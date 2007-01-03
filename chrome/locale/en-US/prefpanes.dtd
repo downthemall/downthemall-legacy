@@ -1,0 +1,73 @@
+<!ENTITY mainpane.label "Main">
+<!ENTITY filterspane.label "Filters">
+<!ENTITY privacypane.label "Privacy">
+<!ENTITY uipane.label "User Interface">
+<!ENTITY advancedpane.label "Advanced">
+<!ENTITY ren.label "If a filename already exists:">
+<!ENTITY rename1.label "Rename">
+<!ENTITY overwrite.label "Overwrite">
+<!ENTITY skip.label "Skip">
+<!ENTITY ask.label "Ask">
+<!ENTITY alert.label "When downloads are completed:">
+<!ENTITY alert1.label "Alert me using alertboxes">
+<!ENTITY alert2.label "Alert me using Firefox slide notifications">
+<!ENTITY alert3.label "Don't alert me">
+<!ENTITY kill.label "Close source tab when DownThemAll starts">
+<!ENTITY closedta.label "Close DownThemAll when downloads are completed">
+<!ENTITY ntask1.value "Max concurrent downloads:">
+<!ENTITY listhead1.label "Caption">
+<!ENTITY listhead2.label "Extensions">
+<!ENTITY filter.label "Filtered extensions:">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY useAs.label "Use this as:">
+<!ENTITY imagesf.label "Images filter">
+<!ENTITY linksf.label "Links filter">
+<!ENTITY add.label "Add new filter">
+<!ENTITY remove.label "Delete filter">
+<!ENTITY default.label "Restore default filters">
+<!ENTITY downloadWin.label "Show dTa in the save window">
+<!ENTITY reduce.label "Show only file names in downloads' window">
+<!ENTITY highlight.label "Highlight files checked by filters">
+<!ENTITY dtamenus.label "Menus">
+<!ENTITY showme.value "Context menu">
+<!ENTITY compactm "Use a compact menu">
+<!ENTITY dtacontext2.label "Preferences">
+<!ENTITY closing.label "On progress window disclosure">
+<!ENTITY removecompleted.label "Remove completed downloads from list">
+<!ENTITY removecanceled.label "Remove canceled/erroneous downloads from list">
+<!ENTITY removeaborted.label "Remove not-started downloads from list">
+<!ENTITY dtadown.label "Dropdown menus">
+<!ENTITY history1.value "Results in dropdown menus: ">
+<!ENTITY butFoldDel.label "Delete Folders History">
+<!ENTITY butFiltDel.label "Delete Additional Filters History">
+<!ENTITY dtadia.label "Diagnostic Log">
+<!ENTITY dump.label "Enable diagnostic messages on console and on file">
+<!ENTITY butShowLog.label "View log">
+<!ENTITY butDelLog.label "Delete log">
+<!ENTITY donation.label "Let dTa download updated news, messages and latest version number">
+<!ENTITY dtampd.label "Multipart download">
+<!ENTITY maxchunk.value "Max number of chunks per download:">
+<!ENTITY dtatocap.label "Downloads' timeout">
+<!ENTITY timeout.label "Max period of connection inactivity before timeout ">
+<!ENTITY dtatmpcap.label "Temporary files">
+<!ENTITY temp.label "Save download chunks in a temporary directory">
+<!ENTITY buttonlabelextra2 "Restore default settings">
+<!ENTITY sec10.label "10 seconds">
+<!ENTITY sec30.label "30 seconds">
+<!ENTITY min1.label "1 minute">
+<!ENTITY min2.label "2 minutes">
+<!ENTITY min3.label "3 minutes">
+<!ENTITY min4.label "4 minutes">
+<!ENTITY min5.label "5 minutes">
+<!ENTITY min10.label "10 minutes">
+<!ENTITY min15.label "15 minutes">
+<!ENTITY dtaPreferences.title "DownThemAll! Preferences...">
+<!ENTITY manager "dTa Manager">
+<!ENTITY toomenu.value "Tools Menu">
+<!ENTITY onedisabled.label "1 (Disabled)">
+<!ENTITY soundsCap.label "Sounds">
+<!ENTITY sounddone.label "Play a sound when all downloads are complete">
+<!ENTITY sounderror.label "Play a sound in case of error">
+<!ENTITY dtapreallcap.label "Disk Space Pre-allocation">
+<!ENTITY dtaprealldes "Disk space pre-allocation speeds up the joining of files and reduces fragmentation, but increases the disk space consume during downloads - requires the double of the space in the worst case.">
+<!ENTITY dtapreallcheck.label "Enable Disk Space Pre-allocation">

@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See notice.txt and gpl.txt for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
+<overlay id="advancedpaneoverlay"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<prefpane id="dtapane5" label="&advancedpane.label;" image="chrome://dta/content/immagini/advPref32.png" onpaneload="versionControl();" >
+	<stringbundle id="stringB" src="chrome://dta/locale/selectwin.properties"/>
+	<stringbundle id="strings" src="chrome://dta/locale/selectwin.properties"/>
+	<!-- restorePref.js needs stringB = prefpanes.properties -->
+	<preferences>
+		<preference id="dtamaxchunks" name="extensions.dta.context.maxchunks" type="int" />
+		<preference id="dtatemporary" name="extensions.dta.context.saveTemp" type="bool" />
+		<preference id="dtatimeout" name="extensions.dta.context.timeout" type="int" />
+		<preference id="dtaprealloc" name="extensions.dta.prealloc" type="bool" />
+		<preference id="dtatemplocation" name="extensions.dta.context.tempLocation" type="unichar" />
+	</preferences>
+	<vbox>
+		<groupbox>
+		  <caption id="dtampd" label="&dtampd.label;" />
+			<hbox class="margin" align="center">
+				<label value="&maxchunk.value;" id="maxchunk" />
+				<menulist id ="maxchunks" preference="dtamaxchunks"> 
+						<menupopup editable="false">
+							<menuitem label="&onedisabled.label;" value="1"/>
+							<menuitem label="2" value="2"/>
+							<menuitem label="3" value="3"/>
+							<menuitem label="4" value="4"/>
+							<menuitem label="5" value="5"/>
+							<menuitem label="6" value="6"/>
+							<menuitem label="7" value="7"/>
+							<menuitem label="8" value="8"/>
+							<menuitem label="9" value="9"/>
+							<menuitem label="10" value="10"/>
+						</menupopup>
+				</menulist>
+			</hbox>
+		</groupbox>
+		<groupbox>
+		  <caption id="dtatocap" label="&dtatocap.label;" />
+			<hbox align="center">
+				<label value="&timeout.label;" id="time1" />
+				<menulist id ="timeout" preference="dtatimeout" >
+					<menupopup>
+						<menuitem id="t0" value="10"  label="&sec10.label;" />
+						<menuitem id="t1" value="30"  label="&sec30.label;" />
+						<menuitem id="t2" value="60"  label="&min1.label;" />
+						<menuitem id="t3" value="120" label="&min2.label;" />
+						<menuitem id="t4" value="180" label="&min3.label;" />
+						<menuitem id="t5" value="240" label="&min4.label;" />
+						<menuitem id="t6" value="300" label="&min5.label;" />
+						<menuitem id="t7" value="600" label="&min10.label;" />
+						<menuitem id="t8" value="900" label="&min15.label;" />
+					</menupopup>
+				</menulist>
+			</hbox>
+		</groupbox>
+		<groupbox>
+		  <caption id="dtatmpcap" label="&dtatmpcap.label;" />
+			<checkbox id="temp" label="&temp.label;" preference="dtatemporary" oncommand="disableLocation();"/>
+			<hbox flex="1" >
+			<textbox style="margin-left: 25px;" flex="90" id="tempLocation" preference="dtatemplocation" />
+			<toolbarbutton id="browsedir" width="35px" oncommand="browseDire();" image="chrome://dta/content/immagini/browse.png" style="padding:3px 2px 0px 3px;" />
+			</hbox>
+		</groupbox>
+		<groupbox>
+			<caption id="dtapreallcap" label="&dtapreallcap.label;" />
+			<description id="dtaprealldes">&dtaprealldes;</description>
+			<checkbox id="dtapreallcheck" label="&dtapreallcheck.label;" preference="dtaprealloc" />
+		</groupbox>	
+	</vbox>
+</prefpane>
+</overlay>

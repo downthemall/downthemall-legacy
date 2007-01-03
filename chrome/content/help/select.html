@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>"Make your selection" window</title>
+<link rel="stylesheet" type="text/css" href="style.css"/>
+</head>
+<body>
+<div id="header">
+	This page in your language? <a href="http://www.downthemall.net" target="_blank">Check out DownThemAll website!</a>
+</div>
+<div id="main">
+<h2>"Make your selection" window</h2>
+<p>In this window you can choose what files will have to be massively downloaded from the current web page. When you're ready, just click on "Start!" to begin downloading.</p>
+<ul>
+<li><strong>"Links"/"Pictures and Embedded":</strong> choose if you want to get a list of the objects linked in the page or the embedded objects, like thumbnails in a gallery page, movies or Flash stuff;
+<li><strong>Links List:</strong> this is the list of "Links"/"Pictures and embedded objects" found in the page. Each row contains:
+		<ul>
+
+    <li><strong>URL</strong></li>
+    <li><strong>Description:</strong> any additional text attached to the link/object will be reported here;</li>
+    <li><strong>Renaming mask:</strong> the schema which will generate the local filename ("Default" will use the renaming mask specified under the list);</li>
+    </ul>
+		You can select links/pictures/objects to download in many different ways:
+		<ul>
+
+    <li><strong>Middle clicking</strong> on the relative row;</li>
+    <li><strong>Clicking on the white circle</strong> at URL's left (it will become a thick);</li>
+    <li><strong>Selecting multiple links</strong> and then choosing "Select all" from right-click context menu.</li>
+		</ul>
+</li>
+
+<li><strong>Save files in:</strong> this is the directory where your finished downloads will be saved to. You can choose it by clicking on the blue folder icon next to the text bar, from the history you can find on the dropdown list, or writing it down by yourself. If specified directory does not exist, dTa create it without warning you.</li>
+
+<li><strong>Renaming mask:</strong> define a schema to generate the local filenames of your downloads. You can also use this mask to make dTa create subdirectories based on the link's datas (see <a href="masks.html">Renaming masks</a>). You can use the tags listed in "Renaming tags", a pop-up you can open clicking on the button near the renaming mask. If you need to generate a different renaming mask for just some files, please right click on the relative row and select the "Modify renaming mask.." option.</li>
+
+<li><strong>Inclusive filters:</strong> this will list the filters created from the Preference's Filter Panel. Click on the checkboxes to activate them. Use the "All" filter to select all the files or all the pictures/embedded objects. Please note that different filters will use different colors to highlight the files.</li>
+
+<li><strong>Additional filters:</strong> you can specify one (or more) comma-separated 'on the fly' filters, without have to set them up in the preferences window. These filters will instantly hightlight the files selected, and will be remembered next time you will open dTa. You can also use * and ? wildcards to speed up filtering.
+    <li><strong>Reg. Exp.:</strong> If you feel more comfortable, you can also use regular expressions to select files on the list. All you need is to bound your regexp with a couple of / (or just click on the "Reg. Exp." checkbox). Please note that you can only set one regular expression at a time.</li>
+</li>
+<li><strong>Start!:</strong> will start the download of the selected links/images.</li>
+
+<li><strong>Queue!:</strong> will queue the selected links/images in the dTa Manager</li>
+
+<li><strong>Cancel:</strong> will close the window</li>
+
+<li><strong>Status bar:</strong> shows the number of selected links</li>
+
+<li><strong>Preferences:</strong> will open the Preferences window</li>
+
+<li><strong>Shortcuts:</strong>
+		<ul>
+    <li><strong class="shortcut">Middle click</strong> on a row, to select a link</li>
+    <li><strong class="shortcut">ESC</strong> / <strong class="shortcut">Command</strong> + <strong class="shortcut">W</strong>, to close the window</li>
+    <li><strong class="shortcut">Return/Enter</strong> to start downloads</li>
+
+    </ul>
+</li>
+</ul>
+</div>
+</body>
+</html>

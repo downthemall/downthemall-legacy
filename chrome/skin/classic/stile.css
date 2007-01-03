@@ -1,0 +1,43 @@
+#turbo-button {
+  list-style-image: url("chrome://dta/content/immagini/tooltdtalarge.png");
+}
+
+#turbo-button:hover {
+  list-style-image: url("chrome://dta/content/immagini/tooltdtalargehover.png");
+}
+
+#dta-button {
+  list-style-image: url("chrome://dta/content/immagini/tooldtalarge.png");
+}
+
+#dta-button:hover {
+  list-style-image: url("chrome://dta/content/immagini/tooldtalargehover.png");
+}
+
+#dta-manager-button {
+  list-style-image: url("chrome://dta/content/immagini/box.png");
+}
+
+#dta-manager-button:hover {
+  list-style-image: url("chrome://dta/content/immagini/boxhover.png");
+}
+
+toolbar[iconsize="small"] #dta-manager-button {
+  list-style-image: url("chrome://dta/content/immagini/boxpiccolo.png");
+}
+
+toolbar[iconsize="small"] #turbo-button {
+  list-style-image: url("chrome://dta/content/immagini/toolsmall.png");
+}
+
+toolbar[iconsize="small"] #turbo-button:hover {
+  list-style-image: url("chrome://dta/content/immagini/toolsmall.png");
+}
+
+toolbar[iconsize="small"] #dta-button {
+  list-style-image: url("chrome://dta/content/immagini/dtasmall.png");
+}
+
+toolbar[iconsize="small"] #dta-button:hover {
+  list-style-image: url("chrome://dta/content/immagini/dtasmall.png");
+}

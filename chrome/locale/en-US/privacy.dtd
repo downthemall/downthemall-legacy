@@ -1,0 +1,7 @@
+<!ENTITY privacy.title "Privacy Info">
+<!ENTITY priinf.value "Privacy notice:">
+<!ENTITY par.value "DownThemAll takes care of your privacy.">
+<!ENTITY par1.value "You can remove complete, canceled, and not started downloads from the download window by changing the settings in the Preferences->Privacy panel.">
+<!ENTITY par2.value "You can enable diagnostic messages (which contain URLS and filenames you're downloading) both on the console and get them written in the log.txt file (contained in the dTa folder) by the Preferences->Privacy panel. This option is DISABLED by default to improve your privacy.">
+<!ENTITY par3.value "DownThemAll connects to our website to get news, donation messages, and latest version number. This feature can be disabled by changing the setting in the Preferences->Privacy panel.">
+<!ENTITY par4.value "This notice is always available by a link in the About window.">
