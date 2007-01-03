@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See notice.txt and gpl.txt for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
+<overlay id="mainpaneoverlay"
+		 xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<prefpane id="dtapane1" label="&mainpane.label;" image="chrome://dta/content/immagini/mainPref32.png" onpaneload="versionControl();loadTab();">
+	<stringbundle id="stringB" src="chrome://dta/locale/selectwin.properties"/>
+	<preferences>
+	  <preference id="dtaexisting" name="extensions.dta.existing" type="int"/>
+	  <preference id="dtantask" name="extensions.dta.context.ntask" type="int"/>
+	  <preference id="dtaalert" name="extensions.dta.alertbox" type="int"/>
+	  <preference id="dtadone" name="extensions.dta.sounds.done" type="bool"/>
+	  <preference id="dtaerror" name="extensions.dta.sounds.error" type="bool"/>
+	  <preference id="dtaclosetab" name="extensions.dta.context.closetab" type="bool"/>
+	  <preference id="dtaautoclose" name="extensions.dta.context.closedta" type="bool"/>
+	</preferences>
+  <vbox>
+	<groupbox>
+		<caption id="ren" label="&ren.label;" />
+		<radiogroup id="scelta" preference="dtaexisting">
+			<grid>
+				<columns><column/><column/></columns>
+				<rows>
+					<row><radio id="rename1" label="&rename1.label;" value="0"/> <radio id="overwrite" label="&overwrite.label;" value="1"/></row>
+					<row><radio id="skip" label="&skip.label;" value="2" /><radio id="ask" label="&ask.label;" value="3"/></row>
+				</rows>
+			</grid>
+		</radiogroup>
+	</groupbox>
+	
+   <vbox>
+				<hbox align="center">
+					<label value="&ntask1.value;" id="ntask1" />
+					<menulist id ="ntask" preference="dtantask" >
+						<menupopup>
+							<menuitem label="1" value="1"/>
+							<menuitem label="2" value="2"/>
+							<menuitem label="3" value="3"/>
+							<menuitem label="4" value="4"/>
+							<menuitem label="5" value="5"/>
+							<menuitem label="6" value="6"/>
+							<menuitem label="7" value="7"/>
+							<menuitem label="8" value="8"/>
+							<menuitem label="9" value="9"/>
+							<menuitem label="10" value="10"/>
+						</menupopup>
+					</menulist>
+					
+				</hbox>	
+		 </vbox>
+	
+	<groupbox>
+				<caption id="ren" label="&alert.label;" />
+				<radiogroup id="alscelta" preference="dtaalert">
+				<grid>
+					<columns><column/><column/></columns>
+						<rows>
+							<row>
+					<radio id="alert1" label="&alert1.label;" value="0" />
+					<radio id="alert2" label="&alert2.label;" value="1" /></row>
+					<row><radio id="alert3" label="&alert3.label;" value="2" /></row>
+					</rows>
+				</grid>
+				</radiogroup>
+	</groupbox>
+	
+	<groupbox>
+				<caption id="soundsCap" label="&soundsCap.label;" />
+				<checkbox id="soundDone" label="&sounddone.label;" preference="dtadone"/>
+				<checkbox id="soundError" label="&sounderror.label;" preference="dtaerror"/>
+				
+	</groupbox>
+	
+	<vbox>
+		<checkbox id="kill" label="&kill.label;" preference="dtaclosetab"/>
+		<checkbox id="closedta" label="&closedta.label;" preference="dtaautoclose"/>
+	</vbox>
+	</vbox>
+   </prefpane>
+</overlay>

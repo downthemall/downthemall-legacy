@@ -1,0 +1,29 @@
+<!ENTITY pause.label "Pausa">
+<!ENTITY resume.label "Riprendi">
+<!ENTITY cancel.label "Annulla">
+<!ENTITY movetop.label "Muovi in cima">
+<!ENTITY movebottom.label "Muovi in fondo">
+<!ENTITY moveup.label "Muovi su">
+<!ENTITY movedown.label "Muovi giù">
+<!ENTITY selectall.label "Seleziona tutto">
+<!ENTITY selectinv.label "Inverti selezione">
+<!ENTITY targetdir.label "Apri la cartella di destinazione">
+<!ENTITY infos.label "Ottieni info">
+<!ENTITY options.label "Preferenze...">
+<!ENTITY task.label "URL">
+<!ENTITY per.label "Percentuale">
+<!ENTITY pct.label "Avanzamento">
+<!ENTITY dim.label "Dimensione">
+<!ENTITY time.label "Tempo stimato">
+<!ENTITY parts.label "Parti">
+<!ENTITY path.label "Percorso salvataggio">
+<!ENTITY remove.label "Rimuovi">
+<!ENTITY addchunk.label "Aggiungi segmento">
+<!ENTITY removechunk.label "Rimuovi segmento">
+<!ENTITY launch.label "Apri file">
+<!ENTITY tooladd.label "Inserisci URL">
+<!ENTITY tooldonate.tooltiptext "Aiutaci a migliorare ancora dTa. Fai una piccola donazione!">
+<!ENTITY mask.label "Maschera di rinomina">
+<!ENTITY speed.label "Velocità">
+<!ENTITY infoURLTitle.value "Link URL: ">
+<!ENTITY infoDestTitle.value "Destinazione: ">

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See notice.txt and gpl.txt for details.
+ *
+ * Contributers:
+ *   Nils Maier <MaierMan@web.de>
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE overlay SYSTEM "chrome://dta/locale/saveas.dtd">
+<overlay id="downthemallDownloadSaveAs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
+<script type="application/x-javascript" src="chrome://dta/content/dta/overlayFunctions.js"/>
+<script type="application/x-javascript" src="dmoverlay.js"/>
+<script type="application/x-javascript" src="menu.js"/>
+
+<stringbundle id="stringsB" src="chrome://dta/locale/saveas.properties"/>
+	<radiogroup id="mode">
+		<vbox insertbefore="save" id="downthemallcontainer" collapsed="true" flex="1">
+			<radio id="downthemall" label="DownThemAll!..." />
+			<radio id="turbodta" label="dTaOneClick!" />
+			<label id="directoryturbodta" crop="center" style="padding-left: 0px; margin-left: 30px; margin-top: 0px; padding-top: 0px; font-size:90%;" class="turbodtadir" flex="1" value="&on;" />
+		</vbox>
+	</radiogroup>
+</overlay>

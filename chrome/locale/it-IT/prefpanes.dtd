@@ -1,0 +1,70 @@
+<!ENTITY mainpane.label "Generali">
+<!ENTITY filterspane.label "Filtri">
+<!ENTITY privacypane.label "Privacy">
+<!ENTITY uipane.label "Interfaccia utente">
+<!ENTITY advancedpane.label "Avanzate">
+<!ENTITY ren.label "Se un nome file esiste già:">
+<!ENTITY rename1.label "Rinomina">
+<!ENTITY overwrite.label "Sovrascrivi">
+<!ENTITY skip.label "Salta">
+<!ENTITY ask.label "Chiedi">
+<!ENTITY alert.label "Quando gli scaricamenti sono completi:">
+<!ENTITY alert1.label "Avvisami con alert boxes">
+<!ENTITY alert2.label "Avvisami usando gli slide alert di Firefox">
+<!ENTITY alert3.label "Non avvisarmi">
+<!ENTITY kill.label "Chiudi la scheda sorgente quando DownThemAll inizia a scaricare">
+<!ENTITY closedta.label "Chiudi DownThemAll quando gli scaricamenti sono completi">
+<!ENTITY ntask1.value "Numero massimo di scaricamenti contemporanei:">
+<!ENTITY listhead1.label "Nome">
+<!ENTITY listhead2.label "Estensioni">
+<!ENTITY filter.label "Estensioni filtrate:">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY useAs.label "Usalo come:">
+<!ENTITY imagesf.label "Filtro immagini">
+<!ENTITY linksf.label "Filtro collegamenti">
+<!ENTITY add.label "Aggiungi nuovo filtro">
+<!ENTITY remove.label "Cancella filtro">
+<!ENTITY default.label "Ripristina filtri iniziali">
+<!ENTITY downloadWin.label "Mostra dTa nella finestra di salvataggio">
+<!ENTITY reduce.label "Mostra solo i nomi dei file nella finestra di scaricamento">
+<!ENTITY highlight.label "Evidenzia i file selezionati attraverso i filtri">
+<!ENTITY dtamenus.label "Menu">
+<!ENTITY showme.value "Menu contestuale">
+<!ENTITY compactm "Usa un menu compatto">
+<!ENTITY dtacontext2.label "Preferenze">
+<!ENTITY closing.label "Alla chiusura della finestra di scaricamento">
+<!ENTITY removecompleted.label "Rimuovi dalla lista i file completati">
+<!ENTITY removecanceled.label "Rimuovi dalla lista i file annullati/interrotti">
+<!ENTITY removeaborted.label "Rimuovi dalla lista i file non partiti">
+<!ENTITY dtadown.label "Menu a tendina">
+<!ENTITY history1.value "Righe dei menu a tendina:">
+<!ENTITY butFoldDel.label "Cancella le ultime cartelle di salvataggio">
+<!ENTITY butFiltDel.label "Cancella gli ultimi filtri aggiuntivi">
+<!ENTITY dtadia.label "Registro diagnostico">
+<!ENTITY dump.label "Abilita i messaggi diagnostici in console e su file">
+<!ENTITY butShowLog.label "Leggi il registro">
+<!ENTITY butDelLog.label "Cancella il registro">
+<!ENTITY donation.label "Permetti a dTa di scaricare notizie, messaggi e controllare se la versione è aggiornata">
+<!ENTITY dtampd.label "Scaricamento in più parti">
+<!ENTITY maxchunk.value "Massimo numero di segmenti per scaricamento:">
+<!ENTITY dtatocap.label "Timeout dello scaricamento">
+<!ENTITY timeout.label "Massimo periodo di inattività prima del timeout">
+<!ENTITY dtatmpcap.label "File temporanei">
+<!ENTITY temp.label "Salva i segmenti in una cartella temporanea">
+<!ENTITY buttonlabelextra2 "Ripristina impostazioni iniziali">
+<!ENTITY sec10.label "10 secondi">
+<!ENTITY sec30.label "30 secondi">
+<!ENTITY min1.label "1 minuto">
+<!ENTITY min2.label "2 minuti">
+<!ENTITY min3.label "3 minuti">
+<!ENTITY min4.label "4 minuti">
+<!ENTITY min5.label "5 minuti">
+<!ENTITY min10.label "10 minuti">
+<!ENTITY min15.label "15 minuti">
+<!ENTITY dtaPreferences.title "DownThemAll! Preferenze...">
+<!ENTITY manager "dTa Manager">
+<!ENTITY toomenu.value "Menù Strumenti">
+<!ENTITY onedisabled.label "1 (Disabilitato)">
+<!ENTITY soundsCap.label "Suoni">
+<!ENTITY sounddone.label "Riproduci un suono alla fine degli scaricamenti">
+<!ENTITY sounderror.label "Riproduci un suono in caso di errori">

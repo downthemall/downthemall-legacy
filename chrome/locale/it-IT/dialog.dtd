@@ -1,0 +1,5 @@
+<!ENTITY title.value "Conflitto di rinomina!">
+<!ENTITY text.value "Applica queste impostazioni:">
+<!ENTITY choice1.label "Solo per questo file">
+<!ENTITY choice2.label "Solo per questa sessione">
+<!ENTITY choice3.label "Da ora in poi">
