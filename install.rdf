@@ -11,7 +11,7 @@
 		<contributor>Stefano Verna</contributor>
 		<version>0.5</version>
 		
-		<aboutURL>chrome://dta/content/about/about.xul</aboutURL>
+		<!--<aboutURL>chrome://dta/content/about/about.xul</aboutURL>-->
 		<iconURL>chrome://dta/content/immagini/icon.png</iconURL>
 		<homepageURL>http://tn123.ath.cx/dtamod/</homepageURL>
 		<optionsURL>chrome://dta/content/opzioni/newPref.xul</optionsURL>
