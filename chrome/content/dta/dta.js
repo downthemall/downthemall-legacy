@@ -130,26 +130,44 @@ function loadOptions () {
 	}
 }
 	
-function updateIcon(nome, nomefile) {
-	if ((new String()).findSystemSlash() == "/") {
-		if (nome.match(/\/[^\/\?]+\.(z(ip|[0-9]{2})|r(ar|[0-9]{2})|jar|bz2|gz|tar|rpm)$/i))
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/zip.png");
-		else if (nome.match(/\/[^\/\?]+\.(mpeg|rm|mpe|avi|mpg|mp4|mov|asf|qt|wmv|ram)$/i))
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/mpg.png");
-		else if (nome.match(/\/[^\/\?]+\.(jpeg|jpg|gif|png|jpe|tif|tiff|bmp|ico)$/i))
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/jpg.png");
-		else if (nome.match(/\/[^\/\?]+\.(wav|mp3|mid|m4a)$/i))
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/mp3.png");
-		else if (nome.match(/\/[^\/\?]+\.(txt|rtf|xls|doc|pdf|java|c(pp)?|xul)$/i))
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/doc.png");
-		else if (nome.match(/\/[^\/\?]+\.(html?|css|rss|xml|js)$/i))
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/htm.png");
-		else
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/other.png");
-	} else
-		nomefile.setAttribute("src", "moz-icon://" + nome + "?size=16");
-
-	return;
+function updateIcon(link, metalink, elem) {
+	var uri = Components.classes["@mozilla.org/network/standard-url;1"]
+		.createInstance(Components.interfaces.nsIURI);
+	uri.spec = link;
+	var ext = uri.path.match(/\.([^/.]+)$/);
+	ext = ext ? ext[1] : null;
+	
+	var ico = null;	
+	if (metalink) {
+		ico = "chrome://dta/content/immagini/metalink.png";
+	}
+	else if ((new String()).findSystemSlash() == "/") {
+		if (!ext) {}
+		else if (ext.search(/^z(?:ip|\d{2})|r(?:ar|\d{2})|jar|bz2|gz|tar|rpm|deb|xpi|ace|7z(?:ip)$/i) != -1) {
+			ico = "chrome://dta/content/immagini/zip.png";
+		}
+		else if (ext.search(/^mp(?:eg?|g|4)|rmv?|ram|avi|mov|qt|asf|wmv?|mkv$/i) != -1) {
+			ico = "chrome://dta/content/immagini/mpg.png";
+		}
+		else if (ext.search(/^jp(?:eg?|g|2)|gif|png|tiff?|w?bmp|psd|icon?|tga$/i) != -1) {
+			ico = "chrome://dta/content/immagini/jpg.png";
+		}
+		else if (ext.search(/^wav|mp[2-4]?a?|mka|flac|og[ga]|mid$/i) != -1) {
+			ico = "chrome://dta/content/immagini/mp3.png";
+		}
+		else if (ext.search(/^cp{0,3}|hh?|txt|rtf|p(?:l|m|yc?)|xls|doc|odt$/i) != 1) {
+			ico = "chrome://dta/content/immagini/doc.png";
+		}
+		else if (ext.search(/^x?html?|css|rss|atom|js|xml|xslt?$/i) != -1) {
+			ico = "chrome://dta/content/immagini/htm.png";
+		}
+	} else {
+		ico = "moz-icon://" + uri.prePath + uri.path + "?size=16";
+	}
+	if (!ico) {
+		ico = "chrome://dta/content/immagini/other.png"
+	}
+	elem.setAttribute('src', ico);
 }
 
 function unload() { 
@@ -574,7 +592,7 @@ function addLinks(name, links) {
 	
 	for (i in links) {
 		
-		if (i == "length" || typeof links[i] !="object")
+		if (typeof links[i] != "object")
 			continue;
 		
 		var link = links[i];
@@ -593,10 +611,10 @@ function addLinks(name, links) {
 
 		var url = (typeof link.url == 'string' ? link.url : link.url.usable);
 		var urlE = document.createElement("treecell");
-		urlE.setAttribute("label", url);
+		urlE.setAttribute("label", " " + url);
 		urlE.setAttribute("value", i);
 						
-		updateIcon(url, urlE);
+		updateIcon(url, link.metalink, urlE);
 			
 		var desc = document.createElement("treecell");
 		var t = "";
@@ -605,18 +623,24 @@ function addLinks(name, links) {
 		if ("ultDescription" in links[i] && links[i].ultDescription.length > 0)
 			t += ((t.length > 0) ? ' - ' : '') + links[i].ultDescription;
 		desc.setAttribute("label", t);
-					
+		
 		var ren = document.createElement("treecell");
 		ren.setAttribute("label", strbundle.getString("default"));
-		ren.setAttribute("id", name+"mask"+i);
+		ren.setAttribute("id", name + "mask" + i);
 						
 		treeRow.appendChild(check);
 		treeRow.appendChild(urlE);
 		treeRow.appendChild(desc);
 		treeRow.appendChild(ren);
 				
-		itemNode.appendChild(treeRow);	
-		list.appendChild(itemNode);
+		itemNode.appendChild(treeRow);
+		
+		if (link.metalink) {
+			list.insertBefore(itemNode, list.firstChild);
+		}
+		else {
+			list.appendChild(itemNode);
+		}
 	}
 }
 

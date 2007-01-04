@@ -95,6 +95,15 @@ var DTA_debug = {
 			}
 			text += "\x0D\x0A";
 			
+			if (Components.stack)
+			{
+				var stack = Components.stack.caller;
+				for (var i = 0; i < 4 && stack; ++i) {
+					text += stack.toString() + "\x0D\x0A";
+					stack = stack.caller;
+				}
+			}
+			
 			this._consoleService.logStringMessage(text);
 			
 			fo.init(this._logPointer, 0x04 | 0x08 | 0x10, 0664, 0); 
@@ -128,16 +137,12 @@ var DTA_URLhelpers = {
 	}
 };
 
-var DTA_URL = function(urlOrElem, charset, usable) {
-	if (typeof urlOrElem == 'string') {
-		this.charset = this.str(charset);
-		this.usable = this.str(usable);
-		this._url = this.str(urlOrElem);
-	} else {
-		this.charset = this.str(urlOrElem.getAttribute("charset"));
-		this.usable = this.str(urlOrElem.getAttribute("usable"));
-		this._url = this.str(urlOrElem.getAttribute("url"));
-	}
+function DTA_URL(url, charset, usable, preference) {
+	this.charset = this.str(charset);
+	this.usable = this.str(usable);
+	this._url = this.str(url);
+	this.preference = preference ? preference : 100;
+
 	this.decode();
 };
 DTA_URL.prototype = {

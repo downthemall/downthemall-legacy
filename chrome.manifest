@@ -2,22 +2,6 @@
 content	dta	chrome/content/
 skin	dta	classic/1.0 chrome/skin/classic/
 locale	dta	en-US	chrome/locale/en-US/
-locale	dta	de-DE	chrome/locale/de-DE/
-locale	dta	el-GR	chrome/locale/el-GR/
-locale	dta	es-ES	chrome/locale/es-ES/
-locale	dta	fr-FR	chrome/locale/fr-FR/
-locale	dta	it-IT	chrome/locale/it-IT/
-locale	dta	ko-KR	chrome/locale/ko-KR/
-locale	dta	nl-NL	chrome/locale/nl-NL/
-locale	dta	pl-PL	chrome/locale/pl-PL/
-locale	dta	pt-BR	chrome/locale/pt-BR/
-locale	dta	ru-RU	chrome/locale/ru-RU/
-locale	dta	sk-SK	chrome/locale/sk-SK/
-locale	dta	bg-BG	chrome/locale/bg-BG/
-locale	dta	zh-CN	chrome/locale/zh-CN/
-locale	dta	he-IL	chrome/locale/he-IL/
-locale	dta	sv-SE	chrome/locale/sv-SE/
-locale	dta	cy-GB	chrome/locale/cy-GB/
 
 content	dta-pref-style	chrome/content/opzioni/style/	platform
 content	dta-down-style	chrome/content/dta/style/	platform

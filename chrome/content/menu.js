@@ -22,22 +22,36 @@ var DTA_ContextOverlay = {
 	addLinksToArray : function(lnks, urls, doc) {
 		var ref = doc.URL;
 		for (var i = 0; i < lnks.length; ++i) {
+		
 			// remove anchor from url
-			var link = lnks[i].href.replace(/#.*$/gi, "");
+			var link = lnks[i].href.replace(/#.*$/gi, "");;
 			// if it's valid and it's new
-			if (DTA_AddingFunctions.isLinkOpenable(link) && !(link in urls)) {
+			if (!DTA_AddingFunctions.isLinkOpenable(link) || link in urls) {
+				continue;
+			}
 				
-				/// XXX: title is also parsed by extractDescription
-				/// XXX: is this instance necessary?
-				var udesc = '';
-				if (lnks[i].hasAttribute('title')) {
-					udesc = this.trim(lnks[i].getAttribute('title'));
-				}
-				urls[link] = {
-					'url': new DTA_URL(link, doc.characterSet),
+			/// XXX: title is also parsed by extractDescription
+			/// XXX: is this instance necessary?
+			var udesc = '';
+			if (lnks[i].hasAttribute('title')) {
+				udesc = this.trim(lnks[i].getAttribute('title'));
+			}
+			urls[link] = {
+				'url': new DTA_URL(link, doc.characterSet),
+				'refPage': ref,
+				'description': this.extractDescription(lnks[i]),
+				'ultDescription': udesc
+			};
+			++urls.length;
+			
+			var ml = lnks[i].hash.match(/#!metalink3!((?:https?|ftp):.+)$/);
+			if (ml && !((ml = ml[1]) in urls)) {
+				urls[ml] = {
+					'url': new DTA_URL(ml, doc.characterSet),
 					'refPage': ref,
-					'description': this.extractDescription(lnks[i]),
-					'ultDescription': udesc
+					'description': '[metalink] http://www.metalinker.org/',
+					'ultDescription': '',
+					'metalink': true
 				};
 				++urls.length;
 			}
@@ -157,14 +171,22 @@ var DTA_ContextOverlay = {
 				cur = cur.parentNode;
 			}
 			
+			var url = gContextMenu.onLink ? cur.href : cur.src;
+			if (gContextMenu.onLink) {
+				var ml = cur.hash.match(/#!metalink3!((?:https?|ftp):.+)$/);
+				if (ml) {
+					url = ml[1];
+				}
+			}			
+			
 			DTA_AddingFunctions.saveSingleLink(
 				turbo,
-				new DTA_URL(gContextMenu.onLink ? cur.href : cur.src, win.document.characterSet),
+				new DTA_URL(url, win.document.characterSet),
 				document.commandDispatcher.focusedWindow.document.URL,
 				this.extractDescription(cur)
 			);
 		} catch (ex) {
-			DTA_debug.dump('findSingleLink', ex);
+			DTA_debug.dump('findSingleLink: ', ex);
 		}
 	},
 	
