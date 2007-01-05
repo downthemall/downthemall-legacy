@@ -28,8 +28,8 @@
 	<prefpane id="dtapane1" image="chrome://dta/skin/preferences/mainPref32.png" label="&mainpane.label;" src="chrome://dta/content/preferences/mainPane.xul"/>
 	<prefpane id="dtapane2" image="chrome://dta/skin/preferences/filters32.png" label="&filterspane.label;" src="chrome://dta/content/preferences/filtersPane.xul" />
 	<prefpane id="dtapane3" image="chrome://dta/skin/preferences/privacy32.png" label="&privacypane.label;" src="chrome://dta/content/preferences/privaPane.xul" />
-	<prefpane id="dtapane4" image="chrome://dta/content/immagini/visual32.png"  label="&uipane.label;" src="chrome://dta/content/preferences/interfacePane.xul" />
-	<prefpane id="dtapane5" image="chrome://dta/content/immagini/advPref32.png" label="&advancedpane.label;" src="chrome://dta/content/preferences/advPane.xul" />
+	<prefpane id="dtapane4" image="chrome://dta/skin/preferences/visual32.png"  label="&uipane.label;" src="chrome://dta/content/preferences/interfacePane.xul" />
+	<prefpane id="dtapane5" image="chrome://dta/skin/preferences/advPref32.png" label="&advancedpane.label;" src="chrome://dta/content/preferences/advPane.xul" />
 	<script type="application/x-javascript" src="chrome://dta/content/dta/overlayFunctions.js"/>
 	<script type="application/x-javascript" src="chrome://dta/content/dta/internalFunctions.js"/>
 	<script type="application/x-javascript" src="newPref.js"/>
