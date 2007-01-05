@@ -106,7 +106,7 @@ function createPrefFilter(index, caption, reg, check, link, image) {
 function loadOptions () {
 
 	var numfilterold = Preferences.get("extensions.dta.context.numfilters", defNumFilters);
-	window.openDialog("chrome://dta/content/opzioni/newPref.xul","_blank","chrome, titlebar=yes, toolbar=yes, close=yes, centerscreen=yes, resizable=yes, dialog=no, modal=yes");
+	DTA_showPreferences();
 
 	if (Preferences.get("extensions.dta.context.numfilters", -1) == -1) {
 		try {

@@ -13,12 +13,12 @@ overlay	chrome://browser/content/browser.xul	chrome://dta/content/menu.xul
 overlay	chrome://browser/content/browser.xul	chrome://dta/content/barra.xul
 overlay	chrome://navigator/content/navigator.xul	chrome://dta/content/menu.xul
 overlay	chrome://mozapps/content/downloads/unknownContentType.xul	chrome://dta/content/saveas.xul
+
+### privacy control ###
 overlay	chrome://browser/content/browser.xul	chrome://dta/content/privacy/overlayBrowser.xul
 overlay chrome://browser/content/preferences/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeUI.xul
 overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeUI.xul
 overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeCode.xul
-overlay chrome://messenger/content/mailWindowOverlay.xul	chrome://dta/content/mailmenu.xul
-overlay	chrome://messenger/content/mailWindowOverlay.xul	chrome://dta/content/mailbarra.xul
 
 # styles
 style	chrome://browser/content/browser.xul	chrome://dta/skin/stile.css

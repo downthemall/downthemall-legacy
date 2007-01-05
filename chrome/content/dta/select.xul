@@ -23,7 +23,7 @@
 	
 	
 	<!-- restorePref.js needs stringB = prefpanes.properties -->
-	<script type="application/x-javascript" src="chrome://dta/content/opzioni/restorePref.js" />
+	<script type="application/x-javascript" src="chrome://dta/content/preferences/restorePref.js" />
 	
 	<script type="application/x-javascript" src="overlayFunctions.js" />
 	<!-- internalFunctions needs overlayFunctions -->

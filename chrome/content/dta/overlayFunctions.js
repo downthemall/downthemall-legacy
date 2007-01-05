@@ -10,6 +10,14 @@
  *   Nils Maier <MaierMan@web.de>
  *
  * ***** END LICENSE BLOCK ***** */
+
+function DTA_showPreferences() {
+	window.openDialog(
+		'chrome://dta/content/preferences/newPref.xul',
+		'_blank',
+		'chrome, titlebar=yes, toolbar=yes, close=yes, centerscreen=yes, resizable=yes, dialog=no, dependent=no, modal=no'
+	);
+}
  
  // Preferences
 var DTA_preferences = {
