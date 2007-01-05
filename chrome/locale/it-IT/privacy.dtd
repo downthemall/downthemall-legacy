@@ -1,7 +1,0 @@
-<!ENTITY privacy.title "Privacy Info">
-<!ENTITY priinf.value "Informativa sulla privacy:">
-<!ENTITY par.value "DownThemAll si prende cura della tua privacy.">
-<!ENTITY par1.value "Puoi rimuovere automaticamente gli scaricamenti completi, annullati o non partiti dalla finestra di scaricamento cambiando le impostazioni in Preferenze-&gt;Privacy.">
-<!ENTITY par2.value "Puoi abilitare i messaggi diagnostici (che contengono URL e nomi file dei tuoi scaricamenti) sia su console che sul file log.txt (contenuto nella cartella di dTa) agendo da Preferenze-&gt;Privacy. Questa opzione è DISATTIVATA in origine per migliorare la tua privacy.">
-<!ENTITY par3.value "DownThemAll si connette al nostro sito per ottenere notizie, messaggi di donazione, e per controllare che la versione installata sia effettivamente la più aggiornata. Questa funzionalità, come le altre, può essere disattivata in Preferenze-&gt;Privacy.">
-<!ENTITY par4.value "Questa informativa è sempre disponibile cliccando sull'apposito link della finestra About.">

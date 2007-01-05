@@ -1,8 +1,0 @@
-<!ENTITY savelinkt.label "Scarica con dTaOneClick!">
-<!ENTITY savelink.label "Scarica con dTa! in...">
-<!ENTITY error1.label "Non ho trovato collegamenti o immagini!">
-<!ENTITY error2.label "Il link scelto non è un file scaricabile.">
-<!ENTITY context-dta-pref.label "dTa preferenze...">
-<!ENTITY submenu-dta-pref.label "Preferenze...">
-<!ENTITY about "Informazioni su...">
-<!ENTITY dta-manager-button "dTa! Manager">
