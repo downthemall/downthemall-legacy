@@ -1,17 +1,20 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-#toolbar {
-	background: url(chrome://dta/content/immagini/tbbgslim.png);
-	background-repeat: repeat-x;
-	border-width: 0px;
+#tools {
+	height: 43px;
+	background-color: white;
 }
-#toolbar toolbarbutton {
+#tools toolbarbutton {
 	-moz-image-region: rect(0px,51px,25px,26px);    
+	-moz-box-orient: vertical !important;
+	-moz-appearance: none !important;
+  border:0px !important;
+	font-size: 85% !important;
 }
-#toolbar toolbarbutton:hover {
+#tools toolbarbutton:hover {
 	-moz-image-region: rect(0px,25px,25px,0px);    
 }
-#toolbar toolbarbutton[disabled="true"] {
+#tools toolbarbutton[disabled="true"] {
 	-moz-image-region: rect(0px,77px,25px,52px) !important;    
 }
 
@@ -52,6 +55,7 @@
 }
 
 #tooldonate {
+	display: none;
 	list-style-image: url("chrome://dta/skin/manager/donate.png");
 	-moz-image-region: rect(0px,67px,40px,0px) !important;    	
 }

@@ -45,7 +45,7 @@ function load() {
 
 	strbundle = $("strings");
 	$("directory").addEventListener("blur", checkSyntax, true);
-	document.getElementById("dtaSelectHelp").hidden = !("openHelp" in window);
+	document.getElementById("dtaHelp").hidden = !("openHelp" in window);
   versionControl();
 	
 	dropDowns.filter = new dropDownObject("filter", "filter", "filteritems", strbundle.getString("ddfilter"), "/(\\.mp3)$/|@|/(\\.(html|htm|rtf|doc|pdf))$/|@|http://www.website.com/subdir/*.*|@|http://www.website.com/subdir/pre*.???|@|*.z??, *.css, *.html");

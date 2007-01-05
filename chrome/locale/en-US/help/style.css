@@ -4,6 +4,7 @@
  font-size: 13px; 
  text-align: justify;
  color: #333;
+ line-height: 128%;
  }
 
 a {
@@ -15,7 +16,7 @@ color: #663300;
 }
 
 body {
-	padding: 15px;
+	
 }
 
 p {
@@ -30,7 +31,7 @@ ul {
 }
 
 ul ul {
-	margin-top: 3px;
+	margin-top: 0px;
 }
 
 li {
@@ -47,6 +48,7 @@ h2 {
 table {
 	text-align: left;
 	margin-left: 15px;
+	margin-top: 5px;
 	margin-right: 15px;
 }
 
@@ -54,11 +56,16 @@ td {
 	vertical-align: top;
 	margin-bottom: 3px;
 	padding-bottom: 3px;
+	padding-right: 20px;
+	padding-left: 10px;
+	border-bottom: #ddd solid 1px;
 }
 
 .caption {
 	font-weight: bold;
+	border-top: #FFE391 solid 1px;
 	border-bottom: #FFE391 solid 1px;
+	background-color: #FFF9DF;
 }
 
 strong {
@@ -66,3 +73,33 @@ strong {
 	font-size: 100%;
 }
 	
+#header {
+	padding: 0.75em;
+	padding-right: 2em;
+	border-top: 1ex solid white;
+	background: #FFF6CF url(chrome://dta/skin/common/help.png) no-repeat 1em 50%;
+	text-align: right;
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+}
+
+#header, #header * {
+	font-size: smaller;
+}
+
+#main {
+	margin: 0;
+	padding: 15px;
+	padding-top: 42px;
+	background: white url(chrome://dta/skin/common/logo.jpg) no-repeat right top;
+
+}
+
+.shortcut {
+	padding: 1px 3px;
+	background-color: #EFEAD1;
+	border: 1px solid #DFD299;
+	-moz-border-radius: 4px;
+}

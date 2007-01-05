@@ -12,7 +12,9 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="stile.css" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://dta/skin/add/style.css" type="text/css" ?>
+
 <!DOCTYPE window SYSTEM "chrome://dta/locale/dta.dtd">
 
 <dialog xmlns:html="http://www.w3.org/1999/xhtml" 
@@ -22,7 +24,6 @@
 	onload="load();" 
 	onunload="unload();" 
 	persist="screenX screenY" 
-	style="background: #EEEEEE url('chrome://dta/content/immagini/add-bkg.png') repeat-x; width: 430px; height: auto;"
 	ondialogaccept="return addURLnow(true);"
 	ondialogextra1="return addURLnow(false);"
 	buttons="accept, extra1, cancel"
@@ -31,12 +32,15 @@
 	>
 	
 	<script type="application/x-javascript" src="addurl.js"/>
+
 	<script type="application/x-javascript" src="overlayFunctions.js"/>
 	<!-- internalFunctions needs overlayFunctions -->
 	<script type="application/x-javascript" src="internalFunctions.js"/>
+
 	<script src="chrome://global/content/nsDragAndDrop.js"/>
 	<script src="chrome://global/content/nsTransferable.js"/> 
 	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
+	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 	
 	<stringbundle id="strings" src="chrome://dta/locale/addurl.properties"/>
 	<stringbundle id="string" src="chrome://dta/locale/dta.properties"/>
@@ -80,17 +84,16 @@
 		</hbox>
 	</popup>
 	</popupset>
-	
-	<label control="URLaddress" id="AddUrlLabel" style="font-weight: bold; margin: 10px 10px 5px 10px; padding-left: 35px; padding-top:8px; background: url('chrome://dta/content/immagini/toolbar/i2.png') no-repeat 0% 50%; height: 26px;" value="&addUrlLabel.value;" />
+
+	<hbox id="header">
+		<label control="URLaddress" id="title" value="&addUrlLabel.value;" />
+		<spacer flex="1" id="logo"/>
+	</hbox>
 	<vbox style="margin:5px 10px;" >
 		<description id="descr">&descr.value;</description>
 		<label style="font-weight:bold;">&examples.value;</label>
-		<label>
-			.../mygallery[A-C]/photo[001-100 step:2].jpg
-		</label>
-		<label>
-		 .../mygallery[10-01 step:3]/photo[1-10][f-a step:2].jpg
-		</label>
+		<label class="example">.../mygallery[A-C]/photo[001-100 step:2].jpg</label>
+		<label class="example">.../mygallery[10-01 step:3]/photo[1-10][f-a step:2].jpg</label>
 		<spacer height="10px"/>
 		<grid onclick="event.stopPropagation();" >
 			<columns>
@@ -113,7 +116,7 @@
 						<menupopup id="directoryitems" >
 						</menupopup>
 					</menulist>
-					<toolbarbutton id="browsedir" oncommand="browseDire();" image="chrome://dta/content/immagini/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browsedir.tooltip;" />
+					<toolbarbutton id="browsedir" oncommand="browseDire();" image="chrome://dta/skin/common/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browsedir.tooltip;" />
 				</hbox>
 			</row>
 			<row align="center">
@@ -123,7 +126,7 @@
 						<menupopup id="renamingitems" >
 						</menupopup>
 					</menulist>
-					<toolbarbutton id="openRenaming" image="chrome://dta/content/immagini/renamingtag.png" popup="renamingTags" style="padding:2px 3px 2px 5px;" tooltiptext="&openRenaming.tooltip;"  />
+					<toolbarbutton id="openRenaming" image="chrome://dta/skin/common/mask.png" popup="renamingTags" style="padding:2px 3px 2px 5px;" tooltiptext="&openRenaming.tooltip;"  />
 				</hbox>
 			</row>
 		</rows>

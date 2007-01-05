@@ -5,7 +5,7 @@
     <rdf:Description about="urn:root"
       nc:title="&dtahelp;"
       nc:defaulttopic="Select"
-      nc:base="chrome://dta/content/help/">
+      nc:base="chrome://dta/locale/help/">
     <nc:panellist>
       <rdf:Seq>
         <rdf:li> <rdf:Description nc:panelid="glossary" nc:datasources=""/> </rdf:li>

@@ -1,18 +1,20 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 #views {
-	min-width: 550px;
+	margin: 0;
+	padding: 0;
+	background: white;	
 }
 #views toolbar {
 	border-width:0px; 
-	background: white url('chrome://dta/skin/select/logo.jpg');
-	background-position:right;
-	background-repeat:no-repeat; 
-	min-height:42px;
+	min-height: 43px;	
+	background: white;	
 }
 
-#views toolbarbutton {
+#views toolbarbutton, #views toolbarbutton:hover{
   -moz-box-orient: horizontal !important;
+  -moz-appearance: none !important;
+
 	min-width: 120px;
 	padding-left: 8px;
 	padding-right: 8px;
@@ -51,6 +53,16 @@
 
 .collapse {
 	background: url("chrome://dta/skin/select/collapse.png") no-repeat 0px 0px;
+}
+
+treechildren::-moz-tree-checkbox {
+    /* css for checked cells */
+		list-style-image: url("chrome://dta/skin/select/uncheck2.png");
+}
+
+treechildren::-moz-tree-checkbox(checked) {
+    /* css for checked cells */
+    list-style-image: url("chrome://dta/skin/select/check.png");
 }
 
 treechildren::-moz-tree-row(manuallySelected) {

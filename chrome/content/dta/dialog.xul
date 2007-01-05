@@ -9,7 +9,8 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
-<?xml-stylesheet href="stile.css" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
+
 <!DOCTYPE window SYSTEM "chrome://dta/locale/dialog.dtd">
 
 <dialog id="replace" 

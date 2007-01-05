@@ -2362,7 +2362,7 @@ function loadDown() {
 	strbundle = $("strings");
 	Prefs.refresh();
 	
-	document.getElementById("dtaManagerHelp").hidden = !("openHelp" in window);
+	document.getElementById("dtaHelp").hidden = !("openHelp" in window);
 	
 	sessionManager.load();
 	
@@ -2923,7 +2923,7 @@ try {
 		var el = context.childNodes.item(i);
 		if (el.setAttribute) disableObj(el);
 	}
-	var context = $("toolbar");
+	var context = $("tools");
 	for (var i=0; i<context.childNodes.length; i++) {
 		var el = context.childNodes.item(i);
 		if (el.setAttribute) disableObj(el);

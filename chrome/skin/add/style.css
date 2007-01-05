@@ -1,0 +1,28 @@
+dialog {
+	padding: 0px;
+	margin: 0px;
+}
+toolbarbutton {
+	width: 28px;
+}
+#addURL  {
+	width: 500px;
+	height: auto;
+}
+
+#header {
+	background-color: white;
+	padding-left: 1em;
+	height: 42px;
+}
+#title {
+	font-weight: bold;
+	padding-top: 1em;
+	margin-bottom: auto;
+	padding-left: 35px;
+	background: url('chrome://dta/skin/add/add.png') no-repeat left center;
+}
+
+.example {
+	font-family: monospace;
+}
