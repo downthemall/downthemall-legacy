@@ -9,8 +9,9 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="stile.css" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
 <?xml-stylesheet href="chrome://dta/skin/select/style.css" type="text/css"?>
+
 <!DOCTYPE window SYSTEM "chrome://dta/locale/dta.dtd">
 
 <window xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
@@ -44,16 +45,16 @@
 		<key id="kMacEsc" modifiers="accel" key="W" oncommand="self.close();"/>
 		<key keycode="VK_RETURN" oncommand="startDownload(true);"/>
 		<key keycode="VK_ENTER" oncommand="startDownload(true);"/>
-		<key id="kHelp" modifiers="accel" key="H" oncommand="openHelp('introduction','chrome://dta/content/dtahelp.rdf');"/>
+		<key id="kHelp" modifiers="accel" key="H" oncommand="openHelp('introduction','chrome://dta/locale/help/dtahelp.rdf');"/>
 		
 	</keyset>
 
 	<popupset>
 		<popup id="popup" >
-			<menuitem image="chrome://dta/content/immagini/check.png" class="menuitem-iconic" id="mcheck" label="&mcheck.label;" oncommand="checkSelected(true);" />
-			<menuitem image="chrome://dta/content/immagini/uncheck.png" class="menuitem-iconic" id="muncheck" label="&muncheck.label;" oncommand="checkSelected(false);" />
+			<menuitem image="chrome://dta/skin/select/check.png" class="menuitem-iconic" id="mcheck" label="&mcheck.label;" oncommand="checkSelected(true);" />
+			<menuitem image="chrome://dta/skin/select/uncheck.png" class="menuitem-iconic" id="muncheck" label="&muncheck.label;" oncommand="checkSelected(false);" />
 			<menuseparator class="down"/>
-			<menuitem image="chrome://dta/content/immagini/modrenaming.png" class="menuitem-iconic" id="modifyRenaming" label="&modifyRenaming.label;" oncommand="modifyRenaming();" />
+			<menuitem image="chrome://dta/skin/select/modrenaming.png" class="menuitem-iconic" id="modifyRenaming" label="&modifyRenaming.label;" oncommand="modifyRenaming();" />
 		</popup>
 		<popup id="renamingTags" orient="vertical" position="before_end" style="padding: 8px; margin-bottom: -10px;">
 			<label id="titlerenaming" value="&titlerenaming.value;" style="background-color: transparent !important; font-weight: bold; text-align: center; font-size: 114%; padding-bottom: 3px;" />
@@ -95,6 +96,7 @@
 		<toolbar class="findfiles" >
 			<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&openlinks.label;" onclick="changeTab('links');" />
 			<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&openpics.label;" onclick="changeTab('pics');" />
+			<spacer flex="1" id="logo"/>
 		</toolbar>
 	</toolbox>
 						
@@ -134,7 +136,7 @@
 					<menupopup id="directoryitems" onselect="dropDowns.directory.saveCurrent(false);" oncommand="dropDowns.directory.saveCurrent(false);">
 					</menupopup>
 				</menulist>
-				<toolbarbutton id="browsedir" oncommand="browseDire();" image="chrome://dta/content/immagini/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browsedir.tooltip;" />
+				<toolbarbutton id="browsedir" oncommand="browseDire();" image="chrome://dta/skin/common/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browsedir.tooltip;" />
 				</hbox>
 			</vbox>
 			<vbox id="renamingbox" style="min-width: 200px" >
@@ -144,7 +146,7 @@
 					<menupopup id="renamingitems" onselect="dropDowns.renaming.saveCurrent(false);" oncommand="dropDowns.renaming.saveCurrent(false);" >
 					</menupopup>
 				</menulist>
-				<toolbarbutton id="openRenaming" image="chrome://dta/content/immagini/renamingtag.png" popup="renamingTags" style="padding:4px 3px 4px 5px;" tooltiptext="&openRenaming.tooltip;"  />
+				<toolbarbutton id="openRenaming" image="chrome://dta/skin/common/mask.png" popup="renamingTags" style="padding:4px 3px 4px 5px;" tooltiptext="&openRenaming.tooltip;"  />
 				</hbox>
 			</vbox>
 		</hbox>
@@ -176,8 +178,8 @@
 	</hbox>
 	<statusbar id="footer">
 		<statusbarpanel id="status" flex="1" />
-		<statusbarpanel id="dtaSelectHelp" label="Help!" style="text-decoration: underline; " onclick="openHelp('introduction','chrome://dta/content/dtahelp.rdf');" />
-		<statusbarpanel id="options" label="&options.label;" style="text-decoration: underline; " onclick="loadOptions();" />
+		<statusbarpanel id="dtaHelp" class="statusbarpanel-iconic-text" label="Help!" onclick="openHelp('Select','chrome://dta/locale/help/dtahelp.rdf');" src="chrome://dta/skin/common/help.png" />
+		<statusbarpanel id="options" class="statusbarpanel-iconic-text" label="&options.label;" onclick="loadOptions();" src="chrome://dta/skin/common/prefs.png" />
 	</statusbar> 
 	
 </window>

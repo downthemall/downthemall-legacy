@@ -9,7 +9,8 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="stile.css" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
+
 <!DOCTYPE window SYSTEM "chrome://dta/locale/privacy.dtd">
 
 <window xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&privacy.title;" autostretch="always" id="privacyInfo" onload="load();" onunload="unload();" flex="1" style="background-color: white;width:600px;">

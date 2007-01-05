@@ -112,7 +112,8 @@ try {
 	return false;
 }
 
-function load() {try {
+function load() {
+	try {
 		strbundleB = $("strings");
 		strbundle = $("string");
 		
@@ -171,7 +172,7 @@ function load() {try {
 		}
 		
 	} catch(e) {
-	DTA_debug.dump("load():", e);
+		DTA_debug.dump("load():", e);
 	}
 }
 

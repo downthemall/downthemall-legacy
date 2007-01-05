@@ -40,11 +40,11 @@
 			<menuseparator />
 
 			<menuitem id="dta-pref-tool" oncommand="DTA_showPreferences();"
-				label="&submenu-dta-pref.label;" image="chrome://dta/content/immagini/opzioni.png" class="menuitem-iconic" />
-			<menuitem id="dta-help-tool" oncommand="openHelp('introduction','chrome://dta/content/dtahelp.rdf');"
-				label="&dta-help-tool.label;" image="chrome://dta/content/immagini/help.png" class="menuitem-iconic" />	
+				label="&submenu-dta-pref.label;" image="chrome://dta/skin/common/prefs.png" class="menuitem-iconic" />
+			<menuitem id="dta-help-tool" oncommand="openHelp('introduction','chrome://dta/locale/help/dtahelp.rdf');"
+				label="&dta-help-tool.label;" image="chrome://dta/skin/common/help.png" class="menuitem-iconic" />	
 			<menuitem id="dta-about" oncommand="window.openDialog('chrome://dta/content/about/about.xul','_blank','chrome,centerscreen,resizable=no, dialog=no');"
-				label="&about;" image="chrome://dta/content/immagini/about.png" class="menuitem-iconic" />
+				label="&about;" image="chrome://dta/skin/common/about.png" class="menuitem-iconic" />
 		</menupopup>
 		</menu>
 	</menupopup>

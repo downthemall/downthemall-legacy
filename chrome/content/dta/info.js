@@ -93,7 +93,7 @@ function load() {
 
 		if (downloads.length == 1) {
 			d = downloads[0];
-			document.getElementById("infoURL").value = d.link.usable;
+			document.getElementById("infoURL").value = d.urlManager.usable;
 			document.getElementById("sourcePage").value = d.refPage.spec;
 			document.getElementById(dropDowns.renaming.idInput).value = d.mask;
 			document.getElementById(dropDowns.directory.idInput).value = d.originalDirSave;

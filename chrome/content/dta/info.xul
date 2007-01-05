@@ -9,14 +9,15 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="stile.css" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
+
 <!DOCTYPE window SYSTEM "chrome://dta/locale/dta.dtd">
 
 <dialog xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	title="&downinfo.title;" 
 	id="downloadInformations" 
 	onload="load();" 
-	style="background: #EEEEEE url('chrome://dta/content/immagini/add-bkg.png') repeat-x; width:500px;"
+	style="width:500px; margin: 0; padding: 0;"
 	buttons="accept,cancel" 
 	ondialogaccept="return unload();" 
 	>
@@ -72,8 +73,8 @@
 			</hbox>
 		</popup>
 	</popupset>
-	<hbox style="margin: 10px;" >
-		<image id="image" style="max-height:32px; max-width:32px; display:block; margin-right:10px;" />
+	<hbox style="margin: 10px;">
+		<image id="image" style="max-height:32px; max-width:32px; display:block;" />
 		<label id="infoLabel" style="font-weight: bold; padding-top:10px;" value="&info.label;" />
 	</hbox>
 	<grid style="padding:5px 10px;">
@@ -97,7 +98,7 @@
 						<menupopup id="directoryitems" >
 						</menupopup>
 					</menulist>
-					<toolbarbutton id="browsedir" oncommand="browseDire();" image="chrome://dta/content/immagini/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browsedir.tooltip;" />
+					<toolbarbutton id="browsedir" oncommand="browseDire();" image="chrome://dta/skin/common/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browsedir.tooltip;" />
 				</hbox>
 			</row>
 			<row align="center">
@@ -107,7 +108,7 @@
 						<menupopup id="renamingitems" >
 						</menupopup>
 					</menulist>
-					<toolbarbutton id="openRenaming" image="chrome://dta/content/immagini/renamingtag.png" popup="renamingTags" style="padding:2px 3px 2px 5px;" tooltiptext="&openRenaming.tooltip;"  />
+					<toolbarbutton id="openRenaming" image="chrome://dta/skin/common/mask.png" popup="renamingTags" style="padding:2px 3px 2px 5px;" tooltiptext="&openRenaming.tooltip;"  />
 				</hbox>
 			</row>
 		</rows>

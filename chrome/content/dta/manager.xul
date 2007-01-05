@@ -9,11 +9,11 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="stile.css" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
 <?xml-stylesheet href="chrome://dta-platform/skin/dta.css" type="text/css" ?>
 <?xml-stylesheet href="chrome://dta/skin/manager/style.css" type="text/css" ?>
-<!DOCTYPE window SYSTEM "chrome://dta/locale/down.dtd">
 
+<!DOCTYPE window SYSTEM "chrome://dta/locale/down.dtd">
 
 <window xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	onload="versionControl();loadDown();popup();" 
@@ -62,59 +62,7 @@
 		<key id="kGetInfo" modifiers="accel" key="I" oncommand="getInfo();"/>
 	</keyset>
 	
- 	<vbox flex="1">
-		<toolbox>
-		  <toolbar id="toolbar" >
-			<spacer width="10"/>
-			<toolbarbutton class="toolbarbuttonDown" label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="Manually add an URL to DownThemAll" />
-			<spacer width="10"/>
-			<toolbarbutton class="toolbarbuttonDown" label="&resume.label;" id="toolplay" onclick="pauseResumeReq(false);" tooltiptext="Start/Resume/Restart downloads" />
-			<toolbarbutton class="toolbarbuttonDown" label="&pause.label;" id="toolpause" onclick="pauseResumeReq(true);" tooltiptext="Pause downloads" />
-			<toolbarbutton class="toolbarbuttonDown" label="&cancel.label;" id="toolcancel" onclick="cancelPopup();" tooltiptext="Cancel/Reset downloads" />
-			<spacer width="10"/>
-			<toolbarbutton class="toolbarbuttonDown" label="&movetop.label;" id="toolmovetop"  onclick="moveTop(true);" />
-			<toolbarbutton class="toolbarbuttonDown" label="&moveup.label;" id="toolmoveup" onclick="move(-1);"/>
-			<toolbarbutton class="toolbarbuttonDown" label="&movedown.label;" id="toolmovedown" onclick="move(1);"/>
-			<toolbarbutton class="toolbarbuttonDown" label="&movebottom.label;" id="toolmovebottom" onclick="moveTop(false);"  />
-			<spacer width="10"/>
-			<toolbarbutton class="toolbarbuttonDown" label="&options.label;" id="toolprefs" onclick="loadOptions();" />
-			<spacer flex="1" style="min-width:15px" />
-			<toolbarbutton class="toolbarbuttonDown" id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
-			<spacer width="10"/>
-		  </toolbar>
-		</toolbox>
 
-		<tree id="listDownload0" flex="1" hidecolumnpicker="false"	context="popup"	seltype="multiple" enableColumnDrag="true" onselect="popup();" style="margin:0px;">
-			<treecols>
-				<treecol id="task" label="&task.label;" ordinal="1" flex="35" crop="center" persist="width ordinal hidden"/>
-				<splitter class="tree-splitter"/>
-				<treecol id="per" label="&per.label;" ordinal="2" flex="10" persist="width ordinal hidden" style="text-align:right;" />
-				<splitter class="tree-splitter"/>
-				<treecol id="pct" label="&pct.label;" ordinal="3" type="progressmeter" flex="35" persist="width ordinal hidden"/>
-				<splitter class="tree-splitter"/>
-				<treecol id="dim" label="&dim.label;" ordinal="4" flex="20" persist="width ordinal hidden"/>
-				<splitter class="tree-splitter"/>
-				<treecol id="time" label="&time.label;" ordinal="5" flex="10" persist="width ordinal hidden"/>
-				<splitter class="tree-splitter"/>
-				<treecol id="parts" label="&parts.label;" ordinal="7" flex="4" persist="width ordinal hidden" style="text-align:center;"/>
-				<splitter class="tree-splitter"/>
-				<treecol id="mask" label="&mask.label;" ordinal="8" hidden="true" crop="left" flex="8" persist="width ordinal hidden" />
-				<splitter class="tree-splitter"/>
-				<treecol id="path" label="&path.label;" ordinal="9" hidden="true" crop="center" flex="15" persist="width ordinal hidden" />
-				<splitter class="tree-splitter"/>
-				<treecol id="speed" label="&speed.label;" ordinal="6" flex="10" persist="width ordinal hidden"/>
-			</treecols>
-			<treechildren id="downfigli" tooltip="t1">
-			</treechildren>
-		</tree>
-
-	</vbox>
-
-	<statusbar id="footer"  >
-		 <statusbarpanel id="status" label="" flex="1" />
-		 <statusbarpanel id="dtaManagerHelp" label="Help!" style="text-decoration: underline; " onclick="openHelp('introduction','chrome://dta/content/dtahelp.rdf');" />
-		 <statusbarpanel id="options" label="&options.label;" style="text-decoration: underline; " onclick="loadOptions();" />
-	</statusbar>
 	<popupset>
 		<popup id="popup" onpopupshowing="popup();">
 			<menuitem id="info" class="menuitem-iconic" image="chrome://dta/skin/manager/info.png" label="&infos.label;" oncommand="getInfo();" />
@@ -155,5 +103,60 @@
 				<html:canvas id="drawSpeed" width="300" height="20" style="border:1px solid #555; margin:5px 10px;" ></html:canvas>
 			</vbox>
 		</tooltip>
-	</popupset>
+	</popupset>	
+	
+ 	<vbox flex="1">
+		<toolbox>
+		  <toolbar id="tools">
+			<spacer/>
+			<toolbarbutton class="toolbarbuttonDown" label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="Manually add an URL to DownThemAll" />
+			<spacer/>
+			<toolbarbutton class="toolbarbuttonDown" label="&resume.label;" id="toolplay" onclick="pauseResumeReq(false);" tooltiptext="Start/Resume/Restart downloads" />
+			<toolbarbutton class="toolbarbuttonDown" label="&pause.label;" id="toolpause" onclick="pauseResumeReq(true);" tooltiptext="Pause downloads" />
+			<toolbarbutton class="toolbarbuttonDown" label="&cancel.label;" id="toolcancel" onclick="cancelPopup();" tooltiptext="Cancel/Reset downloads" />
+			<spacer/>
+			<toolbarbutton class="toolbarbuttonDown" label="&movetop.label;" id="toolmovetop"  onclick="moveTop(true);" />
+			<toolbarbutton class="toolbarbuttonDown" label="&moveup.label;" id="toolmoveup" onclick="move(-1);"/>
+			<toolbarbutton class="toolbarbuttonDown" label="&movedown.label;" id="toolmovedown" onclick="move(1);"/>
+			<toolbarbutton class="toolbarbuttonDown" label="&movebottom.label;" id="toolmovebottom" onclick="moveTop(false);"  />
+			<spacer/>
+			<toolbarbutton class="toolbarbuttonDown" label="&options.label;" id="toolprefs" onclick="loadOptions();" />
+			<spacer/>
+			<toolbarbutton class="toolbarbuttonDown" id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
+			<spacer id="logo" flex="1" />
+		  </toolbar>
+		</toolbox>
+
+		<tree id="listDownload0" flex="1" hidecolumnpicker="false"	context="popup"	seltype="multiple" enableColumnDrag="true" onselect="popup();" style="margin:0px;">
+			<treecols>
+				<treecol id="task" label="&task.label;" ordinal="1" flex="35" crop="center" persist="width ordinal hidden"/>
+				<splitter class="tree-splitter"/>
+				<treecol id="per" label="&per.label;" ordinal="2" flex="10" persist="width ordinal hidden" style="text-align:right;" />
+				<splitter class="tree-splitter"/>
+				<treecol id="pct" label="&pct.label;" ordinal="3" type="progressmeter" flex="35" persist="width ordinal hidden"/>
+				<splitter class="tree-splitter"/>
+				<treecol id="dim" label="&dim.label;" ordinal="4" flex="20" persist="width ordinal hidden"/>
+				<splitter class="tree-splitter"/>
+				<treecol id="time" label="&time.label;" ordinal="5" flex="10" persist="width ordinal hidden"/>
+				<splitter class="tree-splitter"/>
+				<treecol id="parts" label="&parts.label;" ordinal="7" flex="4" persist="width ordinal hidden" style="text-align:center;"/>
+				<splitter class="tree-splitter"/>
+				<treecol id="mask" label="&mask.label;" ordinal="8" hidden="true" crop="left" flex="8" persist="width ordinal hidden" />
+				<splitter class="tree-splitter"/>
+				<treecol id="path" label="&path.label;" ordinal="9" hidden="true" crop="center" flex="15" persist="width ordinal hidden" />
+				<splitter class="tree-splitter"/>
+				<treecol id="speed" label="&speed.label;" ordinal="6" flex="10" persist="width ordinal hidden"/>
+			</treecols>
+			<treechildren id="downfigli" tooltip="t1">
+			</treechildren>
+		</tree>
+
+	</vbox>
+
+	<statusbar id="footer"  >
+		 <statusbarpanel id="status" label="" flex="1" />
+		 <statusbarpanel id="dtaHelp" class="statusbarpanel-iconic-text" label="Help!" onclick="openHelp('Manager','chrome://dta/locale/help/dtahelp.rdf');" src="chrome://dta/skin/common/help.png" />
+		 <statusbarpanel id="options" class="statusbarpanel-iconic-text" label="&options.label;" onclick="loadOptions();" src="chrome://dta/skin/common/prefs.png" />
+	</statusbar>
+	
 </window>
