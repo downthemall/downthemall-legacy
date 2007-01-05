@@ -1,0 +1,28 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+.paneSelector radio {
+  padding: 3px 3px 3px 3px !important;
+}
+
+.moreLeft {
+  margin-left: 10px;
+}
+
+.splitt {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  cursor: e-resize;
+  border: 0px solid #ddd;
+  background-color: #ddd;
+  border-width: 0px 0px 0px 1px;
+  min-width: 1px;
+}
+
+prefwindow {
+    width: 520px !important;
+		height: 440px !important;
+}
+
+#dtaprealldes {
+	height: 40px;
+}
