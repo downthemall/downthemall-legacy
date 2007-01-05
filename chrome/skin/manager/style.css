@@ -17,7 +17,9 @@
 #tools toolbarbutton[disabled="true"] {
 	-moz-image-region: rect(0px,77px,25px,52px) !important;    
 }
-
+#tools spacer {
+	min-width: 8px;
+}
 #tooladd {
 	list-style-image: url("chrome://dta/skin/manager/add26.png");
 }

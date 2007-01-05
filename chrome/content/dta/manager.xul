@@ -68,7 +68,7 @@
 			<menuitem id="info" class="menuitem-iconic" image="chrome://dta/skin/manager/info.png" label="&infos.label;" oncommand="getInfo();" />
 			<menuseparator class="down" />
 			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" image="chrome://dta/skin/manager/pause.png" oncommand="pauseResumeReq(true);" />
-			<menuitem id="unpause" class="menuitem-iconic" label="&resume.label;" image="chrome://dta/skin/manager/play.png" oncommand="pauseResumeReq(false);" />
+			<menuitem id="play" class="menuitem-iconic" label="&resume.label;" image="chrome://dta/skin/manager/play.png" oncommand="pauseResumeReq(false);" />
 			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/skin/manager/stop.png" oncommand="cancelPopup();" />
 			<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/trash.png" oncommand="removeFromList(-1);" />
 			<menuseparator class="down" />
