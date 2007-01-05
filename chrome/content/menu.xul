@@ -16,7 +16,7 @@
 	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
 
 	<popup id="contentAreaContextMenu">
-		<menuitem image="chrome://dta/content/immagini/opzioni.png" class="menuitem-iconic"  id="context-dta-pref" label="&context-dta-pref.label;" insertafter="context-sep-selectall" oncommand="window.openDialog('chrome://dta/content/opzioni/newPref.xul','_blank','chrome, titlebar=yes, toolbar=yes, close=yes, centerscreen=yes, resizable=yes, dialog=no, dependent=no, modal=no');" />
+		<menuitem image="chrome://dta/content/immagini/opzioni.png" class="menuitem-iconic"  id="context-dta-pref" label="&context-dta-pref.label;" insertafter="context-sep-selectall" oncommand="DTA_showPreferences();" />
 		<menuitem image="chrome://dta/content/immagini/tdtasmall.png" class="menuitem-iconic" id="context-tdta" label="dTaOneClick!" accesskey="o" insertafter="context-sep-selectall" oncommand="DTA_ContextOverlay.findLinks(true);"/>
 		<menuitem image="chrome://dta/content/immagini/dtasmall.png" class="menuitem-iconic" id="context-dta" label="DownThemAll!..." accesskey="n" insertafter="context-sep-selectall" oncommand="DTA_ContextOverlay.findLinks(false);" error1="&error1.label;" error2="&error2.label;" />
 		<menuitem image="chrome://dta/content/immagini/tdtasmall.png" class="menuitem-iconic" id="context-dta-savelinkt" label="&savelinkt.label;" insertafter="context-sep-selectall" accesskey="o" oncommand="DTA_ContextOverlay.findSingleLink(true);"/>
@@ -28,7 +28,7 @@
 				<menuitem image="chrome://dta/content/immagini/dtasmall.png" class="menuitem-iconic" id="submenu-dta-savelink" label="&savelink.label;" accesskey="n" oncommand="DTA_ContextOverlay.findSingleLink(false);"/>
 				<menuitem image="chrome://dta/content/immagini/tdtasmall.png" class="menuitem-iconic" id="submenu-dta-savelinkt" label="&savelinkt.label;" accesskey="o"  oncommand="DTA_ContextOverlay.findSingleLink(true);"/>
 				<menuseparator id="dta-separator" />
-				<menuitem image="chrome://dta/content/immagini/opzioni.png" class="menuitem-iconic"  id="submenu-dta-pref" label="&submenu-dta-pref.label;" oncommand="window.openDialog('chrome://dta/content/opzioni/newPref.xul','_blank','chrome, titlebar=yes, toolbar=yes, close=yes, centerscreen=yes, resizable=yes, dialog=no, dependent=no, modal=no');" />
+				<menuitem image="chrome://dta/content/immagini/opzioni.png" class="menuitem-iconic"  id="submenu-dta-pref" label="&submenu-dta-pref.label;" oncommand="DTA_showPreferences();" />
 			</menupopup>
 		</menu>
 	</popup>

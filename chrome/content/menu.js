@@ -12,7 +12,6 @@
  * ***** END LICENSE BLOCK ***** */
  
 // DTA context overlay
-
 var DTA_ContextOverlay = {
 
 	trim : function(t) {
