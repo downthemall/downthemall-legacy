@@ -1,0 +1,115 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#views {
+	min-width: 550px;
+}
+#views toolbar {
+	border-width:0px; 
+	background: white url('chrome://dta/skin/select/logo.jpg');
+	background-position:right;
+	background-repeat:no-repeat; 
+	min-height:42px;
+}
+
+#views toolbarbutton {
+  -moz-box-orient: horizontal !important;
+	min-width: 120px;
+	padding-left: 8px;
+	padding-right: 8px;
+	margin-left: 5px;
+	list-style-image: url("chrome://dta/skin/select/viewbuttons.png");	
+}
+
+#views toolbarbutton[selected="true"] {
+	font-weight: bold;
+	background-color: #eef;
+}
+
+#viewlinks {
+	-moz-image-region: rect(0px,49px,24px,25px);
+}
+#viewlinks:hover {
+	-moz-image-region: rect(0px,24px,24px,0px);
+}
+#viewlinks[disabled="false"] {
+	-moz-image-region: rect(0px,74px,24px,50px) !important;
+}
+
+#viewpics {
+	-moz-image-region: rect(0px,99px,24px,75px);
+}
+#viewpics:hover {
+	-moz-image-region: rect(0px,124px,24px,100px);
+}
+#viewpics[disabled="true"] {
+	-moz-image-region: rect(0px,149px,24px,125px) !important;
+}
+
+.expand {
+	background: url("chrome://dta/skin/select/expand.png") no-repeat 0px 0px;
+}
+
+.collapse {
+	background: url("chrome://dta/skin/select/collapse.png") no-repeat 0px 0px;
+}
+
+treechildren::-moz-tree-row(manuallySelected) {
+	background-color: #FFFFB3
+}
+treechildren::-moz-tree-row(manuallySelected, selected) {
+	background-color: #FFFF80
+}
+treechildren::-moz-tree-row(f0) {
+	background-color: #FFE8BB;
+}
+treechildren::-moz-tree-row(f0, selected) {
+	background-color: #FFD88A
+}
+treechildren::-moz-tree-row(f1) {
+	background-color: #ECFFB3;
+}
+treechildren::-moz-tree-row(f1, selected) {
+	background-color: #DFFF80;
+}
+treechildren::-moz-tree-row(f2) { 
+	background-color: #ECE8FF;
+}
+treechildren::-moz-tree-row(f2, selected) { 
+	background-color: #D5CCFF;
+}
+treechildren::-moz-tree-row(f3) { 
+	background-color: #DDF3FF;
+}
+treechildren::-moz-tree-row(f3, selected) { 
+	background-color: #C2EAFF;
+}
+treechildren::-moz-tree-row(f4) { 
+	background-color: #FDE8FF;
+}
+treechildren::-moz-tree-row(f4, selected) {
+	background-color: #FBCCFF;
+}
+treechildren::-moz-tree-row(f5) {
+	background-color: #DDFFF4;
+}
+treechildren::-moz-tree-row(f5, selected) {
+	background-color: #A8FFE4;
+}
+treechildren::-moz-tree-row(f6) {
+	background-color: #FEFFAF;
+}
+treechildren::-moz-tree-row(f6, selected) {
+	background-color: #FDFF7A;
+}
+treechildren::-moz-tree-row(f7) {
+	background-color: #FFF0B3;
+}
+treechildren::-moz-tree-row(f7, selected) {
+	background-color: #FFE680;
+}
+treechildren::-moz-tree-row(f8) {
+	background-color: #FFDBDB;
+}
+treechildren::-moz-tree-row(f8, selected) {
+	background-color: #DFC2C2;
+}

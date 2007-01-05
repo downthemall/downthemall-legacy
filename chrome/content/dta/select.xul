@@ -10,6 +10,7 @@
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="stile.css" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/select/style.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://dta/locale/dta.dtd">
 
 <window xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
@@ -90,12 +91,12 @@
 	</popupset>
 	<vbox id="frameSelection" flex="1" class="contenitore" >
 				
-	<toolbox class="findfiles" >
+	<toolbox id="views" >
 		<toolbar class="findfiles" >
-			<toolbarbutton class="toolbarbuttonDown" id="openlinks" label="&openlinks.label;" onclick="changeTab('links');" />
-			<toolbarbutton class="toolbarbuttonDown" id="openpics" label="&openpics.label;" onclick="changeTab('pics');" />
+			<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&openlinks.label;" onclick="changeTab('links');" />
+			<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&openpics.label;" onclick="changeTab('pics');" />
 		</toolbar>
-				</toolbox>
+	</toolbox>
 						
 		<tree id="fileList" flex="1" hidecolumnpicker="false" context="popup" seltype="multiple" enableColumnDrag="true" style="margin:0px;" editable="true">
 			<treecols>
@@ -152,7 +153,7 @@
 				<hbox id="head" flex="1"><label class="titolo" id="label4" value="&label4.value;"/></hbox>
 				<vbox flex="1">
 					<hbox id="checkcontainer" flex="1"></hbox>
-					<hbox style="margin: 7px 0px 3px 0px" ><label class="titolo nonaperto" id="additional" onclick="showFilter();checkAll();" tooltiptext="&additional.tooltip;" /></hbox>
+					<hbox style="margin: 7px 0px 3px 0px" ><label class="titolo expand" id="additional" onclick="showFilter();checkAll();" tooltiptext="&additional.tooltip;" /></hbox>
 						<vbox flex="1" id="regexbox" >
 						<hbox>
 							<menulist id="filter" editable="true" flex="1" oninput="dropDowns.filter.saveCurrent(true);checkAll();" onselect="dropDowns.filter.saveCurrent();checkAll();" > 

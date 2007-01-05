@@ -64,11 +64,11 @@ function load() {
 		
 		dropDowns.directory.load();
 		
-		$("openlinks").label = $("openlinks").label + " ("+ links.length + ")";
+		$("viewlinks").label = $("viewlinks").label + " ("+ links.length + ")";
 
 		addLinks("file", links);
 
-		$("openpics").label = $("openpics").label + " ("+ images.length + ")";
+		$("viewpics").label = $("viewpics").label + " ("+ images.length + ")";
 
 		addLinks("img", images);
 		
@@ -128,46 +128,6 @@ function loadOptions () {
 			box.removeChild(box.lastChild);
 		changeTab(lop);
 	}
-}
-	
-function updateIcon(link, metalink, elem) {
-	var uri = Components.classes["@mozilla.org/network/standard-url;1"]
-		.createInstance(Components.interfaces.nsIURI);
-	uri.spec = link;
-	var ext = uri.path.match(/\.([^/.]+)$/);
-	ext = ext ? ext[1] : null;
-	
-	var ico = null;	
-	if (metalink) {
-		ico = "chrome://dta/content/immagini/metalink.png";
-	}
-	else if ((new String()).findSystemSlash() == "/") {
-		if (!ext) {}
-		else if (ext.search(/^z(?:ip|\d{2})|r(?:ar|\d{2})|jar|bz2|gz|tar|rpm|deb|xpi|ace|7z(?:ip)$/i) != -1) {
-			ico = "chrome://dta/content/immagini/zip.png";
-		}
-		else if (ext.search(/^mp(?:eg?|g|4)|rmv?|ram|avi|mov|qt|asf|wmv?|mkv$/i) != -1) {
-			ico = "chrome://dta/content/immagini/mpg.png";
-		}
-		else if (ext.search(/^jp(?:eg?|g|2)|gif|png|tiff?|w?bmp|psd|icon?|tga$/i) != -1) {
-			ico = "chrome://dta/content/immagini/jpg.png";
-		}
-		else if (ext.search(/^wav|mp[2-4]?a?|mka|flac|og[ga]|mid$/i) != -1) {
-			ico = "chrome://dta/content/immagini/mp3.png";
-		}
-		else if (ext.search(/^cp{0,3}|hh?|txt|rtf|p(?:l|m|yc?)|xls|doc|odt$/i) != 1) {
-			ico = "chrome://dta/content/immagini/doc.png";
-		}
-		else if (ext.search(/^x?html?|css|rss|atom|js|xml|xslt?$/i) != -1) {
-			ico = "chrome://dta/content/immagini/htm.png";
-		}
-	} else {
-		ico = "moz-icon://" + uri.prePath + uri.path + "?size=16";
-	}
-	if (!ico) {
-		ico = "chrome://dta/content/immagini/other.png"
-	}
-	elem.setAttribute('src', ico);
 }
 
 function unload() { 
@@ -354,19 +314,20 @@ function changeTab(name) {
 		Preferences.set("extensions.dta.context.seltab", 0);
 		$("fileList").hidden = false;
 		$("imgList").hidden = true;
-		$("openlinks").setAttribute("disabled", true); 
-		$("openpics").setAttribute("disabled", false);
+		$("viewlinks").setAttribute("selected", true); 
+		$("viewpics").setAttribute("selected", false);
 		
 		for (var t=0; t < numfilter; t++) {
 			if (nsPreferences.getBoolPref("extensions.dta.context.filter" + t + ".isLinkFilter",false))
 				addCheckbox(nsPreferences.getLocalizedUnicharPref("extensions.dta.context.filter" + t + ".caption"),"filter" + t, nsPreferences.getBoolPref("extensions.dta.context.filter" + t + ".checked",false));	
 		}
-	} else {
+	}
+	else {
 		Preferences.set("extensions.dta.context.seltab", 1);
 		$("fileList").hidden = true;
 		$("imgList").hidden = false;
-		$("openlinks").setAttribute("disabled", false);
-		$("openpics").setAttribute("disabled", true);
+		$("viewlinks").setAttribute("selected", false);
+		$("viewpics").setAttribute("selected", true);
 		
 		
 		for (var t=0; t < numfilter; t++) {
@@ -447,9 +408,9 @@ function showFilter() {
 
 	if (reg.hidden) {
 		add.setAttribute("value", strbundle.getString("additional") + "...");
-		add.setAttribute("class", "titolo nonaperto");
+		add.setAttribute("class", "titolo expand");
 	} else {
-		add.setAttribute("class", "titolo aperto");
+		add.setAttribute("class", "titolo collapse");
 		add.setAttribute("value", strbundle.getString("additional") + ":");
 	}
 }
@@ -614,7 +575,7 @@ function addLinks(name, links) {
 		urlE.setAttribute("label", " " + url);
 		urlE.setAttribute("value", i);
 						
-		updateIcon(url, link.metalink, urlE);
+		updateIcon(url, urlE, link.metalink);
 			
 		var desc = document.createElement("treecell");
 		var t = "";

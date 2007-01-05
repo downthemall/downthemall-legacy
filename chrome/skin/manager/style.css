@@ -1,0 +1,60 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#toolbar {
+	background: url(chrome://dta/content/immagini/tbbgslim.png);
+	background-repeat: repeat-x;
+	border-width: 0px;
+}
+#toolbar toolbarbutton {
+	-moz-image-region: rect(0px,51px,25px,26px);    
+}
+#toolbar toolbarbutton:hover {
+	-moz-image-region: rect(0px,25px,25px,0px);    
+}
+#toolbar toolbarbutton[disabled="true"] {
+	-moz-image-region: rect(0px,77px,25px,52px) !important;    
+}
+
+#tooladd {
+	list-style-image: url("chrome://dta/skin/manager/add26.png");
+}
+
+#toolplay {
+	list-style-image: url("chrome://dta/skin/manager/play26.png");
+}
+
+#toolpause {
+	list-style-image: url("chrome://dta/skin/manager/pause26.png");
+}
+
+#toolcancel {
+	list-style-image: url("chrome://dta/skin/manager/cancel26.png");
+}
+
+#toolmovetop {
+	list-style-image: url("chrome://dta/skin/manager/movetop26.png");
+}
+
+#toolmovebottom {
+	list-style-image: url("chrome://dta/skin/manager/movebottom26.png");
+}
+
+#toolmovedown {
+	list-style-image: url("chrome://dta/skin/manager/movedown26.png");
+}
+
+#toolmoveup {
+	list-style-image: url("chrome://dta/skin/manager/moveup26.png");
+}
+
+#toolprefs {
+	list-style-image: url("chrome://dta/skin/manager/prefs26.png");
+}
+
+#tooldonate {
+	list-style-image: url("chrome://dta/skin/manager/donate.png");
+	-moz-image-region: rect(0px,67px,40px,0px) !important;    	
+}
+#tooldonate:hover {
+	-moz-image-region: rect(0px,135px,40px,68px) !important;    
+}
