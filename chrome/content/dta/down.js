@@ -2187,7 +2187,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 					if (Prefs.showOnlyFilenames) {
 						d.setTreeCell("url", " " + d.fileName);
 					}
-					updateIcon(d.fileName, $(d.treeID).childNodes[0].childNodes[treeCells["url"]]);
+					updateIcon(d.fileName, $(d.treeID).childNodes[0].childNodes[treeCells["url"]], d.isMetaLink);
 
 					// aggiungiamo le opzioni di renaming a destinationName
 					d.destinationName = d.buildFromMask(false, d.mask);
@@ -2594,30 +2594,6 @@ function startnewDownloads(notQueue, download) {
 		Check.refreshGUI();
 	} catch (e) {Debug.dump("startnewDownloads():", e);}
 	
-}
-
-
-function updateIcon(nome, nomefile) {
-
-	if ((new String()).findSystemSlash() == "/") {
-		if (nome.match(/(\.(z(ip|[0-9]{2})|r(ar|[0-9]{2})|jar|bz2|gz|tar|rpm))$/i))
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/zip.png");
-		else if (nome.match(/(\.(mpeg|rm|mpe|avi|mpg|mp4|mov|asf|qt|wmv|ram))$/i))
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/mpg.png");
-		else if (nome.match(/(\.(jpeg|jpg|gif|png|jpe|tif|tiff|bmp|ico))$/i))
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/jpg.png");
-		else if (nome.match(/(\.(wav|mp3|mid|m4a))$/i))
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/mp3.png");
-		else if (nome.match(/(\.(txt|rtf|png|xls|doc|pdf))$/i))
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/doc.png");
-		else if (nome.match(/(\.(html|htm|css|rss|xml|js))$/i))
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/htm.png");
-		else
-			nomefile.setAttribute("src", "chrome://dta/content/immagini/other.png");
-	} else
-		nomefile.setAttribute("src", "moz-icon://" + nome + "?size=16");
-
-	return;
 }
 
 //--> aggiunge alla listbox gli elementi in array

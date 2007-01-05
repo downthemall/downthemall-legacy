@@ -10,7 +10,8 @@
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="stile.css" type="text/css"?>
-<?xml-stylesheet href="chrome://dta-platform/skin/dta.css"?>
+<?xml-stylesheet href="chrome://dta-platform/skin/dta.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://dta/skin/manager/style.css" type="text/css" ?>
 <!DOCTYPE window SYSTEM "chrome://dta/locale/down.dtd">
 
 
@@ -63,11 +64,11 @@
 	
  	<vbox flex="1">
 		<toolbox>
-		  <toolbar style="background:url('chrome://dta/content/immagini/tbbgslim.png');background-repeat:repeat-x;border-width:0px;" id="toolbar" >
+		  <toolbar id="toolbar" >
 			<spacer width="10"/>
 			<toolbarbutton class="toolbarbuttonDown" label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="Manually add an URL to DownThemAll" />
 			<spacer width="10"/>
-			<toolbarbutton class="toolbarbuttonDown" label="&resume.label;" id="toolunpause" onclick="pauseResumeReq(false);" tooltiptext="Start/Resume/Restart downloads" />
+			<toolbarbutton class="toolbarbuttonDown" label="&resume.label;" id="toolplay" onclick="pauseResumeReq(false);" tooltiptext="Start/Resume/Restart downloads" />
 			<toolbarbutton class="toolbarbuttonDown" label="&pause.label;" id="toolpause" onclick="pauseResumeReq(true);" tooltiptext="Pause downloads" />
 			<toolbarbutton class="toolbarbuttonDown" label="&cancel.label;" id="toolcancel" onclick="cancelPopup();" tooltiptext="Cancel/Reset downloads" />
 			<spacer width="10"/>
@@ -78,7 +79,7 @@
 			<spacer width="10"/>
 			<toolbarbutton class="toolbarbuttonDown" label="&options.label;" id="toolprefs" onclick="loadOptions();" />
 			<spacer flex="1" style="min-width:15px" />
-			<toolbarbutton class="toolbarbuttonDown" id="tooldonate" onclick="openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
+			<toolbarbutton class="toolbarbuttonDown" id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
 			<spacer width="10"/>
 		  </toolbar>
 		</toolbox>
@@ -112,30 +113,31 @@
 	<statusbar id="footer"  >
 		 <statusbarpanel id="status" label="" flex="1" />
 		 <statusbarpanel id="dtaManagerHelp" label="Help!" style="text-decoration: underline; " onclick="openHelp('introduction','chrome://dta/content/dtahelp.rdf');" />
+		 <statusbarpanel id="options" label="&options.label;" style="text-decoration: underline; " onclick="loadOptions();" />
 	</statusbar>
 	<popupset>
 		<popup id="popup" onpopupshowing="popup();">
-			<menuitem id="info" class="menuitem-iconic" image="chrome://dta/content/immagini/info.png" label="&infos.label;" oncommand="getInfo();" />
+			<menuitem id="info" class="menuitem-iconic" image="chrome://dta/skin/manager/info.png" label="&infos.label;" oncommand="getInfo();" />
 			<menuseparator class="down" />
-			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" image="chrome://dta/content/immagini/pause.png" oncommand="pauseResumeReq(true);" />
-			<menuitem id="unpause" class="menuitem-iconic" label="&resume.label;" image="chrome://dta/content/immagini/play.png" oncommand="pauseResumeReq(false);" />
-			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/content/immagini/stop.png" oncommand="cancelPopup();" />
-			<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/content/immagini/trash.png" oncommand="removeFromList(-1);" />
+			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" image="chrome://dta/skin/manager/pause.png" oncommand="pauseResumeReq(true);" />
+			<menuitem id="unpause" class="menuitem-iconic" label="&resume.label;" image="chrome://dta/skin/manager/play.png" oncommand="pauseResumeReq(false);" />
+			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/skin/manager/stop.png" oncommand="cancelPopup();" />
+			<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/trash.png" oncommand="removeFromList(-1);" />
 			<menuseparator class="down" />
-			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" image="chrome://dta/content/immagini/movetop.png" oncommand="moveTop(true);" />
-			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" image="chrome://dta/content/immagini/moveup.png" oncommand="move(-1);" />
-			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" image="chrome://dta/content/immagini/movedown.png" oncommand="move(1);" />
-			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" image="chrome://dta/content/immagini/movebottom.png" oncommand="moveTop(false);" />
+			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" image="chrome://dta/skin/manager/movetop.png" oncommand="moveTop(true);" />
+			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" image="chrome://dta/skin/manager/moveup.png" oncommand="move(-1);" />
+			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" image="chrome://dta/skin/manager/movedown.png" oncommand="move(1);" />
+			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" image="chrome://dta/skin/manager/movebottom.png" oncommand="moveTop(false);" />
 			<menuseparator class="down" />
-			<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/content/immagini/addpart.png" oncommand="addChunk(true);" />
-			<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" image="chrome://dta/content/immagini/rempart.png" oncommand="addChunk(false);" />
+			<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/skin/manager/addpart.png" oncommand="addChunk(true);" />
+			<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" image="chrome://dta/skin/manager/rempart.png" oncommand="addChunk(false);" />
 			<menuseparator class="down" />
-			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/content/immagini/trashCompleted.png" oncommand="removeCompleted();" />
-			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/content/immagini/selectall.png" oncommand="selectAll();" />
-			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/content/immagini/selectinv.png" oncommand="selectInv();" />
+			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/skin/manager/trashCompleted.png" oncommand="removeCompleted();" />
+			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/manager/selectall.png" oncommand="selectAll();" />
+			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/manager/selectinv.png" oncommand="selectInv();" />
 			<menuseparator class="down" />
-			<menuitem id="launch" class="menuitem-iconic" image="chrome://dta/content/immagini/launch.png" label="&launch.label;" oncommand="openFile();" />
-			<menuitem id="folder" class="menuitem-iconic" image="chrome://dta/content/immagini/folder.png" label="&targetdir.label;" oncommand="openFolder();" />
+			<menuitem id="launch" class="menuitem-iconic" image="chrome://dta/skin/manager/launch.png" label="&launch.label;" oncommand="openFile();" />
+			<menuitem id="folder" class="menuitem-iconic" image="chrome://dta/skin/manager/folder.png" label="&targetdir.label;" oncommand="openFolder();" />
 		</popup>
 		<tooltip id="t1" position="after_pointer" noautohide="true" onpopupshowing="return tooltipInfo(event);" onpopuphiding="stopCanvas();" style="width: 470px;" >
 			<vbox>
