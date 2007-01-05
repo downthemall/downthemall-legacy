@@ -11,7 +11,7 @@
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 <overlay id="privacypaneoverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<prefpane id="dtapane3" label="&privacypane.label;" image="chrome://dta/content/immagini/privacy32.png" onpaneload="versionControl();privacyLoad()">
+<prefpane id="dtapane3" label="&privacypane.label;" onpaneload="versionControl();privacyLoad()">
 
 	<stringbundle id="stringB" src="chrome://dta/locale/selectwin.properties"/>
 	<preferences>

@@ -11,7 +11,7 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://browser/skin/preferences/preferences.css"?>
-<?xml-stylesheet href="chrome://dta-pref-style/content/style.css"?>
+<?xml-stylesheet href="chrome://dta-platform/skin/preferences.css"?>
 
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 
@@ -25,11 +25,11 @@
 			persist="width height screenX screenY"
 			>
 	<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties" />
-	<prefpane id="dtapane1" src="chrome://dta/content/opzioni/mainPane.xul" label="&mainpane.label;" image="chrome://dta/content/immagini/mainPref32.png" />
-	<prefpane id="dtapane2" image="chrome://dta/content/immagini/filters.png" label="&filterspane.label;" src="chrome://dta/content/opzioni/filtersPane.xul" />
-	<prefpane id="dtapane3" image="chrome://dta/content/immagini/privacy32.png" src="chrome://dta/content/opzioni/privaPane.xul" label="&privacypane.label;" />
-	<prefpane id="dtapane4" image="chrome://dta/content/immagini/visual32.png"  src="chrome://dta/content/opzioni/interfacePane.xul" label="&uipane.label;" />
-	<prefpane id="dtapane5" image="chrome://dta/content/immagini/advPref32.png" src="chrome://dta/content/opzioni/advPane.xul" label="&advancedpane.label;" />
+	<prefpane id="dtapane1" image="chrome://dta/skin/preferences/mainPref32.png" label="&mainpane.label;" src="chrome://dta/content/preferences/mainPane.xul"/>
+	<prefpane id="dtapane2" image="chrome://dta/skin/preferences/filters32.png" label="&filterspane.label;" src="chrome://dta/content/preferences/filtersPane.xul" />
+	<prefpane id="dtapane3" image="chrome://dta/skin/preferences/privacy32.png" label="&privacypane.label;" src="chrome://dta/content/preferences/privaPane.xul" />
+	<prefpane id="dtapane4" image="chrome://dta/content/immagini/visual32.png"  label="&uipane.label;" src="chrome://dta/content/preferences/interfacePane.xul" />
+	<prefpane id="dtapane5" image="chrome://dta/content/immagini/advPref32.png" label="&advancedpane.label;" src="chrome://dta/content/preferences/advPane.xul" />
 	<script type="application/x-javascript" src="chrome://dta/content/dta/overlayFunctions.js"/>
 	<script type="application/x-javascript" src="chrome://dta/content/dta/internalFunctions.js"/>
 	<script type="application/x-javascript" src="newPref.js"/>
