@@ -2961,7 +2961,7 @@ try {
 			||
 			(d.isPaused && !d.isStarted)
 		)
-			$("unpause", "toolunpause").forEach(enableObj);
+			$("play", "toolplay").forEach(enableObj);
 
 		if (!d.isCanceled && ((d.isCompleted && d.isPassed) || !d.isCompleted))
 			$("cancel", "toolcancel").forEach(enableObj);
