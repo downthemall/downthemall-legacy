@@ -11,7 +11,7 @@
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 <overlay id="filterspaneoverlay"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-    <prefpane id="dtapane2" label="&filterspane.label;" image="chrome://dta/content/immagini/filters32.png" onpaneload="versionControl();load();">
+    <prefpane id="dtapane2" label="&filterspane.label;" onpaneload="versionControl();load();">
     <script type="application/x-javascript" src="filtersPane.js"/>
     <stringbundle id="stringB" src="chrome://dta/locale/selectwin.properties"/>
     <preferences id="dinPref">

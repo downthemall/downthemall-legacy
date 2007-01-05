@@ -12,7 +12,7 @@
 <overlay id="interfacepaneoverlay"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<prefpane id="dtapane4" label="&uipane.label;" image="chrome://dta/content/immagini/visual32.png" onpaneload="versionControl();">
+<prefpane id="dtapane4" label="&uipane.label;" onpaneload="versionControl();">
 	<stringbundle id="stringB" src="chrome://dta/locale/selectwin.properties"/>
 
 	<preferences>

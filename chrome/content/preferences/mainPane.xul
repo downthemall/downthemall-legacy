@@ -12,7 +12,7 @@
 <overlay id="mainpaneoverlay"
 		 xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<prefpane id="dtapane1" label="&mainpane.label;" image="chrome://dta/content/immagini/mainPref32.png" onpaneload="versionControl();loadTab();">
+<prefpane id="dtapane1" label="&mainpane.label;" onpaneload="versionControl();loadTab();">
 	<stringbundle id="stringB" src="chrome://dta/locale/selectwin.properties"/>
 	<preferences>
 	  <preference id="dtaexisting" name="extensions.dta.existing" type="int"/>
