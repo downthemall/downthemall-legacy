@@ -1,10 +1,11 @@
 # package
 content	dta	chrome/content/
-skin	dta	classic/1.0 chrome/skin/classic/
+
+skin	dta	classic/1.0 chrome/skin/
+skin	dta-platform	classic/1.0 chrome/skin/platform	platform
+
 locale	dta	en-US	chrome/locale/en-US/
 
-content	dta-pref-style	chrome/content/opzioni/style/	platform
-content	dta-down-style	chrome/content/dta/style/	platform
 
 # overlay
 overlay	chrome://browser/content/browser.xul	chrome://dta/content/menu.xul

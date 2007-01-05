@@ -14,7 +14,7 @@
 		<!--<aboutURL>chrome://dta/content/about/about.xul</aboutURL>-->
 		<iconURL>chrome://dta/content/immagini/icon.png</iconURL>
 		<homepageURL>http://tn123.ath.cx/dtamod/</homepageURL>
-		<optionsURL>chrome://dta/content/opzioni/newPref.xul</optionsURL>
+		<optionsURL>chrome://dta/content/preferences/newPref.xul</optionsURL>
 		
 		<!-- Firefox -->
 		<targetApplication>
