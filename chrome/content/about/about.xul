@@ -1,61 +1,83 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- ***** BEGIN LICENSE BLOCK *****
- * Version: GPL 2.0
- *
- * This code is part of DownThemAll! - dTa!
- * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- * 
- * See notice.txt and gpl.txt for details.
- *
- * ***** END LICENSE BLOCK ***** -->
+<?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="style.css" type="text/css"?>
+
 <!DOCTYPE window SYSTEM "chrome://dta/locale/about.dtd">
-<window class="dialog"	title="DownThemAll! - About" orient="vertical" autostretch="always" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" style="background-color:#FFFFFF;width:550px;">
-<script type="application/x-javascript"><![CDATA[
-
-function openTab(sito) {
-	var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
-	var recentWindow = wm.getMostRecentWindow("navigator:browser");
-	if (recentWindow) {
-		// Use an existing browser window
-		recentWindow.delayedOpenTab(sito);
-	}	else {
-		// No browser windows are open, so open a new one.
-		window.open(sito);
-	}
-}
-
+<window 
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	width="450"
+	height="530"
+	onload="sizeToContent();"
+	title="About downTHEMall! Mod"
+>
+	<script type="application/x-javascript"><![CDATA[
+		function openTab(sito) {
+			var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
+			var recentWindow = wm.getMostRecentWindow("navigator:browser");
+			if (recentWindow) {
+				// Use an existing browser window
+				recentWindow.delayedOpenTab(sito);
+			}	else {
+				// No browser windows are open, so open a new one.
+				window.open(sito);
+			}
+		}
   ]]></script>
-<groupbox orient="horizontal" style="background-color:#FFFFFF !important;" >
-
-
-<vbox style="margin:8px; margin-left:0px;" flex="1">
+<groupbox orient="vertical">
 	<hbox>
-		<image src="chrome://dta/content/about/logo.png"/><spacer flex="1"/>
+		<vbox>
+			<hbox>
+				<image src="chrome://dta/content/about/tagline.png"/>
+				<vbox style="margin-left: 20px;">
+					<label style="font-size: 150%; color: red; font-family: monospace; font-weight: 900;">MOD</label>
+					<label value="ver. 0.5"/>
+				</vbox>
+				<spacer flex="1"/>
+			</hbox>
+			<label value="Copyright © 2004-2007 By:" style="font-weight: bold;"/>
+			<html:ul>
+				<html:li><label value="Nils Maier" class="link" onclick="openTab('http://tn123.ath.cx/dtamod/', '_blank'); "/></html:li>
+				<html:li><label value="Federico Parodi" class="link" onclick="openTab('http://www.jimmy2k.it', '_blank'); "/></html:li>
+				<html:li><label value="Stefano Verna" class="link" onclick="openTab('http://steffoz.altervista.org/', '_blank'); "/></html:li>
+			</html:ul>
+		</vbox>
+		<spacer flex="1"/>
+		<vbox>
+			<image src="chrome://dta/content/about/logo.png"/>
+			<spacer flex="1"/>
+		</vbox>
 	</hbox>
-  <label value="ver. 0.9.9.7 (1.0-RC3)" style="margin-bottom:10px;" />
-  <label value="Copyright © 2004-2006 By:" style="font-weight: bold;"/>
-  <label value="Federico Parodi" class="link" onclick="openTab('http://www.jimmy2k.it', '_blank'); "/>
-  <label value="Stefano Verna" class="link" onclick="openTab('http://steffoz.altervista.org/', '_blank'); "/>
+	<label style="font-weight: bold; color: red;">BEWARE: dTa! Mod is an <html:i>inofficial</html:i> release meant for testing pruposes only!</label>
   <separator class="thin"/>
-  <description style="margin:0px 0px 5px 6px;">Icons and buttons are based on the works of Mike Matas and Jakub Steiner - © Michael Matas, © Jakub Steiner, © Novell, Inc.</description>
+  <description>
+		<html:b>Icons and buttons</html:b> are based on the works of Mike Matas and Jakub Steiner
+		<html:ul>
+			<html:li>© Michael Matas</html:li>
+			<html:li>© Jakub Steiner</html:li>
+			<html:li>© Novell, Inc.</html:li>
+		</html:ul>
+	</description>
   <separator class="thin"/>
-  <description style="margin:0px 0px 0px 6px;">DownThemAll! comes with ABSOLUTELY NO WARRANTY; this is free software, and you are welcome to redistribute it under certain conditions:</description>
-  <label class="link" value="view license for details." onclick="openTab('chrome://dta/content/gpl.txt', '_blank');"/>
-  <label class="link" value="Privacy notice." onclick="window.openDialog('chrome://dta/content/dta/privacy.xul','_blank','chrome, centerscreen, resizable=no, dialog=yes');"/>
+  <description>
+		DownThemAll! comes with ABSOLUTELY NO WARRANTY!<html:br/>
+		This is free software, and you are welcome to redistribute it under certain conditions:
+	</description>
+  <hbox>
+		<label class="link" value="License" onclick="openTab('chrome://dta/content/gpl.txt', '_blank');"/>
+		<spacer flex="1"/>
+		<label class="link" value="Privacy notice" onclick="window.openDialog('chrome://dta/content/dta/privacy.xul','_blank','chrome, centerscreen, resizable=no, dialog=yes');"/>
+		<spacer flex="1"/>
+	</hbox>
   <separator class="thin"/>
   <label value="&language; translation by" style="font-weight: bold;"/>
-  <label value="&transAutor;" class="link"/>
+  <label value="&transAutor;"/>
   <separator class="thin"/>
   <label value="Home Page" style="font-weight: bold;"/>
   <label value="http://www.downthemall.net/" class="link" onclick="openTab('http://www.downthemall.net/', '_blank'); "/>
-  <separator class="thin"/>
-  <label value="E-mail" style="font-weight: bold;"/>
-  <label value="info@downthemall.net" class="link" onclick="openTab('mailto:info@downthemall.net', '_blank'); "/>
-</vbox>
 </groupbox>
 <hbox>
-<spacer flex="1"/><button label="Close this window" onclick="self.close();"/>
+	<spacer flex="1"/>
+	<button label="Close this window" onclick="self.close();"/>
 </hbox>
 </window>

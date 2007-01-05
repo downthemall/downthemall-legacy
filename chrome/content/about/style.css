@@ -1,0 +1,16 @@
+.link {
+	color: blue;
+	text-decoration: underline;
+	cursor: pointer;
+}
+.link:hover {
+	color: red;
+}
+groupbox {
+	background: white;
+	padding: 3ex;
+}
+ul {
+	margin: 0;
+	margin-bottom: 0.5ex;
+}

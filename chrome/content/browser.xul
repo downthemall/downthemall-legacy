@@ -23,27 +23,27 @@
 	</toolbarpalette>
 	<menupopup id="menu_ToolsPopup">	
 			<menuitem id="dta-tool" oncommand="DTA_ContextOverlay.findLinks(false);" 
-				label="DownThemAll!..." image="chrome://dta/content/immagini/dtasmall.png" class="menuitem-iconic" />
+				label="DownThemAll!..." image="chrome://dta/skin/common/dta.png" class="menuitem-iconic" />
 			<menuitem id="turbo-tool" oncommand="DTA_ContextOverlay.findLinks(true);" 
-				label="dTaOneClick!" image="chrome://dta/content/immagini/tdtasmall.png" class="menuitem-iconic" />
+				label="dTaOneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" />
 			
 			<menuitem id="dta-manager-tool" oncommand="DTA_AddingFunctions.openManager();" 
-				label="&dta-manager-button;..." image="chrome://dta/content/immagini/boxpiccolo.png" class="menuitem-iconic" />	
-		<menu id="dta-menu" label="DownThemAll" class="menu-iconic" image="chrome://dta/content/immagini/dtasmall.png" insertbefore="flashgot-menu" insertafter="sanitizeItem">
+				label="&dta-manager-button;..." image="chrome://dta/skin/common/box.png" class="menuitem-iconic" />	
+		<menu id="dta-menu" label="DownThemAll" class="menu-iconic" image="chrome://dta/skin/common/dta.png" insertbefore="flashgot-menu" insertafter="sanitizeItem">
 			<menupopup id="dta-Popup">
 			<menuitem id="dta-tool-popup" oncommand="DTA_ContextOverlay.findLinks(false)" 
-				label="DownThemAll!..." image="chrome://dta/content/immagini/dtasmall.png" class="menuitem-iconic" />
+				label="DownThemAll!..." image="chrome://dta/skin/common/dta.png" class="menuitem-iconic" />
 			<menuitem id="turbo-tool-popup" oncommand="DTA_ContextOverlay.findLinks(true)" 
-				label="dTaOneClick!" image="chrome://dta/content/immagini/tdtasmall.png" class="menuitem-iconic" />
+				label="dTaOneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" />
 			<menuitem id="dta-manager-tool-popup" oncommand="DTA_AddingFunctions.openManager()" 
-				label="&dta-manager-button;..." image="chrome://dta/content/immagini/boxpiccolo.png" class="menuitem-iconic" />	
+				label="&dta-manager-button;..." image="chrome://dta/skin/common/box.png" class="menuitem-iconic" />	
 			<menuseparator />
 
 			<menuitem id="dta-pref-tool" oncommand="DTA_showPreferences();"
 				label="&submenu-dta-pref.label;" image="chrome://dta/skin/common/prefs.png" class="menuitem-iconic" />
 			<menuitem id="dta-help-tool" oncommand="openHelp('introduction','chrome://dta/locale/help/dtahelp.rdf');"
 				label="&dta-help-tool.label;" image="chrome://dta/skin/common/help.png" class="menuitem-iconic" />	
-			<menuitem id="dta-about" oncommand="window.openDialog('chrome://dta/content/about/about.xul','_blank','chrome,centerscreen,resizable=no, dialog=no');"
+			<menuitem id="dta-about" oncommand="window.openDialog('chrome://dta/content/about/about.xul','_blank','chrome,centerscreen,modal');"
 				label="&about;" image="chrome://dta/skin/common/about.png" class="menuitem-iconic" />
 		</menupopup>
 		</menu>
