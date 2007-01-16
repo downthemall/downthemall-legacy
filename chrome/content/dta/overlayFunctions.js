@@ -40,6 +40,9 @@ var DTA_preferences = {
 			return def;
 		}
 	},
+	getDTA: function DP_getDTA(key, def) {
+		return this._get('extensions.dta' + key, def);
+	},
 	set : function(key, value) {
 		if (!this._conv[typeof(value)]) {
 			value = String(value);

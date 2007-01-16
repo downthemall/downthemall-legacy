@@ -22,6 +22,11 @@ var alerting = false;
 const cc = Components.classes;
 const FileFactory = new Components.Constructor("@mozilla.org/file/local;1", "nsILocalFile", "initWithPath");
 
+var downPrefs = {
+	
+
+};
+
 var Prefs = {
 	// default values
 	showOnlyFilenames : true,
@@ -85,14 +90,18 @@ var Prefs = {
 // --------* Statistiche *--------
 var Stats = {
 	totalDownloads : 0,
-	completedDownloads : 0,
+	
+	// Debug this crap,
+	_completedDownloads : 0,
+	get completedDownloads() : { return this._completedDownloads; },
+	set completedDownloads(nv) : { if (--this._completedDownloads < 0) { throw "Stats::Completed downloads less than 1"; } },
+	
 	zippedToWait : 0,
 	downloadedBytes : 0,
 	passedNumber : 0
 }
 
-function URLManager(urls)
-{
+function URLManager(urls) {
 	this._urls = [];
 	this._idx = 0;
 	

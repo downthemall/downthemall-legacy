@@ -2,14 +2,14 @@
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.mozilla.org/2004/em-rdf#">
 	<rdf:Description about="urn:mozilla:install-manifest">
 		
-		<id>{DDC359D1-844A-42a7-9AA1-88A850A938A8}</id>
+		<id>dtamod@tn123.ath.cx</id>
 		<name>DownThemAll! Mod</name>
 		<description>The mass downloader for Firefox.</description>
+		<version>0.5</version>
 		
 		<creator>Nils Maier</creator>
-		<contributor>Federico Parodi</contributor>
-		<contributor>Stefano Verna</contributor>
-		<version>0.5</version>
+		<developer>Federico Parodi</developer>
+		<developer>Stefano Verna</developer>
 		
 		<!--<aboutURL>chrome://dta/content/about/about.xul</aboutURL>-->
 		<iconURL>chrome://dta/content/immagini/icon.png</iconURL>
