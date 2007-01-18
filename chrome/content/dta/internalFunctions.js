@@ -144,68 +144,7 @@ objectExtend(String.prototype,
 }
 );
 
-// DropdownObject
-function dropDownObject(name, idInput, idDropDown, predefined, predefinedHistory) {
-	this.name = name;
-	this.branch = "extensions.dta.dropdown."+name;
-	this.currentValue = this.branch+"-current";
-	this.history = this.branch+"-history";
-	this.idInput = idInput;
-	this.idDropDown = idDropDown;
-	this.predefined = predefined;
-	this.predefinedHistory = predefinedHistory;
-}
-
-dropDownObject.prototype = {
-
-	load : function() {
-		var valuesDrop = nsPreferences.getLocalizedUnicharPref(this.history, this.predefinedHistory).split("|@|");
-		var drop = $(this.idDropDown);
-		var maxDrop = Preferences.get("extensions.dta.context.history", 5);
-	
-		while (drop.hasChildNodes())
-			drop.removeChild(drop.lastChild); 
-		
-		if (maxDrop>0) {
-			var n = 0;
-			for (var x=0; x<valuesDrop.length; x++) {
-				var itemNode = document.createElement("menuitem");
-				itemNode.setAttribute("label", valuesDrop[x]);
-				drop.appendChild(itemNode);
-				if ((++n)==maxDrop) break;
-			}
-		}
-		
-		$(this.idInput).value = nsPreferences.getLocalizedUnicharPref(this.currentValue, this.predefined);
-	},
-	
-	getCurrent : function() {
-		return $(this.idInput).value;
-	},
-	
-	saveCurrent : function(alsoNothing) {
-		nsPreferences.setUnicharPref(this.currentValue, $(this.idInput).value);
-	},
-	
-	saveDrop : function(stringa) {
-		if (stringa.length == 0) return;
-		var valuesDrop = nsPreferences.getLocalizedUnicharPref(this.history, this.predefinedHistory).split("|@|");
-		var maxInDrop = Preferences.get("extensions.dta.context.history", 5);
-		
-		for (var i=0; i<valuesDrop.length; i++)
-			if (stringa == valuesDrop[i])
-				valuesDrop.splice(i, 1);
-	
-		if (valuesDrop.length == maxInDrop) valuesDrop.pop();
-		valuesDrop.splice(0, 0, stringa);
-		
-		nsPreferences.setUnicharPref(this.history, valuesDrop.join("|@|"));
-		//Preferences.set(this.history, valuesDrop.join("|@|"));
-	}
-}
-
 function filePicker() {}
-
 filePicker.prototype = {
 
 	getFolder : function (predefined, text) {try {
@@ -231,23 +170,37 @@ filePicker.prototype = {
 	},
 	
 	createValidDestination : function(path) {
-			if (!path) return false;
-			if (String(path).trim().length==0) return false;
-			var directory = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
-			
-			try {
-				directory.initWithPath(path);
-				if (directory.exists()) 
-					return directory;
-			} catch(e) {return false;}
-			
-			var f = (new String()).findSystemSlash();
-			if (f=="/") {
-				if ((/[\?\+&=:<>\*\|"\\]/gi).test(path)) return false;
-			} else {
-				if ((/[\?\+&=:<>\*\|"\/]/gi).test(path.substring(3, path.length))) return false;
+		if (!path || !String(path).trim().length) {
+			return false;
+		}
+		var directory = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+		try {
+			directory.initWithPath(path);
+			if (directory.exists()) {
+				return directory;
 			}
-
+		} catch(ex) {
+			return false;
+		}
+		try {
+			if (!directory.diskSpaceAvailable) {
+				return false;
+			}
+		} catch (ex) {
+			return false;
+		}
+		
+		var f = (new String()).findSystemSlash();
+		if (f=="/") {
+			if ((/[\?\+&=:<>\*\|"\\]/gi).test(path)) {
+				return false;
+			}
+		} else {
+			if ((/[\?\+&=:<>\*\|"\/]/gi).test(path.substring(3, path.length))) 
+			{
+				return false;
+			}
+		}
 		return directory;
 	}
 };
