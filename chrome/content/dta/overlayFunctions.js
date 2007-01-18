@@ -1,15 +1,43 @@
 /* ***** BEGIN LICENSE BLOCK *****
- * Version: GPL 2.0
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
- * This code is part of DownThemAll! - dTa!
- * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- * 
- * See notice.txt and gpl.txt for details.
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
  *
- * Contributers:
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is downTHEMall.
+ *
+ * The Initial Developer of the Original Code is Nils Maier
+ * Portions created by the Initial Developer are Copyright (C) 2007
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
  *   Nils Maier <MaierMan@web.de>
+ *   Federico Parodi
+ *   Stefano Verna
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
+/*
+ * File relicensed under MPL-Tri, as it contained mostly my code, even before "forking" and I never signed over the copyright nor did I grant for GPL-only.
+ */
 
 function DTA_showPreferences() {
 	window.openDialog(
@@ -26,33 +54,45 @@ var DTA_preferences = {
 	_conv: {
 		'boolean': 'BoolPref',
 		'string': 'CharPref',
-		'number': 'IntPref'
+		'number': 'IntPref',
+		'undefined': 'CharPref'
 	},
 	get: function DP_get(key, def) {
 		if (!this._conv[typeof(def)]) {
-			def = String(def);
+			def = def.toSource();
 		}
 		try {
 			return this._pref['get' + this._conv[typeof(def)]](key);
 		} catch (ex) {
-			Components.utils.reportError('set' + this._conv[typeof(def)]);
+			Components.utils.reportError('key: ' + key + ' / set' + this._conv[typeof(def)]);
+			Components.utils.reportError(ex);
 			this._pref['set' + this._conv[typeof(def)]](key, def);
 			return def;
 		}
 	},
 	getDTA: function DP_getDTA(key, def) {
-		return this._get('extensions.dta' + key, def);
+		return this.get('extensions.dta.' + key, def);
 	},
-	set : function(key, value) {
+	set: function(key, value) {
 		if (!this._conv[typeof(value)]) {
-			value = String(value);
+			value = value.toSource();
 		}
 		this._pref['set' + this._conv[typeof(value)]](key, value);
 	},
-	removeBranch: function(pref) {
-		try {
-			this._pref.deleteBranch(pref);
-		} catch(e) {}
+	setDTA: function DP_setDTA(key, value) {
+		return this.set('extensions.dta.' + key, value);
+	},
+	reset: function DP_reset(key) {
+		return this._prefs.clearUserPref(key);
+	},
+	resetDTA: function DP_resetDTA(key) {
+		return this.reset('extensions.dta.' + key);
+	},
+	resetBranch: function DP_resetBranch(key) {
+		return this._prefs.resetBranch('extensions.dta.' + key);
+	},
+	resetAll(): function DP_reset() {
+		this._prefs.resetBranch('extensions.dta.');
 	}
 };
 
@@ -89,7 +129,12 @@ var DTA_debug = {
 			this._load();
 		}
 		try {
-			if (!this._dumpEnabled || (message=="" && typeof(e)!="object")) return;
+			if (!this._dumpEnabled || (message=="" && typeof(e)!="object")) {
+				return;
+			}
+			
+			message = String(message);
+			
 			var fo = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);
 			var time = new Date();
 			var text = this.formatTimeDate(time.getHours())
@@ -483,3 +528,77 @@ var DTA_Mediator = {
 		window.open(url);
 	}
 };
+
+// DropdownObject
+function DTA_DropDown(name, input, dropDown, predefined) {
+	this.name = name;
+	this.input = input;
+	this.dropDown = dropDown;
+	this.predefined = (predefined instanceof Array) ? predefined : [];
+	
+	this.reload();
+}
+
+DTA_DropDown.prototype = {
+	reload: function dd_reload() {
+		try {
+			this.load();
+		} catch (ex) {
+			DTA_debug.dump('ddl:', ex);
+			// no-op: might want to load this without attaching to an element.
+		}
+	},
+	load: function dd_load() {
+		var values = eval(Preferences.getDTA(this.name, this.predefined));
+		var max = Preferences.getDTA("context.history", 5);
+		
+		var drop = document.getElementById(this.dropDown);
+		var input = document.getElementById(this.input);
+		
+		while (drop.hasChildNodes()) {
+			drop.removeChild(drop.lastChild);
+		}
+		
+		for (var i =  0; i < values.length && i < max; ++i) {
+			var node = document.createElement('menuitem');
+			node.setAttribute('label', values[i]);
+			drop.appendChild(node);
+		}
+		if (values.length) {
+			input.value = values[0];
+		}
+	},
+	get current() {
+		var node = document.getElementById(this.input);
+		return node ? node.value : '';
+	},
+	set current(value) {
+		var node = document.getElementById(this.input);
+		if (value in node) {
+			node.value = value;
+			this.save();
+		}
+	},
+	save: function dd_save() {
+		var n = this.current;
+		if (!n.length) {
+			return;
+		}
+
+		var inValues = eval(Preferences.getDTA(this.name, this.predefined));
+		var max = Preferences.getDTA("context.history", 5);
+		
+		var outValues = [n];
+		
+		for (var i = 0; i < inValues.length && i < max - 1 && outValues.length < max; ++i) {
+			if (n != inValues[i] && inValues[i].length) {
+				outValues.push(inValues[i]);
+			}
+		}
+		Debug.dump(outValues);
+		Preferences.setDTA(this.name, outValues);
+	},
+	clear: function dd_save() {
+		Preferences.resetDTA(this.name);
+	}
+}
