@@ -1,4 +1,5 @@
-/* ***** BEGIN LICENSE BLOCK *****
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -11,10 +12,10 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is downTHEMall.
+ * The Original Code is downTHEMall
  *
  * The Initial Developer of the Original Code is Nils Maier
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -32,21 +33,38 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
- * ***** END LICENSE BLOCK ***** */
+ * ***** END LICENSE BLOCK ***** -->
 
-.link {
-	color: blue;
-	text-decoration: underline;
-	cursor: pointer;
-}
-.link:hover {
-	color: red;
-}
-groupbox {
-	background: white;
-	padding: 3ex;
-}
-ul {
-	margin: 0;
-	margin-bottom: 0.5ex;
-}
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
+
+<!DOCTYPE window SYSTEM "chrome://dta/locale/privacy.dtd">
+
+<dialog
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	title="&privacy.title;"
+	autostretch="always"
+	id="DTA_privacyInfo"
+	flex="1"
+	buttons="accept"
+	style="width: 80ex;"
+>
+	<style type="text/css">
+		description {
+			padding: 1ex;
+			text-align: justify;
+			font-family: sans-serif;
+		}
+	</style>
+	<stringbundle id="strings" src="chrome://dta/locale/selectwin.properties"/>
+	<keyset>
+		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
+	</keyset>
+	<dialogheader title="&priinf.value;" id="logo"/>
+	<description>&par.value;</description>
+	<description>&par1.value;</description>
+	<description>&par2.value;</description>
+	<description>&par3.value;</description>
+	<description>&par4.value;</description>
+</dialog> 
