@@ -1,619 +1,519 @@
 /* ***** BEGIN LICENSE BLOCK *****
- * Version: GPL 2.0
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
- * This code is part of DownThemAll! - dTa!
- * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- * 
- * See notice.txt and gpl.txt for details.
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
  *
- * Contributers:
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is downTHEMall.
+ *
+ * The Initial Developer of the Original Code is Nils Maier
+ * Portions created by the Initial Developer are Copyright (C) 2007
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
  *   Nils Maier <MaierMan@web.de>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
 
 var strbundle;
-var donation;
-var dropDowns = new Object();
-var lop = ""; //links or pictures
 
-function checkSyntax(allowEmpty) {
-	
-	// let's check and create the directory
-	var f = new filePicker();
-	var directory = $("directory");
-	if ((!directory.value || directory.value.trim().length == 0)&&allowEmpty) return false;
-	if (!directory.value || directory.value.trim().length == 0 || f.createValidDestination(directory.value)==false) {
-		alert(strbundle.getString("alertfolder"));
-		var newDir = f.getFolder(null, strbundle.getString("validdestination"));
-		if (!newDir) 
-			directory.value="";
-		else
-			directory.value = newDir;
-		return false;
-	}
-	dropDowns.directory.saveCurrent(false);
-	return true;
-}
-
-// save preferences	
-function savepref() {
-	for (var i = 0; i < $("checkcontainer").childNodes.length; i++) 
-		Preferences.set("extensions.dta.context." + $("checkcontainer").childNodes[i].getAttribute("id") + ".checked", $("checkcontainer").childNodes[i].checked);
-}
-
-function load() {
-
-	strbundle = $("strings");
-	$("directory").addEventListener("blur", checkSyntax, true);
-	document.getElementById("dtaHelp").hidden = !("openHelp" in window);
-  versionControl();
-	
-	dropDowns.filter = new dropDownObject("filter", "filter", "filteritems", strbundle.getString("ddfilter"), "/(\\.mp3)$/|@|/(\\.(html|htm|rtf|doc|pdf))$/|@|http://www.website.com/subdir/*.*|@|http://www.website.com/subdir/pre*.???|@|*.z??, *.css, *.html");
-	dropDowns.directory = new dropDownObject("directory", "directory", "directoryitems", "", "");
-	dropDowns.renaming = new dropDownObject("renaming", "renaming", "renamingitems", "*name*.*ext*", "*name*.*ext*|@|*num*_*name*.*ext*|@|*url*-*name*.*ext*|@|*name* (*text*).*ext*|@|*name* (*hh*-*mm*).*ext*");
-	
-	try {
-		// searches links in the arguments passed by menu.xul
-		var links = window.arguments[0];
-		var images = window.arguments[1];
-		
-		dropDowns.filter.load();
-		dropDowns.renaming.load();	
-		
-		checkSyntax(true);
-		
-		dropDowns.directory.load();
-		
-		$("viewlinks").label = $("viewlinks").label + " ("+ links.length + ")";
-
-		addLinks("file", links);
-
-		$("viewpics").label = $("viewpics").label + " ("+ images.length + ")";
-
-		addLinks("img", images);
-		
-		if(Preferences.get("extensions.dta.context.seltab", 0) == 0) 
-			lop = "links";
-		else
-			lop = "pics";
-	
-		if (dropDowns.filter.getCurrent().length > 0) showFilter(true); else showFilter(false);
-		changeTab(lop);
-	
-		dropDowns.directory.load();
-		
-		if (Preferences.get("extensions.dta.context.infophrases", true)) {
-			donation = new XMLHttpRequest();
-			donation.onreadystatechange = checkNews;
-			donation.open("GET", "http://www.downthemall.net/news.xml");
-			donation.send(null);
+function Tree(links, type) {
+	this._type = type;
+	this._links = [];
+	for (x in links) {
+		if (x == 'length') {
+			continue;
+		}
+		var link = links[x];
+		link.__defineGetter__('icon', function() { if (!this._icon) { this._icon = getIcon(this.url, 'metalink' in this); } return this._icon; });
+		link.checked = '';
+		link.mask = null;
+		if ('metalink' in link) {
+			this._links.unshift(link);
 		} else {
-		  setDefaultDonation();
-		}
-	} catch(ex) {
-		DTA_debug.dump("load():", ex);
-	}
-}
-
-function createPrefFilter(index, caption, reg, check, link, image) {
-	Preferences.set("extensions.dta.context.filter" + index + ".caption", caption);
-	Preferences.set("extensions.dta.context.filter" + index + ".filter", reg);
-	Preferences.set("extensions.dta.context.filter" + index + ".checked", check);
-	Preferences.set("extensions.dta.context.filter" + index + ".isImageFilter", image);
-	Preferences.set("extensions.dta.context.filter" + index + ".isLinkFilter", link);
-}
-
-function loadOptions () {
-
-	var numfilterold = Preferences.get("extensions.dta.context.numfilters", defNumFilters);
-	DTA_showPreferences();
-
-	if (Preferences.get("extensions.dta.context.numfilters", -1) == -1) {
-		try {
-	    restoreAll();
-		} catch(e) {
-			DTA_debug.dump("restoreAll():", e);
+			this._links.push(link);
 		}
 	}
+	this._iconic = this._as.getAtom('iconic');
+}
+Tree.prototype = {
+	_as: Components.classes["@mozilla.org/atom-service;1"]
+		.getService(Components.interfaces.nsIAtomService),
 	
-	if ($("filteritems")) {
-		dropDowns.filter.load();
-		dropDowns.directory.load();
-		dropDowns.renaming.load();	
+	get type() {
+		return this._type;
+	},
+	get rowCount() {
+		return this._links.length;
+	},
+	setTree: function(box) {
+		this._box = box;
+	},
+	getParentIndex: function(idx) {
+		return -1;
+	},
+	getLevel: function(idx) {
+		return 0;
+	},
+	getCellText: function(idx, col) {
+		var l = this._links[idx];
+		switch (col.index) {
+			case 1: return l.url.usable;
+			case 2: {
+				var t = "";
+				if ("description" in l && l.description.length > 0)
+					t += l.description;
+				if ("ultDescription" in l && l.ultDescription.length > 0)
+					t += ((t.length > 0) ? ' - ' : '') + l.ultDescription;
+				return t;
+			}
+			case 3: return l.mask ? l.mask : strbundle.getString('default');
+		}
+		return null;
+	},
+	isSorted: function() {
+		return false;
+	},
+	isContainer: function(idx) {
+		return false;
+	},
+	isContainerOpen: function(idx) {
+		return false;
+	},
+	isContainerEmpty: function(idx) {
+		return false;
+	},
+	isSeparator: function(idx) {
+		return false;
+	},	
+	isEditable: function(idx) {
+		return true;
+	},	
+  getImageSrc: function(idx, col) {
+		var l = this._links[idx];
+		switch (col.index) {
+			case 1: return l.icon;
+		}
+		return null;
+	},
+  getProgressMode : function(idx,column) {},
+  getCellValue: function(idx, column) {
+		return this._links[idx].checked.length ? "true" : "false";
+	},
+  cycleHeader: function(col, elem) {},
+  selectionChanged: function() {},
+  cycleCell: function(idx, column) {},
+  performAction: function(action) {},
+	performActionOnRow: function(action, index, column) {},
+  performActionOnCell: function(action, index, column) {},
+  getRowProperties: function(idx, prop) {
+		var l = this._links[idx];
+		prop.AppendElement(this._as.getAtom(l.checked));
+	},
+	getCellProperties: function(idx, column, prop) {
+		if (column.index == 1) {
+			prop.AppendElement(this._iconic);
+		}
+	},
+  getColumnProperties: function(column, element, prop) {},
+	setCellValue: function(idx, col, value) {
+		var l = this._links[idx];
+		if (value == "true") {
+			l.checked = "manuallySelected";
+			l.manuallyChecked = true;
+		} else {
+			l.checked = '';
+			l.manuallySelected = false;
+		}
+		if (col) {
+			this.invalidate();
+		}
+	},
+	invalidate: function() {
+		if (this._box) {
+			this._box.invalidate();
+		}
+		var sel = 0;
+		for (var i = 0; i < this.rowCount; ++i) {
+			if (this._links[i].checked.length) {
+				++sel;
+			}
+		}
+		if (sel) {
+			$("status").label = strbundle.getFormattedString("selel", [sel, this.rowCount]);
+		} else {
+			$("status").label = strbundle.getString("status");
+		}
 	}
+};
 
-	var box = $("checkcontainer");
-	if (box) {
-		while (box.hasChildNodes())
-			box.removeChild(box.lastChild);
-		changeTab(lop);
-	}
-}
-
-function unload() { 
-	self.close();
-}
-
-function downloadElement(url, dir, num, desc1, desc2, mask) {
+function downloadElement(url, dir, num, desc1, desc2, mask, refPage) {
 	this.url = url;
 	this.dirSave = dir;	
 	this.numIstance = num;
 	this.description = desc1;
 	this.ultDescription = desc2;
-	this.refPage = "";
+	this.refPage = refPage;
 	this.mask = mask;
 }
 
-function startDownload(notQueue) {
-try {
-	
-	Preferences.set("extensions.dta.lastWasQueued", !notQueue);
-	
-	if (!checkSyntax()) return false;
-	
-	if (lop == "links") {
-		var name = "fileList";
-		var listLinks = window.arguments[0];
-	} else if (lop == "pics") {
-		var name = "imgList";
-		var listLinks = window.arguments[1];
-	}
+
+var Dialog = {
+
+	load: function DTA_load() {
+		strbundle = $("strings");
+		$("dtaHelp").hidden = !("openHelp" in window);
+	  
+		versionControl();
 		
-	var startbutton = $("startbutton");
-	var directory = $("directory");
-	var fileList = $(name);
-	
-	// let's check and create the directory
-	var f = new filePicker();
-	
-	if (!f.createValidDestination(directory.value)) {
-		alert(strbundle.getString("alertfolder"));
-		var newDir = f.getFolder(null, strbundle.getString("validdestination"));
-		if (!newDir) {
-			directory.value = "";
-		} else {
-			directory.value = newDir;
-		}
-		//XXX tell the user what happend!
-		return 0;
-	}
-	// load istance number
-	var num = Preferences.get("extensions.dta.numistance", 1);
-	if (num < 999) num++; else num = 1;
-	Preferences.set("extensions.dta.numistance", num);	
-	
-	var links = new Array();
-	var mask = dropDowns.renaming.getCurrent();
-	
-	// let's create Array to pass to manager.xul
-	for (i in listLinks) {
-		if (i != "length" && (listLinks[i].checked || listLinks[i].manuallyChecked)) {
-			var el = links.length;
-			links[el] = new downloadElement(listLinks[i].url, $("directory").value, num, ("description" in listLinks[i])?listLinks[i].description:"", ("ultDescription" in listLinks[i])?listLinks[i].ultDescription:"", ("mask" in listLinks[i])?listLinks[i].mask:mask);
-			links[el].refPage = listLinks[i].refPage;
-		}
-	}
-	if (links.length == 0) return -1;
-	
-	startbutton.setAttribute("disabled", true);
-
-	DTA_AddingFunctions.sendToDown(notQueue, links);
-	
-	// save history
-	dropDowns.filter.saveDrop(dropDowns.filter.getCurrent());
-	dropDowns.directory.saveDrop(dropDowns.directory.getCurrent());
-	dropDowns.renaming.saveDrop(dropDowns.renaming.getCurrent());
-	
-	unload();
-
-} catch(e) {
-	alert("Downloadfile():" + e);
-	self.close();
-}
-return 0;
-}
-
-function modifyRenaming() {
-	if (lop == "links") {
-		var name = "file";
-		var links = window.arguments[0];
-	} else if (lop == "pics") {
-		var name = "img";
-		var links = window.arguments[1];
-	}
-	
-	var selected = new Array();
-	var elem = new Array();
-	var tree = $(name+"List");
-	var rangeCount = tree.view.selection.getRangeCount();
-	
-	for(var i=0; i<rangeCount; i++) {
-		var start = {}; var end = {};
-		tree.view.selection.getRangeAt(i,start,end);
-			for(var c=start.value; c<=end.value; c++) {
-				var i = tree.view.getCellValue(c, tree.columns.getColumnAt(1));
-				selected.push(links[i]);
-				elem.push(i);
-			}
-	}
-	
-	if (selected.length == 0) return;
-	
-	window.openDialog("chrome://dta/content/dta/renamingmask.xul", "", "chrome, dialog, centerscreen, resizable=yes, dialog=no, modal, close=no", selected);
-	
-	for (var i=0; i<selected.length; i++)
-		if ("mask" in selected[i])
-			$(name+"mask"+elem[i]).setAttribute("label", selected[i].mask);
-}
-
-function makeRegex() {
-	var v = $("filter").value.replace(/^[ \t/]+|[ \t/]+$/gi, "");
-	if ($("regex").checked) {
-		$("filter").value = "/" + v + "/";
-	} else 
-		$("filter").value = v;
-}
-
-function createFilter() {
-	var filtertxt = "";
-	if (!$("regexbox").hidden) {
-		var filtertxt = $("filter").value;
-		if (filtertxt.substring(0,1) == "/" && filtertxt.substr(filtertxt.length - 1, 1) == "/" && filtertxt.length > 1)
-			$("regex").checked = true; else $("regex").setAttribute("checked", false);
-	}
-	var filtro = new Array(); var fil; var arr;
-	for (var i = 0; i < $("checkcontainer").childNodes.length; i++) {
-		if ($("checkcontainer").childNodes[i].checked) 
-			filtro = convertFilter(Preferences._pref.getCharPref("extensions.dta.context." + $("checkcontainer").childNodes[i].getAttribute("id") + ".filter"), filtro);
-	}
-	if (filtertxt.replace(/^\s*|\s*$/gi,"") != "")
-		filtro = convertFilter(filtertxt.replace(/^\s*|\s*$/gi,""), filtro);
-	return filtro;
-}
-
-function convertFilter (fil, filtro) {
-	if (fil.substring(0,1) == "/" && fil.substring(fil.length - 1, fil.length) == "/") {
-		if (fil.substring(1, fil.length - 1).replace(/^\s*|\s*$/gi,"") != "") 
-			filtro[filtro.length] = fil.substring(1, fil.length - 1).replace(/^\s*|\s*$/gi,"");
-	} else {
-		fil = fil.replace(/\./gi, "\\.")
-			.replace(/\*/gi, "(.)*")
-			.replace(/\$/gi, "\\$")
-			.replace(/\^/gi, "\\^")
-			.replace(/\+/gi, "\\+")
-			.replace(/\?/gi, ".")
-			.replace(/\|/gi, "\\|")
-			.replace(/\[/gi, "\\[");
-			
-		var arr = fil.split(",");
-		for (var i=0; i<arr.length; i++)
-			if (arr[i].replace(/^\s*|\s*$/gi,"") != "") 
-				filtro[filtro.length] = arr[i].replace(/^\s*|\s*$/gi,"");
-	}
-	return filtro;
-}
-
-function changeTab(name) {
-	
-	lop = name;
-	var filter = $("filter");
-	var box = $("checkcontainer");
-	while (box.hasChildNodes())
-		box.removeChild(box.lastChild);
-	
-	if (Preferences.get("extensions.dta.context.numfilters", -1) == -1) {
+		this.ddFilter = new DTA_DropDown(
+			"filter",
+			"filter",
+			"filteritems",
+			[strbundle.getString("ddfilter"), "/(\\.mp3)$/", "/(\\.(html|htm|rtf|doc|pdf))$/", "http://www.website.com/subdir/*.*", "http://www.website.com/subdir/pre*.???", "*.z??, *.css, *.html"]
+		);
+		this.ddDirectory = new DTA_DropDown("directory", "directory", "directoryitems", "", "");
+		this.ddRenaming = new DTA_DropDown(
+			"renaming",
+			"renaming",
+			"renamingitems",
+			["*name*.*ext*", "*num*_*name*.*ext*", "*url*-*name*.*ext*", "*name* (*text*).*ext*", "*name* (*hh*-*mm*).*ext*"]
+		);
+		
 		try {
-	    restoreAll();
-		} catch(e) {
-			DTA_debug.dump("restoreAll():", e);
+			// searches links in the arguments passed by menu.xul
+			var links = window.arguments[0];
+			var images = window.arguments[1];
+			
+			$("viewlinks").label = $("viewlinks").label + " ("+ links.length + ")";
+			this.links = new Tree(links, 1);
+
+			$("viewpics").label = $("viewpics").label + " ("+ images.length + ")";
+			this.images = new Tree(images, 2);
+
+			this.showFilter(this.ddFilter.current.length);
+			
+			this.changeTab(Preferences.getDTA("seltab", 0) ? 'images': 'links');
+		} catch(ex) {
+			DTA_debug.dump("load():", ex);
 		}
-	}
+	},
+	unload: function DTA_unload() {
+		DTA_FilterManager.save();
+		self.close();
+	},
 	
-	var numfilter = nsPreferences.getIntPref("extensions.dta.context.numfilters", 0);
-	if (lop == "links") {
-		Preferences.set("extensions.dta.context.seltab", 0);
-		$("fileList").hidden = false;
-		$("imgList").hidden = true;
-		$("viewlinks").setAttribute("selected", true); 
-		$("viewpics").setAttribute("selected", false);
-		
-		for (var t=0; t < numfilter; t++) {
-			if (nsPreferences.getBoolPref("extensions.dta.context.filter" + t + ".isLinkFilter",false))
-				addCheckbox(nsPreferences.getLocalizedUnicharPref("extensions.dta.context.filter" + t + ".caption"),"filter" + t, nsPreferences.getBoolPref("extensions.dta.context.filter" + t + ".checked",false));	
+	check: function DTA_check() {
+		var f = new filePicker();
+		var dir = this.ddDirectory.current.trim();
+		if (!dir.length || !this.ddRenaming.current.trim().length) {
+			return false;
 		}
-	}
-	else {
-		Preferences.set("extensions.dta.context.seltab", 1);
-		$("fileList").hidden = true;
-		$("imgList").hidden = false;
-		$("viewlinks").setAttribute("selected", false);
-		$("viewpics").setAttribute("selected", true);
-		
-		
-		for (var t=0; t < numfilter; t++) {
-			if (nsPreferences.getBoolPref("extensions.dta.context.filter" + t + ".isImageFilter",false))
-				addCheckbox(nsPreferences.getLocalizedUnicharPref("extensions.dta.context.filter" + t + ".caption"),"filter" + t, nsPreferences.getBoolPref("extensions.dta.context.filter" + t + ".checked",false));	
+		if (!f.createValidDestination(dir))
+		{
+			alert(strbundle.getString("alertfolder"));
+			var newDir = f.getFolder(null, strbundle.getString("validdestination"));
+			this.ddDirectory.current = newDir ? newDir : '';
+			return false;
 		}
-	}
-	checkAll();
-}
+		return true;
+	},
+	download: function(notQueue) {
+		try {
+			Preferences.setDTA("lastWasQueued", !notQueue);
+		
+			if (!this.check()) {
+				return false;
+			}
+	
+			var dir = this.ddDirectory.current;
+			var mask = this.ddRenaming.current;
+			var num = Preferences.getDTA("counter", 1);
+			if (++num > 999) {
+				num = 1;
+			}
+			Preferences.setDTA("counter", num);	
+	
+			var links = this.current._links;
+			var out = [];
+			for (var i = 0; i < links.length; ++i) {
+				var link = links[i];
+				if (!link.checked.length) {
+					continue;
+				}
+				out.push(
+					new downloadElement(
+						link.url,
+						dir,
+						num,
+						"description" in link ? link.description : "",
+						"ultDescription" in link ? link.ultDescription : "",
+						link.mask ? link.mask : mask,
+						link.refPage
+					)
+				);
+			}
+			if (!out.length) {
+				return false;
+			}
 
-function checkAll() {
-	if (lop == "links")
-		check("file", window.arguments[0]);
-	else
-		check("img", window.arguments[1]);
-}
+			DTA_AddingFunctions.sendToDown(notQueue, out);
+		
+			// save history
+			['ddDirectory', 'ddRenaming', 'ddFilter'].forEach(function (e) { Dialog[e].save(); });
+				
+			self.close();
+			return true;
+		
+		} catch(ex) {
+			Debug.dump("Downloadfile:", ex);
+		}
+		self.close();
+		return false;
+	},
+	
+	editMask: function() {
+		
+		if (!this.current.selection.count) {
+			return;
+		}
 
-function check(name, links) {
-	try {
-		var filter = createFilter();
-		var highli = Preferences.get("extensions.dta.context.highlight", true);
-		// checks all the items that passes the filtering
-		for (i in links) {
+		var mask = {value: null};
+		window.openDialog(
+			"chrome://dta/content/dta/renamingmask.xul",
+			"",
+			"chrome, dialog, centerscreen, resizable=yes, dialog=no, modal, close=no",
+			mask
+		);
+		if (!mask.value) {
+			return;
+		}
+		var rangeCount = this.current.selection.getRangeCount();
+		var start = {}, end = {};
+		for (var r = 0; r < rangeCount; ++r) {
+			this.current.selection.getRangeAt(r, start, end);
+			for (var i = start.value; i <= end.value; ++i) {
+				this.current._links[i].mask = mask.value;
+			}
+		}
+		this.current.invalidate();
+	},
+
+	makeSelection: function() {
+	
+		var tree = this.current;
+		var type = tree.type;
+	
+		var additional = this.ddFilter.current;
+		if (!additional.length) {
+			additional = null;
+		}
+		else if ($('regex').checked) {
+			try {
+				additional = DTA_regToRegExp(additional);
+			} catch (ex) {
+				additional = null;
+			}
+		}
+		else {
+			additional = DTA_strToRegExp(additional);
+		}
+	
+		var used = {};
+		var idx = 0;
+		for (var x = 0; x < tree._links.length; ++x) {
+
+			var link = tree._links[x];
+			var checked = '';
+
+			if (link.manuallyChecked) {
+				checked = 'manuallySelected';
+			}
+			else if (link.url.usable.search(additional) != -1) {
+				checked = 'f8';
+			}
 			
-			if (i == "length" || typeof(links[i])!="object" ) continue;
-			
-			for (var x=0; x<filter.length; x++) {
-				var reg = new RegExp(filter[x], "i");
-				if (i.match(reg) || (links[i].description && links[i].description.match(reg)) || (links[i].ultDescription && links[i].ultDescription.match(reg))) {
-					if (!links[i].manuallyChecked && !links[i].checked) {
-						links[i].checked = true;
-						var tmp = $(name+i);
-						tmp.setAttribute("value", true); 
-						if (highli) {
-							tmp.parentNode.setAttribute("properties" ,"f"+(x%8));
-						}
+			var e = DTA_FilterManager.enumActive(type);
+			while (e.hasMoreElements()) {
+				var f = e.getNext().QueryInterface(Components.interfaces.dtaIFilter);
+				if (f.match(link.url.usable)) {
+					var i;
+					if (f.id in used) {
+						i = used[f.id];
 					}
+					else {
+						i = idx = (idx + 1) % 8;
+						used[f.id] = i;
+					}
+					checked = 'f' + i;
+					break;
+				}		
+			}
+			link.checked = checked;
+		}
+		tree.invalidate();
+	},
+
+	toggleBox: function(box) {
+
+		if (!('filter') in box) {
+			Debug.dump("toggleBox: invalid element");
+			return;
+		}
+		var c = box.checked;
+		var f = box.filter;
+		f.active = c;
+	
+		this.makeSelection();
+	},
+
+	toggleSelection: function () {
+	
+		var mode = 0;
+		if (arguments.length) {
+			mode = arguments[0] ? 1 : 2;
+		}
+		var tree = this.current;
+		
+		var rangeCount = tree.selection.getRangeCount();
+		var start = {}, end = {}, val;
+		for (var r = 0; r < rangeCount; ++r) {
+			tree.selection.getRangeAt(r, start, end);
+			for (var i = start.value; i <= end.value; ++i) {
+				switch (mode) {
+					case 1:
+						tree.setCellValue(i, null, 'true');
+					break;
+					case 2:
+						tree.setCellValue(i, null, 'false');
+					break;
+					default:
+						val = tree.getCellValue(i);
+						val = val == 'true' ? 'false' : 'true';
+						tree.setCellValue(i, null, val);
 					break;
 				}
 			}
-			
-			if (x == filter.length && links[i].checked && !links[i].manuallyChecked) {
-				links[i].checked = false;
-				var tmp = $(name+i);
-				tmp.removeAttribute("value");
-				$(name+i).parentNode.removeAttribute("properties");
-			}
 		}
+		tree.invalidate();
+	},
+
+	changeTab: function (tab) {
 		
-		savepref();
-		
-		var sel=0;
-		for (i in links)
-			if (i != "length" && (links[i].checked || links[i].manuallyChecked))
-				sel++;
-				
-		if (sel > 0) 
-			$("status").label = strbundle.getFormattedString("selel",[sel,links.length]);
-		else
-			$("status").label = strbundle.getString("status");
-		
-	} catch(e) {
-		DTA_debug.dump("check():", e);
-	}
-}
+		this.current = this[tab];
+		$("urlList").view = this.current;
 
-function showFilter() {
+		var type = this.current.type;
+		if (type == 1) {
+			Preferences.setDTA('seltab', 0);
+			$("viewlinks").setAttribute("selected", true); 
+			$("viewpics").setAttribute("selected", false);
+		}
+		else {
+			Preferences.setDTA('seltab', 1);
+			$("viewlinks").setAttribute("selected", false);
+			$("viewpics").setAttribute("selected", true);
+		}
 
-	var reg = $("regexbox");
-	var add = $("additional");
-	
-	if (!reg) return;
-	
-	if (arguments.length == 0) 
-		reg.hidden= !(reg.hidden); 
-	else 
-		reg.hidden = !(arguments[0]);
-
-	if (reg.hidden) {
-		add.setAttribute("value", strbundle.getString("additional") + "...");
-		add.setAttribute("class", "titolo expand");
-	} else {
-		add.setAttribute("class", "titolo collapse");
-		add.setAttribute("value", strbundle.getString("additional") + ":");
-	}
-}
-
-function addCheckbox (caption, id, checked) {
-	try {
 		var box = $("checkcontainer");
-		var checkbox = document.createElement("checkbox");
-		checkbox.setAttribute("checked", checked);
-		checkbox.setAttribute("id", id);
-		checkbox.setAttribute("label", caption);
-		checkbox.setAttribute("class", "lista");
-		checkbox.setAttribute("oncommand", "savepref();checkAll();");
-		box.appendChild(checkbox);
-	} catch(e) {
-		DTA_debug.dump("addCheckbox():", e);
-	}
-}
-
-function checkItem(event) {
-	try {
-		
-		if (lop == "links") {
-			var name = "file";
-			var links = window.arguments[0];
-		} else if (lop == "pics") {
-			var name = "img";
-			var links = window.arguments[1];
+		while (box.hasChildNodes()) {
+			box.removeChild(box.lastChild);
 		}
-		
-		var tree = $(name+"List");
-		var highli = Preferences.get("extensions.dta.context.highlight", true);
-		
-		var row = new Object;
-		var column = new Object;
-		var part = new Object;
-		
-		var boxobject = tree.treeBoxObject;
-		boxobject.QueryInterface(Components.interfaces.nsITreeBoxObject);
-		boxobject.getCellAt(event.clientX, event.clientY, row, column, part);
-		
-		if (row.value == -1) return;
-		
-		var highli = Preferences.get("extensions.dta.context.highlight", true);
-		
-		var i = tree.view.getCellValue(row.value, tree.columns.getColumnAt(1));
-		
-		// check the item on central click or on left click on the checkbox
-		if ((event.button == 1 && !links[i].manuallyChecked && !links[i].checked)||
-			(event.button == 0 && (tree.view.getCellValue(row.value, tree.columns.getColumnAt(0)) == "true" && !(links[i].manuallyChecked || links[i].checked)))) {
-			tree.view.setCellValue(row.value, tree.columns.getColumnAt(0), "true");
-			links[i].manuallyChecked = true;
-			if (highli)
-				$(name+i).parentNode.setAttribute("properties" ,"manuallySelected"); 
-		// uncheck	
-		} else if ((event.button == 1 && (links[i].manuallyChecked || links[i].checked))||
-				(event.button == 0 && (tree.view.getCellValue(row.value, tree.columns.getColumnAt(0)) == "false" && (links[i].manuallyChecked || links[i].checked)))){
-			tree.view.setCellValue(row.value, tree.columns.getColumnAt(0), "false");
-			links[i].manuallyChecked = links[i].checked = false;
-			if (highli)
-				$(name+i).parentNode.removeAttribute("properties");
-		}
-		else {
-			if (links[i].manuallyChecked || links[i].checked)
-				tree.view.setCellValue(row.value, tree.columns.getColumnAt(0), "true");
-			else
-				tree.view.setCellValue(row.value, tree.columns.getColumnAt(0), "false");
-		}
-
-	
-		var sel=0;
-		for (i in links)
-			if (i != "length" && (links[i].checked || links[i].manuallyChecked))
-				sel++;
-		
-		if (sel>0)
-			$("status").label = strbundle.getFormattedString("selel",[sel,links.length]);
-		else
-			$("status").label = strbundle.getString("status");
-			
-	} catch(e) {
-		DTA_debug.dump("checkItem():", e);
-	}
-}
-
-function checkSelected(check) {
-
-	if (lop == "links") {
-		var name = "file";
-		var links = window.arguments[0];
-	} else if (lop == "pics") {
-		var name = "img";
-		var links = window.arguments[1];
-	}
-	
-	var tree = $(name+"List");
-	var rangeCount = tree.view.selection.getRangeCount();
-	var highli = Preferences.get("extensions.dta.context.highlight", true);
-	
-	for(var x=0; x<rangeCount; x++) {
-		var start = {};var end = {};
-		tree.view.selection.getRangeAt(x,start,end);
-			for(var c=start.value; c<=end.value; c++) {
-				var i = tree.view.getCellValue(c, tree.columns.getColumnAt(1));
-				var e = $(name+i);
-				if (check) {
-					links[i].manuallyChecked = true;
-					e.setAttribute("value", true);
-					if (highli)
-						e.parentNode.setAttribute("properties" , "manuallySelected"); 
-				} else {
-					links[i].manuallyChecked = links[i].checked = false;
-					if (e.hasAttribute("value"))
-						e.removeAttribute("value");
-					if (highli)
-						e.parentNode.removeAttribute("properties"); 
-				}
+		var e = DTA_FilterManager.enumAll();	
+		while (e.hasMoreElements()) {
+			var f = e.getNext().QueryInterface(Components.interfaces.dtaIFilter);
+			if (!(f.type & type)) {
+				continue;
 			}
-	}
+			var checkbox = document.createElement("checkbox");
+			checkbox.setAttribute("checked", f.active);
+			checkbox.setAttribute("id", f.id);
+			checkbox.setAttribute("label", f.label);
+			checkbox.setAttribute("class", "lista");
+			checkbox.setAttribute("oncommand", "Dialog.toggleBox(this);");
+			checkbox.filter = f;
+			box.appendChild(checkbox);
+		}
 
-	var sel=0;
-	for (i in links)
-		if (!(i == "length" || typeof(links[i])!="object" ) && (links[i].checked || links[i].manuallyChecked))
-			sel++;
+		this.makeSelection();
+	},
+	showFilter: function() {
+
+		var reg = $("regexbox");
+		var add = $("additional");
 	
-	if (sel>0)
-		$("status").label = strbundle.getFormattedString("selel",[sel,links.length]);
-	else
-		$("status").label = strbundle.getString("status");
-}
-
-
-// adds links to listbox	
-function addLinks(name, links) {
-	var list = $(name + "ListChildren");
-	list.addEventListener("mousedown", checkItem, true);
-	list.addEventListener("keydown", checkItem, true);
-	
-	var n = 0;
-	
-	for (i in links) {
-		
-		if (typeof links[i] != "object")
-			continue;
-		
-		var link = links[i];
-		link.checked = false;
-		link.manuallyChecked = false;
-		
-		var lista = $("downfigli");
-    
-		var itemNode = document.createElement("treeitem");
-			
-		var treeRow = document.createElement("treerow");
-			
-		var check = document.createElement("treecell");
-		check.setAttribute("value", false);
-		check.setAttribute("id", name + i); 
-
-		var url = (typeof link.url == 'string' ? link.url : link.url.usable);
-		var urlE = document.createElement("treecell");
-		urlE.setAttribute("label", " " + url);
-		urlE.setAttribute("value", i);
-						
-		updateIcon(url, urlE, link.metalink);
-			
-		var desc = document.createElement("treecell");
-		var t = "";
-		if ("description" in links[i] && links[i].description.length > 0)
-			t += links[i].description;
-		if ("ultDescription" in links[i] && links[i].ultDescription.length > 0)
-			t += ((t.length > 0) ? ' - ' : '') + links[i].ultDescription;
-		desc.setAttribute("label", t);
-		
-		var ren = document.createElement("treecell");
-		ren.setAttribute("label", strbundle.getString("default"));
-		ren.setAttribute("id", name + "mask" + i);
-						
-		treeRow.appendChild(check);
-		treeRow.appendChild(urlE);
-		treeRow.appendChild(desc);
-		treeRow.appendChild(ren);
-				
-		itemNode.appendChild(treeRow);
-		
-		if (link.metalink) {
-			list.insertBefore(itemNode, list.firstChild);
+		if (arguments.length == 0) {
+			reg.hidden = !(reg.hidden); 
 		}
 		else {
-			list.appendChild(itemNode);
+			reg.hidden = !(arguments[0]);
+		}
+
+		if (reg.hidden) {
+			add.setAttribute("value", strbundle.getString("additional") + "...");
+			add.setAttribute("class", "titolo expand");
+		} else {
+			add.setAttribute("class", "titolo collapse");
+			add.setAttribute("value", strbundle.getString("additional") + ":");
+		}
+	},
+	browseDir: function() {
+		// let's check and create the directory
+		var f = new filePicker();
+		var newDir = f.getFolder(
+			this.ddDirectory.current,
+			strbundle.getString("validdestination")
+		);
+		if (newDir) {
+			this.ddDirectory.current = newDir;
+		}
+	},
+	showPopup: function() {
+		var open = $('mopen');
+		var tree = this.current;
+		if (tree.selection.count) {
+			var s = {}, e = {};
+			tree.selection.getRangeAt(0, s, e);
+			var l = tree._links[s.value];
+			open.setAttribute("image", l.icon);
+			open.setAttribute("label", l.url.url);
+			open.hidden = false;
+		} else {
+			open.hidden = true;
+		}
+		return true;
+	},
+	openSelection: function() {
+		var tree = this.current;
+		var rangeCount = tree.selection.getRangeCount();
+		var start = {}, end = {}, val;
+		for (var r = 0; r < rangeCount; ++r) {
+			tree.selection.getRangeAt(r, start, end);
+			for (var i = start.value; i <= end.value; ++i) {
+				DTA_Mediator.openTab(tree._links[i].url.url, tree._links[i].refPage);
+			}
 		}
 	}
-}
-
-function browseDire() {
-	// let's check and create the directory
-	var f = new filePicker();
-	var newDir = f.getFolder($("directory").value, strbundle.getString("validdestination"));
-	if (newDir) $("directory").value = newDir;
-	
-	var directory = $("directory");
-	dropDowns.directory.saveCurrent(false);
-}
+};
 
 // Renaming tags reference popup stuff
 var listObserver = { 
@@ -623,168 +523,9 @@ var listObserver = {
     transferData.data.addDataForFlavour("text/unicode",txt);
   }
 };
-
 function appendTag(event) {
-	var text = $(dropDowns.renaming.idInput);
+	var text = $('renaming');
 	var s = text.inputField.selectionStart;
 	text.value = text.value.substring(0, s) + event.target.getAttribute("value") + text.value.substring(text.inputField.selectionEnd, text.value.length);
 	text.inputField.setSelectionRange(s + event.target.getAttribute("value").length, s + event.target.getAttribute("value").length);
-	dropDowns.renaming.saveCurrent(false);
-}
-
-// Donation & news stuff
-function setDefaultDonation() {
-  var frasi = [
-	  "Do you like dTa? Well, then please considerer making a small donation.",
-	  "Keep dTa always reliable and free. Make a small donation.",
-	  "To support further development of dTa, we also need your help.",
-	  "We're working hard to provide you the best Download Manager in FF.",
-	  "Help us making dTa grow. Consider making a small donation.",
-	  "Do you like DTA? Why your friends shouldn't? Help us grow!", 
-	  "dTa is updated on a daily basis in our free time. Help us grow!"];
-  var random = Math.floor(Math.random() * frasi.length);
-  var pezzi = frasi[random];
-  $("donate").appendChild(document.createTextNode(pezzi));
-  $("donate").setAttribute("sito", "http://www.downthemall.net/index.php?page_id=14");
-}
-
-function checkNews() {
-try {
-		if (donation.readyState==4) {
-	var domParser = new DOMParser();
-	var doc = domParser.parseFromString(donation.responseText, "text/xml");
-	var list = doc.documentElement;
-	var latestVersion = new Object();
-	var alertMessage = null;
-	var defaultLink = "http://www.downthemall.net/index.php?page_id=14";
-	var news = new Array();
-	var donations = new Array();
-	
-	
-	for (var i=0; i<list.childNodes.length; i++) {
-		var down = list.childNodes[i];
-		if (!down.tagName) continue;
-
-		switch (down.tagName) {
-			case "currentVersion":
-				latestVersion.version = down.getAttribute("latestVersion");
-				latestVersion.link = down.getAttribute("url");
-			break;
-			case "alert":
-				for (var d=0; d<down.childNodes.length; d++) {
-					var el = down.childNodes[d];
-					if (el.tagName == "element") {
-						alertMessage = new Object();
-						alertMessage.link = el.hasAttribute("url")?el.getAttribute("url"):defaultLink;
-						alertMessage.shortMessage = el.getAttribute("shortdescription");
-						alertMessage.longMessage = el.getAttribute("longdescription");
-						alertMessage.title = el.getAttribute("title");
-						alertMessage.id = el.getAttribute("id");
-						}
-				}
-			break;
-			case "news":
-				for (var d=0; d<down.childNodes.length; d++) {
-					var el = down.childNodes[d];
-					if (el.tagName == "element") {
-						var elem = new Object();
-						elem.link = el.hasAttribute("url")?el.getAttribute("url"):defaultLink;
-						elem.desc = el.getAttribute("description");
-						news.push(elem);
-					}
-				}
-			break;
-			case "donation":
-				for (var d=0; d<down.childNodes.length; d++) {
-					var el = down.childNodes[d];
-					if (el.tagName == "element") {
-						var elem = new Object();
-						elem.link = el.hasAttribute("url")?el.getAttribute("url"):defaultLink;
-						elem.desc = el.getAttribute("description");
-						donations.push(elem);
-					}
-				}
-			break;
-		}
-	}
-	
-	var label = $("donate");
-	
-	if (isNewer(latestVersion.version, currentVersion) && !Preferences.get("extensions.dta.noalert.version"+latestVersion.version, false)) {
-		alertCheckVersion(latestVersion.version, "dTa " + latestVersion.version, latestVersion.link);
-		label.appendChild(document.createTextNode("dTa " + latestVersion.version + " " + strbundle.getString("available")));
-		label.setAttribute("sito", latestVersion.link);
-	} else if (alertMessage != null) {
-		label.appendChild(document.createTextNode(alertMessage.shortMessage));
-		label.setAttribute("sito", alertMessage.link);
-		if (!Preferences.get("extensions.dta.noalert.message"+alertMessage.id, false))
-			alertCheckMessage(alertMessage);
-	} else if (news.length > 0) {
-		var r = Math.floor(Math.random() * news.length);
-		label.appendChild(document.createTextNode(news[r].desc));
-		label.setAttribute("sito", news[r].link);
-	} else if (donations.length > 0) {
-		var r = Math.floor(Math.random() * donations.length);
-		label.appendChild(document.createTextNode(donations[r].desc));
-		label.setAttribute("sito", donations[r].link);
-	} else
-		setDefaultDonation();
-		}
-} catch(e) {
-	DTA_debug.dump("checkNews()",e);
-}
-}
-
-function alertCheckVersion(version, title, sito) {
-
-	var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-	var checkResult = {};
-	
-	if (!Preferences.get("extensions.dta.noalert.version"+version, false)) {
-		if (promptService.confirmCheck(
-			window,
-			strbundle.getFormattedString("released",[title]),
-			strbundle.getString("wantinfo"),
-			strbundle.getString("notanymore"),
-			checkResult
-		)) {
-			DTA_Mediator.openTab(sito);
-		}
-		if (checkResult.value) 
-		{
-			Preferences.set("extensions.dta.noalert.version" + version, true);
-		}
-	}
-}
-
-function alertCheckMessage(m) {
-
-	var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-	var checkResult = {};
-	
-	var flags = promptService.BUTTON_TITLE_IS_STRING * promptService.BUTTON_POS_0 +
-		promptService.BUTTON_TITLE_IS_STRING * promptService.BUTTON_POS_1;
-
-	if (!Preferences.get("extensions.dta.noalert.message"+m.id, false)) {
-		if (promptService.confirmEx(
-			window,
-			m.title,
-			m.longMessage.replace(/\\n/gi, "\n"),
-			flags,
-			strbundle.getString("showmemore"),
-			strbundle.getString("notinterested"),
-			null,
-			strbundle.getString("notshowanymore"), 
-			checkResult
-		) == 0) {
-			DTA_Mediator.openTab(m.link);
-		}
-		if (checkResult.value) {
-			Preferences.set("extensions.dta.noalert.message"+m.id, true);
-		}
-	}
-}
-
-function donate() {
-	DTA_Mediator.openTab($("donate").getAttribute("sito"));
 }

@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is downTHEMall
+ *
+ * The Initial Developer of the Original Code is Nils Maier
+ * Portions created by the Initial Developer are Copyright (C) 2007
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Nils Maier <MaierMan@web.de>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+ 
+<!--
+	pretty lame overlay like stuff.
+	overalying itself is not possible, as this will crash fx
+-->
+ 
+<!DOCTYPE bindings SYSTEM "chrome://dta/locale/dta.dtd">
+ 
+<xbl:bindings
+	xmlns:xbl="http://www.mozilla.org/xbl"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+>
+	<xbl:binding id="maskbutton">
+		<xbl:content>
+			<popupset>
+				<popup id="maskPopup" orient="vertical" position="before_end" style="padding: 8px; margin-bottom: -10px;">
+					<label id="titlerenaming" value="&mask.title;" style="background-color: transparent !important; font-weight: bold; text-align: center; font-size: 114%; padding-bottom: 3px;" />
+					<hbox>
+						<vbox>
+							<grid flex="1">
+								<columns><column /><column flex="1"/></columns>
+								<rows>
+									<row><label class="tag" value="*ext*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des2" class="desc" value="&mask.desc2;"/></row>
+									<row><label class="tag" value="*url*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des3" class="desc" value="&mask.desc3;"/></row>
+									<row><label class="tag" value="*curl*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des4" class="desc" value="&mask.desc4;" /></row>
+									<row><label class="tag" value="*subdirs*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des12" class="desc" value="&mask.desc12;"/></row>
+									<row><label class="tag" value="*num*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des5" class="desc" value="&mask.desc5;"/></row>
+									<row><label class="tag" value="*text*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des12" class="desc" value="&mask.desc13;"/></row>
+								</rows>
+							</grid>
+						</vbox>
+						<vbox>
+							<grid flex="1">
+								<columns><column /><column flex="1"/></columns>
+								<rows>
+									<row><label class="tag" value="*refer*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des14" class="desc" value="&mask.desc14;"/></row>
+									<row><label class="tag" value="*hh*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des6" class="desc" value="&mask.desc6;"/></row>
+									<row><label class="tag" value="*mm*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des7" class="desc" value="&mask.desc7;"/></row>
+									<row><label class="tag" value="*ss*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des8" class="desc" value="&mask.desc8;"/></row>
+									<row><label class="tag" value="*d*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des9" class="desc" value="&mask.desc9;"/></row>
+									<row><label class="tag" value="*m*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des10" class="desc" value="&mask.desc10;"/></row>
+									<row><label class="tag" value="*y*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des11" class="desc" value="&mask.desc11;"/></row>
+								</rows>
+							</grid>
+						</vbox>
+					</hbox>
+				</popup>
+			</popupset>
+			<toolbarbutton
+				image="chrome://dta/skin/common/mask.png"
+				popup="maskPopup"
+				style="padding:4px 3px 4px 5px;"
+				tooltiptext="&openRenaming.tooltip;"
+			/>
+		</xbl:content>
+	</xbl:binding>
+</xbl:bindings>
