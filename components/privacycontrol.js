@@ -130,14 +130,7 @@ privacycontrol.prototype = {
       .getService(Components.interfaces.nsIPrefService)
       .getBranch('extensions.dta.');
 
-    // add more if needed
-    const toClear = Array('directory', 'dropdown.directory-current', 'dropdown.directory-history');
-
-    for (var i = 0; i < toClear.length; ++i) {
-      try {
-        prefs.clearUserPref(toClear[i]);
-      } catch (ex) {}
-    }
+		['directory', 'filter'].forEach(function(e) { prefs.clearUserPref(e); });
   },
 
   sanitize: function() {
@@ -249,5 +242,6 @@ const module = {
 };
 
 function NSGetModule(mgr, spec) {
+	dump("PC getModule");
   return module;
 }

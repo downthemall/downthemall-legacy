@@ -47,11 +47,10 @@ interface dtaIFilter : nsISupports
 	[readonly] attribute boolean defFilter;
 	attribute string label;
 	attribute string test;
-	[readonly] attribute string regex;
-	attribute boolean active;
 	attribute boolean isRegex;
+	attribute boolean active;
 	attribute unsigned long type;
-	
+	boolean match(in string test);
 	void save();
 	void remove();
 };
@@ -63,8 +62,11 @@ interface dtaIFilterManager : nsISupports
 	
   void reload();
 	
-	nsISimpleEnumerator enumerate();
+	nsISimpleEnumerator enumAll();
+	nsISimpleEnumerator enumActive(in unsigned long type);
 	dtaIFilter getFilter(in string id);
+	
+	boolean matchActive(in string test, in unsigned long type);
 	
 	void create(in string label, in string test, in boolean active, in unsigned long type, in boolean regex);
 	void remove(in string id);
