@@ -3,6 +3,9 @@
  *
  * DTA - DownThemAll!
  * Copyright (C) 2004-2006 Federico Parodi and Stefano Verna
+ * 
+ * DTA! Mod
+ * Copyright (C) 2007 Nils Maier
  *
  * DTA contains pieces of code taken from:
  * Linky
@@ -24,26 +27,4 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- *
- * DTA - DownThemAll!
- * Copyright (C) 2004-2006 Federico Parodi e Stefano Verna
- *
- * Contiene frammenti di codice di:
- * Linky
- * Copyright (C) 2002-2003 Henrik Gemal
- *
- * Questo  programma è software  libero; è lecito redistribuirlo  o
- * modificarlo secondo i termini  della Licenza Pubblica Generica GNU
- * come Ë pubblicata dalla Free  Software Foundation; o la versione 2
- * della licenza o (a propria scelta) una versione successiva.
- *
- * Questo programma  è distribuito nella  speranza che sia  utile, ma
- * SENZA  ALCUNA GARANZIA;  senza  neppure la  garanzia implicita  di
- * NEGOZIABILITA' o di  APPLICABILITA' PER UN PARTICOLARE  SCOPO.  Si
- * veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
- *	
- * Questo  programma deve  essere  distribuito assieme  ad una  copia
- * della Licenza Pubblica Generica GNU;  in caso contrario, se ne puÚ
- * ottenere  una scrivendo  alla Free  Software Foundation,  Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * ***** END LICENSE BLOCK ***** -->

@@ -204,51 +204,63 @@ filePicker.prototype = {
 		return directory;
 	}
 };
-
-function updateIcon(link, elem, metalink) {
-
-	var ico = null;	
-	
+function getIcon(link, metalink) {
 	try {
-		
-		var uri = Components.classes["@mozilla.org/network/standard-url;1"]
-			.createInstance(Components.interfaces.nsIURI);
-		uri.spec = link;
+		var url, uri;
+		if (link instanceof String) {
+			url = link;
+		}
+		else if (link instanceof DTA_URL) {
+			url = link.url;
+		}
+		else if (link instanceof Components.interfaces.nsIURI) {
+			uri = link;
+		}
+		else if ('url' in link) {
+			url = link.url;
+		}
+		if (!uri) {
+			uri = Components.classes["@mozilla.org/network/standard-url;1"]
+				.createInstance(Components.interfaces.nsIURI);
+			uri.spec = url;
+		}
 		var ext = uri.path.match(/\.([^/.]+)$/);
 		ext = ext ? ext[1] : null;
+		Debug.dump(url + "\n" + uri.path);
 		
 		if (metalink) {
-			ico = "chrome://dta/skin/icons/metalink.png";
+			return "chrome://dta/skin/icons/metalink.png";
 		}
 		else if ((new String()).findSystemSlash() == "/") {
 			if (!ext) {}
 			else if (ext.search(/^z(?:ip|\d{2})|r(?:ar|\d{2})|jar|bz2|gz|tar|rpm|deb|xpi|ace|7z(?:ip)$/i) != -1) {
-				ico = "chrome://dta/skin/icons/zip.png";
+				return "chrome://dta/skin/icons/zip.png";
 			}
 			else if (ext.search(/^mp(?:eg?|g|4)|rmv?|ram|avi|mov|qt|asf|wmv?|mkv$/i) != -1) {
-				ico = "chrome://dta/skin/icons/mpg.png";
+				return "chrome://dta/skin/icons/mpg.png";
 			}
 			else if (ext.search(/^jp(?:eg?|g|2)|gif|png|tiff?|w?bmp|psd|icon?|tga$/i) != -1) {
-				ico = "chrome://dta/skin/icons/jpg.png";
+				return "chrome://dta/skin/icons/jpg.png";
 			}
 			else if (ext.search(/^wav|mp[2-4]?a?|mka|flac|og[ga]|mid$/i) != -1) {
-				ico = "chrome://dta/skin/icons/mp3.png";
+				return "chrome://dta/skin/icons/mp3.png";
 			}
 			else if (ext.search(/^cp{0,3}|hh?|txt|rtf|p(?:l|m|yc?)|xls|doc|odt$/i) != 1) {
-				ico = "chrome://dta/skin/icons/doc.png";
+				return "chrome://dta/skin/icons/doc.png";
 			}
 			else if (ext.search(/^x?html?|css|rss|atom|js|xml|xslt?$/i) != -1) {
-				ico = "chrome://dta/skin/icons/htm.png";
+				return "chrome://dta/skin/icons/htm.png";
 			}
 		} else {
-			ico = "moz-icon://" + uri.prePath + uri.path + "?size=16";
+			return "moz-icon://" + uri.prePath + uri.path + "?size=16";
 		}
 	}
 	catch (ex) {
+		Debug.dump(link);
 		Debug.dump("updateIcon: failed to grab icon", ex);
 	}
-	if (!ico) {
-		ico = "chrome://dta/skin/icons/other.png"
-	}
-	elem.setAttribute('src', ico);
+	return "chrome://dta/skin/icons/other.png"
+}
+function updateIcon(link, elem, metalink) {
+	elem.setAttribute('src', getIcon(link, metalink));
 }

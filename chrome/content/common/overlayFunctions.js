@@ -38,7 +38,17 @@
 /*
  * File relicensed under MPL-Tri, as it contained mostly my code, even before "forking" and I never signed over the copyright nor did I grant for GPL-only.
  */
+ 
+function DTA_include(uri) {
+	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+		.getService(Components.interfaces.mozIJSSubScriptLoader)
+		.loadSubScript(uri);
+}
+DTA_include("chrome://dta/content/common/regconvert.js");
 
+var DTA_FilterManager = Components.classes['@tn123.ath.cx/dtamod/filtermanager;1']
+	.getService(Components.interfaces.dtaIFilterManager);
+ 
 function DTA_showPreferences() {
 	window.openDialog(
 		'chrome://dta/content/preferences/newPref.xul',
@@ -64,9 +74,8 @@ var DTA_preferences = {
 		try {
 			return this._pref['get' + this._conv[typeof(def)]](key);
 		} catch (ex) {
-			Components.utils.reportError('key: ' + key + ' / set' + this._conv[typeof(def)]);
-			Components.utils.reportError(ex);
-			this._pref['set' + this._conv[typeof(def)]](key, def);
+			//Components.utils.reportError('DTAP: key miss: ' + key + ' / set' + this._conv[typeof(def)]);
+			//this._pref['set' + this._conv[typeof(def)]](key, def);
 			return def;
 		}
 	},
@@ -83,16 +92,16 @@ var DTA_preferences = {
 		return this.set('extensions.dta.' + key, value);
 	},
 	reset: function DP_reset(key) {
-		return this._prefs.clearUserPref(key);
+		return this._pref.clearUserPref(key);
 	},
 	resetDTA: function DP_resetDTA(key) {
 		return this.reset('extensions.dta.' + key);
 	},
 	resetBranch: function DP_resetBranch(key) {
-		return this._prefs.resetBranch('extensions.dta.' + key);
+		return this._pref.resetBranch('extensions.dta.' + key);
 	},
-	resetAll(): function DP_reset() {
-		this._prefs.resetBranch('extensions.dta.');
+	resetAll: function DP_reset() {
+		this._pref.resetBranch('extensions.dta.');
 	}
 };
 
@@ -112,7 +121,7 @@ var DTA_debug = {
 	_logPointer : null,
 	_loaded : false,
 	_load : function() {
-		this._dumpEnabled = DTA_preferences.get("extensions.dta.directory.visibledump", false);
+		this._dumpEnabled = DTA_preferences.getDTA("logging", false);
 		this._consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
 		this._logPointer = DTA_profileFile.get('dta_log.txt');
 		try {
@@ -146,8 +155,14 @@ var DTA_debug = {
 			if (message != "") {
 				text += message.replace(/\n/g, "\x0D\x0A\t") + " ";
 			}
-			if (typeof(e) == "object") {
+			if (e instanceof Components.Exception) {
 				text += (e.message + " (" + e.fileName +" line " + e.lineNumber + ")");
+			}
+			else if (e instanceof String) {
+				text += e;
+			}
+			else if (e) {
+				text += e.toSource();
 			}
 			text += "\x0D\x0A";
 			
@@ -209,6 +224,11 @@ DTA_URL.prototype = {
 	get url() {
 		return this._url;
 	},
+	set url(nv) {
+		this._url = this.str(nv);
+		this.usable = '';
+		this.decode();
+	},
 	decode: function DU_decode() {
 		if (!this.usable.length)
 		{
@@ -263,17 +283,22 @@ var dragObserverdTa = {
 		}
 	}
 };
-// turbo: 4 stati:
-// 0: dta normale
-// 1: tdta
-// 2: dta di un singolo link
-// 3: tdta di un singolo link
-// sends valid links to dialog win
 	
 var DTA_AddingFunctions = {
+	ios: Components.classes["@mozilla.org/network/io-service;1"]
+		.getService(Components.interfaces.nsIIOService),
+	
 	isLinkOpenable : function(url) {
-		var t = (url.url) ? url.url : url;
-		return t.match(/^(http|ftp|https):\/\/.+/i);
+		if (url instanceof DTA_URL) {
+			url = url.url;
+		}
+		try {
+			var scheme = this.ios.extractScheme(url);
+			return ['http', 'https', 'ftp'].some(function(e) { return e = scheme; });
+		}
+		catch (ex) {
+		}
+		return false;
 	},
 	
 	saveSingleLink : function(turbo, url, referrer, description, mask) {
@@ -311,26 +336,31 @@ var DTA_AddingFunctions = {
 	}
 	},
 	
-	getCurrentDropdownValue : function(name) {
-		return nsPreferences.getLocalizedUnicharPref("extensions.dta.dropdown."+name+"-current", "");
+	getDropDownValue : function(name) {
+		var values = eval(DTA_preferences.getDTA(name, '[]'));
+		return values.length ? values[0] : null;
 	},
 	
 	turboSendToDown : function(urlsArray) {
 		try {
 			// XXX: error to localize
-			if (this.getCurrentDropdownValue('renaming').length==0 || this.getCurrentDropdownValue('directory').length==0) {
+			var dir = this.getDropDownValue('directory');
+			var mask = this.getDropDownValue('renaming');
+			if (!mask || !dir) {
 				alert("You have not set a valid renaming mask or a valid destination directory.");
 				DTA_debug.dump("User has not set a valid renaming mask or a valid destination directory.");
 				return false;
 			}
 			
-			var num = DTA_preferences.get("extensions.dta.numistance", 1);
-			num = (num<999)?(++num):1;
-			DTA_preferences.set("extensions.dta.numistance", num);
+			var num = DTA_preferences.getDTA("counter", 1);
+			if (++num > 999) {
+				num = 1;
+			}
+			DTA_preferences.setDTA("counter", num);
 	
-			for (var i=0; i<urlsArray.length; i++) {
-				urlsArray[i].mask = this.getCurrentDropdownValue('renaming');
-				urlsArray[i].dirSave = this.getCurrentDropdownValue('directory');
+			for (var i = 0; i < urlsArray.length; i++) {
+				urlsArray[i].mask = mask;
+				urlsArray[i].dirSave = dir;
 				urlsArray[i].numIstance = num;
 			}
 			
@@ -342,158 +372,108 @@ var DTA_AddingFunctions = {
 		}
 	},
 
-	createFilters : function(type) {
-		
-		var convertToRegExp = function(f) {
-		
-			// f is a String object.
-			
-			// removes leading and final white chars
-			f.replace(/^\s*|\s*$/gi,"");
-			
-			// if it's regexp
-			if (f.substring(0,1) == "/" && f.substring(f.length - 1, f.length) == "/") {
-				return (f.length==2)?[]:[new RegExp(f.substring(1, f.length - 1), "i")];
-			} 
-			// uses wildcards.. needs to be converted into regexp
-			else {
-				f = f.replace(/\./gi, "\\.")
-				.replace(/\*/gi, "(.)*")
-				.replace(/\$/gi, "\\$")
-				.replace(/\^/gi, "\\^")
-				.replace(/\+/gi, "\\+")
-				.replace(/\?/gi, ".")
-				.replace(/\|/gi, "\\|")
-				.replace(/\[/gi, "\\[");
-				
-				var filters = [];
-				var a = f.split(",");
-				for (var i=0; i<a.length; i++)
-					if (a[i].replace(/^\s*|\s*$/gi,"") != "") 
-			 			filters.push(new RegExp(a[i].replace(/^\s*|\s*$/gi, "")));
-			 			
-			 	return filters;
-			}
-		};
-		
-		var checkedFilters = [];
-		var filtertxt = this.getCurrentDropdownValue('filter');
-		if (filtertxt.length > 0) checkedFilters = checkedFilters.concat(convertToRegExp(filtertxt));
-		
-		var nfilters = DTA_preferences.get("extensions.dta.context.numfilters", 0);
-		
-		for (var t=0; t<nfilters; t++) {
-			if (DTA_preferences.get("extensions.dta.context.filter" + t + ".is"+type+"Filter", false)
-					&&
-					DTA_preferences.get("extensions.dta.context.filter" + t + ".checked", false)
-			) {
-				 checkedFilters = checkedFilters.concat(convertToRegExp(nsPreferences.getLocalizedUnicharPref("extensions.dta.context.filter" + t + ".filter")));
-			}
-		}
-		
-		return checkedFilters;
-	},
 	saveLinkArray : function(turbo, urls, images) {
-	try {
-	
-		if (urls.length==0 && images.length==0) {
-			// localization hack
-			alert(document.getElementById("context-dta").attributes.error1.value);
-		}
 		
-		if (turbo) {
-			DTA_debug.dump("saveLinkArray(): DtaOneClick filtering started");
-			
-			var arrayObject = (DTA_preferences.get("extensions.dta.context.seltab", 0)==0)?urls:images;
-			var links = [];
-			var filters = this.createFilters((arrayObject==urls)?"Link":"Image");
-			
-			for (i in arrayObject) {
-				if (i == "length" || typeof(arrayObject[i])!="object") continue;
-				
-				var positiveToFilters = false;
-				for (var j = 0; j<filters.length && !positiveToFilters; j++)
-					if (
-						i.match(filters[j]) 
-						|| 
-						(arrayObject[i].description && arrayObject[i].description.match(filters[j])) 
-						|| 
-						(arrayObject[i].ultDescription && arrayObject[i].ultDescription.match(filters[j]))
-					) positiveToFilters = true;
-				
-				if (!positiveToFilters) continue;
-				
-				links.push({
-					url : arrayObject[i].url,
-					description : arrayObject[i].description,
-					ultDescription : arrayObject[i].ultDescription,
-					refPage : arrayObject[i].refPage
-				});
-			}
-			
-			DTA_debug.dump("saveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
-			
-			// if i cannot start with oneclick open select.xul
-			if (links.length == 0) {
-				alert(document.getElementById("context-dta").attributes.error1.value);
-			} else if (this.turboSendToDown(links)) {
-				return;
-			} else {
-				DTA_debug.dump("saveLinkArray(): turboSendToDown() returned false.. i'm opening Select window");
-			}
-		}
-		
-		window.openDialog("chrome://dta/content/dta/select.xul","_blank","chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no", urls, images);
-	
-	} catch(e) {
-		DTA_debug.dump("saveLinkArray(): ", e);
-	}
-	},
-	
-	openManager : function () {try {
-	
-		var win = DTA_Mediator.get("chrome://dta/content/dta/manager.xul");
-		if (win) {
-			win.focus();
-			return;
-		}
-		window.openDialog("chrome://dta/content/dta/manager.xul", "", "chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no");
-	
-	} catch(e) {
-		Components.utils.reportError(e);
-		DTA_debug.dump("openManager():", e);
-	}
-	},
-	
-	_pref : Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefBranch),
-	// XXX: write this
-	getPreference : function (stringa, predefinito) {
 		try {
-			if (typeof(predefinito) == "boolean")
-				var scelta = this._pref.getBoolPref(stringa);
-			else if (typeof(predefinito) == "string")
-				var scelta = this._pref.getCharPref(stringa);
-			else if (typeof(predefinito) == "number")
-				var scelta = this._pref.getIntPref(stringa);
-			return scelta;
-		} catch (e) {
-			if (typeof(predefinito) == "boolean")
-				var scelta = this._pref.setBoolPref(stringa, predefinito);
-			else if (typeof(predefinito) == "string")
-				var scelta = this._pref.setCharPref(stringa, predefinito);
-			else
-				var scelta = this._pref.setIntPref(stringa, predefinito);
-			return predefinito;
+			if (urls.length==0 && images.length==0) {
+				// localization hack
+				alert(document.getElementById("context-dta").attributes.error1.value);
+			}
+			
+			if (turbo) {
+			
+				DTA_debug.dump("saveLinkArray(): DtaOneClick filtering started");
+				
+				var arrayObject;
+				var type;
+				if (DTA_preferences.getDTA("seltab", 0)) {
+					arrayObject = images;
+					type = 2;
+				}
+				else {
+					arrayObject = urls;
+					type = 1;
+				}
+				var links = [];
+	
+				var additional = this.getDropDownValue('filter');
+				if (!additional);
+				else if (DTA_preferences.getDTA('filterRegex', false)) {
+					additional = DTA_regToRegExp(additional);
+				}
+				else {
+					additional = DTA_strToRegExp(additional);
+				}
+	
+				for (i in arrayObject) {
+					if (i == "length" || typeof(arrayObject[i]) != "object") {
+						continue;
+					}
+					var matched = DTA_FilterManager.matchActive(i, type);
+					if (!matched && additional) {
+						matched = additional.test(i);
+					}
+					
+					if (!matched) {
+						continue;
+					}
+
+					links.push({
+						url : arrayObject[i].url,
+						description : arrayObject[i].description,
+						ultDescription : arrayObject[i].ultDescription,
+						refPage : arrayObject[i].refPage
+					});
+				}
+				
+				DTA_debug.dump("saveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
+				
+				// if i cannot start with oneclick open select.xul
+				if (links.length == 0) {
+					alert(document.getElementById("context-dta").attributes.error1.value);
+				} else if (this.turboSendToDown(links)) {
+					return;
+				} else {
+					DTA_debug.dump("saveLinkArray(): turboSendToDown() returned false.. i'm opening Select window");
+				}
+			}
+			
+			window.openDialog(
+				"chrome://dta/content/dta/select.xul",
+				"_blank",
+				"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
+				urls,
+				images
+			);
+		} catch(ex) {
+			DTA_debug.dump("saveLinkArray(): ", ex);
 		}
+	},
+	
+	openManager : function (quite) {
+		try {
+			var win = DTA_Mediator.get("chrome://dta/content/dta/manager.xul");
+			if (win) {
+				if (!quite) {
+					win.focus();
+				}
+				return win;
+			}
+			window.openDialog(
+				"chrome://dta/content/dta/manager.xul",
+				"_blank",
+				"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no"
+			);
+			return DTA_Mediator.get("chrome://dta/content/dta/manager.xul");
+		} catch(ex) {
+			DTA_debug.dump("openManager():", ex);
+		}
+		return null;
 	},
 	
 	sendToDown : function(notQueue, links) {
-		var win = DTA_Mediator.get("chrome://dta/content/dta/manager.xul");
-		if (win) {
-			win.self.startnewDownloads(notQueue, links);
-			return;
-		}
-		window.openDialog("chrome://dta/content/dta/manager.xul", "", "chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no", notQueue, links);
+		var win = this.openManager(true);
+		return win.self.startnewDownloads(notQueue, links);
 	}
 }
 var DTA_Mediator = {
@@ -507,6 +487,15 @@ var DTA_Mediator = {
 		return rv ? rv.content.document.location : "";
 	},
 	'get': function(url) {
+		if (!url) {
+			return null;
+		}
+		if (url instanceof DTA_URL) {
+			url = url.url;
+		}
+		if (url instanceof Components.interfaces.nsIURI) {
+			url = url.spec;
+		}
 		var enumerator = this._m.getEnumerator(null);
 		while (enumerator.hasMoreElements()) {
 			var win = enumerator.getNext();
@@ -516,16 +505,30 @@ var DTA_Mediator = {
 		}	
 		return null;
 	},
-	openTab: function WM_openTab(url) {
-		var win = this.getMostRecent();
-		if (win)
-		{
-			// Use an existing browser window
-			win.delayedOpenTab(url);
+	openTab: function WM_openTab(url, ref) {
+		if (!url) {
 			return;
 		}
-		// No browser windows are open, so open a new one.
-		window.open(url);
+		var win = this.getMostRecent();
+		if (!win) {
+			window.open();
+			win = this.getMostRecent();
+		}
+		if (url instanceof DTA_URL) {
+			url = url.url;
+		}		
+		if (ref instanceof DTA_URL) {
+			ref = ref.url;
+		}
+		if (ref && !(ref instanceof Components.interfaces.nsIURI)) {
+			try {
+				ref = DTA_AddingFunctions.ios.newURI(ref, null, null);
+			} catch (ex) {
+				alert(ex);
+				ref = null;
+			}
+		}
+		win.delayedOpenTab(url, ref);
 	}
 };
 
@@ -549,8 +552,8 @@ DTA_DropDown.prototype = {
 		}
 	},
 	load: function dd_load() {
-		var values = eval(Preferences.getDTA(this.name, this.predefined));
-		var max = Preferences.getDTA("context.history", 5);
+		var values = eval(DTA_preferences.getDTA(this.name, this.predefined));
+		var max = DTA_preferences.getDTA("history", 5);
 		
 		var drop = document.getElementById(this.dropDown);
 		var input = document.getElementById(this.input);
@@ -585,8 +588,8 @@ DTA_DropDown.prototype = {
 			return;
 		}
 
-		var inValues = eval(Preferences.getDTA(this.name, this.predefined));
-		var max = Preferences.getDTA("context.history", 5);
+		var inValues = eval(DTA_preferences.getDTA(this.name, this.predefined));
+		var max = DTA_preferences.getDTA("history", 5);
 		
 		var outValues = [n];
 		
@@ -595,8 +598,7 @@ DTA_DropDown.prototype = {
 				outValues.push(inValues[i]);
 			}
 		}
-		Debug.dump(outValues);
-		Preferences.setDTA(this.name, outValues);
+		DTA_preferences.setDTA(this.name, outValues);
 	},
 	clear: function dd_save() {
 		Preferences.resetDTA(this.name);
