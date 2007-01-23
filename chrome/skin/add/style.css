@@ -1,28 +1,15 @@
-dialog {
-	padding: 0px;
-	margin: 0px;
+dialog  {
+	max-width: 500px;
+	height: auto;
 }
 toolbarbutton {
 	width: 28px;
 }
-#addURL  {
-	width: 500px;
-	height: auto;
-}
-
-#header {
-	background-color: white;
-	padding-left: 1em;
-	height: 42px;
-}
-#title {
+dialogheader label {
+	padding-top: 4px;
 	font-weight: bold;
-	padding-top: 1em;
+	margin-top: auto;
 	margin-bottom: auto;
 	padding-left: 35px;
 	background: url('chrome://dta/skin/add/add.png') no-repeat left center;
-}
-
-.example {
-	font-family: monospace;
 }

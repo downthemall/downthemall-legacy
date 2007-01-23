@@ -21,11 +21,10 @@
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	title="&addURL.title;"
 	id="addURL" 
-	onload="load();" 
-	onunload="unload();" 
+	onload="sizeToContent(); Dialog.load();" 
 	persist="screenX screenY" 
-	ondialogaccept="return addURLnow(true);"
-	ondialogextra1="return addURLnow(false);"
+	ondialogaccept="return Dialog.download(true);"
+	ondialogextra1="return Dialog.download(false);"
 	buttons="accept, extra1, cancel"
 	buttonlabelaccept="&startbutton.label;"
 	buttonlabelextra1="&queuebutton.label;"	
@@ -33,12 +32,12 @@
 	
 	<script type="application/x-javascript" src="addurl.js"/>
 
-	<script type="application/x-javascript" src="overlayFunctions.js"/>
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<!-- internalFunctions needs overlayFunctions -->
-	<script type="application/x-javascript" src="internalFunctions.js"/>
+	<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js"/>
 
-	<script src="chrome://global/content/nsDragAndDrop.js"/>
-	<script src="chrome://global/content/nsTransferable.js"/> 
+	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
+	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
 	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 	
@@ -49,87 +48,56 @@
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 	</keyset>
 	
-	<popupset>
-	<popup id="renamingTags" orient="vertical" position="before_end" style="padding: 8px; margin-bottom: -10px;">
-		<label id="titlerenaming" value="&titlerenaming.value;" style="background-color: transparent !important; font-weight: bold; text-align: center; font-size: 114%; padding-bottom: 3px;" />
-		<hbox>
-			<vbox>
-				<grid flex="1">
-					<columns><column /><column flex="1"/></columns>
-					<rows>
-						<row><label class="tag" value="*name*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des1" class="descrizione" value="&des1.value;"/></row>
-						<row><label class="tag" value="*ext*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des2" class="descrizione" value="&des2.value;"/></row>
-						<row><label class="tag" value="*url*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des3" class="descrizione" value="&des3.value;"/></row>
-						<row><label class="tag" value="*curl*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des4" class="descrizione" value="&des4.value;" /></row>
-						<row><label class="tag" value="*subdirs*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des12" class="descrizione" value="&des12.value;"/></row>
-						<row><label class="tag" value="*num*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des5" class="descrizione" value="&des5.value;"/></row>
-						<row><label class="tag" value="*text*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des12" class="descrizione" value="&des13.value;"/></row>
-					</rows>
-				</grid>
-			</vbox>
-			<vbox>
-				<grid flex="1">
-					<columns><column /><column flex="1"/></columns>
-					<rows>	
-						<row><label class="tag" value="*refer*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des14" class="descrizione" value="&des14.value;"/></row>
-						<row><label class="tag" value="*hh*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des6" class="descrizione" value="&des6.value;"/></row>
-						<row><label class="tag" value="*mm*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des7" class="descrizione" value="&des7.value;"/></row>
-						<row><label class="tag" value="*ss*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des8" class="descrizione" value="&des8.value;"/></row>
-						<row><label class="tag" value="*d*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des9" class="descrizione" value="&des9.value;"/></row>
-						<row><label class="tag" value="*m*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des10" class="descrizione" value="&des10.value;"/></row>
-						<row><label class="tag" value="*y*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des11" class="descrizione" value="&des11.value;"/></row>
-					</rows>
-				</grid>
-			</vbox>
-		</hbox>
-	</popup>
-	</popupset>
+	<dialogheader id="logo">
+		<label control="URLaddress" value="&addUrlLabel.value;" />
+		<spacer flex="1"/>
+	</dialogheader>
 
-	<hbox id="header">
-		<label control="URLaddress" id="title" value="&addUrlLabel.value;" />
-		<spacer flex="1" id="logo"/>
+	<description class="header" id="descr">&descr.value;</description>
+	
+	<label>&examples.value;</label>
+	<hbox>
+		<vbox flex="1">
+			<label class="monospace indent">.../mygallery[A:C]/photo[001-100 step:2].jpg</label>
+			<label class="monospace indent">.../mygallery[1:3]/photo[01:10][3:01:-1].jpg</label>
+		</vbox>
+		<image src="chrome://dta/skin/common/help.png" oncommand="openHelp('batches','chrome://dta/locale/help/dtahelp.rdf');"/>
 	</hbox>
-	<vbox style="margin:5px 10px;" >
-		<description id="descr">&descr.value;</description>
-		<label style="font-weight:bold;">&examples.value;</label>
-		<label class="example">.../mygallery[A-C]/photo[001-100 step:2].jpg</label>
-		<label class="example">.../mygallery[10-01 step:3]/photo[1-10][f-a step:2].jpg</label>
-		<spacer height="10px"/>
-		<grid onclick="event.stopPropagation();" >
-			<columns>
-				<column />
-				<column flex="1"/>
-			</columns>
-			<rows>
-				<row align="center">
-					<label control="URLaddress" id="URLaddressTitle" value="&URL.value;" />
-					<textbox id="URLaddress" type="autocomplete" autocompletesearch="history" completedefaultindex="true" value="http://" height="21" />
-				</row>
-				<row align="center">
-					<label control="URLref" id="URLrefTitle" value="&referrer.value;"  />
-					<textbox id="URLref" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21" />
-				</row>
-				<row align="center">
-				<label control="directory" id="destinationPath" value="&destinationPath.value;" />
-				<hbox flex="1">
-					<menulist id="directory" editable="true" flex="1" oninput="dropDowns.directory.saveCurrent(false);" >
-						<menupopup id="directoryitems" >
-						</menupopup>
-					</menulist>
-					<toolbarbutton id="browsedir" oncommand="browseDire();" image="chrome://dta/skin/common/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browsedir.tooltip;" />
-				</hbox>
+	<spacer height="10px"/>
+	<grid onclick="event.stopPropagation();" >
+		<columns>
+			<column />
+			<column flex="1"/>
+		</columns>
+		<rows>
+			<row align="center">
+				<label control="URLaddress" id="URLaddressTitle" value="&URL.value;"/>
+				<textbox id="URLaddress" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21" onchange="Dialog.check();" oninput="Dialog.check();" />
 			</row>
 			<row align="center">
-				<label control="renaming" id="infoDestTitle" value="&pct.label;: " />
-				<hbox >
-					<menulist id="renaming" editable="true" flex="1" tooltiptext="&renamingm.tooltip;" oninput="dropDowns.renaming.saveCurrent(false);" >
-						<menupopup id="renamingitems" >
-						</menupopup>
-					</menulist>
-					<toolbarbutton id="openRenaming" image="chrome://dta/skin/common/mask.png" popup="renamingTags" style="padding:2px 3px 2px 5px;" tooltiptext="&openRenaming.tooltip;"  />
-				</hbox>
+				<label control="URLref" id="URLrefTitle" value="&referrer.value;" style="font-style: italic;" />
+				<textbox id="URLref" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21" />
 			</row>
-		</rows>
-		</grid>
-	</vbox>
+			<row align="center">
+			<label control="directory" id="destinationPath" value="&destinationPath.value;" />
+			<hbox flex="1">
+				<menulist id="directory" editable="true" flex="1" oninput="Dialog.check();" onchange="Dialog.check();">
+					<menupopup id="directoryitems" onpopuphidden="Dialog.check();">
+					</menupopup>
+				</menulist>
+				<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" image="chrome://dta/skin/common/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browsedir.tooltip;" />
+			</hbox>
+		</row>
+		<row align="center">
+			<label control="renaming" id="infoDestTitle" value="&pct.label;: " />
+			<hbox >
+				<menulist id="renaming" editable="true" flex="1" tooltiptext="&renamingm.tooltip;" oninput="Dialog.check();" onchange="Dialog.check();">
+					<menupopup id="renamingitems" onpopuphidden="Dialog.check();">
+					</menupopup>
+				</menulist>
+				<maskbutton/>
+			</hbox>
+		</row>
+	</rows>
+	</grid>
 </dialog>
