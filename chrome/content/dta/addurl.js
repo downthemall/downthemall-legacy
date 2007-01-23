@@ -11,184 +11,399 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-var dropDowns = new Object();
+var dropDowns = {};
 var strbundleB, strbundle;
 
-function checkSyntax() {
-	
-	// let's check and create the directory
-	var f = new filePicker();
-	var directory = $("directory");
-	if (!directory.value || directory.value.trim().length == 0) return false;
-	
-	if (f.createValidDestination(directory.value)==false) {
-		alert(strbundleB.getString("destination"));
-		var newDir = f.getFolder(null, strbundle.getString("validdestination"));
-		if (!newDir) 
-			directory.value="";
-		else
-			directory.value = newDir;
-		return false;
+function downloadElement(url, num) {
+	if (!DTA_AddingFunctions.isLinkOpenable(url.url)) {
+		throw new Components.Exception('invalid url');
 	}
-	dropDowns.directory.saveCurrent(false);
-	return true;
+	this.url = url;
+	this.numIstance = num;
+	this.refPage = $('URLref').value,
+	this.description = window.arguments ? window.arguments[0] : '';
+	this.ultDescription = '';
+	this.mask = Dialog.ddRenaming.current;
+	this.dirSave = Dialog.ddDirectory.current;
 }
 
-function createEl(url, num) {
-	if (DTA_AddingFunctions.isLinkOpenable(url)) {
-		var el = {
-				'url': url,
-				'numIstance': num,
-				'refPage': $("URLref").value,
-				'description': window.arguments ? window.arguments[0].description : '',
-				'ultDescription': '',
-				'mask': dropDowns.renaming.getCurrent(),
-				'dirSave': dropDowns.directory.getCurrent()
-			};
-			return el;
-	} else
-		return null;
+function Literal(str) {
+	this.str = str;
 }
-
-function addURLnow(start) {
-try {
-
-		if (!checkSyntax()) {
-			alert(strbundleB.getString("correctness"));
-			return false;
-		}
-		
-		var url = $("URLaddress").value;
-		
-		var num = Preferences.get("extensions.dta.numistance", 1);
-		num = (num<999)?(++num):1;
-		Preferences.set("extensions.dta.numistance", num);
-		
-		var address = $("URLaddress");
-		var url = address.value;
-		if (address.hasAttribute('_realURL'))	{
-			var url = { url: address.getAttribute('_realURL'), usable: address.value };
-		}
-			
-		var urlsToSend = [];
-		
-		var batch = new BatchGenerator(url);
-		if (!batch.isAString) {
-			var URL;
-			while ((URL=batch.getNextURL())!=null) {
-				var el = createEl(URL, num);
-				if (el) urlsToSend.push(el)
+function NumericRange(name, start, end, step, length, strl) {
+	this.name = name;
+	this.start = start;
+	this.end = end;
+	this.step = step;
+	this.length = length;
+	this.strl = strl;
+};
+NumericRange.prototype = {
+	join: function(str) {
+		var rv = [];
+		if (this.step > 0) {
+			for (var i = this.start; i <= this.end; i += this.step) {
+				rv.push(str + this.format(i));
 			}
 		} else {
-			var el = createEl(url, num);
-			if (el) urlsToSend.push(el)
-		}
-		
-		if (urlsToSend.length == 0)  {
-			alert(strbundleB.getString("correctness"));
-			return false;
-		} else if (urlsToSend.length > 1) {
-			
-			var desc = strbundleB.getString("from") + "\n" + urlsToSend[0].url.cropCenter(70) + "\n";
-			if (urlsToSend.length > 2) desc += strbundleB.getString("to")+"\n";
-			desc += urlsToSend[urlsToSend.length-1].url.cropCenter(70);
-			
-			if (!confirm(strbundleB.getFormattedString("tasks",[urlsToSend.length, desc])))
-				return false;
-		}
-		
-		DTA_AddingFunctions.sendToDown(start, urlsToSend);
-		
-		dropDowns.directory.saveCurrent(false);
-		dropDowns.renaming.saveCurrent(false);
-		dropDowns.renaming.saveDrop(dropDowns.renaming.getCurrent());
-		dropDowns.directory.saveDrop(dropDowns.directory.getCurrent());
-			
-		window.close();
-		return true;
-} catch(ex) {
-	DTA_debug.dump("addURLnow(): ", e);
-}
-	return false;
-}
-
-function load() {
-	try {
-		strbundleB = $("strings");
-		strbundle = $("string");
-		
-		$("directory").addEventListener("blur", checkSyntax, true);
-		
-		dropDowns.renaming = new dropDownObject("renaming", "renaming", "renamingitems", "*name*.*ext*", "*name*.*ext*|@|*num*_*name*.*ext*|@|*url*/*name*.*ext*|@|*name* (*text*).*ext*|@|*name* (*hh*-*mm*).*ext*");
-		dropDowns.renaming.load();
-		dropDowns.directory = new dropDownObject("directory", "directory", "directoryitems", "", "");
-		dropDowns.directory.load();
-		
-		// if we know the file to download
-		if (window.arguments) {
-			var e = window.arguments[0];
-			
-			if (!e.url.url) {
-				$("URLaddress").value = e.url;
-			} else {
-				$("URLaddress").value = e.url.usable;
-				// this dialog was fired up with a predefined url.
-				// changing it would invalidate the usable part of it.
-				// so making it readonly is the only option.
-				// if a users want to edit it then he should copy/paste the url. :p
-				// XXX: reflect readonly state in css
-				$("URLaddress").setAttribute('_realURL', e.url.url);
-				$("URLaddress").readonly = true;
+			for (var i = this.start; i >= this.end; i += this.step) {
+				rv.push(str + this.format(i));
 			}
-			
-			var refPage = DTA_AddingFunctions.isLinkOpenable(e.refPage) ? e.refPage : null;
-			if (refPage) {
-				try	{
-						refPage = decodeURIComponent(refPage);
-				} catch (ex) {}
-				$("URLref").value	 = refPage;
-			}
-			
-			if (e.mask) {
-				$("renaming").value = e.mask;
+		}
+		return rv;
+	},
+	format: function(i) {
+		var rv = String(Math.abs(i));
+		while (rv.length < this.strl) {
+			rv = '0' + rv;
+		}
+		if (i < 0) {
+			rv = '-' + rv;
+		}
+		return rv;
+	}
+};
+function CharRange(name, start, end, step, length) {
+	this.name = name;
+	this.start = start;
+	this.end = end;
+	this.step = step;
+	this.length = length;
+};	
+CharRange.prototype = {
+	join: function(str) {
+		var rv = [];
+		if (this.step > 0) {
+			for (var i = this.start; i <= this.end; i += this.step) {
+				rv.push(str + String.fromCharCode(i));
 			}
 		} else {
-			// check if there's some URL in clipboard
-			var clip = Components.classes["@mozilla.org/widget/clipboard;1"].getService(Components.interfaces.nsIClipboard);
-			var trans = Components.classes["@mozilla.org/widget/transferable;1"].createInstance(Components.interfaces.nsITransferable);
-			trans.addDataFlavor("text/unicode");
-			clip.getData(trans, clip.kGlobalClipboard);
-			var str=new Object();
-			var strLength=new Object();
-			trans.getTransferData("text/unicode",str,strLength);
-			if (str) {
-				str=str.value.QueryInterface(Components.interfaces.nsISupportsString);
-				pastetext=str.data.substring(0,strLength.value / 2);
-				if (pastetext.length > 0 && (/^(http|ftp)/).test(pastetext)) {
-					$("URLaddress").value = pastetext;
-					$("URLaddress").select();
+			for (var i = this.start; i >= this.end; i += this.step) {
+				rv.push(str + String.fromCharCode(i));
+			}
+		}
+		return rv;
+	}
+}
+function BatchGenerator(link) {
+	if (!(link instanceof DTA_URL)) {
+		throw new Components.Exception("invalid argument. Type not DTA_URL");
+	}
+	var url = link.url;
+	this._length = 1;
+	this._pats = [];
+	var i;
+	while ((i = url.search(/\[.*?]/)) != -1) {
+		if (i != 0) {
+			this._pats.push(new Literal(url.substring(0, i)));
+			url = url.slice(i);
+		}
+		var m;
+		if ((m = url.match(/\[(-?\d+):(-?\d+)(?::(-?\d+))?\]/))) {
+			url = url.slice(m[0].length);
+			try {
+				var f = new Number(m[1]);
+				var t = new Number(m[2]);
+				if (m.length > 3 && typeof(m[3]) != 'undefined') {
+					var s = new Number(m[3]);
+				}
+				else {
+					var s = 1;
+				}
+				if (!s) {
+					throw 'step invalid!';
+				}
+				if (f == t) {
+					this._pats.push(new Literal(m[1]));
+					continue;
+				}
+				if ((f > t && s > 0) || (f < t && s < 0)) {
+					throw 'negative range!';
+				}
+				var x = m[f > t ? 2 : 1];
+				var sl = x.length;
+				if (x.slice(0,1) == '-') {
+					--sl;
+				}
+				var l = Math.floor((t - f) / s + 1);
+				this._pats.push(new NumericRange(m[0], f, t, s, l, sl));
+			}
+			catch (ex) {
+				this._pats.push(new Literal(m[0]));
+			}
+			continue;
+		}
+		
+		if ((m = url.match(/\[([a-z]):([a-z])(?::(-?\d))?\]/)) || (m = url.match(/\[([A-Z]):([A-Z])(?::(-?\d))?\]/))) {
+			url = url.slice(m[0].length);
+			try {
+				var f = m[1].charCodeAt(0);
+				var t = m[2].charCodeAt(0);
+				if (m.length > 3 && typeof(m[3]) != 'undefined') {
+					var s = new Number(m[3]);
+				}
+				else {
+					var s = 1;
+				}
+				if (!s) {
+					throw 'step invalid!';
+				}
+				if (f == t) {
+					this._pats.push(new Literal(m[1]));
+					continue;
+				}
+				if ((f > t && s > 0) || (f < t && s < 0)) {
+					throw 'negative range!';
+				}
+				var l = Math.floor((t - f) / s + 1);
+				this._pats.push(new CharRange(m[0], f, t, s, l));
+			}
+			catch (ex) {
+				this._pats.push(new Literal(m[0]));
+			}
+			continue;
+		}
+		if ((m = url.match(/\[.*?\]/))) {
+			url = url.slice(m[0].length);
+			this._pats.push(new Literal(m[0]));
+		}
+	}
+	if (url.length) {
+		this._pats.push(new Literal(url));
+	}
+	// join the literals if required!
+	for (i = this._pats.length - 2; i >= 0; --i) {
+		if ((this._pats[i] instanceof Literal) && (this._pats[i+1] instanceof Literal)) {
+			this._pats[i] = new Literal(this._pats[i].str + this._pats[i+1].str);
+			this._pats = this._pats.slice(0, i + 1).concat(this._pats.slice(i + 2));
+		}
+	}
+	for (i = 0; i < this._pats.length; ++i) {
+		var pat = this._pats[i];
+		if (!(pat instanceof Literal)) {
+			this._length *= pat.length;
+		}
+	}
+}
+BatchGenerator.prototype = {
+	_processRange: function(pat, a) {
+		if (!a.length) {
+			a = [''];
+		}
+		var rv = [];
+		for (var i = 0; i < a.length; ++i) {
+			rv = rv.concat(pat.join(a[i]));
+		}
+		return rv;
+	},
+	_processLiteral: function(pat, rv) {
+		if (!rv.length) {
+			return [pat.str];
+		}
+		for (var i = 0; i < rv.length; ++i) {
+			rv[i] = rv[i] + pat.str;
+		}
+		return rv;
+	},
+	get urls() {
+		var rv = [];
+		if (this.length < 1000) {
+			for (var i = 0; i < this._pats.length; ++i) {
+				var pat = this._pats[i];
+				if (pat instanceof Literal) {
+					rv = this._processLiteral(pat, rv);
+				}
+				else {
+					rv = this._processRange(pat, rv);
 				}
 			}
 		}
 		
-	} catch(e) {
-		DTA_debug.dump("load():", e);
+		return rv;
+	},
+	get length() {
+		return this._length;
+	},
+	get parts() {
+		var rv = [];
+		for (var i = 0; i < this._pats.length; ++i) {
+			var pat = this._pats[i];
+			if (pat instanceof Literal) {
+				continue;
+			}
+			rv.push(pat.name);
+		}
+		return rv.join("\n");
+	}
+};
+
+
+var Dialog = {
+	
+	load: function DTA_load() {
+		try {
+			strbundleB = $("strings");
+			strbundle = $("string");
+		
+			this.ddDirectory = new DTA_DropDown("directory", "directory", "directoryitems", "", "");
+			this.ddRenaming = new DTA_DropDown(
+				"renaming",
+				"renaming",
+				"renamingitems",
+				["*name*.*ext*", "*num*_*name*.*ext*", "*url*-*name*.*ext*", "*name* (*text*).*ext*", "*name* (*hh*-*mm*).*ext*"]
+			);
+			
+			var address = $('URLaddress');			
+			
+			if (window.arguments) {
+				var a = window.arguments[0];
+				if (!('url' in a));
+				else if (!(a.url instanceof DTA_URL)) {
+					address.value = a.url;
+				}
+				else {
+					// we've got a DTA_URL.
+					// In this case it is not save to modify it because of encoding issues.
+					address.value = a.url.usable;
+					address.readonly = true;
+					address_realURL = a.url;
+					
+					// XXX reflect in css that URL is readonly
+				}
+				var refPage = DTA_AddingFunctions.isLinkOpenable(a.refPage) ? a.refPage : null;
+				if (refPage) {
+					try	{
+						refPage = decodeURIComponent(refPage);
+					} catch (ex) {}
+					$("URLref").value	 = refPage;
+				}
+				if (a.mask) {
+					$("renaming").current = a.mask;
+				}
+			}
+			else {
+				// check if there's some URL in clipboard
+				var clip = Components.classes["@mozilla.org/widget/clipboard;1"]
+					.getService(Components.interfaces.nsIClipboard);
+				var trans = Components.classes["@mozilla.org/widget/transferable;1"]
+					.createInstance(Components.interfaces.nsITransferable);
+				try {
+					trans.addDataFlavor("text/unicode");
+					clip.getData(trans, clip.kGlobalClipboard);
+					
+					var str = {}, length = {};
+					trans.getTransferData(
+						"text/unicode",
+						str,
+						length
+					);
+					if (length.value) {
+						str = str.value.QueryInterface(Components.interfaces.nsISupportsString);
+						str = str.data;
+						if (str.length && DTA_AddingFunctions.isLinkOpenable(str)) {
+							address.value = str;
+							address.select();
+						}
+					}
+				}
+				catch (ex) {
+					Debug.dump("Not able to gather data from the clipboard!");
+				}
+			}
+
+			this.check();
+		} catch(ex) {
+			Debug.dump("load():", ex);
+		}		
+	},
+	check: function DTA_check() {
+		var disable = $('URLaddress', 'directory', 'renaming')
+			.some(function(e) {
+				// reset the styles
+				var style = e.inputField.style;
+				style.backgroundColor = 'transparent';
+				style.color = 'windowText';
+				
+				return e.value.length == 0;
+			});
+		
+		// enable/disable the buttons;
+		['accept', 'extra1']
+			.forEach(function(e) { document.documentElement.getButton(e).setAttribute('disabled', disable);});
+	},
+	
+	download: function DTA_download(queue) {
+		
+		var errors = [];
+		
+		// check the directory
+		var f = new filePicker();
+		var dir = this.ddDirectory.current.trim();
+		if (!dir.length || !f.createValidDestination(dir)) {
+			errors.push('directory');
+		}
+		
+		// check mask
+		var mask = this.ddRenaming.current;
+		if (!mask.length) {
+			errors.push('renaming');
+		}
+		
+		var address = $('URLaddress');
+		var url = address.value;
+		if ('_realURL' in address) {
+			url = address._realURL;
+		}
+		else if (url.length && DTA_AddingFunctions.isLinkOpenable(url)) {
+			url = new DTA_URL(url);
+		}
+		else {
+			errors.push('URLaddress');
+		}
+		
+		if (errors.length) {
+			errors.forEach(function(e) { var style = $(e).inputField.style; style.backgroundColor = 'red'; style.color = 'white'; });
+			return false;
+		}		
+		
+		var batch = new BatchGenerator(url);
+		if (batch.length > 1) {
+			var message = strbundleB.getFormattedString(
+				'tasks',
+				[batch.length, batch.parts]
+			);
+			if (batch.length > 1000) {
+				message += strbundleB.getString('manytasks');
+			}
+			if (!confirm(message)) {
+				return false;
+			}
+		}
+		
+		DTA_AddingFunctions.sendToDown(queue, batch.urls);
+		
+		['ddRenaming', 'ddDirectory'].forEach(function(e) { this[e].save(); });
+		
+		self.close();
+		
+		return true;
+	},
+	browseDir: function DTA_browseDir() {
+		// let's check and create the directory
+		var f = new filePicker();
+		var newDir = f.getFolder(
+			this.ddDirectory.current,
+			strbundle.getString("validdestination")
+		);
+		if (newDir) {
+			$("directory").current = newDir;
+		}
+		this.check();
 	}
 }
 
-function browseDire() {
-	// let's check and create the directory
-	var f = new filePicker();
-	var newDir = f.getFolder($("directory").value, strbundle.getString("validdestination"));
-	if (newDir) $("directory").value = newDir;
-	
-	var directory = $("directory");
-	checkSyntax();
-	dropDowns.directory.saveCurrent(false);
-}
-
 function appendTag(event) {
-	var text = $(dropDowns.renaming.idInput);
+	var text = $('renaming');
 	var s = text.inputField.selectionStart;
 	text.value = text.value.substring(0, s) + event.target.getAttribute("value") + text.value.substring(text.inputField.selectionEnd, text.value.length);
 	text.inputField.setSelectionRange(s + event.target.getAttribute("value").length, s + event.target.getAttribute("value").length);
@@ -201,95 +416,3 @@ var listObserver = {
     transferData.data.addDataForFlavour("text/unicode", txt);
   }
 }
-
-function unload() {
-}
-
-window.addEventListener("load", function() {setTimeout("window.sizeToContent();",0);}, false);
-
-function BatchGenerator(s) {
-	this.string = s;
-	
-	var mN = (/\[\s*(\d+)\s*-\s*(\d+)((\s+step\s*:?\s*\d*)?)\s*\]/).exec(s);
-	var mL = (/\[\s*([a-z]{1})\s*-\s*([a-z]{1})((\s+step\s*:?\s*\d*)?)\s*\]/i).exec(s);
-	this.isNumerical = (mN && (!mL|| mL.index>mN.index));
-	this.isLiteral =   (mL && (!mN|| mN.index>mL.index));
-	this.isAString = (this.isNumerical==null && this.isLiteral==null);
-
-	if (this.isAString) return;
-	
-	if (this.isNumerical) {
-		this.start=parseInt(mN[1],10);
-		this.end=parseInt(mN[2],10);
-		this.padding = "";
-		for (var i=((this.end>this.start)?mN[1]:mN[2]).length; (i--)>0;) {
-			this.padding=this.padding.concat("0");
-		}
-		this.match = mN;
-	} else if (this.isLiteral) {
-		 if(/[a-z]{1}/.test(mL[1]))
-				mL[2]=mL[2].toLowerCase();
-			else
-				mL[2]=mL[2].toUpperCase();
-				
-			this.start=mL[1].charCodeAt(0);
-			this.end=mL[2].charCodeAt(0);
-			this.match = mL;
-	}
-	
-	var sM=this.match[3].match(/\s+step\s*:?\s*(\d*)/);
-	this.step = (sM?parseInt(sM[1],10):1) * (this.start<=this.end?1:-1);
-	this.cursor=this.start;
-
-	this.nextBatch = new BatchGenerator(this.match.input.substring(this.match.index+this.match[0].length));
-}
-
-BatchGenerator.prototype = {
-
-	reset: function() {
-		this.cursor = this.start;
-		if (this.nextBatch) this.nextBatch.reset();	
-	},
-	
-	getNextURL: function() {
-   	
-    if (this.isAString) return this.string;
-    
-    if(
-    	this.step==0
-      || 
-      (this.step>0 && this.cursor>this.end)
-      || 
-      (this.step<0 && this.cursor<this.end)
-    ) {
-      return null;
-    }
-    
-    var count;
-    
-    if(this.isLiteral) {
-      count=String.fromCharCode(this.cursor);
-    } else {
-      count=new String(this.cursor);
-      if(count.length<this.padding.length) {
-        count=this.padding.substring(count.length).concat(count);
-      }
-    }
-    
-    var n = this.nextBatch.getNextURL();
-    
-    if (n==null || this.nextBatch.isAString) {
-      this.cursor += this.step;
-      if (n==null) {
-        this.nextBatch.reset();
-        return this.getNextURL();
-      }
-    }
-    
-    return this.match.input.substring(0, this.match.index).concat(count).concat(n);
-   
-  }
-
-}
-
-	
