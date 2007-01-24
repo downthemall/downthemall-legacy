@@ -58,7 +58,7 @@
 	<label>&examples.value;</label>
 	<hbox>
 		<vbox flex="1">
-			<label class="monospace indent">.../mygallery[A:C]/photo[001-100 step:2].jpg</label>
+			<label class="monospace indent">.../mygallery[A:C]/photo[001:100:2].jpg</label>
 			<label class="monospace indent">.../mygallery[1:3]/photo[01:10][3:01:-1].jpg</label>
 		</vbox>
 		<image src="chrome://dta/skin/common/help.png" oncommand="openHelp('batches','chrome://dta/locale/help/dtahelp.rdf');"/>

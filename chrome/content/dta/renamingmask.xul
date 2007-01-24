@@ -16,25 +16,12 @@
 <dialog xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	title="&mmask.title;" 
 	id="renamingmask"
-	width="430" height="200" 
+	width="460" height="200" 
 	persist="screenX screenY"
 	onload="Dialog.load();"
 	ondialogaccept="Dialog.accept();" 
 	buttons="accept, cancel" 
 	>
-	<style type="text/css">
-		toolbarbutton {
-			width: 28px;
-		}
-		dialogheader label {
-			padding-top: 4px;
-			font-weight: bold;
-			margin-top: auto;
-			margin-bottom: auto;
-			padding-left: 35px;
-			background: url('chrome://dta/skin/select/mask.png') no-repeat left center;
-		}
-	</style>	
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/x-javascript" src="renamingmask.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
@@ -47,7 +34,7 @@
 	</keyset>
 	
 	<dialogheader id="logo">
-		<label control="URLaddress" value="&mmask.title;" />
+		<label control="URLaddress" value="&mmask.title;" style="padding-left: 35px; background: url('chrome://dta/skin/select/mask.png') no-repeat left center;" />
 		<spacer flex="1"/>
 	</dialogheader>
 

@@ -10,12 +10,15 @@
  *   Nils Maier <MaierMan@web.de>
  *
  * ***** END LICENSE BLOCK ***** */
+ 
+ const Cc = Components.classes;
+ const Ci = Components.interfaces;
 
 var dropDowns = {};
 var strbundleB, strbundle;
 
 function downloadElement(url, num) {
-	if (!DTA_AddingFunctions.isLinkOpenable(url.url)) {
+	if (!(url instanceof DTA_URL) || !DTA_AddingFunctions.isLinkOpenable(url)) {
 		throw new Components.Exception('invalid url');
 	}
 	this.url = url;
@@ -89,7 +92,8 @@ function BatchGenerator(link) {
 	if (!(link instanceof DTA_URL)) {
 		throw new Components.Exception("invalid argument. Type not DTA_URL");
 	}
-	var url = link.url;
+	this.url = link.url;
+	var url = this.url;
 	this._length = 1;
 	this._pats = [];
 	var i;
@@ -205,20 +209,20 @@ BatchGenerator.prototype = {
 		}
 		return rv;
 	},
-	get urls() {
+	getURLs: function(num) {
 		var rv = [];
-		if (this.length < 1000) {
-			for (var i = 0; i < this._pats.length; ++i) {
-				var pat = this._pats[i];
-				if (pat instanceof Literal) {
-					rv = this._processLiteral(pat, rv);
-				}
-				else {
-					rv = this._processRange(pat, rv);
-				}
+		for (var i = 0; i < this._pats.length; ++i) {
+			var pat = this._pats[i];
+			if (pat instanceof Literal) {
+				rv = this._processLiteral(pat, rv);
+			}
+			else {
+				rv = this._processRange(pat, rv);
 			}
 		}
-		
+		for (var i = 0; i < rv.length; ++i) {
+			rv[i] = new downloadElement(new DTA_URL(rv[i]), num);
+		}
 		return rv;
 	},
 	get length() {
@@ -245,7 +249,7 @@ var Dialog = {
 			strbundleB = $("strings");
 			strbundle = $("string");
 		
-			this.ddDirectory = new DTA_DropDown("directory", "directory", "directoryitems", "", "");
+			this.ddDirectory = new DTA_DropDown("directory", "directory", "directoryitems", []);
 			this.ddRenaming = new DTA_DropDown(
 				"renaming",
 				"renaming",
@@ -257,20 +261,22 @@ var Dialog = {
 			
 			if (window.arguments) {
 				var a = window.arguments[0];
+				var url = a.url;
 				if (!('url' in a));
-				else if (!(a.url instanceof DTA_URL)) {
+				else if (typeof(a.url) == 'string') {
 					address.value = a.url;
 				}
-				else {
+				else if (typeof(a.url) == 'object' && 'url' in a.url) {
 					// we've got a DTA_URL.
 					// In this case it is not save to modify it because of encoding issues.
 					address.value = a.url.usable;
-					address.readonly = true;
-					address_realURL = a.url;
-					
+					// JS does not preserve types between windows (as each window gets an own sandbox)
+					// This hack makes our URL a DTA_URL again ;)
+					address._realURL = new DTA_URL(a.url.url, a.url.charset);					
+					address.readOnly = true;
 					// XXX reflect in css that URL is readonly
 				}
-				var refPage = DTA_AddingFunctions.isLinkOpenable(a.refPage) ? a.refPage : null;
+				var refPage = DTA_AddingFunctions.isLinkOpenable(a.referrer) ? a.referrer : null;
 				if (refPage) {
 					try	{
 						refPage = decodeURIComponent(refPage);
@@ -283,10 +289,8 @@ var Dialog = {
 			}
 			else {
 				// check if there's some URL in clipboard
-				var clip = Components.classes["@mozilla.org/widget/clipboard;1"]
-					.getService(Components.interfaces.nsIClipboard);
-				var trans = Components.classes["@mozilla.org/widget/transferable;1"]
-					.createInstance(Components.interfaces.nsITransferable);
+				var clip = Cc["@mozilla.org/widget/clipboard;1"].getService(Ci.nsIClipboard);
+				var trans = Cc["@mozilla.org/widget/transferable;1"].createInstance(Ci.nsITransferable);
 				try {
 					trans.addDataFlavor("text/unicode");
 					clip.getData(trans, clip.kGlobalClipboard);
@@ -298,7 +302,7 @@ var Dialog = {
 						length
 					);
 					if (length.value) {
-						str = str.value.QueryInterface(Components.interfaces.nsISupportsString);
+						str = str.value.QueryInterface(Ci.nsISupportsString);
 						str = str.data;
 						if (str.length && DTA_AddingFunctions.isLinkOpenable(str)) {
 							address.value = str;
@@ -365,9 +369,15 @@ var Dialog = {
 			errors.forEach(function(e) { var style = $(e).inputField.style; style.backgroundColor = 'red'; style.color = 'white'; });
 			return false;
 		}		
+
+		var num = Preferences.getDTA("counter", 0);
+		if (++num > 999) {
+			num = 1;
+		}			
 		
 		var batch = new BatchGenerator(url);
 		if (batch.length > 1) {
+			
 			var message = strbundleB.getFormattedString(
 				'tasks',
 				[batch.length, batch.parts]
@@ -375,14 +385,37 @@ var Dialog = {
 			if (batch.length > 1000) {
 				message += strbundleB.getString('manytasks');
 			}
-			if (!confirm(message)) {
+			
+			var prompter = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
+			var rv = prompter.confirmEx(
+				window,
+				"Download Batch",
+				message,
+				127 + (2 << 8) + (127 << 16),
+				"Batch",
+				null,
+				"Single URL",
+				null,
+				{}
+			);
+			if (rv == 0) {
+				batch = batch.getURLs(url, num);
+			}
+			else if (rv == 2) {
+				batch = [new downloadElement(url, num)];
+			}
+			else {
 				return false;
 			}
 		}
-		
-		DTA_AddingFunctions.sendToDown(queue, batch.urls);
-		
-		['ddRenaming', 'ddDirectory'].forEach(function(e) { this[e].save(); });
+		else {
+			batch = [new downloadElement(url, num)];
+		}
+		DTA_AddingFunctions.sendToDown(queue, batch);
+
+		Preferences.setDTA("counter", num);
+	
+		['ddRenaming', 'ddDirectory'].forEach(function(e) { Dialog[e].save(); });
 		
 		self.close();
 		

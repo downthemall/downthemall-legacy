@@ -28,9 +28,9 @@
 	ondragdrop="nsDragAndDrop.drop(event,dragObserverTdTa)"
 	>
 	
-	<script type="application/x-javascript" src="overlayFunctions.js" />
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
 	<!-- internalFunctions needs overlayFunctions -->
-	<script type="application/x-javascript" src="internalFunctions.js" />
+	<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js" />
 
 	<script type="application/x-javascript" src="dta.js" />
 	<script type="application/x-javascript" src="down.js" />
@@ -58,7 +58,7 @@
 		<key id="kBottom" modifiers="alt" keycode="VK_END" oncommand="moveTop(false);"/>
 		<key id="kPause" modifiers="accel" key="P" oncommand="pauseResumeReq(true);"/>
 		<key id="kResume" modifiers="accel" key="R" oncommand="pauseResumeReq(false);"/>
-		<key id="kAdd" modifiers="accel" key="+" oncommand="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, resizable=yes, dialog=no, dependent=yes');"/>
+		<key id="kAdd" modifiers="accel" key="+" oncommand="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome,centerscreen,dialog,dependent');"/>
 		<key id="kGetInfo" modifiers="accel" key="I" oncommand="getInfo();"/>
 	</keyset>
 	
@@ -66,26 +66,31 @@
 	<popupset>
 		<popup id="popup" onpopupshowing="popup();">
 			<menuitem id="info" class="menuitem-iconic" image="chrome://dta/skin/manager/info.png" label="&infos.label;" oncommand="getInfo();" />
-			<menuseparator class="down" />
+			<menuseparator />
+			<menuitem id="launch" class="menuitem-iconic" image="chrome://dta/skin/manager/launch.png" label="&launch.label;" oncommand="openFile();" />
+			<menuitem id="folder" class="menuitem-iconic" image="chrome://dta/skin/manager/folder.png" label="&targetdir.label;" oncommand="openFolder();" />
+			<menuseparator />
 			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" image="chrome://dta/skin/manager/pause.png" oncommand="pauseResumeReq(true);" />
 			<menuitem id="play" class="menuitem-iconic" label="&resume.label;" image="chrome://dta/skin/manager/play.png" oncommand="pauseResumeReq(false);" />
 			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/skin/manager/stop.png" oncommand="cancelPopup();" />
 			<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/trash.png" oncommand="removeFromList(-1);" />
-			<menuseparator class="down" />
+			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/skin/manager/trashCompleted.png" oncommand="removeCompleted();" />
+			<menuseparator />
 			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" image="chrome://dta/skin/manager/movetop.png" oncommand="moveTop(true);" />
 			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" image="chrome://dta/skin/manager/moveup.png" oncommand="move(-1);" />
 			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" image="chrome://dta/skin/manager/movedown.png" oncommand="move(1);" />
 			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" image="chrome://dta/skin/manager/movebottom.png" oncommand="moveTop(false);" />
-			<menuseparator class="down" />
-			<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/skin/manager/addpart.png" oncommand="addChunk(true);" />
-			<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" image="chrome://dta/skin/manager/rempart.png" oncommand="addChunk(false);" />
-			<menuseparator class="down" />
-			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/skin/manager/trashCompleted.png" oncommand="removeCompleted();" />
+			<menuseparator />
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/manager/selectall.png" oncommand="selectAll();" />
 			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/manager/selectinv.png" oncommand="selectInv();" />
-			<menuseparator class="down" />
-			<menuitem id="launch" class="menuitem-iconic" image="chrome://dta/skin/manager/launch.png" label="&launch.label;" oncommand="openFile();" />
-			<menuitem id="folder" class="menuitem-iconic" image="chrome://dta/skin/manager/folder.png" label="&targetdir.label;" oncommand="openFolder();" />
+			<menu id="misc" label="&misc.label;">
+				<menupopup>
+					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/skin/manager/addpart.png" oncommand="addChunk(true);" />
+					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" image="chrome://dta/skin/manager/rempart.png" oncommand="addChunk(false);" />
+					<menuseparator />
+					<menuitem id="prefs" class="menuitem-iconic" label="&options.label;" image="chrome://dta/skin/common/prefs.png" onclick="DTA_showPreferences();" />
+				</menupopup>
+			</menu>
 		</popup>
 		<tooltip id="t1" position="after_pointer" noautohide="true" onpopupshowing="return tooltipInfo(event);" onpopuphiding="stopCanvas();" style="width: 470px;" >
 			<vbox>
@@ -120,7 +125,7 @@
 			<toolbarbutton class="toolbarbuttonDown" label="&movedown.label;" id="toolmovedown" onclick="move(1);"/>
 			<toolbarbutton class="toolbarbuttonDown" label="&movebottom.label;" id="toolmovebottom" onclick="moveTop(false);"  />
 			<spacer/>
-			<toolbarbutton class="toolbarbuttonDown" label="&options.label;" id="toolprefs" onclick="loadOptions();" />
+			<toolbarbutton class="toolbarbuttonDown" label="&options.label;" id="toolprefs" onclick="DTA_showPreferences();" />
 			<spacer/>
 			<toolbarbutton class="toolbarbuttonDown" id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
 			<spacer id="logo" flex="1" />
@@ -156,7 +161,7 @@
 	<statusbar id="footer"  >
 		 <statusbarpanel id="status" label="" flex="1" />
 		 <statusbarpanel id="dtaHelp" class="statusbarpanel-iconic-text" label="Help!" onclick="openHelp('Manager','chrome://dta/locale/help/dtahelp.rdf');" src="chrome://dta/skin/common/help.png" />
-		 <statusbarpanel id="options" class="statusbarpanel-iconic-text" label="&options.label;" onclick="loadOptions();" src="chrome://dta/skin/common/prefs.png" />
+		 <statusbarpanel id="options" class="statusbarpanel-iconic-text" label="&options.label;" onclick="DTA_showPreferences();" src="chrome://dta/skin/common/prefs.png" />
 	</statusbar>
 	
 </window>

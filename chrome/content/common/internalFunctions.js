@@ -204,7 +204,7 @@ filePicker.prototype = {
 		return directory;
 	}
 };
-function getIcon(link, metalink) {
+function getIcon(link, metalink, size) {
 	try {
 		var url;
 		if (typeof(link) == 'string') {
@@ -223,7 +223,10 @@ function getIcon(link, metalink) {
 			return "chrome://dta/skin/icons/metalink.png";
 		}
 		else {
-			return "moz-icon://" + url + "?size=16";
+			if (typeof(size) != 'number') {
+				size = 16;
+			}
+			return "moz-icon://" + url + '?size=' + size;
 		}
 	}
 	catch (ex) {
