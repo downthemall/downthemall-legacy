@@ -6,10 +6,9 @@ toolbarbutton {
 	width: 28px;
 }
 dialogheader label {
-	padding-top: 4px;
-	font-weight: bold;
-	margin-top: auto;
-	margin-bottom: auto;
 	padding-left: 35px;
 	background: url('chrome://dta/skin/add/add.png') no-repeat left center;
+}
+textbox[readonly], textbox[readonly] * {
+	background-color: -moz-dialog;
 }

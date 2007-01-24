@@ -326,9 +326,11 @@ var DTA_AddingFunctions = {
 		}
 		
 		// else open addurl.xul
-		window.openDialog(
-			"chrome://dta/content/dta/addurl.xul","_blank","chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
-			{ 'url': url, 'description': description, 'refPage': referrer, 'mask': mask }
+		var win = window.openDialog(
+			"chrome://dta/content/dta/addurl.xul",
+			"_blank",
+			"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
+			{'url': url, 'description': description, 'referrer': referrer, 'mask': mask}
 		);
 	} catch(e) {
 		Components.utils.reportError(e);
@@ -352,7 +354,7 @@ var DTA_AddingFunctions = {
 				return false;
 			}
 			
-			var num = DTA_preferences.getDTA("counter", 1);
+			var num = DTA_preferences.getDTA("counter", 0);
 			if (++num > 999) {
 				num = 1;
 			}
@@ -472,8 +474,17 @@ var DTA_AddingFunctions = {
 	},
 	
 	sendToDown : function(notQueue, links) {
-		var win = this.openManager(true);
-		return win.self.startnewDownloads(notQueue, links);
+		var win = DTA_Mediator.get("chrome://dta/content/dta/manager.xul");
+		if (win) {
+			win.self.startnewDownloads(notQueue, links);
+			return;
+		}
+		win = window.openDialog(
+			"chrome://dta/content/dta/manager.xul",
+			"_blank",
+			"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
+			notQueue, links
+		);
 	}
 }
 var DTA_Mediator = {

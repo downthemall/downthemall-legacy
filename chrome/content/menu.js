@@ -20,6 +20,9 @@ var DTA_ContextOverlay = {
 	
 	addLinksToArray : function(lnks, urls, doc) {
 		var ref = doc.URL;
+		if (!('length' in lnks)) {
+			return;
+		}
 		for (var i = 0; i < lnks.length; ++i) {
 		
 			// remove anchor from url
@@ -212,8 +215,8 @@ var DTA_ContextOverlay = {
 	},
 	
 	onHideContext : function() {try {
-		var menu = DTA_AddingFunctions.getPreference("extensions.dta.context.menu", "1,1,0").split(",");
-		var context = DTA_AddingFunctions.getPreference("extensions.dta.context.compactmenu", false);
+		var menu = DTA_preferences.getDTA("menu", "1,1,0").split(",");
+		var context = DTA_preferences.getDTA("compactmenu", false);
 		document.getElementById("dta-help-tool").hidden = !("openHelp" in window);
 		document.getElementById("dta-context-menu").hidden = !context;
 		document.getElementById("context-dta-pref").hidden = !(parseInt(menu[2]) && !context);
@@ -241,8 +244,8 @@ var DTA_ContextOverlay = {
 			document.getElementById("context-dta-savelinkt").label = document.getElementById("submenu-dta-savelinkt").label = "Start link with DtaOneClick!";
 		}
 		
-		var menu = DTA_AddingFunctions.getPreference("extensions.dta.context.menu", "1,1,0").split(",");
-		var context = DTA_AddingFunctions.getPreference("extensions.dta.context.compactmenu", false);
+		var menu = DTA_preferences.getDTA("menu", "1,1,0").split(",");
+		var context = DTA_preferences.getDTA("compactmenu", false);
 		document.getElementById("context-dta").hidden = true;
 		document.getElementById("submenu-dta").hidden = true;
 		document.getElementById("context-tdta").hidden = true;
@@ -263,8 +266,8 @@ var DTA_ContextOverlay = {
 			document.getElementById("context-tdta").label = document.getElementById("submenu-tdta").label = "DtaOneClick!";
 		}
 		
-		var menu = DTA_AddingFunctions.getPreference("extensions.dta.context.menu", "1,1,0").split(",");
-		var context = DTA_AddingFunctions.getPreference("extensions.dta.context.compactmenu", false);
+		var menu = DTA_preferences.getDTA("menu", "1,1,0").split(",");
+		var context = DTA_preferences.getDTA("compactmenu", false);
 		document.getElementById("context-dta-savelink").hidden = true;
 		document.getElementById("submenu-dta-savelink").hidden = true;
 		document.getElementById("context-dta-savelinkt").hidden = true;
@@ -276,8 +279,8 @@ var DTA_ContextOverlay = {
 	},
 	
 	onHideTool : function() {try {
-		var menuTool = DTA_AddingFunctions.getPreference("extensions.dta.tool.menu", "1,1,1").split(",");
-		var contextTool = DTA_AddingFunctions.getPreference("extensions.dta.tool.compactmenu", true); // checks if  the user wants a submenu
+		var menuTool = DTA_preferences.getDTA("menu", "1,1,1").split(",");
+		var contextTool = DTA_preferences.getDTA("compactmenu", true); // checks if  the user wants a submenu
 		document.getElementById("dta-tool").hidden = !(parseInt(menuTool[0]) && (!contextTool));
 		document.getElementById("turbo-tool").hidden = !(parseInt(menuTool[1]) && (!contextTool));
 		document.getElementById("dta-manager-tool").hidden = !(parseInt(menuTool[2]) && (!contextTool));
@@ -286,7 +289,7 @@ var DTA_ContextOverlay = {
 		document.getElementById("dta-tool-popup").hidden = !parseInt(menuTool[0]);
 		document.getElementById("turbo-tool-popup").hidden = !parseInt(menuTool[1]);
 		document.getElementById("dta-manager-tool-popup").hidden = !parseInt(menuTool[2]);
-	} catch(ee) {
+	} catch(ex) {
 		alert("DTAHideTool(): ", ex);
 	}
 	},

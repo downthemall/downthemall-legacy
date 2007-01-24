@@ -53,17 +53,16 @@ var Prefs = {
 	currentTooltip : null,
 	
 	refresh : function() {
-		var p = "extensions.dta.";
-		this.onClosingSaveAborted = !Preferences.get(p+"context.removeaborted", false);
-		this.onClosingSaveCompleted = !Preferences.get(p+"context.removecompleted", true);
-		this.onClosingSaveCanceled = !Preferences.get(p+"context.removecanceled", false);
-		this.maxInProgress = Preferences.get(p+"context.ntask", 5);
-		this.showOnlyFilenames = Preferences.get(p+"context.showOnlyFilenames", true);
-		this.onConflictingFilenames = Preferences.get(p+"existing", 3);
+		this.onClosingSaveAborted = !Preferences.getDTA("removeaborted", false);
+		this.onClosingSaveCompleted = !Preferences.getDTA("removecompleted", true);
+		this.onClosingSaveCanceled = !Preferences.getDTA("removecanceled", false);
+		this.maxInProgress = Preferences.getDTA("ntask", 5);
+		this.showOnlyFilenames = Preferences.getDTA("showOnlyFilenames", true);
+		this.onConflictingFilenames = Preferences.get("existing", 3);
 		
-		if (Preferences.get(p+"context.saveTemp", true)) {
+		if (Preferences.get("saveTemp", true)) {
 			try {
-				this.tempLocation = nsPreferences.getLocalizedUnicharPref(p+"context.tempLocation", '');
+				this.tempLocation = nsPreferences.getLocalizedUnicharPref("extensions.dta.tempLocation", '');
 				if (this.tempLocation == '') {
 					this.tempLocation = cc["@mozilla.org/file/directory_service;1"]
 						.getService(Components.interfaces.nsIProperties)
@@ -78,8 +77,8 @@ var Prefs = {
 			}
 		}
 		
-		this.alertingSystem = Preferences.get(p+"alertbox", ((new String()).findSystemSlash()=='\\')?1:0);
-		this.maxChunks = Preferences.get(p+"context.maxchunks", 5);
+		this.alertingSystem = Preferences.getDTA("alertbox", ((new String()).findSystemSlash()=='\\')?1:0);
+		this.maxChunks = Preferences.getDTA("maxchunks", 5);
 		// overwrite preference only if >
 		var current = Preferences.get("network.http.max-persistent-connections-per-server", this.maxInProgress * this.maxChunks + 2);
 		if (current < this.maxInProgress * this.maxChunks)
@@ -92,16 +91,16 @@ var Stats = {
 	totalDownloads : 0,
 	
 	// Debug this crap,
-	_completedDownloads : 0,
-	get completedDownloads() : { return this._completedDownloads; },
-	set completedDownloads(nv) : { if (--this._completedDownloads < 0) { throw "Stats::Completed downloads less than 1"; } },
+	_completedDownloads: 0,
+	get completedDownloads() { return this._completedDownloads; },
+	set completedDownloads(nv) { if (0 > (this._completedDownloads = nv)) { throw "Stats::Completed downloads less than 1"; } },
 	
 	zippedToWait : 0,
 	downloadedBytes : 0,
 	passedNumber : 0
 }
 
-function URLManager(urls) {
+function DTA_URLManager(urls) {
 	this._urls = [];
 	this._idx = 0;
 	
@@ -115,7 +114,7 @@ function URLManager(urls) {
 		throw "Feeding the URLManager with some bad stuff is usually a bad idea!";
 	}
 }
-URLManager.prototype = {
+DTA_URLManager.prototype = {
 	_sort: function(a,b) {
 		const rv = a.preference - b.preference;
 		return rv ? rv : (a.url < b.url ? -1 : 1);
@@ -423,11 +422,11 @@ function downloadElement(lnk, dir, num, desc, mask, refPage) {
 	dir = dir.addFinalSlash();
 	
 	if (typeof lnk == 'string') {
-		this.urlManager = new URLManager([new DTA_URL(lnk)]);
-	} else if (lnk instanceof URLManager) {
+		this.urlManager = new DTA_URLManager([new DTA_URL(lnk)]);
+	} else if (lnk instanceof DTA_URLManager) {
 		this.urlManager = lnk;
 	} else {
-		this.urlManager = new URLManager([lnk]);
+		this.urlManager = new DTA_URLManager([lnk]);
 	}
 
 	this.dirSave = dir;
@@ -475,6 +474,10 @@ downloadElement.prototype = {
 	timeLastProgress : 0,
 	timeStart : 0,
 	join : null,
+	
+	get icon() {
+		return getIcon(this.fileName, 'metalink' in this);
+	},
 	
 	imWaitingToRearrange : false,
 	
@@ -634,7 +637,8 @@ downloadElement.prototype = {
 		this.finishDownload();
 		if ('isMetalink' in this) {
 			this.handleMetalink();
-		}		
+		}
+		Check.checkClose();
 	},
 	handleMetalink: function dl_handleMetaLink() {
 		try {
@@ -684,7 +688,7 @@ downloadElement.prototype = {
 					desc = '';
 				}
 				downloads.push({
-					'url': new URLManager(urls),
+					'url': new DTA_URLManager(urls),
 					'refPage': this.refPage.spec,
 					'numIstance': 0,
 					'mask': this.mask,
@@ -724,17 +728,16 @@ downloadElement.prototype = {
 					Debug.dump("finishDownload():", e);
 				}
 			}
-		} else {
-			this.isPassed = true;
-			Stats.passedNumber++;
-			this.setTreeCell("status", strbundle.getString("complete"));
-			popup();
-			
-			// Garbage collection
-			this.chunks = null;
+			return;
 		}
 		
-		Check.checkClose();
+		this.isPassed = true;
+		Stats.passedNumber++;
+		this.setTreeCell("status", strbundle.getString("complete"));
+		popup();
+			
+		// Garbage collection
+		this.chunks = null;
 	},
 	
 	unzip : function() {try {
@@ -1161,7 +1164,7 @@ joinListener.prototype = {
 		var outStream = cc['@mozilla.org/network/file-output-stream;1'].createInstance(Components.interfaces.nsIFileOutputStream);
 		outStream.init(this.fileManager, 0x04 | 0x08, 0766, 0);
 		this.outStream = outStream.QueryInterface(Components.interfaces.nsISeekableStream);
-		if (Preferences.get("extensions.dta.prealloc", false) && this.fileManager.fileSize != this.d.totalSize) {
+		if (Preferences.getDTA("prealloc", true) && this.fileManager.fileSize != this.d.totalSize) {
 			this.dump('trying to prealloc', this.d.firstChunk);
 			this.outStream.seek(0x00, this.d.totalSize);
 			this.outStream.setEOF();
@@ -1345,7 +1348,7 @@ dataCopyListener.prototype = {
 
 function failDownload(d, title, msg, state) {
 	try {
-	if (Preferences.get("extensions.dta.sounds.error", false)) {
+	if (Preferences.getDTA("sounds.error", false)) {
 		var DTA_sound = Components.classes["@mozilla.org/sound;1"].createInstance(Components.interfaces.nsISound);
 		var DTA_soundUri = cc['@mozilla.org/network/standard-url;1'].createInstance(Components.interfaces.nsIURI);
 		DTA_soundUri.spec = "chrome://dta/content/error.wav";
@@ -1536,7 +1539,7 @@ var Check = {
 			var d = inProgressList[i].d;
 
 			// checks for timeout
-			if ((isOpenedMessagebox == 0) && (data.getTime() - d.timeLastProgress) >= Preferences.get("extensions.dta.context.timeout", 300, true) * 1000) {
+			if ((isOpenedMessagebox == 0) && (data.getTime() - d.timeLastProgress) >= Preferences.getDTA("timeout", 300, true) * 1000) {
 				if (d.isResumable) {
 					d.setPaused();
 					d.isPaused = true;
@@ -1571,7 +1574,7 @@ var Check = {
 		Prefs.refresh();
 	
 		try {
-		if (Preferences.get("extensions.dta.sounds.done", true)) {
+		if (Preferences.getDTA("sounds.done", true)) {
 			var DTA_sound = Components.classes["@mozilla.org/sound;1"].createInstance(Components.interfaces.nsISound);
 			var DTA_soundUri = cc['@mozilla.org/network/standard-url;1'].createInstance(Components.interfaces.nsIURI);
 			DTA_soundUri.spec = "chrome://dta/content/done.wav";
@@ -1600,7 +1603,7 @@ var Check = {
 		}
 		
 		// checks for auto-disclosure of window
-		if (Preferences.get("extensions.dta.context.closedta", false) || Check.isClosing) {
+		if (Preferences.getDTA("closedta", false) || Check.isClosing) {
 			Debug.dump("checkClose(): I'm closing the window/tab");
 			clearTimeout(this.timerCheck);
 			clearTimeout(this.timerRefresh);
@@ -2133,7 +2136,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 				var tsd = d.totalSize;
 				var nsd;
 				if (Prefs.tempLocation)	{
-					var tst = d.totalSize + (Preferences.get("extensions.dta.prealloc", false) ? d.totalSize : Prefs.maxChunkSize);
+					var tst = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : Prefs.maxChunkSize);
 					nds = Prefs.tempLocation.diskSpaceAvailable
 					if (nds < tst) {
 						Debug.dump("There is not enought free space available on temporary directory, needed=" + tst + " (totalsize="+ d.totalSize +"), user=" + nds);
@@ -2141,7 +2144,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 						return;
 					}
 				}	else {
-					tsd = d.totalSize + (Preferences.get("extensions.dta.prealloc", false) ? d.totalSize : Prefs.maxChunkSize);
+					tsd = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : Prefs.maxChunkSize);
 				}
 				var realDest;
 				try {
@@ -2196,7 +2199,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 					if (Prefs.showOnlyFilenames) {
 						d.setTreeCell("url", " " + d.fileName);
 					}
-					updateIcon(d.fileName, $(d.treeID).childNodes[0].childNodes[treeCells["url"]], d.isMetaLink);
+					$(d.treeID).childNodes[0].childNodes[treeCells["url"]].setAttribute('src', d.icon);
 
 					// aggiungiamo le opzioni di renaming a destinationName
 					d.destinationName = d.buildFromMask(false, d.mask);
@@ -2576,7 +2579,7 @@ function startnewDownloads(notQueue, download) {
 	
 	sessionManager.save();
 	
-	if (Preferences.get("extensions.dta.context.closetab", false)) {
+	if (Preferences.getDTA("closetab", false)) {
 		removeTab(d.refPage.spec);
 	}
 	
@@ -2625,8 +2628,7 @@ function populateListbox(d) {
 	else
 		nomefile.setAttribute("label", " " + d.urlManager.url);
 	
-	updateIcon(d.fileName, nomefile);
-	
+	nomefile.setAttribute('src', d.icon);
 	nomefile.setAttribute("ref", "task");
 	
 	var per = document.createElement("treecell");
@@ -2928,16 +2930,17 @@ try {
 	
 	// disable all commands by default
 	var context = $("popup");
-	for (var i=0; i<context.childNodes.length; i++) {
-		var el = context.childNodes.item(i);
-		if (el.setAttribute) disableObj(el);
+	var mi = context.getElementsByTagName('menuitem');
+	for (var i = 0; i < mi.length; ++i) {
+		disableObj(mi[i]);
 	}
+
 	var context = $("tools");
 	for (var i=0; i<context.childNodes.length; i++) {
 		var el = context.childNodes.item(i);
 		if (el.setAttribute) disableObj(el);
 	}
-	$("tooladd", "tooldonate", "toolprefs").forEach(enableObj);
+	$("tooladd", "tooldonate", "toolprefs", 'misc', 'prefs').forEach(enableObj);
 	
 	if (tree.view.rowCount > 0)
 		$("removeCompleted", "selectall", "selectinv").forEach(enableObj);
@@ -3700,7 +3703,7 @@ var sessionManager = {
 				)) continue;
 			
 			var d = new downloadElement(
-				new URLManager(down),
+				new DTA_URLManager(down),
 				this.get(down, "dirsave"),
 				this.get(down, "numIstance"),
 				this.get(down, "description"),
