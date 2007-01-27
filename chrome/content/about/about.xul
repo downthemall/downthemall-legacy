@@ -20,6 +20,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ *   Federico Parodi
+ *   Stefano Verna
  *   Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -72,19 +74,19 @@
 	<groupbox orient="vertical">
 		<label value="Copyright © 2004-2007 By:" style="font-weight: bold;"/>
 		<html:ul>
-			<html:li><label value="Nils Maier" class="link" onclick="openTab('http://tn123.ath.cx/dtamod/', '_blank'); "/></html:li>
 			<html:li><label value="Federico Parodi" class="link" onclick="openTab('http://www.jimmy2k.it', '_blank'); "/></html:li>
 			<html:li><label value="Stefano Verna" class="link" onclick="openTab('http://steffoz.altervista.org/', '_blank'); "/></html:li>
+			<html:li><label value="Nils Maier" class="link" onclick="openTab('http://tn123.ath.cx/dtamod/', '_blank'); "/></html:li>
 		</html:ul>
 
-		<label style="font-weight: bold; color: red;">BEWARE: dTa! Mod is an <html:i>inofficial</html:i> release meant for testing pruposes only!</label>
+		<!--<label style="font-weight: bold; color: red;">BEWARE: dTa! Mod is an <html:i>inofficial</html:i> release meant for testing pruposes only!</label>-->
 	  <separator class="thin"/>
 	  <description>
-			<html:b>Icons and buttons</html:b> are based on the works of Mike Matas and Jakub Steiner
+			<html:b>Icons and buttons</html:b> are based on the works of Mike Matas, Jakub Steiner and Mark James
 			<html:ul>
 				<html:li>© Michael Matas</html:li>
-				<html:li>© Jakub Steiner</html:li>
-				<html:li>© Novell, Inc.</html:li>
+				<html:li>© Jakub Steiner; © Novell, Inc.</html:li>
+				<html:li>© <span class="link" onclick="openTab('http://www.famfamfam.com/lab/icons/silk/');">Mark James</span> (famfamfam silk icons)</html:li>
 			</html:ul>
 		</description>
 	  <separator class="thin"/>
@@ -112,10 +114,10 @@
 				<column flex="2" />
 			</columns>
 			<rows>
-				<row>
+				<!--<row>
 					<label value="Project" style="font-weight: bold;"/>
 					<label value="http://tn123.ath.cx/dtamod/" class="link" onclick="openTab('http://tn123.ath.cx/dtamod/', '_blank'); "/>
-				</row>
+				</row>-->
 				<row>
 					<label value="DownThemAll!" style="font-weight: bold;"/>
 					<label value="http://www.downthemall.net/" class="link" onclick="openTab('http://www.downthemall.net/', '_blank'); "/>
