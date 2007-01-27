@@ -2,21 +2,23 @@
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.mozilla.org/2004/em-rdf#">
 	<rdf:Description about="urn:mozilla:install-manifest">
 		
-		<id>dtamod@tn123.ath.cx</id>
+		<id>dta@downthemall.net</id>
 		<name>DownThemAll! Mod</name>
 		<description>The mass downloader for Firefox.</description>
-		<version>0.5</version>
-		
+		<version>1.0b1</version>
+
+		<creator>Federico Parodi</creator>
+		<creator>Stefano Verna</creator>
 		<creator>Nils Maier</creator>
-		<developer>Nils Maier</developer>
+
 		<developer>Federico Parodi</developer>
 		<developer>Stefano Verna</developer>
+		<developer>Nils Maier</developer>
 		
 		<aboutURL>chrome://dta/content/about/about.xul</aboutURL>
 		<iconURL>chrome://dta/skin/common/icon.png</iconURL>
-		<homepageURL>http://tn123.ath.cx/dtamod/</homepageURL>
+		<homepageURL>http://downthemall.net/</homepageURL>
 		<optionsURL>chrome://dta/content/preferences/newPref.xul</optionsURL>
-		<updateURL>http://tn123.ath.cx/dtamod/update.rdf</updateURL>
 		
 		<!-- Firefox -->
 		<targetApplication>
