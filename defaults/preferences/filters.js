@@ -40,25 +40,31 @@ pref("extensions.dta.filters.deffilter0.active", false);
 pref("extensions.dta.filters.deffilter0.type", 3);
 
 pref("extensions.dta.filters.deffilter1.label", "Archives (zip, rar..)");
-pref("extensions.dta.filters.deffilter1.test", "/\\.(z(ip|[0-9]{2})|r(ar|[0-9]{2})|jar|bz2|gz|tar|rpm)$/");
+pref("extensions.dta.filters.deffilter1.test", "/\\.(?:z(?:ip|[0-9]{2})|r(?:ar|[0-9]{2})|jar|bz2|gz|tar|rpm)$/");
 pref("extensions.dta.filters.deffilter1.regex", true);
 pref("extensions.dta.filters.deffilter1.active", false);
 pref("extensions.dta.filters.deffilter1.type", 1);
 
 pref("extensions.dta.filters.deffilter2.label", "Videos (mpeg, avi, wmv..)");
-pref("extensions.dta.filters.deffilter2.test", "/\\.(mpeg|rm|mpe|avi|mpg|mp4|mov|divx|asf|qt|wmv|ram|m1v|m2v|rv|vob|asx)$/");
+pref("extensions.dta.filters.deffilter2.test", "/\\.(?:mpeg|rm|mpe|avi|mpg|mp4|mov|divx|asf|qt|wmv|ram|m1v|m2v|rv|vob|asx)$/");
 pref("extensions.dta.filters.deffilter2.regex", true);
 pref("extensions.dta.filters.deffilter2.active", true);
 pref("extensions.dta.filters.deffilter2.type", 3);
 
 pref("extensions.dta.filters.deffilter3.label", "Images (gif, jpg, png..)");
-pref("extensions.dta.filters.deffilter3.test", "/\\.(jp(e?g|e|2)|gif|png|tif|tiff|bmp|ico)$/");
+pref("extensions.dta.filters.deffilter3.test", "/\\.(?:jp(?:e?g|e|2)|gif|png|tif|tiff|bmp|ico)$/");
 pref("extensions.dta.filters.deffilter3.regex", true);
 pref("extensions.dta.filters.deffilter3.active", true);
 pref("extensions.dta.filters.deffilter3.type", 3);
 
-pref("extensions.dta.filters.deffilter4.label", "JPEG");
-pref("extensions.dta.filters.deffilter4.test", "/\\.jp(e?g|e|2)$/");
+pref("extensions.dta.filters.deffilter4.label", "Software");
+pref("extensions.dta.filters.deffilter4.test", "/\\.(?:exe|msi|dmg|bin|xpi)$/");
 pref("extensions.dta.filters.deffilter4.regex", true);
-pref("extensions.dta.filters.deffilter4.active", false);
-pref("extensions.dta.filters.deffilter4.type", 3);
+pref("extensions.dta.filters.deffilter4.active", true);
+pref("extensions.dta.filters.deffilter4.type", 1);
+
+pref("extensions.dta.filters.deffilter5.label", "JPEG");
+pref("extensions.dta.filters.deffilter5.test", "/\\.jp(e?g|e|2)$/");
+pref("extensions.dta.filters.deffilter5.regex", true);
+pref("extensions.dta.filters.deffilter5.active", false);
+pref("extensions.dta.filters.deffilter5.type", 3);
