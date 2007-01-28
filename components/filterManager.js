@@ -204,14 +204,17 @@ Filter.prototype = {
 		if (!this._modified) {
 			return;
 		}
-		this.setMultiBytePref(this.pref('test'), this._test);
 		this._prefs.setBoolPref(this.pref('active'), this._active);
-		this._prefs.setIntPref(this.pref('type'), this._type);
-		this._prefs.setBoolPref(this.pref('regex'), this._isRegex);
 		
-		// save this last as FM will test for it.
-		this.setMultiBytePref(this.pref('label'), this._label);
+		// do not change defFilters
+		if (!this.defFilter) {
+			this.setMultiBytePref(this.pref('test'), this._test);
+			this._prefs.setIntPref(this.pref('type'), this._type);
+			this._prefs.setBoolPref(this.pref('regex'), this._isRegex);
 		
+			// save this last as FM will test for it.
+			this.setMultiBytePref(this.pref('label'), this._label);
+		}
 		this._modified = false;
 	},
 	
