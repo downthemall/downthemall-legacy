@@ -10,12 +10,13 @@
 	This page in your language? <a href="http://www.downthemall.net" target="_blank">Check out DownThemAll website!</a>
 </div>
 <div id="main">
-    <h2>Possible renaming masks</h2>
-    <p>Assuming as base directory "C:\Downloads\", and "http://www.mysite.com/dir1/dir2/document.doc" as the file to be downloaded, here we have a bunch of standard renaming masks and their result:</p>
-    
-    <table>
+    <h1>Possible renaming masks</h1>
+    <p>Assume a download directory <code>C:\Downloads\</code>, and a download URL <code>http://www.example.org/dir1/dir2/document.doc</code>.<br/>
+		Some possible renaming masks and results:</p>
+
+    <table class="codesample">
     <tr>
-    <td class="caption">Renaming mask</td><td class="caption">Result</td>
+			<th>Renaming mask</th><th>Result</th>
     </tr>
     <tr>
     	<td>*name*.*ext*</td><td class="des">C:\Downloads\document.doc</td>
@@ -39,13 +40,13 @@
     </tr>
 
     <tr>
-    	<td>*url*\*name*.*ext*</td><td class="des">C:\Downloads\www.mysite.com\document.doc</td>
+    	<td>*url*\*name*.*ext*</td><td class="des">C:\Downloads\www.example.org\document.doc</td>
     </tr>
     <tr>
-				<td>*url*\*subdirs*\*name*.*ext*</td><td class="des">C:\Downloads\yoursite.com\dir1\dir2\myfile.txt</td>
+				<td>*url*\*subdirs*\*name*.*ext*</td><td class="des">C:\Downloads\www.example.org\dir1\dir2\myfile.txt</td>
         </tr>
     		<tr>
-    			<td>*url*\*subdirs*-*name*.*ext*</td><td class="des">C:\Downloads\yoursite.com\dir1-dir2-myfile.txt</td>
+    			<td>*url*\*subdirs*-*name*.*ext*</td><td class="des">C:\Downloads\www.example.org\dir1-dir2-myfile.txt</td>
     		</tr>
 		</table>
 </div>

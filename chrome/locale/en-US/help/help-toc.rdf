@@ -1,25 +1,85 @@
 <?xml version="1.0"?>
+<!DOCTYPE toc SYSTEM "chrome://dta/locale/help/help.dtd">
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:nc="http://home.netscape.com/NC-rdf#">
   <Description about="urn:root">
     <nc:subheadings>
       <Seq>
         <li>
-					<Description ID="Select" nc:name="&quot;Make your selection&quot; window" nc:link="select.html"/>
+					<Description ID="Select" nc:name="&makeselection;" nc:link="select.html"/>
+				</li>
+				<li>
+					<Description ID="Batches" nc:name="&batches;" nc:link="batches.html"/>
 				</li>
         <li>
-					<Description ID="Manager" nc:name="&quot;dTa! Manager&quot; window" nc:link="manager.html"/>
+					<Description ID="Manager" nc:name="&manager;" nc:link="manager.html"/>
 				</li>
         <li>
-					<Description ID="Preferences" nc:name="&quot;Preferences&quot; window" nc:link="preferences.html"/>
+					<Description ID="Preferences" nc:name="&preferences;" nc:link="preferences.html"/>
 				</li>
         <li>
-					<Description ID="Masks" nc:name="Renaming masks" nc:link="masks.html"/>
+					<Description ID="Masks" nc:name="&masks;" nc:link="masks.html"/>
 				</li>
         <li>
-					<Description ID="OneClick" nc:name="What is &quot;dTaOneClick&quot;?" nc:link="oneclick.html"/>
+					<Description ID="FAQ" nc:name="&faq;" nc:link="faq.html"/>
+				</li>
+				<li>
+					<Description ID="About" nc:name="&about;" nc:link="about.html"/>
 				</li>
       </Seq>
     </nc:subheadings>
   </Description>
+	
+	<Description about="#Select">
+		<nc:subheadings>
+			<Seq>
+				<li>
+					<Description ID="OneClick" nc:name="&help.shortcuts;" nc:link="select.html#shortcuts"/>
+				</li>
+			</Seq>
+		</nc:subheadings>
+	</Description>	
+
+	<Description about="#Manager">
+		<nc:subheadings>
+			<Seq>
+				<li>
+					<Description ID="OneClick" nc:name="&help.shortcuts;" nc:link="manager.html#shortcuts"/>
+				</li>
+			</Seq>
+		</nc:subheadings>
+	</Description>	
+	
+	<Description about="#FAQ">
+		<nc:subheadings>
+			<Seq>
+				<li>
+					<Description ID="OneClick" nc:name="&faq.oneclick;" nc:link="faq.html#oneclick"/>
+				</li>
+				<li>
+					<Description ID="FAQ_OneClickQueue" nc:name="&faq.oneclickqueue;" nc:link="faq.html#oneclickqueue"/>
+				</li>
+				<li>
+					<Description ID="FAQ_Support" nc:name="&faq.support;" nc:link="faq.html#support"/>
+				</li>
+			</Seq>
+		</nc:subheadings>
+	</Description>
+	
+	<Description about="#About">
+		<nc:subheadings>
+			<Seq>
+				<li>
+					<Description ID="About_Copyright" nc:name="&about.copyright;" nc:link="about.html#copyright"/>
+				</li>
+				<li>
+					<Description ID="About_Privacy" nc:name="&about.privacy;" nc:link="about.html#privacy"/>
+				</li>
+				<li>
+					<Description ID="About_Contact" nc:name="&about.contact;" nc:link="about.html#contact"/>
+				</li>
+			</Seq>
+		</nc:subheadings>
+	</Description>
+	
 </RDF>
