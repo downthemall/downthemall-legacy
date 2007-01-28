@@ -50,6 +50,4 @@
 <!ENTITY infoUT.value "Link URL: ">
 <!ENTITY mmask.title "Modify Renaming Mask">
 <!ENTITY choosern.value "Choose the renaming mask for the specified link(s). It is possible to use special renaming tags or just simple text, if are modifing a single mask.">
-<!ENTITY dtahelp "Help!">
-<!ENTITY dtaEmptySearch "Not found">
 <!ENTITY examples.value "Examples:">

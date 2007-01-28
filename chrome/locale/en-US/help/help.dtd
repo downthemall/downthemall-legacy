@@ -1,0 +1,19 @@
+<!ENTITY help.title "downTHEMall! Help">
+<!ENTITY help.empty "Nothing found!">
+<!ENTITY help.shortcuts "Keyboard shortcuts">
+
+<!ENTITY makeselection "Make your selection">
+<!ENTITY batches "Batch Downloading">
+<!ENTITY manager "dTa! Manager">
+<!ENTITY preferences "Preferences">
+<!ENTITY masks "Renaming masks">
+
+<!ENTITY faq "Frequently asked questions">
+<!ENTITY faq.oneclick "What is &quot;dTaOneClick&quot;?">
+<!ENTITY faq.oneclickqueue "oneClick doesn't start downloads anymore">
+<!ENTITY faq.support "How can I contribute to the developement?">
+
+<!ENTITY about "About downTHEMall!">
+<!ENTITY about.copyright "Copyright and license">
+<!ENTITY about.privacy "Privacy Notice">
+<!ENTITY about.contact "Contacts">
