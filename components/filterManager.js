@@ -322,6 +322,19 @@ var FilterManager = {
 
 	_init: function FM_init() {
 		this._prefs = this._prefs.QueryInterface(CI.nsIPrefBranch2);
+		
+		// load those localized labels for default filters.
+		this._labels = {};
+				var b = CC['@mozilla.org/intl/stringbundle;1']
+			.getService(CI.nsIStringBundleService)
+			.createBundle("chrome://dta/locale/filters.properties");
+		var e = b.getSimpleEnumeration();
+		while (e.hasMoreElements()) {
+			var prop = e.getNext().QueryInterface(CI.nsIPropertyElement);
+			this._labels[prop.key] = prop.value;
+		}
+		
+		// register (the observer) and initialize our timer, so that we'll get a reload event.
 		this.register();
 		this._timer.initWithCallback(
 			this,
@@ -364,6 +377,10 @@ var FilterManager = {
 			try {
 				var filter = new Filter(name, this._prefs);
 				filter.load();
+				// overwrite with localized labels.
+				if (filter.id in this._labels) {
+					filter._label = this._labels[filter.id];
+				}
 				this._filters[filter.id] = filter;
 				this._count++;
 			}
