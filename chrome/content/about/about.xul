@@ -65,6 +65,7 @@
 			}
 		}
   ]]></script>
+	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 	
 	<keyset>
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
@@ -99,7 +100,7 @@
 		<separator class="thin"/>
 		<description>
 			DownThemAll! values your privacy.<html:br/>
-			See our <html:span class="link" onclick="window.openDialog('chrome://dta/content/privacy/notice.xul','_blank','chrome, centerscreen, resizable=no, dialog=yes');">Privacy notice</html:span>.
+			See our <html:span class="link" onclick="openHelp('About_Privacy','chrome://dta/locale/help/dtahelp.rdf');">Privacy notice</html:span>.
 		</description>
 
 	  <separator class="thin"/>
