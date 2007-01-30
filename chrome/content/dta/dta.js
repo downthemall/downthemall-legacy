@@ -515,17 +515,4 @@ var Dialog = {
 	}
 };
 
-// Renaming tags reference popup stuff
-var listObserver = { 
-  onDragStart: function (evt,transferData,action){
-    var txt=evt.target.getAttribute("value");
-    transferData.data=new TransferData();
-    transferData.data.addDataForFlavour("text/unicode",txt);
-  }
-};
-function appendTag(event) {
-	var text = $('renaming');
-	var s = text.inputField.selectionStart;
-	text.value = text.value.substring(0, s) + event.target.getAttribute("value") + text.value.substring(text.inputField.selectionEnd, text.value.length);
-	text.inputField.setSelectionRange(s + event.target.getAttribute("value").length, s + event.target.getAttribute("value").length);
-}
+DTA_include("chrome://dta/content/dta/maskbutton.js");

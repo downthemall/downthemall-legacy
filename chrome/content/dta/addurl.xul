@@ -30,8 +30,6 @@
 	buttonlabelextra1="&queuebutton.label;"	
 	>
 	
-	<script type="application/x-javascript" src="addurl.js"/>
-
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<!-- internalFunctions needs overlayFunctions -->
 	<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js"/>
@@ -40,6 +38,8 @@
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
 	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
+
+	<script type="application/x-javascript" src="addurl.js"/>
 	
 	<stringbundle id="strings" src="chrome://dta/locale/addurl.properties"/>
 	<stringbundle id="string" src="chrome://dta/locale/dta.properties"/>
@@ -54,16 +54,14 @@
 	</dialogheader>
 
 	<description class="header" id="descr">&descr.value;</description>
-	
-	<label>&examples.value;</label>
+
 	<hbox>
-		<vbox flex="1">
-			<label class="monospace indent">.../mygallery[A:C]/photo[001:100:2].jpg</label>
-			<label class="monospace indent">.../mygallery[1:3]/photo[01:10][3:01:-1].jpg</label>
-		</vbox>
-		<image src="chrome://dta/skin/common/help.png" oncommand="openHelp('batches','chrome://dta/locale/help/dtahelp.rdf');"/>
+		<label flex="1">&examples.value;</label>
+		<image src="chrome://dta/skin/common/help.png" onclick="openHelp('Batches','chrome://dta/locale/help/dtahelp.rdf');"/>
 	</hbox>
-	<spacer height="10px"/>
+	<label class="monospace indent">.../mygallery[A:C]/photo[001:100:2].jpg</label>
+	<label class="monospace indent">.../mygallery[1:3]/photo[01:10][3:01:-1].jpg</label>
+	<separator class="thin"/>
 	<grid onclick="event.stopPropagation();" >
 		<columns>
 			<column />
@@ -79,25 +77,23 @@
 				<textbox id="URLref" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21" />
 			</row>
 			<row align="center">
-			<label control="directory" id="destinationPath" value="&destinationPath.value;" />
-			<hbox flex="1">
-				<menulist id="directory" editable="true" flex="1" oninput="Dialog.check();" onchange="Dialog.check();">
-					<menupopup id="directoryitems" onpopuphidden="Dialog.check();">
-					</menupopup>
-				</menulist>
-				<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" image="chrome://dta/skin/common/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browsedir.tooltip;" />
-			</hbox>
-		</row>
-		<row align="center">
-			<label control="renaming" id="infoDestTitle" value="&pct.label;: " />
-			<hbox >
-				<menulist id="renaming" editable="true" flex="1" tooltiptext="&renamingm.tooltip;" oninput="Dialog.check();" onchange="Dialog.check();">
-					<menupopup id="renamingitems" onpopuphidden="Dialog.check();">
-					</menupopup>
-				</menulist>
-				<maskbutton/>
-			</hbox>
-		</row>
-	</rows>
+				<label control="directory" id="destinationPath" value="&destinationPath.value;" />
+				<hbox flex="1">
+					<menulist id="directory" editable="true" flex="1" oninput="Dialog.check();" onchange="Dialog.check();">
+						<menupopup id="directoryitems" onpopuphidden="Dialog.check();"/>
+					</menulist>
+					<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" image="chrome://dta/skin/common/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browsedir.tooltip;" />
+				</hbox>
+			</row>
+			<row align="center">
+				<label control="renaming" id="infoDestTitle" value="&pct.label;: " />
+				<hbox>
+					<menulist id="renaming" editable="true" flex="1" tooltiptext="&renamingm.tooltip;" oninput="Dialog.check();" onchange="Dialog.check();">
+						<menupopup id="renamingitems" onpopuphidden="Dialog.check();"/>
+					</menulist>
+					<maskbutton/>
+				</hbox>
+			</row>
+		</rows>
 	</grid>
 </dialog>
