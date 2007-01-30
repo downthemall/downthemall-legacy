@@ -1,13 +1,36 @@
 /* ***** BEGIN LICENSE BLOCK *****
- * Version: GPL 2.0
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
- * This code is part of DownThemAll! - dTa!
- * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- * 
- * See notice.txt and gpl.txt for details.
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
  *
- * Contributers:
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is downTHEMall.
+ *
+ * The Initial Developer of the Original Code is Nils Maier
+ * Portions created by the Initial Developer are Copyright (C) 2007
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
  *   Nils Maier <MaierMan@web.de>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
  
@@ -33,12 +56,12 @@ function downloadElement(url, num) {
 function Literal(str) {
 	this.str = str;
 }
-function NumericRange(name, start, end, step, length, strl) {
+function NumericRange(name, start, end, step, strl) {
 	this.name = name;
 	this.start = start;
 	this.end = end;
 	this.step = step;
-	this.length = length;
+	this.length = Math.floor((end - start) / step + 1);;
 	this.strl = strl;
 };
 NumericRange.prototype = {
@@ -66,12 +89,12 @@ NumericRange.prototype = {
 		return rv;
 	}
 };
-function CharRange(name, start, end, step, length) {
+function CharRange(name, start, end, step) {
 	this.name = name;
 	this.start = start;
 	this.end = end;
 	this.step = step;
-	this.length = length;
+	this.length = Math.floor((end - start) / step + 1);
 };	
 CharRange.prototype = {
 	join: function(str) {
@@ -108,29 +131,21 @@ function BatchGenerator(link) {
 			try {
 				var f = new Number(m[1]);
 				var t = new Number(m[2]);
+				var s = 1;
 				if (m.length > 3 && typeof(m[3]) != 'undefined') {
-					var s = new Number(m[3]);
+					s = new Number(m[3]);
 				}
-				else {
-					var s = 1;
-				}
-				if (!s) {
-					throw 'step invalid!';
-				}
+				this._checkRange(f, t, s);
 				if (f == t) {
 					this._pats.push(new Literal(m[1]));
 					continue;
-				}
-				if ((f > t && s > 0) || (f < t && s < 0)) {
-					throw 'negative range!';
 				}
 				var x = m[f > t ? 2 : 1];
 				var sl = x.length;
 				if (x.slice(0,1) == '-') {
 					--sl;
 				}
-				var l = Math.floor((t - f) / s + 1);
-				this._pats.push(new NumericRange(m[0], f, t, s, l, sl));
+				this._pats.push(new NumericRange(m[0], f, t, s, sl));
 			}
 			catch (ex) {
 				this._pats.push(new Literal(m[0]));
@@ -143,24 +158,16 @@ function BatchGenerator(link) {
 			try {
 				var f = m[1].charCodeAt(0);
 				var t = m[2].charCodeAt(0);
+				var s = 1;
 				if (m.length > 3 && typeof(m[3]) != 'undefined') {
 					var s = new Number(m[3]);
 				}
-				else {
-					var s = 1;
-				}
-				if (!s) {
-					throw 'step invalid!';
-				}
+				this._checkRange(f, t, s);
 				if (f == t) {
 					this._pats.push(new Literal(m[1]));
 					continue;
 				}
-				if ((f > t && s > 0) || (f < t && s < 0)) {
-					throw 'negative range!';
-				}
-				var l = Math.floor((t - f) / s + 1);
-				this._pats.push(new CharRange(m[0], f, t, s, l));
+				this._pats.push(new CharRange(m[0], f, t, s));
 			}
 			catch (ex) {
 				this._pats.push(new Literal(m[0]));
@@ -190,6 +197,14 @@ function BatchGenerator(link) {
 	}
 }
 BatchGenerator.prototype = {
+	_checkRange: function(start, end, step) {
+		if (!step) {
+			throw 'step invalid!';
+		}
+		if ((start > end && step > 0) || (start < end && step < 0)) {
+			throw 'negative range!';
+		}
+	},
 	_processRange: function(pat, a) {
 		if (!a.length) {
 			a = [''];
@@ -209,7 +224,7 @@ BatchGenerator.prototype = {
 		}
 		return rv;
 	},
-	getURLs: function(num) {
+	getURLs: function(generator) {
 		var rv = [];
 		for (var i = 0; i < this._pats.length; ++i) {
 			var pat = this._pats[i];
@@ -221,7 +236,7 @@ BatchGenerator.prototype = {
 			}
 		}
 		for (var i = 0; i < rv.length; ++i) {
-			rv[i] = new downloadElement(new DTA_URL(rv[i]), num);
+			rv[i] = generator(rv[i]);
 		}
 		return rv;
 	},
@@ -399,7 +414,7 @@ var Dialog = {
 				{}
 			);
 			if (rv == 0) {
-				batch = batch.getURLs(url, num);
+				batch = batch.getURLs(function(aURL) { return new downloadElement(new DTA_URL(aURL), num); });
 			}
 			else if (rv == 2) {
 				batch = [new downloadElement(url, num)];
@@ -435,17 +450,5 @@ var Dialog = {
 	}
 }
 
-function appendTag(event) {
-	var text = $('renaming');
-	var s = text.inputField.selectionStart;
-	text.value = text.value.substring(0, s) + event.target.getAttribute("value") + text.value.substring(text.inputField.selectionEnd, text.value.length);
-	text.inputField.setSelectionRange(s + event.target.getAttribute("value").length, s + event.target.getAttribute("value").length);
-}
-
-var listObserver = {
-  onDragStart: function (evt,transferData,action){
-    var txt=evt.target.getAttribute("value");
-    transferData.data=new TransferData();
-    transferData.data.addDataForFlavour("text/unicode", txt);
-  }
-}
+// XXX: make a real xbl binding out of this :p
+DTA_include("chrome://dta/content/dta/maskbutton.js");

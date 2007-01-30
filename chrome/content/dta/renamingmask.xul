@@ -23,9 +23,9 @@
 	buttons="accept, cancel" 
 	>
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
-	<script type="application/x-javascript" src="renamingmask.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
+	<script type="application/x-javascript" src="renamingmask.js"/>
 	
 	<stringbundle id="strings" src="chrome://dta/locale/renamingmask.properties"/>
 

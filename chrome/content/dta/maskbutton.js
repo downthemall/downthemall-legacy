@@ -33,22 +33,17 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
-var Dialog = {
-	load: function() {
-		this.result = window.arguments[0];
-		this.dd = new DTA_DropDown(
-			"renaming",
-			"renaming",
-			"renamingitems",
-			["*name*.*ext*", "*num*_*name*.*ext*", "*url*-*name*.*ext*", "*name* (*text*).*ext*", "*name* (*hh*-*mm*).*ext*"]
-		);
-	},
-	accept: function() {
-		if (this.dd.current.length) {
-			this.result.value = this.dd.current;
-		}
+function appendTag(event) {
+	var text = $('renaming');
+	var value = event.target.getAttribute("value");
+	var s = text.inputField.selectionStart;
+	text.value = text.value.substring(0, s) + value + text.value.substring(text.inputField.selectionEnd, text.value.length);
+	text.inputField.setSelectionRange(s + event.target.getAttribute("value").length, s + value);
+}
+var listObserver = {
+	onDragStart: function (evt,transferData,action){
+		var txt = evt.target.getAttribute("value");
+		transferData.data = new TransferData();
+		transferData.data.addDataForFlavour("text/unicode", txt);
 	}
 };
-
-DTA_include("chrome://dta/content/dta/maskbutton.js");
