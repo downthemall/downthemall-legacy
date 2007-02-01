@@ -41,7 +41,8 @@ li {
 }
 
 h1, h2, h3 {
-	margin-bottom: 9px;
+	padding-top: 1em;
+	margin-bottom: 1ex;
 	border-bottom: #FFE391 solid 1px;
 }
 h1 {
@@ -110,9 +111,6 @@ pre {
 	bottom: 0px;
 	left: 0px;
 	right: 0px;
-}
-
-#header, #header * {
 	font-size: smaller;
 }
 
