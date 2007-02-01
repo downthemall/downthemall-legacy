@@ -11,29 +11,32 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://browser/skin/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://dta/skin/preferences/style.css"?>
 <?xml-stylesheet href="chrome://dta-platform/skin/preferences.css"?>
 
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 
 <prefwindow id="dtaPreferences"
 			xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
-			windowtype="window:prefwindow"
+			windowtype="dta:prefwindow"
 			title="&dtaPreferences.title;" 
 			buttons="accept,cancel,extra2"
 			buttonlabelextra2="&buttonlabelextra2;"
 			ondialogextra2="if (confirm(document.getElementById('stringB').getString('restorepref'))) {restoreAll();window.close();}"
-			persist="width height screenX screenY"
+			persist="screenX screenY"
 			>
 	<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties" />
-	<prefpane id="dtapane1" image="chrome://dta/skin/preferences/mainPref32.png" label="&mainpane.label;" src="chrome://dta/content/preferences/mainPane.xul"/>
-	<prefpane id="dtapane2" image="chrome://dta/skin/preferences/filters32.png" label="&filterspane.label;" src="chrome://dta/content/preferences/filtersPane.xul" />
-	<prefpane id="dtapane3" image="chrome://dta/skin/preferences/privacy32.png" label="&privacypane.label;" src="chrome://dta/content/preferences/privaPane.xul" />
-	<prefpane id="dtapane4" image="chrome://dta/skin/preferences/visual32.png"  label="&uipane.label;" src="chrome://dta/content/preferences/interfacePane.xul" />
-	<prefpane id="dtapane5" image="chrome://dta/skin/preferences/advPref32.png" label="&advancedpane.label;" src="chrome://dta/content/preferences/advPane.xul" />
-	<script type="application/x-javascript" src="chrome://dta/content/dta/overlayFunctions.js"/>
-	<script type="application/x-javascript" src="chrome://dta/content/dta/internalFunctions.js"/>
+	
+	<prefpane id="paneMain" label="&mainpane.label;" src="chrome://dta/content/preferences/mainPane.xul"/>
+	<prefpane id="paneFilters" label="&filterspane.label;" src="chrome://dta/content/preferences/filtersPane.xul" />
+	<prefpane id="panePrivacy" label="&privacypane.label;" src="chrome://dta/content/preferences/privacyPane.xul" />
+	<prefpane id="paneInterface" label="&uipane.label;" src="chrome://dta/content/preferences/interfacePane.xul" />
+	<prefpane id="paneAdvanced" label="&advancedpane.label;" src="chrome://dta/content/preferences/advPane.xul" />
+	
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
+	<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js"/>
 	<script type="application/x-javascript" src="newPref.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
 	<script type="application/x-javascript" src="restorePref.js"/>
-	
+	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 </prefwindow>
