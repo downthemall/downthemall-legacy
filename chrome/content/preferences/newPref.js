@@ -8,97 +8,95 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-function loadTab() {
-	try {
-			var ale = Components.classes['@mozilla.org/alerts-service;1'].getService(Components.interfaces.nsIAlertsService);
-			not1 = false;
-		} catch (e) {
-			$("alert2").hidden = true;
-			not1 = true;
+if (!Cc) {
+	const Cc = Components.classes;
+}
+if (!Ci) {
+	const Ci = Components.interfaces;
+}
+
+var Main = {
+	load: function() {
+		$('alert2').hidden = 'nsIAlertsService' in Ci;
+	}
+}
+
+var Privacy = {
+	load: function PP_load() {
+		try {
+			var log = !DTA_profileFile.get('dta_log.txt').exists();
+			$("butShowLog", 'butDelLog', 'butRevealLog')
+				.forEach(function(e) { e.disabled = log; });
+			
+			var history = uneval(Preferences.getDTA("filter", ''));
+			history = !history || !history.length;
+			$("butFiltDel").disabled = history;
+				
+			history = uneval(Preferences.getDTA("directory", ''));
+			history = !history || !history.length;
+			$("butFoldDel").disabled = history;
 		}
-}
-
-function showLog() {
-	var log = DTA_profileFile.get('dta_log.txt');
-
-	if (log.exists())
-		DTA_Mediator.openTab("file://" + log.path, '_blank');
-
-}
-
-function deleteLog() {
-	var log = DTA_profileFile.get('dta_log.txt');
-
-	if (log.exists()) {
-		log.remove(false);
-		$("butShowLog").disabled=true;
-		$("butDelLog").disabled=true;
+		catch(ex) {
+			Debug.dump("privacyLoad(): ", ex);
+		}
+	},
+	delFilters: function() {
+		Preferences.resetDTA("filter");
+	},
+	delDirectories: function() {
+		Preferences.resetDTA("directory");
+	},
+	showLog: function() {
+		var log = DTA_profileFile.get('dta_log.txt');
+		if (log.exists()) {
+			DTA_Mediator.openTab("file://" + log.path);
+		}
+	},
+	revealLog: function() {
+		var log = DTA_profileFile.get('dta_log.txt')
+			.QueryInterface(Ci.nsILocalFile);
+		if (log.exists()) {
+			log.reveal();
+		}
+	},
+	deleteLog: function() {
+		var log = DTA_profileFile.get('dta_log.txt');
+		if (log.exists()) {
+			log.remove(false);
+			$("butShowLog", 'butDelLog', 'butRevealLog')
+				.forEach(function(e){ e.disabled = true; });
+		}
 	}
-}
+};
 
-function privacyLoad() {
-try {
-  var log = DTA_profileFile.get('dta_log.txt');
-	
-	if (log.exists()) {
-		$("butShowLog").disabled=false;
-		$("butDelLog").disabled=false;
-	} else {
-		$("butShowLog").disabled=true;
-		$("butDelLog").disabled=true;
+var Advanced = {
+	browse: function() {
+		// let's check and create the directory
+		var tmp = $("temp");
+		if (!tmp) {
+			return;
+		}
+		var f = new filePicker();
+		f = f.getFolder(nsPreferences.getLocalizedUnicharPref("extensions.dta.context.tempLocation", tmp.value), "");
+		if (!f) {
+			return;
+		}
+		$("temp").value = f;
+		nsPreferences.setUnicharPref("extensions.dta.context.tempLocation", f);
+		$("temp").focus();
+	},
+	toggleTemp: function() {
+		$("temp").disabled = $("browse").disabled = !$("useTemp").checked;
 	}
-	
-	var filters = Preferences.get("extensions.dta.dropdown.filter-history", "");
-	if (filters != "") $("butFiltDel").disabled=false;
-	else $("butFiltDel").disabled=true;
-		
-	var folders = Preferences.get("extensions.dta.dropdown.directory-history", "");
-	if (folders != "") $("butFoldDel").disabled=false;
-	else $("butFoldDel").disabled=true;
-} catch(e) {Debug.dump("privacyLoad(): ", e);}
-}
+};
 
-function delFilters() {
-	var filters = Preferences.get("extensions.dta.dropdown.filter-history", "");
-	if (filters != "") Preferences.removeBranch("extensions.dta.dropdown.filter-history");
-	$("butFiltDel").disabled=true;
-}
-
-function delFolders() {
-	var folders = Preferences.get("extensions.dta.dropdown.directory-history", "");
-	if (folders != "") Preferences.removeBranch("extensions.dta.dropdown.directory-history");
-	$("butFoldDel").disabled=true;
-}
-
-function loadContext(whatBox) {
-try {
-	var preference = $("dtaContext");
-	var menu =  preference.value.split(",");
-	return menu[whatBox]=="1";
-} catch(e) {Debug.dump("loadContext(): ", e); return false;}
-}
-
-function loadTool(whatBox) {
-try {
-	var preference = $("dtaTool");
-	var menu =  preference.value.split(",");
-	return menu[whatBox]=="1";
-	} catch(e) {Debug.dump("loadTool(): ", e); return false;}
-}
-
-function setContext(whatBox) {
-	
-	var preference = $("dtaContext");
-	var menu =  preference.value.split(",");
-	menu[whatBox] = $("dtacontext" + whatBox).checked?"1":"0";
-	var rv = menu[0] + "," + menu[1] + "," + menu[2];
-	return rv;
-}
-
-function setTool(whatBox) {
-var preference = $("dtaTool");
-	var menu =  preference.value.split(",");
-	menu[whatBox] = $("dtatool" + whatBox).checked?"1":"0";
-	var rv = menu[0] + "," + menu[1] + "," + menu[2];
-	return rv;
-}
+var Interface = {
+	getMenu: function(pref, which) {
+		return $(pref).value.split(',')[which] == '1';
+	},
+	setMenu: function(pref, which) {
+		var menu = $(pref).value.split(',');
+		menu[which] = $(pref + which).checked ? 1 : 0;
+		return menu.toString();
+	}
+};

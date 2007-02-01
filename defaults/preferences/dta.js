@@ -37,7 +37,6 @@ pref("extensions.dta.menu", "1,1,0");
 pref("extensions.dta.compactmenu", false);
 pref("extensions.dta.tool.menu", "1,1,1");
 pref("extensions.dta.tool.compactmenu", true);
-pref("extensions.dta.highlight", true);
 pref("extensions.dta.closetab", false);
 pref("extensions.dta.closedta", false);
 pref("extensions.dta.reduce", true);
@@ -53,6 +52,7 @@ pref("extensions.dta.removecompleted", true);
 pref("extensions.dta.removecanceled", false);
 pref("extensions.dta.removeaborted", false);
 pref("extensions.dta.infophrases", false);
+pref("extensions.dta.statistics", false); // later use!
 pref("extensions.dta.logging", false);
 pref("extensions.dta.showOnlyFilenames", true);
 pref("extensions.dta.sounds.done", true);
