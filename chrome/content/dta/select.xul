@@ -1,33 +1,38 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <!-- ***** BEGIN LICENSE BLOCK *****
  * Version: GPL 2.0
  *
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- * 
+ *
  * See notice.txt and gpl.txt for details.
  *
  * ***** END LICENSE BLOCK ***** -->
+
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
 <?xml-stylesheet href="chrome://dta/skin/select/style.css" type="text/css"?>
 
-<!DOCTYPE window SYSTEM "chrome://dta/locale/dta.dtd">
+<!DOCTYPE dialog [
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
+	%commonDTD;
+	<!ENTITY % dtaDTD SYSTEM "chrome://dta/locale/dta.dtd">
+	%dtaDTD;
+]>
 
-<window xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
-	title="&dtawindow.title;" 
-	width="625" height="500" 
+<window
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	title="&title;"
+	width="625" height="500"
 	id="selectlinks"
 	onload="Dialog.load();"
-	onunload="Dialog.unload();" 
-	persist="width height screenX screenY" 
+	onunload="Dialog.unload();"
+	persist="width height screenX screenY"
 	style="margin: 0px;"
-	>
-	
-	
+>
 	<!-- restorePref.js needs stringB = prefpanes.properties -->
 	<script type="application/x-javascript" src="chrome://dta/content/preferences/restorePref.js" />
-	
+
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
 	<!-- internalFunctions needs overlayFunctions -->
 	<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js" />
@@ -37,7 +42,7 @@
 	<script type="application/x-javascript" src="chrome://global/content/XPCNativeWrapper.js"/>
 
 	<script src="chrome://global/content/nsDragAndDrop.js"/>
-	<script src="chrome://global/content/nsTransferable.js"/> 
+	<script src="chrome://global/content/nsTransferable.js"/>
 
 	<stringbundle id="strings" src="chrome://dta/locale/dta.properties"/>
 	<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties" />
@@ -49,104 +54,93 @@
 		<key keycode="VK_RETURN" oncommand="Dialog.download(true);"/>
 		<key keycode="VK_ENTER" oncommand="Dialog.download(true);"/>
 		<key id="kHelp" modifiers="accel" key="H" oncommand="openHelp('introduction','chrome://dta/locale/help/dtahelp.rdf');"/>
-		
 	</keyset>
 
 	<popupset id="popups">
 		<popup id="popup" onpopupshowing="return Dialog.showPopup();">
 			<menuitem id="mopen" crop="center" class="menuitem-iconic" oncommand="Dialog.openSelection();"/>
 			<menuseperator/>
-			<menuitem image="chrome://dta/skin/select/check.png" class="menuitem-iconic" id="mcheck" label="&mcheck.label;" oncommand="Dialog.toggleSelection(true);" />
-			<menuitem image="chrome://dta/skin/select/uncheck.png" class="menuitem-iconic" id="muncheck" label="&muncheck.label;" oncommand="Dialog.toggleSelection(false);" />
-			<menuitem image="chrome://dta/skin/select/uncheck2.png" class="menuitem-iconic" id="muncheck" label="&mtoggle.label;" oncommand="Dialog.toggleSelection();" />
+			<menuitem image="chrome://dta/skin/select/check.png" class="menuitem-iconic" id="mcheck" label="&menu.check.label;" oncommand="Dialog.toggleSelection(true);" />
+			<menuitem image="chrome://dta/skin/select/uncheck.png" class="menuitem-iconic" id="muncheck" label="&menu.uncheck.label;" oncommand="Dialog.toggleSelection(false);" />
+			<menuitem image="chrome://dta/skin/select/uncheck2.png" class="menuitem-iconic" id="muncheck" label="&menu.toggle.label;" oncommand="Dialog.toggleSelection();" />
 			<menuseparator/>
-			<menuitem image="chrome://dta/skin/select/modrenaming.png" class="menuitem-iconic" id="modifyRenaming" label="&modifyRenaming.label;" oncommand="Dialog.editMask();" />
+			<menuitem image="chrome://dta/skin/select/modrenaming.png" class="menuitem-iconic" id="modifyRenaming" label="&mask.label;" oncommand="Dialog.editMask();" />
 		</popup>
 	</popupset>
 
-	<vbox id="frameSelection" flex="1" class="contenitore">
-				
-		<toolbox id="views">
-			<toolbar class="findfiles" >
-				<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&openlinks.label;" onclick="Dialog.changeTab('links');" />
-				<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&openpics.label;" onclick="Dialog.changeTab('images');" />
-				<spacer flex="1" id="logo"/>
-			</toolbar>
-		</toolbox>
-						
-		<tree
-			id="urlList"
-			flex="1"
-			context="popup"
-			seltype="multiple"
-			enableColumnDrag="true"
-			style="margin:0px;"
-			editable="true"
-		>
-			<treecols>
-				<treecol type="checkbox" fixed="true" editable="true" />
-				<splitter class="tree-splitter"/>
-				<treecol label="&URL.value;" flex="35" crop="right" persist="width hidden" />
-				<splitter class="tree-splitter"/>
-				<treecol label="&per.label;" flex="9" persist="width hidden" />
-				<splitter class="tree-splitter"/>
-				<treecol label="&pct.label;" flex="5" persist="width hidden"/>
-			</treecols>
-			<treechildren/>
-		</tree>
+	<toolbox id="views">
+		<toolbar class="findfiles" >
+			<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&tab.links.label;" onclick="Dialog.changeTab('links');" />
+			<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.pics.label;" onclick="Dialog.changeTab('images');" />
+			<spacer flex="1" id="logo"/>
+		</toolbar>
+	</toolbox>
 
-		<hbox autostretch="never" class="opzioni" id="saveas" >
-			<vbox flex="1">
-				<label class="titolo" id="label2" value="&label2.value;" />
-				<hbox flex="1">
-				<menulist id="directory" editable="true" flex="1">
-					<menupopup id="directoryitems">
-					</menupopup>
+	<tree
+		id="urlList"
+		flex="1"
+		context="popup"
+		seltype="multiple"
+		enableColumnDrag="true"
+		style="margin:0px;"
+		editable="true"
+		autostretch="always"
+	>
+		<treecols>
+			<treecol type="checkbox" fixed="true" editable="true" />
+			<splitter class="tree-splitter"/>
+			<treecol label="&url.value;" flex="35" crop="right" persist="width hidden" />
+			<splitter class="tree-splitter"/>
+			<treecol label="&header.desc.label;" flex="9" persist="width hidden" />
+			<splitter class="tree-splitter"/>
+			<treecol label="&mask.label;" flex="5" persist="width hidden"/>
+		</treecols>
+		<treechildren/>
+	</tree>
+
+	<hbox autostretch="never" class="opzioni" id="saveas" >
+		<groupbox flex="1" orient="horizontal">
+			<caption label="&dest.caption;" />
+			<menulist id="directory" editable="true" flex="1">
+				<menupopup id="directoryitems">
+				</menupopup>
+			</menulist>
+			<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" image="chrome://dta/skin/common/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browse.tip;" />
+		</groupbox>
+		<groupbox id="renamingbox" style="min-width: 200px" orient="horizontal">
+			<caption label="&mask.label;:" />
+			<menulist id="renaming" editable="true" flex="1" tooltiptext="&mask.tip;" >
+				<menupopup id="renamingitems"/>
+			</menulist>
+			<maskbutton/>
+		</groupbox>
+	</hbox>
+
+	<groupbox autostretch="never">
+		<caption label="&filters.caption;"/>
+		<hbox id="checkcontainer" flex="1"/>
+		<groupbox id="regexcontainer" autostrech="never" class="hidegroup">
+			<caption class="expand" id="additional" onclick="Dialog.showFilter();" tooltiptext="&additional.tip;" />
+			<hbox flex="1" id="regexbox">
+				<menulist id="filter" editable="true" flex="1" oninput="Dialog.makeSelection();" onselect="Dialog.makeSelection();">
+					<menupopup id="filteritems" onselect="Dialog.makeSelection();" oncommand="Dialog.makeSelection();"/>
 				</menulist>
-				<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" image="chrome://dta/skin/common/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browsedir.tooltip;" />
-				</hbox>
-			</vbox>
-			<vbox id="renamingbox" style="min-width: 200px" >
-				<label class="titolo" id="label3" value="&pct.label;:" />
-				<hbox flex="1">
-				<menulist id="renaming" editable="true" flex="1" tooltiptext="&renamingm.tooltip;" >
-					<menupopup id="renamingitems">
-					</menupopup>
-				</menulist>
-				<maskbutton/>
-				</hbox>
-			</vbox>
-		</hbox>
-		<hbox autostretch="never" class="opzioni" >
-			<groupbox class="hidegroup" flex="1">
-				<hbox id="head" flex="1"><label class="titolo" id="label4" value="&label4.value;"/></hbox>
-				<vbox flex="1">
-					<hbox id="checkcontainer" flex="1"></hbox>
-					<hbox style="margin: 7px 0px 3px 0px" ><label class="titolo expand" id="additional" onclick="Dialog.showFilter();" tooltiptext="&additional.tooltip;" /></hbox>
-						<vbox flex="1" id="regexbox">
-						<hbox>
-							<menulist id="filter" editable="true" flex="1" oninput="Dialog.makeSelection();" onselect="Dialog.makeSelection();"> 
-								<menupopup id="filteritems" onselect="Dialog.makeSelection();" oncommand="Dialog.makeSelection();">
-								</menupopup>
-							</menulist>
-							<checkbox id="regex" label="&regex.label;" oncommand="Dialog.makeSelection();" /> 
-						</hbox>
-					</vbox>
-				</vbox>
-			</groupbox>
-		</hbox>
-	</vbox>
-	
+				<checkbox id="regex" label="&regex.label;" oncommand="Dialog.makeSelection();" />
+			</hbox>
+		</groupbox>
+	</groupbox>
+
  	<hbox align="baseline" style="margin-top: 11px" >
 		<spacer flex="1"/>
-		<button accesskey="&startbutton.accesskey;" label="&startbutton.label;" id="startbutton" oncommand="Dialog.download(true);" default="true"/>
-		<button accesskey="&queuebutton.accesskey;" label="&queuebutton.label;" id="queuebutton" oncommand="Dialog.download(false);" />
-		<button label="&cancelbutton.label;" id="cancelbutton" oncommand="self.close();" />
+		<button accesskey="&start.key;" label="&start.label;" id="startbutton" oncommand="Dialog.download(true);" default="true"/>
+		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" oncommand="Dialog.download(false);" />
+		<button label="&cancel.label;" id="cancelbutton" oncommand="self.close();" />
 	</hbox>
+	
 	<statusbar id="footer">
 		<statusbarpanel id="status" flex="1" />
 		<statusbarpanel id="dtaHelp" class="statusbarpanel-iconic-text" label="Help!" onclick="openHelp('Select','chrome://dta/locale/help/dtahelp.rdf');" src="chrome://dta/skin/common/help.png" />
 		<statusbarpanel id="options" class="statusbarpanel-iconic-text" label="&options.label;" onclick="DTA_showPreferences();" src="chrome://dta/skin/common/prefs.png" />
-	</statusbar> 
-	
+	</statusbar>
+
 </window>

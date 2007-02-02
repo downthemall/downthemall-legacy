@@ -72,9 +72,10 @@
 			<menuseparator />
 			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" image="chrome://dta/skin/manager/pause.png" oncommand="pauseResumeReq(true);" />
 			<menuitem id="play" class="menuitem-iconic" label="&resume.label;" image="chrome://dta/skin/manager/play.png" oncommand="pauseResumeReq(false);" />
-			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/skin/manager/stop.png" oncommand="cancelPopup();" />
-			<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/trash.png" oncommand="removeFromList(-1);" />
-			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/skin/manager/trashCompleted.png" oncommand="removeCompleted();" />
+			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/skin/manager/cancel.png" oncommand="cancelPopup();" />
+			<menuseparator />
+			<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/delete.png" oncommand="removeFromList(-1);" />
+			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/skin/manager/clean.png" oncommand="removeCompleted();" />
 			<menuseparator />
 			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" image="chrome://dta/skin/manager/movetop.png" oncommand="moveTop(true);" />
 			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" image="chrome://dta/skin/manager/moveup.png" oncommand="move(-1);" />
@@ -83,7 +84,7 @@
 			<menuseparator />
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/manager/selectall.png" oncommand="selectAll();" />
 			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/manager/selectinv.png" oncommand="selectInv();" />
-			<menu id="misc" label="&misc.label;">
+			<menu id="misc" class="menu-iconic" image="chrome://dta/skin/manager/misc.png" label="&misc.label;">
 				<menupopup>
 					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/skin/manager/addpart.png" oncommand="addChunk(true);" />
 					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" image="chrome://dta/skin/manager/rempart.png" oncommand="addChunk(false);" />
@@ -114,20 +115,18 @@
 		<toolbox>
 		  <toolbar id="tools">
 			<spacer/>
-			<toolbarbutton class="toolbarbuttonDown" label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="Manually add an URL to DownThemAll" />
+			<toolbarbutton label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="Manually add an URL to DownThemAll" />
 			<spacer/>
-			<toolbarbutton class="toolbarbuttonDown" label="&resume.label;" id="toolplay" onclick="pauseResumeReq(false);" tooltiptext="Start/Resume/Restart downloads" />
-			<toolbarbutton class="toolbarbuttonDown" label="&pause.label;" id="toolpause" onclick="pauseResumeReq(true);" tooltiptext="Pause downloads" />
-			<toolbarbutton class="toolbarbuttonDown" label="&cancel.label;" id="toolcancel" onclick="cancelPopup();" tooltiptext="Cancel/Reset downloads" />
+			<toolbarbutton label="&resume.label;" id="toolplay" onclick="pauseResumeReq(false);" tooltiptext="Start/Resume/Restart downloads" />
+			<toolbarbutton label="&pause.label;" id="toolpause" onclick="pauseResumeReq(true);" tooltiptext="Pause downloads" />
+			<toolbarbutton label="&cancel.label;" id="toolcancel" onclick="cancelPopup();" tooltiptext="Cancel/Reset downloads" />
 			<spacer/>
-			<toolbarbutton class="toolbarbuttonDown" label="&movetop.label;" id="toolmovetop"  onclick="moveTop(true);" />
-			<toolbarbutton class="toolbarbuttonDown" label="&moveup.label;" id="toolmoveup" onclick="move(-1);"/>
-			<toolbarbutton class="toolbarbuttonDown" label="&movedown.label;" id="toolmovedown" onclick="move(1);"/>
-			<toolbarbutton class="toolbarbuttonDown" label="&movebottom.label;" id="toolmovebottom" onclick="moveTop(false);"  />
+			<toolbarbutton label="&movetop.label;" id="toolmovetop"  onclick="moveTop(true);" />
+			<toolbarbutton label="&moveup.label;" id="toolmoveup" onclick="move(-1);"/>
+			<toolbarbutton label="&movedown.label;" id="toolmovedown" onclick="move(1);"/>
+			<toolbarbutton label="&movebottom.label;" id="toolmovebottom" onclick="moveTop(false);"  />
 			<spacer/>
-			<toolbarbutton class="toolbarbuttonDown" label="&options.label;" id="toolprefs" onclick="DTA_showPreferences();" />
-			<spacer/>
-			<toolbarbutton class="toolbarbuttonDown" id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
+			<toolbarbutton  id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
 			<spacer id="logo" flex="1" />
 		  </toolbar>
 		</toolbox>

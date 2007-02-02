@@ -1,8 +1,8 @@
 <!ENTITY pause.label "Pause">
 <!ENTITY resume.label "Resume">
 <!ENTITY cancel.label "Cancel">
-<!ENTITY movetop.label "Move to top">
-<!ENTITY movebottom.label "Move to bottom">
+<!ENTITY movetop.label "Top">
+<!ENTITY movebottom.label "Bottom">
 <!ENTITY moveup.label "Move up">
 <!ENTITY movedown.label "Move down">
 <!ENTITY selectall.label "Select all">
@@ -11,15 +11,15 @@
 <!ENTITY infos.label "Download info">
 <!ENTITY options.label "Preferences...">
 <!ENTITY task.label "URL Task">
-<!ENTITY per.label "Percent">
+<!ENTITY per.label "Completion">
 <!ENTITY pct.label "Progress">
-<!ENTITY dim.label "Dimension">
+<!ENTITY dim.label "Size">
 <!ENTITY time.label "Est. time">
-<!ENTITY parts.label "Parts">
+<!ENTITY parts.label "Chunks">
 <!ENTITY path.label "Save path">
-<!ENTITY remove.label "Remove from list">
-<!ENTITY addchunk.label "Add chunk">
-<!ENTITY removechunk.label "Remove chunk">
+<!ENTITY remove.label "Delete">
+<!ENTITY addchunk.label "One more chunk">
+<!ENTITY removechunk.label "One less chunk">
 <!ENTITY launch.label "Open file">
 <!ENTITY tooladd.label "Add URL(s)">
 <!ENTITY tooldonate.tooltiptext "You can help us making DownThemAll even better. Consider making a small donation!">

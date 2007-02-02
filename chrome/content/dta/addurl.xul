@@ -15,19 +15,24 @@
 <?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
 <?xml-stylesheet href="chrome://dta/skin/add/style.css" type="text/css" ?>
 
-<!DOCTYPE window SYSTEM "chrome://dta/locale/dta.dtd">
+<!DOCTYPE dialog [
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
+	%commonDTD;
+	<!ENTITY % addUrlDTD SYSTEM "chrome://dta/locale/addurl.dtd">
+	%addUrlDTD;
+]>
 
-<dialog xmlns:html="http://www.w3.org/1999/xhtml" 
+<dialog
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
-	title="&addURL.title;"
+	title="&title;"
 	id="addURL" 
 	onload="sizeToContent(); Dialog.load();" 
 	persist="screenX screenY" 
 	ondialogaccept="return Dialog.download(true);"
 	ondialogextra1="return Dialog.download(false);"
 	buttons="accept, extra1, cancel"
-	buttonlabelaccept="&startbutton.label;"
-	buttonlabelextra1="&queuebutton.label;"	
+	buttonlabelaccept="&start.label;"
+	buttonlabelextra1="&queue.label;"	
 	>
 	
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
@@ -49,11 +54,11 @@
 	</keyset>
 	
 	<dialogheader id="logo">
-		<label control="URLaddress" value="&addUrlLabel.value;" />
+		<label control="URLaddress" value="&add.value;" />
 		<spacer flex="1"/>
 	</dialogheader>
 
-	<description class="header" id="descr">&descr.value;</description>
+	<description class="header" id="descr">&desc.value;</description>
 
 	<hbox>
 		<label flex="1">&examples.value;</label>
@@ -69,7 +74,7 @@
 		</columns>
 		<rows>
 			<row align="center">
-				<label control="URLaddress" id="URLaddressTitle" value="&URL.value;"/>
+				<label control="URLaddress" id="URLaddressTitle" value="&url.value;"/>
 				<textbox id="URLaddress" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21" onchange="Dialog.check();" oninput="Dialog.check();" />
 			</row>
 			<row align="center">
@@ -77,18 +82,18 @@
 				<textbox id="URLref" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21" />
 			</row>
 			<row align="center">
-				<label control="directory" id="destinationPath" value="&destinationPath.value;" />
+				<label control="directory" id="destinationPath" value="&dest.caption;" />
 				<hbox flex="1">
 					<menulist id="directory" editable="true" flex="1" oninput="Dialog.check();" onchange="Dialog.check();">
 						<menupopup id="directoryitems" onpopuphidden="Dialog.check();"/>
 					</menulist>
-					<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" image="chrome://dta/skin/common/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browsedir.tooltip;" />
+					<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" image="chrome://dta/skin/common/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browse.tip;" />
 				</hbox>
 			</row>
 			<row align="center">
-				<label control="renaming" id="infoDestTitle" value="&pct.label;: " />
+				<label control="renaming" id="infoDestTitle" value="&mask.label;: " />
 				<hbox>
-					<menulist id="renaming" editable="true" flex="1" tooltiptext="&renamingm.tooltip;" oninput="Dialog.check();" onchange="Dialog.check();">
+					<menulist id="renaming" editable="true" flex="1" tooltiptext="&mask.tip;" oninput="Dialog.check();" onchange="Dialog.check();">
 						<menupopup id="renamingitems" onpopuphidden="Dialog.check();"/>
 					</menulist>
 					<maskbutton/>

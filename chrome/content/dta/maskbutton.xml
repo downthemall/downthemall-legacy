@@ -40,7 +40,7 @@
 	overalying itself is not possible, as this will crash fx
 -->
  
-<!DOCTYPE bindings SYSTEM "chrome://dta/locale/dta.dtd">
+<!DOCTYPE bindings SYSTEM "chrome://dta/locale/mask.dtd">
  
 <xbl:bindings
 	xmlns:xbl="http://www.mozilla.org/xbl"
@@ -69,7 +69,7 @@
 							<grid flex="1">
 								<columns><column /><column flex="1"/></columns>
 								<rows>
-									<row><label class="tag" value="*refer*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&tag.tooltip;" /><label id="des14" class="desc" value="&mask.desc14;"/></row>
+									<row><label class="tag" value="*refer*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des14" class="desc" value="&mask.desc14;"/></row>
 									<row><label class="tag" value="*hh*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des6" class="desc" value="&mask.desc6;"/></row>
 									<row><label class="tag" value="*mm*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des7" class="desc" value="&mask.desc7;"/></row>
 									<row><label class="tag" value="*ss*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des8" class="desc" value="&mask.desc8;"/></row>
@@ -86,7 +86,7 @@
 				image="chrome://dta/skin/common/mask.png"
 				popup="maskPopup"
 				style="padding:4px 3px 4px 5px;"
-				tooltiptext="&openRenaming.tooltip;"
+				tooltiptext="&openmask.tip;"
 			/>
 		</xbl:content>
 	</xbl:binding>
