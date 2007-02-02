@@ -59,7 +59,7 @@
 	<popupset id="popups">
 		<popup id="popup" onpopupshowing="return Dialog.showPopup();">
 			<menuitem id="mopen" crop="center" class="menuitem-iconic" oncommand="Dialog.openSelection();"/>
-			<menuseperator/>
+			<menuseparator/>
 			<menuitem image="chrome://dta/skin/select/check.png" class="menuitem-iconic" id="mcheck" label="&menu.check.label;" oncommand="Dialog.toggleSelection(true);" />
 			<menuitem image="chrome://dta/skin/select/uncheck.png" class="menuitem-iconic" id="muncheck" label="&menu.uncheck.label;" oncommand="Dialog.toggleSelection(false);" />
 			<menuitem image="chrome://dta/skin/select/uncheck2.png" class="menuitem-iconic" id="muncheck" label="&menu.toggle.label;" oncommand="Dialog.toggleSelection();" />
