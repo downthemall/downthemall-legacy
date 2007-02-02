@@ -1,53 +1,17 @@
-<!ENTITY label0.label "Link selection">
-<!ENTITY openlinks.label "Links">
-<!ENTITY openpics.label "Pictures and Embedded">
-<!ENTITY dtawindow.title "DownThemAll! - Make your selection">
-<!ENTITY per.label "Description">
-<!ENTITY pct.label "Renaming mask">
-<!ENTITY label2.value "Save files in:">
-<!ENTITY label4.value "Inclusive filters">
+<!ENTITY title "DownThemAll! - Make your selection">
+
+<!ENTITY filters.caption "Filters">
+<!ENTITY additional.tip "Textual filter: you can set multiple textual filters at the same time using a comma.">
 <!ENTITY regex.label "Reg. Exp.">
-<!ENTITY startbutton.label "Start!">
-<!ENTITY startbutton.accesskey "s" >
-<!ENTITY queuebutton.label "Queue!">
-<!ENTITY queuebutton.accesskey "q" >
-<!ENTITY cancelbutton.label "Cancel">
+
 <!ENTITY status.label "After selecting links click on Start!">
-<!ENTITY options.label "Preferences...">
-<!ENTITY mcheck.label "Check selected items">
-<!ENTITY muncheck.label "Uncheck selected items">
-<!ENTITY mtoggle.label "Toggle check for selected items">
-<!ENTITY modifyRenaming.label "Modify renaming mask...">
-<!ENTITY additional.tooltip "Textual filter: you can set multiple textual filters at the same time using a comma.">
-<!ENTITY mask.title "Renaming Tags">
-<!ENTITY mask.desc1 "File name">
-<!ENTITY mask.desc2 "Extension">
-<!ENTITY mask.desc3 "Base URL">
-<!ENTITY mask.desc4 "Full URL">
-<!ENTITY mask.desc5 "Progressive number">
-<!ENTITY mask.desc6 "Hours">
-<!ENTITY mask.desc7 "Minutes">
-<!ENTITY mask.desc8 "Seconds">
-<!ENTITY mask.desc9 "Day">
-<!ENTITY mask.desc10 "Month">
-<!ENTITY mask.desc11 "Year">
-<!ENTITY mask.desc12 "URL subdirectories">
-<!ENTITY mask.desc13 "Link description">
-<!ENTITY mask.desc14 "Referrer URL">
-<!ENTITY mask.tip "Click or drag to renaming mask">
-<!ENTITY addURL.title "Add URL(s)">
-<!ENTITY tag.tooltip "Click or drag to renaming mask">
-<!ENTITY addUrlLabel.value "Add URL(s)">
-<!ENTITY descr.value "Enter here the URL and (optionally) the referrer page of the file you want to download. You can also use batch descriptors to download multiple files at one time.">
-<!ENTITY destinationPath.value "Destination Path: ">
-<!ENTITY browsedir.tooltip "Browse for target folder...">
-<!ENTITY renamingm.tooltip "Selected files will be saved and renamed using this mask">
-<!ENTITY openRenaming.tooltip "Renaming tags reference table">
-<!ENTITY URL.value "URL:">
-<!ENTITY referrer.value "Referrer URL:">
-<!ENTITY downinfo.title "Download Info">
-<!ENTITY info.label "Download information">
-<!ENTITY infoUT.value "Link URL: ">
-<!ENTITY mmask.title "Modify Renaming Mask">
-<!ENTITY choosern.value "Choose the renaming mask for the specified link(s). It is possible to use special renaming tags or just simple text, if are modifing a single mask.">
-<!ENTITY examples.value "Examples:">
+
+<!ENTITY menu.mask.title "Modify Renaming Mask">
+<!ENTITY menu.check.label "Check selected items">
+<!ENTITY menu.uncheck.label "Uncheck selected items">
+<!ENTITY menu.toggle.label "Toggle check for selected items">
+
+<!ENTITY tab.links.label "Links">
+<!ENTITY tab.pics.label "Pictures and Embedded">
+
+<!ENTITY header.desc.label "Description">

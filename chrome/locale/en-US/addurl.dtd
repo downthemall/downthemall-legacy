@@ -1,0 +1,4 @@
+<!ENTITY title "Add URL(s)">
+<!ENTITY add.value "Add URL(s)">
+<!ENTITY desc.value "Enter here the URL and (optionally) the referrer page of the file you want to download. You can also use batch descriptors to download multiple files at one time.">
+<!ENTITY examples.value "Examples:">

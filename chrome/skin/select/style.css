@@ -1,5 +1,9 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
+caption {
+	font-weight: bold;
+}
+
 #filter {
 	content: 'Input filter here...';
 	color: gray;
