@@ -40,67 +40,167 @@ if (!Cc) {
 if (!Ci) {
 	const Ci = Components.interfaces;
 }
- 
+
 var strbundle;
 
+/**
+ * implemtents nsITreeView
+ * manages our link trees
+ */
 function Tree(links, type) {
+
+	// type corresponding to dtaIFilterManager
 	this._type = type;
+
+	// internal list of links.
+	// better make this a real array (links parameter is usually an object)
 	this._links = [];
 	for (x in links) {
+		// step over the length prop
 		if (x == 'length') {
 			continue;
 		}
+
 		var link = links[x];
-		link.__defineGetter__('icon', function() { if (!this._icon) { this._icon = getIcon(this.url, 'metalink' in this); } return this._icon; });
+
+		//  "lazy initialize" the icons.
+		// cache them so that we don't have to lookup them again and again.
+		// but do not precompute them, as we don't know if we'll ever display them.
+		link.__defineGetter__(
+			'icon',
+			function() {
+				if (!this._icon) {
+					this._icon = getIcon(this.url, 'metalink' in this);
+				}
+				return this._icon;
+			}
+		);
+
+		// same here for description
+		link.__defineGetter__(
+			'desc',
+			function() {
+				if (!this._desc) {
+					this._desc = "";
+					if ("description" in this && this.description.length > 0) {
+						this._desc += this.description;
+					}
+					if ("ultDescription" in this && this.ultDescription.length > 0) {
+						this._desc += ((this._desc.length > 0) ? ' - ' : '') + this.ultDescription;
+					}
+				}
+				return this._desc;
+			}
+		);
+
+		// .checked will hold the correspoding 'property' string, either none, manuallySelected, or f0-f8
 		link.checked = '';
 		link.mask = null;
+
+		// place metalinks top
 		if ('metalink' in link) {
 			this._links.unshift(link);
 		} else {
 			this._links.push(link);
 		}
 	}
+
+	// atom cache. See getAtom
+	this._atoms = {};
 	this._iconic = this._as.getAtom('iconic');
 }
 Tree.prototype = {
+
+	// will use it quite often.
+	// 'properties' need to be an atom.
 	_as: Cc["@mozilla.org/atom-service;1"]
 		.getService(Ci.nsIAtomService),
-	
+
+	// get atoms, but provide caching.
+	// we have a limited set of atoms anyway, so we don't have to expect a huge cache.
+	getAtom: function(str) {
+		if (!(str in this._atoms)) {
+			this._atoms[str] = this._as.getAtom(str);
+		}
+		return this._atoms[str];
+	},
+
+	// getter only -> readonly
 	get type() {
 		return this._type;
 	},
+
+	// will invalidate the whole box and update the statusbar.
+	invalidate: function() {
+		if (this._box) {
+			// invalidate specific cell(s)
+			if (arguments && arguments.length) {
+				for (var i = 0; i < arguments.length; ++i) {
+					this._box.invalidateRow(arguments[i]);
+				}
+			}
+			// invalidate whole box
+			else {
+				this._box.invalidate();
+			}
+		}
+
+		// compute and set the checked count
+		var checked = 0;
+		this._links.forEach(function(e) { if (e.checked.length) ++checked; });
+
+		if (checked) {
+			$("status").label = strbundle.getFormattedString("selel", [checked, this.rowCount]);
+		} else {
+			$("status").label = strbundle.getString("status");
+		}
+	},
+
+	/*
+	 * actual nsITreeView follows
+	 */
 	get rowCount() {
+		// quite easy.. we have a static list.
 		return this._links.length;
 	},
+
+	// used to initialize nsITreeview and provide the corresponding treeBoxObject
 	setTree: function(box) {
 		this._box = box;
 	},
+
 	getParentIndex: function(idx) {
+		// no parents, as we are actually a list
 		return -1;
 	},
 	getLevel: function(idx) {
+		// ... and being a list all nodes are on the same level
 		return 0;
 	},
 	getCellText: function(idx, col) {
+
+		// corresponding link
 		var l = this._links[idx];
+
 		switch (col.index) {
+			// col 1 is the name
 			case 1: return l.url.usable;
-			case 2: {
-				var t = "";
-				if ("description" in l && l.description.length > 0)
-					t += l.description;
-				if ("ultDescription" in l && l.ultDescription.length > 0)
-					t += ((t.length > 0) ? ' - ' : '') + l.ultDescription;
-				return t;
-			}
+
+			// col 2 is the description
+			case 2: return l.desc;
+
+			// col 3 is the renaming mask
 			case 3: return l.mask ? l.mask : strbundle.getString('default');
 		}
 		return null;
 	},
+
 	isSorted: function() {
+		// not sorted
 		return false;
 	},
 	isContainer: function(idx) {
+		// being a container means we got children... but we don't have any children because we're a list actually
 		return false;
 	},
 	isContainerOpen: function(idx) {
@@ -109,40 +209,68 @@ Tree.prototype = {
 	isContainerEmpty: function(idx) {
 		return false;
 	},
+
 	isSeparator: function(idx) {
+		// no separators
 		return false;
-	},	
+	},
+
 	isEditable: function(idx) {
+		// and nothing is editable
 		return true;
-	},	
+	},
+
+	// will grab the "icon" for a cell.
 	getImageSrc: function(idx, col) {
+
 		var l = this._links[idx];
 		switch (col.index) {
 			case 1: return l.icon;
 		}
 		return null;
 	},
+
+	// we don't provide any progressmeters
 	getProgressMode : function(idx,column) {},
+
+	// will be called for cells other than textcells
 	getCellValue: function(idx, column) {
+		// col 0 is the checkbox
+		// didn't test the column index, as there is just one column that may call it
+		// BEWARE: other code in Dialog will call this function providing no column!
 		return this._links[idx].checked.length ? "true" : "false";
 	},
+
+	// called when a header is called.
+	// would be the place to change sort mode. But we don't have any sorting.
 	cycleHeader: function(col, elem) {},
+
+	// just some stubs we need to provide anyway to provide a full nsITreeView
 	selectionChanged: function() {},
 	cycleCell: function(idx, column) {},
 	performAction: function(action) {},
 	performActionOnRow: function(action, index, column) {},
 	performActionOnCell: function(action, index, column) {},
+	getColumnProperties: function(column, element, prop) {},
+
 	getRowProperties: function(idx, prop) {
 		var l = this._links[idx];
-		prop.AppendElement(this._as.getAtom(l.checked));
+		// AppendElement will just accept nsIAtom.
+		// no documentation on devmo, xulplanet though :p
+		prop.AppendElement(this.getAtom(l.checked));
 	},
 	getCellProperties: function(idx, column, prop) {
+		// col 1 is our url... it should display the type icon
+		// to better be able to style add a property.
 		if (column.index == 1) {
 			prop.AppendElement(this._iconic);
 		}
 	},
-	getColumnProperties: function(column, element, prop) {},
+
+	// called when the user clicks our checkboxen
 	setCellValue: function(idx, col, value) {
+
+		// set new checked state.
 		var l = this._links[idx];
 		if (value == "true") {
 			l.checked = "manuallySelected";
@@ -151,31 +279,22 @@ Tree.prototype = {
 			l.checked = '';
 			l.manuallySelected = false;
 		}
+
+		// a lil' hacky.
+		// Dialog.toggleSelection will call us with a null column
+		// makeSelection will invalidate the whole tree after it is done, so we don't have to sacrifice performance here.
+		// we still have to invalidate if it was a click by the user.
 		if (col) {
-			this.invalidate();
-		}
-	},
-	invalidate: function() {
-		if (this._box) {
-			this._box.invalidate();
-		}
-		var sel = 0;
-		for (var i = 0; i < this.rowCount; ++i) {
-			if (this._links[i].checked.length) {
-				++sel;
-			}
-		}
-		if (sel) {
-			$("status").label = strbundle.getFormattedString("selel", [sel, this.rowCount]);
-		} else {
-			$("status").label = strbundle.getString("status");
+			this.invalidate(idx);
 		}
 	}
 };
 
+// little helper dept.
+// create a downloadElement as accepted by Manager
 function downloadElement(url, dir, num, desc1, desc2, mask, refPage) {
 	this.url = url;
-	this.dirSave = dir;	
+	this.dirSave = dir;
 	this.numIstance = num;
 	this.description = desc1;
 	this.ultDescription = desc2;
@@ -183,15 +302,24 @@ function downloadElement(url, dir, num, desc1, desc2, mask, refPage) {
 	this.mask = mask;
 }
 
-
+/**
+ * Our real, kicks ass implementation of the UI
+ */
 var Dialog = {
 
+	// will be called to initialize the dialog
 	load: function DTA_load() {
+
 		strbundle = $("strings");
+
+		// no help available?
 		$("dtaHelp").hidden = !("openHelp" in window);
-		
+
+		// check if we upgraded...
+		// XXX: look for ways to make this not necessary anymore
 		versionControl();
-		
+
+		// construct or dropdowns.
 		this.ddFilter = new DTA_DropDown(
 			"filter",
 			"filter",
@@ -205,39 +333,59 @@ var Dialog = {
 			"renamingitems",
 			["*name*.*ext*", "*num*_*name*.*ext*", "*url*-*name*.*ext*", "*name* (*text*).*ext*", "*name* (*hh*-*mm*).*ext*"]
 		);
-		
+
 		try {
-			// searches links in the arguments passed by menu.xul
+			// initialize or link lists
 			var links = window.arguments[0];
 			var images = window.arguments[1];
-			
-			$("viewlinks").label = $("viewlinks").label + " ("+ links.length + ")";
-			this.links = new Tree(links, 1);
 
+			// initialize the labels
+			$("viewlinks").label = $("viewlinks").label + " ("+ links.length + ")";
 			$("viewpics").label = $("viewpics").label + " ("+ images.length + ")";
+
+			// intialize our Trees (nsITreeview)
+			// type parameter corresponds to dtaIFilter types
+			this.links = new Tree(links, 1);
 			this.images = new Tree(images, 2);
 
+			// additional filters anyone :p
 			this.showFilter(this.ddFilter.current.length);
-			
+
+			// changeTab will initialize the filters and do the selection for us
 			this.changeTab(Preferences.getDTA("seltab", 0) ? 'images': 'links');
+
 		} catch(ex) {
 			DTA_debug.dump("load():", ex);
 		}
-		
+
+		// will install our observer
+		// currently just observes dtaIFilterManager
 		this.registerObserver();
-		
+
 	},
+
+	// dialog destruction
 	unload: function DTA_unload() {
+
+		// save those filters (we can just modify 'active' props in this dialog)
 		DTA_FilterManager.save();
+
 		self.close();
 	},
-	
+
+	// checks if we can continue to process
 	check: function DTA_check() {
+
 		var f = new filePicker();
 		var dir = this.ddDirectory.current.trim();
+
+		// directory and mask set?
 		if (!dir.length || !this.ddRenaming.current.trim().length) {
+			// XXX: Error message.
 			return false;
 		}
+
+		// directory valid?
 		if (!f.createValidDestination(dir))
 		{
 			alert(strbundle.getString("alertfolder"));
@@ -247,22 +395,24 @@ var Dialog = {
 		}
 		return true;
 	},
+
+	// user decided to start the selection
 	download: function(notQueue) {
 		try {
-			Preferences.setDTA("lastWasQueued", !notQueue);
-		
+
+			// not everything correctly set. refuse to start
 			if (!this.check()) {
 				return false;
 			}
-	
+
 			var dir = this.ddDirectory.current;
 			var mask = this.ddRenaming.current;
-			var num = Preferences.getDTA("counter", 1);
-			if (++num > 999) {
-				num = 1;
+			var counter = Preferences.getDTA("counter", 1);
+			if (++counter > 999) {
+				counter = 1;
 			}
-			Preferences.setDTA("counter", num);	
-	
+
+			// build the actual array holding all selected links
 			var links = this.current._links;
 			var out = [];
 			for (var i = 0; i < links.length; ++i) {
@@ -282,31 +432,44 @@ var Dialog = {
 					)
 				);
 			}
+
+			// nothing selected. cannot start
 			if (!out.length) {
 				return false;
 			}
 
+			// actually start the crap.
 			DTA_AddingFunctions.sendToDown(notQueue, out);
-		
+
 			// save history
 			['ddDirectory', 'ddRenaming', 'ddFilter'].forEach(function (e) { Dialog[e].save(); });
-				
-			self.close();
+
+			// save the counter, queued state
+			Preferences.setDTA("counter", counter);
+			Preferences.setDTA("lastWasQueued", !notQueue);
+
+			// unload ourselves.
+			this.unload();
 			return true;
-		
+
 		} catch(ex) {
 			Debug.dump("Downloadfile:", ex);
 		}
+
+		// if we get here some error occured - just close.
 		self.close();
 		return false;
 	},
-	
+
+	// edit the mask on a per item/selection basis
 	editMask: function() {
-		
+
+		// whoops, nothing selected
 		if (!this.current.selection.count) {
 			return;
 		}
 
+		// display the renaming mask dialog
 		var mask = {value: null};
 		window.openDialog(
 			"chrome://dta/content/dta/renamingmask.xul",
@@ -314,10 +477,14 @@ var Dialog = {
 			"chrome, dialog, centerscreen, resizable=yes, dialog=no, modal, close=no",
 			mask
 		);
+
+		// user hit cancel, or some error occured
 		if (!mask.value) {
 			return;
 		}
-		var rangeCount = this.current.selection.getRangeCount();
+
+		// set the new mask for each selected item
+		const rangeCount = this.current.selection.getRangeCount();
 		var start = {}, end = {};
 		for (var r = 0; r < rangeCount; ++r) {
 			this.current.selection.getRangeAt(r, start, end);
@@ -325,14 +492,18 @@ var Dialog = {
 				this.current._links[i].mask = mask.value;
 			}
 		}
+
+		// invalidate so the new values are displayed
 		this.current.invalidate();
 	},
 
+	// will be called initially and whenever something changed
 	makeSelection: function() {
-	
+
 		var tree = this.current;
 		var type = tree.type;
-	
+
+		// see if there is an additional filter
 		var additional = this.ddFilter.current;
 		if (!additional.length) {
 			additional = null;
@@ -347,69 +518,85 @@ var Dialog = {
 		else {
 			additional = DTA_strToRegExp(additional);
 		}
-	
+
+		// will keep track of used filter-props f0-f7
 		var used = {};
 		var idx = 0;
+
 		for (var x = 0; x < tree._links.length; ++x) {
 
 			var link = tree._links[x];
-			var checked = '';
 
+			var checked = '';
 			if (link.manuallyChecked) {
 				checked = 'manuallySelected';
 			}
 			else if (link.url.usable.search(additional) != -1) {
 				checked = 'f8';
 			}
-			
-			var e = DTA_FilterManager.enumActive(type);
-			while (e.hasMoreElements()) {
-				var f = e.getNext().QueryInterface(Ci.dtaIFilter);
-				if (f.match(link.url.usable)) {
-					var i;
-					if (f.id in used) {
-						i = used[f.id];
+			else {
+				var e = DTA_FilterManager.enumActive(type);
+				while (e.hasMoreElements()) {
+					var f = e.getNext().QueryInterface(Ci.dtaIFilter);
+					if (f.match(link.url.usable)) {
+						var i;
+
+						// see if we already assigned a prop to that filter.
+						if (f.id in used) {
+							i = used[f.id];
+						}
+						else {
+							i = idx = (idx + 1) % 8;
+							used[f.id] = i;
+						}
+						checked = 'f' + i;
+						break;
 					}
-					else {
-						i = idx = (idx + 1) % 8;
-						used[f.id] = i;
-					}
-					checked = 'f' + i;
-					break;
-				}		
+				}
 			}
+
 			link.checked = checked;
 		}
+
+		// need to invalidate our tree so that it displays the selection
 		tree.invalidate();
 	},
 
+	// called whenever a filter is en/disabled
 	toggleBox: function(box) {
 
+		// whoops, somebody called us that has no filter attached
 		if (!('filter') in box) {
 			Debug.dump("toggleBox: invalid element");
 			return;
 		}
-		var c = box.checked;
-		var f = box.filter;
-		f.active = c;
-	
+
+		// set the filter enabled/disabled
+		// Note: this will NOT save the filter (to prefs)
+		box.filter.active = box.checked;
+
+		// alright, need to overthink our selection
 		this.makeSelection();
 	},
 
+	// will check/uncheck/invert the currently selected links
 	toggleSelection: function () {
-	
+
+		// modes: 1 = check, 2 = uncheck, other = invert
 		var mode = 0;
-		if (arguments.length) {
+		if (arguments && arguments.length) {
 			mode = arguments[0] ? 1 : 2;
 		}
 		var tree = this.current;
-		
+
 		var rangeCount = tree.selection.getRangeCount();
 		var start = {}, end = {}, val;
 		for (var r = 0; r < rangeCount; ++r) {
 			tree.selection.getRangeAt(r, start, end);
 			for (var i = start.value; i <= end.value; ++i) {
 				switch (mode) {
+					// calling setCellValue with a null column will prevent the box from invalidating
+					// note, that
 					case 1:
 						tree.setCellValue(i, null, 'true');
 					break;
@@ -424,20 +611,26 @@ var Dialog = {
 				}
 			}
 		}
+
+		// alright, like always our tree needs an update.
 		tree.invalidate();
 	},
 
 	changeTab: function (tab) {
-		
+		// BEWARE: Other functions will call us to reinitalize the filters/selection
+
+		// first of all: remember the currently selected/displayed tab
 		this.current = this[tab];
 		this.current.tab = tab;
-		
+
+		// ... and set it to the actual tree
 		$("urlList").view = this.current;
 
+		// ... and update the UI
 		var type = this.current.type;
 		if (type == 1) {
 			Preferences.setDTA('seltab', 0);
-			$("viewlinks").setAttribute("selected", true); 
+			$("viewlinks").setAttribute("selected", true);
 			$("viewpics").setAttribute("selected", false);
 		}
 		else {
@@ -446,11 +639,14 @@ var Dialog = {
 			$("viewpics").setAttribute("selected", true);
 		}
 
+		// clean all filterboxen
 		var box = $("checkcontainer");
 		while (box.hasChildNodes()) {
 			box.removeChild(box.lastChild);
 		}
-		var e = DTA_FilterManager.enumAll();	
+
+		// but add them again (doing so because we might have been called because dtaIFiltermanager propagated a change)
+		var e = DTA_FilterManager.enumAll();
 		while (e.hasMoreElements()) {
 			var f = e.getNext().QueryInterface(Ci.dtaIFilter);
 			if (!(f.type & type)) {
@@ -466,54 +662,71 @@ var Dialog = {
 			box.appendChild(checkbox);
 		}
 
+		// update selection
 		this.makeSelection();
 	},
+
+	// expand/collpase additional filters box.
 	showFilter: function() {
 
 		var reg = $("regexbox");
 		var add = $("additional");
-	
+
 		if (arguments.length == 0) {
-			reg.hidden = !(reg.hidden); 
+			reg.collapsed = !(reg.collapsed);
 		}
 		else {
-			reg.hidden = !(arguments[0]);
+			reg.collapsed = !(arguments[0]);
 		}
 
-		if (reg.hidden) {
-			add.setAttribute("value", strbundle.getString("additional") + "...");
-			add.setAttribute("class", "titolo expand");
+		if (reg.collapsed) {
+			add.setAttribute("label", strbundle.getString("additional") + "...");
+			add.setAttribute("class", "expand");
 		} else {
-			add.setAttribute("class", "titolo collapse");
-			add.setAttribute("value", strbundle.getString("additional") + ":");
+			add.setAttribute("label", strbundle.getString("additional") + ":");
+			add.setAttribute("class", "collapse");
 		}
 	},
+
+	// browse for a dest directory
 	browseDir: function() {
-		// let's check and create the directory
+
+		// get a new directory
 		var f = new filePicker();
 		var newDir = f.getFolder(
-			this.ddDirectory.current,
+			this.ddDirectory.current, // initialize dialog with the current directory
 			strbundle.getString("validdestination")
 		);
+		// alright, we got something new, so lets set it.
 		if (newDir) {
 			this.ddDirectory.current = newDir;
 		}
 	},
+
+	// initialized the popup
 	showPopup: function() {
+
+		var items = $('popup').getElementsByTagName('menuitem');
 		var open = $('mopen');
 		var tree = this.current;
-		if (tree.selection.count) {
-			var s = {}, e = {};
-			tree.selection.getRangeAt(0, s, e);
-			var l = tree._links[s.value];
-			open.setAttribute("image", l.icon);
-			open.setAttribute("label", l.url.url);
-			open.hidden = false;
-		} else {
-			open.hidden = true;
+
+		// do we have a selection
+		if (!tree.selection.count) {
+			// ... nope. do not display the menu.
+			return false;
 		}
+
+		var s = {}, e = {};
+		tree.selection.getRangeAt(0, s, e);
+		var l = tree._links[s.value];
+		open.setAttribute("image", l.icon);
+		open.setAttribute("label", l.url.url);
+
+		// display the popup
 		return true;
 	},
+	
+	// will open the curretly selected links in new tabs
 	openSelection: function() {
 		var tree = this.current;
 		var rangeCount = tree.selection.getRangeCount();
@@ -525,6 +738,7 @@ var Dialog = {
 			}
 		}
 	},
+	
 	// nsiSupports::QueryInterface
 	// currently we implement a weak observer
 	QueryInterface: function(iid) {
@@ -538,13 +752,13 @@ var Dialog = {
 		}
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
-		
+
 	// nsiWeakReference::QueryReferent
 	// for weak observer
 	QueryReferent: function(iid) {
 		return this;
 	},
-	
+
 	// nsiSupportsWeakReference
 	// for weak observer
 	GetWeakReference: function() {
@@ -558,7 +772,7 @@ var Dialog = {
 			// the heavy work will be performed by changeTab..
 			// it will create the filter boxen for us, and furthermore do another selection
 			this.changeTab(this.current.tab);
-		}	
+		}
 	},
 
 	// register ourselves
