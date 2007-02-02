@@ -183,6 +183,11 @@ var DTA_debug = {
 		} catch(ex) {
 			Components.utils.reportError(ex);
 		}
+	},
+	dumpObj: function(obj) {
+		for (i in obj) {
+			Components.utils.reportError(i + ": " + (obj[i] ? obj[i].toSource() : obj[i]));
+		}
 	}
 };
 
@@ -535,7 +540,7 @@ var DTA_Mediator = {
 			try {
 				ref = DTA_AddingFunctions.ios.newURI(ref, null, null);
 			} catch (ex) {
-				alert(ex);
+				DTA_debug.dump(ref, ex);
 				ref = null;
 			}
 		}
