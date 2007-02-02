@@ -361,7 +361,7 @@ var FilterManager = {
 		}
 		this._mustReload = false;
 
-		error("DTAFM: reload");		
+		//error("DTAFM: reload");		
 		this._filters = {};
 		this._count = 0;
 		
@@ -509,7 +509,7 @@ var FilterManager = {
 	
 	// nsITimerCallback
 	notify: function FM_notify() {
-		error("DTAFM: notify");
+		//error("DTAFM: notify");
 		this.reload();
 	}
 	
