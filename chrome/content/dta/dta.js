@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Nils Maier <MaierMan@web.de>
+ *	 Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -34,6 +34,13 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+if (!Cc) {
+	const Cc = Components.classes;
+}
+if (!Ci) {
+	const Ci = Components.interfaces;
+}
+ 
 var strbundle;
 
 function Tree(links, type) {
@@ -56,8 +63,8 @@ function Tree(links, type) {
 	this._iconic = this._as.getAtom('iconic');
 }
 Tree.prototype = {
-	_as: Components.classes["@mozilla.org/atom-service;1"]
-		.getService(Components.interfaces.nsIAtomService),
+	_as: Cc["@mozilla.org/atom-service;1"]
+		.getService(Ci.nsIAtomService),
 	
 	get type() {
 		return this._type;
@@ -108,24 +115,24 @@ Tree.prototype = {
 	isEditable: function(idx) {
 		return true;
 	},	
-  getImageSrc: function(idx, col) {
+	getImageSrc: function(idx, col) {
 		var l = this._links[idx];
 		switch (col.index) {
 			case 1: return l.icon;
 		}
 		return null;
 	},
-  getProgressMode : function(idx,column) {},
-  getCellValue: function(idx, column) {
+	getProgressMode : function(idx,column) {},
+	getCellValue: function(idx, column) {
 		return this._links[idx].checked.length ? "true" : "false";
 	},
-  cycleHeader: function(col, elem) {},
-  selectionChanged: function() {},
-  cycleCell: function(idx, column) {},
-  performAction: function(action) {},
+	cycleHeader: function(col, elem) {},
+	selectionChanged: function() {},
+	cycleCell: function(idx, column) {},
+	performAction: function(action) {},
 	performActionOnRow: function(action, index, column) {},
-  performActionOnCell: function(action, index, column) {},
-  getRowProperties: function(idx, prop) {
+	performActionOnCell: function(action, index, column) {},
+	getRowProperties: function(idx, prop) {
 		var l = this._links[idx];
 		prop.AppendElement(this._as.getAtom(l.checked));
 	},
@@ -134,7 +141,7 @@ Tree.prototype = {
 			prop.AppendElement(this._iconic);
 		}
 	},
-  getColumnProperties: function(column, element, prop) {},
+	getColumnProperties: function(column, element, prop) {},
 	setCellValue: function(idx, col, value) {
 		var l = this._links[idx];
 		if (value == "true") {
@@ -182,7 +189,7 @@ var Dialog = {
 	load: function DTA_load() {
 		strbundle = $("strings");
 		$("dtaHelp").hidden = !("openHelp" in window);
-	  
+		
 		versionControl();
 		
 		this.ddFilter = new DTA_DropDown(
@@ -216,6 +223,9 @@ var Dialog = {
 		} catch(ex) {
 			DTA_debug.dump("load():", ex);
 		}
+		
+		this.registerObserver();
+		
 	},
 	unload: function DTA_unload() {
 		DTA_FilterManager.save();
@@ -354,7 +364,7 @@ var Dialog = {
 			
 			var e = DTA_FilterManager.enumActive(type);
 			while (e.hasMoreElements()) {
-				var f = e.getNext().QueryInterface(Components.interfaces.dtaIFilter);
+				var f = e.getNext().QueryInterface(Ci.dtaIFilter);
 				if (f.match(link.url.usable)) {
 					var i;
 					if (f.id in used) {
@@ -420,6 +430,8 @@ var Dialog = {
 	changeTab: function (tab) {
 		
 		this.current = this[tab];
+		this.current.tab = tab;
+		
 		$("urlList").view = this.current;
 
 		var type = this.current.type;
@@ -440,7 +452,7 @@ var Dialog = {
 		}
 		var e = DTA_FilterManager.enumAll();	
 		while (e.hasMoreElements()) {
-			var f = e.getNext().QueryInterface(Components.interfaces.dtaIFilter);
+			var f = e.getNext().QueryInterface(Ci.dtaIFilter);
 			if (!(f.type & type)) {
 				continue;
 			}
@@ -512,6 +524,56 @@ var Dialog = {
 				DTA_Mediator.openTab(tree._links[i].url.url, tree._links[i].refPage);
 			}
 		}
+	},
+	// nsiSupports::QueryInterface
+	// currently we implement a weak observer
+	QueryInterface: function(iid) {
+		if (
+			iid.equals(Ci.nsISupports)
+			|| iid.equals(Ci.nsISupportsWeakReference)
+			|| iid.equals(Ci.nsIWeakReference)
+			|| iid.equals(Ci.nsiObserver)
+		) {
+			return this;
+		}
+		throw Components.results.NS_ERROR_NO_INTERFACE;
+	},
+		
+	// nsiWeakReference::QueryReferent
+	// for weak observer
+	QueryReferent: function(iid) {
+		return this;
+	},
+	
+	// nsiSupportsWeakReference
+	// for weak observer
+	GetWeakReference: function() {
+		return this;
+	},
+
+	// nsIObserver::observe
+	observe : function(subject, topic, prefName) {
+		// filterManager will throw this topic at us.
+		if (topic == 'DTA:filterschanged') {
+			// the heavy work will be performed by changeTab..
+			// it will create the filter boxen for us, and furthermore do another selection
+			this.changeTab(this.current.tab);
+		}	
+	},
+
+	// register ourselves
+	// * filterManager
+	registerObserver: function() {
+		try {
+			var os = Cc["@mozilla.org/observer-service;1"]
+				.getService(Ci.nsIObserverService);
+			os.addObserver(this, 'DTA:filterschanged', true);
+		}
+		catch (ex) {
+			Debug.dump("cannot install filterManager observer!", ex);
+			return false;
+		}
+		return true;
 	}
 };
 
