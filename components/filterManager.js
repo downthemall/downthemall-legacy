@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
-// Components.classes['@tn123.ath.cx/dtamod/filtermanager;1'].getService(Components.interfaces.dtaIFilterManager).matchActive('hallo.jpg', 1);
+
+// var fm = Components.classes['@tn123.ath.cx/dtamod/filtermanager;1'].getService(Components.interfaces.dtaIFilterManager); var id = fm.create('a', 'b', false, 1, false); fm.remove(id);
 
 const CC = Components.classes;
 const CI = Components.interfaces;
@@ -57,9 +57,9 @@ Filter.prototype = {
 
 	LINK_FILTER: (1 << 0),
 	IMAGE_FILTER: (1 << 1),
-	
+
 	_modified: false,
-	
+
 	// nsIClassInfo
 	classID: Components.ID("{3F872ADC-35A4-4c79-B771-F2BC130FB792}"),
 	contractID: "@tn123.ath.cx/dtamod/filter;1",
@@ -72,10 +72,10 @@ Filter.prototype = {
 	},
 	getInterfaces: function(count) {
 		// XXX
-		count.value = 0; 
-		return null; 
-	},	
-	
+		count.value = 0;
+		return null;
+	},
+
 	QueryInterface: function F_QI(iid) {
 		if (
 			iid.equals(CI.nsISupports)
@@ -86,17 +86,17 @@ Filter.prototype = {
 		}
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
-	
+
 	// exported
 	get id() {
 		return this._id;
 	},
-	
+
 	// exported
 	get defFilter() {
 		return this._defFilter;
 	},
-	
+
 	// exported
 	get label() {
 		return this._label;
@@ -108,12 +108,15 @@ Filter.prototype = {
 		this._label = value;
 		this._modified = true;
 	},
-	
+
 	// exported
 	get test() {
 		return this._test;
 	},
 	set test(value) {
+		if (this._defFilter) {
+			throw new Components.Exception("default filters cannot be modified!");
+		}
 		if (this._test == value) {
 			return;
 		}
@@ -127,7 +130,7 @@ Filter.prototype = {
 		}
 		this._modified = true;
 	},
-	
+
 	// exported
 	get active() {
 		return this._active;
@@ -139,12 +142,15 @@ Filter.prototype = {
 		this._active = value;
 		this._modified = true;
 	},
-	
+
 	// exported
 	get isRegex() {
 		return this._isRegex;
 	},
 	set isRegex(value) {
+		if (this._defFilter) {
+			throw new Components.Exception("default filters cannot be deleted!");
+		}
 		if (this._isRegex == value) {
 			return;
 		}
@@ -158,19 +164,22 @@ Filter.prototype = {
 		}
 		this._modified = true;
 	},
-	
+
 	// exported
 	get type() {
 		return this._type;
 	},
 	set type(t) {
+		if (this._defFilter) {
+			throw new Components.Exception("default filters cannot be modified!");
+		}
 		if (this._type == t) {
 			return;
 		}
 		this._type = t;
 		this._modified = true;
 	},
-		
+
 	_createRegex: function F_createRegex() {
 		this._regex = this._isRegex ? DTA_regToRegExp(this._test) : DTA_strToRegExp(this._test);
 	},
@@ -182,14 +191,18 @@ Filter.prototype = {
 	match: function F_match(str) {
 		return str.search(this._regex) != -1;
 	},
-	
+
 	/**
 	 * @throws Exception in case loading failed
 	 */
-	load: function F_load() {		
+	load: function F_load(localizedLabel) {
 		this._label = this.getMultiBytePref(this.pref('label'));
 		if (!this._label || !this._label.length) {
 			throw Components.Exception("Empty filter!");
+		}
+		// localize the label, but only if user didn't change it.
+		if (localizedLabel || !this._prefs.prefHasUserValue(this.pref('label'))) {
+			this._label = localizedLabel;
 		}
 		this._test = this.getMultiBytePref(this.pref('test'));
 		this._active = this._prefs.getBoolPref(this.pref('active'));
@@ -206,24 +219,33 @@ Filter.prototype = {
 			return;
 		}
 		this._prefs.setBoolPref(this.pref('active'), this._active);
-		
+
 		// do not change defFilters
 		if (!this.defFilter) {
 			this.setMultiBytePref(this.pref('test'), this._test);
 			this._prefs.setIntPref(this.pref('type'), this._type);
 			this._prefs.setBoolPref(this.pref('regex'), this._isRegex);
-		
-			// save this last as FM will test for it.
-			this.setMultiBytePref(this.pref('label'), this._label);
+
 		}
+		// save this last as FM will test for it.
+		this.setMultiBytePref(this.pref('label'), this._label);
+
 		this._modified = false;
 	},
-	
+
 	// exported
 	remove: function F_remove() {
-		this._prefs.resetBranch(this._id);
+		// BEWARE: 1.8, no implementation for resetBranch
+		if (this._defFilter) {
+			throw new Components.Exception("default filters cannot be deleted!");
+		}
+		var c = {value: 0};
+		var prefs = this._prefs.getChildList(this._id, c);
+		for (var i = 0; i < c.value; ++i) {
+			this._prefs.clearUserPref(prefs[i]);
+		}
 	},
-	
+
 	getMultiBytePref: function F_getMultiBytePref(pref) {
 		var rv = this._prefs.getComplexValue(
 			pref,
@@ -231,7 +253,7 @@ Filter.prototype = {
 		);
 		return rv.data;
 	},
-	
+
 	setMultiBytePref: function F_setMultiBytePref(pref, value) {
 		var str = CC["@mozilla.org/supports-string;1"]
 			.createInstance(CI.nsISupportsString);
@@ -240,7 +262,7 @@ Filter.prototype = {
 			pref,
 			CI.nsISupportsString,
 			str
-		);			
+		);
 	}
 };
 
@@ -260,7 +282,7 @@ function FilterEnumerator(filters) {
 			}
 			return 1;
 		}
-		var i = a.label.toLower(), ii = b.label.toLower();
+		var i = a.label.toLowerCase(), ii = b.label.toLowerCase();
 		return i < ii ? -1 : (i > ii ? 1 : 0);
 	});
 }
@@ -300,8 +322,8 @@ var FilterManager = {
 	},
 	getInterfaces: function(count) {
 		// XXX
-		count.value = 0; 
-		return null; 
+		count.value = 0;
+		return null;
 	},
 
 	implementsIID: function FM_implementID(iid) {
@@ -314,8 +336,8 @@ var FilterManager = {
 				CI.nsITimerCallback,
 				this.classID
 			].some(function(e) { return iid.equals(e); });
-	},	
-	
+	},
+
 	_done: true,
 	_mustReload: true,
 	_prefs: CC['@mozilla.org/preferences-service;1']
@@ -326,7 +348,7 @@ var FilterManager = {
 
 	_init: function FM_init() {
 		this._prefs = this._prefs.QueryInterface(CI.nsIPrefBranch2);
-		
+
 		// load those localized labels for default filters.
 		this._labels = {};
 				var b = CC['@mozilla.org/intl/stringbundle;1']
@@ -337,7 +359,7 @@ var FilterManager = {
 			var prop = e.getNext().QueryInterface(CI.nsIPropertyElement);
 			this._labels[prop.key] = prop.value;
 		}
-		
+
 		// register (the observer) and initialize our timer, so that we'll get a reload event.
 		this.register();
 		this._timer.initWithCallback(
@@ -346,12 +368,12 @@ var FilterManager = {
 			this._timer.TYPE_ONE_SHOT
 		);
 	},
-	
+
 	_delayedReload: function FM_delayedReload() {
 		this._mustReload = true;
 		this._timer.delay = 100;
 	},
-	
+
 	get count() {
 		return this._count;
 	},
@@ -362,14 +384,14 @@ var FilterManager = {
 		}
 		this._mustReload = false;
 
-		//error("DTAFM: reload");		
+		//error("DTAFM: reload");
 		this._filters = {};
 		this._count = 0;
-		
+
 		// hmmm. since we use uuids for the filters we've to enumerate the whole branch.
 		var c = {value: 0};
 		var prefs = this._prefs.getChildList('', c);
-		
+
 		for (var i = 0; i < c.value; ++i) {
 			// we test for label (as we get all the other props as well)
 			if (prefs[i].search(/\.label$/) == -1) {
@@ -377,14 +399,15 @@ var FilterManager = {
 			}
 			// cut of the label part to get the actual name
 			var name = prefs[i].slice(0, -6);
-			
+
 			try {
 				var filter = new Filter(name, this._prefs);
-				filter.load();
 				// overwrite with localized labels.
+				var localizedLabel = null;
 				if (filter.id in this._labels) {
-					filter._label = this._labels[filter.id];
+					localizedLabel = this._labels[filter.id];
 				}
+				filter.load(localizedLabel);
 				this._filters[filter.id] = filter;
 				this._count++;
 			}
@@ -392,13 +415,13 @@ var FilterManager = {
 				error("Failed to load: " + name + " / " + ex);
 			}
 		}
-	
+
 		// notify all observers
 		var observerService = CC["@mozilla.org/observer-service;1"]
 			.getService(CI.nsIObserverService);
 		observerService.notifyObservers(this, 'DTA:filterschanged', null);
 	},
-	
+
 	enumAll: function FM_enumAll() {
 		var a = [];
 		for (x in this._filters) {
@@ -415,7 +438,7 @@ var FilterManager = {
 		}
 		return new FilterEnumerator(a);
 	},
-	
+
 	getFilter: function FM_getFilter(id) {
 		if (id in this._filters) {
 			return this._filters[id];
@@ -428,16 +451,16 @@ var FilterManager = {
 		// we're a friend :p
 		return e._filters.some(function(i) { return i.match(test); });
 	},
-	
+
 	create: function FM_create(label, test, active, type, isRegex) {
-		
+
 		// we will use unique ids for user-supplied filters.
 		// no need to keep track of the actual number of filters or an index.
 		var uuid = CC["@mozilla.org/uuid-generator;1"]
 			.getService(CI.nsIUUIDGenerator)
 			.generateUUID();
-			
-		// 
+
+		//
 		var filter = new Filter(uuid.toString(), this._prefs);
 		// I'm a friend, hence I'm allowed to access private members :p
 		filter._label = label;
@@ -445,21 +468,23 @@ var FilterManager = {
 		filter._active = active;
 		filter._type = type;
 		filter._modified = true;
-		
+
 		// this might throw!
 		filter.isRegex = isRegex;
-			
+
 		// will call our observer so we re-init... no need to do more work here :p
 		filter.save();
-		
+		return filter.id;
 	},
-	
+
 	remove: function FM_remove(id) {
 		if (id in this._filters) {
 			this._filters[id].remove();
+			return;
 		}
+		throw new Components.Exception('filter not defined!');
 	},
-	
+
 	save: function FM_save() {
 		var e = this.enumAll();
 		while (e.hasMoreElements()) {
@@ -471,7 +496,7 @@ var FilterManager = {
 			}
 		}
 	},
-	
+
 		// nsiSupports
 	QueryInterface: function FM_QI(iid) {
 		if (this.implementsIID(iid)) {
@@ -479,7 +504,7 @@ var FilterManager = {
 		}
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
-		
+
 	// nsiWeakReference
 	QueryReferent: function FM_QR(iid) {
 		return this;
@@ -494,7 +519,7 @@ var FilterManager = {
 	observe : function FM_observe(subject, topic, prefName) {
 		this._delayedReload();
 	},
-	
+
 	// own stuff
 	register: function FM_register() {
 		try {
@@ -507,47 +532,47 @@ var FilterManager = {
 		}
 		return true;
 	},
-	
+
 	// nsITimerCallback
 	notify: function FM_notify() {
 		//error("DTAFM: notify");
 		this.reload();
 	}
-	
+
 };
 FilterManager._init();
 
 var Module = {
 	_firstTime: true,
-	
+
 	registerSelf: function M_registerSelf(compMgr, fileSpec, location, type) {
 		if (!this._firstTime) {
 			return;
 		}
 		this._firstTime = false;
-		
-    compMgr.QueryInterface(CI.nsIComponentRegistrar)
+
+		compMgr.QueryInterface(CI.nsIComponentRegistrar)
 			.registerFactoryLocation(
 				FilterManager.classID,
 				FilterManager.classDescription,
-				FilterManager.contractID, 
+				FilterManager.contractID,
 				fileSpec,
-				location, 
+				location,
 				type
 			);
 		CC['@mozilla.org/categorymanager;1']
 			.getService(CI.nsICategoryManager)
 			.addCategoryEntry('app-startup', FilterManager.contractID, FilterManager.contractID, true, true, null);
-  },
+	},
 	unregisterSelf: function(compMgr, fileSpec, location) {
 		compMgr.QueryInterface(CI.nsIComponentRegistrar)
 			.unregisterFactoryLocation(
 				FileManager.classID,
 				fileSpec
 			);
-    CC['@mozilla.org/categorymanager;1']
-      .getService(CI.nsICategoryManager)
-      .deleteCategoryEntry('app-startup', FileManager.contractID, true);			
+		CC['@mozilla.org/categorymanager;1']
+			.getService(CI.nsICategoryManager)
+			.deleteCategoryEntry('app-startup', FileManager.contractID, true);
 	},
 	getClassObject: function (compMgr, cid, iid) {
 		if (cid.equals(FilterManager.classID)) {
@@ -558,15 +583,15 @@ var Module = {
 	canUnload: function(compMgr) {
 		return true;
 	},
-	
+
 	// nsIFactory
-  QueryInterace : function(aIID) {
-    if (aIID.equals(CI.nsIFactory)) {
-      return this;
+	QueryInterace : function(aIID) {
+		if (aIID.equals(CI.nsIFactory)) {
+			return this;
 		}
 
-    return Components.results.NS_ERROR_NO_INTERFACE;
-  },
+		return Components.results.NS_ERROR_NO_INTERFACE;
+	},
 	createInstance: function (outer, iid) {
 		if (outer != null) {
 			throw Components.results.NS_ERROR_NO_AGGREGATION;
@@ -575,10 +600,10 @@ var Module = {
 			return FilterManager;
 		}
 		throw Components.results.NS_ERROR_INVALID_ARG;
-  }	
+	}
 }
 
 // entrypoint
 function NSGetModule(compMgr, fileSpec) {
-  return Module;
+	return Module;
 }
