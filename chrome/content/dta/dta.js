@@ -424,7 +424,7 @@ var Dialog = {
 					new downloadElement(
 						link.url,
 						dir,
-						num,
+						counter,
 						"description" in link ? link.description : "",
 						"ultDescription" in link ? link.ultDescription : "",
 						link.mask ? link.mask : mask,
