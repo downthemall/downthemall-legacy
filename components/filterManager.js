@@ -168,6 +168,7 @@ Filter.prototype = {
 			return;
 		}
 		this._type = t;
+		this._modified = true;
 	},
 		
 	_createRegex: function F_createRegex() {
