@@ -10,7 +10,7 @@
 * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 <overlay id="filterspaneoverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<prefpane id="dtapane2" label="&filterspane.label;" onpaneload="Dialog.load();">
+	<prefpane id="paneFilters" label="&filterspane.label;" onpaneload="Dialog.load();">
 		
 		<script type="application/x-javascript" src="chrome://dta/content/preferences/filtersPane.js" />
 		<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />

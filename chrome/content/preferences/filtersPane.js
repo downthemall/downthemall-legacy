@@ -101,9 +101,7 @@ var Dialog = {
 	load: function DTA_load() {
 		strbundle = $("strings");
 		$("filterTable").view = filterTree;
-		$("filterText").addEventListener("CheckboxStateChange", this.onFilterEdit, false);
-		$("filterImage").addEventListener("CheckboxStateChange", this.onFilterEdit, false);
-		$("filterIsRegex").addEventListener("CheckboxStateChange", this.onFilterEdit, false);
+		$("filterText", "filterImage", "filterIsRegex").forEach(function(a){a.addEventListener("CheckboxStateChange", Dialog.onFilterEdit, false);});
 	},
 	onTableSelectionChange: function() {
 		var idx = $("filterTable").currentIndex;
