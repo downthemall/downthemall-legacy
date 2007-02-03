@@ -17,7 +17,7 @@
 <!ENTITY time.label "Est. time">
 <!ENTITY parts.label "Chunks">
 <!ENTITY path.label "Save path">
-<!ENTITY remove.label "Delete">
+<!ENTITY remove.label "Remove">
 <!ENTITY addchunk.label "One more chunk">
 <!ENTITY removechunk.label "One less chunk">
 <!ENTITY launch.label "Open file">
