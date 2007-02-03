@@ -1,8 +1,11 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
+toolbox, toolbox * {
+	background-color: white;
+}
+
 #tools {
 	height: 43px;
-	background-color: white;
 }
 #tools toolbarbutton {
 	-moz-image-region: rect(0px,51px,25px,26px);    
