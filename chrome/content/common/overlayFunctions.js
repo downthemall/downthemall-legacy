@@ -91,6 +91,34 @@ var DTA_preferences = {
 	setDTA: function DP_setDTA(key, value) {
 		return this.set('extensions.dta.' + key, value);
 	},
+	getMultiByte: function DP_getMultiByte(key, def) {
+		try {
+			var rv = this._prefs.getComplexValue(
+				key,
+				Components.interfaces.nsISupportsString
+			);
+			return rv.data;
+		}
+		catch (ex) {
+			return def;
+		}
+	},
+	getMultiByteDTA: function DP_getMultiByteDTA(key, def) {
+		return this.getMultiByte('extensions.dta.' + key, def);
+	},
+	setMultiByte: function DP_setMultiByte(key, value) {
+		var str = CC["@mozilla.org/supports-string;1"]
+			.createInstance(Components.interfaces.nsISupportsString);
+		str.data = value;
+		this._prefs.setComplexValue(
+			key,
+			Components.interfaces.nsISupportsString,
+			str
+		);
+	},
+	setMultiByteDTA: function DP_setMultiByteDTA(key, value) {
+		this.setMultiByte('extensions.dta.' + key, value);
+	},
 	reset: function DP_reset(key) {
 		return this._pref.clearUserPref(key);
 	},
@@ -98,10 +126,16 @@ var DTA_preferences = {
 		return this.reset('extensions.dta.' + key);
 	},
 	resetBranch: function DP_resetBranch(key) {
-		return this._pref.resetBranch('extensions.dta.' + key);
+		// BEWARE: not yet implemented in XPCOM 1.8/trunk.
+		var branch = 'extensions.dta.' + key;
+		var c = {value: 0};
+		var prefs = this._prefs.getChildList(branch, c);
+		for (var i = 0; i < c.value; ++i) {
+			this.resetDTA(branch + prefs[i]);
+		}
 	},
 	resetAll: function DP_reset() {
-		this._pref.resetBranch('extensions.dta.');
+		this.resetBranch('');
 	}
 };
 
