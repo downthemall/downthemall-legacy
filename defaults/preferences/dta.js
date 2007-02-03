@@ -35,8 +35,8 @@
  * ***** END LICENSE BLOCK ***** */
 pref("extensions.dta.ctxmenu", "1,1,0");
 pref("extensions.dta.ctxcompact", false);
-pref("extensions.dta.toolmenu", "1,1,1");
-pref("extensions.dta.toolcompact", true);
+pref("extensions.dta.toolsmenu", "1,1,1");
+pref("extensions.dta.toolscompact", true);
 pref("extensions.dta.closetab", false);
 pref("extensions.dta.closedta", false);
 pref("extensions.dta.reduce", true);
