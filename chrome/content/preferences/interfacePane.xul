@@ -17,9 +17,9 @@
 			<preference id="dtaShowInDown" name="extensions.dta.downloadWin" type="bool" />
 			<preference id="dtaHideUrl" name="extensions.dta.reduce" type="bool" />
 			<preference id="dtaContextSub" name="extensions.dta.ctxcompact" type="bool" />
-			<preference id="dtaToolSub" name="extensions.dta.toolcompact" type="bool" />
+			<preference id="dtaToolSub" name="extensions.dta.toolscompact" type="bool" />
 			<preference id="dtaContext" name="extensions.dta.ctxmenu" type="string" />
-			<preference id="dtaTool" name="extensions.dta.toolmenu" type="string" />
+			<preference id="dtaTool" name="extensions.dta.toolsmenu" type="string" />
 		</preferences>
 		
 		<groupbox>
