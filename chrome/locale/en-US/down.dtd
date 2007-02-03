@@ -30,3 +30,4 @@
 <!ENTITY dtahelp "Help!">
 <!ENTITY removeCompleted.label "Remove completed tasks">
 <!ENTITY misc.label "Misc">
+<!ENTITY delete.label "Delete file">

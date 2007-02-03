@@ -274,15 +274,17 @@ Visitor.prototype = {
 		
 		if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
 			// we have to handle headers like "content-disposition: inline; filename='dummy.txt'; title='dummy.txt';"
-			var value = aValue.match(/file(name)?=(["']?)([^\2;]+)\2(;.+)?/i);
+			var value = aValue.match(/file(?:name)?=(["']?)([^\2;]+)\2(?:;.+)?/i);
 			if (!value) {
 				// workaround for bug #13959
 				// attachments on some vbulletin forums send nasty headers like "content-disposition: inline; filename*=utf-8''file.ext" 
-				value = aValue.match(/file(name)?\*=(.*)''(.+)/i);
-				this.overrideCharset = 'utf-8';
+				value = aValue.match(/file(?:name)?\*=(.*)''(.+)/i);
+				if (value) {
+					this.overrideCharset = value[1];
+				}
 			}
 			if (value) {
-				this.fileName = value[3].getUsableFileName();
+				this.fileName = value[2].getUsableFileName();
 			}
 		}
 	} catch (ex) {
@@ -2257,10 +2259,11 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 			{
 				// basic integrity check
 				if (d.partialSize > d.totalSize) {
-					Debug.dump(d.fileName + ": superato il 100%... riparto con chunk singolo");
-					d.hasToBeRedownloaded = true;
-					d.redownloadIsResumable = false;
-					d.setPaused();
+					Debug.dump(d.fileName + ": partialSize > totalSize" + "(" + d.partialSize + "/" +  d.totalSize + "/" + ( d.partialSize -  d.totalSize) + ")");
+					failDownload(d, "Size mismatch", "Actual size of " + d.partialSize + " does not match reported size of " + d.totalSize, "Size mismatch");
+					//d.hasToBeRedownloaded = true;
+					//d.redownloadIsResumable = false;
+					//d.setPaused();
 					return;
 				}
 				d.setTreeProgress("inprogress", Math.round(d.partialSize / d.totalSize * 100));
@@ -2979,7 +2982,7 @@ try {
 			$("cancel", "toolcancel").forEach(enableObj);
 			
 		if (d.isCompleted)
-			$("folder", "launch").forEach(enableObj);
+			$('folder', 'launch', 'delete').forEach(enableObj);
 
 		if ((!d.isCanceled)&&(!d.isCompleted)&&(d.declaratedChunks > 1)&&(d.isResumable))
 			enableObj($("removechunk"));
@@ -3452,6 +3455,23 @@ function openFile(event) {
 			dir.initWithPath(downloadList[lastSon].dirSave + downloadList[lastSon].destinationName);
 			dir.launch();
 		} catch (e){}
+	}
+}
+function deleteFile() {
+	var idx = $("listDownload0").currentIndex;
+	var download = downloadList[idx];
+	if (!download.isCompleted) {
+		return;
+	}
+	try {
+		var file = new FileFactory(download.dirSave + download.destinationName);
+		if (file.exists() && confirm("Sure to delete '" + file.path + "'?")) {
+			file.remove(false);
+			removeFromList(idx);
+		}
+	}
+	catch (ex) {
+		Debug.dump('deleteFile: ' + download.destinationName, ex);
 	}
 }
 
