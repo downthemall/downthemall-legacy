@@ -7,8 +7,9 @@
 #tools toolbarbutton {
 	-moz-image-region: rect(0px,51px,25px,26px);    
 	-moz-box-orient: vertical !important;
+	-moz-box-align: center !important;
 	-moz-appearance: none !important;
-  border:0px !important;
+	border: 0px hidden !important;
 	font-size: 85% !important;
 }
 #tools toolbarbutton:hover {
