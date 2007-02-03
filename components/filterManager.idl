@@ -68,7 +68,7 @@ interface dtaIFilterManager : nsISupports
 	
 	boolean matchActive(in string test, in unsigned long type);
 	
-	void create(in string label, in string test, in boolean active, in unsigned long type, in boolean regex);
+	string create(in string label, in string test, in boolean active, in unsigned long type, in boolean regex);
 	void remove(in string id);
 	
 	void save();
