@@ -627,7 +627,7 @@ DTA_DropDown.prototype = {
 	},
 	set current(value) {
 		var node = document.getElementById(this.input);
-		if (value in node) {
+		if ('value' in node) {
 			node.value = value;
 			this.save();
 		}
