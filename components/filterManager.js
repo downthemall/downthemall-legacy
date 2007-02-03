@@ -443,7 +443,7 @@ var FilterManager = {
 		if (id in this._filters) {
 			return this._filters[id];
 		}
-		return null;
+		throw new Components.Exception("invalid filter specified");
 	},
 
 	matchActive: function FM_matchActive(test, type) {
