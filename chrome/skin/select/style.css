@@ -10,7 +10,7 @@ caption {
 }
 
 toolbox, toolbox * {
-	background: white;	
+	background: white;
 }
 
 #views {
@@ -18,20 +18,19 @@ toolbox, toolbox * {
 	padding: 0;
 }
 #views toolbar {
-	border-width:0px; 
-	min-height: 43px;	
-	background: white;	
+	border-width:0px;
+	min-height: 43px;
+	background: white;
 }
 
 #views toolbarbutton, #views toolbarbutton:hover{
-  -moz-box-orient: horizontal !important;
-  -moz-appearance: none !important;
+	-moz-box-orient: horizontal !important;
+	-moz-appearance: none !important;
 
 	min-width: 120px;
 	padding-left: 8px;
 	padding-right: 8px;
-	margin-left: 5px;
-	list-style-image: url("chrome://dta/skin/select/viewbuttons.png");	
+	list-style-image: url("chrome://dta/skin/select/viewbuttons.png");
 }
 
 #views toolbarbutton[selected="true"], #views toolbarbutton[selected="true"] * {
@@ -75,13 +74,13 @@ treechildren::-moz-tree-image(iconic) {
 	padding-right: 0.5ex;
 }
 treechildren::-moz-tree-checkbox {
-  /* css for checked cells */
+	/* css for checked cells */
 	list-style-image: url("chrome://dta/skin/select/uncheck2.png");
 }
 
 treechildren::-moz-tree-checkbox(checked) {
-    /* css for checked cells */
-    list-style-image: url("chrome://dta/skin/select/check.png");
+		/* css for checked cells */
+		list-style-image: url("chrome://dta/skin/select/check.png");
 }
 
 treechildren::-moz-tree-row(manuallySelected) {
@@ -102,19 +101,19 @@ treechildren::-moz-tree-row(f1) {
 treechildren::-moz-tree-row(f1, selected) {
 	background-color: #DFFF80;
 }
-treechildren::-moz-tree-row(f2) { 
+treechildren::-moz-tree-row(f2) {
 	background-color: #ECE8FF;
 }
-treechildren::-moz-tree-row(f2, selected) { 
+treechildren::-moz-tree-row(f2, selected) {
 	background-color: #D5CCFF;
 }
-treechildren::-moz-tree-row(f3) { 
+treechildren::-moz-tree-row(f3) {
 	background-color: #DDF3FF;
 }
-treechildren::-moz-tree-row(f3, selected) { 
+treechildren::-moz-tree-row(f3, selected) {
 	background-color: #C2EAFF;
 }
-treechildren::-moz-tree-row(f4) { 
+treechildren::-moz-tree-row(f4) {
 	background-color: #FDE8FF;
 }
 treechildren::-moz-tree-row(f4, selected) {
