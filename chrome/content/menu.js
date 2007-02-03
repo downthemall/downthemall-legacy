@@ -215,8 +215,8 @@ var DTA_ContextOverlay = {
 	},
 	
 	onHideContext : function() {try {
-		var menu = DTA_preferences.getDTA("menu", "1,1,0").split(",");
-		var context = DTA_preferences.getDTA("compactmenu", false);
+		var menu = DTA_preferences.getDTA("ctxmenu", "1,1,0").split(",");
+		var context = DTA_preferences.getDTA("ctxcompact", false);
 		document.getElementById("dta-help-tool").hidden = !("openHelp" in window);
 		document.getElementById("dta-context-menu").hidden = !context;
 		document.getElementById("context-dta-pref").hidden = !(parseInt(menu[2]) && !context);
@@ -279,8 +279,8 @@ var DTA_ContextOverlay = {
 	},
 	
 	onHideTool : function() {try {
-		var menuTool = DTA_preferences.getDTA("menu", "1,1,1").split(",");
-		var contextTool = DTA_preferences.getDTA("compactmenu", true); // checks if  the user wants a submenu
+		var menuTool = DTA_preferences.getDTA("toolsmenu", "1,1,1").split(",");
+		var contextTool = DTA_preferences.getDTA("toolscompact", true); // checks if  the user wants a submenu
 		document.getElementById("dta-tool").hidden = !(parseInt(menuTool[0]) && (!contextTool));
 		document.getElementById("turbo-tool").hidden = !(parseInt(menuTool[1]) && (!contextTool));
 		document.getElementById("dta-manager-tool").hidden = !(parseInt(menuTool[2]) && (!contextTool));

@@ -33,10 +33,10 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-pref("extensions.dta.menu", "1,1,0");
-pref("extensions.dta.compactmenu", false);
-pref("extensions.dta.tool.menu", "1,1,1");
-pref("extensions.dta.tool.compactmenu", true);
+pref("extensions.dta.ctxmenu", "1,1,0");
+pref("extensions.dta.ctxcompact", false);
+pref("extensions.dta.toolmenu", "1,1,1");
+pref("extensions.dta.toolcompact", true);
 pref("extensions.dta.closetab", false);
 pref("extensions.dta.closedta", false);
 pref("extensions.dta.reduce", true);
