@@ -4,14 +4,14 @@
  *
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- * 
+ *
  * See notice.txt and gpl.txt for details.
  *
  * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<prefpane id="paneMain" label="&mainpane.label;" onpaneload="versionControl(); Main.load();">
-		
+
 		<preferences>
 		  <preference id="dtaexisting" name="extensions.dta.existing" type="int"/>
 		  <preference id="dtantask" name="extensions.dta.ntask" type="int"/>
@@ -40,7 +40,7 @@
 				</grid>
 			</radiogroup>
 		</groupbox>
-		
+
 		<groupbox>
 			<caption label="&mainpane.downloads.caption;"/>
 
@@ -60,14 +60,14 @@
 						<menuitem label="10" value="10"/>
 					</menupopup>
 				</menulist>
-			</hbox>	
-			
+			</hbox>
+
 			<separator class="thin"/>
 
 			<checkbox label="&mainpane.sounderror.label;" preference="dtaerror"/>
 			<checkbox label="&mainpane.closetab.label;" preference="dtaclosetab"/>
 		</groupbox>
-		
+
 		<groupbox>
 			<caption label="&mainpane.alert.caption;" />
 			<radiogroup preference="dtaalert">
@@ -76,10 +76,10 @@
 					<rows>
 						<row>
 							<radio id="alert1" label="&mainpane.alertboxes.label;" value="0" />
-							<radio id="alert2" label="&mainpane.alertslides.label;" value="1" />
+							<radio id="alert3" label="&mainpane.alertnone.label;" value="2" />
 						</row>
 						<row>
-							<radio id="alert3" label="&mainpane.alertnone.label;" value="2" />
+							<radio id="alert2" label="&mainpane.alertslides.label;" value="1" />
 						</row>
 					</rows>
 				</grid>

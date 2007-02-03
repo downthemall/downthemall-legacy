@@ -17,7 +17,7 @@ if (!Ci) {
 
 var Main = {
 	load: function() {
-		$('alert2').hidden = 'nsIAlertsService' in Ci;
+		$('alert2').hidden = !('nsIAlertsService' in Ci);
 	}
 }
 
