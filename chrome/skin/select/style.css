@@ -9,10 +9,13 @@ caption {
 	color: gray;
 }
 
+toolbox, toolbox * {
+	background: white;	
+}
+
 #views {
 	margin: 0;
 	padding: 0;
-	background: white;	
 }
 #views toolbar {
 	border-width:0px; 
@@ -31,7 +34,7 @@ caption {
 	list-style-image: url("chrome://dta/skin/select/viewbuttons.png");	
 }
 
-#views toolbarbutton[selected="true"] {
+#views toolbarbutton[selected="true"], #views toolbarbutton[selected="true"] * {
 	font-weight: bold;
 	background-color: #eef;
 }
