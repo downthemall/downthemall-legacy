@@ -13,6 +13,7 @@
 <?xml-stylesheet href="chrome://browser/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://dta/skin/preferences/style.css"?>
 <?xml-stylesheet href="chrome://dta-platform/skin/preferences.css"?>
+<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
 
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 

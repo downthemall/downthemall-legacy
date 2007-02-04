@@ -53,7 +53,7 @@ function DTA_showPreferences() {
 	window.openDialog(
 		'chrome://dta/content/preferences/newPref.xul',
 		'dtaPrefs',
-		'chrome,titlebar,toolbar,centerscreen'
+		'chrome,titlebar,toolbar,centerscreen,close'
 	);
 }
  
