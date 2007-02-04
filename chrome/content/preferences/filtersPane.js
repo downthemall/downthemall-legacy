@@ -116,13 +116,13 @@ var Dialog = {
 		$("filterTable").view = filterTree;
 		filterTree.reloadFilters();
 		
-		$("filterText", "filterImage", "filterIsRegex").forEach(function(a){a.addEventListener("CheckboxStateChange", Dialog.onFilterEdit, false);});
+		$("filterText", "filterImage").forEach(function(a){a.addEventListener("CheckboxStateChange", Dialog.onFilterEdit, false);});
 	},
 	onTableSelectionChange: function() {
 		var idx = $("filterTable").view.selection.currentIndex;
 		
 		if (idx==-1) {
-			$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex").forEach(function(a){a.disabled=true});
+			$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex", "removebutton").forEach(function(a){a.disabled=true});
 			$("filterLabel", "filterTest").forEach(function(a){a.value=""});
 			$("filterText", "filterImage", "filterIsRegex").forEach(function(a){a.checked=false});
 			return;
@@ -136,14 +136,20 @@ var Dialog = {
 		$("filterText").checked = currentFilter.type & 1;
 		$("filterImage").checked = currentFilter.type & 2;
 		
-		$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex").forEach(function(a){a.disabled=currentFilter.defFilter});
+		$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex", "removebutton").forEach(function(a){a.disabled=currentFilter.defFilter});
+	},
+	onIsRegexClick: function() {
+		var test = $("filterTest").value;
+		if ($("filterIsRegex").checked) {
+			if (test[0]!='/') test='/'+test;
+			if (test[test.length-1]!='/') test=test+'/';
+		} else {
+			test = test.trim().replace(/^\/|\/$/gi, "");
+		}
+		$("filterTest").value = test;
+		this.onFilterEdit();
 	},
 	onFilterEdit: function(evt) {
-		
-		if (evt.type == "" && evt.currentTarget==("filterIsRegex")) {
-			Debug.dump("eccoci");
-		}
-		
 		var idx = $("filterTable").view.selection.currentIndex;
 		var currentFilter = filterTree.getFilter(idx);
 		
@@ -151,19 +157,19 @@ var Dialog = {
 			return;
 		}
 
+		$("filterIsRegex").checked = $("filterTest").value.match(/^\/.+\/$/);
+
 		if (
 			$("filterLabel").value!=currentFilter.label 
 			||
 			$("filterTest").value!=currentFilter.test
-			||
-			currentFilter.isRegex!=$("filterIsRegex").checked
 			||
 			currentFilter.type!= ($("filterText").checked?1:0) + ($("filterImage").checked?2:0)
 			)
 		{
 			currentFilter.label = $("filterLabel").value;
 			currentFilter.test = $("filterTest").value;
-			currentFilter.isRegex = $("filterIsRegex").checked;
+			currentFilter.isRegex = $("filterTest").value.match(/^\/.+\/$/);
 			currentFilter.type = ($("filterText").checked?1:0) + ($("filterImage").checked?2:0);
 			currentFilter.save();
 			filterTree.reloadFilters();
