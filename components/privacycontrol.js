@@ -130,7 +130,7 @@ privacycontrol.prototype = {
       .getService(Components.interfaces.nsIPrefService)
       .getBranch('extensions.dta.');
 
-		['directory', 'filter'].forEach(function(e) { prefs.clearUserPref(e); });
+		['directory', 'filter', 'renaming'].forEach(function(e) { prefs.clearUserPref(e); });
   },
 
   sanitize: function() {
