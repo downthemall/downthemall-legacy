@@ -358,7 +358,7 @@ var DTA_ContextOverlay = {
 		document.getElementById("turbo-tool-popup").hidden = !parseInt(menuTool[1]);
 		document.getElementById("dta-manager-tool-popup").hidden = !parseInt(menuTool[2]);
 	} catch(ex) {
-		alert("DTAHideTool(): ", ex);
+		alert("DTAHideTool(): " + ex);
 	}
 	},
 	
