@@ -113,7 +113,9 @@ pre {
 	right: 0px;
 	font-size: smaller;
 }
-
+#header * {
+	font-size: 100%;
+}
 #main {
 	margin: 0;
 	padding: 15px;

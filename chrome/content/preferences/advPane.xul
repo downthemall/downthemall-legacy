@@ -11,7 +11,14 @@
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<prefpane id="paneAdvanced" label="&advancedpane.label;" onpaneload="versionControl();" orient="vertical">
+	<prefpane
+		id="paneAdvanced"
+		label="&advancedpane.label;"
+		onpaneload="versionControl();"
+		orient="vertical"
+		helpURI="chrome://dta/locale/help/dtahelp.rdf"
+		helpTopic="Preferences_Advanced"		
+	>
 	
 		<preferences>
 			<preference id="dtamaxchunks" name="extensions.dta.maxchunks" type="int" />

@@ -67,6 +67,7 @@
 <!ENTITY advancedpane.usetemp.label "Save download chunks in a temporary directory">
 <!ENTITY advancedpane.tempdir.label "Use this directory:">
 <!ENTITY advancedpane.prealloc.caption "Disk Space Pre-allocation">
+<!ENTITY advancedpane.useprealloc.label "Enable Disk Space Pre-allocation">
 
 <!ENTITY uipane.label "Interface">
 <!ENTITY uipane.appearance.caption "Appearance">

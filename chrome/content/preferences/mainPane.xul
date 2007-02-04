@@ -10,7 +10,13 @@
  * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<prefpane id="paneMain" label="&mainpane.label;" onpaneload="versionControl(); Main.load();">
+	<prefpane
+		id="paneMain"
+		label="&mainpane.label;"
+		onpaneload="versionControl(); Main.load();"
+		helpURI="chrome://dta/locale/help/dtahelp.rdf"
+		helpTopic="Preferences_Main"
+	>
 
 		<preferences>
 		  <preference id="dtaexisting" name="extensions.dta.existing" type="int"/>
@@ -72,8 +78,8 @@
 			<caption label="&mainpane.alert.caption;" />
 			<radiogroup preference="dtaalert">
 				<radio id="alert1" label="&mainpane.alertboxes.label;" value="0" />
-				<radio id="alert3" label="&mainpane.alertnone.label;" value="2" />
 				<radio id="alert2" label="&mainpane.alertslides.label;" value="1" />
+				<radio id="alert3" label="&mainpane.alertnone.label;" value="2" />
 			</radiogroup>
 
 			<separator class="groove-thin"/>

@@ -5,8 +5,14 @@
 <!ENTITY makeselection "Make your selection">
 <!ENTITY batches "Batch Downloading">
 <!ENTITY manager "dTa! Manager">
-<!ENTITY preferences "Preferences">
 <!ENTITY masks "Renaming masks">
+
+<!ENTITY preferences "Preferences">
+<!ENTITY preferences.main "Main panel">
+<!ENTITY preferences.filters "Filters panel">
+<!ENTITY preferences.privacy "Privacy Panel">
+<!ENTITY preferences.ui "User Interface panel">
+<!ENTITY preferences.advanced "Advanced panel">
 
 <!ENTITY faq "Frequently asked questions">
 <!ENTITY faq.oneclick "What is &quot;dTaOneClick&quot;?">
