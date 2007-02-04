@@ -14,6 +14,19 @@
 // DTA context overlay
 var DTA_ContextOverlay = {
 
+	_str: Components.classes['@mozilla.org/intl/stringbundle;1']
+		.getService(Components.interfaces.nsIStringBundleService)
+		.createBundle('chrome://dta/locale/menu.properties'),
+	
+	getString: function(n) {
+		try {
+			return this._str.GetStringFromName(n);
+		} catch (ex) {
+			DTA_debug.dump("locale error: " + n, ex);
+			return '<error>';
+		}
+	},
+	
 	trim : function(t) {
 		return t.replace(/^[ \t_]+|[ \t_]+$/gi, "").replace(/(_){2,}/g, "_");
 	},
@@ -207,75 +220,130 @@ var DTA_ContextOverlay = {
 			if (!o.ctx || !o.menu) {
 				return;
 			}
-			o.ctx.addEventListener("popupshowing", this.onHideContext, false);
+			o.ctx.addEventListener("popupshowing", function (evt) { DTA_ContextOverlay.onContextShowing(evt); }, false);
 			o.menu.addEventListener("popupshowing", this.onHideTool, false);
+
+			// prepare ctx object
+			// order is important!			
+			this.ctx = {};
+			['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'SaveT', 'Save', 'SepFront'].forEach(
+				function (e) {
+					DTA_ContextOverlay.ctx[e] = document.getElementById('dtaCtx' + e);
+				}
+			);
+			this.ctxBase = document.getElementById('dtaCtxCompact');
+			this.ctxMenu = document.getElementById('dtaCtxSubmenu');
+			
 		} catch (ex) {
 			DTA_debug.dump("DCO::init()", ex);
 		}
 	},
 	
-	onHideContext : function() {try {
-		var menu = DTA_preferences.getDTA("ctxmenu", "1,1,0").split(",");
-		var context = DTA_preferences.getDTA("ctxcompact", false);
-		document.getElementById("dta-help-tool").hidden = !("openHelp" in window);
-		document.getElementById("dta-context-menu").hidden = !context;
-		document.getElementById("context-dta-pref").hidden = !(parseInt(menu[2]) && !context);
-		document.getElementById("submenu-dta-pref").hidden = !(parseInt(menu[2]) && context);
-		document.getElementById("dta-separator").hidden = !(parseInt(menu[2]) && context);
-		
-		var cm = gContextMenu;
-		if (cm && (cm.onLink || cm.onImage) && document.commandDispatcher.focusedWindow.getSelection().isCollapsed) {
-			DTA_ContextOverlay.showSingleLinkItems(cm.onImage && !cm.onLink);
-		} else {
-			DTA_ContextOverlay.showMultipleLinkItems(!document.commandDispatcher.focusedWindow.getSelection().isCollapsed);
+	onContextShowing : function(evt) {
+		try {
+			
+			if (evt && evt.target && evt.target.id != 'contentAreaContextMenu') {
+				return;
+			}
+			
+			// get settings
+			var menu = DTA_preferences.getDTA("ctxmenu", "1,1,0")
+				.split(",").map(function(e){return parseInt(e);});
+			var compact = DTA_preferences.getDTA("ctxcompact", false);
+			
+			// all hidden...
+			if (menu.indexOf(1) == -1) {
+				for (var i in this.ctx) {
+					this.ctx[i].hidden = true;
+				}
+				this.ctxBase.hidden = true;
+				return;
+			}
+			
+			// setup menu items
+			// show will hold those that will be shown
+			var show = [];
+			
+			// hovering an image or link
+			if (gContextMenu && (gContextMenu.onLink || gContextMenu.onImage)) {
+				if (menu[0]) {
+					show.push('Save');
+				}
+				if (menu[1]) {
+					show.push('SaveT');
+				}
+				this.ctx.Save.label = this.getString('dtasave' + (gContextMenu.onLink ? 'link' : 'image'));
+				this.ctx.SaveT.label = this.getString('turbosave' + (gContextMenu.onLink ? 'link' : 'image'));
+			}
+			// regular
+			else {
+				if (menu[0]) {
+					show.push('DTA');
+				}
+				if (menu[1]) {
+					show.push('TDTA');
+				}
+				var sel = document.commandDispatcher.focusedWindow.getSelection();
+				sel = sel && !sel.isCollapsed;
+				this.ctx.DTA.label = this.getString('dta' + (sel ? 'selection' : 'regular'));
+				this.ctx.TDTA.label = this.getString('turbo' + (sel ? 'selection' : 'regular'));
+			}
+			
+			// prefs
+			if (menu[2]) {
+				show.push('Pref');
+				if (compact) {
+					show.push('SepPref');
+				} else {
+					show.push('SepBack');
+					show.push('SepFront');
+				}
+			}
+			
+			// general setup
+			var base = document.getElementById('context-sep-selectall');
+			if (compact) {
+				this.ctxBase.hidden = false;
+				base.parentNode.insertBefore(this.ctxBase, base);
+			} else {
+				this.ctxBase.hidden = true;
+			}
+			
+			// show the items.
+			for (var i in this.ctx) {
+				var cur = this.ctx[i];
+				cur.hidden = show.indexOf(i) == -1;
+				if (cur.hidden) {
+					continue;
+				}
+				if (compact) {
+					this.ctxMenu.insertBefore(cur, this.ctxMenu.firstChild);
+				} else {
+					base.parentNode.insertBefore(cur, base);
+					base = cur;
+				}
+			}
+			
+			// add separators
+			if (!compact) {
+				var node = this.ctx.SepFront.previousSibling;
+				while (node && node.hidden) {
+					node = node.previousSibling;
+				}
+				if (node && node.nodeName == 'menuseparator') {
+					this.ctx.SepFront.hidden = true;
+				}
+				node = this.ctx.SepBack.nextSibling;
+				while (node && node.hidden) {
+					node = node.nextSibling;
+				}
+				if (node && node.nodeName == 'menuseparator') {
+					this.ctx.SepBack.hidden = true;
+				}			
+			}
+		} catch(ex) {
+			DTA_debug.dump("DTAHide(): ", ex);
 		}
-	} catch(e) {
-		alert("DTAHide(): " + e);
-	}
-	},
-	
-	showSingleLinkItems : function(onImage) {
-	
-		if (onImage) {
-			document.getElementById("context-dta-savelink").label = document.getElementById("submenu-dta-savelink").label = "Save image with dTa on...";
-			document.getElementById("context-dta-savelinkt").label = document.getElementById("submenu-dta-savelinkt").label = "Start image with DtaOneClick!";
-		} else {
-			document.getElementById("context-dta-savelink").label = document.getElementById("submenu-dta-savelink").label = "Save link with dTa on...";
-			document.getElementById("context-dta-savelinkt").label = document.getElementById("submenu-dta-savelinkt").label = "Start link with DtaOneClick!";
-		}
-		
-		var menu = DTA_preferences.getDTA("menu", "1,1,0").split(",");
-		var context = DTA_preferences.getDTA("compactmenu", false);
-		document.getElementById("context-dta").hidden = true;
-		document.getElementById("submenu-dta").hidden = true;
-		document.getElementById("context-tdta").hidden = true;
-		document.getElementById("submenu-tdta").hidden = true;
-		document.getElementById("context-dta-savelink").hidden = !(parseInt(menu[0]) && !context);
-		document.getElementById("submenu-dta-savelink").hidden = !(parseInt(menu[0]) && context);
-		document.getElementById("context-dta-savelinkt").hidden = !(parseInt(menu[1]) && !context);
-		document.getElementById("submenu-dta-savelinkt").hidden = !(parseInt(menu[1]) && context);
-	}, 
-	
-	showMultipleLinkItems : function (onSelection) {
-	
-		if (onSelection) {
-			document.getElementById("context-dta").label = document.getElementById("submenu-dta").label = "DownThemAll! selection...";
-			document.getElementById("context-tdta").label = document.getElementById("submenu-tdta").label = "DtaOneClick selection!";
-		} else {
-			document.getElementById("context-dta").label = document.getElementById("submenu-dta").label = "DownThemAll!...";
-			document.getElementById("context-tdta").label = document.getElementById("submenu-tdta").label = "DtaOneClick!";
-		}
-		
-		var menu = DTA_preferences.getDTA("menu", "1,1,0").split(",");
-		var context = DTA_preferences.getDTA("compactmenu", false);
-		document.getElementById("context-dta-savelink").hidden = true;
-		document.getElementById("submenu-dta-savelink").hidden = true;
-		document.getElementById("context-dta-savelinkt").hidden = true;
-		document.getElementById("submenu-dta-savelinkt").hidden = true;
-		document.getElementById("context-dta").hidden = !(parseInt(menu[0]) && !context);
-		document.getElementById("submenu-dta").hidden = !(parseInt(menu[0]) && context);
-		document.getElementById("context-tdta").hidden = !(parseInt(menu[1]) && !context);
-		document.getElementById("submenu-tdta").hidden = !(parseInt(menu[1]) && context);
 	},
 	
 	onHideTool : function() {try {
