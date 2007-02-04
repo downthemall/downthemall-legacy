@@ -1,9 +1,6 @@
-<!ENTITY savelinkt.label "Start link with dTaOneClick!">
-<!ENTITY savelink.label "Save link with dTa on...">
-<!ENTITY error1.label "No link or picture found!">
-<!ENTITY error2.label "The selected link is not a downloadable file.">
-<!ENTITY context-dta-pref.label "dTa preferences...">
-<!ENTITY submenu-dta-pref.label "Preferences...">
+<!ENTITY dtaCtxPref.label "downTHEMall! preferences">
+
 <!ENTITY about "About...">
+<!ENTITY submenu-dta-pref.label "Preferences...">
 <!ENTITY dta-manager-button "dTa! Manager">
 <!ENTITY dta-help-tool.label "Help...">
