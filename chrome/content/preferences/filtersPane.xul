@@ -59,7 +59,7 @@
 					<spacer flex="1"/>
 					<button label="&add.label;" oncommand="Dialog.createFilter();"/>
 					<button label="&remove.label;" oncommand="Dialog.removeFilter();" id="removebutton"/>
-					<button label="&default.label;" oncommand="resetFilters();" id="defaultbutton"/>
+					<button label="&default.label;" oncommand="Dialog.restoreDefaultFilters();" id="defaultbutton"/>
 					<spacer flex="1"/>
 				 </hbox>
 			</vbox>
