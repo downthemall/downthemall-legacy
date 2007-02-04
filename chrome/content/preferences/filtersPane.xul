@@ -43,7 +43,7 @@
 							<row id="filterRow" align="center">
 								<label value="&filter.label;"/>
 								<textbox id="filterTest" onchange="Dialog.onFilterEdit();" oninput="Dialog.onFilterEdit();" onblur="Dialog.onFilterEdit();"/>
-								<checkbox id="filterIsRegex" label="&regex.label;" oncommand="makeRegex();"/>
+								<checkbox id="filterIsRegex" label="&regex.label;" oncommand="Dialog.onIsRegexClick();"/>
 							</row>
 							<row align="center">
 								<label id="useAs" value="&useAs.label;"/> 
