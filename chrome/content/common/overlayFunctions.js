@@ -52,8 +52,8 @@ var DTA_FilterManager = Components.classes['@tn123.ath.cx/dtamod/filtermanager;1
 function DTA_showPreferences() {
 	window.openDialog(
 		'chrome://dta/content/preferences/newPref.xul',
-		'_blank',
-		'chrome, titlebar=yes, toolbar=yes, close=yes, centerscreen=yes, resizable=yes, dialog=no, dependent=no, modal=no'
+		'dtaPrefs',
+		'chrome,titlebar,toolbar,centerscreen'
 	);
 }
  
