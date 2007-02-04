@@ -14,6 +14,24 @@
 var strbundle;
 
 var filterTree = {
+	reloadFilters: function() {
+		try {
+			var n = [];
+			var e = DTA_FilterManager.enumAll();
+			while (e.hasMoreElements()) {
+				n.push(e.getNext().QueryInterface(Components.interfaces.dtaIFilter).id);
+			}
+			var index = $("filterTable").view.selection.currentIndex;
+			if (index != -1 && n[index] != this._filterIDs[index]) {
+				$("filterTable").view.selection.select(n.indexOf(this._filterIDs[index]));
+			}
+			this._filterIDs = n;
+			this.invalidate();
+			Dialog.onTableSelectionChange();
+		} catch(e) {
+			Debug.dump("reloadFilters(): ", e);
+		}
+	},
 	get rowCount() {
 		return DTA_FilterManager.count;
 	},
@@ -27,15 +45,10 @@ var filterTree = {
 		return 0;
 	},
 	getFilter: function(idx) {
-		var e = DTA_FilterManager.enumAll();
-		var i=0;
-		while (e.hasMoreElements()) {
-			if (idx==i) 
-				return e.getNext().QueryInterface(Components.interfaces.dtaIFilter);
-			e.getNext();
-			i++;
+		if (idx==-1) {
+			throw new Components.Exception("invalid index specified: " + idx);
 		}
-		return null;
+		return DTA_FilterManager.getFilter(this._filterIDs[idx]);
 	},
 	getCellText: function(idx, col) {
 		switch (col.index) {
@@ -90,9 +103,7 @@ var filterTree = {
 		return;
 	},
 	invalidate: function() {
-		if (this._box) {
-			this._box.invalidate();
-		}
+		this._box.invalidate();
 	}
 };
 
@@ -100,92 +111,82 @@ var filterTree = {
 var Dialog = {
 	load: function DTA_load() {
 		strbundle = $("strings");
+
+		// load the filters for the first time
 		$("filterTable").view = filterTree;
+		filterTree.reloadFilters();
+		
 		$("filterText", "filterImage", "filterIsRegex").forEach(function(a){a.addEventListener("CheckboxStateChange", Dialog.onFilterEdit, false);});
 	},
 	onTableSelectionChange: function() {
-		var idx = $("filterTable").currentIndex;
+		var idx = $("filterTable").view.selection.currentIndex;
+		
+		if (idx==-1) {
+			$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex").forEach(function(a){a.disabled=true});
+			$("filterLabel", "filterTest").forEach(function(a){a.value=""});
+			$("filterText", "filterImage", "filterIsRegex").forEach(function(a){a.checked=false});
+			return;
+		}
+		
 		var currentFilter = filterTree.getFilter(idx);
+
 		$("filterLabel").value = currentFilter.label;
 		$("filterTest").value = currentFilter.test;
 		$("filterIsRegex").checked = currentFilter.isRegex;
 		$("filterText").checked = currentFilter.type & 1;
 		$("filterImage").checked = currentFilter.type & 2;
+		
+		$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex").forEach(function(a){a.disabled=currentFilter.defFilter});
 	},
-	onFilterEdit: function() {
-		var idx = $("filterTable").currentIndex;
+	onFilterEdit: function(evt) {
+		
+		if (evt.type == "" && evt.currentTarget==("filterIsRegex")) {
+			Debug.dump("eccoci");
+		}
+		
+		var idx = $("filterTable").view.selection.currentIndex;
 		var currentFilter = filterTree.getFilter(idx);
-		currentFilter.label = $("filterLabel").value;
-		currentFilter.test = $("filterTest").value;
-		currentFilter.isRegex = $("filterIsRegex").checked;
-		currentFilter.type = ($("filterText").checked?1:0) + ($("filterImage").checked?2:0);
-		currentFilter.save();
-		$("filterTable").view = filterTree;
+		
+		if (idx==-1 || currentFilter.defFilter) {
+			return;
+		}
+
+		if (
+			$("filterLabel").value!=currentFilter.label 
+			||
+			$("filterTest").value!=currentFilter.test
+			||
+			currentFilter.isRegex!=$("filterIsRegex").checked
+			||
+			currentFilter.type!= ($("filterText").checked?1:0) + ($("filterImage").checked?2:0)
+			)
+		{
+			currentFilter.label = $("filterLabel").value;
+			currentFilter.test = $("filterTest").value;
+			currentFilter.isRegex = $("filterIsRegex").checked;
+			currentFilter.type = ($("filterText").checked?1:0) + ($("filterImage").checked?2:0);
+			currentFilter.save();
+			filterTree.reloadFilters();
+		}
+	},
+	createFilter: function() {
+		DTA_FilterManager.create(
+			strbundle.getString("newfilt"), 
+			strbundle.getString("inserthere"),
+			false,
+			1,
+			false
+		);
+		filterTree.reloadFilters();
+	},
+	removeFilter: function() {
+		var idx = $("filterTable").view.selection.currentIndex;
+		
+		if (idx==-1) return;
+		if (filterTree.getFilter(idx).defFilter) return;
+		
+		var currentFilter = filterTree.getFilter(idx).remove();
+		filterTree.reloadFilters();
+		$("filterTable").view.selection.clearSelection();
 	}
 };
-
-
-// Crea il set delle 4 preferenze che caratterizzano un filtro e lo aggiunge allo xul (con crea vero, crea un nuovo filtro, con falso carica il primo filtro disponibile)
-
-function addFilterPreference(i, preferenceIndex) { 
-	
-}
-
-// aggiunge l'elemento all'albero e lo seleziona
-function addItemToList(i) { 
-	
-} 
-
-// crea un nuovo filtro da zero: senza parametri assegna quelli di default
-function addNewFilter(filterName,filterDefinition,isChecked,isLink,isImage) {
-
-}
-
-// quando seleziono un elemento del tree, aggiorno i text e checkbox con i dati relativi al filtro selezionato
-function changeSelection() {
-
-}
-
-// imposta i valori specificati (o in assenza quelli di default) alla preferenza i
-function addDefaultValues(i,filterName,filterDefinition,isChecked,isLink,isImage) {
-
-}
-
-// elimina il filtro selezionato o specificato
-function deleteFilter(i) {
-
-}
-
-// cambia la caption del filtro nell'albero, al cambiamento della relativa textbox
-function changeCaption() {
-
-}
-
-// cambia il contenuto del filtro nell'albero, al cambiamento della relativa textbox
-function changeExt() {
-
-}
-
-// elimina tutti i filtri e imposta quelli di default
-function resetFilters() {
-
-}
-
-// imposta il filtro attutale come regex
-function makeRegex() {
-
-}
-
-// verifica se il filtro selezionato è uan regEx
-function isRegex() {
-
-}
-
-// disabilita i text e checkbox
-function disableWriting() {
-
-}
-
-function enableWriting() {
-
-}

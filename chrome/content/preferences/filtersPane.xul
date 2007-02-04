@@ -16,7 +16,7 @@
 		<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
 		<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js" />
 		
-		<stringbundle id="strings" src="chrome://dta/locale/selectwin.properties"/>
+		<stringbundle id="strings" src="chrome://dta/locale/prefpanes.properties"/>
 		
 		<vbox id="mainbox">
 			<vbox flex="1" style="overflow:auto">
@@ -57,8 +57,8 @@
 				</groupbox>
 				<hbox>
 					<spacer flex="1"/>
-					<button label="&add.label;" oncommand="addNewFilter();"/>
-					<button label="&remove.label;" oncommand="deleteFilter(-1);" id="removebutton"/>
+					<button label="&add.label;" oncommand="Dialog.createFilter();"/>
+					<button label="&remove.label;" oncommand="Dialog.removeFilter();" id="removebutton"/>
 					<button label="&default.label;" oncommand="resetFilters();" id="defaultbutton"/>
 					<spacer flex="1"/>
 				 </hbox>
