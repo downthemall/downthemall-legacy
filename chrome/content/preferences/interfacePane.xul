@@ -11,7 +11,13 @@
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<prefpane id="paneInterface" label="&uipane.label;" onpaneload="versionControl();">
+	<prefpane
+		id="paneInterface"
+		label="&uipane.label;"
+		onpaneload="versionControl();"
+		helpURI="chrome://dta/locale/help/dtahelp.rdf"
+		helpTopic="Preferences_UI"		
+	>
 	
 		<preferences>
 			<preference id="dtaShowInDown" name="extensions.dta.downloadWin" type="bool" />

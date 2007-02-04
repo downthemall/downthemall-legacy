@@ -48,7 +48,30 @@
 				</li>
 			</Seq>
 		</nc:subheadings>
-	</Description>	
+	</Description>
+	
+	<Description about="#Preferences">
+		<nc:subheadings>
+			<Seq>
+				<li>
+					<Description ID="Preferences_Main" nc:name="&preferences.main;" nc:link="preferences.html#mainp"/>
+				</li>
+				<li>
+					<Description ID="Preferences_Filters" nc:name="&preferences.filters;" nc:link="preferences.html#filters"/>
+				</li>
+				<li>
+					<Description ID="Preferences_Privacy" nc:name="&preferences.privacy;" nc:link="preferences.html#privacy"/>
+				</li>
+				<li>
+					<Description ID="Preferences_UI" nc:name="&preferences.ui;" nc:link="preferences.html#ui"/>
+				</li>
+				<li>
+					<Description ID="Preferences_Advanced" nc:name="&preferences.advanced;" nc:link="preferences.html#advanced"/>
+				</li>
+			</Seq>
+		</nc:subheadings>
+	</Description>
+	
 	
 	<Description about="#FAQ">
 		<nc:subheadings>
