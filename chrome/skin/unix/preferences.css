@@ -1,11 +1,6 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-.splitt {
-  -moz-box-align: center;
-  -moz-box-pack: center;
-  cursor: e-resize;
-  border: 0px solid #ddd;
-  background-color: #ddd;
-  border-width: 0px 0px 0px 1px;
-  min-width: 1px;
+prefwindow {
+	width: 52em;
+	height: 38.5em;
 }

@@ -62,7 +62,7 @@
 				</menulist>
 			</hbox>
 
-			<separator class="thin"/>
+			<separator class="groove-thin"/>
 
 			<checkbox label="&mainpane.sounderror.label;" preference="dtaerror"/>
 			<checkbox label="&mainpane.closetab.label;" preference="dtaclosetab"/>
@@ -71,21 +71,12 @@
 		<groupbox>
 			<caption label="&mainpane.alert.caption;" />
 			<radiogroup preference="dtaalert">
-				<grid>
-					<columns><column/><column/></columns>
-					<rows>
-						<row>
-							<radio id="alert1" label="&mainpane.alertboxes.label;" value="0" />
-							<radio id="alert3" label="&mainpane.alertnone.label;" value="2" />
-						</row>
-						<row>
-							<radio id="alert2" label="&mainpane.alertslides.label;" value="1" />
-						</row>
-					</rows>
-				</grid>
+				<radio id="alert1" label="&mainpane.alertboxes.label;" value="0" />
+				<radio id="alert3" label="&mainpane.alertnone.label;" value="2" />
+				<radio id="alert2" label="&mainpane.alertslides.label;" value="1" />
 			</radiogroup>
 
-			<separator class="thin"/>
+			<separator class="groove-thin"/>
 
 			<checkbox id="soundDone" label="&mainpane.sounddone.label;" preference="dtadone"/>
 			<checkbox id="closedta" label="&mainpane.closedta.label;" preference="dtaautoclose"/>

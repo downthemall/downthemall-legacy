@@ -70,7 +70,6 @@
 		
 		<groupbox>
 			<caption id="dtapreallcap" label="&advancedpane.prealloc.caption;" />
-			<description control="dtapreallcheck" class="plain">&advancedpane.prealloc.desc;</description>
 			<checkbox id="dtapreallcheck" label="&advancedpane.useprealloc.label;" preference="dtaprealloc" />
 		</groupbox>	
 	</prefpane>

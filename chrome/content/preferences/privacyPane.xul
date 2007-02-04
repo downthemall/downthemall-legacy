@@ -78,7 +78,7 @@
 		
 		<groupbox>
 			<caption label="&privacypane.notice.caption;"/>
-			<description>&privacypane.notice.desc;</description>
+			<description value="&privacypane.notice.desc;"/>
 			<label style="color: blue; text-decoration: underline;" value="&privacypane.privacynotice.label;" onclick="openHelp('About_Privacy','chrome://dta/locale/help/dtahelp.rdf');"/>
 		</groupbox>
 	</prefpane>
