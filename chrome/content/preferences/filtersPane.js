@@ -16,20 +16,21 @@ var strbundle;
 var filterTree = {
 	reloadFilters: function() {
 		try {
-			var n = [];
+			DTA_FilterManager.reload();
+			var oldfilters = this._filterIDs;
+			this._filterIDs = [];
 			var e = DTA_FilterManager.enumAll();
 			while (e.hasMoreElements()) {
-				n.push(e.getNext().QueryInterface(Components.interfaces.dtaIFilter).id);
+				var filter = e.getNext().QueryInterface(Components.interfaces.dtaIFilter);
+				this._filterIDs.push(filter.id);
 			}
 			var index = $("filterTable").view.selection.currentIndex;
-			if (index != -1 && n[index] != this._filterIDs[index]) {
-				$("filterTable").view.selection.select(n.indexOf(this._filterIDs[index]));
+			if (index != -1 && oldfilters[index] != this._filterIDs[index]) {
+				$("filterTable").view.selection.select(this._filterIDs.indexOf(oldfilters[index]));
+				Dialog.onTableSelectionChange();
 			}
-			this._filterIDs = n;
 			this.invalidate();
-			Dialog.onTableSelectionChange();
 		} catch(e) {
-			Debug.dump("reloadFilters(): ", e);
 		}
 	},
 	get rowCount() {
@@ -103,10 +104,10 @@ var filterTree = {
 		return;
 	},
 	invalidate: function() {
-		this._box.invalidate();
+		$("filterTable").view = this;
+		$("filterTable").treeBoxObject.invalidate();
 	}
 };
-
 
 var Dialog = {
 	load: function DTA_load() {
@@ -120,6 +121,7 @@ var Dialog = {
 	},
 	onTableSelectionChange: function() {
 		var idx = $("filterTable").view.selection.currentIndex;
+		
 		
 		if (idx==-1) {
 			$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex", "removebutton").forEach(function(a){a.disabled=true});
@@ -191,8 +193,20 @@ var Dialog = {
 		if (idx==-1) return;
 		if (filterTree.getFilter(idx).defFilter) return;
 		
+		$("filterTable").view.selection.clearSelection();
+		
 		var currentFilter = filterTree.getFilter(idx).remove();
 		filterTree.reloadFilters();
+	},
+	restoreDefaultFilters: function() {
 		$("filterTable").view.selection.clearSelection();
+		
+		var e = DTA_FilterManager.enumAll();
+		while (e.hasMoreElements()) {
+			var filter = e.getNext().QueryInterface(Components.interfaces.dtaIFilter);
+			if (!filter.defFilter)
+				filter.remove();
+		}
+		filterTree.reloadFilters();
 	}
 };
