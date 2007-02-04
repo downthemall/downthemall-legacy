@@ -51,7 +51,7 @@
 <!ENTITY privacypane.logs.caption "Diagnostic Log">
 <!ENTITY privacypane.enablelogs.label "Enable diagnostic logging">
 <!ENTITY privacypane.notice.caption "Notice">
-<!ENTITY privacypane.notice.desc "downTHEMall also integrates with Firefox' built-in Clear Private Data feature. You might want to have a look at it.">
+<!ENTITY privacypane.notice.desc "downTHEMall also integrates with Firefox' built-in Clear Private Data feature.">
 <!ENTITY privacypane.privacynotice.label "Our Privacy Notice">
 
 <!ENTITY advancedpane.label "Advanced">
@@ -67,8 +67,6 @@
 <!ENTITY advancedpane.usetemp.label "Save download chunks in a temporary directory">
 <!ENTITY advancedpane.tempdir.label "Use this directory:">
 <!ENTITY advancedpane.prealloc.caption "Disk Space Pre-allocation">
-<!ENTITY advancedpane.prealloc.desc "Disk space pre-allocation speeds up the joining of files and reduces fragmentation, but increases the disk space consume during downloads - requires the double of the space in the worst case.">
-<!ENTITY advancedpane.useprealloc.label "Enable Disk Space Pre-allocation">
 
 <!ENTITY uipane.label "Interface">
 <!ENTITY uipane.appearance.caption "Appearance">
