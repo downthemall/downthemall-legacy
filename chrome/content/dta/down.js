@@ -58,7 +58,7 @@ var Prefs = {
 		this.onClosingSaveCanceled = !Preferences.getDTA("removecanceled", false);
 		this.maxInProgress = Preferences.getDTA("ntask", 5);
 		this.showOnlyFilenames = Preferences.getDTA("showOnlyFilenames", true);
-		this.onConflictingFilenames = Preferences.get("existing", 3);
+		this.onConflictingFilenames = Preferences.getDTA("existing", 3);
 		
 		if (Preferences.get("saveTemp", true)) {
 			try {
