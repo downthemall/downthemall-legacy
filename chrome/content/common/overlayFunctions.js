@@ -50,10 +50,11 @@ var DTA_FilterManager = Components.classes['@tn123.ath.cx/dtamod/filtermanager;1
 	.getService(Components.interfaces.dtaIFilterManager);
  
 function DTA_showPreferences() {
+	var instantApply = DTA_preferences.get("browser.preferences.instantApply", false);
 	window.openDialog(
 		'chrome://dta/content/preferences/newPref.xul',
 		'dtaPrefs',
-		'chrome,titlebar,toolbar,centerscreen,close'
+		'chrome,titlebar,toolbar,centerscreen'+ (instantApply ? ',dialog=no' : '')
 	);
 }
  
