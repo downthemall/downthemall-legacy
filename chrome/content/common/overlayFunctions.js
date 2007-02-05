@@ -341,15 +341,6 @@ var DTA_AddingFunctions = {
 	},
 	
 	saveSingleLink : function(turbo, url, referrer, description, mask) {
-	try {
-	
-		if (!this.isLinkOpenable(url)) {
-			if (document.getElementById("context-dta")) {
-				alert(document.getElementById("context-dta").attributes.error2.value);
-			}
-			return;
-		}
-		
 		if (turbo) {
 			var el = {
 				'url': url,
@@ -357,11 +348,8 @@ var DTA_AddingFunctions = {
 				'description': description,
 				'ultDescription': ''
 			};
-			
-			// if i could start with oneclick return
-			if (this.turboSendToDown([el])) {
-				return;
-			}
+			this.turboSendToDown([el]);
+			return;
 		}
 		
 		// else open addurl.xul
@@ -371,10 +359,6 @@ var DTA_AddingFunctions = {
 			"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
 			{'url': url, 'description': description, 'referrer': referrer, 'mask': mask}
 		);
-	} catch(e) {
-		Components.utils.reportError(e);
-		DTA_debug.dump("saveSingleLink(): ", e);
-	}
 	},
 	
 	getDropDownValue : function(name) {
@@ -383,112 +367,97 @@ var DTA_AddingFunctions = {
 	},
 	
 	turboSendToDown : function(urlsArray) {
-		try {
-			// XXX: error to localize
-			var dir = this.getDropDownValue('directory');
-			var mask = this.getDropDownValue('renaming');
-			if (!mask || !dir) {
-				alert("You have not set a valid renaming mask or a valid destination directory.");
-				DTA_debug.dump("User has not set a valid renaming mask or a valid destination directory.");
-				return false;
-			}
-			
-			var num = DTA_preferences.getDTA("counter", 0);
-			if (++num > 999) {
-				num = 1;
-			}
-			DTA_preferences.setDTA("counter", num);
-	
-			for (var i = 0; i < urlsArray.length; i++) {
-				urlsArray[i].mask = mask;
-				urlsArray[i].dirSave = dir;
-				urlsArray[i].numIstance = num;
-			}
-			
-			this.sendToDown(!DTA_preferences.get("extensions.dta.lastWasQueued", false), urlsArray);
-			return true;
-		} catch(e) {
-			DTA_debug.dump("turboSendToDown(): ", e);
-			return false;
+
+		var dir = this.getDropDownValue('directory');
+		var mask = this.getDropDownValue('renaming');
+
+		if (!mask || !dir) {
+			throw new Components.Exception("missing required information");
 		}
+		
+		var num = DTA_preferences.getDTA("counter", 0);
+		if (++num > 999) {
+			num = 1;
+		}
+		DTA_preferences.setDTA("counter", num);
+
+		for (var i = 0; i < urlsArray.length; i++) {
+			urlsArray[i].mask = mask;
+			urlsArray[i].dirSave = dir;
+			urlsArray[i].numIstance = num;
+		}
+		
+		this.sendToDown(!DTA_preferences.get("extensions.dta.lastWasQueued", false), urlsArray);
 	},
 
 	saveLinkArray : function(turbo, urls, images) {
-		
-		try {
-			if (urls.length==0 && images.length==0) {
-				// localization hack
-				alert(document.getElementById("context-dta").attributes.error1.value);
-			}
-			
-			if (turbo) {
-			
-				DTA_debug.dump("saveLinkArray(): DtaOneClick filtering started");
-				
-				var arrayObject;
-				var type;
-				if (DTA_preferences.getDTA("seltab", 0)) {
-					arrayObject = images;
-					type = 2;
-				}
-				else {
-					arrayObject = urls;
-					type = 1;
-				}
-				var links = [];
-	
-				var additional = this.getDropDownValue('filter');
-				if (!additional);
-				else if (DTA_preferences.getDTA('filterRegex', false)) {
-					additional = DTA_regToRegExp(additional);
-				}
-				else {
-					additional = DTA_strToRegExp(additional);
-				}
-	
-				for (i in arrayObject) {
-					if (i == "length" || typeof(arrayObject[i]) != "object") {
-						continue;
-					}
-					var matched = DTA_FilterManager.matchActive(i, type);
-					if (!matched && additional) {
-						matched = additional.test(i);
-					}
-					
-					if (!matched) {
-						continue;
-					}
 
-					links.push({
-						url : arrayObject[i].url,
-						description : arrayObject[i].description,
-						ultDescription : arrayObject[i].ultDescription,
-						refPage : arrayObject[i].refPage
-					});
-				}
-				
-				DTA_debug.dump("saveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
-				
-				// if i cannot start with oneclick open select.xul
-				if (links.length == 0) {
-					alert(document.getElementById("context-dta").attributes.error1.value);
-				} else if (this.turboSendToDown(links)) {
-					return;
-				} else {
-					DTA_debug.dump("saveLinkArray(): turboSendToDown() returned false.. i'm opening Select window");
-				}
-			}
-			
-			window.openDialog(
-				"chrome://dta/content/dta/select.xul",
-				"_blank",
-				"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
-				urls,
-				images
-			);
-		} catch(ex) {
-			DTA_debug.dump("saveLinkArray(): ", ex);
+		if (urls.length == 0 && images.length == 0) {
+			throw new Components.Exception("no links");
 		}
+			
+		if (turbo) {
+			
+			DTA_debug.dump("saveLinkArray(): DtaOneClick filtering started");
+				
+			var arrayObject;
+			var type;
+			if (DTA_preferences.getDTA("seltab", 0)) {
+				arrayObject = images;
+				type = 2;
+			}
+			else {
+				arrayObject = urls;
+				type = 1;
+			}
+			var links = [];
+	
+			var additional = this.getDropDownValue('filter');
+			if (!additional);
+			else if (DTA_preferences.getDTA('filterRegex', false)) {
+				additional = DTA_regToRegExp(additional);
+			}
+			else {
+				additional = DTA_strToRegExp(additional);
+			}
+	
+			for (i in arrayObject) {
+				if (i == "length" || typeof(arrayObject[i]) != "object") {
+					continue;
+				}
+				var matched = DTA_FilterManager.matchActive(i, type);
+				if (!matched && additional) {
+					matched = additional.test(i);
+				}
+					
+				if (!matched) {
+					continue;
+				}
+
+				links.push({
+					url : arrayObject[i].url,
+					description : arrayObject[i].description,
+					ultDescription : arrayObject[i].ultDescription,
+					refPage : arrayObject[i].refPage
+				});
+			}
+				
+			DTA_debug.dump("saveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
+				
+			if (links.length == 0) {
+					throw new Components.Exception('no links remaining');
+			}
+			this.turboSendToDown(links);
+			return;
+		}
+			
+		window.openDialog(
+			"chrome://dta/content/dta/select.xul",
+			"_blank",
+			"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
+			urls,
+			images
+		);
 	},
 	
 	openManager : function (quite) {
