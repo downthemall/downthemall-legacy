@@ -289,6 +289,7 @@ var Dialog = {
 					// This hack makes our URL a DTA_URL again ;)
 					address._realURL = new DTA_URL(a.url.url, a.url.charset);					
 					address.readOnly = true;
+					$('batcheslabel').style.display = 'none';
 					$('batches').collapsed = true;
 					window.sizeToContent();
 					// XXX reflect in css that URL is readonly
