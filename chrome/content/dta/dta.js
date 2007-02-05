@@ -504,20 +504,7 @@ var Dialog = {
 		var type = tree.type;
 
 		// see if there is an additional filter
-		var additional = this.ddFilter.current;
-		if (!additional.length) {
-			additional = null;
-		}
-		else if ($('regex').checked) {
-			try {
-				additional = DTA_regToRegExp(additional);
-			} catch (ex) {
-				additional = null;
-			}
-		}
-		else {
-			additional = DTA_strToRegExp(additional);
-		}
+		var additional = new DTA_AdditionalMatcher(this.ddFilter.current, $('regex').checked);
 
 		// will keep track of used filter-props f0-f7
 		var used = {};
@@ -531,7 +518,7 @@ var Dialog = {
 			if (link.manuallyChecked) {
 				checked = 'manuallySelected';
 			}
-			else if (link.url.usable.search(additional) != -1) {
+			else if (additional.match(link.url.url)) {
 				checked = 'f8';
 			}
 			else {
