@@ -323,6 +323,41 @@ var dragObserverdTa = {
 	}
 };
 	
+function DTA_AdditionalMatcher(str, regex) {
+	this._str = str;
+	this._regex = regex;
+	this._filters = [];
+	this.init();
+};
+DTA_AdditionalMatcher.prototype = {
+	init: function() {
+		if (this._regex) {
+			try {
+				this._filters.push(DTA_regToRegExp(this._str));
+			}
+			catch (ex) {
+			}
+		}
+		else {
+			var filters = this._str.split(',');
+			for (var i = 0; i < filters.length; ++i) {
+				var filter = filters[i].replace(/^[\s\t]+|[\s\t]+$/gi, '');
+				if (!filter.length) {
+					continue;
+				}
+				this._filters.push(DTA_strToRegExp(filter));
+			}
+		}
+	},
+	match: function(url) {
+		return this._filters.some(
+			function(e) {
+				return url.search(e) != -1;
+			}
+		);
+	}
+}
+	
 var DTA_AddingFunctions = {
 	ios: Components.classes["@mozilla.org/network/io-service;1"]
 		.getService(Components.interfaces.nsIIOService),
@@ -412,22 +447,18 @@ var DTA_AddingFunctions = {
 			}
 			var links = [];
 	
-			var additional = this.getDropDownValue('filter');
-			if (!additional);
-			else if (DTA_preferences.getDTA('filterRegex', false)) {
-				additional = DTA_regToRegExp(additional);
-			}
-			else {
-				additional = DTA_strToRegExp(additional);
-			}
-	
+			var additional = new DTA_AdditionalMatcher(
+				this.getDropDownValue('filter'),
+				DTA_preferences.getDTA('filterRegex', false)
+			);
+
 			for (i in arrayObject) {
 				if (i == "length" || typeof(arrayObject[i]) != "object") {
 					continue;
 				}
 				var matched = DTA_FilterManager.matchActive(i, type);
-				if (!matched && additional) {
-					matched = additional.test(i);
+				if (!matched) {
+					matched = additional.match(i);
 				}
 					
 				if (!matched) {
