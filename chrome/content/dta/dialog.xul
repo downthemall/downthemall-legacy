@@ -18,13 +18,13 @@
 	onload="load();" 
 	buttons="accept" 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	style="background: #EEEEEE url('chrome://dta/content/immagini/add-bkg.png') repeat-x; width: 430px;" 
 	ondialogaccept="ok();" 
 	ondialogcancel="return false;"
+	width="430px"
 	>
 	
 	<script type="application/x-javascript" src="dialog.js"/>
-	<label id="title" style="font-weight: bold; margin: 10px 10px 5px 10px; padding-left: 35px; padding-top:8px; background: url('chrome://dta/content/immagini/toolbar/alert.png') no-repeat 0% 50%; height: 26px;" value="&title.value;" />
+	<label id="title" style="font-weight: bold; margin: 10px 10px 5px 10px; padding-left: 35px; padding-top:8px; background: url('chrome://dta/skin/manager/alert.png') no-repeat 0% 50%; height: 26px;" value="&title.value;" />
 	<vbox flex="1" style="padding: 10px;">
 		<description id="text"/>
 		<radiogroup id="scelta" style="margin-left: 10px; margin-bottom: 10px;" >
@@ -34,7 +34,7 @@
 		</radiogroup>
 		<hbox align="center">
 		<label id="text" value="&text.value;" />
-		<menulist id ="apply" editable="false" >
+		<menulist id="apply">
 			<menupopup>
 				<menuitem id="choice1" label="&choice1.label;"/>
 				<menuitem id="choice2" label="&choice2.label;"/>
