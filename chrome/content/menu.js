@@ -28,7 +28,7 @@ var DTA_ContextOverlay = {
 	},
 	
 	trim : function(t) {
-		return t.replace(/^[ \t_]+|[ \t_]+$/gi, "").replace(/(_){2,}/g, "_");
+		return t.replace(/^[ \t_]+|[ \t_]+$/gi, '').replace(/(_){2,}/g, "_");
 	},
 	
 	addLinksToArray : function(lnks, urls, doc) {
@@ -121,8 +121,7 @@ var DTA_ContextOverlay = {
 			var embeds = aWin.document.embeds;
 			
 			var sel = aWin.getSelection();
-			if ('isCollapsed' in sel && !sel.isCollapsed) {
-				DTA_debug.dump("3");
+			if (sel && !sel.isCollapsed) {
 				links = filterElements(links, sel);
 				images = filterElements(images, sel);
 				embeds = filterElements(embeds, sel);
@@ -182,7 +181,7 @@ var DTA_ContextOverlay = {
 					DTA_AddingFunctions.saveLinkArray(true, urls, images);
 					return;
 				} catch (ex) {
-					Debug.dump('findLinks', ex);
+					DTA_debug.dump('findLinks', ex);
 					alert(this.getString('errorinformation'));
 				}
 			}
