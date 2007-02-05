@@ -210,6 +210,7 @@ filePicker.prototype = {
 		return directory;
 	}
 };
+
 function getIcon(link, metalink, size) {
 	try {
 		var url;
@@ -225,13 +226,24 @@ function getIcon(link, metalink, size) {
 		else if ('url' in link) {
 			url = link.url;
 		}
+		if (typeof(size) != 'number') {
+			size = 16;
+		}
 		if (metalink) {
 			return "chrome://dta/skin/icons/metalink.png";
 		}
-		else {
-			if (typeof(size) != 'number') {
-				size = 16;
+		else if (getIconHelper.isMac) {
+			var uri = Components.classes["@mozilla.org/network/standard-url;1"]
+				.createInstance(Components.interfaces.nsIURI);
+				uri.spec = url;
+			var ext = uri.path.match(/\.([^/.]+)$/);
+			ext = ext ? ext[1].toLowerCase() : null;
+			if (ext && getIconHelper.macExtensions.indexOf(ext) != -1) {
+				return "moz-icon://" + url + '?size=' + size;
 			}
+			// pass through to other.png
+		}
+		else {
 			return "moz-icon://" + url + '?size=' + size;
 		}
 	}
@@ -241,3 +253,7 @@ function getIcon(link, metalink, size) {
 	}
 	return "chrome://dta/skin/icons/other.png"
 }
+var getIconHelper = {
+	isMac: navigator.platform.search(/mac/i) != -1,
+	macExtensions: [ 'jpg', 'jpeg', 'jpe', 'png', 'gif' ]
+};
