@@ -179,6 +179,7 @@ filePicker.prototype = {
 		if (!path || !String(path).trim().length) {
 			return false;
 		}
+		
 		var directory = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
 		try {
 			directory.initWithPath(path);
@@ -188,11 +189,31 @@ filePicker.prototype = {
 		} catch(ex) {
 			return false;
 		}
+		
+		// diskSpaceAvailable throws FILE_NOT_FOUND if !directory.exists(). 
+		// To check DiskSpaceAvailable on that drive we gotta do something 
+		// different than check directory.diskSpaceAvailable.
+		var slash = (new String()).findSystemSlash();
+		var isDiskSpaceAvailable = function(path) {
+			var tempDirectory = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+			tempDirectory.initWithPath(path);
+			if (tempDirectory.exists()) {
+				return tempDirectory.diskSpaceAvailable;
+			} else {
+				if (path[path.length-1]==slash) path=path.replace(/[\/\\]$/,"");
+				if (path.lastIndexOf(slash)!=-1)
+					return isDiskSpaceAvailable(path.substr(0,path.lastIndexOf(slash)+1));
+				else
+					return false;
+			}
+		}
+
 		try {
-			if (!directory.diskSpaceAvailable) {
+			if (!isDiskSpaceAvailable(path)) {
 				return false;
 			}
 		} catch (ex) {
+			Debug.dump("isDiskSpaceAvailable(): ", ex);
 			return false;
 		}
 		
@@ -211,49 +232,64 @@ filePicker.prototype = {
 	}
 };
 
-function getIcon(link, metalink, size) {
+var getIcon;
+if (navigator.platform.search(/mac/i) != -1)
+	getIcon = getIconMac;
+else
+	getIcon = getIconOther;
+	
+function getIconOther(link, metalink, size) {
+	if (metalink) {
+		return "chrome://dta/skin/icons/metalink.png";
+	}
+	if (typeof(size) != 'number') {
+		size = 16;
+	}
 	try {
 		var url;
 		if (typeof(link) == 'string') {
 			url = link;
-		}
-		else if (link instanceof DTA_URL) {
+		} else if (link instanceof DTA_URL) {
 			url = link.url;
-		}
-		else if (link instanceof Components.interfaces.nsIURI) {
+		} else if (link instanceof Components.interfaces.nsIURI) {
 			url = link.spec;
-		}
-		else if ('url' in link) {
+		} else if ('url' in link) {
 			url = link.url;
 		}
-		if (typeof(size) != 'number') {
-			size = 16;
-		}
-		if (metalink) {
-			return "chrome://dta/skin/icons/metalink.png";
-		}
-		else if (getIconHelper.isMac) {
-			return getIconHelper.getIcon(url, size);
-		}
-		else {
-			return "moz-icon://" + url + '?size=' + size;
-		}
-	}
-	catch (ex) {
-		Debug.dump(link);
+		return "moz-icon://" + url + "?size=" + size;
+	} catch (ex) {
 		Debug.dump("updateIcon: failed to grab icon", ex);
 	}
-	return "chrome://dta/skin/icons/other.png"
+	return "moz-icon://foo.html?size=" + size;
 }
-var getIconHelper = {
-	isMac: navigator.platform.search(/mac/i) != -1,
-	getIcon: function(url, size) {
+
+var recognizedMacMozIconExtensions = /\.(gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
+function getIconMac(link, metalink, size) {
+	if (metalink) {
+		return "chrome://dta/skin/icons/metalink.png";
+	}
+	if (typeof(size) != 'number') {
+		size = 16;
+	}
+	try {
+		var url;
+		if (typeof(link) == 'string') {
+			url = link;
+		} else if (link instanceof DTA_URL) {
+			url = link.url;
+		} else if (link instanceof Components.interfaces.nsIURI) {
+			url = link.spec;
+		} else if ('url' in link) {
+			url = link.url;
+		}
 		var uri = Components.classes["@mozilla.org/network/standard-url;1"]
 			.createInstance(Components.interfaces.nsIURI);
 		uri.spec = url;
-		if (uri.path.match(/\.(gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/)!=null)
-			return 'moz-icon://' + url + '?size=' + size;
-		else
-			return 'moz-icon://foo.html?size=' + size;
+		if (uri.path.search(recognizedMacMozIconExtensions)!=-1) {
+			return "moz-icon://" + url + "?size=" + size;
+		}
+	} catch (ex) {
+		Debug.dump("updateIcon: failed to grab icon", ex);
 	}
-};
+	return "moz-icon://foo.html?size=" + size;
+}
