@@ -201,9 +201,6 @@ filePicker.prototype = {
 				// from nsIFile
 				parent = parent.QueryInterface(Components.interfaces.nsILocalFile);
 				// we look for a directory that is writeable and has some diskspace
-				Debug.dump(parent.isDirectory() ? 1 : 2);
-				Debug.dump(parent.isWritable() ? 1 : 2);
-				Debug.dump(parent.diskSpaceAvailable);
 				return parent.isDirectory() && parent.isWritable() && parent.diskSpaceAvailable ? directory : false;
 			}
 		}
