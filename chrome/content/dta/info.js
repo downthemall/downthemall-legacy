@@ -184,7 +184,7 @@ var Dialog = {
 		if (!dir.length || !this.ddRenaming.current.trim().length) {
 			return false;
 		}
-		if (!f.createValidDestination(dir))
+		if (!f.checkDirectory(dir))
 		{
 			alert(strbundle.getString("alertfolder"));
 			var newDir = f.getFolder(null, strbundle.getString("validdestination"));

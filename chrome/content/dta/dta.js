@@ -386,7 +386,7 @@ var Dialog = {
 		}
 
 		// directory valid?
-		if (!f.createValidDestination(dir))
+		if (!f.checkDirectory(dir))
 		{
 			alert(strbundle.getString("alertfolder"));
 			var newDir = f.getFolder(null, strbundle.getString("validdestination"));
