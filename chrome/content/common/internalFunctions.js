@@ -153,29 +153,35 @@ objectExtend(String.prototype,
 function filePicker() {}
 filePicker.prototype = {
 
-	getFolder : function (predefined, text) {try {
-		// nsIFilePicker object
-		var nsIFilePicker = Components.interfaces.nsIFilePicker;
-		var fp = Components.classes['@mozilla.org/filepicker;1'].createInstance(nsIFilePicker);
-		fp.init(window, text, nsIFilePicker.modeGetFolder);
-		fp.appendFilters(nsIFilePicker.filterAll);
+	getFolder: function (predefined, text) {
+		try {
+			// nsIFilePicker object
+			var nsIFilePicker = Components.interfaces.nsIFilePicker;
+			var fp = Components.classes['@mozilla.org/filepicker;1'].createInstance(nsIFilePicker);
+			fp.init(window, text, nsIFilePicker.modeGetFolder);
+			fp.appendFilters(nsIFilePicker.filterAll);
 		
-		// locate current directory
-		var dest;
-		if ((dest = this.createValidDestination(predefined)))
-			fp.displayDirectory = dest;
+			// locate current directory
+			var dest;
+			if ((dest = this.checkDirectory(predefined))) {
+				fp.displayDirectory = dest;
+			}
 		
-		// open file picker
-		var res = fp.show();
+			// open file picker
+			var res = fp.show();
 	
-		if (res == nsIFilePicker.returnOK)
-			return fp.file.path.addFinalSlash();
+			if (res == nsIFilePicker.returnOK) {
+				return fp.file.path.addFinalSlash();
+			}
 		
-	} catch (e) {Debug.dump("filePicker.getFolder():", e);}
-	return false;
+		}
+		catch (ex) {
+			Debug.dump("filePicker.getFolder():", ex);
+		}
+		return false;
 	},
 	
-	createValidDestination : function(path) {
+	checkDirectory: function(path) {
 		if (!path || !String(path).trim().length) {
 			return false;
 		}
@@ -183,112 +189,78 @@ filePicker.prototype = {
 		var directory = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
 		try {
 			directory.initWithPath(path);
-			if (directory.exists()) {
-				return directory;
+			
+			// look for the first directory that exists.
+			var parent = directory.clone();
+			while (parent && !parent.exists()) {
+				Debug.dump("parent: " + parent.path);
+				parent = parent.parent;
 			}
-		} catch(ex) {
-			return false;
-		}
-		
-		// diskSpaceAvailable throws FILE_NOT_FOUND if !directory.exists(). 
-		// To check DiskSpaceAvailable on that drive we gotta do something 
-		// different than check directory.diskSpaceAvailable.
-		var slash = (new String()).findSystemSlash();
-		var isDiskSpaceAvailable = function(path) {
-			var tempDirectory = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
-			tempDirectory.initWithPath(path);
-			if (tempDirectory.exists()) {
-				return tempDirectory.diskSpaceAvailable;
-			} else {
-				if (path[path.length-1]==slash) path=path.replace(/[\/\\]$/,"");
-				if (path.lastIndexOf(slash)!=-1)
-					return isDiskSpaceAvailable(path.substr(0,path.lastIndexOf(slash)+1));
-				else
-					return false;
+			Debug.dump("parent: " + parent.path);
+			if (parent) {
+				// from nsIFile
+				parent = parent.QueryInterface(Components.interfaces.nsILocalFile);
+				// we look for a directory that is writeable and has some diskspace
+				Debug.dump(parent.isDirectory() ? 1 : 2);
+				Debug.dump(parent.isWritable() ? 1 : 2);
+				Debug.dump(parent.diskSpaceAvailable);
+				return parent.isDirectory() && parent.isWritable() && parent.diskSpaceAvailable ? directory : false;
 			}
 		}
-
-		try {
-			if (!isDiskSpaceAvailable(path)) {
-				return false;
-			}
-		} catch (ex) {
-			Debug.dump("isDiskSpaceAvailable(): ", ex);
-			return false;
+		catch(ex) {
+			Debug.dump('createValidDestination', ex);
 		}
-		
-		var f = (new String()).findSystemSlash();
-		if (f=="/") {
-			if ((/[\?\+&=:<>\*\|"\\]/gi).test(path)) {
-				return false;
-			}
-		} else {
-			if ((/[\?\+&=:<>\*\|"\/]/gi).test(path.substring(3, path.length))) 
-			{
-				return false;
-			}
-		}
-		return directory;
+		return false;
 	}
 };
 
-var getIcon;
-if (navigator.platform.search(/mac/i) != -1)
-	getIcon = getIconMac;
-else
-	getIcon = getIconOther;
-	
-function getIconOther(link, metalink, size) {
-	if (metalink) {
-		return "chrome://dta/skin/icons/metalink.png";
-	}
-	if (typeof(size) != 'number') {
-		size = 16;
-	}
-	try {
-		var url;
-		if (typeof(link) == 'string') {
-			url = link;
-		} else if (link instanceof DTA_URL) {
-			url = link.url;
-		} else if (link instanceof Components.interfaces.nsIURI) {
-			url = link.spec;
-		} else if ('url' in link) {
-			url = link.url;
-		}
-		return "moz-icon://" + url + "?size=" + size;
-	} catch (ex) {
-		Debug.dump("updateIcon: failed to grab icon", ex);
-	}
-	return "moz-icon://foo.html?size=" + size;
+function getIconOther(url, size) {
+	return "moz-icon://" + url + "?size=" + size; 
 }
 
-var recognizedMacMozIconExtensions = /\.(gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
-function getIconMac(link, metalink, size) {
-	if (metalink) {
-		return "chrome://dta/skin/icons/metalink.png";
-	}
-	if (typeof(size) != 'number') {
-		size = 16;
-	}
-	try {
-		var url;
-		if (typeof(link) == 'string') {
-			url = link;
-		} else if (link instanceof DTA_URL) {
-			url = link.url;
-		} else if (link instanceof Components.interfaces.nsIURI) {
-			url = link.spec;
-		} else if ('url' in link) {
-			url = link.url;
-		}
+var recognizedMacMozIconExtensions = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
+function getIconMac(url, size) {
 		var uri = Components.classes["@mozilla.org/network/standard-url;1"]
 			.createInstance(Components.interfaces.nsIURI);
 		uri.spec = url;
-		if (uri.path.search(recognizedMacMozIconExtensions)!=-1) {
+		if (uri.path.search(recognizedMacMozIconExtensions) != -1) {
 			return "moz-icon://" + url + "?size=" + size;
 		}
-	} catch (ex) {
+		return "moz-icon://foo.html?size=" + size;
+}
+
+var _getIcon;
+if (navigator.platform.search(/mac/i) != -1) {
+	_getIcon = getIconMac;
+}
+else {
+	_getIcon = getIconOther;
+}
+
+function getIcon(link, metalink, size) {
+	if (metalink) {
+		return "chrome://dta/skin/icons/metalink.png";
+	}
+	if (typeof(size) != 'number') {
+		size = 16;
+	}
+	try {
+		var url;
+		if (typeof(link) == 'string') {
+			url = link;
+		}
+		else if (link instanceof DTA_URL) {
+			url = link.url;
+		}
+		else if (link instanceof Components.interfaces.nsIURI) {
+			url = link.spec;
+		}
+		else if ('url' in link) {
+			url = link.url;
+		}
+		return _getIcon(url, size);
+	}
+	catch (ex) {
 		Debug.dump("updateIcon: failed to grab icon", ex);
 	}
 	return "moz-icon://foo.html?size=" + size;

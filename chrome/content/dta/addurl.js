@@ -34,8 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
- const Cc = Components.classes;
- const Ci = Components.interfaces;
+const Cc = Components.classes;
+const Ci = Components.interfaces;
 
 var dropDowns = {};
 var strbundleB, strbundle;
@@ -359,9 +359,8 @@ var Dialog = {
 		var errors = [];
 		
 		// check the directory
-		var f = new filePicker();
 		var dir = this.ddDirectory.current.trim();
-		if (!dir.length || !f.createValidDestination(dir)) {
+		if (!dir.length || !(new filePicker()).checkDirectory(dir)) {
 			errors.push('directory');
 		}
 		
