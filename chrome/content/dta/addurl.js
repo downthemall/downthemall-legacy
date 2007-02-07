@@ -447,7 +447,6 @@ var Dialog = {
 			strbundle.getString("validdestination")
 		);
 		if (newDir) {
-			$("directory").value = newDir;
 			this.ddDirectory.current = newDir;
 		}
 		this.check();
