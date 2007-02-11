@@ -1,4 +1,4 @@
-<!ENTITY help.title "downTHEMall! Help">
+<!ENTITY help.title "DownThemAll! Help">
 <!ENTITY help.empty "Nothing found!">
 <!ENTITY help.shortcuts "Keyboard shortcuts">
 
@@ -19,7 +19,7 @@
 <!ENTITY faq.oneclickqueue "oneClick doesn't start downloads anymore">
 <!ENTITY faq.support "How can I contribute to the developement?">
 
-<!ENTITY about "About downTHEMall!">
+<!ENTITY about "About DownThemAll!">
 <!ENTITY about.copyright "Copyright and license">
 <!ENTITY about.privacy "Privacy Notice">
 <!ENTITY about.contact "Contacts">
