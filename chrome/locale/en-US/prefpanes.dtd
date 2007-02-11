@@ -51,7 +51,7 @@
 <!ENTITY privacypane.logs.caption "Diagnostic Log">
 <!ENTITY privacypane.enablelogs.label "Enable diagnostic logging">
 <!ENTITY privacypane.notice.caption "Notice">
-<!ENTITY privacypane.notice.desc "downTHEMall also integrates with Firefox' built-in Clear Private Data feature.">
+<!ENTITY privacypane.notice.desc "DownThemAll also integrates with Firefox' built-in Clear Private Data feature.">
 <!ENTITY privacypane.privacynotice.label "Our Privacy Notice">
 
 <!ENTITY advancedpane.label "Advanced">
@@ -73,7 +73,7 @@
 <!ENTITY uipane.appearance.caption "Appearance">
 <!ENTITY uipane.namesonly.label "Show only file names in Manager window">
 <!ENTITY uipane.integration.caption "Integration">
-<!ENTITY uipane.downloadwin.label "Add downTHEMall! to the 'Save File' window">
+<!ENTITY uipane.downloadwin.label "Add DownThemAll! to the 'Save File' window">
 <!ENTITY uipane.context.caption "Context menu">
 <!ENTITY uipane.tools.caption "Tools Menu">
 <!ENTITY uipane.compact.label "Use a compact menu">
