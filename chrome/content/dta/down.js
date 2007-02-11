@@ -1362,7 +1362,7 @@ function failDownload(d, title, msg, state) {
 		cc['@mozilla.org/alerts-service;1']
 			.getService(Components.interfaces.nsIAlertsService)
 			.showAlertNotification(
-				"chrome://dta/content/immagini/alert.png",
+				"chrome://dta/skin/common/alert.png",
 				title,
 				msg,
 				false,
