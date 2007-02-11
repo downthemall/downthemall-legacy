@@ -8,12 +8,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-var DtaDialog = {
+var DTA_SaveAs = {
 	init: function dd_init() {
 	
 		var basicBox = document.getElementById('basicBox');
 		const doRevert = basicBox && !basicBox.collapsed;
-		const doOverlay = DTA_AddingFunctions.getPreference("extensions.dta.context.downloadWin", true);
+		const doOverlay = DTA_preferences.getDTA("downloadWin", true);
 		if (
 			!doOverlay
 			&& typeof(gFlashGotDMDialog) == 'undefined'
@@ -26,7 +26,7 @@ var DtaDialog = {
 			// https://bugzilla.mozilla.org/show_bug.cgi?id=315536
 			window.setTimeout(
 				function() {
-					DtaDialog.revertUI();
+					DTA_SaveAs.revertUI();
 				},
 				0
 			);
@@ -43,31 +43,33 @@ var DtaDialog = {
 		this.dialog = dialog;
 		this.url = dialog.mLauncher.source.spec;
 		try {
-			this.referrer=dialog.mContext.QueryInterface(Components.interfaces.nsIWebNavigation).currentURI.spec;
-  		} catch(ex) {
+			this.referrer = dialog.mContext.QueryInterface(Components.interfaces.nsIWebNavigation).currentURI.spec;
+  	}
+		catch(ex) {
 			this.referrer = this.url;
 		}
 
-		var old = DTA_AddingFunctions.getPreference("extensions.dta.directory", "").split("|");
-		var dir = DTA_AddingFunctions.getPreference("extensions.dta.dropdown.directory-current", old[0]);
+		this.ddDirectory = new DTA_DropDown(
+			'directory',
+			'tdtalist',
+			'tdtalistitems',
+			[]
+		);
+		var mask = DTA_AddingFunctions.getDropDownValue('renaming');
 		
-		if (dir.length > 0) {
-			document.getElementById("directoryturbodta").setAttribute("value", document.getElementById("directoryturbodta").value + " " + dir);		
-		} else {
-			document.getElementById("tdownthemall").setAttribute("hidden","true");
-			document.getElementById("directoryturbodta").setAttribute('hidden', 'true');
-		}
+		document.getElementById("tdta").collapsed = !this.ddDirectory.current.length || !mask;
 		
-		this.remember=document.getElementById("rememberChoice");
+		this.remember = document.getElementById("rememberChoice");
 		
 		// aggiungo la nostra proprietà senza sovrascrivere le rimanenti
-		document.documentElement.setAttribute('ondialogaccept', 'if(DtaDialog.dialogAccepted()) { ' + document.documentElement.getAttribute('ondialogaccept') +'}');
+		document.documentElement.setAttribute('ondialogaccept', 'if(DTA_SaveAs.dialogAccepted()) { ' + document.documentElement.getAttribute('ondialogaccept') +'}');
 		
 		document.getElementById("mode").addEventListener("select", 
 			function(event) {
-				DtaDialog.onSelect(); 
+				DTA_SaveAs.onSelect(); 
 			},  
-		false);
+			false
+		);
 	},
 	
 	revertUI: function dd_revertUI() {
@@ -120,8 +122,8 @@ var DtaDialog = {
 		var dta = document.getElementById("downthemall");
 		var tdta = document.getElementById("turbodta");
 		
-		DTA_AddingFunctions._pref.setBoolPref("extensions.dta.context.autoSaveDm.dta", mode==dta && this.remember.checked);
-		DTA_AddingFunctions._pref.setBoolPref("extensions.dta.context.autoSaveDm.tdta", mode==tdta && this.remember.checked);
+		DTA_preferences.setDTA("autoSaveDm.dta", mode==dta && this.remember.checked);
+		DTA_preferences.setDTA("autoSaveDm.tdta", mode==tdta && this.remember.checked);
 		
 		if (mode==dta)  {
 				this.download(false);
@@ -135,6 +137,7 @@ var DtaDialog = {
 	},
 
 	download: function(turbo) {
+		this.ddDirectory.save();
 		DTA_AddingFunctions.saveSingleLink(turbo, this.url, this.referrer, "");
 		document.documentElement.removeAttribute('ondialogaccept');
 		document.documentElement.cancelDialog();
@@ -142,6 +145,6 @@ var DtaDialog = {
 }
 window.addEventListener(
 	"load",
-	function(){DtaDialog.init();},
+	function(){ DTA_SaveAs.init(); },
 	false
 );

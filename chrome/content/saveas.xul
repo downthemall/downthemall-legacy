@@ -13,17 +13,25 @@
  * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/saveas.dtd">
 <overlay id="downthemallDownloadSaveAs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
-<script type="application/x-javascript" src="chrome://dta/content/dta/overlayFunctions.js"/>
-<script type="application/x-javascript" src="dmoverlay.js"/>
-<script type="application/x-javascript" src="menu.js"/>
+	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
+	<script type="application/x-javascript" src="saveas.js"/>
+	<script type="application/x-javascript" src="menu.js"/>
 
-<stringbundle id="stringsB" src="chrome://dta/locale/saveas.properties"/>
-	<radiogroup id="mode">
-		<vbox insertbefore="save" id="downthemallcontainer" collapsed="true" flex="1">
-			<radio id="downthemall" label="DownThemAll!..." />
-			<radio id="turbodta" label="dTaOneClick!" />
-			<label id="directoryturbodta" crop="center" style="padding-left: 0px; margin-left: 30px; margin-top: 0px; padding-top: 0px; font-size:90%;" class="turbodtadir" flex="1" value="&on;" />
-		</vbox>
-	</radiogroup>
+	<stringbundle id="stringsB" src="chrome://dta/locale/saveas.properties"/>
+	
+	<groupbox insertbefore="save" id="downthemallcontainer" collapsed="true" flex="1">
+		<radiogroup id="dtamode">
+			<hbox flex="1">
+				<radio id="downthemall" label="DownThemAll!" />
+			</hbox>
+			<hbox id="tdta" flex="1">
+				<radio id="turbodta" label="dtaOneClick"/>
+				<spacer flex="1"/>
+				<menulist id="tdtalist">
+					<menupopup id="tdtalistitems" />
+				</menulist>
+			</hbox>
+		</radiogroup>
+	</groupbox>
 </overlay>
