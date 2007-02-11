@@ -618,18 +618,22 @@ DTA_DropDown.prototype = {
 			node.setAttribute('label', values[i]);
 			drop.appendChild(node);
 		}
+
 		if (values.length) {
+			input.selectedIndex = 0;
 			input.value = values[0];
 		}
 	},
 	get current() {
 		var node = document.getElementById(this.input);
-		return node ? node.value : '';
+		// use label, as read-only boxen will not set .value!
+		return node ? node.label : '';
 	},
 	set current(value) {
 		var node = document.getElementById(this.input);
-		if ('value' in node) {
-			node.value = value;
+		if ('label' in node) {
+			node.label = value;
+			node.value = node.label;
 			this.save();
 		}
 	},
