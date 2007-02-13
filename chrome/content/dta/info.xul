@@ -45,13 +45,8 @@
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 	</keyset>
 	
-	<dialogheader id="logo">
-		<hbox>
-			<image id="image" style="max-height:32px; max-width:32px; display:block; padding-right: 4px;" />
-			<label value="&info.label;" />
-		</hbox>
-		<spacer flex="1"/>
-	</dialogheader>	
+	<dialogheader id="logo" title="&info.label;" />
+
 	<grid style="padding:5px 10px;">
 		<columns>
 			<column />

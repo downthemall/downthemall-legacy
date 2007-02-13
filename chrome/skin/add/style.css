@@ -5,9 +5,9 @@ dialog  {
 toolbarbutton {
 	width: 28px;
 }
-dialogheader label {
-	padding-left: 35px;
-	background: url('chrome://dta/skin/add/add.png') no-repeat left center;
+dialogheader .dialogheader-title {
+	padding-left: 30px !important;
+	background-image: url('chrome://dta/skin/add/add.png') !important;
 }
 textbox[readonly], textbox[readonly] * {
 	background-color: -moz-dialog;

@@ -34,10 +34,7 @@
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 	</keyset>
 	
-	<dialogheader id="logo">
-		<label control="URLaddress" value="&title;" style="padding-left: 35px; background: url('chrome://dta/skin/select/mask.png') no-repeat left center;" />
-		<spacer flex="1"/>
-	</dialogheader>
+	<dialogheader id="logo" title="&title;" class="renamingmask" />
 
 	<vbox id="renamingbox" style="margin:8px;" >
 		<description>&choose.desc;</description>
