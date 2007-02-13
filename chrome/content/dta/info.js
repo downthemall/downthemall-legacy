@@ -36,8 +36,10 @@ var Dialog = {
 				$("sourcePage").value = d.refPage.spec;
 				$('renaming').value = d.mask;
 				$('directory').value = d.originalDirSave;
-				$("image").setAttribute("src", getIcon(d.fileName, 'isMetaLink' in d, 32));
-				this.item;
+				var caption = document.getAnonymousNodes($("logo"))[0];
+				caption.style.backgroundImage = 'url(' + getIcon(d.fileName, 'isMetaLink' in d, 32) + ')';
+				caption.style.paddingLeft = '37px';
+				this.item = d;
 				Dialog.draw();
 				return;
 			}
@@ -116,6 +118,8 @@ var Dialog = {
 		var d = this.item;
 		
 		var c = d.firstChunk;
+		var canvas = this.canvas;
+		
 		canvas.clearRect(0,0,300,20);
 
 		var prog = canvas.createLinearGradient(0,0,0,16);

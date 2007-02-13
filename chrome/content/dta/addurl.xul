@@ -54,10 +54,7 @@
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 	</keyset>
 	
-	<dialogheader id="logo">
-		<label control="URLaddress" value="&add.value;" />
-		<spacer flex="1"/>
-	</dialogheader>
+	<dialogheader id="logo" title="&add.value;" />
 
 	<description class="header" id="descr">&desc.value; <html:span id="batcheslabel">&desc.batches.value;</html:span></description>
 
