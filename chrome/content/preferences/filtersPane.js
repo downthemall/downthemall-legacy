@@ -13,28 +13,49 @@
  
 var strbundle;
 
-var filterTree = {
+function FilterTree(table) {
+	this._table = table;
+	this.reloadFilters();
+	this.registerObserver();
+}
+
+FilterTree.prototype = {
 	reloadFilters: function() {
+		// something has changed..
 		try {
-			DTA_FilterManager.reload();
-			var oldfilters = this._filterIDs;
-			this._filterIDs = [];
+			// i'm saving the old filters positions and the selected row for a later use
+			var oldfilters = this._filters;
+			var index = this._table.view.selection.currentIndex;
+
+			// let's get the new filters
+			this._filters = [];
 			var e = DTA_FilterManager.enumAll();
 			while (e.hasMoreElements()) {
 				var filter = e.getNext().QueryInterface(Components.interfaces.dtaIFilter);
-				this._filterIDs.push(filter.id);
+				this._filters.push(filter);
 			}
-			var index = $("filterTable").view.selection.currentIndex;
-			if (index != -1 && oldfilters[index] != this._filterIDs[index]) {
-				$("filterTable").view.selection.select(this._filterIDs.indexOf(oldfilters[index]));
+			
+			// the whole table is completely different
+			if (oldfilters) {
+				this._table.treeBoxObject.rowCountChanged(0, -oldfilters.length);
+			}
+			this._table.treeBoxObject.rowCountChanged(0, this._filters.length);
+			
+			// if the filters order has changed.. 
+			// we gotta select the row that corrisponds to the filter that was selected
+			if (index != -1 && oldfilters) {
+				// this is the reference to our old selected filter, but in the new array of filters
+				var selectedFilter = this._filters.filter(function(f){return f.id==oldfilters[index].id})[0];
+				// let's select it
+				this._table.view.selection.select(this._filters.indexOf(selectedFilter));
 				Dialog.onTableSelectionChange();
 			}
-			this.invalidate();
 		} catch(e) {
+			Debug.dump("reloadFilters():", e);
 		}
 	},
 	get rowCount() {
-		return DTA_FilterManager.count;
+		return this._filters.length;
 	},
 	setTree: function(box) {
 		this._box = box;
@@ -46,10 +67,10 @@ var filterTree = {
 		return 0;
 	},
 	getFilter: function(idx) {
-		if (idx==-1) {
-			throw new Components.Exception("invalid index specified: " + idx);
+		if (idx==-1 || idx >= this.rowCount) {
+			throw new Components.Exception("Invalid index specified: " + idx);
 		}
-		return DTA_FilterManager.getFilter(this._filterIDs[idx]);
+		return this._filters[idx];
 	},
 	getCellText: function(idx, col) {
 		switch (col.index) {
@@ -103,25 +124,77 @@ var filterTree = {
 	setCellValue: function(idx, col, value) {
 		return;
 	},
-	invalidate: function() {
-		$("filterTable").view = this;
-		$("filterTable").treeBoxObject.invalidate();
+	
+	// ** observer ** //
+	QueryInterface: function(iid) {
+		if (
+			iid.equals(Ci.nsISupports)
+			|| iid.equals(Ci.nsISupportsWeakReference)
+			|| iid.equals(Ci.nsIWeakReference)
+			|| iid.equals(Ci.nsiObserver)
+		) {
+			return this;
+		}
+		throw Components.results.NS_ERROR_NO_INTERFACE;
+	},
+	// nsiWeakReference::QueryReferent
+	// for weak observer
+	QueryReferent: function(iid) {
+		return this;
+	},
+	// nsiSupportsWeakReference
+	// for weak observer
+	GetWeakReference: function() {
+		return this;
+	},
+	// nsIObserver::observe
+	observe : function(subject, topic, prefName) {
+		// filterManager will throw this topic at us.
+		if (topic == 'DTA:filterschanged') {
+			// the heavy work will be performed by changeTab..
+			// it will create the filter boxen for us, and furthermore do another selection
+			this.reloadFilters();
+		}
+	},
+	// register ourselves
+	// * filterManager
+	registerObserver: function() {
+		try {
+			var os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
+			os.addObserver(this, 'DTA:filterschanged', true);
+		} catch (ex) {
+			Debug.dump("cannot install filterManager observer!", ex);
+			return false;
+		}
+		return true;
 	}
 };
 
 var Dialog = {
+	
+	// more on this later on :) see onTableSelectionChange()
+	_lastRowEdited : -1,
+	
 	load: function DTA_load() {
 		strbundle = $("strings");
-
-		// load the filters for the first time
-		$("filterTable").view = filterTree;
-		filterTree.reloadFilters();
-		
-		$("filterText", "filterImage").forEach(function(a){a.addEventListener("CheckboxStateChange", Dialog.onFilterEdit, false);});
+		// create and attach the tree to the view
+		this._table = $("filterTable");
+		this._filterTree = new FilterTree(this._table);
+		this._table.view = this._filterTree;
+		// attach the listener to checkboxes
+		$("filterText", "filterImage").forEach(function(a){a.addEventListener("CheckboxStateChange", Dialog.onCheckboxChange, false);});
+	},
+	getSelectedRow: function() {
+		return this._table.view.selection.currentIndex;
+	},
+	getFilter: function(idx) {
+		try {
+			return this._filterTree.getFilter(idx);
+		} catch(e) {}
+		return null;
 	},
 	onTableSelectionChange: function() {
-		var idx = $("filterTable").view.selection.currentIndex;
-		
+		var idx = this.getSelectedRow();
 		
 		if (idx==-1) {
 			$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex", "removebutton").forEach(function(a){a.disabled=true});
@@ -130,7 +203,11 @@ var Dialog = {
 			return;
 		}
 		
-		var currentFilter = filterTree.getFilter(idx);
+		var currentFilter = this.getFilter(idx);
+		// invalid idx
+		if (!currentFilter) {
+			return;
+		}
 
 		$("filterLabel").value = currentFilter.label;
 		$("filterTest").value = currentFilter.test;
@@ -142,20 +219,32 @@ var Dialog = {
 	},
 	onIsRegexClick: function() {
 		var test = $("filterTest").value;
+		
+		// not quite sure if this should be in there.
+		// better would be testing DTA_regToRegExp/DTA_strToRegExp. Former will throw if it does not understand the regexp.
+		// might want to check if the filter gets saved...
 		if ($("filterIsRegex").checked) {
-			if (test[0]!='/') test='/'+test;
-			if (test[test.length-1]!='/') test=test+'/';
+			if (test[0]!='/') {
+				test='/'+test;
+			}
+			if (test[test.length-1]!='/') {
+				test=test+'/';
+			}
 		} else {
 			test = test.trim().replace(/^\/|\/$/gi, "");
 		}
 		$("filterTest").value = test;
 		this.onFilterEdit();
 	},
-	onFilterEdit: function(evt) {
-		var idx = $("filterTable").view.selection.currentIndex;
-		var currentFilter = filterTree.getFilter(idx);
-		
-		if (idx==-1 || currentFilter.defFilter) {
+	onCheckboxChange : function() {
+		Dialog.onFilterEdit();
+		Dialog.onFinishedFilterEdit();
+	},
+	onFilterEdit: function() {
+		var idx = this.getSelectedRow();
+		var currentFilter = this.getFilter(idx);
+		// invalid idx
+		if (!currentFilter || currentFilter.defFilter) {
 			return;
 		}
 
@@ -173,8 +262,19 @@ var Dialog = {
 			currentFilter.test = $("filterTest").value;
 			currentFilter.isRegex = $("filterTest").value.match(/^\/.+\/$/);
 			currentFilter.type = ($("filterText").checked?1:0) + ($("filterImage").checked?2:0);
-			currentFilter.save();
-			filterTree.reloadFilters();
+			this._table.treeBoxObject.invalidateRow(idx);
+			// if we want to save immediately:
+			// currentFilter.save();
+			// else
+			this._lastRowEdited = idx;
+		}
+	},
+	onFinishedFilterEdit : function() {
+		if (this._lastRowEdited != -1) {
+			// now we've finished editing, so let's save it
+			// this is to avoid continuous calls to save() which is not a good thing...
+			this.getFilter(this._lastRowEdited).save();
+			this._lastRowEdited = -1;
 		}
 	},
 	createFilter: function() {
@@ -185,28 +285,26 @@ var Dialog = {
 			1,
 			false
 		);
-		filterTree.reloadFilters();
 	},
 	removeFilter: function() {
-		var idx = $("filterTable").view.selection.currentIndex;
+		var idx = this.getSelectedRow();
+		var currentFilter = this.getFilter(idx);
+
+		// invalid idx
+		if (!currentFilter || currentFilter.defFilter) {
+			return;
+		}
 		
-		if (idx==-1) return;
-		if (filterTree.getFilter(idx).defFilter) return;
-		
-		$("filterTable").view.selection.clearSelection();
-		
-		var currentFilter = filterTree.getFilter(idx).remove();
-		filterTree.reloadFilters();
+		this._table.view.selection.clearSelection();
+		var currentFilter = currentFilter.remove();
 	},
 	restoreDefaultFilters: function() {
-		$("filterTable").view.selection.clearSelection();
-		
+		this._table.view.selection.clearSelection();
 		var e = DTA_FilterManager.enumAll();
 		while (e.hasMoreElements()) {
 			var filter = e.getNext().QueryInterface(Components.interfaces.dtaIFilter);
 			if (!filter.defFilter)
 				filter.remove();
 		}
-		filterTree.reloadFilters();
 	}
 };

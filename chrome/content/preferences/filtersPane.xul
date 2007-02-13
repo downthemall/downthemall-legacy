@@ -38,11 +38,11 @@
 						<rows>
 							<row id="captionRow" align="center">
 								<label value="&listhead1.label;:"/>
-								<textbox id="filterLabel" onchange="Dialog.onFilterEdit();" oninput="Dialog.onFilterEdit();" onblur="Dialog.onFilterEdit();" />
+								<textbox id="filterLabel" oninput="Dialog.onFilterEdit();" onblur="Dialog.onFinishedFilterEdit();" />
 							</row>
 							<row id="filterRow" align="center">
 								<label value="&filter.label;"/>
-								<textbox id="filterTest" onchange="Dialog.onFilterEdit();" oninput="Dialog.onFilterEdit();" onblur="Dialog.onFilterEdit();"/>
+								<textbox id="filterTest" oninput="Dialog.onFilterEdit();" onblur="Dialog.onFinishedFilterEdit();" />
 								<checkbox id="filterIsRegex" label="&regex.label;" oncommand="Dialog.onIsRegexClick();"/>
 							</row>
 							<row align="center">
