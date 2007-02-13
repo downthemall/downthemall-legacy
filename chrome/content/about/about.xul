@@ -48,9 +48,10 @@
 <dialog 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
-	onload="sizeToContent();"
-	title="About downTHEMall! Mod"
+	onload="sizeToContent(); versionFill();"
+	title="About DownThemAll!"
 	buttons="accept"
+	id="DTAAboutDialog"
 >
 	<script type="application/x-javascript"><![CDATA[
 		function openTab(sito) {
@@ -64,6 +65,15 @@
 				window.open(sito);
 			}
 		}
+		function versionFill() {
+			var logo = document.getElementById('logo');
+			var em = Components.classes["@mozilla.org/extensions/manager;1"]
+				.getService(Components.interfaces.nsIExtensionManager);
+			var item = em.getItemForID('dta@downthemall.net');
+			var title = item.name + ' ' + item.version;
+			logo.setAttribute('title', title);
+			window.title = 'About ' + title;
+		}
   ]]></script>
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 	
@@ -71,13 +81,13 @@
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 	</keyset>
 	
-	<dialogheader id="logo" title="DownThemAll Mod 0.5" description="The mass downloader for Firefox" orient="vertical" style="font-size: smaller;"/>
+	<dialogheader id="logo" title="DownThemAll!" description="The mass downloader for Firefox" orient="vertical" style="font-size: smaller;"/>
 	<groupbox orient="vertical">
 		<label value="Copyright © 2004-2007 By:" style="font-weight: bold;"/>
 		<html:ul>
 			<html:li><label value="Federico Parodi" class="link" onclick="openTab('http://www.jimmy2k.it', '_blank'); "/></html:li>
 			<html:li><label value="Stefano Verna" class="link" onclick="openTab('http://steffoz.altervista.org/', '_blank'); "/></html:li>
-			<html:li><label value="Nils Maier" class="link" onclick="openTab('http://tn123.ath.cx/dtamod/', '_blank'); "/></html:li>
+			<html:li><label value="Nils Maier" class="link" onclick="openTab('http://tn123.ath.cx/about/', '_blank'); "/></html:li>
 		</html:ul>
 
 		<!--<label style="font-weight: bold; color: red;">BEWARE: dTa! Mod is an <html:i>inofficial</html:i> release meant for testing pruposes only!</label>-->
@@ -115,10 +125,6 @@
 				<column flex="2" />
 			</columns>
 			<rows>
-				<!--<row>
-					<label value="Project" style="font-weight: bold;"/>
-					<label value="http://tn123.ath.cx/dtamod/" class="link" onclick="openTab('http://tn123.ath.cx/dtamod/', '_blank'); "/>
-				</row>-->
 				<row>
 					<label value="DownThemAll!" style="font-weight: bold;"/>
 					<label value="http://www.downthemall.net/" class="link" onclick="openTab('http://www.downthemall.net/', '_blank'); "/>

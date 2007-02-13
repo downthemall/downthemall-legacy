@@ -3,7 +3,7 @@
 	<rdf:Description about="urn:mozilla:install-manifest">
 		
 		<id>dta@downthemall.net</id>
-		<name>downTHEMall!</name>
+		<name>DownThemAll!</name>
 		<description>The mass downloader for Firefox.</description>
 		<version>1.0a1</version>
 
