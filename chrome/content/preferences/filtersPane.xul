@@ -10,7 +10,7 @@
 * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 <overlay id="filterspaneoverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<prefpane id="paneFilters" label="&filterspane.label;" onpaneload="Dialog.load();">
+	<prefpane id="paneFilters" label="&filterspane.label;" onpaneload="Dialog.load();" >
 		
 		<script type="application/x-javascript" src="chrome://dta/content/preferences/filtersPane.js" />
 		<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
@@ -48,8 +48,8 @@
 							<row align="center">
 								<label id="useAs" value="&useAs.label;"/> 
 								<hbox id="linkPicRow">
-									<checkbox id="filterText" label="&linksf.label;"  />
-									<checkbox id="filterImage" label="&imagesf.label;" />
+									<checkbox id="filterText" label="&linksf.label;" oncommand="Dialog.onCheckboxChange();" />
+									<checkbox id="filterImage" label="&imagesf.label;" oncommand="Dialog.onCheckboxChange();" />
 								</hbox>
 							</row>
 						</rows>
