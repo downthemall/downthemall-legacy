@@ -13,9 +13,11 @@
 
 // DTA only code - do not include in overlays or such
 
-// Debug
 var Debug = DTA_debug;
 var Preferences = DTA_preferences;
+
+const SYSTEMSLASH = DTA_profileFile.get('dummy').path == '/' ? '/' : '\\';
+
 
 // From prototype.js :)
 function objectExtend(destination, source) {
@@ -73,49 +75,41 @@ objectExtend(String.prototype,
 		return this.replace(/^[\s\t]+|[\s\t]+$/gi, "");
 	},
 	removeBadChars : function() {
-		return this.replace(/[\?\:<>\*\|"]/g, "_").replace(/%20/g, " ").replace(/%2520/g, " "); //"
-	},
-	findSystemSlash : function() {
-		var path=(DTA_profileFile.get("dummy")).path;
-		if (path.search(/\\/) != -1) return "\\"; else return "/";
-	},
-	findForbiddenSlash : function() {
-		if (this.findSystemSlash() == "/")
-			return "\\";
-		else
-			return "/";
+		return this
+			.replace(/[\?\:<>\*\|"]/g, "_")
+			.replace(/%(?:25)?20/g, " ");
 	},
 	addFinalSlash : function() {
-		if (this.length == 0) return this.findSystemSlash();
+		if (this.length == 0) return new String(SYSTEMSLASH);
 		
-		if (this[this.length - 1] != this.findSystemSlash())
-			return this + this.findSystemSlash();
+		if (this[this.length - 1] != SYSTEMSLASH)
+			return this + SYSTEMSLASH;
 		else
 			return this;
 	},
 	removeFinalChar : function(c) {
-		if (this.length == 0) return this;
-		if (this.length == 1) return (this==c)?"":this;
-		
-		if (this[this.length - 1]==c) {
-			return this.substring(0, this.length - 1);
-		} else
+		if (this.length == 0) {
 			return this;
+		}
+		if (this[this.length - 1] == c) {
+			return this.substring(0, this.length - 1);
+		}
+		return this;
 	},
 	removeLeadingChar : function(c) {
-		if (this.length == 0) return this;
-		if (this.length == 1) return (this==c)?"":this;
-		
-		if (this[0] == c) {
-			return this.substring(1, this.length);
-		} else
+		if (this.length == 0) {
 			return this;
+		}
+		if (this[0] == c) {
+			return this.slice(1);
+		}
+		return this;
 	},
 	removeFinalSlash : function() {
-		return this.removeFinalChar(this.findSystemSlash());
+		return this.removeFinalChar(SYSTEMSLASH);
 	},
 	removeLeadingSlash : function() {
-		return this.removeLeadingChar(this.findSystemSlash());
+		return this.removeLeadingChar(SYSTEMSLASH);
 	},
 	removeFinalBackSlash : function() {
 		return this.removeFinalChar("/");
@@ -132,20 +126,20 @@ objectExtend(String.prototype,
 	},
 	getExtension : function() {
 		var name = this.getUsableFileName();
-		var c = name.split(".");
-		if (c.length == 1) 
+		var c = name.lastIndexOf('.');
+		if (c == -1) {
 			return null;
-		else
-			return c[c.length - 1];
+		}
+		return name.slice[c];
 	},
 	formatTimeDate : function() {
 		return this.replace(/\b(\d)\b/g, "0$1");
 	},
 	cropCenter : function(newLength) {
 		if (this.length > newLength) {
-			return this.substring(0, newLength/2) + "..." + this.substring(this.length - newLength/2, this.length);
-		}	else
-			return this;
+			return this.substring(0, newLength / 2) + "..." + this.substring(this.length - newLength / 2, this.length);
+		}
+		return this;
 	}
 }
 );
@@ -173,7 +167,6 @@ filePicker.prototype = {
 			if (res == nsIFilePicker.returnOK) {
 				return fp.file.path.addFinalSlash();
 			}
-		
 		}
 		catch (ex) {
 			Debug.dump("filePicker.getFolder():", ex);

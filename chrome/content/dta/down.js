@@ -77,7 +77,7 @@ var Prefs = {
 			}
 		}
 		
-		this.alertingSystem = Preferences.getDTA("alertbox", ((new String()).findSystemSlash()=='\\')?1:0);
+		this.alertingSystem = Preferences.getDTA("alertbox", (SYSTEMSLASH == '\\') ? 1 : 0);
 		this.maxChunks = Preferences.getDTA("maxchunks", 5);
 		// overwrite preference only if >
 		var current = Preferences.get("network.http.max-persistent-connections-per-server", this.maxInProgress * this.maxChunks + 2);
@@ -778,106 +778,93 @@ downloadElement.prototype = {
 	} catch (e) {Debug.dump("Unzip():", e);}
 	},
 	
-	buildFromMask : function(dir, mask) {try {
-		var slash = (new String()).findSystemSlash();
+	buildFromMask : function(dir, mask) {
+		try {
+			var uri = cc['@mozilla.org/network/standard-url;1']
+				.createInstance(Components.interfaces.nsIURI);
+			uri.spec = this.urlManager.usable;
 
-		var uri = cc['@mozilla.org/network/standard-url;1'].createInstance(Components.interfaces.nsIURI);
-		uri.spec = this.urlManager.usable;
-
-		// normalize slashes
-		mask = mask
-			.removeLeadingChar("\\").removeFinalChar("\\")
-			.removeLeadingChar("/").removeFinalChar("/")
-			.replace(/([\\/]{1,})/g, slash);
+			// normalize slashes
+			mask = mask
+				.removeLeadingChar("\\").removeFinalChar("\\")
+				.removeLeadingChar("/").removeFinalChar("/")
+				.replace(/([\\/]{1,})/g, slash);
 	
-		if (dir) {
-			mask = mask.substring(0, mask.lastIndexOf(slash));
-			var replacedSlash = slash;
-		} else {
-			mask = mask.substring(mask.lastIndexOf(slash) + 1, mask.length);
-			var replacedSlash = "-";
-		}
-		
-		var uripath = uri.path.removeLeadingBackSlash();
-		
-		if (uripath.length) {
-			// decoding here as a workaround for bug #13175
-			uripath = uripath.substring(0, uri.path.lastIndexOf("/"))
-				.removeFinalBackSlash()
-				.replace(/\//g, replacedSlash);
-		}
-	
-		this.description = this.description.removeBadChars().replace(/[\\/]/g, "").trim();
-
-		var name, ext;
-		// if we have content-type..
-		if (this.contentType) {
-			var contentType = (this.contentType.trim().split(" "))[0].removeFinalChar(";");
-			var mimeServ = Components.classes["@mozilla.org/mime;1"].
-				getService(Components.interfaces.nsIMIMEService);
-			
-			// if filename has an extension..
-			if (this.fileName.getExtension()) {
-				var tempname = this.fileName.substring(0, this.fileName.lastIndexOf("."));
-				var tempext = this.fileName.getExtension();
-				
-				// ..we use it
-				name = tempname;
-				if ((/html/).test(this.contentType) && !(/htm/).test(tempext))
-					ext = tempext+".html";
-				else
-					ext = tempext;
-
+			if (dir) {
+				mask = mask.substring(0, mask.lastIndexOf(SYSTEMSLASH));
+				var replacedSlash = SYSTEMSLASH;
 			} else {
-				//..else we use mime.primaryExtension
-				var info = mimeServ.getFromTypeAndExtension(contentType, "");
+				mask = mask.substring(mask.lastIndexOf(SYSTEMSLASH) + 1, mask.length);
+				var replacedSlash = "-";
+			}
+		
+			var uripath = uri.path.removeLeadingBackSlash();
+			if (uripath.length) {
+				uripath = uripath.substring(0, uri.path.lastIndexOf("/"))
+					.removeFinalBackSlash()
+					.replace(/\//g, replacedSlash);
+			}
+	
+			this.description = this.description.removeBadChars().replace(/[\\/]/g, "").trim();
+
+			var name, ext;
+			if (this.fileName.getExtension()) {
+				var name = this.fileName.substring(0, this.fileName.lastIndexOf("."));
+				var ext = this.fileName.getExtension();
+				
+				if (this.contentType && /html?/.test(this.contentType) && !/htm/.test(ext)) {
+					ext += ".html";
+				}
+			}
+			// mime-service method
+			else if (this.contentType) {
+				var contentType = (this.contentType.trim().split(" "))[0].removeFinalChar(";");
+				var info = Components.classes["@mozilla.org/mime;1"]
+					.getService(Components.interfaces.nsIMIMEService)
+					.getFromTypeAndExtension(contentType, "");
+				
 				name = this.fileName;
 				ext = info.primaryExtension;
 			}
-		} else {
-			// if filename has an extension..
-			if (this.fileName.getExtension()) {
-				// ..we use it
-				name = this.fileName.substring(0, this.fileName.lastIndexOf("."));
-				ext = this.fileName.getExtension();
-			} else {
-				// ..else we cannot do anything
+			else {
 				name = this.fileName;
-				ext = "";
+				ext = '';
 			}
-		}
+			
+			var replacements = {
+				"\\*name\\*" : name,
+				"\\*ext\\*" : ext,
+				"\\*text\\*" : this.description,
+				"\\*url\\*" : uri.host,
+				"\\*subdirs\\*" : uripath,
+				"\\*refer\\*" : this.refPage.host,
+				"\\*curl\\*" : (uri.host + ((uripath=="")?"":(replacedSlash + uripath))),
+				"\\*num\\*" : makeNumber(this.numIstance),
+				"\\*hh\\*" : String(this.startDate.getHours()).formatTimeDate(),
+				"\\*mm\\*" : String(this.startDate.getMinutes()).formatTimeDate(),
+				"\\*ss\\*" : String(this.startDate.getSeconds()).formatTimeDate(),
+				"\\*d\\*"  : String(this.startDate.getDate()).formatTimeDate(),
+				"\\*m\\*"  : String(this.startDate.getMonth()+1).formatTimeDate(),
+				"\\*y\\*"  : String(this.startDate.getFullYear())
+			}
 		
-		var replacements = {
-			"\\*name\\*" : name,
-			"\\*ext\\*" : ext,
-			"\\*text\\*" : this.description,
-			"\\*url\\*" : uri.host,
-			"\\*subdirs\\*" : uripath,
-			"\\*refer\\*" : this.refPage.host,
-			"\\*curl\\*" : (uri.host + ((uripath=="")?"":(replacedSlash + uripath))),
-			"\\*num\\*" : makeNumber(this.numIstance),
-			"\\*hh\\*" : String(this.startDate.getHours()).formatTimeDate(),
-			"\\*mm\\*" : String(this.startDate.getMinutes()).formatTimeDate(),
-			"\\*ss\\*" : String(this.startDate.getSeconds()).formatTimeDate(),
-			"\\*d\\*"  : String(this.startDate.getDate()).formatTimeDate(),
-			"\\*m\\*"  : String(this.startDate.getMonth()+1).formatTimeDate(),
-			"\\*y\\*"  : String(this.startDate.getFullYear())
-		}
+			for (i in replacements) {
+				mask = mask.replace(new RegExp(i, "gi"), replacements[i]);
+			}
 		
-		for (i in replacements)
-			mask = mask.replace(new RegExp(i, "gi"), replacements[i]);
-		
-		if (dir)
-			return this.dirSave + ((mask.removeBadChars().trim().length==0)?"":mask.removeBadChars().trim().addFinalSlash());
-		else
+			if (dir) {
+				return this.dirSave + ((mask.removeBadChars().trim().length==0)?"":mask.removeBadChars().trim().addFinalSlash());
+			}
 			return mask.removeBadChars().removeFinalChar(".").trim();
 		
-	} catch(e) {Debug.dump("buildFromMask():", e);}
+		} catch(ex) {
+			Debug.dump("buildFromMask():", ex);
+		}
 	
-		if (dir)
+		if (dir) {
 			return this.dirSave;
-		else
-			return this.destinationName;
+		}
+		return this.destinationName;
 	},
 	
 	checkFilenameConflict : function() {try {
@@ -2172,8 +2159,6 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 					d.isResumable = false;
 				}
 
-				var separator = (new String()).findSystemSlash();
-
 				// filename renaming
 				if (!d.alreadyMaskedName) {
 					d.alreadyMaskedName = true;
@@ -2712,8 +2697,6 @@ function isLinkType (linktype, link) {
 function downloadMultipart(d) {
 
 try {
-	var separator = (new String()).findSystemSlash();
-	
 	Prefs.refresh();
 	var numChunk = d.maxChunks;
 	
