@@ -49,7 +49,6 @@
 
 	<keyset>
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
-		<key keycode="VK_SPACE" oncommand="Dialog.toggleSelection();"/>
 		<key id="kMacEsc" modifiers="accel" key="W" oncommand="self.close();"/>
 		<key keycode="VK_RETURN" oncommand="Dialog.download(true);"/>
 		<key keycode="VK_ENTER" oncommand="Dialog.download(true);"/>

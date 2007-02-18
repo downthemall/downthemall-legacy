@@ -354,6 +354,16 @@ var Dialog = {
 			// changeTab will initialize the filters and do the selection for us
 			this.changeTab(Preferences.getDTA("seltab", 0) ? 'images': 'links');
 
+			$("urlList").addEventListener(
+				'keypress',
+				function(evt) {
+					if (evt.charCode == ' '.charCodeAt(0)) {
+						Dialog.toggleSelection();
+					}
+				},
+				true
+			);
+			
 		} catch(ex) {
 			DTA_debug.dump("load():", ex);
 		}
