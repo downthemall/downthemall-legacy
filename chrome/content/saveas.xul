@@ -20,18 +20,18 @@
 
 	<stringbundle id="stringsB" src="chrome://dta/locale/saveas.properties"/>
 	
-	<groupbox insertbefore="save" id="downthemallcontainer" collapsed="true" flex="1">
-		<radiogroup id="dtamode">
+	<radiogroup id="mode">
+		<vbox insertbefore="save" id="downthemallcontainer" collapsed="true" flex="1">
 			<hbox flex="1">
-				<radio id="downthemall" label="DownThemAll!" />
+				<radio id="downthemall" label="DownThemAll!" disabled="true"/>
 			</hbox>
 			<hbox id="tdta" flex="1">
-				<radio id="turbodta" label="dtaOneClick"/>
+				<radio id="turbodta" label="dTaOneClick" disabled="true"/>
 				<spacer flex="1"/>
 				<menulist id="tdtalist">
 					<menupopup id="tdtalistitems" />
 				</menulist>
 			</hbox>
-		</radiogroup>
-	</groupbox>
+		</vbox>
+	</radiogroup>
 </overlay>
