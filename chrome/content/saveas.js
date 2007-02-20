@@ -39,6 +39,8 @@ var DTA_SaveAs = {
 			return;
 		}
 		document.getElementById('downthemallcontainer').collapsed = false;
+		document.getElementById('downthemall').disabled = false;
+		document.getElementById('turbodta').disabled = false;
 		
 		this.dialog = dialog;
 		this.url = dialog.mLauncher.source.spec;
@@ -73,8 +75,13 @@ var DTA_SaveAs = {
 	},
 	
 	revertUI: function dd_revertUI() {
-		document.getElementById('open').parentNode.collapsed = true;
-		document.getElementById('rememberChoice').parentNode.collapsed = true;
+		['open', 'rememberChoice'].forEach(
+			function(e) {
+				e = document.getElementById(e);
+				e.parentNode.collapsed = true;		
+				e.disabled = true;
+			}
+		);
 		document.getElementById('normalBox').collapsed = false;
 		var nodes = document.getElementById('normalBox')
 			.getElementsByTagName('separator');
@@ -125,15 +132,15 @@ var DTA_SaveAs = {
 		DTA_preferences.setDTA("autoSaveDm.dta", mode==dta && this.remember.checked);
 		DTA_preferences.setDTA("autoSaveDm.tdta", mode==tdta && this.remember.checked);
 		
-		if (mode==dta)  {
-				this.download(false);
+		if (mode == dta) {
+			this.download(false);
 		  return false;
-		} else if (mode==tdta) {
-				this.download(true);
-		  return false;
-		} else {
-		  return true;
 		}
+		else if (mode == tdta) {
+			this.download(true);
+		  return false;
+		}
+	  return true;
 	},
 
 	download: function(turbo) {
