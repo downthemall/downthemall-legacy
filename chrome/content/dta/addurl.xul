@@ -42,7 +42,6 @@
 
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
-	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 
 	<script type="application/x-javascript" src="addurl.js"/>

@@ -36,7 +36,6 @@
 	<script type="application/x-javascript" src="down.js" />
 	<!-- restorePref.js needs stringB = prefpanes.properties -->
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
-	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
 	<script type="application/x-javascript" src="chrome://dta/content/preferences/restorePref.js" />
 	
 	<script src="chrome://global/content/nsDragAndDrop.js"/>

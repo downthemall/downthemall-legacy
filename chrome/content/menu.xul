@@ -13,7 +13,6 @@
 <overlay id="dta" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<script type="application/x-javascript" src="chrome://dta/content/menu.js"/>
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
-	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
 
 	<popup id="contentAreaContextMenu">
 		<menu image="chrome://dta/skin/common/dta.png" id="dtaCtxCompact" label="DownThemAll!" class="menu-iconic"  insertafter="context-sep-selectall">

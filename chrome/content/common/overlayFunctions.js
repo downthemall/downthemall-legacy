@@ -398,7 +398,7 @@ var DTA_AddingFunctions = {
 	},
 	
 	getDropDownValue : function(name) {
-		var values = eval(DTA_preferences.getDTA(name, '[]'));
+		var values = eval(DTA_preferences.getMultiByteDTA(name, '[]'));
 		return values.length ? values[0] : null;
 	},
 	
@@ -603,7 +603,7 @@ DTA_DropDown.prototype = {
 		}
 	},
 	load: function dd_load() {
-		var values = eval(DTA_preferences.getDTA(this.name, this.predefined));
+		var values = eval(DTA_preferences.getMultiByteDTA(this.name, this.predefined));
 		var max = DTA_preferences.getDTA("history", 5);
 		
 		var drop = document.getElementById(this.dropDown);
@@ -643,7 +643,7 @@ DTA_DropDown.prototype = {
 			return;
 		}
 
-		var inValues = eval(DTA_preferences.getDTA(this.name, this.predefined));
+		var inValues = eval(DTA_preferences.getMultiByteDTA(this.name, this.predefined));
 		var max = DTA_preferences.getDTA("history", 5);
 		
 		var outValues = [n];
@@ -653,7 +653,7 @@ DTA_DropDown.prototype = {
 				outValues.push(inValues[i]);
 			}
 		}
-		DTA_preferences.setDTA(this.name, outValues);
+		DTA_preferences.setMultiByteDTA(this.name, outValues);
 	},
 	clear: function dd_save() {
 		Preferences.resetDTA(this.name);

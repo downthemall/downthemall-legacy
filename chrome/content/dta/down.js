@@ -62,7 +62,7 @@ var Prefs = {
 		
 		if (Preferences.get("saveTemp", true)) {
 			try {
-				this.tempLocation = nsPreferences.getLocalizedUnicharPref("extensions.dta.tempLocation", '');
+				this.tempLocation = Preferences.getMultiByteDTA("tempLocation", '');
 				if (this.tempLocation == '') {
 					this.tempLocation = cc["@mozilla.org/file/directory_service;1"]
 						.getService(Components.interfaces.nsIProperties)

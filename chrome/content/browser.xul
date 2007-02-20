@@ -12,7 +12,6 @@
 <overlay id="DtaBrowserToolbar" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<script type="application/x-javascript" src="chrome://dta/content/dta/overlayFunctions.js"/>
 	<script type="application/x-javascript" src="chrome://dta/content/menu.js"/>
-	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
 	<script src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 	<script src="chrome://global/content/nsTransferable.js"/> 
