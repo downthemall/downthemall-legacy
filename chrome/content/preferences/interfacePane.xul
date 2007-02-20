@@ -65,6 +65,7 @@
 								onsyncfrompreference="return Interface.getMenu('dtaContext', 2);"
 								onsynctopreference="return Interface.setMenu('dtaContext', 2);"
 								class="moreLeft" />
+							<separator class="groove-thin"/>
 							<checkbox label="&uipane.compact.label;" preference="dtaContextSub" />
 						</groupbox>
 						<groupbox>
@@ -87,6 +88,7 @@
 								onsyncfrompreference="return Interface.getMenu('dtaTool', 2);"
 								onsynctopreference="return Interface.setMenu('dtaTool', 2);"
 								class="moreLeft" />
+							<separator class="groove-thin"/>
 							<checkbox label="&uipane.compact.label;" preference="dtaToolSub" />
 						</groupbox>
 					</row>
