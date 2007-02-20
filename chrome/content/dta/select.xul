@@ -37,7 +37,6 @@
 	<!-- internalFunctions needs overlayFunctions -->
 	<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js" />
 	<script type="application/x-javascript" src="dta.js" />
-	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/XPCNativeWrapper.js"/>
 

@@ -77,12 +77,12 @@ var Advanced = {
 			return;
 		}
 		var f = new filePicker();
-		f = f.getFolder(nsPreferences.getLocalizedUnicharPref("extensions.dta.context.tempLocation", tmp.value), "");
+		f = f.getFolder(Preferences.getMultiByteDTA("tempLocation", tmp.value), "");
 		if (!f) {
 			return;
 		}
 		$("temp").value = f;
-		nsPreferences.setUnicharPref("extensions.dta.context.tempLocation", f);
+		Preferences.setMultiByteDTA("tempLocation", f);
 		$("temp").focus();
 	},
 	toggleTemp: function() {
