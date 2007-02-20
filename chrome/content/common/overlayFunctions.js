@@ -94,7 +94,7 @@ var DTA_preferences = {
 	},
 	getMultiByte: function DP_getMultiByte(key, def) {
 		try {
-			var rv = this._prefs.getComplexValue(
+			var rv = this._pref.getComplexValue(
 				key,
 				Components.interfaces.nsISupportsString
 			);
@@ -111,7 +111,7 @@ var DTA_preferences = {
 		var str = CC["@mozilla.org/supports-string;1"]
 			.createInstance(Components.interfaces.nsISupportsString);
 		str.data = value;
-		this._prefs.setComplexValue(
+		this._pref.setComplexValue(
 			key,
 			Components.interfaces.nsISupportsString,
 			str
