@@ -3,7 +3,7 @@
  *
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- * 
+ *
  * See notice.txt and gpl.txt for details.
  *
  * Contributers:
@@ -15,15 +15,15 @@ var strbundle;
 // true if window has focus
 var winFocus = false;
 // true if some dialog.xul is opened
-var isOpenedMessagebox = 0;	
+var isOpenedMessagebox = 0;
 // true if some FF sidebox is shown
 var alerting = false;
 
 if (!Cc) {
-	const Cc = Components.classes;
+	var Cc = Components.classes;
 }
 if (!Ci) {
-	const Ci = Components.interfaces;
+	var Ci = Components.interfaces;
 }
 
 const FileFactory = new Components.Constructor(
@@ -36,27 +36,27 @@ var Prefs = {
 	// default values
 	showOnlyFilenames : true,
 	alertingSystem : 0,
-	
+
 	// conflict filenames preference for this session (-1 not setted)
 	askEveryTime : true,
 	sessionPreference : -1,
 	onConflictingFilenames : 3,
-	
+
 	maxInProgress : 5,
 	maxChunks : 5,
 	tempLocation : null,
-	
+
 	onClosingSaveAborted : true,
 	onClosingSaveCompleted : true,
 	onClosingSaveCanceled : true,
-	
-	minChunkSize : 200 * 1024, 
+
+	minChunkSize : 200 * 1024,
 	// does NOT affect the memory usage as it will be written out directly and synchronously.
 	maxChunkSize :  10 * 1024 * 1024,
 	maxMemoryUsage : 5 * 1024 * 1024,
-	
+
 	currentTooltip : null,
-	
+
 	refresh : function() {
 		this.onClosingSaveAborted = !Preferences.getDTA("removeaborted", false);
 		this.onClosingSaveCompleted = !Preferences.getDTA("removecompleted", true);
@@ -64,7 +64,7 @@ var Prefs = {
 		this.maxInProgress = Preferences.getDTA("ntask", 5);
 		this.showOnlyFilenames = Preferences.getDTA("showOnlyFilenames", true);
 		this.onConflictingFilenames = Preferences.getDTA("existing", 3);
-		
+
 		if (Preferences.get("saveTemp", true)) {
 			try {
 				this.tempLocation = Preferences.getMultiByteDTA("tempLocation", '');
@@ -81,7 +81,7 @@ var Prefs = {
 				// XXX: error handling
 			}
 		}
-		
+
 		this.alertingSystem = Preferences.getDTA("alertbox", (SYSTEMSLASH == '\\') ? 1 : 0);
 		this.maxChunks = Preferences.getDTA("maxchunks", 5);
 		// overwrite preference only if >
@@ -94,12 +94,12 @@ var Prefs = {
 // --------* Statistiche *--------
 var Stats = {
 	totalDownloads : 0,
-	
+
 	// Debug this crap,
 	_completedDownloads: 0,
 	get completedDownloads() { return this._completedDownloads; },
 	set completedDownloads(nv) { if (0 > (this._completedDownloads = nv)) { throw "Stats::Completed downloads less than 1"; } },
-	
+
 	zippedToWait : 0,
 	downloadedBytes : 0,
 	passedNumber : 0
@@ -108,7 +108,7 @@ var Stats = {
 function DTA_URLManager(urls) {
 	this._urls = [];
 	this._idx = 0;
-	
+
 	if (urls instanceof Array) {
 		this.initByArray(urls);
 	}
@@ -124,7 +124,7 @@ DTA_URLManager.prototype = {
 		const rv = a.preference - b.preference;
 		return rv ? rv : (a.url < b.url ? -1 : 1);
 	},
-	
+
 	initByNode: function um_initByNode(node) {
 		var nodes = node.getElementsByTagName('url');
 		for (var i = 0; i < nodes.length; ++i)
@@ -145,7 +145,7 @@ DTA_URLManager.prototype = {
 			this.add(urls[i]);
 		}
 		this._urls.sort(this._sort);
-		this._usable = this._urls[0].usable;		
+		this._usable = this._urls[0].usable;
 	},
 	add: function um_add(url) {
 		if (!url instanceof DTA_URL) {
@@ -228,7 +228,7 @@ Visitor.prototype = {
 	fileName : null,
 	dontacceptrange : false,
 	contentlength : 0,
-	
+
 	QueryInterface: function(aIID) {
 		if (
 			aIID.equals(Ci.nsISupports)
@@ -239,7 +239,7 @@ Visitor.prototype = {
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
 	visitHeader : function(aHeader, aValue) {try {
-	
+
 		const header = aHeader.toLowerCase();
 		switch (header) {
 			case 'content-type':
@@ -275,13 +275,13 @@ Visitor.prototype = {
 
 		if (header in this.cmpKeys)
 			this[header] = aValue;
-		
+
 		if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
 			// we have to handle headers like "content-disposition: inline; filename='dummy.txt'; title='dummy.txt';"
 			var value = aValue.match(/file(?:name)?=(["']?)([^\2;]+)\2(?:;.+)?/i);
 			if (!value) {
 				// workaround for bug #13959
-				// attachments on some vbulletin forums send nasty headers like "content-disposition: inline; filename*=utf-8''file.ext" 
+				// attachments on some vbulletin forums send nasty headers like "content-disposition: inline; filename*=utf-8''file.ext"
 				value = aValue.match(/file(?:name)?\*=(.*)''(.+)/i);
 				if (value) {
 					this.overrideCharset = value[1];
@@ -293,7 +293,7 @@ Visitor.prototype = {
 		}
 	} catch (ex) {
 		Debug.dump("hrhv::visitHeader:", ex);
-	}		
+	}
 	},
 	compare : function vi_compare(v)	{
 		if (!(v instanceof Visitor)) {
@@ -345,7 +345,7 @@ VisitorManager.prototype = {
 		for (var i = 0; i < nodes.length; ++i) {
 			try {
 				var visitor = new Visitor(nodes[i]);
-				this._visitors[nodes[i].getAttribute('url')] = visitor;				
+				this._visitors[nodes[i].getAttribute('url')] = visitor;
 			} catch (ex) {
 				Debug.dump("failed to read one visitor", ex);
 			}
@@ -361,7 +361,7 @@ VisitorManager.prototype = {
 	},
 	visit: function vm_visit(chan) {
 		var url = chan.URI.spec;
-		
+
 		var visitor = new Visitor();
 		chan.visitResponseHeaders(visitor);
 		if (url in this._visitors)
@@ -424,9 +424,9 @@ const treeCells = {
 function downloadElement(lnk, dir, num, desc, mask, refPage) {
 
 	this.visitors = new VisitorManager();
-	
+
 	dir = dir.addFinalSlash();
-	
+
 	if (typeof lnk == 'string') {
 		this.urlManager = new DTA_URLManager([new DTA_URL(lnk)]);
 	} else if (lnk instanceof DTA_URLManager) {
@@ -453,14 +453,14 @@ downloadElement.prototype = {
 	totalSize : 0,
 	partialSize : 0,
 	startDate : null,
-	
+
 	compression : false,
 	compressionType : "",
-	
+
 	treeID : "",
 	alreadyMaskedDir : false,
 	alreadyMaskedName : false,
-	
+
 	isCanceled : false,
 	isPaused : false,
 	isCompleted : false,
@@ -469,24 +469,24 @@ downloadElement.prototype = {
 	isStarted : false,
 	isPassed : false,
 	isRemoved : false,
-	
+
 	isFirst : false,
-	
+
 	fileManager : null,
 	declaratedChunks : 0,
 	maxChunks : null,
 	firstChunk : 0,
-	
+
 	timeLastProgress : 0,
 	timeStart : 0,
 	join : null,
-	
+
 	get icon() {
 		return getIcon(this.fileName, 'metalink' in this);
 	},
-	
+
 	imWaitingToRearrange : false,
-	
+
 	hasToBeRedownloaded : false,
 	reDownload : function() {
 		// replace names
@@ -495,7 +495,7 @@ downloadElement.prototype = {
 		this.alreadyMaskedName = false;
 		this.alreadyMaskedDir = false;
 		this.dirSave = this.originalDirSave;
-		
+
 		// reset flags
 		this.cancelFamily();
 		this.totalSize = 0;
@@ -506,14 +506,14 @@ downloadElement.prototype = {
 		this.visitors = new VisitorManager();
 		this.getHeader();
 	},
-	
+
 	getHeader : function() {
 		Debug.dump(this.urlManager.url + " (" + this.refPage.spec +"): getHeader()");
 		Prefs.refresh();
 		this.maxChunks = Prefs.maxChunks;
 		downloadChunk(0, 0, this, -1, true);
 	},
-	
+
 	treeElement : null,
 	setTreeCell : function(cell, caption) {
 		if (this.isRemoved) return;
@@ -521,14 +521,14 @@ downloadElement.prototype = {
 			this.treeElement = $(this.treeID).childNodes[0];
 		this.treeElement.childNodes[treeCells[cell]].attributes.label.value = caption;
 	},
-	
+
 	setTreeProgress : function(style, value) {
 		if (this.isRemoved) return;
 		$(this.treeID).childNodes[0].childNodes[treeCells["bar"]].attributes.properties.value = style;
 		if (value)
 			$(this.treeID).childNodes[0].childNodes[treeCells["bar"]].attributes.value.value = value;
 	},
-	
+
 	removeFromInProgressList : function() {
 		//this.speeds = new Array();
 		for (var i=0; i<inProgressList.length; i++)
@@ -543,14 +543,14 @@ downloadElement.prototype = {
 		if (!this.chunks) return;
 		while (this.chunks[i]) {
 			try {
-				if (!this.chunks[i].isRunning && !this.chunks[i].isJoining && this.chunks[i].fileManager.exists()) 
+				if (!this.chunks[i].isRunning && !this.chunks[i].isJoining && this.chunks[i].fileManager.exists())
 					this.chunks[i].remove();
 			} catch (e) {}
 			i=this.chunks[i].next;
 			if (i == -1) break;
 		}
 	},
-	
+
 	setIsCompleted : function() {
 		if (this.totalSize == 0) {
 			// if contentlength is unknown..
@@ -563,7 +563,7 @@ downloadElement.prototype = {
 			this.isCompleted = (this.partialSize == this.totalSize || this.partialSize == (this.totalSize-1) || this.partialSize == (this.totalSize+1));
 		return this.isCompleted;
 	},
-	
+
 	setIsRunning : function() {
 	var running = false;
 	try {
@@ -582,7 +582,7 @@ downloadElement.prototype = {
 	this.isRunning = running;
 	return running;
 	},
-	
+
 	refreshPartialSize : function(){
 		var size = 0;
 		for (var i = 0; i<this.chunks.length; i++)
@@ -590,13 +590,13 @@ downloadElement.prototype = {
 		this.partialSize = size;
 		return size;
 	},
-	
+
 	setPaused : function(){
 		for (var i = 0; i<this.chunks.length; i++)
 			if (this.chunks[i].isRunning && this.chunks[i].progressPersist)
 				this.chunks[i].progressPersist.cancelSave();
 	},
-	
+
 	getSize : function() {
 		try {
 			if (this.fileManager.exists())
@@ -606,7 +606,7 @@ downloadElement.prototype = {
 		} catch (e) {Debug.dump("download::getSize(): ", e)}
 		return 0;
 	},
-	
+
 	moveCompleted : function(fileManager) {
 
 		if (this.join) {
@@ -616,25 +616,25 @@ downloadElement.prototype = {
 			return;
 		}
 		Debug.dump(this.isMetalink);
-		
+
 		// increment completedDownloads counter
 		this.isCompleted = true;
-		Stats.completedDownloads++;	
+		Stats.completedDownloads++;
 
 		try {
 			var destination = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 			destination.initWithPath(this.dirSave);
 			Debug.dump(this.fileName + ": Move " + fileManager.path + " to " + this.dirSave + this.destinationName);
-			
+
 			if (!destination.exists()) {
 				destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
 			}
 			this.checkFilenameConflict();
 			var destinationName = (this.compression)?("[comp]"+this.destinationName):this.destinationName;
-			
+
 			// move file
 			fileManager.moveTo(destination, destinationName);
-			
+
 		} catch(ex) {
 			failDownload(this, strbundle.getString("accesserror"), strbundle.getString("permissions") + " " + strbundle.getString("destpath") + strbundle.getString("checkperm"), strbundle.getString("accesserror"));
 			Debug.dump("download::moveCompleted: Could not move file or create directory: ", ex);
@@ -657,14 +657,14 @@ downloadElement.prototype = {
 			}
 			var fileManager = new FileFactory(this.dirSave);
 			fileManager.append(this.destinationName);
-			
+
 			var fiStream = Cc['@mozilla.org/network/file-input-stream;1'].createInstance(Ci.nsIFileInputStream);
 			fiStream.init(fileManager, 1, 0, false);
 			var domParser = new DOMParser();
 			var doc = domParser.parseFromStream(fiStream, null, fileManager.fileSize, "application/xml");
 			var root = doc.documentElement;
 			fiStream.close();
-			
+
 			try {
 				fileManager.remove(false);
 			} catch (ex) {
@@ -710,19 +710,19 @@ downloadElement.prototype = {
 		} catch (ex) {
 			Debug.dump("hml exception", ex);
 		}
-	},	
+	},
 	finishDownload : function() {
 
 		// create final file pointer
 		this.fileManager = new FileFactory(this.dirSave);
 		var destinationName = (this.compression)?("[comp]"+this.destinationName):this.destinationName;
 		this.fileManager.append(destinationName);
-	
+
 		this.totalSize = this.partialSize = this.getSize();
 		this.setTreeCell("size", this.createDimensionString());
 		this.setTreeCell("percent", "100%");
 		this.setTreeProgress("completed", 100);
-		
+
 		// if zipped, unzip it
 		if (this.compression) {
 			if (!this.isCanceled) {
@@ -736,27 +736,27 @@ downloadElement.prototype = {
 			}
 			return;
 		}
-		
+
 		this.isPassed = true;
 		Stats.passedNumber++;
 		this.setTreeCell("status", strbundle.getString("complete"));
 		popup();
-			
+
 		// Garbage collection
 		this.chunks = null;
 	},
-	
+
 	unzip : function() {try {
 		Debug.dump(this.fileName + ": Unzip: unzip into " + this.dirSave + this.destinationName + " from source " + this.fileManager.path);
-		
+
 		// create a channel from the zipped file
 		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 		var fileURI = ios.newFileURI(this.fileManager);
-		var channel = ios.newChannelFromURI(fileURI); 
-		
+		var channel = ios.newChannelFromURI(fileURI);
+
 		// initialize output file
 		var nomeFileOut = new FileFactory(this.dirSave + this.destinationName);
-		
+
 		try {
 			nomeFileOut.create(nomeFileOut.NORMAL_FILE_TYPE, 0766);
 		} catch(e) {
@@ -764,24 +764,24 @@ downloadElement.prototype = {
 			Debug.dump("unzip(): Could not move file or create directory: ", e);
 			return;
 		}
-		
+
 		var fileUscita = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
 		fileUscita.init(nomeFileOut, 0x02 | 0x08, 0766, 0);
-		
+
 		// set up the gzip converter
 		var listener = new dataListener(fileUscita, nomeFileOut, this.fileManager, this);
 		var converter = Cc["@mozilla.org/streamconv;1?from="+this.compressionType+"&to=uncompressed"].createInstance(Ci.nsIStreamConverter);
-		if ("AsyncConvertData" in converter) 
+		if ("AsyncConvertData" in converter)
 			converter.AsyncConvertData(this.compressionType, "uncompressed", listener, null);
 		else
 			converter.asyncConvertData(this.compressionType, "uncompressed", listener, null);
-		
+
 		// start the conversion
 		channel.asyncOpen(converter,null);
 
 	} catch (e) {Debug.dump("Unzip():", e);}
 	},
-	
+
 	buildFromMask : function(dir, mask) {
 		try {
 			var uri = Cc['@mozilla.org/network/standard-url;1']
@@ -793,7 +793,7 @@ downloadElement.prototype = {
 				.removeLeadingChar("\\").removeFinalChar("\\")
 				.removeLeadingChar("/").removeFinalChar("/")
 				.replace(/([\\/]{1,})/g, slash);
-	
+
 			if (dir) {
 				mask = mask.substring(0, mask.lastIndexOf(SYSTEMSLASH));
 				var replacedSlash = SYSTEMSLASH;
@@ -801,21 +801,21 @@ downloadElement.prototype = {
 				mask = mask.substring(mask.lastIndexOf(SYSTEMSLASH) + 1, mask.length);
 				var replacedSlash = "-";
 			}
-		
+
 			var uripath = uri.path.removeLeadingBackSlash();
 			if (uripath.length) {
 				uripath = uripath.substring(0, uri.path.lastIndexOf("/"))
 					.removeFinalBackSlash()
 					.replace(/\//g, replacedSlash);
 			}
-	
+
 			this.description = this.description.removeBadChars().replace(/[\\/]/g, "").trim();
 
 			var name, ext;
 			if (this.fileName.getExtension()) {
 				var name = this.fileName.substring(0, this.fileName.lastIndexOf("."));
 				var ext = this.fileName.getExtension();
-				
+
 				if (this.contentType && /html?/.test(this.contentType) && !/htm/.test(ext)) {
 					ext += ".html";
 				}
@@ -826,7 +826,7 @@ downloadElement.prototype = {
 				var info = Components.classes["@mozilla.org/mime;1"]
 					.getService(Ci.nsIMIMEService)
 					.getFromTypeAndExtension(contentType, "");
-				
+
 				name = this.fileName;
 				ext = info.primaryExtension;
 			}
@@ -834,7 +834,7 @@ downloadElement.prototype = {
 				name = this.fileName;
 				ext = '';
 			}
-			
+
 			var replacements = {
 				"\\*name\\*" : name,
 				"\\*ext\\*" : ext,
@@ -851,44 +851,44 @@ downloadElement.prototype = {
 				"\\*m\\*"  : String(this.startDate.getMonth()+1).formatTimeDate(),
 				"\\*y\\*"  : String(this.startDate.getFullYear())
 			}
-		
+
 			for (i in replacements) {
 				mask = mask.replace(new RegExp(i, "gi"), replacements[i]);
 			}
-		
+
 			if (dir) {
 				return this.dirSave + ((mask.removeBadChars().trim().length==0)?"":mask.removeBadChars().trim().addFinalSlash());
 			}
 			return mask.removeBadChars().removeFinalChar(".").trim();
-		
+
 		} catch(ex) {
 			Debug.dump("buildFromMask():", ex);
 		}
-	
+
 		if (dir) {
 			return this.dirSave;
 		}
 		return this.destinationName;
 	},
-	
+
 	checkFilenameConflict : function() {try {
-	
+
 		// pointer to destination
 		var realDest = new FileFactory(this.dirSave);
 		realDest.append(this.destinationName);
-		
-		var num = 0; 
+
+		var num = 0;
 		var newDest = this.destinationName;
 		while (isInProgress(this.dirSave + newDest, this) != -1 || realDest.exists()) {
 			var newDest = createNumber(++num, this.destinationName); // ora i due sono diversi
-			realDest = new FileFactory(this.dirSave); 
+			realDest = new FileFactory(this.dirSave);
 			realDest.append(newDest);
 		}
 
 		// pointer to destination
 		var realDest = new FileFactory(this.dirSave);
 		realDest.append(this.destinationName);
-		
+
 		// Checks differ between moments
 		// if it's running
 		var maxUrlSize = 70; // set the max size limit of a URL string, after which the string will be trimmed
@@ -920,7 +920,7 @@ downloadElement.prototype = {
 				);
 			}
 		}
-		
+
 		// Make the decision
 		if (s>=0) switch (s) {
 			case 0: {
@@ -944,27 +944,27 @@ downloadElement.prototype = {
 				break;
 			}
 		}
-		
+
 	} catch(e) {Debug.dump("checkFilenameConflict():", e);}
 	},
-	
+
 	cancelDownload : function(message) {try {
 		if (!this.isCanceled) {
 			Debug.dump(this.fileName + ": cancelDownload()");
-			
+
 			this.visitors = new VisitorManager();
-			
+
 			if (this.isFirst) {
 				Check.setFirstInQueue();
 			}
 			this.isCanceled = true;
-			
+
 			if (message == "" || !message) {
 				message = strbundle.getString("canceled");
 			}
 			this.setTreeCell("status", message);
 			this.setTreeProgress("canceled");
-			
+
 			if (!this.isCompleted) {
 				if (this.setIsRunning()) {
 					this.setPaused();
@@ -979,9 +979,9 @@ downloadElement.prototype = {
 				Stats.completedDownloads--;
 				this.join = null;
 			}
-			
+
 			this.cancelFamily();
-			
+
 			if (this.isPaused)
 				this.isPaused = false;
 
@@ -992,37 +992,37 @@ downloadElement.prototype = {
 		Debug.dump("cancelDownload():", ex);
 	}
 	},
-	
+
 	resumeDownload : function () {try {
-	
+
 		if (!("length" in this.chunks) || this.chunks.length==0) {
 			this.getHeader();
 			return false;
 		}
-		
+
 		if (this.maxChunks == null) {
 			Prefs.refresh();
 			this.maxChunks = Prefs.maxChunks;
 		}
-		
-		if (this.maxChunks==this.declaratedChunks) 
+
+		if (this.maxChunks==this.declaratedChunks)
 			return false;
-		
+
 		Debug.dump(this.fileName + ": resumeDownload()");
-		
+
 		/*
 		cp = chunk che si devono inserire
 		sp = spazi da riempire
 		c = floor(cp / sp)
 		m = cp % sp
-		
-		(sp-m) spazi dovranno venire spartiti tra c chunks ciascuno, 
-		mentre i rimanenti m spazi dovranno venire spartiti tra c+1 chunks ciascuno. 
+
+		(sp-m) spazi dovranno venire spartiti tra c chunks ciascuno,
+		mentre i rimanenti m spazi dovranno venire spartiti tra c+1 chunks ciascuno.
 		*/
-		
+
 		var cp = this.maxChunks - this.declaratedChunks;
 		var sp = new Array();
-		
+
 		// calcolo sp - gli spazi vuoti e le sue proprieta'
 		if (this.chunks[this.firstChunk].start!=0) {
 			var e = new Object();
@@ -1032,7 +1032,7 @@ downloadElement.prototype = {
 			e.next = this.firstChunk;
 			sp.push(e);
 		}
-	
+
 		var i = this.firstChunk;
 		while (this.chunks[i].next!=-1) {
 			if (this.chunks[i].end != this.chunks[this.chunks[i].next].start - 1) {
@@ -1045,7 +1045,7 @@ downloadElement.prototype = {
 			}
 			i=this.chunks[i].next;
 		}
-		
+
 		if (this.chunks[i].end != this.totalSize - 1) {
 			var e = new Object();
 			e.start = this.chunks[i].end + 1;
@@ -1053,25 +1053,25 @@ downloadElement.prototype = {
 			e.prev = i;
 			e.next = -1;
 			sp.push(e);
-		} 
-		
+		}
+
 		if (sp.length == 0)
 			return false;
-		
+
 		// ordino gli spazi in dimensione crescente per ottimizzarea l'utilizzo dei chunk
 		// PER OTTIMIZZARE IL JOIN, CONVIENE INVECE CONSIDERARE I CHUNK IN ORDINE
 		//sp.sort(sortByDimension);
-		
+
 		// faccio partire i chunk
 		var m = cp % sp.length;
 		var n = sp.length-m;
 		var c = Math.floor(cp/sp.length);
 		var rest = 0;
-		
-		// chiedo di poter utilizzare c chunks. startSubChunks mi ritorna quanti non e' stato possibile utilizzare. 
+
+		// chiedo di poter utilizzare c chunks. startSubChunks mi ritorna quanti non e' stato possibile utilizzare.
 		// quei chunks si prova quindi a buttarli nello spazio successivo. ordinandoli per dimensione i piu' piccoli buttano
 		// le rimanenze sui piu' grandi.
-		
+
 		var i = 0;
 		if (c > 0 && n > 0) {
 			this.isRunning = true;
@@ -1079,7 +1079,7 @@ downloadElement.prototype = {
 				rest += startSubChunks(sp[i].start, sp[i].end, sp[i].prev, sp[i].next, c+rest, this);
 			}
 		}
-		
+
 		var s = i;
 		if (m > 0) {
 			this.isRunning = true;
@@ -1087,9 +1087,9 @@ downloadElement.prototype = {
 				rest += startSubChunks(sp[i].start, sp[i].end, sp[i].prev, sp[i].next, c+1+rest, this);
 			}
 		}
-	
+
 		return true;
-		
+
 		} catch(e) {Debug.dump("resumeThis():", e);}
 		return false;
 	},
@@ -1099,7 +1099,7 @@ downloadElement.prototype = {
 		}
 		return formatBytes(this.partialSize) + "/" + "???";
 	}
-	
+
 }
 
 
@@ -1116,7 +1116,7 @@ function joinListener(d) {
 		this.closeStream();
 		/// XXX: l10n friendly
 		failDownload(this.d, 'Joining failure', 'Joining failed to initialize', 'Joining Failure');
-	}	
+	}
 }
 
 joinListener.prototype = {
@@ -1136,17 +1136,17 @@ joinListener.prototype = {
 		}
 		Debug.dump('joinListener: ' + m);
 	},
-	
+
 	next : function JL_next() {
 		return this.d.chunks[this.current].next;
 	},
-	
+
 	stopJoining : function JL_stopJoining(c) {
 		if (this.stopRequest != null)
 			this.stopRequest.cancel(0);
 		this.closeStream();
 	},
-	
+
 	init: function JL_init() {
 		this.current = this.d.firstChunk;
 		this.offset = this.d.chunks[this.d.firstChunk].chunkSize;
@@ -1162,43 +1162,43 @@ joinListener.prototype = {
 			this.outStream.seek(0x00, this.d.totalSize);
 			this.outStream.setEOF();
 		}
-	
+
 		this.outStream.seek(0x00, this.offset);
-		
+
 		// seek does not work correctly :p
 		if (this.outStream.tell() != this.offset) {
 			this.dump("tell mismatch" + this.offset + "/" +  this.outStream.tell() + "/" + (this.offset - this.outStream.tell()));
 			this.d.cancelDownload();
 		}
-		
+
 		if (this.next() != -1)
 			this.join(this.next());
 	},
-	
+
 	join : function JL_join(c) {try {
-	
+
 		this.dump('join request', c);
 		if (!this.outStream) {
 			throw ("No outstream");
 		}
-		
+
 		if (c != this.next() || this.d.chunks[c].isRunning || this.imJoining) return;
 		if ((this.d.chunks[c].start - this.d.chunks[this.current].end) != 1) return;
 		if (!this.d.chunks[c].fileManager.exists()) return;
-		
+
 		this.imJoining = this.d.chunks[this.current].isJoining = this.d.chunks[c].isJoining = true;
-		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);		
+		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 
 		var fileURI = ios.newFileURI(this.d.chunks[c].fileManager);
 		var channel = ios.newChannelFromURI(fileURI); // create a channel from the downloaded chunk
-		
+
 		var listener = new dataCopyListener(this.outStream, this.d, c, this.offset, this);
 		channel.asyncOpen(listener, null);
-		
+
 		this.dump('join started', c);
 	} catch (e) {Debug.dump("join(): ", e);}
 	},
-	
+
 	closeStream: function JL_closeStream() {
 		if (this.outStream) {
 			this.dump('closeStream', this.d.firstChunk);
@@ -1206,11 +1206,11 @@ joinListener.prototype = {
 			this.outStream = null;
 		}
 	},
-	
+
 	joinIsFinished : function JL_jobIsFinished(chunk) {
 		this.imJoining = false;
 		this.d.chunks[this.current].isJoining = this.d.chunks[chunk].isJoining = false;
-		
+
 		// are we canceled now?
 		if (this.d.isCanceled) {
 			this.closeStream();
@@ -1222,21 +1222,21 @@ joinListener.prototype = {
 			this.d.chunks = new Array();
 			Check.checkClose();
 			if (this.d.isRemoved) setRemoved(this.d);
-			
+
 			// return early
 			return;
 		}
-		
+
 		var p = this.d.chunks[this.current];
 		var c = this.d.chunks[chunk];
-		
+
 		c.start = 0;
 		c.fileManager = this.fileManager;
 		c.chunkSize += p.chunkSize;
 		c.previous = -1;
 		p.chunkSize = 0;
 		this.d.firstChunk = chunk;
-		
+
 		// put it in to debug a problem, which was: chunksize < filesize because incomplete chunks got saved due to a programming error
 		var told = this.outStream.tell()
 		if (this.offset != told) {
@@ -1247,14 +1247,14 @@ joinListener.prototype = {
 				this.d.cancelDownload();
 			}
 		}
-	
+
 		if (!this.d.isRunning && this.d.isPaused && Check.isClosing) {
 			this.closeStream();
 			Debug.dump("We're closing from Join... isPassed=true");
 			this.d.isPassed = true;
 			Stats.passedNumber++;
 			Check.checkClose();
-		} 
+		}
 		// more to do
 		else {
 			this.current = chunk;
@@ -1282,7 +1282,7 @@ function dataCopyListener(outStream, d, chunk, offset, join) {
 dataCopyListener.prototype = {
 	error : false,
 	myOffset : 0,
-	
+
 	QueryInterface : function DCL_QueryInterface(iid) {
 		if(
 			iid.equals(Ci.nsISupports)
@@ -1291,11 +1291,11 @@ dataCopyListener.prototype = {
 		) return this;
 		throw Components.results.NS_ERROR_NO_INTERFACE;
  	},
-	
+
 	onStartRequest : function DCL_onStartRequest(request, context) {
 		this.join.stopRequest = request;
 	},
-	
+
 	onStopRequest : function DCL_onStopRequest(request, context, status) {
 		if (status == Components.results.NS_OK && !this.error) {
 			Debug.dump(this.d.fileName + ": Join of chunk " + this.d.chunks[this.chunk].start + "-" + this.d.chunks[this.chunk].end + " completed");
@@ -1312,7 +1312,7 @@ dataCopyListener.prototype = {
 				this.join.joinIsFinished(this.chunk, this.myOffset);
 		}
 	},
-	
+
 	onDataAvailable : function DCL_onDataAvailable(request, context, inputStream, offset, count) {try {
 
 		this.join.offset = this.oldoffset + offset;
@@ -1342,7 +1342,7 @@ dataCopyListener.prototype = {
 function failDownload(d, title, msg, state) {
 
 	playSound("error");
-	
+
 	if (Prefs.alertingSystem == 1 && !alerting) {
 		alerting = true;
 		Cc['@mozilla.org/alerts-service;1']
@@ -1360,7 +1360,7 @@ function failDownload(d, title, msg, state) {
 	}
 
 	d.cancelDownload(state);
-	
+
 	return;
 }
 
@@ -1426,48 +1426,48 @@ var Check = {
 	frequencyCheck : 500,
 	frequencyUpdateChunkGraphs : 500,
 	lastSum : 0,
-	
+
 	refreshDownloadedBytes : function() {
 		// update statusbar
 		for (var i=0; i<inProgressList.length; i++)
 			Stats.downloadedBytes+=inProgressList[i].d.partialSize;
 		return Stats.downloadedBytes;
 	},
-	
+
 	refreshGUI : function() {try{
-		
+
 		// Calculate global speed
 		var sum = 0;
 		for (var i=0; i<inProgressList.length; i++)
 			sum+=inProgressList[i].d.partialSize;
-		
+
 		var speed = Math.round((sum - this.lastSum) * (1000 / this.frequencyRefresh));
 		speed = (speed>0)?speed:0;
-		
+
 		this.lastSum = sum;
-		
+
 		// Refresh status bar
 		$("status").label = (
 			strbundle.getFormattedString("cdownloads", [Stats.completedDownloads, downloadList.length]) +
-			" - " + 
+			" - " +
 			strbundle.getString("cspeed") + " " + formatBytes(speed) + "/s"
 		);
-		
+
 		// Refresh window title
 		if (inProgressList.length == 1 && inProgressList[0].d.totalSize > 0) {
 			document.title = (
-				Math.round(inProgressList[0].d.partialSize / inProgressList[0].d.totalSize * 100) + "% - " + 
-				Stats.completedDownloads + "/" + downloadList.length + " - " + 
+				Math.round(inProgressList[0].d.partialSize / inProgressList[0].d.totalSize * 100) + "% - " +
+				Stats.completedDownloads + "/" + downloadList.length + " - " +
 				formatBytes(speed) + "/s - DownThemAll! - " + strbundle.getString("dip")
 			);
 		} else if (inProgressList.length > 0)
 			document.title = (
-				Stats.completedDownloads + "/" + downloadList.length + " - " + 
+				Stats.completedDownloads + "/" + downloadList.length + " - " +
 				formatBytes(speed) + "/s - DownThemAll! - " + strbundle.getString("dip")
 			);
 		else
 			document.title = Stats.completedDownloads + "/" + downloadList.length + " - DownThemAll!";
-		
+
 		var data = new Date();
 		for (var i=0; i<inProgressList.length; i++) {
 			var d = inProgressList[i].d;
@@ -1478,7 +1478,7 @@ var Check = {
 					var hour = Math.floor(remainingSeconds / 3600);
 					var min = Math.floor((remainingSeconds - hour*3600) / 60);
 					var sec = remainingSeconds - min * 60 - hour*3600;
-					if (remainingSeconds == "Infinity") 
+					if (remainingSeconds == "Infinity")
 						d.setTreeCell("status", strbundle.getString("unavailable"));
 					else {
 						var s= hour>0?(hour+":"+min+":"+sec):(min+":"+sec);
@@ -1486,42 +1486,42 @@ var Check = {
 					}
 				}
 				var speed = Math.round((d.partialSize - inProgressList[i].lastBytes) * (1000 / this.frequencyRefresh));
-				
+
 				// Refresh item speed
 				d.setTreeCell("speed", formatBytes(speed) + "/s");
 				d.speeds.push(speed);
 				if (d.speeds.length > 50)
 					d.speeds.splice(0, 1);
-					
+
 				inProgressList[i].lastBytes = d.partialSize;
 			}
 		}
 		this.timerRefresh = setTimeout("Check.refreshGUI();", this.frequencyRefresh);
 	} catch(e) {Debug.dump("refreshGUI():", e);}
 	},
-	
+
 	checkDownloads : function() {try {
-		
+
 		this.refreshDownloadedBytes();
 		Prefs.refresh();
-		
+
 		// se il numero di download e' cambiato, controlla.
 		if (!this.haveToCheck && (this.lastDownloads != downloadList.length))
 			this.haveToCheck = true;
-		
+
 		if (this.haveToCheck && inProgressList.length < Prefs.maxInProgress && !Check.isClosing) {
 			this.lastDownloads = downloadList.length;
-			if (Check.firstInQueue != -1) 
+			if (Check.firstInQueue != -1)
 				this.startNextDownload();
 			else {
 				if (this.setFirstInQueue() == -1)
 					this.haveToCheck = false;
-				else 
+				else
 					this.startNextDownload();
 			}
 		}
 		this.checkClose();
-		
+
 		var data = new Date();
 		for (var i=0; i<inProgressList.length; i++) {
 			var d = inProgressList[i].d;
@@ -1543,9 +1543,9 @@ var Check = {
 		this.timerCheck = setTimeout("Check.checkDownloads();", this.frequencyCheck);
 	} catch(e) {Debug.dump("checkDownloads():", e);}
 	},
-	
+
 	checkClose : function() {try{
-	
+
 	this.refreshDownloadedBytes();
 
 	if (
@@ -1568,7 +1568,7 @@ var Check = {
 			var stringa;
 			if (Stats.completedDownloads > 0)
 				stringa = strbundle.getString("suc");
-			
+
 			if (Prefs.alertingSystem == 1 && !alerting) {
 				alerting = true;
 				alert = Cc['@mozilla.org/alerts-service;1'].getService(Ci.nsIAlertsService);
@@ -1583,7 +1583,7 @@ var Check = {
 				}
 			}
 		}
-		
+
 		// checks for auto-disclosure of window
 		if (Preferences.getDTA("closedta", false) || Check.isClosing) {
 			Debug.dump("checkClose(): I'm closing the window/tab");
@@ -1595,9 +1595,9 @@ var Check = {
 	}
 	} catch(e) {Debug.dump("checkClose():", e);}
 	},
-	
+
 	setFirstInQueue : function() {try {
-	
+
 	if (this.firstInQueue > downloadList.length-1) {
 		this.firstInQueue = -1;
 		return -1;
@@ -1631,7 +1631,7 @@ var Check = {
 	this.firstInQueue = -1;
 	return -1;
 	},
-	
+
 	startNextDownload : function () {try {
 
 		var i = this.firstInQueue;
@@ -1642,10 +1642,10 @@ var Check = {
 		var d = downloadList[i];
 
 		d.setTreeCell("status", strbundle.getString("starting"));
-	
+
 		d.timeLastProgress = (new Date()).getTime();
 		d.isRunning = true;
-	
+
 		var flagAdd = true;
 		for (var i = 0; i < inProgressList.length; ++i) {
 			if (inProgressList[i].d == d) {
@@ -1657,7 +1657,7 @@ var Check = {
 			inProgressList.push(new inProgressElement(d));
 			d.timeStart = (new Date()).getTime();
 		}
-		
+
 		// e' gia' partito o e' un nuovo download?
 		if (!d.isStarted) {
 			d.isStarted = true;
@@ -1667,9 +1667,9 @@ var Check = {
 			Debug.dump("Let's resume " + d.fileName + ": " + d.partialSize);
 			d.resumeDownload();
 		}
-		
+
 		this.setFirstInQueue();
-	
+
 	} catch(e){Debug.dump("startNextDownload():", e);}
 	}
 }
@@ -1691,7 +1691,7 @@ isPassedOnProgress : false,
 // null function
 init: function() {},
 destroy: function() {},
-prompt: function (dialogTitle, text, passwordRealm, savePassword, defaultText, result) {}, 
+prompt: function (dialogTitle, text, passwordRealm, savePassword, defaultText, result) {},
 promptPassword: function  (dialogTitle, text, passwordRealm, savePassword, pwd) {},
 onLocationChange: function (aWebProgress, aRequest, aLocation) {},
 onStatusChange: function (aWebProgress, aRequest, aStatus, aMessage) {},
@@ -1710,13 +1710,13 @@ try {
 	url = url.removeFinalBackSlash();
 	var host = {value:""};var user =  {value:""};var password = {value:""};
 	var r = {user:{value:""},pass:{value:""}};
-	
+
 	var PMI = Cc["@mozilla.org/passwordmanager;1"].createInstance(Ci.nsIPasswordManagerInternal)
 	PMI.findPasswordEntry(url, "", "", host, user, password);
 	r.user.value = user.value;
 	r.pass.value = password.value;
 	return r;
-	
+
 } catch (e) {}
 return r;
 },
@@ -1725,13 +1725,13 @@ saveHostPassword : function(url, username, password) {
 	Debug.dump(d.fileName + ": Trying to save user and pass");
 	var passwordManager = Cc["@mozilla.org/passwordmanager;1"].createInstance();
 	passwordManager = passwordManager.QueryInterface(Ci.nsIPasswordManager);
-	
+
 	if (!passwordManager) return;
 	try {
 		// Remove existing entry
 		passwordManager.removeUser(url, username);
 	 } catch (e) {}
-		
+
 	try{
 		//add new entry
 		passwordManager.addUser(url, username, password);
@@ -1754,13 +1754,13 @@ promptUsernameAndPassword : function  (dialogTitle, text, passwordRealm, savePas
 },
 
 onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
-	
+
 	if (!(aStateFlags & Ci.nsIWebProgressListener.STATE_STOP)) return;
-	
+
 	// shortcuts
 	var c = this.c;
 	var d = this.d;
-	
+
 	// refresh partial size
 	c.chunkSize = c.getSize();
 	if (c.chunkSize == 0) {
@@ -1770,29 +1770,29 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 		if (c.next != -1) d.chunks[c.next].previous = c.previous;
 	}
 	Check.refreshDownloadedBytes();
-	d.refreshPartialSize();	
-	
+	d.refreshPartialSize();
+
 	// update flags and counters
 	c.isRunning = false;
 	d.setIsRunning();
 	d.declaratedChunks--;
 	d.setTreeCell("parts", 	d.declaratedChunks + "/" + d.maxChunks);
-	
+
 	d.setIsCompleted();
-	
+
 	// if it's the chunk that tested response headers
 	if (this.isHeaderHack && !d.isCompleted) {
 		d.chunks.splice(this.chunkIndex, 1);
-		
+
 		if (this.isPassedOnProgress && !d.isCanceled && !Check.isClosing && !d.isPaused) {
 			Debug.dump(d.fileName + ": Header stopped to start download in multipart");
 			downloadMultipart(d);
 			return;
 		} else {
 			Debug.dump(d.fileName + ": Header stopped.");
-			
+
 			d.isStarted = false;
-			
+
 			// removed downloads are not included in passedNumber
 			if (Check.isClosing && !d.isRemoved) {
 				d.isPassed = true;
@@ -1804,7 +1804,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 				strbundle.getFormattedString("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]),
 				strbundle.getString("srver")
 				);
-				
+
 			d.removeFromInProgressList();
 			popup();
 			Check.checkClose();
@@ -1812,10 +1812,10 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 		sessionManager.save();
 		return;
 	}
-	
+
 	// update chunk range
 	c.end = c.start + c.chunkSize - 1;
-	
+
 	// routine for normal chunk
 	Debug.dump(d.fileName + ": Chunk " + c.start + "-" + c.end + " finished.");
 
@@ -1828,7 +1828,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 		popup();
 		sessionManager.save();
 		return;
-	} else 
+	} else
 	// check for corrupted ranges
 	if (d.isResumable && c.next!=-1 && c.end >= d.chunks[c.next].start) {
 		Debug.dump(d.fileName + ": Error on chunks range.. Redownload file in normal mode");
@@ -1837,7 +1837,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 		if (!d.isRunning) {
 			Debug.dump(d.fileName + ": All old chunks are finished, reDownload()");
 			d.reDownload();
-		} else 
+		} else
 			d.setPaused();
 		popup();
 		sessionManager.save();
@@ -1845,7 +1845,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 	}
 
 	// ok, chunk passed all the integrity checks!
-	
+
 	// isHeaderHack chunks have their private call to removeFromInProgressList
 	if (!d.isRunning && !d.imWaitingToRearrange) {
 		d.setTreeCell("speed", "");
@@ -1873,31 +1873,31 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 		sessionManager.save();
 		return;
 	}
-	
+
 	// can we start/continue joining routine?
 	if (!Check.isClosing && !d.isCanceled && d.isResumable) {
 		// create new Joining routine
 		if (d.firstChunk==this.chunkIndex && d.join==null) {
 			d.join = new joinListener(d);
-		} else 
+		} else
 		// continue from already started Joining
 		if (d.join != null && this.chunkIndex == d.join.next())
 			d.join.join(this.chunkIndex);
 	}
-	
+
 	// if download is complete
 	if (d.isCompleted && !d.isCanceled) {
-	
+
 		Debug.dump(d.fileName + ": Download is completed!");
-		
+
 		// multipart downloads have moveCompleted call after the last joining process
 		if (d.chunks.length == 1)
 			d.moveCompleted(c.fileManager);
-	} else 
-	
+	} else
+
 	// if we have to close window
 	if (!d.isRunning && d.isPaused && Check.isClosing) {
-	
+
 		if (d.join == null || !d.join.imJoining) {
 			// removed downloads are not included in passedNumber
 			if (!d.isRemoved) {
@@ -1917,16 +1917,16 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 				d.visitors = new VisitorManager();
 			}
 			Check.checkClose();
-		} else 
+		} else
 			Debug.dump(d.fileName + ": We have to wait for Join...");
-	} else 
-	
+	} else
+
 	// if a chunk gets completed and nothing else happens
 	if (!d.isPaused && !d.isCanceled && d.isResumable) {
-	
+
 		// if all the download space has already been occupied by chunks (= !resumeDownload)
 		if (!d.imWaitingToRearrange && !d.resumeDownload() && (d.maxChunks - d.declaratedChunks) > 0) {
-	
+
 			// find the biggest running chunk..
 			var j = null;
 			for (var x=0; x<d.chunks.length; x++)
@@ -1936,7 +1936,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 					else if ((j.end - j.start - j.chunkSize) < (d.chunks[x].end - d.chunks[x].start))
 						j = d.chunks[x];
 				}
-			
+
 			// ..and if it can be splitted up in more than a chunk..
 			if (Math.round((j.end - j.start - j.chunkSize) / Prefs.minChunkSize) > 1) {
 				Debug.dump(d.fileName + ": Rearrange chunk " + j.start + "-" + j.end);
@@ -1945,22 +1945,22 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 				j.imWaitingToRearrange = true;
 				j.progressPersist.cancelSave();
 			}
-			
+
 		} else if (c.imWaitingToRearrange) {
-		
+
 			// ..to let resumeDownload split space in a better way.
 			c.imWaitingToRearrange = false;
 			d.imWaitingToRearrange = false;
 			d.resumeDownload();
 		}
-		
-	} else 
+
+	} else
 
 	// if download has been canceled by user
 	if (d.isCanceled) {
 		Debug.dump(d.fileName + ": Download has been canceled.. erase chunk.");
 		c.remove();
-		
+
 		if (!d.isRunning) {
 			if (d.join != null && d.join.imJoining)
 				d.join.stopJoining();
@@ -1973,11 +1973,11 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 		}
 		Check.checkClose();
 	}
-	
+
 	sessionManager.save();
 	// refresh GUI
 	popup();
-	
+
 	// Garbage Collection
 	c.progressPersist = null;
 
@@ -1989,7 +1989,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 
 		// shortcuts
 		var c = this.c;
-		var d = this.d;	
+		var d = this.d;
 
 		// flag
 		var firstProgress = false;
@@ -2010,7 +2010,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 			c.progressPersist.cancelSave();
 			c.remove();
 			return;
-		} 
+		}
 
 		var data = new Date();
 		d.timeLastProgress = data.getTime();
@@ -2079,7 +2079,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 				d.setPaused();
 				return;
 			 }
-			
+
 			// this.isHeaderHack = it's the chunk that has to test response headers
 			if (this.isHeaderHack) {
 				Debug.dump(d.fileName + ": Test Header Chunk started");
@@ -2113,7 +2113,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 					d.totalSize = 0;
 					d.isResumable = false;
 				}
-				// Checks for available disk space. 
+				// Checks for available disk space.
 				// XXX: l10n
 				var tsd = d.totalSize;
 				var nsd;
@@ -2137,7 +2137,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 					failDownload(d, strbundle.getString("accesserror"), strbundle.getString("permissions") + " " + strbundle.getString("destpath") + strbundle.getString("checkperm"), strbundle.getString("accesserror"));
 					return;
 				}
-				
+
 				nds = realDest.diskSpaceAvailable;
 				if (nds < tsd) {
 					Debug.dump("There is not enought free space available on destination directory, needed=" + tsd + " (totalsize="+ d.totalSize +"), user=" + nsd);
@@ -2145,7 +2145,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 					return;
 				}
 
-				
+
 				// if we are redownloading the file, here we can force single chunk mode
 				if (d.hasToBeRedownloaded) {
 					d.hasToBeRedownloaded = null;
@@ -2157,7 +2157,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 					d.alreadyMaskedName = true;
 
 					var newName = null;
-					
+
 					if (visitor.fileName && visitor.fileName.length > 0) {
 						// if content disposition hasn't an extension we use extension of URL
 						newName = visitor.fileName;
@@ -2168,7 +2168,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 						// if there has been one or more "moved content" header directives, we use the new url to create filename
 						newName = aRequest.URI.spec.getUsableFileName();
 					}
-					
+
 					// got a new name, so decode and set it.
 					if (newName) {
 						var charset = visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset;
@@ -2221,7 +2221,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 
 			if (!d.totalSize)
 				this.cantCount = 1;
-			
+
 			popup();
 		}
 
@@ -2230,7 +2230,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 
 			c.chunkSize = aCurTotalProgress;
 			d.refreshPartialSize();
-			
+
 			Check.refreshDownloadedBytes();
 
 			if (this.cantCount != 1)
@@ -2274,7 +2274,7 @@ dataListener.prototype = {
 			iid.equals(Ci.nsISupports)
 			|| iid.equals(Ci.nsIStreamListener)
 			|| iid.equals(Ci.nsIRequestObserver)
-		) 
+		)
 			return this;
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
@@ -2283,7 +2283,7 @@ dataListener.prototype = {
 	},
 	onStopRequest : function(request, context, status) {
 		this.outf.close();
-		
+
 		if (this.d.isRemoved) {
 			Stats.zippedToWait--;
 		} else {
@@ -2294,20 +2294,20 @@ dataListener.prototype = {
 			this.d.setTreeCell("status", strbundle.getString("complete"));
 			this.d.setTreeProgress("completed", 100);
 		}
-		
+
 		if (status == Components.results.NS_OK && !this.error) {
-		
+
 			Debug.dump(this.d.fileName + ": Remove: " + this.inf.path + "\nKeep " + this.outFM.path);
 			this.inf.remove(false);
-			
+
 		} else {
 			// if we have an error decompression we assume an erroneous GZIP header response and keep the original file!
 			Debug.dump(this.d.fileName + ": Rename: " + this.inf.path + "\nRemove erroneous: " + this.outFM.path);
-			
+
 			this.outFM.remove(false);
 			var destination = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 			destination.initWithPath(this.d.dirSave);
-			
+
 			try {
 				if (!destination.exists()) destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
 				this.inf.moveTo(destination, this.d.destinationName);
@@ -2317,12 +2317,12 @@ dataListener.prototype = {
 				return;
 			}
 		}
-		
+
 		// Garbage collection
 		this.d.chunks = null;
-		
+
 		Debug.dump(this.d.fileName + ": Decompression completed");
-		
+
 		Check.checkClose();
 		popup();
 	},
@@ -2354,11 +2354,11 @@ function loadDown() {
 
 	strbundle = $("strings");
 	Prefs.refresh();
-	
+
 	document.getElementById("dtaHelp").hidden = !("openHelp" in window);
-	
+
 	sessionManager.load();
-	
+
 	// update status and window title
 	$("status").label = strbundle.getFormattedString("cdownloads", [Stats.completedDownloads, downloadList.length]);
 	document.title = Stats.completedDownloads + "/" + downloadList.length + " - DownThemAll!";
@@ -2367,90 +2367,15 @@ function loadDown() {
 		startnewDownloads(window.arguments[0], window.arguments[1]);
 	} else
 		$("listDownload0").view.selection.currentIndex = $("listDownload0").view.rowCount - 1;
-	
+
 	try {
 		clearTimeout(Check.timerCheck);
 		clearTimeout(Check.timerRefresh);
 		Check.checkDownloads();
 		Check.refreshGUI();
 	} catch (e) {}
-	
+
 	popup();
-}
-
-function removeTab(url) {
-try {
-	var enumerator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-		.getService(Ci.nsIWindowMediator)
-		.getEnumerator("navigator:browser");
-		
-	var useRM = false;
-	try {
-		var ver = Components.classes["@mozilla.org/xre/app-info;1"]
-			.getService(Ci.nsIXULAppInfo)
-			.platformVersion;
-		var versionChecker = Components.classes["@mozilla.org/xpcom/version-comparator;1"]
-			.getService(Ci.nsIVersionComparator);
-		useRM = versionChecker.compare(ver, "1.8") < 0;
-	} catch (ex) {
-		// nothing to do here.
-		// seems to be an old version of Gecko/XRE.
-	}
-
-	var chk = function(tab, url) {
-		if (tab.currentURI.spec == url || tab.contentWindow.location == url) {
-			return tab;
-		}
-		
-		var frames = tab.contentWindow.frames;
-		if (frames && frames.length) {
-			for (var i = 0; i<frames.length; i++) {
-				if (frames[i].location && frames[i].location == url) {
-					return tab;
-				}
-			}
-		}
-
-		return null;
-	};
-
-	// Check each browser instance for our URL
-	var numBrowsers = 0;
-	while (enumerator.hasMoreElements()) {
-		var win = enumerator.getNext();
-		var browser = win.getBrowser();
-
-		var numTabs = browser.browsers.length;
-		
-		// likely its the selected tab.
-		var tab = chk(browser.selectedBrowser, url);
-		if (!tab) {
-			// Check each tab of this browser instance
-			for (var i = 0; i < numTabs; ++i) {
-				tab = chk(browser.getBrowserAtIndex(i), url);
-				if (tab) {
-					break;
-				}
-			}
-		}
-		if (tab)
-		{
-			// If referrer == page to remove && if we have more than a tab
-			if (useRM || numTabs > 1)
-			{
-				browser.removeTab(tab);
-			} else if (numBrowsers || enumerator.hasMoreElements()){
-				win.close();
-			}	else {
-				// this is the 1.8.0 way
-				browser.addTab('about:blank');
-				browser.removeTab(tab);
-			}
-			return;
-		}
-    numBrowsers++;
-  }
-} catch(e) {Debug.dump("removeTab(): ", e);}
 }
 
 function cancelAll(pressedESC) {
@@ -2458,7 +2383,7 @@ function cancelAll(pressedESC) {
 	// if we have non-resumable running downloads...
 	if (!Check.isClosing) {
 		var rFlag=false;
-		
+
 		for (var i=0; i<downloadList.length; i++) {
 			if (downloadList[i].isStarted && !downloadList[i].isResumable && downloadList[i].isRunning && !downloadList[i].isPaused)	{
 				rFlag=true;
@@ -2474,14 +2399,14 @@ function cancelAll(pressedESC) {
 				strbundle.getString("nonres")
 			);
 			if (!rv) {
-				return false;		
+				return false;
 			}
 		}
 	} else if (sessionManager.iHaveToClose)
 		return true;
-	
+
 	Check.isClosing = true;
-	
+
 	if (Stats.passedNumber != downloadList.length || Stats.zippedToWait != 0) {
 		for (var i=0; i<downloadList.length; i++) {
 			var d = downloadList[i];
@@ -2518,9 +2443,9 @@ function cancelAll(pressedESC) {
 			}
 		}
 	}
-	
+
 	Debug.dump("Passed=" + Stats.passedNumber + "/" + downloadList.length);
-	
+
 	// if we can close window now, let's close it
 	if (Stats.passedNumber == downloadList.length && Stats.zippedToWait == 0) {
 		Debug.dump("cancelAll(): Disclosure of window permitted");
@@ -2529,115 +2454,119 @@ function cancelAll(pressedESC) {
 		clearTimeout(Check.timerCheck);
 	} else
 		Debug.dump("cancelAll(): We're waiting...");
-	
+
 	return false;
 }
 
 function startnewDownloads(notQueue, download) {
 
 	var numbefore = $("listDownload0").view.rowCount - 1;
-	
+
 	for (var i=0; i<download.length; i++) {
 		var e = download[i];
 		// uniformita' slash finale
 		e.dirSave.addFinalSlash();
-		
+
 		var desc = "";
 		if (("description" in download[i]) && download[i].description.length>0)
 			desc = e.description;
 		else if ("ultDescription" in download[i])
 			desc = e.ultDescription;
-			
+
 		var startDate = new Date();
 		var d = new downloadElement(e.url, e.dirSave, e.numIstance, desc, e.mask, e.refPage);
 		d.isPaused = !notQueue;
 		d.startDate = startDate;
 		downloadList.push(d);
-	
+
 		// aggiunge i relativi elementi in listbox
 		populateListbox(d);
 	}
-	
+
 	sessionManager.save();
-	
+
 	if (Preferences.getDTA("closetab", false)) {
-		removeTab(d.refPage.spec);
+		try {
+			DTA_Mediator.removeTab(d.refPage.spec);
+		} catch (ex) {
+			Debug.dump("failed to close old tab", ex);
+		}
 	}
-	
+
 	Check.haveToCheck = true;
-	
+
 	// porto in visibile i file che si stanno scaricando
 	var boxobject = $("listDownload0").treeBoxObject;
 	boxobject.QueryInterface(Ci.nsITreeBoxObject);
 	if (download.length <= boxobject.getPageLength())
 		boxobject.scrollToRow($("listDownload0").view.rowCount - boxobject.getPageLength());
-	else 
+	else
 		boxobject.scrollToRow(numbefore);
-	
+
 	$("listDownload0").view.selection.currentIndex = numbefore + 1;
 	if (numbefore == -1) {
 		Check.setFirstInQueue();
 		downloadList[0].isFirst = true;
 	}
-	
+
 	try {
 		clearTimeout(Check.timerRefresh);
 		clearTimeout(Check.timerCheck);
 		Check.checkDownloads();
 		Check.refreshGUI();
 	} catch (e) {Debug.dump("startnewDownloads():", e);}
-	
+
 }
 
 //--> aggiunge alla listbox gli elementi in array
 function populateListbox(d) {
-	
+
 	var lista = $("downfigli");
-	
+
 	var itemNode = document.createElement("treeitem");
 	itemNode.setAttribute("value", d.urlManager.url);
 	var id = d.urlManager.url + (new Date()).getTime() + String(Math.floor(10000 * (Math.random() % 1)));
 	itemNode.setAttribute("id", id);
 	d.treeID = id;
-	
+
 	var treeRow = document.createElement("treerow");
-	
+
 	var nomefile = document.createElement("treecell");
-	
+
 	if (Prefs.showOnlyFilenames)
 		nomefile.setAttribute("label", " " + d.fileName);
 	else
 		nomefile.setAttribute("label", " " + d.urlManager.url);
-	
+
 	nomefile.setAttribute('src', d.icon);
 	nomefile.setAttribute("ref", "task");
-	
+
 	var per = document.createElement("treecell");
-	
+
 	var per1 = document.createElement("treecell");
 	per1.setAttribute("mode", "normal");
 	per1.setAttribute("ref", "pct");
-	
+
 	var dim = document.createElement("treecell");
 	dim.setAttribute("ref", "dim");
-	
+
 	var time = document.createElement("treecell");
 	time.setAttribute("ref", "time");
 	var speed = document.createElement("treecell");
 	speed.setAttribute("ref", "speed");
 	speed.setAttribute("label", "");
-	
+
 	var path = document.createElement("treecell");
 	path.setAttribute("label", d.dirSave);
 	path.setAttribute("ref", "path");
-	
+
 	var mask = document.createElement("treecell");
 	mask.setAttribute("label", d.mask);
 	mask.setAttribute("ref", "mask");
-	
+
 	var parts = document.createElement("treecell");
 	parts.setAttribute("label", (d.maxChunks != null)?("0/"+d.maxChunks):"");
-	
+
 	if (d.isCompleted) {
 			time.setAttribute("label", strbundle.getString("complete"));
 			per1.setAttribute("properties", "completed");
@@ -2651,7 +2580,7 @@ function populateListbox(d) {
 			time.setAttribute("label", strbundle.getString("inqueue"));
 			per1.setAttribute("properties", "queued");
 	}
-	
+
 	if (d.partialSize != 0 && d.totalSize != 0) {
 			dim.setAttribute("label", d.createDimensionString());
 			per1.setAttribute("value", Math.round(d.partialSize / d.totalSize * 100));
@@ -2661,7 +2590,7 @@ function populateListbox(d) {
 			per1.setAttribute("value", 0);
 			per.setAttribute("label", "0%");
 	}
-	
+
 	treeRow.appendChild(nomefile);
 	treeRow.appendChild(per);
 	treeRow.appendChild(per1);
@@ -2671,7 +2600,7 @@ function populateListbox(d) {
 	treeRow.appendChild(mask);
 	treeRow.appendChild(path);
 	treeRow.appendChild(speed);
-	
+
 	itemNode.appendChild(treeRow);
 	lista.appendChild(itemNode);
 	lista.addEventListener("dblclick", openFile, true);
@@ -2692,13 +2621,13 @@ function downloadMultipart(d) {
 try {
 	Prefs.refresh();
 	var numChunk = d.maxChunks;
-	
+
 	// multipart
 	if ((d.totalSize / numChunk) < Prefs.minChunkSize) {
 		// serve un numero inferiore a numChunk di chunks
 		numChunk = Math.round(d.totalSize / Prefs.minChunkSize);
 	}
-	
+
 	var endLastChunk;
 	var stChunkSize = Math.round(d.totalSize / numChunk);
 	if (stChunkSize > Prefs.maxChunkSize) {
@@ -2708,11 +2637,11 @@ try {
 		endLastChunk = d.totalSize - 1;
 	}
 	Debug.dump("downloadMultipart(): I'm splitting " + d.fileName + " (" + d.totalSize + "B) into " + numChunk + " chunks of " + stChunkSize + "B");
-	
+
 	for (var i = 0; i < (numChunk-1); i++) {
 		downloadChunk(stChunkSize * i, (stChunkSize * (i + 1)) - 1, d, i - 1, false);
 	}
-	
+
 	downloadChunk(stChunkSize * i, endLastChunk, d, i - 1, false); // l'ultimo va fino alla fine
 }catch(e) {
 	Debug.dump("downloadMultipart():", e);
@@ -2729,27 +2658,27 @@ function isInProgress(path, d) {
 function askForRenaming(t, s1, s2, s3) {
 	Prefs.refresh();
 	var scelta;
-		
+
 	if (Prefs.onConflictingFilenames == 3 && Prefs.askEveryTime) {
-	
+
 		var passingArguments = new Object();
 		passingArguments.text = t;
 		passingArguments.s1 = s1;
 		passingArguments.s2 = s2;
 		passingArguments.s3 = s3;
-		
+
 		isOpenedMessagebox++;
 		window.openDialog("chrome://dta/content/dta/dialog.xul","_blank","chrome, centerscreen, resizable=no, dialog=yes, modal=yes, close=no, dependent=yes", passingArguments);
 		isOpenedMessagebox--;
-		
+
 		// non faccio registrare il timeout
 		inProgressList.forEach(function(o){o.d.timeLastProgress=(new Date()).getTime()});
-		
+
 		Prefs.sessionPreference = scelta = passingArguments.scelta;
 		Prefs.askEveryTime = (passingArguments.temp==0)?true:false;
-	
+
 	} else {
-	
+
 		if (Prefs.onConflictingFilenames == 3)
 			scelta = Prefs.sessionPreference;
 		else
@@ -2777,22 +2706,22 @@ function downloadChunk(start, end, d, fatherChunk, testHeader) {
 		}
 		d.chunks[fatherChunk].next = chunkIndex;
 	}
-	
+
 		var time = new Date();
 		// nome file temporaneo
 		var baseChunkName = "dtatempfile"+ (time.getTime() + Math.floor(10000 * (Math.random() % 1))) +".part" + chunkIndex;
 		var realDest;
 		var xx=0;
-	
+
 		var stringerror;
 		do {
 			realDest = Prefs.tempLocation?(Prefs.tempLocation.clone()):(new FileFactory(d.dirSave));
-		
+
 			if (xx==0)
 				c.chunkName = baseChunkName;
 			else
-				c.chunkName = makeNumber(xx) + "_" + baseChunkName;	
-			
+				c.chunkName = makeNumber(xx) + "_" + baseChunkName;
+
 			try {
 				if (!realDest.exists()) {
 					realDest.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
@@ -2805,18 +2734,18 @@ function downloadChunk(start, end, d, fatherChunk, testHeader) {
 			xx++;
 		} while (realDest.exists());
 
-		// to check write permissions 
+		// to check write permissions
 		try {
 			var testfile = realDest.clone();
 			testfile.create(testfile.NORMAL_FILE_TYPE, 0766);
 			testfile.remove(false);
 		}
 		catch(ex) {
-			throw ("Testfile failed: " + realDest.path + ", " + ex);		
+			throw ("Testfile failed: " + realDest.path + ", " + ex);
 		}
 
 		c.fileManager = realDest;
-	
+
 		var url = d.urlManager.getURL();
 		var uri = Cc['@mozilla.org/network/standard-url;1'].createInstance(Ci.nsIURI);
 		uri.spec = url.url;
@@ -2825,7 +2754,7 @@ function downloadChunk(start, end, d, fatherChunk, testHeader) {
 			uri.username = d.user;
 			uri.password = d.pass;
 		}*/
-	
+
 		c.progressPersist = Cc['@mozilla.org/embedding/browser/nsWebBrowserPersist;1']
 			.createInstance(Ci.nsIWebBrowserPersist);
 
@@ -2845,9 +2774,9 @@ function downloadChunk(start, end, d, fatherChunk, testHeader) {
 		else {
 			Debug.dump(d.fileName + ": Created Header Chunk Test (" + start + "-" + end + ")");
 		}
-	
+
 		d.setTreeCell("parts", 	(++d.declaratedChunks) + "/" + d.maxChunks);
-		
+
 	} catch (ex) {
 
 		Debug.dump("downloadChunk():", ex);
@@ -2857,14 +2786,14 @@ function downloadChunk(start, end, d, fatherChunk, testHeader) {
 			strbundle.getFormattedString("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]),
 			strbundle.getString("errordownload")
 		);
-	
+
 		d.isRunning = false;
 		d.removeFromInProgressList();
 	}
 }
 
 function makeNumber(number) {
-	var stringa="";	
+	var stringa="";
 	if (number <= 9)
 		{ stringa = "00" + number;}
 	else if (number <= 99 && number >= 10)
@@ -2876,7 +2805,7 @@ function makeNumber(number) {
 
 //--> crea un numero con tot zeri prima, da migliorare
 function createNumber(number, destination) {
-	var stringa = makeNumber(number);		
+	var stringa = makeNumber(number);
 	var re = /(\.[^\.]*)$/i;
 	var find = re.exec(destination);
 	if (find != null)
@@ -2894,7 +2823,7 @@ function popup() {
 try {
 	if (Check.imRemoving) return;
 	var objects = new Array();
-	
+
 	var tree = $("listDownload0");
 	var rangeCount = tree.view.selection.getRangeCount();
 		for(var i=0; i<rangeCount; i++) {
@@ -2903,10 +2832,10 @@ try {
 		for(var c=start.value; c<=end.value; c++)
 			objects.push(downloadList[c]);
 	}
-	
+
 	var enableObj = function(o) {o.setAttribute("disabled", "false");}
 	var disableObj = function(o) {o.setAttribute("disabled", "true");}
-	
+
 	// disable all commands by default
 	var context = $("popup");
 	var mi = context.getElementsByTagName('menuitem');
@@ -2920,17 +2849,17 @@ try {
 		if (el.setAttribute) disableObj(el);
 	}
 	$("tooladd", "tooldonate", "toolprefs", 'misc', 'prefs').forEach(enableObj);
-	
+
 	if (tree.view.rowCount > 0)
 		$("removeCompleted", "selectall", "selectinv").forEach(enableObj);
-		
+
 	if (objects.length==0) return;
-	
+
 	for (var c=0; c<objects.length; c++) {
 		var d = objects[c];
-		
+
 		if (!d || typeof(d) != "object") continue;
-		
+
 		// se non e' cancellato, non e' in pausa, non e' completato,
 		// e se e' un file e' gia' iniziato
 		if (
@@ -2942,7 +2871,7 @@ try {
 				)
 		)
 			$("pause", "toolpause").forEach(enableObj);
-		
+
 		// se non e' cancellato, e' in pausa, non e' completato,
 		// e se e' un file e' gia' iniziato
 		if (
@@ -2956,18 +2885,18 @@ try {
 
 		if (!d.isCanceled && ((d.isCompleted && d.isPassed) || !d.isCompleted))
 			$("cancel", "toolcancel").forEach(enableObj);
-			
+
 		if (d.isCompleted)
 			$('folder', 'launch', 'delete').forEach(enableObj);
 
 		if ((!d.isCanceled)&&(!d.isCompleted)&&(d.declaratedChunks > 1)&&(d.isResumable))
 			enableObj($("removechunk"));
-			
+
 		if ((!d.isCanceled)&&(!d.isCompleted)&&(d.declaratedChunks < 10)&&(d.isResumable))
 			enableObj($("addchunk"));
 	}
-	
- 	$("movetop", "toolmovetop", "movebottom", "toolmovebottom", "moveup", 
+
+ 	$("movetop", "toolmovetop", "movebottom", "toolmovebottom", "moveup",
 		"toolmoveup", "movedown", "toolmovedown", "info", "remove").forEach(enableObj);
 
 } catch(e) {Debug.dump("popup()", e)}
@@ -2979,12 +2908,12 @@ try {
 	var tree = $("listDownload0");
 	var rangeCount = tree.view.selection.getRangeCount();
 	var firstFlag = false;
-	
+
 	for(var i=0; i<rangeCount; i++) {
 		var start = {};
 		var end = {};
 		tree.view.selection.getRangeAt(i,start,end);
-		
+
 		// ciclo gli elementi selezionati
 		for(var c=start.value; c<=end.value; c++) {
 			var d = downloadList[c];
@@ -3001,9 +2930,9 @@ try {
 					d.setTreeCell("status", strbundle.getString("paused"));
 					d.setTreeCell("speed", "");
 					d.setTreeProgress("paused");
-					
+
 					if (d.isFirst) Check.setFirstInQueue();
-					
+
 					d.isPaused = true;
 					d.setPaused();
 				}
@@ -3030,16 +2959,16 @@ try {
 						Stats.passedNumber--;
 					}
 					var n = new downloadElement(
-							d.urlManager, 
-							String(d.originalDirSave), 
+							d.urlManager,
+							String(d.originalDirSave),
 							Number(d.numIstance),
-							String(d.description), 
-							String(d.mask), 
+							String(d.description),
+							String(d.mask),
 							String(d.refPage.spec)
 						);
 					n.startDate = new Date(d.startDate.toUTCString());
 					n.treeID = String(d.treeID);
-					
+
 					downloadList.splice(c, 1, n);
 					d.setTreeCell("status", strbundle.getString("inqueue"));
 				}
@@ -3058,25 +2987,25 @@ try {
 
 //--> si occupa di decidere se uno spazio vuoto deve essere scaricato tramite un solo chunk o ri-suddiviso in un massimo di downloadsLeft chunks
 function startSubChunks(start, end, firstindex, lastindex, downloadsLeft, d) {
-	
+
 	if (downloadsLeft == 0) return 0;
-	
+
 	var numChunk = downloadsLeft;
 
 	var size = end - start;
-	
+
 	if (size <= 2 * Prefs.minChunkSize || downloadsLeft == 1) {
 		// non e' possibile eseguire il multipart o il file e' troppo piccolo
 		downloadChunk(start, (size>Prefs.maxChunkSize)?(start+Prefs.maxChunkSize):end, d, firstindex, false);
 		return downloadsLeft - 1;
 	} else {
- 
+
 		// multipart
 		if ((size / numChunk) < Prefs.minChunkSize) {
 			// serve un numero inferiore a numChunk di chunks
 			numChunk = Math.round(size / Prefs.minChunkSize);
 		}
-		
+
 		var endLastChunk;
 		var stChunkSize = Math.round(size / numChunk);
 		if (stChunkSize > Prefs.maxChunkSize) {
@@ -3084,35 +3013,27 @@ function startSubChunks(start, end, firstindex, lastindex, downloadsLeft, d) {
 			endLastChunk = start + stChunkSize * numChunk - 1;
 		} else
 			endLastChunk = end;
-			
+
 		for (var i = 0; i<(numChunk-1); i++)
 			downloadChunk(start + stChunkSize * i, start + (stChunkSize * (i + 1)) - 1, d, (i==0)?firstindex:(d.chunks.length-1), false);
-		
+
 		downloadChunk(start + stChunkSize * i, endLastChunk, d, d.chunks.length - 1, false); // l'ultimo va fino alla fine
-		
+
 		// nell'inserimento multiplo l'ultimo deve essere collegato con lastindex
 		if (lastindex != -1)
 			d.chunks[lastindex].previous = d.chunks.length-1;
-		
+
 		return downloadsLeft - numChunk;
 	}
-	
+
 	return 0;
 }
-
-
-function sortByDimension(a,b) {
-  if((a.end - a.start) > (b.end - b.start)) return 1;
-  if((a.end - a.start) < (b.end - b.start)) return -1;
-  return 0;
-}
-
 
 //--> attivato dal click su context o toolbar
 function cancelPopup() {
 	var tree = $("listDownload0");
 	var rangeCount = tree.view.selection.getRangeCount();
-	
+
 	for(var i=rangeCount-1; i>=0; i--) {
 		var start = {};
 		var end = {};
@@ -3125,10 +3046,10 @@ function cancelPopup() {
 		}
 	}
 }
-	
+
 function removeFromList(index) {
 	Check.imRemoving = true;
-	
+
 	if (index < 0) {
 		var tree = $("listDownload0");
 		var start;
@@ -3143,9 +3064,9 @@ function removeFromList(index) {
 			}
 		}
 		order.forEach(removeElement);
-	} else 
+	} else
 		removeElement(index);
-	
+
 	Check.imRemoving = false;
 	popup();
 }
@@ -3163,7 +3084,7 @@ function removeElement(index) {
 		Check.setFirstInQueue();
 	else if (index < Check.firstInQueue)
 		Check.firstInQueue--;
-	
+
 	setRemoved(downloadList[index]);
 	downloadList.splice(index, 1);
 }
@@ -3174,13 +3095,13 @@ function setRemoved(d) {
 	d.isRemoved = true;
 	if (!d.isCanceled)
 		d.isCanceled = true;
-		
+
 	if (d.join == null || !d.join.imJoining) {
 		$("downfigli").removeChild($(d.treeID));
 		if (d.isCompleted) {
 			Stats.completedDownloads--;
 		}
-		
+
 		if (!d.isStarted || d.isCompleted) {
 			if (!d.isPassed) {
 				d.isPassed = true;
@@ -3200,12 +3121,12 @@ function setRemoved(d) {
 	} else {
 		d.join.stopJoining();
 	}
-	
+
 	if (d.isPassed) {
 	   d.isPassed = false;
 	   Stats.passedNumber--;
-	}	
-	
+	}
+
 } catch(e) {
 	Debug.dump("setRemoved():", e);
 }
@@ -3240,7 +3161,7 @@ try {
 		var end;
 		var datas = new Array();
 		var rangeCount = tree.view.selection.getRangeCount();
-		
+
 		if (top) { // se top, ordino in maniera decrescente
 			for (var i=rangeCount-1; i>=0; i--) {
 				start = {};	end = {};
@@ -3258,25 +3179,25 @@ try {
 				}
 			}
 		}
-		
+
 		tree.view.selection.clearSelection();
-		
+
 		for (var i=0; i<datas.length; i++) {
 			var oldfirst = downloadList[Check.firstInQueue];
-			if (top == false) 
+			if (top == false)
 				var position = datas[i]-i;
-			else 
+			else
 				var position = datas[i]-(-i);
 			var t = downloadList [position];
 			downloadList.splice(position, 1);
-			if (top==true) 
+			if (top==true)
 				downloadList.splice(0, 0, t);
 			else
 				downloadList.splice(downloadList.length, 0, t);
-			
+
 			if (top) { // top
 			  var beforePos = 0;
-			  
+
 			if ((beforePos <= Check.firstInQueue)&&(!downloadList[beforePos].isRunning)&&(!downloadList[beforePos].isPaused)&&(!downloadList[beforePos].isCanceled)&&(!downloadList[beforePos].isCompleted)) {
 				  oldfirst.isFirst = false;
 				  Check.firstInQueue = beforePos;
@@ -3296,21 +3217,21 @@ try {
 					}
 				  }
 				}
-			  else 
+			  else
 				if (datas[i]<Check.firstInQueue && beforePos > Check.firstInQueue ) Check.firstInQueue--;
 			}
-			
+
 			if(beforePos<=(downloadList.length-1)) { // se non devo spostare l'elemento nell'ultima riga
 				var before = tree.view.getItemAtIndex(beforePos);
 				$("downfigli").insertBefore(tree.view.getItemAtIndex(position), before);
-				tree.view.selection.rangedSelect(beforePos, beforePos, true); 
+				tree.view.selection.rangedSelect(beforePos, beforePos, true);
 			}
 			else {
 				$("downfigli").appendChild(tree.view.getItemAtIndex(position));
 				//$("downfigli").removeChild(tree.view.getItemAtIndex(datas[i]));
-				tree.view.selection.rangedSelect(beforePos-1, beforePos-1, true); 
+				tree.view.selection.rangedSelect(beforePos-1, beforePos-1, true);
 			}
-			
+
 		}
 } catch(e) {
 	Debug.dump("moveTop():", e);
@@ -3328,7 +3249,7 @@ function move(pos) {
 		var end;
 		var datas = new Array();
 		var rangeCount = tree.view.selection.getRangeCount();
-		
+
 		if (pos < 0) { // se si sale, ordino le posizioni in maniera crescente, se si scende decrescente
 			for (var i=0; i<rangeCount; i++) {
 				start = {};	end = {};
@@ -3346,19 +3267,19 @@ function move(pos) {
 				}
 			}
 		}
-		
+
 		tree.view.selection.clearSelection();
-		
+
 		for (var i=0; i<datas.length; i++) {
 			var oldfirst = downloadList[Check.firstInQueue];
 			var t = downloadList[datas[i]];
 			downloadList.splice(datas[i], 1);
 			downloadList.splice(datas[i] + pos, 0, t);
-			
+
 			if (datas[i] + pos < 0) break;
 			if (pos < 0) { // se si sale
 			  var beforePos = datas[i] + pos;
-			  
+
 			if ((beforePos <= Check.firstInQueue)&&(!downloadList[beforePos].isRunning)&&(!downloadList[beforePos].isPaused)&&(!downloadList[beforePos].isCanceled)&&(!downloadList[beforePos].isCompleted)) {
 				  oldfirst.isFirst = false;
 				  Check.firstInQueue = beforePos;
@@ -3378,10 +3299,10 @@ function move(pos) {
 					}
 				  }
 				}
-			  else 
+			  else
 				if ( datas[i]<Check.firstInQueue && beforePos > Check.firstInQueue ) Check.firstInQueue--;
 			}
-			
+
 			if(beforePos<=(downloadList.length-1)) { // se non devo spostare l'elemento nell'ultima riga
 				var before = tree.view.getItemAtIndex(beforePos);
 				$("downfigli").insertBefore(tree.view.getItemAtIndex(datas[i]), before);
@@ -3390,7 +3311,7 @@ function move(pos) {
 				$("downfigli").appendChild(tree.view.getItemAtIndex(datas[i]));
 				//$("downfigli").removeChild(tree.view.getItemAtIndex(datas[i]));
 			}
-			tree.view.selection.rangedSelect(datas[i] + pos, datas[i] + pos, true); 
+			tree.view.selection.rangedSelect(datas[i] + pos, datas[i] + pos, true);
 		}
 	}
 	catch(e) {Debug.dump("move():", e);}
@@ -3472,15 +3393,15 @@ function selectInv() {
 function addChunk(add) {
 	var tree = $("listDownload0");
 	var rangeCount = tree.view.selection.getRangeCount();
-	
+
 	for(var i=0; i<rangeCount; i++) {
 		 var start = {};
 		 var end = {};
 		 tree.view.selection.getRangeAt(i,start,end);
-		 
+
 		 // ciclo gli elementi selezionati
 		 for(var c=start.value; c<=end.value; c++) {
-			
+
 			if (!add && downloadList[c].maxChunks > 1) {
 				--downloadList[c].maxChunks;
 				Debug.dump(downloadList[c].fileName + ": User removed a chunk");
@@ -3495,10 +3416,10 @@ function addChunk(add) {
 				++downloadList[c].maxChunks;
 				var d = downloadList[c];
 				if (!d.isPaused && d.isRunning && (!('imWaitingToRearrange' in d) || !d.imWaitingToRearrange) && !d.resumeDownload()) {
-				
+
 					// trovo il chunk piu' grande con scaricamento in corso
 					var j = null;
-					for (var x=0; x<d.chunks.length; x++) 
+					for (var x=0; x<d.chunks.length; x++)
 						if (d.chunks[x].isRunning) {
 							if (j==null)
 								j=d.chunks[x];
@@ -3508,7 +3429,7 @@ function addChunk(add) {
 					// se il chunk piu' grosso potrebbe venire scaricato in piu' di una parte
 					if (Math.round((j.end - j.start - j.chunkSize) / Prefs.minChunkSize) > 1) {
 						Debug.dump(downloadList[c].fileName + ": Rearrange chunk " + j.start + "-" + j.end);
-						// blocco il chunk in questione 
+						// blocco il chunk in questione
 						d.imWaitingToRearrange = true;
 						j.imWaitingToRearrange = true;
 						j.progressPersist.cancelSave();
@@ -3527,7 +3448,7 @@ var sessionManager = {
 	iHaveToClose : false,
 	byteOut : null,
 	fileOutput : null,
-	
+
 	QueryInterface : function(iid) {
 		if(
 			iid.equals(Ci.nsISupports)
@@ -3548,7 +3469,7 @@ var sessionManager = {
 		// close output file
 		this.fileOutput.close();
 		this.byteOut.close();
-		
+
 		this.imSaving = false;
 		// if there has been a new call to saveSession during saving process
 		if (this.repeat) {
@@ -3567,11 +3488,11 @@ var sessionManager = {
 		this.byteOut.writeBytes(data, count);
 		} catch(e) {alert(e);}
 	},
-	
+
 	save: function(andClose) {
-	
+
 		if (andClose) this.iHaveToClose=true;
-		
+
 		if (this.imSaving) {
 			this.repeat = true;
 			return;
@@ -3581,20 +3502,20 @@ var sessionManager = {
 		try {
 		var doc = document.implementation.createDocument("", "", null);
 		var list = doc.createElement("downloads");
-		
+
 		Prefs.refresh();
 		for (var i=0; i<downloadList.length; i++) {
-			
+
 			var d = downloadList[i];
-			
+
 			if (!(
-				(Prefs.onClosingSaveCompleted && d.isCompleted) || 
-				(Prefs.onClosingSaveCanceled && d.isCanceled) || 
-				(Prefs.onClosingSaveAborted && !d.isStarted) || 
-				d.isPaused || 
+				(Prefs.onClosingSaveCompleted && d.isCompleted) ||
+				(Prefs.onClosingSaveCanceled && d.isCanceled) ||
+				(Prefs.onClosingSaveAborted && !d.isStarted) ||
+				d.isPaused ||
 				d.setIsRunning())
 			) continue;
-			
+
 			var e = doc.createElement("download");
 
 			e.set = e.setAttribute;
@@ -3602,21 +3523,21 @@ var sessionManager = {
 				'fileName',
 				'destinationName',
 				'numIstance',
-				'description', 
-				'isResumable', 
-				'alreadyMaskedName', 
+				'description',
+				'isResumable',
+				'alreadyMaskedName',
 				'alreadyMaskedDir',
 				'mask',
 				'originalDirSave'
 			].forEach(function(u) { e.set(u, d[u]); });
-			
+
 			e.set("dirsave", d.dirSave.addFinalSlash());
 			e.set("referrer", d.refPage.spec);
 			e.set("startDate", d.startDate.toUTCString());
 
 			d.urlManager.save(e);
 			d.visitors.save(e);
-			
+
 			if (!d.isResumable && !d.isCompleted) {
 				e.set("partialsize", 0);
 				e.set("totalsize", 0);
@@ -3627,7 +3548,7 @@ var sessionManager = {
 
 			e.set("completed", d.isCompleted);
 			e.set("canceled", d.isCanceled);
-			
+
 			if (!d.isCanceled && !d.isCompleted && d.chunks.length > 0) {
 				var x = d.firstChunk;
 				do {
@@ -3644,7 +3565,7 @@ var sessionManager = {
 			}
 			list.appendChild(e);
 		}
-		
+
 		// create xml string
 		doc.appendChild(list);
 		var serializer = new XMLSerializer();
@@ -3660,13 +3581,13 @@ var sessionManager = {
 		var inputPump = Components.classes["@mozilla.org/network/input-stream-pump;1"].createInstance(Ci.nsIInputStreamPump);
 		inputPump.init(sInputStream, 0, -1, 0, 0, true);
 		sInputStream.setData(s, s.length);
-		
+
 		// start copying
 		inputPump.asyncRead(this, null);
-		
+
 		} catch(e) {Debug.dump("sessionManager.save():", e);}
 	},
-	
+
 	get: function(down, attr) {
 		if (down.hasAttribute(attr)) {
 			return down.getAttribute(attr);
@@ -3674,11 +3595,11 @@ var sessionManager = {
 		return null;
 	},
 	load: function() {try {
-	
+
 		var file = DTA_profileFile.get('dta_history.xml');
 		if (!file.exists()) return;
 		Prefs.refresh();
-		
+
 		// read file
 		// and parse the xml
 		var fiStream = Cc['@mozilla.org/network/file-input-stream;1'].createInstance(Ci.nsIFileInputStream);
@@ -3687,17 +3608,17 @@ var sessionManager = {
 		var doc = domParser.parseFromStream(fiStream, 'utf-8', file.fileSize, "application/xml");
 		fiStream.close();
 		var list = doc.documentElement.getElementsByTagName("download");
-		
+
 		// load session
 		for (var k=0; k<list.length; k++) {try {
 			var down = list[k];
-			
+
 			if (!(
-					(Prefs.onClosingSaveCompleted && down.getAttribute("completed")=="true") || 
-					(Prefs.onClosingSaveCanceled && down.getAttribute("canceled")=="true") || 
+					(Prefs.onClosingSaveCompleted && down.getAttribute("completed")=="true") ||
+					(Prefs.onClosingSaveCanceled && down.getAttribute("canceled")=="true") ||
 					(this.get(down, "canceled")=="false" && this.get(down, "completed")=="false")
 				)) continue;
-			
+
 			var d = new downloadElement(
 				new DTA_URLManager(down),
 				this.get(down, "dirsave"),
@@ -3708,7 +3629,7 @@ var sessionManager = {
 				);
 			d.startDate = new Date(this.get(down, "startDate"));
 			d.visitors.load(down)	;
-			
+
 			d.fileName = this.get(down, "fileName");
 			d.destinationName = this.get(down, "destinationName");
 			d.originalDirSave = this.get(down, "originalDirSave");
@@ -3719,13 +3640,13 @@ var sessionManager = {
 			d.totalSize = parseInt(this.get(down, "totalsize"));
 			d.alreadyMaskedName = this.get(down, "alreadyMaskedName")=="true" ? true:false;
 			d.alreadyMaskedDir = this.get(down, "alreadyMaskedDir")=="true" ? true:false;
-	
+
 
 			if (d.partialSize == 0)
 				d.isStarted = false;
 			else
 				d.isStarted = true;
-			
+
 			if (!d.isCanceled && !d.isCompleted) {
 				d.isPaused = true;
 				var chunks = down.getElementsByTagName('chunk');
@@ -3745,13 +3666,13 @@ var sessionManager = {
 						);
 						d.chunks[i].isRunning = false;
 						d.chunks[i].chunkSize = parseInt(chunkEl.getAttribute("size"));
-						
+
 						d.chunks[i].previous = i - 1;
 						// adjusted below.
-						d.chunks[i].next = i + 1;	
+						d.chunks[i].next = i + 1;
 
 						d.chunks[i].fileManager = test;
-					} 
+					}
 					else if (d.chunks.length == 1) {
 						// only finished chunks get saved.
 						// one missing therefore means it already got joined
@@ -3761,13 +3682,13 @@ var sessionManager = {
 					}
 				}
 				d.refreshPartialSize();
-				
+
 				if (d.chunks.length > 0) {
 					// adjust the end.
-					d.chunks[d.chunks.length - 1].next = -1;	
+					d.chunks[d.chunks.length - 1].next = -1;
 					d.join = new joinListener(d);
 				}
-				
+
 			} else if (d.isCompleted) {
 					d.fileManager = new FileFactory(d.dirSave);
 					d.fileManager.append(d.destinationName);
@@ -3775,12 +3696,12 @@ var sessionManager = {
 					Stats.completedDownloads++;
 					d.isPassed = true;
 					Stats.passedNumber++;
-					
+
 			} else if (d.isCanceled) {
 				d.isPassed = true;
 				Stats.passedNumber++;
 			}
-			
+
 			downloadList.push(d);
 			populateListbox(d);
 		} catch (e) {Debug.dump("Error loading " + this.get(down, "filename") + ":", e);}
@@ -3797,26 +3718,26 @@ try {
 		var part = new Object;
 
 		var tree = $("listDownload0");
-		
+
 		var boxobject = tree.treeBoxObject;
 		boxobject.QueryInterface(Ci.nsITreeBoxObject);
 		boxobject.getCellAt(event.clientX, event.clientY, row, column, part);
-		
-		if (row.value == -1) 
+
+		if (row.value == -1)
 				return false;
-		
+
 		var arrayComp = Cc['@mozilla.org/supports-array;1'].createInstance();
 		var properties = arrayComp.QueryInterface(Ci.nsISupportsArray);
 		tree.view.getCellProperties(row, column, properties);
-		
+
 		var n = row.value;
 		$("infoURL").value = downloadList[n].urlManager.url;
 		$("infoDest").value = downloadList[n].dirSave + downloadList[n].destinationName;
-		
+
 		Prefs.currentTooltip = downloadList[n];
 		updateChunkCanvas();
 		updateSpeedCanvas();
-		
+
 		return true;
 } catch(e) { Debug.dump("tooltipInfo():", e); }
 return false;
@@ -3828,11 +3749,11 @@ function updateSpeedCanvas() { try {
 	if (file==null) return;
 
 	var d = $("drawSpeed").getContext("2d");
-	
+
 	var normal = d.createLinearGradient(0,0,0,16);
 	normal.addColorStop(0, 'rgba(255,255,255,50)');
 	normal.addColorStop(1, '#CCE8F2');
-	
+
 	var prog = d.createLinearGradient(0,0,0,16);
 	prog.addColorStop(0, '#00D2E0');
 	prog.addColorStop(1, '#009DA6');
@@ -3840,7 +3761,7 @@ function updateSpeedCanvas() { try {
 	d.clearRect(0,0,300,20);
 	d.fillStyle = normal;
 	d.fillRect(0,0,300,20);
-	
+
 	if (file.speeds.length>0) {
 		var maxH = 0;
 		var minH = 1/0; // Infinity
@@ -3853,7 +3774,7 @@ function updateSpeedCanvas() { try {
 			var w = Math.round(300/50);
 			var u = 20/((maxH - minH)*1.1);
 			d.fillStyle=prog;
-		
+
 			d.beginPath();
 			d.moveTo(0, 20);
 			for (var i=0; i<file.speeds.length; i++)
@@ -3864,7 +3785,7 @@ function updateSpeedCanvas() { try {
 	}
 
 	setTimeout("updateSpeedCanvas()", Check.frequencyRefresh);
-	
+
 } catch(e) { Debug.dump("updateSpeedCanvas(): ", e); }
 }
 
@@ -3872,30 +3793,30 @@ function updateChunkCanvas() { try {
 
 	var file = Prefs.currentTooltip;
 	if (file==null) return;
-	
+
 	var c = file.firstChunk;
 	var d = $("drawChunks").getContext("2d");
-	
+
 	d.clearRect(0,0,300,20);
 
 	var prog = d.createLinearGradient(0,0,0,16);
 	prog.addColorStop(0, 'rgba(96,165,1,255)');
 	prog.addColorStop(1, 'rgba(123,214,1,255)');
-	
+
 	var compl = d.createLinearGradient(0,0,0,16);
 	compl.addColorStop(0, 'rgba(13,141,15,255)');
 	compl.addColorStop(1, 'rgba(0,199,56,255)');
-	
+
 	var join = "#A5FE2C";
-	
+
 	var cancel = d.createLinearGradient(0,0,0,16);
 	cancel.addColorStop(0, 'rgba(151,58,2,100)');
 	cancel.addColorStop(1, 'rgba(255,0,0,100)');
-	
+
 	var normal = d.createLinearGradient(0,0,0,16);
 	normal.addColorStop(0, 'rgba(255,255,255,50)');
 	normal.addColorStop(1, '#DBF2CC');
-	
+
 	d.fillStyle = normal;
 	d.fillRect(0,0,300,20);
 
@@ -3924,7 +3845,7 @@ function updateChunkCanvas() { try {
 	}
 
 	setTimeout("updateChunkCanvas()", Check.frequencyUpdateChunkGraphs);
-	
+
 } catch(e) { Debug.dump("updateChunkCanvas(): ", e); }
 }
 

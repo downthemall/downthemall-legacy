@@ -35,10 +35,10 @@
  * ***** END LICENSE BLOCK ***** */
 
 if (!Cc) {
-	const Cc = Components.classes;
+	var Cc = Components.classes;
 }
 if (!Ci) {
-	const Ci = Components.interfaces;
+	var Ci = Components.interfaces;
 }
 
 var strbundle;
