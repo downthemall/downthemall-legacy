@@ -1,18 +1,16 @@
-# package
+### package ###
 content	dta	chrome/content/
 skin	dta	classic/1.0 chrome/skin/
 locale	dta	en-US	chrome/locale/en-US/
 
+### platform package ###
 content dta-platform	chrome/content/ platform
 skin	dta-platform	classic/1.0 chrome/skin/
 
-
-
-# overlay
-overlay	chrome://browser/content/browser.xul	chrome://dta/content/menu.xul
-overlay	chrome://browser/content/browser.xul	chrome://dta/content/browser.xul
-overlay	chrome://navigator/content/navigator.xul	chrome://dta/content/menu.xul
-overlay	chrome://mozapps/content/downloads/unknownContentType.xul	chrome://dta/content/saveas.xul
+### browser ###
+overlay	chrome://browser/content/browser.xul	chrome://dta/content/integration/menu.xul
+overlay	chrome://browser/content/browser.xul	chrome://dta/content/integration/browser.xul
+overlay	chrome://mozapps/content/downloads/unknownContentType.xul	chrome://dta/content/integration/saveas.xul
 
 ### privacy control ###
 overlay	chrome://browser/content/browser.xul	chrome://dta/content/privacy/overlayBrowser.xul
@@ -20,7 +18,7 @@ overlay chrome://browser/content/preferences/sanitize.xul	chrome://dta/content/p
 overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeUI.xul
 overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeCode.xul
 
-# styles
+### styles ###
 style	chrome://browser/content/browser.xul	chrome://dta/skin/stile.css
 style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/stile.css
 

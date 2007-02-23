@@ -15,8 +15,8 @@
 <overlay id="downthemallDownloadSaveAs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
-	<script type="application/x-javascript" src="saveas.js"/>
-	<script type="application/x-javascript" src="menu.js"/>
+	<script type="application/x-javascript" src="chrome://dta/content/integration/saveas.js"/>
+	<script type="application/x-javascript" src="chrome://dta/content/integration/menu.js"/>
 
 	<stringbundle id="stringsB" src="chrome://dta/locale/saveas.properties"/>
 	
