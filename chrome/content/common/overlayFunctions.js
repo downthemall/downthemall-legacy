@@ -48,7 +48,7 @@ DTA_include("chrome://dta/content/common/regconvert.js");
 
 var DTA_FilterManager = Components.classes['@tn123.ath.cx/dtamod/filtermanager;1']
 	.getService(Components.interfaces.dtaIFilterManager);
- 
+
 function DTA_showPreferences() {
 	var instantApply = DTA_preferences.get("browser.preferences.instantApply", false);
 	window.openDialog(
@@ -57,7 +57,7 @@ function DTA_showPreferences() {
 		'chrome,titlebar,toolbar,centerscreen'+ (instantApply ? ',dialog=no' : '')
 	);
 }
- 
+
  // Preferences
 var DTA_preferences = {
 	_pref: Components.classes['@mozilla.org/preferences-service;1']
@@ -108,7 +108,7 @@ var DTA_preferences = {
 		return this.getMultiByte('extensions.dta.' + key, def);
 	},
 	setMultiByte: function DP_setMultiByte(key, value) {
-		var str = CC["@mozilla.org/supports-string;1"]
+		var str = Components.classes["@mozilla.org/supports-string;1"]
 			.createInstance(Components.interfaces.nsISupportsString);
 		str.data = value;
 		this._pref.setComplexValue(
@@ -143,7 +143,7 @@ var DTA_preferences = {
 var DTA_profileFile = {
 	_ds : Components.classes["@mozilla.org/file/directory_service;1"]
 		.getService(Components.interfaces.nsIProperties),
-		
+
 	get: function PF_get(fileName)	{
 		var file = this._ds.get("ProfD", Components.interfaces.nsIFile)
 		file.append(fileName);
@@ -160,7 +160,7 @@ var DTA_debug = {
 		this._consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
 		this._logPointer = DTA_profileFile.get('dta_log.txt');
 		try {
-			if (this._logPointer.fileSize > (200 * 1024)) 
+			if (this._logPointer.fileSize > (200 * 1024))
 				this._logPointer.remove(false);
 		} catch(e) {}
 		this._loaded = true;
@@ -176,9 +176,9 @@ var DTA_debug = {
 			if (!this._dumpEnabled || (message=="" && typeof(e)!="object")) {
 				return;
 			}
-			
+
 			message = String(message);
-			
+
 			var fo = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);
 			var time = new Date();
 			var text = this.formatTimeDate(time.getHours())
@@ -186,7 +186,7 @@ var DTA_debug = {
 				+ ":" + this.formatTimeDate(time.getSeconds())
 				+ ":" + time.getMilliseconds()
 				+ "\x0D\x0A\t";
-			
+
 			if (message != "") {
 				text += message.replace(/\n/g, "\x0D\x0A\t") + " ";
 			}
@@ -200,7 +200,7 @@ var DTA_debug = {
 				text += e.toSource();
 			}
 			text += "\x0D\x0A";
-			
+
 			if (Components.stack)
 			{
 				var stack = Components.stack.caller;
@@ -209,10 +209,10 @@ var DTA_debug = {
 					stack = stack.caller;
 				}
 			}
-			
+
 			this._consoleService.logStringMessage(text);
-			
-			fo.init(this._logPointer, 0x04 | 0x08 | 0x10, 0664, 0); 
+
+			fo.init(this._logPointer, 0x04 | 0x08 | 0x10, 0664, 0);
 			fo.write(text, text.length);
 			fo.close();
 		} catch(ex) {
@@ -229,7 +229,7 @@ var DTA_debug = {
 var DTA_URLhelpers = {
 	textToSubURI : Components.classes["@mozilla.org/intl/texttosuburi;1"]
 		.getService(Components.interfaces.nsITextToSubURI),
-		
+
 	decodeCharset: function(text, charset) {
 		var rv = text;
 		try {
@@ -323,7 +323,7 @@ var dragObserverdTa = {
 		}
 	}
 };
-	
+
 function DTA_AdditionalMatcher(str, regex) {
 	this._str = str;
 	this._regex = regex;
@@ -358,11 +358,11 @@ DTA_AdditionalMatcher.prototype = {
 		);
 	}
 }
-	
+
 var DTA_AddingFunctions = {
 	ios: Components.classes["@mozilla.org/network/io-service;1"]
 		.getService(Components.interfaces.nsIIOService),
-	
+
 	isLinkOpenable : function(url) {
 		if (url instanceof DTA_URL) {
 			url = url.url;
@@ -375,7 +375,7 @@ var DTA_AddingFunctions = {
 		}
 		return false;
 	},
-	
+
 	saveSingleLink : function(turbo, url, referrer, description, mask) {
 		if (turbo) {
 			var el = {
@@ -387,7 +387,7 @@ var DTA_AddingFunctions = {
 			this.turboSendToDown([el]);
 			return;
 		}
-		
+
 		// else open addurl.xul
 		var win = window.openDialog(
 			"chrome://dta/content/dta/addurl.xul",
@@ -396,12 +396,12 @@ var DTA_AddingFunctions = {
 			{'url': url, 'description': description, 'referrer': referrer, 'mask': mask}
 		);
 	},
-	
+
 	getDropDownValue : function(name) {
 		var values = eval(DTA_preferences.getMultiByteDTA(name, '[]'));
 		return values.length ? values[0] : null;
 	},
-	
+
 	turboSendToDown : function(urlsArray) {
 
 		var dir = this.getDropDownValue('directory');
@@ -410,7 +410,7 @@ var DTA_AddingFunctions = {
 		if (!mask || !dir) {
 			throw new Components.Exception("missing required information");
 		}
-		
+
 		var num = DTA_preferences.getDTA("counter", 0);
 		if (++num > 999) {
 			num = 1;
@@ -422,7 +422,7 @@ var DTA_AddingFunctions = {
 			urlsArray[i].dirSave = dir;
 			urlsArray[i].numIstance = num;
 		}
-		
+
 		this.sendToDown(!DTA_preferences.get("extensions.dta.lastWasQueued", false), urlsArray);
 	},
 
@@ -431,11 +431,11 @@ var DTA_AddingFunctions = {
 		if (urls.length == 0 && images.length == 0) {
 			throw new Components.Exception("no links");
 		}
-			
+
 		if (turbo) {
-			
+
 			DTA_debug.dump("saveLinkArray(): DtaOneClick filtering started");
-				
+
 			var arrayObject;
 			var type;
 			if (DTA_preferences.getDTA("seltab", 0)) {
@@ -447,7 +447,7 @@ var DTA_AddingFunctions = {
 				type = 1;
 			}
 			var links = [];
-	
+
 			var additional = new DTA_AdditionalMatcher(
 				this.getDropDownValue('filter'),
 				DTA_preferences.getDTA('filterRegex', false)
@@ -461,7 +461,7 @@ var DTA_AddingFunctions = {
 				if (!matched) {
 					matched = additional.match(i);
 				}
-					
+
 				if (!matched) {
 					continue;
 				}
@@ -473,16 +473,16 @@ var DTA_AddingFunctions = {
 					refPage : arrayObject[i].refPage
 				});
 			}
-				
+
 			DTA_debug.dump("saveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
-				
+
 			if (links.length == 0) {
 					throw new Components.Exception('no links remaining');
 			}
 			this.turboSendToDown(links);
 			return;
 		}
-			
+
 		window.openDialog(
 			"chrome://dta/content/dta/select.xul",
 			"_blank",
@@ -491,7 +491,7 @@ var DTA_AddingFunctions = {
 			images
 		);
 	},
-	
+
 	openManager : function (quite) {
 		try {
 			var win = DTA_Mediator.get("chrome://dta/content/dta/manager.xul");
@@ -512,7 +512,7 @@ var DTA_AddingFunctions = {
 		}
 		return null;
 	},
-	
+
 	sendToDown : function(notQueue, links) {
 		var win = DTA_Mediator.get("chrome://dta/content/dta/manager.xul");
 		if (win) {
@@ -529,6 +529,7 @@ var DTA_AddingFunctions = {
 }
 var DTA_Mediator = {
 	_m: Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator),
+
 	getMostRecent: function(name)	{
 		var rv = this._m.getMostRecentWindow(name ? name : "navigator:browser");
 		return rv ? rv : null;
@@ -553,7 +554,7 @@ var DTA_Mediator = {
 			if (win.location == url) {
 				return win;
 			}
-		}	
+		}
 		return null;
 	},
 	openTab: function WM_openTab(url, ref) {
@@ -567,7 +568,7 @@ var DTA_Mediator = {
 		}
 		if (url instanceof DTA_URL) {
 			url = url.url;
-		}		
+		}
 		if (ref instanceof DTA_URL) {
 			ref = ref.url;
 		}
@@ -580,6 +581,83 @@ var DTA_Mediator = {
 			}
 		}
 		win.delayedOpenTab(url, ref);
+	},
+	removeTab: function WM_removeTab(url) {
+
+		var useRM = false;
+		try {
+			var ver = Components.classes["@mozilla.org/xre/app-info;1"]
+				.getService(Components.interfaces.nsIXULAppInfo)
+				.platformVersion;
+			var versionChecker = Components.classes["@mozilla.org/xpcom/version-comparator;1"]
+				.getService(Components.interfaces.nsIVersionComparator);
+			useRM = versionChecker.compare(ver, "1.8") < 0;
+		} catch (ex) {
+			// nothing to do here.
+			// seems to be an old version of Gecko/XRE.
+		}
+		var enumerator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+			.getService(Components.interfaces.nsIWindowMediator)
+			.getEnumerator("navigator:browser");
+
+		var chk = function(tab, url) {
+			if (tab.currentURI.spec == url || tab.contentWindow.location == url) {
+				return tab;
+			}
+			var frames = tab.contentWindow.frames;
+			if (frames && frames.length) {
+				for (var i = 0; i < frames.length; i++) {
+					if (frames[i].location && frames[i].location == url) {
+						return tab;
+					}
+				}
+			}
+			return null;
+		};
+
+		// Check each browser instance for our URL
+		var numBrowsers = 0, numTabs = 0;
+		var tab = null, browser = null;
+
+		while (enumerator.hasMoreElements()) {
+			var win = enumerator.getNext();
+			browser = win.getBrowser();
+
+			++numBrowsers;
+			numTabs = browser.browsers.length;
+
+			// likely its the selected tab.
+			if ((tab = chk(browser.selectedBrowser, url)) != null) {
+				break;
+			}
+			// Check each tab of this browser instance
+			for (var i = 0; i < numTabs && !tab; ++i) {
+				tab = chk(browser.getBrowserAtIndex(i), url);
+			}
+			if (tab) {
+				break;
+			}
+		}
+
+		// nothing found :p
+		if (!tab)	{
+			return;
+		}
+
+		// newer gecko or more than one tab in window
+		if (useRM || numTabs > 1) {
+			browser.removeTab(tab);
+		}
+		// last tab, more windows, old gecko => close
+		else if (numBrowsers > 1 || enumerator.hasMoreElements()) {
+			win.close();
+		}
+		// old gecko, last tab, last window
+		else {
+			// this is the 1.8.0 way
+			browser.addTab('about:blank');
+			browser.removeTab(tab);
+		}
 	}
 };
 
@@ -589,7 +667,7 @@ function DTA_DropDown(name, input, dropDown, predefined) {
 	this.input = input;
 	this.dropDown = dropDown;
 	this.predefined = (predefined instanceof Array) ? predefined : [];
-	
+
 	this.reload();
 }
 
@@ -605,14 +683,14 @@ DTA_DropDown.prototype = {
 	load: function dd_load() {
 		var values = eval(DTA_preferences.getMultiByteDTA(this.name, this.predefined));
 		var max = DTA_preferences.getDTA("history", 5);
-		
+
 		var drop = document.getElementById(this.dropDown);
 		var input = document.getElementById(this.input);
-		
+
 		while (drop.hasChildNodes()) {
 			drop.removeChild(drop.lastChild);
 		}
-		
+
 		for (var i =  0; i < values.length && i < max; ++i) {
 			var node = document.createElement('menuitem');
 			node.setAttribute('label', values[i]);
@@ -643,17 +721,23 @@ DTA_DropDown.prototype = {
 			return;
 		}
 
-		var inValues = eval(DTA_preferences.getMultiByteDTA(this.name, this.predefined));
+		try {
+			var inValues = eval(DTA_preferences.getMultiByteDTA(this.name, this.predefined));
+		}
+		catch (ex) {
+			DTA_debug.dump("DD::save()", ex);
+			var inValues = [];
+		}
 		var max = DTA_preferences.getDTA("history", 5);
-		
+
 		var outValues = [n];
-		
+
 		for (var i = 0; i < inValues.length && i < max - 1 && outValues.length < max; ++i) {
 			if (n != inValues[i] && inValues[i].length) {
 				outValues.push(inValues[i]);
 			}
 		}
-		DTA_preferences.setMultiByteDTA(this.name, outValues);
+		DTA_preferences.setMultiByteDTA(this.name, outValues.toSource());
 	},
 	clear: function dd_save() {
 		Preferences.resetDTA(this.name);
