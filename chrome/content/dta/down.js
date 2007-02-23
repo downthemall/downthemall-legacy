@@ -192,14 +192,6 @@ DTA_URLManager.prototype = {
 	}
 };
 
-const headerCmpKeys = {
-	'etag': true, // must not be modified from 200 to 206: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.7
-	//'content-length': false,
-	'content-type': true,
-	'last-modified': true, // may get omitted later, but should not change
-	'content-encoding': true // must not change, or download will become corrupt.
-};
-
 function Visitor() {
 	// sanity check
 	if (arguments.length != 1 || !('attributes' in arguments[0])) return;
@@ -211,7 +203,7 @@ function Visitor() {
 	try	{
 		for (var i = 0; i < nodes.length; ++i) {
 			var name = nodes[i].getAttribute('name');
-			if (!name || !(name in headerCmpKeys))
+			if (!name || !(name in this.cmpKeys))
 			{
 				continue;
 			}
@@ -223,6 +215,13 @@ function Visitor() {
 }
 
 Visitor.prototype = {
+	cmpKeys: {
+		'etag': true, // must not be modified from 200 to 206: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.7
+		//'content-length': false,
+		'content-type': true,
+		'last-modified': true, // may get omitted later, but should not change
+		'content-encoding': true // must not change, or download will become corrupt.
+	},
 	type : null,
 	overrideCharset: null,
 	encoding : null,
@@ -274,7 +273,7 @@ Visitor.prototype = {
 			break;
 		}
 
-		if (header in headerCmpKeys)
+		if (header in this.cmpKeys)
 			this[header] = aValue;
 		
 		if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
@@ -301,7 +300,7 @@ Visitor.prototype = {
 			return;
 		}
 
-		for (x in headerCmpKeys) {
+		for (x in this.cmpKeys) {
 			// we don't have this header
 			if (!(x in this)) {
 				continue;
@@ -309,7 +308,7 @@ Visitor.prototype = {
 			// v does not have this header
 			else if (!(x in v)) {
 				// allowed to be missing?
-				if (headerCmpKeys[x]) {
+				if (this.cmpKeys[x]) {
 					continue;
 				}
 				Debug.dump(x + " missing");
@@ -324,7 +323,7 @@ Visitor.prototype = {
 	},
 	save : function vi_save(node) {
 		// salva su file le informazioni sugli headers
-		for (x in headerCmpKeys) {
+		for (x in this.cmpKeys) {
 			if (!(x in this)) {
 				continue;
 			}
