@@ -10,11 +10,13 @@
  * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
 <overlay id="DtaBrowserToolbar" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<script type="application/x-javascript" src="chrome://dta/content/dta/overlayFunctions.js"/>
-	<script type="application/x-javascript" src="chrome://dta/content/menu.js"/>
-	<script src="chrome://global/content/nsDragAndDrop.js"/>
+
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
+	<script type="application/x-javascript" src="chrome://dta/content/integration/menu.js"/>
+	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
+	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
-	<script src="chrome://global/content/nsTransferable.js"/> 
+
 	<toolbarpalette id="BrowserToolbarPalette"> 
 		<toolbarbutton id="turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1" ondragover="nsDragAndDrop.dragOver(event, dragObserverTdTa);" ondragdrop="nsDragAndDrop.drop(event, dragObserverTdTa);" oncommand="DTA_ContextOverlay.findLinks(true);" label="dTaOneClick!" tooltiptext="dTaOneClick!" />
 		<toolbarbutton id="dta-button" class="chromeclass-toolbar-additional toolbarbutton-1" ondragover="nsDragAndDrop.dragOver(event, dragObserverdTa);" ondragdrop="nsDragAndDrop.drop(event, dragObserverdTa);" oncommand="DTA_ContextOverlay.findLinks(false);" label="DownThemAll!" tooltiptext="DownThemAll!" />

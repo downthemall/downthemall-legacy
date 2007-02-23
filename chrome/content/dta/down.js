@@ -1337,12 +1337,18 @@ dataCopyListener.prototype = {
 
 function failDownload(d, title, msg, state) {
 	try {
-	if (Preferences.getDTA("sounds.error", false)) {
-		var DTA_sound = Components.classes["@mozilla.org/sound;1"].createInstance(Components.interfaces.nsISound);
-		var DTA_soundUri = cc['@mozilla.org/network/standard-url;1'].createInstance(Components.interfaces.nsIURI);
-		DTA_soundUri.spec = "chrome://dta/content/error.wav";
-		DTA_sound.play(DTA_soundUri); 
-	}} catch(e) {}
+		if (Preferences.getDTA("sounds.error", false)) {
+			var sound = Components.classes["@mozilla.org/sound;1"]
+				.createInstance(Components.interfaces.nsISound);
+			var uri = cc['@mozilla.org/network/standard-url;1']
+				.createInstance(Components.interfaces.nsIURI);
+			uri.spec = "chrome://dta/skin/sounds/error.wav";
+			sound.play(uri); 
+		}
+	}
+	catch(ex) {
+		Debug.dump("Playing error sound failed", ex);
+	}
 	
 	if (Prefs.alertingSystem == 1 && !alerting) {
 		alerting = true;
@@ -1563,12 +1569,18 @@ var Check = {
 		Prefs.refresh();
 	
 		try {
-		if (Preferences.getDTA("sounds.done", true)) {
-			var DTA_sound = Components.classes["@mozilla.org/sound;1"].createInstance(Components.interfaces.nsISound);
-			var DTA_soundUri = cc['@mozilla.org/network/standard-url;1'].createInstance(Components.interfaces.nsIURI);
-			DTA_soundUri.spec = "chrome://dta/content/done.wav";
-			DTA_sound.play(DTA_soundUri); 
-		}} catch(e) {}
+			if (Preferences.getDTA("sounds.done", true)) {
+				var sound = Components.classes["@mozilla.org/sound;1"]
+					.createInstance(Components.interfaces.nsISound);
+				var soundURI = cc['@mozilla.org/network/standard-url;1']
+					.createInstance(Components.interfaces.nsIURI);
+				soundURI.spec = "chrome://dta/skin/sounds/done.wav";
+				sound.play(soundURI); 
+			}
+		}
+		catch(ex) {
+			Debug.dump("Playing done sound failed", ex);
+		}
 
 		// if windows hasn't focus, show FF sidebox/alerts
 		if (!winFocus && Stats.completedDownloads > 0) {
