@@ -255,3 +255,19 @@ function getIcon(link, metalink, size) {
 	}
 	return "moz-icon://foo.html?size=" + size;
 }
+
+function playSound(name) {
+	try {
+		if (Preferences.getDTA("sounds." + name, false)) {
+			var sound = Components.classes["@mozilla.org/sound;1"]
+				.createInstance(Ci.nsISound);
+			var uri = Cc['@mozilla.org/network/standard-url;1']
+				.createInstance(Ci.nsIURI);
+			uri.spec = "chrome://dta/skin/sounds/" + name + ".wav";
+			sound.play(uri); 
+		}
+	}
+	catch(ex) {
+		Debug.dump("Playing " + name + " sound failed", ex);
+	}
+}

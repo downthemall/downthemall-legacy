@@ -1340,19 +1340,8 @@ dataCopyListener.prototype = {
 }
 
 function failDownload(d, title, msg, state) {
-	try {
-		if (Preferences.getDTA("sounds.error", false)) {
-			var sound = Components.classes["@mozilla.org/sound;1"]
-				.createInstance(Ci.nsISound);
-			var uri = Cc['@mozilla.org/network/standard-url;1']
-				.createInstance(Ci.nsIURI);
-			uri.spec = "chrome://dta/skin/sounds/error.wav";
-			sound.play(uri); 
-		}
-	}
-	catch(ex) {
-		Debug.dump("Playing error sound failed", ex);
-	}
+
+	playSound("error");
 	
 	if (Prefs.alertingSystem == 1 && !alerting) {
 		alerting = true;
@@ -1571,20 +1560,8 @@ var Check = {
 		Debug.dump("checkClose(): All downloads passed correctly");
 		this.lastCheck = Stats.downloadedBytes;
 		Prefs.refresh();
-	
-		try {
-			if (Preferences.getDTA("sounds.done", true)) {
-				var sound = Components.classes["@mozilla.org/sound;1"]
-					.createInstance(Ci.nsISound);
-				var soundURI = Cc['@mozilla.org/network/standard-url;1']
-					.createInstance(Ci.nsIURI);
-				soundURI.spec = "chrome://dta/skin/sounds/done.wav";
-				sound.play(soundURI); 
-			}
-		}
-		catch(ex) {
-			Debug.dump("Playing done sound failed", ex);
-		}
+
+		playSound("done");
 
 		// if windows hasn't focus, show FF sidebox/alerts
 		if (!winFocus && Stats.completedDownloads > 0) {
