@@ -19,13 +19,18 @@ var isOpenedMessagebox = 0;
 // true if some FF sidebox is shown
 var alerting = false;
 
-const cc = Components.classes;
-const FileFactory = new Components.Constructor("@mozilla.org/file/local;1", "nsILocalFile", "initWithPath");
+if (!Cc) {
+	const Cc = Components.classes;
+}
+if (!Ci) {
+	const Ci = Components.interfaces;
+}
 
-var downPrefs = {
-	
-
-};
+const FileFactory = new Components.Constructor(
+	"@mozilla.org/file/local;1",
+	"nsILocalFile",
+	"initWithPath"
+);
 
 var Prefs = {
 	// default values
@@ -64,9 +69,9 @@ var Prefs = {
 			try {
 				this.tempLocation = Preferences.getMultiByteDTA("tempLocation", '');
 				if (this.tempLocation == '') {
-					this.tempLocation = cc["@mozilla.org/file/directory_service;1"]
-						.getService(Components.interfaces.nsIProperties)
-						.get("TmpD", Components.interfaces.nsIFile);
+					this.tempLocation = Cc["@mozilla.org/file/directory_service;1"]
+						.getService(Ci.nsIProperties)
+						.get("TmpD", Ci.nsIFile);
 					this.tempLocation.append("dta");
 				} else {
 					this.tempLocation = new FileFactory(this.tempLocation);
@@ -227,8 +232,8 @@ Visitor.prototype = {
 	
 	QueryInterface: function(aIID) {
 		if (
-			aIID.equals(Components.interfaces.nsISupports)
-			|| aIID.equals(Components.interfaces.nsIHttpHeaderVisitor)
+			aIID.equals(Ci.nsISupports)
+			|| aIID.equals(Ci.nsIHttpHeaderVisitor)
 		) {
 			return this;
 		}
@@ -439,7 +444,7 @@ function downloadElement(lnk, dir, num, desc, mask, refPage) {
 	this.description = desc;
 	this.chunks = new Array();
 	this.speeds = new Array();
-	this.refPage = cc['@mozilla.org/network/standard-url;1'].createInstance(Components.interfaces.nsIURI);
+	this.refPage = Cc['@mozilla.org/network/standard-url;1'].createInstance(Ci.nsIURI);
 	this.refPage.spec = refPage;
 }
 
@@ -618,12 +623,12 @@ downloadElement.prototype = {
 		Stats.completedDownloads++;	
 
 		try {
-			var destination = cc["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+			var destination = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 			destination.initWithPath(this.dirSave);
 			Debug.dump(this.fileName + ": Move " + fileManager.path + " to " + this.dirSave + this.destinationName);
 			
 			if (!destination.exists()) {
-				destination.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0766);
+				destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
 			}
 			this.checkFilenameConflict();
 			var destinationName = (this.compression)?("[comp]"+this.destinationName):this.destinationName;
@@ -654,7 +659,7 @@ downloadElement.prototype = {
 			var fileManager = new FileFactory(this.dirSave);
 			fileManager.append(this.destinationName);
 			
-			var fiStream = cc['@mozilla.org/network/file-input-stream;1'].createInstance(Components.interfaces.nsIFileInputStream);
+			var fiStream = Cc['@mozilla.org/network/file-input-stream;1'].createInstance(Ci.nsIFileInputStream);
 			fiStream.init(fileManager, 1, 0, false);
 			var domParser = new DOMParser();
 			var doc = domParser.parseFromStream(fiStream, null, fileManager.fileSize, "application/xml");
@@ -746,7 +751,7 @@ downloadElement.prototype = {
 		Debug.dump(this.fileName + ": Unzip: unzip into " + this.dirSave + this.destinationName + " from source " + this.fileManager.path);
 		
 		// create a channel from the zipped file
-		var ios = cc["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
+		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 		var fileURI = ios.newFileURI(this.fileManager);
 		var channel = ios.newChannelFromURI(fileURI); 
 		
@@ -761,12 +766,12 @@ downloadElement.prototype = {
 			return;
 		}
 		
-		var fileUscita = cc['@mozilla.org/network/file-output-stream;1'].createInstance(Components.interfaces.nsIFileOutputStream);
+		var fileUscita = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
 		fileUscita.init(nomeFileOut, 0x02 | 0x08, 0766, 0);
 		
 		// set up the gzip converter
 		var listener = new dataListener(fileUscita, nomeFileOut, this.fileManager, this);
-		var converter = cc["@mozilla.org/streamconv;1?from="+this.compressionType+"&to=uncompressed"].createInstance(Components.interfaces.nsIStreamConverter);
+		var converter = Cc["@mozilla.org/streamconv;1?from="+this.compressionType+"&to=uncompressed"].createInstance(Ci.nsIStreamConverter);
 		if ("AsyncConvertData" in converter) 
 			converter.AsyncConvertData(this.compressionType, "uncompressed", listener, null);
 		else
@@ -780,8 +785,8 @@ downloadElement.prototype = {
 	
 	buildFromMask : function(dir, mask) {
 		try {
-			var uri = cc['@mozilla.org/network/standard-url;1']
-				.createInstance(Components.interfaces.nsIURI);
+			var uri = Cc['@mozilla.org/network/standard-url;1']
+				.createInstance(Ci.nsIURI);
 			uri.spec = this.urlManager.usable;
 
 			// normalize slashes
@@ -820,7 +825,7 @@ downloadElement.prototype = {
 			else if (this.contentType) {
 				var contentType = (this.contentType.trim().split(" "))[0].removeFinalChar(";");
 				var info = Components.classes["@mozilla.org/mime;1"]
-					.getService(Components.interfaces.nsIMIMEService)
+					.getService(Ci.nsIMIMEService)
 					.getFromTypeAndExtension(contentType, "");
 				
 				name = this.fileName;
@@ -1150,9 +1155,9 @@ joinListener.prototype = {
 
 		// open the stream in RW mode and seek to its end ;)
 		// saves a lot of headaches :p
-		var outStream = cc['@mozilla.org/network/file-output-stream;1'].createInstance(Components.interfaces.nsIFileOutputStream);
+		var outStream = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
 		outStream.init(this.fileManager, 0x04 | 0x08, 0766, 0);
-		this.outStream = outStream.QueryInterface(Components.interfaces.nsISeekableStream);
+		this.outStream = outStream.QueryInterface(Ci.nsISeekableStream);
 		if (Preferences.getDTA("prealloc", true) && this.fileManager.fileSize != this.d.totalSize) {
 			this.dump('trying to prealloc', this.d.firstChunk);
 			this.outStream.seek(0x00, this.d.totalSize);
@@ -1183,7 +1188,7 @@ joinListener.prototype = {
 		if (!this.d.chunks[c].fileManager.exists()) return;
 		
 		this.imJoining = this.d.chunks[this.current].isJoining = this.d.chunks[c].isJoining = true;
-		var ios = cc["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);		
+		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);		
 
 		var fileURI = ios.newFileURI(this.d.chunks[c].fileManager);
 		var channel = ios.newChannelFromURI(fileURI); // create a channel from the downloaded chunk
@@ -1281,9 +1286,9 @@ dataCopyListener.prototype = {
 	
 	QueryInterface : function DCL_QueryInterface(iid) {
 		if(
-			iid.equals(Components.interfaces.nsISupports)
-			|| iid.equals(Components.interfaces.nsIStreamListener)
-			|| iid.equals(Components.interfaces.nsIRequestObserver)
+			iid.equals(Ci.nsISupports)
+			|| iid.equals(Ci.nsIStreamListener)
+			|| iid.equals(Ci.nsIRequestObserver)
 		) return this;
 		throw Components.results.NS_ERROR_NO_INTERFACE;
  	},
@@ -1321,7 +1326,7 @@ dataCopyListener.prototype = {
 				this.d.setTreeCell("status", strbundle.getString("joining"));
 		}
 		// need to wrap this as nsIInputStream::read is marked non-scriptable.
-		var byteStream = cc['@mozilla.org/binaryinputstream;1'].createInstance(Components.interfaces.nsIBinaryInputStream);
+		var byteStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
 		byteStream.setInputStream(inputStream);
 		// we're using nsIFileOutputStream
 		if (this.outStream.write(byteStream.readBytes(count), count) != count) {
@@ -1339,9 +1344,9 @@ function failDownload(d, title, msg, state) {
 	try {
 		if (Preferences.getDTA("sounds.error", false)) {
 			var sound = Components.classes["@mozilla.org/sound;1"]
-				.createInstance(Components.interfaces.nsISound);
-			var uri = cc['@mozilla.org/network/standard-url;1']
-				.createInstance(Components.interfaces.nsIURI);
+				.createInstance(Ci.nsISound);
+			var uri = Cc['@mozilla.org/network/standard-url;1']
+				.createInstance(Ci.nsIURI);
 			uri.spec = "chrome://dta/skin/sounds/error.wav";
 			sound.play(uri); 
 		}
@@ -1352,8 +1357,8 @@ function failDownload(d, title, msg, state) {
 	
 	if (Prefs.alertingSystem == 1 && !alerting) {
 		alerting = true;
-		cc['@mozilla.org/alerts-service;1']
-			.getService(Components.interfaces.nsIAlertsService)
+		Cc['@mozilla.org/alerts-service;1']
+			.getService(Ci.nsIAlertsService)
 			.showAlertNotification(
 				"chrome://dta/skin/common/alert.png",
 				title,
@@ -1385,7 +1390,7 @@ var inProgressList = new Array();
 // --------* Notifiche slide *--------
 
 function obsAlert () {
-	this.dir = cc["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+	this.dir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 }
 
 obsAlert.prototype = {
@@ -1571,9 +1576,9 @@ var Check = {
 		try {
 			if (Preferences.getDTA("sounds.done", true)) {
 				var sound = Components.classes["@mozilla.org/sound;1"]
-					.createInstance(Components.interfaces.nsISound);
-				var soundURI = cc['@mozilla.org/network/standard-url;1']
-					.createInstance(Components.interfaces.nsIURI);
+					.createInstance(Ci.nsISound);
+				var soundURI = Cc['@mozilla.org/network/standard-url;1']
+					.createInstance(Ci.nsIURI);
 				soundURI.spec = "chrome://dta/skin/sounds/done.wav";
 				sound.play(soundURI); 
 			}
@@ -1590,11 +1595,11 @@ var Check = {
 			
 			if (Prefs.alertingSystem == 1 && !alerting) {
 				alerting = true;
-				alert = cc['@mozilla.org/alerts-service;1'].getService(Components.interfaces.nsIAlertsService);
+				alert = Cc['@mozilla.org/alerts-service;1'].getService(Ci.nsIAlertsService);
 				alert.showAlertNotification("chrome://dta/content/immagini/alert.png", strbundle.getString("dcom"), stringa, true, downloadList[0].dirSave, new obsAlert());
 			} else if (Prefs.alertingSystem == 0) {
 				if (confirm(stringa + "\n "+ strbundle.getString("folder")) == 1) {
-					var dir = cc["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+					var dir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 					try {
 						dir.initWithPath(downloadList[0].dirSave);
 						dir.launch();
@@ -1717,9 +1722,9 @@ onStatusChange: function (aWebProgress, aRequest, aStatus, aMessage) {},
 onSecurityChange: function (aWebProgress, aRequest, aState) {},
 
 QueryInterface : function(aIID) {
-	if(aIID.equals(Components.interfaces.nsIWebProgressListener2))
+	if(aIID.equals(Ci.nsIWebProgressListener2))
 	 return this;
-	if(aIID.equals(Components.interfaces.nsIAuthPrompt))
+	if(aIID.equals(Ci.nsIAuthPrompt))
 	  return this;
 	 throw Components.results.NS_OK;
 },
@@ -1730,7 +1735,7 @@ try {
 	var host = {value:""};var user =  {value:""};var password = {value:""};
 	var r = {user:{value:""},pass:{value:""}};
 	
-	var PMI = cc["@mozilla.org/passwordmanager;1"].createInstance(Components.interfaces.nsIPasswordManagerInternal)
+	var PMI = Cc["@mozilla.org/passwordmanager;1"].createInstance(Ci.nsIPasswordManagerInternal)
 	PMI.findPasswordEntry(url, "", "", host, user, password);
 	r.user.value = user.value;
 	r.pass.value = password.value;
@@ -1742,8 +1747,8 @@ return r;
 
 saveHostPassword : function(url, username, password) {
 	Debug.dump(d.fileName + ": Trying to save user and pass");
-	var passwordManager = cc["@mozilla.org/passwordmanager;1"].createInstance();
-	passwordManager = passwordManager.QueryInterface(Components.interfaces.nsIPasswordManager);
+	var passwordManager = Cc["@mozilla.org/passwordmanager;1"].createInstance();
+	passwordManager = passwordManager.QueryInterface(Ci.nsIPasswordManager);
 	
 	if (!passwordManager) return;
 	try {
@@ -1762,7 +1767,7 @@ promptUsernameAndPassword : function  (dialogTitle, text, passwordRealm, savePas
 	var defaultLogin = this.getUserPass(passwordRealm);
 	var v = (defaultLogin.user.value=="")?false:true;
 	var check = {value: v};
-	var prompt = cc["@mozilla.org/embedcomp/prompt-service;1"].createInstance(Components.interfaces.nsIPromptService);
+	var prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].createInstance(Ci.nsIPromptService);
 	var r = prompt.promptUsernameAndPassword(this, dialogTitle, text, defaultLogin.user, defaultLogin.pass, "Let Firefox Password Manager and dTa remember this logon", check);
 	if (r) {
 		this.d.user = defaultLogin.user.value;
@@ -1774,7 +1779,7 @@ promptUsernameAndPassword : function  (dialogTitle, text, passwordRealm, savePas
 
 onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 	
-	if (!(aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP)) return;
+	if (!(aStateFlags & Ci.nsIWebProgressListener.STATE_STOP)) return;
 	
 	// shortcuts
 	var c = this.c;
@@ -2036,10 +2041,10 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 
 		if (firstProgress) {
 
-			try {var chan = aRequest.QueryInterface(Components.interfaces.nsIHttpChannel);} catch(e) {}
+			try {var chan = aRequest.QueryInterface(Ci.nsIHttpChannel);} catch(e) {}
 
 			// if we don't have any HTTP Response (e.g. FTP link)
-			if (!(chan instanceof Components.interfaces.nsIHttpChannel)) {
+			if (!(chan instanceof Ci.nsIHttpChannel)) {
 				Debug.dump(d.fileName + ": Error in istanceof chan... Probably FTP... forcing single chunk mode");
 
 				// force single chunk mode
@@ -2150,7 +2155,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 				var realDest;
 				try {
 					var realDest = new FileFactory(d.dirSave);
-					if (!realDest.exists()) realDest.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0766);
+					if (!realDest.exists()) realDest.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
 				} catch(e) {
 					Debug.dump("downloadChunk(): Could not move file or create directory on destination path: ", e);
 					failDownload(d, strbundle.getString("accesserror"), strbundle.getString("permissions") + " " + strbundle.getString("destpath") + strbundle.getString("checkperm"), strbundle.getString("accesserror"));
@@ -2290,9 +2295,9 @@ dataListener.prototype = {
 	error : false,
 	QueryInterface : function(iid) {
 		if (
-			iid.equals(Components.interfaces.nsISupports)
-			|| iid.equals(Components.interfaces.nsIStreamListener)
-			|| iid.equals(Components.interfaces.nsIRequestObserver)
+			iid.equals(Ci.nsISupports)
+			|| iid.equals(Ci.nsIStreamListener)
+			|| iid.equals(Ci.nsIRequestObserver)
 		) 
 			return this;
 		throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -2324,11 +2329,11 @@ dataListener.prototype = {
 			Debug.dump(this.d.fileName + ": Rename: " + this.inf.path + "\nRemove erroneous: " + this.outFM.path);
 			
 			this.outFM.remove(false);
-			var destination = cc["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+			var destination = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 			destination.initWithPath(this.d.dirSave);
 			
 			try {
-				if (!destination.exists()) destination.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0766);
+				if (!destination.exists()) destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
 				this.inf.moveTo(destination, this.d.destinationName);
 			} catch(e) {
 				failDownload(this.d, strbundle.getString("accesserror"), strbundle.getString("permissions") + " " + strbundle.getString("destpath") + strbundle.getString("checkperm"), strbundle.getString("accesserror"));
@@ -2351,7 +2356,7 @@ dataListener.prototype = {
 			this.d.setTreeCell("percent", Math.round(offset / this.d.totalSize * 100) + "%");
 			this.d.setTreeProgress("inprogress", Math.round(offset / this.d.totalSize * 100));
 			// write decompressed data
-			var byteStream = cc['@mozilla.org/binaryinputstream;1'].createInstance(Components.interfaces.nsIBinaryInputStream);
+			var byteStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
 			byteStream.setInputStream(inputStream);
 			// we're using nsIFileOutputStream
 			if (this.outf.write(byteStream.readBytes(count), count) != count) {
@@ -2400,16 +2405,16 @@ function loadDown() {
 function removeTab(url) {
 try {
 	var enumerator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-		.getService(Components.interfaces.nsIWindowMediator)
+		.getService(Ci.nsIWindowMediator)
 		.getEnumerator("navigator:browser");
 		
 	var useRM = false;
 	try {
 		var ver = Components.classes["@mozilla.org/xre/app-info;1"]
-			.getService(Components.interfaces.nsIXULAppInfo)
+			.getService(Ci.nsIXULAppInfo)
 			.platformVersion;
 		var versionChecker = Components.classes["@mozilla.org/xpcom/version-comparator;1"]
-			.getService(Components.interfaces.nsIVersionComparator);
+			.getService(Ci.nsIVersionComparator);
 		useRM = versionChecker.compare(ver, "1.8") < 0;
 	} catch (ex) {
 		// nothing to do here.
@@ -2485,8 +2490,8 @@ function cancelAll(pressedESC) {
 			}
 		}
 		if (rFlag) {
-			var promptService = cc["@mozilla.org/embedcomp/prompt-service;1"]
-				.getService(Components.interfaces.nsIPromptService);
+			var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+				.getService(Ci.nsIPromptService);
 			var rv = promptService.confirm(
 				window,
 				strbundle.getString("confclose"),
@@ -2587,7 +2592,7 @@ function startnewDownloads(notQueue, download) {
 	
 	// porto in visibile i file che si stanno scaricando
 	var boxobject = $("listDownload0").treeBoxObject;
-	boxobject.QueryInterface(Components.interfaces.nsITreeBoxObject);
+	boxobject.QueryInterface(Ci.nsITreeBoxObject);
 	if (download.length <= boxobject.getPageLength())
 		boxobject.scrollToRow($("listDownload0").view.rowCount - boxobject.getPageLength());
 	else 
@@ -2778,7 +2783,7 @@ function askForRenaming(t, s1, s2, s3) {
 }
 
 function downloadChunk(start, end, d, fatherChunk, testHeader) {
-	const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
+	const nsIWBP = Ci.nsIWebBrowserPersist;
 	try {
 		var c = new chunkElement(start, end, d);
 		var chunkIndex = d.chunks.push(c) - 1;
@@ -2814,7 +2819,7 @@ function downloadChunk(start, end, d, fatherChunk, testHeader) {
 			
 			try {
 				if (!realDest.exists()) {
-					realDest.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0766);
+					realDest.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
 				}
 			} catch(ex) {
 				throw ("Failed to create directory: " + realDest.path + ", " + ex);
@@ -2837,7 +2842,7 @@ function downloadChunk(start, end, d, fatherChunk, testHeader) {
 		c.fileManager = realDest;
 	
 		var url = d.urlManager.getURL();
-		var uri = cc['@mozilla.org/network/standard-url;1'].createInstance(Components.interfaces.nsIURI);
+		var uri = Cc['@mozilla.org/network/standard-url;1'].createInstance(Ci.nsIURI);
 		uri.spec = url.url;
 
 		/*if ("user" in d && d.user.length > 0 && "pass" in d && d.pass.length > 0) {
@@ -2845,8 +2850,8 @@ function downloadChunk(start, end, d, fatherChunk, testHeader) {
 			uri.password = d.pass;
 		}*/
 	
-		c.progressPersist = cc['@mozilla.org/embedding/browser/nsWebBrowserPersist;1']
-			.createInstance(Components.interfaces.nsIWebBrowserPersist);
+		c.progressPersist = Cc['@mozilla.org/embedding/browser/nsWebBrowserPersist;1']
+			.createInstance(Ci.nsIWebBrowserPersist);
 
 		var flags = nsIWBP.PERSIST_FLAGS_NO_CONVERSION | nsIWBP.PERSIST_FLAGS_REPLACE_EXISTING_FILES | nsIWBP.PERSIST_FLAGS_BYPASS_CACHE;
 		c.progressPersist.persistFlags = flags;
@@ -3425,7 +3430,7 @@ function openFolder() {
 		tree.view.selection.getRangeAt(i,start,end);
 		// ciclo gli elementi selezionati
 		for(var c=start.value; c<=end.value; c++) {
-			var dir = cc["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+			var dir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 			if (downloadList[c].isCompleted) {
 				try {
 					dir.initWithPath(downloadList[c].dirSave + downloadList[c].destinationName);
@@ -3445,7 +3450,7 @@ function openFolder() {
 function openFile(event) {
 	var lastSon = $("listDownload0").currentIndex;
 	if (downloadList[lastSon].isCompleted) {
-		var dir = cc["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+		var dir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 		try {
 			dir.initWithPath(downloadList[lastSon].dirSave + downloadList[lastSon].destinationName);
 			dir.launch();
@@ -3549,18 +3554,18 @@ var sessionManager = {
 	
 	QueryInterface : function(iid) {
 		if(
-			iid.equals(Components.interfaces.nsISupports)
-			|| iid.equals(Components.interfaces.nsIStreamListener)
-			|| iid.equals(Components.interfaces.nsIRequestObserver)
+			iid.equals(Ci.nsISupports)
+			|| iid.equals(Ci.nsIStreamListener)
+			|| iid.equals(Ci.nsIRequestObserver)
 		)
 			return this;
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
 	onStartRequest : function(request, context) {
 		// create output file
-		this.fileOutput = cc['@mozilla.org/network/file-output-stream;1'].createInstance(Components.interfaces.nsIFileOutputStream);
+		this.fileOutput = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
 		this.fileOutput.init(DTA_profileFile.get('dta_history.xml'), 0x02 | 0x08 | 0x20, 0664, 0);
-		this.byteOut = cc['@mozilla.org/binaryoutputstream;1'].createInstance(Components.interfaces.nsIBinaryOutputStream);
+		this.byteOut = Cc['@mozilla.org/binaryoutputstream;1'].createInstance(Ci.nsIBinaryOutputStream);
 		this.byteOut.setOutputStream(this.fileOutput);
 	},
 	onStopRequest : function(request, context, status) {
@@ -3579,7 +3584,7 @@ var sessionManager = {
 		}
 	},
 	onDataAvailable : function(request, context, inputStream, offset, count) {try{
-		var byteStream = cc['@mozilla.org/binaryinputstream;1'].createInstance(Components.interfaces.nsIBinaryInputStream);
+		var byteStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
 		byteStream.setInputStream(inputStream);
 		var data = byteStream.readBytes(count);
 		// write data
@@ -3670,13 +3675,13 @@ var sessionManager = {
 		var s = serializer.serializeToString(doc);
 
 		var converter = Components.classes["@mozilla.org/intl/saveascharset;1"]
-			.createInstance(Components.interfaces.nsISaveAsCharset);
+			.createInstance(Ci.nsISaveAsCharset);
 		converter.Init('utf-8', 1, 0);
 		s = converter.Convert(s);
 
 		// create async input stream
-		var sInputStream = Components.classes["@mozilla.org/io/string-input-stream;1"].createInstance(Components.interfaces.nsIStringInputStream);
-		var inputPump = Components.classes["@mozilla.org/network/input-stream-pump;1"].createInstance(Components.interfaces.nsIInputStreamPump);
+		var sInputStream = Components.classes["@mozilla.org/io/string-input-stream;1"].createInstance(Ci.nsIStringInputStream);
+		var inputPump = Components.classes["@mozilla.org/network/input-stream-pump;1"].createInstance(Ci.nsIInputStreamPump);
 		inputPump.init(sInputStream, 0, -1, 0, 0, true);
 		sInputStream.setData(s, s.length);
 		
@@ -3700,7 +3705,7 @@ var sessionManager = {
 		
 		// read file
 		// and parse the xml
-		var fiStream = cc['@mozilla.org/network/file-input-stream;1'].createInstance(Components.interfaces.nsIFileInputStream);
+		var fiStream = Cc['@mozilla.org/network/file-input-stream;1'].createInstance(Ci.nsIFileInputStream);
 		fiStream.init(file, 1, 0, false);
 		var domParser = new DOMParser();
 		var doc = domParser.parseFromStream(fiStream, 'utf-8', file.fileSize, "application/xml");
@@ -3818,14 +3823,14 @@ try {
 		var tree = $("listDownload0");
 		
 		var boxobject = tree.treeBoxObject;
-		boxobject.QueryInterface(Components.interfaces.nsITreeBoxObject);
+		boxobject.QueryInterface(Ci.nsITreeBoxObject);
 		boxobject.getCellAt(event.clientX, event.clientY, row, column, part);
 		
 		if (row.value == -1) 
 				return false;
 		
-		var arrayComp = cc['@mozilla.org/supports-array;1'].createInstance();
-		var properties = arrayComp.QueryInterface(Components.interfaces.nsISupportsArray);
+		var arrayComp = Cc['@mozilla.org/supports-array;1'].createInstance();
+		var properties = arrayComp.QueryInterface(Ci.nsISupportsArray);
 		tree.view.getCellProperties(row, column, properties);
 		
 		var n = row.value;
