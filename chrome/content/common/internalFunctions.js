@@ -16,7 +16,7 @@
 var Debug = DTA_debug;
 var Preferences = DTA_preferences;
 
-const SYSTEMSLASH = DTA_profileFile.get('dummy').path == '/' ? '/' : '\\';
+const SYSTEMSLASH = (DTA_profileFile.get('dummy').path.indexOf('/') != -1) ? '/' : '\\';
 
 
 // From prototype.js :)
