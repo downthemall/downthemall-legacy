@@ -5,8 +5,6 @@
 <!ENTITY movebottom.label "Bottom">
 <!ENTITY moveup.label "Move up">
 <!ENTITY movedown.label "Move down">
-<!ENTITY selectall.label "Select all">
-<!ENTITY selectinv.label "Invert selection">
 <!ENTITY targetdir.label "Open target dir">
 <!ENTITY infos.label "Download info">
 <!ENTITY options.label "Preferences...">

@@ -17,3 +17,6 @@
 <!ENTITY browse.tip "Browse for target folder...">
 <!ENTITY mask.label "Renaming mask">
 <!ENTITY mask.tip "Selected files will be saved and renamed using this mask">
+
+<!ENTITY selectall.label "Select all">
+<!ENTITY selectinv.label "Invert selection">
