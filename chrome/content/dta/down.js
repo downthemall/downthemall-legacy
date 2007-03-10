@@ -1,13 +1,38 @@
 /* ***** BEGIN LICENSE BLOCK *****
- * Version: GPL 2.0
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
- * This code is part of DownThemAll! - dTa!
- * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
  *
- * See notice.txt and gpl.txt for details.
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
  *
- * Contributers:
- *   Nils Maier <MaierMan@web.de>
+ * The Original Code is DownThemAll!
+ *
+ * The Initial Developers of the Original Code are Stefano Verna and Federico Parodi
+ * Portions created by the Initial Developers are Copyright (C) 2004-2007
+ * the Initial Developers. All Rights Reserved.
+ *
+ * Contributor(s):
+ *  Stefano Verna
+ *  Federico Parodi
+ *	 Nils Maier <MaierMan@web.de>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
 
@@ -32,6 +57,9 @@ const FileFactory = new Components.Constructor(
 	"initWithPath"
 );
 
+const MIN_CHUNK_SIZE = 204800; // 200kb
+const MAX_CHUNK_SIZE = 10485760; // 10MB
+
 var Prefs = {
 	// default values
 	showOnlyFilenames : true,
@@ -46,21 +74,9 @@ var Prefs = {
 	maxChunks : 5,
 	tempLocation : null,
 
-	onClosingSaveAborted : true,
-	onClosingSaveCompleted : true,
-	onClosingSaveCanceled : true,
-
-	minChunkSize : 200 * 1024,
-	// does NOT affect the memory usage as it will be written out directly and synchronously.
-	maxChunkSize :  10 * 1024 * 1024,
-	maxMemoryUsage : 5 * 1024 * 1024,
-
 	currentTooltip : null,
 
 	refresh : function() {
-		this.onClosingSaveAborted = !Preferences.getDTA("removeaborted", false);
-		this.onClosingSaveCompleted = !Preferences.getDTA("removecompleted", true);
-		this.onClosingSaveCanceled = !Preferences.getDTA("removecanceled", false);
 		this.maxInProgress = Preferences.getDTA("ntask", 5);
 		this.showOnlyFilenames = Preferences.getDTA("showOnlyFilenames", true);
 		this.onConflictingFilenames = Preferences.getDTA("existing", 3);
@@ -1938,7 +1954,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 				}
 
 			// ..and if it can be splitted up in more than a chunk..
-			if (Math.round((j.end - j.start - j.chunkSize) / Prefs.minChunkSize) > 1) {
+			if (Math.round((j.end - j.start - j.chunkSize) / MIN_CHUNK_SIZE) > 1) {
 				Debug.dump(d.fileName + ": Rearrange chunk " + j.start + "-" + j.end);
 				// ..we stop it..
 				d.imWaitingToRearrange = true;
@@ -2118,7 +2134,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 				var tsd = d.totalSize;
 				var nsd;
 				if (Prefs.tempLocation)	{
-					var tst = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : Prefs.maxChunkSize);
+					var tst = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : MAX_CHUNK_SIZE);
 					nds = Prefs.tempLocation.diskSpaceAvailable
 					if (nds < tst) {
 						Debug.dump("There is not enought free space available on temporary directory, needed=" + tst + " (totalsize="+ d.totalSize +"), user=" + nds);
@@ -2126,7 +2142,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 						return;
 					}
 				}	else {
-					tsd = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : Prefs.maxChunkSize);
+					tsd = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : MAX_CHUNK_SIZE);
 				}
 				var realDest;
 				try {
@@ -2193,7 +2209,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 				}
 
 				// se scopriamo che e' possibile effettuare multipart blocchiamo il chunk e ricominciamo in multipart
-				if (d.isResumable && d.totalSize > 2 * Prefs.minChunkSize && d.maxChunks > 1) {
+				if (d.isResumable && d.totalSize > 2 * MIN_CHUNK_SIZE && d.maxChunks > 1) {
 					// in case of a redirect set the new real url
 					if (this.url != aRequest.URI.spec) {
 						d.urlManager.replace(this.url, new DTA_URL(aRequest.URI.spec, visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset));
@@ -2382,7 +2398,7 @@ function cancelAll(pressedESC) {
 
 	// if we have non-resumable running downloads...
 	if (!Check.isClosing) {
-		var rFlag=false;
+		var rFlag = false;
 
 		for (var i=0; i<downloadList.length; i++) {
 			if (downloadList[i].isStarted && !downloadList[i].isResumable && downloadList[i].isRunning && !downloadList[i].isPaused)	{
@@ -2402,40 +2418,43 @@ function cancelAll(pressedESC) {
 				return false;
 			}
 		}
-	} else if (sessionManager.iHaveToClose)
+	}
+	else if (sessionManager.iHaveToClose) {
 		return true;
+	}
 
 	Check.isClosing = true;
 
 	if (Stats.passedNumber != downloadList.length || Stats.zippedToWait != 0) {
-		for (var i=0; i<downloadList.length; i++) {
+		var removeAborted = Preferences.getDTA('rememberaborted');
+		for (var i = 0; i < downloadList.length; ++i) {
 			var d = downloadList[i];
 			// completed and passed files are already managed
-			if (d.isPassed || d.isCompleted) continue;
-			// also canceled and paused without running joinings
-			if (d.isCanceled || (d.isPaused && (d.join == null || !d.join.imJoining))) {
+			if (
+				d.isCanceled
+				|| (d.isPaused && (d.join == null || !d.join.imJoining))
+				|| (d.isStarted && !d.isRunning)
+			) {
 				d.isPassed = true;
 				Stats.passedNumber++;
-			} else if (d.isStarted) {
-				// also non-running downloads
-				if (!d.isRunning) {
-					d.isPassed = true;
-					Stats.passedNumber++;
-				} else {
-					// running downloads have to be paused/stopped
-					d.setPaused();
-					d.isPaused = true;
-					d.setTreeCell("status", strbundle.getString("closing"));
-					Debug.dump(d.fileName + " has to be stopped.");
-				}
-			} else {
-				// in queue downloads are already managed
-				if (Prefs.onClosingSaveAborted) {
-					d.isPaused = true;
-					d.isPassed = true;
-					Stats.passedNumber++;
-				} else
-					removeFromList(i);
+			}			
+			if (d.isPassed || d.isCompleted) {
+				continue;
+			}
+			// also canceled and paused without running joinings
+			if (d.isStarted) {
+				d.setPaused();
+				d.isPaused = true;
+				d.setTreeCell("status", strbundle.getString("closing"));
+				Debug.dump(d.fileName + " has to be stopped.");
+			}
+			else if (removeAborted) {
+				removeFromList(i);
+			} 
+			else {
+				d.isPaused = true;
+				d.isPassed = true;
+				Stats.passedNumber++;
 			}
 			// close join stream
 			if (d.join && !d.join.imJoining) {
@@ -2452,9 +2471,10 @@ function cancelAll(pressedESC) {
 		sessionManager.save(true);
 		clearTimeout(Check.timerRefresh);
 		clearTimeout(Check.timerCheck);
-	} else
-		Debug.dump("cancelAll(): We're waiting...");
-
+		return;
+	}
+	
+	Debug.dump("cancelAll(): We're waiting...");
 	return false;
 }
 
@@ -2623,15 +2643,15 @@ try {
 	var numChunk = d.maxChunks;
 
 	// multipart
-	if ((d.totalSize / numChunk) < Prefs.minChunkSize) {
+	if ((d.totalSize / numChunk) < MIN_CHUNK_SIZE) {
 		// serve un numero inferiore a numChunk di chunks
-		numChunk = Math.round(d.totalSize / Prefs.minChunkSize);
+		numChunk = Math.round(d.totalSize / MIN_CHUNK_SIZE);
 	}
 
 	var endLastChunk;
 	var stChunkSize = Math.round(d.totalSize / numChunk);
-	if (stChunkSize > Prefs.maxChunkSize) {
-		stChunkSize = Prefs.maxChunkSize;
+	if (stChunkSize > MAX_CHUNK_SIZE) {
+		stChunkSize = MAX_CHUNK_SIZE;
 		endLastChunk = stChunkSize * numChunk - 1;
 	} else {
 		endLastChunk = d.totalSize - 1;
@@ -2994,22 +3014,22 @@ function startSubChunks(start, end, firstindex, lastindex, downloadsLeft, d) {
 
 	var size = end - start;
 
-	if (size <= 2 * Prefs.minChunkSize || downloadsLeft == 1) {
+	if (size <= 2 * MIN_CHUNK_SIZE || downloadsLeft == 1) {
 		// non e' possibile eseguire il multipart o il file e' troppo piccolo
-		downloadChunk(start, (size>Prefs.maxChunkSize)?(start+Prefs.maxChunkSize):end, d, firstindex, false);
+		downloadChunk(start, (size > MAX_CHUNK_SIZE)?(start + MAX_CHUNK_SIZE):end, d, firstindex, false);
 		return downloadsLeft - 1;
 	} else {
 
 		// multipart
-		if ((size / numChunk) < Prefs.minChunkSize) {
+		if ((size / numChunk) < MIN_CHUNK_SIZE) {
 			// serve un numero inferiore a numChunk di chunks
-			numChunk = Math.round(size / Prefs.minChunkSize);
+			numChunk = Math.round(size / MIN_CHUNK_SIZE);
 		}
 
 		var endLastChunk;
 		var stChunkSize = Math.round(size / numChunk);
-		if (stChunkSize > Prefs.maxChunkSize) {
-			stChunkSize = Prefs.maxChunkSize;
+		if (stChunkSize > MAX_CHUNK_SIZE) {
+			stChunkSize = MAX_CHUNK_SIZE;
 			endLastChunk = start + stChunkSize * numChunk - 1;
 		} else
 			endLastChunk = end;
@@ -3427,7 +3447,7 @@ function addChunk(add) {
 								j = d.chunks[x];
 						}
 					// se il chunk piu' grosso potrebbe venire scaricato in piu' di una parte
-					if (Math.round((j.end - j.start - j.chunkSize) / Prefs.minChunkSize) > 1) {
+					if (Math.round((j.end - j.start - j.chunkSize) / MIN_CHUNK_SIZE) > 1) {
 						Debug.dump(downloadList[c].fileName + ": Rearrange chunk " + j.start + "-" + j.end);
 						// blocco il chunk in questione
 						d.imWaitingToRearrange = true;
@@ -3504,14 +3524,18 @@ var sessionManager = {
 		var list = doc.createElement("downloads");
 
 		Prefs.refresh();
+		
+		var removeCompleted = Preferences.getDTA("removecompleted", true);
+		var removeAborted = Preferences.getDTA('removeaborted', false);
+		var removeCanceled = Preferences.getDTA("removecanceled", false);
 		for (var i=0; i<downloadList.length; i++) {
 
 			var d = downloadList[i];
 
 			if (!(
-				(Prefs.onClosingSaveCompleted && d.isCompleted) ||
-				(Prefs.onClosingSaveCanceled && d.isCanceled) ||
-				(Prefs.onClosingSaveAborted && !d.isStarted) ||
+				(!removeCompleted && d.isCompleted) ||
+				(!removeCanceled && d.isCanceled) ||
+				(!removeAborted && !d.isStarted) ||
 				d.isPaused ||
 				d.setIsRunning())
 			) continue;
@@ -3610,12 +3634,14 @@ var sessionManager = {
 		var list = doc.documentElement.getElementsByTagName("download");
 
 		// load session
+		var removeCompleted = Preferences.getDTA("removecompleted", true);
+		var removeCanceled = Preferences.getDTA("removecanceled", false);
 		for (var k=0; k<list.length; k++) {try {
 			var down = list[k];
 
 			if (!(
-					(Prefs.onClosingSaveCompleted && down.getAttribute("completed")=="true") ||
-					(Prefs.onClosingSaveCanceled && down.getAttribute("canceled")=="true") ||
+					(!removeCompleted && down.getAttribute("completed")=="true") ||
+					(!removeCanceled && down.getAttribute("canceled")=="true") ||
 					(this.get(down, "canceled")=="false" && this.get(down, "completed")=="false")
 				)) continue;
 
