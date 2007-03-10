@@ -13,7 +13,12 @@
 <?xml-stylesheet href="chrome://dta-platform/skin/dta.css" type="text/css" ?>
 <?xml-stylesheet href="chrome://dta/skin/manager/style.css" type="text/css" ?>
 
-<!DOCTYPE window SYSTEM "chrome://dta/locale/down.dtd">
+<!DOCTYPE dialog [
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
+	%commonDTD;
+	<!ENTITY % dtaDTD SYSTEM "chrome://dta/locale/manager.dtd">
+	%dtaDTD;
+]>
 
 <window xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	onload="versionControl();loadDown();popup();" 
@@ -32,16 +37,16 @@
 	<!-- internalFunctions needs overlayFunctions -->
 	<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js" />
 
-	<script type="application/x-javascript" src="dta.js" />
-	<script type="application/x-javascript" src="down.js" />
+	<script type="application/x-javascript" src="chrome://dta/content/dta/dta.js" />
+	<script type="application/x-javascript" src="chrome://dta/content/dta/manager.js" />
 	<!-- restorePref.js needs stringB = prefpanes.properties -->
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 	<script type="application/x-javascript" src="chrome://dta/content/preferences/restorePref.js" />
 	
-	<script src="chrome://global/content/nsDragAndDrop.js"/>
-	<script src="chrome://global/content/nsTransferable.js"/> 
+	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
+	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
 
-	<stringbundle id="strings" src="chrome://dta/locale/down.properties"/>
+	<stringbundle id="strings" src="chrome://dta/locale/manager.properties"/>
 	<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties"/>
 
 	<keyset>
@@ -82,8 +87,8 @@
 			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" image="chrome://dta/skin/manager/movedown.png" oncommand="move(1);" />
 			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" image="chrome://dta/skin/manager/movebottom.png" oncommand="moveTop(false);" />
 			<menuseparator />
-			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/manager/selectall.png" oncommand="selectAll();" />
-			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/manager/selectinv.png" oncommand="selectInv();" />
+			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="selectAll();" />
+			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="selectInv();" />
 			<menu id="misc" class="menu-iconic" image="chrome://dta/skin/manager/misc.png" label="&misc.label;">
 				<menupopup>
 					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/skin/manager/addpart.png" oncommand="addChunk(true);" />
