@@ -155,6 +155,9 @@ Tree.prototype = {
 			$("status").label = strbundle.getString("status");
 		}
 	},
+	isChecked: function(idx) {
+		return this._links[idx].checked.length != 0;
+	},
 
 	/*
 	 * actual nsITreeView follows
@@ -706,19 +709,25 @@ var Dialog = {
 		var items = $('popup').getElementsByTagName('menuitem');
 		var open = $('mopen');
 		var tree = this.current;
-
-		// do we have a selection
-		if (!tree.selection.count) {
-			// ... nope. do not display the menu.
-			return false;
+		
+		const hideItems = tree.selection.count == 0;
+		$('mopen', 'mcheck', 'muncheck', 'mtoggle', 'mrenaming', 'msep1', 'msep2', 'msep3').forEach(
+			function(e) {
+				e.setAttribute('hidden', hideItems);
+			}
+		);
+		
+		var otext = '';
+		if (tree.selection.count == 1) {
+			var s = {}, e = {};
+			tree.selection.getRangeAt(0, s, e);
+			var l = tree._links[s.value];
+			otext = strbundle.getFormattedString("openlink", [l.url.url]);
 		}
-
-		var s = {}, e = {};
-		tree.selection.getRangeAt(0, s, e);
-		var l = tree._links[s.value];
-		open.setAttribute("image", l.icon);
-		open.setAttribute("label", l.url.url);
-
+		else {
+			otext = strbundle.getFormattedString("openlinks", [tree.selection.count]);
+		}
+		open.setAttribute("label", otext);
 		// display the popup
 		return true;
 	},
@@ -732,6 +741,29 @@ var Dialog = {
 			tree.selection.getRangeAt(r, start, end);
 			for (var i = start.value; i <= end.value; ++i) {
 				DTA_Mediator.openTab(tree._links[i].url.url, tree._links[i].refPage);
+			}
+		}
+	},
+	
+	selectAll: function() {
+		this.current.selection.selectAll();
+	},
+	invertSelection: function() {
+		// this.current.selection.invertSelection();
+		// not implemented :p
+		var tree = this.current;
+		var selection = tree.selection;
+		for (var i = 0, e = tree.rowCount; i < e; ++i) {
+			selection.toggleSelect(i);
+		}		
+	},
+	selectFiltered: function() {
+		var tree = this.current;
+		var selection = tree.selection;
+		selection.clearSelection();
+		for (var i = 0, e = tree.rowCount; i < e; ++i) {
+			if (tree.isChecked(i)) {
+				selection.select(i);
 			}
 		}
 	},
