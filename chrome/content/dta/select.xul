@@ -16,8 +16,8 @@
 <!DOCTYPE dialog [
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
 	%commonDTD;
-	<!ENTITY % dtaDTD SYSTEM "chrome://dta/locale/dta.dtd">
-	%dtaDTD;
+	<!ENTITY % selectDTD SYSTEM "chrome://dta/locale/select.dtd">
+	%selectDTD;
 ]>
 
 <window
@@ -36,15 +36,18 @@
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
 	<!-- internalFunctions needs overlayFunctions -->
 	<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js" />
-	<script type="application/x-javascript" src="dta.js" />
+	<script type="application/x-javascript" src="chrome://dta/content/dta/select.js" />
+	
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/XPCNativeWrapper.js"/>
 
 	<script src="chrome://global/content/nsDragAndDrop.js"/>
 	<script src="chrome://global/content/nsTransferable.js"/>
 
-	<stringbundle id="strings" src="chrome://dta/locale/dta.properties"/>
-	<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties" />
+	<stringbundles>
+		<stringbundle id="strings" src="chrome://dta/locale/select.properties"/>
+		<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties" />
+	</stringbundles>
 
 	<keyset>
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>

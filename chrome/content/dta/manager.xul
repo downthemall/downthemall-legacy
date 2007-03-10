@@ -16,8 +16,8 @@
 <!DOCTYPE dialog [
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
 	%commonDTD;
-	<!ENTITY % dtaDTD SYSTEM "chrome://dta/locale/manager.dtd">
-	%dtaDTD;
+	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
+	%managerDTD;
 ]>
 
 <window xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
@@ -37,7 +37,7 @@
 	<!-- internalFunctions needs overlayFunctions -->
 	<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js" />
 
-	<script type="application/x-javascript" src="chrome://dta/content/dta/dta.js" />
+	<script type="application/x-javascript" src="chrome://dta/content/dta/select.js" />
 	<script type="application/x-javascript" src="chrome://dta/content/dta/manager.js" />
 	<!-- restorePref.js needs stringB = prefpanes.properties -->
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
