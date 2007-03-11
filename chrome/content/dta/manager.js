@@ -1587,8 +1587,16 @@ var Check = {
 
 			if (Prefs.alertingSystem == 1 && !alerting) {
 				alerting = true;
-				alert = Cc['@mozilla.org/alerts-service;1'].getService(Ci.nsIAlertsService);
-				alert.showAlertNotification("chrome://dta/content/immagini/alert.png", strbundle.getString("dcom"), stringa, true, downloadList[0].dirSave, new obsAlert());
+				alert = Cc['@mozilla.org/alerts-service;1']
+					.getService(Ci.nsIAlertsService);
+				alert.showAlertNotification(
+					"chrome://dta/skin/common/alert.png",
+					strbundle.getString("dcom"),
+					stringa,
+					true,
+					downloadList[0].dirSave,
+					new obsAlert()
+				);
 			} else if (Prefs.alertingSystem == 0) {
 				if (confirm(stringa + "\n "+ strbundle.getString("folder")) == 1) {
 					var dir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
@@ -1700,74 +1708,73 @@ function PersistProgressListener(chunkIndex, c, d, header) {
 }
 
 PersistProgressListener.prototype = {
+	cantCount : 0,
+	isPassedOnProgress : false,
 
-cantCount : 0,
-isPassedOnProgress : false,
+	init: function() {},
+	destroy: function() {},
+	prompt: function (dialogTitle, text, passwordRealm, savePassword, defaultText, result) {},
+	promptPassword: function  (dialogTitle, text, passwordRealm, savePassword, pwd) {},
+	
+	onLocationChange: function (aWebProgress, aRequest, aLocation) {},
+	onStatusChange: function (aWebProgress, aRequest, aStatus, aMessage) {},
+	onSecurityChange: function (aWebProgress, aRequest, aState) {},
 
-// null function
-init: function() {},
-destroy: function() {},
-prompt: function (dialogTitle, text, passwordRealm, savePassword, defaultText, result) {},
-promptPassword: function  (dialogTitle, text, passwordRealm, savePassword, pwd) {},
-onLocationChange: function (aWebProgress, aRequest, aLocation) {},
-onStatusChange: function (aWebProgress, aRequest, aStatus, aMessage) {},
-onSecurityChange: function (aWebProgress, aRequest, aState) {},
+	QueryInterface : function(aIID) {
+		if (
+			aIID.equals(Ci.nsISupports)
+			|| aIID.equals(Ci.nsIWebProgressListener2)
+			|| aIID.equals(Ci.nsIAuthPromptProvider)
+			|| aIID.equals(Ci.nsIAuthPrompt)
+		) {
+			return this;
+		}
+		throw Components.results.NS_ERROR_NO_INTERFACE;
+	},
+	// nsIAuthPromptProvider
+	get authPrompter() {
+		try {
+	    var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+	      .getService(Ci.nsIWindowWatcher);
+			var rv = watcher.getNewAuthPrompter(null)
+				.QueryInterface(Ci.nsIAuthPrompt);
+			return rv;
+		} catch (ex) {
+			Debug.dump("authPrompter", ex);
+			throw ex;
+		}
+	},
+	// nsIAuthPrompt
+	prompt: function(aDialogTitle, aText, aPasswordRealm, aSavePassword, aDefaultText, aResult) {
+		return this.authPrompter.prompt(
+			aDialogTitle,
+			aText,
+			aPasswordRealm,
+			aSavePassword,
+			aDefaultText,
+			aResult
+		);
+	},
 
-QueryInterface : function(aIID) {
-	if(aIID.equals(Ci.nsIWebProgressListener2))
-	 return this;
-	if(aIID.equals(Ci.nsIAuthPrompt))
-	  return this;
-	 throw Components.results.NS_OK;
-},
-
-getUserPass : function(url) {
-try {
-	url = url.removeFinalBackSlash();
-	var host = {value:""};var user =  {value:""};var password = {value:""};
-	var r = {user:{value:""},pass:{value:""}};
-
-	var PMI = Cc["@mozilla.org/passwordmanager;1"].createInstance(Ci.nsIPasswordManagerInternal)
-	PMI.findPasswordEntry(url, "", "", host, user, password);
-	r.user.value = user.value;
-	r.pass.value = password.value;
-	return r;
-
-} catch (e) {}
-return r;
-},
-
-saveHostPassword : function(url, username, password) {
-	Debug.dump(d.fileName + ": Trying to save user and pass");
-	var passwordManager = Cc["@mozilla.org/passwordmanager;1"].createInstance();
-	passwordManager = passwordManager.QueryInterface(Ci.nsIPasswordManager);
-
-	if (!passwordManager) return;
-	try {
-		// Remove existing entry
-		passwordManager.removeUser(url, username);
-	 } catch (e) {}
-
-	try{
-		//add new entry
-		passwordManager.addUser(url, username, password);
-	} catch (e) {}
-},
-
-promptUsernameAndPassword : function  (dialogTitle, text, passwordRealm, savePassword, user, pwd) {
-	Debug.dump(d.fileName + ": We're asking for user and pass...");
-	var defaultLogin = this.getUserPass(passwordRealm);
-	var v = (defaultLogin.user.value=="")?false:true;
-	var check = {value: v};
-	var prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].createInstance(Ci.nsIPromptService);
-	var r = prompt.promptUsernameAndPassword(this, dialogTitle, text, defaultLogin.user, defaultLogin.pass, "Let Firefox Password Manager and dTa remember this logon", check);
-	if (r) {
-		this.d.user = defaultLogin.user.value;
-		this.d.pass = defaultLogin.pass.value;
-		if (check.value)
-			this.saveHostPassword(passwordRealm, defaultLogin.user.value, defaultLogin.pass.value);
-	}
-},
+	promptUsernameAndPassword: function(aDialogTitle, aText, aPasswordRealm, aSavePassword, aUser, aPwd) {
+		return this.authPrompter.promptUsernameAndPassword(
+			aDialogTitle,
+			aText,
+			aPasswordRealm,
+			aSavePassword,
+			aUser,
+			aPwd
+		);
+	},
+	promptPassword: function capPP(aDialogTitle, aText, aPasswordRealm, aSavePassword, aPwd) {
+		return this.authPrompter.promptPassword(
+			aDialogTitle,
+			aText,
+			aPasswordRealm,
+			aSavePassword,
+			aPwd
+		);
+	},
 
 onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 
@@ -2015,21 +2022,15 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 			Debug.dump("First ProgressChange for chunk " + c.fileManager.path + "!");
 		}
 
-		// if user setted pause, stop the download
-		if (d.isPaused) {
+		if (d.isPaused || d.isCanceled) {
 			c.progressPersist.cancelSave();
+			if (d.isCanceled) {
+				c.remove();
+			}
 			return;
 		}
 
-		// if user setted cancel, stop and remove chunk
-		if (d.isCanceled) {
-			c.progressPersist.cancelSave();
-			c.remove();
-			return;
-		}
-
-		var data = new Date();
-		d.timeLastProgress = data.getTime();
+		d.timeLastProgress = new Date().getTime();
 
 		if (firstProgress) {
 
