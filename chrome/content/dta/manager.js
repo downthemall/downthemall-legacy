@@ -73,6 +73,10 @@ var Prefs = {
 	tempLocation : null,
 
 	currentTooltip : null,
+	
+	removeCompleted: true,
+	removeAborted: false,
+	removeCanceled: false,
 
 	// nsIObserver
 	observe : function(subject, topic, prefName) {
@@ -98,9 +102,15 @@ var Prefs = {
 	_refreshPrefs: function() {
 		Debug.dump("pref reload");
 
+		this.removeCompleted = Preferences.getDTA("removecompleted", true);
+		this.removeAborted = Preferences.getDTA('removeaborted', false);
+		this.removeCanceled = Preferences.getDTA("removecanceled", false);		
+		
 		this.maxInProgress = Preferences.getDTA("ntask", 5);
+		this.maxChunks = Preferences.getDTA("maxchunks", 5);
 		this.showOnlyFilenames = Preferences.getDTA("showOnlyFilenames", true);
 		this.onConflictingFilenames = Preferences.getDTA("existing", 3);
+		this.alertingSystem = Preferences.getDTA("alertbox", (SYSTEMSLASH == '\\') ? 1 : 0);
 
 		if (Preferences.get("saveTemp", true)) {
 			try {
@@ -118,8 +128,6 @@ var Prefs = {
 				// XXX: error handling
 			}
 		}
-		this.alertingSystem = Preferences.getDTA("alertbox", (SYSTEMSLASH == '\\') ? 1 : 0);
-		this.maxChunks = Preferences.getDTA("maxchunks", 5);
 	},
 	refresh : function() {
 		// overwrite preference only if >
@@ -1618,7 +1626,8 @@ var Check = {
 				Debug.dump("checkClose(): I'm closing the window/tab");
 				clearTimeout(this.timerCheck);
 				clearTimeout(this.timerRefresh);
-				sessionManager.save(true);
+				sessionManager.save();
+				self.close();
 				return;
 			}
 			sessionManager.save();
@@ -1836,7 +1845,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 			popup();
 			Check.checkClose();
 		}
-		sessionManager.save();
+		sessionManager.save(d);
 		return;
 	}
 
@@ -1853,7 +1862,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 			d.reDownload();
 		}
 		popup();
-		sessionManager.save();
+		sessionManager.save(d);
 		return;
 	} else
 	// check for corrupted ranges
@@ -1867,7 +1876,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 		} else
 			d.setPaused();
 		popup();
-		sessionManager.save();
+		sessionManager.save(d);
 		return;
 	}
 
@@ -1897,7 +1906,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 			strbundle.getFormattedString("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]),
 			strbundle.getString("srver")
 		);
-		sessionManager.save();
+		sessionManager.save(d);
 		return;
 	}
 
@@ -1997,7 +2006,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 		Check.checkClose();
 	}
 
-	sessionManager.save();
+	sessionManager.save(d);
 	// refresh GUI
 	popup();
 
@@ -2373,7 +2382,7 @@ function loadDown() {
 
 	document.getElementById("dtaHelp").hidden = !("openHelp" in window);
 
-	sessionManager.load();
+	sessionManager.init();
 
 	// update status and window title
 	$("status").label = strbundle.getFormattedString("cdownloads", [Stats.completedDownloads, downloadList.length]);
@@ -2419,13 +2428,10 @@ function cancelAll(pressedESC) {
 			}
 		}
 	}
-	else if (sessionManager.iHaveToClose) {
-		return true;
-	}
 
 	Check.isClosing = true;
 
-	const removeAborted = Preferences.getDTA('rememberaborted');
+	const removeAborted = Prefs.removeAborted;
 	var allPassed = downloadList.every(
 		function(d) {
 			// close join stream
@@ -2467,9 +2473,10 @@ function cancelAll(pressedESC) {
 	// if we can close window now, let's close it
 	if (allPassed && Stats.zippedToWait == 0) {
 		Debug.dump("cancelAll(): Disclosure of window permitted");
-		sessionManager.save(true);
+		sessionManager.save();
 		clearTimeout(Check.timerRefresh);
 		clearTimeout(Check.timerCheck);
+		self.close();
 		return true;
 	}
 
@@ -2502,7 +2509,7 @@ function startnewDownloads(notQueue, download) {
 		populateListbox(d);
 	}
 
-	sessionManager.save();
+	sessionManager.save(d);
 
 	if (Preferences.getDTA("closetab", false)) {
 		try {
@@ -2537,7 +2544,6 @@ function startnewDownloads(notQueue, download) {
 
 }
 
-//--> aggiunge alla listbox gli elementi in array
 function populateListbox(d) {
 
 	var lista = $("downfigli");
@@ -2623,15 +2629,6 @@ function populateListbox(d) {
 	itemNode.appendChild(treeRow);
 	lista.appendChild(itemNode);
 	lista.addEventListener("dblclick", openFile, true);
-}
-
-function isLinkType (linktype, link) {
-	try {
-		var protocol = link.substr(0, linktype.length);
-		return protocol.toLowerCase() == linktype;
-	} catch(e) {
-		return false;
-	}
 }
 
 // fa partire lo scaricamento dei chunk in multipart
@@ -3098,12 +3095,15 @@ function removeCompleted() {
 }
 
 function removeElement(index) {
-	if (downloadList[index].isFirst)
+	var d = downloadList[index];
+	if (d.isFirst) {
 		Check.setFirstInQueue();
-	else if (index < Check.firstInQueue)
+	}
+	else if (index < Check.firstInQueue) {
 		Check.firstInQueue--;
-
-	setRemoved(downloadList[index]);
+	}
+	setRemoved(d);
+	sessionManager.deleteDownload(d);
 	downloadList.splice(index, 1);
 }
 
@@ -3458,273 +3458,251 @@ function addChunk(add) {
 }
 
 var sessionManager = {
-	imSaving : false,
-	repeat : false,
-	iHaveToClose : false,
-	byteOut : null,
-	fileOutput : null,
-
-	QueryInterface : function(iid) {
-		if(
-			iid.equals(Ci.nsISupports)
-			|| iid.equals(Ci.nsIStreamListener)
-			|| iid.equals(Ci.nsIRequestObserver)
-		)
-			return this;
-		throw Components.results.NS_ERROR_NO_INTERFACE;
-	},
-	onStartRequest : function(request, context) {
-		// create output file
-		this.fileOutput = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
-		this.fileOutput.init(DTA_profileFile.get('dta_history.xml'), 0x02 | 0x08 | 0x20, 0664, 0);
-		this.byteOut = Cc['@mozilla.org/binaryoutputstream;1'].createInstance(Ci.nsIBinaryOutputStream);
-		this.byteOut.setOutputStream(this.fileOutput);
-	},
-	onStopRequest : function(request, context, status) {
-		// close output file
-		this.fileOutput.close();
-		this.byteOut.close();
-
-		this.imSaving = false;
-		// if there has been a new call to saveSession during saving process
-		if (this.repeat) {
-			this.repeat = false;
-			this.save();
-		} else if (this.iHaveToClose) {
-			Debug.dump("I'm closing :)");
-			self.close();
+	
+	init: function() {
+		this._con = Cc["@mozilla.org/storage/service;1"]
+			.getService(Ci.mozIStorageService)
+			.openDatabase(DTA_profileFile.get('dta_queue.sqlite'));
+		try {
+			this._con.executeSimpleSQL('CREATE TABLE queue (uuid INTEGER PRIMARY KEY AUTOINCREMENT, pos INTEGER, item TEXT)');
+		} catch (ex) {
+			Debug.dump("ct", ex);
+			// no-op
 		}
+		this._saveStmt = this._con.createStatement('REPLACE INTO queue (uuid, pos, item) VALUES (?1, ?2, ?3)');
+		this._delStmt = this._con.createStatement('DELETE FROM queue WHERE uuid = ?1');
+		
+		this._converter = Components.classes["@mozilla.org/intl/saveascharset;1"]
+			.createInstance(Ci.nsISaveAsCharset);
+		this._converter.Init('utf-8', 1, 0);
+		this._serializer = new XMLSerializer();
+		
+		this.load();
 	},
-	onDataAvailable : function(request, context, inputStream, offset, count) {try{
-		var byteStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
-		byteStream.setInputStream(inputStream);
-		var data = byteStream.readBytes(count);
-		// write data
-		this.byteOut.writeBytes(data, count);
-		} catch(e) {alert(e);}
+	
+	serializeDoc: function(doc) {
+		var rv = this._serializer.serializeToString(doc);
+		rv = this._converter.Convert(rv);
+		return rv;
 	},
-
-	save: function(andClose) {
-
-		if (andClose) this.iHaveToClose=true;
-
-		if (this.imSaving) {
-			this.repeat = true;
+	
+	_saveDownload: function(d, pos) {
+	
+		if (!(
+			(!Prefs.removeCompleted && d.isCompleted) ||
+			(!Prefs.removeCanceled && d.isCanceled) ||
+			(!Prefs.removeAborted && !d.isStarted) ||
+			d.isPaused ||
+			d.setIsRunning())
+		) {
 			return;
 		}
-		this.imSaving = true;
-
-		try {
 		var doc = document.implementation.createDocument("", "", null);
-		var list = doc.createElement("downloads");
+		var e = doc.createElement("download");
 
-		Prefs.refresh();
+		e.set = e.setAttribute;
+		[
+			'fileName',
+			'destinationName',
+			'numIstance',
+			'description',
+			'isResumable',
+			'alreadyMaskedName',
+			'alreadyMaskedDir',
+			'mask',
+			'originalDirSave'
+		].forEach(function(u) { e.set(u, d[u]); });
 
-		const removeCompleted = Preferences.getDTA("removecompleted", true);
-		const removeAborted = Preferences.getDTA('removeaborted', false);
-		const removeCanceled = Preferences.getDTA("removecanceled", false);
-		for (var i=0; i<downloadList.length; i++) {
+		e.set("dirsave", d.dirSave.addFinalSlash());
+		e.set("referrer", d.refPage.spec);
+		e.set("startDate", d.startDate.toUTCString());
 
-			var d = downloadList[i];
+		d.urlManager.save(e);
+		d.visitors.save(e);
 
-			if (!(
-				(!removeCompleted && d.isCompleted) ||
-				(!removeCanceled && d.isCanceled) ||
-				(!removeAborted && !d.isStarted) ||
-				d.isPaused ||
-				d.setIsRunning())
-			) continue;
-
-			var e = doc.createElement("download");
-
-			e.set = e.setAttribute;
-			[
-				'fileName',
-				'destinationName',
-				'numIstance',
-				'description',
-				'isResumable',
-				'alreadyMaskedName',
-				'alreadyMaskedDir',
-				'mask',
-				'originalDirSave'
-			].forEach(function(u) { e.set(u, d[u]); });
-
-			e.set("dirsave", d.dirSave.addFinalSlash());
-			e.set("referrer", d.refPage.spec);
-			e.set("startDate", d.startDate.toUTCString());
-
-			d.urlManager.save(e);
-			d.visitors.save(e);
-
-			if (!d.isResumable && !d.isCompleted) {
-				e.set("partialsize", 0);
-				e.set("totalsize", 0);
-			} else {
-				e.set("partialsize", d.partialSize);
-				e.set("totalsize", d.totalSize);
-			}
-
-			e.set("completed", d.isCompleted);
-			e.set("canceled", d.isCanceled);
-
-			if (!d.isCanceled && !d.isCompleted && d.chunks.length > 0) {
-				var x = d.firstChunk;
-				do {
-					if (!d.chunks[x].isRunning && d.chunks[x].chunkSize != 0) {
-						var chunk = doc.createElement("chunk");
-						chunk.setAttribute("path", d.chunks[x].fileManager.path);
-						chunk.setAttribute("start", d.chunks[x].start);
-						chunk.setAttribute("end", d.chunks[x].end);
-						chunk.setAttribute("size", d.chunks[x].chunkSize);
-						e.appendChild(chunk);
-					}
-					x = d.chunks[x].next;
-				} while(x != -1);
-			}
-			list.appendChild(e);
+		if (!d.isResumable && !d.isCompleted) {
+			e.set("partialsize", 0);
+			e.set("totalsize", 0);
+		} else {
+			e.set("partialsize", d.partialSize);
+			e.set("totalsize", d.totalSize);
 		}
 
-		// create xml string
-		doc.appendChild(list);
-		var serializer = new XMLSerializer();
-		var s = serializer.serializeToString(doc);
+		e.set("completed", d.isCompleted);
+		e.set("canceled", d.isCanceled);
 
-		var converter = Components.classes["@mozilla.org/intl/saveascharset;1"]
-			.createInstance(Ci.nsISaveAsCharset);
-		converter.Init('utf-8', 1, 0);
-		s = converter.Convert(s);
-
-		// create async input stream
-		var sInputStream = Components.classes["@mozilla.org/io/string-input-stream;1"].createInstance(Ci.nsIStringInputStream);
-		var inputPump = Components.classes["@mozilla.org/network/input-stream-pump;1"].createInstance(Ci.nsIInputStreamPump);
-		inputPump.init(sInputStream, 0, -1, 0, 0, true);
-		sInputStream.setData(s, s.length);
-
-		// start copying
-		inputPump.asyncRead(this, null);
-
-		} catch(e) {Debug.dump("sessionManager.save():", e);}
-	},
-
-	get: function(down, attr) {
-		if (down.hasAttribute(attr)) {
-			return down.getAttribute(attr);
+		if (!d.isCanceled && !d.isCompleted && d.chunks.length > 0) {
+			var x = d.firstChunk;
+			do {
+				if (!d.chunks[x].isRunning && d.chunks[x].chunkSize != 0) {
+					var chunk = doc.createElement("chunk");
+					chunk.setAttribute("path", d.chunks[x].fileManager.path);
+					chunk.setAttribute("start", d.chunks[x].start);
+					chunk.setAttribute("end", d.chunks[x].end);
+					chunk.setAttribute("size", d.chunks[x].chunkSize);
+					e.appendChild(chunk);
+				}
+				x = d.chunks[x].next;
+			} while(x != -1);
 		}
-		return null;
+		doc.appendChild(e);
+		
+		var s = this._saveStmt;
+		if (d.dbID) {
+			s.bindInt64Parameter(0, d.dbID);
+		}
+		else {
+			s.bindNullParameter(0);
+		}
+		s.bindInt32Parameter(1, pos);
+		s.bindUTF8StringParameter(2, this.serializeDoc(doc));
+		s.execute();
+		d.dbID = this._con.lastInsertRowID;
 	},
-	load: function() {try {
+	
+	save: function(download) {
 
-		var file = DTA_profileFile.get('dta_history.xml');
-		if (!file.exists()) return;
-		Prefs.refresh();
+		// just one download.
+		if (download) {
+			this._saveDownload(download);
+			return;
+		}
+		
+		this._con.beginTransactionAs(this._con.TRANSACTION_DEFERRED);
+		try {
+			this._con.executeSimpleSQL('DELETE FROM queue;');
+			downloadList.forEach(
+				function(e, i) {
+					this._saveDownload(e, i);
+				},
+				this
+			);
+		}
+		catch (ex) {
+			Debug.dump(ex);
+		}
+		this._con.commitTransaction();
+		
+	},
+	deleteDownload: function(download) {
+		if (!download.dbID) {
+			return;
+		}
+		this._delStmt.bindInt64Parameter(0, download.dbId);
+		this._delStmt.execute();
+	},
+	
+	load: function() {
 
-		// read file
-		// and parse the xml
-		var fiStream = Cc['@mozilla.org/network/file-input-stream;1'].createInstance(Ci.nsIFileInputStream);
-		fiStream.init(file, 1, 0, false);
 		var domParser = new DOMParser();
-		var doc = domParser.parseFromStream(fiStream, 'utf-8', file.fileSize, "application/xml");
-		fiStream.close();
-		var list = doc.documentElement.getElementsByTagName("download");
 
-		// load session
-		const removeCompleted = Preferences.getDTA("removecompleted", true);
-		const removeCanceled = Preferences.getDTA("removecanceled", false);
-		for (var k=0; k<list.length; k++) {try {
-			var down = list[k];
-
-			if (!(
-					(!removeCompleted && down.getAttribute("completed")=="true") ||
-					(!removeCanceled && down.getAttribute("canceled")=="true") ||
-					(this.get(down, "canceled")=="false" && this.get(down, "completed")=="false")
-				)) continue;
-
-			var d = new downloadElement(
-				new DTA_URLManager(down),
-				this.get(down, "dirsave"),
-				this.get(down, "numIstance"),
-				this.get(down, "description"),
-				this.get(down, "mask"),
-				this.get(down, "referrer")
-				);
-			d.startDate = new Date(this.get(down, "startDate"));
-			d.visitors.load(down)	;
-
-			d.fileName = this.get(down, "fileName");
-			d.destinationName = this.get(down, "destinationName");
-			d.originalDirSave = this.get(down, "originalDirSave");
-			d.isResumable = this.get(down, "isResumable")=="true" ? true:false;
-			d.isCanceled = this.get(down, "canceled")=="true" ? true:false;
-			d.isCompleted = this.get(down, "completed")=="true" ? true:false;
-			d.partialSize = parseInt(this.get(down, "partialsize"));
-			d.totalSize = parseInt(this.get(down, "totalsize"));
-			d.alreadyMaskedName = this.get(down, "alreadyMaskedName")=="true" ? true:false;
-			d.alreadyMaskedDir = this.get(down, "alreadyMaskedDir")=="true" ? true:false;
-
-
-			if (d.partialSize == 0)
-				d.isStarted = false;
-			else
-				d.isStarted = true;
-
-			if (!d.isCanceled && !d.isCompleted) {
-				d.isPaused = true;
-				var chunks = down.getElementsByTagName('chunk');
-				for (var x = 0; x < chunks.length; x++) {
-					var chunkEl = chunks[x];
-					var test = new FileFactory(chunkEl.getAttribute("path"));
-					if (test.exists()) {
-						var i = d.chunks.length;
-						d.chunks.push(
-							new chunkElement(
-								parseInt(chunkEl.getAttribute("start")),
-								parseInt(chunkEl.getAttribute("start"))
-									+ parseInt(chunkEl.getAttribute("size"))
-									-1
-								, d
-							)
-						);
-						d.chunks[i].isRunning = false;
-						d.chunks[i].chunkSize = parseInt(chunkEl.getAttribute("size"));
-
-						d.chunks[i].previous = i - 1;
-						// adjusted below.
-						d.chunks[i].next = i + 1;
-
-						d.chunks[i].fileManager = test;
+		const removeCompleted = Prefs.removeCompleted;
+		const removeCanceled = Prefs.removeCompleted;
+		
+		var stmt = this._con.createStatement('SELECT uuid, item FROM queue ORDER BY pos');
+		
+		while (stmt.executeStep()) {
+			try {
+				const dbID = stmt.getInt64(0);
+				var down = domParser.parseFromString(stmt.getUTF8String(1), 'application/xml').documentElement;
+				var get = function(attr) {
+					if (down.hasAttribute(attr)) {
+						return down.getAttribute(attr);
 					}
-					else if (d.chunks.length == 1) {
-						// only finished chunks get saved.
-						// one missing therefore means it already got joined
-						d.chunks[0].chunkSize += parseInt(chunkEl.getAttribute("size"));
-						d.chunks[0].end += parseInt(chunkEl.getAttribute("size"));
-						Debug.dump("sessionManager::load: missing chunk");
-					}
+					return null;
 				}
-				d.refreshPartialSize();
-
-				if (d.chunks.length > 0) {
-					// adjust the end.
-					d.chunks[d.chunks.length - 1].next = -1;
-					d.join = new joinListener(d);
+				if (
+					(removeCompleted && down.getAttribute("completed") == "true")
+					|| (removeCanceled && down.getAttribute("canceled") == "true")
+				) {
+					continue;
 				}
 
-			} else if (d.isCompleted) {
+				var d = new downloadElement(
+					new DTA_URLManager(down),
+					get("dirsave"),
+					get("numIstance"),
+					get("description"),
+					get("mask"),
+					get("referrer")
+					);
+				d.dbID = dbID;
+				d.startDate = new Date(this.get(down, "startDate"));
+				d.visitors.load(down)	;
+
+				d.fileName = get("fileName");
+				d.destinationName = get("destinationName");
+				d.originalDirSave = get("originalDirSave");
+				d.isResumable = get("isResumable")=="true" ? true:false;
+				d.isCanceled = get("canceled")=="true" ? true:false;
+				d.isCompleted = get("completed")=="true" ? true:false;
+				d.partialSize = parseInt(get("partialsize"));
+				d.totalSize = parseInt(get("totalsize"));
+				d.alreadyMaskedName = get("alreadyMaskedName") == "true";
+				d.alreadyMaskedDir = get("alreadyMaskedDir") == "true";
+
+				d.isStarted = d.partialSize != 0;
+
+				if (!d.isCanceled && !d.isCompleted) {
+					d.isPaused = true;
+					var chunks = down.getElementsByTagName('chunk');
+					for (var i = 0, e = chunks.length; i < e; ++i) {
+						var chunkEl = chunks[i];
+						var test = new FileFactory(chunkEl.getAttribute("path"));
+						if (test.exists()) {
+							var i = d.chunks.length;
+							d.chunks.push(
+								new chunkElement(
+									parseInt(chunkEl.getAttribute("start")),
+									parseInt(chunkEl.getAttribute("start"))
+										+ parseInt(chunkEl.getAttribute("size"))
+										-1
+									, d
+								)
+							);
+							d.chunks[i].isRunning = false;
+							d.chunks[i].chunkSize = parseInt(chunkEl.getAttribute("size"));
+
+							d.chunks[i].previous = i - 1;
+							// adjusted below.
+							d.chunks[i].next = i + 1;
+
+							d.chunks[i].fileManager = test;
+						}
+						else if (d.chunks.length == 1) {
+							// only finished chunks get saved.
+							// one missing therefore means it already got joined
+							d.chunks[0].chunkSize += parseInt(chunkEl.getAttribute("size"));
+							d.chunks[0].end += parseInt(chunkEl.getAttribute("size"));
+							Debug.dump("sessionManager::load: missing chunk");
+						}
+					}
+					d.refreshPartialSize();
+
+					if (d.chunks.length > 0) {
+						// adjust the end.
+						d.chunks[d.chunks.length - 1].next = -1;
+						d.join = new joinListener(d);
+					}
+
+				}
+				else if (d.isCompleted) {
 					d.fileManager = new FileFactory(d.dirSave);
 					d.fileManager.append(d.destinationName);
-					d.dirSave = d.dirSave;
 					Stats.completedDownloads++;
 					d.isPassed = true;
-			} else if (d.isCanceled) {
-				d.isPassed = true;
-			}
+				}
+				else if (d.isCanceled) {
+					d.isPassed = true;
+				}
 
-			downloadList.push(d);
-			populateListbox(d);
-		} catch (e) {Debug.dump("Error loading " + this.get(down, "filename") + ":", e);}
-	}
-	} catch(e) {Debug.dump("sessionManager.load():", e);}
+				downloadList.push(d);
+				populateListbox(d);
+			}
+			catch (ex) {
+				Debug.dump('failed to init a download from queuefile', ex);
+			}
+		}
 	}
 };
 
