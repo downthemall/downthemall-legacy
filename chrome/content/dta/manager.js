@@ -73,7 +73,7 @@ var Prefs = {
 	tempLocation : null,
 
 	currentTooltip : null,
-	
+
 	// nsIObserver
 	observe : function(subject, topic, prefName) {
 		this._refreshPrefs();
@@ -81,7 +81,7 @@ var Prefs = {
 
 	init: function() {
 		makeObserver(this);
-		
+
 		try {
 			this.observe();
 			Cc['@mozilla.org/preferences-service;1']
@@ -94,10 +94,10 @@ var Prefs = {
 			Debug.dump("failed to add pref-observer", ex);
 		}
 	},
-	
+
 	_refreshPrefs: function() {
 		Debug.dump("pref reload");
-		
+
 		this.maxInProgress = Preferences.getDTA("ntask", 5);
 		this.showOnlyFilenames = Preferences.getDTA("showOnlyFilenames", true);
 		this.onConflictingFilenames = Preferences.getDTA("existing", 3);
@@ -1203,7 +1203,7 @@ joinListener.prototype = {
 
 		// seek does not work correctly :p
 		if (this.outStream.tell() != this.offset) {
-			this.dump("tell mismatch" + this.offset + "/" +  this.outStream.tell() + "/" + (this.offset - this.outStream.tell()));
+			this.dump("tell mismatch" + this.offset + "/" + this.outStream.tell() + "/" + (this.offset - this.outStream.tell()));
 			this.d.cancelDownload();
 		}
 
@@ -1275,7 +1275,7 @@ joinListener.prototype = {
 		// put it in to debug a problem, which was: chunksize < filesize because incomplete chunks got saved due to a programming error
 		var told = this.outStream.tell()
 		if (this.offset != told) {
-			this.dump("tell() mismatch: " + this.offset + "/" +  this.outStream.tell() + "/" + (this.offset - this.outStream.tell()));
+			this.dump("tell() mismatch: " + this.offset + "/" + this.outStream.tell() + "/" + (this.offset - this.outStream.tell()));
 			if (this.offset < told) {
 				this.outStream.seek(0x00, this.offset);
 			} else {
@@ -1376,7 +1376,7 @@ dataCopyListener.prototype = {
 function failDownload(d, title, msg, state) {
 
 	playSound("error");
-	
+
 	switch (Prefs.alertingSystem) {
 		case 1:
 			AlertService.show(title, msg, false);
@@ -1576,7 +1576,7 @@ var Check = {
 	checkClose: function() {
 		try {
 			this.refreshDownloadedBytes();
-			
+
 			if (
 				!downloadList.length
 				|| this.lastCheck == Stats.downloadedBytes
@@ -1721,9 +1721,7 @@ PersistProgressListener.prototype = {
 
 	init: function() {},
 	destroy: function() {},
-	prompt: function (dialogTitle, text, passwordRealm, savePassword, defaultText, result) {},
-	promptPassword: function  (dialogTitle, text, passwordRealm, savePassword, pwd) {},
-	
+
 	onLocationChange: function (aWebProgress, aRequest, aLocation) {},
 	onStatusChange: function (aWebProgress, aRequest, aStatus, aMessage) {},
 	onSecurityChange: function (aWebProgress, aRequest, aState) {},
@@ -1742,8 +1740,8 @@ PersistProgressListener.prototype = {
 	// nsIAuthPromptProvider
 	get authPrompter() {
 		try {
-	    var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
-	      .getService(Ci.nsIWindowWatcher);
+			var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+				.getService(Ci.nsIWindowWatcher);
 			var rv = watcher.getNewAuthPrompter(null)
 				.QueryInterface(Ci.nsIAuthPrompt);
 			return rv;
@@ -2006,7 +2004,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 	// Garbage Collection
 	c.progressPersist = null;
 
-} catch(e) {Debug.dump("onStateChange():",  e)}
+} catch(ex) {Debug.dump("onStateChange():", ex)}
 },
 
 onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress) {
@@ -2256,7 +2254,7 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 			{
 				// basic integrity check
 				if (d.partialSize > d.totalSize) {
-					Debug.dump(d.fileName + ": partialSize > totalSize" + "(" + d.partialSize + "/" +  d.totalSize + "/" + ( d.partialSize -  d.totalSize) + ")");
+					Debug.dump(d.fileName + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");
 					failDownload(d, "Size mismatch", "Actual size of " + d.partialSize + " does not match reported size of " + d.totalSize, "Size mismatch");
 					//d.hasToBeRedownloaded = true;
 					//d.redownloadIsResumable = false;
@@ -2280,10 +2278,10 @@ onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSel
 // --------* Gzip converter *--------
 
 function dataListener(outStream, outFileManager, dest, d) {
-  this.outf = outStream;
-  this.outFM = outFileManager;
-  this.inf=dest;
-  this.d=d;
+	this.outf = outStream;
+	this.outFM = outFileManager;
+	this.inf=dest;
+	this.d=d;
 }
 
 dataListener.prototype = {
@@ -2426,8 +2424,8 @@ function cancelAll(pressedESC) {
 	}
 
 	Check.isClosing = true;
-	
-	const removeAborted = Preferences.getDTA('rememberaborted');	
+
+	const removeAborted = Preferences.getDTA('rememberaborted');
 	var allPassed = downloadList.every(
 		function(d) {
 			// close join stream
@@ -2441,7 +2439,7 @@ function cancelAll(pressedESC) {
 				|| (d.isStarted && !d.isRunning)
 			) {
 				d.isPassed = true;
-			}			
+			}
 			if (d.isPassed || d.isCompleted) {
 				return true;
 			}
@@ -2456,7 +2454,7 @@ function cancelAll(pressedESC) {
 			else if (removeAborted) {
 				removeFromList(i);
 				return true;
-			} 
+			}
 			else {
 				d.isPaused = true;
 				d.isPassed = true;
@@ -2465,7 +2463,7 @@ function cancelAll(pressedESC) {
 			return false;
 		}
 	);
-	
+
 	// if we can close window now, let's close it
 	if (allPassed && Stats.zippedToWait == 0) {
 		Debug.dump("cancelAll(): Disclosure of window permitted");
@@ -2474,7 +2472,7 @@ function cancelAll(pressedESC) {
 		clearTimeout(Check.timerCheck);
 		return true;
 	}
-	
+
 	Debug.dump("cancelAll(): We're waiting...");
 	return false;
 }
@@ -2993,7 +2991,7 @@ try {
 					d.setTreeCell("status", strbundle.getString("inqueue"));
 				}
 				Check.haveToCheck = true;
-				if (((Check.firstInQueue == -1) || (Check.firstInQueue > c)) && firstFlag)  {
+				if (((Check.firstInQueue == -1) || (Check.firstInQueue > c)) && firstFlag) {
 					if (Check.firstInQueue != -1) downloadList[Check.firstInQueue].isFirst = false;
 					Check.firstInQueue = c;
 					downloadList[c].isFirst = true;
@@ -3133,7 +3131,7 @@ function setRemoved(d) {
 				d.join.stopJoining();
 			} else if(!d.isPassed) {
 				d.isPassed = true;
-	  	}
+			}
 			d.cancelFamily();
 		}
 	} else {
@@ -3141,7 +3139,7 @@ function setRemoved(d) {
 	}
 
 	if (d.isPassed) {
-	   d.isPassed = false;
+		 d.isPassed = false;
 	}
 
 } catch(e) {
@@ -3213,28 +3211,28 @@ try {
 				downloadList.splice(downloadList.length, 0, t);
 
 			if (top) { // top
-			  var beforePos = 0;
+				var beforePos = 0;
 
 			if ((beforePos <= Check.firstInQueue)&&(!downloadList[beforePos].isRunning)&&(!downloadList[beforePos].isPaused)&&(!downloadList[beforePos].isCanceled)&&(!downloadList[beforePos].isCompleted)) {
-				  oldfirst.isFirst = false;
-				  Check.firstInQueue = beforePos;
-				  downloadList[beforePos].isFirst = true;
-			  }
+					oldfirst.isFirst = false;
+					Check.firstInQueue = beforePos;
+					downloadList[beforePos].isFirst = true;
+				}
 			 else if (datas[i] > Check.firstInQueue && beforePos <= Check.firstInQueue) Check.firstInQueue++;
 			}
 			else {
-			  var beforePos = downloadList.length; // bottom
-			  if (datas[i] == Check.firstInQueue) {
-				  for (var dex = datas[i]; dex < beforePos; dex++) {
+				var beforePos = downloadList.length; // bottom
+				if (datas[i] == Check.firstInQueue) {
+					for (var dex = datas[i]; dex < beforePos; dex++) {
 					if ((!downloadList[dex].isRunning)&&(!downloadList[dex].isPaused)&&(!downloadList[dex].isCanceled)&&(!downloadList[dex].isCompleted)) {
-					  oldfirst.isFirst = false;
-					  Check.firstInQueue = dex;
-					  downloadList[dex].isFirst = true;
-					  break;
+						oldfirst.isFirst = false;
+						Check.firstInQueue = dex;
+						downloadList[dex].isFirst = true;
+						break;
 					}
-				  }
+					}
 				}
-			  else
+				else
 				if (datas[i]<Check.firstInQueue && beforePos > Check.firstInQueue ) Check.firstInQueue--;
 			}
 
@@ -3257,7 +3255,7 @@ Check.imRemoving = false;
 }
 
 //--> Richiamata dal context, muove di n posizioni la selezione corrente
-//	  pos < 0 equivale a spostare verso l'alto di pos posizioni
+// pos < 0 equivale a spostare verso l'alto di pos posizioni
 function move(pos) {
 	Check.imRemoving = true;
 	try {
@@ -3295,28 +3293,28 @@ function move(pos) {
 
 			if (datas[i] + pos < 0) break;
 			if (pos < 0) { // se si sale
-			  var beforePos = datas[i] + pos;
+				var beforePos = datas[i] + pos;
 
 			if ((beforePos <= Check.firstInQueue)&&(!downloadList[beforePos].isRunning)&&(!downloadList[beforePos].isPaused)&&(!downloadList[beforePos].isCanceled)&&(!downloadList[beforePos].isCompleted)) {
-				  oldfirst.isFirst = false;
-				  Check.firstInQueue = beforePos;
-				  downloadList[beforePos].isFirst = true;
-			  }
+					oldfirst.isFirst = false;
+					Check.firstInQueue = beforePos;
+					downloadList[beforePos].isFirst = true;
+				}
 			 else if (datas[i] > Check.firstInQueue && beforePos <= Check.firstInQueue) Check.firstInQueue++;
 			}
 			else {
-			  var beforePos = datas[i] + pos + 1; // se si scende
-			  if (datas[i] == Check.firstInQueue) {
-				  for (var dex = datas[i]; dex < beforePos; dex++) {
+				var beforePos = datas[i] + pos + 1; // se si scende
+				if (datas[i] == Check.firstInQueue) {
+					for (var dex = datas[i]; dex < beforePos; dex++) {
 					if ((!downloadList[dex].isRunning)&&(!downloadList[dex].isPaused)&&(!downloadList[dex].isCanceled)&&(!downloadList[dex].isCompleted)) {
-					  oldfirst.isFirst = false;
-					  Check.firstInQueue = dex;
-					  downloadList[dex].isFirst = true;
-					  break;
+						oldfirst.isFirst = false;
+						Check.firstInQueue = dex;
+						downloadList[dex].isFirst = true;
+						break;
 					}
-				  }
+					}
 				}
-			  else
+				else
 				if ( datas[i]<Check.firstInQueue && beforePos > Check.firstInQueue ) Check.firstInQueue--;
 			}
 
@@ -3521,7 +3519,7 @@ var sessionManager = {
 		var list = doc.createElement("downloads");
 
 		Prefs.refresh();
-		
+
 		const removeCompleted = Preferences.getDTA("removecompleted", true);
 		const removeAborted = Preferences.getDTA('removeaborted', false);
 		const removeCanceled = Preferences.getDTA("removecanceled", false);
