@@ -41,8 +41,6 @@ var strbundle;
 var winFocus = false;
 // true if some dialog.xul is opened
 var isOpenedMessagebox = 0;
-// true if some FF sidebox is shown
-var alerting = false;
 
 if (!Cc) {
 	var Cc = Components.classes;
@@ -1381,7 +1379,7 @@ function failDownload(d, title, msg, state) {
 	
 	switch (Prefs.alertingSystem) {
 		case 1:
-			new AlertSlide(title, msg, false);
+			AlertService.show(title, msg, false);
 			break;
 		case 0:
 			alert(msg);
@@ -1403,16 +1401,16 @@ function inProgressElement(el) {
 var downloadList = new Array();
 var inProgressList = new Array();
 
-function AlertSlide(title, msg, clickable, cookie) {
-	if (alerting) {
-		return;
-	}
-	alerting = true;
-	makeObserver(this);
-	
-	Cc['@mozilla.org/alerts-service;1']
-		.getService(Ci.nsIAlertsService)
-		.showAlertNotification(
+var AlertService = {
+	_alerting: false,
+	_service: Cc['@mozilla.org/alerts-service;1']
+		.getService(Ci.nsIAlertsService),
+	show: function(title, msg, clickable, cookie) {
+		if (this._alerting) {
+			return;
+		}
+		this._alerting = true;
+		this._service.showAlertNotification(
 			"chrome://dta/skin/common/alert.png",
 			title,
 			msg,
@@ -1420,13 +1418,12 @@ function AlertSlide(title, msg, clickable, cookie) {
 			cookie,
 			this
 			);
-}
-AlertSlide.prototype = {
+	},
 	observe : function (aSubject, aTopic, aData) {
 		switch (aTopic) {
 			case "alertfinished":
 				// global variable
-				alerting = false;
+				this._alerting = false;
 				break;
 			case "alertclickcallback":
 				if (aData != "errore") {
@@ -1441,6 +1438,7 @@ AlertSlide.prototype = {
 		}
 	}
 };
+makeObserver(AlertService);
 
 // --------* Controlli di chiusura e avvio nuovi downloads *--------
 
@@ -1601,7 +1599,7 @@ var Check = {
 					stringa = strbundle.getString("suc");
 
 				if (Prefs.alertingSystem == 1) {
-					new AlertSlide(strbundle.getString("dcom"), stringa, true, downloadList[0].dirSave);
+					AlertService.show(strbundle.getString("dcom"), stringa, true, downloadList[0].dirSave);
 				}
 				else if (Prefs.alertingSystem == 0) {
 					if (confirm(stringa + "\n "+ strbundle.getString("folder")) == 1) {
