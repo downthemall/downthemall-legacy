@@ -118,7 +118,6 @@ var Stats = {
 
 	zippedToWait : 0,
 	downloadedBytes : 0,
-	passedNumber : 0
 }
 
 function DTA_URLManager(urls) {
@@ -754,7 +753,6 @@ downloadElement.prototype = {
 		}
 
 		this.isPassed = true;
-		Stats.passedNumber++;
 		this.setTreeCell("status", strbundle.getString("complete"));
 		popup();
 
@@ -988,7 +986,6 @@ downloadElement.prototype = {
 					this.join.stopJoining();
 				} else {
 					this.isPassed = true;
-					Stats.passedNumber++;
 				}
 			} else {
 				this.isCompleted = false;
@@ -1233,7 +1230,6 @@ joinListener.prototype = {
 
 			Debug.dump("JoinIsFinished: Cancelling " + this.d.fileName);
 			this.d.isPassed = true;
-			Stats.passedNumber++;
 			this.d.cancelFamily();
 			this.d.chunks = new Array();
 			Check.checkClose();
@@ -1268,7 +1264,6 @@ joinListener.prototype = {
 			this.closeStream();
 			Debug.dump("We're closing from Join... isPassed=true");
 			this.d.isPassed = true;
-			Stats.passedNumber++;
 			Check.checkClose();
 		}
 		// more to do
@@ -1560,64 +1555,71 @@ var Check = {
 	} catch(e) {Debug.dump("checkDownloads():", e);}
 	},
 
-	checkClose : function() {try{
+	checkClose: function() {
+		try {
+			this.refreshDownloadedBytes();
+			
+			if (
+				!downloadList.length
+				|| this.lastCheck == Stats.downloadedBytes
+				|| downloadList.some(function(e) { return !e.isPassed; })
+				|| Stats.zippedToWait
+			) {
+				return;
+			}
 
-	this.refreshDownloadedBytes();
+			Debug.dump("checkClose(): All downloads passed correctly");
+			this.lastCheck = Stats.downloadedBytes;
+			Prefs.refresh();
 
-	if (
-		Stats.passedNumber == downloadList.length
-		&&
-		downloadList.length!=0
-		&&
-		this.lastCheck != Stats.downloadedBytes
-		&&
-		Stats.zippedToWait==0
-	) {
-		Debug.dump("checkClose(): All downloads passed correctly");
-		this.lastCheck = Stats.downloadedBytes;
-		Prefs.refresh();
+			playSound("done");
 
-		playSound("done");
+			// if windows hasn't focus, show FF sidebox/alerts
+			if (!winFocus && Stats.completedDownloads > 0) {
+				var stringa;
+				if (Stats.completedDownloads > 0)
+					stringa = strbundle.getString("suc");
 
-		// if windows hasn't focus, show FF sidebox/alerts
-		if (!winFocus && Stats.completedDownloads > 0) {
-			var stringa;
-			if (Stats.completedDownloads > 0)
-				stringa = strbundle.getString("suc");
-
-			if (Prefs.alertingSystem == 1 && !alerting) {
-				alerting = true;
-				alert = Cc['@mozilla.org/alerts-service;1']
-					.getService(Ci.nsIAlertsService);
-				alert.showAlertNotification(
-					"chrome://dta/skin/common/alert.png",
-					strbundle.getString("dcom"),
-					stringa,
-					true,
-					downloadList[0].dirSave,
-					new obsAlert()
-				);
-			} else if (Prefs.alertingSystem == 0) {
-				if (confirm(stringa + "\n "+ strbundle.getString("folder")) == 1) {
-					var dir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
-					try {
-						dir.initWithPath(downloadList[0].dirSave);
-						dir.launch();
-					} catch (e){strbundle.getString("noFolder");}
+				if (Prefs.alertingSystem == 1 && !alerting) {
+					alerting = true;
+					alert = Cc['@mozilla.org/alerts-service;1']
+						.getService(Ci.nsIAlertsService);
+					alert.showAlertNotification(
+						"chrome://dta/skin/common/alert.png",
+						strbundle.getString("dcom"),
+						stringa,
+						true,
+						downloadList[0].dirSave,
+						new obsAlert()
+					);
+				} else if (Prefs.alertingSystem == 0) {
+					if (confirm(stringa + "\n "+ strbundle.getString("folder")) == 1) {
+						var dir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+						try {
+							dir.initWithPath(downloadList[0].dirSave);
+							dir.launch();
+						}
+						catch (ex){
+							strbundle.getString("noFolder");
+						}
+					}
 				}
 			}
-		}
 
-		// checks for auto-disclosure of window
-		if (Preferences.getDTA("closedta", false) || Check.isClosing) {
-			Debug.dump("checkClose(): I'm closing the window/tab");
-			clearTimeout(this.timerCheck);
-			clearTimeout(this.timerRefresh);
-			sessionManager.save(true);
-		} else
+			// checks for auto-disclosure of window
+			if (Preferences.getDTA("closedta", false) || Check.isClosing) {
+				Debug.dump("checkClose(): I'm closing the window/tab");
+				clearTimeout(this.timerCheck);
+				clearTimeout(this.timerRefresh);
+				sessionManager.save(true);
+				return;
+			}
 			sessionManager.save();
-	}
-	} catch(e) {Debug.dump("checkClose():", e);}
+			
+		}
+		catch(ex) {
+			Debug.dump("checkClose():", ex);
+		}
 	},
 
 	setFirstInQueue : function() {try {
@@ -1816,10 +1818,8 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 
 			d.isStarted = false;
 
-			// removed downloads are not included in passedNumber
 			if (Check.isClosing && !d.isRemoved) {
 				d.isPassed = true;
-				Stats.passedNumber++;
 			} else if (!this.isPassedOnProgress)
 				failDownload(
 				d,
@@ -1922,10 +1922,8 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 	if (!d.isRunning && d.isPaused && Check.isClosing) {
 
 		if (d.join == null || !d.join.imJoining) {
-			// removed downloads are not included in passedNumber
 			if (!d.isRemoved) {
 				d.isPassed = true;
-				Stats.passedNumber++;
 			}
 			// reset download as it was never started (in queue state)
 			if (!d.isResumable) {
@@ -1988,9 +1986,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 			if (d.join != null && d.join.imJoining)
 				d.join.stopJoining();
 			else if (!d.isRemoved) {
-				// removed downloads are not included in passedNumber
 				d.isPassed = true;
-				Stats.passedNumber++;
 				d.chunks = new Array();
 			}
 		}
@@ -2305,7 +2301,6 @@ dataListener.prototype = {
 			Stats.zippedToWait--;
 		} else {
 			this.d.isPassed = true
-			Stats.passedNumber++;
 			Stats.zippedToWait--;
 			this.d.setTreeCell("percent", "100%");
 			this.d.setTreeCell("status", strbundle.getString("complete"));
@@ -2425,23 +2420,26 @@ function cancelAll(pressedESC) {
 	}
 
 	Check.isClosing = true;
-
-	if (Stats.passedNumber != downloadList.length || Stats.zippedToWait != 0) {
-		var removeAborted = Preferences.getDTA('rememberaborted');
-		for (var i = 0; i < downloadList.length; ++i) {
-			var d = downloadList[i];
-			// completed and passed files are already managed
+	
+	const removeAborted = Preferences.getDTA('rememberaborted');	
+	var allPassed = downloadList.every(
+		function(d) {
+			// close join stream
+			if (d.join && !d.join.imJoining) {
+				d.join.closeStream();
+				d.join = null;
+			}
 			if (
 				d.isCanceled
 				|| (d.isPaused && (d.join == null || !d.join.imJoining))
 				|| (d.isStarted && !d.isRunning)
 			) {
 				d.isPassed = true;
-				Stats.passedNumber++;
 			}			
 			if (d.isPassed || d.isCompleted) {
-				continue;
+				return true;
 			}
+
 			// also canceled and paused without running joinings
 			if (d.isStarted) {
 				d.setPaused();
@@ -2451,28 +2449,24 @@ function cancelAll(pressedESC) {
 			}
 			else if (removeAborted) {
 				removeFromList(i);
+				return true;
 			} 
 			else {
 				d.isPaused = true;
 				d.isPassed = true;
-				Stats.passedNumber++;
+				return true;
 			}
-			// close join stream
-			if (d.join && !d.join.imJoining) {
-				d.join.closeStream();
-			}
+			return false;
 		}
-	}
-
-	Debug.dump("Passed=" + Stats.passedNumber + "/" + downloadList.length);
-
+	);
+	
 	// if we can close window now, let's close it
-	if (Stats.passedNumber == downloadList.length && Stats.zippedToWait == 0) {
+	if (allPassed && Stats.zippedToWait == 0) {
 		Debug.dump("cancelAll(): Disclosure of window permitted");
 		sessionManager.save(true);
 		clearTimeout(Check.timerRefresh);
 		clearTimeout(Check.timerCheck);
-		return;
+		return true;
 	}
 	
 	Debug.dump("cancelAll(): We're waiting...");
@@ -2977,7 +2971,6 @@ try {
 					firstFlag = true;
 					if (d.isPassed) {
 						d.isPassed = false;
-						Stats.passedNumber--;
 					}
 					var n = new downloadElement(
 							d.urlManager,
@@ -3126,7 +3119,6 @@ function setRemoved(d) {
 		if (!d.isStarted || d.isCompleted) {
 			if (!d.isPassed) {
 				d.isPassed = true;
-				Stats.passedNumber++;
 			 }
 		} else {
 			if (d.setIsRunning()) {
@@ -3135,7 +3127,6 @@ function setRemoved(d) {
 				d.join.stopJoining();
 			} else if(!d.isPassed) {
 				d.isPassed = true;
-				Stats.passedNumber++;
 	  	}
 			d.cancelFamily();
 		}
@@ -3145,7 +3136,6 @@ function setRemoved(d) {
 
 	if (d.isPassed) {
 	   d.isPassed = false;
-	   Stats.passedNumber--;
 	}
 
 } catch(e) {
@@ -3722,11 +3712,8 @@ var sessionManager = {
 					d.dirSave = d.dirSave;
 					Stats.completedDownloads++;
 					d.isPassed = true;
-					Stats.passedNumber++;
-
 			} else if (d.isCanceled) {
 				d.isPassed = true;
-				Stats.passedNumber++;
 			}
 
 			downloadList.push(d);
