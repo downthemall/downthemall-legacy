@@ -271,3 +271,30 @@ function playSound(name) {
 		Debug.dump("Playing " + name + " sound failed", ex);
 	}
 }
+
+function makeObserver(obj) {
+	// nsiSupports
+	obj.__QueryInterface = obj.QueryInterface;
+	obj.QueryInterface = function(iid) {
+		if (
+			iid.equals(Components.interfaces.nsISupports)
+			|| iid.equals(Components.interfaces.nsISupportsWeakReference)
+			|| iid.equals(Components.interfaces.nsIWeakReference)
+			|| iid.equals(Components.interfaces.nsiObserver)
+		)	{
+			return this;
+		}
+		if (this.__QueryInterface) {
+			return this.__QueryInterface(iid);
+		}
+		throw Components.results.NS_ERROR_NO_INTERFACE;
+	};
+	// nsiWeakReference
+	obj.QueryReferent = function(iid) {
+		return this;
+	};
+	// nsiSupportsWeakReference
+	obj.GetWeakReference = function() {
+		return this;
+	};	
+}
