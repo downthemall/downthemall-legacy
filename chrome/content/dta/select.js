@@ -767,33 +767,6 @@ var Dialog = {
 			}
 		}
 	},
-	
-	// nsiSupports::QueryInterface
-	// currently we implement a weak observer
-	QueryInterface: function(iid) {
-		if (
-			iid.equals(Ci.nsISupports)
-			|| iid.equals(Ci.nsISupportsWeakReference)
-			|| iid.equals(Ci.nsIWeakReference)
-			|| iid.equals(Ci.nsiObserver)
-		) {
-			return this;
-		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
-	},
-
-	// nsiWeakReference::QueryReferent
-	// for weak observer
-	QueryReferent: function(iid) {
-		return this;
-	},
-
-	// nsiSupportsWeakReference
-	// for weak observer
-	GetWeakReference: function() {
-		return this;
-	},
-
 	// nsIObserver::observe
 	observe : function(subject, topic, prefName) {
 		// filterManager will throw this topic at us.
@@ -803,10 +776,10 @@ var Dialog = {
 			this.changeTab(this.current.tab);
 		}
 	},
-
 	// register ourselves
 	// * filterManager
 	registerObserver: function() {
+		makeObserver(this);
 		try {
 			var os = Cc["@mozilla.org/observer-service;1"]
 				.getService(Ci.nsIObserverService);
