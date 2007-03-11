@@ -1378,23 +1378,15 @@ dataCopyListener.prototype = {
 function failDownload(d, title, msg, state) {
 
 	playSound("error");
-
-	if (Prefs.alertingSystem == 1 && !alerting) {
-		alerting = true;
-		Cc['@mozilla.org/alerts-service;1']
-			.getService(Ci.nsIAlertsService)
-			.showAlertNotification(
-				"chrome://dta/skin/common/alert.png",
-				title,
-				msg,
-				false,
-				"errore",
-				new obsAlert()
-			);
-	} else if (Prefs.alertingSystem == 0) {
-		alert(msg);
+	
+	switch (Prefs.alertingSystem) {
+		case 1:
+			new AlertSlide(title, msg, false);
+			break;
+		case 0:
+			alert(msg);
+			break;
 	}
-
 	d.cancelDownload(state);
 
 	return;
@@ -1411,41 +1403,44 @@ function inProgressElement(el) {
 var downloadList = new Array();
 var inProgressList = new Array();
 
-// --------* Notifiche slide *--------
-
-function obsAlert () {
-	this.dir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+function AlertSlide(title, msg, clickable, cookie) {
+	if (alerting) {
+		return;
+	}
+	alerting = true;
+	makeObserver(this);
+	
+	Cc['@mozilla.org/alerts-service;1']
+		.getService(Ci.nsIAlertsService)
+		.showAlertNotification(
+			"chrome://dta/skin/common/alert.png",
+			title,
+			msg,
+			clickable,
+			cookie,
+			this
+			);
 }
-
-obsAlert.prototype = {
-	observe : function (aSubject, aTopic, aData){
+AlertSlide.prototype = {
+	observe : function (aSubject, aTopic, aData) {
 		switch (aTopic) {
 			case "alertfinished":
-			// global variable
-			alerting = false;
-			break;
+				// global variable
+				alerting = false;
+				break;
 			case "alertclickcallback":
-			if (aData != "errore") {
-				try {
-					this.dir.initWithPath(aData);
-					this.dir.launch();
-				} catch (e) {}
-			}
-			break;
-		}
-	},
-	onAlertFinished : function (aCookie) {
-		alerting = false;
-	},
-	onAlertClickCallback : function (aCookie) {
-		if (aCookie != "errore") {
-			try {
-				this.dir.initWithPath(aCookie);
-				this.dir.launch();
-			} catch (e){}
+				if (aData != "errore") {
+					try {
+						new FileFactory(aData).launch();
+					}
+					catch (ex) {
+						// no-op
+					}
+				}
+				break;
 		}
 	}
-}
+};
 
 // --------* Controlli di chiusura e avvio nuovi downloads *--------
 
@@ -1605,24 +1600,13 @@ var Check = {
 				if (Stats.completedDownloads > 0)
 					stringa = strbundle.getString("suc");
 
-				if (Prefs.alertingSystem == 1 && !alerting) {
-					alerting = true;
-					alert = Cc['@mozilla.org/alerts-service;1']
-						.getService(Ci.nsIAlertsService);
-					alert.showAlertNotification(
-						"chrome://dta/skin/common/alert.png",
-						strbundle.getString("dcom"),
-						stringa,
-						true,
-						downloadList[0].dirSave,
-						new obsAlert()
-					);
-				} else if (Prefs.alertingSystem == 0) {
+				if (Prefs.alertingSystem == 1) {
+					new AlertSlide(strbundle.getString("dcom"), stringa, true, downloadList[0].dirSave);
+				}
+				else if (Prefs.alertingSystem == 0) {
 					if (confirm(stringa + "\n "+ strbundle.getString("folder")) == 1) {
-						var dir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 						try {
-							dir.initWithPath(downloadList[0].dirSave);
-							dir.launch();
+							new FileFactory(downloadList[0].dirSave).launch();
 						}
 						catch (ex){
 							strbundle.getString("noFolder");
@@ -1640,7 +1624,6 @@ var Check = {
 				return;
 			}
 			sessionManager.save();
-			
 		}
 		catch(ex) {
 			Debug.dump("checkClose():", ex);
