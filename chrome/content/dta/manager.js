@@ -75,8 +75,31 @@ var Prefs = {
 	tempLocation : null,
 
 	currentTooltip : null,
+	
+	// nsIObserver
+	observe : function(subject, topic, prefName) {
+		this._refreshPrefs();
+	},
 
-	refresh : function() {
+	init: function() {
+		makeObserver(this);
+		
+		try {
+			this.observe();
+			Cc['@mozilla.org/preferences-service;1']
+				.getService(Ci.nsIPrefService)
+				.getBranch(null)
+				.QueryInterface(Components.interfaces.nsIPrefBranch2)
+				.addObserver('extensions.dta.', this, true);
+		}
+		catch (ex) {
+			Debug.dump("failed to add pref-observer", ex);
+		}
+	},
+	
+	_refreshPrefs: function() {
+		Debug.dump("pref reload");
+		
 		this.maxInProgress = Preferences.getDTA("ntask", 5);
 		this.showOnlyFilenames = Preferences.getDTA("showOnlyFilenames", true);
 		this.onConflictingFilenames = Preferences.getDTA("existing", 3);
@@ -97,15 +120,17 @@ var Prefs = {
 				// XXX: error handling
 			}
 		}
-
 		this.alertingSystem = Preferences.getDTA("alertbox", (SYSTEMSLASH == '\\') ? 1 : 0);
 		this.maxChunks = Preferences.getDTA("maxchunks", 5);
+	},
+	refresh : function() {
 		// overwrite preference only if >
 		var current = Preferences.get("network.http.max-persistent-connections-per-server", this.maxInProgress * this.maxChunks + 2);
 		if (current < this.maxInProgress * this.maxChunks)
 			Preferences.set("network.http.max-persistent-connections-per-server", this.maxInProgress * this.maxChunks + 2);
 	}
 }
+Prefs.init();
 
 // --------* Statistiche *--------
 var Stats = {
@@ -117,7 +142,7 @@ var Stats = {
 	set completedDownloads(nv) { if (0 > (this._completedDownloads = nv)) { throw "Stats::Completed downloads less than 1"; } },
 
 	zippedToWait : 0,
-	downloadedBytes : 0,
+	downloadedBytes : 0
 }
 
 function DTA_URLManager(urls) {
@@ -3516,9 +3541,9 @@ var sessionManager = {
 
 		Prefs.refresh();
 		
-		var removeCompleted = Preferences.getDTA("removecompleted", true);
-		var removeAborted = Preferences.getDTA('removeaborted', false);
-		var removeCanceled = Preferences.getDTA("removecanceled", false);
+		const removeCompleted = Preferences.getDTA("removecompleted", true);
+		const removeAborted = Preferences.getDTA('removeaborted', false);
+		const removeCanceled = Preferences.getDTA("removecanceled", false);
 		for (var i=0; i<downloadList.length; i++) {
 
 			var d = downloadList[i];
@@ -3625,8 +3650,8 @@ var sessionManager = {
 		var list = doc.documentElement.getElementsByTagName("download");
 
 		// load session
-		var removeCompleted = Preferences.getDTA("removecompleted", true);
-		var removeCanceled = Preferences.getDTA("removecanceled", false);
+		const removeCompleted = Preferences.getDTA("removecompleted", true);
+		const removeCanceled = Preferences.getDTA("removecanceled", false);
 		for (var k=0; k<list.length; k++) {try {
 			var down = list[k];
 
