@@ -188,7 +188,14 @@ DTA_URLManager.prototype = {
 	},
 	initByArray: function um_initByArray(urls) {
 		for (var i = 0; i < urls.length; ++i) {
-			this.add(urls[i]);
+			this.add(
+				new DTA_URL(
+					urls[i].url,
+					urls[i].charset,
+					urls[i].usable,
+					urls[i].preference
+				)
+			);
 		}
 		this._urls.sort(this._sort);
 		this._usable = this._urls[0].usable;
@@ -224,39 +231,32 @@ DTA_URLManager.prototype = {
 	replace: function um_replace(url, newUrl) {
 		this._urls.forEach(function(u,i,a){ if (u.url == url) u = newURL; });
 	},
-	save: function um_save(node) {
-		for (var i = 0; i < this._urls.length; ++i)
-		{
-			var url = this._urls[i];
-			var n = node.ownerDocument.createElement("url");
-			n.setAttribute('uri', url.url);
-			n.setAttribute('charset', url.charset);
-			n.setAttribute('usable', url.usable);
-			n.setAttribute('preference', url.preference);
-			node.appendChild(n);
+	save: function um_save() {
+		var rv = [];
+		for (var i = 0, e = this._urls.length; i < e; ++i) {
+			var c = {};
+			c.url = this._urls[i].url;
+			c.charset = this._urls[i].charset;
+			c.usable = this._urls[i].usable;
+			c.preference = this._urls[i].preference;
+			rv.push(c);
 		}
+		return rv;
 	}
 };
 
 function Visitor() {
 	// sanity check
-	if (arguments.length != 1 || !('attributes' in arguments[0])) return;
-
-	var nodes = arguments[0].getElementsByTagName('header');
-	if (!nodes.length) {
-		throw "no headers";
+	if (arguments.length != 1) {
+		return;
 	}
-	try	{
-		for (var i = 0; i < nodes.length; ++i) {
-			var name = nodes[i].getAttribute('name');
-			if (!name || !(name in this.cmpKeys))
-			{
-				continue;
-			}
-			this[name] = nodes[i].getAttribute('value');
+	
+	var nodes = arguments[0];
+	for (x in nodes) {
+		if (!name || !(name in this.cmpKeys))	{
+			continue;
 		}
-	} catch (e) {
-		Debug.dump("hrhv::ctor", e);
+		this[x] = nodes[x];
 	}
 }
 
@@ -368,16 +368,15 @@ Visitor.prototype = {
 		}
 	},
 	save : function vi_save(node) {
+		var rv = {};
 		// salva su file le informazioni sugli headers
 		for (x in this.cmpKeys) {
 			if (!(x in this)) {
 				continue;
 			}
-			var head = node.ownerDocument.createElement('header');
-			head.setAttribute('name', x);
-			head.setAttribute('value', this[x]);
-			node.appendChild(head);
+			rv[x] = this[x];
 		}
+		return rv;
 	}
 };
 
@@ -386,24 +385,24 @@ function VisitorManager() {
 }
 VisitorManager.prototype = {
 
-	load: function vm_init(node) {
-		var nodes = node.getElementsByTagName('visitor');
+	load: function vm_init(nodes) {
 		for (var i = 0; i < nodes.length; ++i) {
 			try {
-				var visitor = new Visitor(nodes[i]);
-				this._visitors[nodes[i].getAttribute('url')] = visitor;
+				this._visitors[nodes[i].url] = new Visitor(nodes[i].values);
 			} catch (ex) {
 				Debug.dump("failed to read one visitor", ex);
 			}
 		}
 	},
 	save: function vm_save(node) {
+		var rv = [];
 		for (x in this._visitors) {
-			var v = node.ownerDocument.createElement('visitor');
-			v.setAttribute('url', x);
-			this._visitors[x].save(v);
-			node.appendChild(v);
+			var v = {};
+			v.url = x;
+			v.values = this._visitors[x].save();
+			rv.push(v);
 		}
+		return rv;
 	},
 	visit: function vm_visit(chan) {
 		var url = chan.URI.spec;
@@ -3466,7 +3465,6 @@ var sessionManager = {
 		try {
 			this._con.executeSimpleSQL('CREATE TABLE queue (uuid INTEGER PRIMARY KEY AUTOINCREMENT, pos INTEGER, item TEXT)');
 		} catch (ex) {
-			Debug.dump("ct", ex);
 			// no-op
 		}
 		this._saveStmt = this._con.createStatement('REPLACE INTO queue (uuid, pos, item) VALUES (?1, ?2, ?3)');
@@ -3480,12 +3478,6 @@ var sessionManager = {
 		this.load();
 	},
 	
-	serializeDoc: function(doc) {
-		var rv = this._serializer.serializeToString(doc);
-		rv = this._converter.Convert(rv);
-		return rv;
-	},
-	
 	_saveDownload: function(d, pos) {
 	
 		if (!(
@@ -3497,10 +3489,7 @@ var sessionManager = {
 		) {
 			return;
 		}
-		var doc = document.implementation.createDocument("", "", null);
-		var e = doc.createElement("download");
-
-		e.set = e.setAttribute;
+		var e = {};
 		[
 			'fileName',
 			'destinationName',
@@ -3510,43 +3499,43 @@ var sessionManager = {
 			'alreadyMaskedName',
 			'alreadyMaskedDir',
 			'mask',
-			'originalDirSave'
-		].forEach(function(u) { e.set(u, d[u]); });
+			'originalDirSave',
+			'isCompleted',
+			'isCanceled'
+		].forEach(function(u) { e[u] = d[u]; });
 
-		e.set("dirsave", d.dirSave.addFinalSlash());
-		e.set("referrer", d.refPage.spec);
-		e.set("startDate", d.startDate.toUTCString());
+		e.dirsave = d.dirSave.addFinalSlash();
+		e.referrer = d.refPage.spec;
+		e.startDate = d.startDate.toUTCString();
 
-		d.urlManager.save(e);
-		d.visitors.save(e);
+		e.urlManager = d.urlManager.save();
+		e.visitors = d.visitors.save();
 
 		if (!d.isResumable && !d.isCompleted) {
-			e.set("partialsize", 0);
-			e.set("totalsize", 0);
+			e.partialSize = 0;
+			e.totalSize = 0;
 		} else {
-			e.set("partialsize", d.partialSize);
-			e.set("totalsize", d.totalSize);
+			e.partialSize = d.partialSize;
+			e.totalSize = d.totalSize;
 		}
-
-		e.set("completed", d.isCompleted);
-		e.set("canceled", d.isCanceled);
+		
+		e.chunks = [];
 
 		if (!d.isCanceled && !d.isCompleted && d.chunks.length > 0) {
 			var x = d.firstChunk;
 			do {
 				if (!d.chunks[x].isRunning && d.chunks[x].chunkSize != 0) {
-					var chunk = doc.createElement("chunk");
-					chunk.setAttribute("path", d.chunks[x].fileManager.path);
-					chunk.setAttribute("start", d.chunks[x].start);
-					chunk.setAttribute("end", d.chunks[x].end);
-					chunk.setAttribute("size", d.chunks[x].chunkSize);
-					e.appendChild(chunk);
+					var chunk = {};
+					chunk.path = d.chunks[x].fileManager.path;
+					chunk.start = d.chunks[x].start;
+					chunk.end = d.chunks[x].end;
+					chunk.size = d.chunks[x].chunkSize;
+					e.chunks.push(chunk);
 				}
 				x = d.chunks[x].next;
 			} while(x != -1);
 		}
-		doc.appendChild(e);
-		
+	
 		var s = this._saveStmt;
 		if (d.dbID) {
 			s.bindInt64Parameter(0, d.dbID);
@@ -3555,7 +3544,7 @@ var sessionManager = {
 			s.bindNullParameter(0);
 		}
 		s.bindInt32Parameter(1, pos);
-		s.bindUTF8StringParameter(2, this.serializeDoc(doc));
+		s.bindUTF8StringParameter(2, this._converter.Convert(e.toSource()));
 		s.execute();
 		d.dbID = this._con.lastInsertRowID;
 	},
@@ -3570,7 +3559,7 @@ var sessionManager = {
 		
 		this._con.beginTransactionAs(this._con.TRANSACTION_DEFERRED);
 		try {
-			this._con.executeSimpleSQL('DELETE FROM queue;');
+			this._con.executeSimpleSQL('DELETE FROM queue');
 			downloadList.forEach(
 				function(e, i) {
 					this._saveDownload(e, i);
@@ -3594,8 +3583,6 @@ var sessionManager = {
 	
 	load: function() {
 
-		var domParser = new DOMParser();
-
 		const removeCompleted = Prefs.removeCompleted;
 		const removeCanceled = Prefs.removeCompleted;
 		
@@ -3604,10 +3591,11 @@ var sessionManager = {
 		while (stmt.executeStep()) {
 			try {
 				const dbID = stmt.getInt64(0);
-				var down = domParser.parseFromString(stmt.getUTF8String(1), 'application/xml').documentElement;
+				var down = eval(stmt.getUTF8String(1));
+				Debug.dump(down);
 				var get = function(attr) {
-					if (down.hasAttribute(attr)) {
-						return down.getAttribute(attr);
+					if (attr in down) {
+						return down[attr];
 					}
 					return null;
 				}
@@ -3619,7 +3607,7 @@ var sessionManager = {
 				}
 
 				var d = new downloadElement(
-					new DTA_URLManager(down),
+					new DTA_URLManager(down.urlManager),
 					get("dirsave"),
 					get("numIstance"),
 					get("description"),
@@ -3627,41 +3615,45 @@ var sessionManager = {
 					get("referrer")
 					);
 				d.dbID = dbID;
-				d.startDate = new Date(this.get(down, "startDate"));
-				d.visitors.load(down)	;
+				d.startDate = new Date(get(down, "startDate"));
+				d.visitors.load(down.visitors);
 
-				d.fileName = get("fileName");
-				d.destinationName = get("destinationName");
-				d.originalDirSave = get("originalDirSave");
-				d.isResumable = get("isResumable")=="true" ? true:false;
-				d.isCanceled = get("canceled")=="true" ? true:false;
-				d.isCompleted = get("completed")=="true" ? true:false;
-				d.partialSize = parseInt(get("partialsize"));
-				d.totalSize = parseInt(get("totalsize"));
-				d.alreadyMaskedName = get("alreadyMaskedName") == "true";
-				d.alreadyMaskedDir = get("alreadyMaskedDir") == "true";
+				[
+					'fileName',
+					'destinationName',
+					'orginalDirSave',
+					'isResumable',
+					'isCanceled',
+					'isCompleted',
+					'partialSize',
+					'totalSize',
+					'alreadyMaskedName',
+					'alreadyMaskedDir',
+				].forEach(
+					function(e) {
+						d[e] = get(e);
+					}
+				);
 
 				d.isStarted = d.partialSize != 0;
 
 				if (!d.isCanceled && !d.isCompleted) {
 					d.isPaused = true;
-					var chunks = down.getElementsByTagName('chunk');
+					var chunks = down.chunks;
 					for (var i = 0, e = chunks.length; i < e; ++i) {
-						var chunkEl = chunks[i];
-						var test = new FileFactory(chunkEl.getAttribute("path"));
+						var c = chunks[i];
+						var test = new FileFactory(c.path);
 						if (test.exists()) {
 							var i = d.chunks.length;
 							d.chunks.push(
 								new chunkElement(
-									parseInt(chunkEl.getAttribute("start")),
-									parseInt(chunkEl.getAttribute("start"))
-										+ parseInt(chunkEl.getAttribute("size"))
-										-1
-									, d
+									c.start,
+									c.start + c.size - 1,
+									d
 								)
 							);
 							d.chunks[i].isRunning = false;
-							d.chunks[i].chunkSize = parseInt(chunkEl.getAttribute("size"));
+							d.chunks[i].chunkSize = c.size;
 
 							d.chunks[i].previous = i - 1;
 							// adjusted below.
@@ -3672,8 +3664,8 @@ var sessionManager = {
 						else if (d.chunks.length == 1) {
 							// only finished chunks get saved.
 							// one missing therefore means it already got joined
-							d.chunks[0].chunkSize += parseInt(chunkEl.getAttribute("size"));
-							d.chunks[0].end += parseInt(chunkEl.getAttribute("size"));
+							d.chunks[0].chunkSize += c.size;
+							d.chunks[0].end += c.size;
 							Debug.dump("sessionManager::load: missing chunk");
 						}
 					}
