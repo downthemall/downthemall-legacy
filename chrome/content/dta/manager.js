@@ -158,9 +158,6 @@ function DTA_URLManager(urls) {
 	if (urls instanceof Array) {
 		this.initByArray(urls);
 	}
-	else if (urls instanceof Node) {
-			this.initByNode(urls);
-	}
 	else if (urls) {
 		throw "Feeding the URLManager with some bad stuff is usually a bad idea!";
 	}
@@ -169,22 +166,6 @@ DTA_URLManager.prototype = {
 	_sort: function(a,b) {
 		const rv = a.preference - b.preference;
 		return rv ? rv : (a.url < b.url ? -1 : 1);
-	},
-
-	initByNode: function um_initByNode(node) {
-		var nodes = node.getElementsByTagName('url');
-		for (var i = 0; i < nodes.length; ++i)
-		{
-			var n = nodes[i];
-			this.add(new DTA_URL(
-				n.getAttribute('uri'),
-				n.getAttribute('charset'),
-				n.getAttribute('usable'),
-				n.getAttribute('preference')
-			));
-		}
-		this._urls.sort(this._sort);
-		this._usable = this._urls[0].usable;
 	},
 	initByArray: function um_initByArray(urls) {
 		for (var i = 0; i < urls.length; ++i) {
