@@ -596,19 +596,6 @@ downloadElement.prototype = {
 		}
 	},
 
-	setIsCompleted : function() {
-		if (this.totalSize == 0) {
-			// if contentlength is unknown..
-			if (this.partialSize != 0 && !this.isRunning && !this.isPaused)
-				this.isCompleted = true;
-			else
-				this.isCompleted = false;
-		} else
-			// bugfix #14525
-			this.isCompleted = (this.partialSize == this.totalSize || this.partialSize == (this.totalSize-1) || this.partialSize == (this.totalSize+1));
-		return this.isCompleted;
-	},
-
 	setIsRunning : function() {
 	var running = false;
 	try {
@@ -1815,7 +1802,14 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 	d.declaratedChunks--;
 	d.setTreeCell("parts", 	d.declaratedChunks + "/" + d.maxChunks);
 
-	d.setIsCompleted();
+	// check if we're complete now
+	if (d.totalSize == 0) {
+		// if contentlength is unknown..
+		d.isCompleted = d.partialSize != 0 && !d.isRunning && !d.isPaused;
+	} else {
+		// bugfix #14525
+		d.isCompleted = Math.abs(d.partialSize - d.totalSize) < 2;
+	}
 
 	// if it's the chunk that tested response headers
 	if (this.isHeaderHack && !d.isCompleted) {
