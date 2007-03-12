@@ -83,7 +83,7 @@ var Dialog = {
 		directory = directory.length ? directory.addFinalSlash() : null;
 		
 		var mask = this.ddRenaming.current;
-		mask = mask.length() ? mask : null;
+		mask = mask.length ? mask : null;
 		
 		for (var i = 0; i < t.length; i++) {
 			var d = t[i];
