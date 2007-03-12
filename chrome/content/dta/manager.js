@@ -60,26 +60,26 @@ const MAX_CHUNK_SIZE = 10485760; // 10MB
 
 var Prefs = {
 	// default values
-	showOnlyFilenames : true,
-	alertingSystem : 0,
+	showOnlyFilenames: true,
+	alertingSystem: 0,
 
 	// conflict filenames preference for this session (-1 not setted)
-	askEveryTime : true,
-	sessionPreference : -1,
-	onConflictingFilenames : 3,
+	askEveryTime: true,
+	sessionPreference: -1,
+	onConflictingFilenames: 3,
 
-	maxInProgress : 5,
-	maxChunks : 5,
-	tempLocation : null,
+	maxInProgress: 5,
+	maxChunks: 5,
+	tempLocation: null,
 
-	currentTooltip : null,
+	currentTooltip: null,
 	
 	removeCompleted: true,
 	removeAborted: false,
 	removeCanceled: false,
 
 	// nsIObserver
-	observe : function(subject, topic, prefName) {
+	observe: function(subject, topic, prefName) {
 		this._refreshPrefs();
 	},
 
@@ -129,26 +129,27 @@ var Prefs = {
 			}
 		}
 	},
-	refresh : function() {
+	refresh: function() {
 		// overwrite preference only if >
 		var current = Preferences.get("network.http.max-persistent-connections-per-server", this.maxInProgress * this.maxChunks + 2);
-		if (current < this.maxInProgress * this.maxChunks)
+		if (current < this.maxInProgress * this.maxChunks) {
 			Preferences.set("network.http.max-persistent-connections-per-server", this.maxInProgress * this.maxChunks + 2);
+		}
 	}
 }
 Prefs.init();
 
 // --------* Statistiche *--------
 var Stats = {
-	totalDownloads : 0,
+	totalDownloads: 0,
 
 	// Debug this crap,
 	_completedDownloads: 0,
 	get completedDownloads() { return this._completedDownloads; },
 	set completedDownloads(nv) { if (0 > (this._completedDownloads = nv)) { throw "Stats::Completed downloads less than 1"; } },
 
-	zippedToWait : 0,
-	downloadedBytes : 0
+	zippedToWait: 0,
+	downloadedBytes: 0
 }
 
 function DTA_URLManager(urls) {
@@ -190,8 +191,7 @@ DTA_URLManager.prototype = {
 		}
 	},
 	getURL: function um_getURL(idx) {
-		if (typeof(idx) != 'number')
-		{
+		if (typeof(idx) != 'number') {
 			this._idx--;
 			if (this._idx < 0) {
 				this._idx = this._urls.length - 1;
@@ -249,12 +249,12 @@ Visitor.prototype = {
 		'last-modified': true, // may get omitted later, but should not change
 		'content-encoding': true // must not change, or download will become corrupt.
 	},
-	type : null,
+	type: null,
 	overrideCharset: null,
-	encoding : null,
-	fileName : null,
-	dontacceptrange : false,
-	contentlength : 0,
+	encoding: null,
+	fileName: null,
+	dontacceptrange: false,
+	contentlength: 0,
 
 	QueryInterface: function(aIID) {
 		if (
@@ -265,64 +265,66 @@ Visitor.prototype = {
 		}
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
-	visitHeader : function(aHeader, aValue) {try {
-
-		const header = aHeader.toLowerCase();
-		switch (header) {
-			case 'content-type':
-			{
-				this.type = aValue;
-				var ch = aValue.match(/charset=['"]?([\w\d_-]+)/i);
-				if (ch && ch[1].length) {
-					DTA_debug.dump("visitHeader: found override to " + ch[1]);
-					this.overrideCharset = ch[1];
+	visitHeader: function(aHeader, aValue) {
+		try {
+			const header = aHeader.toLowerCase();
+			switch (header) {
+				case 'content-type': {
+					this.type = aValue;
+					var ch = aValue.match(/charset=['"]?([\w\d_-]+)/i);
+					if (ch && ch[1].length) {
+						DTA_debug.dump("visitHeader: found override to " + ch[1]);
+						this.overrideCharset = ch[1];
+					}
 				}
+				break;
+
+				case 'content-encoding':
+					this.encoding = aValue;
+				break;
+
+				case 'accept-ranges':
+					this.dontacceptrange = (aValue.toLowerCase().indexOf('none') >= 0);
+					Debug.dump("acceptrange = " + aValue.toLowerCase());
+				break;
+
+				case 'content-length':
+					this.contentlength = Number(aValue);
+				break;
+
+				case 'content-range':
+					// XXX?
+					var dim = aValue.substring(aValue.lastIndexOf('/') + 1, aValue.length);
+					if (dim.length>0 && dim.lastIndexOf('*')==-1) {
+						this.contentlength = Number(dim);
+					}
+				break;
 			}
-			break;
 
-			case 'content-encoding':
-				this.encoding = aValue;
-			break;
+			if (header in this.cmpKeys) {
+				this[header] = aValue;
+			}
 
-			case 'accept-ranges':
-				this.dontacceptrange = (aValue.toLowerCase().indexOf('none') >= 0);
-				Debug.dump("acceptrange = " + aValue.toLowerCase());
-			break;
-
-			case 'content-length':
-				this.contentlength = Number(aValue);
-			break;
-
-			case 'content-range':
-				var dim = aValue.substring(aValue.lastIndexOf('/') + 1, aValue.length);
-				if (dim.length>0 && dim.lastIndexOf('*')==-1)
-					this.contentlength = Number(dim);
-			break;
-		}
-
-		if (header in this.cmpKeys)
-			this[header] = aValue;
-
-		if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
-			// we have to handle headers like "content-disposition: inline; filename='dummy.txt'; title='dummy.txt';"
-			var value = aValue.match(/file(?:name)?=(["']?)([^\2;]+)\2(?:;.+)?/i);
-			if (!value) {
-				// workaround for bug #13959
-				// attachments on some vbulletin forums send nasty headers like "content-disposition: inline; filename*=utf-8''file.ext"
-				value = aValue.match(/file(?:name)?\*=(.*)''(.+)/i);
+			if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
+				// we have to handle headers like "content-disposition: inline; filename='dummy.txt'; title='dummy.txt';"
+				var value = aValue.match(/file(?:name)?=(["']?)([^\2;]+)\2(?:;.+)?/i);
+				if (!value) {
+					// workaround for bug #13959
+					// attachments on some vbulletin forums send nasty headers like "content-disposition: inline; filename*=utf-8''file.ext"
+					value = aValue.match(/file(?:name)?\*=(.*)''(.+)/i);
+					if (value) {
+						this.overrideCharset = value[1];
+					}
+				}
 				if (value) {
-					this.overrideCharset = value[1];
+					this.fileName = value[2].getUsableFileName();
 				}
 			}
-			if (value) {
-				this.fileName = value[2].getUsableFileName();
-			}
+		} catch (ex) {
+			Debug.dump("hrhv::visitHeader:", ex);
 		}
-	} catch (ex) {
-		Debug.dump("hrhv::visitHeader:", ex);
-	}
 	},
-	compare : function vi_compare(v)	{
+	compare: function vi_compare(v)	{
 		if (!(v instanceof Visitor)) {
 			return;
 		}
@@ -348,7 +350,7 @@ Visitor.prototype = {
 			}
 		}
 	},
-	save : function vi_save(node) {
+	save: function vi_save(node) {
 		var rv = {};
 		// salva su file le informazioni sugli headers
 		for (x in this.cmpKeys) {
@@ -406,16 +408,16 @@ var chunkElement = function(start, end, d) {
 }
 
 chunkElement.prototype = {
-	next : -1,
-	previous : -1,
-	isJoining : false,
-	isRunning : false,
-	chunkSize : 0,
-	chunkName : "",
-	fileManager : null,
-	progressPersist : null,
-	imWaitingToRearrange : false,
-	getSize : function() {
+	next: -1,
+	previous: -1,
+	isJoining: false,
+	isRunning: false,
+	chunkSize: 0,
+	chunkName: "",
+	fileManager: null,
+	progressPersist: null,
+	imWaitingToRearrange: false,
+	getSize: function() {
 		try {
 			if (this.fileManager.exists())
 				return this.fileManager.fileSize;
@@ -424,7 +426,7 @@ chunkElement.prototype = {
 		} catch (e) {Debug.dump("chunkElement::getSize(): ", e);}
 		return 0;
 	},
-	remove : function() {
+	remove: function() {
 		try {
 			if (this.fileManager.exists()) {
 				this.fileManager.remove(false);
@@ -474,47 +476,47 @@ function downloadElement(lnk, dir, num, desc, mask, refPage) {
 }
 
 downloadElement.prototype = {
-	contentType : "",
-	visitors : null,
-	totalSize : 0,
-	partialSize : 0,
-	startDate : null,
+	contentType: "",
+	visitors: null,
+	totalSize: 0,
+	partialSize: 0,
+	startDate: null,
 
-	compression : false,
-	compressionType : "",
+	compression: false,
+	compressionType: "",
 
-	treeID : "",
-	alreadyMaskedDir : false,
-	alreadyMaskedName : false,
+	treeID: "",
+	alreadyMaskedDir: false,
+	alreadyMaskedName: false,
 
-	isCanceled : false,
-	isPaused : false,
-	isCompleted : false,
+	isCanceled: false,
+	isPaused: false,
+	isCompleted: false,
 	isResumable: false,
-	isRunning : false,
-	isStarted : false,
-	isPassed : false,
-	isRemoved : false,
+	isRunning: false,
+	isStarted: false,
+	isPassed: false,
+	isRemoved: false,
 
-	isFirst : false,
+	isFirst: false,
 
-	fileManager : null,
-	declaratedChunks : 0,
-	maxChunks : null,
-	firstChunk : 0,
+	fileManager: null,
+	declaratedChunks: 0,
+	maxChunks: null,
+	firstChunk: 0,
 
-	timeLastProgress : 0,
-	timeStart : 0,
-	join : null,
+	timeLastProgress: 0,
+	timeStart: 0,
+	join: null,
 
 	get icon() {
 		return getIcon(this.fileName, 'metalink' in this);
 	},
 
-	imWaitingToRearrange : false,
+	imWaitingToRearrange: false,
 
-	hasToBeRedownloaded : false,
-	reDownload : function() {
+	hasToBeRedownloaded: false,
+	reDownload: function() {
 		// replace names
 		Debug.dump(this.urlManager.usable);
 		this.destinationName = this.fileName = this.urlManager.usable.getUsableFileName();
@@ -533,29 +535,29 @@ downloadElement.prototype = {
 		this.getHeader();
 	},
 
-	getHeader : function() {
+	getHeader: function() {
 		Debug.dump(this.urlManager.url + " (" + this.refPage.spec +"): getHeader()");
 		Prefs.refresh();
 		this.maxChunks = Prefs.maxChunks;
 		downloadChunk(0, 0, this, -1, true);
 	},
 
-	treeElement : null,
-	setTreeCell : function(cell, caption) {
+	treeElement: null,
+	setTreeCell: function(cell, caption) {
 		if (this.isRemoved) return;
 		if (this.treeElement==null)
 			this.treeElement = $(this.treeID).childNodes[0];
 		this.treeElement.childNodes[treeCells[cell]].attributes.label.value = caption;
 	},
 
-	setTreeProgress : function(style, value) {
+	setTreeProgress: function(style, value) {
 		if (this.isRemoved) return;
 		$(this.treeID).childNodes[0].childNodes[treeCells["bar"]].attributes.properties.value = style;
 		if (value)
 			$(this.treeID).childNodes[0].childNodes[treeCells["bar"]].attributes.value.value = value;
 	},
 
-	removeFromInProgressList : function() {
+	removeFromInProgressList: function() {
 		//this.speeds = new Array();
 		for (var i=0; i<inProgressList.length; i++)
 			if (this==inProgressList[i].d) {
@@ -564,7 +566,7 @@ downloadElement.prototype = {
 			}
 	},
 
-	cancelFamily : function() {
+	cancelFamily: function() {
 		var i = this.firstChunk;
 		if (!this.chunks) return;
 		while (this.chunks[i]) {
@@ -577,7 +579,7 @@ downloadElement.prototype = {
 		}
 	},
 
-	setIsRunning : function() {
+	setIsRunning: function() {
 	var running = false;
 	try {
 		if (this.chunks) {
@@ -596,7 +598,7 @@ downloadElement.prototype = {
 	return running;
 	},
 
-	refreshPartialSize : function(){
+	refreshPartialSize: function(){
 		var size = 0;
 		for (var i = 0; i<this.chunks.length; i++)
 			size += this.chunks[i].chunkSize;
@@ -604,13 +606,13 @@ downloadElement.prototype = {
 		return size;
 	},
 
-	setPaused : function(){
+	setPaused: function(){
 		for (var i = 0; i<this.chunks.length; i++)
 			if (this.chunks[i].isRunning && this.chunks[i].progressPersist)
 				this.chunks[i].progressPersist.cancelSave();
 	},
 
-	getSize : function() {
+	getSize: function() {
 		try {
 			if (this.fileManager.exists())
 				return this.fileManager.fileSize;
@@ -620,7 +622,7 @@ downloadElement.prototype = {
 		return 0;
 	},
 
-	moveCompleted : function(fileManager) {
+	moveCompleted: function(fileManager) {
 
 		if (this.join) {
 			this.join.closeStream();
@@ -724,7 +726,7 @@ downloadElement.prototype = {
 			Debug.dump("hml exception", ex);
 		}
 	},
-	finishDownload : function() {
+	finishDownload: function() {
 
 		// create final file pointer
 		this.fileManager = new FileFactory(this.dirSave);
@@ -758,7 +760,7 @@ downloadElement.prototype = {
 		this.chunks = null;
 	},
 
-	unzip : function() {try {
+	unzip: function() {try {
 		Debug.dump(this.fileName + ": Unzip: unzip into " + this.dirSave + this.destinationName + " from source " + this.fileManager.path);
 
 		// create a channel from the zipped file
@@ -794,7 +796,7 @@ downloadElement.prototype = {
 	} catch (e) {Debug.dump("Unzip():", e);}
 	},
 
-	buildFromMask : function(dir, mask) {
+	buildFromMask: function(dir, mask) {
 		try {
 			var uri = Cc['@mozilla.org/network/standard-url;1']
 				.createInstance(Ci.nsIURI);
@@ -848,20 +850,20 @@ downloadElement.prototype = {
 			}
 
 			var replacements = {
-				"\\*name\\*" : name,
-				"\\*ext\\*" : ext,
-				"\\*text\\*" : this.description,
-				"\\*url\\*" : uri.host,
-				"\\*subdirs\\*" : uripath,
-				"\\*refer\\*" : this.refPage.host,
-				"\\*curl\\*" : (uri.host + ((uripath=="")?"":(replacedSlash + uripath))),
-				"\\*num\\*" : makeNumber(this.numIstance),
-				"\\*hh\\*" : String(this.startDate.getHours()).formatTimeDate(),
-				"\\*mm\\*" : String(this.startDate.getMinutes()).formatTimeDate(),
-				"\\*ss\\*" : String(this.startDate.getSeconds()).formatTimeDate(),
-				"\\*d\\*"  : String(this.startDate.getDate()).formatTimeDate(),
-				"\\*m\\*"  : String(this.startDate.getMonth()+1).formatTimeDate(),
-				"\\*y\\*"  : String(this.startDate.getFullYear())
+				"\\*name\\*": name,
+				"\\*ext\\*": ext,
+				"\\*text\\*": this.description,
+				"\\*url\\*": uri.host,
+				"\\*subdirs\\*": uripath,
+				"\\*refer\\*": this.refPage.host,
+				"\\*curl\\*": (uri.host + ((uripath=="")?"":(replacedSlash + uripath))),
+				"\\*num\\*": makeNumber(this.numIstance),
+				"\\*hh\\*": String(this.startDate.getHours()).formatTimeDate(),
+				"\\*mm\\*": String(this.startDate.getMinutes()).formatTimeDate(),
+				"\\*ss\\*": String(this.startDate.getSeconds()).formatTimeDate(),
+				"\\*d\\*": String(this.startDate.getDate()).formatTimeDate(),
+				"\\*m\\*": String(this.startDate.getMonth()+1).formatTimeDate(),
+				"\\*y\\*": String(this.startDate.getFullYear())
 			}
 
 			for (i in replacements) {
@@ -883,7 +885,7 @@ downloadElement.prototype = {
 		return this.destinationName;
 	},
 
-	checkFilenameConflict : function() {try {
+	checkFilenameConflict: function() {try {
 
 		// pointer to destination
 		var realDest = new FileFactory(this.dirSave);
@@ -960,7 +962,7 @@ downloadElement.prototype = {
 	} catch(e) {Debug.dump("checkFilenameConflict():", e);}
 	},
 
-	cancelDownload : function(message) {try {
+	cancelDownload: function(message) {try {
 		if (!this.isCanceled) {
 			Debug.dump(this.fileName + ": cancelDownload()");
 
@@ -1004,7 +1006,7 @@ downloadElement.prototype = {
 	}
 	},
 
-	resumeDownload : function () {try {
+	resumeDownload: function () {try {
 
 		if (!("length" in this.chunks) || this.chunks.length==0) {
 			this.getHeader();
@@ -1104,7 +1106,7 @@ downloadElement.prototype = {
 		} catch(e) {Debug.dump("resumeThis():", e);}
 		return false;
 	},
-	createDimensionString : function() {
+	createDimensionString: function() {
 		if (this.totalSize > 0) {
 			return formatBytes(this.partialSize) + "/" + formatBytes(this.totalSize);
 		}
@@ -1132,8 +1134,8 @@ function joinListener(d) {
 
 joinListener.prototype = {
 
-	stopRequest : null,
-	imJoining : false,
+	stopRequest: null,
+	imJoining: false,
 	outStream: null,
 
 	dump: function JL_dump(m, f) {
@@ -1148,11 +1150,11 @@ joinListener.prototype = {
 		Debug.dump('joinListener: ' + m);
 	},
 
-	next : function JL_next() {
+	next: function JL_next() {
 		return this.d.chunks[this.current].next;
 	},
 
-	stopJoining : function JL_stopJoining(c) {
+	stopJoining: function JL_stopJoining(c) {
 		if (this.stopRequest != null)
 			this.stopRequest.cancel(0);
 		this.closeStream();
@@ -1186,7 +1188,7 @@ joinListener.prototype = {
 			this.join(this.next());
 	},
 
-	join : function JL_join(c) {try {
+	join: function JL_join(c) {try {
 
 		this.dump('join request', c);
 		if (!this.outStream) {
@@ -1218,7 +1220,7 @@ joinListener.prototype = {
 		}
 	},
 
-	joinIsFinished : function JL_jobIsFinished(chunk) {
+	joinIsFinished: function JL_jobIsFinished(chunk) {
 		this.imJoining = false;
 		this.d.chunks[this.current].isJoining = this.d.chunks[chunk].isJoining = false;
 
@@ -1289,10 +1291,10 @@ function dataCopyListener(outStream, d, chunk, offset, join) {
 }
 
 dataCopyListener.prototype = {
-	error : false,
-	myOffset : 0,
+	error: false,
+	myOffset: 0,
 
-	QueryInterface : function DCL_QueryInterface(iid) {
+	QueryInterface: function DCL_QueryInterface(iid) {
 		if(
 			iid.equals(Ci.nsISupports)
 			|| iid.equals(Ci.nsIStreamListener)
@@ -1301,11 +1303,11 @@ dataCopyListener.prototype = {
 		throw Components.results.NS_ERROR_NO_INTERFACE;
  	},
 
-	onStartRequest : function DCL_onStartRequest(request, context) {
+	onStartRequest: function DCL_onStartRequest(request, context) {
 		this.join.stopRequest = request;
 	},
 
-	onStopRequest : function DCL_onStopRequest(request, context, status) {
+	onStopRequest: function DCL_onStopRequest(request, context, status) {
 		if (status == Components.results.NS_OK && !this.error) {
 			Debug.dump(this.d.fileName + ": Join of chunk " + this.d.chunks[this.chunk].start + "-" + this.d.chunks[this.chunk].end + " completed");
 			this.join.offset = this.oldoffset + this.d.chunks[this.chunk].chunkSize;
@@ -1322,7 +1324,7 @@ dataCopyListener.prototype = {
 		}
 	},
 
-	onDataAvailable : function DCL_onDataAvailable(request, context, inputStream, offset, count) {try {
+	onDataAvailable: function DCL_onDataAvailable(request, context, inputStream, offset, count) {try {
 
 		this.join.offset = this.oldoffset + offset;
 		if (this.d.isCompleted && !this.d.isCanceled && !this.d.isRemoved) {
@@ -1394,7 +1396,7 @@ var AlertService = {
 			this
 			);
 	},
-	observe : function (aSubject, aTopic, aData) {
+	observe: function (aSubject, aTopic, aData) {
 		switch (aTopic) {
 			case "alertfinished":
 				// global variable
@@ -1418,27 +1420,27 @@ makeObserver(AlertService);
 // --------* Controlli di chiusura e avvio nuovi downloads *--------
 
 var Check = {
-	imRemoving : false,
-	lastCheck : 0,
-	lastDownloads : -1,
-	haveToCheck : true,
-	timerRefresh : 0,
-	timerCheck : 0,
-	isClosing : false,
-	firstInQueue : -1,
-	frequencyRefresh : 1500,
-	frequencyCheck : 500,
-	frequencyUpdateChunkGraphs : 500,
-	lastSum : 0,
+	imRemoving: false,
+	lastCheck: 0,
+	lastDownloads: -1,
+	haveToCheck: true,
+	timerRefresh: 0,
+	timerCheck: 0,
+	isClosing: false,
+	firstInQueue: -1,
+	frequencyRefresh: 1500,
+	frequencyCheck: 500,
+	frequencyUpdateChunkGraphs: 500,
+	lastSum: 0,
 
-	refreshDownloadedBytes : function() {
+	refreshDownloadedBytes: function() {
 		// update statusbar
 		for (var i=0; i<inProgressList.length; i++)
 			Stats.downloadedBytes+=inProgressList[i].d.partialSize;
 		return Stats.downloadedBytes;
 	},
 
-	refreshGUI : function() {try{
+	refreshGUI: function() {try{
 
 		// Calculate global speed
 		var sum = 0;
@@ -1504,7 +1506,7 @@ var Check = {
 	} catch(e) {Debug.dump("refreshGUI():", e);}
 	},
 
-	checkDownloads : function() {try {
+	checkDownloads: function() {try {
 
 		this.refreshDownloadedBytes();
 		Prefs.refresh();
@@ -1604,7 +1606,7 @@ var Check = {
 		}
 	},
 
-	setFirstInQueue : function() {try {
+	setFirstInQueue: function() {try {
 
 	if (this.firstInQueue > downloadList.length-1) {
 		this.firstInQueue = -1;
@@ -1640,7 +1642,7 @@ var Check = {
 	return -1;
 	},
 
-	startNextDownload : function () {try {
+	startNextDownload: function () {try {
 
 		var i = this.firstInQueue;
 		if (i == -1) {
@@ -1692,8 +1694,8 @@ function PersistProgressListener(chunkIndex, c, d, header) {
 }
 
 PersistProgressListener.prototype = {
-	cantCount : 0,
-	isPassedOnProgress : false,
+	cantCount: 0,
+	isPassedOnProgress: false,
 
 	init: function() {},
 	destroy: function() {},
@@ -1702,7 +1704,7 @@ PersistProgressListener.prototype = {
 	onStatusChange: function (aWebProgress, aRequest, aStatus, aMessage) {},
 	onSecurityChange: function (aWebProgress, aRequest, aState) {},
 
-	QueryInterface : function(aIID) {
+	QueryInterface: function(aIID) {
 		if (
 			aIID.equals(Ci.nsISupports)
 			|| aIID.equals(Ci.nsIWebProgressListener2)
@@ -1758,7 +1760,7 @@ PersistProgressListener.prototype = {
 		);
 	},
 
-onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
+onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 
 	if (!(aStateFlags & Ci.nsIWebProgressListener.STATE_STOP)) return;
 
@@ -1990,7 +1992,7 @@ onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 } catch(ex) {Debug.dump("onStateChange():", ex)}
 },
 
-onProgressChange64 : function (aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress) {
+onProgressChange64: function (aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress) {
 	try {
 
 		// shortcuts
@@ -2268,8 +2270,8 @@ function dataListener(outStream, outFileManager, dest, d) {
 }
 
 dataListener.prototype = {
-	error : false,
-	QueryInterface : function(iid) {
+	error: false,
+	QueryInterface: function(iid) {
 		if (
 			iid.equals(Ci.nsISupports)
 			|| iid.equals(Ci.nsIStreamListener)
@@ -2278,10 +2280,10 @@ dataListener.prototype = {
 			return this;
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
-	onStartRequest : function(request, context) {
+	onStartRequest: function(request, context) {
 		Debug.dump(this.d.fileName + ": Decompression started");
 	},
-	onStopRequest : function(request, context, status) {
+	onStopRequest: function(request, context, status) {
 		this.outf.close();
 
 		if (this.d.isRemoved) {
@@ -2325,7 +2327,7 @@ dataListener.prototype = {
 		Check.checkClose();
 		popup();
 	},
-	onDataAvailable : function(request, context, inputStream, offset, count) {
+	onDataAvailable: function(request, context, inputStream, offset, count) {
 		try {
 			// update tree row
 			this.d.setTreeCell("percent", Math.round(offset / this.d.totalSize * 100) + "%");
