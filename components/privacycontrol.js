@@ -86,9 +86,7 @@ privacycontrol.prototype = {
   },
 
   log : function(aMsg) {
-    if (this._logService instanceof Components.interfaces.nsIConsoleService) {
-      this._logService.logStringMessage('dta privacyontrol: ' + aMsg);
-    }
+		Components.utils.reportError('dta privacyControl: ' + aMsg);
   },
 
   dispose: function () {
@@ -129,8 +127,29 @@ privacycontrol.prototype = {
     const prefs = Components.classes["@mozilla.org/preferences-service;1"]
       .getService(Components.interfaces.nsIPrefService)
       .getBranch('extensions.dta.');
-
 		['directory', 'filter', 'renaming'].forEach(function(e) { prefs.clearUserPref(e); });
+
+		try {
+			var prof = Components.classes["@mozilla.org/file/directory_service;1"]
+				.getService(Components.interfaces.nsIProperties)
+				.get("ProfD", Components.interfaces.nsIFile);
+			['dta_history.xml', 'dta_log.txt'].forEach(
+				function (e) {
+					try {
+						var file = prof.clone();
+						file.append(e);
+						if (file.exists()) {
+							file.remove();
+						}
+					} catch (ex) {
+						this.log('cannot remove ' + e);
+					}
+				}
+			);
+		}
+		catch (oex) {
+			this.log('failed to clean files');
+		}
   },
 
   sanitize: function() {
