@@ -190,7 +190,7 @@ var DTA_debug = {
 			if (message != "") {
 				text += message.replace(/\n/g, "\x0D\x0A\t") + " ";
 			}
-			if (e instanceof Components.Exception) {
+			if (e instanceof Components.Exception || e instanceof Error) {
 				text += (e.message + " (" + e.fileName +" line " + e.lineNumber + ")");
 			}
 			else if (e instanceof String) {
