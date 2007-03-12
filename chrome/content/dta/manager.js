@@ -18,9 +18,9 @@
  * the Initial Developers. All Rights Reserved.
  *
  * Contributor(s):
- *  Stefano Verna
- *  Federico Parodi
- *	 Nils Maier <MaierMan@web.de>
+ *    Stefano Verna
+ *    Federico Parodi
+ *    Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -73,7 +73,7 @@ var Prefs = {
 	tempLocation: null,
 
 	currentTooltip: null,
-	
+
 	removeCompleted: true,
 	removeAborted: false,
 	removeCanceled: false,
@@ -104,8 +104,8 @@ var Prefs = {
 
 		this.removeCompleted = Preferences.getDTA("removecompleted", true);
 		this.removeAborted = Preferences.getDTA('removeaborted', false);
-		this.removeCanceled = Preferences.getDTA("removecanceled", false);		
-		
+		this.removeCanceled = Preferences.getDTA("removecanceled", false);
+
 		this.maxInProgress = Preferences.getDTA("ntask", 5);
 		this.maxChunks = Preferences.getDTA("maxchunks", 5);
 		this.showOnlyFilenames = Preferences.getDTA("showOnlyFilenames", true);
@@ -231,7 +231,7 @@ function Visitor() {
 	if (arguments.length != 1) {
 		return;
 	}
-	
+
 	var nodes = arguments[0];
 	for (x in nodes) {
 		if (!name || !(name in this.cmpKeys))	{
@@ -3434,7 +3434,7 @@ function addChunk(add) {
 }
 
 var sessionManager = {
-	
+
 	init: function() {
 		this._con = Cc["@mozilla.org/storage/service;1"]
 			.getService(Ci.mozIStorageService)
@@ -3446,17 +3446,17 @@ var sessionManager = {
 		}
 		this._saveStmt = this._con.createStatement('REPLACE INTO queue (uuid, pos, item) VALUES (?1, ?2, ?3)');
 		this._delStmt = this._con.createStatement('DELETE FROM queue WHERE uuid = ?1');
-		
+
 		this._converter = Components.classes["@mozilla.org/intl/saveascharset;1"]
 			.createInstance(Ci.nsISaveAsCharset);
 		this._converter.Init('utf-8', 1, 0);
 		this._serializer = new XMLSerializer();
-		
+
 		this.load();
 	},
-	
+
 	_saveDownload: function(d, pos) {
-	
+
 		if (!(
 			(!Prefs.removeCompleted && d.isCompleted) ||
 			(!Prefs.removeCanceled && d.isCanceled) ||
@@ -3495,7 +3495,7 @@ var sessionManager = {
 			e.partialSize = d.partialSize;
 			e.totalSize = d.totalSize;
 		}
-		
+
 		e.chunks = [];
 
 		if (!d.isCanceled && !d.isCompleted && d.chunks.length > 0) {
@@ -3512,7 +3512,7 @@ var sessionManager = {
 				x = d.chunks[x].next;
 			} while(x != -1);
 		}
-	
+
 		var s = this._saveStmt;
 		if (d.dbID) {
 			s.bindInt64Parameter(0, d.dbID);
@@ -3525,7 +3525,7 @@ var sessionManager = {
 		s.execute();
 		d.dbID = this._con.lastInsertRowID;
 	},
-	
+
 	save: function(download) {
 
 		// just one download.
@@ -3533,7 +3533,7 @@ var sessionManager = {
 			this._saveDownload(download);
 			return;
 		}
-		
+
 		this._con.beginTransactionAs(this._con.TRANSACTION_DEFERRED);
 		try {
 			this._con.executeSimpleSQL('DELETE FROM queue');
@@ -3548,7 +3548,7 @@ var sessionManager = {
 			Debug.dump(ex);
 		}
 		this._con.commitTransaction();
-		
+
 	},
 	deleteDownload: function(download) {
 		if (!download.dbID) {
@@ -3557,14 +3557,14 @@ var sessionManager = {
 		this._delStmt.bindInt64Parameter(0, download.dbId);
 		this._delStmt.execute();
 	},
-	
+
 	load: function() {
 
 		const removeCompleted = Prefs.removeCompleted;
 		const removeCanceled = Prefs.removeCompleted;
-		
+
 		var stmt = this._con.createStatement('SELECT uuid, item FROM queue ORDER BY pos');
-		
+
 		while (stmt.executeStep()) {
 			try {
 				const dbID = stmt.getInt64(0);
