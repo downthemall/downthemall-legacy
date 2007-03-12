@@ -2466,7 +2466,7 @@ function startnewDownloads(notQueue, download) {
 
 	for (var i=0; i<download.length; i++) {
 		var e = download[i];
-		// uniformita' slash finale
+
 		e.dirSave.addFinalSlash();
 
 		var desc = "";
@@ -2479,13 +2479,13 @@ function startnewDownloads(notQueue, download) {
 		var d = new downloadElement(e.url, e.dirSave, e.numIstance, desc, e.mask, e.refPage);
 		d.isPaused = !notQueue;
 		d.startDate = startDate;
-		downloadList.push(d);
 
-		// aggiunge i relativi elementi in listbox
+		downloadList.push(d);
 		populateListbox(d);
 	}
 
-	sessionManager.save(d);
+	// full save
+	sessionManager.save();
 
 	if (Preferences.getDTA("closetab", false)) {
 		try {
@@ -3554,7 +3554,7 @@ var sessionManager = {
 		if (!download.dbID) {
 			return;
 		}
-		this._delStmt.bindInt64Parameter(0, download.dbId);
+		this._delStmt.bindInt64Parameter(0, download.dbID);
 		this._delStmt.execute();
 	},
 
@@ -3569,7 +3569,6 @@ var sessionManager = {
 			try {
 				const dbID = stmt.getInt64(0);
 				var down = eval(stmt.getUTF8String(1));
-				Debug.dump(down);
 				var get = function(attr) {
 					if (attr in down) {
 						return down[attr];
