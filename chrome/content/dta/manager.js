@@ -41,6 +41,8 @@ var strings = null;
 var winFocus = false;
 // true if some dialog.xul is opened
 var isOpenedMessagebox = 0;
+// your tree
+var tree = null;
 
 if (!Cc) {
 	var Cc = Components.classes;
@@ -48,12 +50,6 @@ if (!Cc) {
 if (!Ci) {
 	var Ci = Components.interfaces;
 }
-
-const FileFactory = new Components.Constructor(
-	"@mozilla.org/file/local;1",
-	"nsILocalFile",
-	"initWithPath"
-);
 
 const MIN_CHUNK_SIZE = 204800; // 200kb
 const MAX_CHUNK_SIZE = 10485760; // 10MB
@@ -2349,6 +2345,7 @@ dataListener.prototype = {
 
 function loadDown() {
 	strings = new StringBundles();
+	tree = $("listDownload0");
 
 	document.getElementById("dtaHelp").hidden = !("openHelp" in window);
 
@@ -2807,7 +2804,6 @@ try {
 	if (Check.imRemoving) return;
 	var objects = new Array();
 
-	var tree = $("listDownload0");
 	var rangeCount = tree.view.selection.getRangeCount();
 		for(var i=0; i<rangeCount; i++) {
 		var start = {}; var end = {};
@@ -2888,7 +2884,6 @@ try {
 //--> attivato dal click su context o toolbar
 function pauseResumeReq(pauseReq) {
 try {
-	var tree = $("listDownload0");
 	var rangeCount = tree.view.selection.getRangeCount();
 	var firstFlag = false;
 
@@ -3013,7 +3008,6 @@ function startSubChunks(start, end, firstindex, lastindex, downloadsLeft, d) {
 
 //--> attivato dal click su context o toolbar
 function cancelPopup() {
-	var tree = $("listDownload0");
 	var rangeCount = tree.view.selection.getRangeCount();
 
 	for(var i=rangeCount-1; i>=0; i--) {
@@ -3033,7 +3027,6 @@ function removeFromList(index) {
 	Check.imRemoving = true;
 
 	if (index < 0) {
-		var tree = $("listDownload0");
 		var start;
 		var end;
 		var rangeCount = tree.view.selection.getRangeCount();
@@ -3118,7 +3111,6 @@ Check.checkClose();
 function getInfo() {
 
 	// store all selected downloads
-	var tree = $("listDownload0");
 	var rangeCount = tree.view.selection.getRangeCount();
 	var t = new Array();
 	for (var i=rangeCount-1; i>=0; i--) {
@@ -3136,9 +3128,8 @@ function getInfo() {
 
 //--> Richiamata dal context, muove la selezione corrente in cima o al fondo della tree
 function moveTop(top) {
-Check.imRemoving = true;
-try {
-	var tree = $("listDownload0");
+	Check.imRemoving = true;
+	try {
 		var start;
 		var end;
 		var datas = new Array();
@@ -3180,7 +3171,7 @@ try {
 			if (top) { // top
 				var beforePos = 0;
 
-			if ((beforePos <= Check.firstInQueue)&&(!downloadList[beforePos].isRunning)&&(!downloadList[beforePos].isPaused)&&(!downloadList[beforePos].isCanceled)&&(!downloadList[beforePos].isCompleted)) {
+				if ((beforePos <= Check.firstInQueue)&&(!downloadList[beforePos].isRunning)&&(!downloadList[beforePos].isPaused)&&(!downloadList[beforePos].isCanceled)&&(!downloadList[beforePos].isCompleted)) {
 					oldfirst.isFirst = false;
 					Check.firstInQueue = beforePos;
 					downloadList[beforePos].isFirst = true;
@@ -3191,16 +3182,17 @@ try {
 				var beforePos = downloadList.length; // bottom
 				if (datas[i] == Check.firstInQueue) {
 					for (var dex = datas[i]; dex < beforePos; dex++) {
-					if ((!downloadList[dex].isRunning)&&(!downloadList[dex].isPaused)&&(!downloadList[dex].isCanceled)&&(!downloadList[dex].isCompleted)) {
-						oldfirst.isFirst = false;
-						Check.firstInQueue = dex;
-						downloadList[dex].isFirst = true;
-						break;
-					}
+						if ((!downloadList[dex].isRunning)&&(!downloadList[dex].isPaused)&&(!downloadList[dex].isCanceled)&&(!downloadList[dex].isCompleted)) {
+							oldfirst.isFirst = false;
+							Check.firstInQueue = dex;
+							downloadList[dex].isFirst = true;
+							break;
+						}
 					}
 				}
-				else
-				if (datas[i]<Check.firstInQueue && beforePos > Check.firstInQueue ) Check.firstInQueue--;
+				else if (datas[i]<Check.firstInQueue && beforePos > Check.firstInQueue )  {
+					Check.firstInQueue--;
+				}
 			}
 
 			if(beforePos<=(downloadList.length-1)) { // se non devo spostare l'elemento nell'ultima riga
@@ -3215,10 +3207,10 @@ try {
 			}
 
 		}
-} catch(e) {
-	Debug.dump("moveTop():", e);
-}
-Check.imRemoving = false;
+	} catch(e) {
+		Debug.dump("moveTop():", e);
+	}
+	Check.imRemoving = false;
 }
 
 //--> Richiamata dal context, muove di n posizioni la selezione corrente
@@ -3226,7 +3218,6 @@ Check.imRemoving = false;
 function move(pos) {
 	Check.imRemoving = true;
 	try {
-		var tree = $("listDownload0");
 		var start;
 		var end;
 		var datas = new Array();
@@ -3302,21 +3293,17 @@ function move(pos) {
 
 //--> Richiamata dal context, apre la directory target
 function openFolder() {
-	var tree = $("listDownload0");
 	var rangeCount = tree.view.selection.getRangeCount();
-	for(var i=0; i<rangeCount; i++) {
+	for (var i = 0; i < rangeCount; ++i) {
 		var start = {}; var end = {};
 		tree.view.selection.getRangeAt(i,start,end);
 		// ciclo gli elementi selezionati
-		for(var c=start.value; c<=end.value; c++) {
-			var dir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+		for (var c = start.value, e = end.value; c <= e; ++c) {
 			try {
 				if (downloadList[c].isCompleted) {
-					dir.initWithPath(downloadList[c].dirSave + downloadList[c].destinationName);
-					dir.reveal();
+					OpenExternal.reveal(downloadList[c].dirSave + downloadList[c].destinationName);
 				} else {
-					dir.initWithPath(downloadList[c].dirSave);
-					dir.reveal();
+					OpenExternal.reveal(downloadList[c].dirSave);
 				}
 			} catch (ex) {
 				Debug.dump('reveal', ex);
@@ -3329,11 +3316,12 @@ function openFolder() {
 function openFile(event) {
 	var lastSon = $("listDownload0").currentIndex;
 	if (downloadList[lastSon].isCompleted) {
-		var dir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 		try {
-			dir.initWithPath(downloadList[lastSon].dirSave + downloadList[lastSon].destinationName);
-			dir.launch();
-		} catch (e){}
+			OpenExternal.launch(downloadList[lastSon].dirSave + downloadList[lastSon].destinationName);
+		}
+		catch (ex) {
+			Debug.dump('launch', ex);
+		}
 	}
 }
 function deleteFile() {
@@ -3356,24 +3344,18 @@ function deleteFile() {
 
 //--> Richiamata dal context, seleziona tutto
 function selectAll() {
-		var tree = $("listDownload0");
-		tree.view.selection.selectAll();
+	tree.view.selection.selectAll();
 }
 
 //--> Richiamata dal context, inverte la selezione
 function selectInv() {
-	var tree = $("listDownload0");
-	for (var x = 0; x<tree.view.rowCount; x++) {
-		if (tree.view.selection.isSelected(x))
-			tree.view.selection.toggleSelect(x);
-		else
-			tree.view.selection.rangedSelect(x, x, true);
+	for (var i = 0, e = tree.view.rowCount; i < e; ++i) {
+		tree.view.selection.toggleSelect(i);
 	}
 }
 
 //--> Richiamata dal context, aumenta o diminuisce di uno il numero di chunks
 function addChunk(add) {
-	var tree = $("listDownload0");
 	var rangeCount = tree.view.selection.getRangeCount();
 
 	for(var i=0; i<rangeCount; i++) {
@@ -3672,7 +3654,6 @@ try {
 		var column = new Object;
 		var part = new Object;
 
-		var tree = $("listDownload0");
 
 		var boxobject = tree.treeBoxObject;
 		boxobject.QueryInterface(Ci.nsITreeBoxObject);
