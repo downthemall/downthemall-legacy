@@ -38,7 +38,6 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 
 var dropDowns = {};
-var strbundleB, strbundle;
 
 function downloadElement(url, num) {
 	if (!(url instanceof DTA_URL) || !DTA_AddingFunctions.isLinkOpenable(url)) {
@@ -258,11 +257,10 @@ BatchGenerator.prototype = {
 
 
 var Dialog = {
-	
+	strings: null,
 	load: function DTA_load() {
 		try {
-			strbundleB = $("strings");
-			strbundle = $("string");
+			this.sb = new StringBundles();
 		
 			this.ddDirectory = new DTA_DropDown("directory", "directory", "directoryitems", []);
 			this.ddRenaming = new DTA_DropDown(
@@ -395,23 +393,23 @@ var Dialog = {
 		var batch = new BatchGenerator(url);
 		if (batch.length > 1) {
 			
-			var message = strbundleB.getFormattedString(
+			var message = this.sb.getFormattedString(
 				'tasks',
 				[batch.length, batch.parts]
 			);
 			if (batch.length > 1000) {
-				message += strbundleB.getString('manytasks');
+				message += this.sb.getString('manytasks');
 			}
 			
 			var prompter = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 			var rv = prompter.confirmEx(
 				window,
-				"Download Batch",
+				this.sb.geString('batchtitle'),
 				message,
 				127 + (2 << 8) + (127 << 16),
-				"Batch",
+				this.sb.geString('batchtitle'),
 				null,
-				"Single URL",
+				this.sb.geString('single'),
 				null,
 				{}
 			);
@@ -443,7 +441,7 @@ var Dialog = {
 		var f = new filePicker();
 		var newDir = f.getFolder(
 			this.ddDirectory.current,
-			strbundle.getString("validdestination")
+			this.sb.getString("validdestination")
 		);
 		if (newDir) {
 			this.ddDirectory.current = newDir;

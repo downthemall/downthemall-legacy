@@ -44,10 +44,11 @@
 	<script src="chrome://global/content/nsDragAndDrop.js"/>
 	<script src="chrome://global/content/nsTransferable.js"/>
 
-	<stringbundles>
-		<stringbundle id="strings" src="chrome://dta/locale/select.properties"/>
-		<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties" />
-	</stringbundles>
+	<stringbundleset>
+		<stringbundle src="chrome://dta/locale/common.properties"/>
+		<stringbundle src="chrome://dta/locale/select.properties"/>
+		<stringbundle src="chrome://dta/locale/prefpanes.properties" />
+	</stringbundleset>
 
 	<keyset>
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>

@@ -46,8 +46,11 @@
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
 
-	<stringbundle id="strings" src="chrome://dta/locale/manager.properties"/>
-	<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties"/>
+	<stringbundleset>
+		<stringbundle src="chrome://dta/locale/common.properties"/>
+		<stringbundle src="chrome://dta/locale/manager.properties"/>
+		<stringbundle src="chrome://dta/locale/prefpanes.properties"/>
+	</stringbundleset>
 
 	<keyset>
 		<key id="esc" keycode="VK_ESCAPE" oncommand="cancelAll(true);"/>
@@ -80,6 +83,7 @@
 			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/skin/manager/cancel.png" oncommand="cancelPopup();" />
 			<menuseparator />
 			<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/remove.png" oncommand="removeFromList(-1);" />
+			<menuseparator />
 			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/skin/manager/clean.png" oncommand="removeCompleted();" />
 			<menuseparator />
 			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" image="chrome://dta/skin/manager/movetop.png" oncommand="moveTop(true);" />
