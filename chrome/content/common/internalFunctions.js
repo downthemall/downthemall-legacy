@@ -332,3 +332,48 @@ StringBundles.prototype = {
 		throw new Components.Exception('BUNDLE STRING NOT FOUND');		
 	}
 };
+
+const FileFactory = new Components.Constructor(
+	"@mozilla.org/file/local;1",
+	"nsILocalFile",
+	"initWithPath"
+);
+
+var OpenExternal = {
+	_io: Components.classes['@mozilla.org/network/io-service;1']
+		.getService(Components.interfaces.nsIIOService),
+	_proto: Components.classes['@mozilla.org/uriloader/external-protocol-service;1']
+		.getService(Components.interfaces.nsIExternalProtocolService),
+	_prepare: function(file) {
+		if (file instanceof Components.interfaces.nsILocalFile) {
+			return file;
+		}
+		else if (typeof(file) == 'string') {
+			return new FileFactory(file);
+		}
+		throw new Components.Exception('OpenExternal: feed me with nsILocalFile or String');
+	},
+	_nixLaunch: function(file) {
+		this._proto.loadUrl(this._io.newFileURI(file));		
+	},
+	launch: function(file) {
+		file = this._prepare(file);
+		try {
+			file.launch();
+		}
+		catch (ex) {
+			// *nix will throw as not implemented
+			this._nixLaunch(file);
+		}
+	},
+	reveal: function(file) {
+		file = this._prepare(file);
+		try {
+			file.reveal();
+		}
+		catch (ex) {
+			// *nix will throw as not implemented
+			this._nixLaunch(file.parent);
+		}
+	}
+};
