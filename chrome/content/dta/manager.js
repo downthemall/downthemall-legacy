@@ -1403,7 +1403,7 @@ var AlertService = {
 			case "alertclickcallback":
 				if (aData != "errore") {
 					try {
-						new FileFactory(aData).launch();
+						OpenExternal.launch(aData);
 					}
 					catch (ex) {
 						// no-op
@@ -1577,7 +1577,7 @@ var Check = {
 				else if (Prefs.alertingSystem == 0) {
 					if (confirm(stringa + "\n "+ strings.getString("folder")) == 1) {
 						try {
-							new FileFactory(downloadList[0].dirSave).launch();
+							OpenExternal.launch(downloadList[0].dirSave);
 						}
 						catch (ex){
 							strings.getString("noFolder");

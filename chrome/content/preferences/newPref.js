@@ -56,7 +56,7 @@ var Privacy = {
 		var log = DTA_profileFile.get('dta_log.txt')
 			.QueryInterface(Ci.nsILocalFile);
 		if (log.exists()) {
-			log.reveal();
+			OpenExternal.reveal(log);
 		}
 	},
 	deleteLog: function() {
