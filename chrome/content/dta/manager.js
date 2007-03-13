@@ -3310,16 +3310,16 @@ function openFolder() {
 		// ciclo gli elementi selezionati
 		for(var c=start.value; c<=end.value; c++) {
 			var dir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
-			if (downloadList[c].isCompleted) {
-				try {
+			try {
+				if (downloadList[c].isCompleted) {
 					dir.initWithPath(downloadList[c].dirSave + downloadList[c].destinationName);
 					dir.reveal();
-				} catch (e){}
-			} else {
-				try {
+				} else {
 					dir.initWithPath(downloadList[c].dirSave);
 					dir.reveal();
-				} catch (e){}
+				}
+			} catch (ex) {
+				Debug.dump('reveal', ex);
 			}
 		}
 	}
