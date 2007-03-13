@@ -39,7 +39,9 @@
 	<script src="chrome://global/content/nsTransferable.js"/>
 	<script type="application/x-javascript" src="info.js"/>
 	
-	<stringbundle id="strings" src="chrome://dta/locale/dta.properties"/>
+	<stringbundleset>
+		<stringbundle src="chrome://dta/locale/common.properties"/>
+	</stringbundleset>
 
 	<keyset>
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>

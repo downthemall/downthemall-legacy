@@ -28,7 +28,9 @@
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
 	<script type="application/x-javascript" src="renamingmask.js"/>
 	
-	<stringbundle id="strings" src="chrome://dta/locale/renamingmask.properties"/>
+	<stringbundleset>
+		<stringbundle id="strings" src="chrome://dta/locale/renamingmask.properties"/>
+	</stringbundleset>
 
 	<keyset>
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>

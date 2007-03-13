@@ -11,12 +11,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-var strbundle;
 
 var Dialog = {
+	sb: null,
 	load: function DTA_load() {
 		try {
-			strbundle = $("strings");
+			this.sb = new StringBundles();
 			this.canvas = $("draw").getContext("2d");
 		
 			// load dropdownns

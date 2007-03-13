@@ -41,8 +41,6 @@ if (!Ci) {
 	var Ci = Components.interfaces;
 }
 
-var strbundle;
-
 /**
  * implemtents nsITreeView
  * manages our link trees
@@ -51,6 +49,7 @@ function Tree(links, type) {
 
 	// type corresponding to dtaIFilterManager
 	this._type = type;
+	this.strings = new StringBundles();
 
 	// internal list of links.
 	// better make this a real array (links parameter is usually an object)
@@ -150,9 +149,9 @@ Tree.prototype = {
 		this._links.forEach(function(e) { if (e.checked.length) ++checked; });
 
 		if (checked) {
-			$("status").label = strbundle.getFormattedString("selel", [checked, this.rowCount]);
+			$("status").label = this.strings.getFormattedString("selel", [checked, this.rowCount]);
 		} else {
-			$("status").label = strbundle.getString("status");
+			$("status").label = this.strings.getString("status");
 		}
 	},
 	isChecked: function(idx) {
@@ -193,7 +192,7 @@ Tree.prototype = {
 			case 2: return l.desc;
 
 			// col 3 is the renaming mask
-			case 3: return l.mask ? l.mask : strbundle.getString('default');
+			case 3: return l.mask ? l.mask : this.strings.getString('default');
 		}
 		return null;
 	},
@@ -309,11 +308,12 @@ function downloadElement(url, dir, num, desc1, desc2, mask, refPage) {
  * Our real, kicks ass implementation of the UI
  */
 var Dialog = {
-
+	strings: null,
+	
 	// will be called to initialize the dialog
 	load: function DTA_load() {
-
-		strbundle = $("strings");
+	
+		this.strings = new StringBundles();
 
 		// no help available?
 		$("dtaHelp").hidden = !("openHelp" in window);
@@ -327,7 +327,7 @@ var Dialog = {
 			"filter",
 			"filter",
 			"filteritems",
-			[strbundle.getString("ddfilter"), "/(\\.mp3)$/", "/(\\.(html|htm|rtf|doc|pdf))$/", "http://www.website.com/subdir/*.*", "http://www.website.com/subdir/pre*.???", "*.z??, *.css, *.html"]
+			[this.strings.getString("ddfilter"), "/(\\.mp3)$/", "/(\\.(html|htm|rtf|doc|pdf))$/", "http://www.website.com/subdir/*.*", "http://www.website.com/subdir/pre*.???", "*.z??, *.css, *.html"]
 		);
 		this.ddDirectory = new DTA_DropDown("directory", "directory", "directoryitems", "", "");
 		this.ddRenaming = new DTA_DropDown(
@@ -401,8 +401,8 @@ var Dialog = {
 		// directory valid?
 		if (!f.checkDirectory(dir))
 		{
-			alert(strbundle.getString("alertfolder"));
-			var newDir = f.getFolder(null, strbundle.getString("validdestination"));
+			alert(this.strings.getString("alertfolder"));
+			var newDir = f.getFolder(null, this.strings.getString("validdestination"));
 			this.ddDirectory.current = newDir ? newDir : '';
 			return false;
 		}
@@ -680,10 +680,10 @@ var Dialog = {
 		}
 
 		if (reg.collapsed) {
-			add.setAttribute("label", strbundle.getString("additional") + "...");
+			add.setAttribute("label", this.strings.getString("additional") + "...");
 			add.setAttribute("class", "expand");
 		} else {
-			add.setAttribute("label", strbundle.getString("additional") + ":");
+			add.setAttribute("label", this.strings.getString("additional") + ":");
 			add.setAttribute("class", "collapse");
 		}
 	},
@@ -695,7 +695,7 @@ var Dialog = {
 		var f = new filePicker();
 		var newDir = f.getFolder(
 			this.ddDirectory.current, // initialize dialog with the current directory
-			strbundle.getString("validdestination")
+			this.strings.getString("validdestination")
 		);
 		// alright, we got something new, so lets set it.
 		if (newDir) {
@@ -722,10 +722,10 @@ var Dialog = {
 			var s = {}, e = {};
 			tree.selection.getRangeAt(0, s, e);
 			var l = tree._links[s.value];
-			otext = strbundle.getFormattedString("openlink", [l.url.url]);
+			otext = this.strings.getFormattedString("openlink", [l.url.url]);
 		}
 		else {
-			otext = strbundle.getFormattedString("openlinks", [tree.selection.count]);
+			otext = this.strings.getFormattedString("openlinks", [tree.selection.count]);
 		}
 		open.setAttribute("label", otext);
 		// display the popup

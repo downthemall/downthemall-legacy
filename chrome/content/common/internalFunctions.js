@@ -298,3 +298,37 @@ function makeObserver(obj) {
 		return this;
 	};	
 }
+
+function StringBundles() {
+	this.init();
+}
+StringBundles.prototype = {
+	_bundles: [],
+	_length: 0,
+	init: function() {
+		this._bundles = document.getElementsByTagName('stringbundle');
+		this._length = this._bundles.length;
+	},
+	getString: function(id) {
+		for (var i = 0, e = this._length; i < e; ++i) {
+			try {
+				return this._bundles[i].getString(id);
+			}
+			catch (ex) {
+				// no-op
+			}
+		}
+		throw new Components.Exception('BUNDLE STRING NOT FOUND');
+	},
+	getFormattedString: function(id, params) {
+		for (var i = 0, e = this._length; i < e; ++i) {
+			try {
+				return this._bundles[i].getFormattedString(id, params);
+			}
+			catch (ex) {
+				// no-op
+			}
+		}
+		throw new Components.Exception('BUNDLE STRING NOT FOUND');		
+	}
+};

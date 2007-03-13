@@ -36,7 +36,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-var strbundle;
+var strings = null;
 // true if window has focus
 var winFocus = false;
 // true if some dialog.xul is opened
@@ -88,11 +88,13 @@ var Prefs = {
 
 		try {
 			this.observe();
-			Cc['@mozilla.org/preferences-service;1']
+			var pbi = Cc['@mozilla.org/preferences-service;1']
 				.getService(Ci.nsIPrefService)
 				.getBranch(null)
 				.QueryInterface(Components.interfaces.nsIPrefBranch2)
-				.addObserver('extensions.dta.', this, true);
+			;
+			pbi.addObserver('extensions.dta.', this, true);
+			pbi.addObserver('network.', this, true);
 		}
 		catch (ex) {
 			Debug.dump("failed to add pref-observer", ex);
@@ -128,13 +130,15 @@ var Prefs = {
 				// XXX: error handling
 			}
 		}
-	},
-	refresh: function() {
-		// overwrite preference only if >
-		var current = Preferences.get("network.http.max-persistent-connections-per-server", this.maxInProgress * this.maxChunks + 2);
-		if (current < this.maxInProgress * this.maxChunks) {
-			Preferences.set("network.http.max-persistent-connections-per-server", this.maxInProgress * this.maxChunks + 2);
-		}
+		var conns = (this.maxInProgress * this.maxChunks + 2) * 2;
+		['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server'].forEach(
+			function(e) {
+				if (conns > Preferences.get(e, conns)) {
+					Preferences.set(e, conns);
+				}
+				conns /= 2;
+			}
+		);
 	}
 }
 Prefs.init();
@@ -537,7 +541,6 @@ downloadElement.prototype = {
 
 	getHeader: function() {
 		Debug.dump(this.urlManager.url + " (" + this.refPage.spec +"): getHeader()");
-		Prefs.refresh();
 		this.maxChunks = Prefs.maxChunks;
 		downloadChunk(0, 0, this, -1, true);
 	},
@@ -651,7 +654,7 @@ downloadElement.prototype = {
 			fileManager.moveTo(destination, destinationName);
 
 		} catch(ex) {
-			failDownload(this, strbundle.getString("accesserror"), strbundle.getString("permissions") + " " + strbundle.getString("destpath") + strbundle.getString("checkperm"), strbundle.getString("accesserror"));
+			failDownload(this, strings.getString("accesserror"), strings.getString("permissions") + " " + strings.getString("destpath") + strings.getString("checkperm"), strings.getString("accesserror"));
 			Debug.dump("download::moveCompleted: Could not move file or create directory: ", ex);
 			return;
 		}
@@ -742,7 +745,7 @@ downloadElement.prototype = {
 		if (this.compression) {
 			if (!this.isCanceled) {
 				Stats.zippedToWait++;
-				this.setTreeCell("status", strbundle.getString("decompressing"));
+				this.setTreeCell("status", strings.getString("decompressing"));
 				try {
 					this.unzip();
 				} catch(e){
@@ -753,7 +756,7 @@ downloadElement.prototype = {
 		}
 
 		this.isPassed = true;
-		this.setTreeCell("status", strbundle.getString("complete"));
+		this.setTreeCell("status", strings.getString("complete"));
 		popup();
 
 		// Garbage collection
@@ -774,7 +777,7 @@ downloadElement.prototype = {
 		try {
 			nomeFileOut.create(nomeFileOut.NORMAL_FILE_TYPE, 0766);
 		} catch(e) {
-			failDownload(this, strbundle.getString("accesserror"), strbundle.getString("permissions") + " " + strbundle.getString("destpath") + strbundle.getString("checkperm"), strbundle.getString("accesserror"));
+			failDownload(this, strings.getString("accesserror"), strings.getString("permissions") + " " + strings.getString("destpath") + strings.getString("checkperm"), strings.getString("accesserror"));
 			Debug.dump("unzip(): Could not move file or create directory: ", e);
 			return;
 		}
@@ -912,15 +915,15 @@ downloadElement.prototype = {
 		if (!this.isCompleted && this.isRunning) {
 			if (realDest.exists()) {
 				s = askForRenaming(
-					strbundle.getFormattedString("alreadyexists", [this.destinationName, this.dirSave]) + " " + strbundle.getFormattedString("whatdoyouwith", [shortUrl]),
-					{caption:strbundle.getFormattedString("reninto", [newDest]), value:0}, {caption:strbundle.getString("overwrite"), value:1}, {caption:strbundle.getString("skip"), value:2}
+					strings.getFormattedString("alreadyexists", [this.destinationName, this.dirSave]) + " " + strings.getFormattedString("whatdoyouwith", [shortUrl]),
+					{caption:strings.getFormattedString("reninto", [newDest]), value:0}, {caption:strings.getString("overwrite"), value:1}, {caption:strings.getString("skip"), value:2}
 				);
 			} else {
 				var p = isInProgress(this.dirSave + this.destinationName, this);
 				if (p != -1) {
 					s = askForRenaming(
-						strbundle.getString("samedestination", [shortUrl, this.destinationName, inProgressList[p].d.urlManager.url]) + " " + strbundle.getString("whatdoyou"),
-						{caption:strbundle.getFormattedString("reninto", [newDest]), value:0}, {caption:strbundle.getString("skipfirst"), value:2}, {caption:strbundle.getString("cancelsecond"), value:3}
+						strings.getString("samedestination", [shortUrl, this.destinationName, inProgressList[p].d.urlManager.url]) + " " + strings.getString("whatdoyou"),
+						{caption:strings.getFormattedString("reninto", [newDest]), value:0}, {caption:strings.getString("skipfirst"), value:2}, {caption:strings.getString("cancelsecond"), value:3}
 					);
 				}
 			}
@@ -929,8 +932,8 @@ downloadElement.prototype = {
 		else if (this.isCompleted && !this.isPassed) {
 			if (realDest.exists()) {
 				s = askForRenaming(
-					strbundle.getFormattedString("alreadyexists", [this.destinationName, this.dirSave]) + " " + strbundle.getFormattedString("whatdoyoucomplete", [shortUrl]),
-					{caption:strbundle.getFormattedString("reninto", [newDest]), value:0}, {caption:strbundle.getString("overwrite"), value:1}, {caption:strbundle.getString("cancel"), value:4}
+					strings.getFormattedString("alreadyexists", [this.destinationName, this.dirSave]) + " " + strings.getFormattedString("whatdoyoucomplete", [shortUrl]),
+					{caption:strings.getFormattedString("reninto", [newDest]), value:0}, {caption:strings.getString("overwrite"), value:1}, {caption:strings.getString("cancel"), value:4}
 				);
 			}
 		}
@@ -946,7 +949,7 @@ downloadElement.prototype = {
 				break;
 			}
 			case 2: {
-				this.cancelDownload(strbundle.getString("skipped"));
+				this.cancelDownload(strings.getString("skipped"));
 				break;
 			}
 			case 3: {
@@ -974,7 +977,7 @@ downloadElement.prototype = {
 			this.isCanceled = true;
 
 			if (message == "" || !message) {
-				message = strbundle.getString("canceled");
+				message = strings.getString("canceled");
 			}
 			this.setTreeCell("status", message);
 			this.setTreeProgress("canceled");
@@ -1014,7 +1017,6 @@ downloadElement.prototype = {
 		}
 
 		if (this.maxChunks == null) {
-			Prefs.refresh();
 			this.maxChunks = Prefs.maxChunks;
 		}
 
@@ -1331,9 +1333,9 @@ dataCopyListener.prototype = {
 			this.d.setTreeCell("percent", Math.round(this.join.offset / this.d.totalSize * 100) + "%");
 			this.d.setTreeProgress("inprogress", Math.round(this.join.offset / this.d.totalSize * 100));
 			if (Check.isClosing)
-				this.d.setTreeCell("status", strbundle.getString("completing"));
+				this.d.setTreeCell("status", strings.getString("completing"));
 			else
-				this.d.setTreeCell("status", strbundle.getString("joining"));
+				this.d.setTreeCell("status", strings.getString("joining"));
 		}
 		// need to wrap this as nsIInputStream::read is marked non-scriptable.
 		var byteStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
@@ -1454,9 +1456,9 @@ var Check = {
 
 		// Refresh status bar
 		$("status").label = (
-			strbundle.getFormattedString("cdownloads", [Stats.completedDownloads, downloadList.length]) +
+			strings.getFormattedString("cdownloads", [Stats.completedDownloads, downloadList.length]) +
 			" - " +
-			strbundle.getString("cspeed") + " " + formatBytes(speed) + "/s"
+			strings.getString("cspeed") + " " + formatBytes(speed) + "/s"
 		);
 
 		// Refresh window title
@@ -1464,12 +1466,12 @@ var Check = {
 			document.title = (
 				Math.round(inProgressList[0].d.partialSize / inProgressList[0].d.totalSize * 100) + "% - " +
 				Stats.completedDownloads + "/" + downloadList.length + " - " +
-				formatBytes(speed) + "/s - DownThemAll! - " + strbundle.getString("dip")
+				formatBytes(speed) + "/s - DownThemAll! - " + strings.getString("dip")
 			);
 		} else if (inProgressList.length > 0)
 			document.title = (
 				Stats.completedDownloads + "/" + downloadList.length + " - " +
-				formatBytes(speed) + "/s - DownThemAll! - " + strbundle.getString("dip")
+				formatBytes(speed) + "/s - DownThemAll! - " + strings.getString("dip")
 			);
 		else
 			document.title = Stats.completedDownloads + "/" + downloadList.length + " - DownThemAll!";
@@ -1485,7 +1487,7 @@ var Check = {
 					var min = Math.floor((remainingSeconds - hour*3600) / 60);
 					var sec = remainingSeconds - min * 60 - hour*3600;
 					if (remainingSeconds == "Infinity")
-						d.setTreeCell("status", strbundle.getString("unavailable"));
+						d.setTreeCell("status", strings.getString("unavailable"));
 					else {
 						var s= hour>0?(hour+":"+min+":"+sec):(min+":"+sec);
 						d.setTreeCell("status", String(s).formatTimeDate());
@@ -1509,7 +1511,6 @@ var Check = {
 	checkDownloads: function() {try {
 
 		this.refreshDownloadedBytes();
-		Prefs.refresh();
 
 		// se il numero di download e' cambiato, controlla.
 		if (!this.haveToCheck && (this.lastDownloads != downloadList.length))
@@ -1537,10 +1538,10 @@ var Check = {
 				if (d.isResumable) {
 					d.setPaused();
 					d.isPaused = true;
-					d.setTreeCell("status", strbundle.getString("timeout"));
+					d.setTreeCell("status", strings.getString("timeout"));
 					d.setTreeProgress("paused");
 				} else
-					d.cancelDownload(strbundle.getString("timeout"));
+					d.cancelDownload(strings.getString("timeout"));
 
 				popup();
 				Debug.dump("checkDownloads(): " + d.fileName + " in timeout");
@@ -1565,7 +1566,6 @@ var Check = {
 
 			Debug.dump("checkClose(): All downloads passed correctly");
 			this.lastCheck = Stats.downloadedBytes;
-			Prefs.refresh();
 
 			playSound("done");
 
@@ -1573,18 +1573,18 @@ var Check = {
 			if (!winFocus && Stats.completedDownloads > 0) {
 				var stringa;
 				if (Stats.completedDownloads > 0)
-					stringa = strbundle.getString("suc");
+					stringa = strings.getString("suc");
 
 				if (Prefs.alertingSystem == 1) {
-					AlertService.show(strbundle.getString("dcom"), stringa, true, downloadList[0].dirSave);
+					AlertService.show(strings.getString("dcom"), stringa, true, downloadList[0].dirSave);
 				}
 				else if (Prefs.alertingSystem == 0) {
-					if (confirm(stringa + "\n "+ strbundle.getString("folder")) == 1) {
+					if (confirm(stringa + "\n "+ strings.getString("folder")) == 1) {
 						try {
 							new FileFactory(downloadList[0].dirSave).launch();
 						}
 						catch (ex){
-							strbundle.getString("noFolder");
+							strings.getString("noFolder");
 						}
 					}
 				}
@@ -1651,7 +1651,7 @@ var Check = {
 
 		var d = downloadList[i];
 
-		d.setTreeCell("status", strbundle.getString("starting"));
+		d.setTreeCell("status", strings.getString("starting"));
 
 		d.timeLastProgress = (new Date()).getTime();
 		d.isRunning = true;
@@ -1812,9 +1812,9 @@ onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 			} else if (!this.isPassedOnProgress)
 				failDownload(
 				d,
-				strbundle.getString("srver"),
-				strbundle.getFormattedString("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]),
-				strbundle.getString("srver")
+				strings.getString("srver"),
+				strings.getFormattedString("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]),
+				strings.getString("srver")
 				);
 
 			d.removeFromInProgressList();
@@ -1867,7 +1867,7 @@ onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 	// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
 	if (!this.isPassedOnProgress && d.isResumable && !c.imWaitingToRearrange && !d.isCanceled && !d.isPaused) {
 		Debug.dump(d.fileName + ": Server error or disconnection (type 1)");
-		d.setTreeCell("status", strbundle.getString("srver"));
+		d.setTreeCell("status", strings.getString("srver"));
 		d.setTreeCell("speed", "");
 		d.setTreeProgress("paused");
 		d.isPaused = true;
@@ -1878,9 +1878,9 @@ onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 		Debug.dump(d.fileName + ": Server error or disconnection (type 2)");
 		failDownload(
 			d,
-			strbundle.getString("srver"),
-			strbundle.getFormattedString("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]),
-			strbundle.getString("srver")
+			strings.getString("srver"),
+			strings.getFormattedString("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]),
+			strings.getString("srver")
 		);
 		sessionManager.save(d);
 		return;
@@ -2057,9 +2057,9 @@ onProgressChange64: function (aWebProgress, aRequest, aCurSelfProgress, aMaxSelf
 				// se si tratta di errore >= 400 blocchiamo e basta
 				failDownload(
 				d,
-				strbundle.getFormattedString("error", [chan.responseStatus]),
-				strbundle.getFormattedString("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]) + " " + strbundle.getFormattedString("sra", [chan.responseStatus]) + ": " + chan.responseStatusText,
-				strbundle.getFormattedString("error", [chan.responseStatus])
+				strings.getFormattedString("error", [chan.responseStatus]),
+				strings.getFormattedString("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]) + " " + strings.getFormattedString("sra", [chan.responseStatus]) + ": " + chan.responseStatusText,
+				strings.getFormattedString("error", [chan.responseStatus])
 				);
 				return;
 			} else if (chan.responseStatus != 206 && c.end != 0) {
@@ -2124,7 +2124,7 @@ onProgressChange64: function (aWebProgress, aRequest, aCurSelfProgress, aMaxSelf
 					nds = Prefs.tempLocation.diskSpaceAvailable
 					if (nds < tst) {
 						Debug.dump("There is not enought free space available on temporary directory, needed=" + tst + " (totalsize="+ d.totalSize +"), user=" + nds);
-						failDownload(d, strbundle.getString("ndsa"), strbundle.getString("spacetemp"), strbundle.getString("freespace"));
+						failDownload(d, strings.getString("ndsa"), strings.getString("spacetemp"), strings.getString("freespace"));
 						return;
 					}
 				}	else {
@@ -2136,14 +2136,14 @@ onProgressChange64: function (aWebProgress, aRequest, aCurSelfProgress, aMaxSelf
 					if (!realDest.exists()) realDest.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
 				} catch(e) {
 					Debug.dump("downloadChunk(): Could not move file or create directory on destination path: ", e);
-					failDownload(d, strbundle.getString("accesserror"), strbundle.getString("permissions") + " " + strbundle.getString("destpath") + strbundle.getString("checkperm"), strbundle.getString("accesserror"));
+					failDownload(d, strings.getString("accesserror"), strings.getString("permissions") + " " + strings.getString("destpath") + strings.getString("checkperm"), strings.getString("accesserror"));
 					return;
 				}
 
 				nds = realDest.diskSpaceAvailable;
 				if (nds < tsd) {
 					Debug.dump("There is not enought free space available on destination directory, needed=" + tsd + " (totalsize="+ d.totalSize +"), user=" + nsd);
-					failDownload(d, strbundle.getString("ndsa"), strbundle.getString("spacedir"), strbundle.getString("freespace"));
+					failDownload(d, strings.getString("ndsa"), strings.getString("spacedir"), strings.getString("freespace"));
 					return;
 				}
 
@@ -2252,7 +2252,7 @@ onProgressChange64: function (aWebProgress, aRequest, aCurSelfProgress, aMaxSelf
 			} else {
 				d.setTreeCell("percent", "???");
 				d.setTreeCell("size", d.createDimensionString());
-				d.setTreeCell("status", strbundle.getString("downloading"));
+				d.setTreeCell("status", strings.getString("downloading"));
 			}
 		}
 		// else: do nothing
@@ -2292,7 +2292,7 @@ dataListener.prototype = {
 			this.d.isPassed = true
 			Stats.zippedToWait--;
 			this.d.setTreeCell("percent", "100%");
-			this.d.setTreeCell("status", strbundle.getString("complete"));
+			this.d.setTreeCell("status", strings.getString("complete"));
 			this.d.setTreeProgress("completed", 100);
 		}
 
@@ -2313,7 +2313,7 @@ dataListener.prototype = {
 				if (!destination.exists()) destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
 				this.inf.moveTo(destination, this.d.destinationName);
 			} catch(e) {
-				failDownload(this.d, strbundle.getString("accesserror"), strbundle.getString("permissions") + " " + strbundle.getString("destpath") + strbundle.getString("checkperm"), strbundle.getString("accesserror"));
+				failDownload(this.d, strings.getString("accesserror"), strings.getString("permissions") + " " + strings.getString("destpath") + strings.getString("checkperm"), strings.getString("accesserror"));
 				Debug.dump("dataListener::onStopRequest: Could not move file or create directory: ", e);
 				return;
 			}
@@ -2347,21 +2347,15 @@ dataListener.prototype = {
 	}
 }
 
-// --------* Inizio funzioni *--------
-
-//--> attivata all'onload
-
 function loadDown() {
-
-	strbundle = $("strings");
-	Prefs.refresh();
+	strings = new StringBundles();
 
 	document.getElementById("dtaHelp").hidden = !("openHelp" in window);
 
 	sessionManager.init();
 
 	// update status and window title
-	$("status").label = strbundle.getFormattedString("cdownloads", [Stats.completedDownloads, downloadList.length]);
+	$("status").label = strings.getFormattedString("cdownloads", [Stats.completedDownloads, downloadList.length]);
 	document.title = Stats.completedDownloads + "/" + downloadList.length + " - DownThemAll!";
 
 	if ("arguments" in window) {
@@ -2396,8 +2390,8 @@ function cancelAll(pressedESC) {
 				.getService(Ci.nsIPromptService);
 			var rv = promptService.confirm(
 				window,
-				strbundle.getString("confclose"),
-				strbundle.getString("nonres")
+				strings.getString("confclose"),
+				strings.getString("nonres")
 			);
 			if (!rv) {
 				return false;
@@ -2430,7 +2424,7 @@ function cancelAll(pressedESC) {
 			if (d.isStarted) {
 				d.setPaused();
 				d.isPaused = true;
-				d.setTreeCell("status", strbundle.getString("closing"));
+				d.setTreeCell("status", strings.getString("closing"));
 				Debug.dump(d.fileName + " has to be stopped.");
 			}
 			else if (removeAborted) {
@@ -2569,16 +2563,16 @@ function populateListbox(d) {
 	parts.setAttribute("label", (d.maxChunks != null)?("0/"+d.maxChunks):"");
 
 	if (d.isCompleted) {
-			time.setAttribute("label", strbundle.getString("complete"));
+			time.setAttribute("label", strings.getString("complete"));
 			per1.setAttribute("properties", "completed");
 	} else if (d.isPaused && !d.isCanceled) {
-			time.setAttribute("label", strbundle.getString("paused"));
+			time.setAttribute("label", strings.getString("paused"));
 			per1.setAttribute("properties", "paused");
 	} else if (d.isCanceled) {
-			time.setAttribute("label", strbundle.getString("canceled"));
+			time.setAttribute("label", strings.getString("canceled"));
 			per1.setAttribute("properties", "canceled");
 	} else {
-			time.setAttribute("label", strbundle.getString("inqueue"));
+			time.setAttribute("label", strings.getString("inqueue"));
 			per1.setAttribute("properties", "queued");
 	}
 
@@ -2609,34 +2603,32 @@ function populateListbox(d) {
 
 // fa partire lo scaricamento dei chunk in multipart
 function downloadMultipart(d) {
+	try {
+		var numChunk = d.maxChunks;
 
-try {
-	Prefs.refresh();
-	var numChunk = d.maxChunks;
+		// multipart
+		if ((d.totalSize / numChunk) < MIN_CHUNK_SIZE) {
+			// serve un numero inferiore a numChunk di chunks
+			numChunk = Math.round(d.totalSize / MIN_CHUNK_SIZE);
+		}
 
-	// multipart
-	if ((d.totalSize / numChunk) < MIN_CHUNK_SIZE) {
-		// serve un numero inferiore a numChunk di chunks
-		numChunk = Math.round(d.totalSize / MIN_CHUNK_SIZE);
-	}
+		var endLastChunk;
+		var stChunkSize = Math.round(d.totalSize / numChunk);
+		if (stChunkSize > MAX_CHUNK_SIZE) {
+			stChunkSize = MAX_CHUNK_SIZE;
+			endLastChunk = stChunkSize * numChunk - 1;
+		} else {
+			endLastChunk = d.totalSize - 1;
+		}
+		Debug.dump("downloadMultipart(): I'm splitting " + d.fileName + " (" + d.totalSize + "B) into " + numChunk + " chunks of " + stChunkSize + "B");
 
-	var endLastChunk;
-	var stChunkSize = Math.round(d.totalSize / numChunk);
-	if (stChunkSize > MAX_CHUNK_SIZE) {
-		stChunkSize = MAX_CHUNK_SIZE;
-		endLastChunk = stChunkSize * numChunk - 1;
-	} else {
-		endLastChunk = d.totalSize - 1;
-	}
-	Debug.dump("downloadMultipart(): I'm splitting " + d.fileName + " (" + d.totalSize + "B) into " + numChunk + " chunks of " + stChunkSize + "B");
+		for (var i = 0; i < (numChunk-1); i++) {
+			downloadChunk(stChunkSize * i, (stChunkSize * (i + 1)) - 1, d, i - 1, false);
+		}
 
-	for (var i = 0; i < (numChunk-1); i++) {
-		downloadChunk(stChunkSize * i, (stChunkSize * (i + 1)) - 1, d, i - 1, false);
-	}
-
-	downloadChunk(stChunkSize * i, endLastChunk, d, i - 1, false); // l'ultimo va fino alla fine
+		downloadChunk(stChunkSize * i, endLastChunk, d, i - 1, false); // l'ultimo va fino alla fine
 }catch(e) {
-	Debug.dump("downloadMultipart():", e);
+		Debug.dump("downloadMultipart():", e);
 }
 }
 
@@ -2648,7 +2640,6 @@ function isInProgress(path, d) {
 }
 
 function askForRenaming(t, s1, s2, s3) {
-	Prefs.refresh();
 	var scelta;
 
 	if (Prefs.onConflictingFilenames == 3 && Prefs.askEveryTime) {
@@ -2774,9 +2765,9 @@ function downloadChunk(start, end, d, fatherChunk, testHeader) {
 		Debug.dump("downloadChunk():", ex);
 		failDownload(
 			d,
-			strbundle.getString("errordownload"),
-			strbundle.getFormattedString("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]),
-			strbundle.getString("errordownload")
+			strings.getString("errordownload"),
+			strings.getFormattedString("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]),
+			strings.getString("errordownload")
 		);
 
 		d.isRunning = false;
@@ -2919,7 +2910,7 @@ try {
 						(d.partialSize == 0)
 					)
 				) {
-					d.setTreeCell("status", strbundle.getString("paused"));
+					d.setTreeCell("status", strings.getString("paused"));
 					d.setTreeCell("speed", "");
 					d.setTreeProgress("paused");
 
@@ -2940,7 +2931,7 @@ try {
 				) {
 					firstFlag = true;
 					d.isPaused = false;
-					d.setTreeCell("status", strbundle.getString("inqueue"));
+					d.setTreeCell("status", strings.getString("inqueue"));
 					d.setTreeProgress("queued");
 				} else if (!d.isRunning && d.isCanceled) {
 
@@ -2961,7 +2952,7 @@ try {
 					n.treeID = String(d.treeID);
 
 					downloadList.splice(c, 1, n);
-					d.setTreeCell("status", strbundle.getString("inqueue"));
+					d.setTreeCell("status", strings.getString("inqueue"));
 				}
 				Check.haveToCheck = true;
 				if (((Check.firstInQueue == -1) || (Check.firstInQueue > c)) && firstFlag) {
