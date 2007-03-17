@@ -763,7 +763,7 @@ var Dialog = {
 		selection.clearSelection();
 		for (var i = 0, e = tree.rowCount; i < e; ++i) {
 			if (tree.isChecked(i)) {
-				selection.select(i);
+				selection.rangedSelect(i, i, true);
 			}
 		}
 	},
