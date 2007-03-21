@@ -46,7 +46,7 @@ function DTA_include(uri) {
 }
 DTA_include("chrome://dta/content/common/regconvert.js");
 
-var DTA_FilterManager = Components.classes['@tn123.ath.cx/dtamod/filtermanager;1']
+var DTA_FilterManager = Components.classes['@downthemall.net/filtermanager;1']
 	.getService(Components.interfaces.dtaIFilterManager);
 
 function DTA_showPreferences() {
