@@ -121,10 +121,17 @@ var DTA_preferences = {
 		this.setMultiByte('extensions.dta.' + key, value);
 	},
 	reset: function DP_reset(key) {
-		return this._pref.clearUserPref(key);
+		try {
+			return this._pref.clearUserPref(key);
+		} catch (ex) {
+			return false;
+		}
 	},
 	resetDTA: function DP_resetDTA(key) {
-		return this.reset('extensions.dta.' + key);
+		if (key.search(/^extensions\.dta\./) != 0) {
+			key = 'extensions.dta.' + key;
+		}
+		return this.reset(key);
 	},
 	resetBranch: function DP_resetBranch(key) {
 		// BEWARE: not yet implemented in XPCOM 1.8/trunk.
@@ -132,7 +139,7 @@ var DTA_preferences = {
 		var c = {value: 0};
 		var prefs = this._pref.getChildList(branch, c);
 		for (var i = 0; i < c.value; ++i) {
-			this.resetDTA(branch + prefs[i]);
+			this.resetDTA(prefs[i]);
 		}
 	},
 	resetAll: function DP_reset() {
