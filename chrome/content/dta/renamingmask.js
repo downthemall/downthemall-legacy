@@ -50,5 +50,3 @@ var Dialog = {
 		}
 	}
 };
-
-DTA_include("chrome://dta/content/dta/maskbutton.js");

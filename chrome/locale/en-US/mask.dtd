@@ -1,17 +1,18 @@
 <!ENTITY mask.title "Renaming Tags">
-<!ENTITY mask.desc1 "File name">
-<!ENTITY mask.desc2 "Extension">
-<!ENTITY mask.desc3 "Base URL">
-<!ENTITY mask.desc4 "Full URL">
-<!ENTITY mask.desc5 "Progressive number">
-<!ENTITY mask.desc6 "Hours">
-<!ENTITY mask.desc7 "Minutes">
-<!ENTITY mask.desc8 "Seconds">
-<!ENTITY mask.desc9 "Day">
-<!ENTITY mask.desc10 "Month">
-<!ENTITY mask.desc11 "Year">
-<!ENTITY mask.desc12 "URL subdirectories">
-<!ENTITY mask.desc13 "Link description">
-<!ENTITY mask.desc14 "Referrer URL">
+<!ENTITY mask.name "File name">
+<!ENTITY mask.ext "Extension">
+<!ENTITY mask.url "Base URL">
+<!ENTITY mask.curl "Full URL">
+<!ENTITY mask.num "Progressive number">
+<!ENTITY mask.hh "Hours">
+<!ENTITY mask.mm "Minutes">
+<!ENTITY mask.ss "Seconds">
+<!ENTITY mask.d "Day">
+<!ENTITY mask.m "Month">
+<!ENTITY mask.y "Year">
+<!ENTITY mask.subdirs "URL subdirectories">
+<!ENTITY mask.text "Link description">
+<!ENTITY mask.refer "Referrer URL">
+<!ENTITY mask.qstring "Query String">
 <!ENTITY mask.tip "Click or drag to renaming mask">
-<!ENTITY openmask.tip "Renaming tags reference table">
+<!ENTITY mask.open.tip "Renaming tags reference table">

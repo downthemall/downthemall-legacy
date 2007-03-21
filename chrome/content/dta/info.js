@@ -198,5 +198,3 @@ var Dialog = {
 		return true;
 	}
 };
-
-DTA_include("chrome://dta/content/dta/maskbutton.js");

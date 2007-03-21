@@ -629,7 +629,6 @@ downloadElement.prototype = {
 		if (this.isCanceled) {
 			return;
 		}
-		Debug.dump(this.isMetalink);
 
 		// increment completedDownloads counter
 		this.isCompleted = true;
@@ -795,17 +794,19 @@ downloadElement.prototype = {
 	} catch (e) {Debug.dump("Unzip():", e);}
 	},
 
+	// XXX: revise
 	buildFromMask: function(dir, mask) {
 		try {
+			var url = this.urlManager.usable;
 			var uri = Cc['@mozilla.org/network/standard-url;1']
-				.createInstance(Ci.nsIURI);
-			uri.spec = this.urlManager.usable;
+				.createInstance(Ci.nsIURL);
+			uri.spec = url;
 
 			// normalize slashes
 			mask = mask
 				.removeLeadingChar("\\").removeFinalChar("\\")
 				.removeLeadingChar("/").removeFinalChar("/")
-				.replace(/([\\/]{1,})/g, slash);
+				.replace(/([\\/]{1,})/g, SYSTEMSLASH);
 
 			if (dir) {
 				mask = mask.substring(0, mask.lastIndexOf(SYSTEMSLASH));
@@ -821,13 +822,21 @@ downloadElement.prototype = {
 					.removeFinalBackSlash()
 					.replace(/\//g, replacedSlash);
 			}
-
+			
+			var query = '';
+			try {
+				query = DTA_URLhelpers.decodeCharset(uri.query, url.originCharset);
+			}
+			catch (ex) {
+				// no-op
+			}
+			
 			this.description = this.description.removeBadChars().replace(/[\\/]/g, "").trim();
 
-			var name, ext;
-			if (this.fileName.getExtension()) {
-				var name = this.fileName.substring(0, this.fileName.lastIndexOf("."));
-				var ext = this.fileName.getExtension();
+			var name = this.fileName;
+			var ext = name.getExtension();
+			if (ext) {
+				name = name.substring(0, this.fileName.lastIndexOf("."));
 
 				if (this.contentType && /html?/.test(this.contentType) && !/htm/.test(ext)) {
 					ext += ".html";
@@ -835,13 +844,14 @@ downloadElement.prototype = {
 			}
 			// mime-service method
 			else if (this.contentType) {
-				var contentType = (this.contentType.trim().split(" "))[0].removeFinalChar(";");
-				var info = Components.classes["@mozilla.org/mime;1"]
-					.getService(Ci.nsIMIMEService)
-					.getFromTypeAndExtension(contentType, "");
-
-				name = this.fileName;
-				ext = info.primaryExtension;
+				try {
+					var info = Cc["@mozilla.org/uriloader/external-helper-app-service;1"]
+						.getService(Ci.nsIMIMEService)
+						.getFromTypeAndExtension(this.contentType.split(';')[0], "");
+					ext = info.primaryExtension;
+				} catch (ex) {
+					ext = '';
+				}
 			}
 			else {
 				name = this.fileName;
@@ -855,6 +865,7 @@ downloadElement.prototype = {
 				"\\*url\\*": uri.host,
 				"\\*subdirs\\*": uripath,
 				"\\*refer\\*": this.refPage.host,
+				"\\*qstring\\*": query,
 				"\\*curl\\*": (uri.host + ((uripath=="")?"":(replacedSlash + uripath))),
 				"\\*num\\*": makeNumber(this.numIstance),
 				"\\*hh\\*": String(this.startDate.getHours()).formatTimeDate(),
@@ -2827,7 +2838,7 @@ try {
 		var el = context.childNodes.item(i);
 		if (el.setAttribute) disableObj(el);
 	}
-	$("tooladd", "tooldonate", "toolprefs", 'misc', 'prefs').forEach(enableObj);
+	$("tooladd", "tooldonate", 'misc', 'prefs').forEach(enableObj);
 
 	if (tree.view.rowCount > 0)
 		$("removeCompleted", "selectall", "selectinv").forEach(enableObj);
