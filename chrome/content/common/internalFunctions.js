@@ -130,7 +130,7 @@ objectExtend(String.prototype,
 		if (c == -1) {
 			return null;
 		}
-		return name.slice[c];
+		return name.slice(c+1);
 	},
 	formatTimeDate : function() {
 		return this.replace(/\b(\d)\b/g, "0$1");
