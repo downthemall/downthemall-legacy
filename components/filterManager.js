@@ -62,8 +62,8 @@ Filter.prototype = {
 
 	// nsIClassInfo
 	classID: Components.ID("{3F872ADC-35A4-4c79-B771-F2BC130FB792}"),
-	contractID: "@tn123.ath.cx/dtamod/filter;1",
-	classDescription: "DownTHEMAll! Mod Filter",
+	contractID: "@downthemall.net/filter;1",
+	classDescription: "DownThemAll! Filter",
 	implementationLanguage: 0x02,
 	flags: (1 << 2), // MAIN_THREAD_ONLY
 	classIDNoAlloc: this.classID,
@@ -312,8 +312,8 @@ var FilterManager = {
 
 	// nsIClassInfo
 	classID: Components.ID("{3F872ADC-35A4-4c79-B771-F2BC130FB791}"),
-	contractID: "@tn123.ath.cx/dtamod/filtermanager;1",
-	classDescription: "DownTHEMAll! Mod Filtermanager",
+	contractID: "@downthemall.net/filtermanager;1",
+	classDescription: "DownThemAll! Filtermanager",
 	implementationLanguage: 0x02,
 	flags: (1 << 0) | (1 << 2), // SINGLETON | MAIN_THREAD_ONLY
 	classIDNoAlloc: this.classID,
@@ -516,7 +516,7 @@ var FilterManager = {
 	},
 
 	// nsIObserver
-	observe : function FM_observe(subject, topic, prefName) {
+	observe: function FM_observe(subject, topic, prefName) {
 		this._delayedReload();
 	},
 
@@ -585,7 +585,7 @@ var Module = {
 	},
 
 	// nsIFactory
-	QueryInterace : function(aIID) {
+	QueryInterface : function(aIID) {
 		if (aIID.equals(CI.nsIFactory)) {
 			return this;
 		}
