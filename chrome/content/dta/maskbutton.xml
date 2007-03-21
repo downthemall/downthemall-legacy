@@ -50,35 +50,33 @@
 		<xbl:content>
 			<popupset>
 				<popup id="maskPopup" orient="vertical" position="before_end" style="padding: 8px; margin-bottom: -10px;">
-					<label id="titlerenaming" value="&mask.title;" style="background-color: transparent !important; font-weight: bold; text-align: center; font-size: 114%; padding-bottom: 3px;" />
-					<hbox>
-						<vbox>
-							<grid flex="1">
-								<columns><column /><column flex="1"/></columns>
-								<rows>
-									<row><label class="tag" value="*ext*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des2" class="desc" value="&mask.desc2;"/></row>
-									<row><label class="tag" value="*url*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des3" class="desc" value="&mask.desc3;"/></row>
-									<row><label class="tag" value="*curl*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des4" class="desc" value="&mask.desc4;" /></row>
-									<row><label class="tag" value="*subdirs*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des12" class="desc" value="&mask.desc12;"/></row>
-									<row><label class="tag" value="*num*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des5" class="desc" value="&mask.desc5;"/></row>
-									<row><label class="tag" value="*text*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des12" class="desc" value="&mask.desc13;"/></row>
-								</rows>
-							</grid>
-						</vbox>
-						<vbox>
-							<grid flex="1">
-								<columns><column /><column flex="1"/></columns>
-								<rows>
-									<row><label class="tag" value="*refer*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des14" class="desc" value="&mask.desc14;"/></row>
-									<row><label class="tag" value="*hh*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des6" class="desc" value="&mask.desc6;"/></row>
-									<row><label class="tag" value="*mm*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des7" class="desc" value="&mask.desc7;"/></row>
-									<row><label class="tag" value="*ss*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des8" class="desc" value="&mask.desc8;"/></row>
-									<row><label class="tag" value="*d*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des9" class="desc" value="&mask.desc9;"/></row>
-									<row><label class="tag" value="*m*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des10" class="desc" value="&mask.desc10;"/></row>
-									<row><label class="tag" value="*y*" ondraggesture="nsDragAndDrop.startDrag(event,listObserver)" onclick="appendTag(event);" tooltiptext="&mask.tip;" /><label id="des11" class="desc" value="&mask.desc11;"/></row>
-								</rows>
-							</grid>
-						</vbox>
+					<label class="masktitle" value="&mask.title;"/>
+					<hbox id="maskitems">
+						<grid flex="1">
+							<columns><column/><column flex="1"/></columns>
+							<rows>
+								<row tag="*name*" desc="&mask.name;"/>
+								<row tag="*ext*" desc="&mask.ext;"/>
+								<row tag="*url*" desc="&mask.url;"/>
+								<row tag="*curl*" desc="&mask.curl;"/>
+								<row tag="*subdirs*" desc="&mask.subdirs;"/>
+								<row tag="*num*" desc="&mask.num;"/>
+								<row tag="*text*" desc="&mask.text;"/>
+								<row tag="*qstring*" desc="&mask.qstring;"/>
+							</rows>
+						</grid>
+						<grid flex="1">
+							<columns><column/><column flex="1"/></columns>
+							<rows>
+								<row tag="*refer*" desc="&mask.refer;"/>
+								<row tag="*hh*" desc="&mask.hh;"/>
+								<row tag="*mm*" desc="&mask.mm;"/>
+								<row tag="*ss*" desc="&mask.ss;"/>
+								<row tag="*d*" desc="&mask.d;"/>
+								<row tag="*m*" desc="&mask.m;"/>
+								<row tag="*y*" desc="&mask.y;"/>
+							</rows>
+						</grid>
 					</hbox>
 				</popup>
 			</popupset>
@@ -86,8 +84,23 @@
 				image="chrome://dta/skin/common/mask.png"
 				popup="maskPopup"
 				style="padding:4px 3px 4px 5px;"
-				tooltiptext="&openmask.tip;"
+				tooltiptext="&mask.open.tip;"
 			/>
+		</xbl:content>
+		<xbl:implementation>
+			<xbl:constructor>DTA_include("chrome://dta/content/dta/maskbutton.js");</xbl:constructor>
+		</xbl:implementation>
+	</xbl:binding>
+	
+	<xbl:binding id="maskitem">
+		<xbl:content>
+				<label
+					xbl:inherits="value=tag"
+					class="masktag"
+					ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
+					onclick="appendTag(event);"
+					tooltiptext="&mask.tip;"/>
+				<label xbl:inherits="value=desc"/>
 		</xbl:content>
 	</xbl:binding>
 </xbl:bindings>

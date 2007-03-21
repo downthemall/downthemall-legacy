@@ -11,14 +11,16 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is downTHEMall.
+ * The Original Code is DownThemAll!
  *
- * The Initial Developer of the Original Code is Nils Maier
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
+ * The Initial Developers of the Original Code are Stefano Verna and Federico Parodi
+ * Portions created by the Initial Developers are Copyright (C) 2004-2007
+ * the Initial Developers. All Rights Reserved.
  *
  * Contributor(s):
- *   Nils Maier <MaierMan@web.de>
+ *    Stefano Verna
+ *    Federico Parodi
+ *    Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -33,6 +35,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
+ 
 function appendTag(event) {
 	var text = $('renaming');
 	var value = event.target.getAttribute("value");

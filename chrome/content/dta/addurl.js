@@ -449,6 +449,3 @@ var Dialog = {
 		this.check();
 	}
 }
-
-// XXX: make a real xbl binding out of this :p
-DTA_include("chrome://dta/content/dta/maskbutton.js");
