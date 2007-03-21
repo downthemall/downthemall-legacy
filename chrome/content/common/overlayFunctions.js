@@ -130,7 +130,7 @@ var DTA_preferences = {
 		// BEWARE: not yet implemented in XPCOM 1.8/trunk.
 		var branch = 'extensions.dta.' + key;
 		var c = {value: 0};
-		var prefs = this._prefs.getChildList(branch, c);
+		var prefs = this._pref.getChildList(branch, c);
 		for (var i = 0; i < c.value; ++i) {
 			this.resetDTA(branch + prefs[i]);
 		}
