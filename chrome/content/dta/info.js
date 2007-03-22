@@ -110,7 +110,8 @@ var Dialog = {
 			d.checkFilenameConflict();
 		}
 		
-		['ddRenaming', 'ddDirectory'].forEach(function(e){ Dialog[e].save(); });
+		// XXX: saveing destroys order, saving with putting new entries in the end, or as 2nd entry?
+		//['ddRenaming', 'ddDirectory'].forEach(function(e){ Dialog[e].save(); });
 		
 		return true;
 	},
