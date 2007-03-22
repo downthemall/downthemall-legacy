@@ -12,12 +12,7 @@
 <overlay id="filterspaneoverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<prefpane id="paneFilters" label="&filterspane.label;" onpaneload="Dialog.load();" >
 		
-		<script type="application/x-javascript" src="chrome://dta/content/preferences/filtersPane.js" />
-		<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
-		<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js" />
-		
-		<stringbundle id="strings" src="chrome://dta/locale/prefpanes.properties"/>
-		
+		<script type="application/x-javascript" src="chrome://dta/content/preferences/filtersPane.js" />		
 		<vbox id="mainbox">
 			<vbox flex="1" style="overflow:auto">
 				<tree id="filterTable" flex="1" rows="10" seltype="single" onselect="Dialog.onTableSelectionChange()">

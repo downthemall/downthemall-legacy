@@ -100,3 +100,11 @@ var Interface = {
 		return menu.toString();
 	}
 };
+
+function restoreAll() {
+	try {
+		Preferences.resetAll();
+	} catch(ex) {
+		// XXX
+	}
+}

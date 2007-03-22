@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is the downTHEMall preferences.
+ * The Original Code is the DownThemAll! preferences.
  *
  * The Initial Developer of the Original Code is Nils Maier
  * Portions created by the Initial Developer are Copyright (C) 2006
@@ -39,19 +39,18 @@ pref("extensions.dta.toolsmenu", "1,1,1");
 pref("extensions.dta.toolscompact", true);
 pref("extensions.dta.closetab", false);
 pref("extensions.dta.closedta", false);
-pref("extensions.dta.reduce", true);
 pref("extensions.dta.saveTemp", true);
 pref("extensions.dta.downloadWin", true);
 pref("extensions.dta.existing", 3);
-pref("extensions.dta.ntask",4);
-pref("extensions.dta.timeoutsel",6);
+pref("extensions.dta.ntask", 4);
+pref("extensions.dta.timeout", 300);
 pref("extensions.dta.maxchunks", 5);
 pref("extensions.dta.history", 5);
 pref("extensions.dta.alertbox", 2);
 pref("extensions.dta.removecompleted", true);
 pref("extensions.dta.removecanceled", false);
 pref("extensions.dta.removeaborted", false);
-pref("extensions.dta.infophrases", false);
+pref("extensions.dta.infophrases", true);
 pref("extensions.dta.statistics", false); // later use!
 pref("extensions.dta.logging", false);
 pref("extensions.dta.showOnlyFilenames", true);
