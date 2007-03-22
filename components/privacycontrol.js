@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is the downTHEMall Privacy component.
+ * The Original Code is the DownThemAll! Privacy component.
  *
  * The Initial Developer of the Original Code is Nils Maier
  * Portions created by the Initial Developer are Copyright (C) 2006
