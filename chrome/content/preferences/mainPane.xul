@@ -13,7 +13,7 @@
 	<prefpane
 		id="paneMain"
 		label="&mainpane.label;"
-		onpaneload="versionControl(); Main.load();"
+		onpaneload="Main.load();"
 		helpURI="chrome://dta/locale/help/dtahelp.rdf"
 		helpTopic="Preferences_Main"
 	>

@@ -318,10 +318,6 @@ var Dialog = {
 		// no help available?
 		$("dtaHelp").hidden = !("openHelp" in window);
 
-		// check if we upgraded...
-		// XXX: look for ways to make this not necessary anymore
-		versionControl();
-
 		// construct or dropdowns.
 		this.ddFilter = new DTA_DropDown(
 			"filter",

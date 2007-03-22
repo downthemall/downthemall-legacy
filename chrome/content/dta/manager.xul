@@ -21,7 +21,7 @@
 ]>
 
 <window xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
-	onload="versionControl();loadDown();popup();" 
+	onload="loadDown();popup();" 
 	title="DownThemAll!"  
 	id="downlinks" 
 	onfocus="winFocus=true;" 
@@ -34,14 +34,11 @@
 	>
 	
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
-	<!-- internalFunctions needs overlayFunctions -->
 	<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js" />
 
 	<script type="application/x-javascript" src="chrome://dta/content/dta/select.js" />
 	<script type="application/x-javascript" src="chrome://dta/content/dta/manager.js" />
-	<!-- restorePref.js needs stringB = prefpanes.properties -->
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
-	<script type="application/x-javascript" src="chrome://dta/content/preferences/restorePref.js" />
 	
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
