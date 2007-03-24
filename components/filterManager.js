@@ -201,7 +201,7 @@ Filter.prototype = {
 			throw Components.Exception("Empty filter!");
 		}
 		// localize the label, but only if user didn't change it.
-		if (localizedLabel || !this._prefs.prefHasUserValue(this.pref('label'))) {
+		if (localizedLabel && !this._prefs.prefHasUserValue(this.pref('label'))) {
 			this._label = localizedLabel;
 		}
 		this._test = this.getMultiBytePref(this.pref('test'));
