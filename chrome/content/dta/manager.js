@@ -304,10 +304,9 @@ Visitor.prototype = {
 			if (header in this.cmpKeys) {
 				this[header] = aValue;
 			}
-
 			if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
 				// we have to handle headers like "content-disposition: inline; filename='dummy.txt'; title='dummy.txt';"
-				var value = aValue.match(/file(?:name)?=(["']?)([^\2;]+)\2(?:;.+)?/i);
+				var value = aValue.match(/file(?:name)?=(["']?)([^\1;]+)\1(?:;.+)?/i);
 				if (!value) {
 					// workaround for bug #13959
 					// attachments on some vbulletin forums send nasty headers like "content-disposition: inline; filename*=utf-8''file.ext"
@@ -318,6 +317,7 @@ Visitor.prototype = {
 				}
 				if (value) {
 					this.fileName = value[2].getUsableFileName();
+					Debug.dump("found fn:" + this.fileName);
 				}
 			}
 		} catch (ex) {
