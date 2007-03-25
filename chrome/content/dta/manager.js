@@ -3560,8 +3560,8 @@ var sessionManager = {
 					return null;
 				}
 				if (
-					(removeCompleted && down.getAttribute("completed") == "true")
-					|| (removeCanceled && down.getAttribute("canceled") == "true")
+					(removeCompleted && down.completed)
+					|| (removeCanceled && down.canceled)
 				) {
 					continue;
 				}
