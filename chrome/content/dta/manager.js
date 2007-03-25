@@ -3588,7 +3588,7 @@ var sessionManager = {
 					get("referrer")
 					);
 				d.dbID = dbID;
-				d.startDate = new Date(get(down, "startDate"));
+				d.startDate = new Date(get("startDate"));
 				d.visitors.load(down.visitors);
 
 				[
