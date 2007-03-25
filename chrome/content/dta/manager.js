@@ -3049,19 +3049,25 @@ function removeFromList(index) {
 				order.push(c);
 			}
 		}
+		sessionManager.beginUpdate();
 		order.forEach(removeElement);
-	} else
+		sessionManager.endUpdate();
+	} else {
 		removeElement(index);
-
+	}
 	Check.imRemoving = false;
 	popup();
 }
 
 function removeCompleted() {
 	Check.imRemoving = true;
+	sessionManager.beginUpdate();
 	for (var i=downloadList.length-1; i>=0; i--) {
-		if (downloadList[i].isCompleted) removeElement(i);
+		if (downloadList[i].isCompleted) {
+			removeElement(i);
+		}
 	}
+	sessionManager.endUpdate();
 	Check.imRemoving = false;
 }
 
@@ -3510,6 +3516,13 @@ var sessionManager = {
 		d.dbID = this._con.lastInsertRowID;
 	},
 
+	beginUpdate: function() {
+		this._con.beginTransactionAs(this._con.TRANSACTION_DEFERRED);		
+	},
+	endUpdate: function() {
+		this._con.commitTransaction();
+	}
+	
 	save: function(download) {
 
 		// just one download.
@@ -3518,7 +3531,7 @@ var sessionManager = {
 			return;
 		}
 
-		this._con.beginTransactionAs(this._con.TRANSACTION_DEFERRED);
+		this.beginUpdate();
 		try {
 			this._con.executeSimpleSQL('DELETE FROM queue');
 			downloadList.forEach(
@@ -3531,7 +3544,7 @@ var sessionManager = {
 		catch (ex) {
 			Debug.dump(ex);
 		}
-		this._con.commitTransaction();
+		this.endUpdate();
 
 	},
 	deleteDownload: function(download) {
