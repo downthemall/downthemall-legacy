@@ -3521,8 +3521,7 @@ var sessionManager = {
 	},
 	endUpdate: function() {
 		this._con.commitTransaction();
-	}
-	
+	},	
 	save: function(download) {
 
 		// just one download.
