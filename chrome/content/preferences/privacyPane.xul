@@ -9,7 +9,7 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
-<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" flex="1">
 
 	<prefpane
 		id="panePrivacy"
@@ -29,36 +29,46 @@
 		  <preference id="dtahistory" name="extensions.dta.history" type="int" />
 		</preferences>
 		
-		<groupbox>
-			<caption id="closing" class="bloccotitolo" label="&privacypane.closing.caption;" />
-			<checkbox id="removecompleted" label="&privacypane.removecompleted.label;" preference="dtarmcomp" />
-			<checkbox id="removecanceled" label="&privacypane.removecanceled.label;" preference="dtarmcanc" />
-			<checkbox id="removeaborted" label="&privacypane.removeaborted.label;" preference="dtarmabort" />
-		</groupbox>
+		<grid>
+			<columns><column flex="3"/><column flex="2"/></columns>
+			<rows>
+				<row>
+					<groupbox>
+						<caption id="closing" label="&privacypane.closing.caption;" />
+						<checkbox id="removecompleted" label="&privacypane.removecompleted.label;" preference="dtarmcomp" />
+						<checkbox id="removecanceled" label="&privacypane.removecanceled.label;" preference="dtarmcanc" />
+						<checkbox id="removeaborted" label="&privacypane.removeaborted.label;" preference="dtarmabort" />
+					</groupbox>
 
-		<groupbox orient="horizontal">
-			<caption id="dtaddown" label="&privacypane.dropdowns.caption;"/>
-			<label value="&privacypane.dropdownresults.label;" id="history1" />
-			<menulist id="history" preference="dtahistory" >
-				<menupopup>
-					<menuitem label="0" value="0"/>
-					<menuitem label="1" value="1"/>
-					<menuitem label="2" value="2"/>
-					<menuitem label="3" value="3"/>
-					<menuitem label="4" value="4"/>
-					<menuitem label="5" value="5"/>
-					<menuitem label="6" value="6"/>
-					<menuitem label="7" value="7"/>
-					<menuitem label="8" value="8"/>
-					<menuitem label="9" value="9"/>
-					<menuitem label="10" value="10"/>
-				</menupopup>
-			</menulist>
-			<spacer flex="1"/>
-			<button id="butFoldDel" label="&privacypane.deletefoldershistory.label;" oncommand="Privacy.delFolders();" />
-			<button id="butFiltDel" label="&privacypane.deletefiltershistory.label;" oncommand="Privacy.delFilters();" />
-		</groupbox>
-				
+					<groupbox>
+						<caption id="dtaddown" label="&privacypane.dropdowns.caption;"/>
+						<hbox>
+							<label value="&privacypane.dropdownresults.label;" id="history1" />
+							<spacer flex="1"/>
+							<menulist id="history" preference="dtahistory" >
+								<menupopup>
+									<menuitem label="0" value="0"/>
+									<menuitem label="1" value="1"/>
+									<menuitem label="2" value="2"/>
+									<menuitem label="3" value="3"/>
+									<menuitem label="4" value="4"/>
+									<menuitem label="5" value="5"/>
+									<menuitem label="6" value="6"/>
+									<menuitem label="7" value="7"/>
+									<menuitem label="8" value="8"/>
+									<menuitem label="9" value="9"/>
+									<menuitem label="10" value="10"/>
+								</menupopup>
+							</menulist>
+						</hbox>
+						<hbox align="right">
+							<button id="butFoldDel" label="&privacypane.deletefoldershistory.label;" oncommand="Privacy.delFolders();" />
+							<button id="butFiltDel" label="&privacypane.deletefiltershistory.label;" oncommand="Privacy.delFilters();" />
+						</hbox>
+					</groupbox>
+				</row>
+			</rows>
+		</grid>
 		<groupbox orient="horizontal">
 			<caption label="&privacypane.logs.caption;"/>
 			<checkbox label="&privacypane.enablelogs.label;" preference="dtadump"/>

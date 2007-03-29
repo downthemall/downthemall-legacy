@@ -27,43 +27,50 @@
 			<preference id="dtatemplocation" name="extensions.dta.tempLocation" type="unichar" />
 		</preferences>
 		
-		<groupbox orient="horizontal" align="center">
-			<caption id="dtampd" label="&advancedpane.multipart.caption;" />
-			<label value="&advancedpane.chunks.label;" id="maxchunk" flex="1"/>
-			<menulist id ="maxchunks" preference="dtamaxchunks"> 
-				<menupopup editable="false">
-					<menuitem label="1 (&advancedpane.chunksdisabled;)" value="1"/>
-					<menuitem label="2" value="2"/>
-					<menuitem label="3" value="3"/>
-					<menuitem label="4" value="4"/>
-					<menuitem label="5" value="5"/>
-					<menuitem label="6" value="6"/>
-					<menuitem label="7" value="7"/>
-					<menuitem label="8" value="8"/>
-					<menuitem label="9" value="9"/>
-					<menuitem label="10" value="10"/>
-				</menupopup>
-			</menulist>
-		</groupbox>
+	<grid>
+			<columns><column flex="3"/><column flex="2"/></columns>
+			<rows>
+				<row>			
+					<groupbox orient="horizontal" align="center">
+						<caption id="dtampd" label="&advancedpane.multipart.caption;" />
+						<label value="&advancedpane.chunks.label;" id="maxchunk" flex="1"/>
+						<menulist id ="maxchunks" preference="dtamaxchunks"> 
+							<menupopup editable="false">
+								<menuitem label="1 (&advancedpane.chunksdisabled;)" value="1"/>
+								<menuitem label="2" value="2"/>
+								<menuitem label="3" value="3"/>
+								<menuitem label="4" value="4"/>
+								<menuitem label="5" value="5"/>
+								<menuitem label="6" value="6"/>
+								<menuitem label="7" value="7"/>
+								<menuitem label="8" value="8"/>
+								<menuitem label="9" value="9"/>
+								<menuitem label="10" value="10"/>
+							</menupopup>
+						</menulist>
+					</groupbox>
 
-		<groupbox orient="horizontal" align="center">
-			<caption label="&advancedpane.timeouts.caption;" />
-			<label value="&advancedpane.timeout.label;" flex="1"/>
-			<menulist preference="dtatimeout">
-				<menupopup>
-					<menuitem id="t0" value="10"  label="10 &advancedpane.seconds;" />
-					<menuitem id="t1" value="30"  label="30 &advancedpane.seconds;" />
-					<menuitem id="t2" value="60"  label="1 &advancedpane.minute;" />
-					<menuitem id="t3" value="120" label="2 &advancedpane.minutes;" />
-					<menuitem id="t4" value="180" label="3 &advancedpane.minutes;" />
-					<menuitem id="t5" value="240" label="4 &advancedpane.minutes;" />
-					<menuitem id="t6" value="300" label="5 &advancedpane.minutes;" />
-					<menuitem id="t7" value="600" label="10 &advancedpane.minutes;" />
-					<menuitem id="t8" value="900" label="15 &advancedpane.minutes;" />
-				</menupopup>
-			</menulist>
-		</groupbox>
-
+					<groupbox orient="horizontal" align="center">
+						<caption label="&advancedpane.timeouts.caption;" />
+						<label value="&advancedpane.timeout.label;" flex="1"/>
+						<menulist preference="dtatimeout">
+							<menupopup>
+								<menuitem id="t0" value="10"  label="10 &advancedpane.seconds;" />
+								<menuitem id="t1" value="30"  label="30 &advancedpane.seconds;" />
+								<menuitem id="t2" value="60"  label="1 &advancedpane.minute;" />
+								<menuitem id="t3" value="120" label="2 &advancedpane.minutes;" />
+								<menuitem id="t4" value="180" label="3 &advancedpane.minutes;" />
+								<menuitem id="t5" value="240" label="4 &advancedpane.minutes;" />
+								<menuitem id="t6" value="300" label="5 &advancedpane.minutes;" />
+								<menuitem id="t7" value="600" label="10 &advancedpane.minutes;" />
+								<menuitem id="t8" value="900" label="15 &advancedpane.minutes;" />
+							</menupopup>
+						</menulist>
+					</groupbox>
+				</row>
+			</rows>
+		</grid>
+		
 		<groupbox>
 			<caption label="&advancedpane.tempfiles.caption;" />
 			<checkbox id="useTemp" label="&advancedpane.usetemp.label;" preference="dtatemporary" oncommand="Advanced.toggleTemp();"/>

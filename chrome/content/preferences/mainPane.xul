@@ -28,51 +28,58 @@
 		  <preference id="dtaautoclose" name="extensions.dta.closedta" type="bool"/>
 		</preferences>
 
-		<groupbox>
-			<caption id="ren" label="&mainpane.rename.caption;" />
-			<radiogroup id="scelta" preference="dtaexisting">
-				<grid>
-					<columns><column/><column/></columns>
-					<rows>
-						<row>
-							<radio id="rename1" label="&mainpane.rename.label;" value="0"/>
-							<radio id="overwrite" label="&mainpane.overwrite.label;" value="1"/>
-						</row>
-						<row>
-							<radio id="skip" label="&mainpane.skip.label;" value="2"/>
-							<radio id="ask" label="&mainpane.ask.label;" value="3"/>
-						</row>
-					</rows>
-				</grid>
-			</radiogroup>
-		</groupbox>
+	<grid>
+			<columns><column flex="3"/><column flex="2"/></columns>
+			<rows>
+				<row>		
+					<groupbox>
+						<caption label="&mainpane.downloads.caption;"/>
 
-		<groupbox>
-			<caption label="&mainpane.downloads.caption;"/>
+						<hbox align="center">
+							<label value="&mainpane.concurrent.label;"/>
+							<menulist preference="dtantask">
+								<menupopup>
+									<menuitem label="1" value="1"/>
+									<menuitem label="2" value="2"/>
+									<menuitem label="3" value="3"/>
+									<menuitem label="4" value="4"/>
+									<menuitem label="5" value="5"/>
+									<menuitem label="6" value="6"/>
+									<menuitem label="7" value="7"/>
+									<menuitem label="8" value="8"/>
+									<menuitem label="9" value="9"/>
+									<menuitem label="10" value="10"/>
+								</menupopup>
+							</menulist>
+						</hbox>
 
-			<hbox align="center">
-				<label value="&mainpane.concurrent.label;"/>
-				<menulist preference="dtantask">
-					<menupopup>
-						<menuitem label="1" value="1"/>
-						<menuitem label="2" value="2"/>
-						<menuitem label="3" value="3"/>
-						<menuitem label="4" value="4"/>
-						<menuitem label="5" value="5"/>
-						<menuitem label="6" value="6"/>
-						<menuitem label="7" value="7"/>
-						<menuitem label="8" value="8"/>
-						<menuitem label="9" value="9"/>
-						<menuitem label="10" value="10"/>
-					</menupopup>
-				</menulist>
-			</hbox>
+						<separator class="groove-thin"/>
 
-			<separator class="groove-thin"/>
-
-			<checkbox label="&mainpane.sounderror.label;" preference="dtaerror"/>
-			<checkbox label="&mainpane.closetab.label;" preference="dtaclosetab"/>
-		</groupbox>
+						<checkbox label="&mainpane.sounderror.label;" preference="dtaerror"/>
+						<checkbox label="&mainpane.closetab.label;" preference="dtaclosetab"/>
+					</groupbox>
+					
+					<groupbox>
+						<caption id="ren" label="&mainpane.rename.caption;" />
+						<radiogroup id="scelta" preference="dtaexisting">
+							<grid>
+								<columns><column/><column/></columns>
+								<rows>
+									<row>
+										<radio id="rename1" label="&mainpane.rename.label;" value="0"/>
+										<radio id="overwrite" label="&mainpane.overwrite.label;" value="1"/>
+									</row>
+									<row>
+										<radio id="skip" label="&mainpane.skip.label;" value="2"/>
+										<radio id="ask" label="&mainpane.ask.label;" value="3"/>
+									</row>
+								</rows>
+							</grid>
+						</radiogroup>
+					</groupbox>
+				</row>
+			</rows>
+		</grid>
 
 		<groupbox>
 			<caption label="&mainpane.alert.caption;" />
