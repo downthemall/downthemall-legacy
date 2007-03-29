@@ -3048,27 +3048,45 @@ function cancelPopup() {
 	}
 }
 
-function removeFromList(index) {
+function removeFromList() {
 	Check.imRemoving = true;
 
+	var index = -1;
+	if (arguments.length) {
+		// multi-delete
+		if (arguments[0] instanceof Array) {
+
+			var dellist = arguments[0];
+			// sort desc
+			dellist.sort(function(a,b) { return b - a; });
+			
+			sessionManager.beginUpdate();			
+			dellist.forEach(removeElement);
+			sessionManager.endUpdate();
+
+			Check.imRemoving = false;
+			popup();
+			return;
+		}
+		index = arguments[0];
+	};
+	
+	// remove selection
 	if (index < 0) {
-		var start;
-		var end;
-		var rangeCount = tree.view.selection.getRangeCount();
-		var order = new Array();
-		for (var i=rangeCount-1; i>=0; i--) {
-			start = {}; end = {};
+		var start = {}, end = {}, rangeCount = tree.view.selection.getRangeCount();
+		var list = new Array();
+		for (var i = 0; i < rangeCount; ++i) {
 			tree.view.selection.getRangeAt(i, start, end);
-			for (var c=end.value; c>=start.value; c--) {
-				order.push(c);
+			for (var c = start.value; c <= end.value; ++c) {
+				list.push(c);
 			}
 		}
-		sessionManager.beginUpdate();
-		order.forEach(removeElement);
-		sessionManager.endUpdate();
-	} else {
-		removeElement(index);
+		removeFromList(list);
+		return;
 	}
+
+	// normal remove
+	removeElement(index);
 	Check.imRemoving = false;
 	popup();
 }
@@ -3328,7 +3346,6 @@ function openFolder() {
 	for (var i = 0; i < rangeCount; ++i) {
 		var start = {}; var end = {};
 		tree.view.selection.getRangeAt(i,start,end);
-		// ciclo gli elementi selezionati
 		for (var c = start.value, e = end.value; c <= e; ++c) {
 			try {
 				if (downloadList[c].isCompleted) {
@@ -3343,7 +3360,6 @@ function openFolder() {
 	}
 }
 
-//--> Richiamata dal doppio click, apre il file
 function openFile(event) {
 	var lastSon = $("listDownload0").currentIndex;
 	if (downloadList[lastSon].isCompleted) {
@@ -3356,21 +3372,40 @@ function openFile(event) {
 	}
 }
 function deleteFile() {
-	var idx = $("listDownload0").currentIndex;
-	var download = downloadList[idx];
-	if (!download.isCompleted) {
-		return;
-	}
-	try {
-		var file = new FileFactory(download.dirSave + download.destinationName);
-		if (file.exists() && confirm("Sure to delete '" + file.path + "'?")) {
-			file.remove(false);
+	var dellist = [];
+	
+	var rangeCount = tree.view.selection.getRangeCount();
+	for (var i = 0; i < rangeCount; ++i) {
+		var start = {}, end = {};
+		tree.view.selection.getRangeAt(i, start, end);
+		for (var c = start.value, e = end.value; c <= e; ++c) {
+			if (downloadList[c].isCompleted) {
+				dellist.push(c);
+			}
 		}
-		removeFromList(idx);
 	}
-	catch (ex) {
-		Debug.dump('deleteFile: ' + download.destinationName, ex);
-	}
+	dellist = dellist.filter(
+		function(i) {
+			var d = downloadList[i];
+			try {
+				var file = new FileFactory(d.dirSave + d.destinationName);
+				if (file.exists()) {
+					if (confirm("Sure to delete '" + file.path + "'?")) {
+						file.remove(false);
+						return true;
+					}
+					return false;
+				}
+				return true;
+			}
+			catch (ex) {
+				Debug.dump('deleteFile: ', ex);
+				return false;
+			}
+		},
+		this
+	);
+	removeFromList(dellist);
 }
 
 //--> Richiamata dal context, seleziona tutto
