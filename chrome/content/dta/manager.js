@@ -2465,20 +2465,34 @@ function cancelAll(pressedESC) {
 function startnewDownloads(notQueue, download) {
 
 	var numbefore = $("listDownload0").view.rowCount - 1;
-
+	const DESCS = ['description', 'ultDescription'];
+	var startDate = new Date();
+	
+	
 	for (var i=0; i<download.length; i++) {
 		var e = download[i];
 
 		e.dirSave.addFinalSlash();
 
 		var desc = "";
-		if (("description" in download[i]) && download[i].description.length>0)
-			desc = e.description;
-		else if ("ultDescription" in download[i])
-			desc = e.ultDescription;
+		DESCS.some(
+			function(i) {
+				if (typeof(e[i]) == 'string' && e[i].length) {
+					desc = e.description;
+					return true;
+				}
+				return false;
+			}
+		);
 
-		var startDate = new Date();
-		var d = new downloadElement(e.url, e.dirSave, e.numIstance, desc, e.mask, e.refPage);
+		var d = new downloadElement(
+			e.url,
+			e.dirSave,
+			e.numIstance,
+			desc,
+			e.mask,
+			e.refPage
+		);
 		d.isPaused = !notQueue;
 		d.startDate = startDate;
 
@@ -3351,8 +3365,8 @@ function deleteFile() {
 		var file = new FileFactory(download.dirSave + download.destinationName);
 		if (file.exists() && confirm("Sure to delete '" + file.path + "'?")) {
 			file.remove(false);
-			removeFromList(idx);
 		}
+		removeFromList(idx);
 	}
 	catch (ex) {
 		Debug.dump('deleteFile: ' + download.destinationName, ex);

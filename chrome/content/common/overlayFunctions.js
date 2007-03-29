@@ -388,8 +388,7 @@ var DTA_AddingFunctions = {
 			var el = {
 				'url': url,
 				'refPage': referrer,
-				'description': description,
-				'ultDescription': ''
+				'description': description
 			};
 			this.turboSendToDown([el]);
 			return;
