@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See notice.txt and gpl.txt for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
+<overlay id="DtaBrowserToolbar" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
+	<script type="application/x-javascript" src="chrome://dta/content/integration/menu.js"/>
+	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
+	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
+	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
+
+	<toolbarpalette id="BrowserToolbarPalette"> 
+		<toolbarbutton id="turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1" ondragover="nsDragAndDrop.dragOver(event, dragObserverTdTa);" ondragdrop="nsDragAndDrop.drop(event, dragObserverTdTa);" oncommand="DTA_ContextOverlay.findLinks(true);" label="dTaOneClick!" tooltiptext="dTaOneClick!" />
+		<toolbarbutton id="dta-button" class="chromeclass-toolbar-additional toolbarbutton-1" ondragover="nsDragAndDrop.dragOver(event, dragObserverdTa);" ondragdrop="nsDragAndDrop.drop(event, dragObserverdTa);" oncommand="DTA_ContextOverlay.findLinks(false);" label="DownThemAll!" tooltiptext="DownThemAll!" />
+		<toolbarbutton id="dta-manager-button" class="chromeclass-toolbar-additional toolbarbutton-1" oncommand="DTA_AddingFunctions.openManager();" label="&dta-manager-button;" tooltiptext="DownThemAll! Manager" />
+	</toolbarpalette>
+	<menupopup id="menu_ToolsPopup">	
+			<menuitem id="dta-tool" oncommand="DTA_ContextOverlay.findLinks(false);" 
+				label="DownThemAll!..." image="chrome://dta/skin/common/dta.png" class="menuitem-iconic" />
+			<menuitem id="turbo-tool" oncommand="DTA_ContextOverlay.findLinks(true);" 
+				label="dTaOneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" />
+			
+			<menuitem id="dta-manager-tool" oncommand="DTA_AddingFunctions.openManager();" 
+				label="&dta-manager-button;..." image="chrome://dta/skin/common/box.png" class="menuitem-iconic" />	
+		<menu id="dta-menu" label="DownThemAll" class="menu-iconic" image="chrome://dta/skin/common/dta.png" insertbefore="flashgot-menu" insertafter="sanitizeItem">
+			<menupopup id="dta-Popup">
+			<menuitem id="dta-tool-popup" oncommand="DTA_ContextOverlay.findLinks(false)" 
+				label="DownThemAll!..." image="chrome://dta/skin/common/dta.png" class="menuitem-iconic" />
+			<menuitem id="turbo-tool-popup" oncommand="DTA_ContextOverlay.findLinks(true)" 
+				label="dTaOneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" />
+			<menuitem id="dta-manager-tool-popup" oncommand="DTA_AddingFunctions.openManager()" 
+				label="&dta-manager-button;..." image="chrome://dta/skin/common/box.png" class="menuitem-iconic" />	
+			<menuseparator />
+
+			<menuitem id="dta-pref-tool" oncommand="DTA_showPreferences();"
+				label="&submenu-dta-pref.label;" image="chrome://dta/skin/common/prefs.png" class="menuitem-iconic" />
+			<menuitem id="dta-help-tool" oncommand="openHelp('introduction','chrome://dta/locale/help/dtahelp.rdf');"
+				label="&dta-help-tool.label;" image="chrome://dta/skin/common/help.png" class="menuitem-iconic" />	
+			<menuitem id="dta-about" oncommand="window.openDialog('chrome://dta/content/about/about.xul','_blank','chrome,centerscreen,modal');"
+				label="&about;" image="chrome://dta/skin/common/about.png" class="menuitem-iconic" />
+		</menupopup>
+		</menu>
+	</menupopup>
+</overlay>

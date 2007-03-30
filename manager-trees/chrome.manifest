@@ -1,0 +1,26 @@
+### package ###
+content	dta	chrome/content/
+skin	dta	classic/1.0 chrome/skin/
+locale	dta	en-US	chrome/locale/en-US/
+
+### platform package ###
+content dta-platform	chrome/content/ platform
+skin	dta-platform	classic/1.0 chrome/skin/
+
+### browser ###
+overlay	chrome://browser/content/browser.xul	chrome://dta/content/integration/menu.xul
+overlay	chrome://browser/content/browser.xul	chrome://dta/content/integration/browser.xul
+overlay	chrome://mozapps/content/downloads/unknownContentType.xul	chrome://dta/content/integration/saveas.xul
+
+### privacy control ###
+overlay	chrome://browser/content/browser.xul	chrome://dta/content/privacy/overlayBrowser.xul
+overlay chrome://browser/content/preferences/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeUI.xul
+overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeUI.xul
+overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeCode.xul
+
+### styles ###
+style	chrome://browser/content/browser.xul	chrome://dta/skin/stile.css
+style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/stile.css
+
+
+

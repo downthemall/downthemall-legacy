@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See notice.txt and gpl.txt for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://dta-platform/skin/dta.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://dta/skin/manager/style.css" type="text/css" ?>
+
+<!DOCTYPE dialog [
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
+	%commonDTD;
+	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
+	%managerDTD;
+]>
+
+<window xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
+	onload="loadDown();popup();" 
+	title="DownThemAll!"  
+	id="downlinks" 
+	onfocus="winFocus=true;" 
+	onblur="winFocus=false;" 
+	onunload="return cancelAll(false);" 
+	onclose="return cancelAll(false);" 
+	persist="width height screenX screenY" 
+	ondragover="nsDragAndDrop.dragOver(event,dragObserverTdTa)"  
+	ondragdrop="nsDragAndDrop.drop(event,dragObserverTdTa)"
+	>
+	
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
+	<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js" />
+
+	<script type="application/x-javascript" src="chrome://dta/content/dta/select.js" />
+	<script type="application/x-javascript" src="chrome://dta/content/dta/manager.js" />
+	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
+	
+	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
+	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
+
+	<stringbundleset>
+		<stringbundle src="chrome://dta/locale/common.properties"/>
+		<stringbundle src="chrome://dta/locale/manager.properties"/>
+		<stringbundle src="chrome://dta/locale/prefpanes.properties"/>
+	</stringbundleset>
+
+	<keyset>
+		<key id="esc" keycode="VK_ESCAPE" oncommand="cancelAll(true);"/>
+		<key id="kMacEsc" modifiers="accel" key="W" oncommand="cancelAll(true);"/>
+		<key id="enter" keycode="VK_RETURN" oncommand="openFile();"/>
+		<key id="sAll" modifiers="accel" key="A" oncommand="selectAll();"/>
+		<key id="kUp" modifiers="alt" keycode="VK_PAGE_UP" oncommand="move(-1);"/>
+		<key id="kDown" modifiers="alt" keycode="VK_PAGE_DOWN" oncommand="move(1);"/>
+		<key id="kCancel" keycode="VK_DELETE" oncommand="removeFromList(-1);"/>
+		<key id="kMacCancel" modifiers="meta" keycode="VK_BACK" oncommand="removeFromList(-1);"/>
+		<key id="kTop" modifiers="alt" keycode="VK_HOME" oncommand="moveTop(true);"/>
+		<key id="kBottom" modifiers="alt" keycode="VK_END" oncommand="moveTop(false);"/>
+		<key id="kPause" modifiers="accel" key="P" oncommand="pauseResumeReq(true);"/>
+		<key id="kResume" modifiers="accel" key="R" oncommand="pauseResumeReq(false);"/>
+		<key id="kAdd" modifiers="accel" key="+" oncommand="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome,centerscreen,dialog,dependent');"/>
+		<key id="kGetInfo" modifiers="accel" key="I" oncommand="getInfo();"/>
+	</keyset>
+	
+
+	<popupset>
+		<popup id="popup" onpopupshowing="popup();">
+			<menuitem id="info" class="menuitem-iconic" image="chrome://dta/skin/manager/info.png" label="&infos.label;" oncommand="getInfo();" />
+			<menuseparator />
+			<menuitem id="launch" class="menuitem-iconic" image="chrome://dta/skin/manager/launch.png" label="&launch.label;" oncommand="openFile();" />
+			<menuitem id="delete" class="menuitem-iconic" image="chrome://dta/skin/manager/delete.png" label="&delete.label;" oncommand="deleteFile();" />
+			<menuitem id="folder" class="menuitem-iconic" image="chrome://dta/skin/manager/folder.png" label="&targetdir.label;" oncommand="openFolder();" />
+			<menuseparator />
+			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" image="chrome://dta/skin/manager/pause.png" oncommand="pauseResumeReq(true);" />
+			<menuitem id="play" class="menuitem-iconic" label="&resume.label;" image="chrome://dta/skin/manager/play.png" oncommand="pauseResumeReq(false);" />
+			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/skin/manager/cancel.png" oncommand="cancelPopup();" />
+			<menuseparator />
+			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/skin/manager/clean.png" oncommand="removeCompleted();" />
+			<menuseparator />
+			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="selectAll();" />
+			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="selectInv();" />
+			<menuseparator />
+			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" image="chrome://dta/skin/manager/movetop.png" oncommand="moveTop(true);" />
+			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" image="chrome://dta/skin/manager/moveup.png" oncommand="move(-1);" />
+			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" image="chrome://dta/skin/manager/movedown.png" oncommand="move(1);" />
+			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" image="chrome://dta/skin/manager/movebottom.png" oncommand="moveTop(false);" />
+			<menuseparator />
+			<menu id="misc" class="menu-iconic" image="chrome://dta/skin/manager/misc.png" label="&misc.label;">
+				<menupopup>
+					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/skin/manager/addpart.png" oncommand="addChunk(true);" />
+					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" image="chrome://dta/skin/manager/rempart.png" oncommand="addChunk(false);" />
+					<menuseparator/>
+					<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/remove.png" oncommand="removeFromList(-1);" />					
+					<menuseparator />
+					<menuitem id="prefs" class="menuitem-iconic" label="&options.label;" image="chrome://dta/skin/common/prefs.png" onclick="DTA_showPreferences();" />
+				</menupopup>
+			</menu>
+		</popup>
+		<tooltip id="t1" position="after_pointer" noautohide="true" onpopupshowing="return tooltipInfo(event);" onpopuphiding="stopCanvas();" style="width: 470px;" >
+			<vbox>
+				<hbox>
+					<vbox>
+						<label id="infoURLTitle" style="font-weight: bold; max-width: 160px;" value="&infoURLTitle.value;" />
+						<label id="infoDestTitle" style="font-weight: bold; max-width: 160px;" value="&infoDestTitle.value;" />
+					</vbox>
+					<vbox>
+						<label crop="left" id="infoURL" style="max-width: 320px;" />
+						<label crop="left" id="infoDest" style="max-width: 320px;" />
+					</vbox>
+				</hbox>
+				<html:canvas id="drawChunks" width="300" height="20" style="border:1px solid #555; margin:5px 10px;" ></html:canvas>
+				<html:canvas id="drawSpeed" width="300" height="20" style="border:1px solid #555; margin:5px 10px;" ></html:canvas>
+			</vbox>
+		</tooltip>
+	</popupset>	
+	
+ 	<vbox flex="1">
+		<toolbox>
+		  <toolbar id="tools">
+			<spacer/>
+			<toolbarbutton label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="Manually add an URL to DownThemAll" />
+			<spacer/>
+			<toolbarbutton label="&resume.label;" id="toolplay" onclick="pauseResumeReq(false);" tooltiptext="Start/Resume/Restart downloads" />
+			<toolbarbutton label="&pause.label;" id="toolpause" onclick="pauseResumeReq(true);" tooltiptext="Pause downloads" />
+			<toolbarbutton label="&cancel.label;" id="toolcancel" onclick="cancelPopup();" tooltiptext="Cancel/Reset downloads" />
+			<spacer/>
+			<toolbarbutton label="&movetop.label;" id="toolmovetop"  onclick="moveTop(true);" />
+			<toolbarbutton label="&moveup.label;" id="toolmoveup" onclick="move(-1);"/>
+			<toolbarbutton label="&movedown.label;" id="toolmovedown" onclick="move(1);"/>
+			<toolbarbutton label="&movebottom.label;" id="toolmovebottom" onclick="moveTop(false);"  />
+			<spacer/>
+			<toolbarbutton  id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
+			<spacer id="logo" flex="1" />
+		  </toolbar>
+		</toolbox>
+
+		<tree id="listDownload0" flex="1" hidecolumnpicker="false"	context="popup"	seltype="multiple" enableColumnDrag="true" onselect="popup();" style="margin:0px;">
+			<treecols>
+				<treecol id="task" label="&task.label;" ordinal="1" flex="35" crop="center" persist="width ordinal hidden"/>
+				<splitter class="tree-splitter"/>
+				<treecol id="per" label="&per.label;" ordinal="2" flex="10" persist="width ordinal hidden" style="text-align:right;" />
+				<splitter class="tree-splitter"/>
+				<treecol id="pct" label="&pct.label;" ordinal="3" type="progressmeter" flex="35" persist="width ordinal hidden"/>
+				<splitter class="tree-splitter"/>
+				<treecol id="dim" label="&dim.label;" ordinal="4" flex="20" persist="width ordinal hidden"/>
+				<splitter class="tree-splitter"/>
+				<treecol id="time" label="&time.label;" ordinal="5" flex="10" persist="width ordinal hidden"/>
+				<splitter class="tree-splitter"/>
+				<treecol id="parts" label="&parts.label;" ordinal="7" flex="4" persist="width ordinal hidden" style="text-align:center;"/>
+				<splitter class="tree-splitter"/>
+				<treecol id="mask" label="&mask.label;" ordinal="8" hidden="true" crop="left" flex="8" persist="width ordinal hidden" />
+				<splitter class="tree-splitter"/>
+				<treecol id="path" label="&path.label;" ordinal="9" hidden="true" crop="center" flex="15" persist="width ordinal hidden" />
+				<splitter class="tree-splitter"/>
+				<treecol id="speed" label="&speed.label;" ordinal="6" flex="10" persist="width ordinal hidden"/>
+			</treecols>
+			<treechildren id="downfigli" tooltip="t1">
+			</treechildren>
+		</tree>
+
+	</vbox>
+
+	<statusbar id="footer"  >
+		 <statusbarpanel id="status" label="" flex="1" />
+		 <statusbarpanel id="dtaHelp" class="statusbarpanel-iconic-text" label="Help!" onclick="openHelp('Manager','chrome://dta/locale/help/dtahelp.rdf');" src="chrome://dta/skin/common/help.png" />
+		 <statusbarpanel id="options" class="statusbarpanel-iconic-text" label="&options.label;" onclick="DTA_showPreferences();" src="chrome://dta/skin/common/prefs.png" />
+	</statusbar>
+	
+</window>

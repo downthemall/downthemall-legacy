@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>Batch Downloading</title>
+	<link rel="stylesheet" type="text/css" href="style.css"/>
+</head>
+<body>
+<div id="header">
+	This page in your language? <a href="http://www.downthemall.net" target="_blank">Check out DownThemAll website!</a>
+</div>
+
+<div id="main">
+	<h1>Batch Downloading</h1>
+	<p>Batch downloads are an easy way to download whole ranges of files.</p>
+	<p>You simply define where to start, where to end and optionally a stepwidth.</p>
+	<ol>
+		<li>Click<code>Add URL(s)</code> button available from the Manager window</li>
+		<li>Fill in URL, renaming mask, download folder and optionally a referrer.</li>
+		<li>Modify your URL to use batch descriptors as described below.</li>
+		<li>Feel free to add even more batch descriptors, but keep in mind that downloading huge ammounts of files will slow down DownThemAll! and overall Firefox performance.</li>
+	</ol>
+	<h2>Batch descriptors</h2>
+	<p>A batch descriptor might look as following:<br/>
+	<code>[start:end]</code><br/>
+	<code>[start:end:step]</code>
+	<table>
+		<tr>
+			<th>Variable</th>
+			<th>Meaning</th>
+		</tr>
+		<tr>
+			<td>start</td>
+			<td>
+				Either a number or a single character saying where to start the range.
+			</td>
+		</tr>
+		<tr>
+			<td>end</td>
+			<td>
+				Either a number or a single character saying where to end the range. dTa! will process that range inclusive <code>end</code>.
+			</td>
+		</tr>
+		<tr>
+			<td>step</td>
+			<td>
+				Use this to define which items between start and end you would like to download.
+			</td>
+		</tr>
+	</table>
+	<p><code>start</code> and <code>end</code> must be of the same type (numerical, lowercase character, uppercase character).</p>
+	<h3>Examples</h3>
+	<p>These batch descriptors will work.</p>
+	<table class="codesample">
+		<tr>
+			<th>Descriptor</th>
+			<th>Result</th>
+		</tr>
+		<tr>
+			<td>[1:100]</td>
+			<td>1 to 100</td>
+		</tr>
+		<tr>
+			<td>[01:100]</td>
+			<td>01 to 100</td>
+		</tr>
+		<tr>
+			<td>[001:100]</td>
+			<td>001 to 100</td>
+		</tr>
+		<tr>
+			<td>[1:100:2]</td>
+			<td>1, 3, 5, ...</td>
+		</tr>		
+		<tr>
+			<td>[0:100:3]</td>
+			<td>0, 3, 6, ...</td>
+		</tr>
+		<tr>
+			<td>[-100:100]</td>
+			<td>-100, -99, ..., 99, 100</td>
+		</tr>		
+		
+		<tr>
+			<td>[100:-5:-1]</td>
+			<td>100 to -5</td>
+		</tr>
+		<tr>
+			<td>[100:-0100:2]</td>
+			<td>0100, 0098, ..., -0099, -0100</td>
+		</tr>
+		<tr>
+			<td>[a:z]</td>
+			<td>a to z</td>
+		</tr>
+		<tr>
+			<td>[F:K]</td>
+			<td>F to K</td>
+		</tr>
+		<tr>
+			<td>[a:e:2]</td>
+			<td>a, c, e</td>
+		</tr>
+	</table>
+	Those won't work.
+	<table class="codesample">
+		<tr>
+			<th>Descriptor</th>
+			<th>Result</th>
+		</tr>
+		<tr>
+			<td>[1:-100]</td>
+			<td>Negative Range</td>
+		</tr>
+		<tr>
+			<td>[1:100:-1]</td>
+			<td>Negative as well</td>
+		</tr>
+		<tr>
+			<td>[1:a]</td>
+			<td>Types different</td>
+		</tr>		
+		<tr>
+			<td>[A:a]</td>
+			<td>Types different</td>
+		</tr>
+		<tr>
+			<td>[1:2:a]</td>
+			<td><code>step</code> must be numeric</td>
+		</tr>
+	</table>
+</div>
+</body>
+</html>

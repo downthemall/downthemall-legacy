@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See notice.txt and gpl.txt for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
+<overlay id="dta" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<script type="application/x-javascript" src="chrome://dta/content/integration/menu.js"/>
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
+
+	<popup id="contentAreaContextMenu">
+		<menu image="chrome://dta/skin/common/dta.png" id="dtaCtxCompact" label="DownThemAll!" class="menu-iconic"  insertafter="context-sep-selectall">
+			<menupopup id="dtaCtxSubmenu">
+				<menuseparator class="thin" id="dtaCtxSepFront"/>
+				<menuitem image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" id="dtaCtxTDTA" accesskey="o" oncommand="DTA_ContextOverlay.findLinks(true);"/>
+				<menuitem image="chrome://dta/skin/common/dta.png" class="menuitem-iconic" id="dtaCtxDTA" accesskey="n" oncommand="DTA_ContextOverlay.findLinks(false);"/>
+				<menuitem image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" id="dtaCtxSaveT" accesskey="o" oncommand="DTA_ContextOverlay.findSingleLink(true);"/>
+				<menuitem image="chrome://dta/skin/common/dta.png" class="menuitem-iconic" id="dtaCtxSave" accesskey="n" oncommand="DTA_ContextOverlay.findSingleLink(false);"/>
+				<menuseparator class="thin" id="dtaCtxSepPref"/>
+				<menuitem image="chrome://dta/skin/common/prefs.png" class="menuitem-iconic" id="dtaCtxPref" label="&dtaCtxPref.label;" oncommand="DTA_showPreferences();" />
+				<menuseparator class="thin" id="dtaCtxSepBack"/>
+			</menupopup>
+		</menu>
+	</popup>
+</overlay>

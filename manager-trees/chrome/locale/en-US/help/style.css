@@ -1,0 +1,137 @@
+* { 
+ font-family: "Lucida Grande", "Lucida Sans Unicode", Arial;
+ margin: 0px; 
+ font-size: 13px; 
+ text-align: justify;
+ color: #333;
+ line-height: 128%;
+ }
+
+a {
+color: #333;
+}
+
+a:hover {
+color: #663300;
+}
+
+body {
+	
+}
+
+p {
+	margin: 15px;
+	margin-top: 3px;
+	margin-bottom: 5px;
+	line-height: 150%;
+}
+
+ul {
+	margin: 6px 15px 5px 20px;
+	padding: 5px;
+}
+
+ul ul {
+	margin-top: 0px;
+}
+
+li {
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+
+h1, h2, h3 {
+	padding-top: 1em;
+	margin-bottom: 1ex;
+	border-bottom: #FFE391 solid 1px;
+}
+h1 {
+	font-size: 120%;
+}
+h2 {
+	font-size: 110%;
+}
+
+table {
+	text-align: left;
+	margin-left: auto;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	margin-right: auto;
+	width: 85%;
+	border-collapse: collapse;
+	border-bottom: #ddd solid 3px;
+}
+
+td {
+	vertical-align: top;
+	margin-bottom: 3px;
+	padding-bottom: 3px;
+	padding-right: 20px;
+	padding-left: 10px;
+	border-bottom: #ddd solid 1px;
+}
+
+th {
+	text-align: center;
+	font-weight: bold;
+	border-top: #FFE391 solid 1px;
+	border-bottom: #FFE391 solid 1px;
+	background-color: #FFF9DF;
+}
+
+strong {
+	font-style: normal;
+	font-size: 100%;
+}
+
+code {
+	font-family: monospace !important;
+	background-color: #f3f3f3;
+	padding: 1px;
+	border-top: 1px solid #e3e3e3;
+	border-bottom: 1px solid #e3e3e3;
+}
+
+pre {
+	font-family: monospace !important;
+	overflow: auto;
+	background-color: #fff9df;
+	border: 1px solid #ffe391;
+	margin: 15px;
+}
+	
+#header {
+	padding: 0.75em;
+	padding-right: 2em;
+	border-top: 1ex solid white;
+	background: #FFF6CF url(chrome://dta/skin/common/help.png) no-repeat 1em 50%;
+	text-align: right;
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	font-size: smaller;
+}
+#header * {
+	font-size: 100%;
+}
+#main {
+	margin: 0;
+	padding: 15px;
+	padding-top: 42px;
+	padding-bottom: 30px;
+	background: white url(chrome://dta/skin/common/logo.jpg) no-repeat right top;
+
+}
+
+.shortcut {
+	padding: 1px 3px;
+	background-color: #EFEAD1;
+	border: 1px solid #DFD299;
+	-moz-border-radius: 4px;
+}
+
+.codesample tr td:first-child {
+	font-family: monospace !important;
+}

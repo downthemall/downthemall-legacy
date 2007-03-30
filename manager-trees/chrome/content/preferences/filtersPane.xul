@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+* Version: GPL 2.0
+*
+* This code is part of DownThemAll! - dTa!
+* Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+* 
+* See notice.txt and gpl.txt for details.
+*
+* ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
+<overlay id="filterspaneoverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<prefpane id="paneFilters" label="&filterspane.label;" onpaneload="Dialog.load();" flex="1">
+		
+		<script type="application/x-javascript" src="chrome://dta/content/preferences/filtersPane.js" />		
+		<tree id="filterTable" flex="1" seltype="single" onselect="Dialog.onTableSelectionChange()">
+			<treecols>
+				<treecol label="&listhead1.label;" flex="1" id="filtername" />
+				<splitter class="splitt" />
+				<treecol label="&listhead2.label;" flex="2" id="filtertest" />
+			</treecols>
+			<treechildren id="listafile" tooltip="t1">
+			</treechildren>
+		</tree>
+		<groupbox id="editableGroup">
+			<grid flex="1">
+				<columns>
+					<column />
+					<column flex="1"/>
+				</columns>
+				<rows>
+					<row id="captionRow" align="center">
+						<label value="&listhead1.label;:"/>
+						<textbox id="filterLabel" oninput="Dialog.onFilterEdit();" onblur="Dialog.onFinishedFilterEdit();" />
+					</row>
+					<row id="filterRow" align="center">
+						<label value="&filter.label;"/>
+						<textbox id="filterTest" oninput="Dialog.onFilterEdit();" onblur="Dialog.onFinishedFilterEdit();" />
+						<checkbox id="filterIsRegex" label="&regex.label;" oncommand="Dialog.onIsRegexClick();"/>
+					</row>
+					<row align="center">
+						<label id="useAs" value="&useAs.label;"/> 
+						<hbox id="linkPicRow">
+							<checkbox id="filterText" label="&linksf.label;" oncommand="Dialog.onCheckboxChange();" />
+							<checkbox id="filterImage" label="&imagesf.label;" oncommand="Dialog.onCheckboxChange();" />
+						</hbox>
+					</row>
+				</rows>
+			</grid>
+		</groupbox>
+		<hbox>
+			<spacer flex="1"/>
+			<button label="&add.label;" oncommand="Dialog.createFilter();"/>
+			<button label="&remove.label;" oncommand="Dialog.removeFilter();" id="removebutton"/>
+			<button label="&default.label;" oncommand="Dialog.restoreDefaultFilters();" id="defaultbutton"/>
+			<spacer flex="1"/>
+		 </hbox>
+	</prefpane>
+</overlay>

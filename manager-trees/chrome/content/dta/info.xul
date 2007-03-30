@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See notice.txt and gpl.txt for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
+
+<!DOCTYPE dialog [
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
+	%commonDTD;
+	<!ENTITY % infoDTD SYSTEM "chrome://dta/locale/info.dtd">
+	%infoDTD;
+]>
+
+<dialog
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	title="&title;" 
+	id="downloadInformations" 
+	onload="Dialog.load();" 
+	style="width:500px; margin: 0; padding: 0;"
+	buttons="accept,cancel" 
+	ondialogaccept="return Dialog.accept();" 
+	>
+	
+	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" /> 
+	
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
+	<!-- internalFunctions needs overlayFunctions -->
+	<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js"/>
+
+	<script src="chrome://global/content/nsDragAndDrop.js"/>
+	<script src="chrome://global/content/nsTransferable.js"/>
+	<script type="application/x-javascript" src="info.js"/>
+	
+	<stringbundleset>
+		<stringbundle src="chrome://dta/locale/common.properties"/>
+	</stringbundleset>
+
+	<keyset>
+		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
+	</keyset>
+	
+	<dialogheader id="logo" title="&info.label;" />
+
+	<grid style="padding:5px 10px;">
+		<columns>
+			<column />
+			<column flex="1"/>
+		</columns>
+		<rows>
+			<row align="center">
+				<label control="infoURL" id="infoURLTitle" value="&link.value;" />
+				<textbox id="infoURL" readonly="true" />
+			</row>
+			<row align="center">
+				<label control="sourcePage" id="sourcePageTitle" value="&referrer.value;" />
+				<textbox id="sourcePage" readonly="true" />
+			</row>
+			<row align="center">
+				<label control="directory" id="destinationPath" value="&dest.caption;" />
+				<hbox flex="1">
+					<menulist id="directory" editable="true" flex="1">
+						<menupopup id="directoryitems">
+						</menupopup>
+					</menulist>
+					<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" image="chrome://dta/skin/common/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browse.tip;" />
+				</hbox>
+			</row>
+			<row align="center">
+				<label control="renaming" id="infoDestTitle" value="&mask.label;: " />
+				<hbox>
+					<menulist id="renaming" editable="true" flex="1" tooltiptext="&mask.tip;">
+						<menupopup id="renamingitems">
+						</menupopup>
+					</menulist>
+					<maskbutton/>
+				</hbox>
+			</row>
+		</rows>
+	</grid>
+	
+	<html:canvas id="draw" width="300" height="20" style="border:1px solid #555; margin:5px 10px;" ></html:canvas>
+</dialog>
