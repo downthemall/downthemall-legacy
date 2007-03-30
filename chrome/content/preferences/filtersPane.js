@@ -10,8 +10,6 @@
  *	Nils Maier <MaierMan@web.de>
  *
  * ***** END LICENSE BLOCK ***** */
- 
-var strbundle;
 
 function FilterTree(table) {
 	this._table = table;
@@ -202,7 +200,7 @@ var Dialog = {
 	_lastRowEdited : -1,
 	
 	load: function DTA_load() {
-		strbundle = $("strings");
+		make_();
 		// create and attach the tree to the view
 		this._table = $("filterTable");
 		this._filterTree = new FilterTree(this._table);
@@ -366,8 +364,8 @@ var Dialog = {
 		Debug.dump("createFilter");
 		
 		var id = DTA_FilterManager.create(
-			strbundle.getString("newfilt"), 
-			strbundle.getString("inserthere"),
+			_("newfilt"), 
+			_("inserthere"),
 			false,
 			1,
 			false

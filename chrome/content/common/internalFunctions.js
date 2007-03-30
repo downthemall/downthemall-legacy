@@ -332,6 +332,16 @@ StringBundles.prototype = {
 		throw new Components.Exception('BUNDLE STRING NOT FOUND');		
 	}
 };
+var _;
+function make_() {
+	var bundles = new StringBundles();
+	_ = function() {
+		if (arguments.length == 1) {
+			return bundles.getString(arguments[0]);
+		}
+		return bundles.getFormattedString.apply(bundles, arguments);
+	}
+}
 
 const FileFactory = new Components.Constructor(
 	"@mozilla.org/file/local;1",

@@ -13,10 +13,9 @@
 
 
 var Dialog = {
-	sb: null,
 	load: function DTA_load() {
+		make_();
 		try {
-			this.sb = new StringBundles();
 			this.canvas = $("draw").getContext("2d");
 		
 			// load dropdownns
@@ -177,7 +176,7 @@ var Dialog = {
 		var f = new filePicker();
 		var newDir = f.getFolder(
 			this.ddDirectory.current,
-			strbundle.getString("validdestination")
+			_("validdestination")
 		);
 		if (newDir) {
 			this.ddDirectory.current = newDir;
@@ -191,8 +190,8 @@ var Dialog = {
 		}
 		if (!f.checkDirectory(dir))
 		{
-			alert(strbundle.getString("alertfolder"));
-			var newDir = f.getFolder(null, strbundle.getString("validdestination"));
+			alert(_("alertfolder"));
+			var newDir = f.getFolder(null, _("validdestination"));
 			this.ddDirectory.current = newDir ? newDir : '';
 			return false;
 		}
