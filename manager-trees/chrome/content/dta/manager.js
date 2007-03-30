@@ -54,90 +54,7 @@ if (!Ci) {
 const MIN_CHUNK_SIZE = 204800; // 200kb
 const MAX_CHUNK_SIZE = 10485760; // 10MB
 
-var Prefs = {
-	// default values
-	showOnlyFilenames: true,
-	alertingSystem: 0,
-
-	// conflict filenames preference for this session (-1 not setted)
-	askEveryTime: true,
-	sessionPreference: -1,
-	onConflictingFilenames: 3,
-
-	maxInProgress: 5,
-	maxChunks: 5,
-	tempLocation: null,
-
-	currentTooltip: null,
-
-	removeCompleted: true,
-	removeAborted: false,
-	removeCanceled: false,
-
-	// nsIObserver
-	observe: function(subject, topic, prefName) {
-		this._refreshPrefs();
-	},
-
-	init: function() {
-		makeObserver(this);
-
-		try {
-			this.observe();
-			var pbi = Cc['@mozilla.org/preferences-service;1']
-				.getService(Ci.nsIPrefService)
-				.getBranch(null)
-				.QueryInterface(Components.interfaces.nsIPrefBranch2)
-			;
-			pbi.addObserver('extensions.dta.', this, true);
-			pbi.addObserver('network.', this, true);
-		}
-		catch (ex) {
-			Debug.dump("failed to add pref-observer", ex);
-		}
-	},
-
-	_refreshPrefs: function() {
-		Debug.dump("pref reload");
-
-		this.removeCompleted = Preferences.getDTA("removecompleted", true);
-		this.removeAborted = Preferences.getDTA('removeaborted', false);
-		this.removeCanceled = Preferences.getDTA("removecanceled", false);
-
-		this.maxInProgress = Preferences.getDTA("ntask", 5);
-		this.maxChunks = Preferences.getDTA("maxchunks", 5);
-		this.showOnlyFilenames = Preferences.getDTA("showOnlyFilenames", true);
-		this.onConflictingFilenames = Preferences.getDTA("existing", 3);
-		this.alertingSystem = Preferences.getDTA("alertbox", (SYSTEMSLASH == '\\') ? 1 : 0);
-
-		if (Preferences.get("saveTemp", true)) {
-			try {
-				this.tempLocation = Preferences.getMultiByteDTA("tempLocation", '');
-				if (this.tempLocation == '') {
-					this.tempLocation = Cc["@mozilla.org/file/directory_service;1"]
-						.getService(Ci.nsIProperties)
-						.get("TmpD", Ci.nsIFile);
-					this.tempLocation.append("dta");
-				} else {
-					this.tempLocation = new FileFactory(this.tempLocation);
-				}
-			} catch (ex) {
-				this.tempLocation = null;
-				// XXX: error handling
-			}
-		}
-		var conns = (this.maxInProgress * this.maxChunks + 2) * 2;
-		['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server'].forEach(
-			function(e) {
-				if (conns > Preferences.get(e, conns)) {
-					Preferences.set(e, conns);
-				}
-				conns /= 2;
-			}
-		);
-	}
-}
-Prefs.init();
+DTA_include('chrome://dta/content/dta/manager/prefs.js');
 
 // --------* Statistiche *--------
 var Stats = {
@@ -152,253 +69,8 @@ var Stats = {
 	downloadedBytes: 0
 }
 
-function DTA_URLManager(urls) {
-	this._urls = [];
-	this._idx = 0;
-
-	if (urls instanceof Array) {
-		this.initByArray(urls);
-	}
-	else if (urls) {
-		throw "Feeding the URLManager with some bad stuff is usually a bad idea!";
-	}
-}
-DTA_URLManager.prototype = {
-	_sort: function(a,b) {
-		const rv = a.preference - b.preference;
-		return rv ? rv : (a.url < b.url ? -1 : 1);
-	},
-	initByArray: function um_initByArray(urls) {
-		for (var i = 0; i < urls.length; ++i) {
-			this.add(
-				new DTA_URL(
-					urls[i].url,
-					urls[i].charset,
-					urls[i].usable,
-					urls[i].preference
-				)
-			);
-		}
-		this._urls.sort(this._sort);
-		this._usable = this._urls[0].usable;
-	},
-	add: function um_add(url) {
-		if (!url instanceof DTA_URL) {
-			throw (url + " is not an DTA_URL");
-		}
-		if (!this._urls.some(function(ref) { return ref.url == url.url; })) {
-			this._urls.push(url);
-		}
-	},
-	getURL: function um_getURL(idx) {
-		if (typeof(idx) != 'number') {
-			this._idx--;
-			if (this._idx < 0) {
-				this._idx = this._urls.length - 1;
-			}
-			idx = this._idx;
-		}
-		return this._urls[idx];
-	},
-	get url() {
-		return this._urls[0].url;
-	},
-	get usable() {
-		return this._urls[0].usable;
-	},
-	get charset() {
-		return this._urls[0].charset;
-	},
-	replace: function um_replace(url, newUrl) {
-		this._urls.forEach(function(u,i,a){ if (u.url == url) u = newURL; });
-	},
-	save: function um_save() {
-		var rv = [];
-		for (var i = 0, e = this._urls.length; i < e; ++i) {
-			var c = {};
-			c.url = this._urls[i].url;
-			c.charset = this._urls[i].charset;
-			c.usable = this._urls[i].usable;
-			c.preference = this._urls[i].preference;
-			rv.push(c);
-		}
-		return rv;
-	}
-};
-
-function Visitor() {
-	// sanity check
-	if (arguments.length != 1) {
-		return;
-	}
-
-	var nodes = arguments[0];
-	for (x in nodes) {
-		if (!name || !(name in this.cmpKeys))	{
-			continue;
-		}
-		this[x] = nodes[x];
-	}
-}
-
-Visitor.prototype = {
-	cmpKeys: {
-		'etag': true, // must not be modified from 200 to 206: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.7
-		//'content-length': false,
-		'content-type': true,
-		'last-modified': true, // may get omitted later, but should not change
-		'content-encoding': true // must not change, or download will become corrupt.
-	},
-	type: null,
-	overrideCharset: null,
-	encoding: null,
-	fileName: null,
-	dontacceptrange: false,
-	contentlength: 0,
-
-	QueryInterface: function(aIID) {
-		if (
-			aIID.equals(Ci.nsISupports)
-			|| aIID.equals(Ci.nsIHttpHeaderVisitor)
-		) {
-			return this;
-		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
-	},
-	visitHeader: function(aHeader, aValue) {
-		try {
-			const header = aHeader.toLowerCase();
-			switch (header) {
-				case 'content-type': {
-					this.type = aValue;
-					var ch = aValue.match(/charset=['"]?([\w\d_-]+)/i);
-					if (ch && ch[1].length) {
-						DTA_debug.dump("visitHeader: found override to " + ch[1]);
-						this.overrideCharset = ch[1];
-					}
-				}
-				break;
-
-				case 'content-encoding':
-					this.encoding = aValue;
-				break;
-
-				case 'accept-ranges':
-					this.dontacceptrange = (aValue.toLowerCase().indexOf('none') >= 0);
-					Debug.dump("acceptrange = " + aValue.toLowerCase());
-				break;
-
-				case 'content-length':
-					this.contentlength = Number(aValue);
-				break;
-
-				case 'content-range':
-					// XXX?
-					var dim = aValue.substring(aValue.lastIndexOf('/') + 1, aValue.length);
-					if (dim.length>0 && dim.lastIndexOf('*')==-1) {
-						this.contentlength = Number(dim);
-					}
-				break;
-			}
-
-			if (header in this.cmpKeys) {
-				this[header] = aValue;
-			}
-			if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
-				// we have to handle headers like "content-disposition: inline; filename='dummy.txt'; title='dummy.txt';"
-				var value = aValue.match(/file(?:name)?=(["']?)([^\1;]+)\1(?:;.+)?/i);
-				if (!value) {
-					// workaround for bug #13959
-					// attachments on some vbulletin forums send nasty headers like "content-disposition: inline; filename*=utf-8''file.ext"
-					value = aValue.match(/file(?:name)?\*=(.*)''(.+)/i);
-					if (value) {
-						this.overrideCharset = value[1];
-					}
-				}
-				if (value) {
-					this.fileName = value[2].getUsableFileName();
-					Debug.dump("found fn:" + this.fileName);
-				}
-			}
-		} catch (ex) {
-			Debug.dump("hrhv::visitHeader:", ex);
-		}
-	},
-	compare: function vi_compare(v)	{
-		if (!(v instanceof Visitor)) {
-			return;
-		}
-
-		for (x in this.cmpKeys) {
-			// we don't have this header
-			if (!(x in this)) {
-				continue;
-			}
-			// v does not have this header
-			else if (!(x in v)) {
-				// allowed to be missing?
-				if (this.cmpKeys[x]) {
-					continue;
-				}
-				Debug.dump(x + " missing");
-				throw (x + " is missing");
-			}
-			// header is there, but differs
-			else if (this[x] != v[x]) {
-				Debug.dump(x + " nm: [" + this[x] + "] [" + v[x] + "]");
-				throw ("Header " + x + "doesn't match");
-			}
-		}
-	},
-	save: function vi_save(node) {
-		var rv = {};
-		// salva su file le informazioni sugli headers
-		for (x in this.cmpKeys) {
-			if (!(x in this)) {
-				continue;
-			}
-			rv[x] = this[x];
-		}
-		return rv;
-	}
-};
-
-function VisitorManager() {
-	this._visitors = {};
-}
-VisitorManager.prototype = {
-
-	load: function vm_init(nodes) {
-		for (var i = 0; i < nodes.length; ++i) {
-			try {
-				this._visitors[nodes[i].url] = new Visitor(nodes[i].values);
-			} catch (ex) {
-				Debug.dump("failed to read one visitor", ex);
-			}
-		}
-	},
-	save: function vm_save(node) {
-		var rv = [];
-		for (x in this._visitors) {
-			var v = {};
-			v.url = x;
-			v.values = this._visitors[x].save();
-			rv.push(v);
-		}
-		return rv;
-	},
-	visit: function vm_visit(chan) {
-		var url = chan.URI.spec;
-
-		var visitor = new Visitor();
-		chan.visitResponseHeaders(visitor);
-		if (url in this._visitors)
-		{
-				this._visitors[url].compare(visitor);
-		}
-		return (this._visitors[url] = visitor);
-	}
-};
+DTA_include('chrome://dta/content/dta/manager/urlmanager.js');
+DTA_include('chrome://dta/content/dta/manager/visitormanager.js');
 
 var chunkElement = function(start, end, d) {
 	Debug.dump('ChunkElement: ' + start + "/" + end);
@@ -1141,223 +813,7 @@ function joinListener(d) {
 	}
 }
 
-joinListener.prototype = {
-
-	stopRequest: null,
-	imJoining: false,
-	outStream: null,
-
-	dump: function JL_dump(m, f) {
-		if (typeof f == 'number') {
-			try {
-				f = this.d.chunks[f];
-			} catch (ex) {}
-		}
-		if (typeof f == 'object' && 'fileManager' in f) {
-			m += " [" + f.fileManager.leafName + "]";
-		}
-		Debug.dump('joinListener: ' + m);
-	},
-
-	next: function JL_next() {
-		return this.d.chunks[this.current].next;
-	},
-
-	stopJoining: function JL_stopJoining(c) {
-		if (this.stopRequest != null)
-			this.stopRequest.cancel(0);
-		this.closeStream();
-	},
-
-	init: function JL_init() {
-		this.current = this.d.firstChunk;
-		this.offset = this.d.chunks[this.d.firstChunk].chunkSize;
-		this.fileManager = this.d.chunks[this.d.firstChunk].fileManager.clone();
-
-		// open the stream in RW mode and seek to its end ;)
-		// saves a lot of headaches :p
-		var outStream = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
-		outStream.init(this.fileManager, 0x04 | 0x08, 0766, 0);
-		this.outStream = outStream.QueryInterface(Ci.nsISeekableStream);
-		if (Preferences.getDTA("prealloc", true) && this.fileManager.fileSize != this.d.totalSize) {
-			this.dump('trying to prealloc', this.d.firstChunk);
-			this.outStream.seek(0x00, this.d.totalSize);
-			this.outStream.setEOF();
-		}
-
-		this.outStream.seek(0x00, this.offset);
-
-		// seek does not work correctly :p
-		if (this.outStream.tell() != this.offset) {
-			this.dump("tell mismatch" + this.offset + "/" + this.outStream.tell() + "/" + (this.offset - this.outStream.tell()));
-			this.d.cancelDownload();
-		}
-
-		if (this.next() != -1)
-			this.join(this.next());
-	},
-
-	join: function JL_join(c) {try {
-
-		this.dump('join request', c);
-		if (!this.outStream) {
-			throw ("No outstream");
-		}
-
-		if (c != this.next() || this.d.chunks[c].isRunning || this.imJoining) return;
-		if ((this.d.chunks[c].start - this.d.chunks[this.current].end) != 1) return;
-		if (!this.d.chunks[c].fileManager.exists()) return;
-
-		this.imJoining = this.d.chunks[this.current].isJoining = this.d.chunks[c].isJoining = true;
-		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-
-		var fileURI = ios.newFileURI(this.d.chunks[c].fileManager);
-		var channel = ios.newChannelFromURI(fileURI); // create a channel from the downloaded chunk
-
-		var listener = new dataCopyListener(this.outStream, this.d, c, this.offset, this);
-		channel.asyncOpen(listener, null);
-
-		this.dump('join started', c);
-	} catch (e) {Debug.dump("join(): ", e);}
-	},
-
-	closeStream: function JL_closeStream() {
-		if (this.outStream) {
-			this.dump('closeStream', this.d.firstChunk);
-			this.outStream.close();
-			this.outStream = null;
-		}
-	},
-
-	joinIsFinished: function JL_jobIsFinished(chunk) {
-		this.imJoining = false;
-		this.d.chunks[this.current].isJoining = this.d.chunks[chunk].isJoining = false;
-
-		// are we canceled now?
-		if (this.d.isCanceled) {
-			this.closeStream();
-
-			Debug.dump("JoinIsFinished: Cancelling " + this.d.fileName);
-			this.d.isPassed = true;
-			this.d.cancelFamily();
-			this.d.chunks = new Array();
-			Check.checkClose();
-			if (this.d.isRemoved) setRemoved(this.d);
-
-			// return early
-			return;
-		}
-
-		var p = this.d.chunks[this.current];
-		var c = this.d.chunks[chunk];
-
-		c.start = 0;
-		c.fileManager = this.fileManager;
-		c.chunkSize += p.chunkSize;
-		c.previous = -1;
-		p.chunkSize = 0;
-		this.d.firstChunk = chunk;
-
-		// put it in to debug a problem, which was: chunksize < filesize because incomplete chunks got saved due to a programming error
-		var told = this.outStream.tell()
-		if (this.offset != told) {
-			this.dump("tell() mismatch: " + this.offset + "/" + this.outStream.tell() + "/" + (this.offset - this.outStream.tell()));
-			if (this.offset < told) {
-				this.outStream.seek(0x00, this.offset);
-			} else {
-				this.d.cancelDownload();
-			}
-		}
-
-		if (!this.d.isRunning && this.d.isPaused && Check.isClosing) {
-			this.closeStream();
-			Debug.dump("We're closing from Join... isPassed=true");
-			this.d.isPassed = true;
-			Check.checkClose();
-		}
-		// more to do
-		else {
-			this.current = chunk;
-			// next piece already available?
-			if (this.next() != -1) {
-				this.join(this.next());
-			}
-			// finished after all.
-			else if (this.d.isCompleted) {
-				this.closeStream();
-				this.d.moveCompleted(this.fileManager);
-			}
-		}
-	}
-}
-
-function dataCopyListener(outStream, d, chunk, offset, join) {
-	this.outStream = outStream;
-	this.d = d;
-	this.chunk = chunk;
-	this.oldoffset = offset;
-	this.join = join;
-}
-
-dataCopyListener.prototype = {
-	error: false,
-	myOffset: 0,
-
-	QueryInterface: function DCL_QueryInterface(iid) {
-		if(
-			iid.equals(Ci.nsISupports)
-			|| iid.equals(Ci.nsIStreamListener)
-			|| iid.equals(Ci.nsIRequestObserver)
-		) return this;
-		throw Components.results.NS_ERROR_NO_INTERFACE;
- 	},
-
-	onStartRequest: function DCL_onStartRequest(request, context) {
-		this.join.stopRequest = request;
-	},
-
-	onStopRequest: function DCL_onStopRequest(request, context, status) {
-		if (status == Components.results.NS_OK && !this.error) {
-			Debug.dump(this.d.fileName + ": Join of chunk " + this.d.chunks[this.chunk].start + "-" + this.d.chunks[this.chunk].end + " completed");
-			this.join.offset = this.oldoffset + this.d.chunks[this.chunk].chunkSize;
-			try {
-				this.d.chunks[this.chunk].remove();
-			} catch(e) {}
-			this.join.joinIsFinished(this.chunk);
-		} else {
-			Debug.dump("Error in Joining of " + this.d.fileName);
-			if (!this.d.isCanceled)
-				this.d.cancelDownload();
-			else
-				this.join.joinIsFinished(this.chunk, this.myOffset);
-		}
-	},
-
-	onDataAvailable: function DCL_onDataAvailable(request, context, inputStream, offset, count) {try {
-
-		this.join.offset = this.oldoffset + offset;
-		if (this.d.isCompleted && !this.d.isCanceled && !this.d.isRemoved) {
-			this.d.setTreeCell("percent", Math.round(this.join.offset / this.d.totalSize * 100) + "%");
-			this.d.setTreeProgress("inprogress", Math.round(this.join.offset / this.d.totalSize * 100));
-			if (Check.isClosing)
-				this.d.setTreeCell("status", strings.getString("completing"));
-			else
-				this.d.setTreeCell("status", strings.getString("joining"));
-		}
-		// need to wrap this as nsIInputStream::read is marked non-scriptable.
-		var byteStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
-		byteStream.setInputStream(inputStream);
-		// we're using nsIFileOutputStream
-		if (this.outStream.write(byteStream.readBytes(count), count) != count) {
-			throw ("dataCopyListener::dataAvailable: read/write count mismatch!");
-		}
-	} catch(e) {
-		this.error = true;
-		request.cancel(Components.results.NS_BINDING_ABORTED);
-		Debug.dump("onDataAvailable():", e);
-	}
-	}
-}
+DTA_include('chrome://dta/content/dta/manager/joinlistener.js');
 
 function failDownload(d, title, msg, state) {
 
@@ -1387,49 +843,11 @@ function inProgressElement(el) {
 var downloadList = new Array();
 var inProgressList = new Array();
 
-var AlertService = {
-	_alerting: false,
-	_service: Cc['@mozilla.org/alerts-service;1']
-		.getService(Ci.nsIAlertsService),
-	show: function(title, msg, clickable, cookie) {
-		if (this._alerting) {
-			return;
-		}
-		this._alerting = true;
-		this._service.showAlertNotification(
-			"chrome://dta/skin/common/alert.png",
-			title,
-			msg,
-			clickable,
-			cookie,
-			this
-			);
-	},
-	observe: function (aSubject, aTopic, aData) {
-		switch (aTopic) {
-			case "alertfinished":
-				// global variable
-				this._alerting = false;
-				break;
-			case "alertclickcallback":
-				if (aData != "errore") {
-					try {
-						OpenExternal.launch(aData);
-					}
-					catch (ex) {
-						// no-op
-					}
-				}
-				break;
-		}
-	}
-};
-makeObserver(AlertService);
+DTA_include('chrome://dta/content/dta/manager/alertservice.js');
 
 // --------* Controlli di chiusura e avvio nuovi downloads *--------
 
 var Check = {
-	imRemoving: false,
 	lastCheck: 0,
 	lastDownloads: -1,
 	haveToCheck: true,
@@ -2620,7 +2038,7 @@ function populateListbox(d) {
 
 	itemNode.appendChild(treeRow);
 	lista.appendChild(itemNode);
-	lista.addEventListener("dblclick", openFile, true);
+	lista.addEventListener("dblclick", FileHandling.openFile, true);
 }
 
 // fa partire lo scaricamento dei chunk in multipart
@@ -2797,15 +2215,15 @@ function downloadChunk(start, end, d, fatherChunk, testHeader) {
 	}
 }
 
-function makeNumber(number) {
-	var stringa="";
-	if (number <= 9)
-		{ stringa = "00" + number;}
-	else if (number <= 99 && number >= 10)
-		{ stringa = "0" + number;}
-	else
-		{stringa = number;}
-	return stringa;
+function makeNumber(rv, digits) {
+	rv = new String(rv);
+	if (typeof(digits) != 'number') {
+			digits = 3;
+	}
+	while (rv.length < digits) {
+		rv = '0' + rv;
+	}
+	return rv;
 }
 
 //--> crea un numero con tot zeri prima, da migliorare
@@ -2826,7 +2244,6 @@ function createNumber(number, destination) {
 //--> disabilita le voci nella context non applicabili ai file selezionati
 function popup() {
 try {
-	if (Check.imRemoving) return;
 	var objects = new Array();
 
 	var rangeCount = tree.view.selection.getRangeCount();
@@ -3049,8 +2466,6 @@ function cancelPopup() {
 }
 
 function removeFromList() {
-	Check.imRemoving = true;
-
 	var index = -1;
 	if (arguments.length) {
 		// multi-delete
@@ -3064,7 +2479,6 @@ function removeFromList() {
 			dellist.forEach(removeElement);
 			sessionManager.endUpdate();
 
-			Check.imRemoving = false;
 			popup();
 			return;
 		}
@@ -3087,12 +2501,10 @@ function removeFromList() {
 
 	// normal remove
 	removeElement(index);
-	Check.imRemoving = false;
 	popup();
 }
 
 function removeCompleted() {
-	Check.imRemoving = true;
 	sessionManager.beginUpdate();
 	for (var i=downloadList.length-1; i>=0; i--) {
 		if (downloadList[i].isCompleted) {
@@ -3100,7 +2512,6 @@ function removeCompleted() {
 		}
 	}
 	sessionManager.endUpdate();
-	Check.imRemoving = false;
 }
 
 function removeElement(index) {
@@ -3177,7 +2588,6 @@ function getInfo() {
 
 //--> Richiamata dal context, muove la selezione corrente in cima o al fondo della tree
 function moveTop(top) {
-	Check.imRemoving = true;
 	try {
 		var start;
 		var end;
@@ -3259,13 +2669,11 @@ function moveTop(top) {
 	} catch(e) {
 		Debug.dump("moveTop():", e);
 	}
-	Check.imRemoving = false;
 }
 
 //--> Richiamata dal context, muove di n posizioni la selezione corrente
 // pos < 0 equivale a spostare verso l'alto di pos posizioni
 function move(pos) {
-	Check.imRemoving = true;
 	try {
 		var start;
 		var end;
@@ -3337,76 +2745,9 @@ function move(pos) {
 		}
 	}
 	catch(e) {Debug.dump("move():", e);}
-	Check.imRemoving = false;
 }
 
-//--> Richiamata dal context, apre la directory target
-function openFolder() {
-	var rangeCount = tree.view.selection.getRangeCount();
-	for (var i = 0; i < rangeCount; ++i) {
-		var start = {}; var end = {};
-		tree.view.selection.getRangeAt(i,start,end);
-		for (var c = start.value, e = end.value; c <= e; ++c) {
-			try {
-				if (downloadList[c].isCompleted) {
-					OpenExternal.reveal(downloadList[c].dirSave + downloadList[c].destinationName);
-				} else {
-					OpenExternal.reveal(downloadList[c].dirSave);
-				}
-			} catch (ex) {
-				Debug.dump('reveal', ex);
-			}
-		}
-	}
-}
-
-function openFile(event) {
-	var lastSon = $("listDownload0").currentIndex;
-	if (downloadList[lastSon].isCompleted) {
-		try {
-			OpenExternal.launch(downloadList[lastSon].dirSave + downloadList[lastSon].destinationName);
-		}
-		catch (ex) {
-			Debug.dump('launch', ex);
-		}
-	}
-}
-function deleteFile() {
-	var dellist = [];
-	
-	var rangeCount = tree.view.selection.getRangeCount();
-	for (var i = 0; i < rangeCount; ++i) {
-		var start = {}, end = {};
-		tree.view.selection.getRangeAt(i, start, end);
-		for (var c = start.value, e = end.value; c <= e; ++c) {
-			if (downloadList[c].isCompleted) {
-				dellist.push(c);
-			}
-		}
-	}
-	dellist = dellist.filter(
-		function(i) {
-			var d = downloadList[i];
-			try {
-				var file = new FileFactory(d.dirSave + d.destinationName);
-				if (file.exists()) {
-					if (confirm("Sure to delete '" + file.path + "'?")) {
-						file.remove(false);
-						return true;
-					}
-					return false;
-				}
-				return true;
-			}
-			catch (ex) {
-				Debug.dump('deleteFile: ', ex);
-				return false;
-			}
-		},
-		this
-	);
-	removeFromList(dellist);
-}
+DTA_include('chrome://dta/content/dta/manager/filehandling.js');
 
 //--> Richiamata dal context, seleziona tutto
 function selectAll() {
@@ -3472,252 +2813,7 @@ function addChunk(add) {
 	}
 }
 
-var sessionManager = {
-
-	init: function() {
-		this._con = Cc["@mozilla.org/storage/service;1"]
-			.getService(Ci.mozIStorageService)
-			.openDatabase(DTA_profileFile.get('dta_queue.sqlite'));
-		try {
-			this._con.executeSimpleSQL('CREATE TABLE queue (uuid INTEGER PRIMARY KEY AUTOINCREMENT, pos INTEGER, item TEXT)');
-		} catch (ex) {
-			// no-op
-		}
-		this._saveStmt = this._con.createStatement('REPLACE INTO queue (uuid, pos, item) VALUES (?1, ?2, ?3)');
-		this._delStmt = this._con.createStatement('DELETE FROM queue WHERE uuid = ?1');
-
-		this._converter = Components.classes["@mozilla.org/intl/saveascharset;1"]
-			.createInstance(Ci.nsISaveAsCharset);
-		this._converter.Init('utf-8', 1, 0);
-		this._serializer = new XMLSerializer();
-
-		this.load();
-	},
-
-	_saveDownload: function(d, pos) {
-
-		if (!(
-			(!Prefs.removeCompleted && d.isCompleted) ||
-			(!Prefs.removeCanceled && d.isCanceled) ||
-			(!Prefs.removeAborted && !d.isStarted) ||
-			d.isPaused ||
-			d.setIsRunning())
-		) {
-			return;
-		}
-		var e = {};
-		[
-			'fileName',
-			'destinationName',
-			'numIstance',
-			'description',
-			'isResumable',
-			'alreadyMaskedName',
-			'alreadyMaskedDir',
-			'mask',
-			'originalDirSave',
-			'isCompleted',
-			'isCanceled'
-		].forEach(function(u) { e[u] = d[u]; });
-
-		e.dirsave = d.dirSave.addFinalSlash();
-		e.referrer = d.refPage.spec;
-		e.startDate = d.startDate.toUTCString();
-
-		e.urlManager = d.urlManager.save();
-		e.visitors = d.visitors.save();
-
-		if (!d.isResumable && !d.isCompleted) {
-			e.partialSize = 0;
-			e.totalSize = 0;
-		} else {
-			e.partialSize = d.partialSize;
-			e.totalSize = d.totalSize;
-		}
-
-		e.chunks = [];
-
-		if (!d.isCanceled && !d.isCompleted && d.chunks.length > 0) {
-			var x = d.firstChunk;
-			do {
-				if (!d.chunks[x].isRunning && d.chunks[x].chunkSize != 0) {
-					var chunk = {};
-					chunk.path = d.chunks[x].fileManager.path;
-					chunk.start = d.chunks[x].start;
-					chunk.end = d.chunks[x].end;
-					chunk.size = d.chunks[x].chunkSize;
-					e.chunks.push(chunk);
-				}
-				x = d.chunks[x].next;
-			} while(x != -1);
-		}
-
-		var s = this._saveStmt;
-		if (d.dbID) {
-			s.bindInt64Parameter(0, d.dbID);
-		}
-		else {
-			s.bindNullParameter(0);
-		}
-		s.bindInt32Parameter(1, pos);
-		s.bindUTF8StringParameter(2, this._converter.Convert(e.toSource()));
-		s.execute();
-		d.dbID = this._con.lastInsertRowID;
-	},
-
-	beginUpdate: function() {
-		this._con.beginTransactionAs(this._con.TRANSACTION_DEFERRED);		
-	},
-	endUpdate: function() {
-		this._con.commitTransaction();
-	},	
-	save: function(download) {
-
-		// just one download.
-		if (download) {
-			this._saveDownload(download);
-			return;
-		}
-
-		this.beginUpdate();
-		try {
-			this._con.executeSimpleSQL('DELETE FROM queue');
-			downloadList.forEach(
-				function(e, i) {
-					this._saveDownload(e, i);
-				},
-				this
-			);
-		}
-		catch (ex) {
-			Debug.dump(ex);
-		}
-		this.endUpdate();
-
-	},
-	deleteDownload: function(download) {
-		if (!download.dbID) {
-			return;
-		}
-		this._delStmt.bindInt64Parameter(0, download.dbID);
-		this._delStmt.execute();
-	},
-
-	load: function() {
-
-		const removeCompleted = Prefs.removeCompleted;
-		const removeCanceled = Prefs.removeCompleted;
-
-		var stmt = this._con.createStatement('SELECT uuid, item FROM queue ORDER BY pos');
-
-		while (stmt.executeStep()) {
-			try {
-				const dbID = stmt.getInt64(0);
-				var down = eval(stmt.getUTF8String(1));
-				var get = function(attr) {
-					if (attr in down) {
-						return down[attr];
-					}
-					return null;
-				}
-				if (
-					(removeCompleted && down.completed)
-					|| (removeCanceled && down.canceled)
-				) {
-					continue;
-				}
-
-				var d = new downloadElement(
-					new DTA_URLManager(down.urlManager),
-					get("dirsave"),
-					get("numIstance"),
-					get("description"),
-					get("mask"),
-					get("referrer")
-					);
-				d.dbID = dbID;
-				d.startDate = new Date(get("startDate"));
-				d.visitors.load(down.visitors);
-
-				[
-					'fileName',
-					'destinationName',
-					'orginalDirSave',
-					'isResumable',
-					'isCanceled',
-					'isCompleted',
-					'partialSize',
-					'totalSize',
-					'alreadyMaskedName',
-					'alreadyMaskedDir',
-				].forEach(
-					function(e) {
-						d[e] = get(e);
-					}
-				);
-
-				d.isStarted = d.partialSize != 0;
-
-				if (!d.isCanceled && !d.isCompleted) {
-					d.isPaused = true;
-					var chunks = down.chunks;
-					for (var i = 0, e = chunks.length; i < e; ++i) {
-						var c = chunks[i];
-						var test = new FileFactory(c.path);
-						if (test.exists()) {
-							var i = d.chunks.length;
-							d.chunks.push(
-								new chunkElement(
-									c.start,
-									c.start + c.size - 1,
-									d
-								)
-							);
-							d.chunks[i].isRunning = false;
-							d.chunks[i].chunkSize = c.size;
-
-							d.chunks[i].previous = i - 1;
-							// adjusted below.
-							d.chunks[i].next = i + 1;
-
-							d.chunks[i].fileManager = test;
-						}
-						else if (d.chunks.length == 1) {
-							// only finished chunks get saved.
-							// one missing therefore means it already got joined
-							d.chunks[0].chunkSize += c.size;
-							d.chunks[0].end += c.size;
-							Debug.dump("sessionManager::load: missing chunk");
-						}
-					}
-					d.refreshPartialSize();
-
-					if (d.chunks.length > 0) {
-						// adjust the end.
-						d.chunks[d.chunks.length - 1].next = -1;
-						d.join = new joinListener(d);
-					}
-
-				}
-				else if (d.isCompleted) {
-					d.fileManager = new FileFactory(d.dirSave);
-					d.fileManager.append(d.destinationName);
-					Stats.completedDownloads++;
-					d.isPassed = true;
-				}
-				else if (d.isCanceled) {
-					d.isPassed = true;
-				}
-
-				downloadList.push(d);
-				populateListbox(d);
-			}
-			catch (ex) {
-				Debug.dump('failed to init a download from queuefile', ex);
-			}
-		}
-	}
-};
+DTA_include('chrome://dta/content/dta/manager/sessionmanager.js');
 
 function tooltipInfo(event) {
 try {

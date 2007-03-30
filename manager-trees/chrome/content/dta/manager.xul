@@ -52,7 +52,7 @@
 	<keyset>
 		<key id="esc" keycode="VK_ESCAPE" oncommand="cancelAll(true);"/>
 		<key id="kMacEsc" modifiers="accel" key="W" oncommand="cancelAll(true);"/>
-		<key id="enter" keycode="VK_RETURN" oncommand="openFile();"/>
+		<key id="enter" keycode="VK_RETURN" oncommand="FileHandling.openFile();"/>
 		<key id="sAll" modifiers="accel" key="A" oncommand="selectAll();"/>
 		<key id="kUp" modifiers="alt" keycode="VK_PAGE_UP" oncommand="move(-1);"/>
 		<key id="kDown" modifiers="alt" keycode="VK_PAGE_DOWN" oncommand="move(1);"/>
@@ -71,9 +71,9 @@
 		<popup id="popup" onpopupshowing="popup();">
 			<menuitem id="info" class="menuitem-iconic" image="chrome://dta/skin/manager/info.png" label="&infos.label;" oncommand="getInfo();" />
 			<menuseparator />
-			<menuitem id="launch" class="menuitem-iconic" image="chrome://dta/skin/manager/launch.png" label="&launch.label;" oncommand="openFile();" />
-			<menuitem id="delete" class="menuitem-iconic" image="chrome://dta/skin/manager/delete.png" label="&delete.label;" oncommand="deleteFile();" />
-			<menuitem id="folder" class="menuitem-iconic" image="chrome://dta/skin/manager/folder.png" label="&targetdir.label;" oncommand="openFolder();" />
+			<menuitem id="launch" class="menuitem-iconic" image="chrome://dta/skin/manager/launch.png" label="&launch.label;" oncommand="FileHandling.openFile();" />
+			<menuitem id="delete" class="menuitem-iconic" image="chrome://dta/skin/manager/delete.png" label="&delete.label;" oncommand="FileHandling.deleteFile();" />
+			<menuitem id="folder" class="menuitem-iconic" image="chrome://dta/skin/manager/folder.png" label="&targetdir.label;" oncommand="FileHandling.openFolder();" />
 			<menuseparator />
 			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" image="chrome://dta/skin/manager/pause.png" oncommand="pauseResumeReq(true);" />
 			<menuitem id="play" class="menuitem-iconic" label="&resume.label;" image="chrome://dta/skin/manager/play.png" oncommand="pauseResumeReq(false);" />
