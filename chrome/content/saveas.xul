@@ -19,19 +19,11 @@
 <script type="application/x-javascript" src="menu.js"/>
 
 <stringbundle id="stringsB" src="chrome://dta/locale/saveas.properties"/>
-
-  <radiogroup id="mode" >
-	  <hbox insertbefore="save" id="downthemallbox" >
+	<radiogroup id="mode">
+		<vbox insertbefore="save" id="downthemallcontainer" collapsed="true" flex="1">
 			<radio id="downthemall" label="DownThemAll!..." />
-			<spacer flex="1"/>
-	  </hbox>
-	  <hbox insertbefore="save" id="tdownthemallbox" >
 			<radio id="turbodta" label="dTaOneClick!" />
-			<spacer flex="1"/>
-	  </hbox>
-	  <hbox insertbefore="save" id="directoryturbodtabox">
-			<label crop="center" style="padding-left: 0px; margin-left: 30px; margin-top: 0px; padding-top: 0px; font-size:90%;" class="turbodtadir" id="directoryturbodta" value="&on;" hidden="true" />
-			<spacer flex="1"/>
-	  </hbox>
-  </radiogroup>
- </overlay>
+			<label id="directoryturbodta" crop="center" style="padding-left: 0px; margin-left: 30px; margin-top: 0px; padding-top: 0px; font-size:90%;" class="turbodtadir" flex="1" value="&on;" />
+		</vbox>
+	</radiogroup>
+</overlay>

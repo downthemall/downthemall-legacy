@@ -106,7 +106,10 @@ try {
 			
 		window.close();
 		return true;
-} catch(e) {DTA_debug.dump("addURLnow(): ", e);}
+} catch(ex) {
+	DTA_debug.dump("addURLnow(): ", e);
+}
+	return false;
 }
 
 function load() {try {
@@ -143,6 +146,10 @@ function load() {try {
 						refPage = decodeURIComponent(refPage);
 				} catch (ex) {}
 				$("URLref").value	 = refPage;
+			}
+			
+			if (e.mask) {
+				$("renaming").value = e.mask;
 			}
 		} else {
 			// check if there's some URL in clipboard
