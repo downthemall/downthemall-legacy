@@ -90,7 +90,9 @@ function load() {
 		} else {
 		  setDefaultDonation();
 		}
-	} catch(e) {Debug.dump("load():", e);}
+	} catch(ex) {
+		DTA_debug.dump("load():", ex);
+	}
 }
 
 function createPrefFilter(index, caption, reg, check, link, image) {
@@ -110,7 +112,7 @@ function loadOptions () {
 		try {
 	    restoreAll();
 		} catch(e) {
-			Debug.dump("restoreAll():", e);
+			DTA_debug.dump("restoreAll():", e);
 		}
 	}
 	
@@ -325,7 +327,7 @@ function changeTab(name) {
 		try {
 	    restoreAll();
 		} catch(e) {
-			Debug.dump("restoreAll():", e);
+			DTA_debug.dump("restoreAll():", e);
 		}
 	}
 	
@@ -409,7 +411,7 @@ function check(name, links) {
 			$("status").label = strbundle.getString("status");
 		
 	} catch(e) {
-		Debug.dump("check():", e);
+		DTA_debug.dump("check():", e);
 	}
 }
 
@@ -445,7 +447,7 @@ function addCheckbox (caption, id, checked) {
 		checkbox.setAttribute("oncommand", "savepref();checkAll();");
 		box.appendChild(checkbox);
 	} catch(e) {
-		Debug.dump("addCheckbox():", e);
+		DTA_debug.dump("addCheckbox():", e);
 	}
 }
 
@@ -511,7 +513,7 @@ function checkItem(event) {
 			$("status").label = strbundle.getString("status");
 			
 	} catch(e) {
-		Debug.dump("checkItem():", e);
+		DTA_debug.dump("checkItem():", e);
 	}
 }
 
@@ -566,7 +568,8 @@ function checkSelected(check) {
 function addLinks(name, links) {
 	var list = $(name + "ListChildren");
 	list.addEventListener("mousedown", checkItem, true);
-	list.addEventListener("keydown", checkItem, true);//aggiunta nn funzionante
+	list.addEventListener("keydown", checkItem, true);
+	
 	var n = 0;
 	for (i in links) {
 	
@@ -739,7 +742,9 @@ try {
 	} else
 		setDefaultDonation();
 		}
-} catch(e) {Debug.dump("checkNews()",e);}
+} catch(e) {
+	DTA_debug.dump("checkNews()",e);
+}
 }
 
 function alertCheckVersion(version, title, sito) {

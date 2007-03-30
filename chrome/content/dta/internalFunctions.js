@@ -47,6 +47,7 @@ function formatBytes(aNumber) {
  		var units = ['TB','GB','MB','KB'];	var unit;
 		while (aNumber > 875 && units.length) { 		aNumber /= 1024;		unit = units.pop(); 	}
  	 	return aNumber.toFixed(2) + " " + unit;
+
 }
 
 objectExtend(String.prototype, 
