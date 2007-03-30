@@ -10,7 +10,36 @@
 
 var DtaDialog = {
 	init: function dd_init() {
-
+	
+		var basicBox = document.getElementById('basicBox');
+		const doRevert = basicBox && !basicBox.collapsed;
+		const doOverlay = DTA_AddingFunctions.getPreference("extensions.dta.context.downloadWin", true);
+		if (
+			!doOverlay
+			&& typeof(gFlashGotDMDialog) == 'undefined'
+		) {
+			// we do not actually overlay!
+			return;
+		}
+		if (doRevert) {
+			// revert mofo bug #315536
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=315536
+			window.setTimeout(
+				function() {
+					DtaDialog.revertUI();
+				},
+				0
+			);
+			
+		}
+		
+		if (!doOverlay) {
+			// we do not actually overlay!
+			// but we revert to help FlashGot ;)
+			return;
+		}
+		document.getElementById('downthemallcontainer').collapsed = false;
+		
 		this.dialog = dialog;
 		this.url = dialog.mLauncher.source.spec;
 		try {
@@ -23,22 +52,11 @@ var DtaDialog = {
 		var dir = DTA_AddingFunctions.getPreference("extensions.dta.dropdown.directory-current", old[0]);
 		
 		if (dir.length > 0) {
-			document.getElementById("directoryturbodta").setAttribute("hidden", "false");
 			document.getElementById("directoryturbodta").setAttribute("value", document.getElementById("directoryturbodta").value + " " + dir);		
 		} else {
-			document.getElementById("tdownthemallbox").setAttribute("hidden","true");
-			document.getElementById("directoryturbodtabox").setAttribute("hidden","true");
+			document.getElementById("tdownthemall").setAttribute("hidden","true");
+			document.getElementById("directoryturbodta").setAttribute('hidden', 'true');
 		}
-		
-		try {
-			// se dalle nostre preferenze si deseleziona il fatto di metterlo
-			var saveEnabled = DTA_AddingFunctions.getPreference("extensions.dta.context.downloadWin", true);
-			if (!saveEnabled) {
-				document.getElementById("downthemallbox").setAttribute("hidden","true");
-				document.getElementById("tdownthemallbox").setAttribute("hidden","true");
-				document.getElementById("directoryturbodtabox").setAttribute("hidden","true");
-			}
-		} catch (e) {}
 		
 		this.remember=document.getElementById("rememberChoice");
 		
@@ -50,18 +68,6 @@ var DtaDialog = {
 				DtaDialog.onSelect(); 
 			},  
 		false);
-		var basicBox = document.getElementById('basicBox');
-		if (basicBox && !basicBox.collapsed) {
-			// revert mofo bug #315536
-			// https://bugzilla.mozilla.org/show_bug.cgi?id=315536
-			window.setTimeout(
-				function() {
-					DtaDialog.revertUI();
-				},
-				0
-			);
-			
-		}
 	},
 	
 	revertUI: function dd_revertUI() {
