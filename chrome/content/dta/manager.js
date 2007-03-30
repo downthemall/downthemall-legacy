@@ -2797,15 +2797,15 @@ function downloadChunk(start, end, d, fatherChunk, testHeader) {
 	}
 }
 
-function makeNumber(number) {
-	var stringa="";
-	if (number <= 9)
-		{ stringa = "00" + number;}
-	else if (number <= 99 && number >= 10)
-		{ stringa = "0" + number;}
-	else
-		{stringa = number;}
-	return stringa;
+function makeNumber(rv, digits) {
+	rv = new String(rv);
+	if (typeof(digits) != 'number') {
+			digits = 3;
+	}
+	while (rv.length < digits) {
+		rv = '0' + rv;
+	}
+	return rv;
 }
 
 //--> crea un numero con tot zeri prima, da migliorare
