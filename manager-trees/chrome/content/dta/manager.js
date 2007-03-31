@@ -2684,11 +2684,11 @@ function move(pos) {
 				var beforePos = datas[i] + pos + 1; // se si scende
 				if (datas[i] == Check.firstInQueue) {
 					for (var dex = datas[i]; dex < beforePos; dex++) {
-						var d = downloadList[dex]
+						var d = downloadList[dex];
 						if (d.is(QUEUED)) {
 							oldfirst.isFirst = false;
 							Check.firstInQueue = dex;
-							downloadList[dex].isFirst = true;
+							d.isFirst = true;
 							break;
 						}
 					}
