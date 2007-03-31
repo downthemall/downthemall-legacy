@@ -91,7 +91,7 @@ joinListener.prototype = {
 		this.d.chunks[this.current].isJoining = this.d.chunks[chunk].isJoining = false;
 
 		// are we canceled now?
-		if (this.d.isCanceled) {
+		if (this.d.is(CANCELED)) {
 			this.closeStream();
 
 			Debug.dump("JoinIsFinished: Cancelling " + this.d.fileName);
@@ -126,7 +126,7 @@ joinListener.prototype = {
 			}
 		}
 
-		if (!this.d.isRunning && this.d.isPaused && Check.isClosing) {
+		if (!this.d.is(PAUSED) && Check.isClosing) {
 			this.closeStream();
 			Debug.dump("We're closing from Join... isPassed=true");
 			this.d.isPassed = true;
@@ -140,7 +140,7 @@ joinListener.prototype = {
 				this.join(this.next());
 			}
 			// finished after all.
-			else if (this.d.isCompleted) {
+			else if (this.d.is(COMPLETE)) {
 				this.closeStream();
 				this.d.moveCompleted(this.fileManager);
 			}
@@ -183,17 +183,19 @@ dataCopyListener.prototype = {
 			this.join.joinIsFinished(this.chunk);
 		} else {
 			Debug.dump("Error in Joining of " + this.d.fileName);
-			if (!this.d.isCanceled)
+			if (!this.d.is(CANCELED)) {
 				this.d.cancelDownload();
-			else
+			}
+			else {
 				this.join.joinIsFinished(this.chunk, this.myOffset);
+			}
 		}
 	},
 
 	onDataAvailable: function DCL_onDataAvailable(request, context, inputStream, offset, count) {try {
 
 		this.join.offset = this.oldoffset + offset;
-		if (this.d.isCompleted && !this.d.isCanceled && !this.d.isRemoved) {
+		if (this.d.is(COMPLETE)) {
 			this.d.setTreeCell("percent", Math.round(this.join.offset / this.d.totalSize * 100) + "%");
 			this.d.setTreeProgress("inprogress", Math.round(this.join.offset / this.d.totalSize * 100));
 			if (Check.isClosing)

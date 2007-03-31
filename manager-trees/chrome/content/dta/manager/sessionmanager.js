@@ -23,12 +23,12 @@ var sessionManager = {
 	_saveDownload: function(d, pos) {
 
 		if (!(
-			(!Prefs.removeCompleted && d.isCompleted) ||
-			(!Prefs.removeCanceled && d.isCanceled) ||
-			(!Prefs.removeAborted && !d.isStarted) ||
-			d.isPaused ||
-			d.setIsRunning())
-		) {
+			(!Prefs.removeCompleted && d.is(COMPLETE))
+			|| (!Prefs.removeCanceled && d.is(CANCELED))
+			|| (!Prefs.removeAborted && !d.isStarted)
+			|| d.is(PAUSED)
+			|| d.setIsRunning()
+		)) {
 			return;
 		}
 		var e = {};
@@ -42,9 +42,8 @@ var sessionManager = {
 			'alreadyMaskedDir',
 			'mask',
 			'originalDirSave',
-			'isCompleted',
-			'isCanceled'
 		].forEach(function(u) { e[u] = d[u]; });
+		e.state = d.is(COMPLETE, CANCELED) ? d.state : PAUSED;
 
 		e.dirsave = d.dirSave.addFinalSlash();
 		e.referrer = d.refPage.spec;
@@ -53,7 +52,7 @@ var sessionManager = {
 		e.urlManager = d.urlManager.save();
 		e.visitors = d.visitors.save();
 
-		if (!d.isResumable && !d.isCompleted) {
+		if (!d.isResumable && !d.is(COMPLETE)) {
 			e.partialSize = 0;
 			e.totalSize = 0;
 		} else {
@@ -63,7 +62,7 @@ var sessionManager = {
 
 		e.chunks = [];
 
-		if (!d.isCanceled && !d.isCompleted && d.chunks.length > 0) {
+		if (!d.is(COMPLETE, CANCELED) && d.chunks.length > 0) {
 			var x = d.firstChunk;
 			do {
 				if (!d.chunks[x].isRunning && d.chunks[x].chunkSize != 0) {
@@ -170,8 +169,7 @@ var sessionManager = {
 					'destinationName',
 					'orginalDirSave',
 					'isResumable',
-					'isCanceled',
-					'isCompleted',
+					'state',
 					'partialSize',
 					'totalSize',
 					'alreadyMaskedName',
@@ -184,8 +182,7 @@ var sessionManager = {
 
 				d.isStarted = d.partialSize != 0;
 
-				if (!d.isCanceled && !d.isCompleted) {
-					d.isPaused = true;
+				if (d.is(PAUSED)) {
 					var chunks = down.chunks;
 					for (var i = 0, e = chunks.length; i < e; ++i) {
 						var c = chunks[i];
@@ -225,13 +222,13 @@ var sessionManager = {
 					}
 
 				}
-				else if (d.isCompleted) {
+				else if (d.is(COMPLETE)) {
 					d.fileManager = new FileFactory(d.dirSave);
 					d.fileManager.append(d.destinationName);
 					Stats.completedDownloads++;
 					d.isPassed = true;
 				}
-				else if (d.isCanceled) {
+				else if (d.is(CANCELED)) {
 					d.isPassed = true;
 				}
 

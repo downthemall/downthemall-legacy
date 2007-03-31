@@ -159,15 +159,12 @@ downloadElement.prototype = {
 	 *Takes one or more state indicators and returns if this download is in state of any of them
 	 */
 	is: function() {
-		if (arguments.length > 1) {
-			for (var i = 0; i < arguments.length; ++i) {
-				if (this.state == arguments[i]) {
-					return true;
-				}
+		for (var i = 0; i < arguments.length; ++i) {
+			if (this.state == arguments[i]) {
+				return true;
 			}
-			return false;
 		}
-		return this.state == x;
+		return false;
 	},
 	
 	contentType: "",
@@ -314,7 +311,7 @@ downloadElement.prototype = {
 	},
 
 	moveCompleted: function(fileManager) {
-
+		Debug.dump("mc");
 		if (this.join) {
 			this.join.closeStream();
 		}
@@ -417,7 +414,7 @@ downloadElement.prototype = {
 		}
 	},
 	finishDownload: function() {
-
+		Debug.dump("fd");
 		// create final file pointer
 		this.fileManager = new FileFactory(this.dirSave);
 		var destinationName = (this.compression)?("[comp]"+this.destinationName):this.destinationName;
@@ -1228,7 +1225,7 @@ onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 	if (
 		(!d.totalSize
 		&& d.partialSize != 0
-		&& !d.is(RUNNING, PAUSED)
+		&& !d.is(RUNNING, PAUSED))
 		|| (Math.abs(d.partialSize - d.totalSize) < 2)
 	) {
 		d.state = COMPLETE;
@@ -1921,7 +1918,7 @@ function startnewDownloads(notQueue, download) {
 			e.mask,
 			e.refPage
 		);
-		d.state = notQueue ? PAUSED : QUEUED;
+		d.state = notQueue ? QUEUED : PAUSED;
 		d.startDate = startDate;
 
 		downloadList.push(d);
@@ -2604,7 +2601,7 @@ function moveTop(top) {
 				if (datas[i] == Check.firstInQueue) {
 					for (var dex = datas[i]; dex < beforePos; dex++) {
 						var d = downloadList[dex];
-						if (d.is(QUEUED))) {
+						if (d.is(QUEUED)) {
 							d.isFirst = true;
 							oldfirst.isFirst = false;
 							Check.firstInQueue = dex;
