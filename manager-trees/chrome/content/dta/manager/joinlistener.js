@@ -197,9 +197,9 @@ dataCopyListener.prototype = {
 			this.d.setTreeCell("percent", Math.round(this.join.offset / this.d.totalSize * 100) + "%");
 			this.d.setTreeProgress("inprogress", Math.round(this.join.offset / this.d.totalSize * 100));
 			if (Check.isClosing)
-				this.d.setTreeCell("status", strings.getString("completing"));
+				this.d.setTreeCell("status", _("completing"));
 			else
-				this.d.setTreeCell("status", strings.getString("joining"));
+				this.d.setTreeCell("status", _("joining"));
 		}
 		// need to wrap this as nsIInputStream::read is marked non-scriptable.
 		var byteStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);

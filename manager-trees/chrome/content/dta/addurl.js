@@ -259,9 +259,8 @@ BatchGenerator.prototype = {
 var Dialog = {
 	strings: null,
 	load: function DTA_load() {
+		make_();
 		try {
-			this.sb = new StringBundles();
-		
 			this.ddDirectory = new DTA_DropDown("directory", "directory", "directoryitems", []);
 			this.ddRenaming = new DTA_DropDown(
 				"renaming",
@@ -393,23 +392,23 @@ var Dialog = {
 		var batch = new BatchGenerator(url);
 		if (batch.length > 1) {
 			
-			var message = this.sb.getFormattedString(
+			var message = _(
 				'tasks',
 				[batch.length, batch.parts]
 			);
 			if (batch.length > 1000) {
-				message += this.sb.getString('manytasks');
+				message += _('manytasks');
 			}
 			
 			var prompter = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 			var rv = prompter.confirmEx(
 				window,
-				this.sb.geString('batchtitle'),
+				_('batchtitle'),
 				message,
 				127 + (2 << 8) + (127 << 16),
-				this.sb.geString('batchtitle'),
+				_('batchtitle'),
 				null,
-				this.sb.geString('single'),
+				_('single'),
 				null,
 				{}
 			);
@@ -441,7 +440,7 @@ var Dialog = {
 		var f = new filePicker();
 		var newDir = f.getFolder(
 			this.ddDirectory.current,
-			this.sb.getString("validdestination")
+			_("validdestination")
 		);
 		if (newDir) {
 			this.ddDirectory.current = newDir;
