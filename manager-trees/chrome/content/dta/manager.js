@@ -54,6 +54,7 @@ const MIN_CHUNK_SIZE = 204800; // 200kb
 const MAX_CHUNK_SIZE = 10485760; // 10MB
 
 DTA_include('chrome://dta/content/dta/manager/prefs.js');
+//DTA_include('chrome://dta/content/dta/manager/tree.js');
 
 // --------* Statistiche *--------
 var Stats = {
@@ -146,7 +147,29 @@ function downloadElement(lnk, dir, num, desc, mask, refPage) {
 	this.refPage.spec = refPage;
 }
 
+const QUEUED = 0;
+const PAUSED =  1<<1;
+const RUNNING = 1<<2;
+const COMPLETE = 1<<3;
+const CANCELED = 1<<4;
+
 downloadElement.prototype = {
+	state: QUEUED,
+	/**
+	 *Takes one or more state indicators and returns if this download is in state of any of them
+	 */
+	is: function() {
+		if (arguments.length > 1) {
+			for (var i = 0; i < arguments.length; ++i) {
+				if (this.state == arguments[i]) {
+					return true;
+				}
+			}
+			return false;
+		}
+		return this.state == x;
+	},
+	
 	contentType: "",
 	visitors: null,
 	totalSize: 0,
@@ -160,11 +183,7 @@ downloadElement.prototype = {
 	alreadyMaskedDir: false,
 	alreadyMaskedName: false,
 
-	isCanceled: false,
-	isPaused: false,
-	isCompleted: false,
 	isResumable: false,
-	isRunning: false,
 	isStarted: false,
 	isPassed: false,
 	isRemoved: false,
@@ -264,7 +283,9 @@ downloadElement.prototype = {
 			}
 		}
 	} catch(e) {Debug.dump("setIsRunning():", e);}
-	this.isRunning = running;
+	if (running) {
+		this.state = RUNNING;
+	}
 	return running;
 	},
 
@@ -297,12 +318,12 @@ downloadElement.prototype = {
 		if (this.join) {
 			this.join.closeStream();
 		}
-		if (this.isCanceled) {
+		if (this.is(CANCELED)) {
 			return;
 		}
 
 		// increment completedDownloads counter
-		this.isCompleted = true;
+		this.state = COMPLETE;
 		Stats.completedDownloads++;
 
 		try {
@@ -409,7 +430,7 @@ downloadElement.prototype = {
 
 		// if zipped, unzip it
 		if (this.compression) {
-			if (!this.isCanceled) {
+			if (!this.is(CANCELED)) {
 				Stats.zippedToWait++;
 				this.setTreeCell("status", _("decompressing"));
 				try {
@@ -590,7 +611,7 @@ downloadElement.prototype = {
 
 		var shortUrl = (this.urlManager.usable).cropCenter(maxUrlSize);
 		var s = -1;
-		if (!this.isCompleted && this.isRunning) {
+		if (this.is(RUNNING)) {
 			if (realDest.exists()) {
 				s = askForRenaming(
 					_("alreadyexists", [this.destinationName, this.dirSave]) + " " + _("whatdoyouwith", [shortUrl]),
@@ -607,13 +628,11 @@ downloadElement.prototype = {
 			}
 		}
 		// if it's completed, and we're going to build final file
-		else if (this.isCompleted && !this.isPassed) {
-			if (realDest.exists()) {
-				s = askForRenaming(
-					_("alreadyexists", [this.destinationName, this.dirSave]) + " " + _("whatdoyoucomplete", [shortUrl]),
-					{caption:_("reninto", [newDest]), value:0}, {caption:_("overwrite"), value:1}, {caption:_("cancel"), value:4}
-				);
-			}
+		else if (this.is(COMPLETE) && !this.isPassed && realDest.exists()) {
+			s = askForRenaming(
+				_("alreadyexists", [this.destinationName, this.dirSave]) + " " + _("whatdoyoucomplete", [shortUrl]),
+				{caption:_("reninto", [newDest]), value:0}, {caption:_("overwrite"), value:1}, {caption:_("cancel"), value:4}
+			);
 		}
 
 		// Make the decision
@@ -643,48 +662,45 @@ downloadElement.prototype = {
 	} catch(e) {Debug.dump("checkFilenameConflict():", e);}
 	},
 
-	cancelDownload: function(message) {try {
-		if (!this.isCanceled) {
+	cancelDownload: function(message) {
+		try {
+			if (this.is(CANCELED)) {
+				return;
+			}			
 			Debug.dump(this.fileName + ": cancelDownload()");
-
 			this.visitors = new VisitorManager();
 
 			if (this.isFirst) {
 				Check.setFirstInQueue();
 			}
-			this.isCanceled = true;
-
 			if (message == "" || !message) {
 				message = _("canceled");
 			}
 			this.setTreeCell("status", message);
 			this.setTreeProgress("canceled");
 
-			if (!this.isCompleted) {
-				if (this.setIsRunning()) {
-					this.setPaused();
-				} else if (this.join != null && this.join.imJoining) {
-					this.join.stopJoining();
-				} else {
-					this.isPassed = true;
-				}
-			} else {
-				this.isCompleted = false;
+			if (this.is(COMPLETE)) {
 				Stats.completedDownloads--;
-				this.join = null;
+				this.join = null;				
+			}
+			else if (this.setIsRunning()) {
+				this.setPaused();
+			}
+			else if (this.join != null && this.join.imJoining) {
+				this.join.stopJoining();
+			}
+			else {
+					this.isPassed = true;
 			}
 
 			this.cancelFamily();
 
-			if (this.isPaused)
-				this.isPaused = false;
-
+			this.state = CANCELED;
 			Check.checkClose();
 			popup();
+		} catch(ex) {
+			Debug.dump("cancelDownload():", ex);
 		}
-	} catch(ex) {
-		Debug.dump("cancelDownload():", ex);
-	}
 	},
 
 	resumeDownload: function () {try {
@@ -767,7 +783,7 @@ downloadElement.prototype = {
 
 		var i = 0;
 		if (c > 0 && n > 0) {
-			this.isRunning = true;
+			this.state = RUNNING;
 			for (; i<n; i++) {
 				rest += startSubChunks(sp[i].start, sp[i].end, sp[i].prev, sp[i].next, c+rest, this);
 			}
@@ -775,7 +791,7 @@ downloadElement.prototype = {
 
 		var s = i;
 		if (m > 0) {
-			this.isRunning = true;
+			this.state = RUNNING;
 			for (; i<(s+m); i++) {
 				rest += startSubChunks(sp[i].start, sp[i].end, sp[i].prev, sp[i].next, c+1+rest, this);
 			}
@@ -903,7 +919,7 @@ var Check = {
 		var data = new Date();
 		for (var i=0; i<inProgressList.length; i++) {
 			var d = inProgressList[i].d;
-			if (d.partialSize != 0 && !d.isPaused && !d.isCanceled && !d.isCompleted && (data.getTime() - d.timeStart) >= 1000 ) {
+			if (d.partialSize != 0 && d.is(RUNNING) && (data.getTime() - d.timeStart) >= 1000 ) {
 				// Calculate estimated time
 				if (d.totalSize > 0) {
 					var remainingSeconds = Math.ceil((d.totalSize - d.partialSize) / ((d.partialSize - inProgressList[i].lastBytes) * (1000 / this.frequencyRefresh)));
@@ -961,7 +977,7 @@ var Check = {
 			if ((isOpenedMessagebox == 0) && (data.getTime() - d.timeLastProgress) >= Preferences.getDTA("timeout", 300, true) * 1000) {
 				if (d.isResumable) {
 					d.setPaused();
-					d.isPaused = true;
+					d.state = PAUSED;
 					d.setTreeCell("status", _("timeout"));
 					d.setTreeProgress("paused");
 				} else
@@ -1044,7 +1060,7 @@ var Check = {
 		while ((oldInQueue == this.firstInQueue)&&(ind <= downloadList.length-2)) {
 			ind++;
 			var dow = downloadList[ind];
-			if (!dow.isCompleted && !dow.isRunning && !dow.isCanceled && !dow.isPaused && !dow.hasToBeRedownloaded) {
+			if (dow.is(QUEUED) && !dow.hasToBeRedownloaded) {
 				this.firstInQueue = ind;
 				downloadList[this.firstInQueue].isFirst = true;
 				return ind;
@@ -1054,7 +1070,7 @@ var Check = {
 		for (var i = 0; i<downloadList.length; i++) {
 			var d = downloadList[i];
 			// se non e' cancellato, non e' in pausa, non e' gia' completato ed e' in coda che aspetta
-			if (!d.isCompleted && !d.isRunning && !d.isCanceled && !d.isPaused && !d.hasToBeRedownloaded) {
+			if (d.is(QUEUED) && !d.hasToBeRedownloaded) {
 				this.firstInQueue = i;
 				downloadList[this.firstInQueue].isFirst = true;
 				return i;
@@ -1078,7 +1094,7 @@ var Check = {
 		d.setTreeCell("status", _("starting"));
 
 		d.timeLastProgress = (new Date()).getTime();
-		d.isRunning = true;
+		d.state = RUNNING;
 
 		var flagAdd = true;
 		for (var i = 0; i < inProgressList.length; ++i) {
@@ -1204,25 +1220,25 @@ onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 	d.refreshPartialSize();
 
 	// update flags and counters
-	c.isRunning = false;
 	d.setIsRunning();
 	d.declaratedChunks--;
 	d.setTreeCell("parts", 	d.declaratedChunks + "/" + d.maxChunks);
 
 	// check if we're complete now
-	if (d.totalSize == 0) {
-		// if contentlength is unknown..
-		d.isCompleted = d.partialSize != 0 && !d.isRunning && !d.isPaused;
-	} else {
-		// bugfix #14525
-		d.isCompleted = Math.abs(d.partialSize - d.totalSize) < 2;
+	if (
+		(!d.totalSize
+		&& d.partialSize != 0
+		&& !d.is(RUNNING, PAUSED)
+		|| (Math.abs(d.partialSize - d.totalSize) < 2)
+	) {
+		d.state = COMPLETE;
 	}
 
 	// if it's the chunk that tested response headers
-	if (this.isHeaderHack && !d.isCompleted) {
+	if (this.isHeaderHack && !d.is(COMPLETE)) {
 		d.chunks.splice(this.chunkIndex, 1);
 
-		if (this.isPassedOnProgress && !d.isCanceled && !Check.isClosing && !d.isPaused) {
+		if (this.isPassedOnProgress && !d.is(CANCELED, PAUSED) && !Check.isClosing) {
 			Debug.dump(d.fileName + ": Header stopped to start download in multipart");
 			downloadMultipart(d);
 			return;
@@ -1257,7 +1273,7 @@ onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 
 	// corrupted range: waiting for all the chunks to be terminated and then restart download from scratch
 	if (d.hasToBeRedownloaded) {
-		if (!d.isRunning) {
+		if (!d.is(RUNNING)) {
 			Debug.dump(d.fileName + ": All old chunks are now finished, reDownload()");
 			d.reDownload();
 		}
@@ -1270,7 +1286,7 @@ onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 		Debug.dump(d.fileName + ": Error on chunks range.. Redownload file in normal mode");
 		d.hasToBeRedownloaded = true;
 		d.redownloadIsResumable = false;
-		if (!d.isRunning) {
+		if (!d.is(RUNNING)) {
 			Debug.dump(d.fileName + ": All old chunks are finished, reDownload()");
 			d.reDownload();
 		} else
@@ -1283,22 +1299,22 @@ onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 	// ok, chunk passed all the integrity checks!
 
 	// isHeaderHack chunks have their private call to removeFromInProgressList
-	if (!d.isRunning && !d.imWaitingToRearrange) {
+	if (!d.is(RUNNING) && !d.imWaitingToRearrange) {
 		d.setTreeCell("speed", "");
 		d.removeFromInProgressList();
 	}
 
 	// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
-	if (!this.isPassedOnProgress && d.isResumable && !c.imWaitingToRearrange && !d.isCanceled && !d.isPaused) {
+	if (!this.isPassedOnProgress && d.isResumable && !c.imWaitingToRearrange && !d.is(CANCELED, PAUSED)) {
 		Debug.dump(d.fileName + ": Server error or disconnection (type 1)");
 		d.setTreeCell("status", _("srver"));
 		d.setTreeCell("speed", "");
 		d.setTreeProgress("paused");
-		d.isPaused = true;
+		d.state = PAUSED;
 		d.setPaused();
 	}
 	// if the only possible chunk for a non-resumable download finishes and download is still not completed -> server error/disconnection
-	else if (!d.isResumable && !d.isCompleted && !d.isCanceled && !d.isPaused) {
+	else if (!d.isResumable && !d.is(COMPLETE, CANCELED, PAUSED)) {
 		Debug.dump(d.fileName + ": Server error or disconnection (type 2)");
 		failDownload(
 			d,
@@ -1311,7 +1327,7 @@ onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 	}
 
 	// can we start/continue joining routine?
-	if (!Check.isClosing && !d.isCanceled && d.isResumable) {
+	if (!Check.isClosing && d.is(RUNNING) && d.isResumable) {
 		// create new Joining routine
 		if (d.firstChunk==this.chunkIndex && d.join==null) {
 			d.join = new joinListener(d);
@@ -1322,17 +1338,14 @@ onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 	}
 
 	// if download is complete
-	if (d.isCompleted && !d.isCanceled) {
-
+	if (d.is(COMPLETE)) {
 		Debug.dump(d.fileName + ": Download is completed!");
-
 		// multipart downloads have moveCompleted call after the last joining process
-		if (d.chunks.length == 1)
+		if (d.chunks.length == 1) {
 			d.moveCompleted(c.fileManager);
-	} else
-
-	// if we have to close window
-	if (!d.isRunning && d.isPaused && Check.isClosing) {
+		}
+	}
+	else if (d.is(PAUSED) && Check.isClosing) {
 
 		if (d.join == null || !d.join.imJoining) {
 			if (!d.isRemoved) {
@@ -1341,7 +1354,7 @@ onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 			// reset download as it was never started (in queue state)
 			if (!d.isResumable) {
 				d.isStarted = false;
-				d.isPaused = false;
+				d.state = PAUSED;
 				d.cancelFamily();
 				d.chunks = new Array();
 				d.totalSize = 0;
@@ -1356,7 +1369,7 @@ onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 	} else
 
 	// if a chunk gets completed and nothing else happens
-	if (!d.isPaused && !d.isCanceled && d.isResumable) {
+	if (!d.is(CANCELED, PAUSED) && d.isResumable) {
 
 		// if all the download space has already been occupied by chunks (= !resumeDownload)
 		if (!d.imWaitingToRearrange && !d.resumeDownload() && (d.maxChunks - d.declaratedChunks) > 0) {
@@ -1391,17 +1404,15 @@ onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {try {
 	} else
 
 	// if download has been canceled by user
-	if (d.isCanceled) {
+	if (d.is(CANCELED)) {
 		Debug.dump(d.fileName + ": Download has been canceled.. erase chunk.");
 		c.remove();
 
-		if (!d.isRunning) {
-			if (d.join != null && d.join.imJoining)
-				d.join.stopJoining();
-			else if (!d.isRemoved) {
-				d.isPassed = true;
-				d.chunks = new Array();
-			}
+		if (d.join != null && d.join.imJoining)
+			d.join.stopJoining();
+		else if (!d.isRemoved) {
+			d.isPassed = true;
+			d.chunks = new Array();
 		}
 		Check.checkClose();
 	}
@@ -1431,9 +1442,9 @@ onProgressChange64: function (aWebProgress, aRequest, aCurSelfProgress, aMaxSelf
 			Debug.dump("First ProgressChange for chunk " + c.fileManager.path + "!");
 		}
 
-		if (d.isPaused || d.isCanceled) {
+		if (d.is(PAUSED, CANCELED)) {
 			c.progressPersist.cancelSave();
-			if (d.isCanceled) {
+			if (d.is(CANCELED)) {
 				c.remove();
 			}
 			return;
@@ -1652,7 +1663,7 @@ onProgressChange64: function (aWebProgress, aRequest, aCurSelfProgress, aMaxSelf
 		}
 
 		// update download tree row
-		if (!d.isCanceled) {
+		if (!d.is(CANCELED)) {
 
 			c.chunkSize = aCurTotalProgress;
 			d.refreshPartialSize();
@@ -1713,7 +1724,7 @@ dataListener.prototype = {
 		if (this.d.isRemoved) {
 			Stats.zippedToWait--;
 		} else {
-			this.d.isPassed = true
+			this.d.isPassed = true;
 			Stats.zippedToWait--;
 			this.d.setTreeCell("percent", "100%");
 			this.d.setTreeCell("status", _("complete"));
@@ -1805,7 +1816,7 @@ function cancelAll(pressedESC) {
 		var rFlag = false;
 
 		for (var i=0; i<downloadList.length; i++) {
-			if (downloadList[i].isStarted && !downloadList[i].isResumable && downloadList[i].isRunning && !downloadList[i].isPaused)	{
+			if (downloadList[i].isStarted && !downloadList[i].isResumable && downloadList[i].is(RUNNING)) {
 				rFlag=true;
 				break;
 			}
@@ -1835,20 +1846,20 @@ function cancelAll(pressedESC) {
 				d.join = null;
 			}
 			if (
-				d.isCanceled
-				|| (d.isPaused && (d.join == null || !d.join.imJoining))
-				|| (d.isStarted && !d.isRunning)
+				d.is(CANCELED)
+				|| (d.is(PAUSED) && (d.join == null || !d.join.imJoining))
+				|| (d.isStarted && !d.is(RUNNING))
 			) {
 				d.isPassed = true;
 			}
-			if (d.isPassed || d.isCompleted) {
+			if (d.isPassed || d.is(COMPLETE)) {
 				return true;
 			}
 
 			// also canceled and paused without running joinings
 			if (d.isStarted) {
 				d.setPaused();
-				d.isPaused = true;
+				d.state = PAUSED;
 				d.setTreeCell("status", _("closing"));
 				Debug.dump(d.fileName + " has to be stopped.");
 			}
@@ -1857,7 +1868,7 @@ function cancelAll(pressedESC) {
 				return true;
 			}
 			else {
-				d.isPaused = true;
+				d.state = PAUSED;
 				d.isPassed = true;
 				return true;
 			}
@@ -1910,7 +1921,7 @@ function startnewDownloads(notQueue, download) {
 			e.mask,
 			e.refPage
 		);
-		d.isPaused = !notQueue;
+		d.state = notQueue ? PAUSED : QUEUED;
 		d.startDate = startDate;
 
 		downloadList.push(d);
@@ -2001,13 +2012,13 @@ function populateListbox(d) {
 	var parts = document.createElement("treecell");
 	parts.setAttribute("label", (d.maxChunks != null)?("0/"+d.maxChunks):"");
 
-	if (d.isCompleted) {
+	if (d.is(COMPLETE)) {
 			time.setAttribute("label", _("complete"));
 			per1.setAttribute("properties", "completed");
-	} else if (d.isPaused && !d.isCanceled) {
+	} else if (d.is(PAUSED)) {
 			time.setAttribute("label", _("paused"));
 			per1.setAttribute("properties", "paused");
-	} else if (d.isCanceled) {
+	} else if (d.is(CANCELED)) {
 			time.setAttribute("label", _("canceled"));
 			per1.setAttribute("properties", "canceled");
 	} else {
@@ -2116,7 +2127,7 @@ function downloadChunk(start, end, d, fatherChunk, testHeader) {
 		var chunkIndex = d.chunks.push(c) - 1;
 
 		c.isRunning = true;
-		d.isRunning = true;
+		d.state = RUNNING;
 
 		// fatherChunk e' il chunk precendente al punto nel quale vogliamo inserire il nuovo chunk
 		if (fatherChunk != -1) {
@@ -2209,7 +2220,7 @@ function downloadChunk(start, end, d, fatherChunk, testHeader) {
 			_("errordownload")
 		);
 
-		d.isRunning = false;
+		d.state = CANCELED;
 		d.removeFromInProgressList();
 	}
 }
@@ -2282,38 +2293,32 @@ try {
 
 		// se non e' cancellato, non e' in pausa, non e' completato,
 		// e se e' un file e' gia' iniziato
-		if (
-			(!d.isCanceled)&&(!d.isPaused)&&(!d.isCompleted)
-			&& (
-				(d.isRunning && d.isResumable)
-				||
-				(!d.isRunning)
-				)
-		)
+		if ((d.is(RUNNING) && d.isResumable) || d.is(QUEUED)) {
 			$("pause", "toolpause").forEach(enableObj);
+		}
 
 		// se non e' cancellato, e' in pausa, non e' completato,
 		// e se e' un file e' gia' iniziato
-		if (
-			(!d.isCanceled && d.isPaused && !d.isCompleted && d.isResumable)
-			||
-			(!d.isRunning && d.isCanceled )
-			||
-			(d.isPaused && !d.isStarted)
-		)
+		if (!d.is(RUNNING, QUEUED, COMPLETE)) {
 			$("play", "toolplay").forEach(enableObj);
-
-		if (!d.isCanceled && ((d.isCompleted && d.isPassed) || !d.isCompleted))
+		}
+		
+		if (!d.is(CANCELED)) {
 			$("cancel", "toolcancel").forEach(enableObj);
+		}
 
-		if (d.isCompleted)
+		if (d.is(COMPLETE)) {
 			$('folder', 'launch', 'delete').forEach(enableObj);
-
-		if ((!d.isCanceled)&&(!d.isCompleted)&&(d.declaratedChunks > 1)&&(d.isResumable))
-			enableObj($("removechunk"));
-
-		if ((!d.isCanceled)&&(!d.isCompleted)&&(d.declaratedChunks < 10)&&(d.isResumable))
-			enableObj($("addchunk"));
+		}
+		
+		if (!d.is(CANCELED, COMPLETE) && (!d.is(RUNNING) || d.isResumable)) {
+			if (d.declaratedChunks > 1) {
+				enableObj($("removechunk"));
+			}
+			if (d.declaratedChunks < 9) {
+				enableObj($("addchunk"));
+			}
+		}
 	}
 
  	$("movetop", "toolmovetop", "movebottom", "toolmovebottom", "moveup",
@@ -2322,7 +2327,6 @@ try {
 } catch(e) {Debug.dump("popup()", e)}
 }
 
-//--> attivato dal click su context o toolbar
 function pauseResumeReq(pauseReq) {
 try {
 	var rangeCount = tree.view.selection.getRangeCount();
@@ -2337,58 +2341,24 @@ try {
 		for(var c=start.value; c<=end.value; c++) {
 			var d = downloadList[c];
 			if (pauseReq) {
-				// se e' effettivamente da pausare
-				if (
-					(!d.isCanceled)&&(!d.isPaused)&&(!d.isCompleted)
-					&& (
-						((d.partialSize != 0)&&(d.isResumable))
-						||
-						(d.partialSize == 0)
-					)
-				) {
+				if (d.is(QUEUED) || (d.is(RUNNING) && d.isResumable)) {
 					d.setTreeCell("status", _("paused"));
 					d.setTreeCell("speed", "");
 					d.setTreeProgress("paused");
 
 					if (d.isFirst) Check.setFirstInQueue();
 
-					d.isPaused = true;
+					d.state = PAUSED;
 					d.setPaused();
 				}
 			} else {
 				// se e' effettivamente da resumare
-				if (
-					(!d.isCanceled)&&(d.isPaused)&&(!d.isCompleted)
-					&& (
-						((d.partialSize != 0)&&(d.isResumable))
-						||
-						(d.partialSize == 0)
-					)
-				) {
+				if (d.is(PAUSED, CANCELED)) {
 					firstFlag = true;
-					d.isPaused = false;
+					d.state = QUEUED;
+					d.isPassed = false;
 					d.setTreeCell("status", _("inqueue"));
 					d.setTreeProgress("queued");
-				} else if (!d.isRunning && d.isCanceled) {
-
-					// e' stato cancellato, glielo faccio ripiacere a getfirstfreefile
-					firstFlag = true;
-					if (d.isPassed) {
-						d.isPassed = false;
-					}
-					var n = new downloadElement(
-							d.urlManager,
-							String(d.originalDirSave),
-							Number(d.numIstance),
-							String(d.description),
-							String(d.mask),
-							String(d.refPage.spec)
-						);
-					n.startDate = new Date(d.startDate.toUTCString());
-					n.treeID = String(d.treeID);
-
-					downloadList.splice(c, 1, n);
-					d.setTreeCell("status", _("inqueue"));
 				}
 				Check.haveToCheck = true;
 				if (((Check.firstInQueue == -1) || (Check.firstInQueue > c)) && firstFlag) {
@@ -2449,7 +2419,8 @@ function startSubChunks(start, end, firstindex, lastindex, downloadsLeft, d) {
 
 //--> attivato dal click su context o toolbar
 function cancelPopup() {
-	var rangeCount = tree.view.selection.getRangeCount();
+	var sel = tree.view.selection;
+	var rangeCount = sel.getRangeCount();
 
 	for(var i=rangeCount-1; i>=0; i--) {
 		var start = {};
@@ -2458,8 +2429,7 @@ function cancelPopup() {
 		// ciclo gli elementi selezionati
 		for(var c=end.value; c>=start.value; c--) {
 			// se e' effettivamente da cancellare
-			if (!downloadList[c].isCanceled && ((downloadList[c].isCompleted && downloadList[c].isPassed) || !downloadList[c].isCompleted))
-				downloadList[c].cancelDownload();
+			downloadList[c].cancelDownload();
 		}
 	}
 }
@@ -2506,7 +2476,7 @@ function removeFromList() {
 function removeCompleted() {
 	sessionManager.beginUpdate();
 	for (var i=downloadList.length-1; i>=0; i--) {
-		if (downloadList[i].isCompleted) {
+		if (downloadList[i].is(COMPLETE)) {
 			removeElement(i);
 		}
 	}
@@ -2530,19 +2500,15 @@ function removeElement(index) {
 function setRemoved(d) {
 	try {
 	d.isRemoved = true;
-	if (!d.isCanceled)
-		d.isCanceled = true;
 
 	if (d.join == null || !d.join.imJoining) {
 		$("downfigli").removeChild($(d.treeID));
-		if (d.isCompleted) {
+		if (d.is(COMPLETE)) {
 			Stats.completedDownloads--;
 		}
 
-		if (!d.isStarted || d.isCompleted) {
-			if (!d.isPassed) {
-				d.isPassed = true;
-			 }
+		if (!d.isStarted || d.is(COMPLETE)) {
+			d.isPassed = true;
 		} else {
 			if (d.setIsRunning()) {
 				d.setPaused();
@@ -2557,10 +2523,8 @@ function setRemoved(d) {
 		d.join.stopJoining();
 	}
 
-	if (d.isPassed) {
-		 d.isPassed = false;
-	}
-
+	d.state = CANCELED;
+	d.isPassed = false;
 } catch(e) {
 	Debug.dump("setRemoved():", e);
 }
@@ -2627,23 +2591,23 @@ function moveTop(top) {
 				downloadList.splice(downloadList.length, 0, t);
 
 			if (top) { // top
-				var beforePos = 0;
-
-				if ((beforePos <= Check.firstInQueue)&&(!downloadList[beforePos].isRunning)&&(!downloadList[beforePos].isPaused)&&(!downloadList[beforePos].isCanceled)&&(!downloadList[beforePos].isCompleted)) {
+				var d = downloadList[0];
+				if ((0 <= Check.firstInQueue)&& d.is(QUEUED)) {
+					d.isFirst = true;
 					oldfirst.isFirst = false;
-					Check.firstInQueue = beforePos;
-					downloadList[beforePos].isFirst = true;
+					Check.firstInQueue = 0;
 				}
-			 else if (datas[i] > Check.firstInQueue && beforePos <= Check.firstInQueue) Check.firstInQueue++;
+				else if (datas[i] > Check.firstInQueue && 0 <= Check.firstInQueue) Check.firstInQueue++;
 			}
 			else {
 				var beforePos = downloadList.length; // bottom
 				if (datas[i] == Check.firstInQueue) {
 					for (var dex = datas[i]; dex < beforePos; dex++) {
-						if ((!downloadList[dex].isRunning)&&(!downloadList[dex].isPaused)&&(!downloadList[dex].isCanceled)&&(!downloadList[dex].isCompleted)) {
+						var d = downloadList[dex];
+						if (d.is(QUEUED))) {
+							d.isFirst = true;
 							oldfirst.isFirst = false;
 							Check.firstInQueue = dex;
-							downloadList[dex].isFirst = true;
 							break;
 						}
 					}
@@ -2708,24 +2672,25 @@ function move(pos) {
 			if (datas[i] + pos < 0) break;
 			if (pos < 0) { // se si sale
 				var beforePos = datas[i] + pos;
-
-			if ((beforePos <= Check.firstInQueue)&&(!downloadList[beforePos].isRunning)&&(!downloadList[beforePos].isPaused)&&(!downloadList[beforePos].isCanceled)&&(!downloadList[beforePos].isCompleted)) {
+				var d = downloadList[beforePos];
+				if ((beforePos <= Check.firstInQueue)&&d.is(QUEUED)) {
 					oldfirst.isFirst = false;
 					Check.firstInQueue = beforePos;
 					downloadList[beforePos].isFirst = true;
 				}
-			 else if (datas[i] > Check.firstInQueue && beforePos <= Check.firstInQueue) Check.firstInQueue++;
+				else if (datas[i] > Check.firstInQueue && beforePos <= Check.firstInQueue) Check.firstInQueue++;
 			}
 			else {
 				var beforePos = datas[i] + pos + 1; // se si scende
 				if (datas[i] == Check.firstInQueue) {
 					for (var dex = datas[i]; dex < beforePos; dex++) {
-					if ((!downloadList[dex].isRunning)&&(!downloadList[dex].isPaused)&&(!downloadList[dex].isCanceled)&&(!downloadList[dex].isCompleted)) {
-						oldfirst.isFirst = false;
-						Check.firstInQueue = dex;
-						downloadList[dex].isFirst = true;
-						break;
-					}
+						var d = downloadList[dex]
+						if (d.is(QUEUED)) {
+							oldfirst.isFirst = false;
+							Check.firstInQueue = dex;
+							downloadList[dex].isFirst = true;
+							break;
+						}
 					}
 				}
 				else
@@ -2775,7 +2740,7 @@ function addChunk(add) {
 			if (!add && downloadList[c].maxChunks > 1) {
 				--downloadList[c].maxChunks;
 				Debug.dump(downloadList[c].fileName + ": User removed a chunk");
-				if (downloadList[c].declaratedChunks > downloadList[c].maxChunks && downloadList[c].isRunning)
+				if (downloadList[c].declaratedChunks > downloadList[c].maxChunks && downloadList[c].is(RUNNING))
 					for (var i=(downloadList[c].chunks.length-1); i>=0; i--)
 						if (downloadList[c].chunks[i].isRunning) {
 							downloadList[c].chunks[i].progressPersist.cancelSave();
@@ -2785,7 +2750,7 @@ function addChunk(add) {
 				Debug.dump(downloadList[c].fileName + ": User added a chunk");
 				++downloadList[c].maxChunks;
 				var d = downloadList[c];
-				if (!d.isPaused && d.isRunning && (!('imWaitingToRearrange' in d) || !d.imWaitingToRearrange) && !d.resumeDownload()) {
+				if (d.is(RUNNIN) && (!('imWaitingToRearrange' in d) || !d.imWaitingToRearrange) && !d.resumeDownload()) {
 
 					// trovo il chunk piu' grande con scaricamento in corso
 					var j = null;
@@ -2923,7 +2888,7 @@ function updateChunkCanvas() { try {
 	d.fillStyle = normal;
 	d.fillRect(0,0,300,20);
 
-	if (file.isCompleted) {
+	if (file.is(COMPLETE)) {
 		d.fillStyle = compl;
 		d.fillRect(0,0,300,20);
 		d.fillStyle = join;
@@ -2931,7 +2896,7 @@ function updateChunkCanvas() { try {
 			d.fillRect(0,16,300,4);
 		else
 			d.fillRect(0,16,Math.ceil(file.join.offset/file.totalSize*300),4);
-	} else if (file.isCanceled) {
+	} else if (file.is(CANCELED)) {
 		d.fillStyle = cancel;
 		d.fillRect(0,0,300,20);
 	} else if (file.isStarted) {
