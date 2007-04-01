@@ -1,3 +1,18 @@
+function joinListener(d) {
+	Debug.dump("joinListener created for #"+d.fileName);
+
+	this.d = d;
+	try
+	{
+		this.init();
+	} catch (ex) {
+		// at least break the download here and do not waste bandwidth
+		Debug.dump("joinlistener::init:", ex);
+		this.closeStream();
+		/// XXX: l10n friendly
+		failDownload(this.d, 'Joining failure', 'Joining failed to initialize', 'Joining Failure');
+	}
+}
 joinListener.prototype = {
 
 	stopRequest: null,
