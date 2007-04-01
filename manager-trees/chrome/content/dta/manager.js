@@ -133,10 +133,12 @@ chunkElement.prototype = {
 				throw ("dataCopyListener::dataAvailable: read/write count mismatch!");
 			}
 			this._written += bytes;
+			return bytes;
 		} catch (ex) {
 			Debug.dump('write:', ex);
 			throw ex;
 		}
+		return 0;
 	}
 }
 
@@ -1148,8 +1150,7 @@ function Download(d, c, cIdx, headerHack) {
 	this.c = c;
 	this.chunkIndex = cIdx;
 	this.isHeaderHack = headerHack;
-	var x = new Date();
-	var uri = d.urlManager.getURL().url + '?' + x.getMilliseconds() + x.getSeconds();
+	var uri = d.urlManager.getURL().url;
 	var referrer = d.refPage;
 	
 	this._chan = this._ios.newChannelFromURI(this._ios.newURI(uri, null,null));
@@ -1264,7 +1265,10 @@ Download.prototype = {
 	// nsIStreamListener
   onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
 		try {
-			this.c.write(aInputStream, aCount);
+			if (!this.c.write(aInputStream, aCount)) {
+				// we already got what we wanted
+				this.cancel();
+			}
 		}
 		catch (ex) {
 			Debug.dump('onDataAvailable', ex);
@@ -1276,6 +1280,8 @@ Download.prototype = {
 	onStartRequest: function(aRequest, aContext) {
 		Debug.dump('StartRequest');
 		try {
+			var c = this.c;
+			var d = this.d;
 			var firstProgress = false;
 
 			if (this.isPassedOnProgress) {
