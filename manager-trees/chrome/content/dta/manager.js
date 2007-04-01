@@ -1185,7 +1185,6 @@ function Download(d, c, cIdx, headerHack) {
 Download.prototype = {
 	_ios: Components.classes["@mozilla.org/network/io-service;1"]
 		.getService(Components.interfaces.nsIIOService),
-	_justStarted: true,
 	_interfaces: [
 		Ci.nsISupports,
 		Ci.nsISupportsWeakReference,
@@ -1289,10 +1288,6 @@ Download.prototype = {
 	
 	//nsIRequestObserver
 	onStartRequest: function(aRequest, aContext) {
-		if (this._justStarted) {
-			this._justStarted = false;
-			//return;
-		}
 		Debug.dump('StartRequest');
 		try {
 			var c = this.c;
