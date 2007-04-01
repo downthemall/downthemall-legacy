@@ -77,6 +77,11 @@ var chunkElement = function(start, end, d) {
 	this.start = start;
 	this.end = end;
 	this.parent = d;
+	var dest = Prefs.tempLocation
+		? Prefs.tempLocation.clone()
+		: new FileFactory(this.parent.dirSave);
+	dest.append(this.parent.fileName + '.dtapart');
+	this.partFile = dest;	
 }
 
 chunkElement.prototype = {
@@ -105,13 +110,8 @@ chunkElement.prototype = {
 	write: function(aInputStream, aCount) {
 		try {
 			if (!this._outstream) {
-				var dest = Prefs.tempLocation
-					? Prefs.tempLocation.clone()
-					: new FileFactory(this.parent.dirSave);
-				dest.append(this.parent.fileName + '.dtapart');
-				Debug.dump(dest.path);
 				var outStream = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
-				outStream.init(dest, 0x04 | 0x08, 0766, 0);
+				outStream.init(this.partFile, 0x04 | 0x08, 0766, 0);
 				this._outstream = outStream.QueryInterface(Ci.nsISeekableStream);
 				this._outstream.seek(0x00, this.start);
 			}
@@ -1155,7 +1155,7 @@ function Download(d, c, cIdx, headerHack) {
 	
 	this._chan = this._ios.newChannelFromURI(this._ios.newURI(uri, null,null));
 	var r = Ci.nsIRequest;
-	this._chan.loadFlags = r.LOAD_NORMAL | r.LOAD_BYPASS_CACHE | r.INHIBIT_CACHING | r.INHIBIT_PERSISTENT_CACHING;
+	this._chan.loadFlags = r.LOAD_NORMAL | r.LOAD_BYPASS_CACHE;
 	this._chan.notificationCallbacks = this;
 	try {
 		var encodedChannel = this._chan.QueryInterface(Ci.nsIEncodedChannel);
@@ -1185,9 +1185,11 @@ function Download(d, c, cIdx, headerHack) {
 Download.prototype = {
 	_ios: Components.classes["@mozilla.org/network/io-service;1"]
 		.getService(Components.interfaces.nsIIOService),
-		
+	_justStarted: true,
 	_interfaces: [
 		Ci.nsISupports,
+		Ci.nsISupportsWeakReference,
+		Ci.nsIWeakReference,
 		Ci.nsICancelable,
 		Ci.nsIInterfaceRequestor,
 		Ci.nsIAuthPrompt,
@@ -1206,10 +1208,18 @@ Download.prototype = {
 			Debug.dump("NF: " + iid);
 			throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
+	// nsISupportsWeakReference
+	GetWeakReference: function( ) {
+		return this;
+	},
+	// nsIWeakReference
+	QueryReferent: function(uuid) {
+		return this.QueryInterface(uuid);
+	},
 	// nsICancelable
 	cancel: function(aReason) {
 		if (!aReason) {
-			aReason = Components.results.NS_BINDING_ABORTED;
+			aReason = 0x804b0002 // NS_BINDING_ABORTED;
 		}
 		this._chan.cancel(aReason);
 	},
@@ -1264,6 +1274,7 @@ Download.prototype = {
 	
 	// nsIStreamListener
   onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
+		Debug.dump("DA " + aCount);
 		try {
 			if (!this.c.write(aInputStream, aCount)) {
 				// we already got what we wanted
@@ -1278,6 +1289,10 @@ Download.prototype = {
 	
 	//nsIRequestObserver
 	onStartRequest: function(aRequest, aContext) {
+		if (this._justStarted) {
+			this._justStarted = false;
+			//return;
+		}
 		Debug.dump('StartRequest');
 		try {
 			var c = this.c;
@@ -1642,7 +1657,7 @@ Download.prototype = {
 		// if download is complete
 		if (d.is(COMPLETE)) {
 			Debug.dump(d.fileName + ": Download is completed!");
-			d.moveCompleted(c.fileManager);
+			d.moveCompleted(c.partFile);
 		}
 		else if (d.is(PAUSED) && Check.isClosing) {
 			if (!d.isRemoved) {

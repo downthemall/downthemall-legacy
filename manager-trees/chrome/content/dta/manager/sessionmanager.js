@@ -67,7 +67,7 @@ var sessionManager = {
 			do {
 				if (!d.chunks[x].isRunning && d.chunks[x].chunkSize != 0) {
 					var chunk = {};
-					chunk.path = d.chunks[x].fileManager.path;
+					chunk.path = d.chunks[x].path;
 					chunk.start = d.chunks[x].start;
 					chunk.end = d.chunks[x].end;
 					chunk.size = d.chunks[x].chunkSize;

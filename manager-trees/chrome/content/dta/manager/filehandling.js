@@ -9,7 +9,7 @@ var FileHandling = {
 			select.getRangeAt(i,start,end);
 			for (var c = start.value, e = end.value; c <= e; ++c) {
 				try {
-					if (downloadList[c].isCompleted) {
+					if (downloadList[c].is(COMPLETE)) {
 						OpenExternal.reveal(downloadList[c].dirSave + downloadList[c].destinationName);
 					} else {
 						OpenExternal.reveal(downloadList[c].dirSave);
@@ -22,7 +22,7 @@ var FileHandling = {
 	},
 	openFile: function() {
 		var cur = downloadList[tree.currentIndex];
-		if (cur.isCompleted) {
+		if (cur.is(COMPLETE)) {
 			try {
 				OpenExternal.launch(cur.dirSave + cur.destinationName);
 			}
@@ -42,7 +42,7 @@ var FileHandling = {
 			select.getRangeAt(i, start, end);
 			for (var c = start.value, e = end.value; c <= e; ++c) {
 				// just populate the list
-				if (downloadList[c].isCompleted) {
+				if (downloadList[c].is(COMPLETE)) {
 					list.push(c);
 				}
 			}
