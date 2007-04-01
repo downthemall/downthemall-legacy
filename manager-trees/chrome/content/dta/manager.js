@@ -186,7 +186,15 @@ const COMPLETE = 1<<3;
 const CANCELED = 1<<4;
 
 downloadElement.prototype = {
-	state: QUEUED,
+	_state: QUEUED,
+	get state() {
+		return this._state;
+	},
+	set state(ns) {
+		Debug.dump('SS: ' + this._state + "/" + ns);
+		this._state = ns;
+	},
+	
 	/**
 	 *Takes one or more state indicators and returns if this download is in state of any of them
 	 */
@@ -233,7 +241,14 @@ downloadElement.prototype = {
 
 	imWaitingToRearrange: false,
 
-	hasToBeRedownloaded: false,
+	_hasToBeRedownloaded: false,
+	get hasToBeRedownloaded() {
+		return this._hasToBeRedownloaded;
+	},
+	set hasToBeRedownloaded(nv) {
+		Debug.dump("HR: " + this._hasToBeRedownloaded + "/" + nv);
+		return this._hasToBeRedownloaded = nv;
+	},
 	reDownload: function() {
 		// replace names
 		Debug.dump(this.urlManager.usable);
@@ -1133,16 +1148,25 @@ function Download(d, c, cIdx, headerHack) {
 	this.c = c;
 	this.chunkIndex = cIdx;
 	this.isHeaderHack = headerHack;
-	var uri = d.urlManager.getURL();
+	var x = new Date();
+	var uri = d.urlManager.getURL().url + '?' + x.getMilliseconds() + x.getSeconds();
 	var referrer = d.refPage;
 	
-	this._chan = this._ios.newChannelFromURI(this._ios.newURI(uri.url, null,null));
+	this._chan = this._ios.newChannelFromURI(this._ios.newURI(uri, null,null));
 	var r = Ci.nsIRequest;
-	this._chan.loadFlags |= r.LOAD_NORMAL | r.INHIBIT_PERSISTENT_CACHING | r.LOAD_BYPASS_CACHE;
+	this._chan.loadFlags = r.LOAD_NORMAL | r.LOAD_BYPASS_CACHE | r.INHIBIT_CACHING | r.INHIBIT_PERSISTENT_CACHING;
 	this._chan.notificationCallbacks = this;
+	try {
+		var encodedChannel = this._chan.QueryInterface(Ci.nsIEncodedChannel);
+		encodedChannel.applyConversion = false;
+	}
+	catch (ex) {
+		Debug.dump("ec", ex);
+	}
 	if (referrer) {
 		try {
 			var http = this._chan.QueryInterface(Ci.nsIHttpChannel);
+			http.setRequestHeader('Accept-Encoding', 'none', false);
 			if (c.end > 0) {
 				http.setRequestHeader('Range', 'bytes=' + c.start + '-' + c.end, false);
 			}
@@ -1155,7 +1179,7 @@ function Download(d, c, cIdx, headerHack) {
 		
 		}
 	}
-	this._chan.asyncOpen(this, this);
+	this._chan.asyncOpen(this, null);
 }
 Download.prototype = {
 	_ios: Components.classes["@mozilla.org/network/io-service;1"]
@@ -1251,6 +1275,226 @@ Download.prototype = {
 	//nsIRequestObserver
 	onStartRequest: function(aRequest, aContext) {
 		Debug.dump('StartRequest');
+		try {
+			var firstProgress = false;
+
+			if (this.isPassedOnProgress) {
+				throw new Components.Exception("WTF?");
+			}
+			firstProgress = this.isPassedOnProgress = true;
+			Debug.dump("First ProgressChange for chunk ");
+			try {
+				var chan = aRequest.QueryInterface(Ci.nsIHttpChannel);
+			} catch(ex) {
+				// no-op
+			}
+
+			// if we don't have any HTTP Response (e.g. FTP link)
+			if (!(chan instanceof Ci.nsIHttpChannel)) {
+				Debug.dump(d.fileName + ": Error in istanceof chan... Probably FTP... forcing single chunk mode");
+
+				// force single chunk mode
+				this.isHeaderHack = false;
+				d.maxChunks = 1;
+				c.end = d.totalSize - 1;
+				d.setTreeCell("parts", "1/1");
+				this.cantCount = 1;
+
+				// filename renaming
+				d.destinationName = d.buildFromMask(false, d.mask);
+				d.alreadyMaskedName = true;
+
+				// target directory renaming
+				d.dirSave = d.buildFromMask(true, d.mask);
+				d.alreadyMaskedDir = true;
+
+				d.setTreeCell("dir", d.dirSave);
+				return;
+			}
+		
+			if (chan.responseStatus >= 400) {
+				// se si tratta di errore >= 400 blocchiamo e basta
+				failDownload(
+					d,
+					_("error", [chan.responseStatus]),
+					_("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]) + " " + _("sra", [chan.responseStatus]) + ": " + chan.responseStatusText,
+					_("error", [chan.responseStatus])
+				);
+				sessionManager.save(d);
+				return;
+			}
+			
+			// not partial content altough we are multi-chunk
+			if (chan.responseStatus != 206 && c.end != 0) {
+				Debug.dump(d.fileName + ": Server returned a " + chan.responseStatus + " response instead of 206... Normal mode");
+				vis = {visitHeader: function(a,b) { Debug.dump(a + ': ' + b); }};
+				chan.visitRequestHeaders(vis);
+				chan.visitResponseHeaders(vis);
+				d.hasToBeRedownloaded = true;
+				d.redownloadIsResumable = false;
+				d.setPaused();
+				return;
+			}
+
+			var visitor = null;
+			try {
+				visitor = d.visitors.visit(chan);
+			}
+			catch (ex) {
+				Debug.dump("header failed! " + d.fileName, ex);
+				// restart download from the beginning
+				d.hasToBeRedownloaded = true;
+				d.setPaused();
+				return;
+			}
+
+			// this.isHeaderHack = it's the chunk that has to test response headers
+			if (this.isHeaderHack) {
+				Debug.dump(d.fileName + ": Test Header Chunk started");
+
+				// content-type
+				if (visitor.type) {
+					d.contentType = visitor.type;
+				}
+
+				// compression?
+				d.compression = (
+					(visitor.encoding=="gzip"||visitor.encoding=="deflate")
+					&&
+					!(/gzip/).test(d.contentType)
+					&&
+					!(/\.gz/).test(d.fileName)
+				);
+				if (d.compression) {
+					d.compressionType = visitor.encoding;
+				}
+
+				// accept range
+				d.isResumable = !visitor.dontacceptrange;
+
+				Debug.dump("type: " + visitor.type);
+				if (visitor.type && visitor.type.search(/application\/metalink\+xml/) != -1) {
+					Debug.dump(chan.URI.spec + " iml");
+					d.isMetalink = true;
+					d.isResumable = false;
+				}
+
+				if (visitor.contentlength > 0) {
+					d.totalSize = visitor.contentlength;
+				} else {
+					d.totalSize = 0;
+					d.isResumable = false;
+				}
+				// Checks for available disk space.
+				// XXX: l10n
+				var tsd = d.totalSize;
+				var nsd;
+				if (Prefs.tempLocation)	{
+					var tst = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : MAX_CHUNK_SIZE);
+					nds = Prefs.tempLocation.diskSpaceAvailable
+					if (nds < tst) {
+						Debug.dump("There is not enought free space available on temporary directory, needed=" + tst + " (totalsize="+ d.totalSize +"), user=" + nds);
+						failDownload(d, _("ndsa"), _("spacetemp"), _("freespace"));
+						return;
+					}
+				}
+				else {
+					tsd = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : MAX_CHUNK_SIZE);
+				}
+				var realDest;
+				try {
+					var realDest = new FileFactory(d.dirSave);
+					if (!realDest.exists()) realDest.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
+				} catch(e) {
+					Debug.dump("downloadChunk(): Could not move file or create directory on destination path: ", e);
+					failDownload(d, _("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+					return;
+				}
+				nds = realDest.diskSpaceAvailable;
+				if (nds < tsd) {
+					Debug.dump("There is not enought free space available on destination directory, needed=" + tsd + " (totalsize="+ d.totalSize +"), user=" + nsd);
+					failDownload(d, _("ndsa"), _("spacedir"), _("freespace"));
+					return;
+				}
+				// if we are redownloading the file, here we can force single chunk mode
+				if (d.hasToBeRedownloaded) {
+					d.hasToBeRedownloaded = null;
+					d.isResumable = false;
+				}
+
+				// filename renaming
+				if (!d.alreadyMaskedName) {
+					d.alreadyMaskedName = true;
+					var newName = null;
+
+					if (visitor.fileName && visitor.fileName.length > 0) {
+						// if content disposition hasn't an extension we use extension of URL
+						newName = visitor.fileName;
+						if (visitor.fileName.lastIndexOf('.') == -1 && d.urlManager.url.getExtension()) {
+							newName += '.' + d.urlManager.url.getExtension();
+						}
+					} else if (aRequest.URI.spec != d.url) {
+						// if there has been one or more "moved content" header directives, we use the new url to create filename
+						newName = aRequest.URI.spec.getUsableFileName();
+					}
+
+					// got a new name, so decode and set it.
+					if (newName) {
+						var charset = visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset;
+						d.fileName = DTA_URLhelpers.decodeCharset(newName, charset);
+					}
+					d.fileName = d.buildFromMask(false, "*name*.*ext*");
+
+					if (Prefs.showOnlyFilenames) {
+						d.setTreeCell("url", " " + d.fileName);
+					}
+					$(d.treeID).childNodes[0].childNodes[treeCells["url"]].setAttribute('src', d.icon);
+
+					// aggiungiamo le opzioni di renaming a destinationName
+					d.destinationName = d.buildFromMask(false, d.mask);
+				}
+
+				// target directory renaming
+				if (!d.alreadyMaskedDir) {
+					d.alreadyMaskedDir = true;
+					d.dirSave = d.buildFromMask(true, d.mask);
+					d.setTreeCell("dir", d.dirSave);
+				}
+
+				// se scopriamo che e' possibile effettuare multipart blocchiamo il chunk e ricominciamo in multipart
+				if (d.isResumable && d.totalSize > 2 * MIN_CHUNK_SIZE && d.maxChunks > 1) {
+					// in case of a redirect set the new real url
+					if (this.url != aRequest.URI.spec) {
+						d.urlManager.replace(this.url, new DTA_URL(aRequest.URI.spec, visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset));
+					}
+					Debug.dump(d.fileName + ": Let's stop single chunk and start multipart!");
+					c.download.cancel();
+					return;
+				}
+				
+				// altrimenti il chunk di prova diventa quello definitivo
+				Debug.dump(d.fileName + ": Multipart downloading is not needed/possible. isResumable = " + d.isResumable);
+				d.maxChunks = 1;
+				c.end = d.totalSize - 1;
+				this.isHeaderHack = false;
+				
+			} else {
+				Debug.dump(d.fileName + ": Chunk " + c.start + "-" + + c.end + " started");
+			}
+
+			d.checkFilenameConflict();
+
+			if (!d.totalSize && d.chunks.length == 1 && aProcessMax > 0) {
+				d.totalSize = Number(aProcessMax);
+			}
+			else if (!d.totalSize) {
+				this.cantCount = 1;
+			}
+			d.setTreeProgress("inprogress", 0);
+			popup();
+		} catch (ex) {
+			Debug.dump("ss", ex);
+		}
 	},
 	onStopRequest: function(aRequest, aContext, aStatusCode) {
 		Debug.dump('StopRequest');
@@ -1318,6 +1562,7 @@ Download.prototype = {
 			Check.checkClose();
 
 			sessionManager.save(d);
+			Debug.dump("out1");
 			return;
 		}
 
@@ -1335,6 +1580,7 @@ Download.prototype = {
 			}
 			popup();
 			sessionManager.save(d);
+			Debug.dump("out2");
 			return;
 		}
 	
@@ -1352,6 +1598,7 @@ Download.prototype = {
 			}
 			popup();
 			sessionManager.save(d);
+			Debug.dump("out3");
 			return;
 		}
 
@@ -1382,6 +1629,7 @@ Download.prototype = {
 				_("srver")
 			);
 			sessionManager.save(d);
+			Debug.dump("out4");
 			return;
 		}
 
@@ -1408,9 +1656,10 @@ Download.prototype = {
 			}
 			Check.checkClose();
 		}
-		else if (!d.is(CANCELED, PAUSED) && d.isResumable) {
+		else if (d.is(RUNNING) && d.isResumable) {
 			// if all the download space has already been occupied by chunks (= !resumeDownload)
 			if (!d.imWaitingToRearrange && !d.resumeDownload() && (d.maxChunks - d.activeChunks) > 0) {
+				Debug.dump("RR");
 				// find the biggest running chunk..
 				var j = null;
 				for (var x=0; x<d.chunks.length; x++)
@@ -1433,6 +1682,7 @@ Download.prototype = {
 				}
 			}
 			else if (c.imWaitingToRearrange) {
+				Debug.dump("NR");
 				// ..to let resumeDownload split space in a better way.
 				c.imWaitingToRearrange = false;
 				d.imWaitingToRearrange = false;
@@ -1475,221 +1725,8 @@ Download.prototype = {
 
 			d.timeLastProgress = new Date().getTime();
 
-			var firstProgress = false;
-
-			if (!this.isPassedOnProgress) {
-				firstProgress = this.isPassedOnProgress = true;
-				Debug.dump("First ProgressChange for chunk ");
-				try {
-					var chan = aRequest.QueryInterface(Ci.nsIHttpChannel);
-				} catch(ex) {
-					// no-op
-				}
-
-				// if we don't have any HTTP Response (e.g. FTP link)
-				if (!(chan instanceof Ci.nsIHttpChannel)) {
-					Debug.dump(d.fileName + ": Error in istanceof chan... Probably FTP... forcing single chunk mode");
-
-					// force single chunk mode
-					this.isHeaderHack = false;
-					d.maxChunks = 1;
-					c.end = d.totalSize - 1;
-					d.setTreeCell("parts", "1/1");
-					this.cantCount = 1;
-
-					// filename renaming
-					d.destinationName = d.buildFromMask(false, d.mask);
-					d.alreadyMaskedName = true;
-
-					// target directory renaming
-					d.dirSave = d.buildFromMask(true, d.mask);
-					d.alreadyMaskedDir = true;
-
-					d.setTreeCell("dir", d.dirSave);
-					return;
-				}
-			
-				if (chan.responseStatus >= 400) {
-					// se si tratta di errore >= 400 blocchiamo e basta
-					failDownload(
-						d,
-						_("error", [chan.responseStatus]),
-						_("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]) + " " + _("sra", [chan.responseStatus]) + ": " + chan.responseStatusText,
-						_("error", [chan.responseStatus])
-					);
-					sessionManager.save(d);
-					return;
-				}
-				
-				// not partial content altough we are multi-chunk
-				if (chan.responseStatus != 206 && c.end != 0) {
-					Debug.dump(d.fileName + ": Server returned a " + chan.responseStatus + " response instead of 206... Normal mode");
-					d.hasToBeRedownloaded = true;
-					d.redownloadIsResumable = false;
-					d.setPaused();
-					return;
-				}
-
-				var visitor = null;
-				try {
-					visitor = d.visitors.visit(chan);
-				}
-				catch (ex) {
-					Debug.dump("header failed! " + d.fileName, ex);
-					// restart download from the beginning
-					d.hasToBeRedownloaded = true;
-					d.setPaused();
-					return;
-				}
-
-				// this.isHeaderHack = it's the chunk that has to test response headers
-				if (this.isHeaderHack) {
-					Debug.dump(d.fileName + ": Test Header Chunk started");
-
-					// content-type
-					if (visitor.type) {
-						d.contentType = visitor.type;
-					}
-
-					// compression?
-					d.compression = (
-						(visitor.encoding=="gzip"||visitor.encoding=="deflate")
-						&&
-						!(/gzip/).test(d.contentType)
-						&&
-						!(/\.gz/).test(d.fileName)
-					);
-					if (d.compression) {
-						d.compressionType = visitor.encoding;
-					}
-
-					// accept range
-					d.isResumable = !visitor.dontacceptrange;
-
-					Debug.dump("type: " + visitor.type);
-					if (visitor.type && visitor.type.search(/application\/metalink\+xml/) != -1) {
-						Debug.dump(chan.URI.spec + " iml");
-						d.isMetalink = true;
-						d.isResumable = false;
-					}
-
-					if (visitor.contentlength > 0) {
-						d.totalSize = visitor.contentlength;
-					} else {
-						d.totalSize = 0;
-						d.isResumable = false;
-					}
-					// Checks for available disk space.
-					// XXX: l10n
-					var tsd = d.totalSize;
-					var nsd;
-					if (Prefs.tempLocation)	{
-						var tst = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : MAX_CHUNK_SIZE);
-						nds = Prefs.tempLocation.diskSpaceAvailable
-						if (nds < tst) {
-							Debug.dump("There is not enought free space available on temporary directory, needed=" + tst + " (totalsize="+ d.totalSize +"), user=" + nds);
-							failDownload(d, _("ndsa"), _("spacetemp"), _("freespace"));
-							return;
-						}
-					}
-					else {
-						tsd = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : MAX_CHUNK_SIZE);
-					}
-					var realDest;
-					try {
-						var realDest = new FileFactory(d.dirSave);
-						if (!realDest.exists()) realDest.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
-					} catch(e) {
-						Debug.dump("downloadChunk(): Could not move file or create directory on destination path: ", e);
-						failDownload(d, _("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
-						return;
-					}
-					nds = realDest.diskSpaceAvailable;
-					if (nds < tsd) {
-						Debug.dump("There is not enought free space available on destination directory, needed=" + tsd + " (totalsize="+ d.totalSize +"), user=" + nsd);
-						failDownload(d, _("ndsa"), _("spacedir"), _("freespace"));
-						return;
-					}
-					// if we are redownloading the file, here we can force single chunk mode
-					if (d.hasToBeRedownloaded) {
-						d.hasToBeRedownloaded = null;
-						d.isResumable = false;
-					}
-
-					// filename renaming
-					if (!d.alreadyMaskedName) {
-						d.alreadyMaskedName = true;
-						var newName = null;
-
-						if (visitor.fileName && visitor.fileName.length > 0) {
-							// if content disposition hasn't an extension we use extension of URL
-							newName = visitor.fileName;
-							if (visitor.fileName.lastIndexOf('.') == -1 && d.urlManager.url.getExtension()) {
-								newName += '.' + d.urlManager.url.getExtension();
-							}
-						} else if (aRequest.URI.spec != d.url) {
-							// if there has been one or more "moved content" header directives, we use the new url to create filename
-							newName = aRequest.URI.spec.getUsableFileName();
-						}
-
-						// got a new name, so decode and set it.
-						if (newName) {
-							var charset = visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset;
-							d.fileName = DTA_URLhelpers.decodeCharset(newName, charset);
-						}
-						d.fileName = d.buildFromMask(false, "*name*.*ext*");
-
-						if (Prefs.showOnlyFilenames) {
-							d.setTreeCell("url", " " + d.fileName);
-						}
-						$(d.treeID).childNodes[0].childNodes[treeCells["url"]].setAttribute('src', d.icon);
-
-						// aggiungiamo le opzioni di renaming a destinationName
-						d.destinationName = d.buildFromMask(false, d.mask);
-					}
-
-					// target directory renaming
-					if (!d.alreadyMaskedDir) {
-						d.alreadyMaskedDir = true;
-						d.dirSave = d.buildFromMask(true, d.mask);
-						d.setTreeCell("dir", d.dirSave);
-					}
-
-					// se scopriamo che e' possibile effettuare multipart blocchiamo il chunk e ricominciamo in multipart
-					if (d.isResumable && d.totalSize > 2 * MIN_CHUNK_SIZE && d.maxChunks > 1) {
-						// in case of a redirect set the new real url
-						if (this.url != aRequest.URI.spec) {
-							d.urlManager.replace(this.url, new DTA_URL(aRequest.URI.spec, visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset));
-						}
-						Debug.dump(d.fileName + ": Let's stop single chunk and start multipart!");
-						c.download.cancel();
-						return;
-					}
-					
-					// altrimenti il chunk di prova diventa quello definitivo
-					Debug.dump(d.fileName + ": Multipart downloading is not needed/possible. isResumable = " + d.isResumable);
-					d.maxChunks = 1;
-					c.end = d.totalSize - 1;
-					this.isHeaderHack = false;
-					
-				} else {
-					Debug.dump(d.fileName + ": Chunk " + c.start + "-" + + c.end + " started");
-				}
-
-				d.checkFilenameConflict();
-
-				if (!d.totalSize && d.chunks.length == 1 && aProcessMax > 0) {
-					d.totalSize = Number(aProcessMax);
-				}
-				else if (!d.totalSize) {
-					this.cantCount = 1;
-				}
-				d.setTreeProgress("inprogress", 0);
-				popup();
-			}
-
 			// update download tree row
-			if (!d.is(CANCELED)) {
+			if (!d.is(CANCELED) && this.isPassedOnProgress) {
 				d.refreshPartialSize();
 
 				Check.refreshDownloadedBytes();
