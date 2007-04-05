@@ -308,6 +308,10 @@ function downloadElement(url, dir, num, desc1, desc2, mask, refPage) {
  */
 var Dialog = {
 	
+	get boxen() {
+		return $('checkcontainer').getElementsByTagName('checkbox');
+	},
+	
 	// will be called to initialize the dialog
 	load: function DTA_load() {
 	
@@ -373,11 +377,8 @@ var Dialog = {
 
 	// dialog destruction
 	unload: function DTA_unload() {
-
-		// save those filters (we can just modify 'active' props in this dialog)
-		DTA_FilterManager.save();
-
 		self.close();
+		return true;
 	},
 
 	// checks if we can continue to process
@@ -454,11 +455,15 @@ var Dialog = {
 			// save the counter, queued state
 			Preferences.setDTA("counter", counter);
 			Preferences.setDTA("lastWasQueued", !notQueue);
+			
+			var boxen = this.boxen;
+			for (var i = 0; i < boxen.length; ++i) {
+				boxen[i].filter.active = boxen[i].checked;
+			}
+			DTA_FilterManager.save();
 
 			// unload ourselves.
-			this.unload();
-			return true;
-
+			return this.unload();
 		} catch(ex) {
 			Debug.dump("Downloadfile:", ex);
 		}
@@ -516,6 +521,14 @@ var Dialog = {
 		// will keep track of used filter-props f0-f7
 		var used = {};
 		var idx = 0;
+		var boxen = this.boxen;
+		var filters = [];
+		for (var i = 0; i < boxen.length; ++i) {
+			if (!boxen[i].checked) {
+				continue;
+			}
+			filters.push(boxen[i].filter);
+		}
 
 		for (var x = 0; x < tree._links.length; ++x) {
 
@@ -529,10 +542,11 @@ var Dialog = {
 				checked = 'f8';
 			}
 			else {
-				var e = DTA_FilterManager.enumActive(type);
-				while (e.hasMoreElements()) {
-					var f = e.getNext().QueryInterface(Ci.dtaIFilter);
-					if (f.match(link.url.usable)) {
+				filters.some(
+					function(f) {
+						if (!f.match(link.url.usable)) {
+							return false;
+						}
 						var i;
 
 						// see if we already assigned a prop to that filter.
@@ -544,9 +558,10 @@ var Dialog = {
 							used[f.id] = i;
 						}
 						checked = 'f' + i;
-						break;
-					}
-				}
+						return true;
+					},
+					this
+				);
 			}
 
 			link.checked = checked;
@@ -564,10 +579,6 @@ var Dialog = {
 			Debug.dump("toggleBox: invalid element");
 			return;
 		}
-
-		// set the filter enabled/disabled
-		// Note: this will NOT save the filter (to prefs)
-		box.filter.active = box.checked;
 
 		// alright, need to overthink our selection
 		this.makeSelection();
