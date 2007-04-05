@@ -269,22 +269,6 @@ Filter.prototype = {
 function FilterEnumerator(filters) {
 	this._filters = filters;
 	this._idx = 0;
-	this._filters.sort(function(a,b) {
-		if (a.defFilter && !b.defFilter) {
-			return -1;
-		}
-		else if (!a.defFilter && b.defFilter) {
-			return 1;
-		}
-		else if (a.defFilter) {
-			if (a.id < b.id) {
-				return -1;
-			}
-			return 1;
-		}
-		var i = a.label.toLowerCase(), ii = b.label.toLowerCase();
-		return i < ii ? -1 : (i > ii ? 1 : 0);
-	});
 }
 FilterEnumerator.prototype = {
 	QueryInterface: function FE_QI(iid) {
@@ -384,8 +368,8 @@ var FilterManager = {
 		}
 		this._mustReload = false;
 
-		//error("DTAFM: reload");
 		this._filters = {};
+		this._all = [];
 		this._count = 0;
 
 		// hmmm. since we use uuids for the filters we've to enumerate the whole branch.
@@ -409,12 +393,32 @@ var FilterManager = {
 				}
 				filter.load(localizedLabel);
 				this._filters[filter.id] = filter;
+				this._all.push(filter);
 				this._count++;
 			}
 			catch (ex) {
 				error("Failed to load: " + name + " / " + ex);
 			}
 		}
+		this._all.sort(
+			function(a,b) {
+				if (a.defFilter && !b.defFilter) {
+					return -1;
+				}
+				else if (!a.defFilter && b.defFilter) {
+					return 1;
+				}
+				else if (a.defFilter) {
+					if (a.id < b.id) {
+						return -1;
+					}
+					return 1;
+				}
+				var i = a.label.toLowerCase(), ii = b.label.toLowerCase();
+				return i < ii ? -1 : (i > ii ? 1 : 0);
+			}
+		);		
+		this._active = this._all.filter(function(f) { return f.active; });
 
 		// notify all observers
 		var observerService = CC["@mozilla.org/observer-service;1"]
@@ -423,20 +427,10 @@ var FilterManager = {
 	},
 
 	enumAll: function FM_enumAll() {
-		var a = [];
-		for (x in this._filters) {
-			a.push(this._filters[x]);
-		}
-		return new FilterEnumerator(a);
+		return new FilterEnumerator(this._all);
 	},
 	enumActive: function FM_enumActive(type) {
-		var a = [];
-		for (x in this._filters) {
-			if (this._filters[x].active && this._filters[x].type & type) {
-				a.push(this._filters[x]);
-			}
-		}
-		return new FilterEnumerator(a);
+		return new FilterEnumerator(this._active);
 	},
 
 	getFilter: function FM_getFilter(id) {
@@ -447,9 +441,7 @@ var FilterManager = {
 	},
 
 	matchActive: function FM_matchActive(test, type) {
-		var e = this.enumActive(type);
-		// we're a friend :p
-		return e._filters.some(function(i) { return i.match(test); });
+		return this._active.some(function(i) { return i.match(test); });
 	},
 
 	create: function FM_create(label, test, active, type, isRegex) {
@@ -486,15 +478,16 @@ var FilterManager = {
 	},
 
 	save: function FM_save() {
-		var e = this.enumAll();
-		while (e.hasMoreElements()) {
-			var f = e.getNext();
-			try {
-				f.save();
-			} catch (ex) {
-				error(ex);
-			}
-		}
+		this._all.forEach(
+			function(f) {
+				try {
+					f.save();
+				} catch (ex) {
+					error(ex);
+				}
+			},
+			this
+		);
 	},
 
 		// nsiSupports
