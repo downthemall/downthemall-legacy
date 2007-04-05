@@ -405,7 +405,7 @@ var DTA_AddingFunctions = {
 
 	getDropDownValue : function(name) {
 		var values = eval(DTA_preferences.getMultiByteDTA(name, '[]'));
-		return values.length ? values[0] : null;
+		return values.length ? values[0] : '';
 	},
 
 	turboSendToDown : function(urlsArray) {

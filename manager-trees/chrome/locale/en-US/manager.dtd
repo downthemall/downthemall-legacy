@@ -23,7 +23,7 @@
 
 <!ENTITY infos.label "Download information">
 <!ENTITY launch.label "Open file">
-<!ENTITY delete.label "Delete file">
+<!ENTITY delete.label "Delete file(s)">
 <!ENTITY targetdir.label "Open directory">
 <!ENTITY pause.label "Pause">
 <!ENTITY resume.label "Resume">
