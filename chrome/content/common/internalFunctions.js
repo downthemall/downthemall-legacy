@@ -1,23 +1,70 @@
 /* ***** BEGIN LICENSE BLOCK *****
- * Version: GPL 2.0
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
- * This code is part of DownThemAll! - dTa!
- * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- * 
- * See notice.txt and gpl.txt for details.
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
  *
- * Contributers:
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is DownThemAll.
+ *
+ * The Initial Developers of the Original Code are
+ * Federico Parodi and Stefano Verna
+ * Portions created by the Initial Developer are Copyright (C) 2004
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Federico Parodi
+ *   Stefano Verna
  *   Nils Maier <MaierMan@web.de>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
 
-// DTA only code - do not include in overlays or such
+/* dTa-only code! - DO NOT include in overlays or such! */
 
 var Debug = DTA_debug;
 var Preferences = DTA_preferences;
 
 const SYSTEMSLASH = (DTA_profileFile.get('dummy').path.indexOf('/') != -1) ? '/' : '\\';
 
+/**
+ * cast non-strings to string
+ * @author Nils
+ * @param Arbitrary data
+ * @return a string
+ */
+function _atos(data) {
+	if (typeof(data) == 'string') {
+		return data;
+	}
+	if (data instanceof String) {
+		// unbox
+		return String(data);
+	}
+	
+	if (typeof(data) == 'object') {
+		return data.toSource();
+	}
+	
+	return String(data);
+}
 
 // From prototype.js :)
 function objectExtend(destination, source) {
@@ -27,18 +74,19 @@ function objectExtend(destination, source) {
   return destination;
 }
 
+/**
+ * Get DOM Element(s) by Id. Missing ids are silently ignored!
+ * @param ids One of more Ids
+ * @return Either the element when there was just one parameter, or an array of elements.
+ */
 function $() {
-  var elements = new Array();
-
-  for (var i = 0; i < arguments.length; i++) {
+	if (arguments.length == 1) {
+		return document.getElementById(arguments[0]);
+	}
+  var elements = [];
+  for (var i = 0, e = arguments.length; i < e; ++i) {
     var id = arguments[i];
-    if (typeof id != 'string') {
-			continue;
-		}			
     var element = document.getElementById(id);
-    if (arguments.length == 1) {
-      return element;
-		}
 		if (element) {
 			elements.push(element);
 		}
@@ -46,7 +94,6 @@ function $() {
 			Debug.dump("requested a non-existing element: " + id);
 		}
   }
-
   return elements;
 }
 
@@ -146,7 +193,6 @@ objectExtend(String.prototype,
 
 function filePicker() {}
 filePicker.prototype = {
-
 	getFolder: function (predefined, text) {
 		try {
 			// nsIFilePicker object
@@ -204,29 +250,34 @@ filePicker.prototype = {
 	}
 };
 
-function getIconOther(url, size) {
-	return "moz-icon://" + url + "?size=" + size; 
-}
+var _getIcon = function() {
+	if (navigator.platform.search(/mac/i) != -1) {
+		const _getIcon_recognizedMac = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
+		return function (url, size) {
+			var uri = Components.classes["@mozilla.org/network/standard-url;1"]
+				.createInstance(Components.interfaces.nsIURI);
+			uri.spec = url;
+			if (uri.path.search(_getIcon_recognizedMac) != -1) {
+				return "moz-icon://" + url + "?size=" + size;
+			}
+			return "moz-icon://foo.html?size=" + size;
+		};
+	}
+	return function _getIconOther(url, size) {
+			return "moz-icon://" + url + "?size=" + size; 
+	};
+};
+_getIcon = _getIcon();
 
-var recognizedMacMozIconExtensions = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
-function getIconMac(url, size) {
-		var uri = Components.classes["@mozilla.org/network/standard-url;1"]
-			.createInstance(Components.interfaces.nsIURI);
-		uri.spec = url;
-		if (uri.path.search(recognizedMacMozIconExtensions) != -1) {
-			return "moz-icon://" + url + "?size=" + size;
-		}
-		return "moz-icon://foo.html?size=" + size;
-}
-
-var _getIcon;
-if (navigator.platform.search(/mac/i) != -1) {
-	_getIcon = getIconMac;
-}
-else {
-	_getIcon = getIconOther;
-}
-
+/**
+ * Get the icon URI corresponding to an URI (special mac handling)
+ * @author Nils
+ * @author Stefano
+ * @param link Some sort of DTA_URL, nsIURI or string to get the icon for
+ * @param metalink Is it a metalink?
+ * @param size The desired iconsize;
+ * @return String containing the icon URI
+ */
 function getIcon(link, metalink, size) {
 	if (metalink) {
 		return "chrome://dta/skin/icons/metalink.png";
@@ -236,17 +287,17 @@ function getIcon(link, metalink, size) {
 	}
 	try {
 		var url;
-		if (typeof(link) == 'string') {
-			url = link;
-		}
-		else if (link instanceof DTA_URL) {
+		if (link instanceof DTA_URL) {
 			url = link.url;
 		}
 		else if (link instanceof Components.interfaces.nsIURI) {
 			url = link.spec;
 		}
-		else if ('url' in link) {
+		else if (link && link.url) {
 			url = link.url;
+		}
+		else {
+			url = _atos(link);
 		}
 		return _getIcon(url, size);
 	}
@@ -255,7 +306,10 @@ function getIcon(link, metalink, size) {
 	}
 	return "moz-icon://foo.html?size=" + size;
 }
-
+/**
+ * Play a sound file (if prefs allow to do so)
+ * @param name Name of the sound (correpsonding to the pref name and the file name of desired sound)
+ */
 function playSound(name) {
 	try {
 		if (Preferences.getDTA("sounds." + name, false)) {
@@ -271,7 +325,11 @@ function playSound(name) {
 		Debug.dump("Playing " + name + " sound failed", ex);
 	}
 }
-
+/**
+ * Tiny helper to "convert" given object into a weak observer. Object must still implement .observe()
+ * @author Nils
+ * @param obj Object to convert
+ */
 function makeObserver(obj) {
 	// nsiSupports
 	obj.__QueryInterface = obj.QueryInterface;
@@ -299,6 +357,11 @@ function makeObserver(obj) {
 	};	
 }
 
+/**
+ * Encapulates all stringbundles of the current document and provides unified access
+ * @author Nils
+ * @see _
+ */
 function StringBundles() {
 	this.init();
 }
@@ -332,7 +395,23 @@ StringBundles.prototype = {
 		throw new Components.Exception('BUNDLE STRING NOT FOUND');		
 	}
 };
+/**
+ * Get a (formatted) locale property string. Initialize with make_() once DOM available. Will use all Document-wide Stringbundles.
+ * @param stringId Id of desired string corresponding to the .properties file(s)
+ * @param ... Optional. Format parameters
+ * @return String for given Name
+ * @throws Exception If stringID is not found or before make_() was called.
+ * @author Nils
+ * @see make_
+ */
 var _;
+
+/**
+ * Initialize the _() l10n helper. Accounts all stringbundles in current document.
+ * @author Nils
+ * @see _
+ * @see StringBundles
+ */
 function make_() {
 	var bundles = new StringBundles();
 	_ = function() {
@@ -343,12 +422,19 @@ function make_() {
 	}
 }
 
+/**
+ * Constructor helper for nsILocalFile
+ */
 const FileFactory = new Components.Constructor(
 	"@mozilla.org/file/local;1",
 	"nsILocalFile",
 	"initWithPath"
 );
 
+/**
+ * XP compatible reveal/launch
+ * @author Nils (derived from DownloadManager code)
+ */
 var OpenExternal = {
 	_io: Components.classes['@mozilla.org/network/io-service;1']
 		.getService(Components.interfaces.nsIIOService),
@@ -366,6 +452,10 @@ var OpenExternal = {
 	_nixLaunch: function(file) {
 		this._proto.loadUrl(this._io.newFileURI(file));		
 	},
+	/**
+	 * Launch/Execute a file
+	 * @param nsILocalFile/String pointing to the desired file
+	 */
 	launch: function(file) {
 		file = this._prepare(file);
 		try {
@@ -376,6 +466,10 @@ var OpenExternal = {
 			this._nixLaunch(file);
 		}
 	},
+	/**
+	 * Reveal a file, which will open the directory and furthermore select the file on some platforms.
+	 * @param nsILocalFile/String pointing to the desired file
+	 */
 	reveal: function(file) {
 		file = this._prepare(file);
 		try {
@@ -387,3 +481,96 @@ var OpenExternal = {
 		}
 	}
 };
+
+/**
+ * Range generator (python style). Difference: step direction is inialized accordingly if corresponding parameter is omitted.
+ * @param start Optional. Start value (default: 0)
+ * @param stop Stop value (exclusive)
+ * @param step Optional. Step value (default: 1/-1)
+ * @author Nils
+ */
+function range() {
+	if (arguments.length == 0) {
+		throw Components.results.NS_ERROR_INVALID_ARG;
+	}
+	var start = 0, stop = Number(arguments[0]), step;
+	if (arguments.length >= 2) {
+		start = stop;
+		stop = Number(arguments[1]);
+	}
+	if (arguments.length >= 3) {
+		step = Number(arguments[2]);
+	}
+	else {
+		step = stop - start > 0 ? 1 : -1;	
+	}
+	if (isNaN(start) || isNaN(stop) || isNaN(step) || step == 0) {
+		throw Components.results.NS_ERROR_INVALID_ARG;
+	}
+	if ((stop - start) / step < 0) {
+		// negative range
+		return;
+	}
+	for (;start != stop; start += step) {
+		yield start;
+	}
+}
+
+/**
+ * Convert string-castable data int a hexdigest string
+ * @param data String-castable data to hash
+ * @return The hex digest of given data
+ * @author Nils (derived from dmo example)
+ */
+function hexdigest(data) {
+	data = _atos(data);
+	// range is required as we extended String
+	return [("0" + data.charCodeAt(i).toString(16)).slice(-2) for (i in range(data.length))].join("");	
+}
+
+/**
+ * Convert a value into a hash
+ * @param data Data to hash. Either an nsInputStream or String-castable.
+ * @param algorithm Optional. Either a number or a string referring to an nsICryptoHash function. (default: sha1)
+ * @param encoding Optional. One of: HASH_HEX (0), HASH_BIN(1), HASH_B64 (2) (default: HASH_HEX)
+ * @param datalen Optional, only for streams. Length of data to hash (default: hash whole stream)
+ * @return A string representing the hash a in given encoding.
+ * @author Nils
+ */
+const HASH_HEX = 0x0;
+const HASH_BIN = 0x1;
+const HASH_B64 = 0x2;
+function hash(value, algorithm, encoding, datalen) {
+	var ch = Components.classes["@mozilla.org/security/hash;1"]
+		.createInstance(Components.interfaces.nsICryptoHash);
+	if (!algorithm) {
+		algorithm = ch.SHA1;
+	}
+	if (!encoding) {
+		encoding = HASH_HEX;
+	}
+	if (typeof(algorithm) == 'string' || algorithm instanceof String) {
+		ch.initWithString(algorithm);
+	} 
+	else {
+		ch.init(algorithm);
+	}
+	if (value instanceof Components.interfaces.nsIInputStream) {
+		datalen = Number(datalen);
+		ch.updateFromStream(value, datalen > 0 ? datalen : 0xffffffff);
+	}
+	else {
+		var converter =
+			Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].
+			createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
+		converter.charset = 'utf8';
+		
+		value = converter.convertToByteArray(_atos(value), {});
+		ch.update(value, value.length);
+	}
+	var rv = ch.finish(encoding == HASH_B64);
+	if (encoding == HASH_HEX) {
+		rv = hexdigest(rv);
+	}
+	return rv;
+}
