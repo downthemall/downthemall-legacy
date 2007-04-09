@@ -511,6 +511,7 @@ function range() {
 		// negative range
 		return;
 	}
+	stop += (stop - start) % step;
 	for (;start != stop; start += step) {
 		yield start;
 	}
