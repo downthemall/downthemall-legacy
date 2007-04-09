@@ -36,6 +36,6 @@
 	<prefpane id="paneAdvanced" label="&advancedpane.label;" src="chrome://dta/content/preferences/advPane.xul" />
 	
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
-	<script type="application/x-javascript" src="chrome://dta/content/common/internalFunctions.js"/>
-	<script type="application/x-javascript" src="newPref.js"/>
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js"/>
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/preferences/newPref.js"/>
 </prefwindow>
