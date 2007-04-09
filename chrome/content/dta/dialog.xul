@@ -23,7 +23,8 @@
 	width="430px"
 	>
 	
-	<script type="application/x-javascript" src="dialog.js"/>
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/dialog.js"/>
+	
 	<label id="title" style="font-weight: bold; margin: 10px 10px 5px 10px; padding-left: 35px; padding-top:8px; background: url('chrome://dta/skin/manager/alert.png') no-repeat 0% 50%; height: 26px;" value="&title.value;" />
 	<vbox flex="1" style="padding: 10px;">
 		<description id="text"/>
