@@ -113,10 +113,14 @@ var Prefs = {
 			try {
 				this.tempLocation = Preferences.getMultiByteDTA("tempLocation", '');
 				if (this.tempLocation == '') {
-					this.tempLocation = Cc["@mozilla.org/file/directory_service;1"]
-						.getService(Ci.nsIProperties)
-						.get("TmpD", Ci.nsIFile);
-					this.tempLocation.append("dta");
+					// #44: generate a default tmp dir on per-profile basis
+					// hash the profD, as it would be otherwise a minor information leak
+					var dsp = Cc["@mozilla.org/file/directory_service;1"]
+						.getService(Ci.nsIProperties);
+					this.tempLocation = dsp.get("TmpD", Ci.nsIFile);
+					var profD = hash(dsp.get("ProfD", Ci.nsIFile).leafName);
+					this.tempLocation.append("dtatmp-" + profD);
+					Debug.dump(this.tempLocation.path);
 				} else {
 					this.tempLocation = new FileFactory(this.tempLocation);
 				}
@@ -126,7 +130,11 @@ var Prefs = {
 			}
 		}
 		var conns = (this.maxInProgress * this.maxChunks + 2) * 2;
-		['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server'].forEach(
+		[
+			'network.http.max-connections',
+			'network.http.max-connections-per-server',
+			'network.http.max-persistent-connections-per-server'
+		].forEach(
 			function(e) {
 				if (conns > Preferences.get(e, conns)) {
 					Preferences.set(e, conns);
@@ -142,7 +150,7 @@ Prefs.init();
 var Stats = {
 	totalDownloads: 0,
 
-	// Debug this crap,
+	// XXX/DC Debug this crap,
 	_completedDownloads: 0,
 	get completedDownloads() { return this._completedDownloads; },
 	set completedDownloads(nv) { if (0 > (this._completedDownloads = nv)) { throw "Stats::Completed downloads less than 1"; } },
