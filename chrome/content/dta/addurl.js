@@ -190,17 +190,12 @@ BatchGenerator.prototype = {
 			a = [''];
 		}
 		var rv = [];
-		for (var i = 0; i < a.length; ++i) {
-			rv = rv.concat(pat.join(a[i]));
-		}
+		a.forEach(function(e) { rv = rv.concat(pat.join(e)); }, this);
 		return rv;
 	},
 	getURLs: function(generator) {
 		var rv = [];
-		this._pats.forEach(
-			function(pat) { rv = this._processRange(pat, rv); },
-			this
-		);
+		this._pats.forEach(function(pat) { rv = this._processRange(pat, rv); }, this);
 		for (var i = 0; i < rv.length; ++i) {
 			rv[i] = generator(rv[i]);
 		}
@@ -210,15 +205,10 @@ BatchGenerator.prototype = {
 		return this._length;
 	},
 	get parts() {
-		var rv = [];
-		for (var i = 0; i < this._pats.length; ++i) {
-			var pat = this._pats[i];
-			if (pat instanceof Literal) {
-				continue;
-			}
-			rv.push(pat.name);
-		}
-		return rv.join("\n");
+		return this._pats
+			.filter(function(e) { return !(e instanceof Literal); })
+			.map(function(e) { return e.name; })
+			.join("\n");
 	}
 };
 
