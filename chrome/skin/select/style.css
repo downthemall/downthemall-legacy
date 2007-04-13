@@ -58,14 +58,6 @@ toolbox, toolbox * {
 	-moz-image-region: rect(0px,149px,24px,125px) !important;
 }
 
-.expand {
-	background: url("chrome://dta/skin/select/expand.png") no-repeat 0px 0px;
-}
-
-.collapse {
-	background: url("chrome://dta/skin/select/collapse.png") no-repeat 0px 0px;
-}
-
 threechildren::-moz-tree-row {
 	min-height: 20px;
 }
