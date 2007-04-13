@@ -336,6 +336,9 @@ function DTA_AdditionalMatcher(str, regex) {
 };
 DTA_AdditionalMatcher.prototype = {
 	init: function() {
+		if (!this._str) {
+			return;
+		}
 		if (this._regex) {
 			try {
 				this._filters.push(DTA_regToRegExp(this._str));
