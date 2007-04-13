@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is downTHEMall.
+ * The Original Code is DownThemAll.
  *
  * The Initial Developer of the Original Code is Nils Maier
  * Portions created by the Initial Developer are Copyright (C) 2007
@@ -35,9 +35,6 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-/*
- * File relicensed under MPL-Tri, as it contained mostly my code, even before "forking" and I never signed over the copyright nor did I grant for GPL-only.
- */
  
 function DTA_include(uri) {
 	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]

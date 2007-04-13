@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is downTHEMall.
+ * The Original Code is DownThemAll.
  *
  * The Initial Developer of the Original Code is Nils Maier
  * Portions created by the Initial Developer are Copyright (C) 2007
@@ -54,30 +54,23 @@ function downloadElement(url, num) {
 
 function Literal(str) {
 	this.str = str;
+	this.length = 1;
 }
-function NumericRange(name, start, end, step, strl) {
+Literal.prototype = {
+	join: function(str) {
+		return [str + this.str];
+	}
+};
+function NumericRange(name, start, stop, step, strl) {
 	this.name = name;
 	this.start = start;
-	this.end = end;
+	this.stop = stop + (start > stop ? -1 : 1);
 	this.step = step;
-	this.length = Math.floor((end - start) / step + 1);;
+	this.length = Math.floor((stop - start) / step + 1);
 	this.strl = strl;
 };
 NumericRange.prototype = {
-	join: function(str) {
-		var rv = [];
-		if (this.step > 0) {
-			for (var i = this.start; i <= this.end; i += this.step) {
-				rv.push(str + this.format(i));
-			}
-		} else {
-			for (var i = this.start; i >= this.end; i += this.step) {
-				rv.push(str + this.format(i));
-			}
-		}
-		return rv;
-	},
-	format: function(i) {
+	_format: function(i) {
 		var rv = String(Math.abs(i));
 		while (rv.length < this.strl) {
 			rv = '0' + rv;
@@ -86,28 +79,21 @@ NumericRange.prototype = {
 			rv = '-' + rv;
 		}
 		return rv;
+	},
+	join: function(str) {
+		return [(str + this._format(i)) for (i in range(this.start, this.stop, this.step))];
 	}
 };
-function CharRange(name, start, end, step) {
+function CharRange(name, start, stop, step) {
 	this.name = name;
 	this.start = start;
-	this.end = end;
+	this.stop = stop + (start > stop ? -1 : 1);
 	this.step = step;
-	this.length = Math.floor((end - start) / step + 1);
+	this.length = Math.floor((stop - start) / step + 1);
 };	
 CharRange.prototype = {
 	join: function(str) {
-		var rv = [];
-		if (this.step > 0) {
-			for (var i = this.start; i <= this.end; i += this.step) {
-				rv.push(str + String.fromCharCode(i));
-			}
-		} else {
-			for (var i = this.start; i >= this.end; i += this.step) {
-				rv.push(str + String.fromCharCode(i));
-			}
-		}
-		return rv;
+		return [(str + String.fromCharCode(i)) for (i in range(this.start, this.stop, this.step))];
 	}
 }
 function BatchGenerator(link) {
@@ -128,23 +114,23 @@ function BatchGenerator(link) {
 		if ((m = url.match(/\[(-?\d+):(-?\d+)(?::(-?\d+))?\]/))) {
 			url = url.slice(m[0].length);
 			try {
-				var f = new Number(m[1]);
-				var t = new Number(m[2]);
-				var s = 1;
+				var start = new Number(m[1]);
+				var stop = new Number(m[2]);
+				var step = stop > start ? 1 : -1;
 				if (m.length > 3 && typeof(m[3]) != 'undefined') {
-					s = new Number(m[3]);
+					step = new Number(m[3]);
 				}
-				this._checkRange(f, t, s);
-				if (f == t) {
+				this._checkRange(start, stop, step);
+				if (start == stop) {
 					this._pats.push(new Literal(m[1]));
 					continue;
 				}
-				var x = m[f > t ? 2 : 1];
+				var x = m[Math.abs(start) > Math.abs(stop) ? 2 : 1];
 				var sl = x.length;
 				if (x.slice(0,1) == '-') {
 					--sl;
 				}
-				this._pats.push(new NumericRange(m[0], f, t, s, sl));
+				this._pats.push(new NumericRange(m[0], start, stop, step, sl));
 			}
 			catch (ex) {
 				this._pats.push(new Literal(m[0]));
@@ -155,18 +141,18 @@ function BatchGenerator(link) {
 		if ((m = url.match(/\[([a-z]):([a-z])(?::(-?\d))?\]/)) || (m = url.match(/\[([A-Z]):([A-Z])(?::(-?\d))?\]/))) {
 			url = url.slice(m[0].length);
 			try {
-				var f = m[1].charCodeAt(0);
-				var t = m[2].charCodeAt(0);
-				var s = 1;
+				var start = m[1].charCodeAt(0);
+				var stop = m[2].charCodeAt(0);
+				var step = stop > start ? 1 : -1;
 				if (m.length > 3 && typeof(m[3]) != 'undefined') {
-					var s = new Number(m[3]);
+					step = new Number(m[3]);
 				}
-				this._checkRange(f, t, s);
-				if (f == t) {
+				this._checkRange(start, stop, step);
+				if (start == stop) {
 					this._pats.push(new Literal(m[1]));
 					continue;
 				}
-				this._pats.push(new CharRange(m[0], f, t, s));
+				this._pats.push(new CharRange(m[0], start, stop, step));
 			}
 			catch (ex) {
 				this._pats.push(new Literal(m[0]));
@@ -183,25 +169,20 @@ function BatchGenerator(link) {
 	}
 	// join the literals if required!
 	for (i = this._pats.length - 2; i >= 0; --i) {
-		if ((this._pats[i] instanceof Literal) && (this._pats[i+1] instanceof Literal)) {
-			this._pats[i] = new Literal(this._pats[i].str + this._pats[i+1].str);
+		if ((this._pats[i] instanceof Literal) && (this._pats[i + 1] instanceof Literal)) {
+			this._pats[i] = new Literal(this._pats[i].str + this._pats[i + 1].str);
 			this._pats = this._pats.slice(0, i + 1).concat(this._pats.slice(i + 2));
 		}
 	}
-	for (i = 0; i < this._pats.length; ++i) {
-		var pat = this._pats[i];
-		if (!(pat instanceof Literal)) {
-			this._length *= pat.length;
-		}
-	}
+	this._pats.forEach(
+		function(i) { this._length *= i.length; },
+		this
+	);
 }
 BatchGenerator.prototype = {
 	_checkRange: function(start, end, step) {
-		if (!step) {
+		if (!step || (stop - start) / step < 0) {
 			throw 'step invalid!';
-		}
-		if ((start > end && step > 0) || (start < end && step < 0)) {
-			throw 'negative range!';
 		}
 	},
 	_processRange: function(pat, a) {
@@ -209,31 +190,12 @@ BatchGenerator.prototype = {
 			a = [''];
 		}
 		var rv = [];
-		for (var i = 0; i < a.length; ++i) {
-			rv = rv.concat(pat.join(a[i]));
-		}
-		return rv;
-	},
-	_processLiteral: function(pat, rv) {
-		if (!rv.length) {
-			return [pat.str];
-		}
-		for (var i = 0; i < rv.length; ++i) {
-			rv[i] = rv[i] + pat.str;
-		}
+		a.forEach(function(e) { rv = rv.concat(pat.join(e)); }, this);
 		return rv;
 	},
 	getURLs: function(generator) {
 		var rv = [];
-		for (var i = 0; i < this._pats.length; ++i) {
-			var pat = this._pats[i];
-			if (pat instanceof Literal) {
-				rv = this._processLiteral(pat, rv);
-			}
-			else {
-				rv = this._processRange(pat, rv);
-			}
-		}
+		this._pats.forEach(function(pat) { rv = this._processRange(pat, rv); }, this);
 		for (var i = 0; i < rv.length; ++i) {
 			rv[i] = generator(rv[i]);
 		}
@@ -243,15 +205,10 @@ BatchGenerator.prototype = {
 		return this._length;
 	},
 	get parts() {
-		var rv = [];
-		for (var i = 0; i < this._pats.length; ++i) {
-			var pat = this._pats[i];
-			if (pat instanceof Literal) {
-				continue;
-			}
-			rv.push(pat.name);
-		}
-		return rv.join("\n");
+		return this._pats
+			.filter(function(e) { return !(e instanceof Literal); })
+			.map(function(e) { return e.name; })
+			.join("\n");
 	}
 };
 

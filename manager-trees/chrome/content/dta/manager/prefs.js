@@ -58,10 +58,14 @@ var Prefs = {
 			try {
 				this.tempLocation = Preferences.getMultiByteDTA("tempLocation", '');
 				if (this.tempLocation == '') {
-					this.tempLocation = Cc["@mozilla.org/file/directory_service;1"]
-						.getService(Ci.nsIProperties)
-						.get("TmpD", Ci.nsIFile);
-					this.tempLocation.append("dta");
+					// #44: generate a default tmp dir on per-profile basis
+					// hash the profD, as it would be otherwise a minor information leak
+					var dsp = Cc["@mozilla.org/file/directory_service;1"]
+						.getService(Ci.nsIProperties);
+					this.tempLocation = dsp.get("TmpD", Ci.nsIFile);
+					var profD = hash(dsp.get("ProfD", Ci.nsIFile).leafName);
+					this.tempLocation.append("dtatmp-" + profD);
+					Debug.dump(this.tempLocation.path);
 				} else {
 					this.tempLocation = new FileFactory(this.tempLocation);
 				}

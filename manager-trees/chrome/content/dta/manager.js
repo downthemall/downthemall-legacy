@@ -60,7 +60,7 @@ DTA_include('chrome://dta/content/dta/manager/prefs.js');
 var Stats = {
 	totalDownloads: 0,
 
-	// Debug this crap,
+	// XXX/DC Debug this crap,
 	_completedDownloads: 0,
 	get completedDownloads() { return this._completedDownloads; },
 	set completedDownloads(nv) { if (0 > (this._completedDownloads = nv)) { throw "Stats::Completed downloads less than 1"; } },
