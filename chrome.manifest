@@ -19,8 +19,8 @@ overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overl
 overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeCode.xul
 
 ### styles ###
-style	chrome://browser/content/browser.xul	chrome://dta/skin/stile.css
-style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/stile.css
+style	chrome://browser/content/browser.xul	chrome://dta/skin/integration/stile.css
+style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/integration/stile.css
 
 
 
