@@ -88,8 +88,7 @@
 		autostretch="always"
 	>
 		<treecols>
-			<treecol type="checkbox" fixed="true" editable="true" />
-			<splitter class="tree-splitter"/>
+			<treecol type="checkbox" fixed="true" editable="true" ignoreincolumnpicker="true" />
 			<treecol label="&url.value;" flex="35" crop="right" persist="width hidden" />
 			<splitter class="tree-splitter"/>
 			<treecol label="&header.desc.label;" flex="9" persist="width hidden" />
