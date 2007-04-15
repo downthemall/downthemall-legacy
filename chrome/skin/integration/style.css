@@ -29,7 +29,7 @@ toolbar[iconsize="small"] #dta-manager-button {
 	-moz-image-region: auto !important;
 }
 
-toolbar[iconsize="small"] #turbo-button {
+toolbar[iconsize="small"] #dta-turbo-button {
 	list-style-image: url("chrome://dta/skin/common/turbo.png");
 	-moz-image-region: auto !important;
 }
