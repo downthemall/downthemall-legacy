@@ -74,7 +74,7 @@
 		</columns>
 		<rows>
 			<row align="center">
-				<label control="URLaddress" id="URLaddressTitle" value="&url.value;"/>
+				<label control="URLaddress" id="URLaddressTitle" value="&url.value;:"/>
 				<textbox id="URLaddress" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21" onchange="Dialog.check();" oninput="Dialog.check();" />
 			</row>
 			<row align="center">

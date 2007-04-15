@@ -11,7 +11,7 @@
 
 <!ENTITY options.label "Preferences...">
 
-<!ENTITY url.value "URL:">
+<!ENTITY url.value "URL">
 <!ENTITY dest.caption "Save files in:">
 <!ENTITY referrer.value "Referrer URL:">
 <!ENTITY browse.tip "Browse for target folder...">
