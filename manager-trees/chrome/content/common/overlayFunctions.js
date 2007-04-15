@@ -37,9 +37,14 @@
  * ***** END LICENSE BLOCK ***** */
  
 function DTA_include(uri) {
-	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(Components.interfaces.mozIJSSubScriptLoader)
-		.loadSubScript(uri);
+	try {
+		Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+			.getService(Components.interfaces.mozIJSSubScriptLoader)
+			.loadSubScript(uri);
+	}
+	catch(ex) {
+		Components.utils.reportError(ex);
+	}
 }
 DTA_include("chrome://dta/content/common/regconvert.js");
 

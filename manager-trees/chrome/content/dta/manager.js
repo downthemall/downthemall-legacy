@@ -73,7 +73,7 @@ DTA_include('chrome://dta/content/dta/manager/urlmanager.js');
 DTA_include('chrome://dta/content/dta/manager/visitormanager.js');
 
 var chunkElement = function(start, end, d) {
-	Debug.dump('ChunkElement: ' + start + "/" + end);
+	//Debug.dump('ChunkElement: ' + start + "/" + end);
 	this.start = start;
 	this.end = end;
 	this.parent = d;
@@ -90,8 +90,14 @@ chunkElement.prototype = {
 	isRunning: false,
 	chunkName: "",
 	imWaitingToRearrange: false,
-	getSize: function() {
+	get total() {
+		return this.end - this.start + 1;
+	},
+	get size() {
 		return this._written;
+	},
+	get remainder() {
+		return this.total - this.size;
 	},
 	remove: function() {
 		this.close();
@@ -104,9 +110,6 @@ chunkElement.prototype = {
 	},
 	_written: 0,
 	_outstream: null,
-	get missing() {
-		return this.end - this.start - this._written;
-	},
 	write: function(aInputStream, aCount) {
 		try {
 			if (!this._outstream) {
@@ -115,12 +118,13 @@ chunkElement.prototype = {
 				this._outstream = outStream.QueryInterface(Ci.nsISeekableStream);
 				this._outstream.seek(0x00, this.start);
 			}
-			bytes = this.missing;
+			bytes = this.remainder;
 			if (aCount < bytes) {
 				bytes = aCount;
 			}
 			if (!bytes) {
-				return;
+				Debug.dump(this.start + " " + this.end + " " + this.size + " " + this.remainder + " ");
+				return 0;
 			}
 			if (bytes < 0) {
 				throw new Components.Exception("bytes negative");
@@ -176,6 +180,7 @@ function downloadElement(lnk, dir, num, desc, mask, refPage) {
 	this.numIstance = num;
 	this.description = desc;
 	this.chunks = new Array();
+	this.ranges = new Array();
 	this.speeds = new Array();
 	this.refPage = Cc['@mozilla.org/network/standard-url;1'].createInstance(Ci.nsIURI);
 	this.refPage.spec = refPage;
@@ -265,15 +270,10 @@ downloadElement.prototype = {
 		this.partialSize = 0;
 		this.compression = false;
 		this.activeChunks = 0;
-		this.chunks = new Array();
+		this.chunks = [];
+		this.ranges = [];
 		this.visitors = new VisitorManager();
 		this.getHeader();
-	},
-
-	getHeader: function() {
-		Debug.dump(this.urlManager.url + " (" + this.refPage.spec +"): getHeader()");
-		this.maxChunks = Prefs.maxChunks;
-		downloadChunk(0, 0, this, -1, true);
 	},
 
 	treeElement: null,
@@ -338,7 +338,7 @@ downloadElement.prototype = {
 	refreshPartialSize: function(){
 		var size = 0;
 		for (var i = 0; i<this.chunks.length; i++)
-			size += this.chunks[i].getSize();
+			size += this.chunks[i].size;
 		this.partialSize = size;
 		return size;
 	},
@@ -743,99 +743,81 @@ downloadElement.prototype = {
 		}
 	},
 
-	resumeDownload: function () {try {
-
-		if (!("length" in this.chunks) || this.chunks.length==0) {
-			this.getHeader();
-			return false;
-		}
-
-		if (this.maxChunks == null) {
-			this.maxChunks = Prefs.maxChunks;
-		}
-
-		if (this.maxChunks==this.activeChunks)
-			return false;
-
-		Debug.dump(this.fileName + ": resumeDownload()");
-
-		/*
-		cp = chunk che si devono inserire
-		sp = spazi da riempire
-		c = floor(cp / sp)
-		m = cp % sp
-
-		(sp-m) spazi dovranno venire spartiti tra c chunks ciascuno,
-		mentre i rimanenti m spazi dovranno venire spartiti tra c+1 chunks ciascuno.
-		*/
-
-		var cp = this.maxChunks - this.activeChunks;
-		var sp = new Array();
-
-		// calcolo sp - gli spazi vuoti e le sue proprieta'
-		if (this.chunks[this.firstChunk].start!=0) {
-			var e = new Object();
-			e.start = 0;
-			e.end = this.chunks[this.firstChunk].start - 1;
-			e.prev = -1;
-			e.next = this.firstChunk;
-			sp.push(e);
-		}
-
-		var i = this.firstChunk;
-		while (this.chunks[i].next!=-1) {
-			if (this.chunks[i].end != this.chunks[this.chunks[i].next].start - 1) {
-				var e = new Object();
-				e.start = this.chunks[i].end + 1;
-				e.end = this.chunks[this.chunks[i].next].start - 1;
-				e.prev = i;
-				e.next = this.chunks[i].next;
-				sp.push(e);
+	resumeDownload: function () {
+	
+		function downloadChunk(download, start, end, header) {
+			var chunk = new chunkElement(start, end, download);
+			download.chunks.push(chunk);
+			chunk.isRunning = true;
+			download.state = RUNNING;
+			chunk.download = new Download(download, chunk, header);
+			if (header) {
+				Debug.dump(download.fileName + ": Created Header Chunk Test (" + chunk.start + "-" + chunk.end + ")");
 			}
-			i=this.chunks[i].next;
-		}
-
-		if (this.chunks[i].end != this.totalSize - 1) {
-			var e = new Object();
-			e.start = this.chunks[i].end + 1;
-			e.end = this.totalSize - 1;
-			e.prev = i;
-			e.next = -1;
-			sp.push(e);
-		}
-
-		if (sp.length == 0)
-			return false;
-
-		// faccio partire i chunk
-		var m = cp % sp.length;
-		var n = sp.length-m;
-		var c = Math.floor(cp/sp.length);
-		var rest = 0;
-
-		// chiedo di poter utilizzare c chunks. startSubChunks mi ritorna quanti non e' stato possibile utilizzare.
-		// quei chunks si prova quindi a buttarli nello spazio successivo. ordinandoli per dimensione i piu' piccoli buttano
-		// le rimanenze sui piu' grandi.
-
-		var i = 0;
-		if (c > 0 && n > 0) {
-			this.state = RUNNING;
-			for (; i<n; i++) {
-				rest += startSubChunks(sp[i].start, sp[i].end, sp[i].prev, sp[i].next, c+rest, this);
+			else {
+				Debug.dump(download.fileName + ": Created chunk of range " + chunk.start + "-" + chunk.end);
 			}
+			download.setTreeCell("parts", 	(++download.activeChunks) + "/" + download.maxChunks);
 		}
-
-		var s = i;
-		if (m > 0) {
-			this.state = RUNNING;
-			for (; i<(s+m); i++) {
-				rest += startSubChunks(sp[i].start, sp[i].end, sp[i].prev, sp[i].next, c+1+rest, this);
+	
+		try {
+			if (!this.maxChunks) {
+				this.maxChunks = Prefs.maxChunks;
 			}
+			if (this.maxChunks <= this.activeChunks) {
+				return false;
+			}
+			
+			Debug.dump(this.fileName + ": resumeDownload");
+
+			var rv = false;
+			
+			// start loaded, previously stopped and or errornous chunks
+			while (this.activeChunks < this.maxChunks && this.ranges.length) {
+				// pop ranges
+				var r = this.ranges[0];
+				this.ranges = this.ranges.splice(1);
+
+				// create chunk of said length;
+				downloadChunk(this, r.start, r.end);
+				rv = true;
+			}
+
+			// we didn't load up anything so let's start the main chunk (which will grab the info)
+			if (this.chunks.length == 0) {
+				downloadChunk(this, 0, 0, true);
+				return false;
+			}
+			
+			// start some new chunks
+			while (this.activeChunks < this.maxChunks) {
+				// find biggest chunk
+				
+				var biggest = null;
+				this.chunks.forEach(
+					function (chunk) {
+						if (chunk.remainder > MIN_CHUNK_SIZE * 2 && (!biggest || chunk.remainder > biggest.remainder)) {
+							biggest = chunk;
+						}
+					}
+				);
+				
+				// nothing found, break
+				if (!biggest) {
+					break;
+				}
+				var end = biggest.end;
+				biggest.end = biggest.start + biggest.size + Math.floor(biggest.remainder / 2);
+				downloadChunk(this, biggest.end + 1, end);
+				rv = true;
+			}
+
+			// update ui
+			return rv;
 		}
-
-		return true;
-
-		} catch(e) {Debug.dump("resumeThis():", e);}
+		catch(ex) {
+			Debug.dump("resumeDownload():", ex);
+		}
 		return false;
 	},
 	createDimensionString: function() {
@@ -846,9 +828,6 @@ downloadElement.prototype = {
 	}
 
 }
-
-
-//DTA_include('chrome://dta/content/dta/manager/joinlistener.js');
 
 function failDownload(d, title, msg, state) {
 
@@ -1128,15 +1107,14 @@ var Check = {
 			d.timeStart = (new Date()).getTime();
 		}
 
-		// e' gia' partito o e' un nuovo download?
+		// start stuff
 		if (!d.isStarted) {
 			d.isStarted = true;
 			Debug.dump("Let's start " + d.fileName);
-			d.getHeader();
 		} else {
 			Debug.dump("Let's resume " + d.fileName + ": " + d.partialSize);
-			d.resumeDownload();
 		}
+		d.resumeDownload();
 
 		this.setFirstInQueue();
 
@@ -1144,11 +1122,10 @@ var Check = {
 	}
 }
 
-function Download(d, c, cIdx, headerHack) {
+function Download(d, c, headerHack) {
 	
 	this.d = d;
 	this.c = c;
-	this.chunkIndex = cIdx;
 	this.isHeaderHack = headerHack;
 	var uri = d.urlManager.getURL().url;
 	var referrer = d.refPage;
@@ -1217,6 +1194,7 @@ Download.prototype = {
 	},
 	// nsICancelable
 	cancel: function(aReason) {
+		Debug.dump("cancel");
 		if (!aReason) {
 			aReason = 0x804b0002 // NS_BINDING_ABORTED;
 		}
@@ -1273,7 +1251,7 @@ Download.prototype = {
 	
 	// nsIStreamListener
   onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
-		Debug.dump("DA " + aCount);
+		//Debug.dump("DA " + aCount);
 		try {
 			if (!this.c.write(aInputStream, aCount)) {
 				// we already got what we wanted
@@ -1397,6 +1375,7 @@ Download.prototype = {
 
 				if (visitor.contentlength > 0) {
 					d.totalSize = visitor.contentlength;
+					c.end = d.totalSize - 1;
 				} else {
 					d.totalSize = 0;
 					d.isResumable = false;
@@ -1477,21 +1456,20 @@ Download.prototype = {
 					d.setTreeCell("dir", d.dirSave);
 				}
 
-				// se scopriamo che e' possibile effettuare multipart blocchiamo il chunk e ricominciamo in multipart
-				if (d.isResumable && d.totalSize > 2 * MIN_CHUNK_SIZE && d.maxChunks > 1) {
-					// in case of a redirect set the new real url
-					if (this.url != aRequest.URI.spec) {
-						d.urlManager.replace(this.url, new DTA_URL(aRequest.URI.spec, visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset));
-					}
-					Debug.dump(d.fileName + ": Let's stop single chunk and start multipart!");
-					c.download.cancel();
-					return;
+				// in case of a redirect set the new real url
+				if (this.url != aRequest.URI.spec) {
+					d.urlManager.replace(this.url, new DTA_URL(aRequest.URI.spec, visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset));
 				}
 				
-				// altrimenti il chunk di prova diventa quello definitivo
-				Debug.dump(d.fileName + ": Multipart downloading is not needed/possible. isResumable = " + d.isResumable);
-				d.maxChunks = 1;
-				c.end = d.totalSize - 1;
+				if (d.isResumable && d.totalSize > 2 * MIN_CHUNK_SIZE && d.maxChunks > 1) {
+					d.resumeDownload();
+				}
+				else {
+					// altrimenti il chunk di prova diventa quello definitivo
+					Debug.dump(d.fileName + ": Multipart downloading is not needed/possible. isResumable = " + d.isResumable);
+					d.maxChunks = 1;
+					c.end = d.totalSize - 1;
+				}
 				this.isHeaderHack = false;
 				
 			} else {
@@ -1521,7 +1499,7 @@ Download.prototype = {
 		
 		var d = this.d;
 
-		if (c.getSize() == 0) {
+		if (c.size == 0) {
 			c.remove();
 			if (c.previous != -1) {
 				d.chunks[c.previous].next = c.next;
@@ -1548,42 +1526,8 @@ Download.prototype = {
 			d.state = COMPLETE;
 		}
 		
-		// if it's the chunk that tested response headers
-		if (this.isHeaderHack && !d.is(COMPLETE)) {
-			d.chunks.splice(this.chunkIndex, 1);
-
-			if (this.isPassedOnProgress && !d.is(CANCELED, PAUSED) && !Check.isClosing) {
-				Debug.dump(d.fileName + ": Header stopped to start download in multipart");
-				downloadMultipart(d);
-				return;
-			}
-			
-			Debug.dump(d.fileName + ": Header stopped.");
-
-			d.isStarted = false;
-
-			if (Check.isClosing && !d.isRemoved) {
-				d.isPassed = true;
-			}
-			else if (!this.isPassedOnProgress) {
-				failDownload(
-					d,
-					_("srver"),
-					_("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]),
-					_("srver")
-				);
-			}
-			d.removeFromInProgressList();
-			popup();
-			Check.checkClose();
-
-			sessionManager.save(d);
-			Debug.dump("out1");
-			return;
-		}
-
 		// update chunk range
-		c.end = c.start + c.getSize() - 1;
+		c.end = c.start + c.size - 1;
 
 		// routine for normal chunk
 		Debug.dump(d.fileName + ": Chunk " + c.start + "-" + c.end + " finished.");
@@ -1674,36 +1618,7 @@ Download.prototype = {
 		}
 		else if (d.is(RUNNING) && d.isResumable) {
 			// if all the download space has already been occupied by chunks (= !resumeDownload)
-			if (!d.imWaitingToRearrange && !d.resumeDownload() && (d.maxChunks - d.activeChunks) > 0) {
-				Debug.dump("RR");
-				// find the biggest running chunk..
-				var j = null;
-				for (var x=0; x<d.chunks.length; x++)
-					if (d.chunks[x].isRunning) {
-						if (j==null) {
-							j = d.chunks[x];
-						}
-						else if ((j.end - j.start - j.getSize()) < (d.chunks[x].end - d.chunks[x].start)) {
-							j = d.chunks[x];
-						}
-				}
-
-				// ..and if it can be splitted up in more than a chunk..
-				if (Math.round((j.end - j.start - j.getSize()) / MIN_CHUNK_SIZE) > 1) {
-					Debug.dump(d.fileName + ": Rearrange chunk " + j.start + "-" + j.end);
-					// ..we stop it..
-					d.imWaitingToRearrange = true;
-					j.imWaitingToRearrange = true;
-					j.download.cancel();
-				}
-			}
-			else if (c.imWaitingToRearrange) {
-				Debug.dump("NR");
-				// ..to let resumeDownload split space in a better way.
-				c.imWaitingToRearrange = false;
-				d.imWaitingToRearrange = false;
-				d.resumeDownload();
-			}
+			d.resumeDownload();
 		}
 		// if download has been canceled by user
 		else if (d.is(CANCELED)) {
@@ -2127,37 +2042,6 @@ function populateListbox(d) {
 	lista.addEventListener("dblclick", FileHandling.openFile, true);
 }
 
-// fa partire lo scaricamento dei chunk in multipart
-function downloadMultipart(d) {
-	try {
-		var numChunk = d.maxChunks;
-
-		// multipart
-		if ((d.totalSize / numChunk) < MIN_CHUNK_SIZE) {
-			// serve un numero inferiore a numChunk di chunks
-			numChunk = Math.round(d.totalSize / MIN_CHUNK_SIZE);
-		}
-
-		var endLastChunk;
-		var stChunkSize = Math.round(d.totalSize / numChunk);
-		if (stChunkSize > MAX_CHUNK_SIZE) {
-			stChunkSize = MAX_CHUNK_SIZE;
-			endLastChunk = stChunkSize * numChunk - 1;
-		} else {
-			endLastChunk = d.totalSize - 1;
-		}
-		Debug.dump("downloadMultipart(): I'm splitting " + d.fileName + " (" + d.totalSize + "B) into " + numChunk + " chunks of " + stChunkSize + "B");
-
-		for (var i = 0; i < (numChunk-1); i++) {
-			downloadChunk(stChunkSize * i, (stChunkSize * (i + 1)) - 1, d, i - 1, false);
-		}
-
-		downloadChunk(stChunkSize * i, endLastChunk, d, i - 1, false); // l'ultimo va fino alla fine
-}catch(e) {
-		Debug.dump("downloadMultipart():", e);
-}
-}
-
 function isInProgress(path, d) {
 	for (var x=0; x<inProgressList.length; x++)
 		if ((inProgressList[x].d.dirSave + inProgressList[x].d.destinationName) == path && d != inProgressList[x].d)
@@ -2194,56 +2078,6 @@ function askForRenaming(t, s1, s2, s3) {
 			scelta = Prefs.onConflictingFilenames;
 	}
 	return scelta;
-}
-
-function downloadChunk(start, end, d, fatherChunk, testHeader) {
-	try {
-		var c = new chunkElement(start, end, d);
-		var chunkIndex = d.chunks.push(c) - 1;
-
-		c.isRunning = true;
-		d.state = RUNNING;
-
-		// fatherChunk e' il chunk precendente al punto nel quale vogliamo inserire il nuovo chunk
-		if (fatherChunk != -1) {
-			c.previous = fatherChunk;
-		if (d.chunks[fatherChunk].next != -1) {
-			c.next = d.chunks[fatherChunk].next;
-			var nextpadre = d.chunks[fatherChunk].next;
-			d.chunks[nextpadre].previous = chunkIndex;
-		}
-		d.chunks[fatherChunk].next = chunkIndex;
-	}
-
-		var time = new Date();
-		// nome file temporaneo
-		var baseChunkName = "dtatempfile"+ (time.getTime() + Math.floor(10000 * (Math.random() % 1))) +".part" + chunkIndex;
-		var realDest;
-		var xx=0;
-
-		c.download = new Download(d, c, chunkIndex, testHeader);
-		if (!testHeader) {
-			Debug.dump(d.fileName + ": Created chunk of range " + start + "-" + end);
-		}
-		else {
-			Debug.dump(d.fileName + ": Created Header Chunk Test (" + start + "-" + end + ")");
-		}
-
-		d.setTreeCell("parts", 	(++d.activeChunks) + "/" + d.maxChunks);
-
-	} catch (ex) {
-
-		Debug.dump("downloadChunk():", ex);
-		failDownload(
-			d,
-			_("errordownload"),
-			_("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]),
-			_("errordownload")
-		);
-
-		d.state = CANCELED;
-		d.removeFromInProgressList();
-	}
 }
 
 function makeNumber(rv, digits) {
@@ -2392,50 +2226,6 @@ try {
 	}
 	popup();
 } catch(e) {Debug.dump("pauseResumeReq()", e)}
-}
-
-//--> si occupa di decidere se uno spazio vuoto deve essere scaricato tramite un solo chunk o ri-suddiviso in un massimo di downloadsLeft chunks
-function startSubChunks(start, end, firstindex, lastindex, downloadsLeft, d) {
-
-	if (downloadsLeft == 0) return 0;
-
-	var numChunk = downloadsLeft;
-
-	var size = end - start;
-
-	if (size <= 2 * MIN_CHUNK_SIZE || downloadsLeft == 1) {
-		// non e' possibile eseguire il multipart o il file e' troppo piccolo
-		downloadChunk(start, (size > MAX_CHUNK_SIZE)?(start + MAX_CHUNK_SIZE):end, d, firstindex, false);
-		return downloadsLeft - 1;
-	} else {
-
-		// multipart
-		if ((size / numChunk) < MIN_CHUNK_SIZE) {
-			// serve un numero inferiore a numChunk di chunks
-			numChunk = Math.round(size / MIN_CHUNK_SIZE);
-		}
-
-		var endLastChunk;
-		var stChunkSize = Math.round(size / numChunk);
-		if (stChunkSize > MAX_CHUNK_SIZE) {
-			stChunkSize = MAX_CHUNK_SIZE;
-			endLastChunk = start + stChunkSize * numChunk - 1;
-		} else
-			endLastChunk = end;
-
-		for (var i = 0; i<(numChunk-1); i++)
-			downloadChunk(start + stChunkSize * i, start + (stChunkSize * (i + 1)) - 1, d, (i==0)?firstindex:(d.chunks.length-1), false);
-
-		downloadChunk(start + stChunkSize * i, endLastChunk, d, d.chunks.length - 1, false); // l'ultimo va fino alla fine
-
-		// nell'inserimento multiplo l'ultimo deve essere collegato con lastindex
-		if (lastindex != -1)
-			d.chunks[lastindex].previous = d.chunks.length-1;
-
-		return downloadsLeft - numChunk;
-	}
-
-	return 0;
 }
 
 //--> attivato dal click su context o toolbar
@@ -2744,48 +2534,19 @@ function selectInv() {
 function addChunk(add) {
 	var rangeCount = tree.view.selection.getRangeCount();
 
-	for(var i=0; i<rangeCount; i++) {
-		 var start = {};
-		 var end = {};
-		 tree.view.selection.getRangeAt(i,start,end);
+	for (var i = 0; i < rangeCount; ++i) {
+		var start = {};
+		var end = {};
+		tree.view.selection.getRangeAt(i,start,end);
 
-		 // ciclo gli elementi selezionati
-		 for(var c=start.value; c<=end.value; c++) {
-
+		// ciclo gli elementi selezionati
+		for (var c = start.value; c <= end.value; ++c) {
 			if (!add && downloadList[c].maxChunks > 1) {
-				--downloadList[c].maxChunks;
-				Debug.dump(downloadList[c].fileName + ": User removed a chunk");
-				if (downloadList[c].activeChunks > downloadList[c].maxChunks && downloadList[c].is(RUNNING))
-					for (var i=(downloadList[c].chunks.length-1); i>=0; i--)
-						if (downloadList[c].chunks[i].isRunning) {
-							downloadList[c].chunks[i].download.cancel();
-							break;
-						}
-			} else if (add && downloadList[c].maxChunks < 10) {
-				Debug.dump(downloadList[c].fileName + ": User added a chunk");
-				++downloadList[c].maxChunks;
-				var d = downloadList[c];
-				if (d.is(RUNNIN) && (!('imWaitingToRearrange' in d) || !d.imWaitingToRearrange) && !d.resumeDownload()) {
-
-					// trovo il chunk piu' grande con scaricamento in corso
-					var j = null;
-					for (var x=0; x<d.chunks.length; x++)
-						if (d.chunks[x].isRunning) {
-							if (j==null)
-								j=d.chunks[x];
-							else if ((j.end - j.start - j.getSize()) < (d.chunks[x].end - d.chunks[x].start))
-								j = d.chunks[x];
-						}
-					// se il chunk piu' grosso potrebbe venire scaricato in piu' di una parte
-					if (Math.round((j.end - j.start - j.getSize()) / MIN_CHUNK_SIZE) > 1) {
-						Debug.dump(downloadList[c].fileName + ": Rearrange chunk " + j.start + "-" + j.end);
-						// blocco il chunk in questione
-						d.imWaitingToRearrange = true;
-						j.imWaitingToRearrange = true;
-						j.download.cancel();
-					} else
-						Debug.dump(downloadList[c].fileName + ": It's not possible to use the chunk added");
-				}
+				downloadList[c].maxChunks--;
+			}
+			else if (add  && downloadList[c].maxChunks < 10) {
+				downloadList[c].maxChunks++;
+				downloadList[c].resumeDownload();
 			}
 			downloadList[c].setTreeCell("parts", downloadList[c].activeChunks + "/" + downloadList[c].maxChunks);
 		}
@@ -2914,11 +2675,11 @@ function updateChunkCanvas() { try {
 	} else if (file.isStarted) {
 		while (c != -1) {
 			d.fillStyle=prog;
-			d.fillRect(Math.ceil(file.chunks[c].start/file.totalSize*300),0,Math.ceil(file.chunks[c].getSize()/file.totalSize*300),20);
+			d.fillRect(Math.ceil(file.chunks[c].start/file.totalSize*300),0,Math.ceil(file.chunks[c].size / file.totalSize*300),20);
 			c = file.chunks[c].next;
 		}
 		d.fillStyle = join;
-		d.fillRect(0,16,Math.ceil(file.chunks[file.firstChunk].getSize()/file.totalSize*300),4);
+		d.fillRect(0,16,Math.ceil(file.chunks[file.firstChunk].size / file.totalSize*300),4);
 	}
 
 	setTimeout("updateChunkCanvas()", Check.frequencyUpdateChunkGraphs);

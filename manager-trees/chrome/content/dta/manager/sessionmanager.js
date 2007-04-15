@@ -60,21 +60,19 @@ var sessionManager = {
 			e.totalSize = d.totalSize;
 		}
 
-		e.chunks = [];
+		e.ranges = [];
 
-		if (!d.is(COMPLETE, CANCELED) && d.chunks.length > 0) {
-			var x = d.firstChunk;
-			do {
-				if (!d.chunks[x].isRunning && d.chunks[x].chunkSize != 0) {
-					var chunk = {};
-					chunk.path = d.chunks[x].path;
-					chunk.start = d.chunks[x].start;
-					chunk.end = d.chunks[x].end;
-					chunk.size = d.chunks[x].chunkSize;
-					e.chunks.push(chunk);
+		if (!d.is(COMPLETE, CANCELED)) {
+			d.ranges.forEach(
+				function(r) {
+					e.ranges.push({start: r.start, end: r.end});
 				}
-				x = d.chunks[x].next;
-			} while(x != -1);
+			);
+			d.chunks.forEach(
+				function(c) {
+					e.ranges.push({start: c.start + c.size, end: c.end});
+				}
+			);
 		}
 
 		var s = this._saveStmt;
@@ -183,7 +181,7 @@ var sessionManager = {
 				d.isStarted = d.partialSize != 0;
 
 				if (d.is(PAUSED)) {
-					var chunks = down.chunks;
+					/*var chunks = down.chunks;
 					for (var i = 0, e = chunks.length; i < e; ++i) {
 						var c = chunks[i];
 						var test = new FileFactory(c.path);
@@ -219,8 +217,7 @@ var sessionManager = {
 						// adjust the end.
 						d.chunks[d.chunks.length - 1].next = -1;
 						d.join = new joinListener(d);
-					}
-
+					}*/
 				}
 				else if (d.is(COMPLETE)) {
 					d.fileManager = new FileFactory(d.dirSave);
