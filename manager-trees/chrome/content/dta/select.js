@@ -325,7 +325,7 @@ var Dialog = {
 			"filter",
 			"filter",
 			"filteritems",
-			[_("ddfilter"), "/(\\.mp3)$/", "/(\\.(html|htm|rtf|doc|pdf))$/", "http://www.website.com/subdir/*.*", "http://www.website.com/subdir/pre*.???", "*.z??, *.css, *.html"]
+			['', "/(\\.mp3)$/", "/(\\.(html|htm|rtf|doc|pdf))$/", "http://www.website.com/subdir/*.*", "http://www.website.com/subdir/pre*.???", "*.z??, *.css, *.html"]
 		);
 		this.ddDirectory = new DTA_DropDown("directory", "directory", "directoryitems", "", "");
 		this.ddRenaming = new DTA_DropDown(
@@ -347,10 +347,7 @@ var Dialog = {
 			// intialize our Trees (nsITreeview)
 			// type parameter corresponds to dtaIFilter types
 			this.links = new Tree(links, 1);
-			this.images = new Tree(images, 2);
-
-			// additional filters anyone :p
-			this.showFilter(this.ddFilter.current.length);
+			this.images = new Tree(images, 2);			
 
 			// changeTab will initialize the filters and do the selection for us
 			this.changeTab(Preferences.getDTA("seltab", 0) ? 'images': 'links');
@@ -669,28 +666,6 @@ var Dialog = {
 
 		// update selection
 		this.makeSelection();
-	},
-
-	// expand/collpase additional filters box.
-	showFilter: function() {
-
-		var reg = $("regexbox");
-		var add = $("additional");
-
-		if (arguments.length == 0) {
-			reg.collapsed = !(reg.collapsed);
-		}
-		else {
-			reg.collapsed = !(arguments[0]);
-		}
-
-		if (reg.collapsed) {
-			add.setAttribute("label", _("additional") + "...");
-			add.setAttribute("class", "expand");
-		} else {
-			add.setAttribute("label", _("additional") + ":");
-			add.setAttribute("class", "collapse");
-		}
 	},
 
 	// browse for a dest directory

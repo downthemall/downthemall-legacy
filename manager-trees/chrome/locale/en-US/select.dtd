@@ -1,8 +1,10 @@
 <!ENTITY title "DownThemAll! - Make your selection">
 
 <!ENTITY filters.caption "Filters">
+<!ENTITY additional.caption "Additional filters">
 <!ENTITY additional.tip "Textual filter: you can set multiple textual filters at the same time using a comma.">
 <!ENTITY regex.label "Reg. Exp.">
+<!ENTITY filter.tip "Type here your textual filters! (some examples on the dropdown)">
 
 <!ENTITY status.label "After selecting links click on Start!">
 

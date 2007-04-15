@@ -88,8 +88,7 @@
 		autostretch="always"
 	>
 		<treecols>
-			<treecol type="checkbox" fixed="true" editable="true" />
-			<splitter class="tree-splitter"/>
+			<treecol type="checkbox" fixed="true" editable="true" ignoreincolumnpicker="true" />
 			<treecol label="&url.value;" flex="35" crop="right" persist="width hidden" />
 			<splitter class="tree-splitter"/>
 			<treecol label="&header.desc.label;" flex="9" persist="width hidden" />
@@ -99,8 +98,8 @@
 		<treechildren/>
 	</tree>
 
-	<hbox autostretch="never" class="opzioni" id="saveas" >
-		<groupbox flex="1" orient="horizontal">
+	<hbox>
+		<groupbox orient="horizontal" autostretch="never" flex="1">
 			<caption label="&dest.caption;" />
 			<menulist id="directory" editable="true" flex="1">
 				<menupopup id="directoryitems">
@@ -117,17 +116,15 @@
 		</groupbox>
 	</hbox>
 
-	<groupbox autostretch="never">
+	<groupbox id="filterbox" class="closer" autostretch="never" orient="vertical" persist="closed">
 		<caption label="&filters.caption;"/>
 		<hbox id="checkcontainer" flex="1"/>
-		<groupbox id="regexcontainer" autostrech="never" class="hidegroup">
-			<caption class="expand" id="additional" onclick="Dialog.showFilter();" tooltiptext="&additional.tip;" />
-			<hbox flex="1" id="regexbox">
-				<menulist id="filter" editable="true" flex="1" oninput="Dialog.makeSelection();" onselect="Dialog.makeSelection();">
-					<menupopup id="filteritems" onselect="Dialog.makeSelection();" oncommand="Dialog.makeSelection();"/>
-				</menulist>
-				<checkbox id="regex" label="&regex.label;" oncommand="Dialog.makeSelection();" />
-			</hbox>
+		<groupbox class="closer" id="regexcontainer" closed="true" persist="closed">
+			<caption id="additional" tooltiptext="&additional.tip;" label="&additional.caption;"/>
+			<menulist id="filter" editable="true" flex="1" oninput="Dialog.makeSelection();" onselect="Dialog.makeSelection();" tooltiptext="&filter.tip;">
+				<menupopup id="filteritems" onselect="Dialog.makeSelection();" oncommand="Dialog.makeSelection();"/>
+			</menulist>
+			<checkbox id="regex" persist="checked" label="&regex.label;" oncommand="Dialog.makeSelection();" />
 		</groupbox>
 	</groupbox>
 
