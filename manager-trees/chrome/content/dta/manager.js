@@ -50,7 +50,7 @@ if (!Ci) {
 	var Ci = Components.interfaces;
 }
 
-const MIN_CHUNK_SIZE = 204800; // 200kb
+const MIN_CHUNK_SIZE = 512 * 1024;
 const MAX_CHUNK_SIZE = 10485760; // 10MB
 
 DTA_include('chrome://dta/content/dta/manager/prefs.js');
@@ -74,7 +74,7 @@ DTA_include('chrome://dta/content/dta/manager/visitormanager.js');
 
 var chunkElement = function(start, end, d) {
 	//Debug.dump('ChunkElement: ' + start + "/" + end);
-	this.start = start;
+	this._start = start;
 	this.end = end;
 	this.parent = d;
 	var dest = Prefs.tempLocation
@@ -90,14 +90,24 @@ chunkElement.prototype = {
 	isRunning: false,
 	chunkName: "",
 	imWaitingToRearrange: false,
+	get start() {
+		return this._start;
+	},
+	get end() {
+		return this._end;
+	},
+	set end(nv) {
+		this._end = nv;
+		this._total = this._end - this._start + 1;
+	},
 	get total() {
-		return this.end - this.start + 1;
+		return this._total;
 	},
 	get size() {
 		return this._written;
 	},
 	get remainder() {
-		return this.total - this.size;
+		return this._total - this._written;
 	},
 	remove: function() {
 		this.close();
