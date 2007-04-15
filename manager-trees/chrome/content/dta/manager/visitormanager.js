@@ -72,8 +72,11 @@ Visitor.prototype = {
 					}
 				break;
 			}
-
-			if (header in this.cmpKeys) {
+			if (header == 'etag') {
+				// strip off the "inode"-part apache and others produce, as mirrors/caches usually provide wrong numbers here :p
+				this[header] = aValue.replace(/^[a-f\d]+-([a-f\d]+)-([a-f\d]+)$/, '$1-$2');
+			}
+			else if (header in this.cmpKeys) {
 				this[header] = aValue;
 			}
 			if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
@@ -118,7 +121,7 @@ Visitor.prototype = {
 			// header is there, but differs
 			else if (this[x] != v[x]) {
 				Debug.dump(x + " nm: [" + this[x] + "] [" + v[x] + "]");
-				throw ("Header " + x + "doesn't match");
+				throw ("Header " + x + " doesn't match");
 			}
 		}
 	},
