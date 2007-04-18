@@ -199,7 +199,7 @@ function changeSelection() { try {
 	linkR.appendChild(chkLnk);
 	linkR.appendChild(chkImg);
 	
-	window.sizeToContent();
+	//window.sizeToContent();
 	
 	isRegex();
 	

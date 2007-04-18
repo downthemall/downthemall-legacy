@@ -41,7 +41,7 @@
 
 		<menuitem id="dta-pref-tool" oncommand="window.openDialog('chrome://dta/content/opzioni/newPref.xul','_blank','chrome,titlebar,toolbar,centerscreen,resizable,dialog=no');"
 			label="&submenu-dta-pref.label;" image="chrome://dta/content/immagini/opzioni.png" class="menuitem-iconic" />
-		<menuitem id="dta-help-tool" oncommand="openHelp('introduction','chrome://dta/content/dtahelp.rdf');"
+		<menuitem id="dta-help-tool" oncommand="openHelp('introduction','chrome://dta/content/help/dtahelp.rdf');"
 			label="&dta-help-tool.label;" image="chrome://dta/content/immagini/help.png" class="menuitem-iconic" />	
 		<menuitem id="dta-about" oncommand="window.openDialog('chrome://dta/content/about/about.xul','_blank','chrome,centerscreen,resizable=no, dialog=no');"
 			label="&about;" image="chrome://dta/content/immagini/about.png" class="menuitem-iconic" />
