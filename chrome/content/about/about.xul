@@ -3,7 +3,7 @@
  * Version: GPL 2.0
  *
  * This code is part of DownThemAll! - dTa!
- * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * Copyright © 2004-2006 Federico Parodi, Stefano Verna and Nils Maier.
  * 
  * See notice.txt and gpl.txt for details.
  *
@@ -34,10 +34,11 @@ function openTab(sito) {
 	<hbox>
 		<image src="chrome://dta/content/about/logo.png"/><spacer flex="1"/>
 	</hbox>
-  <label value="ver. 0.9.9.7 (1.0-RC3)" style="margin-bottom:10px;" />
+  <label value="ver. 0.9.9.8" style="margin-bottom:10px;" />
   <label value="Copyright © 2004-2006 By:" style="font-weight: bold;"/>
   <label value="Federico Parodi" class="link" onclick="openTab('http://www.jimmy2k.it', '_blank'); "/>
   <label value="Stefano Verna" class="link" onclick="openTab('http://steffoz.altervista.org/', '_blank'); "/>
+  <label value="Nils Maier" class="link" onclick="openTab('http://tn123.ath.cx/about/', '_blank'); "/>
   <separator class="thin"/>
   <description style="margin:0px 0px 5px 6px;">Icons and buttons are based on the works of Mike Matas and Jakub Steiner - © Michael Matas, © Jakub Steiner, © Novell, Inc.</description>
   <separator class="thin"/>
