@@ -50,6 +50,9 @@ if (!Ci) {
 
 const MIN_CHUNK_SIZE = 512 * 1024;
 const MAX_CHUNK_SIZE = 10485760; // 10MB
+// in use by decompressor...
+// beware, actual size might be more than twice as big!
+const MAX_BUFFER_SIZE = 3145728; // 3 MB
 
 DTA_include('chrome://dta/content/dta/manager/prefs.js');
 //DTA_include('chrome://dta/content/dta/manager/tree.js');
@@ -163,6 +166,25 @@ const treeCells = {
 	"dir": 7,
 	"mask": 6
 }
+
+function CopyListener(boutStream) {
+	this.boutStream = boutStream;
+}
+CopyListener.prototype = {
+	QueryInterface: function(iid) {
+		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIStreamListener) || iid.equals(cI.nsIRequestObserver)) {
+			return this;
+		}
+		throw Components.results.NS_ERROR_NO_INTERFACE;
+	},
+	onStartRequest: function(r, c) {},
+	onStopRequest: function(r, c) {},
+	onDataAvailable: function(r, c, stream, offset, count) {
+		var binStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
+		binStream.setInputStream(stream);
+		this.boutStream.write(binStream.readBytes(count), count);
+	}
+};
 
 function downloadElement(lnk, dir, num, desc, mask, refPage, tmpFile) {
 
@@ -351,7 +373,7 @@ downloadElement.prototype = {
 		return 0;
 	},
 
-	moveCompleted: function(fileManager) {
+	moveCompleted: function(file) {
 		Debug.dump("mc");
 		if (this.is(CANCELED)) {
 			return;
@@ -364,7 +386,7 @@ downloadElement.prototype = {
 		try {
 			var destination = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 			destination.initWithPath(this.dirSave);
-			Debug.dump(this.fileName + ": Move " + fileManager.path + " to " + this.dirSave + this.destinationName);
+			Debug.dump(this.fileName + ": Move " + file.path + " to " + this.dirSave + this.destinationName);
 
 			if (!destination.exists()) {
 				destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
@@ -372,13 +394,66 @@ downloadElement.prototype = {
 			this.checkFilenameConflict();
 			// move file
 			if (this.compression) {
-				throw new Error("No decompressor ATM");
+				//throw new Error("No decompressor ATM");
+				
+				destination.append(this.destinationName);
+				
+				var outStream = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
+				outStream.init(destination, 0x04 | 0x08, 0766, 0);
+				var boutStream = Cc['@mozilla.org/binaryoutputstream;1'].createInstance(Ci.nsIBinaryOutputStream);
+				boutStream.setOutputStream(outStream);
+				
+				try {
+					var inStream = Cc['@mozilla.org/network/file-input-stream;1'].createInstance(Ci.nsIFileInputStream);
+					inStream.init(file,  0x01, 0766, 0);
+					
+					Debug.dump(this.compressionType);
+					var converter = Cc["@mozilla.org/streamconv;1?from=" + this.compressionType + "&to=uncompressed"]
+						.createInstance(Ci.nsIStreamConverter);
+					var cl = new CopyListener(boutStream);
+					converter.asyncConvertData(
+						this.compressionType,
+						"uncompressed",
+						cl,
+						null
+					);
+					converter.onStartRequest(null, null);
+					while (inStream.available()) {
+						var count = inStream.available();
+						if (count > MAX_BUFFER_SIZE) {
+							count = MAX_BUFFER_SIZE;
+						}
+						converter.onDataAvailable(null, null, inStream, 0, count);
+					}
+					converter.onStopRequest(null, null, 0);
+
+					delete converter;
+					delete cl;
+					boutStream.close();
+					outStream.close();
+					inStream.close();
+					delete boutStream;
+					delete outStream;
+					delete inStream;					
+				}
+				catch (ex) {
+					try {
+						outStream.close();
+						destination.remove();
+					}
+					catch (ex) {
+						// XXX: what now?
+					}
+					throw ex;
+				}
+				file.remove(false);
 			}
 			else {
-				fileManager.moveTo(destination, this.destinationName);
+				file.moveTo(destination, this.destinationName);
 			}
 
-		} catch(ex) {
+		}
+		catch(ex) {
 			failDownload(this, _("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
 			Debug.dump("download::moveCompleted: Could not move file or create directory: ", ex);
 			return;
