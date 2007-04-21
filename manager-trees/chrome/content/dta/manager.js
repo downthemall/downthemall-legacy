@@ -36,8 +36,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 	
-// true if window has focus
-var winFocus = false;
 // true if some dialog.xul is opened
 var isOpenedMessagebox = 0;
 // your tree
@@ -249,8 +247,6 @@ downloadElement.prototype = {
 	fileManager: null,
 	activeChunks: 0,
 	maxChunks: null,
-	firstChunk: 0,
-
 	timeLastProgress: 0,
 	timeStart: 0,
 
@@ -309,20 +305,6 @@ downloadElement.prototype = {
 				inProgressList.splice(i, 1);
 				break;
 			}
-	},
-
-	cancelFamily: function() {
-		var i = this.firstChunk;
-		if (!this.chunks) return;
-		while (this.chunks[i]) {
-			try {
-				if (!this.chunks[i].isRunning) {
-					this.chunks[i].remove();
-				}
-			} catch (e) {}
-			i=this.chunks[i].next;
-			if (i == -1) break;
-		}
 	},
 
 	refreshPartialSize: function(){
@@ -988,7 +970,7 @@ var Check = {
 			playSound("done");
 
 			// if windows hasn't focus, show FF sidebox/alerts
-			if (!winFocus && Stats.completedDownloads > 0) {
+			if (Stats.completedDownloads > 0) {
 				var stringa;
 				if (Stats.completedDownloads > 0)
 					stringa = _("suc");
@@ -2612,9 +2594,10 @@ function updateSpeedCanvas() { try {
 function updateChunkCanvas() { try {
 
 	var file = Prefs.currentTooltip;
-	if (file==null) return;
+	if (!file) {
+		return;
+	}
 
-	var c = file.firstChunk;
 	var d = $("drawChunks").getContext("2d");
 
 	d.clearRect(0,0,300,20);

@@ -24,8 +24,6 @@
 	onload="loadDown();popup();" 
 	title="DownThemAll!"  
 	id="downlinks" 
-	onfocus="winFocus=true;" 
-	onblur="winFocus=false;" 
 	onunload="return cancelAll(false);" 
 	onclose="return cancelAll(false);" 
 	persist="width height screenX screenY" 
