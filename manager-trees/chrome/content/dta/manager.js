@@ -63,7 +63,6 @@ var Stats = {
 	get completedDownloads() { return this._completedDownloads; },
 	set completedDownloads(nv) { if (0 > (this._completedDownloads = nv)) { throw "Stats::Completed downloads less than 1"; } },
 
-	zippedToWait: 0,
 	downloadedBytes: 0
 }
 
@@ -75,11 +74,6 @@ var chunkElement = function(start, end, d) {
 	this._start = start;
 	this.end = end;
 	this.parent = d;
-	var dest = Prefs.tempLocation
-		? Prefs.tempLocation.clone()
-		: new FileFactory(this.parent.dirSave);
-	dest.append(this.parent.fileName + '.dtapart');
-	this.partFile = dest;	
 }
 
 chunkElement.prototype = {
@@ -121,11 +115,12 @@ chunkElement.prototype = {
 	},
 	_written: 0,
 	_outstream: null,
+	_converter: null,
 	write: function(aInputStream, aCount) {
 		try {
 			if (!this._outstream) {
 				var outStream = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
-				outStream.init(this.partFile, 0x04 | 0x08, 0766, 0);
+				outStream.init(this.parent.tmpFile, 0x04 | 0x08, 0766, 0);
 				this._outstream = outStream.QueryInterface(Ci.nsISeekableStream);
 				this._outstream.seek(0x00, this.start);
 			}
@@ -134,7 +129,7 @@ chunkElement.prototype = {
 				bytes = aCount;
 			}
 			if (!bytes) {
-				Debug.dump(this.start + " " + this.end + " " + this.size + " " + this.remainder + " ");
+				Debug.dump(aCount + " - " + this.start + " " + this.end + " " + this.size + " " + this.remainder + " ");
 				return 0;
 			}
 			if (bytes < 0) {
@@ -169,9 +164,8 @@ const treeCells = {
 	"mask": 6
 }
 
-function downloadElement(lnk, dir, num, desc, mask, refPage) {
+function downloadElement(lnk, dir, num, desc, mask, refPage, tmpFile) {
 
-	this.tmpFile = 
 	this.visitors = new VisitorManager();
 
 	dir = dir.addFinalSlash();
@@ -194,6 +188,19 @@ function downloadElement(lnk, dir, num, desc, mask, refPage) {
 	this.speeds = new Array();
 	this.refPage = Cc['@mozilla.org/network/standard-url;1'].createInstance(Ci.nsIURI);
 	this.refPage.spec = refPage;
+	
+	// XXX: reset ranges when failed.
+	if (tmpFile) {
+		try {
+			tmpFile = new FileFactory(tmpFile);
+			if (tmpFile.exists()) {
+				this._tmpFile = tmpFile;
+			}
+		}
+		catch (ex) {
+			Debug.dump("tried to construct with invalid tmpFile", ex);
+		}
+	}
 }
 
 const QUEUED = 0;
@@ -210,6 +217,18 @@ downloadElement.prototype = {
 	set state(ns) {
 		Debug.dump('SS: ' + this._state + "/" + ns);
 		this._state = ns;
+	},
+	
+	_tmpFile: null,
+	get tmpFile() {
+		if (!this._tmpFile) {
+			var dest = Prefs.tempLocation
+				? Prefs.tempLocation.clone()
+				: new FileFactory(this.parent.dirSave);
+			dest.append(this.fileName + '.dtapart');
+			this._tmpFile = dest;
+		}
+		return this._tmpFile;
 	},
 	
 	/**
@@ -273,7 +292,7 @@ downloadElement.prototype = {
 		this.dirSave = this.originalDirSave;
 
 		// reset flags
-		this.cancelFamily();
+		this.setPaused();
 		this.totalSize = 0;
 		this.partialSize = 0;
 		this.compression = false;
@@ -351,10 +370,13 @@ downloadElement.prototype = {
 				destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
 			}
 			this.checkFilenameConflict();
-			var destinationName = (this.compression)?("[comp]"+this.destinationName):this.destinationName;
-
 			// move file
-			fileManager.moveTo(destination, destinationName);
+			if (this.compression) {
+				throw new Error("No decompressor ATM");
+			}
+			else {
+				fileManager.moveTo(destination, this.destinationName);
+			}
 
 		} catch(ex) {
 			failDownload(this, _("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
@@ -436,27 +458,12 @@ downloadElement.prototype = {
 		Debug.dump("fd");
 		// create final file pointer
 		this.fileManager = new FileFactory(this.dirSave);
-		var destinationName = (this.compression)?("[comp]"+this.destinationName):this.destinationName;
-		this.fileManager.append(destinationName);
+		this.fileManager.append(this.destinationName);
 
 		this.totalSize = this.partialSize = this.getSize();
 		this.setTreeCell("size", this.createDimensionString());
 		this.setTreeCell("percent", "100%");
 		this.setTreeProgress("completed", 100);
-
-		// if zipped, unzip it
-		if (this.compression) {
-			if (!this.is(CANCELED)) {
-				Stats.zippedToWait++;
-				this.setTreeCell("status", _("decompressing"));
-				try {
-					this.unzip();
-				} catch(e){
-					Debug.dump("finishDownload():", e);
-				}
-			}
-			return;
-		}
 
 		this.isPassed = true;
 		this.setTreeCell("status", _("complete"));
@@ -464,42 +471,6 @@ downloadElement.prototype = {
 
 		// Garbage collection
 		this.chunks = null;
-	},
-
-	unzip: function() {try {
-		Debug.dump(this.fileName + ": Unzip: unzip into " + this.dirSave + this.destinationName + " from source " + this.fileManager.path);
-
-		// create a channel from the zipped file
-		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-		var fileURI = ios.newFileURI(this.fileManager);
-		var channel = ios.newChannelFromURI(fileURI);
-
-		// initialize output file
-		var nomeFileOut = new FileFactory(this.dirSave + this.destinationName);
-
-		try {
-			nomeFileOut.create(nomeFileOut.NORMAL_FILE_TYPE, 0766);
-		} catch(e) {
-			failDownload(this, _("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
-			Debug.dump("unzip(): Could not move file or create directory: ", e);
-			return;
-		}
-
-		var fileUscita = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
-		fileUscita.init(nomeFileOut, 0x02 | 0x08, 0766, 0);
-
-		// set up the gzip converter
-		var listener = new dataListener(fileUscita, nomeFileOut, this.fileManager, this);
-		var converter = Cc["@mozilla.org/streamconv;1?from="+this.compressionType+"&to=uncompressed"].createInstance(Ci.nsIStreamConverter);
-		if ("AsyncConvertData" in converter)
-			converter.AsyncConvertData(this.compressionType, "uncompressed", listener, null);
-		else
-			converter.asyncConvertData(this.compressionType, "uncompressed", listener, null);
-
-		// start the conversion
-		channel.asyncOpen(converter,null);
-
-	} catch (e) {Debug.dump("Unzip():", e);}
 	},
 
 	// XXX: revise
@@ -705,7 +676,7 @@ downloadElement.prototype = {
 					this.isPassed = true;
 			}
 
-			this.cancelFamily();
+			this.setPaused();
 
 			this.state = CANCELED;
 			Check.checkClose();
@@ -959,7 +930,6 @@ var Check = {
 				!downloadList.length
 				|| this.lastCheck == Stats.downloadedBytes
 				|| downloadList.some(function(e) { return !e.isPassed; })
-				|| Stats.zippedToWait
 			) {
 				return;
 			}
@@ -1105,7 +1075,7 @@ function Download(d, c, headerHack) {
 	if (referrer) {
 		try {
 			var http = this._chan.QueryInterface(Ci.nsIHttpChannel);
-			http.setRequestHeader('Accept-Encoding', 'none', false);
+			//http.setRequestHeader('Accept-Encoding', 'none', false);
 			if (c.end > 0) {
 				http.setRequestHeader('Range', 'bytes=' + c.start + '-' + c.end, false);
 			}
@@ -1555,7 +1525,7 @@ Download.prototype = {
 		// if download is complete
 		if (d.is(COMPLETE)) {
 			Debug.dump(d.fileName + ": Download is completed!");
-			d.moveCompleted(c.partFile);
+			d.moveCompleted(d.tmpFile);
 		}
 		else if (d.is(PAUSED) && Check.isClosing) {
 			if (!d.isRemoved) {
@@ -1564,8 +1534,8 @@ Download.prototype = {
 			// reset download as it was never started (in queue state)
 			if (!d.isResumable) {
 				d.isStarted = false;
+				d.setPaused();
 				d.state = PAUSED;
-				d.cancelFamily();
 				d.chunks = new Array();
 				d.totalSize = 0;
 				d.partialSize = 0;
@@ -1649,92 +1619,6 @@ Download.prototype = {
 	onStatus: function(aRequest, aContext, aStatus, aStatusArg) {}
 };
 
-// --------* Gzip converter *--------
-
-function dataListener(outStream, outFileManager, dest, d) {
-	this.outf = outStream;
-	this.outFM = outFileManager;
-	this.inf=dest;
-	this.d=d;
-}
-
-dataListener.prototype = {
-	error: false,
-	QueryInterface: function(iid) {
-		if (
-			iid.equals(Ci.nsISupports)
-			|| iid.equals(Ci.nsIStreamListener)
-			|| iid.equals(Ci.nsIRequestObserver)
-		)
-			return this;
-		throw Components.results.NS_ERROR_NO_INTERFACE;
-	},
-	onStartRequest: function(request, context) {
-		Debug.dump(this.d.fileName + ": Decompression started");
-	},
-	onStopRequest: function(request, context, status) {
-		this.outf.close();
-
-		if (this.d.isRemoved) {
-			Stats.zippedToWait--;
-		} else {
-			this.d.isPassed = true;
-			Stats.zippedToWait--;
-			this.d.setTreeCell("percent", "100%");
-			this.d.setTreeCell("status", _("complete"));
-			this.d.setTreeProgress("completed", 100);
-		}
-
-		if (status == Components.results.NS_OK && !this.error) {
-
-			Debug.dump(this.d.fileName + ": Remove: " + this.inf.path + "\nKeep " + this.outFM.path);
-			this.inf.remove(false);
-
-		} else {
-			// if we have an error decompression we assume an erroneous GZIP header response and keep the original file!
-			Debug.dump(this.d.fileName + ": Rename: " + this.inf.path + "\nRemove erroneous: " + this.outFM.path);
-
-			this.outFM.remove(false);
-			var destination = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
-			destination.initWithPath(this.d.dirSave);
-
-			try {
-				if (!destination.exists()) destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
-				this.inf.moveTo(destination, this.d.destinationName);
-			} catch(e) {
-				failDownload(this.d, _("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
-				Debug.dump("dataListener::onStopRequest: Could not move file or create directory: ", e);
-				return;
-			}
-		}
-
-		// Garbage collection
-		this.d.chunks = null;
-
-		Debug.dump(this.d.fileName + ": Decompression completed");
-
-		Check.checkClose();
-		popup();
-	},
-	onDataAvailable: function(request, context, inputStream, offset, count) {
-		try {
-			// update tree row
-			this.d.setTreeCell("percent", Math.round(offset / this.d.totalSize * 100) + "%");
-			this.d.setTreeProgress("inprogress", Math.round(offset / this.d.totalSize * 100));
-			// write decompressed data
-			var byteStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
-			byteStream.setInputStream(inputStream);
-			// we're using nsIFileOutputStream
-			if (this.outf.write(byteStream.readBytes(count), count) != count) {
-				throw ("dataDecodeListener::dataAvailable: read/write count mismatch!");
-			}
-		} catch(e) {
-			this.error = true;
-			request.cancel(Components.results.NS_BINDING_ABORTED);
-			Debug.dump("onDataAvailable():", e);
-		}
-	}
-}
 
 function loadDown() {
 	make_();
@@ -1750,8 +1634,9 @@ function loadDown() {
 
 	if ("arguments" in window) {
 		startnewDownloads(window.arguments[0], window.arguments[1]);
-	} else
-		$("listDownload0").view.selection.currentIndex = $("listDownload0").view.rowCount - 1;
+	} else {
+		tree.view.selection.currentIndex = tree.view.rowCount - 1;
+	}
 
 	try {
 		clearTimeout(Check.timerCheck);
@@ -1826,7 +1711,7 @@ function cancelAll(pressedESC) {
 	);
 
 	// if we can close window now, let's close it
-	if (allPassed && Stats.zippedToWait == 0) {
+	if (allPassed) {
 		Debug.dump("cancelAll(): Disclosure of window permitted");
 		sessionManager.save();
 		clearTimeout(Check.timerRefresh);
@@ -1841,7 +1726,7 @@ function cancelAll(pressedESC) {
 
 function startnewDownloads(notQueue, download) {
 
-	var numbefore = $("listDownload0").view.rowCount - 1;
+	var numbefore = tree.view.rowCount - 1;
 	const DESCS = ['description', 'ultDescription'];
 	var startDate = new Date();
 	
@@ -1891,14 +1776,14 @@ function startnewDownloads(notQueue, download) {
 	Check.haveToCheck = true;
 
 	// porto in visibile i file che si stanno scaricando
-	var boxobject = $("listDownload0").treeBoxObject;
+	var boxobject = tree.treeBoxObject;
 	boxobject.QueryInterface(Ci.nsITreeBoxObject);
 	if (download.length <= boxobject.getPageLength())
-		boxobject.scrollToRow($("listDownload0").view.rowCount - boxobject.getPageLength());
+		boxobject.scrollToRow(tree.view.rowCount - boxobject.getPageLength());
 	else
 		boxobject.scrollToRow(numbefore);
 
-	$("listDownload0").view.selection.currentIndex = numbefore + 1;
+	tree.view.selection.currentIndex = numbefore + 1;
 	if (numbefore == -1) {
 		Check.setFirstInQueue();
 		downloadList[0].isFirst = true;
@@ -2283,7 +2168,7 @@ function setRemoved(d) {
 			} else if(!d.isPassed) {
 				d.isPassed = true;
 			}
-			d.cancelFamily();
+			d.setPaused();
 		}
 
 		d.state = CANCELED;

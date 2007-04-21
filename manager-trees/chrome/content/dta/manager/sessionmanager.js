@@ -26,8 +26,7 @@ var sessionManager = {
 			(!Prefs.removeCompleted && d.is(COMPLETE))
 			|| (!Prefs.removeCanceled && d.is(CANCELED))
 			|| (!Prefs.removeAborted && !d.isStarted)
-			|| d.is(PAUSED)
-			|| d.setIsRunning()
+			|| d.is(PAUSED, RUNNING)
 		)) {
 			return;
 		}
