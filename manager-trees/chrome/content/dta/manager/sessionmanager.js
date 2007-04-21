@@ -60,7 +60,7 @@ var sessionManager = {
 			e.totalSize = d.totalSize;
 		}
 
-		e.ranges = [];
+		/*e.ranges = [];
 
 		if (!d.is(COMPLETE, CANCELED)) {
 			d.ranges.forEach(
@@ -73,7 +73,7 @@ var sessionManager = {
 					e.ranges.push({start: c.start + c.size, end: c.end});
 				}
 			);
-		}
+		}*/
 
 		var s = this._saveStmt;
 		if (d.dbID) {

@@ -109,6 +109,9 @@ chunkElement.prototype = {
 	get remainder() {
 		return this._total - this._written;
 	},
+	get complete() {
+		return this._total == this.written;
+	},
 	remove: function() {
 		this.close();
 	},
@@ -190,7 +193,6 @@ function downloadElement(lnk, dir, num, desc, mask, refPage) {
 	this.numIstance = num;
 	this.description = desc;
 	this.chunks = new Array();
-	this.ranges = new Array();
 	this.speeds = new Array();
 	this.refPage = Cc['@mozilla.org/network/standard-url;1'].createInstance(Ci.nsIURI);
 	this.refPage.spec = refPage;
@@ -281,7 +283,6 @@ downloadElement.prototype = {
 		this.compression = false;
 		this.activeChunks = 0;
 		this.chunks = [];
-		this.ranges = [];
 		this.visitors = new VisitorManager();
 		this.getHeader();
 	},
@@ -322,27 +323,6 @@ downloadElement.prototype = {
 			i=this.chunks[i].next;
 			if (i == -1) break;
 		}
-	},
-
-	setIsRunning: function() {
-	var running = false;
-	try {
-		if (this.chunks) {
-			var i = this.firstChunk;
-			while (this.chunks[i]) {
-				if (this.chunks[i].isRunning) {
-					running = true;
-					break;
-				}
-				i=this.chunks[i].next;
-				if (i == -1) break;
-			}
-		}
-	} catch(e) {Debug.dump("setIsRunning():", e);}
-	if (running) {
-		this.state = RUNNING;
-	}
-	return running;
 	},
 
 	refreshPartialSize: function(){
@@ -736,7 +716,7 @@ downloadElement.prototype = {
 			if (this.is(COMPLETE)) {
 				Stats.completedDownloads--;
 			}
-			else if (this.setIsRunning()) {
+			else if (this.is(RUNNING)) {
 				this.setPaused();
 			}
 			else {
@@ -782,17 +762,6 @@ downloadElement.prototype = {
 
 			var rv = false;
 			
-			// start loaded, previously stopped and or errornous chunks
-			while (this.activeChunks < this.maxChunks && this.ranges.length) {
-				// pop ranges
-				var r = this.ranges[0];
-				this.ranges = this.ranges.splice(1);
-
-				// create chunk of said length;
-				downloadChunk(this, r.start, r.end);
-				rv = true;
-			}
-
 			// we didn't load up anything so let's start the main chunk (which will grab the info)
 			if (this.chunks.length == 0) {
 				downloadChunk(this, 0, 0, true);
@@ -1280,12 +1249,11 @@ Download.prototype = {
 		try {
 			var c = this.c;
 			var d = this.d;
-			var firstProgress = false;
 
 			if (this.isPassedOnProgress) {
 				throw new Components.Exception("WTF?");
 			}
-			firstProgress = this.isPassedOnProgress = true;
+			this.isPassedOnProgress = true;
 			Debug.dump("First ProgressChange for chunk ");
 			try {
 				var chan = aRequest.QueryInterface(Ci.nsIHttpChannel);
@@ -1522,7 +1490,6 @@ Download.prototype = {
 		// update flags and counters
 		Check.refreshDownloadedBytes();
 		d.refreshPartialSize();
-		d.setIsRunning();
 		d.activeChunks--;
 		d.setTreeCell("parts", 	d.activeChunks + "/" + d.maxChunks);
 
@@ -1685,13 +1652,12 @@ Download.prototype = {
 					
 					d.setTreeProgress("inprogress", Math.round(d.partialSize / d.totalSize * 100));
 					d.setTreeCell("percent", Math.round(d.partialSize / d.totalSize * 100) + "%");
-					d.setTreeCell("size", d.createDimensionString());
 				}
 				else {
 					d.setTreeCell("percent", "???");
-					d.setTreeCell("size", d.createDimensionString());
-					d.setTreeCell("status", _("downloading"));
+					d.setTreeCell("status", _("downloading"));								
 				}
+				d.setTreeCell("size", d.createDimensionString());
 			}
 		}
 		catch(ex) {
@@ -2330,7 +2296,7 @@ function setRemoved(d) {
 		if (!d.isStarted || d.is(COMPLETE)) {
 			d.isPassed = true;
 		} else {
-			if (d.setIsRunning()) {
+			if (d.is(RUNNING)) {
 				d.setPaused();
 			} else if(!d.isPassed) {
 				d.isPassed = true;
@@ -2661,8 +2627,6 @@ function updateChunkCanvas() { try {
 	compl.addColorStop(0, 'rgba(13,141,15,255)');
 	compl.addColorStop(1, 'rgba(0,199,56,255)');
 
-	var join = "#A5FE2C";
-
 	var cancel = d.createLinearGradient(0,0,0,16);
 	cancel.addColorStop(0, 'rgba(151,58,2,100)');
 	cancel.addColorStop(1, 'rgba(255,0,0,100)');
@@ -2677,19 +2641,16 @@ function updateChunkCanvas() { try {
 	if (file.is(COMPLETE)) {
 		d.fillStyle = compl;
 		d.fillRect(0,0,300,20);
-		d.fillStyle = join;
-		d.fillRect(0,16,300,4);
 	} else if (file.is(CANCELED)) {
 		d.fillStyle = cancel;
 		d.fillRect(0,0,300,20);
 	} else if (file.isStarted) {
-		while (c != -1) {
-			d.fillStyle=prog;
-			d.fillRect(Math.ceil(file.chunks[c].start/file.totalSize*300),0,Math.ceil(file.chunks[c].size / file.totalSize*300),20);
-			c = file.chunks[c].next;
-		}
-		d.fillStyle = join;
-		d.fillRect(0,16,Math.ceil(file.chunks[file.firstChunk].size / file.totalSize*300),4);
+		file.chunks.forEach(
+			function(c) {
+				d.fillStyle = prog;
+				d.fillRect(Math.ceil(c.start / file.totalSize*300), 0, Math.ceil(c.size / file.totalSize * 300), 20);
+			}
+		);
 	}
 
 	setTimeout("updateChunkCanvas()", Check.frequencyUpdateChunkGraphs);
