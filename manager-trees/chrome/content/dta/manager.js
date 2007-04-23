@@ -122,8 +122,12 @@ chunkElement.prototype = {
 	write: function(aInputStream, aCount) {
 		try {
 			if (!this._outstream) {
+				var file = this.parent.tmpFile;
+				if (!file.parent.exists()) {
+					file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
+				}
 				var outStream = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
-				outStream.init(this.parent.tmpFile, 0x04 | 0x08, 0766, 0);
+				outStream.init(file, 0x04 | 0x08, 0766, 0);
 				this._outstream = outStream.QueryInterface(Ci.nsISeekableStream);
 				this._outstream.seek(0x00, this.start);
 			}
