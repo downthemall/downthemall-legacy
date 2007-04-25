@@ -31,10 +31,18 @@
 	persist="screenX screenY width height" 
 	ondialogaccept="return Dialog.download(true);"
 	ondialogextra1="return Dialog.download(false);"
-	buttons="accept, extra1, cancel"
+	buttons="accept, extra1, cancel, help"
 	buttonlabelaccept="&start.label;"
 	buttonlabelextra1="&queue.label;"	
+	ondialoghelp="Dialog.help(event);"
 	>
+	
+	<popupset>
+		<popup id="popupHelp">
+			<menuitem topic="AddUrl" oncommand="Dialog.help(event);" label="&help.adding.label;"/>
+			<menuitem topic="Batches" oncommand="Dialog.help(event);" label="&help.batches.label;"/>
+		</popup>
+	</popupset>
 	
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<!-- internalFunctions needs overlayFunctions -->
@@ -58,11 +66,8 @@
 
 	<description class="header" id="descr">&desc.value; <html:span id="batcheslabel">&desc.batches.value;</html:span></description>
 
-	<vbox id="batches">
-		<hbox>
-			<label flex="1">&examples.value;</label>
-			<image src="chrome://dta/skin/common/help.png" onclick="openHelp('Batches','chrome://dta/locale/help/dtahelp.rdf');"/>
-		</hbox>
+	<vbox id="batches" context="popupHelp">
+		<label flex="1">&examples.value;</label>
 		<label class="monospace indent">.../mygallery[A:C]/photo[001:100:2].jpg</label>
 		<label class="monospace indent">.../mygallery[1:3]/photo[01:10][3:01:-1].jpg</label>
 	</vbox>
