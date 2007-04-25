@@ -106,9 +106,6 @@ chunkElement.prototype = {
 	get complete() {
 		return this._total == this.written;
 	},
-	remove: function() {
-		this.close();
-	},
 	close: function() {
 		this.isRunning = false;
 		if (this._outStream) {
@@ -771,6 +768,8 @@ downloadElement.prototype = {
 			this.setTreeCell("status", message);
 			this.setTreeProgress("canceled");
 
+			this.setPaused();
+
 			if (this.is(COMPLETE)) {
 				Stats.completedDownloads--;
 			}
@@ -780,9 +779,18 @@ downloadElement.prototype = {
 			else {
 					this.isPassed = true;
 			}
-
-			this.setPaused();
-
+			
+			if (this.tmpFile.exists()) {
+				try {
+					this.tmpFile.remove(false);
+				}
+				catch (ex) {
+					Debug.dump("failed to remove the tmpFile", ex);
+				}
+			}
+			// gc
+			this.chunks = [];
+			
 			this.state = CANCELED;
 			Check.checkClose();
 			popup();
@@ -1515,16 +1523,6 @@ Download.prototype = {
 		
 		var d = this.d;
 
-		if (c.size == 0) {
-			c.remove();
-			if (c.previous != -1) {
-				d.chunks[c.previous].next = c.next;
-			}
-			if (c.next != -1) {
-				d.chunks[c.next].previous = c.previous;
-			}
-		}
-	
 		// update flags and counters
 		Check.refreshDownloadedBytes();
 		d.refreshPartialSize();
@@ -1532,7 +1530,7 @@ Download.prototype = {
 		d.setTreeCell("parts", 	d.activeChunks + "/" + d.maxChunks);
 
 		// check if we're complete now
-		if (!d.chunks.some(function(e) { return e.isRunning; })) {
+		if (d.is(RUNNING) && !d.chunks.some(function(e) { return e.isRunning; })) {
 			d.state = COMPLETE;
 		}
 
@@ -1626,18 +1624,6 @@ Download.prototype = {
 			// if all the download space has already been occupied by chunks (= !resumeDownload)
 			d.resumeDownload();
 		}
-		// if download has been canceled by user
-		else if (d.is(CANCELED)) {
-			Debug.dump(d.fileName + ": Download has been canceled.. erase chunk.");
-			c.remove();
-
-			if (!d.isRemoved) {
-				d.isPassed = true;
-				d.chunks = [];
-			}
-			Check.checkClose();
-		}
-
 		sessionManager.save(d);
 		// refresh GUI
 		popup();
@@ -1654,9 +1640,6 @@ Download.prototype = {
 
 			if (d.is(PAUSED, CANCELED)) {
 				this.cancel();
-				if (d.is(CANCELED)) {
-					c.remove();
-				}
 				return;
 			}
 
