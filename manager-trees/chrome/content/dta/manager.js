@@ -850,7 +850,7 @@ downloadElement.prototype = {
 }
 
 function failDownload(d, title, msg, state) {
-
+	Debug.dump("failDownload invoked");
 	playSound("error");
 
 	switch (Prefs.alertingSystem) {
@@ -1279,7 +1279,7 @@ Download.prototype = {
 		}
 		catch (ex) {
 			Debug.dump('onDataAvailable', ex);
-			this.cancel();
+			failDownload(this.d, _("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
 		}
 	},
 	
@@ -1534,17 +1534,9 @@ Download.prototype = {
 		d.setTreeCell("parts", 	d.activeChunks + "/" + d.maxChunks);
 
 		// check if we're complete now
-		if (
-			(!d.totalSize
-			&& d.partialSize != 0
-			&& !d.is(RUNNING, PAUSED))
-			|| (Math.abs(d.partialSize - d.totalSize) < 2)
-		) {
+		if (!d.chunks.some(function(e) { return e.isRunning; })) {
 			d.state = COMPLETE;
 		}
-		
-		// update chunk range
-		c.end = c.start + c.size - 1;
 
 		// routine for normal chunk
 		Debug.dump(d.fileName + ": Chunk " + c.start + "-" + c.end + " finished.");
