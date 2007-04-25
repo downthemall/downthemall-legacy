@@ -467,7 +467,7 @@ downloadElement.prototype = {
 
 		}
 		catch(ex) {
-			failDownload(this, _("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
 			Debug.dump("download::moveCompleted: Could not move file or create directory: ", ex);
 			return;
 		}
@@ -721,28 +721,45 @@ downloadElement.prototype = {
 				break;
 			}
 			case 2: {
-				this.cancelDownload(_("skipped"));
+				this.cancel(_("skipped"));
 				break;
 			}
 			case 3: {
-				inProgressList[p].d.cancelDownload();
+				inProgressList[p].d.cancel();
 				break;
 			}
 			case 4: {
-				this.cancelDownload();
+				this.cancel();
 				break;
 			}
 		}
 
 	} catch(e) {Debug.dump("checkFilenameConflict():", e);}
 	},
+	
+	fail: function dd_fail(d, title, msg, state) {
+		Debug.dump("failDownload invoked");
+		
+		this.cancel(state);
+		
+		playSound("error");
 
-	cancelDownload: function(message) {
+		switch (Prefs.alertingSystem) {
+			case 1:
+				AlertService.show(title, msg, false);
+				break;
+			case 0:
+				alert(msg);
+				break;
+		}
+	},
+
+	cancel: function dd_cancel(message) {
 		try {
 			if (this.is(CANCELED)) {
 				return;
 			}			
-			Debug.dump(this.fileName + ": cancelDownload()");
+			Debug.dump(this.fileName + ": canceled");
 			this.visitors = new VisitorManager();
 
 			if (this.isFirst) {
@@ -770,7 +787,7 @@ downloadElement.prototype = {
 			Check.checkClose();
 			popup();
 		} catch(ex) {
-			Debug.dump("cancelDownload():", ex);
+			Debug.dump("cancel():", ex);
 		}
 	},
 
@@ -848,24 +865,6 @@ downloadElement.prototype = {
 	}
 
 }
-
-function failDownload(d, title, msg, state) {
-	Debug.dump("failDownload invoked");
-	playSound("error");
-
-	switch (Prefs.alertingSystem) {
-		case 1:
-			AlertService.show(title, msg, false);
-			break;
-		case 0:
-			alert(msg);
-			break;
-	}
-	d.cancelDownload(state);
-
-	return;
-}
-
 
 // --------* inProgressElement *--------
 function inProgressElement(el) {
@@ -1000,7 +999,7 @@ var Check = {
 					d.setTreeCell("status", _("timeout"));
 					d.setTreeProgress("paused");
 				} else
-					d.cancelDownload(_("timeout"));
+					d.cancel(_("timeout"));
 
 				popup();
 				Debug.dump("checkDownloads(): " + d.fileName + " in timeout");
@@ -1279,7 +1278,7 @@ Download.prototype = {
 		}
 		catch (ex) {
 			Debug.dump('onDataAvailable', ex);
-			failDownload(this.d, _("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+			this.d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
 		}
 	},
 	
@@ -1326,8 +1325,7 @@ Download.prototype = {
 		
 			if (chan.responseStatus >= 400) {
 				// se si tratta di errore >= 400 blocchiamo e basta
-				failDownload(
-					d,
+				d.fail(
 					_("error", [chan.responseStatus]),
 					_("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]) + " " + _("sra", [chan.responseStatus]) + ": " + chan.responseStatusText,
 					_("error", [chan.responseStatus])
@@ -1407,7 +1405,7 @@ Download.prototype = {
 					nds = Prefs.tempLocation.diskSpaceAvailable
 					if (nds < tst) {
 						Debug.dump("There is not enought free space available on temporary directory, needed=" + tst + " (totalsize="+ d.totalSize +"), user=" + nds);
-						failDownload(d, _("ndsa"), _("spacetemp"), _("freespace"));
+						d.fail(_("ndsa"), _("spacetemp"), _("freespace"));
 						return;
 					}
 				}
@@ -1420,13 +1418,13 @@ Download.prototype = {
 					if (!realDest.exists()) realDest.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
 				} catch(e) {
 					Debug.dump("downloadChunk(): Could not move file or create directory on destination path: ", e);
-					failDownload(d, _("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+					d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
 					return;
 				}
 				nds = realDest.diskSpaceAvailable;
 				if (nds < tsd) {
 					Debug.dump("There is not enought free space available on destination directory, needed=" + tsd + " (totalsize="+ d.totalSize +"), user=" + nsd);
-					failDownload(d, _("ndsa"), _("spacedir"), _("freespace"));
+					d.fail(_("ndsa"), _("spacedir"), _("freespace"));
 					return;
 				}
 				// if we are redownloading the file, here we can force single chunk mode
@@ -1591,8 +1589,7 @@ Download.prototype = {
 		// if the only possible chunk for a non-resumable download finishes and download is still not completed -> server error/disconnection
 		else if (!d.isResumable && !d.is(COMPLETE, CANCELED, PAUSED)) {
 			Debug.dump(d.fileName + ": Server error or disconnection (type 2)");
-			failDownload(
-				d,
+			d.fail(
 				_("srver"),
 				_("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]),
 				_("srver")
@@ -1675,7 +1672,7 @@ Download.prototype = {
 					// basic integrity check
 					if (d.partialSize > d.totalSize) {
 						Debug.dump(d.fileName + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");
-						failDownload(d, "Size mismatch", "Actual size of " + d.partialSize + " does not match reported size of " + d.totalSize, "Size mismatch");
+						d.fail("Size mismatch", "Actual size of " + d.partialSize + " does not match reported size of " + d.totalSize, "Size mismatch");
 						//d.hasToBeRedownloaded = true;
 						//d.redownloadIsResumable = false;
 						//d.setPaused();
@@ -2163,7 +2160,7 @@ function cancelPopup() {
 		// ciclo gli elementi selezionati
 		for(var c=end.value; c>=start.value; c--) {
 			// se e' effettivamente da cancellare
-			downloadList[c].cancelDownload();
+			downloadList[c].cancel();
 		}
 	}
 }
