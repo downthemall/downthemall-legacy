@@ -49,9 +49,8 @@ if (!Ci) {
 }
 
 const MIN_CHUNK_SIZE = 512 * 1024;
-const MAX_CHUNK_SIZE = 10485760; // 10MB
-// in use by decompressor...
-// beware, actual size might be more than twice as big!
+// in use by chunk.writer...
+// in use by decompressor... beware, actual size might be more than twice as big!
 const MAX_BUFFER_SIZE = 3145728; // 3 MB
 
 DTA_include('chrome://dta/content/dta/manager/prefs.js');
@@ -111,25 +110,27 @@ chunkElement.prototype = {
 		this.close();
 	},
 	close: function() {
-		if (this._outstream) {
-			this._outstream.close();
-			delete this._outstream;
+		this.isRunning = false;
+		if (this._outStream) {
+			this._outStream.close();
+			delete this._outStream;
 		}
 	},
 	_written: 0,
-	_outstream: null,
-	_converter: null,
+	_outStream: null,
 	write: function(aInputStream, aCount) {
 		try {
-			if (!this._outstream) {
+			if (!this._outStream) {
+				Debug.dump("creating outStream");
 				var file = this.parent.tmpFile;
 				if (!file.parent.exists()) {
 					file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
 				}
 				var outStream = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
 				outStream.init(file, 0x04 | 0x08, 0766, 0);
-				this._outstream = outStream.QueryInterface(Ci.nsISeekableStream);
-				this._outstream.seek(0x00, this.start);
+				outStream.QueryInterface(Ci.nsISeekableStream).seek(0x00, this.start);
+				this._outStream = Cc['@mozilla.org/network/buffered-output-stream;1'].createInstance(Ci.nsIBufferedOutputStream);
+				this._outStream.init(outStream, Math.floor(MAX_BUFFER_SIZE / Prefs.maxChunks));
 			}
 			bytes = this.remainder;
 			if (aCount < bytes) {
@@ -146,7 +147,7 @@ chunkElement.prototype = {
 			var byteStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
 			byteStream.setInputStream(aInputStream);
 			// we're using nsIFileOutputStream
-			if (this._outstream.write(byteStream.readBytes(bytes), bytes) != bytes) {
+			if (this._outStream.write(byteStream.readBytes(bytes), bytes) != bytes) {
 				throw ("dataCopyListener::dataAvailable: read/write count mismatch!");
 			}
 			this._written += bytes;
@@ -210,7 +211,7 @@ function downloadElement(lnk, dir, num, desc, mask, refPage, tmpFile) {
 	this.mask = mask;
 	this.numIstance = num;
 	this.description = desc;
-	this.chunks = new Array();
+	this.chunks = [];
 	this.speeds = new Array();
 	this.refPage = Cc['@mozilla.org/network/standard-url;1'].createInstance(Ci.nsIURI);
 	this.refPage.spec = refPage;
@@ -361,10 +362,13 @@ downloadElement.prototype = {
 	},
 
 	setPaused: function(){
-		for (var i = 0; i<this.chunks.length; i++)
-			if (this.chunks[i].isRunning) {
-				this.chunks[i].download.cancel();
+		if (this.chunks) {
+			for (var i = 0; i < this.chunks.length; i++) {
+				if (this.chunks[i].isRunning) {
+					this.chunks[i].download.cancel();
+				}
 			}
+		}
 	},
 
 	getSize: function() {
@@ -402,10 +406,17 @@ downloadElement.prototype = {
 				
 				destination.append(this.destinationName);
 				
-				var outStream = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
+				var outStream = Cc['@mozilla.org/network/file-output-stream;1']
+					.createInstance(Ci.nsIFileOutputStream);
 				outStream.init(destination, 0x04 | 0x08, 0766, 0);
-				var boutStream = Cc['@mozilla.org/binaryoutputstream;1'].createInstance(Ci.nsIBinaryOutputStream);
+				var boutStream = Cc['@mozilla.org/network/buffered-output-stream;1']
+					.createInstance(Ci.nsIBufferedOutputStream);
+				boutStream.init(outStream, MAX_BUFFER_SIZE);
+				outStream = boutStream;
+				boutStream = Cc['@mozilla.org/binaryoutputstream;1']
+					.createInstance(Ci.nsIBinaryOutputStream);
 				boutStream.setOutputStream(outStream);
+				outStream = boutStream;
 				
 				try {
 					var inStream = Cc['@mozilla.org/network/file-input-stream;1'].createInstance(Ci.nsIFileInputStream);
@@ -414,7 +425,7 @@ downloadElement.prototype = {
 					Debug.dump(this.compressionType);
 					var converter = Cc["@mozilla.org/streamconv;1?from=" + this.compressionType + "&to=uncompressed"]
 						.createInstance(Ci.nsIStreamConverter);
-					var cl = new CopyListener(boutStream);
+					var cl = new CopyListener(outStream);
 					converter.asyncConvertData(
 						this.compressionType,
 						"uncompressed",
@@ -433,10 +444,8 @@ downloadElement.prototype = {
 
 					delete converter;
 					delete cl;
-					boutStream.close();
 					outStream.close();
 					inStream.close();
-					delete boutStream;
 					delete outStream;
 					delete inStream;					
 				}
@@ -549,7 +558,7 @@ downloadElement.prototype = {
 		popup();
 
 		// Garbage collection
-		this.chunks = null;
+		this.chunks = [];
 	},
 
 	// XXX: revise
@@ -1615,7 +1624,7 @@ Download.prototype = {
 				d.isStarted = false;
 				d.setPaused();
 				d.state = PAUSED;
-				d.chunks = new Array();
+				d.chunks = [];
 				d.totalSize = 0;
 				d.partialSize = 0;
 				d.compression = false;
@@ -1635,7 +1644,7 @@ Download.prototype = {
 
 			if (!d.isRemoved) {
 				d.isPassed = true;
-				d.chunks = new Array();
+				d.chunks = [];
 			}
 			Check.checkClose();
 		}
