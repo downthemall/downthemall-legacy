@@ -28,7 +28,7 @@
 	title="&title;"
 	id="addURL" 
 	onload="sizeToContent(); Dialog.load();" 
-	persist="screenX screenY" 
+	persist="screenX screenY width height" 
 	ondialogaccept="return Dialog.download(true);"
 	ondialogextra1="return Dialog.download(false);"
 	buttons="accept, extra1, cancel"
