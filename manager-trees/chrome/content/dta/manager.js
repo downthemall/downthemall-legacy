@@ -249,7 +249,7 @@ downloadElement.prototype = {
 			var dest = Prefs.tempLocation
 				? Prefs.tempLocation.clone()
 				: new FileFactory(this.parent.dirSave);
-			dest.append(this.fileName + '.dtapart');
+			dest.append(this.fileName + "-" + newUUIDString() + '.dtapart');
 			this._tmpFile = dest;
 		}
 		return this._tmpFile;
@@ -942,10 +942,10 @@ var Check = {
 		else
 			document.title = Stats.completedDownloads + "/" + downloadList.length + " - DownThemAll!";
 
-		var data = new Date();
+		const now = Date.now();
 		for (var i=0; i<inProgressList.length; i++) {
 			var d = inProgressList[i].d;
-			if (d.partialSize != 0 && d.is(RUNNING) && (data.getTime() - d.timeStart) >= 1000 ) {
+			if (d.partialSize != 0 && d.is(RUNNING) && (now - d.timeStart) >= 1000 ) {
 				// Calculate estimated time
 				if (d.totalSize > 0) {
 					var remainingSeconds = Math.ceil((d.totalSize - d.partialSize) / ((d.partialSize - inProgressList[i].lastBytes) * (1000 / this.frequencyRefresh)));
@@ -975,7 +975,6 @@ var Check = {
 	},
 
 	checkDownloads: function() {try {
-
 		this.refreshDownloadedBytes();
 
 		// se il numero di download e' cambiato, controlla.
@@ -995,12 +994,12 @@ var Check = {
 		}
 		this.checkClose();
 
-		var data = new Date();
+		const now = Date.now();
 		for (var i=0; i<inProgressList.length; i++) {
 			var d = inProgressList[i].d;
 
 			// checks for timeout
-			if ((isOpenedMessagebox == 0) && (data.getTime() - d.timeLastProgress) >= Preferences.getDTA("timeout", 300, true) * 1000) {
+			if ((isOpenedMessagebox == 0) && (now - d.timeLastProgress) >= Preferences.getDTA("timeout", 300, true) * 1000) {
 				if (d.isResumable) {
 					d.setPaused();
 					d.state = PAUSED;
@@ -1118,7 +1117,7 @@ var Check = {
 
 		d.setTreeCell("status", _("starting"));
 
-		d.timeLastProgress = (new Date()).getTime();
+		d.timeLastProgress = getTimestamp();
 		d.state = RUNNING;
 
 		var flagAdd = true;
@@ -1130,7 +1129,7 @@ var Check = {
 		}
 		if (flagAdd) {
 			inProgressList.push(new inProgressElement(d));
-			d.timeStart = (new Date()).getTime();
+			d.timeStart = getTimestamp();
 		}
 
 		// start stuff
@@ -1643,7 +1642,7 @@ Download.prototype = {
 				return;
 			}
 
-			d.timeLastProgress = new Date().getTime();
+			d.timeLastProgress = getTimestamp();
 
 			// update download tree row
 			if (!d.is(CANCELED) && this.isPassedOnProgress) {
@@ -1864,7 +1863,7 @@ function populateListbox(d) {
 
 	var itemNode = document.createElement("treeitem");
 	itemNode.setAttribute("value", d.urlManager.url);
-	var id = d.urlManager.url + (new Date()).getTime() + String(Math.floor(10000 * (Math.random() % 1)));
+	var id = newUUIDString();
 	itemNode.setAttribute("id", id);
 	d.treeID = id;
 
@@ -1968,7 +1967,7 @@ function askForRenaming(t, s1, s2, s3) {
 		isOpenedMessagebox--;
 
 		// non faccio registrare il timeout
-		inProgressList.forEach(function(o){o.d.timeLastProgress=(new Date()).getTime()});
+		inProgressList.forEach(function(o) { o.d.timeLastProgress = getTimestamp(); });
 
 		Prefs.sessionPreference = scelta = passingArguments.scelta;
 		Prefs.askEveryTime = (passingArguments.temp==0)?true:false;
