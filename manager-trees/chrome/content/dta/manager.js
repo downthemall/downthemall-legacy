@@ -994,12 +994,11 @@ var Check = {
 		}
 		this.checkClose();
 
-		const now = Date.now();
 		for (var i=0; i<inProgressList.length; i++) {
 			var d = inProgressList[i].d;
 
 			// checks for timeout
-			if ((isOpenedMessagebox == 0) && (now - d.timeLastProgress) >= Preferences.getDTA("timeout", 300, true) * 1000) {
+			if ((isOpenedMessagebox == 0) && (getTimeStamp() - d.timeLastProgress) >= Preferences.getDTA("timeout", 300, true) * 1000) {
 				if (d.isResumable) {
 					d.setPaused();
 					d.state = PAUSED;
