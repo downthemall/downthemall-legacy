@@ -36,8 +36,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 	
-// true if some dialog.xul is opened
-var isOpenedMessagebox = 0;
 // your tree
 var tree = null;
 
@@ -148,6 +146,9 @@ chunkElement.prototype = {
 				throw ("dataCopyListener::dataAvailable: read/write count mismatch!");
 			}
 			this._written += bytes;
+			
+			this.parent.timeLastProgress = getTimestamp();
+			
 			return bytes;
 		} catch (ex) {
 			Debug.dump('write:', ex);
@@ -323,7 +324,7 @@ downloadElement.prototype = {
 		this.activeChunks = 0;
 		this.chunks = [];
 		this.visitors = new VisitorManager();
-		this.getHeader();
+		this.resumeDownload();
 	},
 
 	treeElement: null,
@@ -998,7 +999,7 @@ var Check = {
 			var d = inProgressList[i].d;
 
 			// checks for timeout
-			if ((isOpenedMessagebox == 0) && (getTimeStamp() - d.timeLastProgress) >= Preferences.getDTA("timeout", 300, true) * 1000) {
+			if ((getTimeStamp() - d.timeLastProgress) >= Preferences.getDTA("timeout", 300, true) * 1000) {
 				if (d.isResumable) {
 					d.setPaused();
 					d.state = PAUSED;
@@ -1199,7 +1200,6 @@ Download.prototype = {
 	],
 	
 	cantCount: 0,
-	isPassedOnProgress: false,	
 	
 	QueryInterface: function(iid) {
 			if (this._interfaces.some(function(i) { return iid.equals(i); })) {
@@ -1291,14 +1291,11 @@ Download.prototype = {
 	//nsIRequestObserver
 	onStartRequest: function(aRequest, aContext) {
 		Debug.dump('StartRequest');
+		this.started = true;
 		try {
 			var c = this.c;
 			var d = this.d;
 
-			if (this.isPassedOnProgress) {
-				throw new Components.Exception("WTF?");
-			}
-			this.isPassedOnProgress = true;
 			Debug.dump("First ProgressChange for chunk ");
 			try {
 				var chan = aRequest.QueryInterface(Ci.nsIHttpChannel);
@@ -1574,7 +1571,7 @@ Download.prototype = {
 		}
 
 		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
-		if (!this.isPassedOnProgress && d.isResumable && !c.imWaitingToRearrange && !d.is(CANCELED, PAUSED)) {
+		if (!this.started && d.isResumable && !c.imWaitingToRearrange && !d.is(CANCELED, PAUSED)) {
 			Debug.dump(d.fileName + ": Server error or disconnection (type 1)");
 			d.setTreeCell("status", _("srver"));
 			d.setTreeCell("speed", "");
@@ -1641,10 +1638,8 @@ Download.prototype = {
 				return;
 			}
 
-			d.timeLastProgress = getTimestamp();
-
 			// update download tree row
-			if (!d.is(CANCELED) && this.isPassedOnProgress) {
+			if (!d.is(CANCELED)) {
 				d.refreshPartialSize();
 
 				Check.refreshDownloadedBytes();
@@ -1951,34 +1946,28 @@ function isInProgress(path, d) {
 }
 
 function askForRenaming(t, s1, s2, s3) {
-	var scelta;
+	if (Prefs.onConflictingFilenames == 3) {
+		if (Prefs.askEveryTime) {
+			var passingArguments = new Object();
+			passingArguments.text = t;
+			passingArguments.s1 = s1;
+			passingArguments.s2 = s2;
+			passingArguments.s3 = s3;
 
-	if (Prefs.onConflictingFilenames == 3 && Prefs.askEveryTime) {
+			window.openDialog(
+				"chrome://dta/content/dta/dialog.xul","_blank","chrome,centerscreen,resizable=no,dialog,modal,close=no,dependent",
+				passingArguments
+			);
 
-		var passingArguments = new Object();
-		passingArguments.text = t;
-		passingArguments.s1 = s1;
-		passingArguments.s2 = s2;
-		passingArguments.s3 = s3;
+			// non faccio registrare il timeout
+			inProgressList.forEach(function(o) { o.d.timeLastProgress = getTimestamp(); });
 
-		isOpenedMessagebox++;
-		window.openDialog("chrome://dta/content/dta/dialog.xul","_blank","chrome, centerscreen, resizable=no, dialog=yes, modal=yes, close=no, dependent=yes", passingArguments);
-		isOpenedMessagebox--;
-
-		// non faccio registrare il timeout
-		inProgressList.forEach(function(o) { o.d.timeLastProgress = getTimestamp(); });
-
-		Prefs.sessionPreference = scelta = passingArguments.scelta;
-		Prefs.askEveryTime = (passingArguments.temp==0)?true:false;
-
-	} else {
-
-		if (Prefs.onConflictingFilenames == 3)
-			scelta = Prefs.sessionPreference;
-		else
-			scelta = Prefs.onConflictingFilenames;
+			Prefs.askEveryTime = (passingArguments.temp == 0) ? true : false;
+			Prefs.sessionPreference = passingArguments.scelta;
+		}
+		return Prefs.sessionPreference;
 	}
-	return scelta;
+	return Prefs.onConflictingFilenames;
 }
 
 function makeNumber(rv, digits) {
@@ -1997,11 +1986,12 @@ function createNumber(number, destination) {
 	var stringa = makeNumber(number);
 	var re = /(\.[^\.]*)$/i;
 	var find = re.exec(destination);
-	if (find != null)
+	if (find != null) {
 			destination = destination.replace(/(\.[^\.]*)$/, "_" + stringa + find[0]);
-	else
+	}
+	else {
 			destination = destination + "_" + stringa;
-
+	}
 	return destination;
 }
 
