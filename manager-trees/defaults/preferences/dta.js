@@ -44,7 +44,7 @@ pref("extensions.dta.downloadWin", true);
 pref("extensions.dta.existing", 3);
 pref("extensions.dta.ntask", 4);
 pref("extensions.dta.timeout", 300);
-pref("extensions.dta.maxchunks", 5);
+pref("extensions.dta.maxchunks", 4);
 pref("extensions.dta.history", 5);
 pref("extensions.dta.alertbox", 2);
 pref("extensions.dta.removecompleted", true);
