@@ -371,18 +371,7 @@ var Dialog = {
 				message += _('manytasks');
 			}
 			
-			var prompter = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
-			var rv = prompter.confirmEx(
-				window,
-				_('batchtitle'),
-				message,
-				127 + (2 << 8) + (127 << 16),
-				_('batchtitle'),
-				null,
-				_('single'),
-				null,
-				{}
-			);
+			var rv = DTA_confirm(_('batchtitle'), message, _('batchtitle'), DTA_confirm.CANCEL, _('single'));
 			if (rv == 0) {
 				batch = batch.getURLs(function(aURL) { return new downloadElement(new DTA_URL(aURL), num); });
 			}

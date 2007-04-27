@@ -101,10 +101,18 @@ var Interface = {
 	}
 };
 
-function restoreAll() {
-	try {
-		Preferences.resetAll();
-	} catch(ex) {
-		// XXX
+var NewPrefs = {
+	load: function() {
+		make_();
+	},
+	restoreAll: function() {
+		if (DTA_confirm(_('restoreprefstitle'), _('restoreprefstext'), _('restore'), DTA_confirm.CANCEL, null, 1) == 1) {
+			return;
+		}
+		try {
+			Preferences.resetAll();
+		} catch(ex) {
+			// XXX
+		}
 	}
 }

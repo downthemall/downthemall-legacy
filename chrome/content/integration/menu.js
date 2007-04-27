@@ -183,7 +183,7 @@ var DTA_ContextOverlay = {
 				this
 			);
 			if (!urls.length && !images.length) {
-				alert(this.getString('errornolinks'));
+				DTA_alert(DTA_getString('error'), this.getString('errornolinks'));
 				return;
 			}
 			
@@ -193,7 +193,7 @@ var DTA_ContextOverlay = {
 					return;
 				} catch (ex) {
 					DTA_debug.dump('findLinks', ex);
-					alert(this.getString('errorinformation'));
+					DTA_alert(this.getString('error'), this.getString('errorinformation'));
 				}
 			}
 			DTA_AddingFunctions.saveLinkArray(false, urls, images);
@@ -226,7 +226,7 @@ var DTA_ContextOverlay = {
 			}			
 			
 			if (!DTA_AddingFunctions.isLinkOpenable(url)) {
-				alert(this.getError('errornodownload'));
+				DTA_alert(this.getString('error'), this.getError('errornodownload'));
 				return;
 			}
 			
@@ -240,7 +240,7 @@ var DTA_ContextOverlay = {
 				}
 				catch (ex) {
 					DTA_debug.dump('findSingleLink', ex);
-					alert(this.getString('errorinformation'));
+					DTA_alert(this.getString('error'), this.getString('errorinformation'));
 				}
 			}
 			DTA_AddingFunctions.saveSingleLink(false, url, ref, desc);
