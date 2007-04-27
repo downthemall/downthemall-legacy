@@ -821,7 +821,7 @@ downloadElement.prototype = {
 	} catch(e) {Debug.dump("checkFilenameConflict():", e);}
 	},
 	
-	fail: function dd_fail(d, title, msg, state) {
+	fail: function dd_fail(title, msg, state) {
 		Debug.dump("failDownload invoked");
 		
 		this.cancel(state);
