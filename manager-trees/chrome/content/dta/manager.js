@@ -284,7 +284,7 @@ Decompressor.prototype = {
 			}
 		}
 		try {
-			//this.from.remove(false);
+			this.from.remove(false);
 		}
 		catch (ex) {
 			Debug.dump("Failed to remove tmpFile", ex);
