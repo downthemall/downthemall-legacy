@@ -56,4 +56,4 @@ pref("extensions.dta.logging", false);
 pref("extensions.dta.showOnlyFilenames", true);
 pref("extensions.dta.sounds.done", true);
 pref("extensions.dta.sounds.error", false);
-pref("extensions.dta.prealloc", true);
+pref("extensions.dta.settime", true);
