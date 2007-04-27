@@ -37,9 +37,14 @@
  * ***** END LICENSE BLOCK ***** */
  
 function DTA_include(uri) {
-	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(Components.interfaces.mozIJSSubScriptLoader)
-		.loadSubScript(uri);
+	try {
+		Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+			.getService(Components.interfaces.mozIJSSubScriptLoader)
+			.loadSubScript(uri);
+	}
+	catch(ex) {
+		Components.utils.reportError(ex);
+	}
 }
 DTA_include("chrome://dta/content/common/regconvert.js");
 
@@ -195,10 +200,18 @@ var DTA_debug = {
 				text += message.replace(/\n/g, "\x0D\x0A\t") + " ";
 			}
 			if (e instanceof Components.Exception || e instanceof Error) {
-				text += (e.message + " (" + e.fileName +" line " + e.lineNumber + ")");
+				if (!e.message) {
+					text += e;
+				}
+				else {
+					text += (e.message + " (" + e.fileName +" line " + e.lineNumber + ")");
+				}
 			}
-			else if (e instanceof String) {
+			else if (e instanceof String || typeof(e) == "string") {
 				text += e;
+			}
+			else if (e instanceof Number || typeof(e) == "number") {
+				text += "ResCode: " + e;
 			}
 			else if (e) {
 				text += e.toSource();

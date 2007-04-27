@@ -583,3 +583,35 @@ function hash(value, algorithm, encoding, datalen) {
 	}
 	return rv;
 }
+
+/**
+ * returns a numeric timestamp
+ * @param date Optional. DateString to get stamp for. NOW if ommitted
+ * @return Numeric timestamp
+ * @author Nils
+*/
+function getTimestamp(str) {
+	if (!str) {
+		return Date.now();
+	}
+	if (typeof(str) != 'string' && !(str instanceof String)) {
+		throw new Error("not a string");
+	}
+	var rv = Date.parse(str);
+	if (isNaN(rv)) {
+		throw new Error("invalid date");
+	}
+	return rv;
+}
+
+/**
+ * returns a new UUID in string representation
+ * @return String UUID
+ * @author Nils
+ */
+function newUUIDString() {
+	return Components.classes["@mozilla.org/uuid-generator;1"]
+		.getService(Components.interfaces.nsIUUIDGenerator)
+		.generateUUID()
+		.toString();
+}
