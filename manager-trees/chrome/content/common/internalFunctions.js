@@ -589,7 +589,7 @@ function getTimestamp(str) {
 	if (typeof(str) != 'string' && !(str instanceof String)) {
 		throw new Error("not a string");
 	}
-	var rv = Date.parse(str).getTime();
+	var rv = Date.parse(str);
 	if (isNaN(rv)) {
 		throw new Error("invalid date");
 	}
