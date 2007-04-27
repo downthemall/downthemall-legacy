@@ -121,11 +121,29 @@ chunkElement.prototype = {
 				if (!file.parent.exists()) {
 					file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
 				}
+				var prealloc = !file.exists();
 				var outStream = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
+				
 				outStream.init(file, 0x04 | 0x08, 0766, 0);
-				outStream.QueryInterface(Ci.nsISeekableStream).seek(0x00, this.start);
-				this._outStream = Cc['@mozilla.org/network/buffered-output-stream;1'].createInstance(Ci.nsIBufferedOutputStream);
-				this._outStream.init(outStream, Math.floor(MAX_BUFFER_SIZE / Prefs.maxChunks));
+				var seekable = outStream.QueryInterface(Ci.nsISeekableStream);
+				if (prealloc && this.parent.totalSize > 0) {
+					try {
+						seekable.seek(0x00, this.parent.totalSize);
+						seekable.setEOF();
+					}
+					catch (ex) {
+						// no-op
+					}
+				}
+				seekable.seek(0x00, this.start);
+				bufSize = Math.floor(MAX_BUFFER_SIZE / Prefs.maxChunks);
+				if (bufSize > 4096) {
+					this._outStream = Cc['@mozilla.org/network/buffered-output-stream;1'].createInstance(Ci.nsIBufferedOutputStream);
+					this._outStream.init(outStream, bufSize);
+				}
+				else {
+					this._outStream = outStream;
+				}
 			}
 			bytes = this.remainder;
 			if (aCount < bytes) {
@@ -143,7 +161,7 @@ chunkElement.prototype = {
 			byteStream.setInputStream(aInputStream);
 			// we're using nsIFileOutputStream
 			if (this._outStream.write(byteStream.readBytes(bytes), bytes) != bytes) {
-				throw ("dataCopyListener::dataAvailable: read/write count mismatch!");
+				throw ("chunks::write: read/write count mismatch!");
 			}
 			this._written += bytes;
 			
@@ -170,10 +188,76 @@ const treeCells = {
 	"mask": 6
 }
 
-function CopyListener(boutStream) {
-	this.boutStream = boutStream;
+function Decompressor(download) {
+	this.download = download;
+	this.to = new FileFactory(download.dirSave + download.destinationName);
+	this.from = download.tmpFile.clone();
+
+	download.setTreeCell("status", _("decompress"));
+	try {
+				
+		this._outStream = Cc['@mozilla.org/network/file-output-stream;1']
+			.createInstance(Ci.nsIFileOutputStream);
+		this._outStream.init(this.to, 0x04 | 0x08, 0766, 0);
+		try {
+			// we don't know the actual size, so best we can do is to seek to totalSize.
+			var seekable = this._outStream.QueryInterface(Ci.nsISeekableStream);
+			seekable.seek(0x00, download.totalSize);
+			try {
+				seekable.setEOF();
+			}
+			catch (ex) {
+				// no-op
+			}
+			seekable.seek(0x00, 0);
+		}
+		catch (ex) {
+			// no-op
+		}		
+		var boutStream = Cc['@mozilla.org/network/buffered-output-stream;1']
+			.createInstance(Ci.nsIBufferedOutputStream);
+		boutStream.init(this._outStream, MAX_BUFFER_SIZE);
+		this.outStream = boutStream;		
+		boutStream = Cc['@mozilla.org/binaryoutputstream;1']
+			.createInstance(Ci.nsIBinaryOutputStream);
+		boutStream.setOutputStream(this.outStream);
+		this.outStream = boutStream;
+				
+		var converter = Cc["@mozilla.org/streamconv;1?from=" + download.compressionType + "&to=uncompressed"]
+			.createInstance(Ci.nsIStreamConverter);
+			
+		converter.asyncConvertData(
+			download.compressionType,
+			"uncompressed",
+			this,
+			null
+		);
+		
+		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+		ios
+			.newChannelFromURI(ios.newFileURI(this.from))
+			.asyncOpen(converter, null);
+	}
+	catch (ex) {
+		try {
+			if (this.outStream) {
+				outStream.close();
+			}
+			if (this.to.exists()) {
+				this.to.remove(false);
+			}
+			if (this.from.exists()) {
+				this.from.remove(false);	
+			}
+		}
+		catch (ex) {
+			// XXX: what now?
+		}
+		download.finishDownload(ex);
+	}
 }
-CopyListener.prototype = {
+Decompressor.prototype = {
+	exception: null,
 	QueryInterface: function(iid) {
 		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIStreamListener) || iid.equals(cI.nsIRequestObserver)) {
 			return this;
@@ -181,11 +265,44 @@ CopyListener.prototype = {
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
 	onStartRequest: function(r, c) {},
-	onStopRequest: function(r, c) {},
-	onDataAvailable: function(r, c, stream, offset, count) {
-		var binStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
-		binStream.setInputStream(stream);
-		this.boutStream.write(binStream.readBytes(count), count);
+	onStopRequest: function(request, c) {
+		// important, or else we don't write out the last buffer and truncate too early. :p
+		this.outStream.flush();
+		try {
+			this._outStream.QueryInterface(Ci.nsISeekableStream).setEOF();
+		}
+		catch (ex) {
+			this.exception = ex;
+		}
+		this._outStream.close();
+		if (this.exception) {
+			try {
+				this.to.remove(false);
+			}
+			catch (ex) {
+				// no-op: we're already bad :p
+			}
+		}
+		try {
+			//this.from.remove(false);
+		}
+		catch (ex) {
+			Debug.dump("Failed to remove tmpFile", ex);
+		}
+
+		this.download.finishDownload(this.exception);
+	},
+	onDataAvailable: function(request, c, stream, offset, count) {
+		try {
+			var binStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
+			binStream.setInputStream(stream);
+			this.outStream.write(binStream.readBytes(count), count);
+		}
+		catch (ex) {
+			this.exception = ex;
+			var reason = 0x804b0002; // NS_BINDING_ABORTED;
+			request.cancel(reason);
+		}
 	}
 };
 
@@ -385,10 +502,6 @@ downloadElement.prototype = {
 			return;
 		}
 
-		// increment completedDownloads counter
-		this.state = COMPLETE;
-		Stats.completedDownloads++;
-
 		try {
 			var destination = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 			destination.initWithPath(this.dirSave);
@@ -400,80 +513,16 @@ downloadElement.prototype = {
 			this.checkFilenameConflict();
 			// move file
 			if (this.compression) {
-				//throw new Error("No decompressor ATM");
-				
-				destination.append(this.destinationName);
-				
-				var outStream = Cc['@mozilla.org/network/file-output-stream;1']
-					.createInstance(Ci.nsIFileOutputStream);
-				outStream.init(destination, 0x04 | 0x08, 0766, 0);
-				var boutStream = Cc['@mozilla.org/network/buffered-output-stream;1']
-					.createInstance(Ci.nsIBufferedOutputStream);
-				boutStream.init(outStream, MAX_BUFFER_SIZE);
-				outStream = boutStream;
-				boutStream = Cc['@mozilla.org/binaryoutputstream;1']
-					.createInstance(Ci.nsIBinaryOutputStream);
-				boutStream.setOutputStream(outStream);
-				outStream = boutStream;
-				
-				try {
-					var inStream = Cc['@mozilla.org/network/file-input-stream;1'].createInstance(Ci.nsIFileInputStream);
-					inStream.init(file,  0x01, 0766, 0);
-					
-					Debug.dump(this.compressionType);
-					var converter = Cc["@mozilla.org/streamconv;1?from=" + this.compressionType + "&to=uncompressed"]
-						.createInstance(Ci.nsIStreamConverter);
-					var cl = new CopyListener(outStream);
-					converter.asyncConvertData(
-						this.compressionType,
-						"uncompressed",
-						cl,
-						null
-					);
-					converter.onStartRequest(null, null);
-					while (inStream.available()) {
-						var count = inStream.available();
-						if (count > MAX_BUFFER_SIZE) {
-							count = MAX_BUFFER_SIZE;
-						}
-						converter.onDataAvailable(null, null, inStream, 0, count);
-					}
-					converter.onStopRequest(null, null, 0);
-
-					delete converter;
-					delete cl;
-					outStream.close();
-					inStream.close();
-					delete outStream;
-					delete inStream;					
-				}
-				catch (ex) {
-					try {
-						outStream.close();
-						destination.remove();
-					}
-					catch (ex) {
-						// XXX: what now?
-					}
-					throw ex;
-				}
-				file.remove(false);
+				new Decompressor(this);
 			}
 			else {
 				file.moveTo(destination, this.destinationName);
+				this.finishDownload(null);
 			}
-
 		}
 		catch(ex) {
-			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
-			Debug.dump("download::moveCompleted: Could not move file or create directory: ", ex);
-			return;
+			this.finishDownload(exception);
 		}
-		this.finishDownload();
-		if ('isMetalink' in this) {
-			this.handleMetalink();
-		}
-		Check.checkClose();
 	},
 	handleMetalink: function dl_handleMetaLink() {
 		try {
@@ -540,7 +589,12 @@ downloadElement.prototype = {
 			Debug.dump("hml exception", ex);
 		}
 	},
-	finishDownload: function() {
+	finishDownload: function(exception) {
+		if (exception) {
+			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+			Debug.dump("download::moveCompleted: Could not move file or create directory: ", exception);
+			return;
+		}
 		Debug.dump("fd");
 		// create final file pointer
 		this.fileManager = new FileFactory(this.dirSave);
@@ -580,6 +634,15 @@ downloadElement.prototype = {
 
 		// Garbage collection
 		this.chunks = [];
+		
+		// increment completedDownloads counter
+		this.state = COMPLETE;
+		Stats.completedDownloads++;
+		
+		if ('isMetalink' in this) {
+			this.handleMetalink();
+		}
+		Check.checkClose();
 	},
 
 	// XXX: revise
@@ -1243,7 +1306,7 @@ Download.prototype = {
 	cancel: function(aReason) {
 		Debug.dump("cancel");
 		if (!aReason) {
-			aReason = 0x804b0002 // NS_BINDING_ABORTED;
+			aReason = 0x804b0002; // NS_BINDING_ABORTED;
 		}
 		this._chan.cancel(aReason);
 	},
