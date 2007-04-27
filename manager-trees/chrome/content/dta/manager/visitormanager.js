@@ -27,6 +27,7 @@ Visitor.prototype = {
 	fileName: null,
 	dontacceptrange: false,
 	contentlength: 0,
+	time: null,
 
 	QueryInterface: function(aIID) {
 		if (
@@ -69,6 +70,15 @@ Visitor.prototype = {
 					var dim = aValue.substring(aValue.lastIndexOf('/') + 1, aValue.length);
 					if (dim.length>0 && dim.lastIndexOf('*')==-1) {
 						this.contentlength = Number(dim);
+					}
+				break;
+				case 'last-modified':
+					try {
+						this.time = getTimestamp(aValue);
+					}
+					catch (ex) {
+						Debug.dump("gts", ex);
+						// no-op
 					}
 				break;
 			}
@@ -116,12 +126,12 @@ Visitor.prototype = {
 					continue;
 				}
 				Debug.dump(x + " missing");
-				throw (x + " is missing");
+				throw new Components.Exception(x + " is missing");
 			}
 			// header is there, but differs
 			else if (this[x] != v[x]) {
 				Debug.dump(x + " nm: [" + this[x] + "] [" + v[x] + "]");
-				throw ("Header " + x + " doesn't match");
+				throw new Components.Exception("Header " + x + " doesn't match");
 			}
 		}
 	},
@@ -138,11 +148,19 @@ Visitor.prototype = {
 	}
 };
 
+/**
+ * Visitor Manager c'tor
+ * @author Nils
+ */
 function VisitorManager() {
 	this._visitors = {};
 }
 VisitorManager.prototype = {
-
+	/**
+	 * Loads a ::save'd JS Array
+	 * Will silently bypass failed items!
+	 * @author Nils
+	 */
 	load: function vm_init(nodes) {
 		for (var i = 0; i < nodes.length; ++i) {
 			try {
@@ -152,7 +170,12 @@ VisitorManager.prototype = {
 			}
 		}
 	},
-	save: function vm_save(node) {
+	/**
+	 * Saves/serializes the Manager and associated Visitors to an JS Array
+	 * @return A ::load compatible Array
+	 * @author Nils
+	 */
+	save: function vm_save() {
 		var rv = [];
 		for (x in this._visitors) {
 			var v = {};
@@ -162,6 +185,12 @@ VisitorManager.prototype = {
 		}
 		return rv;
 	},
+	/**
+	 * Visit and compare a channel
+	 * @returns visitor for channel
+	 * @throws Exception if comparision yield a difference (i.e. channels are not "compatible")
+	 * @author Nils
+	 */
 	visit: function vm_visit(chan) {
 		var url = chan.URI.spec;
 
@@ -172,5 +201,18 @@ VisitorManager.prototype = {
 				this._visitors[url].compare(visitor);
 		}
 		return (this._visitors[url] = visitor);
+	},
+	/**
+	 * return the first timestamp registered with a visitor
+	 * @throws Exception if no timestamp found
+	 * @author Nils
+	 */
+	get time() {
+		for (i in this._visitors) {
+			if (this._visitors[i].time > 0) {
+				return this._visitors[i].time;
+			}
+		}
+		throw new Components.Exception("No Date registered");
 	}
 };

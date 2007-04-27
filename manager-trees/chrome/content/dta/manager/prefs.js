@@ -17,6 +17,8 @@ var Prefs = {
 	removeCompleted: true,
 	removeAborted: false,
 	removeCanceled: false,
+	
+	setTime: true,
 
 	// nsIObserver
 	observe: function(subject, topic, prefName) {
@@ -50,6 +52,7 @@ var Prefs = {
 
 		this.maxInProgress = Preferences.getDTA("ntask", 5);
 		this.maxChunks = Preferences.getDTA("maxchunks", 5);
+		this.setTime = Preferences.getDTA("settime", 5);
 		this.showOnlyFilenames = Preferences.getDTA("showOnlyFilenames", true);
 		this.onConflictingFilenames = Preferences.getDTA("existing", 3);
 		this.alertingSystem = Preferences.getDTA("alertbox", (SYSTEMSLASH == '\\') ? 1 : 0);

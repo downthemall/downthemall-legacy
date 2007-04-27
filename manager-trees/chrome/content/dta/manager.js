@@ -545,6 +545,29 @@ downloadElement.prototype = {
 		// create final file pointer
 		this.fileManager = new FileFactory(this.dirSave);
 		this.fileManager.append(this.destinationName);
+		
+		if (Prefs.setTime) {
+			try {
+				var time = this.startDate.getTime();
+				try {
+					var time =  this.visitors.time;
+				}
+				catch (ex) {
+					// no-op
+					Debug.dump("vmt", ex);
+				}
+				// small validation. Around epoche? More than a month in future?
+				if (time < 2 || time > Date.now() + 30 * 86400000) {
+					throw new Components.Exception("invalid date encountered: " + time + ", will not set it");
+				}
+				// have to unwrap
+				var file = this.fileManager.clone();
+				file.lastModifiedTime = time;
+			}
+			catch (ex) {
+				Debug.dump("Setting timestamp on file failed: ", ex);
+			}
+		}
 
 		this.totalSize = this.partialSize = this.getSize();
 		this.setTreeCell("size", this.createDimensionString());
