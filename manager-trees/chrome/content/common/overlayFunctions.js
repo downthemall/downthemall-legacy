@@ -762,3 +762,90 @@ DTA_DropDown.prototype = {
 		Preferences.resetDTA(this.name);
 	}
 }
+
+/**
+ * wrapper around confirmEx
+ * @param title. Dialog title
+ * @param text. Dialog text
+ * @param button0. Either null (omit), one of DTA_confirm.X or a string
+ * @param button1. s.a.
+ * @param button2. s.a.
+ * @param default. Index of the Default button
+ * @param check. either null, a boolean, or string specifying the prefs id.
+ * @param checkText. The text for the checkbox
+ * @return Either the button# or {button: #, checked: bool} if check was a boolean
+ * @author Nils
+ */
+function DTA_confirm(aTitle, aText, aButton0, aButton1, aButton2, aDefault, aCheck, aCheckText) {
+	var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+		.getService(Components.interfaces.nsIPromptService);
+	var flags = 0;
+	[aButton0, aButton1, aButton2].forEach(
+		function(button, idx) {
+			if (typeof(button) == "number") {
+				flags += prompts['BUTTON_POS_' + idx] * button;
+				button = null;
+			}
+			else if (typeof(button) == "string" || button instanceof String) {
+				flags |= prompts['BUTTON_POS_' + idx] * prompts.BUTTON_TITLE_IS_STRING;
+			}
+			else {
+				button = 0;
+			}
+		},
+		this
+	);
+	if (aDefault == 1) {
+		flags += prompts.BUTTON_POS_1_DEFAULT;
+	}
+	else if (aDefault == 2) {
+		flags += prompts.BUTTON_POS_2_DEFAULT;
+	}
+	var check = {};
+	if (aCheckText) {
+		if (typeof(aCheck) == 'boolean') {
+			var rv = {};
+			check.value = aCheck;
+		}
+		else if (typeof(aCheck) == 'string' || aCheck instanceof String) {
+			check.value = DTA_preferences.getDTA(aCheck, false);
+		}
+	}
+	var cr = prompts.confirmEx(
+		window,
+		aTitle,
+		aText,
+		flags,
+		aButton0,
+		aButton1,
+		aButton2,
+		aCheckText,
+		check
+	);
+	if (rv) {
+		rv.checked = check.value;
+		rv.button = cr;
+		return rv;
+	}
+	return cr;
+}
+DTA_confirm.init = function() {
+	for (x in Components.interfaces.nsIPromptService) {
+		var r = new String(x).match(/BUTTON_TITLE_(\w+)$/);
+		if (r) {
+			DTA_confirm[r[1]] = Components.interfaces.nsIPromptService[x];
+		}
+	}
+}
+DTA_confirm.init();
+function DTA_confirmOC(title, text) {
+	return DTA_confirm(title, text, DTA_confirm.OK, DTA_confirm.CANCEL);
+}
+function DTA_confirmYN(title, text) {
+	return DTA_confirm(title, text, DTA_confirm.YES, DTA_confirm.NO);
+}
+function DTA_alert(aTitle, aText) {
+	Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+		.getService(Components.interfaces.nsIPromptService)
+		.alert(window, aTitle, aText);
+}
