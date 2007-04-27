@@ -23,8 +23,8 @@
 			<preference id="dtamaxchunks" name="extensions.dta.maxchunks" type="int" />
 			<preference id="dtatemporary" name="extensions.dta.saveTemp" type="bool" />
 			<preference id="dtatimeout" name="extensions.dta.timeout" type="int" />
-			<preference id="dtaprealloc" name="extensions.dta.prealloc" type="bool" />
 			<preference id="dtatemplocation" name="extensions.dta.tempLocation" type="unichar" />
+			<preference id="dtasettime" name="extensions.dta.settime" type="bool" />
 		</preferences>
 		
 		<groupbox orient="horizontal" align="center">
@@ -65,6 +65,11 @@
 		</groupbox>
 
 		<groupbox>
+			<caption label="&advancedpane.misc.caption;" />
+			<checkbox label="&advancedpane.settime.label;" preference="dtasettime"/>
+		</groupbox>
+		
+		<groupbox>
 			<caption label="&advancedpane.tempfiles.caption;" />
 			<checkbox id="useTemp" label="&advancedpane.usetemp.label;" preference="dtatemporary" oncommand="Advanced.toggleTemp();"/>
 			<hbox flex="1">
@@ -74,9 +79,5 @@
 			</hbox>
 		</groupbox>
 		
-		<groupbox>
-			<caption id="dtapreallcap" label="&advancedpane.prealloc.caption;" />
-			<checkbox id="dtapreallcheck" label="&advancedpane.useprealloc.label;" preference="dtaprealloc" />
-		</groupbox>	
 	</prefpane>
 </overlay>
