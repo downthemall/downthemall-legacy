@@ -54,7 +54,7 @@ var FileHandling = {
 				try {
 					var file = new FileFactory(d.dirSave + d.destinationName);
 					if (file.exists()) {
-						if (confirm("Sure to delete '" + file.path + "'?")) {
+						if (!DTA_confirm(_('deletetitle'), _('deletetext', [file.leafName]), _('delete'), DTA_confirm.CANCEL, null, 1)) {
 							file.remove(false);
 							return true;
 						}
