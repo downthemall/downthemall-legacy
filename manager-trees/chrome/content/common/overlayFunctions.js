@@ -204,7 +204,7 @@ var DTA_debug = {
 					text += e;
 				}
 				else {
-				 text += (e.message + " (" + e.fileName +" line " + e.lineNumber + ")");
+					text += (e.message + " (" + e.fileName +" line " + e.lineNumber + ")");
 				}
 			}
 			else if (e instanceof String || typeof(e) == "string") {

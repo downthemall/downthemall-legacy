@@ -477,7 +477,15 @@ var OpenExternal = {
 		}
 		catch (ex) {
 			// *nix will throw as not implemented
-			this._nixLaunch(file.parent);
+			try {
+				if (!file.isDirectory()) {
+					file = file.parent;
+				}
+			}
+			catch (ex) {
+				// no-op
+			}
+			this._nixLaunch(file);
 		}
 	}
 };
