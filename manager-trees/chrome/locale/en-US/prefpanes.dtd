@@ -63,11 +63,11 @@
 <!ENTITY advancedpane.seconds "seconds">
 <!ENTITY advancedpane.minute "minute">
 <!ENTITY advancedpane.minutes "minutes">
+<!ENTITY advancedpane.misc.caption "Miscellaneous settings">
+<!ENTITY advancedpane.settime.label "Set file times to last modified time (server) or time of queuing">
 <!ENTITY advancedpane.tempfiles.caption "Temporary files">
 <!ENTITY advancedpane.usetemp.label "Save download chunks in a temporary directory">
 <!ENTITY advancedpane.tempdir.label "Use this directory:">
-<!ENTITY advancedpane.prealloc.caption "Disk Space Pre-allocation">
-<!ENTITY advancedpane.useprealloc.label "Enable Disk Space Pre-allocation">
 
 <!ENTITY uipane.label "Interface">
 <!ENTITY uipane.appearance.caption "Appearance">
