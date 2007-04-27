@@ -200,7 +200,6 @@ var Dialog = {
 	_lastRowEdited : -1,
 	
 	load: function DTA_load() {
-		make_();
 		// create and attach the tree to the view
 		this._table = $("filterTable");
 		this._filterTree = new FilterTree(this._table);
@@ -385,6 +384,9 @@ var Dialog = {
 		var currentFilter = currentFilter.remove();
 	},
 	restoreDefaultFilters: function() {
+		if (DTA_confirm(_('restorefilterstitle'), _('restorefilterstext'), _('restore'), DTA_confirm.CANCEL, null, 1) == 1) {
+			return;
+		}
 		this._table.view.selection.select(-1);
 		var e = DTA_FilterManager.enumAll();
 		while (e.hasMoreElements()) {

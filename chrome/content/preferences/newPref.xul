@@ -24,8 +24,9 @@
 	title="&dtaPreferences.title;" 
 	buttons="accept,cancel,extra2"
 	buttonlabelextra2="&buttonlabelextra2;"
-	ondialogextra2="if (confirm(document.getElementById('stringB').getString('restorepref'))) {restoreAll();window.close();}"
+	ondialogextra2="NewPrefs.restoreAll();"
 	persist="lastSelected screenX screenY"
+	onload="NewPrefs.load();"
 >
 	<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties" />
 	
