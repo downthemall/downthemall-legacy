@@ -173,8 +173,7 @@ var Dialog = {
 	},
 	browseDir: function DTA_browseDir() {
 		// let's check and create the directory
-		var f = new filePicker();
-		var newDir = f.getFolder(
+		var newDir = Utils.askForDir(
 			this.ddDirectory.current,
 			_("validdestination")
 		);
@@ -183,15 +182,13 @@ var Dialog = {
 		}
 	},
 	check: function DTA_check() {
-		var f = new filePicker();
 		var dir = this.ddDirectory.current.trim();
 		if (!dir.length || !this.ddRenaming.current.trim().length) {
 			return false;
 		}
-		if (!f.checkDirectory(dir))
-		{
+		if (!Utils.isValidDir(dir)) {
 			alert(_("alertfolder"));
-			var newDir = f.getFolder(null, _("validdestination"));
+			var newDir = Utils.askForDir(null, _("validdestination"));
 			this.ddDirectory.current = newDir ? newDir : '';
 			return false;
 		}

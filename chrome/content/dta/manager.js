@@ -1371,7 +1371,7 @@ dataCopyListener.prototype = {
 
 function failDownload(d, title, msg, state) {
 
-	playSound("error");
+	Utils.playSound("error");
 
 	switch (Prefs.alertingSystem) {
 		case 1:
@@ -1584,7 +1584,7 @@ var Check = {
 			Debug.dump("checkClose(): All downloads passed correctly");
 			this.lastCheck = Stats.downloadedBytes;
 
-			playSound("done");
+			Utils.playSound("done");
 
 			// if windows hasn't focus, show FF sidebox/alerts
 			if (!winFocus && Stats.completedDownloads > 0) {
