@@ -109,6 +109,7 @@ var DTA_ContextOverlay = {
 					filtered.push(nodes[i]);
 				}
 			}
+			return filtered;
 		}
 	
 		try {
@@ -183,7 +184,7 @@ var DTA_ContextOverlay = {
 				this
 			);
 			if (!urls.length && !images.length) {
-				DTA_alert(DTA_getString('error'), this.getString('errornolinks'));
+				DTA_alert(this.getString('error'), this.getString('errornolinks'));
 				return;
 			}
 			
