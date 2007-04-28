@@ -20,7 +20,7 @@
  *
  * Contributor(s):
  *   Federico Parodi
- *   Stefano Verna
+ *   Stefano Verna <stefano.verna@gmail.com>
  *   Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -43,6 +43,7 @@ var Debug = DTA_debug;
 var Preferences = DTA_preferences;
 
 const SYSTEMSLASH = (DTA_profileFile.get('dummy').path.indexOf('/') != -1) ? '/' : '\\';
+const DEFAULT_RENAMING_MASKS = ["*name*.*ext*", "*num*_*name*.*ext*", "*url*-*name*.*ext*", "*name* (*text*).*ext*", "*name* (*hh*-*mm*).*ext*"];
 
 /**
  * cast non-strings to string
