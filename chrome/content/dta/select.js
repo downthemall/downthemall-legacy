@@ -380,8 +380,6 @@ var Dialog = {
 
 	// checks if we can continue to process
 	check: function DTA_check() {
-
-		var f = new filePicker();
 		var dir = this.ddDirectory.current.trim();
 
 		// directory and mask set?
@@ -391,10 +389,10 @@ var Dialog = {
 		}
 
 		// directory valid?
-		if (!f.checkDirectory(dir))
+		if (!Utils.isValidDir(dir))
 		{
 			alert(_("alertfolder"));
-			var newDir = f.getFolder(null, _("validdestination"));
+			var newDir = Utils.askForDir(null, _("validdestination"));
 			this.ddDirectory.current = newDir ? newDir : '';
 			return false;
 		}
@@ -672,8 +670,7 @@ var Dialog = {
 	browseDir: function() {
 
 		// get a new directory
-		var f = new filePicker();
-		var newDir = f.getFolder(
+		var newDir = Utils.askForDir(
 			this.ddDirectory.current, // initialize dialog with the current directory
 			_("validdestination")
 		);

@@ -328,7 +328,7 @@ var Dialog = {
 		
 		// check the directory
 		var dir = this.ddDirectory.current.trim();
-		if (!dir.length || !(new filePicker()).checkDirectory(dir)) {
+		if (!dir.length || !Utils.isValidDir(dir)) {
 			errors.push('directory');
 		}
 		
@@ -397,8 +397,7 @@ var Dialog = {
 	},
 	browseDir: function DTA_browseDir() {
 		// let's check and create the directory
-		var f = new filePicker();
-		var newDir = f.getFolder(
+		var newDir = Utils.askForDir(
 			this.ddDirectory.current,
 			_("validdestination")
 		);
