@@ -223,35 +223,35 @@ var Dialog = {
 				"renaming",
 				"renaming",
 				"renamingitems",
-				["*name*.*ext*", "*num*_*name*.*ext*", "*url*-*name*.*ext*", "*name* (*text*).*ext*", "*name* (*hh*-*mm*).*ext*"]
+				DEFAULT_RENAMING_MASKS
 			);
 			
-			var address = $('URLaddress');			
+			var address = $('URLaddress');
 			
+			// if we've been called by DTA_AddingFunctions.saveSingleLink()
 			if (window.arguments) {
 				var a = window.arguments[0];
 				var url = a.url;
-				if (!('url' in a));
+				if (!('url' in a))
+					;
 				else if (typeof(a.url) == 'string') {
 					address.value = a.url;
 				}
 				else if (typeof(a.url) == 'object' && 'url' in a.url) {
 					// we've got a DTA_URL.
-					// In this case it is not save to modify it because of encoding issues.
+					// In this case it is not safe to modify it because of encoding issues.
 					address.value = a.url.usable;
 					// JS does not preserve types between windows (as each window gets an own sandbox)
 					// This hack makes our URL a DTA_URL again ;)
-					address._realURL = new DTA_URL(a.url.url, a.url.charset);					
+					address._realURL = new DTA_URL(a.url.url, a.url.charset);
 					address.readOnly = true;
 					$('batcheslabel').style.display = 'none';
 					$('batches').collapsed = true;
 					this.multiHelp = false;
-					window.sizeToContent();
-					// XXX reflect in css that URL is readonly
 				}
 				var refPage = DTA_AddingFunctions.isLinkOpenable(a.referrer) ? a.referrer : null;
 				if (refPage) {
-					try	{
+					try {
 						refPage = decodeURIComponent(refPage);
 					} catch (ex) {}
 					$("URLref").value	 = refPage;
@@ -260,8 +260,9 @@ var Dialog = {
 					$("renaming").current = a.mask;
 				}
 			}
+			
+			// check if there's some URL in clipboard
 			else {
-				// check if there's some URL in clipboard
 				var clip = Cc["@mozilla.org/widget/clipboard;1"].getService(Ci.nsIClipboard);
 				var trans = Cc["@mozilla.org/widget/transferable;1"].createInstance(Ci.nsITransferable);
 				try {
@@ -287,8 +288,9 @@ var Dialog = {
 					Debug.dump("Not able to gather data from the clipboard!");
 				}
 			}
-
+			
 			this.check();
+			window.sizeToContent();
 		} catch(ex) {
 			Debug.dump("load():", ex);
 		}		

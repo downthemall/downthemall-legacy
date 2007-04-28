@@ -27,8 +27,8 @@
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	title="&title;"
 	id="addURL" 
-	onload="sizeToContent(); Dialog.load();" 
-	persist="screenX screenY width height" 
+	onload="Dialog.load();" 
+	persist="screenX screenY width"
 	ondialogaccept="return Dialog.download(true);"
 	ondialogextra1="return Dialog.download(false);"
 	buttons="accept, extra1, cancel, help"
@@ -63,9 +63,7 @@
 	</keyset>
 	
 	<dialogheader id="logo" title="&add.value;" />
-
 	<description class="header" id="descr">&desc.value; <html:span id="batcheslabel">&desc.batches.value;</html:span></description>
-
 	<vbox id="batches" context="popupHelp">
 		<label flex="1">&examples.value;</label>
 		<label class="monospace indent">.../mygallery[A:C]/photo[001:100:2].jpg</label>
