@@ -746,79 +746,74 @@ downloadElement.prototype = {
 		return this.destinationName;
 	},
 
-	checkFilenameConflict: function() {try {
-
-		// pointer to destination
-		var realDest = new FileFactory(this.dirSave);
-		realDest.append(this.destinationName);
-
-		var num = 0;
-		var newDest = this.destinationName;
-		while (isInProgress(this.dirSave + newDest, this) != -1 || realDest.exists()) {
-			var newDest = createNumber(++num, this.destinationName); // ora i due sono diversi
-			realDest = new FileFactory(this.dirSave);
-			realDest.append(newDest);
+	checkFilenameConflict: function() {
+		var dn = this.destinationName, ds = this.dirSave;
+		var dest = new FileFactory(ds + dn), newDest = dest.clone();
+		
+		// figure out an unique name
+		var basename = dn, ext = '', pos = basename.lastIndexOf('.');
+		if (pos != -1) {
+			ext = basename.slice(pos);
+			basename = basename.slice(0, pos);
 		}
-
-		// pointer to destination
-		var realDest = new FileFactory(this.dirSave);
-		realDest.append(this.destinationName);
-
-		// Checks differ between moments
-		// if it's running
-		var maxUrlSize = 70; // set the max size limit of a URL string, after which the string will be trimmed
-
-		var shortUrl = (this.urlManager.usable).cropCenter(maxUrlSize);
-		var s = -1;
-		if (this.is(RUNNING)) {
-			if (realDest.exists()) {
-				s = askForRenaming(
-					_("alreadyexists", [this.destinationName, this.dirSave]) + " " + _("whatdoyouwith", [shortUrl]),
-					{caption:_("reninto", [newDest]), value:0}, {caption:_("overwrite"), value:1}, {caption:_("skip"), value:2}
-				);
-			} else {
-				var p = isInProgress(this.dirSave + this.destinationName, this);
-				if (p != -1) {
-					s = askForRenaming(
-						_("samedestination", [shortUrl, this.destinationName, inProgressList[p].d.urlManager.url]) + " " + _("whatdoyou"),
-						{caption:_("reninto", [newDest]), value:0}, {caption:_("skipfirst"), value:2}, {caption:_("cancelsecond"), value:3}
-					);
-				}
-			}
+		for (var num = 1; isInProgress(newDest.path, this) != -1 || newDest.exists(); ++i) {
+			newDest.leafName = basename + "_" +  makeNumber() + ext;
 		}
-		// if it's completed, and we're going to build final file
-		else if (this.is(COMPLETE) && !this.isPassed && realDest.exists()) {
+		if (newDest.path == dest.path) {
+			return;
+		}
+		newDest = newDest.leafName;
+
+		var shortUrl = this.urlManager.usable.cropCenter(70);
+		
+		function mc(aCaption, aValue) {
+			return {caption: aCaption, value: aValue};
+		}
+	
+		var s = -1, p;
+		if (dest.exists()) {
 			s = askForRenaming(
-				_("alreadyexists", [this.destinationName, this.dirSave]) + " " + _("whatdoyoucomplete", [shortUrl]),
-				{caption:_("reninto", [newDest]), value:0}, {caption:_("overwrite"), value:1}, {caption:_("cancel"), value:4}
+				_('alreadyexists', [dn, ds]) + " " + _('whatdoyouwith', [shortUrl]),
+				mc(_('reninto', [newDest]), 0),
+				mc(_('overwrite'), 1),
+				mc(_('skip'), 2)
 			);
 		}
-
-		// Make the decision
-		if (s>=0) switch (s) {
-			case 0: {
-				this.destinationName = newDest;
-				break;
-			}
-			case 1: {
-				realDest.remove(false);
-				break;
-			}
-			case 2: {
-				this.cancel(_("skipped"));
-				break;
-			}
-			case 3: {
-				inProgressList[p].d.cancel();
-				break;
-			}
-			case 4: {
-				this.cancel();
-				break;
-			}
+		else if (this.is(COMPLETE) && !this.isPassed) {
+			s = askForRenaming(
+				_("alreadyexists", [dn, ds]) + " " + _("whatdoyoucomplete", [shortUrl]),
+				mc(_('reninto', [newDest]), 0),
+				mc(_('overwrite'), 1),
+				mc(_('cancel'), 4)
+			);		
+		}
+		else if (-1 != (p = isInProgress(dest.path, this))) {
+			s = askForRenaming(
+				_("samedestination", [shortUrl, dn, inProgressList[p].d.urlManager.url]) + " " + _("whatdoyou"),
+				mc(_('reninto', [newDest]), 0),
+				mc(_('skipfirst'), 2),
+				mc(_('cancelsecond'), 3)
+			);
+		}
+		if (s < 0) {
+			return;
 		}
 
-	} catch(e) {Debug.dump("checkFilenameConflict():", e);}
+		if (s == 0) {
+			this.destinationName = newDest;
+		}
+		else if (s == 1) {
+			dest.remove(false);
+		}
+		else if (s == 2) {
+			this.cancel(_('skipped'));
+		}
+		else if (s == 3) {
+			inProgressList[p].d.cancel();
+		}
+		else {
+			this.cancel();
+		}
 	},
 	
 	fail: function dd_fail(title, msg, state) {
@@ -2065,20 +2060,6 @@ function makeNumber(rv, digits) {
 		rv = '0' + rv;
 	}
 	return rv;
-}
-
-//--> crea un numero con tot zeri prima, da migliorare
-function createNumber(number, destination) {
-	var stringa = makeNumber(number);
-	var re = /(\.[^\.]*)$/i;
-	var find = re.exec(destination);
-	if (find != null) {
-			destination = destination.replace(/(\.[^\.]*)$/, "_" + stringa + find[0]);
-	}
-	else {
-			destination = destination + "_" + stringa;
-	}
-	return destination;
 }
 
 // ---------* Parte relativa a pause, resume, cancel e context in generale *----------
