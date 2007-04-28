@@ -8,6 +8,7 @@
  *
  * Contributors:
  *  Nils Maier <MaierMan@web.de>
+ *  Stefano Verna <stefano.verna@gmail.com>
  *
  * ***** END LICENSE BLOCK ***** */
 
@@ -24,7 +25,7 @@ var Dialog = {
 				"renaming",
 				"renaming",
 				"renamingitems",
-				["*name*.*ext*", "*num*_*name*.*ext*", "*url*-*name*.*ext*", "*name* (*text*).*ext*", "*name* (*hh*-*mm*).*ext*"]
+				DEFAULT_RENAMING_MASKS
 			);
 		
 			// d is an Array of Downloads
