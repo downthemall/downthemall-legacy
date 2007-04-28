@@ -18,7 +18,7 @@
  * the Initial Developers. All Rights Reserved.
  *
  * Contributor(s):
- *    Stefano Verna
+ *    Stefano Verna <stefano.verna@gmail.com>
  *    Federico Parodi
  *    Nils Maier <MaierMan@web.de>
  *
@@ -1399,10 +1399,14 @@ var inProgressList = new Array();
 
 var AlertService = {
 	_alerting: false,
-	_service: Cc['@mozilla.org/alerts-service;1']
-		.getService(Ci.nsIAlertsService),
+	_service: 
+		// not present in MacOS
+		('@mozilla.org/alerts-service;1' in Cc)?
+			Cc['@mozilla.org/alerts-service;1'].getService(Ci.nsIAlertsService):
+			null
+	,
 	show: function(title, msg, clickable, cookie) {
-		if (this._alerting) {
+		if (this._alerting || !this._service) {
 			return;
 		}
 		this._alerting = true;
