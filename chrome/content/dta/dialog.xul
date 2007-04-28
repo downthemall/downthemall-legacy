@@ -22,8 +22,38 @@
 	ondialogcancel="return false;"
 	width="430px"
 	>
-	
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/dialog.js"/>
+		<script type="application/x-javascript"><![CDATA[
+			function load() {
+				var w = window.arguments[0];
+				$("text").appendChild(document.createTextNode(w.text));
+				$("s1").label = w.s1.caption;
+				$("s2").label = w.s2.caption;
+				$("s3").label = w.s3.caption;
+				$("s1").value = w.s1.value;
+				$("s2").value = w.s2.value;
+				$("s3").value = w.s3.value;
+				window.sizeToContent();
+			}
+			function ok() {
+				try {
+					window.arguments[0].scelta = parseInt($("scelta").childNodes[$("scelta").selectedIndex].value);
+					window.arguments[0].temp = $("apply").selectedIndex;
+
+					if (window.arguments[0].temp == 2) {
+						pref = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefBranch);
+						pref.setIntPref("extensions.dta.existing", $("scelta").selectedIndex);
+					}
+
+					return true;
+				} catch (ex) {
+					Debug.dump("ok() : " + ex);
+				}
+				return false;
+			}
+		]]></script>
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
+	<!-- internalFunctions needs overlayFunctions -->
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js"/>
 	
 	<label id="title" style="font-weight: bold; margin: 10px 10px 5px 10px; padding-left: 35px; padding-top:8px; background: url('chrome://dta/skin/manager/alert.png') no-repeat 0% 50%; height: 26px;" value="&title.value;" />
 	<vbox flex="1" style="padding: 10px;">
