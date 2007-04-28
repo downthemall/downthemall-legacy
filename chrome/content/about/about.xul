@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <!--
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -97,7 +97,7 @@
 			<html:b>Icons and buttons</html:b> are based on the works of Mike Matas, Jakub Steiner and Mark James
 			<html:ul>
 				<html:li>© Michael Matas</html:li>
-				<html:li>© Jakub Steiner; © Novell, Inc.</html:li>
+				<html:li>© <span class="link" onclick="openTab('http://jimmac.musichall.cz/icons.php');">Jakub 'jimmac' Steiner</span>; © Novell, Inc.</html:li>
 				<html:li>© <span class="link" onclick="openTab('http://www.famfamfam.com/lab/icons/silk/');">Mark James</span> (famfamfam silk icons)</html:li>
 			</html:ul>
 		</description>
