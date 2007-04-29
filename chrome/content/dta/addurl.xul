@@ -19,7 +19,7 @@
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	title="&addURL.title;"
 	id="addURL" 
-	onload="Dialog.load();" 
+	onload="load();" 
 	onunload="unload();" 
 	persist="screenX screenY width" 
 	style="background: #EEEEEE url('chrome://dta/content/immagini/add-bkg.png') repeat-x; width: 430px; height: auto;"
