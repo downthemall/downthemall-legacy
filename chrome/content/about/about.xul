@@ -35,7 +35,7 @@ function openTab(sito) {
 		<image src="chrome://dta/content/about/logo.png"/><spacer flex="1"/>
 	</hbox>
   <label value="ver. 0.9.9.8" style="margin-bottom:10px;" />
-  <label value="Copyright © 2004-2006 By:" style="font-weight: bold;"/>
+  <label value="Copyright © 2004-2007 By:" style="font-weight: bold;"/>
   <label value="Federico Parodi" class="link" onclick="openTab('http://www.jimmy2k.it', '_blank'); "/>
   <label value="Stefano Verna" class="link" onclick="openTab('http://steffoz.altervista.org/', '_blank'); "/>
   <label value="Nils Maier" class="link" onclick="openTab('http://tn123.ath.cx/about/', '_blank'); "/>
