@@ -199,13 +199,16 @@ var DTA_debug = {
 			if (message != "") {
 				text += message.replace(/\n/g, "\x0D\x0A\t") + " ";
 			}
-			if (e instanceof Components.Exception || e instanceof Error) {
-				if (!e.message) {
+			if (e instanceof Components.Exception) {
+				if (!e.message)
 					text += e;
-				}
-				else {
-					text += (e.message + " (" + e.fileName +" line " + e.lineNumber + ")");
-				}
+				else
+					text += e.message + " (nsResult=" + e.result + ")";
+			} else if (e instanceof Error) {
+				if (!e.message)
+					text += e;
+				else
+					text += e.message + " (" + e.fileName +" line " + e.lineNumber + ")";
 			}
 			else if (e instanceof String || typeof(e) == "string") {
 				text += e;
