@@ -218,14 +218,8 @@ var Dialog = {
 	load: function DTA_load() {
 		make_();
 		try {
-			this.ddDirectory = new DTA_DropDown("directory", "directory", "directoryitems", []);
-			this.ddRenaming = new DTA_DropDown(
-				"renaming",
-				"renaming",
-				"renamingitems",
-				DEFAULT_RENAMING_MASKS
-			);
-			
+			this.ddDirectory = $("directory");
+			this.ddRenaming = $("renaming");			
 			var address = $('URLaddress');
 			
 			// if we've been called by DTA_AddingFunctions.saveSingleLink()

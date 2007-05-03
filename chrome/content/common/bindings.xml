@@ -75,8 +75,104 @@
 			</handler>
 		</handlers>
 	</binding>
-		
 	
+	<binding id="saveddropdown">
+		<content>
+			<xul:vbox flex="1">
+			<xul:menulist anonid="list" editable="true" xbl:inherits="flex,tooltiptext,oninput=onchange,onselect=onchange">
+				<xul:menupopup anonid="popup" xbl:inherits="onselect=onchange,oncommand=onchange"/>
+			</xul:menulist>
+			<xul:spacer flex="1"/>
+			</xul:vbox>
+		</content>
+		<implementation>
+			<constructor><![CDATA[
+				this._load();
+			]]></constructor>
+			<field name="modified">false</field>
+			<property name="_list" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'list');"/>
+			<property name="_popup" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'popup');"/>
+			<property name="_pref" onget="return this.getAttribute('preference')"/>
+			<property name="_values">
+				<getter><![CDATA[
+					var rv = this.getAttribute('default');
+					if (rv.length == 0) {
+						rv = '[]';
+					}
+					if (rv[0] != '[') {
+						rv = '[\'' + rv + '\']';
+					}
+					try {
+						return eval(DTA_preferences.getMultiByteDTA(this._pref, rv));
+					} catch (ex) {
+						alert(ex);
+						return eval(rv);
+					}
+				]]></getter>
+			</property>
+			<property name="_max" onget="return DTA_preferences.getDTA('history', 5);"/>
+			<property name="current" onget="return this._list.value">
+				<setter>
+					val = String(val);
+					if (this.current == val) {
+						return;
+					}
+					this._list.value = val;
+					this._modified = true;
+				</setter>
+			</property>
+			<method name="_load">
+				<body><![CDATA[
+					var values = this._values;
+					var popup = this._popup;
+					
+					while (popup.hasChildNodes()) {
+						drop.removeChild(popup.lastChild);
+					}
+
+					for (var i =  0; i < values.length && i < this._max; ++i) {
+						var node = document.createElement('menuitem');
+						node.setAttribute('label', values[i]);
+						popup.appendChild(node);
+					}
+
+					if (values.length) {
+						this._list.selectedIndex = 0;
+						this.current = values[0];
+					}				
+					if (this.hasAttribute('readonly')) {
+						this._list.removeAttribute('editable');
+					}
+					this._modified = false;
+				]]></body>
+			</method>
+			<method name="reload">
+				<body>this._load();</body>
+			</method>
+			<method name="save">
+				<body><![CDATA[
+					var n = this.current;
+					if ((!this.modified && this._list.selectedIndex == 0) || (n.length == 0 && !this.hasAttribute('allowempty'))) {
+						return;
+					}
+					var inValues = this._values;
+					var max = this._max;
+					var outValues = [n];
+					for (var i = 0; i < inValues.length && i < max - 1 && outValues.length < max; ++i) {
+						if (n != inValues[i] && inValues[i].length) {
+							outValues.push(inValues[i]);
+						}
+					}
+					DTA_preferences.setMultiByteDTA(this._pref, outValues.toSource());
+				]]></body>
+			</method>
+			<method name="clear">
+				<body>
+					DTA_preferences.resetDTA(this._pref);
+				</body>
+			</method>
+		</implementation>
+	</binding>
 </bindings>
 				
 		

@@ -24,7 +24,19 @@
 	buttons="accept, cancel" 
 	>
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/renamingmask.js"/>
+	<script type="application/javascript;version=1.7"><![CDATA[
+		var Dialog = {
+			load: function() {
+				this.result = window.arguments[0];
+			},
+			accept: function() {
+				var dd = document.getElementById('renaming');
+				if (dd.current.length) {
+					this.result.value = dd.current;
+				}
+			}
+		};	
+	]]></script>
 
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
@@ -41,11 +53,8 @@
 
 	<vbox id="renamingbox" style="margin:8px;" >
 		<description>&choose.desc;</description>
-		<hbox >
-			<menulist id="renaming" editable="true" flex="1" tooltiptext="&mask.tip;"  >
-				<menupopup id="renamingitems">
-				</menupopup>
-			</menulist>
+		<hbox>
+			<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
 			<maskbutton/>
 		</hbox>
 	</vbox>
