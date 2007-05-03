@@ -112,8 +112,8 @@
 						<label crop="left" id="infoDest" style="max-width: 320px;" />
 					</vbox>
 				</hbox>
-				<html:canvas id="drawChunks" width="300" height="20" style="border:1px solid #555; margin:5px 10px;" ></html:canvas>
-				<html:canvas id="drawSpeed" width="300" height="20" style="border:1px solid #555; margin:5px 10px;" ></html:canvas>
+				<html:canvas id="drawChunks" width="320" height="50" ></html:canvas>
+				<html:canvas id="drawSpeed" width="320" height="40" ></html:canvas>
 			</vbox>
 		</tooltip>
 	</popupset>	

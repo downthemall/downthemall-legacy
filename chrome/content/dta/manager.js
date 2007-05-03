@@ -1519,7 +1519,7 @@ var Check = {
 				// Refresh item speed
 				d.setTreeCell("speed", formatBytes(speed) + "/s");
 				d.speeds.push(speed);
-				if (d.speeds.length > 50)
+				if (d.speeds.length > 30)
 					d.speeds.splice(0, 1);
 
 				inProgressList[i].lastBytes = d.partialSize;
@@ -3765,106 +3765,233 @@ try {
 return false;
 }
 
+var Graphics = {
+	makeRoundedRectPath: function(ctx,x,y,width,height,radius) {
+		ctx.beginPath();
+		ctx.moveTo(x,y+radius);
+		ctx.lineTo(x,y+height-radius);
+		ctx.quadraticCurveTo(x,y+height,x+radius,y+height);
+		ctx.lineTo(x+width-radius,y+height);
+		ctx.quadraticCurveTo(x+width,y+height,x+width,y+height-radius);
+		ctx.lineTo(x+width,y+radius);
+		ctx.quadraticCurveTo(x+width,y,x+width-radius,y);
+		ctx.lineTo(x+radius,y);
+		ctx.quadraticCurveTo(x,y,x,y+radius);
+	},
+	createVerticalGradient: function(ctx, height, c1, c2) {
+		var g = ctx.createLinearGradient(0,0,0,height);
+		g.addColorStop(0, c1);
+		g.addColorStop(1, c2);
+		return g;
+	},
+	createInnerShadowGradient: function(ctx, w, c1, c2, c3, c4) {
+		var g = ctx.createLinearGradient(0,0,0,w);
+		g.addColorStop(0, c1);
+		g.addColorStop(3.0/w, c2);
+		g.addColorStop(4.0/w, c3);
+		g.addColorStop(1, c4);
+		return g;
+	}
+};
+
+
 function updateSpeedCanvas() { try {
 
 	var file = Prefs.currentTooltip;
 	if (file==null) return;
 
-	var d = $("drawSpeed").getContext("2d");
+	var ctx = $("drawSpeed").getContext("2d");
 
-	var normal = d.createLinearGradient(0,0,0,16);
-	normal.addColorStop(0, 'rgba(255,255,255,50)');
-	normal.addColorStop(1, '#CCE8F2');
-
-	var prog = d.createLinearGradient(0,0,0,16);
-	prog.addColorStop(0, '#00D2E0');
-	prog.addColorStop(1, '#009DA6');
-
-	d.clearRect(0,0,300,20);
-	d.fillStyle = normal;
-	d.fillRect(0,0,300,20);
-
-	if (file.speeds.length>0) {
+	var boxFillStyle = Graphics.createInnerShadowGradient(ctx, 30, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
+	var boxStrokeStyle = Graphics.createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
+	var graphFillStyle = Graphics.createVerticalGradient(ctx, 23, "#FF8B00", "#FFDF38");
+	
+	ctx.clearRect(0,0,300,50);
+	ctx.save();
+		ctx.translate(.5, .5);
+	
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = boxStrokeStyle;
+		ctx.fillStyle = boxFillStyle;
+		
+		// draw container chunks back
+		ctx.fillStyle = boxFillStyle;
+		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 5);
+		ctx.fill();
+		
+		
+		var step = Math.round(300/30);
+		
 		var maxH = 0;
 		var minH = 1/0; // Infinity
 		for (var i=0; i<file.speeds.length; i++) {
 			if (file.speeds[i] > maxH) maxH = file.speeds[i];
 			if (file.speeds[i] < minH) minH = file.speeds[i];
 		}
+		var s = [];
 		if (maxH!=0) {
 			minH *= 0.3;
-			var w = Math.round(300/50);
-			var u = 20/((maxH - minH)*1.1);
-			d.fillStyle=prog;
+			var u = 25/((maxH - minH)*1.1);
 
-			d.beginPath();
-			d.moveTo(0, 20);
 			for (var i=0; i<file.speeds.length; i++)
-				d.lineTo(i*w, 20-Math.round(u*(file.speeds[i] - minH)));
-			d.lineTo((i-1)*w, 20);
-			d.fill();
+				s.push(Math.round(u*(file.speeds[i] - minH)));
 		}
-	}
+		
+		var passes = [
+			{ x:4, y:0, f:Graphics.createVerticalGradient(ctx, 23, "#EADF91", "#F4EFB1") },
+			{ x:2, y:0, f:Graphics.createVerticalGradient(ctx, 23, "#DFD58A", "#D3CB8B") },
+			{ x:1, y:0, f:Graphics.createVerticalGradient(ctx, 23, "#D0BA70", "#DFCF6F") },
+			{ x:0, y:0, f:graphFillStyle, s:Graphics.createVerticalGradient(ctx, 23, "#F98F00", "#FFBF37") }
+		];
+		
+		if (file.speeds.length>1) {
+			ctx.save();
+				ctx.clip();
+	
+				for (var i=0; i<passes.length; i++) {
+					ctx.fillStyle = passes[i].f;
+					var y = 30+passes[i].y;
+					var x = passes[i].x + 0.5;
+					
+					ctx.beginPath();
+					
+					ctx.moveTo(x, y);
+					
+					y = y - s[0];
+					ctx.lineTo(x, y);
+					
+					var slope = (s[1]-s[0]) / step;
+					x = x + step*.7;
+					y = y - slope*(step*.7);
+					ctx.lineTo(x, y);
+					
+					for (var j=1; j<s.length-1; j++) {
+						x = x + step*.3;
+						y = y - slope*(step*.3);
+						
+						slope = (s[j+1]-s[j]) / step;
+						x = x + step*.3;
+						y = y - slope*(step*.3);
+						ctx.quadraticCurveTo(step*j, 30 + passes[i].y - s[j], x, y);
+						
+						x = x + step*.4;
+						y = y - slope*(step*.4);
+						ctx.lineTo(x, y);
+					}
+					
+					x = x + step*.3;
+					y = y - slope*(step*.3);
+					ctx.lineTo(x, y);
+					
+					ctx.lineTo(x, 30);
+					ctx.fill();
+					
+					if (passes[i].s) {
+						ctx.strokeStyle = passes[i].s;
+						ctx.stroke();
+					}
+				}
+			ctx.restore();
+		}
+		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 3);
+		ctx.stroke();
+		
+	ctx.restore();
 
 	setTimeout("updateSpeedCanvas()", Check.frequencyRefresh);
 
 } catch(e) { Debug.dump("updateSpeedCanvas(): ", e); }
 }
 
-function updateChunkCanvas() { try {
+function updateChunkCanvas() {
 
 	var file = Prefs.currentTooltip;
 	if (file==null) return;
 
-	var c = file.firstChunk;
-	var d = $("drawChunks").getContext("2d");
+	var ctx = $("drawChunks").getContext("2d");
 
-	d.clearRect(0,0,300,20);
+	// Create gradients
+	var chunkFillStyle = Graphics.createVerticalGradient(ctx, 30, "#A7D533", "#D3F047");
+	var partialFillStyle = Graphics.createVerticalGradient(ctx, 8, "#5BB136", "#A6D73E");
+	var boxFillStyle = Graphics.createInnerShadowGradient(ctx, 30, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
+	var boxStrokeStyle = Graphics.createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
+	var partialBoxFillStyle = Graphics.createInnerShadowGradient(ctx, 8, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
 
-	var prog = d.createLinearGradient(0,0,0,16);
-	prog.addColorStop(0, 'rgba(96,165,1,255)');
-	prog.addColorStop(1, 'rgba(123,214,1,255)');
-
-	var compl = d.createLinearGradient(0,0,0,16);
-	compl.addColorStop(0, 'rgba(13,141,15,255)');
-	compl.addColorStop(1, 'rgba(0,199,56,255)');
-
-	var join = "#A5FE2C";
-
-	var cancel = d.createLinearGradient(0,0,0,16);
-	cancel.addColorStop(0, 'rgba(151,58,2,100)');
-	cancel.addColorStop(1, 'rgba(255,0,0,100)');
-
-	var normal = d.createLinearGradient(0,0,0,16);
-	normal.addColorStop(0, 'rgba(255,255,255,50)');
-	normal.addColorStop(1, '#DBF2CC');
-
-	d.fillStyle = normal;
-	d.fillRect(0,0,300,20);
-
-	if (file.isCompleted) {
-		d.fillStyle = compl;
-		d.fillRect(0,0,300,20);
-		d.fillStyle = join;
-		if (file.join == null)
-			d.fillRect(0,16,300,4);
-		else
-			d.fillRect(0,16,Math.ceil(file.join.offset/file.totalSize*300),4);
-	} else if (file.isCanceled) {
-		d.fillStyle = cancel;
-		d.fillRect(0,0,300,20);
-	} else if (file.isStarted) {
-		while (c != -1) {
-			d.fillStyle=prog;
-			d.fillRect(Math.ceil(file.chunks[c].start/file.totalSize*300),0,Math.ceil(file.chunks[c].chunkSize/file.totalSize*300),20);
-			c = file.chunks[c].next;
+	var passes = [
+		{ x:3, f: Graphics.createInnerShadowGradient(ctx, 30, "#AFA259", "#E8D675", "#F2E17E", "#F5F1B8") },
+		{ x:2, f: Graphics.createInnerShadowGradient(ctx, 30, "#9A8F4E", "#B0A359", "#B3A75D", "#BAB78B") },
+		{ x:1, f: Graphics.createInnerShadowGradient(ctx, 30, "#8E8746", "#B0A359", "#8E8746", "#CACB96") },
+		{ x:0, f: chunkFillStyle, s:chunkFillStyle }
+	];
+	
+	try {
+	// clear all
+	ctx.clearRect(0,0,300,50);
+	ctx.save();
+		ctx.translate(.5, .5);
+		
+		// draw container chunks back
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = boxStrokeStyle;
+		ctx.fillStyle = boxFillStyle;
+		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 5);
+		ctx.fill();
+		
+		var b = [];
+		if (file.isCompleted) {
+			b.push({
+				s: 0, 
+				w: 300
+			});
+		} else if (file.isCanceled) {
+			
+		} else if (file.isStarted) {
+			for (var c=file.firstChunk; c != -1; c = file.chunks[c].next) {
+				var w = Math.ceil(file.chunks[c].chunkSize / file.totalSize * 300);
+				b.push({
+					s: Math.ceil(file.chunks[c].start / file.totalSize * 300), 
+					w: w
+				});
+			}
 		}
-		d.fillStyle = join;
-		if (file.join == null)
-			d.fillRect(0,16,Math.ceil(file.chunks[file.firstChunk].chunkSize/file.totalSize*300),4);
-		else
-			d.fillRect(0,16,Math.ceil(file.join.offset/file.totalSize*300),4);
-	}
+		
+		ctx.save();
+			ctx.clip();
+			for (var i=0; i<b.length; i++) {
+				// draw shadow chunk
+				for (var j=0; j<passes.length; j++) {
+					ctx.fillStyle = passes[j].f;
+					Graphics.makeRoundedRectPath(ctx, b[i].s + passes[j].x + 0.5, 0, b[i].w, 30, 3);
+					ctx.fill();
+					if (passes[j].s) {
+						ctx.lineWidth = 2;
+						ctx.strokeStyle = passes[j].s;
+						ctx.stroke();
+					}
+				}
+			}
+		ctx.restore();
+		
+		// draw container chunks border
+		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 5);
+		ctx.stroke();
+	
+		// draw progress back
+		ctx.translate(0, 32);
+		ctx.fillStyle = partialBoxFillStyle;
+		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 8, 3);
+		ctx.fill();
+	
+		// draw progress
+		ctx.fillStyle = partialFillStyle;
+		Graphics.makeRoundedRectPath(ctx, 0, 0, Math.ceil(file.partialSize / file.totalSize * 300), 8, 3);
+		ctx.fill();
+	
+		// draw progress border
+		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 8, 3);
+		ctx.stroke();
+	
+	ctx.restore();
 
 	setTimeout("updateChunkCanvas()", Check.frequencyUpdateChunkGraphs);
 
@@ -3872,3 +3999,4 @@ function updateChunkCanvas() { try {
 }
 
 function stopCanvas() {Prefs.currentTooltip=null;}
+
