@@ -1,0 +1,33 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/* closebox */
+.closer {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#closebox);
+}
+.closer caption {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#closebox-caption);
+}
+.closer caption:hover {
+	text-decoration: underline;
+}
+.closer caption, .closer caption * {
+	cursor: pointer !important;
+}
+.closer[closed="true"] {
+	border:0px; margin: 0px; padding: 0px;
+}
+.closer caption .caption-icon {
+	height: 9px;
+	width: 9px;
+	background: transparent url("chrome://global/skin/tree/twisty-open.png") no-repeat center center;
+	-moz-margin-start: 1px;
+	-moz-margin-end: 3px;
+}
+.closer[closed="true"] caption .caption-icon {
+	background-image: url("chrome://global/skin/tree/twisty-clsd.png");
+}
+
+/* saveddropdown */
+saveddropdown {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#saveddropdown);
+}

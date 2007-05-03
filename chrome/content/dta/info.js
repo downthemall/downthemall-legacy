@@ -20,13 +20,8 @@ var Dialog = {
 			this.canvas = $("draw").getContext("2d");
 		
 			// load dropdownns
-			this.ddDirectory = new DTA_DropDown("directory", "directory", "directoryitems", []);
-			this.ddRenaming = new DTA_DropDown(
-				"renaming",
-				"renaming",
-				"renamingitems",
-				DEFAULT_RENAMING_MASKS
-			);
+			this.ddDirectory = $('directory');
+			this.ddRenaming = $('renaming');
 		
 			// d is an Array of Downloads
 			var downloads = window.arguments[0];
@@ -54,7 +49,7 @@ var Dialog = {
 				: '';
 
 			var dir = String(downloads[0].originalDirSave);
-			document.getElementById(dropDowns.directory.idInput).value = 
+			this.ddDirectory.current = 
 				downloads.every(function(e, i, a) { return String(e.originalDirSave) == dir; })
 				? dir
 				: '';
