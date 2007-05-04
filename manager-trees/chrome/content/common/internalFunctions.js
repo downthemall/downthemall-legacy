@@ -20,7 +20,7 @@
  *
  * Contributor(s):
  *   Federico Parodi
- *   Stefano Verna
+ *   Stefano Verna <stefano.verna@gmail.com>
  *   Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -43,6 +43,7 @@ var Debug = DTA_debug;
 var Preferences = DTA_preferences;
 
 const SYSTEMSLASH = (DTA_profileFile.get('dummy').path.indexOf('/') != -1) ? '/' : '\\';
+const DEFAULT_RENAMING_MASKS = ["*name*.*ext*", "*num*_*name*.*ext*", "*url*-*name*.*ext*", "*name* (*text*).*ext*", "*name* (*hh*-*mm*).*ext*"];
 
 /**
  * cast non-strings to string
@@ -191,9 +192,14 @@ objectExtend(String.prototype,
 }
 );
 
-function filePicker() {}
-filePicker.prototype = {
-	getFolder: function (predefined, text) {
+var Utils = {
+	/**
+	 * Opens up a directory picker and returns the user selected path.
+	 * @param predefined The starting path to display when dialog opens up
+	 * @text text The description text to be displayed
+	 * @return A string containing the user selected path, or false if user cancels the dialog.
+	 */
+	askForDir: function (predefined, text) {
 		try {
 			// nsIFilePicker object
 			var nsIFilePicker = Components.interfaces.nsIFilePicker;
@@ -202,8 +208,8 @@ filePicker.prototype = {
 			fp.appendFilters(nsIFilePicker.filterAll);
 		
 			// locate current directory
-			var dest;
-			if ((dest = this.checkDirectory(predefined))) {
+			var dest = this.isValidDir(predefined);
+			if (dest) {
 				fp.displayDirectory = dest;
 			}
 		
@@ -215,38 +221,76 @@ filePicker.prototype = {
 			}
 		}
 		catch (ex) {
-			Debug.dump("filePicker.getFolder():", ex);
+			Debug.dump("Utils.askForDir():", ex);
 		}
 		return false;
 	},
-	
-	checkDirectory: function(path) {
+	/**
+	 * Performs all the needed controls to see if the specified path is valid, is creable and writable and his drive has some free disk space.  
+	 * @param path The path to test
+	 * @return a nsILocalFile to the specified path if it's valid, false if it wasn't
+	 */
+	isValidDir: function(path) {
 		if (!path || !String(path).trim().length) {
 			return false;
 		}
-		
-		var directory = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+		var directory = Components.classes["@mozilla.org/file/local;1"].
+		createInstance(Components.interfaces.nsILocalFile);
 		try {
 			directory.initWithPath(path);
-			
 			// look for the first directory that exists.
 			var parent = directory.clone();
 			while (parent && !parent.exists()) {
-				Debug.dump("parent: " + parent.path);
 				parent = parent.parent;
 			}
-			Debug.dump("parent: " + parent.path);
 			if (parent) {
 				// from nsIFile
 				parent = parent.QueryInterface(Components.interfaces.nsILocalFile);
 				// we look for a directory that is writeable and has some diskspace
 				return parent.isDirectory() && parent.isWritable() && parent.diskSpaceAvailable ? directory : false;
 			}
-		}
-		catch(ex) {
-			Debug.dump('createValidDestination', ex);
+		} catch(ex) {
+			Debug.dump('Utils.isValidDir()', ex);
 		}
 		return false;
+	},
+	/**
+	 * Play a sound file (if prefs allow to do so)
+	 * @param name Name of the sound (correpsonding to the pref name and the file name of desired sound)
+	 */
+	playSound: function(name) {
+		try {
+			if (Preferences.getDTA("sounds." + name, false)) {
+				var sound = Components.classes["@mozilla.org/sound;1"]
+					.createInstance(Ci.nsISound);
+				var uri = Cc['@mozilla.org/network/standard-url;1']
+					.createInstance(Ci.nsIURI);
+				uri.spec = "chrome://dta/skin/sounds/" + name + ".wav";
+				sound.play(uri); 
+			}
+		}
+		catch(ex) {
+			Debug.dump("Playing " + name + " sound failed", ex);
+		}
+	},
+	/**
+	 * returns a numeric timestamp
+	 * @param date Optional. DateString to get stamp for. NOW if ommitted
+	 * @return Numeric timestamp
+	 * @author Nils
+	*/
+	getTimestamp: function(str) {
+		if (!str) {
+			return Date.now();
+		}
+		if (typeof(str) != 'string' && !(str instanceof String)) {
+			throw new Error("not a string");
+		}
+		var rv = Date.parse(str);
+		if (isNaN(rv)) {
+			throw new Error("invalid date");
+		}
+		return rv;
 	}
 };
 
@@ -306,25 +350,7 @@ function getIcon(link, metalink, size) {
 	}
 	return "moz-icon://foo.html?size=" + size;
 }
-/**
- * Play a sound file (if prefs allow to do so)
- * @param name Name of the sound (correpsonding to the pref name and the file name of desired sound)
- */
-function playSound(name) {
-	try {
-		if (Preferences.getDTA("sounds." + name, false)) {
-			var sound = Components.classes["@mozilla.org/sound;1"]
-				.createInstance(Ci.nsISound);
-			var uri = Cc['@mozilla.org/network/standard-url;1']
-				.createInstance(Ci.nsIURI);
-			uri.spec = "chrome://dta/skin/sounds/" + name + ".wav";
-			sound.play(uri); 
-		}
-	}
-	catch(ex) {
-		Debug.dump("Playing " + name + " sound failed", ex);
-	}
-}
+
 /**
  * Tiny helper to "convert" given object into a weak observer. Object must still implement .observe()
  * @author Nils
@@ -580,26 +606,6 @@ function hash(value, algorithm, encoding, datalen) {
 	var rv = ch.finish(encoding == HASH_B64);
 	if (encoding == HASH_HEX) {
 		rv = hexdigest(rv);
-	}
-	return rv;
-}
-
-/**
- * returns a numeric timestamp
- * @param date Optional. DateString to get stamp for. NOW if ommitted
- * @return Numeric timestamp
- * @author Nils
-*/
-function getTimestamp(str) {
-	if (!str) {
-		return Date.now();
-	}
-	if (typeof(str) != 'string' && !(str instanceof String)) {
-		throw new Error("not a string");
-	}
-	var rv = Date.parse(str);
-	if (isNaN(rv)) {
-		throw new Error("invalid date");
 	}
 	return rv;
 }

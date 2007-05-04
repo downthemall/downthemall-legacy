@@ -18,7 +18,7 @@
  * the Initial Developers. All Rights Reserved.
  *
  * Contributor(s):
- *    Stefano Verna
+ *    Stefano Verna <stefano.verna@gmail.com>
  *    Federico Parodi
  *    Nils Maier <MaierMan@web.de>
  *
@@ -49,7 +49,7 @@ if (!Ci) {
 const MIN_CHUNK_SIZE = 512 * 1024;
 // in use by chunk.writer...
 // in use by decompressor... beware, actual size might be more than twice as big!
-const MAX_BUFFER_SIZE = 3145728; // 3 MB
+const MAX_BUFFER_SIZE = 5242880; // 3 MB
 
 DTA_include('chrome://dta/content/dta/manager/prefs.js');
 //DTA_include('chrome://dta/content/dta/manager/tree.js');
@@ -165,7 +165,7 @@ chunkElement.prototype = {
 			}
 			this._written += bytes;
 			
-			this.parent.timeLastProgress = getTimestamp();
+			this.parent.timeLastProgress = Utils.getTimestamp();
 			
 			return bytes;
 		} catch (ex) {
@@ -296,7 +296,9 @@ Decompressor.prototype = {
 		try {
 			var binStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
 			binStream.setInputStream(stream);
-			this.outStream.write(binStream.readBytes(count), count);
+			if (count != this.outStream.write(binStream.readBytes(count), count)) {
+				throw new Components.Exception("Failed to write!");
+			}
 		}
 		catch (ex) {
 			this.exception = ex;
@@ -453,10 +455,16 @@ downloadElement.prototype = {
 	},
 
 	setTreeProgress: function(style, value) {
-		if (this.isRemoved) return;
-		$(this.treeID).childNodes[0].childNodes[treeCells["bar"]].attributes.properties.value = style;
-		if (value)
-			$(this.treeID).childNodes[0].childNodes[treeCells["bar"]].attributes.value.value = value;
+		if (this.isRemoved) {
+			return;
+		}
+		var nodes = $(this.treeID).childNodes[0].childNodes;
+		
+		nodes[treeCells["bar"]].setAttribute('properties', style);
+		if (value > 0) {
+			nodes[treeCells["bar"]].setAttribute('mode', 'normal');
+			nodes[treeCells["bar"]].setAttribute('value', value);
+		}
 	},
 
 	removeFromInProgressList: function() {
@@ -521,7 +529,7 @@ downloadElement.prototype = {
 			}
 		}
 		catch(ex) {
-			this.finishDownload(exception);
+			this.finishDownload(ex);
 		}
 	},
 	handleMetalink: function dl_handleMetaLink() {
@@ -756,8 +764,8 @@ downloadElement.prototype = {
 			ext = basename.slice(pos);
 			basename = basename.slice(0, pos);
 		}
-		for (var num = 1; isInProgress(newDest.path, this) != -1 || newDest.exists(); ++i) {
-			newDest.leafName = basename + "_" +  makeNumber() + ext;
+		for (var i = 1; isInProgress(newDest.path, this) != -1 || newDest.exists(); ++i) {
+			newDest.leafName = basename + "_" +  makeNumber(i) + ext;
 		}
 		if (newDest.path == dest.path) {
 			return;
@@ -821,7 +829,7 @@ downloadElement.prototype = {
 		
 		this.cancel(state);
 		
-		playSound("error");
+		Utils.playSound("error");
 
 		switch (Prefs.alertingSystem) {
 			case 1:
@@ -1080,7 +1088,7 @@ var Check = {
 			var d = inProgressList[i].d;
 
 			// checks for timeout
-			if ((getTimeStamp() - d.timeLastProgress) >= Preferences.getDTA("timeout", 300, true) * 1000) {
+			if ((Utils.getTimestamp() - d.timeLastProgress) >= Preferences.getDTA("timeout", 300, true) * 1000) {
 				if (d.isResumable) {
 					d.setPaused();
 					d.state = PAUSED;
@@ -1112,7 +1120,7 @@ var Check = {
 			Debug.dump("checkClose(): All downloads passed correctly");
 			this.lastCheck = Stats.downloadedBytes;
 
-			playSound("done");
+			Utils.playSound("done");
 
 			// if windows hasn't focus, show FF sidebox/alerts
 			if (Stats.completedDownloads > 0) {
@@ -1198,7 +1206,7 @@ var Check = {
 
 		d.setTreeCell("status", _("starting"));
 
-		d.timeLastProgress = getTimestamp();
+		d.timeLastProgress = Utils.getTimestamp();
 		d.state = RUNNING;
 
 		var flagAdd = true;
@@ -1210,7 +1218,7 @@ var Check = {
 		}
 		if (flagAdd) {
 			inProgressList.push(new inProgressElement(d));
-			d.timeStart = getTimestamp();
+			d.timeStart = Utils.getTimestamp();
 		}
 
 		// start stuff
@@ -2041,7 +2049,7 @@ function askForRenaming(t, s1, s2, s3) {
 			);
 
 			// non faccio registrare il timeout
-			inProgressList.forEach(function(o) { o.d.timeLastProgress = getTimestamp(); });
+			inProgressList.forEach(function(o) { o.d.timeLastProgress = Utils.getTimestamp(); });
 
 			Prefs.askEveryTime = (passingArguments.temp == 0) ? true : false;
 			Prefs.sessionPreference = passingArguments.scelta;

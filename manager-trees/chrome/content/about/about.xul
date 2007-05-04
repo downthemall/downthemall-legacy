@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <!--
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -21,7 +21,7 @@
  *
  * Contributor(s):
  *   Federico Parodi
- *   Stefano Verna
+ *   Stefano Verna <stefano.verna@gmail.com>
  *   Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -54,16 +54,17 @@
 	id="DTAAboutDialog"
 >
 	<script type="application/x-javascript"><![CDATA[
-		function openTab(sito) {
+		function openTab(url) {
 			var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
 			var recentWindow = wm.getMostRecentWindow("navigator:browser");
 			if (recentWindow) {
 				// Use an existing browser window
-				recentWindow.delayedOpenTab(sito);
+				recentWindow.delayedOpenTab(url);
 			}	else {
 				// No browser windows are open, so open a new one.
-				window.open(sito);
+				window.open(url);
 			}
+			self.close();
 		}
 		function versionFill() {
 			var logo = document.getElementById('logo');
@@ -85,9 +86,9 @@
 	<groupbox orient="vertical">
 		<label value="Copyright © 2004-2007 By:" style="font-weight: bold;"/>
 		<html:ul>
-			<html:li><label value="Federico Parodi" class="link" onclick="openTab('http://www.jimmy2k.it', '_blank'); "/></html:li>
-			<html:li><label value="Stefano Verna" class="link" onclick="openTab('http://steffoz.altervista.org/', '_blank'); "/></html:li>
-			<html:li><label value="Nils Maier" class="link" onclick="openTab('http://tn123.ath.cx/about/', '_blank'); "/></html:li>
+			<html:li><label value="Federico Parodi" class="link" onclick="openTab('http://www.jimmy2k.it'); "/></html:li>
+			<html:li><label value="Stefano Verna" class="link" onclick="openTab('http://steffoz.altervista.org/'); "/></html:li>
+			<html:li><label value="Nils Maier" class="link" onclick="openTab('http://tn123.ath.cx/about/'); "/></html:li>
 		</html:ul>
 
 		<!--<label style="font-weight: bold; color: red;">BEWARE: dTa! Mod is an <html:i>inofficial</html:i> release meant for testing pruposes only!</label>-->
@@ -96,7 +97,7 @@
 			<html:b>Icons and buttons</html:b> are based on the works of Mike Matas, Jakub Steiner and Mark James
 			<html:ul>
 				<html:li>© Michael Matas</html:li>
-				<html:li>© Jakub Steiner; © Novell, Inc.</html:li>
+				<html:li>© <span class="link" onclick="openTab('http://jimmac.musichall.cz/icons.php');">Jakub 'jimmac' Steiner</span>; © Novell, Inc.</html:li>
 				<html:li>© <span class="link" onclick="openTab('http://www.famfamfam.com/lab/icons/silk/');">Mark James</span> (famfamfam silk icons)</html:li>
 			</html:ul>
 		</description>
@@ -106,7 +107,7 @@
 			This is free software!<html:br/>
 			You are welcome to redistribute it under certain conditions:
 		</description>
-		<label class="link" value="License" onclick="openTab('chrome://dta/content/gpl.txt', '_blank');"/>
+		<label class="link" value="License" onclick="openTab('chrome://dta/content/gpl.txt');"/>
 		<separator class="thin"/>
 		<description>
 			DownThemAll! values your privacy.<html:br/>
@@ -127,7 +128,7 @@
 			<rows>
 				<row>
 					<label value="DownThemAll!" style="font-weight: bold;"/>
-					<label value="http://www.downthemall.net/" class="link" onclick="openTab('http://www.downthemall.net/', '_blank'); "/>
+					<label value="http://www.downthemall.net/" class="link" onclick="openTab('http://www.downthemall.net/'); "/>
 				</row>
 			</rows>
 		</grid>

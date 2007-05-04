@@ -76,8 +76,7 @@ var Advanced = {
 		if (!tmp) {
 			return;
 		}
-		var f = new filePicker();
-		f = f.getFolder(Preferences.getMultiByteDTA("tempLocation", tmp.value), "");
+		var f = Utils.askForDir(Preferences.getMultiByteDTA("tempLocation", tmp.value), "");
 		if (!f) {
 			return;
 		}
