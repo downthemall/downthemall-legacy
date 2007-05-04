@@ -2728,21 +2728,23 @@ function updateChunkCanvas() {
 		ctx.fill();
 		
 		var b = [];
-		if (file.isCompleted) {
+		if (file.is(COMPLETE)) {
 			b.push({
 				s: 0, 
 				w: 300
 			});
-		} else if (file.isCanceled) {
+		} else if (file.is(CANCELED)) {
 			
 		} else if (file.isStarted) {
-			for (var c=file.firstChunk; c != -1; c = file.chunks[c].next) {
-				var w = Math.ceil(file.chunks[c].chunkSize / file.totalSize * 300);
-				b.push({
-					s: Math.ceil(file.chunks[c].start / file.totalSize * 300), 
-					w: w
-				});
-			}
+			file.chunks.forEach(
+				function(c) {
+					var w = Math.ceil(c.size / file.totalSize * 300);
+					b.push({
+						s: Math.ceil(c.start / file.totalSize * 300), 
+						w: w
+					});
+				}
+			);
 		}
 		
 		ctx.save();
