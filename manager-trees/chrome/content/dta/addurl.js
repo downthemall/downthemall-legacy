@@ -214,18 +214,12 @@ BatchGenerator.prototype = {
 
 
 var Dialog = {
-	strings: null,
+	multiHelp: true,
 	load: function DTA_load() {
 		make_();
 		try {
-			this.ddDirectory = new DTA_DropDown("directory", "directory", "directoryitems", []);
-			this.ddRenaming = new DTA_DropDown(
-				"renaming",
-				"renaming",
-				"renamingitems",
-				DEFAULT_RENAMING_MASKS
-			);
-			
+			this.ddDirectory = $("directory");
+			this.ddRenaming = $("renaming");			
 			var address = $('URLaddress');
 			
 			// if we've been called by DTA_AddingFunctions.saveSingleLink()
@@ -247,6 +241,7 @@ var Dialog = {
 					address.readOnly = true;
 					$('batcheslabel').style.display = 'none';
 					$('batches').collapsed = true;
+					this.multiHelp = false;
 				}
 				var refPage = DTA_AddingFunctions.isLinkOpenable(a.referrer) ? a.referrer : null;
 				if (refPage) {
@@ -294,6 +289,19 @@ var Dialog = {
 			Debug.dump("load():", ex);
 		}		
 	},
+	help: function DTA_help(event) {
+		var topic = event.originalTarget.getAttribute('topic');
+		if (!this.multiHelp) {
+			topic = 'AddUrl';
+		}
+		if (topic) {
+			openHelp(topic, 'chrome://dta/locale/help/dtahelp.rdf');	
+		}
+		else {
+			$('popupHelp').showPopup($('addURL').getButton('help'), -1, -1, "popup");
+		}
+	},
+	
 	check: function DTA_check() {
 		var disable = $('URLaddress', 'directory', 'renaming')
 			.some(function(e) {

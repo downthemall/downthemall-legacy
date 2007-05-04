@@ -199,13 +199,16 @@ var DTA_debug = {
 			if (message != "") {
 				text += message.replace(/\n/g, "\x0D\x0A\t") + " ";
 			}
-			if (e instanceof Components.Exception || e instanceof Error) {
-				if (!e.message) {
+			if (e instanceof Components.Exception) {
+				if (!e.message)
 					text += e;
-				}
-				else {
-					text += (e.message + " (" + e.fileName +" line " + e.lineNumber + ")");
-				}
+				else
+					text += e.message + " (nsResult=" + e.result + ")";
+			} else if (e instanceof Error) {
+				if (!e.message)
+					text += e;
+				else
+					text += e.message + " (" + e.fileName +" line " + e.lineNumber + ")";
 			}
 			else if (e instanceof String || typeof(e) == "string") {
 				text += e;
@@ -679,89 +682,6 @@ var DTA_Mediator = {
 		}
 	}
 };
-
-// DropdownObject
-function DTA_DropDown(name, input, dropDown, predefined) {
-	this.name = name;
-	this.input = input;
-	this.dropDown = dropDown;
-	this.predefined = (predefined instanceof Array) ? predefined : [];
-
-	this.reload();
-}
-
-DTA_DropDown.prototype = {
-	reload: function dd_reload() {
-		try {
-			this.load();
-		} catch (ex) {
-			DTA_debug.dump('ddl:', ex);
-			// no-op: might want to load this without attaching to an element.
-		}
-	},
-	load: function dd_load() {
-		var values = eval(DTA_preferences.getMultiByteDTA(this.name, this.predefined));
-		var max = DTA_preferences.getDTA("history", 5);
-
-		var drop = document.getElementById(this.dropDown);
-		var input = document.getElementById(this.input);
-
-		while (drop.hasChildNodes()) {
-			drop.removeChild(drop.lastChild);
-		}
-
-		for (var i =  0; i < values.length && i < max; ++i) {
-			var node = document.createElement('menuitem');
-			node.setAttribute('label', values[i]);
-			drop.appendChild(node);
-		}
-
-		if (values.length) {
-			input.selectedIndex = 0;
-			input.value = values[0];
-		}
-	},
-	get current() {
-		var node = document.getElementById(this.input);
-		// use label, as read-only boxen will not set .value!
-		return node ? node.label : '';
-	},
-	set current(value) {
-		var node = document.getElementById(this.input);
-		if ('label' in node) {
-			node.label = value;
-			node.value = node.label;
-			this.save();
-		}
-	},
-	save: function dd_save() {
-		var n = this.current;
-		if (!n.length) {
-			return;
-		}
-
-		try {
-			var inValues = eval(DTA_preferences.getMultiByteDTA(this.name, this.predefined));
-		}
-		catch (ex) {
-			DTA_debug.dump("DD::save()", ex);
-			var inValues = [];
-		}
-		var max = DTA_preferences.getDTA("history", 5);
-
-		var outValues = [n];
-
-		for (var i = 0; i < inValues.length && i < max - 1 && outValues.length < max; ++i) {
-			if (n != inValues[i] && inValues[i].length) {
-				outValues.push(inValues[i]);
-			}
-		}
-		DTA_preferences.setMultiByteDTA(this.name, outValues.toSource());
-	},
-	clear: function dd_save() {
-		Preferences.resetDTA(this.name);
-	}
-}
 
 /**
  * wrapper around confirmEx

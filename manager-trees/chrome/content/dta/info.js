@@ -20,13 +20,8 @@ var Dialog = {
 			this.canvas = $("draw").getContext("2d");
 		
 			// load dropdownns
-			this.ddDirectory = new DTA_DropDown("directory", "directory", "directoryitems", []);
-			this.ddRenaming = new DTA_DropDown(
-				"renaming",
-				"renaming",
-				"renamingitems",
-				DEFAULT_RENAMING_MASKS
-			);
+			this.ddDirectory = $('directory');
+			this.ddRenaming = $('renaming');
 		
 			// d is an Array of Downloads
 			var downloads = window.arguments[0];
@@ -54,7 +49,7 @@ var Dialog = {
 				: '';
 
 			var dir = String(downloads[0].originalDirSave);
-			document.getElementById(dropDowns.directory.idInput).value = 
+			this.ddDirectory.current = 
 				downloads.every(function(e, i, a) { return String(e.originalDirSave) == dir; })
 				? dir
 				: '';
@@ -116,8 +111,9 @@ var Dialog = {
 		return true;
 	},
 	draw: function DTA_draw() {
-		
 		var d = this.item;
+		
+		var c = d.firstChunk;
 		var canvas = this.canvas;
 		
 		canvas.clearRect(0,0,300,20);
@@ -130,6 +126,7 @@ var Dialog = {
 		compl.addColorStop(0, 'rgba(13,141,15,255)');
 		compl.addColorStop(1, 'rgba(0,199,56,255)');
 		
+		var join = "#A5FE2C";
 		
 		var cancel = canvas.createLinearGradient(0,0,0,16);
 		cancel.addColorStop(0, 'rgba(151,58,2,100)');
@@ -156,12 +153,16 @@ var Dialog = {
 			canvas.fillStyle = cancel;
 			canvas.fillRect(0,0,300,20);
 		} else if (d.isStarted) {
-			d.chunks.forEach(
-				function(c) {
-					canvas.fillStyle = prog;
-					canvas.fillRect(Math.ceil(c.start / d.totalSize*300), 0, Math.ceil(c.size / d.totalSize * 300), 20);
-				}
-			);
+			while (c != -1) {
+				canvas.fillStyle=prog;
+				canvas.fillRect(Math.round(d.chunks[c].start/d.totalSize*300),0,Math.round(d.chunks[c].chunkSize/d.totalSize*300),20);
+				c = d.chunks[c].next;
+			}
+			canvas.fillStyle = join;
+			if (d.join == null)
+				canvas.fillRect(0,16,Math.round(d.chunks[d.firstChunk].chunkSize/d.totalSize*300),4);
+			else
+				canvas.fillRect(0,16,Math.round(d.join.offset/d.totalSize*300),4);
 		}
 		
 		setTimeout('Dialog.draw();', 150);

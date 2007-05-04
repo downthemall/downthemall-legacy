@@ -321,19 +321,9 @@ var Dialog = {
 		$("dtaHelp").hidden = !("openHelp" in window);
 
 		// construct or dropdowns.
-		this.ddFilter = new DTA_DropDown(
-			"filter",
-			"filter",
-			"filteritems",
-			['', "/(\\.mp3)$/", "/(\\.(html|htm|rtf|doc|pdf))$/", "http://www.website.com/subdir/*.*", "http://www.website.com/subdir/pre*.???", "*.z??, *.css, *.html"]
-		);
-		this.ddDirectory = new DTA_DropDown("directory", "directory", "directoryitems", "", "");
-		this.ddRenaming = new DTA_DropDown(
-			"renaming",
-			"renaming",
-			"renamingitems",
-			DEFAULT_RENAMING_MASKS
-		);
+		this.ddFilter = $('filter');
+		this.ddDirectory = $('directory');
+		this.ddRenaming = $('renaming');
 
 		try {
 			// initialize or link lists
