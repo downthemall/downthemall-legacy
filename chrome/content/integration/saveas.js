@@ -40,7 +40,6 @@ var DTA_SaveAs = {
 		}
 		document.getElementById('downthemallcontainer').collapsed = false;
 		document.getElementById('downthemall').disabled = false;
-		document.getElementById('turbodta').disabled = false;
 		
 		this.dialog = dialog;
 		this.url = dialog.mLauncher.source.spec;
@@ -51,15 +50,13 @@ var DTA_SaveAs = {
 			this.referrer = this.url;
 		}
 
-		this.ddDirectory = new DTA_DropDown(
-			'directory',
-			'tdtalist',
-			'tdtalistitems',
-			[]
-		);
+		this.ddDirectory = document.getElementById('tdtalist');
 		var mask = DTA_AddingFunctions.getDropDownValue('renaming');
 		
-		document.getElementById("tdta").collapsed = !this.ddDirectory.current.length || !mask;
+		if (!(document.getElementById("tdta").collapsed = (!this.ddDirectory.current.length || !mask))) {
+			document.getElementById('turbodta').disabled = false;
+		}
+		
 		
 		this.remember = document.getElementById("rememberChoice");
 		
