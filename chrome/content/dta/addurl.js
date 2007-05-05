@@ -107,7 +107,7 @@ try {
 		window.close();
 		return true;
 } catch(ex) {
-	DTA_debug.dump("addURLnow(): ", e);
+	DTA_debug.dump("addURLnow(): ", ex);
 }
 	return false;
 }
