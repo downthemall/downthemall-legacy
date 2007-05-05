@@ -52,9 +52,10 @@ var DtaDialog = {
 		var dir = DTA_AddingFunctions.getPreference("extensions.dta.dropdown.directory-current", old[0]);
 		
 		if (dir.length > 0) {
+			alert(dir);
 			document.getElementById("directoryturbodta").setAttribute("value", document.getElementById("directoryturbodta").value + " " + dir);		
 		} else {
-			document.getElementById("tdownthemall").setAttribute("hidden","true");
+			document.getElementById("turbodta").setAttribute("hidden","true");
 			document.getElementById("directoryturbodta").setAttribute('hidden', 'true');
 		}
 		
