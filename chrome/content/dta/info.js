@@ -143,7 +143,7 @@ var Dialog = {
 			canvas.fillStyle = compl;
 			canvas.fillRect(0,0,300,20);
 			canvas.fillStyle = join;
-			if (!d.join) {
+			if (!d.join || !d.totalSize) {
 				canvas.fillRect(0,16,300,4);
 			}
 			else {
@@ -152,7 +152,7 @@ var Dialog = {
 		} else if (d.isCanceled) {
 			canvas.fillStyle = cancel;
 			canvas.fillRect(0,0,300,20);
-		} else if (d.isStarted) {
+		} else if (d.isStarted && d.totalSize) {
 			while (c != -1) {
 				canvas.fillStyle=prog;
 				canvas.fillRect(Math.round(d.chunks[c].start/d.totalSize*300),0,Math.round(d.chunks[c].chunkSize/d.totalSize*300),20);
