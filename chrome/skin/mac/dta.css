@@ -4,3 +4,7 @@
 	width:780px;
 	height:450px;
 }
+
+#selectlinks caption {
+	font-weight: normal !important;
+}
