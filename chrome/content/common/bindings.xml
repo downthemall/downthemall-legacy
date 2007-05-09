@@ -46,7 +46,7 @@
 			<xul:hbox class="groupbox-title" align="center" pack="start">
 				<children includes="caption"/>
 			</xul:hbox>
-			<xul:box flex="1" xbl:inherits="orient,align,pack,collapsed=closed">
+			<xul:box flex="1" class="childrenbox" xbl:inherits="orient,align,pack,collapsed=closed">
 				<children/>
 			</xul:box>
 		</content>
