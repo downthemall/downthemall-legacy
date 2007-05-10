@@ -35,7 +35,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-	
+
 // your tree
 var tree = null;
 
@@ -54,7 +54,6 @@ const MAX_BUFFER_SIZE = 5242880; // 3 MB
 DTA_include('chrome://dta/content/dta/manager/prefs.js');
 //DTA_include('chrome://dta/content/dta/manager/tree.js');
 
-// --------* Statistiche *--------
 var Stats = {
 	totalDownloads: 0,
 
@@ -124,7 +123,7 @@ Chunk.prototype = {
 				}
 				var prealloc = !file.exists();
 				var outStream = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
-				
+
 				outStream.init(file, 0x04 | 0x08, 0766, 0);
 				var seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 				if (prealloc && this.parent.totalSize > 0) {
@@ -165,9 +164,9 @@ Chunk.prototype = {
 				throw ("chunks::write: read/write count mismatch!");
 			}
 			this._written += bytes;
-			
+
 			this.parent.timeLastProgress = Utils.getTimestamp();
-			
+
 			return bytes;
 		} catch (ex) {
 			Debug.dump('write:', ex);
@@ -196,7 +195,7 @@ function Decompressor(download) {
 
 	download.setTreeCell("status", _("decompress"));
 	try {
-				
+
 		this._outStream = Cc['@mozilla.org/network/file-output-stream;1']
 			.createInstance(Ci.nsIFileOutputStream);
 		this._outStream.init(this.to, 0x04 | 0x08, 0766, 0);
@@ -214,26 +213,26 @@ function Decompressor(download) {
 		}
 		catch (ex) {
 			// no-op
-		}		
+		}
 		var boutStream = Cc['@mozilla.org/network/buffered-output-stream;1']
 			.createInstance(Ci.nsIBufferedOutputStream);
 		boutStream.init(this._outStream, MAX_BUFFER_SIZE);
-		this.outStream = boutStream;		
+		this.outStream = boutStream;
 		boutStream = Cc['@mozilla.org/binaryoutputstream;1']
 			.createInstance(Ci.nsIBinaryOutputStream);
 		boutStream.setOutputStream(this.outStream);
 		this.outStream = boutStream;
-				
+
 		var converter = Cc["@mozilla.org/streamconv;1?from=" + download.compressionType + "&to=uncompressed"]
 			.createInstance(Ci.nsIStreamConverter);
-			
+
 		converter.asyncConvertData(
 			download.compressionType,
 			"uncompressed",
 			this,
 			null
 		);
-		
+
 		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 		ios
 			.newChannelFromURI(ios.newFileURI(this.from))
@@ -248,7 +247,7 @@ function Decompressor(download) {
 				this.to.remove(false);
 			}
 			if (this.from.exists()) {
-				this.from.remove(false);	
+				this.from.remove(false);
 			}
 		}
 		catch (ex) {
@@ -333,7 +332,7 @@ function downloadElement(lnk, dir, num, desc, mask, refPage, tmpFile) {
 	this.speeds = new Array();
 	this.refPage = Cc['@mozilla.org/network/standard-url;1'].createInstance(Ci.nsIURI);
 	this.refPage.spec = refPage;
-	
+
 	// XXX: reset ranges when failed.
 	if (tmpFile) {
 		try {
@@ -363,7 +362,7 @@ downloadElement.prototype = {
 		Debug.dump('SS: ' + this._state + "/" + ns);
 		this._state = ns;
 	},
-	
+
 	_tmpFile: null,
 	get tmpFile() {
 		if (!this._tmpFile) {
@@ -375,7 +374,7 @@ downloadElement.prototype = {
 		}
 		return this._tmpFile;
 	},
-	
+
 	/**
 	 *Takes one or more state indicators and returns if this download is in state of any of them
 	 */
@@ -387,7 +386,7 @@ downloadElement.prototype = {
 		}
 		return false;
 	},
-	
+
 	contentType: "",
 	visitors: null,
 	totalSize: 0,
@@ -458,7 +457,7 @@ downloadElement.prototype = {
 			return;
 		}
 		var nodes = $(this.treeID).childNodes[0].childNodes;
-		
+
 		nodes[treeCells["bar"]].setAttribute('properties', style);
 		if (value > 0) {
 			nodes[treeCells["bar"]].setAttribute('mode', 'normal');
@@ -588,8 +587,7 @@ downloadElement.prototype = {
 					'ultDescription': ''
 				});
 			}
-			if (downloads.length)
-			{
+			if (downloads.length) {
 				startnewDownloads(true, downloads);
 			}
 		} catch (ex) {
@@ -606,7 +604,7 @@ downloadElement.prototype = {
 		// create final file pointer
 		this.fileManager = new FileFactory(this.dirSave);
 		this.fileManager.append(this.destinationName);
-		
+
 		if (Prefs.setTime) {
 			try {
 				var time = this.startDate.getTime();
@@ -641,11 +639,11 @@ downloadElement.prototype = {
 
 		// Garbage collection
 		this.chunks = [];
-		
+
 		// increment completedDownloads counter
 		this.state = COMPLETE;
 		Stats.completedDownloads++;
-		
+
 		if ('isMetalink' in this) {
 			this.handleMetalink();
 		}
@@ -680,7 +678,7 @@ downloadElement.prototype = {
 					.removeFinalBackSlash()
 					.replace(/\//g, replacedSlash);
 			}
-			
+
 			var query = '';
 			try {
 				query = DTA_URLhelpers.decodeCharset(uri.query, url.originCharset);
@@ -688,7 +686,7 @@ downloadElement.prototype = {
 			catch (ex) {
 				// no-op
 			}
-			
+
 			this.description = this.description.removeBadChars().replace(/[\\/]/g, "").trim();
 
 			var name = this.fileName;
@@ -756,7 +754,7 @@ downloadElement.prototype = {
 	checkFilenameConflict: function() {
 		var dn = this.destinationName, ds = this.dirSave;
 		var dest = new FileFactory(ds + dn), newDest = dest.clone();
-		
+
 		// figure out an unique name
 		var basename = dn, ext = '', pos = basename.lastIndexOf('.');
 		if (pos != -1) {
@@ -772,11 +770,11 @@ downloadElement.prototype = {
 		newDest = newDest.leafName;
 
 		var shortUrl = this.urlManager.usable.cropCenter(70);
-		
+
 		function mc(aCaption, aValue) {
 			return {caption: aCaption, value: aValue};
 		}
-	
+
 		var s = -1, p;
 		if (dest.exists()) {
 			s = askForRenaming(
@@ -792,7 +790,7 @@ downloadElement.prototype = {
 				mc(_('reninto', [newDest]), 0),
 				mc(_('overwrite'), 1),
 				mc(_('cancel'), 4)
-			);		
+			);
 		}
 		else if (-1 != (p = isInProgress(dest.path, this))) {
 			s = askForRenaming(
@@ -822,12 +820,12 @@ downloadElement.prototype = {
 			this.cancel();
 		}
 	},
-	
+
 	fail: function dd_fail(title, msg, state) {
 		Debug.dump("failDownload invoked");
-		
+
 		this.cancel(state);
-		
+
 		Utils.playSound("error");
 
 		switch (Prefs.alertingSystem) {
@@ -844,7 +842,7 @@ downloadElement.prototype = {
 		try {
 			if (this.is(CANCELED)) {
 				return;
-			}			
+			}
 			Debug.dump(this.fileName + ": canceled");
 			this.visitors = new VisitorManager();
 
@@ -865,7 +863,7 @@ downloadElement.prototype = {
 			else {
 					this.isPassed = true;
 			}
-			
+
 			if (this.tmpFile.exists()) {
 				try {
 					this.tmpFile.remove(false);
@@ -876,7 +874,7 @@ downloadElement.prototype = {
 			}
 			// gc
 			this.chunks = [];
-			
+
 			this.state = CANCELED;
 			Check.checkClose();
 			popup();
@@ -891,7 +889,7 @@ downloadElement.prototype = {
 			var chunk = new Chunk(download, start, end);
 			download.chunks.push(chunk);
 			downloadChunk(download, chunk, header);
-		}	
+		}
 		function downloadChunk(download, chunk, header) {
 			chunk.isRunning = true;
 			download.state = RUNNING;
@@ -904,7 +902,7 @@ downloadElement.prototype = {
 			}
 			download.setTreeCell("parts", 	(++download.activeChunks) + "/" + download.maxChunks);
 		}
-		
+
 		try {
 			if (!this.maxChunks) {
 				this.maxChunks = Prefs.maxChunks;
@@ -912,17 +910,17 @@ downloadElement.prototype = {
 			if (this.maxChunks <= this.activeChunks) {
 				return false;
 			}
-			
+
 			Debug.dump(this.fileName + ": resumeDownload");
 
 			var rv = false;
-			
+
 			// we didn't load up anything so let's start the main chunk (which will grab the info)
 			if (this.chunks.length == 0) {
 				downloadNewChunk(this, 0, 0, true);
 				return false;
 			}
-			
+
 			// start some new chunks
 			var paused = this.chunks.filter(
 				function (chunk) {
@@ -930,15 +928,15 @@ downloadElement.prototype = {
 				}
 			);
 			while (this.activeChunks < this.maxChunks) {
-			
+
 				// restart paused chunks
 				if (paused.length) {
 					downloadChunk(this, paused.shift());
 					rv = true;
 					continue;
 				}
-					
-				
+
+
 				// find biggest chunk
 				var biggest = null;
 				this.chunks.forEach(
@@ -948,7 +946,7 @@ downloadElement.prototype = {
 						}
 					}
 				);
-				
+
 				// nothing found, break
 				if (!biggest) {
 					break;
@@ -976,7 +974,6 @@ downloadElement.prototype = {
 
 }
 
-// --------* inProgressElement *--------
 function inProgressElement(el) {
 	this.d = el;
 	this.lastBytes = el.partialSize;
@@ -1154,44 +1151,44 @@ var Check = {
 }
 
 function startNextDownload() {
-		try {
-			for (var i = 0; i < downloadList.length && inProgressList.length < Prefs.maxInProgress; ++i) {
-				if (!downloadList[i].is(QUEUED)) {
-					continue;
-				}
-				var d = downloadList[i];
-
-				d.setTreeCell("status", _("starting"));
-
-				d.timeLastProgress = Utils.getTimestamp();
-				d.state = RUNNING;
-
-				if (inProgressList.indexOf(d) == -1) {
-					inProgressList.push(new inProgressElement(d));
-					d.timeStart = Utils.getTimestamp();
-				}
-				
-				if (!d.isStarted) {
-					d.isStarted = true;
-					Debug.dump("Let's start " + d.fileName);
-				} else {
-					Debug.dump("Let's resume " + d.fileName + ": " + d.partialSize);
-				}
-				d.resumeDownload();
+	try {
+		for (var i = 0; i < downloadList.length && inProgressList.length < Prefs.maxInProgress; ++i) {
+			if (!downloadList[i].is(QUEUED)) {
+				continue;
 			}
-		} catch(ex){
-			Debug.dump("startNextDownload():", ex);
+			var d = downloadList[i];
+
+			d.setTreeCell("status", _("starting"));
+
+			d.timeLastProgress = Utils.getTimestamp();
+			d.state = RUNNING;
+
+			if (inProgressList.indexOf(d) == -1) {
+				inProgressList.push(new inProgressElement(d));
+				d.timeStart = Utils.getTimestamp();
+			}
+
+			if (!d.isStarted) {
+				d.isStarted = true;
+				Debug.dump("Let's start " + d.fileName);
+			} else {
+				Debug.dump("Let's resume " + d.fileName + ": " + d.partialSize);
+			}
+			d.resumeDownload();
 		}
+	} catch(ex){
+		Debug.dump("startNextDownload():", ex);
 	}
+}
 
 function Download(d, c, headerHack) {
-	
+
 	this.d = d;
 	this.c = c;
 	this.isHeaderHack = headerHack;
 	var uri = d.urlManager.getURL().url;
 	var referrer = d.refPage;
-	
+
 	this._chan = this._ios.newChannelFromURI(this._ios.newURI(uri, null,null));
 	var r = Ci.nsIRequest;
 	this._chan.loadFlags = r.LOAD_NORMAL | r.LOAD_BYPASS_CACHE;
@@ -1216,7 +1213,7 @@ function Download(d, c, headerHack) {
 			http.referrer = referrer;
 		}
 		catch (ex) {
-		
+
 		}
 	}
 	this.c.isRunning = true;
@@ -1236,9 +1233,9 @@ Download.prototype = {
 		Ci.nsIRequestObserver,
 		Ci.nsIProgressEventSink
 	],
-	
+
 	cantCount: 0,
-	
+
 	QueryInterface: function(iid) {
 			if (this._interfaces.some(function(i) { return iid.equals(i); })) {
 				return this;
@@ -1266,7 +1263,7 @@ Download.prototype = {
 	getInterface: function(iid) {
 		return this.QueryInterface(iid);
 	},
-	
+
 	get authPrompter() {
 		try {
 			var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
@@ -1310,7 +1307,7 @@ Download.prototype = {
 			aPwd
 		);
 	},
-	
+
 	// nsIStreamListener
   onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
 		//Debug.dump("DA " + aCount);
@@ -1325,7 +1322,7 @@ Download.prototype = {
 			this.d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
 		}
 	},
-	
+
 	//nsIRequestObserver
 	onStartRequest: function(aRequest, aContext) {
 		Debug.dump('StartRequest');
@@ -1363,9 +1360,8 @@ Download.prototype = {
 				d.setTreeCell("dir", d.dirSave);
 				return;
 			}
-		
+
 			if (chan.responseStatus >= 400) {
-				// se si tratta di errore >= 400 blocchiamo e basta
 				d.fail(
 					_("error", [chan.responseStatus]),
 					_("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]) + " " + _("sra", [chan.responseStatus]) + ": " + chan.responseStatusText,
@@ -1374,7 +1370,7 @@ Download.prototype = {
 				sessionManager.save(d);
 				return;
 			}
-			
+
 			// not partial content altough we are multi-chunk
 			if (chan.responseStatus != 206 && c.end != 0) {
 				Debug.dump(d.fileName + ": Server returned a " + chan.responseStatus + " response instead of 206... Normal mode");
@@ -1502,7 +1498,6 @@ Download.prototype = {
 					}
 					$(d.treeID).childNodes[0].childNodes[treeCells["url"]].setAttribute('src', d.icon);
 
-					// aggiungiamo le opzioni di renaming a destinationName
 					d.destinationName = d.buildFromMask(false, d.mask);
 				}
 
@@ -1517,18 +1512,17 @@ Download.prototype = {
 				if (this.url != aRequest.URI.spec) {
 					d.urlManager.replace(this.url, new DTA_URL(aRequest.URI.spec, visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset));
 				}
-				
+
 				if (d.isResumable && d.totalSize > 2 * MIN_CHUNK_SIZE && d.maxChunks > 1) {
 					d.resumeDownload();
 				}
 				else {
-					// altrimenti il chunk di prova diventa quello definitivo
 					Debug.dump(d.fileName + ": Multipart downloading is not needed/possible. isResumable = " + d.isResumable);
 					d.maxChunks = 1;
 					c.end = d.totalSize - 1;
 				}
 				this.isHeaderHack = false;
-				
+
 			} else {
 				Debug.dump(d.fileName + ": Chunk " + c.start + "-" + + c.end + " started");
 			}
@@ -1549,11 +1543,11 @@ Download.prototype = {
 	},
 	onStopRequest: function(aRequest, aContext, aStatusCode) {
 		Debug.dump('StopRequest');
-	
+
 		// shortcuts
 		var c = this.c;
 		c.close();
-		
+
 		var d = this.d;
 
 		// update flags and counters
@@ -1643,7 +1637,7 @@ Download.prototype = {
 		// refresh GUI
 		popup();
 	},
-	
+
 	// nsIProgressEventSink
   onProgress: function(aRequest, aContext, aProgress, aProgressMax) {
 		//Debug.dump('Progress ' + aProgress + "/" + aProgressMax);
@@ -1674,13 +1668,13 @@ Download.prototype = {
 						//d.setPaused();
 						return;
 					}
-					
+
 					d.setTreeProgress("inprogress", Math.round(d.partialSize / d.totalSize * 100));
 					d.setTreeCell("percent", Math.round(d.partialSize / d.totalSize * 100) + "%");
 				}
 				else {
 					d.setTreeCell("percent", "???");
-					d.setTreeCell("status", _("downloading"));								
+					d.setTreeCell("status", _("downloading"));
 				}
 				d.setTreeCell("size", d.createDimensionString());
 			}
@@ -1802,8 +1796,8 @@ function startnewDownloads(notQueue, download) {
 	var numbefore = tree.view.rowCount - 1;
 	const DESCS = ['description', 'ultDescription'];
 	var startDate = new Date();
-	
-	
+
+
 	for (var i=0; i<download.length; i++) {
 		var e = download[i];
 
@@ -1994,9 +1988,6 @@ function makeNumber(rv, digits) {
 	return rv;
 }
 
-// ---------* Parte relativa a pause, resume, cancel e context in generale *----------
-
-//--> disabilita le voci nella context non applicabili ai file selezionati
 function popup() {
 try {
 	var objects = new Array();
@@ -2036,18 +2027,14 @@ try {
 
 		if (!d || typeof(d) != "object") continue;
 
-		// se non e' cancellato, non e' in pausa, non e' completato,
-		// e se e' un file e' gia' iniziato
 		if ((d.is(RUNNING) && d.isResumable) || d.is(QUEUED)) {
 			$("pause", "toolpause").forEach(enableObj);
 		}
 
-		// se non e' cancellato, e' in pausa, non e' completato,
-		// e se e' un file e' gia' iniziato
 		if (!d.is(RUNNING, QUEUED, COMPLETE)) {
 			$("play", "toolplay").forEach(enableObj);
 		}
-		
+
 		if (!d.is(CANCELED)) {
 			$("cancel", "toolcancel").forEach(enableObj);
 		}
@@ -2055,7 +2042,7 @@ try {
 		if (d.is(COMPLETE)) {
 			$('folder', 'launch', 'delete').forEach(enableObj);
 		}
-		
+
 		if (!d.is(CANCELED, COMPLETE) && (!d.is(RUNNING) || d.isResumable)) {
 			if (d.activeChunks > 1) {
 				enableObj($("removechunk"));
@@ -2106,7 +2093,6 @@ try {
 } catch(e) {Debug.dump("pauseResumeReq()", e)}
 }
 
-//--> attivato dal click su context o toolbar
 function cancelPopup() {
 	var sel = tree.view.selection;
 	var rangeCount = sel.getRangeCount();
@@ -2115,9 +2101,7 @@ function cancelPopup() {
 		var start = {};
 		var end = {};
 		tree.view.selection.getRangeAt(i,start,end);
-		// ciclo gli elementi selezionati
 		for(var c=end.value; c>=start.value; c--) {
-			// se e' effettivamente da cancellare
 			downloadList[c].cancel();
 		}
 	}
@@ -2126,14 +2110,12 @@ function cancelPopup() {
 function removeFromList() {
 	var index = -1;
 	if (arguments.length) {
-		// multi-delete
 		if (arguments[0] instanceof Array) {
 
 			var dellist = arguments[0];
-			// sort desc
 			dellist.sort(function(a,b) { return b - a; });
-			
-			sessionManager.beginUpdate();			
+
+			sessionManager.beginUpdate();
 			dellist.forEach(removeElement);
 			sessionManager.endUpdate();
 
@@ -2142,8 +2124,7 @@ function removeFromList() {
 		}
 		index = arguments[0];
 	};
-	
-	// remove selection
+
 	if (index < 0) {
 		var start = {}, end = {}, rangeCount = tree.view.selection.getRangeCount();
 		var list = new Array();
@@ -2231,7 +2212,7 @@ function moveTop(top) {
 /*	try {
 
 		var ids = [];
-		
+
 		var rangeCount = tree.view.selection.getRangeCount();
 		for (var i = 0; i < rangeCount; ++i) {
 				start = {};	end = {};
@@ -2246,7 +2227,7 @@ function moveTop(top) {
 		if (top) {
 			ids.reverse();
 			ids.forEach(function(ex) {
-		
+
 	} catch(ex) {
 		Debug.dump("moveTop():", ex);
 	}*/
@@ -2363,23 +2344,23 @@ function updateSpeedCanvas() { try {
 	var boxFillStyle = Graphics.createInnerShadowGradient(ctx, 30, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
 	var boxStrokeStyle = Graphics.createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
 	var graphFillStyle = Graphics.createVerticalGradient(ctx, 23, "#FF8B00", "#FFDF38");
-	
+
 	ctx.clearRect(0,0,300,50);
 	ctx.save();
 		ctx.translate(.5, .5);
-	
+
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = boxStrokeStyle;
 		ctx.fillStyle = boxFillStyle;
-		
+
 		// draw container chunks back
 		ctx.fillStyle = boxFillStyle;
 		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 5);
 		ctx.fill();
-		
-		
+
+
 		var step = Math.round(300/30);
-		
+
 		var maxH = 0;
 		var minH = 1/0; // Infinity
 		for (var i=0; i<file.speeds.length; i++) {
@@ -2394,56 +2375,56 @@ function updateSpeedCanvas() { try {
 			for (var i=0; i<file.speeds.length; i++)
 				s.push(Math.round(u*(file.speeds[i] - minH)));
 		}
-		
+
 		var passes = [
 			{ x:4, y:0, f:Graphics.createVerticalGradient(ctx, 23, "#EADF91", "#F4EFB1") },
 			{ x:2, y:0, f:Graphics.createVerticalGradient(ctx, 23, "#DFD58A", "#D3CB8B") },
 			{ x:1, y:0, f:Graphics.createVerticalGradient(ctx, 23, "#D0BA70", "#DFCF6F") },
 			{ x:0, y:0, f:graphFillStyle, s:Graphics.createVerticalGradient(ctx, 23, "#F98F00", "#FFBF37") }
 		];
-		
+
 		if (file.speeds.length>1) {
 			ctx.save();
 				ctx.clip();
-	
+
 				for (var i=0; i<passes.length; i++) {
 					ctx.fillStyle = passes[i].f;
 					var y = 30+passes[i].y;
 					var x = passes[i].x + 0.5;
-					
+
 					ctx.beginPath();
-					
+
 					ctx.moveTo(x, y);
-					
+
 					y = y - s[0];
 					ctx.lineTo(x, y);
-					
+
 					var slope = (s[1]-s[0]) / step;
 					x = x + step*.7;
 					y = y - slope*(step*.7);
 					ctx.lineTo(x, y);
-					
+
 					for (var j=1; j<s.length-1; j++) {
 						x = x + step*.3;
 						y = y - slope*(step*.3);
-						
+
 						slope = (s[j+1]-s[j]) / step;
 						x = x + step*.3;
 						y = y - slope*(step*.3);
 						ctx.quadraticCurveTo(step*j, 30 + passes[i].y - s[j], x, y);
-						
+
 						x = x + step*.4;
 						y = y - slope*(step*.4);
 						ctx.lineTo(x, y);
 					}
-					
+
 					x = x + step*.3;
 					y = y - slope*(step*.3);
 					ctx.lineTo(x, y);
-					
+
 					ctx.lineTo(x, 30);
 					ctx.fill();
-					
+
 					if (passes[i].s) {
 						ctx.strokeStyle = passes[i].s;
 						ctx.stroke();
@@ -2453,7 +2434,7 @@ function updateSpeedCanvas() { try {
 		}
 		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 3);
 		ctx.stroke();
-		
+
 	ctx.restore();
 
 	setTimeout("updateSpeedCanvas()", Check.frequencyRefresh);
@@ -2483,40 +2464,40 @@ function updateChunkCanvas() {
 		{ x:1, f: Graphics.createInnerShadowGradient(ctx, 30, "#8E8746", "#B0A359", "#8E8746", "#CACB96") },
 		{ x:0, f: chunkFillStyle, s:chunkFillStyle }
 	];
-	
+
 	try {
 	// clear all
 	ctx.clearRect(0,0,300,50);
 	ctx.save();
 		ctx.translate(.5, .5);
-		
+
 		// draw container chunks back
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = boxStrokeStyle;
 		ctx.fillStyle = boxFillStyle;
 		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 5);
 		ctx.fill();
-		
+
 		var b = [];
 		if (file.is(COMPLETE)) {
 			b.push({
-				s: 0, 
+				s: 0,
 				w: 300
 			});
 		} else if (file.is(CANCELED)) {
-			
+
 		} else if (file.isStarted) {
 			file.chunks.forEach(
 				function(c) {
 					var w = Math.ceil(c.written / file.totalSize * 300);
 					b.push({
-						s: Math.ceil(c.start / file.totalSize * 300), 
+						s: Math.ceil(c.start / file.totalSize * 300),
 						w: w
 					});
 				}
 			);
 		}
-		
+
 		ctx.save();
 			ctx.clip();
 			for (var i=0; i<b.length; i++) {
@@ -2533,26 +2514,26 @@ function updateChunkCanvas() {
 				}
 			}
 		ctx.restore();
-		
+
 		// draw container chunks border
 		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 5);
 		ctx.stroke();
-	
+
 		// draw progress back
 		ctx.translate(0, 32);
 		ctx.fillStyle = partialBoxFillStyle;
 		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 8, 3);
 		ctx.fill();
-	
+
 		// draw progress
 		ctx.fillStyle = partialFillStyle;
 		Graphics.makeRoundedRectPath(ctx, 0, 0, Math.ceil(file.partialSize / file.totalSize * 300), 8, 3);
 		ctx.fill();
-	
+
 		// draw progress border
 		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 8, 3);
 		ctx.stroke();
-	
+
 	ctx.restore();
 
 	setTimeout("updateChunkCanvas()", Check.frequencyUpdateChunkGraphs);
