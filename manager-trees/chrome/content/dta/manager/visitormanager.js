@@ -74,7 +74,7 @@ Visitor.prototype = {
 				break;
 				case 'last-modified':
 					try {
-						this.time = getTimestamp(aValue);
+						this.time = Utils.getTimestamp(aValue);
 					}
 					catch (ex) {
 						Debug.dump("gts", ex);
