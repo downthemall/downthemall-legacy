@@ -1,5 +1,9 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
+#renamingbox {
+	min-width: 200px;
+}
+
 caption {
 	font-weight: bold;
 }
@@ -9,7 +13,7 @@ caption {
 	color: gray;
 }
 
-toolbox, toolbox * {
+toolbox, toolbox toolbar {
 	background: white;
 }
 
@@ -35,27 +39,30 @@ toolbox, toolbox * {
 
 #views toolbarbutton[selected="true"], #views toolbarbutton[selected="true"] * {
 	font-weight: bold;
-	background-color: #eef;
+}
+
+#views toolbarbutton[selected="true"] {
+	background: url("chrome://dta/skin/select/tabback.png");
 }
 
 #viewlinks {
-	-moz-image-region: rect(0px,49px,24px,25px);
+	-moz-image-region: rect(0px,50px,24px,25px);
 }
 #viewlinks:hover {
-	-moz-image-region: rect(0px,24px,24px,0px);
+	-moz-image-region: rect(0px,25px,24px,0px);
 }
 #viewlinks[disabled="false"] {
-	-moz-image-region: rect(0px,74px,24px,50px) !important;
+	-moz-image-region: rect(0px,75px,24px,50px) !important;
 }
 
 #viewpics {
-	-moz-image-region: rect(0px,99px,24px,75px);
+	-moz-image-region: rect(0px,125px,24px,100px);
 }
 #viewpics:hover {
-	-moz-image-region: rect(0px,124px,24px,100px);
+	-moz-image-region: rect(0px,100px,24px,75px);
 }
 #viewpics[disabled="true"] {
-	-moz-image-region: rect(0px,149px,24px,125px) !important;
+	-moz-image-region: rect(0px,150px,24px,125px) !important;
 }
 
 threechildren::-moz-tree-row {
@@ -71,8 +78,8 @@ treechildren::-moz-tree-checkbox {
 }
 
 treechildren::-moz-tree-checkbox(checked) {
-		/* css for checked cells */
-		list-style-image: url("chrome://dta/skin/select/check.png");
+	/* css for checked cells */
+	list-style-image: url("chrome://dta/skin/select/check.png");
 }
 
 treechildren::-moz-tree-row(manuallySelected) {

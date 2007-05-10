@@ -4,6 +4,11 @@
 .closer {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#closebox);
 }
+
+.closer .childrenbox {
+	margin-left: 13px;
+}
+
 .closer caption {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#closebox-caption);
 }
@@ -19,12 +24,12 @@
 .closer caption .caption-icon {
 	height: 9px;
 	width: 9px;
-	background: transparent url("chrome://global/skin/tree/twisty-open.png") no-repeat center center;
+	background: transparent url("chrome://dta/skin/common/twisty-clsd.png") no-repeat center center;
 	-moz-margin-start: 1px;
 	-moz-margin-end: 3px;
 }
 .closer[closed="true"] caption .caption-icon {
-	background-image: url("chrome://global/skin/tree/twisty-clsd.png");
+	background-image: url("chrome://dta/skin/common/twisty-open.png");
 }
 
 /* saveddropdown */
