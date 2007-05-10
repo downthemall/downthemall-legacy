@@ -2261,8 +2261,51 @@ var Mover = {
 		}	
 	},
 	up: function() {
+		try {
+			ids = this._selected;
+			var ti = $('downfigli');
+			ids.forEach(
+				function(id, i) {
+					if (id - i != 0) {
+						var tmp = downloadList[id];
+						downloadList[id] = downloadList[id - 1];
+						downloadList[id - 1] = tmp;
+						ti.insertBefore(tree.view.getItemAtIndex(id), tree.view.getItemAtIndex(--id));
+					}
+					tree.view.selection.rangedSelect(id , id, true);
+				}
+			);
+		}
+		catch (ex) {
+			Debug.dump("Mover::up", ex);
+		}		
 	},
 	down: function() {
+		try {
+			var ids = this._selected;
+			ids.reverse();
+			var ti = $('downfigli');
+			ids.forEach(
+				function(id, i) {
+					if (id + i != downloadList.length - 1) {
+						var tmp = downloadList[id];
+						downloadList[id] = downloadList[id + 1];
+						downloadList[id + 1] = tmp;
+						ti.insertBefore(tree.view.getItemAtIndex(id), tree.view.getItemAtIndex(++id).nextSibling);
+					}
+					tree.view.selection.rangedSelect(id , id, true);
+				}
+			);
+			// readjust view
+			var last = ids[0];
+			if (last != downloadList.length - 1) {
+				++last;
+			}
+			tree.treeBoxObject.ensureRowIsVisible(last);
+		}
+		catch (ex) {
+			Debug.dump("Mover::down", ex);
+		}		
 	}
 };
 
