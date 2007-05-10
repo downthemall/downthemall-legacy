@@ -36,3 +36,20 @@
 saveddropdown {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#saveddropdown);
 }
+
+maskbutton toolbarbutton {
+	list-style-image: url("chrome://dta/skin/common/mask.png");
+	-moz-appearance: none !important;
+	border: none!important;
+	padding: 2px 0px!important;
+	margin: 0px!important;
+	-moz-image-region: rect(0px,48px,21px,24px) !important;
+}
+
+maskbutton toolbarbutton:hover {
+	-moz-image-region: rect(0px,24px,21px,0px) !important;
+}
+
+maskbutton toolbarbutton:active {
+	-moz-image-region: rect(0px,72px,21px,48px) !important;
+}

@@ -81,9 +81,7 @@
 				</popup>
 			</popupset>
 			<toolbarbutton
-				image="chrome://dta/skin/common/mask.png"
 				popup="maskPopup"
-				style="padding:4px 3px 4px 5px;"
 				tooltiptext="&mask.open.tip;"
 			/>
 		</xbl:content>
