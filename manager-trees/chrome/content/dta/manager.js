@@ -406,8 +406,6 @@ downloadElement.prototype = {
 	isPassed: false,
 	isRemoved: false,
 
-	isFirst: false,
-
 	fileManager: null,
 	activeChunks: 0,
 	maxChunks: null,
@@ -850,9 +848,6 @@ downloadElement.prototype = {
 			Debug.dump(this.fileName + ": canceled");
 			this.visitors = new VisitorManager();
 
-			if (this.isFirst) {
-				Check.setFirstInQueue();
-			}
 			if (message == "" || !message) {
 				message = _("canceled");
 			}
@@ -995,12 +990,9 @@ DTA_include('chrome://dta/content/dta/manager/alertservice.js');
 
 var Check = {
 	lastCheck: 0,
-	lastDownloads: -1,
-	haveToCheck: true,
 	timerRefresh: 0,
 	timerCheck: 0,
 	isClosing: false,
-	firstInQueue: -1,
 	frequencyRefresh: 1500,
 	frequencyCheck: 500,
 	frequencyUpdateChunkGraphs: 500,
@@ -1081,22 +1073,8 @@ var Check = {
 
 	checkDownloads: function() {try {
 		this.refreshDownloadedBytes();
+		startNextDownload();
 
-		// se il numero di download e' cambiato, controlla.
-		if (!this.haveToCheck && (this.lastDownloads != downloadList.length))
-			this.haveToCheck = true;
-
-		if (this.haveToCheck && inProgressList.length < Prefs.maxInProgress && !Check.isClosing) {
-			this.lastDownloads = downloadList.length;
-			if (Check.firstInQueue != -1)
-				this.startNextDownload();
-			else {
-				if (this.setFirstInQueue() == -1)
-					this.haveToCheck = false;
-				else
-					this.startNextDownload();
-			}
-		}
 		this.checkClose();
 
 		for (var i=0; i<inProgressList.length; i++) {
@@ -1172,84 +1150,39 @@ var Check = {
 		catch(ex) {
 			Debug.dump("checkClose():", ex);
 		}
-	},
-
-	setFirstInQueue: function() {try {
-
-	if (this.firstInQueue > downloadList.length-1) {
-		this.firstInQueue = -1;
-		return -1;
-	}
-	if (this.firstInQueue != -1) {
-		downloadList[this.firstInQueue].isFirst = false;
-		var oldInQueue = this.firstInQueue;
-		var ind = this.firstInQueue;
-		// until we find one..
-		while ((oldInQueue == this.firstInQueue)&&(ind <= downloadList.length-2)) {
-			ind++;
-			var dow = downloadList[ind];
-			if (dow.is(QUEUED) && !dow.hasToBeRedownloaded) {
-				this.firstInQueue = ind;
-				downloadList[this.firstInQueue].isFirst = true;
-				return ind;
-			}
-		}
-	} else {
-		for (var i = 0; i<downloadList.length; i++) {
-			var d = downloadList[i];
-			// se non e' cancellato, non e' in pausa, non e' gia' completato ed e' in coda che aspetta
-			if (d.is(QUEUED) && !d.hasToBeRedownloaded) {
-				this.firstInQueue = i;
-				downloadList[this.firstInQueue].isFirst = true;
-				return i;
-			}
-		}
-	}
-	} catch(e) {Debug.dump("setFirstInQueue():", e);}
-	this.firstInQueue = -1;
-	return -1;
-	},
-
-	startNextDownload: function () {try {
-
-		var i = this.firstInQueue;
-		if (i == -1) {
-			return;
-		}
-
-		var d = downloadList[i];
-
-		d.setTreeCell("status", _("starting"));
-
-		d.timeLastProgress = Utils.getTimestamp();
-		d.state = RUNNING;
-
-		var flagAdd = true;
-		for (var i = 0; i < inProgressList.length; ++i) {
-			if (inProgressList[i].d == d) {
-				flagAdd = false;
-				break;
-			}
-		}
-		if (flagAdd) {
-			inProgressList.push(new inProgressElement(d));
-			d.timeStart = Utils.getTimestamp();
-		}
-
-		// start stuff
-		if (!d.isStarted) {
-			d.isStarted = true;
-			Debug.dump("Let's start " + d.fileName);
-		} else {
-			Debug.dump("Let's resume " + d.fileName + ": " + d.partialSize);
-		}
-		d.resumeDownload();
-
-		this.setFirstInQueue();
-
-	} catch(e){Debug.dump("startNextDownload():", e);}
 	}
 }
+
+function startNextDownload() {
+		try {
+			for (var i = 0; i < downloadList.length && inProgressList.length < Prefs.maxInProgress; ++i) {
+				if (!downloadList[i].is(QUEUED)) {
+					continue;
+				}
+				var d = downloadList[i];
+
+				d.setTreeCell("status", _("starting"));
+
+				d.timeLastProgress = Utils.getTimestamp();
+				d.state = RUNNING;
+
+				if (inProgressList.indexOf(d) == -1) {
+					inProgressList.push(new inProgressElement(d));
+					d.timeStart = Utils.getTimestamp();
+				}
+				
+				if (!d.isStarted) {
+					d.isStarted = true;
+					Debug.dump("Let's start " + d.fileName);
+				} else {
+					Debug.dump("Let's resume " + d.fileName + ": " + d.partialSize);
+				}
+				d.resumeDownload();
+			}
+		} catch(ex){
+			Debug.dump("startNextDownload():", ex);
+		}
+	}
 
 function Download(d, c, headerHack) {
 	
@@ -1913,9 +1846,6 @@ function startnewDownloads(notQueue, download) {
 		}
 	}
 
-	Check.haveToCheck = true;
-
-	// porto in visibile i file che si stanno scaricando
 	var boxobject = tree.treeBoxObject;
 	boxobject.QueryInterface(Ci.nsITreeBoxObject);
 	if (download.length <= boxobject.getPageLength())
@@ -1924,10 +1854,6 @@ function startnewDownloads(notQueue, download) {
 		boxobject.scrollToRow(numbefore);
 
 	tree.view.selection.currentIndex = numbefore + 1;
-	if (numbefore == -1) {
-		Check.setFirstInQueue();
-		downloadList[0].isFirst = true;
-	}
 
 	try {
 		clearTimeout(Check.timerRefresh);
@@ -2149,14 +2075,12 @@ try {
 function pauseResumeReq(pauseReq) {
 try {
 	var rangeCount = tree.view.selection.getRangeCount();
-	var firstFlag = false;
 
 	for(var i=0; i<rangeCount; i++) {
 		var start = {};
 		var end = {};
 		tree.view.selection.getRangeAt(i,start,end);
 
-		// ciclo gli elementi selezionati
 		for(var c=start.value; c<=end.value; c++) {
 			var d = downloadList[c];
 			if (pauseReq) {
@@ -2165,25 +2089,15 @@ try {
 					d.setTreeCell("speed", "");
 					d.setTreeProgress("paused");
 
-					if (d.isFirst) Check.setFirstInQueue();
-
 					d.state = PAUSED;
 					d.setPaused();
 				}
 			} else {
-				// se e' effettivamente da resumare
 				if (d.is(PAUSED, CANCELED)) {
-					firstFlag = true;
 					d.state = QUEUED;
 					d.isPassed = false;
 					d.setTreeCell("status", _("inqueue"));
 					d.setTreeProgress("queued");
-				}
-				Check.haveToCheck = true;
-				if (((Check.firstInQueue == -1) || (Check.firstInQueue > c)) && firstFlag) {
-					if (Check.firstInQueue != -1) downloadList[Check.firstInQueue].isFirst = false;
-					Check.firstInQueue = c;
-					downloadList[c].isFirst = true;
 				}
 			}
 		}
@@ -2260,12 +2174,6 @@ function removeCompleted() {
 
 function removeElement(index) {
 	var d = downloadList[index];
-	if (d.isFirst) {
-		Check.setFirstInQueue();
-	}
-	else if (index < Check.firstInQueue) {
-		Check.firstInQueue--;
-	}
 	setRemoved(d);
 	sessionManager.deleteDownload(d);
 	downloadList.splice(index, 1);
@@ -2318,183 +2226,48 @@ function getInfo() {
 	}
 }
 
-//--> Richiamata dal context, muove la selezione corrente in cima o al fondo della tree
 function moveTop(top) {
-	try {
-		var start;
-		var end;
-		var datas = new Array();
-		var rangeCount = tree.view.selection.getRangeCount();
+	//XXX
+/*	try {
 
-		if (top) { // se top, ordino in maniera decrescente
-			for (var i=rangeCount-1; i>=0; i--) {
+		var ids = [];
+		
+		var rangeCount = tree.view.selection.getRangeCount();
+		for (var i = 0; i < rangeCount; ++i) {
 				start = {};	end = {};
 				tree.view.selection.getRangeAt(i, start, end);
-				for (var c=end.value; c>=start.value; c--) {
-					datas.push(c);
-				}
-			}
-		}	else {
-			for (var i=0; i<rangeCount; i++) {
-				start = {};	end = {};
-				tree.view.selection.getRangeAt(i, start, end);
-				for (var c=start.value; c<=end.value; c++) {
-					datas.push(c);
+				for (var c = start.value; c <= end.value; c++) {
+					ids.push(c);
 				}
 			}
 		}
-
 		tree.view.selection.clearSelection();
 
-		for (var i=0; i<datas.length; i++) {
-			var oldfirst = downloadList[Check.firstInQueue];
-			if (top == false)
-				var position = datas[i]-i;
-			else
-				var position = datas[i]-(-i);
-			var t = downloadList [position];
-			downloadList.splice(position, 1);
-			if (top==true)
-				downloadList.splice(0, 0, t);
-			else
-				downloadList.splice(downloadList.length, 0, t);
-
-			if (top) { // top
-				var d = downloadList[0];
-				if ((0 <= Check.firstInQueue)&& d.is(QUEUED)) {
-					d.isFirst = true;
-					oldfirst.isFirst = false;
-					Check.firstInQueue = 0;
-				}
-				else if (datas[i] > Check.firstInQueue && 0 <= Check.firstInQueue) Check.firstInQueue++;
-			}
-			else {
-				var beforePos = downloadList.length; // bottom
-				if (datas[i] == Check.firstInQueue) {
-					for (var dex = datas[i]; dex < beforePos; dex++) {
-						var d = downloadList[dex];
-						if (d.is(QUEUED)) {
-							d.isFirst = true;
-							oldfirst.isFirst = false;
-							Check.firstInQueue = dex;
-							break;
-						}
-					}
-				}
-				else if (datas[i]<Check.firstInQueue && beforePos > Check.firstInQueue )  {
-					Check.firstInQueue--;
-				}
-			}
-
-			if(beforePos<=(downloadList.length-1)) { // se non devo spostare l'elemento nell'ultima riga
-				var before = tree.view.getItemAtIndex(beforePos);
-				$("downfigli").insertBefore(tree.view.getItemAtIndex(position), before);
-				tree.view.selection.rangedSelect(beforePos, beforePos, true);
-			}
-			else {
-				$("downfigli").appendChild(tree.view.getItemAtIndex(position));
-				//$("downfigli").removeChild(tree.view.getItemAtIndex(datas[i]));
-				tree.view.selection.rangedSelect(beforePos-1, beforePos-1, true);
-			}
-
-		}
-	} catch(e) {
-		Debug.dump("moveTop():", e);
-	}
+		if (top) {
+			ids.reverse();
+			ids.forEach(function(ex) {
+		
+	} catch(ex) {
+		Debug.dump("moveTop():", ex);
+	}*/
 }
 
-//--> Richiamata dal context, muove di n posizioni la selezione corrente
-// pos < 0 equivale a spostare verso l'alto di pos posizioni
 function move(pos) {
-	try {
-		var start;
-		var end;
-		var datas = new Array();
-		var rangeCount = tree.view.selection.getRangeCount();
-
-		if (pos < 0) { // se si sale, ordino le posizioni in maniera crescente, se si scende decrescente
-			for (var i=0; i<rangeCount; i++) {
-				start = {};	end = {};
-				tree.view.selection.getRangeAt(i, start, end);
-				for (var c=start.value; c<=end.value; c++) {
-					datas.push(c);
-				}
-			}
-		}	else {
-			for (var i=rangeCount-1; i>=0; i--) {
-				start = {};	end = {};
-				tree.view.selection.getRangeAt(i, start, end);
-				for (var c=end.value; c>=start.value; c--) {
-					datas.push(c);
-				}
-			}
-		}
-
-		tree.view.selection.clearSelection();
-
-		for (var i=0; i<datas.length; i++) {
-			var oldfirst = downloadList[Check.firstInQueue];
-			var t = downloadList[datas[i]];
-			downloadList.splice(datas[i], 1);
-			downloadList.splice(datas[i] + pos, 0, t);
-
-			if (datas[i] + pos < 0) break;
-			if (pos < 0) { // se si sale
-				var beforePos = datas[i] + pos;
-				var d = downloadList[beforePos];
-				if ((beforePos <= Check.firstInQueue)&&d.is(QUEUED)) {
-					oldfirst.isFirst = false;
-					Check.firstInQueue = beforePos;
-					downloadList[beforePos].isFirst = true;
-				}
-				else if (datas[i] > Check.firstInQueue && beforePos <= Check.firstInQueue) Check.firstInQueue++;
-			}
-			else {
-				var beforePos = datas[i] + pos + 1; // se si scende
-				if (datas[i] == Check.firstInQueue) {
-					for (var dex = datas[i]; dex < beforePos; dex++) {
-						var d = downloadList[dex];
-						if (d.is(QUEUED)) {
-							oldfirst.isFirst = false;
-							Check.firstInQueue = dex;
-							d.isFirst = true;
-							break;
-						}
-					}
-				}
-				else
-				if ( datas[i]<Check.firstInQueue && beforePos > Check.firstInQueue ) Check.firstInQueue--;
-			}
-
-			if(beforePos<=(downloadList.length-1)) { // se non devo spostare l'elemento nell'ultima riga
-				var before = tree.view.getItemAtIndex(beforePos);
-				$("downfigli").insertBefore(tree.view.getItemAtIndex(datas[i]), before);
-			}
-			else {
-				$("downfigli").appendChild(tree.view.getItemAtIndex(datas[i]));
-				//$("downfigli").removeChild(tree.view.getItemAtIndex(datas[i]));
-			}
-			tree.view.selection.rangedSelect(datas[i] + pos, datas[i] + pos, true);
-		}
-	}
-	catch(e) {Debug.dump("move():", e);}
+	//XXX
 }
 
 DTA_include('chrome://dta/content/dta/manager/filehandling.js');
 
-//--> Richiamata dal context, seleziona tutto
 function selectAll() {
 	tree.view.selection.selectAll();
 }
 
-//--> Richiamata dal context, inverte la selezione
 function selectInv() {
 	for (var i = 0, e = tree.view.rowCount; i < e; ++i) {
 		tree.view.selection.toggleSelect(i);
 	}
 }
 
-//--> Richiamata dal context, aumenta o diminuisce di uno il numero di chunks
 function addChunk(add) {
 	var rangeCount = tree.view.selection.getRangeCount();
 
@@ -2503,7 +2276,6 @@ function addChunk(add) {
 		var end = {};
 		tree.view.selection.getRangeAt(i,start,end);
 
-		// ciclo gli elementi selezionati
 		for (var c = start.value; c <= end.value; ++c) {
 			if (!add && downloadList[c].maxChunks > 1) {
 				downloadList[c].maxChunks--;
