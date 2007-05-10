@@ -69,14 +69,13 @@ var Stats = {
 DTA_include('chrome://dta/content/dta/manager/urlmanager.js');
 DTA_include('chrome://dta/content/dta/manager/visitormanager.js');
 
-var chunkElement = function(start, end, d) {
-	//Debug.dump('ChunkElement: ' + start + "/" + end);
+var Chunk = function(start, end, d) {
 	this._start = start;
 	this.end = end;
 	this.parent = d;
 }
 
-chunkElement.prototype = {
+Chunk.prototype = {
 	next: -1,
 	previous: -1,
 	isRunning: false,
@@ -95,14 +94,14 @@ chunkElement.prototype = {
 	get total() {
 		return this._total;
 	},
-	get size() {
+	get written() {
 		return this._written;
 	},
 	get remainder() {
 		return this._total - this._written;
 	},
 	get complete() {
-		return this._total == this.written;
+		return this._total == this._written;
 	},
 	close: function() {
 		this.isRunning = false;
@@ -135,7 +134,7 @@ chunkElement.prototype = {
 						// no-op
 					}
 				}
-				seekable.seek(0x00, this.start);
+				seekable.seek(0x00, this.start + this.written);
 				bufSize = Math.floor(MAX_BUFFER_SIZE / Prefs.maxChunks);
 				if (bufSize > 4096) {
 					this._outStream = Cc['@mozilla.org/network/buffered-output-stream;1'].createInstance(Ci.nsIBufferedOutputStream);
@@ -150,7 +149,7 @@ chunkElement.prototype = {
 				bytes = aCount;
 			}
 			if (!bytes) {
-				Debug.dump(aCount + " - " + this.start + " " + this.end + " " + this.size + " " + this.remainder + " ");
+				Debug.dump(aCount + " - " + this.start + " " + this.end + " " + this.written + " " + this.remainder + " ");
 				return 0;
 			}
 			if (bytes < 0) {
@@ -479,7 +478,7 @@ downloadElement.prototype = {
 	refreshPartialSize: function(){
 		var size = 0;
 		for (var i = 0; i<this.chunks.length; i++)
-			size += this.chunks[i].size;
+			size += this.chunks[i].written;
 		this.partialSize = size;
 		return size;
 	},
@@ -504,7 +503,7 @@ downloadElement.prototype = {
 		return 0;
 	},
 
-	moveCompleted: function(file) {
+	moveCompleted: function() {
 		Debug.dump("mc");
 		if (this.is(CANCELED)) {
 			return;
@@ -513,7 +512,7 @@ downloadElement.prototype = {
 		try {
 			var destination = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 			destination.initWithPath(this.dirSave);
-			Debug.dump(this.fileName + ": Move " + file.path + " to " + this.dirSave + this.destinationName);
+			Debug.dump(this.fileName + ": Move " + this.tmpFile.path + " to " + this.dirSave + this.destinationName);
 
 			if (!destination.exists()) {
 				destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
@@ -524,7 +523,7 @@ downloadElement.prototype = {
 				new Decompressor(this);
 			}
 			else {
-				file.moveTo(destination, this.destinationName);
+				this.tmpFile.clone().moveTo(destination, this.destinationName);
 				this.finishDownload(null);
 			}
 		}
@@ -890,10 +889,13 @@ downloadElement.prototype = {
 	},
 
 	resumeDownload: function () {
-	
-		function downloadChunk(download, start, end, header) {
-			var chunk = new chunkElement(start, end, download);
+
+		function downloadNewChunk(download, start, end, header) {
+			var chunk = new Chunk(start, end, download);
 			download.chunks.push(chunk);
+			downloadChunk(download, chunk, header);
+		}	
+		function downloadChunk(download, chunk, header) {
 			chunk.isRunning = true;
 			download.state = RUNNING;
 			chunk.download = new Download(download, chunk, header);
@@ -905,7 +907,7 @@ downloadElement.prototype = {
 			}
 			download.setTreeCell("parts", 	(++download.activeChunks) + "/" + download.maxChunks);
 		}
-	
+		
 		try {
 			if (!this.maxChunks) {
 				this.maxChunks = Prefs.maxChunks;
@@ -920,14 +922,27 @@ downloadElement.prototype = {
 			
 			// we didn't load up anything so let's start the main chunk (which will grab the info)
 			if (this.chunks.length == 0) {
-				downloadChunk(this, 0, 0, true);
+				downloadNewChunk(this, 0, 0, true);
 				return false;
 			}
 			
 			// start some new chunks
+			var paused = this.chunks.filter(
+				function (chunk) {
+					return !chunk.isRunning && !chunk.complete;
+				}
+			);
 			while (this.activeChunks < this.maxChunks) {
-				// find biggest chunk
+			
+				// restart paused chunks
+				if (paused.length) {
+					downloadChunk(this, paused.shift());
+					rv = true;
+					continue;
+				}
+					
 				
+				// find biggest chunk
 				var biggest = null;
 				this.chunks.forEach(
 					function (chunk) {
@@ -942,8 +957,8 @@ downloadElement.prototype = {
 					break;
 				}
 				var end = biggest.end;
-				biggest.end = biggest.start + biggest.size + Math.floor(biggest.remainder / 2);
-				downloadChunk(this, biggest.end + 1, end);
+				biggest.end = biggest.start + biggest.written + Math.floor(biggest.remainder / 2);
+				downloadNewChunk(this, biggest.end + 1, end);
 				rv = true;
 			}
 
@@ -975,8 +990,6 @@ var downloadList = new Array();
 var inProgressList = new Array();
 
 DTA_include('chrome://dta/content/dta/manager/alertservice.js');
-
-// --------* Controlli di chiusura e avvio nuovi downloads *--------
 
 var Check = {
 	lastCheck: 0,
@@ -1260,7 +1273,7 @@ function Download(d, c, headerHack) {
 			var http = this._chan.QueryInterface(Ci.nsIHttpChannel);
 			//http.setRequestHeader('Accept-Encoding', 'none', false);
 			if (c.end > 0) {
-				http.setRequestHeader('Range', 'bytes=' + c.start + '-' + c.end, false);
+				http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + '-' + c.end, false);
 			}
 			if (typeof(referrer) == 'string') {
 				referrer = this._ios.newURI(referrer, null, null);
@@ -1271,6 +1284,7 @@ function Download(d, c, headerHack) {
 		
 		}
 	}
+	this.c.isRunning = true;
 	this._chan.asyncOpen(this, null);
 }
 Download.prototype = {
@@ -1684,7 +1698,7 @@ Download.prototype = {
 		// if download is complete
 		if (d.is(COMPLETE)) {
 			Debug.dump(d.fileName + ": Download is completed!");
-			d.moveCompleted(d.tmpFile);
+			d.moveCompleted();
 		}
 		else if (d.is(PAUSED) && Check.isClosing) {
 			if (!d.isRemoved) {
@@ -2738,7 +2752,7 @@ function updateChunkCanvas() {
 		} else if (file.isStarted) {
 			file.chunks.forEach(
 				function(c) {
-					var w = Math.ceil(c.size / file.totalSize * 300);
+					var w = Math.ceil(c.written / file.totalSize * 300);
 					b.push({
 						s: Math.ceil(c.start / file.totalSize * 300), 
 						w: w
