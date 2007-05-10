@@ -69,17 +69,16 @@ var Stats = {
 DTA_include('chrome://dta/content/dta/manager/urlmanager.js');
 DTA_include('chrome://dta/content/dta/manager/visitormanager.js');
 
-var Chunk = function(start, end, d) {
+var Chunk = function(download, start, end, written) {
+	// saveguard against null or strings and such
+	this._written = written > 0 ? written : 0;
 	this._start = start;
 	this.end = end;
-	this.parent = d;
+	this._parent = download;
 }
 
 Chunk.prototype = {
-	next: -1,
-	previous: -1,
 	isRunning: false,
-	chunkName: "",
 	imWaitingToRearrange: false,
 	get start() {
 		return this._start;
@@ -102,6 +101,9 @@ Chunk.prototype = {
 	},
 	get complete() {
 		return this._total == this._written;
+	},
+	get parent() {
+		return this._parent;
 	},
 	close: function() {
 		this.isRunning = false;
@@ -891,7 +893,7 @@ downloadElement.prototype = {
 	resumeDownload: function () {
 
 		function downloadNewChunk(download, start, end, header) {
-			var chunk = new Chunk(start, end, download);
+			var chunk = new Chunk(download, start, end);
 			download.chunks.push(chunk);
 			downloadChunk(download, chunk, header);
 		}	
@@ -1644,24 +1646,6 @@ Download.prototype = {
 			popup();
 			sessionManager.save(d);
 			Debug.dump("out2");
-			return;
-		}
-	
-		// check for corrupted ranges
-		if (d.isResumable && c.next!=-1 && c.end >= d.chunks[c.next].start) {
-			Debug.dump(d.fileName + ": Error on chunks range.. Redownload file in normal mode");
-			d.hasToBeRedownloaded = true;
-			d.redownloadIsResumable = false;
-			if (!d.is(RUNNING)) {
-				Debug.dump(d.fileName + ": All old chunks are finished, reDownload()");
-				d.reDownload();
-			}
-			else {
-				d.setPaused();
-			}
-			popup();
-			sessionManager.save(d);
-			Debug.dump("out3");
 			return;
 		}
 

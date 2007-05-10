@@ -58,21 +58,16 @@ var sessionManager = {
 			e.partialSize = d.partialSize;
 			e.totalSize = d.totalSize;
 		}
-
-		/*e.ranges = [];
+		
+		e.chunks = [];
 
 		if (!d.is(COMPLETE, CANCELED)) {
-			d.ranges.forEach(
-				function(r) {
-					e.ranges.push({start: r.start, end: r.end});
-				}
-			);
 			d.chunks.forEach(
 				function(c) {
-					e.ranges.push({start: c.start + c.size, end: c.end});
+					e.chunks.push({start: c.start, end: c.end, written: c.written});
 				}
 			);
-		}*/
+		}
 
 		var s = this._saveStmt;
 		if (d.dbID) {
@@ -180,43 +175,12 @@ var sessionManager = {
 				d.isStarted = d.partialSize != 0;
 
 				if (d.is(PAUSED)) {
-					/*var chunks = down.chunks;
-					for (var i = 0, e = chunks.length; i < e; ++i) {
-						var c = chunks[i];
-						var test = new FileFactory(c.path);
-						if (test.exists()) {
-							var i = d.chunks.length;
-							d.chunks.push(
-								new chunkElement(
-									c.start,
-									c.start + c.size - 1,
-									d
-								)
-							);
-							d.chunks[i].isRunning = false;
-							d.chunks[i].chunkSize = c.size;
-
-							d.chunks[i].previous = i - 1;
-							// adjusted below.
-							d.chunks[i].next = i + 1;
-
-							d.chunks[i].fileManager = test;
+					down.chunks.forEach(
+						function(c) {
+							d.chunks.push(new Chunk(d, c.start, c.end, c.written));
 						}
-						else if (d.chunks.length == 1) {
-							// only finished chunks get saved.
-							// one missing therefore means it already got joined
-							d.chunks[0].chunkSize += c.size;
-							d.chunks[0].end += c.size;
-							Debug.dump("sessionManager::load: missing chunk");
-						}
-					}
+					);
 					d.refreshPartialSize();
-
-					if (d.chunks.length > 0) {
-						// adjust the end.
-						d.chunks[d.chunks.length - 1].next = -1;
-						d.join = new joinListener(d);
-					}*/
 				}
 				else if (d.is(COMPLETE)) {
 					d.fileManager = new FileFactory(d.dirSave);
