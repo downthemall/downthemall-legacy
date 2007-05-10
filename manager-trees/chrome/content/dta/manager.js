@@ -1153,9 +1153,14 @@ var Check = {
 function startNextDownload() {
 	try {
 		for (var i = 0; i < downloadList.length && inProgressList.length < Prefs.maxInProgress; ++i) {
+			try {
 			if (!downloadList[i].is(QUEUED)) {
 				continue;
 			}
+			} catch (ex) {
+				alert(downloadList[i] + "\n" + i);
+			}
+
 			var d = downloadList[i];
 
 			d.setTreeCell("status", _("starting"));
@@ -2207,35 +2212,59 @@ function getInfo() {
 	}
 }
 
-function moveTop(top) {
-	//XXX
-/*	try {
-
-		var ids = [];
-
+var Mover = {
+	get _selected() {
+		var rv = [];
 		var rangeCount = tree.view.selection.getRangeCount();
 		for (var i = 0; i < rangeCount; ++i) {
 				start = {};	end = {};
 				tree.view.selection.getRangeAt(i, start, end);
 				for (var c = start.value; c <= end.value; c++) {
-					ids.push(c);
+					rv.push(c);
 				}
-			}
 		}
 		tree.view.selection.clearSelection();
-
-		if (top) {
+		return rv;
+	},
+	top: function() {
+		try {
+			var ids = this._selected;
 			ids.reverse();
-			ids.forEach(function(ex) {
-
-	} catch(ex) {
-		Debug.dump("moveTop():", ex);
-	}*/
-}
-
-function move(pos) {
-	//XXX
-}
+			var ti = $('downfigli');
+			ids.forEach(
+				function(id) {
+					downloadList.unshift(downloadList.splice(id, 1)[0]);
+					ti.insertBefore(tree.view.getItemAtIndex(id), ti.firstChild);
+					tree.view.selection.rangedSelect(0, 0, true);
+				}
+			);					
+		}
+		catch (ex) {
+			Debug.dump("Mover::top", ex);
+		}	
+	},
+	bottom: function() {
+		try {
+			var ids = this._selected;
+			var ti = $('downfigli');
+			ids.forEach(
+				function(id, i) {
+					id = id - i;
+					downloadList.push(downloadList.splice(id, 1)[0]);
+					ti.appendChild(tree.view.getItemAtIndex(id));
+					tree.view.selection.rangedSelect(downloadList.length - 1, downloadList.length - 1, true);
+				}
+			);
+		}
+		catch (ex) {
+			Debug.dump("Mover::bottom", ex);
+		}	
+	},
+	up: function() {
+	},
+	down: function() {
+	}
+};
 
 DTA_include('chrome://dta/content/dta/manager/filehandling.js');
 

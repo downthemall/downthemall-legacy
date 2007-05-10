@@ -52,12 +52,12 @@
 		<key id="kMacEsc" modifiers="accel" key="W" oncommand="cancelAll(true);"/>
 		<key id="enter" keycode="VK_RETURN" oncommand="FileHandling.openFile();"/>
 		<key id="sAll" modifiers="accel" key="A" oncommand="selectAll();"/>
-		<key id="kUp" modifiers="alt" keycode="VK_PAGE_UP" oncommand="move(-1);"/>
-		<key id="kDown" modifiers="alt" keycode="VK_PAGE_DOWN" oncommand="move(1);"/>
+		<key id="kUp" modifiers="alt" keycode="VK_PAGE_UP" oncommand="Mover.up();"/>
+		<key id="kDown" modifiers="alt" keycode="VK_PAGE_DOWN" oncommand="Mover.down();"/>
 		<key id="kCancel" keycode="VK_DELETE" oncommand="removeFromList(-1);"/>
 		<key id="kMacCancel" modifiers="meta" keycode="VK_BACK" oncommand="removeFromList(-1);"/>
-		<key id="kTop" modifiers="alt" keycode="VK_HOME" oncommand="moveTop(true);"/>
-		<key id="kBottom" modifiers="alt" keycode="VK_END" oncommand="moveTop(false);"/>
+		<key id="kTop" modifiers="alt" keycode="VK_HOME" oncommand="Mover.top();"/>
+		<key id="kBottom" modifiers="alt" keycode="VK_END" oncommand="Mover.bottom();"/>
 		<key id="kPause" modifiers="accel" key="P" oncommand="pauseResumeReq(true);"/>
 		<key id="kResume" modifiers="accel" key="R" oncommand="pauseResumeReq(false);"/>
 		<key id="kAdd" modifiers="accel" key="+" oncommand="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome,centerscreen,dialog,dependent');"/>
@@ -82,10 +82,10 @@
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="selectAll();" />
 			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="selectInv();" />
 			<menuseparator />
-			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" image="chrome://dta/skin/manager/movetop.png" oncommand="moveTop(true);" />
-			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" image="chrome://dta/skin/manager/moveup.png" oncommand="move(-1);" />
-			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" image="chrome://dta/skin/manager/movedown.png" oncommand="move(1);" />
-			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" image="chrome://dta/skin/manager/movebottom.png" oncommand="moveTop(false);" />
+			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" image="chrome://dta/skin/manager/movetop.png" oncommand="Mover.top();" />
+			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" image="chrome://dta/skin/manager/moveup.png" oncommand="Mover.up();" />
+			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" image="chrome://dta/skin/manager/movedown.png" oncommand="Mover.down();" />
+			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" image="chrome://dta/skin/manager/movebottom.png" oncommand="Mover.bottom();" />
 			<menuseparator />
 			<menu id="misc" class="menu-iconic" image="chrome://dta/skin/manager/misc.png" label="&misc.label;">
 				<menupopup>
@@ -126,10 +126,10 @@
 			<toolbarbutton label="&pause.label;" id="toolpause" onclick="pauseResumeReq(true);" tooltiptext="Pause downloads" />
 			<toolbarbutton label="&cancel.label;" id="toolcancel" onclick="cancelPopup();" tooltiptext="Cancel/Reset downloads" />
 			<spacer/>
-			<toolbarbutton label="&movetop.label;" id="toolmovetop"  onclick="moveTop(true);" />
-			<toolbarbutton label="&moveup.label;" id="toolmoveup" onclick="move(-1);"/>
-			<toolbarbutton label="&movedown.label;" id="toolmovedown" onclick="move(1);"/>
-			<toolbarbutton label="&movebottom.label;" id="toolmovebottom" onclick="moveTop(false);"  />
+			<toolbarbutton label="&movetop.label;" id="toolmovetop" onclick="Mover.top();" />
+			<toolbarbutton label="&moveup.label;" id="toolmoveup" onclick="Mover.up();"/>
+			<toolbarbutton label="&movedown.label;" id="toolmovedown" onclick="Mover.down();"/>
+			<toolbarbutton label="&movebottom.label;" id="toolmovebottom" onclick="Mover.bottom();"  />
 			<spacer/>
 			<toolbarbutton  id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
 			<spacer id="logo" flex="1" />
