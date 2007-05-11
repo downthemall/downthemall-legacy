@@ -25,12 +25,7 @@ caption {
 	font-weight: bold;
 }
 
-#filter {
-	content: 'Input filter here...';
-	color: gray;
-}
-
-toolbox, toolbox toolbar {
+toolbox, toolbox toolbar, toolbox toolbarbutton {
 	background: white;
 }
 
@@ -55,7 +50,7 @@ toolbox, toolbox toolbar {
 }
 
 #views toolbarbutton[selected="true"], #views toolbarbutton[selected="true"] * {
-	font-weight: bold;
+	font-weight: 600;
 }
 
 #views toolbarbutton[selected="true"] {
