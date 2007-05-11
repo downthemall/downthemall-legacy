@@ -316,9 +316,11 @@ function downloadElement(lnk, dir, num, desc, mask, refPage, tmpFile) {
 
 	if (typeof lnk == 'string') {
 		this.urlManager = new DTA_URLManager([new DTA_URL(lnk)]);
-	} else if (lnk instanceof DTA_URLManager) {
+	}
+	else if (lnk instanceof DTA_URLManager) {
 		this.urlManager = lnk;
-	} else {
+	}
+	else {
 		this.urlManager = new DTA_URLManager([lnk]);
 	}
 

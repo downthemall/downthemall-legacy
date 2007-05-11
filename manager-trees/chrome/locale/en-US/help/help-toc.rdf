@@ -8,9 +8,9 @@
         <li>
 					<Description ID="Select" nc:name="&makeselection;" nc:link="select.html"/>
 				</li>
-				<li>
-					<Description ID="Batches" nc:name="&batches;" nc:link="batches.html"/>
-				</li>
+        <li>
+					<Description ID="AddUrls" nc:name="&adding;" nc:link="adding.html"/>
+				</li>				
         <li>
 					<Description ID="Manager" nc:name="&manager;" nc:link="manager.html"/>
 				</li>
@@ -34,7 +34,20 @@
 		<nc:subheadings>
 			<Seq>
 				<li>
-					<Description ID="OneClick" nc:name="&help.shortcuts;" nc:link="select.html#shortcuts"/>
+					<Description ID="Select_Shortcuts" nc:name="&help.shortcuts;" nc:link="select.html#shortcuts"/>
+				</li>
+			</Seq>
+		</nc:subheadings>
+	</Description>
+	
+	<Description about="#AddUrls">
+		<nc:subheadings>
+			<Seq>
+				<li>
+					<Description ID="Batches" nc:name="&batches;" nc:link="batches.html"/>
+				</li>
+				<li>
+					<Description ID="Adding_Shortcuts" nc:name="&help.shortcuts;" nc:link="adding.html#shortcuts"/>
 				</li>
 			</Seq>
 		</nc:subheadings>
@@ -44,7 +57,7 @@
 		<nc:subheadings>
 			<Seq>
 				<li>
-					<Description ID="OneClick" nc:name="&help.shortcuts;" nc:link="manager.html#shortcuts"/>
+					<Description ID="Manager_Shortcuts" nc:name="&help.shortcuts;" nc:link="manager.html#shortcuts"/>
 				</li>
 			</Seq>
 		</nc:subheadings>
