@@ -73,7 +73,12 @@ toolbox {
 }
 
 #tooldonate {
-	background: url("chrome://dta/skin/manager/bardonate.png") no-repeat right top;
-	height: 51px;
+	background: url("chrome://dta/skin/manager/bardonate.png") top right;
 	min-width: 200px !important;
+}
+#tooldonate:hover {
+	background: url("chrome://dta/skin/manager/bardonatehover.png") top right;
+}
+#tooldonate:active {
+	background: url("chrome://dta/skin/manager/bardonateactive.png") top right;
 }
