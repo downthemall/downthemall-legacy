@@ -1,11 +1,13 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-toolbox, toolbox * {
-	background-color: white;
+toolbox {
+	border-width: 0px;
 }
 
 #tools {
-	height: 43px;
+	background: url("chrome://dta/skin/manager/barback.png") repeat-x;
+	border-width: 0px;
+	height: 51px;
 }
 #tools toolbarbutton {
 	-moz-image-region: rect(0px,51px,25px,26px);    
@@ -13,19 +15,29 @@ toolbox, toolbox * {
 	-moz-box-align: center !important;
 	-moz-appearance: none !important;
 	border: 0px hidden !important;
-	font-size: 85% !important;
+	margin-top: 2px;
+	width: 55px;
 }
+
 #tools toolbarbutton:hover {
-	-moz-image-region: rect(0px,25px,25px,0px);    
+	-moz-image-region: rect(0px,25px,25px,0px);
+}
+#tools toolbarbutton:active {
+	-moz-image-region: rect(-1px,25px,25px,0px);
 }
 #tools toolbarbutton[disabled="true"] {
 	-moz-image-region: rect(0px,77px,25px,52px) !important;    
 }
 #tools spacer {
-	min-width: 8px;
+	min-width: 5px;
+}
+#tools spacer.visible {
+	background: url("chrome://dta/skin/common/toolbarspacer.png") no-repeat 50% 11px;
+	min-width: 13px;
 }
 #tooladd {
 	list-style-image: url("chrome://dta/skin/manager/add26.png");
+	width: auto !important;
 }
 
 #toolplay {
@@ -61,10 +73,7 @@ toolbox, toolbox * {
 }
 
 #tooldonate {
-	display: none;
-	list-style-image: url("chrome://dta/skin/manager/donate.png");
-	-moz-image-region: rect(0px,67px,40px,0px) !important;    	
-}
-#tooldonate:hover {
-	-moz-image-region: rect(0px,135px,40px,68px) !important;    
+	background: url("chrome://dta/skin/manager/bardonate.png") no-repeat right top;
+	height: 51px;
+	min-width: 200px !important;
 }
