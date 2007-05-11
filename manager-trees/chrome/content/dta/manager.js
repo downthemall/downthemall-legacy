@@ -110,6 +110,9 @@ Chunk.prototype = {
 			this._outStream.close();
 			delete this._outStream;
 		}
+		if (this.parent.is(CANCELED)) {
+			this.parent.removeTmpFile();
+		}
 	},
 	_written: 0,
 	_outStream: null,
@@ -855,6 +858,8 @@ downloadElement.prototype = {
 			this.setTreeProgress("canceled");
 
 			this.setPaused();
+			
+			this.state = CANCELED;
 
 			if (this.is(COMPLETE)) {
 				Stats.completedDownloads--;
@@ -863,25 +868,28 @@ downloadElement.prototype = {
 				this.setPaused();
 			}
 			else {
+					this.removeTmpFile();
 					this.isPassed = true;
 			}
 
-			if (this.tmpFile.exists()) {
-				try {
-					this.tmpFile.remove(false);
-				}
-				catch (ex) {
-					Debug.dump("failed to remove the tmpFile", ex);
-				}
-			}
 			// gc
 			this.chunks = [];
 
-			this.state = CANCELED;
 			Check.checkClose();
 			popup();
 		} catch(ex) {
 			Debug.dump("cancel():", ex);
+		}
+	},
+	
+	removeTmpFile: function() {
+		if (this.tmpFile.exists()) {
+			try {
+				this.tmpFile.remove(false);
+			}
+			catch (ex) {
+				// no-op
+			}
 		}
 	},
 
@@ -1554,7 +1562,7 @@ Download.prototype = {
 		// shortcuts
 		var c = this.c;
 		c.close();
-
+		
 		var d = this.d;
 
 		// update flags and counters
@@ -2163,6 +2171,7 @@ function removeCompleted() {
 function removeElement(index) {
 	var d = downloadList[index];
 	setRemoved(d);
+	d.removeTmpFile();
 	sessionManager.deleteDownload(d);
 	downloadList.splice(index, 1);
 }
