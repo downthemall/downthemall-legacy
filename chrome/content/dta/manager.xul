@@ -132,7 +132,8 @@
 			<toolbarbutton label="&moveup.label;" id="toolmoveup" onclick="move(-1);"/>
 			<toolbarbutton label="&movedown.label;" id="toolmovedown" onclick="move(1);"/>
 			<toolbarbutton label="&movebottom.label;" id="toolmovebottom" onclick="moveTop(false);"  />
-			<spacer id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" flex="1" />
+			<spacer flex="1" />
+			<spacer id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
 		  </toolbar>
 		</toolbox>
 
