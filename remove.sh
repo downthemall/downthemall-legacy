@@ -1,1 +1,0 @@
-find . -name .svn -type d
