@@ -8,20 +8,20 @@
 
 #dta-button {
 	list-style-image: url("chrome://dta/skin/common/tools.png");
-	-moz-image-region: rect(0px,19px,25px,0px);
+	-moz-image-region: rect(0px,20px,25px,0px);
 }
 
 #dta-button:hover {
-	-moz-image-region: rect(0px,39px,25px,20px);
+	-moz-image-region: rect(0px,40px,25px,20px);
 }
 
 #dta-manager-button {
 	list-style-image: url("chrome://dta/skin/common/tools.png");
-	-moz-image-region: rect(0px,103px,24px,80px);
+	-moz-image-region: rect(0px,104px,24px,80px);
 }
 
 #dta-manager-button:hover {
-	-moz-image-region: rect(0px,127px,24px,104px);
+	-moz-image-region: rect(0px,130px,24px,104px);
 }
 
 toolbar[iconsize="small"] #dta-manager-button {
