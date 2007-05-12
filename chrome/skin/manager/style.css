@@ -5,9 +5,10 @@ toolbox {
 }
 
 #tools {
-	background: url("chrome://dta/skin/manager/barback.png") repeat-x;
+	background: url(chrome://dta/skin/manager/barback.png) repeat-x;
 	border-width: 0px;
 	height: 51px;
+	-moz-appearance: none !important;
 }
 #tools toolbarbutton {
 	-moz-image-region: rect(0px,51px,25px,26px);    
