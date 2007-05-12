@@ -75,7 +75,7 @@
 			<hbox flex="1">
 				<label value="&advancedpane.tempdir.label;" />
 				<textbox id="temp" preference="dtatemplocation" flex="1"/>
-				<toolbarbutton id="browse" oncommand="Advanced.browse();" image="chrome://dta/skin/common/browse.png"/>
+				<toolbarbutton id="browsedir" oncommand="Advanced.browse();" />
 			</hbox>
 		</groupbox>
 		

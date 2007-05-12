@@ -1,22 +1,5 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-#browsedir {
-	list-style-image: url("chrome://dta/skin/common/browse.png");
-	-moz-appearance: none !important;
-	border: none!important;
-	padding: 2px 0px!important;
-	margin: 0px!important;
-	-moz-image-region: rect(0px,48px,21px,24px) !important;
-}
-
-#browsedir:hover {
-	-moz-image-region: rect(0px,24px,21px,0px) !important;
-}
-
-#browsedir:active {
-	-moz-image-region: rect(0px,72px,21px,48px) !important;
-}
-
 #renamingbox {
 	min-width: 200px;
 }

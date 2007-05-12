@@ -85,7 +85,7 @@ var Advanced = {
 		$("temp").focus();
 	},
 	toggleTemp: function() {
-		$("temp").disabled = $("browse").disabled = !$("useTemp").checked;
+		$("temp").disabled = $("browsedir").disabled = !$("useTemp").checked;
 	}
 };
 
