@@ -102,7 +102,9 @@
 		</popup>
 		<tooltip id="t1" position="after_pointer" noautohide="true" onpopupshowing="return tooltipInfo(event);" onpopuphiding="stopCanvas();" style="width: 470px;" >
 			<vbox>
+				<label style="font-weight: bold; font-size: 105%" value="Download informations..."/>
 				<hbox>
+					<html:img src="moz-icon://prova.png" />
 					<vbox>
 						<label id="infoURLTitle" style="font-weight: bold; max-width: 160px;" value="&infoURLTitle.value;" />
 						<label id="infoDestTitle" style="font-weight: bold; max-width: 160px;" value="&infoDestTitle.value;" />

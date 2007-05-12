@@ -88,7 +88,7 @@
 				<label control="directory" id="destinationPath" value="&dest.caption;" />
 				<hbox flex="1">
 					<saveddropdown id="directory" preference="directory" flex="1" onchange="Dialog.check();"/>
-					<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" image="chrome://dta/skin/common/browse.png" style="padding:3px 2px 0px 3px;" tooltiptext="&browse.tip;" />
+					<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" tooltiptext="&browse.tip;" />
 				</hbox>
 			</row>
 			<row align="center">
