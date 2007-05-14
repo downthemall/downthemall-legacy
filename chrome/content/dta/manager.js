@@ -1399,12 +1399,20 @@ var inProgressList = new Array();
 
 var AlertService = {
 	_alerting: false,
-	_service: 
-		// not present in MacOS
-		('@mozilla.org/alerts-service;1' in Cc)?
-			Cc['@mozilla.org/alerts-service;1'].getService(Ci.nsIAlertsService):
-			null
-	,
+	_init: function() {
+		if ('@mozilla.org/alerts-service;1' in Cc && 'nsIAlertsService' in Ci) {
+			// some systems do not have this service
+			try {
+				this._service = Cc['@mozilla.org/alerts-service;1'].getService(Ci.nsIAlertsService);
+				makeObserver(this);
+			}
+			catch (ex) {
+				// no-op
+			}
+			return null;
+		}
+	},
+	_service: null,
 	show: function(title, msg, clickable, cookie) {
 		if (this._alerting || !this._service) {
 			return;
@@ -1438,7 +1446,7 @@ var AlertService = {
 		}
 	}
 };
-makeObserver(AlertService);
+AlertService._init();
 
 // --------* Controlli di chiusura e avvio nuovi downloads *--------
 
@@ -3999,4 +4007,5 @@ function updateChunkCanvas() {
 }
 
 function stopCanvas() {Prefs.currentTooltip=null;}
+
 
