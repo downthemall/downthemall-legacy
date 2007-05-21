@@ -78,7 +78,7 @@
 			<spacer width="10"/>
 			<toolbarbutton class="toolbarbuttonDown" label="&options.label;" id="toolprefs" onclick="loadOptions();" />
 			<spacer flex="1" style="min-width:15px" />
-			<toolbarbutton class="toolbarbuttonDown" id="tooldonate" onclick="openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
+			<toolbarbutton class="toolbarbuttonDown" id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
 			<spacer width="10"/>
 		  </toolbar>
 		</toolbox>
