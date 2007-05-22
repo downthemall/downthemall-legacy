@@ -12,7 +12,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 var defNumFilters = 7;
-var currentVersion = "0.9.9.8";
+var currentVersion = "0.9.9.10";
 
 function isNewer(version, current) {
 
