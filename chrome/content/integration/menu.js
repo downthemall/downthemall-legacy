@@ -92,7 +92,7 @@ var DTA_ContextOverlay = {
 			}
 			// if it's valid and it's new
 			// better double check :p
-			if (DTA_AddingFunctions.isLinkOpenable(src) && !(lnks[i].src in images)) {
+			if (DTA_AddingFunctions.isLinkOpenable(src) && !(src in images)) {
 				// add to array
 				var desc = '';
 				if (lnks[i].hasAttribute('alt')) {
