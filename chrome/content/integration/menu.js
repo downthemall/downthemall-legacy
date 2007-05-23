@@ -80,8 +80,19 @@ var DTA_ContextOverlay = {
 		}
 
 		for (var i = 0; i<lnks.length; ++i) {
+			var src = lnks[i].src;
+			if (!DTA_AddingFunctions.isLinkOpenable(src)) {
+				try {
+					src = DTA_AddingFunctions.composeURL(doc, src);
+				}
+				catch (ex) {
+					DTA_debug.dump("failed to compose: " + src, ex);
+					continue;
+				}
+			}
 			// if it's valid and it's new
-			if (DTA_AddingFunctions.isLinkOpenable(lnks[i].src) && !(lnks[i].src in images)) {
+			// better double check :p
+			if (DTA_AddingFunctions.isLinkOpenable(src) && !(lnks[i].src in images)) {
 				// add to array
 				var desc = '';
 				if (lnks[i].hasAttribute('alt')) {
@@ -90,7 +101,7 @@ var DTA_ContextOverlay = {
 					desc = this.trim(lnks[i].getAttribute('title'));
 				}
 				images[lnks[i].src] = {
-					'url': new DTA_URL(lnks[i].src, doc.characterSet),
+					'url': new DTA_URL(src, doc.characterSet),
 					'refPage': ref,
 					'description': desc
 				}
