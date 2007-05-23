@@ -395,8 +395,22 @@ var DTA_AddingFunctions = {
 			return ['http', 'https', 'ftp'].some(function(e) { return e == scheme; });
 		}
 		catch (ex) {
+			// no op!
 		}
 		return false;
+	},
+	
+	composeURL: function UM_compose(doc, rel) {
+		// find <base href>
+		var base = doc.location.href;
+		var bases = doc.getElementsByTagName('base');
+		for (var i = 0; i < bases.length; ++i) {
+			if (bases[i].hasAttribute('href')) {
+				base = bases[i].getAttribute('href');
+				break;
+			}
+		}
+		return this.ios.newURI(rel, doc.characterSet, this.ios.newURI(base, doc.characterSet, null)).spec;
 	},
 
 	saveSingleLink : function(turbo, url, referrer, description, mask) {
