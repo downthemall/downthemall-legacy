@@ -52,6 +52,7 @@ if (!Ci) {
 
 const MIN_CHUNK_SIZE = 204800; // 200kb
 const MAX_CHUNK_SIZE = 10485760; // 10MB
+const SPEED_COUNT = 25;
 
 var Prefs = {
 	// default values
@@ -521,6 +522,9 @@ downloadElement.prototype = {
 
 	get icon() {
 		return getIcon(this.fileName, 'metalink' in this);
+	},
+	get largeIcon() {
+		return getIcon(this.fileName, 'metalink' in this, 32);
 	},
 
 	imWaitingToRearrange: false,
@@ -1527,8 +1531,9 @@ var Check = {
 				// Refresh item speed
 				d.setTreeCell("speed", formatBytes(speed) + "/s");
 				d.speeds.push(speed);
-				if (d.speeds.length > 30)
-					d.speeds.splice(0, 1);
+				if (d.speeds.length > SPEED_COUNT) {
+					d.speeds.shift();
+				}
 
 				inProgressList[i].lastBytes = d.partialSize;
 			}
@@ -3742,35 +3747,35 @@ var sessionManager = {
 };
 
 function tooltipInfo(event) {
-try {
+	try {
 		var result;
-		var row = new Object;
-		var column = new Object;
-		var part = new Object;
+		var row = {};
 
 
 		var boxobject = tree.treeBoxObject;
 		boxobject.QueryInterface(Ci.nsITreeBoxObject);
-		boxobject.getCellAt(event.clientX, event.clientY, row, column, part);
+		boxobject.getCellAt(event.clientX, event.clientY, row, {}, {});
 
-		if (row.value == -1)
-				return false;
-
-		var arrayComp = Cc['@mozilla.org/supports-array;1'].createInstance();
-		var properties = arrayComp.QueryInterface(Ci.nsISupportsArray);
-		tree.view.getCellProperties(row, column, properties);
+		if (row.value == -1) {
+			return false;
+		}
 
 		var n = row.value;
-		$("infoURL").value = downloadList[n].urlManager.url;
-		$("infoDest").value = downloadList[n].dirSave + downloadList[n].destinationName;
+		var d = downloadList[n];
+		$("infoIcon").src = d.largeIcon;
+		$("infoURL").value = d.urlManager.url;
+		$("infoDest").value = d.dirSave + d.destinationName;
 
-		Prefs.currentTooltip = downloadList[n];
-		updateChunkCanvas();
+		Prefs.currentTooltip = d;
 		updateSpeedCanvas();
-
+		updateChunkCanvas();
+		
 		return true;
-} catch(e) { Debug.dump("tooltipInfo():", e); }
-return false;
+	}
+	catch(ex) {
+		Debug.dump("tooltipInfo():", ex);
+	}
+	return false;
 }
 
 var Graphics = {
@@ -3803,207 +3808,228 @@ var Graphics = {
 };
 
 
-function updateSpeedCanvas() { try {
-
+function updateSpeedCanvas() {
 	var file = Prefs.currentTooltip;
-	if (file==null) return;
-
-	var ctx = $("drawSpeed").getContext("2d");
-
-	var boxFillStyle = Graphics.createInnerShadowGradient(ctx, 30, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
-	var boxStrokeStyle = Graphics.createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
-	var graphFillStyle = Graphics.createVerticalGradient(ctx, 23, "#FF8B00", "#FFDF38");
-	
-	ctx.clearRect(0,0,300,50);
-	ctx.save();
+	if (!file) {
+		return false;
+	}
+	try {
+		// we need to take care about with/height
+		var canvas = $("speedCanvas");
+		var width = canvas.width = canvas.clientWidth;
+		var height = canvas.height = canvas.clientHeight;
+		var ctx = canvas.getContext("2d");
+		--width; --height;
+		
+		var boxFillStyle = Graphics.createInnerShadowGradient(ctx, height, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
+		var boxStrokeStyle = Graphics.createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
+		var graphFillStyle = Graphics.createVerticalGradient(ctx, height - 7, "#FF8B00", "#FFDF38");
+		
+		ctx.clearRect(0, 0, width, height);
+		ctx.save();
 		ctx.translate(.5, .5);
-	
+		
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = boxStrokeStyle;
 		ctx.fillStyle = boxFillStyle;
-		
+			
 		// draw container chunks back
 		ctx.fillStyle = boxFillStyle;
-		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 5);
+		Graphics.makeRoundedRectPath(ctx, 0, 0, width, height, 5);
 		ctx.fill();
-		
-		
-		var step = Math.round(300/30);
-		
-		var maxH = 0;
-		var minH = 1/0; // Infinity
-		for (var i=0; i<file.speeds.length; i++) {
-			if (file.speeds[i] > maxH) maxH = file.speeds[i];
-			if (file.speeds[i] < minH) minH = file.speeds[i];
-		}
-		var s = [];
-		if (maxH!=0) {
-			minH *= 0.3;
-			var u = 25/((maxH - minH)*1.1);
 
-			for (var i=0; i<file.speeds.length; i++)
-				s.push(Math.round(u*(file.speeds[i] - minH)));
-		}
+		var step = Math.floor(width / (SPEED_COUNT - 1));
 		
-		var passes = [
-			{ x:4, y:0, f:Graphics.createVerticalGradient(ctx, 23, "#EADF91", "#F4EFB1") },
-			{ x:2, y:0, f:Graphics.createVerticalGradient(ctx, 23, "#DFD58A", "#D3CB8B") },
-			{ x:1, y:0, f:Graphics.createVerticalGradient(ctx, 23, "#D0BA70", "#DFCF6F") },
-			{ x:0, y:0, f:graphFillStyle, s:Graphics.createVerticalGradient(ctx, 23, "#F98F00", "#FFBF37") }
-		];
-		
-		if (file.speeds.length>1) {
+		if (file.speeds.length > 2) {
+			var maxH, minH;
+			maxH = minH = file.speeds[0];
+			for (var i = 1, e = file.speeds.length; i < e; ++i) {
+					if (file.speeds[i] > maxH) maxH = file.speeds[i];
+					if (file.speeds[i] < minH) minH = file.speeds[i];
+			}
+			if (minH == maxH) {
+				var s = file.speeds.map(function(speed) { return 12; });
+			}
+			else {
+				var r = (maxH - minH);
+				var s = file.speeds.map(function(speed) { return 3 + Math.round((height - 6) * (speed - minH) / r); });
+			}
+			Debug.dump("step vec: " + s + "\n" + file.speeds);
+				
 			ctx.save();
-				ctx.clip();
-	
-				for (var i=0; i<passes.length; i++) {
-					ctx.fillStyle = passes[i].f;
-					var y = 30+passes[i].y;
-					var x = passes[i].x + 0.5;
-					
+			ctx.clip();
+			[
+				{ x:4, y:0, f:Graphics.createVerticalGradient(ctx, height - 7, "#EADF91", "#F4EFB1") },
+				{ x:2, y:0, f:Graphics.createVerticalGradient(ctx, height - 7, "#DFD58A", "#D3CB8B") },
+				{ x:1, y:0, f:Graphics.createVerticalGradient(ctx, height - 7, "#D0BA70", "#DFCF6F") },
+				{ x:0, y:0, f:graphFillStyle, s:Graphics.createVerticalGradient(ctx, height - 7, "#F98F00", "#FFBF37") }
+			].forEach(
+				function(pass) {
+					ctx.fillStyle = pass.f;
+					var y = height + pass.y;
+					var x = pass.x + 0.5;
+							
 					ctx.beginPath();
-					
 					ctx.moveTo(x, y);
-					
+							
 					y = y - s[0];
 					ctx.lineTo(x, y);
-					
-					var slope = (s[1]-s[0]) / step;
-					x = x + step*.7;
-					y = y - slope*(step*.7);
+							
+					var slope = (s[1] - s[0]);
+					x = x + step * .7;
+					y = y - slope * .7;
 					ctx.lineTo(x, y);
-					
-					for (var j=1; j<s.length-1; j++) {
-						x = x + step*.3;
-						y = y - slope*(step*.3);
+							
+					for (var j = 1, e = s.length - 1; j < e; ++j) {
+						x = x + step * .3;
+						y = y - slope *.3;
 						
-						slope = (s[j+1]-s[j]) / step;
-						x = x + step*.3;
-						y = y - slope*(step*.3);
-						ctx.quadraticCurveTo(step*j, 30 + passes[i].y - s[j], x, y);
+						slope = (s[j+1] - s[j]);
+						x = x + step * .3;
+						y = y - slope * .3;
+						ctx.quadraticCurveTo(step * j, height + pass.y - s[j], x, y);
 						
-						x = x + step*.4;
-						y = y - slope*(step*.4);
+						x = x + step * .4;
+						y = y - slope * .4;
 						ctx.lineTo(x, y);
 					}
-					
-					x = x + step*.3;
-					y = y - slope*(step*.3);
+							
+					x = x + step * .3;
+					y = y - slope * .3;
 					ctx.lineTo(x, y);
 					
-					ctx.lineTo(x, 30);
+					ctx.lineTo(x, height);
 					ctx.fill();
-					
-					if (passes[i].s) {
-						ctx.strokeStyle = passes[i].s;
+							
+					if (pass.s) {
+						ctx.strokeStyle = pass.s;
 						ctx.stroke();
 					}
+					Debug.dump("steps " + [x,y, s[0], s[1]]);
 				}
+			);
 			ctx.restore();
 		}
-		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 3);
+		Graphics.makeRoundedRectPath(ctx, 0, 0, width, height, 3);
 		ctx.stroke();
-		
-	ctx.restore();
+			
+		ctx.restore();
 
-	setTimeout("updateSpeedCanvas()", Check.frequencyRefresh);
-
-} catch(e) { Debug.dump("updateSpeedCanvas(): ", e); }
+		setTimeout("updateSpeedCanvas()", Check.frequencyRefresh);
+	}
+	catch(ex) {
+		Debug.dump("updateSpeedCanvas(): ", ex);
+	}
 }
 
 function updateChunkCanvas() {
-
 	var file = Prefs.currentTooltip;
-	if (file==null) return;
-
-	var ctx = $("drawChunks").getContext("2d");
-
-	// Create gradients
-	var chunkFillStyle = Graphics.createVerticalGradient(ctx, 30, "#A7D533", "#D3F047");
-	var partialFillStyle = Graphics.createVerticalGradient(ctx, 8, "#5BB136", "#A6D73E");
-	var boxFillStyle = Graphics.createInnerShadowGradient(ctx, 30, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
-	var boxStrokeStyle = Graphics.createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
-	var partialBoxFillStyle = Graphics.createInnerShadowGradient(ctx, 8, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
-
-	var passes = [
-		{ x:3, f: Graphics.createInnerShadowGradient(ctx, 30, "#AFA259", "#E8D675", "#F2E17E", "#F5F1B8") },
-		{ x:2, f: Graphics.createInnerShadowGradient(ctx, 30, "#9A8F4E", "#B0A359", "#B3A75D", "#BAB78B") },
-		{ x:1, f: Graphics.createInnerShadowGradient(ctx, 30, "#8E8746", "#B0A359", "#8E8746", "#CACB96") },
-		{ x:0, f: chunkFillStyle, s:chunkFillStyle }
-	];
+	if (!file) {
+		return;
+	}
 	
 	try {
-	// clear all
-	ctx.clearRect(0,0,300,50);
-	ctx.save();
+
+		var canvas = $("chunkCanvas");
+		var width = canvas.width = canvas.clientWidth;
+		var height = canvas.height = canvas.clientHeight;
+		var ctx = canvas.getContext("2d");
+		--width; --height;
+		
+		var cheight = height - 9;
+
+		// Create gradients
+		var chunkFillStyle = Graphics.createVerticalGradient(ctx, cheight, "#A7D533", "#D3F047");
+		var partialFillStyle = Graphics.createVerticalGradient(ctx, 8, "#5BB136", "#A6D73E");
+		var boxFillStyle = Graphics.createInnerShadowGradient(ctx, cheight, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
+		var boxStrokeStyle = Graphics.createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
+		var partialBoxFillStyle = Graphics.createInnerShadowGradient(ctx, 8, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
+
+		// clear all
+		ctx.clearRect(0, 0, width, height);
+		ctx.save();
 		ctx.translate(.5, .5);
 		
 		// draw container chunks back
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = boxStrokeStyle;
 		ctx.fillStyle = boxFillStyle;
-		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 5);
+		Graphics.makeRoundedRectPath(ctx, 0, 0, width, cheight, 5);
 		ctx.fill();
 		
 		var b = [];
 		if (file.isCompleted) {
 			b.push({
 				s: 0, 
-				w: 300
+				w: width
 			});
 		} else if (file.isCanceled) {
 			
 		} else if (file.isStarted) {
 			for (var c=file.firstChunk; c != -1; c = file.chunks[c].next) {
-				var w = Math.ceil(file.chunks[c].chunkSize / file.totalSize * 300);
+				var w = Math.ceil(file.chunks[c].chunkSize / file.totalSize * width);
 				b.push({
-					s: Math.ceil(file.chunks[c].start / file.totalSize * 300), 
+					s: Math.ceil(file.chunks[c].start / file.totalSize * width), 
 					w: w
 				});
 			}
 		}
-		
+
 		ctx.save();
-			ctx.clip();
-			for (var i=0; i<b.length; i++) {
-				// draw shadow chunk
-				for (var j=0; j<passes.length; j++) {
-					ctx.fillStyle = passes[j].f;
-					Graphics.makeRoundedRectPath(ctx, b[i].s + passes[j].x + 0.5, 0, b[i].w, 30, 3);
-					ctx.fill();
-					if (passes[j].s) {
-						ctx.lineWidth = 2;
-						ctx.strokeStyle = passes[j].s;
-						ctx.stroke();
+		ctx.clip();
+
+		var passes = [
+			{ x:3, f: Graphics.createInnerShadowGradient(ctx, cheight, "#AFA259", "#E8D675", "#F2E17E", "#F5F1B8") },
+			{ x:2, f: Graphics.createInnerShadowGradient(ctx, cheight, "#9A8F4E", "#B0A359", "#B3A75D", "#BAB78B") },
+			{ x:1, f: Graphics.createInnerShadowGradient(ctx, cheight, "#8E8746", "#B0A359", "#8E8746", "#CACB96") },
+			{ x:0, f: chunkFillStyle, s:chunkFillStyle }
+		];
+		
+	
+		b.forEach(
+			function(chunk) {
+				passes.forEach(
+					function(pass) {
+						ctx.fillStyle = pass.f;
+						Graphics.makeRoundedRectPath(ctx, chunk.s + pass.x + 0.5, 0, chunk.w, cheight, 3);
+						ctx.fill();
+						if (pass.s) {
+							ctx.lineWidth = 2;
+							ctx.strokeStyle = pass.s;
+							ctx.stroke();
+						}
 					}
-				}
+				)
 			}
+		);
 		ctx.restore();
 		
 		// draw container chunks border
-		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 5);
+		Graphics.makeRoundedRectPath(ctx, 0, 0, width, cheight, 5);
 		ctx.stroke();
 	
 		// draw progress back
-		ctx.translate(0, 32);
+		ctx.translate(0, cheight + 1);
 		ctx.fillStyle = partialBoxFillStyle;
-		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 8, 3);
+		Graphics.makeRoundedRectPath(ctx, 0, 0, width, 8, 3);
 		ctx.fill();
 	
 		// draw progress
 		ctx.fillStyle = partialFillStyle;
-		Graphics.makeRoundedRectPath(ctx, 0, 0, Math.ceil(file.partialSize / file.totalSize * 300), 8, 3);
+		Graphics.makeRoundedRectPath(ctx, 0, 0, Math.ceil(file.partialSize / file.totalSize * width), 8, 3);
 		ctx.fill();
 	
 		// draw progress border
-		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 8, 3);
+		Graphics.makeRoundedRectPath(ctx, 0, 0, width, 8, 3);
 		ctx.stroke();
 	
-	ctx.restore();
+		ctx.restore();
 
-	setTimeout("updateChunkCanvas()", Check.frequencyUpdateChunkGraphs);
+		setTimeout("updateChunkCanvas()", Check.frequencyUpdateChunkGraphs);
 
-} catch(e) { Debug.dump("updateChunkCanvas(): ", e); }
+	} catch(ex) {
+		Debug.dump("updateChunkCanvas(): ", ex);
+	}
 }
 
 function stopCanvas() {Prefs.currentTooltip=null;}

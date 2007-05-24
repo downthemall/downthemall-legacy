@@ -1,4 +1,5 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+@namespace html url("http://www.w3.org/1999/xhtml");
 
 toolbox {
 	border-width: 0px;
@@ -82,4 +83,12 @@ toolbox {
 }
 #tooldonate:active {
 	background: url("chrome://dta/skin/manager/bardonateactive.png") top right;
+}
+#tooltip {
+	background-color: white;
+	width: 470px;
+	padding: 4pt;
+}
+#tooltip image {
+	padding: 2pt;
 }

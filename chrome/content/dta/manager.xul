@@ -100,23 +100,28 @@
 				</menupopup>
 			</menu>
 		</popup>
-		<tooltip id="t1" position="after_pointer" noautohide="true" onpopupshowing="return tooltipInfo(event);" onpopuphiding="stopCanvas();" style="width: 470px;" >
-			<vbox>
-				<label style="font-weight: bold; font-size: 105%" value="Download informations..."/>
+		<tooltip id="tooltip" position="after_pointer" noautohide="true" onpopupshowing="return tooltipInfo(event);" onpopuphiding="stopCanvas();" orient="vertical">
 				<hbox>
-					<html:img src="moz-icon://prova.png" />
-					<vbox>
-						<label id="infoURLTitle" style="font-weight: bold; max-width: 160px;" value="&infoURLTitle.value;" />
-						<label id="infoDestTitle" style="font-weight: bold; max-width: 160px;" value="&infoDestTitle.value;" />
-					</vbox>
-					<vbox>
-						<label crop="left" id="infoURL" style="max-width: 320px;" />
-						<label crop="left" id="infoDest" style="max-width: 320px;" />
-					</vbox>
+					<image id="infoIcon" width="32" height="32" />
+					<separator class="thin" />
+					<grid flex="1">
+						<columns><column/><column flex="1"/></columns>
+						<rows>
+							<row>
+								<label id="infoURLTitle" style="font-weight: bold; max-width: 160px;" value="&infoURLTitle.value;" />
+								<label crop="left" id="infoURL" />		
+							</row>
+							<row>
+								<label id="infoDestTitle" style="font-weight: bold; max-width: 160px;" value="&infoDestTitle.value;" />
+								<label crop="left" id="infoDest" />
+							</row>
+						</rows>
+					</grid>
 				</hbox>
-				<html:canvas id="drawChunks" width="320" height="50" ></html:canvas>
-				<html:canvas id="drawSpeed" width="320" height="40" ></html:canvas>
-			</vbox>
+				<separator class="thin" />
+				<html:canvas id="chunkCanvas" height="40"></html:canvas>
+				<separator class="thin" />
+				<html:canvas id="speedCanvas" height="33"></html:canvas>
 		</tooltip>
 	</popupset>	
 	
@@ -159,7 +164,7 @@
 				<splitter class="tree-splitter"/>
 				<treecol id="speed" label="&speed.label;" ordinal="6" flex="10" persist="width ordinal hidden"/>
 			</treecols>
-			<treechildren id="downfigli" tooltip="t1">
+			<treechildren id="downfigli" tooltip="tooltip">
 			</treechildren>
 		</tree>
 
