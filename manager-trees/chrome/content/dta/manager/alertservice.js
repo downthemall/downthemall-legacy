@@ -1,27 +1,30 @@
 var AlertService = {
-	init: function() {
-		try {
-			this._service = Cc['@mozilla.org/alerts-service;1']
-				.getService(Ci.nsIAlertsService);
-			this._available = true;
-		}
-		catch (ex) {
-			this._available = false;
-		}
-		if (this.available) {
-			makeObserver(this);
-		}
-	},		
 	_alerting: false,
+	_init: function() {
+		if ('@mozilla.org/alerts-service;1' in Cc && 'nsIAlertsService' in Ci) {
+			// some systems do not have this service
+			try {
+				this._service = Cc['@mozilla.org/alerts-service;1'].getService(Ci.nsIAlertsService);
+				makeObserver(this);
+				this._available = true;
+			}
+			catch (ex) {
+				// no-op
+			}
+			return null;
+		}
+	},
 	get available() {
 		return this._available;
 	},
+	_available: false,
+	_service: null,
 	show: function(title, msg, clickable, cookie) {
-		if (this._alerting) {
-			return;
-		}
 		if (!this.available) {
-			throw new Components.Exception("Alerting service not available on this platform!");
+			throw new Components.Exception("Alerting Service not available on this platform!");
+		}
+		if (this._alerting || !this._service) {
+			return;
 		}
 		this._alerting = true;
 		this._service.showAlertNotification(
@@ -52,4 +55,4 @@ var AlertService = {
 		}
 	}
 };
-AlertService.init();
+AlertService._init();
