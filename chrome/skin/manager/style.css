@@ -84,10 +84,15 @@ toolbox {
 #tooldonate:active {
 	background: url("chrome://dta/skin/manager/bardonateactive.png") top right;
 }
-#tooltip {
-	background-color: white;
+#tooltip{
 	width: 470px;
-	padding: 4pt;
+	padding: 0; /* work around incorrect tooltip implementation in FX2.0 */
+}
+/* work around incorrect tooltip implementation in FX2.0 */
+#tooltip > vbox {
+	background-color: infobackground !important;
+	padding: 5pt;
+	margin: 0;
 }
 #tooltip image {
 	padding: 2pt;

@@ -4015,9 +4015,11 @@ function updateChunkCanvas() {
 		ctx.fill();
 	
 		// draw progress
-		ctx.fillStyle = partialFillStyle;
-		Graphics.makeRoundedRectPath(ctx, 0, 0, Math.ceil(file.partialSize / file.totalSize * width), 8, 3);
-		ctx.fill();
+		if (file.totalSize > 0) {
+			ctx.fillStyle = partialFillStyle;
+			Graphics.makeRoundedRectPath(ctx, 0, 0, Math.ceil(file.partialSize / file.totalSize * width), 8, 3);
+			ctx.fill();
+		}
 	
 		// draw progress border
 		Graphics.makeRoundedRectPath(ctx, 0, 0, width, 8, 3);
