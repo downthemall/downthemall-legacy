@@ -25,11 +25,13 @@
 			<preference id="dtaToolSub" name="extensions.dta.toolscompact" type="bool" />
 			<preference id="dtaContext" name="extensions.dta.ctxmenu" type="string" />
 			<preference id="dtaTool" name="extensions.dta.toolsmenu" type="string" />
+			<preference id="dtaShowTooltip" name="extensions.dta.showtooltip" type="bool" />
 		</preferences>
 		
 		<groupbox>
 			<caption label="&uipane.appearance.caption;"/>
 			<checkbox label="&uipane.namesonly.label;" preference="dtaHideUrl" />
+			<checkbox label="&uipane.showtooltip.label;" preference="dtaShowTooltip" />
 		</groupbox>	
 		
 		<groupbox>

@@ -77,3 +77,4 @@
 <!ENTITY uipane.context.caption "Context menu">
 <!ENTITY uipane.tools.caption "Tools Menu">
 <!ENTITY uipane.compact.label "Use a compact menu">
+<!ENTITY uipane.showtooltip.label "Show download tooltips">
