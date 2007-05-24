@@ -3748,6 +3748,9 @@ var sessionManager = {
 
 function tooltipInfo(event) {
 	try {
+		if (!Preferences.getDTA("showtooltip", true)) {
+			return false;
+		}
 		var result;
 		var row = {};
 
