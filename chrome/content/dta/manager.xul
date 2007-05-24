@@ -101,6 +101,7 @@
 			</menu>
 		</popup>
 		<tooltip id="tooltip" position="after_pointer" noautohide="true" onpopupshowing="return tooltipInfo(event);" onpopuphiding="stopCanvas();" orient="vertical">
+			<vbox>
 				<hbox>
 					<image id="infoIcon" width="32" height="32" />
 					<separator class="thin" />
@@ -122,6 +123,7 @@
 				<html:canvas id="chunkCanvas" height="40"></html:canvas>
 				<separator class="thin" />
 				<html:canvas id="speedCanvas" height="33"></html:canvas>
+			</vbox>
 		</tooltip>
 	</popupset>	
 	
