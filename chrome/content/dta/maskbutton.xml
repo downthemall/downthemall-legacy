@@ -86,7 +86,7 @@
 			/>
 		</xbl:content>
 		<xbl:implementation>
-			<xbl:constructor>DTA_include_once("dta/maskbutton.js");</xbl:constructor>
+			<xbl:constructor>DTA_include("dta/maskbutton.js");</xbl:constructor>
 		</xbl:implementation>
 	</xbl:binding>
 	
