@@ -39,11 +39,11 @@
 function DTA__include(uri) {
 	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
 		.getService(Components.interfaces.mozIJSSubScriptLoader)
-		.loadSubScript(uri);
+		.loadSubScript("chrome://dta/content/" + uri);
 } 
 function DTA_include(uri) {
 	try {
-		DTA__include("chrome://dta/content/" + uri);
+		DTA__include(uri);
 		return true;
 	}
 	catch(ex) {
@@ -51,21 +51,23 @@ function DTA_include(uri) {
 	}
 	return false;
 }
-function DTA_include_once(uri) {
-	if (uri in this._loaded) {
-		return true;
+var DTA_include_once = function() {
+	var _loaded = {};
+	return function(uri) {
+		if (uri in _loaded) {
+			return true;
+		}
+		try {
+			DTA__include(uri);
+			_loaded[uri] = true;
+			return true;
+		}
+		catch (ex) {
+			Components.utils.reportError(ex);
+		}
+		return false;
 	}
-	try {
-		DTA__include(uri);
-		this._loaded[uri] = true
-		return true;
-	}
-	catch (ex) {
-		Components.utils.reportError(ex);
-	}
-	return false;
-}
-DTA_include_once.loaded = {};
+}();
 
 DTA_include_once("common/regconvert.js");
 
