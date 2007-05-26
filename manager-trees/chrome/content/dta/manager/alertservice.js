@@ -11,7 +11,6 @@ var AlertService = {
 			catch (ex) {
 				// no-op
 			}
-			return null;
 		}
 	},
 	get available() {
