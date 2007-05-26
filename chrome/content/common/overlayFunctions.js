@@ -35,18 +35,39 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
+function DTA__include(uri) {
+	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+		.getService(Components.interfaces.mozIJSSubScriptLoader)
+		.loadSubScript(uri);
+} 
 function DTA_include(uri) {
 	try {
-		Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-			.getService(Components.interfaces.mozIJSSubScriptLoader)
-			.loadSubScript(uri);
+		DTA__include("chrome://dta/content/" + uri);
+		return true;
 	}
 	catch(ex) {
 		Components.utils.reportError(ex);
 	}
+	return false;
 }
-DTA_include("chrome://dta/content/common/regconvert.js");
+function DTA_include_once(uri) {
+	if (uri in this._loaded) {
+		return true;
+	}
+	try {
+		DTA__include(uri);
+		this._loaded[uri] = true
+		return true;
+	}
+	catch (ex) {
+		Components.utils.reportError(ex);
+	}
+	return false;
+}
+DTA_include_once.loaded = {};
+
+DTA_include_once("common/regconvert.js");
 
 var DTA_FilterManager = Components.classes['@downthemall.net/filtermanager;1']
 	.getService(Components.interfaces.dtaIFilterManager);
