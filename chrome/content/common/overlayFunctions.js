@@ -36,29 +36,21 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-function DTA__include(uri) {
-	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(Components.interfaces.mozIJSSubScriptLoader)
-		.loadSubScript("chrome://dta/content/" + uri);
-} 
-function DTA_include(uri) {
-	try {
-		DTA__include(uri);
-		return true;
-	}
-	catch(ex) {
-		Components.utils.reportError(ex);
-	}
-	return false;
-}
-var DTA_include_once = function() {
+/**
+ * include other chrome js files
+ * @param uri Relative URI to the dta content path
+ * @param many Optional. If set, then include that file more than once 
+ */
+var DTA_include = function() {
 	var _loaded = {};
-	return function(uri) {
-		if (uri in _loaded) {
+	return function(uri, many) {
+		if (!many && uri in _loaded) {
 			return true;
 		}
 		try {
-			DTA__include(uri);
+			Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+				.getService(Components.interfaces.mozIJSSubScriptLoader)
+				.loadSubScript("chrome://dta/content/" + uri);			
 			_loaded[uri] = true;
 			return true;
 		}
@@ -69,7 +61,7 @@ var DTA_include_once = function() {
 	}
 }();
 
-DTA_include_once("common/regconvert.js");
+DTA_include("common/regconvert.js");
 
 var DTA_FilterManager = Components.classes['@downthemall.net/filtermanager;1']
 	.getService(Components.interfaces.dtaIFilterManager);
