@@ -21,6 +21,23 @@ maskbutton {
 }
 /* ~maskbutton */
 
+#browsedir {
+	list-style-image: url("chrome://dta/skin/common/browse.png");
+	-moz-appearance: none !important;
+	border: none!important;
+	padding: 2px 0px!important;
+	margin: 0px!important;
+	-moz-image-region: rect(0px,48px,21px,24px) !important;
+}
+
+#browsedir:hover {
+	-moz-image-region: rect(0px,24px,21px,0px) !important;
+}
+
+#browsedir:active {
+	-moz-image-region: rect(0px,72px,21px,48px) !important;
+}
+
 #footer statusbarpanel[class]:hover {
 	text-decoration: underline;
 }
@@ -108,26 +125,6 @@ tree treecols splitter {
 	color: black !important; 
 }
 
-treechildren::-moz-tree-progressmeter(completed) {
-  color: #008F00;
-}
-
-treechildren::-moz-tree-progressmeter(paused) {
-  color: #FFCC00;
-}
-
-treechildren::-moz-tree-progressmeter(canceled) {
-  color: #B12801;
-}
-
-treechildren::-moz-tree-progressmeter(queued) {
-  color: #BFDEFF;
-}
-
-treechildren::-moz-tree-progressmeter(inprogress) {
-  color: #AAE061;
-}
-
 #donate {
 	font-style:italic;
 	text-align:right !important;
@@ -155,4 +152,8 @@ treechildren::-moz-tree-row(selected) {
 
 treechildren::-moz-tree-row {
 	min-height: 22px;
+}
+
+treechildren::-moz-tree-image(iconic) {
+	padding-right: 0.5ex;
 }
