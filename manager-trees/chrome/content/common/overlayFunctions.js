@@ -35,18 +35,33 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
-function DTA_include(uri) {
-	try {
-		Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-			.getService(Components.interfaces.mozIJSSubScriptLoader)
-			.loadSubScript(uri);
+
+/**
+ * include other chrome js files
+ * @param uri Relative URI to the dta content path
+ * @param many Optional. If set, then include that file more than once 
+ */
+var DTA_include = function() {
+	var _loaded = {};
+	return function(uri, many) {
+		if (!many && uri in _loaded) {
+			return true;
+		}
+		try {
+			Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+				.getService(Components.interfaces.mozIJSSubScriptLoader)
+				.loadSubScript("chrome://dta/content/" + uri);			
+			_loaded[uri] = true;
+			return true;
+		}
+		catch (ex) {
+			Components.utils.reportError(ex);
+		}
+		return false;
 	}
-	catch(ex) {
-		Components.utils.reportError(ex);
-	}
-}
-DTA_include("chrome://dta/content/common/regconvert.js");
+}();
+
+DTA_include("common/regconvert.js");
 
 var DTA_FilterManager = Components.classes['@downthemall.net/filtermanager;1']
 	.getService(Components.interfaces.dtaIFilterManager);
@@ -56,7 +71,7 @@ function DTA_showPreferences() {
 	window.openDialog(
 		'chrome://dta/content/preferences/newPref.xul',
 		'dtaPrefs',
-		'chrome,titlebar,toolbar,centerscreen'+ (instantApply ? ',dialog=no' : '')
+		'chrome,titlebar,toolbar,resizable,centerscreen'+ (instantApply ? ',dialog=no' : '')
 	);
 }
 
@@ -395,8 +410,22 @@ var DTA_AddingFunctions = {
 			return ['http', 'https', 'ftp'].some(function(e) { return e == scheme; });
 		}
 		catch (ex) {
+			// no op!
 		}
 		return false;
+	},
+	
+	composeURL: function UM_compose(doc, rel) {
+		// find <base href>
+		var base = doc.location.href;
+		var bases = doc.getElementsByTagName('base');
+		for (var i = 0; i < bases.length; ++i) {
+			if (bases[i].hasAttribute('href')) {
+				base = bases[i].getAttribute('href');
+				break;
+			}
+		}
+		return this.ios.newURI(rel, doc.characterSet, this.ios.newURI(base, doc.characterSet, null)).spec;
 	},
 
 	saveSingleLink : function(turbo, url, referrer, description, mask) {
