@@ -235,6 +235,10 @@ Tree.prototype = {
 		}
 	},
 	
+	get box() {
+		return this._box;
+	},
+	
 	get all() {
 		for (var i = 0, e = this._downloads.length; i < e; ++i) {
 			yield this._downloads[i];
@@ -288,6 +292,7 @@ Tree.prototype = {
 		this._box.endUpdateBatch();
 	},
 	
+	// no generator here.
 	get _selectedIds() {
 		var rv = [];
 		var rangeCount = this.selection.getRangeCount();

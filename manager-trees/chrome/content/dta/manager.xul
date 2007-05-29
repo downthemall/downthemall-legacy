@@ -98,7 +98,7 @@
 				</menupopup>
 			</menu>
 		</popup>
-		<tooltip id="tooltip" position="at_pointer" noautohide="true" onpopupshowing="return tooltipInfo(event);" onpopuphiding="stopCanvas();" orient="vertical">
+		<tooltip id="tooltip" position="at_pointer" noautohide="true" onpopupshowing="return Tooltip.show(event);" onpopuphiding="Tooltip.stopCanvas();" orient="vertical">
 			<vbox>
 				<hbox>
 					<image id="infoIcon" width="32" height="32" />

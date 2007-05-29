@@ -1021,7 +1021,6 @@ var Check = {
 	isClosing: false,
 	frequencyRefresh: 1500,
 	frequencyCheck: 500,
-	frequencyUpdateChunkGraphs: 500,
 	lastSum: 0,
 
 	refreshDownloadedBytes: function() {

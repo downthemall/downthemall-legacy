@@ -1,13 +1,15 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+@namespace html url("http://www.w3.org/1999/xhtml");
 
 toolbox {
 	border-width: 0px;
 }
 
 #tools {
-	background: url("chrome://dta/skin/manager/barback.png") repeat-x;
+	background: url(chrome://dta/skin/manager/barback.png) repeat-x;
 	border-width: 0px;
 	height: 51px;
+	-moz-appearance: none !important;
 }
 #tools toolbarbutton {
 	-moz-image-region: rect(0px,51px,25px,26px);    
@@ -81,4 +83,37 @@ toolbox {
 }
 #tooldonate:active {
 	background: url("chrome://dta/skin/manager/bardonateactive.png") top right;
+}
+#tooltip{
+	width: 470px;
+	padding: 0; /* work around incorrect tooltip implementation in FX2.0 */
+}
+/* work around incorrect tooltip implementation in FX2.0 */
+#tooltip > vbox {
+	background-color: infobackground !important;
+	padding: 5pt;
+	margin: 0;
+}
+#tooltip image {
+	padding: 2pt;
+}
+
+treechildren::-moz-tree-progressmeter(completed) {
+  color: #008F00;
+}
+
+treechildren::-moz-tree-progressmeter(paused) {
+  color: #FFCC00;
+}
+
+treechildren::-moz-tree-progressmeter(canceled) {
+  color: #B12801;
+}
+
+treechildren::-moz-tree-progressmeter(queued) {
+  color: #BFDEFF;
+}
+
+treechildren::-moz-tree-progressmeter(inprogress) {
+  color: #AAE061;
 }
