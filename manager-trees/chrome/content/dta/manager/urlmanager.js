@@ -1,4 +1,4 @@
-function DTA_URLManager(urls) {
+function UrlManager(urls) {
 	this._urls = [];
 	this._idx = 0;
 
@@ -9,7 +9,7 @@ function DTA_URLManager(urls) {
 		throw "Feeding the URLManager with some bad stuff is usually a bad idea!";
 	}
 }
-DTA_URLManager.prototype = {
+UrlManager.prototype = {
 	_sort: function(a,b) {
 		const rv = a.preference - b.preference;
 		return rv ? rv : (a.url < b.url ? -1 : 1);

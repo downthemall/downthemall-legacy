@@ -99,12 +99,10 @@ var sessionManager = {
 		this.beginUpdate();
 		try {
 			this._con.executeSimpleSQL('DELETE FROM queue');
-			downloadList.forEach(
-				function(e, i) {
-					this._saveDownload(e, i);
-				},
-				this
-			);
+			var i = 0;
+			for (d in tree.all) {
+				this._saveDownload(d, i++);
+			};
 		}
 		catch (ex) {
 			Debug.dump(ex);
@@ -121,6 +119,9 @@ var sessionManager = {
 	},
 
 	load: function() {
+		return tree.update(this._load, this);
+	},
+	_load: function() {
 
 		const removeCompleted = Prefs.removeCompleted;
 		const removeCanceled = Prefs.removeCompleted;
@@ -145,7 +146,7 @@ var sessionManager = {
 				}
 
 				var d = new downloadElement(
-					new DTA_URLManager(down.urlManager),
+					new UrlManager(down.urlManager),
 					get("dirsave"),
 					get("numIstance"),
 					get("description"),
@@ -181,19 +182,23 @@ var sessionManager = {
 						}
 					);
 					d.refreshPartialSize();
+					d.status = _('paused');
 				}
 				else if (d.is(COMPLETE)) {
 					d.fileManager = new FileFactory(d.dirSave);
 					d.fileManager.append(d.destinationName);
 					Stats.completedDownloads++;
 					d.isPassed = true;
+					d.status = _('completed');
 				}
 				else if (d.is(CANCELED)) {
 					d.isPassed = true;
+					d.status = _('canceled');
 				}
-
-				downloadList.push(d);
-				populateListbox(d);
+				
+				
+				tree.add(d);
+				
 			}
 			catch (ex) {
 				Debug.dump('failed to init a download from queuefile', ex);

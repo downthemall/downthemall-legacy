@@ -50,9 +50,16 @@ const MIN_CHUNK_SIZE = 512 * 1024;
 // in use by chunk.writer...
 // in use by decompressor... beware, actual size might be more than twice as big!
 const MAX_BUFFER_SIZE = 5242880; // 3 MB
+const SPEED_COUNT = 25;
 
-DTA_include('chrome://dta/content/dta/manager/prefs.js');
-//DTA_include('chrome://dta/content/dta/manager/tree.js');
+const QUEUED = 0;
+const PAUSED =  1<<1;
+const RUNNING = 1<<2;
+const COMPLETE = 1<<3;
+const CANCELED = 1<<4;
+
+
+DTA_include('dta/manager/prefs.js');
 
 var Stats = {
 	totalDownloads: 0,
@@ -65,8 +72,8 @@ var Stats = {
 	downloadedBytes: 0
 }
 
-DTA_include('chrome://dta/content/dta/manager/urlmanager.js');
-DTA_include('chrome://dta/content/dta/manager/visitormanager.js');
+DTA_include('dta/manager/urlmanager.js');
+DTA_include('dta/manager/visitormanager.js');
 
 var Chunk = function(download, start, end, written) {
 	// saveguard against null or strings and such
@@ -179,24 +186,12 @@ Chunk.prototype = {
 	}
 }
 
-const treeCells = {
-	"parts": 5,
-	"speed": 8,
-	"percent": 1,
-	"size": 3,
-	"bar":2,
-	"status": 4,
-	"url": 0,
-	"dir": 7,
-	"mask": 6
-}
-
 function Decompressor(download) {
 	this.download = download;
 	this.to = new FileFactory(download.dirSave + download.destinationName);
 	this.from = download.tmpFile.clone();
 
-	download.setTreeCell("status", _("decompress"));
+	download.status =  _("decompress");
 	try {
 
 		this._outStream = Cc['@mozilla.org/network/file-output-stream;1']
@@ -318,13 +313,13 @@ function downloadElement(lnk, dir, num, desc, mask, refPage, tmpFile) {
 	dir = dir.addFinalSlash();
 
 	if (typeof lnk == 'string') {
-		this.urlManager = new DTA_URLManager([new DTA_URL(lnk)]);
+		this.urlManager = new UrlManager([new DTA_URL(lnk)]);
 	}
-	else if (lnk instanceof DTA_URLManager) {
+	else if (lnk instanceof UrlManager) {
 		this.urlManager = lnk;
 	}
 	else {
-		this.urlManager = new DTA_URLManager([lnk]);
+		this.urlManager = new UrlManager([lnk]);
 	}
 
 	this.dirSave = dir;
@@ -352,20 +347,17 @@ function downloadElement(lnk, dir, num, desc, mask, refPage, tmpFile) {
 	}
 }
 
-const QUEUED = 0;
-const PAUSED =  1<<1;
-const RUNNING = 1<<2;
-const COMPLETE = 1<<3;
-const CANCELED = 1<<4;
-
 downloadElement.prototype = {
 	_state: QUEUED,
 	get state() {
 		return this._state;
 	},
-	set state(ns) {
-		Debug.dump('SS: ' + this._state + "/" + ns);
-		this._state = ns;
+	set state(nv) {
+		Debug.dump('SS: ' + this._state + "/" + nv);
+		if (this._state != nv) {
+			this._state = nv;
+			this.invalidate();
+		}
 	},
 
 	_tmpFile: null,
@@ -401,7 +393,6 @@ downloadElement.prototype = {
 	compression: false,
 	compressionType: "",
 
-	treeID: "",
 	alreadyMaskedDir: false,
 	alreadyMaskedName: false,
 
@@ -411,13 +402,89 @@ downloadElement.prototype = {
 	isRemoved: false,
 
 	fileManager: null,
-	activeChunks: 0,
-	maxChunks: null,
+	_activeChunks: 0,
+	get activeChunks() {
+		return this._activeChunks;
+	},
+	set activeChunks(nv) {
+		this._activeChunks = nv;
+		this.invalidate();
+		return this._activeChunks;
+	},
+	_maxChunks: 0,
+	get maxChunks() {
+		return this._maxChunks;
+	},
+	set maxChunks(nv) {
+		this._maxChunks = nv;
+		this.invalidate();
+		return this._maxChunks;
+	},
 	timeLastProgress: 0,
 	timeStart: 0,
 
 	get icon() {
 		return getIcon(this.fileName, 'metalink' in this);
+	},
+	get largeIcon() {
+		return getIcon(this.fileName, 'metalink' in this, 32);
+	},
+	get size() {
+		try {
+			if (this.fileManager.exists()) {
+				return this.fileManager.fileSize;
+			}
+		}
+		catch (ex) {
+			Debug.dump("download::getSize(): ", e)
+		}
+		return 0;
+	},
+	get dimensionString() {
+		if (this.partialSize <= 0) {
+			return "???"; 
+		}
+		else if (this.totalSize <= 0) {
+			return formatBytes(this.partialSize) + "/" + "???";
+		}
+		return formatBytes(this.partialSize) + "/" + formatBytes(this.totalSize);
+	},
+	_status : '',
+	get status() {
+		return this._status;
+	},
+	set status(nv) {
+		this._status = nv;
+		this.invalidate();
+		return this._status;
+	},
+	get parts() {
+		if (this.maxChunks) {
+			return (++download.activeChunks) + '/' + download.maxChunks;
+		}
+		return '';
+	},
+	get percent() {
+		if (!this.totalSize && this.is(RUNNING)) {
+			return "???";
+		}
+		else if (!this.totalSize) {
+			return "0%";
+		}
+		return Math.round(d.partialSize / d.totalSize * 100) + "%";
+	},
+	_dirSave: '',
+	get dirSave() {
+		return this._dirSave;
+	},
+	set dirSave(nv) {
+		this._dirSave = nv;
+		this.invalidate();
+		return this._dirSave;
+	},
+	
+	invalidate: function() {
+		// IMPLEMENT TREE INVALIDATION;
 	},
 
 	imWaitingToRearrange: false,
@@ -450,25 +517,6 @@ downloadElement.prototype = {
 	},
 
 	treeElement: null,
-	setTreeCell: function(cell, caption) {
-		if (this.isRemoved) return;
-		if (this.treeElement==null)
-			this.treeElement = $(this.treeID).childNodes[0];
-		this.treeElement.childNodes[treeCells[cell]].attributes.label.value = caption;
-	},
-
-	setTreeProgress: function(style, value) {
-		if (this.isRemoved) {
-			return;
-		}
-		var nodes = $(this.treeID).childNodes[0].childNodes;
-
-		nodes[treeCells["bar"]].setAttribute('properties', style);
-		if (value > 0) {
-			nodes[treeCells["bar"]].setAttribute('mode', 'normal');
-			nodes[treeCells["bar"]].setAttribute('value', value);
-		}
-	},
 
 	removeFromInProgressList: function() {
 		//this.speeds = new Array();
@@ -497,18 +545,7 @@ downloadElement.prototype = {
 		}
 	},
 
-	getSize: function() {
-		try {
-			if (this.fileManager.exists())
-				return this.fileManager.fileSize;
-			else
-				Debug.dump("downloadElement::getSize(): File doesn't exists!");
-		} catch (e) {Debug.dump("download::getSize(): ", e)}
-		return 0;
-	},
-
 	moveCompleted: function() {
-		Debug.dump("mc");
 		if (this.is(CANCELED)) {
 			return;
 		}
@@ -537,13 +574,7 @@ downloadElement.prototype = {
 	},
 	handleMetalink: function dl_handleMetaLink() {
 		try {
-			for (var i = 0; i < downloadList.length; ++i)
-			{
-				if (downloadList[i] == this) {
-					removeElement(i);
-					break;
-				}
-			}
+			tree.remove(this);
 			var file = new FileFactory(this.dirSave);
 			file.append(this.destinationName);
 
@@ -583,7 +614,7 @@ downloadElement.prototype = {
 					desc = '';
 				}
 				downloads.push({
-					'url': new DTA_URLManager(urls),
+					'url': new UrlManager(urls),
 					'refPage': this.refPage.spec,
 					'numIstance': 0,
 					'mask': this.mask,
@@ -633,13 +664,10 @@ downloadElement.prototype = {
 			}
 		}
 
-		this.totalSize = this.partialSize = this.getSize();
-		this.setTreeCell("size", this.createDimensionString());
-		this.setTreeCell("percent", "100%");
-		this.setTreeProgress("completed", 100);
+		this.totalSize = this.partialSize = this.size;
 
 		this.isPassed = true;
-		this.setTreeCell("status", _("complete"));
+		this.status = _("complete");
 		popup();
 
 		// Garbage collection
@@ -854,8 +882,7 @@ downloadElement.prototype = {
 			if (message == "" || !message) {
 				message = _("canceled");
 			}
-			this.setTreeCell("status", message);
-			this.setTreeProgress("canceled");
+			this.status = message;
 
 			this.setPaused();
 			
@@ -910,7 +937,7 @@ downloadElement.prototype = {
 			else {
 				Debug.dump(download.fileName + ": Created chunk of range " + chunk.start + "-" + chunk.end);
 			}
-			download.setTreeCell("parts", 	(++download.activeChunks) + "/" + download.maxChunks);
+			++download.activeChunks;
 		}
 
 		try {
@@ -974,14 +1001,7 @@ downloadElement.prototype = {
 			Debug.dump("resumeDownload():", ex);
 		}
 		return false;
-	},
-	createDimensionString: function() {
-		if (this.totalSize > 0) {
-			return formatBytes(this.partialSize) + "/" + formatBytes(this.totalSize);
-		}
-		return formatBytes(this.partialSize) + "/" + "???";
 	}
-
 }
 
 function inProgressElement(el) {
@@ -990,10 +1010,9 @@ function inProgressElement(el) {
 	this.speeds = new Array();
 }
 
-var downloadList = new Array();
 var inProgressList = new Array();
 
-DTA_include('chrome://dta/content/dta/manager/alertservice.js');
+DTA_include('dta/manager/alertservice.js');
 
 var Check = {
 	lastCheck: 0,
@@ -1025,8 +1044,8 @@ var Check = {
 		this.lastSum = sum;
 
 		// Refresh status bar
-		$("status").label = (
-			_("cdownloads", [Stats.completedDownloads, downloadList.length]) +
+		$("statusText").label = (
+			_("cdownloads", [Stats.completedDownloads, tree.rowCount]) +
 			" - " +
 			_("cspeed") + " " + formatBytes(speed) + "/s"
 		);
@@ -1035,16 +1054,16 @@ var Check = {
 		if (inProgressList.length == 1 && inProgressList[0].d.totalSize > 0) {
 			document.title = (
 				Math.round(inProgressList[0].d.partialSize / inProgressList[0].d.totalSize * 100) + "% - " +
-				Stats.completedDownloads + "/" + downloadList.length + " - " +
+				Stats.completedDownloads + "/" + tree.rowCount + " - " +
 				formatBytes(speed) + "/s - DownThemAll! - " + _("dip")
 			);
 		} else if (inProgressList.length > 0)
 			document.title = (
-				Stats.completedDownloads + "/" + downloadList.length + " - " +
+				Stats.completedDownloads + "/" + tree.rowCount + " - " +
 				formatBytes(speed) + "/s - DownThemAll! - " + _("dip")
 			);
 		else
-			document.title = Stats.completedDownloads + "/" + downloadList.length + " - DownThemAll!";
+			document.title = Stats.completedDownloads + "/" + tree.rowCount + " - DownThemAll!";
 
 		const now = Date.now();
 		for (var i=0; i<inProgressList.length; i++) {
@@ -1057,19 +1076,20 @@ var Check = {
 					var min = Math.floor((remainingSeconds - hour*3600) / 60);
 					var sec = remainingSeconds - min * 60 - hour*3600;
 					if (remainingSeconds == "Infinity")
-						d.setTreeCell("status", _("unavailable"));
+						d.status = _("unavailable");
 					else {
 						var s= hour>0?(hour+":"+min+":"+sec):(min+":"+sec);
-						d.setTreeCell("status", String(s).formatTimeDate());
+						d.status = String(s).formatTimeDate();
 					}
 				}
 				var speed = Math.round((d.partialSize - inProgressList[i].lastBytes) * (1000 / this.frequencyRefresh));
 
 				// Refresh item speed
-				d.setTreeCell("speed", formatBytes(speed) + "/s");
-				d.speeds.push(speed);
-				if (d.speeds.length > 30)
-					d.speeds.splice(0, 1);
+				d.speed = formatBytes(speed) + "/s";
+				d.speeds.push(speed > 0 ? speed : 0);
+				if (d.speeds.length > SPEED_COUNT) {
+					d.speeds.shift();
+				}
 
 				inProgressList[i].lastBytes = d.partialSize;
 			}
@@ -1092,8 +1112,7 @@ var Check = {
 				if (d.isResumable) {
 					d.setPaused();
 					d.state = PAUSED;
-					d.setTreeCell("status", _("timeout"));
-					d.setTreeProgress("paused");
+					d.status = _("timeout");
 				} else
 					d.cancel(_("timeout"));
 
@@ -1110,9 +1129,9 @@ var Check = {
 			this.refreshDownloadedBytes();
 
 			if (
-				!downloadList.length
+				!tree.rowCount
 				|| this.lastCheck == Stats.downloadedBytes
-				|| downloadList.some(function(e) { return !e.isPassed; })
+				|| tree.some(function(e) { return !e.isPassed; })
 			) {
 				return;
 			}
@@ -1129,12 +1148,12 @@ var Check = {
 					stringa = _("suc");
 
 				if (Prefs.alertingSystem == 1) {
-					AlertService.show(_("dcom"), stringa, true, downloadList[0].dirSave);
+					AlertService.show(_("dcom"), stringa, true, tree.at(0).dirSave);
 				}
 				else if (Prefs.alertingSystem == 0) {
 					if (confirm(stringa + "\n "+ _("folder")) == 1) {
 						try {
-							OpenExternal.launch(downloadList[0].dirSave);
+							OpenExternal.launch(tree.at(0).dirSave);
 						}
 						catch (ex){
 							_("noFolder");
@@ -1162,35 +1181,35 @@ var Check = {
 
 function startNextDownload() {
 	try {
-		for (var i = 0; i < downloadList.length && inProgressList.length < Prefs.maxInProgress; ++i) {
-			try {
-			if (!downloadList[i].is(QUEUED)) {
-				continue;
+		tree.updateAll(
+			function(d) {
+				if (inProgressList.length >= Prefs.maxInProgress) {
+					return false;
+				}
+				if (!d.is(QUEUED)) {
+					return true;
+				}
+	
+				d.status = _("starting");
+	
+				d.timeLastProgress = Utils.getTimestamp();
+				d.state = RUNNING;
+	
+				if (inProgressList.indexOf(d) == -1) {
+					inProgressList.push(new inProgressElement(d));
+					d.timeStart = Utils.getTimestamp();
+				}
+	
+				if (!d.isStarted) {
+					d.isStarted = true;
+					Debug.dump("Let's start " + d.fileName);
+				} else {
+					Debug.dump("Let's resume " + d.fileName + ": " + d.partialSize);
+				}
+				d.resumeDownload();
+				return true;
 			}
-			} catch (ex) {
-				alert(downloadList[i] + "\n" + i);
-			}
-
-			var d = downloadList[i];
-
-			d.setTreeCell("status", _("starting"));
-
-			d.timeLastProgress = Utils.getTimestamp();
-			d.state = RUNNING;
-
-			if (inProgressList.indexOf(d) == -1) {
-				inProgressList.push(new inProgressElement(d));
-				d.timeStart = Utils.getTimestamp();
-			}
-
-			if (!d.isStarted) {
-				d.isStarted = true;
-				Debug.dump("Let's start " + d.fileName);
-			} else {
-				Debug.dump("Let's resume " + d.fileName + ": " + d.partialSize);
-			}
-			d.resumeDownload();
-		}
+		);
 	} catch(ex){
 		Debug.dump("startNextDownload():", ex);
 	}
@@ -1361,7 +1380,6 @@ Download.prototype = {
 				this.isHeaderHack = false;
 				d.maxChunks = 1;
 				c.end = d.totalSize - 1;
-				d.setTreeCell("parts", "1/1");
 				this.cantCount = 1;
 
 				// filename renaming
@@ -1372,7 +1390,6 @@ Download.prototype = {
 				d.dirSave = d.buildFromMask(true, d.mask);
 				d.alreadyMaskedDir = true;
 
-				d.setTreeCell("dir", d.dirSave);
 				return;
 			}
 
@@ -1508,11 +1525,6 @@ Download.prototype = {
 					}
 					d.fileName = d.buildFromMask(false, "*name*.*ext*");
 
-					if (Prefs.showOnlyFilenames) {
-						d.setTreeCell("url", " " + d.fileName);
-					}
-					$(d.treeID).childNodes[0].childNodes[treeCells["url"]].setAttribute('src', d.icon);
-
 					d.destinationName = d.buildFromMask(false, d.mask);
 				}
 
@@ -1520,7 +1532,6 @@ Download.prototype = {
 				if (!d.alreadyMaskedDir) {
 					d.alreadyMaskedDir = true;
 					d.dirSave = d.buildFromMask(true, d.mask);
-					d.setTreeCell("dir", d.dirSave);
 				}
 
 				// in case of a redirect set the new real url
@@ -1550,7 +1561,6 @@ Download.prototype = {
 			else if (!d.totalSize) {
 				this.cantCount = 1;
 			}
-			d.setTreeProgress("inprogress", 0);
 			popup();
 		} catch (ex) {
 			Debug.dump("ss", ex);
@@ -1569,7 +1579,6 @@ Download.prototype = {
 		Check.refreshDownloadedBytes();
 		d.refreshPartialSize();
 		d.activeChunks--;
-		d.setTreeCell("parts", 	d.activeChunks + "/" + d.maxChunks);
 
 		// check if we're complete now
 		if (d.is(RUNNING) && !d.chunks.some(function(e) { return e.isRunning; })) {
@@ -1595,16 +1604,15 @@ Download.prototype = {
 
 		// isHeaderHack chunks have their private call to removeFromInProgressList
 		if (!d.is(RUNNING) && !d.imWaitingToRearrange) {
-			d.setTreeCell("speed", "");
+			d.speed = '';
 			d.removeFromInProgressList();
 		}
 
 		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
 		if (!this.started && d.isResumable && !c.imWaitingToRearrange && !d.is(CANCELED, PAUSED)) {
 			Debug.dump(d.fileName + ": Server error or disconnection (type 1)");
-			d.setTreeCell("status", _("srver"));
-			d.setTreeCell("speed", "");
-			d.setTreeProgress("paused");
+			d.status = _("srver");
+			d.speed = '';
 			d.state = PAUSED;
 			d.setPaused();
 		}
@@ -1683,15 +1691,10 @@ Download.prototype = {
 						//d.setPaused();
 						return;
 					}
-
-					d.setTreeProgress("inprogress", Math.round(d.partialSize / d.totalSize * 100));
-					d.setTreeCell("percent", Math.round(d.partialSize / d.totalSize * 100) + "%");
 				}
 				else {
-					d.setTreeCell("percent", "???");
-					d.setTreeCell("status", _("downloading"));
+					d.status = _("downloading");
 				}
-				d.setTreeCell("size", d.createDimensionString());
 			}
 		}
 		catch(ex) {
@@ -1704,20 +1707,18 @@ Download.prototype = {
 
 function loadDown() {
 	make_();
-	tree = $("listDownload0");
+	tree = new Tree($("downloads"));
 
 	document.getElementById("dtaHelp").hidden = !("openHelp" in window);
 
 	sessionManager.init();
 
 	// update status and window title
-	$("status").label = _("cdownloads", [Stats.completedDownloads, downloadList.length]);
-	document.title = Stats.completedDownloads + "/" + downloadList.length + " - DownThemAll!";
+	$("statusText").label = _("cdownloads", [Stats.completedDownloads, tree.rowCount]);
+	document.title = Stats.completedDownloads + "/" + tree.rowCount + " - DownThemAll!";
 
 	if ("arguments" in window) {
 		startnewDownloads(window.arguments[0], window.arguments[1]);
-	} else {
-		tree.view.selection.currentIndex = tree.view.rowCount - 1;
 	}
 
 	try {
@@ -1734,15 +1735,8 @@ function cancelAll(pressedESC) {
 
 	// if we have non-resumable running downloads...
 	if (!Check.isClosing) {
-		var rFlag = false;
 
-		for (var i=0; i<downloadList.length; i++) {
-			if (downloadList[i].isStarted && !downloadList[i].isResumable && downloadList[i].is(RUNNING)) {
-				rFlag=true;
-				break;
-			}
-		}
-		if (rFlag) {
+		if (tree.some(function(d) { return d.isStarted && !d.isResumable && d.is(RUNNING); })) {
 			var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
 				.getService(Ci.nsIPromptService);
 			var rv = promptService.confirm(
@@ -1759,7 +1753,7 @@ function cancelAll(pressedESC) {
 	Check.isClosing = true;
 
 	const removeAborted = Prefs.removeAborted;
-	var allPassed = downloadList.every(
+	var allPassed = tree.every(
 		function(d) {
 			if (
 				d.is(CANCELED)
@@ -1776,11 +1770,11 @@ function cancelAll(pressedESC) {
 			if (d.isStarted) {
 				d.setPaused();
 				d.state = PAUSED;
-				d.setTreeCell("status", _("closing"));
+				d.status = _("closing");
 				Debug.dump(d.fileName + " has to be stopped.");
 			}
 			else if (removeAborted) {
-				removeFromList(i);
+				tree.remove(d);
 				return true;
 			}
 			else {
@@ -1808,7 +1802,7 @@ function cancelAll(pressedESC) {
 
 function startnewDownloads(notQueue, download) {
 
-	var numbefore = tree.view.rowCount - 1;
+	var numbefore = tree.rowCount - 1;
 	const DESCS = ['description', 'ultDescription'];
 	var startDate = new Date();
 
@@ -1839,9 +1833,8 @@ function startnewDownloads(notQueue, download) {
 		);
 		d.state = notQueue ? QUEUED : PAUSED;
 		d.startDate = startDate;
-
-		downloadList.push(d);
-		populateListbox(d);
+		
+		tree.add(d);
 	}
 
 	// full save
@@ -1855,14 +1848,14 @@ function startnewDownloads(notQueue, download) {
 		}
 	}
 
-	var boxobject = tree.treeBoxObject;
+	var boxobject = tree._box;
 	boxobject.QueryInterface(Ci.nsITreeBoxObject);
 	if (download.length <= boxobject.getPageLength())
-		boxobject.scrollToRow(tree.view.rowCount - boxobject.getPageLength());
+		boxobject.scrollToRow(tree.rowCount - boxobject.getPageLength());
 	else
 		boxobject.scrollToRow(numbefore);
 
-	tree.view.selection.currentIndex = numbefore + 1;
+	tree.selection.currentIndex = numbefore + 1;
 
 	try {
 		clearTimeout(Check.timerRefresh);
@@ -1934,13 +1927,13 @@ function populateListbox(d) {
 			time.setAttribute("label", _("inqueue"));
 			per1.setAttribute("properties", "queued");
 	}
-
+	
+	dim.setAttribute("label", d.dimensionString);
+	
 	if (d.partialSize != 0 && d.totalSize != 0) {
-			dim.setAttribute("label", d.createDimensionString());
 			per1.setAttribute("value", Math.round(d.partialSize / d.totalSize * 100));
 			per.setAttribute("label", Math.round(d.partialSize / d.totalSize * 100) + "%");
 	} else {
-			dim.setAttribute("label", "N/A");
 			per1.setAttribute("value", 0);
 			per.setAttribute("label", "0%");
 	}
@@ -2004,6 +1997,7 @@ function makeNumber(rv, digits) {
 }
 
 function popup() {
+	return false;
 try {
 	var objects = new Array();
 
@@ -2032,7 +2026,7 @@ try {
 	}
 	$("tooladd", "tooldonate", 'misc', 'prefs').forEach(enableObj);
 
-	if (tree.view.rowCount > 0)
+	if (tree.rowCount > 0)
 		$("removeCompleted", "selectall", "selectinv").forEach(enableObj);
 
 	if (objects.length==0) return;
@@ -2075,554 +2069,71 @@ try {
 }
 
 function pauseResumeReq(pauseReq) {
-try {
-	var rangeCount = tree.view.selection.getRangeCount();
-
-	for(var i=0; i<rangeCount; i++) {
-		var start = {};
-		var end = {};
-		tree.view.selection.getRangeAt(i,start,end);
-
-		for(var c=start.value; c<=end.value; c++) {
-			var d = downloadList[c];
-			if (pauseReq) {
-				if (d.is(QUEUED) || (d.is(RUNNING) && d.isResumable)) {
-					d.setTreeCell("status", _("paused"));
-					d.setTreeCell("speed", "");
-					d.setTreeProgress("paused");
-
-					d.state = PAUSED;
-					d.setPaused();
-				}
-			} else {
-				if (d.is(PAUSED, CANCELED)) {
+	try {
+		tree.updateSelected(
+			function(d) {
+				if (pauseReq) {
+					if (d.is(QUEUED) || (d.is(RUNNING) && d.isResumable)) {
+						d.status = _("paused");
+						d.speed = '';
+						d.state = PAUSED;
+						d.setPaused();
+					}
+				} else if (d.is(PAUSED, CANCELED)) {
 					d.state = QUEUED;
 					d.isPassed = false;
-					d.setTreeCell("status", _("inqueue"));
-					d.setTreeProgress("queued");
+					d.status = _("inqueue");
 				}
+				return true;
 			}
-		}
+		);
+		popup();
 	}
-	popup();
-} catch(e) {Debug.dump("pauseResumeReq()", e)}
+	catch(ex) {
+		Debug.dump("pauseResumeReq()", ex)
+	}
 }
 
 function cancelPopup() {
-	var sel = tree.view.selection;
-	var rangeCount = sel.getRangeCount();
-
-	for(var i=rangeCount-1; i>=0; i--) {
-		var start = {};
-		var end = {};
-		tree.view.selection.getRangeAt(i,start,end);
-		for(var c=end.value; c>=start.value; c--) {
-			downloadList[c].cancel();
-		}
-	}
-}
-
-function removeFromList() {
-	var index = -1;
-	if (arguments.length) {
-		if (arguments[0] instanceof Array) {
-
-			var dellist = arguments[0];
-			dellist.sort(function(a,b) { return b - a; });
-
-			sessionManager.beginUpdate();
-			dellist.forEach(removeElement);
-			sessionManager.endUpdate();
-
-			popup();
-			return;
-		}
-		index = arguments[0];
-	};
-
-	if (index < 0) {
-		var start = {}, end = {}, rangeCount = tree.view.selection.getRangeCount();
-		var list = new Array();
-		for (var i = 0; i < rangeCount; ++i) {
-			tree.view.selection.getRangeAt(i, start, end);
-			for (var c = start.value; c <= end.value; ++c) {
-				list.push(c);
-			}
-		}
-		removeFromList(list);
-		return;
-	}
-
-	// normal remove
-	removeElement(index);
-	popup();
-}
-
-function removeCompleted() {
-	sessionManager.beginUpdate();
-	for (var i=downloadList.length-1; i>=0; i--) {
-		if (downloadList[i].is(COMPLETE)) {
-			removeElement(i);
-		}
-	}
-	sessionManager.endUpdate();
-}
-
-function removeElement(index) {
-	var d = downloadList[index];
-	setRemoved(d);
-	d.removeTmpFile();
-	sessionManager.deleteDownload(d);
-	downloadList.splice(index, 1);
-}
-
-
-function setRemoved(d) {
-	try {
-		d.isRemoved = true;
-
-		$("downfigli").removeChild($(d.treeID));
-		if (d.is(COMPLETE)) {
-			Stats.completedDownloads--;
-		}
-
-		if (!d.isStarted || d.is(COMPLETE)) {
-			d.isPassed = true;
-		} else {
-			if (d.is(RUNNING)) {
-				d.setPaused();
-			} else if(!d.isPassed) {
-				d.isPassed = true;
-			}
-			d.setPaused();
-		}
-
-		d.state = CANCELED;
-		d.isPassed = false;
-	} catch(e) {
-		Debug.dump("setRemoved():", e);
-	}
-	Check.checkClose();
+	tree.updateSelected(function(d) { d.cancel(); return true; });
 }
 
 function getInfo() {
-
-	// store all selected downloads
-	var rangeCount = tree.view.selection.getRangeCount();
 	var t = new Array();
-	for (var i=rangeCount-1; i>=0; i--) {
-		var start = {}, end = {};
-		tree.view.selection.getRangeAt(i, start, end);
-		for (var c = end.value; c >= start.value; c--)
-			t.push(downloadList[c]);
+	for (d in tree.selected) {
+		t.push(d);
 	}
-	// pass them to info.xul
-	if (t.length > 0)
-	{
+	if (t.length > 0) {
 		window.openDialog("chrome://dta/content/dta/info.xul","_blank","chrome, centerscreen, dialog=no", t, this);
 	}
 }
 
-var Mover = {
-	get _selected() {
-		var rv = [];
-		var rangeCount = tree.view.selection.getRangeCount();
-		for (var i = 0; i < rangeCount; ++i) {
-				start = {};	end = {};
-				tree.view.selection.getRangeAt(i, start, end);
-				for (var c = start.value; c <= end.value; c++) {
-					rv.push(c);
-				}
-		}
-		tree.view.selection.clearSelection();
-		return rv;
-	},
-	top: function() {
-		try {
-			var ids = this._selected;
-			ids.reverse();
-			var ti = $('downfigli');
-			ids.forEach(
-				function(id) {
-					downloadList.unshift(downloadList.splice(id, 1)[0]);
-					ti.insertBefore(tree.view.getItemAtIndex(id), ti.firstChild);
-					tree.view.selection.rangedSelect(0, 0, true);
-				}
-			);					
-		}
-		catch (ex) {
-			Debug.dump("Mover::top", ex);
-		}	
-	},
-	bottom: function() {
-		try {
-			var ids = this._selected;
-			var ti = $('downfigli');
-			ids.forEach(
-				function(id, i) {
-					id = id - i;
-					downloadList.push(downloadList.splice(id, 1)[0]);
-					ti.appendChild(tree.view.getItemAtIndex(id));
-					tree.view.selection.rangedSelect(downloadList.length - 1, downloadList.length - 1, true);
-				}
-			);
-		}
-		catch (ex) {
-			Debug.dump("Mover::bottom", ex);
-		}	
-	},
-	up: function() {
-		try {
-			ids = this._selected;
-			var ti = $('downfigli');
-			ids.forEach(
-				function(id, i) {
-					if (id - i != 0) {
-						var tmp = downloadList[id];
-						downloadList[id] = downloadList[id - 1];
-						downloadList[id - 1] = tmp;
-						ti.insertBefore(tree.view.getItemAtIndex(id), tree.view.getItemAtIndex(--id));
-					}
-					tree.view.selection.rangedSelect(id , id, true);
-				}
-			);
-		}
-		catch (ex) {
-			Debug.dump("Mover::up", ex);
-		}		
-	},
-	down: function() {
-		try {
-			var ids = this._selected;
-			ids.reverse();
-			var ti = $('downfigli');
-			ids.forEach(
-				function(id, i) {
-					if (id + i != downloadList.length - 1) {
-						var tmp = downloadList[id];
-						downloadList[id] = downloadList[id + 1];
-						downloadList[id + 1] = tmp;
-						ti.insertBefore(tree.view.getItemAtIndex(id), tree.view.getItemAtIndex(++id).nextSibling);
-					}
-					tree.view.selection.rangedSelect(id , id, true);
-				}
-			);
-			// readjust view
-			var last = ids[0];
-			if (last != downloadList.length - 1) {
-				++last;
-			}
-			tree.treeBoxObject.ensureRowIsVisible(last);
-		}
-		catch (ex) {
-			Debug.dump("Mover::down", ex);
-		}		
-	}
-};
-
-DTA_include('chrome://dta/content/dta/manager/filehandling.js');
+DTA_include('dta/manager/filehandling.js');
 
 function selectAll() {
-	tree.view.selection.selectAll();
+	tree.selection.selectAll();
 }
 
 function selectInv() {
-	for (var i = 0, e = tree.view.rowCount; i < e; ++i) {
-		tree.view.selection.toggleSelect(i);
+	for (var i = 0, e = tree.rowCount; i < e; ++i) {
+		tree.selection.toggleSelect(i);
 	}
 }
 
 function addChunk(add) {
-	var rangeCount = tree.view.selection.getRangeCount();
-
-	for (var i = 0; i < rangeCount; ++i) {
-		var start = {};
-		var end = {};
-		tree.view.selection.getRangeAt(i,start,end);
-
-		for (var c = start.value; c <= end.value; ++c) {
-			if (!add && downloadList[c].maxChunks > 1) {
-				downloadList[c].maxChunks--;
+	tree.updateSelected(
+		function(d) {
+			if (!add && d.maxChunks > 1) {
+					d.maxChunks--;
 			}
-			else if (add  && downloadList[c].maxChunks < 10) {
-				downloadList[c].maxChunks++;
-				downloadList[c].resumeDownload();
+			else if (add  && d.maxChunks < 10) {
+					d.maxChunks++;
+					d.resumeDownload();
 			}
-			downloadList[c].setTreeCell("parts", downloadList[c].activeChunks + "/" + downloadList[c].maxChunks);
+			return true;
 		}
-	}
+	);
 }
 
-DTA_include('chrome://dta/content/dta/manager/sessionmanager.js');
-
-function tooltipInfo(event) {
-try {
-		var result;
-		var row = new Object;
-		var column = new Object;
-		var part = new Object;
-
-
-		var boxobject = tree.treeBoxObject;
-		boxobject.QueryInterface(Ci.nsITreeBoxObject);
-		boxobject.getCellAt(event.clientX, event.clientY, row, column, part);
-
-		if (row.value == -1)
-				return false;
-
-		var arrayComp = Cc['@mozilla.org/supports-array;1'].createInstance();
-		var properties = arrayComp.QueryInterface(Ci.nsISupportsArray);
-		tree.view.getCellProperties(row, column, properties);
-
-		var n = row.value;
-		$("infoURL").value = downloadList[n].urlManager.url;
-		$("infoDest").value = downloadList[n].dirSave + downloadList[n].destinationName;
-
-		Prefs.currentTooltip = downloadList[n];
-		updateChunkCanvas();
-		updateSpeedCanvas();
-
-		return true;
-} catch(e) { Debug.dump("tooltipInfo():", e); }
-return false;
-}
-
-var Graphics = {
-	makeRoundedRectPath: function(ctx,x,y,width,height,radius) {
-		ctx.beginPath();
-		ctx.moveTo(x,y+radius);
-		ctx.lineTo(x,y+height-radius);
-		ctx.quadraticCurveTo(x,y+height,x+radius,y+height);
-		ctx.lineTo(x+width-radius,y+height);
-		ctx.quadraticCurveTo(x+width,y+height,x+width,y+height-radius);
-		ctx.lineTo(x+width,y+radius);
-		ctx.quadraticCurveTo(x+width,y,x+width-radius,y);
-		ctx.lineTo(x+radius,y);
-		ctx.quadraticCurveTo(x,y,x,y+radius);
-	},
-	createVerticalGradient: function(ctx, height, c1, c2) {
-		var g = ctx.createLinearGradient(0,0,0,height);
-		g.addColorStop(0, c1);
-		g.addColorStop(1, c2);
-		return g;
-	},
-	createInnerShadowGradient: function(ctx, w, c1, c2, c3, c4) {
-		var g = ctx.createLinearGradient(0,0,0,w);
-		g.addColorStop(0, c1);
-		g.addColorStop(3.0/w, c2);
-		g.addColorStop(4.0/w, c3);
-		g.addColorStop(1, c4);
-		return g;
-	}
-};
-
-
-function updateSpeedCanvas() { try {
-
-	var file = Prefs.currentTooltip;
-	if (file==null) return;
-
-	var ctx = $("drawSpeed").getContext("2d");
-
-	var boxFillStyle = Graphics.createInnerShadowGradient(ctx, 30, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
-	var boxStrokeStyle = Graphics.createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
-	var graphFillStyle = Graphics.createVerticalGradient(ctx, 23, "#FF8B00", "#FFDF38");
-
-	ctx.clearRect(0,0,300,50);
-	ctx.save();
-		ctx.translate(.5, .5);
-
-		ctx.lineWidth = 1;
-		ctx.strokeStyle = boxStrokeStyle;
-		ctx.fillStyle = boxFillStyle;
-
-		// draw container chunks back
-		ctx.fillStyle = boxFillStyle;
-		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 5);
-		ctx.fill();
-
-
-		var step = Math.round(300/30);
-
-		var maxH = 0;
-		var minH = 1/0; // Infinity
-		for (var i=0; i<file.speeds.length; i++) {
-			if (file.speeds[i] > maxH) maxH = file.speeds[i];
-			if (file.speeds[i] < minH) minH = file.speeds[i];
-		}
-		var s = [];
-		if (maxH!=0) {
-			minH *= 0.3;
-			var u = 25/((maxH - minH)*1.1);
-
-			for (var i=0; i<file.speeds.length; i++)
-				s.push(Math.round(u*(file.speeds[i] - minH)));
-		}
-
-		var passes = [
-			{ x:4, y:0, f:Graphics.createVerticalGradient(ctx, 23, "#EADF91", "#F4EFB1") },
-			{ x:2, y:0, f:Graphics.createVerticalGradient(ctx, 23, "#DFD58A", "#D3CB8B") },
-			{ x:1, y:0, f:Graphics.createVerticalGradient(ctx, 23, "#D0BA70", "#DFCF6F") },
-			{ x:0, y:0, f:graphFillStyle, s:Graphics.createVerticalGradient(ctx, 23, "#F98F00", "#FFBF37") }
-		];
-
-		if (file.speeds.length>1) {
-			ctx.save();
-				ctx.clip();
-
-				for (var i=0; i<passes.length; i++) {
-					ctx.fillStyle = passes[i].f;
-					var y = 30+passes[i].y;
-					var x = passes[i].x + 0.5;
-
-					ctx.beginPath();
-
-					ctx.moveTo(x, y);
-
-					y = y - s[0];
-					ctx.lineTo(x, y);
-
-					var slope = (s[1]-s[0]) / step;
-					x = x + step*.7;
-					y = y - slope*(step*.7);
-					ctx.lineTo(x, y);
-
-					for (var j=1; j<s.length-1; j++) {
-						x = x + step*.3;
-						y = y - slope*(step*.3);
-
-						slope = (s[j+1]-s[j]) / step;
-						x = x + step*.3;
-						y = y - slope*(step*.3);
-						ctx.quadraticCurveTo(step*j, 30 + passes[i].y - s[j], x, y);
-
-						x = x + step*.4;
-						y = y - slope*(step*.4);
-						ctx.lineTo(x, y);
-					}
-
-					x = x + step*.3;
-					y = y - slope*(step*.3);
-					ctx.lineTo(x, y);
-
-					ctx.lineTo(x, 30);
-					ctx.fill();
-
-					if (passes[i].s) {
-						ctx.strokeStyle = passes[i].s;
-						ctx.stroke();
-					}
-				}
-			ctx.restore();
-		}
-		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 3);
-		ctx.stroke();
-
-	ctx.restore();
-
-	setTimeout("updateSpeedCanvas()", Check.frequencyRefresh);
-
-} catch(e) { Debug.dump("updateSpeedCanvas(): ", e); }
-}
-
-function updateChunkCanvas() {
-
-	var file = Prefs.currentTooltip;
-	if (!file) {
-		return;
-	}
-
-	var ctx = $("drawChunks").getContext("2d");
-
-	// Create gradients
-	var chunkFillStyle = Graphics.createVerticalGradient(ctx, 30, "#A7D533", "#D3F047");
-	var partialFillStyle = Graphics.createVerticalGradient(ctx, 8, "#5BB136", "#A6D73E");
-	var boxFillStyle = Graphics.createInnerShadowGradient(ctx, 30, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
-	var boxStrokeStyle = Graphics.createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
-	var partialBoxFillStyle = Graphics.createInnerShadowGradient(ctx, 8, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
-
-	var passes = [
-		{ x:3, f: Graphics.createInnerShadowGradient(ctx, 30, "#AFA259", "#E8D675", "#F2E17E", "#F5F1B8") },
-		{ x:2, f: Graphics.createInnerShadowGradient(ctx, 30, "#9A8F4E", "#B0A359", "#B3A75D", "#BAB78B") },
-		{ x:1, f: Graphics.createInnerShadowGradient(ctx, 30, "#8E8746", "#B0A359", "#8E8746", "#CACB96") },
-		{ x:0, f: chunkFillStyle, s:chunkFillStyle }
-	];
-
-	try {
-	// clear all
-	ctx.clearRect(0,0,300,50);
-	ctx.save();
-		ctx.translate(.5, .5);
-
-		// draw container chunks back
-		ctx.lineWidth = 1;
-		ctx.strokeStyle = boxStrokeStyle;
-		ctx.fillStyle = boxFillStyle;
-		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 5);
-		ctx.fill();
-
-		var b = [];
-		if (file.is(COMPLETE)) {
-			b.push({
-				s: 0,
-				w: 300
-			});
-		} else if (file.is(CANCELED)) {
-
-		} else if (file.isStarted) {
-			file.chunks.forEach(
-				function(c) {
-					var w = Math.ceil(c.written / file.totalSize * 300);
-					b.push({
-						s: Math.ceil(c.start / file.totalSize * 300),
-						w: w
-					});
-				}
-			);
-		}
-
-		ctx.save();
-			ctx.clip();
-			for (var i=0; i<b.length; i++) {
-				// draw shadow chunk
-				for (var j=0; j<passes.length; j++) {
-					ctx.fillStyle = passes[j].f;
-					Graphics.makeRoundedRectPath(ctx, b[i].s + passes[j].x + 0.5, 0, b[i].w, 30, 3);
-					ctx.fill();
-					if (passes[j].s) {
-						ctx.lineWidth = 2;
-						ctx.strokeStyle = passes[j].s;
-						ctx.stroke();
-					}
-				}
-			}
-		ctx.restore();
-
-		// draw container chunks border
-		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 30, 5);
-		ctx.stroke();
-
-		// draw progress back
-		ctx.translate(0, 32);
-		ctx.fillStyle = partialBoxFillStyle;
-		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 8, 3);
-		ctx.fill();
-
-		// draw progress
-		ctx.fillStyle = partialFillStyle;
-		Graphics.makeRoundedRectPath(ctx, 0, 0, Math.ceil(file.partialSize / file.totalSize * 300), 8, 3);
-		ctx.fill();
-
-		// draw progress border
-		Graphics.makeRoundedRectPath(ctx, 0, 0, 300, 8, 3);
-		ctx.stroke();
-
-	ctx.restore();
-
-	setTimeout("updateChunkCanvas()", Check.frequencyUpdateChunkGraphs);
-
-} catch(e) { Debug.dump("updateChunkCanvas(): ", e); }
-}
-
-function stopCanvas() {Prefs.currentTooltip=null;}
-
+DTA_include('dta/manager/sessionmanager.js');
+DTA_include('dta/manager/tooltip.js');

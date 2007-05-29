@@ -97,11 +97,7 @@ var Dialog = {
 			
 			d.dirSave = d.originalDirSave;
 			d.dirSave = d.buildFromMask(true, d.mask);
-			
-			// XXX later there will be virtual trees
-			d.setTreeCell("dir", d.originalDirSave);
-			d.setTreeCell("mask", d.mask);
-				
+
 			d.checkFilenameConflict();
 		}
 		
