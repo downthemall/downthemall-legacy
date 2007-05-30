@@ -176,6 +176,7 @@ Chunk.prototype = {
 			this._written += bytes;
 
 			this.parent.timeLastProgress = Utils.getTimestamp();
+			this.parent.invalidate();
 
 			return bytes;
 		} catch (ex) {
@@ -460,7 +461,7 @@ downloadElement.prototype = {
 	},
 	get parts() {
 		if (this.maxChunks) {
-			return (++download.activeChunks) + '/' + download.maxChunks;
+			return (this.activeChunks) + '/' + this.maxChunks;
 		}
 		return '';
 	},
@@ -471,7 +472,7 @@ downloadElement.prototype = {
 		else if (!this.totalSize) {
 			return "0%";
 		}
-		return Math.round(d.partialSize / d.totalSize * 100) + "%";
+		return Math.round(this.partialSize / this.totalSize * 100) + "%";
 	},
 	_dirSave: '',
 	get dirSave() {
@@ -484,7 +485,7 @@ downloadElement.prototype = {
 	},
 	
 	invalidate: function() {
-		// IMPLEMENT TREE INVALIDATION;
+		tree.invalidate(this);
 	},
 
 	imWaitingToRearrange: false,

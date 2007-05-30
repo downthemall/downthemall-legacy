@@ -275,7 +275,7 @@ Tree.prototype = {
 	},
 	updateSelected: function(f, t) {
 		this._box.beginUpdateBatch();
-		for (d in this.seleted) {
+		for (d in this.selected) {
 			if (!f.call(t, d)) {
 				break;
 			}

@@ -246,9 +246,11 @@ var Tooltip = {
 								ctx.strokeStyle = pass.s;
 								ctx.stroke();
 							}
-						}
+						},
+						this
 					)
-				}
+				},
+				this
 			);
 			ctx.restore();
 	
