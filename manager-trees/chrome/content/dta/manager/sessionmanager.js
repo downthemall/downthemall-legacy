@@ -46,6 +46,10 @@ var sessionManager = {
 
 		e.dirsave = d.dirSave.addFinalSlash();
 		e.referrer = d.refPage.spec;
+		// Store this so we can later resume.
+		if (!d.is(CANCELED) && d.partialSize) {
+			e.tmpFile = d.tmpFile.path;
+		}
 		e.startDate = d.startDate.toUTCString();
 
 		e.urlManager = d.urlManager.save();
@@ -151,7 +155,8 @@ var sessionManager = {
 					get("numIstance"),
 					get("description"),
 					get("mask"),
-					get("referrer")
+					get("referrer"),
+					get("tmpFile")
 					);
 				d.dbID = dbID;
 				d.startDate = new Date(get("startDate"));

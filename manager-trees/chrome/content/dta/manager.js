@@ -341,6 +341,11 @@ function downloadElement(lnk, dir, num, desc, mask, refPage, tmpFile) {
 			if (tmpFile.exists()) {
 				this._tmpFile = tmpFile;
 			}
+			else {
+				// Download partfile is gone!
+				// XXX find appropriate error message!
+				this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+			}
 		}
 		catch (ex) {
 			Debug.dump("tried to construct with invalid tmpFile", ex);
@@ -902,6 +907,7 @@ downloadElement.prototype = {
 
 			// gc
 			this.chunks = [];
+			this.totalSize = this.partialSize = 0;
 
 			Check.checkClose();
 			popup();
