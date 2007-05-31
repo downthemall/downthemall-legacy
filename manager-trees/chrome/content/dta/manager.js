@@ -1838,6 +1838,12 @@ function startnewDownloads(notQueue, download) {
 			e.refPage
 		);
 		d.state = notQueue ? QUEUED : PAUSED;
+		if (d.is(QUEUED)) {
+			d.status = _('paused');
+		}
+		else {
+			d.status = _('inqueue');
+		}
 		d.startDate = startDate;
 		
 		tree.add(d);
@@ -1870,93 +1876,6 @@ function startnewDownloads(notQueue, download) {
 		Check.refreshGUI();
 	} catch (e) {Debug.dump("startnewDownloads():", e);}
 
-}
-
-function populateListbox(d) {
-
-	var lista = $("downfigli");
-
-	var itemNode = document.createElement("treeitem");
-	itemNode.setAttribute("value", d.urlManager.url);
-	var id = newUUIDString();
-	itemNode.setAttribute("id", id);
-	d.treeID = id;
-
-	var treeRow = document.createElement("treerow");
-
-	var nomefile = document.createElement("treecell");
-
-	if (Prefs.showOnlyFilenames)
-		nomefile.setAttribute("label", " " + d.fileName);
-	else
-		nomefile.setAttribute("label", " " + d.urlManager.url);
-
-	nomefile.setAttribute('src', d.icon);
-	nomefile.setAttribute("ref", "task");
-
-	var per = document.createElement("treecell");
-
-	var per1 = document.createElement("treecell");
-	per1.setAttribute("mode", "normal");
-	per1.setAttribute("ref", "pct");
-
-	var dim = document.createElement("treecell");
-	dim.setAttribute("ref", "dim");
-
-	var time = document.createElement("treecell");
-	time.setAttribute("ref", "time");
-	var speed = document.createElement("treecell");
-	speed.setAttribute("ref", "speed");
-	speed.setAttribute("label", "");
-
-	var path = document.createElement("treecell");
-	path.setAttribute("label", d.dirSave);
-	path.setAttribute("ref", "path");
-
-	var mask = document.createElement("treecell");
-	mask.setAttribute("label", d.mask);
-	mask.setAttribute("ref", "mask");
-
-	var parts = document.createElement("treecell");
-	parts.setAttribute("label", (d.maxChunks != null)?("0/"+d.maxChunks):"");
-
-	if (d.is(COMPLETE)) {
-			time.setAttribute("label", _("complete"));
-			per1.setAttribute("properties", "completed");
-	} else if (d.is(PAUSED)) {
-			time.setAttribute("label", _("paused"));
-			per1.setAttribute("properties", "paused");
-	} else if (d.is(CANCELED)) {
-			time.setAttribute("label", _("canceled"));
-			per1.setAttribute("properties", "canceled");
-	} else {
-			time.setAttribute("label", _("inqueue"));
-			per1.setAttribute("properties", "queued");
-	}
-	
-	dim.setAttribute("label", d.dimensionString);
-	
-	if (d.partialSize != 0 && d.totalSize != 0) {
-			per1.setAttribute("value", Math.round(d.partialSize / d.totalSize * 100));
-			per.setAttribute("label", Math.round(d.partialSize / d.totalSize * 100) + "%");
-	} else {
-			per1.setAttribute("value", 0);
-			per.setAttribute("label", "0%");
-	}
-
-	treeRow.appendChild(nomefile);
-	treeRow.appendChild(per);
-	treeRow.appendChild(per1);
-	treeRow.appendChild(dim);
-	treeRow.appendChild(time);
-	treeRow.appendChild(parts);
-	treeRow.appendChild(mask);
-	treeRow.appendChild(path);
-	treeRow.appendChild(speed);
-
-	itemNode.appendChild(treeRow);
-	lista.appendChild(itemNode);
-	lista.addEventListener("dblclick", FileHandling.openFile, true);
 }
 
 function isInProgress(path, d) {

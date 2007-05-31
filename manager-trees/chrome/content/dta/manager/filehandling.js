@@ -14,7 +14,7 @@ var FileHandling = {
 	},
 	openFile: function() {
 		var cur = tree.current;
-		if (cur.is(COMPLETE)) {
+		if (cur && cur.is(COMPLETE)) {
 			try {
 				OpenExternal.launch(cur.dirSave + cur.destinationName);
 			}

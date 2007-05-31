@@ -144,7 +144,7 @@
 		  </toolbar>
 		</toolbox>
 
-		<tree id="downloads" flex="1" hidecolumnpicker="false"	context="popup"	seltype="multiple" enableColumnDrag="true" onselect="popup();" style="margin:0px;">
+		<tree id="downloads" flex="1" hidecolumnpicker="false" context="popup"	seltype="multiple" enableColumnDrag="true" onselect="popup();" style="margin:0px;" ondblclick="FileHandling.openFile();">
 			<treecols>
 				<treecol id="task" label="&task.label;" ordinal="1" flex="35" crop="center" persist="width ordinal hidden"/>
 				<splitter class="tree-splitter"/>

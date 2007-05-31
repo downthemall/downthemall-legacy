@@ -47,7 +47,7 @@ var sessionManager = {
 		e.dirsave = d.dirSave.addFinalSlash();
 		e.referrer = d.refPage.spec;
 		// Store this so we can later resume.
-		if (!d.is(CANCELED) && d.partialSize) {
+		if (!d.is(CANCELED, COMPLETE) && d.partialSize) {
 			e.tmpFile = d.tmpFile.path;
 		}
 		e.startDate = d.startDate.toUTCString();

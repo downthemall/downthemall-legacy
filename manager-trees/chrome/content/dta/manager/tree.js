@@ -199,20 +199,49 @@ Tree.prototype = {
 	
 	// d = null -> selection, d = downloadE, d = array -> all in list
 	remove: function(downloads) {
-		//stub;
-		// sessionManager.deleteDownload(d);
+		
+		if (downloads instanceof Array) {
+			// map to the actual ids and sort them in descending(!) order.
+			var ids = downloads
+				.sort(function(a, b) { return b._tid - a._tid; });
+		}
+		else if (downloads) {
+			var ids = [downloads];
+		}
+		else {
+			var ids = this._getSelectedIds(true).map(
+				function(idx) {
+					return this._downloads[idx]; 
+				},
+				this
+			);
+		}
+		sessionManager.beginUpdate();
+		this._box.beginUpdateBatch();
+		ids.forEach(
+			function(d) {
+				// wipe out any info/tmpFiles
+				if (!d.is(COMPLETE, CANCELED)) {
+					d.cancel();
+				}
+				sessionManager.deleteDownload(d);
+				this._downloads.splice(d._tid, 1);
+				delete d._tid;
+			},
+			this
+		);
+		this._box.endUpdateBatch();
+		sessionManager.endUpdate();
+		this.invalidate();
 	},
 	removeCompleted: function() {
-		sessionManager.beginUpdate();
 		var list = [];
-		for (var i = this._downloads.length - 1; i >= 0; ++i) {
+		for (var i = 0, e = this._downloads.length; i < e; ++i) {
 			if (this._downloads[i].is(COMPLETE)) {
-				this._downloads[i].cancel();
 				list.push(this._downloads[i]);
 			}
 		}
 		this.remove(list);
-		sessionManager.endUpdate();
 	},
 	
 	invalidate: function(d) {
@@ -230,7 +259,7 @@ Tree.prototype = {
 			);
 			this._box.endUpdateBatch();
 		}
-		else {
+		else if ('_tid' in d) {
 			this._box.invalidateRow(d._tid);
 		}
 	},
@@ -239,11 +268,14 @@ Tree.prototype = {
 		return this._box;
 	},
 	
+	// generator for all download elements.
 	get all() {
 		for (var i = 0, e = this._downloads.length; i < e; ++i) {
 			yield this._downloads[i];
 		}
 	},
+	// generator for selected download elements.
+	// do not make any assumptions about the order.
 	get selected() {
 		var select = this.selection;
 		var count = select.getRangeCount();
@@ -256,6 +288,33 @@ Tree.prototype = {
 				yield this._downloads[c];
 			}
 		}
+	},
+	// returns an ASC sorted array of IDs that are currently selected.
+	_getSelectedIds: function(getReversed) {
+		var rv = [];
+		var rangeCount = this.selection.getRangeCount();
+		for (var i = 0; i < rangeCount; ++i) {
+				start = {};	end = {};
+				this.selection.getRangeAt(i, start, end);
+				for (var c = start.value; c <= end.value; c++) {
+					rv.push(c);
+				}
+		}
+		this.selection.clearSelection();
+		if (getReversed) {
+			rv.sort(function(a, b) { return b - a; });
+		}
+		else {
+			rv.sort(function(a, b) { return a - b; });
+		}
+		return rv;
+	},
+	get current() {
+		var ci = this.selection.currentIndex;
+		if (ci > -1) {
+			return this._downloads[ci];
+		}
+		return null;		
 	},
 	
 	at: function(idx) {
@@ -292,25 +351,10 @@ Tree.prototype = {
 		this._box.endUpdateBatch();
 	},
 	
-	// no generator here.
-	get _selectedIds() {
-		var rv = [];
-		var rangeCount = this.selection.getRangeCount();
-		for (var i = 0; i < rangeCount; ++i) {
-				start = {};	end = {};
-				this.selection.getRangeAt(i, start, end);
-				for (var c = start.value; c <= end.value; c++) {
-					rv.push(c);
-				}
-		}
-		this.selection.clearSelection();
-		return rv;
-	},
 	top: function() {
 		try {
 			this._box.beginUpdateBatch();
-			var ids = this._selectedIds;
-			ids.reverse();
+			var ids = this._getSelectedIds(true);
 			ids.forEach(
 				function(id, idx) {
 					id = id + idx;
@@ -329,7 +373,7 @@ Tree.prototype = {
 	bottom: function() {
 		try {
 			this._box.beginUpdateBatch();
-			var ids = this._selectedIds;
+			var ids = this._getSelectedIds();
 			ids.forEach(
 				function(id, idx) {
 					id = id - idx;
@@ -348,7 +392,7 @@ Tree.prototype = {
 	up: function() {
 		try {
 			this._box.beginUpdateBatch();
-			var ids = this._selectedIds;
+			var ids = this._getSelectedIds();
 			ids.forEach(
 				function(id, idx) {
 					if (id - idx != 0) {
@@ -371,9 +415,8 @@ Tree.prototype = {
 	down: function() {
 		try {
 			this._box.beginUpdateBatch();
-			var ids = this._selectedIds;
 			var rowCount = this.rowCount;
-			ids.reverse();
+			var ids = this._getSelectedIds(true);
 			ids.forEach(
 				function(id, idx) {
 					if (id + idx != rowCount - 1) {
