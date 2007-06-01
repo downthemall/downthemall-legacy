@@ -95,7 +95,25 @@ toolbox {
 	margin: 0;
 }
 #tooltip image {
-	padding: 2pt;
+	margin: 2pt;
+	margin-bottom: auto;
+	width: 32px !important;
+	height: 32px !important;
+	-moz-box-flex: 0 !important;
+}
+#tooltip grid {
+	-moz-box-flex: 1;
+}
+#infoGrid label {
+	margin-bottom: 0;
+	font-weight: bold;
+}
+#infoGrid label[crop] {
+	font-weight: normal !important;
+	max-width: 160px;	
+}
+#canvasGrid label[id] {
+	font-weight: bold;
 }
 
 treechildren::-moz-tree-progressmeter(completed) {

@@ -82,19 +82,19 @@ var Dialog = {
 				+ " - "
 				+ _("cspeed")
 				+ " "
-				+ formatBytes(speed) + "/s";
+				+ Utils.formatBytes(speed) + "/s";
 
 			// Refresh window title
 			if (inProgressList.length == 1 && inProgressList[0].d.totalSize > 0) {
 				document.title =
 					Math.round(inProgressList[0].d.partialSize / inProgressList[0].d.totalSize * 100) + "% - "
 					+ Stats.completedDownloads + "/" + tree.rowCount + " - "
-					+ formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
+					+ Utils.formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
 			}
 			else if (inProgressList.length > 0) {
 				document.title =
 					Stats.completedDownloads + "/" + tree.rowCount + " - "
-					+ formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
+					+ Utils.formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
 			}
 			else {
 				document.title = Stats.completedDownloads + "/" + tree.rowCount + " - DownThemAll!";
@@ -107,22 +107,19 @@ var Dialog = {
 					if (d.partialSize != 0 && d.is(RUNNING) && (now - d.timeStart) >= 1000 ) {
 						// Calculate estimated time
 						if (d.totalSize > 0) {
-							var remainingSeconds = Math.ceil((d.totalSize - d.partialSize) / ((d.partialSize - i.lastBytes) * REFRESH_NFREQ));
-							if (isNaN(remainingSeconds)) {
-								d.status = _("unavailable");
+							var remaining = Math.ceil((d.totalSize - d.partialSize) / ((d.partialSize - i.lastBytes) * REFRESH_NFREQ));
+							if (isNaN(remaining)) {
+								d.status = _("unknown");
 							}
 							else {
-								var hour = Math.floor(remainingSeconds / 3600);
-								var min = Math.floor((remainingSeconds % 3600) / 60);
-								var sec = (remainingSeconds % 60);
-								d.status = ((hour> 0 ? hour + ':' : '') + min + ":" + sec).formatTimeDate();
+								d.status = Utils.formatTimeDelta(remaining);
 							}
 						}
 					}
 					var speed = Math.round((d.partialSize - i.lastBytes) * REFRESH_NFREQ);
 
 					// Refresh item speed
-					d.speed = formatBytes(speed) + "/s";
+					d.speed = Utils.formatBytes(speed) + "/s";
 					d.speeds.push(speed > 0 ? speed : 0);
 					if (d.speeds.length > SPEED_COUNT) {
 						d.speeds.shift();
@@ -686,12 +683,12 @@ downloadElement.prototype = {
 	},
 	get dimensionString() {
 		if (this.partialSize <= 0) {
-			return "???"; 
+			return _('unknown'); 
 		}
 		else if (this.totalSize <= 0) {
-			return formatBytes(this.partialSize) + "/" + "???";
+			return Utils.formatBytes(this.partialSize) + "/" + _('unknown');
 		}
-		return formatBytes(this.partialSize) + "/" + formatBytes(this.totalSize);
+		return Utils.formatBytes(this.partialSize) + "/" + Utils.formatBytes(this.totalSize);
 	},
 	_status : '',
 	get status() {
@@ -710,7 +707,7 @@ downloadElement.prototype = {
 	},
 	get percent() {
 		if (!this.totalSize && this.is(RUNNING)) {
-			return "???";
+			return _('unknown');
 		}
 		else if (!this.totalSize) {
 			return "0%";
@@ -996,7 +993,7 @@ downloadElement.prototype = {
 				"\\*refer\\*": this.refPage.host,
 				"\\*qstring\\*": query,
 				"\\*curl\\*": (uri.host + ((uripath=="")?"":(replacedSlash + uripath))),
-				"\\*num\\*": makeNumber(this.numIstance),
+				"\\*num\\*": Utils.makeNumber(this.numIstance),
 				"\\*hh\\*": String(this.startDate.getHours()).formatTimeDate(),
 				"\\*mm\\*": String(this.startDate.getMinutes()).formatTimeDate(),
 				"\\*ss\\*": String(this.startDate.getSeconds()).formatTimeDate(),
@@ -1035,7 +1032,7 @@ downloadElement.prototype = {
 			basename = basename.slice(0, pos);
 		}
 		for (var i = 1; isInProgress(newDest.path, this) != -1 || newDest.exists(); ++i) {
-			newDest.leafName = basename + "_" +  makeNumber(i) + ext;
+			newDest.leafName = basename + "_" +  Utils.makeNumber(i) + ext;
 		}
 		if (newDest.path == dest.path) {
 			return;
@@ -1841,17 +1838,6 @@ function askForRenaming(t, s1, s2, s3) {
 		return Prefs.sessionPreference;
 	}
 	return Prefs.onConflictingFilenames;
-}
-
-function makeNumber(rv, digits) {
-	rv = new String(rv);
-	if (typeof(digits) != 'number') {
-			digits = 3;
-	}
-	while (rv.length < digits) {
-		rv = '0' + rv;
-	}
-	return rv;
 }
 
 function popup() {

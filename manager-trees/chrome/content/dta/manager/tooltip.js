@@ -90,9 +90,10 @@ var Tooltip = {
 				var maxH, minH;
 				maxH = minH = file.speeds[0];
 				for (var i = 1, e = file.speeds.length; i < e; ++i) {
-						if (file.speeds[i] > maxH) maxH = file.speeds[i];
-						if (file.speeds[i] < minH) minH = file.speeds[i];
+					maxH = Math.max(maxH, file.speeds[i]);
+					minH = Math.min(minH, file.speeds[i]);
 				}
+				// special case: all speeds are the same
 				if (minH == maxH) {
 					var s = file.speeds.map(function(speed) { return 12; });
 				}
@@ -172,6 +173,31 @@ var Tooltip = {
 		}
 		
 		try {
+			$('infoSize').value = file.totalSize > 0 ? Utils.formatBytes(file.totalSize) : _('unknown');
+			if (file.is(RUNNING)) {
+				$('timeElapsed').value = Utils.formatTimeDelta((Utils.getTimestamp() - file.timeStart) / 1000);
+				$('timeRemaining').value = file.status;
+				$('speedCurrent').value = file.speed;
+				if (file.speeds.length) {
+					var avg = 0;
+					file.speeds.forEach(
+						function(s) {
+							avg += s;
+						}
+					)
+					$('speedAverage').value = Utils.formatBytes(avg / file.speeds.length) + "/s";
+				}
+				else {
+					$('speedAverage').value = _('unknown');
+				}
+			}
+			else {
+				$('timeElapsed', 'timeRemaining', 'speedCurrent', 'speedAverage').forEach(
+					function(e) {
+						e.value = _('nal');
+					}
+				);
+			}
 	
 			var canvas = $("chunkCanvas");
 			var width = canvas.width = canvas.clientWidth;

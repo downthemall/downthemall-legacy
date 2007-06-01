@@ -101,26 +101,52 @@
 		<tooltip id="tooltip" position="at_pointer" noautohide="true" onpopupshowing="return Tooltip.show(event);" onpopuphiding="Tooltip.stopCanvas();" orient="vertical">
 			<vbox>
 				<hbox>
-					<image id="infoIcon" width="32" height="32" />
+					<vbox>
+						<spacer flex="1"/>
+						<image id="infoIcon"/>
+						<spacer flex="1"/>
+					</vbox>
 					<separator class="thin" />
-					<grid flex="1">
+					<grid id="infoGrid">
 						<columns><column/><column flex="1"/></columns>
 						<rows>
 							<row>
-								<label id="infoURLTitle" style="font-weight: bold; max-width: 160px;" value="&infoURLTitle.value;" />
-								<label crop="left" id="infoURL" />		
+								<label value="&infoURLTitle.value;" />
+								<label crop="left" id="infoURL" />
 							</row>
 							<row>
-								<label id="infoDestTitle" style="font-weight: bold; max-width: 160px;" value="&infoDestTitle.value;" />
+								<label value="&infoDestTitle.value;" />
 								<label crop="left" id="infoDest" />
 							</row>
+							<row>
+								<label value="&infoSizeTitle.value;" />
+								<label crop="left" id="infoSize" />
+							</row>
 						</rows>
+						<spacer flex="1"/>
 					</grid>
 				</hbox>
 				<separator class="thin" />
-				<html:canvas id="chunkCanvas" height="40"></html:canvas>
-				<separator class="thin" />
-				<html:canvas id="speedCanvas" height="33"></html:canvas>
+				<grid id="canvasGrid">
+					<columns><column/><column flex="1"/><column/><column/></columns>
+					<rows>
+						<html:canvas id="chunkCanvas" height="40"></html:canvas>
+						<row>
+							<label value="&elapsedTitle.value;"/>
+							<label id="timeElapsed"/>
+							<label value="&remainingTitle.value;"/>
+							<label id="timeRemaining"/>
+						</row>
+						<separator class="thin" />
+						<html:canvas id="speedCanvas" height="33"></html:canvas>
+						<row>
+							<label value="&currentSpeedTitle.value;"/>
+							<label id="speedCurrent"/>
+							<label value="&avgSpeedTitle.value;"/>
+							<label id="speedAverage"/>
+						</row>
+					</rows>
+				</grid>
 			</vbox>
 		</tooltip>
 	</popupset>	

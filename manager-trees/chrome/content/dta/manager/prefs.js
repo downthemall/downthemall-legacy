@@ -56,7 +56,7 @@ var Prefs = {
 			'removeCanceled',
 			['autoClose', 'closedta'],
 			'timeout',
-			'nTask',
+			['maxInProgress', 'ntask'],
 			'maxChunks',
 			'setTime',
 			'showOnlyFilenames',

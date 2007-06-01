@@ -97,25 +97,6 @@ function $() {
   return elements;
 }
 
-function formatBytes(aNumber) {
-	aNumber = Number(aNumber);
-
-	if (aNumber < 1024)	{
-		return aNumber.toFixed(0) + " b";
- 	}
- 	
-	var units = ['TB','GB','MB','KB'];
-	var unit;
-	
-	while (aNumber > 875 && units.length) {
- 		aNumber /= 1024;
-		unit = units.pop();
- 	}
- 	
- 	return aNumber.toFixed(2) + " " + unit;
-
-}
-
 objectExtend(String.prototype, 
 {	
 	trim : function() {
@@ -178,9 +159,6 @@ objectExtend(String.prototype,
 			return null;
 		}
 		return name.slice(c+1);
-	},
-	formatTimeDate : function() {
-		return this.replace(/\b(\d)\b/g, "0$1");
 	},
 	cropCenter : function(newLength) {
 		if (this.length > newLength) {
@@ -290,6 +268,58 @@ var Utils = {
 			throw new Error("invalid date");
 		}
 		return rv;
+	},
+
+	/**
+	 * returns a formated representation of a (file) size
+	 * @param aNumber The number to format
+	 * @author Nils
+	 */
+	formatBytes: function U_formatBytes(aNumber) {
+		aNumber = Number(aNumber);
+	
+		if (aNumber < 1024)	{
+			return aNumber.toFixed(0) + " b";
+	 	}
+	 	
+		var units = ['TB','GB','MB','KB'];
+		var unit;
+		
+		while (aNumber > 875 && units.length) {
+	 		aNumber /= 1024;
+			unit = units.pop();
+	 	}
+	 	
+	 	return aNumber.toFixed(2) + " " + unit;
+	},
+	
+	/**
+	 * returns a pretty number containing at least specified number of digits
+	 * @param aNumber the number to format
+	 * @param aDigists Optional. Number of digits the result must at least have
+	 * @author Nils
+	 */
+	makeNumber: function U_makeNumber(rv, digits) {
+		rv = _atos(rv);
+		if (typeof(digits) != 'number') {
+			digits = 3;
+		}
+		while (rv.length < digits) {
+			rv = '0' + rv;
+		}
+		return rv;
+	},
+	/**
+	 * formats a time-delta. At least minutes and seconds are given back
+	 */
+	formatTimeDelta: function U_formatTimeDelta(aDelta) {
+		var h = Math.floor(aDelta / 3600);
+		var m = Math.floor((aDelta % 3600) / 60);
+		var s = Math.floor(aDelta % 60);
+		if (h) {
+			return this.makeNumber(h, 2) + ":" + this.makeNumber(m, 2) + ":" + this.makeNumber(s, 2);
+		}
+		return this.makeNumber(m, 2) + ":" + this.makeNumber(s, 2);
 	}
 };
 
