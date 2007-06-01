@@ -130,7 +130,10 @@
 				<grid id="canvasGrid">
 					<columns><column/><column flex="1"/><column/><column/></columns>
 					<rows>
-						<html:canvas id="chunkCanvas" height="40"></html:canvas>
+						<stack>
+							<html:canvas id="chunkCanvas" height="40px"></html:canvas>
+							<label id="infoPercent"/>
+						</stack>
 						<row>
 							<label value="&elapsedTitle.value;"/>
 							<label id="timeElapsed"/>

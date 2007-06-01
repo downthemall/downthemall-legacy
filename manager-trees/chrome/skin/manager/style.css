@@ -115,6 +115,16 @@ toolbox {
 #canvasGrid label[id] {
 	font-weight: bold;
 }
+#infoPercent {
+	text-align: center;
+	height: 40px;
+	margin: 0;
+	padding: 0;
+	padding-top: 7px;
+	font-size: 14px;
+	font-weight: bold;
+	background: transparent !important;
+}
 
 treechildren::-moz-tree-progressmeter(completed) {
   color: #008F00;

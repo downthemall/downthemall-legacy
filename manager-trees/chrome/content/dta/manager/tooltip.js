@@ -198,7 +198,14 @@ var Tooltip = {
 					}
 				);
 			}
-	
+			var ip = $('infoPercent');
+			if (file.totalSize) {
+				ip.collapsed = false;
+				ip.value = file.percent;
+			}
+			else {
+				ip.collapsed = true;
+			}
 			var canvas = $("chunkCanvas");
 			var width = canvas.width = canvas.clientWidth;
 			var height = canvas.height = canvas.clientHeight;
