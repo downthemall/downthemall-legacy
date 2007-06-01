@@ -21,7 +21,7 @@
 ]>
 
 <window xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
-	onload="loadDown();" 
+	onload="Dialog.init();" 
 	title="DownThemAll!"  
 	id="downlinks" 
 	onunload="return Dialog.close();" 
@@ -111,12 +111,12 @@
 						<columns><column/><column flex="1"/></columns>
 						<rows>
 							<row>
-								<label value="&infoURLTitle.value;" />
-								<label crop="left" id="infoURL" />
-							</row>
-							<row>
 								<label value="&infoDestTitle.value;" />
 								<label crop="left" id="infoDest" />
+							</row>
+							<row>
+								<label value="&infoURLTitle.value;" />
+								<label crop="left" id="infoURL" />
 							</row>
 							<row>
 								<label value="&infoSizeTitle.value;" />

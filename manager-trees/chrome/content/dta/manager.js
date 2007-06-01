@@ -64,6 +64,22 @@ const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 
 var Dialog = {
 	_lastSum: 0,
+	init: function D_init() {
+		make_();
+		tree = new Tree($("downloads"));
+	
+		document.getElementById("dtaHelp").hidden = !("openHelp" in window);
+	
+		sessionManager.init();
+	
+		if ("arguments" in window) {
+			startnewDownloads(window.arguments[0], window.arguments[1]);
+		}
+	
+		Dialog.checkDownloads();
+
+		tree.selectionChanged();
+	},	
 	refresh: function() {
 		try {
 			var sum = 0;
@@ -100,7 +116,7 @@ var Dialog = {
 				document.title = Stats.completedDownloads + "/" + tree.rowCount + " - DownThemAll!";
 			}
 
-			const now = Date.now();
+			const now = Utils.getTimestamp();
 			inProgressList.forEach(
 				function(i) {
 					var d = i.d;
@@ -258,21 +274,41 @@ var Dialog = {
 			}
 		}
 		// stop everything!
+		// enumerate everything we'll have to wait for!
+		this._killTimers();		
+		this._safeCloseChunks = [];
+		this._safeCloseFinishing = []
 		for (d in tree.all) {
 			if (d.is(RUNNING, QUEUED)) {
-				d.setPaused();
+				// enumerate all running chunks
+				d.chunks.forEach(
+					function(c) {
+						if (c.isRunning) {
+							this._safeCloseChunks.push(c);
+						}
+					},
+					this
+				);
+				d.setPaused();				
+			}
+			else if (d.is(FINISHING)) {
+				this._safeCloseFinishing.push(d);
 			}
 		}
 		return this._safeClose();
 	},
+	_safeCloseChunks: [],
+	// this one will loop until all chunks and FINISHING are gone.
 	_safeClose: function() {
 		// cannot close at this point
-		if (tree.some(function(d) { return d.is(FINISHING); })) {		
-			this.setTimer('_saveClose', "Dialog._saveclose();", 250);
+		this._safeCloseChunks = this._safeCloseChunks.filter(function(c) { return c.isRunning; });
+		this._safeCloseFinishing = this._safeCloseFinishing.filter(function(d) { return d.is(FINISHING); });
+		if (this._safeCloseChunks.length || this._safeCloseFinishing.length) {
+			this.setTimer('_safeClose', "Dialog._safeClose();", 250);
 			return false;
 		}
+		// alright, we left the loop.. shutdown complete ;)
 		sessionManager.save();
-		this._killTimers();
 		self.close();
 		return true;		
 	},
@@ -322,7 +358,6 @@ var Chunk = function(download, start, end, written) {
 
 Chunk.prototype = {
 	isRunning: false,
-	imWaitingToRearrange: false,
 	get start() {
 		return this._start;
 	},
@@ -353,6 +388,9 @@ Chunk.prototype = {
 		if (this._outStream) {
 			this._outStream.close();
 			delete this._outStream;
+		}
+		if (this.parent.is(CANCELED)) {
+			this.parent.removeTmpFile();
 		}
 	},
 	_written: 0,
@@ -728,8 +766,6 @@ downloadElement.prototype = {
 		tree.invalidate(this);
 	},
 
-	imWaitingToRearrange: false,
-
 	_hasToBeRedownloaded: false,
 	get hasToBeRedownloaded() {
 		return this._hasToBeRedownloaded;
@@ -757,8 +793,6 @@ downloadElement.prototype = {
 		this.resumeDownload();
 	},
 
-	treeElement: null,
-
 	removeFromInProgressList: function() {
 		//this.speeds = new Array();
 		for (var i=0; i<inProgressList.length; i++)
@@ -767,7 +801,7 @@ downloadElement.prototype = {
 				break;
 			}
 	},
-
+	
 	refreshPartialSize: function(){
 		var size = 0;
 		this.chunks.forEach(function(c) { size += c.written; });
@@ -1237,7 +1271,6 @@ downloadElement.prototype = {
 function inProgressElement(el) {
 	this.d = el;
 	this.lastBytes = el.partialSize;
-	this.speeds = new Array();
 }
 
 var inProgressList = new Array();
@@ -1629,13 +1662,13 @@ Download.prototype = {
 		// ok, chunk passed all the integrity checks!
 
 		// isHeaderHack chunks have their private call to removeFromInProgressList
-		if (!d.is(RUNNING) && !d.imWaitingToRearrange) {
+		if (!d.is(RUNNING)) {
 			d.speed = '';
 			d.removeFromInProgressList();
 		}
 
 		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
-		if (!this.started && d.isResumable && !c.imWaitingToRearrange && !d.is(CANCELED, PAUSED)) {
+		if (!this.started && d.isResumable && !d.is(CANCELED, PAUSED)) {
 			Debug.dump(d.fileName + ": Server error or disconnection (type 1)");
 			d.status = _("srver");
 			d.speed = '';
@@ -1715,32 +1748,6 @@ Download.prototype = {
 	onStatus: function(aRequest, aContext, aStatus, aStatusArg) {}
 };
 
-
-function loadDown() {
-	make_();
-	tree = new Tree($("downloads"));
-
-	document.getElementById("dtaHelp").hidden = !("openHelp" in window);
-
-	sessionManager.init();
-
-	// update status and window title
-	$("statusText").label = _("cdownloads", [Stats.completedDownloads, tree.rowCount]);
-	document.title = Stats.completedDownloads + "/" + tree.rowCount + " - DownThemAll!";
-
-	if ("arguments" in window) {
-		startnewDownloads(window.arguments[0], window.arguments[1]);
-	}
-
-	try {
-		Dialog.checkDownloads();
-	}
-	catch (ex) {
-		// no-op
-	}
-	
-	tree.selectionChanged();
-}
 
 function startnewDownloads(notQueue, download) {
 
@@ -1838,10 +1845,6 @@ function askForRenaming(t, s1, s2, s3) {
 		return Prefs.sessionPreference;
 	}
 	return Prefs.onConflictingFilenames;
-}
-
-function popup() {
-	return false;
 }
 
 function pauseResumeReq(pauseReq) {
