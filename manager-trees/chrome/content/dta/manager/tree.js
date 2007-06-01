@@ -146,6 +146,9 @@ Tree.prototype = {
 	getCellValue: function(idx, col) {
 		if (col.id == 'pct') {
 			var d = this._downloads[idx];
+			if (d.is(CANCELED)) {
+				return 100;	
+			}
 			return d.totalSize ? d.partialSize * 100 / d.totalSize : 0;
 		}
 		return null;
@@ -188,6 +191,10 @@ Tree.prototype = {
 
 	// called when the user clicks our checkboxen
 	setCellValue: function(idx, col, value) {
+	},
+	
+	selectionChanged: function() {
+		this.refreshTools();
 	},
 	
 	// stuff
@@ -244,10 +251,33 @@ Tree.prototype = {
 		this.remove(list);
 	},
 	
+	refreshTools: function() {
+		
+		$('info', 'remove', 'movetop', 'moveup', 'movedown', 'movebottom', 'toolmovetop', 'toolmoveup', 'toolmovedown', 'toolmovebottom')
+			.forEach(
+				function(o) { return o.setAttribute('disabled', this.current); },
+				this
+			);
+		
+		var selected = [];
+		for (d in this.selected) {
+			selected.push(d);
+		}
+		function modifySome(items, f) {
+			items.forEach(function(o) { return o.setAttribute('disabled', selected.length == 0 || !selected.some(f)); });
+		}
+		modifySome($('play', 'toolplay'), function(d) { return !d.is(COMPLETE, RUNNING, QUEUED); });
+		modifySome($('pause', 'toolpause'), function(d) { return d.is(RUNNING) && d.isResumable || d.is(QUEUED); });
+		modifySome($('cancel', 'toolcancel'), function(d) { return !d.is(CANCELED); });
+		modifySome($('launch', 'folder', 'delete'), function(d) { return d.is(COMPLETE); });
+		modifySome($('addchunk', 'removechunk'), function(d) { return d.is(QUEUED, RUNNING, PAUSED); });
+	},
+	
 	invalidate: function(d) {
 		if (!d) {
 			this._downloads.forEach(function(e, i) { e._tid = i; });
 			this._box.invalidate();
+			this.refreshTools();			
 		}
 		else if (d instanceof Array) {
 			this._box.beginUpdateBatch();

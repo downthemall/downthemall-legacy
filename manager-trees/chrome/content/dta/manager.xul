@@ -21,11 +21,11 @@
 ]>
 
 <window xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
-	onload="loadDown();popup();" 
+	onload="loadDown();" 
 	title="DownThemAll!"  
 	id="downlinks" 
-	onunload="return cancelAll(false);" 
-	onclose="return cancelAll(false);" 
+	onunload="return Dialog.close();" 
+	onclose="return Dialog.close();" 
 	persist="width height screenX screenY" 
 	ondragover="nsDragAndDrop.dragOver(event,dragObserverTdTa)"  
 	ondragdrop="nsDragAndDrop.drop(event,dragObserverTdTa)"
@@ -48,8 +48,8 @@
 	</stringbundleset>
 
 	<keyset>
-		<key id="esc" keycode="VK_ESCAPE" oncommand="cancelAll(true);"/>
-		<key id="kMacEsc" modifiers="accel" key="W" oncommand="cancelAll(true);"/>
+		<key id="esc" keycode="VK_ESCAPE" oncommand="Dialog.close();"/>
+		<key id="kMacEsc" modifiers="accel" key="W" oncommand="Dialog.close();"/>
 		<key id="enter" keycode="VK_RETURN" oncommand="FileHandling.openFile();"/>
 		<key id="sAll" modifiers="accel" key="A" oncommand="selectAll();"/>
 		<key id="kUp" modifiers="alt" keycode="VK_PAGE_UP" oncommand="tree.up();"/>
@@ -66,15 +66,15 @@
 	
 
 	<popupset>
-		<popup id="popup" onpopupshowing="popup();">
+		<popup id="popup">
 			<menuitem id="info" class="menuitem-iconic" image="chrome://dta/skin/manager/info.png" label="&infos.label;" oncommand="getInfo();" />
 			<menuseparator />
 			<menuitem id="launch" class="menuitem-iconic" image="chrome://dta/skin/manager/launch.png" label="&launch.label;" oncommand="FileHandling.openFile();" />
 			<menuitem id="delete" class="menuitem-iconic" image="chrome://dta/skin/manager/delete.png" label="&delete.label;" oncommand="FileHandling.deleteFile();" />
 			<menuitem id="folder" class="menuitem-iconic" image="chrome://dta/skin/manager/folder.png" label="&targetdir.label;" oncommand="FileHandling.openFolder();" />
 			<menuseparator />
-			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" image="chrome://dta/skin/manager/pause.png" oncommand="pauseResumeReq(true);" />
 			<menuitem id="play" class="menuitem-iconic" label="&resume.label;" image="chrome://dta/skin/manager/play.png" oncommand="pauseResumeReq(false);" />
+			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" image="chrome://dta/skin/manager/pause.png" oncommand="pauseResumeReq(true);" />
 			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/skin/manager/cancel.png" oncommand="cancelPopup();" />
 			<menuseparator />
 			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/skin/manager/clean.png" oncommand="removeCompleted();" />
@@ -144,7 +144,17 @@
 		  </toolbar>
 		</toolbox>
 
-		<tree id="downloads" flex="1" hidecolumnpicker="false" context="popup"	seltype="multiple" enableColumnDrag="true" onselect="popup();" style="margin:0px;" ondblclick="FileHandling.openFile();">
+		<tree
+			id="downloads"
+			flex="1"
+			hidecolumnpicker="false"
+			context="popup"
+			seltype="multiple"
+			enableColumnDrag="true"
+			style="margin:0px;"
+			ondblclick="FileHandling.openFile();"
+			onselect="tree.selectionChanged();"
+		>
 			<treecols>
 				<treecol id="task" label="&task.label;" ordinal="1" flex="35" crop="center" persist="width ordinal hidden"/>
 				<splitter class="tree-splitter"/>

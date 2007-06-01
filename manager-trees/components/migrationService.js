@@ -142,7 +142,7 @@ var MigrationService = {
 			['context.downloadWin', 'downloadWin', true],
 			['context.ntask', 'ntask', 4],
 			['context.maxchunks', 'maxchunks', 5],
-			['context.reduce', 'showOnlyFilenames', true],
+			['context.reduce', 'showonlyfilenames', true],
 			['context.saveTemp', 'saveTemp', true],
 			['context.tempLocation', 'tempLocation', ''],
 			['context.seltab', 'seltab', 0],

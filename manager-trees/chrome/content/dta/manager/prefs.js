@@ -1,7 +1,7 @@
 var Prefs = {
 	// default values
 	showOnlyFilenames: true,
-	alertingSystem: 0,
+	alertingSystem: (SYSTEMSLASH == '\\') ? 1 : 0,
 
 	// conflict filenames preference for this session (-1 not setted)
 	askEveryTime: true,
@@ -18,7 +18,11 @@ var Prefs = {
 	removeAborted: false,
 	removeCanceled: false,
 	
+	autoClose: false,
+	
 	setTime: true,
+	
+	timeout: 300,
 
 	// nsIObserver
 	observe: function(subject, topic, prefName) {
@@ -29,7 +33,7 @@ var Prefs = {
 		makeObserver(this);
 
 		try {
-			this.observe();
+			this._refreshPrefs();
 			var pbi = Cc['@mozilla.org/preferences-service;1']
 				.getService(Ci.nsIPrefService)
 				.getBranch(null)
@@ -46,16 +50,32 @@ var Prefs = {
 	_refreshPrefs: function() {
 		Debug.dump("pref reload");
 
-		this.removeCompleted = Preferences.getDTA("removecompleted", true);
-		this.removeAborted = Preferences.getDTA('removeaborted', false);
-		this.removeCanceled = Preferences.getDTA("removecanceled", false);
-
-		this.maxInProgress = Preferences.getDTA("ntask", 5);
-		this.maxChunks = Preferences.getDTA("maxchunks", 5);
-		this.setTime = Preferences.getDTA("settime", 5);
-		this.showOnlyFilenames = Preferences.getDTA("showOnlyFilenames", true);
-		this.onConflictingFilenames = Preferences.getDTA("existing", 3);
-		this.alertingSystem = Preferences.getDTA("alertbox", (SYSTEMSLASH == '\\') ? 1 : 0);
+		[
+			'removeCompleted',
+			'removeAborted',
+			'removeCanceled',
+			['autoClose', 'closedta'],
+			'timeout',
+			'nTask',
+			'maxChunks',
+			'setTime',
+			'showOnlyFilenames',
+			['onConflictingFilenames', 'existing'],
+			['alertingSystem', 'alertbox']
+		].forEach(
+			function(e) {
+				if (e instanceof Array) {
+					var key = e[0];
+					var pref = e[1];
+				}
+				else {
+					var key = e;
+					var pref = key.toLowerCase();
+				}
+				this[key] = Preferences.getDTA(pref, this[key]);
+			},
+			this
+		);
 
 		if (Preferences.get("saveTemp", true)) {
 			try {

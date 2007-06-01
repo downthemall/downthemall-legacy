@@ -49,14 +49,254 @@ if (!Ci) {
 const MIN_CHUNK_SIZE = 512 * 1024;
 // in use by chunk.writer...
 // in use by decompressor... beware, actual size might be more than twice as big!
-const MAX_BUFFER_SIZE = 5242880; // 3 MB
+const MAX_BUFFER_SIZE = 3 * 1024 * 1024; // 3 MB
 const SPEED_COUNT = 25;
 
 const QUEUED = 0;
 const PAUSED =  1<<1;
 const RUNNING = 1<<2;
-const COMPLETE = 1<<3;
-const CANCELED = 1<<4;
+const FINISHING = 1<<3;
+const COMPLETE = 1<<4;
+const CANCELED = 1<<5;
+
+const REFRESH_FREQ = 1000;
+const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
+
+var Dialog = {
+	_lastSum: 0,
+	refresh: function() {
+		try {
+			var sum = 0;
+			inProgressList.forEach(
+				function(i) {
+					sum += i.d.partialSize;
+				}
+			);
+			var speed = Math.round((sum - this._lastSum) * REFRESH_NFREQ);
+			speed = (speed > 0) ? speed : 0;
+			this._lastSum = sum;
+
+			// Refresh status bar
+			$("statusText").label = 
+				_("cdownloads", [Stats.completedDownloads, tree.rowCount])
+				+ " - "
+				+ _("cspeed")
+				+ " "
+				+ formatBytes(speed) + "/s";
+
+			// Refresh window title
+			if (inProgressList.length == 1 && inProgressList[0].d.totalSize > 0) {
+				document.title =
+					Math.round(inProgressList[0].d.partialSize / inProgressList[0].d.totalSize * 100) + "% - "
+					+ Stats.completedDownloads + "/" + tree.rowCount + " - "
+					+ formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
+			}
+			else if (inProgressList.length > 0) {
+				document.title =
+					Stats.completedDownloads + "/" + tree.rowCount + " - "
+					+ formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
+			}
+			else {
+				document.title = Stats.completedDownloads + "/" + tree.rowCount + " - DownThemAll!";
+			}
+
+			const now = Date.now();
+			inProgressList.forEach(
+				function(i) {
+					var d = i.d;
+					if (d.partialSize != 0 && d.is(RUNNING) && (now - d.timeStart) >= 1000 ) {
+						// Calculate estimated time
+						if (d.totalSize > 0) {
+							var remainingSeconds = Math.ceil((d.totalSize - d.partialSize) / ((d.partialSize - i.lastBytes) * REFRESH_NFREQ));
+							if (isNaN(remainingSeconds)) {
+								d.status = _("unavailable");
+							}
+							else {
+								var hour = Math.floor(remainingSeconds / 3600);
+								var min = Math.floor((remainingSeconds % 3600) / 60);
+								var sec = (remainingSeconds % 60);
+								d.status = ((hour> 0 ? hour + ':' : '') + min + ":" + sec).formatTimeDate();
+							}
+						}
+					}
+					var speed = Math.round((d.partialSize - i.lastBytes) * REFRESH_NFREQ);
+
+					// Refresh item speed
+					d.speed = formatBytes(speed) + "/s";
+					d.speeds.push(speed > 0 ? speed : 0);
+					if (d.speeds.length > SPEED_COUNT) {
+						d.speeds.shift();
+					}
+					i.lastBytes = d.partialSize;
+				}
+			);
+		}
+		catch(ex) {
+			Debug.dump("refresh():", ex);
+		}
+	},
+
+	checkDownloads: function() {
+		try {
+			this.refresh();
+		
+			inProgressList.forEach(
+				function(i) {
+					var d = i.d;
+					// checks for timeout
+					if ((Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
+					if (d.isResumable) {
+						d.setPaused();
+						d.status = _("timeout");
+					} else
+						d.cancel(_("timeout"));
+	
+					Debug.dump("checkDownloads(): " + d.fileName + " in timeout");
+				}
+					
+				}
+			)
+			
+			this.startNext();
+			Dialog.setTimer('dialog:checkDownloads', "Dialog.checkDownloads();", REFRESH_FREQ);
+		} catch(ex) {
+			Debug.dump("checkDownloads():", ex);
+		}
+	},
+	startNext: function() {
+		try {
+			tree.updateAll(
+				function(d) {
+					if (inProgressList.length >= Prefs.maxInProgress) {
+						return false;
+					}
+					if (!d.is(QUEUED)) {
+						return true;
+					}
+		
+					d.status = _("starting");
+		
+					d.timeLastProgress = Utils.getTimestamp();
+					d.state = RUNNING;
+		
+					if (inProgressList.indexOf(d) == -1) {
+						inProgressList.push(new inProgressElement(d));
+						d.timeStart = Utils.getTimestamp();
+					}
+		
+					if (!d.isStarted) {
+						d.isStarted = true;
+						Debug.dump("Let's start " + d.fileName);
+					} else {
+						Debug.dump("Let's resume " + d.fileName + ": " + d.partialSize);
+					}
+					d.resumeDownload();
+					return true;
+				}
+			);
+		} catch(ex){
+			Debug.dump("startNextDownload():", ex);
+		}
+	},
+	_wasStarted: false,
+	signal: function(download) {
+		if (download.is(RUNNING)) {
+			this._wasStarted = true;
+			return;
+		}
+		if (!this._wasStarted) {
+			return;
+		}
+		try {
+			// check if there is something running or scheduled
+			if (tree.some(function(d) { return d.is(FINISHING, RUNNING, QUEUED); } )) {
+				this.startNext();
+				Debug.dump("signal(): not finished");
+				return;
+			}
+			this._wasStarted = false;
+			Debug.dump("signal(): Queue finished");
+			Utils.playSound("done");
+			
+			if (Stats.completedDownloads > 0) {
+				var msg = _('suc');
+				
+				if (Prefs.alertingSystem == 1) {
+					AlertService.show(_("dcom"), _('suc'), true, tree.at(0).dirSave);
+				}
+				else if (Prefs.alertingSystem == 0) {
+					if (confirm(_('suc') + "\n "+ _("folder")) == 1) {
+						try {
+							OpenExternal.launch(tree.at(0).dirSave);
+						}
+						catch (ex){
+							// no-op
+						}
+					}
+				}
+			}
+
+			sessionManager.save();
+			if (Prefs.autoClose) {
+				Dialog.close();
+			}
+		}
+		catch(ex) {
+			Debug.dump("signal():", ex);
+		}
+	},
+	close: function() {
+		
+		// Check for non-resumable downloads
+		if (tree.some(function(d) { return d.isStarted && !d.isResumable && d.is(RUNNING); })) {
+			var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+				.getService(Ci.nsIPromptService);
+			var rv = promptService.confirm(
+				window,
+				_("confclose"),
+				_("nonres")
+			);
+			if (!rv) {
+				return false;
+			}
+		}
+		// stop everything!
+		for (d in tree.all) {
+			if (d.is(RUNNING, QUEUED)) {
+				d.setPaused();
+			}
+		}
+		return this._safeClose();
+	},
+	_safeClose: function() {
+		// cannot close at this point
+		if (tree.some(function(d) { return d.is(FINISHING); })) {		
+			this.setTimer('_saveClose', "Dialog._saveclose();", 250);
+			return false;
+		}
+		sessionManager.save();
+		this._killTimers();
+		self.close();
+		return true;		
+	},
+	_timers: {},
+	setTimer: function(id, func, interval) {
+		this.killTimer(id);
+		this._timers[id] = window.setTimeout(func, interval);
+	},
+	killTimer: function(id) {
+		if (id in this._timers) {
+			window.clearTimeout(this._timers[id]);
+			delete this._timers[id];
+		}
+	},
+	_killTimers: function() {
+		for (id in this._timers) {
+			window.clearTimeout(this._timers[id]);
+		}
+		this._timers = {};
+	}
+};
 
 
 DTA_include('dta/manager/prefs.js');
@@ -116,9 +356,6 @@ Chunk.prototype = {
 		if (this._outStream) {
 			this._outStream.close();
 			delete this._outStream;
-		}
-		if (this.parent.is(CANCELED)) {
-			this.parent.removeTmpFile();
 		}
 	},
 	_written: 0,
@@ -192,6 +429,7 @@ function Decompressor(download) {
 	this.to = new FileFactory(download.dirSave + download.destinationName);
 	this.from = download.tmpFile.clone();
 
+	download.state = FINISHING;
 	download.status =  _("decompress");
 	try {
 
@@ -363,6 +601,8 @@ downloadElement.prototype = {
 		if (this._state != nv) {
 			this._state = nv;
 			this.invalidate();
+			tree.refreshTools();
+			Dialog.signal(this);
 		}
 	},
 
@@ -404,8 +644,6 @@ downloadElement.prototype = {
 
 	isResumable: false,
 	isStarted: false,
-	isPassed: false,
-	isRemoved: false,
 
 	fileManager: null,
 	_activeChunks: 0,
@@ -535,10 +773,8 @@ downloadElement.prototype = {
 
 	refreshPartialSize: function(){
 		var size = 0;
-		for (var i = 0; i<this.chunks.length; i++)
-			size += this.chunks[i].written;
+		this.chunks.forEach(function(c) { size += c.written; });
 		this.partialSize = size;
-		return size;
 	},
 
 	setPaused: function(){
@@ -549,6 +785,7 @@ downloadElement.prototype = {
 				}
 			}
 		}
+		this.state = PAUSED;
 	},
 
 	moveCompleted: function() {
@@ -584,7 +821,8 @@ downloadElement.prototype = {
 			var file = new FileFactory(this.dirSave);
 			file.append(this.destinationName);
 
-			var fiStream = Cc['@mozilla.org/network/file-input-stream;1'].createInstance(Ci.nsIFileInputStream);
+			var fiStream = Cc['@mozilla.org/network/file-input-stream;1']
+				.createInstance(Ci.nsIFileInputStream);
 			fiStream.init(file, 1, 0, false);
 			var domParser = new DOMParser();
 			var doc = domParser.parseFromStream(fiStream, null, file.fileSize, "application/xml");
@@ -672,21 +910,17 @@ downloadElement.prototype = {
 
 		this.totalSize = this.partialSize = this.size;
 
-		this.isPassed = true;
 		this.status = _("complete");
-		popup();
-
-		// Garbage collection
-		this.chunks = [];
-
-		// increment completedDownloads counter
-		this.state = COMPLETE;
-		Stats.completedDownloads++;
-
 		if ('isMetalink' in this) {
 			this.handleMetalink();
 		}
-		Check.checkClose();
+		this.state = COMPLETE;
+
+		// increment completedDownloads counter
+		Stats.completedDownloads++;
+
+		// Garbage collection
+		this.chunks = [];
 	},
 
 	// XXX: revise
@@ -823,7 +1057,7 @@ downloadElement.prototype = {
 				mc(_('skip'), 2)
 			);
 		}
-		else if (this.is(COMPLETE) && !this.isPassed) {
+		else if (this.is(FINISHING)) {
 			s = askForRenaming(
 				_("alreadyexists", [dn, ds]) + " " + _("whatdoyoucomplete", [shortUrl]),
 				mc(_('reninto', [newDest]), 0),
@@ -890,27 +1124,19 @@ downloadElement.prototype = {
 			}
 			this.status = message;
 
-			this.setPaused();
-			
-			this.state = CANCELED;
-
 			if (this.is(COMPLETE)) {
 				Stats.completedDownloads--;
 			}
 			else if (this.is(RUNNING)) {
 				this.setPaused();
 			}
-			else {
-					this.removeTmpFile();
-					this.isPassed = true;
-			}
+			this.removeTmpFile();
+			this.state = CANCELED;
 
 			// gc
 			this.chunks = [];
 			this.totalSize = this.partialSize = 0;
 
-			Check.checkClose();
-			popup();
 		} catch(ex) {
 			Debug.dump("cancel():", ex);
 		}
@@ -922,7 +1148,7 @@ downloadElement.prototype = {
 				this.tmpFile.remove(false);
 			}
 			catch (ex) {
-				// no-op
+				Debug.dump("removeTmpFile", ex);
 			}
 		}
 	},
@@ -1020,206 +1246,6 @@ function inProgressElement(el) {
 var inProgressList = new Array();
 
 DTA_include('dta/manager/alertservice.js');
-
-var Check = {
-	lastCheck: 0,
-	timerRefresh: 0,
-	timerCheck: 0,
-	isClosing: false,
-	frequencyRefresh: 1500,
-	frequencyCheck: 500,
-	lastSum: 0,
-
-	refreshDownloadedBytes: function() {
-		// update statusbar
-		for (var i=0; i<inProgressList.length; i++)
-			Stats.downloadedBytes+=inProgressList[i].d.partialSize;
-		return Stats.downloadedBytes;
-	},
-
-	refreshGUI: function() {try{
-
-		// Calculate global speed
-		var sum = 0;
-		for (var i=0; i<inProgressList.length; i++)
-			sum+=inProgressList[i].d.partialSize;
-
-		var speed = Math.round((sum - this.lastSum) * (1000 / this.frequencyRefresh));
-		speed = (speed>0)?speed:0;
-
-		this.lastSum = sum;
-
-		// Refresh status bar
-		$("statusText").label = (
-			_("cdownloads", [Stats.completedDownloads, tree.rowCount]) +
-			" - " +
-			_("cspeed") + " " + formatBytes(speed) + "/s"
-		);
-
-		// Refresh window title
-		if (inProgressList.length == 1 && inProgressList[0].d.totalSize > 0) {
-			document.title = (
-				Math.round(inProgressList[0].d.partialSize / inProgressList[0].d.totalSize * 100) + "% - " +
-				Stats.completedDownloads + "/" + tree.rowCount + " - " +
-				formatBytes(speed) + "/s - DownThemAll! - " + _("dip")
-			);
-		} else if (inProgressList.length > 0)
-			document.title = (
-				Stats.completedDownloads + "/" + tree.rowCount + " - " +
-				formatBytes(speed) + "/s - DownThemAll! - " + _("dip")
-			);
-		else
-			document.title = Stats.completedDownloads + "/" + tree.rowCount + " - DownThemAll!";
-
-		const now = Date.now();
-		for (var i=0; i<inProgressList.length; i++) {
-			var d = inProgressList[i].d;
-			if (d.partialSize != 0 && d.is(RUNNING) && (now - d.timeStart) >= 1000 ) {
-				// Calculate estimated time
-				if (d.totalSize > 0) {
-					var remainingSeconds = Math.ceil((d.totalSize - d.partialSize) / ((d.partialSize - inProgressList[i].lastBytes) * (1000 / this.frequencyRefresh)));
-					var hour = Math.floor(remainingSeconds / 3600);
-					var min = Math.floor((remainingSeconds - hour*3600) / 60);
-					var sec = remainingSeconds - min * 60 - hour*3600;
-					if (remainingSeconds == "Infinity")
-						d.status = _("unavailable");
-					else {
-						var s= hour>0?(hour+":"+min+":"+sec):(min+":"+sec);
-						d.status = String(s).formatTimeDate();
-					}
-				}
-				var speed = Math.round((d.partialSize - inProgressList[i].lastBytes) * (1000 / this.frequencyRefresh));
-
-				// Refresh item speed
-				d.speed = formatBytes(speed) + "/s";
-				d.speeds.push(speed > 0 ? speed : 0);
-				if (d.speeds.length > SPEED_COUNT) {
-					d.speeds.shift();
-				}
-
-				inProgressList[i].lastBytes = d.partialSize;
-			}
-		}
-		this.timerRefresh = setTimeout("Check.refreshGUI();", this.frequencyRefresh);
-	} catch(e) {Debug.dump("refreshGUI():", e);}
-	},
-
-	checkDownloads: function() {try {
-		this.refreshDownloadedBytes();
-		startNextDownload();
-
-		this.checkClose();
-
-		for (var i=0; i<inProgressList.length; i++) {
-			var d = inProgressList[i].d;
-
-			// checks for timeout
-			if ((Utils.getTimestamp() - d.timeLastProgress) >= Preferences.getDTA("timeout", 300, true) * 1000) {
-				if (d.isResumable) {
-					d.setPaused();
-					d.state = PAUSED;
-					d.status = _("timeout");
-				} else
-					d.cancel(_("timeout"));
-
-				popup();
-				Debug.dump("checkDownloads(): " + d.fileName + " in timeout");
-			}
-		}
-		this.timerCheck = setTimeout("Check.checkDownloads();", this.frequencyCheck);
-	} catch(e) {Debug.dump("checkDownloads():", e);}
-	},
-
-	checkClose: function() {
-		try {
-			this.refreshDownloadedBytes();
-
-			if (
-				!tree.rowCount
-				|| this.lastCheck == Stats.downloadedBytes
-				|| tree.some(function(e) { return !e.isPassed; })
-			) {
-				return;
-			}
-
-			Debug.dump("checkClose(): All downloads passed correctly");
-			this.lastCheck = Stats.downloadedBytes;
-
-			Utils.playSound("done");
-
-			// if windows hasn't focus, show FF sidebox/alerts
-			if (Stats.completedDownloads > 0) {
-				var stringa;
-				if (Stats.completedDownloads > 0)
-					stringa = _("suc");
-
-				if (Prefs.alertingSystem == 1) {
-					AlertService.show(_("dcom"), stringa, true, tree.at(0).dirSave);
-				}
-				else if (Prefs.alertingSystem == 0) {
-					if (confirm(stringa + "\n "+ _("folder")) == 1) {
-						try {
-							OpenExternal.launch(tree.at(0).dirSave);
-						}
-						catch (ex){
-							_("noFolder");
-						}
-					}
-				}
-			}
-
-			// checks for auto-disclosure of window
-			if (Preferences.getDTA("closedta", false) || Check.isClosing) {
-				Debug.dump("checkClose(): I'm closing the window/tab");
-				clearTimeout(this.timerCheck);
-				clearTimeout(this.timerRefresh);
-				sessionManager.save();
-				self.close();
-				return;
-			}
-			sessionManager.save();
-		}
-		catch(ex) {
-			Debug.dump("checkClose():", ex);
-		}
-	}
-}
-
-function startNextDownload() {
-	try {
-		tree.updateAll(
-			function(d) {
-				if (inProgressList.length >= Prefs.maxInProgress) {
-					return false;
-				}
-				if (!d.is(QUEUED)) {
-					return true;
-				}
-	
-				d.status = _("starting");
-	
-				d.timeLastProgress = Utils.getTimestamp();
-				d.state = RUNNING;
-	
-				if (inProgressList.indexOf(d) == -1) {
-					inProgressList.push(new inProgressElement(d));
-					d.timeStart = Utils.getTimestamp();
-				}
-	
-				if (!d.isStarted) {
-					d.isStarted = true;
-					Debug.dump("Let's start " + d.fileName);
-				} else {
-					Debug.dump("Let's resume " + d.fileName + ": " + d.partialSize);
-				}
-				d.resumeDownload();
-				return true;
-			}
-		);
-	} catch(ex){
-		Debug.dump("startNextDownload():", ex);
-	}
-}
 
 function Download(d, c, headerHack) {
 
@@ -1417,7 +1443,7 @@ Download.prototype = {
 				chan.visitResponseHeaders(vis);
 				d.hasToBeRedownloaded = true;
 				d.redownloadIsResumable = false;
-				d.setPaused();
+				d.reDownload();
 				return;
 			}
 
@@ -1429,7 +1455,7 @@ Download.prototype = {
 				Debug.dump("header failed! " + d.fileName, ex);
 				// restart download from the beginning
 				d.hasToBeRedownloaded = true;
-				d.setPaused();
+				d.reDownload();
 				return;
 			}
 
@@ -1567,7 +1593,6 @@ Download.prototype = {
 			else if (!d.totalSize) {
 				this.cantCount = 1;
 			}
-			popup();
 		} catch (ex) {
 			Debug.dump("ss", ex);
 		}
@@ -1582,13 +1607,12 @@ Download.prototype = {
 		var d = this.d;
 
 		// update flags and counters
-		Check.refreshDownloadedBytes();
 		d.refreshPartialSize();
 		d.activeChunks--;
 
 		// check if we're complete now
 		if (d.is(RUNNING) && !d.chunks.some(function(e) { return e.isRunning; })) {
-			d.state = COMPLETE;
+			d.state = FINISHING;
 		}
 
 		// routine for normal chunk
@@ -1600,7 +1624,6 @@ Download.prototype = {
 				Debug.dump(d.fileName + ": All old chunks are now finished, reDownload()");
 				d.reDownload();
 			}
-			popup();
 			sessionManager.save(d);
 			Debug.dump("out2");
 			return;
@@ -1619,11 +1642,10 @@ Download.prototype = {
 			Debug.dump(d.fileName + ": Server error or disconnection (type 1)");
 			d.status = _("srver");
 			d.speed = '';
-			d.state = PAUSED;
 			d.setPaused();
 		}
 		// if the only possible chunk for a non-resumable download finishes and download is still not completed -> server error/disconnection
-		else if (!d.isResumable && !d.is(COMPLETE, CANCELED, PAUSED)) {
+		else if (!d.isResumable && !d.is(COMPLETE, FINISHING, CANCELED, PAUSED)) {
 			Debug.dump(d.fileName + ": Server error or disconnection (type 2)");
 			d.fail(
 				_("srver"),
@@ -1636,35 +1658,26 @@ Download.prototype = {
 		}
 
 		// if download is complete
-		if (d.is(COMPLETE)) {
+		if (d.is(FINISHING)) {
 			Debug.dump(d.fileName + ": Download is completed!");
 			d.moveCompleted();
 		}
-		else if (d.is(PAUSED) && Check.isClosing) {
-			if (!d.isRemoved) {
-				d.isPassed = true;
-			}
+		else if (d.is(PAUSED) && !d.isResumable) {
 			// reset download as it was never started (in queue state)
-			if (!d.isResumable) {
-				d.isStarted = false;
-				d.setPaused();
-				d.state = PAUSED;
-				d.chunks = [];
-				d.totalSize = 0;
-				d.partialSize = 0;
-				d.compression = false;
-				d.activeChunks = 0;
-				d.visitors = new VisitorManager();
-			}
-			Check.checkClose();
+			d.isStarted = false;
+			d.setPaused();
+			d.chunks = [];
+			d.totalSize = 0;
+			d.partialSize = 0;
+			d.compression = false;
+			d.activeChunks = 0;
+			d.visitors = new VisitorManager();
 		}
 		else if (d.is(RUNNING) && d.isResumable) {
 			// if all the download space has already been occupied by chunks (= !resumeDownload)
 			d.resumeDownload();
 		}
 		sessionManager.save(d);
-		// refresh GUI
-		popup();
 	},
 
 	// nsIProgressEventSink
@@ -1685,16 +1698,11 @@ Download.prototype = {
 			if (!d.is(CANCELED)) {
 				d.refreshPartialSize();
 
-				Check.refreshDownloadedBytes();
-
 				if (this.cantCount != 1) {
 					// basic integrity check
 					if (d.partialSize > d.totalSize) {
 						Debug.dump(d.fileName + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");
 						d.fail("Size mismatch", "Actual size of " + d.partialSize + " does not match reported size of " + d.totalSize, "Size mismatch");
-						//d.hasToBeRedownloaded = true;
-						//d.redownloadIsResumable = false;
-						//d.setPaused();
 						return;
 					}
 				}
@@ -1728,82 +1736,13 @@ function loadDown() {
 	}
 
 	try {
-		clearTimeout(Check.timerCheck);
-		clearTimeout(Check.timerRefresh);
-		Check.checkDownloads();
-		Check.refreshGUI();
-	} catch (e) {}
-
-	popup();
-}
-
-function cancelAll(pressedESC) {
-
-	// if we have non-resumable running downloads...
-	if (!Check.isClosing) {
-
-		if (tree.some(function(d) { return d.isStarted && !d.isResumable && d.is(RUNNING); })) {
-			var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
-				.getService(Ci.nsIPromptService);
-			var rv = promptService.confirm(
-				window,
-				_("confclose"),
-				_("nonres")
-			);
-			if (!rv) {
-				return false;
-			}
-		}
+		Dialog.checkDownloads();
 	}
-
-	Check.isClosing = true;
-
-	const removeAborted = Prefs.removeAborted;
-	var allPassed = tree.every(
-		function(d) {
-			if (
-				d.is(CANCELED)
-				|| d.is(PAUSED)
-				|| (d.isStarted && !d.is(RUNNING))
-			) {
-				d.isPassed = true;
-			}
-			if (d.isPassed || d.is(COMPLETE)) {
-				return true;
-			}
-
-			// also canceled and paused without running joinings
-			if (d.isStarted) {
-				d.setPaused();
-				d.state = PAUSED;
-				d.status = _("closing");
-				Debug.dump(d.fileName + " has to be stopped.");
-			}
-			else if (removeAborted) {
-				tree.remove(d);
-				return true;
-			}
-			else {
-				d.state = PAUSED;
-				d.isPassed = true;
-				return true;
-			}
-			return false;
-		}
-	);
-
-	// if we can close window now, let's close it
-	if (allPassed) {
-		Debug.dump("cancelAll(): Disclosure of window permitted");
-		sessionManager.save();
-		clearTimeout(Check.timerRefresh);
-		clearTimeout(Check.timerCheck);
-		self.close();
-		return true;
+	catch (ex) {
+		// no-op
 	}
-
-	Debug.dump("cancelAll(): We're waiting...");
-	return false;
+	
+	tree.selectionChanged();
 }
 
 function startnewDownloads(notQueue, download) {
@@ -1869,13 +1808,7 @@ function startnewDownloads(notQueue, download) {
 
 	tree.selection.currentIndex = numbefore + 1;
 
-	try {
-		clearTimeout(Check.timerRefresh);
-		clearTimeout(Check.timerCheck);
-		Check.checkDownloads();
-		Check.refreshGUI();
-	} catch (e) {Debug.dump("startnewDownloads():", e);}
-
+	Dialog.checkDownloads();
 }
 
 function isInProgress(path, d) {
@@ -1923,74 +1856,6 @@ function makeNumber(rv, digits) {
 
 function popup() {
 	return false;
-try {
-	var objects = new Array();
-
-	var rangeCount = tree.view.selection.getRangeCount();
-		for(var i=0; i<rangeCount; i++) {
-		var start = {}; var end = {};
-		tree.view.selection.getRangeAt(i,start,end);
-		for(var c=start.value; c<=end.value; c++)
-			objects.push(downloadList[c]);
-	}
-
-	var enableObj = function(o) {o.setAttribute("disabled", "false");}
-	var disableObj = function(o) {o.setAttribute("disabled", "true");}
-
-	// disable all commands by default
-	var context = $("popup");
-	var mi = context.getElementsByTagName('menuitem');
-	for (var i = 0; i < mi.length; ++i) {
-		disableObj(mi[i]);
-	}
-
-	var context = $("tools");
-	for (var i=0; i<context.childNodes.length; i++) {
-		var el = context.childNodes.item(i);
-		if (el.setAttribute) disableObj(el);
-	}
-	$("tooladd", "tooldonate", 'misc', 'prefs').forEach(enableObj);
-
-	if (tree.rowCount > 0)
-		$("removeCompleted", "selectall", "selectinv").forEach(enableObj);
-
-	if (objects.length==0) return;
-
-	for (var c=0; c<objects.length; c++) {
-		var d = objects[c];
-
-		if (!d || typeof(d) != "object") continue;
-
-		if ((d.is(RUNNING) && d.isResumable) || d.is(QUEUED)) {
-			$("pause", "toolpause").forEach(enableObj);
-		}
-
-		if (!d.is(RUNNING, QUEUED, COMPLETE)) {
-			$("play", "toolplay").forEach(enableObj);
-		}
-
-		if (!d.is(CANCELED)) {
-			$("cancel", "toolcancel").forEach(enableObj);
-		}
-
-		if (d.is(COMPLETE)) {
-			$('folder', 'launch', 'delete').forEach(enableObj);
-		}
-
-		if (!d.is(CANCELED, COMPLETE) && (!d.is(RUNNING) || d.isResumable)) {
-			if (d.activeChunks > 1) {
-				enableObj($("removechunk"));
-			}
-			if (d.activeChunks < 9) {
-				enableObj($("addchunk"));
-			}
-		}
-	}
-
- 	$("movetop", "toolmovetop", "movebottom", "toolmovebottom", "moveup",
-		"toolmoveup", "movedown", "toolmovedown", "info", "remove").forEach(enableObj);
-
-} catch(e) {Debug.dump("popup()", e)}
 }
 
 function pauseResumeReq(pauseReq) {
@@ -2006,13 +1871,11 @@ function pauseResumeReq(pauseReq) {
 					}
 				} else if (d.is(PAUSED, CANCELED)) {
 					d.state = QUEUED;
-					d.isPassed = false;
 					d.status = _("inqueue");
 				}
 				return true;
 			}
 		);
-		popup();
 	}
 	catch(ex) {
 		Debug.dump("pauseResumeReq()", ex)

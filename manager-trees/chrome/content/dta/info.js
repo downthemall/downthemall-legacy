@@ -82,7 +82,7 @@ var Dialog = {
 		
 		for (var i = 0; i < t.length; i++) {
 			var d = t[i];
-			if (d.isCompleted || d.isPassed) {
+			if (d.is(COMPLETE)) {
 				continue;
 			}
 			if (directory) {

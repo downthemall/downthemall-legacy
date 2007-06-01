@@ -15,21 +15,20 @@ var sessionManager = {
 		this._converter = Components.classes["@mozilla.org/intl/saveascharset;1"]
 			.createInstance(Ci.nsISaveAsCharset);
 		this._converter.Init('utf-8', 1, 0);
-		this._serializer = new XMLSerializer();
 
 		this.load();
 	},
 
 	_saveDownload: function(d, pos) {
 
-		if (!(
-			(!Prefs.removeCompleted && d.is(COMPLETE))
-			|| (!Prefs.removeCanceled && d.is(CANCELED))
-			|| (!Prefs.removeAborted && !d.isStarted)
-			|| d.is(PAUSED, RUNNING)
-		)) {
-			return;
+		if (
+			(Prefs.removeCompleted && d.is(COMPLETE))
+			|| (Prefs.removeCanceled && d.is(CANCELED))
+			|| (Prefs.removeAborted && d.is(PAUSED))
+		) {
+			return false;
 		}
+
 		var e = {};
 		[
 			'fileName',
@@ -41,7 +40,11 @@ var sessionManager = {
 			'alreadyMaskedDir',
 			'mask',
 			'originalDirSave',
-		].forEach(function(u) { e[u] = d[u]; });
+		].forEach(
+			function(u) {
+				e[u] = d[u];
+			}
+		);
 		e.state = d.is(COMPLETE, CANCELED) ? d.state : PAUSED;
 
 		e.dirsave = d.dirSave.addFinalSlash();
@@ -50,7 +53,7 @@ var sessionManager = {
 		if (!d.is(CANCELED, COMPLETE) && d.partialSize) {
 			e.tmpFile = d.tmpFile.path;
 		}
-		e.startDate = d.startDate.toUTCString();
+		e.startDate = d.startDate.getTime();
 
 		e.urlManager = d.urlManager.save();
 		e.visitors = d.visitors.save();
@@ -84,6 +87,7 @@ var sessionManager = {
 		s.bindUTF8StringParameter(2, this._converter.Convert(e.toSource()));
 		s.execute();
 		d.dbID = this._con.lastInsertRowID;
+		return true;
 	},
 
 	beginUpdate: function() {
@@ -105,7 +109,9 @@ var sessionManager = {
 			this._con.executeSimpleSQL('DELETE FROM queue');
 			var i = 0;
 			for (d in tree.all) {
-				this._saveDownload(d, i++);
+				if (this._saveDownload(d, i)) {
+					++i;
+				}
 			};
 		}
 		catch (ex) {
@@ -127,9 +133,6 @@ var sessionManager = {
 	},
 	_load: function() {
 
-		const removeCompleted = Prefs.removeCompleted;
-		const removeCanceled = Prefs.removeCompleted;
-
 		var stmt = this._con.createStatement('SELECT uuid, item FROM queue ORDER BY pos');
 
 		while (stmt.executeStep()) {
@@ -141,12 +144,6 @@ var sessionManager = {
 						return down[attr];
 					}
 					return null;
-				}
-				if (
-					(removeCompleted && down.completed)
-					|| (removeCanceled && down.canceled)
-				) {
-					continue;
 				}
 
 				var d = new downloadElement(
@@ -193,17 +190,12 @@ var sessionManager = {
 					d.fileManager = new FileFactory(d.dirSave);
 					d.fileManager.append(d.destinationName);
 					Stats.completedDownloads++;
-					d.isPassed = true;
-					d.status = _('completed');
+					d.status = _('complete');
 				}
 				else if (d.is(CANCELED)) {
-					d.isPassed = true;
 					d.status = _('canceled');
 				}
-				
-				
 				tree.add(d);
-				
 			}
 			catch (ex) {
 				Debug.dump('failed to init a download from queuefile', ex);

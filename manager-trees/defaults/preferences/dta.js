@@ -53,7 +53,7 @@ pref("extensions.dta.removeaborted", false);
 pref("extensions.dta.infophrases", true);
 pref("extensions.dta.statistics", false); // later use!
 pref("extensions.dta.logging", false);
-pref("extensions.dta.showOnlyFilenames", true);
+pref("extensions.dta.showonlyfilenames", true);
 pref("extensions.dta.sounds.done", true);
 pref("extensions.dta.sounds.error", false);
 pref("extensions.dta.settime", true);

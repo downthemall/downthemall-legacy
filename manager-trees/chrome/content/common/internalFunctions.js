@@ -406,7 +406,7 @@ StringBundles.prototype = {
 				// no-op
 			}
 		}
-		throw new Components.Exception('BUNDLE STRING NOT FOUND');
+		throw new Components.Exception('BUNDLE STRING NOT FOUND (' + id + ')');
 	},
 	getFormattedString: function(id, params) {
 		for (var i = 0, e = this._length; i < e; ++i) {
@@ -417,7 +417,7 @@ StringBundles.prototype = {
 				// no-op
 			}
 		}
-		throw new Components.Exception('BUNDLE STRING NOT FOUND');		
+		throw new Components.Exception('BUNDLE STRING NOT FOUND (' + id + ')');		
 	}
 };
 /**

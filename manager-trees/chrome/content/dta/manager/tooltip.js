@@ -100,8 +100,7 @@ var Tooltip = {
 					var r = (maxH - minH);
 					var s = file.speeds.map(function(speed) { return 3 + Math.round((height - 6) * (speed - minH) / r); });
 				}
-				Debug.dump("step vec: " + s + "\n" + file.speeds + "\n" + file.speeds.map(function(speed) { return Math.round(100 * (speed - minH) / r); }));
-					
+
 				ctx.save();
 				ctx.clip();
 				[
@@ -160,7 +159,7 @@ var Tooltip = {
 				
 			ctx.restore();
 	
-			setTimeout("Tooltip.updateSpeedCanvas()", TOOLTIP_FREQ);
+			Dialog.setTimer('tooltip::speed', 'Tooltip.updateSpeedCanvas()', TOOLTIP_FREQ);
 		}
 		catch(ex) {
 			Debug.dump("updateSpeedCanvas(): ", ex);
@@ -184,7 +183,6 @@ var Tooltip = {
 	
 			// Create gradients
 			var chunkFillStyle = this._createVerticalGradient(ctx, cheight, "#A7D533", "#D3F047");
-			var partialFillStyle = this._createVerticalGradient(ctx, 8, "#5BB136", "#A6D73E");
 			var boxFillStyle = this._createInnerShadowGradient(ctx, cheight, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
 			var boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
 			var partialBoxFillStyle = this._createInnerShadowGradient(ctx, 8, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
@@ -207,9 +205,8 @@ var Tooltip = {
 					s: 0,
 					w: width
 				});
-			} else if (file.is(CANCELED)) {
-	
-			} else if (file.isStarted) {
+			}
+			else if (!file.is(CANCELED)){
 				b = file.chunks.map(
 					function(chunk) {
 						if (file.totalSize <= 0) {
@@ -266,8 +263,13 @@ var Tooltip = {
 	
 			// draw progress
 			if (file.totalSize > 0) {
-				ctx.fillStyle = partialFillStyle;
+				ctx.fillStyle = this._createVerticalGradient(ctx, 8, "#5BB136", "#A6D73E");
 				this._makeRoundedRectPath(ctx, 0, 0, Math.ceil(file.partialSize / file.totalSize * width), 8, 3);
+				ctx.fill();
+			}
+			else if (file.is(CANCELED)) {
+				ctx.fillStyle = this._createVerticalGradient(ctx, 8, "#B12801", "#FFFFFF");;
+				this._makeRoundedRectPath(ctx, 0, 0, width, 8, 3);
 				ctx.fill();
 			}
 	
@@ -277,7 +279,7 @@ var Tooltip = {
 	
 			ctx.restore();
 	
-			setTimeout("Tooltip.updateChunkCanvas()", TOOLTIP_FREQ);
+			Dialog.setTimer('tooltip:chunks', "Tooltip.updateChunkCanvas()", TOOLTIP_FREQ);
 	
 		} catch(ex) {
 			Debug.dump("updateChunkCanvas(): ", ex);
