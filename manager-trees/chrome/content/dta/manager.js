@@ -1625,12 +1625,6 @@ Download.prototype = {
 				d.totalSize = 0;
 			}
 		}
-		if (d.totalSize) {
-			c.end = d.totalSize - 1;
-		}
-
-		// force single chunk mode
-		d.maxChunks = 1;
 		d.isResumable = false;
 	},
 	
@@ -1723,6 +1717,10 @@ Download.prototype = {
 			if (!d.totalSize) {
 				this.cantCount = true;
 			}					
+			if (this.cantCount || !d.isResumable) {
+				d.maxChunks = 1;
+			}
+			c.end = d.totalSize - 1;
 		}
 		catch (ex) {
 			Debug.dump("onStartRequest", ex);
@@ -2000,7 +1998,7 @@ function addChunk(add) {
 			if (!add && d.maxChunks > 1) {
 					d.maxChunks--;
 			}
-			else if (add  && d.maxChunks < 10) {
+			else if (add  && d.maxChunks < 10 && d.isResumable) {
 					d.maxChunks++;
 					d.resumeDownload();
 			}
