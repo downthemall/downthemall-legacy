@@ -46,7 +46,7 @@ if (!Ci) {
 	var Ci = Components.interfaces;
 }
 
-const MIN_CHUNK_SIZE = 512 * 1024;
+const MIN_CHUNK_SIZE = 700 * 1024;
 // in use by chunk.writer...
 // in use by decompressor... beware, actual size might be more than twice as big!
 const MAX_BUFFER_SIZE = 3 * 1024 * 1024; // 3 MB
@@ -428,7 +428,7 @@ Chunk.prototype = {
 				}
 			}
 			bytes = this.remainder;
-			if (aCount < bytes) {
+			if (!this.total || aCount < bytes) {
 				bytes = aCount;
 			}
 			if (!bytes) {
@@ -724,7 +724,7 @@ downloadElement.prototype = {
 			return _('unknown'); 
 		}
 		else if (this.totalSize <= 0) {
-			return Utils.formatBytes(this.partialSize) + "/" + _('unknown');
+			return Utils.formatBytes(this.partialSize) + "/" + _('nas');
 		}
 		return Utils.formatBytes(this.partialSize) + "/" + Utils.formatBytes(this.totalSize);
 	},
@@ -745,7 +745,7 @@ downloadElement.prototype = {
 	},
 	get percent() {
 		if (!this.totalSize && this.is(RUNNING)) {
-			return _('unknown');
+			return _('nas');
 		}
 		else if (!this.totalSize) {
 			return "0%";
@@ -911,7 +911,7 @@ downloadElement.prototype = {
 			Debug.dump("download::moveCompleted: Could not move file or create directory: ", exception);
 			return;
 		}
-		Debug.dump("fd");
+		Debug.dump("finishDownload, connections", this.sessionConnections);
 		// create final file pointer
 		this.fileManager = new FileFactory(this.dirSave);
 		this.fileManager.append(this.destinationName);
@@ -1028,11 +1028,11 @@ downloadElement.prototype = {
 				"\\*qstring\\*": query,
 				"\\*curl\\*": (uri.host + ((uripath=="")?"":(replacedSlash + uripath))),
 				"\\*num\\*": Utils.makeNumber(this.numIstance),
-				"\\*hh\\*": String(this.startDate.getHours()).formatTimeDate(),
-				"\\*mm\\*": String(this.startDate.getMinutes()).formatTimeDate(),
-				"\\*ss\\*": String(this.startDate.getSeconds()).formatTimeDate(),
-				"\\*d\\*": String(this.startDate.getDate()).formatTimeDate(),
-				"\\*m\\*": String(this.startDate.getMonth()+1).formatTimeDate(),
+				"\\*hh\\*": Utils.makeNumber(this.startDate.getHours(), 2),
+				"\\*mm\\*": Utils.makeNumber(this.startDate.getMinutes(), 2),
+				"\\*ss\\*": Utils.makeNumber(this.startDate.getSeconds(), 2),
+				"\\*d\\*": Utils.makeNumber(this.startDate.getDate(), 2),
+				"\\*m\\*": Utils.makeNumber(this.startDate.getMonth(), 2),
 				"\\*y\\*": String(this.startDate.getFullYear())
 			}
 
@@ -1183,13 +1183,14 @@ downloadElement.prototype = {
 			}
 		}
 	},
-
+	sessionConnections: 0,
 	resumeDownload: function () {
 
 		function downloadNewChunk(download, start, end, header) {
 			var chunk = new Chunk(download, start, end);
 			download.chunks.push(chunk);
 			downloadChunk(download, chunk, header);
+			download.sessionConnctions = 0;
 		}
 		function downloadChunk(download, chunk, header) {
 			chunk.isRunning = true;
@@ -1202,6 +1203,7 @@ downloadElement.prototype = {
 				Debug.dump(download.fileName + ": Created chunk of range " + chunk.start + "-" + chunk.end);
 			}
 			++download.activeChunks;
+			++download.sessionConnections;
 		}
 
 		try {
@@ -1236,13 +1238,14 @@ downloadElement.prototype = {
 					rv = true;
 					continue;
 				}
-
+				
+				var mincs = MIN_CHUNK_SIZE * this.activeChunks;
 
 				// find biggest chunk
 				var biggest = null;
 				this.chunks.forEach(
 					function (chunk) {
-						if (chunk.remainder > MIN_CHUNK_SIZE * 2 && (!biggest || chunk.remainder > biggest.remainder)) {
+						if (chunk.remainder > mincs * 2 && (!biggest || chunk.remainder > biggest.remainder)) {
 							biggest = chunk;
 						}
 					}
@@ -1282,10 +1285,10 @@ function Download(d, c, headerHack) {
 	this.d = d;
 	this.c = c;
 	this.isHeaderHack = headerHack;
-	var uri = d.urlManager.getURL().url;
+	this.url = d.urlManager.getURL().url;
 	var referrer = d.refPage;
 
-	this._chan = this._ios.newChannelFromURI(this._ios.newURI(uri, null,null));
+	this._chan = this._ios.newChannelFromURI(this._ios.newURI(this.url, null, null));
 	var r = Ci.nsIRequest;
 	this._chan.loadFlags = r.LOAD_NORMAL | r.LOAD_BYPASS_CACHE;
 	this._chan.notificationCallbacks = this;
@@ -1327,10 +1330,14 @@ Download.prototype = {
 		Ci.nsIAuthPrompt,
 		Ci.nsIStreamListener,
 		Ci.nsIRequestObserver,
-		Ci.nsIProgressEventSink
+		Ci.nsIProgressEventSink,
+		Ci.nsIChannelEventSink,
+		Ci.nsIFTPEventSink
 	],
+	
+	_redirectedTo: null,
 
-	cantCount: 0,
+	cantCount: false,
 
 	QueryInterface: function(iid) {
 			if (this._interfaces.some(function(i) { return iid.equals(i); })) {
@@ -1357,7 +1364,13 @@ Download.prototype = {
 	},
 	// nsIInterfaceRequestor
 	getInterface: function(iid) {
-		return this.QueryInterface(iid);
+		try {
+			return this.QueryInterface(iid);
+		}
+		catch (ex) {
+			Debug.dump("getInterface " + iid, ex);
+			throw ex;
+		}
 	},
 
 	get authPrompter() {
@@ -1394,7 +1407,7 @@ Download.prototype = {
 			aPwd
 		);
 	},
-	promptPassword: function capPP(aDialogTitle, aText, aPasswordRealm, aSavePassword, aPwd) {
+	promptPassword: function(aDialogTitle, aText, aPasswordRealm, aSavePassword, aPwd) {
 		return this.authPrompter.promptPassword(
 			aDialogTitle,
 			aText,
@@ -1402,6 +1415,21 @@ Download.prototype = {
 			aSavePassword,
 			aPwd
 		);
+	},
+	
+	// nsIChannelEventSink
+	onChannelRedirect: function(oldChannel, newChannel, flags) {
+		try {
+			this._redirectedTo = newChannel.URI.spec;
+		}
+		catch (ex) {
+			// no-op
+		}
+	},
+	
+	// nsIFtpEventSink - to keep interfacerequestor calm ;)
+	OnFTPControlLog: function(fromServer, msg) {
+		Debug.dump("FTP: " + msg, fromServer);
 	},
 
 	// nsIStreamListener
@@ -1419,212 +1447,264 @@ Download.prototype = {
 		}
 	},
 
-	//nsIRequestObserver
+	handleHttp: function(aChannel, aContext) {
+		var c = this.c;
+		var d = this.d;
+		
+		Debug.dump("handleHttp: " + aChannel.URI.spec);
+
+		if (aChannel.responseStatus >= 400) {
+			d.fail(
+				_("error", [aChannel.responseStatus]),
+				_("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]) + " " + _("sra", [aChannel.responseStatus]) + ": " + aChannel.responseStatusText,
+				_("error", [aChannel.responseStatus])
+			);
+			sessionManager.save(d);
+			return;
+		}
+
+		// not partial content altough we are multi-chunk
+		if (aChannel.responseStatus != 206 && c.end != 0) {
+			Debug.dump(d.fileName + ": Server returned a " + aChannel.responseStatus + " response instead of 206... Normal mode");
+			vis = {visitHeader: function(a,b) { Debug.dump(a + ': ' + b); }};
+			aChannel.visitRequestHeaders(vis);
+			aChannel.visitResponseHeaders(vis);
+			d.hasToBeRedownloaded = true;
+			d.redownloadIsResumable = false;
+			d.reDownload();
+			return;
+		}
+
+		var visitor = null;
+		try {
+			visitor = d.visitors.visit(aChannel);
+		}
+		catch (ex) {
+			Debug.dump("header failed! " + d.fileName, ex);
+			// restart download from the beginning
+			d.hasToBeRedownloaded = true;
+			d.reDownload();
+			return;
+		}
+		
+		if (this._redirectedTo) {
+			d.urlManager.replace(this.url, new DTA_URL(this._redirectedTo, visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset));
+		}
+		
+
+		// this.isHeaderHack = it's the chunk that has to test response headers
+		if (this.isHeaderHack) {
+			Debug.dump(d.fileName + ": Test Header Chunk started");
+
+			// content-type
+			if (visitor.type) {
+				d.contentType = visitor.type;
+			}
+
+			// compression?
+			d.compression = (
+				(visitor.encoding=="gzip"||visitor.encoding=="deflate")
+				&&
+				!(/gzip/).test(d.contentType)
+				&&
+				!(/\.gz/).test(d.fileName)
+			);
+			if (d.compression) {
+				d.compressionType = visitor.encoding;
+			}
+
+			// accept range
+			d.isResumable = !visitor.dontacceptrange;
+
+			Debug.dump("type: " + visitor.type);
+			if (visitor.type && visitor.type.search(/application\/metalink\+xml/) != -1) {
+				Debug.dump(aChannel.URI.spec + " iml");
+				d.isMetalink = true;
+				d.isResumable = false;
+			}
+
+			if (visitor.contentlength > 0) {
+				d.totalSize = visitor.contentlength;
+				c.end = d.totalSize - 1;
+			} else {
+				d.totalSize = 0;
+				d.isResumable = false;
+			}
+			// Checks for available disk space.
+			// XXX: l10n
+			var tsd = d.totalSize;
+			var nsd;
+			if (Prefs.tempLocation)	{
+				var tst = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : MAX_CHUNK_SIZE);
+				nds = Prefs.tempLocation.diskSpaceAvailable
+				if (nds < tst) {
+					Debug.dump("There is not enought free space available on temporary directory, needed=" + tst + " (totalsize="+ d.totalSize +"), user=" + nds);
+					d.fail(_("ndsa"), _("spacetemp"), _("freespace"));
+					return;
+				}
+			}
+			else {
+				tsd = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : MAX_CHUNK_SIZE);
+			}
+			var realDest;
+			try {
+				var realDest = new FileFactory(d.dirSave);
+				if (!realDest.exists()) realDest.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
+			} catch(e) {
+				Debug.dump("downloadChunk(): Could not move file or create directory on destination path: ", e);
+				d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+				return;
+			}
+			nds = realDest.diskSpaceAvailable;
+			if (nds < tsd) {
+				Debug.dump("There is not enought free space available on destination directory, needed=" + tsd + " (totalsize="+ d.totalSize +"), user=" + nsd);
+				d.fail(_("ndsa"), _("spacedir"), _("freespace"));
+				return;
+			}
+			// if we are redownloading the file, here we can force single chunk mode
+			if (d.hasToBeRedownloaded) {
+				d.hasToBeRedownloaded = null;
+				d.isResumable = false;
+			}
+
+			// filename renaming
+			if (!d.alreadyMaskedName) {
+				d.alreadyMaskedName = true;
+				var newName = null;
+
+				if (visitor.fileName && visitor.fileName.length > 0) {
+					// if content disposition hasn't an extension we use extension of URL
+					newName = visitor.fileName;
+					if (visitor.fileName.lastIndexOf('.') == -1 && d.urlManager.url.getExtension()) {
+						newName += '.' + d.urlManager.url.getExtension();
+					}
+				} else if (aRequest.URI.spec != d.url) {
+					// if there has been one or more "moved content" header directives, we use the new url to create filename
+					newName = aRequest.URI.spec.getUsableFileName();
+				}
+
+				// got a new name, so decode and set it.
+				if (newName) {
+					var charset = visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset;
+					d.fileName = DTA_URLhelpers.decodeCharset(newName, charset);
+				}
+				d.fileName = d.buildFromMask(false, "*name*.*ext*");
+
+				d.destinationName = d.buildFromMask(false, d.mask);
+			}
+
+			// target directory renaming
+			if (!d.alreadyMaskedDir) {
+				d.alreadyMaskedDir = true;
+				d.dirSave = d.buildFromMask(true, d.mask);
+			}
+
+			if (d.isResumable && d.totalSize > 2 * MIN_CHUNK_SIZE && d.maxChunks > 1) {
+				d.resumeDownload();
+			}
+			else {
+				Debug.dump(d.fileName + ": Multipart downloading is not needed/possible. isResumable = " + d.isResumable);
+				d.maxChunks = 1;
+				c.end = d.totalSize - 1;
+			}
+			this.isHeaderHack = false;
+
+		} else {
+			Debug.dump(d.fileName + ": Chunk " + c.start + "-" + + c.end + " started");
+		}
+
+		d.checkFilenameConflict();
+
+		if (!d.totalSize && d.chunks.length == 1 && aProcessMax > 0) {
+			d.totalSize = Number(aProcessMax);
+		}
+		else if (!d.totalSize) {
+			this.cantCount = true;
+		}		
+		
+	},
+	
+	// Generic handler for now :p
+	handleFtp: function(aChannel, aContext) {
+		Debug.dump("handleFtp: " + aChannel.URI.spec);
+		return this.handleGeneric(aChannel, aContext);
+	},
+	
+	handleGeneric: function(aChannel, aContext) {
+		var c = this.c;
+		var d = this.d;
+		
+		Debug.dump("handleGeneric: " + aChannel.URI.spec);
+		
+		try {
+			if (this._redirectedTo) {
+				d.urlManager.replace(this.url, new DTA_URL(this._redirectedTo, d.urlManager.charset));
+			}				
+		}
+		catch (ex) {
+			alert(ex);
+		}
+			
+		// try to get the size anyway ;)
+		try {
+			let pb = aChannel.QueryInterface(Ci.nsIPropertyBag2);
+			d.totalSize = Math.max(pb.getPropertyAsInt64('content-length'), 0);
+		}
+		catch (ex) {
+			alert(ex);
+			try {
+				d.totalSize = Math.max(aChannel.contentLength, 0);
+			}
+			catch (ex) {
+				d.totalSize = 0;
+			}
+		}
+		Debug.dump("TotalSize: " + d.totalSize);
+		c.end = d.totalSize - 1;
+
+		// force single chunk mode
+		this.isHeaderHack = false;
+		d.maxChunks = 1;
+		d.isResumable = false;
+		if (!d.totalSize) {
+			this.cantCount = true;
+		}
+
+		// filename renaming
+		d.destinationName = d.buildFromMask(false, d.mask);
+		d.alreadyMaskedName = true;
+
+		// target directory renaming
+		d.dirSave = d.buildFromMask(true, d.mask);
+		d.alreadyMaskedDir = true;				
+	},
+	
+	//nsIRequestObserver,
+	_supportedChannels: [
+		{i: Ci.nsIHttpChannel, f:'handleHttp'},
+		{i:Ci.nsIFtpChannel, f:'handleFtp'},
+		{i:Ci.nsIChannel, f:'handleGeneric'},
+	],
 	onStartRequest: function(aRequest, aContext) {
 		Debug.dump('StartRequest');
 		this.started = true;
 		try {
-			var c = this.c;
-			var d = this.d;
-
 			Debug.dump("First ProgressChange for chunk ");
-			try {
-				var chan = aRequest.QueryInterface(Ci.nsIHttpChannel);
-			} catch(ex) {
-				// no-op
-			}
-
-			// if we don't have any HTTP Response (e.g. FTP link)
-			if (!(chan instanceof Ci.nsIHttpChannel)) {
-				Debug.dump(d.fileName + ": Error in istanceof chan... Probably FTP... forcing single chunk mode");
-
-				// force single chunk mode
-				this.isHeaderHack = false;
-				d.maxChunks = 1;
-				c.end = d.totalSize - 1;
-				this.cantCount = 1;
-
-				// filename renaming
-				d.destinationName = d.buildFromMask(false, d.mask);
-				d.alreadyMaskedName = true;
-
-				// target directory renaming
-				d.dirSave = d.buildFromMask(true, d.mask);
-				d.alreadyMaskedDir = true;
-
-				return;
-			}
-
-			if (chan.responseStatus >= 400) {
-				d.fail(
-					_("error", [chan.responseStatus]),
-					_("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]) + " " + _("sra", [chan.responseStatus]) + ": " + chan.responseStatusText,
-					_("error", [chan.responseStatus])
-				);
-				sessionManager.save(d);
-				return;
-			}
-
-			// not partial content altough we are multi-chunk
-			if (chan.responseStatus != 206 && c.end != 0) {
-				Debug.dump(d.fileName + ": Server returned a " + chan.responseStatus + " response instead of 206... Normal mode");
-				vis = {visitHeader: function(a,b) { Debug.dump(a + ': ' + b); }};
-				chan.visitRequestHeaders(vis);
-				chan.visitResponseHeaders(vis);
-				d.hasToBeRedownloaded = true;
-				d.redownloadIsResumable = false;
-				d.reDownload();
-				return;
-			}
-
-			var visitor = null;
-			try {
-				visitor = d.visitors.visit(chan);
-			}
-			catch (ex) {
-				Debug.dump("header failed! " + d.fileName, ex);
-				// restart download from the beginning
-				d.hasToBeRedownloaded = true;
-				d.reDownload();
-				return;
-			}
-
-			// this.isHeaderHack = it's the chunk that has to test response headers
-			if (this.isHeaderHack) {
-				Debug.dump(d.fileName + ": Test Header Chunk started");
-
-				// content-type
-				if (visitor.type) {
-					d.contentType = visitor.type;
-				}
-
-				// compression?
-				d.compression = (
-					(visitor.encoding=="gzip"||visitor.encoding=="deflate")
-					&&
-					!(/gzip/).test(d.contentType)
-					&&
-					!(/\.gz/).test(d.fileName)
-				);
-				if (d.compression) {
-					d.compressionType = visitor.encoding;
-				}
-
-				// accept range
-				d.isResumable = !visitor.dontacceptrange;
-
-				Debug.dump("type: " + visitor.type);
-				if (visitor.type && visitor.type.search(/application\/metalink\+xml/) != -1) {
-					Debug.dump(chan.URI.spec + " iml");
-					d.isMetalink = true;
-					d.isResumable = false;
-				}
-
-				if (visitor.contentlength > 0) {
-					d.totalSize = visitor.contentlength;
-					c.end = d.totalSize - 1;
-				} else {
-					d.totalSize = 0;
-					d.isResumable = false;
-				}
-				// Checks for available disk space.
-				// XXX: l10n
-				var tsd = d.totalSize;
-				var nsd;
-				if (Prefs.tempLocation)	{
-					var tst = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : MAX_CHUNK_SIZE);
-					nds = Prefs.tempLocation.diskSpaceAvailable
-					if (nds < tst) {
-						Debug.dump("There is not enought free space available on temporary directory, needed=" + tst + " (totalsize="+ d.totalSize +"), user=" + nds);
-						d.fail(_("ndsa"), _("spacetemp"), _("freespace"));
-						return;
+			this._supportedChannels.some(
+				function(sc) {
+					try {
+						this[sc.f](aRequest.QueryInterface(sc.i), aContext);						
+						return true;
 					}
-				}
-				else {
-					tsd = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : MAX_CHUNK_SIZE);
-				}
-				var realDest;
-				try {
-					var realDest = new FileFactory(d.dirSave);
-					if (!realDest.exists()) realDest.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
-				} catch(e) {
-					Debug.dump("downloadChunk(): Could not move file or create directory on destination path: ", e);
-					d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
-					return;
-				}
-				nds = realDest.diskSpaceAvailable;
-				if (nds < tsd) {
-					Debug.dump("There is not enought free space available on destination directory, needed=" + tsd + " (totalsize="+ d.totalSize +"), user=" + nsd);
-					d.fail(_("ndsa"), _("spacedir"), _("freespace"));
-					return;
-				}
-				// if we are redownloading the file, here we can force single chunk mode
-				if (d.hasToBeRedownloaded) {
-					d.hasToBeRedownloaded = null;
-					d.isResumable = false;
-				}
-
-				// filename renaming
-				if (!d.alreadyMaskedName) {
-					d.alreadyMaskedName = true;
-					var newName = null;
-
-					if (visitor.fileName && visitor.fileName.length > 0) {
-						// if content disposition hasn't an extension we use extension of URL
-						newName = visitor.fileName;
-						if (visitor.fileName.lastIndexOf('.') == -1 && d.urlManager.url.getExtension()) {
-							newName += '.' + d.urlManager.url.getExtension();
-						}
-					} else if (aRequest.URI.spec != d.url) {
-						// if there has been one or more "moved content" header directives, we use the new url to create filename
-						newName = aRequest.URI.spec.getUsableFileName();
+					catch (ex) {
+						return false;
 					}
-
-					// got a new name, so decode and set it.
-					if (newName) {
-						var charset = visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset;
-						d.fileName = DTA_URLhelpers.decodeCharset(newName, charset);
-					}
-					d.fileName = d.buildFromMask(false, "*name*.*ext*");
-
-					d.destinationName = d.buildFromMask(false, d.mask);
-				}
-
-				// target directory renaming
-				if (!d.alreadyMaskedDir) {
-					d.alreadyMaskedDir = true;
-					d.dirSave = d.buildFromMask(true, d.mask);
-				}
-
-				// in case of a redirect set the new real url
-				if (this.url != aRequest.URI.spec) {
-					d.urlManager.replace(this.url, new DTA_URL(aRequest.URI.spec, visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset));
-				}
-
-				if (d.isResumable && d.totalSize > 2 * MIN_CHUNK_SIZE && d.maxChunks > 1) {
-					d.resumeDownload();
-				}
-				else {
-					Debug.dump(d.fileName + ": Multipart downloading is not needed/possible. isResumable = " + d.isResumable);
-					d.maxChunks = 1;
-					c.end = d.totalSize - 1;
-				}
-				this.isHeaderHack = false;
-
-			} else {
-				Debug.dump(d.fileName + ": Chunk " + c.start + "-" + + c.end + " started");
-			}
-
-			d.checkFilenameConflict();
-
-			if (!d.totalSize && d.chunks.length == 1 && aProcessMax > 0) {
-				d.totalSize = Number(aProcessMax);
-			}
-			else if (!d.totalSize) {
-				this.cantCount = 1;
-			}
-		} catch (ex) {
-			Debug.dump("ss", ex);
+				},
+				this
+			)
+		}
+		catch (ex) {
+			Debug.dump("onStartRequest", ex);
 		}
 	},
 	onStopRequest: function(aRequest, aContext, aStatusCode) {
@@ -1719,16 +1799,16 @@ Download.prototype = {
 			var c = this.c;
 			var d = this.d;
 
-			if (d.is(PAUSED, CANCELED)) {
+			/*if (d.is(PAUSED, CANCELED)) {
 				this.cancel();
 				return;
-			}
+			}*/
 
 			// update download tree row
 			if (!d.is(CANCELED)) {
 				d.refreshPartialSize();
 
-				if (this.cantCount != 1) {
+				if (!this.cantCount) {
 					// basic integrity check
 					if (d.partialSize > d.totalSize) {
 						Debug.dump(d.fileName + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");

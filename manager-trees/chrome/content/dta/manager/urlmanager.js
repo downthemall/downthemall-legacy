@@ -56,7 +56,7 @@ UrlManager.prototype = {
 		return this._urls[0].charset;
 	},
 	replace: function um_replace(url, newUrl) {
-		this._urls.forEach(function(u,i,a){ if (u.url == url) u = newURL; });
+		this._urls.forEach(function(u,i,a){ if (u.url == url) u = newUrl; });
 	},
 	save: function um_save() {
 		var rv = [];
