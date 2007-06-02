@@ -699,7 +699,11 @@ downloadElement.prototype = {
 			var dest = Prefs.tempLocation
 				? Prefs.tempLocation.clone()
 				: new FileFactory(this.parent.destinationPath);
-			dest.append(this.fileName + "-" + newUUIDString() + '.dtapart');
+			let name = this.fileName;
+			if (name.length > 60) {
+				name = name.substring(1, 60);
+			}
+			dest.append(name + "-" + newUUIDString() + '.dtapart');
 			this._tmpFile = dest;
 		}
 		return this._tmpFile;
@@ -1053,7 +1057,7 @@ downloadElement.prototype = {
 				name = this.fileName;
 				ext = '';
 			}
-
+			
 			var replacements = {
 				"\\*name\\*": name,
 				"\\*ext\\*": ext,
@@ -1554,7 +1558,7 @@ Download.prototype = {
 			}
 
 			// accept range
-			d.isResumable = !visitor.dontacceptrange;
+			d.isResumable = visitor.acceptRanges;
 
 			Debug.dump("type: " + visitor.type);
 			if (visitor.type && visitor.type.search(/application\/metalink\+xml/) != -1) {
@@ -1565,10 +1569,8 @@ Download.prototype = {
 
 			if (visitor.contentlength > 0) {
 				d.totalSize = visitor.contentlength;
-				c.end = d.totalSize - 1;
 			} else {
 				d.totalSize = 0;
-				d.isResumable = false;
 			}
 			
 			var newName;

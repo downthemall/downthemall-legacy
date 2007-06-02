@@ -25,7 +25,7 @@ Visitor.prototype = {
 	overrideCharset: null,
 	encoding: null,
 	fileName: null,
-	dontacceptrange: false,
+	acceptRanges: false,
 	contentlength: 0,
 	time: null,
 
@@ -57,7 +57,7 @@ Visitor.prototype = {
 				break;
 
 				case 'accept-ranges':
-					this.dontacceptrange = (aValue.toLowerCase().indexOf('none') >= 0);
+					this.acceptRanges = aValue.toLowerCase().indexOf('none') == -1;
 					Debug.dump("acceptrange = " + aValue.toLowerCase());
 				break;
 
