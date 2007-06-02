@@ -1357,10 +1357,18 @@ Download.prototype = {
 	// nsICancelable
 	cancel: function(aReason) {
 		Debug.dump("cancel");
-		if (!aReason) {
-			aReason = 0x804b0002; // NS_BINDING_ABORTED;
+		try {
+			if (this._closed) {
+				return;
+			}
+			if (!aReason) {
+				aReason = 0x804b0002; // NS_BINDING_ABORTED;
+			}
+			this._chan.cancel(aReason);
+			this._closed = true;
+		} catch (ex) {
+			Debug.dump("cancel", ex);
 		}
-		this._chan.cancel(aReason);
 	},
 	// nsIInterfaceRequestor
 	getInterface: function(iid) {
@@ -1420,6 +1428,7 @@ Download.prototype = {
 	// nsIChannelEventSink
 	onChannelRedirect: function(oldChannel, newChannel, flags) {
 		try {
+			this._chan == newChannel;
 			this._redirectedTo = newChannel.URI.spec;
 		}
 		catch (ex) {
@@ -1434,8 +1443,11 @@ Download.prototype = {
 
 	// nsIStreamListener
   onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
-		//Debug.dump("DA " + aCount);
+		if (this._closed) {
+			throw 0x804b0002; // NS_BINDING_ABORTED;
+		}
 		try {
+			// we want to kill ftp chans as well which do not seem to respond to cancel correctly.
 			if (!this.c.write(aInputStream, aCount)) {
 				// we already got what we wanted
 				this.cancel();
@@ -1447,7 +1459,7 @@ Download.prototype = {
 		}
 	},
 
-	handleHttp: function(aChannel, aContext) {
+	handleHttp: function(aChannel) {
 		var c = this.c;
 		var d = this.d;
 		
@@ -1625,12 +1637,12 @@ Download.prototype = {
 	},
 	
 	// Generic handler for now :p
-	handleFtp: function(aChannel, aContext) {
+	handleFtp: function(aChannel) {
 		Debug.dump("handleFtp: " + aChannel.URI.spec);
 		return this.handleGeneric(aChannel, aContext);
 	},
 	
-	handleGeneric: function(aChannel, aContext) {
+	handleGeneric: function(aChannel) {
 		var c = this.c;
 		var d = this.d;
 		
@@ -1681,9 +1693,9 @@ Download.prototype = {
 	
 	//nsIRequestObserver,
 	_supportedChannels: [
-		{i: Ci.nsIHttpChannel, f:'handleHttp'},
-		{i:Ci.nsIFtpChannel, f:'handleFtp'},
-		{i:Ci.nsIChannel, f:'handleGeneric'},
+		{i:'nsIHttpChannel', f:'handleHttp'},
+		{i:'nsIFtpChannel', f:'handleFtp'},
+		{i:'nsIChannel', f:'handleGeneric'}
 	],
 	onStartRequest: function(aRequest, aContext) {
 		Debug.dump('StartRequest');
@@ -1693,10 +1705,12 @@ Download.prototype = {
 			this._supportedChannels.some(
 				function(sc) {
 					try {
-						this[sc.f](aRequest.QueryInterface(sc.i), aContext);						
+						var chan = aRequest.QueryInterface(Ci[sc.i]);
+						this[sc.f](chan);						
 						return true;
 					}
 					catch (ex) {
+						Debug.dump("qu", ex);
 						return false;
 					}
 				},
