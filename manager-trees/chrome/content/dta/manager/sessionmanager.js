@@ -32,14 +32,11 @@ var sessionManager = {
 		var e = {};
 		[
 			'fileName',
-			'destinationName',
 			'numIstance',
 			'description',
 			'isResumable',
-			'alreadyMaskedName',
-			'alreadyMaskedDir',
 			'mask',
-			'originalDirSave',
+			'pathName',
 		].forEach(
 			function(u) {
 				e[u] = d[u];
@@ -47,7 +44,6 @@ var sessionManager = {
 		);
 		e.state = d.is(COMPLETE, CANCELED) ? d.state : PAUSED;
 
-		e.dirsave = d.dirSave.addFinalSlash();
 		e.referrer = d.refPage.spec;
 		// Store this so we can later resume.
 		if (!d.is(CANCELED, COMPLETE) && d.partialSize) {
@@ -148,7 +144,7 @@ var sessionManager = {
 
 				var d = new downloadElement(
 					new UrlManager(down.urlManager),
-					get("dirsave"),
+					get("pathName"),
 					get("numIstance"),
 					get("description"),
 					get("mask"),
@@ -161,14 +157,10 @@ var sessionManager = {
 
 				[
 					'fileName',
-					'destinationName',
-					'orginalDirSave',
 					'isResumable',
 					'state',
 					'partialSize',
 					'totalSize',
-					'alreadyMaskedName',
-					'alreadyMaskedDir',
 				].forEach(
 					function(e) {
 						d[e] = get(e);
@@ -187,8 +179,6 @@ var sessionManager = {
 					d.status = _('paused');
 				}
 				else if (d.is(COMPLETE)) {
-					d.fileManager = new FileFactory(d.dirSave);
-					d.fileManager.append(d.destinationName);
 					Stats.completedDownloads++;
 					d.status = _('complete');
 				}

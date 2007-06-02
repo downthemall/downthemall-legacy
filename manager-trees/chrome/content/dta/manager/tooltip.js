@@ -15,7 +15,7 @@ var Tooltip = {
 			var d = tree.at(row.value);
 			$("infoIcon").src = d.largeIcon;
 			$("infoURL").value = d.urlManager.url;
-			$("infoDest").value = d.dirSave + d.destinationName;
+			$("infoDest").value = d.destinationFile;
 	
 			this._current = d;
 			this.updateSpeedCanvas();

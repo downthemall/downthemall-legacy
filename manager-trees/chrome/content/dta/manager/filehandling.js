@@ -3,9 +3,9 @@ var FileHandling = {
 		for (d in tree.selected) {
 			try {
 				if (d.is(COMPLETE)) {
-					OpenExternal.reveal(d.dirSave + d.destinationName);
+					OpenExternal.reveal(d.destinationFile);
 				} else {
-					OpenExternal.reveal(d.dirSave);
+					OpenExternal.reveal(d.destinationPath);
 				}
 			} catch (ex) {
 				Debug.dump('reveal', ex);
@@ -16,7 +16,7 @@ var FileHandling = {
 		var cur = tree.current;
 		if (cur && cur.is(COMPLETE)) {
 			try {
-				OpenExternal.launch(cur.dirSave + cur.destinationName);
+				OpenExternal.launch(cur.destinationFile);
 			}
 			catch (ex) {
 				Debug.dump('launch', ex);
@@ -28,7 +28,7 @@ var FileHandling = {
 		
 		for (d in tree.selected) {
 			if (d.is(COMPLETE)) {
-				var file = new FileFactory(d.dirSave + d.destinationName);
+				var file = new FileFactory(d.destinationFile);
 				if (file.exists()) {
 					if (!DTA_confirm(_('deletetitle'), _('deletetext', [file.leafName]), _('delete'), DTA_confirm.CANCEL, null, 1)) {
 						file.remove(false);

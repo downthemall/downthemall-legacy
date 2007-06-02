@@ -235,12 +235,12 @@ var Dialog = {
 				var msg = _('suc');
 				
 				if (Prefs.alertingSystem == 1) {
-					AlertService.show(_("dcom"), _('suc'), true, tree.at(0).dirSave);
+					AlertService.show(_("dcom"), _('suc'), true, tree.at(0).destinationPath);
 				}
 				else if (Prefs.alertingSystem == 0) {
 					if (confirm(_('suc') + "\n "+ _("folder")) == 1) {
 						try {
-							OpenExternal.launch(tree.at(0).dirSave);
+							OpenExternal.launch(tree.at(0).destinationPath);
 						}
 						catch (ex){
 							// no-op
@@ -461,7 +461,7 @@ Chunk.prototype = {
 
 function Decompressor(download) {
 	this.download = download;
-	this.to = new FileFactory(download.dirSave + download.destinationName);
+	this.to = new FileFactory(download.destinationFile);
 	this.from = download.tmpFile.clone();
 
 	download.state = FINISHING;
@@ -596,17 +596,20 @@ function downloadElement(lnk, dir, num, desc, mask, refPage, tmpFile) {
 		this.urlManager = new UrlManager([lnk]);
 	}
 
-	this.dirSave = dir;
-	this.originalDirSave = dir;
-	this.destinationName = this.fileName = this.urlManager.usable.getUsableFileName();
-	this.mask = mask;
+	this.startDate = new Date();	
 	this.numIstance = num;
-	this.description = desc;
+	this.description = desc ? desc : '';
 	this.chunks = [];
 	this.speeds = new Array();
 	this.refPage = Cc['@mozilla.org/network/standard-url;1'].createInstance(Ci.nsIURI);
 	this.refPage.spec = refPage;
 
+	// only access the setter of the last so that we don't generate stuff trice.
+	this._pathName = dir;
+	this._mask = mask;
+	this.fileName = this.urlManager.usable.getUsableFileName();
+	
+	
 	// XXX: reset ranges when failed.
 	if (tmpFile) {
 		try {
@@ -640,13 +643,62 @@ downloadElement.prototype = {
 			Dialog.signal(this);
 		}
 	},
+	
+	_fileName: null,
+	get fileName() {
+		return this._fileName;
+	},
+	set fileName(nv) {
+		this._fileName = nv;
+		this.rebuildDestination();
+		this.invalidate();
+		return nv;
+	},
+
+	_pathName: null,
+	get pathName() {
+		return this._pathName;
+	},
+	set pathName(nv) {
+		this._pathName = nv;
+		this.rebuildDestination();
+		this.invalidate();
+		return nv;
+	},	
+
+	_mask: null,
+	get mask() {
+		return this._mask;
+	},
+	set mask(nv) {
+		this._mask = nv;
+		this.rebuildDestination();
+		this.invalidate();
+		return nv;
+	},		
+	
+	_destinationName: null,
+	destinationNameOverride: null, 
+	get destinationName() {
+		return this.destinationNameOverride ? this.destinationNameOverride : this._destinationName; 
+	},
+	set destinationName(nv) {
+		this.destinationNameOverride = nv;
+		this.invalidate();
+		return nv;
+	},
+	
+	_destinationFile: null,
+	get destinationFile() {
+		return this._destinationFile;
+	},
 
 	_tmpFile: null,
 	get tmpFile() {
 		if (!this._tmpFile) {
 			var dest = Prefs.tempLocation
 				? Prefs.tempLocation.clone()
-				: new FileFactory(this.parent.dirSave);
+				: new FileFactory(this.parent.destinationPath);
 			dest.append(this.fileName + "-" + newUUIDString() + '.dtapart');
 			this._tmpFile = dest;
 		}
@@ -667,15 +719,20 @@ downloadElement.prototype = {
 
 	contentType: "",
 	visitors: null,
-	totalSize: 0,
+	_totalSize: 0,
+	get totalSize() { return this._totalSize; },
+	set totalSize(nv) {
+		this._totalSize = nv;
+		Debug.dump("ts", nv);
+		this.invalidate();
+		return this._totalSize;
+	},
 	partialSize: 0,
+
 	startDate: null,
 
 	compression: false,
 	compressionType: "",
-
-	alreadyMaskedDir: false,
-	alreadyMaskedName: false,
 
 	isResumable: false,
 	isStarted: false,
@@ -752,16 +809,11 @@ downloadElement.prototype = {
 		}
 		return Math.round(this.partialSize / this.totalSize * 100) + "%";
 	},
-	_dirSave: '',
-	get dirSave() {
-		return this._dirSave;
+	_destinationPath: '',
+	get destinationPath() {
+		return this._destinationPath;
 	},
-	set dirSave(nv) {
-		this._dirSave = nv;
-		this.invalidate();
-		return this._dirSave;
-	},
-	
+
 	invalidate: function() {
 		tree.invalidate(this);
 	},
@@ -777,10 +829,7 @@ downloadElement.prototype = {
 	reDownload: function() {
 		// replace names
 		Debug.dump(this.urlManager.usable);
-		this.destinationName = this.fileName = this.urlManager.usable.getUsableFileName();
-		this.alreadyMaskedName = false;
-		this.alreadyMaskedDir = false;
-		this.dirSave = this.originalDirSave;
+		this.fileName = this.urlManager.usable.getUsableFileName();
 
 		// reset flags
 		this.setPaused();
@@ -825,9 +874,8 @@ downloadElement.prototype = {
 		}
 
 		try {
-			var destination = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
-			destination.initWithPath(this.dirSave);
-			Debug.dump(this.fileName + ": Move " + this.tmpFile.path + " to " + this.dirSave + this.destinationName);
+			var destination = new FileFactory(this.destinationPath);
+			Debug.dump(this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
 
 			if (!destination.exists()) {
 				destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
@@ -849,8 +897,7 @@ downloadElement.prototype = {
 	handleMetalink: function dl_handleMetaLink() {
 		try {
 			tree.remove(this);
-			var file = new FileFactory(this.dirSave);
-			file.append(this.destinationName);
+			var file = new FileFactory(this.destinationFile);
 
 			var fiStream = Cc['@mozilla.org/network/file-input-stream;1']
 				.createInstance(Ci.nsIFileInputStream);
@@ -893,7 +940,7 @@ downloadElement.prototype = {
 					'refPage': this.refPage.spec,
 					'numIstance': 0,
 					'mask': this.mask,
-					'dirSave': this.originalDirSave,
+					'dirSave': this.pathName,
 					'description': desc,
 					'ultDescription': ''
 				});
@@ -913,8 +960,7 @@ downloadElement.prototype = {
 		}
 		Debug.dump("finishDownload, connections", this.sessionConnections);
 		// create final file pointer
-		this.fileManager = new FileFactory(this.dirSave);
-		this.fileManager.append(this.destinationName);
+		this.fileManager = new FileFactory(this.destinationFile);
 
 		if (Prefs.setTime) {
 			try {
@@ -938,7 +984,6 @@ downloadElement.prototype = {
 				Debug.dump("Setting timestamp on file failed: ", ex);
 			}
 		}
-
 		this.totalSize = this.partialSize = this.size;
 
 		this.status = _("complete");
@@ -954,8 +999,7 @@ downloadElement.prototype = {
 		this.chunks = [];
 	},
 
-	// XXX: revise
-	buildFromMask: function(dir, mask) {
+	rebuildDestination: function() {
 		try {
 			var url = this.urlManager.usable;
 			var uri = Cc['@mozilla.org/network/standard-url;1']
@@ -963,29 +1007,21 @@ downloadElement.prototype = {
 			uri.spec = url;
 
 			// normalize slashes
-			mask = mask
+			var mask = this.mask
 				.removeLeadingChar("\\").removeFinalChar("\\")
 				.removeLeadingChar("/").removeFinalChar("/")
 				.replace(/([\\/]{1,})/g, SYSTEMSLASH);
-
-			if (dir) {
-				mask = mask.substring(0, mask.lastIndexOf(SYSTEMSLASH));
-				var replacedSlash = SYSTEMSLASH;
-			} else {
-				mask = mask.substring(mask.lastIndexOf(SYSTEMSLASH) + 1, mask.length);
-				var replacedSlash = "-";
-			}
 
 			var uripath = uri.path.removeLeadingBackSlash();
 			if (uripath.length) {
 				uripath = uripath.substring(0, uri.path.lastIndexOf("/"))
 					.removeFinalBackSlash()
-					.replace(/\//g, replacedSlash);
+					.replace(/\//g, SYSTEMSLASH);
 			}
 
 			var query = '';
 			try {
-				query = DTA_URLhelpers.decodeCharset(uri.query, url.originCharset);
+				query = uri.query;
 			}
 			catch (ex) {
 				// no-op
@@ -1026,7 +1062,7 @@ downloadElement.prototype = {
 				"\\*subdirs\\*": uripath,
 				"\\*refer\\*": this.refPage.host,
 				"\\*qstring\\*": query,
-				"\\*curl\\*": (uri.host + ((uripath=="")?"":(replacedSlash + uripath))),
+				"\\*curl\\*": (uri.host + ((uripath=="")?"":(SYSTEMSLASH + uripath))),
 				"\\*num\\*": Utils.makeNumber(this.numIstance),
 				"\\*hh\\*": Utils.makeNumber(this.startDate.getHours(), 2),
 				"\\*mm\\*": Utils.makeNumber(this.startDate.getMinutes(), 2),
@@ -1040,23 +1076,21 @@ downloadElement.prototype = {
 				mask = mask.replace(new RegExp(i, "gi"), replacements[i]);
 			}
 
-			if (dir) {
-				return this.dirSave + ((mask.removeBadChars().trim().length==0)?"":mask.removeBadChars().trim().addFinalSlash());
-			}
-			return mask.removeBadChars().removeFinalChar(".").trim();
-
+			this._destinationFile = mask = this.pathName.addFinalSlash() + mask.removeBadChars().removeFinalChar(".").trim();
+			mask = mask.split(SYSTEMSLASH);
+			this._destinationName = mask.pop();
+			this._destinationPath = mask.join(SYSTEMSLASH).addFinalSlash();
+			Debug.dump("generated path: " + this.destinationFile + " (" + this.destinationName + ")");
 		} catch(ex) {
+			this._destinationName = this.fileName;
+			this._destinationPath = this.pathName.addFinalSlash();
+			this._destinationFile = this._destinationPath + this._destinationName;
 			Debug.dump("buildFromMask():", ex);
 		}
-
-		if (dir) {
-			return this.dirSave;
-		}
-		return this.destinationName;
 	},
 
 	checkFilenameConflict: function() {
-		var dn = this.destinationName, ds = this.dirSave;
+		var dn = this.destinationName, ds = this.destinationPath;
 		var dest = new FileFactory(ds + dn), newDest = dest.clone();
 
 		// figure out an unique name
@@ -1285,10 +1319,10 @@ function Download(d, c, headerHack) {
 	this.d = d;
 	this.c = c;
 	this.isHeaderHack = headerHack;
-	this.url = d.urlManager.getURL().url;
+	this.url = d.urlManager.getURL();
 	var referrer = d.refPage;
 
-	this._chan = this._ios.newChannelFromURI(this._ios.newURI(this.url, null, null));
+	this._chan = this._ios.newChannelFromURI(this._ios.newURI(this.url.url, null, null));
 	var r = Ci.nsIRequest;
 	this._chan.loadFlags = r.LOAD_NORMAL | r.LOAD_BYPASS_CACHE;
 	this._chan.notificationCallbacks = this;
@@ -1430,6 +1464,7 @@ Download.prototype = {
 		try {
 			this._chan == newChannel;
 			this._redirectedTo = newChannel.URI.spec;
+			
 		}
 		catch (ex) {
 			// no-op
@@ -1438,7 +1473,6 @@ Download.prototype = {
 	
 	// nsIFtpEventSink - to keep interfacerequestor calm ;)
 	OnFTPControlLog: function(fromServer, msg) {
-		Debug.dump("FTP: " + msg, fromServer);
 	},
 
 	// nsIStreamListener
@@ -1482,7 +1516,6 @@ Download.prototype = {
 			aChannel.visitRequestHeaders(vis);
 			aChannel.visitResponseHeaders(vis);
 			d.hasToBeRedownloaded = true;
-			d.redownloadIsResumable = false;
 			d.reDownload();
 			return;
 		}
@@ -1499,11 +1532,6 @@ Download.prototype = {
 			return;
 		}
 		
-		if (this._redirectedTo) {
-			d.urlManager.replace(this.url, new DTA_URL(this._redirectedTo, visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset));
-		}
-		
-
 		// this.isHeaderHack = it's the chunk that has to test response headers
 		if (this.isHeaderHack) {
 			Debug.dump(d.fileName + ": Test Header Chunk started");
@@ -1542,98 +1570,27 @@ Download.prototype = {
 				d.totalSize = 0;
 				d.isResumable = false;
 			}
-			// Checks for available disk space.
-			// XXX: l10n
-			var tsd = d.totalSize;
-			var nsd;
-			if (Prefs.tempLocation)	{
-				var tst = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : MAX_CHUNK_SIZE);
-				nds = Prefs.tempLocation.diskSpaceAvailable
-				if (nds < tst) {
-					Debug.dump("There is not enought free space available on temporary directory, needed=" + tst + " (totalsize="+ d.totalSize +"), user=" + nds);
-					d.fail(_("ndsa"), _("spacetemp"), _("freespace"));
-					return;
+			
+			var newName;
+			if (visitor.fileName && visitor.fileName.length > 0) {
+				// if content disposition hasn't an extension we use extension of URL
+				newName = visitor.fileName;
+				let ext = this.url.usable.getExtension();
+				if (visitor.fileName.lastIndexOf('.') == -1 && ext) {
+					newName += '.' + ext;
 				}
-			}
-			else {
-				tsd = d.totalSize + (Preferences.getDTA("prealloc", true) ? d.totalSize : MAX_CHUNK_SIZE);
-			}
-			var realDest;
-			try {
-				var realDest = new FileFactory(d.dirSave);
-				if (!realDest.exists()) realDest.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
-			} catch(e) {
-				Debug.dump("downloadChunk(): Could not move file or create directory on destination path: ", e);
-				d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
-				return;
-			}
-			nds = realDest.diskSpaceAvailable;
-			if (nds < tsd) {
-				Debug.dump("There is not enought free space available on destination directory, needed=" + tsd + " (totalsize="+ d.totalSize +"), user=" + nsd);
-				d.fail(_("ndsa"), _("spacedir"), _("freespace"));
-				return;
-			}
-			// if we are redownloading the file, here we can force single chunk mode
-			if (d.hasToBeRedownloaded) {
-				d.hasToBeRedownloaded = null;
-				d.isResumable = false;
+			} else if (this._redirectedTo) {
+				// if there has been one or more "moved content" header directives, we use the new url to create filename
+				newName = this._redirectedTo;
 			}
 
-			// filename renaming
-			if (!d.alreadyMaskedName) {
-				d.alreadyMaskedName = true;
-				var newName = null;
-
-				if (visitor.fileName && visitor.fileName.length > 0) {
-					// if content disposition hasn't an extension we use extension of URL
-					newName = visitor.fileName;
-					if (visitor.fileName.lastIndexOf('.') == -1 && d.urlManager.url.getExtension()) {
-						newName += '.' + d.urlManager.url.getExtension();
-					}
-				} else if (aRequest.URI.spec != d.url) {
-					// if there has been one or more "moved content" header directives, we use the new url to create filename
-					newName = aRequest.URI.spec.getUsableFileName();
-				}
-
-				// got a new name, so decode and set it.
-				if (newName) {
-					var charset = visitor.overrideCharset ? visitor.overrideCharset : d.urlManager.charset;
-					d.fileName = DTA_URLhelpers.decodeCharset(newName, charset);
-				}
-				d.fileName = d.buildFromMask(false, "*name*.*ext*");
-
-				d.destinationName = d.buildFromMask(false, d.mask);
+			// got a new name, so decode and set it.
+			if (newName) {
+				let charset = visitor.overrideCharset ? visitor.overrideCharset : this.url.charset;
+				newName = DTA_URLhelpers.decodeCharset(newName, charset);
+				d.fileName = newName.getUsableFileName();
 			}
-
-			// target directory renaming
-			if (!d.alreadyMaskedDir) {
-				d.alreadyMaskedDir = true;
-				d.dirSave = d.buildFromMask(true, d.mask);
-			}
-
-			if (d.isResumable && d.totalSize > 2 * MIN_CHUNK_SIZE && d.maxChunks > 1) {
-				d.resumeDownload();
-			}
-			else {
-				Debug.dump(d.fileName + ": Multipart downloading is not needed/possible. isResumable = " + d.isResumable);
-				d.maxChunks = 1;
-				c.end = d.totalSize - 1;
-			}
-			this.isHeaderHack = false;
-
-		} else {
-			Debug.dump(d.fileName + ": Chunk " + c.start + "-" + + c.end + " started");
 		}
-
-		d.checkFilenameConflict();
-
-		if (!d.totalSize && d.chunks.length == 1 && aProcessMax > 0) {
-			d.totalSize = Number(aProcessMax);
-		}
-		else if (!d.totalSize) {
-			this.cantCount = true;
-		}		
-		
 	},
 	
 	// Generic handler for now :p
@@ -1648,14 +1605,10 @@ Download.prototype = {
 		
 		Debug.dump("handleGeneric: " + aChannel.URI.spec);
 		
-		try {
-			if (this._redirectedTo) {
-				d.urlManager.replace(this.url, new DTA_URL(this._redirectedTo, d.urlManager.charset));
-			}				
-		}
-		catch (ex) {
-			alert(ex);
-		}
+		if (this._redirectedTo) {
+			let url = new DTA_URL(this._redirectedTo, this.url.charset);
+			d.fileName = url.usable.getUsableFileName();
+		}				
 			
 		// try to get the size anyway ;)
 		try {
@@ -1663,7 +1616,6 @@ Download.prototype = {
 			d.totalSize = Math.max(pb.getPropertyAsInt64('content-length'), 0);
 		}
 		catch (ex) {
-			alert(ex);
 			try {
 				d.totalSize = Math.max(aChannel.contentLength, 0);
 			}
@@ -1671,24 +1623,13 @@ Download.prototype = {
 				d.totalSize = 0;
 			}
 		}
-		Debug.dump("TotalSize: " + d.totalSize);
-		c.end = d.totalSize - 1;
-
-		// force single chunk mode
-		this.isHeaderHack = false;
-		d.maxChunks = 1;
-		d.isResumable = false;
-		if (!d.totalSize) {
-			this.cantCount = true;
+		if (d.totalSize) {
+			c.end = d.totalSize - 1;
 		}
 
-		// filename renaming
-		d.destinationName = d.buildFromMask(false, d.mask);
-		d.alreadyMaskedName = true;
-
-		// target directory renaming
-		d.dirSave = d.buildFromMask(true, d.mask);
-		d.alreadyMaskedDir = true;				
+		// force single chunk mode
+		d.maxChunks = 1;
+		d.isResumable = false;
 	},
 	
 	//nsIRequestObserver,
@@ -1699,6 +1640,10 @@ Download.prototype = {
 	],
 	onStartRequest: function(aRequest, aContext) {
 		Debug.dump('StartRequest');
+		
+		var c = this.c;
+		var d = this.d;
+		
 		this.started = true;
 		try {
 			Debug.dump("First ProgressChange for chunk ");
@@ -1715,7 +1660,67 @@ Download.prototype = {
 					}
 				},
 				this
-			)
+			);
+
+			if (this.isHeadersHack) {
+				// Checks for available disk space.
+				
+				var tsd = d.totalSize;
+				try {
+					if (tsd) {
+						if (Prefs.tempLocation && Prefs.tempLocation.diskSpaceAvailable < tsd) {
+							d.fail(_("ndsa"), _("spacetemp"), _("freespace"));
+							return;
+						}
+						let realDest = new FileFactory(d.destinationPath);
+						if (!realDest.exists()) {
+							realDest.create(Ci.nsiFile.DIRECTORY_TYPE, 0766);
+						}
+						if (!realDest.isWriteable() || !Prefs.tmpLocation.isWritable()) {
+							throw new Components.Exception("Paths write protected");
+						}
+						var nsd = realDest.diskSpaceAvailable;
+						// Same save path or same disk (we assume that tmp.avail == dst.avail means same disk)
+						// simply moving should succeed
+						if (d.compression && !Prefs.tempLocation || Prefs.tempLocation.diskSpaceAvailable == nsd) {
+							// we cannot know how much space we will consume after decompressing.
+							// so we assume factor 1.0 for the compressed and factor 1.5 for the decompressed file.
+							tsd *= 2.5;
+						}
+						if (nsd < tsd) {
+							d.fail(_("ndsa"), _("spacedir"), _("freespace"));
+							return;
+						}
+					}
+				}
+				catch (ex) {
+					d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+					return;
+				}
+				
+				// if we are redownloading the file, here we can force single chunk mode
+				if (d.hasToBeRedownloaded) {
+					d.hasToBeRedownloaded = null;
+					d.isResumable = false;
+				}
+	
+				if (d.totalSize <= 0) {
+					d.maxChunks = 1;
+					d.isResumable = false;
+					c.end = d.totalSize - 1;
+				}
+				d.resumeDownload();
+	
+				this.isHeaderHack = false;
+			} else {
+				Debug.dump(d.fileName + ": Chunk " + c.start + "-" + + c.end + " started");
+			}
+
+			d.checkFilenameConflict();
+	
+			if (!d.totalSize) {
+				this.cantCount = true;
+			}					
 		}
 		catch (ex) {
 			Debug.dump("onStartRequest", ex);
@@ -1819,7 +1824,7 @@ Download.prototype = {
 			}*/
 
 			// update download tree row
-			if (!d.is(CANCELED)) {
+			if (d.is(RUNNING)) {
 				d.refreshPartialSize();
 
 				if (!this.cantCount) {
@@ -1847,8 +1852,6 @@ function startnewDownloads(notQueue, download) {
 
 	var numbefore = tree.rowCount - 1;
 	const DESCS = ['description', 'ultDescription'];
-	var startDate = new Date();
-
 
 	for (var i=0; i<download.length; i++) {
 		var e = download[i];
@@ -1881,8 +1884,6 @@ function startnewDownloads(notQueue, download) {
 		else {
 			d.status = _('inqueue');
 		}
-		d.startDate = startDate;
-		
 		tree.add(d);
 	}
 
@@ -1911,7 +1912,7 @@ function startnewDownloads(notQueue, download) {
 
 function isInProgress(path, d) {
 	for (var x=0; x<inProgressList.length; x++)
-		if ((inProgressList[x].d.dirSave + inProgressList[x].d.destinationName) == path && d != inProgressList[x].d)
+		if ((inProgressList[x].d.destinationFile) == path && d != inProgressList[x].d)
 			return x;
 	return -1;
 }

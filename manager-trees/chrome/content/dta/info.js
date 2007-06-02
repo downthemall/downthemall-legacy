@@ -30,7 +30,7 @@ var Dialog = {
 				$("infoURL").value = d.urlManager.usable;
 				$("sourcePage").value = d.refPage.spec;
 				$('renaming').value = d.mask;
-				$('directory').value = d.originalDirSave;
+				$('directory').value = d.pathName;
 				var caption = document.getAnonymousNodes($("logo"))[0];
 				caption.style.backgroundImage = 'url(' + getIcon(d.fileName, 'isMetaLink' in d, 32) + ')';
 				caption.style.paddingLeft = '37px';
@@ -48,9 +48,9 @@ var Dialog = {
 				? mask
 				: '';
 
-			var dir = String(downloads[0].originalDirSave);
+			var dir = String(downloads[0].pathName);
 			this.ddDirectory.current = 
-				downloads.every(function(e, i, a) { return String(e.originalDirSave) == dir; })
+				downloads.every(function(e, i, a) { return String(e.pathName) == dir; })
 				? dir
 				: '';
 		
@@ -91,13 +91,6 @@ var Dialog = {
 			if (mask) {
 				d.mask = mask;
 			}
-			//XXX ?!
-			d.destinationName = d.fileName;
-			d.destinationName = d.buildFromMask(false, d.mask);
-			
-			d.dirSave = d.originalDirSave;
-			d.dirSave = d.buildFromMask(true, d.mask);
-
 			d.checkFilenameConflict();
 		}
 		

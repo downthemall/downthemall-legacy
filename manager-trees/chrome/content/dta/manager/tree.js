@@ -90,13 +90,13 @@ Tree.prototype = {
 		var d = this._downloads[idx];
 
 		switch (col.id) {
-			case 'task': return Prefs.showOnlyFilenames ? d.fileName : d.urlManager.usable;
+			case 'task': return Prefs.showOnlyFilenames ? d.destinationName : d.urlManager.usable;
 			case 'per': return d.percent;
 			case 'dim': return d.dimensionString;
 			case 'status': return d.status;
 			case 'parts': return d.parts;
 			case 'mask': return d.mask;
-			case 'path': return d.dirSave;
+			case 'path': return d.destinationPath;
 			case 'speed': return d.speed;
 		}
 		return '';
@@ -324,7 +324,7 @@ Tree.prototype = {
 		var rv = [];
 		var rangeCount = this.selection.getRangeCount();
 		for (var i = 0; i < rangeCount; ++i) {
-				start = {};	end = {};
+				let start = {}, end = {};
 				this.selection.getRangeAt(i, start, end);
 				for (var c = start.value; c <= end.value; c++) {
 					rv.push(c);
