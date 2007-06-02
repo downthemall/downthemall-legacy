@@ -111,6 +111,8 @@
 				]]></getter>
 			</property>
 			<property name="_max" onget="return DTA_preferences.getDTA('history', 5);"/>
+			<property name="inputField" onget="return this._list.inputField"/>
+			<property name="value" onget="return this._list.value"/>
 			<property name="current" onget="return this._list.value">
 				<setter>
 					val = String(val);
