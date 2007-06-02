@@ -1342,7 +1342,7 @@ function Download(d, c, headerHack) {
 			var http = this._chan.QueryInterface(Ci.nsIHttpChannel);
 			//http.setRequestHeader('Accept-Encoding', 'none', false);
 			if (c.end > 0) {
-				http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + '-' + c.end, false);
+				http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
 			}
 			if (typeof(referrer) == 'string') {
 				referrer = this._ios.newURI(referrer, null, null);
@@ -1501,9 +1501,30 @@ Download.prototype = {
 		var c = this.c;
 		var d = this.d;
 		
-		Debug.dump("handleHttp: " + aChannel.URI.spec);
-
 		if (aChannel.responseStatus >= 400) {
+			Debug.dump("problem found; trying to recover");
+			var found = -1;
+			for (let i = 0; i < d.chunks.length; ++i) {
+				if (d.chunks[i] == c) {
+					found = --i;
+					break;
+				}
+			}
+			Debug.dump("found self", found);
+			for (let i = found; i > -1; --i) {
+				if (d.chunks[i].isRunning) {
+					Debug.dump("found joinable chunk; recovering suceeded", i);
+					d.chunks[i].end = c.end;
+					if (--d.maxChunks == 1) {
+						d.isResumable = false;
+					}
+					this.cancel();
+					d.chunks = d.chunks.filter(function(ch) { return ch != c; });
+					sessionManager.save(d);
+					return;
+				}
+			}
+			Debug.dump("Cannot recover from problem!", aChannel.responseStatus);
 			d.fail(
 				_("error", [aChannel.responseStatus]),
 				_("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]) + " " + _("sra", [aChannel.responseStatus]) + ": " + aChannel.responseStatusText,
@@ -1605,8 +1626,6 @@ Download.prototype = {
 		var c = this.c;
 		var d = this.d;
 		
-		Debug.dump("handleGeneric: " + aChannel.URI.spec);
-		
 		if (this._redirectedTo) {
 			let url = new DTA_URL(this._redirectedTo, this.url.charset);
 			d.fileName = url.usable.getUsableFileName();
@@ -1630,9 +1649,9 @@ Download.prototype = {
 	
 	//nsIRequestObserver,
 	_supportedChannels: [
-		{i:'nsIHttpChannel', f:'handleHttp'},
-		{i:'nsIFtpChannel', f:'handleFtp'},
-		{i:'nsIChannel', f:'handleGeneric'}
+		{i:Ci.nsIHttpChannel, f:'handleHttp'},
+		{i:Ci.nsIFtpChannel, f:'handleFtp'},
+		{i:Ci.nsIChannel, f:'handleGeneric'}
 	],
 	onStartRequest: function(aRequest, aContext) {
 		Debug.dump('StartRequest');
@@ -1642,21 +1661,20 @@ Download.prototype = {
 		
 		this.started = true;
 		try {
-			Debug.dump("First ProgressChange for chunk ");
-			this._supportedChannels.some(
-				function(sc) {
-					try {
-						var chan = aRequest.QueryInterface(Ci[sc.i]);
-						this[sc.f](chan);						
-						return true;
-					}
-					catch (ex) {
-						Debug.dump("qu", ex);
-						return false;
-					}
-				},
-				this
-			);
+			for (let i = 0, e = this._supportedChannels.length; i < e; ++i) {
+				try {
+					let sc = this._supportedChannels[i];
+					Debug.dump(sc.i);
+					let chan = aRequest.QueryInterface(sc.i);
+					this[sc.f](chan);
+					Debug.dump("handled with: " + sc.f);
+					break;
+				}
+				catch (ex) {
+					Debug.dump(ex);
+					// no-op
+				}
+			}
 
 			if (this.isHeadersHack) {
 				// Checks for available disk space.
@@ -1721,6 +1739,9 @@ Download.prototype = {
 				d.maxChunks = 1;
 			}
 			c.end = d.totalSize - 1;
+			if (d.isResumable) {
+				d.resumeDownload();
+			}
 		}
 		catch (ex) {
 			Debug.dump("onStartRequest", ex);
@@ -1772,18 +1793,6 @@ Download.prototype = {
 			d.status = _("srver");
 			d.speed = '';
 			d.setPaused();
-		}
-		// if the only possible chunk for a non-resumable download finishes and download is still not completed -> server error/disconnection
-		else if (!d.isResumable && !d.is(COMPLETE, FINISHING, CANCELED, PAUSED)) {
-			Debug.dump(d.fileName + ": Server error or disconnection (type 2)");
-			d.fail(
-				_("srver"),
-				_("failed", [((d.fileName.length>50)?(d.fileName.substring(0, 50)+"..."):d.fileName)]),
-				_("srver")
-			);
-			sessionManager.save(d);
-			Debug.dump("out4");
-			return;
 		}
 
 		// if download is complete
