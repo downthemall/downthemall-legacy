@@ -321,13 +321,13 @@ Tree = {
 				);
 			
 			function modifySome(items, f) {
-				let disabled = false; 
-				if (tree.current) {
+				var disabled = false; 
+				if (!Tree.current) {
 					disabled = true;
 				}
 				else {
 					for (let d in Tree.selected) {
-						if ((disabled == f(d))) {
+						if ((disabled = !f(d))) {
 							break;
 						}
 					}
@@ -345,7 +345,7 @@ Tree = {
 			modifySome($('addchunk', 'removechunk'), function(d) { return d.is(QUEUED, RUNNING, PAUSED); });
 		}
 		catch (ex) {
-			// no-op
+			Debug.dump("rt", ex);
 		}
 	},
 	
@@ -361,7 +361,7 @@ Tree = {
 				}
 			);
 			this._box.invalidate();
-			this.refreshTools();
+			this.refreshTools(this);
 			Stats.completedDownloads = complete;			
 		}
 		else if (d instanceof Array) {

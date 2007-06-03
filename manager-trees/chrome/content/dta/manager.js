@@ -202,6 +202,7 @@ var Dialog = {
 		} catch(ex){
 			Debug.dump("startNext():", ex);
 		}
+		return false;
 	},
 	signal: function D_signal(download) {
 		// only close if last download was complete, meaning the queue really finished,
