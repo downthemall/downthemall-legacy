@@ -73,8 +73,8 @@ var sessionManager = {
 		}
 
 		var s = this._saveStmt;
-		if (d.dbID) {
-			s.bindInt64Parameter(0, d.dbID);
+		if (d._dbId) {
+			s.bindInt64Parameter(0, d._dbId);
 		}
 		else {
 			s.bindNullParameter(0);
@@ -82,7 +82,7 @@ var sessionManager = {
 		s.bindInt32Parameter(1, pos);
 		s.bindUTF8StringParameter(2, this._converter.Convert(e.toSource()));
 		s.execute();
-		d.dbID = this._con.lastInsertRowID;
+		d._dbId = this._con.lastInsertRowID;
 		return true;
 	},
 
@@ -117,10 +117,10 @@ var sessionManager = {
 
 	},
 	deleteDownload: function(download) {
-		if (!download.dbID) {
+		if (!download._dbId) {
 			return;
 		}
-		this._delStmt.bindInt64Parameter(0, download.dbID);
+		this._delStmt.bindInt64Parameter(0, download._dbId);
 		this._delStmt.execute();
 	},
 
@@ -133,7 +133,7 @@ var sessionManager = {
 
 		while (stmt.executeStep()) {
 			try {
-				const dbID = stmt.getInt64(0);
+				const _dbId = stmt.getInt64(0);
 				var down = eval(stmt.getUTF8String(1));
 				var get = function(attr) {
 					if (attr in down) {
@@ -151,7 +151,7 @@ var sessionManager = {
 					get("referrer"),
 					get("tmpFile")
 					);
-				d.dbID = dbID;
+				d._dbId = _dbId;
 				d.startDate = new Date(get("startDate"));
 				d.visitors.load(down.visitors);
 

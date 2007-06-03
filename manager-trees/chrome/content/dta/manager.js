@@ -150,19 +150,18 @@ var Dialog = {
 				function(i) {
 					var d = i.d;
 					// checks for timeout
-					if ((Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
-					if (d.isResumable) {
-						d.setPaused();
-						d.status = _("timeout");
-					} else
-						d.cancel(_("timeout"));
-	
-					Debug.dump("checkDownloads(): " + d.fileName + " in timeout");
-				}
-					
+					if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
+						if (d.isResumable) {
+							d.setPaused();
+							d.status = _("timeout");
+						}
+						else {
+							d.cancel(_("timeout"));
+						}
+						Debug.dump("checkDownloads(): " + d.fileName + " in timeout");
+					}
 				}
 			)
-			
 			this.startNext();
 			Dialog.setTimer('dialog:checkDownloads', "Dialog.checkDownloads();", REFRESH_FREQ);
 		} catch(ex) {
@@ -171,37 +170,36 @@ var Dialog = {
 	},
 	startNext: function() {
 		try {
-			Tree.updateAll(
-				function(d) {
-					if (inProgressList.length >= Prefs.maxInProgress) {
-						return false;
-					}
-					if (!d.is(QUEUED)) {
-						return true;
-					}
-		
-					d.status = _("starting");
-		
-					d.timeLastProgress = Utils.getTimestamp();
-					d.state = RUNNING;
-		
-					if (inProgressList.indexOf(d) == -1) {
-						inProgressList.push(new inProgressElement(d));
-						d.timeStart = Utils.getTimestamp();
-					}
-		
-					if (!d.isStarted) {
-						d.isStarted = true;
-						Debug.dump("Let's start " + d.fileName);
-					} else {
-						Debug.dump("Let's resume " + d.fileName + ": " + d.partialSize);
-					}
-					d.resumeDownload();
-					return true;
+			var rv = false;
+			for (let d in Tree.all) {
+				if (inProgressList.length >= Prefs.maxInProgress) {
+					return rv;
+				}				
+				if (!d.is(QUEUED)) {
+					continue;
 				}
-			);
+				d.status = _("starting");
+		
+				d.timeLastProgress = Utils.getTimestamp();
+				d.state = RUNNING;
+		
+				if (inProgressList.indexOf(d) == -1) {
+					inProgressList.push(new inProgressElement(d));
+					d.timeStart = Utils.getTimestamp();
+				}
+		
+				if (!d.isStarted) {
+					d.isStarted = true;
+					Debug.dump("Let's start " + d.fileName);
+				} else {
+					Debug.dump("Let's resume " + d.fileName + ": " + d.partialSize);
+				}
+				d.resumeDownload();
+				rv = true;
+			}
+			return rv;
 		} catch(ex){
-			Debug.dump("startNextDownload():", ex);
+			Debug.dump("startNext():", ex);
 		}
 	},
 	signal: function(download) {
@@ -212,8 +210,7 @@ var Dialog = {
 		}
 		try {
 			// check if there is something running or scheduled
-			if (Tree.some(function(d) { return d.is(FINISHING, RUNNING, QUEUED); } )) {
-				this.startNext();
+			if (this.startNext()) {
 				Debug.dump("signal(): not finished");
 				return;
 			}
@@ -336,117 +333,6 @@ var Stats = {
 
 DTA_include('dta/manager/urlmanager.js');
 DTA_include('dta/manager/visitormanager.js');
-
-var Chunk = function(download, start, end, written) {
-	// saveguard against null or strings and such
-	this._written = written > 0 ? written : 0;
-	this._start = start;
-	this.end = end;
-	this._parent = download;
-}
-
-Chunk.prototype = {
-	isRunning: false,
-	get start() {
-		return this._start;
-	},
-	get end() {
-		return this._end;
-	},
-	set end(nv) {
-		this._end = nv;
-		this._total = this._end - this._start + 1;
-	},
-	get total() {
-		return this._total;
-	},
-	get written() {
-		return this._written;
-	},
-	get remainder() {
-		return this._total - this._written;
-	},
-	get complete() {
-		return this._total == this._written;
-	},
-	get parent() {
-		return this._parent;
-	},
-	close: function() {
-		this.isRunning = false;
-		if (this._outStream) {
-			this._outStream.close();
-			delete this._outStream;
-		}
-		if (this.parent.is(CANCELED)) {
-			this.parent.removeTmpFile();
-		}
-	},
-	_written: 0,
-	_outStream: null,
-	write: function(aInputStream, aCount) {
-		try {
-			if (!this._outStream) {
-				Debug.dump("creating outStream");
-				var file = this.parent.tmpFile;
-				if (!file.parent.exists()) {
-					file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
-				}
-				var prealloc = !file.exists();
-				var outStream = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
-
-				outStream.init(file, 0x04 | 0x08, 0766, 0);
-				var seekable = outStream.QueryInterface(Ci.nsISeekableStream);
-				if (prealloc && this.parent.totalSize > 0) {
-					try {
-						seekable.seek(0x00, this.parent.totalSize);
-						seekable.setEOF();
-					}
-					catch (ex) {
-						// no-op
-					}
-				}
-				seekable.seek(0x00, this.start + this.written);
-				bufSize = Math.floor(MAX_BUFFER_SIZE / Prefs.maxChunks);
-				if (bufSize > 4096) {
-					this._outStream = Cc['@mozilla.org/network/buffered-output-stream;1'].createInstance(Ci.nsIBufferedOutputStream);
-					this._outStream.init(outStream, bufSize);
-				}
-				else {
-					this._outStream = outStream;
-				}
-			}
-			bytes = this.remainder;
-			if (!this.total || aCount < bytes) {
-				bytes = aCount;
-			}
-			if (!bytes) {
-				Debug.dump(aCount + " - " + this.start + " " + this.end + " " + this.written + " " + this.remainder + " ");
-				return 0;
-			}
-			if (bytes < 0) {
-				throw new Components.Exception("bytes negative");
-			}
-			// need to wrap this as nsIInputStream::read is marked non-scriptable.
-			var byteStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
-			byteStream.setInputStream(aInputStream);
-			// we're using nsIFileOutputStream
-			if (this._outStream.write(byteStream.readBytes(bytes), bytes) != bytes) {
-				throw ("chunks::write: read/write count mismatch!");
-			}
-			this._written += bytes;
-
-			this.parent.timeLastProgress = Utils.getTimestamp();
-			this.parent.invalidate();
-
-			return bytes;
-		} catch (ex) {
-			Debug.dump('write:', ex);
-			throw ex;
-		}
-		return 0;
-	}
-}
 
 function Decompressor(download) {
 	this.download = download;
@@ -624,7 +510,6 @@ QueueItem.prototype = {
 		return this._state;
 	},
 	set state(nv) {
-		Debug.dump('SS: ' + this._state + "/" + nv);
 		if (this._state != nv) {
 			this._state = nv;
 			this.invalidate();
@@ -751,8 +636,12 @@ QueueItem.prototype = {
 	timeLastProgress: 0,
 	timeStart: 0,
 
+	_icon: null,
 	get icon() {
-		return getIcon(this.fileName, 'metalink' in this);
+		if (!this._icon) {
+			this._icon = getIcon(this.fileName, 'metalink' in this);
+		}
+		return this._icon;
 	},
 	get largeIcon() {
 		return getIcon(this.fileName, 'metalink' in this, 32);
@@ -782,8 +671,10 @@ QueueItem.prototype = {
 		return this._status;
 	},
 	set status(nv) {
-		this._status = nv;
-		this.invalidate();
+		if (nv != this._status) {
+			this._status = nv;
+			this.invalidate();
+		}
 		return this._status;
 	},
 	get parts() {
@@ -1072,13 +963,13 @@ QueueItem.prototype = {
 			mask = mask.split(SYSTEMSLASH);
 			this._destinationName = mask.pop();
 			this._destinationPath = mask.join(SYSTEMSLASH).addFinalSlash();
-			Debug.dump("generated path: " + this.destinationFile + " (" + this.destinationName + ")");
 		} catch(ex) {
 			this._destinationName = this.fileName;
 			this._destinationPath = this.pathName.addFinalSlash();
 			this._destinationFile = this._destinationPath + this._destinationName;
 			Debug.dump("buildFromMask():", ex);
 		}
+		this._icon = null;
 	},
 
 	checkFilenameConflict: function() {
@@ -1305,6 +1196,117 @@ function inProgressElement(el) {
 var inProgressList = new Array();
 
 DTA_include('dta/manager/alertservice.js');
+
+var Chunk = function(download, start, end, written) {
+	// saveguard against null or strings and such
+	this._written = written > 0 ? written : 0;
+	this._start = start;
+	this.end = end;
+	this._parent = download;
+}
+
+Chunk.prototype = {
+	isRunning: false,
+	get start() {
+		return this._start;
+	},
+	get end() {
+		return this._end;
+	},
+	set end(nv) {
+		this._end = nv;
+		this._total = this._end - this._start + 1;
+	},
+	get total() {
+		return this._total;
+	},
+	get written() {
+		return this._written;
+	},
+	get remainder() {
+		return this._total - this._written;
+	},
+	get complete() {
+		return this._total == this._written;
+	},
+	get parent() {
+		return this._parent;
+	},
+	close: function() {
+		this.isRunning = false;
+		if (this._outStream) {
+			this._outStream.close();
+			delete this._outStream;
+		}
+		if (this.parent.is(CANCELED)) {
+			this.parent.removeTmpFile();
+		}
+	},
+	_written: 0,
+	_outStream: null,
+	write: function(aInputStream, aCount) {
+		try {
+			if (!this._outStream) {
+				Debug.dump("creating outStream");
+				var file = this.parent.tmpFile;
+				if (!file.parent.exists()) {
+					file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
+				}
+				var prealloc = !file.exists();
+				var outStream = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
+
+				outStream.init(file, 0x04 | 0x08, 0766, 0);
+				var seekable = outStream.QueryInterface(Ci.nsISeekableStream);
+				if (prealloc && this.parent.totalSize > 0) {
+					try {
+						seekable.seek(0x00, this.parent.totalSize);
+						seekable.setEOF();
+					}
+					catch (ex) {
+						// no-op
+					}
+				}
+				seekable.seek(0x00, this.start + this.written);
+				bufSize = Math.floor(MAX_BUFFER_SIZE / Prefs.maxChunks);
+				if (bufSize > 4096) {
+					this._outStream = Cc['@mozilla.org/network/buffered-output-stream;1'].createInstance(Ci.nsIBufferedOutputStream);
+					this._outStream.init(outStream, bufSize);
+				}
+				else {
+					this._outStream = outStream;
+				}
+			}
+			bytes = this.remainder;
+			if (!this.total || aCount < bytes) {
+				bytes = aCount;
+			}
+			if (!bytes) {
+				Debug.dump(aCount + " - " + this.start + " " + this.end + " " + this.written + " " + this.remainder + " ");
+				return 0;
+			}
+			if (bytes < 0) {
+				throw new Components.Exception("bytes negative");
+			}
+			// need to wrap this as nsIInputStream::read is marked non-scriptable.
+			var byteStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
+			byteStream.setInputStream(aInputStream);
+			// we're using nsIFileOutputStream
+			if (this._outStream.write(byteStream.readBytes(bytes), bytes) != bytes) {
+				throw ("chunks::write: read/write count mismatch!");
+			}
+			this._written += bytes;
+
+			this.parent.timeLastProgress = Utils.getTimestamp();
+			this.parent.invalidate();
+
+			return bytes;
+		} catch (ex) {
+			Debug.dump('write:', ex);
+			throw ex;
+		}
+		return 0;
+	}
+}
 
 function Download(d, c, headerHack) {
 
@@ -1643,10 +1645,11 @@ Download.prototype = {
 	],
 	onStartRequest: function(aRequest, aContext) {
 		Debug.dump('StartRequest');
+
 		
 		var c = this.c;
 		var d = this.d;
-		
+	
 		this.started = true;
 		try {
 			for (let i = 0, e = this._supportedChannels.length; i < e; ++i) {
@@ -1736,7 +1739,7 @@ Download.prototype = {
 	},
 	onStopRequest: function(aRequest, aContext, aStatusCode) {
 		Debug.dump('StopRequest');
-
+		
 		// shortcuts
 		var c = this.c;
 		c.close();
@@ -1936,16 +1939,6 @@ function askForRenaming(t, s1, s2, s3) {
 		return Prefs.sessionPreference;
 	}
 	return Prefs.onConflictingFilenames;
-}
-
-function getInfo() {
-	var t = new Array();
-	for (d in Tree.selected) {
-		t.push(d);
-	}
-	if (t.length > 0) {
-		window.openDialog("chrome://dta/content/dta/info.xul","_blank","chrome, centerscreen, dialog=no", t, this);
-	}
 }
 
 DTA_include('dta/manager/filehandling.js');

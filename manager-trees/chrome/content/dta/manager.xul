@@ -61,13 +61,13 @@
 		<key id="kPause" modifiers="accel" key="P" oncommand="Tree.pause();"/>
 		<key id="kResume" modifiers="accel" key="R" oncommand="Tree.resume();"/>
 		<key id="kAdd" modifiers="accel" key="+" oncommand="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome,centerscreen,dialog,dependent');"/>
-		<key id="kGetInfo" modifiers="accel" key="I" oncommand="getInfo();"/>
+		<key id="kGetInfo" modifiers="accel" key="I" oncommand="Tree.showInfo();"/>
 	</keyset>
 	
 
 	<popupset>
 		<popup id="popup">
-			<menuitem id="info" class="menuitem-iconic" image="chrome://dta/skin/manager/info.png" label="&infos.label;" oncommand="getInfo();" />
+			<menuitem id="info" class="menuitem-iconic" image="chrome://dta/skin/manager/info.png" label="&infos.label;" oncommand="Tree.showInfo();" />
 			<menuseparator />
 			<menuitem id="launch" class="menuitem-iconic" image="chrome://dta/skin/manager/launch.png" label="&launch.label;" oncommand="FileHandling.openFile();" />
 			<menuitem id="delete" class="menuitem-iconic" image="chrome://dta/skin/manager/delete.png" label="&delete.label;" oncommand="FileHandling.deleteFile();" />
@@ -77,7 +77,7 @@
 			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" image="chrome://dta/skin/manager/pause.png" oncommand="Tree.pause();" />
 			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/skin/manager/cancel.png" oncommand="Tree.cancel();" />
 			<menuseparator />
-			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/skin/manager/clean.png" oncommand="removeCompleted();" />
+			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/skin/manager/clean.png" oncommand="Tree.removeCompleted();" />
 			<menuseparator />
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="Tree.selectAll();" />
 			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="Tree.selectInv();" />
@@ -160,8 +160,8 @@
 			<spacer/>
 			<toolbarbutton label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="Manually add an URL to DownThemAll" />
 			<spacer class="visible" />
-			<toolbarbutton label="&resume.label;" id="toolplay" onclick="Tree.pause();"/>
-			<toolbarbutton label="&pause.label;" id="toolpause" onclick="Tree.resume();"/>
+			<toolbarbutton label="&resume.label;" id="toolplay" onclick="Tree.resume();"/>
+			<toolbarbutton label="&pause.label;" id="toolpause" onclick="Tree.pause();"/>
 			<toolbarbutton label="&cancel.label;" id="toolcancel" onclick="Tree.cancel();"/>
 			<spacer class="visible" />
 			<toolbarbutton label="&movetop.label;" id="toolmovetop" onclick="Tree.top();" />
@@ -169,7 +169,7 @@
 			<toolbarbutton label="&movedown.label;" id="toolmovedown" onclick="Tree.down();"/>
 			<toolbarbutton label="&movebottom.label;" id="toolmovebottom" onclick="Tree.bottom();"  />
 			<spacer flex="1" />
-			<spacer id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
+			<spacer id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/howto/donate/');" tooltiptext="&tooldonate.tooltiptext;" />
 		  </toolbar>
 		</toolbox>
 

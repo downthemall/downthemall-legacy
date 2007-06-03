@@ -34,12 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
- /**
- * implemtents nsITreeView
- * manages our link trees
- */
 Tree = {
-	init: function(elem) {
+	init: function T_init(elem) {
 		this.elem = elem;
 		this._downloads = [];
 		// atom cache. See getAtom
@@ -56,7 +52,7 @@ Tree = {
 
 	// get atoms, but provide caching.
 	// we have a limited set of atoms anyway, so we don't have to expect a huge cache.
-	getAtom: function(str) {
+	getAtom: function T_getAtom(str) {
 		if (!(str in this._atoms)) {
 			this._atoms[str] = this._as.getAtom(str);
 		}
@@ -71,20 +67,20 @@ Tree = {
 	},
 
 	// used to initialize nsITreeview and provide the corresponding treeBoxObject
-	setTree: function(box) {
+	setTree: function T_setTree(box) {
 		this._box = box;
 	},
 
-	getParentIndex: function(idx) {
+	getParentIndex: function T_getParentIndex(idx) {
 		// no parents, as we are actually a list
 		return -1;
 	},
-	getLevel: function(idx) {
+	getLevel: function T_getLevel(idx) {
 		// ... and being a list all nodes are on the same level
 		return 0;
 	},
 	
-	getCellText: function(idx, col) {
+	getCellText: function T_getCellText(idx, col) {
 		let d = this._downloads[idx];
 
 		switch (col.id) {
@@ -100,40 +96,40 @@ Tree = {
 		return '';
 	},
 
-	isSorted: function() {
+	isSorted: function T_isSorted() {
 		// not sorted
 		return false;
 	},
-	isContainer: function(idx) {
+	isContainer: function T_isContainer(idx) {
 		// being a container means we got children... but we don't have any children because we're a list actually
 		return false;
 	},
-	isContainerOpen: function(idx) {
+	isContainerOpen: function T_isContainerOpen(idx) {
 		return false;
 	},
-	isContainerEmpty: function(idx) {
+	isContainerEmpty: function T_isContainerEmpty(idx) {
 		return false;
 	},
 
-	isSeparator: function(idx) {
+	isSeparator: function T_isSeparator(idx) {
 		// no separators
 		return false;
 	},
 
-	isEditable: function(idx) {
+	isEditable: function T_isEditable(idx) {
 		// and nothing is editable
 		return true;
 	},
 
 	// will grab the "icon" for a cell.
-	getImageSrc: function(idx, col) {
+	getImageSrc: function T_getImageSrc(idx, col) {
 		switch (col.id) {
 			case 'task': return this._downloads[idx].icon;
 		}
 		return null;
 	},
 
-	getProgressMode : function(idx, col) {
+	getProgressMode : function T_getProgressMode(idx, col) {
 		if (col.id == 'pct') {
 			return Ci.nsITreeView.PROGRESS_NORMAL;
 		}
@@ -141,7 +137,7 @@ Tree = {
 	},
 
 	// will be called for cells other than textcells
-	getCellValue: function(idx, col) {
+	getCellValue: function T_getCellValue(idx, col) {
 		if (col.id == 'pct') {
 			let d = this._downloads[idx];
 			if (d.is(CANCELED)) {
@@ -152,34 +148,19 @@ Tree = {
 		return null;
 	},
 
-	// called when a header is called.
-	// would be the place to change sort mode. But we don't have any sorting.
-	cycleHeader: function(col, elem) {},
-
-	// just some stubs we need to provide anyway to provide a full nsITreeView
-	selectionChanged: function() {},
-	cycleCell: function(idx, column) {},
-	performAction: function(action) {},
-	performActionOnRow: function(action, index, column) {},
-	performActionOnCell: function(action, index, column) {},
-	getColumnProperties: function(column, element, prop) {},
-
-	getRowProperties: function(idx, prop) {
-	},
-	getCellProperties: function(idx, col, prop) {
+	getCellProperties: function T_getCellProperties(idx, col, prop) {
 		if (col.id == 'pct') {
 			let d = this._downloads[idx];
-			if (d.is(COMPLETE)) {
-				prop.AppendElement(this.getAtom('completed'));
+			let atom = null;
+			switch (d.state) {
+				case COMPLETE: atom = 'completed'; break;
+				case PAUSED: atom = 'completed'; break;
+				case FINISHING:
+				case RUNNING: atom = 'inprogress'; break;
+				case CANCELED: atom = 'canceled'; break;
 			}
-			else if (d.is(PAUSED)) {
-				prop.AppendElement(this.getAtom('paused'));
-			}
-			else if (d.is(RUNNING)) {
-				prop.AppendElement(this.getAtom('inprogress'));
-			}
-			else if (d.is(CANCELED)) {
-				prop.AppendElement(this.getAtom('canceled'));
+			if (atom) {
+				prop.AppendElement(this.getAtom(atom));
 			}
 		}
 		else if (col.id == 'task') {
@@ -187,20 +168,28 @@ Tree = {
 		}
 	},
 
-	// called when the user clicks our checkboxen
-	setCellValue: function(idx, col, value) {
-	},
+	// just some stubs we need to provide anyway to provide a full nsITreeView
+	cycleHeader: function T_cycleHeader(col, elem) {},
+	selectionChanged: function() {},
+	cycleCell: function(idx, column) {},
+	performAction: function(action) {},
+	performActionOnRow: function(action, index, column) {},
+	performActionOnCell: function(action, index, column) {},
+	getColumnProperties: function(column, element, prop) {},
+	getRowProperties: function(idx, prop) {},
+	setCellValue: function(idx, col, value) {},
 	
-	selectionChanged: function() {
+
+	selectionChanged: function T_selectionChanged() {
 		this.refreshTools();
 	},
 	_updating: 0,
-	beginUpdate: function() {
+	beginUpdate: function T_beginUpdate() {
 		if (++this._updating == 1) {
 			this._box.beginUpdateBatch();
 		}
 	},
-	endUpdate: function() {
+	endUpdate: function T_endUpdate() {
 		if (--this._updating == 0) {
 			this._box.endUpdateBatch();
 			this.refreshTools();
@@ -208,14 +197,16 @@ Tree = {
 	},
 	
 	// stuff
-	add: function(download) {
+	add: function T_add(download) {
 		this._downloads.push(download);
 		download._tid = this._downloads.length - 1;
-		this._box.rowCountChanged(download._tid, 1);
+		if (!this._updating) {
+			this._box.rowCountChanged(download._tid, 1);
+		}
 	},
 	
 	// d = null -> selection, d = downloadE, d = array -> all in list
-	remove: function(downloads) {
+	remove: function T_remove(downloads) {
 		
 		if (downloads instanceof Array) {
 			// map to the actual ids and sort them in descending(!) order.
@@ -250,7 +241,7 @@ Tree = {
 		sessionManager.endUpdate();
 		this.invalidate();
 	},
-	removeCompleted: function() {
+	removeCompleted: function T_removeCompleted() {
 		let list = [];
 		for (let i = 0, e = this._downloads.length; i < e; ++i) {
 			if (this._downloads[i].is(COMPLETE)) {
@@ -259,40 +250,42 @@ Tree = {
 		}
 		this.remove(list);
 	},
-	pause: function(setPaused) {
+	pause: function T_pause() {
 		this.updateSelected(
 			function(d) {
 				if (d.is(QUEUED) || (d.is(RUNNING) && d.isResumable)) {
-					d.status = _("paused");
-					d.speed = '';
-					d.state = PAUSED;
 					d.setPaused();
+					d.speed = '';
+					d.status = _("paused");
+					d.state = PAUSED;
 				}
+				return true;
 			}
 		);
 	},
-	resume: function(d) {
+	resume: function T_resume(d) {
 		this.updateSelected(
 			function(d) {
 				if (d.is(PAUSED, CANCELED)) {
 					d.state = QUEUED;
 					d.status = _("inqueue");
 				}
-			}				
+				return true;
+			}
 		);
 	},
-	cancel: function() {
+	cancel: function T_cancel() {
 		this.updateSelected(function(d) { d.cancel(); return true; });
 	},
-	selectAll: function() {
+	selectAll: function T_selectAll() {
 		this.selection.selectAll();
 	},
-	selectInv: function() {
+	selectInv: function T_selectInv() {
 		for (let d in this.all) {
 			this.selection.toggleSelect(d._tid);
 		}
 	},
-	changeChunks: function(increase) {
+	changeChunks: function T_changeChunks(increase) {
 		function inc(d) {
 			if (d.maxChunks < 10 && d.isResumable) {
 					d.maxChunks++;
@@ -306,37 +299,71 @@ Tree = {
 		};
 		Tree.updateSelected(increase ? inc : dec);
 	},
-	
-	
-	refreshTools: function() {
+	showInfo: function T_showInfo() {
+		this.beginUpdate();
+		let downloads = [];
+		for (let d in Tree.selected) {
+			downloads.push(d);
+		}
+		if (downloads.length) {
+			window.openDialog("chrome://dta/content/dta/info.xul","_blank","chrome, centerscreen, dialog=no", downloads, this);			
+		}
+		this.endUpdate();
+	},	
+	refreshTools: function T_refreshTools() {
 		if (this._updating) {
 			return;
 		}
-		$('info', 'remove', 'movetop', 'moveup', 'movedown', 'movebottom', 'toolmovetop', 'toolmoveup', 'toolmovedown', 'toolmovebottom')
-			.forEach(
-				function(o) { return o.setAttribute('disabled', this.current); },
-				this
-			);
-		
-		let selected = [];
-		for (let d in this.selected) {
-			selected.push(d);
+		try {
+			$('info', 'remove', 'movetop', 'moveup', 'movedown', 'movebottom', 'toolmovetop', 'toolmoveup', 'toolmovedown', 'toolmovebottom')
+				.forEach(
+					function(o) { return o.setAttribute('disabled', this.current); },
+					this
+				);
+			
+			function modifySome(items, f) {
+				let disabled = false; 
+				if (tree.current) {
+					disabled = true;
+				}
+				else {
+					for (let d in Tree.selected) {
+						if ((disabled == f(d))) {
+							break;
+						}
+					}
+				}
+				items.forEach(
+					function(o) {
+						o.setAttribute('disabled', disabled);
+					}
+				);
+			}
+			modifySome($('play', 'toolplay'), function(d) { return !d.is(COMPLETE, RUNNING, QUEUED); });
+			modifySome($('pause', 'toolpause'), function(d) { return d.is(RUNNING) && d.isResumable || d.is(QUEUED); });
+			modifySome($('cancel', 'toolcancel'), function(d) { return !d.is(CANCELED); });
+			modifySome($('launch', 'folder', 'delete'), function(d) { return d.is(COMPLETE); });
+			modifySome($('addchunk', 'removechunk'), function(d) { return d.is(QUEUED, RUNNING, PAUSED); });
 		}
-		function modifySome(items, f) {
-			items.forEach(function(o) { return o.setAttribute('disabled', selected.length == 0 || !selected.some(f)); });
+		catch (ex) {
+			// no-op
 		}
-		modifySome($('play', 'toolplay'), function(d) { return !d.is(COMPLETE, RUNNING, QUEUED); });
-		modifySome($('pause', 'toolpause'), function(d) { return d.is(RUNNING) && d.isResumable || d.is(QUEUED); });
-		modifySome($('cancel', 'toolcancel'), function(d) { return !d.is(CANCELED); });
-		modifySome($('launch', 'folder', 'delete'), function(d) { return d.is(COMPLETE); });
-		modifySome($('addchunk', 'removechunk'), function(d) { return d.is(QUEUED, RUNNING, PAUSED); });
 	},
 	
-	invalidate: function(d) {
+	invalidate: function T_invalidate(d) {
 		if (!d) {
-			this._downloads.forEach(function(e, i) { e._tid = i; });
+			let complete = 0;
+			this._downloads.forEach(
+				function(e, i) {
+					e._tid = i;
+					if (e.isPrototypeOf(COMPLETE)) {
+						complete++;
+					}
+				}
+			);
 			this._box.invalidate();
-			this.refreshTools();			
+			this.refreshTools();
+			Stats.completedDownloads = complete;			
 		}
 		else if (d instanceof Array) {
 			this.beginUpdate();
@@ -377,7 +404,7 @@ Tree = {
 		}
 	},
 	// returns an ASC sorted array of IDs that are currently selected.
-	_getSelectedIds: function(getReversed) {
+	_getSelectedIds: function T_getSelectedIds(getReversed) {
 		var rv = [];
 		let select = this.selection;
 		// loop through the selection as usual
@@ -405,22 +432,22 @@ Tree = {
 		return null;		
 	},
 	
-	at: function(idx) {
+	at: function T_at(idx) {
 		return this._downloads[idx];
 	},
-	some: function(f, t) {
+	some: function T_some(f, t) {
 		return this._downloads.some(f, t);
 	},
-	every: function(f, t) {
+	every: function T_every(f, t) {
 		return this._downloads.every(f, t);
 	},
 	
-	update: function(f, t) {
+	update: function T_update(f, t) {
 		this.beginUpdate();
 		f.call(t);
 		this.endUpdate();
 	},
-	updateSelected: function(f, t) {
+	updateSelected: function T_updateSelected(f, t) {
 		this.beginUpdate();
 		for (d in this.selected) {
 			if (!f.call(t, d)) {
@@ -429,7 +456,7 @@ Tree = {
 		}
 		this.endUpdate();
 	},
-	updateAll: function(f, t) {
+	updateAll: function T_updateAll(f, t) {
 		this.beginUpdate();
 		for (d in this.all) {
 			if (!f.call(t, d)) {
@@ -439,7 +466,7 @@ Tree = {
 		this.endUpdate();
 	},
 	
-	top: function() {
+	top: function T_top() {
 		try {
 			this.beginUpdate();
 			this._getSelectedIds(true).forEach(
@@ -457,7 +484,7 @@ Tree = {
 			Debug.dump("Mover::top", ex);
 		}	
 	},
-	bottom: function() {
+	bottom: function T_bottom() {
 		try {
 			this.beginUpdate();
 			this._getSelectedIds().forEach(
@@ -475,7 +502,7 @@ Tree = {
 			Debug.dump("Mover::bottom", ex);
 		}	
 	},
-	up: function() {
+	up: function T_up() {
 		try {
 			this.beginUpdate();
 			ids = this._getSelectedIds().forEach(
@@ -497,7 +524,7 @@ Tree = {
 			Debug.dump("Mover::up", ex);
 		}		
 	},
-	down: function() {
+	down: function T_down() {
 		try {
 			this.beginUpdate();
 			let rowCount = this.rowCount;

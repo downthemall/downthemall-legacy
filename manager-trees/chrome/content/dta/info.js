@@ -80,19 +80,19 @@ var Dialog = {
 		var mask = this.ddRenaming.value;
 		mask = mask.length ? mask : null;
 		
-		for (var i = 0; i < t.length; i++) {
-			var d = t[i];
-			if (d.is(COMPLETE)) {
-				continue;
+		t.forEach(
+			function(d) {
+				if (d.is(COMPLETE, FINISHING)) {
+					return;
+				}
+				if (directory) {
+					d.orginalDirSave = directory;
+				}
+				if (mask) {
+					d.mask = mask;
+				}
 			}
-			if (directory) {
-				d.orginalDirSave = directory;
-			}
-			if (mask) {
-				d.mask = mask;
-			}
-			d.checkFilenameConflict();
-		}
+		);
 		
 		// XXX: saveing destroys order, saving with putting new entries in the end, or as 2nd entry?
 		//['ddRenaming', 'ddDirectory'].forEach(function(e){ Dialog[e].save(); });
