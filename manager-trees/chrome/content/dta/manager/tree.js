@@ -205,6 +205,7 @@ Tree.prototype = {
 	endUpdate: function() {
 		if (--this._updating == 0) {
 			this._box.endUpdateBatch();
+			this.refreshTools();
 		}
 	},
 	

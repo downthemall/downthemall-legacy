@@ -64,6 +64,7 @@ const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 
 var Dialog = {
 	_lastSum: 0,
+	_initialized: false,
 	init: function D_init() {
 		make_();
 		tree = new Tree($("downloads"));
@@ -79,6 +80,8 @@ var Dialog = {
 		Dialog.checkDownloads();
 
 		tree.selectionChanged();
+		
+		this._initialized = true;
 	},	
 	refresh: function() {
 		try {
@@ -211,13 +214,10 @@ var Dialog = {
 			Debug.dump("startNextDownload():", ex);
 		}
 	},
-	_wasStarted: false,
 	signal: function(download) {
-		if (download.is(RUNNING)) {
-			this._wasStarted = true;
-			return;
-		}
-		if (!this._wasStarted) {
+		// only close if last download was complete, meaning the queue really finished,
+		// without any user interaction or errors in between
+		if (!this._initialized || !download.is(COMPLETE)) {
 			return;
 		}
 		try {
@@ -227,7 +227,6 @@ var Dialog = {
 				Debug.dump("signal(): not finished");
 				return;
 			}
-			this._wasStarted = false;
 			Debug.dump("signal(): Queue finished");
 			Utils.playSound("done");
 			
