@@ -38,18 +38,16 @@
  * implemtents nsITreeView
  * manages our link trees
  */
-function Tree(elem) {
-	
-	this.elem = elem;
-
-	this._downloads = [];
-
-	// atom cache. See getAtom
-	this._atoms = {};
-	this._iconic = this._as.getAtom('iconic');
-	this.elem.view = this;	
-}
-Tree.prototype = {
+Tree = {
+	init: function(elem) {
+		this.elem = elem;
+		this._downloads = [];
+		// atom cache. See getAtom
+		this._atoms = {};
+		this._iconic = this._as.getAtom('iconic');
+		this.elem.view = this;	
+		
+	},
 
 	// will use it quite often.
 	// 'properties' need to be an atom.
@@ -87,7 +85,7 @@ Tree.prototype = {
 	},
 	
 	getCellText: function(idx, col) {
-		var d = this._downloads[idx];
+		let d = this._downloads[idx];
 
 		switch (col.id) {
 			case 'task': return Prefs.showOnlyFilenames ? d.destinationName : d.urlManager.usable;
@@ -145,7 +143,7 @@ Tree.prototype = {
 	// will be called for cells other than textcells
 	getCellValue: function(idx, col) {
 		if (col.id == 'pct') {
-			var d = this._downloads[idx];
+			let d = this._downloads[idx];
 			if (d.is(CANCELED)) {
 				return 100;	
 			}
@@ -170,7 +168,7 @@ Tree.prototype = {
 	},
 	getCellProperties: function(idx, col, prop) {
 		if (col.id == 'pct') {
-			var d = this._downloads[idx];
+			let d = this._downloads[idx];
 			if (d.is(COMPLETE)) {
 				prop.AppendElement(this.getAtom('completed'));
 			}
@@ -221,8 +219,7 @@ Tree.prototype = {
 		
 		if (downloads instanceof Array) {
 			// map to the actual ids and sort them in descending(!) order.
-			var ids = downloads
-				.sort(function(a, b) { return b._tid - a._tid; });
+			var ids = downloads.sort(function(a, b) { return b._tid - a._tid; });
 		}
 		else if (downloads) {
 			var ids = [downloads];
@@ -254,14 +251,62 @@ Tree.prototype = {
 		this.invalidate();
 	},
 	removeCompleted: function() {
-		var list = [];
-		for (var i = 0, e = this._downloads.length; i < e; ++i) {
+		let list = [];
+		for (let i = 0, e = this._downloads.length; i < e; ++i) {
 			if (this._downloads[i].is(COMPLETE)) {
 				list.push(this._downloads[i]);
 			}
 		}
 		this.remove(list);
 	},
+	pause: function(setPaused) {
+		this.updateSelected(
+			function(d) {
+				if (d.is(QUEUED) || (d.is(RUNNING) && d.isResumable)) {
+					d.status = _("paused");
+					d.speed = '';
+					d.state = PAUSED;
+					d.setPaused();
+				}
+			}
+		);
+	},
+	resume: function(d) {
+		this.updateSelected(
+			function(d) {
+				if (d.is(PAUSED, CANCELED)) {
+					d.state = QUEUED;
+					d.status = _("inqueue");
+				}
+			}				
+		);
+	},
+	cancel: function() {
+		this.updateSelected(function(d) { d.cancel(); return true; });
+	},
+	selectAll: function() {
+		this.selection.selectAll();
+	},
+	selectInv: function() {
+		for (let d in this.all) {
+			this.selection.toggleSelect(d._tid);
+		}
+	},
+	changeChunks: function(increase) {
+		function inc(d) {
+			if (d.maxChunks < 10 && d.isResumable) {
+					d.maxChunks++;
+					d.resumeDownload();
+			}
+		};
+		function dec(d) {
+			if (d.maxChunks > 1) {
+					d.maxChunks--;
+			}			
+		};
+		Tree.updateSelected(increase ? inc : dec);
+	},
+	
 	
 	refreshTools: function() {
 		if (this._updating) {
@@ -273,8 +318,8 @@ Tree.prototype = {
 				this
 			);
 		
-		var selected = [];
-		for (d in this.selected) {
+		let selected = [];
+		for (let d in this.selected) {
 			selected.push(d);
 		}
 		function modifySome(items, f) {
@@ -314,34 +359,33 @@ Tree.prototype = {
 	
 	// generator for all download elements.
 	get all() {
-		for (var i = 0, e = this._downloads.length; i < e; ++i) {
+		for (let i = 0, e = this._downloads.length; i < e; ++i) {
 			yield this._downloads[i];
 		}
 	},
 	// generator for selected download elements.
 	// do not make any assumptions about the order.
 	get selected() {
-		var select = this.selection;
-		var count = select.getRangeCount();
-		
+		let select = this.selection;
 		// loop through the selection as usual
-		for (var i = 0; i < count; ++i) {
-			var start = {}; var end = {};
+		for (let i = 0, e = select.getRangeCount(); i < e; ++i) {
+			let start = {}, end = {};
 			select.getRangeAt(i,start,end);
-			for (var c = start.value, e = end.value; c <= e; ++c) {
-				yield this._downloads[c];
+			for (let j = start.value, k = end.value; j <= k; ++j) {
+				yield this._downloads[j];
 			}
 		}
 	},
 	// returns an ASC sorted array of IDs that are currently selected.
 	_getSelectedIds: function(getReversed) {
 		var rv = [];
-		var rangeCount = this.selection.getRangeCount();
-		for (var i = 0; i < rangeCount; ++i) {
+		let select = this.selection;
+		// loop through the selection as usual
+		for (let i = 0, e = select.getRangeCount(); i < e; ++i) {
 				let start = {}, end = {};
 				this.selection.getRangeAt(i, start, end);
-				for (var c = start.value; c <= end.value; c++) {
-					rv.push(c);
+				for (let j = start.value, k = end.value; j <= k; ++j) {
+					rv.push(j);
 				}
 		}
 		this.selection.clearSelection();
@@ -354,7 +398,7 @@ Tree.prototype = {
 		return rv;
 	},
 	get current() {
-		var ci = this.selection.currentIndex;
+		let ci = this.selection.currentIndex;
 		if (ci > -1 && ci < this.rowCount) {
 			return this._downloads[ci];
 		}
@@ -398,8 +442,7 @@ Tree.prototype = {
 	top: function() {
 		try {
 			this.beginUpdate();
-			var ids = this._getSelectedIds(true);
-			ids.forEach(
+			this._getSelectedIds(true).forEach(
 				function(id, idx) {
 					id = id + idx;
 					this._downloads.unshift(this._downloads.splice(id, 1)[0]);
@@ -417,8 +460,7 @@ Tree.prototype = {
 	bottom: function() {
 		try {
 			this.beginUpdate();
-			var ids = this._getSelectedIds();
-			ids.forEach(
+			this._getSelectedIds().forEach(
 				function(id, idx) {
 					id = id - idx;
 					this._downloads.push(this._downloads.splice(id, 1)[0]);
@@ -436,16 +478,15 @@ Tree.prototype = {
 	up: function() {
 		try {
 			this.beginUpdate();
-			var ids = this._getSelectedIds();
-			ids.forEach(
+			ids = this._getSelectedIds().forEach(
 				function(id, idx) {
 					if (id - idx != 0) {
-						var tmp = this._downloads[id];
+						let tmp = this._downloads[id];
 						this._downloads[id] = this._downloads[id - 1];
 						this._downloads[id - 1] = tmp;
 						--id;
 					}
-					tree.selection.rangedSelect(id, id, true);						
+					this.selection.rangedSelect(id, id, true);						
 				},
 				this
 			);
@@ -459,12 +500,11 @@ Tree.prototype = {
 	down: function() {
 		try {
 			this.beginUpdate();
-			var rowCount = this.rowCount;
-			var ids = this._getSelectedIds(true);
-			ids.forEach(
+			let rowCount = this.rowCount;
+			this._getSelectedIds(true).forEach(
 				function(id, idx) {
 					if (id + idx != rowCount - 1) {
-						var tmp = this._downloads[id];
+						let tmp = this._downloads[id];
 						this._downloads[id] = this._downloads[id + 1];
 						this._downloads[id + 1] = tmp;
 						++id;
@@ -476,7 +516,7 @@ Tree.prototype = {
 			this.endUpdate();
 			this.invalidate();
 			// readjust view
-			var last = ids[0];
+			let last = ids[0];
 			if (last != this.rowCount - 1) {
 				++last;
 			}

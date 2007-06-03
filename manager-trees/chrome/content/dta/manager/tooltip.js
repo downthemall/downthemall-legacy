@@ -8,11 +8,11 @@ var Tooltip = {
 			}
 			var result;
 			var row = {};
-			tree.box.getCellAt(event.clientX, event.clientY, row, {}, {});
+			Tree.box.getCellAt(event.clientX, event.clientY, row, {}, {});
 			if (row.value == -1) {
 				return false;
 			}
-			var d = tree.at(row.value);
+			var d = Tree.at(row.value);
 			$("infoIcon").src = d.largeIcon;
 			$("infoURL").value = d.urlManager.url;
 			$("infoDest").value = d.destinationFile;

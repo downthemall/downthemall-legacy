@@ -36,9 +36,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-// your tree
-var tree = null;
-
 if (!Cc) {
 	var Cc = Components.classes;
 }
@@ -52,13 +49,6 @@ const MIN_CHUNK_SIZE = 700 * 1024;
 const MAX_BUFFER_SIZE = 3 * 1024 * 1024; // 3 MB
 const SPEED_COUNT = 25;
 
-const QUEUED = 0;
-const PAUSED =  1<<1;
-const RUNNING = 1<<2;
-const FINISHING = 1<<3;
-const COMPLETE = 1<<4;
-const CANCELED = 1<<5;
-
 const REFRESH_FREQ = 1000;
 const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 
@@ -67,7 +57,7 @@ var Dialog = {
 	_initialized: false,
 	init: function D_init() {
 		make_();
-		tree = new Tree($("downloads"));
+		Tree.init($("downloads"));
 	
 		document.getElementById("dtaHelp").hidden = !("openHelp" in window);
 	
@@ -79,7 +69,7 @@ var Dialog = {
 	
 		Dialog.checkDownloads();
 
-		tree.selectionChanged();
+		Tree.selectionChanged();
 		
 		this._initialized = true;
 	},	
@@ -97,7 +87,7 @@ var Dialog = {
 
 			// Refresh status bar
 			$("statusText").label = 
-				_("cdownloads", [Stats.completedDownloads, tree.rowCount])
+				_("cdownloads", [Stats.completedDownloads, Tree.rowCount])
 				+ " - "
 				+ _("cspeed")
 				+ " "
@@ -107,16 +97,16 @@ var Dialog = {
 			if (inProgressList.length == 1 && inProgressList[0].d.totalSize > 0) {
 				document.title =
 					Math.round(inProgressList[0].d.partialSize / inProgressList[0].d.totalSize * 100) + "% - "
-					+ Stats.completedDownloads + "/" + tree.rowCount + " - "
+					+ Stats.completedDownloads + "/" + Tree.rowCount + " - "
 					+ Utils.formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
 			}
 			else if (inProgressList.length > 0) {
 				document.title =
-					Stats.completedDownloads + "/" + tree.rowCount + " - "
+					Stats.completedDownloads + "/" + Tree.rowCount + " - "
 					+ Utils.formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
 			}
 			else {
-				document.title = Stats.completedDownloads + "/" + tree.rowCount + " - DownThemAll!";
+				document.title = Stats.completedDownloads + "/" + Tree.rowCount + " - DownThemAll!";
 			}
 
 			const now = Utils.getTimestamp();
@@ -181,7 +171,7 @@ var Dialog = {
 	},
 	startNext: function() {
 		try {
-			tree.updateAll(
+			Tree.updateAll(
 				function(d) {
 					if (inProgressList.length >= Prefs.maxInProgress) {
 						return false;
@@ -222,7 +212,7 @@ var Dialog = {
 		}
 		try {
 			// check if there is something running or scheduled
-			if (tree.some(function(d) { return d.is(FINISHING, RUNNING, QUEUED); } )) {
+			if (Tree.some(function(d) { return d.is(FINISHING, RUNNING, QUEUED); } )) {
 				this.startNext();
 				Debug.dump("signal(): not finished");
 				return;
@@ -234,12 +224,12 @@ var Dialog = {
 				var msg = _('suc');
 				
 				if (Prefs.alertingSystem == 1) {
-					AlertService.show(_("dcom"), _('suc'), true, tree.at(0).destinationPath);
+					AlertService.show(_("dcom"), _('suc'), true, Tree.at(0).destinationPath);
 				}
 				else if (Prefs.alertingSystem == 0) {
 					if (confirm(_('suc') + "\n "+ _("folder")) == 1) {
 						try {
-							OpenExternal.launch(tree.at(0).destinationPath);
+							OpenExternal.launch(Tree.at(0).destinationPath);
 						}
 						catch (ex){
 							// no-op
@@ -260,7 +250,7 @@ var Dialog = {
 	close: function() {
 		
 		// Check for non-resumable downloads
-		if (tree.some(function(d) { return d.isStarted && !d.isResumable && d.is(RUNNING); })) {
+		if (Tree.some(function(d) { return d.isStarted && !d.isResumable && d.is(RUNNING); })) {
 			var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
 				.getService(Ci.nsIPromptService);
 			var rv = promptService.confirm(
@@ -277,7 +267,7 @@ var Dialog = {
 		this._killTimers();		
 		this._safeCloseChunks = [];
 		this._safeCloseFinishing = []
-		for (d in tree.all) {
+		for (d in Tree.all) {
 			if (d.is(RUNNING, QUEUED)) {
 				// enumerate all running chunks
 				d.chunks.forEach(
@@ -638,7 +628,7 @@ QueueItem.prototype = {
 		if (this._state != nv) {
 			this._state = nv;
 			this.invalidate();
-			tree.refreshTools();
+			Tree.refreshTools();
 			Dialog.signal(this);
 		}
 	},
@@ -817,7 +807,7 @@ QueueItem.prototype = {
 	},
 
 	invalidate: function() {
-		tree.invalidate(this);
+		Tree.invalidate(this);
 	},
 
 	_hasToBeRedownloaded: false,
@@ -898,7 +888,7 @@ QueueItem.prototype = {
 	},
 	handleMetalink: function dl_handleMetaLink() {
 		try {
-			tree.remove(this);
+			Tree.remove(this);
 			var file = new FileFactory(this.destinationFile);
 
 			var fiStream = Cc['@mozilla.org/network/file-input-stream;1']
@@ -1856,7 +1846,7 @@ Download.prototype = {
 
 function startnewDownloads(notQueue, download) {
 
-	var numbefore = tree.rowCount - 1;
+	var numbefore = Tree.rowCount - 1;
 	const DESCS = ['description', 'ultDescription'];
 
 	for (var i=0; i<download.length; i++) {
@@ -1890,7 +1880,7 @@ function startnewDownloads(notQueue, download) {
 		else {
 			d.status = _('inqueue');
 		}
-		tree.add(d);
+		Tree.add(d);
 	}
 
 	// full save
@@ -1904,14 +1894,14 @@ function startnewDownloads(notQueue, download) {
 		}
 	}
 
-	var boxobject = tree._box;
+	var boxobject = Tree._box;
 	boxobject.QueryInterface(Ci.nsITreeBoxObject);
 	if (download.length <= boxobject.getPageLength())
-		boxobject.scrollToRow(tree.rowCount - boxobject.getPageLength());
+		boxobject.scrollToRow(Tree.rowCount - boxobject.getPageLength());
 	else
 		boxobject.scrollToRow(numbefore);
 
-	tree.selection.currentIndex = numbefore + 1;
+	Tree.selection.currentIndex = numbefore + 1;
 
 	Dialog.checkDownloads();
 }
@@ -1948,37 +1938,9 @@ function askForRenaming(t, s1, s2, s3) {
 	return Prefs.onConflictingFilenames;
 }
 
-function pauseResumeReq(pauseReq) {
-	try {
-		tree.updateSelected(
-			function(d) {
-				if (pauseReq) {
-					if (d.is(QUEUED) || (d.is(RUNNING) && d.isResumable)) {
-						d.status = _("paused");
-						d.speed = '';
-						d.state = PAUSED;
-						d.setPaused();
-					}
-				} else if (d.is(PAUSED, CANCELED)) {
-					d.state = QUEUED;
-					d.status = _("inqueue");
-				}
-				return true;
-			}
-		);
-	}
-	catch(ex) {
-		Debug.dump("pauseResumeReq()", ex)
-	}
-}
-
-function cancelPopup() {
-	tree.updateSelected(function(d) { d.cancel(); return true; });
-}
-
 function getInfo() {
 	var t = new Array();
-	for (d in tree.selected) {
+	for (d in Tree.selected) {
 		t.push(d);
 	}
 	if (t.length > 0) {
@@ -1987,31 +1949,5 @@ function getInfo() {
 }
 
 DTA_include('dta/manager/filehandling.js');
-
-function selectAll() {
-	tree.selection.selectAll();
-}
-
-function selectInv() {
-	for (var i = 0, e = tree.rowCount; i < e; ++i) {
-		tree.selection.toggleSelect(i);
-	}
-}
-
-function addChunk(add) {
-	tree.updateSelected(
-		function(d) {
-			if (!add && d.maxChunks > 1) {
-					d.maxChunks--;
-			}
-			else if (add  && d.maxChunks < 10 && d.isResumable) {
-					d.maxChunks++;
-					d.resumeDownload();
-			}
-			return true;
-		}
-	);
-}
-
 DTA_include('dta/manager/sessionmanager.js');
 DTA_include('dta/manager/tooltip.js');

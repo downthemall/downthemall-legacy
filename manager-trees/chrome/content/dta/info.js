@@ -54,12 +54,12 @@ var Dialog = {
 				? dir
 				: '';
 		
-			var normal = canvas.createLinearGradient(0,0,0,16);
+			var normal = this.canvas.createLinearGradient(0,0,0,16);
 			normal.addColorStop(0, 'rgba(255,255,255,50)');
 			normal.addColorStop(1, '#ECE9D8');
 		
-			canvas.fillStyle = normal;
-			canvas.fillRect(0,0,300,20);
+			this.canvas.fillStyle = normal;
+			this.canvas.fillRect(0,0,300,20);
 
 		} catch(ex) {
 			Debug.dump('load', ex);
@@ -128,7 +128,7 @@ var Dialog = {
 		canvas.fillStyle = normal;
 		canvas.fillRect(0,0,300,20);
 
-		if (d.isCompleted) {
+		if (d.is(COMPLETE)) {
 			canvas.fillStyle = compl;
 			canvas.fillRect(0,0,300,20);
 			canvas.fillStyle = join;
@@ -138,22 +138,20 @@ var Dialog = {
 			else {
 				canvas.fillRect(0,16,Math.round(d.join.offset/d.totalSize*300),4);
 			}
-		} else if (d.isCanceled) {
+		} else if (d.is(CANCELED)) {
 			canvas.fillStyle = cancel;
 			canvas.fillRect(0,0,300,20);
 		} else if (d.isStarted && d.totalSize) {
-			while (c != -1) {
-				canvas.fillStyle=prog;
-				canvas.fillRect(Math.round(d.chunks[c].start/d.totalSize*300),0,Math.round(d.chunks[c].chunkSize/d.totalSize*300),20);
-				c = d.chunks[c].next;
-			}
+			d.chunks.forEach(
+				function(c) {
+					this.canvas.fillStyle = prog;
+					this.canvas.fillRect(Math.round(c.start/d.totalSize*300),0,Math.round(c.size/d.totalSize*300),20);
+				},
+				this
+			);
 			canvas.fillStyle = join;
-			if (d.join == null)
-				canvas.fillRect(0,16,Math.round(d.chunks[d.firstChunk].chunkSize/d.totalSize*300),4);
-			else
-				canvas.fillRect(0,16,Math.round(d.join.offset/d.totalSize*300),4);
+			canvas.fillRect(0,16,Math.round(d.chunks[d.firstChunk].chunkSize/d.totalSize*300),4);
 		}
-		
 		setTimeout('Dialog.draw();', 150);
 	},
 	browseDir: function DTA_browseDir() {

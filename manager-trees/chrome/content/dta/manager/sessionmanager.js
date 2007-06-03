@@ -104,7 +104,7 @@ var sessionManager = {
 		try {
 			this._con.executeSimpleSQL('DELETE FROM queue');
 			var i = 0;
-			for (d in tree.all) {
+			for (d in Tree.all) {
 				if (this._saveDownload(d, i)) {
 					++i;
 				}
@@ -125,7 +125,7 @@ var sessionManager = {
 	},
 
 	load: function() {
-		return tree.update(this._load, this);
+		return Tree.update(this._load, this);
 	},
 	_load: function() {
 
@@ -185,7 +185,7 @@ var sessionManager = {
 				else if (d.is(CANCELED)) {
 					d.status = _('canceled');
 				}
-				tree.add(d);
+				Tree.add(d);
 			}
 			catch (ex) {
 				Debug.dump('failed to init a download from queuefile', ex);

@@ -1,6 +1,6 @@
 var FileHandling = {
 	openFolder: function() {
-		for (d in tree.selected) {
+		for (d in Tree.selected) {
 			try {
 				if (d.is(COMPLETE)) {
 					OpenExternal.reveal(d.destinationFile);
@@ -13,7 +13,7 @@ var FileHandling = {
 		}
 	},
 	openFile: function() {
-		var cur = tree.current;
+		var cur = Tree.current;
 		if (cur && cur.is(COMPLETE)) {
 			try {
 				OpenExternal.launch(cur.destinationFile);
@@ -26,7 +26,7 @@ var FileHandling = {
 	deleteFile: function() {
 		var list = [];
 		
-		for (d in tree.selected) {
+		for (d in Tree.selected) {
 			if (d.is(COMPLETE)) {
 				var file = new FileFactory(d.destinationFile);
 				if (file.exists()) {
@@ -41,7 +41,7 @@ var FileHandling = {
 			}
 		}
 		if (list.length) {
-			tree.remove(list);
+			Tree.remove(list);
 		}
 	}
 };

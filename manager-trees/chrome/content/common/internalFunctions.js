@@ -44,6 +44,13 @@ var Preferences = DTA_preferences;
 
 const SYSTEMSLASH = (DTA_profileFile.get('dummy').path.indexOf('/') != -1) ? '/' : '\\';
 
+// shared state defines
+const QUEUED = 0;
+const PAUSED =  1<<1;
+const RUNNING = 1<<2;
+const FINISHING = 1<<3;
+const COMPLETE = 1<<4;
+const CANCELED = 1<<5;
 /**
  * cast non-strings to string
  * @author Nils

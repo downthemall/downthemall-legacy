@@ -51,15 +51,15 @@
 		<key id="esc" keycode="VK_ESCAPE" oncommand="Dialog.close();"/>
 		<key id="kMacEsc" modifiers="accel" key="W" oncommand="Dialog.close();"/>
 		<key id="enter" keycode="VK_RETURN" oncommand="FileHandling.openFile();"/>
-		<key id="sAll" modifiers="accel" key="A" oncommand="selectAll();"/>
-		<key id="kUp" modifiers="alt" keycode="VK_PAGE_UP" oncommand="tree.up();"/>
-		<key id="kDown" modifiers="alt" keycode="VK_PAGE_DOWN" oncommand="tree.down();"/>
-		<key id="kCancel" keycode="VK_DELETE" oncommand="tree.remove();"/>
-		<key id="kMacCancel" modifiers="meta" keycode="VK_BACK" oncommand="tree.remove();"/>
-		<key id="kTop" modifiers="alt" keycode="VK_HOME" oncommand="tree.top();"/>
-		<key id="kBottom" modifiers="alt" keycode="VK_END" oncommand="tree.bottom();"/>
-		<key id="kPause" modifiers="accel" key="P" oncommand="pauseResumeReq(true);"/>
-		<key id="kResume" modifiers="accel" key="R" oncommand="pauseResumeReq(false);"/>
+		<key id="sAll" modifiers="accel" key="A" oncommand="Tree.selectAll();"/>
+		<key id="kUp" modifiers="alt" keycode="VK_PAGE_UP" oncommand="Tree.up();"/>
+		<key id="kDown" modifiers="alt" keycode="VK_PAGE_DOWN" oncommand="Tree.down();"/>
+		<key id="kCancel" keycode="VK_DELETE" oncommand="Tree.remove();"/>
+		<key id="kMacCancel" modifiers="meta" keycode="VK_BACK" oncommand="Tree.remove();"/>
+		<key id="kTop" modifiers="alt" keycode="VK_HOME" oncommand="Tree.top();"/>
+		<key id="kBottom" modifiers="alt" keycode="VK_END" oncommand="Tree.bottom();"/>
+		<key id="kPause" modifiers="accel" key="P" oncommand="Tree.pause();"/>
+		<key id="kResume" modifiers="accel" key="R" oncommand="Tree.resume();"/>
 		<key id="kAdd" modifiers="accel" key="+" oncommand="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome,centerscreen,dialog,dependent');"/>
 		<key id="kGetInfo" modifiers="accel" key="I" oncommand="getInfo();"/>
 	</keyset>
@@ -73,26 +73,26 @@
 			<menuitem id="delete" class="menuitem-iconic" image="chrome://dta/skin/manager/delete.png" label="&delete.label;" oncommand="FileHandling.deleteFile();" />
 			<menuitem id="folder" class="menuitem-iconic" image="chrome://dta/skin/manager/folder.png" label="&targetdir.label;" oncommand="FileHandling.openFolder();" />
 			<menuseparator />
-			<menuitem id="play" class="menuitem-iconic" label="&resume.label;" image="chrome://dta/skin/manager/play.png" oncommand="pauseResumeReq(false);" />
-			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" image="chrome://dta/skin/manager/pause.png" oncommand="pauseResumeReq(true);" />
-			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/skin/manager/cancel.png" oncommand="cancelPopup();" />
+			<menuitem id="play" class="menuitem-iconic" label="&resume.label;" image="chrome://dta/skin/manager/play.png" oncommand="Tree.resume();" />
+			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" image="chrome://dta/skin/manager/pause.png" oncommand="Tree.pause();" />
+			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/skin/manager/cancel.png" oncommand="Tree.cancel();" />
 			<menuseparator />
 			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/skin/manager/clean.png" oncommand="removeCompleted();" />
 			<menuseparator />
-			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="selectAll();" />
-			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="selectInv();" />
+			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="Tree.selectAll();" />
+			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="Tree.selectInv();" />
 			<menuseparator />
-			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" image="chrome://dta/skin/manager/movetop.png" oncommand="tree.top();" />
-			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" image="chrome://dta/skin/manager/moveup.png" oncommand="tree.up();" />
-			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" image="chrome://dta/skin/manager/movedown.png" oncommand="tree.down();" />
-			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" image="chrome://dta/skin/manager/movebottom.png" oncommand="tree.bottom();" />
+			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" image="chrome://dta/skin/manager/movetop.png" oncommand="Tree.top();" />
+			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" image="chrome://dta/skin/manager/moveup.png" oncommand="Tree.up();" />
+			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" image="chrome://dta/skin/manager/movedown.png" oncommand="Tree.down();" />
+			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" image="chrome://dta/skin/manager/movebottom.png" oncommand="Tree.bottom();" />
 			<menuseparator />
 			<menu id="misc" class="menu-iconic" image="chrome://dta/skin/manager/misc.png" label="&misc.label;">
 				<menupopup>
-					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/skin/manager/addpart.png" oncommand="addChunk(true);" />
-					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" image="chrome://dta/skin/manager/rempart.png" oncommand="addChunk(false);" />
+					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/skin/manager/addpart.png" oncommand="Dialog.changeChunks(true);" />
+					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" image="chrome://dta/skin/manager/rempart.png" oncommand="Dialog.changeChunks(false);" />
 					<menuseparator/>
-					<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/remove.png" oncommand="tree.remove()" />					
+					<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/remove.png" oncommand="Tree.remove()" />					
 					<menuseparator />
 					<menuitem id="prefs" class="menuitem-iconic" label="&options.label;" image="chrome://dta/skin/common/prefs.png" onclick="DTA_showPreferences();" />
 				</menupopup>
@@ -160,14 +160,14 @@
 			<spacer/>
 			<toolbarbutton label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="Manually add an URL to DownThemAll" />
 			<spacer class="visible" />
-			<toolbarbutton label="&resume.label;" id="toolplay" onclick="pauseResumeReq(false);" tooltiptext="Start/Resume/Restart downloads" />
-			<toolbarbutton label="&pause.label;" id="toolpause" onclick="pauseResumeReq(true);" tooltiptext="Pause downloads" />
-			<toolbarbutton label="&cancel.label;" id="toolcancel" onclick="cancelPopup();" tooltiptext="Cancel/Reset downloads" />
+			<toolbarbutton label="&resume.label;" id="toolplay" onclick="Tree.pause();"/>
+			<toolbarbutton label="&pause.label;" id="toolpause" onclick="Tree.resume();"/>
+			<toolbarbutton label="&cancel.label;" id="toolcancel" onclick="Tree.cancel();"/>
 			<spacer class="visible" />
-			<toolbarbutton label="&movetop.label;" id="toolmovetop" onclick="tree.top();" />
-			<toolbarbutton label="&moveup.label;" id="toolmoveup" onclick="tree.up();"/>
-			<toolbarbutton label="&movedown.label;" id="toolmovedown" onclick="tree.down();"/>
-			<toolbarbutton label="&movebottom.label;" id="toolmovebottom" onclick="tree.bottom();"  />
+			<toolbarbutton label="&movetop.label;" id="toolmovetop" onclick="Tree.top();" />
+			<toolbarbutton label="&moveup.label;" id="toolmoveup" onclick="Tree.up();"/>
+			<toolbarbutton label="&movedown.label;" id="toolmovedown" onclick="Tree.down();"/>
+			<toolbarbutton label="&movebottom.label;" id="toolmovebottom" onclick="Tree.bottom();"  />
 			<spacer flex="1" />
 			<spacer id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/index.php?page_id=14');" tooltiptext="&tooldonate.tooltiptext;" />
 		  </toolbar>
@@ -182,7 +182,7 @@
 			enableColumnDrag="true"
 			style="margin:0px;"
 			ondblclick="FileHandling.openFile();"
-			onselect="tree.selectionChanged();"
+			onselect="Tree.selectionChanged();"
 		>
 			<treecols>
 				<treecol id="task" label="&task.label;" ordinal="1" flex="35" crop="center" persist="width ordinal hidden"/>
