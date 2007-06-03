@@ -292,8 +292,8 @@ Tree.prototype = {
 };
 
 // little helper dept.
-// create a downloadElement as accepted by Manager
-function downloadElement(url, dir, num, desc1, desc2, mask, refPage) {
+// create a QueueItem as accepted by Manager
+function QueueItem(url, dir, num, desc1, desc2, mask, refPage) {
 	this.url = url;
 	this.dirSave = dir;
 	this.numIstance = num;
@@ -370,10 +370,10 @@ var Dialog = {
 
 	// checks if we can continue to process
 	check: function DTA_check() {
-		var dir = this.ddDirectory.current.trim();
+		var dir = this.ddDirectory.value.trim();
 
 		// directory and mask set?
-		if (!dir.length || !this.ddRenaming.current.trim().length) {
+		if (!dir.length || !this.ddRenaming.value.trim().length) {
 			// XXX: Error message.
 			return false;
 		}
@@ -383,7 +383,7 @@ var Dialog = {
 		{
 			alert(_("alertfolder"));
 			var newDir = Utils.askForDir(null, _("validdestination"));
-			this.ddDirectory.current = newDir ? newDir : '';
+			this.ddDirectory.value = newDir ? newDir : '';
 			return false;
 		}
 		return true;
@@ -398,8 +398,8 @@ var Dialog = {
 				return false;
 			}
 
-			var dir = this.ddDirectory.current;
-			var mask = this.ddRenaming.current;
+			var dir = this.ddDirectory.value;
+			var mask = this.ddRenaming.value;
 			var counter = Preferences.getDTA("counter", 1);
 			if (++counter > 999) {
 				counter = 1;
@@ -414,7 +414,7 @@ var Dialog = {
 					continue;
 				}
 				out.push(
-					new downloadElement(
+					new QueueItem(
 						link.url,
 						dir,
 						counter,
@@ -501,7 +501,7 @@ var Dialog = {
 		var type = tree.type;
 
 		// see if there is an additional filter
-		var additional = new DTA_AdditionalMatcher(this.ddFilter.current, $('regex').checked);
+		var additional = new DTA_AdditionalMatcher(this.ddFilter.value, $('regex').checked);
 
 		// will keep track of used filter-props f0-f7
 		var used = {};

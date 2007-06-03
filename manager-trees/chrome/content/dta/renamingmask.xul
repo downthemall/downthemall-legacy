@@ -31,8 +31,8 @@
 			},
 			accept: function() {
 				var dd = document.getElementById('renaming');
-				if (dd.current.length) {
-					this.result.value = dd.current;
+				if (dd.value.length) {
+					this.result.value = dd.value;
 				}
 			}
 		};	

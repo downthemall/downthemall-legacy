@@ -580,7 +580,7 @@ Decompressor.prototype = {
 	}
 };
 
-function downloadElement(lnk, dir, num, desc, mask, refPage, tmpFile) {
+function QueueItem(lnk, dir, num, desc, mask, refPage, tmpFile) {
 
 	this.visitors = new VisitorManager();
 
@@ -629,7 +629,7 @@ function downloadElement(lnk, dir, num, desc, mask, refPage, tmpFile) {
 	}
 }
 
-downloadElement.prototype = {
+QueueItem.prototype = {
 	_state: QUEUED,
 	get state() {
 		return this._state;
@@ -727,7 +727,6 @@ downloadElement.prototype = {
 	get totalSize() { return this._totalSize; },
 	set totalSize(nv) {
 		this._totalSize = nv;
-		Debug.dump("ts", nv);
 		this.invalidate();
 		return this._totalSize;
 	},
@@ -1664,7 +1663,6 @@ Download.prototype = {
 			for (let i = 0, e = this._supportedChannels.length; i < e; ++i) {
 				try {
 					let sc = this._supportedChannels[i];
-					Debug.dump(sc.i);
 					let chan = aRequest.QueryInterface(sc.i);
 					this[sc.f](chan);
 					Debug.dump("handled with: " + sc.f);
@@ -1878,7 +1876,7 @@ function startnewDownloads(notQueue, download) {
 			}
 		);
 
-		var d = new downloadElement(
+		var d = new QueueItem(
 			e.url,
 			e.dirSave,
 			e.numIstance,

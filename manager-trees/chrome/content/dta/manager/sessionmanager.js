@@ -142,7 +142,7 @@ var sessionManager = {
 					return null;
 				}
 
-				var d = new downloadElement(
+				var d = new QueueItem(
 					new UrlManager(down.urlManager),
 					get("pathName"),
 					get("numIstance"),

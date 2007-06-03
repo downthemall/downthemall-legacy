@@ -49,7 +49,7 @@ var Dialog = {
 				: '';
 
 			var dir = String(downloads[0].pathName);
-			this.ddDirectory.current = 
+			this.ddDirectory.value = 
 				downloads.every(function(e, i, a) { return String(e.pathName) == dir; })
 				? dir
 				: '';
@@ -74,10 +74,10 @@ var Dialog = {
 		var t = window.arguments[0];
 		var win = window.arguments[1];
 
-		var directory = this.ddDirectory.current.trim();
+		var directory = this.ddDirectory.value.trim();
 		directory = directory.length ? directory.addFinalSlash() : null;
 		
-		var mask = this.ddRenaming.current;
+		var mask = this.ddRenaming.value;
 		mask = mask.length ? mask : null;
 		
 		for (var i = 0; i < t.length; i++) {
@@ -159,22 +159,22 @@ var Dialog = {
 	browseDir: function DTA_browseDir() {
 		// let's check and create the directory
 		var newDir = Utils.askForDir(
-			this.ddDirectory.current,
+			this.ddDirectory.value,
 			_("validdestination")
 		);
 		if (newDir) {
-			this.ddDirectory.current = newDir;
+			this.ddDirectory.value = newDir;
 		}
 	},
 	check: function DTA_check() {
-		var dir = this.ddDirectory.current.trim();
-		if (!dir.length || !this.ddRenaming.current.trim().length) {
+		var dir = this.ddDirectory.value.trim();
+		if (!dir.length || !this.ddRenaming.value.trim().length) {
 			return false;
 		}
 		if (!Utils.isValidDir(dir)) {
 			alert(_("alertfolder"));
 			var newDir = Utils.askForDir(null, _("validdestination"));
-			this.ddDirectory.current = newDir ? newDir : '';
+			this.ddDirectory.value = newDir ? newDir : '';
 			return false;
 		}
 		return true;

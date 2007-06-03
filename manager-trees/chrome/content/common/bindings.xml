@@ -112,11 +112,10 @@
 			</property>
 			<property name="_max" onget="return DTA_preferences.getDTA('history', 5);"/>
 			<property name="inputField" onget="return this._list.inputField"/>
-			<property name="value" onget="return this._list.value"/>
-			<property name="current" onget="return this._list.value">
+			<property name="value" onget="return this._list.value">
 				<setter>
 					val = String(val);
-					if (this.current == val) {
+					if (this.value == val) {
 						return;
 					}
 					this._list.value = val;
@@ -140,7 +139,7 @@
 
 					if (values.length) {
 						this._list.selectedIndex = 0;
-						this.current = values[0];
+						this.value = values[0];
 					}				
 					if (this.hasAttribute('readonly')) {
 						this._list.removeAttribute('editable');
@@ -153,7 +152,7 @@
 			</method>
 			<method name="save">
 				<body><![CDATA[
-					var n = this.current;
+					var n = this.value;
 					if ((!this.modified && this._list.selectedIndex == 0) || (n.length == 0 && !this.hasAttribute('allowempty'))) {
 						return;
 					}

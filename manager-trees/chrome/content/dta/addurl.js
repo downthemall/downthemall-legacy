@@ -39,7 +39,7 @@ const Ci = Components.interfaces;
 
 var dropDowns = {};
 
-function downloadElement(url, num) {
+function QueueItem(url, num) {
 	if (!(url instanceof DTA_URL) || !DTA_AddingFunctions.isLinkOpenable(url)) {
 		throw new Components.Exception('invalid url');
 	}
@@ -48,8 +48,8 @@ function downloadElement(url, num) {
 	this.refPage = $('URLref').value,
 	this.description = window.arguments ? window.arguments[0] : '';
 	this.ultDescription = '';
-	this.mask = Dialog.ddRenaming.current;
-	this.dirSave = Dialog.ddDirectory.current;
+	this.mask = Dialog.ddRenaming.value;
+	this.dirSave = Dialog.ddDirectory.value;
 }
 
 function Literal(str) {
@@ -251,7 +251,7 @@ var Dialog = {
 					$("URLref").value	 = refPage;
 				}
 				if (a.mask) {
-					$("renaming").current = a.mask;
+					this.ddRenaming.value = a.mask;
 				}
 			}
 			
@@ -323,13 +323,13 @@ var Dialog = {
 		var errors = [];
 		
 		// check the directory
-		var dir = this.ddDirectory.current.trim();
+		var dir = this.ddDirectory.value.trim();
 		if (!dir.length || !Utils.isValidDir(dir)) {
 			errors.push('directory');
 		}
 		
 		// check mask
-		var mask = this.ddRenaming.current;
+		var mask = this.ddRenaming.value;
 		if (!mask.length) {
 			errors.push('renaming');
 		}
@@ -369,17 +369,17 @@ var Dialog = {
 			
 			var rv = DTA_confirm(_('batchtitle'), message, _('batchtitle'), DTA_confirm.CANCEL, _('single'));
 			if (rv == 0) {
-				batch = batch.getURLs(function(aURL) { return new downloadElement(new DTA_URL(aURL), num); });
+				batch = batch.getURLs(function(aURL) { return new QueueItem(new DTA_URL(aURL), num); });
 			}
 			else if (rv == 2) {
-				batch = [new downloadElement(url, num)];
+				batch = [new QueueItem(url, num)];
 			}
 			else {
 				return false;
 			}
 		}
 		else {
-			batch = [new downloadElement(url, num)];
+			batch = [new QueueItem(url, num)];
 		}
 		DTA_AddingFunctions.sendToDown(queue, batch);
 
@@ -394,11 +394,11 @@ var Dialog = {
 	browseDir: function DTA_browseDir() {
 		// let's check and create the directory
 		var newDir = Utils.askForDir(
-			this.ddDirectory.current,
+			this.ddDirectory.value,
 			_("validdestination")
 		);
 		if (newDir) {
-			this.ddDirectory.current = newDir;
+			this.ddDirectory.value = newDir;
 		}
 		this.check();
 	}

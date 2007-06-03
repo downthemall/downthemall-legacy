@@ -196,6 +196,17 @@ Tree.prototype = {
 	selectionChanged: function() {
 		this.refreshTools();
 	},
+	_updating: 0,
+	beginUpdate: function() {
+		if (++this._updating == 1) {
+			this._box.beginUpdateBatch();
+		}
+	},
+	endUpdate: function() {
+		if (--this._updating == 0) {
+			this._box.endUpdateBatch();
+		}
+	},
 	
 	// stuff
 	add: function(download) {
@@ -224,7 +235,7 @@ Tree.prototype = {
 			);
 		}
 		sessionManager.beginUpdate();
-		this._box.beginUpdateBatch();
+		this.beginUpdate();
 		ids.forEach(
 			function(d) {
 				// wipe out any info/tmpFiles
@@ -237,7 +248,7 @@ Tree.prototype = {
 			},
 			this
 		);
-		this._box.endUpdateBatch();
+		this.endUpdate();
 		sessionManager.endUpdate();
 		this.invalidate();
 	},
@@ -252,7 +263,9 @@ Tree.prototype = {
 	},
 	
 	refreshTools: function() {
-		
+		if (this._updating) {
+			return;
+		}
 		$('info', 'remove', 'movetop', 'moveup', 'movedown', 'movebottom', 'toolmovetop', 'toolmoveup', 'toolmovedown', 'toolmovebottom')
 			.forEach(
 				function(o) { return o.setAttribute('disabled', this.current); },
@@ -280,14 +293,14 @@ Tree.prototype = {
 			this.refreshTools();			
 		}
 		else if (d instanceof Array) {
-			this._box.beginUpdateBatch();
+			this.beginUpdate();
 			d.forEach(
 				function(e) {
 					this.invalidate(e);
 				},
 				this
 			);
-			this._box.endUpdateBatch();
+			this.endUpdate();
 		}
 		else if ('_tid' in d) {
 			this._box.invalidateRow(d._tid);
@@ -341,7 +354,7 @@ Tree.prototype = {
 	},
 	get current() {
 		var ci = this.selection.currentIndex;
-		if (ci > -1) {
+		if (ci > -1 && ci < this.rowCount) {
 			return this._downloads[ci];
 		}
 		return null;		
@@ -358,32 +371,32 @@ Tree.prototype = {
 	},
 	
 	update: function(f, t) {
-		this._box.beginUpdateBatch();
+		this.beginUpdate();
 		f.call(t);
-		this._box.endUpdateBatch();
+		this.endUpdate();
 	},
 	updateSelected: function(f, t) {
-		this._box.beginUpdateBatch();
+		this.beginUpdate();
 		for (d in this.selected) {
 			if (!f.call(t, d)) {
 				break;
 			}
 		}
-		this._box.endUpdateBatch();
+		this.endUpdate();
 	},
 	updateAll: function(f, t) {
-		this._box.beginUpdateBatch();
+		this.beginUpdate();
 		for (d in this.all) {
 			if (!f.call(t, d)) {
 				break;
 			}
 		}
-		this._box.endUpdateBatch();
+		this.endUpdate();
 	},
 	
 	top: function() {
 		try {
-			this._box.beginUpdateBatch();
+			this.beginUpdate();
 			var ids = this._getSelectedIds(true);
 			ids.forEach(
 				function(id, idx) {
@@ -392,7 +405,7 @@ Tree.prototype = {
 				},
 				this
 			);
-			this._box.endUpdateBatch();
+			this.endUpdate();
 			this.invalidate();
 			this.selection.rangedSelect(0, ids.length - 1, true);			
 		}
@@ -402,7 +415,7 @@ Tree.prototype = {
 	},
 	bottom: function() {
 		try {
-			this._box.beginUpdateBatch();
+			this.beginUpdate();
 			var ids = this._getSelectedIds();
 			ids.forEach(
 				function(id, idx) {
@@ -411,7 +424,7 @@ Tree.prototype = {
 				},
 				this
 			);
-			this._box.endUpdateBatch();
+			this.endUpdate();
 			this.invalidate();
 			this.selection.rangedSelect(this._downloads.length - ids.length, this._downloads.length - 1, true);			
 		}
@@ -421,7 +434,7 @@ Tree.prototype = {
 	},
 	up: function() {
 		try {
-			this._box.beginUpdateBatch();
+			this.beginUpdate();
 			var ids = this._getSelectedIds();
 			ids.forEach(
 				function(id, idx) {
@@ -435,7 +448,7 @@ Tree.prototype = {
 				},
 				this
 			);
-			this._box.endUpdateBatch();
+			this.endUpdate();
 			this.invalidate();
 		}
 		catch (ex) {
@@ -444,7 +457,7 @@ Tree.prototype = {
 	},
 	down: function() {
 		try {
-			this._box.beginUpdateBatch();
+			this.beginUpdate();
 			var rowCount = this.rowCount;
 			var ids = this._getSelectedIds(true);
 			ids.forEach(
@@ -459,7 +472,7 @@ Tree.prototype = {
 				},
 				this
 			);
-			this._box.endUpdateBatch();
+			this.endUpdate();
 			this.invalidate();
 			// readjust view
 			var last = ids[0];
