@@ -178,32 +178,30 @@ var DTA_debug = {
 	_dumpEnabled : false,
 	_consoleService : null,
 	_logPointer : null,
-	_loaded : false,
-	_load : function() {
+	load : function() {
 		this._dumpEnabled = DTA_preferences.getDTA("logging", false);
+		if (!this._dumpEnabled) {
+			this.dump = this._dumpStub;
+			return;
+		}
 		this._consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
 		this._logPointer = DTA_profileFile.get('dta_log.txt');
 		try {
 			if (this._logPointer.fileSize > (200 * 1024))
 				this._logPointer.remove(false);
 		} catch(e) {}
-		this._loaded = true;
 	},
 	formatTimeDate: function DD_formatTimeDate(value) {
 		return String(value).replace(/\b(\d)\b/g, "0$1");
 	},
-	dump : function(message, e) {
-		if (!this._loaded) {
-			this._load();
-		}
+	_dump : function(message, e) {
 		try {
-			if (!this._dumpEnabled || (message=="" && typeof(e)!="object")) {
+			if (message == "" && typeof(e) != "object") {
 				return;
 			}
 
 			message = String(message);
 
-			var fo = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);
 			var time = new Date();
 			var text = this.formatTimeDate(time.getHours())
 				+ ":" + this.formatTimeDate(time.getMinutes())
@@ -236,8 +234,7 @@ var DTA_debug = {
 			}
 			text += "\x0D\x0A";
 
-			if (Components.stack)
-			{
+			if (Components.stack) {
 				var stack = Components.stack.caller;
 				for (var i = 0; i < 4 && stack; ++i) {
 					text += stack.toString() + "\x0D\x0A";
@@ -247,6 +244,7 @@ var DTA_debug = {
 
 			this._consoleService.logStringMessage(text);
 
+			var fo = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);
 			fo.init(this._logPointer, 0x04 | 0x08 | 0x10, 0664, 0);
 			fo.write(text, text.length);
 			fo.close();
@@ -254,12 +252,14 @@ var DTA_debug = {
 			Components.utils.reportError(ex);
 		}
 	},
+	_dumpStub: function() {},
 	dumpObj: function(obj) {
 		for (i in obj) {
 			Components.utils.reportError(i + ": " + (obj[i] ? obj[i].toSource() : obj[i]));
 		}
 	}
 };
+DTA_debug.load();
 
 var DTA_URLhelpers = {
 	textToSubURI : Components.classes["@mozilla.org/intl/texttosuburi;1"]

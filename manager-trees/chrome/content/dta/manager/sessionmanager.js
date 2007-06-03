@@ -179,7 +179,6 @@ var sessionManager = {
 					d.status = _('paused');
 				}
 				else if (d.is(COMPLETE)) {
-					Stats.completedDownloads++;
 					d.status = _('complete');
 				}
 				else if (d.is(CANCELED)) {

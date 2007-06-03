@@ -236,9 +236,9 @@ Tree = {
 			},
 			this
 		);
+		this.invalidate();
 		this.endUpdate();
 		sessionManager.endUpdate();
-		this.invalidate();
 	},
 	removeCompleted: function T_removeCompleted() {
 		let list = [];
@@ -309,8 +309,8 @@ Tree = {
 		}
 		this.endUpdate();
 	},	
-	refreshTools: function T_refreshTools() {
-		if (this._updating) {
+	refreshTools: function T_refreshTools(d) {
+		if (this._updating || (d && !this.selection.isSelected(d._tid))) {
 			return;
 		}
 		try {
@@ -319,18 +319,24 @@ Tree = {
 					function(o) { return o.setAttribute('disabled', this.current); },
 					this
 				);
-			
+				
+			let states = {
+				state: 0,
+				isResumable: false,
+				is: QueueItem.prototype.is
+			};
+			for (let d in this.selected) {
+				states.state |= d.state;
+				states.isResumable |= d.isResumable;
+			}
+							
 			function modifySome(items, f) {
-				var disabled = false; 
+				let disabled; 
 				if (!Tree.current) {
 					disabled = true;
 				}
 				else {
-					for (let d in Tree.selected) {
-						if ((disabled = !f(d))) {
-							break;
-						}
-					}
+					disabled = !f(states);
 				}
 				items.forEach(
 					function(o) {
@@ -355,14 +361,14 @@ Tree = {
 			this._downloads.forEach(
 				function(e, i) {
 					e._tid = i;
-					if (e.isPrototypeOf(COMPLETE)) {
+					if (e.is(COMPLETE)) {
 						complete++;
 					}
 				}
 			);
 			this._box.invalidate();
 			this.refreshTools(this);
-			Stats.completedDownloads = complete;			
+			Dialog.completed = complete;
 		}
 		else if (d instanceof Array) {
 			this.beginUpdate();

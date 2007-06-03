@@ -56,6 +56,8 @@ const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 var Dialog = {
 	_lastSum: 0,
 	_initialized: false,
+	completed: 0,
+	totalbytes: 0,
 	init: function D_init() {
 		make_();
 		Tree.init($("downloads"));
@@ -67,11 +69,9 @@ var Dialog = {
 		if ("arguments" in window) {
 			startnewDownloads(window.arguments[0], window.arguments[1]);
 		}
-	
-		Dialog.checkDownloads();
 
-		Tree.selectionChanged();
-		
+		Tree.invalidate();
+		Dialog.checkDownloads();
 		this._initialized = true;
 	},	
 	refresh: function D_refresh() {
@@ -88,7 +88,7 @@ var Dialog = {
 
 			// Refresh status bar
 			$("statusText").label = 
-				_("cdownloads", [Stats.completedDownloads, Tree.rowCount])
+				_("cdownloads", [this._completed, Tree.rowCount])
 				+ " - "
 				+ _("cspeed")
 				+ " "
@@ -98,16 +98,16 @@ var Dialog = {
 			if (inProgressList.length == 1 && inProgressList[0].d.totalSize > 0) {
 				document.title =
 					Math.round(inProgressList[0].d.partialSize / inProgressList[0].d.totalSize * 100) + "% - "
-					+ Stats.completedDownloads + "/" + Tree.rowCount + " - "
+					+ this.completed + "/" + Tree.rowCount + " - "
 					+ Utils.formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
 			}
 			else if (inProgressList.length > 0) {
 				document.title =
-					Stats.completedDownloads + "/" + Tree.rowCount + " - "
+					this.completed + "/" + Tree.rowCount + " - "
 					+ Utils.formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
 			}
 			else {
-				document.title = Stats.completedDownloads + "/" + Tree.rowCount + " - DownThemAll!";
+				document.title = this.completed + "/" + Tree.rowCount + " - DownThemAll!";
 			}
 
 			const now = Utils.getTimestamp();
@@ -219,7 +219,7 @@ var Dialog = {
 			Debug.dump("signal(): Queue finished");
 			Utils.playSound("done");
 			
-			if (Stats.completedDownloads > 0) {
+			if (this.completed > 0) {
 				var msg = _('suc');
 				
 				if (Prefs.alertingSystem == 1) {
@@ -320,17 +320,6 @@ var Dialog = {
 
 
 DTA_include('dta/manager/prefs.js');
-
-var Stats = {
-	totalDownloads: 0,
-
-	// XXX/DC Debug this crap,
-	_completedDownloads: 0,
-	get completedDownloads() { return this._completedDownloads; },
-	set completedDownloads(nv) { if (0 > (this._completedDownloads = nv)) { throw "Stats::Completed downloads less than 1"; } },
-
-	downloadedBytes: 0
-}
 
 DTA_include('dta/manager/urlmanager.js');
 DTA_include('dta/manager/visitormanager.js');
@@ -878,7 +867,7 @@ QueueItem.prototype = {
 		this.state = COMPLETE;
 
 		// increment completedDownloads counter
-		Stats.completedDownloads++;
+		Dialog.completed++;
 
 		// Garbage collection
 		this.chunks = [];
@@ -1075,7 +1064,7 @@ QueueItem.prototype = {
 			this.status = message;
 
 			if (this.is(COMPLETE)) {
-				Stats.completedDownloads--;
+				Dialog.completed--;
 			}
 			else if (this.is(RUNNING)) {
 				this.setPaused();

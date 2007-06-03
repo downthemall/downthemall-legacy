@@ -41,7 +41,7 @@ var FileHandling = {
 			}
 		}
 		if (list.length) {
-			Tree.remove(list);
+			Tree.remove();
 		}
 	}
 };
