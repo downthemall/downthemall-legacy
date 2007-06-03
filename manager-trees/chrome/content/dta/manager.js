@@ -88,7 +88,7 @@ var Dialog = {
 
 			// Refresh status bar
 			$("statusText").label = 
-				_("cdownloads", [this._completed, Tree.rowCount])
+				_("cdownloads", [this.completed, Tree.rowCount])
 				+ " - "
 				+ _("cspeed")
 				+ " "
