@@ -41,6 +41,10 @@ Tree = {
 		// atom cache. See getAtom
 		this._atoms = {};
 		this._iconic = this._as.getAtom('iconic');
+		this._complete = this._as.getAtom('completed');
+		this._inprogress = this._as.getAtom('inprogress');
+		this._paused = this._as.getAtom('paused');
+		this._canceled = this._as.getAtom('canceled');
 		this.elem.view = this;	
 		
 	},
@@ -83,15 +87,15 @@ Tree = {
 	getCellText: function T_getCellText(idx, col) {
 		let d = this._downloads[idx];
 
-		switch (col.id) {
-			case 'task': return Prefs.showOnlyFilenames ? d.destinationName : d.urlManager.usable;
-			case 'per': return d.percent;
-			case 'dim': return d.dimensionString;
-			case 'status': return d.status;
-			case 'parts': return d.parts;
-			case 'mask': return d.mask;
-			case 'path': return d.destinationPath;
-			case 'speed': return d.speed;
+		switch (col.index) {
+			case 0: return Prefs.showOnlyFilenames ? d.destinationName : d.urlManager.usable;
+			case 1: return d.percent;
+			case 3: return d.dimensionString;
+			case 4: return d.status;
+			case 5: return d.parts;
+			case 6: return d.mask;
+			case 7: return d.destinationPath;
+			case 8: return d.speed;
 		}
 		return '';
 	},
@@ -123,14 +127,14 @@ Tree = {
 
 	// will grab the "icon" for a cell.
 	getImageSrc: function T_getImageSrc(idx, col) {
-		switch (col.id) {
-			case 'task': return this._downloads[idx].icon;
+		switch (col.index) {
+			case 0: return this._downloads[idx].icon;
 		}
 		return null;
 	},
 
 	getProgressMode : function T_getProgressMode(idx, col) {
-		if (col.id == 'pct') {
+		if (col.index == 2) {
 			return Ci.nsITreeView.PROGRESS_NORMAL;
 		}
 		return Ci.nsITreeView.PROGRESS_NONE;
@@ -138,7 +142,7 @@ Tree = {
 
 	// will be called for cells other than textcells
 	getCellValue: function T_getCellValue(idx, col) {
-		if (col.id == 'pct') {
+		if (col.index == 2) {
 			let d = this._downloads[idx];
 			if (d.is(CANCELED)) {
 				return 100;	
@@ -147,23 +151,18 @@ Tree = {
 		}
 		return null;
 	},
-
 	getCellProperties: function T_getCellProperties(idx, col, prop) {
-		if (col.id == 'pct') {
+		if (col.index == 2) {
 			let d = this._downloads[idx];
-			let atom = null;
 			switch (d.state) {
-				case COMPLETE: atom = 'completed'; break;
-				case PAUSED: atom = 'completed'; break;
+				case COMPLETE: prop.AppendElement(this._complete); return;
+				case PAUSED: prop.AppendElement(this._paused); return;
 				case FINISHING:
-				case RUNNING: atom = 'inprogress'; break;
-				case CANCELED: atom = 'canceled'; break;
-			}
-			if (atom) {
-				prop.AppendElement(this.getAtom(atom));
+				case RUNNING: prop.AppendElement(this._inprogress); return;
+				case CANCELED: prop.AppendElement(this._canceled); return;
 			}
 		}
-		else if (col.id == 'task') {
+		else if (col.index == 0) {
 			prop.AppendElement(this._iconic);
 		}
 	},

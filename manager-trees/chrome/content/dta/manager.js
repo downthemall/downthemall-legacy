@@ -46,7 +46,8 @@ if (!Ci) {
 const MIN_CHUNK_SIZE = 700 * 1024;
 // in use by chunk.writer...
 // in use by decompressor... beware, actual size might be more than twice as big!
-const MAX_BUFFER_SIZE = 3 * 1024 * 1024; // 3 MB
+const MAX_BUFFER_SIZE = 5 * 1024 * 1024; // 3 MB
+const MIN_BUFFER_SIZE = 1 * 1024 * 1024; // 1 MB
 const SPEED_COUNT = 25;
 
 const REFRESH_FREQ = 1000;
@@ -73,7 +74,7 @@ var Dialog = {
 		
 		this._initialized = true;
 	},	
-	refresh: function() {
+	refresh: function D_refresh() {
 		try {
 			var sum = 0;
 			inProgressList.forEach(
@@ -142,7 +143,7 @@ var Dialog = {
 		}
 	},
 
-	checkDownloads: function() {
+	checkDownloads: function D_checkDownloads() {
 		try {
 			this.refresh();
 		
@@ -168,7 +169,7 @@ var Dialog = {
 			Debug.dump("checkDownloads():", ex);
 		}
 	},
-	startNext: function() {
+	startNext: function D_startNext() {
 		try {
 			var rv = false;
 			for (let d in Tree.all) {
@@ -202,7 +203,7 @@ var Dialog = {
 			Debug.dump("startNext():", ex);
 		}
 	},
-	signal: function(download) {
+	signal: function D_signal(download) {
 		// only close if last download was complete, meaning the queue really finished,
 		// without any user interaction or errors in between
 		if (!this._initialized || !download.is(COMPLETE)) {
@@ -244,7 +245,7 @@ var Dialog = {
 			Debug.dump("signal():", ex);
 		}
 	},
-	close: function() {
+	close: function D_close() {
 		
 		// Check for non-resumable downloads
 		if (Tree.some(function(d) { return d.isStarted && !d.isResumable && d.is(RUNNING); })) {
@@ -285,7 +286,7 @@ var Dialog = {
 	},
 	_safeCloseChunks: [],
 	// this one will loop until all chunks and FINISHING are gone.
-	_safeClose: function() {
+	_safeClose: function D__safeClose() {
 		// cannot close at this point
 		this._safeCloseChunks = this._safeCloseChunks.filter(function(c) { return c.isRunning; });
 		this._safeCloseFinishing = this._safeCloseFinishing.filter(function(d) { return d.is(FINISHING); });
@@ -299,17 +300,16 @@ var Dialog = {
 		return true;		
 	},
 	_timers: {},
-	setTimer: function(id, func, interval) {
-		this.killTimer(id);
+	setTimer: function D_setTimer(id, func, interval) {
 		this._timers[id] = window.setTimeout(func, interval);
 	},
-	killTimer: function(id) {
+	killTimer: function D_killTimer(id) {
 		if (id in this._timers) {
 			window.clearTimeout(this._timers[id]);
 			delete this._timers[id];
 		}
 	},
-	_killTimers: function() {
+	_killTimers: function D__killTimers() {
 		for (id in this._timers) {
 			window.clearTimeout(this._timers[id]);
 		}
@@ -586,9 +586,10 @@ QueueItem.prototype = {
 	/**
 	 *Takes one or more state indicators and returns if this download is in state of any of them
 	 */
-	is: function() {
-		for (var i = 0; i < arguments.length; ++i) {
-			if (this.state == arguments[i]) {
+	is: function QI_is() {
+		let state = this.state;
+		for (let i = 0, e = arguments.length; i < e; ++i) {
+			if (state == arguments[i]) {
 				return true;
 			}
 		}
@@ -697,7 +698,7 @@ QueueItem.prototype = {
 		return this._destinationPath;
 	},
 
-	invalidate: function() {
+	invalidate: function QI_invalidate() {
 		Tree.invalidate(this);
 	},
 
@@ -709,7 +710,7 @@ QueueItem.prototype = {
 		Debug.dump("HR: " + this._hasToBeRedownloaded + "/" + nv);
 		return this._hasToBeRedownloaded = nv;
 	},
-	reDownload: function() {
+	reDownload: function QI_reDownload() {
 		// replace names
 		Debug.dump(this.urlManager.usable);
 		this.fileName = this.urlManager.usable.getUsableFileName();
@@ -725,7 +726,7 @@ QueueItem.prototype = {
 		this.resumeDownload();
 	},
 
-	removeFromInProgressList: function() {
+	removeFromInProgressList: function QI_removeFromInProgressList() {
 		//this.speeds = new Array();
 		for (var i=0; i<inProgressList.length; i++)
 			if (this==inProgressList[i].d) {
@@ -734,15 +735,15 @@ QueueItem.prototype = {
 			}
 	},
 	
-	refreshPartialSize: function(){
+	refreshPartialSize: function QI_refreshPartialSize(){
 		var size = 0;
 		this.chunks.forEach(function(c) { size += c.written; });
 		this.partialSize = size;
 	},
 
-	setPaused: function(){
+	setPaused: function QI_setPaused(){
 		if (this.chunks) {
-			for (var i = 0; i < this.chunks.length; i++) {
+			for (let i = 0, e = this.chunks.length; i < e; ++i) {
 				if (this.chunks[i].isRunning) {
 					this.chunks[i].download.cancel();
 				}
@@ -751,7 +752,7 @@ QueueItem.prototype = {
 		this.state = PAUSED;
 	},
 
-	moveCompleted: function() {
+	moveCompleted: function QI_moveCompleted() {
 		if (this.is(CANCELED)) {
 			return;
 		}
@@ -777,7 +778,7 @@ QueueItem.prototype = {
 			this.finishDownload(ex);
 		}
 	},
-	handleMetalink: function dl_handleMetaLink() {
+	handleMetalink: function QI_handleMetaLink() {
 		try {
 			Tree.remove(this);
 			var file = new FileFactory(this.destinationFile);
@@ -835,7 +836,7 @@ QueueItem.prototype = {
 			Debug.dump("hml exception", ex);
 		}
 	},
-	finishDownload: function(exception) {
+	finishDownload: function QI_finishDownload(exception) {
 		if (exception) {
 			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
 			Debug.dump("download::moveCompleted: Could not move file or create directory: ", exception);
@@ -882,7 +883,7 @@ QueueItem.prototype = {
 		this.chunks = [];
 	},
 
-	rebuildDestination: function() {
+	rebuildDestination: function QI_rebuildDestination() {
 		try {
 			var url = this.urlManager.usable;
 			var uri = Cc['@mozilla.org/network/standard-url;1']
@@ -972,7 +973,7 @@ QueueItem.prototype = {
 		this._icon = null;
 	},
 
-	checkFilenameConflict: function() {
+	checkFilenameConflict: function  QI_checkFileNameConflict() {
 		var dn = this.destinationName, ds = this.destinationPath;
 		var dest = new FileFactory(ds + dn), newDest = dest.clone();
 
@@ -1042,7 +1043,7 @@ QueueItem.prototype = {
 		}
 	},
 
-	fail: function dd_fail(title, msg, state) {
+	fail: function QI_fail(title, msg, state) {
 		Debug.dump("failDownload invoked");
 
 		this.cancel(state);
@@ -1059,7 +1060,7 @@ QueueItem.prototype = {
 		}
 	},
 
-	cancel: function dd_cancel(message) {
+	cancel: function QI_cancel(message) {
 		try {
 			if (this.is(CANCELED)) {
 				return;
@@ -1090,7 +1091,7 @@ QueueItem.prototype = {
 		}
 	},
 	
-	removeTmpFile: function() {
+	removeTmpFile: function QI_removeTmpFile() {
 		if (this.tmpFile.exists()) {
 			try {
 				this.tmpFile.remove(false);
@@ -1101,7 +1102,7 @@ QueueItem.prototype = {
 		}
 	},
 	sessionConnections: 0,
-	resumeDownload: function () {
+	resumeDownload: function QI_resumeDownload() {
 
 		function downloadNewChunk(download, start, end, header) {
 			var chunk = new Chunk(download, start, end);
@@ -1232,7 +1233,7 @@ Chunk.prototype = {
 	get parent() {
 		return this._parent;
 	},
-	close: function() {
+	close: function CH_close() {
 		this.isRunning = false;
 		if (this._outStream) {
 			this._outStream.close();
@@ -1244,7 +1245,7 @@ Chunk.prototype = {
 	},
 	_written: 0,
 	_outStream: null,
-	write: function(aInputStream, aCount) {
+	write: function CH_write(aInputStream, aCount) {
 		try {
 			if (!this._outStream) {
 				Debug.dump("creating outStream");
@@ -1267,14 +1268,7 @@ Chunk.prototype = {
 					}
 				}
 				seekable.seek(0x00, this.start + this.written);
-				bufSize = Math.floor(MAX_BUFFER_SIZE / Prefs.maxChunks);
-				if (bufSize > 4096) {
-					this._outStream = Cc['@mozilla.org/network/buffered-output-stream;1'].createInstance(Ci.nsIBufferedOutputStream);
-					this._outStream.init(outStream, bufSize);
-				}
-				else {
-					this._outStream = outStream;
-				}
+				this._outStream = outStream;
 			}
 			bytes = this.remainder;
 			if (!this.total || aCount < bytes) {
@@ -1367,7 +1361,7 @@ Download.prototype = {
 
 	cantCount: false,
 
-	QueryInterface: function(iid) {
+	QueryInterface: function DL_QI(iid) {
 			if (this._interfaces.some(function(i) { return iid.equals(i); })) {
 				return this;
 			}
@@ -1375,15 +1369,15 @@ Download.prototype = {
 			throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
 	// nsISupportsWeakReference
-	GetWeakReference: function( ) {
+	GetWeakReference: function DL_GWR() {
 		return this;
 	},
 	// nsIWeakReference
-	QueryReferent: function(uuid) {
+	QueryReferent: function DL_QR(uuid) {
 		return this.QueryInterface(uuid);
 	},
 	// nsICancelable
-	cancel: function(aReason) {
+	cancel: function DL_cancel(aReason) {
 		Debug.dump("cancel");
 		try {
 			if (this._closed) {
@@ -1399,7 +1393,7 @@ Download.prototype = {
 		}
 	},
 	// nsIInterfaceRequestor
-	getInterface: function(iid) {
+	getInterface: function DL_getInterface(iid) {
 		try {
 			return this.QueryInterface(iid);
 		}
@@ -1422,7 +1416,7 @@ Download.prototype = {
 		}
 	},
 	// nsIAuthPrompt
-	prompt: function(aDialogTitle, aText, aPasswordRealm, aSavePassword, aDefaultText, aResult) {
+	prompt: function DL_prompt(aDialogTitle, aText, aPasswordRealm, aSavePassword, aDefaultText, aResult) {
 		return this.authPrompter.prompt(
 			aDialogTitle,
 			aText,
@@ -1433,7 +1427,7 @@ Download.prototype = {
 		);
 	},
 
-	promptUsernameAndPassword: function(aDialogTitle, aText, aPasswordRealm, aSavePassword, aUser, aPwd) {
+	promptUsernameAndPassword: function DL_promptUaP(aDialogTitle, aText, aPasswordRealm, aSavePassword, aUser, aPwd) {
 		return this.authPrompter.promptUsernameAndPassword(
 			aDialogTitle,
 			aText,
@@ -1443,7 +1437,7 @@ Download.prototype = {
 			aPwd
 		);
 	},
-	promptPassword: function(aDialogTitle, aText, aPasswordRealm, aSavePassword, aPwd) {
+	promptPassword: function DL_promptPassword(aDialogTitle, aText, aPasswordRealm, aSavePassword, aPwd) {
 		return this.authPrompter.promptPassword(
 			aDialogTitle,
 			aText,
@@ -1454,7 +1448,7 @@ Download.prototype = {
 	},
 	
 	// nsIChannelEventSink
-	onChannelRedirect: function(oldChannel, newChannel, flags) {
+	onChannelRedirect: function DL_onChannelRedirect(oldChannel, newChannel, flags) {
 		try {
 			this._chan == newChannel;
 			this._redirectedTo = newChannel.URI.spec;
@@ -1466,11 +1460,11 @@ Download.prototype = {
 	},
 	
 	// nsIFtpEventSink - to keep interfacerequestor calm ;)
-	OnFTPControlLog: function(fromServer, msg) {
+	OnFTPControlLog: function DL_OnFTPControlLog(fromServer, msg) {
 	},
 
 	// nsIStreamListener
-  onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
+  onDataAvailable: function DL_onDataAvailable(aRequest, aContext, aInputStream, aOffset, aCount) {
 		if (this._closed) {
 			throw 0x804b0002; // NS_BINDING_ABORTED;
 		}
@@ -1487,7 +1481,7 @@ Download.prototype = {
 		}
 	},
 
-	handleHttp: function(aChannel) {
+	handleHttp: function DL_handleHttp(aChannel) {
 		var c = this.c;
 		var d = this.d;
 		
@@ -1607,12 +1601,12 @@ Download.prototype = {
 	},
 	
 	// Generic handler for now :p
-	handleFtp: function(aChannel) {
+	handleFtp: function  DL_handleFtp(aChannel) {
 		Debug.dump("handleFtp: " + aChannel.URI.spec);
 		return this.handleGeneric(aChannel, aContext);
 	},
 	
-	handleGeneric: function(aChannel) {
+	handleGeneric: function DL_handleGeneric(aChannel) {
 		var c = this.c;
 		var d = this.d;
 		
@@ -1643,7 +1637,7 @@ Download.prototype = {
 		{i:Ci.nsIFtpChannel, f:'handleFtp'},
 		{i:Ci.nsIChannel, f:'handleGeneric'}
 	],
-	onStartRequest: function(aRequest, aContext) {
+	onStartRequest: function DL_onStartRequest(aRequest, aContext) {
 		Debug.dump('StartRequest');
 
 		
@@ -1737,7 +1731,7 @@ Download.prototype = {
 			Debug.dump("onStartRequest", ex);
 		}
 	},
-	onStopRequest: function(aRequest, aContext, aStatusCode) {
+	onStopRequest: function DL_onStopRequest(aRequest, aContext, aStatusCode) {
 		Debug.dump('StopRequest');
 		
 		// shortcuts
@@ -1809,7 +1803,7 @@ Download.prototype = {
 	},
 
 	// nsIProgressEventSink
-  onProgress: function(aRequest, aContext, aProgress, aProgressMax) {
+  onProgress: function DL_onProgress(aRequest, aContext, aProgress, aProgressMax) {
 		//Debug.dump('Progress ' + aProgress + "/" + aProgressMax);
 		try {
 
@@ -1843,7 +1837,7 @@ Download.prototype = {
 			Debug.dump("onProgressChange():", e);
 		}
 	},
-	onStatus: function(aRequest, aContext, aStatus, aStatusArg) {}
+	onStatus: function  DL_onStatus(aRequest, aContext, aStatus, aStatusArg) {}
 };
 
 

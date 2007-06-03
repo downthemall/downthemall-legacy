@@ -203,7 +203,7 @@
 				<splitter class="tree-splitter"/>
 				<treecol id="speed" label="&speed.label;" ordinal="6" flex="10" persist="width ordinal hidden"/>
 			</treecols>
-			<treechildren id="downfigli" tooltip="tooltip">
+			<treechildren tooltip="tooltip">
 			</treechildren>
 		</tree>
 
