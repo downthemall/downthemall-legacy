@@ -107,7 +107,7 @@
 			This is free software!<html:br/>
 			You are welcome to redistribute it under certain conditions:
 		</description>
-		<label class="link" value="License" onclick="openTab('chrome://dta/content/gpl.txt');"/>
+		<label class="link" value="License (GPL)" onclick="openTab('http://www.gnu.org/licenses/gpl.txt');"/>
 		<separator class="thin"/>
 		<description>
 			DownThemAll! values your privacy.<html:br/>

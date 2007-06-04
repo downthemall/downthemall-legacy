@@ -4,7 +4,7 @@
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
  * 
- * See notice.txt and gpl.txt for details.
+ * See LICENSE and GPL for details.
  *
  * Contributors:
  *  Nils Maier <MaierMan@web.de>
