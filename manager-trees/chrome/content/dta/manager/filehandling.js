@@ -30,18 +30,41 @@ var FileHandling = {
 			if (d.is(COMPLETE)) {
 				var file = new FileFactory(d.destinationFile);
 				if (file.exists()) {
-					if (!DTA_confirm(_('deletetitle'), _('deletetext', [file.leafName]), _('delete'), DTA_confirm.CANCEL, null, 1)) {
-						file.remove(false);
-						list.push(d);
-					}
+					list.push(d);
 				}
 			}
-			else {
-				list.push(d);
-			}
 		}
-		if (list.length) {
-			Tree.remove();
+		if (!list.length) {
+			return;
+		}
+		var msg = '';
+		if (list.length < 25) {
+			msg = _('deletetexts');
+			list.forEach(
+				function(d) {
+					msg += "\n" + (new FileFactory(d.destinationFile)).leafName;
+				}
+			);				
+		}
+		else {
+			msg = _('deletetextl', [list.length]);
+		}
+		if (!DTA_confirm(_('deletetitle'), msg, _('delete'), DTA_confirm.CANCEL, null, 1)) {
+			list.forEach(
+				function(d) {
+					try {
+						var file = new FileFactory(d.destinationFile);
+						if (file.exists()) {
+							file.remove(false);
+						}
+					}
+					catch (ex) {
+						// no-op
+					}
+				}
+			);
+			Tree.remove(list);
+			Tree.selection.clearSelection();
 		}
 	}
 };

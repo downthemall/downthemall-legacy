@@ -154,7 +154,7 @@ var Dialog = {
 						else {
 							d.cancel(_("timeout"));
 						}
-						Debug.dump("checkDownloads(): " + d.fileName + " in timeout");
+						Debug.dump(d + " is a timeout");
 					}
 				}
 			)
@@ -186,9 +186,9 @@ var Dialog = {
 		
 				if (!d.isStarted) {
 					d.isStarted = true;
-					Debug.dump("Let's start " + d.fileName);
+					Debug.dump("Let's start " + d);
 				} else {
-					Debug.dump("Let's resume " + d.fileName + ": " + d.partialSize);
+					Debug.dump("Let's resume " + d + " at " + d.partialSize);
 				}
 				d.resumeDownload();
 				rv = true;
@@ -207,27 +207,22 @@ var Dialog = {
 		}
 		try {
 			// check if there is something running or scheduled
-			if (this.startNext()) {
-				Debug.dump("signal(): not finished");
+			if (this.startNext() || Tree.some(function(d) { return d.is(FINISHING, RUNNING, QUEUED); } )) {
 				return;
 			}
 			Debug.dump("signal(): Queue finished");
 			Utils.playSound("done");
 			
-			if (this.completed > 0) {
-				var msg = _('suc');
-				
-				if (Prefs.alertingSystem == 1) {
-					AlertService.show(_("dcom"), _('suc'), true, Tree.at(0).destinationPath);
-				}
-				else if (Prefs.alertingSystem == 0) {
-					if (confirm(_('suc') + "\n "+ _("folder")) == 1) {
-						try {
-							OpenExternal.launch(Tree.at(0).destinationPath);
-						}
-						catch (ex){
-							// no-op
-						}
+			if (Prefs.alertingSystem == 1) {
+				AlertService.show(_("dcom"), _('suc'), true, Tree.at(0).destinationPath);
+			}
+			else if (Prefs.alertingSystem == 0) {
+				if (confirm(_('suc') + "\n "+ _("folder")) == 1) {
+					try {
+						OpenExternal.launch(Tree.at(0).destinationPath);
+					}
+					catch (ex){
+						// no-op
 					}
 				}
 			}
@@ -587,7 +582,6 @@ QueueItem.prototype = {
 	get totalSize() { return this._totalSize; },
 	set totalSize(nv) {
 		this._totalSize = nv;
-		Debug.dump("ts", nv);
 		this.invalidate();
 		return this._totalSize;
 	},
@@ -698,7 +692,6 @@ QueueItem.prototype = {
 	},
 	reDownload: function QI_reDownload() {
 		// replace names
-		Debug.dump(this.urlManager.usable);
 		this.fileName = this.urlManager.usable.getUsableFileName();
 
 		// reset flags
@@ -819,7 +812,7 @@ QueueItem.prototype = {
 				startnewDownloads(true, downloads);
 			}
 		} catch (ex) {
-			Debug.dump("hml exception", ex);
+			Debug.dump("handleMetaLink", ex);
 		}
 	},
 	finishDownload: function QI_finishDownload(exception) {
@@ -840,7 +833,6 @@ QueueItem.prototype = {
 				}
 				catch (ex) {
 					// no-op
-					Debug.dump("vmt", ex);
 				}
 				// small validation. Around epoche? More than a month in future?
 				if (time < 2 || time > Date.now() + 30 * 86400000) {
@@ -1083,7 +1075,7 @@ QueueItem.prototype = {
 				this.tmpFile.remove(false);
 			}
 			catch (ex) {
-				Debug.dump("removeTmpFile", ex);
+				// no-op
 			}
 		}
 	},
@@ -1101,12 +1093,6 @@ QueueItem.prototype = {
 			chunk.isRunning = true;
 			download.state = RUNNING;
 			chunk.download = new Download(download, chunk, header);
-			if (header) {
-				Debug.dump(download.fileName + ": Created Header Chunk Test (" + chunk.start + "-" + chunk.end + ")");
-			}
-			else {
-				Debug.dump(download.fileName + ": Created chunk of range " + chunk.start + "-" + chunk.end);
-			}
 			++download.activeChunks;
 			++download.sessionConnections;
 			download.dumpScoreboard();			
@@ -1119,8 +1105,6 @@ QueueItem.prototype = {
 			if (this.maxChunks <= this.activeChunks) {
 				return false;
 			}
-
-			Debug.dump(this.fileName + ": resumeDownload");
 
 			var rv = false;
 
@@ -1171,6 +1155,9 @@ QueueItem.prototype = {
 			}
 
 			// update ui
+			if (rv) {
+				Debug.dump("resumed download: " + d);
+			}
 			return rv;
 		}
 		catch(ex) {
@@ -1223,7 +1210,6 @@ Chunk.prototype = {
 		return this._end;
 	},
 	set end(nv) {
-		Debug.dump(this._end + "/" + nv);
 		this._end = nv;
 		this._total = this._end - this._start + 1;
 	},
@@ -1243,7 +1229,6 @@ Chunk.prototype = {
 		return this._parent;
 	},
 	open: function CH_open() {
-		Debug.dump("creating outStream");
 		var file = this.parent.tmpFile;
 		if (!file.parent.exists()) {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
@@ -1287,11 +1272,7 @@ Chunk.prototype = {
 				bytes = aCount;
 			}
 			if (!bytes) {
-				Debug.dump(aCount + " - " + this.start + " " + this.end + " " + this.written + " " + this.remainder + " ");
 				return 0;
-			}
-			if (bytes != aCount) {
-				Debug.dump("write:" + bytes + "/" + aCount);
 			}
 			if (bytes < 0) {
 				throw new Components.Exception("bytes negative");
@@ -1348,7 +1329,7 @@ function Download(d, c, headerHack) {
 		encodedChannel.applyConversion = false;
 	}
 	catch (ex) {
-		Debug.dump("ec", ex);
+		// no-op
 	}
 	if (referrer) {
 		try {
@@ -1394,7 +1375,6 @@ Download.prototype = {
 			if (this._interfaces.some(function(i) { return iid.equals(i); })) {
 				return this;
 			}
-			Debug.dump("NF: " + iid);
 			throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
 	// nsISupportsWeakReference
@@ -1407,11 +1387,11 @@ Download.prototype = {
 	},
 	// nsICancelable
 	cancel: function DL_cancel(aReason) {
-		Debug.dump("cancel");
 		try {
 			if (this._closed) {
 				return;
 			}
+			Debug.dump("cancel");
 			if (!aReason) {
 				aReason = 0x804b0002; // NS_BINDING_ABORTED;
 			}
@@ -1427,7 +1407,6 @@ Download.prototype = {
 			return this.QueryInterface(iid);
 		}
 		catch (ex) {
-			Debug.dump("getInterface " + iid, ex);
 			throw ex;
 		}
 	},
@@ -1559,9 +1538,12 @@ Download.prototype = {
 		// not partial content altough we are multi-chunk
 		if (aChannel.responseStatus != 206 && c.end != 0) {
 			Debug.dump(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206... Normal mode");
-			vis = {visitHeader: function(a,b) { Debug.dump(a + ': ' + b); }};
+			vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
 			aChannel.visitRequestHeaders(vis);
+			Debug.dump("Request Headers\n\n" + vis.value);
+			vis.value = '';
 			aChannel.visitResponseHeaders(vis);
+			Debug.dump("Response Headers\n\n" + vis.value);
 			d.hasToBeRedownloaded = true;
 			d.reDownload();
 			return;
@@ -1603,9 +1585,8 @@ Download.prototype = {
 		// accept range
 		d.isResumable = visitor.acceptRanges;
 
-		Debug.dump("type: " + visitor.type);
 		if (visitor.type && visitor.type.search(/application\/metalink\+xml/) != -1) {
-			Debug.dump(aChannel.URI.spec + " iml");
+			Debug.dump(d + " is a metalink");
 			d.isMetalink = true;
 			d.isResumable = false;
 		}
@@ -1639,7 +1620,6 @@ Download.prototype = {
 	
 	// Generic handler for now :p
 	handleFtp: function  DL_handleFtp(aChannel) {
-		Debug.dump("handleFtp: " + aChannel.URI.spec);
 		return this.handleGeneric(aChannel, aContext);
 	},
 	
@@ -1692,7 +1672,6 @@ Download.prototype = {
 				}
 				if (chan) {
 					this[sc.f](chan);
-					Debug.dump("handled with: " + sc.f);
 					break;
 				}					
 			}
@@ -1710,7 +1689,7 @@ Download.prototype = {
 						}
 						let realDest = new FileFactory(d.destinationPath);
 						if (!realDest.exists()) {
-							realDest.create(Ci.nsiFile.DIRECTORY_TYPE, 0766);
+							realDest.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
 						}
 						if (!realDest.isWritable() || (tmp && !tmp.isWritable())) {
 							throw new Components.Exception("Paths write protected");
@@ -1748,8 +1727,6 @@ Download.prototype = {
 				}					
 				c.end = d.totalSize - 1;
 				this.isHeaderHack = false;
-			} else {
-				Debug.dump(d + ": Chunk " + c.start + "-" + + c.end + " started");
 			}
 
 			d.checkFilenameConflict();
@@ -1835,17 +1812,10 @@ Download.prototype = {
 
 	// nsIProgressEventSink
   onProgress: function DL_onProgress(aRequest, aContext, aProgress, aProgressMax) {
-		//Debug.dump('Progress ' + aProgress + "/" + aProgressMax);
 		try {
-
 			// shortcuts
-			var c = this.c;
-			var d = this.d;
-
-			/*if (d.is(PAUSED, CANCELED)) {
-				this.cancel();
-				return;
-			}*/
+			let c = this.c;
+			let d = this.d;
 
 			// update download tree row
 			if (d.is(RUNNING)) {
