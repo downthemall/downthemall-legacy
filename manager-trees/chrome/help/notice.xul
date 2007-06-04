@@ -25,7 +25,8 @@
 			var as = Components.interfaces.nsIAppStartup;
 			Components.classes["@mozilla.org/toolkit/app-startup;1"]
       	.getService(as)
-      	.quit(as.eRestart | as.eAttemptQuit);			
+      	.quit(as.eRestart | as.eForceQuit);
+      window.arguments[0].value = true;
 		}
 		window.addEventListener('DOMContentLoaded', load, false);
 	]]></script>

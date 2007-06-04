@@ -97,8 +97,7 @@ var MigrationService = {
 			if (vc.compare(lastVersion, "1.0a1") < 0) {
 				this._execute(['Prefs', 'DropDowns', 'Filters', 'Remove']);
 			}
-			DTA_preferences.setDTA('version', currentVersion);
-			
+			var kill = {value: false};
     	Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
 				.getService(Components.interfaces.nsIWindowWatcher)
     		.openWindow(
@@ -106,8 +105,11 @@ var MigrationService = {
 	    		"chrome://dtahelp/content/notice.xul",
 	    		"_blank",
 	    		"chrome,centerscreen,all,alwaysRaised,dialog,modal",
-	    		null
+	    		kill
 	    	);			
+			if (!kill.value) {
+				DTA_preferences.setDTA('version', currentVersion);
+			}
 		}
 		catch(ex) {
 			DTA_debug.dump("MigrationManager:", ex);
