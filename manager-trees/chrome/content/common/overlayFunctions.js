@@ -184,6 +184,7 @@ var DTA_debug = {
 			this.dump = this._dumpStub;
 			return;
 		}
+		this.dump = this._dump;
 		this._consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
 		this._logPointer = DTA_profileFile.get('dta_log.txt');
 		try {
