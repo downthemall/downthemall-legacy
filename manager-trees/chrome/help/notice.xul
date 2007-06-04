@@ -6,9 +6,11 @@
 	buttons="accept,cancel"
 	buttonlabelaccept="Accept"
 	buttonlabelcancel="Decline"
-	ondialogcancel="cancel();"
+	ondialogaccept="return accept();"
+	ondialogcancel="return cancel();"
 	width="500" height="420"
 >
+	<script type="application/javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/javascript"><![CDATA[
 		function load(evt) {
 			if (evt.originalTarget.location.href.search(/about\.html$/) != -1) {
@@ -17,16 +19,25 @@
 				head.parentNode.removeChild(head);
 			}
 		}
+		function accept() {
+			var params = window.arguments[0].QueryInterface(Components.interfaces.nsIDialogParamBlock);
+			var version = params.GetString(0);
+			DTA_preferences.setDTA('version', version);
+			return true;
+		}
 		function cancel() {
+			if (!confirm("Declining will cause DownThemAll! to be uninstalled.\nContinue?")) {
+				return false;
+			}
 			Components.classes["@mozilla.org/extensions/manager;1"]
 				.getService(Components.interfaces.nsIExtensionManager)
 				.uninstallItem('dta@downthemall.net');
-			alert("DownThemAll! will now be uninstalled!");
 			var as = Components.interfaces.nsIAppStartup;
 			Components.classes["@mozilla.org/toolkit/app-startup;1"]
       	.getService(as)
       	.quit(as.eRestart | as.eForceQuit);
-      window.arguments[0].value = true;
+      window.arguments[0] = true;
+      return true;
 		}
 		window.addEventListener('DOMContentLoaded', load, false);
 	]]></script>
