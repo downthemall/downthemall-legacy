@@ -305,7 +305,7 @@ Tree = {
 			downloads.push(d);
 		}
 		if (downloads.length) {
-			window.openDialog("chrome://dta/content/dta/info.xul","_blank","chrome, centerscreen, dialog=no", downloads, this);			
+			window.openDialog("chrome://dta/content/dta/manager/info.xul","_blank","chrome, centerscreen, dialog=no", downloads, this);			
 		}
 		this.endUpdate();
 	},	

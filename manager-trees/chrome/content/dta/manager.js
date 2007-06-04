@@ -213,13 +213,17 @@ var Dialog = {
 			Debug.dump("signal(): Queue finished");
 			Utils.playSound("done");
 			
-			if (Prefs.alertingSystem == 1) {
-				AlertService.show(_("dcom"), _('suc'), true, Tree.at(0).destinationPath);
+			let dp = Tree.at(0);
+			if (dp) {
+				dp = dp.destinationPath;
 			}
-			else if (Prefs.alertingSystem == 0) {
+			if (Prefs.alertingSystem == 1) {
+				AlertService.show(_("dcom"), _('suc'), dp, dp);
+			}
+			else if (dp && Prefs.alertingSystem == 0) {
 				if (confirm(_('suc') + "\n "+ _("folder")) == 1) {
 					try {
-						OpenExternal.launch(Tree.at(0).destinationPath);
+						OpenExternal.launch(dp);
 					}
 					catch (ex){
 						// no-op
@@ -309,10 +313,302 @@ var Dialog = {
 };
 
 
-DTA_include('dta/manager/prefs.js');
+function UrlManager(urls) {
+	this._urls = [];
+	this._idx = 0;
 
-DTA_include('dta/manager/urlmanager.js');
-DTA_include('dta/manager/visitormanager.js');
+	if (urls instanceof Array) {
+		this.initByArray(urls);
+	}
+	else if (urls) {
+		throw "Feeding the URLManager with some bad stuff is usually a bad idea!";
+	}
+}
+UrlManager.prototype = {
+	_sort: function(a,b) {
+		const rv = a.preference - b.preference;
+		return rv ? rv : (a.url < b.url ? -1 : 1);
+	},
+	initByArray: function um_initByArray(urls) {
+		for (var i = 0; i < urls.length; ++i) {
+			this.add(
+				new DTA_URL(
+					urls[i].url,
+					urls[i].charset,
+					urls[i].usable,
+					urls[i].preference
+				)
+			);
+		}
+		this._urls.sort(this._sort);
+		this._usable = this._urls[0].usable;
+	},
+	add: function um_add(url) {
+		if (!url instanceof DTA_URL) {
+			throw (url + " is not an DTA_URL");
+		}
+		if (!this._urls.some(function(ref) { return ref.url == url.url; })) {
+			this._urls.push(url);
+		}
+	},
+	getURL: function um_getURL(idx) {
+		if (typeof(idx) != 'number') {
+			this._idx--;
+			if (this._idx < 0) {
+				this._idx = this._urls.length - 1;
+			}
+			idx = this._idx;
+		}
+		return this._urls[idx];
+	},
+	get url() {
+		return this._urls[0].url;
+	},
+	get usable() {
+		return this._urls[0].usable;
+	},
+	get charset() {
+		return this._urls[0].charset;
+	},
+	replace: function um_replace(url, newUrl) {
+		for (var i = 0, e = this._urls.length; i < e; ++i) {
+			if (this._urls[i].url == url) {
+				this._urls[i] = newUrl;
+				break;
+			}
+		}
+	},
+	save: function um_save() {
+		var rv = [];
+		for (var i = 0, e = this._urls.length; i < e; ++i) {
+			var c = {};
+			c.url = this._urls[i].url;
+			c.charset = this._urls[i].charset;
+			c.usable = this._urls[i].usable;
+			c.preference = this._urls[i].preference;
+			rv.push(c);
+		}
+		return rv;
+	}
+};
+function Visitor() {
+	// sanity check
+	if (arguments.length != 1) {
+		return;
+	}
+
+	var nodes = arguments[0];
+	for (x in nodes) {
+		if (!name || !(name in this.cmpKeys))	{
+			continue;
+		}
+		this[x] = nodes[x];
+	}
+}
+
+Visitor.prototype = {
+	cmpKeys: {
+		'etag': true, // must not be modified from 200 to 206: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.7
+		//'content-length': false,
+		'content-type': true,
+		'last-modified': true, // may get omitted later, but should not change
+		'content-encoding': true // must not change, or download will become corrupt.
+	},
+	type: null,
+	overrideCharset: null,
+	encoding: null,
+	fileName: null,
+	acceptRanges: false,
+	contentlength: 0,
+	time: null,
+
+	QueryInterface: function(aIID) {
+		if (
+			aIID.equals(Ci.nsISupports)
+			|| aIID.equals(Ci.nsIHttpHeaderVisitor)
+		) {
+			return this;
+		}
+		throw Components.results.NS_ERROR_NO_INTERFACE;
+	},
+	visitHeader: function(aHeader, aValue) {
+		try {
+			const header = aHeader.toLowerCase();
+			switch (header) {
+				case 'content-type': {
+					this.type = aValue;
+					var ch = aValue.match(/charset=['"]?([\w\d_-]+)/i);
+					if (ch && ch[1].length) {
+						DTA_debug.dump("visitHeader: found override to " + ch[1]);
+						this.overrideCharset = ch[1];
+					}
+				}
+				break;
+
+				case 'content-encoding':
+					this.encoding = aValue;
+				break;
+
+				case 'accept-ranges':
+					this.acceptRanges = aValue.toLowerCase().indexOf('none') == -1;
+					Debug.dump("acceptrange = " + aValue.toLowerCase());
+				break;
+
+				case 'content-length':
+					this.contentlength = Number(aValue);
+				break;
+
+				case 'content-range':
+					// XXX?
+					var dim = aValue.substring(aValue.lastIndexOf('/') + 1, aValue.length);
+					if (dim.length>0 && dim.lastIndexOf('*')==-1) {
+						this.contentlength = Number(dim);
+					}
+				break;
+				case 'last-modified':
+					try {
+						this.time = Utils.getTimestamp(aValue);
+					}
+					catch (ex) {
+						Debug.dump("gts", ex);
+						// no-op
+					}
+				break;
+			}
+			if (header == 'etag') {
+				// strip off the "inode"-part apache and others produce, as mirrors/caches usually provide wrong numbers here :p
+				this[header] = aValue.replace(/^[a-f\d]+-([a-f\d]+)-([a-f\d]+)$/, '$1-$2');
+			}
+			else if (header in this.cmpKeys) {
+				this[header] = aValue;
+			}
+			if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
+				// we have to handle headers like "content-disposition: inline; filename='dummy.txt'; title='dummy.txt';"
+				var value = aValue.match(/file(?:name)?=(["']?)([^\1;]+)\1(?:;.+)?/i);
+				if (!value) {
+					// workaround for bug #13959
+					// attachments on some vbulletin forums send nasty headers like "content-disposition: inline; filename*=utf-8''file.ext"
+					value = aValue.match(/file(?:name)?\*=(.*)''(.+)/i);
+					if (value) {
+						this.overrideCharset = value[1];
+					}
+				}
+				if (value) {
+					this.fileName = value[2].getUsableFileName();
+					Debug.dump("found fn:" + this.fileName);
+				}
+			}
+		} catch (ex) {
+			Debug.dump("hrhv::visitHeader:", ex);
+		}
+	},
+	compare: function vi_compare(v)	{
+		if (!(v instanceof Visitor)) {
+			return;
+		}
+
+		for (x in this.cmpKeys) {
+			// we don't have this header
+			if (!(x in this)) {
+				continue;
+			}
+			// v does not have this header
+			else if (!(x in v)) {
+				// allowed to be missing?
+				if (this.cmpKeys[x]) {
+					continue;
+				}
+				Debug.dump(x + " missing");
+				throw new Components.Exception(x + " is missing");
+			}
+			// header is there, but differs
+			else if (this[x] != v[x]) {
+				Debug.dump(x + " nm: [" + this[x] + "] [" + v[x] + "]");
+				throw new Components.Exception("Header " + x + " doesn't match");
+			}
+		}
+	},
+	save: function vi_save(node) {
+		var rv = {};
+		// salva su file le informazioni sugli headers
+		for (x in this.cmpKeys) {
+			if (!(x in this)) {
+				continue;
+			}
+			rv[x] = this[x];
+		}
+		return rv;
+	}
+};
+
+/**
+ * Visitor Manager c'tor
+ * @author Nils
+ */
+function VisitorManager() {
+	this._visitors = {};
+}
+VisitorManager.prototype = {
+	/**
+	 * Loads a ::save'd JS Array
+	 * Will silently bypass failed items!
+	 * @author Nils
+	 */
+	load: function vm_init(nodes) {
+		for (var i = 0; i < nodes.length; ++i) {
+			try {
+				this._visitors[nodes[i].url] = new Visitor(nodes[i].values);
+			} catch (ex) {
+				Debug.dump("failed to read one visitor", ex);
+			}
+		}
+	},
+	/**
+	 * Saves/serializes the Manager and associated Visitors to an JS Array
+	 * @return A ::load compatible Array
+	 * @author Nils
+	 */
+	save: function vm_save() {
+		var rv = [];
+		for (x in this._visitors) {
+			var v = {};
+			v.url = x;
+			v.values = this._visitors[x].save();
+			rv.push(v);
+		}
+		return rv;
+	},
+	/**
+	 * Visit and compare a channel
+	 * @returns visitor for channel
+	 * @throws Exception if comparision yield a difference (i.e. channels are not "compatible")
+	 * @author Nils
+	 */
+	visit: function vm_visit(chan) {
+		var url = chan.URI.spec;
+
+		var visitor = new Visitor();
+		chan.visitResponseHeaders(visitor);
+		if (url in this._visitors)
+		{
+				this._visitors[url].compare(visitor);
+		}
+		return (this._visitors[url] = visitor);
+	},
+	/**
+	 * return the first timestamp registered with a visitor
+	 * @throws Exception if no timestamp found
+	 * @author Nils
+	 */
+	get time() {
+		for (i in this._visitors) {
+			if (this._visitors[i].time > 0) {
+				return this._visitors[i].time;
+			}
+		}
+		throw new Components.Exception("No Date registered");
+	}
+};
 
 function Decompressor(download) {
 	this.download = download;
@@ -391,7 +687,8 @@ Decompressor.prototype = {
 		}
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
-	onStartRequest: function(r, c) {},
+	onStartRequest: function(r, c) {
+	},
 	onStopRequest: function(request, c) {
 		// important, or else we don't write out the last buffer and truncate too early. :p
 		this.outStream.flush();
@@ -426,6 +723,8 @@ Decompressor.prototype = {
 			if (count != this.outStream.write(binStream.readBytes(count), count)) {
 				throw new Components.Exception("Failed to write!");
 			}
+			this.download.partialSize = offset;
+			this.download.invalidate();
 		}
 		catch (ex) {
 			this.exception = ex;
@@ -759,60 +1058,11 @@ QueueItem.prototype = {
 	},
 	handleMetalink: function QI_handleMetaLink() {
 		try {
-			Tree.remove(this);
-			var file = new FileFactory(this.destinationFile);
-
-			var fiStream = Cc['@mozilla.org/network/file-input-stream;1']
-				.createInstance(Ci.nsIFileInputStream);
-			fiStream.init(file, 1, 0, false);
-			var domParser = new DOMParser();
-			var doc = domParser.parseFromStream(fiStream, null, file.fileSize, "application/xml");
-			var root = doc.documentElement;
-			fiStream.close();
-
-			try {
-				file.remove(false);
-			} catch (ex) {
-				Debug.dump("failed to remove metalink file!", ex);
-			}
-
-			var downloads = [];
-			var files = root.getElementsByTagName('file');
-			for (var i = 0; i < files.length; ++i) {
-				var file = files[i];
-				var urls = [];
-				var urlNodes = file.getElementsByTagName('url');
-				for (var j = 0; j < urlNodes.length; ++j) {
-					var url = urlNodes[j];
-					if (['http', 'https'].indexOf(url.getAttribute('type')) != -1) {
-						urls.push(new DTA_URL(url.textContent, doc.characterSet));
-					}
-				}
-				if (!urls.length) {
-					continue;
-				}
-				var desc = root.getElementsByTagName('description');
-				if (desc.length) {
-					desc = desc[0].textContent;
-				}
-				else {
-					desc = '';
-				}
-				downloads.push({
-					'url': new UrlManager(urls),
-					'refPage': this.refPage.spec,
-					'numIstance': 0,
-					'mask': this.mask,
-					'dirSave': this.pathName,
-					'description': desc,
-					'ultDescription': ''
-				});
-			}
-			if (downloads.length) {
-				startnewDownloads(true, downloads);
-			}
-		} catch (ex) {
-			Debug.dump("handleMetaLink", ex);
+			DTA_include("dta/manager/metalinker.js");
+			Metalinker.handleDownload(this);
+		}
+		catch (ex) {
+			Debug.dump("handleMetalink", ex);
 		}
 	},
 	finishDownload: function QI_finishDownload(exception) {
@@ -1189,8 +1439,6 @@ function inProgressElement(el) {
 }
 
 var inProgressList = new Array();
-
-DTA_include('dta/manager/alertservice.js');
 
 var Chunk = function(download, start, end, written) {
 	// saveguard against null or strings and such
@@ -1723,8 +1971,10 @@ Download.prototype = {
 				if (!d.totalSize) {
 					d.isResumable = false;					
 					this.cantCount = true;
+				}
+				if (!d.isResumable) {
 					d.maxChunks = 1;
-				}					
+				}
 				c.end = d.totalSize - 1;
 				this.isHeaderHack = false;
 			}
@@ -1934,7 +2184,3 @@ function askForRenaming(t, s1, s2, s3) {
 	}
 	return Prefs.onConflictingFilenames;
 }
-
-DTA_include('dta/manager/filehandling.js');
-DTA_include('dta/manager/sessionmanager.js');
-DTA_include('dta/manager/tooltip.js');

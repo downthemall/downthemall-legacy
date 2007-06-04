@@ -36,7 +36,15 @@
 
 	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/select.js" />
 	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager.js" />
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/tree.js" />	
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/tree.js" />
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/prefs.js" />
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/sessionmanager.js" />
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/tooltip.js" />
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/filehandling.js" />
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/alertservice.js" />
+	
+
+	
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>	
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 

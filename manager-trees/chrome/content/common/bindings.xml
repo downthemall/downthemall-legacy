@@ -174,6 +174,56 @@
 			</method>
 		</implementation>
 	</binding>
+
+	<binding id="metalinker-item" extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
+		<content>
+			<xul:hbox flex="1">
+				<xul:vbox>
+					<xul:image class="icon" xbl:inherits="src=iconURL"/>
+					<xul:spacer flex="1"/>
+				</xul:vbox>
+				<xul:vbox flex="1">
+					<xul:checkbox anonid="check" xbl:inherits="label=identity,checked"/>
+					<xul:description flex="1" anonid="desc"/>
+					<xul:hbox>
+						<xul:description flex="1" class="url" crop="center" xbl:inherits="value=url"/>
+					</xul:hbox>
+				</xul:vbox>
+				<xul:vbox class="additional">
+					<xul:description xbl:inherits="value=lang"/>
+					<xul:description xbl:inherits="value=sys"/>
+				</xul:vbox>
+			</xul:hbox>
+		</content>
+		
+		<implementation>
+			<constructor><![CDATA[
+				var dl = this.download;
+				this.setAttribute('checked', dl.selected);
+				this.setAttribute('identity', dl.identity ? dl.identity : dl.url.usable.getUsableFileName());
+				this.setAttribute('iconURL', dl.logo ? dl.logo : getIcon(dl.url.usable, false, 32));
+				this.setAttribute('url', dl.url.usable);
+				this.setAttribute('lang', dl.lang);
+				this.setAttribute('sys', dl.sys);
+				if (dl.description) {
+					this._desc.appendChild(document.createTextNode(dl.description));
+				}
+			]]></constructor>
+			<property name="_checkbox" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'check');"/>
+			<property name="_desc" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'desc');"/>
+			<property name="checked" onget="return this._checkbox.checked;"/>
+		</implementation>
+    <handlers>
+      <handler event="click" button="0" phase="capturing">
+      <![CDATA[
+        event.preventDefault();
+        event.stopPropagation();
+        this._checkbox.checked = !this._checkbox.checked;
+      ]]>
+      </handler>
+    </handlers>		
+	</binding>	
+	
 </bindings>
 				
 		
