@@ -19,7 +19,7 @@
 		}
 		function cancel() {
 			Components.classes["@mozilla.org/extensions/manager;1"]
-				.getService(Components.interfaces.nsIExtensionManager);
+				.getService(Components.interfaces.nsIExtensionManager)
 				.uninstallItem('dta@downthemall.net');
 			alert("DownThemAll! will now be uninstalled!");
 			var as = Components.interfaces.nsIAppStartup;
