@@ -315,7 +315,7 @@ var Dialog = {
 
 function UrlManager(urls) {
 	this._urls = [];
-	this._idx = 0;
+	this._idx = -1;
 
 	if (urls instanceof Array) {
 		this.initByArray(urls);
@@ -326,7 +326,7 @@ function UrlManager(urls) {
 }
 UrlManager.prototype = {
 	_sort: function(a,b) {
-		const rv = a.preference - b.preference;
+		const rv = b.preference - a.preference;
 		return rv ? rv : (a.url < b.url ? -1 : 1);
 	},
 	initByArray: function um_initByArray(urls) {
@@ -353,9 +353,9 @@ UrlManager.prototype = {
 	},
 	getURL: function um_getURL(idx) {
 		if (typeof(idx) != 'number') {
-			this._idx--;
-			if (this._idx < 0) {
-				this._idx = this._urls.length - 1;
+			this._idx++;
+			if (this._idx == this._urls.length) {
+				this._idx = 0;
 			}
 			idx = this._idx;
 		}
