@@ -74,7 +74,7 @@
 
 				<menuitem id="dta-pref-tool" oncommand="DTA_showPreferences();"
 					label="&submenu-dta-pref.label;" image="chrome://dta/skin/common/prefs.png" class="menuitem-iconic" />
-				<menuitem id="dta-help-tool" oncommand="openHelp('introduction','chrome://dta/locale/help/dtahelp.rdf');"
+				<menuitem id="dta-help-tool" oncommand="openHelp('introduction','chrome://dtahelp/content/help.rdf');"
 					label="&dta-help-tool.label;" image="chrome://dta/skin/common/help.png" class="menuitem-iconic" />	
 				<menuitem id="dta-about" oncommand="window.openDialog('chrome://dta/content/about/about.xul','_blank','chrome,centerscreen,modal');"
 					label="&about;" image="chrome://dta/skin/common/about.png" class="menuitem-iconic" />

@@ -15,7 +15,7 @@
 		id="paneAdvanced"
 		label="&advancedpane.label;"
 		orient="vertical"
-		helpURI="chrome://dta/locale/help/dtahelp.rdf"
+		helpURI="chrome://dtahelp/content/help.rdf"
 		helpTopic="Preferences_Advanced"		
 	>
 	

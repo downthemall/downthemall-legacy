@@ -295,7 +295,7 @@ var Dialog = {
 			topic = 'AddUrl';
 		}
 		if (topic) {
-			openHelp(topic, 'chrome://dta/locale/help/dtahelp.rdf');	
+			openHelp(topic, 'chrome://dtahelp/content/help.rdf');	
 		}
 		else {
 			$('popupHelp').showPopup($('addURL').getButton('help'), -1, -1, "popup");

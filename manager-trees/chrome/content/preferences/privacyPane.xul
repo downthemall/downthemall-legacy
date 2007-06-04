@@ -16,7 +16,7 @@
 		label="&privacypane.label;"
 		onpaneload="Privacy.load();"
 		orient="vertical"
-		helpURI="chrome://dta/locale/help/dtahelp.rdf"
+		helpURI="chrome://dtahelp/content/help.rdf"
 		helpTopic="Preferences_Privacy"		
 	>
 		<preferences>
@@ -91,7 +91,7 @@
 		<groupbox>
 			<caption label="&privacypane.notice.caption;"/>
 			<description value="&privacypane.notice.desc;"/>
-			<label style="color: blue; text-decoration: underline;" value="&privacypane.privacynotice.label;" onclick="openHelp('About_Privacy','chrome://dta/locale/help/dtahelp.rdf');"/>
+			<label style="color: blue; text-decoration: underline;" value="&privacypane.privacynotice.label;" onclick="openHelp('About_Privacy','chrome://dtahelp/content/help.rdf');"/>
 		</groupbox>
 	</prefpane>
 </overlay>

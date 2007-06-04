@@ -99,9 +99,15 @@ var MigrationService = {
 			}
 			DTA_preferences.setDTA('version', currentVersion);
 			
-			/*if (openHelp) {
-				openHelp('About_Privacy','chrome://dta/locale/help/dtahelp.rdf');
-			}*/
+    	Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+				.getService(Components.interfaces.nsIWindowWatcher)
+    		.openWindow(
+	    		null,
+	    		"chrome://dtahelp/content/notice.xul",
+	    		"_blank",
+	    		"chrome,centerscreen,all,alwaysRaised,dialog,modal",
+	    		null
+	    	);			
 		}
 		catch(ex) {
 			DTA_debug.dump("MigrationManager:", ex);

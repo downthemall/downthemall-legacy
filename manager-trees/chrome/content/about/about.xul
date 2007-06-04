@@ -111,7 +111,7 @@
 		<separator class="thin"/>
 		<description>
 			DownThemAll! values your privacy.<html:br/>
-			See our <html:span class="link" onclick="openHelp('About_Privacy','chrome://dta/locale/help/dtahelp.rdf');">Privacy notice</html:span>.
+			See our <html:span class="link" onclick="openHelp('About_Privacy','chrome://dtahelp/content/help.rdf');">Privacy notice</html:span>.
 		</description>
 
 	  <separator class="thin"/>
