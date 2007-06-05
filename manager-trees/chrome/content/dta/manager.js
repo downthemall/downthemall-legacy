@@ -892,6 +892,7 @@ QueueItem.prototype = {
 		this.partialSize = 0;
 		this.compression = false;
 		this.activeChunks = 0;
+		this.maxChunks = 0;
 		this.chunks = [];
 		this.visitors = new VisitorManager();
 		this.resumeDownload();
@@ -1662,8 +1663,6 @@ Download.prototype = {
 		if (d.urlManager.markBad(this.url)) {
 			Debug.dump("handleError: fresh urls available, kill this one and use another!");
 			this.cancel();
-			c.isRunning = false;
-			d.resumeDownload();
 			return true;
 		}
 		
@@ -1995,17 +1994,6 @@ Download.prototype = {
 		if (d.is(FINISHING)) {
 			Debug.dump(d + ": Download is completed!");
 			d.moveCompleted();
-		}
-		else if (d.is(PAUSED) && !d.isResumable) {
-			// reset download as it was never started (in queue state)
-			d.isStarted = false;
-			d.setPaused();
-			d.chunks = [];
-			d.totalSize = 0;
-			d.partialSize = 0;
-			d.compression = false;
-			d.activeChunks = 0;
-			d.visitors = new VisitorManager();
 		}
 		else if (d.is(RUNNING) && d.isResumable) {
 			// if all the download space has already been occupied by chunks (= !resumeDownload)

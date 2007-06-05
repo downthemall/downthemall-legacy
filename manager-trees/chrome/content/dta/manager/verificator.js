@@ -68,12 +68,22 @@
 			}
 		}
 		catch (ex) {
-			alert("Failed to verify the file!\n" + ex);
 		}
+		alert("Failed to verify the file!\n" + ex);
 		download.completeDownload();
 	}
 }
 Verificator.prototype = {
+	_delete: function() {
+		try {
+			if (this.file.exists()) {
+				this.file.remove(false);
+			}
+		}
+		catch (ex) {
+			alert("Failed to remove file\n" + ex);
+		}
+	},
 	QueryInterface: function(iid) {
 		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIStreamListener) || iid.equals(cI.nsIRequestObserver)) {
 			return this;
@@ -85,7 +95,11 @@ Verificator.prototype = {
 	onStopRequest: function(request, c) {
 		this.hash = hexdigest(this.hash.finish(false));
 		if (this.hash != this.cmp) {
-			alert("vf");
+			var act = DTA_confirm(_('verifyerrortitle'), _('verifyerrortext', [this.cmp, this.hash]), _('retry'), _('delete'), _('keep'));
+			switch (act) {
+				case 0: this.download.reDownload(); return;
+				case 1: this._delete(); this.download.cancel(); return;
+			}
 		}
 		this.download.completeDownload();
 	},
