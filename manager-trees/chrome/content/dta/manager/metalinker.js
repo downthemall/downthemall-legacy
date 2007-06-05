@@ -38,6 +38,8 @@
  	_ios: Components.classes['@mozilla.org/network/io-service;1']
  		.getService(Components.interfaces.nsIIOService),
  		
+ 	_supportedHashes: ['sha1', 'md5'],
+ 		
  	_getSingle: function ML__getSingle(elem, name) {
  		var rv = elem.getElementsByTagName(name);
  		return rv.length ? rv[0].textContent.trim() : '';
@@ -53,12 +55,20 @@
  		}
  		return null;
  	},
- 	_checkURL: function ML__checkURL(url) {
+ 	_checkURL: function ML__checkURL(url, allowed) {
  		try {
-				url = this._ios.newURI(url, null, null);
-				if (url.scheme != 'file') {
- 					return url.spec;
-				}
+			url = this._ios.newURI(url, null, null);
+			if (url.scheme == 'file') {
+				throw new Components.Exception("file protocol invalid");
+			}
+			// check for some popular bad links :p
+			if (['http', 'https', 'ftp'].indexOf(url.scheme) != -1 && url.host.indexOf('.') == -1) {
+				throw new Components.Exception("bad link!");
+			}
+			if (allowed instanceof Array && allowed.indexOf(url.scheme) == -1) {
+				throw new Components.Exception("not allowed");
+			}
+			return url.spec;
  		}
  		catch (ex) {
  			// no-op
@@ -71,7 +81,6 @@
  	handleDownload: function ML_handleDownload(download) {
  		try {
 			Tree.remove(download);
-			--Dialog.completed;
 			var file = new FileFactory(download.destinationFile);
 
 			var fiStream = Cc['@mozilla.org/network/file-input-stream;1']
@@ -124,6 +133,19 @@
 				if (!urls.length) {
 					continue;
 				}
+				var hash = null; 
+				var hashes = file.getElementsByTagName("hash");
+				for (var j = 0; j < hashes.length; ++j) {
+					var h = hashes[j];
+					var t = h.getAttribute('type').toLowerCase();
+					if (this._supportedHashes.indexOf('type')) {
+						h = h.textContent.trim();
+						// always use the longer hash ;)
+						if (!hash || hash.length < h.length) {
+							hash = h;
+						}
+					}
+				}
 				
 				var desc = this._getSingle(file, 'description');
 				if (!desc) {
@@ -137,6 +159,7 @@
 					'dirSave': download.pathName,
 					'description': desc,
 					'ultDescription': '',
+					'hash': hash,
 					'identity': this._getSingle(file, 'identity'),
 					'logo': this._checkURL(this._getSingle(file, 'logo')),
 					'lang': this._getSingle(file, 'language'),
@@ -167,7 +190,8 @@
 			if (downloads.length) {
 				startnewDownloads(true, downloads);
 			}
-		} catch (ex) {
+		}
+		catch (ex) {
 			if (!(ex instanceof Error)) {
 				ex = new Error(_('mlerror', [ex.error]));
 			}
@@ -179,7 +203,7 @@
  	},
  	_insertDownload: function(d) {
  		if (d.lang && d.lang.search(/^\w{2}(?:-\w{2})?$/) != -1) {
- 			var locale = this._locale;
+ 			var locale = this.locale;
  			d.selected = locale.slice(0,2) == d.lang.slice(0,2);
  		}
  		var e = document.createElement('richlistitem');

@@ -319,6 +319,7 @@ function UrlManager(urls) {
 
 	if (urls instanceof Array) {
 		this.initByArray(urls);
+		this._hasFresh = this._urls.length != 0;
 	}
 	else if (urls) {
 		throw "Feeding the URLManager with some bad stuff is usually a bad idea!";
@@ -354,7 +355,7 @@ UrlManager.prototype = {
 	getURL: function um_getURL(idx) {
 		if (typeof(idx) != 'number') {
 			this._idx++;
-			if (this._idx == this._urls.length) {
+			if (this._idx >= this._urls.length) {
 				this._idx = 0;
 			}
 			idx = this._idx;
@@ -377,6 +378,15 @@ UrlManager.prototype = {
 				break;
 			}
 		}
+	},
+	markBad: function um_markBad(url) {
+		if (this._urls.length > 1) {
+			this._urls = this._urls.filter(function(u) { return u != url; });
+		}
+		else if (this._urls[0] == url) {
+			return false;
+		}
+		return true;
 	},
 	save: function um_save() {
 		var rv = [];
@@ -610,130 +620,6 @@ VisitorManager.prototype = {
 	}
 };
 
-function Decompressor(download) {
-	this.download = download;
-	this.to = new FileFactory(download.destinationFile);
-	this.from = download.tmpFile.clone();
-
-	download.state = FINISHING;
-	download.status =  _("decompress");
-	try {
-
-		this._outStream = Cc['@mozilla.org/network/file-output-stream;1']
-			.createInstance(Ci.nsIFileOutputStream);
-		this._outStream.init(this.to, 0x04 | 0x08, 0766, 0);
-		try {
-			// we don't know the actual size, so best we can do is to seek to totalSize.
-			var seekable = this._outStream.QueryInterface(Ci.nsISeekableStream);
-			seekable.seek(0x00, download.totalSize);
-			try {
-				seekable.setEOF();
-			}
-			catch (ex) {
-				// no-op
-			}
-			seekable.seek(0x00, 0);
-		}
-		catch (ex) {
-			// no-op
-		}
-		var boutStream = Cc['@mozilla.org/network/buffered-output-stream;1']
-			.createInstance(Ci.nsIBufferedOutputStream);
-		boutStream.init(this._outStream, MAX_BUFFER_SIZE);
-		this.outStream = boutStream;
-		boutStream = Cc['@mozilla.org/binaryoutputstream;1']
-			.createInstance(Ci.nsIBinaryOutputStream);
-		boutStream.setOutputStream(this.outStream);
-		this.outStream = boutStream;
-
-		var converter = Cc["@mozilla.org/streamconv;1?from=" + download.compressionType + "&to=uncompressed"]
-			.createInstance(Ci.nsIStreamConverter);
-
-		converter.asyncConvertData(
-			download.compressionType,
-			"uncompressed",
-			this,
-			null
-		);
-
-		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-		ios
-			.newChannelFromURI(ios.newFileURI(this.from))
-			.asyncOpen(converter, null);
-	}
-	catch (ex) {
-		try {
-			if (this.outStream) {
-				outStream.close();
-			}
-			if (this.to.exists()) {
-				this.to.remove(false);
-			}
-			if (this.from.exists()) {
-				this.from.remove(false);
-			}
-		}
-		catch (ex) {
-			// XXX: what now?
-		}
-		download.finishDownload(ex);
-	}
-}
-Decompressor.prototype = {
-	exception: null,
-	QueryInterface: function(iid) {
-		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIStreamListener) || iid.equals(cI.nsIRequestObserver)) {
-			return this;
-		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
-	},
-	onStartRequest: function(r, c) {
-	},
-	onStopRequest: function(request, c) {
-		// important, or else we don't write out the last buffer and truncate too early. :p
-		this.outStream.flush();
-		try {
-			this._outStream.QueryInterface(Ci.nsISeekableStream).setEOF();
-		}
-		catch (ex) {
-			this.exception = ex;
-		}
-		this._outStream.close();
-		if (this.exception) {
-			try {
-				this.to.remove(false);
-			}
-			catch (ex) {
-				// no-op: we're already bad :p
-			}
-		}
-		try {
-			this.from.remove(false);
-		}
-		catch (ex) {
-			Debug.dump("Failed to remove tmpFile", ex);
-		}
-
-		this.download.finishDownload(this.exception);
-	},
-	onDataAvailable: function(request, c, stream, offset, count) {
-		try {
-			var binStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
-			binStream.setInputStream(stream);
-			if (count != this.outStream.write(binStream.readBytes(count), count)) {
-				throw new Components.Exception("Failed to write!");
-			}
-			this.download.partialSize = offset;
-			this.download.invalidate();
-		}
-		catch (ex) {
-			this.exception = ex;
-			var reason = 0x804b0002; // NS_BINDING_ABORTED;
-			request.cancel(reason);
-		}
-	}
-};
-
 function QueueItem(lnk, dir, num, desc, mask, refPage, tmpFile) {
 
 	this.visitors = new VisitorManager();
@@ -861,6 +747,13 @@ QueueItem.prototype = {
 		}
 		return this._tmpFile;
 	},
+	_hash: null,
+	get hash() {
+		return this._hash;
+	},
+	set hash(nv) {
+		return this._hash = nv;
+	},	
 
 	/**
 	 *Takes one or more state indicators and returns if this download is in state of any of them
@@ -1045,6 +938,7 @@ QueueItem.prototype = {
 			this.checkFilenameConflict();
 			// move file
 			if (this.compression) {
+				DTA_include("dta/manager/decompressor.js");
 				new Decompressor(this);
 			}
 			else {
@@ -1065,6 +959,10 @@ QueueItem.prototype = {
 			Debug.dump("handleMetalink", ex);
 		}
 	},
+	verifyHash: function() {
+		DTA_include("dta/manager/verificator.js");
+		new Verificator(this);
+	},	
 	finishDownload: function QI_finishDownload(exception) {
 		if (exception) {
 			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
@@ -1098,19 +996,36 @@ QueueItem.prototype = {
 		}
 		this.totalSize = this.partialSize = this.size;
 
-		this.status = _("complete");
-		if ('isMetalink' in this) {
-			this.handleMetalink();
+		this._completeEvents = [];
+		if (this.hash) {
+			this._completeEvents.push('verifyHash');
 		}
-		this.state = COMPLETE;
-
-		// increment completedDownloads counter
-		Dialog.completed++;
-
-		// Garbage collection
-		this.chunks = [];
+		if ('isMetalink' in this) {
+			this._completeEvents.push('handleMetalink');
+		}
+		this.completeDownload();
 	},
+	_completeEvents: [],
+	completeDownload: function QI_completeDownload() {
+				
+		if (this._completeEvents.length) {
+			let evt = this._completeEvents.shift();
+			try {
+				this[evt]();
+			}
+			catch(ex) {
+				Debug.dump("completeEvent failed: " + evt, ex);
+				this.completeDownload();
+			}
+			return;
+		}
 
+		this.state = COMPLETE;
+		this.status = _("complete");
+		++Dialog.completed;
+
+		this.chunks = [];		
+	},
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
 			var url = this.urlManager.usable;
@@ -1501,6 +1416,7 @@ Chunk.prototype = {
 	close: function CH_close() {
 		this.isRunning = false;
 		if (this._outStream) {
+			this._outStream.flush();
 			this._outStream.close();
 			delete this._outStream;
 		}
@@ -1737,12 +1653,22 @@ Download.prototype = {
 		}
 	},
 
-	handleError: function DL_handleError(code, status) {
+	handleError: function DL_handleError() {
 		var c = this.c;
 		var d = this.d;
 		
 		Debug.dump("handleError: problem found; trying to recover");
+		
+		if (d.urlManager.markBad(this.url)) {
+			Debug.dump("handleError: fresh urls available, kill this one and use another!");
+			this.cancel();
+			c.isRunning = false;
+			d.resumeDownload();
+			return true;
+		}
+		
 		d.dumpScoreboard();
+		
 		let max = -1, found = -1;
 		for (let i = 0; i < d.chunks.length; ++i) {
 			let cmp = d.chunks[i]; 
@@ -1762,24 +1688,35 @@ Download.prototype = {
 			d.chunks.sort(function(a,b) { return a.start - b.start; });
 			sessionManager.save(d);
 			this.dumpScoreboard();			
-			return;
+			return true;
 		}
-		Debug.dump("handleError: Cannot recover from problem!", code);
-		var file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
-		d.fail(
-			_("error", [code]),
-			_("failed", [file]) + " " + _("sra", [code]) + ": " + status,
-			_("error", [code])
-		);
-		sessionManager.save(d);
+		return false;
 	},
 	
 	handleHttp: function DL_handleHttp(aChannel) {
 		var c = this.c;
 		var d = this.d;
 		
-		if (aChannel.responseStatus >= 400) {
-			this.handleError(aChannel.responseStatus, aChannel.responseStatusText);
+		let code = 503, status = 'Server returned nothing';
+		try {
+			code = aChannel.responseStatus;
+			status = aChannel.responseStatusText;
+		}
+		catch (ex) {
+			// no-op
+		}
+		
+		if (code >= 400) {
+			if (!this.handleError()) {
+				Debug.dump("handleError: Cannot recover from problem!", code);
+				var file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
+				d.fail(
+					_("error", [code]),
+					_("failed", [file]) + " " + _("sra", [code]) + ": " + status,
+					_("error", [code])
+				);
+				sessionManager.save(d);
+			}
 			return;
 		}
 
@@ -1874,6 +1811,18 @@ Download.prototype = {
 	handleGeneric: function DL_handleGeneric(aChannel) {
 		var c = this.c;
 		var d = this.d;
+		
+		// hack: determine if we are a multi-part chunk,
+		// if so something bad happened, 'cause we aren't supposed to be multi-part
+		if (c.start != 0) {
+			if (!this.handleError()) {
+				Debug.dump(d + ": Server error or disconnection (type 1)");
+				d.status = _("srver");
+				d.speed = '';
+				d.setPaused();
+			}
+			return;
+		}
 		
 		if (this._redirectedTo) {
 			let url = new DTA_URL(this._redirectedTo, this.url.charset);
@@ -2004,7 +1953,10 @@ Download.prototype = {
 
 		// check if we're complete now
 		if (d.is(RUNNING) && !d.chunks.some(function(e) { return e.isRunning; })) {
-			d.state = FINISHING;
+			if (!d.resumeDownload()) {
+				d.dumpScoreboard();
+				d.state = FINISHING;
+			}
 		}
 
 		// routine for normal chunk
@@ -2020,10 +1972,9 @@ Download.prototype = {
 			Debug.dump("out2");
 			return;
 		}
-
+		
 		// ok, chunk passed all the integrity checks!
 
-		// isHeaderHack chunks have their private call to removeFromInProgressList
 		if (!d.is(RUNNING)) {
 			d.speed = '';
 			d.removeFromInProgressList();
@@ -2031,10 +1982,13 @@ Download.prototype = {
 
 		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
 		if (!this.started && d.isResumable && !d.is(CANCELED, PAUSED)) {
-			Debug.dump(d + ": Server error or disconnection (type 1)");
-			d.status = _("srver");
-			d.speed = '';
-			d.setPaused();
+			if (!this.handleError()) {
+				Debug.dump(d + ": Server error or disconnection (type 1)");
+				d.status = _("srver");
+				d.speed = '';
+				d.setPaused();
+			}
+			return;			
 		}
 
 		// if download is complete
@@ -2121,6 +2075,9 @@ function startnewDownloads(notQueue, download) {
 			e.mask,
 			e.refPage
 		);
+		if ('hash' in e && e.hash) {
+			d.hash = e.hash;
+		}
 		d.state = notQueue ? QUEUED : PAUSED;
 		if (d.is(QUEUED)) {
 			d.status = _('paused');
