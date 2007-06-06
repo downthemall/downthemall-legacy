@@ -214,7 +214,7 @@
 				if (d.is(PAUSED)) {
 					down.chunks.forEach(
 						function(c) {
-							d.chunks.push(new Chunk(d, c.start, c.end, Math.max(c.written - 4096, 0)));
+							d.chunks.push(new Chunk(d, c.start, c.end, c.written));
 						}
 					);
 					d.refreshPartialSize();
