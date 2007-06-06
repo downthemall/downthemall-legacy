@@ -227,6 +227,10 @@ var Tree = {
 		this.beginUpdate();
 		ids.forEach(
 			function(d) {
+				if (d.is(FINISHING))) {
+					// un-removable :p
+					return;
+				}
 				// wipe out any info/tmpFiles
 				if (!d.is(COMPLETE, CANCELED)) {
 					d.cancel();
