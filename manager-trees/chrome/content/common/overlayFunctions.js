@@ -430,13 +430,25 @@ var DTA_AddingFunctions = {
 	},
 
 	saveSingleLink : function(turbo, url, referrer, description, mask) {
+		var hash = null;		
+		var ml = DTA_getLinkPrintMetalink(url.url);
+		if (ml) {
+			url.url = ml;
+		}
+		else {
+			hash = DTA_getLinkPrintHash(url.url);
+		}
+		url.url = url.url.replace(/#.*$/, '');
+		
+		var item = {
+			'url': url,
+			'refPage': referrer,
+			'description': description,
+			'hash': hash
+		};
+
 		if (turbo) {
-			var el = {
-				'url': url,
-				'refPage': referrer,
-				'description': description
-			};
-			this.turboSendToDown([el]);
+			this.turboSendToDown([item]);
 			return;
 		}
 
@@ -445,7 +457,7 @@ var DTA_AddingFunctions = {
 			"chrome://dta/content/dta/addurl.xul",
 			"_blank",
 			"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
-			{'url': url, 'description': description, 'referrer': referrer, 'mask': mask}
+			item
 		);
 	},
 
@@ -475,7 +487,7 @@ var DTA_AddingFunctions = {
 			urlsArray[i].numIstance = num;
 		}
 
-		this.sendToDown(!DTA_preferences.get("extensions.dta.lastWasQueued", false), urlsArray);
+		this.sendToDown(!DTA_preferences.getDTA("lastqueued", false), urlsArray);
 	},
 
 	saveLinkArray : function(turbo, urls, images) {
@@ -488,38 +500,33 @@ var DTA_AddingFunctions = {
 
 			DTA_debug.dump("saveLinkArray(): DtaOneClick filtering started");
 
-			var arrayObject;
+			var links;
 			var type;
 			if (DTA_preferences.getDTA("seltab", 0)) {
-				arrayObject = images;
+				links = images;
 				type = 2;
 			}
 			else {
-				arrayObject = urls;
+				links = urls;
 				type = 1;
 			}
-			var links = [];
 
 			var additional = new DTA_AdditionalMatcher(
 				this.getDropDownValue('filter'),
 				DTA_preferences.getDTA('filterRegex', false)
 			);
 
-			for (i in arrayObject) {
-				if (i == "length" || typeof(arrayObject[i]) != "object") {
-					continue;
+			var links = links.filter(
+				function(link) {
+					if (!additional.match(link.url.url)) {
+						return true;
+					}
+					if (!DTA_FilterManager.matchActive(link.url.url, type)) {
+						return true;
+					}
+					return false;
 				}
-				var matched = DTA_FilterManager.matchActive(i, type);
-				if (!matched) {
-					matched = additional.match(i);
-				}
-
-				if (!matched) {
-					continue;
-				}
-
-				links.push(arrayObject[i]);
-			}
+			);
 
 			DTA_debug.dump("saveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
 
@@ -734,7 +741,7 @@ function DTA_checkHashFormat(hash) {
 	return type;
 }
 /**
- * Get a link-fingerprint hash from an url (or just the hash component
+ * Get a link-fingerprint hash from an url (or just the hash component)
  * @param url. Either String or nsIURI
  * @return Valid hash string or null
  */
@@ -749,7 +756,7 @@ function DTA_getLinkPrintHash(url) {
 		return null;
 	}
 	
-	var lp = url.match(/#!(?:md5|sha(?:1|256|384|512)|hash)([\da-f]+)$/i);
+	var lp = url.match(/#!(?:md5|sha(?:1|256|384|512)|hash)!([\da-f]+)$/i);
 	if (lp) {
 		var rv = lp[1].toLowerCase();
 		if (DTA_checkHashFormat(rv)) {

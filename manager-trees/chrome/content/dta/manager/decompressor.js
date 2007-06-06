@@ -35,7 +35,6 @@
  * ***** END LICENSE BLOCK ***** */
  
 function Decompressor(download) {
-	alert("in");
 	this.download = download;
 	this.to = new FileFactory(download.destinationFile);
 	this.from = download.tmpFile.clone();

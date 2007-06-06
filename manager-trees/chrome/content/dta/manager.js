@@ -897,14 +897,14 @@ QueueItem.prototype = {
 
 		// reset flags
 		this.setPaused();
-		this.totalSize = 0;
-		this.partialSize = 0;
+		this.totalSize = this.partialSize = 0;
 		this.compression = null;
 		this.activeChunks = 0;
 		this.maxChunks = 0;
 		this.chunks = [];
 		this.visitors = new VisitorManager();
-		this.resumeDownload();
+		this.state = QUEUED;
+		this.status = _('inqueue');
 	},
 
 	removeFromInProgressList: function QI_removeFromInProgressList() {

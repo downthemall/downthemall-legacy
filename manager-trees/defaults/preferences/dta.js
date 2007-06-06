@@ -60,3 +60,4 @@ pref("extensions.dta.settime", true);
 pref("extensions.dta.showtooltip", true);
 pref("extensions.dta.renaming", "['*name*.*ext*', '*num*_*name*.*ext*', '*url*-*name*.*ext*', '*name* (*text*).*ext*', '*name* (*hh*-*mm*).*ext*']");
 pref("extensions.dta.filter", "['', '/(\\.mp3)$/', '/(\\.(html|htm|rtf|doc|pdf))$/', 'http://www.website.com/subdir/*.*', 'http://www.website.com/subdir/pre*.???', '*.z??, *.css, *.html']");
+pref("extensions.dta.lastqueued", false);

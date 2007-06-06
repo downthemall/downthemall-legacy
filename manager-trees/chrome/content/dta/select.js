@@ -52,56 +52,52 @@ function Tree(links, type) {
 
 	// internal list of links.
 	// better make this a real array (links parameter is usually an object)
-	this._links = [];
-	for (x in links) {
-		// step over the length prop
-		if (x == 'length') {
-			continue;
-		}
-
-		var link = links[x];
-
-		//  "lazy initialize" the icons.
-		// cache them so that we don't have to lookup them again and again.
-		// but do not precompute them, as we don't know if we'll ever display them.
-		link.__defineGetter__(
-			'icon',
-			function() {
-				if (!this._icon) {
-					this._icon = getIcon(this.url, 'metalink' in this);
-				}
-				return this._icon;
-			}
-		);
-
-		// same here for description
-		link.__defineGetter__(
-			'desc',
-			function() {
-				if (!this._desc) {
-					this._desc = "";
-					if ("description" in this && this.description.length > 0) {
-						this._desc += this.description;
+	this._links = links;
+	this._links.forEach(
+		function(link) {
+			//  "lazy initialize" the icons.
+			// cache them so that we don't have to lookup them again and again.
+			// but do not precompute them, as we don't know if we'll ever display them.
+			link.__defineGetter__(
+				'icon',
+				function() {
+					if (!this._icon) {
+						this._icon = getIcon(this.url, 'metalink' in this);
 					}
-					if ("ultDescription" in this && this.ultDescription.length > 0) {
-						this._desc += ((this._desc.length > 0) ? ' - ' : '') + this.ultDescription;
-					}
+					return this._icon;
 				}
-				return this._desc;
+			);
+	
+			// same here for description
+			link.__defineGetter__(
+				'desc',
+				function() {
+					if (!this._desc) {
+						this._desc = "";
+						if ("description" in this && this.description.length > 0) {
+							this._desc += this.description;
+						}
+						if ("ultDescription" in this && this.ultDescription.length > 0) {
+							this._desc += ((this._desc.length > 0) ? ' - ' : '') + this.ultDescription;
+						}
+					}
+					return this._desc;
+				}
+			);
+
+			// .checked will hold the correspoding 'property' string, either none, manuallySelected, or f0-f8
+			link.checked = '';
+			link.mask = null;
+	
+			// place metalinks top
+			if ('metalink' in link) {
+				this._links.unshift(link);
+			} else {
+				this._links.push(link);
 			}
-		);
-
-		// .checked will hold the correspoding 'property' string, either none, manuallySelected, or f0-f8
-		link.checked = '';
-		link.mask = null;
-
-		// place metalinks top
-		if ('metalink' in link) {
-			this._links.unshift(link);
-		} else {
-			this._links.push(link);
-		}
-	}
+		},
+		this
+	);
 
 	// atom cache. See getAtom
 	this._atoms = {};
@@ -291,18 +287,6 @@ Tree.prototype = {
 	}
 };
 
-// little helper dept.
-// create a QueueItem as accepted by Manager
-function QueueItem(url, dir, num, desc1, desc2, mask, refPage) {
-	this.url = url;
-	this.dirSave = dir;
-	this.numIstance = num;
-	this.description = desc1;
-	this.ultDescription = desc2;
-	this.refPage = refPage;
-	this.mask = mask;
-}
-
 /**
  * Our real, kicks ass implementation of the UI
  */
@@ -403,6 +387,13 @@ var Dialog = {
 			if (++counter > 999) {
 				counter = 1;
 			}
+			
+			function prepare(link, dir, counter, mask) {
+				link.dirSave = dir;
+				link.numIstance = counter;
+				link.mask = link.mask ? link.mask : mask;
+				return link
+			}
 
 			// build the actual array holding all selected links
 			var links = this.current._links;
@@ -412,17 +403,7 @@ var Dialog = {
 				if (!link.checked.length) {
 					continue;
 				}
-				out.push(
-					new QueueItem(
-						link.url,
-						dir,
-						counter,
-						"description" in link ? link.description : "",
-						"ultDescription" in link ? link.ultDescription : "",
-						link.mask ? link.mask : mask,
-						link.refPage
-					)
-				);
+				out.push(prepare(link, dir, counter, mask));
 			}
 
 			// nothing selected. cannot start
@@ -438,7 +419,7 @@ var Dialog = {
 
 			// save the counter, queued state
 			Preferences.setDTA("counter", counter);
-			Preferences.setDTA("lastWasQueued", !notQueue);
+			Preferences.setDTA("lastqueued", !notQueue);
 			
 			var boxen = this.boxen;
 			for (var i = 0; i < boxen.length; ++i) {

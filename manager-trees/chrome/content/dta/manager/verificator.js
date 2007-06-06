@@ -102,12 +102,15 @@ Verificator.prototype = {
 	},
 	onStopRequest: function(request, c) {
 		Dialog.killTimer(this._uuid);
-		var raw = this.hash.finish(false);
-		this.hash = hexdigest(raw);
+		
+		this.download.partialSize = this.download.totalSize;
+		this.download.invalidate();
+		
+		this.hash = hexdigest(this.hash.finish(false));
 		if (this.hash != this.cmp) {
 			var act = DTA_confirm(_('verifyerrortitle'), _('verifyerrortext', [this.cmp, this.hash]), _('retry'), _('delete'), _('keep'));
 			switch (act) {
-				case 0: this.download.reDownload(); return;
+				case 0: this._delete(); this.download.reDownload(); return;
 				case 1: this._delete(); this.download.cancel(); return;
 			}
 		}

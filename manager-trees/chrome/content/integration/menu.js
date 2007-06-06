@@ -61,12 +61,13 @@ var DTA_ContextOverlay = {
 		if (!('length' in lnks)) {
 			return;
 		}
+		var known = {};
 		for (var i = 0; i < lnks.length; ++i) {
 			// remove anchor from url
 			var link = lnks[i];
 			var plink = link.href.replace(/#.*$/gi, "");
 			// if it's valid and it's new
-			if (!DTA_AddingFunctions.isLinkOpenable(plink) || plink in urls) {
+			if (!DTA_AddingFunctions.isLinkOpenable(plink) || plink in known) {
 				continue;
 			}
 				
@@ -76,26 +77,25 @@ var DTA_ContextOverlay = {
 			if (link.hasAttribute('title')) {
 				udesc = this.trim(link.getAttribute('title'));
 			}
-			
-			urls[plink] = {
+			urls.push({
 				'url': new DTA_URL(plink, doc.characterSet),
 				'refPage': ref,
 				'description': this.extractDescription(link),
 				'ultDescription': udesc,
 				'hash': DTA_getLinkPrintHash(link.hash)
-			};
-			++urls.length;
+			});
+			known[plink] = null;
 			
 			var ml = DTA_getLinkPrintMetalink(link.hash);
 			if (ml) {
-				urls[ml] = {
+				urls.push({
 					'url': new DTA_URL(ml, doc.characterSet),
 					'refPage': ref,
 					'description': '[metalink] http://www.metalinker.org/',
 					'ultDescription': '',
 					'metalink': true
-				};
-				++urls.length;
+				});
+				known[ml] = null;
 			}
 		}
 	},
@@ -106,8 +106,9 @@ var DTA_ContextOverlay = {
 		if (!lnks || !lnks.length) {
 			return;
 		}
-
-		for (var i = 0; i<lnks.length; ++i) {
+		var known = {};
+		
+		for (var i = 0; i < lnks.length; ++i) {
 			var src = lnks[i].src;
 			if (!DTA_AddingFunctions.isLinkOpenable(src)) {
 				try {
@@ -120,21 +121,22 @@ var DTA_ContextOverlay = {
 			}
 			// if it's valid and it's new
 			// better double check :p
-			if (DTA_AddingFunctions.isLinkOpenable(src) && !(src in images)) {
-				// add to array
-				var desc = '';
-				if (lnks[i].hasAttribute('alt')) {
-					desc = this.trim(lnks[i].getAttribute('alt'));
-				} else if (lnks[i].hasAttribute('title')) {
-					desc = this.trim(lnks[i].getAttribute('title'));
-				}
-				images[lnks[i].src] = {
-					'url': new DTA_URL(src, doc.characterSet),
-					'refPage': ref,
-					'description': desc
-				}
-				++images.length;
+			if (!DTA_AddingFunctions.isLinkOpenable(src) || src in known) {
+				continue;
 			}
+			var desc = '';
+			if (lnks[i].hasAttribute('alt')) {
+				desc = this.trim(lnks[i].getAttribute('alt'));
+			}
+			else if (lnks[i].hasAttribute('title')) {
+				desc = this.trim(lnks[i].getAttribute('title'));
+			}
+			images.push({
+				'url': new DTA_URL(src, doc.characterSet),
+				'refPage': ref,
+				'description': desc
+			});
+			known[src] = null;
 		}
 	},
 	
@@ -214,8 +216,8 @@ var DTA_ContextOverlay = {
 			}
 				
 
-			var urls = {length: 0};
-			var images = {length: 0};
+			var urls = [];
+			var images = [];
 			windows.forEach(
 				function(win) {
 					this.addLinks(win, urls, images, !all);
@@ -258,12 +260,6 @@ var DTA_ContextOverlay = {
 			}
 			
 			var url = gContextMenu.onLink ? cur.href : cur.src;
-			if (gContextMenu.onLink) {
-				var ml = cur.hash.match(/#!metalink3!((?:https?|ftp):.+)$/);
-				if (ml) {
-					url = ml[1];
-				}
-			}			
 			
 			if (!DTA_AddingFunctions.isLinkOpenable(url)) {
 				DTA_alert(this.getString('error'), this.getError('errornodownload'));
