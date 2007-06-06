@@ -56,6 +56,7 @@ const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 var Dialog = {
 	_lastSum: 0,
 	_initialized: false,
+	_wasRunning: false,
 	completed: 0,
 	totalbytes: 0,
 	init: function D_init() {
@@ -201,9 +202,10 @@ var Dialog = {
 		return false;
 	},
 	signal: function D_signal(download) {
-		// only close if last download was complete, meaning the queue really finished,
-		// without any user interaction or errors in between
-		if (!this._initialized || !download.is(COMPLETE)) {
+		if (download.is(RUNNING)) {
+			this._wasRunning = true;
+		}
+		if (!this._initialized || !this._wasRunning || !download.is(COMPLETE)) {
 			return;
 		}
 		try {
@@ -583,10 +585,14 @@ VisitorManager.prototype = {
 	save: function vm_save() {
 		var rv = [];
 		for (x in this._visitors) {
-			var v = {};
-			v.url = x;
-			v.values = this._visitors[x].save();
-			rv.push(v);
+			try {
+				var v = {};
+				v.url = x;
+				v.values = this._visitors[x].save();
+				rv.push(v);
+			} catch(ex) {
+				Debug.dump(x, ex);
+			}
 		}
 		return rv;
 	},
@@ -1006,6 +1012,8 @@ QueueItem.prototype = {
 			}
 		}
 		this.totalSize = this.partialSize = this.size;
+		++Dialog.completed;
+		
 		this.complete();
 	},
 	finishDownload: function QI_finishDownload(exception) {
@@ -1041,12 +1049,10 @@ QueueItem.prototype = {
 			}
 			return;
 		}
-
 		this.state = COMPLETE;
 		this.status = _("complete");
-		++Dialog.completed;
-
 		this.chunks = [];		
+		SessionManager.save(this);
 	},
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
@@ -1270,7 +1276,7 @@ QueueItem.prototype = {
 	sessionConnections: 0,
 	resumeDownload: function QI_resumeDownload() {
 		if (this.is(PAUSED)) {
-			return;
+			return false;
 		}
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat that much

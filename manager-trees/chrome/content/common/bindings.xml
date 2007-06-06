@@ -79,7 +79,7 @@
 	<binding id="saveddropdown">
 		<content>
 			<xul:vbox flex="1">
-			<xul:menulist anonid="list" editable="true" xbl:inherits="flex,tooltiptext,oninput=onchange,onselect=onchange">
+			<xul:menulist anonid="list" editable="true" xbl:inherits="readonly,disabled=readonly,flex,tooltiptext,oninput=onchange,onselect=onchange">
 				<xul:menupopup anonid="popup" xbl:inherits="onselect=onchange,oncommand=onchange"/>
 			</xul:menulist>
 			<xul:spacer flex="1"/>

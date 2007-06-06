@@ -96,25 +96,24 @@ function $() {
 	return elements;
 }
 
-if (!('merge' in Object.prototype)) {
-	Object.prototype.merge = function(that) {
-		for (let c in that) {
-			this[c] = that[c];
-		}
+function merge(me, that) {
+	for (let c in that) {
+		me[c] = that[c];
 	}
 }
 
-if (!('clone' in Object.prototype)) {
 	// not instanceof save, you know ;)
-	Object.prototype.clone = function() {
+function clone(obj) {
+	{
 		var rv = {};
-		rv.merge(this);
+		merge(rv, obj);
 		rv.prototype = this.prototype;
     rv.constructor = this.constructor;
 		return rv;
 	}
 }
-String.prototype.merge(
+merge(
+	String.prototype,
 	{ 
 		trim : function() {
 			return this.replace(/^[\s\t]+|[\s\t]+$/gi, "");

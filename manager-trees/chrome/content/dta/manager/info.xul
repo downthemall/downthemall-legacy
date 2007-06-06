@@ -22,7 +22,7 @@
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	title="&title;" 
-	id="downloadInformations" 
+	id="dTaDownloadInfo" 
 	onload="Dialog.load();" 
 	style="width:500px; margin: 0; padding: 0;"
 	buttons="accept,cancel" 
@@ -73,8 +73,12 @@
 				<label control="renaming" id="infoDestTitle" value="&mask.label;: " />
 				<hbox>
 					<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
-					<maskbutton/>
+					<maskbutton id="mask"/>
 				</hbox>
+			</row>
+			<row align="center">
+				<label control="hash" value="&checksum.value;" />
+				<textbox id="hash"/>
 			</row>
 		</rows>
 	</grid>

@@ -19,10 +19,7 @@ var Dialog = {
 		try {
 			this.canvas = $("draw").getContext("2d");
 		
-			// load dropdownns
-			this.ddDirectory = $('directory');
-			this.ddRenaming = $('renaming');
-		
+	
 			// d is an Array of Downloads
 			var downloads = window.arguments[0];
 			if (downloads.length == 1) {
@@ -31,42 +28,55 @@ var Dialog = {
 				$("sourcePage").value = d.refPage.spec;
 				$('renaming').value = d.mask;
 				$('directory').value = d.pathName;
+				$('hash').value = d.hash;
 				var caption = document.getAnonymousNodes($("logo"))[0];
 				caption.style.backgroundImage = 'url(' + getIcon(d.fileName, 'isMetaLink' in d, 32) + ')';
 				caption.style.paddingLeft = '37px';
 				this.item = d;
 				Dialog.draw();
-				return;
 			}
+			else {
+				
+				// more than just one download
+				$("infoURL").value = $("sourcePage").value = "---";
+				$("hash").setAttribute('readonly', 'true');
+	
+				var mask = downloads[0].mask;
+				$('renaming').value = 
+					downloads.every(function(e, i, a) { return e.mask == mask; })
+					? mask
+					: '';
+	
+				var dir = String(downloads[0].pathName);
+				$('directory').value = 
+					downloads.every(function(e) { return e.pathName == dir; })
+					? dir
+					: '';
+
+				var normal = this.canvas.createLinearGradient(0,0,0,16);
+				normal.addColorStop(0, 'rgba(255,255,255,50)');
+				normal.addColorStop(1, '#ECE9D8');
 			
-			// more than just one download
-			$("infoURL").value = $("sourcePage").value = "---";
-
-			var mask = downloads[0].mask;
-			$('renaming').value = 
-				downloads.every(function(e, i, a) { return e.mask == mask; })
-				? mask
-				: '';
-
-			var dir = String(downloads[0].pathName);
-			this.ddDirectory.value = 
-				downloads.every(function(e, i, a) { return String(e.pathName) == dir; })
-				? dir
-				: '';
-		
-			var normal = this.canvas.createLinearGradient(0,0,0,16);
-			normal.addColorStop(0, 'rgba(255,255,255,50)');
-			normal.addColorStop(1, '#ECE9D8');
-		
-			this.canvas.fillStyle = normal;
-			this.canvas.fillRect(0,0,300,20);
-
+				this.canvas.fillStyle = normal;
+				this.canvas.fillRect(0,0,300,20);
+					
+			}				
+			if (downloads.every(function(d) { return d.is(COMPLETE, FINISHING); })) {
+				$('directory', 'renaming', 'mask').forEach(function(e) { e.setAttribute('readonly', 'true'); });
+				$('browsedir').setAttribute('disabled', 'true');
+			}
+			if ($('directory', 'renaming', 'hash').every(function(e) { return e.hasAttribute('readonly'); })) {
+				$('dTaDownloadInfo').buttons = 'accept';
+			}			
 		} catch(ex) {
 			Debug.dump('load', ex);
 		}
 		window.setTimeout('window.sizeToContent()', 0);
 	},
 	accept: function DTA_accept() {
+		if ($('directory', 'renaming', 'hash').every(function(e) { return e.hasAttribute('readonly'); })) {
+			return true;
+		}		
 		if (!this.check()) {
 			return false;
 		}
@@ -74,10 +84,10 @@ var Dialog = {
 		var t = window.arguments[0];
 		var win = window.arguments[1];
 
-		var directory = this.ddDirectory.value.trim();
+		var directory = $('directory').value.trim();
 		directory = directory.length ? directory.addFinalSlash() : null;
 		
-		var mask = this.ddRenaming.value;
+		var mask = $('renaming').value;
 		mask = mask.length ? mask : null;
 		
 		t.forEach(
@@ -94,8 +104,19 @@ var Dialog = {
 			}
 		);
 		
+		if (t.length == 1) {
+			var d = t[0];
+			var hash = $('hash').value;
+			if (hash && d.hash != hash) {
+				d.hash = hash;
+				if (d.is(COMPLETE)) {
+					// have to manually start this guy ;)
+					d.verifyHash();
+				}
+			}
+		}
+		
 		// XXX: saveing destroys order, saving with putting new entries in the end, or as 2nd entry?
-		//['ddRenaming', 'ddDirectory'].forEach(function(e){ Dialog[e].save(); });
 		
 		return true;
 	},
@@ -157,22 +178,27 @@ var Dialog = {
 	browseDir: function DTA_browseDir() {
 		// let's check and create the directory
 		var newDir = Utils.askForDir(
-			this.ddDirectory.value,
+			$('directory').value,
 			_("validdestination")
 		);
 		if (newDir) {
-			this.ddDirectory.value = newDir;
+			$('directory').value = newDir;
 		}
 	},
 	check: function DTA_check() {
-		var dir = this.ddDirectory.value.trim();
-		if (!dir.length || !this.ddRenaming.value.trim().length) {
+		var dir = $('directory').value.trim();
+		if (!dir.length || !$('renaming').value.trim().length) {
 			return false;
 		}
 		if (!Utils.validateDir(dir)) {
 			alert(_("alertfolder"));
 			var newDir = Utils.askForDir(null, _("validdestination"));
-			this.ddDirectory.value = newDir ? newDir : '';
+			$('directory').value = newDir ? newDir : '';
+			return false;
+		}
+		var hash = $('hash').value;
+		if (hash && !DTA_checkHashFormat(hash)) {
+			alert(_('alertinfo'));
 			return false;
 		}
 		return true;

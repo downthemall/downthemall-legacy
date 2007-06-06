@@ -7,6 +7,3 @@ dialogheader .dialogheader-title {
 	padding-left: 30px !important;
 	background-image: url('chrome://dta/skin/add/add.png') !important;
 }
-textbox[readonly], textbox[readonly] * {
-	background-color: -moz-dialog;
-}
