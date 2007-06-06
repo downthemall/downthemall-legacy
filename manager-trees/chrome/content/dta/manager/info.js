@@ -169,7 +169,7 @@ var Dialog = {
 		if (!dir.length || !this.ddRenaming.value.trim().length) {
 			return false;
 		}
-		if (!Utils.isValidDir(dir)) {
+		if (!Utils.validateDir(dir)) {
 			alert(_("alertfolder"));
 			var newDir = Utils.askForDir(null, _("validdestination"));
 			this.ddDirectory.value = newDir ? newDir : '';

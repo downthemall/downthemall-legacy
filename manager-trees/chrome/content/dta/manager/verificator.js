@@ -71,7 +71,7 @@
 		catch (ex) {
 		}
 		alert("Failed to verify the file!\n" + ex);
-		download.completeDownload();
+		download.complete();
 	}
 }
 Verificator.prototype = {
@@ -95,7 +95,6 @@ Verificator.prototype = {
 	},
 	onStopRequest: function(request, c) {
 		var raw = this.hash.finish(false);
-		alert(raw.length);
 		this.hash = hexdigest(raw);
 		if (this.hash != this.cmp) {
 			var act = DTA_confirm(_('verifyerrortitle'), _('verifyerrortext', [this.cmp, this.hash]), _('retry'), _('delete'), _('keep'));
@@ -104,7 +103,7 @@ Verificator.prototype = {
 				case 1: this._delete(); this.download.cancel(); return;
 			}
 		}
-		this.download.completeDownload();
+		this.download.complete();
 	},
 	onDataAvailable: function(request, c, stream, offset, count) {
 		try {

@@ -792,7 +792,6 @@ QueueItem.prototype = {
 	isResumable: false,
 	isStarted: false,
 
-	fileManager: null,
 	_activeChunks: 0,
 	get activeChunks() {
 		return this._activeChunks;
@@ -826,8 +825,9 @@ QueueItem.prototype = {
 	},
 	get size() {
 		try {
-			if (this.fileManager.exists()) {
-				return this.fileManager.fileSize;
+			let file = new FileFactory(this.destinationFile);
+			if (file.exists()) {
+				return file.fileSize;
 			}
 		}
 		catch (ex) {
@@ -868,7 +868,10 @@ QueueItem.prototype = {
 		else if (!this.totalSize) {
 			return "0%";
 		}
-		return Math.round(this.partialSize / this.totalSize * 100) + "%";
+		else if (this.is(COMPLETE)) {
+			return "100%";
+		}
+		return Math.floor(this.partialSize / this.totalSize * 100) + "%";
 	},
 	_destinationPath: '',
 	get destinationPath() {
@@ -949,11 +952,12 @@ QueueItem.prototype = {
 			}
 			else {
 				this.tmpFile.clone().moveTo(destination, this.destinationName);
-				this.finishDownload(null);
+				this.complete();
 			}
 		}
 		catch(ex) {
-			this.finishDownload(ex);
+			Debug.dump(ex);
+			this.complete(ex);
 		}
 	},
 	handleMetalink: function QI_handleMetaLink() {
@@ -968,17 +972,12 @@ QueueItem.prototype = {
 	verifyHash: function() {
 		DTA_include("dta/manager/verificator.js");
 		new Verificator(this);
-	},	
-	finishDownload: function QI_finishDownload(exception) {
-		if (exception) {
-			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
-			Debug.dump("download::moveCompleted: Could not move file or create directory: ", exception);
-			return;
-		}
-		Debug.dump("finishDownload, connections", this.sessionConnections);
-		// create final file pointer
-		this.fileManager = new FileFactory(this.destinationFile);
-
+	},
+	customFinishEvent: function() {
+		DTA_include("dta/manager/customevent.js");
+		new CustomEvent(this);
+	},
+	setAttributes: function() {
 		if (Prefs.setTime) {
 			try {
 				var time = this.startDate.getTime();
@@ -993,7 +992,7 @@ QueueItem.prototype = {
 					throw new Components.Exception("invalid date encountered: " + time + ", will not set it");
 				}
 				// have to unwrap
-				var file = this.fileManager.clone();
+				var file = new FileFactory(this.destinationFile);
 				file.lastModifiedTime = time;
 			}
 			catch (ex) {
@@ -1001,19 +1000,30 @@ QueueItem.prototype = {
 			}
 		}
 		this.totalSize = this.partialSize = this.size;
-
-		this._completeEvents = [];
+		this.complete();
+	},
+	finishDownload: function QI_finishDownload(exception) {
+		Debug.dump("finishDownload, connections", this.sessionConnections);
+		this._completeEvents = ['moveCompleted'];
 		if (this.hash) {
 			this._completeEvents.push('verifyHash');
 		}
 		if ('isMetalink' in this) {
 			this._completeEvents.push('handleMetalink');
 		}
-		this.completeDownload();
+		this._completeEvents.push('setAttributes');
+		if (Prefs.finishEvent) {
+			this._completeEvents.push('customFinishEvent');
+		}
+		this.complete();
 	},
 	_completeEvents: [],
-	completeDownload: function QI_completeDownload() {
-				
+	complete: function QI_complete(exception) {
+		if (exception) {
+			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+			Debug.dump("complete: ", exception);
+			return;
+		}
 		if (this._completeEvents.length) {
 			let evt = this._completeEvents.shift();
 			try {
@@ -1021,7 +1031,7 @@ QueueItem.prototype = {
 			}
 			catch(ex) {
 				Debug.dump("completeEvent failed: " + evt, ex);
-				this.completeDownload();
+				this.complete();
 			}
 			return;
 		}
@@ -1252,7 +1262,22 @@ QueueItem.prototype = {
 	},
 	sessionConnections: 0,
 	resumeDownload: function QI_resumeDownload() {
-
+		
+		function cleanChunks(d) {
+			// merge finished chunks together, so that the scoreboard does not bloat that much
+			let b4 = d.chunks.length;
+			for (let i = d.chunks.length - 2; i > -1; --i) {
+				let c1 = d.chunks[i], c2 = d.chunks[i + 1];
+				if (c1.complete && c2.complete) {
+					c1.merge(c2);
+					d.chunks.splice(i + 1, 1);
+				}
+			}
+			if (b4 != d.chunks.length) {
+				Debug.dump("merged some chunks; new scoreboard:");
+				d.dumpScoreboard();
+			}
+		}
 		function downloadNewChunk(download, start, end, header) {
 			var chunk = new Chunk(download, start, end);
 			download.chunks.push(chunk);
@@ -1268,6 +1293,8 @@ QueueItem.prototype = {
 			++download.sessionConnections;
 			download.dumpScoreboard();			
 		}
+		
+		cleanChunks(this);
 
 		try {
 			if (!this.maxChunks) {
@@ -1392,10 +1419,17 @@ Chunk.prototype = {
 		return this._total - this._written;
 	},
 	get complete() {
-		return this._total == this._written;
+		return this._total == this._written || this._end == -1;
 	},
 	get parent() {
 		return this._parent;
+	},
+	merge: function CH_merge(ch) {
+		if (!this.complete && !ch.complete) {
+			throw new Error("Cannot merge incomplete chunks this way!");
+		}
+		this.end = ch.end;
+		this._written += ch._written;
 	},
 	open: function CH_open() {
 		var file = this.parent.tmpFile;
@@ -1505,7 +1539,7 @@ function Download(d, c, headerHack) {
 		try {
 			var http = this._chan.QueryInterface(Ci.nsIHttpChannel);
 			//http.setRequestHeader('Accept-Encoding', 'none', false);
-			if (c.end > 0) {
+			if (c.start > 0) {
 				http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
 			}
 			if (typeof(referrer) == 'string') {
@@ -1580,7 +1614,6 @@ Download.prototype = {
 			throw ex;
 		}
 	},
-
 	get authPrompter() {
 		try {
 			var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
@@ -1690,6 +1723,24 @@ Download.prototype = {
 			this.cancel();
 			d.chunks = d.chunks.filter(function(ch) { return ch != c; });
 			d.chunks.sort(function(a,b) { return a.start - b.start; });
+			
+			// check for overlapping ranges we might have created
+			// otherwise we'll receive a size mismatch
+			// this means that we're gonna redownload an already finished chunk...
+			//    XXX
+			//  yyyyyyy
+			for (let i = d.chunks.length - 2; i > -1; --i) {
+				let c1 = d.chunks[i], c2 = d.chunks[i + 1];
+				if (c1.end >= c2.end) {
+					if (c2.isRunning) {
+						// should never ever happen :p
+						d.fail("Internal error", "Please notify the developers that there were 'overlapping chunks'!", "Internal error (please report)");
+						return false;
+					}
+					d.chunks.splice(i + 1, 1);				
+				}
+			}
+			
 			sessionManager.save(d);
 			this.dumpScoreboard();			
 			return true;
@@ -1725,7 +1776,7 @@ Download.prototype = {
 		}
 
 		// not partial content altough we are multi-chunk
-		if (aChannel.responseStatus != 206 && c.end != 0) {
+		if (aChannel.responseStatus != 206 && c.start != 0) {
 			Debug.dump(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206... Normal mode");
 			vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
 			aChannel.visitRequestHeaders(vis);
@@ -1883,22 +1934,22 @@ Download.prototype = {
 				var tsd = d.totalSize;
 				try {
 					if (tsd) {
-						let tmp = Prefs.tempLocation;
-						if (tmp && tmp.diskSpaceAvailable < tsd) {
-							d.fail(_("ndsa"), _("spacetemp"), _("freespace"));
-							return;
+						let tmp = Prefs.tempLocation, vtmp = 0;
+						if (tmp) {
+							vtmp = Utils.validateDir(tmp);
+							if (!vtmp && vtmp.diskSpaceAvailable < tsd) {
+								d.fail(_("ndsa"), _("spacetemp"), _("freespace"));
+								return;
+							}
 						}
-						let realDest = new FileFactory(d.destinationPath);
-						if (!realDest.exists()) {
-							realDest.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
-						}
-						if (!realDest.isWritable() || (tmp && !tmp.isWritable())) {
-							throw new Components.Exception("Paths write protected");
+						let realDest = Utils.validateDir(d.destinationPath);
+						if (!realDest) {
+							throw new Error("invalid destination folder");
 						}
 						var nsd = realDest.diskSpaceAvailable;
 						// Same save path or same disk (we assume that tmp.avail == dst.avail means same disk)
 						// simply moving should succeed
-						if (d.compression && (!tmp || tmp.diskSpaceAvailable == nsd)) {
+						if (d.compression && (!tmp || vtmp.diskSpaceAvailable == nsd)) {
 							// we cannot know how much space we will consume after decompressing.
 							// so we assume factor 1.0 for the compressed and factor 1.5 for the decompressed file.
 							tsd *= 2.5;
@@ -1998,7 +2049,7 @@ Download.prototype = {
 		// if download is complete
 		if (d.is(FINISHING)) {
 			Debug.dump(d + ": Download is completed!");
-			d.moveCompleted();
+			d.finishDownload();
 		}
 		else if (d.is(RUNNING) && d.isResumable) {
 			// if all the download space has already been occupied by chunks (= !resumeDownload)
@@ -2018,7 +2069,7 @@ Download.prototype = {
 			if (d.is(RUNNING)) {
 				d.refreshPartialSize();
 
-				if (!this.isResumable) {
+				if (!this.isResumable && d.totalSize) {
 					// basic integrity check
 					if (d.partialSize > d.totalSize) {
 						d.dumpScoreboard();

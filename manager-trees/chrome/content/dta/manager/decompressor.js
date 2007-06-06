@@ -53,7 +53,7 @@ function Decompressor(download) {
 			try {
 				seekable.setEOF();
 			}
-			catch (ex) {
+			catch (exx) {
 				// no-op
 			}
 			seekable.seek(0x00, 0);
@@ -80,9 +80,10 @@ function Decompressor(download) {
 			null
 		);
 
-		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-		ios
-			.newChannelFromURI(ios.newFileURI(this.from))
+		var ios = 
+		Cc["@mozilla.org/network/io-service;1"]
+			.getService(Ci.nsIIOService);
+		ios.newChannelFromURI(ios.newFileURI(this.from))
 			.asyncOpen(converter, null);
 	}
 	catch (ex) {
@@ -97,10 +98,11 @@ function Decompressor(download) {
 				this.from.remove(false);
 			}
 		}
-		catch (ex) {
+		catch (exx) {
 			// XXX: what now?
 		}
-		download.finishDownload(ex);
+		Debug.dump("err. :p", ex);
+		download.complete(ex);
 	}
 }
 Decompressor.prototype = {
@@ -138,7 +140,7 @@ Decompressor.prototype = {
 			Debug.dump("Failed to remove tmpFile", ex);
 		}
 
-		this.download.finishDownload(this.exception);
+		this.download.complete(this.exception);
 	},
 	onDataAvailable: function(request, c, stream, offset, count) {
 		try {

@@ -324,7 +324,7 @@ var Dialog = {
 		
 		// check the directory
 		var dir = this.ddDirectory.value.trim();
-		if (!dir.length || !Utils.isValidDir(dir)) {
+		if (!dir.length || !Utils.validateDir(dir)) {
 			errors.push('directory');
 		}
 		

@@ -105,7 +105,6 @@
 					try {
 						return eval(DTA_preferences.getMultiByteDTA(this._pref, rv));
 					} catch (ex) {
-						alert(ex);
 						return eval(rv);
 					}
 				]]></getter>

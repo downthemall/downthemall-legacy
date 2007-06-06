@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-Tree = {
+var Tree = {
 	init: function T_init(elem) {
 		this.elem = elem;
 		this._downloads = [];
@@ -315,9 +315,10 @@ Tree = {
 			return;
 		}
 		try {
+			let empty = this.current == null;
 			$('info', 'remove', 'movetop', 'moveup', 'movedown', 'movebottom', 'toolmovetop', 'toolmoveup', 'toolmovedown', 'toolmovebottom')
 				.forEach(
-					function(o) { return o.setAttribute('disabled', this.current); },
+					function(o) { return o.setAttribute('disabled', empty); },
 					this
 				);
 				
@@ -333,7 +334,7 @@ Tree = {
 							
 			function modifySome(items, f) {
 				let disabled;
-				if (!Tree.current) {
+				if (empty) {
 					disabled = true;
 				}
 				else {

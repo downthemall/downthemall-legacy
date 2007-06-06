@@ -374,13 +374,12 @@ var Dialog = {
 
 		// directory and mask set?
 		if (!dir.length || !this.ddRenaming.value.trim().length) {
-			// XXX: Error message.
+			alert(_('alertinfo'));
 			return false;
 		}
 
 		// directory valid?
-		if (!Utils.isValidDir(dir))
-		{
+		if (!Utils.validateDir(dir))	{
 			alert(_("alertfolder"));
 			var newDir = Utils.askForDir(null, _("validdestination"));
 			this.ddDirectory.value = newDir ? newDir : '';

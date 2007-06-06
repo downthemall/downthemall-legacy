@@ -60,6 +60,8 @@
 	
 	setTime: true,
 	
+	finishEvent: '',
+	
 	timeout: 300,
 
 	// nsIObserver
@@ -99,7 +101,8 @@
 			'setTime',
 			'showOnlyFilenames',
 			['onConflictingFilenames', 'existing'],
-			['alertingSystem', 'alertbox']
+			['alertingSystem', 'alertbox'],
+			'finishEvent'
 		].forEach(
 			function(e) {
 				if (e instanceof Array) {
@@ -127,7 +130,8 @@
 					var profD = hash(dsp.get("ProfD", Ci.nsIFile).leafName);
 					this.tempLocation.append("dtatmp-" + profD);
 					Debug.dump(this.tempLocation.path);
-				} else {
+				}
+				else {
 					this.tempLocation = new FileFactory(this.tempLocation);
 				}
 			} catch (ex) {

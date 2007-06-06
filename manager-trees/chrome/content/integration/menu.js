@@ -63,28 +63,31 @@ var DTA_ContextOverlay = {
 		}
 		for (var i = 0; i < lnks.length; ++i) {
 			// remove anchor from url
-			var link = lnks[i].href.replace(/#.*$/gi, "");;
+			var link = lnks[i];
+			var plink = link.href.replace(/#.*$/gi, "");
 			// if it's valid and it's new
-			if (!DTA_AddingFunctions.isLinkOpenable(link) || link in urls) {
+			if (!DTA_AddingFunctions.isLinkOpenable(plink) || plink in urls) {
 				continue;
 			}
 				
 			/// XXX: title is also parsed by extractDescription
 			/// XXX: is this instance necessary?
 			var udesc = '';
-			if (lnks[i].hasAttribute('title')) {
-				udesc = this.trim(lnks[i].getAttribute('title'));
+			if (link.hasAttribute('title')) {
+				udesc = this.trim(link.getAttribute('title'));
 			}
-			urls[link] = {
-				'url': new DTA_URL(link, doc.characterSet),
+			
+			urls[plink] = {
+				'url': new DTA_URL(plink, doc.characterSet),
 				'refPage': ref,
-				'description': this.extractDescription(lnks[i]),
-				'ultDescription': udesc
+				'description': this.extractDescription(link),
+				'ultDescription': udesc,
+				'hash': DTA_getLinkPrintHash(link.hash)
 			};
 			++urls.length;
 			
-			var ml = lnks[i].hash.match(/#!metalink3!((?:https?|ftp):.+)$/);
-			if (ml && !((ml = ml[1]) in urls)) {
+			var ml = DTA_getLinkPrintMetalink(link.hash);
+			if (ml) {
 				urls[ml] = {
 					'url': new DTA_URL(ml, doc.characterSet),
 					'refPage': ref,
