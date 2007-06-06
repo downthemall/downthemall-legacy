@@ -105,7 +105,7 @@ var MigrationService = {
 				.getService(Components.interfaces.nsIWindowWatcher)
     		.openWindow(
 	    		null,
-	    		"chrome://dtahelp/content/notice.xul",
+	    		"chrome://dta/content/about/notice.xul",
 	    		"_blank",
 	    		"chrome,centerscreen,all,alwaysRaised,dialog,modal",
 	    		params

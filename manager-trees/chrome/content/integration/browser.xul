@@ -40,8 +40,8 @@
 				<menuitem id="dta-tb-dta" label="DownThemAll!" onclick="DTA_ContextOverlay.findLinks();" image="chrome://dta/skin/common/dta.png" class="menuitem-iconic"/>
 				<menuitem id="dta-tb-turbo" label="dtaOneClick!" onclick="DTA_ContextOverlay.findLinks(true);" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
 				<menuseparator/>
-				<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all;)" onclick="DTA_ContextOverlay.findLinks(false, true);" image="chrome://dta/skin/common/dta.png" class="menuitem-iconic"/>
-				<menuitem id="dta-tb-allturbo" label="dtaOneClick! (&dta-tb-all;)" onclick="DTA_ContextOverlay.findLinks(true, true);" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
+				<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all.label;)" onclick="DTA_ContextOverlay.findLinks(false, true);" image="chrome://dta/skin/common/dta.png" class="menuitem-iconic"/>
+				<menuitem id="dta-tb-allturbo" label="dtaOneClick! (&dta-tb-all.label;)" onclick="DTA_ContextOverlay.findLinks(true, true);" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
 				<menuseparator/>
 				<menuitem id="dta-tb-manager" label="&dta-manager-button;" onclick="DTA_AddingFunctions.openManager();" image="chrome://dta/skin/common/box.png" class="menuitem-iconic"/>
 			</menupopup>
@@ -73,11 +73,11 @@
 				<menuseparator />
 
 				<menuitem id="dta-pref-tool" oncommand="DTA_showPreferences();"
-					label="&submenu-dta-pref.label;" image="chrome://dta/skin/common/prefs.png" class="menuitem-iconic" />
-				<menuitem id="dta-help-tool" oncommand="openHelp('introduction','chrome://dtahelp/content/help.rdf');"
-					label="&dta-help-tool.label;" image="chrome://dta/skin/common/help.png" class="menuitem-iconic" />	
+					label="&dta-pref.label;" image="chrome://dta/skin/common/prefs.png" class="menuitem-iconic" />
+				<menuitem id="dta-help-tool" oncommand="openHelp('introduction','chrome://dta-help/content/help.rdf');"
+					label="&dta-help.label;" image="chrome://dta/skin/common/help.png" class="menuitem-iconic" />	
 				<menuitem id="dta-about" oncommand="window.openDialog('chrome://dta/content/about/about.xul','_blank','chrome,centerscreen,modal');"
-					label="&about;" image="chrome://dta/skin/common/about.png" class="menuitem-iconic" />
+					label="&dta-about.label;" image="chrome://dta/skin/common/about.png" class="menuitem-iconic" />
 			</menupopup>
 		</menu>
 	</menupopup>

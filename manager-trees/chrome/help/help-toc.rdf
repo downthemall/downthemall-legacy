@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE toc SYSTEM "chrome://dtahelp/content/help.dtd">
+<!DOCTYPE toc SYSTEM "chrome://dta-help/content/help.dtd">
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:nc="http://home.netscape.com/NC-rdf#">
   <Description about="urn:root">

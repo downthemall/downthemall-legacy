@@ -1,7 +1,5 @@
-<!ENTITY dtaCtxPref.label "DownThemAll! preferences">
-
-<!ENTITY about "About...">
-<!ENTITY submenu-dta-pref.label "Preferences...">
+<!ENTITY dta-pref.label "Preferences">
+<!ENTITY dta-about.label "About dTa!">
+<!ENTITY dta-help.label "Help Contents">
 <!ENTITY dta-manager-button "dTa! Manager">
-<!ENTITY dta-help-tool.label "Help...">
-<!ENTITY dta-tb-all "All window tabs">
+<!ENTITY dta-tb-all.label "All tabs">

@@ -41,5 +41,5 @@
 		}
 		window.addEventListener('DOMContentLoaded', load, false);
 	]]></script>
-	<iframe id="frame" src="about.html" flex="1"/>
+	<iframe id="frame" src="chrome://dta-help/content/about.html" flex="1"/>
 </dialog>

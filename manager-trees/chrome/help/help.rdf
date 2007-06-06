@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<!DOCTYPE RDF SYSTEM "chrome://dtahelp/content/help.dtd">
+<!DOCTYPE RDF SYSTEM "chrome://dta-help/content/help.dtd">
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:nc="http://home.netscape.com/NC-rdf#">
     <rdf:Description about="urn:root"
       nc:title="&help.title;"
       nc:defaulttopic="Select"
-      nc:base="chrome://dtahelp/content/">
+      nc:base="chrome://dta-help/content/">
     <nc:panellist>
       <rdf:Seq>
         <rdf:li> <rdf:Description nc:panelid="glossary" nc:datasources=""/> </rdf:li>
