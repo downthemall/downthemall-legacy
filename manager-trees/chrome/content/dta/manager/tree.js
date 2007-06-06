@@ -223,7 +223,7 @@ var Tree = {
 				this
 			);
 		}
-		sessionManager.beginUpdate();
+		SessionManager.beginUpdate();
 		this.beginUpdate();
 		ids.forEach(
 			function(d) {
@@ -231,7 +231,7 @@ var Tree = {
 				if (!d.is(COMPLETE, CANCELED)) {
 					d.cancel();
 				}
-				sessionManager.deleteDownload(d);
+				SessionManager.deleteDownload(d);
 				this._downloads.splice(d._tid, 1);
 				delete d._tid;
 			},
@@ -239,7 +239,7 @@ var Tree = {
 		);
 		this.invalidate();
 		this.endUpdate();
-		sessionManager.endUpdate();
+		SessionManager.endUpdate();
 	},
 	removeCompleted: function T_removeCompleted() {
 		let list = [];

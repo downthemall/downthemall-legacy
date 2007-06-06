@@ -64,7 +64,7 @@ var Dialog = {
 	
 		document.getElementById("dtaHelp").hidden = !("openHelp" in window);
 	
-		sessionManager.init();
+		SessionManager.init();
 	
 		if ("arguments" in window) {
 			startnewDownloads(window.arguments[0], window.arguments[1]);
@@ -103,6 +103,7 @@ var Dialog = {
 					}
 					i.lastBytes = d.partialSize;
 					sum += i.d.partialSize;
+					SessionManager.save(d);
 				}
 			);
 			let speed = Math.round((sum - this._lastSum) * REFRESH_NFREQ);
@@ -231,7 +232,7 @@ var Dialog = {
 				}
 			}
 
-			sessionManager.save();
+			SessionManager.save();
 			if (Prefs.autoClose) {
 				Dialog.close();
 			}
@@ -290,7 +291,7 @@ var Dialog = {
 			return false;
 		}
 		// alright, we left the loop.. shutdown complete ;)
-		sessionManager.save();
+		SessionManager.save();
 		self.close();
 		return true;		
 	},
@@ -1741,7 +1742,7 @@ Download.prototype = {
 				}
 			}
 			
-			sessionManager.save(d);
+			SessionManager.save(d);
 			this.dumpScoreboard();			
 			return true;
 		}
@@ -1770,7 +1771,7 @@ Download.prototype = {
 					_("failed", [file]) + " " + _("sra", [code]) + ": " + status,
 					_("error", [code])
 				);
-				sessionManager.save(d);
+				SessionManager.save(d);
 			}
 			return;
 		}
@@ -2023,7 +2024,7 @@ Download.prototype = {
 				Debug.dump(d + ": All old chunks are now finished, reDownload()");
 				d.reDownload();
 			}
-			sessionManager.save(d);
+			SessionManager.save(d);
 			Debug.dump("out2");
 			return;
 		}
@@ -2055,7 +2056,7 @@ Download.prototype = {
 			// if all the download space has already been occupied by chunks (= !resumeDownload)
 			d.resumeDownload();
 		}
-		sessionManager.save(d);
+		SessionManager.save(d);
 	},
 
 	// nsIProgressEventSink
@@ -2136,7 +2137,7 @@ function startnewDownloads(notQueue, download) {
 	}
 
 	// full save
-	sessionManager.save();
+	SessionManager.save();
 
 	if (Preferences.getDTA("closetab", false)) {
 		try {

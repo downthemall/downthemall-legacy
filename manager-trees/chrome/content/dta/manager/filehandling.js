@@ -34,14 +34,25 @@
  *
  * ***** END LICENSE BLOCK ***** */
  var FileHandling = {
+ 	get _uniqueList() {
+ 		let u = {};
+ 		for (d in Tree.selected) {
+ 			if (d.is(COMPLETE)) {
+ 				let f = d.destinationFile;
+ 				if (SYSTEMSLASH == "\\") {
+ 					f = f.toLowerCase();	
+ 				}
+ 				if (!(f in u)) {
+ 					u[f] = null;
+ 					yield d;
+ 				}
+ 			}
+ 		}
+ 	},
 	openFolder: function() {
-		for (d in Tree.selected) {
+		for (d in this._uniqueList) {
 			try {
-				if (d.is(COMPLETE)) {
-					OpenExternal.reveal(d.destinationFile);
-				} else {
-					OpenExternal.reveal(d.destinationPath);
-				}
+				OpenExternal.reveal(d.destinationFile);
 			} catch (ex) {
 				Debug.dump('reveal', ex);
 			}
@@ -61,12 +72,10 @@
 	deleteFile: function() {
 		var list = [];
 		
-		for (d in Tree.selected) {
-			if (d.is(COMPLETE)) {
-				var file = new FileFactory(d.destinationFile);
-				if (file.exists()) {
-					list.push(d);
-				}
+		for (d in this._uniqueList) {
+			var file = new FileFactory(d.destinationFile);
+			if (file.exists()) {
+				list.push(d);
 			}
 		}
 		if (!list.length) {
@@ -98,8 +107,7 @@
 					}
 				}
 			);
-			Tree.remove(list);
-			Tree.selection.clearSelection();
+			Tree.remove();
 		}
 	}
 };

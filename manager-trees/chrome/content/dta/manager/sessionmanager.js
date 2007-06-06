@@ -36,7 +36,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
- var sessionManager = {
+ var SessionManager = {
 
 	init: function() {
 		this._con = Cc["@mozilla.org/storage/service;1"]
