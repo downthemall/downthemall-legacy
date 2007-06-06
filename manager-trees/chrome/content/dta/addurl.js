@@ -39,7 +39,7 @@ const Ci = Components.interfaces;
 
 var dropDowns = {};
 
-function QueueItem(url, num) {
+function QueueItem(url, num, hash) {
 	if (!(url instanceof DTA_URL) || !DTA_AddingFunctions.isLinkOpenable(url)) {
 		throw new Components.Exception('invalid url');
 	}
@@ -50,6 +50,7 @@ function QueueItem(url, num) {
 	this.ultDescription = '';
 	this.mask = Dialog.ddRenaming.value;
 	this.dirSave = Dialog.ddDirectory.value;
+	this.hash = hash;
 }
 
 function Literal(str) {
@@ -223,6 +224,7 @@ var Dialog = {
 			var address = $('URLaddress');
 			
 			// if we've been called by DTA_AddingFunctions.saveSingleLink()
+			var hash = null;
 			if (window.arguments) {
 				var a = window.arguments[0];
 				var url = a.url;
@@ -253,8 +255,8 @@ var Dialog = {
 				if (a.mask) {
 					this.ddRenaming.value = a.mask;
 				}
+				hash = a.hash;
 			}
-			
 			// check if there's some URL in clipboard
 			else {
 				var clip = Cc["@mozilla.org/widget/clipboard;1"].getService(Ci.nsIClipboard);
@@ -273,7 +275,8 @@ var Dialog = {
 						str = str.value.QueryInterface(Ci.nsISupportsString);
 						str = str.data;
 						if (str.length && DTA_AddingFunctions.isLinkOpenable(str)) {
-							address.value = str;
+							hash = DTA_getLinkPrintHash(str);
+							address.value = str.replace(/#.*$/, '');
 							address.select();
 						}
 					}
@@ -281,6 +284,9 @@ var Dialog = {
 				catch (ex) {
 					Debug.dump("Not able to gather data from the clipboard!");
 				}
+			}
+			if (hash) {
+				$('hash').value = hash;
 			}
 			
 			this.check();
@@ -340,14 +346,31 @@ var Dialog = {
 			url = address._realURL;
 		}
 		else if (url.length && DTA_AddingFunctions.isLinkOpenable(url)) {
+			var hash = DTA_getLinkPrintHash(url);
+			if (hash) {
+				$('hash').value = hash;
+			}
+			url = url.replace(/#.*$/, '');
+			address.value = url;
 			url = new DTA_URL(url);
 		}
 		else {
 			errors.push('URLaddress');
 		}
 		
+		var hash = $('hash').value; 
+		if (hash && !DTA_checkHashFormat(hash)) {
+			errors.push('hash');
+		}
+				
 		if (errors.length) {
-			errors.forEach(function(e) { var style = $(e).inputField.style; style.backgroundColor = 'red'; style.color = 'white'; });
+			errors.forEach(
+				function(e) {
+					var style = $(e).inputField.style;
+					style.backgroundColor = 'red';
+					style.color = 'white';
+				}
+			);
 			return false;
 		}		
 
@@ -371,15 +394,15 @@ var Dialog = {
 			if (rv == 0) {
 				batch = batch.getURLs(function(aURL) { return new QueueItem(new DTA_URL(aURL), num); });
 			}
-			else if (rv == 2) {
-				batch = [new QueueItem(url, num)];
+			else if (rv == 1) {
+				batch = [new QueueItem(url, num, hash)];
 			}
 			else {
 				return false;
 			}
 		}
 		else {
-			batch = [new QueueItem(url, num)];
+			batch = [new QueueItem(url, num, hash)];
 		}
 		DTA_AddingFunctions.sendToDown(queue, batch);
 

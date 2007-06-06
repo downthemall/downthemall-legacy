@@ -73,14 +73,6 @@ function _atos(data) {
 	return String(data);
 }
 
-// From prototype.js :)
-function objectExtend(destination, source) {
-	for (property in source) {
-		destination[property] = source[property];
-	}
-	return destination;
-}
-
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!
  * @param ids One of more Ids
@@ -104,76 +96,94 @@ function $() {
 	return elements;
 }
 
-objectExtend(String.prototype, 
-{ 
-	trim : function() {
-		return this.replace(/^[\s\t]+|[\s\t]+$/gi, "");
-	},
-	removeBadChars : function() {
-		return this
-			.replace(/[\?\:<>\*\|"]/g, "_")
-			.replace(/%(?:25)?20/g, " ");
-	},
-	addFinalSlash : function() {
-		if (this.length == 0) return new String(SYSTEMSLASH);
-		
-		if (this[this.length - 1] != SYSTEMSLASH)
-			return this + SYSTEMSLASH;
-		else
-			return this;
-	},
-	removeFinalChar : function(c) {
-		if (this.length == 0) {
-			return this;
+if (!('merge' in Object.prototype)) {
+	Object.prototype.merge = function(that) {
+		for (let c in that) {
+			this[c] = that[c];
 		}
-		if (this[this.length - 1] == c) {
-			return this.substring(0, this.length - 1);
-		}
-		return this;
-	},
-	removeLeadingChar : function(c) {
-		if (this.length == 0) {
-			return this;
-		}
-		if (this[0] == c) {
-			return this.slice(1);
-		}
-		return this;
-	},
-	removeFinalSlash : function() {
-		return this.removeFinalChar(SYSTEMSLASH);
-	},
-	removeLeadingSlash : function() {
-		return this.removeLeadingChar(SYSTEMSLASH);
-	},
-	removeFinalBackSlash : function() {
-		return this.removeFinalChar("/");
-	},
-	removeLeadingBackSlash : function() {
-		return this.removeLeadingChar("/");
-	},
-	removeArguments : function() {
-		return this.replace(/[\?#].*$/g, "");
-	},
-	getUsableFileName : function() {
-		var t = this.trim().removeArguments().removeFinalBackSlash().split("/");
-		return t[t.length-1].removeBadChars().replace(/[\\/]/g, "").trim();
-	},
-	getExtension : function() {
-		var name = this.getUsableFileName();
-		var c = name.lastIndexOf('.');
-		if (c == -1) {
-			return null;
-		}
-		return name.slice(c+1);
-	},
-	cropCenter : function(newLength) {
-		if (this.length > newLength) {
-			return this.substring(0, newLength / 2) + "..." + this.substring(this.length - newLength / 2, this.length);
-		}
-		return this;
 	}
 }
+
+if (!('clone' in Object.prototype)) {
+	// not instanceof save, you know ;)
+	Object.prototype.clone = function() {
+		var rv = {};
+		rv.merge(this);
+		rv.prototype = this.prototype;
+    rv.constructor = this.constructor;
+		return rv;
+	}
+}
+String.prototype.merge(
+	{ 
+		trim : function() {
+			return this.replace(/^[\s\t]+|[\s\t]+$/gi, "");
+		},
+		removeBadChars : function() {
+			return this
+				.replace(/[\?\:<>\*\|"]/g, "_")
+				.replace(/%(?:25)?20/g, " ");
+		},
+		addFinalSlash : function() {
+			if (this.length == 0) return new String(SYSTEMSLASH);
+			
+			if (this[this.length - 1] != SYSTEMSLASH)
+				return this + SYSTEMSLASH;
+			else
+				return this;
+		},
+		removeFinalChar : function(c) {
+			if (this.length == 0) {
+				return this;
+			}
+			if (this[this.length - 1] == c) {
+				return this.substring(0, this.length - 1);
+			}
+			return this;
+		},
+		removeLeadingChar : function(c) {
+			if (this.length == 0) {
+				return this;
+			}
+			if (this[0] == c) {
+				return this.slice(1);
+			}
+			return this;
+		},
+		removeFinalSlash : function() {
+			return this.removeFinalChar(SYSTEMSLASH);
+		},
+		removeLeadingSlash : function() {
+			return this.removeLeadingChar(SYSTEMSLASH);
+		},
+		removeFinalBackSlash : function() {
+			return this.removeFinalChar("/");
+		},
+		removeLeadingBackSlash : function() {
+			return this.removeLeadingChar("/");
+		},
+		removeArguments : function() {
+			return this.replace(/[\?#].*$/g, "");
+		},
+		getUsableFileName : function() {
+			var t = this.trim().removeArguments().removeFinalBackSlash().split("/");
+			return t[t.length-1].removeBadChars().replace(/[\\/]/g, "").trim();
+		},
+		getExtension : function() {
+			var name = this.getUsableFileName();
+			var c = name.lastIndexOf('.');
+			if (c == -1) {
+				return null;
+			}
+			return name.slice(c+1);
+		},
+		cropCenter : function(newLength) {
+			if (this.length > newLength) {
+				return this.substring(0, newLength / 2) + "..." + this.substring(this.length - newLength / 2, this.length);
+			}
+			return this;
+		}
+	}
 );
 
 var Utils = {

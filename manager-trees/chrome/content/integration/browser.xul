@@ -20,8 +20,8 @@
 	<toolbarpalette id="BrowserToolbarPalette"> 
 		<toolbarbutton 
 			id="dta-turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1"
-			ondragover="nsDragAndDrop.dragOver(event, dragObserverTdTa);"
-			ondragdrop="nsDragAndDrop.drop(event, dragObserverTdTa);"
+			ondragover="nsDragAndDrop.dragOver(event, DTA_DropTDTA);"
+			ondragdrop="nsDragAndDrop.drop(event, DTA_DropTDTA);"
 			oncommand="DTA_ContextOverlay.findLinks(true);"
 			label="dTaOneClick!"
 			tooltiptext="dTaOneClick!"
@@ -29,8 +29,8 @@
 		<toolbarbutton
 			id="dta-button"
 			class="chromeclass-toolbar-additional toolbarbutton-1" 
-			ondragover="nsDragAndDrop.dragOver(event, dragObserverdTa);"
-			ondragdrop="nsDragAndDrop.drop(event, dragObserverdTa);"
+			ondragover="nsDragAndDrop.dragOver(event, DTA_DropDTA);"
+			ondragdrop="nsDragAndDrop.drop(event, DTA_DropDTA);"
 			oncommand="if (event.target == this) DTA_ContextOverlay.findLinks(false);"
 			label="DownThemAll!"
 			tooltiptext="DownThemAll!"

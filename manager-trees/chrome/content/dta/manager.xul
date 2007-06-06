@@ -25,8 +25,8 @@
 	onunload="return Dialog.close();" 
 	onclose="return Dialog.close();" 
 	persist="width height screenX screenY" 
-	ondragover="nsDragAndDrop.dragOver(event,dragObserverTdTa)"  
-	ondragdrop="nsDragAndDrop.drop(event,dragObserverTdTa)"
+	ondragover="nsDragAndDrop.dragOver(event, DTA_DropDTA);"  
+	ondragdrop="nsDragAndDrop.drop(event, DTA_DropDTA);"
 	>
 	
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />

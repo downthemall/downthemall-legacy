@@ -318,47 +318,34 @@ DTA_URL.prototype = {
 	}
 };
 
-var dragObserverTdTa = {
-	getSupportedFlavours: function () {
+function DTA_DropProcessor(func) {
+	this.func = func;
+};
+DTA_DropProcessor.prototype = {
+	getSupportedFlavours: function() {
 		var flavours = new FlavourSet ();
 		flavours.appendFlavour("text/x-moz-url");
 		return flavours;
 	},
-	onDragOver: function(evt,flavour,session) {},
-	onDrop: function (evt,dropdata,session) {
-		if (dropdata != "") {
-			var url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
-			DTA_AddingFunctions.saveSingleLink(
-				true,
-				url,
-				document.commandDispatcher.focusedWindow.document.URL
-					? document.commandDispatcher.focusedWindow.document.URL
-					: DTA_Mediator.getMostRecentURL(),
-				""
-				);
-		}
-	}
-};
-var dragObserverdTa = {
-	getSupportedFlavours: function () {
-		var flavours = new FlavourSet ();
-    	flavours.appendFlavour("text/x-moz-url");
-		return flavours;
+	onDragOver: function(evt,flavour,session) {
 	},
-	onDragOver: function(evt,flavour,session) {},
 	onDrop: function (evt,dropdata,session) {
-		if (dropdata != "") {
-			var url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
-			DTA_AddingFunctions.saveSingleLink(
-				false,
-				url, document.commandDispatcher.focusedWindow.document.URL
-					? document.commandDispatcher.focusedWindow.document.URL
-					: DTA_Mediator.getMostRecentURL(),
-				""
-			);
+		if (!dropdata) {
+			return;
 		}
+		var url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
+		var doc = document.commandDispatcher.focusedWindow.document;
+		url = new DTA_URL(url, doc.characterSet);
+		var ref = doc.URL;
+		if (!ref) {
+			ref = DTA_Mediator.getMostRecentURL();
+		}
+		this.func(url, ref);
 	}
 };
+
+var DTA_DropTDTA = new DTA_DropProcessor(function(url, ref) { DTA_AddingFunctions.saveSingleLink(true, url, ref); });
+var DTA_DropDTA = new DTA_DropProcessor(function(url, ref) { DTA_AddingFunctions.saveSingleLink(false, url, ref); });
 
 function DTA_AdditionalMatcher(str, regex) {
 	this._str = str;
@@ -429,7 +416,7 @@ var DTA_AddingFunctions = {
 		return this.ios.newURI(rel, doc.characterSet, this.ios.newURI(base, doc.characterSet, null)).spec;
 	},
 
-	saveSingleLink : function(turbo, url, referrer, description, mask) {
+	saveSingleLink : function(turbo, url, referrer, description) {
 		var hash = null;		
 		var ml = DTA_getLinkPrintMetalink(url.url);
 		if (ml) {
