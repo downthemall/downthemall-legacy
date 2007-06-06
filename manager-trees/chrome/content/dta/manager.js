@@ -981,7 +981,7 @@ QueueItem.prototype = {
 	},
 	customFinishEvent: function() {
 		DTA_include("dta/manager/customevent.js");
-		new CustomEvent(this);
+		new CustomEvent(this, Prefs.finishEvent);
 	},
 	setAttributes: function() {
 		if (Prefs.setTime) {

@@ -34,20 +34,32 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-function CustomEvent(download) {
+function CustomEvent(download, command) {
  	try {
- 		var args = Prefs.finishEvent.split(' ').map(
- 			function(arg, i) {
- 				arg = arg.replace(/^["']|["']$/g, '');
+ 		// may I introduce you to a real bastard way of commandline parsing?! :p
+ 		var uuids = {};
+ 		function callback(u) {
+ 			u = u.slice(1, u.length - 2);
+ 			id = newUUIDString();
+ 			uuids[id] = u;
+ 			return id;
+ 		}
+ 		function mapper(arg, i) {
  				if (arg == "%f") {
  					if (i == 0) {
  						throw new Components.Exception("Will not execute the file itself");
  					}
  					arg = download.destinationFile;
  				}
+ 				else if (arg in uuids) {
+ 					arg = uuids[arg];
+ 				}
  				return arg;
- 			}
- 		);
+ 		}
+ 		var args = command
+ 			.replace(/(["'])(.*?)\1/g, callback)
+ 			.split(/ /g)
+ 			.map(mapper);
  		var program = new FileFactory(args.shift());
 		var process = Cc["@mozilla.org/process/util;1"]
     	.createInstance(Ci.nsIProcess);
