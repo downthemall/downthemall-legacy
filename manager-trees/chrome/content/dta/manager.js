@@ -752,8 +752,13 @@ QueueItem.prototype = {
 		return this._hash;
 	},
 	set hash(nv) {
-		return this._hash = nv;
-	},	
+		this._hash = nv;
+		this._prettyHash = this.hash ? _('prettyhash', [DTA_checkHashFormat(this.hash), this.hash]) : _('nas');
+	},
+	_prettyHash: null,
+	get prettyHash() {
+		return this._prettyHash;
+	},
 
 	/**
 	 *Takes one or more state indicators and returns if this download is in state of any of them
@@ -2065,6 +2070,9 @@ function startnewDownloads(notQueue, download) {
 		);
 		if ('hash' in e && e.hash) {
 			d.hash = e.hash;
+		}
+		else {
+			d.hash = null; // to initialize prettyHash 
 		}
 		d.state = notQueue ? QUEUED : PAUSED;
 		if (d.is(QUEUED)) {

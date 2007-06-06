@@ -518,12 +518,7 @@ var DTA_AddingFunctions = {
 					continue;
 				}
 
-				links.push({
-					url : arrayObject[i].url,
-					description : arrayObject[i].description,
-					ultDescription : arrayObject[i].ultDescription,
-					refPage : arrayObject[i].refPage
-				});
+				links.push(arrayObject[i]);
 			}
 
 			DTA_debug.dump("saveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
@@ -712,6 +707,87 @@ var DTA_Mediator = {
 		}
 	}
 };
+
+/**
+ * Checks if a provided strip has the correct hash format
+ * Supported are: md5, sha1, sha256, sha384, sha512
+ * @param hash Hash to check
+ * @return hash type or null
+ */
+function DTA_checkHashFormat(hash) {
+	if (typeof(hash) != 'string' && !(hash instanceof String)) {
+		return null;
+	}
+	var type = null;
+	switch(hash.length) {
+		case 32: type = 'MD5'; break;
+		case 40: type = 'SHA1'; break;
+		case 64: type = 'SHA256'; break;
+		/* Currently broken: https://bugzilla.mozilla.org/show_bug.cgi?id=383390
+		case 96: type = 'SHA384'; break;
+		case 128: type = 'SHA512'; break;*/
+		default: return null;
+	}
+	if (isNaN(parseInt(hash, 16))) {
+		type = null;
+	}
+	return type;
+}
+/**
+ * Get a link-fingerprint hash from an url (or just the hash component
+ * @param url. Either String or nsIURI
+ * @return Valid hash string or null
+ */
+function DTA_getLinkPrintHash(url) {
+	if (url instanceof Components.interfaces.nsIURL) {
+		url = url.ref;
+	}
+	else if (url instanceof Components.interfaces.nsIURI) {
+		url = url.spec;
+	}
+	else if (typeof(url) != 'string' && !(url instanceof String)) {
+		return null;
+	}
+	
+	var lp = url.match(/#!(?:md5|sha(?:1|256|384|512)|hash)([\da-f]+)$/i);
+	if (lp) {
+		var rv = lp[1].toLowerCase();
+		if (DTA_checkHashFormat(rv)) {
+			return rv;
+		}
+	}
+	return null;
+}
+
+/**
+ * Get a link-fingerprint metalink from an url (or just the hash component
+ * @param url. Either String or nsIURI
+ * @param charset. Optional. Charset of the orgin link and link to be created
+ * @return Valid hash string or null
+ */
+function DTA_getLinkPrintMetalink(url, charset) {
+	if (url instanceof Components.interfaces.nsIURL) {
+		url = url.ref;
+	}
+	else if (url instanceof Components.interfaces.nsIURI) {
+		url = url.spec;
+	}
+	else if (typeof(url) != 'string' && !(url instanceof String)) {
+		return null;
+	}
+	
+	var lp = url.match(/#!metalink3!((?:https?|ftp):.+)$/);
+	if (lp) {
+		var rv = lp[1];
+		try {
+			return DTA_AddingFunctions.ios.newURI(rv, charset, null).spec;
+		}
+		catch (ex) {
+			// not a valid link, ignore it.
+		}
+	}
+	return null;
+}
 
 /**
  * wrapper around confirmEx

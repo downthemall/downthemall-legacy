@@ -25,6 +25,7 @@
 <!ENTITY avgSpeedTitle.value "Average Speed:">
 <!ENTITY path.label "Save path">
 <!ENTITY mask.label "Renaming Mask">
+<!ENTITY hash.label "Checksum">
 
 <!ENTITY infos.label "Download information">
 <!ENTITY launch.label "Open file">

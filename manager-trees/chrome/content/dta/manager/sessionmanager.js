@@ -75,6 +75,7 @@
 			'isResumable',
 			'mask',
 			'pathName',
+			'hash'	
 		].forEach(
 			function(u) {
 				e[u] = d[u];
@@ -199,6 +200,7 @@
 					'state',
 					'partialSize',
 					'totalSize',
+					'hash'
 				].forEach(
 					function(e) {
 						d[e] = get(e);

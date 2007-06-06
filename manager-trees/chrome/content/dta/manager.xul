@@ -203,13 +203,15 @@
 				<splitter class="tree-splitter"/>
 				<treecol id="status" label="&time.label;" ordinal="5" flex="10" persist="width ordinal hidden"/>
 				<splitter class="tree-splitter"/>
+				<treecol id="speed" label="&speed.label;" ordinal="6" flex="10" persist="width ordinal hidden"/>
+				<splitter class="tree-splitter"/>
 				<treecol id="parts" label="&parts.label;" ordinal="7" flex="4" persist="width ordinal hidden" style="text-align:center;"/>
 				<splitter class="tree-splitter"/>
 				<treecol id="mask" label="&mask.label;" ordinal="8" hidden="true" crop="left" flex="8" persist="width ordinal hidden" />
 				<splitter class="tree-splitter"/>
 				<treecol id="path" label="&path.label;" ordinal="9" hidden="true" crop="center" flex="15" persist="width ordinal hidden" />
 				<splitter class="tree-splitter"/>
-				<treecol id="speed" label="&speed.label;" ordinal="6" flex="10" persist="width ordinal hidden"/>
+				<treecol id="hash" label="&hash.label;" ordinal="10" hidden="true" flex="3" persist="width ordinal hidden"/>
 			</treecols>
 			<treechildren tooltip="tooltip">
 			</treechildren>

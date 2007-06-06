@@ -43,11 +43,12 @@
 	download.state = FINISHING;
 	download.status =  _("verify");
 	try {
-		switch (this.cmp.length) {
-			case 32: this.type = this.CH.MD5; break;
-			case 40: this.type = this.CH.SHA1; break;
-			default: throw new Components.Exception("hash method unsupported!");
+		this.type = DTA_checkHashFormat(this.cmp);
+		if (!(this.type in this.CH)) {
+			throw new Components.Exception("hash method unsupported!");
 		}
+		this.type = this.CH[this.type];
+		
 		this.hash = Cc["@mozilla.org/security/hash;1"]
 			.createInstance(this.CH);
 		this.hash.init(this.type);
@@ -93,7 +94,9 @@ Verificator.prototype = {
 	onStartRequest: function(r, c) {
 	},
 	onStopRequest: function(request, c) {
-		this.hash = hexdigest(this.hash.finish(false));
+		var raw = this.hash.finish(false);
+		alert(raw.length);
+		this.hash = hexdigest(raw);
 		if (this.hash != this.cmp) {
 			var act = DTA_confirm(_('verifyerrortitle'), _('verifyerrortext', [this.cmp, this.hash]), _('retry'), _('delete'), _('keep'));
 			switch (act) {

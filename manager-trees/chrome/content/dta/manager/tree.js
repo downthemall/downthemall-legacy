@@ -92,10 +92,11 @@ Tree = {
 			case 1: return d.percent;
 			case 3: return d.dimensionString;
 			case 4: return d.status;
-			case 5: return d.parts;
-			case 6: return d.mask;
-			case 7: return d.destinationPath;
-			case 8: return d.speed;
+			case 5: return d.speed;
+			case 6: return d.parts;
+			case 7: return d.mask;
+			case 8: return d.destinationPath;
+			case 9: return d.prettyHash;
 		}
 		return '';
 	},
@@ -310,7 +311,7 @@ Tree = {
 		this.endUpdate();
 	},	
 	refreshTools: function T_refreshTools(d) {
-		if (this._updating || (d && !this.selection.isSelected(d._tid))) {
+		if (this._updating || (d && ('_tid' in d) && !this.selection.isSelected(d._tid))) {
 			return;
 		}
 		try {
@@ -331,7 +332,7 @@ Tree = {
 			}
 							
 			function modifySome(items, f) {
-				let disabled; 
+				let disabled;
 				if (!Tree.current) {
 					disabled = true;
 				}
@@ -431,7 +432,7 @@ Tree = {
 	},
 	get current() {
 		let ci = this.selection.currentIndex;
-		if (ci > -1 && ci < this.rowCount) {
+		if (ci > -1 && ci < this.rowCount && this.selection.isSelected(ci)) {
 			return this._downloads[ci];
 		}
 		return null;		

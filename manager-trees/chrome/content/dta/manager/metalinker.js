@@ -38,8 +38,6 @@
  	_ios: Components.classes['@mozilla.org/network/io-service;1']
  		.getService(Components.interfaces.nsIIOService),
  		
- 	_supportedHashes: ['sha1', 'md5'],
- 		
  	_getSingle: function ML__getSingle(elem, name) {
  		var rv = elem.getElementsByTagName(name);
  		return rv.length ? rv[0].textContent.trim() : '';
@@ -136,14 +134,9 @@
 				var hash = null; 
 				var hashes = file.getElementsByTagName("hash");
 				for (var j = 0; j < hashes.length; ++j) {
-					var h = hashes[j];
-					var t = h.getAttribute('type').toLowerCase();
-					if (this._supportedHashes.indexOf('type')) {
-						h = h.textContent.trim();
-						// always use the longer hash ;)
-						if (!hash || hash.length < h.length) {
-							hash = h;
-						}
+					var h = hashes[j].textContent.trim();
+					if (DTA_checkHashFormat(h) && (!hash || hash.length < h.length)) {
+						hash = h;
 					}
 				}
 				
