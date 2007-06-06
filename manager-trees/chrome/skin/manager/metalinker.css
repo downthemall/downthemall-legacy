@@ -1,3 +1,4 @@
+@import 'chrome://dta/skin/common/style.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 #metaselect {
@@ -27,13 +28,4 @@ richlistitem .icon {
 }
 richlistitem vbox {
 	padding: 4pt;
-}
-
-.link {
-	color: blue;
-	text-decoration: underline;
-	cursor: pointer;
-}
-.link:hover {
-	color: red;
 }

@@ -128,7 +128,7 @@ var Interface = {
 	}
 };
 
-var NewPrefs = {
+var Prefs = {
 	load: function() {
 		make_();
 	},

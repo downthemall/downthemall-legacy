@@ -1,5 +1,7 @@
 @import 'chrome://dta/content/common/bindings.css';
+@import 'chrome://dta-platform/skin/dta.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
 /* maskbutton */
 maskbutton {
 	-moz-binding: url(chrome://dta/content/dta/maskbutton.xml#maskbutton);
@@ -79,18 +81,18 @@ dialogheader#logo.renamingmask .dialogheader-title {
 	margin-top: 10px;
 }
 
-.opzioni {
-	margin-left:10px;
-	margin-right:10px;
-}
-
-.imgopzioni {
-	height:24px; width:30px; margin-right: 10px;
-}
-
 #head image:hover {
 	margin-right:1px;
 	
+}
+
+.link {
+	color: blue;
+	text-decoration: underline;
+	cursor: pointer;
+}
+.link:hover {
+	color: red;
 }
 
 .hidegroup {
@@ -100,10 +102,6 @@ dialogheader#logo.renamingmask .dialogheader-title {
 #checkcontainer {
 	margin-right: 10px;
 	display: block;
-}
-
-.titolo {
-	font-weight: bold;
 }
 
 .list {

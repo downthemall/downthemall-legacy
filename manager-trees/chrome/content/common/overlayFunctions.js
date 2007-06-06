@@ -69,7 +69,7 @@ var DTA_FilterManager = Components.classes['@downthemall.net/filtermanager;1']
 function DTA_showPreferences() {
 	var instantApply = DTA_preferences.get("browser.preferences.instantApply", false);
 	window.openDialog(
-		'chrome://dta/content/preferences/newPref.xul',
+		'chrome://dta/content/preferences/prefs.xul',
 		'dtaPrefs',
 		'chrome,titlebar,toolbar,resizable,centerscreen'+ (instantApply ? ',dialog=no' : '')
 	);

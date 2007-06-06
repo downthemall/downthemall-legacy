@@ -12,7 +12,6 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
 <?xml-stylesheet href="chrome://dta/skin/add/style.css" type="text/css" ?>
 
 <!DOCTYPE dialog [
