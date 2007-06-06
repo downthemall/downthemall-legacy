@@ -1705,8 +1705,6 @@ Download.prototype = {
 		var c = this.c;
 		var d = this.d;
 
-		c.close();
-		
 		Debug.dump("handleError: problem found; trying to recover");
 		
 		if (d.urlManager.markBad(this.url)) {
@@ -1751,6 +1749,7 @@ Download.prototype = {
 					d.chunks.splice(i + 1, 1);				
 				}
 			}
+			c.close();
 			
 			SessionManager.save(d);
 			this.dumpScoreboard();			
