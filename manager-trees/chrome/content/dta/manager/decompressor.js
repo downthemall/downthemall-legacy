@@ -35,6 +35,7 @@
  * ***** END LICENSE BLOCK ***** */
  
 function Decompressor(download) {
+	alert("in");
 	this.download = download;
 	this.to = new FileFactory(download.destinationFile);
 	this.from = download.tmpFile.clone();
@@ -70,11 +71,11 @@ function Decompressor(download) {
 		boutStream.setOutputStream(this.outStream);
 		this.outStream = boutStream;
 
-		var converter = Cc["@mozilla.org/streamconv;1?from=" + download.compressionType + "&to=uncompressed"]
+		var converter = Cc["@mozilla.org/streamconv;1?from=" + download.compression + "&to=uncompressed"]
 			.createInstance(Ci.nsIStreamConverter);
 
 		converter.asyncConvertData(
-			download.compressionType,
+			download.compression,
 			"uncompressed",
 			this,
 			null
@@ -113,9 +114,17 @@ Decompressor.prototype = {
 		}
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
+	_invalidate: function() {
+		this.download.invalidate();
+		var thisp = this;
+		Dialog.setTimer(this._uuid, function() { thisp._invalidate(); }, 200);
+	},	
 	onStartRequest: function(r, c) {
+		this._uuid = newUUIDString();
+		this._invalidate();
 	},
 	onStopRequest: function(request, c) {
+		Dialog.killTimer(this._uuid);
 		// important, or else we don't write out the last buffer and truncate too early. :p
 		this.outStream.flush();
 		try {

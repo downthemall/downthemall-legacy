@@ -78,6 +78,7 @@
  	},
  	handleDownload: function ML_handleDownload(download) {
  		try {
+ 			download.state = CANCELED;
 			Tree.remove(download);
 			var file = new FileFactory(download.destinationFile);
 

@@ -75,7 +75,8 @@
 			'isResumable',
 			'mask',
 			'pathName',
-			'hash'	
+			'hash',
+			'compression',
 		].forEach(
 			function(u) {
 				e[u] = d[u];
@@ -200,7 +201,8 @@
 					'state',
 					'partialSize',
 					'totalSize',
-					'hash'
+					'hash',
+					'compression',
 				].forEach(
 					function(e) {
 						d[e] = get(e);
@@ -212,7 +214,7 @@
 				if (d.is(PAUSED)) {
 					down.chunks.forEach(
 						function(c) {
-							d.chunks.push(new Chunk(d, c.start, c.end, c.written));
+							d.chunks.push(new Chunk(d, c.start, c.end, Math.max(c.written - 4096, 0)));
 						}
 					);
 					d.refreshPartialSize();

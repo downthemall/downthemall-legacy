@@ -258,7 +258,7 @@ var Dialog = {
 		}
 		// stop everything!
 		// enumerate everything we'll have to wait for!
-		this._killTimers();		
+		this.killTimer('dialog:checkDownloads');
 		this._safeCloseChunks = [];
 		this._safeCloseFinishing = []
 		for (d in Tree.all) {
@@ -290,6 +290,7 @@ var Dialog = {
 			this.setTimer('_safeClose', "Dialog._safeClose();", 250);
 			return false;
 		}
+		this._killTimers();
 		// alright, we left the loop.. shutdown complete ;)
 		SessionManager.save();
 		self.close();
@@ -787,8 +788,7 @@ QueueItem.prototype = {
 
 	startDate: null,
 
-	compression: false,
-	compressionType: "",
+	compression: null,
 
 	isResumable: false,
 	isStarted: false,
@@ -899,7 +899,7 @@ QueueItem.prototype = {
 		this.setPaused();
 		this.totalSize = 0;
 		this.partialSize = 0;
-		this.compression = false;
+		this.compression = null;
 		this.activeChunks = 0;
 		this.maxChunks = 0;
 		this.chunks = [];
@@ -946,6 +946,11 @@ QueueItem.prototype = {
 				destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
 			}
 			this.checkFilenameConflict();
+			var df = destination.clone();
+			df.append(this.destinationName);
+			if (df.exists()) {
+				df.remove(false);
+			}
 			// move file
 			if (this.compression) {
 				DTA_include("dta/manager/decompressor.js");
@@ -1134,6 +1139,7 @@ QueueItem.prototype = {
 	},
 
 	checkFilenameConflict: function  QI_checkFileNameConflict() {
+		return 0;
 		var dn = this.destinationName, ds = this.destinationPath;
 		var dest = new FileFactory(ds + dn), newDest = dest.clone();
 
@@ -1263,7 +1269,9 @@ QueueItem.prototype = {
 	},
 	sessionConnections: 0,
 	resumeDownload: function QI_resumeDownload() {
-		
+		if (this.is(PAUSED)) {
+			return;
+		}
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat that much
 			let b4 = d.chunks.length;
@@ -1540,7 +1548,7 @@ function Download(d, c, headerHack) {
 		try {
 			var http = this._chan.QueryInterface(Ci.nsIHttpChannel);
 			//http.setRequestHeader('Accept-Encoding', 'none', false);
-			if (c.start > 0) {
+			if (c.start + c.written > 0) {
 				http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
 			}
 			if (typeof(referrer) == 'string') {
@@ -1696,6 +1704,8 @@ Download.prototype = {
 	handleError: function DL_handleError() {
 		var c = this.c;
 		var d = this.d;
+
+		c.close();
 		
 		Debug.dump("handleError: problem found; trying to recover");
 		
@@ -1777,7 +1787,7 @@ Download.prototype = {
 		}
 
 		// not partial content altough we are multi-chunk
-		if (aChannel.responseStatus != 206 && c.start != 0) {
+		if (aChannel.responseStatus != 206 && c.start + c.written != 0) {
 			Debug.dump(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206... Normal mode");
 			vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
 			aChannel.visitRequestHeaders(vis);
@@ -1812,15 +1822,8 @@ Download.prototype = {
 		}
 
 		// compression?
-		d.compression = (
-			(visitor.encoding=="gzip"||visitor.encoding=="deflate")
-			&&
-			!(/gzip/).test(d.contentType)
-			&&
-			!(/\.gz/).test(d.fileName)
-		);
-		if (d.compression) {
-			d.compressionType = visitor.encoding;
+		if (['gzip', 'deflate'].indexOf(visitor.encoding) != -1 && !d.contentType.match(/gzip/i) && !d.fileName.match(/\.gz$/i)) {
+			d.compression = visitor.encoding;
 		}
 
 		// accept range
@@ -2008,10 +2011,12 @@ Download.prototype = {
 		d.activeChunks--;
 
 		// check if we're complete now
+		let shouldFinish = false;
 		if (d.is(RUNNING) && !d.chunks.some(function(e) { return e.isRunning; })) {
 			if (!d.resumeDownload()) {
 				d.dumpScoreboard();
 				d.state = FINISHING;
+				shouldFinish = true;
 			}
 		}
 
@@ -2048,7 +2053,7 @@ Download.prototype = {
 		}
 
 		// if download is complete
-		if (d.is(FINISHING)) {
+		if (shouldFinish) {
 			Debug.dump(d + ": Download is completed!");
 			d.finishDownload();
 		}

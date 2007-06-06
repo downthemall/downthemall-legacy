@@ -85,6 +85,11 @@ Verificator.prototype = {
 			alert("Failed to remove file\n" + ex);
 		}
 	},
+	_invalidate: function() {
+		this.download.invalidate();
+		var thisp = this;
+		Dialog.setTimer(this._uuid, function() { thisp._invalidate(); }, 200);
+	},
 	QueryInterface: function(iid) {
 		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIStreamListener) || iid.equals(cI.nsIRequestObserver)) {
 			return this;
@@ -92,8 +97,11 @@ Verificator.prototype = {
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
 	onStartRequest: function(r, c) {
+		this._uuid = newUUIDString();
+		this._invalidate();
 	},
 	onStopRequest: function(request, c) {
+		Dialog.killTimer(this._uuid);
 		var raw = this.hash.finish(false);
 		this.hash = hexdigest(raw);
 		if (this.hash != this.cmp) {
@@ -109,7 +117,6 @@ Verificator.prototype = {
 		try {
 			this.hash.updateFromStream(stream, count);
 			this.download.partialSize = offset;
-			this.download.invalidate();
 		}
 		catch (ex) {
 			Debug.dump("hash update failed!", ex);

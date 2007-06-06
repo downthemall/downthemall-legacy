@@ -227,7 +227,7 @@ var Tree = {
 		this.beginUpdate();
 		ids.forEach(
 			function(d) {
-				if (d.is(FINISHING))) {
+				if (d.is(FINISHING)) {
 					// un-removable :p
 					return;
 				}
