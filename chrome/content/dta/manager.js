@@ -1265,9 +1265,7 @@ QueueItem.prototype = {
 	},
 	sessionConnections: 0,
 	resumeDownload: function QI_resumeDownload() {
-		if (this.is(PAUSED)) {
-			return false;
-		}
+		Debug.dump("resume: " + d);
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat that much
 			let b4 = d.chunks.length;
@@ -1297,7 +1295,6 @@ QueueItem.prototype = {
 			chunk.download = new Download(download, chunk, header);
 			++download.activeChunks;
 			++download.sessionConnections;
-			download.dumpScoreboard();			
 		}
 		
 		cleanChunks(this);
@@ -1361,7 +1358,8 @@ QueueItem.prototype = {
 			// update ui
 			if (rv) {
 				Debug.dump("resumed download: " + d);
-			}
+				this.dumpScoreboard();		
+			}			
 			return rv;
 		}
 		catch(ex) {
@@ -1757,7 +1755,7 @@ Download.prototype = {
 			c.close();
 			
 			SessionManager.save(d);
-			this.dumpScoreboard();			
+			d.dumpScoreboard();			
 			return true;
 		}
 		return false;
@@ -2070,7 +2068,7 @@ Download.prototype = {
 			Debug.dump(d + ": Download is completed!");
 			d.finishDownload();
 		}
-		else {
+		else if (!d.is(PAUSED, CANCELED)) {
 			d.resumeDownload();
 		}
 		SessionManager.save(d);
