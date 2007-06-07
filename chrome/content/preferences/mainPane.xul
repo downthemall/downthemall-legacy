@@ -5,7 +5,7 @@
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
  *
- * See notice.txt and gpl.txt for details.
+ * See LICENSE and GPL for details.
  *
  * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
@@ -14,7 +14,7 @@
 		id="paneMain"
 		label="&mainpane.label;"
 		onpaneload="Main.load();"
-		helpURI="chrome://dta/locale/help/dtahelp.rdf"
+		helpURI="chrome://dta-help/content/help.rdf"
 		helpTopic="Preferences_Main"
 	>
 

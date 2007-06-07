@@ -1,3 +1,4 @@
+@import 'chrome://dta/skin/common/style.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 #renamingbox {
@@ -64,9 +65,6 @@ threechildren::-moz-tree-row {
 	min-height: 20px;
 }
 
-treechildren::-moz-tree-image(iconic) {
-	padding-right: 0.5ex;
-}
 treechildren::-moz-tree-checkbox {
 	/* css for checked cells */
 	list-style-image: url("chrome://dta/skin/select/uncheck2.png");

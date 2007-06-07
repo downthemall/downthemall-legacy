@@ -5,7 +5,7 @@
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
  * 
- * See notice.txt and gpl.txt for details.
+ * See LICENSE and GPL for details.
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
@@ -22,7 +22,7 @@
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	title="&title;" 
-	id="downloadInformations" 
+	id="dTaDownloadInfo" 
 	onload="Dialog.load();" 
 	style="width:500px; margin: 0; padding: 0;"
 	buttons="accept,cancel" 
@@ -33,7 +33,7 @@
 	
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js"/>
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/info.js"/>
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/info.js"/>
 	
 	<script src="chrome://global/content/nsDragAndDrop.js"/>
 	<script src="chrome://global/content/nsTransferable.js"/>
@@ -73,8 +73,12 @@
 				<label control="renaming" id="infoDestTitle" value="&mask.label;: " />
 				<hbox>
 					<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
-					<maskbutton/>
+					<maskbutton id="mask"/>
 				</hbox>
+			</row>
+			<row align="center">
+				<label control="hash" value="&checksum.value;" />
+				<textbox id="hash"/>
 			</row>
 		</rows>
 	</grid>

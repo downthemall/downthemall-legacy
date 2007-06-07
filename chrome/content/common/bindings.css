@@ -53,3 +53,7 @@ maskbutton toolbarbutton:hover {
 maskbutton toolbarbutton:active {
 	-moz-image-region: rect(0px,72px,21px,48px) !important;
 }
+
+richlistbox.metalinker .item {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#metalinker-item);
+}

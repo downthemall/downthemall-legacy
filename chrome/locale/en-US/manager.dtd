@@ -1,6 +1,3 @@
-<!ENTITY dtahelp "Help!">
-<!ENTITY options.label "Preferences...">
-
 <!ENTITY tooladd.label "Add URL(s)">
 <!ENTITY tooldonate.tooltiptext "You can help us making DownThemAll even better. Consider making a small donation!">
 
@@ -16,10 +13,16 @@
 <!ENTITY time.label "Est. time">
 <!ENTITY parts.label "Chunks">
 <!ENTITY speed.label "Speed">
-<!ENTITY infoURLTitle.value "Link URL: ">
-<!ENTITY infoDestTitle.value "Destination: ">
+<!ENTITY infoURLTitle.value "From:">
+<!ENTITY infoDestTitle.value "File: ">
+<!ENTITY infoSizeTitle.value "Size:">
+<!ENTITY elapsedTitle.value "Elapsed:">
+<!ENTITY remainingTitle.value "Remaining:">
+<!ENTITY currentSpeedTitle.value "Current speed:">
+<!ENTITY avgSpeedTitle.value "Average Speed:">
 <!ENTITY path.label "Save path">
 <!ENTITY mask.label "Renaming Mask">
+<!ENTITY hash.label "Checksum">
 
 <!ENTITY infos.label "Download information">
 <!ENTITY launch.label "Open file">
