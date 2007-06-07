@@ -83,6 +83,7 @@
 			<toolbarbutton
 				popup="maskPopup"
 				tooltiptext="&mask.open.tip;"
+				xbl:inherits="disabled=readonly,popup=readonly"
 			/>
 		</xbl:content>
 		<xbl:implementation>
@@ -92,13 +93,13 @@
 	
 	<xbl:binding id="maskitem">
 		<xbl:content>
-				<label
-					xbl:inherits="value=tag"
-					class="masktag"
-					ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
-					onclick="appendTag(event);"
-					tooltiptext="&mask.tip;"/>
-				<label xbl:inherits="value=desc"/>
+			<label
+				xbl:inherits="value=tag"
+				class="masktag"
+				ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
+				onclick="appendTag(event);"
+				tooltiptext="&mask.tip;"/>
+			<label xbl:inherits="value=desc"/>
 		</xbl:content>
 	</xbl:binding>
 </xbl:bindings>

@@ -5,7 +5,7 @@
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
  * 
- * See notice.txt and gpl.txt for details.
+ * See LICENSE and GPL for details.
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
@@ -13,7 +13,6 @@
 <?xml-stylesheet href="chrome://browser/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://dta/skin/preferences/style.css"?>
 <?xml-stylesheet href="chrome://dta-platform/skin/preferences.css"?>
-<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
 
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 
@@ -24,9 +23,9 @@
 	title="&dtaPreferences.title;" 
 	buttons="accept,cancel,extra2"
 	buttonlabelextra2="&buttonlabelextra2;"
-	ondialogextra2="NewPrefs.restoreAll();"
+	ondialogextra2="Prefs.restoreAll();"
 	persist="lastSelected screenX screenY"
-	onload="NewPrefs.load();"
+	onload="Prefs.load();"
 >
 	<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties" />
 	
@@ -38,5 +37,5 @@
 	
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js"/>
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/preferences/newPref.js"/>
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/preferences/prefs.js"/>
 </prefwindow>

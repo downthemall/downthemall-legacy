@@ -5,7 +5,7 @@
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
  * 
- * See notice.txt and gpl.txt for details.
+ * See LICENSE and GPL for details.
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
@@ -23,7 +23,7 @@
 				<menuitem image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" id="dtaCtxSaveT" accesskey="o" oncommand="DTA_ContextOverlay.findSingleLink(true);"/>
 				<menuitem image="chrome://dta/skin/common/dta.png" class="menuitem-iconic" id="dtaCtxSave" accesskey="n" oncommand="DTA_ContextOverlay.findSingleLink(false);"/>
 				<menuseparator class="thin" id="dtaCtxSepPref"/>
-				<menuitem image="chrome://dta/skin/common/prefs.png" class="menuitem-iconic" id="dtaCtxPref" label="&dtaCtxPref.label;" oncommand="DTA_showPreferences();" />
+				<menuitem image="chrome://dta/skin/common/prefs.png" class="menuitem-iconic" id="dtaCtxPref" label="&dta-pref.label;" oncommand="DTA_showPreferences();" />
 				<menuseparator class="thin" id="dtaCtxSepBack"/>
 			</menupopup>
 		</menu>

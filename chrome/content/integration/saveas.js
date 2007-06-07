@@ -4,7 +4,7 @@
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
  * 
- * See notice.txt and gpl.txt for details.
+ * See LICENSE and GPL for details.
  *
  * ***** END LICENSE BLOCK ***** */
 
@@ -49,6 +49,7 @@ var DTA_SaveAs = {
 		catch(ex) {
 			this.referrer = this.url;
 		}
+		this.url = new DTA_URL(this.url);
 
 		this.ddDirectory = document.getElementById('tdtalist');
 		var mask = DTA_AddingFunctions.getDropDownValue('renaming');
@@ -92,11 +93,11 @@ var DTA_SaveAs = {
 		
 		// take care of FlashGot... for now.
 		// need to negotiate with the author (and possible other extension authors)
-		if (gFlashGotDMDialog)
-		{
+		try {
 			gFlashGotDMDialog.init();
 			document.getElementById("flashgot-basic").collapsed = true;
-		} else {
+		}
+		catch (ex) {
 			window.sizeToContent();
 		}
 	},
@@ -120,7 +121,6 @@ var DTA_SaveAs = {
 	},
 
 	dialogAccepted: function dd_accept() {
-		//se è quello selezionato
 		var mode = document.getElementById("mode").selectedItem;
 		var dta = document.getElementById("downthemall");
 		var tdta = document.getElementById("turbodta");

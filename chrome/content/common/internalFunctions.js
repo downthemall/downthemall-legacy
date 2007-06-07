@@ -44,6 +44,13 @@ var Preferences = DTA_preferences;
 
 const SYSTEMSLASH = (DTA_profileFile.get('dummy').path.indexOf('/') != -1) ? '/' : '\\';
 
+// shared state defines
+const QUEUED =    0;
+const PAUSED =    1<<1;
+const RUNNING =   1<<2;
+const FINISHING = 1<<3;
+const COMPLETE =  1<<4;
+const CANCELED =  1<<5;
 /**
  * cast non-strings to string
  * @author Nils
@@ -66,14 +73,6 @@ function _atos(data) {
 	return String(data);
 }
 
-// From prototype.js :)
-function objectExtend(destination, source) {
-  for (property in source) {
-    destination[property] = source[property];
-  }
-  return destination;
-}
-
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!
  * @param ids One of more Ids
@@ -83,112 +82,107 @@ function $() {
 	if (arguments.length == 1) {
 		return document.getElementById(arguments[0]);
 	}
-  var elements = [];
-  for (var i = 0, e = arguments.length; i < e; ++i) {
-    var id = arguments[i];
-    var element = document.getElementById(id);
+	var elements = [];
+	for (var i = 0, e = arguments.length; i < e; ++i) {
+		var id = arguments[i];
+		var element = document.getElementById(id);
 		if (element) {
 			elements.push(element);
 		}
 		else {
 			Debug.dump("requested a non-existing element: " + id);
 		}
-  }
-  return elements;
+	}
+	return elements;
 }
 
-function formatBytes(aNumber) {
-	aNumber = Number(aNumber);
-
-	if (aNumber < 1024)	{
-		return aNumber.toFixed(0) + " b";
- 	}
- 	
-	var units = ['TB','GB','MB','KB'];
-	var unit;
-	
-	while (aNumber > 875 && units.length) {
- 		aNumber /= 1024;
-		unit = units.pop();
- 	}
- 	
- 	return aNumber.toFixed(2) + " " + unit;
-
-}
-
-objectExtend(String.prototype, 
-{	
-	trim : function() {
-		return this.replace(/^[\s\t]+|[\s\t]+$/gi, "");
-	},
-	removeBadChars : function() {
-		return this
-			.replace(/[\?\:<>\*\|"]/g, "_")
-			.replace(/%(?:25)?20/g, " ");
-	},
-	addFinalSlash : function() {
-		if (this.length == 0) return new String(SYSTEMSLASH);
-		
-		if (this[this.length - 1] != SYSTEMSLASH)
-			return this + SYSTEMSLASH;
-		else
-			return this;
-	},
-	removeFinalChar : function(c) {
-		if (this.length == 0) {
-			return this;
-		}
-		if (this[this.length - 1] == c) {
-			return this.substring(0, this.length - 1);
-		}
-		return this;
-	},
-	removeLeadingChar : function(c) {
-		if (this.length == 0) {
-			return this;
-		}
-		if (this[0] == c) {
-			return this.slice(1);
-		}
-		return this;
-	},
-	removeFinalSlash : function() {
-		return this.removeFinalChar(SYSTEMSLASH);
-	},
-	removeLeadingSlash : function() {
-		return this.removeLeadingChar(SYSTEMSLASH);
-	},
-	removeFinalBackSlash : function() {
-		return this.removeFinalChar("/");
-	},
-	removeLeadingBackSlash : function() {
-		return this.removeLeadingChar("/");
-	},
-	removeArguments : function() {
-		return this.replace(/[\?#].*$/g, "");
-	},
-	getUsableFileName : function() {
-		var t = this.trim().removeArguments().removeFinalBackSlash().split("/");
-		return t[t.length-1].removeBadChars().replace(/[\\/]/g, "").trim();
-	},
-	getExtension : function() {
-		var name = this.getUsableFileName();
-		var c = name.lastIndexOf('.');
-		if (c == -1) {
-			return null;
-		}
-		return name.slice(c+1);
-	},
-	formatTimeDate : function() {
-		return this.replace(/\b(\d)\b/g, "0$1");
-	},
-	cropCenter : function(newLength) {
-		if (this.length > newLength) {
-			return this.substring(0, newLength / 2) + "..." + this.substring(this.length - newLength / 2, this.length);
-		}
-		return this;
+function merge(me, that) {
+	for (let c in that) {
+		me[c] = that[c];
 	}
 }
+
+	// not instanceof save, you know ;)
+function clone(obj) {
+	{
+		var rv = {};
+		merge(rv, obj);
+		rv.prototype = this.prototype;
+    rv.constructor = this.constructor;
+		return rv;
+	}
+}
+merge(
+	String.prototype,
+	{ 
+		trim : function() {
+			return this.replace(/^[\s\t]+|[\s\t]+$/gi, "");
+		},
+		removeBadChars : function() {
+			return this
+				.replace(/[\?\:<>\*\|"]/g, "_")
+				.replace(/%(?:25)?20/g, " ");
+		},
+		addFinalSlash : function() {
+			if (this.length == 0) return new String(SYSTEMSLASH);
+			
+			if (this[this.length - 1] != SYSTEMSLASH)
+				return this + SYSTEMSLASH;
+			else
+				return this;
+		},
+		removeFinalChar : function(c) {
+			if (this.length == 0) {
+				return this;
+			}
+			if (this[this.length - 1] == c) {
+				return this.substring(0, this.length - 1);
+			}
+			return this;
+		},
+		removeLeadingChar : function(c) {
+			if (this.length == 0) {
+				return this;
+			}
+			if (this[0] == c) {
+				return this.slice(1);
+			}
+			return this;
+		},
+		removeFinalSlash : function() {
+			return this.removeFinalChar(SYSTEMSLASH);
+		},
+		removeLeadingSlash : function() {
+			return this.removeLeadingChar(SYSTEMSLASH);
+		},
+		removeFinalBackSlash : function() {
+			return this.removeFinalChar("/");
+		},
+		removeLeadingBackSlash : function() {
+			return this.removeLeadingChar("/");
+		},
+		removeArguments : function() {
+			return this.replace(/[\?#].*$/g, "");
+		},
+		getUsableFileName : function() {
+			var t = this.trim().removeArguments().removeFinalBackSlash().split("/");
+			return t[t.length-1].removeBadChars().replace(/[\\/]/g, "").trim();
+		},
+		getExtension : function() {
+			var name = this.getUsableFileName();
+			var c = name.lastIndexOf('.');
+			if (c == -1) {
+				return null;
+			}
+			return name.slice(c+1);
+		},
+		cropCenter : function(newLength) {
+			if (this.length > newLength) {
+				return this.substring(0, newLength / 2) + "..." + this.substring(this.length - newLength / 2, this.length);
+			}
+			return this;
+		}
+	}
 );
 
 var Utils = {
@@ -207,7 +201,7 @@ var Utils = {
 			fp.appendFilters(nsIFilePicker.filterAll);
 		
 			// locate current directory
-			var dest = this.isValidDir(predefined);
+			var dest = this.validateDir(predefined);
 			if (dest) {
 				fp.displayDirectory = dest;
 			}
@@ -225,31 +219,45 @@ var Utils = {
 		return false;
 	},
 	/**
-	 * Performs all the needed controls to see if the specified path is valid, is creable and writable and his drive has some free disk space.  
+	 * Performs all the needed controls to see if the specified path is valid, is creable and writable and his drive has some free disk space.	
 	 * @param path The path to test
 	 * @return a nsILocalFile to the specified path if it's valid, false if it wasn't
 	 */
-	isValidDir: function(path) {
-		if (!path || !String(path).trim().length) {
-			return false;
+	validateDir: function(path) {
+		var directory = null;
+		if (!(path instanceof Components.interfaces.nsILocalFile)) {
+			if (!path || !String(path).trim().length) {
+				return false;
+			}
+			var directory = Components.classes["@mozilla.org/file/local;1"].
+			createInstance(Components.interfaces.nsILocalFile);
+			try {
+				directory.initWithPath(path);
+			}
+			catch (ex) {
+				//
+			}
 		}
-		var directory = Components.classes["@mozilla.org/file/local;1"].
-		createInstance(Components.interfaces.nsILocalFile);
-		try {
-			directory.initWithPath(path);
-			// look for the first directory that exists.
-			var parent = directory.clone();
-			while (parent && !parent.exists()) {
-				parent = parent.parent;
+		else {
+			directory = path.clone();
+		}
+		if (directory) {
+			try {
+				// look for the first directory that exists.
+				var parent = directory.clone();
+				while (parent && !parent.exists()) {
+					parent = parent.parent;
+				}
+				if (parent) {
+					// from nsIFile
+					parent = parent.QueryInterface(Components.interfaces.nsILocalFile);
+					// we look for a directory that is writeable and has some diskspace
+					return parent.isDirectory() && parent.isWritable() && parent.diskSpaceAvailable ? directory : false;
+				}
 			}
-			if (parent) {
-				// from nsIFile
-				parent = parent.QueryInterface(Components.interfaces.nsILocalFile);
-				// we look for a directory that is writeable and has some diskspace
-				return parent.isDirectory() && parent.isWritable() && parent.diskSpaceAvailable ? directory : false;
+			catch(ex) {
+				Debug.dump('Utils.validateDir()', ex);
 			}
-		} catch(ex) {
-			Debug.dump('Utils.isValidDir()', ex);
 		}
 		return false;
 	},
@@ -286,10 +294,62 @@ var Utils = {
 			throw new Error("not a string");
 		}
 		var rv = Date.parse(str);
-		if (isNaN(rv)) {
+		if (!isFinite(rv)) {
 			throw new Error("invalid date");
 		}
 		return rv;
+	},
+
+	/**
+	 * returns a formated representation of a (file) size
+	 * @param aNumber The number to format
+	 * @author Nils
+	 */
+	formatBytes: function U_formatBytes(aNumber) {
+		aNumber = Number(aNumber);
+	
+		if (aNumber < 1024) {
+			return aNumber.toFixed(0) + " b";
+		}
+		
+		var units = ['TB','GB','MB','KB'];
+		var unit;
+		
+		while (aNumber > 875 && units.length) {
+			aNumber /= 1024;
+			unit = units.pop();
+		}
+		
+		return aNumber.toFixed(2) + " " + unit;
+	},
+	
+	/**
+	 * returns a pretty number containing at least specified number of digits
+	 * @param aNumber the number to format
+	 * @param aDigists Optional. Number of digits the result must at least have
+	 * @author Nils
+	 */
+	formatNumber: function U_formatNumber(rv, digits) {
+		rv = _atos(rv);
+		if (typeof(digits) != 'number') {
+			digits = 3;
+		}
+		while (rv.length < digits) {
+			rv = '0' + rv;
+		}
+		return rv;
+	},
+	/**
+	 * formats a time-delta. At least minutes and seconds are given back
+	 */
+	formatTimeDelta: function U_formatTimeDelta(aDelta) {
+		var h = Math.floor(aDelta / 3600);
+		var m = Math.floor((aDelta % 3600) / 60);
+		var s = Math.floor(aDelta % 60);
+		if (h) {
+			return this.formatNumber(h, 2) + ":" + this.formatNumber(m, 2) + ":" + this.formatNumber(s, 2);
+		}
+		return this.formatNumber(m, 2) + ":" + this.formatNumber(s, 2);
 	}
 };
 
@@ -364,7 +424,7 @@ function makeObserver(obj) {
 			|| iid.equals(Components.interfaces.nsISupportsWeakReference)
 			|| iid.equals(Components.interfaces.nsIWeakReference)
 			|| iid.equals(Components.interfaces.nsiObserver)
-		)	{
+		) {
 			return this;
 		}
 		if (this.__QueryInterface) {
@@ -406,7 +466,7 @@ StringBundles.prototype = {
 				// no-op
 			}
 		}
-		throw new Components.Exception('BUNDLE STRING NOT FOUND');
+		throw new Components.Exception('BUNDLE STRING NOT FOUND (' + id + ')');
 	},
 	getFormattedString: function(id, params) {
 		for (var i = 0, e = this._length; i < e; ++i) {
@@ -417,7 +477,7 @@ StringBundles.prototype = {
 				// no-op
 			}
 		}
-		throw new Components.Exception('BUNDLE STRING NOT FOUND');		
+		throw new Components.Exception('BUNDLE STRING NOT FOUND (' + id + ')');	 
 	}
 };
 /**
@@ -475,7 +535,7 @@ var OpenExternal = {
 		throw new Components.Exception('OpenExternal: feed me with nsILocalFile or String');
 	},
 	_nixLaunch: function(file) {
-		this._proto.loadUrl(this._io.newFileURI(file));		
+		this._proto.loadUrl(this._io.newFileURI(file));	 
 	},
 	/**
 	 * Launch/Execute a file
@@ -535,9 +595,9 @@ function range() {
 		step = Number(arguments[2]);
 	}
 	else {
-		step = stop - start > 0 ? 1 : -1;	
+		step = stop - start > 0 ? 1 : -1; 
 	}
-	if (isNaN(start) || isNaN(stop) || isNaN(step) || step == 0) {
+	if (!isFinite(start) || !isFinite(stop) || !isFinite(step) || step == 0) {
 		throw Components.results.NS_ERROR_INVALID_ARG;
 	}
 	if ((stop - start) / step < 0) {

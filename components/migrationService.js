@@ -97,11 +97,19 @@ var MigrationService = {
 			if (vc.compare(lastVersion, "1.0a1") < 0) {
 				this._execute(['Prefs', 'DropDowns', 'Filters', 'Remove']);
 			}
-			DTA_preferences.setDTA('version', currentVersion);
-			
-			/*if (openHelp) {
-				openHelp('About_Privacy','chrome://dta/locale/help/dtahelp.rdf');
-			}*/
+    	var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
+				.createInstance(Components.interfaces.nsIDialogParamBlock);
+    	params.SetNumberStrings(1);
+    	params.SetString(0, currentVersion);
+    	Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+				.getService(Components.interfaces.nsIWindowWatcher)
+    		.openWindow(
+	    		null,
+	    		"chrome://dta/content/about/notice.xul",
+	    		"_blank",
+	    		"chrome,centerscreen,all,alwaysRaised,dialog,modal",
+	    		params
+	    	);			
 		}
 		catch(ex) {
 			DTA_debug.dump("MigrationManager:", ex);
@@ -142,7 +150,7 @@ var MigrationService = {
 			['context.downloadWin', 'downloadWin', true],
 			['context.ntask', 'ntask', 4],
 			['context.maxchunks', 'maxchunks', 5],
-			['context.reduce', 'showOnlyFilenames', true],
+			['context.reduce', 'showonlyfilenames', true],
 			['context.saveTemp', 'saveTemp', true],
 			['context.tempLocation', 'tempLocation', ''],
 			['context.seltab', 'seltab', 0],

@@ -4,7 +4,7 @@
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
  * 
- * See notice.txt and gpl.txt for details.
+ * See LICENSE and GPL for details.
  *
  * Contributors:
  *  Nils Maier <MaierMan@web.de>
@@ -14,15 +14,19 @@
 
 
 var Dialog = {
+	get isFullyDisabled() {
+		return $('directory', 'renaming', 'hash').every(
+			function(e) {
+				return e.hasAttribute('disabled');
+			}
+		);
+	},
 	load: function DTA_load() {
 		make_();
 		try {
 			this.canvas = $("draw").getContext("2d");
 		
-			// load dropdownns
-			this.ddDirectory = $('directory');
-			this.ddRenaming = $('renaming');
-		
+	
 			// d is an Array of Downloads
 			var downloads = window.arguments[0];
 			if (downloads.length == 1) {
@@ -30,43 +34,61 @@ var Dialog = {
 				$("infoURL").value = d.urlManager.usable;
 				$("sourcePage").value = d.refPage.spec;
 				$('renaming').value = d.mask;
-				$('directory').value = d.originalDirSave;
+				$('directory').value = d.pathName;
+				$('hash').value = d.hash;
 				var caption = document.getAnonymousNodes($("logo"))[0];
 				caption.style.backgroundImage = 'url(' + getIcon(d.fileName, 'isMetaLink' in d, 32) + ')';
 				caption.style.paddingLeft = '37px';
 				this.item = d;
 				Dialog.draw();
-				return;
 			}
+			else {
+				
+				// more than just one download
+				$("infoURL").value = $("sourcePage").value = "---";
+				$("hash").setAttribute('readonly', 'true');
+				$("hash").setAttribute('disabled', 'true');
+	
+				var mask = downloads[0].mask;
+				$('renaming').value = 
+					downloads.every(function(e, i, a) { return e.mask == mask; })
+					? mask
+					: '';
+	
+				var dir = String(downloads[0].pathName);
+				$('directory').value = 
+					downloads.every(function(e) { return e.pathName == dir; })
+					? dir
+					: '';
+
+				var normal = this.canvas.createLinearGradient(0,0,0,16);
+				normal.addColorStop(0, 'rgba(255,255,255,50)');
+				normal.addColorStop(1, '#ECE9D8');
 			
-			// more than just one download
-			$("infoURL").value = $("sourcePage").value = "---";
-
-			var mask = downloads[0].mask;
-			$('renaming').value = 
-				downloads.every(function(e, i, a) { return e.mask == mask; })
-				? mask
-				: '';
-
-			var dir = String(downloads[0].originalDirSave);
-			this.ddDirectory.current = 
-				downloads.every(function(e, i, a) { return String(e.originalDirSave) == dir; })
-				? dir
-				: '';
-		
-			var normal = canvas.createLinearGradient(0,0,0,16);
-			normal.addColorStop(0, 'rgba(255,255,255,50)');
-			normal.addColorStop(1, '#ECE9D8');
-		
-			canvas.fillStyle = normal;
-			canvas.fillRect(0,0,300,20);
-
+				this.canvas.fillStyle = normal;
+				this.canvas.fillRect(0,0,300,20);
+					
+			}				
+			if (downloads.every(function(d) { return d.is(COMPLETE, FINISHING); })) {
+				$('directory', 'renaming', 'mask', 'browsedir').forEach(
+					function(e) {
+						e.setAttribute('readonly', 'true');
+						e.setAttribute('disabled', 'true');
+					}
+				);
+			}
+			if (this.isFullyDisabled) {
+				$('dTaDownloadInfo').buttons = 'accept';
+			}			
 		} catch(ex) {
 			Debug.dump('load', ex);
 		}
 		window.setTimeout('window.sizeToContent()', 0);
 	},
 	accept: function DTA_accept() {
+		if (this.isFullyDisabled) {
+			return true;
+		}		
 		if (!this.check()) {
 			return false;
 		}
@@ -74,39 +96,39 @@ var Dialog = {
 		var t = window.arguments[0];
 		var win = window.arguments[1];
 
-		var directory = this.ddDirectory.current.trim();
+		var directory = $('directory').value.trim();
 		directory = directory.length ? directory.addFinalSlash() : null;
 		
-		var mask = this.ddRenaming.current;
+		var mask = $('renaming').value;
 		mask = mask.length ? mask : null;
 		
-		for (var i = 0; i < t.length; i++) {
-			var d = t[i];
-			if (d.isCompleted || d.isPassed) {
-				continue;
+		t.forEach(
+			function(d) {
+				if (d.is(COMPLETE, FINISHING)) {
+					return;
+				}
+				if (directory) {
+					d.orginalDirSave = directory;
+				}
+				if (mask) {
+					d.mask = mask;
+				}
 			}
-			if (directory) {
-				d.orginalDirSave = directory;
+		);
+		
+		if (t.length == 1) {
+			var d = t[0];
+			var hash = $('hash').value;
+			if (hash && d.hash != hash) {
+				d.hash = hash;
+				if (d.is(COMPLETE)) {
+					// have to manually start this guy ;)
+					d.verifyHash();
+				}
 			}
-			if (mask) {
-				d.mask = mask;
-			}
-			//XXX ?!
-			d.destinationName = d.fileName;
-			d.destinationName = d.buildFromMask(false, d.mask);
-			
-			d.dirSave = d.originalDirSave;
-			d.dirSave = d.buildFromMask(true, d.mask);
-			
-			// XXX later there will be virtual trees
-			d.setTreeCell("dir", d.originalDirSave);
-			d.setTreeCell("mask", d.mask);
-				
-			d.checkFilenameConflict();
 		}
 		
 		// XXX: saveing destroys order, saving with putting new entries in the end, or as 2nd entry?
-		//['ddRenaming', 'ddDirectory'].forEach(function(e){ Dialog[e].save(); });
 		
 		return true;
 	},
@@ -126,8 +148,6 @@ var Dialog = {
 		compl.addColorStop(0, 'rgba(13,141,15,255)');
 		compl.addColorStop(1, 'rgba(0,199,56,255)');
 		
-		var join = "#A5FE2C";
-		
 		var cancel = canvas.createLinearGradient(0,0,0,16);
 		cancel.addColorStop(0, 'rgba(151,58,2,100)');
 		cancel.addColorStop(1, 'rgba(255,0,0,100)');
@@ -139,7 +159,7 @@ var Dialog = {
 		canvas.fillStyle = normal;
 		canvas.fillRect(0,0,300,20);
 
-		if (d.isCompleted) {
+		if (d.is(COMPLETE, FINISHING)) {
 			canvas.fillStyle = compl;
 			canvas.fillRect(0,0,300,20);
 			canvas.fillStyle = join;
@@ -149,43 +169,49 @@ var Dialog = {
 			else {
 				canvas.fillRect(0,16,Math.round(d.join.offset/d.totalSize*300),4);
 			}
-		} else if (d.isCanceled) {
+		} else if (d.is(CANCELED)) {
 			canvas.fillStyle = cancel;
 			canvas.fillRect(0,0,300,20);
 		} else if (d.isStarted && d.totalSize) {
-			while (c != -1) {
-				canvas.fillStyle=prog;
-				canvas.fillRect(Math.round(d.chunks[c].start/d.totalSize*300),0,Math.round(d.chunks[c].chunkSize/d.totalSize*300),20);
-				c = d.chunks[c].next;
-			}
-			canvas.fillStyle = join;
-			if (d.join == null)
-				canvas.fillRect(0,16,Math.round(d.chunks[d.firstChunk].chunkSize/d.totalSize*300),4);
-			else
-				canvas.fillRect(0,16,Math.round(d.join.offset/d.totalSize*300),4);
+			d.chunks.forEach(
+				function(c) {
+					this.canvas.fillStyle = prog;
+					this.canvas.fillRect(
+						Math.ceil(c.start / d.totalSize * 300),
+						0,
+						Math.ceil(c.written / d.totalSize * 300),
+						20
+					);
+				},
+				this
+			);
 		}
-		
 		setTimeout('Dialog.draw();', 150);
 	},
 	browseDir: function DTA_browseDir() {
 		// let's check and create the directory
 		var newDir = Utils.askForDir(
-			this.ddDirectory.current,
+			$('directory').value,
 			_("validdestination")
 		);
 		if (newDir) {
-			this.ddDirectory.current = newDir;
+			$('directory').value = newDir;
 		}
 	},
 	check: function DTA_check() {
-		var dir = this.ddDirectory.current.trim();
-		if (!dir.length || !this.ddRenaming.current.trim().length) {
+		var dir = $('directory').value.trim();
+		if (!dir.length || !$('renaming').value.trim().length) {
 			return false;
 		}
-		if (!Utils.isValidDir(dir)) {
+		if (!Utils.validateDir(dir)) {
 			alert(_("alertfolder"));
 			var newDir = Utils.askForDir(null, _("validdestination"));
-			this.ddDirectory.current = newDir ? newDir : '';
+			$('directory').value = newDir ? newDir : '';
+			return false;
+		}
+		var hash = $('hash').value;
+		if (hash && !DTA_checkHashFormat(hash)) {
+			alert(_('alertinfo'));
 			return false;
 		}
 		return true;

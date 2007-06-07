@@ -69,7 +69,7 @@ var DTA_FilterManager = Components.classes['@downthemall.net/filtermanager;1']
 function DTA_showPreferences() {
 	var instantApply = DTA_preferences.get("browser.preferences.instantApply", false);
 	window.openDialog(
-		'chrome://dta/content/preferences/newPref.xul',
+		'chrome://dta/content/preferences/prefs.xul',
 		'dtaPrefs',
 		'chrome,titlebar,toolbar,resizable,centerscreen'+ (instantApply ? ',dialog=no' : '')
 	);
@@ -178,32 +178,31 @@ var DTA_debug = {
 	_dumpEnabled : false,
 	_consoleService : null,
 	_logPointer : null,
-	_loaded : false,
-	_load : function() {
+	load : function() {
 		this._dumpEnabled = DTA_preferences.getDTA("logging", false);
+		if (!this._dumpEnabled) {
+			this.dump = this._dumpStub;
+			return;
+		}
+		this.dump = this._dump;
 		this._consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
 		this._logPointer = DTA_profileFile.get('dta_log.txt');
 		try {
 			if (this._logPointer.fileSize > (200 * 1024))
 				this._logPointer.remove(false);
 		} catch(e) {}
-		this._loaded = true;
 	},
 	formatTimeDate: function DD_formatTimeDate(value) {
 		return String(value).replace(/\b(\d)\b/g, "0$1");
 	},
-	dump : function(message, e) {
-		if (!this._loaded) {
-			this._load();
-		}
+	_dump : function(message, e) {
 		try {
-			if (!this._dumpEnabled || (message=="" && typeof(e)!="object")) {
+			if (message == "" && typeof(e) != "object") {
 				return;
 			}
 
 			message = String(message);
 
-			var fo = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);
 			var time = new Date();
 			var text = this.formatTimeDate(time.getHours())
 				+ ":" + this.formatTimeDate(time.getMinutes())
@@ -236,8 +235,7 @@ var DTA_debug = {
 			}
 			text += "\x0D\x0A";
 
-			if (Components.stack)
-			{
+			if (Components.stack) {
 				var stack = Components.stack.caller;
 				for (var i = 0; i < 4 && stack; ++i) {
 					text += stack.toString() + "\x0D\x0A";
@@ -247,6 +245,7 @@ var DTA_debug = {
 
 			this._consoleService.logStringMessage(text);
 
+			var fo = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);
 			fo.init(this._logPointer, 0x04 | 0x08 | 0x10, 0664, 0);
 			fo.write(text, text.length);
 			fo.close();
@@ -254,12 +253,14 @@ var DTA_debug = {
 			Components.utils.reportError(ex);
 		}
 	},
+	_dumpStub: function() {},
 	dumpObj: function(obj) {
 		for (i in obj) {
 			Components.utils.reportError(i + ": " + (obj[i] ? obj[i].toSource() : obj[i]));
 		}
 	}
 };
+DTA_debug.load();
 
 var DTA_URLhelpers = {
 	textToSubURI : Components.classes["@mozilla.org/intl/texttosuburi;1"]
@@ -317,47 +318,34 @@ DTA_URL.prototype = {
 	}
 };
 
-var dragObserverTdTa = {
-	getSupportedFlavours: function () {
+function DTA_DropProcessor(func) {
+	this.func = func;
+};
+DTA_DropProcessor.prototype = {
+	getSupportedFlavours: function() {
 		var flavours = new FlavourSet ();
 		flavours.appendFlavour("text/x-moz-url");
 		return flavours;
 	},
-	onDragOver: function(evt,flavour,session) {},
-	onDrop: function (evt,dropdata,session) {
-		if (dropdata != "") {
-			var url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
-			DTA_AddingFunctions.saveSingleLink(
-				true,
-				url,
-				document.commandDispatcher.focusedWindow.document.URL
-					? document.commandDispatcher.focusedWindow.document.URL
-					: DTA_Mediator.getMostRecentURL(),
-				""
-				);
-		}
-	}
-};
-var dragObserverdTa = {
-	getSupportedFlavours: function () {
-		var flavours = new FlavourSet ();
-    	flavours.appendFlavour("text/x-moz-url");
-		return flavours;
+	onDragOver: function(evt,flavour,session) {
 	},
-	onDragOver: function(evt,flavour,session) {},
 	onDrop: function (evt,dropdata,session) {
-		if (dropdata != "") {
-			var url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
-			DTA_AddingFunctions.saveSingleLink(
-				false,
-				url, document.commandDispatcher.focusedWindow.document.URL
-					? document.commandDispatcher.focusedWindow.document.URL
-					: DTA_Mediator.getMostRecentURL(),
-				""
-			);
+		if (!dropdata) {
+			return;
 		}
+		var url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
+		var doc = document.commandDispatcher.focusedWindow.document;
+		url = new DTA_URL(url, doc.characterSet);
+		var ref = doc.URL;
+		if (!ref) {
+			ref = DTA_Mediator.getMostRecentURL();
+		}
+		this.func(url, ref);
 	}
 };
+
+var DTA_DropTDTA = new DTA_DropProcessor(function(url, ref) { DTA_AddingFunctions.saveSingleLink(true, url, ref); });
+var DTA_DropDTA = new DTA_DropProcessor(function(url, ref) { DTA_AddingFunctions.saveSingleLink(false, url, ref); });
 
 function DTA_AdditionalMatcher(str, regex) {
 	this._str = str;
@@ -428,14 +416,26 @@ var DTA_AddingFunctions = {
 		return this.ios.newURI(rel, doc.characterSet, this.ios.newURI(base, doc.characterSet, null)).spec;
 	},
 
-	saveSingleLink : function(turbo, url, referrer, description, mask) {
+	saveSingleLink : function(turbo, url, referrer, description) {
+		var hash = null;		
+		var ml = DTA_getLinkPrintMetalink(url.url);
+		if (ml) {
+			url.url = ml;
+		}
+		else {
+			hash = DTA_getLinkPrintHash(url.url);
+		}
+		url.url = url.url.replace(/#.*$/, '');
+		
+		var item = {
+			'url': url,
+			'refPage': referrer,
+			'description': description,
+			'hash': hash
+		};
+
 		if (turbo) {
-			var el = {
-				'url': url,
-				'refPage': referrer,
-				'description': description
-			};
-			this.turboSendToDown([el]);
+			this.turboSendToDown([item]);
 			return;
 		}
 
@@ -444,7 +444,7 @@ var DTA_AddingFunctions = {
 			"chrome://dta/content/dta/addurl.xul",
 			"_blank",
 			"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
-			{'url': url, 'description': description, 'referrer': referrer, 'mask': mask}
+			item
 		);
 	},
 
@@ -474,7 +474,7 @@ var DTA_AddingFunctions = {
 			urlsArray[i].numIstance = num;
 		}
 
-		this.sendToDown(!DTA_preferences.get("extensions.dta.lastWasQueued", false), urlsArray);
+		this.sendToDown(!DTA_preferences.getDTA("lastqueued", false), urlsArray);
 	},
 
 	saveLinkArray : function(turbo, urls, images) {
@@ -487,43 +487,33 @@ var DTA_AddingFunctions = {
 
 			DTA_debug.dump("saveLinkArray(): DtaOneClick filtering started");
 
-			var arrayObject;
+			var links;
 			var type;
 			if (DTA_preferences.getDTA("seltab", 0)) {
-				arrayObject = images;
+				links = images;
 				type = 2;
 			}
 			else {
-				arrayObject = urls;
+				links = urls;
 				type = 1;
 			}
-			var links = [];
 
 			var additional = new DTA_AdditionalMatcher(
 				this.getDropDownValue('filter'),
 				DTA_preferences.getDTA('filterRegex', false)
 			);
 
-			for (i in arrayObject) {
-				if (i == "length" || typeof(arrayObject[i]) != "object") {
-					continue;
+			var links = links.filter(
+				function(link) {
+					if (!additional.match(link.url.url)) {
+						return true;
+					}
+					if (!DTA_FilterManager.matchActive(link.url.url, type)) {
+						return true;
+					}
+					return false;
 				}
-				var matched = DTA_FilterManager.matchActive(i, type);
-				if (!matched) {
-					matched = additional.match(i);
-				}
-
-				if (!matched) {
-					continue;
-				}
-
-				links.push({
-					url : arrayObject[i].url,
-					description : arrayObject[i].description,
-					ultDescription : arrayObject[i].ultDescription,
-					refPage : arrayObject[i].refPage
-				});
-			}
+			);
 
 			DTA_debug.dump("saveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
 
@@ -711,6 +701,87 @@ var DTA_Mediator = {
 		}
 	}
 };
+
+/**
+ * Checks if a provided strip has the correct hash format
+ * Supported are: md5, sha1, sha256, sha384, sha512
+ * @param hash Hash to check
+ * @return hash type or null
+ */
+function DTA_checkHashFormat(hash) {
+	if (typeof(hash) != 'string' && !(hash instanceof String)) {
+		return null;
+	}
+	var type = null;
+	switch(hash.length) {
+		case 32: type = 'MD5'; break;
+		case 40: type = 'SHA1'; break;
+		case 64: type = 'SHA256'; break;
+		/* Currently broken: https://bugzilla.mozilla.org/show_bug.cgi?id=383390
+		case 96: type = 'SHA384'; break;
+		case 128: type = 'SHA512'; break;*/
+		default: return null;
+	}
+	if (isNaN(parseInt(hash, 16))) {
+		type = null;
+	}
+	return type;
+}
+/**
+ * Get a link-fingerprint hash from an url (or just the hash component)
+ * @param url. Either String or nsIURI
+ * @return Valid hash string or null
+ */
+function DTA_getLinkPrintHash(url) {
+	if (url instanceof Components.interfaces.nsIURL) {
+		url = url.ref;
+	}
+	else if (url instanceof Components.interfaces.nsIURI) {
+		url = url.spec;
+	}
+	else if (typeof(url) != 'string' && !(url instanceof String)) {
+		return null;
+	}
+	
+	var lp = url.match(/#!(?:md5|sha(?:1|256|384|512)|hash)!([\da-f]+)$/i);
+	if (lp) {
+		var rv = lp[1].toLowerCase();
+		if (DTA_checkHashFormat(rv)) {
+			return rv;
+		}
+	}
+	return null;
+}
+
+/**
+ * Get a link-fingerprint metalink from an url (or just the hash component
+ * @param url. Either String or nsIURI
+ * @param charset. Optional. Charset of the orgin link and link to be created
+ * @return Valid hash string or null
+ */
+function DTA_getLinkPrintMetalink(url, charset) {
+	if (url instanceof Components.interfaces.nsIURL) {
+		url = url.ref;
+	}
+	else if (url instanceof Components.interfaces.nsIURI) {
+		url = url.spec;
+	}
+	else if (typeof(url) != 'string' && !(url instanceof String)) {
+		return null;
+	}
+	
+	var lp = url.match(/#!metalink3!((?:https?|ftp):.+)$/);
+	if (lp) {
+		var rv = lp[1];
+		try {
+			return DTA_AddingFunctions.ios.newURI(rv, charset, null).spec;
+		}
+		catch (ex) {
+			// not a valid link, ignore it.
+		}
+	}
+	return null;
+}
 
 /**
  * wrapper around confirmEx

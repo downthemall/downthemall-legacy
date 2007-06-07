@@ -1,3 +1,4 @@
+@import 'chrome://dta/skin/common/style.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 @namespace html url("http://www.w3.org/1999/xhtml");
 
@@ -95,5 +96,54 @@ toolbox {
 	margin: 0;
 }
 #tooltip image {
-	padding: 2pt;
+	margin: 2pt;
+	margin-left: 1ex;	
+	margin-right: 1ex;
+	width: 32px !important;
+	height: 32px !important;
+	-moz-box-flex: 0 !important;
+}
+#tooltip grid {
+	-moz-box-flex: 1;
+}
+#infoGrid label {
+	margin-bottom: 0;
+	font-weight: bold;
+}
+#infoGrid label[crop] {
+	font-weight: normal !important;
+	max-width: 300px;	
+}
+#canvasGrid label[id] {
+	font-weight: bold;
+}
+#infoPercent {
+	text-align: center;
+	height: 40px;
+	margin: 0;
+	padding: 0;
+	padding-top: 7px;
+	font-size: 14px;
+	font-weight: bold;
+	background: transparent !important;
+}
+
+treechildren::-moz-tree-progressmeter(completed) {
+  color: #008F00;
+}
+
+treechildren::-moz-tree-progressmeter(paused) {
+  color: #FFCC00;
+}
+
+treechildren::-moz-tree-progressmeter(canceled) {
+  color: #B12801;
+}
+
+treechildren::-moz-tree-progressmeter(queued) {
+  color: #BFDEFF;
+}
+
+treechildren::-moz-tree-progressmeter(inprogress) {
+  color: #AAE061;
 }

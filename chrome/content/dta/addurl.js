@@ -39,7 +39,7 @@ const Ci = Components.interfaces;
 
 var dropDowns = {};
 
-function downloadElement(url, num) {
+function QueueItem(url, num, hash) {
 	if (!(url instanceof DTA_URL) || !DTA_AddingFunctions.isLinkOpenable(url)) {
 		throw new Components.Exception('invalid url');
 	}
@@ -48,8 +48,9 @@ function downloadElement(url, num) {
 	this.refPage = $('URLref').value,
 	this.description = window.arguments ? window.arguments[0] : '';
 	this.ultDescription = '';
-	this.mask = Dialog.ddRenaming.current;
-	this.dirSave = Dialog.ddDirectory.current;
+	this.mask = Dialog.ddRenaming.value;
+	this.dirSave = Dialog.ddDirectory.value;
+	this.hash = hash;
 }
 
 function Literal(str) {
@@ -223,6 +224,7 @@ var Dialog = {
 			var address = $('URLaddress');
 			
 			// if we've been called by DTA_AddingFunctions.saveSingleLink()
+			var hash = null;
 			if (window.arguments) {
 				var a = window.arguments[0];
 				var url = a.url;
@@ -251,10 +253,10 @@ var Dialog = {
 					$("URLref").value	 = refPage;
 				}
 				if (a.mask) {
-					$("renaming").current = a.mask;
+					this.ddRenaming.value = a.mask;
 				}
+				hash = a.hash;
 			}
-			
 			// check if there's some URL in clipboard
 			else {
 				var clip = Cc["@mozilla.org/widget/clipboard;1"].getService(Ci.nsIClipboard);
@@ -273,7 +275,8 @@ var Dialog = {
 						str = str.value.QueryInterface(Ci.nsISupportsString);
 						str = str.data;
 						if (str.length && DTA_AddingFunctions.isLinkOpenable(str)) {
-							address.value = str;
+							hash = DTA_getLinkPrintHash(str);
+							address.value = str.replace(/#.*$/, '');
 							address.select();
 						}
 					}
@@ -281,6 +284,9 @@ var Dialog = {
 				catch (ex) {
 					Debug.dump("Not able to gather data from the clipboard!");
 				}
+			}
+			if (hash) {
+				$('hash').value = hash;
 			}
 			
 			this.check();
@@ -295,7 +301,7 @@ var Dialog = {
 			topic = 'AddUrl';
 		}
 		if (topic) {
-			openHelp(topic, 'chrome://dta/locale/help/dtahelp.rdf');	
+			openHelp(topic, 'chrome://dta-help/content/help.rdf');	
 		}
 		else {
 			$('popupHelp').showPopup($('addURL').getButton('help'), -1, -1, "popup");
@@ -323,13 +329,13 @@ var Dialog = {
 		var errors = [];
 		
 		// check the directory
-		var dir = this.ddDirectory.current.trim();
-		if (!dir.length || !Utils.isValidDir(dir)) {
+		var dir = this.ddDirectory.value.trim();
+		if (!dir.length || !Utils.validateDir(dir)) {
 			errors.push('directory');
 		}
 		
 		// check mask
-		var mask = this.ddRenaming.current;
+		var mask = this.ddRenaming.value;
 		if (!mask.length) {
 			errors.push('renaming');
 		}
@@ -340,14 +346,31 @@ var Dialog = {
 			url = address._realURL;
 		}
 		else if (url.length && DTA_AddingFunctions.isLinkOpenable(url)) {
+			var hash = DTA_getLinkPrintHash(url);
+			if (hash) {
+				$('hash').value = hash;
+			}
+			url = url.replace(/#.*$/, '');
+			address.value = url;
 			url = new DTA_URL(url);
 		}
 		else {
 			errors.push('URLaddress');
 		}
 		
+		var hash = $('hash').value; 
+		if (hash && !DTA_checkHashFormat(hash)) {
+			errors.push('hash');
+		}
+				
 		if (errors.length) {
-			errors.forEach(function(e) { var style = $(e).inputField.style; style.backgroundColor = 'red'; style.color = 'white'; });
+			errors.forEach(
+				function(e) {
+					var style = $(e).inputField.style;
+					style.backgroundColor = 'red';
+					style.color = 'white';
+				}
+			);
 			return false;
 		}		
 
@@ -369,17 +392,17 @@ var Dialog = {
 			
 			var rv = DTA_confirm(_('batchtitle'), message, _('batchtitle'), DTA_confirm.CANCEL, _('single'));
 			if (rv == 0) {
-				batch = batch.getURLs(function(aURL) { return new downloadElement(new DTA_URL(aURL), num); });
+				batch = batch.getURLs(function(aURL) { return new QueueItem(new DTA_URL(aURL), num); });
 			}
-			else if (rv == 2) {
-				batch = [new downloadElement(url, num)];
+			else if (rv == 1) {
+				batch = [new QueueItem(url, num, hash)];
 			}
 			else {
 				return false;
 			}
 		}
 		else {
-			batch = [new downloadElement(url, num)];
+			batch = [new QueueItem(url, num, hash)];
 		}
 		DTA_AddingFunctions.sendToDown(queue, batch);
 
@@ -394,11 +417,11 @@ var Dialog = {
 	browseDir: function DTA_browseDir() {
 		// let's check and create the directory
 		var newDir = Utils.askForDir(
-			this.ddDirectory.current,
+			this.ddDirectory.value,
 			_("validdestination")
 		);
 		if (newDir) {
-			this.ddDirectory.current = newDir;
+			this.ddDirectory.value = newDir;
 		}
 		this.check();
 	}

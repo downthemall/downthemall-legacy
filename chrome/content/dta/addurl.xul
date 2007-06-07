@@ -5,14 +5,13 @@
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
  * 
- * See notice.txt and gpl.txt for details.
+ * See LICENSE and GPL for details.
  *
  * Contributers:
  *   Nils Maier <MaierMan@web.de>
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
 <?xml-stylesheet href="chrome://dta/skin/add/style.css" type="text/css" ?>
 
 <!DOCTYPE dialog [
@@ -81,10 +80,6 @@
 				<textbox id="URLaddress" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21" onchange="Dialog.check();" oninput="Dialog.check();" />
 			</row>
 			<row align="center">
-				<label control="URLref" id="URLrefTitle" value="&referrer.value;" style="font-style: italic;" />
-				<textbox id="URLref" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21" />
-			</row>
-			<row align="center">
 				<label control="directory" id="destinationPath" value="&dest.caption;" />
 				<hbox flex="1">
 					<saveddropdown id="directory" preference="directory" flex="1" onchange="Dialog.check();"/>
@@ -97,6 +92,14 @@
 					<saveddropdown id="renaming" preference="renaming" flex="1" onchange="Dialog.check();" tooltiptext="&mask.tip;"/>
 					<maskbutton/>
 				</hbox>
+			</row>
+			<row align="center">
+				<label control="URLref" id="URLrefTitle" value="&referrer.value;" style="font-style: italic;" />
+				<textbox id="URLref" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21" />
+			</row>
+			<row align="center">
+				<label control="hash" value="&checksum.value;" style="font-style: italic;" />
+				<textbox id="hash" height="21" />
 			</row>
 		</rows>
 	</grid>

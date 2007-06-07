@@ -1,5 +1,7 @@
 @import 'chrome://dta/content/common/bindings.css';
+@import 'chrome://dta-platform/skin/dta.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
 /* maskbutton */
 maskbutton {
 	-moz-binding: url(chrome://dta/content/dta/maskbutton.xml#maskbutton);
@@ -79,18 +81,18 @@ dialogheader#logo.renamingmask .dialogheader-title {
 	margin-top: 10px;
 }
 
-.opzioni {
-	margin-left:10px;
-	margin-right:10px;
-}
-
-.imgopzioni {
-	height:24px; width:30px; margin-right: 10px;
-}
-
 #head image:hover {
 	margin-right:1px;
 	
+}
+
+.link {
+	color: blue;
+	text-decoration: underline;
+	cursor: pointer;
+}
+.link:hover {
+	color: red;
 }
 
 .hidegroup {
@@ -100,10 +102,6 @@ dialogheader#logo.renamingmask .dialogheader-title {
 #checkcontainer {
 	margin-right: 10px;
 	display: block;
-}
-
-.titolo {
-	font-weight: bold;
 }
 
 .list {
@@ -123,26 +121,6 @@ tree treecols splitter {
 
 .itemlista:focus { 
 	color: black !important; 
-}
-
-treechildren::-moz-tree-progressmeter(completed) {
-  color: #008F00;
-}
-
-treechildren::-moz-tree-progressmeter(paused) {
-  color: #FFCC00;
-}
-
-treechildren::-moz-tree-progressmeter(canceled) {
-  color: #B12801;
-}
-
-treechildren::-moz-tree-progressmeter(queued) {
-  color: #BFDEFF;
-}
-
-treechildren::-moz-tree-progressmeter(inprogress) {
-  color: #AAE061;
 }
 
 #donate {
@@ -172,4 +150,12 @@ treechildren::-moz-tree-row(selected) {
 
 treechildren::-moz-tree-row {
 	min-height: 22px;
+}
+
+treechildren::-moz-tree-image(iconic) {
+	padding-right: 0.5ex;
+}
+
+textbox[readonly], menulist[readonly], textbox[readonly] *, menulist[readonly] * {
+	background-color: -moz-dialog !important;
 }

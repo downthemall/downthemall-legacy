@@ -1,13 +1,38 @@
 /* ***** BEGIN LICENSE BLOCK *****
- * Version: GPL 2.0
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
- * This code is part of DownThemAll! - dTa!
- * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- * 
- * See notice.txt and gpl.txt for details.
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
  *
- * Contributers:
- *   Nils Maier <MaierMan@web.de>
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is DownThemAll!
+ *
+ * The Initial Developers of the Original Code are Stefano Verna and Federico Parodi
+ * Portions created by the Initial Developers are Copyright (C) 2004-2007
+ * the Initial Developers. All Rights Reserved.
+ *
+ * Contributor(s):
+ *    Stefano Verna
+ *    Federico Parodi
+ *    Nils Maier <MaierMan@web.de>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
  
@@ -36,38 +61,41 @@ var DTA_ContextOverlay = {
 		if (!('length' in lnks)) {
 			return;
 		}
+		var known = {};
 		for (var i = 0; i < lnks.length; ++i) {
 			// remove anchor from url
-			var link = lnks[i].href.replace(/#.*$/gi, "");;
+			var link = lnks[i];
+			var plink = link.href.replace(/#.*$/gi, "");
 			// if it's valid and it's new
-			if (!DTA_AddingFunctions.isLinkOpenable(link) || link in urls) {
+			if (!DTA_AddingFunctions.isLinkOpenable(plink) || plink in known) {
 				continue;
 			}
 				
 			/// XXX: title is also parsed by extractDescription
 			/// XXX: is this instance necessary?
 			var udesc = '';
-			if (lnks[i].hasAttribute('title')) {
-				udesc = this.trim(lnks[i].getAttribute('title'));
+			if (link.hasAttribute('title')) {
+				udesc = this.trim(link.getAttribute('title'));
 			}
-			urls[link] = {
-				'url': new DTA_URL(link, doc.characterSet),
+			urls.push({
+				'url': new DTA_URL(plink, doc.characterSet),
 				'refPage': ref,
-				'description': this.extractDescription(lnks[i]),
-				'ultDescription': udesc
-			};
-			++urls.length;
+				'description': this.extractDescription(link),
+				'ultDescription': udesc,
+				'hash': DTA_getLinkPrintHash(link.hash)
+			});
+			known[plink] = null;
 			
-			var ml = lnks[i].hash.match(/#!metalink3!((?:https?|ftp):.+)$/);
-			if (ml && !((ml = ml[1]) in urls)) {
-				urls[ml] = {
+			var ml = DTA_getLinkPrintMetalink(link.hash);
+			if (ml) {
+				urls.push({
 					'url': new DTA_URL(ml, doc.characterSet),
 					'refPage': ref,
 					'description': '[metalink] http://www.metalinker.org/',
 					'ultDescription': '',
 					'metalink': true
-				};
-				++urls.length;
+				});
+				known[ml] = null;
 			}
 		}
 	},
@@ -78,8 +106,9 @@ var DTA_ContextOverlay = {
 		if (!lnks || !lnks.length) {
 			return;
 		}
-
-		for (var i = 0; i<lnks.length; ++i) {
+		var known = {};
+		
+		for (var i = 0; i < lnks.length; ++i) {
 			var src = lnks[i].src;
 			if (!DTA_AddingFunctions.isLinkOpenable(src)) {
 				try {
@@ -92,21 +121,22 @@ var DTA_ContextOverlay = {
 			}
 			// if it's valid and it's new
 			// better double check :p
-			if (DTA_AddingFunctions.isLinkOpenable(src) && !(src in images)) {
-				// add to array
-				var desc = '';
-				if (lnks[i].hasAttribute('alt')) {
-					desc = this.trim(lnks[i].getAttribute('alt'));
-				} else if (lnks[i].hasAttribute('title')) {
-					desc = this.trim(lnks[i].getAttribute('title'));
-				}
-				images[lnks[i].src] = {
-					'url': new DTA_URL(src, doc.characterSet),
-					'refPage': ref,
-					'description': desc
-				}
-				++images.length;
+			if (!DTA_AddingFunctions.isLinkOpenable(src) || src in known) {
+				continue;
 			}
+			var desc = '';
+			if (lnks[i].hasAttribute('alt')) {
+				desc = this.trim(lnks[i].getAttribute('alt'));
+			}
+			else if (lnks[i].hasAttribute('title')) {
+				desc = this.trim(lnks[i].getAttribute('title'));
+			}
+			images.push({
+				'url': new DTA_URL(src, doc.characterSet),
+				'refPage': ref,
+				'description': desc
+			});
+			known[src] = null;
 		}
 	},
 	
@@ -186,8 +216,8 @@ var DTA_ContextOverlay = {
 			}
 				
 
-			var urls = {length: 0};
-			var images = {length: 0};
+			var urls = [];
+			var images = [];
 			windows.forEach(
 				function(win) {
 					this.addLinks(win, urls, images, !all);
@@ -230,12 +260,6 @@ var DTA_ContextOverlay = {
 			}
 			
 			var url = gContextMenu.onLink ? cur.href : cur.src;
-			if (gContextMenu.onLink) {
-				var ml = cur.hash.match(/#!metalink3!((?:https?|ftp):.+)$/);
-				if (ml) {
-					url = ml[1];
-				}
-			}			
 			
 			if (!DTA_AddingFunctions.isLinkOpenable(url)) {
 				DTA_alert(this.getString('error'), this.getError('errornodownload'));

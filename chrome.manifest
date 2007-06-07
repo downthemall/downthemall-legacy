@@ -1,5 +1,6 @@
 ### package ###
 content	dta	chrome/content/
+content	dta-help	chrome/help/
 skin	dta	classic/1.0 chrome/skin/
 locale	dta	en-US	chrome/locale/en-US/
 

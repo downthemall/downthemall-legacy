@@ -40,7 +40,6 @@
  -->
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css"?>
 <?xml-stylesheet href="style.css" type="text/css"?>
 <?xml-stylesheet href="resource://gre/res/html.css" type="text/css"?>
 
@@ -107,11 +106,11 @@
 			This is free software!<html:br/>
 			You are welcome to redistribute it under certain conditions:
 		</description>
-		<label class="link" value="License" onclick="openTab('chrome://dta/content/gpl.txt');"/>
+		<label class="link" value="License (GPL)" onclick="openTab('http://www.gnu.org/licenses/gpl.txt');"/>
 		<separator class="thin"/>
 		<description>
 			DownThemAll! values your privacy.<html:br/>
-			See our <html:span class="link" onclick="openHelp('About_Privacy','chrome://dta/locale/help/dtahelp.rdf');">Privacy notice</html:span>.
+			See our <html:span class="link" onclick="openHelp('About_Privacy','chrome://dta-help/content/help.rdf');">Privacy notice</html:span>.
 		</description>
 
 	  <separator class="thin"/>
