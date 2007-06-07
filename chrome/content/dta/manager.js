@@ -1163,7 +1163,7 @@ QueueItem.prototype = {
 			return Prefs.onConflictingFilenames;
 		}
 		
-		let dn = this.destinationName, ds = this.destinationPath, df = this.destinationFile;
+		let dn = this._destinationName, ds = this._destinationPath, df = this._destinationFile;
 		let dest = new FileFactory(df), newDest = dest.clone();
 
 		if (!this.is(RUNNING, FINISHING) || !dest.exists()) {
