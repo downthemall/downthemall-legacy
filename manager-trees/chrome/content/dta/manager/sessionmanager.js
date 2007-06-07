@@ -83,6 +83,9 @@
 			}
 		);
 		e.state = d.is(COMPLETE, CANCELED) ? d.state : PAUSED;
+		if (d.destinationNameOverride) {
+			e.destinationName = d.destinationNameOverride;
+		}
 
 		e.referrer = d.refPage.spec;
 		// Store this so we can later resume.
@@ -197,6 +200,7 @@
 
 				[
 					'fileName',
+					'destinationName',
 					'isResumable',
 					'state',
 					'partialSize',

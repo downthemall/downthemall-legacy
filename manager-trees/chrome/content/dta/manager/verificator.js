@@ -88,7 +88,7 @@ Verificator.prototype = {
 	_invalidate: function() {
 		this.download.invalidate();
 		var thisp = this;
-		Dialog.setTimer(this._uuid, function() { thisp._invalidate(); }, 200);
+		Dialog.setTimer(this._uuid, function() { thisp._invalidate(); }, STREAMS_FREQ);
 	},
 	QueryInterface: function(iid) {
 		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIStreamListener) || iid.equals(cI.nsIRequestObserver)) {

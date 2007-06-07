@@ -14,6 +14,13 @@
 
 
 var Dialog = {
+	get isFullyDisabled() {
+		return $('directory', 'renaming', 'hash').every(
+			function(e) {
+				return e.hasAttribute('disabled');
+			}
+		);
+	},
 	load: function DTA_load() {
 		make_();
 		try {
@@ -40,6 +47,7 @@ var Dialog = {
 				// more than just one download
 				$("infoURL").value = $("sourcePage").value = "---";
 				$("hash").setAttribute('readonly', 'true');
+				$("hash").setAttribute('disabled', 'true');
 	
 				var mask = downloads[0].mask;
 				$('renaming').value = 
@@ -62,10 +70,14 @@ var Dialog = {
 					
 			}				
 			if (downloads.every(function(d) { return d.is(COMPLETE, FINISHING); })) {
-				$('directory', 'renaming', 'mask').forEach(function(e) { e.setAttribute('readonly', 'true'); });
-				$('browsedir').setAttribute('disabled', 'true');
+				$('directory', 'renaming', 'mask', 'browsedir').forEach(
+					function(e) {
+						e.setAttribute('readonly', 'true');
+						e.setAttribute('disabled', 'true');
+					}
+				);
 			}
-			if ($('directory', 'renaming', 'hash').every(function(e) { return e.hasAttribute('readonly'); })) {
+			if (this.isFullyDisabled) {
 				$('dTaDownloadInfo').buttons = 'accept';
 			}			
 		} catch(ex) {
@@ -74,7 +86,7 @@ var Dialog = {
 		window.setTimeout('window.sizeToContent()', 0);
 	},
 	accept: function DTA_accept() {
-		if ($('directory', 'renaming', 'hash').every(function(e) { return e.hasAttribute('readonly'); })) {
+		if (this.isFullyDisabled) {
 			return true;
 		}		
 		if (!this.check()) {
@@ -136,8 +148,6 @@ var Dialog = {
 		compl.addColorStop(0, 'rgba(13,141,15,255)');
 		compl.addColorStop(1, 'rgba(0,199,56,255)');
 		
-		var join = "#A5FE2C";
-		
 		var cancel = canvas.createLinearGradient(0,0,0,16);
 		cancel.addColorStop(0, 'rgba(151,58,2,100)');
 		cancel.addColorStop(1, 'rgba(255,0,0,100)');
@@ -149,7 +159,7 @@ var Dialog = {
 		canvas.fillStyle = normal;
 		canvas.fillRect(0,0,300,20);
 
-		if (d.is(COMPLETE)) {
+		if (d.is(COMPLETE, FINISHING)) {
 			canvas.fillStyle = compl;
 			canvas.fillRect(0,0,300,20);
 			canvas.fillStyle = join;
@@ -166,12 +176,15 @@ var Dialog = {
 			d.chunks.forEach(
 				function(c) {
 					this.canvas.fillStyle = prog;
-					this.canvas.fillRect(Math.round(c.start/d.totalSize*300),0,Math.round(c.size/d.totalSize*300),20);
+					this.canvas.fillRect(
+						Math.ceil(c.start / d.totalSize * 300),
+						0,
+						Math.ceil(c.written / d.totalSize * 300),
+						20
+					);
 				},
 				this
 			);
-			canvas.fillStyle = join;
-			canvas.fillRect(0,16,Math.round(d.chunks[d.firstChunk].chunkSize/d.totalSize*300),4);
 		}
 		setTimeout('Dialog.draw();', 150);
 	},

@@ -112,7 +112,7 @@
 					var preference = 100;
 					if (url.hasAttribute('preference')) {
 						var a = new Number(url.getAttribute('preference'));
-						if (!isNaN(a)) {
+						if (isFinite(a)) {
 							preference = a;
 						}
 					}

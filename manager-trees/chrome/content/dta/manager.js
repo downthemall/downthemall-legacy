@@ -52,6 +52,7 @@ const SPEED_COUNT = 25;
 
 const REFRESH_FREQ = 1000;
 const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
+const STREAMS_FREQ = 100;
 
 var Dialog = {
 	_lastSum: 0,
@@ -86,7 +87,7 @@ var Dialog = {
 						// Calculate estimated time
 						if (d.totalSize > 0) {
 							var remaining = Math.ceil((d.totalSize - d.partialSize) / ((d.partialSize - i.lastBytes) * REFRESH_NFREQ));
-							if (isNaN(remaining)) {
+							if (!isFinite(remaining)) {
 								d.status = _("unknown");
 							}
 							else {
@@ -375,14 +376,6 @@ UrlManager.prototype = {
 	get charset() {
 		return this._urls[0].charset;
 	},
-	replace: function um_replace(url, newUrl) {
-		for (var i = 0, e = this._urls.length; i < e; ++i) {
-			if (this._urls[i].url == url) {
-				this._urls[i] = newUrl;
-				break;
-			}
-		}
-	},
 	markBad: function um_markBad(url) {
 		if (this._urls.length > 1) {
 			this._urls = this._urls.filter(function(u) { return u != url; });
@@ -432,7 +425,7 @@ Visitor.prototype = {
 	overrideCharset: null,
 	encoding: null,
 	fileName: null,
-	acceptRanges: false,
+	acceptRanges: 'bytes',
 	contentlength: 0,
 	time: null,
 
@@ -509,7 +502,6 @@ Visitor.prototype = {
 				}
 				if (value) {
 					this.fileName = value[2].getUsableFileName();
-					Debug.dump("found fn:" + this.fileName);
 				}
 			}
 		} catch (ex) {
@@ -731,6 +723,7 @@ QueueItem.prototype = {
 	},
 	set destinationName(nv) {
 		this.destinationNameOverride = nv;
+		this._destinationFile = this.destinationPath + this.destinationName;
 		this.invalidate();
 		return nv;
 	},
@@ -913,15 +906,6 @@ QueueItem.prototype = {
 		this.status = _('inqueue');
 	},
 
-	removeFromInProgressList: function QI_removeFromInProgressList() {
-		//this.speeds = new Array();
-		for (var i=0; i<inProgressList.length; i++)
-			if (this==inProgressList[i].d) {
-				inProgressList.splice(i, 1);
-				break;
-			}
-	},
-	
 	refreshPartialSize: function QI_refreshPartialSize(){
 		var size = 0;
 		this.chunks.forEach(function(c) { size += c.written; });
@@ -945,13 +929,15 @@ QueueItem.prototype = {
 		}
 
 		try {
+			if (!this.checkNameConflict()) {
+				return;
+			}
 			var destination = new FileFactory(this.destinationPath);
 			Debug.dump(this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
 
 			if (!destination.exists()) {
 				destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
 			}
-			this.checkFilenameConflict();
 			var df = destination.clone();
 			df.append(this.destinationName);
 			if (df.exists()) {
@@ -1110,26 +1096,31 @@ QueueItem.prototype = {
 			}
 			
 			var replacements = {
-				"\\*name\\*": name,
-				"\\*ext\\*": ext,
-				"\\*text\\*": this.description,
-				"\\*url\\*": uri.host,
-				"\\*subdirs\\*": uripath,
-				"\\*refer\\*": this.refPage.host,
-				"\\*qstring\\*": query,
-				"\\*curl\\*": (uri.host + ((uripath=="")?"":(SYSTEMSLASH + uripath))),
-				"\\*num\\*": Utils.makeNumber(this.numIstance),
-				"\\*hh\\*": Utils.makeNumber(this.startDate.getHours(), 2),
-				"\\*mm\\*": Utils.makeNumber(this.startDate.getMinutes(), 2),
-				"\\*ss\\*": Utils.makeNumber(this.startDate.getSeconds(), 2),
-				"\\*d\\*": Utils.makeNumber(this.startDate.getDate(), 2),
-				"\\*m\\*": Utils.makeNumber(this.startDate.getMonth(), 2),
-				"\\*y\\*": String(this.startDate.getFullYear())
+				"name": name,
+				"ext": ext,
+				"text": this.description,
+				"url": uri.host,
+				"subdirs": uripath,
+				"refer": this.refPage.host,
+				"qstring": query,
+				"curl": (uri.host + ((uripath=="")?"":(SYSTEMSLASH + uripath))),
+				"num": Utils.formatNumber(this.numIstance),
+				"hh": Utils.formatNumber(this.startDate.getHours(), 2),
+				"mm": Utils.formatNumber(this.startDate.getMinutes(), 2),
+				"ss": Utils.formatNumber(this.startDate.getSeconds(), 2),
+				"d": Utils.formatNumber(this.startDate.getDate(), 2),
+				"m": Utils.formatNumber(this.startDate.getMonth(), 2),
+				"y": String(this.startDate.getFullYear())
 			}
-
-			for (i in replacements) {
-				mask = mask.replace(new RegExp(i, "gi"), replacements[i]);
+			function replacer(type) {
+				var t = type.slice(1, u.length - 2).toLowerCase();
+				if (t in replacements) {
+					return replacements[t];
+				}
+				return type;
 			}
+			
+			mask = mask.replace(/\*\w+\*/gi, replacer);
 
 			this._destinationFile = mask = this.pathName.addFinalSlash() + mask.removeBadChars().removeFinalChar(".").trim();
 			mask = mask.split(SYSTEMSLASH);
@@ -1142,24 +1133,53 @@ QueueItem.prototype = {
 			Debug.dump("buildFromMask():", ex);
 		}
 		this._icon = null;
+		this.checkNameConflict();		
 	},
 
-	checkFilenameConflict: function  QI_checkFileNameConflict() {
-		return 0;
-		var dn = this.destinationName, ds = this.destinationPath;
-		var dest = new FileFactory(ds + dn), newDest = dest.clone();
+	checkNameConflict: function  QI_checkFileNameConflict() {
 
-		// figure out an unique name
-		var basename = dn, ext = '', pos = basename.lastIndexOf('.');
+		function askForRenaming(t, s1, s2, s3) {
+			if (Prefs.onConflictingFilenames == 3) {
+				if (Prefs.askEveryTime) {
+					var passingArguments = new Object();
+					passingArguments.text = t;
+					passingArguments.s1 = s1;
+					passingArguments.s2 = s2;
+					passingArguments.s3 = s3;
+		
+					window.openDialog(
+						"chrome://dta/content/dta/dialog.xul","_blank","chrome,centerscreen,resizable=no,dialog,modal,close=no,dependent",
+						passingArguments
+					);
+		
+					// non faccio registrare il timeout
+					inProgressList.forEach(function(o) { o.d.timeLastProgress = Utils.getTimestamp(); });
+		
+					Prefs.askEveryTime = (passingArguments.temp == 0) ? true : false;
+					Prefs.sessionPreference = passingArguments.scelta;
+				}
+				return Prefs.sessionPreference;
+			}
+			return Prefs.onConflictingFilenames;
+		}
+		
+		let dn = this.destinationName, ds = this.destinationPath, df = this.destinationFile;
+		let dest = new FileFactory(df), newDest = dest.clone();
+
+		if (!this.is(RUNNING, FINISHING) || !dest.exists()) {
+			return true;
+		}
+			
+		let basename = dn, ext = '', pos = basename.lastIndexOf('.');
 		if (pos != -1) {
 			ext = basename.slice(pos);
 			basename = basename.slice(0, pos);
 		}
-		for (var i = 1; isInProgress(newDest.path, this) != -1 || newDest.exists(); ++i) {
-			newDest.leafName = basename + "_" +  Utils.makeNumber(i) + ext;
-		}
-		if (newDest.path == dest.path) {
-			return;
+		for (let i = 1;; ++i) {
+			newDest.leafName = basename + "_" +  Utils.formatNumber(i) + ext;
+			if (!newDest.exists()) {
+				break;
+			}
 		}
 		newDest = newDest.leafName;
 
@@ -1170,48 +1190,18 @@ QueueItem.prototype = {
 		}
 
 		var s = -1, p;
-		if (dest.exists()) {
-			s = askForRenaming(
-				_('alreadyexists', [dn, ds]) + " " + _('whatdoyouwith', [shortUrl]),
-				mc(_('reninto', [newDest]), 0),
-				mc(_('overwrite'), 1),
-				mc(_('skip'), 2)
-			);
-		}
-		else if (this.is(FINISHING)) {
-			s = askForRenaming(
-				_("alreadyexists", [dn, ds]) + " " + _("whatdoyoucomplete", [shortUrl]),
-				mc(_('reninto', [newDest]), 0),
-				mc(_('overwrite'), 1),
-				mc(_('cancel'), 4)
-			);
-		}
-		else if (-1 != (p = isInProgress(dest.path, this))) {
-			s = askForRenaming(
-				_("samedestination", [shortUrl, dn, inProgressList[p].d.urlManager.url]) + " " + _("whatdoyou"),
-				mc(_('reninto', [newDest]), 0),
-				mc(_('skipfirst'), 2),
-				mc(_('cancelsecond'), 3)
-			);
-		}
-		if (s < 0) {
-			return;
-		}
-
-		if (s == 0) {
-			this.destinationName = newDest;
-		}
-		else if (s == 1) {
-			dest.remove(false);
-		}
-		else if (s == 2) {
-			this.cancel(_('skipped'));
-		}
-		else if (s == 3) {
-			inProgressList[p].d.cancel();
-		}
-		else {
-			this.cancel();
+		s = askForRenaming(
+			_('alreadyexists', [dn, ds]) + " " + _('whatdoyouwith', [shortUrl]),
+			mc(_('reninto', [newDest]), 0),
+			mc(_('overwrite'), 1),
+			mc(_('skip'), 2)
+		);
+		
+		switch (s) {
+			case 0:	this.destinationName = newDest; return true;
+			case 1: return true;
+			case 3: inProgressList[p].d.cancel(); return true;
+			default: this.cancel(_('skipped')); return false;
 		}
 	},
 
@@ -1303,6 +1293,7 @@ QueueItem.prototype = {
 		function downloadChunk(download, chunk, header) {
 			chunk.isRunning = true;
 			download.state = RUNNING;
+			download.checkNameConflict();
 			chunk.download = new Download(download, chunk, header);
 			++download.activeChunks;
 			++download.sessionConnections;
@@ -1414,6 +1405,9 @@ var Chunk = function(download, start, end, written) {
 
 Chunk.prototype = {
 	isRunning: false,
+	get isStarter() {
+		return this.end <= 0;
+	},
 	get start() {
 		return this._start;
 	},
@@ -1434,7 +1428,10 @@ Chunk.prototype = {
 		return this._total - this._written;
 	},
 	get complete() {
-		return this._total == this._written || this._end == -1;
+		if (this._end == -1) {
+			return this.written != 0;
+		}
+		return this._total == this.written;
 	},
 	get parent() {
 		return this._parent;
@@ -1517,25 +1514,25 @@ Chunk.prototype = {
 	},
 	toString: function() {
 		let len = this.parent.totalSize ? String(this.parent.totalSize).length  : 10; 
-		return Utils.makeNumber(this.start, len)
+		return Utils.formatNumber(this.start, len)
 			+ "/"
-			+ Utils.makeNumber(this.end, len)
+			+ Utils.formatNumber(this.end, len)
 			+ "/"
-			+ Utils.makeNumber(this.total, len)
+			+ Utils.formatNumber(this.total, len)
 			+ " running:"
 			+ this.isRunning
 			+ " written/remain:"
-			+ Utils.makeNumber(this.written, len)
+			+ Utils.formatNumber(this.written, len)
 			+ "/"
-			+ Utils.makeNumber(this.remainder, len);
+			+ Utils.formatNumber(this.remainder, len);
 	}
 }
 
-function Download(d, c, headerHack) {
+function Download(d, c, getInfo) {
 
 	this.d = d;
 	this.c = c;
-	this.isHeaderHack = headerHack;
+	this.isInfoGetter = getInfo;
 	this.url = d.urlManager.getURL();
 	var referrer = d.refPage;
 
@@ -1550,21 +1547,22 @@ function Download(d, c, headerHack) {
 	catch (ex) {
 		// no-op
 	}
-	if (referrer) {
-		try {
-			var http = this._chan.QueryInterface(Ci.nsIHttpChannel);
-			//http.setRequestHeader('Accept-Encoding', 'none', false);
-			if (c.start + c.written > 0) {
-				http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
-			}
-			if (typeof(referrer) == 'string') {
-				referrer = this._ios.newURI(referrer, null, null);
-			}
+	try {
+		var http = this._chan.QueryInterface(Ci.nsIHttpChannel);
+		if (c.start + c.written > 0) {
+			http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
+		}
+		if (typeof(referrer) == 'string') {
+			referrer = this._ios.newURI(referrer, null, null);
+		}
+		if (referrer instanceof Ci.nsIURI) {
 			http.referrer = referrer;
 		}
-		catch (ex) {
+		http.setRequestHeader('Keep-Alive', '', false);
+		http.setRequestHeader('Connection', 'close', false);
+	}
+	catch (ex) {
 
-		}
 	}
 	this.c.isRunning = true;
 	this._chan.asyncOpen(this, null);
@@ -1678,7 +1676,8 @@ Download.prototype = {
 		try {
 			this._chan == newChannel;
 			this._redirectedTo = newChannel.URI.spec;
-			
+			this.url.url = this._redirectedTo;
+			this.d.filename = this.url.usable.getUsableFileName();
 		}
 		catch (ex) {
 			// no-op
@@ -1768,7 +1767,7 @@ Download.prototype = {
 		var c = this.c;
 		var d = this.d;
 		
-		let code = 503, status = 'Server returned nothing';
+		let code = 0, status = 'Server returned nothing';
 		try {
 			code = aChannel.responseStatus;
 			status = aChannel.responseStatusText;
@@ -1777,10 +1776,11 @@ Download.prototype = {
 			// no-op
 		}
 		
-		if (code >= 400) {
+		if (!code || code >= 400) {
 			if (!this.handleError()) {
 				Debug.dump("handleError: Cannot recover from problem!", code);
 				var file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
+				code = Utils.formatNumber(code, 3);
 				d.fail(
 					_("error", [code]),
 					_("failed", [file]) + " " + _("sra", [code]) + ": " + status,
@@ -1794,15 +1794,19 @@ Download.prototype = {
 		// not partial content altough we are multi-chunk
 		if (aChannel.responseStatus != 206 && c.start + c.written != 0) {
 			Debug.dump(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206... Normal mode");
-			vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
-			aChannel.visitRequestHeaders(vis);
-			Debug.dump("Request Headers\n\n" + vis.value);
-			vis.value = '';
-			aChannel.visitResponseHeaders(vis);
-			Debug.dump("Response Headers\n\n" + vis.value);
-			d.hasToBeRedownloaded = true;
-			d.reDownload();
-			return;
+			Debug.dump(c, this.url.url);
+
+			if (!this.handleError()) {
+				vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
+				aChannel.visitRequestHeaders(vis);
+				Debug.dump("Request Headers\n\n" + vis.value);
+				vis.value = '';
+				aChannel.visitResponseHeaders(vis);
+				Debug.dump("Response Headers\n\n" + vis.value);
+				d.hasToBeRedownloaded = true;
+				d.reDownload();
+				return;
+			}
 		}
 
 		var visitor = null;
@@ -1810,15 +1814,14 @@ Download.prototype = {
 			visitor = d.visitors.visit(aChannel);
 		}
 		catch (ex) {
-			Debug.dump("header failed! " + d.fileName, ex);
+			Debug.dump("header failed! " + d, ex);
 			// restart download from the beginning
 			d.hasToBeRedownloaded = true;
 			d.reDownload();
 			return;
 		}
 		
-		// this.isHeaderHack = it's the chunk that has to test response headers
-		if (!this.isHeaderHack) {
+		if (!this.isInfoGetter) {
 			return;
 		}
 
@@ -1937,7 +1940,7 @@ Download.prototype = {
 				}					
 			}
 
-			if (this.isHeaderHack) {
+			if (this.isInfoGetter) {
 				// Checks for available disk space.
 				
 				var tsd = d.totalSize;
@@ -1989,11 +1992,9 @@ Download.prototype = {
 					d.maxChunks = 1;
 				}
 				c.end = d.totalSize - 1;
-				this.isHeaderHack = false;
+				delete this.getInfo;
 			}
-
-			d.checkFilenameConflict();
-	
+			
 			if (d.isResumable) {
 				d.resumeDownload();
 			}
@@ -2017,7 +2018,7 @@ Download.prototype = {
 
 		// check if we're complete now
 		let shouldFinish = false;
-		if (d.is(RUNNING) && !d.chunks.some(function(e) { return e.isRunning; })) {
+		if (d.is(RUNNING) && d.chunks.every(function(e) { return e.complete; })) {
 			if (!d.resumeDownload()) {
 				d.dumpScoreboard();
 				d.state = FINISHING;
@@ -2038,23 +2039,30 @@ Download.prototype = {
 			Debug.dump("out2");
 			return;
 		}
-		
-		// ok, chunk passed all the integrity checks!
 
 		if (!d.is(RUNNING)) {
 			d.speed = '';
-			d.removeFromInProgressList();
+			for (let i = 0, e = inProgressList.length; i < e; ++i) {
+				if (d == inProgressList[i].d) {
+					inProgressList.splice(i, 1);
+					break;
+				}
+			}
 		}
-
+		
 		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
-		if (!this.started && d.isResumable && !d.is(CANCELED, PAUSED)) {
-			if (!this.handleError()) {
+		if (c.isStarter && !shouldFinish) {
+			if (!d.urlManager.markBad(this.url)) {
 				Debug.dump(d + ": Server error or disconnection (type 1)");
 				d.status = _("srver");
 				d.speed = '';
 				d.setPaused();
+				return;
 			}
-			return;			
+			else {
+				Debug.dump("caught bad server");
+				d.chunks = [];
+			}
 		}
 
 		// if download is complete
@@ -2062,8 +2070,7 @@ Download.prototype = {
 			Debug.dump(d + ": Download is completed!");
 			d.finishDownload();
 		}
-		else if (d.is(RUNNING) && d.isResumable) {
-			// if all the download space has already been occupied by chunks (= !resumeDownload)
+		else {
 			d.resumeDownload();
 		}
 		SessionManager.save(d);
@@ -2173,29 +2180,4 @@ function isInProgress(path, d) {
 		if ((inProgressList[x].d.destinationFile) == path && d != inProgressList[x].d)
 			return x;
 	return -1;
-}
-
-function askForRenaming(t, s1, s2, s3) {
-	if (Prefs.onConflictingFilenames == 3) {
-		if (Prefs.askEveryTime) {
-			var passingArguments = new Object();
-			passingArguments.text = t;
-			passingArguments.s1 = s1;
-			passingArguments.s2 = s2;
-			passingArguments.s3 = s3;
-
-			window.openDialog(
-				"chrome://dta/content/dta/dialog.xul","_blank","chrome,centerscreen,resizable=no,dialog,modal,close=no,dependent",
-				passingArguments
-			);
-
-			// non faccio registrare il timeout
-			inProgressList.forEach(function(o) { o.d.timeLastProgress = Utils.getTimestamp(); });
-
-			Prefs.askEveryTime = (passingArguments.temp == 0) ? true : false;
-			Prefs.sessionPreference = passingArguments.scelta;
-		}
-		return Prefs.sessionPreference;
-	}
-	return Prefs.onConflictingFilenames;
 }

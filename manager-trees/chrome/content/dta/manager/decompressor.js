@@ -116,7 +116,7 @@ Decompressor.prototype = {
 	_invalidate: function() {
 		this.download.invalidate();
 		var thisp = this;
-		Dialog.setTimer(this._uuid, function() { thisp._invalidate(); }, 200);
+		Dialog.setTimer(this._uuid, function() { thisp._invalidate(); }, STREAMS_FREQ);
 	},	
 	onStartRequest: function(r, c) {
 		this._uuid = newUUIDString();
@@ -158,7 +158,6 @@ Decompressor.prototype = {
 				throw new Components.Exception("Failed to write!");
 			}
 			this.download.partialSize = offset;
-			this.download.invalidate();
 		}
 		catch (ex) {
 			this.exception = ex;

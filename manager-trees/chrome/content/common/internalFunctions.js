@@ -294,7 +294,7 @@ var Utils = {
 			throw new Error("not a string");
 		}
 		var rv = Date.parse(str);
-		if (isNaN(rv)) {
+		if (!isFinite(rv)) {
 			throw new Error("invalid date");
 		}
 		return rv;
@@ -329,7 +329,7 @@ var Utils = {
 	 * @param aDigists Optional. Number of digits the result must at least have
 	 * @author Nils
 	 */
-	makeNumber: function U_makeNumber(rv, digits) {
+	formatNumber: function U_formatNumber(rv, digits) {
 		rv = _atos(rv);
 		if (typeof(digits) != 'number') {
 			digits = 3;
@@ -347,9 +347,9 @@ var Utils = {
 		var m = Math.floor((aDelta % 3600) / 60);
 		var s = Math.floor(aDelta % 60);
 		if (h) {
-			return this.makeNumber(h, 2) + ":" + this.makeNumber(m, 2) + ":" + this.makeNumber(s, 2);
+			return this.formatNumber(h, 2) + ":" + this.formatNumber(m, 2) + ":" + this.formatNumber(s, 2);
 		}
-		return this.makeNumber(m, 2) + ":" + this.makeNumber(s, 2);
+		return this.formatNumber(m, 2) + ":" + this.formatNumber(s, 2);
 	}
 };
 
@@ -597,7 +597,7 @@ function range() {
 	else {
 		step = stop - start > 0 ? 1 : -1; 
 	}
-	if (isNaN(start) || isNaN(stop) || isNaN(step) || step == 0) {
+	if (!isFinite(start) || !isFinite(stop) || !isFinite(step) || step == 0) {
 		throw Components.results.NS_ERROR_INVALID_ARG;
 	}
 	if ((stop - start) / step < 0) {
