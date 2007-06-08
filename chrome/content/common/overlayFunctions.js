@@ -502,13 +502,12 @@ var DTA_AddingFunctions = {
 				this.getDropDownValue('filter'),
 				DTA_preferences.getDTA('filterRegex', false)
 			);
-
-			var links = links.filter(
+			links = links.filter(
 				function(link) {
-					if (!additional.match(link.url.url)) {
+					if (additional.match(link.url.url)) {
 						return true;
 					}
-					if (!DTA_FilterManager.matchActive(link.url.url, type)) {
+					if (DTA_FilterManager.matchActive(link.url.url, type)) {
 						return true;
 					}
 					return false;
