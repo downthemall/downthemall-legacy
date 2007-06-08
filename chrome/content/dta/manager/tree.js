@@ -258,7 +258,7 @@ var Tree = {
 		this.updateSelected(
 			function(d) {
 				if (d.is(QUEUED) || (d.is(RUNNING) && d.isResumable)) {
-					d.setPaused();
+					d.pause();
 					d.speed = '';
 					d.status = _("paused");
 					d.state = PAUSED;

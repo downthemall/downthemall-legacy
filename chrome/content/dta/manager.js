@@ -151,7 +151,7 @@ var Dialog = {
 					// checks for timeout
 					if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
 						if (d.isResumable) {
-							d.setPaused();
+							d.pause();
 							d.status = _("timeout");
 						}
 						else {
@@ -275,7 +275,7 @@ var Dialog = {
 					},
 					this
 				);
-				d.setPaused();				
+				d.pause();				
 			}
 			else if (d.is(FINISHING)) {
 				this._safeCloseFinishing.push(d);
@@ -895,7 +895,7 @@ QueueItem.prototype = {
 		this.fileName = this.urlManager.usable.getUsableFileName();
 
 		// reset flags
-		this.setPaused();
+		this.pause();
 		this.totalSize = this.partialSize = 0;
 		this.compression = null;
 		this.activeChunks = 0;
@@ -912,11 +912,12 @@ QueueItem.prototype = {
 		this.partialSize = size;
 	},
 
-	setPaused: function QI_setPaused(){
+	pause: function QI_pause(){
 		if (this.chunks) {
 			for (let i = 0, e = this.chunks.length; i < e; ++i) {
 				if (this.chunks[i].isRunning) {
 					this.chunks[i].download.cancel();
+					this.chunks[i].close();
 				}
 			}
 		}
@@ -932,6 +933,8 @@ QueueItem.prototype = {
 			if (!this.checkNameConflict()) {
 				return;
 			}
+			// safeguard against some failed chunks.
+			this.chunks.forEach(function(c) { c.close(); });
 			var destination = new FileFactory(this.destinationPath);
 			Debug.dump(this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
 
@@ -1232,8 +1235,9 @@ QueueItem.prototype = {
 		try {
 			if (this.is(CANCELED)) {
 				return;
-			}
+			}			
 			Debug.dump(this.fileName + ": canceled");
+
 			this.visitors = new VisitorManager();
 
 			if (message == "" || !message) {
@@ -1245,7 +1249,7 @@ QueueItem.prototype = {
 				Dialog.completed--;
 			}
 			else if (this.is(RUNNING)) {
-				this.setPaused();
+				this.pause();
 			}
 			this.removeTmpFile();
 			this.state = CANCELED;
@@ -1890,7 +1894,7 @@ Download.prototype = {
 				Debug.dump(d + ": Server error or disconnection (type 1)");
 				d.status = _("srver");
 				d.speed = '';
-				d.setPaused();
+				d.pause();
 			}
 			return;
 		}
@@ -2060,7 +2064,7 @@ Download.prototype = {
 				Debug.dump(d + ": Server error or disconnection (type 1)");
 				d.status = _("srver");
 				d.speed = '';
-				d.setPaused();
+				d.pause();
 				return;
 			}
 			else {
