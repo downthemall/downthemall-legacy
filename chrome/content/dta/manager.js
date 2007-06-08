@@ -620,7 +620,7 @@ VisitorManager.prototype = {
 	}
 };
 
-function QueueItem(lnk, dir, num, desc, mask, refPage, tmpFile) {
+function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 
 	this.visitors = new VisitorManager();
 
@@ -641,8 +641,8 @@ function QueueItem(lnk, dir, num, desc, mask, refPage, tmpFile) {
 	this.description = desc ? desc : '';
 	this.chunks = [];
 	this.speeds = new Array();
-	this.refPage = Cc['@mozilla.org/network/standard-url;1'].createInstance(Ci.nsIURI);
-	this.refPage.spec = refPage;
+	this.referrer = Cc['@mozilla.org/network/standard-url;1'].createInstance(Ci.nsIURI);
+	this.referrer.spec = referrer;
 
 	// only access the setter of the last so that we don't generate stuff trice.
 	this._pathName = dir;
@@ -1101,7 +1101,7 @@ QueueItem.prototype = {
 				"text": this.description,
 				"url": uri.host,
 				"subdirs": uripath,
-				"refer": this.refPage.host,
+				"refer": this.referrer.host,
 				"qstring": query,
 				"curl": (uri.host + ((uripath=="")?"":(SYSTEMSLASH + uripath))),
 				"num": Utils.formatNumber(this.numIstance),
@@ -1532,7 +1532,7 @@ function Download(d, c, getInfo) {
 	this.c = c;
 	this.isInfoGetter = getInfo;
 	this.url = d.urlManager.getURL();
-	var referrer = d.refPage;
+	var referrer = d.referrer;
 
 	this._chan = this._ios.newChannelFromURI(this._ios.newURI(this.url.url, null, null));
 	var r = Ci.nsIRequest;
@@ -2133,7 +2133,7 @@ function startnewDownloads(notQueue, download) {
 			e.numIstance,
 			desc,
 			e.mask,
-			e.refPage
+			e.referrer
 		);
 		if ('hash' in e && e.hash) {
 			d.hash = e.hash;
@@ -2156,7 +2156,7 @@ function startnewDownloads(notQueue, download) {
 
 	if (Preferences.getDTA("closetab", false)) {
 		try {
-			DTA_Mediator.removeTab(d.refPage.spec);
+			DTA_Mediator.removeTab(d.referrer.spec);
 		} catch (ex) {
 			Debug.dump("failed to close old tab", ex);
 		}

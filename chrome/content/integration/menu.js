@@ -79,7 +79,7 @@ var DTA_ContextOverlay = {
 			}
 			urls.push({
 				'url': new DTA_URL(plink, doc.characterSet),
-				'refPage': ref,
+				'referrer': ref,
 				'description': this.extractDescription(link),
 				'ultDescription': udesc,
 				'hash': DTA_getLinkPrintHash(link.hash)
@@ -90,7 +90,7 @@ var DTA_ContextOverlay = {
 			if (ml) {
 				urls.push({
 					'url': new DTA_URL(ml, doc.characterSet),
-					'refPage': ref,
+					'referrer': ref,
 					'description': '[metalink] http://www.metalinker.org/',
 					'ultDescription': '',
 					'metalink': true
@@ -133,7 +133,7 @@ var DTA_ContextOverlay = {
 			}
 			images.push({
 				'url': new DTA_URL(src, doc.characterSet),
-				'refPage': ref,
+				'referrer': ref,
 				'description': desc
 			});
 			known[src] = null;

@@ -39,7 +39,7 @@ function CustomEvent(download, command) {
  		// may I introduce you to a real bastard way of commandline parsing?! :p
  		var uuids = {};
  		function callback(u) {
- 			u = u.slice(1, u.length - 2);
+ 			u = u.substr(1, u.length - 2);
  			id = newUUIDString();
  			uuids[id] = u;
  			return id;

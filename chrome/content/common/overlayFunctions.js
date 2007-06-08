@@ -429,7 +429,7 @@ var DTA_AddingFunctions = {
 		
 		var item = {
 			'url': url,
-			'refPage': referrer,
+			'referrer': referrer,
 			'description': description,
 			'hash': hash
 		};
