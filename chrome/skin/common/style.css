@@ -156,6 +156,6 @@ treechildren::-moz-tree-image(iconic) {
 	padding-right: 0.5ex;
 }
 
-textbox[readonly], menulist[readonly], textbox[readonly] *, menulist[readonly] * {
+textbox[readonly], menulist[disabled], textbox[readonly] *, menulist[disabled] * {
 	background-color: -moz-dialog !important;
 }

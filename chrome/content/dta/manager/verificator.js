@@ -37,17 +37,15 @@
  function Verificator(download) {
 	this.download = download;
 	this.file = new FileFactory(download.destinationFile);
-	this.cmp = download.hash.trim().toLowerCase();
 	this.CH = Ci.nsICryptoHash;
 
 	download.state = FINISHING;
 	download.status =  _("verify");
 	try {
-		this.type = DTA_checkHashFormat(this.cmp);
-		if (!(this.type in this.CH)) {
+		if (!(download.hash.type in this.CH)) {
 			throw new Components.Exception("hash method unsupported!");
 		}
-		this.type = this.CH[this.type];
+		this.type = this.CH[download.hash.type];
 		
 		this.hash = Cc["@mozilla.org/security/hash;1"]
 			.createInstance(this.CH);
@@ -107,8 +105,8 @@ Verificator.prototype = {
 		this.download.invalidate();
 		
 		this.hash = hexdigest(this.hash.finish(false));
-		if (this.hash != this.cmp) {
-			var act = DTA_confirm(_('verifyerrortitle'), _('verifyerrortext', [this.cmp, this.hash]), _('retry'), _('delete'), _('keep'));
+		if (this.hash != this.download.hash.sum) {
+			var act = DTA_confirm(_('verifyerrortitle'), _('verifyerrortext', [this.download.hash.sum, this.hash]), _('retry'), _('delete'), _('keep'));
 			switch (act) {
 				case 0: this._delete(); this.download.reDownload(); return;
 				case 1: this._delete(); this.download.cancel(); return;

@@ -78,7 +78,7 @@
 			</row>
 			<row align="center">
 				<label control="hash" value="&checksum.value;" />
-				<textbox id="hash"/>
+				<hashinput id="hash"/>
 			</row>
 		</rows>
 	</grid>
