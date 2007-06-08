@@ -136,11 +136,13 @@
 				var hashes = file.getElementsByTagName("hash");
 				for (var j = 0; j < hashes.length; ++j) {
 					var h = hashes[j].textContent.trim();
-					if (DTA_checkHashFormat(h) && (!hash || hash.length < h.length)) {
-						hash = h;
+					try {
+						hash = new DTA_Hash(h, hashes[j].getAttribute('type'));
+					}
+					catch (ex) {
+						// ignore
 					}
 				}
-				
 				var desc = this._getSingle(file, 'description');
 				if (!desc) {
 					desc = this._getSingle(root, 'description');

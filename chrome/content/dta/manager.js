@@ -754,7 +754,7 @@ QueueItem.prototype = {
 	},
 	set hash(nv) {
 		this._hash = nv;
-		this._prettyHash = this.hash ? _('prettyhash', [DTA_checkHashFormat(this.hash), this.hash]) : _('nas');
+		this._prettyHash = this.hash ? _('prettyhash', [this.hash.type, this.hash.sum]) : _('nas');
 	},
 	_prettyHash: null,
 	get prettyHash() {

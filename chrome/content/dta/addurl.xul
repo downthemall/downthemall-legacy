@@ -99,7 +99,7 @@
 			</row>
 			<row align="center">
 				<label control="hash" value="&checksum.value;" style="font-style: italic;" />
-				<textbox id="hash" height="21" />
+				<hashinput id="hash"/>
 			</row>
 		</rows>
 	</grid>

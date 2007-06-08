@@ -118,12 +118,14 @@ var Dialog = {
 		
 		if (t.length == 1) {
 			var d = t[0];
-			var hash = $('hash').value;
-			if (hash && d.hash != hash) {
-				d.hash = hash;
-				if (d.is(COMPLETE)) {
-					// have to manually start this guy ;)
-					d.verifyHash();
+			if ($('hash').isValid) {
+				var h = $('hash').value;
+				if (!h || h.sum != d.hash.sum) {
+					d.hash = h;
+					if (h && d.is(COMPLETE)) {
+						// have to manually start this guy ;)
+						d.verifyHash();
+					}
 				}
 			}
 		}
@@ -162,13 +164,6 @@ var Dialog = {
 		if (d.is(COMPLETE, FINISHING)) {
 			canvas.fillStyle = compl;
 			canvas.fillRect(0,0,300,20);
-			canvas.fillStyle = join;
-			if (!d.join || !d.totalSize) {
-				canvas.fillRect(0,16,300,4);
-			}
-			else {
-				canvas.fillRect(0,16,Math.round(d.join.offset/d.totalSize*300),4);
-			}
 		} else if (d.is(CANCELED)) {
 			canvas.fillStyle = cancel;
 			canvas.fillRect(0,0,300,20);
@@ -209,8 +204,7 @@ var Dialog = {
 			$('directory').value = newDir ? newDir : '';
 			return false;
 		}
-		var hash = $('hash').value;
-		if (hash && !DTA_checkHashFormat(hash)) {
+		if (!$('hash').isValid) {
 			alert(_('alertinfo'));
 			return false;
 		}

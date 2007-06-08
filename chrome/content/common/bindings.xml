@@ -221,7 +221,66 @@
       ]]>
       </handler>
     </handlers>		
-	</binding>	
+	</binding>
+	
+	<binding id="hashinput">
+		<content>
+			<xul:hbox flex="1">
+				<xul:menulist anonid="type" readonly="true" xbl:inherits="disabled">
+					<xul:menupopup anonid="types"/>
+				</xul:menulist>
+				<xul:textbox anonid="hash" flex="1" xbl:inherits="readonly,disabled"/>
+			</xul:hbox>
+		</content>
+		<implementation>
+			<constructor><![CDATA[
+				this._typemap = {};
+				for (x in DTA_SUPPORTED_HASHES) {
+					var e = document.createElement('menuitem');
+					e.setAttribute('value', x);
+					e.setAttribute('label', x);
+					this._types.appendChild(e);
+					this._typemap[x] = e;
+				}			
+			]]></constructor>
+			<property name="_type" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'type');"/>
+			<property name="_types" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'types');"/>
+			<property name="_hash" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'hash');"/>
+			<property name="checked" onget="return this._checkbox.checked;"/>
+			<property name="inputField" onget="return this._hash.inputField;"/>
+			<property name="isValid">
+				<getter><![CDATA[
+					try {
+						if (this._hash.value.length) {
+							new DTA_Hash(this._hash.value, this._type.value);
+						}
+						return true;
+					}
+					catch(ex) {
+						return false;
+					}
+				]]></getter>
+			</property>
+			<property name="value">
+				<getter><![CDATA[
+					if (this._hash.value.length) {
+						return new DTA_Hash(this._hash.value, this._type.value);
+					}
+					return null;
+				]]></getter>
+				<setter><![CDATA[
+					if (val) {
+						this._hash.value = val.sum;
+						this._type.selectedItem = this._typemap[val.type];
+					}
+					else {
+						this._hash.value = '';
+					}
+					return val;
+				]]></setter>
+			</property>
+		</implementation>			
+	</binding>
 	
 </bindings>
 				

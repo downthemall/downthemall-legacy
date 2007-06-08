@@ -708,25 +708,33 @@ var DTA_Mediator = {
  * @param hash Hash to check
  * @return hash type or null
  */
-function DTA_checkHashFormat(hash) {
+const DTA_SUPPORTED_HASHES = {
+	'MD5': 32,
+	'SHA1': 40,
+	'SHA256': 64
+	/* Currently broken: https://bugzilla.mozilla.org/show_bug.cgi?id=383390
+	'sha384': 96,
+	'sha512':  128 */
+};
+function DTA_Hash(hash, type) {
 	if (typeof(hash) != 'string' && !(hash instanceof String)) {
-		return null;
+		throw new Components.Exception("hash is invalid");
 	}
-	var type = null;
-	switch(hash.length) {
-		case 32: type = 'MD5'; break;
-		case 40: type = 'SHA1'; break;
-		case 64: type = 'SHA256'; break;
-		/* Currently broken: https://bugzilla.mozilla.org/show_bug.cgi?id=383390
-		case 96: type = 'SHA384'; break;
-		case 128: type = 'SHA512'; break;*/
-		default: return null;
+	if (typeof(type) != 'string' && (!type instanceof String)) {
+		throw new Components.Exception("hashtype is invalid");
 	}
-	if (isNaN(parseInt(hash, 16))) {
-		type = null;
+	
+	type = type.toUpperCase().replace(/[\s-]/g, '');
+	if (!(type in DTA_SUPPORTED_HASHES)) {
+		throw new Components.Exception("hashtype is invalid");
 	}
-	return type;
+	this.type = type;
+	this.sum = hash.toLowerCase().replace(/\s/g, '');
+	if (DTA_SUPPORTED_HASHES[this.type] != this.sum.length || isNaN(parseInt(this.sum, 16))) {
+		throw new Components.Exception("hash is invalid");
+	}
 }
+
 /**
  * Get a link-fingerprint hash from an url (or just the hash component)
  * @param url. Either String or nsIURI
@@ -743,11 +751,13 @@ function DTA_getLinkPrintHash(url) {
 		return null;
 	}
 	
-	var lp = url.match(/#!(?:md5|sha(?:1|256|384|512)|hash)!([\da-f]+)$/i);
+	var lp = url.match(/#!(md5|sha(?:1|256|384|512)|)!([\da-f]+)$/i);
 	if (lp) {
-		var rv = lp[1].toLowerCase();
-		if (DTA_checkHashFormat(rv)) {
-			return rv;
+		try {
+			return new DTA_Hash(lp[2], lp[1]);
+		}
+		catch (ex) {
+			// pass down
 		}
 	}
 	return null;

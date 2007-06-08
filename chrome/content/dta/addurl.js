@@ -289,7 +289,6 @@ var Dialog = {
 				$('hash').value = hash;
 			}
 			
-			this.check();
 			window.sizeToContent();
 		} catch(ex) {
 			Debug.dump("load():", ex);
@@ -306,22 +305,6 @@ var Dialog = {
 		else {
 			$('popupHelp').showPopup($('addURL').getButton('help'), -1, -1, "popup");
 		}
-	},
-	
-	check: function DTA_check() {
-		var disable = $('URLaddress', 'directory', 'renaming')
-			.some(function(e) {
-				// reset the styles
-				var style = e.inputField.style;
-				style.backgroundColor = 'transparent';
-				style.color = 'windowText';
-				
-				return e.value.length == 0;
-			});
-		
-		// enable/disable the buttons;
-		['accept', 'extra1']
-			.forEach(function(e) { document.documentElement.getButton(e).setAttribute('disabled', disable);});
 	},
 	
 	download: function DTA_download(queue) {
@@ -358,11 +341,23 @@ var Dialog = {
 			errors.push('URLaddress');
 		}
 		
-		var hash = $('hash').value; 
-		if (hash && !DTA_checkHashFormat(hash)) {
+		var hash = null;
+		if (!$('hash').isValid) {
 			errors.push('hash');
 		}
-				
+		else {
+			hash = $('hash').value;
+		}
+
+		$('directory', 'renaming', 'URLaddress', 'hash').forEach(
+			function(e) {
+				// reset the styles
+				var style = e.inputField.style;
+				style.backgroundColor = 'transparent';
+				style.color = 'windowText';
+			}
+		);
+		
 		if (errors.length) {
 			errors.forEach(
 				function(e) {
@@ -423,6 +418,5 @@ var Dialog = {
 		if (newDir) {
 			this.ddDirectory.value = newDir;
 		}
-		this.check();
 	}
 }
