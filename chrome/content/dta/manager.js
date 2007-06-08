@@ -1109,7 +1109,7 @@ QueueItem.prototype = {
 				"mm": Utils.formatNumber(this.startDate.getMinutes(), 2),
 				"ss": Utils.formatNumber(this.startDate.getSeconds(), 2),
 				"d": Utils.formatNumber(this.startDate.getDate(), 2),
-				"m": Utils.formatNumber(this.startDate.getMonth(), 2),
+				"m": Utils.formatNumber(this.startDate.getMonth() + 1, 2),
 				"y": String(this.startDate.getFullYear())
 			}
 			function replacer(type) {
