@@ -107,7 +107,7 @@
 					}
 				}
 			);
-			Tree.remove();
 		}
+		Tree.remove();
 	}
 };
