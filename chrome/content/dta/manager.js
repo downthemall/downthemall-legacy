@@ -808,6 +808,7 @@ QueueItem.prototype = {
 	set maxChunks(nv) {
 		this._maxChunks = nv;
 		this.invalidate();
+		Debug.dump("mc set to", nv);
 		return this._maxChunks;
 	},
 	timeLastProgress: 0,
@@ -891,9 +892,6 @@ QueueItem.prototype = {
 		return this._hasToBeRedownloaded = nv;
 	},
 	reDownload: function QI_reDownload() {
-		// replace names
-		this.fileName = this.urlManager.usable.getUsableFileName();
-
 		// reset flags
 		this.pause();
 		this.totalSize = this.partialSize = 0;
@@ -902,8 +900,7 @@ QueueItem.prototype = {
 		this.maxChunks = 0;
 		this.chunks = [];
 		this.visitors = new VisitorManager();
-		this.state = QUEUED;
-		this.status = _('inqueue');
+		this.resumeDownload();
 	},
 
 	refreshPartialSize: function QI_refreshPartialSize(){
@@ -1173,8 +1170,7 @@ QueueItem.prototype = {
 		}
 		
 		let dn = this._destinationName, ds = this._destinationPath, df = this._destinationFile;
-		let dest = new FileFactory(df), newDest = dest.clone();
-
+		let dest = new FileFactory(this.destinationFile), newDest = new FileFactory(df);
 		if (!this.is(RUNNING, FINISHING) || !dest.exists()) {
 			return true;
 		}
@@ -2069,7 +2065,8 @@ Download.prototype = {
 			}
 			else {
 				Debug.dump("caught bad server");
-				d.chunks = [];
+				d.reDownload();
+				return;
 			}
 		}
 
