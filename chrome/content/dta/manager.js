@@ -1025,14 +1025,20 @@ QueueItem.prototype = {
 			return;
 		}
 		if (this._completeEvents.length) {
-			let evt = this._completeEvents.shift();
-			try {
-				this[evt]();
-			}
-			catch(ex) {
-				Debug.dump("completeEvent failed: " + evt, ex);
-				this.complete();
-			}
+			var evt = this._completeEvents.shift();
+			var tp = this;
+			window.setTimeout(
+				function() {
+					try {
+						tp[evt]();
+					}
+					catch(ex) {
+						Debug.dump("completeEvent failed: " + evt, ex);
+						tp.complete();
+					}
+				},
+				0
+			);
 			return;
 		}
 		this.state = COMPLETE;
