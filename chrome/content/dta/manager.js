@@ -2143,10 +2143,10 @@ function startnewDownloads(notQueue, download) {
 		}
 		d.state = notQueue ? QUEUED : PAUSED;
 		if (d.is(QUEUED)) {
-			d.status = _('paused');
+			d.status = _('inqueue');
 		}
 		else {
-			d.status = _('inqueue');
+			d.status = _('paused');
 		}
 		Tree.add(d);
 	}
