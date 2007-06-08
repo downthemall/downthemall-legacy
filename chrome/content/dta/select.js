@@ -88,13 +88,6 @@ function Tree(links, type) {
 			// .checked will hold the correspoding 'property' string, either none, manuallySelected, or f0-f8
 			link.checked = '';
 			link.mask = null;
-	
-			// place metalinks top
-			if ('metalink' in link) {
-				this._links.unshift(link);
-			} else {
-				this._links.push(link);
-			}
 		},
 		this
 	);
