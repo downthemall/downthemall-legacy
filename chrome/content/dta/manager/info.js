@@ -32,7 +32,7 @@ var Dialog = {
 			if (downloads.length == 1) {
 				var d = downloads[0];
 				$("infoURL").value = d.urlManager.usable;
-				$("sourcePage").value = d.refPage.spec;
+				$("sourcePage").value = d.referrer.spec;
 				$('renaming').value = d.mask;
 				$('directory').value = d.pathName;
 				$('hash').value = d.hash;

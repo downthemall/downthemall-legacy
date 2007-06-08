@@ -45,7 +45,7 @@ function QueueItem(url, num, hash) {
 	}
 	this.url = url;
 	this.numIstance = num;
-	this.refPage = $('URLref').value,
+	this.referrer = $('URLref').value,
 	this.description = window.arguments ? window.arguments[0] : '';
 	this.ultDescription = '';
 	this.mask = Dialog.ddRenaming.value;
@@ -245,12 +245,12 @@ var Dialog = {
 					$('batches').collapsed = true;
 					this.multiHelp = false;
 				}
-				var refPage = DTA_AddingFunctions.isLinkOpenable(a.referrer) ? a.referrer : null;
-				if (refPage) {
+				var referrer = DTA_AddingFunctions.isLinkOpenable(a.referrer) ? a.referrer : null;
+				if (referrer) {
 					try {
-						refPage = decodeURIComponent(refPage);
+						referrer = decodeURIComponent(referrer);
 					} catch (ex) {}
-					$("URLref").value	 = refPage;
+					$("URLref").value	 = referrer;
 				}
 				if (a.mask) {
 					this.ddRenaming.value = a.mask;

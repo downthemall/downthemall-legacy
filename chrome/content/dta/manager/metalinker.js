@@ -147,7 +147,7 @@
 				}
 				downloads.push({
 					'url': new UrlManager(urls),
-					'refPage': download.refPage.spec,
+					'referrer': download.referrer.spec,
 					'numIstance': 0,
 					'mask': download.mask,
 					'dirSave': download.pathName,
