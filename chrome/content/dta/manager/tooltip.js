@@ -237,13 +237,8 @@ var Tooltip = {
 				);
 			}
 			var ip = $('infoPercent');
-			if (file.totalSize) {
-				ip.collapsed = false;
-				ip.value = file.percent;
-			}
-			else {
-				ip.collapsed = true;
-			}
+			ip.value = file.percent;
+
 			var canvas = $("chunkCanvas");
 			var width = canvas.width = canvas.clientWidth;
 			var height = canvas.height = canvas.clientHeight;
@@ -281,7 +276,7 @@ var Tooltip = {
 				b = file.chunks.map(
 					function(chunk) {
 						if (file.totalSize <= 0) {
-							return {s:0, w: 0};
+							return {s:0, w: 1};
 						}
 						return {
 							s: Math.ceil(chunk.start / file.totalSize * width),
