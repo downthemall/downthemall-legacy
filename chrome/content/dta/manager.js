@@ -1128,16 +1128,17 @@ QueueItem.prototype = {
 			
 			mask = mask.replace(/\*\w+\*/gi, replacer);
 
-			this._destinationFile = mask = this.pathName.addFinalSlash() + mask.removeBadChars().removeFinalChar(".").trim();
+			mask = this.pathName.addFinalSlash() + mask.removeBadChars().removeFinalChar(".").trim();
 			mask = mask.split(SYSTEMSLASH);
 			this._destinationName = mask.pop();
 			this._destinationPath = mask.join(SYSTEMSLASH).addFinalSlash();
-		} catch(ex) {
+		}
+		catch(ex) {
 			this._destinationName = this.fileName;
 			this._destinationPath = this.pathName.addFinalSlash();
-			this._destinationFile = this._destinationPath + this._destinationName;
 			Debug.dump("buildFromMask():", ex);
 		}
+		this._destinationFile = this.destinationPath + this.destinationName;
 		this._icon = null;
 		this.checkNameConflict();		
 	},
