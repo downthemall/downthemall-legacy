@@ -120,7 +120,7 @@ var Dialog = {
 			var d = t[0];
 			if ($('hash').isValid) {
 				var h = $('hash').value;
-				if (!h || h.sum != d.hash.sum) {
+				if (!h || !d.hash || h.sum != d.hash.sum) {
 					d.hash = h;
 					if (h && d.is(COMPLETE)) {
 						// have to manually start this guy ;)
