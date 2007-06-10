@@ -93,21 +93,22 @@
 		else {
 			msg = _('deletetextl', [list.length]);
 		}
-		if (!DTA_confirm(_('deletetitle'), msg, _('delete'), DTA_confirm.CANCEL, null, 1)) {
-			list.forEach(
-				function(d) {
-					try {
-						var file = new FileFactory(d.destinationFile);
-						if (file.exists()) {
-							file.remove(false);
-						}
-					}
-					catch (ex) {
-						// no-op
+		if (DTA_confirm(_('deletetitle'), msg, _('delete'), DTA_confirm.CANCEL, null, 1)) {
+			return;
+		}
+		list.forEach(
+			function(d) {
+				try {
+					var file = new FileFactory(d.destinationFile);
+					if (file.exists()) {
+						file.remove(false);
 					}
 				}
-			);
-		}
+				catch (ex) {
+					// no-op
+				}
+			}
+		);
 		Tree.remove();
 	}
 };
