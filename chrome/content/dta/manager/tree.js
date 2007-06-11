@@ -209,23 +209,23 @@ var Tree = {
 	remove: function T_remove(downloads) {
 		
 		if (downloads instanceof Array) {
-			// map to the actual ids and sort them in descending(!) order.
-			var ids = downloads.sort(function(a, b) { return b._tid - a._tid; });
 		}
 		else if (downloads) {
-			var ids = [downloads];
+			downloads = [downloads];
 		}
 		else {
-			var ids = this._getSelectedIds(true).map(
+			downloads = this._getSelectedIds(true).map(
 				function(idx) {
 					return this._downloads[idx]; 
 				},
 				this
 			);
 		}
+		downloads = downloads.sort(function(a, b) { return b._tid - a._tid; });		
 		SessionManager.beginUpdate();
+		let deleteInSitu = downloads.length < 100;
 		this.beginUpdate();
-		ids.forEach(
+		downloads.forEach(
 			function(d) {
 				if (d.is(FINISHING)) {
 					// un-removable :p
@@ -235,15 +235,20 @@ var Tree = {
 				if (!d.is(COMPLETE, CANCELED)) {
 					d.cancel();
 				}
-				SessionManager.deleteDownload(d);
+				if (deleteInSitu) {
+					SessionManager.deleteDownload(d);
+				}
 				this._downloads.splice(d._tid, 1);
 				delete d._tid;
 			},
 			this
 		);
+		SessionManager.endUpdate();
+		if (!deleteInSitu) {
+			SessionManager.save();
+		}
 		this.invalidate();
 		this.endUpdate();
-		SessionManager.endUpdate();
 	},
 	removeCompleted: function T_removeCompleted() {
 		let list = [];
