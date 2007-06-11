@@ -221,6 +221,9 @@ var Tree = {
 				this
 			);
 		}
+		if (!downloads.length) {
+			return;
+		}
 		this.selection.clear();		
 		downloads = downloads.sort(function(a, b) { return b._tid - a._tid; });		
 		SessionManager.beginUpdate();
