@@ -59,7 +59,7 @@ function Literal(str) {
 }
 Literal.prototype = {
 	join: function(str) {
-		return [str + this.str];
+		yield str + this.str;
 	}
 };
 function NumericRange(name, start, stop, step, strl) {
@@ -82,7 +82,9 @@ NumericRange.prototype = {
 		return rv;
 	},
 	join: function(str) {
-		return [(str + this._format(i)) for (i in range(this.start, this.stop, this.step))];
+		for (let i in range(this.start, this.stop, this.step)) {
+			yield (str + this._format(i));
+		}
 	}
 };
 function CharRange(name, start, stop, step) {
@@ -94,7 +96,9 @@ function CharRange(name, start, stop, step) {
 };	
 CharRange.prototype = {
 	join: function(str) {
-		return [(str + String.fromCharCode(i)) for (i in range(this.start, this.stop, this.step))];
+		for (let i in range(this.start, this.stop, this.step)) {
+			yield str + String.fromCharCode(i);
+		}
 	}
 }
 function BatchGenerator(link) {
@@ -112,7 +116,7 @@ function BatchGenerator(link) {
 			url = url.slice(i);
 		}
 		var m;
-		if ((m = url.match(/\[(-?\d+):(-?\d+)(?::(-?\d+))?\]/))) {
+		if ((m = url.match(/^\[(-?\d+):(-?\d+)(?::(-?\d+))?\]/))) {
 			url = url.slice(m[0].length);
 			try {
 				var start = new Number(m[1]);
@@ -139,7 +143,7 @@ function BatchGenerator(link) {
 			continue;
 		}
 		
-		if ((m = url.match(/\[([a-z]):([a-z])(?::(-?\d))?\]/)) || (m = url.match(/\[([A-Z]):([A-Z])(?::(-?\d))?\]/))) {
+		if ((m = url.match(/^\[([a-z]):([a-z])(?::(-?\d))?\]/)) || (m = url.match(/\[([A-Z]):([A-Z])(?::(-?\d))?\]/))) {
 			url = url.slice(m[0].length);
 			try {
 				var start = m[1].charCodeAt(0);
@@ -172,7 +176,7 @@ function BatchGenerator(link) {
 	for (i = this._pats.length - 2; i >= 0; --i) {
 		if ((this._pats[i] instanceof Literal) && (this._pats[i + 1] instanceof Literal)) {
 			this._pats[i] = new Literal(this._pats[i].str + this._pats[i + 1].str);
-			this._pats = this._pats.slice(0, i + 1).concat(this._pats.slice(i + 2));
+			this._pats = this._pats.slice(i + 1, 1);
 		}
 	}
 	this._pats.forEach(
@@ -186,21 +190,23 @@ BatchGenerator.prototype = {
 			throw 'step invalid!';
 		}
 	},
-	_processRange: function(pat, a) {
-		if (!a.length) {
-			a = [''];
+	_process: function(pats) {
+		if (pats.length == 0) {
+			yield '';
 		}
-		var rv = [];
-		a.forEach(function(e) { rv = rv.concat(pat.join(e)); }, this);
-		return rv;
+		else {
+			let pat = pats.pop();
+			for (let i in this._process(pats)) {
+				for (let j in pat.join(i)) {
+					yield j;
+				}
+			}
+		}
 	},
-	getURLs: function(generator) {
-		var rv = [];
-		this._pats.forEach(function(pat) { rv = this._processRange(pat, rv); }, this);
-		for (var i = 0; i < rv.length; ++i) {
-			rv[i] = generator(rv[i]);
+	getURLs: function() {
+		for (let i in this._process(this._pats)) {
+			yield i;
 		}
-		return rv;
 	},
 	get length() {
 		return this._length;
@@ -375,8 +381,9 @@ var Dialog = {
 		}			
 		
 		var batch = new BatchGenerator(url);
-		if (batch.length > 1) {
-			
+	
+		var rv = !('_realURL' in address) && batch.length > 1;
+		if (rv) {
 			var message = _(
 				'tasks',
 				[batch.length, batch.parts]
@@ -384,17 +391,19 @@ var Dialog = {
 			if (batch.length > 1000) {
 				message += _('manytasks');
 			}
-			
-			var rv = DTA_confirm(_('batchtitle'), message, _('batchtitle'), DTA_confirm.CANCEL, _('single'));
-			if (rv == 0) {
-				batch = batch.getURLs(function(aURL) { return new QueueItem(new DTA_URL(aURL), num); });
-			}
-			else if (rv == 1) {
-				batch = [new QueueItem(url, num, hash)];
-			}
-			else {
+			rv = DTA_confirm(_('batchtitle'), message, _('batchtitle'), DTA_confirm.CANCEL, _('single'));
+			if (rv == 1) {
 				return false;
 			}
+			rv = rv == 0;
+		}
+		if (rv) {
+			var g = batch.getURLs();
+			batch = function() {
+				for (let i in g) {
+					yield new QueueItem(new DTA_URL(i), num);
+				}
+			}();
 		}
 		else {
 			batch = [new QueueItem(url, num, hash)];

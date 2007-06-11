@@ -1298,7 +1298,7 @@ QueueItem.prototype = {
 		function downloadChunk(download, chunk, header) {
 			chunk.isRunning = true;
 			download.state = RUNNING;
-			download.checkNameConflict();
+			//download.checkNameConflict();
 			chunk.download = new Download(download, chunk, header);
 			++download.activeChunks;
 			++download.sessionConnections;
@@ -2114,14 +2114,18 @@ Download.prototype = {
 	onStatus: function  DL_onStatus(aRequest, aContext, aStatus, aStatusArg) {}
 };
 
-function startnewDownloads(notQueue, download) {
+function startnewDownloads(notQueue, downloads) {
 
 	var numbefore = Tree.rowCount - 1;
 	const DESCS = ['description', 'ultDescription'];
+	
+	let g = downloads;
+	if ('length' in downloads) {
+		g = function() { for (let i = 0, e = downloads.length; i < e; ++i) yield downloads[i]; }();
+	}
 
-	for (var i=0; i<download.length; i++) {
-		var e = download[i];
-
+	let added = 0;
+	for (let e in g) {
 		e.dirSave.addFinalSlash();
 
 		var desc = "";
@@ -2157,10 +2161,11 @@ function startnewDownloads(notQueue, download) {
 			d.status = _('paused');
 		}
 		Tree.add(d);
+		++added;
 	}
 
 	// full save
-	SessionManager.save();
+	Dialog.setTimer("sd:save", function() { SessionManager.save() }, 100);
 
 	if (Preferences.getDTA("closetab", false)) {
 		try {
@@ -2172,7 +2177,7 @@ function startnewDownloads(notQueue, download) {
 
 	var boxobject = Tree._box;
 	boxobject.QueryInterface(Ci.nsITreeBoxObject);
-	if (download.length <= boxobject.getPageLength()) {
+	if (added <= boxobject.getPageLength()) {
 		boxobject.scrollToRow(Tree.rowCount - boxobject.getPageLength());
 	}
 	else {
