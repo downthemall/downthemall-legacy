@@ -485,7 +485,8 @@ var Tree = {
 	top: function T_top() {
 		try {
 			this.beginUpdate();
-			this._getSelectedIds(true).forEach(
+			let ids = this._getSelectedIds(true); 
+			ids.forEach(
 				function(id, idx) {
 					id = id + idx;
 					this._downloads.unshift(this._downloads.splice(id, 1)[0]);
@@ -503,7 +504,8 @@ var Tree = {
 	bottom: function T_bottom() {
 		try {
 			this.beginUpdate();
-			this._getSelectedIds().forEach(
+			let ids = this._getSelectedIds();
+			ids.forEach(
 				function(id, idx) {
 					id = id - idx;
 					this._downloads.push(this._downloads.splice(id, 1)[0]);
@@ -521,7 +523,7 @@ var Tree = {
 	up: function T_up() {
 		try {
 			this.beginUpdate();
-			ids = this._getSelectedIds().forEach(
+			this._getSelectedIds().forEach(
 				function(id, idx) {
 					if (id - idx != 0) {
 						let tmp = this._downloads[id];
@@ -544,7 +546,8 @@ var Tree = {
 		try {
 			this.beginUpdate();
 			let rowCount = this.rowCount;
-			this._getSelectedIds(true).forEach(
+			let ids = this._getSelectedIds(true);
+			ids.forEach(
 				function(id, idx) {
 					if (id + idx != rowCount - 1) {
 						let tmp = this._downloads[id];
