@@ -77,19 +77,19 @@
 		<rows>
 			<row align="center">
 				<label control="URLaddress" id="URLaddressTitle" value="&url.value;:"/>
-				<textbox id="URLaddress" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21" onchange="Dialog.check();" oninput="Dialog.check();" />
+				<textbox id="URLaddress" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21"/>
 			</row>
 			<row align="center">
 				<label control="directory" id="destinationPath" value="&dest.caption;" />
 				<hbox flex="1">
-					<saveddropdown id="directory" preference="directory" flex="1" onchange="Dialog.check();"/>
+					<saveddropdown id="directory" preference="directory" flex="1"/>
 					<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" tooltiptext="&browse.tip;" />
 				</hbox>
 			</row>
 			<row align="center">
 				<label control="renaming" id="infoDestTitle" value="&mask.label;: " />
 				<hbox>
-					<saveddropdown id="renaming" preference="renaming" flex="1" onchange="Dialog.check();" tooltiptext="&mask.tip;"/>
+					<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
 					<maskbutton/>
 				</hbox>
 			</row>
