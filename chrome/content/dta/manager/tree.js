@@ -221,6 +221,7 @@ var Tree = {
 				this
 			);
 		}
+		this.selection.clear();		
 		downloads = downloads.sort(function(a, b) { return b._tid - a._tid; });		
 		SessionManager.beginUpdate();
 		let deleteInSitu = downloads.length < 100;
