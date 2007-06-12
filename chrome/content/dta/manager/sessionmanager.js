@@ -87,7 +87,9 @@
 			e.destinationName = d.destinationNameOverride;
 		}
 
-		e.referrer = d.referrer.spec;
+		if (d.referrer) {
+			e.referrer = d.referrer.spec;
+		}
 		// Store this so we can later resume.
 		if (!d.is(CANCELED, COMPLETE) && d.partialSize) {
 			e.tmpFile = d.tmpFile.path;
