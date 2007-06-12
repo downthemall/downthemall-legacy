@@ -89,7 +89,7 @@ var Tree = {
 
 		switch (col.index) {
 			case 0: return Prefs.showOnlyFilenames ? d.destinationName : d.urlManager.usable;
-			case 1: return d.percent;
+			case 2: return d.percent;
 			case 3: return d.dimensionString;
 			case 4: return d.status;
 			case 5: return d.speed;
@@ -135,7 +135,7 @@ var Tree = {
 	},
 
 	getProgressMode : function T_getProgressMode(idx, col) {
-		if (col.index == 2) {
+		if (col.index == 1) {
 			return Ci.nsITreeView.PROGRESS_NORMAL;
 		}
 		return Ci.nsITreeView.PROGRESS_NONE;
@@ -143,7 +143,7 @@ var Tree = {
 
 	// will be called for cells other than textcells
 	getCellValue: function T_getCellValue(idx, col) {
-		if (col.index == 2) {
+		if (col.index == 1) {
 			let d = this._downloads[idx];
 			if (d.is(CANCELED)) {
 				return 100;	
@@ -153,7 +153,7 @@ var Tree = {
 		return null;
 	},
 	getCellProperties: function T_getCellProperties(idx, col, prop) {
-		if (col.index == 2) {
+		if (col.index == 1) {
 			let d = this._downloads[idx];
 			switch (d.state) {
 				case COMPLETE: prop.AppendElement(this._complete); return;
@@ -227,7 +227,6 @@ var Tree = {
 		this.selection.clearSelection();		
 		downloads = downloads.sort(function(a, b) { return b._tid - a._tid; });		
 		SessionManager.beginUpdate();
-		let deleteInSitu = downloads.length < 100;
 		this.beginUpdate();
 		downloads.forEach(
 			function(d) {
@@ -239,29 +238,31 @@ var Tree = {
 				if (!d.is(COMPLETE, CANCELED)) {
 					d.cancel();
 				}
-				if (deleteInSitu) {
-					SessionManager.deleteDownload(d);
-				}
+				SessionManager.deleteDownload(d);
 				this._downloads.splice(d._tid, 1);
 				delete d._tid;
 			},
 			this
 		);
 		SessionManager.endUpdate();
-		if (!deleteInSitu) {
-			SessionManager.save();
-		}
 		this.invalidate();
 		this.endUpdate();
 	},
 	removeCompleted: function T_removeCompleted() {
-		let list = [];
-		for (let i = 0, e = this._downloads.length; i < e; ++i) {
-			if (this._downloads[i].is(COMPLETE)) {
-				list.push(this._downloads[i]);
+		SessionManager.beginUpdate();
+		this.beginUpdate();
+		for (let i = this._downloads.length - 1; i > -1; --i) {
+			let d = this._downloads[i];
+			if (!d.is(COMPLETE)) {
+				continue;
 			}
+			SessionManager.deleteDownload(d);
+			this._downloads.splice(d._tid, 1);
+			delete d._tid;
 		}
-		this.remove(list);
+		SessionManager.endUpdate();
+		this.invalidate();
+		this.endUpdate();		
 	},
 	pause: function T_pause() {
 		this.updateSelected(
