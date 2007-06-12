@@ -103,8 +103,7 @@ var Dialog = {
 					if (d.speeds.length > SPEED_COUNT) {
 						d.speeds.shift();
 					}
-					i.lastBytes = d.partialSize;
-					sum += i.d.partialSize;
+					sum += (i.lastBytes = d.partialSize);
 					SessionManager.save(d);
 				}
 			);
@@ -641,8 +640,9 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 	this.description = desc ? desc : '';
 	this.chunks = [];
 	this.speeds = new Array();
-	this.referrer = Cc['@mozilla.org/network/standard-url;1'].createInstance(Ci.nsIURI);
-	this.referrer.spec = referrer;
+	if (referrer) {
+		this.referrer = IOService.newURI(referrer, null, null);
+	}
 
 	// only access the setter of the last so that we don't generate stuff trice.
 	this._pathName = dir;
@@ -676,6 +676,15 @@ QueueItem.prototype = {
 	},
 	set state(nv) {
 		if (this._state != nv) {
+			if (this._state == RUNNING) {
+				// remove ourself from inprogresslist
+				for (let i = 0, e = inProgressList.length; i < e; ++i) {
+					if (this == inProgressList[i].d) {
+						inProgressList.splice(i, 1);
+						break;
+					}
+				}				
+			}
 			this._state = nv;
 			this.invalidate();
 			Tree.refreshTools();
@@ -1049,9 +1058,7 @@ QueueItem.prototype = {
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
 			var url = this.urlManager.usable;
-			var uri = Cc['@mozilla.org/network/standard-url;1']
-				.createInstance(Ci.nsIURL);
-			uri.spec = url;
+			var uri = IOService.newURI(url, null, null).QueryInterface(Ci.nsIURL);
 
 			// normalize slashes
 			var mask = this.mask
@@ -1272,20 +1279,14 @@ QueueItem.prototype = {
 	},
 	sessionConnections: 0,
 	resumeDownload: function QI_resumeDownload() {
-		Debug.dump("resume: " + d);
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat that much
-			let b4 = d.chunks.length;
 			for (let i = d.chunks.length - 2; i > -1; --i) {
 				let c1 = d.chunks[i], c2 = d.chunks[i + 1];
 				if (c1.complete && c2.complete) {
 					c1.merge(c2);
 					d.chunks.splice(i + 1, 1);
 				}
-			}
-			if (b4 != d.chunks.length) {
-				Debug.dump("merged some chunks; new scoreboard:");
-				d.dumpScoreboard();
 			}
 		}
 		function downloadNewChunk(download, start, end, header) {
@@ -1353,20 +1354,13 @@ QueueItem.prototype = {
 				if (!biggest) {
 					break;
 				}
-				Debug.dump("score biggest before: " + biggest);
 				var end = biggest.end;
 				var bend = biggest.start + biggest.written + Math.floor(biggest.remainder / 2);
 				biggest.end = bend;
 				downloadNewChunk(this, biggest.end + 1, end);
-				Debug.dump("score biggest after: " + biggest);
 				rv = true;
 			}
 
-			// update ui
-			if (rv) {
-				Debug.dump("resumed download: " + d);
-				this.dumpScoreboard();		
-			}			
 			return rv;
 		}
 		catch(ex) {
@@ -1397,7 +1391,7 @@ function inProgressElement(el) {
 	this.lastBytes = el.partialSize;
 }
 
-var inProgressList = new Array();
+var inProgressList = [];
 
 var Chunk = function(download, start, end, written) {
 	// saveguard against null or strings and such
@@ -1454,10 +1448,8 @@ Chunk.prototype = {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
 		}
 		var prealloc = !file.exists();
-		var outStream = Cc['@mozilla.org/network/file-output-stream;1'].createInstance(Ci.nsIFileOutputStream);
-
-		outStream.init(file, 0x04 | 0x08, 0766, 0);
-		var seekable = outStream.QueryInterface(Ci.nsISeekableStream);
+		var outStream = new FileOutputStream(file, 0x04 | 0x08, 0766, 0);
+		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 		if (prealloc && this.parent.totalSize > 0) {
 			try {
 				seekable.seek(0x00, this.parent.totalSize);
@@ -1499,7 +1491,8 @@ Chunk.prototype = {
 				throw new Components.Exception("bytes negative");
 			}
 			// need to wrap this as nsIInputStream::read is marked non-scriptable.
-			var byteStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
+			var byteStream = Cc['@mozilla.org/binaryinputstream;1']
+				.createInstance(Ci.nsIBinaryInputStream);
 			byteStream.setInputStream(aInputStream);
 			// we're using nsIFileOutputStream
 			if (this._outStream.write(byteStream.readBytes(bytes), bytes) != bytes) {
@@ -1541,7 +1534,7 @@ function Download(d, c, getInfo) {
 	this.url = d.urlManager.getURL();
 	var referrer = d.referrer;
 
-	this._chan = this._ios.newChannelFromURI(this._ios.newURI(this.url.url, null, null));
+	this._chan = IOService.newChannelFromURI(IOService.newURI(this.url.url, null, null));
 	var r = Ci.nsIRequest;
 	this._chan.loadFlags = r.LOAD_NORMAL | r.LOAD_BYPASS_CACHE;
 	this._chan.notificationCallbacks = this;
@@ -1557,9 +1550,6 @@ function Download(d, c, getInfo) {
 		if (c.start + c.written > 0) {
 			http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
 		}
-		if (typeof(referrer) == 'string') {
-			referrer = this._ios.newURI(referrer, null, null);
-		}
 		if (referrer instanceof Ci.nsIURI) {
 			http.referrer = referrer;
 		}
@@ -1573,8 +1563,6 @@ function Download(d, c, getInfo) {
 	this._chan.asyncOpen(this, null);
 }
 Download.prototype = {
-	_ios: Components.classes["@mozilla.org/network/io-service;1"]
-		.getService(Components.interfaces.nsIIOService),
 	_interfaces: [
 		Ci.nsISupports,
 		Ci.nsISupportsWeakReference,
@@ -2047,12 +2035,6 @@ Download.prototype = {
 
 		if (!d.is(RUNNING)) {
 			d.speed = '';
-			for (let i = 0, e = inProgressList.length; i < e; ++i) {
-				if (d == inProgressList[i].d) {
-					inProgressList.splice(i, 1);
-					break;
-				}
-			}
 		}
 		
 		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
@@ -2186,9 +2168,9 @@ function startnewDownloads(notQueue, downloads) {
 	Tree.selection.currentIndex = numbefore + 1;
 }
 
-function isInProgress(path, d) {
-	for (var x=0; x<inProgressList.length; x++)
-		if ((inProgressList[x].d.destinationFile) == path && d != inProgressList[x].d)
-			return x;
-	return -1;
-}
+const IOService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+const FileOutputStream = Components.Constructor(
+	'@mozilla.org/network/file-output-stream;1',
+	'nsIFileOutputStream',
+	'init'
+);
