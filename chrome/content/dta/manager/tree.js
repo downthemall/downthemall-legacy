@@ -245,6 +245,7 @@ var Tree = {
 			this
 		);
 		SessionManager.endUpdate();
+		this._box.rowCountChanged(0, this._downloads.length);
 		this.invalidate();
 		this.endUpdate();
 	},
@@ -261,6 +262,7 @@ var Tree = {
 			delete d._tid;
 		}
 		SessionManager.endUpdate();
+		this._box.rowCountChanged(0, this._downloads.length);
 		this.invalidate();
 		this.endUpdate();		
 	},

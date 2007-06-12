@@ -58,6 +58,7 @@ var Dialog = {
 	_lastSum: 0,
 	_initialized: false,
 	_wasRunning: false,
+	_running: [],
 	completed: 0,
 	totalbytes: 0,
 	init: function D_init() {
@@ -80,7 +81,7 @@ var Dialog = {
 		try {
 			var sum = 0;
 			const now = Utils.getTimestamp();
-			inProgressList.forEach(
+			this._running.forEach(
 				function(i) {
 					var d = i.d;
 					if (d.partialSize != 0 && d.is(RUNNING) && (now - d.timeStart) >= 1000 ) {
@@ -120,13 +121,13 @@ var Dialog = {
 				+ Utils.formatBytes(speed) + "/s";
 
 			// Refresh window title
-			if (inProgressList.length == 1 && inProgressList[0].d.totalSize > 0) {
+			if (this._running.length == 1 && this._running[0].d.totalSize > 0) {
 				document.title =
-					Math.round(inProgressList[0].d.partialSize / inProgressList[0].d.totalSize * 100) + "% - "
+					Math.round(this._running[0].d.partialSize / this._running[0].d.totalSize * 100) + "% - "
 					+ this.completed + "/" + Tree.rowCount + " - "
 					+ Utils.formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
 			}
-			else if (inProgressList.length > 0) {
+			else if (this._running.length > 0) {
 				document.title =
 					this.completed + "/" + Tree.rowCount + " - "
 					+ Utils.formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
@@ -144,7 +145,7 @@ var Dialog = {
 		try {
 			this.refresh();
 		
-			inProgressList.forEach(
+			this._running.forEach(
 				function(i) {
 					var d = i.d;
 					// checks for timeout
@@ -170,7 +171,7 @@ var Dialog = {
 		try {
 			var rv = false;
 			for (let d in Tree.all) {
-				if (inProgressList.length >= Prefs.maxInProgress) {
+				if (this._running.length >= Prefs.maxInProgress) {
 					return rv;
 				}				
 				if (!d.is(QUEUED)) {
@@ -181,10 +182,8 @@ var Dialog = {
 				d.timeLastProgress = Utils.getTimestamp();
 				d.state = RUNNING;
 		
-				if (inProgressList.indexOf(d) == -1) {
-					inProgressList.push(new inProgressElement(d));
-					d.timeStart = Utils.getTimestamp();
-				}
+				this._running.push({d: d, lastBytes: 0});
+				d.timeStart = Utils.getTimestamp();
 		
 				if (!d.isStarted) {
 					d.isStarted = true;
@@ -200,6 +199,16 @@ var Dialog = {
 			Debug.dump("startNext():", ex);
 		}
 		return false;
+	},
+	wasStopped: function D_wasStopped(download) {
+		this._running = this._running.filter(
+			function(i) {
+				return i.d != download;
+			}
+		);
+	},
+	fixTimeouts: function D_fixTimeouts() {
+		this._running.forEach(function(o) { o.d.timeLastProgress = Utils.getTimestamp(); });
 	},
 	signal: function D_signal(download) {
 		if (download.is(RUNNING)) {
@@ -678,12 +687,7 @@ QueueItem.prototype = {
 		if (this._state != nv) {
 			if (this._state == RUNNING) {
 				// remove ourself from inprogresslist
-				for (let i = 0, e = inProgressList.length; i < e; ++i) {
-					if (this == inProgressList[i].d) {
-						inProgressList.splice(i, 1);
-						break;
-					}
-				}				
+				Dialog.wasStopped(this);
 			}
 			this._state = nv;
 			this.invalidate();
@@ -1114,7 +1118,7 @@ QueueItem.prototype = {
 				"text": this.description,
 				"url": uri.host,
 				"subdirs": uripath,
-				"refer": this.referrer.host,
+				"refer": this.referrer ? this.referrer.host : '',
 				"qstring": query,
 				"curl": (uri.host + ((uripath=="")?"":(SYSTEMSLASH + uripath))),
 				"num": Utils.formatNumber(this.numIstance),
@@ -1165,9 +1169,8 @@ QueueItem.prototype = {
 						"chrome://dta/content/dta/dialog.xul","_blank","chrome,centerscreen,resizable=no,dialog,modal,close=no,dependent",
 						passingArguments
 					);
-		
-					// non faccio registrare il timeout
-					inProgressList.forEach(function(o) { o.d.timeLastProgress = Utils.getTimestamp(); });
+
+					Dialog.fixTimeouts();
 		
 					Prefs.askEveryTime = (passingArguments.temp == 0) ? true : false;
 					Prefs.sessionPreference = passingArguments.scelta;
@@ -1213,7 +1216,7 @@ QueueItem.prototype = {
 		switch (s) {
 			case 0:	this.destinationName = newDest; return true;
 			case 1: return true;
-			case 3: inProgressList[p].d.cancel(); return true;
+			/*case 3: inProgressList[p].d.cancel(); return true;*/
 			default: this.cancel(_('skipped')); return false;
 		}
 	},
@@ -1385,13 +1388,6 @@ QueueItem.prototype = {
 		return this.urlManager.usable;
 	}
 }
-
-function inProgressElement(el) {
-	this.d = el;
-	this.lastBytes = el.partialSize;
-}
-
-var inProgressList = [];
 
 var Chunk = function(download, start, end, written) {
 	// saveguard against null or strings and such
