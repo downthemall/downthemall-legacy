@@ -557,20 +557,19 @@ var OpenExternal = {
 	 */
 	reveal: function(file) {
 		file = this._prepare(file);
+		
 		try {
-			file.reveal();
+			if (!file.exists()) {
+				file.parent.QueryInterface(Components.interfaces.nsILocalFile).launch();
+			}
+			else {
+				file.reveal();
+			}
 		}
 		catch (ex) {
-			// *nix will throw as not implemented
-			try {
-				if (!file.isDirectory()) {
-					file = file.parent;
-				}
+			if (file.parent.exists()) {
+				this._nixLaunch(file.parent);
 			}
-			catch (ex) {
-				// no-op
-			}
-			this._nixLaunch(file);
 		}
 	}
 };
