@@ -43,9 +43,7 @@ function Decompressor(download) {
 	download.status =  _("decompress");
 	try {
 
-		this._outStream = Cc['@mozilla.org/network/file-output-stream;1']
-			.createInstance(Ci.nsIFileOutputStream);
-		this._outStream.init(this.to, 0x04 | 0x08, 0766, 0);
+		this._outStream = new FileOutputStream(this.to, 0x04 | 0x08, 0766, 0);
 		try {
 			// we don't know the actual size, so best we can do is to seek to totalSize.
 			var seekable = this._outStream.QueryInterface(Ci.nsISeekableStream);
