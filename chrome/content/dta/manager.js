@@ -292,9 +292,10 @@ var Dialog = {
 		return this._safeClose();
 	},
 	_cleanTmpDir: function D__cleanTmpDir() {
-		if (!Prefs.tempLocation) {
+		if (!Prefs.tempLocation || Preferences.getMultiByteDTA("tempLocation", '') != '') {
 			// cannot perform this action if we don't use a temp file
 			// there might be far too many directories containing far too many tmpFiles.
+			// or part files from other users.
 			return;
 		}
 		let known = [];
