@@ -291,6 +291,34 @@ var Dialog = {
 		}
 		return this._safeClose();
 	},
+	_cleanTmpDir: function D__cleanTmpDir() {
+		if (!Prefs.tempLocation) {
+			// cannot perform this action if we don't use a temp file
+			// there might be far too many directories containing far too many tmpFiles.
+			return;
+		}
+		let known = [];
+		for (d in Tree.all) {
+			known.push(d.tmpFile.leafName);
+		}
+		let tmpEnum = Prefs.tempLocation.directoryEntries;
+		let unknown = []
+		while (tmpEnum.hasMoreElements()) {
+			let f = tmpEnum.getNext().QueryInterface(Ci.nsILocalFile);
+			if (f.leafName.match(/\.dtapart$/) && known.indexOf(f.leafName) == -1) {
+				unknown.push(f);
+			}
+		}
+		unknown.forEach(
+			function(f) {
+				try {
+					f.remove(false);
+				}
+				catch(ex) {
+				}
+			}
+		);
+	},
 	_safeCloseChunks: [],
 	// this one will loop until all chunks and FINISHING are gone.
 	_safeClose: function D__safeClose() {
@@ -304,6 +332,9 @@ var Dialog = {
 		this._killTimers();
 		// alright, we left the loop.. shutdown complete ;)
 		SessionManager.save();
+		try {
+			this._cleanTmpDir();
+		} catch(ex) {}
 		self.close();
 		return true;		
 	},
