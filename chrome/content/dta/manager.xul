@@ -92,8 +92,8 @@
 			<menuseparator />
 			<menu id="misc" class="menu-iconic" image="chrome://dta/skin/manager/misc.png" label="&misc.label;">
 				<menupopup>
-					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/skin/manager/addpart.png" oncommand="Dialog.changeChunks(true);" />
-					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" image="chrome://dta/skin/manager/rempart.png" oncommand="Dialog.changeChunks(false);" />
+					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/skin/manager/addpart.png" oncommand="Tree.changeChunks(true);" />
+					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" image="chrome://dta/skin/manager/rempart.png" oncommand="Tree.changeChunks(false);" />
 					<menuseparator/>
 					<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/remove.png" oncommand="Tree.remove()" />					
 					<menuseparator />

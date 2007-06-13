@@ -820,6 +820,19 @@ QueueItem.prototype = {
 	},
 	set maxChunks(nv) {
 		this._maxChunks = nv;
+		if (this._maxChunks < this._activeChunks) {
+			let running = this.chunks.filter(function(c) { return c.isRunning; });
+			while (running.length && this._maxChunks < this._activeChunks) {
+				let c = running.pop();
+				if (c.remainder < 10240) {
+					continue;
+				}
+				c.download.cancel();
+			}
+		}
+		else if (this._maxChunks > this._activeChunks) {
+			this.resumeDownload();
+		}
 		this.invalidate();
 		Debug.dump("mc set to", nv);
 		return this._maxChunks;
@@ -1282,6 +1295,7 @@ QueueItem.prototype = {
 	},
 	sessionConnections: 0,
 	resumeDownload: function QI_resumeDownload() {
+		Debug.dump("resumeDownload");
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat that much
 			for (let i = d.chunks.length - 2; i > -1; --i) {
@@ -2003,7 +2017,7 @@ Download.prototype = {
 
 		// update flags and counters
 		d.refreshPartialSize();
-		d.activeChunks--;
+		--d.activeChunks;
 
 		// check if we're complete now
 		let shouldFinish = false;
