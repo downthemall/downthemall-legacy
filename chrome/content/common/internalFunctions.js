@@ -161,11 +161,8 @@ merge(
 		removeLeadingBackSlash : function() {
 			return this.removeLeadingChar("/");
 		},
-		removeArguments : function() {
-			return this.replace(/[\?#].*$/g, "");
-		},
 		getUsableFileName : function() {
-			var t = this.trim().removeArguments().removeFinalBackSlash().split("/");
+			var t = this.trim().removeFinalBackSlash().split("/");
 			return t[t.length-1].removeBadChars().replace(/[\\/]/g, "").trim();
 		},
 		getExtension : function() {
