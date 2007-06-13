@@ -283,17 +283,17 @@ var Tooltip = {
 							w: Math.ceil(chunk.written / file.totalSize * width)
 						};
 					}
-				);
+				).sort(function(a, b) { return b.s - a.s; });
 			}
 	
 			ctx.save();
 			ctx.clip();
 	
 			var passes = [
-				{ x:3, f: this._createInnerShadowGradient(ctx, cheight, "#AFA259", "#E8D675", "#F2E17E", "#F5F1B8") },
-				{ x:2, f: this._createInnerShadowGradient(ctx, cheight, "#9A8F4E", "#B0A359", "#B3A75D", "#BAB78B") },
-				{ x:1, f: this._createInnerShadowGradient(ctx, cheight, "#8E8746", "#B0A359", "#8E8746", "#CACB96") },
-				{ x:0, f: chunkFillStyle, s:chunkFillStyle }
+				{ x:0, f: this._createInnerShadowGradient(ctx, cheight, "#AFA259", "#E8D675", "#F2E17E", "#F5F1B8") },
+				{ x:1, f: this._createInnerShadowGradient(ctx, cheight, "#9A8F4E", "#B0A359", "#B3A75D", "#BAB78B") },
+				{ x:2, f: this._createInnerShadowGradient(ctx, cheight, "#8E8746", "#B0A359", "#8E8746", "#CACB96") },
+				{ x:3, f: chunkFillStyle, s:chunkFillStyle }
 			];
 			
 		
@@ -302,7 +302,7 @@ var Tooltip = {
 					passes.forEach(
 						function(pass) {
 							ctx.fillStyle = pass.f;
-							this._makeRoundedRectPath(ctx, chunk.s + pass.x + 0.5, 0, chunk.w, cheight, 3);
+							this._makeRoundedRectPath(ctx, chunk.s, 0, chunk.w - pass.x, cheight, 3);
 							ctx.fill();
 							if (pass.s) {
 								ctx.lineWidth = 2;
