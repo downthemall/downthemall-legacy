@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *	 Nils Maier <MaierMan@web.de>
+ *   Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -146,7 +146,7 @@ var Tree = {
 		if (col.index == 1) {
 			let d = this._downloads[idx];
 			if (d.is(CANCELED)) {
-				return 100;	
+				return 100; 
 			}
 			return d.totalSize ? d.partialSize * 100 / d.totalSize : 0;
 		}
@@ -225,7 +225,7 @@ var Tree = {
 			return;
 		}
 		this.selection.clearSelection();		
-		downloads = downloads.sort(function(a, b) { return b._tid - a._tid; });		
+		downloads = downloads.sort(function(a, b) { return b._tid - a._tid; });	 
 		SessionManager.beginUpdate();
 		this.beginUpdate();
 		downloads.forEach(
@@ -264,7 +264,7 @@ var Tree = {
 		SessionManager.endUpdate();
 		this._box.rowCountChanged(0, this._downloads.length);
 		this.invalidate();
-		this.endUpdate();		
+		this.endUpdate();	 
 	},
 	pause: function T_pause() {
 		this.updateSelected(
@@ -311,7 +311,7 @@ var Tree = {
 		function dec(d) {
 			if (d.maxChunks > 1) {
 					d.maxChunks--;
-			}			
+			}		 
 		};
 		Tree.updateSelected(increase ? inc : dec);
 	},
@@ -322,7 +322,7 @@ var Tree = {
 			downloads.push(d);
 		}
 		if (downloads.length) {
-			window.openDialog("chrome://dta/content/dta/manager/info.xul","_blank","chrome, centerscreen, dialog=no", downloads, this);			
+			window.openDialog("chrome://dta/content/dta/manager/info.xul","_blank","chrome, centerscreen, dialog=no", downloads, this);		 
 		}
 		this.endUpdate();
 	},	
@@ -502,17 +502,18 @@ var Tree = {
 			);
 			this.endUpdate();
 			this.invalidate();
-			this.selection.rangedSelect(0, ids.length - 1, true);			
+			this.selection.rangedSelect(0, ids.length - 1, true);
+			this._box.ensureRowIsVisible(0);						
 		}
 		catch (ex) {
 			Debug.dump("Mover::top", ex);
-		}	
+		} 
 	},
 	bottom: function T_bottom() {
 		try {
 			this.beginUpdate();
 			let ids = this._getSelectedIds();
-			ids.forEach(
+			ids = ids.map(
 				function(id, idx) {
 					id = id - idx;
 					this._downloads.push(this._downloads.splice(id, 1)[0]);
@@ -521,40 +522,42 @@ var Tree = {
 			);
 			this.endUpdate();
 			this.invalidate();
-			this.selection.rangedSelect(this._downloads.length - ids.length, this._downloads.length - 1, true);			
+			this.selection.rangedSelect(this._downloads.length - ids.length, this._downloads.length - 1, true);
+			this._box.ensureRowIsVisible(this.rowCount - 1);			
 		}
 		catch (ex) {
 			Debug.dump("Mover::bottom", ex);
-		}	
+		} 
 	},
 	up: function T_up() {
 		try {
 			this.beginUpdate();
-			this._getSelectedIds().forEach(
+			var ids = this._getSelectedIds().map(
 				function(id, idx) {
 					if (id - idx != 0) {
-						let tmp = this._downloads[id];
-						this._downloads[id] = this._downloads[id - 1];
-						this._downloads[id - 1] = tmp;
+						[this._downloads[id], this._downloads[id - 1]] = [this._downloads[id - 1], this._downloads[id]];
 						--id;
 					}
-					this.selection.rangedSelect(id, id, true);						
+					this.selection.rangedSelect(id, id, true);
+					return id;
 				},
 				this
 			);
+			
 			this.endUpdate();
 			this.invalidate();
+			this._box.ensureRowIsVisible(Math.max(ids.shift() - 1, 0));
+
 		}
 		catch (ex) {
 			Debug.dump("Mover::up", ex);
-		}		
+		}	 
 	},
 	down: function T_down() {
 		try {
 			this.beginUpdate();
 			let rowCount = this.rowCount;
-			let ids = this._getSelectedIds(true);
-			ids.forEach(
+			let ids = this._getSelectedIds(true).map(
 				function(id, idx) {
 					if (id + idx != rowCount - 1) {
 						let tmp = this._downloads[id];
@@ -563,20 +566,17 @@ var Tree = {
 						++id;
 					}
 					this.selection.rangedSelect(id , id, true);
+					return id;
 				},
 				this
 			);
 			this.endUpdate();
 			this.invalidate();
 			// readjust view
-			let last = ids[0];
-			if (last != this.rowCount - 1) {
-				++last;
-			}
-			this._box.ensureRowIsVisible(last);
+			this._box.ensureRowIsVisible(Math.min(ids.shift(), this.rowCount - 1));
 		}
 		catch (ex) {
 			Debug.dump("Mover::down", ex);
-		}		
+		}	 
 	}
 };
