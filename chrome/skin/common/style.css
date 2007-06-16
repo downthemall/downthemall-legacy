@@ -101,7 +101,6 @@ dialogheader#logo.renamingmask .dialogheader-title {
 
 #checkcontainer {
 	margin-right: 10px;
-	display: block;
 }
 
 .list {
@@ -117,10 +116,6 @@ tree treecols splitter {
   background-color: #ddd;
   border-width: 0px 0px 0px 1px;
   min-width: 0px;
-}
-
-.itemlista:focus { 
-	color: black !important; 
 }
 
 #donate {

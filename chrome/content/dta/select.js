@@ -55,7 +55,7 @@ function Tree(links, type) {
 	this._links = links;
 	this._links.forEach(
 		function(link) {
-			//  "lazy initialize" the icons.
+			// "lazy initialize" the icons.
 			// cache them so that we don't have to lookup them again and again.
 			// but do not precompute them, as we don't know if we'll ever display them.
 			link.__defineGetter__(
@@ -602,29 +602,48 @@ var Dialog = {
 			$("viewpics").setAttribute("selected", true);
 		}
 
-		// clean all filterboxen
-		var box = $("checkcontainer");
-		while (box.hasChildNodes()) {
-			box.removeChild(box.lastChild);
-		}
-
-		// but add them again (doing so because we might have been called because dtaIFiltermanager propagated a change)
+		let boxes = [];
 		var e = DTA_FilterManager.enumAll();
 		while (e.hasMoreElements()) {
-			var f = e.getNext().QueryInterface(Ci.dtaIFilter);
+			let f = e.getNext().QueryInterface(Ci.dtaIFilter);
 			if (!(f.type & type)) {
 				continue;
 			}
-			var checkbox = document.createElement("checkbox");
+			let checkbox = document.createElement("checkbox");
 			checkbox.setAttribute("checked", f.active);
 			checkbox.setAttribute("id", f.id);
 			checkbox.setAttribute("label", f.label);
-			checkbox.setAttribute("class", "lista");
 			checkbox.setAttribute("oncommand", "Dialog.toggleBox(this);");
 			checkbox.filter = f;
-			box.appendChild(checkbox);
+			boxes.push(checkbox);
 		}
-
+		
+		// clean all filterboxen
+		let rows = $('checkcontainerrows');
+		let cols = $('checkcontainercols');
+		while (rows.hasChildNodes()) {
+			rows.removeChild(rows.lastChild);
+		}
+		while (cols.hasChildNodes()) {
+			cols.removeChild(cols.lastChild);
+		}
+		let count = boxes.length;
+		for (let i = 0; i < 4; ++i) {
+			cols.appendChild(document.createElement('column'));
+			cols.lastChild.setAttribute('flex', '1');
+		}
+		
+		let row = null;
+		boxes.forEach(
+			function(b, i) {
+				if (i % 4 == 0) {
+					row = document.createElement('row');
+					row.setAttribute('pack', 'center');
+					rows.appendChild(row);
+				}
+				row.appendChild(b);
+			}
+		);
 		// update selection
 		this.makeSelection();
 	},
