@@ -114,10 +114,13 @@
 		</vbox>
 	</hbox>
 
-	<vbox style="margin:3px 7px;" id="filterbox" class="closer" autostretch="never" persist="closed">
+	<box style="margin:3px 7px;" orient="vertical" id="filterbox" class="closer" autostretch="never" persist="closed">
 		<caption label="&filters.caption;"/>
-		<hbox id="checkcontainer" flex="1"/>
-	</vbox>
+		<grid flex="1" id="checkcontainer">
+			<columns id="checkcontainercols"/>
+			<rows id="checkcontainerrows"/>
+		</grid>
+	</box>
 	<vbox style="margin:3px 7px;" class="closer" id="regexcontainer" closed="true" persist="closed">
 		<caption id="additional" tooltiptext="&additional.tip;" label="&additional.caption;"/>
 		<saveddropdown id="filter" flex="1" tooltiptext="&filter.tip;" preference="filter" allowempty="true" onchange="Dialog.makeSelection();"/>
