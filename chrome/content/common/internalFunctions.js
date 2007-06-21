@@ -162,7 +162,7 @@ merge(
 			return this.removeLeadingChar("/");
 		},
 		getUsableFileName : function() {
-			var t = this.trim().removeFinalBackSlash().split("/");
+			var t = this.replace(/\?.*$/g, '').trim().removeFinalBackSlash().split("/");
 			return t[t.length-1].removeBadChars().replace(/[\\/]/g, "").trim();
 		},
 		getExtension : function() {
