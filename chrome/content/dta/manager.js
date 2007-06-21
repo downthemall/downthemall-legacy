@@ -854,16 +854,17 @@ QueueItem.prototype = {
 		this._maxChunks = nv;
 		if (this._maxChunks < this._activeChunks) {
 			let running = this.chunks.filter(function(c) { return c.isRunning; });
-			while (running.length && this._maxChunks < this._activeChunks) {
+			while (running.length && this._maxChunks < running.length) {
 				let c = running.pop();
 				if (c.remainder < 10240) {
 					continue;
 				}
-				c.download.cancel();
+				c.cancel();
 			}
 		}
 		else if (this._maxChunks > this._activeChunks) {
 			this.resumeDownload();
+			
 		}
 		this.invalidate();
 		Debug.dump("mc set to", nv);
@@ -971,8 +972,7 @@ QueueItem.prototype = {
 		if (this.chunks) {
 			for (let i = 0, e = this.chunks.length; i < e; ++i) {
 				if (this.chunks[i].isRunning) {
-					this.chunks[i].download.cancel();
-					this.chunks[i].close();
+					this.chunks[i].cancel();
 				}
 			}
 		}
@@ -1348,7 +1348,7 @@ QueueItem.prototype = {
 		function downloadChunk(download, chunk, header) {
 			chunk.isRunning = true;
 			download.state = RUNNING;
-			//download.checkNameConflict();
+			Debug.dump("started: " + chunk);
 			chunk.download = new Download(download, chunk, header);
 			++download.activeChunks;
 			++download.sessionConnections;
@@ -1514,6 +1514,13 @@ Chunk.prototype = {
 		if (this.parent.is(CANCELED)) {
 			this.parent.removeTmpFile();
 		}
+	},
+	cancel: function CH_cancel() {
+		this.isRunning = false;
+		if (this.download) {
+			this.download.cancel();
+		}
+		this.close();
 	},
 	_written: 0,
 	_outStream: null,
@@ -1742,34 +1749,35 @@ Download.prototype = {
 	},
 
 	handleError: function DL_handleError() {
-		var c = this.c;
-		var d = this.d;
+		let c = this.c;
+		let d = this.d;
 
 		Debug.dump("handleError: problem found; trying to recover");
 		
 		if (d.urlManager.markBad(this.url)) {
 			Debug.dump("handleError: fresh urls available, kill this one and use another!");
-			this.cancel();
+			c.cancel();
 			return true;
 		}
 		
 		d.dumpScoreboard();
+		Debug.dump("affected: " + c);
 		
 		let max = -1, found = -1;
 		for (let i = 0; i < d.chunks.length; ++i) {
 			let cmp = d.chunks[i]; 
-			if (cmp.isRunning && cmp.start < c.start && cmp.start > max) {
+			if (cmp.start < c.start && cmp.start > max) {
 				found = i;
 				max = cmp.start;
 			}
 		}
 		if (found > -1) {
 			Debug.dump("handleError: found joinable chunk; recovering suceeded", found);
+			c.cancel();
 			d.chunks[found].end = c.end;
 			if (--d.maxChunks == 1) {
 				d.isResumable = false;
 			}
-			this.cancel();
 			d.chunks = d.chunks.filter(function(ch) { return ch != c; });
 			d.chunks.sort(function(a,b) { return a.start - b.start; });
 			
@@ -1792,15 +1800,14 @@ Download.prototype = {
 			c.close();
 			
 			SessionManager.save(d);
-			d.dumpScoreboard();			
+			d.dumpScoreboard();
 			return true;
 		}
 		return false;
 	},
-	
 	handleHttp: function DL_handleHttp(aChannel) {
-		var c = this.c;
-		var d = this.d;
+		let c = this.c;
+		let d = this.d;
 		
 		let code = 0, status = 'Server returned nothing';
 		try {
@@ -1808,10 +1815,11 @@ Download.prototype = {
 			status = aChannel.responseStatusText;
 		}
 		catch (ex) {
-			// no-op
+			return true;
 		}
+		 
 		
-		if (!code || code >= 400) {
+		if (code >= 400) {
 			if (!this.handleError()) {
 				Debug.dump("handleError: Cannot recover from problem!", code);
 				var file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
@@ -1823,7 +1831,7 @@ Download.prototype = {
 				);
 				SessionManager.save(d);
 			}
-			return;
+			return false;
 		}
 
 		// not partial content altough we are multi-chunk
@@ -1840,7 +1848,7 @@ Download.prototype = {
 				Debug.dump("Response Headers\n\n" + vis.value);
 				d.hasToBeRedownloaded = true;
 				d.reDownload();
-				return;
+				return false;
 			}
 		}
 
@@ -1853,11 +1861,11 @@ Download.prototype = {
 			// restart download from the beginning
 			d.hasToBeRedownloaded = true;
 			d.reDownload();
-			return;
+			return false;
 		}
 		
 		if (!this.isInfoGetter) {
-			return;
+			return false;
 		}
 
 		if (visitor.type) {
@@ -1903,6 +1911,7 @@ Download.prototype = {
 			newName = DTA_URLhelpers.decodeCharset(newName, charset);
 			d.fileName = newName.getUsableFileName();
 		}
+		return false;
 	},
 	
 	// Generic handler for now :p
@@ -1919,11 +1928,11 @@ Download.prototype = {
 		if (c.start != 0) {
 			if (!this.handleError()) {
 				Debug.dump(d + ": Server error or disconnection (type 1)");
-				d.status = _("srver");
+				d.status = _("servererror");
 				d.speed = '';
 				d.pause();
 			}
-			return;
+			return false;
 		}
 		
 		if (this._redirectedTo) {
@@ -1945,6 +1954,7 @@ Download.prototype = {
 			}
 		}
 		d.isResumable = false;
+		return false;
 	},
 	
 	//nsIRequestObserver,
@@ -1954,9 +1964,9 @@ Download.prototype = {
 		{i:Ci.nsIChannel, f:'handleGeneric'}
 	],
 	onStartRequest: function DL_onStartRequest(aRequest, aContext) {
-		Debug.dump('StartRequest');
-		var c = this.c;
-		var d = this.d;
+		let c = this.c;
+		let d = this.d;
+		Debug.dump('StartRequest: ' + c);
 	
 		this.started = true;
 		try {
@@ -1967,10 +1977,12 @@ Download.prototype = {
 					chan = aRequest.QueryInterface(sc.i);
 				}
 				catch (ex) {
-					continue
+					continue;
 				}
 				if (chan) {
-					this[sc.f](chan);
+					if ((this.rexamine = this[sc.f](chan))) {
+						 return;
+					}
 					break;
 				}					
 			}
@@ -2083,7 +2095,7 @@ Download.prototype = {
 		if (c.isStarter && !shouldFinish) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.dump(d + ": Server error or disconnection (type 1)");
-				d.status = _("srver");
+				d.status = _("servererror");
 				d.speed = '';
 				d.pause();
 				return;
@@ -2112,6 +2124,10 @@ Download.prototype = {
 			// shortcuts
 			let c = this.c;
 			let d = this.d;
+			
+			if (this.reexamine && (this.reexamine = this.onStartRequest(aRequest, aContext))) {
+				return;				 
+			}
 
 			// update download tree row
 			if (d.is(RUNNING)) {
