@@ -78,9 +78,6 @@
 				list.push(d);
 			}
 		}
-		if (!list.length) {
-			return;
-		}
 		var msg = '';
 		if (list.length < 25) {
 			msg = _('deletetexts');
@@ -93,7 +90,7 @@
 		else {
 			msg = _('deletetextl', [list.length]);
 		}
-		if (DTA_confirm(_('deletetitle'), msg, _('delete'), DTA_confirm.CANCEL, null, 1)) {
+		if (list.length && DTA_confirm(_('deletetitle'), msg, _('delete'), DTA_confirm.CANCEL, null, 1)) {
 			return;
 		}
 		list.forEach(
