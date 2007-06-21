@@ -246,8 +246,8 @@ var Tree = {
 		);
 		SessionManager.endUpdate();
 		this._box.rowCountChanged(0, this._downloads.length);
-		this.invalidate();
 		this.endUpdate();
+		this.invalidate();		
 	},
 	removeCompleted: function T_removeCompleted() {
 		SessionManager.beginUpdate();
@@ -262,9 +262,10 @@ var Tree = {
 			delete d._tid;
 		}
 		SessionManager.endUpdate();
+		this.selection.clearSelection();
 		this._box.rowCountChanged(0, this._downloads.length);
-		this.invalidate();
-		this.endUpdate();	 
+		this.endUpdate();
+		this.invalidate();		
 	},
 	pause: function T_pause() {
 		this.updateSelected(
@@ -304,15 +305,15 @@ var Tree = {
 	changeChunks: function T_changeChunks(increase) {
 		function inc(d) {
 			if (d.maxChunks < 10 && d.isResumable) {
-					d.maxChunks++;
-					d.resumeDownload();
+					++d.maxChunks;
 			}
 		};
 		function dec(d) {
 			if (d.maxChunks > 1) {
-					d.maxChunks--;
+				--d.maxChunks;
 			}		 
 		};
+		
 		Tree.updateSelected(increase ? inc : dec);
 	},
 	showInfo: function T_showInfo() {
@@ -416,13 +417,12 @@ var Tree = {
 	// generator for selected download elements.
 	// do not make any assumptions about the order.
 	get selected() {
-		let select = this.selection;
 		// loop through the selection as usual
-		for (let i = 0, e = select.getRangeCount(); i < e; ++i) {
-			let start = {}, end = {};
-			select.getRangeAt(i,start,end);
+		for (let i = 0, e = this.selection.getRangeCount(); i < e; ++i) {
+			let start = {}, end = {value: -1};
+			this.selection.getRangeAt(i, start, end);
 			for (let j = start.value, k = end.value; j <= k; ++j) {
-				yield this._downloads[j];
+					yield this._downloads[j];
 			}
 		}
 	},
