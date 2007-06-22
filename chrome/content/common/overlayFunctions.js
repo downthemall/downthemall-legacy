@@ -740,17 +740,14 @@ function DTA_Hash(hash, type) {
  * @return Valid hash string or null
  */
 function DTA_getLinkPrintHash(url) {
-	if (url instanceof Components.interfaces.nsIURL) {
-		url = url.ref;
-	}
-	else if (url instanceof Components.interfaces.nsIURI) {
+	if (url instanceof Components.interfaces.nsIURI) {
 		url = url.spec;
 	}
 	else if (typeof(url) != 'string' && !(url instanceof String)) {
 		return null;
 	}
 	
-	var lp = url.match(/#!(md5|sha(?:1|256|384|512)|)!([\da-f]+)$/i);
+	var lp = url.match(/#!(md5|sha(?:1|256|384|512))!([\da-f]+)$/i);
 	if (lp) {
 		try {
 			return new DTA_Hash(lp[2], lp[1]);
