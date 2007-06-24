@@ -161,7 +161,8 @@ var DTA_ContextOverlay = {
 			var rawInputs = aWin.document.getElementsByTagName('input');
 			var inputs = [];
 			for (var i = 0; i < rawInputs.length; ++i) {
-				if (rawInputs[i].getAttribute('type').toLowerCase() != 'image') {
+				var rit = rawInputs[i].getAttribute('type');
+				if (!rit || rit.toLowerCase() != 'image') {
 					continue;
 				}
 				inputs.push(rawInputs[i]);
