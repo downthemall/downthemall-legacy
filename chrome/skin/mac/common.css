@@ -1,0 +1,9 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+dialogheader#logo label {
+	display: none;
+}
+dialogheader#logo .dialogheader-title {
+	border-width: 0px;
+	display: block;
+}
