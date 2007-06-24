@@ -21,7 +21,7 @@
 }
 
 #dta-manager-button:hover {
-	-moz-image-region: rect(0px,130px,24px,104px);
+	-moz-image-region: rect(0px,128px,24px,104px);
 }
 
 toolbar[iconsize="small"] #dta-manager-button {
