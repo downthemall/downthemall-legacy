@@ -13,6 +13,7 @@
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://dta/skin/add/style.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://dta-platform/skin/common.css" type="text/css"?>
 
 <!DOCTYPE dialog [
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
