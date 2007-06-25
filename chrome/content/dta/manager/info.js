@@ -108,7 +108,7 @@ var Dialog = {
 					return;
 				}
 				if (directory) {
-					d.orginalDirSave = directory;
+					d.pathName = directory;
 				}
 				if (mask) {
 					d.mask = mask;
