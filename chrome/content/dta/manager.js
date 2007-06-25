@@ -783,7 +783,7 @@ QueueItem.prototype = {
 		if (!this._tmpFile) {
 			var dest = Prefs.tempLocation
 				? Prefs.tempLocation.clone()
-				: new FileFactory(this.parent.destinationPath);
+				: new FileFactory(this.destinationPath);
 			let name = this.fileName;
 			if (name.length > 60) {
 				name = name.substring(1, 60);

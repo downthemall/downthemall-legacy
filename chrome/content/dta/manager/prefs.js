@@ -118,7 +118,7 @@
 			this
 		);
 
-		if (Preferences.get("saveTemp", true)) {
+		if (Preferences.getDTA("saveTemp", true)) {
 			try {
 				this.tempLocation = Preferences.getMultiByteDTA("tempLocation", '');
 				if (this.tempLocation == '') {
@@ -138,6 +138,9 @@
 				this.tempLocation = null;
 				// XXX: error handling
 			}
+		}
+		else {
+			this.tempLocation = null;
 		}
 		var conns = (this.maxInProgress * this.maxChunks + 2) * 2;
 		['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server'].forEach(
