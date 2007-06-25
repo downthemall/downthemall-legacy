@@ -81,6 +81,7 @@ var Dialog = {
 		try {
 			var sum = 0;
 			const now = Utils.getTimestamp();
+			Debug.dump("refresh:" + this._running);
 			this._running.forEach(
 				function(i) {
 					var d = i.d;
@@ -177,21 +178,7 @@ var Dialog = {
 				if (!d.is(QUEUED)) {
 					continue;
 				}
-				d.status = _("starting");
-		
-				d.timeLastProgress = Utils.getTimestamp();
-				d.state = RUNNING;
-		
-				this._running.push({d: d, lastBytes: 0});
-				d.timeStart = Utils.getTimestamp();
-		
-				if (!d.isStarted) {
-					d.isStarted = true;
-					Debug.dump("Let's start " + d);
-				} else {
-					Debug.dump("Let's resume " + d + " at " + d.partialSize);
-				}
-				d.resumeDownload();
+				this.run(d);
 				rv = true;
 			}
 			return rv;
@@ -199,6 +186,20 @@ var Dialog = {
 			Debug.dump("startNext():", ex);
 		}
 		return false;
+	},
+	run: function D_run(download) {
+		download.status = _("starting");
+		download.timeLastProgress = Utils.getTimestamp();
+		download.state = RUNNING;
+		download.timeStart = Utils.getTimestamp();
+		if (!download.isStarted) {
+			download.isStarted = true;
+			Debug.dump("Let's start " + download);
+		} else {
+			Debug.dump("Let's resume " + download + " at " + download.partialSize);
+		}
+		this._running.push({d: download, lastBytes: 0});
+		download.resumeDownload();
 	},
 	wasStopped: function D_wasStopped(download) {
 		this._running = this._running.filter(
@@ -834,7 +835,7 @@ QueueItem.prototype = {
 
 	compression: null,
 
-	isResumable: false,
+	isResumable: true,
 	isStarted: false,
 
 	_activeChunks: 0,
@@ -843,6 +844,9 @@ QueueItem.prototype = {
 	},
 	set activeChunks(nv) {
 		this._activeChunks = nv;
+		if (this.activeChunks < 0) {
+			Debug.dump("ac too small");
+		}
 		this.invalidate();
 		return this._activeChunks;
 	},
@@ -942,24 +946,17 @@ QueueItem.prototype = {
 		Tree.invalidate(this);
 	},
 
-	_hasToBeRedownloaded: false,
-	get hasToBeRedownloaded() {
-		return this._hasToBeRedownloaded;
-	},
-	set hasToBeRedownloaded(nv) {
-		Debug.dump("HR: " + this._hasToBeRedownloaded + "/" + nv);
-		return this._hasToBeRedownloaded = nv;
-	},
-	reDownload: function QI_reDownload() {
+	retry: function QI_retry() {
 		// reset flags
-		this.pause();
+		this.cancel();
 		this.totalSize = this.partialSize = 0;
 		this.compression = null;
-		this.activeChunks = 0;
-		this.maxChunks = 0;
+		this.activeChunks = this.maxChunks = 0;
+		this.chunks.forEach(function(c) { c.cancel(); });
 		this.chunks = [];
+		this.speeds = [];
 		this.visitors = new VisitorManager();
-		this.resumeDownload();
+		Dialog.run(this);
 	},
 
 	refreshPartialSize: function QI_refreshPartialSize(){
@@ -1846,8 +1843,8 @@ Download.prototype = {
 				vis.value = '';
 				aChannel.visitResponseHeaders(vis);
 				Debug.dump("Response Headers\n\n" + vis.value);
-				d.hasToBeRedownloaded = true;
-				d.reDownload();
+				d.isResumable = false;
+				d.retry();
 				return false;
 			}
 		}
@@ -1859,8 +1856,8 @@ Download.prototype = {
 		catch (ex) {
 			Debug.dump("header failed! " + d, ex);
 			// restart download from the beginning
-			d.hasToBeRedownloaded = true;
-			d.reDownload();
+			d.isResumable = false;
+			d.retry();
 			return false;
 		}
 		
@@ -1878,7 +1875,7 @@ Download.prototype = {
 		}
 
 		// accept range
-		d.isResumable = visitor.acceptRanges;
+		d.isResumable = d.isResumable && visitor.acceptRanges;
 
 		if (visitor.type && visitor.type.search(/application\/metalink\+xml/) != -1) {
 			Debug.dump(d + " is a metalink");
@@ -2025,12 +2022,6 @@ Download.prototype = {
 					return;
 				}
 				
-				// if we are redownloading the file, here we can force single chunk mode
-				if (d.hasToBeRedownloaded) {
-					d.hasToBeRedownloaded = null;
-					d.isResumable = false;
-				}
-	
 				if (!d.totalSize) {
 					d.isResumable = false;					
 					this.cantCount = true;
@@ -2054,10 +2045,13 @@ Download.prototype = {
 		Debug.dump('StopRequest');
 		
 		// shortcuts
-		var c = this.c;
+		let c = this.c;
+		let d = this.d;
 		c.close();
 		
-		var d = this.d;
+		if (d.chunks.indexOf(c) == -1) {
+			return;
+		}
 
 		// update flags and counters
 		d.refreshPartialSize();
@@ -2076,17 +2070,6 @@ Download.prototype = {
 		// routine for normal chunk
 		Debug.dump(d + ": Chunk " + c.start + "-" + c.end + " finished.");
 
-		// corrupted range: waiting for all the chunks to be terminated and then restart download from scratch
-		if (d.hasToBeRedownloaded) {
-			if (!d.is(RUNNING)) {
-				Debug.dump(d + ": All old chunks are now finished, reDownload()");
-				d.reDownload();
-			}
-			SessionManager.save(d);
-			Debug.dump("out2");
-			return;
-		}
-
 		if (!d.is(RUNNING)) {
 			d.speed = '';
 		}
@@ -2102,7 +2085,7 @@ Download.prototype = {
 			}
 			else {
 				Debug.dump("caught bad server");
-				d.reDownload();
+				d.retry();
 				return;
 			}
 		}
