@@ -653,12 +653,12 @@ var Dialog = {
 
 		// get a new directory
 		var newDir = Utils.askForDir(
-			this.ddDirectory.current, // initialize dialog with the current directory
+			this.ddDirectory.value, // initialize dialog with the current directory
 			_("validdestination")
 		);
 		// alright, we got something new, so lets set it.
 		if (newDir) {
-			this.ddDirectory.current = newDir;
+			this.ddDirectory.value = newDir;
 		}
 	},
 
