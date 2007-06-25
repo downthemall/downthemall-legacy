@@ -38,29 +38,16 @@ var Tree = {
 	init: function T_init(elem) {
 		this.elem = elem;
 		this._downloads = [];
-		// atom cache. See getAtom
-		this._atoms = {};
-		this._iconic = this._as.getAtom('iconic');
-		this._complete = this._as.getAtom('completed');
-		this._inprogress = this._as.getAtom('inprogress');
-		this._paused = this._as.getAtom('paused');
-		this._canceled = this._as.getAtom('canceled');
+
+		let as = 	Cc["@mozilla.org/atom-service;1"]
+			.getService(Ci.nsIAtomService);
+		this._iconic = as.getAtom('iconic');
+		this._complete = as.getAtom('completed');
+		this._inprogress = as.getAtom('inprogress');
+		this._paused = as.getAtom('paused');
+		this._canceled = as.getAtom('canceled');
 		this.elem.view = this;	
 		
-	},
-
-	// will use it quite often.
-	// 'properties' need to be an atom.
-	_as: Cc["@mozilla.org/atom-service;1"]
-		.getService(Ci.nsIAtomService),
-
-	// get atoms, but provide caching.
-	// we have a limited set of atoms anyway, so we don't have to expect a huge cache.
-	getAtom: function T_getAtom(str) {
-		if (!(str in this._atoms)) {
-			this._atoms[str] = this._as.getAtom(str);
-		}
-		return this._atoms[str];
 	},
 
 	/*
@@ -69,12 +56,10 @@ var Tree = {
 	get rowCount() {
 		return this._downloads.length;
 	},
-
 	// used to initialize nsITreeview and provide the corresponding treeBoxObject
 	setTree: function T_setTree(box) {
 		this._box = box;
 	},
-
 	getParentIndex: function T_getParentIndex(idx) {
 		// no parents, as we are actually a list
 		return -1;
@@ -83,7 +68,6 @@ var Tree = {
 		// ... and being a list all nodes are on the same level
 		return 0;
 	},
-	
 	getCellText: function T_getCellText(idx, col) {
 		let d = this._downloads[idx];
 
@@ -100,7 +84,6 @@ var Tree = {
 		}
 		return '';
 	},
-
 	isSorted: function T_isSorted() {
 		// not sorted
 		return false;
@@ -120,12 +103,10 @@ var Tree = {
 		// no separators
 		return false;
 	},
-
 	isEditable: function T_isEditable(idx) {
 		// and nothing is editable
 		return true;
 	},
-
 	// will grab the "icon" for a cell.
 	getImageSrc: function T_getImageSrc(idx, col) {
 		switch (col.index) {
@@ -133,14 +114,12 @@ var Tree = {
 		}
 		return null;
 	},
-
 	getProgressMode : function T_getProgressMode(idx, col) {
 		if (col.index == 1) {
 			return Ci.nsITreeView.PROGRESS_NORMAL;
 		}
 		return Ci.nsITreeView.PROGRESS_NONE;
 	},
-
 	// will be called for cells other than textcells
 	getCellValue: function T_getCellValue(idx, col) {
 		if (col.index == 1) {
@@ -167,8 +146,7 @@ var Tree = {
 			prop.AppendElement(this._iconic);
 		}
 	},
-
-	// just some stubs we need to provide anyway to provide a full nsITreeView
+	// just some stubs we need to provide anyway to implement a full nsITreeView
 	cycleHeader: function T_cycleHeader(col, elem) {},
 	selectionChanged: function() {},
 	cycleCell: function(idx, column) {},
@@ -178,8 +156,6 @@ var Tree = {
 	getColumnProperties: function(column, element, prop) {},
 	getRowProperties: function(idx, prop) {},
 	setCellValue: function(idx, col, value) {},
-	
-
 	selectionChanged: function T_selectionChanged() {
 		this.refreshTools();
 	},
@@ -195,7 +171,6 @@ var Tree = {
 			this.refreshTools();
 		}
 	},
-	
 	// stuff
 	add: function T_add(download) {
 		this._downloads.push(download);
@@ -207,10 +182,7 @@ var Tree = {
 	
 	// d = null -> selection, d = downloadE, d = array -> all in list
 	remove: function T_remove(downloads) {
-		
-		if (downloads instanceof Array) {
-		}
-		else if (downloads) {
+		if (downloads && !(downloads instanceof Array)) {
 			downloads = [downloads];
 		}
 		else {
@@ -364,7 +336,7 @@ var Tree = {
 				);
 			}
 			modifySome($('play', 'toolplay'), function(d) { return !d.is(COMPLETE, RUNNING, QUEUED, FINISHING); });
-			modifySome($('pause', 'toolpause'), function(d) { return d.is(RUNNING) && d.isResumable || d.is(QUEUED); });
+			modifySome($('pause', 'toolpause'), function(d) { return (d.state & RUNNING) || (d. state & QUEUED); });
 			modifySome($('cancel', 'toolcancel'), function(d) { return !d.is(FINISHING, CANCELED); });
 			modifySome($('launch', 'folder', 'delete'), function(d) { return d.is(COMPLETE); });
 			modifySome($('addchunk', 'removechunk'), function(d) { return d.is(QUEUED, RUNNING, PAUSED); });
@@ -373,7 +345,6 @@ var Tree = {
 			Debug.dump("rt", ex);
 		}
 	},
-	
 	invalidate: function T_invalidate(d) {
 		if (!d) {
 			let complete = 0;
@@ -403,11 +374,9 @@ var Tree = {
 			this._box.invalidateRow(d._tid);
 		}
 	},
-	
 	get box() {
 		return this._box;
 	},
-	
 	// generator for all download elements.
 	get all() {
 		for (let i = 0, e = this._downloads.length; i < e; ++i) {
@@ -454,7 +423,6 @@ var Tree = {
 		}
 		return null;		
 	},
-	
 	at: function T_at(idx) {
 		return this._downloads[idx];
 	},
@@ -464,7 +432,6 @@ var Tree = {
 	every: function T_every(f, t) {
 		return this._downloads.every(f, t);
 	},
-	
 	update: function T_update(f, t) {
 		this.beginUpdate();
 		f.call(t);
@@ -488,7 +455,6 @@ var Tree = {
 		}
 		this.endUpdate();
 	},
-	
 	top: function T_top() {
 		try {
 			this.beginUpdate();
@@ -543,11 +509,9 @@ var Tree = {
 				},
 				this
 			);
-			
 			this.endUpdate();
 			this.invalidate();
 			this._box.ensureRowIsVisible(Math.max(ids.shift() - 1, 0));
-
 		}
 		catch (ex) {
 			Debug.dump("Mover::up", ex);
