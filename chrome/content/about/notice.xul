@@ -9,6 +9,7 @@
 	ondialogaccept="return accept();"
 	ondialogcancel="return cancel();"
 	width="500" height="420"
+	style="padding: 0px 0px 3px 0px;"
 >
 	<script type="application/javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/javascript"><![CDATA[
