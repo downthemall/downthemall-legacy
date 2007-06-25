@@ -81,7 +81,6 @@ var Dialog = {
 		try {
 			var sum = 0;
 			const now = Utils.getTimestamp();
-			Debug.dump("refresh:" + this._running);
 			this._running.forEach(
 				function(i) {
 					var d = i.d;
