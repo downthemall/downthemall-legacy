@@ -1,17 +1,25 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<!DOCTYPE dialog [
+	<!ENTITY % noticeDTD SYSTEM "chrome://dta/locale/notice.dtd">
+	%noticeDTD;
+]>
+
 <dialog
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	title="DownThemAll! - License and Privacy Notice"
 	buttons="accept,cancel"
-	buttonlabelaccept="Accept"
-	buttonlabelcancel="Decline"
+	buttonlabelaccept="&accept;"
+	buttonlabelcancel="&decline;"
 	ondialogaccept="return accept();"
 	ondialogcancel="return cancel();"
 	width="500" height="420"
 	style="padding: 0px 0px 3px 0px;"
 >
+	
 	<script type="application/javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js" />
 	<script type="application/javascript"><![CDATA[
 		function load(evt) {
 			if (evt.originalTarget.location.href.search(/about\.html$/) != -1) {
@@ -27,7 +35,8 @@
 			return true;
 		}
 		function cancel() {
-			if (!confirm("Declining will cause DownThemAll! to be uninstalled.\nContinue?")) {
+			make_();
+			if (!confirm(_("conf"))) {
 				return false;
 			}
 			Components.classes["@mozilla.org/extensions/manager;1"]
@@ -42,5 +51,8 @@
 		}
 		window.addEventListener('DOMContentLoaded', load, false);
 	]]></script>
+	<stringbundleset>
+		<stringbundle src="chrome://dta/locale/notice.properties"/>
+	</stringbundleset>
 	<iframe id="frame" src="chrome://dta-help/content/about.html" flex="1"/>
 </dialog>
