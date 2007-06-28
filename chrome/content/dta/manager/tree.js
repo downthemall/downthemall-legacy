@@ -336,7 +336,7 @@ var Tree = {
 				);
 			}
 			modifySome($('play', 'toolplay'), function(d) { return !d.is(COMPLETE, RUNNING, QUEUED, FINISHING); });
-			modifySome($('pause', 'toolpause'), function(d) { return (d.state & RUNNING) || (d. state & QUEUED); });
+			modifySome($('pause', 'toolpause'), function(d) { return (d.state & RUNNING) || (d.state & QUEUED); });
 			modifySome($('cancel', 'toolcancel'), function(d) { return !d.is(FINISHING, CANCELED); });
 			modifySome($('launch', 'folder', 'delete'), function(d) { return d.is(COMPLETE); });
 			modifySome($('addchunk', 'removechunk'), function(d) { return d.is(QUEUED, RUNNING, PAUSED); });
