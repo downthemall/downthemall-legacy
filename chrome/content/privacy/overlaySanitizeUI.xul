@@ -38,7 +38,22 @@
 <!DOCTYPE overlay>
   
 <overlay id="dta" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js" />
 	<script type="application/x-javascript"><![CDATA[
+		
+		var _str = Components.classes['@mozilla.org/intl/stringbundle;1']
+		.getService(Components.interfaces.nsIStringBundleService)
+		.createBundle('chrome://dta/locale/sanitize.properties');
+
+		function getString(n) {
+		try {
+			return this._str.GetStringFromName(n);
+		} catch (ex) {
+			DTA_debug.dump("locale error: " + n, ex);
+			return '<error>';
+		}
+		}
+		
 	 	function dtaInit() {
 			// looks nasty. I know :p
 			// but the pref-window does not provide an id for preferences.
@@ -56,9 +71,9 @@
 				pref.setAttribute('name', 'privacy.item.extensions-dta');
 				pref.setAttribute('type', 'bool'); 	
 				prefs.appendChild(pref);
-
+				
 				var check = document.createElement('checkbox');
-				check.setAttribute('label', 'downTHEMall history');
+				check.setAttribute('label', 'DownThemAll! ' + getString('history'));
 				check.setAttribute('preference', 'privacy.item.extensions-dta');
 				
 				// insertAfter
@@ -76,4 +91,5 @@
 		}
 		dtaInit();
 ]]></script>
+
 </overlay>
