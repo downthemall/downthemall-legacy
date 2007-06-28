@@ -786,7 +786,7 @@ QueueItem.prototype = {
 				: new FileFactory(this.destinationPath);
 			let name = this.fileName;
 			if (name.length > 60) {
-				name = name.substring(1, 60);
+				name = name.substring(0, 60);
 			}
 			dest.append(name + "-" + newUUIDString() + '.dtapart');
 			this._tmpFile = dest;
@@ -879,7 +879,7 @@ QueueItem.prototype = {
 	_icon: null,
 	get icon() {
 		if (!this._icon) {
-			this._icon = getIcon(this.fileName, 'metalink' in this);
+			this._icon = getIcon(this.destinationName, 'metalink' in this);
 		}
 		return this._icon;
 	},
