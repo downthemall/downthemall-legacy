@@ -65,6 +65,7 @@
 		<key id="kResume" modifiers="accel" key="R" oncommand="Tree.resume();"/>
 		<key id="kAdd" modifiers="accel" key="+" oncommand="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome,centerscreen,dialog,dependent');"/>
 		<key id="kGetInfo" modifiers="accel" key="I" oncommand="Tree.showInfo();"/>
+		<key id="kNewWin" modifiers="accel" key="N" oncommand="window.open('about:blank', 'New Window');"/>
 	</keyset>
 	
 
