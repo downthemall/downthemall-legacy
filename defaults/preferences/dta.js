@@ -63,4 +63,4 @@ pref("extensions.dta.filter", "['', '/(\\.mp3)$/', '/(\\.(html|htm|rtf|doc|pdf))
 pref("extensions.dta.lastqueued", false);
 
 // Seamonkey specific
-pref("extensions.dta.sm.buttons", "1,1,1");
+pref("extensions.dta.sm.buttons", "1,1,0");
