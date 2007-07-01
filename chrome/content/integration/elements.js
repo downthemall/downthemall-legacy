@@ -52,11 +52,11 @@ var DTA_ContextOverlay = {
 		}
 	},
 	
-	trim : function(t) {
+	trim: function(t) {
 		return t.replace(/^[ \t_]+|[ \t_]+$/gi, '').replace(/(_){2,}/g, "_");
 	},
 	
-	addLinksToArray : function(lnks, urls, doc) {
+	addLinksToArray: function(lnks, urls, doc) {
 		var ref = doc.URL;
 		if (!('length' in lnks)) {
 			return;
@@ -100,7 +100,7 @@ var DTA_ContextOverlay = {
 		}
 	},
 	
-	addImagesToArray : function(lnks, images, doc)	{
+	addImagesToArray: function(lnks, images, doc)	{
 		var ref = doc.URL;
 		
 		if (!lnks || !lnks.length) {
@@ -141,7 +141,7 @@ var DTA_ContextOverlay = {
 	},
 	
 	// recursively add stuff.
-	addLinks : function(aWin, aURLs, aImages, honorSelection) {
+	addLinks: function(aWin, aURLs, aImages, honorSelection) {
 
 		function filterElements(nodes, set) {
 			var filtered = [];
@@ -202,7 +202,7 @@ var DTA_ContextOverlay = {
 		}
 	},
 	
-	findLinks : function(turbo, all) {
+	findLinks: function(turbo, all) {
 		try {
 			if (turbo) {
 				DTA_debug.dump("findLinks(): DtaOneClick request from the user");
@@ -258,7 +258,7 @@ var DTA_ContextOverlay = {
 		}
 	},
 	
-	findSingleLink : function(turbo) {
+	findSingleLink: function(turbo) {
 		try {
 			var win = document.commandDispatcher.focusedWindow.top;
 
@@ -299,50 +299,48 @@ var DTA_ContextOverlay = {
 		}
 	},
 	
-	init : function() {
+	init: function() {
 		try {
-			var o = {
-				ctx: document.getElementById("contentAreaContextMenu"),
-				menu: document.getElementById("menu_ToolsPopup")
-			};
-			if (!o.ctx || !o.menu) {
-				o = {
-					ctx: document.getElementById("messagePaneContext"),
-					menu: document.getElementById("menu_ToolsPopup")
-				};
-			}
-			if (!o.ctx || !o.menu) {
-				return;
-			}
-			o.ctx.addEventListener("popupshowing", function (evt) { DTA_ContextOverlay.onContextShowing(evt); }, false);
-			o.menu.addEventListener("popupshowing", this.onHideTool, false);
+			var ctx = document.getElementById("dtaCtxCompact").parentNode;
+			var menu = document.getElementById("dtaToolsMenu").parentNode;
+			ctx.addEventListener("popupshowing", function (evt) { DTA_ContextOverlay.onContextShowing(evt); }, false);
+			menu.addEventListener("popupshowing", function (evt) { DTA_ContextOverlay.onToolsShowing(evt); }, false);
 
 			// prepare ctx object
 			// order is important!			
 			this.ctx = {};
 			['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'SaveT', 'Save', 'SepFront'].forEach(
 				function (e) {
-					DTA_ContextOverlay.ctx[e] = document.getElementById('dtaCtx' + e);
-				}
+					this.ctx[e] = document.getElementById('dtaCtx' + e);
+				},
+				this
 			);
 			this.ctxBase = document.getElementById('dtaCtxCompact');
 			this.ctxMenu = document.getElementById('dtaCtxSubmenu');
 			
+			// prepare tools
+			this.tools = {};
+			['DTA', 'TDTA', 'Manager'].forEach(
+				function (e) {
+					this.tools[e] = document.getElementById('dtaTools' + e);
+				},
+				this
+			);
+			this.toolsBase = document.getElementById('dtaToolsMenu');
+			this.toolsMenu = document.getElementById('dtaToolsPopup');
+			this.toolsSep = document.getElementById('dtaToolsSep');
+			
 		} catch (ex) {
+			Components.utils.reportError(ex);
 			DTA_debug.dump("DCO::init()", ex);
 		}
 	},
 	
-	onContextShowing : function(evt) {
+	onContextShowing: function(evt) {
 		try {
 			
-			if (evt && evt.target && evt.target.id != 'contentAreaContextMenu') {
-				return;
-			}
-			
 			// get settings
-			var menu = DTA_preferences.getDTA("ctxmenu", "1,1,0")
-				.split(",").map(function(e){return parseInt(e);});
+			var menu = DTA_preferences.getDTA("ctxmenu", "1,1,0").split(",").map(function(e){return parseInt(e);});
 			var compact = DTA_preferences.getDTA("ctxcompact", false);
 			
 			// all hidden...
@@ -436,24 +434,58 @@ var DTA_ContextOverlay = {
 				}		 
 			}
 		} catch(ex) {
-			DTA_debug.dump("DTAHide(): ", ex);
+			DTA_debug.dump("DTAContext(): ", ex);
 		}
 	},
 	
-	onHideTool : function() {try {
-		var menuTool = DTA_preferences.getDTA("toolsmenu", "1,1,1").split(",");
-		var contextTool = DTA_preferences.getDTA("toolscompact", true); // checks if	the user wants a submenu
-		document.getElementById("dta-tool").hidden = !(parseInt(menuTool[0]) && (!contextTool));
-		document.getElementById("turbo-tool").hidden = !(parseInt(menuTool[1]) && (!contextTool));
-		document.getElementById("dta-manager-tool").hidden = !(parseInt(menuTool[2]) && (!contextTool));
-		document.getElementById("dta-menu").hidden = !contextTool; 
-		document.getElementById("dta-Popup").hidden = !contextTool;
-		document.getElementById("dta-tool-popup").hidden = !parseInt(menuTool[0]);
-		document.getElementById("turbo-tool-popup").hidden = !parseInt(menuTool[1]);
-		document.getElementById("dta-manager-tool-popup").hidden = !parseInt(menuTool[2]);
-	} catch(ex) {
-		DTA_debug.dump("DTAHideTool(): " + ex);
-	}
+	onToolsShowing : function(evt) {
+		try {
+			
+			// get settings
+			var menu = DTA_preferences.getDTA("toolsmenu", "1,1,1").split(",").map(function(e){return parseInt(e);});
+			
+			// all hidden...
+			var hidden = DTA_preferences.getDTA("toolshidden", false);
+			for (var i in this.tools) {
+				this.tools[i].hidden = hidden;
+			}
+			this.toolsBase.hidden = hidden;
+			if (hidden) {
+				return;
+			}
+
+			var compact = menu.indexOf(0) != -1;
+			
+			// setup menu items
+			// show will hold those that will be shown
+			var show = [];
+			
+			if (menu[0]) {
+				show.push('DTA');
+			}
+			if (menu[1]) {
+				show.push('TDTA');
+			}
+			// prefs
+			if (menu[2]) {
+				show.push('Manager');
+			}
+			this.toolsSep.hidden = menu.indexOf(0) == -1;
+			this.toolsBase.setAttribute('label', this.getString(menu.indexOf(1) != -1 ? 'moredtatools' : 'simpledtatools'));
+		
+			// show the items.
+			for (var i in this.tools) {
+				var cur = this.tools[i];
+				if (show.indexOf(i) == -1) {
+					this.toolsMenu.insertBefore(cur, this.toolsSep);
+				}
+				else {
+					this.toolsBase.parentNode.insertBefore(cur, this.toolsBase);
+				}
+			}
+		} catch(ex) {
+			DTA_debug.dump("DTATools(): ", ex);
+		}
 	},
 	
 	extractDescription : function(child) {

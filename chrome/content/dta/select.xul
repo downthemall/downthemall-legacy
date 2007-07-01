@@ -22,7 +22,7 @@
 <window
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	title="&title;"
-	width="625" height="500"
+	width="675" height="575"
 	id="selectlinks"
 	onload="Dialog.load();"
 	onunload="Dialog.unload();"

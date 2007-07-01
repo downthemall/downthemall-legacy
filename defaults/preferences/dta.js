@@ -35,8 +35,8 @@
  * ***** END LICENSE BLOCK ***** */
 pref("extensions.dta.ctxmenu", "1,1,0");
 pref("extensions.dta.ctxcompact", false);
-pref("extensions.dta.toolsmenu", "1,1,1");
-pref("extensions.dta.toolscompact", true);
+pref("extensions.dta.toolsmenu", "0,0,0");
+pref("extensions.dta.toolshidden", false);
 pref("extensions.dta.closetab", false);
 pref("extensions.dta.closedta", false);
 pref("extensions.dta.saveTemp", true);
@@ -61,3 +61,6 @@ pref("extensions.dta.showtooltip", true);
 pref("extensions.dta.renaming", "['*name*.*ext*', '*num*_*name*.*ext*', '*url*-*name*.*ext*', '*name* (*text*).*ext*', '*name* (*hh*-*mm*).*ext*']");
 pref("extensions.dta.filter", "['', '/(\\.mp3)$/', '/(\\.(html|htm|rtf|doc|pdf))$/', 'http://www.website.com/subdir/*.*', 'http://www.website.com/subdir/pre*.???', '*.z??, *.css, *.html']");
 pref("extensions.dta.lastqueued", false);
+
+// Seamonkey specific
+pref("extensions.dta.sm.buttons", "1,1,1");

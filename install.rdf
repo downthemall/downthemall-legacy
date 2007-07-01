@@ -28,6 +28,15 @@
 				<maxVersion>3.0.*</maxVersion>
 			</rdf:Description>
 		</targetApplication>
-		
+
+		<!-- Seamonkey -->
+		<targetApplication>
+			<rdf:Description>
+				<id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</id>
+				<minVersion>2.0a</minVersion>
+				<maxVersion>3.0</maxVersion>
+			</rdf:Description>
+		</targetApplication>			
+
 	</rdf:Description>
 </rdf:RDF>
