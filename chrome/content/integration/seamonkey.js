@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- ***** BEGIN LICENSE BLOCK *****
+/* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -15,13 +14,11 @@
  * The Original Code is downTHEMall
  *
  * The Initial Developers of the Original Code are
- * Federico Parodi and Stefano Verna
- * Portions created by the Initial Developers are Copyright (C) 2004
+ * Federico Parodi, Stefano Verna and Nils Maier
+ * Portions created by the Initial Developers are Copyright (C) 2007
  * the Initial Developers. All Rights Reserved.
  *
  * Contributor(s):
- *   Federico Parodi
- *   Stefano Verna <stefano.verna@gmail.com>
  *   Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -36,29 +33,32 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
- * ***** END LICENSE BLOCK ***** -->
-
-<?xml-stylesheet type="text/css" href="chrome://dta/content/common/bindings.css"?>
+ * ***** END LICENSE BLOCK ***** */
  
-<!DOCTYPE overlay SYSTEM "chrome://dta/locale/saveas.dtd">
-<overlay id="downthemallDownloadSaveAs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
-	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
-	<script type="application/x-javascript" src="chrome://dta/content/integration/saveas.js"/>
-	<script type="application/x-javascript" src="chrome://dta/content/integration/menu.js"/>
-
-	<stringbundle id="stringsB" src="chrome://dta/locale/saveas.properties"/>
-	
-	<radiogroup id="mode">
-		<vbox insertbefore="save" id="downthemallcontainer" collapsed="true" flex="1">
-			<hbox flex="1">
-				<radio id="downthemall" label="DownThemAll!" disabled="true"/>
-			</hbox>
-			<hbox id="tdta" flex="1">
-				<radio id="turbodta" label="dTa OneClick!" disabled="true"/>
-				<spacer flex="1"/>
-				<saveddropdown id="tdtalist" preference="directory" readonly="true"/>
-			</hbox>
-		</vbox>
-	</radiogroup>
-</overlay>
+var DTA_Seamonkey = {
+	init: function() {
+		this._items = ['dta-button', 'dta-turbo-button', 'dta-manager-button'].map(
+			function(e) {
+				return document.getElementById(e);
+			}
+		);
+		DTA_makeObserver(this);
+		DTA_preferences.addObserver("extensions.dta.sm.", this);
+		this._refresh();
+	},
+	observe: function(subject, topic, prefName) {
+		this._refresh();
+	},
+	_refresh: function() {
+		DTA_preferences
+			.getDTA('sm.buttons')
+			.split(',')
+			.forEach(
+				function(v, i) {
+					this._items[i].hidden = v != '1';
+				},
+				this
+			);
+	}
+};
+window.addEventListener("load", function() {DTA_Seamonkey.init();}, false);

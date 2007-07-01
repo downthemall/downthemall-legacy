@@ -15,8 +15,8 @@
  * The Original Code is downTHEMall
  *
  * The Initial Developers of the Original Code are
- * Federico Parodi and Stefano Verna
- * Portions created by the Initial Developers are Copyright (C) 2004
+ * Federico Parodi, Stefano Verna and Nils Maier
+ * Portions created by the Initial Developers are Copyright (C) 2007
  * the Initial Developers. All Rights Reserved.
  *
  * Contributor(s):
@@ -37,28 +37,21 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
+<overlay id="DtaBrowserToolbar" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<?xml-stylesheet type="text/css" href="chrome://dta/content/common/bindings.css"?>
- 
-<!DOCTYPE overlay SYSTEM "chrome://dta/locale/saveas.dtd">
-<overlay id="downthemallDownloadSaveAs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
-	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
-	<script type="application/x-javascript" src="chrome://dta/content/integration/saveas.js"/>
-	<script type="application/x-javascript" src="chrome://dta/content/integration/menu.js"/>
+	<script type="application/x-javascript" src="chrome://dta/content/integration/seamonkey.js"/>
 
-	<stringbundle id="stringsB" src="chrome://dta/locale/saveas.properties"/>
-	
-	<radiogroup id="mode">
-		<vbox insertbefore="save" id="downthemallcontainer" collapsed="true" flex="1">
-			<hbox flex="1">
-				<radio id="downthemall" label="DownThemAll!" disabled="true"/>
-			</hbox>
-			<hbox id="tdta" flex="1">
-				<radio id="turbodta" label="dTa OneClick!" disabled="true"/>
-				<spacer flex="1"/>
-				<saveddropdown id="tdtalist" preference="directory" readonly="true"/>
-			</hbox>
-		</vbox>
-	</radiogroup>
+	<popup id="contentAreaContextMenu">
+		<menu id="dtaCtxCompact" insertafter="context-sep-selectall"/>
+	</popup>
+
+	<toolbar id="nav-bar"> 
+		<toolbarbutton id="dta-button" insertbefore="throbber-box" />
+		<toolbarbutton id="dta-turbo-button" insertbefore="throbber-box" />
+		<toolbarbutton id="dta-manager-button" insertbefore="throbber-box" />
+	</toolbar>
+	<menupopup id="taskPopup">	
+		<menu id="dtaToolsMenu" label="DownThemAll" class="menu-iconic" image="chrome://dta/skin/common/dta.png" insertafter="navBeginGlobalItems"/>
+	</menupopup>
 </overlay>
