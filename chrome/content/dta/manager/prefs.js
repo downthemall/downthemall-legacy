@@ -74,13 +74,8 @@
 
 		try {
 			this._refreshPrefs();
-			var pbi = Cc['@mozilla.org/preferences-service;1']
-				.getService(Ci.nsIPrefService)
-				.getBranch(null)
-				.QueryInterface(Components.interfaces.nsIPrefBranch2)
-			;
-			pbi.addObserver('extensions.dta.', this, true);
-			pbi.addObserver('network.', this, true);
+			Preferences.addObserver('extensions.dta.', this);
+			Preferences.addObserver('network.', this);
 		}
 		catch (ex) {
 			Debug.dump("failed to add pref-observer", ex);
