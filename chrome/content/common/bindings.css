@@ -22,11 +22,12 @@
 	border:0px; margin: 0px; padding: 0px;
 }
 .closer caption .caption-icon {
-	height: 9px;
-	width: 9px;
+	height: 10px;
+	width: 10px;
 	background: transparent url("chrome://dta/skin/common/twisty-clsd.png") no-repeat center center;
 	-moz-margin-start: 1px;
 	-moz-margin-end: 3px;
+	padding: 0;
 }
 .closer[closed="true"] caption .caption-icon {
 	background-image: url("chrome://dta/skin/common/twisty-open.png");
