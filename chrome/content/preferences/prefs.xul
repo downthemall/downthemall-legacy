@@ -9,8 +9,6 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
-<?xml-stylesheet href="chrome://browser/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://dta/skin/preferences/style.css"?>
 <?xml-stylesheet href="chrome://dta-platform/skin/preferences.css"?>
 
