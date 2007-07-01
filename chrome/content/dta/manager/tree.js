@@ -148,7 +148,6 @@ var Tree = {
 	},
 	// just some stubs we need to provide anyway to implement a full nsITreeView
 	cycleHeader: function T_cycleHeader(col, elem) {},
-	selectionChanged: function() {},
 	cycleCell: function(idx, column) {},
 	performAction: function(action) {},
 	performActionOnRow: function(action, index, column) {},
