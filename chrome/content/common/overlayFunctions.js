@@ -161,6 +161,11 @@ var DTA_preferences = {
 	},
 	resetAll: function DP_reset() {
 		this.resetBranch('');
+	},
+	addObserver: function DP_addObserver(branch, obj) {
+		this._pref
+			.QueryInterface(Components.interfaces.nsIPrefBranch2)
+			.addObserver(branch, obj, true);
 	}
 };
 
@@ -874,4 +879,36 @@ function DTA_alert(aTitle, aText) {
 	Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
 		.getService(Components.interfaces.nsIPromptService)
 		.alert(window, aTitle, aText);
+}
+
+/**
+ * Tiny helper to "convert" given object into a weak observer. Object must still implement .observe()
+ * @author Nils
+ * @param obj Object to convert
+ */
+function DTA_makeObserver(obj) {
+	// nsiSupports
+	obj.__QueryInterface = obj.QueryInterface;
+	obj.QueryInterface = function(iid) {
+		if (
+			iid.equals(Components.interfaces.nsISupports)
+			|| iid.equals(Components.interfaces.nsISupportsWeakReference)
+			|| iid.equals(Components.interfaces.nsIWeakReference)
+			|| iid.equals(Components.interfaces.nsiObserver)
+		) {
+			return this;
+		}
+		if (this.__QueryInterface) {
+			return this.__QueryInterface(iid);
+		}
+		throw Components.results.NS_ERROR_NO_INTERFACE;
+	};
+	// nsiWeakReference
+	obj.QueryReferent = function(iid) {
+		return this;
+	};
+	// nsiSupportsWeakReference
+	obj.GetWeakReference = function() {
+		return this;
+	};	
 }

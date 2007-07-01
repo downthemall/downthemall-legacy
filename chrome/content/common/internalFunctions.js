@@ -407,37 +407,7 @@ function getIcon(link, metalink, size) {
 	return "moz-icon://foo.html?size=" + size;
 }
 
-/**
- * Tiny helper to "convert" given object into a weak observer. Object must still implement .observe()
- * @author Nils
- * @param obj Object to convert
- */
-function makeObserver(obj) {
-	// nsiSupports
-	obj.__QueryInterface = obj.QueryInterface;
-	obj.QueryInterface = function(iid) {
-		if (
-			iid.equals(Components.interfaces.nsISupports)
-			|| iid.equals(Components.interfaces.nsISupportsWeakReference)
-			|| iid.equals(Components.interfaces.nsIWeakReference)
-			|| iid.equals(Components.interfaces.nsiObserver)
-		) {
-			return this;
-		}
-		if (this.__QueryInterface) {
-			return this.__QueryInterface(iid);
-		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
-	};
-	// nsiWeakReference
-	obj.QueryReferent = function(iid) {
-		return this;
-	};
-	// nsiSupportsWeakReference
-	obj.GetWeakReference = function() {
-		return this;
-	};	
-}
+var makeObserver = DTA_makeObserver;
 
 /**
  * Encapulates all stringbundles of the current document and provides unified access
