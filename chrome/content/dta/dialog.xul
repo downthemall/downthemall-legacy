@@ -13,7 +13,8 @@
 
 <!DOCTYPE window SYSTEM "chrome://dta/locale/dialog.dtd">
 
-<dialog id="replace" 
+<dialog
+	id="DownThemAll" 
 	title="DownThemAll!" 
 	onload="load();" 
 	buttons="accept" 
