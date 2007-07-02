@@ -17,7 +17,7 @@
 <dialog
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	title="&title;" 
-	id="renamingmask"
+	id="DownThemAll"
 	width="460" height="200" 
 	persist="screenX screenY"
 	onload="Dialog.load();"

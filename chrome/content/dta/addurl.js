@@ -309,7 +309,7 @@ var Dialog = {
 			openHelp(topic, 'chrome://dta-help/content/help.rdf');	
 		}
 		else {
-			$('popupHelp').showPopup($('addURL').getButton('help'), -1, -1, "popup");
+			$('popupHelp').showPopup($('DownThemAll').getButton('help'), -1, -1, "popup");
 		}
 	},
 	

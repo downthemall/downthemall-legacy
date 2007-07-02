@@ -15,7 +15,7 @@
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 
 <prefwindow
-	id="dtaPreferenceWindow"
+	id="DownThemAll"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	windowtype="DTA:Preferences"
 	title="&dtaPreferences.title;" 
