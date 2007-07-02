@@ -53,17 +53,12 @@
 	buttons="accept"
 	id="DTAAboutDialog"
 >
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayfunctions.js"/>
+	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
+
 	<script type="application/x-javascript"><![CDATA[
 		function openTab(url) {
-			var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
-			var recentWindow = wm.getMostRecentWindow("navigator:browser");
-			if (recentWindow) {
-				// Use an existing browser window
-				recentWindow.delayedOpenTab(url);
-			}	else {
-				// No browser windows are open, so open a new one.
-				window.open(url);
-			}
+			DTA_Mediator.openTab(url);
 			self.close();
 		}
 		function versionFill() {
@@ -76,7 +71,6 @@
 			window.title = 'About ' + title;
 		}
   ]]></script>
-	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 	
 	<keyset>
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
