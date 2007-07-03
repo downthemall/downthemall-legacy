@@ -37,7 +37,7 @@
 <!ENTITY privacypane.closing.caption "When Manager window is closed">
 <!ENTITY privacypane.removecompleted.label "Remove completed downloads">
 <!ENTITY privacypane.removecanceled.label "Remove canceled/erroneous downloads">
-<!ENTITY privacypane.removeaborted.label "Remove not-started downloads">
+<!ENTITY privacypane.removeaborted.label "Remove unfinished downloads">
 <!ENTITY privacypane.deletefoldershistory.label "Empty Folderlist">
 <!ENTITY privacypane.deletefiltershistory.label "Empty Additional Filters">
 <!ENTITY privacypane.showlog.label "View Log">
@@ -51,7 +51,7 @@
 <!ENTITY privacypane.logs.caption "Diagnostic Log">
 <!ENTITY privacypane.enablelogs.label "Enable diagnostic logging">
 <!ENTITY privacypane.notice.caption "Notice">
-<!ENTITY privacypane.notice.desc "DownThemAll also integrates with Firefox' built-in Clear Private Data feature.">
+<!ENTITY privacypane.notice.desc "DownThemAll also integrates with Firefox's built-in Clear Private Data feature.">
 <!ENTITY privacypane.privacynotice.label "Our Privacy Notice">
 
 <!ENTITY advancedpane.label "Advanced">
