@@ -194,7 +194,8 @@
 					get("description"),
 					get("mask"),
 					get("referrer"),
-					get("tmpFile")
+					get("tmpFile"),
+					get('state')
 					);
 				d._dbId = _dbId;
 				d.startDate = new Date(get("startDate"));
@@ -204,7 +205,6 @@
 					'fileName',
 					'destinationName',
 					'isResumable',
-					'state',
 					'partialSize',
 					'totalSize',
 					'hash',

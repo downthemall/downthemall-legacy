@@ -79,12 +79,12 @@ var Dialog = {
 	},	
 	refresh: function D_refresh() {
 		try {
-			var sum = 0;
+			let sum = 0;
 			const now = Utils.getTimestamp();
 			this._running.forEach(
 				function(i) {
 					var d = i.d;
-					if (d.partialSize != 0 && d.is(RUNNING) && (now - d.timeStart) >= 1000 ) {
+					if (d.partialSize != 0 && (now - d.timeStart) >= 1000 ) {
 						// Calculate estimated time
 						if (d.totalSize > 0) {
 							var remaining = Math.ceil((d.totalSize - d.partialSize) / ((d.partialSize - i.lastBytes) * REFRESH_NFREQ));
@@ -104,12 +104,13 @@ var Dialog = {
 					if (d.speeds.length > SPEED_COUNT) {
 						d.speeds.shift();
 					}
-					sum += (i.lastBytes = d.partialSize);
+					i.lastBytes = d.partialSize;
+					sum += i.lastBytes;
 					SessionManager.save(d);
 				}
 			);
 			let speed = Math.round((sum - this._lastSum) * REFRESH_NFREQ);
-			speed = (speed > 0) ? speed : 0;
+			speed = Utils.formatBytes((speed > 0) ? speed : 0);
 			this._lastSum = sum;
 
 			// Refresh status bar
@@ -118,19 +119,19 @@ var Dialog = {
 				+ " - "
 				+ _("cspeed")
 				+ " "
-				+ Utils.formatBytes(speed) + "/s";
+				+ speed + "/s";
 
 			// Refresh window title
 			if (this._running.length == 1 && this._running[0].d.totalSize > 0) {
 				document.title =
 					Math.round(this._running[0].d.partialSize / this._running[0].d.totalSize * 100) + "% - "
 					+ this.completed + "/" + Tree.rowCount + " - "
-					+ Utils.formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
+					+ speed + "/s - DownThemAll! - " + _("dip");
 			}
 			else if (this._running.length > 0) {
 				document.title =
 					this.completed + "/" + Tree.rowCount + " - "
-					+ Utils.formatBytes(speed) + "/s - DownThemAll! - " + _("dip");
+					+ speed + "/s - DownThemAll! - " + _("dip");
 			}
 			else {
 				document.title = this.completed + "/" + Tree.rowCount + " - DownThemAll!";
@@ -191,10 +192,16 @@ var Dialog = {
 		download.timeLastProgress = Utils.getTimestamp();
 		download.state = RUNNING;
 		download.timeStart = Utils.getTimestamp();
+		if (download.partialSize >= download.totalSize && download.totalSize) {
+			Debug.dump("Download seems to be complete; likely a left-over from a crash, finish it:" + download);
+			download.finishDownload();
+			return;
+		}
 		if (!download.isStarted) {
 			download.isStarted = true;
 			Debug.dump("Let's start " + download);
-		} else {
+		}
+		else {
 			Debug.dump("Let's resume " + download + " at " + download.partialSize);
 		}
 		this._running.push({d: download, lastBytes: 0});
@@ -660,7 +667,7 @@ VisitorManager.prototype = {
 	}
 };
 
-function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
+function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile, state) {
 
 	this.visitors = new VisitorManager();
 
@@ -690,6 +697,9 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 	this._mask = mask;
 	this.fileName = this.urlManager.usable.getUsableFileName();
 	
+	if (state) {
+		this.state = state;
+	}
 	
 	// XXX: reset ranges when failed.
 	if (tmpFile) {
