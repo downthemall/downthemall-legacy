@@ -127,28 +127,36 @@ privacycontrol.prototype = {
     const prefs = Components.classes["@mozilla.org/preferences-service;1"]
       .getService(Components.interfaces.nsIPrefService)
       .getBranch('extensions.dta.');
-		['directory', 'filter', 'renaming'].forEach(function(e) { prefs.clearUserPref(e); });
+		['directory', 'filter', 'renaming'].forEach(
+			function(e) {
+				try {
+					prefs.clearUserPref(e);
+				}
+				catch (ex) {}
+			}
+		);
 
 		try {
 			var prof = Components.classes["@mozilla.org/file/directory_service;1"]
 				.getService(Components.interfaces.nsIProperties)
 				.get("ProfD", Components.interfaces.nsIFile);
-			['dta_history.xml', 'dta_log.txt'].forEach(
-				function (e) {
+			['dta_history.xml', 'dta_log.txt', 'dta_queue.sqlite'].forEach(
+				function(e) {
 					try {
 						var file = prof.clone();
 						file.append(e);
 						if (file.exists()) {
-							file.remove();
+							file.remove(false);
 						}
 					} catch (ex) {
 						this.log('cannot remove ' + e);
 					}
-				}
+				},
+				this
 			);
 		}
 		catch (oex) {
-			this.log('failed to clean files');
+			this.log('failed to clean files: ' + oex);
 		}
   },
 
