@@ -852,10 +852,10 @@ QueueItem.prototype = {
 		return this._activeChunks;
 	},
 	set activeChunks(nv) {
-		this._activeChunks = nv;
-		if (this.activeChunks < 0) {
-			Debug.dump("ac too small");
+		if (nv < 0) {
+			throw new Error("ac too small");
 		}
+		this._activeChunks = nv;
 		this.invalidate();
 		return this._activeChunks;
 	},
@@ -1491,7 +1491,7 @@ Chunk.prototype = {
 		this._written += ch._written;
 	},
 	open: function CH_open() {
-		var file = this.parent.tmpFile;
+		var file = this.parent.tmpFile.clone();
 		if (!file.parent.exists()) {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
 		}
@@ -1560,7 +1560,7 @@ Chunk.prototype = {
 
 			return bytes;
 		} catch (ex) {
-			Debug.dump('write:', ex);
+			Debug.dump('write: ' + this.parent.tmpFile.path, ex);
 			throw ex;
 		}
 		return 0;
@@ -1757,16 +1757,22 @@ Download.prototype = {
 	handleError: function DL_handleError() {
 		let c = this.c;
 		let d = this.d;
+		
+		c.cancel();
+		d.dumpScoreboard();
+		if (d.chunks.indexOf(c) == -1) {
+			// already killed;
+			return true;
+		}
 
 		Debug.dump("handleError: problem found; trying to recover");
+
 		
 		if (d.urlManager.markBad(this.url)) {
 			Debug.dump("handleError: fresh urls available, kill this one and use another!");
-			c.cancel();
 			return true;
 		}
 		
-		d.dumpScoreboard();
 		Debug.dump("affected: " + c);
 		
 		let max = -1, found = -1;
@@ -1779,7 +1785,6 @@ Download.prototype = {
 		}
 		if (found > -1) {
 			Debug.dump("handleError: found joinable chunk; recovering suceeded", found);
-			c.cancel();
 			d.chunks[found].end = c.end;
 			if (--d.maxChunks == 1) {
 				d.isResumable = false;
@@ -1790,19 +1795,22 @@ Download.prototype = {
 			// check for overlapping ranges we might have created
 			// otherwise we'll receive a size mismatch
 			// this means that we're gonna redownload an already finished chunk...
-			//    XXX
-			//  yyyyyyy
 			for (let i = d.chunks.length - 2; i > -1; --i) {
 				let c1 = d.chunks[i], c2 = d.chunks[i + 1];
 				if (c1.end >= c2.end) {
 					if (c2.isRunning) {
 						// should never ever happen :p
+						d.dumpScoreboard();
+						Debug.dump("overlapping:\n" + c1 + "\n" + c2);
 						d.fail("Internal error", "Please notify the developers that there were 'overlapping chunks'!", "Internal error (please report)");
 						return false;
 					}
-					d.chunks.splice(i + 1, 1);				
+					d.chunks.splice(i + 1, 1);
 				}
 			}
+			let ac = 0;
+			d.chunks.forEach(function(c) { if (c.isRunning) { ++ac;	}});
+			d.activeChunks = ac;
 			c.close();
 			
 			SessionManager.save(d);
