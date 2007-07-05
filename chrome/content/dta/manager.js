@@ -1852,6 +1852,8 @@ Download.prototype = {
 		if (aChannel.responseStatus != 206 && c.start + c.written != 0) {
 			Debug.dump(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206... Normal mode");
 			Debug.dump(c, this.url.url);
+			
+			d.isResumable = false;
 
 			if (!this.handleError()) {
 				vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
