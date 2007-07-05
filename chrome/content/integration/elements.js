@@ -57,17 +57,18 @@ var DTA_ContextOverlay = {
 	},
 	
 	addLinksToArray: function(lnks, urls, doc) {
-		var ref = doc.URL;
-		if (!('length' in lnks)) {
+		if (!lnks || !lnks.length) {
 			return;
 		}
-		var known = {};
+		
+		var ref = DTA_AddingFunctions.getRef(doc);
+		
 		for (var i = 0; i < lnks.length; ++i) {
 			// remove anchor from url
 			var link = lnks[i];
 			var plink = link.href.replace(/#.*$/gi, "");
 			// if it's valid and it's new
-			if (!DTA_AddingFunctions.isLinkOpenable(plink) || plink in known) {
+			if (!DTA_AddingFunctions.isLinkOpenable(plink)) {
 				continue;
 			}
 				
@@ -84,7 +85,6 @@ var DTA_ContextOverlay = {
 				'ultDescription': udesc,
 				'hash': DTA_getLinkPrintHash(link.hash)
 			});
-			known[plink] = null;
 			
 			var ml = DTA_getLinkPrintMetalink(link.hash);
 			if (ml) {
@@ -95,19 +95,17 @@ var DTA_ContextOverlay = {
 					'ultDescription': '',
 					'metalink': true
 				});
-				known[ml] = null;
 			}
 		}
 	},
 	
 	addImagesToArray: function(lnks, images, doc)	{
-		var ref = doc.URL;
-		
 		if (!lnks || !lnks.length) {
 			return;
 		}
-		var known = {};
-		
+
+		var ref = DTA_AddingFunctions.getRef(doc);
+
 		for (var i = 0; i < lnks.length; ++i) {
 			var src = lnks[i].src;
 			if (!DTA_AddingFunctions.isLinkOpenable(src)) {
@@ -121,7 +119,7 @@ var DTA_ContextOverlay = {
 			}
 			// if it's valid and it's new
 			// better double check :p
-			if (!DTA_AddingFunctions.isLinkOpenable(src) || src in known) {
+			if (!DTA_AddingFunctions.isLinkOpenable(src)) {
 				continue;
 			}
 			var desc = '';
@@ -136,7 +134,6 @@ var DTA_ContextOverlay = {
 				'referrer': ref,
 				'description': desc
 			});
-			known[src] = null;
 		}
 	},
 	
@@ -170,9 +167,10 @@ var DTA_ContextOverlay = {
 			
 			var sel = aWin.getSelection();
 			if (honorSelection && sel && !sel.isCollapsed) {
-				[links, images, embeds, inputs].forEach(
+				DTA_debug.dump("selection only");
+				[links, images, embeds, inputs] = [links, images, embeds, inputs].map(
 					function(e) {
-						e = filterElements(e, sel);
+						return filterElements(e, sel);
 					}
 				);
 			}
@@ -202,34 +200,75 @@ var DTA_ContextOverlay = {
 		}
 	},
 	
+	findWindowsNavigator: function(all) {
+		var windows = [];
+		if (!all) {
+			var sel = document.commandDispatcher.focusedWindow.getSelection();
+			if (sel.isCollapsed) {
+				windows.push(DTA_Mediator.getMostRecent().getBrowser().selectedBrowser.contentWindow.top);
+			}
+			else {
+				windows.push(document.commandDispatcher.focusedWindow);
+			}
+		}
+		else {
+			var win = DTA_Mediator.getMostRecent().getBrowser();
+			win.browsers.forEach(
+				function(e) {
+					windows.push(e.contentWindow.top);
+				}
+			);
+		}
+		return windows;
+	},
+	findWindowsMail: function(all) {
+		var windows = [];
+		if (document.documentElement.getAttribute('windowtype') == 'mail:3pane') {
+			windows.push(document.getElementById('messagepane').contentWindow);
+		}
+		else if (!all) {
+			windows.push(document.commandDispatcher.focusedWindow);
+		}
+		else {
+			windows = DTA_Mediator
+				.getAllByType('mail:messageWindow')
+				.map(function(w) {
+					return w.content;
+				});
+		}
+		return windows;
+	},
+	
 	findLinks: function(turbo, all) {
 		try {
+			
+			function makeUnique(i) {
+				var known = {};
+				return i.filter(
+					function(e) {
+						var url = e.url.url;
+						if (url in known) {
+							return false;
+						}
+						known[url] = null;
+						return true;
+					}
+				);
+			}		
+			
 			if (turbo) {
 				DTA_debug.dump("findLinks(): DtaOneClick request from the user");
 			} else {
 				DTA_debug.dump("findLinks(): DtaStandard request from the user");
 			}
 
-			var windows = [];
-			if (!all) {
-				var sel = document.commandDispatcher.focusedWindow.getSelection();
-				if (sel.isCollapsed) {
-					windows.push(DTA_Mediator.getMostRecent().getBrowser().selectedBrowser.contentWindow.top);
-				}
-				else {
-					windows.push(document.commandDispatcher.focusedWindow);
-				}
-			}
-			else {
-				var win = DTA_Mediator.getMostRecent().getBrowser();
-				win.browsers.forEach(
-					function(e) {
-						windows.push(e.contentWindow.top);
-					}
-				);
-			}
-				
-
+			var wt = document.documentElement.getAttribute('windowtype'); 
+			var windows = (
+				wt.match(/^mail:/)
+				? this.findWindowsMail
+				: this.findWindowsNavigator
+			)(all);
+			
 			var urls = [];
 			var images = [];
 			windows.forEach(
@@ -238,6 +277,9 @@ var DTA_ContextOverlay = {
 				},
 				this
 			);
+			urls = makeUnique(urls);
+			images = makeUnique(images);
+
 			if (!urls.length && !images.length) {
 				DTA_alert(this.getString('error'), this.getString('errornolinks'));
 				return;
@@ -264,15 +306,11 @@ var DTA_ContextOverlay = {
 
 			var cur = gContextMenu.target;
 			
-			if (gContextMenu.onLink)
-				var tofind = /^a$/i;
-			else
-				var tofind = /^img$/i;
-				
+			var tofind = gContextMenu.onLink ? /^a$/i : /^img$/i; 
+		
 			while (!("tagName" in cur) || !tofind.test(cur.tagName)) {
 				cur = cur.parentNode;
 			}
-			
 			var url = gContextMenu.onLink ? cur.href : cur.src;
 			
 			if (!DTA_AddingFunctions.isLinkOpenable(url)) {
@@ -281,7 +319,7 @@ var DTA_ContextOverlay = {
 			}
 			
 			url = new DTA_URL(url, win.document.characterSet);
-			var ref = document.commandDispatcher.focusedWindow.document.URL;
+			var ref = DTA_AddingFunctions.getRef(document.commandDispatcher.focusedWindow.document);
 			var desc = this.extractDescription(cur);
 			if (turbo) {
 				try {
@@ -393,7 +431,7 @@ var DTA_ContextOverlay = {
 			}
 			
 			// general setup
-			var base = document.getElementById('context-sep-selectall');
+			var base = document.getElementById(this.ctxBase.getAttribute('insertafter'));
 			if (compact) {
 				this.ctxBase.hidden = false;
 				base.parentNode.insertBefore(this.ctxBase, base);
@@ -410,7 +448,8 @@ var DTA_ContextOverlay = {
 				}
 				if (compact) {
 					this.ctxMenu.insertBefore(cur, this.ctxMenu.firstChild);
-				} else {
+				}
+				else {
 					base.parentNode.insertBefore(cur, base);
 					base = cur;
 				}

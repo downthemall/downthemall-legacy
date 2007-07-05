@@ -309,7 +309,7 @@ var Utils = {
 			return aNumber.toFixed(0) + " b";
 		}
 		
-		var units = ['TB','GB','MB','KB'];
+		var units = [['TB', 3], ['GB', 2], ['MB', 2], ['KB', 1]];
 		var unit;
 		
 		while (aNumber > 875 && units.length) {
@@ -317,7 +317,7 @@ var Utils = {
 			unit = units.pop();
 		}
 		
-		return aNumber.toFixed(2) + " " + unit;
+		return aNumber.toFixed(unit[1]) + " " + unit[0];
 	},
 	
 	/**
