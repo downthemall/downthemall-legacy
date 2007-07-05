@@ -328,23 +328,24 @@ function DTA_DropProcessor(func) {
 };
 DTA_DropProcessor.prototype = {
 	getSupportedFlavours: function() {
-		var flavours = new FlavourSet ();
+		var flavours = new FlavourSet();
 		flavours.appendFlavour("text/x-moz-url");
 		return flavours;
 	},
-	onDragOver: function(evt,flavour,session) {
-	},
+	onDragOver: function(evt,flavour,session) {},
 	onDrop: function (evt,dropdata,session) {
 		if (!dropdata) {
 			return;
 		}
-		var url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
+		try {
+			var url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
+		}
+		catch (ex) {
+			return;
+		}
 		var doc = document.commandDispatcher.focusedWindow.document;
 		url = new DTA_URL(url, doc.characterSet);
-		var ref = doc.URL;
-		if (!ref) {
-			ref = DTA_Mediator.getMostRecentURL();
-		}
+		var ref = DTA_AddingFunctions.getRef(doc);
 		this.func(url, ref);
 	}
 };
@@ -420,6 +421,26 @@ var DTA_AddingFunctions = {
 		}
 		return this.ios.newURI(rel, doc.characterSet, this.ios.newURI(base, doc.characterSet, null)).spec;
 	},
+	
+	getRef: function(doc) {
+		var ref = doc.URL;
+		if (!this.isLinkOpenable(ref)) {
+			var b = doc.getElementsByTagName('base');
+			for (var i = 0; i < b.length; ++i) {
+				if (!b[i].hasAttribute('href')) {
+					continue;
+				}
+				try {
+					ref = this.composeURL(doc, b[i].getAttribute('href'));
+				}
+				catch (ex) {
+					continue;
+				}
+				break;
+			}
+		}
+		return this.isLinkOpenable(ref) ? ref: '';
+	},	
 
 	saveSingleLink : function(turbo, url, referrer, description) {
 		var hash = null;		
@@ -539,7 +560,7 @@ var DTA_AddingFunctions = {
 
 	openManager : function (quite) {
 		try {
-			var win = DTA_Mediator.get("chrome://dta/content/dta/manager.xul");
+			var win = DTA_Mediator.getByUrl("chrome://dta/content/dta/manager.xul");
 			if (win) {
 				if (!quite) {
 					win.focus();
@@ -551,7 +572,7 @@ var DTA_AddingFunctions = {
 				"_blank",
 				"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no"
 			);
-			return DTA_Mediator.get("chrome://dta/content/dta/manager.xul");
+			return DTA_Mediator.getByUrl("chrome://dta/content/dta/manager.xul");
 		} catch(ex) {
 			DTA_debug.dump("openManager():", ex);
 		}
@@ -559,7 +580,7 @@ var DTA_AddingFunctions = {
 	},
 
 	sendToDown : function(notQueue, links) {
-		var win = DTA_Mediator.get("chrome://dta/content/dta/manager.xul");
+		var win = DTA_Mediator.getByUrl("chrome://dta/content/dta/manager.xul");
 		if (win) {
 			win.self.startnewDownloads(notQueue, links);
 			return;
@@ -576,14 +597,21 @@ var DTA_Mediator = {
 	_m: Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator),
 
 	getMostRecent: function(name)	{
-		var rv = this._m.getMostRecentWindow(name ? name : "navigator:browser");
-		return rv ? rv : null;
+		var names = ['navigator:browser', 'mail:messageWindow', 'mail:3pane'];
+		if (name) {
+			names.unshift(name);
+		}
+		var rv = null;
+		names.some(
+			function(name) {
+				rv = this._m.getMostRecentWindow(name);
+				return rv;
+			},
+			this
+		);
+		return rv;
 	},
-	getMostRecentURL: function() {
-		var rv = this.getMostRecent();
-		return rv ? rv.content.document.location : "";
-	},
-	'get': function(url) {
+	getByUrl: function(url) {
 		if (!url) {
 			return null;
 		}
@@ -601,6 +629,14 @@ var DTA_Mediator = {
 			}
 		}
 		return null;
+	},
+	getAllByType: function(type) {
+		var rv = [];
+		var enumerator = this._m.getEnumerator(type);
+		while (enumerator.hasMoreElements()) {
+			rv.push(enumerator.getNext());
+		}
+		return rv;
 	},
 	openTab: function WM_openTab(url, ref) {
 		if (!url) {

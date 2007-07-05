@@ -9,18 +9,18 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
-<overlay id="DTAFirefoxIntegration" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<overlay id="DTAThunderbirdIntegration" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<popup id="contentAreaContextMenu">
-		<menu id="dtaCtxCompact" insertafter="context-sep-selectall"/>
+	<popup id="messagePaneContext">
+		<menu id="dtaCtxCompact" insertafter="messagePaneContext-sep-open"/>
 	</popup>
 
-	<toolbarpalette id="BrowserToolbarPalette"> 
+	<toolbarpalette id="MailToolbarPalette"> 
 		<toolbarbutton id="dta-turbo-button" />
 		<toolbarbutton id="dta-button"/>
 		<toolbarbutton id="dta-manager-button"/>
 	</toolbarpalette>
-	<menupopup id="menu_ToolsPopup">	
-		<menu id="dtaToolsMenu" insertbefore="flashgot-menu" insertafter="sanitizeItem"/>
+	<menupopup id="taskPopup">	
+		<menu id="dtaToolsMenu" insertbefore="flashgot-menu" insertafter="filtersCmd"/>
 	</menupopup>
 </overlay>
