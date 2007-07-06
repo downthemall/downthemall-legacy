@@ -165,7 +165,7 @@ var Dialog = {
 		} else if (d.is(CANCELED)) {
 			canvas.fillStyle = cancel;
 			canvas.fillRect(0,0,300,20);
-		} else if (d.isStarted && d.totalSize) {
+		} else if (d.started && d.totalSize) {
 			d.chunks.forEach(
 				function(c) {
 					this.canvas.fillStyle = prog;

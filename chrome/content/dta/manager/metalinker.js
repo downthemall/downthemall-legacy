@@ -184,7 +184,7 @@
 				downloads = downloads.filter(function(d) { return d.selected; });
 			}
 			if (downloads.length) {
-				startnewDownloads(true, downloads);
+				startDownloads(true, downloads);
 			}
 		}
 		catch (ex) {

@@ -69,7 +69,7 @@ var Dialog = {
 		SessionManager.init();
 	
 		if ("arguments" in window) {
-			startnewDownloads(window.arguments[0], window.arguments[1]);
+			startDownloads(window.arguments[0], window.arguments[1]);
 		}
 
 		Tree.invalidate();
@@ -150,7 +150,7 @@ var Dialog = {
 					var d = i.d;
 					// checks for timeout
 					if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
-						if (d.isResumable) {
+						if (d.resumable) {
 							d.pause();
 							d.status = _("timeout");
 						}
@@ -196,8 +196,8 @@ var Dialog = {
 			download.finishDownload();
 			return;
 		}
-		if (!download.isStarted) {
-			download.isStarted = true;
+		if (!download.started) {
+			download.started = true;
 			Debug.dump("Let's start " + download);
 		}
 		else {
@@ -261,7 +261,7 @@ var Dialog = {
 	close: function D_close() {
 		
 		// Check for non-resumable downloads
-		if (Tree.some(function(d) { return d.isStarted && !d.isResumable && d.is(RUNNING); })) {
+		if (Tree.some(function(d) { return d.started && !d.resumable && d.is(RUNNING); })) {
 			var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
 				.getService(Ci.nsIPromptService);
 			var rv = promptService.confirm(
@@ -283,7 +283,7 @@ var Dialog = {
 				// enumerate all running chunks
 				d.chunks.forEach(
 					function(c) {
-						if (c.isRunning) {
+						if (c.running) {
 							this._safeCloseChunks.push(c);
 						}
 					},
@@ -330,7 +330,7 @@ var Dialog = {
 	// this one will loop until all chunks and FINISHING are gone.
 	_safeClose: function D__safeClose() {
 		// cannot close at this point
-		this._safeCloseChunks = this._safeCloseChunks.filter(function(c) { return c.isRunning; });
+		this._safeCloseChunks = this._safeCloseChunks.filter(function(c) { return c.running; });
 		this._safeCloseFinishing = this._safeCloseFinishing.filter(function(d) { return d.is(FINISHING); });
 		if (this._safeCloseChunks.length || this._safeCloseFinishing.length) {
 			this.setTimer('_safeClose', "Dialog._safeClose();", 250);
@@ -843,8 +843,8 @@ QueueItem.prototype = {
 
 	compression: null,
 
-	isResumable: true,
-	isStarted: false,
+	resumable: true,
+	started: false,
 
 	_activeChunks: 0,
 	get activeChunks() {
@@ -865,7 +865,7 @@ QueueItem.prototype = {
 	set maxChunks(nv) {
 		this._maxChunks = nv;
 		if (this._maxChunks < this._activeChunks) {
-			let running = this.chunks.filter(function(c) { return c.isRunning; });
+			let running = this.chunks.filter(function(c) { return c.running; });
 			while (running.length && this._maxChunks < running.length) {
 				let c = running.pop();
 				if (c.remainder < 10240) {
@@ -976,7 +976,7 @@ QueueItem.prototype = {
 	pause: function QI_pause(){
 		if (this.chunks) {
 			for (let i = 0, e = this.chunks.length; i < e; ++i) {
-				if (this.chunks[i].isRunning) {
+				if (this.chunks[i].running) {
 					this.chunks[i].cancel();
 				}
 			}
@@ -1351,7 +1351,7 @@ QueueItem.prototype = {
 			download.sessionConnctions = 0;	
 		}
 		function downloadChunk(download, chunk, header) {
-			chunk.isRunning = true;
+			chunk.running = true;
 			download.state = RUNNING;
 			Debug.dump("started: " + chunk);
 			chunk.download = new Download(download, chunk, header);
@@ -1380,7 +1380,7 @@ QueueItem.prototype = {
 			// start some new chunks
 			var paused = this.chunks.filter(
 				function (chunk) {
-					return !chunk.isRunning && !chunk.complete;
+					return !chunk.running && !chunk.complete;
 				}
 			);
 			while (this.activeChunks < this.maxChunks) {
@@ -1396,7 +1396,7 @@ QueueItem.prototype = {
 				let biggest = null;
 				this.chunks.forEach(
 					function (chunk) {
-						if (chunk.isRunning && chunk.remainder > MIN_CHUNK_SIZE * 2) {
+						if (chunk.running && chunk.remainder > MIN_CHUNK_SIZE * 2) {
 							if (!biggest || biggest.remainder < chunk.remainder) {
 								biggest = chunk;
 							}
@@ -1450,8 +1450,8 @@ var Chunk = function(download, start, end, written) {
 }
 
 Chunk.prototype = {
-	isRunning: false,
-	get isStarter() {
+	running: false,
+	get starter() {
 		return this.end <= 0;
 	},
 	get start() {
@@ -1510,7 +1510,7 @@ Chunk.prototype = {
 		this._outStream = outStream;
 	},
 	close: function CH_close() {
-		this.isRunning = false;
+		this.running = false;
 		if (this._outStream) {
 			this._outStream.flush();
 			this._outStream.close();
@@ -1521,7 +1521,7 @@ Chunk.prototype = {
 		}
 	},
 	cancel: function CH_cancel() {
-		this.isRunning = false;
+		this.running = false;
 		if (this.download) {
 			this.download.cancel();
 		}
@@ -1572,7 +1572,7 @@ Chunk.prototype = {
 			+ "/"
 			+ Utils.formatNumber(this.total, len)
 			+ " running:"
-			+ this.isRunning
+			+ this.running
 			+ " written/remain:"
 			+ Utils.formatNumber(this.written, len)
 			+ "/"
@@ -1613,7 +1613,7 @@ function Download(d, c, getInfo) {
 	catch (ex) {
 
 	}
-	this.c.isRunning = true;
+	this.c.running = true;
 	this._chan.asyncOpen(this, null);
 }
 Download.prototype = {
@@ -1786,7 +1786,7 @@ Download.prototype = {
 			Debug.dump("handleError: found joinable chunk; recovering suceeded", found);
 			d.chunks[found].end = c.end;
 			if (--d.maxChunks == 1) {
-				d.isResumable = false;
+				d.resumable = false;
 			}
 			d.chunks = d.chunks.filter(function(ch) { return ch != c; });
 			d.chunks.sort(function(a,b) { return a.start - b.start; });
@@ -1797,7 +1797,7 @@ Download.prototype = {
 			for (let i = d.chunks.length - 2; i > -1; --i) {
 				let c1 = d.chunks[i], c2 = d.chunks[i + 1];
 				if (c1.end >= c2.end) {
-					if (c2.isRunning) {
+					if (c2.running) {
 						// should never ever happen :p
 						d.dumpScoreboard();
 						Debug.dump("overlapping:\n" + c1 + "\n" + c2);
@@ -1808,7 +1808,7 @@ Download.prototype = {
 				}
 			}
 			let ac = 0;
-			d.chunks.forEach(function(c) { if (c.isRunning) { ++ac;	}});
+			d.chunks.forEach(function(c) { if (c.running) { ++ac;	}});
 			d.activeChunks = ac;
 			c.close();
 			
@@ -1852,7 +1852,7 @@ Download.prototype = {
 			Debug.dump(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206... Normal mode");
 			Debug.dump(c, this.url.url);
 			
-			d.isResumable = false;
+			d.resumable = false;
 
 			if (!this.handleError()) {
 				vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
@@ -1861,7 +1861,7 @@ Download.prototype = {
 				vis.value = '';
 				aChannel.visitResponseHeaders(vis);
 				Debug.dump("Response Headers\n\n" + vis.value);
-				d.isResumable = false;
+				d.resumable = false;
 				d.retry();
 				return false;
 			}
@@ -1874,7 +1874,7 @@ Download.prototype = {
 		catch (ex) {
 			Debug.dump("header failed! " + d, ex);
 			// restart download from the beginning
-			d.isResumable = false;
+			d.resumable = false;
 			d.retry();
 			return false;
 		}
@@ -1893,12 +1893,12 @@ Download.prototype = {
 		}
 
 		// accept range
-		d.isResumable = d.isResumable && visitor.acceptRanges;
+		d.resumable &= visitor.acceptRanges;
 
 		if (visitor.type && visitor.type.search(/application\/metalink\+xml/) != -1) {
 			Debug.dump(d + " is a metalink");
 			d.isMetalink = true;
-			d.isResumable = false;
+			d.resumable = false;
 		}
 
 		if (visitor.contentlength > 0) {
@@ -1968,7 +1968,7 @@ Download.prototype = {
 				d.totalSize = 0;
 			}
 		}
-		d.isResumable = false;
+		d.resumable = false;
 		return false;
 	},
 	
@@ -2041,17 +2041,17 @@ Download.prototype = {
 				}
 				
 				if (!d.totalSize) {
-					d.isResumable = false;					
+					d.resumable = false;					
 					this.cantCount = true;
 				}
-				if (!d.isResumable) {
+				if (!d.resumable) {
 					d.maxChunks = 1;
 				}
 				c.end = d.totalSize - 1;
 				delete this.getInfo;
 			}
 			
-			if (d.isResumable) {
+			if (d.resumable) {
 				d.resumeDownload();
 			}
 		}
@@ -2093,7 +2093,7 @@ Download.prototype = {
 		}
 		
 		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
-		if (c.isStarter && !shouldFinish) {
+		if (c.starter && !shouldFinish) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.dump(d + ": Server error or disconnection (type 1)");
 				d.status = _("servererror");
@@ -2134,7 +2134,7 @@ Download.prototype = {
 			if (d.is(RUNNING)) {
 				d.refreshPartialSize();
 
-				if (!this.isResumable && d.totalSize) {
+				if (!this.resumable && d.totalSize) {
 					// basic integrity check
 					if (d.partialSize > d.totalSize) {
 						d.dumpScoreboard();
@@ -2155,7 +2155,7 @@ Download.prototype = {
 	onStatus: function  DL_onStatus(aRequest, aContext, aStatus, aStatusArg) {}
 };
 
-function startnewDownloads(notQueue, downloads) {
+function startDownloads(notQueue, downloads) {
 
 	var numbefore = Tree.rowCount - 1;
 	const DESCS = ['description', 'ultDescription'];
