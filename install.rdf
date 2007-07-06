@@ -46,6 +46,15 @@
 				<maxVersion>3.0.*</maxVersion>
 			</rdf:Description>
 		</targetApplication>
+		
+		<!-- Flock -->
+		<targetApplication>
+		  <rdf:Description>
+		    <id>{a463f10c-3994-11da-9945-000d60ca027b}</id>
+		    <minVersion>0.8</minVersion>
+		    <maxVersion>1.0</maxVersion>
+		  </rdf:Description>
+		</targetApplication>		
 
 	</rdf:Description>
 </rdf:RDF>
