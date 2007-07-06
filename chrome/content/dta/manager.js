@@ -2155,7 +2155,7 @@ Download.prototype = {
 	onStatus: function  DL_onStatus(aRequest, aContext, aStatus, aStatusArg) {}
 };
 
-function startDownloads(notQueue, downloads) {
+function startDownloads(start, downloads) {
 
 	var numbefore = Tree.rowCount - 1;
 	const DESCS = ['description', 'ultDescription'];
@@ -2194,7 +2194,7 @@ function startDownloads(notQueue, downloads) {
 		else {
 			d.hash = null; // to initialize prettyHash 
 		}
-		d.state = notQueue ? QUEUED : PAUSED;
+		d.state = start ? QUEUED : PAUSED;
 		if (d.is(QUEUED)) {
 			d.status = _('inqueue');
 		}
