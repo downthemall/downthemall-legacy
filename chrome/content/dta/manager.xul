@@ -103,7 +103,7 @@
 				</menupopup>
 			</menu>
 		</popup>
-		<tooltip id="tooltip" position="at_pointer" noautohide="true" onpopupshowing="return Tooltip.show(event);" onpopuphiding="Tooltip.stopCanvas();" orient="vertical">
+		<tooltip id="tooltip" position="at_pointer" noautohide="true" onpopupshowing="return Tree.showTip(event);" onpopuphiding="Tree.stopTip();" orient="vertical">
 			<vbox>
 				<hbox>
 					<vbox>

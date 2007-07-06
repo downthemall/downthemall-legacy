@@ -297,7 +297,33 @@ var Tree = {
 			window.openDialog("chrome://dta/content/dta/manager/info.xul","_blank","chrome, centerscreen, dialog=no", downloads, this);		 
 		}
 		this.endUpdate();
+	},
+	showTip: function(event) {
+		try {
+			if (!Preferences.getDTA("showtooltip", true)) {
+				return false;
+			}
+			let row = {};
+			this._box.getCellAt(event.clientX, event.clientY, row, {}, {});
+			if (row.value == -1) {
+				return false;
+			}
+			let d = this.at(row.value);
+			$("infoIcon").src = d.largeIcon;
+			$("infoURL").value = d.urlManager.url;
+			$("infoDest").value = d.destinationFile;
+	
+			Tooltip.start(d);			
+			return true;
+		}
+		catch(ex) {
+			Debug.dump("Tooltip.show():", ex);
+		}
+		return false;
 	},	
+	stopTip: function T_stopTip() {
+		Tooltip.stop();
+	},
 	refreshTools: function T_refreshTools(d) {
 		if (this._updating || (d && ('_tid' in d) && !this.selection.isSelected(d._tid))) {
 			return;
