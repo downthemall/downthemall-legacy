@@ -72,7 +72,7 @@
 			'fileName',
 			'numIstance',
 			'description',
-			'isResumable',
+			'resumable',
 			'mask',
 			'pathName',
 			'hash',
@@ -99,7 +99,7 @@
 		e.urlManager = d.urlManager.save();
 		e.visitors = d.visitors.save();
 
-		if (!d.isResumable && !d.is(COMPLETE)) {
+		if (!d.resumable && !d.is(COMPLETE)) {
 			e.partialSize = 0;
 			e.totalSize = 0;
 		} else {
@@ -204,7 +204,7 @@
 				[
 					'fileName',
 					'destinationName',
-					'isResumable',
+					'resumable',
 					'partialSize',
 					'totalSize',
 					'hash',
@@ -215,7 +215,7 @@
 					}
 				);
 
-				d.isStarted = d.partialSize != 0;
+				d.started = d.partialSize != 0;
 
 				if (d.is(PAUSED)) {
 					down.chunks.forEach(

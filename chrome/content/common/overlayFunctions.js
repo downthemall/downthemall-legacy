@@ -582,7 +582,7 @@ var DTA_AddingFunctions = {
 	sendToDown : function(notQueue, links) {
 		var win = DTA_Mediator.getByUrl("chrome://dta/content/dta/manager.xul");
 		if (win) {
-			win.self.startnewDownloads(notQueue, links);
+			win.self.startDownloads(notQueue, links);
 			return;
 		}
 		win = window.openDialog(

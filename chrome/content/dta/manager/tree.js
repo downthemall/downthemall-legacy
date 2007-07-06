@@ -241,7 +241,7 @@ var Tree = {
 	pause: function T_pause() {
 		this.updateSelected(
 			function(d) {
-				if (d.is(QUEUED) || (d.is(RUNNING) && d.isResumable)) {
+				if (d.is(QUEUED) || (d.is(RUNNING) && d.resumable)) {
 					d.pause();
 					d.speed = '';
 					d.status = _("paused");
@@ -275,7 +275,7 @@ var Tree = {
 	},
 	changeChunks: function T_changeChunks(increase) {
 		function inc(d) {
-			if (d.maxChunks < 10 && d.isResumable) {
+			if (d.maxChunks < 10 && d.resumable) {
 					++d.maxChunks;
 			}
 		};
@@ -312,12 +312,12 @@ var Tree = {
 				
 			let states = {
 				state: 0,
-				isResumable: false,
+				resumable: false,
 				is: QueueItem.prototype.is
 			};
 			for (let d in this.selected) {
 				states.state |= d.state;
-				states.isResumable |= d.isResumable;
+				states.resumable |= d.resumable;
 			}
 							
 			function modifySome(items, f) {
