@@ -14,17 +14,17 @@ skin	dta-platform	classic/1.0 chrome/skin/
 ## general ##
 # work-around bugs in loadOverlay preventing seamonkey integration otherwise
 overlay chrome://dta/content/preferences/prefs.xul chrome://dta/content/preferences/interfacePane.xul
+style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/integration/style.css
 
-## Firefox ##
-overlay	chrome://browser/content/browser.xul	chrome://dta/content/integration/firefox.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
-overlay	chrome://dta/content/integration/firefox.xul chrome://dta/content/integration/elements.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
-style	chrome://browser/content/browser.xul	chrome://dta/skin/integration/style.css application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
-style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/integration/style.css application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+## Firefox / Flock ##
+overlay	chrome://browser/content/browser.xul	chrome://dta/content/integration/firefox.xul
+overlay	chrome://dta/content/integration/firefox.xul chrome://dta/content/integration/elements.xul
+style	chrome://browser/content/browser.xul	chrome://dta/skin/integration/style.css
 # privacy control
-overlay	chrome://browser/content/browser.xul	chrome://dta/content/privacy/overlayBrowser.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
-overlay chrome://browser/content/preferences/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeUI.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
-overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeUI.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
-overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeCode.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+overlay	chrome://browser/content/browser.xul	chrome://dta/content/privacy/overlayBrowser.xul
+overlay chrome://browser/content/preferences/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeUI.xul
+overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeUI.xul
+overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeCode.xul
 overlay	chrome:///content/downloads/unknownContentType.xul	chrome://dta/content/integration/saveas.xul
 
 ## Seamonkey ##
@@ -39,7 +39,6 @@ overlay chrome://messenger/content/messageWindow.xul chrome://dta/content/integr
 overlay	chrome://dta/content/integration/thunderbird.xul chrome://dta/content/integration/elements.xul application={3550f703-e582-4d05-9a08-453d09bdfdc6}
 style	chrome://messenger/content/messenger.xul chrome://dta/skin/integration/style.css application={3550f703-e582-4d05-9a08-453d09bdfdc6}
 style	chrome://messenger/content/messageWindow.xul chrome://dta/skin/integration/style.css application={3550f703-e582-4d05-9a08-453d09bdfdc6}
-style	chrome://global/content/customizeToolbar.xul chrome://dta/skin/integration/style.css application={3550f703-e582-4d05-9a08-453d09bdfdc6}
 
 ## toolkit ##
 overlay	chrome://mozapps/content/downloads/unknownContentType.xul	chrome://dta/content/integration/saveas.xul
