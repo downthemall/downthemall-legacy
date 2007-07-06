@@ -638,3 +638,65 @@ function newUUIDString() {
 		.generateUUID()
 		.toString();
 }
+
+function Timer(func, interval, persist, now) {
+  this._id = newUUIDString();
+	if (typeof(func) != 'function') {
+		func = new Function(func);
+	}
+	this._func = func;
+  this._interval = interval;
+  this._persist = persist;
+  
+  TimerManager._push(this);
+  if (now) {
+  	this.exec();
+  }
+}
+Timer.prototype = {
+	_install: function TI__install() {
+	  var tp = this; 
+		this._tid = window.setTimeout(
+	    function() {
+	      if (tp._persist) {
+	        tp._install();
+	      }
+	      else {
+	        TimerManager.kill(tp);
+	      }
+	      tp.exec();
+	    },
+	    this._interval
+	  );
+	},
+	exec: function TI_exec() {
+		this._func.call(window);
+	},
+	kill: function TI_kill() {
+		TimerManager.kill(this);
+	},
+	toString: function TI_toString() {
+		return this._id;
+	}
+}
+var TimerManager = {
+	_timers: {},
+	_push: function TM_push(timer) {
+		this.kill(timer);
+		this._timers[timer] = timer;
+		timer._install();
+	},
+	kill: function TM_kill(timer) {
+		if (timer in this._timers) {
+			window.clearTimeout(timer._tid);
+		}
+		delete this._timers[timer];
+	},
+	killAll: function TM_killAll() {
+		for (id in this._timers) {
+			Debug.dump("killing: " + id);
+			window.clearTimeout(this._timers[id]._tid);
+		}
+		this._timers = {};
+	}
+};

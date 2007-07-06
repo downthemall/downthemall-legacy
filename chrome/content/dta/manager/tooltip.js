@@ -41,12 +41,16 @@ var Tooltip = {
 	_current: null,
 	start: function(d) {
 		this._current = d;
-		this.updateSpeedCanvas();
-		this.updateChunkCanvas();
+		this._timer = new Timer('Tooltip.update()', TOOLTIP_FREQ, true, true);		
 	},
 	stop: function() {
 		this._current = null;
+		this._timer.kill();
 	},	
+	update: function() {
+		this.updateChunkCanvas();
+		this.updateSpeedCanvas();
+	},
 	_makeRoundedRectPath: function(ctx,x,y,width,height,radius) {
 		ctx.beginPath();
 		ctx.moveTo(x, y + radius);
@@ -178,8 +182,6 @@ var Tooltip = {
 			ctx.stroke();
 				
 			ctx.restore();
-	
-			Dialog.setTimer('tooltip::speed', 'Tooltip.updateSpeedCanvas()', TOOLTIP_FREQ);
 		}
 		catch(ex) {
 			Debug.dump("updateSpeedCanvas(): ", ex);
@@ -325,9 +327,6 @@ var Tooltip = {
 			ctx.stroke();
 	
 			ctx.restore();
-	
-			Dialog.setTimer('tooltip:chunks', "Tooltip.updateChunkCanvas()", TOOLTIP_FREQ);
-	
 		} catch(ex) {
 			Debug.dump("updateChunkCanvas(): ", ex);
 		}
