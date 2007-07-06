@@ -579,17 +579,18 @@ var DTA_AddingFunctions = {
 		return null;
 	},
 
-	sendToDown : function(notQueue, links) {
+	sendToDown : function(start, links) {
 		var win = DTA_Mediator.getByUrl("chrome://dta/content/dta/manager.xul");
 		if (win) {
-			win.self.startDownloads(notQueue, links);
+			win.self.startDownloads(start, links);
 			return;
 		}
 		win = window.openDialog(
 			"chrome://dta/content/dta/manager.xul",
 			"_blank",
 			"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
-			notQueue, links
+			start,
+			links
 		);
 	}
 }

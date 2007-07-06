@@ -364,7 +364,7 @@ var Dialog = {
 	},
 
 	// user decided to start the selection
-	download: function(notQueue) {
+	download: function(start) {
 		try {
 
 			// not everything correctly set. refuse to start
@@ -403,14 +403,14 @@ var Dialog = {
 			}
 
 			// actually start the crap.
-			DTA_AddingFunctions.sendToDown(notQueue, out);
+			DTA_AddingFunctions.sendToDown(start, out);
 
 			// save history
 			['ddDirectory', 'ddRenaming', 'ddFilter'].forEach(function (e) { Dialog[e].save(); });
 
 			// save the counter, queued state
 			Preferences.setDTA("counter", counter);
-			Preferences.setDTA("lastqueued", !notQueue);
+			Preferences.setDTA("lastqueued", !start);
 			
 			var boxen = this.boxen;
 			for (var i = 0; i < boxen.length; ++i) {
