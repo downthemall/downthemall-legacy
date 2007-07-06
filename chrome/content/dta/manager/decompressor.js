@@ -111,17 +111,12 @@ Decompressor.prototype = {
 		}
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
-	_invalidate: function() {
-		this.download.invalidate();
-		var thisp = this;
-		Dialog.setTimer(this._uuid, function() { thisp._invalidate(); }, STREAMS_FREQ);
-	},	
 	onStartRequest: function(r, c) {
-		this._uuid = newUUIDString();
-		this._invalidate();
+		var thisp = this;		
+		this._timer = new Timer(function() { thisp.download.invalidate(); }, STREAMS_FREQ, true);
 	},
 	onStopRequest: function(request, c) {
-		Dialog.killTimer(this._uuid);
+		this._timer.kill();
 		// important, or else we don't write out the last buffer and truncate too early. :p
 		this.outStream.flush();
 		try {

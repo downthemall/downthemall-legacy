@@ -40,7 +40,7 @@
 	this.CH = Ci.nsICryptoHash;
 
 	download.state = FINISHING;
-	download.status =  _("verify");
+	download.status = _("verify");
 	try {
 		if (!(download.hash.type in this.CH)) {
 			throw new Components.Exception("hash method unsupported!");
@@ -85,8 +85,6 @@ Verificator.prototype = {
 	},
 	_invalidate: function() {
 		this.download.invalidate();
-		var thisp = this;
-		Dialog.setTimer(this._uuid, function() { thisp._invalidate(); }, STREAMS_FREQ);
 	},
 	QueryInterface: function(iid) {
 		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIStreamListener) || iid.equals(cI.nsIRequestObserver)) {
@@ -95,11 +93,11 @@ Verificator.prototype = {
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
 	onStartRequest: function(r, c) {
-		this._uuid = newUUIDString();
-		this._invalidate();
+		var thisp = this;
+		this._timer = new Timer(function() { thisp.download.invalidate(); }, STREAMS_FREQ, true);
 	},
 	onStopRequest: function(request, c) {
-		Dialog.killTimer(this._uuid);
+		this._timer.kill();
 		
 		this.download.partialSize = this.download.totalSize;
 		this.download.invalidate();

@@ -75,6 +75,7 @@ var Dialog = {
 		Tree.invalidate();
 		Dialog.checkDownloads();
 		this._initialized = true;
+		this._updTimer = new Timer("Dialog.checkDownloads();", REFRESH_FREQ, true);		
 	},	
 	refresh: function D_refresh() {
 		try {
@@ -162,7 +163,6 @@ var Dialog = {
 				}
 			)
 			this.startNext();
-			Dialog.setTimer('dialog:checkDownloads', "Dialog.checkDownloads();", REFRESH_FREQ);
 		} catch(ex) {
 			Debug.dump("checkDownloads():", ex);
 		}
@@ -275,7 +275,7 @@ var Dialog = {
 		}
 		// stop everything!
 		// enumerate everything we'll have to wait for!
-		this.killTimer('dialog:checkDownloads');
+		this._updTimer.kill();
 		this._safeCloseChunks = [];
 		this._safeCloseFinishing = []
 		for (d in Tree.all) {
@@ -333,10 +333,10 @@ var Dialog = {
 		this._safeCloseChunks = this._safeCloseChunks.filter(function(c) { return c.running; });
 		this._safeCloseFinishing = this._safeCloseFinishing.filter(function(d) { return d.is(FINISHING); });
 		if (this._safeCloseChunks.length || this._safeCloseFinishing.length) {
-			this.setTimer('_safeClose', "Dialog._safeClose();", 250);
+			new Timer('Dialog._safeClose()', 250);			
 			return false;
 		}
-		this._killTimers();
+		TimerManager.killAll();
 		// alright, we left the loop.. shutdown complete ;)
 		SessionManager.save();
 		try {
@@ -344,25 +344,8 @@ var Dialog = {
 		} catch(ex) {}
 		self.close();
 		return true;		
-	},
-	_timers: {},
-	setTimer: function D_setTimer(id, func, interval) {
-		this._timers[id] = window.setTimeout(func, interval);
-	},
-	killTimer: function D_killTimer(id) {
-		if (id in this._timers) {
-			window.clearTimeout(this._timers[id]);
-			delete this._timers[id];
-		}
-	},
-	_killTimers: function D__killTimers() {
-		for (id in this._timers) {
-			window.clearTimeout(this._timers[id]);
-		}
-		this._timers = {};
 	}
 };
-
 
 function UrlManager(urls) {
 	this._urls = [];
@@ -2206,7 +2189,7 @@ function startDownloads(start, downloads) {
 	}
 
 	// full save
-	Dialog.setTimer("sd:save", function() { SessionManager.save() }, 100);
+	new Timer(function() { SessionManager.save() }, 100);
 
 	if (Preferences.getDTA("closetab", false)) {
 		try {
