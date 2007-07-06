@@ -39,33 +39,14 @@
 const TOOLTIP_FREQ = 500;
 var Tooltip = {
 	_current: null,
-	show: function(event) {
-		try {
-			if (!Preferences.getDTA("showtooltip", true)) {
-				return false;
-			}
-			var result;
-			var row = {};
-			Tree.box.getCellAt(event.clientX, event.clientY, row, {}, {});
-			if (row.value == -1) {
-				return false;
-			}
-			var d = Tree.at(row.value);
-			$("infoIcon").src = d.largeIcon;
-			$("infoURL").value = d.urlManager.url;
-			$("infoDest").value = d.destinationFile;
-	
-			this._current = d;
-			this.updateSpeedCanvas();
-			this.updateChunkCanvas();
-			
-			return true;
-		}
-		catch(ex) {
-			Debug.dump("Tooltip.show():", ex);
-		}
-		return false;
+	start: function(d) {
+		this._current = d;
+		this.updateSpeedCanvas();
+		this.updateChunkCanvas();
 	},
+	stop: function() {
+		this._current = null;
+	},	
 	_makeRoundedRectPath: function(ctx,x,y,width,height,radius) {
 		ctx.beginPath();
 		ctx.moveTo(x, y + radius);
@@ -350,8 +331,5 @@ var Tooltip = {
 		} catch(ex) {
 			Debug.dump("updateChunkCanvas(): ", ex);
 		}
-	},
-	stopCanvas: function() {
-		this._current = null;
 	}
-}
+};
