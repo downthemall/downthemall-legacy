@@ -130,7 +130,6 @@ var Interface = {
 
 var Prefs = {
 	load: function() {
-		make_();
 	},
 	restoreAll: function() {
 		if (DTA_confirm(_('restoreprefstitle'), _('restoreprefstext'), _('restore'), DTA_confirm.CANCEL, null, 1) == 1) {

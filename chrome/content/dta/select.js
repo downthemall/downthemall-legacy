@@ -292,8 +292,6 @@ var Dialog = {
 	// will be called to initialize the dialog
 	load: function DTA_load() {
 	
-		make_();
-
 		// no help available?
 		$("dtaHelp").hidden = !("openHelp" in window);
 

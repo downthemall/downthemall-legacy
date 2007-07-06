@@ -223,7 +223,6 @@ BatchGenerator.prototype = {
 var Dialog = {
 	multiHelp: true,
 	load: function DTA_load() {
-		make_();
 		try {
 			this.ddDirectory = $("directory");
 			this.ddRenaming = $("renaming");			
