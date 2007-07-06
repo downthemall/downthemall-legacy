@@ -62,7 +62,6 @@ var Dialog = {
 	completed: 0,
 	totalbytes: 0,
 	init: function D_init() {
-		make_();
 		Tree.init($("downloads"));
 	
 		document.getElementById("dtaHelp").hidden = !("openHelp" in window);

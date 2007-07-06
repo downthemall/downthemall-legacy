@@ -208,7 +208,6 @@
  		$('downloads').appendChild(e); 		
  	},
  	load: function ML_load() {
- 		make_();	
  		try {
  			var downloads = window.arguments[0];
  			if (downloads.length) {

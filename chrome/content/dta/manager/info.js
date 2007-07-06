@@ -22,11 +22,9 @@ var Dialog = {
 		);
 	},
 	load: function DTA_load() {
-		make_();
 		try {
 			this.canvas = $("draw").getContext("2d");
-		
-	
+
 			// d is an Array of Downloads
 			var downloads = window.arguments[0];
 			if (downloads.length == 1) {

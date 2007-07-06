@@ -35,7 +35,6 @@
 			return true;
 		}
 		function cancel() {
-			make_();
 			if (!confirm(_("conf"))) {
 				return false;
 			}

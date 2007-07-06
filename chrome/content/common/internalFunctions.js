@@ -448,23 +448,14 @@ StringBundles.prototype = {
 	}
 };
 /**
- * Get a (formatted) locale property string. Initialize with make_() once DOM available. Will use all Document-wide Stringbundles.
+ * Get a (formatted) locale property string.
  * @param stringId Id of desired string corresponding to the .properties file(s)
  * @param ... Optional. Format parameters
  * @return String for given Name
- * @throws Exception If stringID is not found or before make_() was called.
+ * @throws Exception if stringID is not found or before the dialog was initialized
  * @author Nils
- * @see make_
  */
-var _;
-
-/**
- * Initialize the _() l10n helper. Accounts all stringbundles in current document.
- * @author Nils
- * @see _
- * @see StringBundles
- */
-function make_() {
+function _() {
 	var bundles = new StringBundles();
 	_ = function() {
 		if (arguments.length == 1) {
@@ -472,6 +463,7 @@ function make_() {
 		}
 		return bundles.getFormattedString.apply(bundles, arguments);
 	}
+	return _.apply(this, arguments);
 }
 
 /**
