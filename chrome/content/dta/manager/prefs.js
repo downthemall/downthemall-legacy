@@ -40,11 +40,7 @@
 	// default values
 	showOnlyFilenames: true,
 	alertingSystem: (SYSTEMSLASH == '\\') ? 1 : 0,
-
-	// conflict filenames preference for this session (-1 not setted)
-	askEveryTime: true,
-	sessionPreference: -1,
-	onConflictingFilenames: 3,
+	conflictResolution: 3,
 
 	maxInProgress: 5,
 	maxChunks: 5,
@@ -95,7 +91,7 @@
 			'maxChunks',
 			'setTime',
 			'showOnlyFilenames',
-			['onConflictingFilenames', 'existing'],
+			'conflictResolution',
 			['alertingSystem', 'alertbox'],
 			'finishEvent'
 		].forEach(

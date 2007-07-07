@@ -1,5 +1,0 @@
-<!ENTITY title.value "Renaming conflict!">
-<!ENTITY text.value "Apply this setting:">
-<!ENTITY choice1.label "Just for this file">
-<!ENTITY choice2.label "Just for this session">
-<!ENTITY choice3.label "From now on">
