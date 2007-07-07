@@ -2177,7 +2177,6 @@ const FileOutputStream = Components.Constructor(
 );
 
 var ConflictManager = {
-	_current: null,
 	_items: [],
 	resolve: function(download, reentry) {
 		if (!this._check(download)) {
@@ -2208,7 +2207,7 @@ var ConflictManager = {
 		return dest.exists() || sn;
 	},
 	_process: function() {
-		if (this._current) {
+		if (this._processing) {
 			return;
 		}
 		while (this._items.length) {
@@ -2254,6 +2253,8 @@ var ConflictManager = {
 			newDest: cur.newDest.cropCenter(45)
 		};
 		
+		this._processing = true;
+		
 		window.openDialog(
 			"chrome://dta/content/dta/manager/conflicts.xul",
 			"_blank",
@@ -2281,6 +2282,7 @@ var ConflictManager = {
 			cur.download[cur.reentry]();
 		}
 		this._items.shift();
+		this._processing = false;
 		this._process();
 	}
 };
