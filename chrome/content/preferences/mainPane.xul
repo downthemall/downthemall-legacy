@@ -19,7 +19,7 @@
 	>
 
 		<preferences>
-		  <preference id="dtaexisting" name="extensions.dta.existing" type="int"/>
+		  <preference id="dtaexisting" name="extensions.dta.conflictresolution" type="int"/>
 		  <preference id="dtantask" name="extensions.dta.ntask" type="int"/>
 		  <preference id="dtaalert" name="extensions.dta.alertbox" type="int"/>
 		  <preference id="dtadone" name="extensions.dta.sounds.done" type="bool"/>

@@ -41,7 +41,7 @@ pref("extensions.dta.closetab", false);
 pref("extensions.dta.closedta", false);
 pref("extensions.dta.saveTemp", true);
 pref("extensions.dta.downloadWin", true);
-pref("extensions.dta.existing", 3);
+pref("extensions.dta.conflictresolution", 3);
 pref("extensions.dta.ntask", 4);
 pref("extensions.dta.timeout", 300);
 pref("extensions.dta.maxchunks", 4);
