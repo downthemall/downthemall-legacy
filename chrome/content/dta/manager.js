@@ -979,11 +979,10 @@ QueueItem.prototype = {
 		if (this.is(CANCELED)) {
 			return;
 		}
-
+		this.checkNameConflict('continueMoveCompleted');
+	},
+	continueMoveCompleted: function QI_continueMoveCompleted() {
 		try {
-			if (!this.checkNameConflict()) {
-				return;
-			}
 			// safeguard against some failed chunks.
 			this.chunks.forEach(function(c) { c.close(); });
 			var destination = new FileFactory(this.destinationPath);
@@ -1192,74 +1191,15 @@ QueueItem.prototype = {
 		}
 		this._destinationFile = this.destinationPath + this.destinationName;
 		this._icon = null;
-		this.checkNameConflict();		
 	},
 
-	checkNameConflict: function  QI_checkFileNameConflict() {
-
-		function askForRenaming(t, s1, s2, s3) {
-			if (Prefs.onConflictingFilenames == 3) {
-				if (Prefs.askEveryTime) {
-					var passingArguments = new Object();
-					passingArguments.text = t;
-					passingArguments.s1 = s1;
-					passingArguments.s2 = s2;
-					passingArguments.s3 = s3;
-		
-					window.openDialog(
-						"chrome://dta/content/dta/dialog.xul","_blank","chrome,centerscreen,resizable=no,dialog,modal,close=no,dependent",
-						passingArguments
-					);
-
-					Dialog.fixTimeouts();
-		
-					Prefs.askEveryTime = (passingArguments.temp == 0) ? true : false;
-					Prefs.sessionPreference = passingArguments.scelta;
-				}
-				return Prefs.sessionPreference;
-			}
-			return Prefs.onConflictingFilenames;
-		}
-		
-		let dn = this._destinationName, ds = this._destinationPath, df = this._destinationFile;
-		let dest = new FileFactory(this.destinationFile), newDest = new FileFactory(df);
+	checkNameConflict: function  QI_checkFileNameConflict(reentry) {
+		let dest = new FileFactory(this.destinationFile);
 		if (!this.is(RUNNING, FINISHING) || !dest.exists()) {
-			return true;
+			this[reentry]();
+			return;
 		}
-			
-		let basename = dn, ext = '', pos = basename.lastIndexOf('.');
-		if (pos != -1) {
-			ext = basename.slice(pos);
-			basename = basename.slice(0, pos);
-		}
-		for (let i = 1;; ++i) {
-			newDest.leafName = basename + "_" +  Utils.formatNumber(i) + ext;
-			if (!newDest.exists()) {
-				break;
-			}
-		}
-		newDest = newDest.leafName;
-
-		var shortUrl = this.urlManager.usable.cropCenter(70);
-
-		function mc(aCaption, aValue) {
-			return {caption: aCaption, value: aValue};
-		}
-
-		var s = -1, p;
-		s = askForRenaming(
-			_('alreadyexists', [dn, ds]) + " " + _('whatdoyouwith', [shortUrl]),
-			mc(_('reninto', [newDest]), 0),
-			mc(_('overwrite'), 1),
-			mc(_('skip'), 2)
-		);
-		
-		switch (s) {
-			case 0:	this.destinationName = newDest; return true;
-			case 1: return true;
-			/*case 3: inProgressList[p].d.cancel(); return true;*/
-			default: this.cancel(_('skipped')); return false;
-		}
+		ConflictManager.queue(this, reentry);
 	},
 
 	fail: function QI_fail(title, msg, state) {
@@ -2224,3 +2164,79 @@ const FileOutputStream = Components.Constructor(
 	'nsIFileOutputStream',
 	'init'
 );
+
+var ConflictManager = {
+	_current: null,
+	_items: [],
+	queue: function(download, reentry) {
+		for (let i = 0; i < this._items.length; ++i) {
+			if (this._items[i].download == download) {
+				this._items[i].reentry = reentry;
+				return;
+			}
+		}
+		this._items.push({download: download, reentry: reentry});
+		this._process();
+	},
+	_process: function() {
+		if (this._current || !this._items.length) {
+			return;
+		}
+		this._current = this._items.shift();
+
+		let download = this._current.download;
+		let basename = download._destinationName, ext = '', pos = basename.lastIndexOf('.');
+		if (pos != -1) {
+			ext = basename.slice(pos);
+			basename = basename.slice(0, pos);
+		}
+		let newDest = new FileFactory(download.destinationFile);
+		for (let i = 1;; ++i) {
+			newDest.leafName = basename + "_" +  Utils.formatNumber(i) + ext;
+			if (!newDest.exists()) {
+				break;
+			}
+		}
+		this._current.newDest = newDest.leafName;
+	
+		if (Prefs.conflictResolution != 3) {
+			this._return(Prefs.conflictResolution);
+		}
+		if (this._sessionSetting) {
+			this._return(this._sessionSetting);
+		}
+
+		var options = {
+			url: download.urlManager.usable.cropCenter(45),
+			fn: download.destinationName.cropCenter(45),
+			newDest: this._current.newDest.cropCenter(45)
+		};
+		
+		window.openDialog(
+			"chrome://dta/content/dta/manager/conflicts.xul",
+			"_blank",
+			"chrome,centerscreen,resizable=no,dialog,close=no,dependent",
+			options, this
+		);
+	},
+	_returnFromDialog: function(option, type) {
+		if (type == 1) {
+			this._sessionSetting = option;
+		}
+		if (type == 2) {
+			Preferences.setDTA('existing', option);
+		}		
+		this._return(option);
+	},
+	_return: function(option) {
+		let cur = this._current;
+		switch (option) {
+			/* rename */    case 0: cur.download.destinationName = cur.newDest; break;
+			/* overwrite */ case 1: break;
+			/* skip */      default: cur.download.cancel(_('skipped')); break;
+		}
+		cur.download[cur.reentry]();
+		this._current = null;
+		this._process();
+	}
+};
