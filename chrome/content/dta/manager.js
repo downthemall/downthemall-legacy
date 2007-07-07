@@ -172,10 +172,9 @@ var Dialog = {
 		}
 	},
 	checkSameName: function D_checkSameName(download, name) {
-		this._running.sort(function(a, b) { return a.d._tid - b.d._tid; }); 
 		for (let i = 0; i < this._running.length; ++i) {
 			if (this._running[i].d == download) {
-				break;
+				continue;
 			}
 			if (this._running[i].d.destinationName == name) {
 				return true;
@@ -2242,9 +2241,11 @@ var ConflictManager = {
 	
 		if (Prefs.conflictResolution != 3) {
 			this._return(Prefs.conflictResolution);
+			return;
 		}
 		if (this._sessionSetting) {
 			this._return(this._sessionSetting);
+			return;
 		}
 
 		var options = {
