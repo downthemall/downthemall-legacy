@@ -171,6 +171,18 @@ var Dialog = {
 			Debug.dump("checkDownloads():", ex);
 		}
 	},
+	checkSameName: function D_checkSameName(download, name) {
+		this._running.sort(function(a, b) { return a.d._tid - b.d._tid; }); 
+		for (let i = 0; i < this._running.length; ++i) {
+			if (this._running[i].d == download) {
+				break;
+			}
+			if (this._running[i].d.destinationName == name) {
+				return true;
+			}
+		}
+		return false;
+	},
 	startNext: function D_startNext() {
 		try {
 			var rv = false;
@@ -979,9 +991,12 @@ QueueItem.prototype = {
 		if (this.is(CANCELED)) {
 			return;
 		}
-		this.checkNameConflict('continueMoveCompleted');
+		ConflictManager.resolve(this, 'continueMoveCompleted');
 	},
 	continueMoveCompleted: function QI_continueMoveCompleted() {
+		if (this.is(CANCELED)) {
+			return;
+		}		
 		try {
 			// safeguard against some failed chunks.
 			this.chunks.forEach(function(c) { c.close(); });
@@ -1191,15 +1206,6 @@ QueueItem.prototype = {
 		}
 		this._destinationFile = this.destinationPath + this.destinationName;
 		this._icon = null;
-	},
-
-	checkNameConflict: function  QI_checkFileNameConflict(reentry) {
-		let dest = new FileFactory(this.destinationFile);
-		if (!this.is(RUNNING, FINISHING) || !dest.exists()) {
-			this[reentry]();
-			return;
-		}
-		ConflictManager.queue(this, reentry);
 	},
 
 	fail: function QI_fail(title, msg, state) {
@@ -1979,7 +1985,8 @@ Download.prototype = {
 					d.maxChunks = 1;
 				}
 				c.end = d.totalSize - 1;
-				delete this.getInfo;
+				delete this.isStarter;
+				ConflictManager.resolve(d);				
 			}
 			
 			if (d.resumable) {
@@ -2057,8 +2064,12 @@ Download.prototype = {
 			let c = this.c;
 			let d = this.d;
 			
-			if (this.reexamine && (this.reexamine = this.onStartRequest(aRequest, aContext))) {
-				return;				 
+			if (this.reexamine) {
+				Debug.dump("reexamine");
+				this.onStartRequest(aRequest, aContext);
+				if (this.reexamine) {
+					return;
+				}
 			}
 
 			// update download tree row
@@ -2168,23 +2179,54 @@ const FileOutputStream = Components.Constructor(
 var ConflictManager = {
 	_current: null,
 	_items: [],
-	queue: function(download, reentry) {
+	resolve: function(download, reentry) {
+		if (!this._check(download)) {
+			if (reentry) {
+				download[reentry]();
+			}
+			return;
+		}
 		for (let i = 0; i < this._items.length; ++i) {
 			if (this._items[i].download == download) {
+				Debug.dump("conflict resolution updated to: " + reentry);
+				
 				this._items[i].reentry = reentry;
 				return;
 			}
 		}
+		Debug.dump("conflict resolution queued to: " + reentry);
 		this._items.push({download: download, reentry: reentry});
 		this._process();
 	},
+	_check: function(download) {
+		let dest = new FileFactory(download.destinationFile);
+		let sn = false;
+		if (download.is(RUNNING)) {
+			sn = Dialog.checkSameName(download, download.destinationName);
+		}
+		Debug.dump("conflict check: " + sn + "/" + dest.exists() + " for " + download.destinationFile);
+		return dest.exists() || sn;
+	},
 	_process: function() {
-		if (this._current || !this._items.length) {
+		if (this._current) {
 			return;
 		}
-		this._current = this._items.shift();
-
-		let download = this._current.download;
+		while (this._items.length) {
+			let cur = this._items[0];
+			if (!this._check(cur.download)) {
+				if (reentry) {
+					download[reentry]();
+				}
+				this._items.shift();
+				continue;
+			}
+			break;
+		}
+		if (!this._items.length) {
+			return;
+		}
+		let cur = this._items[0];
+		let download = cur.download;
 		let basename = download._destinationName, ext = '', pos = basename.lastIndexOf('.');
 		if (pos != -1) {
 			ext = basename.slice(pos);
@@ -2193,11 +2235,11 @@ var ConflictManager = {
 		let newDest = new FileFactory(download.destinationFile);
 		for (let i = 1;; ++i) {
 			newDest.leafName = basename + "_" +  Utils.formatNumber(i) + ext;
-			if (!newDest.exists()) {
+			if (!newDest.exists() && (!download.is(RUNNING) || !Dialog.checkSameName(this, newDest.leafName))) {
 				break;
 			}
 		}
-		this._current.newDest = newDest.leafName;
+		cur.newDest = newDest.leafName;
 	
 		if (Prefs.conflictResolution != 3) {
 			this._return(Prefs.conflictResolution);
@@ -2209,7 +2251,7 @@ var ConflictManager = {
 		var options = {
 			url: download.urlManager.usable.cropCenter(45),
 			fn: download.destinationName.cropCenter(45),
-			newDest: this._current.newDest.cropCenter(45)
+			newDest: cur.newDest.cropCenter(45)
 		};
 		
 		window.openDialog(
@@ -2229,14 +2271,16 @@ var ConflictManager = {
 		this._return(option);
 	},
 	_return: function(option) {
-		let cur = this._current;
+		let cur = this._items[0];
 		switch (option) {
 			/* rename */    case 0: cur.download.destinationName = cur.newDest; break;
 			/* overwrite */ case 1: break;
 			/* skip */      default: cur.download.cancel(_('skipped')); break;
 		}
-		cur.download[cur.reentry]();
-		this._current = null;
+		if (cur.reentry) {
+			cur.download[cur.reentry]();
+		}
+		this._items.shift();
 		this._process();
 	}
 };
