@@ -773,22 +773,33 @@ QueueItem.prototype = {
 	},		
 	
 	_destinationName: null,
-	destinationNameOverride: null, 
+	destinationNameOverride: null,
+	_destinationNameFull: null,
 	get destinationName() {
-		return this.destinationNameOverride ? this.destinationNameOverride : this._destinationName; 
+		return this._destinationNameFull; 
 	},
 	set destinationName(nv) {
 		this.destinationNameOverride = nv;
-		this._destinationFile = this.destinationPath + this.destinationName;
+		this.rebuildDestination();
 		this.invalidate();
-		return nv;
+		return this._destinationNameFull;
 	},
 	
 	_destinationFile: null,
 	get destinationFile() {
 		return this._destinationFile;
 	},
-
+	
+	_conflicts: 0,
+	get conflicts() {
+		return this._conflicts;
+	},
+	set conflicts(nv) {
+		this._conflicts = nv;
+		this.rebuildDestination();
+		this.invalidate();
+		return nv;
+	},
 	_tmpFile: null,
 	get tmpFile() {
 		if (!this._tmpFile) {
@@ -1203,6 +1214,10 @@ QueueItem.prototype = {
 			this._destinationPath = this.pathName.addFinalSlash();
 			Debug.dump("buildFromMask():", ex);
 		}
+		this._destinationNameFull = Utils.formatConflictName(
+			this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
+			this.conflicts
+		);
 		this._destinationFile = this.destinationPath + this.destinationName;
 		this._icon = null;
 	},
@@ -2225,19 +2240,18 @@ var ConflictManager = {
 		}
 		let cur = this._items[0];
 		let download = cur.download;
-		let basename = download._destinationName, ext = '', pos = basename.lastIndexOf('.');
-		if (pos != -1) {
-			ext = basename.slice(pos);
-			basename = basename.slice(0, pos);
-		}
+		download.conflicts = 0;
+		let basename = download.destinationName;
 		let newDest = new FileFactory(download.destinationFile);
-		for (let i = 1;; ++i) {
-			newDest.leafName = basename + "_" +  Utils.formatNumber(i) + ext;
+		let i = 1;
+		for (;; ++i) {
+			newDest.leafName = Utils.formatConflictName(basename, i);
 			if (!newDest.exists() && (!download.is(RUNNING) || !Dialog.checkSameName(this, newDest.leafName))) {
 				break;
 			}
 		}
 		cur.newDest = newDest.leafName;
+		cur.conflicts = i;
 	
 		if (Prefs.conflictResolution != 3) {
 			this._return(Prefs.conflictResolution);
@@ -2275,7 +2289,7 @@ var ConflictManager = {
 	_return: function(option) {
 		let cur = this._items[0];
 		switch (option) {
-			/* rename */    case 0: cur.download.destinationName = cur.newDest; break;
+			/* rename */    case 0: cur.download.conflicts = cur.conflicts; break;
 			/* overwrite */ case 1: break;
 			/* skip */      default: cur.download.cancel(_('skipped')); break;
 		}

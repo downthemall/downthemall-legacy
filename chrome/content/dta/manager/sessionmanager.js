@@ -109,7 +109,7 @@
 		
 		e.chunks = [];
 
-		if (d.is(RUNNING, PAUSED, QUEUED)) {
+		if (d.is(RUNNING, PAUSED, QUEUED) && d.resumable) {
 			d.chunks.forEach(
 				function(c) {
 					e.chunks.push({start: c.start, end: c.end, written: c.written});
