@@ -48,6 +48,7 @@
 	<keyset>
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 		<key id="kMacEsc" modifiers="accel" key="W" oncommand="self.close();"/>
+		<key modifiers="accel" key="A" oncommand="Dialog.selectAll();"/>
 		<key keycode="VK_RETURN" oncommand="Dialog.download(true);"/>
 		<key keycode="VK_ENTER" oncommand="Dialog.download(true);"/>
 		<key id="kHelp" modifiers="accel" key="H" oncommand="openHelp('introduction','chrome://dta-help/content/help.rdf');"/>
