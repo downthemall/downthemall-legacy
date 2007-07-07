@@ -2224,7 +2224,7 @@ var ConflictManager = {
 			this._sessionSetting = option;
 		}
 		if (type == 2) {
-			Preferences.setDTA('existing', option);
+			Preferences.setDTA('conflictresolution', option);
 		}		
 		this._return(option);
 	},

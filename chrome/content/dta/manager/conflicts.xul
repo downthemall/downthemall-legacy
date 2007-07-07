@@ -58,7 +58,7 @@
 			<description id="question"/>
 
 			<radiogroup id="choice" style="margin-left: 10px; margin-bottom: 10px;" >
-				<radio id="s1" persist="selected" crop="right"/>
+				<radio id="s1" persist="selected"/>
 				<radio id="s2" persist="selected" label="&overwrite.label;"/>
 				<radio id="s3" persist="selected" label="&skip.label;"/>
 			</radiogroup>
