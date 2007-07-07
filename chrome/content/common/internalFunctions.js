@@ -45,12 +45,12 @@ var Preferences = DTA_preferences;
 const SYSTEMSLASH = (DTA_profileFile.get('dummy').path.indexOf('/') != -1) ? '/' : '\\';
 
 // shared state defines
-const QUEUED =    0;
 const PAUSED =    1<<1;
 const RUNNING =   1<<2;
 const FINISHING = 1<<3;
 const COMPLETE =  1<<4;
 const CANCELED =  1<<5;
+const QUEUED =    1<<6;
 /**
  * cast non-strings to string
  * @author Nils
@@ -347,6 +347,18 @@ var Utils = {
 			return this.formatNumber(h, 2) + ":" + this.formatNumber(m, 2) + ":" + this.formatNumber(s, 2);
 		}
 		return this.formatNumber(m, 2) + ":" + this.formatNumber(s, 2);
+	},
+	
+	formatConflictName: function U_formatConflictName(basename, conflicts) {
+		if (!conflicts) {
+			return basename;
+		}
+		let ext = '', pos = basename.lastIndexOf('.');
+		if (pos != -1) {
+			ext = basename.slice(pos);
+			basename = basename.slice(0, pos);
+		}
+		return basename + '_' + Utils.formatNumber(conflicts) + ext;
 	}
 };
 
