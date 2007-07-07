@@ -73,9 +73,13 @@ var Dialog = {
 		}
 
 		Tree.invalidate();
-		Dialog.checkDownloads();
 		this._initialized = true;
-		this._updTimer = new Timer("Dialog.checkDownloads();", REFRESH_FREQ, true);		
+		for (let d in Tree.all) {
+			if (d.is(FINISHING)) {
+				this.run(d);
+			}
+		}
+		this._updTimer = new Timer("Dialog.checkDownloads();", REFRESH_FREQ, true, true);		
 	},	
 	refresh: function D_refresh() {
 		try {
@@ -188,14 +192,17 @@ var Dialog = {
 	},
 	run: function D_run(download) {
 		download.status = _("starting");
-		download.timeLastProgress = Utils.getTimestamp();
-		download.state = RUNNING;
-		download.timeStart = Utils.getTimestamp();
-		if (download.partialSize >= download.totalSize && download.totalSize) {
+		if (download.is(FINISHING) || (download.partialSize >= download.totalSize && download.totalSize)) {
+			// we might encounter renaming issues;
+			// but we cannot handle it because we don't know at which stage we crashed
+			download.partialSize = download.totalSize;
 			Debug.dump("Download seems to be complete; likely a left-over from a crash, finish it:" + download);
 			download.finishDownload();
 			return;
 		}
+		download.timeLastProgress = Utils.getTimestamp();
+		download.timeStart = Utils.getTimestamp();
+		download.state = RUNNING;
 		if (!download.started) {
 			download.started = true;
 			Debug.dump("Let's start " + download);
@@ -217,6 +224,7 @@ var Dialog = {
 		this._running.forEach(function(o) { o.d.timeLastProgress = Utils.getTimestamp(); });
 	},
 	signal: function D_signal(download) {
+		SessionManager.save(download);
 		if (download.is(RUNNING)) {
 			this._wasRunning = true;
 		}

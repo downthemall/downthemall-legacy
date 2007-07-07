@@ -82,7 +82,7 @@
 				e[u] = d[u];
 			}
 		);
-		e.state = d.is(COMPLETE, CANCELED) ? d.state : PAUSED;
+		e.state = d.is(COMPLETE, CANCELED, FINISHING) ? d.state : PAUSED;
 		if (d.destinationNameOverride) {
 			e.destinationName = d.destinationNameOverride;
 		}
@@ -109,7 +109,7 @@
 		
 		e.chunks = [];
 
-		if (!d.is(COMPLETE, CANCELED)) {
+		if (d.is(RUNNING, PAUSED, QUEUED)) {
 			d.chunks.forEach(
 				function(c) {
 					e.chunks.push({start: c.start, end: c.end, written: c.written});
