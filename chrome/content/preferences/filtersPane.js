@@ -246,9 +246,10 @@ var Dialog = {
 		Debug.dump("onTableSelectionChange: " + idx);
 		
 		if (idx==-1) {
-			$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex", "removebutton").forEach(function(a){a.disabled=true});
+			$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex", "restoreremovebutton").forEach(function(a){a.disabled=true});
 			$("filterLabel", "filterTest").forEach(function(a){a.value=""});
 			$("filterText", "filterImage", "filterIsRegex").forEach(function(a){a.checked=false});
+			$("restoreremovebutton").label = _('removebutton');
 			return;
 		}
 		
@@ -263,9 +264,9 @@ var Dialog = {
 		$("filterIsRegex").checked = currentFilter.isRegex;
 		$("filterText").checked = currentFilter.type & 1;
 		$("filterImage").checked = currentFilter.type & 2;
+		$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex", "restoreremovebutton").forEach(function(a){a.disabled=false});
 		
-		$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex", "removebutton").forEach(function(a){a.disabled=currentFilter.defFilter});
-		
+		$("restoreremovebutton").label = currentFilter.defFilter?_('restorebutton'):_('removebutton');
 		this.doCheckboxValidation();
 	},
 	doCheckboxValidation : function() {
@@ -274,7 +275,7 @@ var Dialog = {
 		var idx = this.getSelectedRow();
 		var currentFilter = this.getFilter(idx);
 		// invalid idx
-		if (!currentFilter || currentFilter.defFilter) {
+		if (!currentFilter) {
 			return;
 		}
 		
@@ -349,7 +350,7 @@ var Dialog = {
 		var idx = this.getSelectedRow();
 		var currentFilter = this.getFilter(idx);
 		// invalid idx
-		if (!currentFilter || currentFilter.defFilter) {
+		if (!currentFilter) {
 			return;
 		}
 		
@@ -397,27 +398,27 @@ var Dialog = {
 	},
 	removeFilter: function() {
 		Debug.dump("remove");
-		var idx = this.getSelectedRow();
-		var currentFilter = this.getFilter(idx);
-
-		// invalid idx
-		if (!currentFilter || currentFilter.defFilter) {
-			return;
-		}
-		
+		var currentFilter = this.getFilter(this.getSelectedRow());
 		this._table.view.selection.select(-1);
 		var currentFilter = currentFilter.remove();
 	},
-	restoreDefaultFilters: function() {
+	restoreDefaultFilter: function() {
 		if (DTA_confirm(_('restorefilterstitle'), _('restorefilterstext'), _('restore'), DTA_confirm.CANCEL, null, 1) == 1) {
 			return;
 		}
-		this._table.view.selection.select(-1);
-		var e = DTA_FilterManager.enumAll();
-		while (e.hasMoreElements()) {
-			var filter = e.getNext().QueryInterface(Components.interfaces.dtaIFilter);
-			if (!filter.defFilter)
-				filter.remove();
+		var currentFilter = this.getFilter(this.getSelectedRow());
+		currentFilter.restore();
+	},
+	restoreRemoveFilter: function() {
+		var idx = this.getSelectedRow();
+		if (idx==-1){
+			return;
+		}
+		var currentFilter = this.getFilter(idx);
+		if (currentFilter.defFilter) {
+			this.restoreDefaultFilter()
+		} else {
+			this.removeFilter();
 		}
 	}
 };

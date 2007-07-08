@@ -7,8 +7,6 @@
 <!ENTITY imagesf.label "Images filter">
 <!ENTITY linksf.label "Links filter">
 <!ENTITY add.label "Add new filter">
-<!ENTITY remove.label "Delete filter">
-<!ENTITY default.label "Restore default filters">
 <!ENTITY highlight.label "Highlight files checked by filters">
 <!ENTITY dtacontext2.label "Preferences">
 <!ENTITY buttonlabelextra2 "Restore default settings">
