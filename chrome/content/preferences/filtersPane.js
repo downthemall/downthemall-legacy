@@ -44,7 +44,6 @@ function FilterTree(table) {
 
 FilterTree.prototype = {
 	reloadFilters: function() {
-		Debug.dump("reloadFilters");
 		
 		// something has changed..
 		try {
@@ -94,13 +93,11 @@ FilterTree.prototype = {
 	},
 	selectFilter : function(filter) {
 		// this is the reference to our filter
-		Debug.dump("we wanna select " + filter.id);
 		var selectedFilter = this._filters.filter(function(f){return f.id==filter.id});	
 		// if that old selected filter still exists..
 		if (selectedFilter.length==1) {
 			// let's select it
 			this._table.view.selection.select(this._filters.indexOf(selectedFilter[0]));
-			Debug.dump("Let's select row "+ this._filters.indexOf(selectedFilter[0]));
 		}
 	},
 	get rowCount() {
@@ -229,8 +226,8 @@ var Dialog = {
 		this._table = $("filterTable");
 		this._filterTree = new FilterTree(this._table);
 		this._table.view = this._filterTree;
-		
-		this._table.view.selection.select(-1);
+		if (this._filterTree.rowCount >= 1)
+			this._table.view.selection.select(0);
 	},
 	getSelectedRow: function() {
 		return this._table.view.selection.currentIndex;
@@ -243,13 +240,11 @@ var Dialog = {
 	},
 	onTableSelectionChange: function() {
 		var idx = this.getSelectedRow();
-		Debug.dump("onTableSelectionChange: " + idx);
 		
 		if (idx==-1) {
 			$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex", "restoreremovebutton").forEach(function(a){a.disabled=true});
 			$("filterLabel", "filterTest").forEach(function(a){a.value=""});
 			$("filterText", "filterImage", "filterIsRegex").forEach(function(a){a.checked=false});
-			$("restoreremovebutton").label = _('removebutton');
 			return;
 		}
 		
@@ -270,7 +265,6 @@ var Dialog = {
 		this.doCheckboxValidation();
 	},
 	doCheckboxValidation : function() {
-		Debug.dump("doCheckboxValidation");
 		
 		var idx = this.getSelectedRow();
 		var currentFilter = this.getFilter(idx);
@@ -310,7 +304,6 @@ var Dialog = {
 		return test;
 	},
 	onIsRegexClick: function() {
-		Debug.dump("onIsRegexClick");
 		
 		var test = $("filterTest").value;
 		
@@ -326,13 +319,11 @@ var Dialog = {
 		this.onFinishedFilterEdit();
 	},
 	onCheckboxChange : function() {
-		Debug.dump("onCheckboxChange");
 		
 		this.onFilterEdit();
 		this.onFinishedFilterEdit();
 	},
 	isValidFilter : function() {
-		Debug.dump("isValidFilter");
 		
 		var filter = $("filterTest").value;
 		try {
@@ -345,7 +336,6 @@ var Dialog = {
 		return null;
 	},
 	onFilterEdit: function() {
-		Debug.dump("onFilterEdit");
 		
 		var idx = this.getSelectedRow();
 		var currentFilter = this.getFilter(idx);
@@ -371,22 +361,18 @@ var Dialog = {
 			currentFilter.type = ($("filterText").checked?1:0) + ($("filterImage").checked?2:0);
 			currentFilter.test = $("filterTest").value;
 			
-			Debug.dump("invalido riga e setto come filtro da salvare");
 			this._table.treeBoxObject.invalidateRow(idx);
 			this._lastRowEdited = idx;
 		}
 	},
 	onFinishedFilterEdit : function() {
-		Debug.dump("onFinishedFilterEdit");
 		
 		if (this._lastRowEdited != -1) {
-			Debug.dump("salvo");
 			this.getFilter(this._lastRowEdited).save();
 			this._lastRowEdited = -1;
 		}
 	},
 	createFilter: function() {
-		Debug.dump("createFilter");
 		
 		var id = DTA_FilterManager.create(
 			_("newfilt"), 
@@ -397,7 +383,6 @@ var Dialog = {
 		);
 	},
 	removeFilter: function() {
-		Debug.dump("remove");
 		var currentFilter = this.getFilter(this.getSelectedRow());
 		this._table.view.selection.select(-1);
 		var currentFilter = currentFilter.remove();
