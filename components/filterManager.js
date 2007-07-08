@@ -57,39 +57,6 @@ Filter.prototype = {
 
 	LINK_FILTER: (1 << 0),
 	IMAGE_FILTER: (1 << 1),
-	
-	defaultFilters: {
-		deffilter0: {
-			test: "/.*/i",
-			regex: true,
-			type: this.LINK_FILTER + this.IMAGE_FILTER
-		},
-		deffilter1: {
-			test: "/\\.(?:z(?:ip|[0-9]{2})|r(?:ar|[0-9]{2})|jar|bz2|gz|tar|rpm)$/i",
-			regex: true,
-			type: this.LINK_FILTER
-		},
-		deffilter2: {
-			test: "/\\.(?:mpeg|rm|mpe|avi|mpg|mp4|mov|divx|asf|qt|wmv|ram|m1v|m2v|rv|vob|asx)$/i",
-			regex: true,
-			type: this.LINK_FILTER + this.IMAGE_FILTER
-		},
-		deffilter3: {
-			test: "/\\.(?:jp(?:e?g|e|2)|gif|png|tif|tiff|bmp|ico)$/i",
-			regex: true,
-			type: this.LINK_FILTER + this.IMAGE_FILTER
-		},
-		deffilter4: {
-			test: "/\\.(?:exe|msi|dmg|bin|xpi)$/i",
-			regex: true,
-			type: this.LINK_FILTER
-		},
-		deffilter5: {
-			test: "/\\.jp(e?g|e|2)$/i",
-			regex: true,
-			type: this.LINK_FILTER + this.IMAGE_FILTER
-		}
-	},
 
 	_modified: false,
 
@@ -229,6 +196,7 @@ Filter.prototype = {
 		if (localizedLabel && !this._prefs.prefHasUserValue(this.pref('label'))) {
 			this._label = localizedLabel;
 		}
+		
 		this._test = this.getMultiBytePref(this.pref('test'));
 		this._active = this._prefs.getBoolPref(this.pref('active'));
 		this._type = this._prefs.getIntPref(this.pref('type'));
@@ -255,30 +223,31 @@ Filter.prototype = {
 		this._modified = false;
 	},
 
+	_reset: function F_reset() {
+		// BEWARE: 1.8, no implementation for resetBranch
+		var c = {value: 0};
+		var prefs = this._prefs.getChildList(this._id, c);
+		for (var i = 0; i < c.value; ++i) {
+			if (this._prefs.prefHasUserValue(prefs[i])) {
+				this._prefs.clearUserPref(prefs[i]);
+			}
+		}
+	},
+
 	// exported
 	restore: function F_restore() {
 		if (!this._defFilter) {
 			throw new Components.Exception("only default filters can be restored!");
 		}
-		this._label = this._localizedLabel;
-		this._test = defaultFilters[this._id].test;
-		this._type = defaultFilters[this._id].type;
-		this._isRegex = defaultFilters[this._id].regex;
-		
-		this.save();
+		this._reset();
 	},
 
 	// exported
 	remove: function F_remove() {
-		// BEWARE: 1.8, no implementation for resetBranch
 		if (this._defFilter) {
 			throw new Components.Exception("default filters cannot be deleted!");
 		}
-		var c = {value: 0};
-		var prefs = this._prefs.getChildList(this._id, c);
-		for (var i = 0; i < c.value; ++i) {
-			this._prefs.clearUserPref(prefs[i]);
-		}
+		this._reset();
 	},
 
 	getMultiBytePref: function F_getMultiBytePref(pref) {
