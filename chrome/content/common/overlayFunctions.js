@@ -401,7 +401,7 @@ var DTA_AddingFunctions = {
 		}
 		try {
 			var scheme = this.ios.extractScheme(url);
-			return ['http', 'https', 'ftp'].some(function(e) { return e == scheme; });
+			return ['http', 'https', 'ftp'].indexOf(scheme) != -1;
 		}
 		catch (ex) {
 			// no op!
