@@ -4,7 +4,7 @@
 <!ENTITY filter.label "Filtered extensions:">
 <!ENTITY regex.label "Reg. Exp.">
 <!ENTITY useAs.label "Use this as:">
-<!ENTITY imagesf.label "Images filter">
+<!ENTITY imagesf.label "Pictures and embedded filter">
 <!ENTITY linksf.label "Links filter">
 <!ENTITY add.label "Add new filter">
 <!ENTITY highlight.label "Highlight files checked by filters">
