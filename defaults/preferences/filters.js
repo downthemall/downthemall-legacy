@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 pref("extensions.dta.filters.deffilter0.label", "All files");
-pref("extensions.dta.filters.deffilter0.test", ".*");
+pref("extensions.dta.filters.deffilter0.test", "/.*/i");
 pref("extensions.dta.filters.deffilter0.regex", true);
 pref("extensions.dta.filters.deffilter0.active", false);
 pref("extensions.dta.filters.deffilter0.type", 3);

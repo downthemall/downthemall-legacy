@@ -57,6 +57,39 @@ Filter.prototype = {
 
 	LINK_FILTER: (1 << 0),
 	IMAGE_FILTER: (1 << 1),
+	
+	defaultFilters: {
+		deffilter0: {
+			test: "/.*/i",
+			regex: true,
+			type: this.LINK_FILTER + this.IMAGE_FILTER
+		},
+		deffilter1: {
+			test: "/\\.(?:z(?:ip|[0-9]{2})|r(?:ar|[0-9]{2})|jar|bz2|gz|tar|rpm)$/i",
+			regex: true,
+			type: this.LINK_FILTER
+		},
+		deffilter2: {
+			test: "/\\.(?:mpeg|rm|mpe|avi|mpg|mp4|mov|divx|asf|qt|wmv|ram|m1v|m2v|rv|vob|asx)$/i",
+			regex: true,
+			type: this.LINK_FILTER + this.IMAGE_FILTER
+		},
+		deffilter3: {
+			test: "/\\.(?:jp(?:e?g|e|2)|gif|png|tif|tiff|bmp|ico)$/i",
+			regex: true,
+			type: this.LINK_FILTER + this.IMAGE_FILTER
+		},
+		deffilter4: {
+			test: "/\\.(?:exe|msi|dmg|bin|xpi)$/i",
+			regex: true,
+			type: this.LINK_FILTER
+		},
+		deffilter5: {
+			test: "/\\.jp(e?g|e|2)$/i",
+			regex: true,
+			type: this.LINK_FILTER + this.IMAGE_FILTER
+		}
+	},
 
 	_modified: false,
 
@@ -114,9 +147,6 @@ Filter.prototype = {
 		return this._test;
 	},
 	set test(value) {
-		if (this._defFilter) {
-			throw new Components.Exception("default filters cannot be modified!");
-		}
 		if (this._test == value) {
 			return;
 		}
@@ -148,9 +178,6 @@ Filter.prototype = {
 		return this._isRegex;
 	},
 	set isRegex(value) {
-		if (this._defFilter) {
-			throw new Components.Exception("default filters cannot be deleted!");
-		}
 		if (this._isRegex == value) {
 			return;
 		}
@@ -170,9 +197,6 @@ Filter.prototype = {
 		return this._type;
 	},
 	set type(t) {
-		if (this._defFilter) {
-			throw new Components.Exception("default filters cannot be modified!");
-		}
 		if (this._type == t) {
 			return;
 		}
@@ -196,6 +220,7 @@ Filter.prototype = {
 	 * @throws Exception in case loading failed
 	 */
 	load: function F_load(localizedLabel) {
+		this._localizedLabel = localizedLabel;
 		this._label = this.getMultiBytePref(this.pref('label'));
 		if (!this._label || !this._label.length) {
 			throw Components.Exception("Empty filter!");
@@ -219,18 +244,28 @@ Filter.prototype = {
 			return;
 		}
 		this._prefs.setBoolPref(this.pref('active'), this._active);
-
-		// do not change defFilters
-		if (!this.defFilter) {
-			this.setMultiBytePref(this.pref('test'), this._test);
-			this._prefs.setIntPref(this.pref('type'), this._type);
-			this._prefs.setBoolPref(this.pref('regex'), this._isRegex);
-
-		}
+		
+		this.setMultiBytePref(this.pref('test'), this._test);
+		this._prefs.setIntPref(this.pref('type'), this._type);
+		this._prefs.setBoolPref(this.pref('regex'), this._isRegex);
+			
 		// save this last as FM will test for it.
 		this.setMultiBytePref(this.pref('label'), this._label);
 
 		this._modified = false;
+	},
+
+	// exported
+	restore: function F_restore() {
+		if (!this._defFilter) {
+			throw new Components.Exception("only default filters can be restored!");
+		}
+		this._label = this._localizedLabel;
+		this._test = defaultFilters[this._id].test;
+		this._type = defaultFilters[this._id].type;
+		this._isRegex = defaultFilters[this._id].regex;
+		
+		this.save();
 	},
 
 	// exported
@@ -334,14 +369,14 @@ var FilterManager = {
 		this._prefs = this._prefs.QueryInterface(CI.nsIPrefBranch2);
 
 		// load those localized labels for default filters.
-		this._labels = {};
+		this._localizedLabels = {};
 				var b = CC['@mozilla.org/intl/stringbundle;1']
 			.getService(CI.nsIStringBundleService)
 			.createBundle("chrome://dta/locale/filters.properties");
 		var e = b.getSimpleEnumeration();
 		while (e.hasMoreElements()) {
 			var prop = e.getNext().QueryInterface(CI.nsIPropertyElement);
-			this._labels[prop.key] = prop.value;
+			this._localizedLabels[prop.key] = prop.value;
 		}
 
 		// register (the observer) and initialize our timer, so that we'll get a reload event.
@@ -388,8 +423,8 @@ var FilterManager = {
 				var filter = new Filter(name, this._prefs);
 				// overwrite with localized labels.
 				var localizedLabel = null;
-				if (filter.id in this._labels) {
-					localizedLabel = this._labels[filter.id];
+				if (filter.id in this._localizedLabels) {
+					localizedLabel = this._localizedLabels[filter.id];
 				}
 				filter.load(localizedLabel);
 				this._filters[filter.id] = filter;

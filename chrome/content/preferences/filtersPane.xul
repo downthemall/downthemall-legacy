@@ -51,8 +51,7 @@
 		<hbox>
 			<spacer flex="1"/>
 			<button label="&add.label;" oncommand="Dialog.createFilter();"/>
-			<button label="&remove.label;" oncommand="Dialog.removeFilter();" id="removebutton"/>
-			<button label="&default.label;" oncommand="Dialog.restoreDefaultFilters();" id="defaultbutton"/>
+			<button label="" oncommand="Dialog.restoreRemoveFilter();" id="restoreremovebutton"/>
 			<spacer flex="1"/>
 		 </hbox>
 	</prefpane>

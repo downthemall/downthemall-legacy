@@ -52,6 +52,7 @@ interface dtaIFilter : nsISupports
 	attribute unsigned long type;
 	boolean match(in string test);
 	void save();
+	void restore();
 	void remove();
 };
 
