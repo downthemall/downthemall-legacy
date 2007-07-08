@@ -789,7 +789,7 @@ function DTA_getLinkPrintHash(url) {
 		return null;
 	}
 	
-	var lp = url.match(/#!(md5|sha(?:1|256|384|512))!([\da-f]+)$/i);
+	var lp = url.match(/#hash\((md5|sha(?:1|256|384|512)):([\da-f]+)\)$/i); 
 	if (lp) {
 		try {
 			return new DTA_Hash(lp[2], lp[1]);
