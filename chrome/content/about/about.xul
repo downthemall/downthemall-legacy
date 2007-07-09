@@ -53,6 +53,7 @@
 	buttons="accept"
 	id="DTAAboutDialog"
 >
+	<script type="application/x-javascript" src="chrome://dta/content/common/verinfo.js"/>
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayfunctions.js"/>
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 
@@ -63,10 +64,7 @@
 		}
 		function versionFill() {
 			var logo = document.getElementById('logo');
-			var em = Components.classes["@mozilla.org/extensions/manager;1"]
-				.getService(Components.interfaces.nsIExtensionManager);
-			var item = em.getItemForID('dta@downthemall.net');
-			var title = item.name + ' ' + item.version;
+			var title = DTA_NAME + ' ' + DTA_VERSION;
 			logo.setAttribute('title', title);
 			window.title = 'About ' + title;
 		}

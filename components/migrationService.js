@@ -80,17 +80,16 @@ var MigrationService = {
 	},
 	
 	_migrate: function MM_migrate() {
+		include("chrome://dta/content/common/verinfo.js");
 		include("chrome://dta/content/common/overlayFunctions.js");
+		
 		try {
-			var em = Components.classes["@mozilla.org/extensions/manager;1"]
-				.getService(Components.interfaces.nsIExtensionManager);
-			var currentVersion = em.getItemForID('dta@downthemall.net').version;
-			DTA_debug.dump("current " + currentVersion);
+			DTA_debug.dump("current " + DTA_VERSION);
 			var vc = Components.classes["@mozilla.org/xpcom/version-comparator;1"]
 				.getService(Components.interfaces.nsIVersionComparator);
 		
 			var lastVersion = DTA_preferences.getDTA('version', '0');
-			if (0 == vc.compare(currentVersion, lastVersion)) {
+			if (0 == vc.compare(DTA_VERSION, lastVersion)) {
 				return;
 			}
 			DTA_debug.dump("MigrationManager: migration started");
@@ -100,7 +99,7 @@ var MigrationService = {
     	var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
 				.createInstance(Components.interfaces.nsIDialogParamBlock);
     	params.SetNumberStrings(1);
-    	params.SetString(0, currentVersion);
+    	params.SetString(0, DTA_VERSION);
     	Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
 				.getService(Components.interfaces.nsIWindowWatcher)
     		.openWindow(
