@@ -241,6 +241,12 @@ var DTA_ContextOverlay = {
 	
 	findLinks: function(turbo, all) {
 		try {
+			if (all == undefined && turbo && DTA_preferences.getDTA('rememberoneclick', false)) {
+				all = DTA_preferences.getDTA('lastalltabs', false);
+			}
+			if (turbo && all != undefined) {
+				DTA_preferences.setDTA('lastalltabs', all);
+			}
 			
 			function makeUnique(i) {
 				var known = {};

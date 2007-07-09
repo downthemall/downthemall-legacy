@@ -63,6 +63,7 @@
 <!ENTITY advancedpane.minutes "minutes">
 <!ENTITY advancedpane.misc.caption "Miscellaneous settings">
 <!ENTITY advancedpane.settime.label "Set file times to last modified time (server) or time of queuing">
+<!ENTITY advancedpane.rememberoneclick.label "OneClick should remember if it applies to All Tabs or Current Tab">
 <!ENTITY advancedpane.tempfiles.caption "Temporary files">
 <!ENTITY advancedpane.usetemp.label "Save download chunks in a temporary directory">
 <!ENTITY advancedpane.tempdir.label "Use this directory:">
