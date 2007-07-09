@@ -17,7 +17,7 @@
 	width="500" height="420"
 	style="padding: 0px 0px 3px 0px;"
 >
-	
+	<script type="application/javascript" src="chrome://dta/content/common/verinfo.js"/>
 	<script type="application/javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js" />
 	<script type="application/javascript"><![CDATA[
@@ -40,7 +40,7 @@
 			}
 			Components.classes["@mozilla.org/extensions/manager;1"]
 				.getService(Components.interfaces.nsIExtensionManager)
-				.uninstallItem('dta@downthemall.net');
+				.uninstallItem(DTA_ID);
 			var as = Components.interfaces.nsIAppStartup;
 			Components.classes["@mozilla.org/toolkit/app-startup;1"]
       	.getService(as)
