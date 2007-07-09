@@ -2261,6 +2261,10 @@ var ConflictManager = {
 			this._return(this._sessionSetting);
 			return;
 		}
+		if (download.shouldOverwrite) {
+			this._return(1);
+			return;
+		}
 
 		var options = {
 			url: download.urlManager.usable.cropCenter(45),
@@ -2290,7 +2294,7 @@ var ConflictManager = {
 		let cur = this._items[0];
 		switch (option) {
 			/* rename */    case 0: cur.download.conflicts = cur.conflicts; break;
-			/* overwrite */ case 1: break;
+			/* overwrite */ case 1: cur.download.shouldOverwrite = true; break;
 			/* skip */      default: cur.download.cancel(_('skipped')); break;
 		}
 		if (cur.reentry) {
