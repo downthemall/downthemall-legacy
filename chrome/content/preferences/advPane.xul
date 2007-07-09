@@ -25,6 +25,7 @@
 			<preference id="dtatimeout" name="extensions.dta.timeout" type="int" />
 			<preference id="dtatemplocation" name="extensions.dta.tempLocation" type="unichar" />
 			<preference id="dtasettime" name="extensions.dta.settime" type="bool" />
+			<preference id="dtarememberoneclick" name="extensions.dta.rememberoneclick" type="bool" />
 		</preferences>
 		
 		<groupbox orient="horizontal" align="center">
@@ -67,6 +68,7 @@
 		<groupbox>
 			<caption label="&advancedpane.misc.caption;" />
 			<checkbox label="&advancedpane.settime.label;" preference="dtasettime"/>
+			<checkbox label="&advancedpane.rememberoneclick.label;" preference="dtarememberoneclick"/>
 		</groupbox>
 		
 		<groupbox>

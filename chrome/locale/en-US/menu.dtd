@@ -3,3 +3,4 @@
 <!ENTITY dta-help.label "Help Contents">
 <!ENTITY dta-manager-button "Manager">
 <!ENTITY dta-tb-all.label "All tabs">
+<!ENTITY dta-tb-single.label "Current tab">

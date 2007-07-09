@@ -70,11 +70,8 @@
 		type="menu-button"
 	>
 		<menupopup>
-			<menuitem id="dta-tb-dta" label="DownThemAll!" onclick="DTA_ContextOverlay.findLinks();" image="chrome://dta/skin/common/dta.png" class="menuitem-iconic"/>
-			<menuitem id="dta-tb-turbo" label="dtaOneClick!" onclick="DTA_ContextOverlay.findLinks(true);" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
-			<menuseparator/>
+			<menuitem id="dta-tb-dta" label="DownThemAll! (&dta-tb-single.label;)" onclick="DTA_ContextOverlay.findLinks();" image="chrome://dta/skin/common/dta.png" class="menuitem-iconic"/>
 			<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all.label;)" onclick="DTA_ContextOverlay.findLinks(false, true);" image="chrome://dta/skin/common/dta.png" class="menuitem-iconic"/>
-			<menuitem id="dta-tb-allturbo" label="OneClick! (&dta-tb-all.label;)" onclick="DTA_ContextOverlay.findLinks(true, true);" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
 			<menuseparator/>
 			<menuitem id="dta-tb-manager" label="&dta-manager-button;" onclick="DTA_AddingFunctions.openManager();" image="chrome://dta/skin/common/box.png" class="menuitem-iconic"/>
 		</menupopup>
@@ -83,10 +80,16 @@
 		id="dta-turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1"
 		ondragover="nsDragAndDrop.dragOver(event, DTA_DropTDTA);"
 		ondragdrop="nsDragAndDrop.drop(event, DTA_DropTDTA);"
-		oncommand="DTA_ContextOverlay.findLinks(true);"
+		oncommand="if (event.target == this) DTA_ContextOverlay.findLinks(true);"
 		label="OneClick!"
 		tooltiptext="dTa OneClick!"
-	/>
+		type="menu-button"
+	>
+		<menupopup>
+			<menuitem id="dta-tb-turbo" label="OneClick! (&dta-tb-single.label;)" onclick="DTA_ContextOverlay.findLinks(true, false);" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
+			<menuitem id="dta-tb-allturbo" label="OneClick! (&dta-tb-all.label;)" onclick="DTA_ContextOverlay.findLinks(true, true);" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
+		</menupopup>		
+	</toolbarbutton>
 	<toolbarbutton
 		id="dta-manager-button"
 		class="chromeclass-toolbar-additional toolbarbutton-1"
