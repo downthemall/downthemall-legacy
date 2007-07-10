@@ -259,6 +259,22 @@ var Utils = {
 		return false;
 	},
 	/**
+	 * Gets the disk-space available for a nsILocalFile.
+	 * Here, because diskSpaceAvailable requires valid path and/or path to be a directory
+	 * @param file Valid nsILocalFile
+	 * @return the diskspace available to the caller
+	 * @author Nils
+	 */
+	getFreeDisk: function(file) {
+		while (file) {
+			if (file.exists() && file.isDirectory()) {
+				return file.diskSpaceAvailable;
+			}
+			file = file.parent;
+		}
+		return 0;
+	},
+	/**
 	 * Play a sound file (if prefs allow to do so)
 	 * @param name Name of the sound (correpsonding to the pref name and the file name of desired sound)
 	 */
