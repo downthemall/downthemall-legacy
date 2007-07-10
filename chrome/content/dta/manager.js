@@ -1962,7 +1962,7 @@ Download.prototype = {
 						let tmp = Prefs.tempLocation, vtmp = 0;
 						if (tmp) {
 							vtmp = Utils.validateDir(tmp);
-							if (!vtmp && vtmp.diskSpaceAvailable < tsd) {
+							if (!vtmp && Utils.getFreeDisk(vtmp) < tsd) {
 								d.fail(_("ndsa"), _("spacetemp"), _("freespace"));
 								return;
 							}
@@ -1971,15 +1971,17 @@ Download.prototype = {
 						if (!realDest) {
 							throw new Error("invalid destination folder");
 						}
-						var nsd = realDest.diskSpaceAvailable;
+						var nsd = Utils.getFreeDisk(realDest);
 						// Same save path or same disk (we assume that tmp.avail == dst.avail means same disk)
 						// simply moving should succeed
-						if (d.compression && (!tmp || vtmp.diskSpaceAvailable == nsd)) {
+						if (d.compression && (!tmp || Utils.getFreeDisk(vtmp) == nsd)) {
 							// we cannot know how much space we will consume after decompressing.
 							// so we assume factor 1.0 for the compressed and factor 1.5 for the decompressed file.
 							tsd *= 2.5;
 						}
 						if (nsd < tsd) {
+							Debug.dump("nsd", nsd);
+							Debug.dump("tsd", tsd);
 							d.fail(_("ndsa"), _("spacedir"), _("freespace"));
 							return;
 						}
