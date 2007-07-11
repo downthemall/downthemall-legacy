@@ -128,7 +128,8 @@ var Dialog = {
 			// Refresh window title
 			if (this._running.length == 1 && this._running[0].d.totalSize > 0) {
 				document.title =
-					Math.round(this._running[0].d.partialSize / this._running[0].d.totalSize * 100) + "% - "
+					this._running[0].d.percent
+					+ ' - '
 					+ this.completed + "/" + Tree.rowCount + " - "
 					+ speed + "/s - DownThemAll! - " + _("dip");
 			}
