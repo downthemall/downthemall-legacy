@@ -1265,6 +1265,7 @@ QueueItem.prototype = {
 			// gc
 			this.chunks = [];
 			this.totalSize = this.partialSize = 0;
+			this.activeChunks = 0;
 
 		} catch(ex) {
 			Debug.dump("cancel():", ex);
@@ -1574,12 +1575,11 @@ Download.prototype = {
 		Ci.nsIWeakReference,
 		Ci.nsICancelable,
 		Ci.nsIInterfaceRequestor,
-		Ci.nsIAuthPrompt,
 		Ci.nsIStreamListener,
 		Ci.nsIRequestObserver,
 		Ci.nsIProgressEventSink,
 		Ci.nsIChannelEventSink,
-		Ci.nsIFTPEventSink
+		Ci.nsIAuthPrompt
 	],
 	
 	_redirectedTo: null,
@@ -1622,7 +1622,10 @@ Download.prototype = {
 			return this.QueryInterface(iid);
 		}
 		catch (ex) {
-			throw ex;
+			Debug.dump("interface not implemented: " + iid, ex);
+			return this._chan
+				.QueryInterface(Ci.nsIInterfaceRequestor)
+				.getInterface(iid);
 		}
 	},
 	get authPrompter() {
@@ -1682,10 +1685,6 @@ Download.prototype = {
 		}
 	},
 	
-	// nsIFtpEventSink - to keep interfacerequestor calm ;)
-	OnFTPControlLog: function DL_OnFTPControlLog(fromServer, msg) {
-	},
-
 	// nsIStreamListener
   onDataAvailable: function DL_onDataAvailable(aRequest, aContext, aInputStream, aOffset, aCount) {
 		if (this._closed) {
