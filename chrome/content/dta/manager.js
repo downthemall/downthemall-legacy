@@ -1123,6 +1123,7 @@ QueueItem.prototype = {
 		this.state = COMPLETE;
 		this.status = _("complete");
 		this.chunks = [];		
+		this.activeChunks = 0;
 		SessionManager.save(this);
 	},
 	rebuildDestination: function QI_rebuildDestination() {
