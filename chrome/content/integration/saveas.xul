@@ -45,7 +45,6 @@
 	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/x-javascript" src="chrome://dta/content/integration/saveas.js"/>
-	<script type="application/x-javascript" src="chrome://dta/content/integration/elements.js"/>
 
 	<stringbundle id="stringsB" src="chrome://dta/locale/saveas.properties"/>
 	
@@ -57,7 +56,7 @@
 			<hbox id="tdta" flex="1">
 				<radio id="turbodta" label="dTa OneClick!" disabled="true"/>
 				<spacer flex="1"/>
-				<saveddropdown id="tdtalist" preference="directory" readonly="true"/>
+				<saveddropdown id="tdtalist" preference="directory" readonly="true" onclick="return DTA_SaveAs.selectTurbo();"/>
 			</hbox>
 		</vbox>
 	</radiogroup>

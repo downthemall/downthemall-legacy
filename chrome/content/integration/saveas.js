@@ -119,6 +119,11 @@ var DTA_SaveAs = {
 		}
 	*/
 	},
+	
+	selectTurbo: function dd_selectTurbo(event) {
+		document.getElementById("mode").selectedItem = document.getElementById("turbodta");
+		return true;
+	},
 
 	dialogAccepted: function dd_accept() {
 		var mode = document.getElementById("mode").selectedItem;
