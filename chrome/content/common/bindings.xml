@@ -111,13 +111,13 @@
 			</property>
 			<property name="_max" onget="return DTA_preferences.getDTA('history', 5);"/>
 			<property name="inputField" onget="return this._list.inputField"/>
-			<property name="value" onget="return this._list.value">
+			<property name="value" onget="return this._list.label">
 				<setter>
 					val = String(val);
 					if (this.value == val) {
 						return;
 					}
-					this._list.value = val;
+					this._list.label = val;
 					this._modified = true;
 				</setter>
 			</property>
