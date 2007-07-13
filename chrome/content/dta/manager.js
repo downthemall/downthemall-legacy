@@ -1581,7 +1581,8 @@ Download.prototype = {
 		Ci.nsIRequestObserver,
 		Ci.nsIProgressEventSink,
 		Ci.nsIChannelEventSink,
-		Ci.nsIAuthPrompt
+		Ci.nsIAuthPrompt,
+		Ci.nsIFTPEventSink
 	],
 	
 	_redirectedTo: null,
@@ -1625,9 +1626,7 @@ Download.prototype = {
 		}
 		catch (ex) {
 			Debug.dump("interface not implemented: " + iid, ex);
-			return this._chan
-				.QueryInterface(Ci.nsIInterfaceRequestor)
-				.getInterface(iid);
+			throw ex;
 		}
 	},
 	get authPrompter() {
@@ -1704,6 +1703,8 @@ Download.prototype = {
 			this.d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
 		}
 	},
+	
+	OnFTPControlLog: function(server, msg) {},
 
 	handleError: function DL_handleError() {
 		let c = this.c;
@@ -1883,7 +1884,7 @@ Download.prototype = {
 	
 	// Generic handler for now :p
 	handleFtp: function  DL_handleFtp(aChannel) {
-		return this.handleGeneric(aChannel, aContext);
+		return this.handleGeneric(aChannel);
 	},
 	
 	handleGeneric: function DL_handleGeneric(aChannel) {
@@ -1927,7 +1928,7 @@ Download.prototype = {
 	//nsIRequestObserver,
 	_supportedChannels: [
 		{i:Ci.nsIHttpChannel, f:'handleHttp'},
-		{i:Ci.nsIFtpChannel, f:'handleFtp'},
+		{i:Ci.nsIFTPChannel, f:'handleFtp'},
 		{i:Ci.nsIChannel, f:'handleGeneric'}
 	],
 	onStartRequest: function DL_onStartRequest(aRequest, aContext) {
