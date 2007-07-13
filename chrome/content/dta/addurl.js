@@ -312,7 +312,7 @@ var Dialog = {
 		}
 	},
 	
-	download: function DTA_download(queue) {
+	download: function DTA_download(start) {
 		
 		var errors = [];
 		
@@ -407,9 +407,10 @@ var Dialog = {
 		else {
 			batch = [new QueueItem(url, num, hash)];
 		}
-		DTA_AddingFunctions.sendToDown(queue, batch);
+		DTA_AddingFunctions.sendToDown(start, batch);
 
 		Preferences.setDTA("counter", num);
+		Preferences.setDTA("lastqueued", !start);
 	
 		['ddRenaming', 'ddDirectory'].forEach(function(e) { Dialog[e].save(); });
 		
