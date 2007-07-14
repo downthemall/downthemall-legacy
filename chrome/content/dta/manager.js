@@ -1844,6 +1844,9 @@ Download.prototype = {
 		if (['gzip', 'deflate'].indexOf(visitor.encoding) != -1 && !d.contentType.match(/gzip/i) && !d.fileName.match(/\.gz$/i)) {
 			d.compression = visitor.encoding;
 		}
+		else {
+			d.compression = null;
+		}
 
 		// accept range
 		d.resumable &= visitor.acceptRanges;
