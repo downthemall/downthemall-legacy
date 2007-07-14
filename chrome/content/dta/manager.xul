@@ -97,6 +97,7 @@
 					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/skin/manager/addpart.png" oncommand="Tree.changeChunks(true);" />
 					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" image="chrome://dta/skin/manager/rempart.png" oncommand="Tree.changeChunks(false);" />
 					<menuseparator/>
+					<menuitem id="force" class="menuitem-iconic" label="&force.label;" image="chrome://dta/skin/manager/force.png" oncommand="Tree.force()" />
 					<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/remove.png" oncommand="Tree.remove()" />					
 					<menuseparator />
 					<menuitem id="prefs" class="menuitem-iconic" label="&options.label;" image="chrome://dta/skin/common/prefs.png" onclick="DTA_showPreferences();" />

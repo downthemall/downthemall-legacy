@@ -36,3 +36,4 @@
 <!ENTITY misc.label "Misc">
 <!ENTITY addchunk.label "One more chunk">
 <!ENTITY removechunk.label "One less chunk">
+<!ENTITY force.label "Force start">

@@ -287,6 +287,13 @@ var Tree = {
 		
 		Tree.updateSelected(increase ? inc : dec);
 	},
+	force: function T_force() {
+		for (let d in Tree.selected) {
+			if (d.is(QUEUED, PAUSED, CANCELED)) {
+				Dialog.run(d);
+			}
+		}
+	},
 	showInfo: function T_showInfo() {
 		this.beginUpdate();
 		let downloads = [];
@@ -364,7 +371,7 @@ var Tree = {
 			modifySome($('pause', 'toolpause'), function(d) { return (d.state & RUNNING && d.resumable) || (d.state & QUEUED); });
 			modifySome($('cancel', 'toolcancel'), function(d) { return !d.is(FINISHING, CANCELED); });
 			modifySome($('launch', 'folder', 'delete'), function(d) { return d.is(COMPLETE); });
-			modifySome($('addchunk', 'removechunk'), function(d) { return d.is(QUEUED, RUNNING, PAUSED); });
+			modifySome($('addchunk', 'removechunk', 'force'), function(d) { return d.is(QUEUED, RUNNING, PAUSED); });
 		}
 		catch (ex) {
 			Debug.dump("rt", ex);
