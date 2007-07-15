@@ -135,7 +135,9 @@ var Dialog = {
 			}
 			else if (this._running.length > 0) {
 				document.title =
-					this.completed + "/" + Tree.rowCount + " - "
+					Math.floor(this.completed / Tree.rowCount) + '%'
+					+ ' - '				
+					+ this.completed + "/" + Tree.rowCount + " - "
 					+ speed + "/s - DownThemAll! - " + _("dip");
 			}
 			else {
@@ -1801,8 +1803,8 @@ Download.prototype = {
 		}
 
 		// not partial content altough we are multi-chunk
-		if (aChannel.responseStatus != 206 && c.start + c.written != 0) {
-			Debug.dump(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206... Normal mode");
+		if (code != 206 && !this.isInfoGetter) {
+			Debug.dump(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206", this.isInfoGetter);
 			Debug.dump(c, this.url.url);
 			
 			d.resumable = false;
@@ -2006,7 +2008,8 @@ Download.prototype = {
 					d.maxChunks = 1;
 				}
 				c.end = d.totalSize - 1;
-				delete this.isStarter;
+				Debug.dump("exheader fin");
+				delete this.isInfoGetter;
 				ConflictManager.resolve(d);				
 			}
 			
@@ -2072,6 +2075,14 @@ Download.prototype = {
 			Debug.dump(d + ": Download is completed!");
 			d.finishDownload();
 		}
+		else if (d.chunks.length == 1 && d.chunks[0] == c) {
+				d.fail(
+					_('errmismatchtitle'),
+					_('errmismatchtext', [c.written, c.total]),
+					_('errmismatchtitle')
+				);
+				return;			
+		}
 		else if (!d.is(PAUSED, CANCELED)) {
 			d.resumeDownload();
 		}
@@ -2102,7 +2113,11 @@ Download.prototype = {
 					if (d.partialSize > d.totalSize) {
 						d.dumpScoreboard();
 						Debug.dump(d + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");
-						d.fail("Size mismatch", "Actual size of " + d.partialSize + " does not match reported size of " + d.totalSize, "Size mismatch");
+						d.fail(
+							_('errmismatchtitle'),
+							_('errmismatchtext', [d.partialSize, d.totalSize]),
+							_('errmismatchtitle')
+						);
 						return;
 					}
 				}
