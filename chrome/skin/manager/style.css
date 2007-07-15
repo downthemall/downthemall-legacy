@@ -22,11 +22,8 @@ toolbox {
 	width: 55px;
 }
 
-#tools toolbarbutton:hover {
+#tools toolbarbutton:hover, #tools toolbarbutton:active {
 	-moz-image-region: rect(0px,25px,25px,0px);
-}
-#tools toolbarbutton:active {
-	-moz-image-region: rect(-1px,25px,25px,0px);
 }
 #tools toolbarbutton[disabled="true"] {
 	-moz-image-region: rect(0px,77px,25px,52px) !important;    
