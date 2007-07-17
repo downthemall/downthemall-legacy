@@ -439,8 +439,8 @@ var DTA_ContextOverlay = {
 			// general setup
 			var base = document.getElementById(this.ctxBase.getAttribute('insertafter'));
 			if (compact) {
-				this.ctxBase.hidden = false;
-				base.parentNode.insertBefore(this.ctxBase, base);
+				this.ctxBase.hidden = false;				
+				base.parentNode.insertBefore(this.ctxBase, base.nextSibling);				
 			} else {
 				this.ctxBase.hidden = true;
 			}
