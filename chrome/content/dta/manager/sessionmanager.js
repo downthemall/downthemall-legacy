@@ -48,6 +48,7 @@
 			// no-op
 		}
 		this._saveStmt = this._con.createStatement('REPLACE INTO queue (uuid, pos, item) VALUES (?1, ?2, ?3)');
+		this._savePosStmt = this._con.createStatement('UPDATE queue SET pos = ?1 WHERE uuid = ?2');
 		this._delStmt = this._con.createStatement('DELETE FROM queue WHERE uuid = ?1');
 
 		this._converter = Components.classes["@mozilla.org/intl/saveascharset;1"]
@@ -117,12 +118,15 @@
 			);
 		}
 
-		var s = this._saveStmt;
+		let s = this._saveStmt;
 		if (d._dbId) {
 			s.bindInt64Parameter(0, d._dbId);
 		}
 		else {
 			s.bindNullParameter(0);
+		}
+		if (!isFinite(pos)) {
+			pos = d.position;
 		}
 		s.bindInt32Parameter(1, pos);
 		s.bindUTF8StringParameter(2, this._converter.Convert(e.toSource()));
@@ -149,7 +153,7 @@
 		try {
 			this._con.executeSimpleSQL('DELETE FROM queue');
 			var i = 0;
-			for (d in Tree.all) {
+			for (let d in Tree.all) {
 				if (this._saveDownload(d, i)) {
 					++i;
 				}
@@ -160,6 +164,25 @@
 		}
 		this.endUpdate();
 
+	},
+	savePositions: function() {
+		this.beginUpdate();
+		try {
+			let s = this._savePosStmt; 
+			for (let d in Tree.all) {
+				if (!isFinite(d._dbId + d.position)) {
+					throw new Error("test");
+					continue;
+				}
+				s.bindInt64Parameter(0, d.position);
+				s.bindInt64Parameter(1, d._dbId);
+				s.execute();
+			}
+		}
+		catch (ex) {
+			alert(ex);
+		}
+		this.endUpdate();
 	},
 	deleteDownload: function(download) {
 		if (!download._dbId) {
