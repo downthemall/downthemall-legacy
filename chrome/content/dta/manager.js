@@ -135,7 +135,7 @@ var Dialog = {
 			}
 			else if (this._running.length > 0) {
 				document.title =
-					Math.floor(this.completed / Tree.rowCount) + '%'
+					Math.floor(this.completed * 100 / Tree.rowCount) + '%'
 					+ ' - '				
 					+ this.completed + "/" + Tree.rowCount + " - "
 					+ speed + "/s - DownThemAll! - " + _("dip");
@@ -224,7 +224,7 @@ var Dialog = {
 		else {
 			Debug.dump("Let's resume " + download + " at " + download.partialSize);
 		}
-		this._running.push({d: download, lastBytes: 0});
+		this._running.push({d: download, lastBytes: download.partialSize});
 		download.resumeDownload();
 	},
 	wasStopped: function D_wasStopped(download) {
@@ -2075,7 +2075,7 @@ Download.prototype = {
 			Debug.dump(d + ": Download is completed!");
 			d.finishDownload();
 		}
-		else if (d.chunks.length == 1 && d.chunks[0] == c) {
+		else if (!d.is(PAUSED, CANCELED) && d.chunks.length == 1 && d.chunks[0] == c) {
 				d.fail(
 					_('errmismatchtitle'),
 					_('errmismatchtext', [c.written, c.total]),
