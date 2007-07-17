@@ -876,6 +876,9 @@ QueueItem.prototype = {
 	},
 	_maxChunks: 0,
 	get maxChunks() {
+		if (!this._maxChunks) {
+				this._maxChunks = Prefs.maxChunks;
+		}
 		return this._maxChunks;
 	},
 	set maxChunks(nv) {
@@ -890,7 +893,7 @@ QueueItem.prototype = {
 				c.cancel();
 			}
 		}
-		else if (this._maxChunks > this._activeChunks) {
+		else if (this._maxChunks > this._activeChunks && d.is(RUNNING)) {
 			this.resumeDownload();
 			
 		}
@@ -1318,9 +1321,6 @@ QueueItem.prototype = {
 		cleanChunks(this);
 
 		try {
-			if (!this.maxChunks) {
-				this.maxChunks = Prefs.maxChunks;
-			}
 			if (this.maxChunks <= this.activeChunks) {
 				return false;
 			}
