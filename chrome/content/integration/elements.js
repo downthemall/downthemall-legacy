@@ -174,6 +174,11 @@ var DTA_ContextOverlay = {
 					}
 				);
 			}
+			else {
+				// we were asked to honor the selection, but we didn't actually have one.
+				// so reset this flag so that we can continue processing frames below.
+				honorSelection = false;
+			}
 			
 			this.addLinksToArray(links, aURLs, aWin.document);
 			[images, embeds, inputs].forEach(
