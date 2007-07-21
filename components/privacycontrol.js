@@ -269,6 +269,5 @@ const module = {
 };
 
 function NSGetModule(mgr, spec) {
-	dump("PC getModule");
   return module;
 }
