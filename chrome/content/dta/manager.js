@@ -1584,7 +1584,7 @@ Download.prototype = {
 		Ci.nsIProgressEventSink,
 		Ci.nsIChannelEventSink,
 		Ci.nsIAuthPrompt,
-		Ci.nsIFTPEventSink
+		Ci.nsIFTPEventSink,
 	],
 	
 	_redirectedTo: null,
@@ -2022,7 +2022,12 @@ Download.prototype = {
 		}
 	},
 	onStopRequest: function DL_onStopRequest(aRequest, aContext, aStatusCode) {
-		Debug.dump('StopRequest');
+		try {
+			Debug.dump('StopRequest');
+		}
+		catch (ex) {
+			return;
+		}
 		
 		// shortcuts
 		let c = this.c;
