@@ -78,6 +78,7 @@
 			'pathName',
 			'hash',
 			'compression',
+			'maxChunks',
 		].forEach(
 			function(u) {
 				e[u] = d[u];
@@ -101,10 +102,8 @@
 		e.visitors = d.visitors.save();
 
 		if (!d.resumable && !d.is(COMPLETE)) {
-			e.partialSize = 0;
 			e.totalSize = 0;
 		} else {
-			e.partialSize = d.partialSize;
 			e.totalSize = d.totalSize;
 		}
 		
@@ -228,7 +227,6 @@
 					'fileName',
 					'destinationName',
 					'resumable',
-					'partialSize',
 					'totalSize',
 					'hash',
 					'compression',
@@ -237,6 +235,9 @@
 						d[e] = get(e);
 					}
 				);
+				if ('maxChunks' in down) {
+					d._maxChunks = down.maxChunks;
+				}
 
 				d.started = d.partialSize != 0;
 
@@ -250,6 +251,7 @@
 					d.status = _('paused');
 				}
 				else if (d.is(COMPLETE)) {
+					d.partialSize = d.totalSize;
 					d.status = _('complete');
 				}
 				else if (d.is(CANCELED)) {
