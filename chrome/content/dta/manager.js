@@ -1584,7 +1584,7 @@ Download.prototype = {
 		Ci.nsIProgressEventSink,
 		Ci.nsIChannelEventSink,
 		Ci.nsIAuthPrompt,
-		Ci.nsIFTPEventSink,
+		Ci.nsIFTPEventSink
 	],
 	
 	_redirectedTo: null,
