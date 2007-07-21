@@ -60,6 +60,9 @@ function Literal(str) {
 Literal.prototype = {
 	join: function(str) {
 		yield str + this.str;
+	},
+	toString: function() {
+		return this.str;
 	}
 };
 function NumericRange(name, start, stop, step, strl) {
@@ -215,7 +218,30 @@ BatchGenerator.prototype = {
 		return this._pats
 			.filter(function(e) { return !(e instanceof Literal); })
 			.map(function(e) { return e.name; })
-			.join("\n");
+			.join(", ");
+	},
+	get first() {
+		return this._pats.map(
+			function(p) {
+				if (!(p instanceof Literal)) {
+					return p.start;
+				}
+				return p;
+			}
+		).join('');
+	},
+	get last() {
+		return this._pats.map(
+			function(p) {
+				if (!(p instanceof Literal)) {
+					let stop = p.stop;
+					stop += (stop - p.start) % p.step;
+					stop -= p.step;
+					return stop;
+				}
+				return p;
+			}
+		).join('');
 	}
 };
 
@@ -385,7 +411,7 @@ var Dialog = {
 		if (rv) {
 			var message = _(
 				'tasks',
-				[batch.length, batch.parts]
+				[batch.length, batch.parts, batch.first, batch.last]
 			);
 			if (batch.length > 1000) {
 				message += _('manytasks');
