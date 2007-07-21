@@ -55,6 +55,7 @@ const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 const STREAMS_FREQ = 100;
 
 var Dialog = {
+	_observes: ['quit-application-requested', 'quit-application-granted'],
 	_lastSum: 0,
 	_initialized: false,
 	_wasRunning: false,
@@ -63,6 +64,15 @@ var Dialog = {
 	totalbytes: 0,
 	init: function D_init() {
 		Tree.init($("downloads"));
+		makeObserver(this);
+		
+  	let os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);		
+		this._observes.forEach(
+			function(topic) {
+				os.addObserver(this, topic, true);
+			},
+			this
+		);
 	
 		document.getElementById("dtaHelp").hidden = !("openHelp" in window);
 	
@@ -80,7 +90,25 @@ var Dialog = {
 			}
 		}
 		this._updTimer = new Timer("Dialog.checkDownloads();", REFRESH_FREQ, true, true);		
-	},	
+	},
+	observe: function D_observe(subject, topic, data) {
+		if (topic == 'quit-application-requested') {
+			if (!this._canClose()) {
+				delete this._forceClose;
+				try {
+					let cancelQuit = subject.QueryInterface(Ci.nsISupportsPRBool);
+					cancelQuit.data = true;
+				}
+				catch (ex) {
+					Debug.dump("cannot set cancelQuit", ex);
+					//
+				}
+			}
+		}
+		else if (topic == 'quit-application-granted') {
+			this._forceClose = true;
+		}
+	},
 	refresh: function D_refresh() {
 		try {
 			let sum = 0;
@@ -280,9 +308,7 @@ var Dialog = {
 			Debug.dump("signal():", ex);
 		}
 	},
-	close: function D_close() {
-		
-		// Check for non-resumable downloads
+	_canClose: function D__canClose() {
 		if (Tree.some(function(d) { return d.started && !d.resumable && d.is(RUNNING); })) {
 			var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
 				.getService(Ci.nsIPromptService);
@@ -295,6 +321,14 @@ var Dialog = {
 				return false;
 			}
 		}
+		return true;
+	},
+	close: function D_close() {
+		if (!this._forceClose && !this._canClose()) {
+			delete this._forceClose;
+			return false;
+		}
+
 		// stop everything!
 		// enumerate everything we'll have to wait for!
 		this._updTimer.kill();
