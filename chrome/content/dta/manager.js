@@ -2111,16 +2111,16 @@ Download.prototype = {
 
 		// if download is complete
 		if (shouldFinish) {
-			Debug.dump(d + ": Download is completed!");
+			Debug.dump(d + ": Download is complete!");
 			d.finishDownload();
 		}
-		else if (!d.is(PAUSED, CANCELED) && d.chunks.length == 1 && d.chunks[0] == c) {
-				d.fail(
-					_('errmismatchtitle'),
-					_('errmismatchtext', [c.written, c.total]),
-					_('errmismatchtitle')
-				);
-				return;			
+		else if (!d.is(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
+			d.fail(
+				_('errmismatchtitle'),
+				_('errmismatchtext', [c.written, c.total]),
+				_('errmismatchtitle')
+			);
+			return;			
 		}
 		else if (!d.is(PAUSED, CANCELED)) {
 			d.resumeDownload();
