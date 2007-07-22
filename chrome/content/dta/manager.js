@@ -159,14 +159,14 @@ var Dialog = {
 					this._running[0].d.percent
 					+ ' - '
 					+ this.completed + "/" + Tree.rowCount + " - "
-					+ speed + "/s - DownThemAll! - " + _("dip");
+					+ speed + '/s - DownThemAll!';
 			}
 			else if (this._running.length > 0) {
 				document.title =
 					Math.floor(this.completed * 100 / Tree.rowCount) + '%'
 					+ ' - '				
 					+ this.completed + "/" + Tree.rowCount + " - "
-					+ speed + "/s - DownThemAll! - " + _("dip");
+					+ speed + '/s - DownThemAll!';
 			}
 			else {
 				document.title = this.completed + "/" + Tree.rowCount + " - DownThemAll!";
