@@ -199,6 +199,7 @@ var Tree = {
 		downloads = downloads.sort(function(a, b) { return b.position - a.position; });	 
 		SessionManager.beginUpdate();
 		this.beginUpdate();
+		let last = 0;
 		downloads.forEach(
 			function(d) {
 				if (d.is(FINISHING)) {
@@ -211,19 +212,22 @@ var Tree = {
 				}
 				SessionManager.deleteDownload(d);
 				this._downloads.splice(d.position, 1);
+				this._box.rowCountChanged(d.position, -1);
+				last = Math.max(d.position, last);
 				delete d.position;
 			},
 			this
 		);
 		SessionManager.endUpdate();
-		this._box.rowCountChanged(0, this._downloads.length);
 		this.endUpdate();
 		this.invalidate();
+		this._removeCleanup(downloads.length, last);
 		SessionManager.savePositions();		
 	},
 	removeCompleted: function T_removeCompleted() {
 		SessionManager.beginUpdate();
 		this.beginUpdate();
+		let delta = 0, last = 0;
 		for (let i = this._downloads.length - 1; i > -1; --i) {
 			let d = this._downloads[i];
 			if (!d.is(COMPLETE)) {
@@ -231,14 +235,27 @@ var Tree = {
 			}
 			SessionManager.deleteDownload(d);
 			this._downloads.splice(d.position, 1);
+			this._box.rowCountChanged(d.position, -1);
+			last = Math.max(d.position, last);			
 			delete d.position;
 		}
 		SessionManager.endUpdate();
 		this.selection.clearSelection();
-		this._box.rowCountChanged(0, this._downloads.length);
-		this.endUpdate();
-		this.invalidate();		
+		this.endUpdate();	
+		this.invalidate();
+		this._removeCleanup(delta, last);
 		SessionManager.savePositions();		
+	},
+	_removeCleanup: function(delta, last) {
+		if (!this.rowCount) {
+			this._box.ensureRowIsVisible(0);
+		}
+		else {
+			let np = Math.max(0, Math.min(last - delta, this.rowCount));
+			if (np < this._box.getFirstVisibleRow() || np > this._box.lastVisibleRow) {
+				this._box.ensureRowIsVisible(np);
+			}
+		}
 	},
 	pause: function T_pause() {
 		this.updateSelected(
