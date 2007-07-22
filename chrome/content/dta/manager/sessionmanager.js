@@ -125,9 +125,14 @@
 			s.bindNullParameter(0);
 		}
 		if (!isFinite(pos)) {
-			pos = d.position;
+			if ('position' in d) {
+						s.bindInt32Parameter(1, d.position);
+			}
+			s.bindNullParameter(1);
 		}
-		s.bindInt32Parameter(1, pos);
+		else {
+			s.bindInt32Parameter(1, pos);
+		}
 		s.bindUTF8StringParameter(2, this._converter.Convert(e.toSource()));
 		s.execute();
 		d._dbId = this._con.lastInsertRowID;
