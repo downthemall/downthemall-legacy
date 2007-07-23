@@ -10,10 +10,15 @@
  * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 <overlay id="filterspaneoverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<prefpane id="paneFilters" label="&filterspane.label;" onpaneload="Dialog.load();" flex="1">
-		
-		<script type="application/x-javascript" src="chrome://dta/content/preferences/filtersPane.js" />		
-		<tree id="filterTable" flex="1" seltype="single" onselect="Dialog.onTableSelectionChange()">
+	<prefpane
+		id="paneFilters"
+		label="&filterspane.label;"
+		onpaneload="Filters.load();"
+		helpURI="chrome://dta-help/content/help.rdf"
+		helpTopic="Preferences_Filters"
+		flex="1"
+	>
+		<tree id="filterTable" flex="1" seltype="single" onselect="Filters.onTableSelectionChange()">
 			<treecols>
 				<treecol label="&listhead1.label;" flex="1" id="filtername" />
 				<splitter class="splitt" />
@@ -31,18 +36,18 @@
 				<rows>
 					<row id="captionRow" align="center">
 						<label value="&listhead1.label;:"/>
-						<textbox id="filterLabel" oninput="Dialog.onFilterEdit();" onblur="Dialog.onFinishedFilterEdit();" />
+						<textbox id="filterLabel" oninput="Filters.onFilterEdit();" onblur="Filters.onFinishedFilterEdit();" />
 					</row>
 					<row id="filterRow" align="center">
 						<label value="&filter.label;"/>
-						<textbox id="filterTest" oninput="Dialog.onFilterEdit();" onblur="Dialog.onFinishedFilterEdit();" />
-						<checkbox id="filterIsRegex" label="&regex.label;" oncommand="Dialog.onIsRegexClick();"/>
+						<textbox id="filterTest" oninput="Filters.onFilterEdit();" onblur="Filters.onFinishedFilterEdit();" />
+						<checkbox id="filterIsRegex" label="&regex.label;" oncommand="Filters.onIsRegexClick();"/>
 					</row>
 					<row align="center">
 						<label id="useAs" value="&useAs.label;"/> 
 						<hbox id="linkPicRow">
-							<checkbox id="filterText" label="&linksf.label;" oncommand="Dialog.onCheckboxChange();" />
-							<checkbox id="filterImage" label="&imagesf.label;" oncommand="Dialog.onCheckboxChange();" />
+							<checkbox id="filterText" label="&linksf.label;" oncommand="Filters.onCheckboxChange();" />
+							<checkbox id="filterImage" label="&imagesf.label;" oncommand="Filters.onCheckboxChange();" />
 						</hbox>
 					</row>
 				</rows>
@@ -50,8 +55,8 @@
 		</groupbox>
 		<hbox>
 			<spacer flex="1"/>
-			<button label="&add.label;" oncommand="Dialog.createFilter();"/>
-			<button label="" oncommand="Dialog.restoreRemoveFilter();" id="restoreremovebutton"/>
+			<button label="&add.label;" oncommand="Filters.createFilter();"/>
+			<button label="" oncommand="Filters.restoreRemoveFilter();" id="restoreremovebutton"/>
 			<spacer flex="1"/>
 		 </hbox>
 	</prefpane>
