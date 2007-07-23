@@ -201,7 +201,7 @@ Filter.prototype = {
 		this._active = this._prefs.getBoolPref(this.pref('active'));
 		this._type = this._prefs.getIntPref(this.pref('type'));
 		this._isRegex = this._prefs.getBoolPref(this.pref('regex'));
-		this._defFilter = this._id.search(/deffilter\d+/) != -1;
+		this._defFilter = this._id.search(/^deffilter/) != -1;
 		this._createRegex();
 		this._modified = false;
 	},
