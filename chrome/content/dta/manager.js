@@ -726,8 +726,14 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile, state) {
 	this.description = desc ? desc : '';
 	this.chunks = [];
 	this.speeds = new Array();
+	
 	if (referrer) {
-		this.referrer = IOService.newURI(referrer, null, null);
+		try {
+			this.referrer = IOService.newURI(referrer, null, null).QueryInterface(Ci.nsIURL);
+		}
+		catch (ex) {
+			// We might have been fed with about:blank or other crap. so ignore.
+		}
 	}
 
 	// only access the setter of the last so that we don't generate stuff trice.
@@ -739,7 +745,6 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile, state) {
 		this.state = state;
 	}
 	
-	// XXX: reset ranges when failed.
 	if (tmpFile) {
 		try {
 			tmpFile = new FileFactory(tmpFile);
@@ -754,6 +759,7 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile, state) {
 		}
 		catch (ex) {
 			Debug.dump("tried to construct with invalid tmpFile", ex);
+			this.cancel();
 		}
 	}
 }
@@ -1167,23 +1173,24 @@ QueueItem.prototype = {
 	},
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
-			var url = this.urlManager.usable;
-			var uri = IOService.newURI(url, null, null).QueryInterface(Ci.nsIURL);
+			let url = this.urlManager.usable;
+			let uri = IOService.newURI(url, null, null).QueryInterface(Ci.nsIURL);
+			let host = uri.host.toString();
 
 			// normalize slashes
-			var mask = this.mask
+			let mask = this.mask
 				.removeLeadingChar("\\").removeFinalChar("\\")
 				.removeLeadingChar("/").removeFinalChar("/")
 				.replace(/([\\/]{1,})/g, SYSTEMSLASH);
 
-			var uripath = uri.path.removeLeadingBackSlash();
+			let uripath = uri.path.removeLeadingBackSlash();
 			if (uripath.length) {
 				uripath = uripath.substring(0, uri.path.lastIndexOf("/"))
 					.removeFinalBackSlash()
 					.replace(/\//g, SYSTEMSLASH);
 			}
 
-			var query = '';
+			let query = '';
 			try {
 				query = uri.query;
 			}
@@ -1193,8 +1200,8 @@ QueueItem.prototype = {
 
 			this.description = this.description.removeBadChars().replace(/[\\/]/g, "").trim();
 
-			var name = this.fileName;
-			var ext = name.getExtension();
+			let name = this.fileName;
+			let ext = name.getExtension();
 			if (ext) {
 				name = name.substring(0, this.fileName.lastIndexOf("."));
 
@@ -1217,14 +1224,15 @@ QueueItem.prototype = {
 				name = this.fileName;
 				ext = '';
 			}
+			let ref = this.referrer ? this.referrer.host.toString() : '';
 			
 			var replacements = {
 				"name": name,
 				"ext": ext,
 				"text": this.description,
-				"url": uri.host,
+				"url": host,
 				"subdirs": uripath,
-				"refer": this.referrer ? this.referrer.host : '',
+				"refer": ref,
 				"qstring": query,
 				"curl": (uri.host + ((uripath=="")?"":(SYSTEMSLASH + uripath))),
 				"num": Utils.formatNumber(this.numIstance),
