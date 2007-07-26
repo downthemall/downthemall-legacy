@@ -1505,7 +1505,7 @@ Chunk.prototype = {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
 		}
 		let prealloc = !file.exists();
-		let outStream = new FileOutputStream(file, 0x02 | 0x08 | 0x40, 0600, 0);
+		let outStream = new FileOutputStream(file, 0x02 | 0x08, 0600, 0);
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 		if (prealloc && this.parent.totalSize > 0) {
 			try {
@@ -1518,7 +1518,7 @@ Chunk.prototype = {
 		}
 		seekable.seek(0x00, this.start + this.written);
 		this._outStream = Cc['@mozilla.org/network/buffered-output-stream;1'].createInstance(Ci.nsIBufferedOutputStream);
-		this._outStream.init(outStream, MAX_BUFFER_SIZE);
+		this._outStream.init(outStream, 131072);
 	},
 	close: function CH_close() {
 		this.running = false;
