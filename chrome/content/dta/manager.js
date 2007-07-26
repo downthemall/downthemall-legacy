@@ -46,8 +46,8 @@ if (!Ci) {
 const MIN_CHUNK_SIZE = 700 * 1024;
 // in use by chunk.writer...
 // in use by decompressor... beware, actual size might be more than twice as big!
-const MAX_BUFFER_SIZE = 5 * 1024 * 1024; // 3 MB
-const MIN_BUFFER_SIZE = 1 * 1024 * 1024; // 1 MB
+const MAX_BUFFER_SIZE = 5 * 1024 * 1024;
+const MIN_BUFFER_SIZE = 1 * 1024 * 1024;
 const SPEED_COUNT = 25;
 
 const REFRESH_FREQ = 1000;
@@ -89,7 +89,8 @@ var Dialog = {
 				this.run(d);
 			}
 		}
-		this._updTimer = new Timer("Dialog.checkDownloads();", REFRESH_FREQ, true, true);		
+		this._updTimer = new Timer("Dialog.checkDownloads();", REFRESH_FREQ, true, true);
+		this._updTimer = new Timer("Dialog.refreshWritten();", 100, true, true);
 	},
 	observe: function D_observe(subject, topic, data) {
 		if (topic == 'quit-application-requested') {
@@ -175,6 +176,13 @@ var Dialog = {
 		catch(ex) {
 			Debug.dump("refresh():", ex);
 		}
+	},
+	refreshWritten: function D_checkDownloads() {
+		this._running.forEach(
+			function(i) {
+				i.d.invalidate();
+			}
+		);
 	},
 
 	checkDownloads: function D_checkDownloads() {
@@ -1322,13 +1330,17 @@ QueueItem.prototype = {
 	},
 	
 	removeTmpFile: function QI_removeTmpFile() {
+		Debug.dump("remove tmpfile");
 		if (this.tmpFile.exists()) {
 			try {
 				this.tmpFile.remove(false);
 			}
 			catch (ex) {
-				// no-op
+				Debug.dump("failed to remove tmpfile: " + this.tmpFile.path, ex);
 			}
+		}
+		else {
+			Debug.dump("tmpfile not found: " + this.tmpFile.path);
 		}
 	},
 	sessionConnections: 0,
@@ -1488,12 +1500,12 @@ Chunk.prototype = {
 		this._written += ch._written;
 	},
 	open: function CH_open() {
-		var file = this.parent.tmpFile.clone();
+		let file = this.parent.tmpFile.clone();
 		if (!file.parent.exists()) {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
 		}
-		var prealloc = !file.exists();
-		var outStream = new FileOutputStream(file, 0x04 | 0x08, 0766, 0);
+		let prealloc = !file.exists();
+		let outStream = new FileOutputStream(file, 0x02 | 0x08 | 0x40, 0600, 0);
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 		if (prealloc && this.parent.totalSize > 0) {
 			try {
@@ -1505,7 +1517,8 @@ Chunk.prototype = {
 			}
 		}
 		seekable.seek(0x00, this.start + this.written);
-		this._outStream = outStream;
+		this._outStream = Cc['@mozilla.org/network/buffered-output-stream;1'].createInstance(Ci.nsIBufferedOutputStream);
+		this._outStream.init(outStream, MAX_BUFFER_SIZE);
 	},
 	close: function CH_close() {
 		this.running = false;
@@ -1542,18 +1555,13 @@ Chunk.prototype = {
 			if (bytes < 0) {
 				throw new Components.Exception("bytes negative");
 			}
-			// need to wrap this as nsIInputStream::read is marked non-scriptable.
-			var byteStream = Cc['@mozilla.org/binaryinputstream;1']
-				.createInstance(Ci.nsIBinaryInputStream);
-			byteStream.setInputStream(aInputStream);
 			// we're using nsIFileOutputStream
-			if (this._outStream.write(byteStream.readBytes(bytes), bytes) != bytes) {
+			if (this._outStream.writeFrom(aInputStream, bytes) != bytes) {
 				throw ("chunks::write: read/write count mismatch!");
 			}
 			this._written += bytes;
 
 			this.parent.timeLastProgress = Utils.getTimestamp();
-			this.parent.invalidate();
 
 			return bytes;
 		} catch (ex) {
