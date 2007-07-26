@@ -39,7 +39,7 @@ pref("extensions.dta.toolsmenu", "0,0,0");
 pref("extensions.dta.toolshidden", false);
 pref("extensions.dta.closetab", false);
 pref("extensions.dta.closedta", false);
-pref("extensions.dta.saveTemp", true);
+pref("extensions.dta.saveTemp", false);
 pref("extensions.dta.downloadWin", true);
 pref("extensions.dta.conflictresolution", 3);
 pref("extensions.dta.ntask", 4);
