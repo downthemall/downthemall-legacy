@@ -2,8 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<title>Preferences</title>
-<link rel="stylesheet" type="text/css" href="style.css"/>
+	<title>Preferences</title>
+	<link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
 <body>
 <div id="header">
@@ -113,7 +113,7 @@
 	<p><code>Compact menu</code> will create just one menu entry for DownThemAll! which then opens a sub-menu which contains the usual options.</p>
 	
 	<h2 id="advanced">Advanced panel</h2>
-	<p><strong>Note of caution:</strong> Preferences on this panel might render DownThemAll! useless or cause other damage. Use with caution</p>
+	<p><strong>Note of caution:</strong> Preferences on this panel might render DownThemAll! useless or cause other damage. Use with caution!</p>
 	
 	<h3>Multipart download</h3>
 	<p>DownThemAll! may try to download a file in several chunks at once. This may accelerate the overall download.</p>
@@ -123,18 +123,33 @@
 	
 	<h3>Download timeout</h3>
 	<p>A server might not send any new data for some time. If this time exceeds this configured timeout the download will be canceled so that DownThemAll! may continue with the next download in queue.</p>
-	<p>If you have to deal with "laggy" servers you may want to raise the timeout.</p>
+	<p>If you have to deal with "laggy" servers often you may want to increase the timeout.</p>
 	
 	<h3>Temporary Files</h3>
-	<p>The unfinished downloads need to get stored somewhere. Per default the dedicated directory of your system will be used:</p>
-	<ul>
-		<li>Windows: <code>%TEMP%\dta</code> (such as <code>C:\Temp\dta</code>, <code>C:\Windows\Temp\dta</code>, or <code>C:\Documents and Settings\username\Local Settings\Temp\dta</code>)</p>
-		<li>Mac: </li>
-		<li>Linux/Unix: usually <code>temp/dta</code></li>
-	</ul>
-	<p>You may select not to save the files in a temp folder. Partial downloads will then be saved in the download directory</p>
-	<p>If you have a dedicated place to store downloads/big temporary files then you may also select a different directory here.</p>
-	
+	<p>The unfinished downloads need to get stored somewhere. Per default the destination directory will be used:</p>
+	<table>
+		<tr><th>Option</th><th>Result</th></tr>
+		<tr>
+			<td>Unchecked</td>
+			<td>The destination directory will be used (default)</td>
+		</tr>
+		<tr>
+			<td>Checked, no directory set</td>
+			<td>
+				dTa! will use the system Directory
+				<ul>
+					<li>Windows: <code>%TEMP%\dta-XXX</code> (such as <code>C:\Documents and Settings\username\Local Settings\Temp\dta-XXX</code>)</li>
+					<li>Mac: </li>
+					<li>Linux/Unix: usually <code>/tmp/dta-XXX</code></li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
+			<td>Checked, directory set</td>
+			<td>The specified directory will be used.</td>
+		</tr>
+	</table>
+	<p>Remember: You need write access to the directory!</p>	
 </div>
 </body>
 </html>
