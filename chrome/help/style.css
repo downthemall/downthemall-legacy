@@ -1,22 +1,17 @@
 * { 
- font-family: "Lucida Grande", "Lucida Sans Unicode", Arial;
- margin: 0px; 
- font-size: 13px; 
- text-align: justify;
- color: #333;
- line-height: 128%;
+	font-family: "Lucida Grande", "Lucida Sans Unicode", Arial;
+ 	margin: 0px; 
+	font-size: 13px; 
+	text-align: justify;
+	color: #333;
+	line-height: 128%;
  }
 
 a {
-color: #333;
+	color: #333;
 }
-
 a:hover {
-color: #663300;
-}
-
-body {
-	
+	color: #663300;
 }
 
 p {
@@ -127,9 +122,8 @@ pre#license {
 	margin: 0;
 	padding: 15px;
 	padding-top: 42px;
-	padding-bottom: 30px;
+	padding-bottom: 3em;
 	background: white url(chrome://dta/skin/common/logo.png) no-repeat right top;
-
 }
 
 .shortcut {
