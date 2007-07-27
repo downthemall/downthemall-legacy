@@ -383,7 +383,7 @@ var Dialog = {
 				link.dirSave = dir;
 				link.numIstance = counter;
 				link.mask = link.mask ? link.mask : mask;
-				return link
+				return link;
 			}
 
 			// build the actual array holding all selected links
