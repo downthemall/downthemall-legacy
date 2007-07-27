@@ -665,80 +665,31 @@ var DTA_Mediator = {
 		win.delayedOpenTab(url, ref);
 	},
 	removeTab: function WM_removeTab(url) {
-
-		var useRM = false;
-		try {
-			var ver = Components.classes["@mozilla.org/xre/app-info;1"]
-				.getService(Components.interfaces.nsIXULAppInfo)
-				.platformVersion;
-			var versionChecker = Components.classes["@mozilla.org/xpcom/version-comparator;1"]
-				.getService(Components.interfaces.nsIVersionComparator);
-			useRM = versionChecker.compare(ver, "1.8") < 0;
-		} catch (ex) {
-			// nothing to do here.
-			// seems to be an old version of Gecko/XRE.
-		}
-		var enumerator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-			.getService(Components.interfaces.nsIWindowMediator)
-			.getEnumerator("navigator:browser");
-
-		var chk = function(tab, url) {
-			if (tab.currentURI.spec == url || tab.contentWindow.location == url) {
-				return tab;
+		function chk(browser, url) {
+			if (browser.currentURI.spec == url) {
+				return true;
 			}
-			var frames = tab.contentWindow.frames;
+			var frames = browser.contentWindow.frames;
 			if (frames && frames.length) {
 				for (var i = 0; i < frames.length; i++) {
 					if (frames[i].location && frames[i].location == url) {
-						return tab;
+						return true;
 					}
 				}
 			}
-			return null;
-		};
-
-		// Check each browser instance for our URL
-		var numBrowsers = 0, numTabs = 0;
-		var tab = null, browser = null;
-
+			return false;
+		};		
+		
+		var enumerator = this._m.getEnumerator("navigator:browser");
 		while (enumerator.hasMoreElements()) {
 			var win = enumerator.getNext();
-			browser = win.getBrowser();
-
-			++numBrowsers;
-			numTabs = browser.browsers.length;
-
-			// likely its the selected tab.
-			if ((tab = chk(browser.selectedBrowser, url)) != null) {
-				break;
+			var browser = win.getBrowser();
+			for (var i = browser.browsers.length - 1; i >= 0; --i) {
+				if (chk(browser.getBrowserAtIndex(i), url)) {
+					browser.removeTab(browser.mTabContainer.childNodes[i]);
+					return;
+				}
 			}
-			// Check each tab of this browser instance
-			for (var i = 0; i < numTabs && !tab; ++i) {
-				tab = chk(browser.getBrowserAtIndex(i), url);
-			}
-			if (tab) {
-				break;
-			}
-		}
-
-		// nothing found :p
-		if (!tab)	{
-			return;
-		}
-
-		// newer gecko or more than one tab in window
-		if (useRM || numTabs > 1) {
-			browser.removeTab(tab);
-		}
-		// last tab, more windows, old gecko => close
-		else if (numBrowsers > 1 || enumerator.hasMoreElements()) {
-			win.close();
-		}
-		// old gecko, last tab, last window
-		else {
-			// this is the 1.8.0 way
-			browser.addTab('about:blank');
-			browser.removeTab(tab);
 		}
 	}
 };
