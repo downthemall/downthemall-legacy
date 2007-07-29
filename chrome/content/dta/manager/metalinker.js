@@ -34,18 +34,36 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
+function NSResolver(prefix) {
+  if(prefix == 'html') {
+    return 'http://www.w3.org/1999/xhtml';
+  }
+  else {
+  	alert(prefix);
+  	return 'http://www.metalinker.org/';
+  }
+}
+ 
  var Metalinker = {
  	_ios: Components.classes['@mozilla.org/network/io-service;1']
  		.getService(Components.interfaces.nsIIOService),
- 		
- 	_getSingle: function ML__getSingle(elem, name) {
- 		var rv = elem.getElementsByTagName(name);
- 		return rv.length ? rv[0].textContent.trim() : '';
+ 	_getNode: function ML__getNode(elem, query) {
+ 				var rv = elem.ownerDocument.evaluate(
+			'ml:' + query,
+			elem,
+			function() { return 'http://www.metalinker.org/'; },
+			XPathResult.FIRST_ORDERED_NODE_TYPE,
+			null
+		);
+		return rv.singleNodeValue;
  	},
- 	_getLinkRes: function(elem, name) {
- 		var rv = elem.getElementsByTagName(name);
- 		if (rv.length) {
- 			rv = rv[0];
+ 	_getSingle: function ML__getSingle(elem, query) {
+ 		var rv = this._getNode(elem, query);
+ 		return rv ? rv.textContent.trim() : '';
+ 	},
+ 	_getLinkRes: function(elem, query) {
+ 		var rv = this._getNode(elem, query);
+ 		if (rv) {
  			var n = this._getSingle(rv, "name"), l = this._checkURL(this._getSingle(rv, "url"));
  			if (n && l) {
  				return [n, l];
@@ -96,7 +114,8 @@
 				Debug.dump("failed to remove metalink file!", ex);
 			}
 			
-			if (root.nodeName != 'metalink') {
+			
+			if (root.nodeName != 'metalink' || root.getAttribute('version') != '3.0') {
 				throw new Error(_('mlinvalid'));
 			}
 			var locale = this.locale.slice(0,2);
@@ -156,10 +175,15 @@
 					'description': desc,
 					'ultDescription': '',
 					'hash': hash,
+					'license': this._getLinkRes(file, "license"),
+					'publisher': this._getLinkRes(file, "publisher"),
 					'identity': this._getSingle(file, 'identity'),
+					'copyright': this._getSingle(file, 'copyright'),
+					'version': this._getSingle(file, 'version'),
 					'logo': this._checkURL(this._getSingle(file, 'logo')),
 					'lang': this._getSingle(file, 'language'),
 					'sys': this._getSingle(file, 'os'),
+					'mirrors': urls.length, 
 					'selected': true
 				});
 			}
