@@ -2199,6 +2199,7 @@ function startDownloads(start, downloads) {
 	}
 
 	let added = 0;
+	let removeableTabs = {};
 	for (let e in g) {
 		e.dirSave.addFinalSlash();
 
@@ -2236,18 +2237,20 @@ function startDownloads(start, downloads) {
 		}
 		Tree.add(d);
 		++added;
+		if (Preferences.getDTA("closetab", false) && d.referrer) {
+			removeableTabs[d.referrer.spec] = true;			
+		}
 	}
-
-	// full save
-	new Timer(function() { SessionManager.save() }, 100);
-
-	if (Preferences.getDTA("closetab", false)) {
+	for (spec in removeableTabs) {
 		try {
-			DTA_Mediator.removeTab(d.referrer.spec);
+			DTA_Mediator.removeTab(spec);
 		} catch (ex) {
 			Debug.dump("failed to close old tab", ex);
 		}
 	}
+
+	// full save
+	new Timer(function() { SessionManager.save() }, 100);
 
 	var boxobject = Tree._box;
 	boxobject.QueryInterface(Ci.nsITreeBoxObject);
