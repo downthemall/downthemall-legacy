@@ -166,6 +166,13 @@ function NSResolver(prefix) {
 				if (!desc) {
 					desc = this._getSingle(root, 'description');
 				}
+				var size = this._getSingle(file, 'size');
+				try {
+					size = Utils.formatBytes(parseInt(size));
+				}
+				catch (ex) {
+					size = '';
+				}
 				downloads.push({
 					'url': new UrlManager(urls),
 					'referrer': download.referrer.spec,
@@ -179,6 +186,7 @@ function NSResolver(prefix) {
 					'publisher': this._getLinkRes(file, "publisher"),
 					'identity': this._getSingle(file, 'identity'),
 					'copyright': this._getSingle(file, 'copyright'),
+					'size': size,
 					'version': this._getSingle(file, 'version'),
 					'logo': this._checkURL(this._getSingle(file, 'logo')),
 					'lang': this._getSingle(file, 'language'),

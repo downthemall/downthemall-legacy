@@ -469,6 +469,9 @@ UrlManager.prototype = {
 	get charset() {
 		return this._urls[0].charset;
 	},
+	get length() {
+		return this._urls.length;
+	},
 	markBad: function um_markBad(url) {
 		if (this._urls.length > 1) {
 			this._urls = this._urls.filter(function(u) { return u != url; });

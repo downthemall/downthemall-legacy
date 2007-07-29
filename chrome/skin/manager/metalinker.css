@@ -20,6 +20,7 @@
 .additional {
 	text-align: right;
 	font-style: italic;
+	max-width: 10%;
 }
 richlistitem {
 	border-bottom: 1px dotted rgb(192, 192, 192);
