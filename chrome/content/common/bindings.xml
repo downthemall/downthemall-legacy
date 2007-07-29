@@ -34,7 +34,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** -->
- 
+
 <bindings
 	xmlns="http://www.mozilla.org/xbl"
 	xmlns:xbl="http://www.mozilla.org/xbl"
@@ -179,7 +179,6 @@
 			<xul:hbox flex="1">
 				<xul:vbox>
 					<xul:image class="icon" xbl:inherits="src=iconURL"/>
-					<xul:spacer flex="1"/>
 				</xul:vbox>
 				<xul:vbox flex="1">
 					<xul:checkbox anonid="check" xbl:inherits="label=identity,checked"/>
@@ -188,10 +187,7 @@
 						<xul:description flex="1" class="url" crop="center" xbl:inherits="value=url"/>
 					</xul:hbox>
 				</xul:vbox>
-				<xul:vbox class="additional">
-					<xul:description xbl:inherits="value=lang"/>
-					<xul:description xbl:inherits="value=sys"/>
-				</xul:vbox>
+				<xul:vbox class="additional" anonid="additional"/>
 			</xul:hbox>
 		</content>
 		
@@ -199,28 +195,49 @@
 			<constructor><![CDATA[
 				var dl = this.download;
 				this.setAttribute('checked', dl.selected);
-				this.setAttribute('identity', dl.identity ? dl.identity : dl.url.usable.getUsableFileName());
+				var id = '';
+				if (dl.identity) {
+					id = dl.identity + ' (' + dl.url.usable.getUsableFileName() + ')';
+				}
+				else {
+					id = dl.url.usable.getUsableFileName();
+				}
+				this.setAttribute('identity', id);
 				this.setAttribute('iconURL', dl.logo ? dl.logo : getIcon(dl.url.usable, false, 32));
 				this.setAttribute('url', dl.url.usable);
-				this.setAttribute('lang', dl.lang);
-				this.setAttribute('sys', dl.sys);
+				['license', 'publisher'].forEach(
+					function(e) {
+						if (dl[e]) {
+							var n = document.createElement('description');
+							n.setAttribute('class', 'link');
+							n.setAttribute('onclick', 'Metalinker.openLink(this)');
+							n.link = dl[e][1];							
+							n.appendChild(document.createTextNode(dl[e][0]));
+							this._additional.appendChild(n);
+						}
+					},
+					this
+				);							
+				['copyright', 'lang', 'sys', 'version', 'mirrors'].forEach(
+					function(e) {
+						if (dl[e]) {
+							var n = document.createElement('description');
+							n.appendChild(document.createTextNode(_(e, [dl[e]])));
+							this._additional.appendChild(n);
+						}
+					},
+					this
+				);
 				if (dl.description) {
 					this._desc.appendChild(document.createTextNode(dl.description));
 				}
 			]]></constructor>
 			<property name="_checkbox" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'check');"/>
+			<property name="_catcher" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'catcher');"/>
+			<property name="_additional" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'additional');"/>
 			<property name="_desc" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'desc');"/>
 			<property name="checked" onget="return this._checkbox.checked;"/>
 		</implementation>
-    <handlers>
-      <handler event="click" button="0" phase="capturing">
-      <![CDATA[
-        event.preventDefault();
-        event.stopPropagation();
-        this._checkbox.checked = !this._checkbox.checked;
-      ]]>
-      </handler>
-    </handlers>		
 	</binding>
 	
 	<binding id="hashinput">

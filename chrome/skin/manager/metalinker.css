@@ -18,10 +18,13 @@
 	margin-top: 0;
 }
 .additional {
+	text-align: right;
 	font-style: italic;
 }
 richlistitem {
 	border-bottom: 1px dotted rgb(192, 192, 192);
+	background-color: transparent !important;
+	color: inherit !important;	
 }
 richlistitem .icon {
 	margin-top: 1ex !important;

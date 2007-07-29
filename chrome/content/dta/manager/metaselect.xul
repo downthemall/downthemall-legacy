@@ -68,6 +68,7 @@
 
 	<stringbundleset>
 		<stringbundle src="chrome://dta/locale/common.properties"/>
+		<stringbundle src="chrome://dta/locale/metalinker.properties"/>		
 		<stringbundle src="chrome://dta/locale/manager.properties"/>
 		<stringbundle src="chrome://dta/locale/prefpanes.properties"/>
 	</stringbundleset>
