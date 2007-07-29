@@ -180,13 +180,15 @@
 				<xul:vbox>
 					<xul:image class="icon" xbl:inherits="src=iconURL"/>
 				</xul:vbox>
-				<xul:vbox flex="1">
+				<xul:vbox>
 					<xul:checkbox anonid="check" xbl:inherits="label=identity,checked"/>
+					<xul:hbox anonid="additionallinks"/>
 					<xul:description flex="1" anonid="desc"/>
 					<xul:hbox>
-						<xul:description flex="1" class="url" crop="center" xbl:inherits="value=url"/>
+						<xul:description flex="1" class="link" crop="center" xbl:inherits="value=url"/>
 					</xul:hbox>
 				</xul:vbox>
+				<xul:spacer flex="1"/>
 				<xul:vbox class="additional" anonid="additional"/>
 			</xul:hbox>
 		</content>
@@ -205,37 +207,37 @@
 				this.setAttribute('identity', id);
 				this.setAttribute('iconURL', dl.logo ? dl.logo : getIcon(dl.url.usable, false, 32));
 				this.setAttribute('url', dl.url.usable);
-				['license', 'publisher'].forEach(
-					function(e) {
-						if (dl[e]) {
-							var n = document.createElement('description');
-							n.setAttribute('class', 'link');
-							n.setAttribute('onclick', 'Metalinker.openLink(this)');
-							n.link = dl[e][1];							
-							n.appendChild(document.createTextNode(dl[e][0]));
-							this._additional.appendChild(n);
-						}
-					},
-					this
-				);							
-				['copyright', 'lang', 'sys', 'version', 'mirrors'].forEach(
-					function(e) {
-						if (dl[e]) {
-							var n = document.createElement('description');
-							n.appendChild(document.createTextNode(_(e, [dl[e]])));
-							this._additional.appendChild(n);
-						}
-					},
-					this
-				);
+				
+				function addSimple(e) {
+					if (dl[e]) {
+						var n = document.createElement('description');
+						n.appendChild(document.createTextNode(_(e, [dl[e]])));
+						n.setAttribute('crop', 'end');
+						this._additional.appendChild(n);
+					}
+				};
+				function addLink(e) {
+					if (dl[e]) {
+						var n = document.createElement('description');
+						n.setAttribute('class', 'link');
+						n.setAttribute('onclick', 'Metalinker.openLink(this)');
+						n.setAttribute('crop', 'center');
+						n.link = dl[e][1];							
+						n.appendChild(document.createTextNode(dl[e][0]));
+						this._additionalLinks.appendChild(n);
+					}
+				};
+				['size', 'version', 'sys', 'lang', 'copyright', 'mirrors'].forEach(addSimple, this);
+				['publisher', 'license'].forEach(addLink, this);
+				
 				if (dl.description) {
 					this._desc.appendChild(document.createTextNode(dl.description));
 				}
 			]]></constructor>
-			<property name="_checkbox" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'check');"/>
-			<property name="_catcher" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'catcher');"/>
-			<property name="_additional" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'additional');"/>
-			<property name="_desc" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'desc');"/>
+			<field name="_checkbox">document.getAnonymousElementByAttribute(this, 'anonid', 'check');</field>
+			<field name="_additional">document.getAnonymousElementByAttribute(this, 'anonid', 'additional');</field>
+			<field name="_additionalLinks">document.getAnonymousElementByAttribute(this, 'anonid', 'additionallinks');</field>
+			<field name="_desc">document.getAnonymousElementByAttribute(this, 'anonid', 'desc');</field>
 			<property name="checked" onget="return this._checkbox.checked;"/>
 		</implementation>
 	</binding>
