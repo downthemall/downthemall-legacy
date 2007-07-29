@@ -198,7 +198,7 @@ function NSResolver(prefix) {
 			if (!downloads.length) {
 				throw new Error(_('mlnodownloads'));
 			}
-			if (downloads.length > 1) {
+			if (downloads.length) {
 				var info = {
 					'identity': this._getSingle(root, 'identity'),
 					'description': this._getSingle(root, 'description'),
