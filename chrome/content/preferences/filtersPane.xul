@@ -18,7 +18,7 @@
 		helpTopic="Preferences_Filters"
 		flex="1"
 	>
-		<tree id="filterTable" flex="1" seltype="single" onselect="Filters.onTableSelectionChange()">
+		<tree id="filterTable" flex="1" seltype="single" onselect="Filters.selectionChanged()">
 			<treecols>
 				<treecol label="&listhead1.label;" flex="1" id="filtername" />
 				<splitter class="splitt" />
