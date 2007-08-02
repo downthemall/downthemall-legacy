@@ -25,7 +25,7 @@
 <!ENTITY mainpane.closetab.label "Close source tab when DownThemAll starts">
 <!ENTITY mainpane.alert.caption "When downloads are completed:">
 <!ENTITY mainpane.alertboxes.label "Alert me using alertboxes">
-<!ENTITY mainpane.alertslides.label "Alert me using Firefox slide notifications">
+<!ENTITY mainpane.alertslides.label "Alert me using slide notifications">
 <!ENTITY mainpane.alertnone.label "Don't alert me">
 <!ENTITY mainpane.sounddone.label "Play a sound when all downloads are complete">
 <!ENTITY mainpane.closedta.label "Close DownThemAll when downloads are completed">
@@ -49,7 +49,7 @@
 <!ENTITY privacypane.logs.caption "Diagnostic Log">
 <!ENTITY privacypane.enablelogs.label "Enable diagnostic logging">
 <!ENTITY privacypane.notice.caption "Notice">
-<!ENTITY privacypane.notice.desc "DownThemAll also integrates with Firefox's built-in Clear Private Data feature.">
+<!ENTITY privacypane.notice.desc "DownThemAll also integrates with the built-in Clear Private Data feature (if available).">
 <!ENTITY privacypane.privacynotice.label "Our Privacy Notice">
 
 <!ENTITY advancedpane.label "Advanced">
