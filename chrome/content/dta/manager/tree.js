@@ -286,6 +286,7 @@ var Tree = {
 	},
 	selectAll: function T_selectAll() {
 		this.selection.selectAll();
+		this.selectionChanged();
 	},
 	selectInv: function T_selectInv() {
 		for (let d in this.all) {
