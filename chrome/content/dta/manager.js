@@ -42,6 +42,9 @@ if (!Cc) {
 if (!Ci) {
 	var Ci = Components.interfaces;
 }
+if (!Exception) {
+	var Exception = Components.Exception;
+}
 
 const MIN_CHUNK_SIZE = 700 * 1024;
 // in use by chunk.writer...
@@ -621,12 +624,12 @@ Visitor.prototype = {
 					continue;
 				}
 				Debug.dump(x + " missing");
-				throw new Components.Exception(x + " is missing");
+				throw new Exception(x + " is missing");
 			}
 			// header is there, but differs
 			else if (this[x] != v[x]) {
 				Debug.dump(x + " nm: [" + this[x] + "] [" + v[x] + "]");
-				throw new Components.Exception("Header " + x + " doesn't match");
+				throw new Exception("Header " + x + " doesn't match");
 			}
 		}
 	},
@@ -712,7 +715,7 @@ VisitorManager.prototype = {
 				return this._visitors[i].time;
 			}
 		}
-		throw new Components.Exception("No Date registered");
+		throw new Exception("No Date registered");
 	}
 };
 
@@ -1122,7 +1125,7 @@ QueueItem.prototype = {
 				}
 				// small validation. Around epoche? More than a month in future?
 				if (time < 2 || time > Date.now() + 30 * 86400000) {
-					throw new Components.Exception("invalid date encountered: " + time + ", will not set it");
+					throw new Exception("invalid date encountered: " + time + ", will not set it");
 				}
 				// have to unwrap
 				var file = new FileFactory(this.destinationFile);
@@ -1453,13 +1456,14 @@ QueueItem.prototype = {
 	}
 }
 
-var Chunk = function(download, start, end, written) {
+function Chunk(download, start, end, written) {
 	// saveguard against null or strings and such
 	this._written = written > 0 ? written : 0;
 	this._start = start;
 	this._end = end;
 	this.end = end;
 	this._parent = download;
+	this._sessionbytes = 0;
 }
 
 Chunk.prototype = {
@@ -1503,6 +1507,7 @@ Chunk.prototype = {
 		this._written += ch._written;
 	},
 	open: function CH_open() {
+		this._sessionBytes = 0;
 		let file = this.parent.tmpFile.clone();
 		if (!file.parent.exists()) {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
@@ -1534,6 +1539,13 @@ Chunk.prototype = {
 			this.parent.removeTmpFile();
 		}
 	},
+	rollback: function CH_rollback() {
+		if (!this._sessionBytes || this._sessionBytes > this._written) {
+			return;
+		}
+		this._written -= this._sessionBytes;
+		this._sessionBytes = 0;
+	},
 	cancel: function CH_cancel() {
 		this.running = false;
 		if (this.download) {
@@ -1556,18 +1568,20 @@ Chunk.prototype = {
 				return 0;
 			}
 			if (bytes < 0) {
-				throw new Components.Exception("bytes negative");
+				throw new Exception("bytes negative");
 			}
 			// we're using nsIFileOutputStream
 			if (this._outStream.writeFrom(aInputStream, bytes) != bytes) {
 				throw ("chunks::write: read/write count mismatch!");
 			}
 			this._written += bytes;
+			this._sessionBytes += bytes;
 
 			this.parent.timeLastProgress = Utils.getTimestamp();
 
 			return bytes;
-		} catch (ex) {
+		}
+		catch (ex) {
 			Debug.dump('write: ' + this.parent.tmpFile.path, ex);
 			throw ex;
 		}
@@ -1794,7 +1808,7 @@ Download.prototype = {
 			Debug.dump("handleError: found joinable chunk; recovering suceeded", found);
 			d.chunks[found].end = c.end;
 			if (--d.maxChunks == 1) {
-				d.resumable = false;
+				//d.resumable = false;
 			}
 			d.chunks = d.chunks.filter(function(ch) { return ch != c; });
 			d.chunks.sort(function(a,b) { return a.start - b.start; });
@@ -1839,17 +1853,25 @@ Download.prototype = {
 			return true;
 		}
 		 
-		
 		if (code >= 400) {
 			if (!this.handleError()) {
 				Debug.dump("handleError: Cannot recover from problem!", code);
-				var file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
-				code = Utils.formatNumber(code, 3);
-				d.fail(
-					_("error", [code]),
-					_("failed", [file]) + " " + _("sra", [code]) + ": " + status,
-					_("error", [code])
-				);
+				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1) {
+					Debug.dump("we got temp failure!", code);
+					d.pause();
+					d.status = code >= 500 ? _('temperror') : _('autherror');
+				}
+				else {
+					var file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
+					code = Utils.formatNumber(code, 3);
+					d.fail(
+						_("error", [code]),
+						_("failed", [file]) + " " + _("sra", [code]) + ": " + status,
+						_("error", [code])
+					);
+				}
+				// any data that we got over this channel should be considered "corrupt"
+				c.rollback();
 				SessionManager.save(d);
 			}
 			return false;
@@ -1951,7 +1973,7 @@ Download.prototype = {
 		
 		// hack: determine if we are a multi-part chunk,
 		// if so something bad happened, 'cause we aren't supposed to be multi-part
-		if (c.start != 0) {
+		if (c.start != 0 && d.is(RUNNING)) {
 			if (!this.handleError()) {
 				Debug.dump(d + ": Server error or disconnection (type 1)");
 				d.status = _("servererror");
@@ -2113,9 +2135,9 @@ Download.prototype = {
 		}
 		
 		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
-		if (c.starter && !shouldFinish) {
+		if (c.starter && !shouldFinish && d.is(RUNNING)) {
 			if (!d.urlManager.markBad(this.url)) {
-				Debug.dump(d + ": Server error or disconnection (type 1)");
+				Debug.dump(d + ": Server error or disconnection (type 2)");
 				d.status = _("servererror");
 				d.speed = '';
 				d.pause();
