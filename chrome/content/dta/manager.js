@@ -2167,11 +2167,17 @@ Download.prototype = {
 			d.finishDownload();
 		}
 		else if (!d.is(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
-			d.fail(
-				_('errmismatchtitle'),
-				_('errmismatchtext', [c.written, c.total]),
-				_('errmismatchtitle')
-			);
+			if (d.resumable) {
+				d.pause();
+				d.status = _('errmismatchtitle');
+			}
+			else {
+				d.fail(
+					_('errmismatchtitle'),
+					_('errmismatchtext', [d.partialSize, d.totalSize]),
+					_('errmismatchtitle')
+				);
+			}
 			return;			
 		}
 		else if (!d.is(PAUSED, CANCELED)) {
