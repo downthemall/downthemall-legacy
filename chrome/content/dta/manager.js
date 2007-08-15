@@ -93,7 +93,8 @@ var Dialog = {
 			}
 		}
 		this._updTimer = new Timer("Dialog.checkDownloads();", REFRESH_FREQ, true, true);
-		this._updTimer = new Timer("Dialog.refreshWritten();", 100, true, true);
+		new Timer("Dialog.refreshWritten();", 100, true, true);
+		new Timer("Dialog.saveRunning();", 10000, true);
 	},
 	observe: function D_observe(subject, topic, data) {
 		if (topic == 'quit-application-requested') {
@@ -142,7 +143,6 @@ var Dialog = {
 					}
 					i.lastBytes = d.partialSize;
 					sum += i.lastBytes;
-					SessionManager.save(d);
 				}
 			);
 			let speed = Math.round((sum - this._lastSum) * REFRESH_NFREQ);
@@ -186,6 +186,18 @@ var Dialog = {
 				i.d.invalidate();
 			}
 		);
+	},
+	saveRunning: function D_saveRunning() {
+		if (!this._running.length) {
+			return;
+		}
+		SessionManager.beginUpdate();
+		this._running.forEach(
+			function(i) {
+					SessionManager.save(i.d);
+			}
+		);
+		SessionManager.endUpdate();
 	},
 
 	checkDownloads: function D_checkDownloads() {
@@ -1179,11 +1191,10 @@ QueueItem.prototype = {
 			);
 			return;
 		}
-		this.state = COMPLETE;
-		this.status = _("complete");
 		this.chunks = [];		
 		this.activeChunks = 0;
-		SessionManager.save(this);
+		this.state = COMPLETE;
+		this.status = _("complete");
 	},
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
