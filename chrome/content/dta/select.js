@@ -34,12 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-if (!Cc) {
-	var Cc = Components.classes;
-}
-if (!Ci) {
-	var Ci = Components.interfaces;
-}
+const Cc = Components.classes;
+const Ci = Components.interfaces;
 
 /**
  * implemtents nsITreeView

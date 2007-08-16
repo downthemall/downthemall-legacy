@@ -36,15 +36,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-if (!Cc) {
-	var Cc = Components.classes;
-}
-if (!Ci) {
-	var Ci = Components.interfaces;
-}
-if (!Exception) {
-	var Exception = Components.Exception;
-}
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Exception = Components.Exception;
 
 const MIN_CHUNK_SIZE = 700 * 1024;
 // in use by chunk.writer...
