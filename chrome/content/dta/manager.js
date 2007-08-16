@@ -1228,9 +1228,9 @@ QueueItem.prototype = {
 			let name = this.fileName;
 			let ext = name.getExtension();
 			if (ext) {
-				name = name.substring(0, this.fileName.lastIndexOf("."));
+				name = name.substring(0, name.length - ext.length - 1);
 
-				if (this.contentType && /html?/.test(this.contentType) && !/htm/.test(ext)) {
+				if (this.contentType && /htm/.test(this.contentType) && !/htm/.test(ext)) {
 					ext += ".html";
 				}
 			}
@@ -2096,7 +2096,11 @@ Download.prototype = {
 				c.end = d.totalSize - 1;
 				Debug.dump("exheader fin");
 				delete this.isInfoGetter;
-				ConflictManager.resolve(d);				
+				
+				// Explicitly trigger rebuildDestination here, as we might have received
+				// a html content type and need to rewrite the file
+				d.rebuildDestination();
+				ConflictManager.resolve(d);
 			}
 			
 			if (d.resumable) {
@@ -2314,7 +2318,7 @@ const FileOutputStream = Components.Constructor(
 
 var ConflictManager = {
 	_items: [],
-	resolve: function(download, reentry) {
+	resolve: function CM_resolve(download, reentry) {
 		if (!this._check(download)) {
 			if (reentry) {
 				download[reentry]();
@@ -2333,7 +2337,7 @@ var ConflictManager = {
 		this._items.push({download: download, reentry: reentry});
 		this._process();
 	},
-	_check: function(download) {
+	_check: function CM__check(download) {
 		let dest = new FileFactory(download.destinationFile);
 		let sn = false;
 		if (download.is(RUNNING)) {
@@ -2342,7 +2346,7 @@ var ConflictManager = {
 		Debug.dump("conflict check: " + sn + "/" + dest.exists() + " for " + download.destinationFile);
 		return dest.exists() || sn;
 	},
-	_process: function() {
+	_process: function CM__process() {
 		if (this._processing) {
 			return;
 		}
@@ -2403,7 +2407,7 @@ var ConflictManager = {
 			options, this
 		);
 	},
-	_returnFromDialog: function(option, type) {
+	_returnFromDialog: function CM__returnFromDialog(option, type) {
 		if (type == 1) {
 			this._sessionSetting = option;
 		}
@@ -2412,7 +2416,7 @@ var ConflictManager = {
 		}		
 		this._return(option);
 	},
-	_return: function(option) {
+	_return: function CM__return(option) {
 		let cur = this._items[0];
 		switch (option) {
 			/* rename */    case 0: cur.download.conflicts = cur.conflicts; break;
