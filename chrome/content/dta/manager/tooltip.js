@@ -47,7 +47,9 @@ var Tooltip = {
 	},
 	stop: function() {
 		this._current = null;
-		this._timer.kill();
+		if (this._timer) {
+			this._timer.kill();
+		}
 	},	
 	update: function() {
 		this.updateChunkCanvas();

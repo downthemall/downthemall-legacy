@@ -15,15 +15,13 @@
 <!DOCTYPE dialog [
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
 	%commonDTD;
-	<!ENTITY % infoDTD SYSTEM "chrome://dta/locale/info.dtd">
-	%infoDTD;
 	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
 	%managerDTD;	
 ]>
 
 <dialog
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
-	title="&title;" 
+	title="&infoMultiple.value;" 
 	id="dTaDownloadInfo" 
 	onload="Dialog.load();" 
 	buttons="accept,cancel" 
