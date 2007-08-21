@@ -41,11 +41,12 @@ var Tree = {
 
 		let as = 	Cc["@mozilla.org/atom-service;1"]
 			.getService(Ci.nsIAtomService);
-		this._iconic = as.getAtom('iconic');
-		this._complete = as.getAtom('completed');
-		this._inprogress = as.getAtom('inprogress');
-		this._paused = as.getAtom('paused');
-		this._canceled = as.getAtom('canceled');
+		['iconic', 'completed', 'inprogress', 'paused', 'canceled'].forEach(
+			function(e) {
+				this['_' + e] = as.getAtom(e);
+			},
+			this
+		);
 		this.elem.view = this;	
 		
 	},
@@ -56,7 +57,6 @@ var Tree = {
 	get rowCount() {
 		return this._downloads.length;
 	},
-	// used to initialize nsITreeview and provide the corresponding treeBoxObject
 	setTree: function T_setTree(box) {
 		this._box = box;
 	},
@@ -170,7 +170,6 @@ var Tree = {
 			this.refreshTools();
 		}
 	},
-	// stuff
 	add: function T_add(download) {
 		this._downloads.push(download);
 		download.position = this._downloads.length - 1;
@@ -178,8 +177,6 @@ var Tree = {
 			this._box.rowCountChanged(download.position, 1);
 		}
 	},
-	
-	// d = null -> selection, d = downloadE, d = array -> all in list
 	remove: function T_remove(downloads) {
 		if (downloads && !(downloads instanceof Array)) {
 			downloads = [downloads];
@@ -227,8 +224,8 @@ var Tree = {
 	removeCompleted: function T_removeCompleted() {
 		SessionManager.beginUpdate();
 		this.beginUpdate();
-		let delta = 0, last = 0;
-		for (let i = this._downloads.length - 1; i > -1; --i) {
+		let delta = this._downloads.length, last = 0;
+		for (let i = delta - 1; i > -1; --i) {
 			let d = this._downloads[i];
 			if (!d.is(COMPLETE)) {
 				continue;
@@ -236,14 +233,14 @@ var Tree = {
 			SessionManager.deleteDownload(d);
 			this._downloads.splice(d.position, 1);
 			this._box.rowCountChanged(d.position, -1);
-			last = Math.max(d.position, last);			
+			last = Math.max(d.position, last);
 			delete d.position;
 		}
 		SessionManager.endUpdate();
 		this.selection.clearSelection();
 		this.endUpdate();	
 		this.invalidate();
-		this._removeCleanup(delta, last);
+		this._removeCleanup(delta - this._downloads.length, last);
 		SessionManager.savePositions();		
 	},
 	_removeCleanup: function(delta, last) {
@@ -251,10 +248,11 @@ var Tree = {
 			this._box.ensureRowIsVisible(0);
 		}
 		else {
-			let np = Math.max(0, Math.min(last - delta, this.rowCount));
-			if (np < this._box.getFirstVisibleRow() || np > this._box.lastVisibleRow) {
+			let np = Math.max(0, Math.min(last - delta + 1, this.rowCount - 1));
+			if (np < this._box.getFirstVisibleRow() || np > this._box.getLastVisibleRow()) {
 				this._box.ensureRowIsVisible(np);
 			}
+			this.selection.currentIndex = np;			
 		}
 	},
 	pause: function T_pause() {
