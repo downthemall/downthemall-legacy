@@ -45,7 +45,6 @@ const MIN_CHUNK_SIZE = 700 * 1024;
 // in use by decompressor... beware, actual size might be more than twice as big!
 const MAX_BUFFER_SIZE = 5 * 1024 * 1024;
 const MIN_BUFFER_SIZE = 1 * 1024 * 1024;
-const SPEED_COUNT = 25;
 
 const REFRESH_FREQ = 1000;
 const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
