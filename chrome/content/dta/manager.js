@@ -1401,7 +1401,7 @@ QueueItem.prototype = {
 			// start some new chunks
 			var paused = this.chunks.filter(
 				function (chunk) {
-					return !chunk.running && !chunk.complete;
+					return !(chunk.running || chunk.complete);
 				}
 			);
 			while (this.activeChunks < this.maxChunks) {
