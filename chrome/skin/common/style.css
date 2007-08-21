@@ -1,6 +1,7 @@
 @import 'chrome://dta/content/common/bindings.css';
 @import 'chrome://dta-platform/skin/common.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+@namespace html url("http://www.w3.org/1999/xhtml");
 
 /* maskbutton */
 maskbutton {
@@ -151,6 +152,12 @@ treechildren::-moz-tree-image(iconic) {
 	padding-right: 0.5ex;
 }
 
-textbox[readonly], menulist[disabled], textbox[readonly] *, menulist[disabled] * {
-	background-color: -moz-dialog !important;
+textbox[readonly], menulist[disabled] {
+  cursor: default !important;
+  background-color: -moz-dialog !important;
+  color: GrayText !important;
+}
+textbox[readonly] html|*.textbox-input {
+  color: GrayText !important;
+	font-style: italic;
 }
