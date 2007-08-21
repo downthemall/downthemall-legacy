@@ -108,7 +108,7 @@ toolbox {
 	font-weight: bold;
 }
 #infoGrid label[crop] {
-	font-weight: normal !important;
+	font-weight: normal;
 	max-width: 300px;	
 }
 #canvasGrid label[id] {

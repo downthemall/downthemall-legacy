@@ -37,6 +37,8 @@
  * ***** END LICENSE BLOCK ***** */
  
 const TOOLTIP_FREQ = 500;
+const SPEED_COUNT = 25;
+
 var Tooltip = {
 	_current: null,
 	start: function(d) {
@@ -194,26 +196,27 @@ var Tooltip = {
 		}
 		
 		try {
+			if (file.speeds.length) {
+				var avg = 0;
+				file.speeds.forEach(
+					function(s) {
+						avg += s;
+					}
+				)
+				$('speedAverage').value = Utils.formatBytes(avg / file.speeds.length) + "/s";
+			}
+			else {
+				$('speedAverage').value = _('unknown');
+			}
+
 			$('infoSize').value = file.totalSize > 0 ? Utils.formatBytes(file.totalSize) : _('unknown');
 			if (file.is(RUNNING)) {
 				$('timeElapsed').value = Utils.formatTimeDelta((Utils.getTimestamp() - file.timeStart) / 1000);
 				$('timeRemaining').value = file.status;
 				$('speedCurrent').value = file.speed;
-				if (file.speeds.length) {
-					var avg = 0;
-					file.speeds.forEach(
-						function(s) {
-							avg += s;
-						}
-					)
-					$('speedAverage').value = Utils.formatBytes(avg / file.speeds.length) + "/s";
-				}
-				else {
-					$('speedAverage').value = _('unknown');
-				}
 			}
 			else {
-				$('timeElapsed', 'timeRemaining', 'speedCurrent', 'speedAverage').forEach(
+				$('timeElapsed', 'timeRemaining', 'speedCurrent').forEach(
 					function(e) {
 						e.value = _('nal');
 					}

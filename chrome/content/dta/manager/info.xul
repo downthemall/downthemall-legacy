@@ -10,12 +10,15 @@
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://dta/skin/manager/info.css" type="text/css" ?>
 
 <!DOCTYPE dialog [
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
 	%commonDTD;
 	<!ENTITY % infoDTD SYSTEM "chrome://dta/locale/info.dtd">
 	%infoDTD;
+	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
+	%managerDTD;	
 ]>
 
 <dialog
@@ -24,9 +27,9 @@
 	title="&title;" 
 	id="dTaDownloadInfo" 
 	onload="Dialog.load();" 
-	style="width:500px; margin: 0; padding: 0;"
 	buttons="accept,cancel" 
-	ondialogaccept="return Dialog.accept();" 
+	ondialogaccept="return Dialog.accept();"
+	ondialogcancel="Tooltip.stop(); return true;"
 	>
 	
 	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" /> 
@@ -34,6 +37,7 @@
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js"/>
 	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/info.js"/>
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/tooltip.js"/>
 	
 	<script src="chrome://global/content/nsDragAndDrop.js"/>
 	<script src="chrome://global/content/nsTransferable.js"/>
@@ -46,18 +50,36 @@
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 	</keyset>
 	
-	<dialogheader id="logo" title="&info.label;" />
-
-	<grid style="padding:5px 10px;">
+	<hbox>
+		<vbox>
+			<spacer flex="1"/>
+			<image id="infoIcon"/>
+			<spacer flex="1"/>
+		</vbox>
+		<separator class="thin" />
+		<grid id="infoGrid">
+			<columns><column/><column flex="1"/></columns>
+			<rows>
+				<label crop="left" id="infoDest" />
+				<row>
+					<label value="&infoURLTitle.value;" />
+					<label crop="left" id="infoURL" />
+				</row>
+				<row>
+					<label value="&infoSizeTitle.value;" />
+					<label crop="left" id="infoSize" />
+				</row>
+			</rows>
+			<spacer flex="1"/>
+		</grid>
+	</hbox>
+	<separator class="thin" />
+	<grid>
 		<columns>
 			<column />
 			<column flex="1"/>
 		</columns>
 		<rows>
-			<row align="center">
-				<label control="infoURL" id="infoURLTitle" value="&link.value;" />
-				<textbox id="infoURL" readonly="true" />
-			</row>
 			<row align="center">
 				<label control="sourcePage" id="sourcePageTitle" value="&referrer.value;" />
 				<textbox id="sourcePage" readonly="true" />
@@ -82,6 +104,29 @@
 			</row>
 		</rows>
 	</grid>
-	
-	<html:canvas id="draw" width="300" height="20" style="border:1px solid #555; margin:5px 10px;" ></html:canvas>
+	<separator class="thin" />
+	<grid id="canvasGrid">
+		<columns><column/><column flex="1"/><column/><column/></columns>
+		<rows>
+			<stack>
+				<html:canvas id="chunkCanvas" height="40px"></html:canvas>
+				<label id="infoPercent"/>
+			</stack>
+			<row>
+				<label value="&elapsedTitle.value;"/>
+				<label id="timeElapsed"/>
+				<label value="&remainingTitle.value;"/>
+				<label id="timeRemaining"/>
+			</row>
+			<separator class="thin" />
+			<html:canvas id="speedCanvas" height="33"></html:canvas>
+			<row>
+				<label value="&currentSpeedTitle.value;"/>
+				<label id="speedCurrent"/>
+				<label value="&avgSpeedTitle.value;"/>
+				<label id="speedAverage"/>
+			</row>
+		</rows>
+	</grid>
+
 </dialog>

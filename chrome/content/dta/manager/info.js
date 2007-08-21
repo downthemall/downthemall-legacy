@@ -23,27 +23,28 @@ var Dialog = {
 	},
 	load: function DTA_load() {
 		try {
-			this.canvas = $("draw").getContext("2d");
-
 			// d is an Array of Downloads
 			var downloads = window.arguments[0];
 			if (downloads.length == 1) {
 				var d = downloads[0];
-				$("infoURL").value = d.urlManager.usable;
+				$("infoIcon").src = d.largeIcon;
+				$("infoURL").value = d.urlManager.url;
+				window.title = $("infoDest").value = d.destinationFile;
+			
 				$("sourcePage").value = d.referrer.spec;
 				$('renaming').value = d.mask;
 				$('directory').value = d.pathName;
 				$('hash').value = d.hash;
-				var caption = document.getAnonymousNodes($("logo"))[0];
-				caption.style.backgroundImage = 'url(' + getIcon(d.fileName, 'isMetaLink' in d, 32) + ')';
-				caption.style.paddingLeft = '37px';
 				this.item = d;
-				Dialog.draw();
+				Tooltip.start(d);
 			}
 			else {
-				
 				// more than just one download
-				$("infoURL").value = $("sourcePage").value = "---";
+				$('infoDest', 'infoURL', 'sourcePage').forEach(
+					function(e) {
+						e.value = "---";
+					}
+				);
 				$("hash").setAttribute('readonly', 'true');
 				$("hash").setAttribute('disabled', 'true');
 	
@@ -127,59 +128,8 @@ var Dialog = {
 				}
 			}
 		}
-		
-		// XXX: saveing destroys order, saving with putting new entries in the end, or as 2nd entry?
-		
+		Tooltip.stop();
 		return true;
-	},
-	draw: function DTA_draw() {
-		var d = this.item;
-		
-		var c = d.firstChunk;
-		var canvas = this.canvas;
-		
-		canvas.clearRect(0,0,300,20);
-
-		var prog = canvas.createLinearGradient(0,0,0,16);
-		prog.addColorStop(0, 'rgba(96,165,1,255)');
-		prog.addColorStop(1, 'rgba(123,214,1,255)');
-
-		var compl = canvas.createLinearGradient(0,0,0,16);
-		compl.addColorStop(0, 'rgba(13,141,15,255)');
-		compl.addColorStop(1, 'rgba(0,199,56,255)');
-		
-		var cancel = canvas.createLinearGradient(0,0,0,16);
-		cancel.addColorStop(0, 'rgba(151,58,2,100)');
-		cancel.addColorStop(1, 'rgba(255,0,0,100)');
-		
-		var normal = canvas.createLinearGradient(0,0,0,16);
-		normal.addColorStop(0, 'rgba(255,255,255,50)');
-		normal.addColorStop(1, '#ECE9D8');
-		
-		canvas.fillStyle = normal;
-		canvas.fillRect(0,0,300,20);
-
-		if (d.is(COMPLETE, FINISHING)) {
-			canvas.fillStyle = compl;
-			canvas.fillRect(0,0,300,20);
-		} else if (d.is(CANCELED)) {
-			canvas.fillStyle = cancel;
-			canvas.fillRect(0,0,300,20);
-		} else if (d.started && d.totalSize) {
-			d.chunks.forEach(
-				function(c) {
-					this.canvas.fillStyle = prog;
-					this.canvas.fillRect(
-						Math.ceil(c.start / d.totalSize * 300),
-						0,
-						Math.ceil(c.written / d.totalSize * 300),
-						20
-					);
-				},
-				this
-			);
-		}
-		setTimeout('Dialog.draw();', 150);
 	},
 	browseDir: function DTA_browseDir() {
 		// let's check and create the directory
