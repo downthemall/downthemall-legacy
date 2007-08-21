@@ -124,6 +124,10 @@ toolbox {
 	font-weight: bold;
 	background: transparent !important;
 }
+#infoDest {
+	font-weight: bold !important;
+	font-size: 105%;
+}
 
 treechildren::-moz-tree-progressmeter(completed) {
   color: #008F00;

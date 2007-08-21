@@ -14,7 +14,6 @@
 <!ENTITY parts.label "Chunks">
 <!ENTITY speed.label "Speed">
 <!ENTITY infoURLTitle.value "From:">
-<!ENTITY infoDestTitle.value "File: ">
 <!ENTITY infoSizeTitle.value "Size:">
 <!ENTITY elapsedTitle.value "Elapsed:">
 <!ENTITY remainingTitle.value "Remaining:">
