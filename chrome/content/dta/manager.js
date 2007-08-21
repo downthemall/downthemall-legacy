@@ -571,10 +571,9 @@ Visitor.prototype = {
 				break;
 
 				case 'content-range':
-					// XXX?
-					var dim = aValue.substring(aValue.lastIndexOf('/') + 1, aValue.length);
-					if (dim.length>0 && dim.lastIndexOf('*')==-1) {
-						this.contentlength = Number(dim);
+					let cl = new Number(aValue.split('/').pop());
+					if (cl > 0) {
+						this.contentlength = cl;
 					}
 				break;
 				case 'last-modified':
