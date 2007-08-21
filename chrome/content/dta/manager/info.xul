@@ -22,7 +22,7 @@
 <dialog
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	title="&infoMultiple.value;" 
-	id="dTaDownloadInfo" 
+	id="DownThemAll" 
 	onload="Dialog.load();" 
 	buttons="accept,cancel" 
 	ondialogaccept="return Dialog.accept();"
