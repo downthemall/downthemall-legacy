@@ -3,14 +3,6 @@
 dialog {
 	width: 600px;
 }
-
-/*dialog .dialog-content-box {
-	padding: 1ex;
-}*/
 #infoIcon {
 	margin: 1em;
-}
-#infoDest {
-	font-weight: bold !important;
-	font-size: 105%;
 }

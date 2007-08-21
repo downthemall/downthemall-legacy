@@ -18,7 +18,8 @@
 	%managerDTD;
 ]>
 
-<window xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
+<window
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	onload="Dialog.init();" 
 	title="DownThemAll!"  
 	id="DownThemAll"
@@ -106,56 +107,8 @@
 		</popup>
 		<tooltip id="tooltip" position="at_pointer" noautohide="true" onpopupshowing="return Tree.showTip(event);" onpopuphiding="Tree.stopTip();" orient="vertical">
 			<vbox>
-				<hbox>
-					<vbox>
-						<spacer flex="1"/>
-						<image id="infoIcon"/>
-						<spacer flex="1"/>
-					</vbox>
-					<separator class="thin" />
-					<grid id="infoGrid">
-						<columns><column/><column flex="1"/></columns>
-						<rows>
-							<row>
-								<label value="&infoDestTitle.value;" />
-								<label crop="left" id="infoDest" />
-							</row>
-							<row>
-								<label value="&infoURLTitle.value;" />
-								<label crop="left" id="infoURL" />
-							</row>
-							<row>
-								<label value="&infoSizeTitle.value;" />
-								<label crop="left" id="infoSize" />
-							</row>
-						</rows>
-						<spacer flex="1"/>
-					</grid>
-				</hbox>
-				<separator class="thin" />
-				<grid id="canvasGrid">
-					<columns><column/><column flex="1"/><column/><column/></columns>
-					<rows>
-						<stack>
-							<html:canvas id="chunkCanvas" height="40px"></html:canvas>
-							<label id="infoPercent"/>
-						</stack>
-						<row>
-							<label value="&elapsedTitle.value;"/>
-							<label id="timeElapsed"/>
-							<label value="&remainingTitle.value;"/>
-							<label id="timeRemaining"/>
-						</row>
-						<separator class="thin" />
-						<html:canvas id="speedCanvas" height="33"></html:canvas>
-						<row>
-							<label value="&currentSpeedTitle.value;"/>
-							<label id="speedCurrent"/>
-							<label value="&avgSpeedTitle.value;"/>
-							<label id="speedAverage"/>
-						</row>
-					</rows>
-				</grid>
+				<hbox id="infoBox"/>
+				<grid id="canvasGrid"/>
 			</vbox>
 		</tooltip>
 	</popupset>	

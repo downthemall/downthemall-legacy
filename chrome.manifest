@@ -12,6 +12,8 @@ skin	dta-platform	classic/1.0 chrome/skin/
 ### integration ###
 
 ## general ##
+overlay chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager/tooltip.xul
+overlay chrome://dta/content/dta/manager/info.xul chrome://dta/content/dta/manager/tooltip.xul
 # work-around bugs in loadOverlay preventing seamonkey integration otherwise
 overlay chrome://dta/content/preferences/prefs.xul chrome://dta/content/preferences/interfacePane.xul
 style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/integration/style.css
