@@ -40,7 +40,9 @@ var Dialog = {
 			}
 			else {
 				// more than just one download
-				$('infoDest', 'infoURL', 'sourcePage').forEach(
+				$('infoIcon').src = 'chrome://dta/skin/common/icon.png';
+				$('infoDest').value = window.title;
+				$('infoURL', 'infoSize', 'sourcePage').forEach(
 					function(e) {
 						e.value = "---";
 					}
@@ -59,14 +61,7 @@ var Dialog = {
 					downloads.every(function(e) { return e.pathName == dir; })
 					? dir
 					: '';
-
-				var normal = this.canvas.createLinearGradient(0,0,0,16);
-				normal.addColorStop(0, 'rgba(255,255,255,50)');
-				normal.addColorStop(1, '#ECE9D8');
-			
-				this.canvas.fillStyle = normal;
-				this.canvas.fillRect(0,0,300,20);
-					
+				$('canvasGrid').hidden = true;
 			}				
 			if (downloads.every(function(d) { return d.is(COMPLETE, FINISHING); })) {
 				$('directory', 'renaming', 'mask', 'browsedir').forEach(
