@@ -29,9 +29,11 @@ var Dialog = {
 				var d = downloads[0];
 				$("infoIcon").src = d.largeIcon;
 				$("infoURL").value = d.urlManager.url;
-				window.title = $("infoDest").value = d.destinationFile;
+				document.title = $("infoDest").value = d.destinationFile;
 			
-				$("sourcePage").value = d.referrer.spec;
+				if (d.referrer) {
+					$("sourcePage").value = d.referrer.spec;
+				}
 				$('renaming').value = d.mask;
 				$('directory').value = d.pathName;
 				$('hash').value = d.hash;
@@ -41,7 +43,7 @@ var Dialog = {
 			else {
 				// more than just one download
 				$('infoIcon').src = 'chrome://dta/skin/common/icon.png';
-				$('infoDest').value = window.title;
+				$('infoDest').value = document.title;
 				$('infoURL', 'infoSize', 'sourcePage').forEach(
 					function(e) {
 						e.value = "---";
