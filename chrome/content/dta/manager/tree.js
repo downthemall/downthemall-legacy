@@ -135,7 +135,7 @@ var Tree = {
 		if (col.index == 1) {
 			let d = this._downloads[idx];
 			switch (d.state) {
-				case COMPLETE: prop.AppendElement(this._complete); return;
+				case COMPLETE: prop.AppendElement(this._completed); return;
 				case PAUSED: prop.AppendElement(this._paused); return;
 				case FINISHING:
 				case RUNNING: prop.AppendElement(this._inprogress); return;
