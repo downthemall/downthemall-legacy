@@ -51,7 +51,7 @@
 	onload="sizeToContent(); versionFill();"
 	title="About DownThemAll!"
 	buttons="accept"
-	id="DTAAboutDialog"
+	id="DownThemAll"
 >
 	<script type="application/x-javascript" src="chrome://dta/content/common/verinfo.js"/>
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayfunctions.js"/>
@@ -88,8 +88,8 @@
 			<html:b>&about.icons;</html:b>&about.based;
 			<html:ul>
 				<html:li>© Michael Matas</html:li>
-				<html:li>© <span class="link" onclick="openTab('http://jimmac.musichall.cz/icons.php');">Jakub 'jimmac' Steiner</span>; © Novell, Inc.</html:li>
-				<html:li>© <span class="link" onclick="openTab('http://www.famfamfam.com/lab/icons/silk/');">Mark James</span> (famfamfam silk icons)</html:li>
+				<html:li>© <html:span class="link" onclick="openTab('http://jimmac.musichall.cz/icons.php');">Jakub 'jimmac' Steiner</html:span>; © Novell, Inc.</html:li>
+				<html:li>© <html:span class="link" onclick="openTab('http://www.famfamfam.com/lab/icons/silk/');">Mark James</html:span> (famfamfam silk icons)</html:li>
 			</html:ul>
 		</description>
 	  <separator class="thin"/>

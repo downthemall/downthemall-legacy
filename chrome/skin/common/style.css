@@ -87,12 +87,12 @@ dialogheader#logo.renamingmask .dialogheader-title {
 	
 }
 
-.link {
+.link, html|*.link {
 	color: blue;
 	text-decoration: underline;
 	cursor: pointer;
 }
-.link:hover {
+.link:hover, html|*.link:hover {
 	color: red;
 }
 
