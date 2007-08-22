@@ -1750,8 +1750,7 @@ Download.prototype = {
 		try {
 			this._chan == newChannel;
 			this._redirectedTo = newChannel.URI.spec;
-			this.url.url = this._redirectedTo;
-			this.d.filename = this.url.usable.getUsableFileName();
+			this.d.filename = DTA_URLhelpers.decodeCharset(this._redirectedTo, this.url.charset).getUsableFileName();
 		}
 		catch (ex) {
 			// no-op
