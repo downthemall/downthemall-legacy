@@ -3,10 +3,10 @@
 	CHECK BEFORE MODIFY
 -->
 
-<!ENTITY start.label "Start!">
-<!ENTITY start.key "s" >
-<!ENTITY queue.label "Queue!">
-<!ENTITY queue.key "q" >
+<!ENTITY start.label "Queue!">
+<!ENTITY start.key "q" >
+<!ENTITY queue.label "Add paused">
+<!ENTITY queue.key "p" >
 <!ENTITY cancel.label "Cancel">
 
 <!ENTITY options.label "Preferences">
