@@ -56,8 +56,12 @@ var Dialog = {
 				document.title = d.destinationName;
 			
 				if (d.referrer) {
-					$("sourcePage").value = d.referrer.spec;
+					$('sourcePage')._value = $("sourcePage").value = d.referrer.spec;
 				}
+				if (!d.is(FINISHING, COMPLETE)) {
+					$('sourcePage').removeAttribute('readonly');
+				}
+				
 				$('renaming').value = d.mask;
 				$('directory').value = d.pathName;
 				$('hash').value = d.hash;
@@ -121,6 +125,12 @@ var Dialog = {
 		var mask = $('renaming').value;
 		mask = mask.length ? mask : null;
 		
+		var sp = $('sourcePage');
+		var newRef = null;
+		if (!sp.hasAttribute('readonly') && sp._value != sp.value) {
+			newRef = sp.value;
+		}
+		
 		t.forEach(
 			function(d) {
 				if (d.is(COMPLETE, FINISHING)) {
@@ -131,6 +141,14 @@ var Dialog = {
 				}
 				if (mask) {
 					d.mask = mask;
+				}
+				if (newRef) {
+					try {
+						d.referrer.spec = newRef;
+					}
+					catch (ex) {
+						Debug.dump("failed to set referrer to", newRef);
+					}
 				}
 			}
 		);
