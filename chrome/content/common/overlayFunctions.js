@@ -662,7 +662,12 @@ var DTA_Mediator = {
 				ref = null;
 			}
 		}
-		win.delayedOpenTab(url, ref);
+		if ('delayedOpenTab' in win) {
+			win.delayedOpenTab(url, ref);
+		}
+		else {
+			win.getBrowser().addTab(url, ref);
+		}
 	},
 	removeTab: function WM_removeTab(url) {
 		function chk(browser, url) {
