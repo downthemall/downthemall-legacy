@@ -43,28 +43,28 @@
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	>
 	<hbox id="infoBox">
-		<vbox>
-			<spacer flex="1"/>
-			<image id="infoIcon"/>
-			<spacer flex="1"/>
+		<vbox>		
+			<image id="infoIcon" src="chrome://dta/skin/common/icon.png" />
 		</vbox>
-		<separator class="thin" />
-		<grid id="infoGrid">
-			<columns><column/><column flex="1"/></columns>
+		<grid id="infoBox" flex="1">
+			<columns>
+				<column/>
+				<column flex="1"/>
+			</columns>
 			<rows>
 				<label crop="left" id="infoDest" />
 				<row>
 					<label value="&infoURLTitle.value;" />
-					<label crop="left" id="infoURL" />
+					<textbox class="plain" id="infoURL" />
 				</row>
 				<row>
 					<label value="&infoSizeTitle.value;" />
-					<label crop="left" id="infoSize" />
+					<textbox class="plain" id="infoSize" />
 				</row>
 			</rows>
-			<spacer flex="1"/>
 		</grid>
 	</hbox>
+	
 	<grid id="canvasGrid">
 		<columns><column/><column flex="1"/><column/><column/></columns>
 		<rows>

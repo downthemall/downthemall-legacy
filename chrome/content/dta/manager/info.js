@@ -52,7 +52,8 @@ var Dialog = {
 				var d = downloads[0];
 				$("infoIcon").src = d.largeIcon;
 				$("infoURL").value = d.urlManager.url;
-				document.title = $("infoDest").value = d.destinationFile;
+				$("infoDest").value = d.destinationFile;
+				document.title = d.destinationName;
 			
 				if (d.referrer) {
 					$("sourcePage").value = d.referrer.spec;
@@ -65,7 +66,6 @@ var Dialog = {
 			}
 			else {
 				// more than just one download
-				$('infoIcon').src = 'chrome://dta/skin/common/icon.png';
 				$('infoDest').value = document.title;
 				$('infoURL', 'infoSize', 'sourcePage').forEach(
 					function(e) {

@@ -92,10 +92,8 @@ toolbox {
 	padding: 5pt;
 	margin: 0;
 }
-#tooltip image {
-	margin: 2pt;
-	margin-left: 1ex;	
-	margin-right: 1ex;
+#infoIcon {
+	margin: 1.6ex;
 	width: 32px !important;
 	height: 32px !important;
 	-moz-box-flex: 0 !important;
@@ -147,4 +145,7 @@ treechildren::-moz-tree-progressmeter(queued) {
 
 treechildren::-moz-tree-progressmeter(inprogress) {
   color: #AAE061;
+}
+textbox.plain {
+	background-color: transparent !important;
 }

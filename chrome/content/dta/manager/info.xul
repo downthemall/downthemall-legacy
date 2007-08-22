@@ -50,7 +50,7 @@
 	<hbox id="infoBox"/>
 	<grid>
 		<columns>
-			<column />
+			<column/>
 			<column flex="1"/>
 		</columns>
 		<rows>
@@ -59,14 +59,14 @@
 				<textbox id="sourcePage" readonly="true" />
 			</row>
 			<row align="center">
-				<label control="directory" id="destinationPath" value="&dest.caption;" />
+				<label control="directory" value="&dest.caption;" />
 				<hbox flex="1">
 					<saveddropdown id="directory" preference="directory" flex="1"/>
 					<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" tooltiptext="&browse.tip;" />
 				</hbox>
 			</row>
 			<row align="center">
-				<label control="renaming" id="infoDestTitle" value="&mask.label;: " />
+				<label control="renaming" value="&mask.label;: " />
 				<hbox>
 					<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
 					<maskbutton id="mask"/>
