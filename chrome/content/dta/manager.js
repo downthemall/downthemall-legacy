@@ -586,8 +586,8 @@ Visitor.prototype = {
 				break;
 			}
 			if (header == 'etag') {
-				// strip off the "inode"-part apache and others produce, as mirrors/caches usually provide wrong numbers here :p
-				this[header] = aValue.replace(/^[a-f\d]+-([a-f\d]+)-([a-f\d]+)$/, '$1-$2');
+				// strip off the "inode"-part apache and others produce, as mirrors/caches usually provide different/wrong numbers here :p
+				this[header] = aValue.replace(/^[a-f\d]+-([a-f\d]+)-([a-f\d]+)$/, '$1-$2').replace(/^([a-f\d]+):[a-f\d]{1,6}$/, '$1');
 			}
 			else if (header in this.cmpKeys) {
 				this[header] = aValue;
@@ -1750,6 +1750,7 @@ Download.prototype = {
 		try {
 			this._chan == newChannel;
 			this._redirectedTo = newChannel.URI.spec;
+			this.url.url = newChannel.URI.spec;
 			this.d.filename = DTA_URLhelpers.decodeCharset(this._redirectedTo, this.url.charset).getUsableFileName();
 		}
 		catch (ex) {
