@@ -128,7 +128,9 @@
 			if ('position' in d) {
 						s.bindInt32Parameter(1, d.position);
 			}
-			s.bindNullParameter(1);
+			else {
+				s.bindNullParameter(1);
+			}
 		}
 		else {
 			s.bindInt32Parameter(1, pos);
@@ -136,6 +138,7 @@
 		s.bindUTF8StringParameter(2, this._converter.Convert(e.toSource()));
 		s.execute();
 		d._dbId = this._con.lastInsertRowID;
+		s.reset();
 		return true;
 	},
 
@@ -149,7 +152,12 @@
 
 		// just one download.
 		if (download) {
-			this._saveDownload(download);
+			try {
+				this._saveDownload(download);
+			}
+			catch (ex) {
+				Debug.dump("SQLite: " + this._con.lastErrorString);
+			}
 			return;
 		}
 
@@ -164,7 +172,7 @@
 			};
 		}
 		catch (ex) {
-			Debug.dump(ex);
+			Debug.dump("SQLite: " + this._con.lastErrorString);
 		}
 		this.endUpdate();
 
@@ -181,19 +189,26 @@
 				s.bindInt64Parameter(0, d.position);
 				s.bindInt64Parameter(1, d._dbId);
 				s.execute();
+				s.reset();
 			}
 		}
 		catch (ex) {
-			alert(ex);
+			Debug.dump("SQLite: " + this._con.lastErrorString);
 		}
 		this.endUpdate();
 	},
 	deleteDownload: function(download) {
-		if (!download._dbId) {
-			return;
+		try {
+			if (!download._dbId) {
+				return;
+			}
+			this._delStmt.bindInt64Parameter(0, download._dbId);
+			this._delStmt.execute();
 		}
-		this._delStmt.bindInt64Parameter(0, download._dbId);
-		this._delStmt.execute();
+		catch (ex) {
+			Debug.dump("SQLite: " + this._con.lastErrorString);
+			throw ex;
+		}
 	},
 
 	load: function() {
