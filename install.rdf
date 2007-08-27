@@ -5,7 +5,7 @@
 		<id>dta@downthemall.net</id>
 		<name>DownThemAll!</name>
 		<description>The mass downloader for Firefox.</description>
-		<version>1.0b1</version>
+		<version>1.0b2</version>
 
 		<creator>Federico Parodi</creator>
 		<creator>Stefano Verna</creator>
