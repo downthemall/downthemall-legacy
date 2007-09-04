@@ -19,7 +19,7 @@ toolbox {
 	-moz-appearance: none !important;
 	border: 0px hidden !important;
 	margin-top: 2px;
-	width: 55px;
+	min-width: 55px;
 }
 
 #tools toolbarbutton:hover, #tools toolbarbutton:active {
@@ -37,7 +37,6 @@ toolbox {
 }
 #tooladd {
 	list-style-image: url("chrome://dta/skin/manager/add26.png");
-	width: auto !important;
 }
 
 #toolplay {
