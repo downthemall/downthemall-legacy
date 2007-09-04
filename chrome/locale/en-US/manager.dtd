@@ -1,4 +1,5 @@
 <!ENTITY tooladd.label "Add URL(s)">
+<!ENTITY tooladd.tooltip "Manually add an URL to DownThemAll">
 <!ENTITY tooldonate.tooltiptext "You can help us make DownThemAll even better. Consider making a small donation!">
 
 <!ENTITY movetop.label "Top">
