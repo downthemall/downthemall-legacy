@@ -1,3 +1,4 @@
+<!ENTITY winstyle "width:52em;height:42em;">
 <!ENTITY filterspane.label "Filters">
 <!ENTITY listhead1.label "Caption">
 <!ENTITY listhead2.label "Extensions">

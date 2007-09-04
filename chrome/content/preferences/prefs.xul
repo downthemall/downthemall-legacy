@@ -24,7 +24,8 @@
 	ondialogextra2="Prefs.restoreAll();"
 	persist="lastSelected screenX screenY"
 	onload="Prefs.load();"
->
+	style="&winstyle;"
+	>
 	<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties" />
 	
 	<prefpane id="paneMain" label="&mainpane.label;" src="chrome://dta/content/preferences/mainPane.xul" />
