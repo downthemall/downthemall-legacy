@@ -1,5 +1,9 @@
 @import 'chrome://dta/skin/common/style.css';
 
+dialog {
+	max-width: 540px;
+}
+
 toolbarbutton {
 	width: 28px;
 }
