@@ -989,9 +989,12 @@ QueueItem.prototype = {
 			return _('unknown'); 
 		}
 		else if (this.totalSize <= 0) {
-			return Utils.formatBytes(this.partialSize) + "/" + _('nas');
+			return _('transfered', [Utils.formatBytes(this.partialSize), _('nas')]);
 		}
-		return Utils.formatBytes(this.partialSize) + "/" + Utils.formatBytes(this.totalSize);
+		else if (this.is(COMPLETE)) {
+			return Utils.formatBytes(this.totalSize);
+		}
+		return _('transfered', [Utils.formatBytes(this.partialSize), Utils.formatBytes(this.totalSize)]);
 	},
 	_status : '',
 	get status() {
