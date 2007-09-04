@@ -4,4 +4,4 @@
 <!ENTITY desc.batches.value "You can also use batch descriptors to download multiple files at one time.">
 <!ENTITY examples.value "Examples:">
 <!ENTITY help.batches.label "Batch Downloads">
-<!ENTITY help.adding.label "Addings URLs">
+<!ENTITY help.adding.label "Adding URLs">
