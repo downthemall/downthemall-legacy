@@ -321,19 +321,16 @@ var Utils = {
 	formatBytes: function U_formatBytes(aNumber) {
 		aNumber = Number(aNumber);
 	
-		if (aNumber < 1024) {
-			return aNumber.toFixed(0) + " b";
-		}
 		
-		var units = [['TB', 3], ['GB', 2], ['MB', 2], ['KB', 1]];
-		var unit;
+		var units = [['sizeTB', 3], ['sizeGB', 2], ['sizeMB', 2], ['sizeKB', 1], ['sizeB', 0]];
+		var unit = units.pop();
 		
 		while (aNumber > 875 && units.length) {
 			aNumber /= 1024;
 			unit = units.pop();
 		}
 		
-		return aNumber.toFixed(unit[1]) + " " + unit[0];
+		return _(unit[0], [aNumber.toFixed(unit[1])]);
 	},
 	
 	/**
