@@ -117,7 +117,7 @@
 		<toolbox>
 		  <toolbar id="tools">
 			<spacer/>
-			<toolbarbutton label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="Manually add an URL to DownThemAll" />
+			<toolbarbutton label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="&tooladd.tooltip;" />
 			<spacer class="visible" />
 			<toolbarbutton label="&resume.label;" id="toolplay" onclick="Tree.resume();"/>
 			<toolbarbutton label="&pause.label;" id="toolpause" onclick="Tree.pause();"/>
