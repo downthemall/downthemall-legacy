@@ -278,9 +278,6 @@ var Dialog = {
 			}
 		);
 	},
-	fixTimeouts: function D_fixTimeouts() {
-		this._running.forEach(function(o) { o.d.timeLastProgress = Utils.getTimestamp(); });
-	},
 	signal: function D_signal(download) {
 		SessionManager.save(download);
 		if (download.is(RUNNING)) {
@@ -1199,15 +1196,15 @@ QueueItem.prototype = {
 
 			// normalize slashes
 			let mask = this.mask
-				.removeLeadingChar("\\").removeFinalChar("\\")
-				.removeLeadingChar("/").removeFinalChar("/")
-				.replace(/([\\/]{1,})/g, SYSTEMSLASH);
+				.normalizeSlashes()
+				.removeLeadingSlash()
+				.removeFinalSlash();
 
-			let uripath = uri.path.removeLeadingBackSlash();
+			let uripath = uri.path.removeLeadingChar("/");
 			if (uripath.length) {
 				uripath = uripath.substring(0, uri.path.lastIndexOf("/"))
-					.removeFinalBackSlash()
-					.replace(/\//g, SYSTEMSLASH);
+					.normalizeSlashes()
+					.removeFinalSlash();
 			}
 
 			let query = '';
@@ -1218,8 +1215,8 @@ QueueItem.prototype = {
 				// no-op
 			}
 
-			this.description = this.description.removeBadChars().replace(/[\\/]/g, "").trim();
-
+			this.description = this.description.removeBadChars().replace(/\\\//g, '').trim();
+			
 			let name = this.fileName;
 			let ext = name.getExtension();
 			if (ext) {
@@ -1281,7 +1278,7 @@ QueueItem.prototype = {
 		catch(ex) {
 			this._destinationName = this.fileName;
 			this._destinationPath = this.pathName.addFinalSlash();
-			Debug.dump("buildFromMask():", ex);
+			Debug.dump("rebuildDestination():", ex);
 		}
 		this._destinationNameFull = Utils.formatConflictName(
 			this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,

@@ -116,20 +116,22 @@ merge(
 	String.prototype,
 	{ 
 		trim : function() {
-			return this.replace(/^[\s\t]+|[\s\t]+$/gi, "");
+			return this.replace(/^\s+|\s+$/g, '');
 		},
 		removeBadChars : function() {
 			return this
-				.replace(/[\?\:<>\*\|"]/g, "_")
-				.replace(/%(?:25)?20/g, " ");
+				.replace(/[\n\r\v?:<>*|"]/g, '_')
+				.replace(/%(?:25)?20/g, ' ');
 		},
 		addFinalSlash : function() {
-			if (this.length == 0) return new String(SYSTEMSLASH);
+			if (this.length == 0) {
+				return new String(SYSTEMSLASH);
+			}
 			
-			if (this[this.length - 1] != SYSTEMSLASH)
+			if (this[this.length - 1] != SYSTEMSLASH) {
 				return this + SYSTEMSLASH;
-			else
-				return this;
+			}
+			return this;
 		},
 		removeFinalChar : function(c) {
 			if (this.length == 0) {
@@ -152,26 +154,27 @@ merge(
 		removeFinalSlash : function() {
 			return this.removeFinalChar(SYSTEMSLASH);
 		},
+		normalizeSlashes: function() {
+			return this.replace(/[\\/]/g, SYSTEMSLASH);
+		},
 		removeLeadingSlash : function() {
 			return this.removeLeadingChar(SYSTEMSLASH);
 		},
-		removeFinalBackSlash : function() {
-			return this.removeFinalChar("/");
-		},
-		removeLeadingBackSlash : function() {
-			return this.removeLeadingChar("/");
-		},
 		getUsableFileName : function() {
-			var t = this.replace(/\?.*$/g, '').trim().removeFinalBackSlash().split("/");
-			return t[t.length-1].removeBadChars().replace(/[\\/]/g, "").trim();
+			let t = this.replace(/[#?].*$/g, '')
+				.normalizeSlashes()
+				.trim()
+				.removeFinalSlash()
+				.split(SYSTEMSLASH);
+			return t.pop().removeBadChars().trim();
 		},
 		getExtension : function() {
-			var name = this.getUsableFileName();
-			var c = name.lastIndexOf('.');
+			let name = this.getUsableFileName();
+			let c = name.lastIndexOf('.');
 			if (c == -1) {
 				return null;
 			}
-			return name.slice(c+1);
+			return name.slice(c + 1);
 		},
 		cropCenter : function(newLength) {
 			if (this.length > newLength) {
@@ -658,10 +661,12 @@ function hash(value, algorithm, encoding, datalen) {
  * @author Nils
  */
 function newUUIDString() {
-	return Components.classes["@mozilla.org/uuid-generator;1"]
-		.getService(Components.interfaces.nsIUUIDGenerator)
-		.generateUUID()
-		.toString();
+	var uuidgen = Components.classes["@mozilla.org/uuid-generator;1"]
+		.getService(Components.interfaces.nsIUUIDGenerator);
+	newUUIDString = function() {
+		return uuidgen.generateUUID().toString();
+	}
+	return newUUIDString();
 }
 
 function Timer(func, interval, persist, now) {
