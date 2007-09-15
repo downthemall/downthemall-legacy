@@ -359,7 +359,16 @@ var Dialog = {
 		if ('_realURL' in address) {
 			url = address._realURL;
 		}
-		else if (url.length && DTA_AddingFunctions.isLinkOpenable(url)) {
+		else {
+			try {
+				let fs = Cc['@mozilla.org/docshell/urifixup;1'].getService(Ci.nsIURIFixup);
+				// throws if empty
+				let uri = fs.createFixupURI(url, 0);
+				url = uri.spec;
+			}
+			catch (ex) {
+				errors.push('URLaddress');
+			}
 			var hash = DTA_getLinkPrintHash(url);
 			if (hash) {
 				$('hash').value = hash;
@@ -367,9 +376,6 @@ var Dialog = {
 			url = url.replace(/#.*$/, '');
 			address.value = url;
 			url = new DTA_URL(url);
-		}
-		else {
-			errors.push('URLaddress');
 		}
 		
 		var hash = null;
