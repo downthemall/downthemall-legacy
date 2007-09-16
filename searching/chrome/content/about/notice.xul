@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<!DOCTYPE dialog [
+	<!ENTITY % noticeDTD SYSTEM "chrome://dta/locale/notice.dtd">
+	%noticeDTD;
+]>
+
+<dialog
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	title="DownThemAll! - License and Privacy Notice"
+	buttons="accept,cancel"
+	buttonlabelaccept="&accept;"
+	buttonlabelcancel="&decline;"
+	ondialogaccept="return accept();"
+	ondialogcancel="return cancel();"
+	width="500" height="420"
+	style="padding: 0px 0px 3px 0px;"
+>
+	<script type="application/javascript" src="chrome://dta/content/common/verinfo.js"/>
+	<script type="application/javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js" />
+	<script type="application/javascript"><![CDATA[
+		function load(evt) {
+			if (evt.originalTarget.location.href.search(/about\.html$/) != -1) {
+				var doc = document.getElementById('frame').contentDocument;
+				var head = doc.getElementById('header')
+				head.parentNode.removeChild(head);
+			}
+		}
+		function accept() {
+			var params = window.arguments[0].QueryInterface(Components.interfaces.nsIDialogParamBlock);
+			var version = params.GetString(0);
+			DTA_preferences.setDTA('version', version);
+			return true;
+		}
+		function cancel() {
+			if (!confirm(_("conf"))) {
+				return false;
+			}
+			Components.classes["@mozilla.org/extensions/manager;1"]
+				.getService(Components.interfaces.nsIExtensionManager)
+				.uninstallItem(DTA_ID);
+			var as = Components.interfaces.nsIAppStartup;
+			Components.classes["@mozilla.org/toolkit/app-startup;1"]
+      	.getService(as)
+      	.quit(as.eRestart | as.eForceQuit);
+      window.arguments[0] = true;
+      return true;
+		}
+		window.addEventListener('DOMContentLoaded', load, false);
+	]]></script>
+	<stringbundleset>
+		<stringbundle src="chrome://dta/locale/notice.properties"/>
+	</stringbundleset>
+	<iframe id="frame" src="chrome://dta-help/content/about.html" flex="1"/>
+</dialog>
