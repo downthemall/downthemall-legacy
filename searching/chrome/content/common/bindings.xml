@@ -305,6 +305,7 @@
 	
 	<binding id="downloadsearch" extends="chrome://global/content/bindings/textbox.xml#textbox">
 		<content>
+			<xul:image/>
 			<children/>
 			<html:input class="textbox-input" flex="1" anonid="input" allowevents="true" xbl:inherits="onfocus,onblur,value,type,maxlength,disabled,size,readonly,tabindex,accesskey"/>
 			<xul:toolbarbutton anonid="clearbutton" disabled="true" onclick="this.parentNode.clear();"/>

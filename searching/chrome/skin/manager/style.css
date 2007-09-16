@@ -143,17 +143,21 @@ toolbox {
 	-moz-appearance: none;
   -moz-image-region: rect(0px, 16px, 16px, 0px);	
 }
+#downloadsearch > image {
+	list-style-image: url(search.png);
+	margin-right: 4px;
+}
 #downloadsearch html|*.textbox-input {
 	height: 16px !important;
 }
 #downloadsearch toolbarbutton:hover {
-  -moz-image-region: rect(0px, 16px, 16px, 0px);
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 #downloadsearch toolbarbutton:hover:active {
 	-moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 #downloadsearch .toolbarbutton-icon {
-  -moz-margin-end: 0px !important;
+	-moz-margin-end: 0px !important;
 }
 #downloadsearch toolbarbutton[disabled] {
 	display: none;
