@@ -349,6 +349,9 @@ var Tree = {
 	stopTip: function T_stopTip() {
 		Tooltip.stop();
 	},
+	setFilter: function T_setFilter(str) {
+		Debug.dump("setting filter", str);
+	},
 	refreshTools: function T_refreshTools(d) {
 		if (this._updating || (d && ('position' in d) && !this.selection.isSelected(d.position))) {
 			return;

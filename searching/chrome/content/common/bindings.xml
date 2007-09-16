@@ -39,6 +39,7 @@
 	xmlns="http://www.mozilla.org/xbl"
 	xmlns:xbl="http://www.mozilla.org/xbl"
 	xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
 >
 	<!-- closebox -->
 	<binding id="closebox" extends="chrome://global/content/bindings/groupbox.xml#groupbox">
@@ -300,6 +301,36 @@
 				]]></setter>
 			</property>
 		</implementation>			
+	</binding>
+	
+	<binding id="downloadsearch" extends="chrome://global/content/bindings/textbox.xml#textbox">
+		<content>
+			<children/>
+			<html:input class="textbox-input" flex="1" anonid="input" allowevents="true" xbl:inherits="onfocus,onblur,value,type,maxlength,disabled,size,readonly,tabindex,accesskey"/>
+			<xul:toolbarbutton anonid="clearbutton" disabled="true" onclick="this.parentNode.clear();"/>
+		</content>
+		<implementation>
+			<property readonly="true" name="clearButton" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'clearbutton');" />
+			<method name="clear">
+				<body><![CDATA[
+					this.value = '';
+					
+					var evt = document.createEvent('UIEvents');
+					evt.initEvent('input', true, true);
+					this.dispatchEvent(evt);
+				]]></body>
+			</method>
+		</implementation>
+		<handlers>
+			<handler event="input">
+      	if (!this.value) {
+        	 this.clearButton.setAttribute('disabled', 'true');
+        }
+        else {
+        	this.clearButton.removeAttribute('disabled');
+        }
+			</handler>
+		</handlers>
 	</binding>
 	
 </bindings>

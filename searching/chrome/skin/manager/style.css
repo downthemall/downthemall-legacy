@@ -81,7 +81,7 @@ toolbox {
 #tooldonate:active {
 	background: url("chrome://dta/skin/manager/bardonateactive.png") top right;
 }
-#tooltip{
+#tooltip {
 	width: 470px;
 	padding: 0; /* work around incorrect tooltip implementation in FX2.0 */
 }
@@ -126,6 +126,38 @@ toolbox {
 	font-size: 105%;
 }
 
+#downloadsearch {
+	width: 22ex;
+	height: 23px;
+}
+#downloadsearch toolbarbutton {
+	margin: 0;
+	margin-left: 3px;
+	padding: 0;
+	border: 0;
+	height: 16px;
+	
+	cursor: default;
+	list-style-image: url(clear.png);
+
+	-moz-appearance: none;
+  -moz-image-region: rect(0px, 16px, 16px, 0px);	
+}
+#downloadsearch html|*.textbox-input {
+	height: 16px !important;
+}
+#downloadsearch toolbarbutton:hover {
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+#downloadsearch toolbarbutton:hover:active {
+	-moz-image-region: rect(0px, 48px, 16px, 32px);
+}
+#downloadsearch .toolbarbutton-icon {
+  -moz-margin-end: 0px !important;
+}
+#downloadsearch toolbarbutton[disabled] {
+	display: none;
+}
 treechildren::-moz-tree-progressmeter(completed) {
   color: #008F00;
 }

@@ -848,6 +848,10 @@ QueueItem.prototype = {
 		return this._destinationFile;
 	},
 	
+	get filterComparator() {
+		return this.urlManager.usable + " " + this.description + this.filename + this.destinationName;
+	},
+	
 	_conflicts: 0,
 	get conflicts() {
 		return this._conflicts;

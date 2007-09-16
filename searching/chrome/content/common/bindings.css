@@ -62,3 +62,7 @@ richlistbox.metalinker .item {
 hashinput {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#hashinput);
 }
+
+#downloadsearch {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#downloadsearch);
+}
