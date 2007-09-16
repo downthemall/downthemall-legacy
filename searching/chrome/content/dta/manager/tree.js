@@ -35,13 +35,16 @@
  * ***** END LICENSE BLOCK ***** */
  
 var Tree = {
+	_filter: '',
+	
 	init: function T_init(elem) {
 		this.elem = elem;
 		this._downloads = [];
+		this._displayed = this._downloads;
 
 		let as = 	Cc["@mozilla.org/atom-service;1"]
 			.getService(Ci.nsIAtomService);
-		['iconic', 'completed', 'inprogress', 'paused', 'canceled'].forEach(
+		['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'filtered'].forEach(
 			function(e) {
 				this['_' + e] = as.getAtom(e);
 			},
@@ -51,11 +54,15 @@ var Tree = {
 		
 	},
 
+	get count() {
+		return this._downloads.length;
+	},
+	
 	/*
 	 * actual nsITreeView follows
 	 */
 	get rowCount() {
-		return this._downloads.length;
+		return this._displayed.length;
 	},
 	setTree: function T_setTree(box) {
 		this._box = box;
@@ -69,7 +76,7 @@ var Tree = {
 		return 0;
 	},
 	getCellText: function T_getCellText(idx, col) {
-		let d = this._downloads[idx];
+		let d = this._displayed[idx];
 
 		switch (col.index) {
 			case 0: return Prefs.showOnlyFilenames ? d.destinationName : d.urlManager.usable;
@@ -84,33 +91,15 @@ var Tree = {
 		}
 		return '';
 	},
-	isSorted: function T_isSorted() {
-		// not sorted
-		return false;
-	},
-	isContainer: function T_isContainer(idx) {
-		// being a container means we got children... but we don't have any children because we're a list actually
-		return false;
-	},
-	isContainerOpen: function T_isContainerOpen(idx) {
-		return false;
-	},
-	isContainerEmpty: function T_isContainerEmpty(idx) {
-		return false;
-	},
-
-	isSeparator: function T_isSeparator(idx) {
-		// no separators
-		return false;
-	},
-	isEditable: function T_isEditable(idx) {
-		// and nothing is editable
-		return true;
-	},
-	// will grab the "icon" for a cell.
+	isSorted: function T_isSorted() { return false; },
+	isContainer: function T_isContainer(idx) { return false; },
+	isContainerOpen: function T_isContainerOpen(idx) { return false; },
+	isContainerEmpty: function T_isContainerEmpty(idx) { return false;},
+	isSeparator: function T_isSeparator(idx) { return false; },
+	isEditable: function T_isEditable(idx) { return true;	},
 	getImageSrc: function T_getImageSrc(idx, col) {
 		switch (col.index) {
-			case 0: return this._downloads[idx].icon;
+			case 0: return this._displayed[idx].icon;
 		}
 		return null;
 	},
@@ -123,7 +112,7 @@ var Tree = {
 	// will be called for cells other than textcells
 	getCellValue: function T_getCellValue(idx, col) {
 		if (col.index == 1) {
-			let d = this._downloads[idx];
+			let d = this._displayed[idx];
 			if (d.is(CANCELED)) {
 				return 100; 
 			}
@@ -133,7 +122,7 @@ var Tree = {
 	},
 	getCellProperties: function T_getCellProperties(idx, col, prop) {
 		if (col.index == 1) {
-			let d = this._downloads[idx];
+			let d = this._displayed[idx];
 			switch (d.state) {
 				case COMPLETE: prop.AppendElement(this._completed); return;
 				case PAUSED: prop.AppendElement(this._paused); return;
@@ -177,6 +166,7 @@ var Tree = {
 			this._box.rowCountChanged(download.position, 1);
 		}
 	},
+	// XXX: get rowCountChanged, selection, focus right
 	remove: function T_remove(downloads) {
 		if (downloads && !(downloads instanceof Array)) {
 			downloads = [downloads];
@@ -349,8 +339,30 @@ var Tree = {
 	stopTip: function T_stopTip() {
 		Tooltip.stop();
 	},
+	doFilter: function T_doFilter() {
+		this.beginUpdate();
+		this._box.rowCountChanged(0, -this.rowCount);
+		if (!this._filter) {
+			this._displayed = this._downloads;
+		}
+		else {
+			this._displayed = [];
+			let expr = DTA_strToRegExp(this._filter);
+			for (i in this.all) {
+				if (expr.test(i.filterComparator)) {
+					this._displayed.push(i);
+				}
+			}
+		}
+		this._box.rowCountChanged(0, this.rowCount);
+		this.endUpdate();
+	},
 	setFilter: function T_setFilter(str) {
-		Debug.dump("setting filter", str);
+		if (this._filterTimer) {
+			this._filterTimer.kill();
+		}
+		this._filter = str;
+		this._filterTimer = new Timer('Tree.doFilter();', 250);
 	},
 	refreshTools: function T_refreshTools(d) {
 		if (this._updating || (d && ('position' in d) && !this.selection.isSelected(d.position))) {
@@ -411,6 +423,7 @@ var Tree = {
 			);
 			this._box.invalidate();
 			this.refreshTools(this);
+			this.doFilter();
 			Dialog.completed = complete;
 		}
 		else if (d instanceof Array) {
@@ -422,6 +435,7 @@ var Tree = {
 				this
 			);
 			this.endUpdate();
+			this.invalidate();
 		}
 		else if ('position' in d) {
 			this._box.invalidateRow(d.position);
@@ -444,11 +458,12 @@ var Tree = {
 			let start = {}, end = {value: -1};
 			this.selection.getRangeAt(i, start, end);
 			for (let j = start.value, k = end.value; j <= k; ++j) {
-					yield this._downloads[j];
+					yield this._displayed[j];
 			}
 		}
 	},
-	// returns an ASC sorted array of IDs that are currently selected.
+	// returns an ASC sorted array of IDs that are currently selected and clears the selection.
+	// note that this refers to the base list, not the displayed subset.
 	_getSelectedIds: function T_getSelectedIds(getReversed) {
 		var rv = [];
 		let select = this.selection;
@@ -457,7 +472,7 @@ var Tree = {
 				let start = {}, end = {};
 				this.selection.getRangeAt(i, start, end);
 				for (let j = start.value, k = end.value; j <= k; ++j) {
-					rv.push(j);
+					rv.push(this._displayed[j].position);
 				}
 		}
 		this.selection.clearSelection();
@@ -472,12 +487,12 @@ var Tree = {
 	get current() {
 		let ci = this.selection.currentIndex;
 		if (ci > -1 && ci < this.rowCount && this.selection.isSelected(ci)) {
-			return this._downloads[ci];
+			return this._displayed[ci];
 		}
 		return null;		
 	},
 	at: function T_at(idx) {
-		return this._downloads[idx];
+		return this._displayed[idx];
 	},
 	some: function T_some(f, t) {
 		return this._downloads.some(f, t);
@@ -508,6 +523,7 @@ var Tree = {
 		}
 		this.endUpdate();
 	},
+	// XXX: fix moving + reselection after downloads/displayed changes
 	top: function T_top() {
 		try {
 			this.beginUpdate();

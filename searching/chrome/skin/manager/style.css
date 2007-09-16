@@ -162,6 +162,10 @@ toolbox {
 #downloadsearch toolbarbutton[disabled] {
 	display: none;
 }
+treechildren::-moz-tree-row(filtered) {
+	height: 50px;
+	background-color: red;
+}
 treechildren::-moz-tree-progressmeter(completed) {
   color: #008F00;
 }

@@ -144,7 +144,7 @@ var Dialog = {
 
 			// Refresh status bar
 			$("statusText").label = 
-				_("cdownloads", [this.completed, Tree.rowCount])
+				_("cdownloads", [this.completed, Tree.count])
 				+ " - "
 				+ _("cspeed")
 				+ " "
@@ -155,18 +155,18 @@ var Dialog = {
 				document.title =
 					this._running[0].d.percent
 					+ ' - '
-					+ this.completed + "/" + Tree.rowCount + " - "
+					+ this.completed + "/" + Tree.count + " - "
 					+ speed + '/s - DownThemAll!';
 			}
 			else if (this._running.length > 0) {
 				document.title =
-					Math.floor(this.completed * 100 / Tree.rowCount) + '%'
+					Math.floor(this.completed * 100 / Tree.count) + '%'
 					+ ' - '				
-					+ this.completed + "/" + Tree.rowCount + " - "
+					+ this.completed + "/" + Tree.count + " - "
 					+ speed + '/s - DownThemAll!';
 			}
 			else {
-				document.title = this.completed + "/" + Tree.rowCount + " - DownThemAll!";
+				document.title = this.completed + "/" + Tree.count + " - DownThemAll!";
 			}
 		}
 		catch(ex) {
@@ -849,7 +849,7 @@ QueueItem.prototype = {
 	},
 	
 	get filterComparator() {
-		return this.urlManager.usable + " " + this.description + this.filename + this.destinationName;
+		return [this.urlManager.usable, this.description, this.fileName, this.destinationName].join(' ');
 	},
 	
 	_conflicts: 0,
@@ -2294,8 +2294,9 @@ function startDownloads(start, downloads) {
 	// full save
 	new Timer(function() { SessionManager.save() }, 100);
 
-	var boxobject = Tree._box;
-	boxobject.QueryInterface(Ci.nsITreeBoxObject);
+	Tree.doFilter();
+	
+	let boxobject = Tree.box.QueryInterface(Ci.nsITreeBoxObject);
 	if (added <= boxobject.getPageLength()) {
 		boxobject.scrollToRow(Tree.rowCount - boxobject.getPageLength());
 	}
