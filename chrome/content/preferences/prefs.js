@@ -128,7 +128,7 @@ var Interface = {
 	}
 };
 
-Filters = {
+var Filters = {
 	_filters: [],
 	_lastRowEdited : -1,
 
