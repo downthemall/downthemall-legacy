@@ -46,12 +46,13 @@ function DTA_regToRegExp(str) {
 	return new RegExp(str, mod);
 }
 
-function DTA_strToRegExp(str) {
+function DTA_strToRegExp(str, ic) {
 	return new RegExp(
 		str
 			.replace(/^\s+|\s+$/g, '')
 			.replace(/([/{}()\[\]\\^$.])/g, "\\$1")
 			.replace(/\*/g, ".*")
-			.replace(/\?/g, '.')
+			.replace(/\?/g, '.'),
+		ic ? 'i' : null
 	);
 }

@@ -347,8 +347,8 @@ var Tree = {
 		}
 		else {
 			this._displayed = [];
-			let expr = DTA_strToRegExp(this._filter);
-			for (i in this.all) {
+			let expr = DTA_strToRegExp(this._filter, true);
+			for (let i in this.all) {
 				if (expr.test(i.filterComparator)) {
 					this._displayed.push(i);
 				}
