@@ -90,6 +90,7 @@
 				<html:li>© Michael Matas</html:li>
 				<html:li>© <html:span class="link" onclick="openTab('http://jimmac.musichall.cz/icons.php');">Jakub 'jimmac' Steiner</html:span>; © Novell, Inc.</html:li>
 				<html:li>© <html:span class="link" onclick="openTab('http://www.famfamfam.com/lab/icons/silk/');">Mark James</html:span> (famfamfam silk icons)</html:li>
+				<html:li>© The mozilla contributors</html:li>
 			</html:ul>
 		</description>
 	  <separator class="thin"/>
