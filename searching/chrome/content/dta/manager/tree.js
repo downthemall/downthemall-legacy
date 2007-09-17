@@ -356,6 +356,7 @@ var Tree = {
 		}
 		this._box.rowCountChanged(0, this.rowCount);
 		this.endUpdate();
+		this.refreshTools();
 	},
 	setFilter: function T_setFilter(str) {
 		if (this._filterTimer) {
@@ -370,11 +371,17 @@ var Tree = {
 		}
 		try {
 			let empty = this.current == null;
-			$('info', 'remove', 'movetop', 'moveup', 'movedown', 'movebottom', 'toolmovetop', 'toolmoveup', 'toolmovedown', 'toolmovebottom')
+			$('info', 'remove')
 				.forEach(
 					function(o) { return o.setAttribute('disabled', empty); },
 					this
 				);
+			$('movetop', 'moveup', 'movedown', 'movebottom', 'toolmovetop', 'toolmoveup', 'toolmovedown', 'toolmovebottom')
+				.forEach(
+					function(o) { return o.setAttribute('disabled', empty || !!this._filter); },
+					this
+				);
+				
 				
 			let states = {
 				state: 0,
@@ -422,7 +429,6 @@ var Tree = {
 				}
 			);
 			this._box.invalidate();
-			this.refreshTools(this);
 			this.doFilter();
 			Dialog.completed = complete;
 		}

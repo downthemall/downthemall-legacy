@@ -171,8 +171,8 @@
 	</vbox>
 
 	<statusbar id="footer"  >
+		 <statusbarpanel><textbox id="downloadsearch" oninput="Tree.setFilter(this.value);"/></statusbarpanel>		
 		 <statusbarpanel id="statusText" label="" flex="2"/>
-		 <statusbarpanel><textbox id="downloadsearch" oninput="Tree.setFilter(this.value);"/></statusbarpanel>
 		 <statusbarpanel id="dtaHelp" class="statusbarpanel-iconic-text" label="&dtahelp;" onclick="openHelp('Manager','chrome://dta-help/content/help.rdf');" src="chrome://dta/skin/common/help.png" />
 		 <statusbarpanel id="options" class="statusbarpanel-iconic-text" label="&options.label;" onclick="DTA_showPreferences();" src="chrome://dta/skin/common/prefs.png" />
 	</statusbar>
