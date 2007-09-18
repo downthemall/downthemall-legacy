@@ -1227,7 +1227,7 @@ QueueItem.prototype = {
 				}
 			}
 			// mime-service method
-			else if (this.contentType) {
+			else if (this.contentType && /^(?:image|text)/.test(this.contentType)) {
 				try {
 					var info = Cc["@mozilla.org/uriloader/external-helper-app-service;1"]
 						.getService(Ci.nsIMIMEService)
