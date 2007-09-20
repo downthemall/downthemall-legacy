@@ -85,7 +85,7 @@
 
 	  <separator class="thin"/>
 	  <description>
-			<html:b>&about.icons;</html:b>&about.based;
+			<html:b>&about.icons;</html:b>&nbsp;&about.based;
 			<html:ul>
 				<html:li>© Michael Matas</html:li>
 				<html:li>© <html:span class="link" onclick="openTab('http://jimmac.musichall.cz/icons.php');">Jakub 'jimmac' Steiner</html:span>; © Novell, Inc.</html:li>
