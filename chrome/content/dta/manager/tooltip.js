@@ -200,23 +200,17 @@ var Tooltip = {
 		
 		try {
 			if (file.speeds.length) {
-				var avg = 0;
-				file.speeds.forEach(
-					function(s) {
-						avg += s;
-					}
-				)
-				$('speedAverage').value = Utils.formatBytes(avg / file.speeds.length) + "/s";
+				$('speedAverage').value = file.speed;
+				$('speedCurrent').value = Utils.formatBytes(file.speeds[file.speeds.length - 1]) + "/s";;
 			}
 			else {
-				$('speedAverage').value = _('unknown');
+				$('speedCurrent').value = $('speedAverage').value = _('unknown');
 			}
 
 			$('infoSize').value = file.totalSize > 0 ? Utils.formatBytes(file.totalSize) : _('unknown');
 			if (file.is(RUNNING)) {
 				$('timeElapsed').value = Utils.formatTimeDelta((Utils.getTimestamp() - file.timeStart) / 1000);
 				$('timeRemaining').value = file.status;
-				$('speedCurrent').value = file.speed;
 			}
 			else {
 				$('timeElapsed', 'timeRemaining', 'speedCurrent').forEach(
