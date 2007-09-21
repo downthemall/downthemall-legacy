@@ -76,7 +76,7 @@ var Tree = {
 			case 2: return d.percent;
 			case 3: return d.dimensionString;
 			case 4: return d.status;
-			case 5: return d.speed;
+			case 5: return d.is(RUNNING) ? d.speed : '';
 			case 6: return d.parts;
 			case 7: return d.mask;
 			case 8: return d.destinationPath;
@@ -260,7 +260,6 @@ var Tree = {
 			function(d) {
 				if (d.is(QUEUED) || (d.is(RUNNING) && d.resumable)) {
 					d.pause();
-					d.speed = '';
 					d.status = _("paused");
 					d.state = PAUSED;
 				}
