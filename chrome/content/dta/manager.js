@@ -129,13 +129,30 @@ var Dialog = {
 					let speed = Math.round((d.partialSize - i.lastBytes) * REFRESH_NFREQ);
 
 					// Refresh item speed
-					d.speed = Utils.formatBytes(speed) + "/s";
 					d.speeds.push(speed > 0 ? speed : 0);
 					if (d.speeds.length > SPEED_COUNT) {
 						d.speeds.shift();
 					}
 					i.lastBytes = d.partialSize;
 					sum += i.lastBytes;
+					for (let j = 0; j < d.speeds.length; ++j) {
+						speed += d.speeds[j];
+					}
+					speed /= d.speeds.length;
+					
+					if (d.partialSize != 0) {
+						// Calculate estimated time
+						if (d.totalSize > 0) {
+							var remaining = Math.ceil((d.totalSize - d.partialSize) / speed);
+							if (!isFinite(remaining)) {
+								d.status = _("unknown");
+							}
+							else {
+								d.status = Utils.formatTimeDelta(remaining);
+							}
+						}
+					}
+					d.speed = Utils.formatBytes(speed) + "/s";
 				}
 			);
 			let speed = Math.round((sum - this._lastSum) * REFRESH_NFREQ);
