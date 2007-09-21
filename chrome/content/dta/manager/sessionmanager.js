@@ -79,6 +79,8 @@
 			'hash',
 			'compression',
 			'maxChunks',
+			'contentType',
+			'conflicts',
 		].forEach(
 			function(u) {
 				e[u] = d[u];
@@ -244,6 +246,8 @@
 				d.visitors.load(down.visitors);
 
 				[
+					'contentType',
+					'conflicts',
 					'fileName',
 					'destinationName',
 					'resumable',
