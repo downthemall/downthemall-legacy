@@ -36,8 +36,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-const TOOLTIP_FREQ = 500;
-const SPEED_COUNT = 25;
+const TOOLTIP_FREQ = 650;
+const SPEED_COUNT = 60;
+const SPEED_NUMAVG = 10;
 
 var Tooltip = {
 	_current: null,
