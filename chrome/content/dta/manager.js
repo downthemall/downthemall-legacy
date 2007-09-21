@@ -40,7 +40,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Exception = Components.Exception;
 
-const MIN_CHUNK_SIZE = 700 * 1024;
+const MIN_CHUNK_SIZE = 512 * 1024;
 // in use by chunk.writer...
 // in use by decompressor... beware, actual size might be more than twice as big!
 const MAX_BUFFER_SIZE = 5 * 1024 * 1024;
@@ -1997,7 +1997,6 @@ Download.prototype = {
 			if (!this.handleError()) {
 				Debug.dump(d + ": Server error or disconnection (type 1)");
 				d.status = _("servererror");
-				d.speed = '';
 				d.pause();
 			}
 			return false;
@@ -2154,16 +2153,11 @@ Download.prototype = {
 		// routine for normal chunk
 		Debug.dump(d + ": Chunk " + c.start + "-" + c.end + " finished.");
 
-		if (!d.is(RUNNING)) {
-			d.speed = '';
-		}
-		
 		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
 		if (c.starter && !shouldFinish && d.is(RUNNING)) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.dump(d + ": Server error or disconnection (type 2)");
 				d.status = _("servererror");
-				d.speed = '';
 				d.pause();
 				return;
 			}
