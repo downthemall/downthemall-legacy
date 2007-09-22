@@ -940,7 +940,7 @@ QueueItem.prototype = {
 	},
 	set activeChunks(nv) {
 		if (nv < 0) {
-			throw new Error("ac too small");
+			return;
 		}
 		this._activeChunks = nv;
 		this.invalidate();
@@ -1075,6 +1075,7 @@ QueueItem.prototype = {
 				}
 			}
 		}
+		this.activeChunks = 0;
 		this.state = PAUSED;
 	},
 
