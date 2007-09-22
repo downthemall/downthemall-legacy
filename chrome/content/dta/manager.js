@@ -291,8 +291,13 @@ var Dialog = {
 	wasStopped: function D_wasStopped(download) {
 		this._running = this._running.filter(
 			function(i) {
-				return i.d != download;
-			}
+				if (i.d == download) {
+					this._lastSum -= i.lastBytes;
+					return false;
+				}
+				return true;
+			},
+			this
 		);
 	},
 	signal: function D_signal(download) {
