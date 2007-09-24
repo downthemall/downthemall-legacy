@@ -272,7 +272,8 @@ var Filters = {
 			filter.type = ($("filterText").checked?1:0) + ($("filterImage").checked?2:0);
 			filter.test = $("filterTest").value;
 			
-			this..box.invalidateRow(idx);
+			var idx = this.selection.currentIndex;
+			this.box.invalidateRow(idx);
 			this._lastRowEdited = idx;
 		}
 	},
