@@ -944,9 +944,7 @@ QueueItem.prototype = {
 		return this._activeChunks;
 	},
 	set activeChunks(nv) {
-		if (nv < 0) {
-			return;
-		}
+		nv = Math.max(0, nv);
 		this._activeChunks = nv;
 		this.invalidate();
 		return this._activeChunks;
