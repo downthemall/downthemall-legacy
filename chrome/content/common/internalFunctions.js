@@ -161,7 +161,7 @@ merge(
 			return this.removeLeadingChar(SYSTEMSLASH);
 		},
 		getUsableFileName : function() {
-			let t = this.replace(/[#?].*$/g, '')
+			let t = this.replace(/\?.*$/, '')
 				.normalizeSlashes()
 				.trim()
 				.removeFinalSlash()

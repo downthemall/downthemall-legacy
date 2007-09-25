@@ -292,7 +292,7 @@ var DTA_URLhelpers = {
 function DTA_URL(url, charset, usable, preference) {
 	this.charset = this.str(charset);
 	this.usable = this.str(usable);
-	this._url = this.str(url);
+	this._url = this.str(url).replace(/#.*$/, '');
 	this.preference = preference ? preference : 100;
 
 	this.decode();
@@ -306,12 +306,12 @@ DTA_URL.prototype = {
 		return this._url;
 	},
 	set url(nv) {
-		this._url = this.str(nv);
+		this._url = this.str(nv).replace(/#.*$/, '');
 		this.usable = '';
 		this.decode();
 	},
 	decode: function DU_decode() {
-		if (!this.usable.length)
+		if (!this.usable)
 		{
 			this.usable = DTA_URLhelpers.decodeCharset(this._url, this.charset);
 		}
