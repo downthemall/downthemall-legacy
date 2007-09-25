@@ -1678,8 +1678,6 @@ Download.prototype = {
 		Ci.nsIFTPEventSink
 	],
 	
-	_redirectedTo: null,
-
 	cantCount: false,
 
 	QueryInterface: function DL_QI(iid) {
@@ -1770,9 +1768,8 @@ Download.prototype = {
 	onChannelRedirect: function DL_onChannelRedirect(oldChannel, newChannel, flags) {
 		try {
 			this._chan == newChannel;
-			this._redirectedTo = newChannel.URI.spec;
 			this.url.url = newChannel.URI.spec;
-			this.d.fileName = DTA_URLhelpers.decodeCharset(this._redirectedTo, this.url.charset).getUsableFileName();
+			this.d.fileName = this.url.usable.getUsableFileName();
 		}
 		catch (ex) {
 			// no-op
@@ -1964,25 +1961,17 @@ Download.prototype = {
 			d.totalSize = 0;
 		}
 		
-		var newName;
 		if (visitor.fileName && visitor.fileName.length > 0) {
 			// if content disposition hasn't an extension we use extension of URL
-			newName = visitor.fileName;
+			let newName = visitor.fileName;
 			let ext = this.url.usable.getExtension();
 			if (visitor.fileName.lastIndexOf('.') == -1 && ext) {
 				newName += '.' + ext;
 			}
-		} else if (this._redirectedTo) {
-			// if there has been one or more "moved content" header directives, we use the new url to create filename
-			newName = this._redirectedTo;
+			let charset = visitor.overrideCharset ? visitor.overrideCharset : this.url.charset;
+			d.fileName = DTA_URLhelpers.decodeCharset(newName, charset).getUsableFileName();
 		}
 
-		// got a new name, so decode and set it.
-		if (newName) {
-			let charset = visitor.overrideCharset ? visitor.overrideCharset : this.url.charset;
-			newName = DTA_URLhelpers.decodeCharset(newName, charset);
-			d.fileName = newName.getUsableFileName();
-		}
 		return false;
 	},
 	
@@ -2004,12 +1993,7 @@ Download.prototype = {
 				d.pause();
 			}
 			return false;
-		}
-		
-		if (this._redirectedTo) {
-			let url = new DTA_URL(this._redirectedTo, this.url.charset);
-			d.fileName = url.usable.getUsableFileName();
-		}				
+		}			
 			
 		// try to get the size anyway ;)
 		try {
