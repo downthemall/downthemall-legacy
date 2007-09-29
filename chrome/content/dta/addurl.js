@@ -364,7 +364,12 @@ var Dialog = {
 				let fs = Cc['@mozilla.org/docshell/urifixup;1'].getService(Ci.nsIURIFixup);
 				// throws if empty
 				let uri = fs.createFixupURI(url, 0);
-				url = uri.spec;
+				try {
+					url = decodeURIComponent(uri.spec);
+				}
+				catch (ex) {
+					url = uri.spec;
+				}
 			}
 			catch (ex) {
 				errors.push('URLaddress');
