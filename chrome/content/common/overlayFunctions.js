@@ -291,8 +291,10 @@ var DTA_URLhelpers = {
 
 function DTA_URL(url, charset, usable, preference) {
 	this.charset = this.str(charset);
-	this.usable = this.str(usable);
-	this._url = this.str(url).replace(/#.*$/, '');
+	this.url = url;
+	if (usable) {
+		this.usable = this.str(usable);
+	}
 	this.preference = preference ? preference : 100;
 
 	this.decode();
@@ -306,7 +308,14 @@ DTA_URL.prototype = {
 		return this._url;
 	},
 	set url(nv) {
-		this._url = this.str(nv).replace(/#.*$/, '');
+		delete this.hash;
+		this._url = this.str(nv);
+		var hash = DTA_getLinkPrintHash(this._url);
+		if (hash) {
+			this.hash = hash;
+			alert(hash);
+		}
+		this._url = this._url.replace(/#.*$/, '');
 		this.usable = '';
 		this.decode();
 	},
@@ -344,7 +353,10 @@ DTA_DropProcessor.prototype = {
 			return;
 		}
 		var doc = document.commandDispatcher.focusedWindow.document;
-		url = new DTA_URL(url, doc.characterSet);
+		
+		var ml = DTA_getLinkPrintMetalink(url);
+		url = new DTA_URL(ml ? ml : url, doc.characterSet);
+		
 		var ref = DTA_AddingFunctions.getRef(doc);
 		this.func(url, ref);
 	}
@@ -443,21 +455,14 @@ var DTA_AddingFunctions = {
 	},	
 
 	saveSingleLink : function(turbo, url, referrer, description) {
-		var hash = null;		
 		var ml = DTA_getLinkPrintMetalink(url.url);
 		if (ml) {
 			url.url = ml;
-		}
-		else {
-			hash = DTA_getLinkPrintHash(url.url);
-		}
-		url.url = url.url.replace(/#.*$/, '');
-		
+		}		
 		var item = {
 			'url': url,
 			'referrer': referrer,
-			'description': description,
-			'hash': hash
+			'description': description
 		};
 
 		if (turbo) {
@@ -731,6 +736,11 @@ function DTA_Hash(hash, type) {
 		throw new Components.Exception("hash is invalid");
 	}
 }
+DTA_Hash.prototype = {
+	toString: function() {
+		return this.type + " [" + this.sum + "]";
+	}
+};
 
 /**
  * Get a link-fingerprint hash from an url (or just the hash component)
