@@ -34,6 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
+const Process = Components.Constructor('@mozilla.org/process/util;1', 'nsIProcess', 'init');
+ 
 function CustomEvent(download, command) {
  	try {
  		// may I introduce you to a real bastard way of commandline parsing?! :p
@@ -61,9 +63,7 @@ function CustomEvent(download, command) {
  			.split(/ /g)
  			.map(mapper);
  		var program = new FileFactory(args.shift());
-		var process = Cc["@mozilla.org/process/util;1"]
-    	.createInstance(Ci.nsIProcess);
-    process.init(program);
+		var process = new Process(program);
 		process.run(false, args, args.length); 		
  	}
  	catch (ex) {

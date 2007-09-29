@@ -95,9 +95,7 @@ function NSResolver(prefix) {
 			Tree.remove(download);
 			var file = new FileFactory(download.destinationFile);
 
-			var fiStream = Cc['@mozilla.org/network/file-input-stream;1']
-				.createInstance(Ci.nsIFileInputStream);
-			fiStream.init(file, 1, 0, false);
+			var fiStream = new FileInputStream(file, 1, 0, false);
 			var domParser = new DOMParser();
 			var doc = domParser.parseFromStream(fiStream, null, file.fileSize, "application/xml");
 			var root = doc.documentElement;

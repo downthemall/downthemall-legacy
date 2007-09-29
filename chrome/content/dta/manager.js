@@ -38,7 +38,17 @@
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+
 const Exception = Components.Exception;
+
+const BufferedOutputStream = Components.Constructor('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
+const BinaryOutputStream = Components.Constructor('@mozilla.org/binaryoutputstream;1', 'nsIBinaryOutputStream', 'setOutputStream');
+const BinaryInputStream = Components.Constructor('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
+const FileInputStream = Components.Constructor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
+
+const MimeService = Cc["@mozilla.org/uriloader/external-helper-app-service;1"].getService(Ci.nsIMIMEService);
+const ObserverService = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
+const WindowWatcherService = Cc["@mozilla.org/embedcomp/window-watcher;1"].getService(Ci.nsIWindowWatcher);
 
 const MIN_CHUNK_SIZE = 512 * 1024;
 // in use by chunk.writer...
@@ -62,10 +72,9 @@ var Dialog = {
 		Tree.init($("downloads"));
 		makeObserver(this);
 		
-  	let os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);		
 		this._observes.forEach(
 			function(topic) {
-				os.addObserver(this, topic, true);
+				ObserverService.addObserver(this, topic, true);
 			},
 			this
 		);
@@ -344,10 +353,7 @@ var Dialog = {
 	},
 	_canClose: function D__canClose() {
 		if (Tree.some(function(d) { return d.started && !d.resumable && d.is(RUNNING); })) {
-			var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
-				.getService(Ci.nsIPromptService);
-			var rv = promptService.confirm(
-				window,
+			var rv = DTA_confirmYN(
 				_("confclose"),
 				_("nonres")
 			);
@@ -1257,9 +1263,7 @@ QueueItem.prototype = {
 			// mime-service method
 			else if (this.contentType && /^(?:image|text)/.test(this.contentType)) {
 				try {
-					var info = Cc["@mozilla.org/uriloader/external-helper-app-service;1"]
-						.getService(Ci.nsIMIMEService)
-						.getFromTypeAndExtension(this.contentType.split(';')[0], "");
+					let info = MimeService.getFromTypeAndExtension(this.contentType.split(';')[0], "");
 					ext = info.primaryExtension;
 				} catch (ex) {
 					ext = '';
@@ -1556,8 +1560,7 @@ Chunk.prototype = {
 			}
 		}
 		seekable.seek(0x00, this.start + this.written);
-		this._outStream = Cc['@mozilla.org/network/buffered-output-stream;1'].createInstance(Ci.nsIBufferedOutputStream);
-		this._outStream.init(outStream, 131072);
+		this._outStream = new BufferedOutputStream(outStream, 131072);
 	},
 	close: function CH_close() {
 		this.running = false;
@@ -1729,11 +1732,8 @@ Download.prototype = {
 	},
 	get authPrompter() {
 		try {
-			var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
-				.getService(Ci.nsIWindowWatcher);
-			var rv = watcher.getNewAuthPrompter(null)
+			return WindowWatcherService.getNewAuthPrompter(null)
 				.QueryInterface(Ci.nsIAuthPrompt);
-			return rv;
 		} catch (ex) {
 			Debug.dump("authPrompter", ex);
 			throw ex;
