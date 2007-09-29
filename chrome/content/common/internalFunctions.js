@@ -42,6 +42,9 @@
 var Debug = DTA_debug;
 var Preferences = DTA_preferences;
 
+const IOService = Components.classes["@mozilla.org/network/io-service;1"]
+	.getService(Components.interfaces.nsIIOService);
+
 const SYSTEMSLASH = (DTA_profileFile.get('dummy').path.indexOf('/') != -1) ? '/' : '\\';
 
 // shared state defines
@@ -181,6 +184,15 @@ merge(
 				return this.substring(0, newLength / 2) + "..." + this.substring(this.length - newLength / 2, this.length);
 			}
 			return this;
+		},
+		toURI: function(charset, baseURI) {
+			return IOService.newURI(this, charset, baseURI);			
+		},
+		toFileURI: function() {
+			return IOService.newFileURI(this);
+		},
+		toURL: function(charset, baseURI) {
+			return this.toURI(charset, baseURI).QueryInterface(Components.interfaces.nsIURL);
 		}
 	}
 );
@@ -508,8 +520,6 @@ const FileFactory = new Components.Constructor(
  * @author Nils (derived from DownloadManager code)
  */
 var OpenExternal = {
-	_io: Components.classes['@mozilla.org/network/io-service;1']
-		.getService(Components.interfaces.nsIIOService),
 	_proto: Components.classes['@mozilla.org/uriloader/external-protocol-service;1']
 		.getService(Components.interfaces.nsIExternalProtocolService),
 	_prepare: function(file) {
@@ -522,7 +532,7 @@ var OpenExternal = {
 		throw new Components.Exception('OpenExternal: feed me with nsILocalFile or String');
 	},
 	_nixLaunch: function(file) {
-		this._proto.loadUrl(this._io.newFileURI(file));	 
+		this._proto.loadUrl(file.toFileURI());	 
 	},
 	/**
 	 * Launch/Execute a file

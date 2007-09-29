@@ -38,15 +38,10 @@ function NSResolver(prefix) {
   if(prefix == 'html') {
     return 'http://www.w3.org/1999/xhtml';
   }
-  else {
-  	alert(prefix);
-  	return 'http://www.metalinker.org/';
-  }
+ 	return 'http://www.metalinker.org/';
 }
  
  var Metalinker = {
- 	_ios: Components.classes['@mozilla.org/network/io-service;1']
- 		.getService(Components.interfaces.nsIIOService),
  	_getNode: function ML__getNode(elem, query) {
  				var rv = elem.ownerDocument.evaluate(
 			'ml:' + query,
@@ -73,7 +68,7 @@ function NSResolver(prefix) {
  	},
  	_checkURL: function ML__checkURL(url, allowed) {
  		try {
-			url = this._ios.newURI(url, null, null);
+			url = url.toURI();
 			if (url.scheme == 'file') {
 				throw new Components.Exception("file protocol invalid");
 			}

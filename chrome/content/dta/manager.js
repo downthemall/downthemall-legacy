@@ -333,7 +333,6 @@ var Dialog = {
 					}
 				}
 			}
-
 			SessionManager.save();
 			if (Prefs.autoClose) {
 				Dialog.close();
@@ -368,7 +367,7 @@ var Dialog = {
 		// enumerate everything we'll have to wait for!
 		this._updTimer.kill();
 		this._safeCloseChunks = [];
-		this._safeCloseFinishing = []
+		this._safeCloseFinishing = [];
 		for (d in Tree.all) {
 			if (d.is(RUNNING, QUEUED)) {
 				// enumerate all running chunks
@@ -417,6 +416,7 @@ var Dialog = {
 			}
 		);
 	},
+	_safeCloseAttempts: 0,
 	_safeCloseChunks: [],
 	// this one will loop until all chunks and FINISHING are gone.
 	_safeClose: function D__safeClose() {
@@ -424,15 +424,23 @@ var Dialog = {
 		this._safeCloseChunks = this._safeCloseChunks.filter(function(c) { return c.running; });
 		this._safeCloseFinishing = this._safeCloseFinishing.filter(function(d) { return d.is(FINISHING); });
 		if (this._safeCloseChunks.length || this._safeCloseFinishing.length) {
-			new Timer('Dialog._safeClose()', 250);			
-			return false;
+			if (this._safeCloseAttempts < 20) {
+				++this._safeCloseAttempts;
+				new Timer('Dialog._safeClose()', 250);			
+				return false;
+			}
+			else {
+				Debug.dump("Going down even if queue was not probably closed yet!");
+			}
 		}
 		TimerManager.killAll();
 		// alright, we left the loop.. shutdown complete ;)
-		SessionManager.save();
 		try {
+			SessionManager.save();
 			this._cleanTmpDir();
-		} catch(ex) {}
+		} catch(ex) {
+			Debug.dump("_safeClose", ex);
+		}
 		self.close();
 		return true;		
 	}
@@ -766,7 +774,7 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile, state) {
 	
 	if (referrer) {
 		try {
-			this.referrer = IOService.newURI(referrer, null, null).QueryInterface(Ci.nsIURL);
+			this.referrer = referrer.toURL();
 		}
 		catch (ex) {
 			// We might have been fed with about:blank or other crap. so ignore.
@@ -1211,8 +1219,7 @@ QueueItem.prototype = {
 	},
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
-			let url = this.urlManager.usable;
-			let uri = IOService.newURI(url, null, null).QueryInterface(Ci.nsIURL);
+			let uri = this.urlManager.usable.toURL();
 			let host = uri.host.toString();
 
 			// normalize slashes
@@ -1635,7 +1642,7 @@ function Download(d, c, getInfo) {
 	this.url = d.urlManager.getURL();
 	var referrer = d.referrer;
 
-	this._chan = IOService.newChannelFromURI(IOService.newURI(this.url.url, null, null));
+	this._chan = IOService.newChannelFromURI(this.url.url.toURL());
 	var r = Ci.nsIRequest;
 	this._chan.loadFlags = r.LOAD_NORMAL | r.LOAD_BYPASS_CACHE;
 	this._chan.notificationCallbacks = this;
@@ -2299,8 +2306,6 @@ function startDownloads(start, downloads) {
 	}
 	Tree.selection.currentIndex = numbefore + 1;
 }
-
-const IOService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 const FileOutputStream = Components.Constructor(
 	'@mozilla.org/network/file-output-stream;1',
 	'nsIFileOutputStream',
