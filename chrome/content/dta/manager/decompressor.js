@@ -78,11 +78,7 @@ function Decompressor(download) {
 			null
 		);
 
-		var ios = 
-		Cc["@mozilla.org/network/io-service;1"]
-			.getService(Ci.nsIIOService);
-		ios.newChannelFromURI(ios.newFileURI(this.from))
-			.asyncOpen(converter, null);
+		IOService.newChannelFromURI(IOService.newFileURI(this.from)).asyncOpen(converter, null);
 	}
 	catch (ex) {
 		try {

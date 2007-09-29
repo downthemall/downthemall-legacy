@@ -59,6 +59,21 @@
 	finishEvent: '',
 	
 	timeout: 300,
+	
+	mappings: [
+		'removeCompleted',
+		'removeAborted',
+		'removeCanceled',
+		['autoClose', 'closedta'],
+		'timeout',
+		['maxInProgress', 'ntask'],
+		'maxChunks',
+		'setTime',
+		'showOnlyFilenames',
+		'conflictResolution',
+		['alertingSystem', 'alertbox'],
+		'finishEvent'
+	],
 
 	// nsIObserver
 	observe: function(subject, topic, prefName) {
@@ -80,21 +95,7 @@
 
 	_refreshPrefs: function() {
 		Debug.dump("pref reload");
-
-		[
-			'removeCompleted',
-			'removeAborted',
-			'removeCanceled',
-			['autoClose', 'closedta'],
-			'timeout',
-			['maxInProgress', 'ntask'],
-			'maxChunks',
-			'setTime',
-			'showOnlyFilenames',
-			'conflictResolution',
-			['alertingSystem', 'alertbox'],
-			'finishEvent'
-		].forEach(
+		this.mappings.forEach(
 			function(e) {
 				if (e instanceof Array) {
 					var key = e[0];
