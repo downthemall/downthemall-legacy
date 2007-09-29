@@ -2266,8 +2266,8 @@ function startDownloads(start, downloads) {
 			e.mask,
 			e.referrer
 		);
-		if ('hash' in e && e.hash) {
-			d.hash = e.hash;
+		if (e.url.hash) {
+			d.hash = e.url.hash;
 		}
 		else {
 			d.hash = null; // to initialize prettyHash 

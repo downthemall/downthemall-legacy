@@ -66,9 +66,8 @@ var DTA_ContextOverlay = {
 		for (var i = 0; i < lnks.length; ++i) {
 			// remove anchor from url
 			var link = lnks[i];
-			var plink = link.href.replace(/#.*$/gi, "");
 			// if it's valid and it's new
-			if (!DTA_AddingFunctions.isLinkOpenable(plink)) {
+			if (!DTA_AddingFunctions.isLinkOpenable(link.href)) {
 				continue;
 			}
 				
@@ -79,11 +78,10 @@ var DTA_ContextOverlay = {
 				udesc = this.trim(link.getAttribute('title'));
 			}
 			urls.push({
-				'url': new DTA_URL(plink, doc.characterSet),
+				'url': new DTA_URL(link.href, doc.characterSet),
 				'referrer': ref,
 				'description': this.extractDescription(link),
-				'ultDescription': udesc,
-				'hash': DTA_getLinkPrintHash(link.hash)
+				'ultDescription': udesc
 			});
 			
 			var ml = DTA_getLinkPrintMetalink(link.hash);
@@ -329,7 +327,9 @@ var DTA_ContextOverlay = {
 				return;
 			}
 			
-			url = new DTA_URL(url, win.document.characterSet);
+			var ml = DTA_getLinkPrintMetalink(url);
+			url = new DTA_URL(ml ? ml : url, win.document.characterSet);
+			
 			var ref = DTA_AddingFunctions.getRef(document.commandDispatcher.focusedWindow.document);
 			var desc = this.extractDescription(cur);
 			if (turbo) {
