@@ -455,10 +455,6 @@ var DTA_AddingFunctions = {
 	},	
 
 	saveSingleLink : function(turbo, url, referrer, description) {
-		var ml = DTA_getLinkPrintMetalink(url.url);
-		if (ml) {
-			url.url = ml;
-		}		
 		var item = {
 			'url': url,
 			'referrer': referrer,
