@@ -35,8 +35,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
- var SessionManager = {
+
+var SessionManager = {
 
 	init: function() {
 		this._con = Cc["@mozilla.org/storage/service;1"]

@@ -45,6 +45,12 @@ var Preferences = DTA_preferences;
 const IOService = Components.classes["@mozilla.org/network/io-service;1"]
 	.getService(Components.interfaces.nsIIOService);
 
+const FileFactory = new Components.Constructor(
+	"@mozilla.org/file/local;1",
+	"nsILocalFile",
+	"initWithPath"
+);
+	
 const SYSTEMSLASH = (DTA_profileFile.get('dummy').path.indexOf('/') != -1) ? '/' : '\\';
 
 // shared state defines
@@ -204,12 +210,12 @@ var Utils = {
 	 * @text text The description text to be displayed
 	 * @return A string containing the user selected path, or false if user cancels the dialog.
 	 */
+	FilePicker: Components.Constructor('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init'),
 	askForDir: function (predefined, text) {
 		try {
 			// nsIFilePicker object
 			var nsIFilePicker = Components.interfaces.nsIFilePicker;
-			var fp = Components.classes['@mozilla.org/filepicker;1'].createInstance(nsIFilePicker);
-			fp.init(window, text, nsIFilePicker.modeGetFolder);
+			var fp = new Utils.FilePicker(window, text, nsIFilePicker.modeGetFolder);
 			fp.appendFilters(nsIFilePicker.filterAll);
 		
 			// locate current directory
@@ -241,14 +247,7 @@ var Utils = {
 			if (!path || !String(path).trim().length) {
 				return false;
 			}
-			var directory = Components.classes["@mozilla.org/file/local;1"].
-			createInstance(Components.interfaces.nsILocalFile);
-			try {
-				directory.initWithPath(path);
-			}
-			catch (ex) {
-				//
-			}
+			var directory = new FileFactory(path);
 		}
 		else {
 			directory = path.clone();
@@ -298,10 +297,7 @@ var Utils = {
 			if (Preferences.getDTA("sounds." + name, false)) {
 				var sound = Components.classes["@mozilla.org/sound;1"]
 					.createInstance(Ci.nsISound);
-				var uri = Cc['@mozilla.org/network/standard-url;1']
-					.createInstance(Ci.nsIURI);
-				uri.spec = "chrome://dta/skin/sounds/" + name + ".wav";
-				sound.play(uri); 
+				sound.play(("chrome://dta/skin/sounds/" + name + ".wav").toURI()); 
 			}
 		}
 		catch(ex) {
@@ -394,9 +390,7 @@ var _getIcon = function() {
 	if (navigator.platform.search(/mac/i) != -1) {
 		const _getIcon_recognizedMac = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
 		return function (url, size) {
-			var uri = Components.classes["@mozilla.org/network/standard-url;1"]
-				.createInstance(Components.interfaces.nsIURI);
-			uri.spec = url;
+			var uri = url.toURI();
 			if (uri.path.search(_getIcon_recognizedMac) != -1) {
 				return "moz-icon://" + url + "?size=" + size;
 			}
@@ -505,15 +499,6 @@ function _() {
 	}
 	return _.apply(this, arguments);
 }
-
-/**
- * Constructor helper for nsILocalFile
- */
-const FileFactory = new Components.Constructor(
-	"@mozilla.org/file/local;1",
-	"nsILocalFile",
-	"initWithPath"
-);
 
 /**
  * XP compatible reveal/launch
