@@ -84,7 +84,7 @@ var DTA_SaveAs = {
 			this.referrer = this.url;
 		}
 		var ml = DTA_getLinkPrintMetalink(this.url);
-		this.url = new DTA_ULR(ml ? ml : this.url);
+		this.url = new DTA_URL(ml ? ml : this.url);
 
 		this.ddDirectory = document.getElementById('tdtalist');
 		var mask = DTA_AddingFunctions.getDropDownValue('renaming');
