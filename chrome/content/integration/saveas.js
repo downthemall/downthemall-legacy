@@ -83,7 +83,7 @@ var DTA_SaveAs = {
 		catch(ex) {
 			this.referrer = this.url;
 		}
-		var ml = getLinkPrintMetalink(this.url);
+		var ml = DTA_getLinkPrintMetalink(this.url);
 		this.url = new DTA_ULR(ml ? ml : this.url);
 
 		this.ddDirectory = document.getElementById('tdtalist');
