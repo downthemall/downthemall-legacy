@@ -63,13 +63,12 @@
 				</row>
 			</rows>
 		</grid>
-	</hbox>
+	</hbox>	
 	
-	<separator class="thin"/>	
-	
-	<grid id="canvasGrid">
+	<grid id="canvasGrid">	
 		<columns><column/><column flex="1"/><column/><column/></columns>
 		<rows>
+			<separator class="thin"/>		
 			<stack id="chunkStack">
 				<html:canvas id="chunkCanvas" height="40px"></html:canvas>
 				<label id="infoPercent"/>
