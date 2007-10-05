@@ -70,7 +70,7 @@
 		<rows>
 			<separator class="thin"/>		
 			<stack id="chunkStack">
-				<html:canvas id="chunkCanvas" height="40px"></html:canvas>
+				<html:canvas id="chunkCanvas" height="40"></html:canvas>
 				<label id="infoPercent"/>
 			</stack>
 			<hbox id="chunkAlt">
@@ -84,7 +84,7 @@
 				<label id="timeRemaining"/>
 			</row>
 			<separator class="thin" />
-			<html:canvas id="speedCanvas" height="33"></html:canvas>
+			<html:canvas id="speedCanvas" height="30"></html:canvas>
 			<row>
 				<label value="&currentSpeedTitle.value;"/>
 				<label id="speedCurrent"/>
