@@ -65,14 +65,19 @@
 		</grid>
 	</hbox>
 	
+	<separator class="thin"/>	
+	
 	<grid id="canvasGrid">
 		<columns><column/><column flex="1"/><column/><column/></columns>
 		<rows>
-			<separator class="thin"/>			
-			<stack>
+			<stack id="chunkStack">
 				<html:canvas id="chunkCanvas" height="40px"></html:canvas>
 				<label id="infoPercent"/>
 			</stack>
+			<hbox id="chunkAlt">
+				<progressmeter flex="1" id="chunkProgressAlt" type="determined" value="50%" />
+				<label id="infoPercentAlt"/>
+			</hbox>
 			<row>
 				<label value="&elapsedTitle.value;"/>
 				<label id="timeElapsed"/>
