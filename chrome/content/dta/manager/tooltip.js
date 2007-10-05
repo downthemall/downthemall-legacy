@@ -42,6 +42,23 @@ const SPEED_NUMAVG = 10;
 
 var Tooltip = {
 	_current: null,
+	init: function() {
+		try {
+			// check if we support 2d-canvas
+			$('chunkCanvas').getContext('2d');
+			this.progress = $('infoPercent');
+			$('chunkAlt').parentNode.removeChild($('chunkAlt'));
+		}
+		catch (ex) {
+			// we don't support 2d-canvas
+			this.updateChunks = this.updateChunksAlt;
+			this.updateSpeeds = function() {};
+			$('chunkStack', 'speedCanvas').forEach(function(node) { node.parentNode.removeChild(node); });
+			$('infoPercentAlt').id = 'infoPercent';
+		}
+		Debug.dump("ttinit");
+		this.update();
+	},		 
 	start: function(d) {
 		this._current = d;
 		this._timer = new Timer('Tooltip.update()', TOOLTIP_FREQ, true, true);		
@@ -53,8 +70,13 @@ var Tooltip = {
 		}
 	},	
 	update: function() {
-		this.updateChunkCanvas();
-		this.updateSpeedCanvas();
+		let file = this._current;
+		if (!file) {
+			return;
+		}
+		this.updateMetrics(file);
+		this.updateChunks(file);
+		this.updateSpeeds(file);
 	},
 	_makeRoundedRectPath: function(ctx,x,y,width,height,radius) {
 		ctx.beginPath();
@@ -82,11 +104,35 @@ var Tooltip = {
 		g.addColorStop(1, c4);
 		return g;
 	},
-	updateSpeedCanvas: function() {
-		var file = this._current;
-		if (!file) {
-			return;
+	updateMetrics: function(file) {
+		try {
+			if (file.speeds.length) {
+				$('speedAverage').value = file.speed;
+				$('speedCurrent').value = Utils.formatBytes(file.speeds[file.speeds.length - 1]) + "/s";;
+			}
+			else {
+				$('speedCurrent').value = $('speedAverage').value = _('unknown');
+			}
+
+			$('infoSize').value = file.totalSize > 0 ? Utils.formatBytes(file.totalSize) : _('unknown');
+			if (file.is(RUNNING)) {
+				$('timeElapsed').value = Utils.formatTimeDelta((Utils.getTimestamp() - file.timeStart) / 1000);
+				$('timeRemaining').value = file.status;
+			}
+			else {
+				$('timeElapsed', 'timeRemaining', 'speedCurrent').forEach(
+					function(e) {
+						e.value = _('nal');
+					}
+				);
+			}
+			$('infoPercent').value = file.percent;
 		}
+		catch (ex) {
+			Debug.dump("Tooltip.updateMetrics: ", ex);
+		}	
+	},
+	updateSpeeds: function(file) {
 		try {
 			// we need to take care about with/height
 			var canvas = $("speedCanvas");
@@ -192,12 +238,17 @@ var Tooltip = {
 			Debug.dump("updateSpeedCanvas(): ", ex);
 		}
 	},
-	updateChunkCanvas: function () {
-		var file = this._current;
-		if (!file) {
-			return;
+	updateChunksAlt: function(file) {
+		let meter = $('chunkProgressAlt');
+		if (file.is(RUNNING) && 0 >= file.totalSize) {
+			meter.mode = 'undetermined';
 		}
-		
+		else {
+			meter.mode = 'determined';
+			meter.setAttribute('value', file.percent);
+		}
+	},
+	updateChunks: function (file) {
 		try {
 			if (file.speeds.length) {
 				$('speedAverage').value = file.speed;
@@ -332,3 +383,4 @@ var Tooltip = {
 		}
 	}
 };
+addEventListener('load', function() { Tooltip.init(); }, false);

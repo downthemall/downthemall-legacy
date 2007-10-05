@@ -113,13 +113,26 @@ toolbox {
 }
 #infoPercent {
 	text-align: center;
-	height: 40px;
 	margin: 0;
 	padding: 0;
-	padding-top: 7px;
 	font-size: 14px;
 	font-weight: bold;
 	background: transparent !important;
+}
+stack > #infoPercent {
+	padding-top: 7px;
+	height: 40px;
+}
+#chunkAlt {
+	height: 32px;
+	margin-top: 1ex;
+	margin-bottom: 1ex;
+}	
+#chunkAlt > #infoPercent {
+	margin-top: auto;
+	margin-bottom: auto;
+	padding-top: 6px;
+	min-width: 4.2ex;
 }
 #infoDest {
 	font-weight: bold !important;
