@@ -75,7 +75,7 @@ function NumericRange(name, start, stop, step, strl) {
 };
 NumericRange.prototype = {
 	_format: function(i) {
-		var rv = String(Math.abs(i));
+		let rv = String(Math.abs(i));
 		while (rv.length < this.strl) {
 			rv = '0' + rv;
 		}

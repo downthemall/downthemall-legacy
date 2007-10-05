@@ -219,10 +219,7 @@ var DTA_debug = {
 				text += message.replace(/\n/g, "\x0D\x0A\t") + " ";
 			}
 			if (e instanceof Components.Exception) {
-				if (!e.message)
-					text += e;
-				else
-					text += e.message + " (nsResult=" + e.result + ")";
+				text += e.toString();
 			} else if (e instanceof Error) {
 				if (!e.message)
 					text += e;
