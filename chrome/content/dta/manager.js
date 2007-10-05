@@ -357,7 +357,7 @@ var Dialog = {
 				_("confclose"),
 				_("nonres")
 			);
-			if (!rv) {
+			if (rv) {
 				return false;
 			}
 		}
@@ -1363,7 +1363,8 @@ QueueItem.prototype = {
 			// gc
 			this.chunks = [];
 			this.totalSize = this.partialSize = 0;
-			this.activeChunks = 0;
+			this.maxChunks = this.activeChunks = 0;
+			this.resumable = true;
 
 		} catch(ex) {
 			Debug.dump("cancel():", ex);
