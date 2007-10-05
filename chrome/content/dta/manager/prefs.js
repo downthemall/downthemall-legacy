@@ -52,7 +52,7 @@
 		['conflictResolution', 3],
 		['alertingSystem', 'alertbox', (SYSTEMSLASH == '\\') ? 1 : 0],
 		['finishEvent', '']
-		['showToolTip', true]
+		['showTooltip', true]
 	],
 
 	// nsIObserver
@@ -78,7 +78,10 @@
 		this.mappings.forEach(
 			function(e) {
 				let key, pref, def;
-				if (e.length == 3) {
+				if (!e) {
+					return;
+				}
+				else if (e.length == 3) {
 					key = e[0];
 					pref = e[1];
 					def = e[2];
@@ -88,7 +91,6 @@
 					pref = key.toLowerCase();
 					def = e[1];
 				}
-				Debug.dump(key + " " + pref, def);
 				this[key] = Preferences.getDTA(pref, def);
 			},
 			this
