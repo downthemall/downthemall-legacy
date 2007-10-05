@@ -1001,7 +1001,7 @@ QueueItem.prototype = {
 		return this._icon;
 	},
 	get largeIcon() {
-		return getIcon(this.fileName, 'metalink' in this, 32);
+		return getIcon(this.destinationName, 'metalink' in this, 32);
 	},
 	get size() {
 		try {
