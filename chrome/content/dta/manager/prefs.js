@@ -37,42 +37,22 @@
  * ***** END LICENSE BLOCK ***** */
  
  var Prefs = {
-	// default values
-	showOnlyFilenames: true,
-	alertingSystem: (SYSTEMSLASH == '\\') ? 1 : 0,
-	conflictResolution: 3,
-
-	maxInProgress: 5,
-	maxChunks: 5,
 	tempLocation: null,
-
-	currentTooltip: null,
-
-	removeCompleted: true,
-	removeAborted: false,
-	removeCanceled: false,
-	
-	autoClose: false,
-	
-	setTime: true,
-	
-	finishEvent: '',
-	
-	timeout: 300,
 	
 	mappings: [
-		'removeCompleted',
-		'removeAborted',
-		'removeCanceled',
-		['autoClose', 'closedta'],
-		'timeout',
-		['maxInProgress', 'ntask'],
-		'maxChunks',
-		'setTime',
-		'showOnlyFilenames',
-		'conflictResolution',
-		['alertingSystem', 'alertbox'],
-		'finishEvent'
+		['removeCompleted', true],
+		['removeAborted', false],
+		['removeCanceled', false],
+		['autoClose', 'closedta', false],
+		['timeout', 300],
+		['maxInProgress', 'ntask', 4],
+		['maxChunks', 4],
+		['setTime', true],
+		['showOnlyFilenames', true],
+		['conflictResolution', 3],
+		['alertingSystem', 'alertbox', (SYSTEMSLASH == '\\') ? 1 : 0],
+		['finishEvent', '']
+		['showToolTip', true]
 	],
 
 	// nsIObserver
@@ -97,15 +77,19 @@
 		Debug.dump("pref reload");
 		this.mappings.forEach(
 			function(e) {
-				if (e instanceof Array) {
-					var key = e[0];
-					var pref = e[1];
+				let key, pref, def;
+				if (e.length == 3) {
+					key = e[0];
+					pref = e[1];
+					def = e[2];
 				}
 				else {
-					var key = e;
-					var pref = key.toLowerCase();
+					key = e[0];
+					pref = key.toLowerCase();
+					def = e[1];
 				}
-				this[key] = Preferences.getDTA(pref, this[key]);
+				Debug.dump(key + " " + pref, def);
+				this[key] = Preferences.getDTA(pref, def);
 			},
 			this
 		);
