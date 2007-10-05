@@ -51,7 +51,7 @@
 		['showOnlyFilenames', true],
 		['conflictResolution', 3],
 		['alertingSystem', 'alertbox', (SYSTEMSLASH == '\\') ? 1 : 0],
-		['finishEvent', '']
+		['finishEvent', ''],
 		['showTooltip', true]
 	],
 
