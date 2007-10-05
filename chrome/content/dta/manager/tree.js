@@ -322,28 +322,32 @@ var Tree = {
 		}
 		this.endUpdate();
 	},
+	_hoverItem: null,
+	hovering: function(event) {
+		if (!Prefs.showTooltip) {
+			return;
+		}
+		this._hoverItem = {x: event.clientX, y: event.clientY};
+	},
 	showTip: function(event) {
-		try {
-			if (!Preferences.getDTA("showtooltip", true)) {
-				return false;
-			}
-			let row = {};
-			this._box.getCellAt(event.clientX, event.clientY, row, {}, {});
-			if (row.value == -1) {
-				return false;
-			}
-			let d = this.at(row.value);
-			$("infoIcon").src = d.largeIcon;
-			$("infoURL").value = d.urlManager.url;
-			$("infoDest").value = d.destinationFile;
+		if (!Prefs.showTooltip || !this._hoverItem) {
+			return false;
+		}
+		let row = {};
+		this._box.getCellAt(this._hoverItem.x, this._hoverItem.y, row, {}, {});
+		if (row.value == -1) {
+			return false;
+		}
+		let d = this.at(row.value);
+		if (!d) {
+			return false;
+		}
+		$("infoIcon").src = d.largeIcon;
+		$("infoURL").value = d.urlManager.url;
+		$("infoDest").value = d.destinationFile;
 	
-			Tooltip.start(d);			
-			return true;
-		}
-		catch(ex) {
-			Debug.dump("Tooltip.show():", ex);
-		}
-		return false;
+		Tooltip.start(d);			
+		return true;
 	},	
 	stopTip: function T_stopTip() {
 		Tooltip.stop();

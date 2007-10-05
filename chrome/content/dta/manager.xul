@@ -142,6 +142,7 @@
 			style="margin:0px;"
 			ondblclick="FileHandling.openFile();"
 			onselect="Tree.selectionChanged();"
+			onmousemove="Tree.hovering(event);"
 		>
 			<treecols>
 				<treecol id="task" label="&task.label;" ordinal="1" flex="30" crop="center" persist="width ordinal hidden"/>

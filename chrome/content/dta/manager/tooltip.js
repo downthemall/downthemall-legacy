@@ -36,7 +36,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-const TOOLTIP_FREQ = 650;
+const TOOLTIP_FREQ = 333;
 const SPEED_COUNT = 60;
 const SPEED_NUMAVG = 10;
 
@@ -56,12 +56,12 @@ var Tooltip = {
 			$('chunkStack', 'speedCanvas').forEach(function(node) { node.parentNode.removeChild(node); });
 			$('infoPercentAlt').id = 'infoPercent';
 		}
-		Debug.dump("ttinit");
-		this.update();
 	},		 
 	start: function(d) {
 		this._current = d;
-		this._timer = new Timer('Tooltip.update()', TOOLTIP_FREQ, true, true);		
+		this._timer = new Timer('Tooltip.update()', TOOLTIP_FREQ, true, true);
+		// 1.9+, causes some flickering but anyway :p
+		new Timer('Tooltip.update()', 25);
 	},
 	stop: function() {
 		this._current = null;
@@ -97,11 +97,16 @@ var Tooltip = {
 		return g;
 	},
 	_createInnerShadowGradient: function(ctx, w, c1, c2, c3, c4) {
-		var g = ctx.createLinearGradient(0, 0, 0, w);
-		g.addColorStop(0, c1);
-		g.addColorStop(3.0 / w, c2);
-		g.addColorStop(4.0 / w, c3);
-		g.addColorStop(1, c4);
+		try {
+			var g = ctx.createLinearGradient(0, 0, 0, w);
+			g.addColorStop(0, c1);
+			g.addColorStop(3.0 / w, c2);
+			g.addColorStop(4.0 / w, c3);
+			g.addColorStop(1, c4);
+		}
+		catch (ex) {
+			Debug.dump("got" + w);
+		}
 		return g;
 	},
 	updateMetrics: function(file) {
@@ -136,8 +141,14 @@ var Tooltip = {
 		try {
 			// we need to take care about with/height
 			var canvas = $("speedCanvas");
-			var width = canvas.width = canvas.clientWidth;
-			var height = canvas.height = canvas.clientHeight;
+			if (canvas.clientWidth) {
+				canvas.width = canvas.clientWidth;
+			}
+			if (canvas.clientHeight) {
+				canvas.height = canvas.clientHeight;
+			}
+			var width = canvas.width;
+			var height = canvas.height;
 			var ctx = canvas.getContext("2d");
 			--width; --height;
 			
@@ -250,32 +261,15 @@ var Tooltip = {
 	},
 	updateChunks: function (file) {
 		try {
-			if (file.speeds.length) {
-				$('speedAverage').value = file.speed;
-				$('speedCurrent').value = Utils.formatBytes(file.speeds[file.speeds.length - 1]) + "/s";;
-			}
-			else {
-				$('speedCurrent').value = $('speedAverage').value = _('unknown');
-			}
-
-			$('infoSize').value = file.totalSize > 0 ? Utils.formatBytes(file.totalSize) : _('unknown');
-			if (file.is(RUNNING)) {
-				$('timeElapsed').value = Utils.formatTimeDelta((Utils.getTimestamp() - file.timeStart) / 1000);
-				$('timeRemaining').value = file.status;
-			}
-			else {
-				$('timeElapsed', 'timeRemaining', 'speedCurrent').forEach(
-					function(e) {
-						e.value = _('nal');
-					}
-				);
-			}
-			var ip = $('infoPercent');
-			ip.value = file.percent;
-
 			var canvas = $("chunkCanvas");
-			var width = canvas.width = canvas.clientWidth;
-			var height = canvas.height = canvas.clientHeight;
+			if (canvas.clientWidth) {
+				canvas.width = canvas.clientWidth;
+			}
+			if (canvas.clientHeight) {
+				canvas.height = canvas.clientHeight;
+			}
+			var width = canvas.width;
+			var height = canvas.height;
 			var ctx = canvas.getContext("2d");
 			--width; --height;
 			
