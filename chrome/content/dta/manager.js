@@ -1070,7 +1070,6 @@ QueueItem.prototype = {
 
 	retry: function QI_retry() {
 		// reset flags
-		this.cancel();
 		this.totalSize = this.partialSize = 0;
 		this.compression = null;
 		this.activeChunks = this.maxChunks = 0;
@@ -1923,6 +1922,7 @@ Download.prototype = {
 				vis.value = '';
 				aChannel.visitResponseHeaders(vis);
 				Debug.dump("Response Headers\n\n" + vis.value);
+				d.cancel();
 				d.resumable = false;
 				d.retry();
 				return false;
@@ -1936,6 +1936,7 @@ Download.prototype = {
 		catch (ex) {
 			Debug.dump("header failed! " + d, ex);
 			// restart download from the beginning
+			d.cancel();
 			d.resumable = false;
 			d.retry();
 			return false;
@@ -2162,6 +2163,7 @@ Download.prototype = {
 			}
 			else {
 				Debug.dump("caught bad server");
+				d.cancel();
 				d.retry();
 				return;
 			}
