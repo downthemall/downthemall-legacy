@@ -50,7 +50,9 @@ function QueueItem(url, num, hash) {
 	this.ultDescription = '';
 	this.mask = Dialog.ddRenaming.value;
 	this.dirSave = Dialog.ddDirectory.value;
-	this.hash = hash;
+	if (hash) {
+		this.url.hash = hash;
+	}
 }
 
 function Literal(str) {
@@ -286,7 +288,7 @@ var Dialog = {
 				if (a.mask) {
 					this.ddRenaming.value = a.mask;
 				}
-				hash = a.hash;
+				hash = a.url.hash;
 			}
 			// check if there's some URL in clipboard
 			else {

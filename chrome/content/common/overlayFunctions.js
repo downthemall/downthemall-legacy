@@ -310,7 +310,6 @@ DTA_URL.prototype = {
 		var hash = DTA_getLinkPrintHash(this._url);
 		if (hash) {
 			this.hash = hash;
-			alert(hash);
 		}
 		this._url = this._url.replace(/#.*$/, '');
 		this.usable = '';
@@ -706,10 +705,9 @@ var DTA_Mediator = {
 const DTA_SUPPORTED_HASHES = {
 	'MD5': 32,
 	'SHA1': 40,
-	'SHA256': 64
-	/* Currently broken: https://bugzilla.mozilla.org/show_bug.cgi?id=383390
-	'sha384': 96,
-	'sha512':  128 */
+	'SHA256': 64,
+	'SHA384': 96,
+	'SHA512':  128
 };
 function DTA_Hash(hash, type) {
 	if (typeof(hash) != 'string' && !(hash instanceof String)) {
