@@ -533,6 +533,11 @@ UrlManager.prototype = {
 			rv.push(c);
 		}
 		return rv;
+	},
+	toString: function() {
+		var rv = '';
+		this._urls.forEach(function(u) { rv += u.preference + " " + u.url + "\n"; });
+		return rv;
 	}
 };
 function Visitor() {
@@ -2274,6 +2279,9 @@ function startDownloads(start, downloads) {
 		);
 		if (e.url.hash) {
 			d.hash = e.url.hash;
+		}
+		else if (e.hash) {
+			d.hash = e.hash;
 		}
 		else {
 			d.hash = null; // to initialize prettyHash 

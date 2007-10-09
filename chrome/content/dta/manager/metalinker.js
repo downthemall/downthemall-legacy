@@ -42,22 +42,33 @@ function NSResolver(prefix) {
 }
  
  var Metalinker = {
- 	_getNode: function ML__getNode(elem, query) {
- 				var rv = elem.ownerDocument.evaluate(
-			'ml:' + query,
+ 	_getNodes: function ML__getNodes(elem, query) {
+		var rv = [];
+		var nodeSet = elem.ownerDocument.evaluate(
+			query,
 			elem,
 			function() { return 'http://www.metalinker.org/'; },
-			XPathResult.FIRST_ORDERED_NODE_TYPE,
+			XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
 			null
 		);
-		return rv.singleNodeValue;
- 	},
+		for (var j = 0; j < nodeSet.snapshotLength; ++j) {
+			rv.push(nodeSet.snapshotItem(j));
+		}
+		return rv;
+	},
+	_getNode: function ML_getNode(elem, query) {
+		var r = this._getNodes(elem, query);
+		if (r.length) {
+			return r.shift();
+		}
+		return null;
+	},
  	_getSingle: function ML__getSingle(elem, query) {
- 		var rv = this._getNode(elem, query);
+ 		var rv = this._getNode(elem, 'ml:' + query);
  		return rv ? rv.textContent.trim() : '';
  	},
  	_getLinkRes: function(elem, query) {
- 		var rv = this._getNode(elem, query);
+ 		var rv = this._getNode(elem, 'ml:' + query);
  		if (rv) {
  			var n = this._getSingle(rv, "name"), l = this._checkURL(this._getSingle(rv, "url"));
  			if (n && l) {
@@ -111,13 +122,13 @@ function NSResolver(prefix) {
 			if (root.nodeName != 'metalink' || root.getAttribute('version') != '3.0') {
 				throw new Error(_('mlinvalid'));
 			}
-			var locale = this.locale.slice(0,2);
+			var locale = this.locale.split('-').map(function(l) { return l.slice(0, 2).toLowerCase(); }).reverse();
 			var downloads = [];
 			var files = root.getElementsByTagName('file');
 			for (var i = 0; i < files.length; ++i) {
 				var file = files[i];
 				var urls = [];
-				var urlNodes = file.getElementsByTagName('url');
+				var urlNodes = this._getNodes(file, 'ml:resources/ml:url');
 				for (var j = 0; j < urlNodes.length; ++j) {
 					var url = urlNodes[j];
 					var type = url.getAttribute('type');
@@ -130,8 +141,8 @@ function NSResolver(prefix) {
 					}
 					if (url.hasAttribute('location')) {
 						var a = url.getAttribute('location').slice(0,2).toLowerCase();
-						if (a == locale) {
-							preference *= 10;
+						if (locale.indexOf(a) != -1) {
+							preference = 100 + preference;
 						}
 					}
 					if (['http', 'https'].indexOf(type) != -1) {
@@ -145,13 +156,16 @@ function NSResolver(prefix) {
 					continue;
 				}
 				var hash = null; 
-				var hashes = file.getElementsByTagName("hash");
+				var hashes = this._getNodes(file, 'ml:verification/ml:hash');
 				for (var j = 0; j < hashes.length; ++j) {
 					var h = hashes[j].textContent.trim();
 					try {
-						hash = new DTA_Hash(h, hashes[j].getAttribute('type'));
+						h = new DTA_Hash(h, hashes[j].getAttribute('type'));
+						hash = h;
+						Debug.dump(h, "ok");						
 					}
 					catch (ex) {
+						Debug.dump(h, ex);
 						// ignore
 					}
 				}
