@@ -121,10 +121,10 @@ function NSResolver(prefix) {
 				for (var j = 0; j < urlNodes.length; ++j) {
 					var url = urlNodes[j];
 					var type = url.getAttribute('type');
-					var preference = 100;
+					var preference = 1;
 					if (url.hasAttribute('preference')) {
 						var a = new Number(url.getAttribute('preference'));
-						if (isFinite(a)) {
+						if (isFinite(a) && a > 0 && a < 101) {
 							preference = a;
 						}
 					}
