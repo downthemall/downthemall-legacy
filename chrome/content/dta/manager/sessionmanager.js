@@ -47,9 +47,18 @@ var SessionManager = {
 		} catch (ex) {
 			// no-op
 		}
-		this._saveStmt = this._con.createStatement('REPLACE INTO queue (uuid, pos, item) VALUES (?1, ?2, ?3)');
-		this._savePosStmt = this._con.createStatement('UPDATE queue SET pos = ?1 WHERE uuid = ?2');
-		this._delStmt = this._con.createStatement('DELETE FROM queue WHERE uuid = ?1');
+		try {
+			this._saveStmt = this._con.createStatement('INSERT INTO queue (uuid, pos, item) VALUES (?1, ?2, ?3)');
+			this._saveItemStmt = this._con.createStatement('UPDATE queue SET pos = ?2, item = ?3 WHERE uuid = ?1');
+			this._savePosStmt = this._con.createStatement('UPDATE queue SET pos = ?1 WHERE uuid = ?2');
+			this._delStmt = this._con.createStatement('DELETE FROM queue WHERE uuid = ?1');
+		}
+		catch (ex) {
+			Debug.dump("SQLite: " + this._con.lastErrorString);
+			alert("SQLite: " + this._con.lastErrorString);
+			self.close();
+			return;
+		}
 
 		this._converter = Components.classes["@mozilla.org/intl/saveascharset;1"]
 			.createInstance(Ci.nsISaveAsCharset);
@@ -119,16 +128,18 @@ var SessionManager = {
 			);
 		}
 
-		let s = this._saveStmt;
+		let s;
 		if (d._dbId) {
+			s = this._saveItemStmt;
 			s.bindInt64Parameter(0, d._dbId);
 		}
 		else {
+			s = this._saveStmt;
 			s.bindNullParameter(0);
 		}
 		if (!isFinite(pos)) {
 			if ('position' in d) {
-						s.bindInt32Parameter(1, d.position);
+				s.bindInt32Parameter(1, d.position);
 			}
 			else {
 				s.bindNullParameter(1);
