@@ -129,6 +129,7 @@ var SessionManager = {
 		}
 
 		let s;
+		Debug.dump("Saving Download: " + d);
 		if (d._dbId) {
 			s = this._saveItemStmt;
 			s.bindInt64Parameter(0, d._dbId);
@@ -150,7 +151,9 @@ var SessionManager = {
 		}
 		s.bindUTF8StringParameter(2, this._converter.Convert(e.toSource()));
 		s.execute();
-		d._dbId = this._con.lastInsertRowID;
+		if (!d._dbId) {
+			d._dbId = this._con.lastInsertRowID;
+		}
 		s.reset();
 		return true;
 	},
@@ -176,8 +179,7 @@ var SessionManager = {
 
 		this.beginUpdate();
 		try {
-			this._con.executeSimpleSQL('DELETE FROM queue');
-			var i = 0;
+			let i = 0;
 			for (let d in Tree.all) {
 				if (this._saveDownload(d, i)) {
 					++i;
@@ -233,25 +235,24 @@ var SessionManager = {
 
 		while (stmt.executeStep()) {
 			try {
-				const _dbId = stmt.getInt64(0);
-				var down = eval(stmt.getUTF8String(1));
-				var get = function(attr) {
+				let _dbId = stmt.getInt64(0);
+				let down = eval(stmt.getUTF8String(1));
+				let get = function(attr) {
 					if (attr in down) {
 						return down[attr];
 					}
 					return null;
 				}
 
-				var d = new QueueItem(
+				let d = new QueueItem(
 					new UrlManager(down.urlManager),
 					get("pathName"),
 					get("numIstance"),
 					get("description"),
 					get("mask"),
 					get("referrer"),
-					get("tmpFile"),
-					get('state')
-					);
+					get("tmpFile")
+				);
 				d._dbId = _dbId;
 				d.startDate = new Date(get("startDate"));
 				d.visitors.load(down.visitors);
@@ -264,7 +265,7 @@ var SessionManager = {
 					'resumable',
 					'totalSize',
 					'hash',
-					'compression',
+					'compression'
 				].forEach(
 					function(e) {
 						d[e] = get(e);
@@ -275,7 +276,9 @@ var SessionManager = {
 				}
 
 				d.started = d.partialSize != 0;
-
+				if (get('state')) {
+					d.state = get('state');
+				}
 				if (d.is(PAUSED)) {
 					down.chunks.forEach(
 						function(c) {
@@ -291,7 +294,7 @@ var SessionManager = {
 				}
 				else if (d.is(CANCELED)) {
 					d.status = _('canceled');
-				}
+				}			
 				Tree.add(d);
 			}
 			catch (ex) {
