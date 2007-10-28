@@ -46,10 +46,17 @@ const IOService = Components.classes["@mozilla.org/network/io-service;1"]
 	.getService(Components.interfaces.nsIIOService);
 
 const FileFactory = new Components.Constructor(
-	"@mozilla.org/file/local;1",
-	"nsILocalFile",
-	"initWithPath"
+	'@mozilla.org/file/local;1',
+	'nsILocalFile',
+	'initWithPath'
 );
+
+const SoundFactory = new Components.Constructor(
+	'@mozilla.org/sound;1',
+	'nsISound',
+	'play'
+);
+	
 	
 const SYSTEMSLASH = (DTA_profileFile.get('dummy').path.indexOf('/') != -1) ? '/' : '\\';
 
@@ -91,10 +98,9 @@ function $() {
 	if (arguments.length == 1) {
 		return document.getElementById(arguments[0]);
 	}
-	var elements = [];
-	for (var i = 0, e = arguments.length; i < e; ++i) {
-		var id = arguments[i];
-		var element = document.getElementById(id);
+	let elements = [];
+	for (let i = 0, e = arguments.length; i < e; ++i) {
+		let element = document.getElementById(arguments[i]);
 		if (element) {
 			elements.push(element);
 		}
@@ -242,33 +248,34 @@ var Utils = {
 	 * @return a nsILocalFile to the specified path if it's valid, false if it wasn't
 	 */
 	validateDir: function(path) {
-		var directory = null;
+		let directory = null;
 		if (!(path instanceof Components.interfaces.nsILocalFile)) {
 			if (!path || !String(path).trim().length) {
 				return false;
 			}
-			var directory = new FileFactory(path);
+			directory = new FileFactory(path);
 		}
 		else {
 			directory = path.clone();
 		}
-		if (directory) {
-			try {
-				// look for the first directory that exists.
-				var parent = directory.clone();
-				while (parent && !parent.exists()) {
-					parent = parent.parent;
-				}
-				if (parent) {
-					// from nsIFile
-					parent = parent.QueryInterface(Components.interfaces.nsILocalFile);
-					// we look for a directory that is writeable and has some diskspace
-					return parent.isDirectory() && parent.isWritable() && parent.diskSpaceAvailable ? directory : false;
-				}
+		if (!directory) {
+			return false;
+		}
+		try {
+			// look for the first directory that exists.
+			let parent = directory.clone();
+			while (parent && !parent.exists()) {
+				parent = parent.parent;
 			}
-			catch(ex) {
-				Debug.dump('Utils.validateDir()', ex);
+			if (parent) {
+				// from nsIFile
+				parent = parent.QueryInterface(Components.interfaces.nsILocalFile);
+				// we look for a directory that is writable and has some disk-space
+				return parent.isDirectory() && parent.isWritable() && parent.diskSpaceAvailable ? directory : false;
 			}
+		}
+		catch(ex) {
+			Debug.dump('Utils.validateDir()', ex);
 		}
 		return false;
 	},
@@ -276,7 +283,7 @@ var Utils = {
 	 * Gets the disk-space available for a nsILocalFile.
 	 * Here, because diskSpaceAvailable requires valid path and/or path to be a directory
 	 * @param file Valid nsILocalFile
-	 * @return the diskspace available to the caller
+	 * @return the disk-space available to the caller
 	 * @author Nils
 	 */
 	getFreeDisk: function(file) {
@@ -290,14 +297,12 @@ var Utils = {
 	},
 	/**
 	 * Play a sound file (if prefs allow to do so)
-	 * @param name Name of the sound (correpsonding to the pref name and the file name of desired sound)
+	 * @param name Name of the sound (corresponding to the pref name and the file name of desired sound)
 	 */
 	playSound: function(name) {
 		try {
 			if (Preferences.getDTA("sounds." + name, false)) {
-				var sound = Components.classes["@mozilla.org/sound;1"]
-					.createInstance(Ci.nsISound);
-				sound.play(("chrome://dta/skin/sounds/" + name + ".wav").toURI()); 
+				new SoundFactory(("chrome://dta/skin/sounds/" + name + ".wav").toURI());
 			}
 		}
 		catch(ex) {
@@ -386,12 +391,13 @@ var Utils = {
 	}
 };
 
-var _getIcon = function() {
-	if (navigator.platform.search(/mac/i) != -1) {
-		const _getIcon_recognizedMac = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
+const _getIcon_recognizedMac = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
+
+function _getIcon() {
+	if (/mac/i.test(navigator.platform)) {
 		return function (url, size) {
-			var uri = url.toURI();
-			if (uri.path.search(_getIcon_recognizedMac) != -1) {
+			let uri = url.toURI();
+			if (_getIcon_recognizedMac.test(uri.path)) {
 				return "moz-icon://" + url + "?size=" + size;
 			}
 			return "moz-icon://foo.html?size=" + size;
@@ -557,7 +563,7 @@ var OpenExternal = {
 };
 
 /**
- * Range generator (python style). Difference: step direction is inialized accordingly if corresponding parameter is omitted.
+ * Range generator (python style). Difference: step direction is initialized accordingly if corresponding parameter is omitted.
  * @param start Optional. Start value (default: 0)
  * @param stop Stop value (exclusive)
  * @param step Optional. Step value (default: 1/-1)
