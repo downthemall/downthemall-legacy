@@ -764,7 +764,7 @@ VisitorManager.prototype = {
 	}
 };
 
-function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile, state) {
+function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 
 	this.visitors = new VisitorManager();
 
@@ -799,10 +799,6 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile, state) {
 	this._pathName = dir;
 	this._mask = mask;
 	this.fileName = this.urlManager.usable.getUsableFileName();
-	
-	if (state) {
-		this.state = state;
-	}
 	
 	if (tmpFile) {
 		try {
