@@ -174,15 +174,16 @@ function NSResolver(prefix) {
 					desc = this._getSingle(root, 'description');
 				}
 				var size = this._getSingle(file, 'size');
-				try {
-					size = Utils.formatBytes(parseInt(size));
+				size = parseInt(size);
+				if (isFinite(size)) {
+					size = Utils.formatBytes(size);
 				}
-				catch (ex) {
+				else {
 					size = '';
 				}
 				downloads.push({
 					'url': new UrlManager(urls),
-					'referrer': download.referrer.spec,
+					'referrer': download.referrer ? download.referrer.spec : null,
 					'numIstance': 0,
 					'mask': download.mask,
 					'dirSave': download.pathName,
