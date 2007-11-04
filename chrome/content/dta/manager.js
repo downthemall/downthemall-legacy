@@ -442,7 +442,6 @@ var Dialog = {
 		TimerManager.killAll();
 		// alright, we left the loop.. shutdown complete ;)
 		try {
-			SessionManager.save();
 			this._cleanTmpDir();
 		} catch(ex) {
 			Debug.dump("_safeClose", ex);
