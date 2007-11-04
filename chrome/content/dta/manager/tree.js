@@ -116,9 +116,13 @@ var Tree = {
 	},
 	getProgressMode : function T_getProgressMode(idx, col) {
 		if (col.index == 1) {
-			return Ci.nsITreeView.PROGRESS_NORMAL;
+			let d = this._downloads[idx]; 
+			if (d.is(RUNNING) && !d.totalSize) {
+				return 2; // PROGRESS_UNDETERMINED;
+			}
+			return 1; // PROGRESS_NORMAL;
 		}
-		return Ci.nsITreeView.PROGRESS_NONE;
+		return 3; // PROGRESS_NONE;
 	},
 	// will be called for cells other than textcells
 	getCellValue: function T_getCellValue(idx, col) {
