@@ -200,9 +200,6 @@ merge(
 		toURI: function(charset, baseURI) {
 			return IOService.newURI(this, charset, baseURI);			
 		},
-		toFileURI: function() {
-			return IOService.newFileURI(this);
-		},
 		toURL: function(charset, baseURI) {
 			return this.toURI(charset, baseURI).QueryInterface(Components.interfaces.nsIURL);
 		}
@@ -523,7 +520,7 @@ var OpenExternal = {
 		throw new Components.Exception('OpenExternal: feed me with nsILocalFile or String');
 	},
 	_nixLaunch: function(file) {
-		this._proto.loadUrl(file.toFileURI());	 
+		this._proto.loadUrl(IOService.newFileURI(file));	 
 	},
 	/**
 	 * Launch/Execute a file
