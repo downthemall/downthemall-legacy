@@ -342,7 +342,6 @@ var Dialog = {
 					}
 				}
 			}
-			SessionManager.save();
 			if (Prefs.autoClose) {
 				Dialog.close();
 			}
@@ -374,23 +373,26 @@ var Dialog = {
 		this._updTimer.kill();
 		this._safeCloseChunks = [];
 		this._safeCloseFinishing = [];
-		for (d in Tree.all) {
-			if (d.is(RUNNING, QUEUED)) {
-				// enumerate all running chunks
-				d.chunks.forEach(
-					function(c) {
-						if (c.running) {
-							this._safeCloseChunks.push(c);
-						}
-					},
-					this
-				);
-				d.pause();				
-			}
-			else if (d.is(FINISHING)) {
-				this._safeCloseFinishing.push(d);
-			}
-		}
+		Tree.updateAll(
+			function(d) {
+				if (d.is(RUNNING, QUEUED)) {
+					// enumerate all running chunks
+					d.chunks.forEach(
+						function(c) {
+							if (c.running) {
+								this._safeCloseChunks.push(c);
+							}
+						},
+						this
+					);
+					d.pause();				
+				}
+				else if (d.is(FINISHING)) {
+					this._safeCloseFinishing.push(d);
+				}
+			},
+			this
+		);
 		return this._safeClose();
 	},
 	_cleanTmpDir: function D__cleanTmpDir() {
@@ -1366,6 +1368,7 @@ QueueItem.prototype = {
 			this.chunks = [];
 			this.totalSize = this.partialSize = 0;
 			this.maxChunks = this.activeChunks = 0;
+			this.conflicts = 0;
 			this.resumable = true;
 
 		} catch(ex) {

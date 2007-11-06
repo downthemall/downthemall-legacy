@@ -277,7 +277,7 @@ var SessionManager = {
 
 				d.started = d.partialSize != 0;
 				if (get('state')) {
-					d.state = get('state');
+					d._state = get('state');
 				}
 				if (d.is(PAUSED)) {
 					down.chunks.forEach(
@@ -301,5 +301,6 @@ var SessionManager = {
 				Debug.dump('failed to init a download from queuefile', ex);
 			}
 		}
+		Tree.invalidate();
 	}
 };
