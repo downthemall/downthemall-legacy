@@ -496,20 +496,24 @@ var Tree = {
 	},
 	updateSelected: function T_updateSelected(f, t) {
 		this.beginUpdate();
+		SessionManager.beginUpdate();
 		for (d in this.selected) {
 			if (!f.call(t, d)) {
 				break;
 			}
 		}
+		SessionManager.endUpdate();
 		this.endUpdate();
 	},
 	updateAll: function T_updateAll(f, t) {
 		this.beginUpdate();
+		SessionManager.beginUpdate();
 		for (d in this.all) {
 			if (!f.call(t, d)) {
 				break;
 			}
 		}
+		SessionManager.endUpdate();
 		this.endUpdate();
 	},
 	top: function T_top() {
