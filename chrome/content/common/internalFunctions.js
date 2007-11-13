@@ -117,15 +117,13 @@ function merge(me, that) {
 	}
 }
 
-	// not instanceof save, you know ;)
+// not instanceof save, you know ;)
 function clone(obj) {
-	{
-		var rv = {};
-		merge(rv, obj);
-		rv.prototype = this.prototype;
-    rv.constructor = this.constructor;
-		return rv;
-	}
+	var rv = {};
+	merge(rv, obj);
+	rv.prototype = this.prototype;
+	rv.constructor = this.constructor;
+	return rv;
 }
 merge(
 	String.prototype,
