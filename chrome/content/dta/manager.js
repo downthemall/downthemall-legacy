@@ -2316,7 +2316,6 @@ function startDownloads(start, downloads) {
 	else {
 		boxobject.scrollToRow(numbefore);
 	}
-	Tree.selection.currentIndex = numbefore + 1;
 }
 const FileOutputStream = Components.Constructor(
 	'@mozilla.org/network/file-output-stream;1',
