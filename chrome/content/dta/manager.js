@@ -2253,6 +2253,8 @@ function startDownloads(start, downloads) {
 
 	let added = 0;
 	let removeableTabs = {};
+	Tree.beginUpdate();
+	SessionManager.beginUpdate();
 	for (let e in g) {
 		e.dirSave.addFinalSlash();
 
@@ -2292,6 +2294,7 @@ function startDownloads(start, downloads) {
 			d.status = _('paused');
 		}
 		Tree.add(d);
+		SessionManager.save(d);
 		++added;
 		if (Preferences.getDTA("closetab", false) && d.referrer) {
 			removeableTabs[d.referrer.spec] = true;			
@@ -2304,9 +2307,8 @@ function startDownloads(start, downloads) {
 			Debug.dump("failed to close old tab", ex);
 		}
 	}
-
-	// full save
-	new Timer(function() { SessionManager.save() }, 100);
+	Tree.endUpdate();
+	SessionManager.endUpdate();
 
 	var boxobject = Tree._box;
 	boxobject.QueryInterface(Ci.nsITreeBoxObject);
