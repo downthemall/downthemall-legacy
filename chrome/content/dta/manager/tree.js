@@ -327,14 +327,16 @@ var Tree = {
 		this.endUpdate();
 	},
 	_hoverItem: null,
+	_ww: Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+				.getService(Components.interfaces.nsIWindowWatcher),
 	hovering: function(event) {
-		if (!Prefs.showTooltip) {
+		if (!Prefs.showTooltip || this._ww.activeWindow != window) {
 			return;
 		}
 		this._hoverItem = {x: event.clientX, y: event.clientY};
 	},
 	showTip: function(event) {
-		if (!Prefs.showTooltip || !this._hoverItem) {
+		if (!Prefs.showTooltip || !this._hoverItem || this._ww.activeWindow != window) {
 			return false;
 		}
 		let row = {};
