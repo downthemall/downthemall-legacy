@@ -239,7 +239,7 @@
 			<field name="_additional">document.getAnonymousElementByAttribute(this, 'anonid', 'additional');</field>
 			<field name="_additionalLinks">document.getAnonymousElementByAttribute(this, 'anonid', 'additionallinks');</field>
 			<field name="_desc">document.getAnonymousElementByAttribute(this, 'anonid', 'desc');</field>
-			<property name="checked" onget="return this._checkbox.checked;"/>
+			<property name="checked" onget="return this._checkbox.checked;"  onset="this._checkbox.checked = !!val; return !!val;"/>
 		</implementation>
 	</binding>
 	

@@ -22,3 +22,4 @@
 
 <!ENTITY selectall.label "Select all">
 <!ENTITY selectinv.label "Invert selection">
+<!ENTITY selectnone.label "Select none">

@@ -309,5 +309,23 @@ function NSResolver(prefix) {
 	},
 	openLink: function(e) {
 		DTA_Mediator.openTab(e.link);
+	},
+	selectAll: function() {
+		var nodes = document.getElementsByTagName('richlistitem');
+		for (var i = 0; i < nodes.length; ++i) {
+			nodes[i].checked = true;
+		}
+	},
+	selectNone: function() {
+		var nodes = document.getElementsByTagName('richlistitem');
+		for (var i = 0; i < nodes.length; ++i) {
+			nodes[i].checked = false;
+		}
+	},
+	invertSelection: function() {
+		var nodes = document.getElementsByTagName('richlistitem');
+		for (var i = 0; i < nodes.length; ++i) {
+			nodes[i].checked = !nodes[i].checked;
+		}
 	}
 };
