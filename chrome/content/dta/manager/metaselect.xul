@@ -72,6 +72,14 @@
 		<stringbundle src="chrome://dta/locale/manager.properties"/>
 		<stringbundle src="chrome://dta/locale/prefpanes.properties"/>
 	</stringbundleset>
+	
+	<popupset id="popups">
+		<popup id="context">
+			<menuitem class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="Metalinker.selectAll();" />
+			<menuitem class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="Metalinker.invertSelection();" />
+			<menuitem class="menuitem-iconic" label="&selectnone.label;" image="chrome://dta/skin/common/selectnone.png" oncommand="Metalinker.selectNone();" />
+		</popup>
+	</popupset>	
 		
 	<hbox id="header">
 		<vbox>
@@ -100,5 +108,5 @@
 		</vbox>
 	</hbox>
 	
-	<richlistbox id="downloads" class="metalinker" flex="1" suppressonselect="true"/>
+	<richlistbox context="context" id="downloads" class="metalinker" flex="1" suppressonselect="true"/>
 </dialog>
