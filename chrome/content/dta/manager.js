@@ -1414,7 +1414,7 @@ QueueItem.prototype = {
 			chunk.running = true;
 			download.state = RUNNING;
 			Debug.dump("started: " + chunk);
-			chunk.download = new Download(download, chunk, header);
+			chunk.download = new Connection(download, chunk, header);
 			++download.activeChunks;
 			++download.sessionConnections;
 		}
@@ -1643,7 +1643,7 @@ Chunk.prototype = {
 	}
 }
 
-function Download(d, c, getInfo) {
+function Connection(d, c, getInfo) {
 
 	this.d = d;
 	this.c = c;
@@ -1679,7 +1679,7 @@ function Download(d, c, getInfo) {
 	this.c.running = true;
 	this._chan.asyncOpen(this, null);
 }
-Download.prototype = {
+Connection.prototype = {
 	_interfaces: [
 		Ci.nsISupports,
 		Ci.nsISupportsWeakReference,
