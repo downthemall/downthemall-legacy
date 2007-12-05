@@ -1,4 +1,12 @@
 ﻿<?xml version="1.0"?>
+<!DOCTYPE dialog [
+	<!ENTITY % aboutDTD
+		SYSTEM "chrome://dta/locale/about.dtd">
+	%aboutDTD;
+	<!ENTITY % htmlDTD
+		PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+	%htmlDTD;	
+]>
 <!--
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -44,7 +52,6 @@
 <?xml-stylesheet href="resource://gre/res/html.css" type="text/css"?>
 <?xml-stylesheet href="chrome://dta-platform/skin/common.css" type="text/css"?>
 
-<!DOCTYPE window SYSTEM "chrome://dta/locale/about.dtd">
 <dialog 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
