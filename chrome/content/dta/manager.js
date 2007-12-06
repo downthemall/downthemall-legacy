@@ -41,8 +41,8 @@ const Ci = Components.interfaces;
 
 const Exception = Components.Exception;
 const Construct = Components.Constructor;
-function Serv(contract, interface) {
-	return Cc[contract].getService(interface ? Ci[interface] : null);
+function Serv(c, i) {
+	return Cc[c].getService(i ? Ci[i] : null);
 }
 
 const BufferedOutputStream = Construct('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
