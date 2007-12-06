@@ -292,20 +292,23 @@ var Dialog = {
 			}
 			// check if there's some URL in clipboard
 			else {
-				var clip = Cc["@mozilla.org/widget/clipboard;1"].getService(Ci.nsIClipboard);
-				var trans = Cc["@mozilla.org/widget/transferable;1"].createInstance(Ci.nsITransferable);
+				let clip = Cc["@mozilla.org/widget/clipboard;1"]
+					.getService(Ci.nsIClipboard);
+				let trans = Cc["@mozilla.org/widget/transferable;1"]
+					.createInstance(Ci.nsITransferable);
 				try {
 					trans.addDataFlavor("text/unicode");
 					clip.getData(trans, clip.kGlobalClipboard);
 					
-					var str = {}, length = {};
+					let str = {}, length = {};
 					trans.getTransferData(
 						"text/unicode",
 						str,
 						length
 					);
 					if (length.value) {
-						str = str.value.QueryInterface(Ci.nsISupportsString);
+						str = str.value
+							.QueryInterface(Ci.nsISupportsString);
 						str = str.data;
 						if (str.length && DTA_AddingFunctions.isLinkOpenable(str)) {
 							hash = DTA_getLinkPrintHash(str);
