@@ -57,6 +57,7 @@ function QueueItem(url, num, hash) {
 
 function Literal(str) {
 	this.str = str;
+	this.first = this.last = this.str;
 	this.length = 1;
 }
 Literal.prototype = {
@@ -67,24 +68,21 @@ Literal.prototype = {
 		return this.str;
 	}
 };
-function NumericRange(name, start, stop, step, strl) {
-	this.name = name;
-	this.start = start;
-	this.stop = stop + (start > stop ? -1 : 1);
-	this.step = step;
-	this.length = Math.floor((stop - start) / step + 1);
-	this.strl = strl;
+
+function Range() {
 };
-NumericRange.prototype = {
-	_format: function(i) {
-		let rv = String(Math.abs(i));
-		while (rv.length < this.strl) {
-			rv = '0' + rv;
-		}
-		if (i < 0) {
-			rv = '-' + rv;
-		}
-		return rv;
+Range.prototype = {
+	init: function(name, start, stop, step) {
+		stop += -Math.abs(step)/step;
+		stop += step - ((stop - start) % step);
+		
+		this.name = name;
+		this.start = start;
+		this.stop = stop;
+		this.step = step;
+		this.length = Math.floor((stop - start) / step);
+		this.first = this._format(this.start);
+		this.last = this._format(this.stop - this.step);
 	},
 	join: function(str) {
 		for (let i in range(this.start, this.stop, this.step)) {
@@ -92,20 +90,31 @@ NumericRange.prototype = {
 		}
 	}
 };
-function CharRange(name, start, stop, step) {
-	this.name = name;
-	this.start = start;
-	this.stop = stop + (start > stop ? -1 : 1);
-	this.step = step;
-	this.length = Math.floor((stop - start) / step + 1);
-};	
-CharRange.prototype = {
-	join: function(str) {
-		for (let i in range(this.start, this.stop, this.step)) {
-			yield str + String.fromCharCode(i);
-		}
+
+function NumericRange(name, start, stop, step, strl) {
+	this.init(name, start, stop, step);
+	this.strl = strl;
+};
+NumericRange.prototype = Range.prototype;
+NumericRange.prototype._format = function(i) {
+	let rv = String(Math.abs(i));
+	while (rv.length < this.strl) {
+		rv = '0' + rv;
 	}
-}
+	if (i < 0) {
+		rv = '-' + rv;
+	}
+	return rv;
+};
+
+function CharRange(name, start, stop, step) {
+	this.init(name, start, stop, step);
+};
+CharRange.prototype = Range.prototype;
+CharRange.prototype._format = function(val) {
+	return String.fromCharCode(val);
+};
+
 function BatchGenerator(link) {
 	if (!(link instanceof DTA_URL)) {
 		throw new Components.Exception("invalid argument. Type not DTA_URL");
@@ -120,13 +129,13 @@ function BatchGenerator(link) {
 			this._pats.push(new Literal(url.substring(0, i)));
 			url = url.slice(i);
 		}
-		var m;
+		let m;
 		if ((m = url.match(/^\[(-?\d+):(-?\d+)(?::(-?\d+))?\]/))) {
 			url = url.slice(m[0].length);
 			try {
-				var start = new Number(m[1]);
-				var stop = new Number(m[2]);
-				var step = stop > start ? 1 : -1;
+				let start = new Number(m[1]);
+				let stop = new Number(m[2]);
+				let step = stop > start ? 1 : -1;
 				if (m.length > 3 && typeof(m[3]) != 'undefined') {
 					step = new Number(m[3]);
 				}
@@ -151,9 +160,9 @@ function BatchGenerator(link) {
 		if ((m = url.match(/^\[([a-z]):([a-z])(?::(-?\d))?\]/)) || (m = url.match(/\[([A-Z]):([A-Z])(?::(-?\d))?\]/))) {
 			url = url.slice(m[0].length);
 			try {
-				var start = m[1].charCodeAt(0);
-				var stop = m[2].charCodeAt(0);
-				var step = stop > start ? 1 : -1;
+				let start = m[1].charCodeAt(0);
+				let stop = m[2].charCodeAt(0);
+				let step = stop > start ? 1 : -1;
 				if (m.length > 3 && typeof(m[3]) != 'undefined') {
 					step = new Number(m[3]);
 				}
@@ -165,13 +174,10 @@ function BatchGenerator(link) {
 				this._pats.push(new CharRange(m[0], start, stop, step));
 			}
 			catch (ex) {
+				alert(ex);
 				this._pats.push(new Literal(m[0]));
 			}
 			continue;
-		}
-		if ((m = url.match(/\[.*?\]/))) {
-			url = url.slice(m[0].length);
-			this._pats.push(new Literal(m[0]));
 		}
 	}
 	if (url.length) {
@@ -225,23 +231,14 @@ BatchGenerator.prototype = {
 	get first() {
 		return this._pats.map(
 			function(p) {
-				if (!(p instanceof Literal)) {
-					return p.start;
-				}
-				return p;
+				return p.first;
 			}
 		).join('');
 	},
 	get last() {
 		return this._pats.map(
 			function(p) {
-				if (!(p instanceof Literal)) {
-					let stop = p.stop;
-					stop += (stop - p.start) % p.step;
-					stop -= p.step;
-					return stop;
-				}
-				return p;
+				return p.last;
 			}
 		).join('');
 	}
