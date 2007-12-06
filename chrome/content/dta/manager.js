@@ -244,12 +244,12 @@ var Dialog = {
 			Debug.dump("checkDownloads():", ex);
 		}
 	},
-	checkSameName: function D_checkSameName(download, name) {
+	checkSameName: function D_checkSameName(download, path) {
 		for (let i = 0; i < this._running.length; ++i) {
 			if (this._running[i].d == download) {
 				continue;
 			}
-			if (this._running[i].d.destinationName == name) {
+			if (this._running[i].d.destinationPath == path) {
 				return true;
 			}
 		}
@@ -2350,7 +2350,7 @@ var ConflictManager = {
 		let dest = new FileFactory(download.destinationFile);
 		let sn = false;
 		if (download.is(RUNNING)) {
-			sn = Dialog.checkSameName(download, download.destinationName);
+			sn = Dialog.checkSameName(download, download.destinationPath);
 		}
 		Debug.dump("conflict check: " + sn + "/" + dest.exists() + " for " + download.destinationFile);
 		return dest.exists() || sn;
@@ -2381,7 +2381,7 @@ var ConflictManager = {
 		let i = 1;
 		for (;; ++i) {
 			newDest.leafName = Utils.formatConflictName(basename, i);
-			if (!newDest.exists() && (!download.is(RUNNING) || !Dialog.checkSameName(this, newDest.leafName))) {
+			if (!newDest.exists() && (!download.is(RUNNING) || !Dialog.checkSameName(this, newDest.path))) {
 				break;
 			}
 		}
