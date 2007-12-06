@@ -586,10 +586,12 @@ function range() {
 		// negative range
 		return;
 	}
-	stop += (stop - start) % step;
-	for (;start != stop; start += step) {
+	stop += -Math.abs(step)/step;
+	stop += step - ((stop - start) % step);
+	for (; start != stop; start += step) {
 		yield start;
 	}
+
 }
 
 /**
