@@ -39,8 +39,7 @@ var Tree = {
 		this.elem = elem;
 		this._downloads = [];
 
-		let as = 	Cc["@mozilla.org/atom-service;1"]
-			.getService(Ci.nsIAtomService);
+		let as = Serv('@mozilla.org/atom-service;1', 'nsIAtomService');
 		['iconic', 'completed', 'inprogress', 'paused', 'canceled'].forEach(
 			function(e) {
 				this['_' + e] = as.getAtom(e);
@@ -327,8 +326,7 @@ var Tree = {
 		this.endUpdate();
 	},
 	_hoverItem: null,
-	_ww: Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-				.getService(Components.interfaces.nsIWindowWatcher),
+	_ww: Serv('@mozilla.org/embedcomp/window-watcher;1', 'nsIWindowWatcher'),
 	hovering: function(event) {
 		if (!Prefs.showTooltip || this._ww.activeWindow != window) {
 			return;

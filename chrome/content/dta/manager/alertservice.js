@@ -41,7 +41,7 @@
 		if ('@mozilla.org/alerts-service;1' in Cc && 'nsIAlertsService' in Ci) {
 			// some systems do not have this service
 			try {
-				this._service = Cc['@mozilla.org/alerts-service;1'].getService(Ci.nsIAlertsService);
+				this._service = Serv('@mozilla.org/alerts-service;1', 'nsIAlertsService');
 				makeObserver(this);
 				this._available = true;
 			}
@@ -57,7 +57,7 @@
 	_service: null,
 	show: function(title, msg, clickable, cookie) {
 		if (!this.available) {
-			throw new Components.Exception("Alerting Service not available on this platform!");
+			throw new Exception("Alerting Service not available on this platform!");
 		}
 		if (this._alerting || !this._service) {
 			return;
