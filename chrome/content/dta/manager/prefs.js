@@ -102,8 +102,7 @@
 				if (this.tempLocation == '') {
 					// #44: generate a default tmp dir on per-profile basis
 					// hash the profD, as it would be otherwise a minor information leak
-					var dsp = Cc["@mozilla.org/file/directory_service;1"]
-						.getService(Ci.nsIProperties);
+					var dsp = Serv('@mozilla.org/file/directory_service;1', 'nsIProperties');
 					this.tempLocation = dsp.get("TmpD", Ci.nsIFile);
 					var profD = hash(dsp.get("ProfD", Ci.nsIFile).leafName);
 					this.tempLocation.append("dtatmp-" + profD);

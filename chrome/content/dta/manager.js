@@ -40,15 +40,19 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 
 const Exception = Components.Exception;
+const Construct = Components.Constructor;
+function Serv(contract, interface) {
+	return Cc[contract].getService(interface ? Ci[interface] : null);
+}
 
-const BufferedOutputStream = Components.Constructor('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
-const BinaryOutputStream = Components.Constructor('@mozilla.org/binaryoutputstream;1', 'nsIBinaryOutputStream', 'setOutputStream');
-const BinaryInputStream = Components.Constructor('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
-const FileInputStream = Components.Constructor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
+const BufferedOutputStream = Construct('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
+const BinaryOutputStream = Construct('@mozilla.org/binaryoutputstream;1', 'nsIBinaryOutputStream', 'setOutputStream');
+const BinaryInputStream = Construct('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
+const FileInputStream = Construct('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
 
-const MimeService = Cc["@mozilla.org/uriloader/external-helper-app-service;1"].getService(Ci.nsIMIMEService);
-const ObserverService = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
-const WindowWatcherService = Cc["@mozilla.org/embedcomp/window-watcher;1"].getService(Ci.nsIWindowWatcher);
+const MimeService = Serv('@mozilla.org/uriloader/external-helper-app-service;1', 'nsIMIMEService');
+const ObserverService = Serv('@mozilla.org/observer-service;1', 'nsIObserverService');
+const WindowWatcherService = Serv('@mozilla.org/embedcomp/window-watcher;1', 'nsIWindowWatcher');
 
 const MIN_CHUNK_SIZE = 512 * 1024;
 // in use by chunk.writer...
@@ -1185,14 +1189,13 @@ QueueItem.prototype = {
 	},
 	finishDownload: function QI_finishDownload(exception) {
 		Debug.dump("finishDownload, connections", this.sessionConnections);
-		this._completeEvents = ['moveCompleted'];
+		this._completeEvents = ['moveCompleted', 'setAttributes'];
 		if (this.hash) {
 			this._completeEvents.push('verifyHash');
 		}
 		if ('isMetalink' in this) {
 			this._completeEvents.push('handleMetalink');
 		}
-		this._completeEvents.push('setAttributes');
 		if (Prefs.finishEvent) {
 			this._completeEvents.push('customFinishEvent');
 		}

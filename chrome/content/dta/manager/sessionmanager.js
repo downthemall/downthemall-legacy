@@ -39,8 +39,7 @@
 var SessionManager = {
 
 	init: function() {
-		this._con = Cc["@mozilla.org/storage/service;1"]
-			.getService(Ci.mozIStorageService)
+		this._con = Serv('@mozilla.org/storage/service;1', 'mozIStorageService')
 			.openDatabase(DTA_profileFile.get('dta_queue.sqlite'));
 		try {
 			this._con.executeSimpleSQL('CREATE TABLE queue (uuid INTEGER PRIMARY KEY AUTOINCREMENT, pos INTEGER, item TEXT)');
