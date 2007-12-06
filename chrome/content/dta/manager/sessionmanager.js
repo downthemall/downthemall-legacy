@@ -73,6 +73,7 @@ var SessionManager = {
 			|| (Prefs.removeCanceled && d.is(CANCELED))
 			|| (Prefs.removeAborted && d.is(PAUSED))
 		) {
+			this.deleteDownload(d);
 			return false;
 		}
 
@@ -216,8 +217,10 @@ var SessionManager = {
 			if (!download._dbId) {
 				return;
 			}
+			Debug.dump("Deleting Download: " + download);
 			this._delStmt.bindInt64Parameter(0, download._dbId);
 			this._delStmt.execute();
+			this._delStmt.reset();
 		}
 		catch (ex) {
 			Debug.dump("SQLite: " + this._con.lastErrorString);
