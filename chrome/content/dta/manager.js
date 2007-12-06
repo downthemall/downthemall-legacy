@@ -1588,10 +1588,10 @@ Chunk.prototype = {
 	},
 	cancel: function CH_cancel() {
 		this.running = false;
+		this.close();
 		if (this.download) {
 			this.download.cancel();
 		}
-		this.close();
 	},
 	_written: 0,
 	_outStream: null,
