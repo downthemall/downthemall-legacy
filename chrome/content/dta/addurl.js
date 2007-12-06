@@ -92,28 +92,27 @@ Range.prototype = {
 };
 
 function NumericRange(name, start, stop, step, strl) {
-	this.init(name, start, stop, step);
+	this._format = function(val) {
+		let rv = String(Math.abs(val));
+		while (rv.length < this.strl) {
+			rv = '0' + rv;
+		}
+		if (val < 0) {
+			return '-' + rv;
+		}
+		return rv;
+	};
 	this.strl = strl;
+	
+	this.init(name, start, stop, step);
 };
 NumericRange.prototype = Range.prototype;
-NumericRange.prototype._format = function(i) {
-	let rv = String(Math.abs(i));
-	while (rv.length < this.strl) {
-		rv = '0' + rv;
-	}
-	if (i < 0) {
-		rv = '-' + rv;
-	}
-	return rv;
-};
-
 function CharRange(name, start, stop, step) {
-	this.init(name, start, stop, step);
+	this._format = String.fromCharCode;
+
+	this.init(name, start, stop + (step > 0 ? 1 : -1), step);
 };
 CharRange.prototype = Range.prototype;
-CharRange.prototype._format = function(val) {
-	return String.fromCharCode(val);
-};
 
 function BatchGenerator(link) {
 	if (!(link instanceof DTA_URL)) {
@@ -152,6 +151,7 @@ function BatchGenerator(link) {
 				this._pats.push(new NumericRange(m[0], start, stop, step, sl));
 			}
 			catch (ex) {
+				Debug.dump(ex);
 				this._pats.push(new Literal(m[0]));
 			}
 			continue;
@@ -174,7 +174,7 @@ function BatchGenerator(link) {
 				this._pats.push(new CharRange(m[0], start, stop, step));
 			}
 			catch (ex) {
-				alert(ex);
+				Debug.dump(ex);
 				this._pats.push(new Literal(m[0]));
 			}
 			continue;
