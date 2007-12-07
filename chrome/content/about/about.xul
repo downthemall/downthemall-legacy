@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0"?>
 <!DOCTYPE dialog [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+	%globalDTD;
 	<!ENTITY % aboutDTD
 		SYSTEM "chrome://dta/locale/about.dtd">
 	%aboutDTD;
@@ -81,7 +83,7 @@
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 	</keyset>
 	
-	<dialogheader id="logo" title="DownThemAll!" description="&about.subtitle;" orient="vertical" style="font-size: smaller;"/>
+	<dialogheader id="logo" title="DownThemAll!" description="&about.subtitle;" orient="vertical" style="font-size: smaller;" chromedir="&locale.dir;"/>
 	<groupbox orient="vertical">
 		<label value="Copyright © 2004-2007 By:" style="font-weight: bold;"/>
 		<html:ul>
