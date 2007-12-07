@@ -77,14 +77,17 @@ toolbox {
 }
 
 #tooldonate {
-	background: url("chrome://dta/skin/manager/bardonate.png") top right;
+	background: url("chrome://dta/skin/manager/bardonate-ltr.png") top right;
 	min-width: 200px !important;
 }
 #tooldonate:hover {
-	background: url("chrome://dta/skin/manager/bardonatehover.png") top right;
+	background: url("chrome://dta/skin/manager/bardonate-hover-ltr.png") top right;
 }
-#tooldonate:active {
-	background: url("chrome://dta/skin/manager/bardonateactive.png") top right;
+#tooldonate[chromedir="rtl"] {
+	background: url("chrome://dta/skin/manager/bardonate-rtl.png") top right;
+}
+#tooldonate[chromedir="rtl"]:hover {
+	background: url("chrome://dta/skin/manager/bardonate-hover-rtl.png") top right;
 }
 #tooltip{
 	width: 470px;
