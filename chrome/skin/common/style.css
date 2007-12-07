@@ -55,6 +55,9 @@ maskbutton {
 	padding-left: 7px !important;
 	margin: 0 !important;
 }
+#logo[chromedir="rtl"] {
+	background: white url(chrome://dta/skin/common/logo-rtl.png) no-repeat left top;
+}
 dialogheader#logo label {
 	padding: 0;
 }

@@ -13,6 +13,8 @@
 <?xml-stylesheet href="chrome://dta/skin/select/style.css" type="text/css"?>
 
 <!DOCTYPE dialog [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+	%globalDTD;
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
 	%commonDTD;
 	<!ENTITY % selectDTD SYSTEM "chrome://dta/locale/select.dtd">
@@ -71,10 +73,10 @@
 	</popupset>
 
 	<toolbox id="views">
-		<toolbar class="findfiles" >
+		<toolbar class="findfiles" chromedir="&locale.dir;">
 			<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&tab.links.label;" onclick="Dialog.changeTab('links');" />
 			<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.pics.label;" onclick="Dialog.changeTab('images');" />
-			<spacer flex="1" id="logo"/>
+			<spacer flex="1" id="logo" chromedir="&locale.dir;"/>
 		</toolbar>
 	</toolbox>
 

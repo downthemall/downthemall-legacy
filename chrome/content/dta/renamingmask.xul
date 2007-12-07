@@ -11,7 +11,12 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
 
-<!DOCTYPE window SYSTEM "chrome://dta/locale/renamingmask.dtd">
+<!DOCTYPE window [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+	%globalDTD;
+	<!ENTITY % renamingDTD SYSTEM "chrome://dta/locale/renamingmask.dtd">
+	%renamingDTD;
+]>
 
 <dialog
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
@@ -49,7 +54,7 @@
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 	</keyset>
 	
-	<dialogheader id="logo" title="&title;" class="renamingmask" />
+	<dialogheader id="logo" title="&title;" class="renamingmask" chromedir="&locale.dir;"/>
 
 	<vbox id="renamingbox" style="margin:8px;" >
 		<description>&choose.desc;</description>
