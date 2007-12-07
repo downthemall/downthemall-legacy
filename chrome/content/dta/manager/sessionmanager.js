@@ -221,6 +221,7 @@ var SessionManager = {
 			this._delStmt.bindInt64Parameter(0, download._dbId);
 			this._delStmt.execute();
 			this._delStmt.reset();
+			delete download._dbid;
 		}
 		catch (ex) {
 			Debug.dump("SQLite: " + this._con.lastErrorString);
