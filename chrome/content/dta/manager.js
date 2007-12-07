@@ -253,7 +253,7 @@ var Dialog = {
 			if (this._running[i].d == download) {
 				continue;
 			}
-			if (this._running[i].d.destinationPath == path) {
+			if (this._running[i].d.destinationFile == path) {
 				return true;
 			}
 		}
@@ -890,6 +890,9 @@ QueueItem.prototype = {
 	
 	_destinationFile: null,
 	get destinationFile() {
+		if (!this._destinationFile) {
+			this.rebuildDestination();
+		}
 		return this._destinationFile;
 	},
 	
@@ -2353,7 +2356,7 @@ var ConflictManager = {
 		let dest = new FileFactory(download.destinationFile);
 		let sn = false;
 		if (download.is(RUNNING)) {
-			sn = Dialog.checkSameName(download, download.destinationPath);
+			sn = Dialog.checkSameName(download, download.destinationFile);
 		}
 		Debug.dump("conflict check: " + sn + "/" + dest.exists() + " for " + download.destinationFile);
 		return dest.exists() || sn;
