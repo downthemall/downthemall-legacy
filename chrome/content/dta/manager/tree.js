@@ -292,6 +292,7 @@ var Tree = {
 		for (let d in this.all) {
 			this.selection.toggleSelect(d.position);
 		}
+		this.selectionChanged();
 	},
 	changeChunks: function T_changeChunks(increase) {
 		function inc(d) {
