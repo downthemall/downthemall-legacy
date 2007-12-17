@@ -475,7 +475,7 @@ UrlManager.prototype = {
 		return rv ? rv : (a.url < b.url ? -1 : 1);
 	},
 	initByArray: function um_initByArray(urls) {
-		for (var i = 0; i < urls.length; ++i) {
+		for (let i = 0; i < urls.length; ++i) {
 			this.add(
 				new DTA_URL(
 					urls[i].url,
@@ -528,20 +528,26 @@ UrlManager.prototype = {
 		return true;
 	},
 	save: function um_save() {
-		var rv = [];
-		for (var i = 0, e = this._urls.length; i < e; ++i) {
-			var c = {};
-			c.url = this._urls[i].url;
-			c.charset = this._urls[i].charset;
-			c.usable = this._urls[i].usable;
-			c.preference = this._urls[i].preference;
-			rv.push(c);
-		}
+		let rv = [];
+		this._urls.forEach(
+			function(url) {
+				rv.push({
+					'url': url.url,
+					'charset': url.charset,
+					'usable': url.usable,
+					'preference': url.preference
+				});
+			}
+		);
 		return rv;
 	},
 	toString: function() {
-		var rv = '';
-		this._urls.forEach(function(u) { rv += u.preference + " " + u.url + "\n"; });
+		let rv = '';
+		this._urls.forEach(
+			function(u) {
+				rv += u.preference + " " + u.url + "\n";
+			}
+		);
 		return rv;
 	}
 };
@@ -710,7 +716,7 @@ VisitorManager.prototype = {
 	 * @author Nils
 	 */
 	load: function vm_init(nodes) {
-		for (var i = 0; i < nodes.length; ++i) {
+		for (let i = 0; i < nodes.length; ++i) {
 			try {
 				this._visitors[nodes[i].url] = new Visitor(nodes[i].values);
 			} catch (ex) {
@@ -725,7 +731,7 @@ VisitorManager.prototype = {
 	 */
 	save: function vm_save() {
 		var rv = [];
-		for (x in this._visitors) {
+		for (let x in this._visitors) {
 			try {
 				var v = {};
 				v.url = x;
@@ -760,7 +766,7 @@ VisitorManager.prototype = {
 	 * @author Nils
 	 */
 	get time() {
-		for (i in this._visitors) {
+		for (let i in this._visitors) {
 			if (this._visitors[i].time > 0) {
 				return this._visitors[i].time;
 			}
@@ -2254,7 +2260,11 @@ function startDownloads(start, downloads) {
 	
 	let g = downloads;
 	if ('length' in downloads) {
-		g = function() { for (let i = 0, e = downloads.length; i < e; ++i) yield downloads[i]; }();
+		g = function() {
+			 for (let i = 0, e = downloads.length; i < e; ++i) {
+			 	yield downloads[i];
+			 }
+		}();
 	}
 
 	let added = 0;
