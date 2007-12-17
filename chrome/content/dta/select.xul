@@ -58,17 +58,17 @@
 
 	<popupset id="popups">
 		<popup id="popup" onpopupshowing="return Dialog.showPopup();">
-			<menuitem image="chrome://dta/skin/common/openurl.png" id="mopen" crop="center" class="menuitem-iconic" oncommand="Dialog.openSelection();"/>
-			<menuseparator id="msep1" />
 			<menuitem image="chrome://dta/skin/select/check.png" class="menuitem-iconic" id="mcheck" label="&menu.check.label;" oncommand="Dialog.toggleSelection(true);" />
 			<menuitem image="chrome://dta/skin/select/uncheck.png" class="menuitem-iconic" id="muncheck" label="&menu.uncheck.label;" oncommand="Dialog.toggleSelection(false);" />
 			<menuitem image="chrome://dta/skin/select/uncheck2.png" class="menuitem-iconic" id="mtoggle" label="&menu.toggle.label;" oncommand="Dialog.toggleSelection();" />
-			<menuseparator id="msep2" />
+			<menuseparator id="msep1" />
 			<menuitem image="chrome://dta/skin/select/modrenaming.png" class="menuitem-iconic" id="mrenaming" label="&mask.label;" oncommand="Dialog.editMask();" />
-			<menuseparator id="msep3" />
+			<menuseparator id="msep2" />
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="Dialog.selectAll();" />
 			<menuitem id="selectfiltered" class="menuitem-iconic" label="&selectfiltered.label;" image="chrome://dta/skin/select/selectfiltered.png" oncommand="Dialog.selectFiltered();" />						
 			<menuitem id="invertSelection" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="Dialog.invertSelection();" />
+			<menuseparator id="msep3" />
+			<menuitem image="chrome://dta/skin/common/openurl.png" id="mopen" crop="center" class="menuitem-iconic" oncommand="Dialog.openSelection();"/>
 		</popup>
 	</popupset>
 
