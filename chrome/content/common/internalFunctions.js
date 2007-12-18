@@ -509,11 +509,14 @@ var OpenExternal = {
 	_proto: Components.classes['@mozilla.org/uriloader/external-protocol-service;1']
 		.getService(Components.interfaces.nsIExternalProtocolService),
 	_prepare: function(file) {
+		if (typeof(file) == 'string' || file instanceof String) {
+			return new FileFactory(file);
+		}
+		if (file instanceof Components.interfaces.nsIFile) {
+			return file.QueryInterface(Components.interfaces.nsILocalFile);
+		}
 		if (file instanceof Components.interfaces.nsILocalFile) {
 			return file;
-		}
-		else if (typeof(file) == 'string') {
-			return new FileFactory(file);
 		}
 		throw new Components.Exception('OpenExternal: feed me with nsILocalFile or String');
 	},
@@ -526,6 +529,10 @@ var OpenExternal = {
 	 */
 	launch: function(file) {
 		file = this._prepare(file);
+		if (!file.exists()) {
+			throw new Components.Exception("OpenExternal: file not found!");
+		}
+		
 		try {
 			file.launch();
 		}
@@ -540,19 +547,19 @@ var OpenExternal = {
 	 */
 	reveal: function(file) {
 		file = this._prepare(file);
-		
 		try {
 			if (!file.exists()) {
-				file.parent.QueryInterface(Components.interfaces.nsILocalFile).launch();
+				throw new Components.Exception("File does not exist");
 			}
 			else {
 				file.reveal();
 			}
 		}
 		catch (ex) {
-			if (file.parent.exists()) {
-				this._nixLaunch(file.parent);
-			}
+			// try to open the directory instead
+			// (either because the file does not exist anymore
+			// or because the platform does not implement reveal);
+			this.launch(file.parent);
 		}
 	}
 };
