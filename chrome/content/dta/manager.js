@@ -148,9 +148,11 @@ var Dialog = {
 					}
 					i.lastBytes = d.partialSize;
 					sum += i.lastBytes;
-					for (let j = 0; j < d.speeds.length; ++j) {
-						speed += d.speeds[j];
-					}
+					d.speeds.forEach(
+						function(s) {
+							speed += s;
+						}
+					);
 					speed /= d.speeds.length;
 					
 					if (d.partialSize != 0) {
@@ -1111,6 +1113,7 @@ QueueItem.prototype = {
 		}
 		this.activeChunks = 0;
 		this.state = PAUSED;
+		this.speeds = [];
 	},
 
 	moveCompleted: function QI_moveCompleted() {
