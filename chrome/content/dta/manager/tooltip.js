@@ -91,7 +91,7 @@ var Tooltip = {
 		ctx.quadraticCurveTo(x, y, x, y + radius);
 	},
 	_createVerticalGradient: function(ctx, height, c1, c2) {
-		var g = ctx.createLinearGradient(0, 0, 0, height);
+		let g = ctx.createLinearGradient(0, 0, 0, height);
 		g.addColorStop(0, c1);
 		g.addColorStop(1, c2);
 		return g;
@@ -119,7 +119,7 @@ var Tooltip = {
 				$('speedCurrent').value = $('speedAverage').value = _('unknown');
 			}
 
-			$('infoSize').value = file.totalSize > 0 ? Utils.formatBytes(file.totalSize) : _('unknown');
+			$('infoSize').value = file.dimensionString;//file.totalSize > 0 ? Utils.formatBytes(file.totalSize) : _('unknown');
 			if (file.is(RUNNING)) {
 				$('timeElapsed').value = Utils.formatTimeDelta((Utils.getTimestamp() - file.timeStart) / 1000);
 				$('timeRemaining').value = file.status;
@@ -140,21 +140,21 @@ var Tooltip = {
 	updateSpeeds: function(file) {
 		try {
 			// we need to take care about with/height
-			var canvas = $("speedCanvas");
+			let canvas = $("speedCanvas");
 			if (canvas.clientWidth) {
 				canvas.width = canvas.clientWidth;
 			}
 			if (canvas.clientHeight) {
 				canvas.height = canvas.clientHeight;
 			}
-			var width = canvas.width;
-			var height = canvas.height;
-			var ctx = canvas.getContext("2d");
+			let width = canvas.width;
+			let height = canvas.height;
+			let ctx = canvas.getContext("2d");
 			--width; --height;
 			
-			var boxFillStyle = this._createInnerShadowGradient(ctx, height, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
-			var boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
-			var graphFillStyle = this._createVerticalGradient(ctx, height - 7, "#FF8B00", "#FFDF38");
+			let boxFillStyle = this._createInnerShadowGradient(ctx, height, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
+			let boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
+			let graphFillStyle = this._createVerticalGradient(ctx, height - 7, "#FF8B00", "#FFDF38");
 			
 			ctx.clearRect(0, 0, width, height);
 			ctx.save();
@@ -169,22 +169,25 @@ var Tooltip = {
 			this._makeRoundedRectPath(ctx, 0, 0, width, height, 5);
 			ctx.fill();
 	
-			var step = Math.floor(width / (SPEED_COUNT - 1));
+			let step = Math.floor(width / (SPEED_COUNT - 1));
 	
 			if (file.speeds.length > 2) {
-				var maxH, minH;
+				let maxH, minH;
 				maxH = minH = file.speeds[0];
-				for (var i = 1, e = file.speeds.length; i < e; ++i) {
-					maxH = Math.max(maxH, file.speeds[i]);
-					minH = Math.min(minH, file.speeds[i]);
-				}
+				file.speeds.forEach(
+					function(s) {
+						maxH = Math.max(maxH, s);
+						minH = Math.min(minH, s);
+					}
+				);
 				// special case: all speeds are the same
+				let s;
 				if (minH == maxH) {
-					var s = file.speeds.map(function(speed) { return 12; });
+					s = file.speeds.map(function(speed) { return 12; });
 				}
 				else {
-					var r = (maxH - minH);
-					var s = file.speeds.map(function(speed) { return 3 + Math.round((height - 6) * (speed - minH) / r); });
+					let r = (maxH - minH);
+					s = file.speeds.map(function(speed) { return 3 + Math.round((height - 6) * (speed - minH) / r); });
 				}
 
 				ctx.save();
@@ -197,8 +200,8 @@ var Tooltip = {
 				].forEach(
 					function(pass) {
 						ctx.fillStyle = pass.f;
-						var y = height + pass.y;
-						var x = pass.x + 0.5;
+						let y = height + pass.y;
+						let x = pass.x + 0.5;
 								
 						ctx.beginPath();
 						ctx.moveTo(x, y);
@@ -206,12 +209,12 @@ var Tooltip = {
 						y = y - s[0];
 						ctx.lineTo(x, y);
 								
-						var slope = (s[1] - s[0]);
+						let slope = (s[1] - s[0]);
 						x = x + step * .7;
 						y = y - slope * .7;
 						ctx.lineTo(x, y);
 								
-						for (var j = 1, e = s.length - 1; j < e; ++j) {
+						for (let j = 1, e = s.length - 1; j < e; ++j) {
 							x = x + step * .3;
 							y = y - slope *.3;
 	
@@ -261,25 +264,25 @@ var Tooltip = {
 	},
 	updateChunks: function (file) {
 		try {
-			var canvas = $("chunkCanvas");
+			let canvas = $("chunkCanvas");
 			if (canvas.clientWidth) {
 				canvas.width = canvas.clientWidth;
 			}
 			if (canvas.clientHeight) {
 				canvas.height = canvas.clientHeight;
 			}
-			var width = canvas.width;
-			var height = canvas.height;
-			var ctx = canvas.getContext("2d");
+			let width = canvas.width;
+			let height = canvas.height;
+			let ctx = canvas.getContext("2d");
 			--width; --height;
 			
-			var cheight = height - 9;
+			let cheight = height - 9;
 	
 			// Create gradients
-			var chunkFillStyle = this._createVerticalGradient(ctx, cheight, "#A7D533", "#D3F047");
-			var boxFillStyle = this._createInnerShadowGradient(ctx, cheight, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
-			var boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
-			var partialBoxFillStyle = this._createInnerShadowGradient(ctx, 8, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
+			let chunkFillStyle = this._createVerticalGradient(ctx, cheight, "#A7D533", "#D3F047");
+			let boxFillStyle = this._createInnerShadowGradient(ctx, cheight, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
+			let boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
+			let partialBoxFillStyle = this._createInnerShadowGradient(ctx, 8, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
 	
 			// clear all
 			ctx.clearRect(0, 0, width, height);
@@ -293,7 +296,7 @@ var Tooltip = {
 			this._makeRoundedRectPath(ctx, 0, 0, width, cheight, 5);
 			ctx.fill();
 	
-			var b = [];
+			let b = [];
 			if (file.is(COMPLETE)) {
 				b.push({
 					s: 0,
