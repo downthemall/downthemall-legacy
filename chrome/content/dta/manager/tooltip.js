@@ -111,7 +111,7 @@ var Tooltip = {
 	},
 	updateMetrics: function(file) {
 		try {
-			if (file.speeds.length) {
+			if (file.speeds.length && file.is(RUNNING)) {
 				$('speedAverage').value = file.speed;
 				$('speedCurrent').value = Utils.formatBytes(file.speeds[file.speeds.length - 1]) + "/s";;
 			}
