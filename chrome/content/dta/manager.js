@@ -1321,10 +1321,13 @@ QueueItem.prototype = {
 			
 			mask = mask.replace(/\*\w+\*/gi, replacer);
 
-			mask = this.pathName.addFinalSlash() + mask.removeBadChars().removeFinalChar(".").trim();
-			mask = mask.split(SYSTEMSLASH);
-			this._destinationName = mask.pop();
-			this._destinationPath = mask.join(SYSTEMSLASH).addFinalSlash();
+			mask = mask.removeBadChars().removeFinalChar(".").trim().split(SYSTEMSLASH);
+			let file = new FileFactory(this.pathName.addFinalSlash());
+			while (mask.length) {
+				file.append(mask.shift());
+			}
+			this._destinationName = file.leafName;
+			this._destinationPath = file.parent.path;
 		}
 		catch(ex) {
 			this._destinationName = this.fileName;
@@ -1335,7 +1338,9 @@ QueueItem.prototype = {
 			this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
 			this.conflicts
 		);
-		this._destinationFile = this.destinationPath + this.destinationName;
+		let file = new FileFactory(this.destinationPath);
+		file.append(this.destinationName);
+		this._destinationFile = file.path;
 		this._icon = null;
 	},
 
