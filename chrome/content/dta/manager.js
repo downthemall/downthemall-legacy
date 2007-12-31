@@ -126,20 +126,16 @@ var Dialog = {
 			const now = Utils.getTimestamp();
 			this._running.forEach(
 				function(i) {
-					var d = i.d;
-					if (d.partialSize != 0 && (now - d.timeStart) >= 1000 ) {
-						// Calculate estimated time
-						if (d.totalSize > 0) {
-							var remaining = Math.ceil((d.totalSize - d.partialSize) / ((d.partialSize - i.lastBytes) * REFRESH_NFREQ));
-							if (!isFinite(remaining)) {
-								d.status = _("unknown");
-							}
-							else {
-								d.status = Utils.formatTimeDelta(remaining);
-							}
-						}
-					}
-					let speed = Math.round((d.partialSize - i.lastBytes) * REFRESH_NFREQ);
+					let d = i.d;
+					let elapsed = (now - i.lastTime) / 1000;					
+					if (elapsed < 1) {
+						return;
+					}						
+					let advanced = (d.partialSize - i.lastBytes);
+					let speed = Math.round(advanced / elapsed);
+					
+					i.lastBytes = d.partialSize;
+					i.lastTime = now;				
 
 					// Refresh item speed
 					d.speeds.push(speed > 0 ? speed : 0);
@@ -147,7 +143,10 @@ var Dialog = {
 						d.speeds.shift();
 					}
 					i.lastBytes = d.partialSize;
+					i.lastTime = now;
+					
 					sum += i.lastBytes;
+					speed = 0;
 					d.speeds.forEach(
 						function(s) {
 							speed += s;
@@ -155,16 +154,14 @@ var Dialog = {
 					);
 					speed /= d.speeds.length;
 					
-					if (d.partialSize != 0) {
-						// Calculate estimated time
-						if (d.totalSize > 0) {
-							var remaining = Math.ceil((d.totalSize - d.partialSize) / speed);
-							if (!isFinite(remaining)) {
-								d.status = _("unknown");
-							}
-							else {
-								d.status = Utils.formatTimeDelta(remaining);
-							}
+					// Calculate estimated time					
+					if (advanced != 0 || d.totalSize > 0) {
+						let remaining = Math.ceil((d.totalSize - d.partialSize) / speed);
+						if (!isFinite(remaining)) {
+							d.status = _("unknown");
+						}
+						else {
+							d.status = Utils.formatTimeDelta(remaining);
 						}
 					}
 					d.speed = Utils.formatBytes(speed) + "/s";
@@ -280,6 +277,11 @@ var Dialog = {
 		}
 		return false;
 	},
+	RunningJob: function(d) {
+		this.d = d;
+		this.lastBytes = d.partialSize;
+		this.lastTime = Utils.getTimestamp();
+	},
 	run: function D_run(download) {
 		download.status = _("starting");
 		if (download.is(FINISHING) || (download.partialSize >= download.totalSize && download.totalSize)) {
@@ -300,7 +302,7 @@ var Dialog = {
 		else {
 			Debug.dump("Let's resume " + download + " at " + download.partialSize);
 		}
-		this._running.push({d: download, lastBytes: download.partialSize});
+		this._running.push(new Dialog.RunningJob(download));
 		download.resumeDownload();
 	},
 	wasStopped: function D_wasStopped(download) {
