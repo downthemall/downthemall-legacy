@@ -36,7 +36,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-const TOOLTIP_FREQ = 333;
+const TOOLTIP_FREQ = 500;
 const SPEED_COUNT = 60;
 const SPEED_NUMAVG = 10;
 
@@ -147,16 +147,16 @@ var Tooltip = {
 			if (canvas.clientHeight) {
 				canvas.height = canvas.clientHeight;
 			}
-			let width = canvas.width;
-			let height = canvas.height;
+			let w = canvas.width;
+			let h = canvas.height;
 			let ctx = canvas.getContext("2d");
-			--width; --height;
+			--w; --h;
 			
-			let boxFillStyle = this._createInnerShadowGradient(ctx, height, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
+			let boxFillStyle = this._createInnerShadowGradient(ctx, h, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
 			let boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
-			let graphFillStyle = this._createVerticalGradient(ctx, height - 7, "#FF8B00", "#FFDF38");
+			let graphFillStyle = this._createVerticalGradient(ctx, h - 7, "#FF8B00", "#FFDF38");
 			
-			ctx.clearRect(0, 0, width, height);
+			ctx.clearRect(0, 0, w, h);
 			ctx.save();
 			ctx.translate(.5, .5);
 			
@@ -166,10 +166,10 @@ var Tooltip = {
 				
 			// draw container chunks back
 			ctx.fillStyle = boxFillStyle;
-			this._makeRoundedRectPath(ctx, 0, 0, width, height, 5);
+			this._makeRoundedRectPath(ctx, 0, 0, w, h, 5);
 			ctx.fill();
 	
-			let step = Math.floor(width / (SPEED_COUNT - 1));
+			let step = w / SPEED_COUNT;
 	
 			if (file.speeds.length > 2) {
 				let maxH, minH;
@@ -187,52 +187,50 @@ var Tooltip = {
 				}
 				else {
 					let r = (maxH - minH);
-					s = file.speeds.map(function(speed) { return 3 + Math.round((height - 6) * (speed - minH) / r); });
+					s = file.speeds.map(function(speed) { return 3 + Math.round((h - 6) * (speed - minH) / r); });
 				}
 
 				ctx.save();
 				ctx.clip();
 				[
-					{ x:4, y:0, f:this._createVerticalGradient(ctx, height - 7, "#EADF91", "#F4EFB1") },
-					{ x:2, y:0, f:this._createVerticalGradient(ctx, height - 7, "#DFD58A", "#D3CB8B") },
-					{ x:1, y:0, f:this._createVerticalGradient(ctx, height - 7, "#D0BA70", "#DFCF6F") },
-					{ x:0, y:0, f:graphFillStyle, s:this._createVerticalGradient(ctx, height - 7, "#F98F00", "#FFBF37") }
+					{ x:4, y:0, f:this._createVerticalGradient(ctx, h - 7, "#EADF91", "#F4EFB1") },
+					{ x:2, y:0, f:this._createVerticalGradient(ctx, h - 7, "#DFD58A", "#D3CB8B") },
+					{ x:1, y:0, f:this._createVerticalGradient(ctx, h - 7, "#D0BA70", "#DFCF6F") },
+					{ x:0, y:0, f:graphFillStyle, s:this._createVerticalGradient(ctx, h - 7, "#F98F00", "#FFBF37") }
 				].forEach(
 					function(pass) {
 						ctx.fillStyle = pass.f;
-						let y = height + pass.y;
+						let y = h + pass.y;
 						let x = pass.x + 0.5;
 								
 						ctx.beginPath();
 						ctx.moveTo(x, y);
 								
-						y = y - s[0];
+						y -= s[0];
 						ctx.lineTo(x, y);
 								
 						let slope = (s[1] - s[0]);
-						x = x + step * .7;
-						y = y - slope * .7;
+						x += step * .7;
+						y -= slope * .7;
 						ctx.lineTo(x, y);
 								
 						for (let j = 1, e = s.length - 1; j < e; ++j) {
-							x = x + step * .3;
-							y = y - slope *.3;
-	
+							y -= slope *.3;
 							slope = (s[j+1] - s[j]);
-							x = x + step * .3;
-							y = y - slope * .3;
-							ctx.quadraticCurveTo(step * j, height + pass.y - s[j], x, y);
+							y -= slope * .3;
+							
+							ctx.quadraticCurveTo(step * j, h + pass.y - s[j], (x + step * .6), y);
 	
-							x = x + step * .4;
-							y = y - slope * .4;
+							x += step;
+							y -= slope * .4;
+
 							ctx.lineTo(x, y);
 						}
-								
-						x = x + step * .3;
-						y = y - slope * .3;
+						x += step * .3;
+						y -= slope * .3;
 						ctx.lineTo(x, y);
 	
-						ctx.lineTo(x, height);
+						ctx.lineTo(x, h);
 						ctx.fill();
 								
 						if (pass.s) {
@@ -243,7 +241,7 @@ var Tooltip = {
 				);
 				ctx.restore();
 			}
-			this._makeRoundedRectPath(ctx, 0, 0, width, height, 3);
+			this._makeRoundedRectPath(ctx, 0, 0, w, h, 3);
 			ctx.stroke();
 				
 			ctx.restore();
