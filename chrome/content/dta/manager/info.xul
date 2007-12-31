@@ -48,35 +48,38 @@
 	</keyset>
 	
 	<hbox id="infoBox"/>
-	<grid>
-		<columns>
-			<column/>
-			<column flex="1"/>
-		</columns>
-		<rows>
-			<row align="center">
-				<label control="sourcePage" id="sourcePageTitle" value="&referrer.value;" />
-				<textbox id="sourcePage" readonly="true" />
-			</row>
-			<row align="center">
-				<label control="directory" value="&dest.caption;" />
-				<hbox flex="1">
-					<saveddropdown id="directory" preference="directory" flex="1"/>
-					<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" tooltiptext="&browse.tip;" />
-				</hbox>
-			</row>
-			<row align="center">
-				<label control="renaming" value="&mask.label;: " />
-				<hbox>
-					<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
-					<maskbutton id="mask"/>
-				</hbox>
-			</row>
-			<row align="center">
-				<label control="hash" value="&checksum.value;" />
-				<hashinput id="hash"/>
-			</row>
-		</rows>
-	</grid>
+	<groupbox id="paramsBox" class="closer" orient="vertical" closed="true" shouldResize="true" persist="closed">
+		<caption label="&options.caption;"/>
+		<grid>
+			<columns>
+				<column/>
+				<column flex="1"/>
+			</columns>
+			<rows>
+				<row align="center">
+					<label control="sourcePage" id="sourcePageTitle" value="&referrer.value;" />
+					<textbox id="sourcePage" readonly="true" />
+				</row>
+				<row align="center">
+					<label control="directory" value="&dest.caption;" />
+					<hbox flex="1">
+						<saveddropdown id="directory" preference="directory" flex="1"/>
+						<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" tooltiptext="&browse.tip;" />
+					</hbox>
+				</row>
+				<row align="center">
+					<label control="renaming" value="&mask.label;: " />
+					<hbox>
+						<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
+						<maskbutton id="mask"/>
+					</hbox>
+				</row>
+				<row align="center">
+					<label control="hash" value="&checksum.value;" />
+					<hashinput id="hash"/>
+				</row>
+			</rows>
+		</grid>
+	</groupbox>
 	<grid id="canvasGrid"/>
 </dialog>
