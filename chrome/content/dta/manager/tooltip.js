@@ -171,7 +171,7 @@ var Tooltip = {
 	
 			let step = w / SPEED_COUNT;
 	
-			if (file.speeds.length > 2) {
+			if (file.speeds.length > 1) {
 				let maxH, minH;
 				maxH = minH = file.speeds[0];
 				file.speeds.forEach(
