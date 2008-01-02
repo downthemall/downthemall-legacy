@@ -21,6 +21,6 @@
 		<toolbarbutton id="dta-manager-button"/>
 	</toolbarpalette>
 	<menupopup id="menu_ToolsPopup">	
-		<menu id="dtaToolsMenu" insertbefore="flashgot-menu" insertafter="sanitizeItem"/>
+		<menu id="dtaToolsMenu" insertbefore="flashgot-menu" insertafter="javascriptConsole"/>
 	</menupopup>
 </overlay>
