@@ -1367,7 +1367,14 @@ QueueItem.prototype = {
 		try {
 			if (this.is(CANCELED)) {
 				return;
-			}			
+			}
+			if (this.is(COMPLETE)) {
+				Dialog.completed--;
+			}
+			else if (this.is(RUNNING)) {
+				this.pause();
+			}
+			this.state = CANCELED;			
 			Debug.dump(this.fileName + ": canceled");
 
 			this.visitors = new VisitorManager();
@@ -1377,14 +1384,8 @@ QueueItem.prototype = {
 			}
 			this.status = message;
 
-			if (this.is(COMPLETE)) {
-				Dialog.completed--;
-			}
-			else if (this.is(RUNNING)) {
-				this.pause();
-			}
+
 			this.removeTmpFile();
-			this.state = CANCELED;
 
 			// gc
 			this.chunks = [];
@@ -2136,7 +2137,7 @@ Connection.prototype = {
 				ConflictManager.resolve(d);
 			}
 			
-			if (d.resumable) {
+			if (d.resumable && !d.is(CANCELED)) {
 				d.resumeDownload();
 			}
 		}
@@ -2399,20 +2400,6 @@ var ConflictManager = {
 		if (!this._items.length) {
 			return;
 		}
-		let cur = this._items[0];
-		let download = cur.download;
-		download.conflicts = 0;
-		let basename = download.destinationName;
-		let newDest = new FileFactory(download.destinationFile);
-		let i = 1;
-		for (;; ++i) {
-			newDest.leafName = Utils.formatConflictName(basename, i);
-			if (!newDest.exists() && (!download.is(RUNNING) || !Dialog.checkSameName(this, newDest.path))) {
-				break;
-			}
-		}
-		cur.newDest = newDest.leafName;
-		cur.conflicts = i;
 	
 		if (Prefs.conflictResolution != 3) {
 			this._return(Prefs.conflictResolution);
@@ -2426,6 +2413,8 @@ var ConflictManager = {
 			this._return(1);
 			return;
 		}
+		
+		this._computeConflicts();
 
 		var options = {
 			url: download.urlManager.usable.cropCenter(45),
@@ -2442,6 +2431,22 @@ var ConflictManager = {
 			options, this
 		);
 	},
+	_computeConflicts: function CM__computeConflicts() {
+		let cur = this._items[0];
+		let download = cur.download;
+		download.conflicts = 0;
+		let basename = download.destinationName;
+		let newDest = new FileFactory(download.destinationFile);
+		let i = 1;
+		for (;; ++i) {
+			newDest.leafName = Utils.formatConflictName(basename, i);
+			if (!newDest.exists() && (!download.is(RUNNING) || !Dialog.checkSameName(this, newDest.path))) {
+				break;
+			}
+		}
+		cur.newDest = newDest.leafName;
+		cur.conflicts = i;	
+	},
 	_returnFromDialog: function CM__returnFromDialog(option, type) {
 		if (type == 1) {
 			this._sessionSetting = option;
@@ -2454,7 +2459,7 @@ var ConflictManager = {
 	_return: function CM__return(option) {
 		let cur = this._items[0];
 		switch (option) {
-			/* rename */    case 0: cur.download.conflicts = cur.conflicts; break;
+			/* rename */    case 0: this._computeConflicts(); cur.download.conflicts = cur.conflicts; break;
 			/* overwrite */ case 1: cur.download.shouldOverwrite = true; break;
 			/* skip */      default: cur.download.cancel(_('skipped')); break;
 		}
