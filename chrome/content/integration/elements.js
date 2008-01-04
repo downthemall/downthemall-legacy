@@ -315,20 +315,17 @@ var DTA_ContextOverlay = {
 	
 	findSingleLink: function(turbo) {
 		try {
-			// Songbird
-			//if (!gContextMenu) {
-			//	var gContextMenu = document.getElementById('contentAreaContextMenu');
-			//}
 			var win = document.commandDispatcher.focusedWindow.top;
+			var ctx = this.contextMenu;
 
-			var cur = gContextMenu.target;
+			var cur = ctx.target;
 			
-			var tofind = gContextMenu.onLink ? /^a$/i : /^img$/i; 
+			var tofind = ctx.onLink ? /^a$/i : /^img$/i; 
 		
 			while (!("tagName" in cur) || !tofind.test(cur.tagName)) {
 				cur = cur.parentNode;
 			}
-			var url = gContextMenu.onLink ? cur.href : cur.src;
+			var url = ctx.onLink ? cur.href : cur.src;
 			
 			if (!DTA_AddingFunctions.isLinkOpenable(url)) {
 				DTA_alert(this.getString('error'), this.getError('errornodownload'));
@@ -392,14 +389,15 @@ var DTA_ContextOverlay = {
 			DTA_debug.dump("DCO::init()", ex);
 		}
 	},
-	
+	get contextMenu() {
+			if (window.gContextMenu !=  null) {
+				return gContextMenu;
+			}
+			return document.getElementById('contentAreaContentMenu');
+	},
 	onContextShowing: function(evt) {
 		try {
-			// Songbird
-			if ('gContextMenu' in window) {
-				var gContextMenu = evt.originalTarget;
-			}
-			
+			var ctx = this.contextMenu;
 			// get settings
 			var menu = DTA_preferences.getDTA("ctxmenu", "1,1,0").split(",").map(function(e){return parseInt(e);});
 			var compact = DTA_preferences.getDTA("ctxcompact", false);
@@ -418,15 +416,15 @@ var DTA_ContextOverlay = {
 			var show = [];
 			
 			// hovering an image or link
-			if (gContextMenu && (gContextMenu.onLink || gContextMenu.onImage)) {
+			if (ctx && (ctx.onLink || ctx.onImage)) {
 				if (menu[0]) {
 					show.push('Save');
 				}
 				if (menu[1]) {
 					show.push('SaveT');
 				}
-				this.ctx.Save.label = this.getString('dtasave' + (gContextMenu.onLink ? 'link' : 'image'));
-				this.ctx.SaveT.label = this.getString('turbosave' + (gContextMenu.onLink ? 'link' : 'image'));
+				this.ctx.Save.label = this.getString('dtasave' + (ctx.onLink ? 'link' : 'image'));
+				this.ctx.SaveT.label = this.getString('turbosave' + (ctx.onLink ? 'link' : 'image'));
 			}
 			// regular
 			else {
