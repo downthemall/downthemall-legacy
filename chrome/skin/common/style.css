@@ -164,3 +164,18 @@ textbox[readonly] html|*.textbox-input {
   color: GrayText !important;
 	font-style: italic;
 }
+/* foreign theme compat, i.e. Songbird */
+statusbar {
+	-moz-appearance: statusbar;
+	min-height: 22px;	
+}
+statusbarpanel {
+	-moz-appearance: statusbarpanel;
+	-moz-box-align: center;
+	-moz-box-pack: center;
+	height: auto;
+}
+statusbarpanel > label {
+	margin-top: 1px;
+	margin-bottom: 2px;
+}
