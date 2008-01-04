@@ -249,6 +249,11 @@ var Dialog = {
 	multiHelp: true,
 	load: function DTA_load() {
 		try {
+			$('directory', 'renaming', 'URLaddress', 'hash').forEach(
+				function(e) {
+					e.oldColor = e.inputField.style.color;
+				}
+			);
 			this.ddDirectory = $("directory");
 			this.ddRenaming = $("renaming");			
 			var address = $('URLaddress');
@@ -398,7 +403,7 @@ var Dialog = {
 				// reset the styles
 				var style = e.inputField.style;
 				style.backgroundColor = 'transparent';
-				style.color = 'windowText';
+				style.color = e.oldColor;
 			}
 		);
 		
