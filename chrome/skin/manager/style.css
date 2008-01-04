@@ -148,23 +148,23 @@ stack > #infoPercent {
 }
 
 treechildren::-moz-tree-progressmeter(completed) {
-  color: #008F00;
+  color: #008F00 !important;
 }
 
 treechildren::-moz-tree-progressmeter(paused) {
-  color: #FFCC00;
+  color: #FFCC00 !important;
 }
 
 treechildren::-moz-tree-progressmeter(canceled) {
-  color: #B12801;
+  color: #B12801 !important;
 }
 
 treechildren::-moz-tree-progressmeter(queued) {
-  color: #BFDEFF;
+  color: #BFDEFF !important;
 }
 
 treechildren::-moz-tree-progressmeter(inprogress) {
-  color: #AAE061;
+  color: #AAE061 !important;
 }
 textbox.plain {
 	background-color: transparent !important;
