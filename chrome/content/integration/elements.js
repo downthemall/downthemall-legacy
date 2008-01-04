@@ -208,15 +208,14 @@ var DTA_ContextOverlay = {
 		if (!all) {
 			var sel = document.commandDispatcher.focusedWindow.getSelection();
 			if (sel.isCollapsed) {
-				windows.push(DTA_Mediator.getMostRecent().getBrowser().selectedBrowser.contentWindow.top);
+				windows.push(gBrowser.selectedBrowser.contentWindow.top);
 			}
 			else {
 				windows.push(document.commandDispatcher.focusedWindow);
 			}
 		}
 		else {
-			var win = DTA_Mediator.getMostRecent().getBrowser();
-			win.browsers.forEach(
+			gBrowser.browsers.forEach(
 				function(e) {
 					windows.push(e.contentWindow.top);
 				}
@@ -240,6 +239,10 @@ var DTA_ContextOverlay = {
 				});
 		}
 		return windows;
+	},
+	_types: {
+		'mail:3pane': 'findWindowsMail',
+		'mail:messageWindow': 'findWindowsMail'
 	},
 	
 	findLinks: function(turbo, all) {
@@ -271,12 +274,13 @@ var DTA_ContextOverlay = {
 				DTA_debug.dump("findLinks(): DtaStandard request from the user");
 			}
 
-			var wt = document.documentElement.getAttribute('windowtype'); 
-			var windows = (
-				wt.match(/^mail:/)
-				? this.findWindowsMail
-				: this.findWindowsNavigator
-			)(all);
+			var wt = document.documentElement.getAttribute('windowtype');
+			if (wt in this._types) {
+				var windows = this[this._types[wt]](all);
+			}
+			else {
+				var windows = this.findWindowsNavigator(all);
+			}
 			
 			var urls = [];
 			var images = [];
@@ -311,6 +315,10 @@ var DTA_ContextOverlay = {
 	
 	findSingleLink: function(turbo) {
 		try {
+			// Songbird
+			//if (!gContextMenu) {
+			//	var gContextMenu = document.getElementById('contentAreaContextMenu');
+			//}
 			var win = document.commandDispatcher.focusedWindow.top;
 
 			var cur = gContextMenu.target;
@@ -387,6 +395,10 @@ var DTA_ContextOverlay = {
 	
 	onContextShowing: function(evt) {
 		try {
+			// Songbird
+			if ('gContextMenu' in window) {
+				var gContextMenu = evt.originalTarget;
+			}
 			
 			// get settings
 			var menu = DTA_preferences.getDTA("ctxmenu", "1,1,0").split(",").map(function(e){return parseInt(e);});
@@ -570,4 +582,4 @@ var DTA_ContextOverlay = {
 	}
 }
 
-window.addEventListener("load", function() {DTA_ContextOverlay.init();}, false);
+addEventListener("load", function() {DTA_ContextOverlay.init();}, false);
