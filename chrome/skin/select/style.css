@@ -76,62 +76,62 @@ treechildren::-moz-tree-checkbox(checked) {
 }
 
 treechildren::-moz-tree-row(manuallySelected) {
-	background-color: #FFFFB3;
+	background-color: #FFFFB3 !important;
 }
 treechildren::-moz-tree-row(manuallySelected, selected) {
-	background-color: #FFFF80;
+	background-color: #FFFF80 !important;
 }
 treechildren::-moz-tree-row(f0) {
-	background-color: #FFE8BB;
+	background-color: #FFE8BB !important;
 }
 treechildren::-moz-tree-row(f0, selected) {
-	background-color: #FFD88A;
+	background-color: #FFD88A !important;
 }
 treechildren::-moz-tree-row(f1) {
-	background-color: #ECFFB3;
+	background-color: #ECFFB3 !important;
 }
 treechildren::-moz-tree-row(f1, selected) {
-	background-color: #DFFF80;
+	background-color: #DFFF80 !important;
 }
 treechildren::-moz-tree-row(f2) {
-	background-color: #ECE8FF;
+	background-color: #ECE8FF !important;
 }
 treechildren::-moz-tree-row(f2, selected) {
-	background-color: #D5CCFF;
+	background-color: #D5CCFF !important;
 }
 treechildren::-moz-tree-row(f3) {
-	background-color: #DDF3FF;
+	background-color: #DDF3FF !important;
 }
 treechildren::-moz-tree-row(f3, selected) {
-	background-color: #C2EAFF;
+	background-color: #C2EAFF !important;
 }
 treechildren::-moz-tree-row(f4) {
-	background-color: #FDE8FF;
+	background-color: #FDE8FF !important;
 }
 treechildren::-moz-tree-row(f4, selected) {
-	background-color: #FBCCFF;
+	background-color: #FBCCFF !important;
 }
 treechildren::-moz-tree-row(f5) {
-	background-color: #DDFFF4;
+	background-color: #DDFFF4 !important;
 }
 treechildren::-moz-tree-row(f5, selected) {
-	background-color: #A8FFE4;
+	background-color: #A8FFE4 !important;
 }
 treechildren::-moz-tree-row(f6) {
-	background-color: #FEFFAF;
+	background-color: #FEFFAF !important;
 }
 treechildren::-moz-tree-row(f6, selected) {
-	background-color: #FDFF7A;
+	background-color: #FDFF7A !important;
 }
 treechildren::-moz-tree-row(f7) {
-	background-color: #FFF0B3;
+	background-color: #FFF0B3 !important;
 }
 treechildren::-moz-tree-row(f7, selected) {
-	background-color: #FFE680;
+	background-color: #FFE680 !important;
 }
 treechildren::-moz-tree-row(f8) {
-	background-color: #FFDBDB;
+	background-color: #FFDBDB !important;
 }
 treechildren::-moz-tree-row(f8, selected) {
-	background-color: #DFC2C2;
+	background-color: #DFC2C2 !important;
 }

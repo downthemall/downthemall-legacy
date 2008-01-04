@@ -16,10 +16,15 @@ treechildren::-moz-tree-cell-text(progressmeter) {
 #tooltip, #tooltip * {
 	color: windowText !important;
 }
-tree {
-	background-color: white !important;
+tree,
+treechildren::-moz-tree-row,
+treechildren::-moz-tree-row(even),
+treechildren::-moz-tree-row(odd) {
+	background-color: white;
 }
-
-toolbox {
+treechildren::-moz-tree-cell-text {
+	color: black;	
+}
+toolbar *{
 	color: windowText !important;
 }
