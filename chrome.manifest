@@ -43,3 +43,9 @@ overlay chrome://messenger/content/messageWindow.xul chrome://dta/content/integr
 overlay	chrome://dta/content/integration/thunderbird.xul chrome://dta/content/integration/elements.xul application={3550f703-e582-4d05-9a08-453d09bdfdc6}
 style	chrome://messenger/content/messenger.xul chrome://dta/skin/integration/style.css application={3550f703-e582-4d05-9a08-453d09bdfdc6}
 style	chrome://messenger/content/messageWindow.xul chrome://dta/skin/integration/style.css application={3550f703-e582-4d05-9a08-453d09bdfdc6}
+
+## Songbird ##
+overlay	chrome://songbird/content/xul/mainScriptsOverlay.xul	chrome://dta/content/integration/songbird.xul application=songbird@songbirdnest.com
+overlay	chrome://dta/content/integration/songbird.xul chrome://dta/content/integration/elements.xul application=songbird@songbirdnest.com
+style	chrome://songbird/content/xul/mainScriptsOverlay.xul	chrome://dta/skin/integration/style.css application=songbird@songbirdnest.com
+style	chrome://dta/content/dta/manager.xul	chrome://dta/skin/manager/songbird.css application=songbird@songbirdnest.com

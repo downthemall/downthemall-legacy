@@ -24,7 +24,7 @@
 		<targetApplication>
 			<rdf:Description>
 				<id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</id>
-				<minVersion>2.0</minVersion>
+				<minVersion>2.0.0.8</minVersion>
 				<maxVersion>3.0.*</maxVersion>
 			</rdf:Description>
 		</targetApplication>
@@ -43,7 +43,7 @@
 			<rdf:Description>
 				<id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</id>
 				<minVersion>2.0a</minVersion>
-				<maxVersion>3.0</maxVersion>
+				<maxVersion>2.0.*</maxVersion>
 			</rdf:Description>
 		</targetApplication>
 		
@@ -54,6 +54,15 @@
 		    <minVersion>1.0</minVersion>
 		    <maxVersion>1.0.*</maxVersion>
 		  </rdf:Description>
+		</targetApplication>
+		
+		<!-- Songbird -->
+		<targetApplication>
+			<rdf:Description>
+				<id>songbird@songbirdnest.com</id>
+				<minVersion>0.4a</minVersion>
+				<maxVersion>0.4.*</maxVersion>
+			</rdf:Description>
 		</targetApplication>		
 
 	</rdf:Description>
