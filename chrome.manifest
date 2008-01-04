@@ -34,7 +34,7 @@ overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overl
 ## Seamonkey ##
 overlay	chrome://navigator/content/navigator.xul chrome://dta/content/integration/seamonkey.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
 overlay	chrome://dta/content/integration/seamonkey.xul chrome://dta/content/integration/elements.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
-overlay chrome://dta/content/preferences/interfacePane.xul chrome://dta/content/preferences/seamonkey.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+overlay chrome://dta/content/preferences/interfacePane.xul chrome://dta/content/preferences/toolbarButtons.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
 style	chrome://navigator/content/navigator.xul chrome://dta/skin/integration/style.css application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
 
 ## Thunderbird ##
@@ -50,3 +50,4 @@ overlay	chrome://dta/content/integration/songbird.xul chrome://dta/content/integ
 style	chrome://songbird/content/xul/mainScriptsOverlay.xul	chrome://dta/skin/integration/style.css application=songbird@songbirdnest.com
 style	chrome://dta/content/dta/manager.xul	chrome://dta/skin/common/songbird.css application=songbird@songbirdnest.com
 style	chrome://dta/content/dta/select.xul	chrome://dta/skin/common/songbird.css application=songbird@songbirdnest.com
+overlay chrome://dta/content/preferences/interfacePane.xul chrome://dta/content/preferences/toolbarButtons.xul application=songbird@songbirdnest.com

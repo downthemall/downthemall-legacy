@@ -11,15 +11,17 @@
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
 <overlay id="DTAFirefoxIntegration" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+	<script type="application/x-javascript" src="chrome://dta/content/integration/toolbarButtons.js"/>
+
 	<popup id="contentAreaContextMenu">
 		<menu id="dtaCtxCompact" insertafter="html.context.playlist"/>
 	</popup>
 
-	<toolbarpalette id="BrowserToolbarPalette"> 
-		<toolbarbutton id="dta-turbo-button" />
+	<toolbar id="nav-bar"> 
 		<toolbarbutton id="dta-button"/>
+		<toolbarbutton id="dta-turbo-button"/>
 		<toolbarbutton id="dta-manager-button"/>
-	</toolbarpalette>
+	</toolbar>
 	<menupopup id="menu_ToolsPopup">	
 		<menu id="dtaToolsMenu" insertbefore="flashgot-menu" insertafter="javascriptConsole"/>
 	</menupopup>
