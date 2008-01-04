@@ -12,3 +12,14 @@ treechildren::-moz-tree-progressmeter {
 treechildren::-moz-tree-cell-text(progressmeter) {
   margin: 2px 4px;
 }
+
+#tooltip, #tooltip * {
+	color: windowText !important;
+}
+tree {
+	background-color: white !important;
+}
+
+toolbox {
+	color: windowText !important;
+}
