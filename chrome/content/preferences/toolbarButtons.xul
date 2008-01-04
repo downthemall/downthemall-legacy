@@ -44,7 +44,7 @@
 	</columns>	
 	<row id="rowItems">
 		<groupbox>
-			<caption label="&uipane.smbuttons.caption;"/>
+			<caption label="&uipane.tbbuttons.caption;"/>
 			<checkbox id="dtaSMButtons0" 
 				preference="dtaSMButtons"
 				label="DownThemAll!" 

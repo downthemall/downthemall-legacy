@@ -76,7 +76,7 @@
 <!ENTITY uipane.downloadwin.label "Add DownThemAll! to the 'Save File' window">
 <!ENTITY uipane.context.caption "Context menu">
 <!ENTITY uipane.tools.caption "Tools Menu">
-<!ENTITY uipane.smbuttons.caption "Seamonkey Buttons">
+<!ENTITY uipane.tbbuttons.caption "Toolbar Buttons">
 <!ENTITY uipane.compact.label "Use a compact menu">
 <!ENTITY uipane.hide.label "Hide this menu">
 <!ENTITY uipane.showtooltip.label "Show download tooltips">
