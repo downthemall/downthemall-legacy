@@ -38,9 +38,10 @@
 
 var DTA_SaveAs = {
 	init: function dd_init() {
-	
+
 		var basicBox = document.getElementById('basicBox');
-		const doRevert = basicBox && !basicBox.collapsed;
+		var normalBox = document.getElementById('normalBox');
+		const doRevert = basicBox && (!basicBox.collapsed || (normalBox && normalBox.collapsed));
 		const doOverlay = DTA_preferences.getDTA("downloadWin", true);
 		if (
 			!doOverlay
@@ -190,7 +191,7 @@ var DTA_SaveAs = {
 		document.documentElement.cancelDialog();
 	}
 }
-window.addEventListener(
+addEventListener(
 	"load",
 	function(){ DTA_SaveAs.init(); },
 	false
