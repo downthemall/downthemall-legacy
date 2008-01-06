@@ -104,7 +104,7 @@ function NumericRange(name, start, stop, step, strl) {
 	};
 	this.strl = strl;
 	
-	this.init(name, start, stop, step);
+	this.init(name, start, stop + (step > 0 ? 1 : -1), step);
 };
 NumericRange.prototype = Range.prototype;
 function CharRange(name, start, stop, step) {
