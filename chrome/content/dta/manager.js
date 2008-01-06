@@ -155,7 +155,7 @@ var Dialog = {
 					speed /= d.speeds.length;
 					
 					// Calculate estimated time					
-					if (advanced != 0 || d.totalSize > 0) {
+					if (advanced != 0 && d.totalSize > 0) {
 						let remaining = Math.ceil((d.totalSize - d.partialSize) / speed);
 						if (!isFinite(remaining)) {
 							d.status = _("unknown");
