@@ -14,11 +14,11 @@
 	<p>The window is divided in panels. Options are pretty self-explanatory. They will let you shape dTa! how you wish. You'll find the "Filters" panel extremely useful. Here you can add or delete your own inclusive filters, also using regular expressions.</p>
 	<ul>
 		<li><strong>Main panel:</strong> includes settings about file name conflicts, max downloads number, sounds, alerts, and other stuff related to the end of the downloading process;</li>
-		<li><strong>Filters panel:</strong> here you can manage inclusive filters, add new ones, modify or delete existing ones. To add a filter click on 'Add new filter'. Now you can fill the fields with a filter name (which is the one that will appear in the "Make your selection" window) and the filter content, which can be a simple string of text to match or a regular expression.</li>
+		<li><strong>Filters panel:</strong> here you can manage inclusive filters, add new ones, modify or delete existing ones.</li>
 		<li><strong>Privacy panel:</strong> here you can control or delete info that dTa! writes on your computer; you can also disable the downloading of remote messages from dTa website;</li>
 
 		<li><strong>User Interface panel:</strong> here you can set up dTa! context-menus to your liking;</li>
-		<li><strong>Advanced panel:</strong> a few "pro" settings... in most cases, you can leave the default value.</li>
+		<li><strong>Advanced panel:</strong> a few "pro" settings... in most cases, you can leave the default values.</li>
 	</ul>
 	<h2 id="mainp">Main panel</h2>
 	<h3>If a file aready exists</h3>
@@ -62,8 +62,13 @@
 	<p>Furthermore you may play a sound and/or close the <a href="manager.html">Manager window</a> once all downloads are finished.</p>
 
 	<h2 id="filters">Filters panel</h2>
-	<p>To be written...</p>
-	
+	<p>To edit an existing filter just select it on the list and then edit the 'Caption' and the 'Filtered extensions' fields as you wish, the changes will be saved instantaneously as you type.<br/>To add a new filter click on 'Add new filter', it will be added at the bottom of the list with some default values. Now you can edit it. <br/> If you need to remove a filter then simply select it on the list and then click on the 'Delete filter' button. Please note that the default filters cannot be removed, just edited. If you want to restore them, then simply click on the 'Restore default filter' button.</p>
+	<h3>Filters fields</h3>
+	<ul>
+		<li><code>Caption</code>: this is the filter name, the one that will appear in the "Make your selection" window.</li>
+		<li><code>Filtered extensions</code>: It can be a simple comma separated set of strings of text to match - with the optional use of * and ? wildcards - or a more complex regular expression, accordingly to the 'Reg. Exp' checkbox next to the textfield.</li>
+	</ul>
+
 	<h2 id="privacy">Privacy panel</h2>
 	<p>We DownThemAll! authors are concerned on privacy.</p>
 	<p><strong>See also:</strong> <a href="about.html#privacy">Privacy Notice</a></p>
