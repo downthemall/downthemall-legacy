@@ -142,7 +142,7 @@ var DTA_SaveAs = {
 
 		document.getElementById('basicBox').collapsed = true;
 		document.getElementById('normalBox').collapsed = false;
-		window.sizeToContent();
+		this.sizeToContent();
 		
 		// take care of FlashGot... for now.
 		// need to negotiate with the author (and possible other extension authors)
@@ -151,10 +151,26 @@ var DTA_SaveAs = {
 			document.getElementById("flashgot-basic").collapsed = true;
 		}
 		catch (ex) {
-			window.sizeToContent();
+			this.sizeToContent();
 		}		
 	},
 	
+	// Workaround for bug 371508
+	sizeToContent: function() {
+		try {
+			window.sizeToContent();	
+		}
+		catch (ex) {
+			DTA_debug.dump("sizeToContent Bug: 371508", ex);
+			try {
+				var btn = document.documentElement.getButton('accept');
+				window.innerHeight = btn.boxObject.y + 10; 
+			}
+			catch (ex) {
+				DTA_debug.dump("setting height failed");
+			}		
+		}
+	},	
 	select: function dd_select(evt) {
 		var mode = this.mode.selectedItem;
 		this.remember.checked = false;
