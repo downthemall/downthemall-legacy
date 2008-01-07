@@ -393,7 +393,25 @@ var DTA_ContextOverlay = {
 			if (window.gContextMenu !=  null) {
 				return gContextMenu;
 			}
-			return document.getElementById('contentAreaContentMenu');
+			var cm = {
+				onLink: false,
+				onImage: false,
+				target: document.popupNode,
+				fake: true
+			};
+			if (cm.target) {
+				var node = cm.target;
+				if (node instanceof Components.interfaces.nsIImageLoadingContent && node.currentURI) {
+					cm.onImage = true;
+				}
+				while (node && !cm.onLink) {
+					if (node instanceof HTMLAnchorElement && node.href) {
+						cm.onLink = true;
+					}				
+					node = node.parentNode;
+				}
+			}
+			return cm;
 	},
 	onContextShowing: function(evt) {
 		try {
@@ -427,7 +445,7 @@ var DTA_ContextOverlay = {
 				this.ctx.SaveT.label = this.getString('turbosave' + (ctx.onLink ? 'link' : 'image'));
 			}
 			// regular
-			else {
+			if (ctx && (ctx.fake || !(ctx.onLink || ctx.onImage))) {
 				if (menu[0]) {
 					show.push('DTA');
 				}
