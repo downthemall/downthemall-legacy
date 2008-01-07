@@ -474,9 +474,25 @@ var Tree = {
 		}
 		return rv;
 	},
+	// get the first selected item, NOT the item which has the input focus.
 	get current() {
+		let select = this.selection;
+		try {
+			let ci = {value: -1};
+			this.selection.getRangeAt(0, ci, {});			
+			if (ci.value > -1 && ci.value < this.rowCount) {
+				return this._downloads[ci.value];
+			}
+		}
+		catch (ex) {
+			// fall-through
+		}
+		return null;		
+	},
+	// get the currently focused item.
+	get focused() {
 		let ci = this.selection.currentIndex;
-		if (ci > -1 && ci < this.rowCount && this.selection.isSelected(ci)) {
+		if (ci > -1 && ci < this.rowCount) {
 			return this._downloads[ci];
 		}
 		return null;		
