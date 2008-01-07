@@ -566,28 +566,33 @@ var DTA_ContextOverlay = {
 		}
 	},
 	
-	extractDescription : function(child) {
+	extractDescription: function(child) {
+		var rv = "";
 		try {
-			var rv = "";
-			if (child.hasChildNodes()) {
-				for (var x = 0; x < child.childNodes.length; x++) {
-					var c = child.childNodes[x];
+			var fmt = function(s) {
+				try {
+					return s.replace(/(\n){1,}/gi, " ").replace(/(\s){2,}/gi, " ") + " ";
+				} catch (ex) { /* no-op */ }
+				return "";
+			};
+			for (var i = 0, e = child.childNodes.length; i < e; ++i) {
+				var c = child.childNodes[i];
 
-					if (c.nodeValue && c.nodeValue != "") {
-						rv += c.nodeValue.replace(/(\n){1,}/gi, " ").replace(/(\s){2,}/gi, " ");
+				if (c.nodeValue && c.nodeValue != "") {
+					rv += fmt(c.nodeValue);
+				}
+
+				if (c.nodeType == 1) {
+					rv += this.extractDescription(c);
+				}
+
+				if (c.hasAttribute)
+				{
+					if (c.hasAttribute('title')) {
+						rv += fmt(c.getAttribute('title'));	
 					}
-
-					if (c.nodeType == 1) {
-						rv += this.extractDescription(c);
-					}
-
-					if (c.hasAttribute)
-					{
-						if (c.hasAttribute('title')) {
-							rv += c.getAttribute('title').replace(/(\n){1,}/gi, " ").replace(/(\s){2,}/gi, " ") + " ";	
-						} else if (c.hasAttribute('alt')) {
-							rv += c.getAttribute('alt').replace(/(\n){1,}/gi, " ").replace(/(\s){2,}/gi, " ") + " ";
-						}
+					else if (c.hasAttribute('alt')) {
+						rv += fmt(c.getAttribute('alt'));
 					}
 				}
 			}
