@@ -19,7 +19,7 @@
  *
  * Contributor(s):
  *    Stefano Verna <stefano.verna@gmail.com>
- *    Federico Parodi
+ *    Federico Parodi <f.parodi@tiscali.it>
  *    Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
