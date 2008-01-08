@@ -56,7 +56,7 @@
 							/>
 						<checkbox id="dtaContext1" 
 							preference="dtaContext"
-							label="OneClick!"
+							label="DTA OneClick!"
 							onsyncfrompreference="return Interface.getMenu('dtaContext', 1);"
 							onsynctopreference="return Interface.setMenu('dtaContext', 1);"
 							class="moreLeft" />
@@ -79,7 +79,7 @@
 							class="moreLeft" />
 						<checkbox id="dtaTool1" 
 							preference="dtaTool"
-							label="OneClick!" 
+							label="DTA OneClick!" 
 							onsyncfrompreference="return Interface.getMenu('dtaTool', 1);"
 							onsynctopreference="return Interface.setMenu('dtaTool', 1);"
 							class="moreLeft" />

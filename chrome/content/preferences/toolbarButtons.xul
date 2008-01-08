@@ -54,7 +54,7 @@
 				/>
 			<checkbox id="dtaSMButtons1" 
 				preference="dtaSMButtons"
-				label="OneClick!"
+				label="DTA OneClick!"
 				onsyncfrompreference="return Interface.getMenu('dtaSMButtons', 1);"
 				onsynctopreference="return Interface.setMenu('dtaSMButtons', 1);"
 				class="moreLeft" />
