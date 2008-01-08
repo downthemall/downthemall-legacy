@@ -622,11 +622,12 @@ Visitor.prototype = {
 					this.contentlength = Number(aValue);
 				break;
 
-				case 'content-range':
+				case 'content-range': {
 					let cl = new Number(aValue.split('/').pop());
 					if (cl > 0) {
 						this.contentlength = cl;
 					}
+				}
 				break;
 				case 'last-modified':
 					try {
