@@ -825,7 +825,7 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 			else {
 				// Download partfile is gone!
 				// XXX find appropriate error message!
-				this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+				this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 			}
 		}
 		catch (ex) {
@@ -1219,7 +1219,7 @@ QueueItem.prototype = {
 	_completeEvents: [],
 	complete: function QI_complete(exception) {
 		if (exception) {
-			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 			Debug.dump("complete: ", exception);
 			return;
 		}
@@ -1827,7 +1827,7 @@ Connection.prototype = {
 		}
 		catch (ex) {
 			Debug.dump('onDataAvailable', ex);
-			this.d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+			this.d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 		}
 	},
 	
@@ -2117,7 +2117,7 @@ Connection.prototype = {
 				}
 				catch (ex) {
 					Debug.dump("size check threw", ex);
-					d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+					d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 					return;
 				}
 				
