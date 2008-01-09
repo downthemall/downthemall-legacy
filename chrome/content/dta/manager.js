@@ -2390,11 +2390,12 @@ var ConflictManager = {
 		if (this._processing) {
 			return;
 		}
+		let cur;
 		while (this._items.length) {
-			let cur = this._items[0];
+			cur = this._items[0];
 			if (!this._check(cur.download)) {
 				if (reentry) {
-					download[reentry]();
+					cur.download[reentry]();
 				}
 				this._items.shift();
 				continue;
@@ -2413,16 +2414,16 @@ var ConflictManager = {
 			this._return(this._sessionSetting);
 			return;
 		}
-		if (download.shouldOverwrite) {
+		if (cur.download.shouldOverwrite) {
 			this._return(1);
 			return;
 		}
 		
-		this._computeConflicts();
+		this._computeConflicts(cur);
 
 		var options = {
-			url: download.urlManager.usable.cropCenter(45),
-			fn: download.destinationName.cropCenter(45),
+			url: cur.download.urlManager.usable.cropCenter(45),
+			fn: cur.download.destinationName.cropCenter(45),
 			newDest: cur.newDest.cropCenter(45)
 		};
 		
@@ -2435,8 +2436,7 @@ var ConflictManager = {
 			options, this
 		);
 	},
-	_computeConflicts: function CM__computeConflicts() {
-		let cur = this._items[0];
+	_computeConflicts: function CM__computeConflicts(cur) {
 		let download = cur.download;
 		download.conflicts = 0;
 		let basename = download.destinationName;
@@ -2463,7 +2463,7 @@ var ConflictManager = {
 	_return: function CM__return(option) {
 		let cur = this._items[0];
 		switch (option) {
-			/* rename */    case 0: this._computeConflicts(); cur.download.conflicts = cur.conflicts; break;
+			/* rename */    case 0: this._computeConflicts(cur); cur.download.conflicts = cur.conflicts; break;
 			/* overwrite */ case 1: cur.download.shouldOverwrite = true; break;
 			/* skip */      default: cur.download.cancel(_('skipped')); break;
 		}
