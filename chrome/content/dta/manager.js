@@ -66,9 +66,9 @@ const STREAMS_FREQ = 100;
 
 var Dialog = {
 	_observes: ['quit-application-requested', 'quit-application-granted'],
-	_lastSum: 0,
 	_initialized: false,
 	_wasRunning: false,
+	_lastTime: Utils.getTimestamp(),
 	_running: [],
 	completed: 0,
 	totalbytes: 0,
@@ -127,11 +127,15 @@ var Dialog = {
 			this._running.forEach(
 				function(i) {
 					let d = i.d;
+					
+					let advanced = (d.partialSize - i.lastBytes);
+					sum += advanced;
+					
 					let elapsed = (now - i.lastTime) / 1000;					
 					if (elapsed < 1) {
 						return;
 					}						
-					let advanced = (d.partialSize - i.lastBytes);
+					
 					let speed = Math.round(advanced / elapsed);
 					
 					i.lastBytes = d.partialSize;
@@ -145,7 +149,6 @@ var Dialog = {
 					i.lastBytes = d.partialSize;
 					i.lastTime = now;
 					
-					sum += i.lastBytes;
 					speed = 0;
 					d.speeds.forEach(
 						function(s) {
@@ -167,9 +170,10 @@ var Dialog = {
 					d.speed = Utils.formatBytes(speed) + "/s";
 				}
 			);
-			let speed = Math.round((sum - this._lastSum) * REFRESH_NFREQ);
+			let elapsed = (now - this._lastTime) / 1000;
+			this._lastTime = now;
+			let speed = Math.round(sum * elapsed);
 			speed = Utils.formatBytes((speed > 0) ? speed : 0);
-			this._lastSum = sum;
 
 			// Refresh status bar
 			$("statusText").label = 
@@ -309,7 +313,6 @@ var Dialog = {
 		this._running = this._running.filter(
 			function(i) {
 				if (i.d == download) {
-					this._lastSum -= i.lastBytes;
 					return false;
 				}
 				return true;
