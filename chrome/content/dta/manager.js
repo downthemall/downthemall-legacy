@@ -1008,7 +1008,7 @@ QueueItem.prototype = {
 				c.cancel();
 			}
 		}
-		else if (this._maxChunks > this._activeChunks && d.is(RUNNING)) {
+		else if (this._maxChunks > this._activeChunks && this.is(RUNNING)) {
 			this.resumeDownload();
 			
 		}
