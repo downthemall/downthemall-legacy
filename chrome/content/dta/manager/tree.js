@@ -40,7 +40,7 @@ var Tree = {
 		this._downloads = [];
 
 		let as = Serv('@mozilla.org/atom-service;1', 'nsIAtomService');
-		['iconic', 'completed', 'inprogress', 'paused', 'canceled'].forEach(
+		['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined'].forEach(
 			function(e) {
 				this['_' + e] = as.getAtom(e);
 			},
@@ -116,8 +116,11 @@ var Tree = {
 	getProgressMode : function T_getProgressMode(idx, col) {
 		if (col.index == 1) {
 			let d = this._downloads[idx]; 
-			if (d.is(RUNNING) && !d.totalSize) {
+			if (d.is(RUNNING, PAUSED) && !d.totalSize) {
 				return 2; // PROGRESS_UNDETERMINED;
+			}
+			if (d.is(PAUSED) && d.partialSize / d.totalSize < .05) {
+				return 2; // PROGRESS_UNDETERMINED;			
 			}
 			return 1; // PROGRESS_NORMAL;
 		}
@@ -139,7 +142,12 @@ var Tree = {
 			let d = this._downloads[idx];
 			switch (d.state) {
 				case COMPLETE: prop.AppendElement(this._completed); return;
-				case PAUSED: prop.AppendElement(this._paused); return;
+				case PAUSED:
+					prop.AppendElement(this._paused);
+					if (!d.totalSize || d.partialSize / d.totalSize < .05) {
+						prop.AppendElement(this._pausedUndetermined);
+					}
+				return;
 				case FINISHING:
 				case RUNNING: prop.AppendElement(this._inprogress); return;
 				case CANCELED: prop.AppendElement(this._canceled); return;

@@ -6,7 +6,9 @@
 treechildren::-moz-tree-progressmeter(progressUndetermined) {
 	list-style-image: url('chrome://dta/skin/manager/undetermined.gif');
 }
-
+treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined) {
+	list-style-image: url('chrome://dta/skin/manager/paused-undetermined.png');
+}
 toolbox {
 	border-width: 0px;
 }
