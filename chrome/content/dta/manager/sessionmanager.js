@@ -77,57 +77,6 @@ var SessionManager = {
 			return false;
 		}
 
-		var e = {};
-		[
-			'fileName',
-			'numIstance',
-			'description',
-			'resumable',
-			'mask',
-			'pathName',
-			'hash',
-			'compression',
-			'maxChunks',
-			'contentType',
-			'conflicts',
-		].forEach(
-			function(u) {
-				e[u] = d[u];
-			}
-		);
-		e.state = d.is(COMPLETE, CANCELED, FINISHING) ? d.state : PAUSED;
-		if (d.destinationNameOverride) {
-			e.destinationName = d.destinationNameOverride;
-		}
-
-		if (d.referrer) {
-			e.referrer = d.referrer.spec;
-		}
-		// Store this so we can later resume.
-		if (!d.is(CANCELED, COMPLETE) && d.partialSize) {
-			e.tmpFile = d.tmpFile.path;
-		}
-		e.startDate = d.startDate.getTime();
-
-		e.urlManager = d.urlManager.save();
-		e.visitors = d.visitors.save();
-
-		if (!d.resumable && !d.is(COMPLETE)) {
-			e.totalSize = 0;
-		} else {
-			e.totalSize = d.totalSize;
-		}
-		
-		e.chunks = [];
-
-		if (d.is(RUNNING, PAUSED, QUEUED) && d.resumable) {
-			d.chunks.forEach(
-				function(c) {
-					e.chunks.push({start: c.start, end: c.end, written: c.written});
-				}
-			);
-		}
-
 		let s;
 		Debug.dump("Saving Download: " + d);
 		if (d._dbId) {
@@ -149,7 +98,7 @@ var SessionManager = {
 		else {
 			s.bindInt32Parameter(1, pos);
 		}
-		s.bindUTF8StringParameter(2, this._converter.Convert(e.toSource()));
+		s.bindUTF8StringParameter(2, this._converter.Convert(d.toSource()));
 		s.execute();
 		if (!d._dbId) {
 			d._dbId = this._con.lastInsertRowID;
@@ -258,7 +207,7 @@ var SessionManager = {
 				);
 				d._dbId = _dbId;
 				d.startDate = new Date(get("startDate"));
-				d.visitors.load(down.visitors);
+				d.visitors = new VisitorManager(down.visitors);
 
 				[
 					'contentType',
