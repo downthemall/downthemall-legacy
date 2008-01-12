@@ -473,7 +473,7 @@ function UrlManager(urls) {
 		this._hasFresh = this._urls.length != 0;
 	}
 	else if (urls) {
-		throw "Feeding the URLManager with some bad stuff is usually a bad idea!";
+		throw "Feeding the UrlManager with some bad stuff is usually a bad idea!";
 	}
 }
 UrlManager.prototype = {
@@ -534,7 +534,7 @@ UrlManager.prototype = {
 		}
 		return true;
 	},
-	save: function um_save() {
+	toSource: function um_toSource() {
 		let rv = [];
 		this._urls.forEach(
 			function(url) {
@@ -714,8 +714,11 @@ Visitor.prototype = {
  * Visitor Manager c'tor
  * @author Nils
  */
-function VisitorManager() {
+function VisitorManager(nodes) {
 	this._visitors = {};
+	if (nodes) {
+		this._load(nodes);
+	}
 }
 VisitorManager.prototype = {
 	/**
@@ -723,7 +726,7 @@ VisitorManager.prototype = {
 	 * Will silently bypass failed items!
 	 * @author Nils
 	 */
-	load: function vm_init(nodes) {
+	_load: function vm_init(nodes) {
 		for (let i = 0; i < nodes.length; ++i) {
 			try {
 				this._visitors[nodes[i].url] = new Visitor(nodes[i].values);
@@ -737,7 +740,7 @@ VisitorManager.prototype = {
 	 * @return A ::load compatible Array
 	 * @author Nils
 	 */
-	save: function vm_save() {
+	toSource: function vm_toSource() {
 		var rv = [];
 		for (let x in this._visitors) {
 			try {
@@ -1521,6 +1524,60 @@ QueueItem.prototype = {
 	},	
 	toString: function() {
 		return this.urlManager.usable;
+	},
+	toSource: function() {
+		let e = {};
+		[
+			'fileName',
+			'numIstance',
+			'description',
+			'resumable',
+			'mask',
+			'pathName',
+			'hash',
+			'compression',
+			'maxChunks',
+			'contentType',
+			'conflicts',
+		].forEach(
+			function(u) {
+				e[u] = _atos(this[u]);
+			},
+			this
+		);
+		e.state = this.is(COMPLETE, CANCELED, FINISHING) ? this.state : PAUSED;
+		if (this.destinationNameOverride) {
+			this.destinationName = this.destinationNameOverride;
+		}
+		if (this.referrer) {
+			e.referrer = this.referrer.spec;
+		}
+		// Store this so we can later resume.
+		if (!this.is(CANCELED, COMPLETE) && this.partialSize) {
+			e.tmpFile = this.tmpFile.path;
+		}
+		e.startDate = this.startDate.getTime();
+
+		e.urlManager = this.urlManager.toSource();
+		e.visitors = this.visitors.toSource();
+
+		if (!this.resumable && !this.is(COMPLETE)) {
+			e.totalSize = 0;
+		}
+		else {
+			e.totalSize = this.totalSize;
+		}
+		
+		e.chunks = [];
+
+		if (this.is(RUNNING, PAUSED, QUEUED) && this.resumable) {
+			this.chunks.forEach(
+				function(c) {
+					e.chunks.push({start: c.start, end: c.end, written: c.written});
+				}
+			);
+		}
+		return e.toSource();
 	}
 }
 
