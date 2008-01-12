@@ -1,0 +1,15 @@
+<!ENTITY title "DownThemAll! - Creați-vă selecția">
+<!ENTITY filters.caption "Filtre">
+<!ENTITY additional.caption "Filtrare rapidă">
+<!ENTITY additional.tip "Filtru textual: puteți seta mai multe filtre textuale în același timp folosind virgula.">
+<!ENTITY regex.label "Expr. reg.">
+<!ENTITY filter.tip "Tastați aici filtrele textuale! (câteva exemple sunt în listă)">
+<!ENTITY status.label "După ce selectați legăturile, apăsați pe Start!">
+<!ENTITY menu.mask.title "Modificați masca de redenumire...">
+<!ENTITY menu.check.label "Bifați elementele selectate">
+<!ENTITY menu.uncheck.label "Debifați elementele selectate">
+<!ENTITY menu.toggle.label "Verifică sau nu dacă sunt elemente selectate">
+<!ENTITY tab.links.label "Legături">
+<!ENTITY tab.pics.label "Poze și obiecte înglobate">
+<!ENTITY header.desc.label "Descriere">
+<!ENTITY selectfiltered.label "Selectează cele filtrate">

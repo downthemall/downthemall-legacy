@@ -1,0 +1,17 @@
+<!ENTITY start.label "Lataa">
+<!ENTITY start.key "a">
+<!ENTITY queue.label "Lisää jonoon">
+<!ENTITY queue.key "j">
+<!ENTITY cancel.label "Peruuta">
+<!ENTITY options.label "Asetukset">
+<!ENTITY dtahelp "Ohje">
+<!ENTITY url.value "Osoite:">
+<!ENTITY dest.caption "Tallennuskohde:">
+<!ENTITY referrer.value "Viittaus:">
+<!ENTITY checksum.value "Tarkistussumma (Hash):">
+<!ENTITY browse.tip "Valitse kohdekansio...">
+<!ENTITY mask.label "Nimeäminen">
+<!ENTITY mask.tip "Valitut tiedostot tallennetaan ja uudelleennimetään käyttäen tätä maskia">
+<!ENTITY selectall.label "Valitse kaikki">
+<!ENTITY selectinv.label "Käänteinen valinta">
+<!ENTITY selectnone.label "Älä valitse mitään">

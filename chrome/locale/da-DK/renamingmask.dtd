@@ -1,0 +1,3 @@
+<!ENTITY title "Modificer mønster til omdøbning...">
+<!ENTITY choose.desc "Vælg mønster for de(t) specificerede link(s). Det er muligt at bruge enten specielle tags eller almindelig tekst.">
+<!ENTITY mask.tip "De valgte filer vil blive gemt og omdøbt med dette mønster">
