@@ -181,6 +181,7 @@ var Tree = {
 			try {
 				item.addDataForFlavour('text/x-moz-url', qi.urlManager.url + "\n" + qi.destinationName);
 				item.addDataForFlavour("text/unicode", qi.urlManager.url);
+				// this is fake, so that we know that we are we ;)
 				item.addDataForFlavour('text/x-dta-position', qi.position);
 				data.push(item);
 			}
@@ -216,23 +217,30 @@ var Tree = {
 	_dropSelection: function T__dropSelection(row, orientation) {
 		try {
 			this.beginUpdate();
+			// means insert_after, so we need to adjust the row
 			if (orientation == 1) {
 				++row;
 			}
+			/* first we remove the dragged items from the list
+			 * then we reinsert them
+			 * if the dragged item is location before the drop position we need to adjust it (as we remove the item first)
+			 * after we collected all items we simply reinsert them and invalidate our list.
+			 * This might not be the most performant way, but at least it kinda works ;)
+			 */
 			downloads = this._getSelectedIds(true).map(
 				function(id) {
-					let d = this._downloads[id];
+					let qi = this._downloads[id];
 					if (id < row) {
 						--row;
 					}
 					this._downloads.splice(id, 1);
-					return d;					
+					return qi;					
 				},
 				this
 			);
 			downloads.forEach(
-				function(d) {
-					this._downloads.splice(row, 0, d);
+				function(qi) {
+					this._downloads.splice(row, 0, qi);
 				},
 				this
 			);
