@@ -34,7 +34,10 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
+ 
 var Tree = {
+	_ds: Serv('@mozilla.org/widget/dragservice;1', 'nsIDragService'),
+	
 	init: function T_init(elem) {
 		this.elem = elem;
 		this._downloads = [];
@@ -169,6 +172,90 @@ var Tree = {
 	selectionChanged: function T_selectionChanged() {
 		this.refreshTools();
 	},
+	
+	// Drag and Drop stuff
+	onDragStart: function T_onDragStart(evt, transferData, dragAction) {
+		let data = new TransferDataSet();
+		for (qi in this.selected) {
+			var item = new TransferData();
+			try {
+				item.addDataForFlavour('text/x-moz-url', qi.urlManager.url + "\n" + qi.destinationName);
+				item.addDataForFlavour("text/unicode", qi.urlManager.url);
+				item.addDataForFlavour('text/x-dta-position', qi.position);
+				data.push(item);
+			}
+			catch (ex) {
+				Debug.dump("dnd failure", ex);	
+			}
+		}
+		if (!data.first) {
+			throw new Exception("nothing selected");
+		}
+		transferData.data = data;
+	},
+	canDrop: function T_canDrop() {
+		let ds = this._ds.getCurrentSession();
+		return ['text/x-moz-url', 'text/x-dta-position', 'text/unicode'].some(
+			function(e) {
+				return ds.isDataFlavorSupported(e);
+			}
+		);
+	},
+	drop: function T_drop(row, orientation) {
+		if (!this.canDrop()) {
+			throw new Exception("Invalid drop data!");
+		}
+		let ds = this._ds.getCurrentSession();
+		if (ds.isDataFlavorSupported('text/x-dta-position')) {
+			this._dropSelection(row, orientation);
+		}
+		else {
+			this._dropURL(row, orientation);
+		}
+	},
+	_dropSelection: function T__dropSelection(row, orientation) {
+		try {
+			this.beginUpdate();
+			if (orientation == 1) {
+				++row;
+			}
+			downloads = this._getSelectedIds(true).map(
+				function(id) {
+					let d = this._downloads[id];
+					if (id < row) {
+						--row;
+					}
+					this._downloads.splice(id, 1);
+					return d;					
+				},
+				this
+			);
+			downloads.forEach(
+				function(d) {
+					this._downloads.splice(row, 0, d);
+				},
+				this
+			);
+			
+			this.endUpdate();
+			this.invalidate();
+			this._box.ensureRowIsVisible(Math.max(row, 0));
+			this.selection.rangedSelect(row, row + downloads.length - 1, true);
+			SessionManager.savePositions();
+		}
+		catch (ex) {
+			Debug.dump("_dropSelection", ex);
+		}		
+	},
+	_dropURL: function T__dropURL(row, orientation) {
+		// give control to our default DTA drop handler
+		let evt = {
+			target: document.documentElement,
+			stopPropagation: function() {}
+		};
+		nsDragAndDrop.drop(evt, DTA_DropDTA); 
+	},
+	
 	_updating: 0,
 	beginUpdate: function T_beginUpdate() {
 		if (++this._updating == 1) {
