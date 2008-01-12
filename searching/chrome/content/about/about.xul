@@ -1,4 +1,14 @@
 ﻿<?xml version="1.0"?>
+<!DOCTYPE dialog [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+	%globalDTD;
+	<!ENTITY % aboutDTD
+		SYSTEM "chrome://dta/locale/about.dtd">
+	%aboutDTD;
+	<!ENTITY % htmlDTD
+		PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+	%htmlDTD;	
+]>
 <!--
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -20,7 +30,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Federico Parodi
+ *   Federico Parodi <f.parodi@tiscali.it>
  *   Stefano Verna <stefano.verna@gmail.com>
  *   Nils Maier <MaierMan@web.de>
  *
@@ -44,7 +54,6 @@
 <?xml-stylesheet href="resource://gre/res/html.css" type="text/css"?>
 <?xml-stylesheet href="chrome://dta-platform/skin/common.css" type="text/css"?>
 
-<!DOCTYPE window SYSTEM "chrome://dta/locale/about.dtd">
 <dialog 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
@@ -74,7 +83,7 @@
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 	</keyset>
 	
-	<dialogheader id="logo" title="DownThemAll!" description="&about.subtitle;" orient="vertical" style="font-size: smaller;"/>
+	<dialogheader id="logo" title="DownThemAll!" description="&about.subtitle;" orient="vertical" style="font-size: smaller;" chromedir="&locale.dir;"/>
 	<groupbox orient="vertical">
 		<label value="Copyright © 2004-2007 By:" style="font-weight: bold;"/>
 		<html:ul>
@@ -85,11 +94,12 @@
 
 	  <separator class="thin"/>
 	  <description>
-			<html:b>&about.icons;</html:b>&about.based;
+			<html:b>&about.icons;</html:b>&nbsp;&about.based;
 			<html:ul>
 				<html:li>© Michael Matas</html:li>
 				<html:li>© <html:span class="link" onclick="openTab('http://jimmac.musichall.cz/icons.php');">Jakub 'jimmac' Steiner</html:span>; © Novell, Inc.</html:li>
 				<html:li>© <html:span class="link" onclick="openTab('http://www.famfamfam.com/lab/icons/silk/');">Mark James</html:span> (famfamfam silk icons)</html:li>
+				<html:li>© The mozilla contributors</html:li>
 			</html:ul>
 		</description>
 	  <separator class="thin"/>

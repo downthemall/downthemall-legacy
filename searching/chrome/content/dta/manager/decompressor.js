@@ -59,13 +59,9 @@ function Decompressor(download) {
 		catch (ex) {
 			// no-op
 		}
-		var boutStream = Cc['@mozilla.org/network/buffered-output-stream;1']
-			.createInstance(Ci.nsIBufferedOutputStream);
-		boutStream.init(this._outStream, MAX_BUFFER_SIZE);
+		var boutStream = new BufferedOutputStream(this._outStream, MAX_BUFFER_SIZE); 
 		this.outStream = boutStream;
-		boutStream = Cc['@mozilla.org/binaryoutputstream;1']
-			.createInstance(Ci.nsIBinaryOutputStream);
-		boutStream.setOutputStream(this.outStream);
+		boutStream = new BinaryOutputStream(this.outStream);
 		this.outStream = boutStream;
 
 		var converter = Cc["@mozilla.org/streamconv;1?from=" + download.compression + "&to=uncompressed"]
@@ -78,11 +74,7 @@ function Decompressor(download) {
 			null
 		);
 
-		var ios = 
-		Cc["@mozilla.org/network/io-service;1"]
-			.getService(Ci.nsIIOService);
-		ios.newChannelFromURI(ios.newFileURI(this.from))
-			.asyncOpen(converter, null);
+		IOService.newChannelFromURI(IOService.newFileURI(this.from)).asyncOpen(converter, null);
 	}
 	catch (ex) {
 		try {
@@ -145,8 +137,7 @@ Decompressor.prototype = {
 	},
 	onDataAvailable: function(request, c, stream, offset, count) {
 		try {
-			var binStream = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
-			binStream.setInputStream(stream);
+			var binStream = new BinaryInputStream(stream);
 			if (count != this.outStream.write(binStream.readBytes(count), count)) {
 				throw new Components.Exception("Failed to write!");
 			}

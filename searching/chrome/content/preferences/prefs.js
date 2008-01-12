@@ -19,7 +19,7 @@
  *
  * Contributor(s):
  *    Stefano Verna
- *    Federico Parodi
+ *    Federico Parodi <f.parodi@tiscali.it>
  *    Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -128,7 +128,7 @@ var Interface = {
 	}
 };
 
-Filters = {
+var Filters = {
 	_filters: [],
 	_lastRowEdited : -1,
 
@@ -272,7 +272,8 @@ Filters = {
 			filter.type = ($("filterText").checked?1:0) + ($("filterImage").checked?2:0);
 			filter.test = $("filterTest").value;
 			
-			this..box.invalidateRow(idx);
+			var idx = this.selection.currentIndex;
+			this.box.invalidateRow(idx);
 			this._lastRowEdited = idx;
 		}
 	},

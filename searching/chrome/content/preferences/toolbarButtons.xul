@@ -12,17 +12,14 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is downTHEMall
+ * The Original Code is DownThemAll!
  *
- * The Initial Developers of the Original Code are
- * Federico Parodi, Stefano Verna and Nils Maier
- * Portions created by the Initial Developers are Copyright (C) 2007
- * the Initial Developers. All Rights Reserved.
+ * The Initial Developer of the Original Code is Nils Maier
+ * Portions created by the Initial Developer are Copyright (C) 2007
+ * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Federico Parodi <f.parodi@tiscali.it>
- *   Stefano Verna <stefano.verna@gmail.com>
- *   Nils Maier <MaierMan@web.de>
+ *	 Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -37,21 +34,36 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** -->
-<!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
-<overlay id="DtaBrowserToolbar" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-
-	<script type="application/x-javascript" src="chrome://dta/content/integration/seamonkey.js"/>
-
-	<popup id="contentAreaContextMenu">
-		<menu id="dtaCtxCompact" insertafter="context-sep-selectall"/>
-	</popup>
-
-	<toolbar id="nav-bar"> 
-		<toolbarbutton id="dta-button" insertbefore="throbber-box" />
-		<toolbarbutton id="dta-turbo-button" insertbefore="throbber-box" />
-		<toolbarbutton id="dta-manager-button" insertbefore="throbber-box" />
-	</toolbar>
-	<menupopup id="taskPopup">	
-		<menu id="dtaToolsMenu" label="DownThemAll" class="menu-iconic" image="chrome://dta/skin/common/dta.png" insertafter="navBeginGlobalItems"/>
-	</menupopup>
+<!DOCTYPE overlay SYSTEM "chrome://dta/locale/prefpanes.dtd">
+<overlay id="dtaPrefsSeamonkey" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<preferences id="prefsInterface">
+		<preference id="dtaSMButtons" name="extensions.dta.sm.buttons" type="string" />
+	</preferences>
+	<columns id="colItems">
+		<column flex="1"/>
+	</columns>	
+	<row id="rowItems">
+		<groupbox>
+			<caption label="&uipane.tbbuttons.caption;"/>
+			<checkbox id="dtaSMButtons0" 
+				preference="dtaSMButtons"
+				label="DownThemAll!" 
+				class="moreLeft"
+				onsyncfrompreference="return Interface.getMenu('dtaSMButtons', 0);"
+				onsynctopreference="return Interface.setMenu('dtaSMButtons', 0);"
+				/>
+			<checkbox id="dtaSMButtons1" 
+				preference="dtaSMButtons"
+				label="DTA OneClick!"
+				onsyncfrompreference="return Interface.getMenu('dtaSMButtons', 1);"
+				onsynctopreference="return Interface.setMenu('dtaSMButtons', 1);"
+				class="moreLeft" />
+			<checkbox id="dtaSMButtons2"
+				preference="dtaSMButtons"
+				label="&manager;"
+				onsyncfrompreference="return Interface.getMenu('dtaSMButtons', 2);"
+				onsynctopreference="return Interface.setMenu('dtaSMButtons', 2);"
+				class="moreLeft" />
+		</groupbox>
+	</row>
 </overlay>

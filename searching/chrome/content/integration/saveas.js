@@ -19,7 +19,7 @@
  *
  * Contributor(s):
  *    Stefano Verna
- *    Federico Parodi
+ *    Federico Parodi <f.parodi@tiscali.it>
  *    Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -38,9 +38,10 @@
 
 var DTA_SaveAs = {
 	init: function dd_init() {
-	
+
 		var basicBox = document.getElementById('basicBox');
-		const doRevert = basicBox && !basicBox.collapsed;
+		var normalBox = document.getElementById('normalBox');
+		const doRevert = basicBox && (!basicBox.collapsed || (normalBox && normalBox.collapsed));
 		const doOverlay = DTA_preferences.getDTA("downloadWin", true);
 		if (
 			!doOverlay
@@ -83,7 +84,8 @@ var DTA_SaveAs = {
 		catch(ex) {
 			this.referrer = this.url;
 		}
-		this.url = new DTA_URL(this.url);
+		var ml = DTA_getLinkPrintMetalink(this.url);
+		this.url = new DTA_URL(ml ? ml : this.url);
 
 		this.ddDirectory = document.getElementById('tdtalist');
 		var mask = DTA_AddingFunctions.getDropDownValue('renaming');
@@ -140,7 +142,7 @@ var DTA_SaveAs = {
 
 		document.getElementById('basicBox').collapsed = true;
 		document.getElementById('normalBox').collapsed = false;
-		window.sizeToContent();
+		this.sizeToContent();
 		
 		// take care of FlashGot... for now.
 		// need to negotiate with the author (and possible other extension authors)
@@ -149,10 +151,26 @@ var DTA_SaveAs = {
 			document.getElementById("flashgot-basic").collapsed = true;
 		}
 		catch (ex) {
-			window.sizeToContent();
+			this.sizeToContent();
 		}		
 	},
 	
+	// Workaround for bug 371508
+	sizeToContent: function() {
+		try {
+			window.sizeToContent();	
+		}
+		catch (ex) {
+			DTA_debug.dump("sizeToContent Bug: 371508", ex);
+			try {
+				var btn = document.documentElement.getButton('accept');
+				window.innerHeight = btn.boxObject.y + 10; 
+			}
+			catch (ex) {
+				DTA_debug.dump("setting height failed");
+			}		
+		}
+	},	
 	select: function dd_select(evt) {
 		var mode = this.mode.selectedItem;
 		this.remember.checked = false;
@@ -189,7 +207,7 @@ var DTA_SaveAs = {
 		document.documentElement.cancelDialog();
 	}
 }
-window.addEventListener(
+addEventListener(
 	"load",
 	function(){ DTA_SaveAs.init(); },
 	false

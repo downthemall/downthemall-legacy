@@ -38,31 +38,37 @@ function NSResolver(prefix) {
   if(prefix == 'html') {
     return 'http://www.w3.org/1999/xhtml';
   }
-  else {
-  	alert(prefix);
-  	return 'http://www.metalinker.org/';
-  }
+ 	return 'http://www.metalinker.org/';
 }
  
  var Metalinker = {
- 	_ios: Components.classes['@mozilla.org/network/io-service;1']
- 		.getService(Components.interfaces.nsIIOService),
- 	_getNode: function ML__getNode(elem, query) {
- 				var rv = elem.ownerDocument.evaluate(
-			'ml:' + query,
+ 	_getNodes: function ML__getNodes(elem, query) {
+		var rv = [];
+		var nodeSet = elem.ownerDocument.evaluate(
+			query,
 			elem,
 			function() { return 'http://www.metalinker.org/'; },
-			XPathResult.FIRST_ORDERED_NODE_TYPE,
+			XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
 			null
 		);
-		return rv.singleNodeValue;
- 	},
+		for (var j = 0; j < nodeSet.snapshotLength; ++j) {
+			rv.push(nodeSet.snapshotItem(j));
+		}
+		return rv;
+	},
+	_getNode: function ML_getNode(elem, query) {
+		var r = this._getNodes(elem, query);
+		if (r.length) {
+			return r.shift();
+		}
+		return null;
+	},
  	_getSingle: function ML__getSingle(elem, query) {
- 		var rv = this._getNode(elem, query);
+ 		var rv = this._getNode(elem, 'ml:' + query);
  		return rv ? rv.textContent.trim() : '';
  	},
  	_getLinkRes: function(elem, query) {
- 		var rv = this._getNode(elem, query);
+ 		var rv = this._getNode(elem, 'ml:' + query);
  		if (rv) {
  			var n = this._getSingle(rv, "name"), l = this._checkURL(this._getSingle(rv, "url"));
  			if (n && l) {
@@ -73,7 +79,7 @@ function NSResolver(prefix) {
  	},
  	_checkURL: function ML__checkURL(url, allowed) {
  		try {
-			url = this._ios.newURI(url, null, null);
+			url = url.toURI();
 			if (url.scheme == 'file') {
 				throw new Components.Exception("file protocol invalid");
 			}
@@ -100,9 +106,7 @@ function NSResolver(prefix) {
 			Tree.remove(download);
 			var file = new FileFactory(download.destinationFile);
 
-			var fiStream = Cc['@mozilla.org/network/file-input-stream;1']
-				.createInstance(Ci.nsIFileInputStream);
-			fiStream.init(file, 1, 0, false);
+			var fiStream = new FileInputStream(file, 1, 0, false);
 			var domParser = new DOMParser();
 			var doc = domParser.parseFromStream(fiStream, null, file.fileSize, "application/xml");
 			var root = doc.documentElement;
@@ -118,27 +122,27 @@ function NSResolver(prefix) {
 			if (root.nodeName != 'metalink' || root.getAttribute('version') != '3.0') {
 				throw new Error(_('mlinvalid'));
 			}
-			var locale = this.locale.slice(0,2);
+			var locale = this.locale.split('-').map(function(l) { return l.slice(0, 2).toLowerCase(); }).reverse();
 			var downloads = [];
 			var files = root.getElementsByTagName('file');
 			for (var i = 0; i < files.length; ++i) {
 				var file = files[i];
 				var urls = [];
-				var urlNodes = file.getElementsByTagName('url');
+				var urlNodes = this._getNodes(file, 'ml:resources/ml:url');
 				for (var j = 0; j < urlNodes.length; ++j) {
 					var url = urlNodes[j];
 					var type = url.getAttribute('type');
-					var preference = 100;
+					var preference = 1;
 					if (url.hasAttribute('preference')) {
 						var a = new Number(url.getAttribute('preference'));
-						if (isFinite(a)) {
+						if (isFinite(a) && a > 0 && a < 101) {
 							preference = a;
 						}
 					}
 					if (url.hasAttribute('location')) {
 						var a = url.getAttribute('location').slice(0,2).toLowerCase();
-						if (a == locale) {
-							preference *= 10;
+						if (locale.indexOf(a) != -1) {
+							preference = 100 + preference;
 						}
 					}
 					if (['http', 'https'].indexOf(type) != -1) {
@@ -152,13 +156,16 @@ function NSResolver(prefix) {
 					continue;
 				}
 				var hash = null; 
-				var hashes = file.getElementsByTagName("hash");
+				var hashes = this._getNodes(file, 'ml:verification/ml:hash');
 				for (var j = 0; j < hashes.length; ++j) {
 					var h = hashes[j].textContent.trim();
 					try {
-						hash = new DTA_Hash(h, hashes[j].getAttribute('type'));
+						h = new DTA_Hash(h, hashes[j].getAttribute('type'));
+						hash = h;
+						Debug.dump(h, "ok");						
 					}
 					catch (ex) {
+						Debug.dump(h, ex);
 						// ignore
 					}
 				}
@@ -167,15 +174,16 @@ function NSResolver(prefix) {
 					desc = this._getSingle(root, 'description');
 				}
 				var size = this._getSingle(file, 'size');
-				try {
-					size = Utils.formatBytes(parseInt(size));
+				size = parseInt(size);
+				if (isFinite(size)) {
+					size = Utils.formatBytes(size);
 				}
-				catch (ex) {
+				else {
 					size = '';
 				}
 				downloads.push({
 					'url': new UrlManager(urls),
-					'referrer': download.referrer.spec,
+					'referrer': download.referrer ? download.referrer.spec : null,
 					'numIstance': 0,
 					'mask': download.mask,
 					'dirSave': download.pathName,
@@ -301,5 +309,23 @@ function NSResolver(prefix) {
 	},
 	openLink: function(e) {
 		DTA_Mediator.openTab(e.link);
+	},
+	selectAll: function() {
+		var nodes = document.getElementsByTagName('richlistitem');
+		for (var i = 0; i < nodes.length; ++i) {
+			nodes[i].checked = true;
+		}
+	},
+	selectNone: function() {
+		var nodes = document.getElementsByTagName('richlistitem');
+		for (var i = 0; i < nodes.length; ++i) {
+			nodes[i].checked = false;
+		}
+	},
+	invertSelection: function() {
+		var nodes = document.getElementsByTagName('richlistitem');
+		for (var i = 0; i < nodes.length; ++i) {
+			nodes[i].checked = !nodes[i].checked;
+		}
 	}
 };

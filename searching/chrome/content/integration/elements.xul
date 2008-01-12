@@ -20,7 +20,7 @@
  * the Initial Developers. All Rights Reserved.
  *
  * Contributor(s):
- *   Federico Parodi
+ *   Federico Parodi <f.parodi@tiscali.it>
  *   Stefano Verna <stefano.verna@gmail.com>
  *   Nils Maier <MaierMan@web.de>
  *
@@ -81,13 +81,13 @@
 		ondragover="nsDragAndDrop.dragOver(event, DTA_DropTDTA);"
 		ondragdrop="nsDragAndDrop.drop(event, DTA_DropTDTA);"
 		oncommand="if (event.target == this) DTA_ContextOverlay.findLinks(true);"
-		label="OneClick!"
+		label="DTA OneClick!"
 		tooltiptext="dTa OneClick!"
 		type="menu-button"
 	>
 		<menupopup>
-			<menuitem id="dta-tb-turbo" label="OneClick! (&dta-tb-single.label;)" oncommand="DTA_ContextOverlay.findLinks(true, false);" tooltiptext="dTa OneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
-			<menuitem id="dta-tb-allturbo" label="OneClick! (&dta-tb-all.label;)" oncommand="DTA_ContextOverlay.findLinks(true, true);" tooltiptext="dTa OneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
+			<menuitem id="dta-tb-turbo" label="DTA OneClick! (&dta-tb-single.label;)" oncommand="DTA_ContextOverlay.findLinks(true, false);" tooltiptext="dTa OneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
+			<menuitem id="dta-tb-allturbo" label="DTA OneClick! (&dta-tb-all.label;)" oncommand="DTA_ContextOverlay.findLinks(true, true);" tooltiptext="dTa OneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
 		</menupopup>		
 	</toolbarbutton>
 	<toolbarbutton
@@ -102,7 +102,7 @@
 			<menuitem id="dtaToolsDTA" oncommand="DTA_ContextOverlay.findLinks(false)" 
 				label="DownThemAll!..." image="chrome://dta/skin/common/dta.png" class="menuitem-iconic" />
 			<menuitem id="dtaToolsTDTA" oncommand="DTA_ContextOverlay.findLinks(true)" 
-				label="OneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" />
+				label="DTA OneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" />
 			<menuitem id="dtaToolsManager" oncommand="DTA_AddingFunctions.openManager()" 
 				label="&dta-manager-button;..." image="chrome://dta/skin/common/box.png" class="menuitem-iconic" />	
 			<menuseparator id="dtaToolsSep"/>

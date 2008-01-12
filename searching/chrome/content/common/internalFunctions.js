@@ -19,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Federico Parodi
+ *   Federico Parodi <f.parodi@tiscali.it>
  *   Stefano Verna <stefano.verna@gmail.com>
  *   Nils Maier <MaierMan@web.de>
  *
@@ -42,6 +42,22 @@
 var Debug = DTA_debug;
 var Preferences = DTA_preferences;
 
+const IOService = Components.classes["@mozilla.org/network/io-service;1"]
+	.getService(Components.interfaces.nsIIOService);
+
+const FileFactory = new Components.Constructor(
+	'@mozilla.org/file/local;1',
+	'nsILocalFile',
+	'initWithPath'
+);
+
+const SoundFactory = new Components.Constructor(
+	'@mozilla.org/sound;1',
+	'nsISound',
+	'play'
+);
+	
+	
 const SYSTEMSLASH = (DTA_profileFile.get('dummy').path.indexOf('/') != -1) ? '/' : '\\';
 
 // shared state defines
@@ -82,10 +98,9 @@ function $() {
 	if (arguments.length == 1) {
 		return document.getElementById(arguments[0]);
 	}
-	var elements = [];
-	for (var i = 0, e = arguments.length; i < e; ++i) {
-		var id = arguments[i];
-		var element = document.getElementById(id);
+	let elements = [];
+	for (let i = 0, e = arguments.length; i < e; ++i) {
+		let element = document.getElementById(arguments[i]);
 		if (element) {
 			elements.push(element);
 		}
@@ -102,15 +117,13 @@ function merge(me, that) {
 	}
 }
 
-	// not instanceof save, you know ;)
+// not instanceof save, you know ;)
 function clone(obj) {
-	{
-		var rv = {};
-		merge(rv, obj);
-		rv.prototype = this.prototype;
-    rv.constructor = this.constructor;
-		return rv;
-	}
+	var rv = {};
+	merge(rv, obj);
+	rv.prototype = this.prototype;
+	rv.constructor = this.constructor;
+	return rv;
 }
 merge(
 	String.prototype,
@@ -161,7 +174,7 @@ merge(
 			return this.removeLeadingChar(SYSTEMSLASH);
 		},
 		getUsableFileName : function() {
-			let t = this.replace(/[#?].*$/g, '')
+			let t = this.replace(/\?.*$/, '')
 				.normalizeSlashes()
 				.trim()
 				.removeFinalSlash()
@@ -181,6 +194,12 @@ merge(
 				return this.substring(0, newLength / 2) + "..." + this.substring(this.length - newLength / 2, this.length);
 			}
 			return this;
+		},
+		toURI: function(charset, baseURI) {
+			return IOService.newURI(this, charset, baseURI);			
+		},
+		toURL: function(charset, baseURI) {
+			return this.toURI(charset, baseURI).QueryInterface(Components.interfaces.nsIURL);
 		}
 	}
 );
@@ -192,12 +211,12 @@ var Utils = {
 	 * @text text The description text to be displayed
 	 * @return A string containing the user selected path, or false if user cancels the dialog.
 	 */
+	FilePicker: Components.Constructor('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init'),
 	askForDir: function (predefined, text) {
 		try {
 			// nsIFilePicker object
 			var nsIFilePicker = Components.interfaces.nsIFilePicker;
-			var fp = Components.classes['@mozilla.org/filepicker;1'].createInstance(nsIFilePicker);
-			fp.init(window, text, nsIFilePicker.modeGetFolder);
+			var fp = new Utils.FilePicker(window, text, nsIFilePicker.modeGetFolder);
 			fp.appendFilters(nsIFilePicker.filterAll);
 		
 			// locate current directory
@@ -224,40 +243,34 @@ var Utils = {
 	 * @return a nsILocalFile to the specified path if it's valid, false if it wasn't
 	 */
 	validateDir: function(path) {
-		var directory = null;
+		let directory = null;
 		if (!(path instanceof Components.interfaces.nsILocalFile)) {
 			if (!path || !String(path).trim().length) {
 				return false;
 			}
-			var directory = Components.classes["@mozilla.org/file/local;1"].
-			createInstance(Components.interfaces.nsILocalFile);
-			try {
-				directory.initWithPath(path);
-			}
-			catch (ex) {
-				//
-			}
+			directory = new FileFactory(path);
 		}
 		else {
 			directory = path.clone();
 		}
-		if (directory) {
-			try {
-				// look for the first directory that exists.
-				var parent = directory.clone();
-				while (parent && !parent.exists()) {
-					parent = parent.parent;
-				}
-				if (parent) {
-					// from nsIFile
-					parent = parent.QueryInterface(Components.interfaces.nsILocalFile);
-					// we look for a directory that is writeable and has some diskspace
-					return parent.isDirectory() && parent.isWritable() && parent.diskSpaceAvailable ? directory : false;
-				}
+		if (!directory) {
+			return false;
+		}
+		try {
+			// look for the first directory that exists.
+			let parent = directory.clone();
+			while (parent && !parent.exists()) {
+				parent = parent.parent;
 			}
-			catch(ex) {
-				Debug.dump('Utils.validateDir()', ex);
+			if (parent) {
+				// from nsIFile
+				parent = parent.QueryInterface(Components.interfaces.nsILocalFile);
+				// we look for a directory that is writable and has some disk-space
+				return parent.isDirectory() && parent.isWritable() && parent.diskSpaceAvailable ? directory : false;
 			}
+		}
+		catch(ex) {
+			Debug.dump('Utils.validateDir()', ex);
 		}
 		return false;
 	},
@@ -265,7 +278,7 @@ var Utils = {
 	 * Gets the disk-space available for a nsILocalFile.
 	 * Here, because diskSpaceAvailable requires valid path and/or path to be a directory
 	 * @param file Valid nsILocalFile
-	 * @return the diskspace available to the caller
+	 * @return the disk-space available to the caller
 	 * @author Nils
 	 */
 	getFreeDisk: function(file) {
@@ -279,17 +292,12 @@ var Utils = {
 	},
 	/**
 	 * Play a sound file (if prefs allow to do so)
-	 * @param name Name of the sound (correpsonding to the pref name and the file name of desired sound)
+	 * @param name Name of the sound (corresponding to the pref name and the file name of desired sound)
 	 */
 	playSound: function(name) {
 		try {
 			if (Preferences.getDTA("sounds." + name, false)) {
-				var sound = Components.classes["@mozilla.org/sound;1"]
-					.createInstance(Ci.nsISound);
-				var uri = Cc['@mozilla.org/network/standard-url;1']
-					.createInstance(Ci.nsIURI);
-				uri.spec = "chrome://dta/skin/sounds/" + name + ".wav";
-				sound.play(uri); 
+				new SoundFactory(("chrome://dta/skin/sounds/" + name + ".wav").toURI());
 			}
 		}
 		catch(ex) {
@@ -378,14 +386,13 @@ var Utils = {
 	}
 };
 
-var _getIcon = function() {
-	if (navigator.platform.search(/mac/i) != -1) {
-		const _getIcon_recognizedMac = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
+const _getIcon_recognizedMac = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
+
+function _getIcon() {
+	if (/mac/i.test(navigator.platform)) {
 		return function (url, size) {
-			var uri = Components.classes["@mozilla.org/network/standard-url;1"]
-				.createInstance(Components.interfaces.nsIURI);
-			uri.spec = url;
-			if (uri.path.search(_getIcon_recognizedMac) != -1) {
+			let uri = url.toURI();
+			if (_getIcon_recognizedMac.test(uri.path)) {
 				return "moz-icon://" + url + "?size=" + size;
 			}
 			return "moz-icon://foo.html?size=" + size;
@@ -495,34 +502,26 @@ function _() {
 }
 
 /**
- * Constructor helper for nsILocalFile
- */
-const FileFactory = new Components.Constructor(
-	"@mozilla.org/file/local;1",
-	"nsILocalFile",
-	"initWithPath"
-);
-
-/**
  * XP compatible reveal/launch
  * @author Nils (derived from DownloadManager code)
  */
 var OpenExternal = {
-	_io: Components.classes['@mozilla.org/network/io-service;1']
-		.getService(Components.interfaces.nsIIOService),
 	_proto: Components.classes['@mozilla.org/uriloader/external-protocol-service;1']
 		.getService(Components.interfaces.nsIExternalProtocolService),
 	_prepare: function(file) {
+		if (typeof(file) == 'string' || file instanceof String) {
+			return new FileFactory(file);
+		}
+		if (file instanceof Components.interfaces.nsIFile) {
+			return file.QueryInterface(Components.interfaces.nsILocalFile);
+		}
 		if (file instanceof Components.interfaces.nsILocalFile) {
 			return file;
-		}
-		else if (typeof(file) == 'string') {
-			return new FileFactory(file);
 		}
 		throw new Components.Exception('OpenExternal: feed me with nsILocalFile or String');
 	},
 	_nixLaunch: function(file) {
-		this._proto.loadUrl(this._io.newFileURI(file));	 
+		this._proto.loadUrl(IOService.newFileURI(file));	 
 	},
 	/**
 	 * Launch/Execute a file
@@ -530,6 +529,10 @@ var OpenExternal = {
 	 */
 	launch: function(file) {
 		file = this._prepare(file);
+		if (!file.exists()) {
+			throw new Components.Exception("OpenExternal: file not found!");
+		}
+		
 		try {
 			file.launch();
 		}
@@ -544,25 +547,25 @@ var OpenExternal = {
 	 */
 	reveal: function(file) {
 		file = this._prepare(file);
-		
 		try {
 			if (!file.exists()) {
-				file.parent.QueryInterface(Components.interfaces.nsILocalFile).launch();
+				throw new Components.Exception("File does not exist");
 			}
 			else {
 				file.reveal();
 			}
 		}
 		catch (ex) {
-			if (file.parent.exists()) {
-				this._nixLaunch(file.parent);
-			}
+			// try to open the directory instead
+			// (either because the file does not exist anymore
+			// or because the platform does not implement reveal);
+			this.launch(file.parent);
 		}
 	}
 };
 
 /**
- * Range generator (python style). Difference: step direction is inialized accordingly if corresponding parameter is omitted.
+ * Range generator (python style). Difference: step direction is initialized accordingly if corresponding parameter is omitted.
  * @param start Optional. Start value (default: 0)
  * @param stop Stop value (exclusive)
  * @param step Optional. Step value (default: 1/-1)
@@ -590,10 +593,12 @@ function range() {
 		// negative range
 		return;
 	}
-	stop += (stop - start) % step;
-	for (;start != stop; start += step) {
+	stop += -Math.abs(step)/step;
+	stop += step - ((stop - start) % step);
+	for (; start != stop; start += step) {
 		yield start;
 	}
+
 }
 
 /**

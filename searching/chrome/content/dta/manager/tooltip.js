@@ -19,7 +19,7 @@
  *
  * Contributor(s):
  *    Stefano Verna <stefano.verna@gmail.com>
- *    Federico Parodi
+ *    Federico Parodi <f.parodi@tiscali.it>
  *    Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -37,13 +37,31 @@
  * ***** END LICENSE BLOCK ***** */
  
 const TOOLTIP_FREQ = 500;
-const SPEED_COUNT = 25;
+const SPEED_COUNT = 60;
+const SPEED_NUMAVG = 10;
 
 var Tooltip = {
 	_current: null,
+	init: function() {
+		try {
+			// check if we support 2d-canvas
+			$('chunkCanvas').getContext('2d');
+			this.progress = $('infoPercent');
+			$('chunkAlt').parentNode.removeChild($('chunkAlt'));
+		}
+		catch (ex) {
+			// we don't support 2d-canvas
+			this.updateChunks = this.updateChunksAlt;
+			this.updateSpeeds = function() {};
+			$('chunkStack', 'speedCanvas').forEach(function(node) { node.parentNode.removeChild(node); });
+			$('infoPercentAlt').id = 'infoPercent';
+		}
+	},		 
 	start: function(d) {
 		this._current = d;
-		this._timer = new Timer('Tooltip.update()', TOOLTIP_FREQ, true, true);		
+		this._timer = new Timer('Tooltip.update()', TOOLTIP_FREQ, true, true);
+		// 1.9+, causes some flickering but anyway :p
+		new Timer('Tooltip.update()', 25);
 	},
 	stop: function() {
 		this._current = null;
@@ -52,8 +70,13 @@ var Tooltip = {
 		}
 	},	
 	update: function() {
-		this.updateChunkCanvas();
-		this.updateSpeedCanvas();
+		let file = this._current;
+		if (!file) {
+			return;
+		}
+		this.updateMetrics(file);
+		this.updateChunks(file);
+		this.updateSpeeds(file);
 	},
 	_makeRoundedRectPath: function(ctx,x,y,width,height,radius) {
 		ctx.beginPath();
@@ -68,37 +91,71 @@ var Tooltip = {
 		ctx.quadraticCurveTo(x, y, x, y + radius);
 	},
 	_createVerticalGradient: function(ctx, height, c1, c2) {
-		var g = ctx.createLinearGradient(0, 0, 0, height);
+		let g = ctx.createLinearGradient(0, 0, 0, height);
 		g.addColorStop(0, c1);
 		g.addColorStop(1, c2);
 		return g;
 	},
 	_createInnerShadowGradient: function(ctx, w, c1, c2, c3, c4) {
-		var g = ctx.createLinearGradient(0, 0, 0, w);
-		g.addColorStop(0, c1);
-		g.addColorStop(3.0 / w, c2);
-		g.addColorStop(4.0 / w, c3);
-		g.addColorStop(1, c4);
+		try {
+			var g = ctx.createLinearGradient(0, 0, 0, w);
+			g.addColorStop(0, c1);
+			g.addColorStop(3.0 / w, c2);
+			g.addColorStop(4.0 / w, c3);
+			g.addColorStop(1, c4);
+		}
+		catch (ex) {
+			Debug.dump("got" + w);
+		}
 		return g;
 	},
-	updateSpeedCanvas: function() {
-		var file = this._current;
-		if (!file) {
-			return;
+	updateMetrics: function(file) {
+		try {
+			if (file.speeds.length && file.is(RUNNING)) {
+				$('speedAverage').value = file.speed;
+				$('speedCurrent').value = Utils.formatBytes(file.speeds[file.speeds.length - 1]) + "/s";;
+			}
+			else if (file.is(RUNNING)) {
+				$('speedCurrent').value = $('speedAverage').value = _('unknown');
+			}
+			else {
+				$('speedCurrent').value = $('speedAverage').value = _('nal');
+			}
+
+			$('infoSize').value = file.dimensionString;//file.totalSize > 0 ? Utils.formatBytes(file.totalSize) : _('unknown');
+			$('timeRemaining').value = file.status;
+			if (file.is(RUNNING)) {
+				$('timeElapsed').value = Utils.formatTimeDelta((Utils.getTimestamp() - file.timeStart) / 1000);
+			}
+			else {
+				$('timeElapsed').value = _('nal');
+			}
+			$('infoPercent').value = file.percent;
 		}
+		catch (ex) {
+			Debug.dump("Tooltip.updateMetrics: ", ex);
+		}	
+	},
+	updateSpeeds: function(file) {
 		try {
 			// we need to take care about with/height
-			var canvas = $("speedCanvas");
-			var width = canvas.width = canvas.clientWidth;
-			var height = canvas.height = canvas.clientHeight;
-			var ctx = canvas.getContext("2d");
-			--width; --height;
+			let canvas = $("speedCanvas");
+			if (canvas.clientWidth) {
+				canvas.width = canvas.clientWidth;
+			}
+			if (canvas.clientHeight) {
+				canvas.height = canvas.clientHeight;
+			}
+			let w = canvas.width;
+			let h = canvas.height;
+			let ctx = canvas.getContext("2d");
+			--w; --h;
 			
-			var boxFillStyle = this._createInnerShadowGradient(ctx, height, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
-			var boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
-			var graphFillStyle = this._createVerticalGradient(ctx, height - 7, "#FF8B00", "#FFDF38");
+			let boxFillStyle = this._createInnerShadowGradient(ctx, h, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
+			let boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
+			let graphFillStyle = this._createVerticalGradient(ctx, h - 7, "#FF8B00", "#FFDF38");
 			
-			ctx.clearRect(0, 0, width, height);
+			ctx.clearRect(0, 0, w, h);
 			ctx.save();
 			ctx.translate(.5, .5);
 			
@@ -108,70 +165,71 @@ var Tooltip = {
 				
 			// draw container chunks back
 			ctx.fillStyle = boxFillStyle;
-			this._makeRoundedRectPath(ctx, 0, 0, width, height, 5);
+			this._makeRoundedRectPath(ctx, 0, 0, w, h, 5);
 			ctx.fill();
 	
-			var step = Math.floor(width / (SPEED_COUNT - 1));
+			let step = w / SPEED_COUNT;
 	
-			if (file.speeds.length > 2) {
-				var maxH, minH;
+			if (file.speeds.length > 1) {
+				let maxH, minH;
 				maxH = minH = file.speeds[0];
-				for (var i = 1, e = file.speeds.length; i < e; ++i) {
-					maxH = Math.max(maxH, file.speeds[i]);
-					minH = Math.min(minH, file.speeds[i]);
-				}
+				file.speeds.forEach(
+					function(s) {
+						maxH = Math.max(maxH, s);
+						minH = Math.min(minH, s);
+					}
+				);
 				// special case: all speeds are the same
+				let s;
 				if (minH == maxH) {
-					var s = file.speeds.map(function(speed) { return 12; });
+					s = file.speeds.map(function(speed) { return 12; });
 				}
 				else {
-					var r = (maxH - minH);
-					var s = file.speeds.map(function(speed) { return 3 + Math.round((height - 6) * (speed - minH) / r); });
+					let r = (maxH - minH);
+					s = file.speeds.map(function(speed) { return 3 + Math.round((h - 6) * (speed - minH) / r); });
 				}
 
 				ctx.save();
 				ctx.clip();
 				[
-					{ x:4, y:0, f:this._createVerticalGradient(ctx, height - 7, "#EADF91", "#F4EFB1") },
-					{ x:2, y:0, f:this._createVerticalGradient(ctx, height - 7, "#DFD58A", "#D3CB8B") },
-					{ x:1, y:0, f:this._createVerticalGradient(ctx, height - 7, "#D0BA70", "#DFCF6F") },
-					{ x:0, y:0, f:graphFillStyle, s:this._createVerticalGradient(ctx, height - 7, "#F98F00", "#FFBF37") }
+					{ x:4, y:0, f:this._createVerticalGradient(ctx, h - 7, "#EADF91", "#F4EFB1") },
+					{ x:2, y:0, f:this._createVerticalGradient(ctx, h - 7, "#DFD58A", "#D3CB8B") },
+					{ x:1, y:0, f:this._createVerticalGradient(ctx, h - 7, "#D0BA70", "#DFCF6F") },
+					{ x:0, y:0, f:graphFillStyle, s:this._createVerticalGradient(ctx, h - 7, "#F98F00", "#FFBF37") }
 				].forEach(
 					function(pass) {
 						ctx.fillStyle = pass.f;
-						var y = height + pass.y;
-						var x = pass.x + 0.5;
+						let y = h + pass.y;
+						let x = pass.x + 0.5;
 								
 						ctx.beginPath();
 						ctx.moveTo(x, y);
 								
-						y = y - s[0];
+						y -= s[0];
 						ctx.lineTo(x, y);
 								
-						var slope = (s[1] - s[0]);
-						x = x + step * .7;
-						y = y - slope * .7;
+						let slope = (s[1] - s[0]);
+						x += step * .7;
+						y -= slope * .7;
 						ctx.lineTo(x, y);
 								
-						for (var j = 1, e = s.length - 1; j < e; ++j) {
-							x = x + step * .3;
-							y = y - slope *.3;
-	
+						for (let j = 1, e = s.length - 1; j < e; ++j) {
+							y -= slope *.3;
 							slope = (s[j+1] - s[j]);
-							x = x + step * .3;
-							y = y - slope * .3;
-							ctx.quadraticCurveTo(step * j, height + pass.y - s[j], x, y);
+							y -= slope * .3;
+							
+							ctx.quadraticCurveTo(step * j, h + pass.y - s[j], (x + step * .6), y);
 	
-							x = x + step * .4;
-							y = y - slope * .4;
+							x += step;
+							y -= slope * .4;
+
 							ctx.lineTo(x, y);
 						}
-								
-						x = x + step * .3;
-						y = y - slope * .3;
+						x += step * .3;
+						y -= slope * .3;
 						ctx.lineTo(x, y);
 	
-						ctx.lineTo(x, height);
+						ctx.lineTo(x, h);
 						ctx.fill();
 								
 						if (pass.s) {
@@ -182,7 +240,7 @@ var Tooltip = {
 				);
 				ctx.restore();
 			}
-			this._makeRoundedRectPath(ctx, 0, 0, width, height, 3);
+			this._makeRoundedRectPath(ctx, 0, 0, w, h, 3);
 			ctx.stroke();
 				
 			ctx.restore();
@@ -191,55 +249,37 @@ var Tooltip = {
 			Debug.dump("updateSpeedCanvas(): ", ex);
 		}
 	},
-	updateChunkCanvas: function () {
-		var file = this._current;
-		if (!file) {
-			return;
+	updateChunksAlt: function(file) {
+		let meter = $('chunkProgressAlt');
+		if (file.is(RUNNING) && 0 >= file.totalSize) {
+			meter.mode = 'undetermined';
 		}
-		
+		else {
+			meter.mode = 'determined';
+			meter.setAttribute('value', file.percent);
+		}
+	},
+	updateChunks: function (file) {
 		try {
-			if (file.speeds.length) {
-				var avg = 0;
-				file.speeds.forEach(
-					function(s) {
-						avg += s;
-					}
-				)
-				$('speedAverage').value = Utils.formatBytes(avg / file.speeds.length) + "/s";
+			let canvas = $("chunkCanvas");
+			if (canvas.clientWidth) {
+				canvas.width = canvas.clientWidth;
 			}
-			else {
-				$('speedAverage').value = _('unknown');
+			if (canvas.clientHeight) {
+				canvas.height = canvas.clientHeight;
 			}
-
-			$('infoSize').value = file.totalSize > 0 ? Utils.formatBytes(file.totalSize) : _('unknown');
-			if (file.is(RUNNING)) {
-				$('timeElapsed').value = Utils.formatTimeDelta((Utils.getTimestamp() - file.timeStart) / 1000);
-				$('timeRemaining').value = file.status;
-				$('speedCurrent').value = file.speed;
-			}
-			else {
-				$('timeElapsed', 'timeRemaining', 'speedCurrent').forEach(
-					function(e) {
-						e.value = _('nal');
-					}
-				);
-			}
-			var ip = $('infoPercent');
-			ip.value = file.percent;
-
-			var canvas = $("chunkCanvas");
-			var width = canvas.width = canvas.clientWidth;
-			var height = canvas.height = canvas.clientHeight;
-			var ctx = canvas.getContext("2d");
+			let width = canvas.width;
+			let height = canvas.height;
+			let ctx = canvas.getContext("2d");
 			--width; --height;
 			
-			var cheight = height - 9;
+			let cheight = height - 9;
 	
 			// Create gradients
-			var chunkFillStyle = this._createVerticalGradient(ctx, cheight, "#A7D533", "#D3F047");
-			var boxFillStyle = this._createInnerShadowGradient(ctx, cheight, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
-			var boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
-			var partialBoxFillStyle = this._createInnerShadowGradient(ctx, 8, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
+			let chunkFillStyle = this._createVerticalGradient(ctx, cheight, "#A7D533", "#D3F047");
+			let boxFillStyle = this._createInnerShadowGradient(ctx, cheight, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
+			let boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
+			let partialBoxFillStyle = this._createInnerShadowGradient(ctx, 8, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
 	
 			// clear all
 			ctx.clearRect(0, 0, width, height);
@@ -253,7 +293,7 @@ var Tooltip = {
 			this._makeRoundedRectPath(ctx, 0, 0, width, cheight, 5);
 			ctx.fill();
 	
-			var b = [];
+			let b = [];
 			if (file.is(COMPLETE)) {
 				b.push({
 					s: 0,
@@ -337,3 +377,4 @@ var Tooltip = {
 		}
 	}
 };
+addEventListener('load', function() { Tooltip.init(); }, false);

@@ -19,7 +19,7 @@
  *
  * Contributor(s):
  *    Stefano Verna
- *    Federico Parodi
+ *    Federico Parodi <f.parodi@tiscali.it>
  *    Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -66,9 +66,8 @@ var DTA_ContextOverlay = {
 		for (var i = 0; i < lnks.length; ++i) {
 			// remove anchor from url
 			var link = lnks[i];
-			var plink = link.href.replace(/#.*$/gi, "");
 			// if it's valid and it's new
-			if (!DTA_AddingFunctions.isLinkOpenable(plink)) {
+			if (!DTA_AddingFunctions.isLinkOpenable(link.href)) {
 				continue;
 			}
 				
@@ -79,11 +78,10 @@ var DTA_ContextOverlay = {
 				udesc = this.trim(link.getAttribute('title'));
 			}
 			urls.push({
-				'url': new DTA_URL(plink, doc.characterSet),
+				'url': new DTA_URL(link.href, doc.characterSet),
 				'referrer': ref,
 				'description': this.extractDescription(link),
-				'ultDescription': udesc,
-				'hash': DTA_getLinkPrintHash(link.hash)
+				'ultDescription': udesc
 			});
 			
 			var ml = DTA_getLinkPrintMetalink(link.hash);
@@ -210,15 +208,14 @@ var DTA_ContextOverlay = {
 		if (!all) {
 			var sel = document.commandDispatcher.focusedWindow.getSelection();
 			if (sel.isCollapsed) {
-				windows.push(DTA_Mediator.getMostRecent().getBrowser().selectedBrowser.contentWindow.top);
+				windows.push(gBrowser.selectedBrowser.contentWindow.top);
 			}
 			else {
 				windows.push(document.commandDispatcher.focusedWindow);
 			}
 		}
 		else {
-			var win = DTA_Mediator.getMostRecent().getBrowser();
-			win.browsers.forEach(
+			gBrowser.browsers.forEach(
 				function(e) {
 					windows.push(e.contentWindow.top);
 				}
@@ -242,6 +239,10 @@ var DTA_ContextOverlay = {
 				});
 		}
 		return windows;
+	},
+	_types: {
+		'mail:3pane': 'findWindowsMail',
+		'mail:messageWindow': 'findWindowsMail'
 	},
 	
 	findLinks: function(turbo, all) {
@@ -273,12 +274,13 @@ var DTA_ContextOverlay = {
 				DTA_debug.dump("findLinks(): DtaStandard request from the user");
 			}
 
-			var wt = document.documentElement.getAttribute('windowtype'); 
-			var windows = (
-				wt.match(/^mail:/)
-				? this.findWindowsMail
-				: this.findWindowsNavigator
-			)(all);
+			var wt = document.documentElement.getAttribute('windowtype');
+			if (wt in this._types) {
+				var windows = this[this._types[wt]](all);
+			}
+			else {
+				var windows = this.findWindowsNavigator(all);
+			}
 			
 			var urls = [];
 			var images = [];
@@ -314,22 +316,25 @@ var DTA_ContextOverlay = {
 	findSingleLink: function(turbo) {
 		try {
 			var win = document.commandDispatcher.focusedWindow.top;
+			var ctx = this.contextMenu;
 
-			var cur = gContextMenu.target;
+			var cur = ctx.target;
 			
-			var tofind = gContextMenu.onLink ? /^a$/i : /^img$/i; 
+			var tofind = ctx.onLink ? /^a$/i : /^img$/i; 
 		
 			while (!("tagName" in cur) || !tofind.test(cur.tagName)) {
 				cur = cur.parentNode;
 			}
-			var url = gContextMenu.onLink ? cur.href : cur.src;
+			var url = ctx.onLink ? cur.href : cur.src;
 			
 			if (!DTA_AddingFunctions.isLinkOpenable(url)) {
 				DTA_alert(this.getString('error'), this.getError('errornodownload'));
 				return;
 			}
 			
-			url = new DTA_URL(url, win.document.characterSet);
+			var ml = DTA_getLinkPrintMetalink(url);
+			url = new DTA_URL(ml ? ml : url, win.document.characterSet);
+			
 			var ref = DTA_AddingFunctions.getRef(document.commandDispatcher.focusedWindow.document);
 			var desc = this.extractDescription(cur);
 			if (turbo) {
@@ -384,10 +389,33 @@ var DTA_ContextOverlay = {
 			DTA_debug.dump("DCO::init()", ex);
 		}
 	},
-	
+	get contextMenu() {
+			if (window.gContextMenu !=  null) {
+				return gContextMenu;
+			}
+			var cm = {
+				onLink: false,
+				onImage: false,
+				target: document.popupNode,
+				fake: true
+			};
+			if (cm.target) {
+				var node = cm.target;
+				if (node instanceof Components.interfaces.nsIImageLoadingContent && node.currentURI) {
+					cm.onImage = true;
+				}
+				while (node && !cm.onLink) {
+					if (node instanceof HTMLAnchorElement && node.href) {
+						cm.onLink = true;
+					}				
+					node = node.parentNode;
+				}
+			}
+			return cm;
+	},
 	onContextShowing: function(evt) {
 		try {
-			
+			var ctx = this.contextMenu;
 			// get settings
 			var menu = DTA_preferences.getDTA("ctxmenu", "1,1,0").split(",").map(function(e){return parseInt(e);});
 			var compact = DTA_preferences.getDTA("ctxcompact", false);
@@ -406,18 +434,18 @@ var DTA_ContextOverlay = {
 			var show = [];
 			
 			// hovering an image or link
-			if (gContextMenu && (gContextMenu.onLink || gContextMenu.onImage)) {
+			if (ctx && (ctx.onLink || ctx.onImage)) {
 				if (menu[0]) {
 					show.push('Save');
 				}
 				if (menu[1]) {
 					show.push('SaveT');
 				}
-				this.ctx.Save.label = this.getString('dtasave' + (gContextMenu.onLink ? 'link' : 'image'));
-				this.ctx.SaveT.label = this.getString('turbosave' + (gContextMenu.onLink ? 'link' : 'image'));
+				this.ctx.Save.label = this.getString('dtasave' + (ctx.onLink ? 'link' : 'image'));
+				this.ctx.SaveT.label = this.getString('turbosave' + (ctx.onLink ? 'link' : 'image'));
 			}
 			// regular
-			else {
+			if (ctx && (ctx.fake || !(ctx.onLink || ctx.onImage))) {
 				if (menu[0]) {
 					show.push('DTA');
 				}
@@ -538,28 +566,33 @@ var DTA_ContextOverlay = {
 		}
 	},
 	
-	extractDescription : function(child) {
+	extractDescription: function(child) {
+		var rv = "";
 		try {
-			var rv = "";
-			if (child.hasChildNodes()) {
-				for (var x = 0; x < child.childNodes.length; x++) {
-					var c = child.childNodes[x];
+			var fmt = function(s) {
+				try {
+					return s.replace(/(\n){1,}/gi, " ").replace(/(\s){2,}/gi, " ") + " ";
+				} catch (ex) { /* no-op */ }
+				return "";
+			};
+			for (var i = 0, e = child.childNodes.length; i < e; ++i) {
+				var c = child.childNodes[i];
 
-					if (c.nodeValue && c.nodeValue != "") {
-						rv += c.nodeValue.replace(/(\n){1,}/gi, " ").replace(/(\s){2,}/gi, " ");
+				if (c.nodeValue && c.nodeValue != "") {
+					rv += fmt(c.nodeValue);
+				}
+
+				if (c.nodeType == 1) {
+					rv += this.extractDescription(c);
+				}
+
+				if (c.hasAttribute)
+				{
+					if (c.hasAttribute('title')) {
+						rv += fmt(c.getAttribute('title'));	
 					}
-
-					if (c.nodeType == 1) {
-						rv += this.extractDescription(c);
-					}
-
-					if (c.hasAttribute)
-					{
-						if (c.hasAttribute('title')) {
-							rv += c.getAttribute('title').replace(/(\n){1,}/gi, " ").replace(/(\s){2,}/gi, " ") + " ";	
-						} else if (c.hasAttribute('alt')) {
-							rv += c.getAttribute('alt').replace(/(\n){1,}/gi, " ").replace(/(\s){2,}/gi, " ") + " ";
-						}
+					else if (c.hasAttribute('alt')) {
+						rv += fmt(c.getAttribute('alt'));
 					}
 				}
 			}
@@ -570,4 +603,4 @@ var DTA_ContextOverlay = {
 	}
 }
 
-window.addEventListener("load", function() {DTA_ContextOverlay.init();}, false);
+addEventListener("load", function() {DTA_ContextOverlay.init();}, false);

@@ -2,6 +2,13 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 @namespace html url("http://www.w3.org/1999/xhtml");
 
+	
+treechildren::-moz-tree-progressmeter(progressUndetermined) {
+	list-style-image: url('chrome://dta/skin/manager/undetermined.gif');
+}
+treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined) {
+	list-style-image: url('chrome://dta/skin/manager/paused-undetermined.png');
+}
 toolbox {
 	border-width: 0px;
 }
@@ -72,14 +79,17 @@ toolbox {
 }
 
 #tooldonate {
-	background: url("chrome://dta/skin/manager/bardonate.png") top right;
+	background: url("chrome://dta/skin/manager/bardonate-ltr.png") top right;
 	min-width: 200px !important;
 }
 #tooldonate:hover {
-	background: url("chrome://dta/skin/manager/bardonatehover.png") top right;
+	background: url("chrome://dta/skin/manager/bardonate-hover-ltr.png") top right;
 }
-#tooldonate:active {
-	background: url("chrome://dta/skin/manager/bardonateactive.png") top right;
+#tooldonate[chromedir="rtl"] {
+	background: url("chrome://dta/skin/manager/bardonate-rtl.png") top right;
+}
+#tooldonate[chromedir="rtl"]:hover {
+	background: url("chrome://dta/skin/manager/bardonate-hover-rtl.png") top right;
 }
 #tooltip {
 	width: 470px;
@@ -113,13 +123,26 @@ toolbox {
 }
 #infoPercent {
 	text-align: center;
-	height: 40px;
 	margin: 0;
 	padding: 0;
-	padding-top: 7px;
 	font-size: 14px;
 	font-weight: bold;
 	background: transparent !important;
+}
+stack > #infoPercent {
+	padding-top: 7px;
+	height: 40px;
+}
+#chunkAlt {
+	height: 32px;
+	margin-top: 1ex;
+	margin-bottom: 1ex;
+}	
+#chunkAlt > #infoPercent {
+	margin-top: auto;
+	margin-bottom: auto;
+	padding-top: 6px;
+	min-width: 4.2ex;
 }
 #infoDest {
 	font-weight: bold !important;
@@ -167,23 +190,23 @@ treechildren::-moz-tree-row(filtered) {
 	background-color: red;
 }
 treechildren::-moz-tree-progressmeter(completed) {
-  color: #008F00;
+  color: #008F00 !important;
 }
 
 treechildren::-moz-tree-progressmeter(paused) {
-  color: #FFCC00;
+  color: #FFCC00 !important;
 }
 
 treechildren::-moz-tree-progressmeter(canceled) {
-  color: #B12801;
+  color: #B12801 !important;
 }
 
 treechildren::-moz-tree-progressmeter(queued) {
-  color: #BFDEFF;
+  color: #BFDEFF !important;
 }
 
 treechildren::-moz-tree-progressmeter(inprogress) {
-  color: #AAE061;
+  color: #AAE061 !important;
 }
 textbox.plain {
 	background-color: transparent !important;

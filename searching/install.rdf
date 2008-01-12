@@ -5,7 +5,7 @@
 		<id>dta@downthemall.net</id>
 		<name>DownThemAll!</name>
 		<description>The mass downloader for Firefox.</description>
-		<version>1.0b2</version>
+		<version>1.1a1</version>
 
 		<creator>Federico Parodi</creator>
 		<creator>Stefano Verna</creator>
@@ -24,7 +24,16 @@
 		<targetApplication>
 			<rdf:Description>
 				<id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</id>
-				<minVersion>2.0</minVersion>
+				<minVersion>2.0.0.8</minVersion>
+				<maxVersion>3.0.*</maxVersion>
+			</rdf:Description>
+		</targetApplication>
+
+		<!-- Thunderbird -->
+		<targetApplication>
+			<rdf:Description>
+				<id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</id>
+				<minVersion>2.0.0.8</minVersion>
 				<maxVersion>3.0.*</maxVersion>
 			</rdf:Description>
 		</targetApplication>
@@ -34,16 +43,7 @@
 			<rdf:Description>
 				<id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</id>
 				<minVersion>2.0a</minVersion>
-				<maxVersion>3.0</maxVersion>
-			</rdf:Description>
-		</targetApplication>
-		
-		<!-- Thunderbird -->
-		<targetApplication>
-			<rdf:Description>
-				<id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</id>
-				<minVersion>2.0</minVersion>
-				<maxVersion>3.0.*</maxVersion>
+				<maxVersion>2.0.*</maxVersion>
 			</rdf:Description>
 		</targetApplication>
 		
@@ -51,9 +51,18 @@
 		<targetApplication>
 		  <rdf:Description>
 		    <id>{a463f10c-3994-11da-9945-000d60ca027b}</id>
-		    <minVersion>0.8</minVersion>
-		    <maxVersion>1.0</maxVersion>
+		    <minVersion>1.0</minVersion>
+		    <maxVersion>1.0.*</maxVersion>
 		  </rdf:Description>
+		</targetApplication>
+		
+		<!-- Songbird -->
+		<targetApplication>
+			<rdf:Description>
+				<id>songbird@songbirdnest.com</id>
+				<minVersion>0.4a</minVersion>
+				<maxVersion>0.5pre</maxVersion>
+			</rdf:Description>
 		</targetApplication>		
 
 	</rdf:Description>

@@ -11,16 +11,15 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll!
+ * The Original Code is downTHEMall
  *
- * The Initial Developers of the Original Code are Stefano Verna and Federico Parodi
- * Portions created by the Initial Developers are Copyright (C) 2004-2007
+ * The Initial Developers of the Original Code are
+ * Federico Parodi, Stefano Verna and Nils Maier
+ * Portions created by the Initial Developers are Copyright (C) 2007
  * the Initial Developers. All Rights Reserved.
  *
  * Contributor(s):
- *    Stefano Verna <stefano.verna@gmail.com>
- *    Federico Parodi <f.parodi@tiscali.it>
- *    Nils Maier <MaierMan@web.de>
+ *   Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -35,60 +34,31 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- var AlertService = {
-	_alerting: false,
-	_init: function() {
-		if ('@mozilla.org/alerts-service;1' in Cc && 'nsIAlertsService' in Ci) {
-			// some systems do not have this service
-			try {
-				this._service = Serv('@mozilla.org/alerts-service;1', 'nsIAlertsService');
-				makeObserver(this);
-				this._available = true;
+ 
+var DTA_TBB = {
+	init: function() {
+		this._items = ['dta-button', 'dta-turbo-button', 'dta-manager-button'].map(
+			function(e) {
+				return document.getElementById(e);
 			}
-			catch (ex) {
-				// no-op
-			}
-		}
+		);
+		DTA_makeObserver(this);
+		DTA_preferences.addObserver("extensions.dta.sm.", this);
+		this._refresh();
 	},
-	get available() {
-		return this._available;
+	observe: function(subject, topic, prefName) {
+		this._refresh();
 	},
-	_available: false,
-	_service: null,
-	show: function(title, msg, clickable, cookie) {
-		if (!this.available) {
-			throw new Exception("Alerting Service not available on this platform!");
-		}
-		if (this._alerting || !this._service) {
-			return;
-		}
-		this._alerting = true;
-		this._service.showAlertNotification(
-			"chrome://dta/skin/common/alert.png",
-			title,
-			msg,
-			clickable,
-			cookie,
-			this
+	_refresh: function() {
+		DTA_preferences
+			.getDTA('sm.buttons')
+			.split(',')
+			.forEach(
+				function(v, i) {
+					this._items[i].hidden = v != '1';
+				},
+				this
 			);
-	},
-	observe: function (aSubject, aTopic, aData) {
-		switch (aTopic) {
-			case "alertfinished":
-				// global variable
-				this._alerting = false;
-				break;
-			case "alertclickcallback":
-				if (aData != "errore") {
-					try {
-						OpenExternal.launch(aData);
-					}
-					catch (ex) {
-						// no-op
-					}
-				}
-				break;
-		}
 	}
 };
-AlertService._init();
+window.addEventListener("load", function() {DTA_TBB.init();}, false);

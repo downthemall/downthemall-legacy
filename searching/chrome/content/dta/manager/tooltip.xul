@@ -20,7 +20,7 @@
  * the Initial Developers. All Rights Reserved.
  *
  * Contributor(s):
- *   Federico Parodi
+ *   Federico Parodi <f.parodi@tiscali.it>
  *   Stefano Verna <stefano.verna@gmail.com>
  *   Nils Maier <MaierMan@web.de>
  *
@@ -63,16 +63,20 @@
 				</row>
 			</rows>
 		</grid>
-	</hbox>
+	</hbox>	
 	
-	<grid id="canvasGrid">
+	<grid id="canvasGrid">	
 		<columns><column/><column flex="1"/><column/><column/></columns>
 		<rows>
-			<separator class="thin"/>			
-			<stack>
-				<html:canvas id="chunkCanvas" height="40px"></html:canvas>
+			<separator class="thin"/>		
+			<stack id="chunkStack">
+				<html:canvas id="chunkCanvas" height="40"></html:canvas>
 				<label id="infoPercent"/>
 			</stack>
+			<hbox id="chunkAlt">
+				<progressmeter flex="1" id="chunkProgressAlt" type="determined" value="50%" />
+				<label id="infoPercentAlt"/>
+			</hbox>
 			<row>
 				<label value="&elapsedTitle.value;"/>
 				<label id="timeElapsed"/>
@@ -80,7 +84,7 @@
 				<label id="timeRemaining"/>
 			</row>
 			<separator class="thin" />
-			<html:canvas id="speedCanvas" height="33"></html:canvas>
+			<html:canvas id="speedCanvas" height="30"></html:canvas>
 			<row>
 				<label value="&currentSpeedTitle.value;"/>
 				<label id="speedCurrent"/>

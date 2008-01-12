@@ -19,7 +19,7 @@
  *
  * Contributor(s):
  *   Nils Maier <MaierMan@web.de>
- *   Federico Parodi
+ *   Federico Parodi <f.parodi@tiscali.it>
  *   Stefano Verna <stefano.verna@gmail.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -219,10 +219,7 @@ var DTA_debug = {
 				text += message.replace(/\n/g, "\x0D\x0A\t") + " ";
 			}
 			if (e instanceof Components.Exception) {
-				if (!e.message)
-					text += e;
-				else
-					text += e.message + " (nsResult=" + e.result + ")";
+				text += e.toString();
 			} else if (e instanceof Error) {
 				if (!e.message)
 					text += e;
@@ -291,8 +288,10 @@ var DTA_URLhelpers = {
 
 function DTA_URL(url, charset, usable, preference) {
 	this.charset = this.str(charset);
-	this.usable = this.str(usable);
-	this._url = this.str(url);
+	this.url = url;
+	if (usable) {
+		this.usable = this.str(usable);
+	}
 	this.preference = preference ? preference : 100;
 
 	this.decode();
@@ -306,12 +305,18 @@ DTA_URL.prototype = {
 		return this._url;
 	},
 	set url(nv) {
+		delete this.hash;
 		this._url = this.str(nv);
+		var hash = DTA_getLinkPrintHash(this._url);
+		if (hash) {
+			this.hash = hash;
+		}
+		this._url = this._url.replace(/#.*$/, '');
 		this.usable = '';
 		this.decode();
 	},
 	decode: function DU_decode() {
-		if (!this.usable.length)
+		if (!this.usable)
 		{
 			this.usable = DTA_URLhelpers.decodeCharset(this._url, this.charset);
 		}
@@ -344,7 +349,10 @@ DTA_DropProcessor.prototype = {
 			return;
 		}
 		var doc = document.commandDispatcher.focusedWindow.document;
-		url = new DTA_URL(url, doc.characterSet);
+		
+		var ml = DTA_getLinkPrintMetalink(url);
+		url = new DTA_URL(ml ? ml : url, doc.characterSet);
+		
 		var ref = DTA_AddingFunctions.getRef(doc);
 		this.func(url, ref);
 	}
@@ -443,21 +451,10 @@ var DTA_AddingFunctions = {
 	},	
 
 	saveSingleLink : function(turbo, url, referrer, description) {
-		var hash = null;		
-		var ml = DTA_getLinkPrintMetalink(url.url);
-		if (ml) {
-			url.url = ml;
-		}
-		else {
-			hash = DTA_getLinkPrintHash(url.url);
-		}
-		url.url = url.url.replace(/#.*$/, '');
-		
 		var item = {
 			'url': url,
 			'referrer': referrer,
-			'description': description,
-			'hash': hash
+			'description': description
 		};
 
 		if (turbo) {
@@ -708,10 +705,9 @@ var DTA_Mediator = {
 const DTA_SUPPORTED_HASHES = {
 	'MD5': 32,
 	'SHA1': 40,
-	'SHA256': 64
-	/* Currently broken: https://bugzilla.mozilla.org/show_bug.cgi?id=383390
-	'sha384': 96,
-	'sha512':  128 */
+	'SHA256': 64,
+	'SHA384': 96,
+	'SHA512':  128
 };
 function DTA_Hash(hash, type) {
 	if (typeof(hash) != 'string' && !(hash instanceof String)) {
@@ -731,6 +727,11 @@ function DTA_Hash(hash, type) {
 		throw new Components.Exception("hash is invalid");
 	}
 }
+DTA_Hash.prototype = {
+	toString: function() {
+		return this.type + " [" + this.sum + "]";
+	}
+};
 
 /**
  * Get a link-fingerprint hash from an url (or just the hash component)

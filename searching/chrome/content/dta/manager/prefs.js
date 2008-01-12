@@ -19,7 +19,7 @@
  *
  * Contributor(s):
  *    Stefano Verna <stefano.verna@gmail.com>
- *    Federico Parodi
+ *    Federico Parodi <f.parodi@tiscali.it>
  *    Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -37,28 +37,23 @@
  * ***** END LICENSE BLOCK ***** */
  
  var Prefs = {
-	// default values
-	showOnlyFilenames: true,
-	alertingSystem: (SYSTEMSLASH == '\\') ? 1 : 0,
-	conflictResolution: 3,
-
-	maxInProgress: 5,
-	maxChunks: 5,
 	tempLocation: null,
-
-	currentTooltip: null,
-
-	removeCompleted: true,
-	removeAborted: false,
-	removeCanceled: false,
 	
-	autoClose: false,
-	
-	setTime: true,
-	
-	finishEvent: '',
-	
-	timeout: 300,
+	mappings: [
+		['removeCompleted', true],
+		['removeAborted', false],
+		['removeCanceled', false],
+		['autoClose', 'closedta', false],
+		['timeout', 300],
+		['maxInProgress', 'ntask', 4],
+		['maxChunks', 4],
+		['setTime', true],
+		['showOnlyFilenames', true],
+		['conflictResolution', 3],
+		['alertingSystem', 'alertbox', (SYSTEMSLASH == '\\') ? 1 : 0],
+		['finishEvent', ''],
+		['showTooltip', true]
+	],
 
 	// nsIObserver
 	observe: function(subject, topic, prefName) {
@@ -80,31 +75,23 @@
 
 	_refreshPrefs: function() {
 		Debug.dump("pref reload");
-
-		[
-			'removeCompleted',
-			'removeAborted',
-			'removeCanceled',
-			['autoClose', 'closedta'],
-			'timeout',
-			['maxInProgress', 'ntask'],
-			'maxChunks',
-			'setTime',
-			'showOnlyFilenames',
-			'conflictResolution',
-			['alertingSystem', 'alertbox'],
-			'finishEvent'
-		].forEach(
+		this.mappings.forEach(
 			function(e) {
-				if (e instanceof Array) {
-					var key = e[0];
-					var pref = e[1];
+				let key, pref, def;
+				if (!e) {
+					return;
+				}
+				else if (e.length == 3) {
+					key = e[0];
+					pref = e[1];
+					def = e[2];
 				}
 				else {
-					var key = e;
-					var pref = key.toLowerCase();
+					key = e[0];
+					pref = key.toLowerCase();
+					def = e[1];
 				}
-				this[key] = Preferences.getDTA(pref, this[key]);
+				this[key] = Preferences.getDTA(pref, def);
 			},
 			this
 		);
@@ -115,8 +102,7 @@
 				if (this.tempLocation == '') {
 					// #44: generate a default tmp dir on per-profile basis
 					// hash the profD, as it would be otherwise a minor information leak
-					var dsp = Cc["@mozilla.org/file/directory_service;1"]
-						.getService(Ci.nsIProperties);
+					var dsp = Serv('@mozilla.org/file/directory_service;1', 'nsIProperties');
 					this.tempLocation = dsp.get("TmpD", Ci.nsIFile);
 					var profD = hash(dsp.get("ProfD", Ci.nsIFile).leafName);
 					this.tempLocation.append("dtatmp-" + profD);

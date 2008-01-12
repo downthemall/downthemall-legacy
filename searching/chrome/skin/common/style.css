@@ -1,5 +1,6 @@
 @import 'chrome://dta/content/common/bindings.css';
 @import 'chrome://dta-platform/skin/common.css';
+
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 @namespace html url("http://www.w3.org/1999/xhtml");
 
@@ -54,6 +55,9 @@ maskbutton {
 	padding: 3px !important;
 	padding-left: 7px !important;
 	margin: 0 !important;
+}
+#logo[chromedir="rtl"] {
+	background: white url(chrome://dta/skin/common/logo-rtl.png) no-repeat left top;
 }
 dialogheader#logo label {
 	padding: 0;
@@ -140,7 +144,7 @@ treechildren::-moz-tree-cell-text(selected) {
 }
 
 treechildren::-moz-tree-row(selected) {
-	background-color: #99CCFF;
+	background-color: #99CCFF !important;
 	/*-moz-border: none !important;*/
 }
 
@@ -160,4 +164,19 @@ textbox[readonly], menulist[disabled] {
 textbox[readonly] html|*.textbox-input {
   color: GrayText !important;
 	font-style: italic;
+}
+/* foreign theme compat, i.e. Songbird */
+statusbar {
+	-moz-appearance: statusbar;
+	min-height: 22px;	
+}
+statusbarpanel {
+	-moz-appearance: statusbarpanel;
+	-moz-box-align: center;
+	-moz-box-pack: center;
+	height: auto;
+}
+statusbarpanel > label {
+	margin-top: 1px;
+	margin-bottom: 2px;
 }

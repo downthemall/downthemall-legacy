@@ -42,9 +42,8 @@ var Tree = {
 		this._downloads = [];
 		this._displayed = this._downloads;
 
-		let as = 	Cc["@mozilla.org/atom-service;1"]
-			.getService(Ci.nsIAtomService);
-		['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'filtered'].forEach(
+		let as = Serv('@mozilla.org/atom-service;1', 'nsIAtomService');
+		['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined', 'filtered'].forEach(
 			function(e) {
 				this['_' + e] = as.getAtom(e);
 			},
@@ -83,7 +82,7 @@ var Tree = {
 			case 2: return d.percent;
 			case 3: return d.dimensionString;
 			case 4: return d.status;
-			case 5: return d.speed;
+			case 5: return d.is(RUNNING) ? d.speed : '';
 			case 6: return d.parts;
 			case 7: return d.mask;
 			case 8: return d.destinationPath;
@@ -91,12 +90,30 @@ var Tree = {
 		}
 		return '';
 	},
-	isSorted: function T_isSorted() { return false; },
-	isContainer: function T_isContainer(idx) { return false; },
-	isContainerOpen: function T_isContainerOpen(idx) { return false; },
-	isContainerEmpty: function T_isContainerEmpty(idx) { return false;},
-	isSeparator: function T_isSeparator(idx) { return false; },
-	isEditable: function T_isEditable(idx) { return true;	},
+	isSorted: function T_isSorted() {
+		// not sorted
+		return false;
+	},
+	isContainer: function T_isContainer(idx) {
+		// being a container means we got children... but we don't have any children because we're a list actually
+		return false;
+	},
+	isContainerOpen: function T_isContainerOpen(idx) {
+		return false;
+	},
+	isContainerEmpty: function T_isContainerEmpty(idx) {
+		return false;
+	},
+
+	isSeparator: function T_isSeparator(idx) {
+		// no separators
+		return false;
+	},
+	isEditable: function T_isEditable(idx) {
+		// and nothing is editable
+		return true;
+	},
+	// will grab the "icon" for a cell.
 	getImageSrc: function T_getImageSrc(idx, col) {
 		switch (col.index) {
 			case 0: return this._displayed[idx].icon;
@@ -105,9 +122,16 @@ var Tree = {
 	},
 	getProgressMode : function T_getProgressMode(idx, col) {
 		if (col.index == 1) {
-			return Ci.nsITreeView.PROGRESS_NORMAL;
+			let d = this._downloads[idx]; 
+			if (d.is(RUNNING, PAUSED) && !d.totalSize) {
+				return 2; // PROGRESS_UNDETERMINED;
+			}
+			if (d.is(PAUSED) && d.partialSize / d.totalSize < .05) {
+				return 2; // PROGRESS_UNDETERMINED;			
+			}
+			return 1; // PROGRESS_NORMAL;
 		}
-		return Ci.nsITreeView.PROGRESS_NONE;
+		return 3; // PROGRESS_NONE;
 	},
 	// will be called for cells other than textcells
 	getCellValue: function T_getCellValue(idx, col) {
@@ -125,7 +149,12 @@ var Tree = {
 			let d = this._displayed[idx];
 			switch (d.state) {
 				case COMPLETE: prop.AppendElement(this._completed); return;
-				case PAUSED: prop.AppendElement(this._paused); return;
+				case PAUSED:
+					prop.AppendElement(this._paused);
+					if (!d.totalSize || d.partialSize / d.totalSize < .05) {
+						prop.AppendElement(this._pausedUndetermined);
+					}
+				return;
 				case FINISHING:
 				case RUNNING: prop.AppendElement(this._inprogress); return;
 				case CANCELED: prop.AppendElement(this._canceled); return;
@@ -250,7 +279,6 @@ var Tree = {
 			function(d) {
 				if (d.is(QUEUED) || (d.is(RUNNING) && d.resumable)) {
 					d.pause();
-					d.speed = '';
 					d.status = _("paused");
 					d.state = PAUSED;
 				}
@@ -280,6 +308,7 @@ var Tree = {
 		for (let d in this.all) {
 			this.selection.toggleSelect(d.position);
 		}
+		this.selectionChanged();
 	},
 	changeChunks: function T_changeChunks(increase) {
 		function inc(d) {
@@ -313,28 +342,33 @@ var Tree = {
 		}
 		this.endUpdate();
 	},
+	_hoverItem: null,
+	_ww: Serv('@mozilla.org/embedcomp/window-watcher;1', 'nsIWindowWatcher'),
+	hovering: function(event) {
+		if (!Prefs.showTooltip || this._ww.activeWindow != window) {
+			return;
+		}
+		this._hoverItem = {x: event.clientX, y: event.clientY};
+	},
 	showTip: function(event) {
-		try {
-			if (!Preferences.getDTA("showtooltip", true)) {
+		if (!Prefs.showTooltip || !this._hoverItem || this._ww.activeWindow != window) {
 				return false;
 			}
 			let row = {};
-			this._box.getCellAt(event.clientX, event.clientY, row, {}, {});
+		this._box.getCellAt(this._hoverItem.x, this._hoverItem.y, row, {}, {});
 			if (row.value == -1) {
 				return false;
 			}
 			let d = this.at(row.value);
+		if (!d) {
+			return false;
+		}
 			$("infoIcon").src = d.largeIcon;
 			$("infoURL").value = d.urlManager.url;
 			$("infoDest").value = d.destinationFile;
 	
 			Tooltip.start(d);			
 			return true;
-		}
-		catch(ex) {
-			Debug.dump("Tooltip.show():", ex);
-		}
-		return false;
 	},	
 	stopTip: function T_stopTip() {
 		Tooltip.stop();
@@ -490,9 +524,25 @@ var Tree = {
 		}
 		return rv;
 	},
+	// get the first selected item, NOT the item which has the input focus.
 	get current() {
+		let select = this.selection;
+		try {
+			let ci = {value: -1};
+			this.selection.getRangeAt(0, ci, {});			
+			if (ci.value > -1 && ci.value < this.rowCount) {
+				return this._displayed[ci.value];
+			}
+		}
+		catch (ex) {
+			// fall-through
+		}
+		return null;		
+	},
+	// get the currently focused item.
+	get focused() {
 		let ci = this.selection.currentIndex;
-		if (ci > -1 && ci < this.rowCount && this.selection.isSelected(ci)) {
+		if (ci > -1 && ci < this.rowCount) {
 			return this._displayed[ci];
 		}
 		return null;		
@@ -513,20 +563,24 @@ var Tree = {
 	},
 	updateSelected: function T_updateSelected(f, t) {
 		this.beginUpdate();
+		SessionManager.beginUpdate();
 		for (d in this.selected) {
 			if (!f.call(t, d)) {
 				break;
 			}
 		}
+		SessionManager.endUpdate();
 		this.endUpdate();
 	},
 	updateAll: function T_updateAll(f, t) {
 		this.beginUpdate();
+		SessionManager.beginUpdate();
 		for (d in this.all) {
 			if (!f.call(t, d)) {
 				break;
 			}
 		}
+		SessionManager.endUpdate();
 		this.endUpdate();
 	},
 	// XXX: fix moving + reselection after downloads/displayed changes

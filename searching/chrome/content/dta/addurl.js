@@ -50,11 +50,14 @@ function QueueItem(url, num, hash) {
 	this.ultDescription = '';
 	this.mask = Dialog.ddRenaming.value;
 	this.dirSave = Dialog.ddDirectory.value;
-	this.hash = hash;
+	if (hash) {
+		this.url.hash = hash;
+	}
 }
 
 function Literal(str) {
 	this.str = str;
+	this.first = this.last = this.str;
 	this.length = 1;
 }
 Literal.prototype = {
@@ -65,24 +68,21 @@ Literal.prototype = {
 		return this.str;
 	}
 };
-function NumericRange(name, start, stop, step, strl) {
-	this.name = name;
-	this.start = start;
-	this.stop = stop + (start > stop ? -1 : 1);
-	this.step = step;
-	this.length = Math.floor((stop - start) / step + 1);
-	this.strl = strl;
+
+function Range() {
 };
-NumericRange.prototype = {
-	_format: function(i) {
-		var rv = String(Math.abs(i));
-		while (rv.length < this.strl) {
-			rv = '0' + rv;
-		}
-		if (i < 0) {
-			rv = '-' + rv;
-		}
-		return rv;
+Range.prototype = {
+	init: function(name, start, stop, step) {
+		stop += -Math.abs(step)/step;
+		stop += step - ((stop - start) % step);
+		
+		this.name = name;
+		this.start = start;
+		this.stop = stop;
+		this.step = step;
+		this.length = Math.floor((stop - start) / step);
+		this.first = this._format(this.start);
+		this.last = this._format(this.stop - this.step);
 	},
 	join: function(str) {
 		for (let i in range(this.start, this.stop, this.step)) {
@@ -90,20 +90,30 @@ NumericRange.prototype = {
 		}
 	}
 };
-function CharRange(name, start, stop, step) {
-	this.name = name;
-	this.start = start;
-	this.stop = stop + (start > stop ? -1 : 1);
-	this.step = step;
-	this.length = Math.floor((stop - start) / step + 1);
-};	
-CharRange.prototype = {
-	join: function(str) {
-		for (let i in range(this.start, this.stop, this.step)) {
-			yield str + String.fromCharCode(i);
+
+function NumericRange(name, start, stop, step, strl) {
+	this._format = function(val) {
+		let rv = String(Math.abs(val));
+		while (rv.length < this.strl) {
+			rv = '0' + rv;
 		}
-	}
-}
+		if (val < 0) {
+			return '-' + rv;
+		}
+		return rv;
+	};
+	this.strl = strl;
+	
+	this.init(name, start, stop + (step > 0 ? 1 : -1), step);
+};
+NumericRange.prototype = Range.prototype;
+function CharRange(name, start, stop, step) {
+	this._format = String.fromCharCode;
+
+	this.init(name, start, stop + (step > 0 ? 1 : -1), step);
+};
+CharRange.prototype = Range.prototype;
+
 function BatchGenerator(link) {
 	if (!(link instanceof DTA_URL)) {
 		throw new Components.Exception("invalid argument. Type not DTA_URL");
@@ -118,13 +128,13 @@ function BatchGenerator(link) {
 			this._pats.push(new Literal(url.substring(0, i)));
 			url = url.slice(i);
 		}
-		var m;
+		let m;
 		if ((m = url.match(/^\[(-?\d+):(-?\d+)(?::(-?\d+))?\]/))) {
 			url = url.slice(m[0].length);
 			try {
-				var start = new Number(m[1]);
-				var stop = new Number(m[2]);
-				var step = stop > start ? 1 : -1;
+				let start = new Number(m[1]);
+				let stop = new Number(m[2]);
+				let step = stop > start ? 1 : -1;
 				if (m.length > 3 && typeof(m[3]) != 'undefined') {
 					step = new Number(m[3]);
 				}
@@ -141,6 +151,7 @@ function BatchGenerator(link) {
 				this._pats.push(new NumericRange(m[0], start, stop, step, sl));
 			}
 			catch (ex) {
+				Debug.dump(ex);
 				this._pats.push(new Literal(m[0]));
 			}
 			continue;
@@ -149,9 +160,9 @@ function BatchGenerator(link) {
 		if ((m = url.match(/^\[([a-z]):([a-z])(?::(-?\d))?\]/)) || (m = url.match(/\[([A-Z]):([A-Z])(?::(-?\d))?\]/))) {
 			url = url.slice(m[0].length);
 			try {
-				var start = m[1].charCodeAt(0);
-				var stop = m[2].charCodeAt(0);
-				var step = stop > start ? 1 : -1;
+				let start = m[1].charCodeAt(0);
+				let stop = m[2].charCodeAt(0);
+				let step = stop > start ? 1 : -1;
 				if (m.length > 3 && typeof(m[3]) != 'undefined') {
 					step = new Number(m[3]);
 				}
@@ -163,13 +174,10 @@ function BatchGenerator(link) {
 				this._pats.push(new CharRange(m[0], start, stop, step));
 			}
 			catch (ex) {
+				Debug.dump(ex);
 				this._pats.push(new Literal(m[0]));
 			}
 			continue;
-		}
-		if ((m = url.match(/\[.*?\]/))) {
-			url = url.slice(m[0].length);
-			this._pats.push(new Literal(m[0]));
 		}
 	}
 	if (url.length) {
@@ -223,23 +231,14 @@ BatchGenerator.prototype = {
 	get first() {
 		return this._pats.map(
 			function(p) {
-				if (!(p instanceof Literal)) {
-					return p.start;
-				}
-				return p;
+				return p.first;
 			}
 		).join('');
 	},
 	get last() {
 		return this._pats.map(
 			function(p) {
-				if (!(p instanceof Literal)) {
-					let stop = p.stop;
-					stop += (stop - p.start) % p.step;
-					stop -= p.step;
-					return stop;
-				}
-				return p;
+				return p.last;
 			}
 		).join('');
 	}
@@ -250,6 +249,11 @@ var Dialog = {
 	multiHelp: true,
 	load: function DTA_load() {
 		try {
+			$('directory', 'renaming', 'URLaddress', 'hash').forEach(
+				function(e) {
+					e.oldColor = e.inputField.style.color;
+				}
+			);
 			this.ddDirectory = $("directory");
 			this.ddRenaming = $("renaming");			
 			var address = $('URLaddress');
@@ -286,24 +290,27 @@ var Dialog = {
 				if (a.mask) {
 					this.ddRenaming.value = a.mask;
 				}
-				hash = a.hash;
+				hash = a.url.hash;
 			}
 			// check if there's some URL in clipboard
 			else {
-				var clip = Cc["@mozilla.org/widget/clipboard;1"].getService(Ci.nsIClipboard);
-				var trans = Cc["@mozilla.org/widget/transferable;1"].createInstance(Ci.nsITransferable);
+				let clip = Cc["@mozilla.org/widget/clipboard;1"]
+					.getService(Ci.nsIClipboard);
+				let trans = Cc["@mozilla.org/widget/transferable;1"]
+					.createInstance(Ci.nsITransferable);
 				try {
 					trans.addDataFlavor("text/unicode");
 					clip.getData(trans, clip.kGlobalClipboard);
 					
-					var str = {}, length = {};
+					let str = {}, length = {};
 					trans.getTransferData(
 						"text/unicode",
 						str,
 						length
 					);
 					if (length.value) {
-						str = str.value.QueryInterface(Ci.nsISupportsString);
+						str = str.value
+							.QueryInterface(Ci.nsISupportsString);
 						str = str.data;
 						if (str.length && DTA_AddingFunctions.isLinkOpenable(str)) {
 							hash = DTA_getLinkPrintHash(str);
@@ -364,7 +371,12 @@ var Dialog = {
 				let fs = Cc['@mozilla.org/docshell/urifixup;1'].getService(Ci.nsIURIFixup);
 				// throws if empty
 				let uri = fs.createFixupURI(url, 0);
-				url = uri.spec;
+				try {
+					url = decodeURIComponent(uri.spec);
+				}
+				catch (ex) {
+					url = uri.spec;
+				}
 			}
 			catch (ex) {
 				errors.push('URLaddress');
@@ -391,7 +403,7 @@ var Dialog = {
 				// reset the styles
 				var style = e.inputField.style;
 				style.backgroundColor = 'transparent';
-				style.color = 'windowText';
+				style.color = e.oldColor;
 			}
 		);
 		

@@ -34,7 +34,10 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
- function Verificator(download) {
+const Hash = Components.Constructor('@mozilla.org/security/hash;1', 'nsICryptoHash', 'init');
+const InputStreamPump = Components.Constructor('@mozilla.org/network/input-stream-pump;1', 'nsIInputStreamPump', 'init');
+
+function Verificator(download) {
 	this.download = download;
 	this.file = new FileFactory(download.destinationFile);
 	this.CH = Ci.nsICryptoHash;
@@ -47,17 +50,10 @@
 		}
 		this.type = this.CH[download.hash.type];
 		
-		this.hash = Cc["@mozilla.org/security/hash;1"]
-			.createInstance(this.CH);
-		this.hash.init(this.type);
+		this.hash = new Hash(this.type);
 		
-		var nsIFI = Ci.nsIFileInputStream;
-		this.stream = Cc['@mozilla.org/network/file-input-stream;1']
-			.createInstance(Ci.nsIFileInputStream);
-		this.stream.init(this.file, 0x01, 0766, 0);
-		this.pump = Cc['@mozilla.org/network/input-stream-pump;1']
-			.createInstance(Ci.nsIInputStreamPump);
-		this.pump.init(this.stream, 0, -1, 0, 0, true);
+		this.stream = new FileInputStream(this.file, 0x01, 0766, 0);
+		this.pump = new InputStreamPump(this.stream, 0, -1, 0, 0, true);
 		this.pump.asyncRead(this, null);
 	}
 	catch (ex) {

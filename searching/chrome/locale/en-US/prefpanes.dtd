@@ -24,12 +24,12 @@
 <!ENTITY mainpane.concurrent.label "Max concurrent downloads:">
 <!ENTITY mainpane.sounderror.label "Play a sound in case of error">
 <!ENTITY mainpane.closetab.label "Close source tab when DownThemAll starts">
-<!ENTITY mainpane.alert.caption "When downloads are completed:">
+<!ENTITY mainpane.alert.caption "When downloads are complete:">
 <!ENTITY mainpane.alertboxes.label "Alert me using alertboxes">
 <!ENTITY mainpane.alertslides.label "Alert me using slide notifications">
 <!ENTITY mainpane.alertnone.label "Don't alert me">
 <!ENTITY mainpane.sounddone.label "Play a sound when all downloads are complete">
-<!ENTITY mainpane.closedta.label "Close DownThemAll when downloads are completed">
+<!ENTITY mainpane.closedta.label "Close DownThemAll when downloads are complete">
 
 
 <!ENTITY privacypane.label "Privacy">
@@ -43,7 +43,7 @@
 <!ENTITY privacypane.reveallog.label "Show File">
 <!ENTITY privacypane.deletelog.label "Delete Log">
 <!ENTITY privacypane.updates.caption "Updates/Internet">
-<!ENTITY privacypane.information.label "Let dTa download updated news, messages and latest version number">
+<!ENTITY privacypane.information.label "Let dTa download latest news and messages and check for updates">
 <!ENTITY privacypane.statistics.label "Let dTa collect and transfer anonymous usage statistics">
 <!ENTITY privacypane.dropdowns.caption "Dropdown menus">
 <!ENTITY privacypane.dropdownresults.label "Number of entries to keep">
@@ -63,8 +63,8 @@
 <!ENTITY advancedpane.minute "minute">
 <!ENTITY advancedpane.minutes "minutes">
 <!ENTITY advancedpane.misc.caption "Miscellaneous settings">
-<!ENTITY advancedpane.settime.label "Set file times to last modified time (server) or time of queuing">
-<!ENTITY advancedpane.rememberoneclick.label "Have OneClick remember if it applies to All Tabs or Current Tab">
+<!ENTITY advancedpane.settime.label "Set files time to last modified time (server) or time of queuing">
+<!ENTITY advancedpane.rememberoneclick.label "Have DTA OneClick remember if it applies to All Tabs or Current Tab">
 <!ENTITY advancedpane.tempfiles.caption "Temporary files">
 <!ENTITY advancedpane.usetemp.label "Save download chunks in a temporary directory">
 <!ENTITY advancedpane.tempdir.label "Use this directory:">
@@ -76,7 +76,7 @@
 <!ENTITY uipane.downloadwin.label "Add DownThemAll! to the 'Save File' window">
 <!ENTITY uipane.context.caption "Context menu">
 <!ENTITY uipane.tools.caption "Tools Menu">
-<!ENTITY uipane.smbuttons.caption "Seamonkey Buttons">
+<!ENTITY uipane.tbbuttons.caption "Toolbar Buttons">
 <!ENTITY uipane.compact.label "Use a compact menu">
 <!ENTITY uipane.hide.label "Hide this menu">
 <!ENTITY uipane.showtooltip.label "Show download tooltips">

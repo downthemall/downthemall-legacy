@@ -19,7 +19,7 @@
  *
  * Contributor(s):
  *    Stefano Verna <stefano.verna@gmail.com>
- *    Federico Parodi
+ *    Federico Parodi <f.parodi@tiscali.it>
  *    Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -38,9 +38,23 @@
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const Exception = Components.Exception;
 
-const MIN_CHUNK_SIZE = 700 * 1024;
+const Exception = Components.Exception;
+const Construct = Components.Constructor;
+function Serv(c, i) {
+	return Cc[c].getService(i ? Ci[i] : null);
+}
+
+const BufferedOutputStream = Construct('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
+const BinaryOutputStream = Construct('@mozilla.org/binaryoutputstream;1', 'nsIBinaryOutputStream', 'setOutputStream');
+const BinaryInputStream = Construct('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
+const FileInputStream = Construct('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
+
+const MimeService = Serv('@mozilla.org/uriloader/external-helper-app-service;1', 'nsIMIMEService');
+const ObserverService = Serv('@mozilla.org/observer-service;1', 'nsIObserverService');
+const WindowWatcherService = Serv('@mozilla.org/embedcomp/window-watcher;1', 'nsIWindowWatcher');
+
+const MIN_CHUNK_SIZE = 512 * 1024;
 // in use by chunk.writer...
 // in use by decompressor... beware, actual size might be more than twice as big!
 const MAX_BUFFER_SIZE = 5 * 1024 * 1024;
@@ -52,9 +66,9 @@ const STREAMS_FREQ = 100;
 
 var Dialog = {
 	_observes: ['quit-application-requested', 'quit-application-granted'],
-	_lastSum: 0,
 	_initialized: false,
 	_wasRunning: false,
+	_lastTime: Utils.getTimestamp(),
 	_running: [],
 	completed: 0,
 	totalbytes: 0,
@@ -62,10 +76,9 @@ var Dialog = {
 		Tree.init($("downloads"));
 		makeObserver(this);
 		
-  	let os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);		
 		this._observes.forEach(
 			function(topic) {
-				os.addObserver(this, topic, true);
+				ObserverService.addObserver(this, topic, true);
 			},
 			this
 		);
@@ -113,34 +126,54 @@ var Dialog = {
 			const now = Utils.getTimestamp();
 			this._running.forEach(
 				function(i) {
-					var d = i.d;
-					if (d.partialSize != 0 && (now - d.timeStart) >= 1000 ) {
-						// Calculate estimated time
-						if (d.totalSize > 0) {
-							var remaining = Math.ceil((d.totalSize - d.partialSize) / ((d.partialSize - i.lastBytes) * REFRESH_NFREQ));
-							if (!isFinite(remaining)) {
-								d.status = _("unknown");
-							}
-							else {
-								d.status = Utils.formatTimeDelta(remaining);
-							}
-						}
-					}
-					let speed = Math.round((d.partialSize - i.lastBytes) * REFRESH_NFREQ);
+					let d = i.d;
+					
+					let advanced = (d.partialSize - i.lastBytes);
+					sum += advanced;
+					
+					let elapsed = (now - i.lastTime) / 1000;					
+					if (elapsed < 1) {
+						return;
+					}						
+					
+					let speed = Math.round(advanced / elapsed);
+					
+					i.lastBytes = d.partialSize;
+					i.lastTime = now;				
 
 					// Refresh item speed
-					d.speed = Utils.formatBytes(speed) + "/s";
 					d.speeds.push(speed > 0 ? speed : 0);
 					if (d.speeds.length > SPEED_COUNT) {
 						d.speeds.shift();
 					}
 					i.lastBytes = d.partialSize;
-					sum += i.lastBytes;
+					i.lastTime = now;
+					
+					speed = 0;
+					d.speeds.forEach(
+						function(s) {
+							speed += s;
+						}
+					);
+					speed /= d.speeds.length;
+					
+					// Calculate estimated time					
+					if (advanced != 0 && d.totalSize > 0) {
+						let remaining = Math.ceil((d.totalSize - d.partialSize) / speed);
+						if (!isFinite(remaining)) {
+							d.status = _("unknown");
+						}
+						else {
+							d.status = Utils.formatTimeDelta(remaining);
+						}
+					}
+					d.speed = Utils.formatBytes(speed) + "/s";
 				}
 			);
-			let speed = Math.round((sum - this._lastSum) * REFRESH_NFREQ);
+			let elapsed = (now - this._lastTime) / 1000;
+			this._lastTime = now;
+			let speed = Math.round(sum * elapsed);
 			speed = Utils.formatBytes((speed > 0) ? speed : 0);
-			this._lastSum = sum;
 
 			// Refresh status bar
 			$("statusText").label = 
@@ -218,12 +251,12 @@ var Dialog = {
 			Debug.dump("checkDownloads():", ex);
 		}
 	},
-	checkSameName: function D_checkSameName(download, name) {
+	checkSameName: function D_checkSameName(download, path) {
 		for (let i = 0; i < this._running.length; ++i) {
 			if (this._running[i].d == download) {
 				continue;
 			}
-			if (this._running[i].d.destinationName == name) {
+			if (this._running[i].d.destinationFile == path) {
 				return true;
 			}
 		}
@@ -248,6 +281,11 @@ var Dialog = {
 		}
 		return false;
 	},
+	RunningJob: function(d) {
+		this.d = d;
+		this.lastBytes = d.partialSize;
+		this.lastTime = Utils.getTimestamp();
+	},
 	run: function D_run(download) {
 		download.status = _("starting");
 		if (download.is(FINISHING) || (download.partialSize >= download.totalSize && download.totalSize)) {
@@ -268,14 +306,18 @@ var Dialog = {
 		else {
 			Debug.dump("Let's resume " + download + " at " + download.partialSize);
 		}
-		this._running.push({d: download, lastBytes: download.partialSize});
+		this._running.push(new Dialog.RunningJob(download));
 		download.resumeDownload();
 	},
 	wasStopped: function D_wasStopped(download) {
 		this._running = this._running.filter(
 			function(i) {
-				return i.d != download;
-			}
+				if (i.d == download) {
+					return false;
+				}
+				return true;
+			},
+			this
 		);
 	},
 	signal: function D_signal(download) {
@@ -311,8 +353,6 @@ var Dialog = {
 					}
 				}
 			}
-
-			SessionManager.save();
 			if (Prefs.autoClose) {
 				Dialog.close();
 			}
@@ -323,14 +363,11 @@ var Dialog = {
 	},
 	_canClose: function D__canClose() {
 		if (Tree.some(function(d) { return d.started && !d.resumable && d.is(RUNNING); })) {
-			var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
-				.getService(Ci.nsIPromptService);
-			var rv = promptService.confirm(
-				window,
+			var rv = DTA_confirmYN(
 				_("confclose"),
 				_("nonres")
 			);
-			if (!rv) {
+			if (rv) {
 				return false;
 			}
 		}
@@ -346,24 +383,27 @@ var Dialog = {
 		// enumerate everything we'll have to wait for!
 		this._updTimer.kill();
 		this._safeCloseChunks = [];
-		this._safeCloseFinishing = []
-		for (d in Tree.all) {
-			if (d.is(RUNNING, QUEUED)) {
-				// enumerate all running chunks
-				d.chunks.forEach(
-					function(c) {
-						if (c.running) {
-							this._safeCloseChunks.push(c);
-						}
-					},
-					this
-				);
-				d.pause();				
-			}
-			else if (d.is(FINISHING)) {
-				this._safeCloseFinishing.push(d);
-			}
-		}
+		this._safeCloseFinishing = [];
+		Tree.updateAll(
+			function(d) {
+				if (d.is(RUNNING, QUEUED)) {
+					// enumerate all running chunks
+					d.chunks.forEach(
+						function(c) {
+							if (c.running) {
+								this._safeCloseChunks.push(c);
+							}
+						},
+						this
+					);
+					d.pause();				
+				}
+				else if (d.is(FINISHING)) {
+					this._safeCloseFinishing.push(d);
+				}
+			},
+			this
+		);
 		return this._safeClose();
 	},
 	_cleanTmpDir: function D__cleanTmpDir() {
@@ -395,6 +435,7 @@ var Dialog = {
 			}
 		);
 	},
+	_safeCloseAttempts: 0,
 	_safeCloseChunks: [],
 	// this one will loop until all chunks and FINISHING are gone.
 	_safeClose: function D__safeClose() {
@@ -402,15 +443,22 @@ var Dialog = {
 		this._safeCloseChunks = this._safeCloseChunks.filter(function(c) { return c.running; });
 		this._safeCloseFinishing = this._safeCloseFinishing.filter(function(d) { return d.is(FINISHING); });
 		if (this._safeCloseChunks.length || this._safeCloseFinishing.length) {
-			new Timer('Dialog._safeClose()', 250);			
-			return false;
+			if (this._safeCloseAttempts < 20) {
+				++this._safeCloseAttempts;
+				new Timer('Dialog._safeClose()', 250);			
+				return false;
+			}
+			else {
+				Debug.dump("Going down even if queue was not probably closed yet!");
+			}
 		}
 		TimerManager.killAll();
 		// alright, we left the loop.. shutdown complete ;)
-		SessionManager.save();
 		try {
 			this._cleanTmpDir();
-		} catch(ex) {}
+		} catch(ex) {
+			Debug.dump("_safeClose", ex);
+		}
 		self.close();
 		return true;		
 	}
@@ -434,7 +482,7 @@ UrlManager.prototype = {
 		return rv ? rv : (a.url < b.url ? -1 : 1);
 	},
 	initByArray: function um_initByArray(urls) {
-		for (var i = 0; i < urls.length; ++i) {
+		for (let i = 0; i < urls.length; ++i) {
 			this.add(
 				new DTA_URL(
 					urls[i].url,
@@ -487,15 +535,26 @@ UrlManager.prototype = {
 		return true;
 	},
 	save: function um_save() {
-		var rv = [];
-		for (var i = 0, e = this._urls.length; i < e; ++i) {
-			var c = {};
-			c.url = this._urls[i].url;
-			c.charset = this._urls[i].charset;
-			c.usable = this._urls[i].usable;
-			c.preference = this._urls[i].preference;
-			rv.push(c);
-		}
+		let rv = [];
+		this._urls.forEach(
+			function(url) {
+				rv.push({
+					'url': url.url,
+					'charset': url.charset,
+					'usable': url.usable,
+					'preference': url.preference
+				});
+			}
+		);
+		return rv;
+	},
+	toString: function() {
+		let rv = '';
+		this._urls.forEach(
+			function(u) {
+				rv += u.preference + " " + u.url + "\n";
+			}
+		);
 		return rv;
 	}
 };
@@ -566,11 +625,12 @@ Visitor.prototype = {
 					this.contentlength = Number(aValue);
 				break;
 
-				case 'content-range':
+				case 'content-range': {
 					let cl = new Number(aValue.split('/').pop());
 					if (cl > 0) {
 						this.contentlength = cl;
 					}
+				}
 				break;
 				case 'last-modified':
 					try {
@@ -584,7 +644,10 @@ Visitor.prototype = {
 			}
 			if (header == 'etag') {
 				// strip off the "inode"-part apache and others produce, as mirrors/caches usually provide different/wrong numbers here :p
-				this[header] = aValue.replace(/^[a-f\d]+-([a-f\d]+)-([a-f\d]+)$/, '$1-$2').replace(/^([a-f\d]+):[a-f\d]{1,6}$/, '$1');
+				this[header] = aValue
+					.replace(/^(?:W\/)?"(.+)"$/, '$1')
+					.replace(/^[a-f\d]+-([a-f\d]+)-([a-f\d]+)$/, '$1-$2')
+					.replace(/^([a-f\d]+):[a-f\d]{1,6}$/, '$1');
 			}
 			else if (header in this.cmpKeys) {
 				this[header] = aValue;
@@ -661,7 +724,7 @@ VisitorManager.prototype = {
 	 * @author Nils
 	 */
 	load: function vm_init(nodes) {
-		for (var i = 0; i < nodes.length; ++i) {
+		for (let i = 0; i < nodes.length; ++i) {
 			try {
 				this._visitors[nodes[i].url] = new Visitor(nodes[i].values);
 			} catch (ex) {
@@ -676,7 +739,7 @@ VisitorManager.prototype = {
 	 */
 	save: function vm_save() {
 		var rv = [];
-		for (x in this._visitors) {
+		for (let x in this._visitors) {
 			try {
 				var v = {};
 				v.url = x;
@@ -711,7 +774,7 @@ VisitorManager.prototype = {
 	 * @author Nils
 	 */
 	get time() {
-		for (i in this._visitors) {
+		for (let i in this._visitors) {
 			if (this._visitors[i].time > 0) {
 				return this._visitors[i].time;
 			}
@@ -720,7 +783,7 @@ VisitorManager.prototype = {
 	}
 };
 
-function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile, state) {
+function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 
 	this.visitors = new VisitorManager();
 
@@ -744,7 +807,7 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile, state) {
 	
 	if (referrer) {
 		try {
-			this.referrer = IOService.newURI(referrer, null, null).QueryInterface(Ci.nsIURL);
+			this.referrer = referrer.toURL();
 		}
 		catch (ex) {
 			// We might have been fed with about:blank or other crap. so ignore.
@@ -756,10 +819,6 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile, state) {
 	this._mask = mask;
 	this.fileName = this.urlManager.usable.getUsableFileName();
 	
-	if (state) {
-		this.state = state;
-	}
-	
 	if (tmpFile) {
 		try {
 			tmpFile = new FileFactory(tmpFile);
@@ -769,7 +828,7 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile, state) {
 			else {
 				// Download partfile is gone!
 				// XXX find appropriate error message!
-				this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+				this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 			}
 		}
 		catch (ex) {
@@ -845,6 +904,9 @@ QueueItem.prototype = {
 	
 	_destinationFile: null,
 	get destinationFile() {
+		if (!this._destinationFile) {
+			this.rebuildDestination();
+		}
 		return this._destinationFile;
 	},
 	
@@ -926,9 +988,7 @@ QueueItem.prototype = {
 		return this._activeChunks;
 	},
 	set activeChunks(nv) {
-		if (nv < 0) {
-			throw new Error("ac too small");
-		}
+		nv = Math.max(0, nv);
 		this._activeChunks = nv;
 		this.invalidate();
 		return this._activeChunks;
@@ -952,7 +1012,7 @@ QueueItem.prototype = {
 				c.cancel();
 			}
 		}
-		else if (this._maxChunks > this._activeChunks && d.is(RUNNING)) {
+		else if (this._maxChunks > this._activeChunks && this.is(RUNNING)) {
 			this.resumeDownload();
 			
 		}
@@ -971,7 +1031,7 @@ QueueItem.prototype = {
 		return this._icon;
 	},
 	get largeIcon() {
-		return getIcon(this.fileName, 'metalink' in this, 32);
+		return getIcon(this.destinationName, 'metalink' in this, 32);
 	},
 	get size() {
 		try {
@@ -1037,7 +1097,6 @@ QueueItem.prototype = {
 
 	retry: function QI_retry() {
 		// reset flags
-		this.cancel();
 		this.totalSize = this.partialSize = 0;
 		this.compression = null;
 		this.activeChunks = this.maxChunks = 0;
@@ -1062,7 +1121,9 @@ QueueItem.prototype = {
 				}
 			}
 		}
+		this.activeChunks = 0;
 		this.state = PAUSED;
+		this.speeds = [];
 	},
 
 	moveCompleted: function QI_moveCompleted() {
@@ -1150,14 +1211,13 @@ QueueItem.prototype = {
 	},
 	finishDownload: function QI_finishDownload(exception) {
 		Debug.dump("finishDownload, connections", this.sessionConnections);
-		this._completeEvents = ['moveCompleted'];
+		this._completeEvents = ['moveCompleted', 'setAttributes'];
 		if (this.hash) {
 			this._completeEvents.push('verifyHash');
 		}
 		if ('isMetalink' in this) {
 			this._completeEvents.push('handleMetalink');
 		}
-		this._completeEvents.push('setAttributes');
 		if (Prefs.finishEvent) {
 			this._completeEvents.push('customFinishEvent');
 		}
@@ -1166,7 +1226,7 @@ QueueItem.prototype = {
 	_completeEvents: [],
 	complete: function QI_complete(exception) {
 		if (exception) {
-			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 			Debug.dump("complete: ", exception);
 			return;
 		}
@@ -1194,8 +1254,7 @@ QueueItem.prototype = {
 	},
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
-			let url = this.urlManager.usable;
-			let uri = IOService.newURI(url, null, null).QueryInterface(Ci.nsIURL);
+			let uri = this.urlManager.usable.toURL();
 			let host = uri.host.toString();
 
 			// normalize slashes
@@ -1233,9 +1292,7 @@ QueueItem.prototype = {
 			// mime-service method
 			else if (this.contentType) {
 				try {
-					var info = Cc["@mozilla.org/uriloader/external-helper-app-service;1"]
-						.getService(Ci.nsIMIMEService)
-						.getFromTypeAndExtension(this.contentType.split(';')[0], "");
+					let info = MimeService.getFromTypeAndExtension(this.contentType.split(';')[0], "");
 					ext = info.primaryExtension;
 				} catch (ex) {
 					ext = '';
@@ -1274,10 +1331,13 @@ QueueItem.prototype = {
 			
 			mask = mask.replace(/\*\w+\*/gi, replacer);
 
-			mask = this.pathName.addFinalSlash() + mask.removeBadChars().removeFinalChar(".").trim();
-			mask = mask.split(SYSTEMSLASH);
-			this._destinationName = mask.pop();
-			this._destinationPath = mask.join(SYSTEMSLASH).addFinalSlash();
+			mask = mask.removeBadChars().removeFinalChar(".").trim().split(SYSTEMSLASH);
+			let file = new FileFactory(this.pathName.addFinalSlash());
+			while (mask.length) {
+				file.append(mask.shift());
+			}
+			this._destinationName = file.leafName;
+			this._destinationPath = file.parent.path;
 		}
 		catch(ex) {
 			this._destinationName = this.fileName;
@@ -1288,7 +1348,9 @@ QueueItem.prototype = {
 			this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
 			this.conflicts
 		);
-		this._destinationFile = this.destinationPath + this.destinationName;
+		let file = new FileFactory(this.destinationPath);
+		file.append(this.destinationName);
+		this._destinationFile = file.path;
 		this._icon = null;
 	},
 
@@ -1313,7 +1375,14 @@ QueueItem.prototype = {
 		try {
 			if (this.is(CANCELED)) {
 				return;
-			}			
+			}
+			if (this.is(COMPLETE)) {
+				Dialog.completed--;
+			}
+			else if (this.is(RUNNING)) {
+				this.pause();
+			}
+			this.state = CANCELED;			
 			Debug.dump(this.fileName + ": canceled");
 
 			this.visitors = new VisitorManager();
@@ -1323,19 +1392,15 @@ QueueItem.prototype = {
 			}
 			this.status = message;
 
-			if (this.is(COMPLETE)) {
-				Dialog.completed--;
-			}
-			else if (this.is(RUNNING)) {
-				this.pause();
-			}
+
 			this.removeTmpFile();
-			this.state = CANCELED;
 
 			// gc
 			this.chunks = [];
 			this.totalSize = this.partialSize = 0;
-			this.activeChunks = 0;
+			this.maxChunks = this.activeChunks = 0;
+			this.conflicts = 0;
+			this.resumable = true;
 
 		} catch(ex) {
 			Debug.dump("cancel():", ex);
@@ -1380,7 +1445,7 @@ QueueItem.prototype = {
 			chunk.running = true;
 			download.state = RUNNING;
 			Debug.dump("started: " + chunk);
-			chunk.download = new Download(download, chunk, header);
+			chunk.download = new Connection(download, chunk, header);
 			++download.activeChunks;
 			++download.sessionConnections;
 		}
@@ -1532,8 +1597,7 @@ Chunk.prototype = {
 			}
 		}
 		seekable.seek(0x00, this.start + this.written);
-		this._outStream = Cc['@mozilla.org/network/buffered-output-stream;1'].createInstance(Ci.nsIBufferedOutputStream);
-		this._outStream.init(outStream, 131072);
+		this._outStream = new BufferedOutputStream(outStream, 131072);
 	},
 	close: function CH_close() {
 		this.running = false;
@@ -1555,10 +1619,10 @@ Chunk.prototype = {
 	},
 	cancel: function CH_cancel() {
 		this.running = false;
+		this.close();
 		if (this.download) {
 			this.download.cancel();
 		}
-		this.close();
 	},
 	_written: 0,
 	_outStream: null,
@@ -1610,7 +1674,7 @@ Chunk.prototype = {
 	}
 }
 
-function Download(d, c, getInfo) {
+function Connection(d, c, getInfo) {
 
 	this.d = d;
 	this.c = c;
@@ -1618,7 +1682,7 @@ function Download(d, c, getInfo) {
 	this.url = d.urlManager.getURL();
 	var referrer = d.referrer;
 
-	this._chan = IOService.newChannelFromURI(IOService.newURI(this.url.url, null, null));
+	this._chan = IOService.newChannelFromURI(this.url.url.toURL());
 	var r = Ci.nsIRequest;
 	this._chan.loadFlags = r.LOAD_NORMAL | r.LOAD_BYPASS_CACHE;
 	this._chan.notificationCallbacks = this;
@@ -1646,7 +1710,7 @@ function Download(d, c, getInfo) {
 	this.c.running = true;
 	this._chan.asyncOpen(this, null);
 }
-Download.prototype = {
+Connection.prototype = {
 	_interfaces: [
 		Ci.nsISupports,
 		Ci.nsISupportsWeakReference,
@@ -1661,8 +1725,6 @@ Download.prototype = {
 		Ci.nsIFTPEventSink
 	],
 	
-	_redirectedTo: null,
-
 	cantCount: false,
 
 	QueryInterface: function DL_QI(iid) {
@@ -1707,11 +1769,8 @@ Download.prototype = {
 	},
 	get authPrompter() {
 		try {
-			var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
-				.getService(Ci.nsIWindowWatcher);
-			var rv = watcher.getNewAuthPrompter(null)
+			return WindowWatcherService.getNewAuthPrompter(null)
 				.QueryInterface(Ci.nsIAuthPrompt);
-			return rv;
 		} catch (ex) {
 			Debug.dump("authPrompter", ex);
 			throw ex;
@@ -1753,9 +1812,8 @@ Download.prototype = {
 	onChannelRedirect: function DL_onChannelRedirect(oldChannel, newChannel, flags) {
 		try {
 			this._chan == newChannel;
-			this._redirectedTo = newChannel.URI.spec;
 			this.url.url = newChannel.URI.spec;
-			this.d.filename = DTA_URLhelpers.decodeCharset(this._redirectedTo, this.url.charset).getUsableFileName();
+			this.d.fileName = this.url.usable.getUsableFileName();
 		}
 		catch (ex) {
 			// no-op
@@ -1776,7 +1834,7 @@ Download.prototype = {
 		}
 		catch (ex) {
 			Debug.dump('onDataAvailable', ex);
-			this.d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+			this.d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 		}
 	},
 	
@@ -1898,6 +1956,7 @@ Download.prototype = {
 				vis.value = '';
 				aChannel.visitResponseHeaders(vis);
 				Debug.dump("Response Headers\n\n" + vis.value);
+				d.cancel();
 				d.resumable = false;
 				d.retry();
 				return false;
@@ -1911,6 +1970,7 @@ Download.prototype = {
 		catch (ex) {
 			Debug.dump("header failed! " + d, ex);
 			// restart download from the beginning
+			d.cancel();
 			d.resumable = false;
 			d.retry();
 			return false;
@@ -1947,25 +2007,17 @@ Download.prototype = {
 			d.totalSize = 0;
 		}
 		
-		var newName;
 		if (visitor.fileName && visitor.fileName.length > 0) {
 			// if content disposition hasn't an extension we use extension of URL
-			newName = visitor.fileName;
+			let newName = visitor.fileName;
 			let ext = this.url.usable.getExtension();
 			if (visitor.fileName.lastIndexOf('.') == -1 && ext) {
 				newName += '.' + ext;
 			}
-		} else if (this._redirectedTo) {
-			// if there has been one or more "moved content" header directives, we use the new url to create filename
-			newName = this._redirectedTo;
+			let charset = visitor.overrideCharset ? visitor.overrideCharset : this.url.charset;
+			d.fileName = DTA_URLhelpers.decodeCharset(newName, charset).getUsableFileName();
 		}
 
-		// got a new name, so decode and set it.
-		if (newName) {
-			let charset = visitor.overrideCharset ? visitor.overrideCharset : this.url.charset;
-			newName = DTA_URLhelpers.decodeCharset(newName, charset);
-			d.fileName = newName.getUsableFileName();
-		}
 		return false;
 	},
 	
@@ -1984,16 +2036,10 @@ Download.prototype = {
 			if (!this.handleError()) {
 				Debug.dump(d + ": Server error or disconnection (type 1)");
 				d.status = _("servererror");
-				d.speed = '';
 				d.pause();
 			}
 			return false;
-		}
-		
-		if (this._redirectedTo) {
-			let url = new DTA_URL(this._redirectedTo, this.url.charset);
-			d.fileName = url.usable.getUsableFileName();
-		}				
+		}			
 			
 		// try to get the size anyway ;)
 		try {
@@ -2078,7 +2124,7 @@ Download.prototype = {
 				}
 				catch (ex) {
 					Debug.dump("size check threw", ex);
-					d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + _("checkperm"), _("accesserror"));
+					d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 					return;
 				}
 				
@@ -2099,7 +2145,7 @@ Download.prototype = {
 				ConflictManager.resolve(d);
 			}
 			
-			if (d.resumable) {
+			if (d.resumable && !d.is(CANCELED)) {
 				d.resumeDownload();
 			}
 		}
@@ -2141,21 +2187,17 @@ Download.prototype = {
 		// routine for normal chunk
 		Debug.dump(d + ": Chunk " + c.start + "-" + c.end + " finished.");
 
-		if (!d.is(RUNNING)) {
-			d.speed = '';
-		}
-		
 		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
 		if (c.starter && !shouldFinish && d.is(RUNNING)) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.dump(d + ": Server error or disconnection (type 2)");
 				d.status = _("servererror");
-				d.speed = '';
 				d.pause();
 				return;
 			}
 			else {
 				Debug.dump("caught bad server");
+				d.cancel();
 				d.retry();
 				return;
 			}
@@ -2237,11 +2279,17 @@ function startDownloads(start, downloads) {
 	
 	let g = downloads;
 	if ('length' in downloads) {
-		g = function() { for (let i = 0, e = downloads.length; i < e; ++i) yield downloads[i]; }();
+		g = function() {
+			 for (let i = 0, e = downloads.length; i < e; ++i) {
+			 	yield downloads[i];
+			 }
+		}();
 	}
 
 	let added = 0;
 	let removeableTabs = {};
+	Tree.beginUpdate();
+	SessionManager.beginUpdate();
 	for (let e in g) {
 		e.dirSave.addFinalSlash();
 
@@ -2264,7 +2312,10 @@ function startDownloads(start, downloads) {
 			e.mask,
 			e.referrer
 		);
-		if ('hash' in e && e.hash) {
+		if (e.url.hash) {
+			d.hash = e.url.hash;
+		}
+		else if (e.hash) {
 			d.hash = e.hash;
 		}
 		else {
@@ -2278,6 +2329,7 @@ function startDownloads(start, downloads) {
 			d.status = _('paused');
 		}
 		Tree.add(d);
+		SessionManager.save(d);
 		++added;
 		if (Preferences.getDTA("closetab", false) && d.referrer) {
 			removeableTabs[d.referrer.spec] = true;			
@@ -2290,9 +2342,8 @@ function startDownloads(start, downloads) {
 			Debug.dump("failed to close old tab", ex);
 		}
 	}
-
-	// full save
-	new Timer(function() { SessionManager.save() }, 100);
+	Tree.endUpdate();
+	SessionManager.endUpdate();
 
 	Tree.doFilter();
 	
@@ -2303,10 +2354,7 @@ function startDownloads(start, downloads) {
 	else {
 		boxobject.scrollToRow(numbefore);
 	}
-	Tree.selection.currentIndex = numbefore + 1;
 }
-
-const IOService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 const FileOutputStream = Components.Constructor(
 	'@mozilla.org/network/file-output-stream;1',
 	'nsIFileOutputStream',
@@ -2338,7 +2386,7 @@ var ConflictManager = {
 		let dest = new FileFactory(download.destinationFile);
 		let sn = false;
 		if (download.is(RUNNING)) {
-			sn = Dialog.checkSameName(download, download.destinationName);
+			sn = Dialog.checkSameName(download, download.destinationFile);
 		}
 		Debug.dump("conflict check: " + sn + "/" + dest.exists() + " for " + download.destinationFile);
 		return dest.exists() || sn;
@@ -2347,11 +2395,12 @@ var ConflictManager = {
 		if (this._processing) {
 			return;
 		}
+		let cur;
 		while (this._items.length) {
-			let cur = this._items[0];
+			cur = this._items[0];
 			if (!this._check(cur.download)) {
 				if (reentry) {
-					download[reentry]();
+					cur.download[reentry]();
 				}
 				this._items.shift();
 				continue;
@@ -2361,20 +2410,6 @@ var ConflictManager = {
 		if (!this._items.length) {
 			return;
 		}
-		let cur = this._items[0];
-		let download = cur.download;
-		download.conflicts = 0;
-		let basename = download.destinationName;
-		let newDest = new FileFactory(download.destinationFile);
-		let i = 1;
-		for (;; ++i) {
-			newDest.leafName = Utils.formatConflictName(basename, i);
-			if (!newDest.exists() && (!download.is(RUNNING) || !Dialog.checkSameName(this, newDest.leafName))) {
-				break;
-			}
-		}
-		cur.newDest = newDest.leafName;
-		cur.conflicts = i;
 	
 		if (Prefs.conflictResolution != 3) {
 			this._return(Prefs.conflictResolution);
@@ -2384,14 +2419,16 @@ var ConflictManager = {
 			this._return(this._sessionSetting);
 			return;
 		}
-		if (download.shouldOverwrite) {
+		if (cur.download.shouldOverwrite) {
 			this._return(1);
 			return;
 		}
+		
+		this._computeConflicts(cur);
 
 		var options = {
-			url: download.urlManager.usable.cropCenter(45),
-			fn: download.destinationName.cropCenter(45),
+			url: cur.download.urlManager.usable.cropCenter(45),
+			fn: cur.download.destinationName.cropCenter(45),
 			newDest: cur.newDest.cropCenter(45)
 		};
 		
@@ -2403,6 +2440,21 @@ var ConflictManager = {
 			"chrome,centerscreen,resizable=no,dialog,close=no,dependent",
 			options, this
 		);
+	},
+	_computeConflicts: function CM__computeConflicts(cur) {
+		let download = cur.download;
+		download.conflicts = 0;
+		let basename = download.destinationName;
+		let newDest = new FileFactory(download.destinationFile);
+		let i = 1;
+		for (;; ++i) {
+			newDest.leafName = Utils.formatConflictName(basename, i);
+			if (!newDest.exists() && (!download.is(RUNNING) || !Dialog.checkSameName(this, newDest.path))) {
+				break;
+			}
+		}
+		cur.newDest = newDest.leafName;
+		cur.conflicts = i;	
 	},
 	_returnFromDialog: function CM__returnFromDialog(option, type) {
 		if (type == 1) {
@@ -2416,7 +2468,7 @@ var ConflictManager = {
 	_return: function CM__return(option) {
 		let cur = this._items[0];
 		switch (option) {
-			/* rename */    case 0: cur.download.conflicts = cur.conflicts; break;
+			/* rename */    case 0: this._computeConflicts(cur); cur.download.conflicts = cur.conflicts; break;
 			/* overwrite */ case 1: cur.download.shouldOverwrite = true; break;
 			/* skip */      default: cur.download.cancel(_('skipped')); break;
 		}

@@ -12,6 +12,8 @@
 <?xml-stylesheet href="chrome://dta/skin/manager/style.css" type="text/css" ?>
 
 <!DOCTYPE dialog [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+	%globalDTD;
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
 	%commonDTD;
 	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
@@ -114,7 +116,7 @@
 	</popupset>	
 	
  	<vbox flex="1">
-		<toolbox>
+		<toolbox chromedir="&locale.dir;">
 		  <toolbar id="tools">
 			<spacer/>
 			<toolbarbutton label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="&tooladd.tooltip;" />
@@ -128,7 +130,7 @@
 			<toolbarbutton label="&movedown.label;" id="toolmovedown" onclick="Tree.down();"/>
 			<toolbarbutton label="&movebottom.label;" id="toolmovebottom" onclick="Tree.bottom();"  />
 			<spacer flex="1" />
-			<spacer id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/howto/donate/');" tooltiptext="&tooldonate.tooltiptext;" />
+			<spacer chromedir="&locale.dir;" id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/howto/donate/');" tooltiptext="&tooldonate.tooltiptext;" />
 		  </toolbar>
 		</toolbox>
 
@@ -142,6 +144,8 @@
 			style="margin:0px;"
 			ondblclick="FileHandling.openFile();"
 			onselect="Tree.selectionChanged();"
+			onmousemove="Tree.hovering(event);"
+			chromedir="&locale.dir;"
 		>
 			<treecols>
 				<treecol id="task" label="&task.label;" ordinal="1" flex="30" crop="center" persist="width ordinal hidden"/>
@@ -170,7 +174,7 @@
 		
 	</vbox>
 
-	<statusbar id="footer"  >
+	<statusbar id="footer" chromedir="&locale.dir;">
 		 <statusbarpanel><textbox id="downloadsearch" oninput="Tree.setFilter(this.value);"/></statusbarpanel>		
 		 <statusbarpanel id="statusText" label="" flex="2"/>
 		 <statusbarpanel id="dtaHelp" class="statusbarpanel-iconic-text" label="&dtahelp;" onclick="openHelp('Manager','chrome://dta-help/content/help.rdf');" src="chrome://dta/skin/common/help.png" />

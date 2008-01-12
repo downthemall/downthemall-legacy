@@ -3,8 +3,8 @@
 	CHECK BEFORE MODIFY
 -->
 
-<!ENTITY start.label "Queue!">
-<!ENTITY start.key "q" >
+<!ENTITY start.label "Start!">
+<!ENTITY start.key "s" >
 <!ENTITY queue.label "Add paused">
 <!ENTITY queue.key "p" >
 <!ENTITY cancel.label "Cancel">
@@ -22,3 +22,4 @@
 
 <!ENTITY selectall.label "Select all">
 <!ENTITY selectinv.label "Invert selection">
+<!ENTITY selectnone.label "Select none">

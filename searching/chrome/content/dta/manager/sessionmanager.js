@@ -19,7 +19,7 @@
  *
  * Contributor(s):
  *    Stefano Verna <stefano.verna@gmail.com>
- *    Federico Parodi
+ *    Federico Parodi <f.parodi@tiscali.it>
  *    Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -35,21 +35,29 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
- var SessionManager = {
+
+var SessionManager = {
 
 	init: function() {
-		this._con = Cc["@mozilla.org/storage/service;1"]
-			.getService(Ci.mozIStorageService)
+		this._con = Serv('@mozilla.org/storage/service;1', 'mozIStorageService')
 			.openDatabase(DTA_profileFile.get('dta_queue.sqlite'));
 		try {
 			this._con.executeSimpleSQL('CREATE TABLE queue (uuid INTEGER PRIMARY KEY AUTOINCREMENT, pos INTEGER, item TEXT)');
 		} catch (ex) {
 			// no-op
 		}
-		this._saveStmt = this._con.createStatement('REPLACE INTO queue (uuid, pos, item) VALUES (?1, ?2, ?3)');
-		this._savePosStmt = this._con.createStatement('UPDATE queue SET pos = ?1 WHERE uuid = ?2');
-		this._delStmt = this._con.createStatement('DELETE FROM queue WHERE uuid = ?1');
+		try {
+			this._saveStmt = this._con.createStatement('INSERT INTO queue (uuid, pos, item) VALUES (?1, ?2, ?3)');
+			this._saveItemStmt = this._con.createStatement('UPDATE queue SET pos = ?2, item = ?3 WHERE uuid = ?1');
+			this._savePosStmt = this._con.createStatement('UPDATE queue SET pos = ?1 WHERE uuid = ?2');
+			this._delStmt = this._con.createStatement('DELETE FROM queue WHERE uuid = ?1');
+		}
+		catch (ex) {
+			Debug.dump("SQLite: " + this._con.lastErrorString);
+			alert("SQLite: " + this._con.lastErrorString);
+			self.close();
+			return;
+		}
 
 		this._converter = Components.classes["@mozilla.org/intl/saveascharset;1"]
 			.createInstance(Ci.nsISaveAsCharset);
@@ -65,6 +73,7 @@
 			|| (Prefs.removeCanceled && d.is(CANCELED))
 			|| (Prefs.removeAborted && d.is(PAUSED))
 		) {
+			this.deleteDownload(d);
 			return false;
 		}
 
@@ -79,6 +88,8 @@
 			'hash',
 			'compression',
 			'maxChunks',
+			'contentType',
+			'conflicts',
 		].forEach(
 			function(u) {
 				e[u] = d[u];
@@ -117,16 +128,19 @@
 			);
 		}
 
-		let s = this._saveStmt;
+		let s;
+		Debug.dump("Saving Download: " + d);
 		if (d._dbId) {
+			s = this._saveItemStmt;
 			s.bindInt64Parameter(0, d._dbId);
 		}
 		else {
+			s = this._saveStmt;
 			s.bindNullParameter(0);
 		}
 		if (!isFinite(pos)) {
 			if ('position' in d) {
-						s.bindInt32Parameter(1, d.position);
+				s.bindInt32Parameter(1, d.position);
 			}
 			else {
 				s.bindNullParameter(1);
@@ -137,7 +151,9 @@
 		}
 		s.bindUTF8StringParameter(2, this._converter.Convert(e.toSource()));
 		s.execute();
-		d._dbId = this._con.lastInsertRowID;
+		if (!d._dbId) {
+			d._dbId = this._con.lastInsertRowID;
+		}
 		s.reset();
 		return true;
 	},
@@ -163,8 +179,7 @@
 
 		this.beginUpdate();
 		try {
-			this._con.executeSimpleSQL('DELETE FROM queue');
-			var i = 0;
+			let i = 0;
 			for (let d in Tree.all) {
 				if (this._saveDownload(d, i)) {
 					++i;
@@ -202,8 +217,11 @@
 			if (!download._dbId) {
 				return;
 			}
+			Debug.dump("Deleting Download: " + download);
 			this._delStmt.bindInt64Parameter(0, download._dbId);
 			this._delStmt.execute();
+			this._delStmt.reset();
+			delete download._dbId;
 		}
 		catch (ex) {
 			Debug.dump("SQLite: " + this._con.lastErrorString);
@@ -220,36 +238,37 @@
 
 		while (stmt.executeStep()) {
 			try {
-				const _dbId = stmt.getInt64(0);
-				var down = eval(stmt.getUTF8String(1));
-				var get = function(attr) {
+				let _dbId = stmt.getInt64(0);
+				let down = eval(stmt.getUTF8String(1));
+				let get = function(attr) {
 					if (attr in down) {
 						return down[attr];
 					}
 					return null;
 				}
 
-				var d = new QueueItem(
+				let d = new QueueItem(
 					new UrlManager(down.urlManager),
 					get("pathName"),
 					get("numIstance"),
 					get("description"),
 					get("mask"),
 					get("referrer"),
-					get("tmpFile"),
-					get('state')
-					);
+					get("tmpFile")
+				);
 				d._dbId = _dbId;
 				d.startDate = new Date(get("startDate"));
 				d.visitors.load(down.visitors);
 
 				[
+					'contentType',
+					'conflicts',
 					'fileName',
 					'destinationName',
 					'resumable',
 					'totalSize',
 					'hash',
-					'compression',
+					'compression'
 				].forEach(
 					function(e) {
 						d[e] = get(e);
@@ -260,7 +279,9 @@
 				}
 
 				d.started = d.partialSize != 0;
-
+				if (get('state')) {
+					d._state = get('state');
+				}
 				if (d.is(PAUSED)) {
 					down.chunks.forEach(
 						function(c) {
@@ -276,12 +297,13 @@
 				}
 				else if (d.is(CANCELED)) {
 					d.status = _('canceled');
-				}
+				}			
 				Tree.add(d);
 			}
 			catch (ex) {
 				Debug.dump('failed to init a download from queuefile', ex);
 			}
 		}
+		Tree.invalidate();
 	}
 };
