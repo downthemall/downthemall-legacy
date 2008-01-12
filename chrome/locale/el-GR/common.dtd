@@ -1,0 +1,17 @@
+<!ENTITY start.label "Εκκίνηση!">
+<!ENTITY start.key "ν">
+<!ENTITY queue.label "Προσθήκη παυμένου">
+<!ENTITY queue.key "μ">
+<!ENTITY cancel.label "Ακύρωση">
+<!ENTITY options.label "Επιλογές...">
+<!ENTITY dtahelp "Βοήθεια!">
+<!ENTITY url.value "URL">
+<!ENTITY dest.caption "Αποθήκευση αρχείων σε:">
+<!ENTITY referrer.value "URL αναφορέα:">
+<!ENTITY checksum.value "Άθροισμα ελέγχου (Hash):">
+<!ENTITY browse.tip "Εντοπισμός καταλόγου προορισμού...">
+<!ENTITY mask.label "Μάσκα μετονομασίας">
+<!ENTITY mask.tip "Τα επιλεγμένα αρχεία θα αποθηκευτούν και θα μετονομαστούν σύμφωνα με αυτή τη μάσκα">
+<!ENTITY selectall.label "Επιλογή όλων">
+<!ENTITY selectinv.label "Αντιστροφή επιλογής">
+<!ENTITY selectnone.label "Επιλογή κανενός">

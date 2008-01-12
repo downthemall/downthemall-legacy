@@ -1,0 +1,7 @@
+<!ENTITY title.value "Konflikt názvu súboru!">
+<!ENTITY text.value "Pamätať si toto nastavenie:">
+<!ENTITY file.label "Len pre tento súbor">
+<!ENTITY session.label "Len pre túto reláciu">
+<!ENTITY always.label "Odteraz">
+<!ENTITY overwrite.label "Prepísať existujúci súbor">
+<!ENTITY skip.label "Preskočiť/Zrušiť">
