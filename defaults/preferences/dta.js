@@ -33,6 +33,9 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
+ 
+pref("extensions.{DDC359D1-844A-42a7-9AA1-88A850A938A8}.description", "chrome://dta/locale/common.properties");
+ 
 pref("extensions.dta.ctxmenu", "1,1,0");
 pref("extensions.dta.ctxcompact", false);
 pref("extensions.dta.toolsmenu", "0,0,0");
