@@ -65,7 +65,7 @@ var Privacy = {
 			$("butFoldDel").disabled = history;
 		}
 		catch(ex) {
-			Debug.dump("privacyLoad(): ", ex);
+			Debug.log("privacyLoad(): ", ex);
 		}
 	},
 	delFilters: function() {
@@ -75,24 +75,23 @@ var Privacy = {
 		Preferences.resetDTA("directory");
 	},
 	showLog: function() {
-		var log = DTA_profileFile.get('dta_log.txt');
-		if (log.exists()) {
-			DTA_Mediator.openTab("file://" + log.path);
+		if (Debug.file.exists()) {
+			DTA_Mediator.openTab("file://" + Debug.file.path);
 		}
 	},
 	revealLog: function() {
-		var log = DTA_profileFile.get('dta_log.txt')
-			.QueryInterface(Ci.nsILocalFile);
-		if (log.exists()) {
-			OpenExternal.reveal(log);
+		if (Debug.file.exists()) {
+			OpenExternal.reveal(Debug.file);
 		}
 	},
 	deleteLog: function() {
-		var log = DTA_profileFile.get('dta_log.txt');
-		if (log.exists()) {
-			log.remove(false);
+		try {
+			Debug.remove();
 			$("butShowLog", 'butDelLog', 'butRevealLog')
 				.forEach(function(e){ e.disabled = true; });
+		}
+		catch (ex) {
+			alert(ex);
 		}
 	}
 };
@@ -144,8 +143,9 @@ var Filters = {
 			makeObserver(this);
 			var os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
 			os.addObserver(this, 'DTA:filterschanged', true);
-		} catch (ex) {
-			Debug.dump("cannot install filterManager observer!", ex);
+		}
+		catch (ex) {
+			Debug.log("cannot install filterManager observer!", ex);
 			return false;
 		}
 		return true;
@@ -190,8 +190,8 @@ var Filters = {
 				this.selection.select(0);
 			}
 		}
-		catch(e) {
-			Debug.dump("reloadFilters():", e);
+		catch(ex) {
+			Debug.log("reloadFilters():", ex);
 		}
 	},
 	

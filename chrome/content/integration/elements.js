@@ -47,7 +47,7 @@ var DTA_ContextOverlay = {
 		try {
 			return this._str.GetStringFromName(n);
 		} catch (ex) {
-			DTA_debug.dump("locale error: " + n, ex);
+			DTA_debug.log("locale error: " + n, ex);
 			return '<error>';
 		}
 	},
@@ -111,7 +111,7 @@ var DTA_ContextOverlay = {
 					src = DTA_AddingFunctions.composeURL(doc, src);
 				}
 				catch (ex) {
-					DTA_debug.dump("failed to compose: " + src, ex);
+					DTA_debug.log("failed to compose: " + src, ex);
 					continue;
 				}
 			}
@@ -165,7 +165,7 @@ var DTA_ContextOverlay = {
 			
 			var sel = aWin.getSelection();
 			if (honorSelection && sel && !sel.isCollapsed) {
-				DTA_debug.dump("selection only");
+				DTA_debug.log("selection only");
 				[links, images, embeds, inputs] = [links, images, embeds, inputs].map(
 					function(e) {
 						return filterElements(e, sel);
@@ -187,7 +187,7 @@ var DTA_ContextOverlay = {
 			);
 		}
 		catch (ex) {
-			DTA_debug.dump('addLinks', ex);
+			DTA_debug.log('addLinks', ex);
 		}
 		
 		// do not process further as we just filtered the selection
@@ -269,9 +269,9 @@ var DTA_ContextOverlay = {
 			}		
 			
 			if (turbo) {
-				DTA_debug.dump("findLinks(): DtaOneClick request from the user");
+				DTA_debug.logString("findLinks(): DtaOneClick request from the user");
 			} else {
-				DTA_debug.dump("findLinks(): DtaStandard request from the user");
+				DTA_debug.logString("findLinks(): DtaStandard request from the user");
 			}
 
 			var wt = document.documentElement.getAttribute('windowtype');
@@ -303,13 +303,14 @@ var DTA_ContextOverlay = {
 					DTA_AddingFunctions.saveLinkArray(true, urls, images);
 					return;
 				} catch (ex) {
-					DTA_debug.dump('findLinks', ex);
+					DTA_debug.log('findLinks', ex);
 					DTA_alert(this.getString('error'), this.getString('errorinformation'));
 				}
 			}
 			DTA_AddingFunctions.saveLinkArray(false, urls, images);
-		} catch(ex) {
-			DTA_debug.dump('findLinks', ex);
+		}
+		catch(ex) {
+			DTA_debug.log('findLinks', ex);
 		}
 	},
 	
@@ -343,13 +344,14 @@ var DTA_ContextOverlay = {
 					return;
 				}
 				catch (ex) {
-					DTA_debug.dump('findSingleLink', ex);
+					DTA_debug.log('findSingleLink', ex);
 					DTA_alert(this.getString('error'), this.getString('errorinformation'));
 				}
 			}
 			DTA_AddingFunctions.saveSingleLink(false, url, ref, desc);
-		} catch (ex) {
-			DTA_debug.dump('findSingleLink: ', ex);
+		}
+		catch (ex) {
+			DTA_debug.log('findSingleLink: ', ex);
 		}
 	},
 	
@@ -384,9 +386,10 @@ var DTA_ContextOverlay = {
 			this.toolsMenu = document.getElementById('dtaToolsPopup');
 			this.toolsSep = document.getElementById('dtaToolsSep');
 			
-		} catch (ex) {
+		}
+		catch (ex) {
 			Components.utils.reportError(ex);
-			DTA_debug.dump("DCO::init()", ex);
+			DTA_debug.log("DCO::init()", ex);
 		}
 	},
 	get contextMenu() {
@@ -511,8 +514,9 @@ var DTA_ContextOverlay = {
 					this.ctx.SepBack.hidden = true;
 				}		 
 			}
-		} catch(ex) {
-			DTA_debug.dump("DTAContext(): ", ex);
+		}
+		catch(ex) {
+			DTA_debug.log("DTAContext(): ", ex);
 		}
 	},
 	
@@ -562,7 +566,7 @@ var DTA_ContextOverlay = {
 				}
 			}
 		} catch(ex) {
-			DTA_debug.dump("DTATools(): ", ex);
+			DTA_debug.log("DTATools(): ", ex);
 		}
 	},
 	
@@ -596,8 +600,9 @@ var DTA_ContextOverlay = {
 					}
 				}
 			}
-		} catch(ex) {
-			DTA_debug.dump('extractDescription', ex);
+		}
+		catch(ex) {
+			DTA_debug.log('extractDescription', ex);
 		}
 		return this.trim(rv);
 	}

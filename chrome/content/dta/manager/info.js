@@ -103,8 +103,9 @@ var Dialog = {
 			if (this.isFullyDisabled) {
 				$('dTaDownloadInfo').buttons = 'accept';
 			}			
-		} catch(ex) {
-			Debug.dump('load', ex);
+		}
+		catch(ex) {
+			Debug.log('load', ex);
 		}
 		window.setTimeout('window.sizeToContent()', 0);
 	},
@@ -147,7 +148,7 @@ var Dialog = {
 						d.referrer.spec = newRef;
 					}
 					catch (ex) {
-						Debug.dump("failed to set referrer to", newRef);
+						Debug.log("failed to set referrer to", newRef);
 					}
 				}
 			}

@@ -11,14 +11,14 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll!
+ * The Original Code is DownThemAll! Debug Service.
  *
  * The Initial Developer of the Original Code is Nils Maier
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2008
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *	 Nils Maier <MaierMan@web.de>
+ *   Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -33,42 +33,22 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
-const Process = Components.Constructor('@mozilla.org/process/util;1', 'nsIProcess', 'init');
- 
-function CustomEvent(download, command) {
- 	try {
- 		// may I introduce you to a real bastard way of commandline parsing?! :p
- 		var uuids = {};
- 		function callback(u) {
- 			u = u.substr(1, u.length - 2);
- 			id = newUUIDString();
- 			uuids[id] = u;
- 			return id;
- 		}
- 		function mapper(arg, i) {
- 				if (arg == "%f") {
- 					if (i == 0) {
- 						throw new Components.Exception("Will not execute the file itself");
- 					}
- 					arg = download.destinationFile;
- 				}
- 				else if (arg in uuids) {
- 					arg = uuids[arg];
- 				}
- 				return arg;
- 		}
- 		var args = command
- 			.replace(/(["'])(.*?)\1/g, callback)
- 			.split(/ /g)
- 			.map(mapper);
- 		var program = new FileFactory(args.shift());
-		var process = new Process(program);
-		process.run(false, args, args.length); 		
- 	}
- 	catch (ex) {
- 		Debug.log("failed to execute custom event", ex);
- 		alert("failed to execute custom event", ex);
- 	}
- 	download.complete();
-} 
+
+#include "nsISupports.idl"
+
+interface nsILocalFile;
+
+[scriptable, uuid(0B82FEBB-59A1-41d7-B31D-D5A686E11A69)]
+interface dtaIDebugService : nsISupports {
+	
+	readonly attribute nsILocalFile file;
+	readonly attribute boolean enabled;
+
+	/* use a string for result so that we get properly converted errors */	
+	void log(in AUTF8String msg, in AUTF8String result);	
+	
+	/* log a message */
+	void logString(in AUTF8String msg);
+	void remove();
+	
+}; 

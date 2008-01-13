@@ -114,7 +114,7 @@ Verificator.prototype = {
 			this.download.partialSize = offset;
 		}
 		catch (ex) {
-			Debug.dump("hash update failed!", ex);
+			Debug.log("hash update failed!", ex);
 			var reason = 0x804b0002; // NS_BINDING_ABORTED;
 			request.cancel(reason);
 		}

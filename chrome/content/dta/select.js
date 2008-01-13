@@ -323,8 +323,9 @@ var Dialog = {
 				true
 			);
 			
-		} catch(ex) {
-			DTA_debug.dump("load():", ex);
+		}
+		catch(ex) {
+			DTA_debug.log("load():", ex);
 		}
 
 		// will install our observer
@@ -416,8 +417,9 @@ var Dialog = {
 
 			// unload ourselves.
 			return this.unload();
-		} catch(ex) {
-			Debug.dump("Downloadfile:", ex);
+		}
+		catch(ex) {
+			Debug.log("Downloadfile:", ex);
 		}
 
 		// if we get here some error occured - just close.
@@ -528,7 +530,7 @@ var Dialog = {
 
 		// whoops, somebody called us that has no filter attached
 		if (!('filter') in box) {
-			Debug.dump("toggleBox: invalid element");
+			Debug.logString("toggleBox: invalid element");
 			return;
 		}
 
@@ -739,7 +741,7 @@ var Dialog = {
 			os.addObserver(this, 'DTA:filterschanged', true);
 		}
 		catch (ex) {
-			Debug.dump("cannot install filterManager observer!", ex);
+			Debug.log("cannot install filterManager observer!", ex);
 			return false;
 		}
 		return true;

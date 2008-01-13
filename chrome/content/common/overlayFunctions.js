@@ -179,90 +179,8 @@ var DTA_profileFile = {
 		return file;
 	}
 };
-var DTA_debug = {
-	_dumpEnabled : false,
-	_consoleService : null,
-	_logPointer : null,
-	load : function() {
-		this._dumpEnabled = DTA_preferences.getDTA("logging", false);
-		if (!this._dumpEnabled) {
-			this.dump = this._dumpStub;
-			return;
-		}
-		this.dump = this._dump;
-		this._consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
-		this._logPointer = DTA_profileFile.get('dta_log.txt');
-		try {
-			if (this._logPointer.fileSize > (200 * 1024))
-				this._logPointer.remove(false);
-		} catch(e) {}
-	},
-	formatTimeDate: function DD_formatTimeDate(value) {
-		return String(value).replace(/\b(\d)\b/g, "0$1");
-	},
-	_dump : function(message, e) {
-		try {
-			if (message == "" && typeof(e) != "object") {
-				return;
-			}
-
-			message = String(message);
-
-			var time = new Date();
-			var text = this.formatTimeDate(time.getHours())
-				+ ":" + this.formatTimeDate(time.getMinutes())
-				+ ":" + this.formatTimeDate(time.getSeconds())
-				+ ":" + time.getMilliseconds()
-				+ "\x0D\x0A\t";
-
-			if (message != "") {
-				text += message.replace(/\n/g, "\x0D\x0A\t") + " ";
-			}
-			if (e instanceof Components.Exception) {
-				text += e.toString();
-			} else if (e instanceof Error) {
-				if (!e.message)
-					text += e;
-				else
-					text += e.message + " (" + e.fileName +" line " + e.lineNumber + ")";
-			}
-			else if (e instanceof String || typeof(e) == "string") {
-				text += e;
-			}
-			else if (e instanceof Number || typeof(e) == "number") {
-				text += "ResCode: " + e;
-			}
-			else if (e) {
-				text += e.toSource();
-			}
-			text += "\x0D\x0A";
-
-			if (Components.stack) {
-				var stack = Components.stack.caller;
-				for (var i = 0; i < 4 && stack; ++i) {
-					text += stack.toString() + "\x0D\x0A";
-					stack = stack.caller;
-				}
-			}
-
-			this._consoleService.logStringMessage(text);
-
-			var fo = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);
-			fo.init(this._logPointer, 0x04 | 0x08 | 0x10, 0664, 0);
-			fo.write(text, text.length);
-			fo.close();
-		} catch(ex) {
-			Components.utils.reportError(ex);
-		}
-	},
-	_dumpStub: function() {},
-	dumpObj: function(obj) {
-		for (i in obj) {
-			Components.utils.reportError(i + ": " + (obj[i] ? obj[i].toSource() : obj[i]));
-		}
-	}
-};
-DTA_debug.load();
+var DTA_debug = Components.classes['@downthemall.net/debug-service;1']
+	.getService(Components.interfaces.dtaIDebugService);
 
 var DTA_URLhelpers = {
 	textToSubURI : Components.classes["@mozilla.org/intl/texttosuburi;1"]
@@ -278,8 +196,9 @@ var DTA_URLhelpers = {
 		} catch (ex) {
 			try {
 				rv = decodeURIComponent(text);
-			} catch (ex) {
-				DTA_debug.dump("DTA_URLhelpers: failed to decode: " + text, ex);
+			}
+			catch (ex) {
+				DTA_debug.log("DTA_URLhelpers: failed to decode: " + text, ex);
 			}
 		}
 		return rv;
@@ -508,7 +427,7 @@ var DTA_AddingFunctions = {
 
 		if (turbo) {
 
-			DTA_debug.dump("saveLinkArray(): DtaOneClick filtering started");
+			DTA_debug.logString("saveLinkArray(): DtaOneClick filtering started");
 
 			var links;
 			var type;
@@ -537,7 +456,7 @@ var DTA_AddingFunctions = {
 				}
 			);
 
-			DTA_debug.dump("saveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
+			DTA_debug.logString("saveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
 
 			if (links.length == 0) {
 					throw new Components.Exception('no links remaining');
@@ -571,7 +490,7 @@ var DTA_AddingFunctions = {
 			);
 			return DTA_Mediator.getByUrl("chrome://dta/content/dta/manager.xul");
 		} catch(ex) {
-			DTA_debug.dump("openManager():", ex);
+			DTA_debug.log("openManager():", ex);
 		}
 		return null;
 	},
@@ -655,7 +574,7 @@ var DTA_Mediator = {
 			try {
 				ref = DTA_AddingFunctions.ios.newURI(ref, null, null);
 			} catch (ex) {
-				DTA_debug.dump(ref, ex);
+				DTA_debug.log(ref, ex);
 				ref = null;
 			}
 		}

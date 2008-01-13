@@ -53,8 +53,7 @@ var SessionManager = {
 			this._delStmt = this._con.createStatement('DELETE FROM queue WHERE uuid = ?1');
 		}
 		catch (ex) {
-			Debug.dump("SQLite: " + this._con.lastErrorString);
-			alert("SQLite: " + this._con.lastErrorString);
+			Debug.log("SQLite", this._con.lastErrorString);
 			self.close();
 			return;
 		}
@@ -78,7 +77,7 @@ var SessionManager = {
 		}
 
 		let s;
-		Debug.dump("Saving Download: " + d);
+		Debug.logString("Saving Download: " + d);
 		if (d._dbId) {
 			s = this._saveItemStmt;
 			s.bindInt64Parameter(0, d._dbId);
@@ -121,7 +120,8 @@ var SessionManager = {
 				this._saveDownload(download);
 			}
 			catch (ex) {
-				Debug.dump("SQLite: " + this._con.lastErrorString);
+				alert(ex + "\n" + ex.fileName + ex.sourceName + ex.lineNumber);
+				Debug.log("SQLite: " + this._con.lastErrorString, ex);
 			}
 			return;
 		}
@@ -136,7 +136,7 @@ var SessionManager = {
 			};
 		}
 		catch (ex) {
-			Debug.dump("SQLite: " + this._con.lastErrorString);
+			Debug.log("SQLite: " + this._con.lastErrorString, ex);
 		}
 		this.endUpdate();
 
@@ -157,7 +157,7 @@ var SessionManager = {
 			}
 		}
 		catch (ex) {
-			Debug.dump("SQLite: " + this._con.lastErrorString);
+			Debug.log("SQLite: " + this._con.lastErrorString, ex);
 		}
 		this.endUpdate();
 	},
@@ -166,14 +166,14 @@ var SessionManager = {
 			if (!download._dbId) {
 				return;
 			}
-			Debug.dump("Deleting Download: " + download);
+			Debug.logString("Deleting Download: " + download);
 			this._delStmt.bindInt64Parameter(0, download._dbId);
 			this._delStmt.execute();
 			this._delStmt.reset();
 			delete download._dbId;
 		}
 		catch (ex) {
-			Debug.dump("SQLite: " + this._con.lastErrorString);
+			Debug.log("SQLite: " + this._con.lastErrorString, ex);
 			throw ex;
 		}
 	},
@@ -216,13 +216,15 @@ var SessionManager = {
 					'destinationName',
 					'resumable',
 					'totalSize',
-					'hash',
 					'compression'
 				].forEach(
 					function(e) {
 						d[e] = get(e);
 					}
 				);
+				if (down.hash) {
+					d.hash = new DTA_Hash(down.hash, down.hashType);
+				}
 				if ('maxChunks' in down) {
 					d._maxChunks = down.maxChunks;
 				}
@@ -250,7 +252,7 @@ var SessionManager = {
 				Tree.add(d);
 			}
 			catch (ex) {
-				Debug.dump('failed to init a download from queuefile', ex);
+				Debug.log('failed to init a download from queuefile', ex);
 			}
 		}
 		Tree.invalidate();

@@ -161,13 +161,13 @@ var DTA_SaveAs = {
 			window.sizeToContent();	
 		}
 		catch (ex) {
-			DTA_debug.dump("sizeToContent Bug: 371508", ex);
+			DTA_debug.log("sizeToContent Bug: 371508", ex);
 			try {
 				var btn = document.documentElement.getButton('accept');
 				window.innerHeight = btn.boxObject.y + 10; 
 			}
 			catch (ex) {
-				DTA_debug.dump("setting height failed");
+				DTA_debug.log("setting height failed", ex);
 			}		
 		}
 	},	

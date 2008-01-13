@@ -53,8 +53,9 @@
 		for (d in this._uniqueList) {
 			try {
 				OpenExternal.reveal(d.destinationFile);
-			} catch (ex) {
-				Debug.dump('reveal', ex);
+			}
+			catch (ex) {
+				Debug.log('reveal', ex);
 			}
 		}
 	},
@@ -65,7 +66,7 @@
 				OpenExternal.launch(cur.destinationFile);
 			}
 			catch (ex) {
-				Debug.dump('launch', ex);
+				Debug.log('launch', ex);
 			}
 		}
 	},
