@@ -111,8 +111,7 @@ var Dialog = {
 					cancelQuit.data = true;
 				}
 				catch (ex) {
-					Debug.dump("cannot set cancelQuit", ex);
-					//
+					Debug.log("cannot set cancelQuit", ex);
 				}
 			}
 		}
@@ -203,7 +202,7 @@ var Dialog = {
 			}
 		}
 		catch(ex) {
-			Debug.dump("refresh():", ex);
+			Debug.log("refresh():", ex);
 		}
 	},
 	refreshWritten: function D_checkDownloads() {
@@ -242,13 +241,14 @@ var Dialog = {
 						else {
 							d.cancel(_("timeout"));
 						}
-						Debug.dump(d + " is a timeout");
+						Debug.logString(d + " is a timeout");
 					}
 				}
 			)
 			this.startNext();
-		} catch(ex) {
-			Debug.dump("checkDownloads():", ex);
+		}
+		catch(ex) {
+			Debug.log("checkDownloads():", ex);
 		}
 	},
 	checkSameName: function D_checkSameName(download, path) {
@@ -276,8 +276,9 @@ var Dialog = {
 				rv = true;
 			}
 			return rv;
-		} catch(ex){
-			Debug.dump("startNext():", ex);
+		}
+		catch(ex){
+			Debug.log("startNext():", ex);
 		}
 		return false;
 	},
@@ -292,7 +293,7 @@ var Dialog = {
 			// we might encounter renaming issues;
 			// but we cannot handle it because we don't know at which stage we crashed
 			download.partialSize = download.totalSize;
-			Debug.dump("Download seems to be complete; likely a left-over from a crash, finish it:" + download);
+			Debug.logString("Download seems to be complete; likely a left-over from a crash, finish it:" + download);
 			download.finishDownload();
 			return;
 		}
@@ -301,10 +302,10 @@ var Dialog = {
 		download.state = RUNNING;
 		if (!download.started) {
 			download.started = true;
-			Debug.dump("Let's start " + download);
+			Debug.logString("Let's start " + download);
 		}
 		else {
-			Debug.dump("Let's resume " + download + " at " + download.partialSize);
+			Debug.logString("Let's resume " + download + " at " + download.partialSize);
 		}
 		this._running.push(new Dialog.RunningJob(download));
 		download.resumeDownload();
@@ -333,7 +334,7 @@ var Dialog = {
 			if (this.startNext() || Tree.some(function(d) { return d.is(FINISHING, RUNNING, QUEUED); } )) {
 				return;
 			}
-			Debug.dump("signal(): Queue finished");
+			Debug.logString("signal(): Queue finished");
 			Utils.playSound("done");
 			
 			let dp = Tree.at(0);
@@ -358,7 +359,7 @@ var Dialog = {
 			}
 		}
 		catch(ex) {
-			Debug.dump("signal():", ex);
+			Debug.log("signal():", ex);
 		}
 	},
 	_canClose: function D__canClose() {
@@ -449,15 +450,16 @@ var Dialog = {
 				return false;
 			}
 			else {
-				Debug.dump("Going down even if queue was not probably closed yet!");
+				Debug.logString("Going down even if queue was not probably closed yet!");
 			}
 		}
 		TimerManager.killAll();
 		// alright, we left the loop.. shutdown complete ;)
 		try {
 			this._cleanTmpDir();
-		} catch(ex) {
-			Debug.dump("_safeClose", ex);
+		}
+		catch(ex) {
+			Debug.log("_safeClose", ex);
 		}
 		self.close();
 		return true;		
@@ -606,7 +608,7 @@ Visitor.prototype = {
 					this.type = aValue;
 					var ch = aValue.match(/charset=['"]?([\w\d_-]+)/i);
 					if (ch && ch[1].length) {
-						DTA_debug.dump("visitHeader: found override to " + ch[1]);
+						DTA_debug.logString("visitHeader: found override to " + ch[1]);
 						this.overrideCharset = ch[1];
 					}
 				}
@@ -618,7 +620,7 @@ Visitor.prototype = {
 
 				case 'accept-ranges':
 					this.acceptRanges = aValue.toLowerCase().indexOf('none') == -1;
-					Debug.dump("acceptrange = " + aValue.toLowerCase());
+					Debug.logString("acceptrange = " + aValue.toLowerCase());
 				break;
 
 				case 'content-length':
@@ -637,8 +639,7 @@ Visitor.prototype = {
 						this.time = Utils.getTimestamp(aValue);
 					}
 					catch (ex) {
-						Debug.dump("gts", ex);
-						// no-op
+						Debug.log("gts", ex);
 					}
 				break;
 			}
@@ -667,8 +668,9 @@ Visitor.prototype = {
 					this.fileName = value[2].getUsableFileName();
 				}
 			}
-		} catch (ex) {
-			Debug.dump("hrhv::visitHeader:", ex);
+		}
+		catch (ex) {
+			Debug.log("hrhv::visitHeader:", ex);
 		}
 	},
 	compare: function vi_compare(v)	{
@@ -687,12 +689,12 @@ Visitor.prototype = {
 				if (this.cmpKeys[x]) {
 					continue;
 				}
-				Debug.dump(x + " missing");
+				Debug.logString(x + " missing");
 				throw new Exception(x + " is missing");
 			}
 			// header is there, but differs
 			else if (this[x] != v[x]) {
-				Debug.dump(x + " nm: [" + this[x] + "] [" + v[x] + "]");
+				Debug.logString(x + " nm: [" + this[x] + "] [" + v[x] + "]");
 				throw new Exception("Header " + x + " doesn't match");
 			}
 		}
@@ -730,8 +732,9 @@ VisitorManager.prototype = {
 		for (let i = 0; i < nodes.length; ++i) {
 			try {
 				this._visitors[nodes[i].url] = new Visitor(nodes[i].values);
-			} catch (ex) {
-				Debug.dump("failed to read one visitor", ex);
+			}
+			catch (ex) {
+				Debug.log("failed to read one visitor", ex);
 			}
 		}
 	},
@@ -748,8 +751,9 @@ VisitorManager.prototype = {
 				v.url = x;
 				v.values = this._visitors[x].save();
 				rv.push(v);
-			} catch(ex) {
-				Debug.dump(x, ex);
+			}
+			catch(ex) {
+				Debug.log(x, ex);
 			}
 		}
 		return rv;
@@ -835,7 +839,7 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 			}
 		}
 		catch (ex) {
-			Debug.dump("tried to construct with invalid tmpFile", ex);
+			Debug.log("tried to construct with invalid tmpFile", ex);
 			this.cancel();
 		}
 	}
@@ -1016,7 +1020,7 @@ QueueItem.prototype = {
 			
 		}
 		this.invalidate();
-		Debug.dump("mc set to", nv);
+		Debug.log("mc set to", nv);
 		return this._maxChunks;
 	},
 	timeLastProgress: 0,
@@ -1040,7 +1044,7 @@ QueueItem.prototype = {
 			}
 		}
 		catch (ex) {
-			Debug.dump("download::getSize(): ", e)
+			Debug.log("download::getSize(): ", e)
 		}
 		return 0;
 	},
@@ -1139,7 +1143,7 @@ QueueItem.prototype = {
 			// safeguard against some failed chunks.
 			this.chunks.forEach(function(c) { c.close(); });
 			var destination = new FileFactory(this.destinationPath);
-			Debug.dump(this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
+			Debug.logString(this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
 
 			if (!destination.exists()) {
 				destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
@@ -1160,7 +1164,7 @@ QueueItem.prototype = {
 			}
 		}
 		catch(ex) {
-			Debug.dump(ex);
+			Debug.log("continueMoveCompleted encountered an error", ex);
 			this.complete(ex);
 		}
 	},
@@ -1170,7 +1174,7 @@ QueueItem.prototype = {
 			Metalinker.handleDownload(this);
 		}
 		catch (ex) {
-			Debug.dump("handleMetalink", ex);
+			Debug.log("handleMetalink", ex);
 		}
 	},
 	verifyHash: function() {
@@ -1200,7 +1204,7 @@ QueueItem.prototype = {
 				file.lastModifiedTime = time;
 			}
 			catch (ex) {
-				Debug.dump("Setting timestamp on file failed: ", ex);
+				Debug.log("Setting timestamp on file failed: ", ex);
 			}
 		}
 		this.totalSize = this.partialSize = this.size;
@@ -1209,7 +1213,7 @@ QueueItem.prototype = {
 		this.complete();
 	},
 	finishDownload: function QI_finishDownload(exception) {
-		Debug.dump("finishDownload, connections", this.sessionConnections);
+		Debug.logString("finishDownload, connections: " + this.sessionConnections);
 		this._completeEvents = ['moveCompleted', 'setAttributes'];
 		if (this.hash) {
 			this._completeEvents.push('verifyHash');
@@ -1226,7 +1230,7 @@ QueueItem.prototype = {
 	complete: function QI_complete(exception) {
 		if (exception) {
 			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
-			Debug.dump("complete: ", exception);
+			Debug.log("complete: ", exception);
 			return;
 		}
 		if (this._completeEvents.length) {
@@ -1238,7 +1242,7 @@ QueueItem.prototype = {
 						tp[evt]();
 					}
 					catch(ex) {
-						Debug.dump("completeEvent failed: " + evt, ex);
+						Debug.log("completeEvent failed: " + evt, ex);
 						tp.complete();
 					}
 				},
@@ -1341,7 +1345,7 @@ QueueItem.prototype = {
 		catch(ex) {
 			this._destinationName = this.fileName;
 			this._destinationPath = this.pathName.addFinalSlash();
-			Debug.dump("rebuildDestination():", ex);
+			Debug.log("rebuildDestination():", ex);
 		}
 		this._destinationNameFull = Utils.formatConflictName(
 			this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
@@ -1354,7 +1358,7 @@ QueueItem.prototype = {
 	},
 
 	fail: function QI_fail(title, msg, state) {
-		Debug.dump("failDownload invoked");
+		Debug.logString("failDownload invoked");
 
 		this.cancel(state);
 
@@ -1382,7 +1386,7 @@ QueueItem.prototype = {
 				this.pause();
 			}
 			this.state = CANCELED;			
-			Debug.dump(this.fileName + ": canceled");
+			Debug.logString(this.fileName + ": canceled");
 
 			this.visitors = new VisitorManager();
 
@@ -1402,27 +1406,26 @@ QueueItem.prototype = {
 			this.resumable = true;
 
 		} catch(ex) {
-			Debug.dump("cancel():", ex);
+			Debug.log("cancel():", ex);
 		}
 	},
 	
 	removeTmpFile: function QI_removeTmpFile() {
-		Debug.dump("remove tmpfile");
 		if (this.tmpFile.exists()) {
 			try {
 				this.tmpFile.remove(false);
 			}
 			catch (ex) {
-				Debug.dump("failed to remove tmpfile: " + this.tmpFile.path, ex);
+				Debug.log("failed to remove tmpfile: " + this.tmpFile.path, ex);
 			}
 		}
 		else {
-			Debug.dump("tmpfile not found: " + this.tmpFile.path);
+			Debug.logString("tmpfile not found: " + this.tmpFile.path);
 		}
 	},
 	sessionConnections: 0,
 	resumeDownload: function QI_resumeDownload() {
-		Debug.dump("resumeDownload");
+		Debug.logString("resumeDownload: " + d);
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat that much
 			for (let i = d.chunks.length - 2; i > -1; --i) {
@@ -1443,7 +1446,7 @@ QueueItem.prototype = {
 		function downloadChunk(download, chunk, header) {
 			chunk.running = true;
 			download.state = RUNNING;
-			Debug.dump("started: " + chunk);
+			Debug.logString("started: " + chunk);
 			chunk.download = new Connection(download, chunk, header);
 			++download.activeChunks;
 			++download.sessionConnections;
@@ -1505,7 +1508,7 @@ QueueItem.prototype = {
 			return rv;
 		}
 		catch(ex) {
-			Debug.dump("resumeDownload():", ex);
+			Debug.log("resumeDownload():", ex);
 		}
 		return false;
 	},
@@ -1520,7 +1523,7 @@ QueueItem.prototype = {
 					+ "\n";
 			}
 		);
-		Debug.dump("scoreboard\n" + scoreboard);
+		Debug.logString("scoreboard\n" + scoreboard);
 	},	
 	toString: function() {
 		return this.urlManager.usable;
@@ -1534,7 +1537,6 @@ QueueItem.prototype = {
 			'resumable',
 			'mask',
 			'pathName',
-			'hash',
 			'compression',
 			'maxChunks',
 			'contentType',
@@ -1545,6 +1547,10 @@ QueueItem.prototype = {
 			},
 			this
 		);
+		if (this.hash) {
+			e.hash = _atos(this.hash.sum);
+			e.hashType = _atos(this.hash.type);
+		}
 		e.state = this.is(COMPLETE, CANCELED, FINISHING) ? this.state : PAUSED;
 		if (this.destinationNameOverride) {
 			this.destinationName = this.destinationNameOverride;
@@ -1706,7 +1712,7 @@ Chunk.prototype = {
 			return bytes;
 		}
 		catch (ex) {
-			Debug.dump('write: ' + this.parent.tmpFile.path, ex);
+			Debug.log('write: ' + this.parent.tmpFile.path, ex);
 			throw ex;
 		}
 		return 0;
@@ -1800,14 +1806,15 @@ Connection.prototype = {
 			if (this._closed) {
 				return;
 			}
-			Debug.dump("cancel");
+			Debug.logString("cancel");
 			if (!aReason) {
 				aReason = 0x804b0002; // NS_BINDING_ABORTED;
 			}
 			this._chan.cancel(aReason);
 			this._closed = true;
-		} catch (ex) {
-			Debug.dump("cancel", ex);
+		}
+		catch (ex) {
+			Debug.log("cancel", ex);
 		}
 	},
 	// nsIInterfaceRequestor
@@ -1816,7 +1823,7 @@ Connection.prototype = {
 			return this.QueryInterface(iid);
 		}
 		catch (ex) {
-			Debug.dump("interface not implemented: " + iid, ex);
+			Debug.log("interface not implemented: " + iid, ex);
 			throw ex;
 		}
 	},
@@ -1824,8 +1831,9 @@ Connection.prototype = {
 		try {
 			return WindowWatcherService.getNewAuthPrompter(null)
 				.QueryInterface(Ci.nsIAuthPrompt);
-		} catch (ex) {
-			Debug.dump("authPrompter", ex);
+		}
+		catch (ex) {
+			Debug.log("authPrompter", ex);
 			throw ex;
 		}
 	},
@@ -1886,7 +1894,7 @@ Connection.prototype = {
 			}
 		}
 		catch (ex) {
-			Debug.dump('onDataAvailable', ex);
+			Debug.log('onDataAvailable', ex);
 			this.d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 		}
 	},
@@ -1904,15 +1912,15 @@ Connection.prototype = {
 			return true;
 		}
 
-		Debug.dump("handleError: problem found; trying to recover");
+		Debug.logString("handleError: problem found; trying to recover");
 
 		
 		if (d.urlManager.markBad(this.url)) {
-			Debug.dump("handleError: fresh urls available, kill this one and use another!");
+			Debug.logString("handleError: fresh urls available, kill this one and use another!");
 			return true;
 		}
 		
-		Debug.dump("affected: " + c);
+		Debug.logString("affected: " + c);
 		
 		let max = -1, found = -1;
 		for (let i = 0; i < d.chunks.length; ++i) {
@@ -1923,7 +1931,7 @@ Connection.prototype = {
 			}
 		}
 		if (found > -1) {
-			Debug.dump("handleError: found joinable chunk; recovering suceeded", found);
+			Debug.logString("handleError: found joinable chunk; recovering suceeded, chunk: " + found);
 			d.chunks[found].end = c.end;
 			if (--d.maxChunks == 1) {
 				//d.resumable = false;
@@ -1940,7 +1948,7 @@ Connection.prototype = {
 					if (c2.running) {
 						// should never ever happen :p
 						d.dumpScoreboard();
-						Debug.dump("overlapping:\n" + c1 + "\n" + c2);
+						Debug.logString("overlapping:\n" + c1 + "\n" + c2);
 						d.fail("Internal error", "Please notify the developers that there were 'overlapping chunks'!", "Internal error (please report)");
 						return false;
 					}
@@ -1973,9 +1981,9 @@ Connection.prototype = {
 		 
 		if (code >= 400) {
 			if (!this.handleError()) {
-				Debug.dump("handleError: Cannot recover from problem!", code);
+				Debug.log("handleError: Cannot recover from problem!", code);
 				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1) {
-					Debug.dump("we got temp failure!", code);
+					Debug.log("we got temp failure!", code);
 					d.pause();
 					d.status = code >= 500 ? _('temperror') : _('autherror');
 				}
@@ -1997,18 +2005,18 @@ Connection.prototype = {
 
 		// not partial content altough we are multi-chunk
 		if (code != 206 && !this.isInfoGetter) {
-			Debug.dump(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206", this.isInfoGetter);
-			Debug.dump(c, this.url.url);
+			Debug.log(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206", this.isInfoGetter);
+			Debug.log(c, this.url.url);
 			
 			d.resumable = false;
 
 			if (!this.handleError()) {
 				vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
 				aChannel.visitRequestHeaders(vis);
-				Debug.dump("Request Headers\n\n" + vis.value);
+				Debug.logString("Request Headers\n\n" + vis.value);
 				vis.value = '';
 				aChannel.visitResponseHeaders(vis);
-				Debug.dump("Response Headers\n\n" + vis.value);
+				Debug.logString("Response Headers\n\n" + vis.value);
 				d.cancel();
 				d.resumable = false;
 				d.retry();
@@ -2021,7 +2029,7 @@ Connection.prototype = {
 			visitor = d.visitors.visit(aChannel);
 		}
 		catch (ex) {
-			Debug.dump("header failed! " + d, ex);
+			Debug.log("header failed! " + d, ex);
 			// restart download from the beginning
 			d.cancel();
 			d.resumable = false;
@@ -2049,7 +2057,6 @@ Connection.prototype = {
 		d.resumable &= visitor.acceptRanges;
 
 		if (visitor.type && visitor.type.search(/application\/metalink\+xml/) != -1) {
-			Debug.dump(d + " is a metalink");
 			d.isMetalink = true;
 			d.resumable = false;
 		}
@@ -2087,7 +2094,7 @@ Connection.prototype = {
 		// if so something bad happened, 'cause we aren't supposed to be multi-part
 		if (c.start != 0 && d.is(RUNNING)) {
 			if (!this.handleError()) {
-				Debug.dump(d + ": Server error or disconnection (type 1)");
+				Debug.log(d + ": Server error or disconnection", "(type 1)");
 				d.status = _("servererror");
 				d.pause();
 			}
@@ -2120,7 +2127,7 @@ Connection.prototype = {
 	onStartRequest: function DL_onStartRequest(aRequest, aContext) {
 		let c = this.c;
 		let d = this.d;
-		Debug.dump('StartRequest: ' + c);
+		Debug.logString('StartRequest: ' + c);
 	
 		this.started = true;
 		try {
@@ -2168,15 +2175,14 @@ Connection.prototype = {
 							tsd *= 2.5;
 						}
 						if (nsd < tsd) {
-							Debug.dump("nsd", nsd);
-							Debug.dump("tsd", tsd);
+							Debug.logString("nsd: " +  nsd + ", tsd: " + tsd);
 							d.fail(_("ndsa"), _("spacedir"), _("freespace"));
 							return;
 						}
 					}
 				}
 				catch (ex) {
-					Debug.dump("size check threw", ex);
+					Debug.log("size check threw", ex);
 					d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 					return;
 				}
@@ -2189,7 +2195,6 @@ Connection.prototype = {
 					d.maxChunks = 1;
 				}
 				c.end = d.totalSize - 1;
-				Debug.dump("exheader fin");
 				delete this.isInfoGetter;
 				
 				// Explicitly trigger rebuildDestination here, as we might have received
@@ -2203,12 +2208,12 @@ Connection.prototype = {
 			}
 		}
 		catch (ex) {
-			Debug.dump("onStartRequest", ex);
+			Debug.log("onStartRequest", ex);
 		}
 	},
 	onStopRequest: function DL_onStopRequest(aRequest, aContext, aStatusCode) {
 		try {
-			Debug.dump('StopRequest');
+			Debug.logString('StopRequest');
 		}
 		catch (ex) {
 			return;
@@ -2238,18 +2243,18 @@ Connection.prototype = {
 		}
 
 		// routine for normal chunk
-		Debug.dump(d + ": Chunk " + c.start + "-" + c.end + " finished.");
+		Debug.logString(d + ": Chunk " + c.start + "-" + c.end + " finished.");
 
 		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
 		if (c.starter && !shouldFinish && d.is(RUNNING)) {
 			if (!d.urlManager.markBad(this.url)) {
-				Debug.dump(d + ": Server error or disconnection (type 2)");
+				Debug.log(d + ": Server error or disconnection", "(type 2)");
 				d.status = _("servererror");
 				d.pause();
 				return;
 			}
 			else {
-				Debug.dump("caught bad server");
+				Debug.log("caught bad server", d.toString());
 				d.cancel();
 				d.retry();
 				return;
@@ -2258,7 +2263,7 @@ Connection.prototype = {
 
 		// if download is complete
 		if (shouldFinish) {
-			Debug.dump(d + ": Download is complete!");
+			Debug.logString(d + ": Download is complete!");
 			d.finishDownload();
 		}
 		else if (!d.is(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
@@ -2289,7 +2294,7 @@ Connection.prototype = {
 			let d = this.d;
 			
 			if (this.reexamine) {
-				Debug.dump("reexamine");
+				Debug.logString(d + ": reexamine");
 				this.onStartRequest(aRequest, aContext);
 				if (this.reexamine) {
 					return;
@@ -2304,7 +2309,7 @@ Connection.prototype = {
 					// basic integrity check
 					if (d.partialSize > d.totalSize) {
 						d.dumpScoreboard();
-						Debug.dump(d + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");
+						Debug.logString(d + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");
 						d.fail(
 							_('errmismatchtitle'),
 							_('errmismatchtext', [d.partialSize, d.totalSize]),
@@ -2319,7 +2324,7 @@ Connection.prototype = {
 			}
 		}
 		catch(ex) {
-			Debug.dump("onProgressChange():", e);
+			Debug.log("onProgressChange():", e);
 		}
 	},
 	onStatus: function  DL_onStatus(aRequest, aContext, aStatus, aStatusArg) {}
@@ -2391,8 +2396,9 @@ function startDownloads(start, downloads) {
 	for (spec in removeableTabs) {
 		try {
 			DTA_Mediator.removeTab(spec);
-		} catch (ex) {
-			Debug.dump("failed to close old tab", ex);
+		}
+		catch (ex) {
+			Debug.log("failed to close old tab", ex);
 		}
 	}
 	Tree.endUpdate();
@@ -2424,13 +2430,13 @@ var ConflictManager = {
 		}
 		for (let i = 0; i < this._items.length; ++i) {
 			if (this._items[i].download == download) {
-				Debug.dump("conflict resolution updated to: " + reentry);
+				Debug.logString("conflict resolution updated to: " + reentry);
 				
 				this._items[i].reentry = reentry;
 				return;
 			}
 		}
-		Debug.dump("conflict resolution queued to: " + reentry);
+		Debug.logString("conflict resolution queued to: " + reentry);
 		this._items.push({download: download, reentry: reentry});
 		this._process();
 	},
@@ -2440,7 +2446,7 @@ var ConflictManager = {
 		if (download.is(RUNNING)) {
 			sn = Dialog.checkSameName(download, download.destinationFile);
 		}
-		Debug.dump("conflict check: " + sn + "/" + dest.exists() + " for " + download.destinationFile);
+		Debug.logString("conflict check: " + sn + "/" + dest.exists() + " for " + download.destinationFile);
 		return dest.exists() || sn;
 	},
 	_process: function CM__process() {

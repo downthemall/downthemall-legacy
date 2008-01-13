@@ -84,7 +84,7 @@ var MigrationService = {
 		include("chrome://dta/content/common/overlayFunctions.js");
 		
 		try {
-			DTA_debug.dump("current " + DTA_VERSION);
+			DTA_debug.logString("current " + DTA_VERSION);
 			var vc = Components.classes["@mozilla.org/xpcom/version-comparator;1"]
 				.getService(Components.interfaces.nsIVersionComparator);
 		
@@ -92,7 +92,7 @@ var MigrationService = {
 			if (0 == vc.compare(DTA_VERSION, lastVersion)) {
 				return;
 			}
-			DTA_debug.dump("MigrationManager: migration started");
+			DTA_debug.logString("MigrationManager: migration started");
 			if (vc.compare(lastVersion, "1.0a1") < 0) {
 				this._execute(['Prefs', 'DropDowns', 'Filters', 'Remove']);
 			}
@@ -111,7 +111,7 @@ var MigrationService = {
 	    	);			
 		}
 		catch(ex) {
-			DTA_debug.dump("MigrationManager:", ex);
+			DTA_debug.log("MigrationManager:", ex);
 			try {
 				DTA_preferences.resetDTA("version");
 			}
@@ -136,7 +136,7 @@ var MigrationService = {
 	
 	// pre-1.0: convert prefs
 	_migratePrefs: function MM_migratePrefs() {
-		DTA_debug.dump("migrating prefs");
+		DTA_debug.logString("migrating prefs");
 		const toMigrate = [
 			['context.infophrases', 'infophrases', true],
 			['context.closetab', 'closetab', false],
@@ -183,7 +183,7 @@ var MigrationService = {
 	
 	// pre 1.0: migrate Filters
 	_migrateFilters: function MM_migrateFilters() {
-		DTA_debug.dump("migrating filters");
+		DTA_debug.log("migrating filters");
 		const defFilters = [
 			"/\./", "/\\./", '/(\\.*)/',
 			"/\\/[^\\/\\?]+\\.(z(ip|\\d{2})|r(ar|\\d{2})|jar|bz2|gz|tar|rpm)$/", "/\\/[^\\/\\?]+\\.(z(ip|[0-9]{2})|r(ar|[0-9]{2})|jar|bz2|gz|tar|rpm)$/", "/(\\.(z(ip|[0-9]{2})|r(ar|[0-9]{2})|jar|bz2|gz|tar|rpm))$/",
@@ -230,7 +230,7 @@ var MigrationService = {
 	
 	// pre 1.0: dropdown history
 	_migrateDropDowns: function MM_migrateDropdowns() {
-		DTA_debug.dump("migrating dropdowns");
+		DTA_debug.logString("migrating dropdowns");
 		['renaming', 'filter', 'directory'].forEach(
 			function(e) {
 				try { DTA_preferences.resetDTA(e); } catch (ex) { /*no-op*/ }

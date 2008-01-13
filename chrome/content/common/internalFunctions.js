@@ -83,7 +83,12 @@ function _atos(data) {
 	}
 	
 	if (typeof(data) == 'object') {
-		return data.toSource();
+		try {
+			return data.toSource();
+		}
+		catch (ex) {
+			// fall-trough
+		}
 	}
 	
 	return String(data);
@@ -105,7 +110,7 @@ function $() {
 			elements.push(element);
 		}
 		else {
-			Debug.dump("requested a non-existing element: " + id);
+			Debug.logString("requested a non-existing element: " + id);
 		}
 	}
 	return elements;
@@ -233,7 +238,7 @@ var Utils = {
 			}
 		}
 		catch (ex) {
-			Debug.dump("Utils.askForDir():", ex);
+			Debug.log("Utils.askForDir():", ex);
 		}
 		return false;
 	},
@@ -270,7 +275,7 @@ var Utils = {
 			}
 		}
 		catch(ex) {
-			Debug.dump('Utils.validateDir()', ex);
+			Debug.log('Utils.validateDir()', ex);
 		}
 		return false;
 	},
@@ -301,7 +306,7 @@ var Utils = {
 			}
 		}
 		catch(ex) {
-			Debug.dump("Playing " + name + " sound failed", ex);
+			Debug.log("Playing " + name + " sound failed", ex);
 		}
 	},
 	/**
@@ -437,7 +442,7 @@ function getIcon(link, metalink, size) {
 		return _getIcon(url, size);
 	}
 	catch (ex) {
-		Debug.dump("updateIcon: failed to grab icon", ex);
+		Debug.log("updateIcon: failed to grab icon", ex);
 	}
 	return "moz-icon://foo.html?size=" + size;
 }
@@ -729,7 +734,7 @@ var TimerManager = {
 	},
 	killAll: function TM_killAll() {
 		for (id in this._timers) {
-			Debug.dump("killing: " + id);
+			Debug.logString("killing: " + id);
 			window.clearTimeout(this._timers[id]._tid);
 		}
 		this._timers = {};

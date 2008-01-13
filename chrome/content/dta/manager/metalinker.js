@@ -115,7 +115,7 @@ function NSResolver(prefix) {
 			try {
 				file.remove(false);
 			} catch (ex) {
-				Debug.dump("failed to remove metalink file!", ex);
+				Debug.log("failed to remove metalink file!", ex);
 			}
 			
 			
@@ -161,12 +161,10 @@ function NSResolver(prefix) {
 					var h = hashes[j].textContent.trim();
 					try {
 						h = new DTA_Hash(h, hashes[j].getAttribute('type'));
-						hash = h;
-						Debug.dump(h, "ok");						
+						hash = h;		
 					}
 					catch (ex) {
-						Debug.dump(h, ex);
-						// ignore
+						Debug.log(h, ex);
 					}
 				}
 				var desc = this._getSingle(file, 'description');
@@ -234,7 +232,7 @@ function NSResolver(prefix) {
 			if (ex instanceof Error) {
 				AlertService.show(_('mlerrortitle'), ex.message, false);
 			}
-			Debug.dump("Metalinker::handleDownload", ex);
+			Debug.log("Metalinker::handleDownload", ex);
 		}
  	},
  	_insertDownload: function(d) {

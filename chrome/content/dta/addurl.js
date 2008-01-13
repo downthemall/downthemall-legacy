@@ -151,7 +151,7 @@ function BatchGenerator(link) {
 				this._pats.push(new NumericRange(m[0], start, stop, step, sl));
 			}
 			catch (ex) {
-				Debug.dump(ex);
+				Debug.log(ex);
 				this._pats.push(new Literal(m[0]));
 			}
 			continue;
@@ -174,7 +174,7 @@ function BatchGenerator(link) {
 				this._pats.push(new CharRange(m[0], start, stop, step));
 			}
 			catch (ex) {
-				Debug.dump(ex);
+				Debug.log(ex);
 				this._pats.push(new Literal(m[0]));
 			}
 			continue;
@@ -320,7 +320,7 @@ var Dialog = {
 					}
 				}
 				catch (ex) {
-					Debug.dump("Not able to gather data from the clipboard!");
+					Debug.log("Not able to gather data from the clipboard!");
 				}
 			}
 			if (hash) {
@@ -328,8 +328,9 @@ var Dialog = {
 			}
 			
 			window.sizeToContent();
-		} catch(ex) {
-			Debug.dump("load():", ex);
+		}
+		catch(ex) {
+			Debug.log("load():", ex);
 		}		
 	},
 	help: function DTA_help(event) {

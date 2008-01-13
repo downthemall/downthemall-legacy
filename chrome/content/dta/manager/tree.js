@@ -186,7 +186,7 @@ var Tree = {
 				data.push(item);
 			}
 			catch (ex) {
-				Debug.dump("dnd failure", ex);	
+				Debug.log("dnd failure", ex);	
 			}
 		}
 		if (!data.first) {
@@ -252,7 +252,7 @@ var Tree = {
 			SessionManager.savePositions();
 		}
 		catch (ex) {
-			Debug.dump("_dropSelection", ex);
+			Debug.log("_dropSelection", ex);
 		}		
 	},
 	_dropURL: function T__dropURL(row, orientation) {
@@ -503,7 +503,7 @@ var Tree = {
 			modifySome($('addchunk', 'removechunk', 'force'), function(d) { return d.is(QUEUED, RUNNING, PAUSED); });
 		}
 		catch (ex) {
-			Debug.dump("rt", ex);
+			Debug.log("rt", ex);
 		}
 	},
 	invalidate: function T_invalidate(d) {
@@ -654,7 +654,7 @@ var Tree = {
 			SessionManager.savePositions();			
 		}
 		catch (ex) {
-			Debug.dump("Mover::top", ex);
+			Debug.log("Mover::top", ex);
 		} 
 	},
 	bottom: function T_bottom() {
@@ -675,7 +675,7 @@ var Tree = {
 			SessionManager.savePositions();			
 		}
 		catch (ex) {
-			Debug.dump("Mover::bottom", ex);
+			Debug.log("Mover::bottom", ex);
 		} 
 	},
 	up: function T_up() {
@@ -698,7 +698,7 @@ var Tree = {
 			SessionManager.savePositions();			
 		}
 		catch (ex) {
-			Debug.dump("Mover::up", ex);
+			Debug.log("Mover::up", ex);
 		}	 
 	},
 	down: function T_down() {
@@ -725,7 +725,7 @@ var Tree = {
 			SessionManager.savePositions();
 		}
 		catch (ex) {
-			Debug.dump("Mover::down", ex);
+			Debug.log("Mover::down", ex);
 		}	 
 	}
 };

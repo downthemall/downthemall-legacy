@@ -69,12 +69,12 @@
 			Preferences.addObserver('network.', this);
 		}
 		catch (ex) {
-			Debug.dump("failed to add pref-observer", ex);
+			Debug.log("failed to add pref-observer", ex);
 		}
 	},
 
 	_refreshPrefs: function() {
-		Debug.dump("pref reload");
+		Debug.logString("pref reload");
 		this.mappings.forEach(
 			function(e) {
 				let key, pref, def;
@@ -106,7 +106,7 @@
 					this.tempLocation = dsp.get("TmpD", Ci.nsIFile);
 					var profD = hash(dsp.get("ProfD", Ci.nsIFile).leafName);
 					this.tempLocation.append("dtatmp-" + profD);
-					Debug.dump(this.tempLocation.path);
+					Debug.log(this.tempLocation.path);
 				}
 				else {
 					this.tempLocation = new FileFactory(this.tempLocation);

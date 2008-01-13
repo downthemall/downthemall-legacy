@@ -97,16 +97,11 @@ var Tooltip = {
 		return g;
 	},
 	_createInnerShadowGradient: function(ctx, w, c1, c2, c3, c4) {
-		try {
-			var g = ctx.createLinearGradient(0, 0, 0, w);
-			g.addColorStop(0, c1);
-			g.addColorStop(3.0 / w, c2);
-			g.addColorStop(4.0 / w, c3);
-			g.addColorStop(1, c4);
-		}
-		catch (ex) {
-			Debug.dump("got" + w);
-		}
+		let g = ctx.createLinearGradient(0, 0, 0, w);
+		g.addColorStop(0, c1);
+		g.addColorStop(3.0 / w, c2);
+		g.addColorStop(4.0 / w, c3);
+		g.addColorStop(1, c4);
 		return g;
 	},
 	updateMetrics: function(file) {
@@ -133,7 +128,7 @@ var Tooltip = {
 			$('infoPercent').value = file.percent;
 		}
 		catch (ex) {
-			Debug.dump("Tooltip.updateMetrics: ", ex);
+			Debug.log("Tooltip.updateMetrics: ", ex);
 		}	
 	},
 	updateSpeeds: function(file) {
@@ -246,7 +241,7 @@ var Tooltip = {
 			ctx.restore();
 		}
 		catch(ex) {
-			Debug.dump("updateSpeedCanvas(): ", ex);
+			Debug.log("updateSpeedCanvas(): ", ex);
 		}
 	},
 	updateChunksAlt: function(file) {
@@ -372,8 +367,9 @@ var Tooltip = {
 			ctx.stroke();
 	
 			ctx.restore();
-		} catch(ex) {
-			Debug.dump("updateChunkCanvas(): ", ex);
+		}
+		catch(ex) {
+			Debug.log("updateChunkCanvas(): ", ex);
 		}
 	}
 };

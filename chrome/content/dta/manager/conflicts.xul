@@ -47,7 +47,7 @@
 					);
 					return true;
 				} catch (ex) {
-					Debug.dump("accept() : " + ex);
+					Debug.log("accept() : " + ex);
 				}
 				return false;
 			}

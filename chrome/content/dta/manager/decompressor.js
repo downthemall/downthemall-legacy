@@ -91,7 +91,7 @@ function Decompressor(download) {
 		catch (exx) {
 			// XXX: what now?
 		}
-		Debug.dump("err. :p", ex);
+		Debug.log("err. :p", ex);
 		download.complete(ex);
 	}
 }
@@ -130,7 +130,7 @@ Decompressor.prototype = {
 			this.from.remove(false);
 		}
 		catch (ex) {
-			Debug.dump("Failed to remove tmpFile", ex);
+			Debug.log("Failed to remove tmpFile", ex);
 		}
 
 		this.download.complete(this.exception);
