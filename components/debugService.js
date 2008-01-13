@@ -135,7 +135,7 @@ var DebugService = {
 			this.logString = this.log = this._log;
 		}
 		else {
-			this.logString = this.log = this._log;
+			this.logString = this.log = this._logDisabled;
 		}
 	},
 	_formatTimeDate: function DS_formatTimeDate(value) {
