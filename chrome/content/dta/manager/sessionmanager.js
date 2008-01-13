@@ -85,7 +85,6 @@ var SessionManager = {
 			'resumable',
 			'mask',
 			'pathName',
-			'hash',
 			'compression',
 			'maxChunks',
 			'contentType',
@@ -95,6 +94,10 @@ var SessionManager = {
 				e[u] = d[u];
 			}
 		);
+		if (d.hash) {
+			e.hash = d.hash.sum;
+			e.hashType = d.hash.type;
+		}
 		e.state = d.is(COMPLETE, CANCELED, FINISHING) ? d.state : PAUSED;
 		if (d.destinationNameOverride) {
 			e.destinationName = d.destinationNameOverride;
@@ -267,13 +270,15 @@ var SessionManager = {
 					'destinationName',
 					'resumable',
 					'totalSize',
-					'hash',
 					'compression'
 				].forEach(
 					function(e) {
 						d[e] = get(e);
 					}
 				);
+				if (down.hash) {
+					d.hash = new DTA_Hash(down.hash, down.hashType);
+				}
 				if ('maxChunks' in down) {
 					d._maxChunks = down.maxChunks;
 				}
