@@ -922,6 +922,9 @@ QueueItem.prototype = {
 		return this._conflicts;
 	},
 	set conflicts(nv) {
+		if (typeof(conflicts) != 'number') {
+			return;
+		}
 		this._conflicts = nv;
 		this.rebuildDestination();
 		this.invalidate();
@@ -1543,7 +1546,7 @@ QueueItem.prototype = {
 			'conflicts',
 		].forEach(
 			function(u) {
-				e[u] = _atos(this[u]);
+				e[u] = this[u];
 			},
 			this
 		);
