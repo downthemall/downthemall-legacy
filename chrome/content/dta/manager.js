@@ -1024,7 +1024,7 @@ QueueItem.prototype = {
 			
 		}
 		this.invalidate();
-		Debug.log("mc set to", nv);
+		Debug.logString("mc set to " + nv);
 		return this._maxChunks;
 	},
 	timeLastProgress: 0,
