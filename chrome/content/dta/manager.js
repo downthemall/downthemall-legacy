@@ -645,7 +645,7 @@ Visitor.prototype = {
 			if (header == 'etag') {
 				// strip off the "inode"-part apache and others produce, as mirrors/caches usually provide different/wrong numbers here :p
 				this[header] = aValue
-					.replace(/^(?:W\/)?"(.+)"$/, '$1')
+					.replace(/^(?:[wW]\/)?"(.+)"$/, '$1')
 					.replace(/^[a-f\d]+-([a-f\d]+)-([a-f\d]+)$/, '$1-$2')
 					.replace(/^([a-f\d]+):[a-f\d]{1,6}$/, '$1');
 			}
