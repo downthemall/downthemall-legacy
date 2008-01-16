@@ -165,7 +165,7 @@ var DTA_ContextOverlay = {
 			
 			var sel = aWin.getSelection();
 			if (honorSelection && sel && !sel.isCollapsed) {
-				DTA_debug.log("selection only");
+				DTA_debug.logString("selection only");
 				[links, images, embeds, inputs] = [links, images, embeds, inputs].map(
 					function(e) {
 						return filterElements(e, sel);
