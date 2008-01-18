@@ -29,6 +29,10 @@
 <!ENTITY mainpane.alertnone.label "Don't alert me">
 <!ENTITY mainpane.sounddone.label "Play a sound when all downloads are complete">
 <!ENTITY mainpane.closedta.label "Close DownThemAll when downloads are complete">
+<!ENTITY mainpane.autoretry.caption "Auto Retries">
+<!ENTITY mainpane.autoretry.interval.label "Retry each">
+<!ENTITY mainpane.autoretry.max.label "Max. Retries">
+<!ENTITY mainpane.autoretry.unlimited "Unlimited">
 
 
 <!ENTITY privacypane.label "Privacy">
@@ -61,6 +65,8 @@
 <!ENTITY advancedpane.seconds "seconds">
 <!ENTITY advancedpane.minute "minute">
 <!ENTITY advancedpane.minutes "minutes">
+<!ENTITY advancedpane.hour "hour">
+<!ENTITY advancedpane.hours "hours">
 <!ENTITY advancedpane.misc.caption "Miscellaneous settings">
 <!ENTITY advancedpane.settime.label "Set files time to last modified time (server) or time of queuing">
 <!ENTITY advancedpane.rememberoneclick.label "Have DTA OneClick remember if it applies to All Tabs or Current Tab">
