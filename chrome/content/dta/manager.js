@@ -1473,7 +1473,7 @@ QueueItem.prototype = {
 				let c1 = d.chunks[i], c2 = d.chunks[i + 1];
 				if (c1.complete && c2.complete) {
 					c1.merge(c2);
-					d.splice(i + 1, 1);
+					d.chunks.splice(i + 1, 1);
 				}
 			}
 		}
