@@ -377,8 +377,7 @@ var Tree = {
 		this.updateSelected(
 			function(d) {
 				if (d.is(PAUSED, CANCELED)) {
-					d.state = QUEUED;
-					d.status = _("inqueue");
+					d.queue();
 				}
 				return true;
 			}

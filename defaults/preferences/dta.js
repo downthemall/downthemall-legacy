@@ -63,6 +63,8 @@ pref("extensions.dta.filter", "['', '/(\\.mp3)$/', '/(\\.(html|htm|rtf|doc|pdf))
 pref("extensions.dta.lastqueued", false);
 pref("extensions.dta.lastalltabs", false);
 pref("extensions.dta.rememberoneclick", false);
+pref("extensions.dta.autoretryinterval", 0);
+pref("extensions.dta.maxautoretries", 10);
 
 // Seamonkey specific
 pref("extensions.dta.sm.buttons", "1,1,0");
