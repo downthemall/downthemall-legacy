@@ -24,7 +24,6 @@
 		  <preference id="dtaalert" name="extensions.dta.alertbox" type="int"/>
 		  <preference id="dtadone" name="extensions.dta.sounds.done" type="bool"/>
 		  <preference id="dtaerror" name="extensions.dta.sounds.error" type="bool"/>
-		  <preference id="dtaclosetab" name="extensions.dta.closetab" type="bool"/>
 		  <preference id="dtaautoclose" name="extensions.dta.closedta" type="bool"/>
 		</preferences>
 
@@ -56,7 +55,6 @@
 						<separator class="groove-thin"/>
 
 						<checkbox label="&mainpane.sounderror.label;" preference="dtaerror"/>
-						<checkbox label="&mainpane.closetab.label;" preference="dtaclosetab"/>
 					</groupbox>
 					
 					<groupbox>

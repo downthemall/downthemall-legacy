@@ -2450,17 +2450,6 @@ function startDownloads(start, downloads) {
 		Tree.add(d);
 		SessionManager.save(d);
 		++added;
-		if (Preferences.getDTA("closetab", false) && d.referrer) {
-			removeableTabs[d.referrer.spec] = true;			
-		}
-	}
-	for (spec in removeableTabs) {
-		try {
-			DTA_Mediator.removeTab(spec);
-		}
-		catch (ex) {
-			Debug.log("failed to close old tab", ex);
-		}
 	}
 	Tree.endUpdate();
 	SessionManager.endUpdate();

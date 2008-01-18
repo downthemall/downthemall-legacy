@@ -37,7 +37,6 @@ pref("extensions.dta.ctxmenu", "1,1,0");
 pref("extensions.dta.ctxcompact", false);
 pref("extensions.dta.toolsmenu", "0,0,0");
 pref("extensions.dta.toolshidden", false);
-pref("extensions.dta.closetab", false);
 pref("extensions.dta.closedta", false);
 pref("extensions.dta.saveTemp", false);
 pref("extensions.dta.downloadWin", true);
