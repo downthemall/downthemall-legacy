@@ -923,7 +923,7 @@ QueueItem.prototype = {
 		return this._conflicts;
 	},
 	set conflicts(nv) {
-		if (typeof(conflicts) != 'number') {
+		if (typeof(nv) != 'number') {
 			return;
 		}
 		this._conflicts = nv;
@@ -1429,7 +1429,7 @@ QueueItem.prototype = {
 	},
 	sessionConnections: 0,
 	resumeDownload: function QI_resumeDownload() {
-		Debug.logString("resumeDownload: " + d);
+		Debug.logString("resumeDownload: " + this);
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat that much
 			for (let i = d.chunks.length - 2; i > -1; --i) {
