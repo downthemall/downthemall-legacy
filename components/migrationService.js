@@ -139,7 +139,6 @@ var MigrationService = {
 		DTA_debug.logString("migrating prefs");
 		const toMigrate = [
 			['context.infophrases', 'infophrases', true],
-			['context.closetab', 'closetab', false],
 			['context.closedta', 'closedta', false],
 			['context.menu', 'ctxmenu', ''],
 			['context.compact', 'ctxcompact', false],
