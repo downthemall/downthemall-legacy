@@ -1445,7 +1445,7 @@ QueueItem.prototype = {
 	_autoRetries: 0,
 	_autoRetryTime: 0,
 	markAutoRetry: function QI_markRetry() {
-		if (!Prefs.autoRetryInterval || Prefs.maxAutoRetries <= this._autoRetries) {
+		if (!Prefs.autoRetryInterval || (Prefs.maxAutoRetries && Prefs.maxAutoRetries <= this._autoRetries)) {
 			 return;
 		}
 		this._autoRetryTime = Utils.getTimestamp();
