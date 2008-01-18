@@ -2275,12 +2275,13 @@ Connection.prototype = {
 		--d.activeChunks;
 
 		// check if we're complete now
-		let shouldFinish = false;
 		if (d.is(RUNNING) && d.chunks.every(function(e) { return e.complete; })) {
 			if (!d.resumeDownload()) {
-				d.dumpScoreboard();
 				d.state = FINISHING;
-				shouldFinish = true;
+				Debug.logString(d + ": Download is complete!");
+				d.finishDownload();
+				
+				return;
 			}
 		}
 
@@ -2311,22 +2312,16 @@ Connection.prototype = {
 				d.pause();
 				d.status = _("servererror");
 				d.markAutoRetry();				
-				return;
 			}
 			else {
 				Debug.log("caught bad server", d.toString());
 				d.cancel();
 				d.safeRetry();
-				return;
 			}
+			return;			
 		}
 
-		// if download is complete
-		if (shouldFinish) {
-			Debug.logString(d + ": Download is complete!");
-			d.finishDownload();
-		}
-		else if (!d.is(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
+		if (!d.is(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
 			if (d.resumable) {
 				d.pause();
 				d.markAutoRetry();
@@ -2341,10 +2336,9 @@ Connection.prototype = {
 			}
 			return;			
 		}
-		else if (!d.is(PAUSED, CANCELED)) {
+		if (!d.is(PAUSED, CANCELED)) {
 			d.resumeDownload();
 		}
-		//SessionManager.save(d);
 	},
 
 	// nsIProgressEventSink
