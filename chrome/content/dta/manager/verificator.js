@@ -102,7 +102,7 @@ Verificator.prototype = {
 		if (this.hash != this.download.hash.sum) {
 			var act = DTA_confirm(_('verifyerrortitle'), _('verifyerrortext'), _('retry'), _('delete'), _('keep'));
 			switch (act) {
-				case 0: this._delete(); this.download.retry(); return;
+				case 0: this._delete(); this.download.safeRetry(); return;
 				case 1: this._delete(); this.download.cancel(); return;
 			}
 		}

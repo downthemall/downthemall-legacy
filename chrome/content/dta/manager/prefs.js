@@ -52,7 +52,9 @@
 		['conflictResolution', 3],
 		['alertingSystem', 'alertbox', (SYSTEMSLASH == '\\') ? 1 : 0],
 		['finishEvent', ''],
-		['showTooltip', true]
+		['showTooltip', true],
+		['maxAutoRetries', 10],
+		['autoRetryInterval', 0]
 	],
 
 	// nsIObserver

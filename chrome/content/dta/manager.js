@@ -35,6 +35,13 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
+ 
+const NS_ERROR_MODULE_NETWORK = 0x804B0000;
+const NS_ERROR_BINDING_ABORTED = NS_ERROR_MODULE_NETWORK + 2;
+const NS_ERROR_UNKNOWN_HOST = NS_ERROR_MODULE_NETWORK + 30;
+const NS_ERROR_CONNECTION_REFUSED = NS_ERROR_MODULE_NETWORK + 13;
+const NS_ERROR_NET_TIMEOUT = NS_ERROR_MODULE_NETWORK + 14;
+const NS_ERROR_NET_RESET = NS_ERROR_MODULE_NETWORK + 20;
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -228,7 +235,13 @@ var Dialog = {
 	checkDownloads: function D_checkDownloads() {
 		try {
 			this.refresh();
-		
+			
+			if (Prefs.autoRetryInterval) {
+				for (let d in Tree.all) {
+					d.autoRetry();
+				}
+			}
+					
 			this._running.forEach(
 				function(i) {
 					var d = i.d;
@@ -236,6 +249,7 @@ var Dialog = {
 					if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
 						if (d.resumable) {
 							d.pause();
+							d.markAutoRetry();
 							d.status = _("timeout");
 						}
 						else {
@@ -924,7 +938,7 @@ QueueItem.prototype = {
 	},
 	set conflicts(nv) {
 		if (typeof(nv) != 'number') {
-			return;
+			return this._conflicts;
 		}
 		this._conflicts = nv;
 		this.rebuildDestination();
@@ -1066,7 +1080,7 @@ QueueItem.prototype = {
 	},
 	_status : '',
 	get status() {
-		return this._status;
+		return this._status + (this._autoRetryTime ? ' *' : '');
 	},
 	set status(nv) {
 		if (nv != this._status) {
@@ -1102,7 +1116,7 @@ QueueItem.prototype = {
 		Tree.invalidate(this);
 	},
 
-	retry: function QI_retry() {
+	safeRetry: function QI_safeRetry() {
 		// reset flags
 		this.totalSize = this.partialSize = 0;
 		this.compression = null;
@@ -1428,6 +1442,29 @@ QueueItem.prototype = {
 		}
 	},
 	sessionConnections: 0,
+	_autoRetries: 0,
+	_autoRetryTime: 0,
+	markAutoRetry: function QI_markRetry() {
+		if (!Prefs.autoRetryInterval || Prefs.maxAutoRetries <= this._autoRetries) {
+			 return;
+		}
+		this._autoRetryTime = Utils.getTimestamp();
+		Debug.logString("marked auto-retry: " + d);
+	},
+	autoRetry: function QI_autoRetry() {
+		if (!this._autoRetryTime || Utils.getTimestamp() - (Prefs.autoRetryInterval * 1000) < this._autoRetryTime) {
+			return;
+		}
+
+		this._autoRetryTime = 0;
+		++this._autoRetries;
+		this.queue();
+		Debug.logString("Requeued due to auto-retry: " + d);		
+	},
+	queue: function QI_queue() {
+		this.state = QUEUED;
+		this.status = _("inqueue");
+	},
 	resumeDownload: function QI_resumeDownload() {
 		Debug.logString("resumeDownload: " + this);
 		function cleanChunks(d) {
@@ -1436,7 +1473,7 @@ QueueItem.prototype = {
 				let c1 = d.chunks[i], c2 = d.chunks[i + 1];
 				if (c1.complete && c2.complete) {
 					c1.merge(c2);
-					d.chunks.splice(i + 1, 1);
+					d.splice(i + 1, 1);
 				}
 			}
 		}
@@ -1812,7 +1849,7 @@ Connection.prototype = {
 			}
 			Debug.logString("cancel");
 			if (!aReason) {
-				aReason = 0x804b0002; // NS_BINDING_ABORTED;
+				aReason = NS_ERROR_BINDING_ABORTED;
 			}
 			this._chan.cancel(aReason);
 			this._closed = true;
@@ -1989,6 +2026,7 @@ Connection.prototype = {
 				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1) {
 					Debug.log("we got temp failure!", code);
 					d.pause();
+					d.markAutoRetry();
 					d.status = code >= 500 ? _('temperror') : _('autherror');
 				}
 				else {
@@ -2010,7 +2048,6 @@ Connection.prototype = {
 		// not partial content altough we are multi-chunk
 		if (code != 206 && !this.isInfoGetter) {
 			Debug.log(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206", this.isInfoGetter);
-			Debug.log(c, this.url.url);
 			
 			d.resumable = false;
 
@@ -2023,7 +2060,7 @@ Connection.prototype = {
 				Debug.logString("Response Headers\n\n" + vis.value);
 				d.cancel();
 				d.resumable = false;
-				d.retry();
+				d.safeRetry();
 				return false;
 			}
 		}
@@ -2037,7 +2074,7 @@ Connection.prototype = {
 			// restart download from the beginning
 			d.cancel();
 			d.resumable = false;
-			d.retry();
+			d.safeRetry();
 			return false;
 		}
 		
@@ -2100,6 +2137,7 @@ Connection.prototype = {
 			if (!this.handleError()) {
 				Debug.log(d + ": Server error or disconnection", "(type 1)");
 				d.status = _("servererror");
+				d.markAutoRetry();
 				d.pause();
 			}
 			return false;
@@ -2246,21 +2284,39 @@ Connection.prototype = {
 			}
 		}
 
+		if (aStatusCode == NS_ERROR_BINDING_ABORTED) {
+			return;
+		}
+		
+		if (-1 != [
+			NS_ERROR_CONNECTION_REFUSED,
+			NS_ERROR_UNKNOWN_HOST,
+			NS_ERROR_NET_TIMEOUT,
+			NS_ERROR_NET_RESET
+		].indexOf(aStatusCode)) {
+			Debug.log(d + ": Server error or disconnection", "(type 3)");
+			d.pause();
+			d.status = _("servererror");
+			d.markAutoRetry();				
+			return;
+		}		
+
 		// routine for normal chunk
 		Debug.logString(d + ": Chunk " + c.start + "-" + c.end + " finished.");
-
+		
 		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
 		if (c.starter && !shouldFinish && d.is(RUNNING)) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.log(d + ": Server error or disconnection", "(type 2)");
-				d.status = _("servererror");
 				d.pause();
+				d.status = _("servererror");
+				d.markAutoRetry();				
 				return;
 			}
 			else {
 				Debug.log("caught bad server", d.toString());
 				d.cancel();
-				d.retry();
+				d.safeRetry();
 				return;
 			}
 		}
@@ -2273,6 +2329,7 @@ Connection.prototype = {
 		else if (!d.is(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
 			if (d.resumable) {
 				d.pause();
+				d.markAutoRetry();
 				d.status = _('errmismatchtitle');
 			}
 			else {
@@ -2287,7 +2344,7 @@ Connection.prototype = {
 		else if (!d.is(PAUSED, CANCELED)) {
 			d.resumeDownload();
 		}
-		SessionManager.save(d);
+		//SessionManager.save(d);
 	},
 
 	// nsIProgressEventSink
