@@ -413,6 +413,7 @@ var Tree = {
 	force: function T_force() {
 		for (let d in Tree.selected) {
 			if (d.is(QUEUED, PAUSED, CANCELED)) {
+				d.queue();
 				Dialog.run(d);
 			}
 		}

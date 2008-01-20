@@ -1463,6 +1463,7 @@ QueueItem.prototype = {
 		Debug.logString("Requeued due to auto-retry: " + d);		
 	},
 	queue: function QI_queue() {
+		this._autoRetryTime = 0;
 		this.state = QUEUED;
 		this.status = _("inqueue");
 	},
