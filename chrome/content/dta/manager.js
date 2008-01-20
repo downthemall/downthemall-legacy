@@ -247,7 +247,7 @@ var Dialog = {
 					var d = i.d;
 					// checks for timeout
 					if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
-						if (d.resumable) {
+						if (d.resumable || !d.totalSize || !d.partialSize) {
 							d.pause();
 							d.markAutoRetry();
 							d.status = _("timeout");
@@ -1422,6 +1422,7 @@ QueueItem.prototype = {
 			this.maxChunks = this.activeChunks = 0;
 			this.conflicts = 0;
 			this.resumable = true;
+			this._autoRetries = 0;
 
 		} catch(ex) {
 			Debug.log("cancel():", ex);
