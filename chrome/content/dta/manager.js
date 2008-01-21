@@ -1914,6 +1914,9 @@ Connection.prototype = {
 	
 	// nsIChannelEventSink
 	onChannelRedirect: function DL_onChannelRedirect(oldChannel, newChannel, flags) {
+		if (!this.isInfoGetter) {
+			return;
+		}
 		try {
 			this._chan == newChannel;
 			this.url.url = newChannel.URI.spec;
