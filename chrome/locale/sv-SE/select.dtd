@@ -1,0 +1,15 @@
+<!ENTITY title "Välj">
+<!ENTITY filters.caption "Filter">
+<!ENTITY additional.caption "Snabbfiltrering">
+<!ENTITY additional.tip "Textfiler: Här kan du ställa in flera filter genom att skilja dem med kommatecken.">
+<!ENTITY regex.label "Reg.utr.">
+<!ENTITY filter.tip "Ange här dina filter! (exempel i den rullande menyn)">
+<!ENTITY status.label "Klicka på Börja! efter att ha valt länkar">
+<!ENTITY menu.mask.title "Ändra omdöpningsschablon">
+<!ENTITY menu.check.label "Markera valda objekt">
+<!ENTITY menu.uncheck.label "Avmarkera valda objekt">
+<!ENTITY menu.toggle.label "Växla valda objekt">
+<!ENTITY tab.links.label "Länkar">
+<!ENTITY tab.pics.label "Bilder och Inbäddade objekt">
+<!ENTITY header.desc.label "Beskrivning">
+<!ENTITY selectfiltered.label "Välj filtrerad">

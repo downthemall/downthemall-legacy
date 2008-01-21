@@ -1,0 +1,7 @@
+<!ENTITY title.value "Filnamnkonflikt!">
+<!ENTITY text.value "Spara denna inställning:">
+<!ENTITY file.label "Endast för denna fil">
+<!ENTITY session.label "Endast under denna session">
+<!ENTITY always.label "Alltid">
+<!ENTITY overwrite.label "Skriv över befintlig fil">
+<!ENTITY skip.label "Skippa/Avbryt">
