@@ -501,7 +501,8 @@ var Tree = {
 			modifySome($('play', 'toolplay'), function(d) { return !d.is(COMPLETE, RUNNING, QUEUED, FINISHING); });
 			modifySome($('pause', 'toolpause'), function(d) { return (d.state & RUNNING && d.resumable) || (d.state & QUEUED); });
 			modifySome($('cancel', 'toolcancel'), function(d) { return !d.is(FINISHING, CANCELED); });
-			modifySome($('launch', 'folder', 'delete'), function(d) { return d.curFile; });
+			modifySome($('launch', 'folder'), function(d) { return d.curFile; });
+			modifySome($('delete'), function(d) { return d.is(COMPLETE); });
 			modifySome($('addchunk', 'removechunk', 'force'), function(d) { return d.is(QUEUED, RUNNING, PAUSED); });
 		}
 		catch (ex) {
