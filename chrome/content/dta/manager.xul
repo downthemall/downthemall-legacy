@@ -72,7 +72,7 @@
 	
 
 	<popupset>
-		<popup id="popup">
+		<popup id="popup" onpopupshowing="Tree.refreshTools(); return true;">
 			<menuitem id="info" class="menuitem-iconic" image="chrome://dta/skin/manager/info.png" label="&infos.label;" oncommand="Tree.showInfo();" />
 			<menuseparator />
 			<menuitem id="launch" class="menuitem-iconic" image="chrome://dta/skin/manager/launch.png" label="&launch.label;" oncommand="FileHandling.openFile();" />
