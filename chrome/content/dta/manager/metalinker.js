@@ -103,7 +103,7 @@ function NSResolver(prefix) {
  	handleDownload: function ML_handleDownload(download) {
  		try {
  			download.state = CANCELED;
-			Tree.remove(download);
+			Tree.remove(download, false);
 			var file = new FileFactory(download.destinationFile);
 
 			var fiStream = new FileInputStream(file, 1, 0, false);

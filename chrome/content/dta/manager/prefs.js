@@ -54,7 +54,8 @@
 		['finishEvent', ''],
 		['showTooltip', true],
 		['maxAutoRetries', 10],
-		['autoRetryInterval', 0]
+		['autoRetryInterval', 0],
+		['autoClearComplete', false],
 	],
 
 	// nsIObserver

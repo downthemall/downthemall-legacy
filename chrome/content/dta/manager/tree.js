@@ -133,7 +133,7 @@ var Tree = {
 	getCellValue: function T_getCellValue(idx, col) {
 		if (col.index == 1) {
 			let d = this._downloads[idx];
-			if (d.is(CANCELED)) {
+			if (d.is(CANCELED, COMPLETE)) {
 				return 100; 
 			}
 			return d.totalSize ? d.partialSize * 100 / d.totalSize : 0;
@@ -283,11 +283,11 @@ var Tree = {
 			this._box.rowCountChanged(download.position, 1);
 		}
 	},
-	remove: function T_remove(downloads) {
+	remove: function T_remove(downloads, performJump) {
 		if (downloads && !(downloads instanceof Array)) {
 			downloads = [downloads];
 		}
-		else {
+		else if (!downloads) {
 			downloads = this._getSelectedIds(true).map(
 				function(idx) {
 					return this._downloads[idx]; 
@@ -298,7 +298,7 @@ var Tree = {
 		if (!downloads.length) {
 			return;
 		}
-		this.selection.clearSelection();		
+	
 		downloads = downloads.sort(function(a, b) { return b.position - a.position; });	 
 		SessionManager.beginUpdate();
 		this.beginUpdate();
@@ -324,7 +324,9 @@ var Tree = {
 		SessionManager.endUpdate();
 		this.endUpdate();
 		this.invalidate();
-		this._removeCleanup(downloads.length, last);
+		if (performJump) {
+			this._removeJump(downloads.length, last);
+		}
 		SessionManager.savePositions();		
 	},
 	removeCompleted: function T_removeCompleted() {
@@ -346,10 +348,10 @@ var Tree = {
 		this.selection.clearSelection();
 		this.endUpdate();	
 		this.invalidate();
-		this._removeCleanup(delta - this._downloads.length, last);
+		this._removeJump(delta - this._downloads.length, last);
 		SessionManager.savePositions();		
 	},
-	_removeCleanup: function(delta, last) {
+	_removeJump: function(delta, last) {
 		if (!this.rowCount) {
 			this._box.ensureRowIsVisible(0);
 		}
@@ -357,8 +359,7 @@ var Tree = {
 			let np = Math.max(0, Math.min(last - delta + 1, this.rowCount - 1));
 			if (np < this._box.getFirstVisibleRow() || np > this._box.getLastVisibleRow()) {
 				this._box.ensureRowIsVisible(np);
-			}
-			this.selection.currentIndex = np;			
+			}		
 		}
 	},
 	pause: function T_pause() {
