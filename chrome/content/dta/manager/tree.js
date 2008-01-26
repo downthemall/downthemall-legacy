@@ -493,6 +493,9 @@ var Tree = {
 				else {
 					disabled = !f(states);
 				}
+				if (!(items instanceof Array)) {
+					items = [items];
+				}
 				items.forEach(
 					function(o) {
 						o.setAttribute('disabled', disabled);
