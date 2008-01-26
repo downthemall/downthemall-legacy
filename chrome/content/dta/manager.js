@@ -77,6 +77,7 @@ var Dialog = {
 	_wasRunning: false,
 	_lastTime: Utils.getTimestamp(),
 	_running: [],
+	_autoClears: [],
 	completed: 0,
 	totalbytes: 0,
 	init: function D_init() {
@@ -236,6 +237,11 @@ var Dialog = {
 		try {
 			this.refresh();
 			
+			if (Prefs.autoClearComplete && this._autoClears.length) {
+				Tree.remove(this._autoClears);
+				this._autoClears = [];
+			}
+			
 			if (Prefs.autoRetryInterval) {
 				for (let d in Tree.all) {
 					d.autoRetry();
@@ -339,6 +345,9 @@ var Dialog = {
 		SessionManager.save(download);
 		if (download.is(RUNNING)) {
 			this._wasRunning = true;
+		}
+		else if (Prefs.autoClearComplete && download.is(COMPLETE)) {
+			this._autoClears.push(download);
 		}
 		if (!this._initialized || !this._wasRunning || !download.is(COMPLETE)) {
 			return;
