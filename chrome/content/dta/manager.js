@@ -2087,6 +2087,11 @@ Connection.prototype = {
 			if (this.isInfoGetter) {
 				// Checks for available disk space.
 				
+				if (d.fileName.getExtension() == 'metalink') {
+					d.isMetalink = true;
+					d.resumable = true;
+				}
+				
 				var tsd = d.totalSize;
 				try {
 					if (tsd) {
