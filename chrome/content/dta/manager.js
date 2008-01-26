@@ -250,7 +250,7 @@ var Dialog = {
 					
 			this._running.forEach(
 				function(i) {
-					var d = i.d;
+					let d = i.d;
 					// checks for timeout
 					if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
 						if (d.resumable || !d.totalSize || !d.partialSize) {
@@ -1490,6 +1490,7 @@ QueueItem.prototype = {
 		}
 		function downloadNewChunk(download, start, end, header) {
 			var chunk = new Chunk(download, start, end);
+			Debug.logString("started: " + chunk);
 			download.chunks.push(chunk);
 			download.chunks.sort(function(a,b) { return a.start - b.start; });
 			downloadChunk(download, chunk, header);
@@ -1792,6 +1793,7 @@ function Connection(d, c, getInfo) {
 	this.isInfoGetter = getInfo;
 	this.url = d.urlManager.getURL();
 	var referrer = d.referrer;
+	Debug.logString("starting: " + this.url.url);
 
 	this._chan = IOService.newChannelFromURI(this.url.url.toURL());
 	var r = Ci.nsIRequest;
@@ -1968,10 +1970,10 @@ Connection.prototype = {
 		}
 
 		Debug.logString("handleError: problem found; trying to recover");
-
 		
 		if (d.urlManager.markBad(this.url)) {
 			Debug.logString("handleError: fresh urls available, kill this one and use another!");
+			d.timeLastProgress = Utils.getTimestamp();
 			return true;
 		}
 		
@@ -2207,6 +2209,11 @@ Connection.prototype = {
 			if (this.isInfoGetter) {
 				// Checks for available disk space.
 				
+				if (d.fileName.getExtension() == 'metalink') {
+					d.isMetalink = true;
+					d.resumable = true;
+				}				
+				
 				var tsd = d.totalSize;
 				try {
 					if (tsd) {
@@ -2294,15 +2301,10 @@ Connection.prototype = {
 				d.state = FINISHING;
 				Debug.logString(d + ": Download is complete!");
 				d.finishDownload();
-				
 				return;
 			}
 		}
 
-		if (aStatusCode == NS_ERROR_BINDING_ABORTED) {
-			return;
-		}
-		
 		if (-1 != [
 			NS_ERROR_CONNECTION_REFUSED,
 			NS_ERROR_UNKNOWN_HOST,
@@ -2320,7 +2322,7 @@ Connection.prototype = {
 		Debug.logString(d + ": Chunk " + c.start + "-" + c.end + " finished.");
 		
 		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
-		if (c.starter && !shouldFinish && d.is(RUNNING)) {
+		if (c.starter && d.is(RUNNING)) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.log(d + ": Server error or disconnection", "(type 2)");
 				d.pause();
