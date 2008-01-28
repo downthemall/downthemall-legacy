@@ -359,6 +359,7 @@ var Tree = {
 			let np = Math.max(0, Math.min(last - delta + 1, this.rowCount - 1));
 			if (np < this._box.getFirstVisibleRow() || np > this._box.getLastVisibleRow()) {
 				this._box.ensureRowIsVisible(np);
+				this.selection.currentIndex = np;
 			}		
 		}
 	},

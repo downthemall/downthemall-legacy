@@ -60,7 +60,7 @@
 		<key id="kUp" modifiers="alt" keycode="VK_PAGE_UP" oncommand="Tree.up();"/>
 		<key id="kDown" modifiers="alt" keycode="VK_PAGE_DOWN" oncommand="Tree.down();"/>
 		<key id="kCancel" keycode="VK_DELETE" oncommand="Tree.remove(null, true);"/>
-		<key id="kMacCancel" modifiers="meta" keycode="VK_BACK" oncommand="Tree.remove();"/>
+		<key id="kMacCancel" modifiers="meta" keycode="VK_BACK" oncommand="Tree.remove(null, true);"/>
 		<key id="kTop" modifiers="alt" keycode="VK_HOME" oncommand="Tree.top();"/>
 		<key id="kBottom" modifiers="alt" keycode="VK_END" oncommand="Tree.bottom();"/>
 		<key id="kPause" modifiers="accel" key="P" oncommand="Tree.pause();"/>
