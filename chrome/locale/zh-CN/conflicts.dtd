@@ -1,0 +1,7 @@
+<!ENTITY title.value "文件名冲突！">
+<!ENTITY text.value "记住该设置:">
+<!ENTITY file.label "只针对这个文件">
+<!ENTITY session.label "只针对当前会话">
+<!ENTITY always.label "从现在起">
+<!ENTITY overwrite.label "覆盖已存在文件">
+<!ENTITY skip.label "跳过/取消">
