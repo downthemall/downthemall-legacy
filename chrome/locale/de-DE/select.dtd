@@ -1,0 +1,15 @@
+<!ENTITY title "DownThemAll! - Downloads auswählen">
+<!ENTITY filters.caption "Filter">
+<!ENTITY additional.caption "Schnelles Filtern">
+<!ENTITY additional.tip "Textfilter: Es können mehrere Textfilter gleichzeitig kommagetrennt angegeben werden.">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY filter.tip "Geben Sie hier Ihre Textfilter ein (Beispiele siehe Auswahlliste)">
+<!ENTITY status.label "Nach dem Auswählen von Links auf Start klicken!">
+<!ENTITY menu.mask.title "Umbenennungsschema ändern...">
+<!ENTITY menu.check.label "Ausgewählte Einträge markieren">
+<!ENTITY menu.uncheck.label "Ausgewählte Einträge abwählen">
+<!ENTITY menu.toggle.label "Makierung für ausgewählte Einträge umkehren">
+<!ENTITY tab.links.label "Links">
+<!ENTITY tab.pics.label "Grafiken und eingebettete Objekte">
+<!ENTITY header.desc.label "Beschreibung">
+<!ENTITY selectfiltered.label "Makierte Einträge auswählen">

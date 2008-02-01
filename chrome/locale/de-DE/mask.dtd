@@ -1,0 +1,18 @@
+<!ENTITY mask.title "Umbenennungs-Tags">
+<!ENTITY mask.name "Dateiname">
+<!ENTITY mask.ext "Dateiendung">
+<!ENTITY mask.url "Basis-URL">
+<!ENTITY mask.curl "Komplette URL">
+<!ENTITY mask.num "Fortlaufende Nummerierung">
+<!ENTITY mask.hh "Stunden">
+<!ENTITY mask.mm "Minuten">
+<!ENTITY mask.ss "Sekunden">
+<!ENTITY mask.d "Tag">
+<!ENTITY mask.m "Monat">
+<!ENTITY mask.y "Jahr">
+<!ENTITY mask.subdirs "URL-Unterverzeichnisse">
+<!ENTITY mask.text "Link-Beschreibung">
+<!ENTITY mask.refer "Verweisende URL">
+<!ENTITY mask.qstring "Abfrage-Parameter">
+<!ENTITY mask.tip "Zur Übernahme anklicken oder ins Umbenennungsschema ziehen">
+<!ENTITY mask.open.tip "Referenzübersicht der Umbenennungs-Tags">
