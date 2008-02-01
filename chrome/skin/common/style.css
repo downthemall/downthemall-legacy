@@ -71,7 +71,7 @@ dialogheader#logo .dialogheader-title {
 }
 dialogheader#logo.renamingmask .dialogheader-title {
 	padding-left: 30px !important;
-	background-image: url('chrome://dta/skin/select/mask.png') !important;
+	background-image: url(chrome://dta/skin/select/mask.png) !important;
 }
 
 /* snip */

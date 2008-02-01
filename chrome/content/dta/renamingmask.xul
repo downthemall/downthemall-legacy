@@ -22,7 +22,7 @@
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	title="&title;" 
 	id="DownThemAll"
-	width="460" height="200" 
+	width="500" height="240" 
 	persist="screenX screenY"
 	onload="Dialog.load();"
 	ondialogaccept="Dialog.accept();" 
