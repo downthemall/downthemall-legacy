@@ -1,0 +1,7 @@
+<!ENTITY title "URL hinzufügen">
+<!ENTITY add.value "URL hinzufügen">
+<!ENTITY desc.value "Hier eine URL und (optional) die verweisende Seite der runterzuladenenen Datei eintragen.">
+<!ENTITY desc.batches.value "Sie können auch Batch-Marker benutzen um mehrere Dateien gleichzeitig zu laden.">
+<!ENTITY examples.value "Beispiele:">
+<!ENTITY help.batches.label "Batch Download">
+<!ENTITY help.adding.label "URLs hinzufügen">
