@@ -17,8 +17,8 @@
 <!ENTITY infoMultiple.value "Mehrere Elemente">
 <!ENTITY elapsedTitle.value "Verstrichen:">
 <!ENTITY remainingTitle.value "Verbleibend:">
-<!ENTITY currentSpeedTitle.value "Aktuelle Geschwindigkeit:">
-<!ENTITY avgSpeedTitle.value "Durchschnittliche Geschwindigkeit:">
+<!ENTITY currentSpeedTitle.value "Aktuell:">
+<!ENTITY avgSpeedTitle.value "Durchschnittlich:">
 <!ENTITY path.label "Zielordner">
 <!ENTITY mask.label "Umbenennungsschema">
 <!ENTITY hash.label "Prüfsumme">
