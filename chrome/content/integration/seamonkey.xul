@@ -40,7 +40,7 @@
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
 <overlay id="DtaBrowserToolbar" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<script type="application/x-javascript" src="chrome://dta/content/integration/seamonkey.js"/>
+	<script type="application/x-javascript" src="chrome://dta/content/integration/toolbarButtons.js"/>
 
 	<popup id="contentAreaContextMenu">
 		<menu id="dtaCtxCompact" insertafter="context-sep-selectall"/>
