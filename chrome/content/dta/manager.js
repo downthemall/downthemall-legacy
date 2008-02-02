@@ -62,6 +62,11 @@ const ObserverService = Serv('@mozilla.org/observer-service;1', 'nsIObserverServ
 const WindowWatcherService = Serv('@mozilla.org/embedcomp/window-watcher;1', 'nsIWindowWatcher');
 
 const MIN_CHUNK_SIZE = 512 * 1024;
+
+// ammount to buffer in BufferedOutputStream
+// furthermore up to this ammount will automagically discared after crashes
+const CHUNK_BUFFER_SIZE = 96 * 1024;
+
 // in use by chunk.writer...
 // in use by decompressor... beware, actual size might be more than twice as big!
 const MAX_BUFFER_SIZE = 5 * 1024 * 1024;
@@ -1632,7 +1637,7 @@ QueueItem.prototype = {
 		if (this.is(RUNNING, PAUSED, QUEUED) && this.resumable) {
 			this.chunks.forEach(
 				function(c) {
-					e.chunks.push({start: c.start, end: c.end, written: c.written});
+					e.chunks.push({start: c.start, end: c.end, written: c.safeBytes});
 				}
 			);
 		}
@@ -1643,6 +1648,7 @@ QueueItem.prototype = {
 function Chunk(download, start, end, written) {
 	// saveguard against null or strings and such
 	this._written = written > 0 ? written : 0;
+	this._buffered = 0;
 	this._start = start;
 	this._end = end;
 	this.end = end;
@@ -1670,6 +1676,9 @@ Chunk.prototype = {
 	},
 	get written() {
 		return this._written;
+	},
+	get safeBytes() {
+		return this.written - this._buffered;
 	},
 	get remainder() {
 		return this._total - this._written;
@@ -1709,7 +1718,7 @@ Chunk.prototype = {
 			}
 		}
 		seekable.seek(0x00, this.start + this.written);
-		this._outStream = new BufferedOutputStream(outStream, 131072);
+		this._outStream = new BufferedOutputStream(outStream, CHUNK_BUFFER_SIZE);
 	},
 	close: function CH_close() {
 		this.running = false;
@@ -1718,6 +1727,7 @@ Chunk.prototype = {
 			this._outStream.close();
 			delete this._outStream;
 		}
+		this._buffered = 0;
 		if (this.parent.is(CANCELED)) {
 			this.parent.removeTmpFile();
 		}
@@ -1759,6 +1769,7 @@ Chunk.prototype = {
 			}
 			this._written += bytes;
 			this._sessionBytes += bytes;
+			this._buffered = Math.min(CHUNK_BUFFER_SIZE, this._buffered + bytes);
 
 			this.parent.timeLastProgress = Utils.getTimestamp();
 
