@@ -2056,6 +2056,13 @@ Connection.prototype = {
 					d.markAutoRetry();
 					d.status = code >= 500 ? _('temperror') : _('autherror');
 				}
+				else if (code == 450) {
+					d.fail(
+						_('pcerrortitle'),
+						_('pcerrortext'),
+						_('pcerrortitle')
+					);
+				}
 				else {
 					var file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
 					code = Utils.formatNumber(code, 3);
