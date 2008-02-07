@@ -1,14 +1,8 @@
 @import 'chrome://dta/skin/common/style.css';
+@import 'chrome://dta-platform/skin/manager.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 @namespace html url("http://www.w3.org/1999/xhtml");
 	
-	
-treechildren::-moz-tree-progressmeter(progressUndetermined) {
-	list-style-image: url('chrome://dta/skin/manager/undetermined.gif');
-}
-treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined) {
-	list-style-image: url('chrome://dta/skin/manager/paused-undetermined.png');
-}
 toolbox {
 	border-width: 0px;
 }
