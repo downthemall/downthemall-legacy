@@ -30,8 +30,8 @@
 <!ENTITY mainpane.sounddone.label "Klang abspielen, wenn alle Downloads abgeschlossen sind">
 <!ENTITY mainpane.closedta.label "DownThemAll! schließen, wenn alle Downloads abgeschlossen sind">
 <!ENTITY privacypane.label "Privatsphäre">
-<!ENTITY privacypane.closing.caption "Wenn das Fenster geschlossen wird">
-<!ENTITY privacypane.removecompleted.label "Fertige Downloads aus entfernen">
+<!ENTITY privacypane.closing.caption "Beim Schließen des Download-Fensters">
+<!ENTITY privacypane.removecompleted.label "Abgeschlossene Downloads entfernen">
 <!ENTITY privacypane.removecanceled.label "Abgebrochene/fehlerhafte Downloads entfernen">
 <!ENTITY privacypane.removeaborted.label "Nicht begonnene Downloads entfernen">
 <!ENTITY privacypane.deletefoldershistory.label "Ordner-Chronik löschen">
@@ -51,16 +51,16 @@
 <!ENTITY privacypane.privacynotice.label "Unsere Datenschutzerklärung">
 <!ENTITY advancedpane.label "Erweitert">
 <!ENTITY advancedpane.multipart.caption "Segmentierter Download">
-<!ENTITY advancedpane.chunks.label "Maximale Anzahl an Segmenten pro Download:">
+<!ENTITY advancedpane.chunks.label "Maximale Anzahl an Segmente pro Download:">
 <!ENTITY advancedpane.chunksdisabled "1 (Deaktiviert)">
-<!ENTITY advancedpane.timeouts.caption "Download-Timeout">
+<!ENTITY advancedpane.timeouts.caption "Download-Zeitüberschreitung">
 <!ENTITY advancedpane.timeout.label "Verbindung trennen nach einer max. Inaktivität von">
 <!ENTITY advancedpane.seconds "Sekunden">
 <!ENTITY advancedpane.minute "Minute">
 <!ENTITY advancedpane.minutes "Minuten">
 <!ENTITY advancedpane.misc.caption "Verschiedene Einstellungen">
 <!ENTITY advancedpane.settime.label "Dateizeit auf die Änderungszeit (von Server) oder Zeit des Downloadauftrags setzen">
-<!ENTITY advancedpane.rememberoneclick.label "dTa OneClick soll sich merken ob es für alle oder nur für das aktuelle Tab gilt">
+<!ENTITY advancedpane.rememberoneclick.label "dTa OneClick soll sich merken, ob es für alle oder nur für das aktuelle Tab gilt">
 <!ENTITY advancedpane.tempfiles.caption "Temporäre Dateien">
 <!ENTITY advancedpane.usetemp.label "Download-Segmente in temporärem Verzeichnis zwischenspeichern">
 <!ENTITY advancedpane.tempdir.label "Dieses Verzeichnis nutzen:">
@@ -68,10 +68,10 @@
 <!ENTITY uipane.appearance.caption "Oberfläche">
 <!ENTITY uipane.namesonly.label "Nur Dateinamen im Manager-Fenster zeigen">
 <!ENTITY uipane.integration.caption "Integration">
-<!ENTITY uipane.downloadwin.label "DownThemAll! im &apos;Datei speichern&apos; Fenster zeigen">
+<!ENTITY uipane.downloadwin.label "DownThemAll! im &apos;Datei speichern&apos;-Fenster zeigen">
 <!ENTITY uipane.context.caption "Einträge im Kontextmenü">
 <!ENTITY uipane.tools.caption "Einträge im Extras-Menü">
-<!ENTITY uipane.tbbuttons.caption "Symboleisten-Buttons">
+<!ENTITY uipane.tbbuttons.caption "Symbolleisten-Schaltflächen">
 <!ENTITY uipane.compact.label "Kompakte Menüdarstellung verwenden">
-<!ENTITY uipane.hide.label "Dieses Menü verstecken">
-<!ENTITY uipane.showtooltip.label "Zeige Download Tooltip">
+<!ENTITY uipane.hide.label "Dieses Menü ausblenden">
+<!ENTITY uipane.showtooltip.label "Download Tooltip anzeigen">
