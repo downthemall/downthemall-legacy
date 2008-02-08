@@ -1,0 +1,7 @@
+<!ENTITY title "Додади URL">
+<!ENTITY add.value "Додади URL">
+<!ENTITY desc.value "Внесете URL овде и (опционално) референтната страна на датоеката што сакате да ја симнете.">
+<!ENTITY desc.batches.value "Можете да користите пакетни модификатори за да симнувате повеќе датотеки одеднаш.">
+<!ENTITY examples.value "Примери:">
+<!ENTITY help.batches.label "Пакетно Симнување">
+<!ENTITY help.adding.label "Додавам URL">
