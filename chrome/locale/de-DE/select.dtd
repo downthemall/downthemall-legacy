@@ -8,8 +8,8 @@
 <!ENTITY menu.mask.title "Umbenennungsschema ändern...">
 <!ENTITY menu.check.label "Ausgewählte Einträge markieren">
 <!ENTITY menu.uncheck.label "Ausgewählte Einträge abwählen">
-<!ENTITY menu.toggle.label "Makierung für ausgewählte Einträge umkehren">
+<!ENTITY menu.toggle.label "Markierung für ausgewählte Einträge umkehren">
 <!ENTITY tab.links.label "Links">
 <!ENTITY tab.pics.label "Grafiken und eingebettete Objekte">
 <!ENTITY header.desc.label "Beschreibung">
-<!ENTITY selectfiltered.label "Makierte Einträge auswählen">
+<!ENTITY selectfiltered.label "Markierte Einträge auswählen">

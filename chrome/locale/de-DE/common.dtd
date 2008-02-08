@@ -12,6 +12,6 @@
 <!ENTITY browse.tip "Zielordner auswählen...">
 <!ENTITY mask.label "Umbenennungsschema">
 <!ENTITY mask.tip "Ausgewählte Dateien werden nach diesem Umbenennungsschema gespeichert und umbenannt">
-<!ENTITY selectall.label "Alles auswählen">
+<!ENTITY selectall.label "Alle auswählen">
 <!ENTITY selectinv.label "Auswahl umkehren">
 <!ENTITY selectnone.label "Nichts auswählen">
