@@ -1313,7 +1313,7 @@ QueueItem.prototype = {
 				// no-op
 			}
 
-			this.description = this.description.removeBadChars().replace(/\\\//g, '').trim();
+			let description = this.description.removeBadChars().replaceSlashes(' ').trim();
 			
 			let name = this.fileName;
 			let ext = name.getExtension();
@@ -1342,7 +1342,7 @@ QueueItem.prototype = {
 			var replacements = {
 				"name": name,
 				"ext": ext,
-				"text": this.description,
+				"text": description,
 				"url": host,
 				"subdirs": uripath,
 				"refer": ref,
