@@ -46,7 +46,7 @@ function QueueItem(url, num, hash) {
 	this.url = url;
 	this.numIstance = num;
 	this.referrer = $('URLref').value,
-	this.description = window.arguments ? window.arguments[0] : '';
+	this.description = window.arguments ? window.arguments[0].description : '';
 	this.ultDescription = '';
 	this.mask = Dialog.ddRenaming.value;
 	this.dirSave = Dialog.ddDirectory.value;
