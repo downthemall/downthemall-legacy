@@ -172,8 +172,11 @@ merge(
 		removeFinalSlash : function() {
 			return this.removeFinalChar(SYSTEMSLASH);
 		},
+		replaceSlashes: function(replaceWith) {
+			return this.replace(/[\\/]/g, replaceWith);
+		},
 		normalizeSlashes: function() {
-			return this.replace(/[\\/]/g, SYSTEMSLASH);
+			return this.replaceSlashes(SYSTEMSLASH);
 		},
 		removeLeadingSlash : function() {
 			return this.removeLeadingChar(SYSTEMSLASH);
