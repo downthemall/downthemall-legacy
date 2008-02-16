@@ -2323,7 +2323,7 @@ Connection.prototype = {
 			}
 		}
 
-		if (-1 != [
+		if (c.starter && -1 != [
 			NS_ERROR_CONNECTION_REFUSED,
 			NS_ERROR_UNKNOWN_HOST,
 			NS_ERROR_NET_TIMEOUT,
