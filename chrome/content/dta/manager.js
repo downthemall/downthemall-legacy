@@ -1179,6 +1179,7 @@ QueueItem.prototype = {
 
 			if (!destination.exists()) {
 				destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
+				this.invalidate();
 			}
 			var df = destination.clone();
 			df.append(this.destinationName);
@@ -1704,6 +1705,7 @@ Chunk.prototype = {
 		let file = this.parent.tmpFile.clone();
 		if (!file.parent.exists()) {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
+			this.parent.invalidate();
 		}
 		let prealloc = !file.exists();
 		let outStream = new FileOutputStream(file, 0x02 | 0x08, 0600, 0);
