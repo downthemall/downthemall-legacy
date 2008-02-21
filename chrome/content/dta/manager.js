@@ -400,9 +400,10 @@ var Dialog = {
 				return false;
 			}
 		}
-		return true;
+		return (this._forceClose = true);
 	},
 	close: function D_close() {
+		Debug.logString("Close request");
 		if (!this._forceClose && !this._canClose()) {
 			delete this._forceClose;
 			return false;
@@ -410,9 +411,12 @@ var Dialog = {
 
 		// stop everything!
 		// enumerate everything we'll have to wait for!
-		this._updTimer.kill();
-		this._safeCloseChunks = [];
-		this._safeCloseFinishing = [];
+		if (this._updTimer) {
+			this._updTimer.kill();
+			delete this._updTimer;
+		}
+		let chunks = 0;
+		let finishing = 0;
 		Tree.updateAll(
 			function(d) {
 				if (d.is(RUNNING, QUEUED)) {
@@ -420,7 +424,7 @@ var Dialog = {
 					d.chunks.forEach(
 						function(c) {
 							if (c.running) {
-								this._safeCloseChunks.push(c);
+								++chunks;
 							}
 						},
 						this
@@ -428,12 +432,21 @@ var Dialog = {
 					d.pause();				
 				}
 				else if (d.is(FINISHING)) {
-					this._safeCloseFinishing.push(d);
+					++finishing;
 				}
 			},
 			this
 		);
-		return this._safeClose();
+		if (chunks || finishing) {
+			if (this._safeCloseAttempts < 20) {
+				++this._safeCloseAttempts;
+				new Timer(function() { Dialog.close(); }, 250);				
+				return false;
+			}
+			Debug.logString("Going down even if queue was not probably closed yet!");
+		}
+		close();
+		return true;
 	},
 	_cleanTmpDir: function D__cleanTmpDir() {
 		if (!Prefs.tempLocation || Preferences.getMultiByteDTA("tempLocation", '') != '') {
@@ -465,31 +478,15 @@ var Dialog = {
 		);
 	},
 	_safeCloseAttempts: 0,
-	_safeCloseChunks: [],
-	// this one will loop until all chunks and FINISHING are gone.
-	_safeClose: function D__safeClose() {
-		// cannot close at this point
-		this._safeCloseChunks = this._safeCloseChunks.filter(function(c) { return c.running; });
-		this._safeCloseFinishing = this._safeCloseFinishing.filter(function(d) { return d.is(FINISHING); });
-		if (this._safeCloseChunks.length || this._safeCloseFinishing.length) {
-			if (this._safeCloseAttempts < 20) {
-				++this._safeCloseAttempts;
-				new Timer('Dialog._safeClose()', 250);			
-				return false;
-			}
-			else {
-				Debug.logString("Going down even if queue was not probably closed yet!");
-			}
-		}
+
+	unload: function D_unload() {
 		TimerManager.killAll();
-		// alright, we left the loop.. shutdown complete ;)
 		try {
 			this._cleanTmpDir();
 		}
 		catch(ex) {
 			Debug.log("_safeClose", ex);
 		}
-		self.close();
 		return true;		
 	}
 };
