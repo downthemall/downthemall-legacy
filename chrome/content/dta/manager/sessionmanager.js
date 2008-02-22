@@ -35,15 +35,29 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
+ 
+const DB_FILE = 'dta_queue.sqlite';
+const DB_FILE_BAK = DB_FILE + ".bak";
+const DB_VERSION = 1;
 
 var SessionManager = {
 
 	init: function() {
 		this._con = Serv('@mozilla.org/storage/service;1', 'mozIStorageService')
-			.openDatabase(DTA_profileFile.get('dta_queue.sqlite'));
+			.openDatabase(DTA_profileFile.get(DB_FILE));
 		try {
-			this._con.executeSimpleSQL('CREATE TABLE queue (uuid INTEGER PRIMARY KEY AUTOINCREMENT, pos INTEGER, item TEXT)');
+			if (('schemaVersion' in this._con) && this._con.schemaVersion != DB_VERSION) {
+				/*
+					migrate data
+				*/
+				this._con.schemaVersion = DB_VERSION;
+				Debug.logString("setting schema version");				
+			}
+			if (!this._con.tableExists('queue')) {
+				this._con.createTable('queue', 'uuid INTEGER PRIMARY KEY AUTOINCREMENT, pos INTEGER, item TEXT');
+			}
 		} catch (ex) {
+			Debug.log("failed to create table", ex);
 			// no-op
 		}
 		try {
@@ -63,6 +77,19 @@ var SessionManager = {
 		this._converter.Init('utf-8', 1, 0);
 
 		this.load();
+	},
+	shutdown: function() {
+		try {
+			['_saveStmt', '_saveItemStmt', '_savePosStmt', '_delStmt'].forEach(
+				function(e) {
+					try { this[e].finalize(); } catch (ex) { /* no op */ }
+				},
+				this
+			);
+		}
+		catch (ex) {
+			Debug.log("SessionManager::shutdown", ex);
+		}
 	},
 
 	_saveDownload: function(d, pos) {
@@ -111,7 +138,21 @@ var SessionManager = {
 	},
 	endUpdate: function() {
 		this._con.commitTransaction();
-	},	
+	},
+	backup: function() {
+		if (!('backupDB' in this._con)) {
+			Debug.logString("DB Backup not possible");
+			return;
+		}
+		try {
+			if (!this._con.backupDB(DB_FILE_BAK).exists()) {
+				throw new Exception("DB Backup failed!");
+			} 
+		}
+		catch (ex) {
+			Debug.log("SessionManager: Cannot backup queue", ex);
+		} 
+	},
 	save: function(download) {
 
 		// just one download.

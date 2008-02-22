@@ -487,6 +487,7 @@ var Dialog = {
 		catch(ex) {
 			Debug.log("_safeClose", ex);
 		}
+		SessionManager.shutdown();
 		return true;		
 	}
 };
