@@ -40,8 +40,7 @@
 					</row>
 					<row id="filterRow" align="center">
 						<label value="&filter.label;"/>
-						<textbox id="filterTest" oninput="Filters.onFilterEdit();" onblur="Filters.onFinishedFilterEdit();" />
-						<checkbox id="filterIsRegex" label="&regex.label;" oncommand="Filters.onIsRegexClick();"/>
+						<textbox id="filterExpression" oninput="Filters.onFilterEdit();" onblur="Filters.onFinishedFilterEdit();" />
 					</row>
 					<row align="center">
 						<label id="useAs" value="&useAs.label;"/> 
