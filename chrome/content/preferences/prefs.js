@@ -43,6 +43,9 @@ if (!Ci) {
 	const Ci = Components.interfaces;
 }
 
+const LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
+const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
+
 var Main = {
 	load: function() {
 		$('alert2').hidden = !('nsIAlertsService' in Ci);
@@ -194,83 +197,23 @@ var Filters = {
 			Debug.log("reloadFilters():", ex);
 		}
 	},
-	
-	doCheckboxValidation : function() {
-		var filter = this.filter;
-
-		var potentiallyValidRegExp = false;
-		try {
-			var potentialReg = this.addSlashes($("filterTest").value);
-			DTA_regToRegExp(potentialReg);
-			$("filterIsRegex").disabled = false;			
-		} catch(ex) {
-			$("filterIsRegex").disabled = true;
-		}
-				
-		if (this.isValidFilter()) {
-			$("filterIsRegex").checked = $("filterTest").value.match(/^\/.+\/i?$/);
-		} else {
-			var lastCaretPosition = $("filterTest").selectionStart;
-			$("filterTest").value = $("filterTest").value.trim().replace(/^\/|\/i?$/gi, "");
-			$("filterTest").setSelectionRange(lastCaretPosition-1, lastCaretPosition-1);
-			$("filterIsRegex").checked = false;
-		}
-	},
-	addSlashes: function(test) {
-		if (test[0] != '/') {
-			test = '/' + test;
-		}
-		if (!test.match(/\/i?$/)) {
-			test = test + '/i';
-		}
-		return test;
-	},
-	onIsRegexClick: function() {
-		var test = $("filterTest").value;
-		
-		if ($("filterIsRegex").checked) {
-			test = this.addSlashes(test);
-		}
-		else {
-			test = test.trim().replace(/^\/|\/i?$/gi, "");
-		}
-		
-		$("filterTest").value = test;
-		
-		this.onFilterEdit();
-		this.onFinishedFilterEdit();
-	},
 	onCheckboxChange : function() {
 		this.onFilterEdit();
 		this.onFinishedFilterEdit();
 	},
-	isValidFilter : function() {
-		var filter = $("filterTest").value;
-		try {
-			if ($("filterIsRegex").checked) {
-				return DTA_regToRegExp(filter);
-			} else {
-				return DTA_strToRegExp(filter);
-			}
-		} catch(ex) {}
-		return null;
-	},
 	onFilterEdit: function() {
-		var filter = this.filter;
-		
-		this.doCheckboxValidation();
+		let filter = this.filter;
+		let newType = ($("filterText").checked ? LINK_FILTER : 0) | ($("filterImage").checked ? IMAGE_FILTER : 0);
 		
 		if (
 			$("filterLabel").value != filter.label 
-			|| $("filterTest").value!=filter.test
-			|| filter.type!= ($("filterText").checked?1:0) + ($("filterImage").checked?2:0)
-			|| filter.isRegex != $("filterIsRegex").checked
-			)
+			|| $("filterExpression").value != filter.expression
+			|| filter.type != newType
+		)
 		{
 			filter.label = $("filterLabel").value;
-			filter.isRegex = $("filterIsRegex").checked;
-			filter.type = ($("filterText").checked?1:0) + ($("filterImage").checked?2:0);
-			filter.test = $("filterTest").value;
+			filter.type = newType;
+			filter.expression = $("filterExpression").value;
 			
 			var idx = this.selection.currentIndex;
 			this.box.invalidateRow(idx);
@@ -346,7 +289,7 @@ var Filters = {
 			case 0:
 				return this.getFilter(idx).label;
 			case 1:
-				return this.getFilter(idx).test;
+				return this.getFilter(idx).expression;
 		}
 		return null;
 	},
@@ -382,9 +325,21 @@ var Filters = {
 		var idx = this.current;
 
 		if (idx == -1) {
-			$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex", "restoreremovebutton").forEach(function(a){a.disabled=true});
-			$("filterLabel", "filterTest").forEach(function(a){a.value=""});
-			$("filterText", "filterImage", "filterIsRegex").forEach(function(a){a.checked=false});
+			$("filterLabel", "filterExpression", "filterText", "filterImage", "restoreremovebutton").forEach(
+				function(a){
+					a.disabled = true
+				}
+			);
+			$("filterLabel", "filterExpression").forEach(
+				function(a){
+					a.value = ""
+				}
+			);
+			$("filterText", "filterImage").forEach(
+				function(a){
+					a.checked = false
+				}
+			);
 			return;
 		}
 		
@@ -395,16 +350,18 @@ var Filters = {
 		}
 
 		$("filterLabel").value = currentFilter.label;
-		$("filterTest").value = currentFilter.test;
-		$("filterIsRegex").checked = currentFilter.isRegex;
-		$("filterText").checked = currentFilter.type & 1;
-		$("filterImage").checked = currentFilter.type & 2;
-		$("filterLabel", "filterTest", "filterText", "filterImage", "filterIsRegex", "restoreremovebutton").forEach(function(a){a.disabled=false});
+		$("filterExpression").value = currentFilter.expression;
+		$("filterText").checked = currentFilter.type & LINK_FILTER;
+		$("filterImage").checked = currentFilter.type & IMAGE_FILTER;
+		$("filterLabel", "filterExpression", "filterText", "filterImage", "restoreremovebutton").forEach(
+			function(a){
+				a.disabled = false
+			}
+		);
 		
 		$("restoreremovebutton").label = currentFilter.defFilter
 			? _('restorebutton')
 			: _('removebutton');
-		this.doCheckboxValidation();	
 	},
 	cycleCell: function(idx, column) {},
 	performAction: function(action) {},

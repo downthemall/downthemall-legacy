@@ -261,7 +261,8 @@ Tree.prototype = {
 		if (value == "true") {
 			l.checked = "manuallySelected";
 			l.manuallyChecked = true;
-		} else {
+		}
+		else {
 			l.checked = '';
 			l.manuallySelected = false;
 		}
@@ -469,10 +470,7 @@ var Dialog = {
 		var tree = this.current;
 		var type = tree.type;
 
-		// see if there is an additional filter
-		var additional = new DTA_AdditionalMatcher(this.ddFilter.value, $('regex').checked);
-
-		// will keep track of used filter-props f0-f7
+		// will keep track of used filter-props f0-f9
 		var used = {};
 		var idx = 0;
 		var boxen = this.boxen;
@@ -483,32 +481,33 @@ var Dialog = {
 			}
 			filters.push(boxen[i].filter);
 		}
-
-		for (var x = 0; x < tree._links.length; ++x) {
-
-			var link = tree._links[x];
-
-			var checked = '';
-			if (link.manuallyChecked) {
-				checked = 'manuallySelected';
-			}
-			else if (additional.match(link.url.url)) {
-				checked = 'f8';
-			}
-			else {
+		try {
+			filters.push(DTA_FilterManager.getTmpFromString(this.ddFilter.value));
+		}
+		catch (ex) {
+			// no op
+		}
+		
+		tree._links.forEach(
+			function(link) {
+				let checked = '';
+				if (link.manuallyChecked) {
+					checked = 'manuallySelected';
+					return;
+				}
 				filters.some(
 					function(f) {
 						if (!f.match(link.url.usable)) {
 							return false;
 						}
-						var i;
+						let i;
 
 						// see if we already assigned a prop to that filter.
 						if (f.id in used) {
 							i = used[f.id];
 						}
 						else {
-							i = idx = (idx + 1) % 8;
+							i = idx = (idx + 1) % 9;
 							used[f.id] = i;
 						}
 						checked = 'f' + i;
@@ -516,10 +515,10 @@ var Dialog = {
 					},
 					this
 				);
-			}
-
-			link.checked = checked;
-		}
+				link.checked = checked;
+			},
+			this
+		);
 
 		// need to invalidate our tree so that it displays the selection
 		tree.invalidate();

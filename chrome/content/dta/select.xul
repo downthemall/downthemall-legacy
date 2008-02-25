@@ -128,7 +128,6 @@
 	<vbox style="margin:3px 7px;" class="closer" id="regexcontainer" closed="true" persist="closed">
 		<caption id="additional" tooltiptext="&additional.tip;" label="&additional.caption;"/>
 		<saveddropdown id="filter" flex="1" tooltiptext="&filter.tip;" preference="filter" allowempty="true" onchange="Dialog.makeSelection();"/>
-		<checkbox id="regex" persist="checked" label="&regex.label;" oncommand="Dialog.makeSelection();" />
 	</vbox>
 
  	<hbox align="baseline" style="margin: 2px 7px 4px 7px" >
