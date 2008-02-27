@@ -37,7 +37,7 @@
 #include "nsISupports.idl"
 #include "nsISimpleEnumerator.idl"
 
-[scriptable, uuid(3F872ADC-35A4-4c79-B771-F2BC130FB792)]
+[scriptable, uuid(1CF86DC0-33A7-43b3-BDDE-7ADC3B35D114)]
 interface dtaIFilter : nsISupports
 {
 	const unsigned long LINK_FILTER  = 1<<0;
@@ -46,8 +46,7 @@ interface dtaIFilter : nsISupports
 	[readonly] attribute string id;
 	[readonly] attribute boolean defFilter;
 	attribute AUTF8String label;
-	attribute AUTF8String test;
-	attribute boolean isRegex;
+	attribute AUTF8String expression;
 	attribute boolean active;
 	attribute unsigned long type;
 	boolean match(in AUTF8String test);
@@ -56,7 +55,7 @@ interface dtaIFilter : nsISupports
 	void remove();
 };
 
-[scriptable, uuid(3F872ADC-35A4-4c79-B771-F2BC130FB791)]
+[scriptable, uuid(435FC5E5-D4F0-47a1-BDC1-F325B78188F3)]
 interface dtaIFilterManager : nsISupports
 {
 	[readonly] attribute unsigned long count;
@@ -69,8 +68,11 @@ interface dtaIFilterManager : nsISupports
 	
 	boolean matchActive(in AUTF8String test, in unsigned long type);
 	
-	string create(in AUTF8String label, in AUTF8String test, in boolean active, in unsigned long type, in boolean regex);
+	string create(in AUTF8String label, in AUTF8String expression, in boolean active, in unsigned long type);
 	void remove(in string id);
 	
 	void save();
+	
+	dtaIFilter getTmpFromString(in AUTF8String expression);	
+	
 }; 

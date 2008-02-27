@@ -34,11 +34,17 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-// var fm = Components.classes['@tn123.ath.cx/dtamod/filtermanager;1'].getService(Components.interfaces.dtaIFilterManager); var id = fm.create('a', 'b', false, 1, false); fm.remove(id);
-
 const CC = Components.classes;
 const CI = Components.interfaces;
-const error = Components.utils.reportError;
+const Exception = Components.Exception;
+
+const NS_ERROR_NO_INTERFACE = Components.results.NS_ERROR_NO_INTERFACE;
+const NS_ERROR_FAILURE = Components.results.NS_ERROR_FAILURE;
+const NS_ERROR_NO_AGGREGATION = Components.results.NS_ERROR_NO_AGGREGATION;
+const NS_ERROR_INVALID_ARG = Components.results.NS_ERROR_INVALID_ARG;
+
+const LINK_FILTER = CI.dtaIFilter.LINK_FILTER;
+const IMAGE_FILTER = CI.dtaIFilter.IMAGE_FILTER;
 
 function include(uri) {
 	CC["@mozilla.org/moz/jssubscript-loader;1"]
@@ -46,7 +52,24 @@ function include(uri) {
 		.loadSubScript(uri);
 }
 
-include("chrome://dta/content/common/regconvert.js");
+function debug(str, ex) {
+	try {
+		var DTA_Debug = Components.classes['@downthemall.net/debug-service;1']
+			.getService(Components.interfaces.dtaIDebugService);
+		debug = function(str, ex) {
+			if (ex) {
+				DTA_Debug.log(str, ex);
+			}
+			else {
+				DTA_Debug.logString(str);
+			}
+		}
+		debug(str, ex);
+	}
+	catch (ex) {
+		Components.utils.reportError(str + ": " + ex);
+	}
+}
 
 // no not create DTA_Filter yourself, managed by DTA_FilterManager
 function Filter(name, prefs) {
@@ -59,10 +82,11 @@ Filter.prototype = {
 	IMAGE_FILTER: (1 << 1),
 
 	_modified: false,
+	_regs: [],
 
 	// nsIClassInfo
-	classID: Components.ID("{3F872ADC-35A4-4c79-B771-F2BC130FB792}"),
-	contractID: "@downthemall.net/filter;1",
+	classID: Components.ID("{1CF86DC0-33A7-43b3-BDDE-7ADC3B35D114}"),
+	contractID: "@downthemall.net/filter;2",
 	classDescription: "DownThemAll! Filter",
 	implementationLanguage: 0x02,
 	flags: (1 << 2), // MAIN_THREAD_ONLY
@@ -84,7 +108,7 @@ Filter.prototype = {
 		) {
 			return this;
 		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
+		throw NS_ERROR_NO_INTERFACE;
 	},
 
 	// exported
@@ -110,22 +134,61 @@ Filter.prototype = {
 	},
 
 	// exported
-	get test() {
-		return this._test;
+	get expression() {
+		return this._expr;
 	},
-	set test(value) {
-		if (this._test == value) {
+	set expression(value) {
+		if (this._expr == value) {
 			return;
 		}
-		try {
-			this._test = value;
-			this._createRegex();
-		} catch (ex) {
-			// hope we don't throw again ROFL
-			this.isRegex = false;
-			throw Components.Exception("Failed to create Regex");
+		this._expr = value;
+		this._regs = [];
+		this._makeRegs(this._expr);
+		
+		this._modified = true;		
+	},
+	_makeRegs: function FM__makeRegs(str) {
+	
+		str = str.replace(/^\s+|\s+$/g, '');
+		
+		// first of all: check if we are are a regexp.
+		if (str.length > 2 && str[0] == '/') {
+			try {
+				var m = str.match(/^\/(.+?)(?:\/(i?))?$/);
+				if (!m) {
+					throw new Exception("Invalid RegExp supplied");
+				}
+				if (!m[1].length) {
+					return;
+				}
+				this._regs.push(new RegExp(m[1], m[2]));
+				return;
+			}
+			catch (ex) {
+				// fall-through
+			}
 		}
-		this._modified = true;
+	
+		var parts = str.split(',');
+		// we contain multiple filters
+		if (parts.length > 1) {
+			parts.forEach(
+				function(s) {
+					this._makeRegs(s);
+				},
+				this
+			);
+			return;
+		}
+
+		// we are simple text
+		str = str
+			.replace(/([/{}()\[\]\\^$.])/g, "\\$1")
+			.replace(/\*/g, ".*")
+			.replace(/\?/g, '.');
+		if (str.length) {				
+			this._regs.push(new RegExp(str, 'i'));
+		}
 	},
 
 	// exported
@@ -141,25 +204,6 @@ Filter.prototype = {
 	},
 
 	// exported
-	get isRegex() {
-		return this._isRegex;
-	},
-	set isRegex(value) {
-		if (this._isRegex == value) {
-			return;
-		}
-		try {
-			this._isRegex = value;
-			this._createRegex();
-		} catch (ex) {
-			// hope we don't throw again ROFL
-			this.isRegex = false;
-			throw Components.Exception("Failed to create Regex");
-		}
-		this._modified = true;
-	},
-
-	// exported
 	get type() {
 		return this._type;
 	},
@@ -171,16 +215,16 @@ Filter.prototype = {
 		this._modified = true;
 	},
 
-	_createRegex: function F_createRegex() {
-		this._regex = this._isRegex ? DTA_regToRegExp(this._test) : DTA_strToRegExp(this._test);
-	},
-
 	pref: function F_pref(str) {
 		return this._id + "." + str;
 	},
 
 	match: function F_match(str) {
-		return str.search(this._regex) != -1;
+		return this._regs.some(
+			function(reg) {
+				return str.search(reg) != -1;
+			}
+		);
 	},
 
 	/**
@@ -197,25 +241,28 @@ Filter.prototype = {
 			this._label = localizedLabel;
 		}
 		
-		this._test = this.getMultiBytePref(this.pref('test'));
 		this._active = this._prefs.getBoolPref(this.pref('active'));
 		this._type = this._prefs.getIntPref(this.pref('type'));
-		this._isRegex = this._prefs.getBoolPref(this.pref('regex'));
 		this._defFilter = this._id.search(/^deffilter/) != -1;
-		this._createRegex();
+		
+		// may throw
+		this.expression = this.getMultiBytePref(this.pref('test'));
+		
 		this._modified = false;
 	},
 
 	// exported
 	save: function F_save() {
+		if (!this._prefs) {
+			throw NS_ERROR_INVALID_ARG;
+		}
 		if (!this._modified) {
 			return;
 		}
 		this._prefs.setBoolPref(this.pref('active'), this._active);
 		
-		this.setMultiBytePref(this.pref('test'), this._test);
+		this.setMultiBytePref(this.pref('test'), this._expr);
 		this._prefs.setIntPref(this.pref('type'), this._type);
-		this._prefs.setBoolPref(this.pref('regex'), this._isRegex);
 			
 		// save this last as FM will test for it.
 		this.setMultiBytePref(this.pref('label'), this._label);
@@ -267,6 +314,12 @@ Filter.prototype = {
 			CI.nsISupportsString,
 			str
 		);
+	},
+	toString: function() {
+		return this._label + " (" + this._id + ")";
+	},
+	toSource: function() {
+		return this.toString() + ": " + this._regs.toSource();
 	}
 };
 
@@ -282,14 +335,14 @@ FilterEnumerator.prototype = {
 		) {
 			return this;
 		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
+		throw NS_ERROR_NO_INTERFACE;
 	},
 	hasMoreElements: function FE_hasMoreElements() {
 		return this._idx < this._filters.length;
 	},
 	getNext: function FE_getNext() {
 		if (!this.hasMoreElements()) {
-			throw Components.results.NS_ERROR_FAILURE;
+			throw NS_ERROR_FAILURE;
 		}
 		return this._filters[this._idx++];
 	}
@@ -299,8 +352,8 @@ FilterEnumerator.prototype = {
 var FilterManager = {
 
 	// nsIClassInfo
-	classID: Components.ID("{3F872ADC-35A4-4c79-B771-F2BC130FB791}"),
-	contractID: "@downthemall.net/filtermanager;1",
+	classID: Components.ID("{435FC5E5-D4F0-47a1-BDC1-F325B78188F3}"),
+	contractID: "@downthemall.net/filtermanager;2",
 	classDescription: "DownThemAll! Filtermanager",
 	implementationLanguage: 0x02,
 	flags: (1 << 0) | (1 << 2), // SINGLETON | MAIN_THREAD_ONLY
@@ -315,15 +368,15 @@ var FilterManager = {
 	},
 
 	implementsIID: function FM_implementID(iid) {
-			return [
-				CI.nsISupports,
-				CI.nsISupportsWeakReference,
-				CI.nsIWeakReference,
-				CI.nsIObserver,
-				CI.nsIClassInfo,
-				CI.nsITimerCallback,
-				this.classID
-			].some(function(e) { return iid.equals(e); });
+		return [
+			CI.nsISupports,
+			CI.nsISupportsWeakReference,
+			CI.nsIWeakReference,
+			CI.nsIObserver,
+			CI.nsIClassInfo,
+			CI.nsITimerCallback,
+			this.classID
+		].some(function(e) { return iid.equals(e); });
 	},
 
 	_done: true,
@@ -339,7 +392,7 @@ var FilterManager = {
 
 		// load those localized labels for default filters.
 		this._localizedLabels = {};
-				var b = CC['@mozilla.org/intl/stringbundle;1']
+		var b = CC['@mozilla.org/intl/stringbundle;1']
 			.getService(CI.nsIStringBundleService)
 			.createBundle("chrome://dta/locale/filters.properties");
 		var e = b.getSimpleEnumeration();
@@ -401,7 +454,7 @@ var FilterManager = {
 				this._count++;
 			}
 			catch (ex) {
-				error("Failed to load: " + name + " / " + ex);
+				debug("Failed to load: " + name + " / " + ex);
 			}
 		}
 		this._all.sort(
@@ -431,10 +484,17 @@ var FilterManager = {
 	},
 
 	enumAll: function FM_enumAll() {
+		this._all.forEach(function(f) { debug(f.toSource()); }); 
 		return new FilterEnumerator(this._all);
 	},
 	enumActive: function FM_enumActive(type) {
-		return new FilterEnumerator(this._active);
+		return new FilterEnumerator(
+			this._active.filter(
+				function(i) {
+					return i.type & type;
+				}
+			)
+		);
 	},
 
 	getFilter: function FM_getFilter(id) {
@@ -445,10 +505,10 @@ var FilterManager = {
 	},
 
 	matchActive: function FM_matchActive(test, type) {
-		return this._active.some(function(i) { return i.match(test); });
+		return this._active.some(function(i) { return (i.type & type) && i.match(test); });
 	},
 
-	create: function FM_create(label, test, active, type, isRegex) {
+	create: function FM_create(label, expression, active, type) {
 
 		// we will use unique ids for user-supplied filters.
 		// no need to keep track of the actual number of filters or an index.
@@ -460,13 +520,13 @@ var FilterManager = {
 		var filter = new Filter(uuid.toString(), this._prefs);
 		// I'm a friend, hence I'm allowed to access private members :p
 		filter._label = label;
-		filter._test = test;
 		filter._active = active;
 		filter._type = type;
 		filter._modified = true;
 
 		// this might throw!
-		filter.isRegex = isRegex;
+		filter.expression = expression;
+
 
 		// will call our observer so we re-init... no need to do more work here :p
 		filter.save();
@@ -486,12 +546,25 @@ var FilterManager = {
 			function(f) {
 				try {
 					f.save();
-				} catch (ex) {
-					error(ex);
+				}
+				catch (ex) {
+					debug(ex);
 				}
 			},
 			this
 		);
+	},
+	
+	getTmpFromString: function FM_getTmpFromString(expression) {
+		if (!expression.length) {
+			throw NS_ERROR_INVALID_ARG;
+		}
+		var filter = new Filter("temp", null);
+		filter._active = true;
+		filter._type = LINK_FILTER | IMAGE_FILTER;
+		filter._modified = false;
+		filter.expression = expression;
+		return filter;
 	},
 
 		// nsiSupports
@@ -499,7 +572,7 @@ var FilterManager = {
 		if (this.implementsIID(iid)) {
 			return this;
 		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
+		throw NS_ERROR_NO_INTERFACE;
 	},
 
 	// nsiWeakReference
@@ -575,7 +648,7 @@ var Module = {
 		if (cid.equals(FilterManager.classID)) {
 			return this;
 		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
+		throw NS_ERROR_NO_INTERFACE;
 	},
 	canUnload: function(compMgr) {
 		return true;
@@ -587,16 +660,16 @@ var Module = {
 			return this;
 		}
 
-		return Components.results.NS_ERROR_NO_INTERFACE;
+		return NS_ERROR_NO_INTERFACE;
 	},
 	createInstance: function (outer, iid) {
 		if (outer != null) {
-			throw Components.results.NS_ERROR_NO_AGGREGATION;
+			throw NS_ERROR_NO_AGGREGATION;
 		}
 		if (FilterManager.implementsIID(iid)) {
 			return FilterManager;
 		}
-		throw Components.results.NS_ERROR_INVALID_ARG;
+		throw NS_ERROR_INVALID_ARG;
 	}
 }
 
