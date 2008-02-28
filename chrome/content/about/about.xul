@@ -85,7 +85,7 @@
 	
 	<dialogheader id="logo" title="DownThemAll!" description="&about.subtitle;" orient="vertical" style="font-size: smaller;" chromedir="&locale.dir;"/>
 	<groupbox orient="vertical">
-		<label value="Copyright © 2004-2007 By:" style="font-weight: bold;"/>
+		<label value="Copyright © 2004-2008 By:" style="font-weight: bold;"/>
 		<html:ul>
 			<html:li><label value="Federico Parodi" class="link" onclick="openTab('http://www.jimmy2k.it'); "/></html:li>
 			<html:li><label value="Stefano Verna" class="link" onclick="openTab('http://steffoz.altervista.org/'); "/></html:li>
