@@ -14,7 +14,7 @@
  * The Original Code is DownThemAll!
  *
  * The Initial Developers of the Original Code are Stefano Verna and Federico Parodi
- * Portions created by the Initial Developers are Copyright (C) 2004-2007
+ * Portions created by the Initial Developers are Copyright (C) 2004-2008
  * the Initial Developers. All Rights Reserved.
  *
  * Contributor(s):
