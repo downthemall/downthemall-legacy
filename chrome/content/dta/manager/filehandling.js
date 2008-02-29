@@ -50,9 +50,11 @@
  		}
  	},
 	openFolder: function() {
-		for (d in this._uniqueList) {
+		for (d in Tree.selected) {
 			try {
-				OpenExternal.reveal(d.destinationFile);
+				if (new FileFactory(d.destinationPath).exists()) {
+					OpenExternal.reveal(d.destinationFile);
+				}
 			}
 			catch (ex) {
 				Debug.log('reveal', ex);
