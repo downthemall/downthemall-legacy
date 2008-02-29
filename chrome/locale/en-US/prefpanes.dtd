@@ -73,6 +73,7 @@
 <!ENTITY advancedpane.tempfiles.caption "Temporary files">
 <!ENTITY advancedpane.usetemp.label "Save download chunks in a temporary directory">
 <!ENTITY advancedpane.tempdir.label "Use this directory:">
+<!ENTITY advancedpane.confirmremove.label "User must confirm removeral of downloads">
 
 <!ENTITY uipane.label "Interface">
 <!ENTITY uipane.appearance.caption "Appearance">

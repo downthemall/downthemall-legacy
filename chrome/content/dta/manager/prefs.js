@@ -56,6 +56,7 @@
 		['maxAutoRetries', 10],
 		['autoRetryInterval', 0],
 		['autoClearComplete', false],
+		['confirmRemove', true],
 	],
 
 	// nsIObserver

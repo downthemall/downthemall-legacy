@@ -65,6 +65,7 @@ pref("extensions.dta.rememberoneclick", false);
 pref("extensions.dta.autoretryinterval", 0);
 pref("extensions.dta.maxautoretries", 10);
 pref("extensions.dta.autoclearcomplete", false);
+pref("extensions.dta.confirmremove", true);
 
 // Seamonkey specific
 pref("extensions.dta.sm.buttons", "1,1,0");

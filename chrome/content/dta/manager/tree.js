@@ -283,6 +283,18 @@ var Tree = {
 			this._box.rowCountChanged(download.position, 1);
 		}
 	},
+	removeWithConfirmation: function T_removeWithConfirmation() {
+		if (Prefs.confirmRemove) {
+			let res = DTA_confirm(_('removetitle'), _('removequestion'), DTA_confirm.YES, DTA_confirm.NO, null, 0, false, _('removecheck'));
+			if (res.checked) {
+				Preferences.setDTA('confirmremove', false);
+			}
+			if (res.button) {
+				return;
+			}
+		}
+		this.remove(null, true);
+	},
 	remove: function T_remove(downloads, performJump) {
 		if (downloads && !(downloads instanceof Array)) {
 			downloads = [downloads];
