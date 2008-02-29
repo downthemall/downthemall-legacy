@@ -3,6 +3,7 @@
 <!ENTITY mask.ext "Extension">
 <!ENTITY mask.url "Base URL">
 <!ENTITY mask.curl "Full URL">
+<!ENTITY mask.flatcurl "Flat Full URL">
 <!ENTITY mask.num "Progressive number">
 <!ENTITY mask.hh "Hours">
 <!ENTITY mask.mm "Minutes">
@@ -11,6 +12,7 @@
 <!ENTITY mask.m "Month">
 <!ENTITY mask.y "Year">
 <!ENTITY mask.subdirs "URL subdirectories">
+<!ENTITY mask.flatsubdirs "Flat URL subdirectories">
 <!ENTITY mask.text "Link description">
 <!ENTITY mask.refer "Referrer URL">
 <!ENTITY mask.qstring "Query String">
