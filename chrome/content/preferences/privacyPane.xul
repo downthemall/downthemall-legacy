@@ -62,7 +62,7 @@
 							</menulist>
 						</hbox>
 						<hbox align="right">
-							<button id="butFoldDel" label="&privacypane.deletefoldershistory.label;" oncommand="Privacy.delFolders();" />
+							<button id="butFoldDel" label="&privacypane.deletefoldershistory.label;" oncommand="Privacy.delDirectories();" />
 							<button id="butFiltDel" label="&privacypane.deletefiltershistory.label;" oncommand="Privacy.delFilters();" />
 						</hbox>
 					</groupbox>
