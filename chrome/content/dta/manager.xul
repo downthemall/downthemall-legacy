@@ -84,6 +84,7 @@
 			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/skin/manager/cancel.png" oncommand="Tree.cancel();" />
 			<menuseparator />
 			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/skin/manager/clean.png" oncommand="Tree.removeCompleted();" />
+			<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/remove.png" oncommand="Tree.removeWithConfirmation();" />			
 			<menuseparator />
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="Tree.selectAll();" />
 			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="Tree.selectInv();" />
@@ -98,8 +99,7 @@
 					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/skin/manager/addpart.png" oncommand="Tree.changeChunks(true);" />
 					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" image="chrome://dta/skin/manager/rempart.png" oncommand="Tree.changeChunks(false);" />
 					<menuseparator/>
-					<menuitem id="force" class="menuitem-iconic" label="&force.label;" image="chrome://dta/skin/manager/force.png" oncommand="Tree.force()" />
-					<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/remove.png" oncommand="Tree.remove()" />					
+					<menuitem id="force" class="menuitem-iconic" label="&force.label;" image="chrome://dta/skin/manager/force.png" oncommand="Tree.force()" />					
 					<menuseparator />
 					<menuitem id="prefs" class="menuitem-iconic" label="&options.label;" image="chrome://dta/skin/common/prefs.png" onclick="DTA_showPreferences();" />
 				</menupopup>
