@@ -1338,15 +1338,19 @@ QueueItem.prototype = {
 			}
 			let ref = this.referrer ? this.referrer.host.toString() : '';
 			
+			let curl = (uri.host + ((uripath=="") ? "" : (SYSTEMSLASH + uripath))); 
+			
 			var replacements = {
 				"name": name,
 				"ext": ext,
 				"text": description,
 				"url": host,
 				"subdirs": uripath,
+				"flatsubdirs": uripath.replaceSlashes('_'),
 				"refer": ref,
 				"qstring": query,
-				"curl": (uri.host + ((uripath=="")?"":(SYSTEMSLASH + uripath))),
+				"curl": curl,
+				"flatcurl": curl.replaceSlashes('_'),
 				"num": Utils.formatNumber(this.numIstance),
 				"hh": Utils.formatNumber(this.startDate.getHours(), 2),
 				"mm": Utils.formatNumber(this.startDate.getMinutes(), 2),
