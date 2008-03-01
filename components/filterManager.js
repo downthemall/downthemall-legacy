@@ -484,7 +484,6 @@ var FilterManager = {
 	},
 
 	enumAll: function FM_enumAll() {
-		this._all.forEach(function(f) { debug(f.toSource()); }); 
 		return new FilterEnumerator(this._all);
 	},
 	enumActive: function FM_enumActive(type) {
