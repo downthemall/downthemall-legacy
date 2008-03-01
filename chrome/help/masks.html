@@ -11,7 +11,7 @@
 </div>
 <div id="main">
     <h1>Possible renaming masks</h1>
-    <p>Assume a download directory <code>C:\Downloads\</code>, and a download URL <code>http://www.example.org/dir1/dir2/document.doc</code>.<br/>
+    <p>Assume a download directory <code>C:\Downloads\</code>, and a download URL <code>http://www.example.org/dir1/dir2/document.doc?something</code>.<br/>
 		Some possible renaming masks and results:</p>
 
     <table class="codesample">
@@ -42,12 +42,19 @@
     <tr>
     	<td>*url*\*name*.*ext*</td><td class="des">C:\Downloads\www.example.org\document.doc</td>
     </tr>
+
     <tr>
-				<td>*url*\*subdirs*\*name*.*ext*</td><td class="des">C:\Downloads\www.example.org\dir1\dir2\myfile.txt</td>
-        </tr>
-    		<tr>
-    			<td>*url*\*subdirs*-*name*.*ext*</td><td class="des">C:\Downloads\www.example.org\dir1-dir2-myfile.txt</td>
-    		</tr>
+			<td>*url*\*subdirs*\*name*.*ext*</td><td class="des">C:\Downloads\www.example.org\dir1\dir2\myfile.txt</td>
+    </tr>
+
+    <tr>
+			<td>*curl*\*name*.*ext*</td><td class="des">C:\Downloads\www.example.org\dir1\dir2\myfile.txt</td>
+    </tr>
+    
+    <tr>
+			<td>*name*-*qstring*.*ext*</td><td class="des">C:\Downloads\myfile-something*.txt</td>
+    </tr>
+
 		</table>
 </div>
 </body>
