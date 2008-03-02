@@ -355,22 +355,37 @@ var DTA_ContextOverlay = {
 	
 	init: function() {
 		try {
-			var ctx = document.getElementById("dtaCtxCompact").parentNode;
+			this.direct = {};
+			this.compact = {};
+			
+			var ctxItem = document.getElementById("dtaCtxCompact");
+			var ctx = ctxItem.parentNode;
+			var cont = document.getElementById('dtaCtxSubmenu');
+			
+			['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'SaveT', 'Save', 'SepFront'].forEach(
+				function(id) {
+					this.compact[id] = document.getElementById('dtaCtx' + id);
+					var node = document.getElementById('dtaCtx' + id).cloneNode(true);
+					node.setAttribute('id', node.id + "-direct");
+					ctx.insertBefore(node, ctxItem.nextSibling);
+					this.direct[id] = node;
+				},
+				this
+			);
+			// intitalize those to have Menu Editor pick up "good" text
+			[this.direct, this.compact].forEach(
+				function(m) {
+					m.Save.label = this.getString('dtasavelink');
+					m.SaveT.label = this.getString('turbosavelink');
+				},
+				this
+			);
+
 			var menu = document.getElementById("dtaToolsMenu").parentNode;
 			ctx.addEventListener("popupshowing", function (evt) { DTA_ContextOverlay.onContextShowing(evt); }, false);
 			menu.addEventListener("popupshowing", function (evt) { DTA_ContextOverlay.onToolsShowing(evt); }, false);
 
-			// prepare ctx object
-			// order is important!			
-			this.ctx = {};
-			['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'SaveT', 'Save', 'SepFront'].forEach(
-				function (e) {
-					this.ctx[e] = document.getElementById('dtaCtx' + e);
-				},
-				this
-			);
 			this.ctxBase = document.getElementById('dtaCtxCompact');
-			this.ctxMenu = document.getElementById('dtaCtxSubmenu');
 			
 			// prepare tools
 			this.tools = {};
@@ -390,43 +405,50 @@ var DTA_ContextOverlay = {
 		}
 	},
 	get contextMenu() {
-			if (window.gContextMenu !=  null) {
-				return gContextMenu;
+		if (window.gContextMenu !=  null) {
+			return gContextMenu;
+		}
+		var cm = {
+			onLink: false,
+			onImage: false,
+			target: document.popupNode,
+			fake: true
+		};
+		if (cm.target) {
+			var node = cm.target;
+			if (node instanceof Components.interfaces.nsIImageLoadingContent && node.currentURI) {
+				cm.onImage = true;
 			}
-			var cm = {
-				onLink: false,
-				onImage: false,
-				target: document.popupNode,
-				fake: true
-			};
-			if (cm.target) {
-				var node = cm.target;
-				if (node instanceof Components.interfaces.nsIImageLoadingContent && node.currentURI) {
-					cm.onImage = true;
-				}
-				while (node && !cm.onLink) {
-					if (node instanceof HTMLAnchorElement && node.href) {
-						cm.onLink = true;
-					}				
-					node = node.parentNode;
-				}
+			while (node && !cm.onLink) {
+				if (node instanceof HTMLAnchorElement && node.href) {
+					cm.onLink = true;
+				}				
+				node = node.parentNode;
 			}
-			return cm;
+		}
+		return cm;
 	},
 	onContextShowing: function(evt) {
 		try {
 			var ctx = this.contextMenu;
 			// get settings
-			var menu = DTA_preferences.getDTA("ctxmenu", "1,1,0").split(",").map(function(e){return parseInt(e);});
+			var items = DTA_preferences.getDTA("ctxmenu", "1,1,0").split(",").map(function(e){return parseInt(e);});
 			var compact = DTA_preferences.getDTA("ctxcompact", false);
-			
-			// all hidden...
-			if (menu.indexOf(1) == -1) {
-				for (var i in this.ctx) {
-					this.ctx[i].hidden = true;
-				}
+
+			var menu;
+			if (compact) {
+				this.ctxBase.hidden = false;
+				menu = this.compact;
+			}
+			else {
 				this.ctxBase.hidden = true;
-				return;
+				menu = this.direct;
+			}
+			
+			// hide all
+			for (var i in menu) {
+				this.direct[i].hidden = true;
+				this.compact[i].hidden = true;
 			}
 			
 			// setup menu items
@@ -435,82 +457,65 @@ var DTA_ContextOverlay = {
 			
 			// hovering an image or link
 			if (ctx && (ctx.onLink || ctx.onImage)) {
-				if (menu[0]) {
-					show.push('Save');
+				if (items[0]) {
+					show.push(menu.Save);
 				}
-				if (menu[1]) {
-					show.push('SaveT');
+				if (items[1]) {
+					show.push(menu.SaveT);
 				}
-				this.ctx.Save.label = this.getString('dtasave' + (ctx.onLink ? 'link' : 'image'));
-				this.ctx.SaveT.label = this.getString('turbosave' + (ctx.onLink ? 'link' : 'image'));
+				menu.Save.label = this.getString('dtasave' + (ctx.onLink ? 'link' : 'image'));
+				menu.SaveT.label = this.getString('turbosave' + (ctx.onLink ? 'link' : 'image'));
 			}
 			// regular
 			if (ctx && (ctx.fake || !(ctx.onLink || ctx.onImage))) {
-				if (menu[0]) {
-					show.push('DTA');
+				if (items[0]) {
+					show.push(menu.DTA);
 				}
-				if (menu[1]) {
-					show.push('TDTA');
+				if (items[1]) {
+					show.push(menu.TDTA);
 				}
 				var sel = document.commandDispatcher.focusedWindow.getSelection();
 				sel = sel && !sel.isCollapsed;
-				this.ctx.DTA.label = this.getString('dta' + (sel ? 'selection' : 'regular'));
-				this.ctx.TDTA.label = this.getString('turbo' + (sel ? 'selection' : 'regular'));
+				menu.DTA.label = this.getString('dta' + (sel ? 'selection' : 'regular'));
+				menu.TDTA.label = this.getString('turbo' + (sel ? 'selection' : 'regular'));
 			}
 			
 			// prefs
-			if (menu[2]) {
-				show.push('Pref');
-				if (compact) {
-					show.push('SepPref');
-				} else {
-					show.push('SepBack');
-					show.push('SepFront');
+			if (items[2]) {
+				show.push(menu.Pref);
+				if (compact && (items[0] || items[1])) {
+					show.push(menu.SepPref);
 				}
 			}
 			
-			// general setup
-			var base = document.getElementById(this.ctxBase.getAttribute('insertafter'));
-			if (compact) {
-				this.ctxBase.hidden = false;				
-				base.parentNode.insertBefore(this.ctxBase, base.nextSibling);				
-			} else {
-				this.ctxBase.hidden = true;
-			}
-			
-			// show the items.
-			for (var i in this.ctx) {
-				var cur = this.ctx[i];
-				cur.hidden = show.indexOf(i) == -1;
-				if (cur.hidden) {
+			// show the seperators, if required.
+			var n = menu.SepFront;
+			while ((n = n.previousSibling)) {
+				if (n.hidden) {
 					continue;
 				}
-				if (compact) {
-					this.ctxMenu.insertBefore(cur, this.ctxMenu.firstChild);
+				if (n.nodeName != 'menuseparator') {
+					show.push(menu.SepFront);
 				}
-				else {
-					base.parentNode.insertBefore(cur, base);
-					base = cur;
+				break;
+			}
+			n = menu.SepBack;
+			while ((n = n.nextSibling)) {
+				if (n.hidden) {
+					continue;
 				}
+				if (n.nodeName != 'menuseparator') {
+					show.push(menu.SepBack);
+				}
+				break;
 			}
 			
-			// add separators
-			if (!compact) {
-				var node = this.ctx.SepFront.previousSibling;
-				while (node && node.hidden) {
-					node = node.previousSibling;
+			show.forEach(
+				function (node) {
+					node.hidden = false;
 				}
-				if (node && node.nodeName == 'menuseparator') {
-					this.ctx.SepFront.hidden = true;
-				}
-				node = this.ctx.SepBack.nextSibling;
-				while (node && node.hidden) {
-					node = node.nextSibling;
-				}
-				if (node && node.nodeName == 'menuseparator') {
-					this.ctx.SepBack.hidden = true;
-				}		 
-			}
+			);
+
 		} catch(ex) {
 			DTA_debug.dump("DTAContext(): ", ex);
 		}
