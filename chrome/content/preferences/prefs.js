@@ -100,6 +100,11 @@ var Privacy = {
 };
 
 var Advanced = {
+	load: function() {
+		if (/win/i.test(navigator.platform)) {
+			$('advPermissions').hidden = true;
+		}
+	},
 	browse: function() {
 		// let's check and create the directory
 		var tmp = $("temp");
@@ -116,6 +121,13 @@ var Advanced = {
 	},
 	toggleTemp: function() {
 		$("temp").disabled = $("browsedir").disabled = !$("useTemp").checked;
+	},
+	getPerm: function(perm) {
+		return $('dtapermissions').value & perm;
+	},
+	setPerm: function(perm) {
+		var rv = $('dtapermissions').value ^ perm;
+		return $('dtapermissions').value ^ perm;
 	}
 };
 

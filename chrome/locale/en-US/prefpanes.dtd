@@ -34,7 +34,6 @@
 <!ENTITY mainpane.autoretry.max.label "Max. Retries">
 <!ENTITY mainpane.autoretry.unlimited "Unlimited">
 
-
 <!ENTITY privacypane.label "Privacy">
 <!ENTITY privacypane.closing.caption "When Manager window is closed">
 <!ENTITY privacypane.removecompleted.label "Remove completed downloads">
@@ -74,6 +73,12 @@
 <!ENTITY advancedpane.usetemp.label "Save download chunks in a temporary directory">
 <!ENTITY advancedpane.tempdir.label "Use this directory:">
 <!ENTITY advancedpane.confirmremove.label "User must confirm removeral of downloads">
+<!ENTITY advancedpane.permissions.caption "Default file permissions">
+<!ENTITY advancedpane.permissions.desc "Affected by user umask">
+<!ENTITY advancedpane.permissions.group "Group">
+<!ENTITY advancedpane.permissions.everybody "Everybody">
+<!ENTITY advancedpane.permissions.read "May read">
+<!ENTITY advancedpane.permissions.write "May write">
 
 <!ENTITY uipane.label "Interface">
 <!ENTITY uipane.appearance.caption "Appearance">
