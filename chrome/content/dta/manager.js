@@ -1176,7 +1176,7 @@ QueueItem.prototype = {
 			Debug.logString(this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
 
 			if (!destination.exists()) {
-				destination.create(Ci.nsIFile.DIRECTORY_TYPE, 0766);
+				destination.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
 				this.invalidate();
 			}
 			var df = destination.clone();
@@ -1706,11 +1706,11 @@ Chunk.prototype = {
 		this._sessionBytes = 0;
 		let file = this.parent.tmpFile.clone();
 		if (!file.parent.exists()) {
-			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
+			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, dirPermissions);
 			this.parent.invalidate();
 		}
 		let prealloc = !file.exists();
-		let outStream = new FileOutputStream(file, 0x02 | 0x08, 0600, 0);
+		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 		if (prealloc && this.parent.totalSize > 0) {
 			try {

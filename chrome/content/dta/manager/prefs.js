@@ -57,6 +57,7 @@
 		['autoRetryInterval', 0],
 		['autoClearComplete', false],
 		['confirmRemove', true],
+		['permissions', 384],
 	],
 
 	// nsIObserver
@@ -99,6 +100,18 @@
 			},
 			this
 		);
+		
+		var perms = Prefs.permissions;
+		if (perms & 0600) {
+			perms |= 0100;
+		}
+		if (perms & 0060) {
+			perms |= 0010;
+		}				
+		if (perms & 0006) {
+			perms |= 0001;
+		}
+		this.dirPermissions = perms;		
 
 		if (Preferences.getDTA("saveTemp", true)) {
 			try {
