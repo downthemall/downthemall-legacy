@@ -470,7 +470,7 @@ var Dialog = {
 		var tree = this.current;
 		var type = tree.type;
 
-		// will keep track of used filter-props f0-f9
+		// will keep track of used filter-props f0-f8
 		var used = {};
 		var idx = 0;
 		var boxen = this.boxen;
@@ -481,8 +481,11 @@ var Dialog = {
 			}
 			filters.push(boxen[i].filter);
 		}
+		let fast = null;
 		try {
-			filters.push(DTA_FilterManager.getTmpFromString(this.ddFilter.value));
+			if (this.ddFilter.value) {
+				fast = DTA_FilterManager.getTmpFromString(this.ddFilter.value);
+			}
 		}
 		catch (ex) {
 			// no op
@@ -490,9 +493,13 @@ var Dialog = {
 		
 		tree._links.forEach(
 			function(link) {
-				let checked = '';
+				link.checked = '';
 				if (link.manuallyChecked) {
-					checked = 'manuallySelected';
+					link.checked = 'manuallySelected';
+					return;
+				}
+				if (fast && (fast.match(link.url.usable) || fast.match(link.desc))) {
+					link.checked = 'fastFiltered';
 					return;
 				}
 				filters.some(
@@ -507,15 +514,14 @@ var Dialog = {
 							i = used[f.id];
 						}
 						else {
-							i = idx = (idx + 1) % 9;
+							i = idx = (idx + 1) % 8;
 							used[f.id] = i;
 						}
-						checked = 'f' + i;
+						link.checked = 'f' + i;
 						return true;
 					},
 					this
 				);
-				link.checked = checked;
 			},
 			this
 		);

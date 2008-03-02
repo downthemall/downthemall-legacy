@@ -400,16 +400,19 @@ var DTA_AddingFunctions = {
 				type = 1;
 			}
 
-			var additional = {match: function() { return false; }};
+			var fast = null;
 			try {
-				additional = DTA_FilterManager.getTmpFromString(this.getDropDownValue('filter'));
+				fast = DTA_FilterManager.getTmpFromString(this.getDropDownValue('filter'));
 			}
 			catch (ex) {
 				// fall-through
 			}
 			links = links.filter(
 				function(link) {
-					return additional.match(link.url.url) || DTA_FilterManager.matchActive(link.url.url, type);
+					if (fast && (fast.match(link.url.usable) || fast.match(link.desc))) {
+						return true;
+					}
+					return DTA_FilterManager.matchActive(link.url.usable, type);
 				}
 			);
 
