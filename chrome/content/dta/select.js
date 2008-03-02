@@ -490,7 +490,7 @@ var Dialog = {
 			if (link.manuallyChecked) {
 				checked = 'manuallySelected';
 			}
-			else if (additional.match(link.url.url)) {
+			else if (additional.match(link.url.url) || additional.match(link.desc)) {
 				checked = 'f8';
 			}
 			else {
