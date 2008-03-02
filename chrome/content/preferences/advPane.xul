@@ -16,7 +16,8 @@
 		label="&advancedpane.label;"
 		orient="vertical"
 		helpURI="chrome://dta-help/content/help.rdf"
-		helpTopic="Preferences_Advanced"		
+		helpTopic="Preferences_Advanced"
+		onpaneload="Advanced.load();"	
 	>
 	
 		<preferences>
@@ -27,6 +28,7 @@
 			<preference id="dtasettime" name="extensions.dta.settime" type="bool" />
 			<preference id="dtarememberoneclick" name="extensions.dta.rememberoneclick" type="bool" />
 			<preference id="dtaconfirmremove" name="extensions.dta.confirmremove" type="bool" />
+			<preference id="dtapermissions" name="extensions.dta.permissions" type="int" />			
 		</preferences>
 		
 		<groupbox orient="horizontal" align="center">
@@ -73,15 +75,70 @@
 			<checkbox label="&advancedpane.confirmremove.label;" preference="dtaconfirmremove"/>
 		</groupbox>
 		
-		<groupbox>
-			<caption label="&advancedpane.tempfiles.caption;" />
-			<checkbox id="useTemp" label="&advancedpane.usetemp.label;" preference="dtatemporary" oncommand="Advanced.toggleTemp();"/>
-			<hbox flex="1">
-				<label value="&advancedpane.tempdir.label;" />
-				<textbox id="temp" preference="dtatemplocation" flex="1"/>
-				<toolbarbutton id="browsedir" oncommand="Advanced.browse();" />
-			</hbox>
-		</groupbox>
+		<grid>
+			<columns id="colsFiles">
+				<column flex="1"/>
+				<column/>
+			</columns>
+			<rows>
+				<row id="rowFiles">
+					<groupbox>
+						<caption label="&advancedpane.tempfiles.caption;" />
+						<checkbox id="useTemp" label="&advancedpane.usetemp.label;" preference="dtatemporary" oncommand="Advanced.toggleTemp();"/>
+						<hbox>
+							<label value="&advancedpane.tempdir.label;" />
+							<textbox id="temp" preference="dtatemplocation" flex="1"/>
+							<toolbarbutton id="browsedir" oncommand="Advanced.browse();" />
+						</hbox>
+					</groupbox>
+					
+					<groupbox id="advPermissions">
+						<caption id="dtaperms" label="&advancedpane.permissions.caption;" />
+						<description value="&advancedpane.permissions.desc;"/>
+						<grid>
+							<columns>
+								<column flex="1"/>
+								<column flex="1"/>
+							</columns>
+							<rows>
+								<row>
+									<label value="&advancedpane.permissions.group;"/>
+									<label value="&advancedpane.permissions.everybody;"/>
+								</row>
+								<row>
+									<checkbox
+										label="&advancedpane.permissions.read;"
+										preference="dtapermissions"
+										onsyncfrompreference="return Advanced.getPerm(0040);"
+										onsynctopreference="return Advanced.setPerm(0040);"										
+										/>
+									<checkbox
+										label="&advancedpane.permissions.read;"
+										preference="dtapermissions"
+										onsyncfrompreference="return Advanced.getPerm(0004);"
+										onsynctopreference="return Advanced.setPerm(0004);"										
+										/>
+								</row>
+								<row>
+									<checkbox
+										label="&advancedpane.permissions.write;"
+										preference="dtapermissions"
+										onsyncfrompreference="return Advanced.getPerm(0020);"
+										onsynctopreference="return Advanced.setPerm(0020);"										
+										/>
+									<checkbox
+										label="&advancedpane.permissions.write;"
+										preference="dtapermissions"
+										onsyncfrompreference="return Advanced.getPerm(0002);"
+										onsynctopreference="return Advanced.setPerm(0002);"										
+										/>
+								</row>
+							</rows>
+						</grid>					
+					</groupbox>					
+				</row>
+			</rows>
+		</grid>
 		
 	</prefpane>
 </overlay>
