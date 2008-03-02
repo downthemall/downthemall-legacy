@@ -129,9 +129,9 @@ treechildren::-moz-tree-row(f7) {
 treechildren::-moz-tree-row(f7, selected) {
 	background-color: #FFE680 !important;
 }
-treechildren::-moz-tree-row(f8) {
+treechildren::-moz-tree-row(fastFiltered) {
 	background-color: #FFDBDB !important;
 }
-treechildren::-moz-tree-row(f8, selected) {
+treechildren::-moz-tree-row(fastFiltered, selected) {
 	background-color: #DFC2C2 !important;
 }
