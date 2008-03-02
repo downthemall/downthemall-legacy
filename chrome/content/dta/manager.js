@@ -1706,7 +1706,7 @@ Chunk.prototype = {
 		this._sessionBytes = 0;
 		let file = this.parent.tmpFile.clone();
 		if (!file.parent.exists()) {
-			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, dirPermissions);
+			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
 			this.parent.invalidate();
 		}
 		let prealloc = !file.exists();
