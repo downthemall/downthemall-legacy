@@ -527,7 +527,7 @@ var DTA_AddingFunctions = {
 			);
 			links = links.filter(
 				function(link) {
-					if (additional.match(link.url.url)) {
+					if (additional.match(link.url.url) || additional.match(link.desc)) {
 						return true;
 					}
 					if (DTA_FilterManager.matchActive(link.url.url, type)) {
