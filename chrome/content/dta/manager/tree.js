@@ -182,7 +182,7 @@ var Tree = {
 				item.addDataForFlavour('text/x-moz-url', qi.urlManager.url + "\n" + qi.destinationName);
 				item.addDataForFlavour("text/unicode", qi.urlManager.url);
 				// this is fake, so that we know that we are we ;)
-				item.addDataForFlavour('text/x-dta-position', qi.position);
+				item.addDataForFlavour('application/x-dta-position', qi.position);
 				data.push(item);
 			}
 			catch (ex) {
@@ -196,7 +196,7 @@ var Tree = {
 	},
 	canDrop: function T_canDrop() {
 		let ds = this._ds.getCurrentSession();
-		return ['text/x-moz-url', 'text/x-dta-position', 'text/unicode'].some(
+		return ['text/x-moz-url', 'application/x-dta-position', 'text/unicode'].some(
 			function(e) {
 				return ds.isDataFlavorSupported(e);
 			}
@@ -207,7 +207,7 @@ var Tree = {
 			throw new Exception("Invalid drop data!");
 		}
 		let ds = this._ds.getCurrentSession();
-		if (ds.isDataFlavorSupported('text/x-dta-position')) {
+		if (ds.isDataFlavorSupported('application/x-dta-position')) {
 			this._dropSelection(row, orientation);
 		}
 		else {
