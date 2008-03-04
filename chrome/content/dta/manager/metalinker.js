@@ -101,32 +101,67 @@ function NSResolver(prefix) {
  		return Preferences.get('general.useragent.locale', 'en-US');
  	},
  	handleDownload: function ML_handleDownload(download) {
- 		try {
- 			download.state = CANCELED;
-			Tree.remove(download, false);
-			var file = new FileFactory(download.destinationFile);
-
-			var fiStream = new FileInputStream(file, 1, 0, false);
+		download.state = CANCELED;
+		Tree.remove(download, false);
+		var file = new FileFactory(download.destinationFile);
+		
+		this.handleFile(file, download.referrer);
+		
+		try {
+			file.remove(false);
+		} catch (ex) {
+			Debug.log("failed to remove metalink file!", ex);
+		}
+	},
+	handleFile: function ML_handleFile(aFile, aReferrer) {
+		try {
+			
+			if (aReferrer && 'spec' in aReferrer) {
+				aReferrer = aReferrer.spec;
+			}		
+		
+			var fiStream = new FileInputStream(aFile, 1, 0, false);
 			var domParser = new DOMParser();
-			var doc = domParser.parseFromStream(fiStream, null, file.fileSize, "application/xml");
+			var doc = domParser.parseFromStream(fiStream, null, aFile.fileSize, "application/xml");
 			var root = doc.documentElement;
 			fiStream.close();
-			
-			try {
-				file.remove(false);
-			} catch (ex) {
-				Debug.log("failed to remove metalink file!", ex);
-			}
-			
 			
 			if (root.nodeName != 'metalink' || root.getAttribute('version') != '3.0') {
 				throw new Error(_('mlinvalid'));
 			}
+	
+			var aNum = Preferences.getDTA('numistance', 0);
+			if (++aNum > 999) {
+				aNum = 1;
+			}
+			Preferences.setDTA('numistance', aNum);
+	
+	
 			var locale = this.locale.split('-').map(function(l) { return l.slice(0, 2).toLowerCase(); }).reverse();
 			var downloads = [];
 			var files = root.getElementsByTagName('file');
 			for (var i = 0; i < files.length; ++i) {
 				var file = files[i];
+				var referrer = null;
+				if (file.hasAttributeNS(NS_DTA, 'referrer')) {
+					referrer = file.getAttributeNS(NS_DTA, 'referrer');
+				}
+				else {
+					referrer = aReferrer;
+				}
+				var num = aNum;
+				if (file.hasAttributeNS(NS_DTA, 'num')) {
+					try {
+						num = parseInt(file.getAttributeNS(NS_DTA, 'num'));
+					} catch (ex) { /* no-op */ }
+				}
+				var startDate = new Date();
+				if (file.hasAttributeNS(NS_DTA, 'date')) {
+					try {
+						startDate = new Date(parseInt(file.getAttributeNS(NS_DTA, 'num')));
+					} catch (ex) { /* no-op */ }
+				}				
+					
 				var urls = [];
 				var urlNodes = this._getNodes(file, 'ml:resources/ml:url');
 				for (var j = 0; j < urlNodes.length; ++j) {
@@ -181,11 +216,10 @@ function NSResolver(prefix) {
 				}
 				downloads.push({
 					'url': new UrlManager(urls),
-					'referrer': download.referrer ? download.referrer.spec : null,
-					'numIstance': 0,
-					'mask': download.mask,
-					'dirSave': download.pathName,
+					'referrer': referrer ? referrer : null,
+					'numIstance': num,
 					'description': desc,
+					'startDate': startDate,
 					'ultDescription': '',
 					'hash': hash,
 					'license': this._getLinkRes(file, "license"),
@@ -293,11 +327,42 @@ function NSResolver(prefix) {
  			$('boxLicense').hidden = true;
  		} 		
  	},
-	accept: function ML_accept() {
-		var nodes = document.getElementsByTagName('richlistitem');
-		for (var i = 0; i < nodes.length; ++i) {
-			nodes[i].download.selected = nodes[i].checked;
+	browseDir: function() {
+
+		// get a new directory
+		var newDir = Utils.askForDir(
+			$('directory').value, // initialize dialog with the current directory
+			_("validdestination")
+		);
+		// alright, we got something new, so lets set it.
+		if (newDir) {
+			$('directory').value = newDir;
 		}
+	}, 	
+	accept: function ML_accept() {
+		if ($('directory', 'renaming').some(
+			function(e) {
+				if (!e.value) {
+					e.focus();
+					e.style.border = "1px solid red";
+					return true;
+				}
+				return false;
+			}
+		)) {
+			return false;
+		}
+
+		Array.forEach(
+			document.getElementsByTagName('richlistitem'),
+			function(n) {
+				n.download.dirSave =  $('directory').value;
+				n.download.mask =  $('renaming').value;		
+				n.download.selected = n.checked;
+			},
+			this
+		);
+		return true;
 	},
 	cancel: function ML_cancel() {
 		var nodes = document.getElementsByTagName('richlistitem');

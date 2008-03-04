@@ -37,9 +37,6 @@
 const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init');
 const ConverterOutputStream = Construct('@mozilla.org/intl/converter-output-stream;1', 'nsIConverterOutputStream', 'init');
 
-const NS_DTA = 'http://www.downthemall.net/properties#';
-const NS_METALINKER = 'http://www.metalinker.org/';
-
 DTA_include("common/verinfo.js");
  
 var Tree = {
@@ -456,7 +453,7 @@ var Tree = {
 	_export: function T_export() {
 		let fp = new FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
 		fp.appendFilters(Ci.nsIFilePicker.filterHTML | Ci.nsIFilePicker.filterText);
-		fp.appendFilter(_('exportfiltermetalink'), '*.metalink');
+		fp.appendFilter(_('filtermetalink'), '*.metalink');
 		fp.defaultExtension = "metalink";
 		fp.filterIndex = 2;
 		
@@ -547,6 +544,47 @@ var Tree = {
 		fs.close();
 		
 		return true;
+	},
+	import: function T_import() {
+		try {
+			if (!this._import()) {
+				throw new Exception("Cannot import");
+			}
+		}
+		catch (ex) {
+			Debug.log("Cannot import downloads", ex);		
+			DTA_alert(_('importtitle'), _('importfailed'));
+		}
+	},
+	_import: function T_import() {
+		let fp = new FilePicker(window, _('importtitle'), Ci.nsIFilePicker.modeOpen);
+		fp.appendFilters(Ci.nsIFilePicker.filterText);
+		fp.appendFilter(_('filtermetalink'), '*.metalink');
+		fp.defaultExtension = "metalink";
+		fp.filterIndex = 1;
+		
+		let rv = fp.show();
+		if (rv == Ci.nsIFilePicker.returnOK) {
+			switch (fp.filterIndex) {
+				case 0: return this._importText(fp.file);
+				case 1: return this._importMetalink(fp.file);
+			} 
+		}
+		return false;	
+	},
+	_importText: function T__importText() {
+	
+	},
+	_importMetalink: function T__importMetalink(file) {
+		try {
+			DTA_include("dta/manager/metalinker.js");
+			Metalinker.handleFile(file);
+			return true;
+		}
+		catch (ex) {
+			Debug.log("T__importMetalink", ex);
+		}	
+		return false;
 	},
 	showInfo: function T_showInfo() {
 		this.beginUpdate();
