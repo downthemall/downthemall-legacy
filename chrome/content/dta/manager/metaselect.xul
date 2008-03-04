@@ -50,14 +50,10 @@
 	%managerDTD;
 ]>
 
-<dialog
+<window
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	onload="Metalinker.load()"
-	ondialogaccept="return Metalinker.accept();"
-	ondialogcancel="return Metalinker.cancel();"
-	buttons="accept, cancel"
-	buttonlabelaccept="&download;"
 	title="&title;"
 	id="metaselect"
 	persist="width height"
@@ -127,4 +123,11 @@
 		</vbox>
 	</hbox>	
 	
-</dialog>
+ 	<hbox align="baseline" style="margin: 2px 7px 4px 7px" >
+		<spacer flex="1"/>
+		<button accesskey="&start.key;" label="&start.label;" id="startbutton" oncommand="Metalinker.download(true);" default="true"/>
+		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" oncommand="Metalinker.download(false);" />
+		<button label="&cancel.label;" id="cancelbutton" oncommand="Metalinker.cancel();" />
+	</hbox>
+	
+</window>

@@ -244,7 +244,8 @@ function NSResolver(prefix) {
 					'description': this._getSingle(root, 'description'),
 					'logo': this._checkURL(this._getSingle(root, 'logo')),
 					'license': this._getLinkRes(root, "license"),
-					'publisher': this._getLinkRes(root, "publisher")
+					'publisher': this._getLinkRes(root, "publisher"),
+					'start': false
 				};
 				window.openDialog(
 					'chrome://dta/content/dta/manager/metaselect.xul',
@@ -254,9 +255,9 @@ function NSResolver(prefix) {
 					info
 				);
 				downloads = downloads.filter(function(d) { return d.selected; });
-			}
-			if (downloads.length) {
-				startDownloads(true, downloads);
+				if (downloads.length) {
+					startDownloads(info.start, downloads);
+				}
 			}
 		}
 		catch (ex) {
@@ -339,7 +340,7 @@ function NSResolver(prefix) {
 			$('directory').value = newDir;
 		}
 	}, 	
-	accept: function ML_accept() {
+	download: function ML_download(start) {
 		if ($('directory', 'renaming').some(
 			function(e) {
 				if (!e.value) {
@@ -362,6 +363,8 @@ function NSResolver(prefix) {
 			},
 			this
 		);
+		window.arguments[1].start = start;
+		self.close();
 		return true;
 	},
 	cancel: function ML_cancel() {
@@ -369,6 +372,7 @@ function NSResolver(prefix) {
 		for (var i = 0; i < nodes.length; ++i) {
 			nodes[i].download.selected = false;
 		}
+		self.close();
 	},
 	openLink: function(e) {
 		DTA_Mediator.openTab(e.link);
