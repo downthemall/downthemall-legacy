@@ -47,7 +47,7 @@ function NSResolver(prefix) {
 		var nodeSet = elem.ownerDocument.evaluate(
 			query,
 			elem,
-			function() { return 'http://www.metalinker.org/'; },
+			NSResolver,
 			XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
 			null
 		);
