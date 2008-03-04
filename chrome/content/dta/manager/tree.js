@@ -467,6 +467,101 @@ var Tree = {
 		}
 		return false;
 	},
+	_exportHTML: function T__exportHTML(file) {
+		// do not localize?!
+		let title = "DownThemAll: exported on " + (new Date).toUTCString();
+		
+		let doctype = document.implementation.createDocumentType('html', '-//W3C//DTD XHTML 1.0 Strict//EN', 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd');
+		let doc = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', doctype);
+		let root = doc.documentElement;
+		
+		{
+			let head = doc.createElement('head');
+			
+			let n = doc.createElement('title');
+			n.textContent = title;
+			head.appendChild(n);
+			
+			n = doc.createElement('meta')
+			n.setAttribute('http-equiv', 'content-type');
+			n.setAttribute('content', 'application/xhtml+xml;charset=utf-8');
+			head.appendChild(n);
+			
+			n = doc.createElement('link');
+			n.setAttribute('rel', 'stylesheet');
+			n.setAttribute('type', 'text/css');
+			n.setAttribute('href', 'chrome://dta/skin/common/exporthtml.css');
+			head.appendChild(n);
+			
+			root.appendChild(head);
+		}
+		{
+			let addDesc = function(key, value, element) {
+				let div = doc.createElement('div');
+				
+				div.appendChild(doc.createTextNode(key + ": "));
+				
+				let b = doc.createElement('strong');
+				b.textContent = value;
+				div.appendChild(b);
+				
+				element.appendChild(div);				
+			};
+		
+		
+			let body = doc.createElement('body');
+			
+			let n = doc.createElement('h1');
+			n.textContent = title;
+			body.appendChild(n);
+			
+			let list = doc.createElement('ol');
+			for (let d in this.selected) {
+				let url = d.urlManager.url;
+				if (d.hash) {
+					url += '#hash(' + d.hash.type + ":" + d.hash.sum + ")";
+				}
+				let desc = d.description;
+				if (!desc) {
+					desc = d.fileName;
+				}
+				let li = doc.createElement('li');
+
+				let div = doc.createElement('div');
+				n = doc.createElement('a');
+				n.setAttribute('href', url);
+				n.textContent = desc;
+				div.appendChild(n);
+				li.appendChild(div);
+				
+				addDesc('URL', d.urlManager.usable, li);
+				if (d.referrer) {
+					addDesc('Referrer', d.referrer.spec, li);				
+				}
+				if (d.hash) {
+					addDesc(d.hash.type, d.hash.sum.toLowerCase(), li);
+				}					
+				list.appendChild(li);
+			}			
+			body.appendChild(list);
+			
+			let foot = doc.createElement('p');
+			foot.appendChild(doc.createTextNode('Exported by '));
+			n = doc.createElement('a');
+			n.setAttribute('href', 'http://www.downthemall.net/');
+			n.textContent = 'DownThemAll! ' + DTA_VERSION;
+			foot.appendChild(n);
+			body.appendChild(foot);		
+			
+			root.appendChild(body);
+		}
+		
+
+		let fs = new FileOutputStream(file, 0x02 | 0x08 | 0x20, Prefs.permissions, 0);
+		new XMLSerializer().serializeToStream(doc, fs, 'utf-8');
+		fs.close();
+		return true;		
+	},
 	// i.e. one url per line
 	// exports hash fragments as well.
 	_exportText: function T__exportText(file) {
