@@ -1,0 +1,77 @@
+<!ENTITY winstyle "width:52em;height:42em;">
+<!ENTITY filterspane.label "Филтри">
+<!ENTITY listhead1.label "Заглавие">
+<!ENTITY listhead2.label "Добавки">
+<!ENTITY filter.label "Филтрирани добавки:">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY useAs.label "Използвай това като:">
+<!ENTITY imagesf.label "Филтър за картинки">
+<!ENTITY linksf.label "Филтър за линкове">
+<!ENTITY add.label "Добави нов филтър">
+<!ENTITY highlight.label "Откроявай файловете проверени от филтрите">
+<!ENTITY dtacontext2.label "Настройки">
+<!ENTITY buttonlabelextra2 "Възвърни стандартните настройки">
+<!ENTITY dtaPreferences.title "DownThemAll! Настройки...">
+<!ENTITY manager "dTa Мениджър">
+<!ENTITY mainpane.label "Главен">
+<!ENTITY mainpane.rename.caption "Ако такова име за файл вече съществува:">
+<!ENTITY mainpane.rename.label "Преименувай">
+<!ENTITY mainpane.overwrite.label "Презапиши">
+<!ENTITY mainpane.skip.label "Прескочи">
+<!ENTITY mainpane.ask.label "Попитай">
+<!ENTITY mainpane.downloads.caption "Файлове за сваляне">
+<!ENTITY mainpane.concurrent.label "Максимален брой едновременни тегления:">
+<!ENTITY mainpane.sounderror.label "Пускай звук при грешка">
+<!ENTITY mainpane.closetab.label "Затвори табът-източник, когато DownThemAll стартира">
+<!ENTITY mainpane.alert.caption "Когато даунлоудите са завършени:">
+<!ENTITY mainpane.alertboxes.label "Кажи ми чрез сигнални прозорци">
+<!ENTITY mainpane.alertslides.label "Използвай Firefox съобщения">
+<!ENTITY mainpane.alertnone.label "Не ме сигнализирай">
+<!ENTITY mainpane.sounddone.label "Пускай звук когато всички даунлоуди са завършени">
+<!ENTITY mainpane.closedta.label "Затвори DownThemAll когато даунлоудите са се изтеглили">
+<!ENTITY privacypane.label "Поверителност">
+<!ENTITY privacypane.closing.caption "Когато прозорецът за Управление е затворен">
+<!ENTITY privacypane.removecompleted.label "Махай завършени даунлоуди от листа">
+<!ENTITY privacypane.removecanceled.label "Махай отменени/грешни даунлоуди от листа">
+<!ENTITY privacypane.removeaborted.label "Махай незапочнати даунлоуди от листа">
+<!ENTITY privacypane.deletefoldershistory.label "Изтрии историята на папките">
+<!ENTITY privacypane.deletefiltershistory.label "Изтрии допълнителната филтър история">
+<!ENTITY privacypane.showlog.label "Виж лог-а">
+<!ENTITY privacypane.reveallog.label "Покажи Файл">
+<!ENTITY privacypane.deletelog.label "Изтрии лог-а">
+<!ENTITY privacypane.updates.caption "Нови Версии/Интернет">
+<!ENTITY privacypane.information.label "Позволи на dTa да тегли новини, съобщения и последната версия">
+<!ENTITY privacypane.statistics.label "Позволи на dTa да събира и предава анонимна информация при използването му.">
+<!ENTITY privacypane.dropdowns.caption "Падащи менюта">
+<!ENTITY privacypane.dropdownresults.label "Брой на отметки, който да се пазят">
+<!ENTITY privacypane.logs.caption "Диагностичен лог">
+<!ENTITY privacypane.enablelogs.label "Позволи диагностично влизане">
+<!ENTITY privacypane.notice.caption "Предупреждение">
+<!ENTITY privacypane.notice.desc "DTA също се интегрира с вградената опция за почистване на Личната Информация (ако има такава).">
+<!ENTITY privacypane.privacynotice.label "Относно Сигурността">
+<!ENTITY advancedpane.label "Настройки за Напреднали">
+<!ENTITY advancedpane.multipart.caption "Мултичастен даунлоуд">
+<!ENTITY advancedpane.chunks.label "Максимален брой части на даунлоуд:">
+<!ENTITY advancedpane.chunksdisabled "1 (недостъпен)">
+<!ENTITY advancedpane.timeouts.caption "Даунлоуд таймаут">
+<!ENTITY advancedpane.timeout.label "Максимален период от невъзможност за връзка преди таймаут">
+<!ENTITY advancedpane.seconds "секунди">
+<!ENTITY advancedpane.minute "минута">
+<!ENTITY advancedpane.minutes "минути">
+<!ENTITY advancedpane.misc.caption "Други настройки">
+<!ENTITY advancedpane.settime.label "Настрой времето на файловете на последното променено време (сървърно) или последната зададена заявка">
+<!ENTITY advancedpane.rememberoneclick.label "Избери дали DTA ЕдинКлик да помни дали да работи за всички подпрозорци или само за сегашния">
+<!ENTITY advancedpane.tempfiles.caption "Временни файлове">
+<!ENTITY advancedpane.usetemp.label "Запазвай даунлоуд частите във временна директория">
+<!ENTITY advancedpane.tempdir.label "Използвай тази директория:">
+<!ENTITY uipane.label "Потребителски Интерфейс">
+<!ENTITY uipane.appearance.caption "Външен Вид">
+<!ENTITY uipane.namesonly.label "Показвай само файлови имена в прозореца за Управление">
+<!ENTITY uipane.integration.caption "Интеграция">
+<!ENTITY uipane.downloadwin.label "Добави DTA! в &quot;Запази Файл&quot; прозорчето">
+<!ENTITY uipane.context.caption "Контекстно меню">
+<!ENTITY uipane.tools.caption "Меню Инструменти">
+<!ENTITY uipane.tbbuttons.caption "Бутони в лентата с Инструменти">
+<!ENTITY uipane.compact.label "Използвай компаткно менщ">
+<!ENTITY uipane.hide.label "Скрий това меню">
+<!ENTITY uipane.showtooltip.label "Показвай прозорчета за даунлоудие">

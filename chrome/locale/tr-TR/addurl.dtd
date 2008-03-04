@@ -1,0 +1,7 @@
+<!ENTITY title "URL(ler) ekle">
+<!ENTITY add.value "URL(ler) ekle">
+<!ENTITY desc.value "URL&apos;yi buraya gir ve seçimlik olarak indirmek istediğiniz dosyayı işaret eden kaynağı da ekleyin.">
+<!ENTITY desc.batches.value "Ayrıca birçok dosyayı aynı anda indirmek için toplu betimleyiciler de kullanabilirsiniz.">
+<!ENTITY examples.value "Örnekler:">
+<!ENTITY help.batches.label "Toplu İndirmeler">
+<!ENTITY help.adding.label "URL(lerin) Eklenmesi">

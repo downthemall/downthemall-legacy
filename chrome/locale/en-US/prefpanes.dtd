@@ -13,7 +13,6 @@
 <!ENTITY buttonlabelextra2 "Restore default settings">
 <!ENTITY dtaPreferences.title "DownThemAll! Preferences...">
 <!ENTITY manager "dTa Manager">
-
 <!ENTITY mainpane.label "Main">
 <!ENTITY mainpane.rename.caption "If a filename already exists:">
 <!ENTITY mainpane.rename.label "Rename">
@@ -27,11 +26,9 @@
 <!ENTITY mainpane.alert.caption "When downloads are complete:">
 <!ENTITY mainpane.alertboxes.label "Alert me using alertboxes">
 <!ENTITY mainpane.alertslides.label "Alert me using slide notifications">
-<!ENTITY mainpane.alertnone.label "Don't alert me">
+<!ENTITY mainpane.alertnone.label "Don&apos;t alert me">
 <!ENTITY mainpane.sounddone.label "Play a sound when all downloads are complete">
 <!ENTITY mainpane.closedta.label "Close DownThemAll when downloads are complete">
-
-
 <!ENTITY privacypane.label "Privacy">
 <!ENTITY privacypane.closing.caption "When Manager window is closed">
 <!ENTITY privacypane.removecompleted.label "Remove completed downloads">
@@ -52,7 +49,6 @@
 <!ENTITY privacypane.notice.caption "Notice">
 <!ENTITY privacypane.notice.desc "DownThemAll also integrates with the built-in Clear Private Data feature (if available).">
 <!ENTITY privacypane.privacynotice.label "Our Privacy Notice">
-
 <!ENTITY advancedpane.label "Advanced">
 <!ENTITY advancedpane.multipart.caption "Multipart download">
 <!ENTITY advancedpane.chunks.label "Max. number of chunks per download:">
@@ -64,16 +60,15 @@
 <!ENTITY advancedpane.minutes "minutes">
 <!ENTITY advancedpane.misc.caption "Miscellaneous settings">
 <!ENTITY advancedpane.settime.label "Set files time to last modified time (server) or time of queuing">
-<!ENTITY advancedpane.rememberoneclick.label "Have dTa OneClick remember if it applies to All Tabs or Current Tab">
+<!ENTITY advancedpane.rememberoneclick.label "Have dTa OneClickClick remember if it applies to All Tabs or Current Tab">
 <!ENTITY advancedpane.tempfiles.caption "Temporary files">
 <!ENTITY advancedpane.usetemp.label "Save download chunks in a temporary directory">
 <!ENTITY advancedpane.tempdir.label "Use this directory:">
-
 <!ENTITY uipane.label "Interface">
 <!ENTITY uipane.appearance.caption "Appearance">
 <!ENTITY uipane.namesonly.label "Show only file names in Manager window">
 <!ENTITY uipane.integration.caption "Integration">
-<!ENTITY uipane.downloadwin.label "Add DownThemAll! to the 'Save File' window">
+<!ENTITY uipane.downloadwin.label "Add DownThemAll! to the &apos;Save File&apos; window">
 <!ENTITY uipane.context.caption "Context menu">
 <!ENTITY uipane.tools.caption "Tools Menu">
 <!ENTITY uipane.tbbuttons.caption "Toolbar Buttons">
