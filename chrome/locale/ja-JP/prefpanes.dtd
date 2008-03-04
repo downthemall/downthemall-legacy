@@ -60,7 +60,7 @@
 <!ENTITY advancedpane.minutes "分">
 <!ENTITY advancedpane.misc.caption "その他の設定">
 <!ENTITY advancedpane.settime.label "ファイルの日付をサーバーの変更日時か登録日時に設定します">
-<!ENTITY advancedpane.rememberoneclick.label "dTa OneClickClick の使用を記憶する">
+<!ENTITY advancedpane.rememberoneclick.label "dTa OneClick の使用を記憶する">
 <!ENTITY advancedpane.tempfiles.caption "一時ファイル">
 <!ENTITY advancedpane.usetemp.label "ダウンロードした断片ファイルを一時フォルダに保存">
 <!ENTITY advancedpane.tempdir.label "このフォルダを使用:">
