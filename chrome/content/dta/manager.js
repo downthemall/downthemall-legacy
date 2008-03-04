@@ -225,7 +225,7 @@ var Dialog = {
 		SessionManager.beginUpdate();
 		this._running.forEach(
 			function(i) {
-					SessionManager.save(i.d);
+				i.d.save();
 			}
 		);
 		SessionManager.endUpdate();
@@ -326,7 +326,7 @@ var Dialog = {
 		);
 	},
 	signal: function D_signal(download) {
-		SessionManager.save(download);
+		download.save();
 		if (download.is(RUNNING)) {
 			this._wasRunning = true;
 		}
@@ -965,6 +965,10 @@ QueueItem.prototype = {
 		}
 		return false;
 	},
+	
+	save: function QI_save() {
+		SessionManager.save(this);
+	}, 
 
 	contentType: "",
 	visitors: null,
@@ -1906,7 +1910,7 @@ Connection.prototype = {
 			d.activeChunks = ac;
 			c.close();
 			
-			SessionManager.save(d);
+			d.save();
 			d.dumpScoreboard();
 			return true;
 		}
@@ -1944,7 +1948,7 @@ Connection.prototype = {
 				}
 				// any data that we got over this channel should be considered "corrupt"
 				c.rollback();
-				SessionManager.save(d);
+				d.save();
 			}
 			return false;
 		}
@@ -2237,7 +2241,7 @@ Connection.prototype = {
 		else if (!d.is(PAUSED, CANCELED)) {
 			d.resumeDownload();
 		}
-		SessionManager.save(d);
+		d.save();
 	},
 
 	// nsIProgressEventSink
@@ -2341,7 +2345,7 @@ function startDownloads(start, downloads) {
 			d.status = _('paused');
 		}
 		Tree.add(d);
-		SessionManager.save(d);
+		d.save();
 		++added;
 		if (Preferences.getDTA("closetab", false) && d.referrer) {
 			removeableTabs[d.referrer.spec] = true;			
