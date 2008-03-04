@@ -101,6 +101,8 @@
 					<menuseparator/>
 					<menuitem id="force" class="menuitem-iconic" label="&force.label;" image="chrome://dta/skin/manager/force.png" oncommand="Tree.force()" />					
 					<menuseparator />
+					<menuitem id="export" class="menuitem-iconic" label="&export.label;" image="chrome://dta/skin/manager/export.png" oncommand="Tree.export();"/>
+					<menuseparator />
 					<menuitem id="prefs" class="menuitem-iconic" label="&options.label;" image="chrome://dta/skin/common/prefs.png" onclick="DTA_showPreferences();" />
 				</menupopup>
 			</menu>

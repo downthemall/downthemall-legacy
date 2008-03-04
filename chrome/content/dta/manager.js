@@ -553,6 +553,11 @@ UrlManager.prototype = {
 	get length() {
 		return this._urls.length;
 	},
+	get all() {
+		for (let i = 0, e = this._urls.length; i < e; ++i) {
+			yield this._urls[i];
+		}
+	},
 	markBad: function um_markBad(url) {
 		if (this._urls.length > 1) {
 			this._urls = this._urls.filter(function(u) { return u != url; });

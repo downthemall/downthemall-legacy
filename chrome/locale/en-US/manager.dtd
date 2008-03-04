@@ -38,5 +38,6 @@
 <!ENTITY addchunk.label "One more chunk">
 <!ENTITY removechunk.label "One less chunk">
 <!ENTITY force.label "Force start">
+<!ENTITY export.label "Export selected">
 
 <!ENTITY options.caption "Options">

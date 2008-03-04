@@ -34,6 +34,13 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
+const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init');
+const ConverterOutputStream = Construct('@mozilla.org/intl/converter-output-stream;1', 'nsIConverterOutputStream', 'init');
+
+const NS_DTA = 'http://www.downthemall.net/properties#';
+const NS_METALINKER = 'http://www.metalinker.org/';
+
+DTA_include("common/verinfo.js");
  
 var Tree = {
 	_ds: Serv('@mozilla.org/widget/dragservice;1', 'nsIDragService'),
@@ -435,6 +442,112 @@ var Tree = {
 			}
 		}
 	},
+	export: function T_export() {
+		try {
+			if (!this._export()) {
+				throw new Exception("Cannot export");
+			}
+		}
+		catch (ex) {
+			Debug.log("Cannot export downloads", ex);		
+			DTA_alert(_('exporttitle'), _('exportfailed'));
+		}
+	},
+	_export: function T_export() {
+		let fp = new FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
+		fp.appendFilters(Ci.nsIFilePicker.filterHTML | Ci.nsIFilePicker.filterText);
+		fp.appendFilter(_('exportfiltermetalink'), '*.metalink');
+		fp.defaultExtension = "metalink";
+		fp.filterIndex = 2;
+		
+		let rv = fp.show();
+		if (rv == Ci.nsIFilePicker.returnOK || rv == Ci.nsIFilePicker.returnReplace) {
+			switch (fp.filterIndex) {
+				case 0: return this._exportHTML(fp.file);
+				case 1: return this._exportText(fp.file);
+				case 2: return this._exportMetalink(fp.file);
+			} 
+		}
+		return false;
+	},
+	// i.e. one url per line
+	// exports hash fragments as well.
+	_exportText: function T__exportText(file) {
+		let cs = ConverterOutputStream(
+			new FileOutputStream(file, 0x02 | 0x08 | 0x20, Prefs.permissions, 0),
+			null,
+			0,
+			null
+		);
+		for (let d in this.selected) {
+			let url = d.urlManager.url;
+			if (d.hash) {
+				url += '#hash(' + d.hash.type + ":" + d.hash.sum + ")";
+			}
+			url += "\r\n";
+			cs.writeString(url); 
+		}
+		cs.close();
+		return true;
+	},
+	_exportMetalink: function T__exportMetalink(file) {
+		let doc = document.implementation.createDocument(NS_METALINKER, 'metalink', null);
+		let root = doc.documentElement;
+		root.setAttribute('type', 'static');
+		root.setAttribute('version', '3.0');
+		root.setAttribute('generator', 'DownThemAll! ' + DTA_VERSION + ' <http://downthemall.net/>');
+		root.setAttributeNS(NS_DTA, 'version', DTA_VERSION);
+		root.setAttribute('pubdate', new Date().toUTCString());
+		
+		root.appendChild(doc.createComment("metalink as exported by DownThemAll!\r\nmay contain DownThemAll! specific information in the DownThemAll! namespace: " + NS_DTA));  
+		
+		let files = doc.createElement('files');
+		for (let d in this.selected) {
+			let f = doc.createElement('file');
+			f.setAttribute('name', d.fileName);
+			f.setAttributeNS(NS_DTA, 'num', d.numIstance);
+			f.setAttributeNS(NS_DTA, 'startDate', d.startDate.getTime());
+			if (d.referrer) {
+				f.setAttributeNS(NS_DTA, 'referrer', d.referrer.spec);
+			}
+			
+			if (d.description) {
+				let n = doc.createElement('description');
+				n.textContent = d.description;
+				f.appendChild(n);
+			} 
+			let r = doc.createElement('resources');
+			for (let u in d.urlManager.all) {
+				let n = doc.createElement('url');
+				let t = u.url.match(/^(\w+):/);
+				n.setAttribute('type', t[1]);
+				n.setAttribute('preference', u.preference);
+				n.setAttributeNS(NS_DTA, 'usable', u.usable);
+				n.setAttributeNS(NS_DTA, 'charset', u.charset);
+				n.textContent = u.url;
+				r.appendChild(n);
+			}
+			if (d.hash) {
+				let v = doc.createElement('verification');
+				let h = doc.createElement('hash');
+				h.setAttribute('type', d.hash.type.toLowerCase());
+				h.textContent = d.hash.sum.toLowerCase();
+				v.appendChild(h);
+				f.appendChild(v);
+			}
+			f.appendChild(r);
+			files.appendChild(f);
+		}
+		root.appendChild(files);
+		
+		let fs = new FileOutputStream(file, 0x02 | 0x08 | 0x20, Prefs.permissions, 0);
+		let xml = '<?xml version="1.0"?>\r\n';
+		fs.write(xml, xml.length);
+		new XMLSerializer().serializeToStream(doc, fs, 'utf-8');
+		fs.close();
+		
+		return true;
+	},
 	showInfo: function T_showInfo() {
 		this.beginUpdate();
 		let downloads = [];
@@ -492,7 +605,8 @@ var Tree = {
 			let states = {
 				state: 0,
 				resumable: false,
-				is: QueueItem.prototype.is
+				is: QueueItem.prototype.is,
+				count: this.selection.count
 			};
 			for (let d in this.selected) {
 				states.state |= d.state;
@@ -525,6 +639,7 @@ var Tree = {
 			modifySome($('launch'), function(d) { return d.curFile; });
 			modifySome($('folder'), function(d) { return d.curFolder; });
 			modifySome($('delete'), function(d) { return d.is(COMPLETE); });
+			modifySome($('export'), function(d) { return d.count != 0; });
 			modifySome($('addchunk', 'removechunk', 'force'), function(d) { return d.is(QUEUED, RUNNING, PAUSED); });
 		}
 		catch (ex) {
