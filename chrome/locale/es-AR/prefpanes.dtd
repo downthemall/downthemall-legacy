@@ -60,7 +60,7 @@
 <!ENTITY advancedpane.minutes "minutos">
 <!ENTITY advancedpane.misc.caption "Diversas configuraciones">
 <!ENTITY advancedpane.settime.label "Establecer la hora de los archivos a la última modificación (servidor) o al tiempo de cola">
-<!ENTITY advancedpane.rememberoneclick.label "Hacer que dTa OneClickClick recuerde si se aplica a todas las pestañas o solamente a la actual">
+<!ENTITY advancedpane.rememberoneclick.label "Hacer que dTa OneClick recuerde si se aplica a todas las pestañas o solamente a la actual">
 <!ENTITY advancedpane.tempfiles.caption "Archivos temporales">
 <!ENTITY advancedpane.usetemp.label "Guardar las partes de la descarga en un directorio temporal">
 <!ENTITY advancedpane.tempdir.label "Usar este directorio:">

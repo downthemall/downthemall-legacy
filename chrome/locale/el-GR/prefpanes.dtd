@@ -60,7 +60,7 @@
 <!ENTITY advancedpane.minutes "λεπτά">
 <!ENTITY advancedpane.misc.caption "Διάφορες ρυθμίσεις">
 <!ENTITY advancedpane.settime.label "Χρονοσήμανση αρχείων με βάση την χρονοσήμανση του διακομιστή ή την ώρα που μπήκαν στην ουρά αναμονής">
-<!ENTITY advancedpane.rememberoneclick.label "Να διατηρεί το dTa OneClickClick την επιλογή για εφαρμογή σε όλες τις καρτέλες ή μόνο στην τρέχουσα">
+<!ENTITY advancedpane.rememberoneclick.label "Να διατηρεί το dTa OneClick την επιλογή για εφαρμογή σε όλες τις καρτέλες ή μόνο στην τρέχουσα">
 <!ENTITY advancedpane.tempfiles.caption "Προσωρινά αρχεία">
 <!ENTITY advancedpane.usetemp.label "Αποθήκευση τεμαχίων πολυμερών λήψεων σε προσωρινό κατάλογο">
 <!ENTITY advancedpane.tempdir.label "Χρήση αυτού του καταλόγου:">
