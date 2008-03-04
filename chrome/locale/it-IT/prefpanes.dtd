@@ -68,7 +68,7 @@
 <!ENTITY uipane.appearance.caption "Aspetto">
 <!ENTITY uipane.namesonly.label "Mostra solo i nomi dei file nella finestra Manager">
 <!ENTITY uipane.integration.caption "Integrazione">
-<!ENTITY uipane.downloadwin.label "Aggiungi DownThemAll alla finestra \&quot;Salva\&quot;">
+<!ENTITY uipane.downloadwin.label "Aggiungi DownThemAll alla finestra &quot;Salva&quot;">
 <!ENTITY uipane.context.caption "Menu contestuale">
 <!ENTITY uipane.tools.caption "Menù Strumenti">
 <!ENTITY uipane.tbbuttons.caption "Bottoni della barra degli strumenti">

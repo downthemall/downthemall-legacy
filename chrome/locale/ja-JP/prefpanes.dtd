@@ -1,0 +1,77 @@
+<!ENTITY winstyle "width:52em;height:42em;">
+<!ENTITY filterspane.label "フィルタ">
+<!ENTITY listhead1.label "表示名">
+<!ENTITY listhead2.label "拡張子">
+<!ENTITY filter.label "拡張子:">
+<!ENTITY regex.label "正規表現">
+<!ENTITY useAs.label "適用先:">
+<!ENTITY imagesf.label "画像と組み込みオブジェクト">
+<!ENTITY linksf.label "リンク">
+<!ENTITY add.label "新しいフィルタを追加">
+<!ENTITY highlight.label "フィルタによって選択された項目を強調表示">
+<!ENTITY dtacontext2.label "設定">
+<!ENTITY buttonlabelextra2 "設定を初期設定に戻す">
+<!ENTITY dtaPreferences.title "DownThemAll! の設定...">
+<!ENTITY manager "dTa マネージャー">
+<!ENTITY mainpane.label "全般">
+<!ENTITY mainpane.rename.caption "ファイル名が既に存在する場合:">
+<!ENTITY mainpane.rename.label "名前を変更">
+<!ENTITY mainpane.overwrite.label "上書き">
+<!ENTITY mainpane.skip.label "無視する">
+<!ENTITY mainpane.ask.label "確認する">
+<!ENTITY mainpane.downloads.caption "ダウンロード">
+<!ENTITY mainpane.concurrent.label "同時ダウンロード数の上限:">
+<!ENTITY mainpane.sounderror.label "エラー発生時に音で知らせる">
+<!ENTITY mainpane.closetab.label "DownThemAll の開始時にタブを閉じる">
+<!ENTITY mainpane.alert.caption "ダウンロードの完了時:">
+<!ENTITY mainpane.alertboxes.label "通常のポップアップで通知">
+<!ENTITY mainpane.alertslides.label "スライド ポップアップで通知">
+<!ENTITY mainpane.alertnone.label "通知しない">
+<!ENTITY mainpane.sounddone.label "すべてのダウンロードが完了した時に音で知らせる">
+<!ENTITY mainpane.closedta.label "ダウンロードの完了時に DownThemAll を閉じる">
+<!ENTITY privacypane.label "プライバシ">
+<!ENTITY privacypane.closing.caption "管理ウィンドウが閉じられた時">
+<!ENTITY privacypane.removecompleted.label "完了したダウンロードをリストから削除">
+<!ENTITY privacypane.removecanceled.label "エラーやキャンセルされたダウンロードをリストから削除">
+<!ENTITY privacypane.removeaborted.label "開始されなかったダウンロードをリストから削除">
+<!ENTITY privacypane.deletefoldershistory.label "保存先の履歴を消去">
+<!ENTITY privacypane.deletefiltershistory.label "追加フィルタの履歴を消去">
+<!ENTITY privacypane.showlog.label "メッセージを表示">
+<!ENTITY privacypane.reveallog.label "ファイルを表示">
+<!ENTITY privacypane.deletelog.label "メッセージを消去">
+<!ENTITY privacypane.updates.caption "更新をインターネットから取得します">
+<!ENTITY privacypane.information.label "更新情報や最新のバージョンを dTa でダウンロード">
+<!ENTITY privacypane.statistics.label "dTa は利用者を特定する事ができない匿名の使用情報を収集します">
+<!ENTITY privacypane.dropdowns.caption "ドロップダウンメニュー">
+<!ENTITY privacypane.dropdownresults.label "履歴の表示数">
+<!ENTITY privacypane.logs.caption "診断メッセージ">
+<!ENTITY privacypane.enablelogs.label "診断メッセージを記録">
+<!ENTITY privacypane.notice.caption "注意">
+<!ENTITY privacypane.notice.desc "DownThemAll を(利用できる場合のみ)プライバシー情報の消去機能に統合できます。">
+<!ENTITY privacypane.privacynotice.label "プライバシーについて">
+<!ENTITY advancedpane.label "詳細">
+<!ENTITY advancedpane.multipart.caption "分割ダウンロード">
+<!ENTITY advancedpane.chunks.label "最大分割数:">
+<!ENTITY advancedpane.chunksdisabled "無効">
+<!ENTITY advancedpane.timeouts.caption "ダウンロードのタイムアウト">
+<!ENTITY advancedpane.timeout.label "タイムアウトまでの無通信時間">
+<!ENTITY advancedpane.seconds "秒">
+<!ENTITY advancedpane.minute "分">
+<!ENTITY advancedpane.minutes "分">
+<!ENTITY advancedpane.misc.caption "その他の設定">
+<!ENTITY advancedpane.settime.label "ファイルの日付をサーバーの変更日時か登録日時に設定します">
+<!ENTITY advancedpane.rememberoneclick.label "dTa OneClickClick の使用を記憶する">
+<!ENTITY advancedpane.tempfiles.caption "一時ファイル">
+<!ENTITY advancedpane.usetemp.label "ダウンロードした断片ファイルを一時フォルダに保存">
+<!ENTITY advancedpane.tempdir.label "このフォルダを使用:">
+<!ENTITY uipane.label "操作">
+<!ENTITY uipane.appearance.caption "表示">
+<!ENTITY uipane.namesonly.label "マネージャーウィンドウにファイル名だけを表示">
+<!ENTITY uipane.integration.caption "統合">
+<!ENTITY uipane.downloadwin.label "&apos;ファイルを保存&apos; ダイアログに DownThemAll! を追加">
+<!ENTITY uipane.context.caption "コンテキストメニュー">
+<!ENTITY uipane.tools.caption "ツールメニュー">
+<!ENTITY uipane.tbbuttons.caption "ツールバーボタン">
+<!ENTITY uipane.compact.label "コンパクトなメニューを使用">
+<!ENTITY uipane.hide.label "このメニューを非表示">
+<!ENTITY uipane.showtooltip.label "ダウンロードツールチップを表示">

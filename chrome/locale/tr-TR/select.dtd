@@ -1,0 +1,15 @@
+<!ENTITY title "Seçiminizi yapın">
+<!ENTITY filters.caption "Süzgeçler">
+<!ENTITY additional.caption "Hızlı süzme">
+<!ENTITY additional.tip "Doku süzgeçleri: virgül kullanarak aynı anda birden fazla dokusal süzgeç belirleyebilirsiniz.">
+<!ENTITY regex.label "Düz. İfa.">
+<!ENTITY filter.tip "Doku süzgeçlerinizi buraya yazabilirsiniz! (Aşağı açılır menüdeki bazı örnekler)">
+<!ENTITY status.label "Bağlantılar seçildikten sonra, Başlat&apos;a tıkla!">
+<!ENTITY menu.mask.title "Yeniden adlandırma maskesini değiştir...">
+<!ENTITY menu.check.label "Seçilen öğeleri onayla">
+<!ENTITY menu.uncheck.label "Seçilen öğelerin onayını kaldır">
+<!ENTITY menu.toggle.label "Seçilen öğeleri ters çevir">
+<!ENTITY tab.links.label "Bağlantılar">
+<!ENTITY tab.pics.label "Resimler ve Gömülenler">
+<!ENTITY header.desc.label "Tanımlama">
+<!ENTITY selectfiltered.label "Süzülenleri Seç">
