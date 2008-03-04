@@ -168,6 +168,9 @@ function NSResolver(prefix) {
 					var url = urlNodes[j];
 					var type = url.getAttribute('type');
 					var preference = 1;
+					var charset = doc.characterSet;
+					var usable = null;
+					
 					if (url.hasAttribute('preference')) {
 						var a = new Number(url.getAttribute('preference'));
 						if (isFinite(a) && a > 0 && a < 101) {
@@ -180,10 +183,16 @@ function NSResolver(prefix) {
 							preference = 100 + preference;
 						}
 					}
+					if (url.hasAttributeNS(NS_DTA, 'charset')) {
+						charset = url.getAttributeNS(NS_DTA, 'charset');
+					}
+					if (url.hasAttributeNS(NS_DTA, 'usable')) {
+						usable = url.getAttributeNS(NS_DTA, 'usable');
+					}
 					if (['http', 'https'].indexOf(type) != -1) {
 						url = this._checkURL(url.textContent.trim())
 						if (url) {
-							urls.push(new DTA_URL(url, doc.characterSet, null, preference));
+							urls.push(new DTA_URL(url, charset, usable, preference));
 						}
 					}
 				}
