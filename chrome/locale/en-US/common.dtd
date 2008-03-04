@@ -1,10 +1,17 @@
+<!--
+	commonly used.
+	CHECK BEFORE MODIFY
+-->
+
 <!ENTITY start.label "Start!">
-<!ENTITY start.key "s">
+<!ENTITY start.key "s" >
 <!ENTITY queue.label "Add paused">
-<!ENTITY queue.key "p">
+<!ENTITY queue.key "p" >
 <!ENTITY cancel.label "Cancel">
+
 <!ENTITY options.label "Preferences">
 <!ENTITY dtahelp "Help!">
+
 <!ENTITY url.value "URL">
 <!ENTITY dest.caption "Save files in:">
 <!ENTITY referrer.value "Referrer URL:">
@@ -12,6 +19,7 @@
 <!ENTITY browse.tip "Browse for target folder...">
 <!ENTITY mask.label "Renaming mask">
 <!ENTITY mask.tip "Selected files will be saved and renamed using this mask">
+
 <!ENTITY selectall.label "Select all">
 <!ENTITY selectinv.label "Invert selection">
 <!ENTITY selectnone.label "Select none">
