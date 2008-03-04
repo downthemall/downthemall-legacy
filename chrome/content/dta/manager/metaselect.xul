@@ -109,4 +109,22 @@
 	</hbox>
 	
 	<richlistbox context="context" id="downloads" class="metalinker" flex="1" suppressonselect="true"/>
+	
+	<hbox style="margin:7px 7px 3px 7px;" >
+		<vbox autostretch="never" flex="1">
+			<caption label="&dest.caption;" />
+			<hbox>
+				<saveddropdown id="directory" preference="directory" flex="1"/>
+				<toolbarbutton id="browsedir" oncommand="Metalinker.browseDir();" tooltiptext="&browse.tip;" />
+			</hbox>
+		</vbox>
+		<vbox id="renamingbox">
+			<caption label="&mask.label;:" />
+			<hbox>
+				<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
+				<maskbutton/>
+			</hbox>
+		</vbox>
+	</hbox>	
+	
 </dialog>

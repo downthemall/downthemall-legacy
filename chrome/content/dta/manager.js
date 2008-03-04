@@ -36,6 +36,10 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
+const NS_DTA = 'http://www.downthemall.net/properties#';
+const NS_METALINKER = 'http://www.metalinker.org/';
+ 
+ 
 const NS_ERROR_MODULE_NETWORK = 0x804B0000;
 const NS_ERROR_BINDING_ABORTED = NS_ERROR_MODULE_NETWORK + 2;
 const NS_ERROR_UNKNOWN_HOST = NS_ERROR_MODULE_NETWORK + 30;
@@ -2472,6 +2476,9 @@ function startDownloads(start, downloads) {
 			e.mask,
 			e.referrer
 		);
+		if (e.startDate) {
+			d.startDate = e.startDate;
+		}
 		if (e.url.hash) {
 			d.hash = e.url.hash;
 		}
