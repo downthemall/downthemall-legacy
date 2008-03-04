@@ -132,6 +132,20 @@ var Dialog = {
 			newRef = sp.value;
 		}
 		
+		if (t.length == 1) {
+			var d = t[0];
+			if ($('hash').isValid) {
+				var h = $('hash').value;
+				if (!h || !d.hash || h.sum != d.hash.sum) {
+					d.hash = h;
+					if (h && d.is(COMPLETE)) {
+						// have to manually start this guy ;)
+						d.verifyHash();
+					}
+				}
+			}
+		}
+		
 		t.forEach(
 			function(d) {
 				if (d.is(COMPLETE, FINISHING)) {
@@ -151,22 +165,10 @@ var Dialog = {
 						Debug.log("failed to set referrer to", newRef);
 					}
 				}
+				d.save();
 			}
 		);
 		
-		if (t.length == 1) {
-			var d = t[0];
-			if ($('hash').isValid) {
-				var h = $('hash').value;
-				if (!h || !d.hash || h.sum != d.hash.sum) {
-					d.hash = h;
-					if (h && d.is(COMPLETE)) {
-						// have to manually start this guy ;)
-						d.verifyHash();
-					}
-				}
-			}
-		}
 		Tooltip.stop();
 		return true;
 	},
