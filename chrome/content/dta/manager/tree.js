@@ -628,7 +628,15 @@ var Tree = {
 				f.appendChild(v);
 			}
 			f.appendChild(r);
+			
+			if (d.totalSize > 0) {
+				let s = doc.createElement('size');
+				s.textContent = d.totalSize;
+				f.appendChild(s);
+			}
+			
 			files.appendChild(f);
+			
 		}
 		root.appendChild(files);
 		
