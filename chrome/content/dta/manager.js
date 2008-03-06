@@ -1814,6 +1814,25 @@ Chunk.prototype = {
 	}
 }
 
+var Prompts = {
+	_authPrompter: null,
+	_prompter: null,
+	get authPrompter() {
+		if (!this._authPrompter) {
+			this._authPrompter = WindowWatcherService.getNewAuthPrompter(window)
+				.QueryInterface(Ci.nsIAuthPrompt);		
+		}
+		return this._authPrompter;
+	},
+	get prompter() {
+		if (!this._prompter) {
+			this._prompter = WindowWatcherService.getNewPrompter(window)
+				.QueryInterface(Ci.nsIPrompt);
+		}
+		return this._prompter;
+	}
+};
+
 function Connection(d, c, getInfo) {
 
 	this.d = d;
@@ -1851,6 +1870,7 @@ function Connection(d, c, getInfo) {
 	this.c.running = true;
 	this._chan.asyncOpen(this, null);
 }
+
 Connection.prototype = {
 	_interfaces: [
 		Ci.nsISupports,
@@ -1900,14 +1920,19 @@ Connection.prototype = {
 	},
 	// nsIInterfaceRequestor
 	getInterface: function DL_getInterface(iid) {
-		if (this._interfaces.some(function(i) { return iid.equals(i); })) {
-			return this;
-		}
 		if (iid.equals(Ci.nsIAuthPrompt)) {
-			return this.authPrompter;
-		}	
+			return Prompts.authPrompter;
+		}
 		if (iid.equals(Ci.nsIPrompt)) {
-			return this.prompter;
+			return Prompts.prompter;
+		}
+		// for 1.9
+		if ('nsIAuthPromptProvider' in Ci && iid.equals(Ci.nsIAuthPromptProvider)) {
+			return Prompts.prompter.QueryInterface(Ci.nsIAuthPromptProvider);
+		}
+		// for 1.9
+		if ('nsIAuthPrompt2' in Ci && iid.equals(Ci.nsIAuthPrompt2)) {
+			return Prompts.authPrompter.QueryInterface(Ci.nsIAuthPrompt2);
 		}
 		try {
 			return this.QueryInterface(iid);
@@ -1917,26 +1942,7 @@ Connection.prototype = {
 			throw ex;
 		}
 	},
-	get authPrompter() {
-		try {
-			return WindowWatcherService.getNewAuthPrompter(window)
-				.QueryInterface(Ci.nsIAuthPrompt);
-		}
-		catch (ex) {
-			Debug.log("authPrompter", ex);
-			throw ex;
-		}
-	},
-	get prompter() {
-		try {
-			return WindowWatcherService.getNewPrompter(window)
-				.QueryInterface(Ci.nsIPrompt);
-		}
-		catch (ex) {
-			Debug.log("prompter", ex);
-			throw ex;
-		}
-	},	
+
 	// nsIChannelEventSink
 	onChannelRedirect: function DL_onChannelRedirect(oldChannel, newChannel, flags) {
 		if (!this.isInfoGetter) {
