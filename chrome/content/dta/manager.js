@@ -844,7 +844,6 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 
 	this.startDate = new Date();	
 	this.numIstance = num;
-	this.description = desc ? desc : '';
 	this.chunks = [];
 	this.speeds = new Array();
 	
@@ -859,6 +858,7 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 
 	// only access the setter of the last so that we don't generate stuff trice.
 	this._pathName = dir;
+	this._description = desc ? desc : '';
 	this._mask = mask;
 	this.fileName = this.urlManager.usable.getUsableFileName();
 	
@@ -909,6 +909,16 @@ QueueItem.prototype = {
 		this.invalidate();
 		return nv;
 	},
+	_description: null,
+	get description() {
+		return this._description;
+	},
+	set description(nv) {
+		this._description = nv;
+		this.rebuildDestination();
+		this.invalidate();
+		return nv;
+	},	
 
 	_pathName: null,
 	get pathName() {

@@ -39,14 +39,14 @@ const Ci = Components.interfaces;
 
 var dropDowns = {};
 
-function QueueItem(url, num, hash) {
+function QueueItem(url, num, desc, hash) {
 	if (!(url instanceof DTA_URL) || !DTA_AddingFunctions.isLinkOpenable(url)) {
 		throw new Components.Exception('invalid url');
 	}
 	this.url = url;
 	this.numIstance = num;
 	this.referrer = $('URLref').value,
-	this.description = window.arguments ? window.arguments[0].description : '';
+	this.description = desc;
 	this.ultDescription = '';
 	this.mask = Dialog.ddRenaming.value;
 	this.dirSave = Dialog.ddDirectory.value;
@@ -291,6 +291,7 @@ var Dialog = {
 					this.ddRenaming.value = a.mask;
 				}
 				hash = a.url.hash;
+				$('description').value = a.description;
 			}
 			// check if there's some URL in clipboard
 			else {
@@ -441,16 +442,17 @@ var Dialog = {
 			}
 			rv = rv == 0;
 		}
+		var desc = $('description').value;
 		if (rv) {
 			var g = batch.getURLs();
 			batch = function() {
 				for (let i in g) {
-					yield new QueueItem(new DTA_URL(i), num);
+					yield new QueueItem(new DTA_URL(i), num, desc);
 				}
 			}();
 		}
 		else {
-			batch = [new QueueItem(url, num, hash)];
+			batch = [new QueueItem(url, num, desc, hash)];
 		}
 		DTA_AddingFunctions.sendToDown(start, batch);
 

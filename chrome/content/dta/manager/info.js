@@ -65,6 +65,7 @@ var Dialog = {
 				$('renaming').value = d.mask;
 				$('directory').value = d.pathName;
 				$('hash').value = d.hash;
+				$('description').value = d.description;
 				this.item = d;
 				Tooltip.start(d);
 			}
@@ -126,6 +127,9 @@ var Dialog = {
 		var mask = $('renaming').value;
 		mask = mask.length ? mask : null;
 		
+		var description = $('description').value;
+		description = description.length ? description : null;
+		
 		var sp = $('sourcePage');
 		var newRef = null;
 		if (!sp.hasAttribute('readonly') && sp._value != sp.value) {
@@ -156,6 +160,9 @@ var Dialog = {
 				}
 				if (mask) {
 					d.mask = mask;
+				}
+				if (description) {
+					d.description = description;
 				}
 				if (newRef) {
 					try {
