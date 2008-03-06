@@ -1862,7 +1862,6 @@ Connection.prototype = {
 		Ci.nsIRequestObserver,
 		Ci.nsIProgressEventSink,
 		Ci.nsIChannelEventSink,
-		Ci.nsIAuthPrompt,
 		Ci.nsIFTPEventSink
 	],
 	
@@ -1901,6 +1900,15 @@ Connection.prototype = {
 	},
 	// nsIInterfaceRequestor
 	getInterface: function DL_getInterface(iid) {
+		if (this._interfaces.some(function(i) { return iid.equals(i); })) {
+			return this;
+		}
+		if (iid.equals(Ci.nsIAuthPrompt)) {
+			return this.authPrompter;
+		}	
+		if (iid.equals(Ci.nsIPrompt)) {
+			return this.prompter;
+		}
 		try {
 			return this.QueryInterface(iid);
 		}
@@ -1911,7 +1919,7 @@ Connection.prototype = {
 	},
 	get authPrompter() {
 		try {
-			return WindowWatcherService.getNewAuthPrompter(null)
+			return WindowWatcherService.getNewAuthPrompter(window)
 				.QueryInterface(Ci.nsIAuthPrompt);
 		}
 		catch (ex) {
@@ -1919,38 +1927,16 @@ Connection.prototype = {
 			throw ex;
 		}
 	},
-	// nsIAuthPrompt
-	prompt: function DL_prompt(aDialogTitle, aText, aPasswordRealm, aSavePassword, aDefaultText, aResult) {
-		return this.authPrompter.prompt(
-			aDialogTitle,
-			aText,
-			aPasswordRealm,
-			aSavePassword,
-			aDefaultText,
-			aResult
-		);
-	},
-
-	promptUsernameAndPassword: function DL_promptUaP(aDialogTitle, aText, aPasswordRealm, aSavePassword, aUser, aPwd) {
-		return this.authPrompter.promptUsernameAndPassword(
-			aDialogTitle,
-			aText,
-			aPasswordRealm,
-			aSavePassword,
-			aUser,
-			aPwd
-		);
-	},
-	promptPassword: function DL_promptPassword(aDialogTitle, aText, aPasswordRealm, aSavePassword, aPwd) {
-		return this.authPrompter.promptPassword(
-			aDialogTitle,
-			aText,
-			aPasswordRealm,
-			aSavePassword,
-			aPwd
-		);
-	},
-	
+	get prompter() {
+		try {
+			return WindowWatcherService.getNewPrompter(window)
+				.QueryInterface(Ci.nsIPrompt);
+		}
+		catch (ex) {
+			Debug.log("prompter", ex);
+			throw ex;
+		}
+	},	
 	// nsIChannelEventSink
 	onChannelRedirect: function DL_onChannelRedirect(oldChannel, newChannel, flags) {
 		if (!this.isInfoGetter) {
