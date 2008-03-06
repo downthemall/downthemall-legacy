@@ -1927,9 +1927,10 @@ Connection.prototype = {
 			return Prompts.prompter;
 		}
 		// for 1.9
+		/* this one makes minefield ask for the password again and again :p
 		if ('nsIAuthPromptProvider' in Ci && iid.equals(Ci.nsIAuthPromptProvider)) {
 			return Prompts.prompter.QueryInterface(Ci.nsIAuthPromptProvider);
-		}
+		}*/
 		// for 1.9
 		if ('nsIAuthPrompt2' in Ci && iid.equals(Ci.nsIAuthPrompt2)) {
 			return Prompts.authPrompter.QueryInterface(Ci.nsIAuthPrompt2);
