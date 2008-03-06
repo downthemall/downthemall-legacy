@@ -2476,6 +2476,9 @@ function startDownloads(start, downloads) {
 			e.mask,
 			e.referrer
 		);
+		if (e.fileName) {
+			d.fileName = e.fileName;
+		}
 		if (e.startDate) {
 			d.startDate = e.startDate;
 		}

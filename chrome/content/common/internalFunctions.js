@@ -185,9 +185,8 @@ merge(
 			let t = this.replace(/\?.*$/, '')
 				.normalizeSlashes()
 				.trim()
-				.removeFinalSlash()
-				.split(SYSTEMSLASH);
-			return t.pop().removeBadChars().trim();
+				.removeFinalSlash();
+			return t.split(SYSTEMSLASH).pop().removeBadChars().trim();
 		},
 		getExtension : function() {
 			let name = this.getUsableFileName();
