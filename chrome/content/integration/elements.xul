@@ -86,8 +86,8 @@
 		type="menu-button"
 	>
 		<menupopup>
-			<menuitem id="dta-tb-turbo" label="DTA OneClick! (&dta-tb-single.label;)" oncommand="DTA_ContextOverlay.findLinks(true, false);" tooltiptext="dTa OneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
-			<menuitem id="dta-tb-allturbo" label="DTA OneClick! (&dta-tb-all.label;)" oncommand="DTA_ContextOverlay.findLinks(true, true);" tooltiptext="dTa OneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
+			<menuitem id="dta-tb-turbo" label="dTa OneClick! (&dta-tb-single.label;)" oncommand="DTA_ContextOverlay.findLinks(true, false);" tooltiptext="dTa OneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
+			<menuitem id="dta-tb-allturbo" label="dTa OneClick! (&dta-tb-all.label;)" oncommand="DTA_ContextOverlay.findLinks(true, true);" tooltiptext="dTa OneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic"/>
 		</menupopup>		
 	</toolbarbutton>
 	<toolbarbutton

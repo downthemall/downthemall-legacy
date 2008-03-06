@@ -9,7 +9,7 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
-<overlay id="DTAFirefoxIntegration" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<overlay id="DTASongbirdIntegration" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 	<script type="application/x-javascript" src="chrome://dta/content/integration/toolbarButtons.js"/>
 
