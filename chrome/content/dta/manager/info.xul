@@ -57,9 +57,13 @@
 			</columns>
 			<rows>
 				<row align="center">
-					<label control="sourcePage" id="sourcePageTitle" value="&referrer.value;" />
+					<label control="sourcePage" id="sourcePageTitle" value="&referrer.value;"  style="font-style: italic;" />
 					<textbox id="sourcePage" readonly="true" />
 				</row>
+				<row align="center">
+					<label control="description" value="&description.value;"  style="font-style: italic;" />
+					<textbox id="description" />
+				</row>				
 				<row align="center">
 					<label control="directory" value="&dest.caption;" />
 					<hbox flex="1">
@@ -75,7 +79,7 @@
 					</hbox>
 				</row>
 				<row align="center">
-					<label control="hash" value="&checksum.value;" />
+					<label control="hash" value="&checksum.value;" style="font-style: italic;" />
 					<hashinput id="hash"/>
 				</row>
 			</rows>

@@ -83,6 +83,14 @@
 				<textbox id="URLaddress" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21"/>
 			</row>
 			<row align="center">
+				<label control="URLref" id="URLrefTitle" value="&referrer.value;" style="font-style: italic;" />
+				<textbox id="URLref" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21" />
+			</row>
+			<row align="center">
+				<label control="description" value="&description.value;" style="font-style: italic;"/>
+				<textbox id="description" height="21" />
+			</row>			
+			<row align="center">
 				<label control="directory" id="destinationPath" value="&dest.caption;" />
 				<hbox flex="1">
 					<saveddropdown id="directory" preference="directory" flex="1"/>
@@ -95,10 +103,6 @@
 					<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
 					<maskbutton/>
 				</hbox>
-			</row>
-			<row align="center">
-				<label control="URLref" id="URLrefTitle" value="&referrer.value;" style="font-style: italic;" />
-				<textbox id="URLref" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21" />
 			</row>
 			<row align="center">
 				<label control="hash" value="&checksum.value;" style="font-style: italic;" />
