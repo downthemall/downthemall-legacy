@@ -409,7 +409,7 @@ var DTA_AddingFunctions = {
 			}
 			links = links.filter(
 				function(link) {
-					if (fast && (fast.match(link.url.usable) || fast.match(link.desc))) {
+					if (fast && (fast.match(link.url.usable) || fast.match(link.description))) {
 						return true;
 					}
 					return DTA_FilterManager.matchActive(link.url.usable, type);

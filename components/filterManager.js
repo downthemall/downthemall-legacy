@@ -220,6 +220,9 @@ Filter.prototype = {
 	},
 
 	match: function F_match(str) {
+		if (!str) {
+			return;
+		}
 		return this._regs.some(
 			function(reg) {
 				return str.search(reg) != -1;
