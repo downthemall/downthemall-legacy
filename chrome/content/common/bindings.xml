@@ -210,10 +210,10 @@
 				this.setAttribute('checked', dl.selected);
 				var id = '';
 				if (dl.identity) {
-					id = dl.identity + ' (' + dl.url.usable.getUsableFileName() + ')';
+					id = dl.identity + ' (' + dl.fileName + ')';
 				}
 				else {
-					id = dl.url.usable.getUsableFileName();
+					id = dl.fileName;
 				}
 				this.setAttribute('identity', id);
 				this.setAttribute('iconURL', dl.logo ? dl.logo : getIcon(dl.url.usable, false, 32));

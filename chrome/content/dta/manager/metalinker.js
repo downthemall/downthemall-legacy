@@ -142,6 +142,10 @@ function NSResolver(prefix) {
 			var files = root.getElementsByTagName('file');
 			for (var i = 0; i < files.length; ++i) {
 				var file = files[i];
+				var fileName = file.getAttribute('name').getUsableFileName();
+				if (!fileName) {
+					throw new Exception("File name not provided!");
+				}
 				var referrer = null;
 				if (file.hasAttributeNS(NS_DTA, 'referrer')) {
 					referrer = file.getAttributeNS(NS_DTA, 'referrer');
@@ -225,6 +229,7 @@ function NSResolver(prefix) {
 				}
 				downloads.push({
 					'url': new UrlManager(urls),
+					'fileName': fileName,
 					'referrer': referrer ? referrer : null,
 					'numIstance': num,
 					'description': desc,
