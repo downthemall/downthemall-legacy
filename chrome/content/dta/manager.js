@@ -60,7 +60,9 @@ const BufferedOutputStream = Construct('@mozilla.org/network/buffered-output-str
 const BinaryOutputStream = Construct('@mozilla.org/binaryoutputstream;1', 'nsIBinaryOutputStream', 'setOutputStream');
 const BinaryInputStream = Construct('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
 const FileInputStream = Construct('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
+const StringInputStream = Construct('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
 
+const ContentHandling = Serv('@downthemall.net/contenthandling;1', 'dtaIContentHandling');
 const MimeService = Serv('@mozilla.org/uriloader/external-helper-app-service;1', 'nsIMIMEService');
 const ObserverService = Serv('@mozilla.org/observer-service;1', 'nsIObserverService');
 const WindowWatcherService = Serv('@mozilla.org/embedcomp/window-watcher;1', 'nsIWindowWatcher');
@@ -899,6 +901,8 @@ QueueItem.prototype = {
 		}
 	},
 	
+	postData: null,
+	
 	_fileName: null,
 	get fileName() {
 		return this._fileName;
@@ -1616,6 +1620,7 @@ QueueItem.prototype = {
 		let e = {};
 		[
 			'fileName',
+			'postData',
 			'numIstance',
 			'description',
 			'resumable',
@@ -1864,7 +1869,7 @@ function Connection(d, c, getInfo) {
 		// no-op
 	}
 	try {
-		var http = this._chan.QueryInterface(Ci.nsIHttpChannel);
+		let http = this._chan.QueryInterface(Ci.nsIHttpChannel);
 		if (c.start + c.written > 0) {
 			http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
 		}
@@ -1873,9 +1878,15 @@ function Connection(d, c, getInfo) {
 		}
 		http.setRequestHeader('Keep-Alive', '', false);
 		http.setRequestHeader('Connection', 'close', false);
+		if (d.postData) {
+			let uc = http.QueryInterface(Ci.nsIUploadChannel);
+			uc.setUploadStream(new StringInputStream(d.postData, d.postData.length), null, -1);
+			http.requestMethod = 'POST';
+		}			 
 	}
 	catch (ex) {
-
+		Debug.log("error setting up channel", ex);
+		// no-op
 	}
 	this.c.running = true;
 	this._chan.asyncOpen(this, null);
@@ -2493,6 +2504,13 @@ function startDownloads(start, downloads) {
 		}
 		else {
 			d.hash = null; // to initialize prettyHash 
+		}
+		try {
+			d.postData = ContentHandling.getPostDataFor(d.urlManager.url.toURI());
+		}
+		catch (ex) {
+			Debug.log("No post data for me: " + d.urlManager.url, ex);
+			// no-op
 		}
 		d.state = start ? QUEUED : PAUSED;
 		if (d.is(QUEUED)) {
