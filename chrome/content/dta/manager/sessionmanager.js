@@ -254,6 +254,7 @@ var SessionManager = {
 					'contentType',
 					'conflicts',
 					'fileName',
+					'postData',
 					'destinationName',
 					'resumable',
 					'totalSize',
