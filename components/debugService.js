@@ -40,71 +40,21 @@ const error = Components.utils.reportError;
 const res = Components.results;
 const FileStream = new Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const ScriptError = new Components.Constructor('@mozilla.org/scripterror;1', 'nsIScriptError', 'init');
- 
+
+function include(uri) {
+	Cc["@mozilla.org/moz/jssubscript-loader;1"]
+		.getService(Ci.mozIJSSubScriptLoader)
+		.loadSubScript(uri);
+}
+include("chrome://dta/content/common/module.js");
+
 var DebugService = {
-	// nsIClassInfo
-	classID: Components.ID("{0B82FEBB-59A1-41d7-B31D-D5A686E11A69}"),
-	contractID: "@downthemall.net/debug-service;1",
-	classDescription: "DownThemAll! Debug Service",
-	implementationLanguage: 0x02,
-	flags: (1 << 0) | (1 << 2), // SINGLETON | MAIN_THREAD_ONLY
-	classIDNoAlloc: this.classID,
-	getHelperForLanguage: function() {
-		return null;
-	},
-	getInterfaces: function(count) {
-		// XXX
-		count.value = 0;
-		return null;
-	},
-
-	implementsIID: function DS_implementID(iid) {
-			return [
-				Ci.nsISupports,
-				Ci.nsISupportsWeakReference,
-				Ci.nsIWeakReference,
-				Ci.nsIObserver,
-				Ci.nsIClassInfo,
-				Ci.nsIFactory,
-				Ci.dtaIDebugService
-			].some(function(e) { return iid.equals(e); });
-	},
-	// nsiSupports
-	QueryInterface: function DS_QI(iid) {
-		if (this.implementsIID(iid)) {
-			return this;
-		}
-		throw res.NS_ERROR_NO_INTERFACE;
-	},
-
-	// nsiWeakReference
-	QueryReferent: function DS_QR(iid) {
-		return this;
-	},
-
-	// nsiSupportsWeakReference
-	GetWeakReference: function DS_GWR() {
-		return this;
-	},
-
-	// nsIFactory
-	createInstance: function (outer, iid) {
-		if (outer != null) {
-			throw res.NS_ERROR_NO_AGGREGATION;
-		}
-		if (this.implementsIID(iid)) {
-			this._init();		
-			return this;
-		}
-		throw res.NS_ERROR_INVALID_ARG;
-	},
-
 	// nsIObserver
 	observe: function DS_observe(subject, topic, prefName) {
 		this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));	
 	},
 	
-	_init: function DS__init() {
+	init: function DS_init() {
 		this._cs = Cc['@mozilla.org/consoleservice;1'].getService(Ci.nsIConsoleService);
 		this._pb = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2);
 		this._pb.addObserver('extensions.dta.logging', this, true);
@@ -121,7 +71,7 @@ var DebugService = {
 		catch(ex) {
 			// No-Op
 		}
-		this._init = new Function();
+		delete this.init;
 	},
 	get file() {
 		return this._file;
@@ -141,7 +91,7 @@ var DebugService = {
 	_formatTimeDate: function DS_formatTimeDate(value) {
 		return String(value).replace(/\b(\d)\b/g, "0$1");
 	},
-	_log: function DS__dump(msg, e) {
+	_log: function DS__log(msg, e) {
 		try {
 			if (msg == "" && typeof(e) != "object") {
 				return;
@@ -186,7 +136,7 @@ var DebugService = {
 				this._cs.logStringMessage(text);
 			}
 			
-			var f = new FileStream(this._file, 0x04 | 0x08 | 0x10, 0664, 0);
+			var f = new FileStream(this.file, 0x04 | 0x08 | 0x10, 0664, 0);
 			f.write(text, text.length);
 			f.close();
 		}
@@ -208,51 +158,17 @@ var DebugService = {
 		catch (ex) {
 			throw res.NS_ERROR_FAILURE;
 		}
-	},
-
-	_firstTime: true,
-	registerSelf: function DS_registerSelf(compMgr, fileSpec, location, type) {
-		try {
-			error("registering");
-			
-			if (!this._firstTime) {
-				return;
-			}
-			this._firstTime = false;
-	
-			compMgr.QueryInterface(Ci.nsIComponentRegistrar)
-				.registerFactoryLocation(
-					this.classID,
-					this.classDescription,
-					this.contractID,
-					fileSpec,
-					location,
-					type
-				);
-		}
-		catch (ex) {
-			error(ex);
-		}
-	},
-	unregisterSelf: function DS_unregisterSelf(compMgr, fileSpec, location) {
-		compMgr.QueryInterface(Ci.nsIComponentRegistrar)
-			.unregisterFactoryLocation(
-				this.classID,
-				fileSpec
-			);
-	},
-	getClassObject: function DS_getClassObject(compMgr, cid, iid) {
-		if (cid.equals(this.classID)) {
-			return this;
-		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
-	},
-	canUnload: function DS_canUnload(compMgr) {
-		return true;
 	}
 };
+implementComponent(
+	DebugService,
+	Components.ID("{0B82FEBB-59A1-41d7-B31D-D5A686E11A69}"),
+	"@downthemall.net/debug-service;1",
+	"DownThemAll! Debug Service",
+	[Ci.nsIObserver, Ci.dtaIDebugService]
+);
 
 // entrypoint
 function NSGetModule(compMgr, fileSpec) {
-	return DebugService;
+	return new ServiceModule(DebugService, false);
 }

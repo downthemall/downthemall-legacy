@@ -34,48 +34,23 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+
 function include(uri) {
-	CC["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(CI.mozIJSSubScriptLoader)
+	Cc["@mozilla.org/moz/jssubscript-loader;1"]
+		.getService(Ci.mozIJSSubScriptLoader)
 		.loadSubScript(uri);
 }
- 
-const CC = Components.classes;
-const CI = Components.interfaces;
-const error = Components.utils.reportError;
+include("chrome://dta/content/common/module.js");
+
 
 var MigrationService = {
-
-	// nsIClassInfo
-	classID: Components.ID("{F66539C8-2590-4e69-B189-F9F8595A7670}"),
-	contractID: "@downthemall.net/migration-service;1",
-	classDescription: "DownThemAll! Migration Service",
-	implementationLanguage: 0x02,
-	flags: (1 << 0) | (1 << 2), // SINGLETON | MAIN_THREAD_ONLY
-	classIDNoAlloc: this.classID,
-	getHelperForLanguage: function() {
-		return null;
-	},
-	getInterfaces: function(count) {
-		// XXX
-		count.value = 0;
-		return null;
-	},
-
-	implementsIID: function FM_implementID(iid) {
-			return [
-				CI.nsISupports,
-				CI.nsISupportsWeakReference,
-				CI.nsIWeakReference,
-				CI.nsIObserver,
-				CI.nsIClassInfo
-			].some(function(e) { return iid.equals(e); });
-	},
-
 	_init: function MM_init() {
     // observer registration
-    CC['@mozilla.org/observer-service;1']
-			.getService(CI.nsIObserverService)
+    Cc['@mozilla.org/observer-service;1']
+			.getService(Ci.nsIObserverService)
 			.addObserver(this, "final-ui-startup", true);
 	},
 	
@@ -84,7 +59,7 @@ var MigrationService = {
 		include("chrome://dta/content/common/overlayFunctions.js");
 		
 		try {
-			DTA_debug.logString("current " + DTA_VERSION);
+			debug("current " + DTA_VERSION);
 			var vc = Components.classes["@mozilla.org/xpcom/version-comparator;1"]
 				.getService(Components.interfaces.nsIVersionComparator);
 		
@@ -92,7 +67,7 @@ var MigrationService = {
 			if (0 == vc.compare(DTA_VERSION, lastVersion)) {
 				return;
 			}
-			DTA_debug.logString("MigrationManager: migration started");
+			debug.logString("MigrationManager: migration started");
 			if (vc.compare(lastVersion, "1.0a1") < 0) {
 				this._execute(['Prefs', 'DropDowns', 'Filters', 'Remove']);
 			}
@@ -111,7 +86,7 @@ var MigrationService = {
 	    	);			
 		}
 		catch(ex) {
-			DTA_debug.log("MigrationManager:", ex);
+			debug("MigrationManager:", ex);
 			try {
 				DTA_preferences.resetDTA("version");
 			}
@@ -136,7 +111,7 @@ var MigrationService = {
 	
 	// pre-1.0: convert prefs
 	_migratePrefs: function MM_migratePrefs() {
-		DTA_debug.logString("migrating prefs");
+		debug("migrating prefs");
 		const toMigrate = [
 			['context.infophrases', 'infophrases', true],
 			['context.closedta', 'closedta', false],
@@ -182,7 +157,7 @@ var MigrationService = {
 	
 	// pre 1.0: migrate Filters
 	_migrateFilters: function MM_migrateFilters() {
-		DTA_debug.log("migrating filters");
+		debug("migrating filters");
 		const defFilters = [
 			"/\./", "/\\./", '/(\\.*)/',
 			"/\\/[^\\/\\?]+\\.(z(ip|\\d{2})|r(ar|\\d{2})|jar|bz2|gz|tar|rpm)$/", "/\\/[^\\/\\?]+\\.(z(ip|[0-9]{2})|r(ar|[0-9]{2})|jar|bz2|gz|tar|rpm)$/", "/(\\.(z(ip|[0-9]{2})|r(ar|[0-9]{2})|jar|bz2|gz|tar|rpm))$/",
@@ -192,9 +167,9 @@ var MigrationService = {
 			"/\\/[^\\/\\?]+\\.gif$/",
 			"/\\/[^\\/\\?]+\\.png$/"
 		];
-		const LINK_FILTER = CI.dtaIFilter.LINK_FILTER;
-		const IMAGE_FILTER = CI.dtaIFilter.IMAGE_FILTER;
-		const prefs = CC['@mozilla.org/preferences-service;1']
+		const LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
+		const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
+		const prefs = Cc['@mozilla.org/preferences-service;1']
 			.getService(Components.interfaces.nsIPrefService)
 			.getBranch("extensions.dta.context.")
 			.QueryInterface(Components.interfaces.nsIPrefBranch2);
@@ -229,7 +204,7 @@ var MigrationService = {
 	
 	// pre 1.0: dropdown history
 	_migrateDropDowns: function MM_migrateDropdowns() {
-		DTA_debug.logString("migrating dropdowns");
+		debug("migrating dropdowns");
 		['renaming', 'filter', 'directory'].forEach(
 			function(e) {
 				try { DTA_preferences.resetDTA(e); } catch (ex) { /*no-op*/ }
@@ -254,24 +229,6 @@ var MigrationService = {
 		['context.', 'tool.', 'dropdown.', 'windows.', 'rename.'].forEach(function(e) { DTA_preferences.resetBranch(e); });
 	},
 	
-		// nsiSupports
-	QueryInterface: function MM_QI(iid) {
-		if (this.implementsIID(iid)) {
-			return this;
-		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
-	},
-
-	// nsiWeakReference
-	QueryReferent: function MM_QR(iid) {
-		return this;
-	},
-
-	// nsiSupportsWeakReference
-	GetWeakReference: function MM_GWR() {
-		return this;
-	},
-
 	// nsIObserver
 	observe: function MM_observe(subject, topic, prefName) {
 		if (topic == "final-ui-startup") {
@@ -279,70 +236,16 @@ var MigrationService = {
 		}
 	}
 };
+implementComponent(
+	MigrationService,
+	Components.ID("{F66539C8-2590-4e69-B189-F9F8595A7670}"),
+	"@downthemall.net/migration-service;1",
+	"DownThemAll! Migration Service",
+	[Ci.nsIObserver]
+);
 MigrationService._init();
-
-var Module = {
-	_firstTime: true,
-
-	registerSelf: function M_registerSelf(compMgr, fileSpec, location, type) {
-		if (!this._firstTime) {
-			return;
-		}
-		this._firstTime = false;
-
-		compMgr.QueryInterface(CI.nsIComponentRegistrar)
-			.registerFactoryLocation(
-				MigrationService.classID,
-				MigrationService.classDescription,
-				MigrationService.contractID,
-				fileSpec,
-				location,
-				type
-			);
-		CC['@mozilla.org/categorymanager;1']
-			.getService(CI.nsICategoryManager)
-			.addCategoryEntry('app-startup', MigrationService.contractID, MigrationService.contractID, true, true, null);
-	},
-	unregisterSelf: function(compMgr, fileSpec, location) {
-		compMgr.QueryInterface(CI.nsIComponentRegistrar)
-			.unregisterFactoryLocation(
-				MigrationService.classID,
-				fileSpec
-			);
-		CC['@mozilla.org/categorymanager;1']
-			.getService(CI.nsICategoryManager)
-			.deleteCategoryEntry('app-startup', MigrationService.contractID, true);
-	},
-	getClassObject: function (compMgr, cid, iid) {
-		if (cid.equals(MigrationService.classID)) {
-			return this;
-		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
-	},
-	canUnload: function(compMgr) {
-		return true;
-	},
-
-	// nsIFactory
-	QueryInterface : function(aIID) {
-		if (aIID.equals(CI.nsIFactory)) {
-			return this;
-		}
-
-		return Components.results.NS_ERROR_NO_INTERFACE;
-	},
-	createInstance: function (outer, iid) {
-		if (outer != null) {
-			throw Components.results.NS_ERROR_NO_AGGREGATION;
-		}
-		if (MigrationService.implementsIID(iid)) {
-			return MigrationService;
-		}
-		throw Components.results.NS_ERROR_INVALID_ARG;
-	}
-}
 
 // entrypoint
 function NSGetModule(compMgr, fileSpec) {
-	return Module;
+	return new ServiceModule(MigrationService, true);
 }

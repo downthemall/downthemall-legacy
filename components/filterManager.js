@@ -34,8 +34,10 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const CC = Components.classes;
-const CI = Components.interfaces;
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+
 const Exception = Components.Exception;
 
 const NS_ERROR_NO_INTERFACE = Components.results.NS_ERROR_NO_INTERFACE;
@@ -43,33 +45,15 @@ const NS_ERROR_FAILURE = Components.results.NS_ERROR_FAILURE;
 const NS_ERROR_NO_AGGREGATION = Components.results.NS_ERROR_NO_AGGREGATION;
 const NS_ERROR_INVALID_ARG = Components.results.NS_ERROR_INVALID_ARG;
 
-const LINK_FILTER = CI.dtaIFilter.LINK_FILTER;
-const IMAGE_FILTER = CI.dtaIFilter.IMAGE_FILTER;
+const LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
+const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
 
 function include(uri) {
-	CC["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(CI.mozIJSSubScriptLoader)
+	Cc["@mozilla.org/moz/jssubscript-loader;1"]
+		.getService(Ci.mozIJSSubScriptLoader)
 		.loadSubScript(uri);
 }
-
-function debug(str, ex) {
-	try {
-		var DTA_Debug = Components.classes['@downthemall.net/debug-service;1']
-			.getService(Components.interfaces.dtaIDebugService);
-		debug = function(str, ex) {
-			if (ex) {
-				DTA_Debug.log(str, ex);
-			}
-			else {
-				DTA_Debug.logString(str);
-			}
-		}
-		debug(str, ex);
-	}
-	catch (ex) {
-		Components.utils.reportError(str + ": " + ex);
-	}
-}
+include("chrome://dta/content/common/module.js");
 
 // no not create DTA_Filter yourself, managed by DTA_FilterManager
 function Filter(name, prefs) {
@@ -77,40 +61,6 @@ function Filter(name, prefs) {
 	this._prefs = prefs;
 }
 Filter.prototype = {
-
-	LINK_FILTER: (1 << 0),
-	IMAGE_FILTER: (1 << 1),
-
-	_modified: false,
-	_regs: [],
-
-	// nsIClassInfo
-	classID: Components.ID("{1CF86DC0-33A7-43b3-BDDE-7ADC3B35D114}"),
-	contractID: "@downthemall.net/filter;2",
-	classDescription: "DownThemAll! Filter",
-	implementationLanguage: 0x02,
-	flags: (1 << 2), // MAIN_THREAD_ONLY
-	classIDNoAlloc: this.classID,
-	getHelperForLanguage: function() {
-		return null;
-	},
-	getInterfaces: function(count) {
-		// XXX
-		count.value = 0;
-		return null;
-	},
-
-	QueryInterface: function F_QI(iid) {
-		if (
-			iid.equals(CI.nsISupports)
-			|| iid.equals(CI.nsIClassInfo)
-			|| iid.equals(CI.dtaIFilter)
-		) {
-			return this;
-		}
-		throw NS_ERROR_NO_INTERFACE;
-	},
-
 	// exported
 	get id() {
 		return this._id;
@@ -303,18 +253,18 @@ Filter.prototype = {
 	getMultiBytePref: function F_getMultiBytePref(pref) {
 		var rv = this._prefs.getComplexValue(
 			pref,
-			CI.nsISupportsString
+			Ci.nsISupportsString
 		);
 		return rv.data;
 	},
 
 	setMultiBytePref: function F_setMultiBytePref(pref, value) {
-		var str = CC["@mozilla.org/supports-string;1"]
-			.createInstance(CI.nsISupportsString);
+		var str = Cc["@mozilla.org/supports-string;1"]
+			.createInstance(Ci.nsISupportsString);
 		str.data = value;
 		this._prefs.setComplexValue(
 			pref,
-			CI.nsISupportsString,
+			Ci.nsISupportsString,
 			str
 		);
 	},
@@ -325,6 +275,13 @@ Filter.prototype = {
 		return this.toString() + ": " + this._regs.toSource();
 	}
 };
+implementComponent(
+	Filter.prototype,
+	Components.ID("{1CF86DC0-33A7-43b3-BDDE-7ADC3B35D114}"),
+	"@downthemall.net/filter;2",
+	"DownThemAll! Filter",
+	[Ci.dtaIFilter]
+);
 
 function FilterEnumerator(filters) {
 	this._filters = filters;
@@ -333,8 +290,8 @@ function FilterEnumerator(filters) {
 FilterEnumerator.prototype = {
 	QueryInterface: function FE_QI(iid) {
 		if (
-			iid.equals(Components.intefaces.nsISupports)
-			|| iid.equals(Components.intefaces.nsISimpleEnumerator)
+			iid.equals(Ci.nsISupports)
+			|| iid.equals(Ci.nsISimpleEnumerator)
 		) {
 			return this;
 		}
@@ -353,54 +310,27 @@ FilterEnumerator.prototype = {
 
 // XXX: reload() should be called delayed when we observe changes (as many changes might come in)
 var FilterManager = {
-
-	// nsIClassInfo
-	classID: Components.ID("{435FC5E5-D4F0-47a1-BDC1-F325B78188F3}"),
-	contractID: "@downthemall.net/filtermanager;2",
-	classDescription: "DownThemAll! Filtermanager",
-	implementationLanguage: 0x02,
-	flags: (1 << 0) | (1 << 2), // SINGLETON | MAIN_THREAD_ONLY
-	classIDNoAlloc: this.classID,
-	getHelperForLanguage: function() {
-		return null;
-	},
-	getInterfaces: function(count) {
-		// XXX
-		count.value = 0;
-		return null;
-	},
-
-	implementsIID: function FM_implementID(iid) {
-		return [
-			CI.nsISupports,
-			CI.nsISupportsWeakReference,
-			CI.nsIWeakReference,
-			CI.nsIObserver,
-			CI.nsIClassInfo,
-			CI.nsITimerCallback,
-			this.classID
-		].some(function(e) { return iid.equals(e); });
-	},
-
 	_done: true,
 	_mustReload: true,
-	_prefs: CC['@mozilla.org/preferences-service;1']
-		.getService(CI.nsIPrefService)
+	
+	_prefs: Cc['@mozilla.org/preferences-service;1']
+		.getService(Ci.nsIPrefService)
 		.getBranch("extensions.dta.filters."),
-	_timer: CC['@mozilla.org/timer;1']
-			.createInstance(CI.nsITimer),
+	
+	_timer: Cc['@mozilla.org/timer;1']
+			.createInstance(Ci.nsITimer),
 
 	_init: function FM_init() {
-		this._prefs = this._prefs.QueryInterface(CI.nsIPrefBranch2);
+		this._prefs = this._prefs.QueryInterface(Ci.nsIPrefBranch2);
 
 		// load those localized labels for default filters.
 		this._localizedLabels = {};
-		var b = CC['@mozilla.org/intl/stringbundle;1']
-			.getService(CI.nsIStringBundleService)
+		var b = Cc['@mozilla.org/intl/stringbundle;1']
+			.getService(Ci.nsIStringBundleService)
 			.createBundle("chrome://dta/locale/filters.properties");
 		var e = b.getSimpleEnumeration();
 		while (e.hasMoreElements()) {
-			var prop = e.getNext().QueryInterface(CI.nsIPropertyElement);
+			var prop = e.getNext().QueryInterface(Ci.nsIPropertyElement);
 			this._localizedLabels[prop.key] = prop.value;
 		}
 
@@ -481,8 +411,8 @@ var FilterManager = {
 		this._active = this._all.filter(function(f) { return f.active; });
 
 		// notify all observers
-		var observerService = CC["@mozilla.org/observer-service;1"]
-			.getService(CI.nsIObserverService);
+		var observerService = Cc["@mozilla.org/observer-service;1"]
+			.getService(Ci.nsIObserverService);
 		observerService.notifyObservers(this, 'DTA:filterschanged', null);
 	},
 
@@ -503,7 +433,7 @@ var FilterManager = {
 		if (id in this._filters) {
 			return this._filters[id];
 		}
-		throw new Components.Exception("invalid filter specified: " + id);
+		throw new Exception("invalid filter specified: " + id);
 	},
 
 	matchActive: function FM_matchActive(test, type) {
@@ -514,8 +444,8 @@ var FilterManager = {
 
 		// we will use unique ids for user-supplied filters.
 		// no need to keep track of the actual number of filters or an index.
-		var uuid = CC["@mozilla.org/uuid-generator;1"]
-			.getService(CI.nsIUUIDGenerator)
+		var uuid = Cc["@mozilla.org/uuid-generator;1"]
+			.getService(Ci.nsIUUIDGenerator)
 			.generateUUID();
 
 		//
@@ -569,24 +499,6 @@ var FilterManager = {
 		return filter;
 	},
 
-		// nsiSupports
-	QueryInterface: function FM_QI(iid) {
-		if (this.implementsIID(iid)) {
-			return this;
-		}
-		throw NS_ERROR_NO_INTERFACE;
-	},
-
-	// nsiWeakReference
-	QueryReferent: function FM_QR(iid) {
-		return this;
-	},
-
-	// nsiSupportsWeakReference
-	GetWeakReference: function FM_GWR() {
-		return this;
-	},
-
 	// nsIObserver
 	observe: function FM_observe(subject, topic, prefName) {
 		this._delayedReload();
@@ -610,72 +522,17 @@ var FilterManager = {
 		//error("DTAFM: notify");
 		this.reload();
 	}
-
 };
+implementComponent(
+	FilterManager,
+	Components.ID("{435FC5E5-D4F0-47a1-BDC1-F325B78188F3}"),
+	"@downthemall.net/filtermanager;2",
+	"DownThemAll! Filtermanager",
+	[Ci.nsITimerCallback, Ci.nsIObserver, Ci.dtaIFilterManager]
+);
 FilterManager._init();
-
-var Module = {
-	_firstTime: true,
-
-	registerSelf: function M_registerSelf(compMgr, fileSpec, location, type) {
-		if (!this._firstTime) {
-			return;
-		}
-		this._firstTime = false;
-
-		compMgr.QueryInterface(CI.nsIComponentRegistrar)
-			.registerFactoryLocation(
-				FilterManager.classID,
-				FilterManager.classDescription,
-				FilterManager.contractID,
-				fileSpec,
-				location,
-				type
-			);
-		CC['@mozilla.org/categorymanager;1']
-			.getService(CI.nsICategoryManager)
-			.addCategoryEntry('app-startup', FilterManager.contractID, FilterManager.contractID, true, true, null);
-	},
-	unregisterSelf: function(compMgr, fileSpec, location) {
-		compMgr.QueryInterface(CI.nsIComponentRegistrar)
-			.unregisterFactoryLocation(
-				FileManager.classID,
-				fileSpec
-			);
-		CC['@mozilla.org/categorymanager;1']
-			.getService(CI.nsICategoryManager)
-			.deleteCategoryEntry('app-startup', FileManager.contractID, true);
-	},
-	getClassObject: function (compMgr, cid, iid) {
-		if (cid.equals(FilterManager.classID)) {
-			return this;
-		}
-		throw NS_ERROR_NO_INTERFACE;
-	},
-	canUnload: function(compMgr) {
-		return true;
-	},
-
-	// nsIFactory
-	QueryInterface : function(aIID) {
-		if (aIID.equals(CI.nsIFactory)) {
-			return this;
-		}
-
-		return NS_ERROR_NO_INTERFACE;
-	},
-	createInstance: function (outer, iid) {
-		if (outer != null) {
-			throw NS_ERROR_NO_AGGREGATION;
-		}
-		if (FilterManager.implementsIID(iid)) {
-			return FilterManager;
-		}
-		throw NS_ERROR_INVALID_ARG;
-	}
-}
 
 // entrypoint
 function NSGetModule(compMgr, fileSpec) {
-	return Module;
+	return new ServiceModule(FilterManager, true);
 }
