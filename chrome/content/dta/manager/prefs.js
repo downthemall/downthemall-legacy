@@ -62,13 +62,14 @@
 
 	// nsIObserver
 	observe: function(subject, topic, prefName) {
-		this._refreshPrefs();
+		this._refreshPrefs(prefName);
 	},
 
 	init: function() {
 		makeObserver(this);
 
 		try {
+			this._resetConnPrefs();
 			this._refreshPrefs();
 			Preferences.addObserver('extensions.dta.', this);
 			Preferences.addObserver('network.', this);
@@ -78,7 +79,7 @@
 		}
 	},
 
-	_refreshPrefs: function() {
+	_refreshPrefs: function(prefName) {
 		Debug.logString("pref reload");
 		this.mappings.forEach(
 			function(e) {
@@ -136,13 +137,31 @@
 		else {
 			this.tempLocation = null;
 		}
-		var conns = (this.maxInProgress * this.maxChunks + 2) * 2;
-		['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server'].forEach(
+		var conns = (this.maxInProgress * this.maxChunks) + 2;
+		['network.http.max-connections', 'network.http.max-connections-per-server'].forEach(
 			function(e) {
+				if ((!prefName || prefName == e) && conns != Preferences.get(e, conns)) {
+					Preferences.setDTA(e, Preferences.get(e, conns));
+				}				
 				if (conns > Preferences.get(e, conns)) {
 					Preferences.set(e, conns);
 				}
-				conns /= 2;
+				conns = Math.floor(conns / 1.5);
+			}
+		);
+	},
+	shutdown: function() {
+		Preferences.removeObserver('network.', this);
+		this._resetConnPrefs();
+	},
+	_resetConnPrefs: function() {
+		['network.http.max-connections', 'network.http.max-connections-per-server'].forEach(
+			function(e) {
+				let conn = Preferences.getDTA(e, 0);
+				if (conn) {
+					Preferences.set(e, conn);
+					Preferences.setDTA(e, 0);
+				}
 			}
 		);
 	}
