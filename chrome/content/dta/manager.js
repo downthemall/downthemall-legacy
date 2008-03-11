@@ -1283,7 +1283,7 @@ QueueItem.prototype = {
 				// no-op
 			}
 
-			this.description = this.description.removeBadChars().replace(/\\\//g, '').trim();
+			let description = this.description.removeBadChars().replace(/\\\//g, '').trim();
 			
 			let name = this.fileName;
 			let ext = name.getExtension();
@@ -1308,16 +1308,19 @@ QueueItem.prototype = {
 				ext = '';
 			}
 			let ref = this.referrer ? this.referrer.host.toString() : '';
+			let curl = (uri.host + ((uripath=="") ? "" : (SYSTEMSLASH + uripath)));
 			
 			var replacements = {
 				"name": name,
 				"ext": ext,
-				"text": this.description,
+				"text": description,
 				"url": host,
 				"subdirs": uripath,
+				"flatsubdirs": uripath.replaceSlashes('-'),
 				"refer": ref,
 				"qstring": query,
-				"curl": (uri.host + ((uripath=="")?"":(SYSTEMSLASH + uripath))),
+				"curl": curl,
+				"flatcurl": curl.replaceSlashes('-'),
 				"num": Utils.formatNumber(this.numIstance),
 				"hh": Utils.formatNumber(this.startDate.getHours(), 2),
 				"mm": Utils.formatNumber(this.startDate.getMinutes(), 2),

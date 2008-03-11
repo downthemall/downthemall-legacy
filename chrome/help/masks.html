@@ -16,43 +16,63 @@
 
     <table class="codesample">
     <tr>
-			<th>Renaming mask</th><th>Result</th>
+			<th>Renaming mask</th>
+			<th>Result</th>
     </tr>
     <tr>
-    	<td>*name*.*ext*</td><td class="des">C:\Downloads\document.doc</td>
+    	<td>*name*.*ext*</td>
+    	<td class="des">C:\Downloads\document.doc</td>
     </tr>
     <tr>
-    	<td>*name*_*hh*.*mm*.*ext*</td><td class="des">C:\Downloads\document_23.30.doc</td>
-
+    	<td>*name*_*hh*.*mm*.*ext*</td>
+    	<td class="des">C:\Downloads\document_23.30.doc</td>
     </tr>
     <tr>
-    	<td>*name*_(*text*).*ext*</td><td class="des">C:\Downloads\document_(click here to download).doc</td>
+    	<td>*name*_(*text*).*ext*</td>
+    	<td class="des">C:\Downloads\document_(click here to download).doc</td>
     </tr>
     <tr>
-    	<td>*num*_*name*.*ext*</td><td class="des">C:\Downloads\032_document.doc
-    	<br/><span style="font-size:12px">(*num* tag will increment on every new dta session, it's a great way to avoid duplicate filenames!)</span></td>
+    	<td>*num*_*name*.*ext*</td>
+    	<td class="des">C:\Downloads\032_document.doc<br/><span style="font-size:12px">(*num* tag will increment on every new dta session, it's a great way to avoid duplicate filenames!)</span></td>
     </tr>
     <tr>
-    	<td>*ext*\*name*.*ext*</td><td class="des">C:\Downloads\doc\document.doc</td>
+    	<td>*ext*\*name*.*ext*</td>
+    	<td class="des">C:\Downloads\doc\document.doc</td>
     </tr>
     <tr>
-    	<td>*m*-*d*-*y*\*name*.*ext*</td><td class="des">C:\Downloads\05-27-2006\document.doc</td>
-    </tr>
-
-    <tr>
-    	<td>*url*\*name*.*ext*</td><td class="des">C:\Downloads\www.example.org\document.doc</td>
-    </tr>
-
-    <tr>
-			<td>*url*\*subdirs*\*name*.*ext*</td><td class="des">C:\Downloads\www.example.org\dir1\dir2\myfile.txt</td>
+    	<td>*m*-*d*-*y*\*name*.*ext*</td>
+    	<td class="des">C:\Downloads\05-27-2006\document.doc</td>
     </tr>
 
     <tr>
-			<td>*curl*\*name*.*ext*</td><td class="des">C:\Downloads\www.example.org\dir1\dir2\myfile.txt</td>
+    	<td>*url*\*name*.*ext*</td>
+    	<td class="des">C:\Downloads\www.example.org\document.doc</td>
+    </tr>
+    <tr>
+    
+    <tr>
+			<td>*subdirs*\*name*.*ext*</td>
+			<td class="des">C:\Downloads\dir1\dir2\document.doc</td>
+    </tr>
+
+    <tr>
+			<td>*flatsubdirs*_*name*.*ext*</td>
+			<td class="des">C:\Downloads\dir1-dir2_document.doc</td>
+    </tr>
+
+    <tr>
+			<td>*curl*\*name*.*ext*</td>
+			<td class="des">C:\Downloads\www.example.org\dir1\dir2\document.doc</td>
+    </tr>
+
+    <tr>
+			<td>*flatcurl*_*name*.*ext*</td>
+			<td class="des">C:\Downloads\www.example.org-dir1-dir2_document.doc</td>
     </tr>
     
     <tr>
-			<td>*name*-*qstring*.*ext*</td><td class="des">C:\Downloads\myfile-something*.txt</td>
+			<td>*name*-*qstring*.*ext*</td>
+			<td class="des">C:\Downloads\document-something.doc</td>
     </tr>
 
 		</table>
