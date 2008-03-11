@@ -98,7 +98,12 @@
 		</content>
 		<implementation>
 			<constructor><![CDATA[
-				this._load();
+				try {
+					this._load();
+				}
+				catch (ex) {
+					DTA_debug.dump("Loading of saveddropdown failed:", ex);
+				}
 			]]></constructor>
 			<field name="modified">false</field>
 			<property name="_list" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'list');"/>
@@ -115,7 +120,9 @@
 					}
 					try {
 						return eval(DTA_preferences.getMultiByteDTA(this._pref, rv));
-					} catch (ex) {
+					}
+					catch (ex) {
+						DTA_debug.dump("Cannot initialize from preferences:", ex);
 						return eval(rv);
 					}
 				]]></getter>
@@ -138,7 +145,7 @@
 					var popup = this._popup;
 					
 					while (popup.hasChildNodes()) {
-						drop.removeChild(popup.lastChild);
+						popup.removeChild(popup.lastChild);
 					}
 
 					for (var i =  0; i < values.length && i < this._max; ++i) {
