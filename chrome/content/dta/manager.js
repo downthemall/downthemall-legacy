@@ -487,6 +487,7 @@ var Dialog = {
 
 	unload: function D_unload() {
 		TimerManager.killAll();
+		Prefs.shutdown();
 		try {
 			this._cleanTmpDir();
 		}
