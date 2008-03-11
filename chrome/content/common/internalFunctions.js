@@ -58,7 +58,7 @@ const SoundFactory = new Components.Constructor(
 );
 	
 	
-const SYSTEMSLASH = (DTA_profileFile.get('dummy').path.indexOf('/') != -1) ? '/' : '\\';
+const SYSTEMSLASH = (DTA_getProfileFile('dummy').path.indexOf('/') != -1) ? '/' : '\\';
 
 // shared state defines
 const PAUSED =    1<<1;

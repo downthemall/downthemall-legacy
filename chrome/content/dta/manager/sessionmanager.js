@@ -44,7 +44,7 @@ var SessionManager = {
 
 	init: function() {
 		this._con = Serv('@mozilla.org/storage/service;1', 'mozIStorageService')
-			.openDatabase(DTA_profileFile.get(DB_FILE));
+			.openDatabase(DTA_getProfileFile(DB_FILE));
 		try {
 			if (('schemaVersion' in this._con) && this._con.schemaVersion != DB_VERSION) {
 				/*

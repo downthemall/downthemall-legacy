@@ -55,7 +55,7 @@ var Main = {
 var Privacy = {
 	load: function PP_load() {
 		try {
-			var log = !DTA_profileFile.get('dta_log.txt').exists();
+			var log = !DTA_getProfileFile('dta_log.txt').exists();
 			$("butShowLog", 'butDelLog', 'butRevealLog')
 				.forEach(function(e) { e.disabled = log; });
 			
