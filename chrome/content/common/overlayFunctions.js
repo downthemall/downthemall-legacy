@@ -164,19 +164,26 @@ var DTA_preferences = {
 		this._pref
 			.QueryInterface(Components.interfaces.nsIPrefBranch2)
 			.addObserver(branch, obj, true);
+	},
+	removeObserver: function DP_removeObserver(branch, obj) {
+		this._pref
+			.QueryInterface(Components.interfaces.nsIPrefBranch2)
+			.removeObserver(branch, obj);
 	}
 };
 
-var DTA_profileFile = {
-	_ds : Components.classes["@mozilla.org/file/directory_service;1"]
-		.getService(Components.interfaces.nsIProperties),
-
-	get: function PF_get(fileName)	{
-		var file = this._ds.get("ProfD", Components.interfaces.nsIFile)
+function DTA_getProfileFile(fileName) {
+	var _profile = Components.classes["@mozilla.org/file/directory_service;1"]
+		.getService(Components.interfaces.nsIProperties)
+		.get("ProfD", Components.interfaces.nsIFile);
+	DTA_getProfileFile = function(fileName) {
+		var file = _profile.clone();
 		file.append(fileName);
 		return file;
-	}
-};
+	};
+	return DTA_getProfileFile(fileName);
+}
+
 var DTA_debug = Components.classes['@downthemall.net/debug-service;1']
 	.getService(Components.interfaces.dtaIDebugService);
 
