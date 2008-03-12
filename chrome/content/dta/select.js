@@ -461,9 +461,14 @@ var Dialog = {
 		this.current.invalidate();
 	},
 
-	// will be called initially and whenever something changed
-	makeSelection: function() {
 
+	notify: function() {
+		if (this.current) {
+			this.makeSelection();
+		}
+	},
+	// will be called initially and whenever something changed	
+	makeSelection: function() {
 		var tree = this.current;
 		var type = tree.type;
 
