@@ -313,7 +313,7 @@ var DTA_AddingFunctions = {
 				break;
 			}
 		}
-		return this.ios.newURI(rel, doc.characterSet, this.ios.newURI(base, doc.characterSet, null)).spec;
+		return this.ios.newURI(rel, doc.characterSet, this.ios.newURI(base, doc.characterSet, null));
 	},
 	
 	getRef: function(doc) {
@@ -325,7 +325,7 @@ var DTA_AddingFunctions = {
 					continue;
 				}
 				try {
-					ref = this.composeURL(doc, b[i].getAttribute('href'));
+					ref = this.composeURL(doc, b[i].getAttribute('href')).spec;
 				}
 				catch (ex) {
 					continue;
@@ -336,7 +336,7 @@ var DTA_AddingFunctions = {
 		return this.isLinkOpenable(ref) ? ref: '';
 	},	
 
-	saveSingleLink : function(turbo, url, referrer, description) {
+	saveSingleLink : function(turbo, url, referrer, description, postData) {
 		var item = {
 			'url': url,
 			'referrer': referrer,

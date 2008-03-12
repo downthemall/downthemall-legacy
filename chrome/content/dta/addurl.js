@@ -40,9 +40,6 @@ const Ci = Components.interfaces;
 var dropDowns = {};
 
 function QueueItem(url, num, desc, hash) {
-	if (!(url instanceof DTA_URL) || !DTA_AddingFunctions.isLinkOpenable(url)) {
-		throw new Components.Exception('invalid url');
-	}
 	this.url = url;
 	this.numIstance = num;
 	this.referrer = $('URLref').value,
@@ -115,9 +112,6 @@ function CharRange(name, start, stop, step) {
 CharRange.prototype = Range.prototype;
 
 function BatchGenerator(link) {
-	if (!(link instanceof DTA_URL)) {
-		throw new Components.Exception("invalid argument. Type not DTA_URL");
-	}
 	this.url = link.url;
 	var url = this.url;
 	this._length = 1;
@@ -274,7 +268,7 @@ var Dialog = {
 					address.value = a.url.usable;
 					// JS does not preserve types between windows (as each window gets an own sandbox)
 					// This hack makes our URL a DTA_URL again ;)
-					address._realURL = new DTA_URL(a.url.url, a.url.charset);
+					address._realURL = a.url;
 					address.readOnly = true;
 					$('batcheslabel').style.display = 'none';
 					$('batches').collapsed = true;

@@ -4,3 +4,5 @@
 <!ENTITY dta-manager-button "Manager">
 <!ENTITY dta-tb-all.label "All tabs">
 <!ENTITY dta-tb-single.label "Current tab">
+<!ENTITY dta-form-save.label "Save form target with DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Start saving form target with dTa OneClick!">
