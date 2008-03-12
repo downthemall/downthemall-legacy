@@ -119,7 +119,7 @@
 		else {
 			this.tempLocation = null;
 		}
-		var conns = Math.floor((this.maxInProgress * this.maxChunks) * 1.5) + 2;
+		var conns = (this.maxInProgress * this.maxChunks) + 2;
 		if (conns > Preferences.get('network.http.max-persistent-connections-per-server', conns)) {
 			Preferences.set('network.http.max-persistent-connections-per-server', conns);
 		}
