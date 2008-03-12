@@ -67,10 +67,13 @@ var MigrationService = {
 			if (0 == vc.compare(DTA_VERSION, lastVersion)) {
 				return;
 			}
-			debug.logString("MigrationManager: migration started");
+			debug("MigrationManager: migration started");
 			if (vc.compare(lastVersion, "1.0a1") < 0) {
 				this._execute(['Prefs', 'DropDowns', 'Filters', 'Remove']);
 			}
+			if (vc.compare(lastVersion, "1.0.1") < 0) {
+				this._execute(['ResetMaxConnections']);
+			}			
     	var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
 				.createInstance(Components.interfaces.nsIDialogParamBlock);
     	params.SetNumberStrings(1);
@@ -152,6 +155,16 @@ var MigrationService = {
 				}
 			},
 			this
+		);
+	},
+	
+	// 1.0.1: #613 Multiple "slow-down" reports
+	_migrateResetMaxConnections: function() {
+		debug("resetting connection prefs");
+		['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server'].forEach(
+			function(e) {
+				DTA_preferences.reset(e);
+			}
 		);
 	},
 	

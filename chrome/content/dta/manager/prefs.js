@@ -35,8 +35,10 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
- var Prefs = {
+
+const PREF_CONN = 'network.http.max-persistent-connections-per-server';
+
+var Prefs = {
 	tempLocation: null,
 	
 	mappings: [
@@ -137,18 +139,17 @@
 		else {
 			this.tempLocation = null;
 		}
-		var conns = (this.maxInProgress * this.maxChunks) + 2;
-		['network.http.max-connections', 'network.http.max-connections-per-server'].forEach(
-			function(e) {
-				if ((!prefName || prefName == e) && conns != Preferences.get(e, conns)) {
-					Preferences.setDTA(e, Preferences.get(e, conns));
-				}				
-				if (conns > Preferences.get(e, conns)) {
-					Preferences.set(e, conns);
-				}
-				conns = Math.floor(conns / 1.5);
+		if (!prefName || prefName == PREF_CONN) {
+			let conns = (this.maxInProgress * this.maxChunks) + 2;
+			let cur = Preferences.get(PREF_CONN, conns);
+						
+			if (conns != cur) {
+				Preferences.setDTA(PREF_CONN, cur);
 			}
-		);
+			if (conns > cur) {
+				Preferences.set(PREF_CONN, conns);
+			}
+		}
 	},
 	shutdown: function() {
 		Preferences.removeObserver('extensions.dta.', this);
@@ -156,15 +157,11 @@
 		this._resetConnPrefs();
 	},
 	_resetConnPrefs: function() {
-		['network.http.max-connections', 'network.http.max-connections-per-server'].forEach(
-			function(e) {
-				let conn = Preferences.getDTA(e, 0);
-				if (conn) {
-					Preferences.set(e, conn);
-					Preferences.setDTA(e, 0);
-				}
-			}
-		);
+		let conn = Preferences.getDTA(PREF_CONN, 0);
+		if (conn) {
+			Preferences.set(PREF_CONN, conn);
+			Preferences.setDTA(PREF_CONN, 0);
+		}
 	}
-}
+};
 Prefs.init();
