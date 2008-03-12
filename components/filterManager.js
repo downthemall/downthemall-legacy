@@ -320,7 +320,7 @@ var FilterManager = {
 	_timer: Cc['@mozilla.org/timer;1']
 			.createInstance(Ci.nsITimer),
 
-	_init: function FM_init() {
+	init: function FM_init() {
 		this._prefs = this._prefs.QueryInterface(Ci.nsIPrefBranch2);
 
 		// load those localized labels for default filters.
@@ -341,6 +341,7 @@ var FilterManager = {
 			100,
 			this._timer.TYPE_ONE_SHOT
 		);
+		this.init = new Function();
 	},
 
 	_delayedReload: function FM_delayedReload() {
@@ -530,9 +531,8 @@ implementComponent(
 	"DownThemAll! Filtermanager",
 	[Ci.nsITimerCallback, Ci.nsIObserver, Ci.dtaIFilterManager]
 );
-FilterManager._init();
 
 // entrypoint
 function NSGetModule(compMgr, fileSpec) {
-	return new ServiceModule(FilterManager, true);
+	return new ServiceModule(FilterManager, false);
 }
