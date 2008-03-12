@@ -119,15 +119,10 @@
 		else {
 			this.tempLocation = null;
 		}
-		var conns = (this.maxInProgress * this.maxChunks + 2) * 2;
-		['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server'].forEach(
-			function(e) {
-				if (conns > Preferences.get(e, conns)) {
-					Preferences.set(e, conns);
-				}
-				conns /= 2;
-			}
-		);
+		var conns = Math.floor((this.maxInProgress * this.maxChunks) * 1.5) + 2;
+		if (conns > Preferences.get('network.http.max-persistent-connections-per-server', conns)) {
+			Preferences.set('network.http.max-persistent-connections-per-server', conns);
+		}
 	}
 }
 Prefs.init();
