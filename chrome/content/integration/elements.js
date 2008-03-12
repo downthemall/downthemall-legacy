@@ -108,7 +108,7 @@ var DTA_ContextOverlay = {
 			var src = lnks[i].src;
 			if (!DTA_AddingFunctions.isLinkOpenable(src)) {
 				try {
-					src = DTA_AddingFunctions.composeURL(doc, src);
+					src = DTA_AddingFunctions.composeURL(doc, src).spec;
 				}
 				catch (ex) {
 					DTA_debug.log("failed to compose: " + src, ex);
@@ -354,6 +354,97 @@ var DTA_ContextOverlay = {
 			DTA_debug.log('findSingleLink: ', ex);
 		}
 	},
+	findForm: function(turbo) {
+		try {
+			var ctx = this.contextMenu;
+			if (!('form' in ctx.target)) {
+				throw new Components.Exception("No form");
+			}
+			var form = ctx.target.form;
+			
+			var action = DTA_AddingFunctions.composeURL(form.ownerDocument, form.action);
+			if (!DTA_AddingFunctions.isLinkOpenable(action.spec)) {
+				throw new Components.Exception('Unsupported URL');
+			}
+			action = action.QueryInterface(Components.interfaces.nsIURL);
+			
+			var charset = form.ownerDocument.characterSet;
+			if (form.acceptCharset) {
+				charset = form.acceptCharset;
+			}
+			if (charset.match(/utf-?(?:16|32)/i)) {
+				charset = 'utf-8';
+			}
+						
+			var encoder = Components.classes['@mozilla.org/intl/texttosuburi;1']
+				.getService(Components.interfaces.nsITextToSubURI);
+			
+			var values = []; 
+			
+			for (var i = 0; i < form.elements.length; ++i) {
+				if (form.elements[i].name ==  '') {
+					continue;
+				}
+				var v = encoder.ConvertAndEscape(charset, form.elements[i].name) + "=";
+				if (form.elements[i].value != '') {
+					v += encoder.ConvertAndEscape(charset, form.elements[i].value);
+				}
+				values.push(v); 
+			}
+			values = values.join("&");
+
+			if (form.method.toLowerCase() == 'post') {
+				var ss = Components.classes['@mozilla.org/io/string-input-stream;1']
+					.createInstance(Components.interfaces.nsIStringInputStream);
+				ss.setData(values, -1);
+				
+				var ms = Components.classes['@mozilla.org/network/mime-input-stream;1']
+					.createInstance(Components.interfaces.nsIMIMEInputStream);
+				ms.addContentLength = true;
+				ms.addHeader('Content-Type', 'application/x-www-form-urlencoded');
+				ms.setData(ss);
+				
+				var sis = Components.classes['@mozilla.org/scriptableinputstream;1']
+					.createInstance(Components.interfaces.nsIScriptableInputStream);
+				sis.init(ms);
+				var postData = '';
+				var avail = 0;
+				while ((avail = sis.available()) != 0) {
+					postData += sis.read(avail);
+				}
+				sis.close();
+				ms.close();
+				ss.close();
+				
+				action = new DTA_URL(action.spec, form.ownerDocument.characterSet);
+				action.postData = postData;
+			}
+			else {
+				action.query = values;
+				action.ref = '';
+				action = new DTA_URL(action.spec, form.ownerDocument.characterSet);
+			}			
+
+			
+			var ref = DTA_AddingFunctions.getRef(document.commandDispatcher.focusedWindow.document);
+			var desc = this.extractDescription(form);
+			
+			if (turbo) {
+				try {
+					DTA_AddingFunctions.saveSingleLink(true, action, ref, desc);
+					return;
+				}
+				catch (ex) {
+					DTA_debug.log('findSingleLink', ex);
+					DTA_alert(this.getString('error'), this.getString('errorinformation'));
+				}
+			}
+			DTA_AddingFunctions.saveSingleLink(false, action, ref, desc);
+		}
+		catch (ex) {
+			DTA_debug.log('findForm', ex);
+		}
+	},
 	
 	init: function() {
 		try {
@@ -364,7 +455,7 @@ var DTA_ContextOverlay = {
 			var ctx = ctxItem.parentNode;
 			var cont = document.getElementById('dtaCtxSubmenu');
 
-			['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'SaveT', 'Save', 'SepFront'].forEach(
+			['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'SaveT', 'Save', 'SaveFormT', 'SaveForm', 'SepFront'].forEach(
 				function(id) {
 					this.compact[id] = document.getElementById('dtaCtx' + id);
 					var node = document.getElementById('dtaCtx' + id).cloneNode(true);
@@ -469,8 +560,22 @@ var DTA_ContextOverlay = {
 				menu.Save.label = this.getString('dtasave' + (ctx.onLink ? 'link' : 'image'));
 				menu.SaveT.label = this.getString('turbosave' + (ctx.onLink ? 'link' : 'image'));
 			}
+			else if (
+				ctx.target
+				&& ctx.target.localName.toLowerCase() == 'input'
+				&& ctx.target.hasAttribute('type')
+				&& ctx.target.getAttribute('type').toLowerCase() == 'submit'
+				&& 'form' in ctx.target
+			) {
+				if (items[0]) {
+					show.push(menu.SaveForm);
+				}
+				if (items[1]) {
+					show.push(menu.SaveFormT);
+				}		
+			}			
 			// regular
-			if (ctx && (ctx.fake || !(ctx.onLink || ctx.onImage))) {
+			else if (ctx && (ctx.fake || !(ctx.onLink || ctx.onImage))) {
 				if (items[0]) {
 					show.push(menu.DTA);
 				}

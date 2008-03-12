@@ -2506,12 +2506,17 @@ function startDownloads(start, downloads) {
 		else {
 			d.hash = null; // to initialize prettyHash 
 		}
-		try {
-			d.postData = ContentHandling.getPostDataFor(d.urlManager.url.toURI());
+		if (e.url.postData) {
+			d.postData = e.url.postData;
 		}
-		catch (ex) {
-			Debug.log("No post data for me: " + d.urlManager.url, ex);
-			// no-op
+		else {
+			try {
+				d.postData = ContentHandling.getPostDataFor(d.urlManager.url.toURI());
+			}
+			catch (ex) {
+				Debug.log("No post data for me: " + d.urlManager.url, ex);
+				// no-op
+			}
 		}
 		d.state = start ? QUEUED : PAUSED;
 		if (d.is(QUEUED)) {
