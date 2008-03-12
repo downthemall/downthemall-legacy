@@ -151,6 +151,7 @@
 		);
 	},
 	shutdown: function() {
+		Preferences.removeObserver('extensions.dta.', this);
 		Preferences.removeObserver('network.', this);
 		this._resetConnPrefs();
 	},
