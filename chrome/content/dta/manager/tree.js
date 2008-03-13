@@ -35,7 +35,6 @@
  * ***** END LICENSE BLOCK ***** */
  
 const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init');
-const ConverterOutputStream = Construct('@mozilla.org/intl/converter-output-stream;1', 'nsIConverterOutputStream', 'init');
 
 DTA_include("common/verinfo.js");
  
@@ -441,8 +440,19 @@ var Tree = {
 	},
 	export: function T_export() {
 		try {
-			if (!this._export()) {
-				throw new Exception("Cannot export");
+			let fp = new FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
+			fp.appendFilters(Ci.nsIFilePicker.filterHTML | Ci.nsIFilePicker.filterText);
+			fp.appendFilter(_('filtermetalink'), '*.metalink');
+			fp.defaultExtension = "metalink";
+			fp.filterIndex = 2;
+			
+			let rv = fp.show();
+			if (rv == Ci.nsIFilePicker.returnOK || rv == Ci.nsIFilePicker.returnReplace) {
+				switch (fp.filterIndex) {
+					case 0: ImEx.exportToHtml(this.selected, fp.file); return;
+					case 1: ImEx.exportToTxt(this.selected, fp.file); return;
+					case 2: ImEx.exportToMetalink(this.selected, fp.file); return;
+				} 
 			}
 		}
 		catch (ex) {
@@ -450,244 +460,26 @@ var Tree = {
 			DTA_alert(_('exporttitle'), _('exportfailed'));
 		}
 	},
-	_export: function T_export() {
-		let fp = new FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
-		fp.appendFilters(Ci.nsIFilePicker.filterHTML | Ci.nsIFilePicker.filterText);
-		fp.appendFilter(_('filtermetalink'), '*.metalink');
-		fp.defaultExtension = "metalink";
-		fp.filterIndex = 2;
-		
-		let rv = fp.show();
-		if (rv == Ci.nsIFilePicker.returnOK || rv == Ci.nsIFilePicker.returnReplace) {
-			switch (fp.filterIndex) {
-				case 0: return this._exportHTML(fp.file);
-				case 1: return this._exportText(fp.file);
-				case 2: return this._exportMetalink(fp.file);
-			} 
-		}
-		return false;
-	},
-	_exportHTML: function T__exportHTML(file) {
-		// do not localize?!
-		let title = "DownThemAll: exported on " + (new Date).toUTCString();
-		
-		let doctype = document.implementation.createDocumentType('html', '-//W3C//DTD XHTML 1.0 Strict//EN', 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd');
-		let doc = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', doctype);
-		let root = doc.documentElement;
-		
-		{
-			let head = doc.createElement('head');
-			
-			let n = doc.createElement('title');
-			n.textContent = title;
-			head.appendChild(n);
-			
-			n = doc.createElement('meta')
-			n.setAttribute('http-equiv', 'content-type');
-			n.setAttribute('content', 'application/xhtml+xml;charset=utf-8');
-			head.appendChild(n);
-			
-			n = doc.createElement('link');
-			n.setAttribute('rel', 'stylesheet');
-			n.setAttribute('type', 'text/css');
-			n.setAttribute('href', 'chrome://dta/skin/common/exporthtml.css');
-			head.appendChild(n);
-			
-			root.appendChild(head);
-		}
-		{
-			let addDesc = function(key, value, element) {
-				let div = doc.createElement('div');
-				
-				div.appendChild(doc.createTextNode(key + ": "));
-				
-				let b = doc.createElement('strong');
-				b.textContent = value;
-				div.appendChild(b);
-				
-				element.appendChild(div);				
-			};
-		
-		
-			let body = doc.createElement('body');
-			
-			let n = doc.createElement('h1');
-			n.textContent = title;
-			body.appendChild(n);
-			
-			let list = doc.createElement('ol');
-			for (let d in this.selected) {
-				let url = d.urlManager.url;
-				if (d.hash) {
-					url += '#hash(' + d.hash.type + ":" + d.hash.sum + ")";
-				}
-				let desc = d.description;
-				if (!desc) {
-					desc = d.fileName;
-				}
-				let li = doc.createElement('li');
-
-				let div = doc.createElement('div');
-				n = doc.createElement('a');
-				n.setAttribute('href', url);
-				n.textContent = desc;
-				div.appendChild(n);
-				li.appendChild(div);
-				
-				addDesc('URL', d.urlManager.usable, li);
-				if (d.referrer) {
-					addDesc('Referrer', d.referrer.spec, li);				
-				}
-				if (d.hash) {
-					addDesc(d.hash.type, d.hash.sum.toLowerCase(), li);
-				}					
-				list.appendChild(li);
-			}			
-			body.appendChild(list);
-			
-			let foot = doc.createElement('p');
-			foot.appendChild(doc.createTextNode('Exported by '));
-			n = doc.createElement('a');
-			n.setAttribute('href', 'http://www.downthemall.net/');
-			n.textContent = 'DownThemAll! ' + DTA_VERSION;
-			foot.appendChild(n);
-			body.appendChild(foot);		
-			
-			root.appendChild(body);
-		}
-		
-
-		let fs = new FileOutputStream(file, 0x02 | 0x08 | 0x20, Prefs.permissions, 0);
-		new XMLSerializer().serializeToStream(doc, fs, 'utf-8');
-		fs.close();
-		return true;		
-	},
-	// i.e. one url per line
-	// exports hash fragments as well.
-	_exportText: function T__exportText(file) {
-		let cs = ConverterOutputStream(
-			new FileOutputStream(file, 0x02 | 0x08 | 0x20, Prefs.permissions, 0),
-			null,
-			0,
-			null
-		);
-		for (let d in this.selected) {
-			let url = d.urlManager.url;
-			if (d.hash) {
-				url += '#hash(' + d.hash.type + ":" + d.hash.sum + ")";
-			}
-			url += "\r\n";
-			cs.writeString(url); 
-		}
-		cs.close();
-		return true;
-	},
-	_exportMetalink: function T__exportMetalink(file) {
-		let doc = document.implementation.createDocument(NS_METALINKER, 'metalink', null);
-		let root = doc.documentElement;
-		root.setAttribute('type', 'static');
-		root.setAttribute('version', '3.0');
-		root.setAttribute('generator', 'DownThemAll! ' + DTA_VERSION + ' <http://downthemall.net/>');
-		root.setAttributeNS(NS_DTA, 'version', DTA_VERSION);
-		root.setAttribute('pubdate', new Date().toUTCString());
-		
-		root.appendChild(doc.createComment("metalink as exported by DownThemAll!\r\nmay contain DownThemAll! specific information in the DownThemAll! namespace: " + NS_DTA));  
-		
-		let files = doc.createElement('files');
-		for (let d in this.selected) {
-			let f = doc.createElement('file');
-			f.setAttribute('name', d.fileName);
-			f.setAttributeNS(NS_DTA, 'num', d.numIstance);
-			f.setAttributeNS(NS_DTA, 'startDate', d.startDate.getTime());
-			if (d.referrer) {
-				f.setAttributeNS(NS_DTA, 'referrer', d.referrer.spec);
-			}
-			
-			if (d.description) {
-				let n = doc.createElement('description');
-				n.textContent = d.description;
-				f.appendChild(n);
-			} 
-			let r = doc.createElement('resources');
-			for (let u in d.urlManager.all) {
-				let n = doc.createElement('url');
-				let t = u.url.match(/^(\w+):/);
-				n.setAttribute('type', t[1]);
-				n.setAttribute('preference', u.preference);
-				n.setAttributeNS(NS_DTA, 'usable', u.usable);
-				n.setAttributeNS(NS_DTA, 'charset', u.charset);
-				n.textContent = u.url;
-				r.appendChild(n);
-			}
-			if (d.hash) {
-				let v = doc.createElement('verification');
-				let h = doc.createElement('hash');
-				h.setAttribute('type', d.hash.type.toLowerCase());
-				h.textContent = d.hash.sum.toLowerCase();
-				v.appendChild(h);
-				f.appendChild(v);
-			}
-			f.appendChild(r);
-			
-			if (d.totalSize > 0) {
-				let s = doc.createElement('size');
-				s.textContent = d.totalSize;
-				f.appendChild(s);
-			}
-			
-			files.appendChild(f);
-			
-		}
-		root.appendChild(files);
-		
-		let fs = new FileOutputStream(file, 0x02 | 0x08 | 0x20, Prefs.permissions, 0);
-		let xml = '<?xml version="1.0"?>\r\n';
-		fs.write(xml, xml.length);
-		new XMLSerializer().serializeToStream(doc, fs, 'utf-8');
-		fs.close();
-		
-		return true;
-	},
 	import: function T_import() {
 		try {
-			if (!this._import()) {
-				throw new Exception("Cannot import");
+			let fp = new FilePicker(window, _('importtitle'), Ci.nsIFilePicker.modeOpen);
+			fp.appendFilters(Ci.nsIFilePicker.filterText);
+			fp.appendFilter(_('filtermetalink'), '*.metalink');
+			fp.defaultExtension = "metalink";
+			fp.filterIndex = 1;
+			
+			let rv = fp.show();
+			if (rv == Ci.nsIFilePicker.returnOK) {
+				switch (fp.filterIndex) {
+					case 0: ImEx.importFromTxt(fp.file); return;
+					case 1: ImEx.importFromMetalink(fp.file); return;
+				} 
 			}
 		}
 		catch (ex) {
 			Debug.log("Cannot import downloads", ex);		
 			DTA_alert(_('importtitle'), _('importfailed'));
 		}
-	},
-	_import: function T_import() {
-		let fp = new FilePicker(window, _('importtitle'), Ci.nsIFilePicker.modeOpen);
-		fp.appendFilters(Ci.nsIFilePicker.filterText);
-		fp.appendFilter(_('filtermetalink'), '*.metalink');
-		fp.defaultExtension = "metalink";
-		fp.filterIndex = 1;
-		
-		let rv = fp.show();
-		if (rv == Ci.nsIFilePicker.returnOK) {
-			switch (fp.filterIndex) {
-				case 0: return this._importText(fp.file);
-				case 1: return this._importMetalink(fp.file);
-			} 
-		}
-		return false;	
-	},
-	_importText: function T__importText() {
-	
-	},
-	_importMetalink: function T__importMetalink(file) {
-		try {
-			DTA_include("dta/manager/metalinker.js");
-			Metalinker.handleFile(file);
-			return true;
-		}
-		catch (ex) {
-			Debug.log("T__importMetalink", ex);
-		}	
-		return false;
 	},
 	showInfo: function T_showInfo() {
 		this.beginUpdate();
