@@ -63,7 +63,7 @@
 	id="DownThemAll"
 >
 	<script type="application/x-javascript" src="chrome://dta/content/common/verinfo.js"/>
-	<script type="application/x-javascript" src="chrome://dta/content/common/overlayfunctions.js"/>
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 
 	<script type="application/x-javascript"><![CDATA[
