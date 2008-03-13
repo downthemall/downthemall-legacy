@@ -194,7 +194,7 @@ function NSResolver(prefix) {
 						usable = url.getAttributeNS(NS_DTA, 'usable');
 					}
 					if (['http', 'https'].indexOf(type) != -1) {
-						url = this._checkURL(url.textContent.trim())
+						url = this._checkURL(url.textContent.trim());
 						if (url) {
 							urls.push(new DTA_URL(url, charset, usable, preference));
 						}
@@ -382,11 +382,15 @@ function NSResolver(prefix) {
 		return true;
 	},
 	cancel: function ML_cancel() {
-		var nodes = document.getElementsByTagName('richlistitem');
-		for (var i = 0; i < nodes.length; ++i) {
-			nodes[i].download.selected = false;
-		}
+		Array.forEach(
+			document.getElementsByTagName('richlistitem'),
+			function(n) {
+				n.download.selected = false;
+			},
+			this
+		);
 		self.close();
+		return true;
 	},
 	openLink: function(e) {
 		DTA_Mediator.openTab(e.link);
