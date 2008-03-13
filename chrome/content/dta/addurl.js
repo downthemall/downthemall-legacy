@@ -123,7 +123,7 @@ function BatchGenerator(link) {
 			url = url.slice(i);
 		}
 		let m;
-		if ((m = url.match(/^\[(-?\d+):(-?\d+)(?::(-?\d+))?\]/))) {
+		if ((m = url.match(/^\[(-?\d+):(-?\d+)(?::(-?\d+))?\]/)) != null) {
 			url = url.slice(m[0].length);
 			try {
 				let start = new Number(m[1]);
@@ -173,6 +173,12 @@ function BatchGenerator(link) {
 			}
 			continue;
 		}
+		if ((m = url.match(/^\[.*?]/)) != null) {
+			url = url.slice(m[0].length);
+			this._pats.push(new Literal(m[0]));
+			continue;
+		}
+		throw new Components.Exception("Failed to parse the expression");
 	}
 	if (url.length) {
 		this._pats.push(new Literal(url));
@@ -419,7 +425,13 @@ var Dialog = {
 			num = 1;
 		}			
 		
-		var batch = new BatchGenerator(url);
+		try {
+			var batch = new BatchGenerator(url);
+		}
+		catch (ex) {
+			Debug.dump("Cannot create batch", ex);
+			return;
+		}
 	
 		var rv = !('_realURL' in address) && batch.length > 1;
 		if (rv) {
