@@ -51,14 +51,7 @@ var DTA_SaveAs = {
 			return;
 		}
 		if (doRevert) {
-			// revert mofo bug #315536
-			// https://bugzilla.mozilla.org/show_bug.cgi?id=315536
-			window.setTimeout(
-				function() {
-					DTA_SaveAs.revertUI();
-				},
-				0
-			);
+			this.revertUI();
 		}
 		
 		if (!doOverlay) {
@@ -142,7 +135,6 @@ var DTA_SaveAs = {
 
 		document.getElementById('basicBox').collapsed = true;
 		document.getElementById('normalBox').collapsed = false;
-		this.sizeToContent();
 		
 		// take care of FlashGot... for now.
 		// need to negotiate with the author (and possible other extension authors)
@@ -151,8 +143,10 @@ var DTA_SaveAs = {
 			document.getElementById("flashgot-basic").collapsed = true;
 		}
 		catch (ex) {
-			this.sizeToContent();
-		}		
+			// no op
+		}
+		this.sizeToContent();
+				
 	},
 	
 	// Workaround for bug 371508
