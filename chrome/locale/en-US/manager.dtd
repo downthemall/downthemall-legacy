@@ -12,7 +12,7 @@
 <!ENTITY pct.label "Progress">
 <!ENTITY dim.label "Size">
 <!ENTITY time.label "Est. time">
-<!ENTITY parts.label "Chunks">
+<!ENTITY parts.label "Segments">
 <!ENTITY speed.label "Speed">
 <!ENTITY infoURLTitle.value "From:">
 <!ENTITY infoSizeTitle.value "Size:">
@@ -35,8 +35,8 @@
 <!ENTITY remove.label "Remove selected downloads">
 <!ENTITY removeCompleted.label "Remove completed tasks">
 <!ENTITY misc.label "Misc">
-<!ENTITY addchunk.label "One more chunk">
-<!ENTITY removechunk.label "One less chunk">
+<!ENTITY addchunk.label "One more segment">
+<!ENTITY removechunk.label "One less segment">
 <!ENTITY force.label "Force start">
 <!ENTITY import.label "Import from file">
 <!ENTITY export.label "Export selected">
