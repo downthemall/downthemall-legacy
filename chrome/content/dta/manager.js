@@ -2506,18 +2506,15 @@ function startDownloads(start, downloads) {
 		else {
 			d.hash = null; // to initialize prettyHash 
 		}
+
+		let postData = ContentHandling.getPostDataFor(d.urlManager.url.toURI());
 		if (e.url.postData) {
-			d.postData = e.url.postData;
+			postData = e.url.postData;
 		}
-		else {
-			try {
-				d.postData = ContentHandling.getPostDataFor(d.urlManager.url.toURI());
-			}
-			catch (ex) {
-				Debug.log("No post data for me: " + d.urlManager.url, ex);
-				// no-op
-			}
-		}
+		if (postData) {
+			d.postData = postData;
+		}		
+
 		d.state = start ? QUEUED : PAUSED;
 		if (d.is(QUEUED)) {
 			d.status = _('inqueue');

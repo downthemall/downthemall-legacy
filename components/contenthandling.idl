@@ -39,11 +39,13 @@ interface nsIURI;
 
 [scriptable, uuid(47C53284-E2D1-49af-9524-4D42D70D1279)]
 interface dtaIContentHandling : nsISupports {
-	/*
-		The dtaIContentHandling Service will store the last view post-data strings
+	/**
+		The dtaIContentHandling Service will store the last few post-data strings
 		so that requests might be replayed easier later on.
 		
 		Only the first 64kb of the post-data will be stored.
+		
+		@return empty string when not found, otherwise mime-channel bytes
 	*/
 	AUTF8String getPostDataFor(in nsIURI uri);  
 }; 
