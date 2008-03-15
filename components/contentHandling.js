@@ -113,7 +113,7 @@ var ContentHandling = {
   		uri = uri.spec;
   	}
   	if (!(uri in this._dataDict)) {
-  		throw new Exception("No data Found!");
+  		return '';
   	}
   	return this._dataDict[uri];
   }  	
