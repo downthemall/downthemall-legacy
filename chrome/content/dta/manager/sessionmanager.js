@@ -90,6 +90,10 @@ var SessionManager = {
 		catch (ex) {
 			Debug.log("SessionManager::shutdown", ex);
 		}
+		this._con.executeSimpleSQL('VACUUM');
+		if ('close' in this._con) {
+			this._con.close();
+		}
 	},
 
 	_saveDownload: function(d, pos) {
