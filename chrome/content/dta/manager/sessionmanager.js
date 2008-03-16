@@ -92,7 +92,12 @@ var SessionManager = {
 		}
 		this._con.executeSimpleSQL('VACUUM');
 		if ('close' in this._con) {
-			this._con.close();
+			try {
+				this._con.close();
+			}
+			catch (ex) {
+				//
+			}
 		}
 	},
 
