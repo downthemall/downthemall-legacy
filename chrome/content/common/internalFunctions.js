@@ -402,11 +402,12 @@ function _getIcon() {
 			if (_getIcon_recognizedMac.test(uri.path)) {
 				return "moz-icon://" + url + "?size=" + size;
 			}
-			return "moz-icon://foo.html?size=" + size;
+			return "moz-icon://file.html?size=" + size;
 		};
 	}
 	return function _getIconOther(url, size) {
-			return "moz-icon://" + url + "?size=" + size; 
+		url = url.replace(/^.*\//, '').replace(/^.*(\..*?)$/, 'file$1');
+		return "moz-icon://" + url + "?size=" + size; 
 	};
 };
 _getIcon = _getIcon();
