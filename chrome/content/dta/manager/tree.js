@@ -252,28 +252,10 @@ var Tree = {
 			this.invalidate();
 			this._box.ensureRowIsVisible(Math.max(row, 0));
 			this.selection.rangedSelect(row, row + downloads.length - 1, true);
-			this.savePositions();
 		}
 		catch (ex) {
 			Debug.log("_dropSelection", ex);
 		}		
-	},
-	savePositions: function T_savePositions() {
-		SessionManager.beginUpdate();
-		try {
- 
-			for (let d in this.all) {
-				if (!d._dbId || !isFinite(d.position)) {
-					throw new Error("test");
-					continue;
-				}
-				SessionManager.savePosition(d._dbId, d.position);
-			}
-		}
-		catch (ex) {
-			Debug.log("SQLite: " + this._con.lastErrorString, ex);
-		}
-		SessionManager.endUpdate();
 	},
 	_dropURL: function T__dropURL(row, orientation) {
 		// give control to our default DTA drop handler
@@ -345,11 +327,10 @@ var Tree = {
 				if (!d.is(COMPLETE, CANCELED)) {
 					d.cancel();
 				}
-				SessionManager.deleteDownload(d);
 				this._downloads.splice(d.position, 1);
 				this._box.rowCountChanged(d.position, -1);
 				last = Math.max(d.position, last);
-				delete d.position;
+				d.remove();				
 			},
 			this
 		);
@@ -359,7 +340,6 @@ var Tree = {
 		if (performJump) {
 			this._removeJump(downloads.length, last);
 		}
-		this.savePositions();		
 	},
 	removeCompleted: function T_removeCompleted() {
 		SessionManager.beginUpdate();
@@ -370,11 +350,10 @@ var Tree = {
 			if (!d.is(COMPLETE)) {
 				continue;
 			}
-			SessionManager.deleteDownload(d);
 			this._downloads.splice(d.position, 1);
 			this._box.rowCountChanged(d.position, -1);
 			last = Math.max(d.position, last);
-			delete d.position;
+			d.remove();						
 		}
 		SessionManager.endUpdate();
 		this.endUpdate();	
@@ -384,7 +363,6 @@ var Tree = {
 		this.selection.clearSelection();
 		this.invalidate();		
 		this._removeJump(delta - this._downloads.length, last);
-		this.savePositions();		
 	},
 	_removeJump: function(delta, last) {
 		if (!this.rowCount) {
@@ -599,6 +577,7 @@ var Tree = {
 	invalidate: function T_invalidate(d) {
 		if (!d) {
 			let complete = 0;
+			SessionManager.beginUpdate();
 			this._downloads.forEach(
 				function(e, i) {
 					e.position = i;
@@ -607,6 +586,7 @@ var Tree = {
 					}
 				}
 			);
+			SessionManager.endUpdate();
 			this._box.invalidate();
 			this.refreshTools(this);
 			Dialog.completed = complete;
@@ -621,7 +601,7 @@ var Tree = {
 			);
 			this.endUpdate();
 		}
-		else if ('position' in d) {
+		else if (d.position) {
 			this._box.invalidateRow(d.position);
 		}
 	},
@@ -741,7 +721,6 @@ var Tree = {
 			this.invalidate();
 			this.selection.rangedSelect(0, ids.length - 1, true);
 			this._box.ensureRowIsVisible(0);
-			this.savePositions();			
 		}
 		catch (ex) {
 			Debug.log("Mover::top", ex);
@@ -762,7 +741,6 @@ var Tree = {
 			this.invalidate();
 			this.selection.rangedSelect(this._downloads.length - ids.length, this._downloads.length - 1, true);
 			this._box.ensureRowIsVisible(this.rowCount - 1);
-			this.savePositions();			
 		}
 		catch (ex) {
 			Debug.log("Mover::bottom", ex);
@@ -785,7 +763,6 @@ var Tree = {
 			this.endUpdate();
 			this.invalidate();
 			this._box.ensureRowIsVisible(Math.max(ids.shift() - 1, 0));
-			this.savePositions();			
 		}
 		catch (ex) {
 			Debug.log("Mover::up", ex);
@@ -812,7 +789,6 @@ var Tree = {
 			this.invalidate();
 			// readjust view
 			this._box.ensureRowIsVisible(Math.min(ids.shift(), this.rowCount - 1));
-			this.savePositions();
 		}
 		catch (ex) {
 			Debug.log("Mover::down", ex);

@@ -1023,7 +1023,39 @@ QueueItem.prototype = {
 	},
 	
 	save: function QI_save() {
-		SessionManager.save(this);
+		if (this.dbID) {
+			if (
+				(Prefs.removeCompleted && this.is(COMPLETE))
+				|| (Prefs.removeCanceled && this.is(CANCELED))
+				|| (Prefs.removeAborted && this.is(PAUSED))
+			) {
+				this.remove();
+				return false;
+			}
+			SessionManager.saveDownload(this.dbId, this.toSource());
+			return true;
+		}
+
+		this.dbId = SessionManager.addDownload(this.toSource());
+		return true;
+	},
+	remove: function QI_remove() {
+			SessionManager.deleteDownload(this.dbId);
+			delete this.dbId;
+			this.position = -1;
+	},
+	_position: -1,
+	get position() {
+		return this._position;
+	},
+	set position(nv) {
+		if (nv == this._position) {
+			return;
+		}
+		this._position = nv;
+		if (this.dbId && this._position != -1) {
+			SessionManager.savePosition(this.dbId, this._position);	
+		}
 	},
 
 	contentType: "",
@@ -2522,8 +2554,8 @@ function startDownloads(start, downloads) {
 		else {
 			d.status = _('paused');
 		}
+		d.save();		
 		Tree.add(d);
-		d.save();
 		++added;
 	}
 	Tree.endUpdate();

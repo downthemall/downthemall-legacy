@@ -61,8 +61,8 @@ var SessionManager = {
 			// no-op
 		}
 		try {
-			this._saveStmt = this._con.createStatement('INSERT INTO queue (uuid, pos, item) VALUES (?1, ?2, ?3)');
-			this._saveItemStmt = this._con.createStatement('UPDATE queue SET pos = ?2, item = ?3 WHERE uuid = ?1');
+			this._addStmt = this._con.createStatement('INSERT INTO queue (item) VALUES (?1)');
+			this._saveStmt = this._con.createStatement('UPDATE queue SET item = ?3 WHERE uuid = ?1');
 			this._savePosStmt = this._con.createStatement('UPDATE queue SET pos = ?1 WHERE uuid = ?2');
 			this._delStmt = this._con.createStatement('DELETE FROM queue WHERE uuid = ?1');
 		}
@@ -80,7 +80,7 @@ var SessionManager = {
 	},
 	shutdown: function() {
 		try {
-			['_saveStmt', '_saveItemStmt', '_savePosStmt', '_delStmt'].forEach(
+			['_addStmt', '_saveStmt', '_savePosStmt', '_delStmt'].forEach(
 				function(e) {
 					try { this[e].finalize(); } catch (ex) { /* no op */ }
 				},
@@ -100,7 +100,6 @@ var SessionManager = {
 			}
 		}
 	},
-
 	beginUpdate: function() {
 		this._con.beginTransactionAs(this._con.TRANSACTION_DEFERRED);		
 	},
@@ -121,47 +120,26 @@ var SessionManager = {
 			Debug.log("SessionManager: Cannot backup queue", ex);
 		} 
 	},
-	save: function(download, pos) {
+	addDownload: function(download) {
 		if (!download) {
 			throw new Exception("You must provide a Download to save!");
 		}
-		if (
-			(Prefs.removeCompleted && download.is(COMPLETE))
-			|| (Prefs.removeCanceled && download.is(CANCELED))
-			|| (Prefs.removeAborted && download.is(PAUSED))
-		) {
-			this.deleteDownload(download);
-			return false;
+		let s = this._addStmt;
+		s.bindUTF8StringParameter(0, this._converter.Convert(download));
+		s.execute();
+		s.reset();
+		return this._con.lastInsertRowID;
+	},
+	saveDownload: function(id, download) {
+		if (!download) {
+			throw new Exception("You must provide a Download to save!");
 		}
 
-		let s;
-		Debug.logString("Saving Download: " + download);
-		if (d._dbId) {
-			s = this._saveItemStmt;
-			s.bindInt64Parameter(0, download._dbId);
-		}
-		else {
-			s = this._saveStmt;
-			s.bindNullParameter(0);
-		}
-		if (!isFinite(pos)) {
-			if ('position' in download) {
-				s.bindInt32Parameter(1, download.position);
-			}
-			else {
-				s.bindNullParameter(1);
-			}
-		}
-		else {
-			s.bindInt32Parameter(1, pos);
-		}
-		s.bindUTF8StringParameter(2, this._converter.Convert(download.toSource()));
+		let s = this._saveStmt;
+		s.bindInt64Parameter(0, id);
+		s.bindUTF8StringParameter(1, this._converter.Convert(download));
 		s.execute();
-		if (!download._dbId) {
-			download._dbId = this._con.lastInsertRowID;
-		}
 		s.reset();
-		return true;
 	},
 	savePosition: function(id, position) {
 		let s = this._savePosStmt; 
@@ -170,21 +148,13 @@ var SessionManager = {
 		s.execute();
 		s.reset();
 	},
-	deleteDownload: function(download) {
-		try {
-			if (!download._dbId) {
-				return;
-			}
-			Debug.logString("Deleting Download: " + download);
-			this._delStmt.bindInt64Parameter(0, download._dbId);
-			this._delStmt.execute();
-			this._delStmt.reset();
-			delete download._dbId;
+	deleteDownload: function(id) {
+		if (!id) {
+			return;
 		}
-		catch (ex) {
-			Debug.log("SQLite: " + this._con.lastErrorString, ex);
-			throw ex;
-		}
+		this._delStmt.bindInt64Parameter(0, id);
+		this._delStmt.execute();
+		this._delStmt.reset();
 	},
 
 	load: function() {
@@ -196,7 +166,7 @@ var SessionManager = {
 
 		while (stmt.executeStep()) {
 			try {
-				let _dbId = stmt.getInt64(0);
+				let dbId = stmt.getInt64(0);
 				let down = eval(stmt.getUTF8String(1));
 				let get = function(attr) {
 					if (attr in down) {
@@ -214,7 +184,7 @@ var SessionManager = {
 					get("referrer"),
 					get("tmpFile")
 				);
-				d._dbId = _dbId;
+				d.dbId = dbId;
 				d.startDate = new Date(get("startDate"));
 				d.visitors = new VisitorManager(down.visitors);
 
