@@ -101,8 +101,30 @@ var SessionManager = {
 		}
 	},
 
-	_saveDownload: function(d, pos) {
-
+	beginUpdate: function() {
+		this._con.beginTransactionAs(this._con.TRANSACTION_DEFERRED);		
+	},
+	endUpdate: function() {
+		this._con.commitTransaction();
+	},
+	backup: function() {
+		if (!('backupDB' in this._con)) {
+			Debug.logString("DB Backup not possible");
+			return;
+		}
+		try {
+			if (!this._con.backupDB(DB_FILE_BAK).exists()) {
+				throw new Exception("DB Backup failed!");
+			} 
+		}
+		catch (ex) {
+			Debug.log("SessionManager: Cannot backup queue", ex);
+		} 
+	},
+	save: function(download, pos) {
+		if (!download) {
+			throw new Exception("You must provide a Download to save!");
+		}
 		if (
 			(Prefs.removeCompleted && d.is(COMPLETE))
 			|| (Prefs.removeCanceled && d.is(CANCELED))
@@ -141,75 +163,12 @@ var SessionManager = {
 		s.reset();
 		return true;
 	},
-
-	beginUpdate: function() {
-		this._con.beginTransactionAs(this._con.TRANSACTION_DEFERRED);		
-	},
-	endUpdate: function() {
-		this._con.commitTransaction();
-	},
-	backup: function() {
-		if (!('backupDB' in this._con)) {
-			Debug.logString("DB Backup not possible");
-			return;
-		}
-		try {
-			if (!this._con.backupDB(DB_FILE_BAK).exists()) {
-				throw new Exception("DB Backup failed!");
-			} 
-		}
-		catch (ex) {
-			Debug.log("SessionManager: Cannot backup queue", ex);
-		} 
-	},
-	save: function(download) {
-
-		// just one download.
-		if (download) {
-			try {
-				this._saveDownload(download);
-			}
-			catch (ex) {
-				alert(ex + "\n" + ex.fileName + ex.sourceName + ex.lineNumber);
-				Debug.log("SQLite: " + this._con.lastErrorString, ex);
-			}
-			return;
-		}
-
-		this.beginUpdate();
-		try {
-			let i = 0;
-			for (let d in Tree.all) {
-				if (this._saveDownload(d, i)) {
-					++i;
-				}
-			};
-		}
-		catch (ex) {
-			Debug.log("SQLite: " + this._con.lastErrorString, ex);
-		}
-		this.endUpdate();
-
-	},
-	savePositions: function() {
-		this.beginUpdate();
-		try {
-			let s = this._savePosStmt; 
-			for (let d in Tree.all) {
-				if (!isFinite(d._dbId + d.position)) {
-					throw new Error("test");
-					continue;
-				}
-				s.bindInt64Parameter(0, d.position);
-				s.bindInt64Parameter(1, d._dbId);
-				s.execute();
-				s.reset();
-			}
-		}
-		catch (ex) {
-			Debug.log("SQLite: " + this._con.lastErrorString, ex);
-		}
-		this.endUpdate();
+	savePosition: function(id, position) {
+		let s = this._savePosStmt; 
+		s.bindInt64Parameter(0, position);
+		s.bindInt64Parameter(1, id);
+		s.execute();
+		s.reset();
 	},
 	deleteDownload: function(download) {
 		try {
