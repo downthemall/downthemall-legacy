@@ -252,11 +252,28 @@ var Tree = {
 			this.invalidate();
 			this._box.ensureRowIsVisible(Math.max(row, 0));
 			this.selection.rangedSelect(row, row + downloads.length - 1, true);
-			SessionManager.savePositions();
+			this.savePositions();
 		}
 		catch (ex) {
 			Debug.log("_dropSelection", ex);
 		}		
+	},
+	savePositions: function T_savePositions() {
+		SessionManager.beginUpdate();
+		try {
+ 
+			for (let d in this.all) {
+				if (!d._dbId || !isFinite(d.position)) {
+					throw new Error("test");
+					continue;
+				}
+				SessionManager.savePosition(d._dbId, d.position);
+			}
+		}
+		catch (ex) {
+			Debug.log("SQLite: " + this._con.lastErrorString, ex);
+		}
+		SessionManager.endUpdate();
 	},
 	_dropURL: function T__dropURL(row, orientation) {
 		// give control to our default DTA drop handler
@@ -342,7 +359,7 @@ var Tree = {
 		if (performJump) {
 			this._removeJump(downloads.length, last);
 		}
-		SessionManager.savePositions();		
+		this.savePositions();		
 	},
 	removeCompleted: function T_removeCompleted() {
 		SessionManager.beginUpdate();
@@ -367,7 +384,7 @@ var Tree = {
 		this.selection.clearSelection();
 		this.invalidate();		
 		this._removeJump(delta - this._downloads.length, last);
-		SessionManager.savePositions();		
+		this.savePositions();		
 	},
 	_removeJump: function(delta, last) {
 		if (!this.rowCount) {
@@ -724,7 +741,7 @@ var Tree = {
 			this.invalidate();
 			this.selection.rangedSelect(0, ids.length - 1, true);
 			this._box.ensureRowIsVisible(0);
-			SessionManager.savePositions();			
+			this.savePositions();			
 		}
 		catch (ex) {
 			Debug.log("Mover::top", ex);
@@ -745,7 +762,7 @@ var Tree = {
 			this.invalidate();
 			this.selection.rangedSelect(this._downloads.length - ids.length, this._downloads.length - 1, true);
 			this._box.ensureRowIsVisible(this.rowCount - 1);
-			SessionManager.savePositions();			
+			this.savePositions();			
 		}
 		catch (ex) {
 			Debug.log("Mover::bottom", ex);
@@ -768,7 +785,7 @@ var Tree = {
 			this.endUpdate();
 			this.invalidate();
 			this._box.ensureRowIsVisible(Math.max(ids.shift() - 1, 0));
-			SessionManager.savePositions();			
+			this.savePositions();			
 		}
 		catch (ex) {
 			Debug.log("Mover::up", ex);
@@ -795,7 +812,7 @@ var Tree = {
 			this.invalidate();
 			// readjust view
 			this._box.ensureRowIsVisible(Math.min(ids.shift(), this.rowCount - 1));
-			SessionManager.savePositions();
+			this.savePositions();
 		}
 		catch (ex) {
 			Debug.log("Mover::down", ex);
