@@ -126,27 +126,27 @@ var SessionManager = {
 			throw new Exception("You must provide a Download to save!");
 		}
 		if (
-			(Prefs.removeCompleted && d.is(COMPLETE))
-			|| (Prefs.removeCanceled && d.is(CANCELED))
-			|| (Prefs.removeAborted && d.is(PAUSED))
+			(Prefs.removeCompleted && download.is(COMPLETE))
+			|| (Prefs.removeCanceled && download.is(CANCELED))
+			|| (Prefs.removeAborted && download.is(PAUSED))
 		) {
-			this.deleteDownload(d);
+			this.deleteDownload(download);
 			return false;
 		}
 
 		let s;
-		Debug.logString("Saving Download: " + d);
+		Debug.logString("Saving Download: " + download);
 		if (d._dbId) {
 			s = this._saveItemStmt;
-			s.bindInt64Parameter(0, d._dbId);
+			s.bindInt64Parameter(0, download._dbId);
 		}
 		else {
 			s = this._saveStmt;
 			s.bindNullParameter(0);
 		}
 		if (!isFinite(pos)) {
-			if ('position' in d) {
-				s.bindInt32Parameter(1, d.position);
+			if ('position' in download) {
+				s.bindInt32Parameter(1, download.position);
 			}
 			else {
 				s.bindNullParameter(1);
@@ -155,10 +155,10 @@ var SessionManager = {
 		else {
 			s.bindInt32Parameter(1, pos);
 		}
-		s.bindUTF8StringParameter(2, this._converter.Convert(d.toSource()));
+		s.bindUTF8StringParameter(2, this._converter.Convert(download.toSource()));
 		s.execute();
-		if (!d._dbId) {
-			d._dbId = this._con.lastInsertRowID;
+		if (!download._dbId) {
+			download._dbId = this._con.lastInsertRowID;
 		}
 		s.reset();
 		return true;
