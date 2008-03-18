@@ -80,7 +80,7 @@ const MIN_BUFFER_SIZE = 1 * 1024 * 1024;
 
 const REFRESH_FREQ = 1000;
 const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
-const STREAMS_FREQ = 100;
+const STREAMS_FREQ = 200;
 
 var Dialog = {
 	_observes: ['quit-application-requested', 'quit-application-granted'],
