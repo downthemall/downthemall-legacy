@@ -62,8 +62,8 @@ var SessionManager = {
 		}
 		try {
 			this._addStmt = this._con.createStatement('INSERT INTO queue (item) VALUES (?1)');
-			this._saveStmt = this._con.createStatement('UPDATE queue SET item = ?3 WHERE uuid = ?1');
-			this._savePosStmt = this._con.createStatement('UPDATE queue SET pos = ?1 WHERE uuid = ?2');
+			this._saveStmt = this._con.createStatement('UPDATE queue SET item = ?2 WHERE uuid = ?1');
+			this._savePosStmt = this._con.createStatement('UPDATE queue SET pos = ?2 WHERE uuid = ?1');
 			this._delStmt = this._con.createStatement('DELETE FROM queue WHERE uuid = ?1');
 		}
 		catch (ex) {
@@ -143,8 +143,8 @@ var SessionManager = {
 	},
 	savePosition: function(id, position) {
 		let s = this._savePosStmt; 
-		s.bindInt64Parameter(0, position);
-		s.bindInt64Parameter(1, id);
+		s.bindInt64Parameter(0, id);
+		s.bindInt64Parameter(1, position);
 		s.execute();
 		s.reset();
 	},
@@ -163,7 +163,8 @@ var SessionManager = {
 	_load: function() {
 
 		var stmt = this._con.createStatement('SELECT uuid, item FROM queue ORDER BY pos');
-
+		Tree.beginUpdate();
+		this.beginUpdate();
 		while (stmt.executeStep()) {
 			try {
 				let dbId = stmt.getInt64(0);
@@ -175,23 +176,52 @@ var SessionManager = {
 					return null;
 				}
 
-				let d = new QueueItem(
-					new UrlManager(down.urlManager),
-					get("pathName"),
-					get("numIstance"),
-					get("description"),
-					get("mask"),
-					get("referrer"),
-					get("tmpFile")
-				);
+				let d = new QueueItem();
 				d.dbId = dbId;
+				d.urlManager = new UrlManager(down.urlManager);
+				d.numIstance = get("numIstance");
+
+				let referrer = get('referrer');
+				if (referrer) {
+					try {
+						d.referrer = referrer.toURL();
+					}
+					catch (ex) {
+						// We might have been fed with about:blank or other crap. so ignore.
+					}
+				}
+			
+				// only access the setter of the last so that we don't generate stuff trice.
+				d._pathName = get('pathName');
+				d._description = get('description');
+				d._mask = get('mask');
+				d.fileName = get('fileName');
+				
+				let tmpFile = get('tmpFile');
+				if (tmpFile) {
+					try {
+						tmpFile = new FileFactory(tmpFile);
+						if (tmpFile.exists()) {
+							d._tmpFile = tmpFile;
+						}
+						else {
+							// Download partfile is gone!
+							// XXX find appropriate error message!
+							d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+						}
+					}
+					catch (ex) {
+						Debug.log("tried to construct with invalid tmpFile", ex);
+						d.cancel();
+					}
+				}				
+
 				d.startDate = new Date(get("startDate"));
 				d.visitors = new VisitorManager(down.visitors);
 
 				[
 					'contentType',
 					'conflicts',
-					'fileName',
 					'postData',
 					'destinationName',
 					'resumable',
@@ -235,6 +265,8 @@ var SessionManager = {
 				Debug.log('failed to init a download from queuefile', ex);
 			}
 		}
+		this.endUpdate();
+		Tree.endUpdate();
 		Tree.invalidate();
 	}
 };
