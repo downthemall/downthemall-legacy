@@ -833,55 +833,11 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 
 	this.visitors = new VisitorManager();
 
-	dir = dir.addFinalSlash();
-
-	if (typeof lnk == 'string') {
-		this.urlManager = new UrlManager([new DTA_URL(lnk)]);
-	}
-	else if (lnk instanceof UrlManager) {
-		this.urlManager = lnk;
-	}
-	else {
-		this.urlManager = new UrlManager([lnk]);
-	}
-
 	this.startDate = new Date();	
-	this.numIstance = num;
+
 	this.chunks = [];
 	this.speeds = new Array();
 	
-	if (referrer) {
-		try {
-			this.referrer = referrer.toURL();
-		}
-		catch (ex) {
-			// We might have been fed with about:blank or other crap. so ignore.
-		}
-	}
-
-	// only access the setter of the last so that we don't generate stuff trice.
-	this._pathName = dir;
-	this._description = desc ? desc : '';
-	this._mask = mask;
-	this.fileName = this.urlManager.usable.getUsableFileName();
-	
-	if (tmpFile) {
-		try {
-			tmpFile = new FileFactory(tmpFile);
-			if (tmpFile.exists()) {
-				this._tmpFile = tmpFile;
-			}
-			else {
-				// Download partfile is gone!
-				// XXX find appropriate error message!
-				this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
-			}
-		}
-		catch (ex) {
-			Debug.log("tried to construct with invalid tmpFile", ex);
-			this.cancel();
-		}
-	}
 }
 
 QueueItem.prototype = {
@@ -1023,7 +979,7 @@ QueueItem.prototype = {
 	},
 	
 	save: function QI_save() {
-		if (this.dbID) {
+		if (this.dbId) {
 			if (
 				(Prefs.removeCompleted && this.is(COMPLETE))
 				|| (Prefs.removeCanceled && this.is(CANCELED))
@@ -1040,9 +996,9 @@ QueueItem.prototype = {
 		return true;
 	},
 	remove: function QI_remove() {
-			SessionManager.deleteDownload(this.dbId);
-			delete this.dbId;
-			this.position = -1;
+		SessionManager.deleteDownload(this.dbId);
+		delete this.dbId;
+		this.position = -1;
 	},
 	_position: -1,
 	get position() {
@@ -2502,7 +2458,6 @@ function startDownloads(start, downloads) {
 	Tree.beginUpdate();
 	SessionManager.beginUpdate();
 	for (let e in g) {
-		e.dirSave.addFinalSlash();
 
 		var desc = "";
 		DESCS.some(
@@ -2514,52 +2469,72 @@ function startDownloads(start, downloads) {
 				return false;
 			}
 		);
-
-		var d = new QueueItem(
-			e.url,
-			e.dirSave,
-			e.numIstance,
-			desc,
-			e.mask,
-			e.referrer
-		);
-		if (e.fileName) {
-			d.fileName = e.fileName;
+		
+		let qi = new QueueItem();
+		let lnk = e.url;
+		if (typeof lnk == 'string') {
+			qi.urlManager = new UrlManager([new DTA_URL(lnk)]);
 		}
-		if (e.startDate) {
-			d.startDate = e.startDate;
-		}
-		if (e.url.hash) {
-			d.hash = e.url.hash;
-		}
-		else if (e.hash) {
-			d.hash = e.hash;
+		else if (lnk instanceof UrlManager) {
+			qi.urlManager = lnk;
 		}
 		else {
-			d.hash = null; // to initialize prettyHash 
+			qi.urlManager = new UrlManager([lnk]);
+		}
+		qi.numIstance = e.numIstance;
+	
+		if (e.referrer) {
+			try {
+				qi.referrer = e.referrer.toURL();
+			}
+			catch (ex) {
+				// We might have been fed with about:blank or other crap. so ignore.
+			}
+		}
+		// only access the setter of the last so that we don't generate stuff trice.
+		qi._pathName = e.dirSave.addFinalSlash();
+		qi._description = desc ? desc : '';
+		qi._mask = e.mask;
+		if (e.fileName) {
+			qi.fileName = e.fileName;
+		}
+		else {
+			qi.fileName = qi.urlManager.usable.getUsableFileName();
+		}
+		if (e.startDate) {
+			qi.startDate = e.startDate;
+		}
+		if (e.url.hash) {
+			qi.hash = e.url.hash;
+		}
+		else if (e.hash) {
+			qi.hash = e.hash;
+		}
+		else {
+			qi.hash = null; // to initialize prettyHash 
 		}
 
-		let postData = ContentHandling.getPostDataFor(d.urlManager.url.toURI());
+		let postData = ContentHandling.getPostDataFor(qi.urlManager.url.toURI());
 		if (e.url.postData) {
 			postData = e.url.postData;
 		}
 		if (postData) {
-			d.postData = postData;
+			qi.postData = postData;
 		}		
 
-		d.state = start ? QUEUED : PAUSED;
-		if (d.is(QUEUED)) {
-			d.status = _('inqueue');
+		qi.state = start ? QUEUED : PAUSED;
+		if (qi.is(QUEUED)) {
+			qi.status = _('inqueue');
 		}
 		else {
-			d.status = _('paused');
+			qi.status = _('paused');
 		}
-		d.save();		
-		Tree.add(d);
+		qi.save();		
+		Tree.add(qi);
 		++added;
 	}
-	Tree.endUpdate();
 	SessionManager.endUpdate();
+	Tree.endUpdate();
 
 	var boxobject = Tree._box;
 	boxobject.QueryInterface(Ci.nsITreeBoxObject);

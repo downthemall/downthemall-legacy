@@ -694,6 +694,7 @@ var Tree = {
 		}
 		SessionManager.endUpdate();
 		this.endUpdate();
+		this.invalidate();
 	},
 	updateAll: function T_updateAll(f, t) {
 		this.beginUpdate();

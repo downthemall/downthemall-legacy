@@ -48,7 +48,7 @@
 	</keyset>
 	
 	<hbox id="infoBox"/>
-	<groupbox id="paramsBox" class="closer" orient="vertical" shouldResize="true" persist="closed">
+	<groupbox id="paramsBox" orient="vertical">
 		<caption label="&options.caption;"/>
 		<grid>
 			<columns>
