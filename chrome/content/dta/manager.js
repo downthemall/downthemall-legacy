@@ -1727,12 +1727,24 @@ Chunk.prototype = {
 			this.parent.invalidate();
 		}
 		let prealloc = !file.exists();
+		if (prealloc && this.parent.totalSize > 0) {
+			try {
+				file.create(file.NORMAL_FILE_TYPE, Prefs.permissions);
+				file.fileSize = this.parent.totalSize;
+				Debug.logString("fileSize set using #1");
+				prealloc = false;
+			}
+			catch (ex) {
+				// no op
+			}
+		}		
 		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 		if (prealloc && this.parent.totalSize > 0) {
 			try {
 				seekable.seek(0x00, this.parent.totalSize);
 				seekable.setEOF();
+				Debug.logString("fileSize set using #2");
 			}
 			catch (ex) {
 				// no-op
