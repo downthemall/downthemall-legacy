@@ -393,24 +393,24 @@ var Utils = {
 	}
 };
 
-const _getIcon_recognizedMac = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
-
-function _getIcon() {
+function _getIcon(url, size) {
 	if (/mac/i.test(navigator.platform)) {
-		return function (url, size) {
+		const _recognizedMac = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
+		_getIcon = function _getIconMac(url, size) {
 			let uri = url.toURI();
-			if (_getIcon_recognizedMac.test(uri.path)) {
+			if (_recognizedMac.test(uri.path)) {
 				return "moz-icon://" + url + "?size=" + size;
 			}
 			return "moz-icon://file.html?size=" + size;
 		};
 	}
-	return function _getIconOther(url, size) {
-		url = url.removeFinalSlash().replace(/^.*\//, '').replace(/^.*(\..*?)$/, 'file$1');
-		return "moz-icon://" + url + "?size=" + size; 
-	};
+	else {
+		_getIcon = function _getIconOther(url, size) {
+			return "moz-icon://" + url + "?size=" + size;
+		};
+	}
+	return _getIcon(url, size);
 };
-_getIcon = _getIcon();
 
 /**
  * Get the icon URI corresponding to an URI (special mac handling)
