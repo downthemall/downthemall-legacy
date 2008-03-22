@@ -406,7 +406,7 @@ function _getIcon() {
 		};
 	}
 	return function _getIconOther(url, size) {
-		url = url.replace(/^.*\//, '').replace(/^.*(\..*?)$/, 'file$1');
+		url = url.removeFinalSlash().replace(/^.*\//, '').replace(/^.*(\..*?)$/, 'file$1');
 		return "moz-icon://" + url + "?size=" + size; 
 	};
 };
