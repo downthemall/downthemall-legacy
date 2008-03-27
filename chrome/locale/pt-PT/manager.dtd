@@ -1,5 +1,5 @@
 <!ENTITY tooladd.label "Adicionar URL(s)">
-<!ENTITY tooladd.tooltip "">
+<!ENTITY tooladd.tooltip "Adicionar manualmente um URL ao DownThemAll">
 <!ENTITY tooldonate.tooltiptext "Ajude-nos a tornar o DownThemAll ainda melhor. Pense em fazer uma pequena doação!">
 <!ENTITY movetop.label "Topo">
 <!ENTITY movebottom.label "Fundo">
@@ -35,4 +35,4 @@
 <!ENTITY addchunk.label "Mais uma parte">
 <!ENTITY removechunk.label "Menos uma parte">
 <!ENTITY force.label "Forçar início">
-<!ENTITY options.caption "">
+<!ENTITY options.caption "Opções">

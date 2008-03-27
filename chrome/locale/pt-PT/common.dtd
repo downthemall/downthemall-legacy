@@ -14,4 +14,4 @@
 <!ENTITY mask.tip "Os ficheiros seleccionados serão guardados e renomeados usando esta máscara">
 <!ENTITY selectall.label "Seleccionar Tudo">
 <!ENTITY selectinv.label "Inverter selecção">
-<!ENTITY selectnone.label "">
+<!ENTITY selectnone.label "Não seleccionar nada">
