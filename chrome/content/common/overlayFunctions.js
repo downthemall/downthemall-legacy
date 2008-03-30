@@ -479,6 +479,8 @@ var DTA_AddingFunctions = {
 }
 var DTA_Mediator = {
 	_m: Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator),
+	_ios: Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService),
+	
 
 	getMostRecent: function(name)	{
 		var names = ['navigator:browser', 'mail:messageWindow', 'mail:3pane'];
@@ -545,11 +547,23 @@ var DTA_Mediator = {
 				ref = null;
 			}
 		}
-		if ('delayedOpenTab' in win) {
-			win.delayedOpenTab(url, ref);
-		}
-		else {
+		try {
+			if ('delayedOpenTab' in win) {
+				win.delayedOpenTab(url, ref);
+				return;
+			}
 			win.getBrowser().addTab(url, ref);
+		}		
+		// thunderbird?
+		catch (ex) {
+			try {
+				var ps = Components.classes['@mozilla.org/uriloader/external-protocol-service;1']
+					.getService(Components.interfaces.nsIExternalProtocolService);
+				ps.loadUrl(this._ios.newURI(url, null, null));
+			}
+			catch (ex) {
+				DTA_debug.log("cannot open link", ex);
+			}			
 		}
 	},
 	removeTab: function WM_removeTab(url) {
