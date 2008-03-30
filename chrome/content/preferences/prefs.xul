@@ -22,6 +22,7 @@
 	buttons="accept,cancel,extra2"
 	buttonlabelextra2="&buttonlabelextra2;"
 	ondialogextra2="Prefs.restoreAll();"
+	ondialoghelp="Prefs.showHelp();"
 	persist="lastSelected screenX screenY"
 	onload="Prefs.load();"
 	style="&winstyle;"
@@ -37,4 +38,5 @@
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js"/>
 	<script type="application/javascript;version=1.7" src="chrome://dta/content/preferences/prefs.js"/>
+	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 </prefwindow>

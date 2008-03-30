@@ -77,6 +77,14 @@
 			logo.setAttribute('title', title);
 			document.title = 'About ' + title;
 		}
+		function openNotice() {
+			if ('openHelp' in window) {
+				openHelp('About_Privacy','chrome://dta-help/content/help.rdf');
+			}
+			else {
+				openTab('chrome://dta-help/content/about.html#privacy');
+			}
+		}
   ]]></script>
 	
 	<keyset>
@@ -112,7 +120,7 @@
 		<separator class="thin"/>
 		<description>
 			DownThemAll! &about.privacy;.<html:br/>
-			&about.read; <html:span class="link" onclick="openHelp('About_Privacy','chrome://dta-help/content/help.rdf');">&about.pnot;</html:span>.
+			&about.read; <html:span class="link" onclick="openNotice();">&about.pnot;</html:span>.
 		</description>
 
 	  <separator class="thin"/>
