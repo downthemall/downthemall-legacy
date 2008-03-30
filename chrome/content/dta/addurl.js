@@ -249,6 +249,8 @@ var Dialog = {
 	multiHelp: true,
 	load: function DTA_load() {
 		try {
+			$('DownThemAll').getButton('help').hidden = !('openHelp' in window);
+			
 			$('directory', 'renaming', 'URLaddress', 'hash').forEach(
 				function(e) {
 					e.oldColor = e.inputField.style.color;
