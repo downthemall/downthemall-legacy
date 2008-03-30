@@ -41,7 +41,6 @@ const DB_FILE_BAK = DB_FILE + ".bak";
 const DB_VERSION = 1;
 
 var SessionManager = {
-
 	init: function() {
 		this._con = Serv('@mozilla.org/storage/service;1', 'mozIStorageService')
 			.openDatabase(DTA_getProfileFile(DB_FILE));
@@ -168,7 +167,7 @@ var SessionManager = {
 		while (stmt.executeStep()) {
 			try {
 				let dbId = stmt.getInt64(0);
-				let down = eval(stmt.getUTF8String(1));
+				let down = Serializer.decode(stmt.getUTF8String(1));
 				let get = function(attr) {
 					if (attr in down) {
 						return down[attr];
