@@ -2617,7 +2617,7 @@ var ConflictManager = {
 			this._return(Prefs.conflictResolution);
 			return;
 		}
-		if (this._sessionSetting) {
+		if ('_sessionSetting' in this) {
 			this._return(this._sessionSetting);
 			return;
 		}
