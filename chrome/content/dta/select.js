@@ -169,6 +169,10 @@ Tree.prototype = {
 		var l = this._links[idx];
 
 		switch (col.index) {
+			
+			// check mark, sort compat
+			case 0: return this.getCellValue(idx, col);
+			
 			// col 1 is the name
 			case 1: return l.url.usable;
 
@@ -183,7 +187,7 @@ Tree.prototype = {
 
 	isSorted: function() {
 		// not sorted
-		return false;
+		return true;
 	},
 	isContainer: function(idx) {
 		// being a container means we got children... but we don't have any children because we're a list actually
@@ -228,8 +232,34 @@ Tree.prototype = {
 	},
 
 	// called when a header is called.
-	// would be the place to change sort mode. But we don't have any sorting.
-	cycleHeader: function(col, elem) {},
+	// apply sorting here
+	_sortColumn: null,
+	_sortDirection: false,
+	cycleHeader: function(col, elem) {
+		if (col.index == this._sortColumn) {
+			this._sortDirection = !this._sortDirection;
+		}
+		else {
+			Debug.logString("setting sortColum = " + col.index);
+			this._sortColumn = col.index;
+			this._sortDirection = false;
+		}
+		let tp = this;
+		let sd;
+		if (this._sortDirection) {
+			sd = function(ca, cb) { return ca > cb ? -1 : ca < cb ? 1 : 0; };
+		}
+		else {
+			sd = function(ca, cb) { return ca > cb ? 1 : ca < cb ? -1 : 0; };
+		}
+		this._links.forEach(function(e, i) { e._sortId = i; });
+		this._links.sort(
+			function(a,b) {
+				return sd(tp.getCellText(a._sortId, col), tp.getCellText(b._sortId, col));
+			}
+		);
+		this.invalidate();
+	},
 
 	// just some stubs we need to provide anyway to provide a full nsITreeView
 	selectionChanged: function() {},
