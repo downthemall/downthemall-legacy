@@ -2704,7 +2704,12 @@ var Serializer = {
 			Debug.logString("hello json");
 			let json = Serv('@mozilla.org/dom/json;1', 'nsIJSON');
 			this.decode = function(str) {
-				return json.decode(str);
+				try {
+					return json.decode(str);
+				}
+				catch (ex) {
+					return eval(str);
+				}
 			}
 		}
 		else {
