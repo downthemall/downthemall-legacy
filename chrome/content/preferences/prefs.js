@@ -94,6 +94,14 @@ var Privacy = {
 			$("butShowLog", 'butDelLog', 'butRevealLog')
 				.forEach(function(e){ e.disabled = true; });
 		}
+	},
+	showNotice: function() {
+		if ('openHelp' in window) {
+			openHelp('About_Privacy','chrome://dta-help/content/help.rdf');
+		}
+		else {
+			DTA_Mediator.openTab('chrome://dta-help/content/about.html#privacy');
+		}
 	}
 };
 
@@ -438,5 +446,11 @@ var Prefs = {
 		} catch(ex) {
 			// XXX
 		}
+	},
+	showHelp: function() {
+		if ('openHelp' in window) {
+			return;
+		}
+		DTA_Mediator.openTab('chrome://dta-help/content/preferences.html');
 	}
 }
