@@ -1661,7 +1661,7 @@ QueueItem.prototype = {
 				}
 			);
 		}
-		return e.toSource();
+		return Serializer.encode(e);
 	}
 }
 
@@ -2680,5 +2680,38 @@ var ConflictManager = {
 		this._items.shift();
 		this._processing = false;
 		this._process();
+	}
+};
+
+var Serializer = {
+	encode: function(obj) {
+		if ('nsIJSON' in Ci) {
+			Debug.logString("hello json");
+			let json = Serv('@mozilla.org/dom/json;1', 'nsIJSON');
+			this.encode = function(obj) {
+				return json.encode(obj);
+			}
+		}
+		else {
+			this.encode = function(obj) {
+				return obj.toSource();
+			}
+		}
+		return this.encode(obj);
+	},
+	decode: function(str) {
+		if ('nsIJSON' in Ci) {
+			Debug.logString("hello json");
+			let json = Serv('@mozilla.org/dom/json;1', 'nsIJSON');
+			this.decode = function(str) {
+				return json.decode(str);
+			}
+		}
+		else {
+			this.decode = function(str) {
+				return eval(str);
+			}
+		}
+		return this.decode(str);
 	}
 };
