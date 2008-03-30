@@ -77,12 +77,7 @@ function _atos(data) {
 	if (typeof(data) == 'string') {
 		return data;
 	}
-	if (data instanceof String) {
-		// unbox
-		return String(data);
-	}
-	
-	if (typeof(data) == 'object') {
+	if (data instanceof String || typeof(data) == 'object') {
 		try {
 			return data.toSource();
 		}
@@ -143,7 +138,7 @@ merge(
 		},
 		addFinalSlash : function() {
 			if (this.length == 0) {
-				return new String(SYSTEMSLASH);
+				return SYSTEMSLASH;
 			}
 			
 			if (this[this.length - 1] != SYSTEMSLASH) {

@@ -886,7 +886,7 @@ QueueItem.prototype = {
 		return this._pathName;
 	},
 	set pathName(nv) {
-		this._pathName = nv;
+		this._pathName = nv.toString();
 		this.rebuildDestination();
 		this.invalidate();
 		return nv;
@@ -2504,7 +2504,7 @@ function startDownloads(start, downloads) {
 			}
 		}
 		// only access the setter of the last so that we don't generate stuff trice.
-		qi._pathName = e.dirSave.addFinalSlash();
+		qi._pathName = e.dirSave.addFinalSlash().toString();
 		qi._description = desc ? desc : '';
 		qi._mask = e.mask;
 		if (e.fileName) {
