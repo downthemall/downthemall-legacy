@@ -240,7 +240,7 @@ Tree.prototype = {
 			this._sortDirection = !this._sortDirection;
 		}
 		else {
-			Debug.logString("setting sortColum = " + col.index);
+			Debug.logString("setting sortColumn = " + col.index);
 			this._sortColumn = col.index;
 			this._sortDirection = false;
 		}
