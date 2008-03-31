@@ -58,8 +58,8 @@
 		<targetApplication>
 			<rdf:Description>
 				<id>songbird@songbirdnest.com</id>
-				<minVersion>0.4a</minVersion>
-				<maxVersion>0.5pre</maxVersion>
+				<minVersion>0.5</minVersion>
+				<maxVersion>0.6pre</maxVersion>
 			</rdf:Description>
 		</targetApplication>		
 
