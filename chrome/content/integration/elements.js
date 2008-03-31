@@ -700,8 +700,7 @@ var DTA_ContextOverlay = {
 					rv += this.extractDescription(c);
 				}
 
-				if (c.hasAttribute)
-				{
+				if (c && 'hasAttribute' in c) { 
 					if (c.hasAttribute('title')) {
 						rv += fmt(c.getAttribute('title'));	
 					}
