@@ -181,7 +181,12 @@
 							outValues.push(inValues[i]);
 						}
 					}
-					DTA_preferences.setMultiByteDTA(this._pref, outValues.toSource());
+					try {
+						DTA_preferences.setMultiByteDTA(this._pref, outValues.toSource());
+					}
+					catch (ex) {
+						DTA_debug.dump("Cannot save saveddropdown", ex);
+					}
 				]]></body>
 			</method>
 			<method name="clear">
