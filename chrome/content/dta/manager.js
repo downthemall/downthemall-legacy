@@ -979,15 +979,17 @@ QueueItem.prototype = {
 	},
 	
 	save: function QI_save() {
-		if (this.dbId) {
-			if (
-				(Prefs.removeCompleted && this.is(COMPLETE))
-				|| (Prefs.removeCanceled && this.is(CANCELED))
-				|| (Prefs.removeAborted && this.is(PAUSED))
-			) {
+		if (
+			(Prefs.removeCompleted && this.is(COMPLETE))
+			|| (Prefs.removeCanceled && this.is(CANCELED))
+			|| (Prefs.removeAborted && this.is(PAUSED))
+		) {
+			if (this.dbId) {
 				this.remove();
-				return false;
 			}
+			return false;			
+		}			
+		if (this.dbId) {
 			SessionManager.saveDownload(this.dbId, this.toSource());
 			return true;
 		}
@@ -998,7 +1000,6 @@ QueueItem.prototype = {
 	remove: function QI_remove() {
 		SessionManager.deleteDownload(this.dbId);
 		delete this.dbId;
-		this.position = -1;
 	},
 	_position: -1,
 	get position() {
