@@ -49,12 +49,12 @@
 	<menu image="chrome://dta/skin/common/dta.png" id="dtaCtxCompact" label="DownThemAll!" class="menu-iconic">
 		<menupopup id="dtaCtxSubmenu">
 			<menuseparator class="thin" id="dtaCtxSepFront"/>
-			<menuitem image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" id="dtaCtxTDTA" accesskey="o" oncommand="DTA_ContextOverlay.findLinks(true);"/>
 			<menuitem image="chrome://dta/skin/common/dta.png" class="menuitem-iconic" id="dtaCtxDTA" accesskey="n" oncommand="DTA_ContextOverlay.findLinks(false);"/>
-			<menuitem image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" id="dtaCtxSaveT" accesskey="o" oncommand="DTA_ContextOverlay.findSingleLink(true);"/>
+			<menuitem image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" id="dtaCtxTDTA" accesskey="o" oncommand="DTA_ContextOverlay.findLinks(true);"/>
 			<menuitem image="chrome://dta/skin/common/dta.png" class="menuitem-iconic" id="dtaCtxSave" accesskey="n" oncommand="DTA_ContextOverlay.findSingleLink(false);"/>
-			<menuitem image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" id="dtaCtxSaveFormT" label="&dta-form-save-turbo.label;" accesskey="o" oncommand="DTA_ContextOverlay.findForm(true);"/>
+			<menuitem image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" id="dtaCtxSaveT" accesskey="o" oncommand="DTA_ContextOverlay.findSingleLink(true);"/>
 			<menuitem image="chrome://dta/skin/common/dta.png" class="menuitem-iconic" id="dtaCtxSaveForm" label="&dta-form-save.label;" accesskey="n" oncommand="DTA_ContextOverlay.findForm(false);"/>			
+			<menuitem image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" id="dtaCtxSaveFormT" label="&dta-form-save-turbo.label;" accesskey="o" oncommand="DTA_ContextOverlay.findForm(true);"/>
 			<menuseparator class="thin" id="dtaCtxSepPref"/>
 			<menuitem image="chrome://dta/skin/common/prefs.png" class="menuitem-iconic" id="dtaCtxPref" label="&dta-pref.label;" oncommand="DTA_showPreferences();" />
 			<menuseparator class="thin" id="dtaCtxSepBack"/>
