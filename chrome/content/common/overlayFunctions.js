@@ -268,8 +268,12 @@ DTA_DropProcessor.prototype = {
 		}
 		try {
 			var url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
+			if (!DTA_AddingFunctions.isLinkOpenable(url)) {
+				throw new Components.Exception("Link cannot be opened!");
+			}
 		}
 		catch (ex) {
+			DTA_debug.log("Failed to process drop", ex);
 			return;
 		}
 		var doc = document.commandDispatcher.focusedWindow.document;
