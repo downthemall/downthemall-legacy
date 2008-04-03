@@ -601,7 +601,7 @@ var Tree = {
 			);
 			this.endUpdate();
 		}
-		else if (d.position) {
+		else if (d.position >= 0) {
 			this._box.invalidateRow(d.position);
 		}
 	},
