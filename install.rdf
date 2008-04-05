@@ -25,7 +25,7 @@
 				<em:minVersion>2.0.0.8</em:minVersion>
 				<em:maxVersion>3.0pre</em:maxVersion>
 			</Description>
-		</targetApplication>
+		</em:targetApplication>
 
 		<!-- Thunderbird -->
 		<em:targetApplication>
