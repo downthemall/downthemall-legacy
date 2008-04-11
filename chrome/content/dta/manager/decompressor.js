@@ -105,7 +105,7 @@ Decompressor.prototype = {
 	},
 	onStartRequest: function(r, c) {
 		var thisp = this;		
-		this._timer = new Timer(function() { thisp.download.invalidate(); }, STREAMS_FREQ, true);
+		this._timer = new Timer(function() { thisp.download.invalidate(); }, REFRESH_FREQ, true);
 	},
 	onStopRequest: function(request, c) {
 		this._timer.kill();

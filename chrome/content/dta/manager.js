@@ -78,9 +78,7 @@ const CHUNK_BUFFER_SIZE = 96 * 1024;
 const MAX_BUFFER_SIZE = 5 * 1024 * 1024;
 const MIN_BUFFER_SIZE = 1 * 1024 * 1024;
 
-const REFRESH_FREQ = 1000;
-const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
-const STREAMS_FREQ = 200;
+const REFRESH_FREQ = 125;
 
 var Dialog = {
 	_observes: ['quit-application-requested', 'quit-application-granted'],
@@ -117,8 +115,8 @@ var Dialog = {
 				this.run(d);
 			}
 		}
-		this._updTimer = new Timer("Dialog.checkDownloads();", REFRESH_FREQ, true, true);
-		new Timer("Dialog.refreshWritten();", 100, true, true);
+		this._updTimer = new Timer("Dialog.checkDownloads();", 1000, true, true);
+		new Timer("Dialog.refreshWritten();", REFRESH_FREQ, true, true);
 		new Timer("Dialog.saveRunning();", 10000, true);
 	},
 	observe: function D_observe(subject, topic, data) {
@@ -160,10 +158,7 @@ var Dialog = {
 					i.lastTime = now;				
 
 					// Refresh item speed
-					d.speeds.push(speed > 0 ? speed : 0);
-					if (d.speeds.length > SPEED_COUNT) {
-						d.speeds.shift();
-					}
+					d.addSpeed(speed);
 					i.lastBytes = d.partialSize;
 					i.lastTime = now;
 					
@@ -352,7 +347,13 @@ var Dialog = {
 			this
 		);
 	},
-	signal: function D_signal(download) {
+	addDownload: function D_addDownload(download) {
+		download.addObserver(this);
+	},
+	observe: function D_observe(download, topic) {
+		if (topic != 'statechanged') {
+			return;
+		}
 		download.save();
 		if (download.is(RUNNING)) {
 			this._wasRunning = true;
@@ -368,7 +369,7 @@ var Dialog = {
 			if (this.startNext() || Tree.some(function(d) { return d.is(FINISHING, RUNNING, QUEUED); } )) {
 				return;
 			}
-			Debug.logString("signal(): Queue finished");
+			Debug.logString("observe(): Queue finished");
 			Utils.playSound("done");
 			
 			let dp = Tree.at(0);
@@ -393,7 +394,7 @@ var Dialog = {
 			}
 		}
 		catch(ex) {
-			Debug.log("signal():", ex);
+			Debug.log("observe():", ex);
 		}
 	},
 	_canClose: function D__canClose() {
@@ -836,7 +837,7 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 	this.startDate = new Date();	
 
 	this.chunks = [];
-	this.speeds = new Array();
+	this.speeds = [];
 	
 }
 
@@ -853,8 +854,7 @@ QueueItem.prototype = {
 			}
 			this._state = nv;
 			this.invalidate();
-			Tree.refreshTools();
-			Dialog.signal(this);
+			this._notifyObservers('statechanged');
 		}
 	},
 	
@@ -1140,11 +1140,43 @@ QueueItem.prototype = {
 	get destinationPath() {
 		return this._destinationPath;
 	},
-
-	invalidate: function QI_invalidate() {
-		Tree.invalidate(this);
+	
+	_observers: [],
+	addObserver: function QI_addObserver(obs) {
+		this._observers.push(obs);
 	},
-
+	removeObserver: function QI_removeObserver(obs) {
+		this._observers = this._observers.filter(
+			function(e) {
+				return e != obs;
+			}
+		);
+	},
+	_notifyObservers: function QI__notifyObservers(topic) {
+		this._observers.forEach(
+			function(obs) {
+				try {
+					obs.observe(this, topic);
+				}
+				catch (ex) {
+					Debug.log("observer threw when casting msg for " + topic, ex);
+				}
+			},
+			this
+		);
+	},
+	
+	addSpeed: function QI_addSpeed(speed) {
+		this.speeds.push(speed > 0 ? speed : 0);
+		if (this.speeds.length > SPEED_COUNT) {
+			this.speeds.shift();
+		}
+		this._notifyObservers('speedadded');
+	},
+			
+	invalidate: function QI_invalidate() {
+		this._notifyObservers('invalidated');
+	},
 	safeRetry: function QI_safeRetry() {
 		// reset flags
 		this.totalSize = this.partialSize = 0;
@@ -2544,6 +2576,7 @@ function startDownloads(start, downloads) {
 		}
 		qi.save();		
 		Tree.add(qi);
+		Dialog.addDownload(qi);
 		++added;
 	}
 	SessionManager.endUpdate();
