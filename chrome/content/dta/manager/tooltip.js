@@ -74,8 +74,8 @@ var Tooltip = {
 		if (!file) {
 			return;
 		}
+		this.updateMetrics(file);
 		if (topic == 'speedadded') {
-			this.updateMetrics(file);
 			this.updateSpeeds(file);
 		}
 		else {
