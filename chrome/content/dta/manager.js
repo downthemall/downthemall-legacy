@@ -1158,7 +1158,7 @@ QueueItem.prototype = {
 	},
 
 	refreshPartialSize: function QI_refreshPartialSize(){
-		var size = 0;
+		let size = 0;
 		this.chunks.forEach(function(c) { size += c.written; });
 		this.partialSize = size;
 	},
@@ -1457,6 +1457,7 @@ QueueItem.prototype = {
 			this.conflicts = 0;
 			this.resumable = true;
 			this._autoRetries = 0;
+			delete this._autoRetryTime;
 
 		} catch(ex) {
 			Debug.log("cancel():", ex);
@@ -1464,16 +1465,14 @@ QueueItem.prototype = {
 	},
 	
 	removeTmpFile: function QI_removeTmpFile() {
-		if (this.tmpFile.exists()) {
-			try {
-				this.tmpFile.remove(false);
-			}
-			catch (ex) {
-				Debug.log("failed to remove tmpfile: " + this.tmpFile.path, ex);
-			}
+		if (!this.tmpFile.exists()) {
+			return;
 		}
-		else {
-			Debug.logString("tmpfile not found: " + this.tmpFile.path);
+		try {
+			this.tmpFile.remove(false);
+		}
+		catch (ex) {
+			Debug.log("failed to remove tmpfile: " + this.tmpFile.path, ex);
 		}
 	},
 	sessionConnections: 0,
@@ -1905,16 +1904,16 @@ Connection.prototype = {
 		Ci.nsIRequestObserver,
 		Ci.nsIProgressEventSink,
 		Ci.nsIChannelEventSink,
-		Ci.nsIFTPEventSink
+		Ci.nsIFTPEventSink,
 	],
 	
 	cantCount: false,
 
 	QueryInterface: function DL_QI(iid) {
-			if (this._interfaces.some(function(i) { return iid.equals(i); })) {
-				return this;
-			}
-			throw Components.results.NS_ERROR_NO_INTERFACE;
+		if (this._interfaces.some(function(i) { return iid.equals(i); })) {
+			return this;
+		}
+		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
 	// nsISupportsWeakReference
 	GetWeakReference: function DL_GWR() {
@@ -2000,8 +1999,9 @@ Connection.prototype = {
 		}
 	},
 	
+	// nsIFTPEventSink
 	OnFTPControlLog: function(server, msg) {},
-
+	
 	handleError: function DL_handleError() {
 		let c = this.c;
 		let d = this.d;
