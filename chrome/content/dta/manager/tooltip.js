@@ -36,6 +36,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
+const TOOLTIP_FREQ = 500;
 const SPEED_COUNT = 60;
 const SPEED_NUMAVG = 10;
 
@@ -58,29 +59,24 @@ var Tooltip = {
 	},		 
 	start: function(d) {
 		this._current = d;
-		this._current.addObserver(this);
-		this.update('speedadded');
-		this.update('invalidated');
-	},
-	observe: function(d, topic) {
-		this.update(topic);
+		this._timer = new Timer('Tooltip.update()', TOOLTIP_FREQ, true, true);
+		// 1.9+, causes some flickering but anyway :p
+		new Timer('Tooltip.update()', 25);
 	},
 	stop: function() {
-		this._current.removeObserver(this);
 		this._current = null;
+		if (this._timer) {
+			this._timer.kill();
+		}
 	},	
-	update: function(topic) {
+	update: function() {
 		let file = this._current;
 		if (!file) {
 			return;
 		}
 		this.updateMetrics(file);
-		if (topic == 'speedadded') {
-			this.updateSpeeds(file);
-		}
-		else {
-			this.updateChunks(file);
-		}
+		this.updateChunks(file);
+		this.updateSpeeds(file);
 	},
 	_makeRoundedRectPath: function(ctx,x,y,width,height,radius) {
 		ctx.beginPath();

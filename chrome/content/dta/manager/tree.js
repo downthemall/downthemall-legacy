@@ -284,13 +284,6 @@ var Tree = {
 		if (!this._updating) {
 			this._box.rowCountChanged(download.position, 1);
 		}
-		download.addObserver(this);
-	},
-	observe: function T_observe(download, topic) {
-		switch (topic) {
-			case 'invalidated': this.invalidate(download); return;
-			case 'statechanged': this.refreshTools(); return;
-		}
 	},
 	removeWithConfirmation: function T_removeWithConfirmation() {
 		if (Prefs.confirmRemove) {
