@@ -259,7 +259,6 @@ var SessionManager = {
 					d.status = _('canceled');
 				}			
 				Tree.add(d);
-				Dialog.addDownload(d);
 			}
 			catch (ex) {
 				Debug.log('failed to init a download from queuefile', ex);
