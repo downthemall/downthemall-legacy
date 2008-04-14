@@ -693,18 +693,24 @@ Visitor.prototype = {
 				this[header] = aValue;
 			}
 			if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
-				// we have to handle headers like "content-disposition: inline; filename='dummy.txt'; title='dummy.txt';"
-				var value = aValue.match(/file(?:name)?\s*=\s*(["']?)([^\1;]+)\1(?:;.+)?/i);
-				if (!value) {
-					// workaround for bug #13959
-					// attachments on some vbulletin forums send nasty headers like "content-disposition: inline; filename*=utf-8''file.ext"
-					value = aValue.match(/file(?:name)?\*=(.*)''(.+)/i);
-					if (value) {
-						this.overrideCharset = value[1];
+				let mhp = Serv('@mozilla.org/network/mime-hdrparam;1', 'nsIMIMEHeaderParam');
+				let fn;
+				try {
+				 fn = mhp.getParameter(aValue, 'filename', '', true, {});
+				}
+				catch (ex) {
+					// no-op; handled below
+				}
+				if (!fn) {
+					try {
+					 fn = mhp.getParameter(aValue, 'name', '', true, {});
+					}
+					catch (ex) {
+						// no-op; handled below
 					}
 				}
-				if (value) {
-					this.fileName = value[2].getUsableFileName();
+				if (fn) {
+					this.fileName = fn.getUsableFileName();
 				}
 			}
 		}
@@ -2182,8 +2188,7 @@ Connection.prototype = {
 			if (visitor.fileName.lastIndexOf('.') == -1 && ext) {
 				newName += '.' + ext;
 			}
-			let charset = visitor.overrideCharset ? visitor.overrideCharset : this.url.charset;
-			d.fileName = DTA_URLhelpers.decodeCharset(newName, charset).getUsableFileName();
+			d.fileName = newName.getUsableFileName();
 		}
 
 		return false;
