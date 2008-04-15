@@ -40,6 +40,7 @@ const InputStreamPump = Components.Constructor('@mozilla.org/network/input-strea
 function Verificator(download) {
 	this.download = download;
 	this.file = new FileFactory(download.destinationFile);
+	this._pending = this.file.fileSize;
 	this.CH = Ci.nsICryptoHash;
 
 	download.state = FINISHING;
@@ -53,8 +54,11 @@ function Verificator(download) {
 		this.hash = new Hash(this.type);
 		
 		this.stream = new FileInputStream(this.file, 0x01, 0766, 0);
-		this.pump = new InputStreamPump(this.stream, 0, -1, 0, 0, true);
-		this.pump.asyncRead(this, null);
+		this.download.partialSize = 0;
+		this._readNextChunk();
+	
+		var thisp = this;
+		this._timer = new Timer(function() { thisp.download.invalidate(); }, STREAMS_FREQ, true);
 	}
 	catch (ex) {
 		try {
@@ -79,6 +83,33 @@ Verificator.prototype = {
 			alert("Failed to remove file\n" + ex);
 		}
 	},
+	_finish: function() {			
+			this.download.partialSize = this.download.totalSize;
+			this.download.invalidate();
+			
+			this.hash = hexdigest(this.hash.finish(false));
+			if (this.hash != this.download.hash.sum) {
+				Debug.dump("hash mismatch, actual: " + this.hash + " expected: " + this.download.hash.sum);
+				var act = DTA_confirm(_('verifyerrortitle'), _('verifyerrortext'), _('retry'), _('delete'), _('keep'));
+				switch (act) {
+					case 0: this._delete(); this.download.safeRetry(); return;
+					case 1: this._delete(); this.download.cancel(); return;
+				}
+			}
+			this.download.complete();
+	},
+	_readNextChunk: function() {
+		if (this._pending <= 0) {
+			this.stream.close();
+			this._timer.kill();
+			var thisp = this;
+			setTimeout(function() { thisp._finish(); }, 100);
+			return;
+		}
+		var nextChunk = Math.min(this._pending, 1024 /* 2GB */);
+		this._pending -= nextChunk;
+		new InputStreamPump(this.stream, -1, nextChunk, 0, 0, false).asyncRead(this, null);		
+	},
 	_invalidate: function() {
 		this.download.invalidate();
 	},
@@ -89,29 +120,14 @@ Verificator.prototype = {
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
 	onStartRequest: function(r, c) {
-		var thisp = this;
-		this._timer = new Timer(function() { thisp.download.invalidate(); }, STREAMS_FREQ, true);
 	},
 	onStopRequest: function(request, c) {
-		this._timer.kill();
-		
-		this.download.partialSize = this.download.totalSize;
-		this.download.invalidate();
-		
-		this.hash = hexdigest(this.hash.finish(false));
-		if (this.hash != this.download.hash.sum) {
-			var act = DTA_confirm(_('verifyerrortitle'), _('verifyerrortext'), _('retry'), _('delete'), _('keep'));
-			switch (act) {
-				case 0: this._delete(); this.download.retry(); return;
-				case 1: this._delete(); this.download.cancel(); return;
-			}
-		}
-		this.download.complete();
+		this._readNextChunk();
 	},
 	onDataAvailable: function(request, c, stream, offset, count) {
 		try {
 			this.hash.updateFromStream(stream, count);
-			this.download.partialSize = offset;
+			this.download.partialSize += count;
 		}
 		catch (ex) {
 			Debug.dump("hash update failed!", ex);
