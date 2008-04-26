@@ -544,6 +544,11 @@ var DTA_ContextOverlay = {
 				this.direct[i].hidden = true;
 				this.compact[i].hidden = true;
 			}
+			// show nothing!
+			if (items.indexOf(1) == -1) {
+				this.ctxBase.hidden = true;
+				return;
+			} 
 			
 			// setup menu items
 			// show will hold those that will be shown
