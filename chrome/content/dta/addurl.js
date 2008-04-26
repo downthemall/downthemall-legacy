@@ -193,7 +193,7 @@ function BatchGenerator(link) {
 	for (i = this._pats.length - 2; i >= 0; --i) {
 		if ((this._pats[i] instanceof Literal) && (this._pats[i + 1] instanceof Literal)) {
 			this._pats[i] = new Literal(this._pats[i].str + this._pats[i + 1].str);
-			this._pats = this._pats.slice(i + 1, 1);
+			this._pats.splice(i + 1, 1);
 		}
 	}
 	this._pats.forEach(
