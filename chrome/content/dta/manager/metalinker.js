@@ -246,7 +246,8 @@ function NSResolver(prefix) {
 					'lang': this._getSingle(file, 'language'),
 					'sys': this._getSingle(file, 'os'),
 					'mirrors': urls.length, 
-					'selected': true
+					'selected': true,
+					'fromMetalink': true
 				});
 			}
 			if (!downloads.length) {

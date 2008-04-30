@@ -225,7 +225,8 @@ var SessionManager = {
 					'destinationName',
 					'resumable',
 					'totalSize',
-					'compression'
+					'compression',
+					'fromMetalink',
 				].forEach(
 					function(e) {
 						d[e] = get(e);
