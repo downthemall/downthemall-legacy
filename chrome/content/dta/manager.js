@@ -1625,6 +1625,7 @@ QueueItem.prototype = {
 			'maxChunks',
 			'contentType',
 			'conflicts',
+			'fromMetalink'
 		].forEach(
 			function(u) {
 				e[u] = this[u];
@@ -1879,6 +1880,9 @@ function Connection(d, c, getInfo) {
 		let http = this._chan.QueryInterface(Ci.nsIHttpChannel);
 		if (c.start + c.written > 0) {
 			http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
+		}
+		if (this.isInfoGetter && !d.fromMetalink) {
+			http.setRequestHeader('Accept', 'application/metalink+xml;q=0.9', true);
 		}
 		if (referrer instanceof Ci.nsIURI) {
 			http.referrer = referrer;
@@ -2513,6 +2517,7 @@ function startDownloads(start, downloads) {
 		qi._pathName = e.dirSave.addFinalSlash().toString();
 		qi._description = desc ? desc : '';
 		qi._mask = e.mask;
+		qi.fromMetalink = !!e.fromMetalink;
 		if (e.fileName) {
 			qi.fileName = e.fileName;
 		}
