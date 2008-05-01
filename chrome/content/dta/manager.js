@@ -283,11 +283,11 @@ var Dialog = {
 		}
 	},
 	checkSameName: function D_checkSameName(download, path) {
-		for (let i = 0; i < this._running.length; ++i) {
-			if (this._running[i].d == download) {
+		for each (let runner in this._running) {
+			if (runner.d == download) {
 				continue;
 			}
-			if (this._running[i].d.destinationFile == path) {
+			if (runner.d.destinationFile == path) {
 				return true;
 			}
 		}
@@ -517,13 +517,13 @@ UrlManager.prototype = {
 		return rv ? rv : (a.url < b.url ? -1 : 1);
 	},
 	initByArray: function um_initByArray(urls) {
-		for (let i = 0; i < urls.length; ++i) {
+		for each (let u in urls) {
 			this.add(
 				new DTA_URL(
-					urls[i].url,
-					urls[i].charset,
-					urls[i].usable,
-					urls[i].preference
+					u.url,
+					u.charset,
+					u.usable,
+					u.preference
 				)
 			);
 		}
@@ -561,8 +561,8 @@ UrlManager.prototype = {
 		return this._urls.length;
 	},
 	get all() {
-		for (let i = 0, e = this._urls.length; i < e; ++i) {
-			yield this._urls[i];
+		for each (let i in this._urls) {
+			yield i;
 		}
 	},
 	markBad: function um_markBad(url) {
@@ -774,9 +774,9 @@ VisitorManager.prototype = {
 	 * @author Nils
 	 */
 	_load: function vm_init(nodes) {
-		for (let i = 0; i < nodes.length; ++i) {
+		for each (let n in nodes) {
 			try {
-				this._visitors[nodes[i].url] = new Visitor(nodes[i].values);
+				this._visitors[n.url] = new Visitor(n.values);
 			}
 			catch (ex) {
 				Debug.log("failed to read one visitor", ex);
@@ -1171,9 +1171,9 @@ QueueItem.prototype = {
 
 	pause: function QI_pause(){
 		if (this.chunks) {
-			for (let i = 0, e = this.chunks.length; i < e; ++i) {
-				if (this.chunks[i].running) {
-					this.chunks[i].cancel();
+			for each (let c in this.chunks) {
+				if (c.running) {
+					c.cancel();
 				}
 			}
 		}
@@ -1951,7 +1951,17 @@ Connection.prototype = {
 		}
 	},
 	// nsIInterfaceRequestor
+	_notImplemented: [
+		Ci.nsIDocShellTreeItem, // cookie same-origin checks
+		Ci.nsIDOMWindow, // cookie same-origin checks
+		Ci.nsIWebProgress, 
+	],
 	getInterface: function DL_getInterface(iid) {
+		if (this._notImplemented.some(function(i) { return iid.equals(i); })) {
+			// we don't want to implement these
+			// and we don't want them to pop up in our logs
+			throw Components.results.NS_ERROR_NO_INTERFACE;
+		}
 		if (iid.equals(Ci.nsIAuthPrompt)) {
 			return Prompts.authPrompter;
 		}
@@ -2034,8 +2044,7 @@ Connection.prototype = {
 		Debug.logString("affected: " + c);
 		
 		let max = -1, found = -1;
-		for (let i = 0; i < d.chunks.length; ++i) {
-			let cmp = d.chunks[i]; 
+		for each (let cmp in d.chunks) {
 			if (cmp.start < c.start && cmp.start > max) {
 				found = i;
 				max = cmp.start;
@@ -2249,8 +2258,7 @@ Connection.prototype = {
 	
 		this.started = true;
 		try {
-			for (let i = 0, e = this._supportedChannels.length; i < e; ++i) {
-				let sc = this._supportedChannels[i];
+			for each (let sc in this._supportedChannels) {
 				let chan = null;
 				try {
 					chan = aRequest.QueryInterface(sc.i);
@@ -2469,8 +2477,8 @@ function startDownloads(start, downloads) {
 	let g = downloads;
 	if ('length' in downloads) {
 		g = function() {
-			 for (let i = 0, e = downloads.length; i < e; ++i) {
-			 	yield downloads[i];
+			 for each (let i in downloads) {
+			 	yield i;
 			 }
 		}();
 	}
@@ -2583,11 +2591,10 @@ var ConflictManager = {
 			}
 			return;
 		}
-		for (let i = 0; i < this._items.length; ++i) {
-			if (this._items[i].download == download) {
+		for each (let item in this._items.length) {
+			if (item.download == download) {
 				Debug.logString("conflict resolution updated to: " + reentry);
-				
-				this._items[i].reentry = reentry;
+				item.reentry = reentry;
 				return;
 			}
 		}
