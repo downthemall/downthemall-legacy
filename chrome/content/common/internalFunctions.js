@@ -457,15 +457,13 @@ function StringBundles() {
 }
 StringBundles.prototype = {
 	_bundles: [],
-	_length: 0,
 	init: function() {
 		this._bundles = document.getElementsByTagName('stringbundle');
-		this._length = this._bundles.length;
 	},
 	getString: function(id) {
-		for (var i = 0, e = this._length; i < e; ++i) {
+		for each (var bundle in this._bundles) {
 			try {
-				return this._bundles[i].getString(id);
+				return bundle.getString(id);
 			}
 			catch (ex) {
 				// no-op
@@ -474,9 +472,9 @@ StringBundles.prototype = {
 		throw new Components.Exception('BUNDLE STRING NOT FOUND (' + id + ')');
 	},
 	getFormattedString: function(id, params) {
-		for (var i = 0, e = this._length; i < e; ++i) {
+		for each (var bundle in this._bundles) {
 			try {
-				return this._bundles[i].getFormattedString(id, params);
+				return bundle.getFormattedString(id, params);
 			}
 			catch (ex) {
 				// no-op
