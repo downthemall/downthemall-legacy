@@ -140,7 +140,7 @@ function NSResolver(prefix) {
 			var locale = this.locale.split('-').map(function(l) { return l.slice(0, 2).toLowerCase(); }).reverse();
 			var downloads = [];
 			var files = root.getElementsByTagName('file');
-			for (var i = 0; i < files.length; ++i) {
+			for (var i = 0, e = files.length; i < e; ++i) {
 				var file = files[i];
 				var fileName = file.getAttribute('name').getUsableFileName();
 				if (!fileName) {
@@ -168,8 +168,7 @@ function NSResolver(prefix) {
 					
 				var urls = [];
 				var urlNodes = this._getNodes(file, 'ml:resources/ml:url');
-				for (var j = 0; j < urlNodes.length; ++j) {
-					var url = urlNodes[j];
+				for each (var url in urlNodes) {
 					var type = url.getAttribute('type');
 					var preference = 1;
 					var charset = doc.characterSet;
@@ -205,8 +204,8 @@ function NSResolver(prefix) {
 				}
 				var hash = null; 
 				var hashes = this._getNodes(file, 'ml:verification/ml:hash');
-				for (var j = 0; j < hashes.length; ++j) {
-					var h = hashes[j].textContent.trim();
+				for each (h in hashes) {
+					h = h.textContent.trim();
 					try {
 						h = new DTA_Hash(h, hashes[j].getAttribute('type'));
 						hash = h;		
@@ -396,22 +395,21 @@ function NSResolver(prefix) {
 	openLink: function(e) {
 		DTA_Mediator.openTab(e.link);
 	},
-	selectAll: function() {
-		var nodes = document.getElementsByTagName('richlistitem');
-		for (var i = 0; i < nodes.length; ++i) {
-			nodes[i].checked = true;
-		}
-	},
-	selectNone: function() {
-		var nodes = document.getElementsByTagName('richlistitem');
-		for (var i = 0; i < nodes.length; ++i) {
-			nodes[i].checked = false;
-		}
-	},
-	invertSelection: function() {
-		var nodes = document.getElementsByTagName('richlistitem');
-		for (var i = 0; i < nodes.length; ++i) {
-			nodes[i].checked = !nodes[i].checked;
+	select: function(type) {
+		var f;
+		switch (type) {
+		case 'all':
+			f = function(node) { return true; }
+		break;
+		case 'none':
+			f = function(node) { return false; }
+		break;
+		case 'invert':
+			f = function(node) { return !node.checked; }
+		break;
+		}		
+		for each (var node in document.getElementsByTagName('richlistitem')) {
+			node.checked = f(node);
 		}
 	}
 };
