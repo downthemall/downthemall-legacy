@@ -71,9 +71,9 @@
 	
 	<popupset id="popups">
 		<popup id="context">
-			<menuitem class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="Metalinker.selectAll();" />
-			<menuitem class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="Metalinker.invertSelection();" />
-			<menuitem class="menuitem-iconic" label="&selectnone.label;" image="chrome://dta/skin/common/selectnone.png" oncommand="Metalinker.selectNone();" />
+			<menuitem class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="Metalinker.select('all');" />
+			<menuitem class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="Metalinker.select('invert');" />
+			<menuitem class="menuitem-iconic" label="&selectnone.label;" image="chrome://dta/skin/common/selectnone.png" oncommand="Metalinker.select('none');" />
 		</popup>
 	</popupset>	
 		
