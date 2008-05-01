@@ -417,8 +417,7 @@ var Dialog = {
 			// build the actual array holding all selected links
 			var links = this.current._links;
 			var out = [];
-			for (var i = 0; i < links.length; ++i) {
-				var link = links[i];
+			for each (let link in links) {
 				if (!link.checked.length) {
 					continue;
 				}
@@ -441,8 +440,8 @@ var Dialog = {
 			Preferences.setDTA("lastqueued", !start);
 			
 			var boxen = this.boxen;
-			for (var i = 0; i < boxen.length; ++i) {
-				boxen[i].filter.active = boxen[i].checked;
+			for each (let box in boxen) {
+				box.filter.active = box.checked;
 			}
 			DTA_FilterManager.save();
 
@@ -510,11 +509,11 @@ var Dialog = {
 		var idx = 0;
 		var boxen = this.boxen;
 		var filters = [];
-		for (var i = 0; i < boxen.length; ++i) {
-			if (!boxen[i].checked) {
+		for each (let box in boxen) {
+			if (!box.checked) {
 				continue;
 			}
-			filters.push(boxen[i].filter);
+			filters.push(box.filter);
 		}
 		let fast = null;
 		try {

@@ -148,9 +148,9 @@
 						popup.removeChild(popup.lastChild);
 					}
 
-					for (var i =  0; i < values.length && i < this._max; ++i) {
+					for each (var val in values) {
 						var node = document.createElement('menuitem');
-						node.setAttribute('label', values[i]);
+						node.setAttribute('label', val);
 						popup.appendChild(node);
 					}
 
