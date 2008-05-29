@@ -1,0 +1,15 @@
+<!ENTITY title "DownThemAll! - Зробіть свій вибір">
+<!ENTITY filters.caption "">
+<!ENTITY additional.caption "">
+<!ENTITY additional.tip "Текстові фільтри: можна використовувати декілька текстових фільтрів розмежовуючи їх комою.">
+<!ENTITY regex.label "">
+<!ENTITY filter.tip "">
+<!ENTITY status.label "">
+<!ENTITY menu.mask.title "Змінити маску перейменування...">
+<!ENTITY menu.check.label "Обрати виділені пункти">
+<!ENTITY menu.uncheck.label "Не обирати виділені пункти">
+<!ENTITY menu.toggle.label "">
+<!ENTITY tab.links.label "">
+<!ENTITY tab.pics.label "">
+<!ENTITY header.desc.label "Опис">
+<!ENTITY selectfiltered.label "">

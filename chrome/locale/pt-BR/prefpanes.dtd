@@ -1,4 +1,4 @@
-<!ENTITY winstyle "largura:52em;altura:42em;">
+<!ENTITY winstyle "width:72em;height:52em;">
 <!ENTITY filterspane.label "Filtros">
 <!ENTITY listhead1.label "Nome">
 <!ENTITY listhead2.label "Extensões">
@@ -31,9 +31,9 @@
 <!ENTITY mainpane.closedta.label "Fechar o DownThemAll quando os downloads terminarem">
 <!ENTITY privacypane.label "Privacidade">
 <!ENTITY privacypane.closing.caption "Quando a janela do gerenciador é fechada">
-<!ENTITY privacypane.removecompleted.label "Remover da lista dos downloads completos">
-<!ENTITY privacypane.removecanceled.label "Remover da lista dos downloads cancelados e/ou com erros">
-<!ENTITY privacypane.removeaborted.label "Remover da lista dos downloads não iniciados">
+<!ENTITY privacypane.removecompleted.label "Remover da lista os downloads concluídos">
+<!ENTITY privacypane.removecanceled.label "Remover da lista os downloads cancelados e/ou com erros">
+<!ENTITY privacypane.removeaborted.label "Remover da lista os downloads não concluídos">
 <!ENTITY privacypane.deletefoldershistory.label "Excluir Histórico de Pastas">
 <!ENTITY privacypane.deletefiltershistory.label "Excluir Histórico de Filtros Adicionais">
 <!ENTITY privacypane.showlog.label "Exibir Log">
@@ -47,7 +47,7 @@
 <!ENTITY privacypane.logs.caption "Logs de Diagnóstico">
 <!ENTITY privacypane.enablelogs.label "Ativar diagnóstico de logs">
 <!ENTITY privacypane.notice.caption "Alerta">
-<!ENTITY privacypane.notice.desc "O DownThemAll também integra a opção Limpar dados pessoais(se disponível).">
+<!ENTITY privacypane.notice.desc "O DownThemAll também integra a opção Limpar dados pessoais (se disponível).">
 <!ENTITY privacypane.privacynotice.label "Nossa política de privacidade">
 <!ENTITY advancedpane.label "Avançado">
 <!ENTITY advancedpane.multipart.caption "Download Multi-partes">
@@ -60,7 +60,7 @@
 <!ENTITY advancedpane.minutes "minutos">
 <!ENTITY advancedpane.misc.caption "Opções Miscelâneas">
 <!ENTITY advancedpane.settime.label "Ajustar horário do arquivo de acordo com a última modificação no servidor ou tempo de espera">
-<!ENTITY advancedpane.rememberoneclick.label "Tenha um lembrete do OneClick se isso for aplicado para todas as abas ou para a aba atual">
+<!ENTITY advancedpane.rememberoneclick.label "Tenha um lembrete do dTa OneClick se isso for aplicado para todas as abas ou para a aba atual">
 <!ENTITY advancedpane.tempfiles.caption "Arquivos temporários">
 <!ENTITY advancedpane.usetemp.label "Salvar partes do download no diretório temporário">
 <!ENTITY advancedpane.tempdir.label "Usar esta pasta:">
