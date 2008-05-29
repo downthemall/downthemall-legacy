@@ -71,10 +71,6 @@ var SessionManager = {
 			return;
 		}
 
-		this._converter = Components.classes["@mozilla.org/intl/saveascharset;1"]
-			.createInstance(Ci.nsISaveAsCharset);
-		this._converter.Init('utf-8', 1, 0);
-
 		this.load();
 	},
 	shutdown: function() {
@@ -124,7 +120,7 @@ var SessionManager = {
 			throw new Exception("You must provide a Download to save!");
 		}
 		let s = this._addStmt;
-		s.bindUTF8StringParameter(0, this._converter.Convert(download));
+		s.bindStringParameter(0, download);
 		s.execute();
 		s.reset();
 		return this._con.lastInsertRowID;
@@ -136,7 +132,7 @@ var SessionManager = {
 
 		let s = this._saveStmt;
 		s.bindInt64Parameter(0, id);
-		s.bindUTF8StringParameter(1, this._converter.Convert(download));
+		s.bindStringParameter(1, download);
 		s.execute();
 		s.reset();
 	},
