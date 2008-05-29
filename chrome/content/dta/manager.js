@@ -1464,7 +1464,7 @@ QueueItem.prototype = {
 			this.resumable = true;
 			this._autoRetries = 0;
 			delete this._autoRetryTime;
-
+			this.save();
 		} catch(ex) {
 			Debug.log("cancel():", ex);
 		}
