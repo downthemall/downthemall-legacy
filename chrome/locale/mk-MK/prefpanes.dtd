@@ -1,4 +1,4 @@
-<!ENTITY winstyle "ширина:52em;висина42em;">
+<!ENTITY winstyle "width:52em;height:42em;">
 <!ENTITY filterspane.label "Филтри">
 <!ENTITY listhead1.label "Наслов">
 <!ENTITY listhead2.label "Наставки">
@@ -60,7 +60,7 @@
 <!ENTITY advancedpane.minutes "минути">
 <!ENTITY advancedpane.misc.caption "Различни подесувања">
 <!ENTITY advancedpane.settime.label "Подеси датотечни времиња на последно изменето време(сервер) или на време на редица">
-<!ENTITY advancedpane.rememberoneclick.label "Дозволи OneClick да запамти дали важи за Сите Табови или за Тековниот Таб">
+<!ENTITY advancedpane.rememberoneclick.label "Дозволи dTa OneClick да запамти дали важи за Сите Табови или за Тековниот Таб">
 <!ENTITY advancedpane.tempfiles.caption "Привремени датотеки">
 <!ENTITY advancedpane.usetemp.label "Зачувај симнати делови во привремената датотека">
 <!ENTITY advancedpane.tempdir.label "Користете ја оваа папка:">

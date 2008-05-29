@@ -2,7 +2,7 @@
 <!ENTITY filters.caption "Filter">
 <!ENTITY additional.caption "Schnelles Filtern">
 <!ENTITY additional.tip "Textfilter: Es können mehrere Textfilter gleichzeitig kommagetrennt angegeben werden.">
-<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY regex.label "Regulärer Ausdruck">
 <!ENTITY filter.tip "Geben Sie hier Ihre Textfilter ein (Beispiele siehe Auswahlliste)">
 <!ENTITY status.label "Nach dem Auswählen von Links auf Start klicken!">
 <!ENTITY menu.mask.title "Umbenennungsschema ändern...">

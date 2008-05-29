@@ -41,7 +41,7 @@
 <!ENTITY privacypane.deletelog.label "Poista loki">
 <!ENTITY privacypane.updates.caption "Päivitys/Internet">
 <!ENTITY privacypane.information.label "Salli laajennuksen ladata uutiset, viestit ja tarkistaa viimeisin versio">
-<!ENTITY privacypane.statistics.label "Anna DTA:n kerätä nimettömiä käyttötietoja">
+<!ENTITY privacypane.statistics.label "Anna dTa:n kerätä nimettömiä käyttötietoja">
 <!ENTITY privacypane.dropdowns.caption "Pudotusvalikot">
 <!ENTITY privacypane.dropdownresults.label "Pidettävien kohteiden määrä">
 <!ENTITY privacypane.logs.caption "Tilanneloki">
@@ -59,11 +59,11 @@
 <!ENTITY advancedpane.minute "minuutti">
 <!ENTITY advancedpane.minutes "minuuttia">
 <!ENTITY advancedpane.misc.caption "Sekalaiset asetukset">
-<!ENTITY advancedpane.settime.label "Aseta tiedostojen ajaksi muokkausaika (palvelimelta) tai aika, jolloin lisätty jonoon">
-<!ENTITY advancedpane.rememberoneclick.label "Aseta OneClick muistamaan, koskeeko se kaikkia välilehtiä vai vain nykyistä">
+<!ENTITY advancedpane.settime.label "Aseta tiedostojen ajaksi muokkausaika (palvelimelta) tai aika jolloin lisätty jonoon">
+<!ENTITY advancedpane.rememberoneclick.label "Aseta dTa OneClick muistamaan, koskeeko se kaikkia välilehtiä vai vain nykyistä">
 <!ENTITY advancedpane.tempfiles.caption "Väliaikaistiedostot">
 <!ENTITY advancedpane.usetemp.label "Tallenna latauksen osat väliaikaiskansioon">
-<!ENTITY advancedpane.tempdir.label "Käytä hakemistoa:">
+<!ENTITY advancedpane.tempdir.label "Hakemisto:">
 <!ENTITY uipane.label "Käyttöliittymä">
 <!ENTITY uipane.appearance.caption "Ulkonäkö">
 <!ENTITY uipane.namesonly.label "Näytä hallintaikkunassa vain tiedostonimet">

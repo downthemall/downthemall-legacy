@@ -1,0 +1,77 @@
+<!ENTITY winstyle "">
+<!ENTITY filterspane.label "Фільтри">
+<!ENTITY listhead1.label "Заголовок">
+<!ENTITY listhead2.label "Розширення">
+<!ENTITY filter.label "Фільтр розширень:">
+<!ENTITY regex.label "Регулярний вираз">
+<!ENTITY useAs.label "Використовувати як:">
+<!ENTITY imagesf.label "Фільтр зображень">
+<!ENTITY linksf.label "Фільтр посилань">
+<!ENTITY add.label "Додати новий фільтр">
+<!ENTITY highlight.label "Підсвічувати файли відмічені фільтрами">
+<!ENTITY dtacontext2.label "Налаштування">
+<!ENTITY buttonlabelextra2 "Відновити стандартні налаштування">
+<!ENTITY dtaPreferences.title "Налаштування DownThemAll!">
+<!ENTITY manager "Менеджер dTa">
+<!ENTITY mainpane.label "Головні">
+<!ENTITY mainpane.rename.caption "Якщо файл існує, тоді:">
+<!ENTITY mainpane.rename.label "Перейменувати">
+<!ENTITY mainpane.overwrite.label "Перезаписати">
+<!ENTITY mainpane.skip.label "Пропустити">
+<!ENTITY mainpane.ask.label "Спитати">
+<!ENTITY mainpane.downloads.caption "">
+<!ENTITY mainpane.concurrent.label "Максимальна кількість одночасних завантажень:">
+<!ENTITY mainpane.sounderror.label "при виникненні помилки">
+<!ENTITY mainpane.closetab.label "Закривати вихідну вкладку при старті DownThemAll">
+<!ENTITY mainpane.alert.caption "Повідомляти про завершення завантажень за допомогою:">
+<!ENTITY mainpane.alertboxes.label "вікна попередження">
+<!ENTITY mainpane.alertslides.label "вигулькного вікна Firefox">
+<!ENTITY mainpane.alertnone.label "не повідомляти">
+<!ENTITY mainpane.sounddone.label "при виконанні всих завантаженнь ">
+<!ENTITY mainpane.closedta.label "Закривати DownThemAll при завершенні завантажень">
+<!ENTITY privacypane.label "Приватність">
+<!ENTITY privacypane.closing.caption "">
+<!ENTITY privacypane.removecompleted.label "Видаляти виконані завантаження зі списку">
+<!ENTITY privacypane.removecanceled.label "Видаляти скасовані/помилкові завантаження зі списку">
+<!ENTITY privacypane.removeaborted.label "Видаляти завантаження, які не розпочалися">
+<!ENTITY privacypane.deletefoldershistory.label "Видаляти теки історії">
+<!ENTITY privacypane.deletefiltershistory.label "Видаляти історію додаткових фільтрів">
+<!ENTITY privacypane.showlog.label "Переглянути фурнал">
+<!ENTITY privacypane.reveallog.label "">
+<!ENTITY privacypane.deletelog.label "Видалити журнал">
+<!ENTITY privacypane.updates.caption "">
+<!ENTITY privacypane.information.label "Заборонити dTa завантажувати новини, повідомлення та інформацію про оновлення">
+<!ENTITY privacypane.statistics.label "">
+<!ENTITY privacypane.dropdowns.caption "Меню вигулькного списку">
+<!ENTITY privacypane.dropdownresults.label "">
+<!ENTITY privacypane.logs.caption "Журнал діагностики">
+<!ENTITY privacypane.enablelogs.label "">
+<!ENTITY privacypane.notice.caption "">
+<!ENTITY privacypane.notice.desc "">
+<!ENTITY privacypane.privacynotice.label "">
+<!ENTITY advancedpane.label "Розширені">
+<!ENTITY advancedpane.multipart.caption "Багаточастинне завантаження">
+<!ENTITY advancedpane.chunks.label "Максимальна кількість частин завантаження:">
+<!ENTITY advancedpane.chunksdisabled "1 (Вимкнено)">
+<!ENTITY advancedpane.timeouts.caption "Час очікування завантаження">
+<!ENTITY advancedpane.timeout.label "Максимальний час очікування перед перервою">
+<!ENTITY advancedpane.seconds "">
+<!ENTITY advancedpane.minute "">
+<!ENTITY advancedpane.minutes "">
+<!ENTITY advancedpane.misc.caption "">
+<!ENTITY advancedpane.settime.label "">
+<!ENTITY advancedpane.rememberoneclick.label "">
+<!ENTITY advancedpane.tempfiles.caption "Тимчасові файли">
+<!ENTITY advancedpane.usetemp.label "Зберігити частини завантаження у тимчасовій теці">
+<!ENTITY advancedpane.tempdir.label "">
+<!ENTITY uipane.label "Інтерфейс користувача">
+<!ENTITY uipane.appearance.caption "">
+<!ENTITY uipane.namesonly.label "">
+<!ENTITY uipane.integration.caption "">
+<!ENTITY uipane.downloadwin.label "">
+<!ENTITY uipane.context.caption "Контекстне меню">
+<!ENTITY uipane.tools.caption "Меню інструментів">
+<!ENTITY uipane.tbbuttons.caption "">
+<!ENTITY uipane.compact.label "Використовувати компактне меню">
+<!ENTITY uipane.hide.label "">
+<!ENTITY uipane.showtooltip.label "">

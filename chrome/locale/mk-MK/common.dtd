@@ -1,7 +1,7 @@
 <!ENTITY start.label "Редица!">
-<!ENTITY start.key "q">
+<!ENTITY start.key "Р">
 <!ENTITY queue.label "Додај паузирано">
-<!ENTITY queue.key "p">
+<!ENTITY queue.key "Д">
 <!ENTITY cancel.label "Откажи">
 <!ENTITY options.label "Својства...">
 <!ENTITY dtahelp "Помош!">

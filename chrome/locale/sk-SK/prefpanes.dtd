@@ -60,7 +60,7 @@
 <!ENTITY advancedpane.minutes "min.">
 <!ENTITY advancedpane.misc.caption "Rôzne nastavenia">
 <!ENTITY advancedpane.settime.label "Nastaviť časy súborov podľa času poslednej zmeny (server) alebo času zaradenia do frontu">
-<!ENTITY advancedpane.rememberoneclick.label "Povoliť pamätanie funkcie OneClick, ak sa použije na aktuál. kartu alebo všetky karty">
+<!ENTITY advancedpane.rememberoneclick.label "Povoliť pamätanie funkcie dTa OneClick, ak sa použije na aktuál. kartu alebo všetky karty">
 <!ENTITY advancedpane.tempfiles.caption "Dočasné súbory">
 <!ENTITY advancedpane.usetemp.label "Uložiť prevzaté časti do dočasného priečinka">
 <!ENTITY advancedpane.tempdir.label "Použiť tento priečinok:">

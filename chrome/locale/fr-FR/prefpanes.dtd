@@ -12,7 +12,7 @@
 <!ENTITY dtacontext2.label "Préférences">
 <!ENTITY buttonlabelextra2 "Rétablir les paramètres par défaut">
 <!ENTITY dtaPreferences.title "Préférences de DownThemAll!…">
-<!ENTITY manager "Gestionnaire de DTA!">
+<!ENTITY manager "Gestionnaire de dTa!">
 <!ENTITY mainpane.label "Principales">
 <!ENTITY mainpane.rename.caption "Si un nom de fichier existe déjà :">
 <!ENTITY mainpane.rename.label "Renommer">
@@ -41,7 +41,7 @@
 <!ENTITY privacypane.deletelog.label "Supprimer le journal">
 <!ENTITY privacypane.updates.caption "Mises à jour/Internet">
 <!ENTITY privacypane.information.label "Autoriser le téléchargement des nouveautés et des dernières versions">
-<!ENTITY privacypane.statistics.label "Autoriser DTA! à collecter et transférer des statistiques d&apos;utilisation anonymes">
+<!ENTITY privacypane.statistics.label "Autoriser dTa! à collecter et transférer des statistiques d&apos;utilisation anonymes">
 <!ENTITY privacypane.dropdowns.caption "Menus déroulants">
 <!ENTITY privacypane.dropdownresults.label "Nombre d&apos;éléments à conserver">
 <!ENTITY privacypane.logs.caption "Journal de diagnostic">
@@ -60,7 +60,7 @@
 <!ENTITY advancedpane.minutes "minutes">
 <!ENTITY advancedpane.misc.caption "Paramètres divers">
 <!ENTITY advancedpane.settime.label "Fixer l&apos;horaire du fichier à l&apos;horaire de dernière modification (serveur) ou d&apos;attente dans la file">
-<!ENTITY advancedpane.rememberoneclick.label "OneClick! doit se souvenir s&apos;il s&apos;applique à tous les onglets ou à l&apos;onglet courant">
+<!ENTITY advancedpane.rememberoneclick.label "dTa OneClick! doit se souvenir s&apos;il s&apos;applique à tous les onglets ou à l&apos;onglet courant">
 <!ENTITY advancedpane.tempfiles.caption "Fichiers temporaires">
 <!ENTITY advancedpane.usetemp.label "Enregistrer les segments dans un dossier temporaire">
 <!ENTITY advancedpane.tempdir.label "Utiliser ce dossier :">

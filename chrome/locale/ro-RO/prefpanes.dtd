@@ -60,7 +60,7 @@
 <!ENTITY advancedpane.minutes "minute">
 <!ENTITY advancedpane.misc.caption "Setări diverse">
 <!ENTITY advancedpane.settime.label "Setează data fișierului la data ultimei modificări sau la data punerii la coadă">
-<!ENTITY advancedpane.rememberoneclick.label "OneClick să țină minte dacă este aplicat la Toate filele sau la Fila curentă">
+<!ENTITY advancedpane.rememberoneclick.label "dTa OneClick să țină minte dacă este aplicat la Toate filele sau la Fila curentă">
 <!ENTITY advancedpane.tempfiles.caption "Fișiere temporare">
 <!ENTITY advancedpane.usetemp.label "Salvează părțile descărcărilor într-un director temporar">
 <!ENTITY advancedpane.tempdir.label "Folosește acest director:">

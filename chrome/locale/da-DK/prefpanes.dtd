@@ -60,7 +60,7 @@
 <!ENTITY advancedpane.minutes "minutter">
 <!ENTITY advancedpane.misc.caption "Diverse indstillinger">
 <!ENTITY advancedpane.settime.label "Sæt filens tidspunkter til servers tidspunkt for sidste modifikation eller tidspunkt for køplacering">
-<!ENTITY advancedpane.rememberoneclick.label "Husk om OneClick gælder for alle tabs eller kun den aktuelle tab">
+<!ENTITY advancedpane.rememberoneclick.label "Husk om dTa OneClick gælder for alle tabs eller kun den aktuelle tab">
 <!ENTITY advancedpane.tempfiles.caption "Midlertidige filer">
 <!ENTITY advancedpane.usetemp.label "Gem dele af downloads i en midlertidig mappe">
 <!ENTITY advancedpane.tempdir.label "Brug denne mappe:">

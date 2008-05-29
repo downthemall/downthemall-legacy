@@ -60,7 +60,7 @@
 <!ENTITY advancedpane.minutes "minutos">
 <!ENTITY advancedpane.misc.caption "Definições várias">
 <!ENTITY advancedpane.settime.label "Aplicar a hora dos ficheiros à última hora de modificação (servidor) ou hora de espera">
-<!ENTITY advancedpane.rememberoneclick.label "O OneClick deve lembrar-se se se aplica a Todos os Separadores ou ao Separador Actual">
+<!ENTITY advancedpane.rememberoneclick.label "O dTa OneClick deve lembrar-se se se aplica a Todos os Separadores ou ao Separador Actual">
 <!ENTITY advancedpane.tempfiles.caption "Ficheiros temporários">
 <!ENTITY advancedpane.usetemp.label "Guardar as partes da transferência numa directoria temporária">
 <!ENTITY advancedpane.tempdir.label "Usar esta Directoria:">

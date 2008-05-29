@@ -60,7 +60,7 @@
 <!ENTITY advancedpane.minutes "minuter">
 <!ENTITY advancedpane.misc.caption "Diverse inställningar">
 <!ENTITY advancedpane.settime.label "Ange serverns senast ändrad-tid som filens skapad-tid">
-<!ENTITY advancedpane.rememberoneclick.label "OneClick behåller inställningarna (Alla flikar/aktuell flik)">
+<!ENTITY advancedpane.rememberoneclick.label "dTa OneClick behåller inställningarna (Alla flikar/aktuell flik)">
 <!ENTITY advancedpane.tempfiles.caption "Temporära filer">
 <!ENTITY advancedpane.usetemp.label "Spara hämtningsdelarna i en tillfällig mapp">
 <!ENTITY advancedpane.tempdir.label "Använd denna map:">

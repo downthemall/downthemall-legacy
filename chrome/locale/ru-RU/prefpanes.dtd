@@ -60,7 +60,7 @@
 <!ENTITY advancedpane.minutes "минуты">
 <!ENTITY advancedpane.misc.caption "Разные настройки">
 <!ENTITY advancedpane.settime.label "Устанавливать файлу время по времени последнего изменения (сервера) или по времени в очереди">
-<!ENTITY advancedpane.rememberoneclick.label "Запоминать действие OneClick относящееся ко всем вкладкам или текущей вкладке">
+<!ENTITY advancedpane.rememberoneclick.label "Запоминать действие dTa OneClick относящееся ко всем вкладкам или текущей вкладке">
 <!ENTITY advancedpane.tempfiles.caption "Временные файлы">
 <!ENTITY advancedpane.usetemp.label "Сохранять части загрузки во временной директории">
 <!ENTITY advancedpane.tempdir.label "Используется каталог:">
