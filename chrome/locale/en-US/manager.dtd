@@ -34,6 +34,7 @@
 <!ENTITY cancel.label "Cancel">
 <!ENTITY remove.label "Remove selected downloads">
 <!ENTITY removeCompleted.label "Remove completed tasks">
+<!ENTITY removeGone.label "Clean gone files">
 <!ENTITY misc.label "Misc">
 <!ENTITY addchunk.label "One more segment">
 <!ENTITY removechunk.label "One less segment">
