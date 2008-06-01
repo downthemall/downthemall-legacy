@@ -364,6 +364,39 @@ var Tree = {
 		this.invalidate();		
 		this._removeJump(delta - this._downloads.length, last);
 	},
+	
+	_removeCompleted: function T__removeCompleted(onlyGone) {
+		SessionManager.beginUpdate();
+		this.beginUpdate();
+		let delta = this._downloads.length, last = 0;
+		for (let i = delta - 1; i > -1; --i) {
+			let d = this._downloads[i];
+			if (!d.is(COMPLETE)) {
+				continue;
+			}
+			if (onlyGone && (new FileFactory(d.destinationFile).exists())) {
+				continue;
+			}
+			this._downloads.splice(d.position, 1);
+			this._box.rowCountChanged(d.position, -1);
+			last = Math.max(d.position, last);
+			d.remove();						
+		}
+		SessionManager.endUpdate();
+		this.endUpdate();	
+		if (delta == this._downloads.length) {
+			return;
+		}
+		this.selection.clearSelection();
+		this.invalidate();		
+		this._removeJump(delta - this._downloads.length, last);
+	},
+	removeCompleted: function T_removeCompleted() {
+		this._removeCompleted(false);
+	},
+	removeGone: function T_removeGone() {
+		this._removeCompleted(true);
+	},
 	_removeJump: function(delta, last) {
 		if (!this.rowCount) {
 			this._box.ensureRowIsVisible(0);
