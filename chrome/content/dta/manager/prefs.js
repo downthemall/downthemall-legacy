@@ -83,26 +83,23 @@ var Prefs = {
 
 	_refreshPrefs: function(prefName) {
 		Debug.logString("pref reload");
-		this.mappings.forEach(
-			function(e) {
-				let key, pref, def;
-				if (!e) {
-					return;
-				}
-				else if (e.length == 3) {
-					key = e[0];
-					pref = e[1];
-					def = e[2];
-				}
-				else {
-					key = e[0];
-					pref = key.toLowerCase();
-					def = e[1];
-				}
-				this[key] = Preferences.getDTA(pref, def);
-			},
-			this
-		);
+		for each (let e in this.mappings) {
+			let key, pref, def;
+			if (!e) {
+				return;
+			}
+			else if (e.length == 3) {
+				key = e[0];
+				pref = e[1];
+				def = e[2];
+			}
+			else {
+				key = e[0];
+				pref = key.toLowerCase();
+				def = e[1];
+			}
+			this[key] = Preferences.getDTA(pref, def);
+		}
 		
 		var perms = Prefs.permissions;
 		if (perms & 0600) {

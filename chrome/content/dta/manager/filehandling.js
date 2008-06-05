@@ -84,11 +84,9 @@
 		var msg = '';
 		if (list.length < 25) {
 			msg = _('deletetexts');
-			list.forEach(
-				function(d) {
-					msg += "\n" + (new FileFactory(d.destinationFile)).leafName;
-				}
-			);				
+			for each (let d in list) {
+				msg += "\n" + (new FileFactory(d.destinationFile)).leafName;
+			}
 		}
 		else {
 			msg = _('deletetextl', [list.length]);
@@ -96,19 +94,17 @@
 		if (list.length && DTA_confirm(_('deletetitle'), msg, _('delete'), DTA_confirm.CANCEL, null, 1)) {
 			return;
 		}
-		list.forEach(
-			function(d) {
-				try {
-					var file = new FileFactory(d.destinationFile);
-					if (file.exists()) {
-						file.remove(false);
-					}
-				}
-				catch (ex) {
-					// no-op
+		for each (let d in list) {
+			try {
+				var file = new FileFactory(d.destinationFile);
+				if (file.exists()) {
+					file.remove(false);
 				}
 			}
-		);
+			catch (ex) {
+				// no-op
+			}
+		}
 		Tree.remove(null, true);
 	}
 };

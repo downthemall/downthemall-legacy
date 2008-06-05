@@ -72,11 +72,9 @@ var Dialog = {
 			else {
 				// more than just one download
 				$('infoDest').value = document.title;
-				$('infoURL', 'infoSize', 'sourcePage').forEach(
-					function(e) {
-						e.value = "---";
-					}
-				);
+				for each (let e in $('infoURL', 'infoSize', 'sourcePage')) {
+					e.value = "---";
+				}
 				$("hash").setAttribute('readonly', 'true');
 				$("hash").setAttribute('disabled', 'true');
 	
@@ -94,12 +92,10 @@ var Dialog = {
 				$('canvasGrid').hidden = true;
 			}				
 			if (downloads.every(function(d) { return d.is(COMPLETE, FINISHING); })) {
-				$('directory', 'renaming', 'mask', 'browsedir').forEach(
-					function(e) {
-						e.setAttribute('readonly', 'true');
-						e.setAttribute('disabled', 'true');
-					}
-				);
+				for each (let e in $('directory', 'renaming', 'mask', 'browsedir')) {
+					e.setAttribute('readonly', 'true');
+					e.setAttribute('disabled', 'true');
+				}
 			}
 			if (this.isFullyDisabled) {
 				$('dTaDownloadInfo').buttons = 'accept';
@@ -150,31 +146,29 @@ var Dialog = {
 			}
 		}
 		
-		t.forEach(
-			function(d) {
-				if (d.is(COMPLETE, FINISHING)) {
-					return;
-				}
-				if (directory) {
-					d.pathName = directory;
-				}
-				if (mask) {
-					d.mask = mask;
-				}
-				if (description) {
-					d.description = description;
-				}
-				if (newRef) {
-					try {
-						d.referrer.spec = newRef;
-					}
-					catch (ex) {
-						Debug.log("failed to set referrer to", newRef);
-					}
-				}
-				d.save();
+		for each (let d in t) {
+			if (d.is(COMPLETE, FINISHING)) {
+				return;
 			}
-		);
+			if (directory) {
+				d.pathName = directory;
+			}
+			if (mask) {
+				d.mask = mask;
+			}
+			if (description) {
+				d.description = description;
+			}
+			if (newRef) {
+				try {
+					d.referrer.spec = newRef;
+				}
+				catch (ex) {
+					Debug.log("failed to set referrer to", newRef);
+				}
+			}
+			d.save();
+		}
 		
 		Tooltip.stop();
 		return true;
