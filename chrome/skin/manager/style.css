@@ -143,6 +143,10 @@ stack > #infoPercent {
 	font-size: 105%;
 }
 
+#downloads[offline]  {
+	color: gray !important;
+}
+
 treechildren::-moz-tree-progressmeter(completed) {
   color: #008F00 !important;
 }
