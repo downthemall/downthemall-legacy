@@ -1675,7 +1675,12 @@ QueueItem.prototype = {
 			e.hash = _atos(this.hash.sum);
 			e.hashType = _atos(this.hash.type);
 		}
-		e.state = this.is(COMPLETE, CANCELED, FINISHING) ? this.state : PAUSED;
+		if (this.autoRetrying) {
+			e.state = QUEUED;
+		}
+		else {
+			e.state = this.state;
+		}
 		if (this.destinationNameOverride) {
 			this.destinationName = this.destinationNameOverride;
 		}
