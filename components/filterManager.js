@@ -122,12 +122,9 @@ Filter.prototype = {
 		var parts = str.split(',');
 		// we contain multiple filters
 		if (parts.length > 1) {
-			parts.forEach(
-				function(s) {
-					this._makeRegs(s);
-				},
-				this
-			);
+			for each (var e in parts) { 
+				this._makeRegs(s);
+			}
 			return;
 		}
 
@@ -475,17 +472,14 @@ var FilterManager = {
 	},
 
 	save: function FM_save() {
-		this._all.forEach(
-			function(f) {
-				try {
-					f.save();
-				}
-				catch (ex) {
-					debug(ex);
-				}
-			},
-			this
-		);
+		for each (var f in this._all) {
+			try {
+				f.save();
+			}
+			catch (ex) {
+				debug(ex);
+			}
+		}
 	},
 	
 	getTmpFromString: function FM_getTmpFromString(expression) {

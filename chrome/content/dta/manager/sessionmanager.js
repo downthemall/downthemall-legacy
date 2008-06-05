@@ -240,11 +240,9 @@ var SessionManager = {
 					d._state = get('state');
 				}
 				if (d.is(PAUSED)) {
-					down.chunks.forEach(
-						function(c) {
-							d.chunks.push(new Chunk(d, c.start, c.end, c.written));
-						}
-					);
+					for each (let c in down.chunk) {
+						d.chunks.push(new Chunk(d, c.start, c.end, c.written));
+					}
 					d.refreshPartialSize();
 					d.status = _('paused');
 				}

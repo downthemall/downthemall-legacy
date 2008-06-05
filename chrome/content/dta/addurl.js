@@ -190,10 +190,9 @@ function BatchGenerator(link) {
 			this._pats.splice(i + 1, 1);
 		}
 	}
-	this._pats.forEach(
-		function(i) { this._length *= i.length; },
-		this
-	);
+	for each (let i in this._pats) {
+		this._length *= i.length;
+	}
 }
 BatchGenerator.prototype = {
 	_checkRange: function(start, end, step) {

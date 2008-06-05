@@ -99,17 +99,14 @@ var MigrationService = {
 		}
 	},
 	_execute: function MM_execute(types) {
-		types.forEach(
-			function(e) {
-				try {
-					this['_migrate' + e]();
-				}
-				catch (ex) {
-					error('MigrationManager: failed to migrate ' + e + ", " + ex);
-				}
-			},
-			this
-		);
+		for each (var e in types) {
+			try {
+				this['_migrate' + e]();
+			}
+			catch (ex) {
+				error('MigrationManager: failed to migrate ' + e + ", " + ex);
+			}
+		}
 	},
 	
 	// pre-1.0: convert prefs
@@ -137,25 +134,22 @@ var MigrationService = {
 			['context.removecompleted', 'removecompleted', true],
 			['numistance', 'counter', 0]
 		];
-		toMigrate.forEach(
-			function(e) {
-				try {
-					var oldName = e[0], newName = e[1], defaultValue = null;
-					if (e.length == 3) {
-						defaultValue = e[2];
-					}
-					var nv = DTA_preferences.getDTA(newName, defaultValue);
-					var ov = DTA_preferences.getDTA(oldName, nv);
-					if (ov != nv) {	
-						DTA_preferences.setDTA(newName, ov);
-					}
+		for each (var e in toMigrate) {
+			try {
+				var oldName = e[0], newName = e[1], defaultValue = null;
+				if (e.length == 3) {
+					defaultValue = e[2];
 				}
-				catch (ex) {
-					error('MM: failed ' + newName + ", " + ex);
+				var nv = DTA_preferences.getDTA(newName, defaultValue);
+				var ov = DTA_preferences.getDTA(oldName, nv);
+				if (ov != nv) {	
+					DTA_preferences.setDTA(newName, ov);
 				}
-			},
-			this
-		);
+			}
+			catch (ex) {
+				error('MM: failed ' + newName + ", " + ex);
+			}
+		}
 	},
 	
 	// 1.0.1: #613 Multiple "slow-down" reports

@@ -53,7 +53,9 @@ var Tooltip = {
 			// we don't support 2d-canvas
 			this.updateChunks = this.updateChunksAlt;
 			this.updateSpeeds = function() {};
-			$('chunkStack', 'speedCanvas').forEach(function(node) { node.parentNode.removeChild(node); });
+			for each (var node in $('chunkStack', 'speedCanvas')) {
+				node.parentNode.removeChild(node);
+			}
 			$('infoPercentAlt').id = 'infoPercent';
 		}
 	},		 
@@ -168,12 +170,10 @@ var Tooltip = {
 			if (file.speeds.length > 1) {
 				let maxH, minH;
 				maxH = minH = file.speeds[0];
-				file.speeds.forEach(
-					function(s) {
-						maxH = Math.max(maxH, s);
-						minH = Math.min(minH, s);
-					}
-				);
+				for each (let s in file.speeds) {
+					maxH = Math.max(maxH, s);
+					minH = Math.min(minH, s);
+				}
 				// special case: all speeds are the same
 				let s;
 				if (minH == maxH) {
@@ -319,25 +319,18 @@ var Tooltip = {
 				{ x:3, f: chunkFillStyle, s:chunkFillStyle }
 			];
 			
-		
-			b.forEach(
-				function(chunk) {
-					passes.forEach(
-						function(pass) {
-							ctx.fillStyle = pass.f;
-							this._makeRoundedRectPath(ctx, chunk.s, 0, chunk.w - pass.x, cheight, 3);
-							ctx.fill();
-							if (pass.s) {
-								ctx.lineWidth = 2;
-								ctx.strokeStyle = pass.s;
-								ctx.stroke();
-							}
-						},
-						this
-					)
-				},
-				this
-			);
+			for each (var chunk in b) {
+				for each (var pass in passes) {
+					ctx.fillStyle = pass.f;
+					this._makeRoundedRectPath(ctx, chunk.s, 0, chunk.w - pass.x, cheight, 3);
+					ctx.fill();
+					if (pass.s) {
+						ctx.lineWidth = 2;
+						ctx.strokeStyle = pass.s;
+						ctx.stroke();
+					}
+				}
+			}
 			ctx.restore();
 	
 			// draw container chunks border
