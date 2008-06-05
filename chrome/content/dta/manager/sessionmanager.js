@@ -252,7 +252,10 @@ var SessionManager = {
 				}
 				else if (d.is(CANCELED)) {
 					d.status = _('canceled');
-				}			
+				}
+				else if (d.is(QUEUED)) {
+					d.status = _('queued');
+				}		
 				Tree.add(d);
 			}
 			catch (ex) {
