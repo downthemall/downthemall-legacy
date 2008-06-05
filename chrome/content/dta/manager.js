@@ -1543,7 +1543,7 @@ QueueItem.prototype = {
 	queue: function QI_queue() {
 		this._autoRetryTime = 0;
 		this.state = QUEUED;
-		this.status = _("inqueue");
+		this.status = _('queued');
 	},
 	resumeDownload: function QI_resumeDownload() {
 		Debug.logString("resumeDownload: " + this);
@@ -2599,7 +2599,7 @@ function startDownloads(start, downloads) {
 
 		qi.state = start ? QUEUED : PAUSED;
 		if (qi.is(QUEUED)) {
-			qi.status = _('inqueue');
+			qi.status = _('queued');
 		}
 		else {
 			qi.status = _('paused');
