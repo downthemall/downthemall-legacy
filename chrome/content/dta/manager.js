@@ -83,7 +83,11 @@ const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 const STREAMS_FREQ = 200;
 
 var Dialog = {
-	_observes: ['quit-application-requested', 'quit-application-granted'],
+	_observes: [
+		'quit-application-requested',
+		'quit-application-granted',
+		'network:offline-status-changed'
+	],
 	_initialized: false,
 	_wasRunning: false,
 	_lastTime: Utils.getTimestamp(),
@@ -136,6 +140,9 @@ var Dialog = {
 		}
 		else if (topic == 'quit-application-granted') {
 			this._forceClose = true;
+		}
+		else if (topic == 'network:offline-status-changed') {
+			
 		}
 	},
 	refresh: function D_refresh() {
@@ -1484,6 +1491,9 @@ QueueItem.prototype = {
 	sessionConnections: 0,
 	_autoRetries: 0,
 	_autoRetryTime: 0,
+	get autoRetrying() {
+		return !!this._autoRetryTime;
+	},
 	markAutoRetry: function QI_markRetry() {
 		if (!Prefs.autoRetryInterval || (Prefs.maxAutoRetries && Prefs.maxAutoRetries <= this._autoRetries)) {
 			 return;
