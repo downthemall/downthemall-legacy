@@ -46,12 +46,9 @@ var Tree = {
 		this._downloads = [];
 
 		let as = Serv('@mozilla.org/atom-service;1', 'nsIAtomService');
-		['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined'].forEach(
-			function(e) {
-				this['_' + e] = as.getAtom(e);
-			},
-			this
-		);
+		for each (let e in ['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined', 'pausedAutoretrying']) {
+			this['_' + e] = as.getAtom(e);
+		}
 		this.elem.view = this;	
 		
 	},
@@ -153,6 +150,9 @@ var Tree = {
 					if (!d.totalSize || d.partialSize / d.totalSize < .05) {
 						prop.AppendElement(this._pausedUndetermined);
 					}
+					if (d.autoRetrying) {
+						prop.AppendElement(this._pausedAutoretrying);
+					}
 				return;
 				case FINISHING:
 				case RUNNING: prop.AppendElement(this._inprogress); return;
@@ -241,12 +241,9 @@ var Tree = {
 				},
 				this
 			);
-			downloads.forEach(
-				function(qi) {
-					this._downloads.splice(row, 0, qi);
-				},
-				this
-			);
+			for each (let qi in downloads) {
+				this._downloads.splice(row, 0, qi);
+			}
 			
 			this.endUpdate();
 			this.invalidate();
@@ -317,23 +314,20 @@ var Tree = {
 		SessionManager.beginUpdate();
 		this.beginUpdate();
 		let last = 0;
-		downloads.forEach(
-			function(d) {
-				if (d.is(FINISHING)) {
-					// un-removable :p
-					return;
-				}
-				// wipe out any info/tmpFiles
-				if (!d.is(COMPLETE, CANCELED)) {
-					d.cancel();
-				}
-				this._downloads.splice(d.position, 1);
-				this._box.rowCountChanged(d.position, -1);
-				last = Math.max(d.position, last);
-				d.remove();				
-			},
-			this
-		);
+		for each (let d in downloads) {
+			if (d.is(FINISHING)) {
+				// un-removable :p
+				return;
+			}
+			// wipe out any info/tmpFiles
+			if (!d.is(COMPLETE, CANCELED)) {
+				d.cancel();
+			}
+			this._downloads.splice(d.position, 1);
+			this._box.rowCountChanged(d.position, -1);
+			last = Math.max(d.position, last);
+			d.remove();				
+		}
 		SessionManager.endUpdate();
 		this.endUpdate();
 		this.invalidate();
@@ -341,30 +335,6 @@ var Tree = {
 			this._removeJump(downloads.length, last);
 		}
 	},
-	removeCompleted: function T_removeCompleted() {
-		SessionManager.beginUpdate();
-		this.beginUpdate();
-		let delta = this._downloads.length, last = 0;
-		for (let i = delta - 1; i > -1; --i) {
-			let d = this._downloads[i];
-			if (!d.is(COMPLETE)) {
-				continue;
-			}
-			this._downloads.splice(d.position, 1);
-			this._box.rowCountChanged(d.position, -1);
-			last = Math.max(d.position, last);
-			d.remove();						
-		}
-		SessionManager.endUpdate();
-		this.endUpdate();	
-		if (delta == this._downloads.length) {
-			return;
-		}
-		this.selection.clearSelection();
-		this.invalidate();		
-		this._removeJump(delta - this._downloads.length, last);
-	},
-	
 	_removeCompleted: function T__removeCompleted(onlyGone) {
 		SessionManager.beginUpdate();
 		this.beginUpdate();
@@ -557,11 +527,9 @@ var Tree = {
 		}
 		try {
 			let empty = this.current == null;
-			$('info', 'remove', 'movetop', 'moveup', 'movedown', 'movebottom', 'toolmovetop', 'toolmoveup', 'toolmovedown', 'toolmovebottom')
-				.forEach(
-					function(o) { return o.setAttribute('disabled', empty); },
-					this
-				);
+			for each (let o in $('info', 'remove', 'movetop', 'moveup', 'movedown', 'movebottom', 'toolmovetop', 'toolmoveup', 'toolmovedown', 'toolmovebottom')) {
+				o.setAttribute('disabled', empty);
+			}
 				
 			let states = {
 				state: 0,
@@ -588,11 +556,9 @@ var Tree = {
 				if (!(items instanceof Array)) {
 					items = [items];
 				}
-				items.forEach(
-					function(o) {
-						o.setAttribute('disabled', disabled);
-					}
-				);
+				for each (let o in items) { 
+					o.setAttribute('disabled', disabled);
+				}
 			}
 			modifySome($('play', 'toolplay'), function(d) { return !d.is(COMPLETE, RUNNING, QUEUED, FINISHING); });
 			modifySome($('pause', 'toolpause'), function(d) { return (d.state & RUNNING && d.resumable) || (d.state & QUEUED); });
@@ -626,12 +592,9 @@ var Tree = {
 		}
 		else if (d instanceof Array) {
 			this.beginUpdate();
-			d.forEach(
-				function(e) {
-					this.invalidate(e);
-				},
-				this
-			);
+			for each (let e in d) {
+				this.invalidate(e);
+			}
 			this.endUpdate();
 		}
 		else if (d.position >= 0) {
