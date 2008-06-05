@@ -89,6 +89,22 @@ var Dialog = {
 		'network:offline-status-changed'
 	],
 	_initialized: false,
+	_offline: false,
+	get offline() {
+		return this._offline;
+	},
+	set offline(nv) {
+		this._offline = !!nv;
+		let de = $('downloads');
+		
+		if (this._offline) {
+			de.setAttribute('offline', true);
+		}
+		else if (de.hasAttribute('offline')) {
+				de.removeAttribute('offline');
+		}		
+		Tree.invalidate();
+	},
 	_wasRunning: false,
 	_lastTime: Utils.getTimestamp(),
 	_running: [],
@@ -97,18 +113,26 @@ var Dialog = {
 	totalbytes: 0,
 	init: function D_init() {
 		Tree.init($("downloads"));
-		makeObserver(this);
+		SessionManager.init();
+
+		try {
+			let ios2 = Serv('@mozilla.org/network/io-service;1', 'nsIIOService2');
+			this.offline = ios2.offline;
+		}
+		catch (ex) {
+			Debug.log("Cannot get offline status", ex);
+		}
 		
+		makeObserver(this);
 		this._observes.forEach(
 			function(topic) {
 				ObserverService.addObserver(this, topic, true);
 			},
 			this
 		);
-	
+			
 		document.getElementById("dtaHelp").hidden = !("openHelp" in window);
 	
-		SessionManager.init();
 	
 		if ("arguments" in window) {
 			startDownloads(window.arguments[0], window.arguments[1]);
@@ -142,7 +166,7 @@ var Dialog = {
 			this._forceClose = true;
 		}
 		else if (topic == 'network:offline-status-changed') {
-			
+			this.offline = data == "offline";
 		}
 	},
 	refresh: function D_refresh() {
@@ -255,17 +279,6 @@ var Dialog = {
 		try {
 			this.refresh();
 			
-			if (Prefs.autoClearComplete && this._autoClears.length) {
-				Tree.remove(this._autoClears);
-				this._autoClears = [];
-			}
-			
-			if (Prefs.autoRetryInterval) {
-				for (let d in Tree.all) {
-					d.autoRetry();
-				}
-			}
-					
 			this._running.forEach(
 				function(i) {
 					let d = i.d;
@@ -283,7 +296,20 @@ var Dialog = {
 					}
 				}
 			)
-			this.startNext();
+			
+			if (Prefs.autoClearComplete && this._autoClears.length) {
+				Tree.remove(this._autoClears);
+				this._autoClears = [];
+			}
+
+			if (!this._offline) {					
+				if (Prefs.autoRetryInterval) {
+					for (let d in Tree.all) {
+						d.autoRetry();
+					}
+				}
+				this.startNext();
+			}
 		}
 		catch(ex) {
 			Debug.log("checkDownloads():", ex);
@@ -1122,6 +1148,9 @@ QueueItem.prototype = {
 	},
 	_status : '',
 	get status() {
+		if (Dialog.offline && this.is(QUEUED, PAUSED)) {
+			return _('offline');
+		}
 		return this._status + (this._autoRetryTime ? ' *' : '');
 	},
 	set status(nv) {
