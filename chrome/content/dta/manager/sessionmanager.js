@@ -239,12 +239,17 @@ var SessionManager = {
 				if (get('state')) {
 					d._state = get('state');
 				}
-				if (d.is(PAUSED)) {
-					for each (let c in down.chunk) {
+				if (d.is(PAUSED, QUEUED)) {
+					for each (let c in down.chunks) {
 						d.chunks.push(new Chunk(d, c.start, c.end, c.written));
 					}
 					d.refreshPartialSize();
-					d.status = _('paused');
+					if (d.is(PAUSED)) {
+						d.status = _('paused');
+					}
+					else {
+						d.status = _('queued');
+					}
 				}
 				else if (d.is(COMPLETE)) {
 					d.partialSize = d.totalSize;
@@ -253,9 +258,6 @@ var SessionManager = {
 				else if (d.is(CANCELED)) {
 					d.status = _('canceled');
 				}
-				else if (d.is(QUEUED)) {
-					d.status = _('queued');
-				}		
 				Tree.add(d);
 			}
 			catch (ex) {

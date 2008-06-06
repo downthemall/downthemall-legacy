@@ -255,7 +255,7 @@ var Dialog = {
 			Debug.log("refresh():", ex);
 		}
 	},
-	refreshWritten: function D_checkDownloads() {
+	refreshWritten: function D_refreshWritten() {
 		this._running.forEach(
 			function(i) {
 				i.d.invalidate();
@@ -279,30 +279,28 @@ var Dialog = {
 		try {
 			this.refresh();
 			
-			this._running.forEach(
-				function(i) {
-					let d = i.d;
-					// checks for timeout
-					if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
-						if (d.resumable || !d.totalSize || !d.partialSize) {
-							d.pause();
-							d.markAutoRetry();
-							d.status = _("timeout");
-						}
-						else {
-							d.cancel(_("timeout"));
-						}
-						Debug.logString(d + " is a timeout");
+			for each (let i in this._running) {
+				let d = i.d;
+				// checks for timeout
+				if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
+					if (d.resumable || !d.totalSize || !d.partialSize) {
+						d.pause();
+						d.markAutoRetry();
+						d.status = _("timeout");
 					}
+					else {
+						d.cancel(_("timeout"));
+					}
+					Debug.logString(d + " is a timeout");
 				}
-			)
+			}
 			
 			if (Prefs.autoClearComplete && this._autoClears.length) {
 				Tree.remove(this._autoClears);
 				this._autoClears = [];
 			}
 
-			if (!this._offline) {					
+			if (!this.offline) {					
 				if (Prefs.autoRetryInterval) {
 					for (let d in Tree.all) {
 						d.autoRetry();
@@ -352,6 +350,9 @@ var Dialog = {
 		this.lastTime = Utils.getTimestamp();
 	},
 	run: function D_run(download) {
+		if (this.offline) {
+			return;
+		}
 		download.status = _("starting");
 		if (download.is(FINISHING) || (download.partialSize >= download.totalSize && download.totalSize)) {
 			// we might encounter renaming issues;
@@ -443,6 +444,7 @@ var Dialog = {
 	},
 	close: function D_close() {
 		Debug.logString("Close request");
+		this.offline = true;
 		if (!this._forceClose && !this._canClose()) {
 			delete this._forceClose;
 			return false;
@@ -468,7 +470,8 @@ var Dialog = {
 						},
 						this
 					);
-					d.pause();				
+					d.pause();
+					d.state = QUEUED;				
 				}
 				else if (d.is(FINISHING)) {
 					++finishing;
@@ -1577,7 +1580,7 @@ QueueItem.prototype = {
 		cleanChunks(this);
 
 		try {
-			if (this.maxChunks <= this.activeChunks) {
+			if (Dialog.offline || this.maxChunks <= this.activeChunks) {
 				return false;
 			}
 
@@ -1676,6 +1679,9 @@ QueueItem.prototype = {
 			e.hashType = _atos(this.hash.type);
 		}
 		if (this.autoRetrying) {
+			e.state = QUEUED;
+		}
+		else if (this.is(RUNNING)) {
 			e.state = QUEUED;
 		}
 		else {
@@ -2748,7 +2754,6 @@ var ConflictManager = {
 var Serializer = {
 	encode: function(obj) {
 		if ('nsIJSON' in Ci) {
-			Debug.logString("hello json");
 			let json = Serv('@mozilla.org/dom/json;1', 'nsIJSON');
 			this.encode = function(obj) {
 				return json.encode(obj);
@@ -2763,7 +2768,6 @@ var Serializer = {
 	},
 	decode: function(str) {
 		if ('nsIJSON' in Ci) {
-			Debug.logString("hello json");
 			let json = Serv('@mozilla.org/dom/json;1', 'nsIJSON');
 			this.decode = function(str) {
 				try {
