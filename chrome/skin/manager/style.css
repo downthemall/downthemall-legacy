@@ -154,7 +154,7 @@ treechildren::-moz-tree-progressmeter(completed) {
 treechildren::-moz-tree-progressmeter(paused) {
   color: #FFCC00 !important;
 }
-treechildren::-moz-tree-progressmeter(paused, progressAutoretrying) {
+treechildren::-moz-tree-progressmeter(paused, pausedAutoretrying) {
 	color: #849FFF !important;
 }
 treechildren::-moz-tree-progressmeter(canceled) {
