@@ -31,6 +31,11 @@ locale dta sr-YU chrome/locale/sr-YU/
 locale dta sv-SE chrome/locale/sv-SE/
 locale dta tr-TR chrome/locale/tr-TR/
 locale dta zh-CN chrome/locale/zh-CN/
+locale dta bg-BG chrome/locale/bg-BG/
+locale dta vi-VN chrome/locale/vi-VN/
+locale dta gl-ES chrome/locale/gl-ES/
+locale dta sr-RS chrome/locale/sr-RS/
+locale dta uk-UA chrome/locale/uk-UA/
 
 ## platform package ##
 content dta-platform	chrome/content/ platform
