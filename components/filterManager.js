@@ -122,7 +122,7 @@ Filter.prototype = {
 		var parts = str.split(',');
 		// we contain multiple filters
 		if (parts.length > 1) {
-			for each (var e in parts) { 
+			for each (var s in parts) { 
 				this._makeRegs(s);
 			}
 			return;
