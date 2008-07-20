@@ -82,7 +82,7 @@ var DTA_SaveAs = {
 
 		this.ddDirectory = document.getElementById('tdtalist');
 		var mask = DTA_AddingFunctions.getDropDownValue('renaming');
-		if (!(document.getElementById("tdta").collapsed = (!DTA_AddingFunctions.getDropDownValue('directory') || !mask))) {
+		if (!(document.getElementById("tdta").hidden = (DTA_AddingFunctions.getDropDownValue('directory') == '' || !mask))) {
 			this.turbo.disabled = false;
 		}
 		
