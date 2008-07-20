@@ -417,11 +417,16 @@ var Dialog = {
 			// build the actual array holding all selected links
 			var links = this.current._links;
 			var out = [];
-			for each (let link in links) {
-				if (!link.checked.length) {
-					continue;
+			for each (let i in links) {
+				try {
+					if (!i.checked.length) {
+						continue;
+					}
+					out.push(prepare(i, dir, counter, mask));
 				}
-				out.push(prepare(link, dir, counter, mask));
+				catch (ex) {
+					Debug.log("err: " + i.toSource(), ex);
+				}
 			}
 
 			// nothing selected. cannot start
@@ -439,9 +444,9 @@ var Dialog = {
 			Preferences.setDTA("counter", counter);
 			Preferences.setDTA("lastqueued", !start);
 			
-			var boxen = this.boxen;
-			for each (let box in boxen) {
-				box.filter.active = box.checked;
+			let boxen = this.boxen;
+			for (let i = 0; i < boxen.length; ++i) {
+				boxen[i].filter.active = boxen[i].checked;
 			}
 			DTA_FilterManager.save();
 
@@ -501,19 +506,21 @@ var Dialog = {
 	},
 	// will be called initially and whenever something changed	
 	makeSelection: function() {
-		var tree = this.current;
-		var type = tree.type;
+		let tree = this.current;
+		let type = tree.type;
 
 		// will keep track of used filter-props f0-f8
-		var used = {};
-		var idx = 0;
-		var boxen = this.boxen;
-		var filters = [];
-		for each (let box in boxen) {
-			if (!box.checked) {
-				continue;
+		let used = {};
+		let idx = 0;
+		let boxen = this.boxen;
+		let filters = [];
+		if (!$('disableothers').checked) {
+			for each (let box in boxen) {
+				if (!box.checked) {
+					continue;
+				}
+				filters.push(box.filter);
 			}
-			filters.push(box.filter);
 		}
 		let fast = null;
 		try {
@@ -525,40 +532,37 @@ var Dialog = {
 			// no op
 		}
 		
-		tree._links.forEach(
-			function(link) {
-				link.checked = '';
-				if (link.manuallyChecked) {
-					link.checked = 'manuallySelected';
-					return;
-				}
-				if (fast && (fast.match(link.url.usable) || fast.match(link.desc))) {
-					link.checked = 'fastFiltered';
-					return;
-				}
-				filters.some(
-					function(f) {
-						if (!f.match(link.url.usable)) {
-							return false;
-						}
-						let i;
+		for each (let link in tree._links) {
+			link.checked = '';
+			if (link.manuallyChecked) {
+				link.checked = 'manuallySelected';
+				continue;
+			}
+			if (fast && (fast.match(link.url.usable) || fast.match(link.desc))) {
+				link.checked = 'fastFiltered';
+				continue;
+			}
+			filters.some(
+				function(f) {
+					if (!f.match(link.url.usable)) {
+						return false;
+					}
+					let i;
 
-						// see if we already assigned a prop to that filter.
-						if (f.id in used) {
-							i = used[f.id];
-						}
-						else {
-							i = idx = (idx + 1) % 8;
-							used[f.id] = i;
-						}
-						link.checked = 'f' + i;
-						return true;
-					},
-					this
-				);
-			},
-			this
-		);
+					// see if we already assigned a prop to that filter.
+					if (f.id in used) {
+						i = used[f.id];
+					}
+					else {
+						i = idx = (idx + 1) % 8;
+						used[f.id] = i;
+					}
+					link.checked = 'f' + i;
+					return true;
+				},
+				this
+			);
+		}
 
 		// need to invalidate our tree so that it displays the selection
 		tree.invalidate();
