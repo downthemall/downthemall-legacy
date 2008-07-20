@@ -37,6 +37,7 @@
 #include "nsISupports.idl"
 
 interface nsILocalFile;
+interface nsIVariant;
 
 [scriptable, uuid(0B82FEBB-59A1-41d7-B31D-D5A686E11A69)]
 interface dtaIDebugService : nsISupports {
@@ -45,7 +46,7 @@ interface dtaIDebugService : nsISupports {
 	readonly attribute boolean enabled;
 
 	/* use a string for result so that we get properly converted errors */	
-	void log(in AUTF8String msg, in AUTF8String result);	
+	void log(in AString msg, in nsIVariant result);	
 	
 	/* log a message */
 	void logString(in AUTF8String msg);

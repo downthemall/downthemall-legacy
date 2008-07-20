@@ -91,9 +91,9 @@ var DebugService = {
 	_formatTimeDate: function DS_formatTimeDate(value) {
 		return String(value).replace(/\b(\d)\b/g, "0$1");
 	},
-	_log: function DS__log(msg, e) {
+	_log: function DS__log(msg, exception) {
 		try {
-			if (msg == "" && typeof(e) != "object") {
+			if (msg == "" && typeof(exception) != "object") {
 				return;
 			}
 			if (!(msg instanceof String) && typeof(msg) != 'string') {
@@ -102,8 +102,8 @@ var DebugService = {
 				}
 				msg = msg.toSource();
 			}
-			var time = new Date();
-			var text = this._formatTimeDate(time.getHours())
+			let time = new Date();
+			let text = this._formatTimeDate(time.getHours())
 				+ ":" + this._formatTimeDate(time.getMinutes())
 				+ ":" + this._formatTimeDate(time.getSeconds())
 				+ ":" + time.getMilliseconds()
@@ -112,20 +112,44 @@ var DebugService = {
 			if (msg != "") {
 				text += msg.replace(/\n/g, "\n\t") + " ";
 			}
-			if (e) {
-				text += "\tError: " + e;
+			if (exception) {
+				text += "\tError: " + exception;
 			}
 			text += "\r\n";
+			let stack = null;
+			let lineNumber = 0;
+			let fileName = null;
 			if (Components.stack) {
-				var stack = Components.stack.caller.caller;
-
-				for (var i = 0; i < 4 && stack; ++i) {
-					text += "\t> " + stack.toString() + "\n";
-					stack = stack.caller;
-				}
 				stack = Components.stack.caller.caller;
-				if (stack && e) {
-					this._cs.logMessage(new ScriptError(text, stack.filename, null, stack.lineNumber, 0, 0x2, 'component javascript'));
+			}
+			if (exception && exception.stack) {
+				lineNumber = exception.lineNumber;
+				fileName = exception.fileName;
+				let initialLine = "Frame :: " + fileName;
+				if (exception.location) {
+					initialLine += " :: " + exception.location;
+				}
+				else if (stack && stack.name) {
+					initialLine += " :: " + stack.name;
+				}
+				initialLine += " :: line: " + lineNumber;
+				text += "\t> " + initialLine + "\n";
+			}
+			else if (stack) {
+				text += "\t> " + stack.toString() + "\n";
+				lineNumber = stack.lineNumber;
+				fileName = stack.fileName;
+				
+			}
+			
+			if (stack) {
+				let s = stack.caller;
+				for (let i = 0; i < 4 && s; ++i) {
+					text += "\t> " + s.toString() + "\n";
+					s = s.caller;
+				}
+				if (stack && exception) {
+					this._cs.logMessage(new ScriptError(text, fileName, null, lineNumber, 0, 0x2, 'component javascript'));
 					 
 				} 
 				else {
