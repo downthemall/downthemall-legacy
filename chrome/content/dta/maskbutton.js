@@ -35,7 +35,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
+// Appends/Inserts a renaming mask tag into the current mask text
 function appendTag(event) {
 	var text = $('renaming');
 	var value = event.target.getAttribute("value");
@@ -43,10 +44,12 @@ function appendTag(event) {
 	text.value = text.value.substring(0, s) + value + text.value.substring(text.inputField.selectionEnd, text.value.length);
 	text.inputField.setSelectionRange(s + event.target.getAttribute("value").length, s + value);
 }
+
+// Handles Drag'n'Drop
 var listObserver = {
-	onDragStart: function (evt,transferData,action){
-		var txt = evt.target.getAttribute("value");
+	onDragStart: function (evt, transferData, action){
+		// Add the mask text to the d'n'd data collection
 		transferData.data = new TransferData();
-		transferData.data.addDataForFlavour("text/unicode", txt);
+		transferData.data.addDataForFlavour("text/unicode", evt.target.getAttribute("value"));
 	}
 };
