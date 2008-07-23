@@ -567,10 +567,7 @@ var DTA_ContextOverlay = {
 			}
 			else if (
 				ctx.target
-				&& ctx.target.localName.toLowerCase() == 'input'
-				&& ctx.target.hasAttribute('type')
-				&& ctx.target.getAttribute('type').toLowerCase() == 'submit'
-				&& 'form' in ctx.target
+				&& ('form' in ctx.target)
 			) {
 				if (items[0]) {
 					show.push(menu.SaveForm);
