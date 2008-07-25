@@ -42,24 +42,10 @@
 
 					<groupbox>
 						<caption id="dtaddown" label="&privacypane.dropdowns.caption;"/>
-						<hbox>
-							<label value="&privacypane.dropdownresults.label;" id="history1" />
-							<spacer flex="1"/>
-							<menulist id="history" preference="dtahistory" >
-								<menupopup>
-									<menuitem label="0" value="0"/>
-									<menuitem label="1" value="1"/>
-									<menuitem label="2" value="2"/>
-									<menuitem label="3" value="3"/>
-									<menuitem label="4" value="4"/>
-									<menuitem label="5" value="5"/>
-									<menuitem label="6" value="6"/>
-									<menuitem label="7" value="7"/>
-									<menuitem label="8" value="8"/>
-									<menuitem label="9" value="9"/>
-									<menuitem label="10" value="10"/>
-								</menupopup>
-							</menulist>
+						<hbox flex="1" align="center">
+							<label value="&privacypane.dropdownresults.label;" flex="1" />
+							<scale min="0" max="15" id="history" preference-editable="true" onchange="Privacy.changedHistory();"/>
+							<label id="historylabel" style="min-width: 3em;" />
 						</hbox>
 						<hbox align="right">
 							<button id="butFoldDel" label="&privacypane.deletefoldershistory.label;" oncommand="Privacy.delDirectories();" />
