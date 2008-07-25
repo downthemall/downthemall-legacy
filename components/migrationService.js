@@ -34,37 +34,33 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-
 function include(uri) {
-	Cc["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(Ci.mozIJSSubScriptLoader)
+	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+		.getService(Components.interfaces.mozIJSSubScriptLoader)
 		.loadSubScript(uri);
 }
-include("chrome://dta/content/common/module.js");
-
+include('chrome://dta/content/common/xpcom.jsm');
 
 var MigrationService = {
 	_init: function MM_init() {
-    // observer registration
-    Cc['@mozilla.org/observer-service;1']
-			.getService(Ci.nsIObserverService)
-			.addObserver(this, "final-ui-startup", true);
+	    // observer registration
+	    Cc['@mozilla.org/observer-service;1']
+				.getService(Ci.nsIObserverService)
+				.addObserver(this, "final-ui-startup", true);
 	},
 	
 	_migrate: function MM_migrate() {
-		include("chrome://dta/content/common/verinfo.js");
+		let DTA = {};
+		Components.utils.import('resource://dta/version.jsm', DTA);		
 		include("chrome://dta/content/common/overlayFunctions.js");
 		
 		try {
-			debug("current " + DTA_VERSION);
+			debug("current " + DTA.VERSION);
 			var vc = Components.classes["@mozilla.org/xpcom/version-comparator;1"]
 				.getService(Components.interfaces.nsIVersionComparator);
 		
 			var lastVersion = DTA_preferences.getDTA('version', '0');
-			if (0 == vc.compare(DTA_VERSION, lastVersion)) {
+			if (0 == vc.compare(DTA.VERSION, lastVersion)) {
 				return;
 			}
 			debug("MigrationManager: migration started");
@@ -77,7 +73,7 @@ var MigrationService = {
     	var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
 				.createInstance(Components.interfaces.nsIDialogParamBlock);
     	params.SetNumberStrings(1);
-    	params.SetString(0, DTA_VERSION);
+    	params.SetString(0, DTA.VERSION);
     	Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
 				.getService(Components.interfaces.nsIWindowWatcher)
     		.openWindow(

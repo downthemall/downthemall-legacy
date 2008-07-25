@@ -33,7 +33,13 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const error = Components.utils.reportError;
+const Cr = Components.results;
+const importModule = Components.utils.import;
+
 function debug(str, ex) {
 	try {
 		var _debugServ = Components.classes['@downthemall.net/debug-service;1']
@@ -49,7 +55,7 @@ function debug(str, ex) {
 		debug(str, ex);
 	}
 	catch (ex) {
-		Components.utils.reportError(str + ": " + ex);
+		error(str + ": " + ex);
 	}
 }
 
@@ -90,7 +96,7 @@ function implementComponent(obj, classID, contractID, description, interfaces) {
 		if (this.implementsIID(iid)) {
 			return this;
 		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
+		throw Cr.NS_ERROR_NO_INTERFACE;
 	};
 	obj.QueryReferent = function(iid) {
 		return this.QueryInterface(iid);

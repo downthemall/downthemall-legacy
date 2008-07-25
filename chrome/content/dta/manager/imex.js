@@ -119,7 +119,7 @@ var ImEx = {
 			foot.appendChild(doc.createTextNode('Exported by '));
 			n = doc.createElement('a');
 			n.setAttribute('href', 'http://www.downthemall.net/');
-			n.textContent = 'DownThemAll! ' + DTA_VERSION;
+			n.textContent = 'DownThemAll! ' + DTA.VERSION;
 			foot.appendChild(n);
 			body.appendChild(foot);		
 			
@@ -153,8 +153,8 @@ var ImEx = {
 		let root = doc.documentElement;
 		root.setAttribute('type', 'static');
 		root.setAttribute('version', '3.0');
-		root.setAttribute('generator', 'DownThemAll! ' + DTA_VERSION + ' <http://downthemall.net/>');
-		root.setAttributeNS(NS_DTA, 'version', DTA_VERSION);
+		root.setAttribute('generator', 'DownThemAll! ' + DTA.VERSION + ' <http://downthemall.net/>');
+		root.setAttributeNS(NS_DTA, 'version', DTA.VERSION);
 		root.setAttribute('pubdate', new Date().toUTCString());
 		
 		root.appendChild(doc.createComment("metalink as exported by DownThemAll!\r\nmay contain DownThemAll! specific information in the DownThemAll! namespace: " + NS_DTA));  
@@ -214,14 +214,15 @@ var ImEx = {
 	},
 	
 	importFromTxt: function(file) {
+		// Open the file in a line reader
 		let is = new FileInputStream(file, 0x01, 0, 0);
 		let ls = is.QueryInterface(Ci.nsILineInputStream);
 		let line = {};
 		let links = [];
 		while(ls.readLine(line)) {
-			line.value.trim();
 			try {
-				let url = line.value.toURI();
+				// try to parse the URI and and see if it is of the correct type.
+				let url = line.value.trim().toURI();
 				if (['http', 'https', 'ftp'].indexOf(url.scheme) == -1) {
 					throw new Exception("Invalid url!");
 				}

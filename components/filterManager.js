@@ -33,27 +33,23 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
+ 
+function include(uri) {
+	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+		.getService(Components.interfaces.mozIJSSubScriptLoader)
+		.loadSubScript(uri);
+}
+include('chrome://dta/content/common/xpcom.jsm');
 
 const Exception = Components.Exception;
 
-const NS_ERROR_NO_INTERFACE = Components.results.NS_ERROR_NO_INTERFACE;
-const NS_ERROR_FAILURE = Components.results.NS_ERROR_FAILURE;
-const NS_ERROR_NO_AGGREGATION = Components.results.NS_ERROR_NO_AGGREGATION;
-const NS_ERROR_INVALID_ARG = Components.results.NS_ERROR_INVALID_ARG;
+const NS_ERROR_NO_INTERFACE = Cr.NS_ERROR_NO_INTERFACE;
+const NS_ERROR_FAILURE = Cr.NS_ERROR_FAILURE;
+const NS_ERROR_NO_AGGREGATION = Cr.NS_ERROR_NO_AGGREGATION;
+const NS_ERROR_INVALID_ARG = Cr.NS_ERROR_INVALID_ARG;
 
 const LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
 const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
-
-function include(uri) {
-	Cc["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(Ci.mozIJSSubScriptLoader)
-		.loadSubScript(uri);
-}
-include("chrome://dta/content/common/module.js");
 
 // no not create DTA_Filter yourself, managed by DTA_FilterManager
 function Filter(name, prefs) {

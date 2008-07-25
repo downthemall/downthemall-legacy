@@ -91,7 +91,7 @@
 		else {
 			msg = _('deletetextl', [list.length]);
 		}
-		if (list.length && DTA_confirm(_('deletetitle'), msg, _('delete'), DTA_confirm.CANCEL, null, 1)) {
+		if (list.length && DTA_confirm(window, _('deletetitle'), msg, _('delete'), DTA_confirm.CANCEL, null, 1)) {
 			return;
 		}
 		for each (let d in list) {

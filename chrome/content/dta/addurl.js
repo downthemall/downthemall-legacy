@@ -37,6 +37,8 @@
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
+Components.utils.import('resource://dta/confirm.jsm');
+
 var dropDowns = {};
 
 function QueueItem(url, num, desc, hash) {
@@ -443,7 +445,7 @@ var Dialog = {
 			if (batch.length > 1000) {
 				message += _('manytasks');
 			}
-			rv = DTA_confirm(_('batchtitle'), message, _('batchtitle'), DTA_confirm.CANCEL, _('single'));
+			rv = DTA_confirm(window, _('batchtitle'), message, _('batchtitle'), DTA_confirm.CANCEL, _('single'));
 			if (rv == 1) {
 				return false;
 			}
