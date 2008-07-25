@@ -82,7 +82,8 @@ const REFRESH_FREQ = 1000;
 const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 const STREAMS_FREQ = 200;
 
-Components.utils.import('resource://dta/confirm.jsm');
+let Prompts = {};
+Components.utils.import('resource://dta/prompts.jsm', Prompts);
 
 var Dialog = {
 	_observes: [
@@ -434,7 +435,7 @@ var Dialog = {
 	},
 	_canClose: function D__canClose() {
 		if (Tree.some(function(d) { return d.started && !d.resumable && d.is(RUNNING); })) {
-			var rv = DTA_confirmYN(
+			var rv = Prompts.confirmYN(
 				window,
 				_("confclose"),
 				_("nonres")

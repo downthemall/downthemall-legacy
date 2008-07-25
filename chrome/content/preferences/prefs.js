@@ -42,7 +42,8 @@ const Ci = Components.interfaces;
 const LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
 const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
 
-Components.utils.import('resource://dta/confirm.jsm');
+let Prompts = {};
+Components.utils.import('resource://dta/prompts.jsm', Prompts);
 
 var Main = {
 	load: function() {
@@ -257,7 +258,7 @@ var Filters = {
 		this.filter.remove();
 	},
 	_restoreDefaultFilter: function() {
-		if (DTA_confirm(window, _('restorefilterstitle'), _('restorefilterstext'), _('restore'), DTA_confirm.CANCEL, null, 1) == 1) {
+		if (Prompts.confirm(window, _('restorefilterstitle'), _('restorefilterstext'), _('restore'), Prompts.CANCEL, null, 1) == 1) {
 			return;
 		}
 		this.filter.restore();
@@ -405,7 +406,7 @@ var Prefs = {
 	load: function() {
 	},
 	restoreAll: function() {
-		if (DTA_confirm(window, _('restoreprefstitle'), _('restoreprefstext'), _('restore'), DTA_confirm.CANCEL, null, 1) == 1) {
+		if (Prompts.confirm(window, _('restoreprefstitle'), _('restoreprefstext'), _('restore'), Prompts.CANCEL, null, 1) == 1) {
 			return;
 		}
 		try {

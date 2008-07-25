@@ -285,7 +285,7 @@ var Tree = {
 	},
 	removeWithConfirmation: function T_removeWithConfirmation() {
 		if (Prefs.confirmRemove) {
-			let res = DTA_confirm(window, _('removetitle'), _('removequestion'), DTA_confirm.YES, DTA_confirm.NO, null, 0, false, _('removecheck'));
+			let res = Prompts.confirm(window, _('removetitle'), _('removequestion'), Prompts.YES, Prompts.NO, null, 0, false, _('removecheck'));
 			if (res.checked) {
 				Preferences.setDTA('confirmremove', false);
 			}
