@@ -48,7 +48,14 @@ Components.utils.import('resource://dta/prompts.jsm', Prompts);
 var Main = {
 	load: function() {
 		$('alert2').hidden = !('nsIAlertsService' in Ci);
-	}
+		
+		// delay this assignment, or else we get messed up by the slider c'tor
+		$('maxtasks').setAttribute('preference', 'dtamaxtasks');
+		$('dtamaxtasks').updateElements();		
+	},
+	changedMaxTasks: function() {
+		$('maxtaskslabel').value = $('maxtasks').value;
+	}	
 }
 
 var Privacy = {
@@ -69,6 +76,13 @@ var Privacy = {
 		catch(ex) {
 			Debug.log("privacyLoad(): ", ex);
 		}
+		
+		// delay this assignment, or else we get messed up by the slider c'tor
+		$('history').setAttribute('preference', 'dtahistory');
+		$('dtahistory').updateElements();		
+	},
+	changedHistory: function() {
+		$('historylabel').value = $('history').value;
 	},
 	delFilters: function() {
 		Preferences.resetDTA("filter");
@@ -111,6 +125,9 @@ var Advanced = {
 		if (/win/i.test(navigator.platform)) {
 			$('advPermissions').hidden = true;
 		}
+		// delay this assignment, or else we get messed up by the slider c'tor
+		$('maxchunks').setAttribute('preference', 'dtamaxchunks');
+		$('dtamaxchunks').updateElements();
 	},
 	browse: function() {
 		// let's check and create the directory
@@ -135,6 +152,9 @@ var Advanced = {
 	setPerm: function(perm) {
 		var rv = $('dtapermissions').value ^ perm;
 		return $('dtapermissions').value ^ perm;
+	},
+	changedMaxChunks: function() {
+		$('maxchunkslabel').value = $('maxchunks').value;
 	}
 };
 
