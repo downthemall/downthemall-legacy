@@ -36,6 +36,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
+var DTA_Prompts = {};
+Components.utils.import('resource://dta/prompts.jsm', DTA_Prompts); 
+ 
 // DTA context overlay
 var DTA_ContextOverlay = {
 
@@ -294,7 +297,7 @@ var DTA_ContextOverlay = {
 			images = makeUnique(images);
 
 			if (!urls.length && !images.length) {
-				DTA_alert(this.getString('error'), this.getString('errornolinks'));
+				DTA_Prompts.alert(window, this.getString('error'), this.getString('errornolinks'));
 				return;
 			}
 			
@@ -304,7 +307,7 @@ var DTA_ContextOverlay = {
 					return;
 				} catch (ex) {
 					DTA_debug.log('findLinks', ex);
-					DTA_alert(this.getString('error'), this.getString('errorinformation'));
+					DTA_Prompts.alert(window, this.getString('error'), this.getString('errorinformation'));
 				}
 			}
 			DTA_AddingFunctions.saveLinkArray(false, urls, images);
@@ -329,7 +332,7 @@ var DTA_ContextOverlay = {
 			var url = ctx.onLink ? cur.href : cur.src;
 			
 			if (!DTA_AddingFunctions.isLinkOpenable(url)) {
-				DTA_alert(this.getString('error'), this.getError('errornodownload'));
+				DTA_Prompts.alert(window, this.getString('error'), this.getError('errornodownload'));
 				return;
 			}
 			
@@ -345,7 +348,7 @@ var DTA_ContextOverlay = {
 				}
 				catch (ex) {
 					DTA_debug.log('findSingleLink', ex);
-					DTA_alert(this.getString('error'), this.getString('errorinformation'));
+					DTA_Prompts.alert(window, this.getString('error'), this.getString('errorinformation'));
 				}
 			}
 			DTA_AddingFunctions.saveSingleLink(false, url, ref, desc);
@@ -436,7 +439,7 @@ var DTA_ContextOverlay = {
 				}
 				catch (ex) {
 					DTA_debug.log('findSingleLink', ex);
-					DTA_alert(this.getString('error'), this.getString('errorinformation'));
+					DTA_Prompts.alert(window, this.getString('error'), this.getString('errorinformation'));
 				}
 			}
 			DTA_AddingFunctions.saveSingleLink(false, action, ref, desc);
