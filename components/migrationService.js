@@ -95,7 +95,7 @@ var MigrationService = {
 		}
 	},
 	_execute: function MM_execute(types) {
-		for each (var e in types) {
+		for each (let e in types) {
 			try {
 				this['_migrate' + e]();
 			}
@@ -130,14 +130,14 @@ var MigrationService = {
 			['context.removecompleted', 'removecompleted', true],
 			['numistance', 'counter', 0]
 		];
-		for each (var e in toMigrate) {
+		for each (let e in toMigrate) {
 			try {
-				var oldName = e[0], newName = e[1], defaultValue = null;
+				let oldName = e[0], newName = e[1], defaultValue = null;
 				if (e.length == 3) {
 					defaultValue = e[2];
 				}
-				var nv = DTA_preferences.getDTA(newName, defaultValue);
-				var ov = DTA_preferences.getDTA(oldName, nv);
+				let nv = DTA_preferences.getDTA(newName, defaultValue);
+				let ov = DTA_preferences.getDTA(oldName, nv);
 				if (ov != nv) {	
 					DTA_preferences.setDTA(newName, ov);
 				}
@@ -178,7 +178,7 @@ var MigrationService = {
 			.QueryInterface(Components.interfaces.nsIPrefBranch2);
 		var c = {value: 0};
 		var children = prefs.getChildList('', c);
-		for (var i = 0; i < c.value; ++i) {
+		for (let i = 0; i < c.value; ++i) {
 			if (!children[i].match(/filter\d+\.caption/)) {
 				continue;
 			}
@@ -208,23 +208,25 @@ var MigrationService = {
 	// pre 1.0: dropdown history
 	_migrateDropDowns: function MM_migrateDropdowns() {
 		debug("migrating dropdowns");
-		['renaming', 'filter', 'directory'].forEach(
-			function(e) {
-				try { DTA_preferences.resetDTA(e); } catch (ex) { /*no-op*/ }
-				try {
-						var cv = DTA_preferences.getMultiByteDTA('dropdown.' + e + '-history', null);
-						if (cv == null) {
-							return;
-						}
-						cv = cv.split('|@|');
-						DTA_preferences.setMultiByteDTA(e, cv.toSource());
+		for each (let e in ['renaming', 'filter', 'directory']) {
+			try {
+				DTA_preferences.resetDTA(e);
+			}
+			catch (ex) {
+				/*no-op*/
+			}
+			try {
+				let cv = DTA_preferences.getMultiByteDTA('dropdown.' + e + '-history', null);
+				if (cv == null) {
+					return;
 				}
-				catch (ex) {
-					error("failed to migrate dropdown " + e + ", " + ex);
-				}
-			},
-			this
-		);
+				cv = cv.split('|@|');
+				DTA_preferences.setMultiByteDTA(e, cv.toSource());
+			}
+			catch (ex) {
+				error("failed to migrate dropdown " + e + ", " + ex);
+			}
+		}
 	},
 	
 	// all: remove all prefs
