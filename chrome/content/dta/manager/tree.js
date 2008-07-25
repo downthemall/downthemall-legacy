@@ -456,7 +456,7 @@ var Tree = {
 		}
 		catch (ex) {
 			Debug.log("Cannot export downloads", ex);		
-			DTA_alert(_('exporttitle'), _('exportfailed'));
+			Prompts.alert(window, _('exporttitle'), _('exportfailed'));
 		}
 	},
 	import: function T_import() {
@@ -477,7 +477,7 @@ var Tree = {
 		}
 		catch (ex) {
 			Debug.log("Cannot import downloads", ex);		
-			DTA_alert(_('importtitle'), _('importfailed'));
+			Prompts.alert(window, _('importtitle'), _('importfailed'));
 		}
 	},
 	showInfo: function T_showInfo() {
