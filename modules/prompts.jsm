@@ -11,16 +11,14 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll.
+ * The Original Code is DownThemAll Confirm wrappers module.
  *
  * The Initial Developer of the Original Code is Nils Maier
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2007;2008
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
  *   Nils Maier <MaierMan@web.de>
- *   Federico Parodi <f.parodi@tiscali.it>
- *   Stefano Verna <stefano.verna@gmail.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -36,13 +34,26 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-var EXPORTED_SYMBOLS = ['DTA_confirm', 'DTA_confirmOC', 'DTA_confirmYN', 'DTA_alert'];
+var EXPORTED_SYMBOLS = ['confirm', 'confirmOC', 'confirmYN', 'alert'];
+
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+
+// unpack the default button types
+for (let x in Components.interfaces.nsIPromptService) {
+	let r = new String(x).match(/BUTTON_TITLE_(\w+)$/);
+	if (r) {
+		this[r[1]] = Components.interfaces.nsIPromptService[x];
+		EXPORTED_SYMBOLS.push(r[1]);
+	}
+}
 
 /**
  * wrapper around confirmEx
  * @param title. Dialog title
  * @param text. Dialog text
- * @param button0. Either null (omit), one of DTA_confirm.X or a string
+ * @param button0. Either null (omit), one of CANCEL/NO/... or a string
  * @param button1. s.a.
  * @param button2. s.a.
  * @param default. Index of the Default button
@@ -51,17 +62,19 @@ var EXPORTED_SYMBOLS = ['DTA_confirm', 'DTA_confirmOC', 'DTA_confirmYN', 'DTA_al
  * @return Either the button# or {button: #, checked: bool} if check was a boolean
  * @author Nils
  */
-function DTA_confirm(aWindow, aTitle, aText, aButton0, aButton1, aButton2, aDefault, aCheck, aCheckText) {
-	var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-		.getService(Components.interfaces.nsIPromptService);
-	var flags = 0;
+function confirm(aWindow, aTitle, aText, aButton0, aButton1, aButton2, aDefault, aCheck, aCheckText) {
+	let prompts = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+		.getService(Ci.nsIPromptService);
+	
+	// Set up the flags/buttons
+	let flags = 0;
 	[aButton0, aButton1, aButton2].forEach(
 		function(button, idx) {
-			if (typeof(button) == "number") {
+			if (typeof button == 'number') {
 				flags += prompts['BUTTON_POS_' + idx] * button;
 				button = null;
 			}
-			else if (typeof(button) == "string" || button instanceof String) {
+			else if (typeof button == 'string' || button instanceof String) {
 				flags |= prompts['BUTTON_POS_' + idx] * prompts.BUTTON_TITLE_IS_STRING;
 			}
 			else {
@@ -76,17 +89,21 @@ function DTA_confirm(aWindow, aTitle, aText, aButton0, aButton1, aButton2, aDefa
 	else if (aDefault == 2) {
 		flags += prompts.BUTTON_POS_2_DEFAULT;
 	}
-	var check = {};
+	
+	// Checkmark requested?
+	let rv = null;
+	let check = {};
 	if (aCheckText) {
 		if (typeof(aCheck) == 'boolean') {
-			var rv = {};
+			rv = {};
 			check.value = aCheck;
 		}
 		else if (typeof(aCheck) == 'string' || aCheck instanceof String) {
 			check.value = DTA_preferences.getDTA(aCheck, false);
 		}
 	}
-	var cr = prompts.confirmEx(
+	
+	let cr = prompts.confirmEx(
 		aWindow,
 		aTitle,
 		aText,
@@ -97,30 +114,40 @@ function DTA_confirm(aWindow, aTitle, aText, aButton0, aButton1, aButton2, aDefa
 		aCheckText,
 		check
 	);
+	
+	// We've got a checkmark request
 	if (rv) {
 		rv.checked = check.value;
 		rv.button = cr;
 		return rv;
 	}
+	
+	// Just return as usual
 	return cr;
 }
-DTA_confirm.init = function() {
-	for (x in Components.interfaces.nsIPromptService) {
-		var r = new String(x).match(/BUTTON_TITLE_(\w+)$/);
-		if (r) {
-			DTA_confirm[r[1]] = Components.interfaces.nsIPromptService[x];
-		}
-	}
+
+/**
+ * Shortcut for OK/Cancel Confirmation dialogs
+ * @author Nils
+ */
+function confirmOC(aWindow, aTitle, aText) {
+	return confirm(aWindow, aTitle, aText, OK, CANCEL);
 }
-DTA_confirm.init();
-function DTA_confirmOC(title, text) {
-	return DTA_confirm(title, text, DTA_confirm.OK, DTA_confirm.CANCEL);
+
+/**
+ * Shortcut for Yes/No Confirmation dialogs
+ * @author Nils
+ */
+function confirmYN(aWindow, aTitle, aText) {
+	return confirm(aWindow, aTitle, aText, YES, NO);
 }
-function DTA_confirmYN(title, text) {
-	return DTA_confirm(title, text, DTA_confirm.YES, DTA_confirm.NO);
-}
-function DTA_alert(aWindow, aTitle, aText) {
-	Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-		.getService(Components.interfaces.nsIPromptService)
+
+/**
+ * wrapper around alert
+ * @author Nils
+ */
+function alert(aWindow, aTitle, aText) {
+	Cc["@mozilla.org/embedcomp/prompt-service;1"]
+		.getService(Ci.nsIPromptService)
 		.alert(aWindow, aTitle, aText);
 }
