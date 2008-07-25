@@ -34,19 +34,15 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const error = Components.utils.reportError;
-const res = Components.results;
-const FileStream = new Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const ScriptError = new Components.Constructor('@mozilla.org/scripterror;1', 'nsIScriptError', 'init');
-
 function include(uri) {
-	Cc["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(Ci.mozIJSSubScriptLoader)
+	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+		.getService(Components.interfaces.mozIJSSubScriptLoader)
 		.loadSubScript(uri);
 }
-include("chrome://dta/content/common/module.js");
+include('chrome://dta/content/common/xpcom.jsm');
+
+const FileStream = new Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
+const ScriptError = new Components.Constructor('@mozilla.org/scripterror;1', 'nsIScriptError', 'init');
 
 var DebugService = {
 	// nsIObserver
@@ -180,7 +176,7 @@ var DebugService = {
 			this._file.remove(false);
 		}
 		catch (ex) {
-			throw res.NS_ERROR_FAILURE;
+			throw Cr.NS_ERROR_FAILURE;
 		}
 	}
 };

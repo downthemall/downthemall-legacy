@@ -34,23 +34,19 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Exception = Components.Exception;
-
-const NS_ERROR_NO_INTERFACE = Components.results.NS_ERROR_NO_INTERFACE;
-const NS_ERROR_FAILURE = Components.results.NS_ERROR_FAILURE;
-const NS_ERROR_NO_AGGREGATION = Components.results.NS_ERROR_NO_AGGREGATION;
-const NS_ERROR_INVALID_ARG = Components.results.NS_ERROR_INVALID_ARG;
-
-const ScriptableInputStream = new Components.Constructor('@mozilla.org/scriptableinputstream;1', 'nsIScriptableInputStream', 'init');
-
 function include(uri) {
-	Cc["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(Ci.mozIJSSubScriptLoader)
+	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+		.getService(Components.interfaces.mozIJSSubScriptLoader)
 		.loadSubScript(uri);
 }
-include("chrome://dta/content/common/module.js");
+include('chrome://dta/content/common/xpcom.jsm');
+
+const NS_ERROR_NO_INTERFACE = Cr.NS_ERROR_NO_INTERFACE;
+const NS_ERROR_FAILURE = Cr.NS_ERROR_FAILURE;
+const NS_ERROR_NO_AGGREGATION = Cr.NS_ERROR_NO_AGGREGATION;
+const NS_ERROR_INVALID_ARG = Cr.NS_ERROR_INVALID_ARG;
+
+const ScriptableInputStream = new Components.Constructor('@mozilla.org/scriptableinputstream;1', 'nsIScriptableInputStream', 'init');
 
 var ContentHandling = {
 	_init: function() {
@@ -71,7 +67,7 @@ var ContentHandling = {
 
 		var post;
     
-    try {
+		try {
 			var us = subject.QueryInterface(Ci.nsIUploadChannel).uploadStream;
 			var ss = us.QueryInterface(Ci.nsISeekableStream);
 			var op = ss.tell();

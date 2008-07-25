@@ -17,10 +17,10 @@
 	width="500" height="420"
 	style="padding: 0px 0px 3px 0px;"
 >
-	<script type="application/javascript" src="chrome://dta/content/common/verinfo.js"/>
 	<script type="application/javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js" />
 	<script type="application/javascript"><![CDATA[
+	
 		function load(evt) {
 			if (evt.originalTarget.location.href.search(/about\.html$/) != -1) {
 				var doc = document.getElementById('frame').contentDocument;
@@ -38,9 +38,12 @@
 			if (!confirm(_("conf"))) {
 				return false;
 			}
+			let DTA = {};
+			Components.utils.import('resource://dta/version.jsm', DTA);	
+
 			Components.classes["@mozilla.org/extensions/manager;1"]
 				.getService(Components.interfaces.nsIExtensionManager)
-				.uninstallItem(DTA_ID);
+				.uninstallItem(DTA.ID);
 			var as = Components.interfaces.nsIAppStartup;
 			Components.classes["@mozilla.org/toolkit/app-startup;1"]
       	.getService(as)

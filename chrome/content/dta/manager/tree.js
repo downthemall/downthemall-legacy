@@ -36,7 +36,8 @@
  
 const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init');
 
-DTA_include("common/verinfo.js");
+let DTA = {};
+Components.utils.import('resource://dta/version.jsm', DTA);
  
 var Tree = {
 	_ds: Serv('@mozilla.org/widget/dragservice;1', 'nsIDragService'),
@@ -284,7 +285,7 @@ var Tree = {
 	},
 	removeWithConfirmation: function T_removeWithConfirmation() {
 		if (Prefs.confirmRemove) {
-			let res = DTA_confirm(_('removetitle'), _('removequestion'), DTA_confirm.YES, DTA_confirm.NO, null, 0, false, _('removecheck'));
+			let res = DTA_confirm(window, _('removetitle'), _('removequestion'), DTA_confirm.YES, DTA_confirm.NO, null, 0, false, _('removecheck'));
 			if (res.checked) {
 				Preferences.setDTA('confirmremove', false);
 			}

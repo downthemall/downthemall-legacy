@@ -62,18 +62,19 @@
 	buttons="accept"
 	id="DownThemAll"
 >
-	<script type="application/x-javascript" src="chrome://dta/content/common/verinfo.js"/>
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 
 	<script type="application/x-javascript"><![CDATA[
+		let DTA = {};
+		Components.utils.import('resource://dta/version.jsm', DTA);
 		function openTab(url) {
 			DTA_Mediator.openTab(url);
 			self.close();
 		}
 		function versionFill() {
 			var logo = document.getElementById('logo');
-			var title = DTA_NAME + ' ' + DTA_VERSION;
+			var title = DTA.NAME + ' ' + DTA.VERSION;
 			logo.setAttribute('title', title);
 			document.title = 'About ' + title;
 		}

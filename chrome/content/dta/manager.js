@@ -82,6 +82,8 @@ const REFRESH_FREQ = 1000;
 const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 const STREAMS_FREQ = 200;
 
+Components.utils.import('resource://dta/confirm.jsm');
+
 var Dialog = {
 	_observes: [
 		'quit-application-requested',
@@ -433,6 +435,7 @@ var Dialog = {
 	_canClose: function D__canClose() {
 		if (Tree.some(function(d) { return d.started && !d.resumable && d.is(RUNNING); })) {
 			var rv = DTA_confirmYN(
+				window,
 				_("confclose"),
 				_("nonres")
 			);
@@ -751,7 +754,6 @@ Visitor.prototype = {
 			}
 		}
 		catch (ex) {
-			Debug.log("hrhv::visitHeader:", ex);
 		}
 	},
 	compare: function vi_compare(v)	{
