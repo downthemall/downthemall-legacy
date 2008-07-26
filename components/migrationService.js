@@ -41,6 +41,8 @@ function include(uri) {
 }
 include('chrome://dta/content/common/xpcom.jsm');
 
+var Preferences = {};
+
 var MigrationService = {
 	_init: function MM_init() {
 	    // observer registration
@@ -52,14 +54,15 @@ var MigrationService = {
 	_migrate: function MM_migrate() {
 		let DTA = {};
 		Components.utils.import('resource://dta/version.jsm', DTA);		
+		Components.utils.import('resource://dta/preferences.jsm', Preferences);
 		include("chrome://dta/content/common/overlayFunctions.js");
 		
 		try {
 			debug("current " + DTA.VERSION);
-			var vc = Components.classes["@mozilla.org/xpcom/version-comparator;1"]
-				.getService(Components.interfaces.nsIVersionComparator);
+			var vc = Cc["@mozilla.org/xpcom/version-comparator;1"]
+				.getService(Ci.nsIVersionComparator);
 		
-			var lastVersion = DTA_preferences.getDTA('version', '0');
+			var lastVersion = Preferences.getDTA('version', '0');
 			if (0 == vc.compare(DTA.VERSION, lastVersion)) {
 				return;
 			}
@@ -87,7 +90,7 @@ var MigrationService = {
 		catch(ex) {
 			debug("MigrationManager:", ex);
 			try {
-				DTA_preferences.resetDTA("version");
+				Preferences.resetDTA("version");
 			}
 			catch (ex) {
 				// XXX
@@ -100,7 +103,7 @@ var MigrationService = {
 				this['_migrate' + e]();
 			}
 			catch (ex) {
-				error('MigrationManager: failed to migrate ' + e + ", " + ex);
+				debug('MigrationManager: failed to migrate ' + e, ex);
 			}
 		}
 	},
@@ -130,20 +133,17 @@ var MigrationService = {
 			['context.removecompleted', 'removecompleted', true],
 			['numistance', 'counter', 0]
 		];
-		for each (let e in toMigrate) {
+		for each (let [oldName, newName, defaultValue] in toMigrate) {
 			try {
-				let oldName = e[0], newName = e[1], defaultValue = null;
-				if (e.length == 3) {
-					defaultValue = e[2];
-				}
-				let nv = DTA_preferences.getDTA(newName, defaultValue);
-				let ov = DTA_preferences.getDTA(oldName, nv);
+				let nv = Preferences.getDTA(newName, defaultValue);
+				let ov = Preferences.getDTA(oldName, nv);
 				if (ov != nv) {	
-					DTA_preferences.setDTA(newName, ov);
+					Preferences.setDTA(newName, ov);
 				}
+				Preferences.reset(oldName);				
 			}
 			catch (ex) {
-				error('MM: failed ' + newName + ", " + ex);
+				debug('MM: failed ' + newName + ", ", ex);
 			}
 		}
 	},
@@ -151,11 +151,9 @@ var MigrationService = {
 	// 1.0.1: #613 Multiple "slow-down" reports
 	_migrateResetMaxConnections: function() {
 		debug("resetting connection prefs");
-		['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server'].forEach(
-			function(e) {
-				DTA_preferences.reset(e);
-			}
-		);
+		for each (let e in ['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server']) {
+			Preferences.reset(e);
+		}
 	},
 	
 	// pre 1.0: migrate Filters
@@ -184,23 +182,23 @@ var MigrationService = {
 			}
 			var name = 'context.' + children[i].slice(0, -8);
 			try {
-				var reg = DTA_preferences.getMultiByteDTA(name + '.filter', '');
+				var reg = Preferences.getMultiByteDTA(name + '.filter', '');
 				if (-1 != defFilters.indexOf(reg) || !reg.length) {
 					continue;
 				}
-				var label = DTA_preferences.getMultiByteDTA(name + '.caption', 'imported');
-				var active = DTA_preferences.getDTA(name + '.checked', false);
+				var label = Preferences.getMultiByteDTA(name + '.caption', 'imported');
+				var active = Preferences.getDTA(name + '.checked', false);
 				var type = 0;
-				if (DTA_preferences.getDTA(name + '.isImageFilter', false)) {
+				if (Preferences.getDTA(name + '.isImageFilter', false)) {
 					type |= IMAGE_FILTER;
 				}
-				if (DTA_preferences.getDTA(name + '.isLinkFilter', false)) {
+				if (Preferences.getDTA(name + '.isLinkFilter', false)) {
 					type |= LINK_FILTER;
 				}
 				DTA_FilterManager.create(label, reg, active, type, true);
 			}
 			catch (ex) {
-				error("failed to migrate filter," + ex);
+				debug("failed to migrate filter", ex);
 			}
 		}
 	},
@@ -210,28 +208,30 @@ var MigrationService = {
 		debug("migrating dropdowns");
 		for each (let e in ['renaming', 'filter', 'directory']) {
 			try {
-				DTA_preferences.resetDTA(e);
+				Preferences.resetDTA(e);
 			}
 			catch (ex) {
 				/*no-op*/
 			}
 			try {
-				let cv = DTA_preferences.getMultiByteDTA('dropdown.' + e + '-history', null);
+				let cv = Preferences.getMultiByteDTA('dropdown.' + e + '-history', null);
 				if (cv == null) {
 					return;
 				}
 				cv = cv.split('|@|');
-				DTA_preferences.setMultiByteDTA(e, cv.toSource());
+				Preferences.setMultiByteDTA(e, cv.toSource());
 			}
 			catch (ex) {
-				error("failed to migrate dropdown " + e + ", " + ex);
+				debug("failed to migrate dropdown " + e, ex);
 			}
 		}
 	},
 	
 	// all: remove all prefs
 	_migrateRemove: function MM_migrateRemove() {
-		['context.', 'tool.', 'dropdown.', 'windows.', 'rename.'].forEach(function(e) { DTA_preferences.resetBranch(e); });
+		for each (let e in ['context.', 'tool.', 'dropdown.', 'windows.', 'rename.']) {
+			Preferences.resetBranchDTA(e);
+		}
 	},
 	
 	// nsIObserver
