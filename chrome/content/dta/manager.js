@@ -495,7 +495,7 @@ var Dialog = {
 		return true;
 	},
 	_cleanTmpDir: function D__cleanTmpDir() {
-		if (!Prefs.tempLocation || Preferences.getMultiByteDTA("tempLocation", '') != '') {
+		if (!Prefs.tempLocation || Preferences.getExt("tempLocation", '') != '') {
 			// cannot perform this action if we don't use a temp file
 			// there might be far too many directories containing far too many tmpFiles.
 			// or part files from other users.
@@ -1890,7 +1890,7 @@ Chunk.prototype = {
 	}
 }
 
-var Prompts = {
+let AuthPrompts = {
 	_authPrompter: null,
 	_prompter: null,
 	get authPrompter() {
@@ -2016,19 +2016,19 @@ Connection.prototype = {
 			throw Components.results.NS_ERROR_NO_INTERFACE;
 		}
 		if (iid.equals(Ci.nsIAuthPrompt)) {
-			return Prompts.authPrompter;
+			return AuthPrompts.authPrompter;
 		}
 		if (iid.equals(Ci.nsIPrompt)) {
-			return Prompts.prompter;
+			return AuthPrompts.prompter;
 		}
 		// for 1.9
 		/* this one makes minefield ask for the password again and again :p
 		if ('nsIAuthPromptProvider' in Ci && iid.equals(Ci.nsIAuthPromptProvider)) {
-			return Prompts.prompter.QueryInterface(Ci.nsIAuthPromptProvider);
+			return AuthPrompts.prompter.QueryInterface(Ci.nsIAuthPromptProvider);
 		}*/
 		// for 1.9
 		if ('nsIAuthPrompt2' in Ci && iid.equals(Ci.nsIAuthPrompt2)) {
-			return Prompts.authPrompter.QueryInterface(Ci.nsIAuthPrompt2);
+			return AuthPrompts.authPrompter.QueryInterface(Ci.nsIAuthPrompt2);
 		}
 		try {
 			return this.QueryInterface(iid);
@@ -2734,7 +2734,7 @@ var ConflictManager = {
 			this._sessionSetting = option;
 		}
 		if (type == 2) {
-			Preferences.setDTA('conflictresolution', option);
+			Preferences.setExt('conflictresolution', option);
 		}		
 		this._return(option);
 	},

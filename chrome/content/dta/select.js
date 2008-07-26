@@ -342,7 +342,7 @@ var Dialog = {
 			this.images = new Tree(images, 2);			
 
 			// changeTab will initialize the filters and do the selection for us
-			this.changeTab(Preferences.getDTA("seltab", 0) ? 'images': 'links');
+			this.changeTab(Preferences.getExt("seltab", 0) ? 'images': 'links');
 
 			$("urlList").addEventListener(
 				'keypress',
@@ -402,7 +402,7 @@ var Dialog = {
 
 			var dir = this.ddDirectory.value;
 			var mask = this.ddRenaming.value;
-			var counter = Preferences.getDTA("counter", 1);
+			var counter = Preferences.getExt("counter", 1);
 			if (++counter > 999) {
 				counter = 1;
 			}
@@ -441,8 +441,8 @@ var Dialog = {
 			['ddDirectory', 'ddRenaming', 'ddFilter'].forEach(function (e) { Dialog[e].save(); });
 
 			// save the counter, queued state
-			Preferences.setDTA("counter", counter);
-			Preferences.setDTA("lastqueued", !start);
+			Preferences.setExt("counter", counter);
+			Preferences.setExt("lastqueued", !start);
 			
 			let boxen = this.boxen;
 			for (let i = 0; i < boxen.length; ++i) {
@@ -631,12 +631,12 @@ var Dialog = {
 		// ... and update the UI
 		var type = this.current.type;
 		if (type == 1) {
-			Preferences.setDTA('seltab', 0);
+			Preferences.setExt('seltab', 0);
 			$("viewlinks").setAttribute("selected", true);
 			$("viewpics").setAttribute("selected", false);
 		}
 		else {
-			Preferences.setDTA('seltab', 1);
+			Preferences.setExt('seltab', 1);
 			$("viewlinks").setAttribute("selected", false);
 			$("viewpics").setAttribute("selected", true);
 		}

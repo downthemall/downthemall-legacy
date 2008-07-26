@@ -98,7 +98,7 @@ var Prefs = {
 				pref = key.toLowerCase();
 				def = e[1];
 			}
-			this[key] = Preferences.getDTA(pref, def);
+			this[key] = Preferences.getExt(pref, def);
 		}
 		
 		var perms = Prefs.permissions;
@@ -113,9 +113,9 @@ var Prefs = {
 		}
 		this.dirPermissions = perms;		
 
-		if (Preferences.getDTA("saveTemp", true)) {
+		if (Preferences.getExt("saveTemp", true)) {
 			try {
-				this.tempLocation = Preferences.getMultiByteDTA("tempLocation", '');
+				this.tempLocation = Preferences.getExt("tempLocation", '');
 				if (this.tempLocation == '') {
 					// #44: generate a default tmp dir on per-profile basis
 					// hash the profD, as it would be otherwise a minor information leak
@@ -141,7 +141,7 @@ var Prefs = {
 			let cur = Preferences.get(PREF_CONN, conns);
 						
 			if (conns != cur) {
-				Preferences.setDTA(PREF_CONN, cur);
+				Preferences.setExt(PREF_CONN, cur);
 			}
 			if (conns > cur) {
 				Preferences.set(PREF_CONN, conns);
@@ -154,10 +154,10 @@ var Prefs = {
 		this._resetConnPrefs();
 	},
 	_resetConnPrefs: function() {
-		let conn = Preferences.getDTA(PREF_CONN, 0);
+		let conn = Preferences.getExt(PREF_CONN, 0);
 		if (conn) {
 			Preferences.set(PREF_CONN, conn);
-			Preferences.setDTA(PREF_CONN, 0);
+			Preferences.setExt(PREF_CONN, 0);
 		}
 	}
 };

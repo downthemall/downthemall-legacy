@@ -130,11 +130,11 @@ function NSResolver(prefix) {
 				throw new Error(_('mlinvalid'));
 			}
 	
-			var aNum = Preferences.getDTA('numistance', 0);
+			var aNum = Preferences.getExt('numistance', 0);
 			if (++aNum > 999) {
 				aNum = 1;
 			}
-			Preferences.setDTA('numistance', aNum);
+			Preferences.setExt('numistance', aNum);
 	
 	
 			var locale = this.locale.split('-').map(function(l) { return l.slice(0, 2).toLowerCase(); }).reverse();

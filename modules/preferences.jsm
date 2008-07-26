@@ -36,21 +36,23 @@
 
 const EXPORTED_SYMBOLS = [
 	'get',
-	'getDTA',
-	'getMultiByte',
-	'getMultiByteDTA',
+	'getExt',
 	'set',
-	'setDTA',
-	'setMultiByte',
-	'setMultiByteDTA',
+	'setExt',
+	'hasUserValue',
+	'hasUserValueExt',
+	'getChildren',
+	'getChildrenExt',
 	'reset',
-	'resetDTA',
+	'resetExt',
 	'resetBranch',
-	'resetBranchDTA',
-	'resetAllDTA',
+	'resetBranchExt',
+	'resetAllExt',
 	'addObserver',
 	'removeObserver'
 ];
+
+const EXT = 'extensions.dta.';
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -90,8 +92,8 @@ function get(key, defaultValue){
 	return defaultValue;
 }
 	
-function getDTA(key, defaultValue) {
-		return get('extensions.dta.' + key, defaultValue);
+function getExt(key, defaultValue) {
+		return get(EXT + key, defaultValue);
 }
 
 function set(key, value){
@@ -104,8 +106,8 @@ function set(key, value){
 	return setMultiByte(key, value);
 }
 
-function setDTA(key, value){
-	return set('extensions.dta.' + key, value);
+function setExt(key, value){
+	return set(EXT + key, value);
 }
 
 function getMultiByte(key, defaultValue){
@@ -118,18 +120,32 @@ function getMultiByte(key, defaultValue){
 	return defaultValue;
 }
 
-function getMultiByteDTA(key, defaultValue){
-	return getMultiByte('extensions.dta.' + key, defaultValue);
-}
-
 function setMultiByte(key, value) {
 	let str = new SupportsString();
 	str.data = value.toString();
 	prefs.setComplexValue(key, Ci.nsISupportsString, str);
 }
 
-function setMultiByteDTA(key, value) {
-		setMultiByte('extensions.dta.' + key, value);
+function hasUserValue(key) {
+	try {
+		return prefs.prefHasUserValue(key);
+	}
+	catch (ex) {
+		// no-op
+	}
+	return false;
+}
+
+function hasUserValueExt(key) {
+	return hasUserValue(EXT + key);
+}
+
+function getChildren(key) {
+	return prefs.getChildList(key, {});
+}
+
+function getChildrenExt(key) {
+	return getChildren(EXT + key);
 }
 
 function reset(key) {
@@ -143,9 +159,9 @@ function reset(key) {
 }
 
 
-function resetDTA(key) {
-	if (key.search(/^extensions\.dta\./) != 0) {
-		key = 'extensions.dta.' + key;
+function resetExt(key) {
+	if (key.search(new RegExp('/^' + EXT + '/')) != 0) {
+		key = EXT + key;
 	}
 	return reset(key);
 }
@@ -164,12 +180,12 @@ function resetBranch(branch) {
 	}
 }
 
-function resetBranchDTA(branch) {
+function resetBranchExt(branch) {
 	resetBranch('extension.dta.' + branch);
 }
 
-function resetAllDTA() {
-	resetBranchDTA('');
+function resetAllExt() {
+	resetBranchExt('');
 }
 
 function addObserver(branch, obj) {

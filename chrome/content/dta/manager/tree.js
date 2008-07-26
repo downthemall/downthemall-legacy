@@ -287,7 +287,7 @@ var Tree = {
 		if (Prefs.confirmRemove) {
 			let res = Prompts.confirm(window, _('removetitle'), _('removequestion'), Prompts.YES, Prompts.NO, null, 0, false, _('removecheck'));
 			if (res.checked) {
-				Preferences.setDTA('confirmremove', false);
+				Preferences.setExt('confirmremove', false);
 			}
 			if (res.button) {
 				return;
