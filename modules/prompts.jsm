@@ -99,7 +99,18 @@ function confirm(aWindow, aTitle, aText, aButton0, aButton1, aButton2, aDefault,
 			check.value = aCheck;
 		}
 		else if (typeof(aCheck) == 'string' || aCheck instanceof String) {
-			check.value = DTA_preferences.getDTA(aCheck, false);
+			check.value = undefined;
+			try {
+				check.value = Cc['@mozilla.org/preferences-service;1']
+					.getService(Ci.nsIPrefBranch)
+					.getBoolPref(aCheck);
+			}
+			catch (ex) {
+				// no-op				
+			}
+			if (check.value == undefined) {
+				check.value = false;
+			}
 		}
 	}
 	
