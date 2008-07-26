@@ -17,10 +17,8 @@
 	width="500" height="420"
 	style="padding: 0px 0px 3px 0px;"
 >
-	<script type="application/javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js" />
 	<script type="application/javascript"><![CDATA[
-	
+		
 		function load(evt) {
 			if (evt.originalTarget.location.href.search(/about\.html$/) != -1) {
 				var doc = document.getElementById('frame').contentDocument;
@@ -29,9 +27,17 @@
 			}
 		}
 		function accept() {
+			let Preferences = {};
+			Components.utils.import('resource://dta/preferences.jsm', Preferences);
+
 			var params = window.arguments[0].QueryInterface(Components.interfaces.nsIDialogParamBlock);
 			var version = params.GetString(0);
-			DTA_preferences.setDTA('version', version);
+			try {
+				Preferences.setDTA('version', version);
+			}
+			catch (ex) {
+				alert(ex);
+			}
 			return true;
 		}
 		function cancel() {

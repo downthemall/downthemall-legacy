@@ -430,7 +430,7 @@ var Prefs = {
 			return;
 		}
 		try {
-			Preferences.resetAll();
+			Preferences.resetAllDTA();
 		} catch(ex) {
 			// XXX
 		}
