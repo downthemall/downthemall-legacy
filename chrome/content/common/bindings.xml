@@ -119,7 +119,7 @@
 						rv = '[\'' + rv + '\']';
 					}
 					try {
-						return eval(DTA_preferences.getMultiByteDTA(this._pref, rv));
+						return eval(DTA_preferences.getExt(this._pref, rv));
 					}
 					catch (ex) {
 						DTA_debug.dump("Cannot initialize from preferences:", ex);
@@ -127,7 +127,7 @@
 					}
 				]]></getter>
 			</property>
-			<property name="_max" onget="return DTA_preferences.getDTA('history', 5);"/>
+			<property name="_max" onget="return DTA_preferences.getExt('history', 5);"/>
 			<property name="inputField" onget="return this._list.inputField"/>
 			<property name="value" onget="return this._list.label">
 				<setter>
@@ -182,7 +182,7 @@
 						}
 					}
 					try {
-						DTA_preferences.setMultiByteDTA(this._pref, outValues.toSource());
+						DTA_preferences.setExt(this._pref, outValues.toSource());
 					}
 					catch (ex) {
 						DTA_debug.log("Cannot save saveddropdown", ex);
@@ -191,7 +191,7 @@
 			</method>
 			<method name="clear">
 				<body>
-					DTA_preferences.resetDTA(this._pref);
+					DTA_preferences.resetExt(this._pref);
 				</body>
 			</method>
 		</implementation>

@@ -267,7 +267,7 @@ var DTA_AddingFunctions = {
 	},
 
 	getDropDownValue : function(name) {
-		var values = eval(DTA_preferences.getMultiByteDTA(name, '[]'));
+		var values = eval(DTA_preferences.getExt(name, '[]'));
 		return values.length ? values[0] : '';
 	},
 
@@ -280,11 +280,11 @@ var DTA_AddingFunctions = {
 			throw new Components.Exception("missing required information");
 		}
 
-		var num = DTA_preferences.getDTA("counter", 0);
+		var num = DTA_preferences.getExt("counter", 0);
 		if (++num > 999) {
 			num = 1;
 		}
-		DTA_preferences.setDTA("counter", num);
+		DTA_preferences.setExt("counter", num);
 
 		for (var i = 0; i < urlsArray.length; i++) {
 			urlsArray[i].mask = mask;
@@ -292,7 +292,7 @@ var DTA_AddingFunctions = {
 			urlsArray[i].numIstance = num;
 		}
 
-		this.sendToDown(!DTA_preferences.getDTA("lastqueued", false), urlsArray);
+		this.sendToDown(!DTA_preferences.getExt("lastqueued", false), urlsArray);
 	},
 
 	saveLinkArray : function(turbo, urls, images) {
@@ -307,7 +307,7 @@ var DTA_AddingFunctions = {
 
 			var links;
 			var type;
-			if (DTA_preferences.getDTA("seltab", 0)) {
+			if (DTA_preferences.getExt("seltab", 0)) {
 				links = images;
 				type = 2;
 			}

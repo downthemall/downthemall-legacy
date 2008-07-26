@@ -89,7 +89,7 @@ var DebugService = {
 	},
 	_log: function DS__log(msg, exception) {
 		try {
-			if (msg == "" && typeof(exception) != "object") {
+			if (!msg || (msg == "" && typeof(exception) != "object")) {
 				return;
 			}
 			if (!(msg instanceof String) && typeof(msg) != 'string') {

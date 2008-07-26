@@ -33,7 +33,7 @@
 			var params = window.arguments[0].QueryInterface(Components.interfaces.nsIDialogParamBlock);
 			var version = params.GetString(0);
 			try {
-				Preferences.setDTA('version', version);
+				Preferences.setExt('version', version);
 			}
 			catch (ex) {
 				alert(ex);

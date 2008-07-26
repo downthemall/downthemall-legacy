@@ -65,11 +65,11 @@ var Privacy = {
 			$("butShowLog", 'butDelLog', 'butRevealLog')
 				.forEach(function(e) { e.disabled = log; });
 			
-			var history = uneval(Preferences.getDTA("filter", ''));
+			var history = uneval(Preferences.getExt("filter", ''));
 			history = !history || !history.length;
 			$("butFiltDel").disabled = history;
 				
-			history = uneval(Preferences.getDTA("directory", ''));
+			history = uneval(Preferences.getExt("directory", ''));
 			history = !history || !history.length;
 			$("butFoldDel").disabled = history;
 		}
@@ -85,10 +85,10 @@ var Privacy = {
 		$('historylabel').value = $('history').value;
 	},
 	delFilters: function() {
-		Preferences.resetDTA("filter");
+		Preferences.resetExt("filter");
 	},
 	delDirectories: function() {
-		Preferences.resetDTA("directory");
+		Preferences.resetExt("directory");
 	},
 	showLog: function() {
 		if (Debug.file.exists()) {
@@ -135,12 +135,12 @@ var Advanced = {
 		if (!tmp) {
 			return;
 		}
-		var f = Utils.askForDir(Preferences.getMultiByteDTA("tempLocation", tmp.value), "");
+		var f = Utils.askForDir(Preferences.getExt("tempLocation", tmp.value), "");
 		if (!f) {
 			return;
 		}
 		$("temp").value = f;
-		Preferences.setMultiByteDTA("tempLocation", f);
+		Preferences.setExt("tempLocation", f);
 		$("temp").focus();
 	},
 	toggleTemp: function() {
@@ -430,7 +430,7 @@ var Prefs = {
 			return;
 		}
 		try {
-			Preferences.resetAllDTA();
+			Preferences.resetAllExt();
 		} catch(ex) {
 			// XXX
 		}

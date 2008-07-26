@@ -250,11 +250,11 @@ var DTA_ContextOverlay = {
 	
 	findLinks: function(turbo, all) {
 		try {
-			if (all == undefined && turbo && DTA_preferences.getDTA('rememberoneclick', false)) {
-				all = DTA_preferences.getDTA('lastalltabs', false);
+			if (all == undefined && turbo && DTA_preferences.getExt('rememberoneclick', false)) {
+				all = DTA_preferences.getExt('lastalltabs', false);
 			}
 			if (turbo && all != undefined) {
-				DTA_preferences.setDTA('lastalltabs', all);
+				DTA_preferences.setExt('lastalltabs', all);
 			}
 			
 			function makeUnique(i) {
@@ -529,8 +529,8 @@ var DTA_ContextOverlay = {
 		try {
 			var ctx = this.contextMenu;
 			// get settings
-			var items = DTA_preferences.getDTA("ctxmenu", "1,1,0").split(",").map(function(e){return parseInt(e);});
-			var compact = DTA_preferences.getDTA("ctxcompact", false);
+			var items = DTA_preferences.getExt("ctxmenu", "1,1,0").split(",").map(function(e){return parseInt(e);});
+			var compact = DTA_preferences.getExt("ctxcompact", false);
 			
 			var menu;
 			if (compact) {
@@ -638,10 +638,10 @@ var DTA_ContextOverlay = {
 		try {
 			
 			// get settings
-			var menu = DTA_preferences.getDTA("toolsmenu", "1,1,1").split(",").map(function(e){return parseInt(e);});
+			var menu = DTA_preferences.getExt("toolsmenu", "1,1,1").split(",").map(function(e){return parseInt(e);});
 			
 			// all hidden...
-			var hidden = DTA_preferences.getDTA("toolshidden", false);
+			var hidden = DTA_preferences.getExt("toolshidden", false);
 			for (var i in this.tools) {
 				this.tools[i].hidden = hidden;
 			}

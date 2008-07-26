@@ -424,7 +424,7 @@ var Dialog = {
 			return false;
 		}		
 
-		var num = Preferences.getDTA("counter", 0);
+		var num = Preferences.getExt("counter", 0);
 		if (++num > 999) {
 			num = 1;
 		}			
@@ -466,8 +466,8 @@ var Dialog = {
 		}
 		DTA_AddingFunctions.sendToDown(start, batch);
 
-		Preferences.setDTA("counter", num);
-		Preferences.setDTA("lastqueued", !start);
+		Preferences.setExt("counter", num);
+		Preferences.setExt("lastqueued", !start);
 	
 		['ddRenaming', 'ddDirectory'].forEach(function(e) { Dialog[e].save(); });
 		

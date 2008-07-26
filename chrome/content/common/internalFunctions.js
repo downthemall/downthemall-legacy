@@ -298,7 +298,7 @@ var Utils = {
 	 */
 	playSound: function(name) {
 		try {
-			if (Preferences.getDTA("sounds." + name, false)) {
+			if (Preferences.getExt("sounds." + name, false)) {
 				new SoundFactory(("chrome://dta/skin/sounds/" + name + ".wav").toURI());
 			}
 		}

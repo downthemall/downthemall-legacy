@@ -62,7 +62,7 @@ var MigrationService = {
 			var vc = Cc["@mozilla.org/xpcom/version-comparator;1"]
 				.getService(Ci.nsIVersionComparator);
 		
-			var lastVersion = Preferences.getDTA('version', '0');
+			var lastVersion = Preferences.getExt('version', '0');
 			if (0 == vc.compare(DTA.VERSION, lastVersion)) {
 				return;
 			}
@@ -90,7 +90,7 @@ var MigrationService = {
 		catch(ex) {
 			debug("MigrationManager:", ex);
 			try {
-				Preferences.resetDTA("version");
+				Preferences.resetExt("version");
 			}
 			catch (ex) {
 				// XXX
@@ -135,10 +135,10 @@ var MigrationService = {
 		];
 		for each (let [oldName, newName, defaultValue] in toMigrate) {
 			try {
-				let nv = Preferences.getDTA(newName, defaultValue);
-				let ov = Preferences.getDTA(oldName, nv);
+				let nv = Preferences.getExt(newName, defaultValue);
+				let ov = Preferences.getExt(oldName, nv);
 				if (ov != nv) {	
-					Preferences.setDTA(newName, ov);
+					Preferences.setExt(newName, ov);
 				}
 				Preferences.reset(oldName);				
 			}
@@ -182,17 +182,17 @@ var MigrationService = {
 			}
 			var name = 'context.' + children[i].slice(0, -8);
 			try {
-				var reg = Preferences.getMultiByteDTA(name + '.filter', '');
+				var reg = Preferences.getExt(name + '.filter', '');
 				if (-1 != defFilters.indexOf(reg) || !reg.length) {
 					continue;
 				}
-				var label = Preferences.getMultiByteDTA(name + '.caption', 'imported');
-				var active = Preferences.getDTA(name + '.checked', false);
+				var label = Preferences.getExt(name + '.caption', 'imported');
+				var active = Preferences.getExt(name + '.checked', false);
 				var type = 0;
-				if (Preferences.getDTA(name + '.isImageFilter', false)) {
+				if (Preferences.getExt(name + '.isImageFilter', false)) {
 					type |= IMAGE_FILTER;
 				}
-				if (Preferences.getDTA(name + '.isLinkFilter', false)) {
+				if (Preferences.getExt(name + '.isLinkFilter', false)) {
 					type |= LINK_FILTER;
 				}
 				DTA_FilterManager.create(label, reg, active, type, true);
@@ -208,18 +208,18 @@ var MigrationService = {
 		debug("migrating dropdowns");
 		for each (let e in ['renaming', 'filter', 'directory']) {
 			try {
-				Preferences.resetDTA(e);
+				Preferences.resetExt(e);
 			}
 			catch (ex) {
 				/*no-op*/
 			}
 			try {
-				let cv = Preferences.getMultiByteDTA('dropdown.' + e + '-history', null);
+				let cv = Preferences.getExt('dropdown.' + e + '-history', null);
 				if (cv == null) {
 					return;
 				}
 				cv = cv.split('|@|');
-				Preferences.setMultiByteDTA(e, cv.toSource());
+				Preferences.setExt(e, cv.toSource());
 			}
 			catch (ex) {
 				debug("failed to migrate dropdown " + e, ex);
@@ -230,7 +230,7 @@ var MigrationService = {
 	// all: remove all prefs
 	_migrateRemove: function MM_migrateRemove() {
 		for each (let e in ['context.', 'tool.', 'dropdown.', 'windows.', 'rename.']) {
-			Preferences.resetBranchDTA(e);
+			Preferences.resetBranchExt(e);
 		}
 	},
 	

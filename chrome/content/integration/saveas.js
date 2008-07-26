@@ -42,7 +42,7 @@ var DTA_SaveAs = {
 		var basicBox = document.getElementById('basicBox');
 		var normalBox = document.getElementById('normalBox');
 		const doRevert = basicBox && (!basicBox.collapsed || (normalBox && normalBox.collapsed));
-		const doOverlay = DTA_preferences.getDTA("downloadWin", true);
+		const doOverlay = DTA_preferences.getExt("downloadWin", true);
 		if (
 			!doOverlay
 			&& typeof(gFlashGotDMDialog) == 'undefined'
@@ -87,7 +87,7 @@ var DTA_SaveAs = {
 		}
 		
 		try {
-			switch (DTA_preferences.getDTA('saveasmode', 0)) {
+			switch (DTA_preferences.getExt('saveasmode', 0)) {
 				case 1:
 					this.mode.selectedItem = this.normal;
 					break;
@@ -95,7 +95,7 @@ var DTA_SaveAs = {
 					this.mode.selectedItem = this.turbo.disabled ? this.normal : this.turbo;
 					break;
 			}
-			if (DTA_preferences.getDTA('saveasmode', 0)) {
+			if (DTA_preferences.getExt('saveasmode', 0)) {
 				this.remember.checked = true;
 				this.remember.disabled = false;
 			}
@@ -182,15 +182,15 @@ var DTA_SaveAs = {
 		var mode = this.mode.selectedItem;
 		if (mode == this.normal || mode == this.turbo) {
 			if (this.remember.checked) {
-				DTA_preferences.setDTA("saveasmode", mode == this.normal ? 1 : 2);
+				DTA_preferences.setExt("saveasmode", mode == this.normal ? 1 : 2);
 			}
 			else {
-				DTA_preferences.setDTA("saveasmode", 0);
+				DTA_preferences.setExt("saveasmode", 0);
 			}
 			this.download(mode == this.turbo);			
 			return false;
 		}
-		DTA_preferences.setDTA("saveasmode", 0);		
+		DTA_preferences.setExt("saveasmode", 0);		
 	  return true;
 	},
 	

@@ -51,7 +51,7 @@ var DTA_TBB = {
 	},
 	_refresh: function() {
 		DTA_preferences
-			.getDTA('sm.buttons')
+			.getExt('sm.buttons')
 			.split(',')
 			.forEach(
 				function(v, i) {
