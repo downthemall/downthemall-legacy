@@ -48,6 +48,9 @@ function include(uri) {
 
 include("chrome://dta/content/common/regconvert.js");
 
+const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'initWithCallback');
+const TYPE_ONE_SHOT = CI.nsITimer.TYPE_ONE_SHOT;
+
 // no not create DTA_Filter yourself, managed by DTA_FilterManager
 function Filter(name, prefs) {
 	this._id = name;
@@ -327,12 +330,11 @@ var FilterManager = {
 	},
 
 	_done: true,
-	_mustReload: true,
+	_mustReload: false,
 	_prefs: CC['@mozilla.org/preferences-service;1']
 		.getService(CI.nsIPrefService)
 		.getBranch("extensions.dta.filters."),
-	_timer: CC['@mozilla.org/timer;1']
-			.createInstance(CI.nsITimer),
+	_timer: null,
 
 	_init: function FM_init() {
 		this._prefs = this._prefs.QueryInterface(CI.nsIPrefBranch2);
@@ -350,16 +352,15 @@ var FilterManager = {
 
 		// register (the observer) and initialize our timer, so that we'll get a reload event.
 		this.register();
-		this._timer.initWithCallback(
-			this,
-			100,
-			this._timer.TYPE_ONE_SHOT
-		);
+		this._delayedReload();
 	},
 
 	_delayedReload: function FM_delayedReload() {
+		if (this._mustReload) {
+			return;
+		}
 		this._mustReload = true;
-		this._timer.delay = 100;
+		this._timer = new Timer(this, 100, TYPE_ONE_SHOT); 
 	},
 
 	get count() {
