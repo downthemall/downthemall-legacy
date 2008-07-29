@@ -172,26 +172,38 @@ var Interface = {
 var Filters = {
 	_filters: [],
 	_lastRowEdited : -1,
+	
+	Observer: {
+		registerObserver: function() {
+			try {
+				makeObserver(this);
+				var os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
+				os.addObserver(this, 'DTA:filterschanged', true);
+			}
+			catch (ex) {
+				Debug.log("cannot install filterManager observer!", ex);
+				return false;
+			}
+			return true;
+		},	
+		// nsIObserver::observe
+		observe : function(subject, topic, prefName) {
+			// filterManager will throw this topic at us.
+			if (topic == 'DTA:filterschanged') {
+				// the heavy work will be performed by changeTab..
+				// it will create the filter boxen for us, and furthermore do another selection
+				Filters.reloadFilters();
+			}
+		}
+	},
 
 	load: function() {
 		this._elem = $("filterTable");
 		this._elem.view = this;
 		
-		this.registerObserver();
+		this.Observer.registerObserver();
 		this.reloadFilters();
 	},
-	registerObserver: function() {
-		try {
-			makeObserver(this);
-			var os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
-			os.addObserver(this, 'DTA:filterschanged', true);
-		}
-		catch (ex) {
-			Debug.log("cannot install filterManager observer!", ex);
-			return false;
-		}
-		return true;
-	},	
 	reloadFilters: function() {
 		// something has changed..
 		try {
@@ -409,17 +421,7 @@ var Filters = {
 	getRowProperties: function(idx, prop) {},
 	getCellProperties: function(idx, column, prop) {},
 	getColumnProperties: function(column, element, prop) {},
-	setCellValue: function(idx, col, value) {},
-	
-	// nsIObserver::observe
-	observe : function(subject, topic, prefName) {
-		// filterManager will throw this topic at us.
-		if (topic == 'DTA:filterschanged') {
-			// the heavy work will be performed by changeTab..
-			// it will create the filter boxen for us, and furthermore do another selection
-			this.reloadFilters();
-		}
-	}
+	setCellValue: function(idx, col, value) {}
 };
 
 var Prefs = {
