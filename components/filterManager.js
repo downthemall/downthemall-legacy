@@ -42,6 +42,7 @@ function include(uri) {
 include('chrome://dta/content/common/xpcom.jsm');
 
 const Exception = Components.Exception;
+const BASE = 'extensions.dta.filters.';
 
 const NS_ERROR_NO_INTERFACE = Cr.NS_ERROR_NO_INTERFACE;
 const NS_ERROR_FAILURE = Cr.NS_ERROR_FAILURE;
@@ -50,11 +51,16 @@ const NS_ERROR_INVALID_ARG = Cr.NS_ERROR_INVALID_ARG;
 
 const LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
 const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
+const TOPIC_FILTERSCHANGED = 'DTA:filterschanged';
+
+const nsITimer = Ci.nsITimer;
+const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'init');
+ 
+let Preferences = {};
 
 // no not create DTA_Filter yourself, managed by DTA_FilterManager
-function Filter(name, prefs) {
+function Filter(name) {
 	this._id = name;
-	this._prefs = prefs;
 }
 Filter.prototype = {
 	// exported
@@ -178,53 +184,42 @@ Filter.prototype = {
 	 */
 	load: function F_load(localizedLabel) {
 		this._localizedLabel = localizedLabel;
-		this._label = this.getMultiBytePref(this.pref('label'));
+		this._label = Preferences.get(this.pref('label'));
 		if (!this._label || !this._label.length) {
 			throw Components.Exception("Empty filter!");
 		}
 		// localize the label, but only if user didn't change it.
-		if (localizedLabel && !this._prefs.prefHasUserValue(this.pref('label'))) {
+		if (localizedLabel && !Preferences.hasUserValue(this.pref('label'))) {
 			this._label = localizedLabel;
 		}
-		
-		this._active = this._prefs.getBoolPref(this.pref('active'));
-		this._type = this._prefs.getIntPref(this.pref('type'));
+				
+		this._active = Preferences.get(this.pref('active'));
+		this._type = Preferences.get(this.pref('type'));
 		this._defFilter = this._id.search(/^deffilter/) != -1;
 		
 		// may throw
-		this.expression = this.getMultiBytePref(this.pref('test'));
+		this.expression = Preferences.get(this.pref('test'));
 		
 		this._modified = false;
 	},
 
 	// exported
 	save: function F_save() {
-		if (!this._prefs) {
-			throw NS_ERROR_INVALID_ARG;
-		}
 		if (!this._modified) {
 			return;
 		}
-		this._prefs.setBoolPref(this.pref('active'), this._active);
-		
-		this.setMultiBytePref(this.pref('test'), this._expr);
-		this._prefs.setIntPref(this.pref('type'), this._type);
+		Preferences.set(this.pref('active'), this._active);
+		Preferences.set(this.pref('test'), this._expr);
+		Preferences.set(this.pref('type'), this._type);
 			
 		// save this last as FM will test for it.
-		this.setMultiBytePref(this.pref('label'), this._label);
+		Preferences.set(this.pref('label'), this._label);
 
 		this._modified = false;
 	},
 
 	_reset: function F_reset() {
-		// BEWARE: 1.8, no implementation for resetBranch
-		var c = {value: 0};
-		var prefs = this._prefs.getChildList(this._id, c);
-		for (var i = 0; i < c.value; ++i) {
-			if (this._prefs.prefHasUserValue(prefs[i])) {
-				this._prefs.clearUserPref(prefs[i]);
-			}
-		}
+		Preferences.resetBranch(this._id);
 	},
 
 	// exported
@@ -243,27 +238,10 @@ Filter.prototype = {
 		this._reset();
 	},
 
-	getMultiBytePref: function F_getMultiBytePref(pref) {
-		var rv = this._prefs.getComplexValue(
-			pref,
-			Ci.nsISupportsString
-		);
-		return rv.data;
-	},
-
-	setMultiBytePref: function F_setMultiBytePref(pref, value) {
-		var str = Cc["@mozilla.org/supports-string;1"]
-			.createInstance(Ci.nsISupportsString);
-		str.data = value;
-		this._prefs.setComplexValue(
-			pref,
-			Ci.nsISupportsString,
-			str
-		);
-	},
 	toString: function() {
 		return this._label + " (" + this._id + ")";
 	},
+
 	toSource: function() {
 		return this.toString() + ": " + this._regs.toSource();
 	}
@@ -304,42 +282,41 @@ FilterEnumerator.prototype = {
 // XXX: reload() should be called delayed when we observe changes (as many changes might come in)
 var FilterManager = {
 	_done: true,
-	_mustReload: true,
+	_mustReload: false,
 	
-	_prefs: Cc['@mozilla.org/preferences-service;1']
-		.getService(Ci.nsIPrefService)
-		.getBranch("extensions.dta.filters."),
-	
-	_timer: Cc['@mozilla.org/timer;1']
-			.createInstance(Ci.nsITimer),
+	_timer: null,
+	_obs: null,
 
 	init: function FM_init() {
-		this._prefs = this._prefs.QueryInterface(Ci.nsIPrefBranch2);
+		Components.utils.import('resource://dta/preferences.jsm', Preferences);
 
 		// load those localized labels for default filters.
 		this._localizedLabels = {};
-		var b = Cc['@mozilla.org/intl/stringbundle;1']
+		let b = Cc['@mozilla.org/intl/stringbundle;1']
 			.getService(Ci.nsIStringBundleService)
 			.createBundle("chrome://dta/locale/filters.properties");
-		var e = b.getSimpleEnumeration();
+		let e = b.getSimpleEnumeration();
 		while (e.hasMoreElements()) {
 			var prop = e.getNext().QueryInterface(Ci.nsIPropertyElement);
 			this._localizedLabels[prop.key] = prop.value;
 		}
+		
+		// init the observer service
+		this._obs = Cc["@mozilla.org/observer-service;1"]
+			.getService(Ci.nsIObserverService);
 
 		// register (the observer) and initialize our timer, so that we'll get a reload event.
 		this.register();
-		this._timer.initWithCallback(
-			this,
-			100,
-			this._timer.TYPE_ONE_SHOT
-		);
+		this._delayedReload();
 		this.init = new Function();
 	},
 
 	_delayedReload: function FM_delayedReload() {
+		if (this._mustReload) {
+			return;
+		}
 		this._mustReload = true;
-		this._timer.delay = 100;
+		this._timer = new Timer(this, 100, nsITimer.TYPE_ONE_SHOT);
 	},
 
 	get count() {
@@ -351,39 +328,38 @@ var FilterManager = {
 			return;
 		}
 		this._mustReload = false;
+		
 
 		this._filters = {};
 		this._all = [];
-		this._count = 0;
 
 		// hmmm. since we use uuids for the filters we've to enumerate the whole branch.
-		var c = {value: 0};
-		var prefs = this._prefs.getChildList('', c);
-
-		for (var i = 0; i < c.value; ++i) {
+		for each (let pref in Preferences.getChildren(BASE)) {
 			// we test for label (as we get all the other props as well)
-			if (prefs[i].search(/\.label$/) == -1) {
+			if (pref.search(/\.label$/) == -1) {
 				continue;
 			}
 			// cut of the label part to get the actual name
-			var name = prefs[i].slice(0, -6);
-
+			let name = pref.slice(0, -6);
 			try {
-				var filter = new Filter(name, this._prefs);
+				let filter = new Filter(name);
 				// overwrite with localized labels.
-				var localizedLabel = null;
-				if (filter.id in this._localizedLabels) {
-					localizedLabel = this._localizedLabels[filter.id];
+				let localizedLabel = null;
+				let localizedTag = filter.id.slice(BASE.length);
+				if (localizedTag in this._localizedLabels) {
+					localizedLabel = this._localizedLabels[localizedTag];
 				}
 				filter.load(localizedLabel);
 				this._filters[filter.id] = filter;
 				this._all.push(filter);
-				this._count++;
 			}
 			catch (ex) {
-				debug("Failed to load: " + name + " / " + ex);
+				debug("Failed to load: " + name + " / ", ex);
 			}
 		}
+		
+		this._count = this._all.length;
+		
 		this._all.sort(
 			function(a,b) {
 				if (a.defFilter && !b.defFilter) {
@@ -405,9 +381,12 @@ var FilterManager = {
 		this._active = this._all.filter(function(f) { return f.active; });
 
 		// notify all observers
-		var observerService = Cc["@mozilla.org/observer-service;1"]
-			.getService(Ci.nsIObserverService);
-		observerService.notifyObservers(this, 'DTA:filterschanged', null);
+		let enumerator = this._obs.enumerateObservers(TOPIC_FILTERSCHANGED);
+		debug("notifying");
+		while (enumerator.hasMoreElements()) {
+			debug("enumerator:" + enumerator.getNext().toSource());
+		}
+		this._obs.notifyObservers(this, TOPIC_FILTERSCHANGED, null);
 	},
 
 	enumAll: function FM_enumAll() {
@@ -438,12 +417,12 @@ var FilterManager = {
 
 		// we will use unique ids for user-supplied filters.
 		// no need to keep track of the actual number of filters or an index.
-		var uuid = Cc["@mozilla.org/uuid-generator;1"]
+		let uuid = Cc["@mozilla.org/uuid-generator;1"]
 			.getService(Ci.nsIUUIDGenerator)
 			.generateUUID();
 
 		//
-		var filter = new Filter(uuid.toString(), this._prefs);
+		let filter = new Filter(BASE + uuid.toString());
 		// I'm a friend, hence I'm allowed to access private members :p
 		filter._label = label;
 		filter._active = active;
@@ -473,7 +452,7 @@ var FilterManager = {
 				f.save();
 			}
 			catch (ex) {
-				debug(ex);
+				debug('Failed to save filters', ex);
 			}
 		}
 	},
@@ -492,26 +471,25 @@ var FilterManager = {
 
 	// nsIObserver
 	observe: function FM_observe(subject, topic, prefName) {
-		this._delayedReload();
+		if (topic == 'timer-callback') {
+			this.reload();
+		}
+		else {
+			this._delayedReload();
+		}
 	},
 
 	// own stuff
 	register: function FM_register() {
 		try {
 			// Put self as observer to desired branch
-			this._prefs.addObserver("", this, true);
+			Preferences.addObserver(BASE, this);
 		}
 		catch (ex) {
 			error(ex);
 			return false;
 		}
 		return true;
-	},
-
-	// nsITimerCallback
-	notify: function FM_notify() {
-		//error("DTAFM: notify");
-		this.reload();
 	}
 };
 implementComponent(
@@ -519,7 +497,7 @@ implementComponent(
 	Components.ID("{435FC5E5-D4F0-47a1-BDC1-F325B78188F3}"),
 	"@downthemall.net/filtermanager;2",
 	"DownThemAll! Filtermanager",
-	[Ci.nsITimerCallback, Ci.nsIObserver, Ci.dtaIFilterManager]
+	[Ci.nsIObserver, Ci.dtaIFilterManager]
 );
 
 // entrypoint
