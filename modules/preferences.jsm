@@ -172,10 +172,9 @@ function resetBranch(branch) {
 	}
 	catch (ex) {
 		// BEWARE: not yet implemented in XPCOM 1.8/trunk.
-		let c = {value: 0};
-		let children = prefs.getChildList(branch, c);
-		for (var i = 0; i < c.value; ++i) {
-			reset(prefs[i]);
+		let children = prefs.getChildList(branch, {});
+		for each (let key in children) {
+			reset(key);
 		}
 	}
 }
