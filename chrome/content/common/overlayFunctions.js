@@ -604,27 +604,34 @@ function DTA_getLinkPrintMetalink(url, charset) {
  */
 function DTA_makeObserver(obj) {
 	// nsiSupports
-	obj.__QueryInterface = obj.QueryInterface;
+	let __QueryInterface = obj.QueryInterface;
 	obj.QueryInterface = function(iid) {
-		if (
-			iid.equals(Components.interfaces.nsISupports)
-			|| iid.equals(Components.interfaces.nsISupportsWeakReference)
-			|| iid.equals(Components.interfaces.nsIWeakReference)
-			|| iid.equals(Components.interfaces.nsiObserver)
-		) {
-			return this;
+		try {
+			if (
+				iid.equals(Components.interfaces.nsISupports)
+				|| iid.equals(Components.interfaces.nsISupportsWeakReference)
+				|| iid.equals(Components.interfaces.nsIWeakReference)
+				|| iid.equals(Components.interfaces.nsiObserver)
+			) {
+				return obj;
+			}
+			if (__QueryInterface) {
+				debug("calling original: " + iid);
+				return __QueryInterface.call(this, iid);
+			}
+			throw Components.results.NS_ERROR_NO_INTERFACE;
 		}
-		if (this.__QueryInterface) {
-			return this.__QueryInterface(iid);
+		catch (ex) {
+			debug("requested interface not available: " + iid);
+			throw ex;
 		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
 	};
 	// nsiWeakReference
 	obj.QueryReferent = function(iid) {
-		return this;
+		return obj.QueryInterface(iid);
 	};
 	// nsiSupportsWeakReference
 	obj.GetWeakReference = function() {
-		return this;
+		return obj;
 	};	
 }
