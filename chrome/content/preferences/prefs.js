@@ -160,10 +160,11 @@ var Advanced = {
 
 var Interface = {
 	getMenu: function(pref, which) {
-		return $(pref).value.split(',')[which] == '1';
+		let menu = $(pref).value.split(',');
+		return which in menu ? menu[which] == '1' : false;
 	},
 	setMenu: function(pref, which) {
-		var menu = $(pref).value.split(',');
+		let menu = $(pref).value.split(',');
 		menu[which] = $(pref + which).checked ? 1 : 0;
 		return menu.toString();
 	}
