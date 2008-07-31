@@ -147,13 +147,18 @@ stack > #infoPercent {
 	color: gray !important;
 }
 
+#loadingbox {
+  opacity: 0.6;
+  background-color: -moz-Field;
+}
+
 #loading {
   -moz-appearance: none;
   -moz-user-focus: ignore;
   border: none !important;
   min-width: 0;
   background-color: transparent;
-  color: -moz-dialogText;
+  color: -moz-fieldText;
 
 	font-size: large;
 	font-weight: bold;

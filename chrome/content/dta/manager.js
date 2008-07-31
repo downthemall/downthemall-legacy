@@ -162,7 +162,7 @@ var Dialog = {
 		new Timer("Dialog.refreshWritten();", 100, true, true);
 		new Timer("Dialog.saveRunning();", 10000, true);
 		
-		$('mainstack').selectedIndex++;		
+		$('loadingbox').parentNode.removeChild($('loadingbox'));		
 	},
 	
 	observe: function D_observe(subject, topic, data) {
