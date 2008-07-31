@@ -77,12 +77,14 @@ function CoThreadBase(func, yieldEvery, thisCtx) {
  *          1000
  *        ).run();
  *   
- * @param {Object} func Function to be called. Is passed call count as argument. Returning false will cancel the operation. 
- * @param {Object} yieldEvery Optional. After how many items control should be turned over to the main thread
+ * @param {Function} func Function to be called. Is passed call count as argument. Returning false will cancel the operation. 
+ * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
  * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
  */
 function CoThread(func, yieldEvery, thisCtx) {
 	CoThreadBase.call(this, func, yieldEvery, thisCtx);
+	
+	// fake generator so we may use a common implementation. ;)
 	this._generator = (function() { for(;;) { yield null }; })();
 }
 
@@ -91,11 +93,12 @@ CoThread.prototype = {
 	_idx: 0,
 	_ran: false,
 	
-	run: function() {
+	run: function CoThread_run() {
 		if (this._ran) {
 			throw new Error("You cannot run a CoThread/CoThreadListWalker instance more than once.");
 		}
 		this._ran = true;
+		
 		this._timer = new Timer(this, 10, TYPE_REPEATING_SLACK);		
 	},
 	
@@ -128,7 +131,7 @@ CoThread.prototype = {
 		this._timer.cancel();
 	},
 	
-	_callf: function CoThread_callf(ctx, item, idx, func) {
+	_callf: function CoThread__callf(ctx, item, idx, func) {
 		return func.call(ctx, idx);
 	}
 }
@@ -154,9 +157,9 @@ CoThread.prototype = {
  *          1000
  *        ).run();
  *   
- * @param {Object} func Function to be called on each item. Is passed item and index as arguments. Returning false will cancel the operation. 
- * @param {Object} arrayOrGenerator Array or Generator object to be used as the input list 
- * @param {Object} yieldEvery Optional. After how many items control should be turned over to the main thread
+ * @param {Function} func Function to be called on each item. Is passed item and index as arguments. Returning false will cancel the operation. 
+ * @param {Array/Generator} arrayOrGenerator Array or Generator object to be used as the input list 
+ * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
  * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
  */
 function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
@@ -178,6 +181,6 @@ function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
 for (x in CoThread.prototype) {
 	CoThreadListWalker.prototype[x] = CoThread.prototype[x];
 }
-CoThreadListWalker.prototype._callf = function CoThreadListWalker_callf(ctx, item, idx, func) {
+CoThreadListWalker.prototype._callf = function CoThreadListWalker__callf(ctx, item, idx, func) {
 	return func.call(ctx, item, idx);
 }
