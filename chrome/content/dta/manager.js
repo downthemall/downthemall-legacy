@@ -111,7 +111,7 @@ var Dialog = {
 		else if (de.hasAttribute('offline')) {
 				de.removeAttribute('offline');
 		}		
-		Tree.invalidate();
+		Tree.box.invalidate();
 	},
 	_wasRunning: false,
 	_lastTime: Utils.getTimestamp(),
@@ -716,6 +716,7 @@ Visitor.prototype = {
 
 				case 'content-length':
 					let contentLength = new Number(aValue);
+					Debug.logString(contentLength);
 					if (contentLength > 0 && !isNaN(contentLength)) {
 						this.ccontentLength = Math.floor(contentLength); 
 					}
@@ -723,7 +724,7 @@ Visitor.prototype = {
 
 				case 'content-range': {
 					let contentLength = new Number(aValue.split('/').pop());
-					if (contentLength > 0) {
+					if (contentLength > 0 && !isNaN(contentLength)) {
 						this.contentLength = Math.floor(contentLength);
 					}
 				}
@@ -1089,6 +1090,7 @@ QueueItem.prototype = {
 	_totalSize: 0,
 	get totalSize() { return this._totalSize; },
 	set totalSize(nv) {
+		Debug.logString(nv + "/" + this._totalSize);
 		if (this._totalSize == nv) {
 			return nv;
 		}
