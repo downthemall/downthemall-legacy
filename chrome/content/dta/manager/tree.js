@@ -535,7 +535,9 @@ var Tree = {
 			let states = {
 				state: 0,
 				resumable: false,
-				is: QueueItem.prototype.is,
+				is: function(s) {
+					return this.state & s;  
+				},
 				isOf: QueueItem.prototype.isOf,
 				count: this.selection.count
 			};
