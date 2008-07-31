@@ -591,7 +591,7 @@ Visitor.prototype = {
 	encoding: null,
 	fileName: null,
 	acceptRanges: 'bytes',
-	contentlength: 0,
+	contentLength: 0,
 	time: null,
 
 	QueryInterface: function(aIID) {
@@ -627,16 +627,17 @@ Visitor.prototype = {
 				break;
 
 				case 'content-length':
-					let contentlength = new Number(aValue);
+					let contentLength = new Number(aValue);
 					if (contentLength > 0 && !isNaN(contentLength)) {
-						this.contentlength = Math.floor(contentLength);
+						this.contentLength = Math.floor(contentLength);
+						Debug.dump("cl: " + contentLength);
 					}
 				break;
 
 				case 'content-range': {
-					let cl = new Number(aValue.split('/').pop());
-					if (cl > 0) {
-						this.contentlength = cl;
+					let contentLength = new Number(aValue.split('/').pop());
+					if (contentLength > 0 && !isNan(contentLength)) {
+						this.contentLength = Math.floor(contentLength);
 					}
 				}
 				break;
@@ -984,7 +985,7 @@ QueueItem.prototype = {
 	_totalSize: 0,
 	get totalSize() { return this._totalSize; },
 	set totalSize(nv) {
-		if (this._totalsize == nv) {
+		if (this._totalSize == nv) {
 			return nv;
 		}
 		if (nv >= 0 && !isNaN(nv)) {
@@ -2023,8 +2024,8 @@ Connection.prototype = {
 			d.resumable = false;
 		}
 
-		if (visitor.contentlength > 0) {
-			d.totalSize = visitor.contentlength;
+		if (visitor.contentLength > 0) {
+			d.totalSize = visitor.contentLength;
 		}
 		else {
 			d.totalSize = 0;
