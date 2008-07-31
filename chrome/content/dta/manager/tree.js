@@ -535,9 +535,7 @@ var Tree = {
 			let states = {
 				_state: 0,
 				resumable: false,
-				is: function(s) {
-					return this._state & s;  
-				},
+				is: function(s) this._state & s,  
 				isOf: QueueItem.prototype.isOf,
 				count: this.selection.count
 			};
@@ -564,14 +562,14 @@ var Tree = {
 					o.setAttribute('disabled', disabled);
 				}
 			}
-			modifySome($('play', 'toolplay'), function(d) { return !d.isOf(COMPLETE, RUNNING, QUEUED, FINISHING); });
-			modifySome($('pause', 'toolpause'), function(d) { return (d.state & RUNNING && d.resumable) || (d.state & QUEUED); });
-			modifySome($('cancel', 'toolcancel'), function(d) { return !d.isOf(FINISHING, CANCELED); });
-			modifySome($('launch'), function(d) { return d.curFile; });
-			modifySome($('folder'), function(d) { return d.curFolder; });
-			modifySome($('delete'), function(d) { return d.is(COMPLETE); });
-			modifySome($('export'), function(d) { return d.count != 0; });
-			modifySome($('addchunk', 'removechunk', 'force'), function(d) { return d.isOf(QUEUED, RUNNING, PAUSED); });
+			modifySome($('play', 'toolplay'), function(d) !d.isOf(COMPLETE, RUNNING, QUEUED, FINISHING));
+			modifySome($('pause', 'toolpause'), function(d) (d.is(RUNNING) && d.resumable) || d.is(QUEUED));
+			modifySome($('cancel', 'toolcancel'), function(d) !d.isOf(FINISHING, CANCELED));
+			modifySome($('launch'), function(d) !!d.curFile);
+			modifySome($('folder'), function(d) !!d.curFolder);
+			modifySome($('delete'), function(d) d.is(COMPLETE));
+			modifySome($('export'), function(d) !!d.count);
+			modifySome($('addchunk', 'removechunk', 'force'), function(d) d.isOf(QUEUED, RUNNING, PAUSED));
 		}
 		catch (ex) {
 			Debug.log("rt", ex);
