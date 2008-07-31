@@ -152,7 +152,6 @@ var Dialog = {
 		if ("arguments" in window) {
 			startDownloads(window.arguments[0], window.arguments[1]);
 		}
-
 		this._initialized = true;
 		for (let d in Tree.all) {
 			if (d.is(FINISHING)) {
@@ -461,6 +460,10 @@ var Dialog = {
 	},
 	close: function D_close() {
 		Debug.logString("Close request");
+		if (!this._initialized) {
+			Debug.logString("not initialized. Going down immediately!");
+			return true;
+		}
 		this.offline = true;
 		if (!this._forceClose && !this._canClose()) {
 			delete this._forceClose;

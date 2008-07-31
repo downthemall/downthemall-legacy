@@ -76,27 +76,37 @@ var SessionManager = {
 		this.load();
 	},
 	shutdown: function() {
-		try {
-			for each (let e in ['_addStmt', '_saveStmt', '_savePosStmt', '_delStmt']) {
-				try {
-					this[e].finalize();
-					delete this[e];
-				}
-				catch (ex) {
-					// no-op
-				}
-			}
-			this._con.executeSimpleSQL('VACUUM');
+		// try to kill any loaders
+		if ('_loader' in this) {
 			try {
-				this._con.close();
-				delete this._con;
+				this._loader.cancel();
+				this.endUpdate();
 			}
 			catch (ex) {
-				Debug.log("Cannot close!", ex);
+				// no-op
 			}
 		}
+		for each (let e in ['_addStmt', '_saveStmt', '_savePosStmt', '_delStmt']) {
+			try {
+				this[e].finalize();
+				delete this[e];
+			}
+			catch (ex) {
+				// no-op
+			}
+		}
+		try {
+			this._con.executeSimpleSQL('VACUUM');
+		}
 		catch (ex) {
-			Debug.log("SessionManager::shutdown", ex);
+			// no-op
+		}
+		try {
+			this._con.close();
+			delete this._con;
+		}
+		catch (ex) {
+			Debug.log("Cannot close!", ex);
 		}
 	},
 	beginUpdate: function() {
@@ -157,8 +167,6 @@ var SessionManager = {
 	},
 
 	load: function() {
-		this._loaded = false;
-		
 		let stmt = this._con.createStatement('SELECT COUNT(*) FROM queue');
 		stmt.executeStep();
 		let count = stmt.getInt64(0);
@@ -168,11 +176,14 @@ var SessionManager = {
 		stmt = this._con.createStatement('SELECT uuid, item FROM queue ORDER BY pos');
 		this.beginUpdate();
 		Tree.beginUpdate();
-		new CoThread(
+		this._loader = new CoThread(
 			function(idx) {
-				loading.value = _('loading', [++idx, count]);
+				if (idx % 500 == 0) {
+					loading.label = _('loading', [idx, count]);
+				}
 				// Are we done?
 				if (!stmt || !stmt.executeStep()) {
+					delete this._loader;
 					this.endUpdate();
 					Tree.endUpdate();
 					Tree.invalidate();
@@ -290,8 +301,9 @@ var SessionManager = {
 				}
 				return true;
 			},
-			200,
+			100,
 			this
-		).run();
+		);
+		this._loader.run();
 	}
 };
