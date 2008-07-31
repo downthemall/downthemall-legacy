@@ -119,12 +119,7 @@
 		</tooltip>
 	</popupset>	
 	
-	<deck flex="1" id="mainstack">
-		<vbox align="center">
-			<spacer flex="1"/>
-			<button id="loading" disabled="true" label="&loading.label;"/>
-			<spacer flex="1"/>
-		</vbox>
+	<stack flex="1" id="mainstack">
 		<vbox flex="1">		
 			<toolbox chromedir="&locale.dir;">
 			  <toolbar id="tools">
@@ -183,7 +178,12 @@
 					</treechildren>
 				</tree>			
 		</vbox>
-	</deck>
+		<vbox align="center" flex="1" id="loadingbox">
+			<spacer flex="1"/>
+			<button id="loading" disabled="true" label="&loading.label;"/>
+			<spacer flex="1"/>
+		</vbox>					
+	</stack>
 
 	<statusbar id="footer" chromedir="&locale.dir;">
 		 <statusbarpanel id="statusText" label="" flex="1" />
