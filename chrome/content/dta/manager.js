@@ -1043,7 +1043,7 @@ QueueItem.prototype = {
 	isOf: function QI_isOf() {
 		let state = this._state;
 		for (let i = 0, e = arguments.length; i < e; ++i) {
-			if (state == arguments[i]) {
+			if (state & arguments[i]) {
 				return true;
 			}
 		}

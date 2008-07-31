@@ -533,16 +533,16 @@ var Tree = {
 			}
 				
 			let states = {
-				state: 0,
+				_state: 0,
 				resumable: false,
 				is: function(s) {
-					return this.state & s;  
+					return this._state & s;  
 				},
 				isOf: QueueItem.prototype.isOf,
 				count: this.selection.count
 			};
 			for (let d in this.selected) {
-				states.state |= d.state;
+				states._state |= d.state;
 				states.resumable |= d.resumable;
 			}
 			let cur = this.current;
