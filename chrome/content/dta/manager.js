@@ -1689,9 +1689,7 @@ QueueItem.prototype = {
 		);
 		Debug.logString("scoreboard\n" + scoreboard);
 	},	
-	toString: function() {
-		return this.urlManager.usable;
-	},
+	toString: function() this.urlManager.usable,
 	toSource: function() {
 		let e = {};
 		[
@@ -2563,11 +2561,7 @@ function startDownloads(start, downloads) {
 	
 	let g = downloads;
 	if ('length' in downloads) {
-		g = function() {
-			 for each (let i in downloads) {
-			 	yield i;
-			 }
-		}();
+		g = (i for each (i in downloads));
 	}
 
 	let added = 0;
