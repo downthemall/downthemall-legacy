@@ -122,7 +122,7 @@
 	<deck flex="1" id="mainstack">
 		<vbox align="center">
 			<spacer flex="1"/>
-			<button id="loading" disabled="true"/>
+			<button id="loading" disabled="true" label="&loading.label;"/>
 			<spacer flex="1"/>
 		</vbox>
 		<vbox flex="1">		

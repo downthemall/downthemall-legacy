@@ -179,7 +179,7 @@ var SessionManager = {
 		this._loader = new CoThread(
 			function(idx) {
 				if (idx % 500 == 0) {
-					loading.label = _('loading', [idx, count]);
+					loading.label = _('loading', [idx, count, Math.floor(idx * 100 / count)]);
 				}
 				// Are we done?
 				if (!stmt || !stmt.executeStep()) {
