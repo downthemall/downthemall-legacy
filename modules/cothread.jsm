@@ -43,6 +43,22 @@ const Cr = Components.results;
 const TYPE_REPEATING_SLACK = Ci.nsITimer.TYPE_REPEATING_SLACK;
 const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'initWithCallback');
 
+// "Abstract" base c'tor
+function CoThreadBase(func, yieldEvery, thisCtx) {
+	this._thisCtx = thisCtx ? thisCtx : this;
+	
+	// default to 1
+	this._yieldEvery = typeof yieldEvery == 'number' ? Math.floor(yieldEvery) : 1;
+	if (yieldEvery < 1) {
+		throw Cr.NS_ERROR_INVALID_ARG;
+	}
+	
+	if (typeof func != 'function' && !(func instanceof Function)) {
+		throw Cr.NS_ERROR_INVALID_ARG;
+	} 
+	this._func = func;
+}
+
 /**
  * Constructs a new CoThread (aka. pseudo-thread).
  * A CoThread will repeatedly call a specified function, but "breaking"
@@ -66,20 +82,7 @@ const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'initWi
  * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
  */
 function CoThread(func, yieldEvery, thisCtx) {
-	
-	this._thisCtx = thisCtx ? thisCtx : this;
-	
-	// default to 1
-	this._yieldEvery = typeof yieldEvery == 'number' ? Math.floor(yieldEvery) : 1;
-	if (yieldEvery < 1) {
-		throw Cr.NS_ERROR_INVALID_ARG;
-	}
-	
-	if (typeof func != 'function' && !(func instanceof Function)) {
-		throw Cr.NS_ERROR_INVALID_ARG;
-	} 
-	this._func = func;
-
+	CoThreadBase.call(this, func, yieldEvery, thisCtx);
 	this._generator = (function() { for(;;) { yield null }; })();
 }
 
@@ -157,7 +160,7 @@ CoThread.prototype = {
  * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
  */
 function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
-	CoThread.call(this, func, yieldEvery, thisCtx);
+	CoThreadBase.call(this, func, yieldEvery, thisCtx);
 	
 	if (arrayOrGenerator instanceof Array) {
 		// make a generator
