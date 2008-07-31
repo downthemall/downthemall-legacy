@@ -120,9 +120,11 @@
 	</popupset>	
 	
 	<deck flex="1" id="mainstack">
-		<hbox align="center">
-			<label flex="1" align="center" id="loading"/>
-		</hbox>
+		<vbox align="center">
+			<spacer flex="1"/>
+			<button id="loading" disabled="true"/>
+			<spacer flex="1"/>
+		</vbox>
 		<vbox flex="1">		
 			<toolbox chromedir="&locale.dir;">
 			  <toolbar id="tools">

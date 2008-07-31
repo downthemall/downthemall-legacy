@@ -9,3 +9,7 @@ treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined, 
 treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined) {
 	list-style-image: url('chrome://dta/skin/manager/paused-undetermined.png');
 }
+
+#loadingimg {
+	list-style-image: url(moz-icon://stock/gtk-dialog-info?size=dnd);
+}

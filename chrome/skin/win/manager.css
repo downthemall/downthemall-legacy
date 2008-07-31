@@ -9,3 +9,7 @@ treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined) 
 treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined, pausedAutoretrying) {
 	list-style-image: url('chrome://dta/skin/manager/paused-autoretry.png');
 }
+
+#loading {
+	list-style-image: url(chrome://global/skin/icons/information-32.png);
+}

@@ -148,9 +148,19 @@ stack > #infoPercent {
 }
 
 #loading {
-	text-align: center;
-	font-size: x-large;
+  -moz-appearance: none;
+  -moz-user-focus: ignore;
+  border: none !important;
+  min-width: 0;
+  background-color: transparent;
+  color: -moz-dialogText;
+
+	font-size: large;
 	font-weight: bold;
+}
+
+#loading label {
+	padding-left: 2ex;
 }
 
 treechildren::-moz-tree-progressmeter(completed) {
