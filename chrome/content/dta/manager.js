@@ -1356,6 +1356,10 @@ QueueItem.prototype = {
 	},
 	_completeEvents: [],
 	complete: function QI_complete(exception) {
+		for each (let a in 'speeds', 'chunks') {
+			delete this[a];
+			this[a] = [];
+		}
 		if (exception) {
 			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 			Debug.log("complete: ", exception);
@@ -1378,10 +1382,10 @@ QueueItem.prototype = {
 			);
 			return;
 		}
-		this.chunks = [];		
 		this.activeChunks = 0;
 		this.state = COMPLETE;
 		this.status = TEXT_COMPLETE;
+		this.visitors = new VisitorManager();
 	},
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
@@ -1848,7 +1852,6 @@ Chunk.prototype = {
 		if (this._outStream) {
 			this._outStream.flush();
 			this._outStream.close();
-			delete this._outStream;
 		}
 		this._buffered = 0;
 		if (this.parent.is(CANCELED)) {
