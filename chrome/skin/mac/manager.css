@@ -1,5 +1,5 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-#loadingimg {
+#loading {
 	list-style-image: url(chrome://global/skin/icons/information-32.png);
 }
