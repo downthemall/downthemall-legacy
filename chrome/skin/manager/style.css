@@ -147,6 +147,12 @@ stack > #infoPercent {
 	color: gray !important;
 }
 
+#loading {
+	text-align: center;
+	font-size: x-large;
+	font-weight: bold;
+}
+
 treechildren::-moz-tree-progressmeter(completed) {
   color: #008F00 !important;
 }
