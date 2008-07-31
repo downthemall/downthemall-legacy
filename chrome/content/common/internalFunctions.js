@@ -121,22 +121,22 @@ function merge(me, that) {
 function clone(obj) {
 	var rv = {};
 	merge(rv, obj);
-	rv.prototype = this.prototype;
+	merge(rv.prototype, this.prototype);
 	rv.constructor = this.constructor;
 	return rv;
 }
 merge(
 	String.prototype,
 	{ 
-		trim : function() {
+		trim: function() {
 			return this.replace(/^\s+|\s+$/g, '');
 		},
-		removeBadChars : function() {
+		removeBadChars: function() {
 			return this
 				.replace(/[\n\r\v?:<>*|"]/g, '_')
 				.replace(/%(?:25)?20/g, ' ');
 		},
-		addFinalSlash : function() {
+		addFinalSlash: function() {
 			if (this.length == 0) {
 				return SYSTEMSLASH;
 			}
@@ -146,7 +146,7 @@ merge(
 			}
 			return this;
 		},
-		removeFinalChar : function(c) {
+		removeFinalChar: function(c) {
 			if (this.length == 0) {
 				return this;
 			}
@@ -155,7 +155,7 @@ merge(
 			}
 			return this;
 		},
-		removeLeadingChar : function(c) {
+		removeLeadingChar: function(c) {
 			if (this.length == 0) {
 				return this;
 			}
@@ -164,7 +164,7 @@ merge(
 			}
 			return this;
 		},
-		removeFinalSlash : function() {
+		removeFinalSlash: function() {
 			return this.removeFinalChar(SYSTEMSLASH);
 		},
 		replaceSlashes: function(replaceWith) {
@@ -173,17 +173,17 @@ merge(
 		normalizeSlashes: function() {
 			return this.replaceSlashes(SYSTEMSLASH);
 		},
-		removeLeadingSlash : function() {
+		removeLeadingSlash: function() {
 			return this.removeLeadingChar(SYSTEMSLASH);
 		},
-		getUsableFileName : function() {
+		getUsableFileName: function() {
 			let t = this.replace(/\?.*$/, '')
 				.normalizeSlashes()
 				.trim()
 				.removeFinalSlash();
 			return t.split(SYSTEMSLASH).pop().removeBadChars().trim();
 		},
-		getExtension : function() {
+		getExtension: function() {
 			let name = this.getUsableFileName();
 			let c = name.lastIndexOf('.');
 			if (c == -1) {
@@ -437,6 +437,9 @@ function getIcon(link, metalink, size) {
 		else {
 			url = _atos(link);
 		}
+		let ext = url.getExtension();
+		url = 'file' + (ext ? '.' + ext : '');
+		Debug.logString(url);
 		return _getIcon(url, size);
 	}
 	catch (ex) {
@@ -675,6 +678,7 @@ function newUUIDString() {
 	return newUUIDString();
 }
 
+// XXX switch to nsITimer?
 function Timer(func, interval, persist, now) {
   this._id = newUUIDString();
 	if (typeof(func) != 'function') {
