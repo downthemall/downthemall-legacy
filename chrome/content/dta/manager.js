@@ -716,9 +716,8 @@ Visitor.prototype = {
 
 				case 'content-length':
 					let contentLength = new Number(aValue);
-					Debug.logString(contentLength);
 					if (contentLength > 0 && !isNaN(contentLength)) {
-						this.ccontentLength = Math.floor(contentLength); 
+						this.contentLength = Math.floor(contentLength); 
 					}
 				break;
 
@@ -1090,7 +1089,6 @@ QueueItem.prototype = {
 	_totalSize: 0,
 	get totalSize() { return this._totalSize; },
 	set totalSize(nv) {
-		Debug.logString(nv + "/" + this._totalSize);
 		if (this._totalSize == nv) {
 			return nv;
 		}
