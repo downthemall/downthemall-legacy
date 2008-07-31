@@ -120,7 +120,7 @@ var Tree = {
 	getProgressMode : function T_getProgressMode(idx, col) {
 		if (col.index == 1) {
 			let d = this._downloads[idx]; 
-			if (d.is(RUNNING, PAUSED) && !d.totalSize) {
+			if (d.isOf(RUNNING, PAUSED) && !d.totalSize) {
 				return 2; // PROGRESS_UNDETERMINED;
 			}
 			if (d.is(PAUSED) && d.partialSize / d.totalSize < .05) {
@@ -134,7 +134,7 @@ var Tree = {
 	getCellValue: function T_getCellValue(idx, col) {
 		if (col.index == 1) {
 			let d = this._downloads[idx];
-			if (d.is(CANCELED, COMPLETE)) {
+			if (d.isOf(CANCELED, COMPLETE)) {
 				return 100; 
 			}
 			return d.totalSize ? d.partialSize * 100 / d.totalSize : 0;
@@ -321,7 +321,7 @@ var Tree = {
 				return;
 			}
 			// wipe out any info/tmpFiles
-			if (!d.is(COMPLETE, CANCELED)) {
+			if (!d.isOf(COMPLETE, CANCELED)) {
 				d.cancel();
 			}
 			this._downloads.splice(d.position, 1);
@@ -395,7 +395,7 @@ var Tree = {
 	resume: function T_resume(d) {
 		this.updateSelected(
 			function(d) {
-				if (d.is(PAUSED, CANCELED)) {
+				if (d.isOf(PAUSED, CANCELED)) {
 					d.queue();
 				}
 				return true;
@@ -431,7 +431,7 @@ var Tree = {
 	},
 	force: function T_force() {
 		for (let d in Tree.selected) {
-			if (d.is(QUEUED, PAUSED, CANCELED)) {
+			if (d.isOf(QUEUED, PAUSED, CANCELED)) {
 				d.queue();
 				Dialog.run(d);
 			}
@@ -536,6 +536,7 @@ var Tree = {
 				state: 0,
 				resumable: false,
 				is: QueueItem.prototype.is,
+				isOf: QueueItem.prototype.isOf,
 				count: this.selection.count
 			};
 			for (let d in this.selected) {
@@ -561,14 +562,14 @@ var Tree = {
 					o.setAttribute('disabled', disabled);
 				}
 			}
-			modifySome($('play', 'toolplay'), function(d) { return !d.is(COMPLETE, RUNNING, QUEUED, FINISHING); });
+			modifySome($('play', 'toolplay'), function(d) { return !d.isOf(COMPLETE, RUNNING, QUEUED, FINISHING); });
 			modifySome($('pause', 'toolpause'), function(d) { return (d.state & RUNNING && d.resumable) || (d.state & QUEUED); });
-			modifySome($('cancel', 'toolcancel'), function(d) { return !d.is(FINISHING, CANCELED); });
+			modifySome($('cancel', 'toolcancel'), function(d) { return !d.isOf(FINISHING, CANCELED); });
 			modifySome($('launch'), function(d) { return d.curFile; });
 			modifySome($('folder'), function(d) { return d.curFolder; });
 			modifySome($('delete'), function(d) { return d.is(COMPLETE); });
 			modifySome($('export'), function(d) { return d.count != 0; });
-			modifySome($('addchunk', 'removechunk', 'force'), function(d) { return d.is(QUEUED, RUNNING, PAUSED); });
+			modifySome($('addchunk', 'removechunk', 'force'), function(d) { return d.isOf(QUEUED, RUNNING, PAUSED); });
 		}
 		catch (ex) {
 			Debug.log("rt", ex);

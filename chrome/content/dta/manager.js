@@ -85,6 +85,11 @@ const STREAMS_FREQ = 200;
 let Prompts = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
 
+var TEXT_PAUSED;
+var TEXT_QUEUED;
+var TEXT_COMPLETE;
+var TEXT_CANCELED;
+
 var Dialog = {
 	_observes: [
 		'quit-application-requested',
@@ -115,6 +120,12 @@ var Dialog = {
 	completed: 0,
 	totalbytes: 0,
 	init: function D_init() {
+		
+		TEXT_PAUSED = _('paused');
+		TEXT_QUEUED = _('queued');
+		TEXT_COMPLETE = _('complete');
+		TEXT_CANCELED = _('canceled');
+		
 		Tree.init($("downloads"));
 		SessionManager.init();
 
@@ -135,13 +146,13 @@ var Dialog = {
 		);
 			
 		document.getElementById("dtaHelp").hidden = !("openHelp" in window);
+	},
 	
-	
+	start: function() {
 		if ("arguments" in window) {
 			startDownloads(window.arguments[0], window.arguments[1]);
 		}
 
-		Tree.invalidate();
 		this._initialized = true;
 		for (let d in Tree.all) {
 			if (d.is(FINISHING)) {
@@ -151,7 +162,10 @@ var Dialog = {
 		this._updTimer = new Timer("Dialog.checkDownloads();", REFRESH_FREQ, true, true);
 		new Timer("Dialog.refreshWritten();", 100, true, true);
 		new Timer("Dialog.saveRunning();", 10000, true);
+		
+		$('mainstack').selectedIndex++;		
 	},
+	
 	observe: function D_observe(subject, topic, data) {
 		if (topic == 'quit-application-requested') {
 			if (!this._canClose()) {
@@ -176,52 +190,50 @@ var Dialog = {
 		try {
 			let sum = 0;
 			const now = Utils.getTimestamp();
-			this._running.forEach(
-				function(i) {
-					let d = i.d;
-					
-					let advanced = (d.partialSize - i.lastBytes);
-					sum += advanced;
-					
-					let elapsed = (now - i.lastTime) / 1000;					
-					if (elapsed < 1) {
-						return;
-					}						
-					
-					let speed = Math.round(advanced / elapsed);
-					
-					i.lastBytes = d.partialSize;
-					i.lastTime = now;				
+			for each (i in this._running) {
+				let d = i.d;
+				
+				let advanced = (d.partialSize - i.lastBytes);
+				sum += advanced;
+				
+				let elapsed = (now - i.lastTime) / 1000;					
+				if (elapsed < 1) {
+					return;
+				}						
+				
+				let speed = Math.round(advanced / elapsed);
+				
+				i.lastBytes = d.partialSize;
+				i.lastTime = now;				
 
-					// Refresh item speed
-					d.speeds.push(speed > 0 ? speed : 0);
-					if (d.speeds.length > SPEED_COUNT) {
-						d.speeds.shift();
-					}
-					i.lastBytes = d.partialSize;
-					i.lastTime = now;
-					
-					speed = 0;
-					d.speeds.forEach(
-						function(s) {
-							speed += s;
-						}
-					);
-					speed /= d.speeds.length;
-					
-					// Calculate estimated time					
-					if (advanced != 0 && d.totalSize > 0) {
-						let remaining = Math.ceil((d.totalSize - d.partialSize) / speed);
-						if (!isFinite(remaining)) {
-							d.status = _("unknown");
-						}
-						else {
-							d.status = Utils.formatTimeDelta(remaining);
-						}
-					}
-					d.speed = Utils.formatBytes(speed) + "/s";
+				// Refresh item speed
+				d.speeds.push(speed > 0 ? speed : 0);
+				if (d.speeds.length > SPEED_COUNT) {
+					d.speeds.shift();
 				}
-			);
+				i.lastBytes = d.partialSize;
+				i.lastTime = now;
+				
+				speed = 0;
+				d.speeds.forEach(
+					function(s) {
+						speed += s;
+					}
+				);
+				speed /= d.speeds.length;
+				
+				// Calculate estimated time					
+				if (advanced != 0 && d.totalSize > 0) {
+					let remaining = Math.ceil((d.totalSize - d.partialSize) / speed);
+					if (!isFinite(remaining)) {
+						d.status = _("unknown");
+					}
+					else {
+						d.status = Utils.formatTimeDelta(remaining);
+					}
+				}
+				d.speed = Utils.formatBytes(speed) + "/s";
+			}
 			let elapsed = (now - this._lastTime) / 1000;
 			this._lastTime = now;
 			let speed = Math.round(sum * elapsed);
@@ -303,7 +315,8 @@ var Dialog = {
 				this._autoClears = [];
 			}
 
-			if (!this.offline) {					
+			if (!this.offline) {
+				// XXX Improve					
 				if (Prefs.autoRetryInterval) {
 					for (let d in Tree.all) {
 						d.autoRetry();
@@ -402,7 +415,7 @@ var Dialog = {
 		}
 		try {
 			// check if there is something running or scheduled
-			if (this.startNext() || Tree.some(function(d) { return d.is(FINISHING, RUNNING, QUEUED); } )) {
+			if (this.startNext() || Tree.some(function(d) { return d.isOf(FINISHING, RUNNING, QUEUED); } )) {
 				return;
 			}
 			Debug.logString("signal(): Queue finished");
@@ -434,7 +447,7 @@ var Dialog = {
 		}
 	},
 	_canClose: function D__canClose() {
-		if (Tree.some(function(d) { return d.started && !d.resumable && d.is(RUNNING); })) {
+		if (Tree.some(function(d) { return d.started && !d.resumable && d.isOf(RUNNING); })) {
 			var rv = Prompts.confirmYN(
 				window,
 				_("confclose"),
@@ -464,7 +477,7 @@ var Dialog = {
 		let finishing = 0;
 		Tree.updateAll(
 			function(d) {
-				if (d.is(RUNNING, QUEUED)) {
+				if (d.isOf(RUNNING, QUEUED)) {
 					// enumerate all running chunks
 					d.chunks.forEach(
 						function(c) {
@@ -666,7 +679,7 @@ Visitor.prototype = {
 	encoding: null,
 	fileName: null,
 	acceptRanges: 'bytes',
-	contentlength: 0,
+	contentLength: 0,
 	time: null,
 
 	QueryInterface: function(aIID) {
@@ -702,13 +715,16 @@ Visitor.prototype = {
 				break;
 
 				case 'content-length':
-					this.contentlength = Number(aValue);
+					let contentLength = new Number(aValue);
+					if (contentLength > 0 && !isNaN(contentLength)) {
+						this.ccontentLength = Math.floor(contentLength); 
+					}
 				break;
 
 				case 'content-range': {
-					let cl = new Number(aValue.split('/').pop());
-					if (cl > 0) {
-						this.contentlength = cl;
+					let contentLength = new Number(aValue.split('/').pop());
+					if (contentLength > 0) {
+						this.contentLength = Math.floor(contentLength);
 					}
 				}
 				break;
@@ -891,16 +907,18 @@ QueueItem.prototype = {
 		return this._state;
 	},
 	set state(nv) {
-		if (this._state != nv) {
-			if (this._state == RUNNING) {
-				// remove ourself from inprogresslist
-				Dialog.wasStopped(this);
-			}
-			this._state = nv;
-			this.invalidate();
-			Tree.refreshTools();
-			Dialog.signal(this);
+		if (this._state == nv) {
+			return nv;
 		}
+		if (this._state == RUNNING) {
+			// remove ourself from inprogresslist
+			Dialog.wasStopped(this);
+		}
+		this._state = nv;
+		this.invalidate();
+		Dialog.signal(this);
+		Tree.refreshTools();
+		return nv;
 	},
 	
 	postData: null,
@@ -910,6 +928,9 @@ QueueItem.prototype = {
 		return this._fileName;
 	},
 	set fileName(nv) {
+		if (this._fileName == nv) {
+			return nv;
+		}
 		this._fileName = nv;
 		this.rebuildDestination();
 		this.invalidate();
@@ -974,8 +995,8 @@ QueueItem.prototype = {
 		return this._conflicts;
 	},
 	set conflicts(nv) {
-		if (typeof(nv) != 'number') {
-			return this._conflicts;
+		if (this._conflicts == nv) {
+			return nv;
 		}
 		this._conflicts = nv;
 		this.rebuildDestination();
@@ -1013,14 +1034,17 @@ QueueItem.prototype = {
 	/**
 	 *Takes one or more state indicators and returns if this download is in state of any of them
 	 */
-	is: function QI_is() {
-		let state = this.state;
+	is: function QI_is(state) {
+		return this._state == state; 
+	},
+	isOf: function QI_isOf() {
+		let state = this._state;
 		for (let i = 0, e = arguments.length; i < e; ++i) {
 			if (state == arguments[i]) {
 				return true;
 			}
 		}
-		return false;
+		return false;		
 	},
 	
 	save: function QI_save() {
@@ -1065,7 +1089,12 @@ QueueItem.prototype = {
 	_totalSize: 0,
 	get totalSize() { return this._totalSize; },
 	set totalSize(nv) {
-		this._totalSize = nv;
+		if (this._totalSize == nv) {
+			return nv;
+		}
+		if (nv >= 0 && !isNaN(nv)) {
+			this._totalSize = Math.floor(nv);
+		}
 		this.invalidate();
 		return this._totalSize;
 	},
@@ -1154,7 +1183,7 @@ QueueItem.prototype = {
 	},
 	_status : '',
 	get status() {
-		if (Dialog.offline && this.is(QUEUED, PAUSED)) {
+		if (Dialog.offline && this.isOf(QUEUED, PAUSED)) {
 			return _('offline');
 		}
 		return this._status + (this._autoRetryTime ? ' *' : '');
@@ -1349,7 +1378,7 @@ QueueItem.prototype = {
 		this.chunks = [];		
 		this.activeChunks = 0;
 		this.state = COMPLETE;
-		this.status = _("complete");
+		this.status = TEXT_COMPLETE;
 	},
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
@@ -1549,7 +1578,7 @@ QueueItem.prototype = {
 	queue: function QI_queue() {
 		this._autoRetryTime = 0;
 		this.state = QUEUED;
-		this.status = _('queued');
+		this.status = TEXT_QUEUED;
 	},
 	resumeDownload: function QI_resumeDownload() {
 		Debug.logString("resumeDownload: " + this);
@@ -1642,7 +1671,7 @@ QueueItem.prototype = {
 	},
 	dumpScoreboard: function QI_dumpScoreboard() {
 		let scoreboard = '';
-		let len = String(this.totalSize).length; 
+		let len = this.totalSize.toString().length;
 		this.chunks.forEach(
 			function(c,i) {
 				scoreboard += i
@@ -1697,7 +1726,7 @@ QueueItem.prototype = {
 			e.referrer = this.referrer.spec;
 		}
 		// Store this so we can later resume.
-		if (!this.is(CANCELED, COMPLETE) && this.partialSize) {
+		if (!this.isOf(CANCELED, COMPLETE) && this.partialSize) {
 			e.tmpFile = this.tmpFile.path;
 		}
 		e.startDate = this.startDate.getTime();
@@ -1714,12 +1743,10 @@ QueueItem.prototype = {
 		
 		e.chunks = [];
 
-		if (this.is(RUNNING, PAUSED, QUEUED) && this.resumable) {
-			this.chunks.forEach(
-				function(c) {
-					e.chunks.push({start: c.start, end: c.end, written: c.safeBytes});
-				}
-			);
+		if (this.isOf(RUNNING, PAUSED, QUEUED) && this.resumable) {
+			for each (let c in this.chunks) {
+				e.chunks.push({start: c.start, end: c.end, written: c.safeBytes});
+			}
 		}
 		return Serializer.encode(e);
 	}
@@ -2241,9 +2268,10 @@ Connection.prototype = {
 			d.resumable = false;
 		}
 
-		if (visitor.contentlength > 0) {
-			d.totalSize = visitor.contentlength;
-		} else {
+		if (visitor.contentLength > 0) {
+			d.totalSize = visitor.contentLength;
+		}
+		else {
 			d.totalSize = 0;
 		}
 		
@@ -2458,7 +2486,7 @@ Connection.prototype = {
 			return;			
 		}
 
-		if (!d.is(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
+		if (!d.isOf(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
 			if (d.resumable) {
 				d.pause();
 				d.markAutoRetry();
@@ -2473,7 +2501,7 @@ Connection.prototype = {
 			}
 			return;			
 		}
-		if (!d.is(PAUSED, CANCELED)) {
+		if (!d.isOf(PAUSED, CANCELED)) {
 			d.resumeDownload();
 		}
 	},
@@ -2608,10 +2636,10 @@ function startDownloads(start, downloads) {
 
 		qi.state = start ? QUEUED : PAUSED;
 		if (qi.is(QUEUED)) {
-			qi.status = _('queued');
+			qi.status = TEXT_QUEUED;
 		}
 		else {
-			qi.status = _('paused');
+			qi.status = TEXT_PAUSED;
 		}
 		qi.save();		
 		Tree.add(qi);

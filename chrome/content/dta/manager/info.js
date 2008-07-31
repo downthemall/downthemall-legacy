@@ -58,7 +58,7 @@ var Dialog = {
 				if (d.referrer) {
 					$('sourcePage')._value = $("sourcePage").value = d.referrer.spec;
 				}
-				if (!d.is(FINISHING, COMPLETE)) {
+				if (!d.isOf(FINISHING, COMPLETE)) {
 					$('sourcePage').removeAttribute('readonly');
 				}
 				
@@ -91,7 +91,7 @@ var Dialog = {
 					: '';
 				$('canvasGrid').hidden = true;
 			}				
-			if (downloads.every(function(d) { return d.is(COMPLETE, FINISHING); })) {
+			if (downloads.every(function(d) { return d.isOf(COMPLETE, FINISHING); })) {
 				for each (let e in $('directory', 'renaming', 'mask', 'browsedir')) {
 					e.setAttribute('readonly', 'true');
 					e.setAttribute('disabled', 'true');
@@ -147,7 +147,7 @@ var Dialog = {
 		}
 		
 		for each (let d in t) {
-			if (d.is(COMPLETE, FINISHING)) {
+			if (d.isOf(COMPLETE, FINISHING)) {
 				return;
 			}
 			if (directory) {

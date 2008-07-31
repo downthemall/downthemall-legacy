@@ -40,6 +40,8 @@ const DB_FILE = 'dta_queue.sqlite';
 const DB_FILE_BAK = DB_FILE + ".bak";
 const DB_VERSION = 1;
 
+Components.utils.import('resource://dta/cothread.jsm');
+
 var SessionManager = {
 	init: function() {
 		this._con = Serv('@mozilla.org/storage/service;1', 'mozIStorageService')
@@ -75,24 +77,26 @@ var SessionManager = {
 	},
 	shutdown: function() {
 		try {
-			['_addStmt', '_saveStmt', '_savePosStmt', '_delStmt'].forEach(
-				function(e) {
-					try { this[e].finalize(); } catch (ex) { /* no op */ }
-				},
-				this
-			);
+			for each (let e in ['_addStmt', '_saveStmt', '_savePosStmt', '_delStmt']) {
+				try {
+					this[e].finalize();
+					delete this[e];
+				}
+				catch (ex) {
+					// no-op
+				}
+			}
+			this._con.executeSimpleSQL('VACUUM');
+			try {
+				this._con.close();
+				delete this._con;
+			}
+			catch (ex) {
+				Debug.log("Cannot close!", ex);
+			}
 		}
 		catch (ex) {
 			Debug.log("SessionManager::shutdown", ex);
-		}
-		this._con.executeSimpleSQL('VACUUM');
-		if ('close' in this._con) {
-			try {
-				this._con.close();
-			}
-			catch (ex) {
-				//
-			}
 		}
 	},
 	beginUpdate: function() {
@@ -153,119 +157,141 @@ var SessionManager = {
 	},
 
 	load: function() {
-		return Tree.update(this._load, this);
-	},
-	_load: function() {
+		this._loaded = false;
+		
+		let stmt = this._con.createStatement('SELECT COUNT(*) FROM queue');
+		stmt.executeStep();
+		let count = stmt.getInt64(0);
+		stmt.finalize();
+		let loading = $('loading');
 
-		var stmt = this._con.createStatement('SELECT uuid, item FROM queue ORDER BY pos');
-		Tree.beginUpdate();
+		stmt = this._con.createStatement('SELECT uuid, item FROM queue ORDER BY pos');
 		this.beginUpdate();
-		while (stmt.executeStep()) {
-			try {
-				let dbId = stmt.getInt64(0);
-				let down = Serializer.decode(stmt.getUTF8String(1));
-				let get = function(attr) {
-					if (attr in down) {
-						return down[attr];
-					}
-					return null;
+		Tree.beginUpdate();
+		new CoThread(
+			function(idx) {
+				loading.value = _('loading', [++idx, count]);
+				// Are we done?
+				if (!stmt || !stmt.executeStep()) {
+					this.endUpdate();
+					Tree.endUpdate();
+					Tree.invalidate();
+					Dialog.start();
+					return false;
 				}
-
-				let d = new QueueItem();
-				d.dbId = dbId;
-				d.urlManager = new UrlManager(down.urlManager);
-				d.numIstance = get("numIstance");
-
-				let referrer = get('referrer');
-				if (referrer) {
-					try {
-						d.referrer = referrer.toURL();
-					}
-					catch (ex) {
-						// We might have been fed with about:blank or other crap. so ignore.
-					}
-				}
-			
-				// only access the setter of the last so that we don't generate stuff trice.
-				d._pathName = get('pathName');
-				d._description = get('description');
-				d._mask = get('mask');
-				d.fileName = get('fileName');
 				
-				let tmpFile = get('tmpFile');
-				if (tmpFile) {
-					try {
-						tmpFile = new FileFactory(tmpFile);
-						if (tmpFile.exists()) {
-							d._tmpFile = tmpFile;
+				// ... not yet.
+				try {
+					let dbId = stmt.getInt64(0);
+					let down = Serializer.decode(stmt.getUTF8String(1));
+					let get = function(attr) {
+						return (attr in down) ? down[attr] : null;
+					}
+	
+					let d = new QueueItem();
+					d.dbId = dbId;
+					d.urlManager = new UrlManager(down.urlManager);
+					d.numIstance = get("numIstance");
+	
+					let referrer = get('referrer');
+					if (referrer) {
+						try {
+							d.referrer = referrer.toURL();
 						}
-						else {
-							// Download partfile is gone!
-							// XXX find appropriate error message!
-							d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+						catch (ex) {
+							// We might have been fed with about:blank or other crap. so ignore.
 						}
 					}
-					catch (ex) {
-						Debug.log("tried to construct with invalid tmpFile", ex);
-						d.cancel();
+				
+					// only access the setter of the last so that we don't generate stuff trice.
+					d._pathName = get('pathName');
+					d._description = get('description');
+					d._mask = get('mask');
+					d.fileName = get('fileName');
+					
+					let tmpFile = get('tmpFile');
+					if (tmpFile) {
+						try {
+							tmpFile = new FileFactory(tmpFile);
+							if (tmpFile.exists()) {
+								d._tmpFile = tmpFile;
+							}
+							else {
+								// Download partfile is gone!
+								// XXX find appropriate error message!
+								d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+							}
+						}
+						catch (ex) {
+							Debug.log("tried to construct with invalid tmpFile", ex);
+							d.cancel();
+						}
+					}				
+	
+					d.startDate = new Date(get("startDate"));
+					d.visitors = new VisitorManager(down.visitors);
+					
+					for each (let e in [
+						'contentType',
+						'conflicts',
+						'postData',
+						'destinationName',
+						'resumable',
+						'totalSize',
+						'compression',
+						'fromMetalink',
+					]) {
+						d[e] = (e in down) ? down[e] : null;
 					}
-				}				
-
-				d.startDate = new Date(get("startDate"));
-				d.visitors = new VisitorManager(down.visitors);
-
-				[
-					'contentType',
-					'conflicts',
-					'postData',
-					'destinationName',
-					'resumable',
-					'totalSize',
-					'compression',
-					'fromMetalink',
-				].forEach(
-					function(e) {
-						d[e] = get(e);
+	
+					if (down.hash) {
+						d.hash = new DTA_Hash(down.hash, down.hashType);
 					}
-				);
-				if (down.hash) {
-					d.hash = new DTA_Hash(down.hash, down.hashType);
-				}
-				if ('maxChunks' in down) {
-					d._maxChunks = down.maxChunks;
-				}
-
-				d.started = d.partialSize != 0;
-				if (get('state')) {
-					d._state = get('state');
-				}
-				if (d.is(PAUSED, QUEUED)) {
-					for each (let c in down.chunks) {
-						d.chunks.push(new Chunk(d, c.start, c.end, c.written));
+					if ('maxChunks' in down) {
+						d._maxChunks = down.maxChunks;
 					}
-					d.refreshPartialSize();
-					if (d.is(PAUSED)) {
-						d.status = _('paused');
+	
+					d.started = d.partialSize != 0;
+					let state = get('state') 
+					if (state) {
+						d._state = state;
 					}
-					else {
-						d.status = _('queued');
+					switch (d._state) {
+						case PAUSED:
+						case QUEUED:
+						{
+							for each (let c in down.chunks) {
+								d.chunks.push(new Chunk(d, c.start, c.end, c.written));
+							}
+							d.refreshPartialSize();
+							if (d._state == PAUSED) {
+								d.status = TEXT_PAUSED;
+							}
+							else {
+								d.status = TEXT_QUEUED;
+							}
+						}
+						break;
+						
+						case COMPLETE:
+							d.partialSize = d.totalSize;
+							d.status = TEXT_COMPLETE;
+						break;
+						
+						case CANCELED:
+							d.status = TEXT_CANCELED;
+						break;
 					}
+	
+					Tree.add(d);
 				}
-				else if (d.is(COMPLETE)) {
-					d.partialSize = d.totalSize;
-					d.status = _('complete');
+				catch (ex) {
+					Debug.log('failed to init a download from queuefile', ex);
 				}
-				else if (d.is(CANCELED)) {
-					d.status = _('canceled');
-				}
-				Tree.add(d);
-			}
-			catch (ex) {
-				Debug.log('failed to init a download from queuefile', ex);
-			}
-		}
-		this.endUpdate();
-		Tree.endUpdate();
-		Tree.invalidate();
+				return true;
+			},
+			200,
+			this
+		).run();
 	}
 };
