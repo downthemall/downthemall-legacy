@@ -627,7 +627,10 @@ Visitor.prototype = {
 				break;
 
 				case 'content-length':
-					this.contentlength = Number(aValue);
+					let contentlength = new Number(aValue);
+					if (contentLength > 0 && !isNaN(contentLength)) {
+						this.contentlength = Math.floor(contentLength);
+					}
 				break;
 
 				case 'content-range': {
@@ -981,7 +984,12 @@ QueueItem.prototype = {
 	_totalSize: 0,
 	get totalSize() { return this._totalSize; },
 	set totalSize(nv) {
-		this._totalSize = nv;
+		if (this._totalsize == nv) {
+			return nv;
+		}
+		if (nv >= 0 && !isNaN(nv)) {
+			this._totalSize = Math.floor(nv);
+		}
 		this.invalidate();
 		return this._totalSize;
 	},
@@ -2017,7 +2025,8 @@ Connection.prototype = {
 
 		if (visitor.contentlength > 0) {
 			d.totalSize = visitor.contentlength;
-		} else {
+		}
+		else {
 			d.totalSize = 0;
 		}
 		
