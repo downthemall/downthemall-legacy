@@ -1016,7 +1016,7 @@ QueueItem.prototype = {
 			if (name.length > 60) {
 				name = name.substring(0, 60);
 			}
-			dest.append(name + "-" + newUUIDString() + '.dtapart');
+			dest.append(name + "-" + Utils.newUUIDString() + '.dtapart');
 			this._tmpFile = dest;
 		}
 		return this._tmpFile;
@@ -1043,7 +1043,7 @@ QueueItem.prototype = {
 	isOf: function QI_isOf() {
 		let state = this._state;
 		for (let i = 0, e = arguments.length; i < e; ++i) {
-			if (state & arguments[i]) {
+			if (state == arguments[i]) {
 				return true;
 			}
 		}
@@ -1712,8 +1712,8 @@ QueueItem.prototype = {
 			this
 		);
 		if (this.hash) {
-			e.hash = _atos(this.hash.sum);
-			e.hashType = _atos(this.hash.type);
+			e.hash = Utils.atos(this.hash.sum);
+			e.hashType = Utils.atos(this.hash.type);
 		}
 		if (this.autoRetrying) {
 			e.state = QUEUED;

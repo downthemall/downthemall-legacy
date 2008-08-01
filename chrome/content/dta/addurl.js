@@ -85,7 +85,7 @@ Range.prototype = {
 		this.last = this._format(this.stop - this.step);
 	},
 	join: function(str) {
-		for (let i in range(this.start, this.stop, this.step)) {
+		for (let i in Utils.range(this.start, this.stop, this.step)) {
 			yield (str + this._format(i));
 		}
 	}
