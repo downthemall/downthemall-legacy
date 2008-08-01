@@ -202,16 +202,14 @@ function NSResolver(prefix) {
 				if (!urls.length) {
 					continue;
 				}
-				var hash = null; 
-				var hashes = this._getNodes(file, 'ml:verification/ml:hash');
-				for each (h in hashes) {
-					h = h.textContent.trim();
+				let hash = null; 
+				for each (let h in this._getNodes(file, 'ml:verification/ml:hash')) {
 					try {
-						h = new DTA_Hash(h, hashes[j].getAttribute('type'));
+						h = new DTA_Hash(h.textContent.trim(), h.getAttribute('type'));
 						hash = h;		
 					}
 					catch (ex) {
-						Debug.log(h, ex);
+						Debug.log("Failed to parse hash: " + h.textContent.trim() + "/" + h.getAttribute('type'), ex);
 					}
 				}
 				var desc = this._getSingle(file, 'description');
