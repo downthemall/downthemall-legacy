@@ -35,6 +35,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 const EXPORTED_SYMBOLS = [
+	'atos',
 	'newUUIDString',
 	'range',
 	'hexdigest',
