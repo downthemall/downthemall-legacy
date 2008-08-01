@@ -42,7 +42,7 @@ function CustomEvent(download, command) {
  		var uuids = {};
  		function callback(u) {
  			u = u.substr(1, u.length - 2);
- 			id = newUUIDString();
+ 			id = Utils.newUUIDString();
  			uuids[id] = u;
  			return id;
  		}

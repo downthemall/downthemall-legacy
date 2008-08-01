@@ -67,27 +67,9 @@ const FINISHING = 1<<3;
 const COMPLETE =  1<<4;
 const CANCELED =  1<<5;
 const QUEUED =    1<<6;
-/**
- * cast non-strings to string
- * @author Nils
- * @param Arbitrary data
- * @return a string
- */
-function _atos(data) {
-	if (typeof(data) == 'string') {
-		return data;
-	}
-	if (data instanceof String || typeof(data) == 'object') {
-		try {
-			return data.toSource();
-		}
-		catch (ex) {
-			// fall-trough
-		}
-	}
-	
-	return String(data);
-}
+
+
+
 
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!
@@ -110,101 +92,6 @@ function $() {
 	}
 	return elements;
 }
-
-function merge(me, that) {
-	for (let c in that) {
-		me[c] = that[c];
-	}
-}
-
-// not instanceof save, you know ;)
-function clone(obj) {
-	var rv = {};
-	merge(rv, obj);
-	merge(rv.prototype, this.prototype);
-	rv.constructor = this.constructor;
-	return rv;
-}
-merge(
-	String.prototype,
-	{ 
-		trim: function() {
-			return this.replace(/^\s+|\s+$/g, '');
-		},
-		removeBadChars: function() {
-			return this
-				.replace(/[\n\r\v?:<>*|"]/g, '_')
-				.replace(/%(?:25)?20/g, ' ');
-		},
-		addFinalSlash: function() {
-			if (this.length == 0) {
-				return SYSTEMSLASH;
-			}
-			
-			if (this[this.length - 1] != SYSTEMSLASH) {
-				return this + SYSTEMSLASH;
-			}
-			return this;
-		},
-		removeFinalChar: function(c) {
-			if (this.length == 0) {
-				return this;
-			}
-			if (this[this.length - 1] == c) {
-				return this.substring(0, this.length - 1);
-			}
-			return this;
-		},
-		removeLeadingChar: function(c) {
-			if (this.length == 0) {
-				return this;
-			}
-			if (this[0] == c) {
-				return this.slice(1);
-			}
-			return this;
-		},
-		removeFinalSlash: function() {
-			return this.removeFinalChar(SYSTEMSLASH);
-		},
-		replaceSlashes: function(replaceWith) {
-			return this.replace(/[\\/]/g, replaceWith);
-		},
-		normalizeSlashes: function() {
-			return this.replaceSlashes(SYSTEMSLASH);
-		},
-		removeLeadingSlash: function() {
-			return this.removeLeadingChar(SYSTEMSLASH);
-		},
-		getUsableFileName: function() {
-			let t = this.replace(/\?.*$/, '')
-				.normalizeSlashes()
-				.trim()
-				.removeFinalSlash();
-			return t.split(SYSTEMSLASH).pop().removeBadChars().trim();
-		},
-		getExtension: function() {
-			let name = this.getUsableFileName();
-			let c = name.lastIndexOf('.');
-			if (c == -1) {
-				return null;
-			}
-			return name.slice(c + 1);
-		},
-		cropCenter : function(newLength) {
-			if (this.length > newLength) {
-				return this.substring(0, newLength / 2) + "..." + this.substring(this.length - newLength / 2, this.length);
-			}
-			return this;
-		},
-		toURI: function(charset, baseURI) {
-			return IOService.newURI(this, charset, baseURI);			
-		},
-		toURL: function(charset, baseURI) {
-			return this.toURI(charset, baseURI).QueryInterface(Components.interfaces.nsIURL);
-		}
-	}
-);
 
 var Utils = {
 	/**
@@ -306,25 +193,6 @@ var Utils = {
 			Debug.log("Playing " + name + " sound failed", ex);
 		}
 	},
-	/**
-	 * returns a numeric timestamp
-	 * @param date Optional. DateString to get stamp for. NOW if ommitted
-	 * @return Numeric timestamp
-	 * @author Nils
-	*/
-	getTimestamp: function(str) {
-		if (!str) {
-			return Date.now();
-		}
-		if (typeof(str) != 'string' && !(str instanceof String)) {
-			throw new Error("not a string");
-		}
-		var rv = Date.parse(str);
-		if (!isFinite(rv)) {
-			throw new Error("invalid date");
-		}
-		return rv;
-	},
 
 	/**
 	 * returns a formated representation of a (file) size
@@ -332,49 +200,26 @@ var Utils = {
 	 * @author Nils
 	 */
 	formatBytes: function U_formatBytes(aNumber) {
+		const formatBytes_units = [['sizeB', 0], ['sizeKB', 1], ['sizeMB', 2], ['sizeGB', 2], ['sizeTB', 3]];
+		const formatBytes_nunits = formatBytes_units.length;
+
 		aNumber = Number(aNumber);
-	
 		
-		var units = [['sizeTB', 3], ['sizeGB', 2], ['sizeMB', 2], ['sizeKB', 1], ['sizeB', 0]];
-		var unit = units.pop();
+		if (!isFinite(aNumber)) {
+			return 'NaN';
+		}
 		
-		while (aNumber > 875 && units.length) {
+		let unit = formatBytes_units[0];
+		
+		for (let i = 1; aNumber > 875 && i < formatBytes_nunits; ++i) {
 			aNumber /= 1024;
-			unit = units.pop();
+			unit = formatBytes_units[i];
 		}
 		
 		return _(unit[0], [aNumber.toFixed(unit[1])]);
 	},
-	
-	/**
-	 * returns a pretty number containing at least specified number of digits
-	 * @param aNumber the number to format
-	 * @param aDigists Optional. Number of digits the result must at least have
-	 * @author Nils
-	 */
-	formatNumber: function U_formatNumber(rv, digits) {
-		rv = _atos(rv);
-		if (typeof(digits) != 'number') {
-			digits = 3;
-		}
-		while (rv.length < digits) {
-			rv = '0' + rv;
-		}
-		return rv;
-	},
-	/**
-	 * formats a time-delta. At least minutes and seconds are given back
-	 */
-	formatTimeDelta: function U_formatTimeDelta(aDelta) {
-		var h = Math.floor(aDelta / 3600);
-		var m = Math.floor((aDelta % 3600) / 60);
-		var s = Math.floor(aDelta % 60);
-		if (h) {
-			return this.formatNumber(h, 2) + ":" + this.formatNumber(m, 2) + ":" + this.formatNumber(s, 2);
-		}
-		return this.formatNumber(m, 2) + ":" + this.formatNumber(s, 2);
-	},
-	
+
+
 	formatConflictName: function U_formatConflictName(basename, conflicts) {
 		if (!conflicts) {
 			return basename;
@@ -388,24 +233,86 @@ var Utils = {
 	}
 };
 
-function _getIcon(url, size) {
-	if (/mac/i.test(navigator.platform)) {
-		const _recognizedMac = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
-		_getIcon = function _getIconMac(url, size) {
-			let uri = url.toURI();
-			if (_recognizedMac.test(uri.path)) {
-				return "moz-icon://" + url + "?size=" + size;
+Components.utils.import('resource://dta/utils.jsm', Utils);
+
+Utils.merge(
+	String.prototype,
+	{ 
+		trim: function() {
+			return this.replace(/^\s+|\s+$/g, '');
+		},
+		removeBadChars: function() {
+			return this
+				.replace(/[\n\r\v?:<>*|"]/g, '_')
+				.replace(/%(?:25)?20/g, ' ');
+		},
+		addFinalSlash: function() {
+			if (this.length == 0) {
+				return SYSTEMSLASH;
 			}
-			return "moz-icon://file.html?size=" + size;
-		};
+			
+			if (this[this.length - 1] != SYSTEMSLASH) {
+				return this + SYSTEMSLASH;
+			}
+			return this;
+		},
+		removeFinalChar: function(c) {
+			if (this.length == 0) {
+				return this;
+			}
+			if (this[this.length - 1] == c) {
+				return this.substring(0, this.length - 1);
+			}
+			return this;
+		},
+		removeLeadingChar: function(c) {
+			if (this.length == 0) {
+				return this;
+			}
+			if (this[0] == c) {
+				return this.slice(1);
+			}
+			return this;
+		},
+		removeFinalSlash: function() {
+			return this.removeFinalChar(SYSTEMSLASH);
+		},
+		replaceSlashes: function(replaceWith) {
+			return this.replace(/[\\/]/g, replaceWith);
+		},
+		normalizeSlashes: function() {
+			return this.replaceSlashes(SYSTEMSLASH);
+		},
+		removeLeadingSlash: function() {
+			return this.removeLeadingChar(SYSTEMSLASH);
+		},
+		getUsableFileName: function() {
+			let t = this.replace(/\?.*$/, '')
+				.normalizeSlashes()
+				.trim()
+				.removeFinalSlash();
+			return t.split(SYSTEMSLASH).pop().removeBadChars().trim();
+		},
+		getExtension: function() {
+			let name = this.getUsableFileName();
+			let c = name.lastIndexOf('.');
+			return (c == - 1) ? null : name.slice(++c);
+		},
+		cropCenter : function(newLength) {
+			if (this.length > newLength) {
+				return this.substring(0, newLength / 2) + "..." + this.substring(this.length - newLength / 2, this.length);
+			}
+			return this;
+		},
+		toURI: function(charset, baseURI) {
+			return IOService.newURI(this, charset, baseURI);			
+		},
+		toURL: function(charset, baseURI) {
+			return this.toURI(charset, baseURI).QueryInterface(Components.interfaces.nsIURL);
+		}
 	}
-	else {
-		_getIcon = function _getIconOther(url, size) {
-			return "moz-icon://" + url + "?size=" + size;
-		};
-	}
-	return _getIcon(url, size);
-};
+);
+
 
 /**
  * Get the icon URI corresponding to an URI (special mac handling)
@@ -417,6 +324,31 @@ function _getIcon(url, size) {
  * @return String containing the icon URI
  */
 function getIcon(link, metalink, size) {
+
+	const _recognizedMac = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
+
+	function _getIconMac(url, size) {
+		let uri = url.toURI();
+		if (_recognizedMac.test(uri.path)) {
+			return "moz-icon://" + url + "?size=" + size;
+		}
+		return "moz-icon://file.html?size=" + size;
+	}
+	
+	function _getIconOther(url, size) {
+		return "moz-icon://" + url + "?size=" + size;
+	};
+	
+	function _getIcon(url, size) {
+		if (/mac/i.test(navigator.platform)) {
+			_getIcon = _getIconMac; 
+		}
+		else {
+			_getIcon = _getIconOther;
+		}
+		return _getIcon(url, size);
+	};
+
 	if (metalink) {
 		return "chrome://dta/skin/icons/metalink.png";
 	}
@@ -435,7 +367,7 @@ function getIcon(link, metalink, size) {
 			url = link.url;
 		}
 		else {
-			url = _atos(link);
+			url = link.toString();
 		}
 		let ext = url.getExtension();
 		url = 'file' + (ext ? '.' + ext : '');
@@ -568,54 +500,6 @@ var OpenExternal = {
 	}
 };
 
-/**
- * Range generator (python style). Difference: step direction is initialized accordingly if corresponding parameter is omitted.
- * @param start Optional. Start value (default: 0)
- * @param stop Stop value (exclusive)
- * @param step Optional. Step value (default: 1/-1)
- * @author Nils
- */
-function range() {
-	if (arguments.length == 0) {
-		throw Components.results.NS_ERROR_INVALID_ARG;
-	}
-	var start = 0, stop = Number(arguments[0]), step;
-	if (arguments.length >= 2) {
-		start = stop;
-		stop = Number(arguments[1]);
-	}
-	if (arguments.length >= 3) {
-		step = Number(arguments[2]);
-	}
-	else {
-		step = stop - start > 0 ? 1 : -1; 
-	}
-	if (!isFinite(start) || !isFinite(stop) || !isFinite(step) || step == 0) {
-		throw Components.results.NS_ERROR_INVALID_ARG;
-	}
-	if ((stop - start) / step < 0) {
-		// negative range
-		return;
-	}
-	stop += -Math.abs(step)/step;
-	stop += step - ((stop - start) % step);
-	for (; start != stop; start += step) {
-		yield start;
-	}
-
-}
-
-/**
- * Convert string-castable data int a hexdigest string
- * @param data String-castable data to hash
- * @return The hex digest of given data
- * @author Nils (derived from dmo example)
- */
-function hexdigest(data) {
-	data = _atos(data);
-	// range is required as we extended String
-	return [("0" + data.charCodeAt(i).toString(16)).slice(-2) for (i in range(data.length))].join("");	
-}
 
 /**
  * Convert a value into a hash
@@ -654,33 +538,20 @@ function hash(value, algorithm, encoding, datalen) {
 			createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
 		converter.charset = 'utf8';
 		
-		value = converter.convertToByteArray(_atos(value), {});
+		value = converter.convertToByteArray(Utils.atos(value), {});
 		ch.update(value, value.length);
 	}
 	var rv = ch.finish(encoding == HASH_B64);
 	if (encoding == HASH_HEX) {
-		rv = hexdigest(rv);
+		rv = Utils.hexdigest(rv);
 	}
 	return rv;
 }
 
-/**
- * returns a new UUID in string representation
- * @return String UUID
- * @author Nils
- */
-function newUUIDString() {
-	var uuidgen = Components.classes["@mozilla.org/uuid-generator;1"]
-		.getService(Components.interfaces.nsIUUIDGenerator);
-	newUUIDString = function() {
-		return uuidgen.generateUUID().toString();
-	}
-	return newUUIDString();
-}
 
 // XXX switch to nsITimer?
 function Timer(func, interval, persist, now) {
-  this._id = newUUIDString();
+  this._id = Utils.newUUIDString();
 	if (typeof(func) != 'function') {
 		func = new Function(func);
 	}

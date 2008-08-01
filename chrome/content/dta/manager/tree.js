@@ -569,7 +569,7 @@ var Tree = {
 			modifySome($('folder'), function(d) !!d.curFolder);
 			modifySome($('delete'), function(d) d.is(COMPLETE));
 			modifySome($('export'), function(d) !!d.count);
-			modifySome($('addchunk', 'removechunk', 'force'), function(d) d.isOf(QUEUED, RUNNING, PAUSED));
+			modifySome($('addchunk', 'removechunk', 'force'), function(d) d.isOf(QUEUED, RUNNING, PAUSED, CANCELED));
 		}
 		catch (ex) {
 			Debug.log("rt", ex);

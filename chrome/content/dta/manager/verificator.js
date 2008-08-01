@@ -87,7 +87,7 @@ Verificator.prototype = {
 			this.download.partialSize = this.download.totalSize;
 			this.download.invalidate();
 			
-			this.hash = hexdigest(this.hash.finish(false));
+			this.hash = Utils.hexdigest(this.hash.finish(false));
 			if (this.hash != this.download.hash.sum) {
 				Debug.logString("hash mismatch, actual: " + this.hash + " expected: " + this.download.hash.sum);
 				var act = Prompts.confirm(window, _('verifyerrortitle'), _('verifyerrortext'), _('retry'), _('delete'), _('keep'));
