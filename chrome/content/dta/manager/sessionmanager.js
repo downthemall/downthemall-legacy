@@ -171,6 +171,7 @@ var SessionManager = {
 		stmt.executeStep();
 		let count = stmt.getInt64(0);
 		stmt.finalize();
+		delete stmt;
 		if (!count) {
 			Dialog.start();
 			return;			
@@ -187,6 +188,8 @@ var SessionManager = {
 				}
 				// Are we done?
 				if (!stmt || !stmt.executeStep()) {
+					stmt.finalize();
+					delete stmt;
 					delete this._loader;
 					this.endUpdate();
 					Tree.endUpdate();

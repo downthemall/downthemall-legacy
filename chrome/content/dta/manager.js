@@ -162,7 +162,7 @@ var Dialog = {
 		new Timer("Dialog.refreshWritten();", 100, true, true);
 		new Timer("Dialog.saveRunning();", 10000, true);
 		
-		$('loadingbox').parentNode.removeChild($('loadingbox'));		
+		$('loadingbox').hidden = true;		
 	},
 	
 	observe: function D_observe(subject, topic, data) {
@@ -2572,94 +2572,108 @@ function startDownloads(start, downloads) {
 	let removeableTabs = {};
 	Tree.beginUpdate();
 	SessionManager.beginUpdate();
-	for (let e in g) {
-
-		var desc = "";
-		DESCS.some(
-			function(i) {
-				if (typeof(e[i]) == 'string' && e[i].length) {
-					desc = e.description;
-					return true;
+	$('loadingbox').hidden = false;
+	$('loading').value = _('adding');
+	Components.utils.import('resource://dta/cothread.jsm');
+	new CoThreadListWalker(
+		function startDownloads_cothread(e) {
+			let desc = "";
+			DESCS.some(
+				function(i) {
+					if (typeof(e[i]) == 'string' && e[i].length) {
+						desc = e.description;
+						return true;
+					}
+					return false;
 				}
-				return false;
+			);
+			
+			let qi = new QueueItem();
+			let lnk = e.url;
+			if (typeof lnk == 'string') {
+				qi.urlManager = new UrlManager([new DTA_URL(IOService.newURI(lnk, null, null))]);
 			}
-		);
+			else if (lnk instanceof UrlManager) {
+				qi.urlManager = lnk;
+			}
+			else {
+				qi.urlManager = new UrlManager([lnk]);
+			}
+			qi.numIstance = e.numIstance;
 		
-		let qi = new QueueItem();
-		let lnk = e.url;
-		if (typeof lnk == 'string') {
-			qi.urlManager = new UrlManager([new DTA_URL(IOService.newURI(lnk, null, null))]);
-		}
-		else if (lnk instanceof UrlManager) {
-			qi.urlManager = lnk;
-		}
-		else {
-			qi.urlManager = new UrlManager([lnk]);
-		}
-		qi.numIstance = e.numIstance;
+			if (e.referrer) {
+				try {
+					qi.referrer = e.referrer.toURL();
+				}
+				catch (ex) {
+					// We might have been fed with about:blank or other crap. so ignore.
+				}
+			}
+			// only access the setter of the last so that we don't generate stuff trice.
+			qi._pathName = e.dirSave.addFinalSlash().toString();
+			qi._description = desc ? desc : '';
+			qi._mask = e.mask;
+			qi.fromMetalink = !!e.fromMetalink;
+			if (e.fileName) {
+				qi.fileName = e.fileName;
+			}
+			else {
+				qi.fileName = qi.urlManager.usable.getUsableFileName();
+			}
+			if (e.startDate) {
+				qi.startDate = e.startDate;
+			}
+			if (e.url.hash) {
+				qi.hash = e.url.hash;
+			}
+			else if (e.hash) {
+				qi.hash = e.hash;
+			}
+			else {
+				qi.hash = null; // to initialize prettyHash 
+			}
 	
-		if (e.referrer) {
-			try {
-				qi.referrer = e.referrer.toURL();
+			let postData = ContentHandling.getPostDataFor(qi.urlManager.url);
+			if (e.url.postData) {
+				postData = e.url.postData;
 			}
-			catch (ex) {
-				// We might have been fed with about:blank or other crap. so ignore.
+			if (postData) {
+				qi.postData = postData;
+			}		
+	
+			qi.state = start ? QUEUED : PAUSED;
+			if (qi.is(QUEUED)) {
+				qi.status = TEXT_QUEUED;
 			}
-		}
-		// only access the setter of the last so that we don't generate stuff trice.
-		qi._pathName = e.dirSave.addFinalSlash().toString();
-		qi._description = desc ? desc : '';
-		qi._mask = e.mask;
-		qi.fromMetalink = !!e.fromMetalink;
-		if (e.fileName) {
-			qi.fileName = e.fileName;
-		}
-		else {
-			qi.fileName = qi.urlManager.usable.getUsableFileName();
-		}
-		if (e.startDate) {
-			qi.startDate = e.startDate;
-		}
-		if (e.url.hash) {
-			qi.hash = e.url.hash;
-		}
-		else if (e.hash) {
-			qi.hash = e.hash;
-		}
-		else {
-			qi.hash = null; // to initialize prettyHash 
-		}
+			else {
+				qi.status = TEXT_PAUSED;
+			}
+			qi.save();		
+			Tree.add(qi);
+			++added;
+			
+			return true;
+		},
+		g,
+		100,
+		this,
+		function startDownloads_finish() {
+			SessionManager.endUpdate();
+			Tree.endUpdate();
 
-		let postData = ContentHandling.getPostDataFor(qi.urlManager.url);
-		if (e.url.postData) {
-			postData = e.url.postData;
+			$('loadingbox').hidden = true;
+		
+			let bo = Tree.box.QueryInterface(Ci.nsITreeBoxObject);
+			if (added <= bo.getPageLength()) {
+				bo.scrollToRow(Tree.rowCount - bo.getPageLength());
+			}
+			else {
+				bo.scrollToRow(numbefore);
+			}
+			
+			Dialog.startNext();
 		}
-		if (postData) {
-			qi.postData = postData;
-		}		
-
-		qi.state = start ? QUEUED : PAUSED;
-		if (qi.is(QUEUED)) {
-			qi.status = TEXT_QUEUED;
-		}
-		else {
-			qi.status = TEXT_PAUSED;
-		}
-		qi.save();		
-		Tree.add(qi);
-		++added;
-	}
-	SessionManager.endUpdate();
-	Tree.endUpdate();
-
-	var boxobject = Tree._box;
-	boxobject.QueryInterface(Ci.nsITreeBoxObject);
-	if (added <= boxobject.getPageLength()) {
-		boxobject.scrollToRow(Tree.rowCount - boxobject.getPageLength());
-	}
-	else {
-		boxobject.scrollToRow(numbefore);
-	}
+	).run();
 }
 const FileOutputStream = Components.Constructor(
 	'@mozilla.org/network/file-output-stream;1',
@@ -2787,37 +2801,16 @@ var ConflictManager = {
 };
 
 var Serializer = {
+	json: Serv('@mozilla.org/dom/json;1', 'nsIJSON'),
 	encode: function(obj) {
-		if ('nsIJSON' in Ci) {
-			let json = Serv('@mozilla.org/dom/json;1', 'nsIJSON');
-			this.encode = function(obj) {
-				return json.encode(obj);
-			}
-		}
-		else {
-			this.encode = function(obj) {
-				return obj.toSource();
-			}
-		}
-		return this.encode(obj);
+		return this.json.encode(obj);
 	},
 	decode: function(str) {
-		if ('nsIJSON' in Ci) {
-			let json = Serv('@mozilla.org/dom/json;1', 'nsIJSON');
-			this.decode = function(str) {
-				try {
-					return json.decode(str);
-				}
-				catch (ex) {
-					return eval(str);
-				}
-			}
+		try {
+			return this.json.decode(str);
 		}
-		else {
-			this.decode = function(str) {
-				return eval(str);
-			}
+		catch (ex) {
+			return eval(str);
 		}
-		return this.decode(str);
 	}
 };
