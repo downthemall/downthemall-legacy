@@ -371,7 +371,6 @@ function getIcon(link, metalink, size) {
 		}
 		let ext = url.getExtension();
 		url = 'file' + (ext ? '.' + ext : '');
-		Debug.logString(url);
 		return _getIcon(url, size);
 	}
 	catch (ex) {
