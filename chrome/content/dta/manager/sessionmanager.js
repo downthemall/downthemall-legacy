@@ -110,6 +110,9 @@ var SessionManager = {
 		}
 	},
 	beginUpdate: function() {
+		if (this._con.transactionInProgress) {
+			return;
+		}
 		this._con.beginTransactionAs(this._con.TRANSACTION_DEFERRED);		
 	},
 	endUpdate: function() {
