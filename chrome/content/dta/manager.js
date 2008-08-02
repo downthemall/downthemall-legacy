@@ -574,7 +574,6 @@ UrlManager.prototype = {
 	},
 	initByArray: function um_initByArray(urls) {
 		for each (let u in urls) {
-			Debug.logString(u.toSource());
 			if (u instanceof DTA_URL || (u.url && u.url instanceof Ci.nsIURI)) {
 				this.add(u);
 			}
