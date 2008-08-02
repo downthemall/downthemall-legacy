@@ -513,7 +513,7 @@ var Tree = {
 			return false;
 		}
 		$("infoIcon").src = d.largeIcon;
-		$("infoURL").value = d.urlManager.url;
+		$("infoURL").value = d.urlManager.url.spec;
 		$("infoDest").value = d.destinationFile;
 	
 		Tooltip.start(d);			

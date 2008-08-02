@@ -79,10 +79,10 @@
 		
 	<hbox id="header">
 		<vbox>
-				<spacer flex="1"/>
-				<image id="icon" class="icon"/>
-				<spacer flex="1"/>
-		</vbox>
+			<spacer flex="1"/>
+			<html:canvas width="48" height="48" id="icon" class="icon"/>
+			<spacer flex="1"/>
+		</vbox>	
 		<vbox flex="1">
 			<grid flex="1">
 				<columns><column flex="1"/><column/><column/></columns>
@@ -100,7 +100,8 @@
 					</row>
 				</rows>					
 			</grid>
-			<description id="desc"/>		
+			<description id="desc"/>	
+			<spacer flex="1"/>	
 		</vbox>
 	</hbox>
 	

@@ -33,6 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
+
+const METALINK_LOGO = 'chrome://dta/skin/icons/metalink48.png';
  
 function NSResolver(prefix) {
   if(prefix == 'html') {
@@ -195,7 +197,7 @@ function NSResolver(prefix) {
 					if (['http', 'https'].indexOf(type) != -1) {
 						url = this._checkURL(url.textContent.trim());
 						if (url) {
-							urls.push(new DTA_URL(url, charset, usable, preference));
+							urls.push(new DTA_URL(IOService.newURI(url, charset, null), preference));
 						}
 					}
 				}
@@ -267,7 +269,7 @@ function NSResolver(prefix) {
 					info
 				);
 				downloads = downloads.filter(function(d) { return d.selected; });
-				if (downloads.length) {
+				if (info.start && downloads.length) {
 					startDownloads(info.start, downloads);
 				}
 			}
@@ -305,7 +307,7 @@ function NSResolver(prefix) {
  		var info = {
  			'identity': _('mlidentity'),
  			'description': _('mldescription'),
- 			'logo': 'chrome://dta/skin/icons/metalink_big.png',
+ 			'logo': null,
  			'publisher': null,
  			'license': null
  		}
@@ -322,7 +324,32 @@ function NSResolver(prefix) {
  		}
  		$('identity').value = info.identity;
  		$('desc').appendChild(document.createTextNode(info.description));
- 		$('icon').src = info.logo;
+		let logo = new Image();
+		logo.onload = function() {
+			let canvas = $('icon');
+			try {
+				canvas.width = canvas.clientWidth;
+				canvas.height = canvas.clientHeight;
+				let ctx = canvas.getContext('2d');
+				
+				let w = logo.naturalWidth;
+				let h = logo.naturalHeight;
+				d = Math.max(w, h);
+				
+				ctx.scale(canvas.width / d, canvas.height / d);
+				
+				ctx.drawImage(logo, (d - w) /2, (d - h) / 2);								
+			}
+			catch (ex) {
+				alert(ex);
+				Debug.log("Cannot load logo", ex);
+				logo.src = METALINK_LOGO;
+			}
+		};
+		logo.onerror = function() {
+			logo.src = METALINK_LOGO;
+		};
+		logo.src = info.logo ? info.logo : METALINK_LOGO;
  		if (info.publisher) {
  			var e = $('publisher');
  			e.value = info.publisher[0];

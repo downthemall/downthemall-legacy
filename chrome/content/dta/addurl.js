@@ -116,7 +116,7 @@ CharRange.prototype = Range.prototype;
 
 function BatchGenerator(link) {
 	this.url = link.url;
-	var url = this.url;
+	let url = this.url.spec;
 	this._length = 1;
 	this._pats = [];
 	var i;
@@ -393,7 +393,7 @@ var Dialog = {
 			}
 			url = url.replace(/#.*$/, '');
 			address.value = url;
-			url = new DTA_URL(url);
+			url = new DTA_URL(IOService.newURI(url, null, null));
 		}
 		
 		var hash = null;
@@ -433,7 +433,7 @@ var Dialog = {
 			var batch = new BatchGenerator(url);
 		}
 		catch (ex) {
-			Debug.dump("Cannot create batch", ex);
+			Debug.log("Cannot create batch", ex);
 			return;
 		}
 	
@@ -457,7 +457,7 @@ var Dialog = {
 			var g = batch.getURLs();
 			batch = function() {
 				for (let i in g) {
-					yield new QueueItem(new DTA_URL(i), num, desc);
+					yield new QueueItem(new DTA_URL(IOService.newURI(i, null, null)), num, desc);
 				}
 			}();
 		}

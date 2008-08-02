@@ -171,6 +171,10 @@ var SessionManager = {
 		stmt.executeStep();
 		let count = stmt.getInt64(0);
 		stmt.finalize();
+		if (!count) {
+			Dialog.start();
+			return;			
+		}
 		let loading = $('loading');
 
 		stmt = this._con.createStatement('SELECT uuid, item FROM queue ORDER BY pos');

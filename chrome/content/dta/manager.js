@@ -574,14 +574,21 @@ UrlManager.prototype = {
 	},
 	initByArray: function um_initByArray(urls) {
 		for each (let u in urls) {
-			this.add(
-				new DTA_URL(
-					u.url,
-					u.charset,
-					u.usable,
-					u.preference
-				)
-			);
+			Debug.logString(u.toSource());
+			if (u instanceof DTA_URL || (u.url && u.url instanceof Ci.nsIURI)) {
+				this.add(u);
+			}
+			else if (u instanceof Ci.nsIURI) {
+				this.add(new DTA_URL(u));
+			}
+			else {
+				this.add(
+					new DTA_URL(
+						IOService.newURI(u.url,	u.charset, null),
+						u.preference
+					)
+				);
+			}
 		}
 		this._urls.sort(this._sort);
 		this._usable = this._urls[0].usable;
@@ -590,7 +597,7 @@ UrlManager.prototype = {
 		if (!url instanceof DTA_URL) {
 			throw (url + " is not an DTA_URL");
 		}
-		if (!this._urls.some(function(ref) { return ref.url == url.url; })) {
+		if (!this._urls.some(function(ref) ref.url.spec == url.url.spec)) {
 			this._urls.push(url);
 		}
 	},
@@ -609,9 +616,6 @@ UrlManager.prototype = {
 	},
 	get usable() {
 		return this._urls[0].usable;
-	},
-	get charset() {
-		return this._urls[0].charset;
 	},
 	get length() {
 		return this._urls.length;
@@ -632,26 +636,13 @@ UrlManager.prototype = {
 	},
 	toSource: function um_toSource() {
 		let rv = [];
-		this._urls.forEach(
-			function(url) {
-				rv.push({
-					'url': url.url,
-					'charset': url.charset,
-					'usable': url.usable,
-					'preference': url.preference
-				});
-			}
-		);
+		for each (let url in this._urls) {
+			rv.push(url.toSource());
+		}
 		return rv;
 	},
 	toString: function() {
-		let rv = '';
-		this._urls.forEach(
-			function(u) {
-				rv += u.preference + " " + u.url + "\n";
-			}
-		);
-		return rv;
+		return this._urls.reduce(function(v, u) v + u.preference + " " + u.url + "\n");
 	}
 };
 function Visitor() {
@@ -1543,7 +1534,8 @@ QueueItem.prototype = {
 			this._autoRetries = 0;
 			delete this._autoRetryTime;
 			this.save();
-		} catch(ex) {
+		}
+		catch(ex) {
 			Debug.log("cancel():", ex);
 		}
 	},
@@ -1949,7 +1941,7 @@ function Connection(d, c, getInfo) {
 	var referrer = d.referrer;
 	Debug.logString("starting: " + this.url.url);
 
-	this._chan = IOService.newChannelFromURI(this.url.url.toURL());
+	this._chan = IOService.newChannelFromURI(this.url.url);
 	var r = Ci.nsIRequest;
 	this._chan.loadFlags = r.LOAD_NORMAL | r.LOAD_BYPASS_CACHE;
 	this._chan.notificationCallbacks = this;
@@ -2584,7 +2576,7 @@ function startDownloads(start, downloads) {
 		let qi = new QueueItem();
 		let lnk = e.url;
 		if (typeof lnk == 'string') {
-			qi.urlManager = new UrlManager([new DTA_URL(lnk)]);
+			qi.urlManager = new UrlManager([new DTA_URL(IOService.newURI(lnk, null, null))]);
 		}
 		else if (lnk instanceof UrlManager) {
 			qi.urlManager = lnk;
@@ -2626,7 +2618,7 @@ function startDownloads(start, downloads) {
 			qi.hash = null; // to initialize prettyHash 
 		}
 
-		let postData = ContentHandling.getPostDataFor(qi.urlManager.url.toURI());
+		let postData = ContentHandling.getPostDataFor(qi.urlManager.url);
 		if (e.url.postData) {
 			postData = e.url.postData;
 		}
