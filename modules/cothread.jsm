@@ -92,6 +92,7 @@ CoThread.prototype = {
 	
 	_idx: 0,
 	_ran: false,
+	_finishFunc: null,
 	
 	run: function CoThread_run() {
 		if (this._ran) {
@@ -123,12 +124,15 @@ CoThread.prototype = {
 			}
 		}
 		catch (ex) {
-			this.cancel();			
+			this.cancel();
 		}
 	},
 	
 	cancel: function CoThread_cancel() {
 		this._timer.cancel();
+		if (this._finishFunc) {
+			this._finishFunc.call(this._thisCtx);
+		}		
 	},
 	
 	_callf: function CoThread__callf(ctx, item, idx, func) {
@@ -154,15 +158,18 @@ CoThread.prototype = {
  *          (function() { for (let i = 0; i < 30000; ++i) yield i; })(),
  *          // When to turn over Control?
  *          // Each 1000 items
- *          1000
+ *          1000,
+ *          null,
+ *          function() alert('done')
  *        ).run();
  *   
  * @param {Function} func Function to be called on each item. Is passed item and index as arguments. Returning false will cancel the operation. 
  * @param {Array/Generator} arrayOrGenerator Array or Generator object to be used as the input list 
  * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
  * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
+ * @param {Function} finishFunc Optional. This function will be called once the operation finishes or is cancelled.
  */
-function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
+function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx, finishFunc) {
 	CoThreadBase.call(this, func, yieldEvery, thisCtx);
 	
 	if (arrayOrGenerator instanceof Array) {
@@ -175,6 +182,11 @@ function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
 	else {
 		throw Cr.NS_ERROR_INVALID_ARG;
 	}
+	
+	this._finishFunc = finishFunc;
+	if (this._lastFunc && (typeof func != 'function' && !(func instanceof Function))) {
+		throw Cr.NS_ERROR_INVALID_ARG;
+	} 
 }
 
 // not just b.prototype = a.prototype, because we wouldn't then be allowed to override methods 
