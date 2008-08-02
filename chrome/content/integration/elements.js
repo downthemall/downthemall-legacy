@@ -105,19 +105,17 @@ var DTA_ContextOverlay = {
 		if (!lnks || !lnks.length) {
 			return;
 		}
-
+		
 		var ref = DTA_AddingFunctions.getRef(doc);
 
 		for (var i = 0; i < lnks.length; ++i) {
 			var src = lnks[i].src;
-			if (!DTA_AddingFunctions.isLinkOpenable(src)) {
-				try {
-					src = DTA_AddingFunctions.composeURL(doc, src).spec;
-				}
-				catch (ex) {
-					DTA_debug.log("failed to compose: " + src, ex);
-					continue;
-				}
+			try {
+				src = DTA_AddingFunctions.composeURL(doc, src);
+			}
+			catch (ex) {
+				DTA_debug.log("failed to compose: " + src, ex);
+				continue;
 			}
 			// if it's valid and it's new
 			// better double check :p
@@ -132,7 +130,7 @@ var DTA_ContextOverlay = {
 				desc = this.trim(lnks[i].getAttribute('title'));
 			}
 			images.push({
-				'url': new DTA_URL(DTA_AddingFunctions.ios.newURI(src, doc.characterSet)),
+				'url': new DTA_URL(src),
 				'referrer': ref,
 				'description': desc
 			});
@@ -262,7 +260,7 @@ var DTA_ContextOverlay = {
 				var known = {};
 				return i.filter(
 					function(e) {
-						var url = e.url.url;
+						let url = e.url.url.spec;
 						if (url in known) {
 							return false;
 						}
@@ -274,7 +272,8 @@ var DTA_ContextOverlay = {
 			
 			if (turbo) {
 				DTA_debug.logString("findLinks(): DtaOneClick request from the user");
-			} else {
+			}
+			else {
 				DTA_debug.logString("findLinks(): DtaStandard request from the user");
 			}
 
@@ -288,12 +287,9 @@ var DTA_ContextOverlay = {
 			
 			var urls = [];
 			var images = [];
-			windows.forEach(
-				function(win) {
-					this.addLinks(win, urls, images, !all);
-				},
-				this
-			);
+			for each (let win in windows) {
+				this.addLinks(win, urls, images, !all);
+			}
 			urls = makeUnique(urls);
 			images = makeUnique(images);
 
@@ -306,7 +302,8 @@ var DTA_ContextOverlay = {
 				try {
 					DTA_AddingFunctions.saveLinkArray(true, urls, images);
 					return;
-				} catch (ex) {
+				}
+				catch (ex) {
 					DTA_debug.log('findLinks', ex);
 					DTA_Prompts.alert(window, this.getString('error'), this.getString('errorinformation'));
 				}

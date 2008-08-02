@@ -200,6 +200,9 @@ var DTA_AddingFunctions = {
 		if (url instanceof DTA_URL) {
 			url = url.url.spec;
 		}
+		else if (url instanceof Components.interfaces.nsIURL) {
+			url = url.spec;
+		}
 		try {
 			var scheme = this.ios.extractScheme(url);
 			return ['http', 'https', 'ftp'].indexOf(scheme) != -1;

@@ -58,7 +58,7 @@ function Tree(links, type) {
 				'icon',
 				function() {
 					if (!this._icon) {
-						this._icon = getIcon(this.url, 'metalink' in this);
+						this._icon = getIcon(this.url.url.spec, 'metalink' in this);
 					}
 					return this._icon;
 				}
