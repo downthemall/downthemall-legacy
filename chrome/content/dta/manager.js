@@ -934,6 +934,9 @@ QueueItem.prototype = {
 		return this._description;
 	},
 	set description(nv) {
+		if (nv = this._description) {
+			return nv;
+		}
 		this._description = nv;
 		this.rebuildDestination();
 		this.invalidate();
@@ -945,7 +948,11 @@ QueueItem.prototype = {
 		return this._pathName;
 	},
 	set pathName(nv) {
-		this._pathName = nv.toString();
+		nv = nv.toString();
+		if (this._pathName == nv) {
+			return nv;
+		}
+		this._pathName = nv;
 		this.rebuildDestination();
 		this.invalidate();
 		return nv;
@@ -956,6 +963,9 @@ QueueItem.prototype = {
 		return this._mask;
 	},
 	set mask(nv) {
+		if (this._mask == nv) {
+			return nv;
+		}
 		this._mask = nv;
 		this.rebuildDestination();
 		this.invalidate();
@@ -969,6 +979,9 @@ QueueItem.prototype = {
 		return this._destinationNameFull; 
 	},
 	set destinationName(nv) {
+		if (this.destinationNameOverride == nv) {
+			return this._destinationNameFull;
+		}
 		this.destinationNameOverride = nv;
 		this.rebuildDestination();
 		this.invalidate();
