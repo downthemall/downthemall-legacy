@@ -227,7 +227,7 @@ var ImEx = {
 					throw new Exception("Invalid url!");
 				}
 				links.push({
-					'url': new DTA_URL(url.spec),
+					'url': new DTA_URL(url),
 					'referrer': '',
 					'description': 'imported from ' + file.leafName 
 				});

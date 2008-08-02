@@ -358,7 +358,7 @@ function getIcon(link, metalink, size) {
 	try {
 		var url;
 		if (link instanceof DTA_URL) {
-			url = link.url;
+			url = link.url.spec;
 		}
 		else if (link instanceof Components.interfaces.nsIURI) {
 			url = link.spec;

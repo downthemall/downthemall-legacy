@@ -70,13 +70,14 @@ var DTA_SaveAs = {
 		this.normal.disabled = false;
 		
 		this.dialog = dialog;
-		this.url = dialog.mLauncher.source.spec;
+		this.url = dialog.mLauncher.source;
 		try {
 			this.referrer = dialog.mContext.QueryInterface(Components.interfaces.nsIWebNavigation).currentURI.spec;
   	}
 		catch(ex) {
-			this.referrer = this.url;
+			this.referrer = this.url.spec;
 		}
+		
 		var ml = DTA_getLinkPrintMetalink(this.url);
 		this.url = new DTA_URL(ml ? ml : this.url);
 

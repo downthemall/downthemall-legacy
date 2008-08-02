@@ -80,17 +80,18 @@ var DTA_ContextOverlay = {
 			if (link.hasAttribute('title')) {
 				udesc = this.trim(link.getAttribute('title'));
 			}
+			let url = DTA_AddingFunctions.ios.newURI(link.href, doc.characterSet, null);
 			urls.push({
-				'url': new DTA_URL(link.href, doc.characterSet),
+				'url': new DTA_URL(url),
 				'referrer': ref,
 				'description': this.extractDescription(link),
 				'ultDescription': udesc
 			});
 			
-			var ml = DTA_getLinkPrintMetalink(link.hash);
+			var ml = DTA_getLinkPrintMetalink(url.ref);
 			if (ml) {
 				urls.push({
-					'url': new DTA_URL(ml, doc.characterSet),
+					'url': new DTA_URL(ml),
 					'referrer': ref,
 					'description': '[metalink] http://www.metalinker.org/',
 					'ultDescription': '',
@@ -131,7 +132,7 @@ var DTA_ContextOverlay = {
 				desc = this.trim(lnks[i].getAttribute('title'));
 			}
 			images.push({
-				'url': new DTA_URL(src, doc.characterSet),
+				'url': new DTA_URL(DTA_AddingFunctions.ios.newURI(src, doc.characterSet)),
 				'referrer': ref,
 				'description': desc
 			});
@@ -332,12 +333,13 @@ var DTA_ContextOverlay = {
 			var url = ctx.onLink ? cur.href : cur.src;
 			
 			if (!DTA_AddingFunctions.isLinkOpenable(url)) {
-				DTA_Prompts.alert(window, this.getString('error'), this.getError('errornodownload'));
+				DTA_Prompts.alert(window, this.getString('error'), this.getString('errornodownload'));
 				return;
 			}
 			
+			url = DTA_AddingFunctions.ios.newURI(url, win.document.characterSet, null);
 			var ml = DTA_getLinkPrintMetalink(url);
-			url = new DTA_URL(ml ? ml : url, win.document.characterSet);
+			url = new DTA_URL(ml ? ml : url);
 			
 			var ref = DTA_AddingFunctions.getRef(document.commandDispatcher.focusedWindow.document);
 			var desc = this.extractDescription(cur);
@@ -419,13 +421,13 @@ var DTA_ContextOverlay = {
 				ms.close();
 				ss.close();
 				
-				action = new DTA_URL(action.spec, form.ownerDocument.characterSet);
+				action = new DTA_URL(DTA_AddingFunctions.ios.newURI(action.spec, form.ownerDocument.characterSet));
 				action.postData = postData;
 			}
 			else {
 				action.query = values;
 				action.ref = '';
-				action = new DTA_URL(action.spec, form.ownerDocument.characterSet);
+				action = new DTA_URL(DTA_AddingFunctions.ios.newURI(action.spec, form.ownerDocument.characterSet));
 			}			
 
 			

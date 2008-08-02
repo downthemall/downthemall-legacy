@@ -1,21 +1,21 @@
 @import 'chrome://dta/skin/common/style.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
-
+@namespace html url("http://www.w3.org/1999/xhtml");
+	
 #metaselect {
 	width: 600px;
 	height: 430px;
 }
 #header {
+	margin: 1ex;
 	margin-bottom: 1em;
 }
 #header label, #downloads label {
 	font-weight: bold;
 }
-.icon {
-	height: 32px !important;
-	width: 32px !important;
+.icon, html|*.icon {
 	margin: 1ex;
-	margin-top: 0;
+	margin-top: 0.5ex;
 }
 .additional {
 	text-align: right;

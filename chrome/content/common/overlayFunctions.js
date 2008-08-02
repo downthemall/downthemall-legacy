@@ -115,45 +115,42 @@ var DTA_URLhelpers = {
 	}
 };
 
-function DTA_URL(url, charset, usable, preference) {
-	this.charset = this.str(charset);
+function DTA_URL(url, preference) {
 	this.url = url;
-	if (usable) {
-		this.usable = this.str(usable);
-	}
 	this.preference = preference ? preference : 100;
-
-	this.decode();
 };
 DTA_URL.prototype = {
-	str: function(value) {
-		return value ? String(value) : '';
-	},
-	// only a getter here. :p
 	get url() {
 		return this._url;
 	},
 	set url(nv) {
 		delete this.hash;
-		this._url = this.str(nv);
-		var hash = DTA_getLinkPrintHash(this._url);
+		
+		if (nv instanceof Components.interfaces.nsIURI) {
+			nv = nv.QueryInterface(Components.interfaces.nsIURL);
+		}
+		if (!(nv instanceof Components.interfaces.nsIURL)) {
+			throw new Components.Exception("you must pass an nsIURL");
+		}
+
+		this._url = nv.clone();
+		
+		let hash = DTA_getLinkPrintHash(this._url);
+		this._url.ref = '';		
 		if (hash) {
 			this.hash = hash;
 		}
-		this._url = this._url.replace(/#.*$/, '');
-		this.usable = '';
-		this.decode();
+		this._usable = DTA_URLhelpers.decodeCharset(this._url.spec, this._url.originCharset);
 	},
-	decode: function DU_decode() {
-		if (!this.usable)
-		{
-			this.usable = DTA_URLhelpers.decodeCharset(this._url, this.charset);
+	get usable() {
+		return this._usable;
+	},
+	toSource: function DU_toSource() {
+		return {
+			url: this._url.spec,
+			charset: this._url.originCharset,
+			preference: this.preference
 		}
-	},
-	save: function DU_save(element) {
-		element.setAttribute("url", this._url);
-		element.setAttribute("charset", this.charset);
-		element.setAttribute("usableURL", this.usable);
 	}
 };
 
@@ -176,6 +173,7 @@ DTA_DropProcessor.prototype = {
 			if (!DTA_AddingFunctions.isLinkOpenable(url)) {
 				throw new Components.Exception("Link cannot be opened!");
 			}
+			url = this.ios.newURI(url, null, null);
 		}
 		catch (ex) {
 			DTA_debug.log("Failed to process drop", ex);
@@ -183,10 +181,10 @@ DTA_DropProcessor.prototype = {
 		}
 		var doc = document.commandDispatcher.focusedWindow.document;
 		
-		var ml = DTA_getLinkPrintMetalink(url);
-		url = new DTA_URL(ml ? ml : url, doc.characterSet);
+		let ml = DTA_getLinkPrintMetalink(url);
+		url = new DTA_URL(ml ? ml : url);
 		
-		var ref = DTA_AddingFunctions.getRef(doc);
+		let ref = DTA_AddingFunctions.getRef(doc);
 		this.func(url, ref);
 	}
 };
@@ -200,7 +198,7 @@ var DTA_AddingFunctions = {
 
 	isLinkOpenable : function(url) {
 		if (url instanceof DTA_URL) {
-			url = url.url;
+			url = url.url.spec;
 		}
 		try {
 			var scheme = this.ios.extractScheme(url);
@@ -448,10 +446,14 @@ var DTA_Mediator = {
 		if (ref instanceof DTA_URL) {
 			ref = ref.url;
 		}
+		if (!url instanceof Components.interfaces.nsIURI) {
+			throw new Error("Cannot open non nsIURI");
+		}
 		if (ref && !(ref instanceof Components.interfaces.nsIURI)) {
 			try {
 				ref = DTA_AddingFunctions.ios.newURI(ref, null, null);
-			} catch (ex) {
+			}
+			catch (ex) {
 				DTA_debug.log(ref, ex);
 				ref = null;
 			}
@@ -468,7 +470,7 @@ var DTA_Mediator = {
 			try {
 				var ps = Components.classes['@mozilla.org/uriloader/external-protocol-service;1']
 					.getService(Components.interfaces.nsIExternalProtocolService);
-				ps.loadUrl(this._ios.newURI(url, null, null));
+				ps.loadUrl(url);
 			}
 			catch (ex) {
 				DTA_debug.log("cannot open link", ex);
@@ -548,14 +550,10 @@ DTA_Hash.prototype = {
  * @return Valid hash string or null
  */
 function DTA_getLinkPrintHash(url) {
-	if (url instanceof Components.interfaces.nsIURI) {
-		url = url.spec;
-	}
-	else if (typeof(url) != 'string' && !(url instanceof String)) {
+	if (!(url instanceof Components.interfaces.nsIURL)) {
 		return null;
 	}
-	
-	var lp = url.match(/#hash\((md5|sha(?:1|256|384|512)):([\da-f]+)\)$/i); 
+	var lp = url.ref.match(/^hash\((md5|sha(?:1|256|384|512)):([\da-f]+)\)$/i); 
 	if (lp) {
 		try {
 			return new DTA_Hash(lp[2], lp[1]);
@@ -573,24 +571,21 @@ function DTA_getLinkPrintHash(url) {
  * @param charset. Optional. Charset of the orgin link and link to be created
  * @return Valid hash string or null
  */
-function DTA_getLinkPrintMetalink(url, charset) {
-	if (url instanceof Components.interfaces.nsIURL) {
-		url = url.ref;
-	}
-	else if (url instanceof Components.interfaces.nsIURI) {
-		url = url.spec;
-	}
-	else if (typeof(url) != 'string' && !(url instanceof String)) {
+function DTA_getLinkPrintMetalink(url) {
+	if (!(url instanceof Components.interfaces.nsIURL)) {
 		return null;
 	}
-	
-	var lp = url.match(/#!metalink3!((?:https?|ftp):.+)$/);
+	let lp = url.ref.match(/^!metalink3!(.+)$/);
 	if (lp) {
-		var rv = lp[1];
+		let rv = lp[1];
 		try {
-			return DTA_AddingFunctions.ios.newURI(rv, charset, null).spec;
+			rv = DTA_AddingFunctions.ios.newURI(rv, url.originCharset, url);
+			if (DTA_AddingFunctions.isLinkOpenable(rv.spec)) {
+				return rv;
+			}
 		}
 		catch (ex) {
+			alert(ex);
 			// not a valid link, ignore it.
 		}
 	}
