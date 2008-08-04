@@ -303,6 +303,10 @@ var SessionManager = {
 							d.status = TEXT_CANCELED;
 						break;
 					}
+					
+					// XXX better call this only once
+					// See above
+					d.rebuildDestination();
 	
 					Tree.add(d);
 				}
