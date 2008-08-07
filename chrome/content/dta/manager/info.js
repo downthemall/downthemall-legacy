@@ -51,7 +51,7 @@ var Dialog = {
 			if (downloads.length == 1) {
 				var d = downloads[0];
 				$("infoIcon").src = d.largeIcon;
-				$("infoURL").value = d.urlManager.url;
+				$("infoURL").value = d.urlManager.url.spec;
 				$("infoDest").value = d.destinationFile;
 				document.title = d.destinationName;
 			
