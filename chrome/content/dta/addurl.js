@@ -116,7 +116,7 @@ CharRange.prototype = Range.prototype;
 
 function BatchGenerator(link) {
 	this.url = link.url;
-	let url = this.url.spec;
+	let url = link.usable;
 	this._length = 1;
 	this._pats = [];
 	var i;
@@ -274,9 +274,11 @@ var Dialog = {
 				}
 				else if (typeof(a.url) == 'object' && 'url' in a.url) {
 					// we've got a DTA_URL.
-					// In this case it is not safe to modify it because of encoding issues.
+					// In this case it is not safe to modify it because of encoding
+					// issues.
 					address.value = a.url.usable;
-					// JS does not preserve types between windows (as each window gets an own sandbox)
+					// JS does not preserve types between windows (as each window gets an
+					// own sandbox)
 					// This hack makes our URL a DTA_URL again ;)
 					address._realURL = a.url;
 					address.readOnly = true;
