@@ -191,10 +191,7 @@ function NSResolver(prefix) {
 					if (url.hasAttributeNS(NS_DTA, 'charset')) {
 						charset = url.getAttributeNS(NS_DTA, 'charset');
 					}
-					if (url.hasAttributeNS(NS_DTA, 'usable')) {
-						usable = url.getAttributeNS(NS_DTA, 'usable');
-					}
-					if (['http', 'https'].indexOf(type) != -1) {
+					if (['http', 'https', 'ftp'].indexOf(type) != -1) {
 						url = this._checkURL(url.textContent.trim());
 						if (url) {
 							urls.push(new DTA_URL(IOService.newURI(url, charset, null), preference));
