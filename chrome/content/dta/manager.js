@@ -46,7 +46,7 @@ const NS_ERROR_UNKNOWN_HOST = NS_ERROR_MODULE_NETWORK + 30;
 const NS_ERROR_CONNECTION_REFUSED = NS_ERROR_MODULE_NETWORK + 13;
 const NS_ERROR_NET_TIMEOUT = NS_ERROR_MODULE_NETWORK + 14;
 const NS_ERROR_NET_RESET = NS_ERROR_MODULE_NETWORK + 20;
-
+const NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
@@ -74,7 +74,8 @@ const MIN_CHUNK_SIZE = 512 * 1024;
 const CHUNK_BUFFER_SIZE = 96 * 1024;
 
 // in use by chunk.writer...
-// in use by decompressor... beware, actual size might be more than twice as big!
+// in use by decompressor... beware, actual size might be more than twice as
+// big!
 const MAX_BUFFER_SIZE = 5 * 1024 * 1024;
 const MIN_BUFFER_SIZE = 1 * 1024 * 1024;
 
@@ -221,7 +222,7 @@ var Dialog = {
 				);
 				speed /= d.speeds.length;
 				
-				// Calculate estimated time					
+				// Calculate estimated time
 				if (advanced != 0 && d.totalSize > 0) {
 					let remaining = Math.ceil((d.totalSize - d.partialSize) / speed);
 					if (!isFinite(remaining)) {
@@ -315,7 +316,7 @@ var Dialog = {
 			}
 
 			if (!this.offline) {
-				// XXX Improve					
+				// XXX Improve
 				if (Prefs.autoRetryInterval) {
 					for (let d in Tree.all) {
 						d.autoRetry();
@@ -513,7 +514,8 @@ var Dialog = {
 	_cleanTmpDir: function D__cleanTmpDir() {
 		if (!Prefs.tempLocation || Preferences.getExt("tempLocation", '') != '') {
 			// cannot perform this action if we don't use a temp file
-			// there might be far too many directories containing far too many tmpFiles.
+			// there might be far too many directories containing far too many
+			// tmpFiles.
 			// or part files from other users.
 			return;
 		}
@@ -644,13 +646,14 @@ UrlManager.prototype = {
 		return this._urls.reduce(function(v, u) v + u.preference + " " + u.url + "\n");
 	}
 };
+
 function Visitor() {
 	// sanity check
 	if (arguments.length != 1) {
 		return;
 	}
 
-	var nodes = arguments[0];
+	let nodes = arguments[0];
 	for (x in nodes) {
 		if (!name || !(name in this.cmpKeys))	{
 			continue;
@@ -660,21 +663,59 @@ function Visitor() {
 }
 
 Visitor.prototype = {
+	compare: function vi_compare(v)	{
+		if (!(v instanceof Visitor)) {
+			return;
+		}
+
+		for (x in this.cmpKeys) {
+			// we don't have this header
+			if (!(x in this)) {
+				continue;
+			}
+			// v does not have this header
+			else if (!(x in v)) {
+				// allowed to be missing?
+				if (this.cmpKeys[x]) {
+					continue;
+				}
+				Debug.logString(x + " missing");
+				throw new Exception(x + " is missing");
+			}
+			// header is there, but differs
+			else if (this[x] != v[x]) {
+				Debug.logString(x + " nm: [" + this[x] + "] [" + v[x] + "]");
+				throw new Exception("Header " + x + " doesn't match");
+			}
+		}
+	},
+	save: function vi_save(node) {
+		var rv = {};
+		// salva su file le informazioni sugli headers
+		for (x in this.cmpKeys) {
+			if (!(x in this)) {
+				continue;
+			}
+			rv[x] = this[x];
+		}
+		return rv;
+	}
+};
+
+function HttpVisitor() {
+	Visitor.apply(this, arguments);
+}
+
+HttpVisitor.prototype = {
 	cmpKeys: {
-		'etag': true, // must not be modified from 200 to 206: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.7
-		//'content-length': false,
+		'etag': true, // must not be modified from 200 to 206:
+									// http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.7
+		// 'content-length': false,
 		'content-type': true,
 		'last-modified': true, // may get omitted later, but should not change
-		'content-encoding': true // must not change, or download will become corrupt.
+		'content-encoding': true // must not change, or download will become
+															// corrupt.
 	},
-	type: null,
-	overrideCharset: null,
-	encoding: null,
-	fileName: null,
-	acceptRanges: 'bytes',
-	contentLength: 0,
-	time: null,
-
 	QueryInterface: function(aIID) {
 		if (
 			aIID.equals(Ci.nsISupports)
@@ -731,7 +772,8 @@ Visitor.prototype = {
 				break;
 			}
 			if (header == 'etag') {
-				// strip off the "inode"-part apache and others produce, as mirrors/caches usually provide different/wrong numbers here :p
+				// strip off the "inode"-part apache and others produce, as
+				// mirrors/caches usually provide different/wrong numbers here :p
 				this[header] = aValue
 					.replace(/^(?:[Ww]\/)?"(.+)"$/, '$1')
 					.replace(/^[a-f\d]+-([a-f\d]+)-([a-f\d]+)$/, '$1-$2')
@@ -765,48 +807,47 @@ Visitor.prototype = {
 		}
 		catch (ex) {
 		}
-	},
-	compare: function vi_compare(v)	{
-		if (!(v instanceof Visitor)) {
-			return;
-		}
-
-		for (x in this.cmpKeys) {
-			// we don't have this header
-			if (!(x in this)) {
-				continue;
-			}
-			// v does not have this header
-			else if (!(x in v)) {
-				// allowed to be missing?
-				if (this.cmpKeys[x]) {
-					continue;
-				}
-				Debug.logString(x + " missing");
-				throw new Exception(x + " is missing");
-			}
-			// header is there, but differs
-			else if (this[x] != v[x]) {
-				Debug.logString(x + " nm: [" + this[x] + "] [" + v[x] + "]");
-				throw new Exception("Header " + x + " doesn't match");
-			}
-		}
-	},
-	save: function vi_save(node) {
-		var rv = {};
-		// salva su file le informazioni sugli headers
-		for (x in this.cmpKeys) {
-			if (!(x in this)) {
-				continue;
-			}
-			rv[x] = this[x];
-		}
-		return rv;
 	}
 };
 
+Utils.merge(HttpVisitor.prototype, Visitor.prototype);
+
+function FtpVisitor() {
+	Visitor.apply(this, arguments);
+}
+
+FtpVisitor.prototype = {
+	cmpKeys: {
+		'etag': true,
+	},
+	time: null,
+	visitChan: function fv_visitChan(chan) {
+		try {
+			this.etag = chan.QueryInterface(Ci.nsIResumableChannel).entityID;
+			let m = this.etag.match(/\/(\d{4})(\d{2})(\d{2})(?:(\d{2})(\d{2})(?:(\d{2})))?$/);
+			if (m) {
+				let time = m[1] + '/' + m[2] + '/' + m[3];
+				if (m.length >= 4) {
+					time += ' ' + m[4] + ':' + m[5];
+					if (m.length >= 7) {
+						time += ':' + m[6];
+					}
+					this.time = Utils.getTimestamp(time);
+					Debug.logString(this.time);
+				}
+			}
+		}
+		catch (ex) {
+			Debug.log("visitChan:", ex);
+		}
+	}
+};
+
+Utils.merge(FtpVisitor.prototype, Visitor.prototype);
+
 /**
  * Visitor Manager c'tor
+ * 
  * @author Nils
  */
 function VisitorManager(nodes) {
@@ -817,14 +858,22 @@ function VisitorManager(nodes) {
 }
 VisitorManager.prototype = {
 	/**
-	 * Loads a ::save'd JS Array
-	 * Will silently bypass failed items!
+	 * Loads a ::save'd JS Array Will silently bypass failed items!
+	 * 
 	 * @author Nils
 	 */
 	_load: function vm_init(nodes) {
 		for each (let n in nodes) {
 			try {
-				this._visitors[n.url] = new Visitor(n.values);
+				let uri = IOService.newURI(n.url, null, null);
+				switch (uri.scheme) {
+				case 'http':
+					this._visitors[n.url] = new HttpVisitor(n.values);
+					break;
+				case 'ftp':
+					this._visitors[n.url] = new FtpVisitor(n.values);
+					break;
+				}
 			}
 			catch (ex) {
 				Debug.log("failed to read one visitor", ex);
@@ -833,6 +882,7 @@ VisitorManager.prototype = {
 	},
 	/**
 	 * Saves/serializes the Manager and associated Visitors to an JS Array
+	 * 
 	 * @return A ::load compatible Array
 	 * @author Nils
 	 */
@@ -853,24 +903,38 @@ VisitorManager.prototype = {
 	},
 	/**
 	 * Visit and compare a channel
+	 * 
 	 * @returns visitor for channel
-	 * @throws Exception if comparision yield a difference (i.e. channels are not "compatible")
+	 * @throws Exception
+	 *           if comparision yield a difference (i.e. channels are not
+	 *           "compatible")
 	 * @author Nils
 	 */
 	visit: function vm_visit(chan) {
-		var url = chan.URI.spec;
-
-		var visitor = new Visitor();
-		chan.visitResponseHeaders(visitor);
-		if (url in this._visitors)
-		{
-				this._visitors[url].compare(visitor);
+		let url = chan.URI.spec;
+		
+		let visitor;
+		switch(chan.URI.scheme) {
+		case 'http':
+			visitor = new HttpVisitor();
+			chan.visitResponseHeaders(visitor);
+			break;
+		case 'ftp':
+			visitor = new FtpVisitor(chan);
+			visitor.visitChan(chan);
+			break;
+		}
+		
+		if (url in this._visitors) {
+			this._visitors[url].compare(visitor);
 		}
 		return (this._visitors[url] = visitor);
 	},
 	/**
 	 * return the first timestamp registered with a visitor
-	 * @throws Exception if no timestamp found
+	 * 
+	 * @throws Exception
+	 *           if no timestamp found
 	 * @author Nils
 	 */
 	get time() {
@@ -1038,7 +1102,8 @@ QueueItem.prototype = {
 	},
 
 	/**
-	 *Takes one or more state indicators and returns if this download is in state of any of them
+	 * Takes one or more state indicators and returns if this download is in state
+	 * of any of them
 	 */
 	is: function QI_is(state) {
 		return this._state == state; 
@@ -1594,7 +1659,8 @@ QueueItem.prototype = {
 	resumeDownload: function QI_resumeDownload() {
 		Debug.logString("resumeDownload: " + this);
 		function cleanChunks(d) {
-			// merge finished chunks together, so that the scoreboard does not bloat that much
+			// merge finished chunks together, so that the scoreboard does not bloat
+			// that much
 			for (let i = d.chunks.length - 2; i > -1; --i) {
 				let c1 = d.chunks[i], c2 = d.chunks[i + 1];
 				if (c1.complete && c2.complete) {
@@ -1629,7 +1695,8 @@ QueueItem.prototype = {
 
 			var rv = false;
 
-			// we didn't load up anything so let's start the main chunk (which will grab the info)
+			// we didn't load up anything so let's start the main chunk (which will
+			// grab the info)
 			if (this.chunks.length == 0) {
 				downloadNewChunk(this, 0, 0, true);
 				return false;
@@ -1951,7 +2018,7 @@ function Connection(d, c, getInfo) {
 	this.isInfoGetter = getInfo;
 	this.url = d.urlManager.getURL();
 	var referrer = d.referrer;
-	Debug.logString("starting: " + this.url.url);
+	Debug.logString("starting: " + this.url.url.spec);
 
 	this._chan = IOService.newChannelFromURI(this.url.url);
 	var r = Ci.nsIRequest;
@@ -1964,28 +2031,43 @@ function Connection(d, c, getInfo) {
 	catch (ex) {
 		// no-op
 	}
-	try {
-		let http = this._chan.QueryInterface(Ci.nsIHttpChannel);
-		if (c.start + c.written > 0) {
-			http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
+	if (this._chan instanceof Ci.nsIHttpChannel) {
+		try {
+			Debug.logString("http");
+			let http = this._chan.QueryInterface(Ci.nsIHttpChannel);
+			if (c.start + c.written > 0) {
+				http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
+			}
+			if (this.isInfoGetter && !d.fromMetalink) {
+				http.setRequestHeader('Accept', 'application/metalink+xml;q=0.9', true);
+			}
+			if (referrer instanceof Ci.nsIURI) {
+				http.referrer = referrer;
+			}
+			http.setRequestHeader('Keep-Alive', '', false);
+			http.setRequestHeader('Connection', 'close', false);
+			if (d.postData) {
+				let uc = http.QueryInterface(Ci.nsIUploadChannel);
+				uc.setUploadStream(new StringInputStream(d.postData, d.postData.length), null, -1);
+				http.requestMethod = 'POST';
+			}			 
 		}
-		if (this.isInfoGetter && !d.fromMetalink) {
-			http.setRequestHeader('Accept', 'application/metalink+xml;q=0.9', true);
+		catch (ex) {
+			Debug.log("error setting up http channel", ex);
+			// no-op
 		}
-		if (referrer instanceof Ci.nsIURI) {
-			http.referrer = referrer;
-		}
-		http.setRequestHeader('Keep-Alive', '', false);
-		http.setRequestHeader('Connection', 'close', false);
-		if (d.postData) {
-			let uc = http.QueryInterface(Ci.nsIUploadChannel);
-			uc.setUploadStream(new StringInputStream(d.postData, d.postData.length), null, -1);
-			http.requestMethod = 'POST';
-		}			 
 	}
-	catch (ex) {
-		Debug.log("error setting up channel", ex);
-		// no-op
+	else if (this._chan instanceof Ci.nsIFTPChannel) {
+		try {
+			let ftp = this._chan.QueryInterface(Ci.nsIFTPChannel);
+			if (c.start + c.written > 0) {
+					let resumable = ftp.QueryInterface(Ci.nsIResumableChannel);
+					resumable.resumeAt(c.start + c.written, '');
+			}				
+		}
+		catch (ex) {
+			Debug.log('error setting up ftp channel', ex);
+		}
 	}
 	this.c.running = true;
 	this._chan.asyncOpen(this, null);
@@ -2011,6 +2093,7 @@ Connection.prototype = {
 		if (this._interfaces.some(function(i) { return iid.equals(i); })) {
 			return this;
 		}
+		Debug.log("Interface not implemented " + iid, Components.results.NS_ERROR_NO_INTERFACE);
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
 	// nsISupportsWeakReference
@@ -2056,12 +2139,6 @@ Connection.prototype = {
 		if (iid.equals(Ci.nsIPrompt)) {
 			return AuthPrompts.prompter;
 		}
-		// for 1.9
-		/* this one makes minefield ask for the password again and again :p
-		if ('nsIAuthPromptProvider' in Ci && iid.equals(Ci.nsIAuthPromptProvider)) {
-			return AuthPrompts.prompter.QueryInterface(Ci.nsIAuthPromptProvider);
-		}*/
-		// for 1.9
 		if ('nsIAuthPrompt2' in Ci && iid.equals(Ci.nsIAuthPrompt2)) {
 			return AuthPrompts.authPrompter.QueryInterface(Ci.nsIAuthPrompt2);
 		}
@@ -2095,7 +2172,8 @@ Connection.prototype = {
 			throw 0x804b0002; // NS_BINDING_ABORTED;
 		}
 		try {
-			// we want to kill ftp chans as well which do not seem to respond to cancel correctly.
+			// we want to kill ftp chans as well which do not seem to respond to
+			// cancel correctly.
 			if (!this.c.write(aInputStream, aCount)) {
 				// we already got what we wanted
 				this.cancel();
@@ -2108,7 +2186,23 @@ Connection.prototype = {
 	},
 	
 	// nsIFTPEventSink
-	OnFTPControlLog: function(server, msg) {},
+	OnFTPControlLog: function(server, msg) {
+		/*
+		 * Very hacky :p If we don't handle it here, then nsIFTPChannel will + try
+		 * to CWD to the file (d'oh) + afterwards ALERT (modally) that the CWD
+		 * didn't succeed (double-d'oh)
+		 */
+		if (!server) {
+			this._wasRetr = /^RETR/.test(msg) || /^REST/.test(msg);
+		}
+		if (server && this._wasRetr && /^[45]/.test(msg)) {
+			Debug.logString("Server didn't allow retrieving stuff!");
+			if (!this.handleError()) {
+				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
+			}
+		}
+		// Debug.logString((server ? 's' : 'c') + ': ' + msg);
+	},
 	
 	handleError: function DL_handleError() {
 		let c = this.c;
@@ -2130,22 +2224,23 @@ Connection.prototype = {
 		}
 		
 		Debug.logString("affected: " + c);
+		d.dumpScoreboard();
 		
-		let max = -1, found = -1;
+		let max = -1, found = null;
 		for each (let cmp in d.chunks) {
 			if (cmp.start < c.start && cmp.start > max) {
-				found = i;
+				found = cmp;
 				max = cmp.start;
 			}
 		}
-		if (found > -1) {
+		if (found) {
 			Debug.logString("handleError: found joinable chunk; recovering suceeded, chunk: " + found);
-			d.chunks[found].end = c.end;
+			found.end = c.end;
 			if (--d.maxChunks == 1) {
-				//d.resumable = false;
+				// d.resumable = false;
 			}
-			d.chunks = d.chunks.filter(function(ch) { return ch != c; });
-			d.chunks.sort(function(a,b) { return a.start - b.start; });
+			d.chunks = d.chunks.filter(function(ch) ch != c);
+			d.chunks.sort(function(a, b) a.start - b.start);
 			
 			// check for overlapping ranges we might have created
 			// otherwise we'll receive a size mismatch
@@ -2172,6 +2267,7 @@ Connection.prototype = {
 			d.dumpScoreboard();
 			return true;
 		}
+		Debug.logString("recovery failed");
 		return false;
 	},
 	handleHttp: function DL_handleHttp(aChannel) {
@@ -2298,7 +2394,41 @@ Connection.prototype = {
 	
 	// Generic handler for now :p
 	handleFtp: function  DL_handleFtp(aChannel) {
-		return this.handleGeneric(aChannel);
+		let c = this.c;
+		let d = this.d;
+		try {
+			let pb = aChannel.QueryInterface(Ci.nsIPropertyBag2);
+			d.totalSize = Math.max(pb.getPropertyAsInt64('content-length'), 0);
+		}
+		catch (ex) {
+			d.totalSize = 0;
+			d.resumable = false;
+		}
+		
+		try {
+			aChannel.QueryInterface(Ci.nsIResumableChannel).entityID;
+		}
+		catch (ex) {
+			Debug.logString("likely not resumable or connection refused!");
+			if (!this.handleError()) {
+				// restart download from the beginning
+				d.fail(_('servererror'), _('ftperrortext'), _('servererror')); 
+				return false;
+			}
+		}
+		
+		try {
+			let visitor = d.visitors.visit(aChannel.QueryInterface(Ci.nsIChannel));
+		}
+		catch (ex) {
+			Debug.log("header failed! " + d, ex);
+			// restart download from the beginning
+			d.cancel();
+			d.resumable = false;
+			d.safeRetry();
+			return false;
+		}
+		return false;
 	},
 	
 	handleGeneric: function DL_handleGeneric(aChannel) {
@@ -2334,7 +2464,7 @@ Connection.prototype = {
 		return false;
 	},
 	
-	//nsIRequestObserver,
+	// nsIRequestObserver,
 	_supportedChannels: [
 		{i:Ci.nsIHttpChannel, f:'handleHttp'},
 		{i:Ci.nsIFTPChannel, f:'handleFtp'},
@@ -2351,16 +2481,14 @@ Connection.prototype = {
 				let chan = null;
 				try {
 					chan = aRequest.QueryInterface(sc.i);
-				}
-				catch (ex) {
-					continue;
-				}
-				if (chan) {
 					if ((this.rexamine = this[sc.f](chan))) {
 						 return;
 					}
 					break;
-				}					
+				}
+				catch (ex) {
+					// continue
+				}
 			}
 
 			if (this.isInfoGetter) {
@@ -2368,7 +2496,7 @@ Connection.prototype = {
 				
 				if (d.fileName.getExtension() == 'metalink') {
 					d.isMetalink = true;
-					d.resumable = true;
+					d.resumable = false;
 				}				
 				
 				var tsd = d.totalSize;
@@ -2387,11 +2515,14 @@ Connection.prototype = {
 							throw new Error("invalid destination folder");
 						}
 						var nsd = Utils.getFreeDisk(realDest);
-						// Same save path or same disk (we assume that tmp.avail == dst.avail means same disk)
+						// Same save path or same disk (we assume that tmp.avail ==
+						// dst.avail means same disk)
 						// simply moving should succeed
 						if (d.compression && (!tmp || Utils.getFreeDisk(vtmp) == nsd)) {
-							// we cannot know how much space we will consume after decompressing.
-							// so we assume factor 1.0 for the compressed and factor 1.5 for the decompressed file.
+							// we cannot know how much space we will consume after
+							// decompressing.
+							// so we assume factor 1.0 for the compressed and factor 1.5 for
+							// the decompressed file.
 							tsd *= 2.5;
 						}
 						if (nsd < tsd) {
@@ -2473,12 +2604,22 @@ Connection.prototype = {
 			d.status = _("servererror");
 			d.markAutoRetry();				
 			return;
-		}		
-
+		}
+		
+		// work-around for ftp crap
+		// nsiftpchan for some reason assumes that if RETR fails it is a directory
+		// and tries to advance into said directory
+		if (aStatusCode == NS_ERROR_FTP_CWD) {
+			Debug.logString("Cannot change to directory :p", aStatusCode);
+			d.cancel();
+			return;
+		}
+			
 		// routine for normal chunk
 		Debug.logString(d + ": Chunk " + c.start + "-" + c.end + " finished.");
 		
-		// rude way to determine disconnection: if connection is closed before download is started we assume a server error/disconnection
+		// rude way to determine disconnection: if connection is closed before
+		// download is started we assume a server error/disconnection
 		if (c.starter && d.is(RUNNING)) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.log(d + ": Server error or disconnection", "(type 2)");
@@ -2627,7 +2768,7 @@ function startDownloads(start, downloads) {
 			qi.hash = e.hash;
 		}
 		else {
-			qi.hash = null; // to initialize prettyHash 
+			qi.hash = null; // to initialize prettyHash
 		}
 
 		let postData = ContentHandling.getPostDataFor(qi.urlManager.url);
