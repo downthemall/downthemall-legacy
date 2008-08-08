@@ -2158,11 +2158,11 @@ Connection.prototype = {
 		}
 		try {
 			this._chan == newChannel;
-			this.url.url = newChannel.URI.spec;
+			this.url.url = newChannel.URI;
 			this.d.fileName = this.url.usable.getUsableFileName();
 		}
 		catch (ex) {
-			// no-op
+			Debug.log("Failed to reset data on channel redirect", ex);
 		}
 	},
 	
