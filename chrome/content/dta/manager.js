@@ -2195,7 +2195,7 @@ Connection.prototype = {
 		if (!server) {
 			this._wasRetr = /^RETR/.test(msg) || /^REST/.test(msg);
 		}
-		if (server && this._wasRetr && /^[45]/.test(msg)) {
+		else if (/^5/.test(msg) || (this._wasRetr && /^4/.test(msg))) {
 			Debug.logString("Server didn't allow retrieving stuff!");
 			if (!this.handleError()) {
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
