@@ -806,6 +806,7 @@ HttpVisitor.prototype = {
 			}
 		}
 		catch (ex) {
+			Debug.log("Error parsing header", ex);
 		}
 	}
 };
@@ -868,6 +869,7 @@ VisitorManager.prototype = {
 				let uri = IOService.newURI(n.url, null, null);
 				switch (uri.scheme) {
 				case 'http':
+				case 'https':
 					this._visitors[n.url] = new HttpVisitor(n.values);
 					break;
 				case 'ftp':
@@ -887,7 +889,7 @@ VisitorManager.prototype = {
 	 * @author Nils
 	 */
 	toSource: function vm_toSource() {
-		var rv = [];
+		let rv = [];
 		for (let x in this._visitors) {
 			try {
 				var v = {};
@@ -916,13 +918,18 @@ VisitorManager.prototype = {
 		let visitor;
 		switch(chan.URI.scheme) {
 		case 'http':
+		case 'https':
 			visitor = new HttpVisitor();
 			chan.visitResponseHeaders(visitor);
 			break;
+		
 		case 'ftp':
 			visitor = new FtpVisitor(chan);
 			visitor.visitChan(chan);
 			break;
+		
+		default:
+			return;
 		}
 		
 		if (url in this._visitors) {
