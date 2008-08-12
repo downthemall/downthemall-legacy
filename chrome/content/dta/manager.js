@@ -1928,6 +1928,7 @@ Chunk.prototype = {
 		if (this._outStream) {
 			this._outStream.flush();
 			this._outStream.close();
+			delete this._outStream;
 		}
 		this._buffered = 0;
 		if (this.parent.is(CANCELED)) {
