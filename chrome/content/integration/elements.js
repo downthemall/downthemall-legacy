@@ -37,7 +37,7 @@
  * ***** END LICENSE BLOCK ***** */
  
 var DTA_Prompts = {};
-Components.utils.import('resource://dta/prompts.jsm', DTA_Prompts); 
+Components.utils.import('resource://dta/prompts.jsm', DTA_Prompts);
  
 // DTA context overlay
 var DTA_ContextOverlay = {
@@ -64,7 +64,7 @@ var DTA_ContextOverlay = {
 			return;
 		}
 		
-		var ref = DTA_AddingFunctions.getRef(doc);
+		let ref = DTA_AddingFunctions.getRef(doc);
 		
 		for (var i = 0; i < lnks.length; ++i) {
 			// remove anchor from url

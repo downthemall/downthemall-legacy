@@ -626,9 +626,12 @@ UrlManager.prototype = {
 			yield i;
 		}
 	},
+	replace: function(url, newurl) {
+		this._urls = this._urls.map(function(u) u.url.spec == url.url.spec ? newurl : u);
+	},
 	markBad: function um_markBad(url) {
 		if (this._urls.length > 1) {
-			this._urls = this._urls.filter(function(u) { return u != url; });
+			this._urls = this._urls.filter(function(u) u != url);
 		}
 		else if (this._urls[0] == url) {
 			return false;
@@ -2166,7 +2169,9 @@ Connection.prototype = {
 		}
 		try {
 			this._chan == newChannel;
-			this.url.url = newChannel.URI;
+			let newurl = new DTA_URL(newChannel.URI.QueryInterface(Ci.nsIURL), this.url.preference);
+			this.d.urlManager.replace(this.url, newurl);
+			this.url = newurl;
 			this.d.fileName = this.url.usable.getUsableFileName();
 		}
 		catch (ex) {
