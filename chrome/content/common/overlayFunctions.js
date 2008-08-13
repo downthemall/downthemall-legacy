@@ -38,8 +38,11 @@
 
 /**
  * include other chrome js files
- * @param uri Relative URI to the dta content path
- * @param many Optional. If set, then include that file more than once 
+ * 
+ * @param uri
+ *          Relative URI to the dta content path
+ * @param many
+ *          Optional. If set, then include that file more than once
  */
 var DTA_include = function() {
 	var _loaded = {};
@@ -116,31 +119,33 @@ var DTA_URLhelpers = {
 };
 
 function DTA_URL(url, preference) {
-	this.url = url;
 	this.preference = preference ? preference : 100;
-};
-DTA_URL.prototype = {
-	get url() {
-		return this._url;
-	},
-	set url(nv) {
-		delete this.hash;
-		
-		if (nv instanceof Components.interfaces.nsIURI) {
-			nv = nv.QueryInterface(Components.interfaces.nsIURL);
+
+	try {
+		if (url instanceof Components.interfaces.nsIURI) {
+			url = url.QueryInterface(Components.interfaces.nsIURL);
 		}
-		if (!(nv instanceof Components.interfaces.nsIURL)) {
+		if (!(url instanceof Components.interfaces.nsIURL)) {
 			throw new Components.Exception("you must pass an nsIURL");
 		}
 
-		this._url = nv.clone();
-		
+		this._url = url.clone();
+	
 		let hash = DTA_getLinkPrintHash(this._url);
 		this._url.ref = '';		
 		if (hash) {
 			this.hash = hash;
 		}
 		this._usable = DTA_URLhelpers.decodeCharset(this._url.spec, this._url.originCharset);
+	}
+	catch (ex) {
+		DTA_debug.log("failed to set URL", ex);
+		throw ex;
+	}
+};
+DTA_URL.prototype = {
+	get url() {
+		return this._url;
 	},
 	get usable() {
 		return this._usable;
@@ -511,9 +516,11 @@ var DTA_Mediator = {
 };
 
 /**
- * Checks if a provided strip has the correct hash format
- * Supported are: md5, sha1, sha256, sha384, sha512
- * @param hash Hash to check
+ * Checks if a provided strip has the correct hash format Supported are: md5,
+ * sha1, sha256, sha384, sha512
+ * 
+ * @param hash
+ *          Hash to check
  * @return hash type or null
  */
 const DTA_SUPPORTED_HASHES = {
@@ -549,7 +556,9 @@ DTA_Hash.prototype = {
 
 /**
  * Get a link-fingerprint hash from an url (or just the hash component)
- * @param url. Either String or nsIURI
+ * 
+ * @param url.
+ *          Either String or nsIURI
  * @return Valid hash string or null
  */
 function DTA_getLinkPrintHash(url) {
@@ -570,8 +579,11 @@ function DTA_getLinkPrintHash(url) {
 
 /**
  * Get a link-fingerprint metalink from an url (or just the hash component
- * @param url. Either String or nsIURI
- * @param charset. Optional. Charset of the orgin link and link to be created
+ * 
+ * @param url.
+ *          Either String or nsIURI
+ * @param charset.
+ *          Optional. Charset of the orgin link and link to be created
  * @return Valid hash string or null
  */
 function DTA_getLinkPrintMetalink(url) {
@@ -596,9 +608,12 @@ function DTA_getLinkPrintMetalink(url) {
 }
 
 /**
- * Tiny helper to "convert" given object into a weak observer. Object must still implement .observe()
+ * Tiny helper to "convert" given object into a weak observer. Object must still
+ * implement .observe()
+ * 
  * @author Nils
- * @param obj Object to convert
+ * @param obj
+ *          Object to convert
  */
 function DTA_makeObserver(obj) {
 	// nsiSupports
