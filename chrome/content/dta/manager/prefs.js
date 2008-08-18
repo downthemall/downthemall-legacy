@@ -60,6 +60,7 @@ var Prefs = {
 		['autoClearComplete', false],
 		['confirmRemove', true],
 		['permissions', 384],
+		['loadEndFirst', false]
 	],
 
 	// nsIObserver

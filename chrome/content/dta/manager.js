@@ -83,6 +83,8 @@ const REFRESH_FREQ = 1000;
 const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 const STREAMS_FREQ = 200;
 
+const END_FIRST_SIZE = 2 * 1024 * 1024;
+
 let Prompts = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
 
@@ -1684,8 +1686,7 @@ QueueItem.prototype = {
 			Debug.logString("started: " + chunk);
 			download.chunks.push(chunk);
 			download.chunks.sort(function(a,b) { return a.start - b.start; });
-			downloadChunk(download, chunk, header);
-			download.sessionConnctions = 0;	
+			downloadChunk(download, chunk, header);	
 		}
 		function downloadChunk(download, chunk, header) {
 			chunk.running = true;
@@ -1709,15 +1710,13 @@ QueueItem.prototype = {
 			// grab the info)
 			if (this.chunks.length == 0) {
 				downloadNewChunk(this, 0, 0, true);
+				this.sessionConnections = 0;				
 				return false;
 			}
-
+			
 			// start some new chunks
-			var paused = this.chunks.filter(
-				function (chunk) {
-					return !(chunk.running || chunk.complete);
-				}
-			);
+			let paused = this.chunks.filter(function (chunk) !(chunk.running || chunk.complete));
+			
 			while (this.activeChunks < this.maxChunks) {
 
 				// restart paused chunks
@@ -1726,26 +1725,33 @@ QueueItem.prototype = {
 					rv = true;
 					continue;
 				}
+
+				if (this.chunks.length == 1 && Prefs.loadEndFirst && this.chunks[0].remainder > 3 * END_FIRST_SIZE) {
+					// we should download the end first!
+					let c = this.chunks[0];
+					let end = c.end;
+					c.end -= END_FIRST_SIZE;
+					downloadNewChunk(this, c.end + 1, end);					
+					rv = true;
+					continue;
+				}
 				
 				// find biggest chunk
 				let biggest = null;
-				this.chunks.forEach(
-					function (chunk) {
-						if (chunk.running && chunk.remainder > MIN_CHUNK_SIZE * 2) {
-							if (!biggest || biggest.remainder < chunk.remainder) {
-								biggest = chunk;
-							}
+				for each (let chunk in this.chunks) {
+					if (chunk.running && chunk.remainder > MIN_CHUNK_SIZE * 2) {
+						if (!biggest || biggest.remainder < chunk.remainder) {
+							biggest = chunk;
 						}
 					}
-				);
+				}
 
 				// nothing found, break
 				if (!biggest) {
 					break;
 				}
-				var end = biggest.end;
-				var bend = biggest.start + biggest.written + Math.floor(biggest.remainder / 2);
-				biggest.end = bend;
+				let end = biggest.end;
+				biggest.end = biggest.start + biggest.written + Math.floor(biggest.remainder / 2);
 				downloadNewChunk(this, biggest.end + 1, end);
 				rv = true;
 			}
