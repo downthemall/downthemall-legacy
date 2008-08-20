@@ -44,6 +44,7 @@ const EXPORTED_SYMBOLS = [
 	'formatNumber',
 	'formatTimeDelta',
 	'getTimestamp',
+	'naturalSort',
 ];
 
 const Cc = Components.classes;
@@ -205,4 +206,67 @@ function getTimestamp(str) {
 		throw new Error('invalid date');
 	}
 	return rv;
+}
+
+function naturalSort(arr, mapper) {
+	if (typeof mapper != 'function' && !(mapper instanceof Function)) {
+		mapper = function(e) e;
+	}
+	let isDigit = function(a, i) {
+		i = a[i];
+		return i >= '0' && i <= '9';
+	};
+	let compare = function(a, b) {
+		return a === b ? 0 : (a < b ? -1 : 1);
+	}
+	arr = arr.map(
+		function(b) {
+			let e = mapper(b);
+			if (e == null || e == undefined || typeof e == 'number') {
+				return {elem: b, chunks: [e]};
+			}
+			let a = e.toString().replace(/\b(?:a|one|the)\b/g, ' ').replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' ').toLowerCase();
+			let len = a.length;
+			if (!len) {
+				return {elem: b, chunks: [a]};
+			}
+			let rv = [];
+			let last = isDigit(a, 0);
+			let cur = last;
+			start = 0;
+		
+			for (let i = 0; i < len; ++i) {
+				cur = isDigit(a, i);
+				if (cur != last) {
+					rv.push(cur ? a.substr(start, i - start) : Number(a.substr(start, i - start)));
+					start = i;
+					last = cur;
+				}
+			}
+			if (!rv.length || len - start != 1) {
+				rv.push(cur ? Number(a.substr(start)) : a.substr(start));
+			}
+			return {elem: b, chunks: rv};
+		}
+	);
+	arr.sort(
+		function (a, b) {
+			let ai, bi;
+			[a, b] = [a.chunks, b.chunks];
+			let m = Math.max(a.length, b.length);
+			for (let i = 0; i < m; ++i) {
+				let ai = a[i], bi = b[i];
+				let rv = compare(typeof ai, typeof bi);
+				if (rv) {
+					return rv;
+				}
+				rv = compare(ai, bi);
+				if (rv) {
+					return rv;
+				}
+			}
+			return a.length - b.length;
+		}
+	);
+	return arr.map(function(a) a.elem);
 }
