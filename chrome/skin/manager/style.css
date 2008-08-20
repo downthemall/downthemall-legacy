@@ -75,6 +75,7 @@ toolbox {
 #tooldonate {
 	background: url("chrome://dta/skin/manager/bardonate-ltr.png") top right;
 	min-width: 200px !important;
+	cursor: pointer;
 }
 #tooldonate:hover {
 	background: url("chrome://dta/skin/manager/bardonate-hover-ltr.png") top right;
@@ -86,14 +87,8 @@ toolbox {
 	background: url("chrome://dta/skin/manager/bardonate-hover-rtl.png") top right;
 }
 #tooltip{
-	width: 470px;
-	padding: 0; /* work around incorrect tooltip implementation in FX2.0 */
-}
-/* work around incorrect tooltip implementation in FX2.0 */
-#tooltip > vbox {
-	background-color: infobackground !important;
+	width: 500px;
 	padding: 5pt;
-	margin: 0;
 }
 #infoIcon {
 	margin: 1.6ex;

@@ -59,7 +59,7 @@
 	persist="width height"
 >
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js" />
+	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
 	<script type="application/x-javascript" src="chrome://dta/content/dta/manager/metalinker.js" />
 
 	<stringbundleset>

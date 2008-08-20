@@ -147,6 +147,38 @@ var Dialog = {
 		);
 			
 		document.getElementById("dtaHelp").hidden = !("openHelp" in window);
+		
+		(function autofit() {
+			let de = document.documentElement;
+			let version = {};
+			Components.utils.import('resource://dta/version.jsm', version);
+			let cv = version.VERSION + ".toolitems" + $('tools').childNodes.length;
+			let shouldAutofit = !de.hasAttribute('dtaAutofitted');
+			if (!shouldAutofit) {
+				try {
+					let lv = de.getAttribute('dtaAutofitted');
+					shouldAutofit = !!version.compareVersion(cv, lv);
+				}
+				catch (ex) {
+					shouldAutofit = true;
+				}
+			}
+			if (shouldAutofit) {
+				document.documentElement.setAttribute('dtaAutofitted', cv);
+				setTimeout(
+					function() {
+						let tdb = $('tooldonate').boxObject;
+						let db = de.boxObject
+						let cw = tdb.width + tdb.x;
+						if (db.width < cw) {
+							window.resizeTo(cw, window.outerHeight);
+							Debug.logString("manager was autofit");
+						}
+					},
+					10
+				);
+			}
+		})();
 	},
 	
 	start: function() {

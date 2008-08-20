@@ -29,7 +29,7 @@
 	buttons="accept, cancel" 
 	>
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
-	<script type="application/javascript;version=1.7"><![CDATA[
+	<script type="application/javascript"><![CDATA[
 		var Dialog = {
 			load: function() {
 				this.result = window.arguments[0];
