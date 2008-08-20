@@ -28,7 +28,8 @@
 			<preference id="dtasettime" name="extensions.dta.settime" type="bool" />
 			<preference id="dtarememberoneclick" name="extensions.dta.rememberoneclick" type="bool" />
 			<preference id="dtaconfirmremove" name="extensions.dta.confirmremove" type="bool" />
-			<preference id="dtapermissions" name="extensions.dta.permissions" type="int" />			
+			<preference id="dtapermissions" name="extensions.dta.permissions" type="int" />
+			<preference id="dtaloadendfirst" name="extensions.dta.loadendfirst" type="int" />			
 		</preferences>
 		
 		<groupbox orient="horizontal" align="center">
@@ -36,7 +37,7 @@
 			<label value="&advancedpane.chunks.label;" id="maxchunk"/>
 			<spacer flex="1"/>
 			<scale min="1" max="10" id="maxchunks" preference-editable="true" onchange="Advanced.changedMaxChunks();"/>
-			<label id="maxchunkslabel" style="min-width: 3em;" />
+			<label id="maxchunkslabel" style="min-width: 6em;" />
 		</groupbox>
 
 		<groupbox orient="horizontal" align="center">
@@ -62,6 +63,13 @@
 			<checkbox label="&advancedpane.settime.label;" preference="dtasettime"/>
 			<checkbox label="&advancedpane.rememberoneclick.label;" preference="dtarememberoneclick"/>
 			<checkbox label="&advancedpane.confirmremove.label;" preference="dtaconfirmremove"/>
+			<hbox align="center">
+				<label value="&advancedpane.loadendfirst.label;" id="loadendfirst"/>
+				<spacer flex="1"/>
+				<scale min="0" max="4096" id="loadendfirst" increment="4" pageincrement="16" preference-editable="true" onchange="Advanced.changedLoadEndFirst();"/>
+				<label id="loadendfirstlabel" style="min-width: 6em;" />
+			</hbox>
+			
 		</groupbox>
 		
 		<grid>
