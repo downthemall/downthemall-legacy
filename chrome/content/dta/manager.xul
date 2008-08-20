@@ -133,7 +133,7 @@
 					<toolbarbutton label="&movedown.label;" id="toolmovedown" onclick="Tree.down();"/>
 					<toolbarbutton label="&movebottom.label;" id="toolmovebottom" onclick="Tree.bottom();"  />
 					<spacer flex="1" />
-					<spacer chromedir="&locale.dir;" id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/howto/donate/');" tooltiptext="&tooldonate.tooltiptext;" />
+					<image chromedir="&locale.dir;" id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/howto/donate/');" tooltiptext="&tooldonate.tooltiptext;" />
 			  </toolbar>
 			</toolbox>
 			
