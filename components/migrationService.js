@@ -59,18 +59,16 @@ var MigrationService = {
 		
 		try {
 			debug("current " + DTA.VERSION);
-			var vc = Cc["@mozilla.org/xpcom/version-comparator;1"]
-				.getService(Ci.nsIVersionComparator);
-		
-			var lastVersion = Preferences.getExt('version', '0');
-			if (0 == vc.compare(DTA.VERSION, lastVersion)) {
+
+			let lastVersion = Preferences.getExt('version', '0');
+			if (0 == DTA.compareVersion(lastVersion)) {
 				return;
 			}
 			debug("MigrationManager: migration started");
-			if (vc.compare(lastVersion, "1.0a1") < 0) {
+			if (DTA.compareVersion(lastVersion, "1.0a1") < 0) {
 				this._execute(['Prefs', 'DropDowns', 'Filters', 'Remove']);
 			}
-			if (vc.compare(lastVersion, "1.0.1") < 0) {
+			if (DTA.compareversion(lastVersion, "1.0.1") < 0) {
 				this._execute(['ResetMaxConnections']);
 			}			
     	var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
