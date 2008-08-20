@@ -83,8 +83,6 @@ const REFRESH_FREQ = 1000;
 const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 const STREAMS_FREQ = 200;
 
-const END_FIRST_SIZE = 2 * 1024 * 1024;
-
 let Prompts = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
 
@@ -1726,11 +1724,11 @@ QueueItem.prototype = {
 					continue;
 				}
 
-				if (this.chunks.length == 1 && Prefs.loadEndFirst && this.chunks[0].remainder > 3 * END_FIRST_SIZE) {
+				if (this.chunks.length == 1 && !!Prefs.loadEndFirst && this.chunks[0].remainder > 3 * Prefs.loadEndFirst) {
 					// we should download the end first!
 					let c = this.chunks[0];
 					let end = c.end;
-					c.end -= END_FIRST_SIZE;
+					c.end -= Prefs.loadEndFirst;
 					downloadNewChunk(this, c.end + 1, end);					
 					rv = true;
 					continue;

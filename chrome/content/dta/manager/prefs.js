@@ -60,7 +60,7 @@ var Prefs = {
 		['autoClearComplete', false],
 		['confirmRemove', true],
 		['permissions', 384],
-		['loadEndFirst', false]
+		['loadEndFirst', 0]
 	],
 
 	// nsIObserver
@@ -137,6 +137,10 @@ var Prefs = {
 		else {
 			this.tempLocation = null;
 		}
+		
+		// Make this KB
+		this.loadEndFirst *= 1024;
+		
 		if (!prefName || prefName == PREF_CONN) {
 			let conns = (this.maxInProgress * this.maxChunks) + 2;
 			let cur = Preferences.get(PREF_CONN, conns);

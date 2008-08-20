@@ -49,7 +49,7 @@ var Main = {
 	load: function() {
 		$('alert2').hidden = !('nsIAlertsService' in Ci);
 		
-		// delay this assignment, or else we get messed up by the slider c'tor
+		// delay these assignments, or else we get messed up by the slider c'tor
 		$('maxtasks').setAttribute('preference', 'dtamaxtasks');
 		$('dtamaxtasks').updateElements();		
 	},
@@ -120,14 +120,16 @@ var Privacy = {
 	}
 };
 
-var Advanced = {
+let Advanced = {
 	load: function() {
 		if (/win/i.test(navigator.platform)) {
 			$('advPermissions').hidden = true;
 		}
-		// delay this assignment, or else we get messed up by the slider c'tor
+		// delay these assignments, or else we get messed up by the slider c'tor
 		$('maxchunks').setAttribute('preference', 'dtamaxchunks');
 		$('dtamaxchunks').updateElements();
+		$('loadendfirst').setAttribute('preference', 'dtaloadendfirst');
+		$('dtaloadendfirst').updateElements();		
 	},
 	browse: function() {
 		// let's check and create the directory
@@ -154,7 +156,20 @@ var Advanced = {
 		return $('dtapermissions').value ^ perm;
 	},
 	changedMaxChunks: function() {
+		let v = $('maxchunks').value;
 		$('maxchunkslabel').value = $('maxchunks').value;
+		if (v == '1') {
+			$('maxchunkslabel').value += ' / ' + _('disabled');
+		}
+	},
+	changedLoadEndFirst: function() {
+		let v = $('loadendfirst').value;
+		if (v == '0') {
+			$('loadendfirstlabel').value = _('disabled');
+		}
+		else {
+			$('loadendfirstlabel').value = _('sizeKB', [$('loadendfirst').value]);
+		}
 	}
 };
 

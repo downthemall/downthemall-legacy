@@ -12,7 +12,14 @@
 <?xml-stylesheet href="chrome://dta/skin/preferences/style.css"?>
 <?xml-stylesheet href="chrome://dta-platform/skin/preferences.css"?>
 
-<!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
+<!DOCTYPE prefwindow [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+	%globalDTD;
+	<!ENTITY % prefpanesDTD SYSTEM "chrome://dta/locale/prefpanes.dtd">
+	%prefpanesDTD;
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
+	%commonDTD;
+]>
 
 <prefwindow
 	id="DownThemAll"
@@ -27,6 +34,7 @@
 	onload="Prefs.load();"
 	style="&winstyle;"
 	>
+	<stringbundle id="stringB" src="chrome://dta/locale/common.properties" />
 	<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties" />
 	
 	<prefpane id="paneMain" label="&mainpane.label;" src="chrome://dta/content/preferences/mainPane.xul" />
