@@ -28,20 +28,20 @@
 	class="downlinks"
 	onunload="return Dialog.unload();" 
 	onclose="return Dialog.close();" 
-	persist="width height screenX screenY" 
+	persist="width height screenX screenY dtaAutofitted" 
 	>
 	
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js" />
+	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
 
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager.js" />
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/tree.js" />
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/prefs.js" />
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/sessionmanager.js" />
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/tooltip.js" />
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/filehandling.js" />
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/alertservice.js" />
-	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/manager/imex.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/tree.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/prefs.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/sessionmanager.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/tooltip.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/filehandling.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/alertservice.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/imex.js" />
 	
 	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>	
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
@@ -112,10 +112,8 @@
 			</menu>
 		</popup>
 		<tooltip id="tooltip" position="at_pointer" noautohide="true" onpopupshowing="return Tree.showTip(event);" onpopuphiding="Tree.stopTip();" orient="vertical">
-			<vbox>
-				<hbox id="infoBox"/>
-				<grid id="canvasGrid"/>
-			</vbox>
+			<hbox id="infoBox"/>
+			<grid id="canvasGrid"/>
 		</tooltip>
 	</popupset>	
 	
@@ -123,19 +121,19 @@
 		<vbox flex="1">		
 			<toolbox chromedir="&locale.dir;">
 			  <toolbar id="tools">
-				<spacer/>
-				<toolbarbutton label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="&tooladd.tooltip;" />
-				<spacer class="visible" />
-				<toolbarbutton label="&resume.label;" id="toolplay" onclick="Tree.resume();"/>
-				<toolbarbutton label="&pause.label;" id="toolpause" onclick="Tree.pause();"/>
-				<toolbarbutton label="&cancel.label;" id="toolcancel" onclick="Tree.cancel();"/>
-				<spacer class="visible" />
-				<toolbarbutton label="&movetop.label;" id="toolmovetop" onclick="Tree.top();" />
-				<toolbarbutton label="&moveup.label;" id="toolmoveup" onclick="Tree.up();"/>
-				<toolbarbutton label="&movedown.label;" id="toolmovedown" onclick="Tree.down();"/>
-				<toolbarbutton label="&movebottom.label;" id="toolmovebottom" onclick="Tree.bottom();"  />
-				<spacer flex="1" />
-				<spacer chromedir="&locale.dir;" id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/howto/donate/');" tooltiptext="&tooldonate.tooltiptext;" />
+					<spacer/>
+					<toolbarbutton label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="&tooladd.tooltip;" />
+					<spacer class="visible" />
+					<toolbarbutton label="&resume.label;" id="toolplay" onclick="Tree.resume();"/>
+					<toolbarbutton label="&pause.label;" id="toolpause" onclick="Tree.pause();"/>
+					<toolbarbutton label="&cancel.label;" id="toolcancel" onclick="Tree.cancel();"/>
+					<spacer class="visible" />
+					<toolbarbutton label="&movetop.label;" id="toolmovetop" onclick="Tree.top();" />
+					<toolbarbutton label="&moveup.label;" id="toolmoveup" onclick="Tree.up();"/>
+					<toolbarbutton label="&movedown.label;" id="toolmovedown" onclick="Tree.down();"/>
+					<toolbarbutton label="&movebottom.label;" id="toolmovebottom" onclick="Tree.bottom();"  />
+					<spacer flex="1" />
+					<spacer chromedir="&locale.dir;" id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/howto/donate/');" tooltiptext="&tooldonate.tooltiptext;" />
 			  </toolbar>
 			</toolbox>
 			

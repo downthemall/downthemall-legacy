@@ -1,3 +1,5 @@
+const EXPORTED_SYMBOLS = ['ID', 'ITEM', 'VERSION', 'NAME', 'compareVersion'];
+
 const ID = 'dta@downthemall.net';
 const ITEM = Components.classes["@mozilla.org/extensions/manager;1"]
 	.getService(Components.interfaces.nsIExtensionManager)
@@ -6,4 +8,13 @@ const ITEM = Components.classes["@mozilla.org/extensions/manager;1"]
 const VERSION = ITEM.version;
 const NAME = ITEM.name;
 
-const EXPORTED_SYMBOLS = ['ID', 'ITEM', 'VERSION', 'NAME'];
+const comparator = 
+	Components.classes['@mozilla.org/xpcom/version-comparator;1']
+	.getService(Components.interfaces.nsIVersionComparator);
+
+function compareVersion(version, cmp) {
+	if (!cmp) {
+		[version, cmp] = [VERSION, version];
+	}
+	return comparator.compare(version, cmp);
+}
