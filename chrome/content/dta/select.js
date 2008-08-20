@@ -38,8 +38,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 
 /**
- * implemtents nsITreeView
- * manages our link trees
+ * implemtents nsITreeView manages our link trees
  */
 function Tree(links, type) {
 
@@ -48,12 +47,12 @@ function Tree(links, type) {
 
 	// internal list of links.
 	// better make this a real array (links parameter is usually an object)
-	this._links = links;
-	this._links.forEach(
+	this._links = links.map(
 		function(link) {
 			// "lazy initialize" the icons.
 			// cache them so that we don't have to lookup them again and again.
-			// but do not precompute them, as we don't know if we'll ever display them.
+			// but do not precompute them, as we don't know if we'll ever display
+			// them.
 			link.__defineGetter__(
 				'icon',
 				function() {
@@ -80,12 +79,22 @@ function Tree(links, type) {
 					return this._desc;
 				}
 			);
+			link.__defineGetter__(
+				'resname',
+				function() {
+					if (!this._resname) {
+						this._resname = this.url.usable.getUsableFileName();
+					}
+					return this._resname;
+				}
+			);
 
-			// .checked will hold the correspoding 'property' string, either none, manuallySelected, or f0-f8
+			// .checked will hold the correspoding 'property' string, either none,
+			// manuallySelected, or f0-f8
 			link.checked = '';
 			link.mask = null;
-		},
-		this
+			return link;
+		}
 	);
 
 	// atom cache. See getAtom
@@ -100,7 +109,8 @@ Tree.prototype = {
 		.getService(Ci.nsIAtomService),
 
 	// get atoms, but provide caching.
-	// we have a limited set of atoms anyway, so we don't have to expect a huge cache.
+	// we have a limited set of atoms anyway, so we don't have to expect a huge
+	// cache.
 	getAtom: function(str) {
 		if (!(str in this._atoms)) {
 			this._atoms[str] = this._as.getAtom(str);
@@ -130,7 +140,7 @@ Tree.prototype = {
 
 		// compute and set the checked count
 		var checked = 0;
-		this._links.forEach(function(e) { if (e.checked.length) ++checked; });
+		this._links.forEach(function(e) { if (e.checked.length){++checked;} });
 
 		if (checked) {
 			$("status").label = _("selel", [checked, this.rowCount]);
@@ -176,21 +186,24 @@ Tree.prototype = {
 			// col 1 is the name
 			case 1: return l.url.usable;
 
-			// col 2 is the description
-			case 2: return l.desc;
+			// col 2 is the resname
+			case 2: return l.resname;
+			
+			// col 3 is the description
+			case 3: return l.desc;
 
-			// col 3 is the renaming mask
-			case 3: return l.mask ? l.mask : _('default');
+			// col 4 is the renaming mask
+			case 4: return l.mask ? l.mask : _('default');
 		}
 		return null;
 	},
 
 	isSorted: function() {
-		// not sorted
-		return true;
+		return !!this._sortColumn;
 	},
 	isContainer: function(idx) {
-		// being a container means we got children... but we don't have any children because we're a list actually
+		// being a container means we got children... but we don't have any children
+		// because we're a list actually
 		return false;
 	},
 	isContainerOpen: function(idx) {
@@ -226,7 +239,8 @@ Tree.prototype = {
 	// will be called for cells other than textcells
 	getCellValue: function(idx, column) {
 		// col 0 is the checkbox
-		// didn't test the column index, as there is just one column that may call it
+		// didn't test the column index, as there is just one column that may call
+		// it
 		// BEWARE: other code in Dialog will call this function providing no column!
 		return this._links[idx].checked.length ? "true" : "false";
 	},
@@ -244,20 +258,14 @@ Tree.prototype = {
 			this._sortColumn = col.index;
 			this._sortDirection = false;
 		}
-		let tp = this;
 		let sd;
-		if (this._sortDirection) {
-			sd = function(ca, cb) { return ca > cb ? -1 : ca < cb ? 1 : 0; };
-		}
-		else {
-			sd = function(ca, cb) { return ca > cb ? 1 : ca < cb ? -1 : 0; };
-		}
 		this._links.forEach(function(e, i) { e._sortId = i; });
-		this._links.sort(
-			function(a,b) {
-				return sd(tp.getCellText(a._sortId, col), tp.getCellText(b._sortId, col));
-			}
-		);
+		
+		let tp = this;
+		this._links = Utils.naturalSort(this._links, function(e) tp.getCellText(e._sortId, col));
+		if (this._sortDirection) {
+			this._links.reverse();
+		}
 		this.invalidate();
 	},
 
@@ -273,7 +281,7 @@ Tree.prototype = {
 		var l = this._links[idx];
 		// AppendElement will just accept nsIAtom.
 		// no documentation on devmo, xulplanet though :p
-		prop.AppendElement(this.getAtom(l.checked));
+		// prop.AppendElement(this.getAtom(l.checked));
 	},
 	getCellProperties: function(idx, column, prop) {
 		// col 1 is our url... it should display the type icon
@@ -299,7 +307,8 @@ Tree.prototype = {
 
 		// a lil' hacky.
 		// Dialog.toggleSelection will call us with a null column
-		// makeSelection will invalidate the whole tree after it is done, so we don't have to sacrifice performance here.
+		// makeSelection will invalidate the whole tree after it is done, so we
+		// don't have to sacrifice performance here.
 		// we still have to invalidate if it was a click by the user.
 		if (col) {
 			this.invalidate(idx);
@@ -504,7 +513,7 @@ var Dialog = {
 			this.makeSelection();
 		}
 	},
-	// will be called initially and whenever something changed	
+	// will be called initially and whenever something changed
 	makeSelection: function() {
 		let tree = this.current;
 		let type = tree.type;
@@ -597,7 +606,8 @@ var Dialog = {
 			tree.selection.getRangeAt(r, start, end);
 			for (var i = start.value; i <= end.value; ++i) {
 				switch (mode) {
-					// calling setCellValue with a null column will prevent the box from invalidating
+					// calling setCellValue with a null column will prevent the box from
+					// invalidating
 					// note, that
 					case 1:
 						tree.setCellValue(i, null, 'true');
@@ -770,7 +780,8 @@ var Dialog = {
 		// filterManager will throw this topic at us.
 		if (topic == 'DTA:filterschanged') {
 			// the heavy work will be performed by changeTab..
-			// it will create the filter boxen for us, and furthermore do another selection
+			// it will create the filter boxen for us, and furthermore do another
+			// selection
 			this.changeTab(this.current.tab);
 		}
 	},

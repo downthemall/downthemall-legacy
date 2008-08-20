@@ -94,6 +94,8 @@
 			<treecol type="checkbox" fixed="true" editable="true" ignoreincolumnpicker="true" />
 			<treecol label="&url.value;" flex="35" crop="right" persist="width hidden" />
 			<splitter class="tree-splitter"/>
+			<treecol label="&resname.value;" flex="15" crop="right" hidden="true" persist="width hidden" />
+			<splitter class="tree-splitter"/>
 			<treecol label="&header.desc.label;" flex="9" persist="width hidden" />
 			<splitter class="tree-splitter"/>
 			<treecol label="&mask.label;" flex="5" persist="width hidden"/>

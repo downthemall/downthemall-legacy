@@ -73,8 +73,11 @@ const QUEUED =    1<<6;
 
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!
- * @param ids One of more Ids
- * @return Either the element when there was just one parameter, or an array of elements.
+ * 
+ * @param ids
+ *          One of more Ids
+ * @return Either the element when there was just one parameter, or an array of
+ *         elements.
  */
 function $() {
 	if (arguments.length == 1) {
@@ -96,9 +99,12 @@ function $() {
 var Utils = {
 	/**
 	 * Opens up a directory picker and returns the user selected path.
-	 * @param predefined The starting path to display when dialog opens up
+	 * 
+	 * @param predefined
+	 *          The starting path to display when dialog opens up
 	 * @text text The description text to be displayed
-	 * @return A string containing the user selected path, or false if user cancels the dialog.
+	 * @return A string containing the user selected path, or false if user
+	 *         cancels the dialog.
 	 */
 	FilePicker: Components.Constructor('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init'),
 	askForDir: function (predefined, text) {
@@ -127,9 +133,13 @@ var Utils = {
 		return false;
 	},
 	/**
-	 * Performs all the needed controls to see if the specified path is valid, is creable and writable and his drive has some free disk space.	
-	 * @param path The path to test
-	 * @return a nsILocalFile to the specified path if it's valid, false if it wasn't
+	 * Performs all the needed controls to see if the specified path is valid, is
+	 * creable and writable and his drive has some free disk space.
+	 * 
+	 * @param path
+	 *          The path to test
+	 * @return a nsILocalFile to the specified path if it's valid, false if it
+	 *         wasn't
 	 */
 	validateDir: function(path) {
 		let directory = null;
@@ -164,9 +174,11 @@ var Utils = {
 		return false;
 	},
 	/**
-	 * Gets the disk-space available for a nsILocalFile.
-	 * Here, because diskSpaceAvailable requires valid path and/or path to be a directory
-	 * @param file Valid nsILocalFile
+	 * Gets the disk-space available for a nsILocalFile. Here, because
+	 * diskSpaceAvailable requires valid path and/or path to be a directory
+	 * 
+	 * @param file
+	 *          Valid nsILocalFile
 	 * @return the disk-space available to the caller
 	 * @author Nils
 	 */
@@ -181,7 +193,10 @@ var Utils = {
 	},
 	/**
 	 * Play a sound file (if prefs allow to do so)
-	 * @param name Name of the sound (corresponding to the pref name and the file name of desired sound)
+	 * 
+	 * @param name
+	 *          Name of the sound (corresponding to the pref name and the file
+	 *          name of desired sound)
 	 */
 	playSound: function(name) {
 		try {
@@ -196,7 +211,9 @@ var Utils = {
 
 	/**
 	 * returns a formated representation of a (file) size
-	 * @param aNumber The number to format
+	 * 
+	 * @param aNumber
+	 *          The number to format
 	 * @author Nils
 	 */
 	formatBytes: function U_formatBytes(aNumber) {
@@ -313,14 +330,17 @@ Utils.merge(
 	}
 );
 
-
 /**
  * Get the icon URI corresponding to an URI (special mac handling)
+ * 
  * @author Nils
  * @author Stefano
- * @param link Some sort of DTA_URL, nsIURI or string to get the icon for
- * @param metalink Is it a metalink?
- * @param size The desired iconsize;
+ * @param link
+ *          Some sort of DTA_URL, nsIURI or string to get the icon for
+ * @param metalink
+ *          Is it a metalink?
+ * @param size
+ *          The desired iconsize;
  * @return String containing the icon URI
  */
 function getIcon(link, metalink, size) {
@@ -382,7 +402,9 @@ function getIcon(link, metalink, size) {
 var makeObserver = DTA_makeObserver;
 
 /**
- * Encapulates all stringbundles of the current document and provides unified access
+ * Encapulates all stringbundles of the current document and provides unified
+ * access
+ * 
  * @author Nils
  * @see _
  */
@@ -419,10 +441,14 @@ StringBundles.prototype = {
 };
 /**
  * Get a (formatted) locale property string.
- * @param stringId Id of desired string corresponding to the .properties file(s)
- * @param ... Optional. Format parameters
+ * 
+ * @param stringId
+ *          Id of desired string corresponding to the .properties file(s)
+ * @param ...
+ *          Optional. Format parameters
  * @return String for given Name
- * @throws Exception if stringID is not found or before the dialog was initialized
+ * @throws Exception
+ *           if stringID is not found or before the dialog was initialized
  * @author Nils
  */
 function _() {
@@ -438,6 +464,7 @@ function _() {
 
 /**
  * XP compatible reveal/launch
+ * 
  * @author Nils (derived from DownloadManager code)
  */
 var OpenExternal = {
@@ -460,7 +487,9 @@ var OpenExternal = {
 	},
 	/**
 	 * Launch/Execute a file
-	 * @param nsILocalFile/String pointing to the desired file
+	 * 
+	 * @param nsILocalFile/String
+	 *          pointing to the desired file
 	 */
 	launch: function(file) {
 		file = this._prepare(file);
@@ -477,8 +506,11 @@ var OpenExternal = {
 		}
 	},
 	/**
-	 * Reveal a file, which will open the directory and furthermore select the file on some platforms.
-	 * @param nsILocalFile/String pointing to the desired file
+	 * Reveal a file, which will open the directory and furthermore select the
+	 * file on some platforms.
+	 * 
+	 * @param nsILocalFile/String
+	 *          pointing to the desired file
 	 */
 	reveal: function(file) {
 		file = this._prepare(file);
@@ -502,10 +534,18 @@ var OpenExternal = {
 
 /**
  * Convert a value into a hash
- * @param data Data to hash. Either an nsInputStream or String-castable.
- * @param algorithm Optional. Either a number or a string referring to an nsICryptoHash function. (default: sha1)
- * @param encoding Optional. One of: HASH_HEX (0), HASH_BIN(1), HASH_B64 (2) (default: HASH_HEX)
- * @param datalen Optional, only for streams. Length of data to hash (default: hash whole stream)
+ * 
+ * @param data
+ *          Data to hash. Either an nsInputStream or String-castable.
+ * @param algorithm
+ *          Optional. Either a number or a string referring to an nsICryptoHash
+ *          function. (default: sha1)
+ * @param encoding
+ *          Optional. One of: HASH_HEX (0), HASH_BIN(1), HASH_B64 (2) (default:
+ *          HASH_HEX)
+ * @param datalen
+ *          Optional, only for streams. Length of data to hash (default: hash
+ *          whole stream)
  * @return A string representing the hash a in given encoding.
  * @author Nils
  */
