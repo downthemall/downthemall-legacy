@@ -8,27 +8,32 @@ toolbox {
 }
 
 #tools {
-	background: url(chrome://dta/skin/manager/barback.png) repeat-x;
+	-moz-appearance: none !important;
 	border-width: 0px;
 	height: 51px;
-	-moz-appearance: none !important;
 }
 #tools toolbarbutton {
-	-moz-image-region: rect(0px,51px,25px,26px);    
+	list-style-image: url(chrome://dta/skin/manager/tools.png);
 	-moz-box-orient: vertical !important;
 	-moz-box-align: center !important;
 	-moz-appearance: none !important;
-	border: 0px hidden !important;
+	border: 0;
 	margin-top: 2px;
-	min-width: 55px;
+	margin-bottom: 3px;
+	text-align: center;
 }
 
-#tools toolbarbutton:hover, #tools toolbarbutton:active {
-	-moz-image-region: rect(0px,25px,25px,0px);
+#tools .toolbarbutton-icon {
+	margin: 0 !important;
 }
-#tools toolbarbutton[disabled="true"] {
-	-moz-image-region: rect(0px,77px,25px,52px) !important;    
+
+#tools .toolbarbutton-text {
+	min-width: 45px;
+	margin: 0;
+	padding: 0;
+	text-anchor: center;
 }
+
 #tools spacer {
 	min-width: 5px;
 }
@@ -36,56 +41,105 @@ toolbox {
 	background: url("chrome://dta/skin/common/toolbarspacer.png") no-repeat 50% 11px;
 	min-width: 13px;
 }
+
 #tooladd {
-	list-style-image: url("chrome://dta/skin/manager/add26.png");
+	-moz-image-region: rect(0px,52px,26px,26px);
+}
+#tooladd:hover, #tooladd:active {
+	-moz-image-region: rect(0px,26px,26px,0px);
+}
+#tooladd[disabled="true"] {
+	-moz-image-region: rect(0px,78px,26px,52px);    
+}
+
+
+#toolcancel {
+	-moz-image-region: rect(26px,52px,52px,26px);
+}
+#toolcancel:hover, #toolcancel:active {
+	-moz-image-region: rect(26px,26px,52px,0px);
+}
+#toolcancel[disabled="true"] {
+	-moz-image-region: rect(26px,78px,52px,52px);    
 }
 
 #toolplay {
-	list-style-image: url("chrome://dta/skin/manager/play26.png");
+	-moz-image-region: rect(52px,52px,78px,26px);
 }
+#toolplay:hover, #toolplay:active {
+	-moz-image-region: rect(52px,26px,78px,0px);
+}
+#toolplay[disabled="true"] {
+	-moz-image-region: rect(52px,78px,78px,52px);    
+}
+
 
 #toolpause {
-	list-style-image: url("chrome://dta/skin/manager/pause26.png");
+	-moz-image-region: rect(78px,52px,104px,26px);
 }
-
-#toolcancel {
-	list-style-image: url("chrome://dta/skin/manager/cancel26.png");
+#toolpause:hover, #toolpause:active {
+	-moz-image-region: rect(78px,26px,104px,0px);
+}
+#toolpause[disabled="true"] {
+	-moz-image-region: rect(78px,78px,104px,52px);    
 }
 
 #toolmovetop {
-	list-style-image: url("chrome://dta/skin/manager/movetop26.png");
+	-moz-image-region: rect(104px,52px,130px,26px);
 }
-
-#toolmovebottom {
-	list-style-image: url("chrome://dta/skin/manager/movebottom26.png");
+#toolmovetop:hover, #toolmovetop:active {
+	-moz-image-region: rect(104px,26px,130px,0px);
 }
-
-#toolmovedown {
-	list-style-image: url("chrome://dta/skin/manager/movedown26.png");
+#toolmovetop[disabled="true"] {
+	-moz-image-region: rect(104px,78px,130px,52px);    
 }
 
 #toolmoveup {
-	list-style-image: url("chrome://dta/skin/manager/moveup26.png");
+	-moz-image-region: rect(130px,52px,156px,26px);
+}
+#toolmoveup:hover, #toolmoveup:active {
+	-moz-image-region: rect(130px,26px,156px,0px);
+}
+#toolmoveup[disabled="true"] {
+	-moz-image-region: rect(130px,78px,156px,52px);    
 }
 
-#toolprefs {
-	list-style-image: url("chrome://dta/skin/manager/prefs26.png");
+#toolmovedown {
+	-moz-image-region: rect(156px,52px,182px,26px);
+}
+#toolmovedown:hover, #toolmovedown:active {
+	-moz-image-region: rect(156px,26px,182px,0px);
+}
+#toolmovedown[disabled="true"] {
+	-moz-image-region: rect(156px,78px,182px,52px);    
+}
+
+#toolmovebottom {
+	-moz-image-region: rect(182px,52px,208px,26px);
+}
+#toolmovebottom:hover, #toolmovebottom:active {
+	-moz-image-region: rect(182px,26px,208px,0px);
+}
+#toolmovebottom[disabled="true"] {
+	-moz-image-region: rect(182px,78px,208px,52px);    
 }
 
 #tooldonate {
-	background: url("chrome://dta/skin/manager/bardonate-ltr.png") top right;
-	min-width: 200px !important;
+	list-style-image: url(chrome://dta/skin/manager/donate.png);
+	-moz-image-region: rect(51px,360px,102px,180px); 	
+	min-width: 180px !important;
 	cursor: pointer;
 }
 #tooldonate:hover {
-	background: url("chrome://dta/skin/manager/bardonate-hover-ltr.png") top right;
+	-moz-image-region: rect(51px,180px,102px,0px);
 }
 #tooldonate[chromedir="rtl"] {
-	background: url("chrome://dta/skin/manager/bardonate-rtl.png") top right;
+	-moz-image-region: rect(0px,360px,51px,180px);
 }
 #tooldonate[chromedir="rtl"]:hover {
-	background: url("chrome://dta/skin/manager/bardonate-hover-rtl.png") top right;
+	-moz-image-region: rect(0px,180px,51px,0px);
 }
+
 #tooltip{
 	width: 500px;
 	padding: 5pt;
