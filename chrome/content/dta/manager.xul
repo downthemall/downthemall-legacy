@@ -74,40 +74,40 @@
 
 	<popupset>
 		<popup id="popup" onpopupshowing="Tree.refreshTools(); return true;">
-			<menuitem id="info" class="menuitem-iconic" image="chrome://dta/skin/manager/info.png" label="&infos.label;" oncommand="Tree.showInfo();" />
+			<menuitem id="info" class="menuitem-iconic" label="&infos.label;" oncommand="Tree.showInfo();" />
 			<menuseparator />
-			<menuitem id="launch" class="menuitem-iconic" image="chrome://dta/skin/manager/launch.png" label="&launch.label;" oncommand="FileHandling.openFile();" />
-			<menuitem id="delete" class="menuitem-iconic" image="chrome://dta/skin/manager/delete.png" label="&delete.label;" oncommand="FileHandling.deleteFile();" />
-			<menuitem id="folder" class="menuitem-iconic" image="chrome://dta/skin/manager/folder.png" label="&targetdir.label;" oncommand="FileHandling.openFolder();" />
+			<menuitem id="launch" class="menuitem-iconic" label="&launch.label;" oncommand="FileHandling.openFile();" />
+			<menuitem id="delete" class="menuitem-iconic" label="&delete.label;" oncommand="FileHandling.deleteFile();" />
+			<menuitem id="folder" class="menuitem-iconic" label="&targetdir.label;" oncommand="FileHandling.openFolder();" />
 			<menuseparator />
-			<menuitem id="play" class="menuitem-iconic" label="&resume.label;" image="chrome://dta/skin/manager/play.png" oncommand="Tree.resume();" />
-			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" image="chrome://dta/skin/manager/pause.png" oncommand="Tree.pause();" />
-			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" image="chrome://dta/skin/manager/cancel.png" oncommand="Tree.cancel();" />
+			<menuitem id="play" class="menuitem-iconic" label="&resume.label;" oncommand="Tree.resume();" />
+			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" oncommand="Tree.pause();" />
+			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" oncommand="Tree.cancel();" />
 			<menuseparator />
-			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" image="chrome://dta/skin/manager/clean.png" oncommand="Tree.removeCompleted();" />
-			<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" image="chrome://dta/skin/manager/remove.png" oncommand="Tree.removeWithConfirmation();" />			
+			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" oncommand="Tree.removeCompleted();" />
+			<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" oncommand="Tree.removeWithConfirmation();" />			
 			<menuseparator />
-			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="Tree.selectAll();" />
-			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="Tree.selectInv();" />
+			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" oncommand="Tree.selectAll();" />
+			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" oncommand="Tree.selectInv();" />
 			<menuseparator />
-			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" image="chrome://dta/skin/manager/movetop.png" oncommand="Tree.top();" />
-			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" image="chrome://dta/skin/manager/moveup.png" oncommand="Tree.up();" />
-			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" image="chrome://dta/skin/manager/movedown.png" oncommand="Tree.down();" />
-			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" image="chrome://dta/skin/manager/movebottom.png" oncommand="Tree.bottom();" />
+			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" oncommand="Tree.top();" />
+			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" oncommand="Tree.up();" />
+			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" oncommand="Tree.down();" />
+			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" oncommand="Tree.bottom();" />
 			<menuseparator />
-			<menu id="misc" class="menu-iconic" image="chrome://dta/skin/manager/misc.png" label="&misc.label;">
+			<menu id="misc" class="menu-iconic" label="&misc.label;">
 				<menupopup>
-					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" image="chrome://dta/skin/manager/addpart.png" oncommand="Tree.changeChunks(true);" />
-					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" image="chrome://dta/skin/manager/rempart.png" oncommand="Tree.changeChunks(false);" />
+					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" oncommand="Tree.changeChunks(true);" />
+					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" oncommand="Tree.changeChunks(false);" />
 					<menuseparator/>
-					<menuitem id="removegone" class="menuitem-iconic" label="&removeGone.label;" image="chrome://dta/skin/manager/removeGone.png" oncommand="Tree.removeGone();" />
+					<menuitem id="removegone" class="menuitem-iconic" label="&removeGone.label;" oncommand="Tree.removeGone();" />
 					<menuseparator/>
-					<menuitem id="force" class="menuitem-iconic" label="&force.label;" image="chrome://dta/skin/manager/force.png" oncommand="Tree.force()" />					
+					<menuitem id="force" class="menuitem-iconic" label="&force.label;" oncommand="Tree.force()" />					
 					<menuseparator />
-					<menuitem id="import" class="menuitem-iconic" label="&import.label;" image="chrome://dta/skin/manager/import.png" oncommand="Tree.import();"/>
-					<menuitem id="export" class="menuitem-iconic" label="&export.label;" image="chrome://dta/skin/manager/export.png" oncommand="Tree.export();"/>
+					<menuitem id="import" class="menuitem-iconic" label="&import.label;" oncommand="Tree.import();"/>
+					<menuitem id="export" class="menuitem-iconic" label="&export.label;" oncommand="Tree.export();"/>
 					<menuseparator />
-					<menuitem id="prefs" class="menuitem-iconic" label="&options.label;" image="chrome://dta/skin/common/prefs.png" onclick="DTA_showPreferences();" />
+					<menuitem id="prefs" class="menuitem-iconic" label="&options.label;" onclick="DTA_showPreferences();" />
 				</menupopup>
 			</menu>
 		</popup>
