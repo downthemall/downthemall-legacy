@@ -34,6 +34,10 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE bindings [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+	%globalDTD;
+]>
 
 <bindings
 	xmlns="http://www.mozilla.org/xbl"
@@ -327,6 +331,22 @@
 		</implementation>			
 	</binding>
 	
+	<binding id="menu-iconic-addressable" extends="chrome://global/content/bindings/menu.xml#menu-base">
+		<content>
+			<xul:hbox class="menu-iconic-left" align="center" pack="center">
+				<xul:image class="menu-iconic-icon" xbl:inherits="src=image" />
+			</xul:hbox>
+			<xul:label class="menu-iconic-text" flex="1" xbl:inherits="value=label,accesskey,crop" crop="right"/>
+			<xul:hbox class="menu-accel-container" anonid="accel">
+				<xul:label class="menu-iconic-accel" xbl:inherits="value=acceltext"/>
+			</xul:hbox>
+			<xul:hbox class="menu-right" chromedir="&locale.dir;" xbl:inherits="_moz-menuactive,disabled" align="center" pack="center">
+				<xul:image/>
+			</xul:hbox>
+			<children includes="menupopup|template"/>
+		</content>
+	</binding>
+
 </bindings>
 				
 		
