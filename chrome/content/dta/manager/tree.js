@@ -528,20 +528,22 @@ var Tree = {
 		}
 		try {
 			let empty = this.current == null;
-			for each (let o in $('info', 'remove', 'movetop', 'moveup', 'movedown', 'movebottom', 'toolmovetop', 'toolmoveup', 'toolmovedown', 'toolmovebottom')) {
-				o.setAttribute('disabled', empty);
-			}
 				
 			let states = {
 				_state: 0,
 				resumable: false,
 				is: function(s) this._state & s,  
 				isOf: QueueItem.prototype.isOf,
-				count: this.selection.count
+				count: this.selection.count,
+				rows: this.rowCount,
+				min: this.rowCount,
+				max: 0
 			};
 			for (let d in this.selected) {
 				states._state |= d.state;
 				states.resumable |= d.resumable;
+				states.min = Math.min(d.position, states.min);
+				states.max = Math.max(d.position, states.max);
 			}
 			let cur = this.current;
 			states.curFile = (cur && cur.is(COMPLETE) && (new FileFactory(cur.destinationFile)).exists());
@@ -570,6 +572,8 @@ var Tree = {
 			modifySome($('delete'), function(d) d.is(COMPLETE));
 			modifySome($('export'), function(d) !!d.count);
 			modifySome($('addchunk', 'removechunk', 'force'), function(d) d.isOf(QUEUED, RUNNING, PAUSED, CANCELED));
+			modifySome($('movetop', 'moveup', 'toolmovetop', 'toolmoveup'), function(d) d.min > 0); 
+			modifySome($('movedown', 'movebottom', 'toolmovedown', 'toolmovebottom'), function(d) d.max != d.rows - 1);  
 		}
 		catch (ex) {
 			Debug.log("rt", ex);
