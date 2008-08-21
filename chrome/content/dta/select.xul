@@ -74,8 +74,8 @@
 
 	<toolbox id="views">
 		<toolbar class="findfiles" chromedir="&locale.dir;">
-			<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&tab.links.label;" onclick="Dialog.changeTab('links');" />
-			<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.pics.label;" onclick="Dialog.changeTab('images');" />
+			<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&tab.links.label;" oncommand="Dialog.changeTab('links');" />
+			<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.pics.label;" oncommand="Dialog.changeTab('images');" />
 			<spacer flex="1" id="logo" chromedir="&locale.dir;"/>
 		</toolbar>
 	</toolbox>

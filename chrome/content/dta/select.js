@@ -343,7 +343,13 @@ var Dialog = {
 
 			// initialize the labels
 			$("viewlinks").label = $("viewlinks").label + " ("+ links.length + ")";
+			if (!links.length) {
+				$('viewlinks').disabled = true;
+			}
 			$("viewpics").label = $("viewpics").label + " ("+ images.length + ")";
+			if (!images.length) {
+				$('viewpics').disabled = true;
+			}
 
 			// intialize our Trees (nsITreeview)
 			// type parameter corresponds to dtaIFilter types
@@ -351,7 +357,13 @@ var Dialog = {
 			this.images = new Tree(images, 2);			
 
 			// changeTab will initialize the filters and do the selection for us
-			this.changeTab(Preferences.getExt("seltab", 0) ? 'images': 'links');
+			let preferredTab = Preferences.getExt("seltab", 0);
+			if (preferredTab) {
+				this.changeTab(!!images.length ? 'images' : 'links');
+			}
+			else {
+				this.changeTab(!!links.length ? 'links': 'images');
+			}
 
 			$("urlList").addEventListener(
 				'keypress',
