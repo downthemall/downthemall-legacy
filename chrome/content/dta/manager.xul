@@ -122,18 +122,18 @@
 			<toolbox chromedir="&locale.dir;">
 			  <toolbar id="tools">
 					<spacer/>
-					<toolbarbutton label="&tooladd.label;" id="tooladd" onclick="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="&tooladd.tooltip;" />
+					<toolbarbutton label="&tooladd.label;" id="tooladd" oncommand="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="&tooladd.tooltip;" />
 					<spacer class="visible" />
-					<toolbarbutton label="&resume.label;" id="toolplay" onclick="Tree.resume();"/>
-					<toolbarbutton label="&pause.label;" id="toolpause" onclick="Tree.pause();"/>
-					<toolbarbutton label="&cancel.label;" id="toolcancel" onclick="Tree.cancel();"/>
+					<toolbarbutton label="&resume.label;" id="toolplay" oncommand="Tree.resume();"/>
+					<toolbarbutton label="&pause.label;" id="toolpause" oncommand="Tree.pause();"/>
+					<toolbarbutton label="&cancel.label;" id="toolcancel" oncommand="Tree.cancel();"/>
 					<spacer class="visible" />
-					<toolbarbutton label="&movetop.label;" id="toolmovetop" onclick="Tree.top();" />
-					<toolbarbutton label="&moveup.label;" id="toolmoveup" onclick="Tree.up();"/>
-					<toolbarbutton label="&movedown.label;" id="toolmovedown" onclick="Tree.down();"/>
-					<toolbarbutton label="&movebottom.label;" id="toolmovebottom" onclick="Tree.bottom();"  />
+					<toolbarbutton label="&movetop.label;" id="toolmovetop" oncommand="Tree.top();" />
+					<toolbarbutton label="&moveup.label;" id="toolmoveup" oncommand="Tree.up();"/>
+					<toolbarbutton label="&movedown.label;" id="toolmovedown" oncommand="Tree.down();"/>
+					<toolbarbutton label="&movebottom.label;" id="toolmovebottom" oncommand="Tree.bottom();"  />
 					<spacer flex="1" />
-					<image chromedir="&locale.dir;" id="tooldonate" onclick="DTA_Mediator.openTab('http://www.downthemall.net/howto/donate/');" tooltiptext="&tooldonate.tooltiptext;" />
+					<image chromedir="&locale.dir;" id="tooldonate" oncommand="DTA_Mediator.openTab('http://www.downthemall.net/howto/donate/');" tooltiptext="&tooldonate.tooltiptext;" />
 			  </toolbar>
 			</toolbox>
 			
