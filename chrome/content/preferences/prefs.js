@@ -201,7 +201,7 @@ var Filters = {
 	Observer: {
 		registerObserver: function() {
 			try {
-				makeObserver(this);
+				Preferences.makeObserver(this);
 				var os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
 				os.addObserver(this, 'DTA:filterschanged', true);
 			}

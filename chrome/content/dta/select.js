@@ -800,7 +800,7 @@ var Dialog = {
 	// register ourselves
 	// * filterManager
 	registerObserver: function() {
-		makeObserver(this);
+		Preferences.makeObserver(this);
 		try {
 			var os = Cc["@mozilla.org/observer-service;1"]
 				.getService(Ci.nsIObserverService);

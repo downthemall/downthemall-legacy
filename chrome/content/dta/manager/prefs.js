@@ -70,8 +70,6 @@ var Prefs = {
 	},
 
 	init: function() {
-		makeObserver(this);
-
 		try {
 			this._resetConnPrefs();
 			this._refreshPrefs();

@@ -42,7 +42,6 @@ var DTA_TBB = {
 				return document.getElementById(e);
 			}
 		);
-		DTA_makeObserver(this);
 		DTA_preferences.addObserver("extensions.dta.sm.", this);
 		this._refresh();
 	},

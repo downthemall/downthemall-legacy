@@ -138,7 +138,7 @@ var Dialog = {
 			Debug.log("Cannot get offline status", ex);
 		}
 		
-		makeObserver(this);
+		Preferences.makeObserver(this);
 		this._observes.forEach(
 			function(topic) {
 				ObserverService.addObserver(this, topic, true);
