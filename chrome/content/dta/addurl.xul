@@ -79,8 +79,8 @@
 		</columns>
 		<rows>
 			<row align="center">
-				<label control="URLaddress" id="URLaddressTitle" value="&url.value;:"/>
-				<textbox id="URLaddress" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21"/>
+				<label control="address" value="&url.value;:"/>
+				<textbox id="address" type="autocomplete" autocompletesearch="history" completedefaultindex="true" height="21"/>
 			</row>
 			<row align="center">
 				<label control="URLref" id="URLrefTitle" value="&referrer.value;" style="font-style: italic;" />

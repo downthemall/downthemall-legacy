@@ -1,4 +1,7 @@
 @import 'chrome://dta/skin/common/style.css';
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+@namespace html url("http://www.w3.org/1999/xhtml");
+
 
 dialog {
 	max-width: 540px;
@@ -10,4 +13,13 @@ toolbarbutton {
 dialogheader .dialogheader-title {
 	padding-left: 30px !important;
 	background-image: url('chrome://dta/skin/add/add.png') !important;
+}
+
+textbox[error="true"],
+menulist[error="true"],
+textbox[error="true"] > hbox,
+menulist[error="true"] > hbox,
+*[error="true"] html|input {
+	color: white;
+	background-color: red;
 }

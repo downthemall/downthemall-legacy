@@ -94,7 +94,7 @@
 	<binding id="saveddropdown">
 		<content>
 			<xul:vbox flex="1">
-			<xul:menulist anonid="list" editable="true" xbl:inherits="readonly,disabled,flex,tooltiptext,oninput=onchange,onselect=onchange">
+			<xul:menulist anonid="list" editable="true" xbl:inherits="readonly,disabled,flex,tooltiptext,oninput=onchange,onselect=onchange,error">
 				<xul:menupopup anonid="popup" xbl:inherits="onselect=onchange,oncommand=onchange"/>
 			</xul:menulist>
 			<xul:spacer flex="1"/>
@@ -275,7 +275,7 @@
 	<binding id="hashinput">
 		<content>
 			<xul:hbox flex="1">
-				<xul:menulist anonid="type" readonly="true" xbl:inherits="disabled">
+				<xul:menulist anonid="type" readonly="true" xbl:inherits="disabled,error">
 					<xul:menupopup anonid="types"/>
 				</xul:menulist>
 				<xul:textbox anonid="hash" flex="1" xbl:inherits="readonly,disabled"/>
