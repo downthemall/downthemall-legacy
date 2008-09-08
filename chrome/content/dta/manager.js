@@ -2894,8 +2894,8 @@ var ConflictManager = {
 		while (this._items.length) {
 			cur = this._items[0];
 			if (!this._check(cur.download)) {
-				if (reentry) {
-					cur.download[reentry]();
+				if (cur.reentry) {
+					cur.download[cur.reentry]();
 				}
 				this._items.shift();
 				continue;
@@ -2990,3 +2990,13 @@ var Serializer = {
 		}
 	}
 };
+
+addEventListener(
+	"DOMContentLoaded",
+	function() {
+		if (Preferences.getExt('startminimized') && window.arguments && window.arguments.length != 0) {
+			minimize();
+		}
+	},
+	false
+);
