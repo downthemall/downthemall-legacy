@@ -127,7 +127,7 @@ tree treecols splitter {
 	font-style:italic;
 	text-align:right !important;
 	font-size: 9px !important;
-	cursor:pointer;
+	cursor: pointer;
 }
 
 .toolbarbutton-menu-dropmarker {
@@ -138,21 +138,20 @@ scrollbarbutton[sbattr="scrollbar-up-bottom"]{
 	display: -moz-box !important;
 	
 }
-
 treechildren::-moz-tree-cell-text(selected) {
-	color: black !important;
+	color: white !important;
+	font-weight: bold;
 }
-
 treechildren::-moz-tree-row(selected) {
-	background-color: #99CCFF !important;
-	/*-moz-border: none !important;*/
+	background-color: #7aa3cc !important;
 }
 
 treechildren::-moz-tree-row {
-	min-height: 22px;
+	min-height: 21px;
 }
 
 treechildren::-moz-tree-image(iconic) {
+	padding-left: 0.1ex;
 	padding-right: 0.5ex;
 }
 
