@@ -624,7 +624,7 @@ function DTA_makeObserver(obj) {
 				iid.equals(Components.interfaces.nsISupports)
 				|| iid.equals(Components.interfaces.nsISupportsWeakReference)
 				|| iid.equals(Components.interfaces.nsIWeakReference)
-				|| iid.equals(Components.interfaces.nsiObserver)
+				|| iid.equals(Components.interfaces.nsIObserver)
 			) {
 				return obj;
 			}
