@@ -281,7 +281,7 @@ Tree.prototype = {
 		var l = this._links[idx];
 		// AppendElement will just accept nsIAtom.
 		// no documentation on devmo, xulplanet though :p
-		// prop.AppendElement(this.getAtom(l.checked));
+		prop.AppendElement(this.getAtom(l.checked));
 	},
 	getCellProperties: function(idx, column, prop) {
 		// col 1 is our url... it should display the type icon
@@ -536,7 +536,8 @@ var Dialog = {
 		let boxen = this.boxen;
 		let filters = [];
 		if (!$('disableothers').checked) {
-			for each (let box in boxen) {
+			for (let i = 0, e = boxen.length; i < e; ++i) {
+				let box = boxen[i];
 				if (!box.checked) {
 					continue;
 				}
