@@ -174,6 +174,12 @@ let Advanced = {
 };
 
 var Interface = {
+	init: function(pref, which) {
+		if (!('trayITrayService' in Components.interfaces)) {
+			$('minimizetotray').disabled = true;
+			$('minimizetotray_link').hidden = false;
+		}
+	},
 	getMenu: function(pref, which) {
 		let menu = $(pref).value.split(',');
 		return which in menu ? menu[which] == '1' : false;
@@ -182,6 +188,9 @@ var Interface = {
 		let menu = $(pref).value.split(',');
 		menu[which] = $(pref + which).checked ? 1 : 0;
 		return menu.toString();
+	},
+	openMinTrayR: function() {
+		DTA_Mediator.openTab('http://tn123.ath.cx/mintrayr/?fromdta');
 	}
 };
 

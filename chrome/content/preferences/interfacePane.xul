@@ -15,7 +15,8 @@
 		id="paneInterface"
 		label="&uipane.label;"
 		helpURI="chrome://dta-help/content/help.rdf"
-		helpTopic="Preferences_UI"		
+		helpTopic="Preferences_UI"
+		onpaneload="Interface.init();"		
 	>
 	
 		<preferences id="prefsInterface">
@@ -26,13 +27,24 @@
 			<preference id="dtaContext" name="extensions.dta.ctxmenu" type="string" />
 			<preference id="dtaTool" name="extensions.dta.toolsmenu" type="string" />
 			<preference id="dtaShowTooltip" name="extensions.dta.showtooltip" type="bool" />
+			<preference id="dtaStartMinimized" name="extensions.dta.startminimized" type="bool" />
+			<preference id="dtaMinimizeToTray" name="extensions.dta.minimizetotray" type="bool" />
 		</preferences>
 		
 		<groupbox>
 			<caption label="&uipane.appearance.caption;"/>
 			<checkbox label="&uipane.namesonly.label;" preference="dtaHideUrl" />
 			<checkbox label="&uipane.showtooltip.label;" preference="dtaShowTooltip" />
-		</groupbox>	
+		</groupbox>
+		
+		<groupbox>
+			<caption label="&uipane.window.caption;"/>
+			<checkbox label="&uipane.startminimized.label;" preference="dtaStartMinimized"/>
+			<hbox>
+				<checkbox flex="1" id="minimizetotray" label="&uipane.minimizetotray.label;" preference="dtaMinimizeToTray"/>
+				<label id="minimizetotray_link" value="Get MinTrayR" onclick="Interface.openMinTrayR();" hidden="true" class="link"/>
+			</hbox>
+		</groupbox>
 		
 		<groupbox>
 			<caption label="&uipane.integration.caption;"/>

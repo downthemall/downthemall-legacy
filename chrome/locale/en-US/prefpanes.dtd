@@ -92,3 +92,6 @@
 <!ENTITY uipane.compact.label "Use a compact menu">
 <!ENTITY uipane.hide.label "Hide this menu">
 <!ENTITY uipane.showtooltip.label "Show download tooltips">
+<!ENTITY uipane.window.caption "Window">
+<!ENTITY uipane.startminimized.label "Start minimized">
+<!ENTITY uipane.minimizetotray.label "Minimize to system tray">

@@ -68,6 +68,9 @@ pref("extensions.dta.autoclearcomplete", false);
 pref("extensions.dta.confirmremove", true);
 pref("extensions.dta.permissions", 384);
 pref("extensions.dta.loadendfirst", 0);
+pref("extensions.dta.loadendfirst", 0);
+pref("extensions.dta.startminimized", false);
+pref("extensions.dta.minimizetotray", false);
 
-// Seamonkey specific
+// Non-customizable-toolbar specific
 pref("extensions.dta.sm.buttons", "1,1,0");

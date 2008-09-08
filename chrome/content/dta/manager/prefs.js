@@ -60,7 +60,8 @@ var Prefs = {
 		['autoClearComplete', false],
 		['confirmRemove', true],
 		['permissions', 384],
-		['loadEndFirst', 0]
+		['loadEndFirst', 0],
+		['minimizeToTray', false]
 	],
 
 	// nsIObserver
@@ -151,6 +152,12 @@ var Prefs = {
 			if (conns > cur) {
 				Preferences.set(PREF_CONN, conns);
 			}
+		}
+		if (this.minimizeToTray) {
+			TrayHandler.watch();
+		}
+		else {
+			TrayHandler.unwatch();
 		}
 	},
 	shutdown: function() {
