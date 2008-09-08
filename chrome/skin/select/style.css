@@ -11,6 +11,7 @@ caption {
 
 toolbox, toolbox toolbar, toolbox toolbarbutton {
 	background: white;
+	color: black;
 }
 
 #views {
