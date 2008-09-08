@@ -28,7 +28,7 @@
 	class="downlinks"
 	onunload="return Dialog.unload();" 
 	onclose="return Dialog.close();" 
-	persist="width height screenX screenY dtaAutofitted" 
+	persist="width height screenX screenY sizemode dtaAutofitted" 
 	>
 	
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
