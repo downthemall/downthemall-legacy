@@ -253,14 +253,9 @@ var Dialog = {
 		try {
 			$('DownThemAll').getButton('help').hidden = !('openHelp' in window);
 			
-			$('directory', 'renaming', 'URLaddress', 'hash').forEach(
-				function(e) {
-					e.oldColor = e.inputField.style.color;
-				}
-			);
 			this.ddDirectory = $("directory");
 			this.ddRenaming = $("renaming");			
-			var address = $('URLaddress');
+			var address = $('address');
 			
 			// if we've been called by DTA_AddingFunctions.saveSingleLink()
 			var hash = null;
@@ -369,15 +364,17 @@ var Dialog = {
 			errors.push('renaming');
 		}
 		
-		var address = $('URLaddress');
+		var address = $('address');
 		var url = address.value;
 		if ('_realURL' in address) {
 			url = address._realURL;
 		}
 		else {
 			try {
+				if (url == '') {
+					throw new Components.Exception("Empty url");
+				}
 				let fs = Cc['@mozilla.org/docshell/urifixup;1'].getService(Ci.nsIURIFixup);
-				// throws if empty
 				let uri = fs.createFixupURI(url, 0);
 				try {
 					url = decodeURIComponent(uri.spec);
@@ -385,17 +382,17 @@ var Dialog = {
 				catch (ex) {
 					url = uri.spec;
 				}
+				var hash = DTA_getLinkPrintHash(url);
+				if (hash) {
+					$('hash').value = hash;
+				}
+				url = url.replace(/#.*$/, '');
+				address.value = url;
+				url = new DTA_URL(IOService.newURI(url, null, null));				
 			}
 			catch (ex) {
-				errors.push('URLaddress');
+				errors.push('address');
 			}
-			var hash = DTA_getLinkPrintHash(url);
-			if (hash) {
-				$('hash').value = hash;
-			}
-			url = url.replace(/#.*$/, '');
-			address.value = url;
-			url = new DTA_URL(IOService.newURI(url, null, null));
 		}
 		
 		var hash = null;
@@ -406,21 +403,19 @@ var Dialog = {
 			hash = $('hash').value;
 		}
 
-		$('directory', 'renaming', 'URLaddress', 'hash').forEach(
+		$('directory', 'renaming', 'address', 'hash').forEach(
 			function(e) {
 				// reset the styles
-				var style = e.inputField.style;
-				style.backgroundColor = 'transparent';
-				style.color = e.oldColor;
+				if (e.hasAttribute('error')) {
+					e.removeAttribute('error');
+				}
 			}
 		);
 		
 		if (errors.length) {
 			errors.forEach(
 				function(e) {
-					var style = $(e).inputField.style;
-					style.backgroundColor = 'red';
-					style.color = 'white';
+					$(e).setAttribute('error', 'true');
 				}
 			);
 			return false;
