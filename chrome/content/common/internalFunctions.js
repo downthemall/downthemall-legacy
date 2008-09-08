@@ -399,8 +399,6 @@ function getIcon(link, metalink, size) {
 	return "moz-icon://foo.html?size=" + size;
 }
 
-var makeObserver = DTA_makeObserver;
-
 /**
  * Encapulates all stringbundles of the current document and provides unified
  * access

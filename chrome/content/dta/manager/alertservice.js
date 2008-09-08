@@ -42,7 +42,7 @@
 			// some systems do not have this service
 			try {
 				this._service = Serv('@mozilla.org/alerts-service;1', 'nsIAlertsService');
-				makeObserver(this);
+				Preferences.makeObserver(this);
 				this._available = true;
 			}
 			catch (ex) {

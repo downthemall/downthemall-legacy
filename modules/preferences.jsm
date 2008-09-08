@@ -49,7 +49,8 @@ const EXPORTED_SYMBOLS = [
 	'resetBranchExt',
 	'resetAllExt',
 	'addObserver',
-	'removeObserver'
+	'removeObserver',
+	'makeObserver'
 ];
 
 const EXT = 'extensions.dta.';
@@ -188,9 +189,54 @@ function resetAllExt() {
 }
 
 function addObserver(branch, obj) {
+	makeObserver(obj);
 	prefs.QueryInterface(nsIPrefBranch2).addObserver(branch, obj, true);
 }
 
 function removeObserver(branch, obj) {
 	prefs.QueryInterface(nsIPrefBranch2).removeObserver(branch, obj);
+}
+
+function makeObserver(obj) {
+	try {
+		if (
+			obj.QueryInterface(Ci.nsISupportsWeakReference)
+			&& obj.QueryInterface(Ci.nsIObserver)
+		) {
+			return;
+		}
+	}
+	catch (ex) {
+		// fall-through
+	}
+	let __QueryInterface = obj.QueryInterface;
+	obj.QueryInterface = function(iid) {
+		try {
+			if (
+				iid.equals(Components.interfaces.nsISupports)
+				|| iid.equals(Components.interfaces.nsISupportsWeakReference)
+				|| iid.equals(Components.interfaces.nsIWeakReference)
+				|| iid.equals(Components.interfaces.nsIObserver)
+			) {
+				return obj;
+			}
+			if (__QueryInterface) {
+				debug("calling original: " + iid);
+				return __QueryInterface.call(this, iid);
+			}
+			throw Components.results.NS_ERROR_NO_INTERFACE;
+		}
+		catch (ex) {
+			debug("requested interface not available: " + iid);
+			throw ex;
+		}
+	};
+	// nsiWeakReference
+	obj.QueryReferent = function(iid) {
+		return obj.QueryInterface(iid);
+	};
+	// nsiSupportsWeakReference
+	obj.GetWeakReference = function() {
+		return obj;
+	};	
 }
