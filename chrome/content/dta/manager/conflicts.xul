@@ -46,8 +46,9 @@
 						$('context').selectedIndex
 					);
 					return true;
-				} catch (ex) {
-					Debug.log("accept() : " + ex);
+				}
+				catch (ex) {
+					Debug.log("accept() : ", ex);
 				}
 				return false;
 			}
