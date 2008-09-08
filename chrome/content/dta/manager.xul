@@ -35,10 +35,11 @@
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
 
 	<script type="application/javascript" src="chrome://dta/content/dta/manager.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/tooltip.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/tree.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/tray.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/prefs.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/sessionmanager.js" />
-	<script type="application/javascript" src="chrome://dta/content/dta/manager/tooltip.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/filehandling.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/alertservice.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/imex.js" />
@@ -115,6 +116,12 @@
 			<hbox id="infoBox"/>
 			<grid id="canvasGrid"/>
 		</tooltip>
+		<menupopup id="traymenu">
+			<menuitem label="&tooladd.label;" oncommand="Dialog.openAdd();"/>
+			<menuseparator/>
+			<menuitem label="&restore.label;" oncommand="TrayHandler.restore();"/>
+			<menuitem label="&close.label;" oncommand="window.close();"/> 
+		</menupopup>
 	</popupset>	
 	
 	<stack flex="1" id="mainstack">
@@ -122,7 +129,7 @@
 			<toolbox chromedir="&locale.dir;">
 			  <toolbar id="tools">
 					<spacer/>
-					<toolbarbutton label="&tooladd.label;" id="tooladd" oncommand="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome, centerscreen, dialog=no, dependent=yes');" tooltiptext="&tooladd.tooltip;" />
+					<toolbarbutton label="&tooladd.label;" id="tooladd" oncommand="Dialog.openAdd();" tooltiptext="&tooladd.tooltip;" />
 					<spacer class="visible" />
 					<toolbarbutton label="&resume.label;" id="toolplay" oncommand="Tree.resume();"/>
 					<toolbarbutton label="&pause.label;" id="toolpause" oncommand="Tree.pause();"/>

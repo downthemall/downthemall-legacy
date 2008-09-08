@@ -181,7 +181,15 @@ var Dialog = {
 		})();
 	},
 	
-	start: function() {
+	openAdd: function D_openAdd() {
+		window.openDialog(
+			'chrome://dta/content/dta/addurl.xul',
+			'_blank',
+			'chrome, centerscreen, dialog=no, dependent=yes'
+		);
+	},
+	
+	start: function D_start() {
 		if ("arguments" in window) {
 			startDownloads(window.arguments[0], window.arguments[1]);
 		}
@@ -2992,10 +3000,19 @@ var Serializer = {
 };
 
 addEventListener(
-	"DOMContentLoaded",
+	"load",
 	function() {
 		if (Preferences.getExt('startminimized') && window.arguments && window.arguments.length != 0) {
-			minimize();
+			setTimeout(
+				function() {
+					try {
+						window.QueryInterface(Ci.nsIDOMChromeWindow).minimize();
+					}
+					catch (ex) {
+					}
+				},
+				0
+			);
 		}
 	},
 	false

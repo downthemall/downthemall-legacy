@@ -44,3 +44,6 @@
 
 <!ENTITY options.caption "Options">
 <!ENTITY loading.label "Loading...">
+
+<!ENTITY restore.label "Restore">
+<!ENTITY close.label "Close">
