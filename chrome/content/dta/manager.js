@@ -1299,7 +1299,7 @@ QueueItem.prototype = {
 		if (Dialog.offline && this.isOf(QUEUED, PAUSED)) {
 			return _('offline');
 		}
-		return this._status + (this._autoRetryTime ? ' *' : '');
+		return this._status + (this.autoRetrying ? ' *' : '');
 	},
 	set status(nv) {
 		if (nv != this._status) {
@@ -1684,7 +1684,7 @@ QueueItem.prototype = {
 		Debug.logString("marked auto-retry: " + d);
 	},
 	autoRetry: function QI_autoRetry() {
-		if (!this._autoRetryTime || Utils.getTimestamp() - (Prefs.autoRetryInterval * 1000) < this._autoRetryTime) {
+		if (!this.autoRetrying || Utils.getTimestamp() - (Prefs.autoRetryInterval * 1000) < this._autoRetryTime) {
 			return;
 		}
 
