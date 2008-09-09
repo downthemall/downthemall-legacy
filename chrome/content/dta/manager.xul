@@ -44,7 +44,6 @@
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/alertservice.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/imex.js" />
 	
-	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>	
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
 
@@ -192,7 +191,6 @@
 
 	<statusbar id="footer" chromedir="&locale.dir;">
 		 <statusbarpanel id="statusText" label="" flex="1" />
-		 <statusbarpanel id="dtaHelp" class="statusbarpanel-iconic-text" label="&dtahelp;" onclick="openHelp('Manager','chrome://dta-help/content/help.rdf');" src="chrome://dta/skin/common/help.png" />
 		 <statusbarpanel id="options" class="statusbarpanel-iconic-text" label="&options.label;" onclick="DTA_showPreferences();" src="chrome://dta/skin/common/prefs.png" />
 	</statusbar>
 	

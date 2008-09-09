@@ -44,7 +44,6 @@
 	<script type="application/x-javascript" src="chrome://dta/content/integration/elements.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
-	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 
 	<menu image="chrome://dta/skin/common/dta.png" id="dtaCtxCompact" label="DownThemAll!" class="menu-iconic">
 		<menupopup id="dtaCtxSubmenu">
@@ -110,8 +109,6 @@
 			<menuseparator id="dtaToolsSep"/>
 			<menuitem id="dtaToolsPrefs" oncommand="DTA_showPreferences();"
 				label="&dta-pref.label;" image="chrome://dta/skin/common/prefs.png" class="menuitem-iconic" />
-			<menuitem id="dtaToolsHelp" oncommand="openHelp('introduction','chrome://dta-help/content/help.rdf');"
-				label="&dta-help.label;" image="chrome://dta/skin/common/help.png" class="menuitem-iconic" />	
 			<menuitem id="dtaToolsAbout" oncommand="window.openDialog('chrome://dta/content/about/about.xul','_blank','chrome,centerscreen,modal');"
 				label="&dta-about.label;" image="chrome://dta/skin/common/about.png" class="menuitem-iconic" />
 		</menupopup>

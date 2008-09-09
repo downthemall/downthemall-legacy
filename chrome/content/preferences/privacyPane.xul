@@ -16,8 +16,6 @@
 		label="&privacypane.label;"
 		onpaneload="Privacy.load();"
 		orient="vertical"
-		helpURI="chrome://dta-help/content/help.rdf"
-		helpTopic="Preferences_Privacy"		
 	>
 		<preferences>
 		  <preference id="dtarmcomp" name="extensions.dta.removecompleted" type="bool"/>

@@ -14,8 +14,6 @@
 	<prefpane
 		id="paneInterface"
 		label="&uipane.label;"
-		helpURI="chrome://dta-help/content/help.rdf"
-		helpTopic="Preferences_UI"
 		onpaneload="Interface.init();"		
 	>
 	

@@ -248,10 +248,8 @@ BatchGenerator.prototype = {
 
 
 var Dialog = {
-	multiHelp: true,
 	load: function DTA_load() {
 		try {
-			$('DownThemAll').getButton('help').hidden = !('openHelp' in window);
 			
 			this.ddDirectory = $("directory");
 			this.ddRenaming = $("renaming");			
@@ -279,7 +277,6 @@ var Dialog = {
 					address.readOnly = true;
 					$('batcheslabel').style.display = 'none';
 					$('batches').collapsed = true;
-					this.multiHelp = false;
 				}
 				var referrer = DTA_AddingFunctions.isLinkOpenable(a.referrer) ? a.referrer : null;
 				if (referrer) {
@@ -335,19 +332,6 @@ var Dialog = {
 			Debug.log("load():", ex);
 		}		
 	},
-	help: function DTA_help(event) {
-		var topic = event.originalTarget.getAttribute('topic');
-		if (!this.multiHelp) {
-			topic = 'AddUrl';
-		}
-		if (topic) {
-			openHelp(topic, 'chrome://dta-help/content/help.rdf');	
-		}
-		else {
-			$('popupHelp').showPopup($('DownThemAll').getButton('help'), -1, -1, "popup");
-		}
-	},
-	
 	download: function DTA_download(start) {
 		
 		var errors = [];

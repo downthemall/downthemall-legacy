@@ -63,7 +63,6 @@
 	id="DownThemAll"
 >
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
-	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
 
 	<script type="application/x-javascript"><![CDATA[
 		let DTA = {};
@@ -79,12 +78,7 @@
 			document.title = 'About ' + title;
 		}
 		function openNotice() {
-			if ('openHelp' in window) {
-				openHelp('About_Privacy','chrome://dta-help/content/help.rdf');
-			}
-			else {
-				openTab('chrome://dta-help/content/about.html#privacy');
-			}
+			openTab('chrome://dta/content/about/about.html#privacy');
 		}
   ]]></script>
 	

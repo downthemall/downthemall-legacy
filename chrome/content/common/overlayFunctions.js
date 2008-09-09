@@ -393,9 +393,10 @@ var DTA_AddingFunctions = {
 	}
 }
 var DTA_Mediator = {
-	_m: Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator),
-	_ios: Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService),
-	
+	_m: Components.classes["@mozilla.org/appshell/window-mediator;1"]
+	  .getService(Components.interfaces.nsIWindowMediator),
+	_ios: Components.classes["@mozilla.org/network/io-service;1"]
+	  .getService(Components.interfaces.nsIIOService),
 
 	getMostRecent: function(name)	{
 		var names = ['navigator:browser', 'mail:messageWindow', 'mail:3pane'];

@@ -10,7 +10,6 @@
 <!ENTITY cancel.label "Cancel">
 
 <!ENTITY options.label "Preferences">
-<!ENTITY dtahelp "Help!">
 
 <!ENTITY url.value "URL">
 <!ENTITY dest.caption "Save files in:">

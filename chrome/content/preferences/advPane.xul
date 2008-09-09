@@ -15,8 +15,6 @@
 		id="paneAdvanced"
 		label="&advancedpane.label;"
 		orient="vertical"
-		helpURI="chrome://dta-help/content/help.rdf"
-		helpTopic="Preferences_Advanced"
 		onpaneload="Advanced.load();"	
 	>
 	

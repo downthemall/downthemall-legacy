@@ -14,8 +14,6 @@
 		id="paneFilters"
 		label="&filterspane.label;"
 		onpaneload="Filters.load();"
-		helpURI="chrome://dta-help/content/help.rdf"
-		helpTopic="Preferences_Filters"
 		flex="1"
 	>
 		<tree id="filterTable" flex="1" seltype="single" onselect="Filters.selectionChanged()">
