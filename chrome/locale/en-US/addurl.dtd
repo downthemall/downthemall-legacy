@@ -3,5 +3,3 @@
 <!ENTITY desc.value "Enter the URL here and (optionally) the referrer page of the file you want to download.">
 <!ENTITY desc.batches.value "You can also use batch descriptors to download multiple files at one time.">
 <!ENTITY examples.value "Examples:">
-<!ENTITY help.batches.label "Batch Downloads">
-<!ENTITY help.adding.label "Adding URLs">

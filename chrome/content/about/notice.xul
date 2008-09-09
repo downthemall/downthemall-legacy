@@ -62,5 +62,5 @@
 	<stringbundleset>
 		<stringbundle src="chrome://dta/locale/notice.properties"/>
 	</stringbundleset>
-	<iframe id="frame" src="chrome://dta-help/content/about.html" flex="1"/>
+	<iframe id="frame" src="chrome://dta/content/about/about.html" flex="1"/>
 </dialog>

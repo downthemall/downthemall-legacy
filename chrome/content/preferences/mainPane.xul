@@ -14,8 +14,6 @@
 		id="paneMain"
 		label="&mainpane.label;"
 		onpaneload="Main.load();"
-		helpURI="chrome://dta-help/content/help.rdf"
-		helpTopic="Preferences_Main"
 	>
 
 		<preferences>

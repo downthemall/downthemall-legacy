@@ -146,8 +146,6 @@ var Dialog = {
 			this
 		);
 			
-		document.getElementById("dtaHelp").hidden = !("openHelp" in window);
-		
 		(function autofit() {
 			let de = document.documentElement;
 			let version = {};

@@ -37,8 +37,6 @@
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/select.js" />
 	
-	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
-
 	<script src="chrome://global/content/nsDragAndDrop.js"/>
 	<script src="chrome://global/content/nsTransferable.js"/>
 
@@ -53,7 +51,6 @@
 		<key modifiers="accel" key="A" oncommand="Dialog.selectAll();"/>
 		<key keycode="VK_RETURN" oncommand="Dialog.download(true);"/>
 		<key keycode="VK_ENTER" oncommand="Dialog.download(true);"/>
-		<key id="kHelp" modifiers="accel" key="H" oncommand="openHelp('introduction','chrome://dta-help/content/help.rdf');"/>
 	</keyset>
 
 	<popupset id="popups">
@@ -144,7 +141,6 @@
 	
 	<statusbar id="footer">
 		<statusbarpanel id="status" flex="1" />
-		<statusbarpanel id="dtaHelp" class="statusbarpanel-iconic-text" label="&dtahelp;" onclick="openHelp('Select','chrome://dta-help/content/help.rdf');" src="chrome://dta/skin/common/help.png" />
 		<statusbarpanel id="options" class="statusbarpanel-iconic-text" label="&options.label;" onclick="DTA_showPreferences();" src="chrome://dta/skin/common/prefs.png" />
 	</statusbar>
 

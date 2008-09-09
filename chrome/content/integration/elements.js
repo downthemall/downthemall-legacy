@@ -677,9 +677,9 @@ var DTA_ContextOverlay = {
 				else {
 					this.toolsBase.parentNode.insertBefore(cur, this.toolsBase);
 				}
-				document.getElementById('dtaToolsHelp').hidden = !('openHelp' in window);			
 			}
-		} catch(ex) {
+		}
+		catch(ex) {
 			DTA_debug.log("DTATools(): ", ex);
 		}
 	},
