@@ -28,3 +28,26 @@ treechildren::-moz-tree-cell-text {
 toolbar *{
 	color: windowText !important;
 }
+
+radio[pane] {
+	min-width: 60px;
+}
+
+.scale-slider {
+	-moz-appearance: scale-horizontal !important;	
+	height: 16px !important;
+	background-color: transparent !important;
+	background-image: url(chrome://global/skin/scale/scale-tray-horiz.gif) !important;
+	background-repeat: repeat-x !important;
+	background-attachment: scroll !important;
+	background-position: 0% 50% !important;
+	-moz-background-clip: -moz-initial !important;
+	-moz-background-origin: -moz-initial !important;
+	-moz-background-inline-policy: -moz-initial !important;	
+}	
+
+.scale-thumb {
+	-moz-appearance: scalethumb-horizontal !important;
+	width: 6px !important;
+	height: 16px !important;	
+}
