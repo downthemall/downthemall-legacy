@@ -98,7 +98,6 @@
 			<label
 				xbl:inherits="value=tag"
 				class="masktag"
-				ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
 				onclick="appendTag(event);"
 				tooltiptext="&mask.tip;"/>
 			<label xbl:inherits="value=desc"/>
