@@ -68,22 +68,16 @@ var MigrationService = {
 			if (DTA.compareVersion(lastVersion, "1.0a1") < 0) {
 				this._execute(['Prefs', 'DropDowns', 'Filters', 'Remove']);
 			}
-			if (DTA.compareversion(lastVersion, "1.0.1") < 0) {
+			if (DTA.compareVersion(lastVersion, "1.0.1") < 0) {
 				this._execute(['ResetMaxConnections']);
 			}			
     	var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
 				.createInstance(Components.interfaces.nsIDialogParamBlock);
     	params.SetNumberStrings(1);
     	params.SetString(0, DTA.VERSION);
-    	Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-				.getService(Components.interfaces.nsIWindowWatcher)
-    		.openWindow(
-	    		null,
-	    		"chrome://dta/content/about/notice.xul",
-	    		"_blank",
-	    		"chrome,centerscreen,all,alwaysRaised,dialog,modal",
-	    		params
-	    	);			
+    	let mediator = {};
+    	Components.utils.import('resource://dta/mediator.jsm', mediator);
+    	mediator.showNotice(null, params);		
 		}
 		catch(ex) {
 			debug("MigrationManager:", ex);
