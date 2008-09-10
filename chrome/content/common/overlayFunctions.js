@@ -358,7 +358,7 @@ var DTA_AddingFunctions = {
 
 	openManager : function (quite) {
 		try {
-			var win = DTA_Mediator.getByUrl("chrome://dta/content/dta/manager.xul");
+			var win = DTA_Mediator.getMostRecent('DTA:Manager');
 			if (win) {
 				if (!quite) {
 					win.focus();
@@ -370,7 +370,7 @@ var DTA_AddingFunctions = {
 				"_blank",
 				"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no"
 			);
-			return DTA_Mediator.getByUrl("chrome://dta/content/dta/manager.xul");
+			return DTA_Mediator.getMostRecent('DTA:Manager');
 		} catch(ex) {
 			DTA_debug.log("openManager():", ex);
 		}
@@ -378,7 +378,7 @@ var DTA_AddingFunctions = {
 	},
 
 	sendToDown : function(start, links) {
-		var win = DTA_Mediator.getByUrl("chrome://dta/content/dta/manager.xul");
+		var win = DTA_Mediator.getMostRecent('DTA:Manager');
 		if (win) {
 			win.self.startDownloads(start, links);
 			return;
@@ -392,129 +392,13 @@ var DTA_AddingFunctions = {
 		);
 	}
 }
-var DTA_Mediator = {
-	_m: Components.classes["@mozilla.org/appshell/window-mediator;1"]
-	  .getService(Components.interfaces.nsIWindowMediator),
-	_ios: Components.classes["@mozilla.org/network/io-service;1"]
-	  .getService(Components.interfaces.nsIIOService),
 
-	getMostRecent: function(name)	{
-		var names = ['navigator:browser', 'mail:messageWindow', 'mail:3pane'];
-		if (name) {
-			names.unshift(name);
-		}
-		var rv = null;
-		names.some(
-			function(name) {
-				rv = this._m.getMostRecentWindow(name);
-				return rv;
-			},
-			this
-		);
-		return rv;
-	},
-	getByUrl: function(url) {
-		if (!url) {
-			return null;
-		}
-		if (url instanceof DTA_URL) {
-			url = url.url;
-		}
-		if (url instanceof Components.interfaces.nsIURI) {
-			url = url.spec;
-		}
-		var enumerator = this._m.getEnumerator(null);
-		while (enumerator.hasMoreElements()) {
-			var win = enumerator.getNext();
-			if (win.location == url) {
-				return win;
-			}
-		}
-		return null;
-	},
-	getAllByType: function(type) {
-		var rv = [];
-		var enumerator = this._m.getEnumerator(type);
-		while (enumerator.hasMoreElements()) {
-			rv.push(enumerator.getNext());
-		}
-		return rv;
-	},
-	openTab: function WM_openTab(url, ref) {
-		if (!url) {
-			return;
-		}
-		var win = this.getMostRecent();
-		if (!win) {
-			window.open();
-			win = this.getMostRecent();
-		}
-		if (url instanceof DTA_URL) {
-			url = url.url;
-		}
-		if (ref instanceof DTA_URL) {
-			ref = ref.url;
-		}
-		if (!url instanceof Components.interfaces.nsIURI) {
-			throw new Error("Cannot open non nsIURI");
-		}
-		if (ref && !(ref instanceof Components.interfaces.nsIURI)) {
-			try {
-				ref = DTA_AddingFunctions.ios.newURI(ref, null, null);
-			}
-			catch (ex) {
-				DTA_debug.log(ref, ex);
-				ref = null;
-			}
-		}
-		try {
-			if ('delayedOpenTab' in win) {
-				win.delayedOpenTab(url, ref);
-				return;
-			}
-			win.getBrowser().addTab(url, ref);
-		}		
-		// thunderbird?
-		catch (ex) {
-			try {
-				var ps = Components.classes['@mozilla.org/uriloader/external-protocol-service;1']
-					.getService(Components.interfaces.nsIExternalProtocolService);
-				ps.loadUrl(url);
-			}
-			catch (ex) {
-				DTA_debug.log("cannot open link", ex);
-			}			
-		}
-	},
-	removeTab: function WM_removeTab(url) {
-		function chk(browser, url) {
-			if (browser.currentURI.spec == url) {
-				return true;
-			}
-			var frames = browser.contentWindow.frames;
-			if (frames && frames.length) {
-				for (var i = 0; i < frames.length; i++) {
-					if (frames[i].location && frames[i].location == url) {
-						return true;
-					}
-				}
-			}
-			return false;
-		};		
-		
-		var enumerator = this._m.getEnumerator("navigator:browser");
-		while (enumerator.hasMoreElements()) {
-			var win = enumerator.getNext();
-			var browser = win.getBrowser();
-			for (var i = browser.browsers.length - 1; i >= 0; --i) {
-				if (chk(browser.getBrowserAtIndex(i), url)) {
-					browser.removeTab(browser.mTabContainer.childNodes[i]);
-					return;
-				}
-			}
-		}
+let DTA_Mediator = {
+	open: function DTA_Mediator_open(url, ref) {
+		this.openUrl(window, url, ref);
 	}
-};
+}
+Components.utils.import('resource://dta/mediator.jsm', DTA_Mediator);
 
 /**
  * Checks if a provided strip has the correct hash format Supported are: md5,

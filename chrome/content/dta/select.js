@@ -758,7 +758,7 @@ var Dialog = {
 		for (var r = 0; r < rangeCount; ++r) {
 			tree.selection.getRangeAt(r, start, end);
 			for (var i = start.value; i <= end.value; ++i) {
-				DTA_Mediator.openTab(tree._links[i].url.url, tree._links[i].referrer);
+				DTA_Mediator.open(tree._links[i].url.url, tree._links[i].referrer);
 			}
 		}
 	},

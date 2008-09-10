@@ -10,23 +10,30 @@
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	title="DownThemAll! - License and Privacy Notice"
 	buttons="accept,cancel"
-	buttonlabelaccept="&accept;"
 	buttonlabelcancel="&decline;"
 	ondialogaccept="return accept();"
 	ondialogcancel="return cancel();"
 	width="500" height="420"
 	style="padding: 0px 0px 3px 0px;"
+	acceptLabel="&accept;"
 >
 	<script type="application/javascript"><![CDATA[
 		
 		function load(evt) {
-			if (evt.originalTarget.location.href.search(/about\.html$/) != -1) {
-				var doc = document.getElementById('frame').contentDocument;
-				var head = doc.getElementById('header')
-				head.parentNode.removeChild(head);
+			if (!window.arguments || !window.arguments.length) {
+				document.documentElement.getButton('cancel').hidden = true;
 			}
+			else {
+				button = document.documentElement.getButton('accept');
+				button.setAttribute('label', document.documentElement.getAttribute('acceptLabel'));
+			}
+			document.getElementById('frame').contentWindow.scrollTo(0, 0);
 		}
 		function accept() {
+			if (!window.arguments || !window.arguments.length) {
+				return true;
+			}
+			
 			let Preferences = {};
 			Components.utils.import('resource://dta/preferences.jsm', Preferences);
 
@@ -41,7 +48,10 @@
 			return true;
 		}
 		function cancel() {
-			if (!confirm(_("conf"))) {
+			if (!window.arguments || !window.arguments.length) {
+				return true;
+			}		
+			if (!confirm(document.getElementById('bundle').getString('conf'))) {
 				return false;
 			}
 			let DTA = {};
@@ -60,7 +70,8 @@
 		window.addEventListener('DOMContentLoaded', load, false);
 	]]></script>
 	<stringbundleset>
-		<stringbundle src="chrome://dta/locale/notice.properties"/>
+		<stringbundle id="bundle" src="chrome://dta/locale/notice.properties"/>
 	</stringbundleset>
-	<iframe id="frame" src="chrome://dta/content/about/about.html" flex="1"/>
+	<hbox style="background: white url(chrome://dta/skin/common/logo.png) no-repeat top right; height: 43px;"/>
+	<iframe id="frame" style="background: white;" src="chrome://dta/content/about/notice.html" flex="1"/>
 </dialog>

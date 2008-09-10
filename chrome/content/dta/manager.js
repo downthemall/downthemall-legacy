@@ -187,6 +187,15 @@ var Dialog = {
 		);
 	},
 	
+	openDonate: function D_openDonate() {
+		try {
+			DTA_Mediator.open('http://www.downthemall.net/howto/donate/');
+		}
+		catch(ex) {
+			alert(ex);
+		}
+	},
+	
 	start: function D_start() {
 		if ("arguments" in window) {
 			startDownloads(window.arguments[0], window.arguments[1]);

@@ -415,7 +415,7 @@ function NSResolver(prefix) {
 		return true;
 	},
 	openLink: function(e) {
-		DTA_Mediator.openTab(e.link);
+		DTA_Mediator.open(e.link);
 	},
 	select: function(type) {
 		var f;
