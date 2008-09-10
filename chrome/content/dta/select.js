@@ -278,7 +278,7 @@ Tree.prototype = {
 	getColumnProperties: function(column, element, prop) {},
 
 	getRowProperties: function(idx, prop) {
-		var l = this._links[idx];
+		let l = this._links[idx];
 		// AppendElement will just accept nsIAtom.
 		// no documentation on devmo, xulplanet though :p
 		prop.AppendElement(this.getAtom(l.checked));
@@ -289,6 +289,8 @@ Tree.prototype = {
 		if (column.index == 1) {
 			prop.AppendElement(this._iconic);
 		}
+		let l = this._links[idx];
+		prop.AppendElement(this.getAtom(l.checked));
 	},
 
 	// called when the user clicks our checkboxen

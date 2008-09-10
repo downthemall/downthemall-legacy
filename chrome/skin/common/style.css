@@ -139,7 +139,7 @@ scrollbarbutton[sbattr="scrollbar-up-bottom"]{
 	
 }
 treechildren::-moz-tree-cell-text(selected) {
-	color: white !important;
+	color: white;
 	font-weight: bold;
 }
 treechildren::-moz-tree-row(selected) {
