@@ -68,7 +68,7 @@
 		let DTA = {};
 		Components.utils.import('resource://dta/version.jsm', DTA);
 		function openTab(url) {
-			DTA_Mediator.openTab(url);
+			DTA_Mediator.open(url);
 			self.close();
 		}
 		function versionFill() {
@@ -78,7 +78,7 @@
 			document.title = 'About ' + title;
 		}
 		function openNotice() {
-			openTab('chrome://dta/content/about/about.html#privacy');
+			DTA.mediator.showNotice(window);
 		}
   ]]></script>
 	
