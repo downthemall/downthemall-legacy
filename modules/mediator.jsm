@@ -63,9 +63,14 @@ function objToString(obj) {
 	if (
 		typeof obj == 'string'
 		|| obj instanceof String
-		|| obj instanceof Ci.nsIURI
 	) {
 		return obj.toString();
+	}
+	if (
+		obj instanceof Ci.nsIURL
+		|| obj instanceof Ci.nsIURI
+	) {
+		return obj.spec;
 	}
 	if (obj.url) {
 		return objToString(obj.url);
