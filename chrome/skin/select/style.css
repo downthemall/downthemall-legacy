@@ -135,10 +135,6 @@ treechildren::-moz-tree-row(fastFiltered) {
 treechildren::-moz-tree-row(fastFiltered, selected) {
 	background-color: #DFC2C2 !important;
 }
-treechildren::-moz-tree-cell-text(manuallySelected, selected) {
-	font-family: monospace;
-	color: black !important;
-}	
 treechildren::-moz-tree-cell-text(manuallySelected, selected),
 treechildren::-moz-tree-cell-text(f1, selected),
 treechildren::-moz-tree-cell-text(f2, selected),
