@@ -1675,15 +1675,15 @@ QueueItem.prototype = {
 	},
 	
 	removeTmpFile: function QI_removeTmpFile() {
-		if (!this.tmpFile.exists()) {
-			return;
+		if (!!this._tmpFile && this._tmpFile.exists()) {
+			try {
+				this._tmpFile.remove(false);
+			}
+			catch (ex) {
+				Debug.log("failed to remove tmpfile: " + this.tmpFile.path, ex);
+			}
 		}
-		try {
-			this.tmpFile.remove(false);
-		}
-		catch (ex) {
-			Debug.log("failed to remove tmpfile: " + this.tmpFile.path, ex);
-		}
+		this._tmpFile = null;
 	},
 	sessionConnections: 0,
 	_autoRetries: 0,
