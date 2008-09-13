@@ -1570,6 +1570,7 @@ QueueItem.prototype = {
 				"name": name,
 				"ext": ext,
 				"text": description,
+				"flattext": description.replaceSlashes(' ').replace(/[\n\r\s]+/g, ' '),
 				"url": host,
 				"subdirs": uripath,
 				"flatsubdirs": uripath.replaceSlashes('-'),
