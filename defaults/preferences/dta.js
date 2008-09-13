@@ -71,6 +71,7 @@ pref("extensions.dta.loadendfirst", 0);
 pref("extensions.dta.loadendfirst", 0);
 pref("extensions.dta.startminimized", false);
 pref("extensions.dta.minimizetotray", false);
+pref("extensions.dta.flatreplacementchar", "-");
 
 // Non-customizable-toolbar specific
 pref("extensions.dta.sm.buttons", "1,1,0");
