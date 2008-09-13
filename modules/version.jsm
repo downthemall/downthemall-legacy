@@ -16,6 +16,6 @@ function compareVersion(version, cmp) {
 	if (!cmp) {
 		[version, cmp] = [VERSION, version];
 	}
-	cmp = cmp.replace(/^(\d+\.\d+).*$/, '$1');
+	version = version.replace(/^([\d\w]+\.[\d\w]+).*?$/, '$1');
 	return comparator.compare(version, cmp);
 }
