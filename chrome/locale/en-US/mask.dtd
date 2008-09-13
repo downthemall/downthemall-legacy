@@ -14,6 +14,7 @@
 <!ENTITY mask.subdirs "URL subdirectories">
 <!ENTITY mask.flatsubdirs "Flat URL subdirectories">
 <!ENTITY mask.text "Link description">
+<!ENTITY mask.flattext "Flat link description">
 <!ENTITY mask.refer "Referrer URL">
 <!ENTITY mask.qstring "Query String">
 <!ENTITY mask.tip "Click or drag to renaming mask">

@@ -71,6 +71,7 @@
 							<rows>
 								<row tag="*num*" desc="&mask.num;"/>
 								<row tag="*text*" desc="&mask.text;"/>
+								<row tag="*flattext*" desc="&mask.flattext;"/>
 								<row tag="*hh*" desc="&mask.hh;"/>
 								<row tag="*mm*" desc="&mask.mm;"/>
 								<row tag="*ss*" desc="&mask.ss;"/>
