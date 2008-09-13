@@ -61,7 +61,8 @@ var Prefs = {
 		['confirmRemove', true],
 		['permissions', 384],
 		['loadEndFirst', 0],
-		['minimizeToTray', false]
+		['minimizeToTray', false],
+		['flatReplacementChar', '-']
 	],
 
 	// nsIObserver
