@@ -35,7 +35,9 @@
 	ondialogextra1="return Dialog.download(false);"
 	buttons="accept,extra1,cancel"
 	buttonlabelaccept="&start.label;"
-	buttonlabelextra1="&queue.label;"	
+	buttonlabelextra1="&queue.label;"
+	buttonaccesskeyaccept="&start.key;"
+	buttonaccesskeyextra1="&queue.key;"	
 	>
 	
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
