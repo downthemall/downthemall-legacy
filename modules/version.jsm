@@ -1,4 +1,4 @@
-const EXPORTED_SYMBOLS = ['ID', 'ITEM', 'VERSION', 'NAME', 'compareVersion'];
+const EXPORTED_SYMBOLS = ['ID', 'ITEM', 'VERSION', 'BASE_VERSION', 'NAME', 'compareVersion'];
 
 const ID = 'dta@downthemall.net';
 const ITEM = Components.classes["@mozilla.org/extensions/manager;1"]
