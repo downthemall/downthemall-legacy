@@ -1848,10 +1848,7 @@ QueueItem.prototype = {
 			e.hash = Utils.atos(this.hash.sum);
 			e.hashType = Utils.atos(this.hash.type);
 		}
-		if (this.autoRetrying) {
-			e.state = QUEUED;
-		}
-		else if (this.is(RUNNING)) {
+		if (this.autoRetrying || this.is(RUNNING)) {
 			e.state = QUEUED;
 		}
 		else {

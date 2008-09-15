@@ -43,6 +43,8 @@ const DB_VERSION = 1;
 Components.utils.import('resource://dta/cothread.jsm');
 
 var SessionManager = {
+	_broken: [],
+	
 	init: function() {
 		this._con = Serv('@mozilla.org/storage/service;1', 'mozIStorageService')
 			.openDatabase(DTA_getProfileFile(DB_FILE));
@@ -193,6 +195,18 @@ var SessionManager = {
 				if (!stmt || !stmt.executeStep()) {
 					stmt.finalize();
 					delete stmt;
+					if (this._broken.length) {
+						try {
+							for each (let id in this._broken) {
+								this.deleteDownload(id);
+								Debug.logString("Removed broken download #" + id);
+							}
+						}
+						catch (ex) {
+							Debug.log("failed to remove broken downloads", ex);
+						}
+						this._broken = [];
+					}					
 					delete this._loader;
 					this.endUpdate();
 					Tree.endUpdate();
@@ -204,111 +218,118 @@ var SessionManager = {
 				// ... not yet.
 				try {
 					let dbId = stmt.getInt64(0);
-					let down = Serializer.decode(stmt.getUTF8String(1));
-					let get = function(attr) {
-						return (attr in down) ? down[attr] : null;
-					}
-	
-					let d = new QueueItem();
-					d.dbId = dbId;
-					d.urlManager = new UrlManager(down.urlManager);
-					d.numIstance = get("numIstance");
-	
-					let referrer = get('referrer');
-					if (referrer) {
-						try {
-							d.referrer = referrer.toURL();
-						}
-						catch (ex) {
-							// We might have been fed with about:blank or other crap. so ignore.
-						}
-					}
-				
-					// only access the setter of the last so that we don't generate stuff trice.
-					d._pathName = get('pathName');
-					d._description = get('description');
-					d._mask = get('mask');
-					d.fileName = get('fileName');
-					
-					let tmpFile = get('tmpFile');
-					if (tmpFile) {
-						try {
-							tmpFile = new FileFactory(tmpFile);
-							if (tmpFile.exists()) {
-								d._tmpFile = tmpFile;
-							}
-							else {
-								// Download partfile is gone!
-								// XXX find appropriate error message!
-								d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
-							}
-						}
-						catch (ex) {
-							Debug.log("tried to construct with invalid tmpFile", ex);
-							d.cancel();
-						}
-					}				
-	
-					d.startDate = new Date(get("startDate"));
-					d.visitors = new VisitorManager(down.visitors);
-					
-					for each (let e in [
-						'contentType',
-						'conflicts',
-						'postData',
-						'destinationName',
-						'resumable',
-						'totalSize',
-						'compression',
-						'fromMetalink',
-					]) {
-						d[e] = (e in down) ? down[e] : null;
-					}
-	
-					if (down.hash) {
-						d.hash = new DTA_Hash(down.hash, down.hashType);
-					}
-					if ('maxChunks' in down) {
-						d._maxChunks = down.maxChunks;
-					}
-	
-					d.started = d.partialSize != 0;
-					let state = get('state') 
-					if (state) {
-						d._state = state;
-					}
-					switch (d._state) {
-						case PAUSED:
-						case QUEUED:
-						{
-							for each (let c in down.chunks) {
-								d.chunks.push(new Chunk(d, c.start, c.end, c.written));
-							}
-							d.refreshPartialSize();
-							if (d._state == PAUSED) {
-								d.status = TEXT_PAUSED;
-							}
-							else {
-								d.status = TEXT_QUEUED;
-							}
-						}
-						break;
+					try {
+						let down = Serializer.decode(stmt.getUTF8String(1));
 						
-						case COMPLETE:
-							d.partialSize = d.totalSize;
-							d.status = TEXT_COMPLETE;
-						break;
-						
-						case CANCELED:
-							d.status = TEXT_CANCELED;
-						break;
-					}
+						let get = function(attr) {
+							return (attr in down) ? down[attr] : null;
+						}
+		
+						let d = new QueueItem();
+						d.dbId = dbId;
+						d.urlManager = new UrlManager(down.urlManager);
+						d.numIstance = get("numIstance");
+		
+						let referrer = get('referrer');
+						if (referrer) {
+							try {
+								d.referrer = referrer.toURL();
+							}
+							catch (ex) {
+								// We might have been fed with about:blank or other crap. so ignore.
+							}
+						}
 					
-					// XXX better call this only once
-					// See above
-					d.rebuildDestination();
-	
-					Tree.add(d);
+						// only access the setter of the last so that we don't generate stuff trice.
+						d._pathName = get('pathName');
+						d._description = get('description');
+						d._mask = get('mask');
+						d.fileName = get('fileName');
+						
+						let tmpFile = get('tmpFile');
+						if (tmpFile) {
+							try {
+								tmpFile = new FileFactory(tmpFile);
+								if (tmpFile.exists()) {
+									d._tmpFile = tmpFile;
+								}
+								else {
+									// Download partfile is gone!
+									// XXX find appropriate error message!
+									d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+								}
+							}
+							catch (ex) {
+								Debug.log("tried to construct with invalid tmpFile", ex);
+								d.cancel();
+							}
+						}				
+		
+						d.startDate = new Date(get("startDate"));
+						d.visitors = new VisitorManager(down.visitors);
+						
+						for each (let e in [
+							'contentType',
+							'conflicts',
+							'postData',
+							'destinationName',
+							'resumable',
+							'totalSize',
+							'compression',
+							'fromMetalink',
+						]) {
+							d[e] = (e in down) ? down[e] : null;
+						}
+		
+						if (down.hash) {
+							d.hash = new DTA_Hash(down.hash, down.hashType);
+						}
+						if ('maxChunks' in down) {
+							d._maxChunks = down.maxChunks;
+						}
+		
+						d.started = d.partialSize != 0;
+						let state = get('state') 
+						if (state) {
+							d._state = state;
+						}
+						switch (d._state) {
+							case PAUSED:
+							case QUEUED:
+							{
+								for each (let c in down.chunks) {
+									d.chunks.push(new Chunk(d, c.start, c.end, c.written));
+								}
+								d.refreshPartialSize();
+								if (d._state == PAUSED) {
+									d.status = TEXT_PAUSED;
+								}
+								else {
+									d.status = TEXT_QUEUED;
+								}
+							}
+							break;
+							
+							case COMPLETE:
+								d.partialSize = d.totalSize;
+								d.status = TEXT_COMPLETE;
+							break;
+							
+							case CANCELED:
+								d.status = TEXT_CANCELED;
+							break;
+						}
+						
+						// XXX better call this only once
+						// See above
+						d.rebuildDestination();
+		
+						Tree.add(d);
+					}
+					catch (ex) {
+						Debug.log('failed to init download #' + dbId + ' from queuefile', ex);
+						this._broken.push(dbId);
+					}
 				}
 				catch (ex) {
 					Debug.log('failed to init a download from queuefile', ex);
