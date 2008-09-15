@@ -78,7 +78,7 @@
 			document.title = 'About ' + title;
 		}
 		function openNotice() {
-			DTA.mediator.showNotice(window);
+			DTA_Mediator.showNotice(window);
 		}
   ]]></script>
 	

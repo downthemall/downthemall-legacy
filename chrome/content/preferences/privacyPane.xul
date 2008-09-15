@@ -62,6 +62,7 @@
 			<button id="butDelLog" label="&privacypane.deletelog.label;" oncommand="Privacy.deleteLog();" />
 		</groupbox>
 		
+		<!-- Does not apply, not in use
 		<groupbox>
 			<caption label="&privacypane.updates.caption;"/>
 			<checkbox id="infoAndDonation" 
@@ -71,6 +72,7 @@
 				label="&privacypane.statistics.label;"
 				preference="dtastatistics" />				
 		</groupbox>
+		-->
 		
 		<groupbox>
 			<caption label="&privacypane.notice.caption;"/>
