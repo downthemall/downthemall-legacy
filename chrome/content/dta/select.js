@@ -148,31 +148,21 @@ Tree.prototype = {
 			$("status").label = _("status");
 		}
 	},
-	isChecked: function(idx) {
-		return this._links[idx].checked.length != 0;
-	},
+	isChecked: function(idx) this._links[idx].checked.length != 0,
 
 	/*
 	 * actual nsITreeView follows
 	 */
-	get rowCount() {
-		// quite easy.. we have a static list.
-		return this._links.length;
-	},
+	get rowCount() this._links.length,
 
 	// used to initialize nsITreeview and provide the corresponding treeBoxObject
 	setTree: function(box) {
 		this._box = box;
 	},
 
-	getParentIndex: function(idx) {
-		// no parents, as we are actually a list
-		return -1;
-	},
-	getLevel: function(idx) {
-		// ... and being a list all nodes are on the same level
-		return 0;
-	},
+	getParentIndex: function(idx) -1,
+	getLevel: function(idx) 0,
+	
 	getCellText: function(idx, col) {
 
 		// corresponding link
@@ -198,30 +188,12 @@ Tree.prototype = {
 		return null;
 	},
 
-	isSorted: function() {
-		return !!this._sortColumn;
-	},
-	isContainer: function(idx) {
-		// being a container means we got children... but we don't have any children
-		// because we're a list actually
-		return false;
-	},
-	isContainerOpen: function(idx) {
-		return false;
-	},
-	isContainerEmpty: function(idx) {
-		return false;
-	},
-
-	isSeparator: function(idx) {
-		// no separators
-		return false;
-	},
-
-	isEditable: function(idx) {
-		// and nothing is editable
-		return true;
-	},
+	isSorted: function() !!this._sortColumn,
+	isContainer: function(idx) false,
+	isContainerOpen: function(idx) false,
+	isContainerEmpty: function(idx) false,
+	isSeparator: function(idx) false,
+	isEditable: function(idx) false,
 
 	// will grab the "icon" for a cell.
 	getImageSrc: function(idx, col) {
