@@ -61,7 +61,7 @@ var MigrationService = {
 			debug("current " + DTA.VERSION);
 
 			let lastVersion = Preferences.getExt('version', '0');
-			if (0 == DTA.compareVersion(lastVersion)) {
+			if (0 == DTA.compareVersion(DTA.BASE_VERSION, lastVersion)) {
 				return;
 			}
 			debug("MigrationManager: migration started");
@@ -74,7 +74,7 @@ var MigrationService = {
     	var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
 				.createInstance(Components.interfaces.nsIDialogParamBlock);
     	params.SetNumberStrings(1);
-    	params.SetString(0, DTA.VERSION);
+    	params.SetString(0, DTA.BASE_VERSION);
     	let mediator = {};
     	Components.utils.import('resource://dta/mediator.jsm', mediator);
     	mediator.showNotice(null, params);		
