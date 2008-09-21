@@ -183,8 +183,8 @@ var Tree = {
 		for (qi in this.selected) {
 			var item = new TransferData();
 			try {
-				item.addDataForFlavour('text/x-moz-url', qi.urlManager.url + "\n" + qi.destinationName);
-				item.addDataForFlavour("text/unicode", qi.urlManager.url);
+				item.addDataForFlavour('text/x-moz-url', qi.urlManager.url.spec + "\n" + qi.destinationName);
+				item.addDataForFlavour("text/unicode", qi.urlManager.url.spec);
 				// this is fake, so that we know that we are we ;)
 				item.addDataForFlavour('application/x-dta-position', qi.position);
 				data.push(item);
