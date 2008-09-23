@@ -87,7 +87,7 @@ var ImEx = {
 			
 			let list = doc.createElement('ol');
 			for (let d in downloads) {
-				let url = d.urlManager.url;
+				let url = d.urlManager.url.spec;
 				if (d.hash) {
 					url += '#hash(' + d.hash.type + ":" + d.hash.sum + ")";
 				}
@@ -139,7 +139,7 @@ var ImEx = {
 			null
 		);
 		for (let d in downloads) {
-			let url = d.urlManager.url;
+			let url = d.urlManager.url.spec;
 			if (d.hash) {
 				url += '#hash(' + d.hash.type + ":" + d.hash.sum + ")";
 			}
@@ -177,12 +177,12 @@ var ImEx = {
 			let r = doc.createElement('resources');
 			for (let u in d.urlManager.all) {
 				let n = doc.createElement('url');
-				let t = u.url.match(/^(\w+):/);
+				let t = u.url.spec.match(/^(\w+):/);
 				n.setAttribute('type', t[1]);
 				n.setAttribute('preference', u.preference);
 				n.setAttributeNS(NS_DTA, 'usable', u.usable);
 				n.setAttributeNS(NS_DTA, 'charset', u.charset);
-				n.textContent = u.url;
+				n.textContent = u.url.spec;
 				r.appendChild(n);
 			}
 			if (d.hash) {
