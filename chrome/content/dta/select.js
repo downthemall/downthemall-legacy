@@ -193,7 +193,7 @@ Tree.prototype = {
 	isContainerOpen: function(idx) false,
 	isContainerEmpty: function(idx) false,
 	isSeparator: function(idx) false,
-	isEditable: function(idx) false,
+	isEditable: function(idx, col) col.index == 0,
 
 	// will grab the "icon" for a cell.
 	getImageSrc: function(idx, col) {
@@ -267,9 +267,8 @@ Tree.prototype = {
 
 	// called when the user clicks our checkboxen
 	setCellValue: function(idx, col, value) {
-
 		// set new checked state.
-		var l = this._links[idx];
+		let l = this._links[idx];
 		if (value == "true") {
 			l.checked = "manuallySelected";
 			l.manuallyChecked = true;
