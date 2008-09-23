@@ -34,45 +34,53 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const METALINK_LOGO = 'chrome://dta/skin/icons/metalink48.png';
+var METALINK_LOGO = 'chrome://dta/skin/icons/metalink48.png';
  
-function NSResolver(prefix) {
-  if(prefix == 'html') {
-    return 'http://www.w3.org/1999/xhtml';
-  }
- 	return 'http://www.metalinker.org/';
-}
- 
- var Metalinker = {
+var NSResolver = {
+	lookupNamespaceURI: function NSR_lookupNamespaceURI(prefix) {
+		switch (prefix) {
+		case 'html':
+			return NS_HTML;
+		case 'dta':
+			return NS_DTA;
+	  default:
+	    return NS_METALINKER;
+		break;  
+	  }
+	}
+}; 
+
+var Metalinker = {
  	_getNodes: function ML__getNodes(elem, query) {
-		var rv = [];
-		var nodeSet = elem.ownerDocument.evaluate(
+		let rv = [];
+		let doc = elem instanceof Document ? elem : elem.ownerDocument;
+		let iterator = doc.evaluate(
 			query,
 			elem,
 			NSResolver,
-			XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+			XPathResult.ORDERED_NODE_ITERATOR_TYPE,
 			null
 		);
-		for (var j = 0; j < nodeSet.snapshotLength; ++j) {
-			rv.push(nodeSet.snapshotItem(j));
+		for (let n = iterator.iterateNext(); n; n = iterator.iterateNext()) {
+			rv.push(n);
 		}
 		return rv;
 	},
 	_getNode: function ML_getNode(elem, query) {
-		var r = this._getNodes(elem, query);
+		let r = this._getNodes(elem, query);
 		if (r.length) {
 			return r.shift();
 		}
 		return null;
 	},
  	_getSingle: function ML__getSingle(elem, query) {
- 		var rv = this._getNode(elem, 'ml:' + query);
+ 		let rv = this._getNode(elem, 'ml:' + query);
  		return rv ? rv.textContent.trim() : '';
  	},
  	_getLinkRes: function(elem, query) {
- 		var rv = this._getNode(elem, 'ml:' + query);
+ 		let rv = this._getNode(elem, 'ml:' + query);
  		if (rv) {
- 			var n = this._getSingle(rv, "name"), l = this._checkURL(this._getSingle(rv, "url"));
+ 			let n = this._getSingle(rv, 'name'), l = this._checkURL(this._getSingle(rv, 'url'));
  			if (n && l) {
  				return [n, l];
  			}
@@ -105,7 +113,7 @@ function NSResolver(prefix) {
  	handleDownload: function ML_handleDownload(download) {
 		download.state = CANCELED;
 		Tree.remove(download, false);
-		var file = new FileFactory(download.destinationFile);
+		let file = new FileFactory(download.destinationFile);
 		
 		this.handleFile(file, download.referrer);
 		
@@ -122,59 +130,63 @@ function NSResolver(prefix) {
 				aReferrer = aReferrer.spec;
 			}		
 		
-			var fiStream = new FileInputStream(aFile, 1, 0, false);
-			var domParser = new DOMParser();
-			var doc = domParser.parseFromStream(fiStream, null, aFile.fileSize, "application/xml");
-			var root = doc.documentElement;
+			let fiStream = new FileInputStream(aFile, 1, 0, false);
+			let domParser = new DOMParser();
+			let doc = domParser.parseFromStream(fiStream, null, aFile.fileSize, "application/xml");
+			let root = doc.documentElement;
 			fiStream.close();
 			
 			if (root.nodeName != 'metalink' || root.getAttribute('version') != '3.0') {
-				throw new Error(_('mlinvalid'));
+				throw new Exception(_('mlinvalid'));
 			}
-	
-			var aNum = Preferences.getExt('numistance', 0);
+			let aNum = Preferences.getExt('numistance', 0);
 			if (++aNum > 999) {
 				aNum = 1;
 			}
 			Preferences.setExt('numistance', aNum);
 	
 	
-			var locale = this.locale.split('-').map(function(l) { return l.slice(0, 2).toLowerCase(); }).reverse();
-			var downloads = [];
-			var files = root.getElementsByTagName('file');
-			for (var i = 0, e = files.length; i < e; ++i) {
-				var file = files[i];
-				var fileName = file.getAttribute('name').getUsableFileName();
+			let locale = this.locale.split('-').map(function(l) { return l.slice(0, 2).toLowerCase(); }).reverse();
+			let downloads = [];
+			let files = this._getNodes(doc, '//ml:files/ml:file');
+			for each (let file in files) {
+				let fileName = file.getAttribute('name').getUsableFileName();
 				if (!fileName) {
 					throw new Exception("File name not provided!");
 				}
-				var referrer = null;
+				let referrer = null;
 				if (file.hasAttributeNS(NS_DTA, 'referrer')) {
 					referrer = file.getAttributeNS(NS_DTA, 'referrer');
 				}
 				else {
 					referrer = aReferrer;
 				}
-				var num = aNum;
+				let num = aNum;
 				if (file.hasAttributeNS(NS_DTA, 'num')) {
 					try {
 						num = parseInt(file.getAttributeNS(NS_DTA, 'num'));
-					} catch (ex) { /* no-op */ }
+					}
+					catch (ex) {
+						/* no-op */
+					}
 				}
-				var startDate = new Date();
+				let startDate = new Date();
 				if (file.hasAttributeNS(NS_DTA, 'date')) {
 					try {
 						startDate = new Date(parseInt(file.getAttributeNS(NS_DTA, 'num')));
-					} catch (ex) { /* no-op */ }
+					}
+					catch (ex) {
+						/* no-op */
+					}
 				}				
 					
-				var urls = [];
-				var urlNodes = this._getNodes(file, 'ml:resources/ml:url');
+				let urls = [];
+				let urlNodes = this._getNodes(file, 'ml:resources/ml:url');
 				for each (var url in urlNodes) {
-					var type = url.getAttribute('type');
-					var preference = 1;
-					var charset = doc.characterSet;
-					var usable = null;
+					let type = url.getAttribute('type');
+					let preference = 1;
+					let charset = doc.characterSet;
+					let usable = null;
 					
 					if (url.hasAttribute('preference')) {
 						var a = new Number(url.getAttribute('preference'));
@@ -211,11 +223,11 @@ function NSResolver(prefix) {
 						Debug.log("Failed to parse hash: " + h.textContent.trim() + "/" + h.getAttribute('type'), ex);
 					}
 				}
-				var desc = this._getSingle(file, 'description');
+				let desc = this._getSingle(file, 'description');
 				if (!desc) {
 					desc = this._getSingle(root, 'description');
 				}
-				var size = this._getSingle(file, 'size');
+				let size = this._getSingle(file, 'size');
 				size = parseInt(size);
 				if (isFinite(size)) {
 					size = Utils.formatBytes(size);
@@ -250,7 +262,7 @@ function NSResolver(prefix) {
 				throw new Error(_('mlnodownloads'));
 			}
 			if (downloads.length) {
-				var info = {
+				let info = {
 					'identity': this._getSingle(root, 'identity'),
 					'description': this._getSingle(root, 'description'),
 					'logo': this._checkURL(this._getSingle(root, 'logo')),
@@ -266,24 +278,24 @@ function NSResolver(prefix) {
 					info
 				);
 				downloads = downloads.filter(function(d) { return d.selected; });
-				if (info.start && downloads.length) {
+				if (downloads.length) {
 					startDownloads(info.start, downloads);
 				}
 			}
 		}
 		catch (ex) {
+			Debug.log("Metalinker::handleDownload", ex);			
 			if (!(ex instanceof Error)) {
 				ex = new Error(_('mlerror', [ex.error]));
 			}
 			if (ex instanceof Error) {
 				AlertService.show(_('mlerrortitle'), ex.message, false);
 			}
-			Debug.log("Metalinker::handleDownload", ex);
 		}
  	},
  	_insertDownload: function(d) {
  		if (d.lang && d.lang.search(/^\w{2}(?:-\w{2})?$/) != -1) {
- 			var locale = this.locale;
+ 			let locale = this.locale;
  			d.selected = locale.slice(0,2) == d.lang.slice(0,2);
  		}
  		var e = document.createElement('richlistitem');
@@ -293,7 +305,7 @@ function NSResolver(prefix) {
  	},
  	load: function ML_load() {
  		try {
- 			var downloads = window.arguments[0];
+ 			let downloads = window.arguments[0];
  			if (downloads.length) {
  				downloads.forEach(this._insertDownload, this);
  			}
@@ -309,7 +321,7 @@ function NSResolver(prefix) {
  			'license': null
  		}
  		try {
- 			var oi = window.arguments[1];
+ 			let oi = window.arguments[1];
  			for (x in info) {
  				if (x in oi && oi[x]) {
  					info[x] = oi[x];
@@ -331,14 +343,13 @@ function NSResolver(prefix) {
 				
 				let w = logo.naturalWidth;
 				let h = logo.naturalHeight;
-				d = Math.max(w, h);
+				let d = Math.max(w, h);
 				
 				ctx.scale(canvas.width / d, canvas.height / d);
 				
 				ctx.drawImage(logo, (d - w) /2, (d - h) / 2);								
 			}
 			catch (ex) {
-				alert(ex);
 				Debug.log("Cannot load logo", ex);
 				logo.src = METALINK_LOGO;
 			}
@@ -348,7 +359,7 @@ function NSResolver(prefix) {
 		};
 		logo.src = info.logo ? info.logo : METALINK_LOGO;
  		if (info.publisher) {
- 			var e = $('publisher');
+ 			let e = $('publisher');
  			e.value = info.publisher[0];
  			e.link = info.publisher[1]; 			
  		}
@@ -356,7 +367,7 @@ function NSResolver(prefix) {
  			$('boxPublisher').hidden = true;
  		}
  		if (info.license) {
- 			var e = $('license');
+ 			let e = $('license');
  			e.value = info.license[0];
  			e.link = info.license[1]; 			
  		}
@@ -365,9 +376,8 @@ function NSResolver(prefix) {
  		} 		
  	},
 	browseDir: function() {
-
 		// get a new directory
-		var newDir = Utils.askForDir(
+		let newDir = Utils.askForDir(
 			$('directory').value, // initialize dialog with the current directory
 			_("validdestination")
 		);
@@ -389,7 +399,7 @@ function NSResolver(prefix) {
 		)) {
 			return false;
 		}
-
+		
 		Array.forEach(
 			document.getElementsByTagName('richlistitem'),
 			function(n) {
@@ -418,7 +428,7 @@ function NSResolver(prefix) {
 		DTA_Mediator.open(e.link);
 	},
 	select: function(type) {
-		var f;
+		let f;
 		switch (type) {
 		case 'all':
 			f = function(node) { return true; }
@@ -429,8 +439,12 @@ function NSResolver(prefix) {
 		case 'invert':
 			f = function(node) { return !node.checked; }
 		break;
-		}		
-		for each (var node in document.getElementsByTagName('richlistitem')) {
+		default:
+		return;
+		}
+		let nodes = document.getElementsByTagName('richlistitem');
+		for (let i = 0, e = nodes.length, node; i < e; ++i) {
+			node = nodes[i];
 			node.checked = f(node);
 		}
 	}
