@@ -181,7 +181,6 @@ var ImEx = {
 				n.setAttribute('type', t[1]);
 				n.setAttribute('preference', u.preference);
 				n.setAttributeNS(NS_DTA, 'usable', u.usable);
-				n.setAttributeNS(NS_DTA, 'charset', u.charset);
 				n.textContent = u.url.spec;
 				r.appendChild(n);
 			}
