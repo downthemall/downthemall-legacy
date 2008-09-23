@@ -38,6 +38,7 @@
  
 const NS_DTA = 'http://www.downthemall.net/properties#';
 const NS_METALINKER = 'http://www.metalinker.org/';
+const NS_HTML = 'http://www.w3.org/1999/xhtml';
  
  
 const NS_ERROR_MODULE_NETWORK = 0x804B0000;
@@ -1943,7 +1944,7 @@ Chunk.prototype = {
 	},
 	open: function CH_open() {
 		this._sessionBytes = 0;
-		let file = this.parent.tmpFile.clone();
+		let file = this.parent.tmpFile;
 		if (!file.parent.exists()) {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
 			this.parent.invalidate();
