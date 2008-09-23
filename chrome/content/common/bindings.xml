@@ -205,9 +205,9 @@
 		<content>
 			<xul:hbox flex="1">
 				<xul:vbox>
-					<spacer flex="1"/>
+					<xul:spacer flex="1"/>
 					<xul:image style="width: 32px; height: 32px;" class="icon" xbl:inherits="src=iconURL"/>
-					<spacer flex="1"/>
+					<xul:spacer flex="1"/>
 				</xul:vbox>
 				<xul:vbox flex="1">
 					<xul:checkbox anonid="check" xbl:inherits="label=identity,checked"/>
