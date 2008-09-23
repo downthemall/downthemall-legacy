@@ -153,15 +153,15 @@ var ImEx = {
 		let root = doc.documentElement;
 		root.setAttribute('type', 'static');
 		root.setAttribute('version', '3.0');
-		root.setAttribute('generator', 'DownThemAll! ' + DTA.VERSION + ' <http://downthemall.net/>');
+		root.setAttribute('generator', 'DownThemAll! ' + DTA.BASE_VERSION + ' <http://downthemall.net/>');
 		root.setAttributeNS(NS_DTA, 'version', DTA.VERSION);
 		root.setAttribute('pubdate', new Date().toUTCString());
 		
 		root.appendChild(doc.createComment("metalink as exported by DownThemAll!\r\nmay contain DownThemAll! specific information in the DownThemAll! namespace: " + NS_DTA));  
 		
-		let files = doc.createElement('files');
+		let files = doc.createElementNS(NS_METALINKER, 'files');
 		for (let d in downloads) {
-			let f = doc.createElement('file');
+			let f = doc.createElementNS(NS_METALINKER, 'file');
 			f.setAttribute('name', d.fileName);
 			f.setAttributeNS(NS_DTA, 'num', d.numIstance);
 			f.setAttributeNS(NS_DTA, 'startDate', d.startDate.getTime());
@@ -170,13 +170,13 @@ var ImEx = {
 			}
 			
 			if (d.description) {
-				let n = doc.createElement('description');
+				let n = doc.createElementNS(NS_METALINKER, 'description');
 				n.textContent = d.description;
 				f.appendChild(n);
 			} 
-			let r = doc.createElement('resources');
+			let r = doc.createElementNS(NS_METALINKER, 'resources');
 			for (let u in d.urlManager.all) {
-				let n = doc.createElement('url');
+				let n = doc.createElementNS(NS_METALINKER, 'url');
 				let t = u.url.spec.match(/^(\w+):/);
 				n.setAttribute('type', t[1]);
 				n.setAttribute('preference', u.preference);
@@ -186,8 +186,8 @@ var ImEx = {
 				r.appendChild(n);
 			}
 			if (d.hash) {
-				let v = doc.createElement('verification');
-				let h = doc.createElement('hash');
+				let v = doc.createElementNS(NS_METALINKER, 'verification');
+				let h = doc.createElementNS(NS_METALINKER, 'hash');
 				h.setAttribute('type', d.hash.type.toLowerCase());
 				h.textContent = d.hash.sum.toLowerCase();
 				v.appendChild(h);
@@ -196,7 +196,7 @@ var ImEx = {
 			f.appendChild(r);
 			
 			if (d.totalSize > 0) {
-				let s = doc.createElement('size');
+				let s = doc.createElementNS(NS_METALINKER, 'size');
 				s.textContent = d.totalSize;
 				f.appendChild(s);
 			}
