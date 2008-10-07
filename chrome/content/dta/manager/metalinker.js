@@ -43,10 +43,8 @@ var NSResolver = {
 			return NS_HTML;
 		case 'dta':
 			return NS_DTA;
-	  default:
-	    return NS_METALINKER;
-		break;  
 	  }
+    return NS_METALINKER;		
 	}
 }; 
 
@@ -94,11 +92,11 @@ var Metalinker = {
 				throw new Components.Exception("file protocol invalid");
 			}
 			// check for some popular bad links :p
-			if (['http', 'https', 'ftp'].indexOf(url.scheme) != -1 && url.host.indexOf('.') == -1) {
-				throw new Components.Exception("bad link!");
+			if (['http', 'https', 'ftp'].indexOf(url.scheme) == -1 || url.host.indexOf('.') == -1) {
+				throw new Exception("bad link!");
 			}
 			if (allowed instanceof Array && allowed.indexOf(url.scheme) == -1) {
-				throw new Components.Exception("not allowed");
+				throw new Exception("not allowed");
 			}
 			return url.spec;
  		}
@@ -183,10 +181,23 @@ var Metalinker = {
 				let urls = [];
 				let urlNodes = this._getNodes(file, 'ml:resources/ml:url');
 				for each (var url in urlNodes) {
-					let type = url.getAttribute('type');
 					let preference = 1;
 					let charset = doc.characterSet;
-					let usable = null;
+					if (url.hasAttributeNS(NS_DTA, 'charset')) {
+						charset = url.getAttributeNS(NS_DTA, 'charset');
+					}
+
+					let uri = null;
+					try {
+						uri = this._checkURL(url.textContent.trim());
+						if (!uri) {
+							throw new Exception("Invalid url");
+						}							
+						uri = IOService.newURI(uri, charset, null);
+					}
+					catch (ex) {
+						continue;
+					}
 					
 					if (url.hasAttribute('preference')) {
 						var a = new Number(url.getAttribute('preference'));
@@ -200,15 +211,7 @@ var Metalinker = {
 							preference = 100 + preference;
 						}
 					}
-					if (url.hasAttributeNS(NS_DTA, 'charset')) {
-						charset = url.getAttributeNS(NS_DTA, 'charset');
-					}
-					if (['http', 'https', 'ftp'].indexOf(type) != -1) {
-						url = this._checkURL(url.textContent.trim());
-						if (url) {
-							urls.push(new DTA_URL(IOService.newURI(url, charset, null), preference));
-						}
-					}
+					urls.push(new DTA_URL(uri, preference));
 				}
 				if (!urls.length) {
 					continue;
