@@ -47,7 +47,7 @@ var Tree = {
 		this._downloads = [];
 
 		let as = Serv('@mozilla.org/atom-service;1', 'nsIAtomService');
-		for each (let e in ['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined', 'pausedAutoretrying']) {
+		for each (let e in ['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined', 'pausedAutoretrying', 'verified', 'progress']) {
 			this['_' + e] = as.getAtom(e);
 		}
 		this.elem.view = this;	
@@ -142,10 +142,12 @@ var Tree = {
 		return null;
 	},
 	getCellProperties: function T_getCellProperties(idx, col, prop) {
-		if (col.index == 1) {
+		let cidx = col.index;
+		if (cidx == 1) {
+			prop.AppendElement(this._iconic);
+			prop.AppendElement(this._progress);
 			let d = this._downloads[idx];
 			switch (d.state) {
-				case COMPLETE: prop.AppendElement(this._completed); return;
 				case PAUSED:
 					prop.AppendElement(this._paused);
 					if (!d.totalSize || d.partialSize / d.totalSize < .05) {
@@ -158,9 +160,15 @@ var Tree = {
 				case FINISHING:
 				case RUNNING: prop.AppendElement(this._inprogress); return;
 				case CANCELED: prop.AppendElement(this._canceled); return;
+				case COMPLETE:
+					prop.AppendElement(this._completed);
+					if (d.hash) {
+						prop.AppendElement(this._verified);
+					}
+				return;
 			}
 		}
-		else if (col.index == 0) {
+		else if (cidx == 0) { 
 			prop.AppendElement(this._iconic);
 		}
 	},
