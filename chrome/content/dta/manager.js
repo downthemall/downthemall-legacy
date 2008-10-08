@@ -347,8 +347,8 @@ var Dialog = {
 				// checks for timeout
 				if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
 					if (d.resumable || !d.totalSize || !d.partialSize) {
-						d.pause();
 						d.markAutoRetry();
+						d.pause();
 						d.status = _("timeout");
 					}
 					else {
@@ -2351,8 +2351,8 @@ Connection.prototype = {
 				Debug.log("handleError: Cannot recover from problem!", code);
 				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1) {
 					Debug.log("we got temp failure!", code);
-					d.pause();
 					d.markAutoRetry();
+					d.pause();
 					d.status = code >= 500 ? _('temperror') : _('autherror');
 				}
 				else if (code == 450) {
@@ -2503,8 +2503,8 @@ Connection.prototype = {
 		if (c.start != 0 && d.is(RUNNING)) {
 			if (!this.handleError()) {
 				Debug.log(d + ": Server error or disconnection", "(type 1)");
-				d.status = _("servererror");
 				d.markAutoRetry();
+				d.status = _("servererror");
 				d.pause();
 			}
 			return false;
@@ -2663,9 +2663,9 @@ Connection.prototype = {
 			NS_ERROR_NET_RESET
 		].indexOf(aStatusCode)) {
 			Debug.log(d + ": Server error or disconnection", "(type 3)");
+			d.markAutoRetry();
 			d.pause();
 			d.status = _("servererror");
-			d.markAutoRetry();				
 			return;
 		}
 		
@@ -2686,9 +2686,9 @@ Connection.prototype = {
 		if (c.starter && d.is(RUNNING)) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.log(d + ": Server error or disconnection", "(type 2)");
+				d.markAutoRetry();
 				d.pause();
 				d.status = _("servererror");
-				d.markAutoRetry();				
 			}
 			else {
 				Debug.log("caught bad server", d.toString());
@@ -2700,8 +2700,8 @@ Connection.prototype = {
 
 		if (!d.isOf(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
 			if (d.resumable) {
-				d.pause();
 				d.markAutoRetry();
+				d.pause();
 				d.status = _('errmismatchtitle');
 			}
 			else {
