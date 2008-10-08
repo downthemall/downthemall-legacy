@@ -755,6 +755,8 @@ Visitor.prototype = {
 
 function HttpVisitor() {
 	Visitor.apply(this, arguments);
+	// assume ranges are accepted unless indicated otherwise
+	this.acceptRanges = true;
 }
 
 HttpVisitor.prototype = {
@@ -795,7 +797,7 @@ HttpVisitor.prototype = {
 				break;
 
 				case 'accept-ranges':
-					this.acceptRanges = aValue.toLowerCase().indexOf('none') == -1;
+					this.acceptRanges = aValue.toLowerCase().indexOf('bytes') != -1;
 					Debug.logString("acceptrange = " + aValue.toLowerCase());
 				break;
 
