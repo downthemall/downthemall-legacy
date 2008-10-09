@@ -278,11 +278,6 @@ textbox.plain {
 
 /* :: menu :: */
 
-/* rebind as a workaround for the hidden image */
-menu.menu-iconic {
-	-moz-binding: url(chrome://dta/content/common/bindings.xml#menu-iconic-addressable);
-}
-
 /* menu elements */
 #popup .menu-iconic-icon {
 		display: list-item;
