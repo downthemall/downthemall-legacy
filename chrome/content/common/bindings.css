@@ -1,5 +1,10 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
+/* rebind as a workaround for the hidden image */
+menu.menu-iconic {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#menu-iconic-addressable);
+}
+
 /* closebox */
 .closer {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#closebox);
