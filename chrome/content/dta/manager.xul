@@ -28,7 +28,8 @@
 	id="DownThemAll"
 	class="downlinks"
 	onunload="return Dialog.unload();" 
-	onclose="return Dialog.close();" 
+	onclose="return Dialog.close();"
+	onblur="Tree.stopTip();"
 	persist="width height screenX screenY sizemode dtaAutofitted" 
 	>
 	
