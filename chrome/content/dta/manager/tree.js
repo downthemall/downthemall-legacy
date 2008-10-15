@@ -52,6 +52,7 @@ var Tree = {
 		}
 		this.elem.view = this;	
 		
+		this.refreshTools();
 	},
 
 	/*
