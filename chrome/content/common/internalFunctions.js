@@ -165,7 +165,14 @@ var Utils = {
 				// from nsIFile
 				parent = parent.QueryInterface(Components.interfaces.nsILocalFile);
 				// we look for a directory that is writable and has some disk-space
-				return parent.isDirectory() && parent.isWritable() && parent.diskSpaceAvailable ? directory : false;
+				if (parent.isDirectory() && parent.isWritable()) {
+					try {
+						return parent.diskSpaceAvailable ? directory : false;
+					}
+					catch (ex) {
+						// Solaris compat: #889
+						return directory;
+					}
 			}
 		}
 		catch(ex) {
@@ -185,7 +192,14 @@ var Utils = {
 	getFreeDisk: function(file) {
 		while (file) {
 			if (file.exists() && file.isDirectory()) {
-				return file.diskSpaceAvailable;
+				try {
+					return file.diskSpaceAvailable;
+				}
+				catch (ex) {
+					// Solaris compat: #889
+					// As we cannot get a correct value simply return max int64_t
+					return 9223372036854775807;
+				}					
 			}
 			file = file.parent;
 		}
