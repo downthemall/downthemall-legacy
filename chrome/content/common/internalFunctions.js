@@ -173,6 +173,7 @@ var Utils = {
 						// Solaris compat: #889
 						return directory;
 					}
+				}
 			}
 		}
 		catch(ex) {
