@@ -112,7 +112,7 @@ var Dialog = {
 		}
 		else if (de.hasAttribute('offline')) {
 				de.removeAttribute('offline');
-		}		
+		}
 		Tree.box.invalidate();
 	},
 	_wasRunning: false,
@@ -232,6 +232,14 @@ var Dialog = {
 		}
 		else if (topic == 'network:offline-status-changed') {
 			this.offline = data == "offline";
+			if (data == 'offline') {
+				for (let d in Tree.all) {
+					if (d.is(RUNNING)) {
+						d.pause();
+						d.queue();
+					}
+				}
+			}
 		}
 	},
 	refresh: function D_refresh() {
