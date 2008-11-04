@@ -31,7 +31,9 @@ toolbox {
 #tools .toolbarbutton-text {
 	min-width: 45px;
 	margin: 0;
-	padding: 0;
+	padding: 1px;
+	padding-left: 2px;
+	padding-right: 2px;
 	text-align: center;
 }
 
