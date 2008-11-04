@@ -289,7 +289,7 @@ var Metalinker = {
 		catch (ex) {
 			Debug.log("Metalinker::handleDownload", ex);			
 			if (!(ex instanceof Error)) {
-				ex = new Error(_('mlerror', [ex.error]));
+				ex = new Error(_('mlerror', [ex.message ? ex.message : (ex.error ? ex.error : ex.toString())]));
 			}
 			if (ex instanceof Error) {
 				AlertService.show(_('mlerrortitle'), ex.message, false);
