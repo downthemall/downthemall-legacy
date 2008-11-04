@@ -203,23 +203,20 @@
 
 	<binding id="metalinker-item" extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
 		<content>
-			<xul:hbox flex="1">
-				<xul:vbox>
-					<xul:spacer flex="1"/>
-					<xul:image style="width: 32px; height: 32px;" class="icon" xbl:inherits="src=iconURL"/>
-					<xul:spacer flex="1"/>
-				</xul:vbox>
-				<xul:vbox flex="1">
-					<xul:checkbox anonid="check" xbl:inherits="label=identity,checked"/>
-					<xul:hbox flex="1" anonid="additionallinks"/>
-					<xul:description flex="1" anonid="desc"/>
-					<xul:hbox>
-						<xul:description flex="1" class="link" crop="center" xbl:inherits="value=url"/>
-					</xul:hbox>
-				</xul:vbox>
-				<xul:spacer flex="1"/>
-				<xul:vbox class="additional" anonid="additional"/>
-			</xul:hbox>
+			<xul:vbox flex="1">
+				<xul:hbox class="metalink-mainbox" flex="1">
+					<xul:image class="metalinker-icon" xbl:inherits="src=iconURL"/>
+					<xul:vbox class="metalink-infobox" flex="1">
+						<xul:checkbox anonid="check" xbl:inherits="label=identity,checked"/>
+						<xul:hbox flex="1" anonid="additionallinks"/>
+						<xul:hbox>
+							<xul:description flex="1" crop="center" xbl:inherits="value=url"/>
+						</xul:hbox>
+					</xul:vbox>
+					<xul:vbox class="metalinker-additional" anonid="additional"/>
+				</xul:hbox>
+				<xul:description class="metalinker-description" flex="1" anonid="desc"/>
+			</xul:vbox>			
 		</content>
 		
 		<implementation>
@@ -248,7 +245,7 @@
 				function addLink(e) {
 					if (dl[e]) {
 						var n = document.createElement('description');
-						n.setAttribute('class', 'link');
+						n.setAttribute('class', 'text-link');
 						n.setAttribute('onclick', 'Metalinker.openLink(this)');
 						n.setAttribute('crop', 'center');
 						n.setAttribute('flex', '1');

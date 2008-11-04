@@ -17,19 +17,28 @@
 	margin: 1ex;
 	margin-top: 0.5ex;
 }
-.additional {
+richlistitem {
+	border-bottom: 1px dotted rgb(192, 192, 192);
+	background-color: transparent !important;
+	color: inherit !important;
+	overflow: visible;
+	-moz-box-align: center;
+	padding: 4pt;
+}
+.metalinker-icon {
+	margin-top: 1ex !important;
+	-moz-margin-start: 1ex;
+	-moz-margin-end: 1.3ex;
+	width: 32px;
+	max-height: 32px;
+}
+.metalinker-additional {
 	text-align: right;
 	font-style: italic;
 	max-width: 10%;
 }
-richlistitem {
-	border-bottom: 1px dotted rgb(192, 192, 192);
-	background-color: transparent !important;
-	color: inherit !important;	
-}
-richlistitem .icon {
-	margin-top: 1ex !important;
-}
-richlistitem vbox {
-	padding: 4pt;
+.metalinker-description {
+	padding-top: 0.5ex;
+	-moz-padding-start: 1em;
+	-moz-padding-end: 1ex;
 }

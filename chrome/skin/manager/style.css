@@ -43,6 +43,9 @@ toolbox {
 #tools spacer.visible {
 	background: url(chrome://dta/skin/common/toolbarspacer.png) no-repeat 50% 11px;
 	min-width: 13px;
+	padding: 0;
+	margin: 0;
+	height: 100%;
 }
 
 #tooladd {

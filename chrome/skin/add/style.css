@@ -7,12 +7,9 @@ dialog {
 	max-width: 540px;
 }
 
-toolbarbutton {
-	width: 28px;
-}
-dialogheader .dialogheader-title {
-	padding-left: 30px !important;
-	background-image: url('chrome://dta/skin/add/add.png') !important;
+
+#logo {
+	list-style-image: url(add.png);
 }
 
 textbox[error="true"],
