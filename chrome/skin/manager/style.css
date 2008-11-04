@@ -22,6 +22,7 @@ toolbox {
 	margin-top: 3px;
 	margin-bottom: 2px;
 	text-align: center;
+	min-width: 50px;
 }
 
 #tools .toolbarbutton-icon {
@@ -29,7 +30,6 @@ toolbox {
 }
 
 #tools .toolbarbutton-text {
-	min-width: 45px;
 	margin: 0;
 	padding: 1px;
 	padding-left: 2px;
