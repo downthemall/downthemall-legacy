@@ -93,10 +93,12 @@ var Metalinker = {
 			}
 			// check for some popular bad links :p
 			if (['http', 'https', 'ftp'].indexOf(url.scheme) == -1 || url.host.indexOf('.') == -1) {
-				throw new Exception("bad link!");
-			}
-			if (allowed instanceof Array && allowed.indexOf(url.scheme) == -1) {
-				throw new Exception("not allowed");
+				if (!(allowed instanceof Array)) {
+					throw new Exception("bad link!");
+				}
+				if (allowed.indexOf(url.scheme) == -1) {
+						throw new Exception("not allowed");
+					}
 			}
 			return url.spec;
  		}
@@ -253,7 +255,7 @@ var Metalinker = {
 					'copyright': this._getSingle(file, 'copyright'),
 					'size': size,
 					'version': this._getSingle(file, 'version'),
-					'logo': this._checkURL(this._getSingle(file, 'logo')),
+					'logo': this._checkURL(this._getSingle(file, 'logo', ['data'])),
 					'lang': this._getSingle(file, 'language'),
 					'sys': this._getSingle(file, 'os'),
 					'mirrors': urls.length, 
@@ -268,7 +270,7 @@ var Metalinker = {
 				let info = {
 					'identity': this._getSingle(root, 'identity'),
 					'description': this._getSingle(root, 'description'),
-					'logo': this._checkURL(this._getSingle(root, 'logo')),
+					'logo': this._checkURL(this._getSingle(root, 'logo', ['data'])),
 					'license': this._getLinkRes(root, "license"),
 					'publisher': this._getLinkRes(root, "publisher"),
 					'start': false
@@ -346,9 +348,11 @@ var Metalinker = {
 				
 				let w = logo.naturalWidth;
 				let h = logo.naturalHeight;
-				let d = Math.max(w, h);
+				let d = Math.max(canvas.width, w, h);
 				
-				ctx.scale(canvas.width / d, canvas.height / d);
+				if (d != canvas.width) {
+					ctx.scale(canvas.width / d, canvas.height / d);
+				}
 				
 				ctx.drawImage(logo, (d - w) /2, (d - h) / 2);								
 			}
