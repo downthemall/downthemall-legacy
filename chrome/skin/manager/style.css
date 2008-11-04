@@ -10,7 +10,9 @@ toolbox {
 #tools {
 	-moz-appearance: none !important;
 	border-width: 0px;
-	height: 51px;
+	height: 54px;
+	padding: 0;
+	margin: 0;
 }
 #tools toolbarbutton {
 	list-style-image: url(chrome://dta/skin/manager/tools.png);
