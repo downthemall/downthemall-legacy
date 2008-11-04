@@ -18,10 +18,9 @@ toolbox {
 	list-style-image: url(chrome://dta/skin/manager/tools.png);
 	-moz-box-orient: vertical !important;
 	-moz-box-align: center !important;
-	-moz-appearance: none !important;
 	border: 0;
-	margin-top: 2px;
-	margin-bottom: 3px;
+	margin-top: 3px;
+	margin-bottom: 2px;
 	text-align: center;
 }
 
@@ -46,6 +45,7 @@ toolbox {
 
 #tooladd {
 	-moz-image-region: rect(0px,52px,26px,26px);
+	margin-left: 1ex;
 }
 #tooladd:hover, #tooladd:active {
 	-moz-image-region: rect(0px,26px,26px,0px);
