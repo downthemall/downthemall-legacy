@@ -57,6 +57,7 @@
 	title="&title;"
 	id="metaselect"
 	persist="width height"
+	onclose="Metalinker.cancel();"
 >
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
@@ -91,11 +92,11 @@
 						<label id="identity" crop="end"/>
 						<hbox id="boxPublisher">
 							<label value="&publisher;"/>
-							<description id="publisher" class="link" onclick="Metalinker.openLink(this);"/>
+							<description id="publisher" class="text-link" onclick="Metalinker.openLink(this);"/>
 						</hbox>
 						<hbox id="boxLicense">
 							<label value="&license;"/>
-							<description id="license" class="link" onclick="Metalinker.openLink(this);"/>
+							<description id="license" class="text-link" onclick="Metalinker.openLink(this);"/>
 						</hbox>
 					</row>
 				</rows>					
