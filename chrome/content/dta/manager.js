@@ -521,11 +521,11 @@ var Dialog = {
 			Debug.logString("not initialized. Going down immediately!");
 			return true;
 		}
-		this.offline = true;
 		if (!this._forceClose && !this._canClose()) {
 			delete this._forceClose;
 			return false;
 		}
+		this.offline = true;
 
 		// stop everything!
 		// enumerate everything we'll have to wait for!
@@ -2139,6 +2139,14 @@ function Connection(d, c, getInfo) {
 		catch (ex) {
 			Debug.log('error setting up ftp channel', ex);
 		}
+	}
+	try {
+		prio = this._chan.QueryInterface(Ci.nsISupportsPriority);
+		prio.adjustPriority(Ci.nsISupportsPriority.PRIORITY_LOW);
+		Debug.logString("set priority");
+	}
+	catch (ex) {
+		Debug.log("Failed setting priority", ex);
 	}
 	this.c.running = true;
 	this._chan.asyncOpen(this, null);
