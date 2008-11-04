@@ -278,7 +278,7 @@
 				<xul:menulist anonid="type" readonly="true" xbl:inherits="disabled,error">
 					<xul:menupopup anonid="types"/>
 				</xul:menulist>
-				<xul:textbox anonid="hash" flex="1" xbl:inherits="readonly,disabled"/>
+				<xul:textbox anonid="hash" flex="1" xbl:inherits="readonly,disabled" type="autocomplete" />
 			</xul:hbox>
 		</content>
 		<implementation>
