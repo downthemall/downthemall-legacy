@@ -319,7 +319,7 @@ var Dialog = {
 					}
 				}
 				catch (ex) {
-					Debug.log("Not able to gather data from the clipboard!");
+					Debug.log("Not able to gather data from the clipboard!", ex);
 				}
 			}
 			if (hash) {
