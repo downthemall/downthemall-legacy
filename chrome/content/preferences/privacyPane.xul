@@ -77,7 +77,7 @@
 		<groupbox>
 			<caption label="&privacypane.notice.caption;"/>
 			<description value="&privacypane.notice.desc;"/>
-			<label class="link" value="&privacypane.privacynotice.label;" onclick="Privacy.showNotice();"/>
+			<label class="text-link" value="&privacypane.privacynotice.label;" onclick="Privacy.showNotice();"/>
 		</groupbox>
 	</prefpane>
 </overlay>

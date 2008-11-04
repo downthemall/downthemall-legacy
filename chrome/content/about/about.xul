@@ -86,13 +86,19 @@
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 	</keyset>
 	
-	<dialogheader id="logo" title="DownThemAll!" description="&about.subtitle;" orient="vertical" style="font-size: smaller;" chromedir="&locale.dir;"/>
+	<dialogheader id="logo" chromedir="&locale.dir;" style="font-size: smaller;">
+		<vbox>
+			<label class="dialogheader-title" value="DownThemAll!"/>
+			<label class="dialogheader-description" value="&about.subtitle;"/>
+		</vbox>
+	</dialogheader>
+			
 	<groupbox orient="vertical">
 		<label value="Copyright © 2004-2008 By:" style="font-weight: bold;"/>
 		<html:ul>
-			<html:li><label value="Federico Parodi" class="link" onclick="openTab('http://www.jimmy2k.it'); "/></html:li>
-			<html:li><label value="Stefano Verna" class="link" onclick="openTab('http://steffoz.altervista.org/'); "/></html:li>
-			<html:li><label value="Nils Maier" class="link" onclick="openTab('http://tn123.ath.cx/about/'); "/></html:li>
+			<html:li><label value="Federico Parodi" class="text-link" onclick="openTab('http://www.jimmy2k.it'); "/></html:li>
+			<html:li><label value="Stefano Verna" class="text-link" onclick="openTab('http://steffoz.altervista.org/'); "/></html:li>
+			<html:li><label value="Nils Maier" class="text-link" onclick="openTab('http://tn123.ath.cx/about/'); "/></html:li>
 		</html:ul>
 
 	  <separator class="thin"/>
@@ -100,8 +106,8 @@
 			<html:b>&about.icons;</html:b>&nbsp;&about.based;
 			<html:ul>
 				<html:li>© Michael Matas</html:li>
-				<html:li>© <html:span class="link" onclick="openTab('http://jimmac.musichall.cz/icons.php');">Jakub 'jimmac' Steiner</html:span>; © Novell, Inc.</html:li>
-				<html:li>© <html:span class="link" onclick="openTab('http://www.famfamfam.com/lab/icons/silk/');">Mark James</html:span> (famfamfam silk icons)</html:li>
+				<html:li>© <html:span class="text-link" onclick="openTab('http://jimmac.musichall.cz/icons.php');">Jakub 'jimmac' Steiner</html:span>; © Novell, Inc.</html:li>
+				<html:li>© <html:span class="text-link" onclick="openTab('http://www.famfamfam.com/lab/icons/silk/');">Mark James</html:span> (famfamfam silk icons)</html:li>
 				<html:li>© The mozilla contributors</html:li>
 			</html:ul>
 		</description>
@@ -111,11 +117,11 @@
 			&about.freesoft;<html:br/>
 			&about.redistr;:
 		</description>
-		<label class="link" value="License (GPL)" onclick="openTab('http://www.gnu.org/licenses/gpl.txt');"/>
+		<label class="text-link" value="License (GPL)" onclick="openTab('http://www.gnu.org/licenses/gpl.txt');"/>
 		<separator class="thin"/>
 		<description>
 			DownThemAll! &about.privacy;.<html:br/>
-			&about.read; <html:span class="link" onclick="openNotice();">&about.pnot;</html:span>.
+			&about.read; <html:span class="text-link" onclick="openNotice();">&about.pnot;</html:span>.
 		</description>
 
 	  <separator class="thin"/>
@@ -132,7 +138,7 @@
 			<rows>
 				<row>
 					<label value="DownThemAll!" style="font-weight: bold;"/>
-					<label value="http://www.downthemall.net/" class="link" onclick="openTab('http://www.downthemall.net/'); "/>
+					<label value="http://www.downthemall.net/" class="text-link" onclick="openTab('http://www.downthemall.net/'); "/>
 				</row>
 			</rows>
 		</grid>

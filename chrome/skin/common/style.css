@@ -4,6 +4,16 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 @namespace html url("http://www.w3.org/1999/xhtml");
 
+
+		
+dialogheader {
+	border: 2px solid -moz-use-text-color;
+	-moz-border-top-colors: threedshadow threeddarkshadow;
+	-moz-border-right-colors: threedhighlight threeddarkshadow;
+	-moz-border-bottom-colors: threedhighlight threeddarkshadow;
+	-moz-border-left-colors: threedshadow threeddarkshadow;
+}
+
 /* maskbutton */
 maskbutton {
 	-moz-binding: url(chrome://dta/content/dta/maskbutton.xml#maskbutton);
@@ -13,7 +23,7 @@ maskbutton {
 }
 .masktag {
 	text-decoration: underline;
-	cursor:pointer;
+	cursor :pointer;
 	font-family: "Courier New", Courier, monospace;
 }
 .masktitle {
@@ -27,20 +37,38 @@ maskbutton {
 
 #browsedir {
 	list-style-image: url("chrome://dta/skin/common/browse.png");
-	-moz-appearance: none !important;
-	border: none!important;
-	padding: 2px 0px!important;
-	margin: 0px!important;
+}
+
+/* maskbutton */
+maskbutton toolbarbutton {
+	list-style-image: url("chrome://dta/skin/common/mask.png");
+}
+
+/* maskbutton/browsedir common */
+maskbutton toolbarbutton,
+#browsedir {
 	-moz-image-region: rect(0px,48px,21px,24px) !important;
 }
 
+maskbutton toolbarbutton:hover,
 #browsedir:hover {
 	-moz-image-region: rect(0px,24px,21px,0px) !important;
 }
 
+maskbutton toolbarbutton:active,
 #browsedir:active {
 	-moz-image-region: rect(0px,72px,21px,48px) !important;
 }
+
+maskbutton .toolbarbutton-icon,
+#browsedir .toolbarbutton-icon {
+	-moz-margin-end: 0;
+}
+maskbutton .toolbarbutton-text,
+#browsedir .toolbarbutton-text {
+	display: none;
+}
+
 
 #footer statusbarpanel[class]:hover {
 	text-decoration: underline;
@@ -51,27 +79,31 @@ maskbutton {
 	background: white url(chrome://dta/skin/common/logo.png) no-repeat right top;	
 	min-width: 290px !important;
 	height: 42px !important;
-	overflow: hidden;
+	overflow: visible;
+	-moz-box-align: center;
+	-moz-box-pack: start;
 	padding: 3px !important;
-	padding-left: 7px !important;
+	padding-left: 1em !important;
 	margin: 0 !important;
 }
+#logo > label {
+	-moz-box-align: start;
+	-moz-box-flex: 0;
+}	
 #logo[chromedir="rtl"] {
 	background: white url(chrome://dta/skin/common/logo-rtl.png) no-repeat left top;
 }
-dialogheader#logo label {
-	padding: 0;
-}
-dialogheader#logo .dialogheader-title {
+#logo .dialogheader-title {
 	padding-top: 2px;
 	font-weight: bold;
+	font-size: larger;
 	margin-top: auto;
 	margin-bottom: auto;
+	padding-left: 0.7em;
 	background: transparent left center no-repeat;
 }
-dialogheader#logo.renamingmask .dialogheader-title {
-	padding-left: 30px !important;
-	background-image: url('chrome://dta/skin/select/mask.png') !important;
+#logo.renamingmask {
+	list-style-image: url('chrome://dta/skin/select/mask.png');
 }
 
 /* snip */
@@ -89,15 +121,6 @@ dialogheader#logo.renamingmask .dialogheader-title {
 #head image:hover {
 	margin-right:1px;
 	
-}
-
-.link, html|*.link {
-	color: blue;
-	text-decoration: underline;
-	cursor: pointer;
-}
-.link:hover, html|*.link:hover {
-	color: red;
 }
 
 .hidegroup {
@@ -164,6 +187,12 @@ textbox[readonly] html|*.textbox-input {
   color: GrayText !important;
 	font-style: italic;
 }
+
+.textbox-input-box {
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
 /* foreign theme compat, i.e. Songbird */
 statusbar {
 	-moz-appearance: statusbar;
