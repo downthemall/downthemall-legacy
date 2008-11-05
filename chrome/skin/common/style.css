@@ -188,7 +188,7 @@ textbox[readonly] html|*.textbox-input {
 	font-style: italic;
 }
 
-.textbox-input-box {
+textbox {
 	padding-top: 3px;
 	padding-bottom: 3px;
 }
