@@ -713,7 +713,7 @@ var Dialog = {
 			var s = {}, e = {};
 			tree.selection.getRangeAt(0, s, e);
 			var l = tree._links[s.value];
-			otext = _("openlink", [l.url.url]);
+			otext = _("openlink", [l.url.url.spec]);
 		}
 		else {
 			otext = _("openlinks", [tree.selection.count]);
