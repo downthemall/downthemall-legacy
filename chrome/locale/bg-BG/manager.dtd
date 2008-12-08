@@ -1,38 +1,38 @@
-<!ENTITY tooladd.label "Добари адрес">
-<!ENTITY tooladd.tooltip "">
+<!ENTITY tooladd.label "Добави адрес">
+<!ENTITY tooladd.tooltip "Добави ръчно адрес в DownThemAll">
 <!ENTITY tooldonate.tooltiptext "Можете да ни помогнете да направим DownThemAll даже по-добра добавка. Помислете върху едно малко дарение!">
-<!ENTITY movetop.label "">
-<!ENTITY movebottom.label "">
-<!ENTITY moveup.label "">
-<!ENTITY movedown.label "">
-<!ENTITY task.label "">
+<!ENTITY movetop.label "Горе">
+<!ENTITY movebottom.label "Долу">
+<!ENTITY moveup.label "Нагоре">
+<!ENTITY movedown.label "Надолу">
+<!ENTITY task.label "Адрес/Име">
 <!ENTITY per.label "Процент">
 <!ENTITY pct.label "Напредък">
 <!ENTITY dim.label "Размер">
 <!ENTITY time.label "Изч. време">
 <!ENTITY parts.label "Части">
 <!ENTITY speed.label "Скорост">
-<!ENTITY infoURLTitle.value "">
-<!ENTITY infoSizeTitle.value "">
-<!ENTITY infoMultiple.value "">
-<!ENTITY elapsedTitle.value "">
-<!ENTITY remainingTitle.value "">
-<!ENTITY currentSpeedTitle.value "">
-<!ENTITY avgSpeedTitle.value "">
+<!ENTITY infoURLTitle.value "От:">
+<!ENTITY infoSizeTitle.value "Размер:">
+<!ENTITY infoMultiple.value "Множество файлове">
+<!ENTITY elapsedTitle.value "Изтекло">
+<!ENTITY remainingTitle.value "Оставащо">
+<!ENTITY currentSpeedTitle.value "Текуща скорост">
+<!ENTITY avgSpeedTitle.value "Средна скорост">
 <!ENTITY path.label "Запази пътя">
 <!ENTITY mask.label "Преименуваме Маската">
-<!ENTITY hash.label "">
+<!ENTITY hash.label "Сума за проверка">
 <!ENTITY infos.label "Даунлоуд инфо">
 <!ENTITY launch.label "Отвори файл">
-<!ENTITY delete.label "">
+<!ENTITY delete.label "Изтрий файл(ове)">
 <!ENTITY targetdir.label "Отвори избраната директория">
 <!ENTITY pause.label "Пауза">
 <!ENTITY resume.label "Продължи">
 <!ENTITY cancel.label "Откажи">
 <!ENTITY remove.label "Махни от листа">
 <!ENTITY removeCompleted.label "Махни изпълнените задачи">
-<!ENTITY misc.label "">
+<!ENTITY misc.label "Допълнителни">
 <!ENTITY addchunk.label "Добави част">
 <!ENTITY removechunk.label "Махни част">
-<!ENTITY force.label "">
-<!ENTITY options.caption "">
+<!ENTITY force.label "Насилствен старт">
+<!ENTITY options.caption "Опции">

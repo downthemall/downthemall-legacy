@@ -13,6 +13,6 @@
 <!ENTITY mask.subdirs "URL под-директории">
 <!ENTITY mask.text "Описание на линка">
 <!ENTITY mask.refer "Отнасящи се адреси (виж &apos;referrer&apos;)">
-<!ENTITY mask.qstring "">
+<!ENTITY mask.qstring "Запитващ низ">
 <!ENTITY mask.tip "Кликни или издърпай до преименуващият &apos;mask&apos;">
 <!ENTITY mask.open.tip "Преименуващи тагове - Справочна таблица">

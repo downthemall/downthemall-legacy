@@ -1,7 +1,7 @@
 <!ENTITY title "Добави адрес">
-<!ENTITY add.value "">
-<!ENTITY desc.value "">
-<!ENTITY desc.batches.value "">
+<!ENTITY add.value "Добави адрес">
+<!ENTITY desc.value "Въведи адрес тук и (допълнително) страницата на реферала на файла, който искаш да свалип">
+<!ENTITY desc.batches.value "Може да използваш група описания, за да свалиш множество файлове на един път">
 <!ENTITY examples.value "Примери:">
-<!ENTITY help.batches.label "">
-<!ENTITY help.adding.label "">
+<!ENTITY help.batches.label "Групов даунлоуд">
+<!ENTITY help.adding.label "Дабавяне на адреси">

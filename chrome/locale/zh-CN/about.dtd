@@ -1,9 +1,9 @@
 <!ENTITY language "简体中文">
-<!ENTITY transAutor "Blacko ( http://blacko.org ) &amp; Cye3s">
+<!ENTITY transAutor "Cye3s">
 <!ENTITY about.subtitle "Firefox上的批量下载工具。">
-<!ENTITY about.nowarr "完全免费！">
-<!ENTITY about.freesoft "这是免费软件">
-<!ENTITY about.privacy "为了您的隐私">
+<!ENTITY about.nowarr "没有保修！">
+<!ENTITY about.freesoft "这是免费软件！">
+<!ENTITY about.privacy "重视您的隐私">
 <!ENTITY about.read "请阅读我们的">
 <!ENTITY about.pnot "隐私通告">
 <!ENTITY about.by "翻译">

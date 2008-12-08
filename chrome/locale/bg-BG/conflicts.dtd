@@ -1,7 +1,7 @@
-<!ENTITY title.value "">
-<!ENTITY text.value "">
-<!ENTITY file.label "">
-<!ENTITY session.label "">
-<!ENTITY always.label "">
-<!ENTITY overwrite.label "">
-<!ENTITY skip.label "">
+<!ENTITY title.value "Конфликт с име на файл!">
+<!ENTITY text.value "Запомни тази настройка:">
+<!ENTITY file.label "Само за този файл">
+<!ENTITY session.label "Само за тази сесия">
+<!ENTITY always.label "Отсега нататък">
+<!ENTITY overwrite.label "Запиши върху съществуващ файл">
+<!ENTITY skip.label "Пропусни/Отказ">
