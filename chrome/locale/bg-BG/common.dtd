@@ -8,10 +8,10 @@
 <!ENTITY url.value "Адрес:">
 <!ENTITY dest.caption "Запази файловете във:">
 <!ENTITY referrer.value "Отнасещ се Адрес:">
-<!ENTITY checksum.value "">
+<!ENTITY checksum.value "Сума за проверка (хеш):">
 <!ENTITY browse.tip "Браузни за търсената папка...">
 <!ENTITY mask.label "Преименувам &apos;mask&apos;">
 <!ENTITY mask.tip "Избраните файлове ще бъдат запазени и преименувани чрез този &apos;mask&apos;">
 <!ENTITY selectall.label "Избери всички">
 <!ENTITY selectinv.label "Обърни селекцията">
-<!ENTITY selectnone.label "">
+<!ENTITY selectnone.label "Не избирай никой">

@@ -1,12 +1,12 @@
 <!ENTITY language "Български">
 <!ENTITY transAutor "Александър &quot; Орелскитрън &quot; Кирилов">
-<!ENTITY about.subtitle "">
-<!ENTITY about.nowarr "">
-<!ENTITY about.freesoft "">
-<!ENTITY about.privacy "">
-<!ENTITY about.read "">
-<!ENTITY about.pnot "">
-<!ENTITY about.by "">
-<!ENTITY about.redistr "">
-<!ENTITY about.icons "">
-<!ENTITY about.based "">
+<!ENTITY about.subtitle "The mass downloader for Firefox">
+<!ENTITY about.nowarr " comes with ABSOLUTELY NO WARRANTY!">
+<!ENTITY about.freesoft "This is free software!">
+<!ENTITY about.privacy " values your privacy">
+<!ENTITY about.read "Read our ">
+<!ENTITY about.pnot "Privacy notice">
+<!ENTITY about.by " translation by">
+<!ENTITY about.redistr "You are welcome to redistribute it under certain conditions">
+<!ENTITY about.icons "Icons and buttons">
+<!ENTITY about.based "are based on the works of Mike Matas, Jakub Steiner and Mark James">

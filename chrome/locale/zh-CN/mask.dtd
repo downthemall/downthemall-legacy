@@ -14,5 +14,5 @@
 <!ENTITY mask.text "链接描述">
 <!ENTITY mask.refer "重定向网址">
 <!ENTITY mask.qstring "查询字符串">
-<!ENTITY mask.tip "点击或拖动来重命名掩码">
-<!ENTITY mask.open.tip "标签参考表重命名中">
+<!ENTITY mask.tip "点击或拖动到重命名规则中">
+<!ENTITY mask.open.tip "重命名标签参考表">
