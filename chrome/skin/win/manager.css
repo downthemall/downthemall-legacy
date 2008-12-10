@@ -1,13 +1,13 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 treechildren::-moz-tree-progressmeter(progressUndetermined) {
-	list-style-image: url('chrome://dta/skin/manager/undetermined.png');
+	list-style-image: url(chrome://dta/skin/manager/undetermined.png);
 }
 treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined) {
-	list-style-image: url('chrome://dta/skin/manager/paused-undetermined.png');
+	list-style-image: url(chrome://dta/skin/manager/paused-undetermined.png);
 }
 treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined, pausedAutoretrying) {
-	list-style-image: url('chrome://dta/skin/manager/paused-autoretry.png');
+	list-style-image: url(chrome://dta/skin/manager/paused-autoretry.png);
 }
 
 #loading {
