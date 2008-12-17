@@ -309,18 +309,13 @@ var Tree = {
 			downloads = [downloads];
 		}
 		else if (!downloads) {
-			downloads = this._getSelectedIds(true).map(
-				function(idx) {
-					return this._downloads[idx]; 
-				},
-				this
-			);
+			downloads = this._getSelectedIds(true).map(function(idx) this._downloads[idx], this);
 		}
 		if (!downloads.length) {
 			return;
 		}
 	
-		downloads = downloads.sort(function(a, b) { return b.position - a.position; });	 
+		downloads = downloads.sort(function(a, b) b.position - a.position);	 
 		SessionManager.beginUpdate();
 		this.beginUpdate();
 		let last = 0;
@@ -336,7 +331,8 @@ var Tree = {
 			this._downloads.splice(d.position, 1);
 			this._box.rowCountChanged(d.position, -1);
 			last = Math.max(d.position, last);
-			d.remove();				
+			d.remove();
+			Dialog.wasRemoved(d);
 		}
 		SessionManager.endUpdate();
 		this.endUpdate();
@@ -427,15 +423,16 @@ var Tree = {
 	changeChunks: function T_changeChunks(increase) {
 		function inc(d) {
 			if (d.maxChunks < 10 && d.resumable) {
-					++d.maxChunks;
+				++d.maxChunks;
 			}
+			return true;
 		};
 		function dec(d) {
 			if (d.maxChunks > 1) {
 				--d.maxChunks;
-			}		 
+			}
+			return true;
 		};
-		
 		Tree.updateSelected(increase ? inc : dec);
 	},
 	force: function T_force() {
