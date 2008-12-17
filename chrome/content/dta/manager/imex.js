@@ -218,7 +218,7 @@ var ImEx = {
 		let ls = is.QueryInterface(Ci.nsILineInputStream);
 		let line = {};
 		let links = [];
-		while(ls.readLine(line)) {
+		function addLine(line) {
 			try {
 				// try to parse the URI and and see if it is of the correct type.
 				let url = line.value.trim().toURI();
@@ -235,6 +235,10 @@ var ImEx = {
 				Debug.log("not processing line " + line.value, ex);
 			}
 		}
+		while(ls.readLine(line)) {
+			addLine(line);
+		}
+		addLine(line);
 		is.close();
 		if (links.length) {
 			DTA_AddingFunctions.saveLinkArray(false, links, []);
