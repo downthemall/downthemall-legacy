@@ -192,8 +192,9 @@
 	</stack>
 
 	<statusbar id="footer" chromedir="&locale.dir;">
-		 <statusbarpanel id="statusText" label="" flex="1" />
-		 <statusbarpanel id="options" class="statusbarpanel-iconic-text" label="&options.label;" onclick="DTA_showPreferences();" src="chrome://dta/skin/common/prefs.png" />
+		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" oncommand="Dialog.offlineForced = !Dialog.offlineForced;"/>
+		<statusbarpanel id="statusText" label="" flex="1" />
+		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text" label="&options.label;" onclick="DTA_showPreferences();" />
 	</statusbar>
 	
 </window>

@@ -208,3 +208,7 @@ statusbarpanel > label {
 	margin-top: 1px;
 	margin-bottom: 2px;
 }
+
+statusbarpanel#preferences {
+	list-style-image: url(chrome://dta/skin/common/prefs.png);
+}

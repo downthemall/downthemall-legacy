@@ -141,7 +141,7 @@
 	
 	<statusbar id="footer">
 		<statusbarpanel id="status" flex="1" />
-		<statusbarpanel id="options" class="statusbarpanel-iconic-text" label="&options.label;" onclick="DTA_showPreferences();" src="chrome://dta/skin/common/prefs.png" />
+		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text" label="&options.label;" onclick="DTA_showPreferences();" src="chrome://dta/skin/common/prefs.png" />
 	</statusbar>
 
 </window>
