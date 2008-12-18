@@ -1,0 +1,7 @@
+<!ENTITY title.value "Bestandnaam conflict!">
+<!ENTITY text.value "Deze instelling onthouden:">
+<!ENTITY file.label "alleen voor dit bestand">
+<!ENTITY session.label "alleen gedurende deze sessie">
+<!ENTITY always.label "altijd vanaf nu">
+<!ENTITY overwrite.label "bestaand bestand overschrijven">
+<!ENTITY skip.label "overslaan/annuleren">

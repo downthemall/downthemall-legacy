@@ -1,0 +1,18 @@
+<!ENTITY title "DownThemAll! – vyberte si">
+<!ENTITY filters.caption "Filtre">
+<!ENTITY additional.caption "Rýchle filtrovanie">
+<!ENTITY additional.tip "Textový filter: môžete nastaviť viac textových filtrov naraz, oddeľte ich čiarkou.">
+<!ENTITY regex.label "Reg. výraz">
+<!ENTITY filter.tip "Sem zadajte textové filtre! (V rozbaľovacom zozname sú príklady.)">
+<!ENTITY status.label "Po výbere prepojení kliknite na položku Spustiť!">
+<!ENTITY menu.mask.title "Upraviť masku premenovania...">
+<!ENTITY menu.check.label "Označiť vybrané">
+<!ENTITY menu.uncheck.label "Zrušiť označenie vybraných">
+<!ENTITY menu.toggle.label "Prepnúť označenie vybraných">
+<!ENTITY tab.links.label "Prepojenia">
+<!ENTITY tab.pics.label "Obrázky/Vložené">
+<!ENTITY header.desc.label "Popis">
+<!ENTITY selectfiltered.label "Vybrať filtrované">
+<!ENTITY disableother.label "Vypnúť ostatné filtre">
+<!ENTITY disableother.tooltip "Vypnúť ostatné filtre a použiť len rýchle filtrovanie (toto nastavenie sa momentálne neukladá)">
+<!ENTITY resname.value "Názov zdroja">

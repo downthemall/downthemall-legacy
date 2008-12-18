@@ -1,0 +1,44 @@
+<!ENTITY tooladd.label "Προσθήκη URL">
+<!ENTITY tooladd.tooltip "Χειρωνακτική προσθήκη URL στο DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Μπορείτε να μας βοηθήσετε να κάνουμε το DownThemAll ακόμα καλύτερο. Κάντε μια μικρή δωρεά!">
+<!ENTITY movetop.label "Κορυφή">
+<!ENTITY movebottom.label "Τέλος">
+<!ENTITY moveup.label "Πάνω">
+<!ENTITY movedown.label "Κάτω">
+<!ENTITY task.label "Όνομα/URL">
+<!ENTITY per.label "Ποσοστό &#37;">
+<!ENTITY pct.label "Πρόοδος">
+<!ENTITY dim.label "Μέγεθος">
+<!ENTITY time.label "Υπολογισμένος χρόνος">
+<!ENTITY parts.label "Τμήματα">
+<!ENTITY speed.label "Ταχύτητα">
+<!ENTITY infoURLTitle.value "Από:">
+<!ENTITY infoSizeTitle.value "Μέγεθος:">
+<!ENTITY infoMultiple.value "Πολλαπλά στοιχεία">
+<!ENTITY elapsedTitle.value "Χρόνος που πέρασε:">
+<!ENTITY remainingTitle.value "Χρόνος που απομένει:">
+<!ENTITY currentSpeedTitle.value "Τρέχουσα ταχύτητα:">
+<!ENTITY avgSpeedTitle.value "Μέση ταχύτητα:">
+<!ENTITY path.label "Διαδρομή αποθήκευσης">
+<!ENTITY mask.label "Μάσκα μετονομασίας">
+<!ENTITY hash.label "Άθροισμα ελέγχου">
+<!ENTITY infos.label "Πληροφορίες λήψης">
+<!ENTITY launch.label "Άνοιγμα αρχείου">
+<!ENTITY delete.label "Διαγραφή αρχείου">
+<!ENTITY targetdir.label "Άνοιγμα καταλόγου προορισμού">
+<!ENTITY pause.label "Παύση">
+<!ENTITY resume.label "Συνέχιση">
+<!ENTITY cancel.label "Ακύρωση">
+<!ENTITY remove.label "Αφαίρεση από τη λίστα">
+<!ENTITY removeCompleted.label "Αφαίρεση ολοκληρωμένων εργασιών">
+<!ENTITY removeGone.label "Εκκαθάριση ολοκληρωμένων αρχείων">
+<!ENTITY misc.label "Διάφορα">
+<!ENTITY addchunk.label "Προσθήκη τεμαχίου">
+<!ENTITY removechunk.label "Αφαίρεση τεμαχίου">
+<!ENTITY force.label "Εξαναγκασμένη εκκίνηση">
+<!ENTITY import.label "Εισαγωγή από αρχείο">
+<!ENTITY export.label "Εξαγωγή επιλεγμένων">
+<!ENTITY options.caption "Επιλογές">
+<!ENTITY loading.label "Φόρτωση...">
+<!ENTITY restore.label "Επαναφορά">
+<!ENTITY close.label "Κλείσιμο">

@@ -1,0 +1,7 @@
+<!ENTITY dta-pref.label "Preferencias...">
+<!ENTITY dta-about.label "Acerca de ...">
+<!ENTITY dta-manager-button "Administrador de dTa!">
+<!ENTITY dta-tb-all.label "Todas las pestañas">
+<!ENTITY dta-tb-single.label "Pestaña actual">
+<!ENTITY dta-form-save.label "Guardar el formulario de destino con DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Empezar a guardar el formulario de destino con dTa OneClick!">

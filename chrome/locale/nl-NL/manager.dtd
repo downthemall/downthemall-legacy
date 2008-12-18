@@ -1,0 +1,44 @@
+<!ENTITY tooladd.label "Webadres toevoegen">
+<!ENTITY tooladd.tooltip "Handmatig een webadres aan DownThemAll toevoegen">
+<!ENTITY tooldonate.tooltiptext "Help mee DownThemAll te verbeteren. Overweeg het doen van een kleine donatie!">
+<!ENTITY movetop.label "Bovenkant">
+<!ENTITY movebottom.label "Onderkant">
+<!ENTITY moveup.label "Omhoog">
+<!ENTITY movedown.label "Omlaag">
+<!ENTITY task.label "Webadres/Naam">
+<!ENTITY per.label "Voltooiing">
+<!ENTITY pct.label "Voortgang">
+<!ENTITY dim.label "Grootte">
+<!ENTITY time.label "Rest. tijd">
+<!ENTITY parts.label "Delen">
+<!ENTITY speed.label "Snelheid">
+<!ENTITY infoURLTitle.value "Van:">
+<!ENTITY infoSizeTitle.value "Grootte:">
+<!ENTITY infoMultiple.value "Meervoudige items">
+<!ENTITY elapsedTitle.value "Verstreken:">
+<!ENTITY remainingTitle.value "Overblijvend:">
+<!ENTITY currentSpeedTitle.value "Huidige snelheid:">
+<!ENTITY avgSpeedTitle.value "Gem. snelheid:">
+<!ENTITY path.label "Pad opslaan">
+<!ENTITY mask.label "Masker voor te hernoemen">
+<!ENTITY hash.label "Controlegetal">
+<!ENTITY infos.label "Download info">
+<!ENTITY launch.label "Bestand openen">
+<!ENTITY delete.label "Bestand(en) verwijderen">
+<!ENTITY targetdir.label "Doelmap openen">
+<!ENTITY pause.label "Pauzeren">
+<!ENTITY resume.label "Hervatten">
+<!ENTITY cancel.label "Annuleren">
+<!ENTITY remove.label "Geselecteerde downloads uit lijst verwijderen">
+<!ENTITY removeCompleted.label "Voltooide taken uit lijst verwijderen">
+<!ENTITY removeGone.label "Verwijderde bestanden wissen">
+<!ENTITY misc.label "Diversen">
+<!ENTITY addchunk.label "Deel toevoegen">
+<!ENTITY removechunk.label "Deel verwijderen">
+<!ENTITY force.label "Starten forceren">
+<!ENTITY import.label "Vanuit bestand importeren">
+<!ENTITY export.label "Geselecteerde export">
+<!ENTITY options.caption "Opties">
+<!ENTITY loading.label "Laden...">
+<!ENTITY restore.label "Herstelln">
+<!ENTITY close.label "Sluiten">

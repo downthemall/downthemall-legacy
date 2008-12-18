@@ -1,0 +1,21 @@
+<!ENTITY mask.title "Thay đổi thẻ thông tin">
+<!ENTITY mask.name "Tên tập tin">
+<!ENTITY mask.ext "Phần mở rộng">
+<!ENTITY mask.url "Liên kết chính">
+<!ENTITY mask.curl "Liên kết đầy đủ">
+<!ENTITY mask.flatcurl "Liên kết tham khảo đầy đủ">
+<!ENTITY mask.num "Số tiến trình">
+<!ENTITY mask.hh "Giờ">
+<!ENTITY mask.mm "Phút">
+<!ENTITY mask.ss "Giây">
+<!ENTITY mask.d "Ngày">
+<!ENTITY mask.m "Tháng">
+<!ENTITY mask.y "Năm">
+<!ENTITY mask.subdirs "Thư mục con của liên kết">
+<!ENTITY mask.flatsubdirs "Thư mục con của liên kết tham khảo">
+<!ENTITY mask.text "Diễn giải về liên kết">
+<!ENTITY mask.flattext "Diễn giải về liên kết tham khảo">
+<!ENTITY mask.refer "Liên kết liên quan">
+<!ENTITY mask.qstring "Chuỗi truy vấn">
+<!ENTITY mask.tip "Nhấp hoặc kéo thả chuột để thay đổi bộ lọc">
+<!ENTITY mask.open.tip "Bảng thay đổi các thẻ thông tin liên quan">

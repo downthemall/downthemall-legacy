@@ -1,0 +1,17 @@
+<!ENTITY start.label "Spustiť!">
+<!ENTITY start.key "S">
+<!ENTITY queue.label "Pridať pozastavené">
+<!ENTITY queue.key "P">
+<!ENTITY cancel.label "Zrušiť">
+<!ENTITY options.label "Predvoľby...">
+<!ENTITY url.value "Adresa:">
+<!ENTITY dest.caption "Uložiť súbory do:">
+<!ENTITY referrer.value "Odkazujúca adresa:">
+<!ENTITY description.value "Popis:">
+<!ENTITY checksum.value "Kontr. súčet (hash):">
+<!ENTITY browse.tip "Vyhľadať cieľ. priečinok...">
+<!ENTITY mask.label "Maska premenovania">
+<!ENTITY mask.tip "Vybrané súbory budú uložené a premenované podľa tejto masky">
+<!ENTITY selectall.label "Vybrať všetko">
+<!ENTITY selectinv.label "Otočiť výber">
+<!ENTITY selectnone.label "Nevybrať nič">

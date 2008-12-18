@@ -1,0 +1,12 @@
+<!ENTITY language "Español">
+<!ENTITY transAutor "Urko">
+<!ENTITY about.subtitle "El descargador masivo para Firefox">
+<!ENTITY about.nowarr "se ofrece sin NINGUNA GARANTÍA DE NINGUNA CLASE">
+<!ENTITY about.freesoft "¡Esto es software libre!">
+<!ENTITY about.privacy "se preocupa por su privacidad">
+<!ENTITY about.read "Lea nuestra">
+<!ENTITY about.pnot "Información sobre privacidad">
+<!ENTITY about.by "traducido por">
+<!ENTITY about.redistr "Puede redistribuirse bajo ciertas condiciones">
+<!ENTITY about.icons "Los iconos y botones">
+<!ENTITY about.based "se basan en el trabajo de Mike Matas, Jakub Steiner y Mark James">

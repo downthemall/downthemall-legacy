@@ -1,0 +1,17 @@
+<!ENTITY start.label "Starten!">
+<!ENTITY start.key "S">
+<!ENTITY queue.label "Warteschlange!">
+<!ENTITY queue.key "W">
+<!ENTITY cancel.label "Abbrechen">
+<!ENTITY options.label "Einstellungen">
+<!ENTITY url.value "URL">
+<!ENTITY dest.caption "Dateien speichern in:">
+<!ENTITY referrer.value "Verweisende URL:">
+<!ENTITY description.value "Beschreibung:">
+<!ENTITY checksum.value "Prüfsumme (Hash):">
+<!ENTITY browse.tip "Zielordner auswählen...">
+<!ENTITY mask.label "Umbenennungsschema">
+<!ENTITY mask.tip "Ausgewählte Dateien werden nach diesem Umbenennungsschema gespeichert und umbenannt">
+<!ENTITY selectall.label "Alle auswählen">
+<!ENTITY selectinv.label "Auswahl umkehren">
+<!ENTITY selectnone.label "Nichts auswählen">
