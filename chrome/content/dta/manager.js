@@ -99,6 +99,7 @@ var Dialog = {
 		'network:offline-status-changed'
 	],
 	_initialized: false,
+	_autoRetrying: [],
 	_offline: false,
 	get offline() {
 		return this._offline;
@@ -355,7 +356,7 @@ var Dialog = {
 				// checks for timeout
 				if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
 					if (d.resumable || !d.totalSize || !d.partialSize) {
-						d.markAutoRetry();
+						Dialog.markAutoRetry(d);
 						d.pause();
 						d.status = _("timeout");
 					}
@@ -372,11 +373,8 @@ var Dialog = {
 			}
 
 			if (!this.offline) {
-				// XXX Improve
 				if (Prefs.autoRetryInterval) {
-					for (let d in Tree.all) {
-						d.autoRetry();
-					}
+					this._autoRetrying = this._autoRetrying.filter(function(d) !d.autoRetry());
 				}
 				this.startNext();
 			}
@@ -501,6 +499,16 @@ var Dialog = {
 		catch(ex) {
 			Debug.log("signal():", ex);
 		}
+	},
+	markAutoRetry: function D_markAutoRetry(d) {
+		d.initAutoRetry();
+		if (this._autoRetrying.indexOf(d) == -1) {
+			this._autoRetrying.push(d);
+		}
+	},
+	wasRemoved: function D_wasRemoved(d) {
+		this._running = this._running.filter(function(r) r != d);
+		this._autoRetrying = this._autoRetrying.filter(function(r) r != d);
 	},
 	_canClose: function D__canClose() {
 		if (Tree.some(function(d) { return d.started && !d.resumable && d.isOf(RUNNING); })) {
@@ -1007,7 +1015,8 @@ VisitorManager.prototype = {
 	 */
 	get time() {
 		for (let i in this._visitors) {
-			if (this._visitors[i].time > 0) {
+			let v = this._visitors[i];
+			if (v.time && v.time > 0) {
 				return this._visitors[i].time;
 			}
 		}
@@ -1452,9 +1461,9 @@ QueueItem.prototype = {
 	setAttributes: function() {
 		if (Prefs.setTime) {
 			try {
-				var time = this.startDate.getTime();
+				let time = this.startDate.getTime();
 				try {
-					var time =  this.visitors.time;
+					time =  this.visitors.time;
 				}
 				catch (ex) {
 					// no-op
@@ -1464,7 +1473,7 @@ QueueItem.prototype = {
 					throw new Exception("invalid date encountered: " + time + ", will not set it");
 				}
 				// have to unwrap
-				var file = new FileFactory(this.destinationFile);
+				let file = new FileFactory(this.destinationFile);
 				file.lastModifiedTime = time;
 			}
 			catch (ex) {
@@ -1703,7 +1712,7 @@ QueueItem.prototype = {
 	get autoRetrying() {
 		return !!this._autoRetryTime;
 	},
-	markAutoRetry: function QI_markRetry() {
+	initAutoRetry: function QI_markRetry() {
 		if (!Prefs.autoRetryInterval || (Prefs.maxAutoRetries && Prefs.maxAutoRetries <= this._autoRetries)) {
 			 return;
 		}
@@ -1712,13 +1721,14 @@ QueueItem.prototype = {
 	},
 	autoRetry: function QI_autoRetry() {
 		if (!this.autoRetrying || Utils.getTimestamp() - (Prefs.autoRetryInterval * 1000) < this._autoRetryTime) {
-			return;
+			return false;
 		}
 
 		this._autoRetryTime = 0;
 		++this._autoRetries;
 		this.queue();
-		Debug.logString("Requeued due to auto-retry: " + d);		
+		Debug.logString("Requeued due to auto-retry: " + d);
+		return true;
 	},
 	queue: function QI_queue() {
 		this._autoRetryTime = 0;
@@ -2141,9 +2151,8 @@ function Connection(d, c, getInfo) {
 		}
 	}
 	try {
-		prio = this._chan.QueryInterface(Ci.nsISupportsPriority);
+		let prio = this._chan.QueryInterface(Ci.nsISupportsPriority);
 		prio.adjustPriority(Ci.nsISupportsPriority.PRIORITY_LOW);
-		Debug.logString("set priority");
 	}
 	catch (ex) {
 		Debug.log("Failed setting priority", ex);
@@ -2369,7 +2378,7 @@ Connection.prototype = {
 				Debug.log("handleError: Cannot recover from problem!", code);
 				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1) {
 					Debug.log("we got temp failure!", code);
-					d.markAutoRetry();
+					Dialog.markAutoRetry(d);
 					d.pause();
 					d.status = code >= 500 ? _('temperror') : _('autherror');
 				}
@@ -2521,7 +2530,7 @@ Connection.prototype = {
 		if (c.start != 0 && d.is(RUNNING)) {
 			if (!this.handleError()) {
 				Debug.log(d + ": Server error or disconnection", "(type 1)");
-				d.markAutoRetry();
+				Dialog.markAutoRetry(d);
 				d.status = _("servererror");
 				d.pause();
 			}
@@ -2681,7 +2690,7 @@ Connection.prototype = {
 			NS_ERROR_NET_RESET
 		].indexOf(aStatusCode)) {
 			Debug.log(d + ": Server error or disconnection", "(type 3)");
-			d.markAutoRetry();
+			Dialog.markAutoRetry(d);
 			d.pause();
 			d.status = _("servererror");
 			return;
@@ -2704,7 +2713,7 @@ Connection.prototype = {
 		if (c.starter && d.is(RUNNING)) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.log(d + ": Server error or disconnection", "(type 2)");
-				d.markAutoRetry();
+				Dialog.markAutoRetry(d);
 				d.pause();
 				d.status = _("servererror");
 			}
@@ -2718,7 +2727,7 @@ Connection.prototype = {
 
 		if (!d.isOf(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
 			if (d.resumable) {
-				d.markAutoRetry();
+				Dialog.markAutoRetry(d);
 				d.pause();
 				d.status = _('errmismatchtitle');
 			}
