@@ -1,0 +1,31 @@
+<!ENTITY pause.label "Pause">
+<!ENTITY resume.label "Resume">
+<!ENTITY cancel.label "Cancel">
+<!ENTITY movetop.label "Move to top">
+<!ENTITY movebottom.label "Move to bottom">
+<!ENTITY moveup.label "Move up">
+<!ENTITY movedown.label "Move down">
+<!ENTITY selectall.label "Select all">
+<!ENTITY selectinv.label "Invert selection">
+<!ENTITY targetdir.label "Open target dir">
+<!ENTITY infos.label "Download info">
+<!ENTITY options.label "Preferences...">
+<!ENTITY task.label "URL Task">
+<!ENTITY per.label "Percent">
+<!ENTITY pct.label "Progress">
+<!ENTITY dim.label "Dimension">
+<!ENTITY time.label "Est. time">
+<!ENTITY parts.label "Parts">
+<!ENTITY path.label "Save path">
+<!ENTITY remove.label "Remove from list">
+<!ENTITY addchunk.label "Add chunk">
+<!ENTITY removechunk.label "Remove chunk">
+<!ENTITY launch.label "Open file">
+<!ENTITY tooladd.label "Add URL(s)">
+<!ENTITY tooldonate.tooltiptext "You can help us making DownThemAll even better. Consider making a small donation!">
+<!ENTITY mask.label "Renaming Mask">
+<!ENTITY speed.label "Speed">
+<!ENTITY infoURLTitle.value "Link URL: ">
+<!ENTITY infoDestTitle.value "Destination: ">
+<!ENTITY dtahelp "Help!">
+<!ENTITY removeCompleted.label "Remove completed tasks">

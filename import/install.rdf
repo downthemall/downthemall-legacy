@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+	<Description about="urn:mozilla:install-manifest">
+		<em:id>{DDC359D1-844A-42a7-9AA1-88A850A938A8}</em:id>
+		<em:name>DownThemAll!</em:name>
+		<em:description>The mass downloader for Firefox.</em:description>
+		<em:creator>Federico Parodi - Stefano Verna</em:creator>
+		<em:version>0.9.9.4</em:version>
+		<em:aboutURL>chrome://dta/content/about/about.xul</em:aboutURL>
+		<em:iconURL>chrome://dta/content/immagini/icon.png</em:iconURL>
+		<em:homepageURL>http://www.downthemall.net</em:homepageURL>
+		<em:optionsURL>chrome://dta/content/opzioni/newPref.xul</em:optionsURL>
+		
+		<!-- Firefox -->
+		<em:targetApplication>
+			<Description>
+				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+				<em:minVersion>1.5</em:minVersion>
+				<em:maxVersion>2.0</em:maxVersion>
+			</Description>
+		</em:targetApplication>
+		
+		<!-- Flock -->
+		<em:targetApplication>
+		  <Description>
+			<em:id>{a463f10c-3994-11da-9945-000d60ca027b}</em:id>
+			<em:minVersion>0.4</em:minVersion>
+			<em:maxVersion>0.8</em:maxVersion>
+		  </Description>
+		</em:targetApplication>
+
+		<!-- Thunderbird -->
+		<em:targetApplication>
+		  <Description>
+			<em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
+			<em:minVersion>1.5</em:minVersion>
+			<em:maxVersion>2.0.0.*</em:maxVersion>
+		  </Description>
+		</em:targetApplication>
+
+	</Description>
+</RDF>

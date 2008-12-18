@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See notice.txt and gpl.txt for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
+<overlay id="filterspaneoverlay"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <prefpane id="dtapane2" label="&filterspane.label;" image="chrome://dta/content/immagini/filters32.png" onpaneload="versionControl();load();">
+    <script type="application/x-javascript" src="filtersPane.js"/>
+    <stringbundle id="stringB" src="chrome://dta/locale/selectwin.properties"/>
+    <preferences id="dinPref">
+        <preference id="visibledump" name="extensions.dta.directory.visibledump" type="bool" />
+    </preferences>
+    <vbox id="scatolone">
+       
+        <vbox flex="1" style="overflow:auto">
+	<tree id="filterTree" flex="1" rows="10" seltype="single" onselect="changeSelection();">
+		
+		<treecols>
+			<treecol label="&listhead1.label;" flex="1"/>
+			<splitter class="splitt" />
+			<treecol label="&listhead2.label;" flex="2"/>
+		</treecols>
+		<treechildren id="listafile" tooltip="t1">
+        </treechildren>
+	</tree>
+		<groupbox id="editableGroup" flex="1"><caption id="captiongroup" />
+		<grid flex="1">
+			<columns>
+				<column />
+				<column flex="1"/>
+			</columns>
+			<rows>
+				<row id="captionRow" align="center">
+					<label value="&listhead1.label;:"/><textbox id="captionA" onchange="changeCaption();" oninput="changeCaption();" onblur="changeCaption();" />
+				</row>
+				<row id="filterRow" align="center">
+					<label value="&filter.label;"/> <textbox id="filterA" onchange="changeExt();" oninput="changeExt();" onblur="changeExt();"/><checkbox id="regex" label="&regex.label;" oncommand="makeRegex();"/>
+				</row>
+				<row align="center">
+					<label id="useAs" value="&useAs.label;"/> <hbox id="linkPicRow"><checkbox id="linksf" label="&linksf.label;"  /><checkbox id="imagesf" label="&imagesf.label;" /></hbox>
+				</row>
+			</rows>
+		</grid>
+		</groupbox>
+		<hbox><spacer flex="1"/><button label="&add.label;" oncommand="addNewFilter();"/><button label="&remove.label;" oncommand="deleteFilter(-1);" id="removebutton"/><button label="&default.label;" oncommand="resetFilters();" id="defaultbutton"/><spacer flex="1"/></hbox>
+	</vbox>
+              
+   </vbox>
+</prefpane>
+</overlay>

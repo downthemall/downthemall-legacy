@@ -1,0 +1,97 @@
+* { 
+ font-family: "Lucida Grande", "Lucida Sans Unicode", Arial;
+ margin: 0px; 
+ font-size: 13px; 
+ text-align: justify;
+ color: #333;
+ line-height: 128%;
+ }
+
+a {
+color: #333;
+}
+
+a:hover {
+color: #663300;
+}
+
+body {
+	
+}
+
+p {
+	margin: 15px;
+	margin-bottom: 5px;
+	margin-bottom: 6px;
+}
+
+ul {
+	margin: 6px 15px 5px 20px;
+	padding: 5px;
+}
+
+ul ul {
+	margin-top: 0px;
+}
+
+li {
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+
+h2 {
+	margin-bottom: 9px;
+	border-bottom: #FFE391 solid 1px;
+	font-size: 16px;
+}
+
+table {
+	text-align: left;
+	margin-left: 15px;
+	margin-top: 5px;
+	margin-right: 15px;
+}
+
+td {
+	vertical-align: top;
+	margin-bottom: 3px;
+	padding-bottom: 3px;
+	padding-right: 20px;
+	padding-left: 10px;
+	border-bottom: #ddd solid 1px;
+}
+
+.caption {
+	font-weight: bold;
+	border-top: #FFE391 solid 1px;
+	border-bottom: #FFE391 solid 1px;
+	background-color: #FFF9DF;
+}
+
+strong {
+	font-style: normal;
+	font-size: 100%;
+}
+	
+#header {
+	padding: 11px;
+	border-bottom: 1px solid #DFD299;
+	margin-bottom: 20px;
+	background-color: #FFF6CF;
+	text-align: right;
+}
+
+#header, #header * {
+	font-size: 12px;
+}
+
+#main {
+	margin: 15px;
+}
+
+.shortcut {
+	padding: 1px 3px;
+	background-color: #EFEAD1;
+	border: 1px solid #DFD299;
+	-moz-border-radius: 4px;
+}

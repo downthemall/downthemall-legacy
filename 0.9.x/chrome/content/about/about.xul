@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi, Stefano Verna and Nils Maier.
+ * 
+ * See notice.txt and gpl.txt for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="style.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://dta/locale/about.dtd">
+<window class="dialog"	title="DownThemAll! - About" orient="vertical" autostretch="always" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" style="background-color:#FFFFFF;width:550px;">
+<script type="application/x-javascript"><![CDATA[
+
+function openTab(sito) {
+	var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
+	var recentWindow = wm.getMostRecentWindow("navigator:browser");
+	if (recentWindow) {
+		// Use an existing browser window
+		recentWindow.delayedOpenTab(sito);
+	}	else {
+		// No browser windows are open, so open a new one.
+		window.open(sito);
+	}
+}
+
+  ]]></script>
+<groupbox orient="horizontal" style="background-color:#FFFFFF !important;" >
+
+
+<vbox style="margin:8px; margin-left:0px;" flex="1">
+	<hbox>
+		<image src="chrome://dta/content/about/logo.png"/><spacer flex="1"/>
+	</hbox>
+  <label value="ver. 0.9.9.10" style="margin-bottom:10px;" />
+  <label value="Copyright © 2004-2007 By:" style="font-weight: bold;"/>
+  <label value="Federico Parodi" class="link" onclick="openTab('http://www.jimmy2k.it', '_blank'); "/>
+  <label value="Stefano Verna" class="link" onclick="openTab('http://steffoz.altervista.org/', '_blank'); "/>
+  <label value="Nils Maier" class="link" onclick="openTab('http://tn123.ath.cx/about/', '_blank'); "/>
+  <separator class="thin"/>
+  <description style="margin:0px 0px 5px 6px;">Icons and buttons are based on the works of Mike Matas and Jakub Steiner - © Michael Matas, © Jakub Steiner, © Novell, Inc.</description>
+  <separator class="thin"/>
+  <description style="margin:0px 0px 0px 6px;">DownThemAll! comes with ABSOLUTELY NO WARRANTY; this is free software, and you are welcome to redistribute it under certain conditions:</description>
+  <label class="link" value="view license for details." onclick="openTab('chrome://dta/content/gpl.txt', '_blank');"/>
+  <label class="link" value="Privacy notice." onclick="window.openDialog('chrome://dta/content/dta/privacy.xul','_blank','chrome, centerscreen, resizable=no, dialog=yes');"/>
+  <separator class="thin"/>
+  <label value="&language; translation by" style="font-weight: bold;"/>
+  <label value="&transAutor;" class="link"/>
+  <separator class="thin"/>
+  <label value="Home Page" style="font-weight: bold;"/>
+  <label value="http://www.downthemall.net/" class="link" onclick="openTab('http://www.downthemall.net/', '_blank'); "/>
+  <separator class="thin"/>
+  <label value="E-mail" style="font-weight: bold;"/>
+  <label value="info@downthemall.net" class="link" onclick="openTab('mailto:info@downthemall.net', '_blank'); "/>
+</vbox>
+</groupbox>
+<hbox>
+<spacer flex="1"/><button label="Close this window" onclick="self.close();"/>
+</hbox>
+</window>

@@ -1,0 +1,39 @@
+<?xml version="1.0"?> 
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See notice.txt and gpl.txt for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://browser/skin/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://dta-pref-style/content/style.css"?>
+
+<!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
+
+<prefwindow id="dtaPreferences"
+			xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
+			windowtype="window:prefwindow"
+			title="&dtaPreferences.title;" 
+			buttons="accept,cancel,extra2"
+			buttonlabelextra2="&buttonlabelextra2;"
+			ondialogextra2="if (confirm(document.getElementById('stringB').getString('restorepref'))) {restoreAll();window.close();}"
+			persist="width height screenX screenY"
+			>
+	<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties" />
+	<prefpane id="dtapane1" src="chrome://dta/content/opzioni/mainPane.xul" label="&mainpane.label;" image="chrome://dta/content/immagini/mainPref32.png" />
+	<prefpane id="dtapane2" image="chrome://dta/content/immagini/filters.png" label="&filterspane.label;" src="chrome://dta/content/opzioni/filtersPane.xul" />
+	<prefpane id="dtapane3" image="chrome://dta/content/immagini/privacy32.png" src="chrome://dta/content/opzioni/privaPane.xul" label="&privacypane.label;" />
+	<prefpane id="dtapane4" image="chrome://dta/content/immagini/visual32.png"  src="chrome://dta/content/opzioni/interfacePane.xul" label="&uipane.label;" />
+	<prefpane id="dtapane5" image="chrome://dta/content/immagini/advPref32.png" src="chrome://dta/content/opzioni/advPane.xul" label="&advancedpane.label;" />
+	<script type="application/x-javascript" src="chrome://dta/content/dta/overlayFunctions.js"/>
+	<script type="application/x-javascript" src="chrome://dta/content/dta/internalFunctions.js"/>
+	<script type="application/x-javascript" src="newPref.js"/>
+	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
+	<script type="application/x-javascript" src="restorePref.js"/>
+	
+</prefwindow>
