@@ -1,0 +1,5 @@
+<!ENTITY title "Thêm liên kết">
+<!ENTITY add.value "Thêm liên kết">
+<!ENTITY desc.value "Nhập liên kết vào đây và nhập (nếu muốn) trang tham khảo của tập tin mà bạn muốn tải xuống.">
+<!ENTITY desc.batches.value "Bạn cũng có thể sử dụng nhiều diễn giải cùng lúc để tải xuống nhiều tập tin cùng một lúc.">
+<!ENTITY examples.value "Ví dụ:">

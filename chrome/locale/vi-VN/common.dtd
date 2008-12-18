@@ -1,0 +1,17 @@
+<!ENTITY start.label "Bắt đầu!">
+<!ENTITY start.key "giây">
+<!ENTITY queue.label "Thêm tạm ngừng">
+<!ENTITY queue.key "H">
+<!ENTITY cancel.label "Bỏ qua">
+<!ENTITY options.label "Tuỳ chỉnh">
+<!ENTITY url.value "Liên kết">
+<!ENTITY dest.caption "Lưu tập tin vào:">
+<!ENTITY referrer.value "Liên kết liên quan:">
+<!ENTITY description.value "Diễn giải:">
+<!ENTITY checksum.value "Kiểm tra tổng (Hash):">
+<!ENTITY browse.tip "Duyệt thư mục gốc...">
+<!ENTITY mask.label "Đổi tên bộ lọc">
+<!ENTITY mask.tip "Những tập tin được chọn sẽ được lưu và đổi tên theo bộ lọc này">
+<!ENTITY selectall.label "Chọn tất cả">
+<!ENTITY selectinv.label "Đảo chọn">
+<!ENTITY selectnone.label "Không chọn">

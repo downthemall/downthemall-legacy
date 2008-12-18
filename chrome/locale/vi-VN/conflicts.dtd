@@ -1,0 +1,7 @@
+<!ENTITY title.value "Xung đột tên tập tin!">
+<!ENTITY text.value "Ghi nhớ thiết lập này:">
+<!ENTITY file.label "Chỉ với tập tin này">
+<!ENTITY session.label "Chỉ với lựa chọn này">
+<!ENTITY always.label "Từ đây trở đi">
+<!ENTITY overwrite.label "Ghi đè lên tập tin đã có">
+<!ENTITY skip.label "Bỏ qua">
