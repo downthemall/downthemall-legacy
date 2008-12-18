@@ -100,21 +100,31 @@ var Dialog = {
 	],
 	_initialized: false,
 	_offline: false,
+	_offlineForced: false,
 	get offline() {
-		return this._offline;
+		return this._offline || this._offlineForced;
 	},
 	set offline(nv) {
 		this._offline = !!nv;
-		let de = $('downloads');
-		
-		if (this._offline) {
-			de.setAttribute('offline', true);
-		}
-		else if (de.hasAttribute('offline')) {
-				de.removeAttribute('offline');
-		}
-		Tree.box.invalidate();
+		this._processOfflineChange();
+		return this._offline;
 	},
+	get offlineForced() {
+		return this._offlineForced;
+	},
+	set offlineForced(nv) {
+		this._offlineForced = !!nv;
+		let netstatus = $('netstatus');
+		if (this._offlineForced) {
+			netstatus.setAttribute('offline', true);
+		}
+		else if (netstatus.hasAttribute('offline')) {
+			netstatus.removeAttribute('offline');
+		}		
+		this._processOfflineChange();
+		return this._offlineForced;
+	},
+	
 	_wasRunning: false,
 	_lastTime: Utils.getTimestamp(),
 	_running: [],
@@ -232,14 +242,6 @@ var Dialog = {
 		}
 		else if (topic == 'network:offline-status-changed') {
 			this.offline = data == "offline";
-			if (data == 'offline') {
-				for (let d in Tree.all) {
-					if (d.is(RUNNING)) {
-						d.pause();
-						d.queue();
-					}
-				}
-			}
 		}
 	},
 	refresh: function D_refresh() {
@@ -344,6 +346,29 @@ var Dialog = {
 			}
 		);
 		SessionManager.endUpdate();
+	},
+	
+	_processOfflineChange: function D__processOfflineChange() {
+		let de = $('downloads');
+		if (this.offline == de.hasAttribute('offline')) {
+			return;
+		}
+		
+		if (this.offline) {
+			de.setAttribute('offline', true);
+			$('netstatus').setAttribute('offline', true);
+			for (let d in Tree.all) {
+				if (d.is(RUNNING)) {
+					d.pause();
+					d.queue();
+				}
+			}		
+		}
+		else if (de.hasAttribute('offline')) {
+			de.removeAttribute('offline');
+			$('netstatus').removeAttribute('offline');
+		}
+		Tree.box.invalidate();		
 	},
 
 	checkDownloads: function D_checkDownloads() {

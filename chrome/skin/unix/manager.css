@@ -14,3 +14,10 @@ treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined, 
 #loading {
 	list-style-image: url(moz-icon://stock/gtk-dialog-info?size=dnd);
 }
+
+statusbarpanel#netstatus {
+	list-style-image: url(moz-icon://stock/network-transmit?size=16);
+}
+statusbarpanel#netstatus[offline] {
+	list-style-image: url(moz-icon://stock/network-offline?size=16);
+}
