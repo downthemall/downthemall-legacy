@@ -16,8 +16,14 @@ treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined, 
 }
 
 statusbarpanel#netstatus {
-	list-style-image: url(moz-icon://stock/network-transmit?size=16);
+	list-style-image: url(moz-icon://stock/network-transmit);
 }
+
+statusbarpanel#netstatus image.statusbarpanel-icon {
+	max-width: 16px;
+	max-height: 16px;
+} 
+
 statusbarpanel#netstatus[offline] {
-	list-style-image: url(moz-icon://stock/network-offline?size=16);
+	list-style-image: url(moz-icon://stock/network-offline);
 }
