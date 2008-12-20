@@ -68,37 +68,40 @@
 			<menuitem image="chrome://dta/skin/common/openurl.png" id="mopen" crop="center" class="menuitem-iconic" oncommand="Dialog.openSelection();"/>
 		</popup>
 	</popupset>
-
-	<toolbox id="views">
-		<toolbar class="findfiles" chromedir="&locale.dir;">
-			<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&tab.links.label;" oncommand="Dialog.changeTab('links');" />
-			<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.pics.label;" oncommand="Dialog.changeTab('images');" />
-			<spacer flex="1" id="logo" chromedir="&locale.dir;"/>
-		</toolbar>
-	</toolbox>
-
-	<tree
-		id="urlList"
-		flex="1"
-		context="popup"
-		seltype="multiple"
-		enableColumnDrag="true"
-		style="margin:0px;"
-		editable="true"
-		autostretch="always"
-	>
-		<treecols>
-			<treecol type="checkbox" fixed="true" editable="true" ignoreincolumnpicker="true" />
-			<treecol label="&url.value;" flex="35" crop="right" persist="width hidden" />
-			<splitter class="tree-splitter"/>
-			<treecol label="&resname.value;" flex="15" crop="right" hidden="true" persist="width hidden" />
-			<splitter class="tree-splitter"/>
-			<treecol label="&header.desc.label;" flex="9" persist="width hidden" />
-			<splitter class="tree-splitter"/>
-			<treecol label="&mask.label;" flex="5" persist="width hidden"/>
-		</treecols>
-		<treechildren/>
-	</tree>
+	
+	<notificationbox id="notifications" flex="1">
+		<toolbox id="views">
+			<toolbar class="findfiles" chromedir="&locale.dir;">
+				<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&tab.links.label;" oncommand="Dialog.changeTab('links');" />
+				<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.pics.label;" oncommand="Dialog.changeTab('images');" />
+				<spacer flex="1" id="logo" chromedir="&locale.dir;"/>
+			</toolbar>
+		</toolbox>
+	
+		<tree
+			id="urlList"
+			flex="1"
+			context="popup"
+			seltype="multiple"
+			enableColumnDrag="true"
+			style="margin:0px;"
+			editable="true"
+			autostretch="always"
+		>
+			<treecols>
+				<treecol type="checkbox" fixed="true" editable="true" ignoreincolumnpicker="true" />
+				<treecol label="&url.value;" flex="35" crop="right" persist="width hidden" />
+				<splitter class="tree-splitter"/>
+				<treecol label="&resname.value;" flex="15" crop="right" hidden="true" persist="width hidden" />
+				<splitter class="tree-splitter"/>
+				<treecol label="&header.desc.label;" flex="9" persist="width hidden" />
+				<splitter class="tree-splitter"/>
+				<treecol label="&mask.label;" flex="5" persist="width hidden"/>
+			</treecols>
+			
+			<treechildren/>
+		</tree>
+	</notificationbox>	
 
 	<hbox style="margin:7px 7px 3px 7px;" >
 		<vbox autostretch="never" flex="1">

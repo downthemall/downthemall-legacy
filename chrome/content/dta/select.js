@@ -345,6 +345,17 @@ var Dialog = {
 				true
 			);
 			
+			this._notifications = $('notifications');
+			for (x in this._notifications) {
+				if (!x.match(/^PRIORITY/)) {
+					break;
+				}
+				this[x] = this._notifications[x];
+			}
+			
+			if (window.arguments[2]) {
+				this.setNotification(window.arguments[2], this.PRIORITY_WARNING_HIGH, 4500);
+			}			
 		}
 		catch(ex) {
 			DTA_debug.log("load():", ex);
@@ -353,7 +364,26 @@ var Dialog = {
 		// will install our observer
 		// currently just observes dtaIFilterManager
 		this.registerObserver();
-
+	},
+	
+	addNotification: function DTA_addNotification(label, priority, timeout, buttons) {
+		let nb = this._notifications;
+		let n = nb.appendNotification(label, 0, null, priority, buttons);
+		if (isFinite(timeout) && timeout > 0) {
+			setTimeout(
+				function() {
+					nb.removeNotification(n);
+				},
+				timeout
+			);
+		}
+	},
+	setNotification: function DTA_setNotification(label, priority, timeout, buttons) {
+		this.clearNotifications();
+		this.addNotification(label, priority, timeout, buttons);
+	},
+	clearNotifications: function DTA_clearNotifications() {
+		this._notifications.removeAllNotifications(true);
 	},
 
 	// dialog destruction
@@ -364,17 +394,18 @@ var Dialog = {
 
 	// checks if we can continue to process
 	check: function DTA_check() {
+		this.clearNotifications();
 		var dir = this.ddDirectory.value.trim();
 
-		// directory and mask set?
-		if (!dir.length || !this.ddRenaming.value.trim().length) {
-			alert(_('alertinfo'));
+		// mask set?
+		if (!this.ddRenaming.value.trim().length) {
+			this.addNotification(_('alertmask'), this.PRIORITY_CRITICAL_MEDIUM);
 			return false;
 		}
 
 		// directory valid?
-		if (!Utils.validateDir(dir))	{
-			alert(_("alertfolder"));
+		if (!dir.length || !Utils.validateDir(dir)) {
+			this.addNotification(_(dir.length ? 'alertinvaliddir' : 'alertnodir'), this.PRIORITY_CRITICAL_MEDIUM);
 			var newDir = Utils.askForDir(null, _("validdestination"));
 			this.ddDirectory.value = newDir ? newDir : '';
 			return false;
@@ -422,6 +453,7 @@ var Dialog = {
 
 			// nothing selected. cannot start
 			if (!out.length) {
+				this.setNotification(_('nolinks'), this.PRIORITY_CRITICAL_LOW);
 				return false;
 			}
 
@@ -577,14 +609,14 @@ var Dialog = {
 	toggleSelection: function () {
 
 		// modes: 1 = check, 2 = uncheck, other = invert
-		var mode = 0;
+		let mode = 0;
 		if (arguments && arguments.length) {
 			mode = arguments[0] ? 1 : 2;
 		}
-		var tree = this.current;
+		let tree = this.current;
 
-		var rangeCount = tree.selection.getRangeCount();
-		var start = {}, end = {}, val;
+		let rangeCount = tree.selection.getRangeCount();
+		let start = {}, end = {}, val;
 		for (var r = 0; r < rangeCount; ++r) {
 			tree.selection.getRangeAt(r, start, end);
 			for (var i = start.value; i <= end.value; ++i) {

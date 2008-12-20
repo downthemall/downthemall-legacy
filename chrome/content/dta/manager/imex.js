@@ -241,7 +241,7 @@ var ImEx = {
 		addLine(line);
 		is.close();
 		if (links.length) {
-			DTA_AddingFunctions.saveLinkArray(false, links, []);
+			DTA_AddingFunctions.saveLinkArray(links, []);
 		}
 	},
 	importFromMetalink: function(file) {
