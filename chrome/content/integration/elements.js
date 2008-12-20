@@ -300,15 +300,18 @@ var DTA_ContextOverlay = {
 			
 			if (turbo) {
 				try {
-					DTA_AddingFunctions.saveLinkArray(true, urls, images);
+					DTA_AddingFunctions.turboSaveLinkArray(urls, images);
 					return;
 				}
 				catch (ex) {
 					DTA_debug.log('findLinks', ex);
-					DTA_Prompts.alert(window, this.getString('error'), this.getString('errorinformation'));
+					//DTA_Prompts.alert(window, this.getString('error'), );
+					DTA_AddingFunctions.saveLinkArray(urls, images, this.getString('errorinformation'));
 				}
 			}
-			DTA_AddingFunctions.saveLinkArray(false, urls, images);
+			else {
+				DTA_AddingFunctions.saveLinkArray(urls, images);
+			}
 		}
 		catch(ex) {
 			DTA_debug.log('findLinks', ex);

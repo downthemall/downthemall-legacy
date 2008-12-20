@@ -189,7 +189,7 @@ var Dialog = {
 			return false;
 		}
 		if (!Utils.validateDir(dir)) {
-			alert(_("alertfolder"));
+			alert(_('alertinvalidfolder'));
 			var newDir = Utils.askForDir(null, _("validdestination"));
 			$('directory').value = newDir ? newDir : '';
 			return false;

@@ -301,50 +301,9 @@ var DTA_AddingFunctions = {
 		this.sendToDown(!DTA_preferences.getExt("lastqueued", false), urlsArray);
 	},
 
-	saveLinkArray : function(turbo, urls, images) {
-
+	saveLinkArray : function(urls, images, error) {
 		if (urls.length == 0 && images.length == 0) {
 			throw new Components.Exception("no links");
-		}
-
-		if (turbo) {
-
-			DTA_debug.logString("saveLinkArray(): DtaOneClick filtering started");
-
-			var links;
-			var type;
-			if (DTA_preferences.getExt("seltab", 0)) {
-				links = images;
-				type = 2;
-			}
-			else {
-				links = urls;
-				type = 1;
-			}
-
-			var fast = null;
-			try {
-				fast = DTA_FilterManager.getTmpFromString(this.getDropDownValue('filter'));
-			}
-			catch (ex) {
-				// fall-through
-			}
-			links = links.filter(
-				function(link) {
-					if (fast && (fast.match(link.url.usable) || fast.match(link.description))) {
-						return true;
-					}
-					return DTA_FilterManager.matchActive(link.url.usable, type);
-				}
-			);
-
-			DTA_debug.logString("saveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
-
-			if (links.length == 0) {
-					throw new Components.Exception('no links remaining');
-			}
-			this.turboSendToDown(links);
-			return;
 		}
 
 		window.openDialog(
@@ -352,8 +311,50 @@ var DTA_AddingFunctions = {
 			"_blank",
 			"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
 			urls,
-			images
+			images,
+			error
 		);
+	},
+	
+	turboSaveLinkArray: function(urls, images) {
+		if (urls.length == 0 && images.length == 0) {
+			throw new Components.Exception("no links");
+		}
+		DTA_debug.logString("turboSaveLinkArray(): DtaOneClick filtering started");
+
+		var links;
+		var type;
+		if (DTA_preferences.getExt("seltab", 0)) {
+			links = images;
+			type = 2;
+		}
+		else {
+			links = urls;
+			type = 1;
+		}
+
+		var fast = null;
+		try {
+			fast = DTA_FilterManager.getTmpFromString(this.getDropDownValue('filter'));
+		}
+		catch (ex) {
+			// fall-through
+		}
+		links = links.filter(
+			function(link) {
+				if (fast && (fast.match(link.url.usable) || fast.match(link.description))) {
+					return true;
+				}
+				return DTA_FilterManager.matchActive(link.url.usable, type);
+			}
+		);
+
+		DTA_debug.logString("turboSaveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
+
+		if (links.length == 0) {
+			throw new Components.Exception('no links remaining');
+		}
+		this.turboSendToDown(links);		
 	},
 
 	openManager : function (quite) {
