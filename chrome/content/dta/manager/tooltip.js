@@ -110,7 +110,7 @@ var Tooltip = {
 		try {
 			if (file.speeds.length && file.is(RUNNING)) {
 				$('speedAverage').value = file.speed;
-				$('speedCurrent').value = Utils.formatBytes(file.speeds[file.speeds.length - 1]) + "/s";;
+				$('speedCurrent').value = Utils.formatBytes(file.speeds.last) + "/s";;
 			}
 			else if (file.is(RUNNING)) {
 				$('speedCurrent').value = $('speedAverage').value = _('unknown');
@@ -169,28 +169,29 @@ var Tooltip = {
 	
 			if (file.speeds.length > 1) {
 				let maxH, minH;
-				maxH = minH = file.speeds[0];
-				for each (let s in file.speeds) {
+				maxH = minH = file.speeds.first;
+				let speeds = [];
+				for (let s in file.speeds.all) {
 					maxH = Math.max(maxH, s);
 					minH = Math.min(minH, s);
+					speeds.push(s);
 				}
 				// special case: all speeds are the same
-				let s;
 				if (minH == maxH) {
-					s = file.speeds.map(function(speed) { return 12; });
+					speeds = speeds.map(function(speed) { return 12; });
 				}
 				else {
 					let r = (maxH - minH);
-					s = file.speeds.map(function(speed) { return 3 + Math.round((h - 6) * (speed - minH) / r); });
+					speeds = speeds.map(function(speed) { return 3 + Math.round((h - 6) * (speed - minH) / r); });
 				}
 
 				ctx.save();
 				ctx.clip();
 				[
-					{ x:4, y:0, f:this._createVerticalGradient(ctx, h - 7, "#EADF91", "#F4EFB1") },
-					{ x:2, y:0, f:this._createVerticalGradient(ctx, h - 7, "#DFD58A", "#D3CB8B") },
-					{ x:1, y:0, f:this._createVerticalGradient(ctx, h - 7, "#D0BA70", "#DFCF6F") },
-					{ x:0, y:0, f:graphFillStyle, s:this._createVerticalGradient(ctx, h - 7, "#F98F00", "#FFBF37") }
+					{ x:4, y:0, f: this._createVerticalGradient(ctx, h - 7, "#EADF91", "#F4EFB1") },
+					{ x:2, y:0, f: this._createVerticalGradient(ctx, h - 7, "#DFD58A", "#D3CB8B") },
+					{ x:1, y:0, f: this._createVerticalGradient(ctx, h - 7, "#D0BA70", "#DFCF6F") },
+					{ x:0, y:0, f: graphFillStyle, s: this._createVerticalGradient(ctx, h - 7, "#F98F00", "#FFBF37") }
 				].forEach(
 					function(pass) {
 						ctx.fillStyle = pass.f;
@@ -200,20 +201,20 @@ var Tooltip = {
 						ctx.beginPath();
 						ctx.moveTo(x, y);
 								
-						y -= s[0];
+						y -= speeds[0];
 						ctx.lineTo(x, y);
 								
-						let slope = (s[1] - s[0]);
+						let slope = (speeds[1] - speeds[0]);
 						x += step * .7;
 						y -= slope * .7;
 						ctx.lineTo(x, y);
 								
-						for (let j = 1, e = s.length - 1; j < e; ++j) {
+						for (let j = 1, e = speeds.length - 1; j < e; ++j) {
 							y -= slope *.3;
-							slope = (s[j+1] - s[j]);
+							slope = (speeds[j+1] - speeds[j]);
 							y -= slope * .3;
 							
-							ctx.quadraticCurveTo(step * j, h + pass.y - s[j], (x + step * .6), y);
+							ctx.quadraticCurveTo(step * j, h + pass.y - speeds[j], (x + step * .6), y);
 	
 							x += step;
 							y -= slope * .4;

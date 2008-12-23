@@ -86,6 +86,7 @@ const STREAMS_FREQ = 200;
 
 let Prompts = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
+Components.utils.import('resource://dta/speedstats.jsm');
 
 var TEXT_PAUSED;
 var TEXT_QUEUED;
@@ -126,7 +127,8 @@ var Dialog = {
 	},
 	
 	_wasRunning: false,
-	_lastTime: Utils.getTimestamp(),
+	_sum: 0,
+	_speeds: new SpeedStats(5),
 	_running: [],
 	_autoClears: [],
 	completed: 0,
@@ -246,43 +248,14 @@ var Dialog = {
 	},
 	refresh: function D_refresh() {
 		try {
-			let sum = 0;
 			const now = Utils.getTimestamp();
-			for each (i in this._running) {
-				let d = i.d;
-				
-				let advanced = (d.partialSize - i.lastBytes);
-				sum += advanced;
-				
-				let elapsed = (now - i.lastTime) / 1000;					
-				if (elapsed < 1) {
-					return;
-				}						
-				
-				let speed = Math.round(advanced / elapsed);
-				
-				i.lastBytes = d.partialSize;
-				i.lastTime = now;				
-
-				// Refresh item speed
-				d.speeds.push(speed > 0 ? speed : 0);
-				if (d.speeds.length > SPEED_COUNT) {
-					d.speeds.shift();
-				}
-				i.lastBytes = d.partialSize;
-				i.lastTime = now;
-				
-				speed = 0;
-				d.speeds.forEach(
-					function(s) {
-						speed += s;
-					}
-				);
-				speed /= d.speeds.length;
+			for each (let d in this._running) {
+				let advanced = d.speeds.add(d.partialSize, now);
+				this._sum += advanced;
 				
 				// Calculate estimated time
 				if (advanced != 0 && d.totalSize > 0) {
-					let remaining = Math.ceil((d.totalSize - d.partialSize) / speed);
+					let remaining = Math.ceil((d.totalSize - d.partialSize) / d.speeds.avg);
 					if (!isFinite(remaining)) {
 						d.status = _("unknown");
 					}
@@ -290,12 +263,10 @@ var Dialog = {
 						d.status = Utils.formatTimeDelta(remaining);
 					}
 				}
-				d.speed = Utils.formatBytes(speed) + "/s";
+				d.speed = Utils.formatBytes(d.speeds.avg) + "/s";
 			}
-			let elapsed = (now - this._lastTime) / 1000;
-			this._lastTime = now;
-			let speed = Math.round(sum * elapsed);
-			speed = Utils.formatBytes((speed > 0) ? speed : 0);
+			this._speeds.add(this._sum, now);
+			speed = Utils.formatBytes(this._speeds.avg);
 
 			// Refresh status bar
 			$("statusText").label = 
@@ -306,9 +277,9 @@ var Dialog = {
 				+ speed + "/s";
 
 			// Refresh window title
-			if (this._running.length == 1 && this._running[0].d.totalSize > 0) {
+			if (this._running.length == 1 && this._running[0].totalSize > 0) {
 				document.title =
-					this._running[0].d.percent
+					this._running[0].percent
 					+ ' - '
 					+ this.completed + "/" + Tree.rowCount + " - "
 					+ speed + '/s - DownThemAll!';
@@ -329,22 +300,18 @@ var Dialog = {
 		}
 	},
 	refreshWritten: function D_refreshWritten() {
-		this._running.forEach(
-			function(i) {
-				i.d.invalidate();
-			}
-		);
+		for each (let d in this._running) {
+			d.invalidate();
+		}
 	},
 	saveRunning: function D_saveRunning() {
 		if (!this._running.length) {
 			return;
 		}
 		SessionManager.beginUpdate();
-		this._running.forEach(
-			function(i) {
-				i.d.save();
-			}
-		);
+		for each (let d in this._running) {
+			d.save();
+		}
 		SessionManager.endUpdate();
 	},
 	
@@ -375,8 +342,7 @@ var Dialog = {
 		try {
 			this.refresh();
 			
-			for each (let i in this._running) {
-				let d = i.d;
+			for each (let d in this._running) {
 				// checks for timeout
 				if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
 					if (d.resumable || !d.totalSize || !d.partialSize) {
@@ -409,10 +375,10 @@ var Dialog = {
 	},
 	checkSameName: function D_checkSameName(download, path) {
 		for each (let runner in this._running) {
-			if (runner.d == download) {
+			if (runner == download) {
 				continue;
 			}
-			if (runner.d.destinationFile == path) {
+			if (runner.destinationFile == path) {
 				return true;
 			}
 		}
@@ -438,11 +404,6 @@ var Dialog = {
 		}
 		return false;
 	},
-	RunningJob: function(d) {
-		this.d = d;
-		this.lastBytes = d.partialSize;
-		this.lastTime = Utils.getTimestamp();
-	},
 	run: function D_run(download) {
 		if (this.offline) {
 			return;
@@ -466,19 +427,11 @@ var Dialog = {
 		else {
 			Debug.logString("Let's resume " + download + " at " + download.partialSize);
 		}
-		this._running.push(new Dialog.RunningJob(download));
+		this._running.push(download);
 		download.resumeDownload();
 	},
 	wasStopped: function D_wasStopped(download) {
-		this._running = this._running.filter(
-			function(i) {
-				if (i.d == download) {
-					return false;
-				}
-				return true;
-			},
-			this
-		);
+		this._running = this._running.filter(function (d) d != download);
 	},
 	signal: function D_signal(download) {
 		download.save();
@@ -1055,8 +1008,7 @@ function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 	this.startDate = new Date();	
 
 	this.chunks = [];
-	this.speeds = new Array();
-	
+	this.speeds = new SpeedStats(SPEED_COUNT);
 }
 
 QueueItem.prototype = {
@@ -1401,7 +1353,7 @@ QueueItem.prototype = {
 		this.activeChunks = this.maxChunks = 0;
 		this.chunks.forEach(function(c) { c.cancel(); });
 		this.chunks = [];
-		this.speeds = [];
+		this.speeds.clear();
 		this.visitors = new VisitorManager();
 		Dialog.run(this);
 	},
@@ -1422,7 +1374,7 @@ QueueItem.prototype = {
 		}
 		this.activeChunks = 0;
 		this.state = PAUSED;
-		this.speeds = [];
+		this.speeds.clear();
 	},
 
 	moveCompleted: function QI_moveCompleted() {
@@ -1525,10 +1477,8 @@ QueueItem.prototype = {
 	},
 	_completeEvents: [],
 	complete: function QI_complete(exception) {
-		for each (let a in 'speeds', 'chunks') {
-			delete this[a];
-			this[a] = [];
-		}
+		this.chunks = [];
+		this.speeds.clear();
 		if (exception) {
 			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 			Debug.log("complete: ", exception);
