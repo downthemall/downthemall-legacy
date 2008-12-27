@@ -36,7 +36,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-const TOOLTIP_FREQ = 500;
+const TOOLTIP_FREQ = 1000;
 const SPEED_COUNT = 60;
 const SPEED_NUMAVG = 10;
 
@@ -79,6 +79,7 @@ var Tooltip = {
 		this.updateMetrics(file);
 		this.updateChunks(file);
 		this.updateSpeeds(file);
+		Debug.logString("tt");
 	},
 	_makeRoundedRectPath: function(ctx,x,y,width,height,radius) {
 		ctx.beginPath();

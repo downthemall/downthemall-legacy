@@ -604,9 +604,7 @@ var Tree = {
 		}
 		else if (d instanceof Array) {
 			this.beginUpdate();
-			for each (let e in d) {
-				this.invalidate(e);
-			}
+			this._box.invalidateRange(d[0].position, d[d.length - 1].position);
 			this.endUpdate();
 		}
 		else if (d.position >= 0) {
