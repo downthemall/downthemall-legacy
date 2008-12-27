@@ -422,25 +422,33 @@ function getIcon(link, metalink, size) {
  * @see _
  */
 function StringBundles() {
+	this._bundles = [];
+	this._strings = {};
 	this.init();
 }
 StringBundles.prototype = {
-	_bundles: [],
 	init: function() {
 		this._bundles = document.getElementsByTagName('stringbundle');
-	},
-	getString: function(id) {
-		for each (var bundle in this._bundles) {
-			try {
-				return bundle.getString(id);
-			}
-			catch (ex) {
-				// no-op
+		for each (let bundle in Array.map(this._bundles, function(s) s.strings)) {
+			while (bundle.hasMoreElements()) {
+				let s = bundle.getNext().QueryInterface(Ci.nsIPropertyElement);
+				this._strings[s.key] = s.value;
 			}
 		}
-		throw new Components.Exception('BUNDLE STRING NOT FOUND (' + id + ')');
+	},
+	getString: function(id) {
+		let rv = this._strings[id];
+		if (!rv) {
+			throw new Components.Exception('BUNDLE STRING NOT FOUND (' + id + ')');
+		}
+		return rv;
 	},
 	getFormattedString: function(id, params) {
+		let fmt = this.getString(id);
+		function repl() {
+			return params.shift();
+		}
+		return fmt.replace(/%S/gi, repl);
 		for each (var bundle in this._bundles) {
 			try {
 				return bundle.getFormattedString(id, params);
