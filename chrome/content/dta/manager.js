@@ -1581,7 +1581,7 @@ QueueItem.prototype = {
 				"y": String(this.startDate.getFullYear())
 			}
 			function replacer(type) {
-				var t = type.substr(1, type.length - 2);
+				let t = type.substr(1, type.length - 2);
 				if (t in replacements) {
 					return replacements[t];
 				}

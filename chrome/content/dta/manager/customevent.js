@@ -47,16 +47,16 @@ function CustomEvent(download, command) {
  			return id;
  		}
  		function mapper(arg, i) {
- 				if (arg == "%f") {
- 					if (i == 0) {
- 						throw new Components.Exception("Will not execute the file itself");
- 					}
- 					arg = download.destinationFile;
- 				}
- 				else if (arg in uuids) {
- 					arg = uuids[arg];
- 				}
- 				return arg;
+			if (arg == "%f") {
+				if (i == 0) {
+					throw new Components.Exception("Will not execute the file itself");
+				}
+				arg = download.destinationFile;
+			}
+			else if (arg in uuids) {
+				arg = uuids[arg];
+			}
+			return arg;
  		}
  		var args = command
  			.replace(/(["'])(.*?)\1/g, callback)
