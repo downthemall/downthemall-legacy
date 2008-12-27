@@ -449,15 +449,6 @@ StringBundles.prototype = {
 			return params.shift();
 		}
 		return fmt.replace(/%S/gi, repl);
-		for each (var bundle in this._bundles) {
-			try {
-				return bundle.getFormattedString(id, params);
-			}
-			catch (ex) {
-				// no-op
-			}
-		}
-		throw new Components.Exception('BUNDLE STRING NOT FOUND (' + id + ')');	 
 	}
 };
 /**
