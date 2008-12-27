@@ -1,0 +1,18 @@
+<!ENTITY title "DownThemAll! - Направи селекцията си">
+<!ENTITY filters.caption "Филтри">
+<!ENTITY additional.caption "Бърз филтър">
+<!ENTITY additional.tip "Текстов филтър: можеш да поставиш многобройни текстови филтри едновременно, като изпозлваш запетайки.">
+<!ENTITY regex.label "Регулярни изрази">
+<!ENTITY filter.tip "Напишете вашите текстови филтри тук! (някои примери)">
+<!ENTITY status.label "След избора на връзките, кликнете върху Старт!">
+<!ENTITY menu.mask.title "Модифицирай преименуващата маска">
+<!ENTITY menu.check.label "Отметни избраните файлове">
+<!ENTITY menu.uncheck.label "Махни отметките на избраните файлове">
+<!ENTITY menu.toggle.label "Инвертира отметката на избраните файлове">
+<!ENTITY tab.links.label "Връзки">
+<!ENTITY tab.pics.label "Картинки и вградени">
+<!ENTITY header.desc.label "Описание">
+<!ENTITY selectfiltered.label "Изберете филтрираните">
+<!ENTITY disableother.label "Изключи другите филтри">
+<!ENTITY disableother.tooltip "Изключи другите филтри и използвай само бързо филтриране. (Това не се препоръчва за момента)">
+<!ENTITY resname.value "Име на ресурса">

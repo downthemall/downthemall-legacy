@@ -1,0 +1,3 @@
+<!ENTITY title "Modification de masque de renommage…">
+<!ENTITY choose.desc "Choisissez le masque de renommage pour le(s) lien(s) spécifié(s). Vous pouvez utiliser des marqueurs de renommage spéciaux ou du texte simple.">
+<!ENTITY mask.tip "Les fichiers sélectionnés seront enregistrés et renommés en utilisant ce masque">

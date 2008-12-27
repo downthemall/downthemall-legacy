@@ -1,0 +1,12 @@
+<!ENTITY language "Français">
+<!ENTITY transAutor "Jojaba (French BabelZilla Team)">
+<!ENTITY about.subtitle "Le gestionnaire de téléchargement pour Firefox">
+<!ENTITY about.nowarr "vous est proposé sans AUCUNE GARANTIE !">
+<!ENTITY about.freesoft "Ceci est une application libre et gratuite !">
+<!ENTITY about.privacy "protection de votre vie privée">
+<!ENTITY about.read "Consultez notre">
+<!ENTITY about.pnot "Politique de confidentialité">
+<!ENTITY about.by "traduite par">
+<!ENTITY about.redistr "Vous êtes libre de la redistribuer sous certaines conditions">
+<!ENTITY about.icons "Les icônes et les boutons">
+<!ENTITY about.based "sont basés sur le travail de Mike Matas, Jakub Steiner et Mark James">

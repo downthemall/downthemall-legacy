@@ -1,0 +1,12 @@
+<!ENTITY language "Български">
+<!ENTITY transAutor "Александър &quot; Орелскитрън &quot; Кирилов\nВладимир Петров">
+<!ENTITY about.subtitle "Масовият даулоудер за Firefox">
+<!ENTITY about.nowarr "идва без АБСОЛЮТНО НИКАКВА ГАРАНЦИЯ!">
+<!ENTITY about.freesoft "Това е свободен софтуер!">
+<!ENTITY about.privacy "ценим вашите лични данни">
+<!ENTITY about.read "Прочетете нашата">
+<!ENTITY about.pnot "Бележка относно неприкосновеността на личните данни">
+<!ENTITY about.by "преведен от">
+<!ENTITY about.redistr "Можете да го разпросранявате при определени условия">
+<!ENTITY about.icons "Иконите и бутоните">
+<!ENTITY about.based "се базират на работата на Mike Matas, Jakub Steiner и Mark James">
