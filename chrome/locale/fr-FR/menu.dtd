@@ -1,0 +1,7 @@
+<!ENTITY dta-pref.label "Préférences">
+<!ENTITY dta-about.label "À propos de DTA!">
+<!ENTITY dta-manager-button "Gestionnaire">
+<!ENTITY dta-tb-all.label "Tous les onglets">
+<!ENTITY dta-tb-single.label "Onglet courant">
+<!ENTITY dta-form-save.label "Enregistrer la cible du formulaire avec DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Démarrage de l&apos;enregistrement de la cible du formulaire avec dTa OneClick!">
