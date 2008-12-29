@@ -82,7 +82,7 @@
 		ondragover="nsDragAndDrop.dragOver(event, DTA_DropTDTA);"
 		ondragdrop="nsDragAndDrop.drop(event, DTA_DropTDTA);"
 		oncommand="if (event.target == this) DTA_ContextOverlay.findLinks(true);"
-		label="DTA OneClick!"
+		label="dTa OneClick!"
 		tooltiptext="dTa OneClick!"
 		type="menu-button"
 	>
