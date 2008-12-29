@@ -5,6 +5,24 @@
 #dta-turbo-button:hover {
 	-moz-image-region: rect(0px,79px,25px,60px);
 }
+toolbar[iconsize="small"] #dta-turbo-button {
+	list-style-image: url("chrome://dta/skin/common/turbo.png");
+	-moz-image-region: auto !important;
+}
+
+/* XXX Needs icon */
+#dta-turboselect-button {
+	list-style-image: url("chrome://dta/skin/common/tools.png");
+	-moz-image-region: rect(0px,168px,24px,148px);
+}
+#dta-turboselect-button:hover {
+	-moz-image-region: rect(0px,148px,24px,128px);
+}
+toolbar[iconsize="small"] #dta-turboselect-button {
+	list-style-image: url("chrome://dta/skin/common/turbo.png");
+	-moz-image-region: auto !important;
+}
+
 
 #dta-button {
 	list-style-image: url("chrome://dta/skin/common/tools.png");
@@ -13,28 +31,21 @@
 
 #dta-button:hover {
 	-moz-image-region: rect(0px,40px,25px,20px);
+
+}
+toolbar[iconsize="small"] #dta-button {
+	list-style-image: url("chrome://dta/skin/common/dta.png");
+	-moz-image-region: auto !important;
 }
 
 #dta-manager-button {
 	list-style-image: url("chrome://dta/skin/common/tools.png");
 	-moz-image-region: rect(0px,104px,24px,80px);
 }
-
 #dta-manager-button:hover {
 	-moz-image-region: rect(0px,128px,24px,104px);
 }
-
 toolbar[iconsize="small"] #dta-manager-button {
 	list-style-image: url("chrome://dta/skin/common/box.png");
-	-moz-image-region: auto !important;
-}
-
-toolbar[iconsize="small"] #dta-turbo-button {
-	list-style-image: url("chrome://dta/skin/common/turbo.png");
-	-moz-image-region: auto !important;
-}
-
-toolbar[iconsize="small"] #dta-button {
-	list-style-image: url("chrome://dta/skin/common/dta.png");
 	-moz-image-region: auto !important;
 }

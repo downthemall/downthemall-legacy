@@ -98,6 +98,13 @@
 		label="&dta-manager-button;"
 		tooltiptext="Manager"
 	/>
+	<toolbarbutton 
+		id="dta-turboselect-button" class="chromeclass-toolbar-additional toolbarbutton-1"
+		oncommand="if (event.target == this) DTA_ContextOverlay.toggleOneClick(event);"
+		label="DTA OneClick! Selector"
+		tooltiptext="dTa OneClick! Selector"
+		type="checkbox"
+	/>	
 	<menu id="dtaToolsMenu" label="DownThemAll" class="menu-iconic" image="chrome://dta/skin/common/dta.png">
 		<menupopup id="dtaToolsPopup">
 			<menuitem id="dtaToolsDTA" oncommand="DTA_ContextOverlay.findLinks(false)" 

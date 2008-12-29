@@ -320,7 +320,6 @@ var DTA_ContextOverlay = {
 	
 	findSingleLink: function(turbo) {
 		try {
-			var win = document.commandDispatcher.focusedWindow.top;
 			var ctx = this.contextMenu;
 
 			var cur = ctx.target;
@@ -331,33 +330,35 @@ var DTA_ContextOverlay = {
 				cur = cur.parentNode;
 			}
 			var url = ctx.onLink ? cur.href : cur.src;
-			
-			if (!DTA_AddingFunctions.isLinkOpenable(url)) {
-				DTA_Prompts.alert(window, this.getString('error'), this.getString('errornodownload'));
-				return;
-			}
-			
-			url = DTA_AddingFunctions.ios.newURI(url, win.document.characterSet, null);
-			var ml = DTA_getLinkPrintMetalink(url);
-			url = new DTA_URL(ml ? ml : url);
-			
-			var ref = DTA_AddingFunctions.getRef(document.commandDispatcher.focusedWindow.document);
-			var desc = this.extractDescription(cur);
-			if (turbo) {
-				try {
-					DTA_AddingFunctions.saveSingleLink(true, url, ref, desc);
-					return;
-				}
-				catch (ex) {
-					DTA_debug.log('findSingleLink', ex);
-					DTA_Prompts.alert(window, this.getString('error'), this.getString('errorinformation'));
-				}
-			}
-			DTA_AddingFunctions.saveSingleLink(false, url, ref, desc);
+			this.saveSingleLink(turbo, url, cur);
 		}
 		catch (ex) {
 			DTA_debug.log('findSingleLink: ', ex);
 		}
+	},
+	saveSingleLink: function(turbo, url, elem) {
+		if (!DTA_AddingFunctions.isLinkOpenable(url)) {
+			DTA_Prompts.alert(window, this.getString('error'), this.getString('errornodownload'));
+			return;
+		}
+		
+		url = DTA_AddingFunctions.ios.newURI(url, elem.ownerDocument.characterSet, null);
+		let ml = DTA_getLinkPrintMetalink(url);
+		url = new DTA_URL(ml ? ml : url);
+		
+		let ref = DTA_AddingFunctions.getRef(elem.ownerDocument);
+		let desc = this.extractDescription(elem);
+		if (turbo) {
+			try {
+				DTA_AddingFunctions.saveSingleLink(true, url, ref, desc);
+				return;
+			}
+			catch (ex) {
+				DTA_debug.log('saveSingleLink', ex);
+				DTA_Prompts.alert(window, this.getString('error'), this.getString('errorinformation'));
+			}
+		}
+		DTA_AddingFunctions.saveSingleLink(false, url, ref, desc);		
 	},
 	findForm: function(turbo) {
 		try {
@@ -503,29 +504,32 @@ var DTA_ContextOverlay = {
 			DTA_debug.log("DCO::init()", ex);
 		}
 	},
+	get selectButton() {
+		return document.getElementById('dta-turboselect-button');
+	},
 	get contextMenu() {
-			if (window.gContextMenu !=  null) {
-				return gContextMenu;
+		if (window.gContextMenu !=  null) {
+			return gContextMenu;
+		}
+		var cm = {
+			onLink: false,
+			onImage: false,
+			target: document.popupNode,
+			fake: true
+		};
+		if (cm.target) {
+			var node = cm.target;
+			if (node instanceof Components.interfaces.nsIImageLoadingContent && node.currentURI) {
+				cm.onImage = true;
 			}
-			var cm = {
-				onLink: false,
-				onImage: false,
-				target: document.popupNode,
-				fake: true
-			};
-			if (cm.target) {
-				var node = cm.target;
-				if (node instanceof Components.interfaces.nsIImageLoadingContent && node.currentURI) {
-					cm.onImage = true;
-				}
-				while (node && !cm.onLink) {
-					if (node instanceof HTMLAnchorElement && node.href) {
-						cm.onLink = true;
-					}				
-					node = node.parentNode;
-				}
+			while (node && !cm.onLink) {
+				if (node instanceof HTMLAnchorElement && node.href) {
+					cm.onLink = true;
+				}				
+				node = node.parentNode;
 			}
-			return cm;
+		}
+		return cm;
 	},
 	onContextShowing: function(evt) {
 		try {
@@ -721,6 +725,136 @@ var DTA_ContextOverlay = {
 			DTA_debug.log('extractDescription', ex);
 		}
 		return this.trim(rv);
+	},
+	toggleOneClick: function(evt) {
+		if (this.selectButton.checked) {
+			this.attachOneClick(evt);
+		}
+		else {
+			this.detachOneClick(evt);
+		}
+	},
+	attachOneClick: function(evt) {
+		window.addEventListener('click', this.onClickOneClick, false);
+	},
+	detachOneClick: function(evt) {
+		window.removeEventListener('click', this.onClickOneClick, false);
+	},
+	onClickOneClick: function(evt) {
+		target = evt.target;
+		if (evt.button != 0 || !target || target.nodeType != 1 || (target.namespaceURI && target.namespaceURI != 'http://www.w3.org/1999/xhtml')) {
+			return;
+		}
+		
+		function findElem(e, n, a) {
+			if (!e) {
+				return e;
+			}
+			if (e.localName == n && e[a]) {
+				return e;
+			}
+			return findElem(e.parentNode, n, a);
+		}
+		function getBgImage(e) {
+			if (!e || !e.ownerDocument) {
+				return null;
+			}
+			let url = e.ownerDocument.defaultView.getComputedStyle(e, "").getPropertyCSSValue('background-image');
+			if (url && url.primitiveType == CSSPrimitiveValue.CSS_URI) {
+				return [url.getStringValue(), e];
+			}
+			return getBgImage(e.parentNode);
+		}
+		function cancelEvent(evt) {
+			if (evt.cancelable) {
+				evt.preventDefault();
+				evt.stopPropagation();
+			}
+		}
+		function flash(elem) {
+			try {
+				/* note: do not use inIFlasher as
+					a) it is not supported everywhere
+					b) it is *very* buggy (does not correctly clear)
+				*/
+				let doc = elem.ownerDocument;
+				
+				let flasher = doc.createElement('div');
+				doc.documentElement.appendChild(flasher);
+				flasher.style.background = 'white no-repeat center';
+				if (elem.offsetWidth > 36 && elem.offsetHeight > 36) {
+					flasher.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_large.png)';
+					flasher.style.border = '1px solid blue';
+				} 
+				else if (elem.offsetWidth > 18 && elem.offsetHeight > 18 ) {
+					flasher.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_small.png)';
+					flasher.style.border = '1px solid lightgray';
+				}
+				flasher.style.position = (elem.style.position && elem.style.position == 'fixed') ? 'fixed' : 'absolute';
+				flasher.style.width = elem.offsetWidth + "px";
+				flasher.style.height = elem.offsetHeight + "px";
+				flasher.style.opacity = '0.9';
+				
+				// compute the element position
+				let ot = -1;
+				let ol = -1;
+				let parent = elem;
+				while (parent) {
+					ot += parent.offsetTop;
+					ol += parent.offsetLeft;
+					parent = parent.offsetParent;
+				}
+					
+				flasher.style.top = ot + "px";
+				flasher.style.left = ol + "px";
+				
+				// fade our element out
+				function fade() {
+					let o = (parseFloat(flasher.style.opacity) - 0.18);
+					if (o - 0.1 < 0) {
+						doc.documentElement.removeChild(flasher);
+						return;
+					}
+					flasher.style.opacity = o.toString();
+					setTimeout(fade, 75);
+				}
+				setTimeout(fade, 400);
+			}
+			catch (ex) {
+				// no op
+			}
+		}
+		function processRegular(e) {
+			let elem = findElem(target, e[0], e[1]);
+			if (elem) {
+				cancelEvent(evt);
+				try {
+					DTA_ContextOverlay.saveSingleLink(true, elem[e[1]], elem);
+					flash(elem);
+				}
+				catch (ex) {
+					DTA_debug.log("failed to process select " + e[0], ex);
+				}
+				return true;
+			}
+			return false;
+		}
+		if ([['A', 'href'], ['IMG', 'src']].some(processRegular)) {
+			return;
+		}
+		let img = getBgImage(target);
+		// protect against clicks on the flasher, e.g double clicks
+		if (img && !img[0].match(/^chrome/)) {
+			cancelEvent(evt);
+			try {
+				DTA_ContextOverlay.saveSingleLink(true, img[0], img[1]);
+				flash(img[1]);
+			}
+			catch (ex) {
+				DTA_debug.log("failed to process select img", ex);
+			}
+			return;
+		}
 	}
 }
 
