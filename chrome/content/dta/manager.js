@@ -1718,6 +1718,7 @@ QueueItem.prototype = {
 		}
 		this._autoRetryTime = Utils.getTimestamp();
 		Debug.logString("marked auto-retry: " + d);
+		this.save();
 	},
 	autoRetry: function QI_autoRetry() {
 		if (!this.autoRetrying || Utils.getTimestamp() - (Prefs.autoRetryInterval * 1000) < this._autoRetryTime) {
