@@ -4,7 +4,7 @@
 <!ENTITY mask.url "基本网址">
 <!ENTITY mask.curl "完整网址">
 <!ENTITY mask.flatcurl "简单完整网址">
-<!ENTITY mask.num "增量">
+<!ENTITY mask.num "增量数字">
 <!ENTITY mask.hh "小时">
 <!ENTITY mask.mm "分钟">
 <!ENTITY mask.ss "秒">

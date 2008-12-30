@@ -1,13 +1,13 @@
 <!ENTITY winstyle "width:48em;height:38em;">
-<!ENTITY filterspane.label "过滤">
+<!ENTITY filterspane.label "过滤器">
 <!ENTITY listhead1.label "标题">
 <!ENTITY listhead2.label "扩展名">
 <!ENTITY filter.label "过滤后的扩展名:">
 <!ENTITY regex.label "正则表达式">
 <!ENTITY useAs.label "用这个作为:">
-<!ENTITY imagesf.label "图像过滤">
-<!ENTITY linksf.label "链接过滤">
-<!ENTITY add.label "新建过滤">
+<!ENTITY imagesf.label "图像和嵌入对象过滤器">
+<!ENTITY linksf.label "链接过滤器">
+<!ENTITY add.label "新建过滤器">
 <!ENTITY highlight.label "高亮被过滤器选中的文件">
 <!ENTITY dtacontext2.label "选项">
 <!ENTITY buttonlabelextra2 "恢复默认设置">
@@ -24,7 +24,7 @@
 <!ENTITY mainpane.sounderror.label "出错时播放声音">
 <!ENTITY mainpane.alert.caption "当下载结束:">
 <!ENTITY mainpane.alertboxes.label "通过警告窗口提示我">
-<!ENTITY mainpane.alertslides.label "通过Firefox滑动通知">
+<!ENTITY mainpane.alertslides.label "通过Firefox滑动通知提示我">
 <!ENTITY mainpane.alertnone.label "不提示">
 <!ENTITY mainpane.sounddone.label "全部下载完成时播放声音">
 <!ENTITY mainpane.closedta.label "下载结束时关闭DownThemAll">
@@ -46,7 +46,7 @@
 <!ENTITY privacypane.information.label "允许DownThemAll下载更新新闻、消息和最新版版本号">
 <!ENTITY privacypane.statistics.label "允许dTa收集并发送匿名使用统计信息">
 <!ENTITY privacypane.dropdowns.caption "下拉菜单">
-<!ENTITY privacypane.dropdownresults.label "保存的项目个数">
+<!ENTITY privacypane.dropdownresults.label "保存项目个数">
 <!ENTITY privacypane.logs.caption "诊断日志">
 <!ENTITY privacypane.enablelogs.label "启用诊断日志">
 <!ENTITY privacypane.notice.caption "注意">
