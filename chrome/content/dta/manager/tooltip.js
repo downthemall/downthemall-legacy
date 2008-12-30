@@ -63,7 +63,15 @@ var Tooltip = {
 		this._current = d;
 		this._timer = new Timer('Tooltip.update()', TOOLTIP_FREQ, true, true);
 		// 1.9+, causes some flickering but anyway :p
-		new Timer('Tooltip.update()', 25);
+		new Timer('Tooltip.initUpdate()', 25);
+	},
+	initUpdate: function() {
+		let box = $('canvasGrid').boxObject;
+		for each (let canvas in $('chunkCanvas', 'speedCanvas')) {
+			canvas.width = Math.min(box.width, canvas.clientWidth);
+			canvas.height = Math.min(box.height, canvas.clientHeight);
+		}		
+		this.update();
 	},
 	stop: function() {
 		this._current = null;
@@ -138,12 +146,6 @@ var Tooltip = {
 		try {
 			// we need to take care about with/height
 			let canvas = $("speedCanvas");
-			if (canvas.clientWidth) {
-				canvas.width = canvas.clientWidth;
-			}
-			if (canvas.clientHeight) {
-				canvas.height = canvas.clientHeight;
-			}
 			let w = canvas.width;
 			let h = canvas.height;
 			let ctx = canvas.getContext("2d");
@@ -259,12 +261,6 @@ var Tooltip = {
 	updateChunks: function (file) {
 		try {
 			let canvas = $("chunkCanvas");
-			if (canvas.clientWidth) {
-				canvas.width = canvas.clientWidth;
-			}
-			if (canvas.clientHeight) {
-				canvas.height = canvas.clientHeight;
-			}
 			let width = canvas.width;
 			let height = canvas.height;
 			let ctx = canvas.getContext("2d");

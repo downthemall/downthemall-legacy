@@ -69,11 +69,11 @@
 		<columns><column/><column flex="1"/><column/><column/></columns>
 		<rows>
 			<separator class="thin"/>		
-			<stack id="chunkStack">
+			<stack id="chunkStack" flex="1">
 				<html:canvas id="chunkCanvas" height="40"></html:canvas>
 				<label id="infoPercent"/>
 			</stack>
-			<hbox id="chunkAlt">
+			<hbox id="chunkAlt" flex="1">
 				<progressmeter flex="1" id="chunkProgressAlt" type="determined" value="50%" />
 				<label id="infoPercentAlt"/>
 			</hbox>
