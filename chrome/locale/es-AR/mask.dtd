@@ -1,0 +1,21 @@
+<!ENTITY mask.title "Etiquetas de renombrado">
+<!ENTITY mask.name "Nombre de archivo">
+<!ENTITY mask.ext "Extensión">
+<!ENTITY mask.url "URL base">
+<!ENTITY mask.curl "URL completa">
+<!ENTITY mask.flatcurl "Flat Full URL">
+<!ENTITY mask.num "Número progresivo">
+<!ENTITY mask.hh "Horas">
+<!ENTITY mask.mm "Minutos">
+<!ENTITY mask.ss "Segundos">
+<!ENTITY mask.d "Día">
+<!ENTITY mask.m "Mes">
+<!ENTITY mask.y "Año">
+<!ENTITY mask.subdirs "Subdirectorios de URL">
+<!ENTITY mask.flatsubdirs "Flat URL subdirectories">
+<!ENTITY mask.text "Descripción del enlace">
+<!ENTITY mask.flattext "Flat link description">
+<!ENTITY mask.refer "URL de referencia">
+<!ENTITY mask.qstring "Cadena de consulta">
+<!ENTITY mask.tip "Clic o arrastrar a máscara de renombrado">
+<!ENTITY mask.open.tip "Tabla de referencia de etiquetas de renombrado">

@@ -1,0 +1,7 @@
+<!ENTITY dta-pref.label "Asetukset">
+<!ENTITY dta-about.label "Tietoa">
+<!ENTITY dta-manager-button "dTa! Latausten hallinta">
+<!ENTITY dta-tb-all.label "Kaikki välilehdet">
+<!ENTITY dta-tb-single.label "Nykyinen välilehti">
+<!ENTITY dta-form-save.label "Tallenna kaavakkeen kohde DownThemAll! laajennuksella">
+<!ENTITY dta-form-save-turbo.label "Aloita kaavakkeen kohteen tallennus dTa OneClick! latauksella">

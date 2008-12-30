@@ -1,0 +1,7 @@
+<!ENTITY dta-pref.label "설정">
+<!ENTITY dta-about.label "dTa! 정보">
+<!ENTITY dta-manager-button "dTa! 관리자">
+<!ENTITY dta-tb-all.label "모든 탭">
+<!ENTITY dta-tb-single.label "현재 탭">
+<!ENTITY dta-form-save.label "Save form target with DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Start saving form target with dTa OneClick!">

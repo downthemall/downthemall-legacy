@@ -1,0 +1,21 @@
+<!ENTITY mask.title "Oznake preimenovanja">
+<!ENTITY mask.name "Ime datoteke">
+<!ENTITY mask.ext "Končnica">
+<!ENTITY mask.url "Osnovni URL">
+<!ENTITY mask.curl "Polni URL">
+<!ENTITY mask.flatcurl "Čisti polni URL">
+<!ENTITY mask.num "Progresivno število">
+<!ENTITY mask.hh "ur">
+<!ENTITY mask.mm "minut">
+<!ENTITY mask.ss "sekund">
+<!ENTITY mask.d "Dan">
+<!ENTITY mask.m "Mesec">
+<!ENTITY mask.y "Leto">
+<!ENTITY mask.subdirs "Podmape URL">
+<!ENTITY mask.flatsubdirs "Čiste podmape URL">
+<!ENTITY mask.text "Opis povezave">
+<!ENTITY mask.flattext "Opis čiste povezave">
+<!ENTITY mask.refer "URL sklicatelja">
+<!ENTITY mask.qstring "Niz povpraševanja">
+<!ENTITY mask.tip "Kliknite ali povlecite na masko preimenovanja">
+<!ENTITY mask.open.tip "Referenčna tabela oznak preimenovanja">

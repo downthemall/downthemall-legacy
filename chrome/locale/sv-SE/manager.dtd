@@ -1,0 +1,44 @@
+<!ENTITY tooladd.label "Lägg till URL">
+<!ENTITY tooladd.tooltip "Lägg till URL manuellt">
+<!ENTITY tooldonate.tooltiptext "Ditt bidrag kan hjälpa oss att utveckla och förbättra DownThemAll!">
+<!ENTITY movetop.label "Först">
+<!ENTITY movebottom.label "Sist">
+<!ENTITY moveup.label "Upp">
+<!ENTITY movedown.label "Ner">
+<!ENTITY task.label "URL/Namn">
+<!ENTITY per.label "Procent">
+<!ENTITY pct.label "Förlopp">
+<!ENTITY dim.label "Storlek">
+<!ENTITY time.label "Återstående tid">
+<!ENTITY parts.label "Delar">
+<!ENTITY speed.label "Hastighet">
+<!ENTITY infoURLTitle.value "Från:">
+<!ENTITY infoSizeTitle.value "Storlek:">
+<!ENTITY infoMultiple.value "Mångfaldiga objekt">
+<!ENTITY elapsedTitle.value "Förfluten:">
+<!ENTITY remainingTitle.value "Återstående:">
+<!ENTITY currentSpeedTitle.value "Aktuell hastighet:">
+<!ENTITY avgSpeedTitle.value "Medelhastighet:">
+<!ENTITY path.label "Sökväg">
+<!ENTITY mask.label "Omdöpningsschablon">
+<!ENTITY hash.label "Kontrollsumma">
+<!ENTITY infos.label "Hämtningsinfo">
+<!ENTITY launch.label "Öppna fil">
+<!ENTITY delete.label "Radera fil(er)">
+<!ENTITY targetdir.label "Öppna målmappen">
+<!ENTITY pause.label "Paus">
+<!ENTITY resume.label "Återuppta">
+<!ENTITY cancel.label "Avbryt">
+<!ENTITY remove.label "Ta bort från listan">
+<!ENTITY removeCompleted.label "Ta bort avslutade hämtningar">
+<!ENTITY removeGone.label "Clean gone files">
+<!ENTITY misc.label "Diverse">
+<!ENTITY addchunk.label "Lägg till segment">
+<!ENTITY removechunk.label "Ta bort segment">
+<!ENTITY force.label "Tvinga">
+<!ENTITY import.label "Import from file">
+<!ENTITY export.label "Export selected">
+<!ENTITY options.caption "Alternativ">
+<!ENTITY loading.label "Loading...">
+<!ENTITY restore.label "Restore">
+<!ENTITY close.label "Close">

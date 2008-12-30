@@ -1,0 +1,44 @@
+<!ENTITY tooladd.label "URL(ler) Ekle">
+<!ENTITY tooladd.tooltip "DownThemALL&apos;a elle bir URL ekle">
+<!ENTITY tooldonate.tooltiptext "DownThemAll&apos;ı daha iyi yapmamız için bize yardım edebilirsiniz. Küçük bir bağışı düşünün!">
+<!ENTITY movetop.label "Üst">
+<!ENTITY movebottom.label "Alt">
+<!ENTITY moveup.label "Yukarı">
+<!ENTITY movedown.label "Aşağı">
+<!ENTITY task.label "URL/İsim">
+<!ENTITY per.label "Tamamlanma">
+<!ENTITY pct.label "Aşama">
+<!ENTITY dim.label "Boyut">
+<!ENTITY time.label "Tahmini zaman">
+<!ENTITY parts.label "Parçalar">
+<!ENTITY speed.label "Hız">
+<!ENTITY infoURLTitle.value "Geldiği yer:">
+<!ENTITY infoSizeTitle.value "Boyut:">
+<!ENTITY infoMultiple.value "Çoklu Öğe">
+<!ENTITY elapsedTitle.value "Geçen:">
+<!ENTITY remainingTitle.value "Kalan:">
+<!ENTITY currentSpeedTitle.value "Geçerli hız:">
+<!ENTITY avgSpeedTitle.value "Ortalama Hız:">
+<!ENTITY path.label "Kayıt yolu">
+<!ENTITY mask.label "Yeniden adlandırma maskesi">
+<!ENTITY hash.label "Sağlama toplamı">
+<!ENTITY infos.label "İndirme bilgisi">
+<!ENTITY launch.label "Dosya aç">
+<!ENTITY delete.label "Dosya(ları) sil">
+<!ENTITY targetdir.label "Dizin aç">
+<!ENTITY pause.label "Bekle">
+<!ENTITY resume.label "Sürdür">
+<!ENTITY cancel.label "İptal">
+<!ENTITY remove.label "Seçilen indirmeleri kaldır">
+<!ENTITY removeCompleted.label "Tamamlanan görevleri kaldır">
+<!ENTITY removeGone.label "Clean gone files">
+<!ENTITY misc.label "Çeşitli">
+<!ENTITY addchunk.label "Parça ekle">
+<!ENTITY removechunk.label "Parça çıkart">
+<!ENTITY force.label "Başlamaya zorla">
+<!ENTITY import.label "Import from file">
+<!ENTITY export.label "Export selected">
+<!ENTITY options.caption "Seçenekler">
+<!ENTITY loading.label "Loading...">
+<!ENTITY restore.label "Restore">
+<!ENTITY close.label "Close">

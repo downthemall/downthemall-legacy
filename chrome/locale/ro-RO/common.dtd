@@ -1,0 +1,17 @@
+<!ENTITY start.label "Start!">
+<!ENTITY start.key "s">
+<!ENTITY queue.label "La coadă!">
+<!ENTITY queue.key "c">
+<!ENTITY cancel.label "Anulează">
+<!ENTITY options.label "Preferințe...">
+<!ENTITY url.value "URL:">
+<!ENTITY dest.caption "Salvează fișiere în:">
+<!ENTITY referrer.value "URL referent:">
+<!ENTITY description.value "Description:">
+<!ENTITY checksum.value "Sumă de control (hash):">
+<!ENTITY browse.tip "Răsfoire după dosarul țintă...">
+<!ENTITY mask.label "Mască redenumire">
+<!ENTITY mask.tip "Fişierele selectate vor fi salvate şi redenumite folosind următoarea mască">
+<!ENTITY selectall.label "Selectează tot">
+<!ENTITY selectinv.label "Inversează selecția">
+<!ENTITY selectnone.label "Nimic selectat">

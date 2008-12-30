@@ -1,0 +1,21 @@
+<!ENTITY mask.title "برچسب‌های تغییر نام">
+<!ENTITY mask.name "نام فایل">
+<!ENTITY mask.ext "پسوند">
+<!ENTITY mask.url "آدرس پایه">
+<!ENTITY mask.curl "آدرس کامل">
+<!ENTITY mask.flatcurl "Flat Full URL">
+<!ENTITY mask.num "شماره پله ای (تصاعدی)">
+<!ENTITY mask.hh "ساعت">
+<!ENTITY mask.mm "دقیقه">
+<!ENTITY mask.ss "ثانیه">
+<!ENTITY mask.d "روز">
+<!ENTITY mask.m "ماه">
+<!ENTITY mask.y "سال">
+<!ENTITY mask.subdirs "زیر فهرست آدرس">
+<!ENTITY mask.flatsubdirs "Flat URL subdirectories">
+<!ENTITY mask.text "توضیح لینک">
+<!ENTITY mask.flattext "Flat link description">
+<!ENTITY mask.refer "آدرس ارجاع دهنده">
+<!ENTITY mask.qstring "رشته پرس و جو">
+<!ENTITY mask.tip "برای استفاده از برچسب آن را بکشید یا روی آن کلیک کنید">
+<!ENTITY mask.open.tip "جدول مرجع برچسب‌های تغییر نام">

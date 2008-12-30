@@ -1,0 +1,17 @@
+<!ENTITY start.label "در نوبت!">
+<!ENTITY start.key "د">
+<!ENTITY queue.label "مکث شده">
+<!ENTITY queue.key "م">
+<!ENTITY cancel.label "انصراف">
+<!ENTITY options.label "تنظیمات">
+<!ENTITY url.value "آدرس">
+<!ENTITY dest.caption "ذخیره فایل ها در :">
+<!ENTITY referrer.value "آدرس ارجاع دهنده :">
+<!ENTITY description.value "Description:">
+<!ENTITY checksum.value "Hash) Checksum):">
+<!ENTITY browse.tip "جستجوی پوشه مقصد...">
+<!ENTITY mask.label "برچسب تغییر نام">
+<!ENTITY mask.tip "فایل های انتخاب شده ذخیره شده و نام آن ها با این برچسب تغییر خواهد کرد.">
+<!ENTITY selectall.label "انتخاب همه">
+<!ENTITY selectinv.label "وارون کردن انتخاب">
+<!ENTITY selectnone.label "انتخاب هیچ کدام">

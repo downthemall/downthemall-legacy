@@ -1,0 +1,18 @@
+<!ENTITY title "DownThemAll - Valitse ladattavat tiedostot">
+<!ENTITY filters.caption "Suodattimet">
+<!ENTITY additional.caption "Nopea suodatus">
+<!ENTITY additional.tip "Tekstisuodatin: Voit asettaa useita tekstisuodattimia samaan aikaan käyttämällä pilkkua.">
+<!ENTITY regex.label "Sään. lauseke">
+<!ENTITY filter.tip "Kirjoita tekstisuodattimet tähän (esimerkkejä pudotusvalikossa)">
+<!ENTITY status.label "Linkkien valinnan jälkeen paina Aloita">
+<!ENTITY menu.mask.title "Muokkaa nimeämismaskia...">
+<!ENTITY menu.check.label "Merkitse valitut kohteet">
+<!ENTITY menu.uncheck.label "Poista merkintä valituista kohteista">
+<!ENTITY menu.toggle.label "Tarkista valitut tiedostot">
+<!ENTITY tab.links.label "Linkit">
+<!ENTITY tab.pics.label "Kuvat ja sisällytetyt">
+<!ENTITY header.desc.label "Kuvaus">
+<!ENTITY selectfiltered.label "Valitse suodatetut">
+<!ENTITY disableother.label "Poista muut suodattimet käytöstä">
+<!ENTITY disableother.tooltip "Poista muut suodattimet käytöstä ja käytä nopeaa suodatusta. (Tätä asetusta ei muisteta)">
+<!ENTITY resname.value "Resurssin nimi">

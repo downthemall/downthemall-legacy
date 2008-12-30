@@ -1,0 +1,17 @@
+<!ENTITY start.label "Başla!">
+<!ENTITY start.key "s">
+<!ENTITY queue.label "Durma ekle">
+<!ENTITY queue.key "p">
+<!ENTITY cancel.label "İptal">
+<!ENTITY options.label "Tercihler...">
+<!ENTITY url.value "URL">
+<!ENTITY dest.caption "Dosyaları kaydet:">
+<!ENTITY referrer.value "Gönderen URL:">
+<!ENTITY description.value "Description:">
+<!ENTITY checksum.value "Sağlama toplamı (Hash):">
+<!ENTITY browse.tip "Hedef dizin için tara...">
+<!ENTITY mask.label "Adlandırma maskesi">
+<!ENTITY mask.tip "Seçilen dosyalar bu maskeyi kullanarak yeniden adlandırılacak ve kaydedilecek">
+<!ENTITY selectall.label "Tümünü seç">
+<!ENTITY selectinv.label "Seçimi tersine çevir">
+<!ENTITY selectnone.label "Hiçbirini seçme">

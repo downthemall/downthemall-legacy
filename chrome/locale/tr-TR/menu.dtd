@@ -1,0 +1,7 @@
+<!ENTITY dta-pref.label "Tercihler">
+<!ENTITY dta-about.label "dTa! Hakkında">
+<!ENTITY dta-manager-button "Yönetici">
+<!ENTITY dta-tb-all.label "Tüm sekmeler">
+<!ENTITY dta-tb-single.label "Geçerli sekme">
+<!ENTITY dta-form-save.label "Save form target with DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Start saving form target with dTa OneClick!">

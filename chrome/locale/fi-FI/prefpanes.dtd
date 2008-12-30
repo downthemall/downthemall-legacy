@@ -1,0 +1,93 @@
+<!ENTITY winstyle "width:52em;height:42em;">
+<!ENTITY filterspane.label "Suodattimet">
+<!ENTITY listhead1.label "Nimi">
+<!ENTITY listhead2.label "Tiedostotyypit">
+<!ENTITY filter.label "Tiedostotyypit">
+<!ENTITY regex.label "Sään. lauseke">
+<!ENTITY useAs.label "Käytä tätä:">
+<!ENTITY imagesf.label "Kuvien suodatukseen">
+<!ENTITY linksf.label "Linkkien suodatukseen">
+<!ENTITY add.label "Lisää uusi suodatin">
+<!ENTITY highlight.label "Korosta suodattimien valitsemat tiedostot">
+<!ENTITY dtacontext2.label "Asetukset">
+<!ENTITY buttonlabelextra2 "Palauta oletusasetukset">
+<!ENTITY dtaPreferences.title "DownThemAll! Asetukset">
+<!ENTITY manager "dTa Latausten hallinta">
+<!ENTITY mainpane.label "Yleiset">
+<!ENTITY mainpane.rename.caption "Jos tiedostonimi on jo käytössä:">
+<!ENTITY mainpane.rename.label "Nimeä uudelleen">
+<!ENTITY mainpane.overwrite.label "Korvaa">
+<!ENTITY mainpane.skip.label "Ohita">
+<!ENTITY mainpane.ask.label "Kysy">
+<!ENTITY mainpane.downloads.caption "Lataukset">
+<!ENTITY mainpane.concurrent.label "Samanaikaisten latausten enimmäismäärä:">
+<!ENTITY mainpane.sounderror.label "Toista äänimerkki virheen sattuessa">
+<!ENTITY mainpane.alert.caption "Kun lataukset ovat valmiit:">
+<!ENTITY mainpane.alertboxes.label "Ilmoita käyttämällä ilmoitusruutua">
+<!ENTITY mainpane.alertslides.label "Ilmoita Firefoxin liukuviestillä">
+<!ENTITY mainpane.alertnone.label "Älä ilmoita">
+<!ENTITY mainpane.sounddone.label "Toista äänimerkki kun kaikki lataukset ovat valmiit">
+<!ENTITY mainpane.closedta.label "Sulje DownThemAll kun lataukset ovat valmiit">
+<!ENTITY mainpane.autoretry.caption "Automaattiset toistot">
+<!ENTITY mainpane.autoretry.interval.label "Toista kukin">
+<!ENTITY mainpane.autoretry.max.label "Enim. toistot">
+<!ENTITY mainpane.autoretry.unlimited "Rajaton">
+<!ENTITY privacypane.label "Tietosuoja">
+<!ENTITY privacypane.closing.caption "Kun hallintaikkuna suljetaan">
+<!ENTITY privacypane.removecompleted.label "Poista valmiit lataukset listasta">
+<!ENTITY privacypane.removecanceled.label "Poista peruutetut ja virheelliset lataukset listasta">
+<!ENTITY privacypane.removeaborted.label "Poista aloittamattomat lataukset listasta">
+<!ENTITY privacypane.deletefoldershistory.label "Poista kansiohistoria">
+<!ENTITY privacypane.deletefiltershistory.label "Poista suodattimien historia">
+<!ENTITY privacypane.showlog.label "Näytä loki">
+<!ENTITY privacypane.reveallog.label "Näytä tiedosto">
+<!ENTITY privacypane.deletelog.label "Poista loki">
+<!ENTITY privacypane.updates.caption "Päivitys/Internet">
+<!ENTITY privacypane.information.label "Salli laajennuksen ladata uutiset, viestit ja tarkistaa viimeisin versio">
+<!ENTITY privacypane.statistics.label "Anna dTa:n kerätä nimettömiä käyttötietoja">
+<!ENTITY privacypane.dropdowns.caption "Pudotusvalikot">
+<!ENTITY privacypane.dropdownresults.label "Pidettävien kohteiden määrä">
+<!ENTITY privacypane.logs.caption "Tilanneloki">
+<!ENTITY privacypane.enablelogs.label "Pidä diagnosointilokia">
+<!ENTITY privacypane.notice.caption "Ilmoitus">
+<!ENTITY privacypane.notice.desc "DownThemAll integroituu myös Poista yksityisyystietoja -toimintoon.">
+<!ENTITY privacypane.privacynotice.label "Yksityisyysilmoitus">
+<!ENTITY advancedpane.label "Lisäasetukset">
+<!ENTITY advancedpane.multipart.caption "Lataaminen osissa">
+<!ENTITY advancedpane.chunks.label "Osien enimmäismäärä latausta kohden:">
+<!ENTITY advancedpane.chunksdisabled "Poistettu käytöstä">
+<!ENTITY advancedpane.timeouts.caption "Latauksen aikaraja">
+<!ENTITY advancedpane.timeout.label "Yhteyden toimimattomuuden aikaraja">
+<!ENTITY advancedpane.seconds "sekuntia">
+<!ENTITY advancedpane.minute "minuutti">
+<!ENTITY advancedpane.minutes "minuuttia">
+<!ENTITY advancedpane.hour "tunti">
+<!ENTITY advancedpane.hours "tuntia">
+<!ENTITY advancedpane.misc.caption "Sekalaiset asetukset">
+<!ENTITY advancedpane.settime.label "Aseta tiedostojen ajaksi muokkausaika (palvelimelta) tai aika jolloin lisätty jonoon">
+<!ENTITY advancedpane.rememberoneclick.label "Aseta OneClick muistamaan, koskeeko se kaikkia välilehtiä vai vain nykyistä">
+<!ENTITY advancedpane.tempfiles.caption "Väliaikaistiedostot">
+<!ENTITY advancedpane.usetemp.label "Tallenna latauksen osat väliaikaiskansioon">
+<!ENTITY advancedpane.tempdir.label "Hakemisto:">
+<!ENTITY advancedpane.confirmremove.label "Käyttäjän täytyy vahvistaa latausten poistaminen.">
+<!ENTITY advancedpane.permissions.caption "Oletusarvoiset tiedostojen käyttöoikeudet">
+<!ENTITY advancedpane.permissions.desc "Käyttäjän maskin vaikutuksen alainen">
+<!ENTITY advancedpane.permissions.group "Ryhmä">
+<!ENTITY advancedpane.permissions.everybody "Kaikki">
+<!ENTITY advancedpane.permissions.read "Voi lukea">
+<!ENTITY advancedpane.permissions.write "Voi kirjoittaa">
+<!ENTITY advancedpane.loadendfirst.label "Lataa viimeiset kilotavut ensimmäisenä">
+<!ENTITY uipane.label "Käyttöliittymä">
+<!ENTITY uipane.appearance.caption "Ulkonäkö">
+<!ENTITY uipane.namesonly.label "Näytä hallintaikkunassa vain tiedostonimet">
+<!ENTITY uipane.integration.caption "Sulauttaminen">
+<!ENTITY uipane.downloadwin.label "Lisää DownThemAll! &apos;Tallenna tiedosto&apos;-ikkunaan">
+<!ENTITY uipane.context.caption "Ponnahdusvalikko">
+<!ENTITY uipane.tools.caption "Työkalut-valikko">
+<!ENTITY uipane.tbbuttons.caption "Työkalurivin painikkeet">
+<!ENTITY uipane.compact.label "Ryhmitä kohteet">
+<!ENTITY uipane.hide.label "Piilota tämä valikko">
+<!ENTITY uipane.showtooltip.label "Näytä vihjeet">
+<!ENTITY uipane.window.caption "Ikkuna">
+<!ENTITY uipane.startminimized.label "Avaa pienennettynä">
+<!ENTITY uipane.minimizetotray.label "Pienennä tehtäväpalkkiin">

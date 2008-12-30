@@ -1,0 +1,44 @@
+<!ENTITY tooladd.label "Lisää osoite">
+<!ENTITY tooladd.tooltip "Lisää osoite käsin">
+<!ENTITY tooldonate.tooltiptext "Voit auttaa meitä kehittämään DownThemAll-laajennusta vieläkin paremmaksi. Harkitse pientä lahjoitusta!">
+<!ENTITY movetop.label "Alkuun">
+<!ENTITY movebottom.label "Loppuun">
+<!ENTITY moveup.label "Ylös">
+<!ENTITY movedown.label "Alas">
+<!ENTITY task.label "Osoite/Nimi">
+<!ENTITY per.label "Valmiina">
+<!ENTITY pct.label "Edistyminen">
+<!ENTITY dim.label "Koko">
+<!ENTITY time.label "Aika-arvio">
+<!ENTITY parts.label "Osat">
+<!ENTITY speed.label "Nopeus">
+<!ENTITY infoURLTitle.value "Kohteesta:">
+<!ENTITY infoSizeTitle.value "Koko:">
+<!ENTITY infoMultiple.value "Useita kohteita">
+<!ENTITY elapsedTitle.value "Kulunut:">
+<!ENTITY remainingTitle.value "Jäljellä:">
+<!ENTITY currentSpeedTitle.value "Nopeus:">
+<!ENTITY avgSpeedTitle.value "Keskinopeus:">
+<!ENTITY path.label "Tallennuskohde">
+<!ENTITY mask.label "Nimeämismaski">
+<!ENTITY hash.label "Tarkistussumma">
+<!ENTITY infos.label "Tietoa latauksesta">
+<!ENTITY launch.label "Avaa tiedosto">
+<!ENTITY delete.label "Poista tiedosto(t)">
+<!ENTITY targetdir.label "Avaa kohdehakemisto">
+<!ENTITY pause.label "Keskeytä">
+<!ENTITY resume.label "Jatka">
+<!ENTITY cancel.label "Peruuta">
+<!ENTITY remove.label "Poista listasta">
+<!ENTITY removeCompleted.label "Poista valmiit tehtävät">
+<!ENTITY removeGone.label "Poista menneet tiedostot">
+<!ENTITY misc.label "Sekalaiset">
+<!ENTITY addchunk.label "Lisää osa">
+<!ENTITY removechunk.label "Poista osa">
+<!ENTITY force.label "Pakota aloitus">
+<!ENTITY import.label "Tuo tiedostosta">
+<!ENTITY export.label "Vie valitut">
+<!ENTITY options.caption "Asetukset">
+<!ENTITY loading.label "Avataan...">
+<!ENTITY restore.label "Palauta">
+<!ENTITY close.label "Sulje">

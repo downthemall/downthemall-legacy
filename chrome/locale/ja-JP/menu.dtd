@@ -1,0 +1,7 @@
+<!ENTITY dta-pref.label "設定">
+<!ENTITY dta-about.label "dTa! について">
+<!ENTITY dta-manager-button "マネージャー">
+<!ENTITY dta-tb-all.label "すべてのタブ">
+<!ENTITY dta-tb-single.label "現在のタブ">
+<!ENTITY dta-form-save.label "Save form target with DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Start saving form target with dTa OneClick!">
