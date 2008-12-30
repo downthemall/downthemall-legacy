@@ -1,0 +1,5 @@
+<!ENTITY title "Adăugare adrese">
+<!ENTITY add.value "Adaugă adrese">
+<!ENTITY desc.value "Introduceți adresa aici și (opțional) pagina referentă a fișierului pe care doriți să-l descărcați.">
+<!ENTITY desc.batches.value "Puteți folosi și definiții pentru descărcărea mai multor fișiere în același timp.">
+<!ENTITY examples.value "Exemple:">

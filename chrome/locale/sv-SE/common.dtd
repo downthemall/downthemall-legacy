@@ -1,0 +1,17 @@
+<!ENTITY start.label "Börja!">
+<!ENTITY start.key "b">
+<!ENTITY queue.label "Lägg till pausad">
+<!ENTITY queue.key "p">
+<!ENTITY cancel.label "Avbryt">
+<!ENTITY options.label "Alternativ...">
+<!ENTITY url.value "URL">
+<!ENTITY dest.caption "Spara filerna i:">
+<!ENTITY referrer.value "Hänvisande URL:">
+<!ENTITY description.value "Description:">
+<!ENTITY checksum.value "Kontrollsumma (hashvärde):">
+<!ENTITY browse.tip "Bläddra...">
+<!ENTITY mask.label "Omdöpningsschablon">
+<!ENTITY mask.tip "Filerna kommer att döpas om enligt denna schablon">
+<!ENTITY selectall.label "Välj alla">
+<!ENTITY selectinv.label "Omvänd valet">
+<!ENTITY selectnone.label "Välj inget">

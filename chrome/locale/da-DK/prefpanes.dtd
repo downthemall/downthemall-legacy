@@ -1,0 +1,93 @@
+<!ENTITY winstyle "width:52em;height:42em;">
+<!ENTITY filterspane.label "Filtre">
+<!ENTITY listhead1.label "Navn">
+<!ENTITY listhead2.label "Filendelser">
+<!ENTITY filter.label "Filtrerede filendelser:">
+<!ENTITY regex.label "Regulært udtryk">
+<!ENTITY useAs.label "Brug dette som:">
+<!ENTITY imagesf.label "Billedfilter">
+<!ENTITY linksf.label "Linkfilter">
+<!ENTITY add.label "Tilføj nyt filter">
+<!ENTITY highlight.label "Fremhæv filer som er blevet tjekket af filtre">
+<!ENTITY dtacontext2.label "Indstillinger">
+<!ENTITY buttonlabelextra2 "Gendan standardindstillinger">
+<!ENTITY dtaPreferences.title "DownThemAll! indstillinger...">
+<!ENTITY manager "dTa Manager">
+<!ENTITY mainpane.label "Generelt">
+<!ENTITY mainpane.rename.caption "Hvis et filnavn allerede eksisterer:">
+<!ENTITY mainpane.rename.label "Omdøb">
+<!ENTITY mainpane.overwrite.label "Overskriv">
+<!ENTITY mainpane.skip.label "Spring over">
+<!ENTITY mainpane.ask.label "Spørg">
+<!ENTITY mainpane.downloads.caption "Downloads">
+<!ENTITY mainpane.concurrent.label "Maks. antal samtidige downloads:">
+<!ENTITY mainpane.sounderror.label "Afspil en lyd i tilfælde af en fejl">
+<!ENTITY mainpane.alert.caption "Når downloads er færdige:">
+<!ENTITY mainpane.alertboxes.label "Giv mig besked vha. beskedbokse">
+<!ENTITY mainpane.alertslides.label "Giv mig besked vha. Firefoxs glidende beskedbokse">
+<!ENTITY mainpane.alertnone.label "Giv mig ikke besked">
+<!ENTITY mainpane.sounddone.label "Afspil en lyd når alle downloads er færdige">
+<!ENTITY mainpane.closedta.label "Luk DownThemAll når alle downloads er færdige">
+<!ENTITY mainpane.autoretry.caption "Automatisk gentagelse">
+<!ENTITY mainpane.autoretry.interval.label "Gentag hvert">
+<!ENTITY mainpane.autoretry.max.label "Maksimalt antal gentagelser">
+<!ENTITY mainpane.autoretry.unlimited "Ubegrænset">
+<!ENTITY privacypane.label "Privatliv">
+<!ENTITY privacypane.closing.caption "Når manager vinduet lukkes">
+<!ENTITY privacypane.removecompleted.label "Fjern færdige downloads fra listen">
+<!ENTITY privacypane.removecanceled.label "Fjern annullerede/fejlende downloads fra listen">
+<!ENTITY privacypane.removeaborted.label "Fjern ikke-startede downloads fra listen">
+<!ENTITY privacypane.deletefoldershistory.label "Slet mappehistorik">
+<!ENTITY privacypane.deletefiltershistory.label "Slet filterhistorik">
+<!ENTITY privacypane.showlog.label "Vis log">
+<!ENTITY privacypane.reveallog.label "Åbn fil">
+<!ENTITY privacypane.deletelog.label "Slet log">
+<!ENTITY privacypane.updates.caption "Opdateringer">
+<!ENTITY privacypane.information.label "Lad dTa downloade opdaterede nyheder, beskeder og seneste versionsnummer">
+<!ENTITY privacypane.statistics.label "Lad dTa indsamle og sende brugsstatistik i anonym form">
+<!ENTITY privacypane.dropdowns.caption "Dropdownmenuer">
+<!ENTITY privacypane.dropdownresults.label "Antal gemte punkter">
+<!ENTITY privacypane.logs.caption "Diagnosticeringslog">
+<!ENTITY privacypane.enablelogs.label "Aktiver diagnosticeringslog">
+<!ENTITY privacypane.notice.caption "Besked">
+<!ENTITY privacypane.notice.desc "DownThemAll integreres også med den indbyggede funktion til at slette privat data.">
+<!ENTITY privacypane.privacynotice.label "Vores besked om private oplysninger">
+<!ENTITY advancedpane.label "Avanceret">
+<!ENTITY advancedpane.multipart.caption "Downloads i flere dele">
+<!ENTITY advancedpane.chunks.label "Max. antal dele per download:">
+<!ENTITY advancedpane.chunksdisabled "Deaktiveret">
+<!ENTITY advancedpane.timeouts.caption "Timeout">
+<!ENTITY advancedpane.timeout.label "Max. periode af inaktivitet før timeout">
+<!ENTITY advancedpane.seconds "sekunder">
+<!ENTITY advancedpane.minute "minut">
+<!ENTITY advancedpane.minutes "minutter">
+<!ENTITY advancedpane.hour "time">
+<!ENTITY advancedpane.hours "timer">
+<!ENTITY advancedpane.misc.caption "Diverse indstillinger">
+<!ENTITY advancedpane.settime.label "Sæt filens tidspunkter til servers tidspunkt for sidste modifikation eller tidspunkt for køplacering">
+<!ENTITY advancedpane.rememberoneclick.label "Husk om OneClick gælder for alle tabs eller kun den aktuelle tab">
+<!ENTITY advancedpane.tempfiles.caption "Midlertidige filer">
+<!ENTITY advancedpane.usetemp.label "Gem dele af downloads i en midlertidig mappe">
+<!ENTITY advancedpane.tempdir.label "Brug denne mappe:">
+<!ENTITY advancedpane.confirmremove.label "Bruger skal bekræfte fjernelse af downloads">
+<!ENTITY advancedpane.permissions.caption "Standard filrettigheder">
+<!ENTITY advancedpane.permissions.desc "Påvirket af bruger umask">
+<!ENTITY advancedpane.permissions.group "Gruppe">
+<!ENTITY advancedpane.permissions.everybody "Alle">
+<!ENTITY advancedpane.permissions.read "Må læse">
+<!ENTITY advancedpane.permissions.write "Må skrive">
+<!ENTITY advancedpane.loadendfirst.label "Indlæs de sidste kilobytes først">
+<!ENTITY uipane.label "Brugerflade">
+<!ENTITY uipane.appearance.caption "Udseende">
+<!ENTITY uipane.namesonly.label "Vis kun filnavne i manager vinduet">
+<!ENTITY uipane.integration.caption "Integration">
+<!ENTITY uipane.downloadwin.label "Tilføj DownThemAll! til &quot;Åbn&quot; vinduet">
+<!ENTITY uipane.context.caption "Højrekliksmenu">
+<!ENTITY uipane.tools.caption "Værktøjsmenu">
+<!ENTITY uipane.tbbuttons.caption "Knapper til værktøjslinie">
+<!ENTITY uipane.compact.label "Brug en kompakt menu">
+<!ENTITY uipane.hide.label "Gem denne menu">
+<!ENTITY uipane.showtooltip.label "Vis download tooltips">
+<!ENTITY uipane.window.caption "Vindue">
+<!ENTITY uipane.startminimized.label "Start minimeret">
+<!ENTITY uipane.minimizetotray.label "Minimer til systray">

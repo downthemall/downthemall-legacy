@@ -1,0 +1,44 @@
+<!ENTITY tooladd.label "Додајте адресу">
+<!ENTITY tooladd.tooltip "Ручно додајте адресу у DownThemAll!">
+<!ENTITY tooldonate.tooltiptext "Можете нам помоћи да DownThemAll! учинимо још бољим. Будите донатор">
+<!ENTITY movetop.label "Врх">
+<!ENTITY movebottom.label "Дно">
+<!ENTITY moveup.label "Горе">
+<!ENTITY movedown.label "Доле">
+<!ENTITY task.label "Адреса/Име">
+<!ENTITY per.label "Завршеност">
+<!ENTITY pct.label "Напредак">
+<!ENTITY dim.label "Величина">
+<!ENTITY time.label "Процена времена">
+<!ENTITY parts.label "Број делова">
+<!ENTITY speed.label "Брзина">
+<!ENTITY infoURLTitle.value "Са:">
+<!ENTITY infoSizeTitle.value "Величина:">
+<!ENTITY infoMultiple.value "Више ствари">
+<!ENTITY elapsedTitle.value "Протекло:">
+<!ENTITY remainingTitle.value "Преостало:">
+<!ENTITY currentSpeedTitle.value "Тренутна брзина:">
+<!ENTITY avgSpeedTitle.value "Просечна брзина:">
+<!ENTITY path.label "Место чувања преузете датотеке">
+<!ENTITY mask.label "Образац за преименовање">
+<!ENTITY hash.label "Извештај">
+<!ENTITY infos.label "Информације о преузимању">
+<!ENTITY launch.label "Отвори датотеку">
+<!ENTITY delete.label "Обриши датотеку (датотеке)">
+<!ENTITY targetdir.label "Отвори директоријум">
+<!ENTITY pause.label "Пауза">
+<!ENTITY resume.label "Наставак">
+<!ENTITY cancel.label "Прекид">
+<!ENTITY remove.label "Уклони изабрана преузимања">
+<!ENTITY removeCompleted.label "Уклони завршена преузимања">
+<!ENTITY removeGone.label "Clean gone files">
+<!ENTITY misc.label "Разно">
+<!ENTITY addchunk.label "Један део више">
+<!ENTITY removechunk.label "Један део мање">
+<!ENTITY force.label "Приморај старт">
+<!ENTITY import.label "Import from file">
+<!ENTITY export.label "Export selected">
+<!ENTITY options.caption "Опције">
+<!ENTITY loading.label "Loading...">
+<!ENTITY restore.label "Restore">
+<!ENTITY close.label "Close">

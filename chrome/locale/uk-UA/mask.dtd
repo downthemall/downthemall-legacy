@@ -1,0 +1,21 @@
+<!ENTITY mask.title "Теги перейменування">
+<!ENTITY mask.name "Назва">
+<!ENTITY mask.ext "Розширення">
+<!ENTITY mask.url "Базова адреса">
+<!ENTITY mask.curl "Повна адреса">
+<!ENTITY mask.flatcurl "Докладний Flat URL">
+<!ENTITY mask.num "Зростаюче число">
+<!ENTITY mask.hh "Час">
+<!ENTITY mask.mm "Хвилини">
+<!ENTITY mask.ss "Секунди">
+<!ENTITY mask.d "День">
+<!ENTITY mask.m "Місяць">
+<!ENTITY mask.y "Рік">
+<!ENTITY mask.subdirs "Адреса підтеки">
+<!ENTITY mask.flatsubdirs "Підтеки Flat URL">
+<!ENTITY mask.text "Описи посилання">
+<!ENTITY mask.flattext "Докладний опис посилання">
+<!ENTITY mask.refer "Адреса переспрямування">
+<!ENTITY mask.qstring "Рядок запиту">
+<!ENTITY mask.tip "Натисніть, щоб обрати маску перейменування">
+<!ENTITY mask.open.tip "Відобразити теги перейменування">

@@ -1,0 +1,7 @@
+<!ENTITY title.value "برخورد نام ها!">
+<!ENTITY text.value "به خاطر سپردن تنظیمات :">
+<!ENTITY file.label "فقط برای این فایل">
+<!ENTITY session.label "فقط برای این نشست">
+<!ENTITY always.label "از این به بعد">
+<!ENTITY overwrite.label "بازنویسی">
+<!ENTITY skip.label "پرش/انصراف">

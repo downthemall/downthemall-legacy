@@ -1,0 +1,17 @@
+<!ENTITY start.label "Comezar!">
+<!ENTITY start.key "c">
+<!ENTITY queue.label "Engadir parada">
+<!ENTITY queue.key "p">
+<!ENTITY cancel.label "Cancelar">
+<!ENTITY options.label "Preferencias...">
+<!ENTITY url.value "URL">
+<!ENTITY dest.caption "Gardar ficheiros en:">
+<!ENTITY referrer.value "URL do referer:">
+<!ENTITY description.value "Description:">
+<!ENTITY checksum.value "Suma de comprobación (Hash):">
+<!ENTITY browse.tip "Buscar un cartafol de destino...">
+<!ENTITY mask.label "Máscara de renomeado">
+<!ENTITY mask.tip "Os ficheiros seleccionados gardaranse e renomearanse empregando esta máscara">
+<!ENTITY selectall.label "Seleccionar todos">
+<!ENTITY selectinv.label "Inverter a selección">
+<!ENTITY selectnone.label "Non seleccionar nada">

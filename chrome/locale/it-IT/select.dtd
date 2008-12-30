@@ -1,0 +1,18 @@
+<!ENTITY title "DownThemAll! - Scegli">
+<!ENTITY filters.caption "Filtri">
+<!ENTITY additional.caption "Filtraggio veloce">
+<!ENTITY additional.tip "Filtro testuale: puoi impostare più filtri testuali contemporaneamente, separandoli con una virgola.">
+<!ENTITY regex.label "Reg. Exp">
+<!ENTITY filter.tip "Scrivi qui i tuoi filtri testuali! (esempi nel menu a tendina)">
+<!ENTITY status.label "Dopo aver selezionato i link, clicca su Inizia!">
+<!ENTITY menu.mask.title "Modifica la maschera di rinomina...">
+<!ENTITY menu.check.label "Seleziona gli elementi evidenziati">
+<!ENTITY menu.uncheck.label "Scarta gli elementi evidenziati">
+<!ENTITY menu.toggle.label "Cambia la spunta per gli elementi selezionati">
+<!ENTITY tab.links.label "Collegamenti">
+<!ENTITY tab.pics.label "Immagini ed oggetti">
+<!ENTITY header.desc.label "Descrizione">
+<!ENTITY selectfiltered.label "Seleziona i filtrati">
+<!ENTITY disableother.label "Disabilita gli altri filtri">
+<!ENTITY disableother.tooltip "Disabilita gli altri filtri e usa solo il filtraggio veloce. (Questa impostazione non rimane memorizzata, al momento)">
+<!ENTITY resname.value "Nome risorsa">

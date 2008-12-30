@@ -1,0 +1,7 @@
+<!ENTITY title.value "Ristiriitainen tiedostonimi!">
+<!ENTITY text.value "Muista tämä asetus:">
+<!ENTITY file.label "Vain tälle tiedostolle">
+<!ENTITY session.label "Vain tässä istunnossa">
+<!ENTITY always.label "Aina jatkossa">
+<!ENTITY overwrite.label "Korvaa olemassa oleva tiedosto">
+<!ENTITY skip.label "Ohita/Peruuta">

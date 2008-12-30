@@ -1,0 +1,21 @@
+<!ENTITY mask.title "Omdöpningsuttryck">
+<!ENTITY mask.name "Filnamn">
+<!ENTITY mask.ext "Tillägg">
+<!ENTITY mask.url "Grund-URL">
+<!ENTITY mask.curl "Fullständig URL">
+<!ENTITY mask.flatcurl "Fullständig flat URL">
+<!ENTITY mask.num "Stegvis ökande siffra">
+<!ENTITY mask.hh "Timmar">
+<!ENTITY mask.mm "Minuter">
+<!ENTITY mask.ss "Sekunder">
+<!ENTITY mask.d "Dag">
+<!ENTITY mask.m "Månad">
+<!ENTITY mask.y "År">
+<!ENTITY mask.subdirs "URL-undermappar">
+<!ENTITY mask.flatsubdirs "Flat URL-undermappar">
+<!ENTITY mask.text "Länkbeskrivning">
+<!ENTITY mask.flattext "Beskrivning flat-länk">
+<!ENTITY mask.refer "Hänvisande URL">
+<!ENTITY mask.qstring "Förfrågesträng">
+<!ENTITY mask.tip "Klicka eller dra till omdöpningsschablon">
+<!ENTITY mask.open.tip "Omdöpningsuttryckstabell">

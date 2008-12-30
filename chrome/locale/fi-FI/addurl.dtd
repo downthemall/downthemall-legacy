@@ -1,0 +1,5 @@
+<!ENTITY title "Lisää osoite">
+<!ENTITY add.value "Lisää osoite">
+<!ENTITY desc.value "Anna ladatavan tiedoston osoite tähän (ja halutessasi myös sen viittaussivu).">
+<!ENTITY desc.batches.value "Voit myös käyttää erälatausta ladataksesi useita tiedostoja kerralla.">
+<!ENTITY examples.value "Esimerkit:">
