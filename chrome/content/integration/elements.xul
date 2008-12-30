@@ -103,7 +103,7 @@
 			<menuitem id="dtaToolsDTA" oncommand="DTA_ContextOverlay.findLinks(false)" 
 				label="DownThemAll!..." image="chrome://dta/skin/common/dta.png" class="menuitem-iconic" />
 			<menuitem id="dtaToolsTDTA" oncommand="DTA_ContextOverlay.findLinks(true)" 
-				label="DTA OneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" />
+				label="dTa OneClick!" image="chrome://dta/skin/common/turbo.png" class="menuitem-iconic" />
 			<menuitem id="dtaToolsManager" oncommand="DTA_AddingFunctions.openManager()" 
 				label="&dta-manager-button;..." image="chrome://dta/skin/common/box.png" class="menuitem-iconic" />	
 			<menuseparator id="dtaToolsSep"/>
