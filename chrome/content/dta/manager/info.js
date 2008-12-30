@@ -199,5 +199,10 @@ var Dialog = {
 			return false;
 		}
 		return true;
+	},
+	resize: function() {
+		Tooltip.initUpdate();
+		return true;
 	}
 };
+addEventListener("resize", function() Dialog.resize(), true);

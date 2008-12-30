@@ -47,8 +47,8 @@
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 	</keyset>
 	
-	<hbox id="infoBox"/>
-	<groupbox id="paramsBox" orient="vertical">
+	<hbox id="infoBox" flex="1"/>
+	<groupbox id="paramsBox" orient="vertical" flex="1">
 		<caption label="&options.caption;"/>
 		<grid>
 			<columns>
@@ -85,5 +85,5 @@
 			</rows>
 		</grid>
 	</groupbox>
-	<grid id="canvasGrid"/>
+	<grid id="canvasGrid" flex="1" style="overflow: hidden;" />
 </dialog>
