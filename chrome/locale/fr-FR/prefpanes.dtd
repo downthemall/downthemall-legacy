@@ -12,7 +12,7 @@
 <!ENTITY dtacontext2.label "Préférences">
 <!ENTITY buttonlabelextra2 "Rétablir les paramètres par défaut">
 <!ENTITY dtaPreferences.title "Préférences de DownThemAll!…">
-<!ENTITY manager "Gestionnaire de DTA!">
+<!ENTITY manager "Gestionnaire de dTa!">
 <!ENTITY mainpane.label "Principales">
 <!ENTITY mainpane.rename.caption "Si un nom de fichier existe déjà :">
 <!ENTITY mainpane.rename.label "Renommer">
@@ -44,7 +44,7 @@
 <!ENTITY privacypane.deletelog.label "Supprimer le journal">
 <!ENTITY privacypane.updates.caption "Mises à jour/Internet">
 <!ENTITY privacypane.information.label "Autoriser le téléchargement des nouveautés et des dernières versions">
-<!ENTITY privacypane.statistics.label "Autoriser DTA! à collecter et transférer des statistiques d&apos;utilisation anonymes">
+<!ENTITY privacypane.statistics.label "Autoriser dTa! à collecter et transférer des statistiques d&apos;utilisation anonymes">
 <!ENTITY privacypane.dropdowns.caption "Menus déroulants">
 <!ENTITY privacypane.dropdownresults.label "Nombre d&apos;éléments à conserver">
 <!ENTITY privacypane.logs.caption "Journal de diagnostic">

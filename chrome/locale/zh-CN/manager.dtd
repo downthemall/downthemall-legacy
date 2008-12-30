@@ -6,7 +6,7 @@
 <!ENTITY moveup.label "上移">
 <!ENTITY movedown.label "下移">
 <!ENTITY task.label "链接/名称">
-<!ENTITY per.label "百分比">
+<!ENTITY per.label "完成度">
 <!ENTITY pct.label "进度">
 <!ENTITY dim.label "大小">
 <!ENTITY time.label "剩余时间">
@@ -29,12 +29,12 @@
 <!ENTITY pause.label "暂停">
 <!ENTITY resume.label "继续">
 <!ENTITY cancel.label "取消">
-<!ENTITY remove.label "从列表中移除">
+<!ENTITY remove.label "移除选中下载项">
 <!ENTITY removeCompleted.label "移除已完成任务">
 <!ENTITY removeGone.label "清除不存在的文件">
-<!ENTITY misc.label "杂项">
-<!ENTITY addchunk.label "增加线程">
-<!ENTITY removechunk.label "移除线程">
+<!ENTITY misc.label "其它">
+<!ENTITY addchunk.label "增加下载块数">
+<!ENTITY removechunk.label "减少下载块数">
 <!ENTITY force.label "强制开始">
 <!ENTITY import.label "从文件中导入">
 <!ENTITY export.label "导出所选项">
