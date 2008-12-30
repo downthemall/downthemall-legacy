@@ -736,14 +736,40 @@ var DTA_ContextOverlay = {
 	},
 	attachOneClick: function(evt) {
 		window.addEventListener('click', this.onClickOneClick, false);
+		window.addEventListener('mousemove', this.onClickOneClick, false);
 	},
 	detachOneClick: function(evt) {
 		window.removeEventListener('click', this.onClickOneClick, false);
+		window.removeEventListener('mousemove', this.onClickOneClick, false);
 	},
 	onClickOneClick: function(evt) {
 		target = evt.target;
+		let doc = target.ownerDocument;
+		
+		// hope that it doesn't exist a div with an ugly id like this in the entire www :)
+		let highlighter = doc.getElementById('__dta_selector_highlighter__');
+		if (!highlighter) {
+			highlighter = createDiv('#FD8400');
+			highlighter.id = '__dta_selector_highlighter__';
+			highlighter.style.display = 'none';
+		}
+		
+		// retrieve the real event target as the highlighter is hovering it
+		if (target == highlighter) {
+			target = highlighter.realTarget;
+		}
+		
 		if (evt.button != 0 || !target || target.nodeType != 1 || (target.namespaceURI && target.namespaceURI != 'http://www.w3.org/1999/xhtml')) {
 			return;
+		}
+		
+		if (evt.type == 'click') {
+			[['A', 'href'], ['IMG', 'src']].some(processRegular);
+		} else if (evt.type == 'mousemove') {
+			if (![['A', 'href'], ['IMG', 'src']].some(highlightElement)) {
+				highlighter.style.display = 'none';
+				return;
+			}
 		}
 		
 		function findElem(e, n, a) {
@@ -754,16 +780,6 @@ var DTA_ContextOverlay = {
 				return e;
 			}
 			return findElem(e.parentNode, n, a);
-		}
-		function getBgImage(e) {
-			if (!e || !e.ownerDocument) {
-				return null;
-			}
-			let url = e.ownerDocument.defaultView.getComputedStyle(e, "").getPropertyCSSValue('background-image');
-			if (url && url.primitiveType == CSSPrimitiveValue.CSS_URI) {
-				return [url.getStringValue(), e];
-			}
-			return getBgImage(e.parentNode);
 		}
 		function cancelEvent(evt) {
 			if (evt.cancelable) {
@@ -777,41 +793,14 @@ var DTA_ContextOverlay = {
 					a) it is not supported everywhere
 					b) it is *very* buggy (does not correctly clear)
 				*/
-				let doc = elem.ownerDocument;
 				
-				let flasher = doc.createElement('div');
-				doc.documentElement.appendChild(flasher);
-				flasher.style.background = 'white no-repeat center';
-				if (elem.offsetWidth > 36 && elem.offsetHeight > 36) {
-					flasher.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_large.png)';
-					flasher.style.border = '1px solid blue';
-				} 
-				else if (elem.offsetWidth > 18 && elem.offsetHeight > 18 ) {
-					flasher.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_small.png)';
-					flasher.style.border = '1px solid lightgray';
-				}
-				flasher.style.position = (elem.style.position && elem.style.position == 'fixed') ? 'fixed' : 'absolute';
-				flasher.style.width = elem.offsetWidth + "px";
-				flasher.style.height = elem.offsetHeight + "px";
-				flasher.style.opacity = '0.9';
-				
-				// compute the element position
-				let ot = -1;
-				let ol = -1;
-				let parent = elem;
-				while (parent) {
-					ot += parent.offsetTop;
-					ol += parent.offsetLeft;
-					parent = parent.offsetParent;
-				}
-					
-				flasher.style.top = ot + "px";
-				flasher.style.left = ol + "px";
+				let flasher = createDiv('#1DEF39');
+				putInFrontOf(flasher, elem);
 				
 				// fade our element out
 				function fade() {
-					let o = (parseFloat(flasher.style.opacity) - 0.18);
-					if (o - 0.1 < 0) {
+					let o = (parseFloat(flasher.style.opacity) - 0.03);
+					if (o - 0.03 < 0) {
 						doc.documentElement.removeChild(flasher);
 						return;
 					}
@@ -831,6 +820,7 @@ var DTA_ContextOverlay = {
 				try {
 					DTA_ContextOverlay.saveSingleLink(true, elem[e[1]], elem);
 					flash(elem);
+					highlighter.style.display = 'none';
 				}
 				catch (ex) {
 					DTA_debug.log("failed to process select " + e[0], ex);
@@ -839,21 +829,40 @@ var DTA_ContextOverlay = {
 			}
 			return false;
 		}
-		if ([['A', 'href'], ['IMG', 'src']].some(processRegular)) {
-			return;
+		function createDiv(color) {
+			let div = doc.createElement('div');
+			doc.documentElement.appendChild(div);
+			div.style.MozBorderRadius = '5px';
+			div.style.zIndex = 1000;
+			div.style.opacity = '0.3';
+			div.style.background = color;
+			return div;
 		}
-		let img = getBgImage(target);
-		// protect against clicks on the flasher, e.g double clicks
-		if (img && !img[0].match(/^chrome/)) {
-			cancelEvent(evt);
-			try {
-				DTA_ContextOverlay.saveSingleLink(true, img[0], img[1]);
-				flash(img[1]);
+		function putInFrontOf(div, elem) {
+			let padding = 6;
+			let ot = -1;
+			let ol = -1;
+			let parent = elem;
+			while (parent) {
+				ot += parent.offsetTop;
+				ol += parent.offsetLeft;
+				parent = parent.offsetParent;
 			}
-			catch (ex) {
-				DTA_debug.log("failed to process select img", ex);
+			div.style.width = (elem.offsetWidth + 2*padding) + "px";
+			div.style.height = (elem.offsetHeight + 2*padding) + "px";
+			div.style.top = (ot - padding) + "px";
+			div.style.left = (ol - padding) + "px";
+			div.style.position = (elem.style.position && elem.style.position == 'fixed') ? 'fixed' : 'absolute';
+			div.style.display = 'block';
+		}
+		function highlightElement(e) {
+			let elem = findElem(target, e[0], e[1]);
+			if (elem) {
+				highlighter.realTarget = elem;
+				putInFrontOf(highlighter, elem);
+				return true;
 			}
-			return;
+			return false;
 		}
 	}
 }
