@@ -5,7 +5,7 @@
 		<em:id>dta@downthemall.net</em:id>
 		<em:name>DownThemAll!</em:name>
 		<em:description>The mass downloader for Firefox.</em:description>
-		<em:version>1.1b2</em:version>
+		<em:version>1.1.0</em:version>
 
 		<em:creator>Federico Parodi, Stefano Verna, Nils Maier</em:creator>
 
@@ -49,7 +49,7 @@
 		<em:targetApplication>
 		  <Description>
 		    <em:id>{a463f10c-3994-11da-9945-000d60ca027b}</em:id>
-		    <em:minVersion>2.0b</em:minVersion>
+		    <em:minVersion>2.0</em:minVersion>
 		    <em:maxVersion>2.0.*</em:maxVersion>
 		  </Description>
 		</em:targetApplication>
