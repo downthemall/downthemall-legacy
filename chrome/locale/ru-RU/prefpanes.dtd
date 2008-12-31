@@ -1,4 +1,4 @@
-<!ENTITY winstyle "width:52em;height:42em;">
+<!ENTITY winstyle "width:63em;height:42em;">
 <!ENTITY filterspane.label "Фильтры">
 <!ENTITY listhead1.label "Заголовок">
 <!ENTITY listhead2.label "Расширение">
