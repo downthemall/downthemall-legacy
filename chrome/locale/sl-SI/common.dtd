@@ -1,0 +1,17 @@
+<!ENTITY start.label "Začni!">
+<!ENTITY start.key "Z">
+<!ENTITY queue.label "V vrsto!">
+<!ENTITY queue.key "v">
+<!ENTITY cancel.label "Prekliči">
+<!ENTITY options.label "Nastavitve ...">
+<!ENTITY url.value "URL:">
+<!ENTITY dest.caption "Shrani datoteke v:">
+<!ENTITY referrer.value "URL sklicatelja:">
+<!ENTITY description.value "Description:">
+<!ENTITY checksum.value "Kontrolna vsota (izvleček):">
+<!ENTITY browse.tip "Prebrskaj za ciljno mapo ...">
+<!ENTITY mask.label "Maska preimenovanja">
+<!ENTITY mask.tip "Izbrane datoteke bodo shranjene in preimenovane z uporabo te maske">
+<!ENTITY selectall.label "Izberi vse">
+<!ENTITY selectinv.label "Preobrni izbor">
+<!ENTITY selectnone.label "Ne izberi ničesar">

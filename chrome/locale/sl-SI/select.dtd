@@ -1,0 +1,18 @@
+<!ENTITY title "PrenesiVse! - Opravite svoj izbor">
+<!ENTITY filters.caption "Filtri">
+<!ENTITY additional.caption "Hitro filtriranje">
+<!ENTITY additional.tip "Besedilni filter: naenkrat lahko nastavite več besedilnih filtrov z uporabo vejic med njimi.">
+<!ENTITY regex.label "Regularni izraz">
+<!ENTITY filter.tip "Vnesite svoje besedilne filtre! (nekaj primerov v spustnem meniju)">
+<!ENTITY status.label "Po izboru povezav kliknite Začni!">
+<!ENTITY menu.mask.title "Spremeni masko preimenovanja ...">
+<!ENTITY menu.check.label "Označi izbrane elemente">
+<!ENTITY menu.uncheck.label "Odznači izbrane elemente">
+<!ENTITY menu.toggle.label "Vključi/izključi oznako izbranim elementom">
+<!ENTITY tab.links.label "Povezave">
+<!ENTITY tab.pics.label "Slike in vdelano">
+<!ENTITY header.desc.label "Opis">
+<!ENTITY selectfiltered.label "Izberite filtrirane">
+<!ENTITY disableother.label "Onemogoči druge filtre">
+<!ENTITY disableother.tooltip "Onemogoči druge filtre in uporabi le hitro filtriranje. (Ta nastavitev se trenutno ne pomni)">
+<!ENTITY resname.value "Ime vira">

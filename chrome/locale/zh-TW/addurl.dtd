@@ -1,0 +1,5 @@
+<!ENTITY title "加入網址">
+<!ENTITY add.value "加入網址">
+<!ENTITY desc.value "請輸入檔案的網址及引用頁面(選用)">
+<!ENTITY desc.batches.value "你也可以用批次敘述一次下載多個檔案">
+<!ENTITY examples.value "範例：">
