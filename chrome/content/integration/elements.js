@@ -333,12 +333,13 @@ var DTA_ContextOverlay = {
 			this.saveSingleLink(turbo, url, cur);
 		}
 		catch (ex) {
+			DTA_Prompts.alert(window, this.getString('error'), this.getString('errornodownload'));
 			DTA_debug.log('findSingleLink: ', ex);
 		}
 	},
 	saveSingleLink: function(turbo, url, elem) {
 		if (!DTA_AddingFunctions.isLinkOpenable(url)) {
-			DTA_Prompts.alert(window, this.getString('error'), this.getString('errornodownload'));
+			throw Error("not downloadable");
 			return;
 		}
 		
@@ -497,7 +498,6 @@ var DTA_ContextOverlay = {
 			this.toolsBase = document.getElementById('dtaToolsMenu');
 			this.toolsMenu = document.getElementById('dtaToolsPopup');
 			this.toolsSep = document.getElementById('dtaToolsSep');
-			
 		}
 		catch (ex) {
 			Components.utils.reportError(ex);
@@ -505,7 +505,7 @@ var DTA_ContextOverlay = {
 		}
 	},
 	get selectButton() {
-		return document.getElementById('dta-turboselect-button');
+		return document.getElementById('dta-turboselect-button') || {checked: false};
 	},
 	get contextMenu() {
 		if (window.gContextMenu !=  null) {
@@ -726,6 +726,42 @@ var DTA_ContextOverlay = {
 		}
 		return this.trim(rv);
 	},
+	_shiftDown: false,
+	_altDown: false,
+	onKeyDown: function(evt) {
+		if (this._altDown && this._shiftDown) {
+			return;
+		}
+		switch (evt.keyCode) {
+			case evt.DOM_VK_ALT:
+				this._altDown = true;
+			break;
+			case evt.DOM_VK_SHIFT:
+				this._shiftDown = true;
+			break;
+		}
+		if (this._altDown && this._shiftDown) {
+			this.selectButton.checked = true;
+			this.attachOneClick();
+		}
+	},
+	onKeyUp: function(evt) {
+		let upped = false;
+		switch (evt.keyCode) {
+			case evt.DOM_VK_ALT:
+				upped = this._altDown && this._shiftDown;
+				this._ctrlDown = false;
+			break;
+			case evt.DOM_VK_SHIFT:
+				upped = this._altDown && this._shiftDown;
+				this._shiftDown = false;
+			break;
+		}
+		if (upped) {
+			this.selectButton.checked = false;
+			this.detachOneClick();
+		}		
+	},
 	toggleOneClick: function(evt) {
 		if (this.selectButton.checked) {
 			this.attachOneClick(evt);
@@ -734,50 +770,53 @@ var DTA_ContextOverlay = {
 			this.detachOneClick(evt);
 		}
 	},
+	_attachedOneClick: false,
+	_hilights: [],
 	attachOneClick: function(evt) {
-		window.addEventListener('click', this.onClickOneClick, false);
-		window.addEventListener('mousemove', this.onClickOneClick, false);
-	},
-	detachOneClick: function(evt) {
-		window.removeEventListener('click', this.onClickOneClick, false);
-		window.removeEventListener('mousemove', this.onClickOneClick, false);
-	},
-	onClickOneClick: function(evt) {
-		target = evt.target;
-		let doc = target.ownerDocument;
-		
-		// hope that it doesn't exist a div with an ugly id like this in the entire www :)
-		let highlighter = doc.getElementById('__dta_selector_highlighter__');
-		if (!highlighter) {
-			highlighter = createDiv('#FD8400');
-			highlighter.id = '__dta_selector_highlighter__';
-			highlighter.style.display = 'none';
-		}
-		
-		// retrieve the real event target as the highlighter is hovering it
-		if (target == highlighter) {
-			target = highlighter.realTarget;
-		}
-		
-		if (evt.button != 0 || !target || target.nodeType != 1 || (target.namespaceURI && target.namespaceURI != 'http://www.w3.org/1999/xhtml')) {
+		if (this._attachedOneClick) {
 			return;
 		}
-		
-		if (evt.type == 'click') {
-			[['A', 'href'], ['IMG', 'src']].some(processRegular);
-		} else if (evt.type == 'mousemove') {
-			if (![['A', 'href'], ['IMG', 'src']].some(highlightElement)) {
-				highlighter.style.display = 'none';
-				return;
-			}
+		DTA_debug.logString("attached");
+		window.addEventListener('click', DTA_ContextOverlay.onClickOneClick, false);
+		window.addEventListener('mousemove', DTA_ContextOverlay.onClickOneClick, false);
+		this._attachedOneClick = true;
+	},
+	detachOneClick: function(evt) {
+		if (!this._attachedOneClick) {
+			return;
 		}
-		
+		DTA_debug.logString("detached");
+		window.removeEventListener('click', DTA_ContextOverlay.onClickOneClick, false);
+		window.removeEventListener('mousemove', DTA_ContextOverlay.onClickOneClick, false);
+		this._attachedOneClick = false;
+		for each (let hilight in this._hilights) {
+			hilight.ownerDocument.documentElement.removeChild(hilight);
+		}
+		this._hilights = [];
+	},
+	onClickOneClick: function(evt) {
+		return DTA_ContextOverlay.real_onClickOneClick(evt);
+	},
+	real_onClickOneClick: function(evt) {
 		function findElem(e, n, a) {
+			function getBgImage(e) {
+				if (!e || !e.ownerDocument) {
+					return null;
+				}
+				let url = e.ownerDocument.defaultView.getComputedStyle(e, "").getPropertyCSSValue('background-image');
+				if (url && url.primitiveType == CSSPrimitiveValue.CSS_URI) {
+					return {elem: e, url: url.getStringValue()};
+				}
+				return getBgImage(e.parentNode);
+			}
+			if (n == 'bgimg') {
+				return getBgImage(e);
+			}
 			if (!e) {
-				return e;
+				return null;
 			}
 			if (e.localName == n && e[a]) {
-				return e;
+				return {elem: e, url: e[a] };
 			}
 			return findElem(e.parentNode, n, a);
 		}
@@ -789,11 +828,6 @@ var DTA_ContextOverlay = {
 		}
 		function flash(elem) {
 			try {
-				/* note: do not use inIFlasher as
-					a) it is not supported everywhere
-					b) it is *very* buggy (does not correctly clear)
-				*/
-				
 				let flasher = createDiv('#1DEF39');
 				putInFrontOf(flasher, elem);
 				
@@ -814,21 +848,30 @@ var DTA_ContextOverlay = {
 			}
 		}
 		function processRegular(e) {
-			let elem = findElem(target, e[0], e[1]);
-			if (elem) {
-				cancelEvent(evt);
-				try {
-					DTA_ContextOverlay.saveSingleLink(true, elem[e[1]], elem);
-					flash(elem);
-					highlighter.style.display = 'none';
-				}
-				catch (ex) {
-					DTA_debug.log("failed to process select " + e[0], ex);
-				}
-				return true;
+			let m = findElem(target, e[0], e[1]);
+			if (!m) {
+				return false;
 			}
-			return false;
+			cancelEvent(evt);
+			try {
+				DTA_ContextOverlay.saveSingleLink(true, m.url, m.elem);
+				flash(m.elem);
+				highlighter.style.display = 'none';
+			}
+			catch (ex) {
+				DTA_debug.log("failed to process select " + e[0], ex);
+			}
+			return true;
 		}
+		function highlightElement(e) {
+			let m = findElem(target, e[0], e[1]);
+			if (!m) {
+				return false;
+			}
+			highlighter.realTarget = m.elem;
+			putInFrontOf(highlighter, m.elem);
+			return true;
+		}		
 		function createDiv(color) {
 			let div = doc.createElement('div');
 			doc.documentElement.appendChild(div);
@@ -848,23 +891,50 @@ var DTA_ContextOverlay = {
 				ol += parent.offsetLeft;
 				parent = parent.offsetParent;
 			}
-			div.style.width = (elem.offsetWidth + 2*padding) + "px";
-			div.style.height = (elem.offsetHeight + 2*padding) + "px";
+			div.style.width = (elem.offsetWidth + 2 * padding) + "px";
+			div.style.height = (elem.offsetHeight + 2 * padding) + "px";
 			div.style.top = (ot - padding) + "px";
 			div.style.left = (ol - padding) + "px";
 			div.style.position = (elem.style.position && elem.style.position == 'fixed') ? 'fixed' : 'absolute';
 			div.style.display = 'block';
+		}		
+		
+		let searchee = [
+			['A', 'href'],
+			['IMG', 'src'],
+			//['bgimg', 'bgimg']
+		];
+		target = evt.target;
+		let doc = target.ownerDocument;
+		
+		// hope that it doesn't exist a div with an ugly id like this in the entire www :)
+		let highlighter = doc.getElementById('__dta_selector_highlighter__');
+		if (!highlighter) {
+			highlighter = createDiv('#FD8400');
+			highlighter.id = '__dta_selector_highlighter__';
+			highlighter.style.display = 'none';
+			this._hilights.push(highlighter);
 		}
-		function highlightElement(e) {
-			let elem = findElem(target, e[0], e[1]);
-			if (elem) {
-				highlighter.realTarget = elem;
-				putInFrontOf(highlighter, elem);
-				return true;
-			}
-			return false;
+		
+		// retrieve the real event target as the highlighter is hovering it
+		if (target == highlighter) {
+			target = highlighter.realTarget;
+		}
+		
+		if (evt.button != 0 || !target || target.nodeType != 1 || (target.namespaceURI && target.namespaceURI != 'http://www.w3.org/1999/xhtml')) {
+			return;
+		}
+		
+		if (evt.type == 'click') {
+			searchee.some(processRegular);
+		}
+		else if (evt.type == 'mousemove' && !searchee.some(highlightElement)) {
+			highlighter.style.display = 'none';
+			return;
 		}
 	}
 }
 
 addEventListener("load", function() {DTA_ContextOverlay.init();}, false);
+addEventListener("keydown", function(evt) {DTA_ContextOverlay.onKeyDown(evt);}, false);
+addEventListener("keyup", function(evt) {DTA_ContextOverlay.onKeyUp(evt);}, false);
