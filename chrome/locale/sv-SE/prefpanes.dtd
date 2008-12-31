@@ -20,16 +20,16 @@
 <!ENTITY mainpane.skip.label "Hoppa över">
 <!ENTITY mainpane.ask.label "Fråga">
 <!ENTITY mainpane.downloads.caption "Filhämtningar">
-<!ENTITY mainpane.concurrent.label "Max antal samtida hämtningar">
+<!ENTITY mainpane.concurrent.label "Max. antal samtida hämtningar">
 <!ENTITY mainpane.sounderror.label "Spela upp ett ljud vid fel">
 <!ENTITY mainpane.alert.caption "Åtgärder vid slutförda filhämtningar:">
 <!ENTITY mainpane.alertboxes.label "Meddela i ett fönster">
-<!ENTITY mainpane.alertslides.label "Meddela med Firefox standardruta">
+<!ENTITY mainpane.alertslides.label "Meddela i popup-fönster">
 <!ENTITY mainpane.alertnone.label "Meddela inte">
 <!ENTITY mainpane.sounddone.label "Spela upp ett ljud när samtliga filhämtningar är slutförda">
 <!ENTITY mainpane.closedta.label "Stäng DownThemAll när alla filer har hämtats">
-<!ENTITY mainpane.autoretry.caption "Automatiska återfösök">
-<!ENTITY mainpane.autoretry.interval.label "Försök på nytt varje">
+<!ENTITY mainpane.autoretry.caption "Automatiska återförsök">
+<!ENTITY mainpane.autoretry.interval.label "Tidsintervall:">
 <!ENTITY mainpane.autoretry.max.label "Max. antal försök">
 <!ENTITY mainpane.autoretry.unlimited "Obegränsat">
 <!ENTITY privacypane.label "Sekretess">
@@ -54,10 +54,10 @@
 <!ENTITY privacypane.privacynotice.label "Vårt sekretessmeddelande">
 <!ENTITY advancedpane.label "Avancerat">
 <!ENTITY advancedpane.multipart.caption "Uppdelade hämtningar">
-<!ENTITY advancedpane.chunks.label "Max antal delar per hämtning:">
-<!ENTITY advancedpane.chunksdisabled "Avaktiverad">
-<!ENTITY advancedpane.timeouts.caption "Väntetid">
-<!ENTITY advancedpane.timeout.label "Max väntetid innan time-out vid inaktiv anslutning">
+<!ENTITY advancedpane.chunks.label "Max. antal delar per hämtning:">
+<!ENTITY advancedpane.chunksdisabled "Avaktiverat">
+<!ENTITY advancedpane.timeouts.caption "timeout-väntetid">
+<!ENTITY advancedpane.timeout.label "Timeout efter:">
 <!ENTITY advancedpane.seconds "sekunder">
 <!ENTITY advancedpane.minute "minut">
 <!ENTITY advancedpane.minutes "minuter">
@@ -68,20 +68,20 @@
 <!ENTITY advancedpane.rememberoneclick.label "OneClick behåller inställningarna (Alla flikar/aktuell flik)">
 <!ENTITY advancedpane.tempfiles.caption "Temporära filer">
 <!ENTITY advancedpane.usetemp.label "Spara hämtningsdelarna i en tillfällig mapp">
-<!ENTITY advancedpane.tempdir.label "Använd denna map:">
-<!ENTITY advancedpane.confirmremove.label "User must confirm removal of downloads">
-<!ENTITY advancedpane.permissions.caption "Default file permissions">
-<!ENTITY advancedpane.permissions.desc "Affected by user umask">
-<!ENTITY advancedpane.permissions.group "Group">
-<!ENTITY advancedpane.permissions.everybody "Everybody">
-<!ENTITY advancedpane.permissions.read "May read">
-<!ENTITY advancedpane.permissions.write "May write">
-<!ENTITY advancedpane.loadendfirst.label "Load last few kilobytes first">
+<!ENTITY advancedpane.tempdir.label "Använd denna mapp:">
+<!ENTITY advancedpane.confirmremove.label "Användaren måste bekräfta borttagningen av filhämtningar">
+<!ENTITY advancedpane.permissions.caption "Förvalda filbehörigheter">
+<!ENTITY advancedpane.permissions.desc "Påverkad av umask">
+<!ENTITY advancedpane.permissions.group "Grupp">
+<!ENTITY advancedpane.permissions.everybody "Alla">
+<!ENTITY advancedpane.permissions.read "Kan lösa">
+<!ENTITY advancedpane.permissions.write "Kan skriva">
+<!ENTITY advancedpane.loadendfirst.label "Ladda först de sista KBytes">
 <!ENTITY uipane.label "Gränssnitt">
 <!ENTITY uipane.appearance.caption "Utseende">
 <!ENTITY uipane.namesonly.label "Visa endast filnamn i hanterarfönstret">
 <!ENTITY uipane.integration.caption "Integration">
-<!ENTITY uipane.downloadwin.label "Lägg till DownThemAll! i Firefox:s &quot;Spara som&quot;-rutan">
+<!ENTITY uipane.downloadwin.label "Integrera DownThemAll! i Firefox:s &quot;Spara som&quot;-rutan">
 <!ENTITY uipane.context.caption "Högerklicksmeny">
 <!ENTITY uipane.tools.caption "Verktygsmeny">
 <!ENTITY uipane.tbbuttons.caption "Verktygfältsknappar">
@@ -89,5 +89,5 @@
 <!ENTITY uipane.hide.label "Dölj denna meny">
 <!ENTITY uipane.showtooltip.label "Visa verktygstips">
 <!ENTITY uipane.window.caption "Fönster">
-<!ENTITY uipane.startminimized.label "Start minimized">
+<!ENTITY uipane.startminimized.label "Starta minimerad">
 <!ENTITY uipane.minimizetotray.label "Minimera till aktivitetsfältet">

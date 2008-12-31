@@ -4,7 +4,7 @@
 <!ENTITY mask.url "Grund-URL">
 <!ENTITY mask.curl "Fullständig URL">
 <!ENTITY mask.flatcurl "Fullständig flat URL">
-<!ENTITY mask.num "Stegvis ökande siffra">
+<!ENTITY mask.num "Stegvis ökande nummer">
 <!ENTITY mask.hh "Timmar">
 <!ENTITY mask.mm "Minuter">
 <!ENTITY mask.ss "Sekunder">

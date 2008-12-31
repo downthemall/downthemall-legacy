@@ -44,7 +44,7 @@
 <!ENTITY privacypane.deletelog.label "Poista loki">
 <!ENTITY privacypane.updates.caption "Päivitys/Internet">
 <!ENTITY privacypane.information.label "Salli laajennuksen ladata uutiset, viestit ja tarkistaa viimeisin versio">
-<!ENTITY privacypane.statistics.label "Anna dTa:n kerätä nimettömiä käyttötietoja">
+<!ENTITY privacypane.statistics.label "Anna DTA:n kerätä nimettömiä käyttötietoja">
 <!ENTITY privacypane.dropdowns.caption "Pudotusvalikot">
 <!ENTITY privacypane.dropdownresults.label "Pidettävien kohteiden määrä">
 <!ENTITY privacypane.logs.caption "Tilanneloki">

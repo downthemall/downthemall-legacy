@@ -1,7 +1,0 @@
-<!ENTITY title.value "Конфлікт назв файлів!">
-<!ENTITY text.value "Запам’ятати налаштування:">
-<!ENTITY file.label "Тільки для цього файлу">
-<!ENTITY session.label "Тільки для цієї сесії">
-<!ENTITY always.label "Завжди використовувати">
-<!ENTITY overwrite.label "Перезаписати існуючий файл">
-<!ENTITY skip.label "Пропустити/Скасувати">

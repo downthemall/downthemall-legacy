@@ -4,4 +4,4 @@
 <!ENTITY session.label "Endast under denna session">
 <!ENTITY always.label "Alltid">
 <!ENTITY overwrite.label "Skriv över befintlig fil">
-<!ENTITY skip.label "Skippa/Avbryt">
+<!ENTITY skip.label "Hoppa över/Avbryt">
