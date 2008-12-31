@@ -1,0 +1,93 @@
+<!ENTITY winstyle "width:52em;height:42em;">
+<!ENTITY filterspane.label "Фільтри">
+<!ENTITY listhead1.label "Заголовок">
+<!ENTITY listhead2.label "Розширення">
+<!ENTITY filter.label "Фільтр розширень:">
+<!ENTITY regex.label "Регулярний вираз">
+<!ENTITY useAs.label "Використовувати як:">
+<!ENTITY imagesf.label "Фільтр зображень">
+<!ENTITY linksf.label "Фільтр посилань">
+<!ENTITY add.label "Додати новий фільтр">
+<!ENTITY highlight.label "Підсвічувати файли відмічені фільтрами">
+<!ENTITY dtacontext2.label "Вподобання">
+<!ENTITY buttonlabelextra2 "Відновити стандартні налаштування">
+<!ENTITY dtaPreferences.title "Налаштування DownThemAll!">
+<!ENTITY manager "Менеджер dTa">
+<!ENTITY mainpane.label "Загальні">
+<!ENTITY mainpane.rename.caption "Якщо файл існує, тоді:">
+<!ENTITY mainpane.rename.label "Перейменувати">
+<!ENTITY mainpane.overwrite.label "Перезаписати">
+<!ENTITY mainpane.skip.label "Пропустити">
+<!ENTITY mainpane.ask.label "Запитати">
+<!ENTITY mainpane.downloads.caption "Завантаження">
+<!ENTITY mainpane.concurrent.label "Максимальна кількість одночасних завантажень:">
+<!ENTITY mainpane.sounderror.label "Звукове сповіщення при виникненні помилки">
+<!ENTITY mainpane.alert.caption "Повідомляти про завершення завантажень за допомогою:">
+<!ENTITY mainpane.alertboxes.label "вікна попередження">
+<!ENTITY mainpane.alertslides.label "виринаючого вікна Firefox">
+<!ENTITY mainpane.alertnone.label "не повідомляти">
+<!ENTITY mainpane.sounddone.label "Повідомляти при виконанні усіх завантаженнь">
+<!ENTITY mainpane.closedta.label "Закривати DownThemAll при завершенні завантажень">
+<!ENTITY mainpane.autoretry.caption "Перезапускати автоматично">
+<!ENTITY mainpane.autoretry.interval.label "Перезапускати кожне">
+<!ENTITY mainpane.autoretry.max.label "Максимальна кількість перезапусків">
+<!ENTITY mainpane.autoretry.unlimited "Необмежено">
+<!ENTITY privacypane.label "Приватність">
+<!ENTITY privacypane.closing.caption "При закритті вікна Менеджеру">
+<!ENTITY privacypane.removecompleted.label "Вилучати виконані завантаження зі списку">
+<!ENTITY privacypane.removecanceled.label "Вилучати скасовані/завантаження з помилками зі списку">
+<!ENTITY privacypane.removeaborted.label "Вилучати завантаження, які не розпочалися">
+<!ENTITY privacypane.deletefoldershistory.label "Вилучати теки історії">
+<!ENTITY privacypane.deletefiltershistory.label "Вилучати історію додаткових фільтрів">
+<!ENTITY privacypane.showlog.label "Переглянути журнал">
+<!ENTITY privacypane.reveallog.label "Переглянути файл">
+<!ENTITY privacypane.deletelog.label "Вилучити журнал">
+<!ENTITY privacypane.updates.caption "Поновлення/Інтернет">
+<!ENTITY privacypane.information.label "Заборонити dTa завантажувати новини, повідомлення та інформацію про оновлення">
+<!ENTITY privacypane.statistics.label "Дозволити dTa збирати та відправляти анонімну статистику">
+<!ENTITY privacypane.dropdowns.caption "Меню виринаючого списку">
+<!ENTITY privacypane.dropdownresults.label "Кількість записів для відображення">
+<!ENTITY privacypane.logs.caption "Журнал діагностики">
+<!ENTITY privacypane.enablelogs.label "Увімкнути ведення журналу діагностики">
+<!ENTITY privacypane.notice.caption "Зауваження">
+<!ENTITY privacypane.notice.desc "DownThemAll інтегрується з вбудованою функцією очищення приватної інформації (якщо вона увімкнена).">
+<!ENTITY privacypane.privacynotice.label "Наше повідомлення про конфіденційність">
+<!ENTITY advancedpane.label "Розширені">
+<!ENTITY advancedpane.multipart.caption "Багаточастинне завантаження">
+<!ENTITY advancedpane.chunks.label "Максимальна кількість частин завантаження:">
+<!ENTITY advancedpane.chunksdisabled "(Вимкнено)">
+<!ENTITY advancedpane.timeouts.caption "Час очікування завантаження">
+<!ENTITY advancedpane.timeout.label "Максимальний час очікування перед перервою">
+<!ENTITY advancedpane.seconds "секунд">
+<!ENTITY advancedpane.minute "хвилина">
+<!ENTITY advancedpane.minutes "хвилин(и)">
+<!ENTITY advancedpane.hour "година">
+<!ENTITY advancedpane.hours "годин">
+<!ENTITY advancedpane.misc.caption "Різні налаштування">
+<!ENTITY advancedpane.settime.label "Надавати файлам час останньої зміни (з серверу) чи час додавання до черги">
+<!ENTITY advancedpane.rememberoneclick.label "Чи повинен dTa OneClick пам’ятати дію по відношенню до усіх вкладок, чи до поточної">
+<!ENTITY advancedpane.tempfiles.caption "Тимчасові файли">
+<!ENTITY advancedpane.usetemp.label "Зберігати частини завантаження у тимчасовій теці">
+<!ENTITY advancedpane.tempdir.label "Використовувати теку:">
+<!ENTITY advancedpane.confirmremove.label "Користувач повинен підтвердити вилучення завантажень">
+<!ENTITY advancedpane.permissions.caption "Типові права доступу до файлу">
+<!ENTITY advancedpane.permissions.desc "З використанням масок користувача">
+<!ENTITY advancedpane.permissions.group "Група">
+<!ENTITY advancedpane.permissions.everybody "Усі">
+<!ENTITY advancedpane.permissions.read "Читання">
+<!ENTITY advancedpane.permissions.write "Запис">
+<!ENTITY advancedpane.loadendfirst.label "Завантажувати кілька останніх кілобайт спочатку">
+<!ENTITY uipane.label "Інтерфейс">
+<!ENTITY uipane.appearance.caption "Відображення">
+<!ENTITY uipane.namesonly.label "Відображати тільки назви файлів у вікні Менеджера">
+<!ENTITY uipane.integration.caption "Інтеграція">
+<!ENTITY uipane.downloadwin.label "Додати DownThemAll! до вікна „Збереження файлу“">
+<!ENTITY uipane.context.caption "Контекстне меню">
+<!ENTITY uipane.tools.caption "Меню інструментів">
+<!ENTITY uipane.tbbuttons.caption "Кнопки панелі інструментів">
+<!ENTITY uipane.compact.label "Використовувати компактне меню">
+<!ENTITY uipane.hide.label "Приховати це меню">
+<!ENTITY uipane.showtooltip.label "Показувати виринаюче вікно">
+<!ENTITY uipane.window.caption "Вікно">
+<!ENTITY uipane.startminimized.label "Запускати з прихованим вікном">
+<!ENTITY uipane.minimizetotray.label "Згорнути до системного трею">

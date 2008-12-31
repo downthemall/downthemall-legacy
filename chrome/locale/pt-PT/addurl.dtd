@@ -1,0 +1,5 @@
+<!ENTITY title "Adicionar URL(s)">
+<!ENTITY add.value "Adicionar  URL(s)">
+<!ENTITY desc.value "Escreva aqui o URL e (opcional) o nome da página do ficheiro que quer transferir.">
+<!ENTITY desc.batches.value "Também pode usar descritores batch para transferir múltiplos ficheiros de uma só vez.">
+<!ENTITY examples.value "Exemplos:">

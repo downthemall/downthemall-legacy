@@ -1,0 +1,7 @@
+<!ENTITY dta-pref.label "偏好設定">
+<!ENTITY dta-about.label "關於dTa">
+<!ENTITY dta-manager-button "管理員">
+<!ENTITY dta-tb-all.label "所有分頁">
+<!ENTITY dta-tb-single.label "目前分頁">
+<!ENTITY dta-form-save.label "用DownThemAll儲存">
+<!ENTITY dta-form-save-turbo.label "用dTa一鍵式儲存">

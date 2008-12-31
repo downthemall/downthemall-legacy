@@ -13,16 +13,21 @@ locale dta el-GR chrome/locale/el-GR/
 locale dta es-ES chrome/locale/es-ES/
 locale dta fi-FI chrome/locale/fi-FI/
 locale dta fr-FR chrome/locale/fr-FR/
+locale dta hu-HU chrome/locale/hu-HU/
 locale dta it-IT chrome/locale/it-IT/
 locale dta mk-MK chrome/locale/mk-MK/
 locale dta nl-NL chrome/locale/nl-NL/
 locale dta pl-PL chrome/locale/pl-PL/
+locale dta pt-PT chrome/locale/pt-PT/
 locale dta ro-RO chrome/locale/ro-RO/
 locale dta ru-RU chrome/locale/ru-RU/
 locale dta sk-SK chrome/locale/sk-SK/
+locale dta sl-SI chrome/locale/sl-SI/
 locale dta sv-SE chrome/locale/sv-SE/
+locale dta uk-UA chrome/locale/uk-UA/
 locale dta vi-VN chrome/locale/vi-VN/
 locale dta zh-CN chrome/locale/zh-CN/
+locale dta zh-TW chrome/locale/zh-TW/
 
 ## platform package ##
 content dta-platform	chrome/content/ platform

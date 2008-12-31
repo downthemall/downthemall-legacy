@@ -1,0 +1,7 @@
+<!ENTITY title.value "Imenski spor datotek!">
+<!ENTITY text.value "Zapomni si to nastavitev:">
+<!ENTITY file.label "Le za to datoteko">
+<!ENTITY session.label "Le za to sejo">
+<!ENTITY always.label "Odslej">
+<!ENTITY overwrite.label "Prepiši obstoječo datoteko">
+<!ENTITY skip.label "Preskoči/Prekliči">

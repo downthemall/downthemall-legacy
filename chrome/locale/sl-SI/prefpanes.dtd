@@ -1,0 +1,93 @@
+<!ENTITY winstyle "width:52em;height:42em;">
+<!ENTITY filterspane.label "Filtri">
+<!ENTITY listhead1.label "Napis">
+<!ENTITY listhead2.label "Razširitve">
+<!ENTITY filter.label "Filtrirane razširitve:">
+<!ENTITY regex.label "Logični izraz">
+<!ENTITY useAs.label "Uporabi kot:">
+<!ENTITY imagesf.label "filter slik">
+<!ENTITY linksf.label "filter povezav">
+<!ENTITY add.label "Dodaj nov filter">
+<!ENTITY highlight.label "Obarvaj datoteke, preverjene s filtri">
+<!ENTITY dtacontext2.label "Nastavitve">
+<!ENTITY buttonlabelextra2 "Obnovi privzete nastavitve">
+<!ENTITY dtaPreferences.title "Nastavitve za PrenesiVse ...">
+<!ENTITY manager "Upravitelj PV">
+<!ENTITY mainpane.label "Splošno">
+<!ENTITY mainpane.rename.caption "Če datoteka s takšnim imenom že obstaja:">
+<!ENTITY mainpane.rename.label "Preimenuj">
+<!ENTITY mainpane.overwrite.label "Prepiši">
+<!ENTITY mainpane.skip.label "Preskoči">
+<!ENTITY mainpane.ask.label "Vprašaj">
+<!ENTITY mainpane.downloads.caption "Prenosi">
+<!ENTITY mainpane.concurrent.label "Največ hkratnih prenosov:">
+<!ENTITY mainpane.sounderror.label "Predvajaj zvok ob napaki">
+<!ENTITY mainpane.alert.caption "Ob zaključku prenosov:">
+<!ENTITY mainpane.alertboxes.label "Opozori me s sporočili">
+<!ENTITY mainpane.alertslides.label "Opozori me s Firefoxovimi obvestili">
+<!ENTITY mainpane.alertnone.label "Ne opozarjaj me">
+<!ENTITY mainpane.sounddone.label "Predvajaj zvočno datoteko, ko so vsi prenosi dokončani">
+<!ENTITY mainpane.closedta.label "Zapri PrenesiVse, ko so prenosi dokončani">
+<!ENTITY mainpane.autoretry.caption "Samodejni ponovni poskusi">
+<!ENTITY mainpane.autoretry.interval.label "Poskusi znova vsakih">
+<!ENTITY mainpane.autoretry.max.label "Največ poskusov">
+<!ENTITY mainpane.autoretry.unlimited "neomejeno">
+<!ENTITY privacypane.label "Zasebnost">
+<!ENTITY privacypane.closing.caption "Ko je okno upravitelja zaprto">
+<!ENTITY privacypane.removecompleted.label "odstrani dokončane prenose s seznama">
+<!ENTITY privacypane.removecanceled.label "odstrani preklicane/napačne prenose s seznama">
+<!ENTITY privacypane.removeaborted.label "odstrani še ne pričete prenose s seznama">
+<!ENTITY privacypane.deletefoldershistory.label "Izbriši zgodovino map">
+<!ENTITY privacypane.deletefiltershistory.label "Izbriši zgodovino dodatnih filtrov">
+<!ENTITY privacypane.showlog.label "Pokaži zapisnik">
+<!ENTITY privacypane.reveallog.label "Pokaži datoteko">
+<!ENTITY privacypane.deletelog.label "Izbriši zapisnik">
+<!ENTITY privacypane.updates.caption "Posodobitve/Splet">
+<!ENTITY privacypane.information.label "PV naj prenese zadnje novice, sporočila in številko zadnje različice">
+<!ENTITY privacypane.statistics.label "PV naj zbira in prenese anonimno statistiko uporabe">
+<!ENTITY privacypane.dropdowns.caption "Spustni meniji">
+<!ENTITY privacypane.dropdownresults.label "Število obdržanih vnosov">
+<!ENTITY privacypane.logs.caption "Diagnostični zapisnik">
+<!ENTITY privacypane.enablelogs.label "Omogoči diagnostično beleženje">
+<!ENTITY privacypane.notice.caption "Opozorilo">
+<!ENTITY privacypane.notice.desc "PrenesiVse! lahko vključi tudi vgrajeno funkcionalnost Počisti zasebne podatke (če je na voljo).">
+<!ENTITY privacypane.privacynotice.label "Naše Opozorilo o zasebnosti">
+<!ENTITY advancedpane.label "Napredno">
+<!ENTITY advancedpane.multipart.caption "Večdelni prenos">
+<!ENTITY advancedpane.chunks.label "Največ kosov na prenos:">
+<!ENTITY advancedpane.chunksdisabled "1 (onemogočeno)">
+<!ENTITY advancedpane.timeouts.caption "Časovna omejitev prenosa">
+<!ENTITY advancedpane.timeout.label "Čas najdaljše neaktivnosti pred prekoračitvijo">
+<!ENTITY advancedpane.seconds "sekund">
+<!ENTITY advancedpane.minute "minuta">
+<!ENTITY advancedpane.minutes "minut">
+<!ENTITY advancedpane.hour "ura">
+<!ENTITY advancedpane.hours "ur">
+<!ENTITY advancedpane.misc.caption "Razne nastavitve">
+<!ENTITY advancedpane.settime.label "Nastavi čase datotek na čas zadnje spremembe (strežnik) ali čas postavitve v vrsto">
+<!ENTITY advancedpane.rememberoneclick.label "EnKlik naj si zapomni, če se nanaša na vse ali trenutni zavihek">
+<!ENTITY advancedpane.tempfiles.caption "Začasne datoteke">
+<!ENTITY advancedpane.usetemp.label "Shrani prenesene koščke v začasni mapi">
+<!ENTITY advancedpane.tempdir.label "Uporabi naslednjo mapo:">
+<!ENTITY advancedpane.confirmremove.label "Uporabnik mora potrditi odstranitev prenosov">
+<!ENTITY advancedpane.permissions.caption "Privzeta dovoljenja za datoteke">
+<!ENTITY advancedpane.permissions.desc "Vpliva uporabnikov umask">
+<!ENTITY advancedpane.permissions.group "Skupina">
+<!ENTITY advancedpane.permissions.everybody "Vsi">
+<!ENTITY advancedpane.permissions.read "lahko berejo">
+<!ENTITY advancedpane.permissions.write "lahko pišejo">
+<!ENTITY advancedpane.loadendfirst.label "Najprej hitro naloži nekaj zadnjih kb">
+<!ENTITY uipane.label "Uporabniški vmesnik">
+<!ENTITY uipane.appearance.caption "Videz">
+<!ENTITY uipane.namesonly.label "V oknu upravitelja pokaži le imena datotek">
+<!ENTITY uipane.integration.caption "Vključitev">
+<!ENTITY uipane.downloadwin.label "Dodaj PrenesiVse! v okno &apos;Shrani datoteko&apos;">
+<!ENTITY uipane.context.caption "Pojavni meni">
+<!ENTITY uipane.tools.caption "Meni Orodja">
+<!ENTITY uipane.tbbuttons.caption "Gumbi orodne vrstice">
+<!ENTITY uipane.compact.label "Uporabi strnjeni meni">
+<!ENTITY uipane.hide.label "Skrij ta meni">
+<!ENTITY uipane.showtooltip.label "Pokaži nasvete za prenos">
+<!ENTITY uipane.window.caption "Okno">
+<!ENTITY uipane.startminimized.label "Zaženi pomanjšano">
+<!ENTITY uipane.minimizetotray.label "Pomanjšaj v sistemski pladenj">

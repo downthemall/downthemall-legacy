@@ -1,0 +1,12 @@
+<!ENTITY language "Slovenščina">
+<!ENTITY transAutor "Martin Srebotnjak">
+<!ENTITY about.subtitle "Količinski prenašalec za Firefox">
+<!ENTITY about.nowarr "ne zagotavlja ABSOLUTNO NOBENE GARANCIJE!">
+<!ENTITY about.freesoft "To je prosta programska oprema!">
+<!ENTITY about.privacy "spoštuje vašo zasebnost">
+<!ENTITY about.read "Preverite naše">
+<!ENTITY about.pnot "Opozorilo o zasebnosti">
+<!ENTITY about.by "prevedel">
+<!ENTITY about.redistr "Vabimo vas, da razširitev razširjate pod določenimi pogoji">
+<!ENTITY about.icons "Ikone in gumbe">
+<!ENTITY about.based "so oblikovali Mike Matas, Jakub Steiner in Mark James">

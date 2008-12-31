@@ -1,0 +1,18 @@
+<!ENTITY title "DownThemAll! - Зробіть свій вибір">
+<!ENTITY filters.caption "Фільтри">
+<!ENTITY additional.caption "Швидка фільтрація">
+<!ENTITY additional.tip "Текстові фільтри: можна використовувати декілька текстових фільтрів розмежовуючи їх комою.">
+<!ENTITY regex.label "Регулярний вираз">
+<!ENTITY filter.tip "Уведіть Ваші текстові фільтри тут! (деякі приклади у списку)">
+<!ENTITY status.label "Після вибору посилань натисніть Розпочати!">
+<!ENTITY menu.mask.title "Змінити маску перейменування...">
+<!ENTITY menu.check.label "Обрати виділені пункти">
+<!ENTITY menu.uncheck.label "Не обирати виділені пункти">
+<!ENTITY menu.toggle.label "Зміна перевірки для обраних елементів">
+<!ENTITY tab.links.label "Посилання">
+<!ENTITY tab.pics.label "Зображення та вкладення">
+<!ENTITY header.desc.label "Опис">
+<!ENTITY selectfiltered.label "Обрати відфільтровані">
+<!ENTITY disableother.label "Вимкнути інші фільтри">
+<!ENTITY disableother.tooltip "Вимкнути інші фільтри та використовувати тільки швидке фільтрування (це налаштування не запам’ятовується)">
+<!ENTITY resname.value "Назва ресурсу">
