@@ -1,7 +1,7 @@
 <!ENTITY dta-pref.label "Alternativ">
 <!ENTITY dta-about.label "Om dTa!">
-<!ENTITY dta-manager-button "Hanterare">
+<!ENTITY dta-manager-button "dTa-hanterare">
 <!ENTITY dta-tb-all.label "Samtliga flikar">
 <!ENTITY dta-tb-single.label "Aktuell flik">
-<!ENTITY dta-form-save.label "Save form target with DownThemAll!">
-<!ENTITY dta-form-save-turbo.label "Start saving form target with dTa OneClick!">
+<!ENTITY dta-form-save.label "Spara formulärmål med DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Spara formulärmål med dTa OneClick!">

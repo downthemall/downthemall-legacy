@@ -31,14 +31,14 @@
 <!ENTITY cancel.label "Avbryt">
 <!ENTITY remove.label "Ta bort från listan">
 <!ENTITY removeCompleted.label "Ta bort avslutade hämtningar">
-<!ENTITY removeGone.label "Clean gone files">
+<!ENTITY removeGone.label "Rensa borttagna filer">
 <!ENTITY misc.label "Diverse">
 <!ENTITY addchunk.label "Lägg till segment">
 <!ENTITY removechunk.label "Ta bort segment">
 <!ENTITY force.label "Tvinga">
-<!ENTITY import.label "Import from file">
-<!ENTITY export.label "Export selected">
+<!ENTITY import.label "Importera från fil">
+<!ENTITY export.label "Exportera">
 <!ENTITY options.caption "Alternativ">
-<!ENTITY loading.label "Loading...">
-<!ENTITY restore.label "Restore">
-<!ENTITY close.label "Close">
+<!ENTITY loading.label "Laddar...">
+<!ENTITY restore.label "Återställ">
+<!ENTITY close.label "Stäng">

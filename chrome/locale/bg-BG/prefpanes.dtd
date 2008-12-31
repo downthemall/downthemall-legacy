@@ -50,7 +50,7 @@
 <!ENTITY privacypane.logs.caption "Диагностичен лог">
 <!ENTITY privacypane.enablelogs.label "Включи създаване на диагностичен лог">
 <!ENTITY privacypane.notice.caption "Предупреждение">
-<!ENTITY privacypane.notice.desc "dTa също се интегрира с вградената опция за почистване на Личната Информация (ако има такава).">
+<!ENTITY privacypane.notice.desc "DTA също се интегрира с вградената опция за почистване на Личната Информация (ако има такава).">
 <!ENTITY privacypane.privacynotice.label "Относно Сигурността">
 <!ENTITY advancedpane.label "Настройки за Напреднали">
 <!ENTITY advancedpane.multipart.caption "Мултичастен даунлоуд">
@@ -65,7 +65,7 @@
 <!ENTITY advancedpane.hours "Часа">
 <!ENTITY advancedpane.misc.caption "Други настройки">
 <!ENTITY advancedpane.settime.label "Настрой времето на файловете на последното променено време (сървърно) или последната зададена заявка">
-<!ENTITY advancedpane.rememberoneclick.label "Избери дали dTa ЕдинКлик да помни дали да работи за всички подпрозорци или само за сегашния">
+<!ENTITY advancedpane.rememberoneclick.label "Избери дали DTA ЕдинКлик да помни дали да работи за всички подпрозорци или само за сегашния">
 <!ENTITY advancedpane.tempfiles.caption "Временни файлове">
 <!ENTITY advancedpane.usetemp.label "Запазвай даунлоуд частите във временна директория">
 <!ENTITY advancedpane.tempdir.label "Използвай тази директория:">
@@ -81,7 +81,7 @@
 <!ENTITY uipane.appearance.caption "Външен Вид">
 <!ENTITY uipane.namesonly.label "Показвай само файлови имена в прозореца за Управление">
 <!ENTITY uipane.integration.caption "Интеграция">
-<!ENTITY uipane.downloadwin.label "Добави dTa! в &quot;Запази Файл&quot; прозорчето">
+<!ENTITY uipane.downloadwin.label "Добави DTA! в &quot;Запази Файл&quot; прозорчето">
 <!ENTITY uipane.context.caption "Контекстно меню">
 <!ENTITY uipane.tools.caption "Меню Инструменти">
 <!ENTITY uipane.tbbuttons.caption "Бутони в лентата с Инструменти">

@@ -7,7 +7,7 @@
 <!ENTITY url.value "URL">
 <!ENTITY dest.caption "Spara filerna i:">
 <!ENTITY referrer.value "Hänvisande URL:">
-<!ENTITY description.value "Description:">
+<!ENTITY description.value "Beskrivning:">
 <!ENTITY checksum.value "Kontrollsumma (hashvärde):">
 <!ENTITY browse.tip "Bläddra...">
 <!ENTITY mask.label "Omdöpningsschablon">

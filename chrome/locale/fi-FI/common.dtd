@@ -7,7 +7,7 @@
 <!ENTITY url.value "Osoite:">
 <!ENTITY dest.caption "Tallennuskohde:">
 <!ENTITY referrer.value "Viittaus:">
-<!ENTITY description.value "Description:">
+<!ENTITY description.value "Kuvaus:">
 <!ENTITY checksum.value "Tarkistussumma (Hash):">
 <!ENTITY browse.tip "Valitse kohdekansio...">
 <!ENTITY mask.label "Nimeäminen">
