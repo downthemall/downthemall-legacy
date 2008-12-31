@@ -65,7 +65,7 @@
 <!ENTITY advancedpane.hours "小時">
 <!ENTITY advancedpane.misc.caption "其它設定">
 <!ENTITY advancedpane.settime.label "設定檔案時間為服務器上的上次修改時間或下載的時間">
-<!ENTITY advancedpane.rememberoneclick.label "讓DTA快速下載(OneClick)記住應用到所有分頁或是目前分頁">
+<!ENTITY advancedpane.rememberoneclick.label "讓dTa快速下載(OneClick)記住應用到所有分頁或是目前分頁">
 <!ENTITY advancedpane.tempfiles.caption "暫存檔案">
 <!ENTITY advancedpane.usetemp.label "將分割下載儲存在暫存資料夾">
 <!ENTITY advancedpane.tempdir.label "使用指定資料夾">
