@@ -726,41 +726,36 @@ var DTA_ContextOverlay = {
 		}
 		return this.trim(rv);
 	},
-	_shiftDown: false,
-	_altDown: false,
+	_keyActive: false,
 	onKeyDown: function(evt) {
-		if (this._altDown && this._shiftDown) {
+		if (this._keyActive) {
 			return;
 		}
-		switch (evt.keyCode) {
-			case evt.DOM_VK_ALT:
-				this._altDown = true;
-			break;
-			case evt.DOM_VK_SHIFT:
-				this._shiftDown = true;
-			break;
-		}
-		if (this._altDown && this._shiftDown) {
+		if (evt.shiftKey && evt.ctrlKey) {
+			this._keyActive = true;
 			this.selectButton.checked = true;
 			this.attachOneClick();
 		}
 	},
 	onKeyUp: function(evt) {
-		let upped = false;
-		switch (evt.keyCode) {
-			case evt.DOM_VK_ALT:
-				upped = this._altDown && this._shiftDown;
-				this._ctrlDown = false;
-			break;
-			case evt.DOM_VK_SHIFT:
-				upped = this._altDown && this._shiftDown;
-				this._shiftDown = false;
-			break;
+		if (!this._keyActive) {
+			return;
 		}
-		if (upped) {
+		if (evt.shiftKey) {
+			this._keyActive = false;
 			this.selectButton.checked = false;
 			this.detachOneClick();
-		}		
+		}
+	},
+	onBlur: function (evt) {
+		// when the window loses focus the keyup might not be received.
+		// better toggle back
+		if (!this._keyActive) {
+			return;
+		}
+		this._keyActive = false;
+		this.selectButton.checked = false;
+		this.detachOneClick();
 	},
 	toggleOneClick: function(evt) {
 		if (this.selectButton.checked) {
@@ -777,7 +772,7 @@ var DTA_ContextOverlay = {
 			return;
 		}
 		DTA_debug.logString("attached");
-		window.addEventListener('click', DTA_ContextOverlay.onClickOneClick, false);
+		window.addEventListener('mousedown', DTA_ContextOverlay.onClickOneClick, false);
 		window.addEventListener('mousemove', DTA_ContextOverlay.onClickOneClick, false);
 		this._attachedOneClick = true;
 	},
@@ -786,7 +781,7 @@ var DTA_ContextOverlay = {
 			return;
 		}
 		DTA_debug.logString("detached");
-		window.removeEventListener('click', DTA_ContextOverlay.onClickOneClick, false);
+		window.removeEventListener('mousedown', DTA_ContextOverlay.onClickOneClick, false);
 		window.removeEventListener('mousemove', DTA_ContextOverlay.onClickOneClick, false);
 		this._attachedOneClick = false;
 		for each (let hilight in this._hilights) {
@@ -830,6 +825,15 @@ var DTA_ContextOverlay = {
 			try {
 				let flasher = createDiv('#1DEF39');
 				putInFrontOf(flasher, elem);
+				
+				if (elem.offsetWidth > 36 && elem.offsetHeight > 36) {
+					flasher.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_large.png)';
+					flasher.style.border = '1px solid blue';
+				} 
+				else if (elem.offsetWidth > 18 && elem.offsetHeight > 18 ) {
+					flasher.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_small.png)';
+					flasher.style.border = '1px solid lightgray';
+				}				
 				
 				// fade our element out
 				function fade() {
@@ -876,9 +880,10 @@ var DTA_ContextOverlay = {
 			let div = doc.createElement('div');
 			doc.documentElement.appendChild(div);
 			div.style.MozBorderRadius = '5px';
-			div.style.zIndex = 1000;
+			div.style.zIndex = 2147483647;
 			div.style.opacity = '0.3';
-			div.style.background = color;
+			div.style.background = 'no-repeat center';
+			div.style.backgroundColor = color;
 			return div;
 		}
 		function putInFrontOf(div, elem) {
@@ -913,6 +918,7 @@ var DTA_ContextOverlay = {
 			highlighter = createDiv('#FD8400');
 			highlighter.id = '__dta_selector_highlighter__';
 			highlighter.style.display = 'none';
+			highlighter.style.zIndex = 2147483646;
 			this._hilights.push(highlighter);
 		}
 		
@@ -925,7 +931,7 @@ var DTA_ContextOverlay = {
 			return;
 		}
 		
-		if (evt.type == 'click') {
+		if (evt.type == 'mousedown') {
 			searchee.some(processRegular);
 		}
 		else if (evt.type == 'mousemove' && !searchee.some(highlightElement)) {
@@ -935,6 +941,7 @@ var DTA_ContextOverlay = {
 	}
 }
 
-addEventListener("load", function() {DTA_ContextOverlay.init();}, false);
-addEventListener("keydown", function(evt) {DTA_ContextOverlay.onKeyDown(evt);}, false);
-addEventListener("keyup", function(evt) {DTA_ContextOverlay.onKeyUp(evt);}, false);
+addEventListener("load", function() DTA_ContextOverlay.init(), false);
+addEventListener("keydown", function(evt) DTA_ContextOverlay.onKeyDown(evt), false);
+addEventListener("keyup", function(evt) DTA_ContextOverlay.onKeyUp(evt), false);
+addEventListener("blur", function(evt) DTA_ContextOverlay.onBlur(evt), true);
