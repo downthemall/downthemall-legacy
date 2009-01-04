@@ -816,6 +816,26 @@ HttpVisitor.prototype = {
 						Debug.log("gts", ex);
 					}
 				break;
+				case 'digest': {
+					let mhp = Serv('@mozilla.org/network/mime-hdrparam;1', 'nsIMIMEHeaderParam');
+					for (let t in DTA_SUPPORTED_HASHES_ALIASES) {
+						try {
+							let v = mhp.getParameter(aValue, t, '', true, {});
+							if (!v) {
+								continue;
+							}
+							v = Utils.hexdigest(atob(v));
+							v = new DTA_Hash(v, t);
+							if (!this.hash || this.hash.q < v.q) {
+								this.hash = v;
+							}
+						}
+						catch (ex) {
+							// no-op
+						}
+					}
+				}
+				break;
 			}
 			if (header == 'etag') {
 				// strip off the "inode"-part apache and others produce, as
@@ -833,14 +853,14 @@ HttpVisitor.prototype = {
 				let mhp = Serv('@mozilla.org/network/mime-hdrparam;1', 'nsIMIMEHeaderParam');
 				let fn;
 				try {
-				 fn = mhp.getParameter(aValue, 'filename', '', true, {});
+					fn = mhp.getParameter(aValue, 'filename', '', true, {});
 				}
 				catch (ex) {
 					// no-op; handled below
 				}
 				if (!fn) {
 					try {
-					 fn = mhp.getParameter(aValue, 'name', '', true, {});
+						fn = mhp.getParameter(aValue, 'name', '', true, {});
 					}
 					catch (ex) {
 						// no-op; handled below
@@ -2094,8 +2114,15 @@ function Connection(d, c, getInfo) {
 			if (c.start + c.written > 0) {
 				http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
 			}
-			if (this.isInfoGetter && !d.fromMetalink) {
-				http.setRequestHeader('Accept', 'application/metalink+xml;q=0.9', true);
+			if (this.isInfoGetter) {
+				if (!d.fromMetalink) {
+					http.setRequestHeader('Accept', 'application/metalink+xml;q=0.9', true);
+				}
+				let sd = [];
+				for (let a in DTA_SUPPORTED_HASHES_ALIASES) {
+					sd.push(a + ";q=" + DTA_SUPPORTED_HASHES[DTA_SUPPORTED_HASHES_ALIASES[a]].q);
+				}
+				http.setRequestHeader('Want-Digest', sd.join(', '), false);
 			}
 			if (referrer instanceof Ci.nsIURI) {
 				http.referrer = referrer;
@@ -2427,6 +2454,10 @@ Connection.prototype = {
 		}
 		else {
 			d.compression = null;
+		}
+		
+		if (visitor.hash && (!d.hash || d.hash.q < visitor.hash.q)) {
+			d.hash = visitor.hash;
 		}
 
 		// accept range

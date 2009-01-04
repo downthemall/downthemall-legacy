@@ -410,12 +410,26 @@ Components.utils.import('resource://dta/mediator.jsm', DTA_Mediator);
  * @return hash type or null
  */
 const DTA_SUPPORTED_HASHES = {
-	'MD5': 32,
-	'SHA1': 40,
-	'SHA256': 64,
-	'SHA384': 96,
-	'SHA512':  128
+	'MD5': {l: 32, q: 0.3 },
+	'SHA1': {l: 40, q: 0.8 },
+	'SHA256': {l: 64, q: 0.9 },
+	'SHA384': {l: 96, q: 0.9 },
+	'SHA512': {l: 128, q: 1 }
 };
+const DTA_SUPPORTED_HASHES_ALIASES = {
+	'MD5': 'MD5',
+	'MD-5': 'MD5',
+	'SHA1': 'SHA1',
+	'SHA': 'SHA1',
+	'SHA-1': 'SHA1',
+	'SHA256': 'SHA256',
+	'SHA-256': 'SHA256',
+	'SHA384': 'SHA384',
+	'SHA-384': 'SHA384',
+	'SHA512': 'SHA512',
+	'SHA-512': 'SHA512'
+};
+
 function DTA_Hash(hash, type) {
 	if (typeof(hash) != 'string' && !(hash instanceof String)) {
 		throw new Components.Exception("hash is invalid");
@@ -425,16 +439,22 @@ function DTA_Hash(hash, type) {
 	}
 	
 	type = type.toUpperCase().replace(/[\s-]/g, '');
-	if (!(type in DTA_SUPPORTED_HASHES)) {
-		throw new Components.Exception("hashtype is invalid");
+	if (!(type in DTA_SUPPORTED_HASHES_ALIASES)) {
+		throw new Components.Exception("hashtype is invalid: " + type);
 	}
-	this.type = type;
+	this.type = DTA_SUPPORTED_HASHES_ALIASES[type];
 	this.sum = hash.toLowerCase().replace(/\s/g, '');
-	if (DTA_SUPPORTED_HASHES[this.type] != this.sum.length || isNaN(parseInt(this.sum, 16))) {
+	let h = DTA_SUPPORTED_HASHES[this.type];
+	if (h.l != this.sum.length || isNaN(parseInt(this.sum, 16))) {
 		throw new Components.Exception("hash is invalid");
 	}
+	this._q = h.q;
 }
 DTA_Hash.prototype = {
+	_q: 0,
+	get q() {
+		return this._hashLength;
+	},
 	toString: function() {
 		return this.type + " [" + this.sum + "]";
 	}
@@ -451,7 +471,7 @@ function DTA_getLinkPrintHash(url) {
 	if (!(url instanceof Components.interfaces.nsIURL)) {
 		return null;
 	}
-	var lp = url.ref.match(/^hash\((md5|sha(?:1|256|384|512)):([\da-f]+)\)$/i); 
+	var lp = url.ref.match(/^hash\((md5|sha(?:-?(?:1|256|384|512))?):([\da-f]+)\)$/i); 
 	if (lp) {
 		try {
 			return new DTA_Hash(lp[2], lp[1]);
