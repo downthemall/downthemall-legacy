@@ -178,7 +178,7 @@ DTA_DropProcessor.prototype = {
 			if (!DTA_AddingFunctions.isLinkOpenable(url)) {
 				throw new Components.Exception("Link cannot be opened!");
 			}
-			url = this.ios.newURI(url, null, null);
+			url = DTA_AddingFunctions.ios.newURI(url, null, null);
 		}
 		catch (ex) {
 			DTA_debug.log("Failed to process drop", ex);
@@ -255,7 +255,7 @@ var DTA_AddingFunctions = {
 		var item = {
 			'url': url,
 			'referrer': referrer,
-			'description': description
+			'description': description ? description : ''
 		};
 
 		if (turbo) {
