@@ -224,7 +224,8 @@ stack > #infoPercent {
 	padding-left: 2ex;
 }
 
-treechildren::-moz-tree-progressmeter {
+#downloads > treechildren::-moz-tree-progressmeter {
+	padding: 1px; /* songbird compat */
 	margin-left: 0;
 }
 treechildren::-moz-tree-progressmeter(completed) {
