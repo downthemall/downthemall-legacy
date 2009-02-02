@@ -39,6 +39,7 @@
  * ***** END LICENSE BLOCK ***** -->
 
 <?xml-stylesheet type="text/css" href="chrome://dta/content/common/bindings.css"?>
+<?xml-stylesheet type="text/css" href="chrome://dta/skin/common/saveas.css"?>
  
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/saveas.dtd">
 <overlay id="downthemallDownloadSaveAs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -54,7 +55,8 @@
 				<radio id="downthemall" label="DownThemAll!" disabled="true"/>
 			</hbox>
 			<hbox id="tdta" flex="1">
-				<radio id="turbodta" label="dTa OneClick!" disabled="true"/>
+				<radio id="turbodta" disabled="true" label="dTa OneClick!"/>
+				<toolbarbutton id="turbodtaexec" disabled="true" oncommand="DTA_SaveAs.download(true);"/>
 				<spacer flex="1"/>
 				<saveddropdown id="tdtalist" preference="directory" readonly="true" onclick="return DTA_SaveAs.selectTurbo();"/>
 			</hbox>
