@@ -62,6 +62,7 @@ var DTA_SaveAs = {
 		
 		this.normal = document.getElementById('downthemall');
 		this.turbo = document.getElementById('turbodta');
+		this.turboExec = document.getElementById('turbodtaexec');
 		this.mode = document.getElementById('mode');
 		this.remember = document.getElementById("rememberChoice");
 		this.settingsChange = document.getElementById("settingsChange");
@@ -73,7 +74,7 @@ var DTA_SaveAs = {
 		this.url = dialog.mLauncher.source;
 		try {
 			this.referrer = dialog.mContext.QueryInterface(Components.interfaces.nsIWebNavigation).currentURI.spec;
-  	}
+		}
 		catch(ex) {
 			this.referrer = this.url.spec;
 		}
@@ -85,6 +86,7 @@ var DTA_SaveAs = {
 		var mask = DTA_AddingFunctions.getDropDownValue('renaming');
 		if (!(document.getElementById("tdta").hidden = (DTA_AddingFunctions.getDropDownValue('directory') == '' || !mask))) {
 			this.turbo.disabled = false;
+			this.turboExec.disabled = false;
 		}
 		
 		try {
@@ -191,8 +193,8 @@ var DTA_SaveAs = {
 			this.download(mode == this.turbo);			
 			return false;
 		}
-		DTA_preferences.setExt("saveasmode", 0);		
-	  return true;
+		DTA_preferences.setExt("saveasmode", 0);
+		return true;
 	},
 	
 	download: function(turbo) {
