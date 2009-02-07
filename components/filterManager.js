@@ -282,12 +282,13 @@ FilterEnumerator.prototype = {
 // XXX: reload() should be called delayed when we observe changes (as many changes might come in)
 var FilterManager = {
 	_done: true,
-	_mustReload: false,
+	_mustReload: true,
 	
 	_timer: null,
 	_obs: null,
 
 	init: function FM_init() {
+		debug("Init called!");
 		Components.utils.import('resource://dta/preferences.jsm', Preferences);
 
 		// load those localized labels for default filters.
@@ -306,8 +307,8 @@ var FilterManager = {
 			.getService(Ci.nsIObserverService);
 
 		// register (the observer) and initialize our timer, so that we'll get a reload event.
+		this.reload();
 		this.register();
-		this._delayedReload();
 		this.init = new Function();
 	},
 
@@ -379,7 +380,7 @@ var FilterManager = {
 			}
 		);		
 		this._active = this._all.filter(function(f) { return f.active; });
-
+		
 		// notify all observers
 		let enumerator = this._obs.enumerateObservers(TOPIC_FILTERSCHANGED);
 		debug("notifying");
