@@ -214,7 +214,14 @@ var Utils = {
 	 *          name of desired sound)
 	 */
 	playSound: function(name) {
+		
 		try {
+			var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"]
+				.getService(Components.interfaces.nsIXULRuntime);
+			if (/linux|sun|bsd|aix|hp|dragonfly|irix/i.test(xulRuntime.OS) && /64/.test(xulRuntime.XPCOMABI)) {
+				throw new Components.Exception("*nix 64 - freeze problems");
+			}
+			
 			if (Preferences.getExt("sounds." + name, false)) {
 				new SoundFactory(("chrome://dta/skin/sounds/" + name + ".wav").toURI());
 			}
