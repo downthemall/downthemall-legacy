@@ -64,8 +64,14 @@ var DTA_include = function() {
 	}
 }();
 
-var DTA_FilterManager = Components.classes['@downthemall.net/filtermanager;2']
-	.getService(Components.interfaces.dtaIFilterManager);
+var DTA__FilterManager = null;
+this.__defineGetter__('DTA_FilterManager', function() {
+	if (!DTA__FilterManager) {
+		DTA__FilterManager = Components.classes['@downthemall.net/filtermanager;2']
+			.getService(Components.interfaces.dtaIFilterManager);
+	}
+	return DTA__FilterManager;
+});
 
 function DTA_showPreferences() {
 	var instantApply = DTA_preferences.get("browser.preferences.instantApply", false);
