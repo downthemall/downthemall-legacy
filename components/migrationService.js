@@ -55,7 +55,6 @@ var MigrationService = {
 		let DTA = {};
 		Components.utils.import('resource://dta/version.jsm', DTA);		
 		Components.utils.import('resource://dta/preferences.jsm', Preferences);
-		include("chrome://dta/content/common/overlayFunctions.js");
 		
 		try {
 			debug("current " + DTA.VERSION);
@@ -65,19 +64,16 @@ var MigrationService = {
 				return;
 			}
 			debug("MigrationManager: migration started");
-			if (DTA.compareVersion(lastVersion, "1.0a1") < 0) {
-				this._execute(['Prefs', 'DropDowns', 'Filters', 'Remove']);
-			}
 			if (DTA.compareVersion(lastVersion, "1.0.1") < 0) {
 				this._execute(['ResetMaxConnections']);
 			}			
-    	var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
-				.createInstance(Components.interfaces.nsIDialogParamBlock);
-    	params.SetNumberStrings(1);
-    	params.SetString(0, DTA.BASE_VERSION);
-    	let mediator = {};
-    	Components.utils.import('resource://dta/mediator.jsm', mediator);
-    	mediator.showNotice(null, params);		
+	    	var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
+					.createInstance(Components.interfaces.nsIDialogParamBlock);
+	    	params.SetNumberStrings(1);
+	    	params.SetString(0, DTA.BASE_VERSION);
+	    	let mediator = {};
+	    	Components.utils.import('resource://dta/mediator.jsm', mediator);
+	    	mediator.showNotice(null, params);		
 		}
 		catch(ex) {
 			debug("MigrationManager:", ex);
@@ -100,129 +96,11 @@ var MigrationService = {
 		}
 	},
 	
-	// pre-1.0: convert prefs
-	_migratePrefs: function MM_migratePrefs() {
-		debug("migrating prefs");
-		const toMigrate = [
-			['context.infophrases', 'infophrases', true],
-			['context.closedta', 'closedta', false],
-			['context.menu', 'ctxmenu', ''],
-			['context.compact', 'ctxcompact', false],
-			['tool.menu', 'toolsmenu', ''],
-			['tool.compact', 'toolscompact', false],
-			['context.history', 'history',5],
-			['context.downloadWin', 'downloadWin', true],
-			['context.ntask', 'ntask', 4],
-			['context.maxchunks', 'maxchunks', 5],
-			['context.reduce', 'showonlyfilenames', true],
-			['context.saveTemp', 'saveTemp', true],
-			['context.tempLocation', 'tempLocation', ''],
-			['context.seltab', 'seltab', 0],
-			['context.timeout', 'timeout', 300],
-			['directory.visibledump', 'logging', false],
-			['context.removeaborted', 'removeaborted', false],
-			['context.removecanceled', 'removecanceled', false],
-			['context.removecompleted', 'removecompleted', true],
-			['numistance', 'counter', 0]
-		];
-		for each (let [oldName, newName, defaultValue] in toMigrate) {
-			try {
-				let nv = Preferences.getExt(newName, defaultValue);
-				let ov = Preferences.getExt(oldName, nv);
-				if (ov != nv) {	
-					Preferences.setExt(newName, ov);
-				}
-				Preferences.reset(oldName);				
-			}
-			catch (ex) {
-				debug('MM: failed ' + newName + ", ", ex);
-			}
-		}
-	},
-	
 	// 1.0.1: #613 Multiple "slow-down" reports
 	_migrateResetMaxConnections: function() {
 		debug("resetting connection prefs");
 		for each (let e in ['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server']) {
 			Preferences.reset(e);
-		}
-	},
-	
-	// pre 1.0: migrate Filters
-	_migrateFilters: function MM_migrateFilters() {
-		debug("migrating filters");
-		const defFilters = [
-			"/\./", "/\\./", '/(\\.*)/',
-			"/\\/[^\\/\\?]+\\.(z(ip|\\d{2})|r(ar|\\d{2})|jar|bz2|gz|tar|rpm)$/", "/\\/[^\\/\\?]+\\.(z(ip|[0-9]{2})|r(ar|[0-9]{2})|jar|bz2|gz|tar|rpm)$/", "/(\\.(z(ip|[0-9]{2})|r(ar|[0-9]{2})|jar|bz2|gz|tar|rpm))$/",
-			"/\\/[^\\/\\?]+\\.(mp(eg?|[g4])|rm|avi|mov|divx|asf|qt|wmv|ram|m1v|m2v|rv|vob|asx)$/", "/(\\.(mpeg|rm|mpe|avi|mpg|mp4|mov|divx|asf|qt|wmv|ram|m1v|m2v|rv|vob|asx))$/",
-			"/\\/[^\\/\\?]+\\.(jpe?g|jpe|gif|png|tiff?|bmp|ico)$/",
-			"/\\/[^\\/\\?]+\\.(jpe?g|jpe)$/", '/\\.jp(?:e|e?g|2)$/',
-			"/\\/[^\\/\\?]+\\.gif$/",
-			"/\\/[^\\/\\?]+\\.png$/"
-		];
-		const LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
-		const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
-		const prefs = Cc['@mozilla.org/preferences-service;1']
-			.getService(Components.interfaces.nsIPrefService)
-			.getBranch("extensions.dta.context.")
-			.QueryInterface(Components.interfaces.nsIPrefBranch2);
-		var c = {value: 0};
-		var children = prefs.getChildList('', c);
-		for (let i = 0; i < c.value; ++i) {
-			if (!children[i].match(/filter\d+\.caption/)) {
-				continue;
-			}
-			var name = 'context.' + children[i].slice(0, -8);
-			try {
-				var reg = Preferences.getExt(name + '.filter', '');
-				if (-1 != defFilters.indexOf(reg) || !reg.length) {
-					continue;
-				}
-				var label = Preferences.getExt(name + '.caption', 'imported');
-				var active = Preferences.getExt(name + '.checked', false);
-				var type = 0;
-				if (Preferences.getExt(name + '.isImageFilter', false)) {
-					type |= IMAGE_FILTER;
-				}
-				if (Preferences.getExt(name + '.isLinkFilter', false)) {
-					type |= LINK_FILTER;
-				}
-				DTA_FilterManager.create(label, reg, active, type, true);
-			}
-			catch (ex) {
-				debug("failed to migrate filter", ex);
-			}
-		}
-	},
-	
-	// pre 1.0: dropdown history
-	_migrateDropDowns: function MM_migrateDropdowns() {
-		debug("migrating dropdowns");
-		for each (let e in ['renaming', 'filter', 'directory']) {
-			try {
-				Preferences.resetExt(e);
-			}
-			catch (ex) {
-				/*no-op*/
-			}
-			try {
-				let cv = Preferences.getExt('dropdown.' + e + '-history', null);
-				if (cv == null) {
-					return;
-				}
-				cv = cv.split('|@|');
-				Preferences.setExt(e, cv.toSource());
-			}
-			catch (ex) {
-				debug("failed to migrate dropdown " + e, ex);
-			}
-		}
-	},
-	
-	// all: remove all prefs
-	_migrateRemove: function MM_migrateRemove() {
-		for each (let e in ['context.', 'tool.', 'dropdown.', 'windows.', 'rename.']) {
-			Preferences.resetBranchExt(e);
 		}
 	},
 	
