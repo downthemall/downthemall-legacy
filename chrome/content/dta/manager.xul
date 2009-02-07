@@ -98,7 +98,7 @@
 			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" oncommand="Tree.bottom();" />
 			<menuseparator />
 			<menu id="misc" class="menu-iconic" label="&misc.label;">
-				<menupopup>
+				<menupopup id="popupmisc">
 					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" oncommand="Tree.changeChunks(true);" />
 					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" oncommand="Tree.changeChunks(false);" />
 					<menuseparator/>
