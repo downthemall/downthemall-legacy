@@ -49,6 +49,8 @@
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
 
+	<script type="application/x-javascript" src="chrome://browser/content/utilityOverlay.js"/>
+	
 	<stringbundleset>
 		<stringbundle src="chrome://dta/locale/common.properties"/>
 		<stringbundle src="chrome://dta/locale/manager.properties"/>
@@ -70,7 +72,8 @@
 		<key id="kResume" modifiers="accel" key="R" oncommand="Tree.resume();"/>
 		<key id="kAdd" modifiers="accel" key="+" oncommand="window.openDialog('chrome://dta/content/dta/addurl.xul','_blank','chrome,centerscreen,dialog,dependent');"/>
 		<key id="kGetInfo" modifiers="accel" key="I" oncommand="Tree.showInfo();"/>
-		<key id="kNewWin" modifiers="accel" key="N" oncommand="window.open('about:blank', 'New Window');"/>
+		<key id="kNewTab" modifiers="accel" key="T" oncommand="DTA_Mediator.open('about:blank');"/>
+		<key id="kNewWin" modifiers="accel" key="N" oncommand="openNewWindowWith(DTA_getHomePage(), null, null, false);"/>
 	</keyset>
 	
 
