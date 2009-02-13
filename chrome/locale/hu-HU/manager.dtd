@@ -1,5 +1,5 @@
 <!ENTITY tooladd.label "URL hozzáadása">
-<!ENTITY tooladd.tooltip "URL hozzáadása menuálisan">
+<!ENTITY tooladd.tooltip "URL hozzáadása manuálisan">
 <!ENTITY tooldonate.tooltiptext "Segíthet a DownThemAll Kiterjesztést még jobbá tenni! Támogassa a fejlesztést hozzájárulásaival!">
 <!ENTITY movetop.label "Első">
 <!ENTITY movebottom.label "Utolsó">
@@ -21,7 +21,7 @@
 <!ENTITY avgSpeedTitle.value "Átlagos sebesség:">
 <!ENTITY path.label "Mentési útvonal">
 <!ENTITY mask.label "Átnevezési maszk">
-<!ENTITY hash.label "Ellenörzőösszeg">
+<!ENTITY hash.label "Ellenőrzőösszeg">
 <!ENTITY infos.label "Letöltési információ">
 <!ENTITY launch.label "Fájl megnyitása">
 <!ENTITY delete.label "Törölt fájlok">

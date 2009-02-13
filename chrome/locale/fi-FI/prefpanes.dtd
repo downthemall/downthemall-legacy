@@ -65,7 +65,7 @@
 <!ENTITY advancedpane.hours "tuntia">
 <!ENTITY advancedpane.misc.caption "Sekalaiset asetukset">
 <!ENTITY advancedpane.settime.label "Aseta tiedostojen ajaksi muokkausaika (palvelimelta) tai aika jolloin lisätty jonoon">
-<!ENTITY advancedpane.rememberoneclick.label "Aseta OneClick muistamaan, koskeeko se kaikkia välilehtiä vai vain nykyistä">
+<!ENTITY advancedpane.rememberoneclick.label "AsetadTa OneClick muistamaan, koskeeko se kaikkia välilehtiä vai vain nykyistä">
 <!ENTITY advancedpane.tempfiles.caption "Väliaikaistiedostot">
 <!ENTITY advancedpane.usetemp.label "Tallenna latauksen osat väliaikaiskansioon">
 <!ENTITY advancedpane.tempdir.label "Hakemisto:">

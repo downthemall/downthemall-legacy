@@ -7,7 +7,7 @@
 <!ENTITY url.value "網址：">
 <!ENTITY dest.caption "儲存檔案到：">
 <!ENTITY referrer.value "參照網址：">
-<!ENTITY description.value "Description:">
+<!ENTITY description.value "敘述：">
 <!ENTITY checksum.value "校驗值(Hash)：">
 <!ENTITY browse.tip "指定目的資料夾">
 <!ENTITY mask.label "重新命名規則">

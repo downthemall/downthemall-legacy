@@ -25,8 +25,8 @@
 <!ENTITY infos.label "Hämtningsinfo">
 <!ENTITY launch.label "Öppna fil">
 <!ENTITY delete.label "Radera fil(er)">
-<!ENTITY targetdir.label "Öppna målmappen">
-<!ENTITY pause.label "Paus">
+<!ENTITY targetdir.label "Öppna målmapp">
+<!ENTITY pause.label "Pausa">
 <!ENTITY resume.label "Återuppta">
 <!ENTITY cancel.label "Avbryt">
 <!ENTITY remove.label "Ta bort från listan">
@@ -37,7 +37,7 @@
 <!ENTITY removechunk.label "Ta bort segment">
 <!ENTITY force.label "Tvinga">
 <!ENTITY import.label "Importera från fil">
-<!ENTITY export.label "Exportera">
+<!ENTITY export.label "Exportera markerade">
 <!ENTITY options.caption "Alternativ">
 <!ENTITY loading.label "Laddar...">
 <!ENTITY restore.label "Återställ">
