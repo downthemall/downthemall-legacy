@@ -12,6 +12,6 @@
 <!ENTITY browse.tip "Bläddra...">
 <!ENTITY mask.label "Omdöpningsschablon">
 <!ENTITY mask.tip "Filerna kommer att döpas om enligt denna schablon">
-<!ENTITY selectall.label "Välj alla">
-<!ENTITY selectinv.label "Omvänd valet">
-<!ENTITY selectnone.label "Välj inget">
+<!ENTITY selectall.label "Markera allt">
+<!ENTITY selectinv.label "Omvänd markeringen">
+<!ENTITY selectnone.label "Markera inget">

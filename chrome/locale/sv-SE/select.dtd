@@ -3,8 +3,8 @@
 <!ENTITY additional.caption "Snabbfiltrering">
 <!ENTITY additional.tip "Textfiler: Här kan du ange flera (kommaseparerade) filter">
 <!ENTITY regex.label "Reg.utr.">
-<!ENTITY filter.tip "Ange här dina filter! (exempel i den rullande menyn)">
-<!ENTITY status.label "Klicka på Börja! efter att ha valt länkar">
+<!ENTITY filter.tip "Ange här dina filter!">
+<!ENTITY status.label "Klicka på Börja! efter att ha markerat länkar">
 <!ENTITY menu.mask.title "Ändra omdöpningsschablon">
 <!ENTITY menu.check.label "Markera valda objekt">
 <!ENTITY menu.uncheck.label "Avmarkera valda objekt">
@@ -12,7 +12,7 @@
 <!ENTITY tab.links.label "Länkar">
 <!ENTITY tab.pics.label "Bilder och Inbäddade objekt">
 <!ENTITY header.desc.label "Beskrivning">
-<!ENTITY selectfiltered.label "Välj filtrerad">
+<!ENTITY selectfiltered.label "Markera endast filtrerade">
 <!ENTITY disableother.label "Avaktivera andra filter">
 <!ENTITY disableother.tooltip "Avaktivera övriga filter och använd senaste filter">
 <!ENTITY resname.value "Resursnamn">

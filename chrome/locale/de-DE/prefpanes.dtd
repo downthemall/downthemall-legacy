@@ -76,7 +76,7 @@
 <!ENTITY advancedpane.permissions.everybody "Jeder">
 <!ENTITY advancedpane.permissions.read "Lesen">
 <!ENTITY advancedpane.permissions.write "Schreiben">
-<!ENTITY advancedpane.loadendfirst.label "Lade letze paar Kilobytes zuerst">
+<!ENTITY advancedpane.loadendfirst.label "Letzten paar Kilobytes zuerst laden">
 <!ENTITY uipane.label "Oberfläche">
 <!ENTITY uipane.appearance.caption "Oberfläche">
 <!ENTITY uipane.namesonly.label "Nur Dateinamen im Manager-Fenster anzeigen">

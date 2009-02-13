@@ -14,7 +14,7 @@
 <!ENTITY mask.subdirs "URL-undermappar">
 <!ENTITY mask.flatsubdirs "Flat URL-undermappar">
 <!ENTITY mask.text "Länkbeskrivning">
-<!ENTITY mask.flattext "Beskrivning flat-länk">
+<!ENTITY mask.flattext "Beskrivning flat länk">
 <!ENTITY mask.refer "Hänvisande URL">
 <!ENTITY mask.qstring "Förfrågesträng">
 <!ENTITY mask.tip "Klicka eller dra till omdöpningsschablon">

@@ -10,7 +10,7 @@
 <!ENTITY add.label "Lägg till nytt filter">
 <!ENTITY highlight.label "Markera filerna som återspeglar de valda filterreglerna">
 <!ENTITY dtacontext2.label "Alternativ">
-<!ENTITY buttonlabelextra2 "Återställ stardardinställningar">
+<!ENTITY buttonlabelextra2 "Återställ standardinställningar">
 <!ENTITY dtaPreferences.title "DownThemAll!-alternativ...">
 <!ENTITY manager "dTa!-hanterare">
 <!ENTITY mainpane.label "Allmänt">
@@ -23,12 +23,12 @@
 <!ENTITY mainpane.concurrent.label "Max. antal samtida hämtningar">
 <!ENTITY mainpane.sounderror.label "Spela upp ett ljud vid fel">
 <!ENTITY mainpane.alert.caption "Åtgärder vid slutförda filhämtningar:">
-<!ENTITY mainpane.alertboxes.label "Meddela i ett fönster">
-<!ENTITY mainpane.alertslides.label "Meddela i popup-fönster">
+<!ENTITY mainpane.alertboxes.label "Meddela i en ruta">
+<!ENTITY mainpane.alertslides.label "Meddela i ett popup-fönster">
 <!ENTITY mainpane.alertnone.label "Meddela inte">
 <!ENTITY mainpane.sounddone.label "Spela upp ett ljud när samtliga filhämtningar är slutförda">
 <!ENTITY mainpane.closedta.label "Stäng DownThemAll när alla filer har hämtats">
-<!ENTITY mainpane.autoretry.caption "Automatiska återförsök">
+<!ENTITY mainpane.autoretry.caption "Automatiska nya försök">
 <!ENTITY mainpane.autoretry.interval.label "Tidsintervall:">
 <!ENTITY mainpane.autoretry.max.label "Max. antal försök">
 <!ENTITY mainpane.autoretry.unlimited "Obegränsat">
@@ -44,20 +44,20 @@
 <!ENTITY privacypane.deletelog.label "Radera logg">
 <!ENTITY privacypane.updates.caption "Uppdateringar/Internet">
 <!ENTITY privacypane.information.label "Tillåt dTa att erhålla nyheter, meddelanden samt uppdaterade versioner.">
-<!ENTITY privacypane.statistics.label "Tillåt dTa att skicka anonym anvädningsstatistik">
+<!ENTITY privacypane.statistics.label "Tillåt dTa att skicka anonym användarstatistik">
 <!ENTITY privacypane.dropdowns.caption "Rullande menyer">
 <!ENTITY privacypane.dropdownresults.label "Antal inmatningar att behålla">
 <!ENTITY privacypane.logs.caption "Logg">
 <!ENTITY privacypane.enablelogs.label "Aktivera diagnostisk logg">
 <!ENTITY privacypane.notice.caption "Meddelande">
-<!ENTITY privacypane.notice.desc "DownThemAll samverkar även med det inbyggda Clear Private Data (om tillgänglig).">
+<!ENTITY privacypane.notice.desc "DownThemAll samverkar även med Clear Private Data om tillgängligt.">
 <!ENTITY privacypane.privacynotice.label "Vårt sekretessmeddelande">
 <!ENTITY advancedpane.label "Avancerat">
 <!ENTITY advancedpane.multipart.caption "Uppdelade hämtningar">
 <!ENTITY advancedpane.chunks.label "Max. antal delar per hämtning:">
 <!ENTITY advancedpane.chunksdisabled "Avaktiverat">
-<!ENTITY advancedpane.timeouts.caption "timeout-väntetid">
-<!ENTITY advancedpane.timeout.label "Timeout efter:">
+<!ENTITY advancedpane.timeouts.caption "time out-väntetid">
+<!ENTITY advancedpane.timeout.label "Time out efter:">
 <!ENTITY advancedpane.seconds "sekunder">
 <!ENTITY advancedpane.minute "minut">
 <!ENTITY advancedpane.minutes "minuter">
