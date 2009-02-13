@@ -1,0 +1,3 @@
+<!ENTITY title "Modifica la màscara de canvi de nom...">
+<!ENTITY choose.desc "Escull les màscares per a tornar a anomenar els enllaços especificats. És possible emprar etiquetes especials o simplement text.">
+<!ENTITY mask.tip "Els fitxers seleccionats seran desats i tornats a anomenat emprant aquesta màscara">

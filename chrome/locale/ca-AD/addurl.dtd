@@ -1,0 +1,5 @@
+<!ENTITY title "Afegeix URL(s)">
+<!ENTITY add.value "Afegeix URL(s)">
+<!ENTITY desc.value "Escriviu aquí la URL i (de manera opcional) la pàgina referrer del fitxer que desitgeu descarregar.">
+<!ENTITY desc.batches.value "Podeu, a més, emprar descriptors en lot per a descarregar múltiples fitxers en un moment.">
+<!ENTITY examples.value "Exemples:">

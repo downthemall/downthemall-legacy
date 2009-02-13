@@ -1,0 +1,7 @@
+<!ENTITY title.value "Conflicte en el nom dels fitxers!">
+<!ENTITY text.value "Recordeu aquest paràmetre:">
+<!ENTITY file.label "Només per aquest fitxer">
+<!ENTITY session.label "Només per aquesta sessió">
+<!ENTITY always.label "Des d&apos;ara a">
+<!ENTITY overwrite.label "Sobreescriviu el fitxer existent">
+<!ENTITY skip.label "Omet/Cancel·la">

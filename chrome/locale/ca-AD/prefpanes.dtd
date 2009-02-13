@@ -1,0 +1,93 @@
+<!ENTITY winstyle "width:52em;height:42em;">
+<!ENTITY filterspane.label "Filtres">
+<!ENTITY listhead1.label "Títol">
+<!ENTITY listhead2.label "Extensions">
+<!ENTITY filter.label "Extensions filtrades:">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY useAs.label "Empra això com a:">
+<!ENTITY imagesf.label "Filtre d&apos;imatges i objectes incrustats">
+<!ENTITY linksf.label "Filtre d&apos;enllaços">
+<!ENTITY add.label "Afegeix un nou filtre">
+<!ENTITY highlight.label "Realça els fitxers activats pels filtres">
+<!ENTITY dtacontext2.label "Preferències">
+<!ENTITY buttonlabelextra2 "Restaura als paràmetres per defecte">
+<!ENTITY dtaPreferences.title "Preferències del DownThemAll!">
+<!ENTITY manager "dTa Manager">
+<!ENTITY mainpane.label "Principal">
+<!ENTITY mainpane.rename.caption "Si un fitxer ja existeix:">
+<!ENTITY mainpane.rename.label "Canvia el nom">
+<!ENTITY mainpane.overwrite.label "Sobreescriu">
+<!ENTITY mainpane.skip.label "Omet">
+<!ENTITY mainpane.ask.label "Pregunta">
+<!ENTITY mainpane.downloads.caption "Descàrregues">
+<!ENTITY mainpane.concurrent.label "Màxim de descàrregues concurrents:">
+<!ENTITY mainpane.sounderror.label "Reprodueix un so en cas d&apos;error">
+<!ENTITY mainpane.alert.caption "Quan les descàrregues siguin completes:">
+<!ENTITY mainpane.alertboxes.label "Alerta&apos;m emprant caselles d&apos;alerta">
+<!ENTITY mainpane.alertslides.label "Alerteu-me emprant notificacions de diapositives">
+<!ENTITY mainpane.alertnone.label "No m&apos;alerteu">
+<!ENTITY mainpane.sounddone.label "Reproduïu un so quan totes les descàrregues estiguin completades">
+<!ENTITY mainpane.closedta.label "Tanqueu el DownThemAll quan totes les descàrregues estiguin completades">
+<!ENTITY mainpane.autoretry.caption "Reintents automàtics">
+<!ENTITY mainpane.autoretry.interval.label "Reintenta cada">
+<!ENTITY mainpane.autoretry.max.label "Màx. reintents">
+<!ENTITY mainpane.autoretry.unlimited "Sense límit">
+<!ENTITY privacypane.label "Privacitat">
+<!ENTITY privacypane.closing.caption "Quan el gestor de finestres estigui tancat">
+<!ENTITY privacypane.removecompleted.label "Suprimiu totes les descàrregues completades">
+<!ENTITY privacypane.removecanceled.label "Suprimiu les descàrregues cancelades/errònies">
+<!ENTITY privacypane.removeaborted.label "Suprimiu les descàrregues no acabades">
+<!ENTITY privacypane.deletefoldershistory.label "Buida el llistat de directoris">
+<!ENTITY privacypane.deletefiltershistory.label "Buida els filtres addicionals">
+<!ENTITY privacypane.showlog.label "Visualitza el registre">
+<!ENTITY privacypane.reveallog.label "Mostra el fitxer">
+<!ENTITY privacypane.deletelog.label "Suprimeix el registre">
+<!ENTITY privacypane.updates.caption "Actualitzacions/Internet">
+<!ENTITY privacypane.information.label "Permet al dTa descarregar les darreres notícies i missatges i comprovar les actualitzacions">
+<!ENTITY privacypane.statistics.label "Permet al dTa recollir i transferir estadístiques d&apos;ús anònimes">
+<!ENTITY privacypane.dropdowns.caption "Menús desplegables">
+<!ENTITY privacypane.dropdownresults.label "Nombre d&apos;entrades a desar">
+<!ENTITY privacypane.logs.caption "Registre del diagnòstic">
+<!ENTITY privacypane.enablelogs.label "Habilita el registre per a diagnòstic">
+<!ENTITY privacypane.notice.caption "Avís">
+<!ENTITY privacypane.notice.desc "El DownThemAll també integra les funcions de Neteja de Dades privades (si estan disponibles).">
+<!ENTITY privacypane.privacynotice.label "La nostra Nota de Privacitat">
+<!ENTITY advancedpane.label "Avançat">
+<!ENTITY advancedpane.multipart.caption "Descàrrega multipart">
+<!ENTITY advancedpane.chunks.label "Max. nombre de fragments per a descàrrega:">
+<!ENTITY advancedpane.chunksdisabled "Deshabilitat">
+<!ENTITY advancedpane.timeouts.caption "Temps excedit per a les descàrregues">
+<!ENTITY advancedpane.timeout.label "Temps excedit per a les descàrregues">
+<!ENTITY advancedpane.seconds "segons">
+<!ENTITY advancedpane.minute "minut">
+<!ENTITY advancedpane.minutes "minuts">
+<!ENTITY advancedpane.hour "hora">
+<!ENTITY advancedpane.hours "hores">
+<!ENTITY advancedpane.misc.caption "Paràmetres miscel·lanis">
+<!ENTITY advancedpane.settime.label "Estableix la data dels fitxers a l&apos;última data modificada (del servidor) o al temps de cua.">
+<!ENTITY advancedpane.rememberoneclick.label "Tingues un recordadori del dTa OneClick si s&apos;aplica a Totes les pestanyes o a la Pestanya actual">
+<!ENTITY advancedpane.tempfiles.caption "Fitxers temporals">
+<!ENTITY advancedpane.usetemp.label "Desa els fragments descarregats en un directori temporal">
+<!ENTITY advancedpane.tempdir.label "Empra aquest directori:">
+<!ENTITY advancedpane.confirmremove.label "L&apos;usuari ha de confirmar la supressió de les descàrregues">
+<!ENTITY advancedpane.permissions.caption "Permisos de fitxer per defecte">
+<!ENTITY advancedpane.permissions.desc "Afectat per la màscara d&apos;usuari">
+<!ENTITY advancedpane.permissions.group "Grup">
+<!ENTITY advancedpane.permissions.everybody "Tothom">
+<!ENTITY advancedpane.permissions.read "Pot llegir">
+<!ENTITY advancedpane.permissions.write "Pot escriure">
+<!ENTITY advancedpane.loadendfirst.label "Carrega els últims kilobytes primer">
+<!ENTITY uipane.label "Interfície">
+<!ENTITY uipane.appearance.caption "Aparença">
+<!ENTITY uipane.namesonly.label "Mostra només els noms dels fitxers en la finestra del Gestor">
+<!ENTITY uipane.integration.caption "Integració">
+<!ENTITY uipane.downloadwin.label "Afegeix el DownThemAll! a la finestra de &apos;Desa fitxer&apos;">
+<!ENTITY uipane.context.caption "Menú contextual">
+<!ENTITY uipane.tools.caption "Menú d&apos;eines">
+<!ENTITY uipane.tbbuttons.caption "Botons de la barra d&apos;eines">
+<!ENTITY uipane.compact.label "Empra un menú compacte">
+<!ENTITY uipane.hide.label "Amaga aquest menú">
+<!ENTITY uipane.showtooltip.label "Mostra els indicadors de descàrrega">
+<!ENTITY uipane.window.caption "Finestra">
+<!ENTITY uipane.startminimized.label "Inicia minimitzada">
+<!ENTITY uipane.minimizetotray.label "Minimitza a la safata del sistema">

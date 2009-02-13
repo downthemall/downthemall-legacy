@@ -1,0 +1,17 @@
+<!ENTITY start.label "Začít stahovat!">
+<!ENTITY start.key "s">
+<!ENTITY queue.label "Do fronty!">
+<!ENTITY queue.key "f">
+<!ENTITY cancel.label "Zrušit">
+<!ENTITY options.label "Předvolby...">
+<!ENTITY url.value "URL:">
+<!ENTITY dest.caption "Soubory uložit do:">
+<!ENTITY referrer.value "Odkazující URL:">
+<!ENTITY description.value "Popis:">
+<!ENTITY checksum.value "Kontrolní součet (Hash):">
+<!ENTITY browse.tip "Přejít na cílovou složku...">
+<!ENTITY mask.label "Maska přejmenování">
+<!ENTITY mask.tip "Vybrané soubory budou uloženy a přejmenovány pomocí této masky">
+<!ENTITY selectall.label "Vybrat vše">
+<!ENTITY selectinv.label "Obrátit výběr">
+<!ENTITY selectnone.label "Zrušit výběr">
