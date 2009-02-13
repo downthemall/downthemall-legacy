@@ -1,0 +1,44 @@
+<!ENTITY tooladd.label "Afegeix URL(s)">
+<!ENTITY tooladd.tooltip "Afegeix manualment una URL al DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Ens podeu ajudar a fer el DownThemAll encara millor. Considereu fer una petita donació!">
+<!ENTITY movetop.label "A la part superior">
+<!ENTITY movebottom.label "A la part inferior">
+<!ENTITY moveup.label "A sobre">
+<!ENTITY movedown.label "A sota">
+<!ENTITY task.label "URL/Nom">
+<!ENTITY per.label "Finalització">
+<!ENTITY pct.label "Progrés">
+<!ENTITY dim.label "Mida">
+<!ENTITY time.label "Temps estimat">
+<!ENTITY parts.label "Fragments">
+<!ENTITY speed.label "Velocitat">
+<!ENTITY infoURLTitle.value "Des de:">
+<!ENTITY infoSizeTitle.value "Mida:">
+<!ENTITY infoMultiple.value "Múltiples elements">
+<!ENTITY elapsedTitle.value "Transcorregut:">
+<!ENTITY remainingTitle.value "Restant:">
+<!ENTITY currentSpeedTitle.value "Velocitat actual:">
+<!ENTITY avgSpeedTitle.value "Velocitat mitjana:">
+<!ENTITY path.label "Camí per desar:">
+<!ENTITY mask.label "Màscara de canvi de nom">
+<!ENTITY hash.label "Suma de verificació">
+<!ENTITY infos.label "Informació de la descàrrega">
+<!ENTITY launch.label "Obre el fitxer">
+<!ENTITY delete.label "Suprimeix fitxer(s)">
+<!ENTITY targetdir.label "Obre el directori">
+<!ENTITY pause.label "Pausa">
+<!ENTITY resume.label "Continua">
+<!ENTITY cancel.label "Cancel·la">
+<!ENTITY remove.label "Suprimeix les descàrregues seleccionades">
+<!ENTITY removeCompleted.label "Suprimeix les tasques completades">
+<!ENTITY removeGone.label "Neteja els fitxers antics">
+<!ENTITY misc.label "Misc">
+<!ENTITY addchunk.label "Un fragment més">
+<!ENTITY removechunk.label "Un fragment menys">
+<!ENTITY force.label "Força l&apos;arrencada">
+<!ENTITY import.label "Importa des d&apos;un fitxer">
+<!ENTITY export.label "Exporta seleccionats">
+<!ENTITY options.caption "Opcions">
+<!ENTITY loading.label "S&apos;està carregant...">
+<!ENTITY restore.label "Restaura">
+<!ENTITY close.label "Tanca">

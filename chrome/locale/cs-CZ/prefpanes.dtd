@@ -1,0 +1,93 @@
+<!ENTITY winstyle "width:52em;height:42em;">
+<!ENTITY filterspane.label "Filtry">
+<!ENTITY listhead1.label "Popis">
+<!ENTITY listhead2.label "Přípony">
+<!ENTITY filter.label "Filtrované přípony:">
+<!ENTITY regex.label "Reg. výraz">
+<!ENTITY useAs.label "Použít jako:">
+<!ENTITY imagesf.label "Filtr obrázků">
+<!ENTITY linksf.label "Filtr odkazů">
+<!ENTITY add.label "Přidat nový filtr">
+<!ENTITY highlight.label "Zvýraznit soubory vybrané pomocí filtrů">
+<!ENTITY dtacontext2.label "Předvolby">
+<!ENTITY buttonlabelextra2 "Obnovit původní nastavení">
+<!ENTITY dtaPreferences.title "Předvolby...">
+<!ENTITY manager "dTa správce">
+<!ENTITY mainpane.label "Hlavní">
+<!ENTITY mainpane.rename.caption "Pokud jméno souboru již existuje tak:">
+<!ENTITY mainpane.rename.label "Přejmenovat">
+<!ENTITY mainpane.overwrite.label "Přepsat">
+<!ENTITY mainpane.skip.label "Přeskočit">
+<!ENTITY mainpane.ask.label "Zeptat se">
+<!ENTITY mainpane.downloads.caption "Stahování">
+<!ENTITY mainpane.concurrent.label "Maximálních současných stahování:">
+<!ENTITY mainpane.sounderror.label "Zahrát zvuk v případě chyby">
+<!ENTITY mainpane.alert.caption "Po dokončení stahování:">
+<!ENTITY mainpane.alertboxes.label "Upozornit mě pomocí výstražného okna">
+<!ENTITY mainpane.alertslides.label "Upozornit mě pomocí vysunovacího upozornění Firefoxu">
+<!ENTITY mainpane.alertnone.label "Neupozorňovat mě">
+<!ENTITY mainpane.sounddone.label "Zahrát zvuk, pokud jsou včechna stahování kompletní">
+<!ENTITY mainpane.closedta.label "Zavřít okno rozšíření, pokud jsou stahování dokončena">
+<!ENTITY mainpane.autoretry.caption "Automatické opakování">
+<!ENTITY mainpane.autoretry.interval.label "Opakovat každých">
+<!ENTITY mainpane.autoretry.max.label "Max. opakováních">
+<!ENTITY mainpane.autoretry.unlimited "Neomezeno">
+<!ENTITY privacypane.label "Soukromí">
+<!ENTITY privacypane.closing.caption "Pokud je okno manažeru zavřeno.">
+<!ENTITY privacypane.removecompleted.label "Odstranit dokončená stahování ze seznamu">
+<!ENTITY privacypane.removecanceled.label "Odstranit zrušená/chybná stahování ze seznamu">
+<!ENTITY privacypane.removeaborted.label "Odstranit nespuštěná stahování ze seznamu">
+<!ENTITY privacypane.deletefoldershistory.label "Smazat historii složek">
+<!ENTITY privacypane.deletefiltershistory.label "Smazat historii filtrů">
+<!ENTITY privacypane.showlog.label "Zobrazit zprávu">
+<!ENTITY privacypane.reveallog.label "Zobrazit soubor">
+<!ENTITY privacypane.deletelog.label "Smazat zprávu">
+<!ENTITY privacypane.updates.caption "Aktualizace/Internet">
+<!ENTITY privacypane.information.label "Nechat rozšíření stahovat novinky, informace a čísla posledních verzí">
+<!ENTITY privacypane.statistics.label "Dovolit dTa sbírat a zasílat statistiky používání.">
+<!ENTITY privacypane.dropdowns.caption "Vysunovací nabídky">
+<!ENTITY privacypane.dropdownresults.label "Počet položek pro uchování">
+<!ENTITY privacypane.logs.caption "Diagnostické zprávy">
+<!ENTITY privacypane.enablelogs.label "Povolit logování diagnostik">
+<!ENTITY privacypane.notice.caption "Upozornění">
+<!ENTITY privacypane.notice.desc "Integrovat DownThemAll  taký do dialogu Vymazat důvěrná data... (pokuk je dostupné)">
+<!ENTITY privacypane.privacynotice.label "Poznámka k našim zásadám ochrany soukromí">
+<!ENTITY advancedpane.label "Rozšířené">
+<!ENTITY advancedpane.multipart.caption "Stahování více částí">
+<!ENTITY advancedpane.chunks.label "Maximální počet částí v rámci jednoho stahování:">
+<!ENTITY advancedpane.chunksdisabled "1 (Zakázáno)">
+<!ENTITY advancedpane.timeouts.caption "Překročení časového limitu stahování">
+<!ENTITY advancedpane.timeout.label "Maximální doba nečinnosti připojení před překročením časového limitu">
+<!ENTITY advancedpane.seconds "sekund">
+<!ENTITY advancedpane.minute "minuta">
+<!ENTITY advancedpane.minutes "minuty">
+<!ENTITY advancedpane.hour "hodina">
+<!ENTITY advancedpane.hours "hodiny">
+<!ENTITY advancedpane.misc.caption "Různá nastavení">
+<!ENTITY advancedpane.settime.label "Nastavit časy souborů podle času poslední změny (server) nebo času zařazení do frontu">
+<!ENTITY advancedpane.rememberoneclick.label "Povolit pamatování funkce JedenKlik, pokud se použije na aktuální kartu nebo všechny karty">
+<!ENTITY advancedpane.tempfiles.caption "Dočasné soubory">
+<!ENTITY advancedpane.usetemp.label "Ukládat stahované části v dočasném adresáři">
+<!ENTITY advancedpane.tempdir.label "Použít tuto složku:">
+<!ENTITY advancedpane.confirmremove.label "Musíte potvrdit odstranění stažených souborů">
+<!ENTITY advancedpane.permissions.caption "Výchozí oprávnění k souboru">
+<!ENTITY advancedpane.permissions.desc "Ovlivněné příkazem umask">
+<!ENTITY advancedpane.permissions.group "Skupina">
+<!ENTITY advancedpane.permissions.everybody "Každý">
+<!ENTITY advancedpane.permissions.read "Může číst">
+<!ENTITY advancedpane.permissions.write "Může zapisovat">
+<!ENTITY advancedpane.loadendfirst.label "Nejdříve načíst pár posledních kilobajtů">
+<!ENTITY uipane.label "Uživatelské rozhraní">
+<!ENTITY uipane.appearance.caption "Vzhled">
+<!ENTITY uipane.namesonly.label "Zobrazit v okně Správce jen názvy souború">
+<!ENTITY uipane.integration.caption "Integrace">
+<!ENTITY uipane.downloadwin.label "Přidat položku DownThemAll! do okna &apos;Uložit soubor&apos;">
+<!ENTITY uipane.context.caption "Místní nabídka:">
+<!ENTITY uipane.tools.caption "Nabídka nástrojů:">
+<!ENTITY uipane.tbbuttons.caption "Tlačítka nástrojové lišty">
+<!ENTITY uipane.compact.label "Použít složenou nabídku">
+<!ENTITY uipane.hide.label "Skrýt nabítku">
+<!ENTITY uipane.showtooltip.label "Zobrazit Místní nápovědu">
+<!ENTITY uipane.window.caption "Okno">
+<!ENTITY uipane.startminimized.label "Spustit minimalizovaně">
+<!ENTITY uipane.minimizetotray.label "Minimalizovat do systémové lišty">

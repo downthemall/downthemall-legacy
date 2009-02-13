@@ -1,0 +1,44 @@
+<!ENTITY tooladd.label "Tilføj en URL">
+<!ENTITY tooladd.tooltip "Tilføj manuelt en URL til DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Du kan hjælpe os med at gøre DownThemAll endnu bedre. Overvej en lille donation!">
+<!ENTITY movetop.label "Øverst">
+<!ENTITY movebottom.label "Nederst">
+<!ENTITY moveup.label "Op">
+<!ENTITY movedown.label "Ned">
+<!ENTITY task.label "URL/Navn">
+<!ENTITY per.label "Procent">
+<!ENTITY pct.label "Fremskridt">
+<!ENTITY dim.label "Størrelse">
+<!ENTITY time.label "Vurderet tid">
+<!ENTITY parts.label "Dele">
+<!ENTITY speed.label "Hastighed">
+<!ENTITY infoURLTitle.value "Kilde:">
+<!ENTITY infoSizeTitle.value "Størrelse">
+<!ENTITY infoMultiple.value "Flere valg">
+<!ENTITY elapsedTitle.value "Forløbet:">
+<!ENTITY remainingTitle.value "Tilbageværende:">
+<!ENTITY currentSpeedTitle.value "Nuværende hastidhed:">
+<!ENTITY avgSpeedTitle.value "Gennemsnitlig hastighed:">
+<!ENTITY path.label "Gem-placering">
+<!ENTITY mask.label "Omdøbnings-skabelon">
+<!ENTITY hash.label "Checksum">
+<!ENTITY infos.label "Downloadinfo">
+<!ENTITY launch.label "Åbn fil">
+<!ENTITY delete.label "Slet fil(er)">
+<!ENTITY targetdir.label "Åben mappe">
+<!ENTITY pause.label "Pause">
+<!ENTITY resume.label "Fortsæt">
+<!ENTITY cancel.label "Annuller">
+<!ENTITY remove.label "Fjern fra liste">
+<!ENTITY removeCompleted.label "Fjern udførte opgaver">
+<!ENTITY removeGone.label "Fjern slettede filer">
+<!ENTITY misc.label "Diverse">
+<!ENTITY addchunk.label "Tilføj del">
+<!ENTITY removechunk.label "Fjern del">
+<!ENTITY force.label "Gennemtving start">
+<!ENTITY import.label "Importer fra fil">
+<!ENTITY export.label "Eksporter valgte">
+<!ENTITY options.caption "Indstillinger">
+<!ENTITY loading.label "Indlæser...">
+<!ENTITY restore.label "Gendan">
+<!ENTITY close.label "Luk">

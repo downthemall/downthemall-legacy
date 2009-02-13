@@ -1,0 +1,17 @@
+<!ENTITY start.label "Comença!">
+<!ENTITY start.key "s">
+<!ENTITY queue.label "Pausa">
+<!ENTITY queue.key "p">
+<!ENTITY cancel.label "Cancel·la">
+<!ENTITY options.label "Preferències">
+<!ENTITY url.value "URL">
+<!ENTITY dest.caption "Desa els fitxers a:">
+<!ENTITY referrer.value "URL referent">
+<!ENTITY description.value "Description:">
+<!ENTITY checksum.value "Suma de verificació (Hash):">
+<!ENTITY browse.tip "Navega pel directori de destinació...">
+<!ENTITY mask.label "Màscara de canvi de nom">
+<!ENTITY mask.tip "Els fitxers seleccionats seran desats i renombrats emprant aquesta màscara">
+<!ENTITY selectall.label "Selecciona-ho tot">
+<!ENTITY selectinv.label "Inverteix selecció">
+<!ENTITY selectnone.label "No seleccionis res">

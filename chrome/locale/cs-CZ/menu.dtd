@@ -1,0 +1,7 @@
+<!ENTITY dta-pref.label "Předvolby...">
+<!ENTITY dta-about.label "O rozšíření...">
+<!ENTITY dta-manager-button "Správce">
+<!ENTITY dta-tb-all.label "Všechny panely">
+<!ENTITY dta-tb-single.label "Současný panel">
+<!ENTITY dta-form-save.label "Uložit cílový formulář pomocí DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Spustit ukládání cílového formuláře s dTa OneClick!">

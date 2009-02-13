@@ -1,0 +1,44 @@
+<!ENTITY tooladd.label "Adicionar Endereço">
+<!ENTITY tooladd.tooltip "Adicionar uma URL manualmente ao DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Você pode nos ajudar a tornar o DownThemAll ainda melhor. Considere a possibilidade de nos fazer uma pequena doação!">
+<!ENTITY movetop.label "Mover ao início">
+<!ENTITY movebottom.label "Mover ao final">
+<!ENTITY moveup.label "Mover para cima">
+<!ENTITY movedown.label "Mover para baixo">
+<!ENTITY task.label "URL/Nome">
+<!ENTITY per.label "Porcentagem">
+<!ENTITY pct.label "Progresso">
+<!ENTITY dim.label "Tamanho">
+<!ENTITY time.label "Tempo estimado">
+<!ENTITY parts.label "Partes">
+<!ENTITY speed.label "Velocidade">
+<!ENTITY infoURLTitle.value "De:">
+<!ENTITY infoSizeTitle.value "Tamanho:">
+<!ENTITY infoMultiple.value "Itens múltiplos">
+<!ENTITY elapsedTitle.value "Transcorrido:">
+<!ENTITY remainingTitle.value "Restante:">
+<!ENTITY currentSpeedTitle.value "Velocidade atual:">
+<!ENTITY avgSpeedTitle.value "Velocidade média:">
+<!ENTITY path.label "Caminho para Salvar">
+<!ENTITY mask.label "Mascará de renomear">
+<!ENTITY hash.label "Checksum">
+<!ENTITY infos.label "Informações do Download">
+<!ENTITY launch.label "Abrir arquivo">
+<!ENTITY delete.label "Apagar arquivo">
+<!ENTITY targetdir.label "Abrir pasta de destino">
+<!ENTITY pause.label "Pausar">
+<!ENTITY resume.label "Continuar">
+<!ENTITY cancel.label "Cancelar">
+<!ENTITY remove.label "Remover da lista">
+<!ENTITY removeCompleted.label "Remover tarefas completadas">
+<!ENTITY removeGone.label "Limpar arquivos já baixados">
+<!ENTITY misc.label "Miscelâneas">
+<!ENTITY addchunk.label "Adicionar parte">
+<!ENTITY removechunk.label "Remover parte">
+<!ENTITY force.label "Forçar início">
+<!ENTITY import.label "Importar de arquivo">
+<!ENTITY export.label "Exportar selecionados">
+<!ENTITY options.caption "Opções">
+<!ENTITY loading.label "Carregando...">
+<!ENTITY restore.label "Restaurar">
+<!ENTITY close.label "Fechar">
