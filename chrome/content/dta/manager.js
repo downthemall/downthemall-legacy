@@ -61,6 +61,7 @@ const BufferedOutputStream = Construct('@mozilla.org/network/buffered-output-str
 const BinaryOutputStream = Construct('@mozilla.org/binaryoutputstream;1', 'nsIBinaryOutputStream', 'setOutputStream');
 const BinaryInputStream = Construct('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
 const FileInputStream = Construct('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
+const FileOutputStream = Construct('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const StringInputStream = Construct('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
 
 const ContentHandling = Serv('@downthemall.net/contenthandling;1', 'dtaIContentHandling');
@@ -84,9 +85,10 @@ const REFRESH_FREQ = 1000;
 const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 const STREAMS_FREQ = 200;
 
-let Prompts = {};
+let Prompts = {}, Preallocator = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
 Components.utils.import('resource://dta/speedstats.jsm');
+Components.utils.import('resource://dta/preallocator.jsm', Preallocator);
 
 var TEXT_PAUSED;
 var TEXT_QUEUED;
@@ -1689,6 +1691,32 @@ QueueItem.prototype = {
 		}
 	},
 	
+	prealloc: function QI_prealloc() {
+		let file = this.tmpFile;
+		
+		if (!file.parent.exists()) {
+			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
+			this.invalidate();
+		}
+		
+		if (!this.totalSize) {
+			return;
+		}
+		
+		if (!file.exists() || this.totalSize != file.fileSize) {
+			this.preallocating = true;
+			Preallocator.prealloc(file, this.totalSize, Prefs.permissions, this._donePrealloc, this);
+		}
+	},
+	
+	_donePrealloc: function QI__donePrealloc(res) {
+		this.preallocating = false;
+		if (this.resumable && this.is(RUNNING)) {
+			this.resumeDownload();
+		}
+	},
+	
+	
 	removeTmpFile: function QI_removeTmpFile() {
 		if (!!this._tmpFile && this._tmpFile.exists()) {
 			try {
@@ -1700,6 +1728,7 @@ QueueItem.prototype = {
 		}
 		this._tmpFile = null;
 	},
+	
 	sessionConnections: 0,
 	_autoRetries: 0,
 	_autoRetryTime: 0,
@@ -1731,6 +1760,12 @@ QueueItem.prototype = {
 		this.status = TEXT_QUEUED;
 	},
 	resumeDownload: function QI_resumeDownload() {
+		
+		if (this.preallocating) {
+			Debug.logString("not resuming download " + this + " because preallocating");
+			return false;
+		}
+		
 		Debug.logString("resumeDownload: " + this);
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat
@@ -1745,7 +1780,6 @@ QueueItem.prototype = {
 		}
 		function downloadNewChunk(download, start, end, header) {
 			var chunk = new Chunk(download, start, end);
-			Debug.logString("started: " + chunk);
 			download.chunks.push(chunk);
 			download.chunks.sort(function(a,b) { return a.start - b.start; });
 			downloadChunk(download, chunk, header);	
@@ -1960,34 +1994,8 @@ Chunk.prototype = {
 	open: function CH_open() {
 		this._sessionBytes = 0;
 		let file = this.parent.tmpFile;
-		if (!file.parent.exists()) {
-			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
-			this.parent.invalidate();
-		}
-		let prealloc = !file.exists();
-		if (prealloc && this.parent.totalSize > 0) {
-			try {
-				file.create(file.NORMAL_FILE_TYPE, Prefs.permissions);
-				file.fileSize = this.parent.totalSize;
-				Debug.logString("fileSize set using #1");
-				prealloc = false;
-			}
-			catch (ex) {
-				// no op
-			}
-		}		
 		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
-		if (prealloc && this.parent.totalSize > 0) {
-			try {
-				seekable.seek(0x00, this.parent.totalSize);
-				seekable.setEOF();
-				Debug.logString("fileSize set using #2");
-			}
-			catch (ex) {
-				// no-op
-			}
-		}
 		seekable.seek(0x00, this.start + this.written);
 		this._outStream = new BufferedOutputStream(outStream, CHUNK_BUFFER_SIZE);
 	},
@@ -2087,21 +2095,21 @@ let AuthPrompts = {
 	}
 };
 
-function Connection(d, c, getInfo) {
+function Connection(d, c, isInfoGetter) {
 
 	this.d = d;
 	this.c = c;
-	this.isInfoGetter = getInfo;
+	this.isInfoGetter = isInfoGetter;
 	this.url = d.urlManager.getURL();
-	var referrer = d.referrer;
+	let referrer = d.referrer;
 	Debug.logString("starting: " + this.url.url.spec);
 
 	this._chan = IOService.newChannelFromURI(this.url.url);
-	var r = Ci.nsIRequest;
+	let r = Ci.nsIRequest;
 	this._chan.loadFlags = r.LOAD_NORMAL | r.LOAD_BYPASS_CACHE;
 	this._chan.notificationCallbacks = this;
 	try {
-		var encodedChannel = this._chan.QueryInterface(Ci.nsIEncodedChannel);
+		let encodedChannel = this._chan.QueryInterface(Ci.nsIEncodedChannel);
 		encodedChannel.applyConversion = false;
 	}
 	catch (ex) {
@@ -2638,6 +2646,9 @@ Connection.prototype = {
 					d.resumable = false;					
 					this.cantCount = true;
 				}
+				else {
+					d.prealloc();
+				}
 				if (!d.resumable) {
 					d.maxChunks = 1;
 				}
@@ -2898,11 +2909,6 @@ function startDownloads(start, downloads) {
 		boxobject.scrollToRow(numbefore);
 	}
 }
-const FileOutputStream = Components.Constructor(
-	'@mozilla.org/network/file-output-stream;1',
-	'nsIFileOutputStream',
-	'init'
-);
 
 var ConflictManager = {
 	_items: [],
