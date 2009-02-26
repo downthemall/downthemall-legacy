@@ -62,7 +62,7 @@ function CoThreadBase(func, yieldEvery, thisCtx) {
 /**
  * Constructs a new CoThread (aka. pseudo-thread).
  * A CoThread will repeatedly call a specified function, but "breaking"
- * the operation temporarily after a certain ammount of calls,
+ * the operation temporarily after a certain amount of calls,
  * so that the main thread gets a chance to process any outstanding
  * events.
  * 
@@ -144,7 +144,7 @@ CoThread.prototype = {
  * Constructs a new CoThreadListWalker (aka. pseudo-thread).
  * A CoThreadListWalker will walk a specified list and call a specified function
  * on each item, but "breaking" the operation temporarily after a
- * certain ammount of processed items, so that the main thread may
+ * certain amount of processed items, so that the main thread may
  * process any outstanding events.
  * 
  * Example:
