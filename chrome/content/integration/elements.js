@@ -771,8 +771,8 @@ var DTA_ContextOverlay = {
 		if (this._attachedOneClick) {
 			return;
 		}
-		DTA_debug.logString("attached");
-		window.addEventListener('mousedown', DTA_ContextOverlay.onClickOneClick, false);
+		window.addEventListener('click', DTA_ContextOverlay.onClickOneClick, false);
+		window.addEventListener('mouseup', DTA_ContextOverlay.onClickOneClick, false);
 		window.addEventListener('mousemove', DTA_ContextOverlay.onClickOneClick, false);
 		this._attachedOneClick = true;
 	},
@@ -780,8 +780,8 @@ var DTA_ContextOverlay = {
 		if (!this._attachedOneClick) {
 			return;
 		}
-		DTA_debug.logString("detached");
-		window.removeEventListener('mousedown', DTA_ContextOverlay.onClickOneClick, false);
+		window.removeEventListener('click', DTA_ContextOverlay.onClickOneClick, false);
+		window.removeEventListener('mouseup', DTA_ContextOverlay.onClickOneClick, false);
 		window.removeEventListener('mousemove', DTA_ContextOverlay.onClickOneClick, false);
 		this._attachedOneClick = false;
 		for each (let hilight in this._hilights) {
@@ -816,10 +816,11 @@ var DTA_ContextOverlay = {
 			return findElem(e.parentNode, n, a);
 		}
 		function cancelEvent(evt) {
-			if (evt.cancelable) {
-				evt.preventDefault();
-				evt.stopPropagation();
+			if (!evt.cancelable) {
+				return;
 			}
+			evt.preventDefault();
+			evt.stopPropagation();
 		}
 		function flash(elem) {
 			try {
@@ -856,10 +857,12 @@ var DTA_ContextOverlay = {
 			if (!m) {
 				return false;
 			}
+			DTA_debug.logString("searching");
 			cancelEvent(evt);
 			try {
 				DTA_ContextOverlay.saveSingleLink(true, m.url, m.elem);
 				flash(m.elem);
+				m.elem.removeAttribute('target');
 				highlighter.style.display = 'none';
 			}
 			catch (ex) {
@@ -931,12 +934,14 @@ var DTA_ContextOverlay = {
 			return;
 		}
 		
-		if (evt.type == 'mousedown') {
+		if (evt.type == 'click') {
 			searchee.some(processRegular);
 		}
 		else if (evt.type == 'mousemove' && !searchee.some(highlightElement)) {
 			highlighter.style.display = 'none';
-			return;
+		}
+		else {
+			cancelEvent(evt);
 		}
 	}
 }
@@ -945,3 +950,9 @@ addEventListener("load", function() DTA_ContextOverlay.init(), false);
 addEventListener("keydown", function(evt) DTA_ContextOverlay.onKeyDown(evt), false);
 addEventListener("keyup", function(evt) DTA_ContextOverlay.onKeyUp(evt), false);
 addEventListener("blur", function(evt) DTA_ContextOverlay.onBlur(evt), true);
+
+nsBrowserAccess.prototype._openURI = nsBrowserAccess.prototype.openURI;
+nsBrowserAccess.prototype.openURI = function(aURI, aOpener, aWhere, aContext) {
+	DTA_debug.logString("invoked");
+	return nsBrowserAccess.prototype._openURI.call(this, aURI, aOpener, aWhere, aContext);	
+}
