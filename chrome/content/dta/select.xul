@@ -44,36 +44,69 @@
 		<stringbundle src="chrome://dta/locale/common.properties"/>
 		<stringbundle src="chrome://dta/locale/select.properties"/>
 	</stringbundleset>
+	
+	<commandset>
+		<command id="cmdClose" oncommand="self.close();"/>
+		
+		<command id="cmdSelectAll" oncommand="Dialog.selectAll();"/>
+		<command id="cmdSelectInv" oncommand="Dialog.invertSelection();"/>
+		<command id="cmdSelectFiltered" oncommand="Dialog.selectFiltered();"/>
+		<command id="cmdOpenSelection" oncommand="Dialog.openSelection();"/>
+		
+		<command id="cmdEditMask" oncommand="Dialog.editMask();"/>
+		
+		<command id="cmdCheck" oncommand="Dialog.toggleSelection(true);"/>
+		<command id="cmdUncheck" oncommand="Dialog.toggleSelection(false);"/>
+		<command id="cmdToggle" oncommand="Dialog.toggleSelection();"/>
+		
+		<command id="cmdStart" oncommand="Dialog.download(true);"/>
+		<command id="cmdQueue" oncommand="Dialog.download(false);"/>
+		
+		<command id="cmdBrowseDirectory" oncommand="Dialog.browseDir();"/>
+		
+		<command id="cmdChangeToLinks" oncommand="Dialog.changeTab('links')"/>
+		<command id="cmdChangeToImages" oncommand="Dialog.changeTab('images')"/>
+		
+		<command id="cmdPreferences" oncommand="DTA_showPreferences();"/>
+	</commandset>
 
 	<keyset>
-		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
-		<key id="kMacEsc" modifiers="accel" key="W" oncommand="self.close();"/>
-		<key modifiers="accel" key="A" oncommand="Dialog.selectAll();"/>
-		<key keycode="VK_RETURN" oncommand="Dialog.download(true);"/>
-		<key keycode="VK_ENTER" oncommand="Dialog.download(true);"/>
+		<key id="kClose" keycode="VK_ESCAPE" command="cmdClose"/>
+		<key id="kCloseMac" modifiers="accel" key="W" command="cmdClose"/>
+		
+		<key id="kSelectAll" modifiers="accel" key="A" command="cmdSelectAll"/>
+		<key id="kSelectInv" modifiers="accel" key="I" command="cmdSelectInv"/>
+		<key id="kSelectFiltered" modifiers="accel" key="F" command="cmdSelectFiltered"/>
+		<key id="kOpenSelection" modifiers="accel" key="O" command="cmdOpenSelection"/>
+		
+		<key id="kStart" keycode="VK_RETURN" command="cmdStart"/>
+		<key id="kStartAlt" keycode="VK_ENTER" command="cmdStart"/>
+
+		<key id="kQueue" modifiers="alt" keycode="VK_RETURN" command="cmdQueue"/>
+		<key id="kQueueAlt" modifiers="alt" keycode="VK_ENTER" command="cmdQueue"/>		
 	</keyset>
 
 	<popupset id="popups">
 		<popup id="popup" onpopupshowing="return Dialog.showPopup();">
-			<menuitem image="chrome://dta/skin/select/check.png" class="menuitem-iconic" id="mcheck" label="&menu.check.label;" oncommand="Dialog.toggleSelection(true);" />
-			<menuitem image="chrome://dta/skin/select/uncheck.png" class="menuitem-iconic" id="muncheck" label="&menu.uncheck.label;" oncommand="Dialog.toggleSelection(false);" />
-			<menuitem image="chrome://dta/skin/select/uncheck2.png" class="menuitem-iconic" id="mtoggle" label="&menu.toggle.label;" oncommand="Dialog.toggleSelection();" />
+			<menuitem image="chrome://dta/skin/select/check.png" class="menuitem-iconic" id="mcheck" label="&menu.check.label;" command="cmdCheck" />
+			<menuitem image="chrome://dta/skin/select/uncheck.png" class="menuitem-iconic" id="muncheck" label="&menu.uncheck.label;" command="cmdUncheck" />
+			<menuitem image="chrome://dta/skin/select/uncheck2.png" class="menuitem-iconic" id="mtoggle" label="&menu.toggle.label;" command="cmdToggle" />
 			<menuseparator id="msep1" />
-			<menuitem image="chrome://dta/skin/select/modrenaming.png" class="menuitem-iconic" id="mrenaming" label="&mask.label;" oncommand="Dialog.editMask();" />
+			<menuitem image="chrome://dta/skin/select/modrenaming.png" class="menuitem-iconic" id="mrenaming" label="&mask.label;" command="cmdEditMask" />
 			<menuseparator id="msep2" />
-			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="Dialog.selectAll();" />
-			<menuitem id="selectfiltered" class="menuitem-iconic" label="&selectfiltered.label;" image="chrome://dta/skin/select/selectfiltered.png" oncommand="Dialog.selectFiltered();" />						
-			<menuitem id="invertSelection" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="Dialog.invertSelection();" />
+			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" command="cmdSelectAll" key="kSelectAll" />
+			<menuitem id="selectfiltered" class="menuitem-iconic" label="&selectfiltered.label;" image="chrome://dta/skin/select/selectfiltered.png" command="cmdSelectFiltered" key="kSelectFiltered" />						
+			<menuitem id="invertSelection" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" command="cmdSelectInv" key="kSelectInv" />
 			<menuseparator id="msep3" />
-			<menuitem image="chrome://dta/skin/common/openurl.png" id="mopen" crop="center" class="menuitem-iconic" oncommand="Dialog.openSelection();"/>
+			<menuitem image="chrome://dta/skin/common/openurl.png" id="mopen" crop="center" class="menuitem-iconic" command="cmdOpenSelection" key="kOpenSelection" />
 		</popup>
 	</popupset>
 	
 	<notificationbox id="notifications" flex="1">
 		<toolbox id="views">
 			<toolbar class="findfiles" chromedir="&locale.dir;">
-				<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&tab.links.label;" oncommand="Dialog.changeTab('links');" />
-				<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.pics.label;" oncommand="Dialog.changeTab('images');" />
+				<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&tab.links.label;" command="cmdChangeToLinks" />
+				<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.pics.label;" command="cmdChangeToImages" />
 				<spacer flex="1" id="logo" chromedir="&locale.dir;"/>
 			</toolbar>
 		</toolbox>
@@ -108,7 +141,7 @@
 			<caption label="&dest.caption;" />
 			<hbox>
 				<saveddropdown id="directory" preference="directory" flex="1"/>
-				<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" tooltiptext="&browse.tip;" />
+				<toolbarbutton id="browsedir" command="cmdBrowseDirectory" tooltiptext="&browse.tip;" />
 			</hbox>
 		</vbox>
 		<vbox id="renamingbox">
@@ -137,14 +170,14 @@
 
  	<hbox align="baseline" style="margin: 2px 7px 4px 7px" >
 		<spacer flex="1"/>
-		<button accesskey="&start.key;" label="&start.label;" id="startbutton" oncommand="Dialog.download(true);" default="true"/>
-		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" oncommand="Dialog.download(false);" />
-		<button label="&cancel.label;" id="cancelbutton" oncommand="self.close();" />
+		<button accesskey="&start.key;" label="&start.label;" id="startbutton" command="cmdStart" default="true"/>
+		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" command="cmdQueue" />
+		<button label="&cancel.label;" id="cancelbutton" command="cmdClose" />
 	</hbox>
 	
 	<statusbar id="footer">
 		<statusbarpanel id="status" flex="1" />
-		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text" label="&options.label;" onclick="DTA_showPreferences();" src="chrome://dta/skin/common/prefs.png" />
+		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text" label="&options.label;" command="cmdPreferences" src="chrome://dta/skin/common/prefs.png" />
 	</statusbar>
 
 </window>
