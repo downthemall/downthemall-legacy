@@ -2646,9 +2646,9 @@ Connection.prototype = {
 					d.resumable = false;					
 					this.cantCount = true;
 				}
-				else {
-					d.prealloc();
-				}
+				
+				d.prealloc();
+
 				if (!d.resumable) {
 					d.maxChunks = 1;
 				}
