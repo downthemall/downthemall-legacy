@@ -385,10 +385,10 @@ textbox.plain {
 	-moz-image-region: rect(48px,32px,64px,16px);
 }
 
-#removegone .menu-iconic-icon {
+#cleangone .menu-iconic-icon {
 	-moz-image-region: rect(32px,48px,48px,32px);
 }
-#removegone[disabled="true"] .menu-iconic-icon {
+#cleanegone[disabled="true"] .menu-iconic-icon {
 	-moz-image-region: rect(48px,48px,64px,32px);
 }
 

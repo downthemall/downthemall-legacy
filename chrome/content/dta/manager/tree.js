@@ -570,16 +570,19 @@ var Tree = {
 					o.setAttribute('disabled', disabled);
 				}
 			}
-			modifySome($('play', 'toolplay'), function(d) !d.isOf(COMPLETE, RUNNING, QUEUED, FINISHING));
-			modifySome($('pause', 'toolpause'), function(d) (d.is(RUNNING) && d.resumable) || d.is(QUEUED));
-			modifySome($('cancel', 'toolcancel'), function(d) !d.isOf(FINISHING, CANCELED));
-			modifySome($('launch'), function(d) !!d.curFile);
-			modifySome($('folder'), function(d) !!d.curFolder);
-			modifySome($('delete'), function(d) d.is(COMPLETE));
-			modifySome($('export'), function(d) !!d.count);
-			modifySome($('addchunk', 'removechunk', 'force'), function(d) d.isOf(QUEUED, RUNNING, PAUSED, CANCELED));
-			modifySome($('movetop', 'moveup', 'toolmovetop', 'toolmoveup'), function(d) d.min > 0); 
-			modifySome($('movedown', 'movebottom', 'toolmovedown', 'toolmovebottom'), function(d) d.max != d.rows - 1);  
+			modifySome($('cmdResume'), function(d) !d.isOf(COMPLETE, RUNNING, QUEUED, FINISHING));
+			modifySome($('cmdPause'), function(d) (d.is(RUNNING) && d.resumable) || d.is(QUEUED));
+			modifySome($('cmdCancel'), function(d) !d.isOf(FINISHING, CANCELED));
+			
+			modifySome($('cmdLaunch'), function(d) !!d.curFile);
+			modifySome($('cmdOpenFolder'), function(d) !!d.curFolder);
+			modifySome($('cmdDelete'), function(d) d.is(COMPLETE));
+			
+			modifySome($('cmdRemoveSelected', 'cmdExport', 'cmdGetInfo'), function(d) !!d.count);
+			
+			modifySome($('cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'), function(d) d.isOf(QUEUED, RUNNING, PAUSED, CANCELED));
+			modifySome($('cmdMoveTop', 'cmdMoveUp'), function(d) d.min > 0); 
+			modifySome($('cmdMoveDown', 'cmdMoveBottom'), function(d) d.max != d.rows - 1);  
 		}
 		catch (ex) {
 			Debug.log("rt", ex);
