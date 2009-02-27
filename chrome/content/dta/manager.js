@@ -109,6 +109,7 @@ var Dialog = {
 	},
 	set offline(nv) {
 		this._offline = !!nv;
+		$('cmdToggleOffline').setAttribute('disabled', this._offline);
 		this._processOfflineChange();
 		return this._offline;
 	},
