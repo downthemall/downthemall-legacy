@@ -173,3 +173,13 @@ treechildren::-moz-tree-cell-text(fastFiltered, selected) {
 #mopen {
 	list-style-image: url(chrome://dta/skin/common/openurl.png);
 }
+
+#maskeditor {
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 4px;
+	padding-bottom: 6px;
+}
+#maskeditor-buttons {
+	margin-top: 1em;
+}

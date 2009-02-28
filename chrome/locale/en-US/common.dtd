@@ -7,7 +7,6 @@
 <!ENTITY start.key "s" >
 <!ENTITY queue.label "Add paused">
 <!ENTITY queue.key "p" >
-<!ENTITY cancel.label "Cancel">
 
 <!ENTITY options.label "Preferences">
 
