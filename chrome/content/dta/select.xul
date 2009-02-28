@@ -88,17 +88,17 @@
 
 	<popupset id="popups">
 		<popup id="popup" onpopupshowing="return Dialog.showPopup();">
-			<menuitem image="chrome://dta/skin/select/check.png" class="menuitem-iconic" id="mcheck" label="&menu.check.label;" command="cmdCheck" />
-			<menuitem image="chrome://dta/skin/select/uncheck.png" class="menuitem-iconic" id="muncheck" label="&menu.uncheck.label;" command="cmdUncheck" />
-			<menuitem image="chrome://dta/skin/select/uncheck2.png" class="menuitem-iconic" id="mtoggle" label="&menu.toggle.label;" command="cmdToggle" />
+			<menuitem class="menuitem-iconic" id="mcheck" label="&menu.check.label;" command="cmdCheck" />
+			<menuitem class="menuitem-iconic" id="muncheck" label="&menu.uncheck.label;" command="cmdUncheck" />
+			<menuitem class="menuitem-iconic" id="mtoggle" label="&menu.toggle.label;" command="cmdToggle" />
 			<menuseparator id="msep1" />
-			<menuitem image="chrome://dta/skin/select/modrenaming.png" class="menuitem-iconic" id="mrenaming" label="&mask.label;" command="cmdEditMask" />
+			<menuitem class="menuitem-iconic" id="mrenaming" label="&mask.label;" command="cmdEditMask" />
 			<menuseparator id="msep2" />
-			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" command="cmdSelectAll" key="kSelectAll" />
-			<menuitem id="selectfiltered" class="menuitem-iconic" label="&selectfiltered.label;" image="chrome://dta/skin/select/selectfiltered.png" command="cmdSelectFiltered" key="kSelectFiltered" />						
-			<menuitem id="invertSelection" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" command="cmdSelectInv" key="kSelectInv" />
+			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" command="cmdSelectAll" key="kSelectAll" />
+			<menuitem id="selectfiltered" class="menuitem-iconic" label="&selectfiltered.label;" command="cmdSelectFiltered" key="kSelectFiltered" />						
+			<menuitem id="selectinvert" class="menuitem-iconic" label="&selectinv.label;" command="cmdSelectInv" key="kSelectInv" />
 			<menuseparator id="msep3" />
-			<menuitem image="chrome://dta/skin/common/openurl.png" id="mopen" crop="center" class="menuitem-iconic" command="cmdOpenSelection" key="kOpenSelection" />
+			<menuitem id="mopen" crop="center" class="menuitem-iconic" command="cmdOpenSelection" key="kOpenSelection" />
 		</popup>
 	</popupset>
 	
@@ -177,7 +177,7 @@
 	
 	<statusbar id="footer">
 		<statusbarpanel id="status" flex="1" />
-		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text" label="&options.label;" command="cmdPreferences" src="chrome://dta/skin/common/prefs.png" />
+		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text" label="&options.label;" command="cmdPreferences"/>
 	</statusbar>
 
 </window>

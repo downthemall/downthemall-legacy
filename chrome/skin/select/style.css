@@ -146,3 +146,28 @@ treechildren::-moz-tree-cell-text(f7, selected),
 treechildren::-moz-tree-cell-text(fastFiltered, selected) {
 	color: black !important;
 }
+
+#mcheck {
+	list-style-image: url(chrome://dta/skin/select/check.png);
+}
+#muncheck {
+	list-style-image: url(chrome://dta/skin/select/uncheck.png);
+}
+#mtoggle {
+	list-style-image: url(chrome://dta/skin/select/uncheck2.png);
+}
+#mrenaming {
+	list-style-image: url(chrome://dta/skin/select/modrenaming.png);
+}
+#selectall {
+	list-style-image: url(chrome://dta/skin/common/selectall.png);
+}
+#selectinvert {
+	list-style-image: url(chrome://dta/skin/common/selectinv.png);
+}
+#selectfiltered {
+	list-style-image: url(chrome://dta/skin/select/selectfiltered.png);
+}
+#mopen {
+	list-style-image: url(chrome://dta/skin/common/openurl.png);
+}
