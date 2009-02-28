@@ -445,12 +445,12 @@ textbox.plain {
 
 /* menuitem common */
 #selectall .menu-iconic-icon {
-	list-style-image: url(../common/selectall.png);
-	-moz-image-region: rect(0px,16px,16px,0px);
+	list-style-image: url(chrome://dta/skin/common/selection.png);
+	-moz-image-region: rect(0px, 16px, 16px, 0px);  
 }
 #selectinv .menu-iconic-icon {
-	list-style-image: url(../common/selectinv.png);
-	-moz-image-region: rect(0px,16px,16px,0px);
+	list-style-image: url(chrome://dta/skin/common/selection.png);
+	-moz-image-region: rect(0px, 48px, 16px, 32px);  
 }
 #prefs .menu-iconic-icon {
 	list-style-image: url(../common/prefs.png);
