@@ -309,6 +309,9 @@ var Metalinker = {
  		$('downloads').appendChild(e); 		
  	},
  	load: function ML_load() {
+ 		
+ 		$('cancelbutton').label = _('button-cancel');
+ 		
  		try {
  			let downloads = window.arguments[0];
  			if (downloads.length) {
