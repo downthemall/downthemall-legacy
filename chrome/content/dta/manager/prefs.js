@@ -62,7 +62,8 @@ var Prefs = {
 		['permissions', 384],
 		['loadEndFirst', 0],
 		['minimizeToTray', false],
-		['flatReplacementChar', '-']
+		['flatReplacementChar', '-'],
+		['recoverAllHttpErrors', false]
 	],
 
 	// nsIObserver

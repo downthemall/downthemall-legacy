@@ -2387,7 +2387,7 @@ Connection.prototype = {
 		if (code >= 400) {
 			if (!this.handleError()) {
 				Debug.log("handleError: Cannot recover from problem!", code);
-				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1) {
+				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1 || Prefs.recoverAllHttpErrors) {
 					Debug.log("we got temp failure!", code);
 					Dialog.markAutoRetry(d);
 					d.pause();
