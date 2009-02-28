@@ -43,6 +43,7 @@
 	<stringbundleset>
 		<stringbundle src="chrome://dta/locale/common.properties"/>
 		<stringbundle src="chrome://dta/locale/select.properties"/>
+		<stringbundle src="chrome://global/locale/dialog.properties"/>
 	</stringbundleset>
 	
 	<commandset>
@@ -53,7 +54,9 @@
 		<command id="cmdSelectFiltered" oncommand="Dialog.selectFiltered();"/>
 		<command id="cmdOpenSelection" oncommand="Dialog.openSelection();"/>
 		
-		<command id="cmdEditMask" oncommand="Dialog.editMask();"/>
+		<command id="cmdStartEditMask" oncommand="Dialog.editMask();"/>
+		<command id="cmdAcceptEditMask" oncommand="Dialog.acceptEditMask();"/>
+		<command id="cmdCancelEditMask" oncommand="$('maskeditor').hidePopup();"/>
 		
 		<command id="cmdCheck" oncommand="Dialog.toggleSelection(true);"/>
 		<command id="cmdUncheck" oncommand="Dialog.toggleSelection(false);"/>
@@ -92,7 +95,7 @@
 			<menuitem class="menuitem-iconic" id="muncheck" label="&menu.uncheck.label;" command="cmdUncheck" />
 			<menuitem class="menuitem-iconic" id="mtoggle" label="&menu.toggle.label;" command="cmdToggle" />
 			<menuseparator id="msep1" />
-			<menuitem class="menuitem-iconic" id="mrenaming" label="&mask.label;" command="cmdEditMask" />
+			<menuitem class="menuitem-iconic" id="mrenaming" label="&mask.label;" command="cmdStartEditMask" />
 			<menuseparator id="msep2" />
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" command="cmdSelectAll" key="kSelectAll" />
 			<menuitem id="selectfiltered" class="menuitem-iconic" label="&selectfiltered.label;" command="cmdSelectFiltered" key="kSelectFiltered" />						
@@ -100,6 +103,18 @@
 			<menuseparator id="msep3" />
 			<menuitem id="mopen" crop="center" class="menuitem-iconic" command="cmdOpenSelection" key="kOpenSelection" />
 		</popup>
+		<panel id="maskeditor">
+			<groupbox orient="horizontal">
+				<caption label="&mask.label;:" />
+				<saveddropdown id="maskeditor-selector" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
+				<maskbutton/>
+			</groupbox>
+			<hbox id="maskeditor-buttons">
+				<spacer flex="1"/>
+				<button id="maskeditor-accept" command="cmdAcceptEditMask"/>
+				<button id="maskeditor-cancel" command="cmdCancelEditMask"/>
+			</hbox>
+		</panel>
 	</popupset>
 	
 	<notificationbox id="notifications" flex="1">
@@ -110,7 +125,6 @@
 				<spacer flex="1" id="logo" chromedir="&locale.dir;"/>
 			</toolbar>
 		</toolbox>
-	
 		<tree
 			id="urlList"
 			flex="1"
@@ -172,7 +186,7 @@
 		<spacer flex="1"/>
 		<button accesskey="&start.key;" label="&start.label;" id="startbutton" command="cmdStart" default="true"/>
 		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" command="cmdQueue" />
-		<button label="&cancel.label;" id="cancelbutton" command="cmdClose" />
+		<button id="cancelbutton" command="cmdClose" />
 	</hbox>
 	
 	<statusbar id="footer">

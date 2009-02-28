@@ -305,6 +305,9 @@ var Dialog = {
 		this.ddFilter = $('filter');
 		this.ddDirectory = $('directory');
 		this.ddRenaming = $('renaming');
+		
+		$('maskeditor-accept').label = _('button-accept');
+		$('cancelbutton').label = $('maskeditor-cancel').label = _('button-cancel');
 
 		try {
 			// initialize or link lists
@@ -492,35 +495,31 @@ var Dialog = {
 		if (!this.current.selection.count) {
 			return;
 		}
-
-		// display the renaming mask dialog
-		var mask = {value: null};
-		window.openDialog(
-			"chrome://dta/content/dta/renamingmask.xul",
-			"",
-			"chrome, dialog, centerscreen, resizable=yes, dialog=no, modal, close=no",
-			mask
-		);
-
-		// user hit cancel, or some error occured
-		if (!mask.value) {
+		
+		$('maskeditor-selector').reload();
+		$('maskeditor').openPopup($('urlList'), 'overlap', 20, 20, false, false);
+	},
+	
+	acceptEditMask: function() {
+		let selector = $('maskeditor-selector');
+		if (!selector.value || selector.value.length == 0) {
 			return;
 		}
-
+		
 		// set the new mask for each selected item
 		const rangeCount = this.current.selection.getRangeCount();
 		var start = {}, end = {};
 		for (var r = 0; r < rangeCount; ++r) {
 			this.current.selection.getRangeAt(r, start, end);
 			for (var i = start.value; i <= end.value; ++i) {
-				this.current._links[i].mask = mask.value;
+				this.current._links[i].mask = selector.value;
 			}
 		}
 
 		// invalidate so the new values are displayed
 		this.current.invalidate();
+		$('maskeditor').hidePopup();
 	},
-
 
 	notify: function() {
 		if (this.current) {
