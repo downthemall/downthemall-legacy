@@ -191,6 +191,7 @@ function resetAllExt() {
 function addObserver(branch, obj) {
 	makeObserver(obj);
 	prefs.QueryInterface(nsIPrefBranch2).addObserver(branch, obj, true);
+	return function() removeObserver(branch, obj);
 }
 
 function removeObserver(branch, obj) {

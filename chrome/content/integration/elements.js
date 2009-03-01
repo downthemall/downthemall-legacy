@@ -765,194 +765,301 @@ var DTA_ContextOverlay = {
 			this.detachOneClick(evt);
 		}
 	},
-	_attachedOneClick: false,
-	_hilights: [],
+	_selector: null,
 	attachOneClick: function(evt) {
-		if (this._attachedOneClick) {
+		if (!!this._selector) {
 			return;
 		}
-		window.addEventListener('click', DTA_ContextOverlay.onClickOneClick, false);
-		window.addEventListener('mouseup', DTA_ContextOverlay.onClickOneClick, false);
-		window.addEventListener('mousemove', DTA_ContextOverlay.onClickOneClick, false);
-		this._attachedOneClick = true;
+		this._selector = new this.Selector();
 	},
 	detachOneClick: function(evt) {
-		if (!this._attachedOneClick) {
+		if (!this._selector) {
 			return;
 		}
-		window.removeEventListener('click', DTA_ContextOverlay.onClickOneClick, false);
-		window.removeEventListener('mouseup', DTA_ContextOverlay.onClickOneClick, false);
-		window.removeEventListener('mousemove', DTA_ContextOverlay.onClickOneClick, false);
-		this._attachedOneClick = false;
-		for each (let hilight in this._hilights) {
-			hilight.ownerDocument.documentElement.removeChild(hilight);
-		}
-		this._hilights = [];
+		this._selector.dispose();
+		delete this._selector;
 	},
+	
+};
+DTA_ContextOverlay.Selector = function() {
+	let tp = this;
+	this._callback = function(evt) tp.onClickOneClick(evt);
+	
+	window.addEventListener('click', this._callback, false);
+	window.addEventListener('mouseup', this._callback, false);
+	window.addEventListener('mousemove', this._callback, false);
+	
+	this._detachObserver = DTA_preferences.addObserver('extensions.dta.selectbgimages', this);
+	this.observe();
+}
+DTA_ContextOverlay.Selector.prototype = {
+	dispose: function() {
+		window.removeEventListener('click', this._callback, false);
+		window.removeEventListener('mouseup', this._callback, false);
+		window.removeEventListener('mousemove', this._callback, false);
+		this.detachHilight();
+		this._detachObserver();
+	},
+	detachHilight: function () {
+		if (this._hilight) {
+			this._hilight.hide();
+			delete this._hilight;
+		}
+	},
+	getBgImage: function(e) {
+		if (!e || !e.ownerDocument) {
+			return null;
+		}
+		let url = e.ownerDocument.defaultView.getComputedStyle(e, "").getPropertyCSSValue('background-image');
+		if (url && url.primitiveType == CSSPrimitiveValue.CSS_URI) {
+			return {elem: e, url: url.getStringValue()};
+		}
+		return getBgImage(e.parentNode);
+	},
+	findElemUnderCursor: function (e, n, a) {
+		if (n == 'bgimg') {
+			return this.getBgImage(e);
+		}
+		if (!e) {
+			return null;
+		}
+		if (e.localName == n && e[a]) {
+			return {elem: e, url: e[a] };
+		}
+		return this.findElemUnderCursor(e.parentNode, n, a);
+	},
+	cancelEvent: function (evt) {
+		if (!evt.cancelable) {
+			return;
+		}
+		evt.preventDefault();
+		evt.stopPropagation();
+	},	
 	onClickOneClick: function(evt) {
-		return DTA_ContextOverlay.real_onClickOneClick(evt);
-	},
-	real_onClickOneClick: function(evt) {
-		function findElem(e, n, a) {
-			function getBgImage(e) {
-				if (!e || !e.ownerDocument) {
-					return null;
-				}
-				let url = e.ownerDocument.defaultView.getComputedStyle(e, "").getPropertyCSSValue('background-image');
-				if (url && url.primitiveType == CSSPrimitiveValue.CSS_URI) {
-					return {elem: e, url: url.getStringValue()};
-				}
-				return getBgImage(e.parentNode);
-			}
-			if (n == 'bgimg') {
-				return getBgImage(e);
-			}
-			if (!e) {
-				return null;
-			}
-			if (e.localName == n && e[a]) {
-				return {elem: e, url: e[a] };
-			}
-			return findElem(e.parentNode, n, a);
-		}
-		function cancelEvent(evt) {
-			if (!evt.cancelable) {
-				return;
-			}
-			evt.preventDefault();
-			evt.stopPropagation();
-		}
-		function flash(elem) {
-			try {
-				let flasher = createDiv('#1DEF39');
-				putInFrontOf(flasher, elem);
-				
-				if (elem.offsetWidth > 36 && elem.offsetHeight > 36) {
-					flasher.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_large.png)';
-					flasher.style.border = '1px solid blue';
-				} 
-				else if (elem.offsetWidth > 18 && elem.offsetHeight > 18 ) {
-					flasher.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_small.png)';
-					flasher.style.border = '1px solid lightgray';
-				}				
-				
-				// fade our element out
-				function fade() {
-					let o = (parseFloat(flasher.style.opacity) - 0.03);
-					if (o - 0.03 < 0) {
-						doc.documentElement.removeChild(flasher);
-						return;
-					}
-					flasher.style.opacity = o.toString();
-					setTimeout(fade, 75);
-				}
-				setTimeout(fade, 400);
-			}
-			catch (ex) {
-				// no op
-			}
-		}
 		function processRegular(e) {
-			let m = findElem(target, e[0], e[1]);
+			let m = this.findElemUnderCursor(target, e[0], e[1]);
 			if (!m) {
 				return false;
 			}
 			DTA_debug.logString("searching");
-			cancelEvent(evt);
+			this.cancelEvent(evt);
 			try {
 				DTA_ContextOverlay.saveSingleLink(true, m.url, m.elem);
-				flash(m.elem);
-				m.elem.removeAttribute('target');
-				highlighter.style.display = 'none';
+				this.detachHilight();
+				new this.Flasher(m.elem).hide();
 			}
 			catch (ex) {
-				DTA_debug.log("failed to process select " + e[0], ex);
+				DTA_debug.log("failed to process " + e[0], ex);
 			}
 			return true;
 		}
 		function highlightElement(e) {
-			let m = findElem(target, e[0], e[1]);
+			let m = this.findElemUnderCursor(target, e[0], e[1]);
 			if (!m) {
 				return false;
 			}
-			highlighter.realTarget = m.elem;
-			putInFrontOf(highlighter, m.elem);
+			if (this._hilight && this._hilight.elem == m.elem) {
+				return true;
+			}
+			this.detachHilight();
+			this._hilight = new this.Highlighter(m.elem);
 			return true;
 		}		
-		function createDiv(color) {
-			let div = doc.createElement('div');
-			doc.documentElement.appendChild(div);
-			div.style.MozBorderRadius = '5px';
-			div.style.zIndex = 2147483647;
-			div.style.opacity = '0.3';
-			div.style.background = 'no-repeat center';
-			div.style.backgroundColor = color;
-			return div;
-		}
-		function putInFrontOf(div, elem) {
-			let padding = 6;
-			let ot = -1;
-			let ol = -1;
-			let parent = elem;
-			while (parent) {
-				ot += parent.offsetTop;
-				ol += parent.offsetLeft;
-				parent = parent.offsetParent;
-			}
-			div.style.width = (elem.offsetWidth + 2 * padding) + "px";
-			div.style.height = (elem.offsetHeight + 2 * padding) + "px";
-			div.style.top = (ot - padding) + "px";
-			div.style.left = (ol - padding) + "px";
-			div.style.position = (elem.style.position && elem.style.position == 'fixed') ? 'fixed' : 'absolute';
-			div.style.display = 'block';
-		}		
 		
-		let searchee = [
-			['A', 'href'],
-			['IMG', 'src'],
-			//['bgimg', 'bgimg']
-		];
 		target = evt.target;
 		let doc = target.ownerDocument;
 		
-		// hope that it doesn't exist a div with an ugly id like this in the entire www :)
-		let highlighter = doc.getElementById('__dta_selector_highlighter__');
-		if (!highlighter) {
-			highlighter = createDiv('#FD8400');
-			highlighter.id = '__dta_selector_highlighter__';
-			highlighter.style.display = 'none';
-			highlighter.style.zIndex = 2147483646;
-			this._hilights.push(highlighter);
-		}
-		
-		// retrieve the real event target as the highlighter is hovering it
-		if (target == highlighter) {
-			target = highlighter.realTarget;
-		}
-		
-		if (evt.button != 0 || !target || target.nodeType != 1 || (target.namespaceURI && target.namespaceURI != 'http://www.w3.org/1999/xhtml')) {
-			return;
-		}
-		
 		if (evt.type == 'click') {
-			searchee.some(processRegular);
+			if (evt.button == 0 && !!target && target.nodeType == 1 && (!target.namespaceURI || target.namespaceURI == 'http://www.w3.org/1999/xhtml')) {
+				this._searchee.some(processRegular, this);
+			}			
 		}
-		else if (evt.type == 'mousemove' && !searchee.some(highlightElement)) {
-			highlighter.style.display = 'none';
+		else if (evt.type == 'mousemove') {
+			if (!this._searchee.some(highlightElement, this)) {
+				this.detachHilight();
+			}
 		}
 		else {
-			cancelEvent(evt);
+			this.cancelEvent(evt);
+		}
+	},
+	observe: function() {
+		let searchee = [
+			['A', 'href'],
+			['IMG', 'src']
+		];
+		if (DTA_preferences.getExt('selectbgimages', false)) {
+			searchee.push(['bgimg', 'bgimg']);
+		}
+		this._searchee = searchee;
+	}
+};
+
+DTA_ContextOverlay.Selector.prototype.Flasher = function(elem) {
+	this.elem = elem;
+	this.doc = elem.ownerDocument;
+	this.init();
+}
+DTA_ContextOverlay.Selector.prototype.Flasher.prototype = {
+	BACKGROUND: '#1def39 no-repeat center',
+	PADDING: 6,
+	OPACITY: 0.6,
+	RADIUS: 5,
+	FSTEP: 0.05,
+	FINTERVAL: 60,
+	FWAIT: 350,
+	
+	calcPosition: function() {
+		let parent = this.elem;
+		let ow = parent.offsetWidth;
+		let oh = parent.offsetHeight;
+		let ol = parent.offsetLeft;
+		let ot = parent.offsetTop;
+		// enlarge the box to include all (overflowing) child elements
+		// useful for example for inline <A><IMG></A>
+		if (parent.nodeName != 'IMG') {
+			let boxen = parent.getElementsByTagName('*');
+			for (let i = 0; i < boxen.length; ++i) {
+				let box = boxen[i];
+				if (!!box.style.float || box.style.position == 'fixed' || box.style.position == 'absolute') {
+					continue;
+				}
+				ow = Math.max(ow, box.offsetWidth);
+				oh = Math.max(oh, box.offsetHeight);
+				ol = Math.min(ol, box.offsetLeft);
+				ot = Math.min(ot, box.offsetTop);
+			}
+		}
+		// calculate the real offset coordinates
+		parent = parent.offsetParent;
+		let pos = (this.elem.style.position && this.elem.style.position == 'fixed') ? 'fixed' : 'absolute';
+		while (parent) {
+			ot += parent.offsetTop;
+			ol += parent.offsetLeft;
+			if (parent.style.position == 'fixed') {
+				pos = 'fixed';
+			}
+			parent = parent.offsetParent;
+		}
+		return {
+			width: ow,
+			height: oh,
+			left: ol,
+			top: ot,
+			position: pos
+		};
+	},	
+	
+	init: function() {
+		let div = this.doc.createElement('div');
+		this.doc.documentElement.appendChild(div);
+		
+		div.style.MozBorderRadius = this.RADIUS + 'px';
+		div.style.zIndex = 2147483647;
+		div.style.opacity = this.OPACITY;
+		div.style.background = this.BACKGROUND;
+		div.style.display = 'block';
+
+		// put the div where it belongs
+		let pos = this.calcPosition();
+		div.style.width = (pos.width + 2 * this.PADDING) + "px";
+		div.style.height = (pos.height + 2 * this.PADDING) + "px";
+		div.style.top = (pos.top - this.PADDING) + "px";
+		div.style.left = (pos.left - this.PADDING) + "px";
+		div.style.position = pos.position;
+		
+		// add the adding icon if the element covers enough space
+		if (Math.min(pos.width, pos.height) >= 36) {
+			div.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_large.png)';
+		} 
+		if (Math.min(pos.width, pos.height) >= 18) {
+			div.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_small.png)';
+		}
+		
+		this._div = div;
+	},
+	fade: function() {
+		let o = (parseFloat(this._div.style.opacity) - this.FSTEP);
+		if (o - 0.03 < 0) {
+			this._div.parentNode.removeChild(this._div);
+			return false;
+		}
+		this._div.style.opacity = o.toString();
+		let tp = this;
+		setTimeout(function() tp.fade(), this.FINTERVAL);
+		return true;
+	},
+	hide: function() {
+		let tp = this;
+		setTimeout(function() tp.fade(), this.FWAIT);
+	}
+};
+
+DTA_ContextOverlay.Selector.prototype.Highlighter = function(elem) {
+	this.elem = elem;
+	this.doc = elem.ownerDocument;
+	this.init();
+}
+DTA_ContextOverlay.Selector.prototype.Highlighter.prototype = {
+	BACKGROUND: 'red',
+	OPACITY: 0.4,
+	RADIUS: 9,
+	WIDTH: 3,
+	
+	calcPosition: DTA_ContextOverlay.Selector.prototype.Flasher.prototype.calcPosition, 
+	
+	init: function() {
+		let left = this.doc.createElement('div');
+		this.doc.documentElement.appendChild(left);
+		let right = this.doc.createElement('div');
+		this.doc.documentElement.appendChild(right);
+		let top = this.doc.createElement('div');
+		this.doc.documentElement.appendChild(top);
+		let bottom = this.doc.createElement('div');
+		this.doc.documentElement.appendChild(bottom);
+		
+		let pos = this.calcPosition();
+		for each (let div in [left, right, top, bottom]) {
+			div.style.zIndex = 2147483647;
+			div.style.opacity = this.OPACITY;
+			div.style.background = this.BACKGROUND;
+			div.style.display = 'block';
+			div.style.position = pos.position;
+			div.style.width = this.WIDTH + 'px';
+			div.style.height = this.WIDTH + 'px';
+		}
+		
+		left.style.MozBorderRadiusTopleft = this.RADIUS + 'px';
+		left.style.MozBorderRadiusBottomleft = this.RADIUS + 'px';
+		left.style.left = (pos.left - this.WIDTH) + 'px';
+		left.style.top = (pos.top - this.WIDTH) + 'px';
+		left.style.height = (pos.height + this.WIDTH * 2) + 'px';
+
+		right.style.MozBorderRadiusTopright = this.RADIUS + 'px';
+		right.style.MozBorderRadiusBottomright = this.RADIUS + 'px';
+		right.style.top = left.style.top;
+		right.style.left = (pos.left + pos.width) + 'px';
+		right.style.height = left.style.height;
+		
+		
+		top.style.left = pos.left + 'px';
+		top.style.top = (pos.top - this.WIDTH) + 'px';
+		top.style.width = pos.width + 'px';
+		
+		bottom.style.left = pos.left + 'px';
+		bottom.style.top = (pos.top + pos.height) + 'px';
+		bottom.style.width = pos.width + 'px';
+		
+		this._divs = [left, right, top, bottom];
+	},
+	hide: function() {
+		for each (let div in this._divs) {
+			div.parentNode.removeChild(div);
 		}
 	}
-}
+};
 
 addEventListener("load", function() DTA_ContextOverlay.init(), false);
 addEventListener("keydown", function(evt) DTA_ContextOverlay.onKeyDown(evt), false);
 addEventListener("keyup", function(evt) DTA_ContextOverlay.onKeyUp(evt), false);
 addEventListener("blur", function(evt) DTA_ContextOverlay.onBlur(evt), true);
-
-nsBrowserAccess.prototype._openURI = nsBrowserAccess.prototype.openURI;
-nsBrowserAccess.prototype.openURI = function(aURI, aOpener, aWhere, aContext) {
-	DTA_debug.logString("invoked");
-	return nsBrowserAccess.prototype._openURI.call(this, aURI, aOpener, aWhere, aContext);	
-}
