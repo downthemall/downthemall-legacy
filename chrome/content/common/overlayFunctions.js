@@ -64,13 +64,10 @@ var DTA_include = function() {
 	}
 }();
 
-var DTA__FilterManager = null;
 this.__defineGetter__('DTA_FilterManager', function() {
-	if (!DTA__FilterManager) {
-		DTA__FilterManager = Components.classes['@downthemall.net/filtermanager;2']
-			.getService(Components.interfaces.dtaIFilterManager);
-	}
-	return DTA__FilterManager;
+	delete this.DTA_FilterManager;
+	return this.DTA_FilterManager = Components.classes['@downthemall.net/filtermanager;2']
+		.getService(Components.interfaces.dtaIFilterManager);
 });
 
 function DTA_showPreferences() {
@@ -82,9 +79,12 @@ function DTA_showPreferences() {
 	);
 }
 
-
-var DTA_preferences = {};
-Components.utils.import('resource://dta/preferences.jsm', DTA_preferences);
+this.__defineGetter__('DTA_preferences', function() {
+	delete this.DTA_preferences;
+	this.DTA_preferences = {};
+	Components.utils.import('resource://dta/preferences.jsm', DTA_preferences);
+	return this.DTA_preferences;
+});
 
 function DTA_getProfileFile(fileName) {
 	var _profile = Components.classes["@mozilla.org/file/directory_service;1"]
@@ -98,12 +98,18 @@ function DTA_getProfileFile(fileName) {
 	return DTA_getProfileFile(fileName);
 }
 
-var DTA_debug = Components.classes['@downthemall.net/debug-service;1']
-	.getService(Components.interfaces.dtaIDebugService);
+this.__defineGetter__('DTA_debug', function() {
+	delete this.DTA_debug;
+	return this.DTA_debug = Components.classes['@downthemall.net/debug-service;1']
+		.getService(Components.interfaces.dtaIDebugService);	                            
+});
 
 var DTA_URLhelpers = {
-	textToSubURI : Components.classes["@mozilla.org/intl/texttosuburi;1"]
-		.getService(Components.interfaces.nsITextToSubURI),
+	get textToSubURI() {
+		delete this.textToSubURI;
+		return this.textToSubURI = Components.classes["@mozilla.org/intl/texttosuburi;1"]
+			.getService(Components.interfaces.nsITextToSubURI);
+	},
 
 	decodeCharset: function(text, charset) {
 		var rv = text;
@@ -204,8 +210,11 @@ var DTA_DropTDTA = new DTA_DropProcessor(function(url, ref) { DTA_AddingFunction
 var DTA_DropDTA = new DTA_DropProcessor(function(url, ref) { DTA_AddingFunctions.saveSingleLink(false, url, ref); });
 
 var DTA_AddingFunctions = {
-	ios: Components.classes["@mozilla.org/network/io-service;1"]
-		.getService(Components.interfaces.nsIIOService),
+	get ios() {
+		delete this.ios;
+		this.ios = Components.classes["@mozilla.org/network/io-service;1"]
+			.getService(Components.interfaces.nsIIOService);
+	},
 
 	isLinkOpenable : function(url) {
 		if (url instanceof DTA_URL) {
@@ -400,12 +409,16 @@ var DTA_AddingFunctions = {
 	}
 }
 
-let DTA_Mediator = {
-	open: function DTA_Mediator_open(url, ref) {
-		this.openUrl(window, url, ref);
-	}
-}
-Components.utils.import('resource://dta/mediator.jsm', DTA_Mediator);
+this.__defineGetter__('DTA_Mediator', function() {
+	delete this.DTA_Mediator;
+	this.DTA_Mediator = {
+		open: function DTA_Mediator_open(url, ref) {
+			this.openUrl(window, url, ref);
+		}
+	};
+	Components.utils.import('resource://dta/mediator.jsm', this.DTA_Mediator);
+	return this.DTA_Mediator;
+});
 
 /**
  * Checks if a provided strip has the correct hash format Supported are: md5,
