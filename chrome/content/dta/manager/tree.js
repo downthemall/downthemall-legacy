@@ -370,6 +370,27 @@ var Tree = {
 	removeCompleted: function T_removeCompleted() {
 		this._removeCompleted(false);
 	},
+	removeDupes: function() {
+		let known = {};
+		let dupes = [];
+		for (let d in this.all) {
+			let url = d.urlManager.url.spec; 
+			if (url in known) {
+				if (d.isOf(COMPLETE, FINISHING)) {
+					continue;
+				}				
+				dupes.push(d);
+			}
+			else {
+				known[url] = true;
+			}
+		}
+		if (dupes.length) {
+			this.remove(dupes);
+			return true;
+		}
+		return false;
+	},
 	removeGone: function T_removeGone() {
 		this._removeCompleted(true);
 	},

@@ -292,10 +292,10 @@ textbox.plain {
 		list-style-image: url(menu.png);
 }
 
-#misc .menu-iconic-icon {
+#advanced .menu-iconic-icon {
 	-moz-image-region: rect(32px,112px,48px,96px);
 }
-#misc[disabled="true"] .menu-iconic-icon {
+#advanced[disabled="true"] .menu-iconic-icon {
 	-moz-image-region: rect(48px,112px,64px,96px);
 }
 
@@ -455,4 +455,11 @@ textbox.plain {
 #prefs .menu-iconic-icon {
 	list-style-image: url(../common/prefs.png);
 	-moz-image-region: rect(0px,16px,16px,0px);
+}
+
+/* menuitem dupes */
+
+#removeDupes .menu-iconic-icon {
+	list-style-image: url(chrome://dta/skin/manager/dupes.png);
+	-moz-image-region: auto;
 }
