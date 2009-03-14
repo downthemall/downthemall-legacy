@@ -212,7 +212,7 @@ var DTA_DropDTA = new DTA_DropProcessor(function(url, ref) { DTA_AddingFunctions
 var DTA_AddingFunctions = {
 	get ios() {
 		delete this.ios;
-		this.ios = Components.classes["@mozilla.org/network/io-service;1"]
+		return this.ios = Components.classes["@mozilla.org/network/io-service;1"]
 			.getService(Components.interfaces.nsIIOService);
 	},
 
