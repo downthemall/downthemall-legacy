@@ -437,8 +437,7 @@ StringBundles.prototype = {
 	init: function() {
 		this._bundles = document.getElementsByTagName('stringbundle');
 		for each (let bundle in Array.map(this._bundles, function(s) s.strings)) {
-			while (bundle.hasMoreElements()) {
-				let s = bundle.getNext().QueryInterface(Components.interfaces.nsIPropertyElement);
+			for (let s in new Utils.SimpleIterator(bundle, Components.interfaces.nsIPropertyElement)) {
 				this._strings[s.key] = s.value;
 			}
 		}

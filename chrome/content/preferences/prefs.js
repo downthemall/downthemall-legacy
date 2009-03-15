@@ -235,9 +235,7 @@ var Filters = {
 			this._box.rowCountChanged(0, -this.rowCount);
 			this._filters = [];
 
-			var e = DTA_FilterManager.enumAll();
-			while (e.hasMoreElements()) {
-				var filter = e.getNext().QueryInterface(Components.interfaces.dtaIFilter);
+			for (let filter in new Utils.SimpleIterator(DTA_FilterManager.enumAll(), Ci.dtaIFilter)) {
 				this._filters.push(filter);
 			}
 			this._box.rowCountChanged(0, this.rowCount);
