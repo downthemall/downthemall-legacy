@@ -181,7 +181,7 @@ function resetBranch(branch) {
 }
 
 function resetBranchExt(branch) {
-	resetBranch('extension.dta.' + branch);
+	resetBranch(EXT + branch);
 }
 
 function resetAllExt() {
