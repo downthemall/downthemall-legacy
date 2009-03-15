@@ -45,6 +45,7 @@ const EXPORTED_SYMBOLS = [
 	'formatTimeDelta',
 	'getTimestamp',
 	'naturalSort',
+	'SimpleIterator'
 ];
 
 const Cc = Components.classes;
@@ -270,3 +271,15 @@ function naturalSort(arr, mapper) {
 	);
 	return arr.map(function(a) a.elem);
 }
+
+function SimpleIterator(obj, iface) {
+	this.iface = iface ? iface : Ci.nsISupport;
+	this.obj = obj.QueryInterface(Ci.nsISimpleEnumerator);
+}
+SimpleIterator.prototype = {
+	__iterator__: function() {
+		while(this.obj.hasMoreElements()) {
+			yield this.obj.getNext().QueryInterface(this.iface);
+		}
+	}
+};

@@ -666,9 +666,7 @@ var Dialog = {
 		}
 
 		let boxes = [];
-		var e = DTA_FilterManager.enumAll();
-		while (e.hasMoreElements()) {
-			let f = e.getNext().QueryInterface(Ci.dtaIFilter);
+		for (let f in new Utils.SimpleIterator(DTA_FilterManager.enumAll(), Ci.dtaIFilter)) {
 			if (!(f.type & type)) {
 				continue;
 			}

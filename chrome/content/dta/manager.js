@@ -568,9 +568,8 @@ var Dialog = {
 			known.push(d.tmpFile.leafName);
 		}
 		let tmpEnum = Prefs.tempLocation.directoryEntries;
-		let unknown = []
-		while (tmpEnum.hasMoreElements()) {
-			let f = tmpEnum.getNext().QueryInterface(Ci.nsILocalFile);
+		let unknown = [];
+		for (let f in new Utils.SimpleIterator(tmpEnum, Ci.nsILocalFile)) {
 			if (f.leafName.match(/\.dtapart$/) && known.indexOf(f.leafName) == -1) {
 				unknown.push(f);
 			}
