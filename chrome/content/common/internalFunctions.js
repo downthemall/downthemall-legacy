@@ -61,15 +61,8 @@ const SoundFactory = new Components.Constructor(
 const SYSTEMSLASH = (DTA_getProfileFile('dummy').path.indexOf('/') != -1) ? '/' : '\\';
 
 // shared state defines
-const PAUSED =    1<<1;
-const RUNNING =   1<<2;
-const FINISHING = 1<<3;
-const COMPLETE =  1<<4;
-const CANCELED =  1<<5;
-const QUEUED =    1<<6;
 
-
-
+Components.utils.import("resource://dta/constants.jsm", this);
 
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!
