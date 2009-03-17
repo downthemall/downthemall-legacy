@@ -69,7 +69,12 @@ var Tooltip = {
 		let box = $('canvasGrid').boxObject;
 		for each (let canvas in $('chunkCanvas', 'speedCanvas')) {
 			canvas.width = Math.min(box.width, canvas.clientWidth);
-			canvas.height = Math.min(box.height, canvas.clientHeight);
+			try {
+				canvas.height = canvas.clientHeight;
+			}
+			catch (ex) {
+				Debug.log("tt: failed to set height", ex);
+			}
 		}		
 		this.update();
 	},
@@ -87,7 +92,6 @@ var Tooltip = {
 		this.updateMetrics(file);
 		this.updateChunks(file);
 		this.updateSpeeds(file);
-		Debug.logString("tt");
 	},
 	_makeRoundedRectPath: function(ctx,x,y,width,height,radius) {
 		ctx.beginPath();
