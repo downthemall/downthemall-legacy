@@ -44,21 +44,6 @@ function Decompressor(download) {
 	try {
 
 		this._outStream = new FileOutputStream(this.to, 0x04 | 0x08, Prefs.permissions, 0);
-		try {
-			// we don't know the actual size, so best we can do is to seek to totalSize.
-			var seekable = this._outStream.QueryInterface(Ci.nsISeekableStream);
-			seekable.seek(0x00, download.totalSize);
-			try {
-				seekable.setEOF();
-			}
-			catch (exx) {
-				// no-op
-			}
-			seekable.seek(0x00, 0);
-		}
-		catch (ex) {
-			// no-op
-		}
 		var boutStream = new BufferedOutputStream(this._outStream, MAX_BUFFER_SIZE); 
 		this.outStream = boutStream;
 		boutStream = new BinaryOutputStream(this.outStream);
