@@ -191,7 +191,7 @@ var Metalinker = {
 
 					let uri = null;
 					try {
-						if (url.hasAttribute('type') && !(url.getAttribute('type') in ['ftp', 'http', 'https'])) {
+						if (url.hasAttribute('type') && !url.getAttribute('type').match(/^(?:https?|ftp)$/)) {
 							throw new Exception("Invalid url type");
 						}
 						uri = this._checkURL(url.textContent.trim());
