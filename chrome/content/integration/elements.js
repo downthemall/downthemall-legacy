@@ -429,7 +429,7 @@ var DTA_ContextOverlay = {
 			else {
 				action.query = values;
 				action.ref = '';
-				action = new DTA_URL(DTA_AddingFunctions.ios.newURI(action.spec, form.ownerDocument.characterSet));
+				action = new DTA_URL(DTA_AddingFunctions.ios.newURI(action.spec, form.ownerDocument.characterSet, null));
 			}			
 
 			
