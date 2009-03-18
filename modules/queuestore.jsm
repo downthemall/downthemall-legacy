@@ -48,8 +48,6 @@ const DB_VERSION = 1;
 
 const Debug = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService);
 
-Components.utils.import('resource://dta/cothread.jsm');
-
 var _connection = null;
 
 var QueueStore = {
