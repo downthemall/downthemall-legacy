@@ -58,7 +58,7 @@ const log = (function() {
 })();
 
 const SIZE_MIN = 5 * 1024 * 1024; // will not prealloc below
-const SIZE_STEP = 25 * 1024 * 1024; // prealloc will NOT use threads up to this size
+const SIZE_STEP = 10 * 1024 * 1024; // prealloc will NOT use threads up to this size
 
 Components.utils.import('resource://dta/cothread.jsm');
 
@@ -68,32 +68,45 @@ function prealloc(file, size, perms, callback, tp) {
 		if (callback) {
 			callback.call(tp, false);
 		}
-		return;
+		return null;
 	}
 	
 	//new WorkerJob(file.path, size, perms, callback, tp);
-	new CoThreadListWalker(function() true, realPrealloc(file.clone(), size, perms, callback, tp), 1).run();
+	let rv = new CoThreadListWalker(function() true, realPrealloc(file.clone(), size, perms, callback, tp), 1)
+	rv.run();
+	return rv;
 }
 
 function realPrealloc(file, size, perms, callback, tp) {
 	let rv = false;
 	try {
-		let stream = new FileOutputStream(file, 0x02 | 0x08, perms, 0);
-		let seekable = stream.QueryInterface(Ci.nsISeekableStream);
-		seekable.seek(0x02, 0);
-		let i = seekable.tell() + SIZE_STEP;
-		for (i = Math.min(size - 1, i); i < size - 1; i = Math.min(size - 1, i + SIZE_STEP)) {
-			seekable.seek(0x00, i);
-			// XXX: This will force the OS to write the file out to this position
-			// However I'm not quiet sure yet if this may overwrite already received data
-			// I guess it might (on a very fast connection)
-			// "a" is used to avoid sparse file "optimizations"
-			stream.write("a", 1);
+		for (let ok = true; ok;) {
+			let stream = new FileOutputStream(file, 0x02 | 0x08, perms, 0);
+			try {
+				let seekable = stream.QueryInterface(Ci.nsISeekableStream);
+				seekable.seek(0x02, 0);
+				let i = Math.min((size - seekable.tell()) - 1, SIZE_STEP);
+				if (i <= 0) {
+					stream.close();
+					break;
+				}
+				seekable.seek(0x01, i);
+				// XXX: This will force the OS to write the file out to this position
+				// However I'm not quite sure yet if this may overwrite already received data
+				// I guess it might (on a very fast connection)
+				// On the other hand, at the moment all IO is running on the main thread
+				// and event execution cannot be "suspended", so we should be safe
+				// "a" is used to avoid sparse file "optimizations"
+				stream.write("a", 1);
+				cont = true;
+			}
+			catch (ex) {
+				log("prealloc: failed", ex);
+				ok = false;
+			}
+			stream.close();
 			yield true;
 		}
-		
-		//seekable.setEOF();
-		stream.close();
 		rv = true;
 	}
 	catch (ex) {
