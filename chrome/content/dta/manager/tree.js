@@ -316,7 +316,7 @@ var Tree = {
 		}
 	
 		downloads = downloads.sort(function(a, b) b.position - a.position);	 
-		SessionManager.beginUpdate();
+		QueueStore.beginUpdate();
 		this.beginUpdate();
 		let last = 0;
 		for each (let d in downloads) {
@@ -334,7 +334,7 @@ var Tree = {
 			d.remove();
 			Dialog.wasRemoved(d);
 		}
-		SessionManager.endUpdate();
+		QueueStore.endUpdate();
 		this.endUpdate();
 		this.invalidate();
 		if (performJump) {
@@ -342,7 +342,7 @@ var Tree = {
 		}
 	},
 	_removeCompleted: function T__removeCompleted(onlyGone) {
-		SessionManager.beginUpdate();
+		QueueStore.beginUpdate();
 		this.beginUpdate();
 		let delta = this._downloads.length, last = 0;
 		for (let i = delta - 1; i > -1; --i) {
@@ -358,7 +358,7 @@ var Tree = {
 			last = Math.max(d.position, last);
 			d.remove();						
 		}
-		SessionManager.endUpdate();
+		QueueStore.endUpdate();
 		this.endUpdate();	
 		if (delta == this._downloads.length) {
 			return;
@@ -612,7 +612,7 @@ var Tree = {
 	invalidate: function T_invalidate(d) {
 		if (!d) {
 			let complete = 0;
-			SessionManager.beginUpdate();
+			QueueStore.beginUpdate();
 			this._downloads.forEach(
 				function(e, i) {
 					e.position = i;
@@ -621,7 +621,7 @@ var Tree = {
 					}
 				}
 			);
-			SessionManager.endUpdate();
+			QueueStore.endUpdate();
 			this._box.invalidate();
 			this.refreshTools(this);
 			Dialog.completed = complete;
@@ -716,25 +716,25 @@ var Tree = {
 	},
 	updateSelected: function T_updateSelected(f, t) {
 		this.beginUpdate();
-		SessionManager.beginUpdate();
+		QueueStore.beginUpdate();
 		for (d in this.selected) {
 			if (!f.call(t, d)) {
 				break;
 			}
 		}
-		SessionManager.endUpdate();
+		QueueStore.endUpdate();
 		this.endUpdate();
 		this.invalidate();
 	},
 	updateAll: function T_updateAll(f, t) {
 		this.beginUpdate();
-		SessionManager.beginUpdate();
+		QueueStore.beginUpdate();
 		for (d in this.all) {
 			if (!f.call(t, d)) {
 				break;
 			}
 		}
-		SessionManager.endUpdate();
+		QueueStore.endUpdate();
 		this.endUpdate();
 	},
 	top: function T_top() {

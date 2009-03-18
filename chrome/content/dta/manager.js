@@ -89,6 +89,8 @@ let Prompts = {}, Preallocator = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
 Components.utils.import('resource://dta/speedstats.jsm');
 Components.utils.import('resource://dta/preallocator.jsm', Preallocator);
+Components.utils.import('resource://dta/cothread.jsm');
+Components.utils.import('resource://dta/queuestore.jsm');
 
 var TEXT_PAUSED;
 var TEXT_QUEUED;
@@ -144,7 +146,12 @@ var Dialog = {
 		TEXT_CANCELED = _('canceled');
 		
 		Tree.init($("downloads"));
-		SessionManager.init();
+		try {
+			this._loadDownloads();
+		}
+		catch (ex) {
+			Debug.log("Failed to load any downloads from queuefile", ex);
+		}
 
 		try {
 			let ios2 = Serv('@mozilla.org/network/io-service;1', 'nsIIOService2');
@@ -193,6 +200,160 @@ var Dialog = {
 				);
 			}
 		})();
+	},
+	
+	_loadDownloads: function D__loadDownloads() {
+		let loading = $('loading');
+		Tree.beginUpdate();
+		this._brokenDownloads = [];
+		Debug.logString("loading of the queue started!");
+		this._loader = new CoThreadListWalker(
+			function D__loader_loadItem(dbItem, idx) {
+				if (idx % 500 == 0) {
+					loading.label = _('loading', [idx, dbItem.count, Math.floor(idx * 100 / dbItem.count)]);
+				}
+				
+				try {
+					let down = Serializer.decode(dbItem.serial);
+					
+					let get = function(attr) {
+						return (attr in down) ? down[attr] : null;
+					}
+	
+					let d = new QueueItem();
+					d.dbId = dbItem.id;
+					d.urlManager = new UrlManager(down.urlManager);
+					d.numIstance = get("numIstance");
+	
+					let referrer = get('referrer');
+					if (referrer) {
+						try {
+							d.referrer = referrer.toURL();
+						}
+						catch (ex) {
+							// We might have been fed with about:blank or other crap. so ignore.
+						}
+					}
+				
+					// only access the setter of the last so that we don't generate stuff trice.
+					d._pathName = get('pathName');
+					d._description = get('description');
+					d._mask = get('mask');
+					d.fileName = get('fileName');
+					
+					let tmpFile = get('tmpFile');
+					if (tmpFile) {
+						try {
+							tmpFile = new FileFactory(tmpFile);
+							if (tmpFile.exists()) {
+								d._tmpFile = tmpFile;
+							}
+							else {
+								// Download partfile is gone!
+								// XXX find appropriate error message!
+								d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+							}
+						}
+						catch (ex) {
+							Debug.log("tried to construct with invalid tmpFile", ex);
+							d.cancel();
+						}
+					}				
+	
+					d.startDate = new Date(get("startDate"));
+					d.visitors = new VisitorManager(down.visitors);
+					
+					for each (let e in [
+						'contentType',
+						'conflicts',
+						'postData',
+						'destinationName',
+						'resumable',
+						'totalSize',
+						'compression',
+						'fromMetalink',
+					]) {
+						d[e] = (e in down) ? down[e] : null;
+					}
+	
+					if (down.hash) {
+						d.hash = new DTA_Hash(down.hash, down.hashType);
+					}
+					if ('maxChunks' in down) {
+						d._maxChunks = down.maxChunks;
+					}
+	
+					d.started = d.partialSize != 0;
+					let state = get('state') 
+					if (state) {
+						d._state = state;
+					}
+					switch (d._state) {
+						case PAUSED:
+						case QUEUED:
+						{
+							for each (let c in down.chunks) {
+								d.chunks.push(new Chunk(d, c.start, c.end, c.written));
+							}
+							d.refreshPartialSize();
+							if (d._state == PAUSED) {
+								d.status = TEXT_PAUSED;
+							}
+							else {
+								d.status = TEXT_QUEUED;
+							}
+						}
+						break;
+						
+						case COMPLETE:
+							d.partialSize = d.totalSize;
+							d.status = TEXT_COMPLETE;
+						break;
+						
+						case CANCELED:
+							d.status = TEXT_CANCELED;
+						break;
+					}
+					
+					// XXX better call this only once
+					// See above
+					d.rebuildDestination();
+	
+					Tree.add(d);
+				}
+				catch (ex) {
+					Debug.log('failed to init download #' + dbItem.id + ' from queuefile', ex);
+					this._brokenDownloads.push(dbItem.id);
+				}
+				return true;
+			},
+			QueueStore.loadGenerator(),
+			100,
+			this,
+			function D__loader_finish() {
+				delete this._loader;
+				Tree.endUpdate();
+				Tree.invalidate();
+				
+				if (this._brokenDownloads.length) {
+					QueueStore.beginUpdate();
+					try {
+						for each (let id in this._brokenDownloads) {
+							QueueStore.deleteDownload(id);
+							Debug.logString("Removed broken download #" + id);
+						}
+					}
+					catch (ex) {
+						Debug.log("failed to remove broken downloads", ex);
+					}
+					QueueStore.endUpdate();
+				}
+				delete this._brokenDownloads;				
+				
+				this.start();
+			}
+		);
+		this._loader.run();		
 	},
 	
 	openAdd: function D_openAdd() {
@@ -311,11 +472,11 @@ var Dialog = {
 		if (!this._running.length) {
 			return;
 		}
-		SessionManager.beginUpdate();
+		QueueStore.beginUpdate();
 		for each (let d in this._running) {
 			d.save();
 		}
-		SessionManager.endUpdate();
+		QueueStore.endUpdate();
 	},
 	
 	_processOfflineChange: function D__processOfflineChange() {
@@ -547,7 +708,7 @@ var Dialog = {
 		if (chunks || finishing) {
 			if (this._safeCloseAttempts < 20) {
 				++this._safeCloseAttempts;
-				new Timer(function() { Dialog.close(); }, 250);				
+				new Timer(function() Dialog.close(), 250);				
 				return false;
 			}
 			Debug.logString("Going down even if queue was not probably closed yet!");
@@ -588,6 +749,9 @@ var Dialog = {
 
 	unload: function D_unload() {
 		TimerManager.killAll();
+		if (this._loader) {
+			this._loader.cancel();
+		}
 		Prefs.shutdown();
 		try {
 			this._cleanTmpDir();
@@ -595,7 +759,6 @@ var Dialog = {
 		catch(ex) {
 			Debug.log("_safeClose", ex);
 		}
-		SessionManager.shutdown();
 		return true;		
 	}
 };
@@ -1205,15 +1368,15 @@ QueueItem.prototype = {
 			return false;			
 		}			
 		if (this.dbId) {
-			SessionManager.saveDownload(this.dbId, this.toSource());
+			QueueStore.saveDownload(this.dbId, this.toSource());
 			return true;
 		}
 
-		this.dbId = SessionManager.addDownload(this.toSource());
+		this.dbId = QueueStore.addDownload(this.toSource());
 		return true;
 	},
 	remove: function QI_remove() {
-		SessionManager.deleteDownload(this.dbId);
+		QueueStore.deleteDownload(this.dbId);
 		delete this.dbId;
 	},
 	_position: -1,
@@ -1226,7 +1389,7 @@ QueueItem.prototype = {
 		}
 		this._position = nv;
 		if (this.dbId && this._position != -1) {
-			SessionManager.savePosition(this.dbId, this._position);	
+			QueueStore.savePosition(this.dbId, this._position);	
 		}
 	},
 
@@ -2819,7 +2982,7 @@ function startDownloads(start, downloads) {
 	let added = 0;
 	let removeableTabs = {};
 	Tree.beginUpdate();
-	SessionManager.beginUpdate();
+	QueueStore.beginUpdate();
 	for (let e in g) {
 
 		var desc = "";
@@ -2897,7 +3060,7 @@ function startDownloads(start, downloads) {
 		Tree.add(qi);
 		++added;
 	}
-	SessionManager.endUpdate();
+	QueueStore.endUpdate();
 	Tree.endUpdate();
 
 	var boxobject = Tree._box;

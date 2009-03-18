@@ -41,7 +41,6 @@
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/tree.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/tray.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/prefs.js" />
-	<script type="application/javascript" src="chrome://dta/content/dta/manager/sessionmanager.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/filehandling.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/alertservice.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/imex.js" />
