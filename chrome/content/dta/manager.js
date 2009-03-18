@@ -269,12 +269,14 @@ var Dialog = {
 						'postData',
 						'destinationName',
 						'resumable',
-						'totalSize',
 						'compression',
 						'fromMetalink',
 					]) {
 						d[e] = (e in down) ? down[e] : null;
 					}
+					
+					// don't trigger prealloc!
+					d._totalSize = down.totalSize ? down.totalSize : 0;
 	
 					if (down.hash) {
 						d.hash = new DTA_Hash(down.hash, down.hashType);
@@ -592,6 +594,7 @@ var Dialog = {
 			Debug.logString("Let's resume " + download + " at " + download.partialSize);
 		}
 		this._running.push(download);
+		download.prealloc();
 		download.resumeDownload();
 	},
 	wasStopped: function D_wasStopped(download) {
@@ -702,6 +705,7 @@ var Dialog = {
 				else if (d.is(FINISHING)) {
 					++finishing;
 				}
+				d.cancelPreallocation();
 			},
 			this
 		);
@@ -1405,6 +1409,7 @@ QueueItem.prototype = {
 			this._totalSize = Math.floor(nv);
 		}
 		this.invalidate();
+		this.prealloc();
 		return this._totalSize;
 	},
 	partialSize: 0,
@@ -1835,8 +1840,9 @@ QueueItem.prototype = {
 				message = _("canceled");
 			}
 			this.status = message;
-
-
+			
+			this.cancelPreallocation();
+			
 			this.removeTmpFile();
 
 			// gc
@@ -1857,22 +1863,42 @@ QueueItem.prototype = {
 	prealloc: function QI_prealloc() {
 		let file = this.tmpFile;
 		
-		if (!file.parent.exists()) {
-			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
-			this.invalidate();
-		}
-		
 		if (!this.totalSize) {
-			return;
+			Debug.logString("pa: no totalsize");
+			return false;
+		}
+		if (this.preallocating) {
+			Debug.logString("pa: already working");
+			return true;
 		}
 		
 		if (!file.exists() || this.totalSize != file.fileSize) {
-			this.preallocating = true;
-			Preallocator.prealloc(file, this.totalSize, Prefs.permissions, this._donePrealloc, this);
+			if (!file.parent.exists()) {
+				file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
+				this.invalidate();
+			}
+			let pa = Preallocator.prealloc(file, this.totalSize, Prefs.permissions, this._donePrealloc, this);
+			if (pa) {
+				this.preallocating = true;
+				this._preallocator = pa;
+				Debug.logString("started");
+			}
 		}
+		else {
+			Debug.logString("pa: already allocated");
+		}
+		return this.preallocating;
+	},
+	cancelPreallocation: function() {
+		if (this._preallocator) {
+			this._preallocator.cancel();
+		}
+		this.preallocating = false;
 	},
 	
 	_donePrealloc: function QI__donePrealloc(res) {
+		Debug.logString("pa: done");
+		delete this._preallocator; 
 		this.preallocating = false;
 		if (this.resumable && this.is(RUNNING)) {
 			this.resumeDownload();
@@ -1923,8 +1949,7 @@ QueueItem.prototype = {
 		this.status = TEXT_QUEUED;
 	},
 	resumeDownload: function QI_resumeDownload() {
-		
-		if (this.preallocating) {
+		if (this.preallocating && this.activeChunks) {
 			Debug.logString("not resuming download " + this + " because preallocating");
 			return false;
 		}
@@ -1972,6 +1997,7 @@ QueueItem.prototype = {
 				this.sessionConnections = 0;				
 				return false;
 			}
+			
 			
 			// start some new chunks
 			let paused = this.chunks.filter(function (chunk) !(chunk.running || chunk.complete));
@@ -2430,7 +2456,7 @@ Connection.prototype = {
 	},
 	
 	// nsIStreamListener
-  onDataAvailable: function DL_onDataAvailable(aRequest, aContext, aInputStream, aOffset, aCount) {
+	onDataAvailable: function DL_onDataAvailable(aRequest, aContext, aInputStream, aOffset, aCount) {
 		if (this._closed) {
 			throw 0x804b0002; // NS_BINDING_ABORTED;
 		}
@@ -2810,8 +2836,6 @@ Connection.prototype = {
 					this.cantCount = true;
 				}
 				
-				d.prealloc();
-
 				if (!d.resumable) {
 					d.maxChunks = 1;
 				}
