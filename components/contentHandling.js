@@ -64,24 +64,40 @@ var ContentHandling = {
 		if (channel.requestMethod != 'POST') {
 			return;
 		}
-
+				
 		var post;
     
 		try {
 			var us = subject.QueryInterface(Ci.nsIUploadChannel).uploadStream;
-			var ss = us.QueryInterface(Ci.nsISeekableStream);
-			var op = ss.tell();
+			if (!us) {
+				return;
+			}
+			try {
+				us.QueryInterface(Ci.nsIMultiplexInputStream);
+				debug("ignoring multiplex stream");
+				return;
+			}
+			catch (ex) {
+				// no op
+			}
+				
+			let ss = us.QueryInterface(Ci.nsISeekableStream);
+			if (!ss) {
+				return;
+			}
+			let op = ss.tell();
 		
 			ss.seek(0, 0);
 			
-			var is = new ScriptableInputStream(us);
+			let is = new ScriptableInputStream(us);
 			
 			// we'll read max 64k
-			var available = Math.min(is.available(), 1 << 16);
+			let available = Math.min(is.available(), 1 << 16);
 			if (available) {
 				post = is.read(available);
 			}
-			ss.seek(op, 0);
+			ss.seek(0, op);
+			
 			if (post) {
 				this._registerData(channel.URI, post);
 			}
