@@ -2183,6 +2183,10 @@ Chunk.prototype = {
 	open: function CH_open() {
 		this._sessionBytes = 0;
 		let file = this.parent.tmpFile;
+		if (!file.parent.exists()) {
+			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
+			this.parent.invalidate();
+		}		
 		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 		seekable.seek(0x00, this.start + this.written);
