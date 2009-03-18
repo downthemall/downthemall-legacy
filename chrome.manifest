@@ -24,7 +24,7 @@ style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/integration
 ## toolkit ##
 overlay	chrome://mozapps/content/downloads/unknownContentType.xul	chrome://dta/content/integration/saveas.xul
 
-## Firefox / Flock ##
+## Firefox / Flock / Songbird ##
 overlay	chrome://browser/content/browser.xul	chrome://dta/content/integration/firefox.xul
 overlay	chrome://dta/content/integration/firefox.xul chrome://dta/content/integration/elements.xul
 style	chrome://browser/content/browser.xul	chrome://dta/skin/integration/style.css
@@ -48,7 +48,7 @@ style	chrome://messenger/content/messenger.xul chrome://dta/skin/integration/sty
 style	chrome://messenger/content/messageWindow.xul chrome://dta/skin/integration/style.css application={3550f703-e582-4d05-9a08-453d09bdfdc6}
 
 ## Songbird ##
-overlay	chrome://songbird/content/xul/layoutWithBrowserOverlay.xul	chrome://dta/content/integration/songbird.xul application=songbird@songbirdnest.com
+overlay	chrome://songbird/content/xul/layoutWithBrowserOverlay.xul	chrome://dta/content/integration/songbird.xul application=songbird@songbirdnest.com appversion<1.1
 overlay	chrome://dta/content/integration/songbird.xul chrome://dta/content/integration/elements.xul application=songbird@songbirdnest.com
 style	chrome://songbird/content/xul/mainScriptsOverlay.xul	chrome://dta/skin/integration/style.css application=songbird@songbirdnest.com
 style	chrome://dta/content/dta/manager.xul	chrome://dta/skin/common/songbird.css application=songbird@songbirdnest.com
