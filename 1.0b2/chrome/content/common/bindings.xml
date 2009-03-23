@@ -1,0 +1,307 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is DownThemAll
+ *
+ * The Initial Developer of the Original Code is Nils Maier
+ * Portions created by the Initial Developer are Copyright (C) 2007
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Nils Maier <MaierMan@web.de>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+
+<bindings
+	xmlns="http://www.mozilla.org/xbl"
+	xmlns:xbl="http://www.mozilla.org/xbl"
+	xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+>
+	<!-- closebox -->
+	<binding id="closebox" extends="chrome://global/content/bindings/groupbox.xml#groupbox">
+		<content>
+			<xul:hbox class="groupbox-title" align="center" pack="start">
+				<children includes="caption"/>
+			</xul:hbox>
+			<xul:box flex="1" class="childrenbox" xbl:inherits="orient,align,pack,collapsed=closed">
+				<children/>
+			</xul:box>
+		</content>
+		<implementation implements="nsIAccessibleProvider">
+			<property name="closed">
+				<getter>
+					return this.getAttribute('closed') == 'true';
+				</getter>
+				<setter>
+					this.setAttribute('closed', val ? 'true' : 'false');
+				</setter>
+			</property>
+      <property name="accessibleType" readonly="true">
+        <getter>
+          <![CDATA[
+            return Components.interfaces.nsIAccessibleProvider.XULGroupbox;
+          ]]>
+        </getter>
+      </property>
+    </implementation>
+	</binding>
+	<binding id="closebox-caption" extends="chrome://global/content/bindings/groupbox.xml#caption">
+		<handlers>
+			<handler event="click">
+				this.parentNode.closed = !this.parentNode.closed;
+			</handler>
+		</handlers>
+	</binding>
+	
+	<binding id="saveddropdown">
+		<content>
+			<xul:vbox flex="1">
+			<xul:menulist anonid="list" editable="true" xbl:inherits="readonly,disabled,flex,tooltiptext,oninput=onchange,onselect=onchange">
+				<xul:menupopup anonid="popup" xbl:inherits="onselect=onchange,oncommand=onchange"/>
+			</xul:menulist>
+			<xul:spacer flex="1"/>
+			</xul:vbox>
+		</content>
+		<implementation>
+			<constructor><![CDATA[
+				this._load();
+			]]></constructor>
+			<field name="modified">false</field>
+			<property name="_list" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'list');"/>
+			<property name="_popup" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'popup');"/>
+			<property name="_pref" onget="return this.getAttribute('preference')"/>
+			<property name="_values">
+				<getter><![CDATA[
+					var rv = this.getAttribute('default');
+					if (rv.length == 0) {
+						rv = '[]';
+					}
+					if (rv[0] != '[') {
+						rv = '[\'' + rv + '\']';
+					}
+					try {
+						return eval(DTA_preferences.getMultiByteDTA(this._pref, rv));
+					} catch (ex) {
+						return eval(rv);
+					}
+				]]></getter>
+			</property>
+			<property name="_max" onget="return DTA_preferences.getDTA('history', 5);"/>
+			<property name="inputField" onget="return this._list.inputField"/>
+			<property name="value" onget="return this._list.label">
+				<setter>
+					val = String(val);
+					if (this.value == val) {
+						return;
+					}
+					this._list.label = val;
+					this._modified = true;
+				</setter>
+			</property>
+			<method name="_load">
+				<body><![CDATA[
+					var values = this._values;
+					var popup = this._popup;
+					
+					while (popup.hasChildNodes()) {
+						drop.removeChild(popup.lastChild);
+					}
+
+					for (var i =  0; i < values.length && i < this._max; ++i) {
+						var node = document.createElement('menuitem');
+						node.setAttribute('label', values[i]);
+						popup.appendChild(node);
+					}
+
+					if (values.length) {
+						this._list.selectedIndex = 0;
+						this.value = values[0];
+					}				
+					if (this.hasAttribute('readonly')) {
+						this._list.removeAttribute('editable');
+					}
+					this._modified = false;
+				]]></body>
+			</method>
+			<method name="reload">
+				<body>this._load();</body>
+			</method>
+			<method name="save">
+				<body><![CDATA[
+					var n = this.value;
+					if ((!this.modified && this._list.selectedIndex == 0) || (n.length == 0 && !this.hasAttribute('allowempty'))) {
+						return;
+					}
+					var inValues = this._values;
+					var max = this._max;
+					var outValues = [n];
+					for (var i = 0; i < inValues.length && i < max - 1 && outValues.length < max; ++i) {
+						if (n != inValues[i] && inValues[i].length) {
+							outValues.push(inValues[i]);
+						}
+					}
+					DTA_preferences.setMultiByteDTA(this._pref, outValues.toSource());
+				]]></body>
+			</method>
+			<method name="clear">
+				<body>
+					DTA_preferences.resetDTA(this._pref);
+				</body>
+			</method>
+		</implementation>
+	</binding>
+
+	<binding id="metalinker-item" extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
+		<content>
+			<xul:hbox flex="1">
+				<xul:vbox>
+					<xul:image class="icon" xbl:inherits="src=iconURL"/>
+				</xul:vbox>
+				<xul:vbox flex="1">
+					<xul:checkbox anonid="check" xbl:inherits="label=identity,checked"/>
+					<xul:hbox flex="1" anonid="additionallinks"/>
+					<xul:description flex="1" anonid="desc"/>
+					<xul:hbox>
+						<xul:description flex="1" class="link" crop="center" xbl:inherits="value=url"/>
+					</xul:hbox>
+				</xul:vbox>
+				<xul:spacer flex="1"/>
+				<xul:vbox class="additional" anonid="additional"/>
+			</xul:hbox>
+		</content>
+		
+		<implementation>
+			<constructor><![CDATA[
+				var dl = this.download;
+				this.setAttribute('checked', dl.selected);
+				var id = '';
+				if (dl.identity) {
+					id = dl.identity + ' (' + dl.url.usable.getUsableFileName() + ')';
+				}
+				else {
+					id = dl.url.usable.getUsableFileName();
+				}
+				this.setAttribute('identity', id);
+				this.setAttribute('iconURL', dl.logo ? dl.logo : getIcon(dl.url.usable, false, 32));
+				this.setAttribute('url', dl.url.usable);
+				
+				function addSimple(e) {
+					if (dl[e]) {
+						var n = document.createElement('description');
+						n.appendChild(document.createTextNode(_(e, [dl[e]])));
+						n.setAttribute('crop', 'end');
+						this._additional.appendChild(n);
+					}
+				};
+				function addLink(e) {
+					if (dl[e]) {
+						var n = document.createElement('description');
+						n.setAttribute('class', 'link');
+						n.setAttribute('onclick', 'Metalinker.openLink(this)');
+						n.setAttribute('crop', 'center');
+						n.setAttribute('flex', '1');
+						n.link = dl[e][1];							
+						n.appendChild(document.createTextNode(dl[e][0]));
+						this._additionalLinks.appendChild(n);
+					}
+				};
+				['size', 'version', 'sys', 'lang', 'copyright', 'mirrors'].forEach(addSimple, this);
+				['publisher', 'license'].forEach(addLink, this);
+				
+				if (dl.description) {
+					this._desc.appendChild(document.createTextNode(dl.description));
+				}
+			]]></constructor>
+			<field name="_checkbox">document.getAnonymousElementByAttribute(this, 'anonid', 'check');</field>
+			<field name="_additional">document.getAnonymousElementByAttribute(this, 'anonid', 'additional');</field>
+			<field name="_additionalLinks">document.getAnonymousElementByAttribute(this, 'anonid', 'additionallinks');</field>
+			<field name="_desc">document.getAnonymousElementByAttribute(this, 'anonid', 'desc');</field>
+			<property name="checked" onget="return this._checkbox.checked;"/>
+		</implementation>
+	</binding>
+	
+	<binding id="hashinput">
+		<content>
+			<xul:hbox flex="1">
+				<xul:menulist anonid="type" readonly="true" xbl:inherits="disabled">
+					<xul:menupopup anonid="types"/>
+				</xul:menulist>
+				<xul:textbox anonid="hash" flex="1" xbl:inherits="readonly,disabled"/>
+			</xul:hbox>
+		</content>
+		<implementation>
+			<constructor><![CDATA[
+				this._typemap = {};
+				for (x in DTA_SUPPORTED_HASHES) {
+					var e = document.createElement('menuitem');
+					e.setAttribute('value', x);
+					e.setAttribute('label', x);
+					this._types.appendChild(e);
+					this._typemap[x] = e;
+				}			
+			]]></constructor>
+			<property name="_type" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'type');"/>
+			<property name="_types" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'types');"/>
+			<property name="_hash" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'hash');"/>
+			<property name="checked" onget="return this._checkbox.checked;"/>
+			<property name="inputField" onget="return this._hash.inputField;"/>
+			<property name="isValid">
+				<getter><![CDATA[
+					try {
+						if (this._hash.value.length) {
+							new DTA_Hash(this._hash.value, this._type.value);
+						}
+						return true;
+					}
+					catch(ex) {
+						return false;
+					}
+				]]></getter>
+			</property>
+			<property name="value">
+				<getter><![CDATA[
+					if (this._hash.value.length) {
+						return new DTA_Hash(this._hash.value, this._type.value);
+					}
+					return null;
+				]]></getter>
+				<setter><![CDATA[
+					if (val) {
+						this._hash.value = val.sum;
+						this._type.selectedItem = this._typemap[val.type];
+					}
+					else {
+						this._hash.value = '';
+					}
+					return val;
+				]]></setter>
+			</property>
+		</implementation>			
+	</binding>
+	
+</bindings>
+				
+		

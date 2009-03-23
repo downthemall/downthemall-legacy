@@ -1,0 +1,31 @@
+@import 'chrome://dta/skin/common/style.css';
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#metaselect {
+	width: 600px;
+	height: 430px;
+}
+#header {
+	margin-bottom: 1em;
+}
+#header label, #downloads label {
+	font-weight: bold;
+}
+.icon {
+	height: 32px !important;
+	width: 32px !important;
+	margin: 1ex;
+	margin-top: 0;
+}
+.additional {
+	font-style: italic;
+}
+richlistitem {
+	border-bottom: 1px dotted rgb(192, 192, 192);
+}
+richlistitem .icon {
+	margin-top: 1ex !important;
+}
+richlistitem vbox {
+	padding: 4pt;
+}

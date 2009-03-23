@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>Preferences</title>
+	<link rel="stylesheet" type="text/css" href="style.css"/>
+</head>
+<body>
+<div id="header">
+	This page in your language? <a href="http://www.downthemall.net" target="_blank">Check out DownThemAll website!</a>
+</div>
+<div id="main">
+	<h1>Preferences</h1>
+	<p>The window is divided in panels. Options are pretty self-explanatory. They will let you shape dTa! how you wish. You'll find the "Filters" panel extremely useful. Here you can add or delete your own inclusive filters, also using regular expressions.</p>
+	<ul>
+		<li><strong>Main panel:</strong> includes settings about file name conflicts, max downloads number, sounds, alerts, and other stuff related to the end of the downloading process;</li>
+		<li><strong>Filters panel:</strong> here you can manage inclusive filters, add new ones, modify or delete existing ones. To add a filter click on 'Add new filter'. Now you can fill the fields with a filter name (which is the one that will appear in the "Make your selection" window) and the filter content, which can be a simple string of text to match or a regular expression.</li>
+		<li><strong>Privacy panel:</strong> here you can control or delete info that dTa! writes on your computer; you can also disable the downloading of remote messages from dTa website;</li>
+
+		<li><strong>User Interface panel:</strong> here you can set up dTa! context-menus to your liking;</li>
+		<li><strong>Advanced panel:</strong> a few "pro" settings... in most cases, you can leave the default value.</li>
+	</ul>
+	<h2 id="mainp">Main panel</h2>
+	<h3>If a file aready exists</h3>
+	<table>
+		<tr>
+			<th>Option</th>
+			<th>Result</th>
+		</tr>
+		<tr>
+			<td>Rename</td>
+			<td>The file will be renamed. dTa! will append a unique number to the name, which is computed in order.<br/>First would be <code>somefile<i>_001</i>.ext</code>.</td>
+		</tr>
+		<tr>
+			<td>Overwrite</td>
+			<td>The existing file will be overwritten if possible.<br/>Please be aware that there will be no confirmation done prior to overwriting.</td>
+		</tr>
+		<tr>
+			<td>Skip</td>
+			<td>File will not be downloaded. Or if it was downloaded and another file with the same name was created in between, the download will be deleted.</td>
+		</tr>
+		<tr>
+			<td>Ask</td>
+			<td>dTa! will ask you how to proceed. <i>(default)</i></td>
+		</tr>
+	</table>
+
+	<h3>Downloads</h3>
+	<p><code>Max. concurrent downloads</code> determines how many files to download at the same time.<br/>
+	It is not the same as connections, as there might be <a href="#advanced">multiple connections</a> per download.</p>
+	<p>Playing a sound whenever a download error occurs brings that error to your attention, so that you may fix your download/settings as soon as possible.</p>
+	<p>DownThemAll! also offers to close the tabs where the download came from once it is started.<br/>
+	This option allows you to download lots of links from different tabs more efficiently.</p>
+	
+	<h3>When downloads are completed</h3>
+	<p>You may want to receive a notification once <strong>all</strong> downloads are completed.</p>
+	<ul>
+		<li>Alert boxes will show a regular alert box</li>
+		<li>Slides on the other hand will show a small notification for a short period of time. A slide is e.g. used in Thunderbird when new mails arrive.</li>
+		<li>Some people might not want to ge bothered by such alerts. <code>Don't alert me</code> is especially for you folks.</li>
+	</ul>
+	<p>Furthermore you may play a sound and/or close the <a href="manager.html">Manager window</a> once all downloads are finished.</p>
+
+	<h2 id="filters">Filters panel</h2>
+	<p>To be written...</p>
+	
+	<h2 id="privacy">Privacy panel</h2>
+	<p>We DownThemAll! authors are concerned on privacy.</p>
+	<p><strong>See also:</strong> <a href="about.html#privacy">Privacy Notice</a></p>
+	
+	<h3>When manager is closed</h3>
+	<p>Automatically clean the download queue once the <a href="manager.html">Manager window</a> is closed.</p>
+	<ul>
+		<li><code>Remove completed downloads</code> will clean all successful downloads.</li>
+		<li><code>Remove canceled/erronous download</code> will clean all downloads that you either canceled or that failed to download for some reason.<br/>
+		Use with caution as you might unwillingly remove downloads you would have liked to retry.</li>
+		<li><code>Remove unfinished downloads</code> will remove all downloads that are not running at the momemnt of closing the window.<br/>
+		This feature fulfills the needs of the "paranoid" users; regular users should be cautious instead.</li>
+	</ul>
+	<h3>Dropdown menus</h3>
+	<p>DownThemAll! keeps track of some user-specified values: the target directory, the renaming mask and furthermore additional filters.</p>
+	<p>Specify the number of entries dTa should remember.</p>
+	<p><strong>Please note:</strong> the "Clear Private Data" feature might be configured to delete these history values.</p>
+	
+	<h3>Diagnostic log</h3>
+	<p>A diagnostic log is a file containing a lot of information that helps to diagnose problems and bugs.</p>
+	<p>The DownThemAll! authors will appreciate every such log they receive as part of a bug report.</p>
+	<p>The diagnostic log might contain sensitive information (like URLs, cookies and similar) and logging has a negative impact on performance, hence <strong>you should only activate</strong> this feature if you are planning to <strong>submit a bug report</strong>.</p>
+	
+	<h3>Updates/Internet</h3>
+	<p>You might let dTa check for updates.<br/>
+	This might be very useful to get new versions faster or get important news.<br/>
+	dTa will transfer no personal information except the version of DownThemAll!.<br/>
+	Other transmitted information is the same as with every other HTTP request: Browser identification, Accepted languages and such (actual information depends on the browser and is likely not used by DownThemAll!).</p>
+	
+	<p>Anonymous usage statistics may contain e.g. the number of downloads, the total and average sizes of downloads, file types and similar.<br/>
+	But DownThemAll! will NEVER transmit any personally identifiable data, ever.</p>
+	
+	<h2 id="ui">User Interface panel</h2>
+	
+	<h3>Appearance</h3>
+	<p>When downloading you may either display the full URL or just the filename.</p>
+	
+	<h3>Integration</h3>
+	<p>When you turn on integration with the "Save File" window there will be two new options displayed:</p>
+	<ul>
+		<li>Either regular DownThemAll! where you could still tweak the settings of the download</li>
+		<li>Or the OneClick!, which will proceed with the download using the settings of the last download you started.</li>
+	</ul>
+	
+	<h3>Menus</h3>
+	<p>Click the menu items you would like to see.</p>
+	<p><code>Compact menu</code> will create just one menu entry for DownThemAll! which then opens a sub-menu which contains the usual options.</p>
+	
+	<h2 id="advanced">Advanced panel</h2>
+	<p><strong>Note of caution:</strong> Preferences on this panel might render DownThemAll! useless or cause other damage. Use with caution!</p>
+	
+	<h3>Multipart download</h3>
+	<p>DownThemAll! may try to download a file in several chunks at once. This may accelerate the overall download.</p>
+	<p>On the other hand some servers may be erronous when it comes to such procedures, so downloads might fail.</p>
+	<p>Specify the maximum number of concurrent connections per download using the dropdown.</p>
+	<p>Keep in mind: <em>the more the better</em> does not count here. Usually you'll get best performance with with a value of 2 - 5.</p>
+	
+	<h3>Download timeout</h3>
+	<p>A server might not send any new data for some time. If this time exceeds this configured timeout the download will be canceled so that DownThemAll! may continue with the next download in queue.</p>
+	<p>If you have to deal with "laggy" servers often, you may want to increase the timeout.</p>
+	
+	<h3>Temporary Files</h3>
+	<p>The unfinished downloads need to get stored somewhere. By default, the destination directory will be used:</p>
+	<table>
+		<tr><th>Option</th><th>Result</th></tr>
+		<tr>
+			<td>Unchecked</td>
+			<td>The destination directory will be used (default)</td>
+		</tr>
+		<tr>
+			<td>Checked, no directory set</td>
+			<td>
+				dTa! will use the system Directory
+				<ul>
+					<li>Windows: <code>%TEMP%\dta-XXX</code> (such as <code>C:\Documents and Settings\username\Local Settings\Temp\dta-XXX</code>)</li>
+					<li>Mac: </li>
+					<li>Linux/Unix: usually <code>/tmp/dta-XXX</code></li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
+			<td>Checked, directory set</td>
+			<td>The specified directory will be used.</td>
+		</tr>
+	</table>
+	<p>Remember: You need write access to the directory!</p>	
+</div>
+</body>
+</html>

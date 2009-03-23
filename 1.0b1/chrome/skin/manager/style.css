@@ -1,0 +1,149 @@
+@import 'chrome://dta/skin/common/style.css';
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+toolbox {
+	border-width: 0px;
+}
+
+#tools {
+	background: url(chrome://dta/skin/manager/barback.png) repeat-x;
+	border-width: 0px;
+	height: 51px;
+	-moz-appearance: none !important;
+}
+#tools toolbarbutton {
+	-moz-image-region: rect(0px,51px,25px,26px);    
+	-moz-box-orient: vertical !important;
+	-moz-box-align: center !important;
+	-moz-appearance: none !important;
+	border: 0px hidden !important;
+	margin-top: 2px;
+	width: 55px;
+}
+
+#tools toolbarbutton:hover {
+	-moz-image-region: rect(0px,25px,25px,0px);
+}
+#tools toolbarbutton:active {
+	-moz-image-region: rect(-1px,25px,25px,0px);
+}
+#tools toolbarbutton[disabled="true"] {
+	-moz-image-region: rect(0px,77px,25px,52px) !important;    
+}
+#tools spacer {
+	min-width: 5px;
+}
+#tools spacer.visible {
+	background: url("chrome://dta/skin/common/toolbarspacer.png") no-repeat 50% 11px;
+	min-width: 13px;
+}
+#tooladd {
+	list-style-image: url("chrome://dta/skin/manager/add26.png");
+	width: auto !important;
+}
+
+#toolplay {
+	list-style-image: url("chrome://dta/skin/manager/play26.png");
+}
+
+#toolpause {
+	list-style-image: url("chrome://dta/skin/manager/pause26.png");
+}
+
+#toolcancel {
+	list-style-image: url("chrome://dta/skin/manager/cancel26.png");
+}
+
+#toolmovetop {
+	list-style-image: url("chrome://dta/skin/manager/movetop26.png");
+}
+
+#toolmovebottom {
+	list-style-image: url("chrome://dta/skin/manager/movebottom26.png");
+}
+
+#toolmovedown {
+	list-style-image: url("chrome://dta/skin/manager/movedown26.png");
+}
+
+#toolmoveup {
+	list-style-image: url("chrome://dta/skin/manager/moveup26.png");
+}
+
+#toolprefs {
+	list-style-image: url("chrome://dta/skin/manager/prefs26.png");
+}
+
+#tooldonate {
+	background: url("chrome://dta/skin/manager/bardonate.png") top right;
+	min-width: 200px !important;
+}
+#tooldonate:hover {
+	background: url("chrome://dta/skin/manager/bardonatehover.png") top right;
+}
+#tooldonate:active {
+	background: url("chrome://dta/skin/manager/bardonateactive.png") top right;
+}
+#tooltip{
+	width: 470px;
+	padding: 0; /* work around incorrect tooltip implementation in FX2.0 */
+}
+/* work around incorrect tooltip implementation in FX2.0 */
+#tooltip > vbox {
+	background-color: infobackground !important;
+	padding: 5pt;
+	margin: 0;
+}
+#tooltip image {
+	margin: 2pt;
+	margin-left: 1ex;	
+	margin-right: 1ex;
+	width: 32px !important;
+	height: 32px !important;
+	-moz-box-flex: 0 !important;
+}
+#tooltip grid {
+	-moz-box-flex: 1;
+}
+#infoGrid label {
+	margin-bottom: 0;
+	font-weight: bold;
+}
+#infoGrid label[crop] {
+	font-weight: normal !important;
+	max-width: 300px;	
+}
+#canvasGrid label[id] {
+	font-weight: bold;
+}
+#infoPercent {
+	text-align: center;
+	height: 40px;
+	margin: 0;
+	padding: 0;
+	padding-top: 7px;
+	font-size: 14px;
+	font-weight: bold;
+	background: transparent !important;
+}
+
+treechildren::-moz-tree-progressmeter(completed) {
+  color: #008F00;
+}
+
+treechildren::-moz-tree-progressmeter(paused) {
+  color: #FFCC00;
+}
+
+treechildren::-moz-tree-progressmeter(canceled) {
+  color: #B12801;
+}
+
+treechildren::-moz-tree-progressmeter(queued) {
+  color: #BFDEFF;
+}
+
+treechildren::-moz-tree-progressmeter(inprogress) {
+  color: #AAE061;
+}

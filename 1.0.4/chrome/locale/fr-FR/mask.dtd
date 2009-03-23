@@ -1,0 +1,18 @@
+<!ENTITY mask.title "Marqueurs de renommage">
+<!ENTITY mask.name "Nom de fichier">
+<!ENTITY mask.ext "Extension">
+<!ENTITY mask.url "URL de base">
+<!ENTITY mask.curl "URL complète">
+<!ENTITY mask.num "Nombre progressif">
+<!ENTITY mask.hh "Heures">
+<!ENTITY mask.mm "Minutes">
+<!ENTITY mask.ss "Secondes">
+<!ENTITY mask.d "Jour">
+<!ENTITY mask.m "Mois">
+<!ENTITY mask.y "Année">
+<!ENTITY mask.subdirs "Sous-dossier de l&apos;URL">
+<!ENTITY mask.text "Description du lien">
+<!ENTITY mask.refer "URL de provenance">
+<!ENTITY mask.qstring "Chaîne de requête (Query string)">
+<!ENTITY mask.tip "Cliquez ou glissez pour renommer le masque">
+<!ENTITY mask.open.tip "Table de référence de marqueurs de renommage">

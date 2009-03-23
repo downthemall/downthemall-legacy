@@ -1,0 +1,20 @@
+** DownThemAll! **
+Copyright (C) 2004-2007 Federico Parodi and Stefano Verna.
+Copyright (C) 2007 Federico Parodi, Stefano Verna and Nils Maier.
+
+DownThemAll! is licensed under GPL 2.0. See the GPL file.
+This applies to all source code files.
+
+Individual files may have different licenses.
+See the corresponding repository files available from
+<http://code.downthemall.net/repos/>
+Many files are tri-licensed under a MPL 1.1/GPL 2.0/LGPL 2.1 license;
+See the MPL, GPL, LGPL files respectively.
+
+DTA contains pieces of code taken from:
+Linky * Copyright (C) 2002-2003 Henrik Gemal
+
+Icons and buttons are based on the works of Mike Matas, Jakub Steiner and Mark James
+ * (C) Michael Matas,
+ * (C) Jakub Steiner, (C) Novell, Inc.
+ * (C) Mark James

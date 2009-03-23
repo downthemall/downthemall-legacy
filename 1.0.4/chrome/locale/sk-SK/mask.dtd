@@ -1,0 +1,18 @@
+<!ENTITY mask.title "Značky premenovania">
+<!ENTITY mask.name "Názov súboru">
+<!ENTITY mask.ext "Prípona">
+<!ENTITY mask.url "Základ adresy">
+<!ENTITY mask.curl "Celá adresa">
+<!ENTITY mask.num "Postupné číslo">
+<!ENTITY mask.hh "Hodiny">
+<!ENTITY mask.mm "Minúty">
+<!ENTITY mask.ss "Sekundy">
+<!ENTITY mask.d "Deň">
+<!ENTITY mask.m "Mesiac">
+<!ENTITY mask.y "Rok">
+<!ENTITY mask.subdirs "Podpriečinky adresy">
+<!ENTITY mask.text "Popis prepojenia">
+<!ENTITY mask.refer "Odkazujúca adresa">
+<!ENTITY mask.qstring "Reťazec dopytu">
+<!ENTITY mask.tip "Kliknutím alebo presunutím myšou nastavte masku premenovania">
+<!ENTITY mask.open.tip "Tabuľka značiek premenovania">

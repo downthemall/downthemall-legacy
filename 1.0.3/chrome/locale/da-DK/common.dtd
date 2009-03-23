@@ -1,0 +1,17 @@
+<!ENTITY start.label "Start!">
+<!ENTITY start.key "s">
+<!ENTITY queue.label "Kø!">
+<!ENTITY queue.key "k">
+<!ENTITY cancel.label "Annuller">
+<!ENTITY options.label "Indstillinger...">
+<!ENTITY dtahelp "Hjælp!">
+<!ENTITY url.value "URL">
+<!ENTITY dest.caption "Gem filer i:">
+<!ENTITY referrer.value "Henvisende URL:">
+<!ENTITY checksum.value "Checksum:">
+<!ENTITY browse.tip "Find mappe">
+<!ENTITY mask.label "Omdøbnings-bitmaske">
+<!ENTITY mask.tip "Valgte filer vil blive gemt og omdøbt ved brug af denne bitmaske">
+<!ENTITY selectall.label "Vælg alle">
+<!ENTITY selectinv.label "Inverter valg">
+<!ENTITY selectnone.label "Fjern valg">

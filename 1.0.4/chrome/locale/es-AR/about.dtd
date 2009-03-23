@@ -1,0 +1,12 @@
+<!ENTITY language "Español (es-AR)">
+<!ENTITY transAutor "Eduardo Leon">
+<!ENTITY about.subtitle "El descargador masivo para Firefox">
+<!ENTITY about.nowarr "viene con ABSOLUTAMENTE NINGUNA GARANTIA">
+<!ENTITY about.freesoft "¡Este programa es libre!">
+<!ENTITY about.privacy "valora su privacidad">
+<!ENTITY about.read "Lea nuestro">
+<!ENTITY about.pnot "Aviso de privacidad">
+<!ENTITY about.by "traducido por">
+<!ENTITY about.redistr "Le invitamos a redistribuirlo bajo ciertas condiciones">
+<!ENTITY about.icons "Los iconos y botones">
+<!ENTITY about.based " se basan en los trabajos de Mike Matas, Jakub Steiner y Mark James">

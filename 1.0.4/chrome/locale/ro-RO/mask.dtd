@@ -1,0 +1,18 @@
+<!ENTITY mask.title "Taguri de redenumire">
+<!ENTITY mask.name "Nume fișier">
+<!ENTITY mask.ext "Extensie">
+<!ENTITY mask.url "URL de bază">
+<!ENTITY mask.curl "URL complet">
+<!ENTITY mask.num "Număr progresiv">
+<!ENTITY mask.hh "Ore">
+<!ENTITY mask.mm "Minute">
+<!ENTITY mask.ss "Secunde">
+<!ENTITY mask.d "Zi">
+<!ENTITY mask.m "Lună">
+<!ENTITY mask.y "An">
+<!ENTITY mask.subdirs "Subdirectoare URL">
+<!ENTITY mask.text "Descriere legătură">
+<!ENTITY mask.refer "URL referent">
+<!ENTITY mask.qstring "Interogare">
+<!ENTITY mask.tip "Clicați sau trageți către masca de redenumire">
+<!ENTITY mask.open.tip "Tabelul de referinţă al tagurilor de redenumire">

@@ -1,0 +1,17 @@
+<!ENTITY start.label "Inizia!">
+<!ENTITY start.key "i">
+<!ENTITY queue.label "Accoda">
+<!ENTITY queue.key "a">
+<!ENTITY cancel.label "Annulla">
+<!ENTITY options.label "Preferenze...">
+<!ENTITY dtahelp "Aiuto!">
+<!ENTITY url.value "URL:">
+<!ENTITY dest.caption "Salva file in:">
+<!ENTITY referrer.value "URL referente:">
+<!ENTITY checksum.value "Codice di controllo (Hash):">
+<!ENTITY browse.tip "Seleziona la cartella di destinazione...">
+<!ENTITY mask.label "Maschera di rinomina">
+<!ENTITY mask.tip "I file selezionati saranno salvati e rinominati secondo questa maschera.">
+<!ENTITY selectall.label "Seleziona tutto">
+<!ENTITY selectinv.label "Inverti selezione">
+<!ENTITY selectnone.label "Non selezionare nulla">

@@ -1,0 +1,38 @@
+<!ENTITY tooladd.label "URL hozzáadása">
+<!ENTITY tooladd.tooltip "URL hozzáadása menuálisan">
+<!ENTITY tooldonate.tooltiptext "Segíthet a DownThemAll Kiterjesztést még jobbá tenni! Támogassa a fejlesztést hozzájárulásaival!">
+<!ENTITY movetop.label "Első">
+<!ENTITY movebottom.label "Utolsó">
+<!ENTITY moveup.label "Fel">
+<!ENTITY movedown.label "Le">
+<!ENTITY task.label "URL/Név">
+<!ENTITY per.label "Százalék">
+<!ENTITY pct.label "Állapot">
+<!ENTITY dim.label "Méret">
+<!ENTITY time.label "Hátralévő idő">
+<!ENTITY parts.label "Szeletek">
+<!ENTITY speed.label "Sebesség">
+<!ENTITY infoURLTitle.value "Hely:">
+<!ENTITY infoSizeTitle.value "Méret:">
+<!ENTITY infoMultiple.value "Többszörös elem">
+<!ENTITY elapsedTitle.value "Eltelt idő:">
+<!ENTITY remainingTitle.value "Hátralevő idő:">
+<!ENTITY currentSpeedTitle.value "Aktuális sebesség:">
+<!ENTITY avgSpeedTitle.value "Átlagos sebesség:">
+<!ENTITY path.label "Mentési útvonal">
+<!ENTITY mask.label "Átnevezési maszk">
+<!ENTITY hash.label "Ellenörzőösszeg">
+<!ENTITY infos.label "Letöltési információ">
+<!ENTITY launch.label "Fájl megnyitása">
+<!ENTITY delete.label "Törölt fájlok">
+<!ENTITY targetdir.label "Célmappa megnyitása">
+<!ENTITY pause.label "Szünet">
+<!ENTITY resume.label "Folytatás">
+<!ENTITY cancel.label "Mégse">
+<!ENTITY remove.label "Eltávolítás a listáról">
+<!ENTITY removeCompleted.label "Befejezett feladatok eltávolítása">
+<!ENTITY misc.label "Egyéb">
+<!ENTITY addchunk.label "Szelet hozzáadása">
+<!ENTITY removechunk.label "Szelet eltávolítása">
+<!ENTITY force.label "Kényszerített indítás">
+<!ENTITY options.caption "Beállítások">

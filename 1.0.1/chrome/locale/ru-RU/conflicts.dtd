@@ -1,0 +1,7 @@
+<!ENTITY title.value "Конфликт имен файлов!">
+<!ENTITY text.value "Выполнять эту настройку:">
+<!ENTITY file.label "Только для этого файла">
+<!ENTITY session.label "Только для этой сессии">
+<!ENTITY always.label "Только сейчас">
+<!ENTITY overwrite.label "Перезаписать существующий файл">
+<!ENTITY skip.label "Пропустить/Отмена">

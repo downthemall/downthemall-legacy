@@ -1,0 +1,15 @@
+<!ENTITY title "Направете сопствена селекција">
+<!ENTITY filters.caption "Филтри">
+<!ENTITY additional.caption "Брзо Филтрирање">
+<!ENTITY additional.tip "Текстуален филтер: можете да поставите повеќе текстуални филтри користејќи запирки.">
+<!ENTITY regex.label "Регуларен Израз">
+<!ENTITY filter.tip "Внесете ги вашите тектсуални филтри тука! (примери се наведени на симнувачкото мени)">
+<!ENTITY status.label "После избраните врски, изберете Старт!">
+<!ENTITY menu.mask.title "Промени ја преименувачката маска">
+<!ENTITY menu.check.label "Означи ги избраните предмети">
+<!ENTITY menu.uncheck.label "Отстрани ознаки од избраните предмети">
+<!ENTITY menu.toggle.label "Сменете ја проверката за избраните предмети">
+<!ENTITY tab.links.label "Врски">
+<!ENTITY tab.pics.label "Слики и Вградени">
+<!ENTITY header.desc.label "Опис">
+<!ENTITY selectfiltered.label "Избери филтрирани">

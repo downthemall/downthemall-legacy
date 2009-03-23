@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:nc="http://home.netscape.com/NC-rdf#">
+  <rdf:Description about="urn:root">
+    <nc:subheadings>
+      <rdf:Seq>
+        <rdf:li> <rdf:Description ID="Select" nc:name="&quot;Make your selection&quot; window" nc:link="select.html"/> </rdf:li>
+        <rdf:li> <rdf:Description ID="Manager" nc:name="&quot;dTa! Manager&quot; window" nc:link="manager.html"/> </rdf:li>
+        <rdf:li> <rdf:Description ID="Preferences" nc:name="&quot;Preferences&quot; window" nc:link="preferences.html"/> </rdf:li>
+        <rdf:li> <rdf:Description ID="Masks" nc:name="Renaming masks" nc:link="masks.html"/> </rdf:li>
+        <rdf:li> <rdf:Description ID="OneClick" nc:name="What is &quot;dTaOneClick&quot;?" nc:link="oneclick.html"/> </rdf:li>
+      </rdf:Seq>
+    </nc:subheadings>
+  </rdf:Description>
+</rdf:RDF>

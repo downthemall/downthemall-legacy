@@ -1,0 +1,39 @@
+# package
+content	dta	jar:chrome/dta.jar!/content/
+skin	dta	classic/1.0 jar:chrome/dta.jar!/skin/classic/
+locale	dta	en-US	jar:chrome/dta.jar!/locale/en-US/
+
+# new in 0.9.9.6
+locale	dta	ar-SA	jar:chrome/dta.jar!/locale/ar-SA/
+locale	dta	gl-ES	jar:chrome/dta.jar!/locale/gl-ES/
+locale	dta	sq-AL	jar:chrome/dta.jar!/locale/sq-AL/
+locale	dta	da-DK	jar:chrome/dta.jar!/locale/da-DK/
+locale	dta	zh-TW	jar:chrome/dta.jar!/locale/zh-TW/
+
+#new in 0.9.9.6.4
+locale	dta	cs-CZ	jar:chrome/dta.jar!/locale/cs-CZ/
+locale	dta	uk-UA	jar:chrome/dta.jar!/locale/uk-UA/
+locale	dta	hr-HR	jar:chrome/dta.jar!/locale/hr-HR/
+
+
+content	dta-pref-style	jar:chrome/dta.jar!/content/opzioni/style/	platform
+content	dta-down-style	jar:chrome/dta.jar!/content/dta/style/	platform
+
+# overlay
+overlay	chrome://browser/content/browser.xul	chrome://dta/content/menu.xul
+overlay	chrome://browser/content/browser.xul	chrome://dta/content/barra.xul
+overlay	chrome://navigator/content/navigator.xul	chrome://dta/content/menu.xul
+overlay	chrome://mozapps/content/downloads/unknownContentType.xul	chrome://dta/content/saveas.xul
+overlay	chrome://browser/content/browser.xul	chrome://dta/content/privacy/overlayBrowser.xul
+overlay chrome://browser/content/preferences/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeUI.xul
+overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeUI.xul
+overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeCode.xul
+overlay chrome://messenger/content/mailWindowOverlay.xul	chrome://dta/content/mailmenu.xul
+overlay	chrome://messenger/content/mailWindowOverlay.xul	chrome://dta/content/mailbarra.xul
+
+# styles
+style	chrome://browser/content/browser.xul	chrome://dta/skin/stile.css
+style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/stile.css
+
+
+

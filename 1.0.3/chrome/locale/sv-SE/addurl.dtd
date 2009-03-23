@@ -1,0 +1,7 @@
+<!ENTITY title "Lägg till URL">
+<!ENTITY add.value "Lägg till URL">
+<!ENTITY desc.value "Ange en URL och eventuellt filens hänvisande sida.">
+<!ENTITY desc.batches.value "Du kan också använda batch-indentifierare för att hämta fler filer samtidigt.">
+<!ENTITY examples.value "Exempel:">
+<!ENTITY help.batches.label "Batch-hämtningar">
+<!ENTITY help.adding.label "Anger URL">

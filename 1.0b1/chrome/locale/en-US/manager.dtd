@@ -1,0 +1,38 @@
+<!ENTITY tooladd.label "Add URL(s)">
+<!ENTITY tooldonate.tooltiptext "You can help us make DownThemAll even better. Consider making a small donation!">
+
+<!ENTITY movetop.label "Top">
+<!ENTITY movebottom.label "Bottom">
+<!ENTITY moveup.label "Up">
+<!ENTITY movedown.label "Down">
+
+<!ENTITY task.label "URL/Name">
+<!ENTITY per.label "Completion">
+<!ENTITY pct.label "Progress">
+<!ENTITY dim.label "Size">
+<!ENTITY time.label "Est. time">
+<!ENTITY parts.label "Chunks">
+<!ENTITY speed.label "Speed">
+<!ENTITY infoURLTitle.value "From:">
+<!ENTITY infoDestTitle.value "File: ">
+<!ENTITY infoSizeTitle.value "Size:">
+<!ENTITY elapsedTitle.value "Elapsed:">
+<!ENTITY remainingTitle.value "Remaining:">
+<!ENTITY currentSpeedTitle.value "Current speed:">
+<!ENTITY avgSpeedTitle.value "Average Speed:">
+<!ENTITY path.label "Save path">
+<!ENTITY mask.label "Renaming Mask">
+<!ENTITY hash.label "Checksum">
+
+<!ENTITY infos.label "Download information">
+<!ENTITY launch.label "Open file">
+<!ENTITY delete.label "Delete file(s)">
+<!ENTITY targetdir.label "Open directory">
+<!ENTITY pause.label "Pause">
+<!ENTITY resume.label "Resume">
+<!ENTITY cancel.label "Cancel">
+<!ENTITY remove.label "Remove selected downloads">
+<!ENTITY removeCompleted.label "Remove completed tasks">
+<!ENTITY misc.label "Misc">
+<!ENTITY addchunk.label "One more chunk">
+<!ENTITY removechunk.label "One less chunk">

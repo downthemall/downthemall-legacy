@@ -1,0 +1,17 @@
+<!ENTITY start.label "Start">
+<!ENTITY start.key "S">
+<!ENTITY queue.label "Gepauzeerd toevoegen">
+<!ENTITY queue.key "t">
+<!ENTITY cancel.label "Annuleren">
+<!ENTITY options.label "Voorkeuren">
+<!ENTITY dtahelp "Help!">
+<!ENTITY url.value "Webadres:">
+<!ENTITY dest.caption "Bestanden opslaan in:">
+<!ENTITY referrer.value "Verwijzend webadres:">
+<!ENTITY checksum.value "Controlegetal (versleuteling):">
+<!ENTITY browse.tip "Naar doelmap bladeren...">
+<!ENTITY mask.label "Hernoem masker">
+<!ENTITY mask.tip "Geselecteerde bestanden zullen opgeslagen en hernoemd worden met behulp van dit masker">
+<!ENTITY selectall.label "Alles selecteren">
+<!ENTITY selectinv.label "Selectie omkeren">
+<!ENTITY selectnone.label "Niets selecteren">

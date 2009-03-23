@@ -1,0 +1,7 @@
+<!ENTITY title "Tilføj URL">
+<!ENTITY add.value "Tilføj URL">
+<!ENTITY desc.value "Indtast URL til den fil du vil downloade og angiv den henvisende side (ikke krævet).">
+<!ENTITY desc.batches.value "Du kan også bruge mønstre til at downloade flere filer ad gangen.">
+<!ENTITY examples.value "Eksempler:">
+<!ENTITY help.batches.label "Batch downloads">
+<!ENTITY help.adding.label "Tilføj URL">

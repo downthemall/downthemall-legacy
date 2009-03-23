@@ -1,0 +1,17 @@
+<!ENTITY start.label "Редица!">
+<!ENTITY start.key "Р">
+<!ENTITY queue.label "Додај паузирано">
+<!ENTITY queue.key "Д">
+<!ENTITY cancel.label "Откажи">
+<!ENTITY options.label "Својства...">
+<!ENTITY dtahelp "Помош!">
+<!ENTITY url.value "URL:">
+<!ENTITY dest.caption "Сними во:">
+<!ENTITY referrer.value "Референтен URL:">
+<!ENTITY checksum.value "Контролна Сума(Hash):">
+<!ENTITY browse.tip "Барај папка ...">
+<!ENTITY mask.label "Маска за преименување">
+<!ENTITY mask.tip "Избраните датотеки ќе бидат зачувани и преименувани користејќи ја оваа маска">
+<!ENTITY selectall.label "Избери се">
+<!ENTITY selectinv.label "Обратен избор">
+<!ENTITY selectnone.label "Отстранете избор">

@@ -1,0 +1,18 @@
+<!ENTITY mask.title "Markeringen hernoemen">
+<!ENTITY mask.name "Bestandsnaam">
+<!ENTITY mask.ext "Extensie">
+<!ENTITY mask.url "Basis webadres">
+<!ENTITY mask.curl "Volledig webadres">
+<!ENTITY mask.num "Ophoog aantal">
+<!ENTITY mask.hh "Uren">
+<!ENTITY mask.mm "Minuten">
+<!ENTITY mask.ss "Seconden">
+<!ENTITY mask.d "Dag">
+<!ENTITY mask.m "Maand">
+<!ENTITY mask.y "Jaar">
+<!ENTITY mask.subdirs "Webadres subdirectories">
+<!ENTITY mask.text "Omschrijving van de koppeling">
+<!ENTITY mask.refer "Verwijzend webadres">
+<!ENTITY mask.qstring "Wachtrij string">
+<!ENTITY mask.tip "Klikken of slepen om masker te hernoemen">
+<!ENTITY mask.open.tip "Referentietabel hernoemde markeringen">

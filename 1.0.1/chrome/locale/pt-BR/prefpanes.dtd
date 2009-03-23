@@ -1,0 +1,77 @@
+<!ENTITY winstyle "largura:52em;altura:42em;">
+<!ENTITY filterspane.label "Filtros">
+<!ENTITY listhead1.label "Nome">
+<!ENTITY listhead2.label "Extensões">
+<!ENTITY filter.label "Extensões filtradas:">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY useAs.label "Usar como:">
+<!ENTITY imagesf.label "Filtros de Imagens">
+<!ENTITY linksf.label "Filtros de links">
+<!ENTITY add.label "Adicionar Filtro">
+<!ENTITY highlight.label "Destacar arquivos selecionado pelos filtros">
+<!ENTITY dtacontext2.label "Opções">
+<!ENTITY buttonlabelextra2 "Restaurar configurações originais">
+<!ENTITY dtaPreferences.title "Opções do DownThemAll!">
+<!ENTITY manager "Gerenciador dTa">
+<!ENTITY mainpane.label "Principal">
+<!ENTITY mainpane.rename.caption "Se o arquivo já existir:">
+<!ENTITY mainpane.rename.label "Renomear">
+<!ENTITY mainpane.overwrite.label "Sobrescrever">
+<!ENTITY mainpane.skip.label "Omitir">
+<!ENTITY mainpane.ask.label "Perguntar">
+<!ENTITY mainpane.downloads.caption "Downloads">
+<!ENTITY mainpane.concurrent.label "Número máximo de downloads simultâneos:">
+<!ENTITY mainpane.sounderror.label "Tocar um som em caso de erro">
+<!ENTITY mainpane.closetab.label "Fechar a aba fonte quando DownThemAll iniciar">
+<!ENTITY mainpane.alert.caption "Quando os downloads terminarem:">
+<!ENTITY mainpane.alertboxes.label "Avisar usando caixas de aviso">
+<!ENTITY mainpane.alertslides.label "Avisar usando painéis de aviso do Firefox">
+<!ENTITY mainpane.alertnone.label "Não me avisar">
+<!ENTITY mainpane.sounddone.label "Tocar um som quando todos os downloads terminarem">
+<!ENTITY mainpane.closedta.label "Fechar o DownThemAll quando os downloads terminarem">
+<!ENTITY privacypane.label "Privacidade">
+<!ENTITY privacypane.closing.caption "Quando a janela do gerenciador é fechada">
+<!ENTITY privacypane.removecompleted.label "Remover da lista dos downloads completos">
+<!ENTITY privacypane.removecanceled.label "Remover da lista dos downloads cancelados e/ou com erros">
+<!ENTITY privacypane.removeaborted.label "Remover da lista dos downloads não iniciados">
+<!ENTITY privacypane.deletefoldershistory.label "Excluir Histórico de Pastas">
+<!ENTITY privacypane.deletefiltershistory.label "Excluir Histórico de Filtros Adicionais">
+<!ENTITY privacypane.showlog.label "Exibir Log">
+<!ENTITY privacypane.reveallog.label "Mostrar arquivo">
+<!ENTITY privacypane.deletelog.label "Excluir Log">
+<!ENTITY privacypane.updates.caption "Atualizações/Internet">
+<!ENTITY privacypane.information.label "Permitir que o dTa baixe notícias atualizadas, mensagens, e o informações da última versão">
+<!ENTITY privacypane.statistics.label "Deixar o dTa coletar e transferir estatísticas de uso anônimas">
+<!ENTITY privacypane.dropdowns.caption "Menus em Lista">
+<!ENTITY privacypane.dropdownresults.label "Número de entradas para manter">
+<!ENTITY privacypane.logs.caption "Logs de Diagnóstico">
+<!ENTITY privacypane.enablelogs.label "Ativar diagnóstico de logs">
+<!ENTITY privacypane.notice.caption "Alerta">
+<!ENTITY privacypane.notice.desc "O DownThemAll também integra a opção Limpar dados pessoais(se disponível).">
+<!ENTITY privacypane.privacynotice.label "Nossa política de privacidade">
+<!ENTITY advancedpane.label "Avançado">
+<!ENTITY advancedpane.multipart.caption "Download Multi-partes">
+<!ENTITY advancedpane.chunks.label "Número máximo de partes por download:">
+<!ENTITY advancedpane.chunksdisabled "Desativado">
+<!ENTITY advancedpane.timeouts.caption "Tempo esgotado para o download">
+<!ENTITY advancedpane.timeout.label "Tempo máximo de inatividade antes do tempo esgotado">
+<!ENTITY advancedpane.seconds "segundos">
+<!ENTITY advancedpane.minute "minutos">
+<!ENTITY advancedpane.minutes "minutos">
+<!ENTITY advancedpane.misc.caption "Opções Miscelâneas">
+<!ENTITY advancedpane.settime.label "Ajustar horário do arquivo de acordo com a última modificação no servidor ou tempo de espera">
+<!ENTITY advancedpane.rememberoneclick.label "Tenha um lembrete do OneClick se isso for aplicado para todas as abas ou para a aba atual">
+<!ENTITY advancedpane.tempfiles.caption "Arquivos temporários">
+<!ENTITY advancedpane.usetemp.label "Salvar partes do download no diretório temporário">
+<!ENTITY advancedpane.tempdir.label "Usar esta pasta:">
+<!ENTITY uipane.label "Interface">
+<!ENTITY uipane.appearance.caption "Aparência">
+<!ENTITY uipane.namesonly.label "Mostrar somente os nomes de arquivos na janela do Gerenciador">
+<!ENTITY uipane.integration.caption "Integração">
+<!ENTITY uipane.downloadwin.label "Adicionar o DownThemAll! para a janela &apos;Salvar Arquivo&apos;">
+<!ENTITY uipane.context.caption "Menu de contexto">
+<!ENTITY uipane.tools.caption "Menu de Ferramentas">
+<!ENTITY uipane.tbbuttons.caption "Botões da Barra de Ferramentas">
+<!ENTITY uipane.compact.label "Usar menu compacto">
+<!ENTITY uipane.hide.label "Ocultar esse menu">
+<!ENTITY uipane.showtooltip.label "Mostrar dicas para os downloads">

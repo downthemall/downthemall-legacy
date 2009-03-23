@@ -1,0 +1,7 @@
+<!ENTITY title.value "Filename conflict!">
+<!ENTITY text.value "Remember this setting:">
+<!ENTITY file.label "Just for this file">
+<!ENTITY session.label "Just for this session">
+<!ENTITY always.label "From now on">
+<!ENTITY overwrite.label "Overwrite existing file">
+<!ENTITY skip.label "Skip/Cancel">

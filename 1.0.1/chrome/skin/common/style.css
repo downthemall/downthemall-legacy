@@ -1,0 +1,182 @@
+@import 'chrome://dta/content/common/bindings.css';
+@import 'chrome://dta-platform/skin/common.css';
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+/* maskbutton */
+maskbutton {
+	-moz-binding: url(chrome://dta/content/dta/maskbutton.xml#maskbutton);
+}
+#maskitems row {
+	-moz-binding: url(chrome://dta/content/dta/maskbutton.xml#maskitem);
+}
+.masktag {
+	text-decoration: underline;
+	cursor:pointer;
+	font-family: "Courier New", Courier, monospace;
+}
+.masktitle {
+	background-color: transparent !important;
+	font-weight: bold;
+	text-align: center;
+	font-size: large;
+	padding-bottom: 3px;
+}
+/* ~maskbutton */
+
+#browsedir {
+	list-style-image: url("chrome://dta/skin/common/browse.png");
+	-moz-appearance: none !important;
+	border: none!important;
+	padding: 2px 0px!important;
+	margin: 0px!important;
+	-moz-image-region: rect(0px,48px,21px,24px) !important;
+}
+
+#browsedir:hover {
+	-moz-image-region: rect(0px,24px,21px,0px) !important;
+}
+
+#browsedir:active {
+	-moz-image-region: rect(0px,72px,21px,48px) !important;
+}
+
+#footer statusbarpanel[class]:hover {
+	text-decoration: underline;
+}
+
+#logo {
+	color: windowText;
+	background: white url(chrome://dta/skin/common/logo.png) no-repeat right top;	
+	min-width: 290px !important;
+	height: 42px !important;
+	overflow: hidden;
+	padding: 3px !important;
+	padding-left: 7px !important;
+	margin: 0 !important;
+}
+#logo[chromedir="rtl"] {
+	background: white url(chrome://dta/skin/common/logo-rtl.png) no-repeat left top;
+}
+dialogheader#logo label {
+	padding: 0;
+}
+dialogheader#logo .dialogheader-title {
+	padding-top: 2px;
+	font-weight: bold;
+	margin-top: auto;
+	margin-bottom: auto;
+	background: transparent left center no-repeat;
+}
+dialogheader#logo.renamingmask .dialogheader-title {
+	padding-left: 30px !important;
+	background-image: url(chrome://dta/skin/select/mask.png) !important;
+}
+
+/* snip */
+
+#frameSelection, listbox.list, #regexbox {
+	margin:0px;
+}
+
+
+#saveas {
+	margin-bottom: 10px; 
+	margin-top: 10px;
+}
+
+#head image:hover {
+	margin-right:1px;
+	
+}
+
+.link, html|*.link {
+	color: blue;
+	text-decoration: underline;
+	cursor: pointer;
+}
+.link:hover, html|*.link:hover {
+	color: red;
+}
+
+.hidegroup {
+	border:0px; margin: 0px; padding: 0px;
+}
+
+#checkcontainer {
+	margin-right: 10px;
+}
+
+.list {
+	overflow: auto;
+}
+
+tree treecols splitter {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  cursor: e-resize;
+  border-color: #ddd;
+  border: 1px solid #ddd;
+  background-color: #ddd;
+  border-width: 0px 0px 0px 1px;
+  min-width: 0px;
+}
+
+#donate {
+	font-style:italic;
+	text-align:right !important;
+	font-size: 9px !important;
+	cursor:pointer;
+}
+
+.toolbarbutton-menu-dropmarker {
+	list-style-image: none;
+}
+
+scrollbarbutton[sbattr="scrollbar-up-bottom"]{
+	display: -moz-box !important;
+	
+}
+
+treechildren::-moz-tree-cell-text(selected) {
+	color: black !important;
+}
+
+treechildren::-moz-tree-row(selected) {
+	background-color: #99CCFF !important;
+	/*-moz-border: none !important;*/
+}
+
+treechildren::-moz-tree-row {
+	min-height: 22px;
+}
+
+treechildren::-moz-tree-image(iconic) {
+	padding-right: 0.5ex;
+}
+
+textbox[readonly], menulist[disabled] {
+  cursor: default !important;
+  background-color: -moz-dialog !important;
+  color: GrayText !important;
+}
+textbox[readonly] html|*.textbox-input {
+  color: GrayText !important;
+	font-style: italic;
+}
+/* foreign theme compat, i.e. Songbird */
+statusbar {
+	-moz-appearance: statusbar;
+	min-height: 22px;	
+}
+statusbarpanel {
+	-moz-appearance: statusbarpanel;
+	-moz-box-align: center;
+	-moz-box-pack: center;
+	height: auto;
+}
+statusbarpanel > label {
+	margin-top: 1px;
+	margin-bottom: 2px;
+}

@@ -1,0 +1,77 @@
+<!ENTITY winstyle "bredd:52em;höjd:42em;">
+<!ENTITY filterspane.label "Filter">
+<!ENTITY listhead1.label "Rubrik">
+<!ENTITY listhead2.label "Filnamnstillägg">
+<!ENTITY filter.label "Filtrerade filtyper">
+<!ENTITY regex.label "Reg. Ut.">
+<!ENTITY useAs.label "Använd som:">
+<!ENTITY imagesf.label "Bildfilter">
+<!ENTITY linksf.label "Länkfilter">
+<!ENTITY add.label "Lägg till nytt filter">
+<!ENTITY highlight.label "Markera filerna som återspeglar de valda filterreglerna">
+<!ENTITY dtacontext2.label "Alternativ">
+<!ENTITY buttonlabelextra2 "Återställ stardardinställningar">
+<!ENTITY dtaPreferences.title "DownThemAll!-alternativ...">
+<!ENTITY manager "dTa!-hanterare">
+<!ENTITY mainpane.label "Allmänt">
+<!ENTITY mainpane.rename.caption "Åtgärder vid namnkonflikt:">
+<!ENTITY mainpane.rename.label "Döp om">
+<!ENTITY mainpane.overwrite.label "Ersätt">
+<!ENTITY mainpane.skip.label "Hoppa över">
+<!ENTITY mainpane.ask.label "Fråga">
+<!ENTITY mainpane.downloads.caption "Filhämtningar">
+<!ENTITY mainpane.concurrent.label "Max antal samtida hämtningar">
+<!ENTITY mainpane.sounderror.label "Spela upp ett ljud vid fel">
+<!ENTITY mainpane.closetab.label "Stäng källfliken när DownThemAll startar">
+<!ENTITY mainpane.alert.caption "Åtgärder vid slutförda filhämtningar:">
+<!ENTITY mainpane.alertboxes.label "Meddela i ett fönster">
+<!ENTITY mainpane.alertslides.label "Meddela med Firefox standardruta">
+<!ENTITY mainpane.alertnone.label "Meddela inte">
+<!ENTITY mainpane.sounddone.label "Spela upp ett ljud när samtliga filhämtningar är slutförda">
+<!ENTITY mainpane.closedta.label "Stäng DownThemAll när alla filer har hämtats">
+<!ENTITY privacypane.label "Sekretess">
+<!ENTITY privacypane.closing.caption "När hanteraren stängs">
+<!ENTITY privacypane.removecompleted.label "Ta bort slutförda hämtningar">
+<!ENTITY privacypane.removecanceled.label "Ta bort avbrutna eller felaktiga hämtningar">
+<!ENTITY privacypane.removeaborted.label "Ta bort ofullständiga hämtningar">
+<!ENTITY privacypane.deletefoldershistory.label "Rensa mapphistorik">
+<!ENTITY privacypane.deletefiltershistory.label "Rensa filterhistorik">
+<!ENTITY privacypane.showlog.label "Visa logg">
+<!ENTITY privacypane.reveallog.label "Visa fil">
+<!ENTITY privacypane.deletelog.label "Radera logg">
+<!ENTITY privacypane.updates.caption "Uppdateringar/Internet">
+<!ENTITY privacypane.information.label "Tillåt dTa att erhålla nyheter, meddelanden samt uppdaterade versioner.">
+<!ENTITY privacypane.statistics.label "Tillåt dTa att skicka anonym anvädningsstatistik">
+<!ENTITY privacypane.dropdowns.caption "Rullande menyer">
+<!ENTITY privacypane.dropdownresults.label "Antal inmatningar att behålla">
+<!ENTITY privacypane.logs.caption "Logg">
+<!ENTITY privacypane.enablelogs.label "Aktivera diagnostisk logg">
+<!ENTITY privacypane.notice.caption "Meddelande">
+<!ENTITY privacypane.notice.desc "DownThemAll samverkar även med det inbyggda Clear Private Data (om tillgänglig).">
+<!ENTITY privacypane.privacynotice.label "Vårt sekretessmeddelande">
+<!ENTITY advancedpane.label "Avancerat">
+<!ENTITY advancedpane.multipart.caption "Uppdelade hämtningar">
+<!ENTITY advancedpane.chunks.label "Max antal delar per hämtning:">
+<!ENTITY advancedpane.chunksdisabled "Avaktiverad">
+<!ENTITY advancedpane.timeouts.caption "Väntetid">
+<!ENTITY advancedpane.timeout.label "Max väntetid innan time-out vid inaktiv anslutning">
+<!ENTITY advancedpane.seconds "sekunder">
+<!ENTITY advancedpane.minute "minut">
+<!ENTITY advancedpane.minutes "minuter">
+<!ENTITY advancedpane.misc.caption "Diverse inställningar">
+<!ENTITY advancedpane.settime.label "Ange serverns senast ändrad-tid som filens skapad-tid">
+<!ENTITY advancedpane.rememberoneclick.label "OneClick behåller inställningarna (Alla flikar/aktuell flik)">
+<!ENTITY advancedpane.tempfiles.caption "Temporära filer">
+<!ENTITY advancedpane.usetemp.label "Spara hämtningsdelarna i en tillfällig mapp">
+<!ENTITY advancedpane.tempdir.label "Använd denna map:">
+<!ENTITY uipane.label "Gränssnitt">
+<!ENTITY uipane.appearance.caption "Utseende">
+<!ENTITY uipane.namesonly.label "Visa endast filnamn i hanterarfönstret">
+<!ENTITY uipane.integration.caption "Integration">
+<!ENTITY uipane.downloadwin.label "Lägg till DownThemAll! i Firefox:s &quot;Spara som&quot;-rutan">
+<!ENTITY uipane.context.caption "Högerklicksmeny">
+<!ENTITY uipane.tools.caption "Verktygsmeny">
+<!ENTITY uipane.tbbuttons.caption "Verktygfältsknappar">
+<!ENTITY uipane.compact.label "Använd kompakt meny">
+<!ENTITY uipane.hide.label "Dölj denna meny">
+<!ENTITY uipane.showtooltip.label "Visa verktygstips">

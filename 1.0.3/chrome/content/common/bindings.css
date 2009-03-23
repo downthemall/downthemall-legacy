@@ -1,0 +1,64 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/* closebox */
+.closer {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#closebox);
+}
+
+.closer .childrenbox {
+	margin-left: 13px;
+}
+
+.closer caption {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#closebox-caption);
+}
+.closer caption:hover {
+	text-decoration: underline;
+}
+.closer caption, .closer caption * {
+	cursor: pointer !important;
+}
+.closer[closed="true"] {
+	border:0px; margin: 0px; padding: 0px;
+}
+.closer caption .caption-icon {
+	height: 10px;
+	width: 10px;
+	background: transparent url("chrome://dta/skin/common/twisty-clsd.png") no-repeat center center;
+	-moz-margin-start: 1px;
+	-moz-margin-end: 3px;
+	padding: 0;
+}
+.closer[closed="true"] caption .caption-icon {
+	background-image: url("chrome://dta/skin/common/twisty-open.png");
+}
+
+/* saveddropdown */
+saveddropdown {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#saveddropdown);
+}
+
+maskbutton toolbarbutton {
+	list-style-image: url("chrome://dta/skin/common/mask.png");
+	-moz-appearance: none !important;
+	border: none!important;
+	padding: 2px 0px!important;
+	margin: 0px!important;
+	-moz-image-region: rect(0px,48px,21px,24px) !important;
+}
+
+maskbutton toolbarbutton:hover {
+	-moz-image-region: rect(0px,24px,21px,0px) !important;
+}
+
+maskbutton toolbarbutton:active {
+	-moz-image-region: rect(0px,72px,21px,48px) !important;
+}
+
+richlistbox.metalinker .item {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#metalinker-item);
+}
+
+hashinput {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#hashinput);
+}

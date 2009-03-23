@@ -1,0 +1,77 @@
+<!ENTITY winstyle "width:52em;height:42em;">
+<!ENTITY filterspane.label "Филтри">
+<!ENTITY listhead1.label "Наслов">
+<!ENTITY listhead2.label "Наставки">
+<!ENTITY filter.label "Филтрирани наставки:">
+<!ENTITY regex.label "Регуларен Израз">
+<!ENTITY useAs.label "Употреби како:">
+<!ENTITY imagesf.label "Филтер за слики и вградени">
+<!ENTITY linksf.label "Филтер на врски">
+<!ENTITY add.label "Додади нов филтер">
+<!ENTITY highlight.label "Означи датотеки проверени од филтрите">
+<!ENTITY dtacontext2.label "Својства">
+<!ENTITY buttonlabelextra2 "Врати во почетна состојба">
+<!ENTITY dtaPreferences.title "Својства на DownThemAll!">
+<!ENTITY manager "Менаџер на dTa">
+<!ENTITY mainpane.label "Главно">
+<!ENTITY mainpane.rename.caption "Ако постои името на датотеката:">
+<!ENTITY mainpane.rename.label "Преименувај">
+<!ENTITY mainpane.overwrite.label "Запиши врз">
+<!ENTITY mainpane.skip.label "Прескокни">
+<!ENTITY mainpane.ask.label "Прашај">
+<!ENTITY mainpane.downloads.caption "Симнувања">
+<!ENTITY mainpane.concurrent.label "Максимален број истовремени симнувања">
+<!ENTITY mainpane.sounderror.label "Пушти звук при грешка">
+<!ENTITY mainpane.closetab.label "Затвори ја изворната ознака при старт на DownThemAll">
+<!ENTITY mainpane.alert.caption "Кога симнувањата се комплетирани:">
+<!ENTITY mainpane.alertboxes.label "Предупредувај ме со предупредувачки рамки">
+<!ENTITY mainpane.alertslides.label "Предупредувај ме користејќи Firefox слајд известувања">
+<!ENTITY mainpane.alertnone.label "Не ме предупредувај">
+<!ENTITY mainpane.sounddone.label "Пушти звук кога сите симнувања се завршени">
+<!ENTITY mainpane.closedta.label "Затвори го DownThemAll кога симнувањата се завршени">
+<!ENTITY privacypane.label "Приватност">
+<!ENTITY privacypane.closing.caption "Кога менаџерскиот прозорецот е затворен">
+<!ENTITY privacypane.removecompleted.label "Отстрани завршени симнувања од списокот">
+<!ENTITY privacypane.removecanceled.label "Отстрани откажани/грешни симнувања од списокот">
+<!ENTITY privacypane.removeaborted.label "Отстрани незапочнати симнувања од списокот">
+<!ENTITY privacypane.deletefoldershistory.label "Отстрани историјат на папките">
+<!ENTITY privacypane.deletefiltershistory.label "Отстрани додатни филтри">
+<!ENTITY privacypane.showlog.label "Прегледај дневник">
+<!ENTITY privacypane.reveallog.label "Прикажи датотека">
+<!ENTITY privacypane.deletelog.label "Избриши дневник">
+<!ENTITY privacypane.updates.caption "Ажурирања/Интернет">
+<!ENTITY privacypane.information.label "Овозможи на dTa да симне најнови вести, пораки и да провери за нова верзија">
+<!ENTITY privacypane.statistics.label "Дозволи на dTa да собира и праќа анонимна статистика за користењето">
+<!ENTITY privacypane.dropdowns.caption "Паѓачки менија">
+<!ENTITY privacypane.dropdownresults.label "Број на записи за чување">
+<!ENTITY privacypane.logs.caption "Дневник на дијагностика">
+<!ENTITY privacypane.enablelogs.label "Овозможи дијагностички дневник">
+<!ENTITY privacypane.notice.caption "Соопштение">
+<!ENTITY privacypane.notice.desc "DownThemAll се интегрира и со вградената опција &quot;Исчисти Приватни Податоци&quot; (ако е достапна)">
+<!ENTITY privacypane.privacynotice.label "Наше Соопштение за Приватноста">
+<!ENTITY advancedpane.label "Напредни">
+<!ENTITY advancedpane.multipart.caption "Симнување на повеќе делови">
+<!ENTITY advancedpane.chunks.label "Максимален број делови по симнување:">
+<!ENTITY advancedpane.chunksdisabled "Оневозможен">
+<!ENTITY advancedpane.timeouts.caption "Неактивност на симнувањето">
+<!ENTITY advancedpane.timeout.label "Максимален период на неактивност пред прекин на симнувањето">
+<!ENTITY advancedpane.seconds "секунди">
+<!ENTITY advancedpane.minute "минута">
+<!ENTITY advancedpane.minutes "минути">
+<!ENTITY advancedpane.misc.caption "Различни подесувања">
+<!ENTITY advancedpane.settime.label "Подеси датотечни времиња на последно изменето време(сервер) или на време на редица">
+<!ENTITY advancedpane.rememberoneclick.label "Дозволи dTa OneClick да запамти дали важи за Сите Табови или за Тековниот Таб">
+<!ENTITY advancedpane.tempfiles.caption "Привремени датотеки">
+<!ENTITY advancedpane.usetemp.label "Зачувај симнати делови во привремената датотека">
+<!ENTITY advancedpane.tempdir.label "Користете ја оваа папка:">
+<!ENTITY uipane.label "Кориснички изглед">
+<!ENTITY uipane.appearance.caption "Изглед">
+<!ENTITY uipane.namesonly.label "Прикажете ги само имињата во менаџерскиот позорец">
+<!ENTITY uipane.integration.caption "Интеграција">
+<!ENTITY uipane.downloadwin.label "Додади го DownThemAll! во &quot;Зачувај Датотека&quot; прозорецот">
+<!ENTITY uipane.context.caption "Контекстно мени">
+<!ENTITY uipane.tools.caption "Мени со алатки">
+<!ENTITY uipane.tbbuttons.caption "Копчиња на менито на алатки">
+<!ENTITY uipane.compact.label "Користи компактно мени">
+<!ENTITY uipane.hide.label "Скриј го ова мени">
+<!ENTITY uipane.showtooltip.label "Прикажи описни алатки за симнувањата">

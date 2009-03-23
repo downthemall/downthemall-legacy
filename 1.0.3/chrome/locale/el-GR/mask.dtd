@@ -1,0 +1,18 @@
+<!ENTITY mask.title "Οδηγίες μετονομασίας">
+<!ENTITY mask.name "Όνομα αρχείου">
+<!ENTITY mask.ext "Επέκταση">
+<!ENTITY mask.url "Βασικό URL">
+<!ENTITY mask.curl "Πλήρες URL">
+<!ENTITY mask.num "Αύξων αριθμός">
+<!ENTITY mask.hh "Ώρες">
+<!ENTITY mask.mm "Λεπτά">
+<!ENTITY mask.ss "Δευτερόλεπτα">
+<!ENTITY mask.d "Ημέρα">
+<!ENTITY mask.m "Μήνας">
+<!ENTITY mask.y "Έτος">
+<!ENTITY mask.subdirs "Υποκατάλογοι URL">
+<!ENTITY mask.text "Περιγραφή δεσμού">
+<!ENTITY mask.refer "URL αναφορέα">
+<!ENTITY mask.qstring "Αλφαριθμητικό επερώτησης">
+<!ENTITY mask.tip "Κάντε κλικ ή σύρετε στη μάσκα μετονομασίας">
+<!ENTITY mask.open.tip "Πίνακας αναφοράς οδηγιών μετονομασίας">

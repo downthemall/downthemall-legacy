@@ -1,0 +1,38 @@
+<!ENTITY tooladd.label "افزودن آدرس">
+<!ENTITY tooladd.tooltip "افزودن نشانی به DownThemAll به صورت دستی">
+<!ENTITY tooldonate.tooltiptext "با کمک مالی به برنامه به بهتر شدن آن کمک کنید.">
+<!ENTITY movetop.label "فرستادن به ابتدای لیست">
+<!ENTITY movebottom.label "فرستادن به انتهای لیست">
+<!ENTITY moveup.label "حرکت به بالا">
+<!ENTITY movedown.label "حرکت به پایین">
+<!ENTITY task.label "آدرس/نام">
+<!ENTITY per.label "درصد">
+<!ENTITY pct.label "پیشرفت">
+<!ENTITY dim.label "اندازه">
+<!ENTITY time.label "زمان مانده">
+<!ENTITY parts.label "بخش ها">
+<!ENTITY speed.label "سرعت">
+<!ENTITY infoURLTitle.value "آدرس لینک :">
+<!ENTITY infoSizeTitle.value "اندازه :">
+<!ENTITY infoMultiple.value "موارد چندگانه">
+<!ENTITY elapsedTitle.value "گذشته :">
+<!ENTITY remainingTitle.value "مانده :">
+<!ENTITY currentSpeedTitle.value "سرعت فعلی :">
+<!ENTITY avgSpeedTitle.value "سرعت میانگین :">
+<!ENTITY path.label "مسیر ذخیره">
+<!ENTITY mask.label "ماسک تغییر نام">
+<!ENTITY hash.label "Checksum">
+<!ENTITY infos.label "اطلاعات دانلود">
+<!ENTITY launch.label "باز کردن فایل">
+<!ENTITY delete.label "پاک کردن فایل (ها)">
+<!ENTITY targetdir.label "باز کردن پوشه">
+<!ENTITY pause.label "مکث">
+<!ENTITY resume.label "ادامه">
+<!ENTITY cancel.label "انصراف">
+<!ENTITY remove.label "پاک کردن دانلودهای انتخاب شده">
+<!ENTITY removeCompleted.label "پاک کردن پایان یافته ها">
+<!ENTITY misc.label "Misc">
+<!ENTITY addchunk.label "افزودن یک بخش">
+<!ENTITY removechunk.label "کم کردن یک بخش">
+<!ENTITY force.label "شروع اجباری">
+<!ENTITY options.caption "گزینه ها">

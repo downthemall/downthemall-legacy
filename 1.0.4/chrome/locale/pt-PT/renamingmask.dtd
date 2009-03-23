@@ -1,0 +1,3 @@
+<!ENTITY title "Modificar mudança de nome da Máscara...">
+<!ENTITY choose.desc "Escolha a mudança de nome da Máscara para as ligações especificadas. É possível utilizar etiquetas especiais para mudar o nome ou então apenas texto.">
+<!ENTITY mask.tip "Os ficheiros seleccionados serão guardados e o nome alterado usando esta máscara">

@@ -1,0 +1,77 @@
+<!ENTITY winstyle "width:52em;height:42em;">
+<!ENTITY filterspane.label "Filter">
+<!ENTITY listhead1.label "Beschreibung">
+<!ENTITY listhead2.label "Endungen">
+<!ENTITY filter.label "Gefilterte Endungen:">
+<!ENTITY regex.label "Regulärer Ausdruck">
+<!ENTITY useAs.label "Benutzen als:">
+<!ENTITY imagesf.label "Grafik-Filter">
+<!ENTITY linksf.label "Link-Filter">
+<!ENTITY add.label "Neuen Filter hinzufügen">
+<!ENTITY highlight.label "Durch Filter kontrollierte Dateien hervorheben">
+<!ENTITY dtacontext2.label "Einstellungen">
+<!ENTITY buttonlabelextra2 "Standard wiederherstellen">
+<!ENTITY dtaPreferences.title "DownThemAll! - Einstellungen">
+<!ENTITY manager "dTa!-Manager">
+<!ENTITY mainpane.label "Allgemein">
+<!ENTITY mainpane.rename.caption "Falls ein Dateiname bereits existiert:">
+<!ENTITY mainpane.rename.label "Umbenennen">
+<!ENTITY mainpane.overwrite.label "Überschreiben">
+<!ENTITY mainpane.skip.label "Überspringen">
+<!ENTITY mainpane.ask.label "Nachfragen">
+<!ENTITY mainpane.downloads.caption "Downloads">
+<!ENTITY mainpane.concurrent.label "Max. Anzahl gleichzeitiger Downloads:">
+<!ENTITY mainpane.sounderror.label "Klang abspielen im Falle eines Fehlers">
+<!ENTITY mainpane.closetab.label "Quell-Tab beim Start von DownThemAll! schließen">
+<!ENTITY mainpane.alert.caption "Wenn Downloads abgeschlossen sind:">
+<!ENTITY mainpane.alertboxes.label "Hinweisfenster einblenden">
+<!ENTITY mainpane.alertslides.label "Benachrichtigungsanzeige von Firefox benutzen">
+<!ENTITY mainpane.alertnone.label "Keine Benachrichtigung anzeigen">
+<!ENTITY mainpane.sounddone.label "Klang abspielen, wenn alle Downloads abgeschlossen sind">
+<!ENTITY mainpane.closedta.label "DownThemAll! schließen, wenn alle Downloads abgeschlossen sind">
+<!ENTITY privacypane.label "Privatsphäre">
+<!ENTITY privacypane.closing.caption "Beim Schließen des Download-Fensters">
+<!ENTITY privacypane.removecompleted.label "Abgeschlossene Downloads entfernen">
+<!ENTITY privacypane.removecanceled.label "Abgebrochene/fehlerhafte Downloads entfernen">
+<!ENTITY privacypane.removeaborted.label "Nicht begonnene Downloads entfernen">
+<!ENTITY privacypane.deletefoldershistory.label "Ordner-Chronik löschen">
+<!ENTITY privacypane.deletefiltershistory.label "Filter-Chronik löschen">
+<!ENTITY privacypane.showlog.label "Protokoll anzeigen">
+<!ENTITY privacypane.reveallog.label "Datei zeigen">
+<!ENTITY privacypane.deletelog.label "Protokoll löschen">
+<!ENTITY privacypane.updates.caption "Updates/Internet">
+<!ENTITY privacypane.information.label "dTa! erlauben, aktuelle Neuigkeiten, Meldungen und Versionsnummern abzurufen">
+<!ENTITY privacypane.statistics.label "dTa! erlauben anonyme Nutzungsdaten zu erheben und zu übertragen">
+<!ENTITY privacypane.dropdowns.caption "Auswahlmenüs">
+<!ENTITY privacypane.dropdownresults.label "Anzahl der zu behaltenden Einträge">
+<!ENTITY privacypane.logs.caption "Diagnoseprotokoll">
+<!ENTITY privacypane.enablelogs.label "Diagnoseprotokoll einschalten">
+<!ENTITY privacypane.notice.caption "Mitteilung">
+<!ENTITY privacypane.notice.desc "DownThemAll! integriert sich auch in die Private Daten Löschen Funktion (falls vorhanden).">
+<!ENTITY privacypane.privacynotice.label "Unsere Datenschutzerklärung">
+<!ENTITY advancedpane.label "Erweitert">
+<!ENTITY advancedpane.multipart.caption "Segmentierter Download">
+<!ENTITY advancedpane.chunks.label "Maximale Anzahl an Segmente pro Download:">
+<!ENTITY advancedpane.chunksdisabled "1 (Deaktiviert)">
+<!ENTITY advancedpane.timeouts.caption "Download-Zeitüberschreitung">
+<!ENTITY advancedpane.timeout.label "Verbindung trennen nach einer max. Inaktivität von">
+<!ENTITY advancedpane.seconds "Sekunden">
+<!ENTITY advancedpane.minute "Minute">
+<!ENTITY advancedpane.minutes "Minuten">
+<!ENTITY advancedpane.misc.caption "Verschiedene Einstellungen">
+<!ENTITY advancedpane.settime.label "Dateizeit auf die Änderungszeit (von Server) oder Zeit des Downloadauftrags setzen">
+<!ENTITY advancedpane.rememberoneclick.label "dTa OneClick soll sich merken, ob es für alle oder nur für das aktuelle Tab gilt">
+<!ENTITY advancedpane.tempfiles.caption "Temporäre Dateien">
+<!ENTITY advancedpane.usetemp.label "Download-Segmente in temporärem Verzeichnis zwischenspeichern">
+<!ENTITY advancedpane.tempdir.label "Dieses Verzeichnis nutzen:">
+<!ENTITY uipane.label "Oberfläche">
+<!ENTITY uipane.appearance.caption "Oberfläche">
+<!ENTITY uipane.namesonly.label "Nur Dateinamen im Manager-Fenster zeigen">
+<!ENTITY uipane.integration.caption "Integration">
+<!ENTITY uipane.downloadwin.label "DownThemAll! im &apos;Datei speichern&apos;-Fenster zeigen">
+<!ENTITY uipane.context.caption "Einträge im Kontextmenü">
+<!ENTITY uipane.tools.caption "Einträge im Extras-Menü">
+<!ENTITY uipane.tbbuttons.caption "Symbolleisten-Schaltflächen">
+<!ENTITY uipane.compact.label "Kompakte Menüdarstellung verwenden">
+<!ENTITY uipane.hide.label "Dieses Menü ausblenden">
+<!ENTITY uipane.showtooltip.label "Download Tooltip anzeigen">

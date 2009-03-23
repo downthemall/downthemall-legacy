@@ -1,0 +1,7 @@
+<!ENTITY title "添加链接">
+<!ENTITY add.value "添加链接">
+<!ENTITY desc.value "请输入下载文件的链接和引用页面(可选)。">
+<!ENTITY desc.batches.value "你也可以使用批量描述符进行批量下载。">
+<!ENTITY examples.value "例子:">
+<!ENTITY help.batches.label "批量下载">
+<!ENTITY help.adding.label "添加链接">

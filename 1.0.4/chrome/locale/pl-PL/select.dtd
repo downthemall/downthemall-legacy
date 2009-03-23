@@ -1,0 +1,15 @@
+<!ENTITY title "DownThemAll! - wybór odnośników">
+<!ENTITY filters.caption "Filtry">
+<!ENTITY additional.caption "Szybkie filtrowanie">
+<!ENTITY additional.tip "Używając przecinków można ustanowić jednocześnie wiele filtrów tekstowych">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY filter.tip "Wprowadź tutaj swój filtr tekstowy! (przykłady w menu rozwijanym)">
+<!ENTITY status.label "Po zaznaczeniu odnośników naciśnij przycisk &quot;Pobierz&quot;">
+<!ENTITY menu.mask.title "Modyfikuj maskę zmiany nazwy">
+<!ENTITY menu.check.label "Zaznacz wybrane elementy">
+<!ENTITY menu.uncheck.label "Odznacz wybrane elementy">
+<!ENTITY menu.toggle.label "Odwróć zaznaczenie">
+<!ENTITY tab.links.label "Odnośniki">
+<!ENTITY tab.pics.label "Grafiki i obiekty osadzone">
+<!ENTITY header.desc.label "Opis">
+<!ENTITY selectfiltered.label "Zaznacz odfiltrowane">

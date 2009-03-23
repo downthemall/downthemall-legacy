@@ -1,0 +1,17 @@
+<!ENTITY start.label "Старт!">
+<!ENTITY start.key "С">
+<!ENTITY queue.label "Очередь">
+<!ENTITY queue.key "ь">
+<!ENTITY cancel.label "Отмена">
+<!ENTITY options.label "Настройки...">
+<!ENTITY dtahelp "Помощь!">
+<!ENTITY url.value "URL:">
+<!ENTITY dest.caption "Сохранять файлы в:">
+<!ENTITY referrer.value "URL перенаправления:">
+<!ENTITY checksum.value "Контрольная сумма (Хэш):">
+<!ENTITY browse.tip "Выбрать папку...">
+<!ENTITY mask.label "Маска переименования">
+<!ENTITY mask.tip "Выбранные файлы будут сохранены и переименованы с помощью этой маски">
+<!ENTITY selectall.label "Выбрать все">
+<!ENTITY selectinv.label "Обратный выбор">
+<!ENTITY selectnone.label "Не выбирать">

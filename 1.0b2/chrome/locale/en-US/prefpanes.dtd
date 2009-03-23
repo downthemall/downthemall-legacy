@@ -1,0 +1,81 @@
+<!ENTITY filterspane.label "Filters">
+<!ENTITY listhead1.label "Caption">
+<!ENTITY listhead2.label "Extensions">
+<!ENTITY filter.label "Filtered extensions:">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY useAs.label "Use this as:">
+<!ENTITY imagesf.label "Pictures and embedded filter">
+<!ENTITY linksf.label "Links filter">
+<!ENTITY add.label "Add new filter">
+<!ENTITY highlight.label "Highlight files checked by filters">
+<!ENTITY dtacontext2.label "Preferences">
+<!ENTITY buttonlabelextra2 "Restore default settings">
+<!ENTITY dtaPreferences.title "DownThemAll! Preferences...">
+<!ENTITY manager "dTa Manager">
+
+<!ENTITY mainpane.label "Main">
+<!ENTITY mainpane.rename.caption "If a filename already exists:">
+<!ENTITY mainpane.rename.label "Rename">
+<!ENTITY mainpane.overwrite.label "Overwrite">
+<!ENTITY mainpane.skip.label "Skip">
+<!ENTITY mainpane.ask.label "Ask">
+<!ENTITY mainpane.downloads.caption "Downloads">
+<!ENTITY mainpane.concurrent.label "Max concurrent downloads:">
+<!ENTITY mainpane.sounderror.label "Play a sound in case of error">
+<!ENTITY mainpane.closetab.label "Close source tab when DownThemAll starts">
+<!ENTITY mainpane.alert.caption "When downloads are completed:">
+<!ENTITY mainpane.alertboxes.label "Alert me using alertboxes">
+<!ENTITY mainpane.alertslides.label "Alert me using slide notifications">
+<!ENTITY mainpane.alertnone.label "Don't alert me">
+<!ENTITY mainpane.sounddone.label "Play a sound when all downloads are complete">
+<!ENTITY mainpane.closedta.label "Close DownThemAll when downloads are completed">
+
+
+<!ENTITY privacypane.label "Privacy">
+<!ENTITY privacypane.closing.caption "When Manager window is closed">
+<!ENTITY privacypane.removecompleted.label "Remove completed downloads">
+<!ENTITY privacypane.removecanceled.label "Remove canceled/erroneous downloads">
+<!ENTITY privacypane.removeaborted.label "Remove unfinished downloads">
+<!ENTITY privacypane.deletefoldershistory.label "Empty Folderlist">
+<!ENTITY privacypane.deletefiltershistory.label "Empty Additional Filters">
+<!ENTITY privacypane.showlog.label "View Log">
+<!ENTITY privacypane.reveallog.label "Show File">
+<!ENTITY privacypane.deletelog.label "Delete Log">
+<!ENTITY privacypane.updates.caption "Updates/Internet">
+<!ENTITY privacypane.information.label "Let dTa download updated news, messages and latest version number">
+<!ENTITY privacypane.statistics.label "Let dTa collect and transfer anonymous usage statistics">
+<!ENTITY privacypane.dropdowns.caption "Dropdown menus">
+<!ENTITY privacypane.dropdownresults.label "Number of entries to keep">
+<!ENTITY privacypane.logs.caption "Diagnostic Log">
+<!ENTITY privacypane.enablelogs.label "Enable diagnostic logging">
+<!ENTITY privacypane.notice.caption "Notice">
+<!ENTITY privacypane.notice.desc "DownThemAll also integrates with the built-in Clear Private Data feature (if available).">
+<!ENTITY privacypane.privacynotice.label "Our Privacy Notice">
+
+<!ENTITY advancedpane.label "Advanced">
+<!ENTITY advancedpane.multipart.caption "Multipart download">
+<!ENTITY advancedpane.chunks.label "Max. number of chunks per download:">
+<!ENTITY advancedpane.chunksdisabled "Disabled">
+<!ENTITY advancedpane.timeouts.caption "Download timeout">
+<!ENTITY advancedpane.timeout.label "Download timeout after ">
+<!ENTITY advancedpane.seconds "seconds">
+<!ENTITY advancedpane.minute "minute">
+<!ENTITY advancedpane.minutes "minutes">
+<!ENTITY advancedpane.misc.caption "Miscellaneous settings">
+<!ENTITY advancedpane.settime.label "Set file times to last modified time (server) or time of queuing">
+<!ENTITY advancedpane.rememberoneclick.label "Have OneClick remember if it applies to All Tabs or Current Tab">
+<!ENTITY advancedpane.tempfiles.caption "Temporary files">
+<!ENTITY advancedpane.usetemp.label "Save download chunks in a temporary directory">
+<!ENTITY advancedpane.tempdir.label "Use this directory:">
+
+<!ENTITY uipane.label "Interface">
+<!ENTITY uipane.appearance.caption "Appearance">
+<!ENTITY uipane.namesonly.label "Show only file names in Manager window">
+<!ENTITY uipane.integration.caption "Integration">
+<!ENTITY uipane.downloadwin.label "Add DownThemAll! to the 'Save File' window">
+<!ENTITY uipane.context.caption "Context menu">
+<!ENTITY uipane.tools.caption "Tools Menu">
+<!ENTITY uipane.smbuttons.caption "Seamonkey Buttons">
+<!ENTITY uipane.compact.label "Use a compact menu">
+<!ENTITY uipane.hide.label "Hide this menu">
+<!ENTITY uipane.showtooltip.label "Show download tooltips">

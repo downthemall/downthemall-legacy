@@ -1,0 +1,17 @@
+<!ENTITY start.label "今すぐ開始!">
+<!ENTITY start.key "s">
+<!ENTITY queue.label "リストへ追加">
+<!ENTITY queue.key "p">
+<!ENTITY cancel.label "キャンセル">
+<!ENTITY options.label "設定">
+<!ENTITY dtahelp "ヘルプ!">
+<!ENTITY url.value "URL">
+<!ENTITY dest.caption "ファイルの保存先:">
+<!ENTITY referrer.value "参照元 URL:">
+<!ENTITY checksum.value "チェックサム(ハッシュ):">
+<!ENTITY browse.tip "保存先のフォルダを参照...">
+<!ENTITY mask.label "別名で保存">
+<!ENTITY mask.tip "選択されたファイルは、名前の変更設定に基づいて別名で保存されます。">
+<!ENTITY selectall.label "すべて選択">
+<!ENTITY selectinv.label "反転して選択">
+<!ENTITY selectnone.label "選択を解除">

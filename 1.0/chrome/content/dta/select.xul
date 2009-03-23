@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ *
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/select/style.css" type="text/css"?>
+
+<!DOCTYPE dialog [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+	%globalDTD;
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
+	%commonDTD;
+	<!ENTITY % selectDTD SYSTEM "chrome://dta/locale/select.dtd">
+	%selectDTD;
+]>
+
+<window
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	title="DownThemAll! - &title;"
+	width="675" height="575"
+	id="DownThemAll"
+	class="selectlinks"
+	onload="Dialog.load();"
+	onunload="Dialog.unload();"
+	persist="width height screenX screenY"
+	style="margin: 0px;"
+>
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
+	<!-- internalFunctions needs overlayFunctions -->
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/common/internalFunctions.js" />
+	<script type="application/javascript;version=1.7" src="chrome://dta/content/dta/select.js" />
+	
+	<script type="application/x-javascript" src="chrome://help/content/contextHelp.js"/>
+
+	<script src="chrome://global/content/nsDragAndDrop.js"/>
+	<script src="chrome://global/content/nsTransferable.js"/>
+
+	<stringbundleset>
+		<stringbundle src="chrome://dta/locale/common.properties"/>
+		<stringbundle src="chrome://dta/locale/select.properties"/>
+	</stringbundleset>
+
+	<keyset>
+		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
+		<key id="kMacEsc" modifiers="accel" key="W" oncommand="self.close();"/>
+		<key modifiers="accel" key="A" oncommand="Dialog.selectAll();"/>
+		<key keycode="VK_RETURN" oncommand="Dialog.download(true);"/>
+		<key keycode="VK_ENTER" oncommand="Dialog.download(true);"/>
+		<key id="kHelp" modifiers="accel" key="H" oncommand="openHelp('introduction','chrome://dta-help/content/help.rdf');"/>
+	</keyset>
+
+	<popupset id="popups">
+		<popup id="popup" onpopupshowing="return Dialog.showPopup();">
+			<menuitem image="chrome://dta/skin/select/check.png" class="menuitem-iconic" id="mcheck" label="&menu.check.label;" oncommand="Dialog.toggleSelection(true);" />
+			<menuitem image="chrome://dta/skin/select/uncheck.png" class="menuitem-iconic" id="muncheck" label="&menu.uncheck.label;" oncommand="Dialog.toggleSelection(false);" />
+			<menuitem image="chrome://dta/skin/select/uncheck2.png" class="menuitem-iconic" id="mtoggle" label="&menu.toggle.label;" oncommand="Dialog.toggleSelection();" />
+			<menuseparator id="msep1" />
+			<menuitem image="chrome://dta/skin/select/modrenaming.png" class="menuitem-iconic" id="mrenaming" label="&mask.label;" oncommand="Dialog.editMask();" />
+			<menuseparator id="msep2" />
+			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" image="chrome://dta/skin/common/selectall.png" oncommand="Dialog.selectAll();" />
+			<menuitem id="selectfiltered" class="menuitem-iconic" label="&selectfiltered.label;" image="chrome://dta/skin/select/selectfiltered.png" oncommand="Dialog.selectFiltered();" />						
+			<menuitem id="invertSelection" class="menuitem-iconic" label="&selectinv.label;" image="chrome://dta/skin/common/selectinv.png" oncommand="Dialog.invertSelection();" />
+			<menuseparator id="msep3" />
+			<menuitem image="chrome://dta/skin/common/openurl.png" id="mopen" crop="center" class="menuitem-iconic" oncommand="Dialog.openSelection();"/>
+		</popup>
+	</popupset>
+
+	<toolbox id="views">
+		<toolbar class="findfiles" chromedir="&locale.dir;">
+			<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&tab.links.label;" onclick="Dialog.changeTab('links');" />
+			<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.pics.label;" onclick="Dialog.changeTab('images');" />
+			<spacer flex="1" id="logo" chromedir="&locale.dir;"/>
+		</toolbar>
+	</toolbox>
+
+	<tree
+		id="urlList"
+		flex="1"
+		context="popup"
+		seltype="multiple"
+		enableColumnDrag="true"
+		style="margin:0px;"
+		editable="true"
+		autostretch="always"
+	>
+		<treecols>
+			<treecol type="checkbox" fixed="true" editable="true" ignoreincolumnpicker="true" />
+			<treecol label="&url.value;" flex="35" crop="right" persist="width hidden" />
+			<splitter class="tree-splitter"/>
+			<treecol label="&header.desc.label;" flex="9" persist="width hidden" />
+			<splitter class="tree-splitter"/>
+			<treecol label="&mask.label;" flex="5" persist="width hidden"/>
+		</treecols>
+		<treechildren/>
+	</tree>
+
+	<hbox style="margin:7px 7px 3px 7px;" >
+		<vbox autostretch="never" flex="1">
+			<caption label="&dest.caption;" />
+			<hbox>
+				<saveddropdown id="directory" preference="directory" flex="1"/>
+				<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" tooltiptext="&browse.tip;" />
+			</hbox>
+		</vbox>
+		<vbox id="renamingbox">
+			<caption label="&mask.label;:" />
+			<hbox>
+				<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
+				<maskbutton/>
+			</hbox>
+		</vbox>
+	</hbox>
+
+	<box style="margin:3px 7px;" orient="vertical" id="filterbox" class="closer" autostretch="never" persist="closed">
+		<caption label="&filters.caption;"/>
+		<grid flex="1" id="checkcontainer">
+			<columns id="checkcontainercols"/>
+			<rows id="checkcontainerrows"/>
+		</grid>
+	</box>
+	<vbox style="margin:3px 7px;" class="closer" id="regexcontainer" closed="true" persist="closed">
+		<caption id="additional" tooltiptext="&additional.tip;" label="&additional.caption;"/>
+		<saveddropdown id="filter" flex="1" tooltiptext="&filter.tip;" preference="filter" allowempty="true" onchange="Dialog.makeSelection();"/>
+		<checkbox id="regex" persist="checked" label="&regex.label;" oncommand="Dialog.makeSelection();" />
+	</vbox>
+
+ 	<hbox align="baseline" style="margin: 2px 7px 4px 7px" >
+		<spacer flex="1"/>
+		<button accesskey="&start.key;" label="&start.label;" id="startbutton" oncommand="Dialog.download(true);" default="true"/>
+		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" oncommand="Dialog.download(false);" />
+		<button label="&cancel.label;" id="cancelbutton" oncommand="self.close();" />
+	</hbox>
+	
+	<statusbar id="footer">
+		<statusbarpanel id="status" flex="1" />
+		<statusbarpanel id="dtaHelp" class="statusbarpanel-iconic-text" label="&dtahelp;" onclick="openHelp('Select','chrome://dta-help/content/help.rdf');" src="chrome://dta/skin/common/help.png" />
+		<statusbarpanel id="options" class="statusbarpanel-iconic-text" label="&options.label;" onclick="DTA_showPreferences();" src="chrome://dta/skin/common/prefs.png" />
+	</statusbar>
+
+</window>

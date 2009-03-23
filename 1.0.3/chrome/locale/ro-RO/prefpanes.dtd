@@ -1,0 +1,77 @@
+<!ENTITY winstyle "width:52em;height:42em;">
+<!ENTITY filterspane.label "Filtre">
+<!ENTITY listhead1.label "Titlu">
+<!ENTITY listhead2.label "Extensii">
+<!ENTITY filter.label "Extensii filtrate:">
+<!ENTITY regex.label "Exp. reg.">
+<!ENTITY useAs.label "Folosește ca:">
+<!ENTITY imagesf.label "Filtru imagini">
+<!ENTITY linksf.label "Filtru legături">
+<!ENTITY add.label "Adaugă un nou filtru">
+<!ENTITY highlight.label "Evidențiează fișierele trecute prin filtre">
+<!ENTITY dtacontext2.label "Preferințe">
+<!ENTITY buttonlabelextra2 "Restaurează setările">
+<!ENTITY dtaPreferences.title "Preferințe DownThemAll!...">
+<!ENTITY manager "Gestionar dTa">
+<!ENTITY mainpane.label "General">
+<!ENTITY mainpane.rename.caption "Dacă un fișier există deja:">
+<!ENTITY mainpane.rename.label "Redenumește">
+<!ENTITY mainpane.overwrite.label "Suprascrie">
+<!ENTITY mainpane.skip.label "Sări peste">
+<!ENTITY mainpane.ask.label "Întreabă">
+<!ENTITY mainpane.downloads.caption "Descărcări">
+<!ENTITY mainpane.concurrent.label "Max descărcări concurente:">
+<!ENTITY mainpane.sounderror.label "Redă un sunet în caz de eroare">
+<!ENTITY mainpane.closetab.label "Închide fila sursă când începe DownThemAll">
+<!ENTITY mainpane.alert.caption "Când descărcările sunt încheiate:">
+<!ENTITY mainpane.alertboxes.label "Atenționează-mă folosind alerte">
+<!ENTITY mainpane.alertslides.label "Atenționează-mă folosind notificări glisante Firefox">
+<!ENTITY mainpane.alertnone.label "Nu mă atenționa">
+<!ENTITY mainpane.sounddone.label "Redă un sunet când toate descărcările s-au încheiat">
+<!ENTITY mainpane.closedta.label "Închide DownThemAll când descărcările s-au încheiat">
+<!ENTITY privacypane.label "Intimitate">
+<!ENTITY privacypane.closing.caption "Când gestionarul este închis">
+<!ENTITY privacypane.removecompleted.label "Elimină descărcările încheiate">
+<!ENTITY privacypane.removecanceled.label "Elimină descărcările anulate">
+<!ENTITY privacypane.removeaborted.label "Elimină descărcările neîncepute">
+<!ENTITY privacypane.deletefoldershistory.label "Șterge lista de dosare">
+<!ENTITY privacypane.deletefiltershistory.label "Șterge filtrele adiționale">
+<!ENTITY privacypane.showlog.label "Vezi jurnalul">
+<!ENTITY privacypane.reveallog.label "Arată fișierul">
+<!ENTITY privacypane.deletelog.label "Șterge jurnalul">
+<!ENTITY privacypane.updates.caption "Actualizări/Internet">
+<!ENTITY privacypane.information.label "Permite dTa să descarce știri actualizate, mesaje și ultima versiune">
+<!ENTITY privacypane.statistics.label "Permite dTa să colecteze și transfere statistici anonime despre utilizare">
+<!ENTITY privacypane.dropdowns.caption "Meniuri coborâtoare">
+<!ENTITY privacypane.dropdownresults.label "Numărul de elemente de păstrat">
+<!ENTITY privacypane.logs.caption "Jurnal pentru diagnosticare">
+<!ENTITY privacypane.enablelogs.label "Activează înregistrările pentru diagnostic">
+<!ENTITY privacypane.notice.caption "Important">
+<!ENTITY privacypane.notice.desc "DownThemAll funcționează cu caracteristica „Curăță datele private” (dacă e disponibilă).">
+<!ENTITY privacypane.privacynotice.label "Declarația noastră cu privire la intimitate">
+<!ENTITY advancedpane.label "Avansat">
+<!ENTITY advancedpane.multipart.caption "Descărcare în mai multe părți">
+<!ENTITY advancedpane.chunks.label "Maxim de părți per descărcare:">
+<!ENTITY advancedpane.chunksdisabled "1 (Dezactivat)">
+<!ENTITY advancedpane.timeouts.caption "Timpul de expirare al descărcărilor">
+<!ENTITY advancedpane.timeout.label "Descărcările expiră după">
+<!ENTITY advancedpane.seconds "secunde">
+<!ENTITY advancedpane.minute "minut">
+<!ENTITY advancedpane.minutes "minute">
+<!ENTITY advancedpane.misc.caption "Setări diverse">
+<!ENTITY advancedpane.settime.label "Setează data fișierului la data ultimei modificări sau la data punerii la coadă">
+<!ENTITY advancedpane.rememberoneclick.label "dTa OneClick să țină minte dacă este aplicat la Toate filele sau la Fila curentă">
+<!ENTITY advancedpane.tempfiles.caption "Fișiere temporare">
+<!ENTITY advancedpane.usetemp.label "Salvează părțile descărcărilor într-un director temporar">
+<!ENTITY advancedpane.tempdir.label "Folosește acest director:">
+<!ENTITY uipane.label "Interfață">
+<!ENTITY uipane.appearance.caption "Aspect">
+<!ENTITY uipane.namesonly.label "Arată numai nume de fișiere în fereastra gestionarului">
+<!ENTITY uipane.integration.caption "Integrare">
+<!ENTITY uipane.downloadwin.label "Adaugă DownThemAll! la fereastra „Salvare fișier”">
+<!ENTITY uipane.context.caption "Meniu contextual">
+<!ENTITY uipane.tools.caption "Meniu unelte">
+<!ENTITY uipane.tbbuttons.caption "Butoane de pe bară">
+<!ENTITY uipane.compact.label "Folosește un meniu compact">
+<!ENTITY uipane.hide.label "Ascunde acest meniu">
+<!ENTITY uipane.showtooltip.label "Arată informații la trecerea cu mausul pe descărcări">

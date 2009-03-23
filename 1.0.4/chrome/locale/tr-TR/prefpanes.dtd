@@ -1,0 +1,77 @@
+<!ENTITY winstyle "genişlik:52em;yükseklik:42em;">
+<!ENTITY filterspane.label "Süzgeçler">
+<!ENTITY listhead1.label "Başlık">
+<!ENTITY listhead2.label "Uzantılar">
+<!ENTITY filter.label "Süzülmüş uzantılar:">
+<!ENTITY regex.label "Düz. İfa.">
+<!ENTITY useAs.label "Bunu böyle kullan:">
+<!ENTITY imagesf.label "Resimler ve gömülü süzgeç">
+<!ENTITY linksf.label "Bağlantı süzgeci">
+<!ENTITY add.label "Yeni süzgeç ekle">
+<!ENTITY highlight.label "Süzgeçler tarafından seçilen dosyaları vurgula">
+<!ENTITY dtacontext2.label "Tercihler">
+<!ENTITY buttonlabelextra2 "Varsayılan ayarları geri yükle">
+<!ENTITY dtaPreferences.title "DownThemAll! Tercihleri...">
+<!ENTITY manager "dTa Yönetici">
+<!ENTITY mainpane.label "Ana Menü">
+<!ENTITY mainpane.rename.caption "Eğer bir dosya zaten varsa:">
+<!ENTITY mainpane.rename.label "Yeniden adlandır">
+<!ENTITY mainpane.overwrite.label "Üzerine yaz">
+<!ENTITY mainpane.skip.label "Atla">
+<!ENTITY mainpane.ask.label "Sor">
+<!ENTITY mainpane.downloads.caption "İndirilenler">
+<!ENTITY mainpane.concurrent.label "Aynı anda en fazla indirme:">
+<!ENTITY mainpane.sounderror.label "Bir hata oluştuğunda ses çal">
+<!ENTITY mainpane.closetab.label "DownThemAll başladığında kaynak sekmeyi kapat">
+<!ENTITY mainpane.alert.caption "İndirmeler tamamlanınca:">
+<!ENTITY mainpane.alertboxes.label "Uyarı kutuları ile beni uyar">
+<!ENTITY mainpane.alertslides.label "Firefox&apos;un saydam bildirileri kullanarak beni uyar">
+<!ENTITY mainpane.alertnone.label "Beni uyarma">
+<!ENTITY mainpane.sounddone.label "Tüm indirmeler tamamlandığında bir ses çal">
+<!ENTITY mainpane.closedta.label "Tüm indirmeler tamamlandığında DownThemAll&apos;ı kapat">
+<!ENTITY privacypane.label "Gizlilik">
+<!ENTITY privacypane.closing.caption "Yönetici penceresi kapatıldığında">
+<!ENTITY privacypane.removecompleted.label "Tamamlanan indirmeleri listeden kaldır">
+<!ENTITY privacypane.removecanceled.label "İptal edilen veya hatalı indirmeleri listeden kaldır">
+<!ENTITY privacypane.removeaborted.label "Başlamayan indirmeleri listeden kaldır">
+<!ENTITY privacypane.deletefoldershistory.label "Dizinlerin geçmişini sil">
+<!ENTITY privacypane.deletefiltershistory.label "Ek süzgeçler geçmişini sil">
+<!ENTITY privacypane.showlog.label "Günlüğü göster">
+<!ENTITY privacypane.reveallog.label "Dosyayı Göster">
+<!ENTITY privacypane.deletelog.label "Günlüğü sil">
+<!ENTITY privacypane.updates.caption "Güncellemeler/Internet">
+<!ENTITY privacypane.information.label "dTa&apos;ın güncel sürüm numarasını, haberleri ve iletileri indirmesine izin ver.">
+<!ENTITY privacypane.statistics.label "dTa&apos;ya anonim kullanım istatistiklerini toplama ve gönderme izni ver">
+<!ENTITY privacypane.dropdowns.caption "Açılan menü">
+<!ENTITY privacypane.dropdownresults.label "Tutulacak giriş sayısı">
+<!ENTITY privacypane.logs.caption "Tanı kaydı">
+<!ENTITY privacypane.enablelogs.label "Tanısal kaydı seçilir kıl">
+<!ENTITY privacypane.notice.caption "Uyarı">
+<!ENTITY privacypane.notice.desc "DownThemAll aynı zamanda firefox&apos;un yerleşik Özel Verileri Temizle özelliği&apos;ni de kullanabilir.">
+<!ENTITY privacypane.privacynotice.label "Gizlilik Uyarımız">
+<!ENTITY advancedpane.label "Gelişmiş">
+<!ENTITY advancedpane.multipart.caption "Çok parçalı indirme">
+<!ENTITY advancedpane.chunks.label "Her indirme için en fazla parça sayısı:">
+<!ENTITY advancedpane.chunksdisabled "Seçilemez">
+<!ENTITY advancedpane.timeouts.caption "İndirme zamanaşımı">
+<!ENTITY advancedpane.timeout.label "Süre sonra indirme zamanaşımı">
+<!ENTITY advancedpane.seconds "saniye">
+<!ENTITY advancedpane.minute "dakika">
+<!ENTITY advancedpane.minutes "dakika">
+<!ENTITY advancedpane.misc.caption "Çeşitli ayarlar">
+<!ENTITY advancedpane.settime.label "Dosya isimlerini son değiştirildiği zamana (sunucudaki) veya kuyruğa atıldığı zamana göre ayarla">
+<!ENTITY advancedpane.rememberoneclick.label "Eğer tüm sekmelere veya varolan sekmeye uygulanıyorsa hatırla">
+<!ENTITY advancedpane.tempfiles.caption "Geçici dosyalar">
+<!ENTITY advancedpane.usetemp.label "İndirme parçalarını geçici bir dizine kaydet">
+<!ENTITY advancedpane.tempdir.label "Bu dizini kullan:">
+<!ENTITY uipane.label "Kullanıcı Arabirimi">
+<!ENTITY uipane.appearance.caption "Görünüm">
+<!ENTITY uipane.namesonly.label "Yönetici penceresinde yalnızca dosya isimlerini göster.">
+<!ENTITY uipane.integration.caption "Bütünleştirme">
+<!ENTITY uipane.downloadwin.label "&apos;Dosya Kaydet&apos; penceresine DownThemAll!&apos;ı ekle">
+<!ENTITY uipane.context.caption "İçerik menüsü">
+<!ENTITY uipane.tools.caption "Araçlar Menüsü">
+<!ENTITY uipane.tbbuttons.caption "Araç Çubuğu Tuşları">
+<!ENTITY uipane.compact.label "Küçük boyutlu menü kullan">
+<!ENTITY uipane.hide.label "Bu menüyü gizle">
+<!ENTITY uipane.showtooltip.label "İndirme ipuçlarını göster">

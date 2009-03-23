@@ -1,0 +1,77 @@
+### package ###
+## general ##
+content	dta	chrome/content/
+content	dta-help	chrome/help/
+skin	dta	classic/1.0 chrome/skin/
+
+locale dta en-US chrome/locale/en-US/
+
+locale dta da-DK chrome/locale/da-DK/
+locale dta de-DE chrome/locale/de-DE/
+locale dta el-GR chrome/locale/el-GR/
+locale dta es-ES chrome/locale/es-ES/
+locale dta fa-IR chrome/locale/fa-IR/
+locale dta fi-FI chrome/locale/fi-FI/
+locale dta fr-FR chrome/locale/fr-FR/
+locale dta hu-HU chrome/locale/hu-HU/
+locale dta it-IT chrome/locale/it-IT/
+locale dta ko-KR chrome/locale/ko-KR/
+locale dta mk-MK chrome/locale/mk-MK/
+locale dta nl-NL chrome/locale/nl-NL/
+locale dta pl-PL chrome/locale/pl-PL/
+locale dta pt-BR chrome/locale/pt-BR/
+locale dta pt-PT chrome/locale/pt-PT/
+locale dta ro-RO chrome/locale/ro-RO/
+locale dta ru-RU chrome/locale/ru-RU/
+locale dta sk-SK chrome/locale/sk-SK/
+locale dta sl-SI chrome/locale/sl-SI/
+locale dta sr-YU chrome/locale/sr-YU/
+locale dta sv-SE chrome/locale/sv-SE/
+locale dta zh-CN chrome/locale/zh-CN/
+
+## platform package ##
+content dta-platform	chrome/content/ platform
+skin	dta-platform	classic/1.0 chrome/skin/
+
+### integration ###
+
+## general ##
+overlay chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager/tooltip.xul
+overlay chrome://dta/content/dta/manager/info.xul chrome://dta/content/dta/manager/tooltip.xul
+# work-around bugs in loadOverlay preventing seamonkey integration otherwise
+overlay chrome://dta/content/preferences/prefs.xul chrome://dta/content/preferences/interfacePane.xul
+style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/integration/style.css
+
+## toolkit ##
+overlay	chrome://mozapps/content/downloads/unknownContentType.xul	chrome://dta/content/integration/saveas.xul
+
+## Firefox / Flock ##
+overlay	chrome://browser/content/browser.xul	chrome://dta/content/integration/firefox.xul
+overlay	chrome://dta/content/integration/firefox.xul chrome://dta/content/integration/elements.xul
+style	chrome://browser/content/browser.xul	chrome://dta/skin/integration/style.css
+# privacy control
+overlay	chrome://browser/content/browser.xul	chrome://dta/content/privacy/overlayBrowser.xul
+overlay chrome://browser/content/preferences/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeUI.xul
+overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeUI.xul
+overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitizeCode.xul
+
+## Seamonkey ##
+overlay	chrome://navigator/content/navigator.xul chrome://dta/content/integration/seamonkey.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+overlay	chrome://dta/content/integration/seamonkey.xul chrome://dta/content/integration/elements.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+overlay chrome://dta/content/preferences/interfacePane.xul chrome://dta/content/preferences/toolbarButtons.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+style	chrome://navigator/content/navigator.xul chrome://dta/skin/integration/style.css application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+
+## Thunderbird ##
+overlay chrome://messenger/content/messenger.xul chrome://dta/content/integration/thunderbird.xul application={3550f703-e582-4d05-9a08-453d09bdfdc6}
+overlay chrome://messenger/content/messageWindow.xul chrome://dta/content/integration/thunderbird.xul application={3550f703-e582-4d05-9a08-453d09bdfdc6}
+overlay	chrome://dta/content/integration/thunderbird.xul chrome://dta/content/integration/elements.xul application={3550f703-e582-4d05-9a08-453d09bdfdc6}
+style	chrome://messenger/content/messenger.xul chrome://dta/skin/integration/style.css application={3550f703-e582-4d05-9a08-453d09bdfdc6}
+style	chrome://messenger/content/messageWindow.xul chrome://dta/skin/integration/style.css application={3550f703-e582-4d05-9a08-453d09bdfdc6}
+
+## Songbird ##
+overlay	chrome://songbird/content/xul/mainScriptsOverlay.xul	chrome://dta/content/integration/songbird.xul application=songbird@songbirdnest.com
+overlay	chrome://dta/content/integration/songbird.xul chrome://dta/content/integration/elements.xul application=songbird@songbirdnest.com
+style	chrome://songbird/content/xul/mainScriptsOverlay.xul	chrome://dta/skin/integration/style.css application=songbird@songbirdnest.com
+style	chrome://dta/content/dta/manager.xul	chrome://dta/skin/common/songbird.css application=songbird@songbirdnest.com
+style	chrome://dta/content/dta/select.xul	chrome://dta/skin/common/songbird.css application=songbird@songbirdnest.com
+overlay chrome://dta/content/preferences/interfacePane.xul chrome://dta/content/preferences/toolbarButtons.xul application=songbird@songbirdnest.com

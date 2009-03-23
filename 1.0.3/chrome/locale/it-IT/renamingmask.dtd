@@ -1,0 +1,3 @@
+<!ENTITY title "Modifica la maschera di rinomina...">
+<!ENTITY choose.desc "Imposta la maschera di rinomina per il/i link specificati. È possibile usare degli speciali tag di rinomina o testo semplice.">
+<!ENTITY mask.tip "I file selezionati saranno salvati e rinominati usando questa maschera.">

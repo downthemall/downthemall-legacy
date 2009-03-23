@@ -1,0 +1,18 @@
+<!ENTITY mask.title "Преименувам Таговете ( виж &apos;tags&apos; )">
+<!ENTITY mask.name "Име на файла">
+<!ENTITY mask.ext "Добавка">
+<!ENTITY mask.url "Базов адрес">
+<!ENTITY mask.curl "Цялостен адрес">
+<!ENTITY mask.num "Прогресивен номер">
+<!ENTITY mask.hh "Часове">
+<!ENTITY mask.mm "Минути">
+<!ENTITY mask.ss "Секунди">
+<!ENTITY mask.d "Ден">
+<!ENTITY mask.m "Месец">
+<!ENTITY mask.y "Година">
+<!ENTITY mask.subdirs "URL под-директории">
+<!ENTITY mask.text "Описание на линка">
+<!ENTITY mask.refer "Отнасящи се адреси (виж &apos;referrer&apos;)">
+<!ENTITY mask.qstring "Запитващ низ">
+<!ENTITY mask.tip "Кликни или издърпай до преименуващият &apos;mask&apos;">
+<!ENTITY mask.open.tip "Преименуващи тагове - Справочна таблица">

@@ -1,0 +1,3 @@
+<!ENTITY title "Sửa đổi tên Mask">
+<!ENTITY choose.desc "Chọn đổi tên Mask cho những liên kết được chỉ ra. Có thể sử dụng các Tag đặc biệt để đổi tên hoặc chỉ cần các ký tự đơn giản">
+<!ENTITY mask.tip "Những tập tin được chọn sẽ được lưu và đổi tên theo Mask này">

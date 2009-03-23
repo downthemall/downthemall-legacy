@@ -1,0 +1,15 @@
+<!ENTITY title "DownThemAll! - Foretag dit valg">
+<!ENTITY filters.caption "Filtre">
+<!ENTITY additional.caption "Hurtig filtrering">
+<!ENTITY additional.tip "Tekstfilter: du kan angive flere tekstfiltre på samme tid ved at adskille den med komma.">
+<!ENTITY regex.label "Regulært udtryk">
+<!ENTITY filter.tip "Indtast dit tekstfilter her! (eksempler findes i dropdownmenuen)">
+<!ENTITY status.label "Efter du har valgt links, klik Start!">
+<!ENTITY menu.mask.title "Rediger mønster til omdøbning">
+<!ENTITY menu.check.label "Tjek valgte artikler">
+<!ENTITY menu.uncheck.label "Afmarker valgte artikler">
+<!ENTITY menu.toggle.label "Skift status for check af dit valg">
+<!ENTITY tab.links.label "Links">
+<!ENTITY tab.pics.label "Billeder og indlejrede">
+<!ENTITY header.desc.label "Beskrivelse">
+<!ENTITY selectfiltered.label "Vælg filterede">

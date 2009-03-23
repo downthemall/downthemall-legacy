@@ -1,0 +1,7 @@
+<!ENTITY title.value "Сукоб имена датотека!">
+<!ENTITY text.value "Запамти следећа подешавања:">
+<!ENTITY file.label "Само за ову датотеку">
+<!ENTITY session.label "Само током ове сесије">
+<!ENTITY always.label "Од сада па надаље">
+<!ENTITY overwrite.label "Препиши преко постојећих датотека">
+<!ENTITY skip.label "Прескочи/Откажи">

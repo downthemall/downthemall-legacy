@@ -1,0 +1,40 @@
+#dta-turbo-button {
+	list-style-image: url("chrome://dta/skin/common/tools.png");
+	-moz-image-region: rect(0px,59px,25px,40px);
+}
+#dta-turbo-button:hover {
+	-moz-image-region: rect(0px,79px,25px,60px);
+}
+
+#dta-button {
+	list-style-image: url("chrome://dta/skin/common/tools.png");
+	-moz-image-region: rect(0px,20px,25px,0px);
+}
+
+#dta-button:hover {
+	-moz-image-region: rect(0px,40px,25px,20px);
+}
+
+#dta-manager-button {
+	list-style-image: url("chrome://dta/skin/common/tools.png");
+	-moz-image-region: rect(0px,104px,24px,80px);
+}
+
+#dta-manager-button:hover {
+	-moz-image-region: rect(0px,128px,24px,104px);
+}
+
+toolbar[iconsize="small"] #dta-manager-button {
+	list-style-image: url("chrome://dta/skin/common/box.png");
+	-moz-image-region: auto !important;
+}
+
+toolbar[iconsize="small"] #dta-turbo-button {
+	list-style-image: url("chrome://dta/skin/common/turbo.png");
+	-moz-image-region: auto !important;
+}
+
+toolbar[iconsize="small"] #dta-button {
+	list-style-image: url("chrome://dta/skin/common/dta.png");
+	-moz-image-region: auto !important;
+}

@@ -1,0 +1,10 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+.selectlinks .toolbarbuttonDown {
+	border-width: 0px !important;
+}
+
+.downlinks {
+	width:780px;
+	height:450px;
+}
