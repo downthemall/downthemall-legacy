@@ -1,0 +1,15 @@
+<!ENTITY title "انتخاب کنید">
+<!ENTITY filters.caption "فیلترها">
+<!ENTITY additional.caption "فیلترینگ سریع">
+<!ENTITY additional.tip "فیلتر متنی : شما می توانید با استفاده از کاما از چند فیلتنر متنی به صورت همزمان استفاده کنید.">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY filter.tip "فیلترهای متنی خود را اینجا بنویسید!(نمونه ها در منوی پایین افتادنی)">
+<!ENTITY status.label "پس از انتخاب لینک ها روی شروع کلیک کنید!">
+<!ENTITY menu.mask.title "اصلاح برچسب تغییر نام">
+<!ENTITY menu.check.label "تیک زدن موارد انتخاب شده">
+<!ENTITY menu.uncheck.label "خارج کردن موارد انتخاب شده از انتخاب ها">
+<!ENTITY menu.toggle.label "تغییر وضعیت انتخاب شده ها">
+<!ENTITY tab.links.label "لینک ها">
+<!ENTITY tab.pics.label "تصاویر و فایل های جاسازی شده">
+<!ENTITY header.desc.label "توضیح">
+<!ENTITY selectfiltered.label "انتخاب فیلتر شده ها">

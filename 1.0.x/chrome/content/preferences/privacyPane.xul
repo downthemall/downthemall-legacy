@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" flex="1">
+
+	<prefpane
+		id="panePrivacy"
+		label="&privacypane.label;"
+		onpaneload="Privacy.load();"
+		orient="vertical"
+		helpURI="chrome://dta-help/content/help.rdf"
+		helpTopic="Preferences_Privacy"		
+	>
+		<preferences>
+		  <preference id="dtarmcomp" name="extensions.dta.removecompleted" type="bool"/>
+		  <preference id="dtarmcanc" name="extensions.dta.removecanceled" type="bool"/>
+		  <preference id="dtarmabort" name="extensions.dta.removeaborted" type="bool"/>
+		  <preference id="dtadonation" name="extensions.dta.infophrases" type="bool" />
+			<preference id="dtastatistics" name="extensions.dta.statistics" type="bool" />
+		  <preference id="dtadump" name="extensions.dta.logging" type="bool" />
+		  <preference id="dtahistory" name="extensions.dta.history" type="int" />
+		</preferences>
+		
+		<grid>
+			<columns><column flex="3"/><column flex="2"/></columns>
+			<rows>
+				<row>
+					<groupbox>
+						<caption id="closing" label="&privacypane.closing.caption;" />
+						<checkbox id="removecompleted" label="&privacypane.removecompleted.label;" preference="dtarmcomp" />
+						<checkbox id="removecanceled" label="&privacypane.removecanceled.label;" preference="dtarmcanc" />
+						<checkbox id="removeaborted" label="&privacypane.removeaborted.label;" preference="dtarmabort" />
+					</groupbox>
+
+					<groupbox>
+						<caption id="dtaddown" label="&privacypane.dropdowns.caption;"/>
+						<hbox>
+							<label value="&privacypane.dropdownresults.label;" id="history1" />
+							<spacer flex="1"/>
+							<menulist id="history" preference="dtahistory" >
+								<menupopup>
+									<menuitem label="0" value="0"/>
+									<menuitem label="1" value="1"/>
+									<menuitem label="2" value="2"/>
+									<menuitem label="3" value="3"/>
+									<menuitem label="4" value="4"/>
+									<menuitem label="5" value="5"/>
+									<menuitem label="6" value="6"/>
+									<menuitem label="7" value="7"/>
+									<menuitem label="8" value="8"/>
+									<menuitem label="9" value="9"/>
+									<menuitem label="10" value="10"/>
+								</menupopup>
+							</menulist>
+						</hbox>
+						<hbox align="right">
+							<button id="butFoldDel" label="&privacypane.deletefoldershistory.label;" oncommand="Privacy.delDirectories();" />
+							<button id="butFiltDel" label="&privacypane.deletefiltershistory.label;" oncommand="Privacy.delFilters();" />
+						</hbox>
+					</groupbox>
+				</row>
+			</rows>
+		</grid>
+		<groupbox orient="horizontal">
+			<caption label="&privacypane.logs.caption;"/>
+			<checkbox label="&privacypane.enablelogs.label;" preference="dtadump"/>
+			<spacer flex="1"/>
+			<button id="butShowLog" label="&privacypane.showlog.label;" oncommand="Privacy.showLog();" />
+			<button id="butRevealLog" label="&privacypane.reveallog.label;" oncommand="Privacy.revealLog();" />
+			<button id="butDelLog" label="&privacypane.deletelog.label;" oncommand="Privacy.deleteLog();" />
+		</groupbox>
+		
+		<!-- We don't do any of these at the moment
+		<groupbox>
+			<caption label="&privacypane.updates.caption;"/>
+			<checkbox id="infoAndDonation" 
+				label="&privacypane.information.label;"
+				preference="dtadonation" />
+			<checkbox id="infoAndDonation" 
+				label="&privacypane.statistics.label;"
+				preference="dtastatistics" />				
+		</groupbox> -->
+		
+		<groupbox>
+			<caption label="&privacypane.notice.caption;"/>
+			<description value="&privacypane.notice.desc;"/>
+			<label style="color: blue; text-decoration: underline;" value="&privacypane.privacynotice.label;" onclick="Privacy.showNotice();"/>
+		</groupbox>
+	</prefpane>
+</overlay>

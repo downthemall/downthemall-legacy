@@ -1,0 +1,38 @@
+<!ENTITY tooladd.label "Dodaj URL(je)">
+<!ENTITY tooladd.tooltip "Ročno dodaj URL v PrenesiVse">
+<!ENTITY tooldonate.tooltiptext "Lahko nam pomagate narediti razširitev PrenesiVse še boljšo. Razmislite o manjši donaciji!">
+<!ENTITY movetop.label "Na vrh">
+<!ENTITY movebottom.label "Na dno">
+<!ENTITY moveup.label "Navzgor">
+<!ENTITY movedown.label "Navzdol">
+<!ENTITY task.label "URL/ime">
+<!ENTITY per.label "odstotkov">
+<!ENTITY pct.label "Napredek">
+<!ENTITY dim.label "Mera">
+<!ENTITY time.label "Pribl. čas">
+<!ENTITY parts.label "Deli">
+<!ENTITY speed.label "Hitrost">
+<!ENTITY infoURLTitle.value "Od:">
+<!ENTITY infoSizeTitle.value "Velikost:">
+<!ENTITY infoMultiple.value "Več kosov">
+<!ENTITY elapsedTitle.value "Pretečeni čas:">
+<!ENTITY remainingTitle.value "Preostali čas:">
+<!ENTITY currentSpeedTitle.value "Trenutna hitrost:">
+<!ENTITY avgSpeedTitle.value "Povprečna hitrost:">
+<!ENTITY path.label "Shrani pot">
+<!ENTITY mask.label "Maska preimenovanja">
+<!ENTITY hash.label "Kontrolna vsota">
+<!ENTITY infos.label "Podatki o prenosu">
+<!ENTITY launch.label "Odpri datoteko">
+<!ENTITY delete.label "Izbriši datoteke">
+<!ENTITY targetdir.label "Odpri ciljno mapo">
+<!ENTITY pause.label "Prekini">
+<!ENTITY resume.label "Nadaljuj">
+<!ENTITY cancel.label "Prekliči">
+<!ENTITY remove.label "Odstrani s seznama">
+<!ENTITY removeCompleted.label "Odstrani dokončana opravila">
+<!ENTITY misc.label "Razno">
+<!ENTITY addchunk.label "Dodaj košček">
+<!ENTITY removechunk.label "Odstrani košček">
+<!ENTITY force.label "Vsili začetek">
+<!ENTITY options.caption "Možnosti">

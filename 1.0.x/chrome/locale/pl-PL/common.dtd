@@ -1,0 +1,17 @@
+<!ENTITY start.label "Pobierz">
+<!ENTITY start.key "R">
+<!ENTITY queue.label "Kolejka">
+<!ENTITY queue.key "K">
+<!ENTITY cancel.label "Anuluj">
+<!ENTITY options.label "Ustawienia">
+<!ENTITY dtahelp "Pomoc">
+<!ENTITY url.value "Adres URL:">
+<!ENTITY dest.caption "Zapisz pliki w:">
+<!ENTITY referrer.value "Powiązany adres URL:">
+<!ENTITY checksum.value "Suma kontrolna (hash):">
+<!ENTITY browse.tip "Znajdź katalog docelowy">
+<!ENTITY mask.label "Maska">
+<!ENTITY mask.tip "Wybrane pliki zostaną zapisane ze zmienioną nazwą wg. tej maski">
+<!ENTITY selectall.label "Zaznacz wszystko">
+<!ENTITY selectinv.label "Odwróć zaznaczenie">
+<!ENTITY selectnone.label "Odznacz wszystko">

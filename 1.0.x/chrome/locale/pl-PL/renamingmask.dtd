@@ -1,0 +1,3 @@
+<!ENTITY title "Modyfikuj maskę zmiany nazwy">
+<!ENTITY choose.desc "Wybierz maskę zmiany nazwy dla określonego odnośnika(ów). Można używać specjalnych znaczników zmiany nazwy lub prostego tekstu.">
+<!ENTITY mask.tip "Zaznaczone pliki zostaną zapisane ze zmienionymi nazwami wg tej maski">

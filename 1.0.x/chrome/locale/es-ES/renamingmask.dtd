@@ -1,0 +1,3 @@
+<!ENTITY title "Modificar máscara de renombrado...">
+<!ENTITY choose.desc "Elija la máscara de renombrado para el enlace o enlaces especificados. Puede usar etiquetas especiales de renombrado o sólo texto simple.">
+<!ENTITY mask.tip "Los archivos seleccionados se guardarán y renombrarán según esta máscara">

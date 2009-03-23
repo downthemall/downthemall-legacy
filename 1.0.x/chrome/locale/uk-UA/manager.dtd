@@ -1,0 +1,38 @@
+<!ENTITY tooladd.label "Додати адресу">
+<!ENTITY tooladd.tooltip "">
+<!ENTITY tooldonate.tooltiptext "Ви можете допомогти зробити DownThemAll краще. Розгляньте можливість невеличкої пожертви!">
+<!ENTITY movetop.label "">
+<!ENTITY movebottom.label "">
+<!ENTITY moveup.label "">
+<!ENTITY movedown.label "">
+<!ENTITY task.label "">
+<!ENTITY per.label "Відсотки">
+<!ENTITY pct.label "Виконання">
+<!ENTITY dim.label "Розмір">
+<!ENTITY time.label "Залишилось часу">
+<!ENTITY parts.label "Частини">
+<!ENTITY speed.label "Швидкість">
+<!ENTITY infoURLTitle.value "">
+<!ENTITY infoSizeTitle.value "">
+<!ENTITY infoMultiple.value "">
+<!ENTITY elapsedTitle.value "">
+<!ENTITY remainingTitle.value "">
+<!ENTITY currentSpeedTitle.value "">
+<!ENTITY avgSpeedTitle.value "">
+<!ENTITY path.label "Шлях збереження">
+<!ENTITY mask.label "Маска переіменування">
+<!ENTITY hash.label "">
+<!ENTITY infos.label "Інформація про завантаження">
+<!ENTITY launch.label "Відкрити файл">
+<!ENTITY delete.label "">
+<!ENTITY targetdir.label "Відкрити теку призначення">
+<!ENTITY pause.label "Пауза">
+<!ENTITY resume.label "Старт">
+<!ENTITY cancel.label "Скасувати">
+<!ENTITY remove.label "Видалити зі списку">
+<!ENTITY removeCompleted.label "Видалити завершені завантаження">
+<!ENTITY misc.label "">
+<!ENTITY addchunk.label "Додати частину">
+<!ENTITY removechunk.label "Видалити частину">
+<!ENTITY force.label "">
+<!ENTITY options.caption "">

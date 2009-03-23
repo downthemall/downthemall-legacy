@@ -1,0 +1,17 @@
+<!ENTITY start.label "Старт!">
+<!ENTITY start.key "с">
+<!ENTITY queue.label "У чергу!">
+<!ENTITY queue.key "ч">
+<!ENTITY cancel.label "Скасувати">
+<!ENTITY options.label "Налаштування...">
+<!ENTITY dtahelp "Допомога!">
+<!ENTITY url.value "Адреса:">
+<!ENTITY dest.caption "Тека збереження файлів:">
+<!ENTITY referrer.value "Адреса переспрямування:">
+<!ENTITY checksum.value "">
+<!ENTITY browse.tip "Обрати теку завантаження...">
+<!ENTITY mask.label "Маска перейменування">
+<!ENTITY mask.tip "За допомогою цієї маски обрані файли будуть перейменовані та збережені">
+<!ENTITY selectall.label "Обрати усе">
+<!ENTITY selectinv.label "Зворотній вибір">
+<!ENTITY selectnone.label "">

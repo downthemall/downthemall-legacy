@@ -1,0 +1,77 @@
+<!ENTITY winstyle "width:55em;height:45em;">
+<!ENTITY filterspane.label "فیلترها">
+<!ENTITY listhead1.label "عنوان">
+<!ENTITY listhead2.label "پسوندها">
+<!ENTITY filter.label "پسوندهای فیلتر شده:">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY useAs.label "استفاده به عنوان:">
+<!ENTITY imagesf.label "فیلتر تصاویر و فایل های جاسازی شده">
+<!ENTITY linksf.label "فیلتر لینک ها">
+<!ENTITY add.label "افزودن فیلتر جدید">
+<!ENTITY highlight.label "رنگی کردن فایل های انتخاب شده توسط فیلترها">
+<!ENTITY dtacontext2.label "تنظیمات">
+<!ENTITY buttonlabelextra2 "بازگردانی تنظیمات پیش فرض">
+<!ENTITY dtaPreferences.title "تنظیمات !DownThemAll...">
+<!ENTITY manager "مدیریت dTa">
+<!ENTITY mainpane.label "اصلی">
+<!ENTITY mainpane.rename.caption "وقتی نام فایل از پیش موجود است:">
+<!ENTITY mainpane.rename.label "تغییر نام">
+<!ENTITY mainpane.overwrite.label "باز نویسی">
+<!ENTITY mainpane.skip.label "پرش">
+<!ENTITY mainpane.ask.label "پرسیدن">
+<!ENTITY mainpane.downloads.caption "دانلودها">
+<!ENTITY mainpane.concurrent.label "بیشترین تعداد دانلودهای همزمان:">
+<!ENTITY mainpane.sounderror.label "پخش صدا هنگام دریافت خطا">
+<!ENTITY mainpane.closetab.label "بستن تبی که از آن دانلود می شود پس از شروع DownThemAl">
+<!ENTITY mainpane.alert.caption "هنگام به پایان رسیدن دانلودها:">
+<!ENTITY mainpane.alertboxes.label "اطلاع دادن با صفحه های هشدار">
+<!ENTITY mainpane.alertslides.label "اطلاع دادن با صفحه هشدار اسلاید مانند فایرفاکس">
+<!ENTITY mainpane.alertnone.label "هشدار نده">
+<!ENTITY mainpane.sounddone.label "پخش صدا پس از پایان یافتن همه دانلودها">
+<!ENTITY mainpane.closedta.label "بستن DownThemAll وقتی دانلودها به پایان رسیدند">
+<!ENTITY privacypane.label "حریم خصوصی">
+<!ENTITY privacypane.closing.caption "پس از بسته شدن پنجره مدیریت">
+<!ENTITY privacypane.removecompleted.label "پاک کردن دانلودهای به پایان رسیده از لیست">
+<!ENTITY privacypane.removecanceled.label "پاک کردن دانلودهای لغو شده یا دارای خطا از لیست">
+<!ENTITY privacypane.removeaborted.label "پاک کردن دانلودهای به پایان نرسیده">
+<!ENTITY privacypane.deletefoldershistory.label "خالی کردن لیست پوشه ها">
+<!ENTITY privacypane.deletefiltershistory.label "پاک کردن فیلترهای اضافی">
+<!ENTITY privacypane.showlog.label "نمایش گزارش">
+<!ENTITY privacypane.reveallog.label "نمایش فایل">
+<!ENTITY privacypane.deletelog.label "پاک کردن گزارش">
+<!ENTITY privacypane.updates.caption "به روز رسانی/اینترنت">
+<!ENTITY privacypane.information.label "دادن مجوز به dTa برای دانلود آخرین اخبار،پیام ها و شماره آخرین نسخه">
+<!ENTITY privacypane.statistics.label "دادن مجوز به dTa برای جمع آوری آمار استفاده به صورت ناشناس">
+<!ENTITY privacypane.dropdowns.caption "منوهای پایین افتادنی">
+<!ENTITY privacypane.dropdownresults.label "تعداد موارد ذخیره شده">
+<!ENTITY privacypane.logs.caption "گزارش تشخیص">
+<!ENTITY privacypane.enablelogs.label "فعال سازی گزارش تشخیص">
+<!ENTITY privacypane.notice.caption "توجه">
+<!ENTITY privacypane.notice.desc "همچنین گزینه پاک کردن اطلاعات DownThemAll به پنجره پاک کردن اطلاعات شخصی فایرفاکس افزوده می شود.">
+<!ENTITY privacypane.privacynotice.label "نوشته حریم خصوصی">
+<!ENTITY advancedpane.label "پیشرفته">
+<!ENTITY advancedpane.multipart.caption "دانلود چند بخشی">
+<!ENTITY advancedpane.chunks.label "بیشترین تعداد بخش ها برای هر دانلود:">
+<!ENTITY advancedpane.chunksdisabled "غیر فعال">
+<!ENTITY advancedpane.timeouts.caption "پایان وقت دانلود">
+<!ENTITY advancedpane.timeout.label "پایان زمان دانلود پس از">
+<!ENTITY advancedpane.seconds "ثانیه">
+<!ENTITY advancedpane.minute "دقیقه">
+<!ENTITY advancedpane.minutes "دقیقه">
+<!ENTITY advancedpane.misc.caption "دیگر تنظیمات">
+<!ENTITY advancedpane.settime.label "تنظیم زمان فایل ها به زمان آخرین تغییر (سرور) یا زمان افزوده شدن به لیست دانلود">
+<!ENTITY advancedpane.rememberoneclick.label "dTa OneClick به خاطر بسپارد که روی تب فعلی اعمال شده یا روی همه تب ها">
+<!ENTITY advancedpane.tempfiles.caption "فایل های موقت">
+<!ENTITY advancedpane.usetemp.label "ذخیره بخش های دانلودها در یک پوشه موقت">
+<!ENTITY advancedpane.tempdir.label "استفاده از این پوشه :">
+<!ENTITY uipane.label "واسط کاربری">
+<!ENTITY uipane.appearance.caption "نما">
+<!ENTITY uipane.namesonly.label "فقط نام فایل ها را در پنجره دانلود نمایش بده">
+<!ENTITY uipane.integration.caption "ترکیب با فایرفاکس">
+<!ENTITY uipane.downloadwin.label "افزودن !DownThemAll به پنجره &apos;ذخیره فایل&apos; فایرفاکس">
+<!ENTITY uipane.context.caption "منوی کلیک راست">
+<!ENTITY uipane.tools.caption "منوی ابزارها">
+<!ENTITY uipane.tbbuttons.caption "دکمه های نوار ابزار">
+<!ENTITY uipane.compact.label "استفاده از منوی فشرده">
+<!ENTITY uipane.hide.label "پنهان کردن این منو">
+<!ENTITY uipane.showtooltip.label "نمایش tooltip های دانلود">
