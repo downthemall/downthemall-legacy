@@ -1929,7 +1929,7 @@ QueueItem.prototype = {
 			 return;
 		}
 		this._autoRetryTime = Utils.getTimestamp();
-		Debug.logString("marked auto-retry: " + d);
+		Debug.logString("marked auto-retry: " + this);
 		this.save();
 	},
 	autoRetry: function QI_autoRetry() {
