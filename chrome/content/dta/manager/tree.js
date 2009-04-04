@@ -368,6 +368,15 @@ var Tree = {
 		this._removeJump(delta - this._downloads.length, last);
 	},
 	removeCompleted: function T_removeCompleted() {
+		if (Prefs.confirmRemoveCompleted) {
+			let res = Prompts.confirm(window, _('removetitle'), _('removecompletedquestion'), Prompts.YES, Prompts.NO, null, 0, false, _('removecheck'));
+			if (res.checked) {
+				Preferences.setExt('confirmremovecompleted', false);
+			}
+			if (res.button) {
+				return;
+			}
+		}
 		this._removeCompleted(false);
 	},
 	removeDupes: function() {
