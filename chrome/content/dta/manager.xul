@@ -204,44 +204,46 @@
 			  </toolbar>
 			</toolbox>
 			
-			<tree
-				id="downloads"
-				flex="1"
-				hidecolumnpicker="false"
-				context="popup"
-				seltype="multiple"
-				enableColumnDrag="true"
-				style="margin:0px;"
-				ondblclick="FileHandling.openFile();"
-				onselect="Tree.selectionChanged();"
-				onmousemove="Tree.hovering(event);"
-				ondraggesture="if (event.originalTarget.localName == 'treechildren') nsDragAndDrop.startDrag(event, Tree);"
-				chromedir="&locale.dir;"
-			>
-				<treecols>
-					<treecol id="task" label="&task.label;" ordinal="1" flex="30" crop="center" persist="width ordinal hidden"/>
-					<splitter class="tree-splitter"/>
-					<treecol id="pct" label="&pct.label;" ordinal="2" type="progressmeter" flex="20" persist="width ordinal hidden"/>
-					<splitter class="tree-splitter"/>
-					<treecol id="per" label="&per.label;" ordinal="3" flex="4" persist="width ordinal hidden"/>
-					<splitter class="tree-splitter"/>
-					<treecol id="dim" label="&dim.label;" ordinal="4" flex="10" persist="width ordinal hidden"/>
-					<splitter class="tree-splitter"/>
-					<treecol id="status" label="&time.label;" ordinal="5" flex="7" persist="width ordinal hidden"/>
-					<splitter class="tree-splitter"/>
-					<treecol id="speed" label="&speed.label;" ordinal="6" flex="7" persist="width ordinal hidden"/>
-					<splitter class="tree-splitter"/>
-					<treecol id="parts" label="&parts.label;" ordinal="7" flex="4" hidden="true" persist="width ordinal hidden" style="text-align:center;" />
-					<splitter class="tree-splitter"/>
-					<treecol id="mask" label="&mask.label;" ordinal="8" hidden="true" crop="left" flex="8" persist="width ordinal hidden" />
-					<splitter class="tree-splitter"/>
-					<treecol id="path" label="&path.label;" ordinal="9" hidden="true" crop="center" flex="10" persist="width ordinal hidden" />
-					<splitter class="tree-splitter"/>
-					<treecol id="hash" label="&hash.label;" ordinal="10" hidden="true" flex="6" persist="width ordinal hidden"/>
-				</treecols>
-				<treechildren tooltip="tooltip">
-				</treechildren>
-			</tree>			
+			<notificationbox id="notifications" flex="1" dir="reverse">
+				<tree
+					id="downloads"
+					flex="1"
+					hidecolumnpicker="false"
+					context="popup"
+					seltype="multiple"
+					enableColumnDrag="true"
+					style="margin:0px;"
+					ondblclick="FileHandling.openFile();"
+					onselect="Tree.selectionChanged();"
+					onmousemove="Tree.hovering(event);"
+					ondraggesture="if (event.originalTarget.localName == 'treechildren') nsDragAndDrop.startDrag(event, Tree);"
+					chromedir="&locale.dir;"
+				>
+					<treecols>
+						<treecol id="task" label="&task.label;" ordinal="1" flex="30" crop="center" persist="width ordinal hidden"/>
+						<splitter class="tree-splitter"/>
+						<treecol id="pct" label="&pct.label;" ordinal="2" type="progressmeter" flex="20" persist="width ordinal hidden"/>
+						<splitter class="tree-splitter"/>
+						<treecol id="per" label="&per.label;" ordinal="3" flex="4" persist="width ordinal hidden"/>
+						<splitter class="tree-splitter"/>
+						<treecol id="dim" label="&dim.label;" ordinal="4" flex="10" persist="width ordinal hidden"/>
+						<splitter class="tree-splitter"/>
+						<treecol id="status" label="&time.label;" ordinal="5" flex="7" persist="width ordinal hidden"/>
+						<splitter class="tree-splitter"/>
+						<treecol id="speed" label="&speed.label;" ordinal="6" flex="7" persist="width ordinal hidden"/>
+						<splitter class="tree-splitter"/>
+						<treecol id="parts" label="&parts.label;" ordinal="7" flex="4" hidden="true" persist="width ordinal hidden" style="text-align:center;" />
+						<splitter class="tree-splitter"/>
+						<treecol id="mask" label="&mask.label;" ordinal="8" hidden="true" crop="left" flex="8" persist="width ordinal hidden" />
+						<splitter class="tree-splitter"/>
+						<treecol id="path" label="&path.label;" ordinal="9" hidden="true" crop="center" flex="10" persist="width ordinal hidden" />
+						<splitter class="tree-splitter"/>
+						<treecol id="hash" label="&hash.label;" ordinal="10" hidden="true" flex="6" persist="width ordinal hidden"/>
+					</treecols>
+					<treechildren tooltip="tooltip">
+					</treechildren>
+				</tree>
+			</notificationbox>	
 		</vbox>
 		<vbox align="center" flex="1" id="loadingbox">
 			<spacer flex="1"/>
