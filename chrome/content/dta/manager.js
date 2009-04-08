@@ -3268,10 +3268,7 @@ addEventListener(
 			if (seq < nagnext) {
 				return;
 			}
-			
-			while (seq > nagnext) {
-				nagnext *= 2;
-			}
+			for (nagnext = isFinite(nagnext) && nagnext > 0 ? nagnext : 50; seq > nagnext; nagnext *= 2);
 			Preferences.setExt('nagnext', nagnext);
 			
 			seq = Math.floor(seq / 50) * 50;
