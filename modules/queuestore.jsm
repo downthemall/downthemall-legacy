@@ -191,6 +191,16 @@ var QueueStore = {
 		}
 		stmt.finalize();
 		delete stmt;
+	},
+	getQueueSeq: function() {
+		let stmt = _connection.createStatement("SELECT seq FROM SQLITE_SEQUENCE WHERE name LIKE '%queue%'");
+		let rv = 0;
+		if (stmt.executeStep()) {
+			rv = stmt.getInt64(0);
+		}
+		stmt.finalize();
+		delete stmt;
+		return rv.toString();
 	}
 };
 
