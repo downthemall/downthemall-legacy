@@ -3253,3 +3253,65 @@ addEventListener(
 	},
 	false
 );
+
+addEventListener(
+	'load',
+	function nagging() {
+		if (Preferences.getExt('nagnever', false)) {
+			return;
+		}
+		let nb = $('notifications');
+		try {
+			let seq = QueueStore.getQueueSeq();
+			let nagnext = Preferences.getExt('nagnext', 50);
+			Debug.logString("nag: " + seq + "/" + nagnext + "/" + (seq - nagnext));
+			if (seq < nagnext) {
+				return;
+			}
+			
+			while (seq > nagnext) {
+				nagnext *= 2;
+			}
+			Preferences.setExt('nagnext', nagnext);
+			
+			seq = Math.floor(seq / 50) * 50;
+
+			setTimeout(function() {
+				let ndonation = nb.appendNotification(
+						_('nagtext', [seq]),
+						"donation",
+						null,
+						nb.PRIORITY_INFO_HIGH,
+						[
+							{
+								accessKey: '',
+								label: _('nagdonate'),
+								callback: function() {
+									nb.removeNotification(ndonation);
+									Dialog.openDonate();
+								}
+							},
+							{
+								accessKey: '',
+								label: _('naghide'),
+								callback: function() nb.removeNotification(ndonation)
+							},
+							{
+								accessKey: '',
+								label: _('nagneveragain'),
+								callback: function() {
+									nb.removeNotification(ndonation);
+									Preferences.setExt('nagnever', true);
+								}
+							}
+
+						]
+				)
+			}, 1000);
+		}
+		catch (ex) {
+			Debug.log('nagger', ex);
+		}
+	},
+	true
+);
