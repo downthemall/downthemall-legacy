@@ -70,7 +70,7 @@ var Tooltip = {
 		for each (let canvas in $('chunkCanvas', 'speedCanvas')) {
 			canvas.width = Math.min(box.width, canvas.clientWidth);
 			try {
-				canvas.height = canvas.clientHeight;
+				canvas.height = parseInt(canvas.getAttribute('height'));
 			}
 			catch (ex) {
 				Debug.log("tt: failed to set height", ex);
