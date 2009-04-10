@@ -72,8 +72,8 @@ function Tree(links, type) {
 						if ("description" in this && this.description.length > 0) {
 							this._desc += this.description;
 						}
-						if ("ultDescription" in this && this.ultDescription.length > 0) {
-							this._desc += ((this._desc.length > 0) ? ' - ' : '') + this.ultDescription;
+						if ("title" in this && this.title.length > 0) {
+							this._desc += ((this._desc.length > 0) ? ' - ' : '') + this.title;
 						}
 					}
 					return this._desc;

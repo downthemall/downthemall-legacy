@@ -216,8 +216,8 @@ var Dialog = {
 				try {
 					let down = Serializer.decode(dbItem.serial);
 					
-					let get = function(attr) {
-						return (attr in down) ? down[attr] : null;
+					let get = function(attr, def) {
+						return (attr in down) ? down[attr] : (def ? def : null);
 					}
 	
 					let d = new QueueItem();
@@ -236,8 +236,9 @@ var Dialog = {
 					}
 				
 					// only access the setter of the last so that we don't generate stuff trice.
-					d._pathName = get('pathName');
-					d._description = get('description');
+					d._pathName = get('pathName', '');
+					d._description = get('description', '');
+					d._title = get('title', '');
 					d._mask = get('mask');
 					d.fileName = get('fileName');
 					
@@ -1298,7 +1299,7 @@ QueueItem.prototype = {
 		return this._description;
 	},
 	set description(nv) {
-		if (nv = this._description) {
+		if (nv == this._description) {
 			return nv;
 		}
 		this._description = nv;
@@ -1306,7 +1307,19 @@ QueueItem.prototype = {
 		this.invalidate();
 		return nv;
 	},	
-
+	_title: '',
+	get title() {
+		return this._title;
+	},
+	set title(nv) {
+		if (nv == this._title) {
+			return this._title;
+		}
+		this._title = nv;
+		this.rebuildDestination();
+		this.invalidate();
+		return this._title;
+	},
 	_pathName: null,
 	get pathName() {
 		return this._pathName;
@@ -1781,6 +1794,7 @@ QueueItem.prototype = {
 			}
 
 			let description = this.description.removeBadChars().replaceSlashes(' ').trim();
+			let title = this.title.removeBadChars().trim();
 			
 			let name = this.fileName;
 			let ext = name.getExtension();
@@ -1812,10 +1826,12 @@ QueueItem.prototype = {
 				"name": name,
 				"ext": ext,
 				"text": description,
-				"flattext": description.replaceSlashes(Prefs.flatReplacementChar).replace(/[\n\r\s]+/g, ' '),
+				"flattext": description.replaceSlashes(Prefs.flatReplacementChar).replace(/[\n\r\s]+/g, ' ').trim(),
+				'title': title,
+				'flattitle': title.replaceSlashes(Prefs.flatReplacementChar).replace(/[\n\r\s]+/g, ' ').trim(),
 				"url": host,
 				"subdirs": uripath,
-				"flatsubdirs": uripath.replaceSlashes(Prefs.flatReplacementChar),
+				"flatsubdirs": uripath.replaceSlashes(Prefs.flatReplacementChar).trim(),
 				"refer": ref,
 				"qstring": query,
 				"curl": curl,
@@ -2127,6 +2143,7 @@ QueueItem.prototype = {
 			'postData',
 			'numIstance',
 			'description',
+			'title',
 			'resumable',
 			'mask',
 			'pathName',
@@ -3058,7 +3075,6 @@ Connection.prototype = {
 function startDownloads(start, downloads) {
 
 	var numbefore = Tree.rowCount - 1;
-	const DESCS = ['description', 'ultDescription'];
 	
 	let g = downloads;
 	if ('length' in downloads) {
@@ -3070,18 +3086,6 @@ function startDownloads(start, downloads) {
 	Tree.beginUpdate();
 	QueueStore.beginUpdate();
 	for (let e in g) {
-
-		var desc = "";
-		DESCS.some(
-			function(i) {
-				if (typeof(e[i]) == 'string' && e[i].length) {
-					desc = e.description;
-					return true;
-				}
-				return false;
-			}
-		);
-		
 		let qi = new QueueItem();
 		let lnk = e.url;
 		if (typeof lnk == 'string') {
@@ -3105,7 +3109,8 @@ function startDownloads(start, downloads) {
 		}
 		// only access the setter of the last so that we don't generate stuff trice.
 		qi._pathName = e.dirSave.addFinalSlash().toString();
-		qi._description = desc ? desc : '';
+		qi._description = !!e.description ? e.description : '';
+		qi._title = !!e.title ? e.title : '';
 		qi._mask = e.mask;
 		qi.fromMetalink = !!e.fromMetalink;
 		if (e.fileName) {
