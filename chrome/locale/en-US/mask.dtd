@@ -13,9 +13,11 @@
 <!ENTITY mask.y "Year">
 <!ENTITY mask.subdirs "URL subdirectories">
 <!ENTITY mask.flatsubdirs "Flat URL subdirectories">
-<!ENTITY mask.text "Link description">
-<!ENTITY mask.flattext "Flat link description">
+<!ENTITY mask.text "Link text">
+<!ENTITY mask.flattext "Flat link text">
 <!ENTITY mask.refer "Referrer URL">
 <!ENTITY mask.qstring "Query String">
+<!ENTITY mask.title "Title associated with link">
+<!ENTITY mask.flattitle "Title associated with link">
 <!ENTITY mask.tip "Click or drag to renaming mask">
 <!ENTITY mask.open.tip "Renaming tags reference table">

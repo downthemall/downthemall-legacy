@@ -74,18 +74,19 @@ var DTA_ContextOverlay = {
 				continue;
 			}
 				
-			/// XXX: title is also parsed by extractDescription
-			/// XXX: is this instance necessary?
-			var udesc = '';
+			var title = '';
 			if (link.hasAttribute('title')) {
-				udesc = this.trim(link.getAttribute('title'));
+				title = this.trim(link.getAttribute('title'));
+			}
+			if (!title && link.hasAttribute('alt')) {
+				title = this.trim(link.getAttribute('alt'));
 			}
 			let url = DTA_AddingFunctions.ios.newURI(link.href, doc.characterSet, null);
 			urls.push({
 				'url': new DTA_URL(url),
 				'referrer': ref,
 				'description': this.extractDescription(link),
-				'ultDescription': udesc
+				'title': title
 			});
 			
 			var ml = DTA_getLinkPrintMetalink(url.ref);
@@ -94,7 +95,7 @@ var DTA_ContextOverlay = {
 					'url': new DTA_URL(ml),
 					'referrer': ref,
 					'description': '[metalink] http://www.metalinker.org/',
-					'ultDescription': '',
+					'title': title,
 					'metalink': true
 				});
 			}
