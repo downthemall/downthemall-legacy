@@ -59,6 +59,7 @@ var Prefs = {
 		['autoRetryInterval', 0],
 		['autoClearComplete', false],
 		['confirmRemove', true],
+		['confirmRemoveCompleted', true],
 		['permissions', 384],
 		['loadEndFirst', 0],
 		['minimizeToTray', false],
