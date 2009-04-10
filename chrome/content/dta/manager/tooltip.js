@@ -36,7 +36,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-const TOOLTIP_FREQ = 500;
+const TOOLTIP_FREQ = 1000;
 const SPEED_COUNT = 60;
 const SPEED_NUMAVG = 10;
 
@@ -69,7 +69,12 @@ var Tooltip = {
 		let box = $('canvasGrid').boxObject;
 		for each (let canvas in $('chunkCanvas', 'speedCanvas')) {
 			canvas.width = Math.min(box.width, canvas.clientWidth);
-			canvas.height = Math.min(box.height, canvas.clientHeight);
+			try {
+				canvas.height = parseInt(canvas.getAttribute('height'));
+			}
+			catch (ex) {
+				Debug.log("tt: failed to set height", ex);
+			}
 		}		
 		this.update();
 	},
