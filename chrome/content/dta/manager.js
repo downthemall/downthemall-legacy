@@ -217,7 +217,7 @@ var Dialog = {
 					let down = Serializer.decode(dbItem.serial);
 					
 					let get = function(attr, def) {
-						return (attr in down) ? down[attr] : (def ? def : null);
+						return (attr in down) ? down[attr] : (def ? def : '');
 					}
 	
 					let d = new QueueItem();
@@ -2169,7 +2169,7 @@ QueueItem.prototype = {
 			e.state = this.state;
 		}
 		if (this.destinationNameOverride) {
-			this.destinationName = this.destinationNameOverride;
+			e.destinationName = this.destinationNameOverride;
 		}
 		if (this.referrer) {
 			e.referrer = this.referrer.spec;
