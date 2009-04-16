@@ -199,8 +199,8 @@ stack > #infoPercent {
 	font-size: 105%;
 }
 
-#downloads[offline]  {
-	color: gray !important;
+#downloads[offline] > treechildren  {
+	opacity: 0.7;
 }
 
 #loadingbox {
