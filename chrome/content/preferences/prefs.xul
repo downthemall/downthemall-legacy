@@ -33,8 +33,10 @@
 	onload="Prefs.load();"
 	style="&winstyle;"
 	>
-	<stringbundle id="stringB" src="chrome://dta/locale/common.properties" />
-	<stringbundle id="stringB" src="chrome://dta/locale/prefpanes.properties" />
+	<stringbundleset id="bundlesPrefs">
+		<stringbundle src="chrome://dta/locale/common.properties" />
+		<stringbundle src="chrome://dta/locale/prefpanes.properties" />
+	</stringbundleset>
 	
 	<prefpane id="paneMain" label="&mainpane.label;" src="chrome://dta/content/preferences/mainPane.xul" />
 	<prefpane id="paneFilters" label="&filterspane.label;" src="chrome://dta/content/preferences/filtersPane.xul" />
