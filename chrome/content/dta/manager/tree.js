@@ -363,9 +363,7 @@ var Tree = {
 		if (delta == this._downloads.length) {
 			return;
 		}
-		this.selection.clearSelection();
 		this.invalidate();		
-		this._removeJump(delta - this._downloads.length, last);
 	},
 	removeCompleted: function T_removeCompleted() {
 		if (Prefs.confirmRemoveCompleted) {
