@@ -34,49 +34,80 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-function include(uri) {
-	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(Components.interfaces.mozIJSSubScriptLoader)
-		.loadSubScript(uri);
-}
-include('chrome://dta/content/common/xpcom.jsm');
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const error = Components.utils.reportError;
+
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 var Preferences = {};
 
-var MigrationService = {
-	_init: function MM_init() {
-	    // observer registration
-	    Cc['@mozilla.org/observer-service;1']
-				.getService(Ci.nsIObserverService)
-				.addObserver(this, "final-ui-startup", true);
+function log(str, ex) {
+	try {
+		var _debugServ = Components.classes['@downthemall.net/debug-service;1']
+			.getService(Components.interfaces.dtaIDebugService);
+		log = function(str, ex) {
+			if (ex) {
+				_debugServ.log(str, ex);
+			}
+			else {
+				_debugServ.logString(str);
+			}
+		}
+		log(str, ex);
+	}
+	catch (oex) {
+		error(str + ": " + ex);
+	}
+}
+
+
+function MigrationService() {
+	Components.utils.import('resource://dta/preferences.jsm', Preferences);
+}
+
+MigrationService.prototype = {
+	classDescription: "DownThemAll! Migration Service",
+	contractID: "@downthemall.net/migration-service;1",
+	classID: Components.ID("F66539C8-2590-4e69-B189-F9F8595A7670"),
+	_xpcom_categories: [{category: 'app-startup'}],
+	
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference, Ci.nsIWindowMediatorListener]),
+	
+	QueryReferent: function(iid) this.QueryInterface(iid),
+	GetWeakReference: function() this,
+	
+	get _os() {
+		return Cc['@mozilla.org/observer-service;1']
+			.getService(Ci.nsIObserverService);
 	},
 	
+	_mediator: {},
+
 	_migrate: function MM_migrate() {
 		let DTA = {};
 		Components.utils.import('resource://dta/version.jsm', DTA);		
-		Components.utils.import('resource://dta/preferences.jsm', Preferences);
 		
 		try {
-			debug("current " + DTA.VERSION);
+			log("current " + DTA.VERSION);
 
 			let lastVersion = Preferences.getExt('version', '0');
 			if (0 == DTA.compareVersion(DTA.BASE_VERSION, lastVersion)) {
 				return;
 			}
-			debug("MigrationManager: migration started");
+			log("MigrationManager: migration started");
 			if (DTA.compareVersion(lastVersion, "1.0.1") < 0) {
 				this._execute(['ResetMaxConnections']);
 			}			
-	    	var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
-					.createInstance(Components.interfaces.nsIDialogParamBlock);
-	    	params.SetNumberStrings(1);
-	    	params.SetString(0, DTA.BASE_VERSION);
-	    	let mediator = {};
-	    	Components.utils.import('resource://dta/mediator.jsm', mediator);
-	    	mediator.showNotice(null, params);		
+			
+			Preferences.setExt('version', DTA.BASE_VERSION);
+
+			Components.utils.import('resource://dta/mediator.jsm', this._mediator);
+			this._mediator.addListener(this);
 		}
 		catch(ex) {
-			debug("MigrationManager:", ex);
+			log("MigrationManager:", ex);
 			try {
 				Preferences.resetExt("version");
 			}
@@ -91,14 +122,14 @@ var MigrationService = {
 				this['_migrate' + e]();
 			}
 			catch (ex) {
-				debug('MigrationManager: failed to migrate ' + e, ex);
+				log('MigrationManager: failed to migrate ' + e, ex);
 			}
 		}
 	},
 	
 	// 1.0.1: #613 Multiple "slow-down" reports
 	_migrateResetMaxConnections: function() {
-		debug("resetting connection prefs");
+		log("resetting connection prefs");
 		for each (let e in ['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server']) {
 			Preferences.reset(e);
 		}
@@ -106,21 +137,48 @@ var MigrationService = {
 	
 	// nsIObserver
 	observe: function MM_observe(subject, topic, prefName) {
-		if (topic == "final-ui-startup") {
+		if (topic == 'app-startup') {
+			try {
+				this._os.removeObserver(this, 'app-startup');
+			}
+			catch (ex) { /* no-op */ }
+			this._os.addObserver(this, 'final-ui-startup', false);
+		}
+		
+		else if (topic == "final-ui-startup") {
+			try {
+				this._os.removeObserver(this, 'final-ui-startup');
+			}
+			catch (ex) { /* no-op */ }			
 			this._migrate();
+		}
+	},
+	onWindowTitleChange: function() {},
+	onOpenWindow: function(window) {
+		try {
+		let dw = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowInternal);
+		let tp = this;
+		this._loadFunc = function() {
+			dw.removeEventListener('load', tp._loadFunc, false);
+			dw.setTimeout(function() { tp.onWindowLoad(dw); }, 600);
+		};
+		dw.addEventListener('load', this._loadFunc, false);
+		}
+		catch (ex) {
+			log(ex);
+		}
+	},
+	onCloseWindow: function() {},
+	onWindowLoad: function(window) {
+		log("loaded: " + window.location);
+		if (this._loaded) {
+			return;
+		}
+		if (this._mediator.tryOpenUrl(window, 'about:downthemall')) {
+			this._loaded = true;
+			this._mediator.removeListener(this);
 		}
 	}
 };
-implementComponent(
-	MigrationService,
-	Components.ID("{F66539C8-2590-4e69-B189-F9F8595A7670}"),
-	"@downthemall.net/migration-service;1",
-	"DownThemAll! Migration Service",
-	[Ci.nsIObserver]
-);
-MigrationService._init();
 
-// entrypoint
-function NSGetModule(compMgr, fileSpec) {
-	return new ServiceModule(MigrationService, true);
-}
+function NSGetModule(aCompMgr, aFileSpec) XPCOMUtils.generateModule([MigrationService]);
