@@ -35,12 +35,10 @@
  * ***** END LICENSE BLOCK ***** */
 
 const EXPORTED_SYMBOLS = [
-	'getMostRecent',
-	'getMostRecentByUrl',
-	'getAllByType',
-	'openExternal',
-	'openUrl',
-	'showNotice',
+	'getMostRecent', 'getMostRecentByUrl', 'getAllByType',
+	'openExternal', 'openUrl', 'tryOpenUrl',
+	'addListener', 'removeListener',
+	'showNotice'
 ];
 	
 const Cc = Components.classes;
@@ -143,16 +141,29 @@ function openExternal(link) {
 }
 function openUrl(window, link, ref) {
 	logger.logString("Mediator: Request to open " + link);
+	if (!tryOpenUrl(window, link, ref)) {
+		try {
+			window.open(link);
+		}
+		catch (ex) {
+			openExternal(link);
+		}
+	}
+}
+function tryOpenUrl(window, link, ref) {
 	try {
+		if (link instanceof Ci.nsIURI) {
+			link = link.spec;
+		}		
 		let win = getMostRecent('navigator:browser');
 		if (win) {
 			// browser
 			if ('delayedOpenTab' in win) {
 				win.delayedOpenTab(objToString(link), objToUri(ref));
-				return;
+				return true;
 			}
 			win.getBrowser().addTab(objToString(link), objToString(ref));
-			return;
+			return true;
 		}
 		win = getMostRecent('Songbird:Main');
 		if (win) {
@@ -160,28 +171,32 @@ function openUrl(window, link, ref) {
 			let tb = win.document.getElementById('content');
 			if (tb) {
 				tb.loadOneTab(objToString(link), objToUri(ref), null, null, null);
-				return;
+				return true;
+			}
+		}
+		win = getMostRecent('mail:3pane');
+		if (win) {
+			// thunderbird 3+
+			let tb = win.document.getElementById('tabmail');
+			if (tb && ('openTab' in tb)) {
+				tb.openTab('contentTab', link, link);
+				return true;
 			}
 		}
 	}
 	catch (ex) {
 		logger.log('Mediator: Failed to open tab', ex);
 	}
-	try {
-		window.open(objToString(link));
-	}
-	catch (ex) {
-		logger.log('Mediator: Failed to open window', ex);
-		openExternal(link);
-	}
+	return false;
 }
 
-function showNotice(window, params) {
-	windowwatcher.openWindow(
-		window,
-		'chrome://dta/content/about/notice.xul',
-		'_blank',
-		'chrome,centerscreen,all,dialog,modal',
-		params
-		);
+function addListener(listener) {
+	mediator.addListener(listener);
+}
+function removeListener(listener) {
+	mediator.removeListener(listener);
+}
+
+function showNotice(window) {
+	openUrl(window, 'about:downthemall#privacy');
 }
