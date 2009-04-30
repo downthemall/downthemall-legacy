@@ -454,8 +454,8 @@ textbox.plain {
 	-moz-image-region: rect(0px, 48px, 16px, 32px);  
 }
 #prefs .menu-iconic-icon {
-	list-style-image: url(../common/prefs.png);
-	-moz-image-region: rect(0px,16px,16px,0px);
+	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	-moz-image-region: rect(0px, 64px, 16px, 48px);	
 }
 
 /* menuitem dupes */

@@ -2,5 +2,6 @@
 @namespace html url("http://www.w3.org/1999/xhtml");
 
 #turbodtaexec {
-	list-style-image: url(chrome://dta/skin/common/turbo.png);
+	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	-moz-image-region: rect(0px, 32px, 16px, 16px);
 }

@@ -321,22 +321,29 @@ var DTA_ContextOverlay = {
 	
 	findSingleLink: function(turbo) {
 		try {
-			var ctx = this.contextMenu;
-
-			var cur = ctx.target;
-			
-			var tofind = ctx.onLink ? /^a$/i : /^img$/i; 
-		
-			while (!("tagName" in cur) || !tofind.test(cur.tagName)) {
+			var cur = this.contextMenu.target;
+			while (!("tagName" in cur) || !cur.tagName.match(/^a$/i)) {
 				cur = cur.parentNode;
 			}
-			var url = ctx.onLink ? cur.href : cur.src;
-			this.saveSingleLink(turbo, url, cur);
+			this.saveSingleLink(turbo, cur.href, cur);
 		}
 		catch (ex) {
 			DTA_Prompts.alert(window, this.getString('error'), this.getString('errornodownload'));
 			DTA_debug.log('findSingleLink: ', ex);
 		}
+	},
+	findSingleImg: function(turbo) {
+		try {
+			var cur = this.contextMenu.target;
+			while (!("tagName" in cur) || !cur.tagName.match(/^img$/i)) {
+				cur = cur.parentNode;
+			}
+			this.saveSingleLink(turbo, cur.src, cur);
+		}
+		catch (ex) {
+			DTA_Prompts.alert(window, this.getString('error'), this.getString('errornodownload'));
+			DTA_debug.log('findSingleLink: ', ex);
+		}		
 	},
 	saveSingleLink: function(turbo, url, elem) {
 		if (!DTA_AddingFunctions.isLinkOpenable(url)) {
@@ -463,21 +470,13 @@ var DTA_ContextOverlay = {
 			var ctx = ctxItem.parentNode;
 			var cont = document.getElementById('dtaCtxSubmenu');
 
-			['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'SaveT', 'Save', 'SaveFormT', 'SaveForm', 'SepFront'].forEach(
+			['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveFormT', 'SaveForm', 'SepFront'].forEach(
 				function(id) {
 					this.compact[id] = document.getElementById('dtaCtx' + id);
 					var node = document.getElementById('dtaCtx' + id).cloneNode(true);
 					node.setAttribute('id', node.id + "-direct");
 					ctx.insertBefore(node, ctxItem.nextSibling);
 					this.direct[id] = node;
-				},
-				this
-			);
-			// intitalize those to have Menu Editor pick up "good" text
-			[this.direct, this.compact].forEach(
-				function(m) {
-					m.Save.label = this.getString('dtasavelink');
-					m.SaveT.label = this.getString('turbosavelink');
 				},
 				this
 			);
@@ -536,7 +535,7 @@ var DTA_ContextOverlay = {
 		try {
 			var ctx = this.contextMenu;
 			// get settings
-			var items = DTA_preferences.getExt("ctxmenu", "1,1,0").split(",").map(function(e){return parseInt(e);});
+			var items = DTA_preferences.getExt("ctxmenu", "1,1,0").split(",").map(function(e) parseInt(e));
 			var compact = DTA_preferences.getExt("ctxcompact", false);
 			
 			var menu;
@@ -564,16 +563,34 @@ var DTA_ContextOverlay = {
 			// show will hold those that will be shown
 			var show = [];
 			
+			var sel = document.commandDispatcher.focusedWindow.getSelection();
+			if (sel && !sel.isCollapsed) {
+				if (items[0]) {
+					show.push(menu.DTASel);
+				}
+				if (items[1]) {
+					show.push(menu.TDTASel);
+				}
+			}
+			
 			// hovering an image or link
 			if (ctx && (ctx.onLink || ctx.onImage)) {
 				if (items[0]) {
-					show.push(menu.Save);
+					if (ctx.onLink) {
+						show.push(menu.SaveLink);
+					}
+					if (ctx.onImage) {
+						show.push(menu.SaveImg);
+					}
 				}
 				if (items[1]) {
-					show.push(menu.SaveT);
+					if (ctx.onLink) {
+						show.push(menu.SaveLinkT);
+					}
+					if (ctx.onImage) {
+						show.push(menu.SaveImgT);
+					}
 				}
-				menu.Save.label = this.getString('dtasave' + (ctx.onLink ? 'link' : 'image'));
-				menu.SaveT.label = this.getString('turbosave' + (ctx.onLink ? 'link' : 'image'));
 			}
 			else if (
 				ctx.target
@@ -587,17 +604,13 @@ var DTA_ContextOverlay = {
 				}		
 			}			
 			// regular
-			else if (ctx && (ctx.fake || !(ctx.onLink || ctx.onImage))) {
+			else if (!sel || sel.isCollapsed) {
 				if (items[0]) {
 					show.push(menu.DTA);
 				}
 				if (items[1]) {
 					show.push(menu.TDTA);
 				}
-				var sel = document.commandDispatcher.focusedWindow.getSelection();
-				sel = sel && !sel.isCollapsed;
-				menu.DTA.label = this.getString('dta' + (sel ? 'selection' : 'regular'));
-				menu.TDTA.label = this.getString('turbo' + (sel ? 'selection' : 'regular'));
 			}
 			
 			// prefs

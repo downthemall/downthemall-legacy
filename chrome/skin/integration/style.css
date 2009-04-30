@@ -6,8 +6,8 @@
 	-moz-image-region: rect(0px,79px,25px,60px);
 }
 toolbar[iconsize="small"] #dta-turbo-button {
-	list-style-image: url("chrome://dta/skin/common/turbo.png");
-	-moz-image-region: auto !important;
+	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	-moz-image-region: rect(0px, 32px, 16px, 16px);
 }
 
 /* XXX Needs icon */
@@ -19,8 +19,8 @@ toolbar[iconsize="small"] #dta-turbo-button {
 	-moz-image-region: rect(0px,148px,24px,128px);
 }
 toolbar[iconsize="small"] #dta-turboselect-button {
-	list-style-image: url("chrome://dta/skin/common/turbo.png");
-	-moz-image-region: auto !important;
+	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	-moz-image-region: rect(0px, 32px, 16px, 16px);
 }
 
 
@@ -34,8 +34,8 @@ toolbar[iconsize="small"] #dta-turboselect-button {
 
 }
 toolbar[iconsize="small"] #dta-button {
-	list-style-image: url("chrome://dta/skin/common/dta.png");
-	-moz-image-region: auto !important;
+	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 
 #dta-manager-button {
@@ -46,6 +46,27 @@ toolbar[iconsize="small"] #dta-button {
 	-moz-image-region: rect(0px,128px,24px,104px);
 }
 toolbar[iconsize="small"] #dta-manager-button {
-	list-style-image: url("chrome://dta/skin/common/box.png");
-	-moz-image-region: auto !important;
+	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	-moz-image-region: rect(0px, 48px, 16px, 32px);
+}
+
+.dta {
+	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+.dtaturbo {
+	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	-moz-image-region: rect(0px, 32px, 16px, 16px);
+}
+.dtaprefs {
+	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	-moz-image-region: rect(0px, 64px, 16px, 48px);	
+}
+.dtamanager {
+	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	-moz-image-region: rect(0px, 48px, 16px, 32px);
+}
+#dtaToolsAbout {
+	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	-moz-image-region: rect(0px, 96px, 16px, 80px);
 }
