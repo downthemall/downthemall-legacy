@@ -52,6 +52,6 @@
 		<toolbarbutton id="dta-manager-button" insertbefore="throbber-box" />
 	</toolbar>
 	<menupopup id="taskPopup">	
-		<menu id="dtaToolsMenu" label="DownThemAll" class="menu-iconic" image="chrome://dta/skin/common/dta.png" insertafter="navBeginGlobalItems"/>
+		<menu id="dtaToolsMenu" label="DownThemAll" class="menu-iconic dta" insertafter="navBeginGlobalItems"/>
 	</menupopup>
 </overlay>
