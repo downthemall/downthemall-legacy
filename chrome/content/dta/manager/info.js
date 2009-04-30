@@ -147,14 +147,13 @@ var Dialog = {
 		}
 		
 		for each (let d in t) {
-			if (d.isOf(COMPLETE, FINISHING)) {
-				return;
-			}
-			if (directory) {
-				d.pathName = directory;
-			}
-			if (mask) {
-				d.mask = mask;
+			if (!d.isOf(COMPLETE, FINISHING)) {
+				if (directory) {
+					d.pathName = directory;
+				}
+				if (mask) {
+					d.mask = mask;
+				}
 			}
 			if (description) {
 				d.description = description;
