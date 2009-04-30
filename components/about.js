@@ -65,9 +65,10 @@ AboutDta.prototype = {
 		    	function (m, m1) (m1 in version) ? version[m1] : m
 		    );
 		    
-		    let chan = io.newChannel(ru, null, null);
+		    let uri = io.newURI(ru, null, null);
+		    let chan = io.newChannelFromURI(uri);
 		    chan.originalURI = aURI;
-		    chan.owner = sec.getCodebasePrincipal(aURI);
+		    chan.owner = sec.getCodebasePrincipal(uri);
 		    
 		    return chan;
 		}
