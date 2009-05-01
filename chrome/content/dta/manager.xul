@@ -85,7 +85,7 @@
 		<command id="cmdMoveBottom" oncommand="Tree.bottom();"/>
 		
 		<command id="cmdAddChunk" oncommand="Tree.changeChunks(true);"/>
-		<command id="cmdRemoveChunk" oncommand="Tree.changeChunks(true);"/>
+		<command id="cmdRemoveChunk" oncommand="Tree.changeChunks(false);"/>
 		
 		<command id="cmdCleanGone" oncommand="Tree.removeGone();"/>
 		
