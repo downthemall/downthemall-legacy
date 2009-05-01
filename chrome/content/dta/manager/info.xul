@@ -57,7 +57,7 @@
 			</columns>
 			<rows>
 				<row align="center">
-					<label control="sourcePage" id="sourcePageTitle" value="&referrer.value;"  style="font-style: italic;" />
+					<label control="sourcePage" id="sourcePageTitle" value="&referrer.value;" style="font-style: italic;" />
 					<textbox id="sourcePage" readonly="true" />
 				</row>
 				<row align="center">

@@ -36,9 +36,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-const TOOLTIP_FREQ = 1000;
-const SPEED_COUNT = 60;
-const SPEED_NUMAVG = 10;
+const TOOLTIP_FREQ = 500;
+const SPEED_COUNT = 100;
 
 var Tooltip = {
 	_current: null,
@@ -61,8 +60,7 @@ var Tooltip = {
 	},		 
 	start: function(d) {
 		this._current = d;
-		this._timer = new Timer('Tooltip.update()', TOOLTIP_FREQ, true, true);
-		// 1.9+, causes some flickering but anyway :p
+		this._timer = new Timer('Tooltip.update()', TOOLTIP_FREQ, true);
 		new Timer('Tooltip.initUpdate()', 25);
 	},
 	initUpdate: function() {
@@ -146,8 +144,20 @@ var Tooltip = {
 			Debug.log("Tooltip.updateMetrics: ", ex);
 		}	
 	},
+	_usFile: null,
+	_usUpdate: -1,
+	_usBytes: -1,
+	_usState: null,
 	updateSpeeds: function(file) {
 		try {
+			if (file === this._usFile && file.speeds.lastUpdate === this._usUpdate && file.speeds.lastBytes === this._usBytes && file.state == this._usState) {
+				return;
+			}
+			this._usFile = file;
+			this._usState = file.state;
+			this._usUpdate = file.speeds.lastUpdate;
+			this._usBytes = file.speeds.lastBytes;
+			
 			// we need to take care about with/height
 			let canvas = $("speedCanvas");
 			let w = canvas.width;
@@ -262,15 +272,26 @@ var Tooltip = {
 			meter.setAttribute('value', file.percent);
 		}
 	},
+	_ucFile: null,
+	_ucDim: null,
+	_ucTotal: null,
+	_ucState: null,
 	updateChunks: function (file) {
 		try {
+			if (file === this._ucFile && file.state === this._ucState && file.dimensionString === this._ucDim) {
+				return;
+			}
+			this._ucFile = file;
+			this._ucState = file.state;
+			this._ucDim = file.dimensionString;
+			
 			let canvas = $("chunkCanvas");
 			let width = canvas.width;
 			let height = canvas.height;
 			let ctx = canvas.getContext("2d");
 			--width; --height;
 			
-			let cheight = height - 9;
+			let cheight = height - 15;
 	
 			// Create gradients
 			let chunkFillStyle = this._createVerticalGradient(ctx, cheight, "#A7D533", "#D3F047");
@@ -324,7 +345,7 @@ var Tooltip = {
 			for each (var chunk in b) {
 				for each (var pass in passes) {
 					ctx.fillStyle = pass.f;
-					this._makeRoundedRectPath(ctx, chunk.s, 0, chunk.w - pass.x, cheight, 3);
+					this._makeRoundedRectPath(ctx, chunk.s, 0, chunk.w - pass.x + 2, cheight, 3);
 					ctx.fill();
 					if (pass.s) {
 						ctx.lineWidth = 2;

@@ -62,7 +62,14 @@ SpeedStats.prototype = {
 			yield x;
 		}
 	},	
-	
+	get lastUpdate() {
+		return this._lastTime;
+	},
+	get lastBytes() {
+		return this._lastBytes;
+	},
+	_lastTime: 0,
+	_lastBytes: 0,
 	add: function DSS_add(bytes, time) {
 		let received = 0;
 		if (this._lastTime) {
