@@ -42,12 +42,14 @@ const Ci = Components.interfaces;
 const nsITimer = Ci.nsITimer;
 const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'init');
 
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 function Observers() {
 	this._obs = [];
 	this._timer = new Timer(this, 5000, nsITimer.TYPE_REPEATING_SLACK);	
 }
 Observers.prototype = {
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
 	_obs: null,
 	_timer: null,
 	register: function(observer) {
@@ -71,13 +73,13 @@ Observers.prototype = {
 }
 
 function ByteBucket(byteRate, burstFactor) {
+	this._obs = new Observers();
 	this.byteRate = byteRate;
 	if (arguments.length > 1) {
 		this.burstFactor = burstFactor;
 	}
 	this._available = byteRate;
 	this._timer = new Timer(this, 100, nsITimer.TYPE_REPEATING_PRECISE);
-	this._obs = new Observers();
 }
 ByteBucket.prototype = {
 	_timer: null,
@@ -95,7 +97,9 @@ ByteBucket.prototype = {
 		if (nv == 0) {
 			throw new Error("Invalid byte rate");
 		}		
-		return this._available = this._byteRate = nv;
+		this._available = this._byteRate = nv;
+		this._obs.notify();
+		return this._byteRate;
 	},
 	get burstFactor() {
 		return this._burstFactor;
