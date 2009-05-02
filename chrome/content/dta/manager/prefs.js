@@ -64,7 +64,8 @@ var Prefs = {
 		['loadEndFirst', 0],
 		['minimizeToTray', false],
 		['flatReplacementChar', '-'],
-		['recoverAllHttpErrors', false]
+		['recoverAllHttpErrors', false],
+		['speedLimit', -1]
 	],
 
 	// nsIObserver

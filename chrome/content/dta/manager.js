@@ -97,6 +97,9 @@ var TEXT_QUEUED;
 var TEXT_COMPLETE;
 var TEXT_CANCELED;
 
+
+var GlobalBucket = null; 
+
 var Dialog = {
 	_observes: [
 		'quit-application-requested',
@@ -200,6 +203,44 @@ var Dialog = {
 				);
 			}
 		})();
+		Components.utils.import('resource://dta/bytebucket.jsm');
+		GlobalBucket = new ByteBucket(Prefs.speedLimit);
+		this._fillSpeedList();
+	},
+	
+	_fillSpeedList: function() {
+		let list = $('listSpeeds');
+		let iv = Prefs.speedLimit;
+		if (list.value) {
+			iv = parseInt(list.value);
+		}
+		list.removeAllItems();
+		let items = [];
+		let m = iv < 1 ? 60 : iv / 1024;
+		for each (let v in [0,1,2,5,10,20,50,100]) {
+			if (v && m - v > 1) {
+				items.unshift(m - v);
+			}
+			items.push(m + v);
+		}
+		for each (let v in items.map(function(e) e * 1024)) {
+			let item = list.appendItem(Utils.formatBytes(v, 0) + '/s', v);
+			if (v == iv) {
+				list.selectedItem = item;
+			}
+		}
+		let item = list.appendItem(_('unlimitedspeed'), -1);
+		if (iv == -1) {
+			list.selectedItem = item;
+		}
+	},
+	changeSpeedLimit: function() {
+		let list = $('listSpeeds');
+		let val = parseInt(list.value);
+		Preferences.setExt('speedlimit', val);
+		GlobalBucket.byteRate = val;
+		this._fillSpeedList();
+		list.blur();
 	},
 	
 	_loadDownloads: function D__loadDownloads() {
@@ -494,12 +535,8 @@ var Dialog = {
 			speed = Utils.formatBytes(this._speeds.avg);
 
 			// Refresh status bar
-			$("statusText").label = 
-				_("cdownloads", [this.completed, Tree.rowCount])
-				+ " - "
-				+ _("cspeed")
-				+ " "
-				+ speed + "/s";
+			$('statusText').label = _("currentdownloads", [this.completed, Tree.rowCount, this._running.length]);
+			$('statusSpeed').label = _("currentspeed", [speed]);
 
 			// Refresh window title
 			if (this._running.length == 1 && this._running[0].totalSize > 0) {
@@ -507,14 +544,14 @@ var Dialog = {
 					this._running[0].percent
 					+ ' - '
 					+ this.completed + "/" + Tree.rowCount + " - "
-					+ speed + '/s - DownThemAll!';
+					+ $('statusSpeed').label + ' - DownThemAll!';
 			}
 			else if (this._running.length > 0) {
 				document.title =
 					Math.floor(this.completed * 100 / Tree.rowCount) + '%'
 					+ ' - '				
 					+ this.completed + "/" + Tree.rowCount + " - "
-					+ speed + '/s - DownThemAll!';
+					+ $('statusSpeed').label + ' - DownThemAll!';
 			}
 			else {
 				document.title = this.completed + "/" + Tree.rowCount + " - DownThemAll!";
@@ -811,6 +848,7 @@ var Dialog = {
 	_safeCloseAttempts: 0,
 
 	unload: function D_unload() {
+		GlobalBucket.kill();
 		TimerManager.killAll();
 		if (this._loader) {
 			this._loader.cancel();
@@ -2266,6 +2304,7 @@ Chunk.prototype = {
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 		seekable.seek(0x00, this.start + this.written);
 		this._outStream = new BufferedOutputStream(outStream, CHUNK_BUFFER_SIZE);
+		GlobalBucket.register(this);
 	},
 	close: function CH_close() {
 		this.running = false;
@@ -2278,6 +2317,8 @@ Chunk.prototype = {
 		if (this.parent.is(CANCELED)) {
 			this.parent.removeTmpFile();
 		}
+		GlobalBucket.unregister(this);
+		delete this._req;
 	},
 	rollback: function CH_rollback() {
 		if (!this._sessionBytes || this._sessionBytes > this._written) {
@@ -2293,19 +2334,37 @@ Chunk.prototype = {
 			this.download.cancel();
 		}
 	},
+	_wnd: 0,
 	_written: 0,
 	_outStream: null,
-	write: function CH_write(aInputStream, aCount) {
+	write: function CH_write(aRequest, aInputStream, aCount) {
 		try {
 			if (!this._outStream) {
 				this.open();
+				this._wnd = 1024;
 			}
 			bytes = this.remainder;
 			if (!this.total || aCount < bytes) {
 				bytes = aCount;
 			}
 			if (!bytes) {
-				return 0;
+				// we got what we wanted
+				return -1;
+			}
+			bytes = Math.min(Math.round(this._wnd), bytes);
+			let got = GlobalBucket.requestBytes(bytes);
+			// Variation of AIMD/TCP Congestion control
+			if (got < bytes) {
+				this._wnd *= 0.5;
+				this._req = aRequest;
+				this._req.suspend();
+			}
+			else {
+				this._wnd += 256;
+			}
+			bytes = got;
+			if (!bytes) {
+				return bytes;
 			}
 			if (bytes < 0) {
 				throw new Exception("bytes negative");
@@ -2327,6 +2386,13 @@ Chunk.prototype = {
 			throw ex;
 		}
 		return 0;
+	},
+	observe: function() {
+		if (!this._req) {
+			return;
+		}
+		this._req.resume();
+		delete this._req;
 	},
 	toString: function() {
 		let len = this.parent.totalSize ? String(this.parent.totalSize).length  : 10; 
@@ -2542,7 +2608,7 @@ Connection.prototype = {
 		try {
 			// we want to kill ftp chans as well which do not seem to respond to
 			// cancel correctly.
-			if (!this.c.write(aInputStream, aCount)) {
+			if (0 > this.c.write(aRequest, aInputStream, aCount)) {
 				// we already got what we wanted
 				this.cancel();
 			}
