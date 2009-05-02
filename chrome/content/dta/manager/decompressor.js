@@ -44,10 +44,7 @@ function Decompressor(download) {
 	try {
 
 		this._outStream = new FileOutputStream(this.to, 0x04 | 0x08, Prefs.permissions, 0);
-		var boutStream = new BufferedOutputStream(this._outStream, MAX_BUFFER_SIZE); 
-		this.outStream = boutStream;
-		boutStream = new BinaryOutputStream(this.outStream);
-		this.outStream = boutStream;
+		this.outStream = new BinaryOutputStream(new BufferedOutputStream(this._outStream, MAX_BUFFER_SIZE));
 
 		var converter = Cc["@mozilla.org/streamconv;1?from=" + download.compression + "&to=uncompressed"]
 			.createInstance(Ci.nsIStreamConverter);
@@ -89,11 +86,10 @@ Decompressor.prototype = {
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
 	onStartRequest: function(r, c) {
-		var thisp = this;		
-		this._timer = new Timer(function() { thisp.download.invalidate(); }, STREAMS_FREQ, true);
+		this._timer = Timers.createRepeating(STREAMS_FREQ, this.download.invalidate, this.download); 
 	},
 	onStopRequest: function(request, c) {
-		this._timer.kill();
+		Timers.killTimer(this._timer);
 		// important, or else we don't write out the last buffer and truncate too early. :p
 		this.outStream.flush();
 		try {
@@ -102,7 +98,13 @@ Decompressor.prototype = {
 		catch (ex) {
 			this.exception = ex;
 		}
-		this._outStream.close();
+		try {
+			this.outStream.close();
+			this._outStream.close();
+		}
+		catch (ex) {
+			alert(ex);
+		}
 		if (this.exception) {
 			try {
 				this.to.remove(false);

@@ -39,14 +39,14 @@ const EXPORTED_SYMBOLS = ['ByteBucket'];
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
-const nsITimer = Ci.nsITimer;
-const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'init');
-
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Components.utils.import("resource://dta/timers.jsm");
+
+const Timers = new TimerManager();
 
 function Observers() {
 	this._obs = [];
-	this._timer = new Timer(this, 5000, nsITimer.TYPE_REPEATING_SLACK);	
+	this._timer = Timers.createRepeating(5000, this.observe, this); 
 }
 Observers.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
@@ -65,7 +65,7 @@ Observers.prototype = {
 		}		
 	},
 	kill: function() {
-		this._timer.cancel();
+		Timers.killTimer(this._timer);
 	},
 	observe: function() {
 		this._obs.sort(function() Math.round(Math.random() - 0.5));
@@ -79,7 +79,7 @@ function ByteBucket(byteRate, burstFactor) {
 		this.burstFactor = burstFactor;
 	}
 	this._available = byteRate;
-	this._timer = new Timer(this, 100, nsITimer.TYPE_REPEATING_PRECISE);
+	this._timer = Timers.createRepeating(100, this.observe, this);
 }
 ByteBucket.prototype = {
 	_timer: null,
@@ -138,7 +138,7 @@ ByteBucket.prototype = {
 		this._obs.notify();
 	},
 	kill: function() {
-		this._timer.cancel();
+		Timers.killTimer(this._timer);
 		this._obs.kill();
 	}
 };

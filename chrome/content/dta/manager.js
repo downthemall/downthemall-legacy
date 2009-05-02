@@ -82,7 +82,6 @@ const MAX_BUFFER_SIZE = 5 * 1024 * 1024;
 const MIN_BUFFER_SIZE = 1 * 1024 * 1024;
 
 const REFRESH_FREQ = 1000;
-const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 const STREAMS_FREQ = 200;
 
 let Prompts = {}, Preallocator = {};
@@ -91,6 +90,7 @@ Components.utils.import('resource://dta/speedstats.jsm');
 Components.utils.import('resource://dta/preallocator.jsm', Preallocator);
 Components.utils.import('resource://dta/cothread.jsm');
 Components.utils.import('resource://dta/queuestore.jsm');
+Components.utils.import('resource://dta/timers.jsm');
 
 var TEXT_PAUSED;
 var TEXT_QUEUED;
@@ -98,7 +98,8 @@ var TEXT_COMPLETE;
 var TEXT_CANCELED;
 
 
-var GlobalBucket = null; 
+var GlobalBucket = null;
+var Timers = new TimerManager();
 
 var Dialog = {
 	_observes: [
@@ -136,7 +137,7 @@ var Dialog = {
 	
 	_wasRunning: false,
 	_sum: 0,
-	_speeds: new SpeedStats(5),
+	_speeds: new SpeedStats(10),
 	_running: [],
 	_autoClears: [],
 	completed: 0,
@@ -241,6 +242,7 @@ var Dialog = {
 		GlobalBucket.byteRate = val;
 		this._fillSpeedList();
 		list.blur();
+		this._speeds.clear();
 	},
 	
 	_loadDownloads: function D__loadDownloads() {
@@ -485,9 +487,9 @@ var Dialog = {
 				this.run(d);
 			}
 		}
-		this._updTimer = new Timer("Dialog.checkDownloads();", REFRESH_FREQ, true, true);
-		new Timer("Dialog.refreshWritten();", 100, true, true);
-		new Timer("Dialog.saveRunning();", 10000, true);
+		this._updTimer = Timers.createRepeating(REFRESH_FREQ, this.checkDownloads, this, true);
+		Timers.createRepeating(100, this.refreshWritten, this, true);
+		Timers.createRepeating(10000, this.saveRunning, this);
 		
 		$('loadingbox').parentNode.removeChild($('loadingbox'));		
 	},
@@ -778,7 +780,7 @@ var Dialog = {
 		// stop everything!
 		// enumerate everything we'll have to wait for!
 		if (this._updTimer) {
-			this._updTimer.kill();
+			Timers.killTimer(this._updTimer);
 			delete this._updTimer;
 		}
 		let chunks = 0;
@@ -808,7 +810,7 @@ var Dialog = {
 		if (chunks || finishing) {
 			if (this._safeCloseAttempts < 20) {
 				++this._safeCloseAttempts;
-				new Timer(function() Dialog.close(), 250);				
+				Timers.createOneshot(250, this.close, this);				
 				return false;
 			}
 			Debug.logString("Going down even if queue was not probably closed yet!");
@@ -849,7 +851,7 @@ var Dialog = {
 
 	unload: function D_unload() {
 		GlobalBucket.kill();
-		TimerManager.killAll();
+		Timers.killAllTimers();
 		if (this._loader) {
 			this._loader.cancel();
 		}
@@ -1654,6 +1656,7 @@ QueueItem.prototype = {
 		this.chunks = [];
 		this.speeds.clear();
 		this.visitors = new VisitorManager();
+		this.state = QUEUED;
 		Dialog.run(this);
 	},
 

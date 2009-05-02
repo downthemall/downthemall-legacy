@@ -57,8 +57,7 @@ function Verificator(download) {
 		this.download.partialSize = 0;
 		this._readNextChunk();
 	
-		var thisp = this;
-		this._timer = new Timer(function() { thisp.download.invalidate(); }, STREAMS_FREQ, true);
+		this._timer = Timers.createRepeating(STREAMS_FREQ, this._invalidate, this, true);
 	}
 	catch (ex) {
 		try {
@@ -83,7 +82,8 @@ Verificator.prototype = {
 			alert("Failed to remove file\n" + ex);
 		}
 	},
-	_finish: function() {			
+	_finish: function() {		
+		try {
 			this.download.partialSize = this.download.totalSize;
 			this.download.invalidate();
 			
@@ -97,13 +97,16 @@ Verificator.prototype = {
 				}
 			}
 			this.download.complete();
+		}
+		catch (ex) {
+			Debug.log("verificator::_finish", ex);
+		}
 	},
 	_readNextChunk: function() {
 		if (this._pending <= 0) {
 			this.stream.close();
-			this._timer.kill();
-			var thisp = this;
-			setTimeout(function() { thisp._finish(); }, 100);
+			Timers.killTimer(this._timer);
+			Timers.createOneshot(100, this._finish, this);
 			return;
 		}
 		var nextChunk = Math.min(this._pending, 2147483648 /* 2GB */);
