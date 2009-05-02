@@ -92,6 +92,8 @@
 		<command id="cmdImport" oncommand="Tree.import();"/>
 		<command id="cmdExport" oncommand="Tree.export();"/>
 		
+		<command id="cmdChangeSpeedLimit" oncommand="Dialog.changeSpeedLimit();"/>
+		
 		<command id="cmdPreferences" oncommand="DTA_showPreferences();"/>		
 		
 	</commandset>
@@ -118,7 +120,7 @@
 
 		<key id="kRemoveSelected" keycode="VK_DELETE" command="cmdRemoveSelected"/>
 		<key id="kRemoveSelectedMac" modifiers="meta" keycode="VK_BACK" command="cmdRemoveSelected"/>
-		<key id="kRemoveCompleted" modifiers="accel" keycode="VK_DELETE" command="cmdRemoveCompleted"/>
+		<key id="kRemoveCompleted" modifiers="shift" keycode="VK_DELETE" command="cmdRemoveCompleted"/>
 		<key id="kCleanGone" modifiers="alt" keycode="VK_DELETE" command="cmdCleanGone"/>
 
 		<key id="kMoveTop" modifiers="alt" keycode="VK_HOME" command="cmdMoveTop"/>
@@ -258,7 +260,7 @@
 		<statusbarpanel id="statusSpeed" label=""/>
 		<statusbarpanel id="statusSpeeds">
 			<label control="listSpeeds" value="&speedlimit.label;"/>
-			<menulist id="listSpeeds" oncommand="Dialog.changeSpeedLimit();" class="plain" tooltiptext="&speedlimit.tooltip;">
+			<menulist id="listSpeeds" command="cmdChangeSpeedLimit" class="plain" tooltiptext="&speedlimit.tooltip;">
 				<menupopup/>
 			</menulist>
 		</statusbarpanel>
