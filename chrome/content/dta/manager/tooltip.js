@@ -60,8 +60,8 @@ var Tooltip = {
 	},		 
 	start: function(d) {
 		this._current = d;
-		this._timer = new Timer('Tooltip.update()', TOOLTIP_FREQ, true);
-		new Timer('Tooltip.initUpdate()', 25);
+		this._timer = Timers.createRepeating(TOOLTIP_FREQ, this.update, this);
+		Timers.createOneshot(25, this.initUpdate, this);
 	},
 	initUpdate: function() {
 		let box = $('canvasGrid').boxObject;
@@ -79,7 +79,8 @@ var Tooltip = {
 	stop: function() {
 		this._current = null;
 		if (this._timer) {
-			this._timer.kill();
+			Timers.killTimer(this._timer);
+			delete this._timer;
 		}
 	},	
 	update: function() {
