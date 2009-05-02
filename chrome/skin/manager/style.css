@@ -468,3 +468,18 @@ textbox.plain {
 .menu-iconic-accel {
 	font-size: 75%;
 }
+
+#statusSpeeds {
+	text-align: right;
+}
+
+#statusSpeeds,
+#listSpeeds menuitem {
+	font-size: 90%;
+}
+#listSpeeds,
+#listSpeeds  textbox {
+	padding: 0px !important;
+	margin: 0px !important;
+	cursor: default;
+}

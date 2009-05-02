@@ -254,7 +254,14 @@
 
 	<statusbar id="footer" chromedir="&locale.dir;">
 		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline" />
-		<statusbarpanel id="statusText" label="" flex="1" />
+		<statusbarpanel id="statusText" label="" flex="3"/>
+		<statusbarpanel id="statusSpeed" label=""/>
+		<statusbarpanel id="statusSpeeds">
+			<label control="listSpeeds" value="&speedlimit.label;"/>
+			<menulist id="listSpeeds" oncommand="Dialog.changeSpeedLimit();" class="plain" tooltiptext="&speedlimit.tooltip;">
+				<menupopup/>
+			</menulist>
+		</statusbarpanel>
 		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text" label="&options.label;" command="cmdPreferences"/>
 	</statusbar>
 	

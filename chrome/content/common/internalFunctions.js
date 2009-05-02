@@ -231,7 +231,7 @@ var Utils = {
 	 *          The number to format
 	 * @author Nils
 	 */
-	formatBytes: function U_formatBytes(aNumber) {
+	formatBytes: function U_formatBytes(aNumber, decimalPlace) {
 		const formatBytes_units = [['sizeB', 0], ['sizeKB', 1], ['sizeMB', 2], ['sizeGB', 2], ['sizeTB', 3]];
 		const formatBytes_nunits = formatBytes_units.length;
 
@@ -248,7 +248,7 @@ var Utils = {
 			unit = formatBytes_units[i];
 		}
 		
-		return _(unit[0], [aNumber.toFixed(unit[1])]);
+		return _(unit[0], [aNumber.toFixed(arguments.length > 1 ? decimalPlace : unit[1])]);
 	},
 
 
