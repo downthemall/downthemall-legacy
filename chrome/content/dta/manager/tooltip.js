@@ -41,6 +41,7 @@ const SPEED_COUNT = 100;
 
 var Tooltip = {
 	_current: null,
+	_mustDraw: true,
 	init: function() {
 		try {
 			// check if we support 2d-canvas
@@ -60,21 +61,25 @@ var Tooltip = {
 	},		 
 	start: function(d) {
 		this._current = d;
-		this._timer = Timers.createRepeating(TOOLTIP_FREQ, this.update, this);
+		this._mustDraw = true;
+		this._timer = Timers.createRepeating(TOOLTIP_FREQ, this.update, this, true);
 		Timers.createOneshot(25, this.initUpdate, this);
 	},
 	initUpdate: function() {
 		let box = $('canvasGrid').boxObject;
 		for each (let canvas in $('chunkCanvas', 'speedCanvas')) {
-			canvas.width = Math.min(box.width, canvas.clientWidth);
 			try {
+				canvas.width = Math.min(box.width, canvas.clientWidth);
 				canvas.height = parseInt(canvas.getAttribute('height'));
 			}
 			catch (ex) {
+				this.start(this._current);
 				Debug.log("tt: failed to set height", ex);
+				return;
 			}
-		}		
+		}
 		this.update();
+		this._mustDraw = false;
 	},
 	stop: function() {
 		this._current = null;
@@ -151,7 +156,7 @@ var Tooltip = {
 	_usState: null,
 	updateSpeeds: function(file) {
 		try {
-			if (file === this._usFile && file.speeds.lastUpdate === this._usUpdate && file.speeds.lastBytes === this._usBytes && file.state == this._usState) {
+			if (!this._mustDraw && file === this._usFile && file.speeds.lastUpdate === this._usUpdate && file.speeds.lastBytes === this._usBytes && file.state == this._usState) {
 				return;
 			}
 			this._usFile = file;
@@ -279,7 +284,7 @@ var Tooltip = {
 	_ucState: null,
 	updateChunks: function (file) {
 		try {
-			if (file === this._ucFile && file.state === this._ucState && file.dimensionString === this._ucDim) {
+			if (!this._mustDraw && file === this._ucFile && file.state === this._ucState && file.dimensionString === this._ucDim) {
 				return;
 			}
 			this._ucFile = file;
