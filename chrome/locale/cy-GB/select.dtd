@@ -1,0 +1,18 @@
+<!ENTITY title "Buat pilihan anda">
+<!ENTITY filters.caption "Penapis">
+<!ENTITY additional.caption "Penapisan pantas">
+<!ENTITY additional.tip "Penapis teks: anda boleh tetapkan pelbagai penapis teks serentak menggunakan koma.">
+<!ENTITY regex.label "Daf. Eks.">
+<!ENTITY filter.tip "Taipkan penapis teks anda di sini! (contoh ada di bawah)">
+<!ENTITY status.label "Selepas memilih penghubung, klik pada Mula!">
+<!ENTITY menu.mask.title "Ubah Penama Tutupan">
+<!ENTITY menu.check.label "Tanda butiran terpilih">
+<!ENTITY menu.uncheck.label "Buang tanda butiran terpilih">
+<!ENTITY menu.toggle.label "Jana tandaan untuk butiran terpilih">
+<!ENTITY tab.links.label "Penghubung">
+<!ENTITY tab.pics.label "Gambar dan Siratan">
+<!ENTITY header.desc.label "Gambaran">
+<!ENTITY selectfiltered.label "Pilih yang ditapis">
+<!ENTITY disableother.label "Lumpuhkan penapis lain">
+<!ENTITY disableother.tooltip "Lumpuhkan penapis lain dan gunakan penapis pantas. (Tetapan ini tidak akan diingat pada masa sekarang)">
+<!ENTITY resname.value "Nama sumber">

@@ -1,0 +1,5 @@
+<!ENTITY title "Tambah URL">
+<!ENTITY add.value "Tambah URL">
+<!ENTITY desc.value "Masukkan URL di sini dan (pilihan) mukasurat rujukan fail yang ingin dimuat turun.">
+<!ENTITY desc.batches.value "Anda boleh menggunakan penghurai kelompok untuk muat turun pelbagai fail serentak.">
+<!ENTITY examples.value "Contoh:">

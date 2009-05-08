@@ -1,0 +1,21 @@
+<!ENTITY mask.title "Penama Label">
+<!ENTITY mask.name "Nama fail">
+<!ENTITY mask.ext "Sambungan">
+<!ENTITY mask.url "URL Asas">
+<!ENTITY mask.curl "URL Penuh">
+<!ENTITY mask.flatcurl "URL Penuh Rata">
+<!ENTITY mask.num "Nombor progresif">
+<!ENTITY mask.hh "Jam">
+<!ENTITY mask.mm "Minit">
+<!ENTITY mask.ss "Saat">
+<!ENTITY mask.d "Hari">
+<!ENTITY mask.m "Bulan">
+<!ENTITY mask.y "Tahun">
+<!ENTITY mask.subdirs "Subdirektori URL">
+<!ENTITY mask.flatsubdirs "Subdirektori URL rata">
+<!ENTITY mask.text "Gambaran penghubung">
+<!ENTITY mask.flattext "Gambaran penghubung rata">
+<!ENTITY mask.refer "URL Perujuk">
+<!ENTITY mask.qstring "Rentetan Pertanyaan">
+<!ENTITY mask.tip "Klik atau heret untuk menamakan tutupan">
+<!ENTITY mask.open.tip "Jadual pengubahan penama label">
