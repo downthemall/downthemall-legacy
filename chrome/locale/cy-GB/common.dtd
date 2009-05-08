@@ -1,0 +1,17 @@
+<!ENTITY start.label "Mula!">
+<!ENTITY start.key "m">
+<!ENTITY queue.label "Tambah henti dahulu">
+<!ENTITY queue.key "t">
+<!ENTITY cancel.label "Batal">
+<!ENTITY options.label "Pengubahan">
+<!ENTITY url.value "URL">
+<!ENTITY dest.caption "Simpan fail dalam:">
+<!ENTITY referrer.value "URL Rujukan:">
+<!ENTITY description.value "Gambaran:">
+<!ENTITY checksum.value "Semakan ralat (Hancur)">
+<!ENTITY browse.tip "Carian untuk sasaran fail...">
+<!ENTITY mask.label "Penama tutupan">
+<!ENTITY mask.tip "Fail pilihan akan disimpan dan dinamakan menggunakan tutupan ini">
+<!ENTITY selectall.label "Pilih semua">
+<!ENTITY selectinv.label "Songsangkan pilihan">
+<!ENTITY selectnone.label "Tidak pilih">

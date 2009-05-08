@@ -1,0 +1,7 @@
+<!ENTITY title.value "Konflik nama fail!">
+<!ENTITY text.value "Ingat tetapan ini:">
+<!ENTITY file.label "Hanya untuk fail ini">
+<!ENTITY session.label "Hanya untuk sesi ini">
+<!ENTITY always.label "Mulai sekarang">
+<!ENTITY overwrite.label "Tulis lampau fail sedia ada">
+<!ENTITY skip.label "Langkau/Batal">

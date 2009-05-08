@@ -1,0 +1,44 @@
+<!ENTITY tooladd.label "Tambah URL">
+<!ENTITY tooladd.tooltip "Tambah URL secara manual kepada DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Anda boleh bantu kami jadikan DownThemAll lebih baik. Fikirkan untuk sedikit derma!">
+<!ENTITY movetop.label "Puncak">
+<!ENTITY movebottom.label "Dasar">
+<!ENTITY moveup.label "Atas">
+<!ENTITY movedown.label "Bawah">
+<!ENTITY task.label "URL/Nama">
+<!ENTITY per.label "Penyiapan">
+<!ENTITY pct.label "Kemajuan">
+<!ENTITY dim.label "Saiz">
+<!ENTITY time.label "Masa jangkaan">
+<!ENTITY parts.label "Segmen">
+<!ENTITY speed.label "Kelajuan">
+<!ENTITY infoURLTitle.value "Daripada:">
+<!ENTITY infoSizeTitle.value "Saiz:">
+<!ENTITY infoMultiple.value "Pelbagai Butiran">
+<!ENTITY elapsedTitle.value "Sesudah">
+<!ENTITY remainingTitle.value "Tinggal">
+<!ENTITY currentSpeedTitle.value "Kelajuan semasa:">
+<!ENTITY avgSpeedTitle.value "Kelajuan purata:">
+<!ENTITY path.label "Laluan Simpan">
+<!ENTITY mask.label "Penama Tutupan">
+<!ENTITY hash.label "Semakan ralat">
+<!ENTITY infos.label "Maklumat muat turun">
+<!ENTITY launch.label "Buka fail">
+<!ENTITY delete.label "Padam fail">
+<!ENTITY targetdir.label "Buka direktori">
+<!ENTITY pause.label "Henti Seketika">
+<!ENTITY resume.label "Sambung Semula">
+<!ENTITY cancel.label "Batal">
+<!ENTITY remove.label "Alih muat turun pilihan">
+<!ENTITY removeCompleted.label "Alih tugas tercapai">
+<!ENTITY removeGone.label "Bersihkan tiada fail">
+<!ENTITY misc.label "Aneka">
+<!ENTITY addchunk.label "Tambahkan satu segmen">
+<!ENTITY removechunk.label "Kurangkan satu segmen">
+<!ENTITY force.label "Paksa mula">
+<!ENTITY import.label "Import daripada fail">
+<!ENTITY export.label "Export dipilih">
+<!ENTITY options.caption "Pilihan">
+<!ENTITY loading.label "Pemuatan...">
+<!ENTITY restore.label "Kembalikan">
+<!ENTITY close.label "Tutup">
