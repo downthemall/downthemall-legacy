@@ -36,8 +36,9 @@
 #include "nsISupports.idl"
 
 interface nsIURI;
+interface nsIVariant;
 
-[scriptable, uuid(47C53284-E2D1-49af-9524-4D42D70D1279)]
+[scriptable, uuid(35eabb45-6bca-408a-b90c-4b22e543caf4)]
 interface dtaIContentHandling : nsISupports {
 	/**
 		The dtaIContentHandling Service will store the last few post-data strings
@@ -47,5 +48,6 @@ interface dtaIContentHandling : nsISupports {
 		
 		@return empty string when not found, otherwise mime-channel bytes
 	*/
-	AUTF8String getPostDataFor(in nsIURI uri);  
+	AUTF8String getPostDataFor(in nsIURI uri);
+	nsIVariant getFlashVideosFor(in nsIURI uri);  
 }; 

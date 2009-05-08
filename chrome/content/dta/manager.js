@@ -64,7 +64,7 @@ const FileInputStream = Construct('@mozilla.org/network/file-input-stream;1', 'n
 const FileOutputStream = Construct('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const StringInputStream = Construct('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
 
-const ContentHandling = Serv('@downthemall.net/contenthandling;1', 'dtaIContentHandling');
+const ContentHandling = Serv('@downthemall.net/contenthandling;2', 'dtaIContentHandling');
 const MimeService = Serv('@mozilla.org/uriloader/external-helper-app-service;1', 'nsIMIMEService');
 const ObserverService = Serv('@mozilla.org/observer-service;1', 'nsIObserverService');
 const WindowWatcherService = Serv('@mozilla.org/embedcomp/window-watcher;1', 'nsIWindowWatcher');
@@ -205,7 +205,7 @@ var Dialog = {
 			}
 		})();
 		Components.utils.import('resource://dta/bytebucket.jsm');
-		GlobalBucket = new ByteBucket(Prefs.speedLimit);
+		GlobalBucket = new ByteBucket(Prefs.speedLimit, 1.2);
 		this._fillSpeedList();
 	},
 	
@@ -2443,7 +2443,14 @@ function Connection(d, c, isInfoGetter) {
 
 	this._chan = IOService.newChannelFromURI(this.url.url);
 	let r = Ci.nsIRequest;
-	this._chan.loadFlags = r.LOAD_NORMAL | r.LOAD_BYPASS_CACHE;
+	let loadFlags = r.LOAD_NORMAL
+	if (!Preferences.getExt('useCache', false)) {
+		loadFlags = loadFlags | r.LOAD_BYPASS_CACHE;
+	}
+	else {
+		Debug.logString("using cache");
+	}
+	this._chan.loadFlags = loadFlags;
 	this._chan.notificationCallbacks = this;
 	try {
 		let encodedChannel = this._chan.QueryInterface(Ci.nsIEncodedChannel);
