@@ -75,8 +75,8 @@
 		ondragover="nsDragAndDrop.dragOver(event, DTA_DropDTA);"
 		ondragdrop="nsDragAndDrop.drop(event, DTA_DropDTA);"
 		oncommand="if (event.target == this) DTA_ContextOverlay.findLinks(false);"
-		label="dTa!"
-		tooltiptext="DownThemAll!"
+		label="&dta-regular.label;"
+		tooltiptext="&dta-regular.label;"
 		type="menu-button"
 	>
 		<menupopup>
@@ -91,8 +91,8 @@
 		ondragover="nsDragAndDrop.dragOver(event, DTA_DropTDTA);"
 		ondragdrop="nsDragAndDrop.drop(event, DTA_DropTDTA);"
 		oncommand="if (event.target == this) DTA_ContextOverlay.findLinks(true);"
-		label="dTa OneClick!"
-		tooltiptext="dTa OneClick!"
+		label="&dta-regular-turbo.label;"
+		tooltiptext="&dta-regular-turbo.label;"
 		type="menu-button"
 	>
 		<menupopup>
@@ -105,13 +105,13 @@
 		class="chromeclass-toolbar-additional toolbarbutton-1"
 		oncommand="DTA_AddingFunctions.openManager();"
 		label="&dta-manager-button;"
-		tooltiptext="Manager"
+		tooltiptext="&dta-manager-button;"
 	/>
 	<toolbarbutton 
 		id="dta-turboselect-button" class="chromeclass-toolbar-additional toolbarbutton-1"
 		oncommand="if (event.target == this) DTA_ContextOverlay.toggleOneClick(event);"
-		label="DTA OneClick! Selector"
-		tooltiptext="dTa OneClick! Selector"
+		label="&dta-selector-button;"
+		tooltiptext="&dta-selector-button;"
 		type="checkbox"
 	/>	
 	<menu id="dtaToolsMenu" label="DownThemAll" class="menu-iconic dta">
@@ -121,7 +121,7 @@
 			<menuitem id="dtaToolsTDTA" oncommand="DTA_ContextOverlay.findLinks(true)" 
 				label="&dta-regular-turbo.label;" class="menuitem-iconic dtaturbo" />
 			<menuitem id="dtaToolsManager" oncommand="DTA_AddingFunctions.openManager()" 
-				label="&dta-manager-button;..." class="menuitem-iconic dtamanager" />	
+				label="&dta-manager-button;" class="menuitem-iconic dtamanager" />	
 			<menuseparator id="dtaToolsSep"/>
 			<menuitem id="dtaToolsPrefs" oncommand="DTA_showPreferences();"
 				label="&dta-pref.label;" class="menuitem-iconic dtaprefs" />
