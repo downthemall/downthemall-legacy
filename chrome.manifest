@@ -10,6 +10,7 @@ locale	dta	en-US	chrome/locale/en-US/
 locale dta bg-BG chrome/locale/bg-BG/
 locale dta ca-AD chrome/locale/ca-AD/
 locale dta cs-CZ chrome/locale/cs-CZ/
+locale dta cy-GB chrome/locale/cy-GB/
 locale dta da-DK chrome/locale/da-DK/
 locale dta de-DE chrome/locale/de-DE/
 locale dta el-GR chrome/locale/el-GR/
