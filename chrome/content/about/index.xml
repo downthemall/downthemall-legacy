@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!DOCTYPE html [
+	<!ENTITY % aboutDTD SYSTEM "chrome://dta/locale/about.dtd">
+	%aboutDTD;
+	
+	<!ENTITY % landingpageDTD SYSTEM "chrome://dta/locale/landingpage.dtd">
+	%landingpageDTD;
+	
+	<!ENTITY % htmlDTD PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+	%htmlDTD;	
+]>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>&lp.title;</title>
+</head>
+<style type="text/css">
+	.player {
+		width: 400px;
+		height: 300px;
+		border: 1px solid red;
+	}
+</style>
+		
+
+<body>
+	<div id="welcome">
+		<h1>&lp.welcome;</h1>
+		<p class="info">&lp.info;</p>
+		<p class="remark">&lp.moreinfo;</p>
+	</div>
+
+	<div class="pager pager-with-tabs pager-no-history">
+
+		<ul class="pager-tabs">
+			<li class="first"><a href="#tutorial">&lp.gettingstarted;</a></li>
+			<li><a href="#toolbar">&lp.toolbar;</a></li>
+			<li><a href="#privacy">&lp.privacy;</a></li>
+			<li><a href="#license">&lp.yourrights;</a></li>
+			<li class="pager-not-tab"><a href="http://www.downthemall.net/howto/donate/">&lp.donate;</a></li>
+			<li class="last"><a href="#contact">&lp.contact;</a></li>
+		</ul>
+		<div class="pager-outer">
+		
+		<div class="pager-content">
+			
+			<div id="tutorial">
+				<h2>&lp.tut.firsttitle;</h2>
+				<div class="player" href="first-download"/>
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.   
+				Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
+
+				<h2>&lp.tut.selecttitle;</h2>
+				<div class="player" href="select-window"/>
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.   
+				Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
+
+				<h2>&lp.tut.batchestitle;</h2>
+				<div class="player" href="batches"/>
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.   
+				Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
+
+			</div>
+
+			<div id="toolbar">
+				<h2>&lp.tb.addingtitle;</h2>
+				<div class="player" href="toolbar-add"/>
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.   
+				Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
+
+				<h3>&lp.tb.dndtitle;</h3>
+				<div class="player" href="dnd"/>
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.   
+				Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
+
+				<h3>&lp.tb.selectortitle;</h3>
+				<div class="player" href="selector"/>
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.   
+				Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
+			</div>
+
+			<div id="privacy">
+				<h2>&lp.pr.title;</h2>
+				<p>&lp.pr.intro;</p>
+				<p>&lp.pr.settings;</p>
+				<p>&lp.pr.diag;</p>
+				<p>&lp.pr.link;</p>
+			</div>
+			
+			<div id="license">
+				<h2>&lp.yr.usagetitle;</h2>
+				<p>&lp.yr.usage;</p>
+				<ul>
+					<li>&lp.yr.usageuse;</li>
+					<li>&lp.yr.usagemod;</li>
+					<li>&lp.yr.usagedist;</li>
+				</ul>
+				<p>&lp.yr.usagemore;</p>
+
+				<h2>&lp.yr.licensetitle;</h2>
+				
+				<p>Copyright © 2004-2007 Federico Parodi and Stefano Verna<br/>
+				Copyright © 2007-2008 Nils Maier, Federico Parodi and Stefano Verna</p>
+				
+				<p>&lp.yr.licensed;</p>
+
+				<p>&lp.yr.morelicense;</p>
+				 
+				<p>&lp.yr.gplintro;</p>
+				
+				<h3>NO WARRANTY</h3>
+				<p>11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+				FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.	EXCEPT WHEN
+				OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+				PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
+				OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+				MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.	THE ENTIRE RISK AS
+				TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.	SHOULD THE
+				PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
+				REPAIR OR CORRECTION.</p>
+
+				<p>12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+				WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+				REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,
+				INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING
+				OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED
+				TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY
+				YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER
+				PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
+				POSSIBILITY OF SUCH DAMAGES.</p>
+
+				<h3>&about.icons;</h3>
+				<p>&about.based;</p>
+				<ul>
+					<li>© Michael Matas,</li>
+					<li>© Jakub Steiner, © Novell, Inc.</li>
+					<li>© Mark James (famfamfam silk icons)</li>
+				</ul>
+
+				<h3>Language</h3>
+				<p><strong>&language; &about.by;</strong> &transAutor;</p>
+			</div>
+			
+			<div id="contacts">
+				<h2>&lp.ct.bugstitle;</h2>
+				<p>&lp.ct.bugs;</p>
+
+				<h2>&lp.ct.contactstitle;</h2>
+				<p>&lp.ct.contactsfeed;</p>
+				<p>&lp.ct.contacts;</p>
+			</div>
+
+		</div>
+		</div>
+	</div>
+</body>
+</html>
