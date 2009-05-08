@@ -1,0 +1,43 @@
+<!ENTITY lp.title "About DownThemAll!">
+<!ENTITY lp.welcome "Welcome to DownThemAll!">
+<!ENTITY lp.info "This page is designed to let you know all the important information about DownThemAll!">
+<!ENTITY lp.moreinfo "For more information visit our <a href='http://www.downthemall.net/howto/features/'>features page</a>.">
+<!ENTITY lp.gettingstarted "Getting started">
+<!ENTITY lp.toolbar "Browser toolbar">
+<!ENTITY lp.privacy "Privacy">
+<!ENTITY lp.yourrights "Your rights">
+<!ENTITY lp.donate "Donate">
+<!ENTITY lp.contact "Contact">
+
+<!ENTITY lp.tut.firsttitle "Your first download">
+<!ENTITY lp.tut.selecttitle "Using the selection window">
+<!ENTITY lp.tut.batchestitle "Downloading Batches">
+
+<!ENTITY lp.tb.addingtitle "Adding and using toolbar buttons">
+<!ENTITY lp.tb.dndtitle "Drag'n'drop">
+<!ENTITY lp.tb.selectortitle "Using the DownThemAll! Selector">
+
+<!ENTITY lp.pr.title "Privacy Notice">
+<!ENTITY lp.pr.intro "DownThemAll protects your privacy.">
+<!ENTITY lp.pr.settings "You can remove complete, canceled, and unfinished downloads from the download window by changing the settings in the Preferences->Privacy panel.">
+<!ENTITY lp.pr.diag "You can enable diagnostic messages, which will be logged to both the error console and written to the dta_log.txt file, by the Preferences->Privacy panel. Diagnostic messages will likely contain sensitive information like URLs, file paths, filenames you're downloading, or even cookie information. This option is DISABLED by default to protect your privacy. If you submit a diagnostic message, you may wish to censor this sensitive information.">
+<!ENTITY lp.pr.link "This notice is always available from this help and additionally linked on the About window">
+
+<!ENTITY lp.yr.usagetitle "Usage and redistribution">
+<!ENTITY lp.yr.usage "The authors license DownThemAll! in such a way to you that you may freely:">
+<!ENTITY lp.yr.usageuse "Use DownThemAll!">
+<!ENTITY lp.yr.usagemod "Modify DownThemAll!">
+<!ENTITY lp.yr.usagedist "Redistribute DownThemAll!, with or without modifications">
+<!ENTITY lp.yr.usagemore "See the licenses for more information.">
+
+<!ENTITY lp.yr.licensetitle "Copyright and License">
+<!ENTITY lp.yr.licensed "DownThemAll! is licensed under <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. See the GPL file. This applies to all source code files.">
+<!ENTITY lp.yr.morelicense "Individual files may have different licenses. See the corresponding repository files available from <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Many files are tri-licensed under a MPL 1.1/GPL 2.0/LGPL 2.1 license; See the MPL, GPL, LGPL files respectively.">
+<!ENTITY lp.yr.gplintro "Most important parts from the GPL 2.0">
+
+<!ENTITY lp.ct.bugstitle "Reporting bugs/Feature requests">
+<!ENTITY lp.ct.bugs "Please report bug and feature requests at our <a href='http://bugs.code.downthemall.net/'>bug tracker</a>.">
+
+<!ENTITY lp.ct.contactstitle "Contacts">
+<!ENTITY lp.ct.contactsfeed "We like to receive your feedback, suggestions or offers to help.">
+<!ENTITY lp.ct.contacts "Please see our <a href='http://www.downthemall.net/main/contacts/'>contact page</a> online.">
