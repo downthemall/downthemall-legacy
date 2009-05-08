@@ -52,8 +52,18 @@ var ContentHandling = {
 	_init: function() {
 		var obs = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
 		obs.addObserver(this, 'http-on-modify-request', true);
+		obs.addObserver(this, 'http-on-examine-response', true);
+		obs.addObserver(this, 'http-on-examine-cached-response', true); 
 	},
 	observe: function(subject, topic, data) {
+		if (topic == 'http-on-modify-request') {
+			this.observeRequest(subject, topic, data);
+		}
+		else if (topic == 'http-on-examine-response' || topic == 'http-on-examine-cached-response') {
+			this.observeResponse(subject, topic, data);
+		}
+	},
+	observeRequest: function(subject, topic, data) {
 		if (
 			!(subject instanceof Ci.nsIHttpChannel)
 			|| !(subject instanceof Ci.nsIUploadChannel)
@@ -61,12 +71,13 @@ var ContentHandling = {
 			return;
 		}
 		var channel = subject.QueryInterface(Ci.nsIHttpChannel);
+				
 		if (channel.requestMethod != 'POST') {
 			return;
 		}
 				
 		var post;
-    
+		
 		try {
 			var us = subject.QueryInterface(Ci.nsIUploadChannel).uploadStream;
 			if (!us) {
@@ -105,35 +116,102 @@ var ContentHandling = {
 		catch (ex) {
 			debug("cannot get post-data", ex);
 		}
-  },
-  _dataDict: {},
-  _dataArray: [],
-  _registerData: function(uri, data) {
-  	uri = uri.spec;
+ 	},
+	observeResponse: function(subject, topic, data) {
+		if (!(subject instanceof Ci.nsIHttpChannel)) {
+			return;
+		}
+		let channel = subject.QueryInterface(Ci.nsIHttpChannel);
+		try {
+			if (!channel.requestSucceeded) {
+				return;
+			}
+			let ct = '';
+			for each (let x in ['Content-Type', 'Content-Disposition']) {
+				try {
+					ct += channel.getResponseHeader('Content-Type');
+				}
+				catch (ex) {
+					// no op
+				}
+			}
+			if (channel.URI.spec.match(/\.flv\b/i) || ct.match(/\bflv\b/i)) {
+				let wp = null;
+				if (channel.loadGroup && channel.loadGroup.groupObserver) {
+					channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);					
+				}
+				if (!wp) {
+					wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
+				}
+				 
+				if (!wp || !wp.DOMWindow) {
+					return 
+				}
+				let wn = wp.DOMWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
+				if (!wn || !wn.currentURI) {
+					return;
+				}
+				let parentURI = wn.currentURI;
+				if (!parentURI.schemeIs('http') && !parentURI.schemeIs('https') && !parentURI.schemeIs('ftp')) {
+					return;
+				}
+				this._registerFlash(parentURI, channel.URI);
+			}
+		}
+		catch (ex) {
+			// no op
+		}
+	},
+	_dataDict: {},
+	_dataArray: [],
+	_registerData: function(uri, data) {
+		uri = uri.spec;
 
-  	if (!(uri in this._dataDict)) {
-  		if (this._dataArray.length > 5) {
-  			delete this._dataDict[this._dataArray.pop()];
-  		}
-  		this._dataArray.push(uri);
-  	}
-  	
-  	this._dataDict[uri] = data;  	
-  },
-  getPostDataFor: function(uri) {
-  	if (uri instanceof Ci.nsIURI) {
-  		uri = uri.spec;
-  	}
-  	if (!(uri in this._dataDict)) {
-  		return '';
-  	}
-  	return this._dataDict[uri];
-  }  	
+		if (!(uri in this._dataDict)) {
+			if (this._dataArray.length > 5) {
+				delete this._dataDict[this._dataArray.pop()];
+			}
+			this._dataArray.push(uri);
+		}
+		
+		this._dataDict[uri] = data;  	
+	},
+	_flvDict: {},
+	_flvArray: [],
+	_registerFlash: function(uri, flv) {
+		uri = uri.spec;
+		if (!(uri in this._flvDict)) {
+			if (this._flvArray.length > 20) {
+				delete this._flvDict[this._flvArray.pop()];
+			}
+			this._flvArray.push(uri);
+			this._flvDict[uri] = [];
+		}
+		this._flvDict[uri].push(flv);
+	},
+	getPostDataFor: function(uri) {
+		if (uri instanceof Ci.nsIURI) {
+			uri = uri.spec;
+		}
+		if (!(uri in this._dataDict)) {
+			return '';
+		}
+		return this._dataDict[uri];
+	},
+	getFlashVideosFor: function(uri) {
+		if (uri instanceof Ci.nsIURI) {
+			uri = uri.spec;
+		}
+		if (!(uri in this._flvDict)) {
+			return [];
+		}
+		return this._flvDict[uri];
+	}
 };
 implementComponent(
 	ContentHandling,
-	Components.ID("{47C53284-E2D1-49af-9524-4D42D70D1279}"),
-	"@downthemall.net/contenthandling;1",
+	Components.ID("{35eabb45-6bca-408a-b90c-4b22e543caf4}"),
+	"@downthemall.net/contenthandling;2",
 	"DownThemAll! Content Handling",
 	[Ci.nsIObserver, Ci.nsiURIContentListener, Ci.dtaIContentHandling]
 );	
