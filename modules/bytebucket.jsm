@@ -54,7 +54,6 @@ Observers.prototype = {
 	_timer: null,
 	register: function(observer) {
 		this._obs.push(observer);
-		Components.utils.reportError("obs: " + this._obs.length);
 	},
 	unregister: function(observer) {
 		this._obs = this._obs.filter(function(e) e != observer);
