@@ -138,7 +138,7 @@ var ContentHandling = {
 			if (channel.URI.spec.match(/\.flv\b/i) || ct.match(/\bflv\b/i)) {
 				let wp = null;
 				if (channel.loadGroup && channel.loadGroup.groupObserver) {
-					channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);					
+					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);					
 				}
 				if (!wp) {
 					wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
