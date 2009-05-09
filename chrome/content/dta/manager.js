@@ -224,12 +224,16 @@ var Dialog = {
 			}
 			items.push(m + v);
 		}
+		let sep = document.createElement('menuseparator');
 		for each (let v in items.map(function(e) e * 1024)) {
 			let item = list.appendItem(Utils.formatBytes(v, 0) + '/s', v);
 			if (v == iv) {
+				list.menupopup.insertBefore(sep.cloneNode(false), item);
 				list.selectedItem = item;
+				list.menupopup.appendChild(sep.cloneNode(false));
 			}
 		}
+		list.menupopup.appendChild(sep);
 		let item = list.appendItem(_('unlimitedspeed'), -1);
 		if (iv == -1) {
 			list.selectedItem = item;
