@@ -33,6 +33,8 @@
 <!ENTITY lp.yr.usagedist "Redistribute DownThemAll!, with or without modifications">
 <!ENTITY lp.yr.usagemore "See the licenses for more information.">
 
+<!ENTITY lp.languagetitle "Language">
+
 <!ENTITY lp.yr.licensetitle "Copyright and License">
 <!ENTITY lp.yr.licensed "DownThemAll! is licensed under <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. See the GPL file. This applies to all source code files.">
 <!ENTITY lp.yr.morelicense "Individual files may have different licenses. See the corresponding repository files available from <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Many files are tri-licensed under a MPL 1.1/GPL 2.0/LGPL 2.1 license; See the MPL, GPL, LGPL files respectively.">
