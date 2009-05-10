@@ -19,6 +19,10 @@
 		height: 300px;
 		border: 1px solid red;
 	}
+	.pager-content > div {
+		border-top: 1px solid red;
+		margin-top: 5em;
+	}
 </style>
 		
 
@@ -39,10 +43,7 @@
 			<li class="pager-not-tab"><a href="http://www.downthemall.net/howto/donate/">&lp.donate;</a></li>
 			<li class="last"><a href="#contact">&lp.contact;</a></li>
 		</ul>
-		<div class="pager-outer">
-		
 		<div class="pager-content">
-			
 			<div id="tutorial">
 				<h2>&lp.tut.firsttitle;</h2>
 				<div class="player" href="first-download"/>
@@ -62,6 +63,7 @@
 			</div>
 
 			<div id="toolbar">
+				<p>&lp.tb.intro;</p>   
 				<h2>&lp.tb.addingtitle;</h2>
 				<div class="player" href="toolbar-add"/>
 				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.   
@@ -148,8 +150,6 @@
 				<p>&lp.ct.contactsfeed;</p>
 				<p>&lp.ct.contacts;</p>
 			</div>
-
-		</div>
 		</div>
 	</div>
 </body>

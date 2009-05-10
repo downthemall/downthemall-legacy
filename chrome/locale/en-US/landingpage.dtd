@@ -1,9 +1,11 @@
+<!ENTITY lp.localedir "ltr">
+
 <!ENTITY lp.title "About DownThemAll!">
 <!ENTITY lp.welcome "Welcome to DownThemAll!">
 <!ENTITY lp.info "This page is designed to let you know all the important information about DownThemAll!">
 <!ENTITY lp.moreinfo "For more information visit our <a href='http://www.downthemall.net/howto/features/'>features page</a>.">
 <!ENTITY lp.gettingstarted "Getting started">
-<!ENTITY lp.toolbar "Browser toolbar">
+<!ENTITY lp.toolbar "Toolbar buttons">
 <!ENTITY lp.privacy "Privacy">
 <!ENTITY lp.yourrights "Your rights">
 <!ENTITY lp.donate "Donate">
@@ -13,6 +15,7 @@
 <!ENTITY lp.tut.selecttitle "Using the selection window">
 <!ENTITY lp.tut.batchestitle "Downloading Batches">
 
+<!ENTITY lp.tb.intro "DownThemAll! offers some toolbar buttons that give you a convenient way to access DownThemAll! features.">
 <!ENTITY lp.tb.addingtitle "Adding and using toolbar buttons">
 <!ENTITY lp.tb.dndtitle "Drag'n'drop">
 <!ENTITY lp.tb.selectortitle "Using the DownThemAll! Selector">
