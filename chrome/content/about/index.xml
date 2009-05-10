@@ -14,6 +14,15 @@
 	<title>&lp.title;</title>
 </head>
 <style type="text/css">
+	html {
+		direction: &lp.localedir;
+	}
+	.alwaysleft {
+		direction: ltr;
+	}
+	*[localedir="rtl"] .aligntolocale {
+		text-align: right;
+	}
 	.player {
 		width: 400px;
 		height: 300px;
@@ -132,7 +141,7 @@
 
 				<h3>&about.icons;</h3>
 				<p>&about.based;</p>
-				<ul>
+				<ul class="alwaysleft aligntolocale">
 					<li>© Michael Matas,</li>
 					<li>© Jakub Steiner, © Novell, Inc.</li>
 					<li>© Mark James (famfamfam silk icons)</li>
