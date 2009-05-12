@@ -459,6 +459,10 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 	margin: 0px !important;
 	cursor: default;
 }
+#listSpeeds menuitem,
+#listSpeeds menuseparator {
+	padding-right: 4px;
+}
 #listSpeeds menuitem > .menu-iconic-left {
 	display: none;
 }
