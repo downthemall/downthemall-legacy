@@ -48,8 +48,12 @@ const DB_VERSION = 1;
 
 const Debug = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService);
 
-var _connection = null;
+Components.utils.import("resource://dta/timers.jsm");
+const Timers = new TimerManager();
 
+var _connection = null;
+var _trans = 0;
+var _timer = null;
 var QueueStore = {
 	init: function() {
 		Debug.logString("QueueStore: initialzing");
@@ -74,6 +78,8 @@ var QueueStore = {
 			// no-op
 		}
 		try {
+			_connection.executeSimpleSQL("PRAGMA journal_mode = MEMORY");
+			_connection.executeSimpleSQL("PRAGMA synchronous = NORMAL");
 			this._addStmt = _connection.createStatement('INSERT INTO queue (item) VALUES (?1)');
 			this._saveStmt = _connection.createStatement('UPDATE queue SET item = ?2 WHERE uuid = ?1');
 			this._savePosStmt = _connection.createStatement('UPDATE queue SET pos = ?2 WHERE uuid = ?1');
@@ -110,13 +116,20 @@ var QueueStore = {
 		Debug.logString("QueueStore: shutdown complete!");
 	},
 	beginUpdate: function() {
-		if (_connection.transactionInProgress) {
-			return;
+		if (++_trans == 1 && !_connection.transactionInProgress) {
+			_connection.beginTransactionAs(_connection.TRANSACTION_DEFERRED);
 		}
-		_connection.beginTransactionAs(_connection.TRANSACTION_DEFERRED);		
 	},
 	endUpdate: function() {
-		_connection.commitTransaction();
+		if (--_trans == 0 && !_timer) {
+			_timer = Timers.createOneshot(100, this._endUpdateInternal, this);
+		}
+	},
+	_endUpdateInternal: function() {
+		if (_trans == 0 && _connection.transactionInProgress) {
+			_timer = null;
+			_connection.commitTransaction();			
+		}
 	},
 	backup: function() {
 		if (!('backupDB' in _connection)) {
@@ -146,12 +159,13 @@ var QueueStore = {
 		if (!download) {
 			throw new Exception("You must provide a Download to save!");
 		}
-
+		this.beginUpdate();
 		let s = this._saveStmt;
 		s.bindInt64Parameter(0, id);
 		s.bindStringParameter(1, download);
 		s.execute();
 		s.reset();
+		this.endUpdate();
 	},
 	savePosition: function(id, position) {
 		let s = this._savePosStmt; 
