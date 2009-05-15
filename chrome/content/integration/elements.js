@@ -277,18 +277,8 @@ var DTA_ContextOverlay = {
 				DTA_preferences.setExt('lastalltabs', all);
 			}
 			
-			function makeUnique(i) {
-				var known = {};
-				return i.filter(
-					function(e) {
-						let url = e.url.url.spec;
-						if (url in known) {
-							return false;
-						}
-						known[url] = null;
-						return true;
-					}
-				);
+			function unique(i) {
+				return i.filter(function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)), {});
 			}		
 			
 			if (turbo) {
@@ -311,8 +301,8 @@ var DTA_ContextOverlay = {
 			for each (let win in windows) {
 				this.addLinks(win, urls, images, !all);
 			}
-			urls = makeUnique(urls);
-			images = makeUnique(images);
+			urls = unique(urls);
+			images = unique(images);
 
 			if (!urls.length && !images.length) {
 				DTA_Prompts.alert(window, this.getString('error'), this.getString('errornolinks'));

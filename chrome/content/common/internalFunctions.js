@@ -250,6 +250,15 @@ var Utils = {
 		
 		return _(unit[0], [aNumber.toFixed(arguments.length > 1 ? decimalPlace : unit[1])]);
 	},
+	
+	formatKBytes: function U_formatKBytes(aNumber, decimalPlace) {
+		aNumber = Number(aNumber) / 1024;
+		
+		if (!isFinite(aNumber)) {
+			return 'NaN';
+		}
+		return _('sizeKB', [aNumber.toFixed(arguments.length > 1 ? decimalPlace : 1)]);
+	},
 
 
 	formatConflictName: function U_formatConflictName(basename, conflicts) {

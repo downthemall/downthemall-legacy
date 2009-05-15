@@ -260,7 +260,7 @@
 		<statusbarpanel id="statusSpeed" label=""/>
 		<statusbarpanel id="statusSpeeds">
 			<label control="listSpeeds" value="&speedlimit.label;"/>
-			<menulist id="listSpeeds" command="cmdChangeSpeedLimit" class="plain" tooltiptext="&speedlimit.tooltip;" sizetopopup="none"/>
+			<menulist id="listSpeeds" command="cmdChangeSpeedLimit" class="plain" onpopupshowing="return Dialog.fillSpeedsList();" tooltiptext="&speedlimit.tooltip;" sizetopopup="none"/>
 		</statusbarpanel>
 		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text" label="&options.label;" command="cmdPreferences"/>
 	</statusbar>
