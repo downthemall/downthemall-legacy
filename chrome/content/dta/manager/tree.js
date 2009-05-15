@@ -389,7 +389,7 @@ var Tree = {
 				dupes.push(d);
 			}
 			else {
-				known[url] = true;
+				known[url] = null;
 			}
 		}
 		if (dupes.length) {
