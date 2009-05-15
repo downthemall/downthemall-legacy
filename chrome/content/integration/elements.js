@@ -46,6 +46,9 @@ var DTA_ContextOverlay = {
 		.getService(Components.interfaces.nsIStringBundleService)
 		.createBundle('chrome://dta/locale/menu.properties'),
 	
+	_ch: Components.classes['@downthemall.net/contenthandling;2']
+		.getService(Components.interfaces.dtaIContentHandling),
+	
 	getString: function(n) {
 		try {
 			return this._str.GetStringFromName(n);
@@ -176,6 +179,23 @@ var DTA_ContextOverlay = {
 				);
 			}
 			else {
+				if (DTA_preferences.getExt('listflv', false)) {
+					let flvs = Array.map(
+						this._ch.getFlashVideosFor(DTA_AddingFunctions.ios.newURI(aWin.location.href, aWin.document.characterSet, null)),
+						function(e) e
+					);
+						
+					let ref = DTA_AddingFunctions.getRef(aWin.document);
+					for each (let flv in flvs) {
+						let o = {
+							'url': new DTA_URL(flv),
+							'ref': ref,
+							'description': 'Embedded Flash Video'
+						}
+						aURLs.push(o);
+						aImages.push(o);
+					}
+				}
 				// we were asked to honor the selection, but we didn't actually have one.
 				// so reset this flag so that we can continue processing frames below.
 				honorSelection = false;
