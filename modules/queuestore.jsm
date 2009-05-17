@@ -48,12 +48,8 @@ const DB_VERSION = 1;
 
 const Debug = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService);
 
-Components.utils.import("resource://dta/timers.jsm");
-const Timers = new TimerManager();
-
 var _connection = null;
-var _trans = 0;
-var _timer = null;
+
 var QueueStore = {
 	init: function() {
 		Debug.logString("QueueStore: initialzing");
@@ -116,20 +112,16 @@ var QueueStore = {
 		Debug.logString("QueueStore: shutdown complete!");
 	},
 	beginUpdate: function() {
-		if (++_trans == 1 && !_connection.transactionInProgress) {
-			_connection.beginTransactionAs(_connection.TRANSACTION_DEFERRED);
+		if (_connection.transactionInProgress) {
+			return;
 		}
+		_connection.beginTransactionAs(_connection.TRANSACTION_DEFERRED);
 	},
 	endUpdate: function() {
-		if (--_trans == 0 && !_timer) {
-			_timer = Timers.createOneshot(100, this._endUpdateInternal, this);
+		if (!_connection.transactionInProgress) {
+			return;
 		}
-	},
-	_endUpdateInternal: function() {
-		if (_trans == 0 && _connection.transactionInProgress) {
-			_timer = null;
-			_connection.commitTransaction();			
-		}
+		_connection.commitTransaction();
 	},
 	backup: function() {
 		if (!('backupDB' in _connection)) {
@@ -159,13 +151,11 @@ var QueueStore = {
 		if (!download) {
 			throw new Exception("You must provide a Download to save!");
 		}
-		this.beginUpdate();
 		let s = this._saveStmt;
 		s.bindInt64Parameter(0, id);
 		s.bindStringParameter(1, download);
 		s.execute();
 		s.reset();
-		this.endUpdate();
 	},
 	savePosition: function(id, position) {
 		let s = this._savePosStmt; 
