@@ -35,6 +35,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+Components.utils.import('resource://dta/timers.jsm');
+var Timers = new TimerManager();
+
 
 var Dialog = {
 	get isFullyDisabled() {
@@ -200,7 +203,7 @@ var Dialog = {
 		return true;
 	},
 	resize: function() {
-		Tooltip.initUpdate();
+		Tooltip.start(this.item);
 		return true;
 	}
 };

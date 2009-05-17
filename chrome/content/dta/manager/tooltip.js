@@ -63,20 +63,36 @@ var Tooltip = {
 		this._current = d;
 		this._mustDraw = true;
 		this._timer = Timers.createRepeating(TOOLTIP_FREQ, this.update, this, true);
-		Timers.createOneshot(25, this.initUpdate, this);
+		this.initUpdate();
 	},
 	initUpdate: function() {
+		Debug.logString("init");
+		let mr = false;
 		let box = $('canvasGrid').boxObject;
 		for each (let canvas in $('chunkCanvas', 'speedCanvas')) {
 			try {
-				canvas.width = Math.min(box.width, canvas.clientWidth);
-				canvas.height = parseInt(canvas.getAttribute('height'));
+				let w = Math.min(box.width, canvas.clientWidth);
+				let h = parseInt(canvas.getAttribute('height'));
+				if (!isFinite(w) || !isFinite(h) || w <= 1 || h <= 1) {
+					throw new Components.Exception("Failed to get dimensions");
+				}
+				if (w == canvas.width && h == canvas.height) {
+					continue;
+				}
+				canvas.width = w; 
+				canvas.height = h;
+				Debug.logString("set " + canvas.id + " to " + w + "/" + h);
+				mr = true;
 			}
 			catch (ex) {
-				this.start(this._current);
-				Debug.log("tt: failed to set height", ex);
+				Debug.log("tt", ex);
+				Timers.createOneshot(25, this.initUpdate, this);				
 				return;
 			}
+		}
+		if (mr) {
+			this._mustDraw = true;
+			Timers.createOneshot(25, this.initUpdate, this);
 		}
 		this.update();
 		this._mustDraw = false;
