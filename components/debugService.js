@@ -99,53 +99,76 @@ var DebugService = {
 				msg = msg.toSource();
 			}
 			let time = new Date();
-			let text = this._formatTimeDate(time.getHours())
-				+ ":" + this._formatTimeDate(time.getMinutes())
-				+ ":" + this._formatTimeDate(time.getSeconds())
-				+ ":" + time.getMilliseconds()
-				+ "\n";
+			let text = [];
+			text.push(this._formatTimeDate(time.getHours()));
+			text.push(':');
+			text.push(this._formatTimeDate(time.getMinutes()));
+			text.push(':');
+			text.push(this._formatTimeDate(time.getSeconds()));
+			text.push('::');
+			text.push(time.getMilliseconds());
+			text.push('\n');
 
 			if (msg != "") {
-				text += msg.replace(/\n/g, "\n\t") + " ";
+				text.push(msg.replace(/\n/g, "\n\t") + " ");
 			}
 			if (exception) {
-				text += "\tError: " + exception;
+				text.push("\tError: " + exception);
 			}
-			text += "\r\n";
-			let stack = null;
+			text.push('\n');
+			let stack = Components.stack;
+			if (stack) {
+				stack = stack.caller.caller;
+			}
 			let lineNumber = 0;
+			let columnNumber = 0;
 			let fileName = null;
-			if (Components.stack) {
-				stack = Components.stack.caller.caller;
-			}
-			if (exception && exception.stack) {
+			let sourceLine = '';
+			
+			if (exception && exception.location) {
 				lineNumber = exception.lineNumber;
-				fileName = exception.fileName;
-				let initialLine = "Frame :: " + fileName;
-				if (exception.location) {
-					initialLine += " :: " + exception.location;
-				}
-				else if (stack && stack.name) {
-					initialLine += " :: " + stack.name;
-				}
+				fileName = exception.filename;
+				columnNumber = exception.columnNumber;
+				stack = exception.location;
+
+				let initialLine = "Source Frame :: " + fileName;
+				initialLine += " :: " + exception.location;
 				initialLine += " :: line: " + lineNumber;
-				text += "\t> " + initialLine + "\n";
+				text.push('\t>');
+				text.push(initialLine);
+				text.push('\n');
+			}
+			else if (exception && stack) {
+				lineNumber = stack.lineNumber;
+				
+				fileName = stack.filename;
+				let initialLine = "Source Frame :: " + fileName;
+				initialLine += " :: " + stack.name;
+				initialLine += " :: line: " + lineNumber;
+				text.push('\t>');
+				text.push(initialLine);
+				text.push('\n');
 			}
 			else if (stack) {
-				text += "\t> " + stack.toString() + "\n";
+				text.push('\t>');
+				text.push(stack.toString());
+				text.push('\n');
 				lineNumber = stack.lineNumber;
-				fileName = stack.fileName;
-				
+				fileName = stack.filename;
 			}
 			
-			if (stack) {
+			if (stack instanceof Ci.nsIStackFrame) {
+				let sourceLine = stack.sourceLine;
 				let s = stack.caller;
 				for (let i = 0; i < 4 && s; ++i) {
-					text += "\t> " + s.toString() + "\n";
+					text.push('\t>');
+					text.push(s.toString());
+					text.push('\n');
 					s = s.caller;
 				}
+				text = text.join('');
 				if (stack && exception) {
-					this._cs.logMessage(new ScriptError(text, fileName, null, lineNumber, 0, 0x2, 'component javascript'));
+					this._cs.logMessage(new ScriptError(text, fileName, sourceLine, lineNumber, columnNumber, 0x2, 'component javascript'));
 					 
 				} 
 				else {
@@ -153,9 +176,9 @@ var DebugService = {
 				}
 			}
 			else {
+				text = text.join('');
 				this._cs.logStringMessage(text);
 			}
-			
 			var f = new FileStream(this.file, 0x04 | 0x08 | 0x10, 0664, 0);
 			f.write(text, text.length);
 			f.close();
