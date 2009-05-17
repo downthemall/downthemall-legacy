@@ -38,7 +38,7 @@ const EXPORTED_SYMBOLS = ['TimerManager'];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const error = Components.utils.reportError;
+const Exception = Components.Exception; 
 
 const nsITimer = Ci.nsITimer;
 const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'init');
@@ -51,9 +51,17 @@ function newUUIDString() {
 	return newUUIDString();
 }
 
+this.__defineGetter__('Debug', function() {
+	delete this.Debug;
+	return this.Debug = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService);
+});
+
 function TimerData(owner, time, type, func, ctx) {
 	this.uuid = newUUIDString();
 	this.func = func;
+	if (!this.func) {
+		throw new Exception("callback function is null");
+	}
 	if (typeof this.func != 'function') {
 		this.func = new Function(this.func);
 	}
@@ -67,7 +75,7 @@ TimerData.prototype = {
 			this.func.call(this.ctx);
 		}
 		catch (ex) {
-			Components.utils.reportError(ex);	
+			Debug.log("Failed to execute timer callback", ex);
 		}
 	}
 };
@@ -122,6 +130,6 @@ TimerManager.prototype = {
 		}
 		error(timer);
 		timer.cancel();
-		throw new Error("Unknown timer fired?");
+		throw new Exception("Unknown timer fired?");
 	}
 };
