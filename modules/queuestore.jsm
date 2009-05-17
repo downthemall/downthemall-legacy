@@ -46,9 +46,14 @@ const DB_FILE = 'dta_queue.sqlite';
 const DB_FILE_BAK = DB_FILE + ".bak";
 const DB_VERSION = 1;
 
+Components.utils.import("resource://dta/timers.jsm");
+const Timers = new TimerManager();
+
 const Debug = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService);
 
 var _connection = null;
+var _saveQueue = {};
+var _timer = 0;
 
 var QueueStore = {
 	init: function() {
@@ -151,11 +156,23 @@ var QueueStore = {
 		if (!download) {
 			throw new Exception("You must provide a Download to save!");
 		}
+		_saveQueue[id] = download;
+		if (!_timer) {
+			_timer = Timers.createOneshot(500, this._saveDownloadQueue, this);
+		}
+	},
+	_saveDownloadQueue: function() {
+		this.beginUpdate();
 		let s = this._saveStmt;
-		s.bindInt64Parameter(0, id);
-		s.bindStringParameter(1, download);
-		s.execute();
+		for (let id in _saveQueue) {
+			s.bindInt64Parameter(0, id);
+			s.bindStringParameter(1, _saveQueue[id]);
+			s.execute();			
+		}
 		s.reset();
+		_saveQueue = {};
+		_timer = null;
+		this.endUpdate();
 	},
 	savePosition: function(id, position) {
 		let s = this._savePosStmt; 
