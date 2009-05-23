@@ -58,7 +58,7 @@
 				<radio id="turbodta" disabled="true" label="dTa OneClick!"/>
 				<toolbarbutton id="turbodtaexec" disabled="true" oncommand="DTA_SaveAs.download(true);"/>
 				<spacer flex="1"/>
-				<saveddropdown id="tdtalist" preference="directory" readonly="true" onclick="return DTA_SaveAs.selectTurbo();"/>
+				<saveddropdown id="tdtalist" preference="directory" readonly="true" crop="center" onclick="return DTA_SaveAs.selectTurbo();"  flex="1"/>
 			</hbox>
 		</vbox>
 	</radiogroup>
