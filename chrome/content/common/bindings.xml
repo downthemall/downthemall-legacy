@@ -93,12 +93,9 @@
 	
 	<binding id="saveddropdown">
 		<content>
-			<xul:vbox flex="1">
-			<xul:menulist anonid="list" editable="true" xbl:inherits="readonly,disabled,flex,tooltiptext,oninput=onchange,onselect=onchange,error">
-				<xul:menupopup anonid="popup" xbl:inherits="onselect=onchange,oncommand=onchange"/>
+			<xul:menulist anonid="list" editable="true" xbl:inherits="crop,readonly,disabled,flex,tooltiptext,oninput=onchange,onselect=onchange,error">
+				<xul:menupopup anonid="popup" xbl:inherits="crop,onselect=onchange,oncommand=onchange"/>
 			</xul:menulist>
-			<xul:spacer flex="1"/>
-			</xul:vbox>
 		</content>
 		<implementation>
 			<constructor><![CDATA[
@@ -155,6 +152,9 @@
 					for each (var val in values) {
 						var node = document.createElement('menuitem');
 						node.setAttribute('label', val);
+						if (this.hasAttribute('crop')) {
+							node.setAttribute('crop', this.getAttribute('crop'));
+						}
 						popup.appendChild(node);
 					}
 
