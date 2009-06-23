@@ -128,7 +128,7 @@ Tree.prototype = {
 		if (this._box) {
 			// invalidate specific cell(s)
 			if (arguments && arguments.length) {
-				for (var i = 0; i < arguments.length; ++i) {
+				for (let i = 0; i < arguments.length; ++i) {
 					this._box.invalidateRow(arguments[i]);
 				}
 			}
@@ -139,7 +139,7 @@ Tree.prototype = {
 		}
 
 		// compute and set the checked count
-		var checked = 0;
+		let checked = 0;
 		this._links.forEach(function(e) { if (e.checked.length){++checked;} });
 
 		if (checked) {
@@ -166,7 +166,7 @@ Tree.prototype = {
 	getCellText: function(idx, col) {
 
 		// corresponding link
-		var l = this._links[idx];
+		let l = this._links[idx];
 
 		switch (col.index) {
 			
@@ -198,7 +198,7 @@ Tree.prototype = {
 	// will grab the "icon" for a cell.
 	getImageSrc: function(idx, col) {
 
-		var l = this._links[idx];
+		let l = this._links[idx];
 		switch (col.index) {
 			case 1: return l.icon;
 		}
@@ -292,7 +292,7 @@ Tree.prototype = {
 /**
  * Our real, kicks ass implementation of the UI
  */
-var Dialog = {
+let Dialog = {
 	
 	get boxen() {
 		return $('checkcontainer').getElementsByTagName('checkbox');
@@ -311,8 +311,8 @@ var Dialog = {
 
 		try {
 			// initialize or link lists
-			var links = window.arguments[0];
-			var images = window.arguments[1];
+			let links = window.arguments[0];
+			let images = window.arguments[1];
 
 			// initialize the labels
 			$("viewlinks").label = $("viewlinks").label + " ("+ links.length + ")";
@@ -398,7 +398,7 @@ var Dialog = {
 	// checks if we can continue to process
 	check: function DTA_check() {
 		this.clearNotifications();
-		var dir = this.ddDirectory.value.trim();
+		let dir = this.ddDirectory.value.trim();
 
 		// mask set?
 		if (!this.ddRenaming.value.trim().length) {
@@ -409,7 +409,7 @@ var Dialog = {
 		// directory valid?
 		if (!dir.length || !Utils.validateDir(dir)) {
 			this.addNotification(_(dir.length ? 'alertinvaliddir' : 'alertnodir'), this.PRIORITY_CRITICAL_MEDIUM);
-			var newDir = Utils.askForDir(null, _("validdestination"));
+			let newDir = Utils.askForDir(null, _("validdestination"));
 			this.ddDirectory.value = newDir ? newDir : '';
 			return false;
 		}
@@ -425,9 +425,9 @@ var Dialog = {
 				return false;
 			}
 
-			var dir = this.ddDirectory.value;
-			var mask = this.ddRenaming.value;
-			var counter = Preferences.getExt("counter", 1);
+			let dir = this.ddDirectory.value;
+			let mask = this.ddRenaming.value;
+			let counter = Preferences.getExt("counter", 1);
 			if (++counter > 999) {
 				counter = 1;
 			}
@@ -440,8 +440,8 @@ var Dialog = {
 			}
 
 			// build the actual array holding all selected links
-			var links = this.current._links;
-			var out = [];
+			let links = this.current._links;
+			let out = [];
 			for each (let i in links) {
 				try {
 					if (!i.checked.length) {
@@ -463,6 +463,9 @@ var Dialog = {
 			// actually start the crap.
 			DTA_AddingFunctions.sendToDown(start, out);
 
+			// save tab
+			
+			Preferences.setExt('seltab', this.current.type == 1 ? 0 : 1);
 			// save history
 			['ddDirectory', 'ddRenaming', 'ddFilter'].forEach(function (e) { Dialog[e].save(); });
 
@@ -508,10 +511,10 @@ var Dialog = {
 		
 		// set the new mask for each selected item
 		const rangeCount = this.current.selection.getRangeCount();
-		var start = {}, end = {};
-		for (var r = 0; r < rangeCount; ++r) {
+		let start = {}, end = {};
+		for (let r = 0; r < rangeCount; ++r) {
 			this.current.selection.getRangeAt(r, start, end);
-			for (var i = start.value; i <= end.value; ++i) {
+			for (let i = start.value; i <= end.value; ++i) {
 				this.current._links[i].mask = selector.value;
 			}
 		}
@@ -616,9 +619,9 @@ var Dialog = {
 
 		let rangeCount = tree.selection.getRangeCount();
 		let start = {}, end = {}, val;
-		for (var r = 0; r < rangeCount; ++r) {
+		for (let r = 0; r < rangeCount; ++r) {
 			tree.selection.getRangeAt(r, start, end);
-			for (var i = start.value; i <= end.value; ++i) {
+			for (let i = start.value; i <= end.value; ++i) {
 				switch (mode) {
 					// calling setCellValue with a null column will prevent the box from
 					// invalidating
@@ -653,14 +656,12 @@ var Dialog = {
 		$("urlList").view = this.current;
 
 		// ... and update the UI
-		var type = this.current.type;
+		let type = this.current.type;
 		if (type == 1) {
-			Preferences.setExt('seltab', 0);
 			$("viewlinks").setAttribute("selected", true);
 			$("viewpics").setAttribute("selected", false);
 		}
 		else {
-			Preferences.setExt('seltab', 1);
 			$("viewlinks").setAttribute("selected", false);
 			$("viewpics").setAttribute("selected", true);
 		}
@@ -713,7 +714,7 @@ var Dialog = {
 	browseDir: function() {
 
 		// get a new directory
-		var newDir = Utils.askForDir(
+		let newDir = Utils.askForDir(
 			this.ddDirectory.value, // initialize dialog with the current directory
 			_("validdestination")
 		);
@@ -726,9 +727,9 @@ var Dialog = {
 	// initialized the popup
 	showPopup: function() {
 
-		var items = $('popup').getElementsByTagName('menuitem');
-		var open = $('mopen');
-		var tree = this.current;
+		let items = $('popup').getElementsByTagName('menuitem');
+		let open = $('mopen');
+		let tree = this.current;
 		
 		const hideItems = tree.selection.count == 0;
 		$('mopen', 'mcheck', 'muncheck', 'mtoggle', 'mrenaming', 'msep1', 'msep2', 'msep3').forEach(
@@ -737,11 +738,11 @@ var Dialog = {
 			}
 		);
 		
-		var otext = '';
+		let otext = '';
 		if (tree.selection.count == 1) {
-			var s = {}, e = {};
+			let s = {}, e = {};
 			tree.selection.getRangeAt(0, s, e);
-			var l = tree._links[s.value];
+			let l = tree._links[s.value];
 			otext = _("openlink", [l.url.url.spec]);
 		}
 		else {
@@ -754,12 +755,12 @@ var Dialog = {
 	
 	// will open the curretly selected links in new tabs
 	openSelection: function() {
-		var tree = this.current;
-		var rangeCount = tree.selection.getRangeCount();
-		var start = {}, end = {}, val;
-		for (var r = 0; r < rangeCount; ++r) {
+		let tree = this.current;
+		let rangeCount = tree.selection.getRangeCount();
+		let start = {}, end = {}, val;
+		for (let r = 0; r < rangeCount; ++r) {
 			tree.selection.getRangeAt(r, start, end);
-			for (var i = start.value; i <= end.value; ++i) {
+			for (let i = start.value; i <= end.value; ++i) {
 				DTA_Mediator.open(tree._links[i].url.url, tree._links[i].referrer);
 			}
 		}
@@ -771,17 +772,17 @@ var Dialog = {
 	invertSelection: function() {
 		// this.current.selection.invertSelection();
 		// not implemented :p
-		var tree = this.current;
-		var selection = tree.selection;
-		for (var i = 0, e = tree.rowCount; i < e; ++i) {
+		let tree = this.current;
+		let selection = tree.selection;
+		for (let i = 0, e = tree.rowCount; i < e; ++i) {
 			selection.toggleSelect(i);
 		}		
 	},
 	selectFiltered: function() {
-		var tree = this.current;
-		var selection = tree.selection;
+		let tree = this.current;
+		let selection = tree.selection;
 		selection.clearSelection();
-		for (var i = 0, e = tree.rowCount; i < e; ++i) {
+		for (let i = 0, e = tree.rowCount; i < e; ++i) {
 			if (tree.isChecked(i)) {
 				selection.rangedSelect(i, i, true);
 			}
@@ -802,7 +803,7 @@ var Dialog = {
 	registerObserver: function() {
 		Preferences.makeObserver(this);
 		try {
-			var os = Cc["@mozilla.org/observer-service;1"]
+			let os = Cc["@mozilla.org/observer-service;1"]
 				.getService(Ci.nsIObserverService);
 			os.addObserver(this, 'DTA:filterschanged', true);
 		}
