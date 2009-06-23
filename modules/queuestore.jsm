@@ -92,6 +92,16 @@ var QueueStore = {
 		Debug.logString("QueueStore: done initialzing");
 	},
 	shutdown: function() {
+		// fnish any pending operations
+		if (_timer) {
+			try {
+				_timer.cancel();
+			}
+			catch (ex) { /* don' care */ }
+			
+			_timer = null;
+			this._saveDownloadQueue();
+		}
 		for each (let e in ['_addStmt', '_saveStmt', '_savePosStmt', '_delStmt']) {
 			try {
 				this[e].finalize();
