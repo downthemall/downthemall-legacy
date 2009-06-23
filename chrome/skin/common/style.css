@@ -195,7 +195,6 @@ textbox {
 
 /* foreign theme compat, i.e. Songbird */
 statusbar {
-	-moz-appearance: statusbar;
 	min-height: 22px;	
 }
 statusbarpanel {
