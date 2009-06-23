@@ -933,8 +933,7 @@ DTA_ContextOverlay.Selector.prototype.Flasher.prototype = {
 	FINTERVAL: 60,
 	FWAIT: 350,
 	
-	calcPosition: function() {
-		let parent = this.elem;
+	calcPosition: function(parent) {
 		let ow = parent.offsetWidth;
 		let oh = parent.offsetHeight;
 		let ol = parent.offsetLeft;
@@ -985,7 +984,7 @@ DTA_ContextOverlay.Selector.prototype.Flasher.prototype = {
 		div.style.display = 'block';
 
 		// put the div where it belongs
-		let pos = this.calcPosition();
+		let pos = this.calcPosition(this.elem);
 		div.style.width = (pos.width + 2 * this.PADDING) + "px";
 		div.style.height = (pos.height + 2 * this.PADDING) + "px";
 		div.style.top = (pos.top - this.PADDING) + "px";
@@ -1042,7 +1041,7 @@ DTA_ContextOverlay.Selector.prototype.Highlighter.prototype = {
 		let bottom = this.doc.createElement('div');
 		this.doc.documentElement.appendChild(bottom);
 		
-		let pos = this.calcPosition();
+		let pos = this.calcPosition(this.elem);
 		for each (let div in [left, right, top, bottom]) {
 			div.style.zIndex = 2147483647;
 			div.style.opacity = this.OPACITY;
