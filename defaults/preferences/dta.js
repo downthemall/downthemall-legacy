@@ -79,6 +79,7 @@ pref("extensions.dta.nagnever", false);
 pref("extensions.dta.nagnext", 50);
 pref("extensions.dta.speedlimit", -1);
 pref("extensions.dta.listflv", false);
+pref("extensions.dta.nokeepalive", true);
 
 // Non-customizable-toolbar specific
 pref("extensions.dta.sm.buttons", "1,1,0");

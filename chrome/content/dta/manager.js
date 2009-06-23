@@ -2506,8 +2506,10 @@ function Connection(d, c, isInfoGetter) {
 			if (referrer instanceof Ci.nsIURI) {
 				http.referrer = referrer;
 			}
-			http.setRequestHeader('Keep-Alive', '', false);
-			http.setRequestHeader('Connection', 'close', false);
+			if (Prefs.noKeepAlive) {
+				http.setRequestHeader('Keep-Alive', '', false);
+				http.setRequestHeader('Connection', 'close', false);
+			}
 			if (d.postData) {
 				let uc = http.QueryInterface(Ci.nsIUploadChannel);
 				uc.setUploadStream(new StringInputStream(d.postData, d.postData.length), null, -1);
