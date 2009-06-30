@@ -1,3 +1,3 @@
-<!ENTITY title "Sửa đổi tên bộ lọc">
-<!ENTITY choose.desc "Chọn đổi tên bộ lọc cho liên kết được chỉ ra. Có thể sử dụng các thẻ thông tin đặc biệt để đổi tên hoặc chỉ cần các ký tự đơn giản">
-<!ENTITY mask.tip "Tập tin được chọn sẽ được lưu và đổi tên theo bộ lọc này">
+<!ENTITY title "Sửa đổi mặt nạ đổi tên...">
+<!ENTITY choose.desc "Chọn mặt nạ đổi tên cho liên kết được chỉ ra. Có thể dùng các tag đổi tên đặc biệt hoặc chỉ đơn giản dùng văn bản.">
+<!ENTITY mask.tip "Tập tin được chọn sẽ được lưu và đổi tên bằng mặt nạ này">

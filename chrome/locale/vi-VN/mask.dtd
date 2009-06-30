@@ -1,21 +1,21 @@
-<!ENTITY mask.title "Thay đổi thẻ thông tin">
+<!ENTITY mask.title "Tag đổi tên">
 <!ENTITY mask.name "Tên tập tin">
-<!ENTITY mask.ext "Phần mở rộng">
-<!ENTITY mask.url "Liên kết chính">
-<!ENTITY mask.curl "Liên kết đầy đủ">
-<!ENTITY mask.flatcurl "Liên kết tham khảo đầy đủ">
-<!ENTITY mask.num "Số tiến trình">
+<!ENTITY mask.ext "Đuôi mở rộng">
+<!ENTITY mask.url "URL Cơ sở">
+<!ENTITY mask.curl "URL Đầy đủ">
+<!ENTITY mask.flatcurl "URL Đầy đủ Phẳng">
+<!ENTITY mask.num "Số tăng dần">
 <!ENTITY mask.hh "Giờ">
 <!ENTITY mask.mm "Phút">
 <!ENTITY mask.ss "Giây">
 <!ENTITY mask.d "Ngày">
 <!ENTITY mask.m "Tháng">
 <!ENTITY mask.y "Năm">
-<!ENTITY mask.subdirs "Thư mục con của liên kết">
-<!ENTITY mask.flatsubdirs "Thư mục con của liên kết tham khảo">
-<!ENTITY mask.text "Diễn giải về liên kết">
-<!ENTITY mask.flattext "Diễn giải về liên kết tham khảo">
-<!ENTITY mask.refer "Liên kết liên quan">
+<!ENTITY mask.subdirs "Thư mục con của URL">
+<!ENTITY mask.flatsubdirs "Thư mục con của URL Phẳng">
+<!ENTITY mask.text "Mô tả liên kết">
+<!ENTITY mask.flattext "Mô tả liên kết phẳng">
+<!ENTITY mask.refer "URL Referer">
 <!ENTITY mask.qstring "Chuỗi truy vấn">
-<!ENTITY mask.tip "Nhấp hoặc kéo thả chuột để thay đổi bộ lọc">
-<!ENTITY mask.open.tip "Bảng thay đổi các thẻ thông tin liên quan">
+<!ENTITY mask.tip "Nhấp hoặc kéo tới mặt nạ đổi tên">
+<!ENTITY mask.open.tip "Bảng tham khảo tag đổi tên">
