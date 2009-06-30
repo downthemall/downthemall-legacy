@@ -21,7 +21,7 @@
 <!ENTITY mainpane.ask.label "물어보기">
 <!ENTITY mainpane.downloads.caption "다운로드">
 <!ENTITY mainpane.concurrent.label "최대 동시 다운로드 개수:">
-<!ENTITY mainpane.sounderror.label "에러가 발생하면 소리로 알림">
+<!ENTITY mainpane.sounderror.label "오류가 발생하면 소리로 알림">
 <!ENTITY mainpane.alert.caption "다운로드가 완료되면:">
 <!ENTITY mainpane.alertboxes.label "알림 상자로 알림">
 <!ENTITY mainpane.alertslides.label "Firefox 슬라이드 상자로 알림">
@@ -69,7 +69,7 @@
 <!ENTITY advancedpane.tempfiles.caption "임시 파일">
 <!ENTITY advancedpane.usetemp.label "분할 파일을 임시 폴더에 저장">
 <!ENTITY advancedpane.tempdir.label "이 디렉토리 사용:">
-<!ENTITY advancedpane.confirmremove.label "사용자는 다운로드 제거를 확인해야 합니다.">
+<!ENTITY advancedpane.confirmremove.label "다운로드 제거 시 항상 확인">
 <!ENTITY advancedpane.permissions.caption "기본 파일 권한">
 <!ENTITY advancedpane.permissions.desc "사용자 마스크에 따름">
 <!ENTITY advancedpane.permissions.group "그룹">
