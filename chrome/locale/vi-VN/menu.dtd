@@ -1,7 +1,7 @@
-<!ENTITY dta-pref.label "Tuỳ chỉnh">
+<!ENTITY dta-pref.label "Tùy chỉnh">
 <!ENTITY dta-about.label "Thông tin về dTa!">
-<!ENTITY dta-manager-button "Quản lý">
-<!ENTITY dta-tb-all.label "Tất cả thẻ">
+<!ENTITY dta-manager-button "Quản lí">
+<!ENTITY dta-tb-all.label "Tất cả các thẻ">
 <!ENTITY dta-tb-single.label "Thẻ hiện tại">
-<!ENTITY dta-form-save.label "Lưu mẫu biểu bằng DownThemAll!">
+<!ENTITY dta-form-save.label "Lưu biểu mẫu bằng DownThemAll!">
 <!ENTITY dta-form-save-turbo.label "Bắt đầu lưu mẫu biểu bằng dTa OneClick!">

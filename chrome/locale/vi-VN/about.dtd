@@ -1,12 +1,12 @@
-<!ENTITY language "Tiếng Anh">
-<!ENTITY transAutor "Nhóm tạo lập dTa">
-<!ENTITY about.subtitle "Trình tải xuống dành cho Firefox">
-<!ENTITY about.nowarr "Tham gia mà KHÔNG CÓ SỰ ĐẢM BẢO nào!">
-<!ENTITY about.freesoft "Đây là phần mềm miễn phí!">
-<!ENTITY about.privacy "Đánh giá riêng của bạn">
+<!ENTITY language "Tiếng Việt">
+<!ENTITY transAutor "NGUYỄN Mạnh Hùng - http://vi.mozdev.org">
+<!ENTITY about.subtitle "Trình tải xuống hàng loạt cho Firefox">
+<!ENTITY about.nowarr "KHÔNG CÓ SỰ ĐẢM BẢO nào!">
+<!ENTITY about.freesoft "Đây là phần mềm tự do miễn phí!">
+<!ENTITY about.privacy "trân trọng sự riêng tư của bạn">
 <!ENTITY about.read "Hãy đọc">
-<!ENTITY about.pnot "Chú ý riêng tư">
-<!ENTITY about.by "Được dịch bởi">
-<!ENTITY about.redistr "Bạn được khuyến khích để phân phối lại nó với những điều kiện đã biết">
-<!ENTITY about.icons "Các biểu tượng và nút chọn">
-<!ENTITY about.based "nhờ vào sự đóng góp của Mike Matas, Jakub Steiner và Mark James">
+<!ENTITY about.pnot "Lưu ý riêng tư của chúng tôi">
+<!ENTITY about.by "được dịch bởi">
+<!ENTITY about.redistr "Bạn được khuyến khích phân phối lại nó dưới những điều kiện chắc chắn">
+<!ENTITY about.icons "Các biểu tượng và nút">
+<!ENTITY about.based "được tạo ra dựa vào các tác phẩm của Mike Matas, Jakub Steiner và Mark James">

@@ -1,44 +1,44 @@
-<!ENTITY tooladd.label "Thêm liên kết">
-<!ENTITY tooladd.tooltip "Thêm liên kết vào DownThemAll">
-<!ENTITY tooldonate.tooltiptext "Bạn có thể giúp chúng tôi làm cho DownThemAll hoàn thiện hơn bằng việc quyên góp!">
+<!ENTITY tooladd.label "Thêm URL">
+<!ENTITY tooladd.tooltip "Tự thêm liên kết vào DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Bạn có thể giúp chúng tôi làm cho DownThemAll tốt hơn. Hãy cân nhắc đến việc quyên góp nhé!">
 <!ENTITY movetop.label "Trên cùng">
 <!ENTITY movebottom.label "Dưới cùng">
 <!ENTITY moveup.label "Lên">
 <!ENTITY movedown.label "Xuống">
-<!ENTITY task.label "Liên kết/Tên">
-<!ENTITY per.label "Hoàn thành">
+<!ENTITY task.label "URL/Tên">
+<!ENTITY per.label "Hoàn tất">
 <!ENTITY pct.label "Tiến trình">
-<!ENTITY dim.label "Kích cỡ">
-<!ENTITY time.label "Thời gian">
-<!ENTITY parts.label "Kết nối">
+<!ENTITY dim.label "Dung lượng">
+<!ENTITY time.label "Thời gian ước tính">
+<!ENTITY parts.label "Phân mảnh">
 <!ENTITY speed.label "Tốc độ">
 <!ENTITY infoURLTitle.value "Từ:">
-<!ENTITY infoSizeTitle.value "Kích cỡ:">
+<!ENTITY infoSizeTitle.value "Dung lượng:">
 <!ENTITY infoMultiple.value "Đa mục">
-<!ENTITY elapsedTitle.value "Thời gian tải:">
+<!ENTITY elapsedTitle.value "Tổng thời gian:">
 <!ENTITY remainingTitle.value "Còn lại:">
 <!ENTITY currentSpeedTitle.value "Tốc độ hiện tại:">
 <!ENTITY avgSpeedTitle.value "Tốc độ trung bình:">
 <!ENTITY path.label "Lưu đường dẫn">
-<!ENTITY mask.label "Đổi tên bộ lọc">
-<!ENTITY hash.label "Kiểm tra tổng (Checksum)">
-<!ENTITY infos.label "Thông tin tải xuống">
+<!ENTITY mask.label "Mặt nạ đổi tên">
+<!ENTITY hash.label "Mã kiểm tra (Checksum)">
+<!ENTITY infos.label "Thông tin tải">
 <!ENTITY launch.label "Mở tập tin">
-<!ENTITY delete.label "Xoá tập tin">
+<!ENTITY delete.label "Xóa tập tin">
 <!ENTITY targetdir.label "Mở thư mục">
-<!ENTITY pause.label "Tạm ngừng">
-<!ENTITY resume.label "Nối lại">
-<!ENTITY cancel.label "Bỏ qua">
-<!ENTITY remove.label "Xoá tải xuống được chọn">
-<!ENTITY removeCompleted.label "Xoá tác vụ đã hoàn thành">
-<!ENTITY removeGone.label "Loại bỏ tập tin bị lỗi">
-<!ENTITY misc.label "Các mục khác">
-<!ENTITY addchunk.label "Thêm kết nối">
-<!ENTITY removechunk.label "Bớt kết nối">
-<!ENTITY force.label "Buộc khởi động">
+<!ENTITY pause.label "Tạm dừng">
+<!ENTITY resume.label "Tiếp tục">
+<!ENTITY cancel.label "Hủy bỏ">
+<!ENTITY remove.label "Xóa các phiên tải xuống đã chọn">
+<!ENTITY removeCompleted.label "Xóa các tác vụ đã hoàn tất">
+<!ENTITY removeGone.label "Dọn sạch các tập tin đã biến mất">
+<!ENTITY misc.label "Linh tinh">
+<!ENTITY addchunk.label "Thêm một phân mảnh">
+<!ENTITY removechunk.label "Bớt một phân mảnh">
+<!ENTITY force.label "Bắt buộc khởi động">
 <!ENTITY import.label "Nhập từ tập tin">
-<!ENTITY export.label "Xuất các lựa chọn">
-<!ENTITY options.caption "Tuỳ chọn">
+<!ENTITY export.label "Xuất phần đã chọn">
+<!ENTITY options.caption "Tùy chọn">
 <!ENTITY loading.label "Đang tải...">
-<!ENTITY restore.label "Phục hồi">
+<!ENTITY restore.label "Khôi phục">
 <!ENTITY close.label "Đóng">

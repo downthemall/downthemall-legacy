@@ -1,93 +1,93 @@
-<!ENTITY winstyle "Rộng:52em;Cao:42em;">
-<!ENTITY filterspane.label "Các bộ lọc">
+<!ENTITY winstyle "width:52em;height:42em;">
+<!ENTITY filterspane.label "Bộ lọc">
 <!ENTITY listhead1.label "Đầu đề">
-<!ENTITY listhead2.label "Phần mở rộng">
-<!ENTITY filter.label "Phần mở rộng được lọc:">
-<!ENTITY regex.label "Đăng ký">
+<!ENTITY listhead2.label "Đuôi mở rộng">
+<!ENTITY filter.label "Đuôi mở rộng được lọc:">
+<!ENTITY regex.label "Biểu thức Quy tắc">
 <!ENTITY useAs.label "Sử dụng như:">
 <!ENTITY imagesf.label "Hình ảnh và bộ lọc được nhúng">
 <!ENTITY linksf.label "Bộ lọc liên kết">
 <!ENTITY add.label "Thêm bộ lọc mới">
-<!ENTITY highlight.label "Đánh dấu tập tin được kiểm tra bởi các bộ lọc">
-<!ENTITY dtacontext2.label "Tuỳ chỉnh">
-<!ENTITY buttonlabelextra2 "Phục hồi những thiết lập mặc định">
-<!ENTITY dtaPreferences.title "Tuỳ chỉnh cho DownThemAll!...">
-<!ENTITY manager "Quản lý dTa">
-<!ENTITY mainpane.label "Màn hình chính">
+<!ENTITY highlight.label "Tô sáng các tập tin được kiểm tra bởi bộ lọc">
+<!ENTITY dtacontext2.label "Tùy chỉnh">
+<!ENTITY buttonlabelextra2 "Khôi phục thiết lập mặc định">
+<!ENTITY dtaPreferences.title "Tùy chỉnh DownThemAll!...">
+<!ENTITY manager "Quản lí dTa">
+<!ENTITY mainpane.label "Tổng quát">
 <!ENTITY mainpane.rename.caption "Nếu tập tin đã tồn tại:">
 <!ENTITY mainpane.rename.label "Đổi tên">
 <!ENTITY mainpane.overwrite.label "Ghi đè">
 <!ENTITY mainpane.skip.label "Bỏ qua">
 <!ENTITY mainpane.ask.label "Hỏi">
 <!ENTITY mainpane.downloads.caption "Tải xuống">
-<!ENTITY mainpane.concurrent.label "Số tải xuống tối đa:">
-<!ENTITY mainpane.sounderror.label "Âm báo khi bị lỗi">
-<!ENTITY mainpane.alert.caption "Khi tải xuống hoàn thành:">
-<!ENTITY mainpane.alertboxes.label "Cảnh báo bằng hộp thoại">
-<!ENTITY mainpane.alertslides.label "Cảnh báo bằng thông báo trượt">
-<!ENTITY mainpane.alertnone.label "Không cảnh báo">
-<!ENTITY mainpane.sounddone.label "Âm báo khi tất cả tải xuống hoàn thành">
-<!ENTITY mainpane.closedta.label "Đóng DownThemAll khi tải xuống hoàn thành">
-<!ENTITY mainpane.autoretry.caption "Tải lại tự động">
-<!ENTITY mainpane.autoretry.interval.label "Tải lại mỗi">
-<!ENTITY mainpane.autoretry.max.label "Số tải lại tối đa">
+<!ENTITY mainpane.concurrent.label "Số phiên tải xuống tối đa:">
+<!ENTITY mainpane.sounderror.label "Phát tiếng khi có lỗi">
+<!ENTITY mainpane.alert.caption "Khi các phiên tải xuống hoàn tất:">
+<!ENTITY mainpane.alertboxes.label "Báo tôi bằng hộp thoại">
+<!ENTITY mainpane.alertslides.label "Báo bằng thông báo trượt">
+<!ENTITY mainpane.alertnone.label "Không báo">
+<!ENTITY mainpane.sounddone.label "Phát tiếng khi tất cả các phiên tải xuống hoàn tất">
+<!ENTITY mainpane.closedta.label "Đóng DownThemAll khi các phiên tải xuống hoàn tất">
+<!ENTITY mainpane.autoretry.caption "Tự động Thử lại">
+<!ENTITY mainpane.autoretry.interval.label "Thử lại mỗi">
+<!ENTITY mainpane.autoretry.max.label "Số lần thử lại tối đa">
 <!ENTITY mainpane.autoretry.unlimited "Không giới hạn">
 <!ENTITY privacypane.label "Riêng tư">
-<!ENTITY privacypane.closing.caption "Khi cửa sổ quản lý bị đóng">
-<!ENTITY privacypane.removecompleted.label "Xoá tải xuống đã hoàn thành">
-<!ENTITY privacypane.removecanceled.label "Xoá tải xuống đã bị bỏ qua/bị lỗi">
-<!ENTITY privacypane.removeaborted.label "Xoá tải xuống chưa hoàn thành">
-<!ENTITY privacypane.deletefoldershistory.label "Làm trống danh sách thư mục">
-<!ENTITY privacypane.deletefiltershistory.label "Làm trống bộ lọc thêm vào">
-<!ENTITY privacypane.showlog.label "Xem nhật ký">
-<!ENTITY privacypane.reveallog.label "Trình bày tập tin">
-<!ENTITY privacypane.deletelog.label "Xoá nhật ký">
+<!ENTITY privacypane.closing.caption "Khi cửa sổ quản lí bị đóng">
+<!ENTITY privacypane.removecompleted.label "Xóa các phiên tải xuống đã hoàn tất">
+<!ENTITY privacypane.removecanceled.label "Xóa các phiên tải xuống bị hủy bỏ/bị lỗi">
+<!ENTITY privacypane.removeaborted.label "Xóa các phiên tải xuống chưa hoàn tất">
+<!ENTITY privacypane.deletefoldershistory.label "Dọn trống Danh sách thư mục">
+<!ENTITY privacypane.deletefiltershistory.label "Dọn trống Bộ lọc Phụ thêm">
+<!ENTITY privacypane.showlog.label "Xem lưu kí">
+<!ENTITY privacypane.reveallog.label "Hiển thị Tập tin">
+<!ENTITY privacypane.deletelog.label "Xóa lưu kí">
 <!ENTITY privacypane.updates.caption "Cập nhật/Internet">
-<!ENTITY privacypane.information.label "Để dTa tự tải tin tức, tin nhắn và kiểm tra bản cập nhật mới">
-<!ENTITY privacypane.statistics.label "Để dTa thu thập và chuyển các thống kê sử dụng vô danh">
+<!ENTITY privacypane.information.label "Để dTa kiểm tra bản cập nhật, tải tin tức và tin nhắn mới nhất">
+<!ENTITY privacypane.statistics.label "Để dTa thu thập và truyền tải các thống kê sử dụng vô danh">
 <!ENTITY privacypane.dropdowns.caption "Trình đơn thả xuống">
-<!ENTITY privacypane.dropdownresults.label "Số đầu vào được giữ lại">
-<!ENTITY privacypane.logs.caption "Nhật ký chẩn đoán">
-<!ENTITY privacypane.enablelogs.label "Cho ghi nhật ký chẩn đoán">
-<!ENTITY privacypane.notice.caption "Chú ý">
-<!ENTITY privacypane.notice.desc "Tích hợp DownThemAll vào chức năng Xoá dữ liệu cá nhân (nếu được).">
-<!ENTITY privacypane.privacynotice.label "Thông báo riêng tư">
-<!ENTITY advancedpane.label "Cao cấp">
+<!ENTITY privacypane.dropdownresults.label "Số danh mục được giữ lại">
+<!ENTITY privacypane.logs.caption "Lưu kí Chẩn đoán">
+<!ENTITY privacypane.enablelogs.label "Bật lưu kí chẩn đoán">
+<!ENTITY privacypane.notice.caption "Lưu ý">
+<!ENTITY privacypane.notice.desc "DownThemAll cũng tích hợp trong tính năng Xóa các Dữ liệu cá nhân (nếu được).">
+<!ENTITY privacypane.privacynotice.label "Lưu ý Riêng tư của Chúng tôi">
+<!ENTITY advancedpane.label "Nâng cao">
 <!ENTITY advancedpane.multipart.caption "Tải xuống đa phần">
-<!ENTITY advancedpane.chunks.label "Số kết nối tối đa trên tải xuống:">
+<!ENTITY advancedpane.chunks.label "Số mảnh ghép tối đa của mỗi phiên tải xuống:">
 <!ENTITY advancedpane.chunksdisabled "Vô hiệu hoá">
-<!ENTITY advancedpane.timeouts.caption "Hiệu lực tải xuống">
-<!ENTITY advancedpane.timeout.label "Tải xuống hết hiệu lực sau">
+<!ENTITY advancedpane.timeouts.caption "Thời gian hết hạn của tải xuống">
+<!ENTITY advancedpane.timeout.label "Tải xuống hết hạn sau">
 <!ENTITY advancedpane.seconds "giây">
 <!ENTITY advancedpane.minute "phút">
 <!ENTITY advancedpane.minutes "phút">
 <!ENTITY advancedpane.hour "giờ">
 <!ENTITY advancedpane.hours "giờ">
-<!ENTITY advancedpane.misc.caption "Thiết lập khác">
-<!ENTITY advancedpane.settime.label "Thiết lập thời gian cho tập tin khi sắp xếp hoặc khi sửa đổi thời gian">
-<!ENTITY advancedpane.rememberoneclick.label "dTa OneClick tự ghi nhớ khi được áp dụng cho Tất cả thẻ hoặc Thẻ hiện tại">
+<!ENTITY advancedpane.misc.caption "Thiết lập linh tinh">
+<!ENTITY advancedpane.settime.label "Thiết lập thời gian cho tập tin theo lần sửa cuối (trên máy chủ) hoặc thời gian chờ tải">
+<!ENTITY advancedpane.rememberoneclick.label "Cho dTa OneClick ghi nhớ khi nó được áp dụng cho Tất cả Các thẻ hoặc chỉ Thẻ hiện tại">
 <!ENTITY advancedpane.tempfiles.caption "Tập tin tạm thời">
-<!ENTITY advancedpane.usetemp.label "Lưu kết nối tải xuống trong thư mục tạm thời">
-<!ENTITY advancedpane.tempdir.label "Sử dụng thư mục này:">
-<!ENTITY advancedpane.confirmremove.label "Người dùng phải xác nhận việc xoá bỏ tải xuống">
-<!ENTITY advancedpane.permissions.caption "Mặc định quyền hạn về tập tin">
-<!ENTITY advancedpane.permissions.desc "Ảnh hưởng bởi người dùng">
+<!ENTITY advancedpane.usetemp.label "Lưu mảnh ghép của phiên tải xuống trong thư mục tạm thời">
+<!ENTITY advancedpane.tempdir.label "Dùng thư mục này:">
+<!ENTITY advancedpane.confirmremove.label "Người dùng phải xác nhận việc xóa các phiên tải xuống">
+<!ENTITY advancedpane.permissions.caption "Quyền hạn tập tin mặc định">
+<!ENTITY advancedpane.permissions.desc "Ảnh hưởng bởi mặt nạ người dùng">
 <!ENTITY advancedpane.permissions.group "Nhóm">
 <!ENTITY advancedpane.permissions.everybody "Mọi người">
 <!ENTITY advancedpane.permissions.read "Có thể đọc">
 <!ENTITY advancedpane.permissions.write "Có thể ghi">
 <!ENTITY advancedpane.loadendfirst.label "Tải vài KB cuối cùng trước">
-<!ENTITY uipane.label "Tổng quát">
-<!ENTITY uipane.appearance.caption "Giao diện">
-<!ENTITY uipane.namesonly.label "Chỉ trình bày tên tập tin trong cửa sổ Quản lý">
+<!ENTITY uipane.label "Giao diện">
+<!ENTITY uipane.appearance.caption "Diện mạo">
+<!ENTITY uipane.namesonly.label "Chỉ hiện tên tập tin trong cửa sổ Quản lí">
 <!ENTITY uipane.integration.caption "Tích hợp">
 <!ENTITY uipane.downloadwin.label "Thêm DownThemAll! vào cửa sổ &quot;Lưu tập tin&quot;">
 <!ENTITY uipane.context.caption "Trình đơn ngữ cảnh">
-<!ENTITY uipane.tools.caption "Trình đơn công cụ">
-<!ENTITY uipane.tbbuttons.caption "Các nút của thanh công cụ">
-<!ENTITY uipane.compact.label "Sử dụng trình đơn tối giản">
+<!ENTITY uipane.tools.caption "Trình đơn Công cụ">
+<!ENTITY uipane.tbbuttons.caption "Các nút trên Thanh công cụ">
+<!ENTITY uipane.compact.label "Dùng trình đơn tối giản">
 <!ENTITY uipane.hide.label "Ẩn trình đơn này">
-<!ENTITY uipane.showtooltip.label "Trình bày lời khuyên tải xuống">
+<!ENTITY uipane.showtooltip.label "Hiện mẹo tải xuống">
 <!ENTITY uipane.window.caption "Cửa sổ">
-<!ENTITY uipane.startminimized.label "Bắt đầu thu nhỏ">
-<!ENTITY uipane.minimizetotray.label "Thu nhỏ và ở trên khay hệ thống">
+<!ENTITY uipane.startminimized.label "Bắt đầu cực tiểu hóa">
+<!ENTITY uipane.minimizetotray.label "Cực tiểu hóa vào khay hệ thống">
