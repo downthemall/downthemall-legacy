@@ -65,7 +65,7 @@
 <!ENTITY advancedpane.hours "horas">
 <!ENTITY advancedpane.misc.caption "Opções Miscelâneas">
 <!ENTITY advancedpane.settime.label "Ajustar horário do arquivo de acordo com a última modificação no servidor ou tempo de espera">
-<!ENTITY advancedpane.rememberoneclick.label "Tenha um lembrete dodTa OneClick se isso for aplicado para todas as abas ou para a aba atual">
+<!ENTITY advancedpane.rememberoneclick.label "Tenha um lembrete do OneClick se isso for aplicado para todas as abas ou para a aba atual">
 <!ENTITY advancedpane.tempfiles.caption "Arquivos temporários">
 <!ENTITY advancedpane.usetemp.label "Salvar partes do download no diretório temporário">
 <!ENTITY advancedpane.tempdir.label "Usar esta pasta:">
