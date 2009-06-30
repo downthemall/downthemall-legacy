@@ -65,7 +65,7 @@
 <!ENTITY advancedpane.hours "сати">
 <!ENTITY advancedpane.misc.caption "Разна остала подешавања">
 <!ENTITY advancedpane.settime.label "Постави време датотеке користећи време последње измене или време стављања у распоред">
-<!ENTITY advancedpane.rememberoneclick.label "НекаdTa OneClick запамти ако се односи на све картице или само на тренутну картицу">
+<!ENTITY advancedpane.rememberoneclick.label "Нека OneClick запамти ако се односи на све картице или само на тренутну картицу">
 <!ENTITY advancedpane.tempfiles.caption "Привремене датотеке">
 <!ENTITY advancedpane.usetemp.label "Сачувај преузете делове у привременом директоријуму">
 <!ENTITY advancedpane.tempdir.label "Користи овај директоријум:">
