@@ -65,7 +65,7 @@
 <!ENTITY advancedpane.hours "godz.">
 <!ENTITY advancedpane.misc.caption "Różne ustawienia">
 <!ENTITY advancedpane.settime.label "Określ czasy pliku do czasu ostatniej modyfikacji (serwer) lub czas kolejkowania">
-<!ENTITY advancedpane.rememberoneclick.label "Zapamiętaj to działanie przezdTa OneClick jeśli ma to zastosowanie do aktywnej lub wszystkich kart">
+<!ENTITY advancedpane.rememberoneclick.label "Zapamiętaj to działanie przez OneClick jeśli ma to zastosowanie do aktywnej lub wszystkich kart">
 <!ENTITY advancedpane.tempfiles.caption "Pliki tymczasowe">
 <!ENTITY advancedpane.usetemp.label "Zapisuj pobrane części w katalogu tymczasowym">
 <!ENTITY advancedpane.tempdir.label "Zapisz w katalogu:">
