@@ -1,4 +1,4 @@
-<!ENTITY language "Romanian">
+<!ENTITY language "Tradcere în">
 <!ENTITY transAutor "Alexandru Szasz">
 <!ENTITY about.subtitle "Descărcătorul în masă pentru Firefox">
 <!ENTITY about.nowarr "vine cu ABSOLUT NICIO GARANŢIE!">
@@ -6,7 +6,7 @@
 <!ENTITY about.privacy "ţine la intimitatea dumneavoastră">
 <!ENTITY about.read "Citiţi">
 <!ENTITY about.pnot "Nota despre confidenţialitate">
-<!ENTITY about.by "traducere de">
+<!ENTITY about.by "Română făcută de">
 <!ENTITY about.redistr "Sunteţi binevenit(ă) să redistribuiţi programul sub anumite condiţii">
 <!ENTITY about.icons "Iconiţe şi butoane">
 <!ENTITY about.based "sunt rezultatele muncii lui Mike Matas, Jakub Steiner şi Mark James">
