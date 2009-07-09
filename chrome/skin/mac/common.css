@@ -1,5 +1,9 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
+#views toolbarbutton, #views toolbarbutton:hover {
+	margin: 0px !important;
+}
+
 .downlinks {
 	width:780px;
 	height:450px;
