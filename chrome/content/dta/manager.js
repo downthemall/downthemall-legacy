@@ -636,7 +636,7 @@ var Dialog = {
 			for each (let d in this._running) {
 				// checks for timeout
 				if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
-					if (d.resumable || !d.totalSize || !d.partialSize) {
+					if (d.resumable || !d.totalSize || !d.partialSize || Prefs.resumeOnError) {
 						Dialog.markAutoRetry(d);
 						d.pause();
 						d.status = _("timeout");
@@ -2775,11 +2775,18 @@ Connection.prototype = {
 				else {
 					var file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
 					code = Utils.formatNumber(code, 3);
-					d.fail(
-						_("error", [code]),
-						_("failed", [file]) + " " + _("sra", [code]) + ": " + status,
-						_("error", [code])
-					);
+					if (Prefs.resumeOnError) {
+						Dialog.markAutoRetry(d);
+						d.pause();
+						d.status = _('temperror')
+					}
+					else {
+						d.fail(
+							_("error", [code]),
+							_("failed", [file]) + " " + _("sra", [code]) + ": " + status,
+							_("error", [code])
+						);
+					}
 				}
 				// any data that we got over this channel should be considered "corrupt"
 				c.rollback();
@@ -3114,7 +3121,7 @@ Connection.prototype = {
 		}
 
 		if (!d.isOf(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
-			if (d.resumable) {
+			if (d.resumable || Prefs.resumeOnError) {
 				Dialog.markAutoRetry(d);
 				d.pause();
 				d.status = _('errmismatchtitle');
