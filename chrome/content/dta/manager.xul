@@ -9,6 +9,7 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/toolbar.css" type="text/css"?>
 <?xml-stylesheet href="chrome://dta/skin/manager/style.css" type="text/css" ?>
 
 <!DOCTYPE dialog [
@@ -94,7 +95,9 @@
 		
 		<command id="cmdChangeSpeedLimit" oncommand="Dialog.changeSpeedLimit();"/>
 		
-		<command id="cmdPreferences" oncommand="DTA_showPreferences();"/>		
+		<command id="cmdPreferences" oncommand="DTA_showPreferences();"/>
+		
+		<command id="cmdCustomizeToolbar" oncommand="Dialog.customizeToolbar(event);"/>		
 		
 	</commandset>
 
@@ -184,12 +187,16 @@
 			<menuitem label="&restore.label;" oncommand="TrayHandler.restore();"/>
 			<menuitem label="&close.label;" command="cmdClose"/> 
 		</menupopup>
+		<menupopup id="toolbarpopup" command="cmdCustomizeToolbar">
+			<menuitem id="tbp_icons" mode="icons" label="&toolbar.icons;" type="radio"/>
+			<menuitem id="tbp_full" mode="full" label="&toolbar.full;" type="radio"/>
+		</menupopup>
 	</popupset>	
 	
 	<stack flex="1" id="mainstack">
 		<vbox flex="1">		
-			<toolbox chromedir="&locale.dir;">
-			  <toolbar id="tools">
+			<toolbox chromedir="&locale.dir;" context="toolbarpopup">
+			  <toolbar id="tools" mode="full" persist="mode">
 					<spacer/>
 					<toolbarbutton label="&tooladd.label;" id="tooladd" command="cmdAddUrl" tooltiptext="&tooladd.tooltip;" />
 					<spacer class="visible" />

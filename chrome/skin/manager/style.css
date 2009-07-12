@@ -12,7 +12,6 @@ toolbox {
 #tools {
 	-moz-appearance: none !important;
 	border-width: 0px;
-	height: 54px;
 	padding: 0;
 	margin: 0;
 }
@@ -24,6 +23,12 @@ toolbox {
 	margin-top: 3px;
 	margin-bottom: 2px;
 	text-align: center;
+}
+#tools[mode="icons"] toolbarbutton {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+#tools[mode="full"] toolbarbutton {
 	min-width: 50px;
 }
 
@@ -43,7 +48,7 @@ toolbox {
 	min-width: 5px;
 }
 #tools spacer.visible {
-	background: url(chrome://dta/skin/common/toolbarspacer.png) no-repeat 50% 11px;
+	background: url(chrome://dta/skin/common/toolbarspacer.png) no-repeat 50% 50%;
 	min-width: 13px;
 	padding: 0;
 	margin: 0;
@@ -135,19 +140,34 @@ toolbox {
 
 #tooldonate {
 	list-style-image: url(chrome://dta/skin/manager/donate.png);
-	-moz-image-region: rect(51px,360px,102px,180px); 	
+	-moz-image-region: rect(51px,360px,102px,180px);
 	min-width: 180px !important;
 	cursor: pointer;
 }
 #tooldonate:hover {
 	-moz-image-region: rect(51px,180px,102px,0px);
 }
+
+#tools[mode="icons"] #tooldonate {
+	-moz-image-region: rect(58px,360px,94px,180px);
+}
+#tools[mode="icons"] #tooldonate:hover {
+	-moz-image-region: rect(58px,180px,94px,0px);
+}
+
 #tooldonate[chromedir="rtl"] {
 	-moz-image-region: rect(0px,360px,51px,180px);
 }
 #tooldonate[chromedir="rtl"]:hover {
 	-moz-image-region: rect(0px,180px,51px,0px);
 }
+#tools[mode="icons"] #tooldonate[chromedir="rtl"] {
+	-moz-image-region: rect(7px,360px,43px,180px);
+}
+#tools[mode="icons"] #tooldonate[chromedir="rtl"]:hover {
+	-moz-image-region: rect(7px,180px,43px,0px);
+}
+
 
 /** :: Tooltip :: **/
 #tooltip{

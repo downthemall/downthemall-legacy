@@ -51,3 +51,6 @@
 
 <!ENTITY speedlimit.label "Limit:">
 <!ENTITY speedlimit.tooltip "Change speed limit. The list is dynamicly updated.">
+
+<!ENTITY toolbar.icons "Use icons">
+<!ENTITY toolbar.full "Use icons and text">

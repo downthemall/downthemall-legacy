@@ -205,9 +205,22 @@ var Dialog = {
 				);
 			}
 		})();
+		(function() {
+			for each (let e in Array.map(document.getElementsByTagName('toolbarbutton'), function(e) e)) {
+				if (!e.hasAttribute('tooltiptext')) {
+					e.setAttribute('tooltiptext', e.getAttribute('label'));
+				}
+			}
+			
+			$('tbp_' + $('tools').getAttribute('mode')).setAttribute('checked', "true");
+		})();
 		Components.utils.import('resource://dta/bytebucket.jsm');
 		GlobalBucket = new ByteBucket(Prefs.speedLimit, 1.2);
 		this.fillSpeedsList();
+	},
+	
+	customizeToolbar: function(evt) {
+		$('tools').setAttribute('mode', evt.target.getAttribute('mode'));
 	},
 	
 	fillSpeedsList: function() {
