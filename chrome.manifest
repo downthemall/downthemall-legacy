@@ -20,6 +20,7 @@ overlay chrome://dta/content/dta/manager/info.xul chrome://dta/content/dta/manag
 # work-around bugs in loadOverlay preventing seamonkey integration otherwise
 overlay chrome://dta/content/preferences/prefs.xul chrome://dta/content/preferences/interfacePane.xul
 style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/integration/style.css
+override chrome://dta/skin/manager/netstatus.png chrome://dta-platform/skin/netstatus-aero.png os=WINNT osversion>=6
 
 ## toolkit ##
 overlay	chrome://mozapps/content/downloads/unknownContentType.xul	chrome://dta/content/integration/saveas.xul
