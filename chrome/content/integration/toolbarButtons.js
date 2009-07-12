@@ -37,12 +37,19 @@
  
 var DTA_TBB = {
 	init: function() {
-		this._items = ['dta-button', 'dta-turbo-button', 'dta-manager-button'].map(
-			function(e) {
-				return document.getElementById(e);
-			}
+		this._items = ['button', 'turbo-button', 'manager-button', 'toolbar-spacer'].map(function(e) document.getElementById('dta-' + e));
+		let before = this._items.map(
+			function(e) e.hasAttribute('insertbefore') ? {b: e, e: document.getElementById(e.getAttribute('insertbefore'))} : null
 		);
-		DTA_preferences.addObserver("extensions.dta.sm.", this);
+		for each (let e in before) {
+			if (!e || !e.e) {
+				continue;
+			}
+			if (e.b.previousSibling.id != e.e.id) {
+				e.e.parentNode.insertBefore(e.b, e.e);
+			}
+		}
+		DTA_preferences.addObserver("extensions.dta.tb.", this);
 		this._refresh();
 	},
 	observe: function(subject, topic, prefName) {
@@ -50,7 +57,7 @@ var DTA_TBB = {
 	},
 	_refresh: function() {
 		DTA_preferences
-			.getExt('sm.buttons')
+			.getExt('tb.buttons')
 			.split(',')
 			.forEach(
 				function(v, i) {
@@ -60,4 +67,4 @@ var DTA_TBB = {
 			);
 	}
 };
-window.addEventListener("load", function() {DTA_TBB.init();}, false);
+window.addEventListener("load", function() DTA_TBB.init() || true, false);

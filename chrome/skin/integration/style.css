@@ -1,3 +1,5 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
 #dta-turbo-button {
 	list-style-image: url("chrome://dta/skin/common/tools.png");
 	-moz-image-region: rect(0px,59px,25px,40px);
