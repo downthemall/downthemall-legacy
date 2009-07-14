@@ -186,48 +186,31 @@ var Tree = {
 		this.refreshTools();
 	},
 	
-	// Drag and Drop stuff
 	onDragStart: function T_onDragStart(evt, transferData, dragAction) {
-		let data = new TransferDataSet();
 		for (qi in this.selected) {
-			var item = new TransferData();
+			let item = new TransferData();
 			try {
-				item.addDataForFlavour('text/x-moz-url', qi.urlManager.url.spec + "\n" + qi.destinationName);
-				item.addDataForFlavour("text/unicode", qi.urlManager.url.spec);
-				// this is fake, so that we know that we are we ;)
 				item.addDataForFlavour('application/x-dta-position', qi.position);
-				data.push(item);
+				transferData.data = item;
 			}
 			catch (ex) {
 				Debug.log("dnd failure", ex);	
 			}
+			return;			
 		}
-		if (!data.first) {
-			throw new Exception("nothing selected");
-		}
-		transferData.data = data;
+	},
+	onDragOver: function T_onDragOver(aEvent, aFlavor, aDragSession) {
+		this.canDrop(aDragSession);
 	},
 	canDrop: function T_canDrop() {
 		let ds = this._ds.getCurrentSession();
-		return ['text/x-moz-url', 'application/x-dta-position', 'text/unicode'].some(
-			function(e) {
-				return ds.isDataFlavorSupported(e);
-			}
-		);
+		return ds && ds.isDataFlavorSupported('application/x-dta-position');
 	},
 	drop: function T_drop(row, orientation) {
+		Debug.logString("drop");
 		if (!this.canDrop()) {
-			throw new Exception("Invalid drop data!");
+			return;
 		}
-		let ds = this._ds.getCurrentSession();
-		if (ds.isDataFlavorSupported('application/x-dta-position')) {
-			this._dropSelection(row, orientation);
-		}
-		else {
-			this._dropURL(row, orientation);
-		}
-	},
-	_dropSelection: function T__dropSelection(row, orientation) {
 		try {
 			this.beginUpdate();
 			// means insert_after, so we need to adjust the row
@@ -240,7 +223,7 @@ var Tree = {
 			 * after we collected all items we simply reinsert them and invalidate our list.
 			 * This might not be the most performant way, but at least it kinda works ;)
 			 */
-			downloads = this._getSelectedIds(true).map(
+			let downloads = this._getSelectedIds(true).map(
 				function(id) {
 					let qi = this._downloads[id];
 					if (id < row) {
@@ -263,14 +246,6 @@ var Tree = {
 		catch (ex) {
 			Debug.log("_dropSelection", ex);
 		}		
-	},
-	_dropURL: function T__dropURL(row, orientation) {
-		// give control to our default DTA drop handler
-		let evt = {
-			target: document.documentElement,
-			stopPropagation: function() {}
-		};
-		nsDragAndDrop.drop(evt, DTA_DropDTA); 
 	},
 	
 	_updating: 0,
