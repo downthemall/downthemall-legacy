@@ -249,7 +249,7 @@ var Dialog = {
 			vals = [0,50,100,200,500];
 		}
 		
-		let items = [10, 50, 100]; // always include these		
+		let items = [10, 50, 100, 1000]; // always include these		
 		for each (let v in vals) {
 			if (v && m - v > 1) {
 				items.unshift(m - v);
