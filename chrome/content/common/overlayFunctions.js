@@ -171,22 +171,28 @@ DTA_URL.prototype = {
 	}
 };
 
-function DTA_DropProcessor(func) {
+function DTA_DropProcessor(func, multiple) {
 	this.func = func;
+	if (multiple) {
+		this.canHandleMultipleItems = true;
+	}
 };
 DTA_DropProcessor.prototype = {
 	getSupportedFlavours: function() {
-		var flavours = new FlavourSet();
-		flavours.appendFlavour("text/x-moz-url");
-		return flavours;
+		if (!this._flavors) {
+			this._flavors = new FlavourSet();
+			this._flavors.appendFlavour('text/x-moz-url');
+		}	
+		return this._flavors;
 	},
-	onDragOver: function(evt,flavour,session) {},
-	onDrop: function (evt,dropdata,session) {
+	onDragOver: function() {},
+	onDrop: function (evt, dropdata, session) {
 		if (!dropdata) {
 			return;
 		}
+		let url = null;
 		try {
-			var url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
+			url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
 			if (!DTA_AddingFunctions.isLinkOpenable(url)) {
 				throw new Components.Exception("Link cannot be opened!");
 			}
@@ -196,13 +202,13 @@ DTA_DropProcessor.prototype = {
 			DTA_debug.log("Failed to process drop", ex);
 			return;
 		}
-		var doc = document.commandDispatcher.focusedWindow.document;
+		let doc = document.commandDispatcher.focusedWindow.document;
+		let ref = doc ? DTA_AddingFunctions.getRef(doc) : null;		
 		
-		let ml = DTA_getLinkPrintMetalink(url);
-		url = new DTA_URL(ml ? ml : url);
-		
-		let ref = DTA_AddingFunctions.getRef(doc);
-		this.func(url, ref);
+		if (url) {
+			url = new DTA_URL(DTA_getLinkPrintMetalink(url) || url);
+			this.func(url, ref);			
+		}
 	}
 };
 
