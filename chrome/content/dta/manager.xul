@@ -24,16 +24,16 @@
 <window
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	windowtype="DTA:Manager" 
-	onload="Dialog.init();" 
 	title="DownThemAll!"  
 	id="DownThemAll"
 	class="downlinks"
-	onunload="return Dialog.unload();" 
-	onclose="return Dialog.close();"
-	onblur="Tree.stopTip();"
-	persist="width height screenX screenY sizemode dtaAutofitted" 
+	persist="width height screenX screenY sizemode dtaAutofitted"
 	>
-	
+	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
+	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
+
+	<script type="application/x-javascript" src="chrome://browser/content/utilityOverlay.js"/>
+
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
 
@@ -45,11 +45,6 @@
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/filehandling.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/alertservice.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/imex.js" />
-	
-	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
-	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
-
-	<script type="application/x-javascript" src="chrome://browser/content/utilityOverlay.js"/>
 	
 	<stringbundleset>
 		<stringbundle src="chrome://dta/locale/common.properties"/>
@@ -209,7 +204,7 @@
 					<toolbarbutton label="&movedown.label;" id="toolmovedown" command="cmdMoveDown" />
 					<toolbarbutton label="&movebottom.label;" id="toolmovebottom" command="cmdMoveBottom" />
 					<spacer flex="1" />
-					<image chromedir="&locale.dir;" id="tooldonate" onclick="Dialog.openDonate();" tooltiptext="&tooldonate.tooltiptext;" />
+					<image chromedir="&locale.dir;" id="tooldonate" tooltiptext="&tooldonate.tooltiptext;" />
 			  </toolbar>
 			</toolbox>
 			
@@ -222,10 +217,6 @@
 					seltype="multiple"
 					enableColumnDrag="true"
 					style="margin:0px;"
-					ondblclick="FileHandling.openFile();"
-					onselect="Tree.selectionChanged();"
-					onmousemove="Tree.hovering(event);"
-					ondraggesture="if (event.originalTarget.localName == 'treechildren') nsDragAndDrop.startDrag(event, Tree);"
 					chromedir="&locale.dir;"
 				>
 					<treecols>

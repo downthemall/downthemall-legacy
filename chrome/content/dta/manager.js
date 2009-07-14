@@ -144,11 +144,28 @@ var Dialog = {
 	completed: 0,
 	totalbytes: 0,
 	init: function D_init() {
+		removeEventListener('load', arguments.callee, false);
 		
 		TEXT_PAUSED = _('paused');
 		TEXT_QUEUED = _('queued');
 		TEXT_COMPLETE = _('complete');
 		TEXT_CANCELED = _('canceled');
+
+		(function initListeners() {
+			addEventListener('unload', function() Dialog.unload(), false);
+			addEventListener('close', function() Dialog.close(), false)
+			addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA), true);
+			addEventListener('drop', function(event) nsDragAndDrop.drop(event, DTA_DropDTA), true);
+			addEventListener('blur', function() Tree.stopTip(), false);
+			
+			$('tooldonate').addEventListener('click', function() Dialog.openDonate(), false);
+			
+			let dtree = $('downloads');
+			dtree.addEventListener('dblclick', function() FileHandling.openFile(), false);
+			dtree.addEventListener('select', function() Tree.selectionChanged(), false);
+			dtree.addEventListener('mousemove', function(event) Tree.hovering(event), false);
+			dtree.addEventListener('draggesture', function(event) nsDragAndDrop.startDrag(event, Tree), false);
+		})();		
 		
 		Tree.init($("downloads"));
 		try {
@@ -905,6 +922,7 @@ var Dialog = {
 		return true;		
 	}
 };
+addEventListener('load', function() Dialog.init(), false);
 
 function UrlManager(urls) {
 	this._urls = [];
@@ -1624,8 +1642,8 @@ QueueItem.prototype = {
 	},
 	get size() {
 		try {
-			let file;
-			if (!this.is(COMPLETE)) {
+			let file = null;
+			if (!this.isOf(COMPLETE, FINISHING)) {
 				file = this._tmpFile || null;	
 			}
 			else {
