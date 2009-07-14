@@ -53,16 +53,19 @@
 			var prefs = document.getElementsByTagName('preferences')[0];
 			
 			var chk = document.getElementsByTagName('checkbox');
+			if (!chk.length) {
+				chk = document.getElementsByTagName('listitem');
+			}
 			chk = chk[chk.length - 1];
 			if (prefs && chk) {
-
 				var pref = document.createElement('preference');
 				pref.setAttribute('id', 'privacy.item.extensions-dta');
 				pref.setAttribute('name', 'privacy.item.extensions-dta');
 				pref.setAttribute('type', 'bool'); 	
 				prefs.appendChild(pref);
 				
-				var check = document.createElement('checkbox');
+				var check = document.createElement(chk.localName);
+				check.setAttribute('type', 'checkbox');
 				check.setAttribute('label', msg);
 				check.setAttribute('preference', 'privacy.item.extensions-dta');
 				
