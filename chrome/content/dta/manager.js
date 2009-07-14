@@ -1624,8 +1624,14 @@ QueueItem.prototype = {
 	},
 	get size() {
 		try {
-			let file = new FileFactory(this.destinationFile);
-			if (file.exists()) {
+			let file;
+			if (!this.is(COMPLETE)) {
+				file = this._tmpFile || null;	
+			}
+			else {
+				file = new FileFactory(this.destinationFile);
+			}
+			if (file && file.exists()) {
 				return file.fileSize;
 			}
 		}
@@ -2027,7 +2033,7 @@ QueueItem.prototype = {
 			return true;
 		}
 		
-		if (!file.exists() || this.totalSize != file.fileSize) {
+		if (!file.exists() || this.totalSize != this.size) {
 			if (!file.parent.exists()) {
 				file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
 				this.invalidate();
@@ -2386,7 +2392,7 @@ Chunk.prototype = {
 				this.open();
 				this._wnd = 1024;
 			}
-			bytes = this.remainder;
+			let bytes = this.remainder;
 			if (!this.total || aCount < bytes) {
 				bytes = aCount;
 			}
