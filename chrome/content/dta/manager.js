@@ -163,6 +163,7 @@ var Dialog = {
 			let dtree = $('downloads');
 			dtree.addEventListener('dblclick', function() FileHandling.openFile(), false);
 			dtree.addEventListener('select', function() Tree.selectionChanged(), false);
+			dtree.addEventListener('click', function(evt) { if (evt.button == 1) Tree.showInfo(); }, false);
 			dtree = $('downloadList');
 			dtree.addEventListener('mousemove', function(event) Tree.hovering(event), false);
 			dtree.addEventListener('draggesture', function(event) nsDragAndDrop.startDrag(event, Tree), false);
