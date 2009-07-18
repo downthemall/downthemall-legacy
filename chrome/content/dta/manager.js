@@ -163,6 +163,7 @@ var Dialog = {
 			let dtree = $('downloads');
 			dtree.addEventListener('dblclick', function() FileHandling.openFile(), false);
 			dtree.addEventListener('select', function() Tree.selectionChanged(), false);
+			dtree = $('downloadList');
 			dtree.addEventListener('mousemove', function(event) Tree.hovering(event), false);
 			dtree.addEventListener('draggesture', function(event) nsDragAndDrop.startDrag(event, Tree), false);
 		})();		
@@ -2386,6 +2387,7 @@ Chunk.prototype = {
 		}
 		GlobalBucket.unregister(this);
 		delete this._req;
+		this._sessionBytes = 0;
 	},
 	rollback: function CH_rollback() {
 		if (!this._sessionBytes || this._sessionBytes > this._written) {
@@ -2406,6 +2408,10 @@ Chunk.prototype = {
 	_outStream: null,
 	write: function CH_write(aRequest, aInputStream, aCount) {
 		try {
+			// not running: do not write anything
+			if (!this.running) {
+				return -1;
+			}
 			if (!this._outStream) {
 				this.open();
 				this._wnd = 1024;
@@ -2795,6 +2801,10 @@ Connection.prototype = {
 		 
 		if (code >= 400) {
 			if (!this.handleError()) {
+				
+				// any data that we got over this channel should be considered "corrupt"
+				c.rollback();
+				
 				Debug.log("handleError: Cannot recover from problem!", code);
 				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1 || Prefs.recoverAllHttpErrors) {
 					Debug.log("we got temp failure!", code);
@@ -2825,8 +2835,6 @@ Connection.prototype = {
 						);
 					}
 				}
-				// any data that we got over this channel should be considered "corrupt"
-				c.rollback();
 				d.save();
 			}
 			return false;
