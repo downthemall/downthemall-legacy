@@ -240,7 +240,7 @@
 						<splitter class="tree-splitter"/>
 						<treecol id="hash" label="&hash.label;" ordinal="10" hidden="true" flex="6" persist="width ordinal hidden"/>
 					</treecols>
-					<treechildren tooltip="tooltip">
+					<treechildren id="downloadList" tooltip="tooltip">
 					</treechildren>
 				</tree>
 			</notificationbox>	
