@@ -201,6 +201,7 @@ toolbox {
 	font-size: 14px;
 	font-weight: bold;
 	background: transparent !important;
+	color: black !important;
 }
 stack > #infoPercent {
 	padding-top: 7px;
