@@ -2411,7 +2411,7 @@ Chunk.prototype = {
 		try {
 			// not running: do not write anything
 			if (!this.running) {
-				return -1;
+				return 0;
 			}
 			if (!this._outStream) {
 				this.open();
