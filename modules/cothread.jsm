@@ -63,6 +63,7 @@ CoThreadBase.prototype = {
 			throw Cr.NS_ERROR_INVALID_ARG;
 		} 
 		this._func = func;
+		this.init = function() {};
 	},
 	
 	run: function CoThreadBase_run() {
