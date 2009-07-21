@@ -177,7 +177,7 @@
 			<grid id="canvasGrid"/>
 		</tooltip>
 		<menupopup id="traymenu">
-			<menuitem label="&tooladd.label;" command="cmdAddUrl;"/>
+			<menuitem label="&tooladd.label;" command="cmdAddUrl"/>
 			<menuseparator/>
 			<menuitem label="&restore.label;" oncommand="TrayHandler.restore();"/>
 			<menuitem label="&close.label;" command="cmdClose"/> 
