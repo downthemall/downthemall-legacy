@@ -382,11 +382,6 @@ var FilterManager = {
 		this._active = this._all.filter(function(f) { return f.active; });
 		
 		// notify all observers
-		let enumerator = this._obs.enumerateObservers(TOPIC_FILTERSCHANGED);
-		debug("notifying");
-		while (enumerator.hasMoreElements()) {
-			debug("enumerator:" + enumerator.getNext().toSource());
-		}
 		this._obs.notifyObservers(this, TOPIC_FILTERSCHANGED, null);
 	},
 
