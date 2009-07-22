@@ -34,12 +34,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-function include(uri) {
-	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(Components.interfaces.mozIJSSubScriptLoader)
-		.loadSubScript(uri);
-}
-include('chrome://dta/content/common/xpcom.jsm');
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const error = Components.utils.reportError;
+
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const NS_ERROR_NO_INTERFACE = Cr.NS_ERROR_NO_INTERFACE;
 const NS_ERROR_FAILURE = Cr.NS_ERROR_FAILURE;
@@ -48,14 +48,37 @@ const NS_ERROR_INVALID_ARG = Cr.NS_ERROR_INVALID_ARG;
 
 const ScriptableInputStream = new Components.Constructor('@mozilla.org/scriptableinputstream;1', 'nsIScriptableInputStream', 'init');
 
-var ContentHandling = {
+function ContentHandling() {}
+ContentHandling.prototype = {
+	classDescription: 'DownThemAll! Content Handling',
+	classID: Components.ID('35eabb45-6bca-408a-b90c-4b22e543caf4'),
+	contractID: '@downthemall.net/contenthandling;2',
+	
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.dtaIContentHandling]),
+	
+	_xpcom_categories: [{category: 'app-startup'}],
+		
 	_init: function() {
-		var obs = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
-		obs.addObserver(this, 'http-on-modify-request', true);
-		obs.addObserver(this, 'http-on-examine-response', true);
-		obs.addObserver(this, 'http-on-examine-cached-response', true); 
+		let obs = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
+		obs.addObserver(this, 'http-on-modify-request', false);
+		obs.addObserver(this, 'http-on-examine-response', false);
+		obs.addObserver(this, 'http-on-examine-cached-response', false);
+		obs.addObserver(this, 'xpcom-shutdown', false);
+	},
+	_uninit: function() {
+		let obs = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
+		obs.removeObserver(this, 'http-on-modify-request');
+		obs.removeObserver(this, 'http-on-examine-response');
+		obs.removeObserver(this, 'http-on-examine-cached-response');
+		obs.removeObserver(this, 'xpcom-shutdown');
 	},
 	observe: function(subject, topic, data) {
+		if (topic == 'app-startup') {
+			this._init();
+		}
+		else if (topic == 'xpcom-shutdown') {
+			this._uninit();
+		}
 		if (topic == 'http-on-modify-request') {
 			this.observeRequest(subject, topic, data);
 		}
@@ -135,7 +158,7 @@ var ContentHandling = {
 					// no op
 				}
 			}
-			if (channel.URI.spec.match(/\.flv\b/i) || ct.match(/\bflv\b/i)) {
+			if (channel.URI.spec.match(/\.(flv|ogg|ogm|ogv|avi|divx)\b/i) || ct.match(/\b(flv|ogg|ogm|avi|divx)\b/i)) {
 				let wp = null;
 				if (channel.loadGroup && channel.loadGroup.groupObserver) {
 					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);					
@@ -176,18 +199,18 @@ var ContentHandling = {
 		
 		this._dataDict[uri] = data;  	
 	},
-	_flvDict: {},
-	_flvArray: [],
-	_registerFlash: function(uri, flv) {
+	_vidDict: {},
+	_vidArray: [],
+	_registerVideo: function(uri, vid) {
 		uri = uri.spec;
-		if (!(uri in this._flvDict)) {
-			if (this._flvArray.length > 20) {
-				delete this._flvDict[this._flvArray.pop()];
+		if (!(uri in this._vidDict)) {
+			if (this._vidArray.length > 20) {
+				delete this._vidDict[this._vidArray.pop()];
 			}
-			this._flvArray.push(uri);
-			this._flvDict[uri] = [];
+			this._vidArray.push(uri);
+			this._vidDict[uri] = [];
 		}
-		this._flvDict[uri].push(flv);
+		this._vidDict[uri].push(vid);
 	},
 	getPostDataFor: function(uri) {
 		if (uri instanceof Ci.nsIURI) {
@@ -198,27 +221,16 @@ var ContentHandling = {
 		}
 		return this._dataDict[uri];
 	},
-	getFlashVideosFor: function(uri) {
+	getSniffedVideosFor: function(uri) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
-		if (!(uri in this._flvDict)) {
+		if (!(uri in this._vidDict)) {
 			return [];
 		}
-		return this._flvDict[uri];
+		return this.vidDict[uri];
 	}
 };
-implementComponent(
-	ContentHandling,
-	Components.ID("{35eabb45-6bca-408a-b90c-4b22e543caf4}"),
-	"@downthemall.net/contenthandling;2",
-	"DownThemAll! Content Handling",
-	[Ci.nsIObserver, Ci.nsiURIContentListener, Ci.dtaIContentHandling]
-);	
-ContentHandling._init();
-
 
 // entrypoint
-function NSGetModule(compMgr, fileSpec) {
-	return new ServiceModule(ContentHandling, true);
-}
+function NSGetModule(aCompMgr, aFileSpec) XPCOMUtils.generateModule([ContentHandling]);
