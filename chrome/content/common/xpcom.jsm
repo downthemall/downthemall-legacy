@@ -40,6 +40,8 @@ const error = Components.utils.reportError;
 const Cr = Components.results;
 const importModule = Components.utils.import;
 
+// XXX Deprecated
+
 function debug(str, ex) {
 	try {
 		var _debugServ = Components.classes['@downthemall.net/debug-service;1']
