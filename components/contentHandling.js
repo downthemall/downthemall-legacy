@@ -46,7 +46,27 @@ const NS_ERROR_FAILURE = Cr.NS_ERROR_FAILURE;
 const NS_ERROR_NO_AGGREGATION = Cr.NS_ERROR_NO_AGGREGATION;
 const NS_ERROR_INVALID_ARG = Cr.NS_ERROR_INVALID_ARG;
 
+const PREF_SNIFFVIDEOS = 'extensions.dta.listsniffedvideos';
+
 const ScriptableInputStream = new Components.Constructor('@mozilla.org/scriptableinputstream;1', 'nsIScriptableInputStream', 'init');
+
+function debug(str, ex) {
+	try {
+		let ds = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService);
+		(debug = function _debugimpl(str, ex) {
+			if (ex) {
+				ds.log(str, ex);
+			}
+			else {
+				ds.logString(str);
+			}
+		})(str, ex);
+	}
+	catch (iex) {
+		error(str + ": " + ex);
+	}
+}
+
 
 function ContentHandling() {}
 ContentHandling.prototype = {
@@ -56,37 +76,70 @@ ContentHandling.prototype = {
 	
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.dtaIContentHandling]),
 	
-	_xpcom_categories: [{category: 'app-startup'}],
-		
-	_init: function() {
+	_xpcom_categories: [{category: 'app-startup', service: true}],
+	
+	// ensure that there is only one instance of this service around
+	_xpcom_factory: {
+		_instance: null,
+		createInstance: function(outer, iid) {
+			if (outer) {
+				throw Cr.NS_ERROR_NO_AGGREGATION;
+			}
+			if (!this._instance) {
+				this._instance = new ContentHandling();
+			}
+			return this._instance.QueryInterface(iid);
+		}
+	},
+	
+	_init: function ct__init() {
 		let obs = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
 		obs.addObserver(this, 'http-on-modify-request', false);
 		obs.addObserver(this, 'http-on-examine-response', false);
 		obs.addObserver(this, 'http-on-examine-cached-response', false);
 		obs.addObserver(this, 'xpcom-shutdown', false);
+		obs.addObserver(this, 'private-browsing', false);
+		this._ps = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2);
+		this._ps.addObserver(PREF_SNIFFVIDEOS, this, false);
+		this.sniffVideos = this._ps.getBoolPref(PREF_SNIFFVIDEOS);
 	},
-	_uninit: function() {
+	_uninit: function ct__uninit() {
 		let obs = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
 		obs.removeObserver(this, 'http-on-modify-request');
 		obs.removeObserver(this, 'http-on-examine-response');
 		obs.removeObserver(this, 'http-on-examine-cached-response');
 		obs.removeObserver(this, 'xpcom-shutdown');
+		obs.removeObserver(this, 'private-browsing');
+		this._ps.removeObserver('extensions.dta.listsniffedvideos', this);
 	},
-	observe: function(subject, topic, data) {
+	observe: function ct_observe(subject, topic, data) {
 		if (topic == 'app-startup') {
 			this._init();
 		}
 		else if (topic == 'xpcom-shutdown') {
 			this._uninit();
 		}
-		if (topic == 'http-on-modify-request') {
+		else if (topic == 'http-on-modify-request') {
 			this.observeRequest(subject, topic, data);
 		}
 		else if (topic == 'http-on-examine-response' || topic == 'http-on-examine-cached-response') {
 			this.observeResponse(subject, topic, data);
 		}
+		else if (topic == 'nsPref:changed') {
+			debug("help");
+			try {
+				this.sniffVideos = subject.QueryInterface(Ci.nsIPrefBranch).getBoolPref(PREF_SNIFFVIDEOS);
+			}
+			catch (ex) {
+				debug(ex);
+			}
+		}
+		else if (topic == 'private-browsing') {
+			this._clearPostData();
+			this._clearVideos();
+		}
 	},
-	observeRequest: function(subject, topic, data) {
+	observeRequest: function ct_observeRequest(subject, topic, data) {
 		if (
 			!(subject instanceof Ci.nsIHttpChannel)
 			|| !(subject instanceof Ci.nsIUploadChannel)
@@ -140,8 +193,8 @@ ContentHandling.prototype = {
 			debug("cannot get post-data", ex);
 		}
  	},
-	observeResponse: function(subject, topic, data) {
-		if (!(subject instanceof Ci.nsIHttpChannel)) {
+	observeResponse: function ct_observeResponse(subject, topic, data) {
+		if (!this.sniffVideos || !(subject instanceof Ci.nsIHttpChannel)) {
 			return;
 		}
 		let channel = subject.QueryInterface(Ci.nsIHttpChannel);
@@ -178,7 +231,7 @@ ContentHandling.prototype = {
 				if (!parentURI.schemeIs('http') && !parentURI.schemeIs('https') && !parentURI.schemeIs('ftp')) {
 					return;
 				}
-				this._registerFlash(parentURI, channel.URI);
+				this._registerVideo(parentURI, channel.URI);
 			}
 		}
 		catch (ex) {
@@ -187,7 +240,11 @@ ContentHandling.prototype = {
 	},
 	_dataDict: {},
 	_dataArray: [],
-	_registerData: function(uri, data) {
+	_clearPostData: function ct__clearPostData() {
+		this._dataDict = {};
+		this._dataArray = [];
+	},
+	_registerData: function ct__registerData(uri, data) {
 		uri = uri.spec;
 
 		if (!(uri in this._dataDict)) {
@@ -199,20 +256,37 @@ ContentHandling.prototype = {
 		
 		this._dataDict[uri] = data;  	
 	},
+	
+	_sniffVideos: false,
+	get sniffVideos() {
+		return this._sniffVideos;
+	},
+	set sniffVideos(nv) {
+		this._sniffVideos = nv;
+		if (!nv) {
+			this._clearVideos();
+		}
+		return nv;
+	},
 	_vidDict: {},
 	_vidArray: [],
-	_registerVideo: function(uri, vid) {
+	_clearVideos: function ct__clearVideos() {
+		this._vidDict = {};
+		this._vidArray = [];
+	},
+	_registerVideo: function ct__registerVideo(uri, vid) {
 		uri = uri.spec;
 		if (!(uri in this._vidDict)) {
 			if (this._vidArray.length > 20) {
 				delete this._vidDict[this._vidArray.pop()];
 			}
 			this._vidArray.push(uri);
-			this._vidDict[uri] = [];
+			this._vidDict[uri] = {};
 		}
-		this._vidDict[uri].push(vid);
+		this._vidDict[uri][vid.spec] = vid;
 	},
-	getPostDataFor: function(uri) {
+	
+	getPostDataFor: function ct_getPostDataFor(uri) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
@@ -221,14 +295,21 @@ ContentHandling.prototype = {
 		}
 		return this._dataDict[uri];
 	},
-	getSniffedVideosFor: function(uri) {
+	getSniffedVideosFor: function ct_getSniffedVideosFor(uri) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
+		let rv = [];
+		debug(uri);
+		debug(this._vidDict.toSource());
 		if (!(uri in this._vidDict)) {
-			return [];
+			return rv;
 		}
-		return this.vidDict[uri];
+		let vids = this._vidDict[uri];
+		for (let v in vids) {
+			rv.push(vids[v]);
+		}
+		return rv;
 	}
 };
 
