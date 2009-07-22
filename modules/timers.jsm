@@ -53,10 +53,11 @@ function newUUIDString() {
 
 this.__defineGetter__('Debug', function() {
 	delete this.Debug;
-	return this.Debug = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService);
+	return (this.Debug = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService));
 });
 
 function TimerData(owner, time, type, func, ctx) {
+	this.owner = owner;
 	this.uuid = newUUIDString();
 	this.func = func;
 	if (!this.func) {
@@ -66,10 +67,18 @@ function TimerData(owner, time, type, func, ctx) {
 		this.func = new Function(this.func);
 	}
 	this.ctx = ctx;
-	this.timer = new Timer(owner, time, type);
+	this.timer = new Timer(this, time, type);
 }
 
 TimerData.prototype = {
+	cancel: function() this.timer.cancel(),
+	toString: function() this.uuid,
+	observe: function(timer) {
+		if (this.timer.type == nsITimer.TYPE_ONE_SHOT) {
+			this.owner.killTimer(this.uuid);
+		}
+		this.execute();
+	},
 	execute: function() {
 		try {
 			this.func.call(this.ctx);
@@ -83,53 +92,32 @@ TimerData.prototype = {
 function TimerManager() {}
 TimerManager.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
-	_timers: [],
+	_timers: {},
 	createOneshot: function(delay, func, ctx) {
 		ctx = ctx ? ctx : func.__parent__;
 		let td = new TimerData(this, delay, nsITimer.TYPE_ONE_SHOT, func, ctx);
-		this._timers.push(td);
+		this._timers[td] = td;
 		return td.uuid;
 	},
 	createRepeating: function(interval, func, ctx, fireInitially) {
 		ctx = ctx ? ctx : func.__proto__.__parent__;
 		let td = new TimerData(this, interval, nsITimer.TYPE_REPEATING_PRECISE, func, ctx);
-		this._timers.push(td);
+		this._timers[td] = td;
 		if (fireInitially) {
 			td.execute();
 		}
 		return td.uuid;		
 	},
 	killTimer: function TM_kill(uuid) {
-		this._timers = this._timers.filter(
-			function(td) {
-				if (td.uuid != uuid) {
-					return true;
-				}
-				td.timer.cancel();
-				return false;
-			},
-			this
-		);
+		if (uuid in this._timers) {
+			this._timers[uuid].cancel();
+			delete this._timers[uuid];
+		}
 	},
 	killAllTimers: function TM_killAll() {
-		for each (let td in this._timers) {
-			td.timer.cancel();
+		for (let td in this._timers) {
+			td.cancel();
 		}
-		this._timers = [];
-	},
-	observe: function(timer) {
-		for each (let td in this._timers) {
-			if (td.timer != timer) {
-				continue;
-			}
-			if (td.timer.type == nsITimer.TYPE_ONE_SHOT) {
-				this.killTimer(td.uuid);
-			}
-			td.execute(); 
-			return;
-		}
-		error(timer);
-		timer.cancel();
-		throw new Exception("Unknown timer fired?");
+		this._timers = {};
 	}
 };
