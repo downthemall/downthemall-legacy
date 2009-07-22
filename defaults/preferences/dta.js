@@ -78,7 +78,7 @@ pref("extensions.dta.selectbgimages", false);
 pref("extensions.dta.nagnever", false);
 pref("extensions.dta.nagnext", 50);
 pref("extensions.dta.speedlimit", -1);
-pref("extensions.dta.listflv", false);
+pref("extensions.dta.listsniffedvideos", false);
 pref("extensions.dta.nokeepalive", true);
 pref("extensions.dta.resumeonerror", false);
 // Non-customizable-toolbar specific

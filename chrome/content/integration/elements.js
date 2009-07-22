@@ -179,9 +179,9 @@ var DTA_ContextOverlay = {
 				);
 			}
 			else {
-				if (DTA_preferences.getExt('listflv', false)) {
+				if (DTA_preferences.getExt('listsniffedvideos', false)) {
 					let flvs = Array.map(
-						this._ch.getFlashVideosFor(DTA_AddingFunctions.ios.newURI(aWin.location.href, aWin.document.characterSet, null)),
+						this._ch.getSniffedVideosFor(DTA_AddingFunctions.ios.newURI(aWin.location.href, aWin.document.characterSet, null)),
 						function(e) e
 					);
 						
@@ -190,7 +190,7 @@ var DTA_ContextOverlay = {
 						let o = {
 							'url': new DTA_URL(flv),
 							'ref': ref,
-							'description': 'Embedded Flash Video'
+							'description': 'Sniffed embedded video'
 						}
 						aURLs.push(o);
 						aImages.push(o);
