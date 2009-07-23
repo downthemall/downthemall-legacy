@@ -80,7 +80,7 @@ var Tree = {
 			case 2: return d.percent;
 			case 3: return d.dimensionString;
 			case 4: return d.status;
-			case 5: return d.is(RUNNING) ? d.speed : '';
+			case 5: return d.speed;
 			case 6: return d.parts;
 			case 7: return d.mask;
 			case 8: return d.destinationPath;
@@ -121,10 +121,10 @@ var Tree = {
 	getProgressMode : function T_getProgressMode(idx, col) {
 		if (col.index == 1) {
 			let d = this._downloads[idx]; 
-			if (d.isOf(RUNNING, PAUSED) && !d.totalSize) {
+			if (d.is(PAUSED) && (!d.totalSize || d.partialSize / d.totalSize < .05)) {
 				return 2; // PROGRESS_UNDETERMINED;
 			}
-			if (d.is(PAUSED) && d.partialSize / d.totalSize < .05) {
+			if (d.is(RUNNING) && !d.totalSize) {
 				return 2; // PROGRESS_UNDETERMINED;			
 			}
 			return 1; // PROGRESS_NORMAL;
