@@ -78,7 +78,7 @@ function ByteBucket(byteRate, burstFactor) {
 		this.burstFactor = burstFactor;
 	}
 	this._available = byteRate;
-	this._timer = Timers.createRepeating(100, this.observe, this);
+	this._timer = Timers.createRepeating(100, this.observe, this, false, true);
 }
 ByteBucket.prototype = {
 	_timer: null,

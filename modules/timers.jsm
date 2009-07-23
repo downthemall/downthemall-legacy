@@ -99,9 +99,9 @@ TimerManager.prototype = {
 		this._timers[td] = td;
 		return td.uuid;
 	},
-	createRepeating: function(interval, func, ctx, fireInitially) {
+	createRepeating: function(interval, func, ctx, fireInitially, precise) {
 		ctx = ctx ? ctx : func.__proto__.__parent__;
-		let td = new TimerData(this, interval, nsITimer.TYPE_REPEATING_PRECISE, func, ctx);
+		let td = new TimerData(this, interval, precise ? nsITimer.TYPE_REPEATING_PRECISE : nsITimer.TYPE_REPEATING_SLACK, func, ctx);
 		this._timers[td] = td;
 		if (fireInitially) {
 			td.execute();
