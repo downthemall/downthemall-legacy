@@ -63,6 +63,10 @@ var Tree = {
 	},
 	setTree: function T_setTree(box) {
 		this._box = box;
+		this._cols = [];
+		for (let i = 0; i < box.columns.count; ++i) {
+			this._cols.push(box.columns.getColumnAt(i));
+		}
 	},
 	getParentIndex: function T_getParentIndex(idx) {
 		// no parents, as we are actually a list
@@ -88,29 +92,13 @@ var Tree = {
 		}
 		return '';
 	},
-	isSorted: function T_isSorted() {
-		// not sorted
-		return false;
-	},
-	isContainer: function T_isContainer(idx) {
-		// being a container means we got children... but we don't have any children because we're a list actually
-		return false;
-	},
-	isContainerOpen: function T_isContainerOpen(idx) {
-		return false;
-	},
-	isContainerEmpty: function T_isContainerEmpty(idx) {
-		return false;
-	},
+	isSorted: function T_isSorted() true,
+	isContainer: function T_isContainer(idx) false,
+	isContainerOpen: function T_isContainerOpen(idx) false,
+	isContainerEmpty: function T_isContainerEmpty(idx) false,
+	isSeparator: function T_isSeparator(idx) false,
+	isEditable: function T_isEditable(idx) true,
 
-	isSeparator: function T_isSeparator(idx) {
-		// no separators
-		return false;
-	},
-	isEditable: function T_isEditable(idx) {
-		// and nothing is editable
-		return true;
-	},
 	// will grab the "icon" for a cell.
 	getImageSrc: function T_getImageSrc(idx, col) {
 		switch (col.index) {
@@ -591,7 +579,7 @@ var Tree = {
 			Debug.log("rt", ex);
 		}
 	},
-	invalidate: function T_invalidate(d) {
+	invalidate: function T_invalidate(d, cell) {
 		if (!d) {
 			let complete = 0;
 			QueueStore.beginUpdate();
@@ -614,7 +602,12 @@ var Tree = {
 			this.endUpdate();
 		}
 		else if (d.position >= 0) {
-			this._box.invalidateRow(d.position);
+			if (cell !== undefined) {
+				this._box.invalidateCell(d.position, this._cols[cell]);
+			}
+			else {
+				this._box.invalidateRow(d.position);
+			}
 		}
 	},
 	get box() {
