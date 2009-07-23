@@ -82,7 +82,7 @@ const MAX_BUFFER_SIZE = 5 * 1024 * 1024;
 const MIN_BUFFER_SIZE = 1 * 1024 * 1024;
 
 const REFRESH_FREQ = 1000;
-const STREAMS_FREQ = 200;
+const STREAMS_FREQ = 250;
 
 let Prompts = {}, Preallocator = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
@@ -624,7 +624,8 @@ var Dialog = {
 	},
 	refreshWritten: function D_refreshWritten() {
 		for each (let d in this._running) {
-			d.invalidate();
+			d.invalidate(2);
+			d.invalidate(3);
 		}
 	},
 	saveRunning: function D_saveRunning() {
@@ -1391,7 +1392,7 @@ QueueItem.prototype = {
 		}
 		this._fileName = nv;
 		this.rebuildDestination();
-		this.invalidate();
+		this.invalidate(0);
 		return nv;
 	},
 	_description: null,
@@ -1404,7 +1405,7 @@ QueueItem.prototype = {
 		}
 		this._description = nv;
 		this.rebuildDestination();
-		this.invalidate();
+		this.invalidate(0);
 		return nv;
 	},	
 	_title: '',
@@ -1417,7 +1418,7 @@ QueueItem.prototype = {
 		}
 		this._title = nv;
 		this.rebuildDestination();
-		this.invalidate();
+		this.invalidate(0);
 		return this._title;
 	},
 	_pathName: null,
@@ -1431,7 +1432,7 @@ QueueItem.prototype = {
 		}
 		this._pathName = nv;
 		this.rebuildDestination();
-		this.invalidate();
+		this.invalidate(0);
 		return nv;
 	},	
 
@@ -1445,7 +1446,7 @@ QueueItem.prototype = {
 		}
 		this._mask = nv;
 		this.rebuildDestination();
-		this.invalidate();
+		this.invalidate(7);
 		return nv;
 	},		
 	
@@ -1461,7 +1462,7 @@ QueueItem.prototype = {
 		}
 		this.destinationNameOverride = nv;
 		this.rebuildDestination();
-		this.invalidate();
+		this.invalidate(0);
 		return this._destinationNameFull;
 	},
 	
@@ -1483,7 +1484,7 @@ QueueItem.prototype = {
 		}
 		this._conflicts = nv;
 		this.rebuildDestination();
-		this.invalidate();
+		this.invalidate(0);
 		return nv;
 	},
 	_tmpFile: null,
@@ -1579,7 +1580,7 @@ QueueItem.prototype = {
 		if (nv >= 0 && !isNaN(nv)) {
 			this._totalSize = Math.floor(nv);
 		}
-		this.invalidate();
+		this.invalidate(3);
 		this.prealloc();
 		return this._totalSize;
 	},
@@ -1599,7 +1600,7 @@ QueueItem.prototype = {
 	set activeChunks(nv) {
 		nv = Math.max(0, nv);
 		this._activeChunks = nv;
-		this.invalidate();
+		this.invalidate(6);
 		return this._activeChunks;
 	},
 	_maxChunks: 0,
@@ -1625,7 +1626,7 @@ QueueItem.prototype = {
 			this.resumeDownload();
 			
 		}
-		this.invalidate();
+		this.invalidate(6);
 		Debug.logString("mc set to " + nv);
 		return this._maxChunks;
 	},
@@ -1709,8 +1710,8 @@ QueueItem.prototype = {
 		return this._destinationPath;
 	},
 
-	invalidate: function QI_invalidate() {
-		Tree.invalidate(this);
+	invalidate: function QI_invalidate(cell) {
+		Tree.invalidate(this, cell);
 	},
 
 	safeRetry: function QI_safeRetry() {
@@ -1763,7 +1764,6 @@ QueueItem.prototype = {
 
 			if (!destination.exists()) {
 				destination.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
-				this.invalidate();
 			}
 			var df = destination.clone();
 			df.append(this.destinationName);
@@ -2056,7 +2056,6 @@ QueueItem.prototype = {
 		if (!file.exists() || this.totalSize != this.size) {
 			if (!file.parent.exists()) {
 				file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
-				this.invalidate();
 			}
 			let pa = Preallocator.prealloc(file, this.totalSize, Prefs.permissions, this._donePrealloc, this);
 			if (pa) {
@@ -2367,7 +2366,6 @@ Chunk.prototype = {
 		let file = this.parent.tmpFile;
 		if (!file.parent.exists()) {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
-			this.parent.invalidate();
 		}		
 		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
