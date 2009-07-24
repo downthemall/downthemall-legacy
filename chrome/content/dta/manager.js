@@ -84,8 +84,9 @@ const REFRESH_FREQ = 1000;
 const REFRESH_NFREQ = 1000 / REFRESH_FREQ;
 const STREAMS_FREQ = 200;
 
-let Prompts = {};
+let Prompts = {}, Preallocator = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
+Components.utils.import('resource://dta/preallocator.jsm', Preallocator);
 
 var TEXT_PAUSED;
 var TEXT_QUEUED;
@@ -443,6 +444,7 @@ var Dialog = {
 			Debug.logString("Let's resume " + download + " at " + download.partialSize);
 		}
 		this._running.push(new Dialog.RunningJob(download));
+		download.prealloc();
 		download.resumeDownload();
 	},
 	wasStopped: function D_wasStopped(download) {
@@ -561,6 +563,7 @@ var Dialog = {
 				else if (d.is(FINISHING)) {
 					++finishing;
 				}
+				d.cancelPreallocation();
 			},
 			this
 		);
@@ -1244,6 +1247,7 @@ QueueItem.prototype = {
 			this._totalSize = Math.floor(nv);
 		}
 		this.invalidate();
+		this.prealloc();
 		return this._totalSize;
 	},
 	partialSize: 0,
@@ -1307,8 +1311,14 @@ QueueItem.prototype = {
 	},
 	get size() {
 		try {
-			let file = new FileFactory(this.destinationFile);
-			if (file.exists()) {
+			let file = null;
+			if (!this.isOf(COMPLETE, FINISHING)) {
+				file = this._tmpFile || null;	
+			}
+			else {
+				file = new FileFactory(this.destinationFile);
+			}
+			if (file && file.exists()) {
 				return file.fileSize;
 			}
 		}
@@ -1676,8 +1686,9 @@ QueueItem.prototype = {
 				message = _("canceled");
 			}
 			this.status = message;
-
-
+			
+			this.cancelPreallocation();
+			
 			this.removeTmpFile();
 
 			// gc
@@ -1694,6 +1705,51 @@ QueueItem.prototype = {
 			Debug.log("cancel():", ex);
 		}
 	},
+	
+	prealloc: function QI_prealloc() {
+		let file = this.tmpFile;
+		
+		if (!this.totalSize || !this.isOf(RUNNING, QUEUED, PAUSED)) {
+			Debug.logString("pa: no totalsize");
+			return false;
+		}
+		if (this.preallocating) {
+			Debug.logString("pa: already working");
+			return true;
+		}
+		
+		if (!file.exists() || this.totalSize != this.size) {
+			if (!file.parent.exists()) {
+				file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
+			}
+			let pa = Preallocator.prealloc(file, this.totalSize, Prefs.permissions, this._donePrealloc, this);
+			if (pa) {
+				this.preallocating = true;
+				this._preallocator = pa;
+				Debug.logString("started");
+			}
+		}
+		else {
+			Debug.logString("pa: already allocated");
+		}
+		return this.preallocating;
+	},
+	cancelPreallocation: function() {
+		if (this._preallocator) {
+			this._preallocator.cancel();
+		}
+		this.preallocating = false;
+	},
+	
+	_donePrealloc: function QI__donePrealloc(res) {
+		Debug.logString("pa: done");
+		delete this._preallocator; 
+		this.preallocating = false;
+		if (this.resumable && this.is(RUNNING)) {
+			this.resumeDownload();
+		}
+	},
+	
 	
 	removeTmpFile: function QI_removeTmpFile() {
 		if (!!this._tmpFile && this._tmpFile.exists()) {
@@ -1737,6 +1793,11 @@ QueueItem.prototype = {
 		this.status = TEXT_QUEUED;
 	},
 	resumeDownload: function QI_resumeDownload() {
+		if (this.preallocating && this.activeChunks) {
+			Debug.logString("not resuming download " + this + " because preallocating");
+			return false;
+		}
+		
 		Debug.logString("resumeDownload: " + this);
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat
@@ -1968,32 +2029,9 @@ Chunk.prototype = {
 		let file = this.parent.tmpFile;
 		if (!file.parent.exists()) {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
-			this.parent.invalidate();
-		}
-		let prealloc = !file.exists();
-		if (prealloc && this.parent.totalSize > 0) {
-			try {
-				file.create(file.NORMAL_FILE_TYPE, Prefs.permissions);
-				file.fileSize = this.parent.totalSize;
-				Debug.logString("fileSize set using #1");
-				prealloc = false;
-			}
-			catch (ex) {
-				// no op
-			}
 		}		
 		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
-		if (prealloc && this.parent.totalSize > 0) {
-			try {
-				seekable.seek(0x00, this.parent.totalSize);
-				seekable.setEOF();
-				Debug.logString("fileSize set using #2");
-			}
-			catch (ex) {
-				// no-op
-			}
-		}
 		seekable.seek(0x00, this.start + this.written);
 		this._outStream = new BufferedOutputStream(outStream, CHUNK_BUFFER_SIZE);
 	},
