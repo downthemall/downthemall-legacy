@@ -73,5 +73,5 @@
 		<stringbundle id="bundle" src="chrome://dta/locale/notice.properties"/>
 	</stringbundleset>
 	<hbox style="background: white url(chrome://dta/skin/common/logo.png) no-repeat top right; height: 43px;"/>
-	<iframe id="frame" style="background: white;" src="chrome://dta/content/about/notice.html" flex="1"/>
+	<iframe id="frame" type="content" style="background: white;" src="chrome://dta/content/about/notice.html" flex="1"/>
 </dialog>
