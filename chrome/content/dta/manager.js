@@ -575,7 +575,7 @@ var Dialog = {
 			}
 			Debug.logString("Going down even if queue was not probably closed yet!");
 		}
-		close();
+		closeWindow(true);
 		return true;
 	},
 	_cleanTmpDir: function D__cleanTmpDir() {
@@ -1051,9 +1051,10 @@ QueueItem.prototype = {
 			// remove ourself from inprogresslist
 			Dialog.wasStopped(this);
 		}
+		this.speed = '';
 		this._state = nv;
-		this.invalidate();
 		Dialog.signal(this);
+		this.invalidate();
 		Tree.refreshTools();
 		return nv;
 	},
