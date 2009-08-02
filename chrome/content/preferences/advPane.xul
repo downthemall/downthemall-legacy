@@ -62,7 +62,7 @@
 			<checkbox label="&advancedpane.rememberoneclick.label;" preference="dtarememberoneclick"/>
 			<checkbox label="&advancedpane.confirmremove.label;" preference="dtaconfirmremove"/>
 			<hbox align="center">
-				<label value="&advancedpane.loadendfirst.label;" id="loadendfirst"/>
+				<label value="&advancedpane.loadendfirst.label;" control="loadendfirst"/>
 				<spacer flex="1"/>
 				<scale min="0" max="4096" id="loadendfirst" increment="4" pageincrement="16" preference-editable="true" onchange="Advanced.changedLoadEndFirst();"/>
 				<label id="loadendfirstlabel" style="min-width: 6em;" />
