@@ -29,6 +29,7 @@
 	class="downlinks"
 	persist="width height screenX screenY sizemode dtaAutofitted"
 	>
+	<script type="application/x-javascript" src="chrome://global/content/globalOverlay.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
 
