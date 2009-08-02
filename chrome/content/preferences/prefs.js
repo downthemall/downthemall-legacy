@@ -123,8 +123,10 @@ let Advanced = {
 		// delay these assignments, or else we get messed up by the slider c'tor
 		$('maxchunks').setAttribute('preference', 'dtamaxchunks');
 		$('dtamaxchunks').updateElements();
+		this.changedMaxChunks();
 		$('loadendfirst').setAttribute('preference', 'dtaloadendfirst');
-		$('dtaloadendfirst').updateElements();		
+		$('dtaloadendfirst').updateElements();
+		this.changedLoadEndFirst();
 	},
 	browse: function() {
 		// let's check and create the directory
