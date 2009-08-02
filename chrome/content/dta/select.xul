@@ -32,13 +32,13 @@
 	persist="width height screenX screenY"
 	style="margin: 0px;"
 >
-	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
-	<!-- internalFunctions needs overlayFunctions -->
-	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
-	<script type="application/javascript" src="chrome://dta/content/dta/select.js" />
-	
-	<script src="chrome://global/content/nsDragAndDrop.js"/>
-	<script src="chrome://global/content/nsTransferable.js"/>
+	<script type="application/x-javascript" src="chrome://global/content/globalOverlay.js"/>
+	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
+	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/>
+
+	<script type="text/javascript" src="chrome://dta/content/common/overlayFunctions.js" />
+	<script type="text/javascript" src="chrome://dta/content/common/internalFunctions.js" />
+	<script type="text/javascript" src="chrome://dta/content/dta/select.js" />
 
 	<stringbundleset>
 		<stringbundle src="chrome://dta/locale/common.properties"/>

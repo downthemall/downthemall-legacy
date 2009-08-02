@@ -391,7 +391,7 @@ let Dialog = {
 
 	// dialog destruction
 	unload: function DTA_unload() {
-		self.close();
+		closeWindow(true);
 		return true;
 	},
 
@@ -487,7 +487,7 @@ let Dialog = {
 		}
 
 		// if we get here some error occured - just close.
-		self.close();
+		closeWindow(true);
 		return false;
 	},
 
