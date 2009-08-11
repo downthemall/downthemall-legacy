@@ -624,6 +624,7 @@ var Dialog = {
 	},
 	refreshWritten: function D_refreshWritten() {
 		for each (let d in this._running) {
+			d.invalidate(1);
 			d.invalidate(2);
 			d.invalidate(3);
 		}
