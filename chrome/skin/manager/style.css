@@ -524,3 +524,8 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 textbox.plain {
 	background-color: transparent !important;
 }
+
+statusbarpanel#netstatus {
+	padding-left: 4px;
+	padding-right: 6px;
+}
