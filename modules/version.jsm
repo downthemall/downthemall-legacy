@@ -6,6 +6,9 @@ const EXPORTED_SYMBOLS = [
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+const module = Components.utils.import;
+
+module("resource://dta/utils.jsm");
 
 const ID = 'dta@downthemall.net';
 const ITEM = Cc["@mozilla.org/extensions/manager;1"].getService(Ci.nsIExtensionManager).getItemForID(ID);
@@ -19,9 +22,7 @@ const VERSION = ITEM.version;
 const BASE_VERSION = VERSION.replace(/^([\d\w]+\.[\d\w]+).*?$/, '$1');
 const NAME = ITEM.name;
 
-const comparator = 
-	Components.classes['@mozilla.org/xpcom/version-comparator;1']
-	.getService(Components.interfaces.nsIVersionComparator);
+ServiceGetter(this, "comparator", "@mozilla.org/xpcom/version-comparator;1", "nsIVersionComparator");
 
 function compareVersion(version, cmp) {
 	if (!cmp) {

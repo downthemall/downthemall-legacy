@@ -38,23 +38,16 @@ const EXPORTED_SYMBOLS = ['TimerManager'];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+const module = Components.utils.import;
 const Exception = Components.Exception; 
 
 const nsITimer = Ci.nsITimer;
 const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'init');
 
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+module("resource://gre/modules/XPCOMUtils.jsm");
+module("resource://dta/utils.jsm")
 
-function newUUIDString() {
-	let uuidgen = Cc["@mozilla.org/uuid-generator;1"].getService(Ci.nsIUUIDGenerator);
-	newUUIDString = function() uuidgen.generateUUID().toString();
-	return newUUIDString();
-}
-
-this.__defineGetter__('Debug', function() {
-	delete this.Debug;
-	return (this.Debug = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService));
-});
+ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 
 function TimerData(owner, time, type, func, ctx) {
 	this.owner = owner;

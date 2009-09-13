@@ -39,6 +39,9 @@ var EXPORTED_SYMBOLS = ['confirm', 'confirmOC', 'confirmYN', 'alert'];
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const module = Components.utils.import;
+
+module("resource://dta/utils.jsm")
 
 // unpack the default button types
 for (let x in Components.interfaces.nsIPromptService) {
@@ -48,6 +51,8 @@ for (let x in Components.interfaces.nsIPromptService) {
 		EXPORTED_SYMBOLS.push(r[1]);
 	}
 }
+
+ServiceGetter(this, "prompts", "@mozilla.org/embedcomp/prompt-service;1", "nsIPromptService");
 
 /**
  * wrapper around confirmEx
@@ -63,9 +68,6 @@ for (let x in Components.interfaces.nsIPromptService) {
  * @author Nils
  */
 function confirm(aWindow, aTitle, aText, aButton0, aButton1, aButton2, aDefault, aCheck, aCheckText) {
-	let prompts = Cc["@mozilla.org/embedcomp/prompt-service;1"]
-		.getService(Ci.nsIPromptService);
-	
 	// Set up the flags/buttons
 	let flags = 0;
 	[aButton0, aButton1, aButton2].forEach(
@@ -158,7 +160,5 @@ function confirmYN(aWindow, aTitle, aText) {
  * @author Nils
  */
 function alert(aWindow, aTitle, aText) {
-	Cc["@mozilla.org/embedcomp/prompt-service;1"]
-		.getService(Ci.nsIPromptService)
-		.alert(aWindow, aTitle, aText);
+	prompts.alert(aWindow, aTitle, aText);
 }

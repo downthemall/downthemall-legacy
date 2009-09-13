@@ -36,6 +36,10 @@
 
 const EXPORTED_SYMBOLS = [
 	'atos',
+	'bind',
+	'setNewGetter',
+	'ServiceGetter',
+	'InstanceGetter',
 	'newUUIDString',
 	'range',
 	'hexdigest',
@@ -51,22 +55,75 @@ const EXPORTED_SYMBOLS = [
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const Exception = Components.Exception;
 
+function setNewGetter(aObject, aName, aLambda) {
+	if (aName in aObject) {
+		throw new Exception(aName + " is already defined in context " + aObject);
+	}
+	try {
+		aObject.__defineGetter__(aName, function() {
+			delete aObject[aName];
+			return aObject[aName] = aLambda.apply(aObject);
+		});
 
+	}
+	catch (ex) {
+		log(aName);
+		log(ex);
+	}
+}
+
+function ServiceGetter(context, name, contract, iface) {
+	if (!iface) {
+		iface = Ci.nsISupports;
+	}
+	else if (typeof iface == "string") {
+		iface = Ci[iface];
+	}
+	setNewGetter(
+		context,
+		name,
+		function() Cc[contract].getService(iface)
+	);	
+}
+
+function InstanceGetter(context, name, contract, iface, initFuncName/*, args */) {
+	if (!iface) {
+		iface = Ci.nsISupports;
+	}
+	else if (typeof iface == "string") {
+		iface = Ci[iface];
+	}
+
+	// build an arguments array for the initFunc, stripping the first 5 arguments
+	let args = Array.filter(arguments, function(e, i) i > 4);
+	setNewGetter(
+		context,
+		name,
+		function() {
+			let rv = Cc[contract].createInstance(iface);
+			if (initFuncName) {
+				rv[initFuncName].apply(rv, args);
+			}
+			return rv;
+		}
+	);
+}
+
+function bind(context, func) (function() func.apply(context, arguments));
 
 /**
  * returns a new UUID in string representation
  * @return String UUID
  * @author Nils
  */
-function newUUIDString() {
+setNewGetter(this, "newUUIDString", function() {
 	let uuidgen = Cc["@mozilla.org/uuid-generator;1"].getService(Ci.nsIUUIDGenerator);
-	
-	newUUIDString = function() {
+	return function() {
 		return uuidgen.generateUUID().toString();
-	}
-	return newUUIDString();
-}
+	};
+});
 
 /**
  * Range generator (python style). Difference: step direction is initialized accordingly if corresponding parameter is omitted.
