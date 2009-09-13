@@ -34,8 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
+ServiceGetter(this, "os", "@mozilla.org/observer-service;1", "nsIObserverService");
 
 /**
  * implemtents nsITreeView manages our link trees
@@ -102,12 +101,6 @@ function Tree(links, type) {
 	this._iconic = this._as.getAtom('iconic');
 }
 Tree.prototype = {
-
-	// will use it quite often.
-	// 'properties' need to be an atom.
-	_as: Cc["@mozilla.org/atom-service;1"]
-		.getService(Ci.nsIAtomService),
-
 	// get atoms, but provide caching.
 	// we have a limited set of atoms anyway, so we don't have to expect a huge
 	// cache.
@@ -288,6 +281,8 @@ Tree.prototype = {
 		}
 	}
 };
+ServiceGetter(Tree.prototype, "_as", "@mozilla.org/atom-service;1", "nsIAtomService");
+
 
 /**
  * Our real, kicks ass implementation of the UI
@@ -803,8 +798,6 @@ let Dialog = {
 	registerObserver: function() {
 		Preferences.makeObserver(this);
 		try {
-			let os = Cc["@mozilla.org/observer-service;1"]
-				.getService(Ci.nsIObserverService);
 			os.addObserver(this, 'DTA:filterschanged', true);
 		}
 		catch (ex) {

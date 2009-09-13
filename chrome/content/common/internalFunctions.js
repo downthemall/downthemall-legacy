@@ -42,8 +42,12 @@
 var Debug = DTA_debug;
 var Preferences = DTA_preferences;
 
-const IOService = Components.classes["@mozilla.org/network/io-service;1"]
-	.getService(Components.interfaces.nsIIOService);
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const Cu = Components.utils;
+const module = Cu.import;
+const Exception = Components.Exception;
 
 const FileFactory = new Components.Constructor(
 	'@mozilla.org/file/local;1',
@@ -55,6 +59,10 @@ const SoundFactory = new Components.Constructor(
 	'@mozilla.org/sound;1',
 	'nsISound',
 	'play'
+);
+const CryptoHash = new Components.Constructor(
+	"@mozilla.org/security/hash;1",
+	"nsICryptoHash"
 );
 	
 	
@@ -103,7 +111,7 @@ var Utils = {
 	askForDir: function (predefined, text) {
 		try {
 			// nsIFilePicker object
-			var nsIFilePicker = Components.interfaces.nsIFilePicker;
+			var nsIFilePicker = Ci.nsIFilePicker;
 			var fp = new Utils.FilePicker(window, text, nsIFilePicker.modeGetFolder);
 			fp.appendFilters(nsIFilePicker.filterAll);
 		
@@ -136,7 +144,7 @@ var Utils = {
 	 */
 	validateDir: function(path) {
 		let directory = null;
-		if (!(path instanceof Components.interfaces.nsILocalFile)) {
+		if (!(path instanceof Ci.nsILocalFile)) {
 			if (!path || !String(path).trim().length) {
 				return false;
 			}
@@ -156,7 +164,7 @@ var Utils = {
 			}
 			if (parent) {
 				// from nsIFile
-				parent = parent.QueryInterface(Components.interfaces.nsILocalFile);
+				parent = parent.QueryInterface(Ci.nsILocalFile);
 				// we look for a directory that is writable and has some disk-space
 				if (parent.isDirectory() && parent.isWritable()) {
 					try {
@@ -210,7 +218,7 @@ var Utils = {
 		
 		try {
 			var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"]
-				.getService(Components.interfaces.nsIXULRuntime);
+				.getService(Ci.nsIXULRuntime);
 			if (/linux|sun|bsd|aix|hp|dragonfly|irix/i.test(xulRuntime.OS) && /64/.test(xulRuntime.XPCOMABI)) {
 				throw new Components.Exception("*nix 64 - freeze problems");
 			}
@@ -275,6 +283,15 @@ var Utils = {
 };
 
 Components.utils.import('resource://dta/utils.jsm', Utils);
+
+
+//XXX Copy from utils.jsm
+//XXX Cannot use directly; yields NS_ERROR_INVALID_VALUE then
+for each (let copy in ["setNewGetter", "ServiceGetter", "InstanceGetter", "bind"]) {
+	eval(Utils[copy].toSource());
+}
+
+ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService2");
 
 Utils.merge(
 	String.prototype,
@@ -349,7 +366,7 @@ Utils.merge(
 			return IOService.newURI(this, charset, baseURI);			
 		},
 		toURL: function(charset, baseURI) {
-			return this.toURI(charset, baseURI).QueryInterface(Components.interfaces.nsIURL);
+			return this.toURI(charset, baseURI).QueryInterface(Ci.nsIURL);
 		}
 	}
 );
@@ -404,7 +421,7 @@ function getIcon(link, metalink, size) {
 		if (link instanceof DTA_URL) {
 			url = link.url.spec;
 		}
-		else if (link instanceof Components.interfaces.nsIURI) {
+		else if (link instanceof Ci.nsIURI) {
 			url = link.spec;
 		}
 		else if (link && link.url) {
@@ -439,7 +456,7 @@ StringBundles.prototype = {
 	init: function() {
 		this._bundles = document.getElementsByTagName('stringbundle');
 		for each (let bundle in Array.map(this._bundles, function(s) s.strings)) {
-			for (let s in new Utils.SimpleIterator(bundle, Components.interfaces.nsIPropertyElement)) {
+			for (let s in new Utils.SimpleIterator(bundle, Ci.nsIPropertyElement)) {
 				this._strings[s.key] = s.value;
 			}
 		}
@@ -471,16 +488,15 @@ StringBundles.prototype = {
  *           if stringID is not found or before the dialog was initialized
  * @author Nils
  */
-function _() {
-	var bundles = new StringBundles();
-	_ = function() {
+setNewGetter(this, "_", function() {
+	let bundles = new StringBundles();
+	return function() {
 		if (arguments.length == 1) {
 			return bundles.getString(arguments[0]);
 		}
 		return bundles.getFormattedString.apply(bundles, arguments);
-	}
-	return _.apply(this, arguments);
-}
+	} 
+});
 
 /**
  * XP compatible reveal/launch
@@ -488,16 +504,14 @@ function _() {
  * @author Nils (derived from DownloadManager code)
  */
 var OpenExternal = {
-	_proto: Components.classes['@mozilla.org/uriloader/external-protocol-service;1']
-		.getService(Components.interfaces.nsIExternalProtocolService),
 	_prepare: function(file) {
 		if (typeof(file) == 'string' || file instanceof String) {
 			return new FileFactory(file);
 		}
-		if (file instanceof Components.interfaces.nsIFile) {
-			return file.QueryInterface(Components.interfaces.nsILocalFile);
+		if (file instanceof Ci.nsIFile) {
+			return file.QueryInterface(Ci.nsILocalFile);
 		}
-		if (file instanceof Components.interfaces.nsILocalFile) {
+		if (file instanceof Ci.nsILocalFile) {
 			return file;
 		}
 		throw new Components.Exception('OpenExternal: feed me with nsILocalFile or String');
@@ -551,6 +565,9 @@ var OpenExternal = {
 	}
 };
 
+ServiceGetter(OpenExternal, "_proto", "@mozilla.org/uriloader/external-protocol-service;1", "nsIExternalProtocolService");
+
+InstanceGetter(this, "converter", "@mozilla.org/intl/scriptableunicodeconverter", "nsIScriptableUnicodeConverter");
 
 /**
  * Convert a value into a hash
@@ -573,8 +590,7 @@ const HASH_HEX = 0x0;
 const HASH_BIN = 0x1;
 const HASH_B64 = 0x2;
 function hash(value, algorithm, encoding, datalen) {
-	var ch = Components.classes["@mozilla.org/security/hash;1"]
-		.createInstance(Components.interfaces.nsICryptoHash);
+	var ch = new CryptoHash();
 	if (!algorithm) {
 		algorithm = ch.SHA1;
 	}
@@ -587,16 +603,12 @@ function hash(value, algorithm, encoding, datalen) {
 	else {
 		ch.init(algorithm);
 	}
-	if (value instanceof Components.interfaces.nsIInputStream) {
+	if (value instanceof Ci.nsIInputStream) {
 		datalen = Number(datalen);
 		ch.updateFromStream(value, datalen > 0 ? datalen : 0xffffffff);
 	}
 	else {
-		var converter =
-			Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].
-			createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
-		converter.charset = 'utf8';
-		
+		converter.charset = 'utf8';		
 		value = converter.convertToByteArray(Utils.atos(value), {});
 		ch.update(value, value.length);
 	}
