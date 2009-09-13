@@ -40,16 +40,19 @@ var EXPORTED_SYMBOLS = ['QueueStore'];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+const module = Components.utils.import;
 const Exception = Components.Exception;
 
 const DB_FILE = 'dta_queue.sqlite';
 const DB_FILE_BAK = DB_FILE + ".bak";
 const DB_VERSION = 1;
 
-Components.utils.import("resource://dta/timers.jsm");
+module("resource://dta/timers.jsm");
+module("resource://dta/utils.jsm");
+
 const Timers = new TimerManager();
 
-const Debug = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService);
+ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 
 var _connection = null;
 var _saveQueue = {};

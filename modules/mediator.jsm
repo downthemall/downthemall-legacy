@@ -45,14 +45,16 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
+const module = Cu.import;
 const Exception = Components.Exception;
 
-const mediator = 	Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator);
-const ioservice = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
-const protoservice = Cc['@mozilla.org/uriloader/external-protocol-service;1'].getService(Ci.nsIExternalProtocolService);
-const logger = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService);
-const windowwatcher = Cc["@mozilla.org/embedcomp/window-watcher;1"].getService(Ci.nsIWindowWatcher);
+module("resource://dta/utils.jsm");
 
+ServiceGetter(this, "mediator", "@mozilla.org/appshell/window-mediator;1", "nsIWindowMediator");
+ServiceGetter(this, "ioservice", "@mozilla.org/network/io-service;1", "nsIIOService");
+ServiceGetter(this, "protoservice", "@mozilla.org/uriloader/external-protocol-service;1", "nsIExternalProtocolService");
+ServiceGetter(this, "logger", "@downthemall.net/debug-service;1", "dtaIDebugService");
+ServiceGetter(this, "windowwatcher", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 
 function objToString(obj) {
 	if (obj == null || obj == undefined) {
