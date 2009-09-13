@@ -48,10 +48,7 @@ const NS_ERROR_CONNECTION_REFUSED = NS_ERROR_MODULE_NETWORK + 13;
 const NS_ERROR_NET_TIMEOUT = NS_ERROR_MODULE_NETWORK + 14;
 const NS_ERROR_NET_RESET = NS_ERROR_MODULE_NETWORK + 20;
 const NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
-const Cc = Components.classes;
-const Ci = Components.interfaces;
 
-const Exception = Components.Exception;
 const Construct = Components.Constructor;
 function Serv(c, i) {
 	return Cc[c].getService(i ? Ci[i] : null);
@@ -64,10 +61,13 @@ const FileInputStream = Construct('@mozilla.org/network/file-input-stream;1', 'n
 const FileOutputStream = Construct('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const StringInputStream = Construct('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
 
-const ContentHandling = Serv('@downthemall.net/contenthandling;2', 'dtaIContentHandling');
-const MimeService = Serv('@mozilla.org/uriloader/external-helper-app-service;1', 'nsIMIMEService');
-const ObserverService = Serv('@mozilla.org/observer-service;1', 'nsIObserverService');
-const WindowWatcherService = Serv('@mozilla.org/embedcomp/window-watcher;1', 'nsIWindowWatcher');
+ServiceGetter(this, "ContentHandling", "@downthemall.net/contenthandling;2", "dtaIContentHandling");
+ServiceGetter(this, "MimeService", "@mozilla.org/uriloader/external-helper-app-service;1", "nsIMIMEService");
+ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIObserverService");
+ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
+ServiceGetter(this, "MimeHeaderParams", "@mozilla.org/network/mime-hdrparam;1", "nsIMIMEHeaderParam");
+ServiceGetter(this, "JSONSerializer", "@mozilla.org/dom/json;1", "nsIJSON");
+
 
 const MIN_CHUNK_SIZE = 512 * 1024;
 
@@ -178,8 +178,7 @@ var Dialog = {
 		}
 
 		try {
-			let ios2 = Serv('@mozilla.org/network/io-service;1', 'nsIIOService2');
-			this.offline = ios2.offline;
+			this.offline = IOService.offline;
 		}
 		catch (ex) {
 			Debug.log("Cannot get offline status", ex);
@@ -315,7 +314,7 @@ var Dialog = {
 				}
 				
 				try {
-					let down = Serializer.decode(dbItem.serial);
+					let down = JSONSerializer.decode(dbItem.serial);
 					
 					let get = function(attr, def) {
 						return (attr in down) ? down[attr] : (def ? def : '');
@@ -1147,10 +1146,9 @@ HttpVisitor.prototype = {
 					}
 				break;
 				case 'digest': {
-					let mhp = Serv('@mozilla.org/network/mime-hdrparam;1', 'nsIMIMEHeaderParam');
 					for (let t in DTA_SUPPORTED_HASHES_ALIASES) {
 						try {
-							let v = mhp.getParameter(aValue, t, '', true, {});
+							let v = MimeHeaderParams.getParameter(aValue, t, '', true, {});
 							if (!v) {
 								continue;
 							}
@@ -1180,10 +1178,9 @@ HttpVisitor.prototype = {
 				this[header] = aValue;
 			}
 			if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
-				let mhp = Serv('@mozilla.org/network/mime-hdrparam;1', 'nsIMIMEHeaderParam');
 				let fn;
 				try {
-					fn = mhp.getParameter(aValue, 'filename', '', true, {});
+					fn = MimeHeaderParams.getParameter(aValue, 'filename', '', true, {});
 				}
 				catch (ex) {
 					// no-op; handled below
@@ -2305,7 +2302,7 @@ QueueItem.prototype = {
 				e.chunks.push({start: c.start, end: c.end, written: c.safeBytes});
 			}
 		}
-		return Serializer.encode(e);
+		return JSONSerializer.encode(e);
 	}
 }
 
@@ -3438,21 +3435,6 @@ var ConflictManager = {
 		this._items.shift();
 		this._processing = false;
 		this._process();
-	}
-};
-
-var Serializer = {
-	json: Serv('@mozilla.org/dom/json;1', 'nsIJSON'),
-	encode: function(obj) {
-		return this.json.encode(obj);
-	},
-	decode: function(str) {
-		try {
-			return this.json.decode(str);
-		}
-		catch (ex) {
-			return eval(str);
-		}
 	}
 };
 

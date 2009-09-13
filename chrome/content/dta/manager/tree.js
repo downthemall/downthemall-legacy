@@ -39,16 +39,17 @@ const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init
 let DTA = {};
 Components.utils.import('resource://dta/version.jsm', DTA);
  
-var Tree = {
-	_ds: Serv('@mozilla.org/widget/dragservice;1', 'nsIDragService'),
-	
+const Tree = {
 	init: function T_init(elem) {
 		this.elem = elem;
 		this._downloads = [];
-
-		let as = Serv('@mozilla.org/atom-service;1', 'nsIAtomService');
+		
+		ServiceGetter(this, "_ds", "@mozilla.org/widget/dragservice;1", "nsIDragService");
+		ServiceGetter(this, "_ww", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
+		ServiceGetter(this, "_as", "@mozilla.org/atom-service;1", "nsIAtomService");
+		
 		for each (let e in ['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined', 'pausedAutoretrying', 'verified', 'progress']) {
-			this['_' + e] = as.getAtom(e);
+			this['_' + e] = this._as.getAtom(e);
 		}
 		this.elem.view = this;	
 		
@@ -63,6 +64,9 @@ var Tree = {
 	},
 	setTree: function T_setTree(box) {
 		this._box = box;
+		if (!box) {
+			return;
+		}
 		this._cols = [];
 		for (let i = 0; i < box.columns.count; ++i) {
 			this._cols.push(box.columns.getColumnAt(i));
@@ -490,7 +494,6 @@ var Tree = {
 		this.endUpdate();
 	},
 	_hoverItem: null,
-	_ww: Serv('@mozilla.org/embedcomp/window-watcher;1', 'nsIWindowWatcher'),
 	hovering: function(event) {
 		if (!Prefs.showTooltip || this._ww.activeWindow != window) {
 			return;

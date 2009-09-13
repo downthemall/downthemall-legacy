@@ -34,11 +34,13 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-
 let Prompts = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
+
+ServiceGetter(this, "Clipboard", "@mozilla.org/widget/clipboard;1", "nsIClipboard");
+ServiceGetter(this, "Fixups", "@mozilla.org/docshell/urifixup;1", "nsIURIFixup");
+
+const Transferable = new Components.Constructor("@mozilla.org/widget/transferable;1", "nsITransferable");
 
 var dropDowns = {};
 
@@ -293,13 +295,10 @@ var Dialog = {
 			}
 			// check if there's some URL in clipboard
 			else {
-				let clip = Cc["@mozilla.org/widget/clipboard;1"]
-					.getService(Ci.nsIClipboard);
-				let trans = Cc["@mozilla.org/widget/transferable;1"]
-					.createInstance(Ci.nsITransferable);
+				let trans = new Transferable();
 				try {
 					trans.addDataFlavor("text/unicode");
-					clip.getData(trans, clip.kGlobalClipboard);
+					Clipboard.getData(trans, Clipboard.kGlobalClipboard);
 					
 					let str = {}, length = {};
 					trans.getTransferData(
@@ -358,8 +357,7 @@ var Dialog = {
 				if (url == '') {
 					throw new Components.Exception("Empty url");
 				}
-				let fs = Cc['@mozilla.org/docshell/urifixup;1'].getService(Ci.nsIURIFixup);
-				let uri = fs.createFixupURI(url, 0);
+				let uri = Fixups.createFixupURI(url, 0);
 				try {
 					url = decodeURIComponent(uri.spec);
 				}

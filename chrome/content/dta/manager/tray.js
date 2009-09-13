@@ -39,8 +39,7 @@ function TrayHandler() {
 		this.available = false;
 		return;
 	}
-	this._trayService = Serv('@tn123.ath.cx/trayservice;1', 'trayITrayService');
-	this.available = !!this._trayService;
+	ServiceGetter(this, "@tn123.ath.cx/trayservice;1", "trayITrayService");
 	window.addEventListener(
 		'TrayDblClick',
 		function(event) {
