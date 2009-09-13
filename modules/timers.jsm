@@ -116,7 +116,12 @@ TimerManager.prototype = {
 	},
 	killAllTimers: function TM_killAll() {
 		for (let td in this._timers) {
-			td.cancel();
+			try {
+				td.cancel();
+			}
+			catch (ex) {
+				// no op
+			}
 		}
 		this._timers = {};
 	}

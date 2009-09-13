@@ -72,9 +72,11 @@ var QueueStore = {
 				Debug.logString("setting schema version");				
 			}
 			if (!_connection.tableExists('queue')) {
+				_connection.executeSimpleSQL('PRAGMA page_size = 4096');
 				_connection.createTable('queue', 'uuid INTEGER PRIMARY KEY AUTOINCREMENT, pos INTEGER, item TEXT');
-			}
-		} catch (ex) {
+			}			
+		}
+		catch (ex) {
 			Debug.log("failed to create table", ex);
 			// no-op
 		}
@@ -210,6 +212,7 @@ var QueueStore = {
 			return;			
 		}
 		stmt = _connection.createStatement('SELECT uuid, item FROM queue ORDER BY pos');
+		this.beginUpdate();
 		while (stmt.executeStep()) {
 			try {
 				let dbId = stmt.getInt64(0);
@@ -221,6 +224,7 @@ var QueueStore = {
 			}
 		}
 		stmt.finalize();
+		this.endUpdate();
 		delete stmt;
 	},
 	getQueueSeq: function() {

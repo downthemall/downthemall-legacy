@@ -250,10 +250,11 @@ var Tree = {
 	},
 	add: function T_add(download) {
 		this._downloads.push(download);
-		download.position = this._downloads.length - 1;
+		let pos = this._downloads.length - 1;
 		if (!this._updating) {
-			this._box.rowCountChanged(download.position, 1);
+			this._box.rowCountChanged(pos, 1);
 		}
+		return pos;
 	},
 	removeWithConfirmation: function T_removeWithConfirmation() {
 		if (Prefs.confirmRemove) {

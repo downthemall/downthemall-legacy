@@ -310,7 +310,7 @@ var Dialog = {
 		Debug.logString("loading of the queue started!");
 		this._loader = new CoThreadListWalker(
 			function D__loader_loadItem(dbItem, idx) {
-				if (idx % 500 == 0) {
+				if (idx % 400 == 0) {
 					loading.label = _('loading', [idx, dbItem.count, Math.floor(idx * 100 / dbItem.count)]);
 				}
 				
@@ -422,8 +422,8 @@ var Dialog = {
 					// XXX better call this only once
 					// See above
 					d.rebuildDestination();
-	
-					Tree.add(d);
+
+					d._position = Tree.add(d, false);
 				}
 				catch (ex) {
 					Debug.log('failed to init download #' + dbItem.id + ' from queuefile', ex);
@@ -432,7 +432,7 @@ var Dialog = {
 				return true;
 			},
 			QueueStore.loadGenerator(),
-			100,
+			200,
 			this,
 			function D__loader_finish() {
 				delete this._loader;
@@ -3305,8 +3305,8 @@ function startDownloads(start, downloads) {
 		else {
 			qi.status = TEXT_PAUSED;
 		}
+		qi._position = Tree.add(qi);
 		qi.save();		
-		Tree.add(qi);
 		++added;
 	}
 	QueueStore.endUpdate();
