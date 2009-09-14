@@ -35,11 +35,11 @@
  * ***** END LICENSE BLOCK ***** */
 
 function TrayHandler() {
-	if (!('trayITrayService' in Ci)) {
-		this.available = false;
+	this.available = !!('trayITrayService' in Ci);
+	if (!this.available) {
 		return;
 	}
-	ServiceGetter(this, "@tn123.ath.cx/trayservice;1", "trayITrayService");
+	ServiceGetter(this, "_trayService", "@tn123.ath.cx/trayservice;1", "trayITrayService");
 	window.addEventListener(
 		'TrayDblClick',
 		function(event) {
