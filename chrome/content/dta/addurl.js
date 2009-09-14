@@ -257,7 +257,6 @@ var Dialog = {
 			this.ddRenaming = $("renaming");			
 			var address = $('address');
 			
-			// if we've been called by DTA_AddingFunctions.saveSingleLink()
 			var hash = null;
 			if (window.arguments) {
 				var a = window.arguments[0];
@@ -268,19 +267,19 @@ var Dialog = {
 					address.value = a.url;
 				}
 				else if (typeof(a.url) == 'object' && 'url' in a.url) {
-					// we've got a DTA_URL.
+					// we've got a DTA.URL.
 					// In this case it is not safe to modify it because of encoding
 					// issues.
 					address.value = a.url.usable;
 					// JS does not preserve types between windows (as each window gets an
 					// own sandbox)
-					// This hack makes our URL a DTA_URL again ;)
+					// This hack makes our URL a DTA.URL again ;)
 					address._realURL = a.url;
 					address.readOnly = true;
 					$('batcheslabel').style.display = 'none';
 					$('batches').collapsed = true;
 				}
-				var referrer = DTA_AddingFunctions.isLinkOpenable(a.referrer) ? a.referrer : null;
+				var referrer = DTA.isLinkOpenable(a.referrer) ? a.referrer : null;
 				if (referrer) {
 					try {
 						referrer = decodeURIComponent(referrer);
@@ -310,8 +309,8 @@ var Dialog = {
 						str = str.value
 							.QueryInterface(Ci.nsISupportsString);
 						str = str.data;
-						if (str.length && DTA_AddingFunctions.isLinkOpenable(str)) {
-							hash = DTA_getLinkPrintHash(str);
+						if (str.length && DTA.isLinkOpenable(str)) {
+							hash = DTA.getLinkPrintHash(str);
 							address.value = str.replace(/#.*$/, '');
 							address.select();
 						}
@@ -364,13 +363,13 @@ var Dialog = {
 				catch (ex) {
 					url = uri.spec;
 				}
-				var hash = DTA_getLinkPrintHash(url);
+				var hash = DTA.getLinkPrintHash(url);
 				if (hash) {
 					$('hash').value = hash;
 				}
 				url = url.replace(/#.*$/, '');
 				address.value = url;
-				url = new DTA_URL(IOService.newURI(url, null, null));				
+				url = new DTA.URL(IOService.newURI(url, null, null));				
 			}
 			catch (ex) {
 				errors.push('address');
@@ -436,14 +435,14 @@ var Dialog = {
 			var g = batch.getURLs();
 			batch = function() {
 				for (let i in g) {
-					yield new QueueItem(new DTA_URL(IOService.newURI(i, null, null)), num, desc);
+					yield new QueueItem(new DTA.URL(IOService.newURI(i, null, null)), num, desc);
 				}
 			}();
 		}
 		else {
 			batch = [new QueueItem(url, num, desc, hash)];
 		}
-		DTA_AddingFunctions.sendToDown(start, batch);
+		DTA.sendLinksToManager(window, start, batch);
 
 		Preferences.setExt("counter", num);
 		Preferences.setExt("lastqueued", !start);

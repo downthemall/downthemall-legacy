@@ -58,7 +58,7 @@ const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'init')
  
 let Preferences = {};
 
-// no not create DTA_Filter yourself, managed by DTA_FilterManager
+// no not create DTA_Filter yourself, managed by FilterManager
 function Filter(name) {
 	this._id = name;
 }

@@ -356,7 +356,7 @@ let Dialog = {
 			}			
 		}
 		catch(ex) {
-			DTA_debug.log("load():", ex);
+			Debug.log("load():", ex);
 		}
 
 		// will install our observer
@@ -456,7 +456,7 @@ let Dialog = {
 			}
 
 			// actually start the crap.
-			DTA_AddingFunctions.sendToDown(start, out);
+			DTA.sendLinksToManager(window, start, out);
 
 			// save tab
 			
@@ -472,7 +472,7 @@ let Dialog = {
 			for (let i = 0; i < boxen.length; ++i) {
 				boxen[i].filter.active = boxen[i].checked;
 			}
-			DTA_FilterManager.save();
+			DTA.FilterManager.save();
 
 			// unload ourselves.
 			return this.unload();
@@ -546,7 +546,7 @@ let Dialog = {
 		let fast = null;
 		try {
 			if (this.ddFilter.value) {
-				fast = DTA_FilterManager.getTmpFromString(this.ddFilter.value);
+				fast = DTA.FilterManager.getTmpFromString(this.ddFilter.value);
 			}
 		}
 		catch (ex) {
@@ -662,7 +662,7 @@ let Dialog = {
 		}
 
 		let boxes = [];
-		for (let f in new Utils.SimpleIterator(DTA_FilterManager.enumAll(), Ci.dtaIFilter)) {
+		for (let f in new Utils.SimpleIterator(DTA.FilterManager.enumAll(), Ci.dtaIFilter)) {
 			if (!(f.type & type)) {
 				continue;
 			}

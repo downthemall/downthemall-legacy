@@ -226,7 +226,7 @@ var ImEx = {
 					throw new Exception("Invalid url!");
 				}
 				links.push({
-					'url': new DTA_URL(url),
+					'url': new DTA.URL(url),
 					'referrer': '',
 					'description': 'imported from ' + file.leafName 
 				});
@@ -241,7 +241,7 @@ var ImEx = {
 		addLine(line);
 		is.close();
 		if (links.length) {
-			DTA_AddingFunctions.saveLinkArray(links, []);
+			DTA.saveLinkArray(window, links, []);
 		}
 	},
 	importFromMetalink: function(file) {

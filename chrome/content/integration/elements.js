@@ -53,7 +53,7 @@ var DTA_ContextOverlay = {
 		try {
 			return this._str.GetStringFromName(n);
 		} catch (ex) {
-			DTA_debug.log("locale error: " + n, ex);
+			DTA.Debug.log("locale error: " + n, ex);
 			return '<error>';
 		}
 	},
@@ -67,13 +67,13 @@ var DTA_ContextOverlay = {
 			return;
 		}
 		
-		let ref = DTA_AddingFunctions.getRef(doc);
+		let ref = DTA.getRef(doc);
 		
 		for (var i = 0; i < lnks.length; ++i) {
 			// remove anchor from url
 			var link = lnks[i];
 			// if it's valid and it's new
-			if (!DTA_AddingFunctions.isLinkOpenable(link.href)) {
+			if (!DTA.isLinkOpenable(link.href)) {
 				continue;
 			}
 				
@@ -84,18 +84,18 @@ var DTA_ContextOverlay = {
 			if (!title && link.hasAttribute('alt')) {
 				title = this.trim(link.getAttribute('alt'));
 			}
-			let url = DTA_AddingFunctions.ios.newURI(link.href, doc.characterSet, null);
+			let url = DTA.IOService.newURI(link.href, doc.characterSet, null);
 			urls.push({
-				'url': new DTA_URL(url),
+				'url': new DTA.URL(url),
 				'referrer': ref,
 				'description': this.extractDescription(link),
 				'title': title
 			});
 			
-			var ml = DTA_getLinkPrintMetalink(url.ref);
+			var ml = DTA.getLinkPrintMetalink(url.ref);
 			if (ml) {
 				urls.push({
-					'url': new DTA_URL(ml),
+					'url': new DTA.URL(ml),
 					'referrer': ref,
 					'description': '[metalink] http://www.metalinker.org/',
 					'title': title,
@@ -110,20 +110,20 @@ var DTA_ContextOverlay = {
 			return;
 		}
 		
-		var ref = DTA_AddingFunctions.getRef(doc);
+		var ref = DTA.getRef(doc);
 
 		for (var i = 0; i < lnks.length; ++i) {
 			var src = lnks[i].src;
 			try {
-				src = DTA_AddingFunctions.composeURL(doc, src);
+				src = DTA.composeURL(doc, src);
 			}
 			catch (ex) {
-				DTA_debug.log("failed to compose: " + src, ex);
+				DTA.Debug.log("failed to compose: " + src, ex);
 				continue;
 			}
 			// if it's valid and it's new
 			// better double check :p
-			if (!DTA_AddingFunctions.isLinkOpenable(src)) {
+			if (!DTA.isLinkOpenable(src)) {
 				continue;
 			}
 			var desc = '';
@@ -134,7 +134,7 @@ var DTA_ContextOverlay = {
 				desc = this.trim(lnks[i].getAttribute('title'));
 			}
 			images.push({
-				'url': new DTA_URL(src),
+				'url': new DTA.URL(src),
 				'referrer': ref,
 				'description': desc
 			});
@@ -171,7 +171,7 @@ var DTA_ContextOverlay = {
 			
 			var sel = aWin.getSelection();
 			if (honorSelection && sel && !sel.isCollapsed) {
-				DTA_debug.logString("selection only");
+				DTA.Debug.logString("selection only");
 				[links, images, embeds, inputs] = [links, images, embeds, inputs].map(
 					function(e) {
 						return filterElements(e, sel);
@@ -179,16 +179,16 @@ var DTA_ContextOverlay = {
 				);
 			}
 			else {
-				if (DTA_preferences.getExt('listsniffedvideos', false)) {
+				if (DTA.Preferences.getExt('listsniffedvideos', false)) {
 					let flvs = Array.map(
-						this._ch.getSniffedVideosFor(DTA_AddingFunctions.ios.newURI(aWin.location.href, aWin.document.characterSet, null)),
+						this._ch.getSniffedVideosFor(DTA.IOService.newURI(aWin.location.href, aWin.document.characterSet, null)),
 						function(e) e
 					);
 						
-					let ref = DTA_AddingFunctions.getRef(aWin.document);
+					let ref = DTA.getRef(aWin.document);
 					for each (let flv in flvs) {
 						let o = {
-							'url': new DTA_URL(flv),
+							'url': new DTA.URL(flv),
 							'ref': ref,
 							'description': 'Sniffed embedded video'
 						}
@@ -210,7 +210,7 @@ var DTA_ContextOverlay = {
 			);
 		}
 		catch (ex) {
-			DTA_debug.log('addLinks', ex);
+			DTA.Debug.log('addLinks', ex);
 		}
 		
 		// do not process further as we just filtered the selection
@@ -270,11 +270,11 @@ var DTA_ContextOverlay = {
 	
 	findLinks: function(turbo, all) {
 		try {
-			if (all == undefined && turbo && DTA_preferences.getExt('rememberoneclick', false)) {
-				all = DTA_preferences.getExt('lastalltabs', false);
+			if (all == undefined && turbo && DTA.Preferences.getExt('rememberoneclick', false)) {
+				all = DTA.Preferences.getExt('lastalltabs', false);
 			}
 			if (turbo && all != undefined) {
-				DTA_preferences.setExt('lastalltabs', all);
+				DTA.Preferences.setExt('lastalltabs', all);
 			}
 			
 			function unique(i) {
@@ -282,10 +282,10 @@ var DTA_ContextOverlay = {
 			}		
 			
 			if (turbo) {
-				DTA_debug.logString("findLinks(): DtaOneClick request from the user");
+				DTA.Debug.logString("findLinks(): DtaOneClick request from the user");
 			}
 			else {
-				DTA_debug.logString("findLinks(): DtaStandard request from the user");
+				DTA.Debug.logString("findLinks(): DtaStandard request from the user");
 			}
 
 			var wt = document.documentElement.getAttribute('windowtype');
@@ -311,21 +311,21 @@ var DTA_ContextOverlay = {
 			
 			if (turbo) {
 				try {
-					DTA_AddingFunctions.turboSaveLinkArray(urls, images);
+					DTA.turboSaveLinkArray(window, urls, images);
 					return;
 				}
 				catch (ex) {
-					DTA_debug.log('findLinks', ex);
+					DTA.Debug.log('findLinks', ex);
 					//DTA_Prompts.alert(window, this.getString('error'), );
-					DTA_AddingFunctions.saveLinkArray(urls, images, this.getString('errorinformation'));
+					DTA.saveLinkArray(window, urls, images, this.getString('errorinformation'));
 				}
 			}
 			else {
-				DTA_AddingFunctions.saveLinkArray(urls, images);
+				DTA.saveLinkArray(window, urls, images);
 			}
 		}
 		catch(ex) {
-			DTA_debug.log('findLinks', ex);
+			DTA.Debug.log('findLinks', ex);
 		}
 	},
 	
@@ -339,7 +339,7 @@ var DTA_ContextOverlay = {
 		}
 		catch (ex) {
 			DTA_Prompts.alert(window, this.getString('error'), this.getString('errornodownload'));
-			DTA_debug.log('findSingleLink: ', ex);
+			DTA.Debug.log('findSingleLink: ', ex);
 		}
 	},
 	findSingleImg: function(turbo) {
@@ -352,32 +352,32 @@ var DTA_ContextOverlay = {
 		}
 		catch (ex) {
 			DTA_Prompts.alert(window, this.getString('error'), this.getString('errornodownload'));
-			DTA_debug.log('findSingleLink: ', ex);
+			DTA.Debug.log('findSingleLink: ', ex);
 		}		
 	},
 	saveSingleLink: function(turbo, url, elem) {
-		if (!DTA_AddingFunctions.isLinkOpenable(url)) {
+		if (!DTA.isLinkOpenable(url)) {
 			throw Error("not downloadable");
 			return;
 		}
 		
-		url = DTA_AddingFunctions.ios.newURI(url, elem.ownerDocument.characterSet, null);
-		let ml = DTA_getLinkPrintMetalink(url);
-		url = new DTA_URL(ml ? ml : url);
+		url = DTA.IOService.newURI(url, elem.ownerDocument.characterSet, null);
+		let ml = DTA.getLinkPrintMetalink(url);
+		url = new DTA.URL(ml ? ml : url);
 		
-		let ref = DTA_AddingFunctions.getRef(elem.ownerDocument);
+		let ref = DTA.getRef(elem.ownerDocument);
 		let desc = this.extractDescription(elem);
 		if (turbo) {
 			try {
-				DTA_AddingFunctions.saveSingleLink(true, url, ref, desc);
+				DTA.saveSingleLink(window, true, url, ref, desc);
 				return;
 			}
 			catch (ex) {
-				DTA_debug.log('saveSingleLink', ex);
+				DTA.Debug.log('saveSingleLink', ex);
 				DTA_Prompts.alert(window, this.getString('error'), this.getString('errorinformation'));
 			}
 		}
-		DTA_AddingFunctions.saveSingleLink(false, url, ref, desc);		
+		DTA.saveSingleLink(window, false, url, ref, desc);		
 	},
 	findForm: function(turbo) {
 		try {
@@ -387,8 +387,8 @@ var DTA_ContextOverlay = {
 			}
 			var form = ctx.target.form;
 			
-			var action = DTA_AddingFunctions.composeURL(form.ownerDocument, form.action);
-			if (!DTA_AddingFunctions.isLinkOpenable(action.spec)) {
+			var action = DTA.composeURL(form.ownerDocument, form.action);
+			if (!DTA.isLinkOpenable(action.spec)) {
 				throw new Components.Exception('Unsupported URL');
 			}
 			action = action.QueryInterface(Components.interfaces.nsIURL);
@@ -441,33 +441,33 @@ var DTA_ContextOverlay = {
 				ms.close();
 				ss.close();
 				
-				action = new DTA_URL(DTA_AddingFunctions.ios.newURI(action.spec, form.ownerDocument.characterSet, null));
+				action = new DTA.URL(DTA.IOService.newURI(action.spec, form.ownerDocument.characterSet, null));
 				action.postData = postData;
 			}
 			else {
 				action.query = values;
 				action.ref = '';
-				action = new DTA_URL(DTA_AddingFunctions.ios.newURI(action.spec, form.ownerDocument.characterSet, null));
+				action = new DTA.URL(DTA.IOService.newURI(action.spec, form.ownerDocument.characterSet, null));
 			}			
 
 			
-			var ref = DTA_AddingFunctions.getRef(document.commandDispatcher.focusedWindow.document);
+			var ref = DTA.getRef(document.commandDispatcher.focusedWindow.document);
 			var desc = this.extractDescription(form);
 			
 			if (turbo) {
 				try {
-					DTA_AddingFunctions.saveSingleLink(true, action, ref, desc);
+					DTA.saveSingleLink(window, true, action, ref, desc);
 					return;
 				}
 				catch (ex) {
-					DTA_debug.log('findSingleLink', ex);
+					DTA.Debug.log('findSingleLink', ex);
 					DTA_Prompts.alert(window, this.getString('error'), this.getString('errorinformation'));
 				}
 			}
-			DTA_AddingFunctions.saveSingleLink(false, action, ref, desc);
+			DTA.saveSingleLink(window, window, false, action, ref, desc);
 		}
 		catch (ex) {
-			DTA_debug.log('findForm', ex);
+			DTA.Debug.log('findForm', ex);
 		}
 	},
 	
@@ -511,7 +511,7 @@ var DTA_ContextOverlay = {
 		}
 		catch (ex) {
 			Components.utils.reportError(ex);
-			DTA_debug.log("DCO::init()", ex);
+			DTA.Debug.log("DCO::init()", ex);
 		}
 	},
 	get selectButton() {
@@ -545,8 +545,8 @@ var DTA_ContextOverlay = {
 		try {
 			var ctx = this.contextMenu;
 			// get settings
-			var items = DTA_preferences.getExt("ctxmenu", "1,1,0").split(",").map(function(e) parseInt(e));
-			var compact = DTA_preferences.getExt("ctxcompact", false);
+			var items = DTA.Preferences.getExt("ctxmenu", "1,1,0").split(",").map(function(e) parseInt(e));
+			var compact = DTA.Preferences.getExt("ctxcompact", false);
 			
 			var menu;
 			if (compact) {
@@ -660,7 +660,7 @@ var DTA_ContextOverlay = {
 			);
 		}
 		catch(ex) {
-			DTA_debug.log("DTAContext(): ", ex);
+			DTA.Debug.log("DTAContext(): ", ex);
 		}		 
 	},
 	
@@ -668,10 +668,10 @@ var DTA_ContextOverlay = {
 		try {
 			
 			// get settings
-			var menu = DTA_preferences.getExt("toolsmenu", "1,1,1").split(",").map(function(e){return parseInt(e);});
+			var menu = DTA.Preferences.getExt("toolsmenu", "1,1,1").split(",").map(function(e){return parseInt(e);});
 			
 			// all hidden...
-			var hidden = DTA_preferences.getExt("toolshidden", false);
+			var hidden = DTA.Preferences.getExt("toolshidden", false);
 			for (var i in this.tools) {
 				this.tools[i].hidden = hidden;
 			}
@@ -711,7 +711,7 @@ var DTA_ContextOverlay = {
 			}
 		}
 		catch(ex) {
-			DTA_debug.log("DTATools(): ", ex);
+			DTA.Debug.log("DTATools(): ", ex);
 		}
 	},
 	
@@ -746,7 +746,7 @@ var DTA_ContextOverlay = {
 			}
 		}
 		catch(ex) {
-			DTA_debug.log('extractDescription', ex);
+			DTA.Debug.log('extractDescription', ex);
 		}
 		return this.trim(rv);
 	},
@@ -813,7 +813,7 @@ DTA_ContextOverlay.Selector = function() {
 	window.addEventListener('mouseup', this._callback, false);
 	window.addEventListener('mousemove', this._callback, false);
 	
-	this._detachObserver = DTA_preferences.addObserver('extensions.dta.selectbgimages', this);
+	this._detachObserver = DTA.Preferences.addObserver('extensions.dta.selectbgimages', this);
 	this.observe();
 }
 DTA_ContextOverlay.Selector.prototype = {
@@ -865,7 +865,7 @@ DTA_ContextOverlay.Selector.prototype = {
 			if (!m) {
 				return false;
 			}
-			DTA_debug.logString("searching");
+			DTA.Debug.logString("searching");
 			this.cancelEvent(evt);
 			try {
 				DTA_ContextOverlay.saveSingleLink(true, m.url, m.elem);
@@ -873,7 +873,7 @@ DTA_ContextOverlay.Selector.prototype = {
 				new this.Flasher(m.elem).hide();
 			}
 			catch (ex) {
-				DTA_debug.log("failed to process " + e[0], ex);
+				DTA.Debug.log("failed to process " + e[0], ex);
 			}
 			return true;
 		}
@@ -912,7 +912,7 @@ DTA_ContextOverlay.Selector.prototype = {
 			['A', 'href'],
 			['IMG', 'src']
 		];
-		if (DTA_preferences.getExt('selectbgimages', false)) {
+		if (DTA.Preferences.getExt('selectbgimages', false)) {
 			searchee.push(['bgimg', 'bgimg']);
 		}
 		this._searchee = searchee;

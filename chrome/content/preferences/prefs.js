@@ -61,7 +61,7 @@ var Main = {
 var Privacy = {
 	load: function PP_load() {
 		try {
-			var log = !DTA_getProfileFile('dta_log.txt').exists();
+			var log = !DTA.getProfileFile('dta_log.txt').exists();
 			$("butShowLog", 'butDelLog', 'butRevealLog')
 				.forEach(function(e) { e.disabled = log; });
 			
@@ -237,7 +237,7 @@ var Filters = {
 			this._box.rowCountChanged(0, -this.rowCount);
 			this._filters = [];
 
-			for (let filter in new Utils.SimpleIterator(DTA_FilterManager.enumAll(), Ci.dtaIFilter)) {
+			for (let filter in new Utils.SimpleIterator(DTA.FilterManager.enumAll(), Ci.dtaIFilter)) {
 				this._filters.push(filter);
 			}
 			this._box.rowCountChanged(0, this.rowCount);
@@ -298,7 +298,7 @@ var Filters = {
 		}
 	},
 	createFilter: function() {
-		DTA_FilterManager.create(
+		DTA.FilterManager.create(
 			_("newfilt"), 
 			_("inserthere"),
 			false,
