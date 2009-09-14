@@ -80,7 +80,7 @@ ProcessorImpl.prototype = {
 			let url = new URL(IOService.newURI(props.mediaUrl, doc ? doc.characterSet : null, null));
 			let item = {
 				url: url,
-				referrer: props.documentUrl || null,
+				referrer: props.documentUrl || props.pageUrl || null,
 			};
 			if (props.youtubeTitle) {
 				item.description = props.youtubeTitle;
@@ -116,7 +116,9 @@ ProcessorImpl.prototype = {
 	}	
 };
 
-const processors = [
-	new ProcessorImpl(false, "dta-regular", "DownThemAll!", "Download with DownThemAll!"),
-	new ProcessorImpl(true, "dta-turbo", "dta! OneClick", "Download with DownThemAll! OneClick")	
-];
+const processors = [];
+if (available) {
+	// XXX l10n
+	processors.push(new ProcessorImpl(false, "dta-regular", "DownThemAll!", "Download with DownThemAll!"));
+	processors.push(new ProcessorImpl(true, "dta-turbo", "dta! OneClick", "Download with DownThemAll! OneClick"));
+}
