@@ -3441,18 +3441,26 @@ var ConflictManager = {
 addEventListener(
 	"load",
 	function() {
-		if (Preferences.getExt('startminimized') && window.arguments && window.arguments.length != 0) {
-			setTimeout(
-				function() {
-					try {
-						window.QueryInterface(Ci.nsIDOMChromeWindow).minimize();
-					}
-					catch (ex) {
-					}
-				},
-				0
-			);
+		if (!Preferences.getExt('startminimized', false)) {
+			return;
 		}
+		// Only start minimized if invoked with new downloads
+		if (!window.arguments || !window.arguments.length) {
+			return;
+		}
+		setTimeout(
+			function() {
+				try {
+					window.QueryInterface(Ci.nsIDOMChromeWindow).minimize();
+					if (window.opener) {
+						window.opener.focus();
+					}
+				}
+				catch (ex) {
+				}
+			},
+			0
+		);
 	},
 	false
 );
