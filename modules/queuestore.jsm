@@ -86,7 +86,7 @@ var QueueStore = {
 		try {
 			_connection.executeSimpleSQL("PRAGMA journal_mode = MEMORY");
 			_connection.executeSimpleSQL("PRAGMA synchronous = NORMAL");
-			this._addStmt = _connection.createStatement('INSERT INTO queue (item) VALUES (?1)');
+			this._addStmt = _connection.createStatement('INSERT INTO queue (pos, item) VALUES (?1, ?2)');
 			this._saveStmt = _connection.createStatement('UPDATE queue SET item = ?2 WHERE uuid = ?1');
 			this._savePosStmt = _connection.createStatement('UPDATE queue SET pos = ?2 WHERE uuid = ?1');
 			this._delStmt = _connection.createStatement('DELETE FROM queue WHERE uuid = ?1');
@@ -157,12 +157,13 @@ var QueueStore = {
 			Debug.log("QueueStore: Cannot backup queue", ex);
 		} 
 	},
-	addDownload: function(download) {
+	addDownload: function(download, position) {
 		if (!download) {
 			throw new Exception("You must provide a Download to save!");
 		}
 		let s = this._addStmt;
-		s.bindStringParameter(0, download);
+		s.bindStringParameter(0, position);
+		s.bindStringParameter(1, download);
 		s.execute();
 		s.reset();
 		return _connection.lastInsertRowID;
