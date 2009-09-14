@@ -36,9 +36,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-
 const LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
 const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
 
