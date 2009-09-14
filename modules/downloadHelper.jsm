@@ -77,9 +77,6 @@ ProcessorImpl.prototype = {
 			props = new Properties(props);
 			let win = ('window' in props) ? props.window : null;
 			let doc = ('document' in props) ? props.document : null;
-			for (let x in props) {
-				Debug.logString(x + ": " + props[x]);
-			}
 			let url = new URL(IOService.newURI(props.mediaUrl, doc ? doc.characterSet : null, null));
 			let item = {
 				url: url,
@@ -100,7 +97,6 @@ ProcessorImpl.prototype = {
 				item.fileName = item.destinationName = item.description + "." + props.fileExtension;
 			}
 				
-			Debug.logString(item.toSource());
 			saveSingleItem(win, this.turbo, item);
 		}
 		catch (ex) {
