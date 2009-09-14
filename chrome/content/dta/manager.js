@@ -380,7 +380,7 @@ var Dialog = {
 					d._totalSize = down.totalSize ? down.totalSize : 0;
 	
 					if (down.hash) {
-						d.hash = new DTA_Hash(down.hash, down.hashType);
+						d.hash = new DTA.Hash(down.hash, down.hashType);
 					}
 					if ('maxChunks' in down) {
 						d._maxChunks = down.maxChunks;
@@ -946,15 +946,15 @@ UrlManager.prototype = {
 	},
 	initByArray: function um_initByArray(urls) {
 		for each (let u in urls) {
-			if (u instanceof DTA_URL || (u.url && u.url instanceof Ci.nsIURI)) {
+			if (u instanceof DTA.URL || (u.url && u.url instanceof Ci.nsIURI)) {
 				this.add(u);
 			}
 			else if (u instanceof Ci.nsIURI) {
-				this.add(new DTA_URL(u));
+				this.add(new DTA.URL(u));
 			}
 			else {
 				this.add(
-					new DTA_URL(
+					new DTA.URL(
 						IOService.newURI(u.url,	u.charset, null),
 						u.preference
 					)
@@ -965,8 +965,8 @@ UrlManager.prototype = {
 		this._usable = this._urls[0].usable;
 	},
 	add: function um_add(url) {
-		if (!url instanceof DTA_URL) {
-			throw (url + " is not an DTA_URL");
+		if (!url instanceof DTA.URL) {
+			throw (url + " is not an DTA.URL");
 		}
 		if (!this._urls.some(function(ref) ref.url.spec == url.url.spec)) {
 			this._urls.push(url);
@@ -1108,7 +1108,7 @@ HttpVisitor.prototype = {
 					this.type = aValue;
 					var ch = aValue.match(/charset=['"]?([\w\d_-]+)/i);
 					if (ch && ch[1].length) {
-						DTA_debug.logString("visitHeader: found override to " + ch[1]);
+						Debug.logString("visitHeader: found override to " + ch[1]);
 						this.overrideCharset = ch[1];
 					}
 				}
@@ -1146,14 +1146,14 @@ HttpVisitor.prototype = {
 					}
 				break;
 				case 'digest': {
-					for (let t in DTA_SUPPORTED_HASHES_ALIASES) {
+					for (let t in DTA.SUPPORTED_HASHES_ALIASES) {
 						try {
 							let v = MimeHeaderParams.getParameter(aValue, t, '', true, {});
 							if (!v) {
 								continue;
 							}
 							v = Utils.hexdigest(atob(v));
-							v = new DTA_Hash(v, t);
+							v = new DTA.Hash(v, t);
 							if (!this.hash || this.hash.q < v.q) {
 								this.hash = v;
 							}
@@ -2244,7 +2244,7 @@ QueueItem.prototype = {
 	toSource: function() {
 		let e = {};
 		[
-			'fileName',
+		 	'fileName',
 			'postData',
 			'numIstance',
 			'description',
@@ -2539,8 +2539,8 @@ function Connection(d, c, isInfoGetter) {
 					http.setRequestHeader('Accept', 'application/metalink+xml;q=0.9', true);
 				}
 				let sd = [];
-				for (let a in DTA_SUPPORTED_HASHES_ALIASES) {
-					sd.push(a + ";q=" + DTA_SUPPORTED_HASHES[DTA_SUPPORTED_HASHES_ALIASES[a]].q);
+				for (let a in DTA.SUPPORTED_HASHES_ALIASES) {
+					sd.push(a + ";q=" + DTA.SUPPORTED_HASHES[DTA.SUPPORTED_HASHES_ALIASES[a]].q);
 				}
 				http.setRequestHeader('Want-Digest', sd.join(', '), false);
 			}
@@ -2670,7 +2670,7 @@ Connection.prototype = {
 		}
 		try {
 			this._chan == newChannel;
-			let newurl = new DTA_URL(newChannel.URI.QueryInterface(Ci.nsIURL), this.url.preference);
+			let newurl = new DTA.URL(newChannel.URI.QueryInterface(Ci.nsIURL), this.url.preference);
 			this.d.urlManager.replace(this.url, newurl);
 			this.url = newurl;
 			this.d.fileName = this.url.usable.getUsableFileName();
@@ -3244,7 +3244,7 @@ function startDownloads(start, downloads) {
 		let qi = new QueueItem();
 		let lnk = e.url;
 		if (typeof lnk == 'string') {
-			qi.urlManager = new UrlManager([new DTA_URL(IOService.newURI(lnk, null, null))]);
+			qi.urlManager = new UrlManager([new DTA.URL(IOService.newURI(lnk, null, null))]);
 		}
 		else if (lnk instanceof UrlManager) {
 			qi.urlManager = lnk;
@@ -3268,11 +3268,12 @@ function startDownloads(start, downloads) {
 		qi._title = !!e.title ? e.title : '';
 		qi._mask = e.mask;
 		qi.fromMetalink = !!e.fromMetalink;
+		qi.fileName = qi.urlManager.usable.getUsableFileName();
 		if (e.fileName) {
-			qi.fileName = e.fileName;
+			qi.fileName = e.fileName.getUsableFileName();
 		}
-		else {
-			qi.fileName = qi.urlManager.usable.getUsableFileName();
+		if (e.destinationName) {
+			qi.destinationName = e.destinationName.getUsableFileName();
 		}
 		if (e.startDate) {
 			qi.startDate = e.startDate;

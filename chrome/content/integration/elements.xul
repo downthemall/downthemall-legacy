@@ -83,7 +83,7 @@
 			<menuitem id="dta-tb-dta" label="DownThemAll! (&dta-tb-single.label;)" oncommand="DTA_ContextOverlay.findLinks();"  class="menuitem-iconic dta" tooltiptext="&dta-regular.label;"/>
 			<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all.label;)" oncommand="DTA_ContextOverlay.findLinks(false, true);" class="menuitem-iconic dta" tooltiptext="&dta-regular.label;"/>
 			<menuseparator/>
-			<menuitem id="dta-tb-manager" label="&dta-manager-button;" oncommand="DTA_AddingFunctions.openManager();" class="menuitem-iconic dtamanager" tooltiptext="&dta-manager-button;"/>
+			<menuitem id="dta-tb-manager" label="&dta-manager-button;" oncommand="DTA.openManager(window);" class="menuitem-iconic dtamanager" tooltiptext="&dta-manager-button;"/>
 		</menupopup>
 	</toolbarbutton>
 	<toolbarbutton 
@@ -103,7 +103,7 @@
 	<toolbarbutton
 		id="dta-manager-button"
 		class="chromeclass-toolbar-additional toolbarbutton-1"
-		oncommand="DTA_AddingFunctions.openManager();"
+		oncommand="DTA.openManager(window);"
 		label="&dta-manager-button;"
 		tooltiptext="&dta-manager-button;"
 	/>
@@ -120,7 +120,7 @@
 				label="&dta-regular.label;" class="menuitem-iconic dta" />
 			<menuitem id="dtaToolsTDTA" oncommand="DTA_ContextOverlay.findLinks(true)" 
 				label="&dta-regular-turbo.label;" class="menuitem-iconic dtaturbo" />
-			<menuitem id="dtaToolsManager" oncommand="DTA_AddingFunctions.openManager()" 
+			<menuitem id="dtaToolsManager" oncommand="DTA.openManager(window)" 
 				label="&dta-manager-button;" class="menuitem-iconic dtamanager" />	
 			<menuseparator id="dtaToolsSep"/>
 			<menuitem id="dtaToolsPrefs" oncommand="DTA_showPreferences();"

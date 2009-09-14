@@ -42,7 +42,7 @@ var DTA_SaveAs = {
 		var basicBox = document.getElementById('basicBox');
 		var normalBox = document.getElementById('normalBox');
 		const doRevert = basicBox && (!basicBox.collapsed || (normalBox && normalBox.collapsed));
-		const doOverlay = DTA_preferences.getExt("downloadWin", true);
+		const doOverlay = DTA.Preferences.getExt("downloadWin", true);
 		if (
 			!doOverlay
 			&& typeof(gFlashGotDMDialog) == 'undefined'
@@ -79,18 +79,18 @@ var DTA_SaveAs = {
 			this.referrer = this.url.spec;
 		}
 		
-		var ml = DTA_getLinkPrintMetalink(this.url);
-		this.url = new DTA_URL(ml ? ml : this.url);
+		var ml = DTA.getLinkPrintMetalink(this.url);
+		this.url = new DTA.URL(ml ? ml : this.url);
 
 		this.ddDirectory = document.getElementById('tdtalist');
-		var mask = DTA_AddingFunctions.getDropDownValue('renaming');
-		if (!(document.getElementById("tdta").hidden = (DTA_AddingFunctions.getDropDownValue('directory') == '' || !mask))) {
+		var mask = DTA.getDropDownValue('renaming');
+		if (!(document.getElementById("tdta").hidden = (DTA.getDropDownValue('directory') == '' || !mask))) {
 			this.turbo.disabled = false;
 			this.turboExec.disabled = false;
 		}
 		
 		try {
-			switch (DTA_preferences.getExt('saveasmode', 0)) {
+			switch (DTA.Preferences.getExt('saveasmode', 0)) {
 				case 1:
 					this.mode.selectedItem = this.normal;
 					break;
@@ -98,7 +98,7 @@ var DTA_SaveAs = {
 					this.mode.selectedItem = this.turbo.disabled ? this.normal : this.turbo;
 					break;
 			}
-			if (DTA_preferences.getExt('saveasmode', 0)) {
+			if (DTA.Preferences.getExt('saveasmode', 0)) {
 				this.remember.checked = true;
 				this.remember.disabled = false;
 			}
@@ -158,13 +158,13 @@ var DTA_SaveAs = {
 			window.sizeToContent();	
 		}
 		catch (ex) {
-			DTA_debug.log("sizeToContent Bug: 371508", ex);
+			DTA.Debug.log("sizeToContent Bug: 371508", ex);
 			try {
 				var btn = document.documentElement.getButton('accept');
 				window.innerHeight = btn.boxObject.y + 10; 
 			}
 			catch (ex) {
-				DTA_debug.log("setting height failed", ex);
+				DTA.Debug.log("setting height failed", ex);
 			}		
 		}
 	},	
@@ -185,21 +185,21 @@ var DTA_SaveAs = {
 		var mode = this.mode.selectedItem;
 		if (mode == this.normal || mode == this.turbo) {
 			if (this.remember.checked) {
-				DTA_preferences.setExt("saveasmode", mode == this.normal ? 1 : 2);
+				DTA.Preferences.setExt("saveasmode", mode == this.normal ? 1 : 2);
 			}
 			else {
-				DTA_preferences.setExt("saveasmode", 0);
+				DTA.Preferences.setExt("saveasmode", 0);
 			}
 			this.download(mode == this.turbo);			
 			return false;
 		}
-		DTA_preferences.setExt("saveasmode", 0);
+		DTA.Preferences.setExt("saveasmode", 0);
 		return true;
 	},
 	
 	download: function(turbo) {
 		this.ddDirectory.save();
-		DTA_AddingFunctions.saveSingleLink(turbo, this.url, this.referrer, "");
+		DTA.saveSingleLink(window, turbo, this.url, this.referrer, "");
 		document.documentElement.removeAttribute('ondialogaccept');
 		document.documentElement.cancelDialog();
 	}

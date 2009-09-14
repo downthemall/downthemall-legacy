@@ -49,14 +49,14 @@ var DTA_TBB = {
 				e.e.parentNode.insertBefore(e.b, e.e);
 			}
 		}
-		DTA_preferences.addObserver("extensions.dta.tb.", this);
+		DTA.Preferences.addObserver("extensions.dta.tb.", this);
 		this._refresh();
 	},
 	observe: function(subject, topic, prefName) {
 		this._refresh();
 	},
 	_refresh: function() {
-		DTA_preferences
+		DTA.Preferences
 			.getExt('tb.buttons')
 			.split(',')
 			.forEach(

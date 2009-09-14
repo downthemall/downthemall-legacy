@@ -39,8 +39,8 @@
 
 /* dTa-only code! - DO NOT include in overlays or such! */
 
-var Debug = DTA_debug;
-var Preferences = DTA_preferences;
+var Debug = DTA.Debug;
+var Preferences = DTA.Preferences;
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -66,7 +66,7 @@ const CryptoHash = new Components.Constructor(
 );
 	
 	
-const SYSTEMSLASH = (DTA_getProfileFile('dummy').path.indexOf('/') != -1) ? '/' : '\\';
+const SYSTEMSLASH = (DTA.getProfileFile('dummy').path.indexOf('/') != -1) ? '/' : '\\';
 
 // shared state defines
 
@@ -377,7 +377,7 @@ Utils.merge(
  * @author Nils
  * @author Stefano
  * @param link
- *          Some sort of DTA_URL, nsIURI or string to get the icon for
+ *          Some sort of DTA.URL, nsIURI or string to get the icon for
  * @param metalink
  *          Is it a metalink?
  * @param size
@@ -418,7 +418,7 @@ function getIcon(link, metalink, size) {
 	}
 	try {
 		var url;
-		if (link instanceof DTA_URL) {
+		if (link instanceof DTA.URL) {
 			url = link.url.spec;
 		}
 		else if (link instanceof Ci.nsIURI) {

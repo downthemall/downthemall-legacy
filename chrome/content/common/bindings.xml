@@ -103,7 +103,7 @@
 					this._load();
 				}
 				catch (ex) {
-					DTA_debug.dump("Loading of saveddropdown failed:", ex);
+					DTA.Debug.log("Loading of saveddropdown failed:", ex);
 				}
 			]]></constructor>
 			<field name="modified">false</field>
@@ -120,15 +120,15 @@
 						rv = '[\'' + rv + '\']';
 					}
 					try {
-						return eval(DTA_preferences.getExt(this._pref, rv));
+						return eval(DTA.Preferences.getExt(this._pref, rv));
 					}
 					catch (ex) {
-						DTA_debug.dump("Cannot initialize from preferences:", ex);
+						DTA.Debug.log("Cannot initialize from preferences:", ex);
 						return eval(rv);
 					}
 				]]></getter>
 			</property>
-			<property name="_max" onget="return DTA_preferences.getExt('history', 5);"/>
+			<property name="_max" onget="return DTA.Preferences.getExt('history', 5);"/>
 			<property name="inputField" onget="return this._list.inputField"/>
 			<property name="value" onget="return this._list.label">
 				<setter>
@@ -186,16 +186,16 @@
 						}
 					}
 					try {
-						DTA_preferences.setExt(this._pref, outValues.toSource());
+						DTA.Preferences.setExt(this._pref, outValues.toSource());
 					}
 					catch (ex) {
-						DTA_debug.log("Cannot save saveddropdown", ex);
+						DTA.Debug.log("Cannot save saveddropdown", ex);
 					} 
 				]]></body>
 			</method>
 			<method name="clear">
 				<body>
-					DTA_preferences.resetExt(this._pref);
+					DTA.Preferences.resetExt(this._pref);
 				</body>
 			</method>
 		</implementation>
@@ -281,7 +281,7 @@
 		<implementation>
 			<constructor><![CDATA[
 				this._typemap = {};
-				for (x in DTA_SUPPORTED_HASHES) {
+				for (x in DTA.SUPPORTED_HASHES) {
 					var e = document.createElement('menuitem');
 					e.setAttribute('value', x);
 					e.setAttribute('label', x);
@@ -298,7 +298,7 @@
 				<getter><![CDATA[
 					try {
 						if (this._hash.value.length) {
-							new DTA_Hash(this._hash.value, this._type.value);
+							new DTA.Hash(this._hash.value, this._type.value);
 						}
 						return true;
 					}
@@ -310,7 +310,7 @@
 			<property name="value">
 				<getter><![CDATA[
 					if (this._hash.value.length) {
-						return new DTA_Hash(this._hash.value, this._type.value);
+						return new DTA.Hash(this._hash.value, this._type.value);
 					}
 					return null;
 				]]></getter>

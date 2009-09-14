@@ -216,7 +216,7 @@ var Metalinker = {
 							preference = 100 + preference;
 						}
 					}
-					urls.push(new DTA_URL(uri, preference));
+					urls.push(new DTA.URL(uri, preference));
 				}
 				if (!urls.length) {
 					continue;
@@ -224,7 +224,7 @@ var Metalinker = {
 				let hash = null; 
 				for each (let h in this._getNodes(file, 'ml:verification/ml:hash')) {
 					try {
-						h = new DTA_Hash(h.textContent.trim(), h.getAttribute('type'));
+						h = new DTA.Hash(h.textContent.trim(), h.getAttribute('type'));
 						hash = h;		
 					}
 					catch (ex) {

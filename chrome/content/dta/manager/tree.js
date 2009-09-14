@@ -36,7 +36,6 @@
  
 const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init');
 
-let DTA = {};
 Components.utils.import('resource://dta/version.jsm', DTA);
  
 const Tree = {
