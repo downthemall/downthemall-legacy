@@ -422,7 +422,7 @@ var Dialog = {
 					// See above
 					d.rebuildDestination();
 
-					d._position = Tree.add(d, false);
+					d._position = Tree.add(d);
 				}
 				catch (ex) {
 					Debug.log('failed to init download #' + dbItem.id + ' from queuefile', ex);
@@ -1064,7 +1064,6 @@ Visitor.prototype = {
 	},
 	save: function vi_save(node) {
 		var rv = {};
-		// salva su file le informazioni sugli headers
 		for (x in this.cmpKeys) {
 			if (!(x in this)) {
 				continue;
@@ -1547,7 +1546,7 @@ QueueItem.prototype = {
 			return true;
 		}
 
-		this.dbId = QueueStore.addDownload(this.toSource());
+		this.dbId = QueueStore.addDownload(this.toSource(), this.position);
 		return true;
 	},
 	remove: function QI_remove() {
