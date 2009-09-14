@@ -98,7 +98,7 @@ function objToUri(obj) {
  * @param type Either a string or an array of string specifying the type of the window
  */
 function getMostRecent(type) {
-	if (type instanceof Array) {
+	if (type && type instanceof Array) {
 		for each (t in type) {
 			let rv = getMostRecent(t);
 			if (rv) {
@@ -106,7 +106,7 @@ function getMostRecent(type) {
 			}
 		}
 	}
-	return mediator.getMostRecentWindow(type.toString());
+	return mediator.getMostRecentWindow(type ? type.toString() : null);
 }
 
 /**
