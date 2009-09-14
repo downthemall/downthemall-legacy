@@ -211,7 +211,7 @@ ContentHandling.prototype = {
 					// no op
 				}
 			}
-			if (channel.URI.spec.match(/\.(flv|ogg|ogm|ogv|avi|divx)\b/i) || ct.match(/\b(flv|ogg|ogm|avi|divx)\b/i)) {
+			if (channel.URI.spec.match(/\.(flv|ogg|ogm|ogv|avi|divx|mp4)\b/i) || ct.match(/\b(flv|ogg|ogm|avi|divx|mp4)\b/i)) {
 				let wp = null;
 				if (channel.loadGroup && channel.loadGroup.groupObserver) {
 					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);					
