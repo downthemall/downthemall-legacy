@@ -618,3 +618,10 @@ function hash(value, algorithm, encoding, datalen) {
 	}
 	return rv;
 }
+
+
+setNewGetter(
+	this,
+	"DefaultDownloadsDirectory",
+	function() Cc["@mozilla.org/download-manager;1"].getService(Ci.nsIDownloadManager).defaultDownloadsDirectory
+);
