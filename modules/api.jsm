@@ -437,7 +437,7 @@ function turboSaveLinkArray(window, urls, images) {
 	if (links.length == 0) {
 		throw new Exception('no links remaining');
 	}
-	this.turboSendToDown(window, links);		
+	this.turboSendLinksToManager(window, links);		
 }
 
 function openManager(window, quiet) {
