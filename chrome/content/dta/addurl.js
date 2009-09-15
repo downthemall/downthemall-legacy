@@ -252,8 +252,10 @@ BatchGenerator.prototype = {
 var Dialog = {
 	load: function DTA_load() {
 		try {
-			
 			this.ddDirectory = $("directory");
+			if (!this.ddDirectory.value) {
+				this.ddDirectory.value = DefaultDownloadsDirectory.path;
+			}			
 			this.ddRenaming = $("renaming");			
 			var address = $('address');
 			

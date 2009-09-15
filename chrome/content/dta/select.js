@@ -299,6 +299,9 @@ let Dialog = {
 		// construct or dropdowns.
 		this.ddFilter = $('filter');
 		this.ddDirectory = $('directory');
+		if (!this.ddDirectory.value) {
+			this.ddDirectory.value = DefaultDownloadsDirectory.path;
+		}
 		this.ddRenaming = $('renaming');
 		
 		$('maskeditor-accept').label = _('button-accept');
