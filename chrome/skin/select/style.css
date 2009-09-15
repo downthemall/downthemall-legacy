@@ -1,5 +1,5 @@
 @import 'chrome://dta/skin/common/style.css';
-@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
 
 #renamingbox {
 	min-width: 200px;
@@ -31,7 +31,7 @@ toolbox, toolbox toolbar, toolbox toolbarbutton {
 	min-width: 120px;
 	padding-left: 8px;
 	padding-right: 8px;
-	list-style-image: url("chrome://dta/skin/select/viewbuttons.png");
+	list-style-image: url(viewbuttons.png);
 }
 
 #views toolbarbutton[selected="true"], #views toolbarbutton[selected="true"] * {
@@ -39,9 +39,13 @@ toolbox, toolbox toolbar, toolbox toolbarbutton {
 }
 
 #views toolbarbutton[selected="true"] {
-	background: url("chrome://dta/skin/select/tabback.png");
+	background: url(tabback.png);
 }
-
+#views toolbarbutton:hover {
+    background: url(tabbackhover.png);
+    cursor: pointer;
+    font-weight: 700;
+}
 #viewlinks {
 	-moz-image-region: rect(0px,50px,24px,25px);
 }
@@ -68,12 +72,12 @@ threechildren::-moz-tree-row {
 
 treechildren::-moz-tree-checkbox {
 	/* css for checked cells */
-	list-style-image: url("chrome://dta/skin/select/uncheck2.png");
+	list-style-image: url(uncheck2.png);
 }
 
 treechildren::-moz-tree-checkbox(checked) {
 	/* css for checked cells */
-	list-style-image: url("chrome://dta/skin/select/check.png");
+	list-style-image: url(check.png);
 }
 
 treechildren::-moz-tree-row(manuallySelected) {
