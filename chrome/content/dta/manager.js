@@ -322,6 +322,10 @@ var Dialog = {
 	
 					let d = new QueueItem();
 					d.dbId = dbItem.id;
+					let state = get('state'); 
+					if (state) {
+						d._state = state;
+					}					
 					d.urlManager = new UrlManager(down.urlManager);
 					d.numIstance = get("numIstance");
 	
@@ -387,10 +391,6 @@ var Dialog = {
 					}
 	
 					d.started = d.partialSize != 0;
-					let state = get('state') 
-					if (state) {
-						d._state = state;
-					}
 					switch (d._state) {
 						case PAUSED:
 						case QUEUED:
@@ -2042,7 +2042,11 @@ QueueItem.prototype = {
 	prealloc: function QI_prealloc() {
 		let file = this.tmpFile;
 		
-		if (!this.totalSize || !this.isOf(RUNNING, QUEUED, PAUSED)) {
+		if (!this.is(RUNNING)) {
+			return false;
+		}
+		
+		if (!this.totalSize) {
 			Debug.logString("pa: no totalsize");
 			return false;
 		}
