@@ -1710,7 +1710,11 @@ QueueItem.prototype = {
 	prealloc: function QI_prealloc() {
 		let file = this.tmpFile;
 		
-		if (!this.totalSize || !this.isOf(RUNNING, QUEUED, PAUSED)) {
+		if (!this.is(RUNNING)) {
+			return false;
+		}
+		
+		if (!this.totalSize) {
 			Debug.logString("pa: no totalsize");
 			return false;
 		}
