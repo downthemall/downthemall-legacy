@@ -226,6 +226,12 @@ var SessionManager = {
 						}
 		
 						let d = new QueueItem();
+						
+						let state = get('state'); 
+						if (state) {
+							d._state = state;
+						}
+						
 						d.dbId = dbId;
 						d.urlManager = new UrlManager(down.urlManager);
 						d.numIstance = get("numIstance");
@@ -267,6 +273,7 @@ var SessionManager = {
 		
 						d.startDate = new Date(get("startDate"));
 						d.visitors = new VisitorManager(down.visitors);
+
 						
 						for each (let e in [
 							'contentType',
@@ -289,10 +296,6 @@ var SessionManager = {
 						}
 		
 						d.started = d.partialSize != 0;
-						let state = get('state') 
-						if (state) {
-							d._state = state;
-						}
 						switch (d._state) {
 							case PAUSED:
 							case QUEUED:
