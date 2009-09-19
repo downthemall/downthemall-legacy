@@ -72,14 +72,14 @@
 			
 		</groupbox>
 		
-		<grid>
+		<grid id="gridFiles">
 			<columns id="colsFiles">
 				<column flex="1"/>
-				<column/>
+				<column flex="2"/>
 			</columns>
 			<rows>
 				<row id="rowFiles">
-					<groupbox>
+					<groupbox id="advTempFiles">
 						<caption label="&advancedpane.tempfiles.caption;" />
 						<checkbox id="useTemp" label="&advancedpane.usetemp.label;" preference="dtatemporary" oncommand="Advanced.toggleTemp();"/>
 						<hbox>
