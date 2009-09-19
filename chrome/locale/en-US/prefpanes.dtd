@@ -80,6 +80,7 @@
 <!ENTITY advancedpane.permissions.read "May read">
 <!ENTITY advancedpane.permissions.write "May write">
 <!ENTITY advancedpane.loadendfirst.label "Load last few kilobytes first">
+<!ENTITY advancedpane.textlinks.label "Recognize text links">
 
 <!ENTITY uipane.label "Interface">
 <!ENTITY uipane.appearance.caption "Appearance">

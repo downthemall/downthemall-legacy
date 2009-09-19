@@ -141,6 +141,15 @@ var DTA_ContextOverlay = {
 		}
 	},
 	
+	get recognizeTextLinks() {
+		return DTA.Preferences.getExt("textlinks", true);
+	},
+	getTextLinks: function(text, fakeLinks) {
+		delete this.getTextLinks;
+		Components.utils.import("resource://dta/textlinks.jsm", this);
+		return this.getTextLinks(text, fakeLinks);
+	},
+	
 	// recursively add stuff.
 	addLinks: function(aWin, aURLs, aImages, honorSelection) {
 
@@ -156,11 +165,11 @@ var DTA_ContextOverlay = {
 	
 		try {
 		 
-			var links = aWin.document.links;
-			var images = aWin.document.images;
-			var embeds = aWin.document.embeds;
-			var rawInputs = aWin.document.getElementsByTagName('input');
-			var inputs = [];
+			let links = Array.map(aWin.document.links, function(e) e);
+			let images = aWin.document.images;
+			let embeds = aWin.document.embeds;
+			let rawInputs = aWin.document.getElementsByTagName('input');
+			let inputs = [];
 			for (var i = 0; i < rawInputs.length; ++i) {
 				var rit = rawInputs[i].getAttribute('type');
 				if (!rit || rit.toLowerCase() != 'image') {
@@ -177,6 +186,10 @@ var DTA_ContextOverlay = {
 						return filterElements(e, sel);
 					}
 				);
+				if (this.recognizeTextLinks) {
+					let selText = new String(sel.toString());
+					links = links.concat(this.getTextLinks(selText, true));
+				}
 			}
 			else {
 				if (DTA.Preferences.getExt('listsniffedvideos', false)) {
@@ -184,7 +197,13 @@ var DTA_ContextOverlay = {
 						this._ch.getSniffedVideosFor(DTA.IOService.newURI(aWin.location.href, aWin.document.characterSet, null)),
 						function(e) e
 					);
-						
+					if (this.recognizeTextLinks) {
+						let body = aWin.document.getElementsByTagName("body");
+						if (body.length) {
+							links = links.concat(this.getTextLinks(body[0].textContent, true));
+						}
+					}
+
 					let ref = DTA.getRef(aWin.document);
 					for each (let flv in flvs) {
 						let o = {
