@@ -41,7 +41,7 @@ toolbox, toolbox toolbar, toolbox toolbarbutton {
 #views toolbarbutton[selected="true"] {
 	background: url(tabback.png);
 }
-#views toolbarbutton:hover {
+#views toolbarbutton:not([disabled="true"]):hover {
     background: url(tabbackhover.png);
     cursor: pointer;
     font-weight: 700;
