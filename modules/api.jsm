@@ -43,6 +43,7 @@ const EXPORTED_SYMBOLS = [
 	"URL",
 	"SUPPORTED_HASHES",
 	"SUPPORTED_HASHES_ALIASES",
+	"WANT_DIGEST_STRING",
 	"Hash",
 	"getLinkPrintHash",
 	"getLinkPrintMetalink",
@@ -154,10 +155,10 @@ URL.prototype = {
  */
 const SUPPORTED_HASHES = {
 	'MD5': {l: 32, q: 0.3 },
-	'SHA1': {l: 40, q: 0.8 },
-	'SHA256': {l: 64, q: 0.9 },
-	'SHA384': {l: 96, q: 0.9 },
-	'SHA512': {l: 128, q: 1 }
+	'SHA1': {l: 40, q: 0.5 },
+	'SHA256': {l: 64, q: 0.7 },
+	'SHA384': {l: 96, q: 0.8 },
+	'SHA512': {l: 128, q: 0.9 }
 };
 const SUPPORTED_HASHES_ALIASES = {
 	'MD5': 'MD5',
@@ -172,6 +173,14 @@ const SUPPORTED_HASHES_ALIASES = {
 	'SHA512': 'SHA512',
 	'SHA-512': 'SHA512'
 };
+const WANT_DIGEST_STRING = (function() {
+	let rv = new MimeQuality();
+	for each (let h in ["MD5", "SHA", "SHA1", "SHA256", "SHA512"]) {
+		let q = SUPPORTED_HASHES[SUPPORTED_HASHES_ALIASES[h]].q;
+		rv.add(h, q);
+	}
+	return rv.toString();
+})();
 
 function Hash(hash, type) {
 	if (typeof(hash) != 'string' && !(hash instanceof String)) {

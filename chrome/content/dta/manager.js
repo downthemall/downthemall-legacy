@@ -2541,11 +2541,7 @@ function Connection(d, c, isInfoGetter) {
 				if (!d.fromMetalink) {
 					http.setRequestHeader('Accept', 'application/metalink+xml;q=0.9', true);
 				}
-				let sd = [];
-				for (let a in DTA.SUPPORTED_HASHES_ALIASES) {
-					sd.push(a + ";q=" + DTA.SUPPORTED_HASHES[DTA.SUPPORTED_HASHES_ALIASES[a]].q);
-				}
-				http.setRequestHeader('Want-Digest', sd.join(', '), false);
+				http.setRequestHeader('Want-Digest', DTA.WANT_DIGEST_STRING, false);
 			}
 			if (referrer instanceof Ci.nsIURI) {
 				http.referrer = referrer;

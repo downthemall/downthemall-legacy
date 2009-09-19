@@ -50,12 +50,14 @@ const EXPORTED_SYMBOLS = [
 	'getTimestamp',
 	'naturalSort',
 	'SimpleIterator',
-	'Properties'
+	'Properties',
+	'MimeQuality'
 ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const log = Components.utils.reportError;
 const Exception = Components.Exception;
 
 function setNewGetter(aObject, aName, aLambda) {
@@ -85,7 +87,17 @@ function ServiceGetter(context, name, contract, iface) {
 	setNewGetter(
 		context,
 		name,
-		function() Cc[contract].getService(iface)
+		function() {
+			try {
+				return Cc[contract].getService(iface);
+			}
+			catch (ex) {
+				log(ex);
+				log(contract);
+				log(iface);
+				throw ex;
+			}
+		}
 	);	
 }
 
@@ -414,5 +426,33 @@ function Properties(properties) {
 		catch (ex) {
 			Components.utils.reportError("Failed to convert property: " + ex);
 		}
+	}
+}
+
+function MimeQuality() {
+	this._q = {};
+}
+MimeQuality.prototype = {
+	add: function(v, q) {
+		if (typeof q != "number" || q > 1 || q < 0) {
+			throw new Error("Invalid q");
+		}
+		q = parseInt(q * 1000) / 1000;
+		if (!(q in this._q)) {
+			this._q[q] = [];
+		}
+		this._q[q].push(v);
+		return this;
+	},
+	toString: function() {
+		let rv = [];
+		for (let x in this._q) {
+			let e = this._q[x];
+			e.sort();
+			rv.push({q: x, v: e.join(", ")});
+		}
+		rv.sort(function(a, b) (a.q > b.q) ? -1 : ((a.q < b.q) ? 1 : 0));
+		rv = rv.map(function(e) e.v + ";q=" + e.q).join(", ");
+		return rv;
 	}
 }
