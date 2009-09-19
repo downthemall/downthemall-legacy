@@ -125,6 +125,7 @@ var DebugService = {
 			let fileName = null;
 			let sourceLine = '';
 			
+			
 			if (exception && exception.location) {
 				lineNumber = exception.lineNumber;
 				fileName = exception.filename;
@@ -138,11 +139,20 @@ var DebugService = {
 				text.push(initialLine);
 				text.push('\n');
 			}
+			else if (exception && exception.stack) {
+				lineNumber = exception.lineNumber;
+				fileName = exception.fileName;
+				columnNumber = 0;
+				let initialLine = "Source Frame (error) :: " + fileName;
+				initialLine += " :: " + exception.name;
+				initialLine += " :: line: " + lineNumber;
+				text.push("\t>" + initialLine + "\n");
+				
+			}
 			else if (exception && stack) {
 				lineNumber = stack.lineNumber;
-				
 				fileName = stack.filename;
-				let initialLine = "Source Frame :: " + fileName;
+				let initialLine = "Source Frame (stack) :: " + fileName;
 				initialLine += " :: " + stack.name;
 				initialLine += " :: line: " + lineNumber;
 				text.push('\t>');
