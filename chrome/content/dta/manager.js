@@ -111,6 +111,7 @@ var Dialog = {
 	_autoRetrying: [],
 	_offline: false,
 	_maxObservedSpeed: 0,
+	_infoWindows: [],
 	get offline() {
 		return this._offline || this._offlineForced;
 	},
@@ -533,6 +534,17 @@ var Dialog = {
 			alert(ex);
 		}
 	},
+	openInfo: function D_openInfo(downloads) {
+		let w = window.openDialog(
+			"chrome://dta/content/dta/manager/info.xul","_blank",
+			"chrome, centerscreen, dialog=no",
+			downloads,
+			this
+			);
+		if (w) {
+			this._infoWindows.push(w);
+		}
+	},
 	
 	start: function D_start() {
 		if ("arguments" in window) {
@@ -921,6 +933,11 @@ var Dialog = {
 		}
 		catch(ex) {
 			Debug.log("_safeClose", ex);
+		}
+		for each (let w in this._infoWindows) {
+			if (!w.closed) {
+				w.close();
+			}
 		}
 		return true;		
 	}
