@@ -488,7 +488,7 @@ const Tree = {
 			downloads.push(d);
 		}
 		if (downloads.length) {
-			window.openDialog("chrome://dta/content/dta/manager/info.xul","_blank","chrome, centerscreen, dialog=no", downloads, this);		 
+			Dialog.openInfo(downloads);		 
 		}
 		this.endUpdate();
 	},
