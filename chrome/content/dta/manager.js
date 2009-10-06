@@ -1324,7 +1324,7 @@ QueueItem.prototype = {
 			}
 		}
 		catch (ex) {
-			Debug.log("download::getSize(): ", e)
+			Debug.log("download::getSize(): ", ex);
 		}
 		return 0;
 	},
