@@ -88,7 +88,7 @@ function _decodeCharset(text, charset) {
 		if (!charset.length) {
 			throw 'no charset';
 		}
-		rv = TextToSubURI.UnEscapeAndConvert(charset, text);
+		rv = TextToSubURI.unEscapeURIForUI(charset || "UTF-8", text);
 	}
 	catch (ex) {
 		try {
