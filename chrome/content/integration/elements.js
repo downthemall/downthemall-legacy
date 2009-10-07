@@ -193,28 +193,28 @@ var DTA_ContextOverlay = {
 			}
 			else {
 				if (DTA.Preferences.getExt('listsniffedvideos', false)) {
-					let flvs = Array.map(
+					let sniffed = Array.map(
 						this._ch.getSniffedVideosFor(DTA.IOService.newURI(aWin.location.href, aWin.document.characterSet, null)),
 						function(e) e
 					);
-					if (this.recognizeTextLinks) {
-						let body = aWin.document.getElementsByTagName("body");
-						if (body.length) {
-							links = links.concat(this.getTextLinks(body[0].textContent, true));
-						}
-					}
-
 					let ref = DTA.getRef(aWin.document);
-					for each (let flv in flvs) {
+					for each (let s in sniffed) {
 						let o = {
-							'url': new DTA.URL(flv),
-							'ref': ref,
+							'url': new DTA.URL(sniffed),
+							'referrer': ref,
 							'description': 'Sniffed embedded video'
 						}
 						aURLs.push(o);
 						aImages.push(o);
 					}
 				}
+				if (this.recognizeTextLinks) {
+					let body = aWin.document.getElementsByTagName("body");
+					if (body.length) {
+						links = links.concat(this.getTextLinks(body[0].textContent, true));
+					}
+				}
+				
 				// we were asked to honor the selection, but we didn't actually have one.
 				// so reset this flag so that we can continue processing frames below.
 				honorSelection = false;
