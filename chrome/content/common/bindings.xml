@@ -39,19 +39,17 @@
 	%globalDTD;
 ]>
 
-<bindings
-	xmlns="http://www.mozilla.org/xbl"
-	xmlns:xbl="http://www.mozilla.org/xbl"
-	xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
->
+<bindings xmlns="http://www.mozilla.org/xbl" xmlns:xbl="http://www.mozilla.org/xbl"
+	xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<!-- closebox -->
-	<binding id="closebox" extends="chrome://global/content/bindings/groupbox.xml#groupbox">
+	<binding id="closebox"
+		extends="chrome://global/content/bindings/groupbox.xml#groupbox">
 		<content>
 			<xul:hbox class="groupbox-title" align="center" pack="start">
-				<children includes="caption"/>
+				<children includes="caption" />
 			</xul:hbox>
 			<xul:box flex="1" class="childrenbox" xbl:inherits="orient,align,pack,collapsed=closed">
-				<children/>
+				<children />
 			</xul:box>
 		</content>
 		<implementation implements="nsIAccessibleProvider">
@@ -70,31 +68,33 @@
 				<setter>
 					this.setAttribute('shouldResize', val ? 'true' : 'false');
 				</setter>
-			</property>			
-      <property name="accessibleType" readonly="true">
-        <getter>
+			</property>
+			<property name="accessibleType" readonly="true">
+				<getter>
           <![CDATA[
             return Components.interfaces.nsIAccessibleProvider.XULGroupbox;
           ]]>
-        </getter>
-      </property>
-    </implementation>
+				</getter>
+			</property>
+		</implementation>
 	</binding>
-	<binding id="closebox-caption" extends="chrome://global/content/bindings/groupbox.xml#caption">
+	<binding id="closebox-caption"
+		extends="chrome://global/content/bindings/groupbox.xml#caption">
 		<handlers>
 			<handler event="click">
-				this.parentNode.closed = !this.parentNode.closed;
-				if (this.parentNode.shouldResize) {
-					window.sizeToContent();
-				}
+				this.parentNode.closed =
+				!this.parentNode.closed; if (this.parentNode.shouldResize) {
+				window.sizeToContent(); }
 			</handler>
 		</handlers>
 	</binding>
-	
+
 	<binding id="saveddropdown">
 		<content>
-			<xul:menulist anonid="list" editable="true" xbl:inherits="crop,readonly,disabled,flex,tooltiptext,oninput=onchange,onselect=onchange,error">
-				<xul:menupopup anonid="popup" xbl:inherits="crop,onselect=onchange,oncommand=onchange"/>
+			<xul:menulist anonid="list" editable="true"
+				xbl:inherits="crop,readonly,disabled,flex,tooltiptext,oninput=onchange,onselect=onchange,error">
+				<xul:menupopup anonid="popup"
+					xbl:inherits="crop,onselect=onchange,oncommand=onchange" />
 			</xul:menulist>
 		</content>
 		<implementation>
@@ -107,9 +107,11 @@
 				}
 			]]></constructor>
 			<field name="modified">false</field>
-			<property name="_list" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'list');"/>
-			<property name="_popup" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'popup');"/>
-			<property name="_pref" onget="return this.getAttribute('preference')"/>
+			<property name="_list"
+				onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'list');" />
+			<property name="_popup"
+				onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'popup');" />
+			<property name="_pref" onget="return this.getAttribute('preference')" />
 			<property name="_values">
 				<getter><![CDATA[
 					var rv = this.getAttribute('default');
@@ -128,13 +130,14 @@
 					}
 				]]></getter>
 			</property>
-			<property name="_max" onget="return DTA.Preferences.getExt('history', 5);"/>
-			<property name="inputField" onget="return this._list.inputField"/>
+			<property name="_max"
+				onget="return DTA.Preferences.getExt('history', 5);" />
+			<property name="inputField" onget="return this._list.inputField" />
 			<property name="value" onget="return this._list.label">
 				<setter>
 					val = String(val);
 					if (this.value == val) {
-						return;
+					return;
 					}
 					this._list.label = val;
 					this._modified = true;
@@ -201,24 +204,27 @@
 		</implementation>
 	</binding>
 
-	<binding id="metalinker-item" extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
+	<binding id="metalinker-item"
+		extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
 		<content>
 			<xul:vbox flex="1">
 				<xul:hbox class="metalink-mainbox" flex="1">
-					<xul:image class="metalinker-icon" xbl:inherits="src=iconURL"/>
+					<xul:image class="metalinker-icon" xbl:inherits="src=iconURL" />
 					<xul:vbox class="metalink-infobox" flex="1">
-						<xul:checkbox anonid="check" xbl:inherits="label=identity,checked"/>
-						<xul:hbox flex="1" anonid="additionallinks"/>
+						<xul:checkbox anonid="check" xbl:inherits="label=identity,checked" />
+						<xul:hbox flex="1" anonid="additionallinks" />
 						<xul:hbox>
-							<xul:description flex="1" crop="center" xbl:inherits="value=url"/>
+							<xul:description flex="1" crop="center"
+								xbl:inherits="value=url" />
 						</xul:hbox>
 					</xul:vbox>
-					<xul:vbox class="metalinker-additional" anonid="additional"/>
+					<xul:vbox class="metalinker-additional" anonid="additional" />
 				</xul:hbox>
-				<xul:description class="metalinker-description" flex="1" anonid="desc"/>
-			</xul:vbox>			
+				<xul:description class="metalinker-description"
+					flex="1" anonid="desc" />
+			</xul:vbox>
 		</content>
-		
+
 		<implementation>
 			<constructor><![CDATA[
 				var dl = this.download;
@@ -261,21 +267,28 @@
 					this._desc.appendChild(document.createTextNode(dl.description));
 				}
 			]]></constructor>
-			<field name="_checkbox">document.getAnonymousElementByAttribute(this, 'anonid', 'check');</field>
-			<field name="_additional">document.getAnonymousElementByAttribute(this, 'anonid', 'additional');</field>
-			<field name="_additionalLinks">document.getAnonymousElementByAttribute(this, 'anonid', 'additionallinks');</field>
-			<field name="_desc">document.getAnonymousElementByAttribute(this, 'anonid', 'desc');</field>
-			<property name="checked" onget="return this._checkbox.checked;"  onset="this._checkbox.checked = !!val; return !!val;"/>
+			<field name="_checkbox">document.getAnonymousElementByAttribute(this,
+				'anonid', 'check');</field>
+			<field name="_additional">document.getAnonymousElementByAttribute(this,
+				'anonid', 'additional');</field>
+			<field name="_additionalLinks">document.getAnonymousElementByAttribute(this,
+				'anonid', 'additionallinks');</field>
+			<field name="_desc">document.getAnonymousElementByAttribute(this,
+				'anonid', 'desc');</field>
+			<property name="checked" onget="return this._checkbox.checked;"
+				onset="this._checkbox.checked = !!val; return !!val;" />
 		</implementation>
 	</binding>
-	
+
 	<binding id="hashinput">
 		<content>
 			<xul:hbox flex="1">
-				<xul:menulist anonid="type" readonly="true" xbl:inherits="disabled,error">
-					<xul:menupopup anonid="types"/>
+				<xul:menulist anonid="type" readonly="true"
+					xbl:inherits="disabled,error">
+					<xul:menupopup anonid="types" />
 				</xul:menulist>
-				<xul:textbox anonid="hash" flex="1" xbl:inherits="readonly,disabled" type="autocomplete" />
+				<xul:textbox anonid="hash" flex="1" xbl:inherits="readonly,disabled"
+					type="autocomplete" />
 			</xul:hbox>
 		</content>
 		<implementation>
@@ -289,11 +302,14 @@
 					this._typemap[x] = e;
 				}			
 			]]></constructor>
-			<property name="_type" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'type');"/>
-			<property name="_types" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'types');"/>
-			<property name="_hash" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'hash');"/>
-			<property name="checked" onget="return this._checkbox.checked;"/>
-			<property name="inputField" onget="return this._hash.inputField;"/>
+			<property name="_type"
+				onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'type');" />
+			<property name="_types"
+				onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'types');" />
+			<property name="_hash"
+				onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'hash');" />
+			<property name="checked" onget="return this._checkbox.checked;" />
+			<property name="inputField" onget="return this._hash.inputField;" />
 			<property name="isValid">
 				<getter><![CDATA[
 					try {
@@ -325,23 +341,120 @@
 					return val;
 				]]></setter>
 			</property>
-		</implementation>			
+		</implementation>
 	</binding>
-	
-	<binding id="menu-iconic-addressable" extends="chrome://global/content/bindings/menu.xml#menu-base">
+
+	<binding id="menu-iconic-addressable"
+		extends="chrome://global/content/bindings/menu.xml#menu-base">
 		<content>
 			<xul:hbox class="menu-iconic-left" align="center" pack="center">
 				<xul:image class="menu-iconic-icon" xbl:inherits="src=image" />
 			</xul:hbox>
-			<xul:label class="menu-iconic-text" flex="1" xbl:inherits="value=label,accesskey,crop" crop="right"/>
+			<xul:label class="menu-iconic-text" flex="1"
+				xbl:inherits="value=label,accesskey,crop" crop="right" />
 			<xul:hbox class="menu-accel-container" anonid="accel">
-				<xul:label class="menu-iconic-accel" xbl:inherits="value=acceltext"/>
+				<xul:label class="menu-iconic-accel" xbl:inherits="value=acceltext" />
 			</xul:hbox>
-			<xul:hbox class="menu-right" chromedir="&locale.dir;" xbl:inherits="_moz-menuactive,disabled" align="center" pack="center">
-				<xul:image/>
+			<xul:hbox class="menu-right" chromedir="&locale.dir;"
+				xbl:inherits="_moz-menuactive,disabled" align="center" pack="center">
+				<xul:image />
 			</xul:hbox>
-			<children includes="menupopup|template"/>
+			<children includes="menupopup|template" />
 		</content>
+	</binding>
+
+	<binding id="speed-limit-list"
+		extends="chrome://global/content/bindings/menulist.xml#menulist">
+		<implementation>
+			<constructor><![CDATA[
+				this.limit = -1;
+			]]></constructor>
+			<property name="hint">
+				<getter>
+					return this._hint || 0;
+				</getter>
+				<setter>
+					if (!isFinite(val)) {
+						throw new Error("Provide a valid number");
+					}
+					if (this._hint != val) { 
+						this._hint = val;
+						this.fill();
+					}
+				</setter>
+			</property>
+			<property name="limit">
+				<getter>
+					return parseInt(this.value);
+				</getter>
+				<setter><![CDATA[
+					if (!isFinite(val)) {
+						throw new Error("Provide a valid number");
+					}
+					if (this.value != val) {
+						this.value = val;
+						this.fill();
+					}
+				]]></setter>
+			</property>
+			<method name="fill">
+				<body><![CDATA[
+					function scale(e) e >= 1000 ? Math.round(e / 50) * 50 : (e >= 400 ? Math.round(e / 5) * 5 : e);
+					let iv = this.limit;
+					// Do not use .removeAllItems() as this will discard the actual menupopup
+					if (this.menupopup) {
+						while (this.menupopup.firstChild) {
+							this.menupopup.removeChild(this.menupopup.firstChild);
+						}
+					}
+					
+					let m = Math.round((iv > 0 ? iv : this.hint / 2) / 1024);
+					m = scale(m > 50 ? m : 150);
+					let vals = [0,1,2,5,10,20,50];
+					if (m >= 1000) {
+						vals = [0,100,200,500,1000];
+					}
+					else if (m > 400) {
+						vals = [0,50,100,200,500];
+					}
+					
+					let items = [10, 50, 100, 1000]; // always include these		
+					for each (let v in vals) {
+						if (v && m - v > 1) {
+							items.unshift(m - v);
+						}
+						items.push(m + v);
+					}
+					items = items
+						.map(scale)
+						.filter(function(e) !((e in this) || (this[e] = null)), {}) // makes array unique
+						.sort(function(a, b) a - b);
+					let sep = document.createElement('menuseparator');
+					for each (let v in items.map(function(e) e * 1024)) {
+						let item = this.appendItem(Utils.formatKBytes(v, 0) + '/s', v);
+						if (v == iv) {
+							if (item.previousSibling) { 
+								this.menupopup.insertBefore(sep.cloneNode(false), item);
+							}
+							this.selectedItem = item;
+							this.menupopup.appendChild(sep.cloneNode(false));
+						}
+					}
+					this.menupopup.appendChild(sep);
+					let item = this.appendItem(_('unlimitedspeed'), -1);
+					if (iv == -1) {
+						this.selectedItem = item;
+					}
+					return true;
+				]]></body>
+			</method>
+		</implementation>
+		<handlers>
+			<handler event="command"><![CDATA[
+				this.blur();
+				this.fill();
+			]]></handler>
+		</handlers>
 	</binding>
 
 </bindings>
