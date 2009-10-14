@@ -90,7 +90,7 @@ maskbutton .toolbarbutton-text,
 	-moz-box-align: start;
 	-moz-box-flex: 0;
 }	
-#logo[chromedir="rtl"] {
+#logo[chromedir="rtl"], #logo:-moz-locale-dir(rtl) {
 	background: white url(chrome://dta/skin/common/logo-rtl.png) no-repeat left top;
 }
 #logo .dialogheader-title {
