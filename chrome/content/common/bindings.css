@@ -50,3 +50,7 @@ richlistbox.metalinker .item {
 hashinput {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#hashinput);
 }
+
+menulist.speedlimitlist {
+    -moz-binding: url(chrome://dta/content/common/bindings.xml#speed-limit-list);
+}

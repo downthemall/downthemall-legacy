@@ -235,71 +235,18 @@ var Dialog = {
 		})();
 		Components.utils.import('resource://dta/bytebucket.jsm');
 		GlobalBucket = new ByteBucket(Prefs.speedLimit, 1.2);
-		this.fillSpeedsList();
+		$('listSpeeds').limit = Prefs.speedLimit;
 	},
 	
 	customizeToolbar: function(evt) {
 		$('tools').setAttribute('mode', evt.target.getAttribute('mode'));
 	},
 	
-	fillSpeedsList: function() {
-		
-		function scale(e) e >= 1000 ? Math.round(e / 50) * 50 : (e >= 400 ? Math.round(e / 5) * 5 : e);
-		
-		let list = $('listSpeeds');
-		let iv = Prefs.speedLimit;
-		if (list.value) {
-			iv = parseInt(list.value);
-		}
-		// Do not use .removeAllItems() as this will discared the actual menupopup
-		if (list.menupopup) {
-			while (list.menupopup.firstChild) {
-				list.menupopup.removeChild(list.menupopup.firstChild);
-			}
-		}
-		
-		let m = Math.round((iv > 0 ? iv : this._maxObservedSpeed / 2) / 1024);
-		m = scale(m > 0 ? m : 120);
-		let vals = [0,1,2,5,10,20,50];
-		if (m >= 1000) {
-			vals = [0,100,200,500,1000];
-		}
-		else if (m > 400) {
-			vals = [0,50,100,200,500];
-		}
-		
-		let items = [10, 50, 100, 1000]; // always include these		
-		for each (let v in vals) {
-			if (v && m - v > 1) {
-				items.unshift(m - v);
-			}
-			items.push(m + v);
-		}
-		items = items.map(scale).filter(function(e) !((e in this) || (this[e] = null)), {}).sort(function(a, b) a - b); // filter makes array unique
-		let sep = document.createElement('menuseparator');
-		for each (let v in items.map(function(e) e * 1024)) {
-			let item = list.appendItem(Utils.formatKBytes(v, 0) + '/s', v);
-			if (v == iv) {
-				if (item.previousSibling) { 
-					list.menupopup.insertBefore(sep.cloneNode(false), item);
-				}
-				list.selectedItem = item;
-				list.menupopup.appendChild(sep.cloneNode(false));
-			}
-		}
-		list.menupopup.appendChild(sep);
-		let item = list.appendItem(_('unlimitedspeed'), -1);
-		if (iv == -1) {
-			list.selectedItem = item;
-		}
-		return true;
-	},
 	changeSpeedLimit: function() {
 		let list = $('listSpeeds');
-		let val = parseInt(list.value);
+		let val = list.limit;
 		Preferences.setExt('speedlimit', val);
 		GlobalBucket.byteRate = val;
-		list.blur();
 		this._speeds.clear();
 	},
 	
@@ -604,7 +551,7 @@ var Dialog = {
 			}
 			this._speeds.add(this._sum, now);
 			speed = Utils.formatBytes(this._speeds.avg);
-			this._maxObservedSpeed = Math.max(this._speeds.avg, this._maxObservedSpeed);
+			$('listSpeeds').hint = this._maxObservedSpeed = Math.max(this._speeds.avg, this._maxObservedSpeed);
 
 			// Refresh status bar
 			$('statusText').label = _("currentdownloads", [this.completed, Tree.rowCount, this._running.length]);
