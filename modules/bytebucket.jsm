@@ -114,6 +114,7 @@ ByteBucket.prototype = {
 			this._obs.start();
 		}
 		else if (nv == -1 && this._timer) {
+			this.observe();
 			Timers.killTimer(this._timer);
 			this._timer = null;
 			this._obs.stop();
@@ -146,15 +147,14 @@ ByteBucket.prototype = {
 		return this._obs.unregister(observer);
 	},
 	observe: function() {
-		if (this._byteRate <= 0) {
-			return;
+		if (this._byteRate > 0) {
+			this._available = Math.round(
+				Math.min(
+					this._available + (this._byteRate / 10),
+					this.byteRate * this._burstFactor
+				)
+			);
 		}
-		this._available = Math.round(
-			Math.min(
-				this._available + (this._byteRate / 10),
-				this.byteRate * this._burstFactor
-			)
-		);
 		this._obs.notify();
 	},
 	kill: function() {
