@@ -363,11 +363,12 @@
 		</content>
 	</binding>
 
-	<binding id="speed-limit-list"
-		extends="chrome://global/content/bindings/menulist.xml#menulist">
+	<binding id="speed-limit-list-popup"
+		extends="chrome://global/content/bindings/popup.xml#popup-scrollbars">
 		<implementation>
 			<constructor><![CDATA[
 				this.limit = -1;
+				this.fill();
 			]]></constructor>
 			<property name="hint">
 				<getter>
@@ -379,33 +380,55 @@
 					}
 					if (this._hint != val) { 
 						this._hint = val;
-						this.fill();
 					}
 				</setter>
 			</property>
 			<property name="limit">
 				<getter>
-					return parseInt(this.value);
+					return parseInt(this.parentNode.value) || -1;
 				</getter>
 				<setter><![CDATA[
 					if (!isFinite(val)) {
 						throw new Error("Provide a valid number");
 					}
-					if (this.value != val) {
-						this.value = val;
+					if (this.parentNode.value != val) {
+						this.parentNode.value = val;
 						this.fill();
 					}
 				]]></setter>
 			</property>
+			<property name="selectedItem">
+				<setter><![CDATA[
+					let pn = this.parentNode;
+					if (pn.localName == 'menulist') {
+						pn.selectedItem = val;
+					}
+					else {
+						val.setAttribute('checked', 'true');
+					}
+				]]></setter>
+			</property>
+			<method name="appendItem">
+				<parameter name="label"/>
+				<parameter name="value"/>
+				<parameter name="description"/>
+				<body><![CDATA[
+					let item = document.createElement('menuitem');
+        	item.setAttribute("label", label);
+          item.setAttribute("value", value);
+          if (description) {
+            item.setAttribute("description", description);
+          }
+          this.appendChild(item);
+          return item;
+				]]></body>
+			</method>
 			<method name="fill">
 				<body><![CDATA[
 					function scale(e) e >= 1000 ? Math.round(e / 50) * 50 : (e >= 400 ? Math.round(e / 5) * 5 : e);
-					let iv = this.limit;
-					// Do not use .removeAllItems() as this will discard the actual menupopup
-					if (this.menupopup) {
-						while (this.menupopup.firstChild) {
-							this.menupopup.removeChild(this.menupopup.firstChild);
-						}
+					let iv = Math.max(this.limit, -1);
+					while (this.firstChild) {
+						this.removeChild(this.firstChild);
 					}
 					
 					let m = Math.round((iv > 0 ? iv : this.hint / 2) / 1024);
@@ -434,13 +457,13 @@
 						let item = this.appendItem(Utils.formatKBytes(v, 0) + '/s', v);
 						if (v == iv) {
 							if (item.previousSibling) { 
-								this.menupopup.insertBefore(sep.cloneNode(false), item);
+								this.insertBefore(sep.cloneNode(false), item);
 							}
 							this.selectedItem = item;
-							this.menupopup.appendChild(sep.cloneNode(false));
+							this.appendChild(sep.cloneNode(false));
 						}
 					}
-					this.menupopup.appendChild(sep);
+					this.appendChild(sep);
 					let item = this.appendItem(_('unlimitedspeed'), -1);
 					if (iv == -1) {
 						this.selectedItem = item;
@@ -450,9 +473,15 @@
 			</method>
 		</implementation>
 		<handlers>
-			<handler event="command"><![CDATA[
-				this.blur();
+			<handler phase="capturing" event="popupshowing"><![CDATA[
 				this.fill();
+			]]></handler>
+			<handler phase="capturing" event="command"><![CDATA[
+				this.parentNode.blur();
+				let nv = parseInt(event.originalTarget.value);
+				if (nv != this.limit) {
+					this.limit = nv;
+				}
 			]]></handler>
 		</handlers>
 	</binding>

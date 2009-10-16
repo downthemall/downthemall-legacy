@@ -157,17 +157,8 @@ var Dialog = {
 			addEventListener('close', function() Dialog.close(), false)
 			addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA), true);
 			addEventListener('drop', function(event) nsDragAndDrop.drop(event, DTA_DropDTA), true);
-			addEventListener('blur', function() Tree.stopTip(), false);
 			
 			$('tooldonate').addEventListener('click', function() Dialog.openDonate(), false);
-			
-			let dtree = $('downloads');
-			dtree.addEventListener('dblclick', function() FileHandling.openFile(), false);
-			dtree.addEventListener('select', function() Tree.selectionChanged(), false);
-			dtree.addEventListener('click', function(evt) { if (evt.button == 1) Tree.showInfo(); }, false);
-			dtree = $('downloadList');
-			dtree.addEventListener('mousemove', function(event) Tree.hovering(event), false);
-			dtree.addEventListener('draggesture', function(event) nsDragAndDrop.startDrag(event, Tree), false);
 		})();		
 		
 		Tree.init($("downloads"));
@@ -324,8 +315,9 @@ var Dialog = {
 						'resumable',
 						'compression',
 						'fromMetalink',
-					]) {
-						d[e] = (e in down) ? down[e] : null;
+						'speedLimit',
+					].filter(function(e) e in down)) {
+						d[e] = down[e];
 					}
 					
 					// don't trigger prealloc!
@@ -548,10 +540,16 @@ var Dialog = {
 					}
 				}
 				d.speed = Utils.formatBytes(d.speeds.avg) + "/s";
+				if (d.speedLimit > 0) {
+					d.speed += " (" + Utils.formatKBytes(d.speedLimit, 0) + "/s)";
+				}
 			}
 			this._speeds.add(this._sum, now);
 			speed = Utils.formatBytes(this._speeds.avg);
-			$('listSpeeds').hint = this._maxObservedSpeed = Math.max(this._speeds.avg, this._maxObservedSpeed);
+			this._maxObservedSpeed = Math.max(this._speeds.avg, this._maxObservedSpeed);
+			for each (let e in $('listSpeeds', 'perDownloadSpeedLimitList')) {
+				e.hint = this._maxObservedSpeed;
+			}
 
 			// Refresh status bar
 			$('statusText').label = _("currentdownloads", [this.completed, Tree.rowCount, this._running.length]);
@@ -1333,16 +1331,60 @@ QueueItem.prototype = {
 		if (this._state == RUNNING) {
 			// remove ourself from inprogresslist
 			Dialog.wasStopped(this);
+			// kill the bucket
+			this.bucket = null;
 		}
 		this.speed = '';
 		this._state = nv;
+		if (this._state == RUNNING && this.speedLimit > 0) {
+			// set up the bucket
+			this._bucket = new ByteBucket(this.speedLimit, 1.1);
+		}		
 		Dialog.signal(this);
 		this.invalidate();
 		Tree.refreshTools();
 		return nv;
 	},
 	
+	_bucket: null,
+	get bucket() {
+		return this._bucket;
+	},
+	set bucket(nv) {
+		if (nv !== null) {
+			throw new Exception("Bucket is only nullable");
+		}
+		if (this._bucket) {
+			this._bucket.kill();
+			this._bucket = null;
+		}
+	},
+	
+	_speedLimit: -1,
+	get speedLimit() {
+		return this._speedLimit;
+	},
+	set speedLimit(nv) {
+		nv = Math.max(nv, -1);
+		if (this._speedLimit == nv) {
+			return;
+		}
+		this._speedLimit = nv;
+		if (this.is(RUNNING)) {
+			if (this._bucket) {
+				this._bucket.byteRate = this.speedLimit;
+			}
+			else {
+				this._bucket = new ByteBucket(this.speedLimit, 1.1);
+			}
+		}
+		this.save();
+	},
+	
 	postData: null,
+	
+	fromMetalink: false,
+	numIstance: 0,
 	
 	_fileName: null,
 	get fileName() {
@@ -2223,10 +2265,14 @@ QueueItem.prototype = {
 			'maxChunks',
 			'contentType',
 			'conflicts',
-			'fromMetalink'
+			'fromMetalink',
+			'speedLimit'
 		].forEach(
 			function(u) {
-				e[u] = this[u];
+				// only save what is changed
+				if (this.__proto__[u] !== this[u]) {
+					e[u] = this[u];
+				}
 			},
 			this
 		);
@@ -2338,6 +2384,9 @@ Chunk.prototype = {
 		seekable.seek(0x00, this.start + this.written);
 		this._outStream = new BufferedOutputStream(outStream, CHUNK_BUFFER_SIZE);
 		GlobalBucket.register(this);
+		if (this.parent.bucket) {
+			this.parent.bucket.register(this);
+		}
 	},
 	close: function CH_close() {
 		this.running = false;
@@ -2390,7 +2439,13 @@ Chunk.prototype = {
 				return -1;
 			}
 			bytes = Math.min(Math.round(this._wnd), bytes);
-			let got = GlobalBucket.requestBytes(bytes);
+			let got = bytes;
+			if (this.parent.bucket) {
+				got = this.parent.bucket.requestBytes(got);
+			}
+			if (got) {
+				got = GlobalBucket.requestBytes(got);
+			}
 			// Variation of AIMD/TCP Congestion control
 			if (got < bytes) {
 				this._wnd *= 0.5;

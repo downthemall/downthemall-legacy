@@ -90,6 +90,7 @@
 		<command id="cmdExport" oncommand="Tree.export();"/>
 		
 		<command id="cmdChangeSpeedLimit" oncommand="Dialog.changeSpeedLimit();"/>
+		<command id="cmdPerDownloadSpeedLimit" oncommand="Tree.changePerDownloadSpeedLimit();"/>
 		
 		<command id="cmdPreferences" oncommand="DTA_showPreferences();"/>
 		
@@ -155,6 +156,10 @@
 			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" key="kMoveUp" command="cmdMoveUp" />
 			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" key="kMoveDown" command="cmdMoveDown" />
 			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" key="kMoveBottom" command="cmdMoveBottom" />
+			<menuseparator />				
+			<menu class="menu-iconic" label="&perdownloadspeedlimit.label;" id="perDownloadSpeedLimit" tooltiptext="&perdownloadspeedlimit.tooltip;">
+				<menupopup id="perDownloadSpeedLimitList" class="speedlimitlist-popup" command="cmdPerDownloadSpeedLimit"/>
+			</menu>
 			<menuseparator />
 			<menu id="advanced" class="menu-iconic" label="&advanced.label;">
 				<menupopup id="popupmisc">
@@ -259,7 +264,9 @@
 		<statusbarpanel id="statusSpeed" label=""/>
 		<statusbarpanel id="statusSpeeds">
 			<label control="listSpeeds" value="&speedlimit.label;"/>
-			<menulist id="listSpeeds" command="cmdChangeSpeedLimit" class="plain speedlimitlist" tooltiptext="&speedlimit.tooltip;" sizetopopup="none"/>
+			<menulist class="plain" id="speedLimit" tooltiptext="&speedlimit.tooltip;" sizetopopup="none" command="cmdChangeSpeedLimit">
+				<menupopup id="listSpeeds" class="speedlimitlist-popup" position="before_start" />
+			</menulist>
 		</statusbarpanel>
 		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text" label="&options.label;" command="cmdPreferences"/>
 	</statusbar>

@@ -42,6 +42,21 @@ const Tree = {
 	init: function T_init(elem) {
 		this.elem = elem;
 		this._downloads = [];
+		this._speedLimitList = $('perDownloadSpeedLimitList');
+		
+		addEventListener('blur', function() Tree.stopTip(), false);
+		
+		let tp = this;
+		this.elem.addEventListener('dblclick', function() FileHandling.openFile(), false);
+		this.elem.addEventListener('select', function() tp.selectionChanged(), false);
+		this.elem.addEventListener('click', function(evt) { if (evt.button == 1) tp.showInfo(); }, false);
+		
+		let dtree = $('downloadList');
+		dtree.addEventListener('mousemove', function(event) tp.hovering(event), false);
+		dtree.addEventListener('draggesture', function(event) nsDragAndDrop.startDrag(event, tp), false);
+		
+		$('popup').addEventListener('popupshowing', function(event) tp.showSpeedLimitList(event), true);
+
 		
 		ServiceGetter(this, "_ds", "@mozilla.org/widget/dragservice;1", "nsIDragService");
 		ServiceGetter(this, "_ww", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
@@ -572,7 +587,7 @@ const Tree = {
 			modifySome($('cmdOpenFolder'), function(d) !!d.curFolder);
 			modifySome($('cmdDelete'), function(d) d.is(COMPLETE));
 			
-			modifySome($('cmdRemoveSelected', 'cmdExport', 'cmdGetInfo'), function(d) !!d.count);
+			modifySome($('cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'), function(d) !!d.count);
 			
 			modifySome($('cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'), function(d) d.isOf(QUEUED, RUNNING, PAUSED, CANCELED));
 			modifySome($('cmdMoveTop', 'cmdMoveUp'), function(d) d.min > 0); 
@@ -802,5 +817,23 @@ const Tree = {
 		catch (ex) {
 			Debug.log("Mover::down", ex);
 		}	 
+	},
+	showSpeedLimitList: function(event) {
+		if (!this.selection.count) {
+			return false;
+		}
+		let selection = this.selected;
+		let limit = selection.next().speedLimit;
+		for (let qi in selection) {
+			if (limit != qi.speedLimit) {
+				limit = -1;
+			}
+		}
+		this._speedLimitList.limit = limit;
+		return true;
+	},
+	changePerDownloadSpeedLimit: function() {
+		let limit = $('perDownloadSpeedLimitList').limit;
+		this.updateSelected(function(d) (d.speedLimit = limit) || true); 
 	}
 };

@@ -255,8 +255,8 @@ var Utils = {
 			aNumber /= 1024;
 			unit = formatBytes_units[i];
 		}
-		
-		return _(unit[0], [aNumber.toFixed(arguments.length > 1 ? decimalPlace : unit[1])]);
+		decimalPlace = decimalPlace || unit[1];
+		return _(unit[0], [aNumber.toFixed(decimalPlace)]);
 	},
 	
 	formatKBytes: function U_formatKBytes(aNumber, decimalPlace) {
