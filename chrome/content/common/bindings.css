@@ -51,6 +51,9 @@ hashinput {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#hashinput);
 }
 
-menulist.speedlimitlist {
-    -moz-binding: url(chrome://dta/content/common/bindings.xml#speed-limit-list);
+menupopup.speedlimitlist-popup {
+    -moz-binding: url(chrome://dta/content/common/bindings.xml#speed-limit-list-popup);
+}
+menu > menupopup.speedlimitlist-popup menuitem[checked] {
+	font-weight: bold;
 }

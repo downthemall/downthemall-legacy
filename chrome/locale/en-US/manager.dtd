@@ -52,5 +52,8 @@
 <!ENTITY speedlimit.label "Limit:">
 <!ENTITY speedlimit.tooltip "Change speed limit. The list is dynamicly updated.">
 
+<!ENTITY perdownloadspeedlimit.label "Speed limit">
+<!ENTITY perdownloadspeedlimit.tooltip "Change speed limit. The global speed limit will be still obeyed.">
+
 <!ENTITY toolbar.icons "Use icons">
 <!ENTITY toolbar.full "Use icons and text">
