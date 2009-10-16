@@ -46,7 +46,6 @@ const Timers = new TimerManager();
 
 function Observers() {
 	this._obs = [];
-	this._timer = Timers.createRepeating(5000, this.observe, this); 
 }
 Observers.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
@@ -63,8 +62,20 @@ Observers.prototype = {
 			o.observe.call(o);
 		}		
 	},
+	start: function() {
+		if (!this._timer) {
+			this._timer = Timers.createRepeating(5000, this.observe, this);
+		}
+	},
+	stop: function() {
+		if (this._timer) {
+			Timers.killTimer(this._timer);
+			this._timer = null;
+		}
+	},
 	kill: function() {
-		Timers.killTimer(this._timer);
+		this.stop();
+		delete this._obs;
 	},
 	observe: function() {
 		this._obs.sort(function() Math.round(Math.random() - 0.5));
@@ -78,7 +89,6 @@ function ByteBucket(byteRate, burstFactor) {
 		this.burstFactor = burstFactor;
 	}
 	this._available = byteRate;
-	this._timer = Timers.createRepeating(100, this.observe, this, false, true);
 }
 ByteBucket.prototype = {
 	_timer: null,
@@ -98,6 +108,17 @@ ByteBucket.prototype = {
 		}		
 		this._available = this._byteRate = nv;
 		this._obs.notify();
+		
+		if (nv > 0 && !this._timer) {
+			this._timer = Timers.createRepeating(100, this.observe, this, false, true);
+			this._obs.start();
+		}
+		else if (nv == -1 && this._timer) {
+			Timers.killTimer(this._timer);
+			this._timer = null;
+			this._obs.stop();
+		}
+		
 		return this._byteRate;
 	},
 	get burstFactor() {
