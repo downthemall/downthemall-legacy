@@ -225,7 +225,7 @@ var Dialog = {
 			$('tbp_' + $('tools').getAttribute('mode')).setAttribute('checked', "true");
 		})();
 		Components.utils.import('resource://dta/bytebucket.jsm');
-		GlobalBucket = new ByteBucket(Prefs.speedLimit, 1.2);
+		GlobalBucket = new ByteBucket(Prefs.speedLimit, 1.3);
 		$('listSpeeds').limit = Prefs.speedLimit;
 	},
 	
@@ -1338,7 +1338,7 @@ QueueItem.prototype = {
 		this._state = nv;
 		if (this._state == RUNNING && this.speedLimit > 0) {
 			// set up the bucket
-			this._bucket = new ByteBucket(this.speedLimit, 1.1);
+			this._bucket = new ByteBucket(this.speedLimit, 1.7);
 		}		
 		Dialog.signal(this);
 		this.invalidate();
@@ -1375,7 +1375,7 @@ QueueItem.prototype = {
 				this._bucket.byteRate = this.speedLimit;
 			}
 			else {
-				this._bucket = new ByteBucket(this.speedLimit, 1.1);
+				this._bucket = new ByteBucket(this.speedLimit, 1.7);
 			}
 		}
 		this.save();
