@@ -358,7 +358,7 @@ var Dialog = {
 
 	// dialog destruction
 	unload: function DTA_unload() {
-		closeWindow(true);
+		close(); // XXX #1267: closeWindow(true);
 		return true;
 	},
 
@@ -449,7 +449,7 @@ var Dialog = {
 		}
 
 		// if we get here some error occured - just close.
-		closeWindow(true);
+		close(); // XXX #1267: closeWindow(true);
 		return false;
 	},
 
