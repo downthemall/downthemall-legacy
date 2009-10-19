@@ -575,7 +575,7 @@ var Dialog = {
 			}
 			Debug.logString("Going down even if queue was not probably closed yet!");
 		}
-		closeWindow(true);
+		close(); // XXX #1267: closeWindow(true);
 		return true;
 	},
 	_cleanTmpDir: function D__cleanTmpDir() {
