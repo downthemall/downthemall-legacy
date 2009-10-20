@@ -34,29 +34,82 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-function include(uri) {
-	Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(
-		Components.interfaces.mozIJSSubScriptLoader).loadSubScript(uri);
-}
-include('chrome://dta/content/common/xpcom.jsm');
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const ctor = Components.Constructor;
+const module = Components.utils.import;
+const error = Components.utils.reportError; 
 
-var PrivacyControl = {
-	initialize : function() {
-		// install required observers, so that we may process on shutdown
-		const	os = Components.classes['@mozilla.org/observer-service;1']
-			.getService(Components.interfaces.nsIObserverService);
-		os.addObserver(this, 'profile-change-teardown', false);
-		os.addObserver(this, 'xpcom-shutdown', false);
+module("resource://gre/modules/XPCOMUtils.jsm");
+
+this.__defineGetter__(
+	"debug",
+	function() {
+		try {
+			let _ds = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService);
+			delete this.debug;
+			return (this.debug = function(str, ex) {
+				if (ex) {
+					_ds.log(str, ex);
+				}
+				else {
+					_ds.logString(str);
+				}
+			});
+		}
+		catch (ex) {
+			return function(str, ex) {
+				if (ex) {
+					str += ", " + ex;
+					error(str);
+				}
+			}
+		}
+	}
+);
+
+this.__defineGetter__(
+	'Preferences',
+	function() {
+		let prefs = {}
+		module('resource://dta/preferences.jsm', prefs);
+		delete this.Preferences;
+		return (this.Preferences = prefs); 
+	}
+);
+
+this.__defineGetter__(
+	'Observers',
+	function() {
+		let obs = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
+		delete this.Observers;
+		return (this.Observers = obs); 
+	}
+);
+function PrivacyControl() {};
+PrivacyControl.prototype = {
+	classDescription: "DownThemAll! Privacy Control",
+	contractID: "@downthemall.net/privacycontrol;1",
+	classID: Components.ID("db7a8d60-a4c7-11da-a746-0800200c9a66"),		
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference]),				
+	_xpcom_categories: [{category: 'app-startup', service: true}],		
+
+	init: function() {
+		Observers.addObserver(this, 'profile-change-teardown', false);
+		Observers.addObserver(this, 'xpcom-shutdown', false);
 	},
 	dispose: function() {
 		// always remove observers ;)
-		const	os = Components.classes['@mozilla.org/observer-service;1']
-			.getService(Components.interfaces.nsIObserverService);
-		os.removeObserver(this, 'profile-change-teardown');
-		os.removeObserver(this, 'xpcom-shutdown');
+		Observers.removeObserver(this, 'profile-change-teardown');
+		Observers.removeObserver(this, 'xpcom-shutdown');
 	},
 	observe: function(subject, topic, data) {
 		switch (topic) {
+		case 'app-startup':
+			this.init();
+			break;
+			
 		case 'xpcom-shutdown':
 			this.dispose();
 			break;
@@ -79,12 +132,9 @@ var PrivacyControl = {
 		debug('clean()');
 		
 		// Cleaning prefs
-		var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-			.getService(Components.interfaces.nsIPrefService).getBranch(
-				'extensions.dta.');
 		for each (let e in ['directory', 'filter', 'renaming']) {
 			try {
-				prefs.clearUserPref(e);
+				resetExt.resetExt(e);
 			}
 			catch (ex) {
 				debug("Cannot clear pref: " + e, ex);
@@ -93,9 +143,8 @@ var PrivacyControl = {
 		
 		// Cleaning files
 		try {
-			var prof = Components.classes["@mozilla.org/file/directory_service;1"]
-				.getService(Components.interfaces.nsIProperties).get("ProfD",
-					Components.interfaces.nsIFile);
+			let prof = Cc["@mozilla.org/file/directory_service;1"]
+				.getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
 			for each (let e in ['dta_history.xml', 'dta_log.txt', 'dta_queue.sqlite']) {
 				try {
 					var file = prof.clone();
@@ -105,7 +154,7 @@ var PrivacyControl = {
 					}
 				}
 				catch (ex) {
-					debug('cannot remove: ' + e, ex);
+					debug('Cannot remove: ' + e, ex);
 				}
 			}
 		}
@@ -116,37 +165,24 @@ var PrivacyControl = {
 
 	sanitize : function() {
 		debug("sanitize()");
-		const prefs = Components.classes["@mozilla.org/preferences-service;1"]
-			.getService(Components.interfaces.nsIPrefService).getBranch('privacy.');
+		let branch = Preferences.getBranch('privacy.');
 
 		// in case UI should be used the cleaning will be processed there.
 		// Furthermore we have to ensure user wants us to sanitize.
-		if (!prefs.getBoolPref('sanitize.promptOnSanitize')
-			&& prefs.getBoolPref('item.extensions-dta')){
-				this.clean(prefs);
-			}
-
+		if (!branch.getBoolPref('sanitize.promptOnSanitize')
+			&& branch.getBoolPref('item.extensions-dta')){
+			this.clean(prefs);
+		}
 	},
 
 	onShutdown : function() {
-		const prefs = Components.classes["@mozilla.org/preferences-service;1"]
-			.getService(Components.interfaces.nsIPrefService).getBranch('privacy.');
+		let branch = Preferences.getBranch('privacy.');
 
 		// has user pref'ed to sanitize on shutdown?
-		if (prefs.getBoolPref('sanitize.sanitizeOnShutdown')){
+		if (branch.getBoolPref('sanitize.sanitizeOnShutdown')){
 			this.sanitize();
 		}
 	}
 };
-implementComponent(
-	PrivacyControl,
-	Components.ID("{db7a8d60-a4c7-11da-a746-0800200c9a66}"),
-	"@downthemall.net/privacycontrol;1",
-	"DownThemAll! Privacy Control",
-	[Ci.nsIObserver]
-);
-PrivacyControl.initialize();
 
-function NSGetModule(mgr, spec) {
-	return new ServiceModule(PrivacyControl, true);
-}
+function NSGetModule(mgr, spec) XPCOMUtils.generateModule([PrivacyControl]);

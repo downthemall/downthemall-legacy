@@ -34,12 +34,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-function include(uri) {
-	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(Components.interfaces.mozIJSSubScriptLoader)
-		.loadSubScript(uri);
-}
-include('chrome://dta/content/common/xpcom.jsm');
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const ctor = Components.Constructor;
+const module = Components.utils.import;
+const error = Components.utils.reportError; 
+
+module("resource://gre/modules/XPCOMUtils.jsm");
 
 const Exception = Components.Exception;
 const BASE = 'extensions.dta.filters.';
@@ -54,15 +56,46 @@ const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
 const TOPIC_FILTERSCHANGED = 'DTA:filterschanged';
 
 const nsITimer = Ci.nsITimer;
-const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'init');
+const Timer = ctor('@mozilla.org/timer;1', 'nsITimer', 'init');
  
 let Preferences = {};
+
+this.__defineGetter__(
+	"debug",
+	function() {
+		try {
+			let _ds = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService);
+			delete this.debug;
+			return (this.debug = function(str, ex) {
+				if (ex) {
+					_ds.log(str, ex);
+				}
+				else {
+					_ds.logString(str);
+				}
+			});
+		}
+		catch (ex) {
+			return function(str, ex) {
+				if (ex) {
+					str += ", " + ex;
+					error(str);
+				}
+			}
+		}
+	}
+);
 
 // no not create DTA_Filter yourself, managed by FilterManager
 function Filter(name) {
 	this._id = name;
 }
 Filter.prototype = {
+	classDescription: "DownThemAll! Filter",
+	contractID: "@downthemall.net/filter;1",
+	classID: Components.ID("1CF86DC0-33A7-43b3-BDDE-7ADC3B35D114"),		
+	QueryInterface: XPCOMUtils.generateQI([Ci.dtaIFilter]),		
+	
 	// exported
 	get id() {
 		return this._id.slice(BASE.length);
@@ -246,28 +279,14 @@ Filter.prototype = {
 		return this.toString() + ": " + this._regs.toSource();
 	}
 };
-implementComponent(
-	Filter.prototype,
-	Components.ID("{1CF86DC0-33A7-43b3-BDDE-7ADC3B35D114}"),
-	"@downthemall.net/filter;2",
-	"DownThemAll! Filter",
-	[Ci.dtaIFilter]
-);
 
 function FilterEnumerator(filters) {
 	this._filters = filters;
 	this._idx = 0;
 }
 FilterEnumerator.prototype = {
-	QueryInterface: function FE_QI(iid) {
-		if (
-			iid.equals(Ci.nsISupports)
-			|| iid.equals(Ci.nsISimpleEnumerator)
-		) {
-			return this;
-		}
-		throw NS_ERROR_NO_INTERFACE;
-	},
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsISimpleEnumerator]),
+
 	hasMoreElements: function FE_hasMoreElements() {
 		return this._idx < this._filters.length;
 	},
@@ -280,16 +299,24 @@ FilterEnumerator.prototype = {
 };
 
 // XXX: reload() should be called delayed when we observe changes (as many changes might come in)
-var FilterManager = {
-	_done: true,
-	_mustReload: true,
-	
-	_timer: null,
-	_obs: null,
+function FilterManager() {};
+FilterManager.prototype = {
+	classDescription: "DownThemAll! Filtermanager",
+	contractID: "@downthemall.net/filtermanager;2",
+	classID: Components.ID("435FC5E5-D4F0-47a1-BDC1-F325B78188F3"),		
+	QueryInterface: XPCOMUtils.generateQI([Ci.dtaIFilterManager, Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference]),				
+	_xpcom_categories: [{category: 'app-startup', service: true}],
 
+	QueryReferent: function(iid) this.QueryInterface(iid),
+	GetWeakReference: function() this,
+	
+	get _os() {
+		return Cc['@mozilla.org/observer-service;1']
+			.getService(Ci.nsIObserverService);
+	},	
+	
 	init: function FM_init() {
-		debug("Init called!");
-		Components.utils.import('resource://dta/preferences.jsm', Preferences);
+		module('resource://dta/preferences.jsm', Preferences);
 
 		// load those localized labels for default filters.
 		this._localizedLabels = {};
@@ -298,19 +325,19 @@ var FilterManager = {
 			.createBundle("chrome://dta/locale/filters.properties");
 		let e = b.getSimpleEnumeration();
 		while (e.hasMoreElements()) {
-			var prop = e.getNext().QueryInterface(Ci.nsIPropertyElement);
+			let prop = e.getNext().QueryInterface(Ci.nsIPropertyElement);
 			this._localizedLabels[prop.key] = prop.value;
 		}
 		
-		// init the observer service
-		this._obs = Cc["@mozilla.org/observer-service;1"]
-			.getService(Ci.nsIObserverService);
-
 		// register (the observer) and initialize our timer, so that we'll get a reload event.
 		this.reload();
 		this.register();
-		this.init = new Function();
 	},
+		
+	_done: true,
+	_mustReload: true,
+	
+	_timer: null,
 
 	_delayedReload: function FM_delayedReload() {
 		if (this._mustReload) {
@@ -382,7 +409,7 @@ var FilterManager = {
 		this._active = this._all.filter(function(f) { return f.active; });
 		
 		// notify all observers
-		this._obs.notifyObservers(this, TOPIC_FILTERSCHANGED, null);
+		this._os.notifyObservers(this, TOPIC_FILTERSCHANGED, null);
 	},
 
 	enumAll: function FM_enumAll() {
@@ -467,7 +494,14 @@ var FilterManager = {
 
 	// nsIObserver
 	observe: function FM_observe(subject, topic, prefName) {
-		if (topic == 'timer-callback') {
+		if (topic == 'app-startup') {
+			this._os.addObserver(this, 'final-ui-startup', true);
+		}
+		else if (topic = "final-ui-startup") {
+			this._os.removeObserver(this, 'final-ui-startup');
+			this.init();
+		}
+		else if (topic == 'timer-callback') {
 			this.reload();
 		}
 		else {
@@ -488,15 +522,6 @@ var FilterManager = {
 		return true;
 	}
 };
-implementComponent(
-	FilterManager,
-	Components.ID("{435FC5E5-D4F0-47a1-BDC1-F325B78188F3}"),
-	"@downthemall.net/filtermanager;2",
-	"DownThemAll! Filtermanager",
-	[Ci.nsIObserver, Ci.dtaIFilterManager]
-);
 
 // entrypoint
-function NSGetModule(compMgr, fileSpec) {
-	return new ServiceModule(FilterManager, false);
-}
+function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([FilterManager]);

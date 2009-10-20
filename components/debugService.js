@@ -33,42 +33,65 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
-function include(uri) {
-	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(Components.interfaces.mozIJSSubScriptLoader)
-		.loadSubScript(uri);
+
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const ctor = Components.Constructor;
+const module = Components.utils.import;
+const error = Components.utils.reportError; 
+
+module("resource://gre/modules/XPCOMUtils.jsm");
+
+const FileStream = new ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
+const ScriptError = new ctor('@mozilla.org/scripterror;1', 'nsIScriptError', 'init');
+
+function DebugService() {
+	this._pb.addObserver('extensions.dta.logging', this, true);
+	this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));
+	
+	try {
+		if (this._file.fileSize > (200 * 1024)) {
+			this.remove();
+		}
+	}
+	catch(ex) {
+		// No-Op
+	}
 }
-include('chrome://dta/content/common/xpcom.jsm');
-
-const FileStream = new Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const ScriptError = new Components.Constructor('@mozilla.org/scripterror;1', 'nsIScriptError', 'init');
-
-var DebugService = {
+DebugService.prototype = {
+	classDescription: "DownThemAll! Debug and Logging Service",
+	contractID: "@downthemall.net/debug-service;1",
+	classID: Components.ID("0B82FEBB-59A1-41d7-B31D-D5A686E11A69"),
+	
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference, Ci.dtaIDebugService]),
+	
+	QueryReferent: function(iid) this.QueryInterface(iid),
+	GetWeakReference: function() this,
+	
 	// nsIObserver
 	observe: function DS_observe(subject, topic, prefName) {
 		this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));	
 	},
 	
-	init: function DS_init() {
-		this._cs = Cc['@mozilla.org/consoleservice;1'].getService(Ci.nsIConsoleService);
-		this._pb = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2);
-		this._pb.addObserver('extensions.dta.logging', this, true);
-		this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));
-		
-		this._file = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("ProfD", Ci.nsILocalFile);
-		this._file.append('dta_log.txt');
-		
-		try {
-			if (this._file.fileSize > (200 * 1024)) {
-				this.remove();
-			}
-		}
-		catch(ex) {
-			// No-Op
-		}
-		delete this.init;
+	get _cs() {
+		delete DebugService.prototype._cs;
+		return (DebugService.prototype._cs = Cc['@mozilla.org/consoleservice;1'].getService(Ci.nsIConsoleService));
 	},
+	get _pb() {
+		delete DebugService.prototype._pb;
+		return (DebugService.prototype._pb = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2));
+	},
+	
+	get _file() {
+		let file = Cc["@mozilla.org/file/directory_service;1"]
+			.getService(Ci.nsIProperties)
+			.get("ProfD", Ci.nsILocalFile);
+		 file.append('dta_log.txt');
+		 delete DebugService.prototype._file;
+		 return (DebugService.prototype._file = file);
+	},
+	
 	get file() {
 		return this._file;
 	},
@@ -213,15 +236,6 @@ var DebugService = {
 		}
 	}
 };
-implementComponent(
-	DebugService,
-	Components.ID("{0B82FEBB-59A1-41d7-B31D-D5A686E11A69}"),
-	"@downthemall.net/debug-service;1",
-	"DownThemAll! Debug Service",
-	[Ci.nsIObserver, Ci.dtaIDebugService]
-);
 
 // entrypoint
-function NSGetModule(compMgr, fileSpec) {
-	return new ServiceModule(DebugService, false);
-}
+function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([DebugService]);
