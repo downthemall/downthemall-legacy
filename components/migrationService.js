@@ -37,15 +37,25 @@
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const module = Components.utils.import;
 const error = Components.utils.reportError;
 
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+module("resource://gre/modules/XPCOMUtils.jsm");
 
-var Preferences = {};
+this.__defineGetter__(
+	'Preferences',
+	function() {
+		let prefs = {}
+		module('resource://dta/preferences.jsm', prefs);
+		delete this.Preferences;
+		return (this.Preferences = prefs); 
+	}
+);
+
 
 function log(str, ex) {
 	try {
-		var _debugServ = Components.classes['@downthemall.net/debug-service;1']
+		let _debugServ = Components.classes['@downthemall.net/debug-service;1']
 			.getService(Components.interfaces.dtaIDebugService);
 		log = function(str, ex) {
 			if (ex) {
@@ -63,15 +73,12 @@ function log(str, ex) {
 }
 
 
-function MigrationService() {
-	Components.utils.import('resource://dta/preferences.jsm', Preferences);
-}
-
+function MigrationService() {}
 MigrationService.prototype = {
 	classDescription: "DownThemAll! Migration Service",
 	contractID: "@downthemall.net/migration-service;1",
 	classID: Components.ID("F66539C8-2590-4e69-B189-F9F8595A7670"),
-	_xpcom_categories: [{category: 'app-startup'}],
+	_xpcom_categories: [{category: 'app-startup', service: true}],
 	
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference, Ci.nsIWindowMediatorListener]),
 	
@@ -87,7 +94,7 @@ MigrationService.prototype = {
 
 	_migrate: function MM_migrate() {
 		let DTA = {};
-		Components.utils.import('resource://dta/version.jsm', DTA);		
+		module('resource://dta/version.jsm', DTA);		
 		
 		try {
 			log("current " + DTA.VERSION);
@@ -103,7 +110,7 @@ MigrationService.prototype = {
 			
 			Preferences.setExt('version', DTA.BASE_VERSION);
 
-			Components.utils.import('resource://dta/mediator.jsm', this._mediator);
+			module('resource://dta/mediator.jsm', this._mediator);
 			this._mediator.addListener(this);
 		}
 		catch(ex) {
