@@ -37,6 +37,7 @@
 const EXPORTED_SYMBOLS = [
 	'get',
 	'getExt',
+	'getBranch',
 	'set',
 	'setExt',
 	'hasUserValue',
@@ -92,9 +93,13 @@ function get(key, defaultValue){
 	
 	return defaultValue;
 }
-	
+
 function getExt(key, defaultValue) {
 		return get(EXT + key, defaultValue);
+}
+
+function getBranch(branch) {
+	return prefs.getBranch(branch);
 }
 
 function set(key, value){
