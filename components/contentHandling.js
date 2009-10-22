@@ -211,7 +211,10 @@ ContentHandling.prototype = {
 					// no op
 				}
 			}
-			if (channel.URI.spec.match(/\.(flv|ogg|ogm|ogv|avi|divx|mp4)\b/i) || ct.match(/\b(flv|ogg|ogm|avi|divx|mp4)\b/i)) {
+			if (
+					(/\.(flv|ogg|ogm|ogv|avi|divx|mp4)\b/i.test(channel.URI.spec) && !/\.swf\b/i.test(channel.URI.spec)) 
+					|| ct.match(/\b(flv|ogg|ogm|avi|divx|mp4)\b/i)
+			) {
 				let wp = null;
 				if (channel.loadGroup && channel.loadGroup.groupObserver) {
 					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);					
@@ -300,14 +303,13 @@ ContentHandling.prototype = {
 			uri = uri.spec;
 		}
 		let rv = [];
-		debug(uri);
-		debug(this._vidDict.toSource());
 		if (!(uri in this._vidDict)) {
 			return rv;
 		}
 		let vids = this._vidDict[uri];
-		for (let v in vids) {
-			rv.push(vids[v]);
+		for each (let v in vids) {
+			debug(v.spec);
+			rv.push(v.clone());
 		}
 		return rv;
 	}
