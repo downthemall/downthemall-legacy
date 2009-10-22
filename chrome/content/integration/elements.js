@@ -200,9 +200,9 @@ var DTA_ContextOverlay = {
 					let ref = DTA.getRef(aWin.document);
 					for each (let s in sniffed) {
 						let o = {
-							'url': new DTA.URL(sniffed),
+							'url': new DTA.URL(s),
 							'referrer': ref,
-							'description': 'Sniffed embedded video'
+							'description': this.getString('sniffedvideo')
 						}
 						aURLs.push(o);
 						aImages.push(o);
