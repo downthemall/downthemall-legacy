@@ -426,13 +426,14 @@
 			<method name="fill">
 				<body><![CDATA[
 					function scale(e) e >= 1000 ? Math.round(e / 50) * 50 : (e >= 400 ? Math.round(e / 5) * 5 : e);
-					let iv = Math.max(this.limit, -1);
+
 					while (this.firstChild) {
 						this.removeChild(this.firstChild);
 					}
 					
+					let iv = Math.max(this.limit, -1);
 					let m = Math.round((iv > 0 ? iv : this.hint / 2) / 1024);
-					m = scale(m > 50 ? m : 150);
+					m = scale(iv > 1 ? m : 150);
 					let vals = [0,1,2,5,10,20,50];
 					if (m >= 1000) {
 						vals = [0,100,200,500,1000];
@@ -441,10 +442,10 @@
 						vals = [0,50,100,200,500];
 					}
 					
-					let items = [10, 50, 100, 1000]; // always include these		
+					let items = [10, 50, 100, 250, 1000]; // always include these
 					for each (let v in vals) {
 						if (v && m - v > 1) {
-							items.unshift(m - v);
+							items.push(m - v);
 						}
 						items.push(m + v);
 					}
