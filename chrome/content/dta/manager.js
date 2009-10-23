@@ -1331,12 +1331,12 @@ QueueItem.prototype = {
 		if (this._state == RUNNING) {
 			// remove ourself from inprogresslist
 			Dialog.wasStopped(this);
-			// kill the bucket
+			// kill the bucket via it's setter
 			this.bucket = null;
 		}
 		this.speed = '';
 		this._state = nv;
-		if (this._state == RUNNING && this.speedLimit > 0) {
+		if (this._state == RUNNING) {
 			// set up the bucket
 			this._bucket = new ByteBucket(this.speedLimit, 1.7);
 		}		
@@ -1371,12 +1371,7 @@ QueueItem.prototype = {
 		}
 		this._speedLimit = nv;
 		if (this.is(RUNNING)) {
-			if (this._bucket) {
-				this._bucket.byteRate = this.speedLimit;
-			}
-			else {
-				this._bucket = new ByteBucket(this.speedLimit, 1.7);
-			}
+			this._bucket.byteRate = this.speedLimit;
 		}
 		this.save();
 	},
@@ -2383,10 +2378,9 @@ Chunk.prototype = {
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 		seekable.seek(0x00, this.start + this.written);
 		this._outStream = new BufferedOutputStream(outStream, CHUNK_BUFFER_SIZE);
-		GlobalBucket.register(this);
-		if (this.parent.bucket) {
-			this.parent.bucket.register(this);
-		}
+		
+		this.buckets = new ByteBucketTee(this.parent.bucket, GlobalBucket);
+		this.buckets.register(this);
 	},
 	close: function CH_close() {
 		this.running = false;
@@ -2399,7 +2393,7 @@ Chunk.prototype = {
 		if (this.parent.is(CANCELED)) {
 			this.parent.removeTmpFile();
 		}
-		GlobalBucket.unregister(this);
+		this.buckets.unregister(this);
 		delete this._req;
 		this._sessionBytes = 0;
 	},
@@ -2439,16 +2433,9 @@ Chunk.prototype = {
 				return -1;
 			}
 			bytes = Math.min(Math.round(this._wnd), bytes);
-			let got = bytes;
-			if (this.parent.bucket) {
-				got = this.parent.bucket.requestBytes(got);
-			}
-			if (got) {
-				got = GlobalBucket.requestBytes(got);
-			}
-			// Variation of AIMD/TCP Congestion control
+			let got = this.buckets.requestBytes(bytes);
 			if (got < bytes) {
-				this._wnd *= 0.5;
+				this._wnd = Math.max(this._wnd * 0.5, 512);
 				this._req = aRequest;
 				this._req.suspend();
 			}
