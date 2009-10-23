@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['ByteBucket'];
+const EXPORTED_SYMBOLS = ['ByteBucket', 'ByteBucketTee'];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -161,4 +161,34 @@ ByteBucket.prototype = {
 		Timers.killTimer(this._timer);
 		this._obs.kill();
 	}
+};
+
+function ByteBucketTee() {
+	this._buckets = Array.filter(arguments, function(e) e instanceof ByteBucket);
+	if (!this._buckets.length) {
+		throw new Error("No buckets supplied");
+	}
+}
+ByteBucketTee.prototype = {
+		get byteRate() {
+			return this._buckets
+				.map(function(e) e.byteRange)
+				.reduce(function(p, c) Math.min(p,c)); 
+		},
+		get burstFactor() {
+			return this._buckets
+				.map(function(e) e.burstFactor)
+				.reduce(function(p, c) Math.min(p,c));
+		},
+		requestBytes: function(bytes) {
+			return this._buckets
+				.map(function(e) e.requestBytes(bytes))
+				.reduce(function(p, c) Math.min(p,c));
+		},
+		register: function(observer) {
+			this._buckets.forEach(function(e) e.register(observer));
+		},
+		unregister: function(observer) {
+			this._buckets.forEach(function(e) e.unregister(observer));
+		}
 };
