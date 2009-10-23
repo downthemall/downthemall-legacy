@@ -2471,8 +2471,9 @@ Chunk.prototype = {
 		if (!this._req) {
 			return;
 		}
-		this._req.resume();
+		let req = this._req;
 		delete this._req;
+		req.resume();
 	},
 	toString: function() {
 		let len = this.parent.totalSize ? String(this.parent.totalSize).length  : 10; 
