@@ -181,9 +181,13 @@ ByteBucketTee.prototype = {
 				.reduce(function(p, c) Math.min(p,c));
 		},
 		requestBytes: function(bytes) {
-			return this._buckets
-				.map(function(e) e.requestBytes(bytes))
-				.reduce(function(p, c) Math.min(p,c));
+			for each (let bucket in this._buckets) {
+				bytes = bucket.requestBytes(bytes);
+				if (!bytes) {
+					break;
+				}
+			}
+			return bytes;
 		},
 		register: function(observer) {
 			this._buckets.forEach(function(e) e.register(observer));
