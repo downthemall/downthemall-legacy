@@ -6,7 +6,7 @@
 <!ENTITY options.label "Préférences…">
 <!ENTITY url.value "URL :">
 <!ENTITY dest.caption "Enregistrer les fichiers dans :">
-<!ENTITY referrer.value "URL d&apos;origine :">
+<!ENTITY referrer.value "URL d'origine :">
 <!ENTITY description.value "Description :">
 <!ENTITY checksum.value "Checksum (Hash) :">
 <!ENTITY browse.tip "Rechercher le dossier cible…">

@@ -1,4 +1,4 @@
-<!ENTITY tooladd.label "Ajout d&apos;URL">
+<!ENTITY tooladd.label "Ajout d'URL">
 <!ENTITY tooladd.tooltip "Ajouter manuellement une URL à DownThemAll">
 <!ENTITY tooldonate.tooltiptext "Vous pouvez nous aider à améliorer DownThemAll en faisant un petit don !">
 <!ENTITY movetop.label "Haut">
@@ -19,7 +19,7 @@
 <!ENTITY remainingTitle.value "Restant :">
 <!ENTITY currentSpeedTitle.value "Vitesse actuelle :">
 <!ENTITY avgSpeedTitle.value "Vitesse moyenne :">
-<!ENTITY path.label "Chemin d&apos;enregistrement">
+<!ENTITY path.label "Chemin d'enregistrement">
 <!ENTITY mask.label "Masque de renommage">
 <!ENTITY hash.label "Checksum">
 <!ENTITY infos.label "Infos téléchargement">

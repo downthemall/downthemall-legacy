@@ -3,7 +3,7 @@
 <!ENTITY mask.ext "Estensione">
 <!ENTITY mask.url "URL base">
 <!ENTITY mask.curl "URL completa">
-<!ENTITY mask.flatcurl "Stringa dell&apos;intero URL">
+<!ENTITY mask.flatcurl "Stringa dell'intero URL">
 <!ENTITY mask.num "Numero progressivo">
 <!ENTITY mask.hh "Ore">
 <!ENTITY mask.mm "Minuti">
@@ -11,8 +11,8 @@
 <!ENTITY mask.d "Giorno">
 <!ENTITY mask.m "Mese">
 <!ENTITY mask.y "Anno">
-<!ENTITY mask.subdirs "Sottocartelle dell&apos;URL">
-<!ENTITY mask.flatsubdirs "Stringa delle sottocartelle dell&apos;URL">
+<!ENTITY mask.subdirs "Sottocartelle dell'URL">
+<!ENTITY mask.flatsubdirs "Stringa delle sottocartelle dell'URL">
 <!ENTITY mask.text "Descrizione del link">
 <!ENTITY mask.flattext "Stringa della descrizione del link">
 <!ENTITY mask.refer "Referrer URL">

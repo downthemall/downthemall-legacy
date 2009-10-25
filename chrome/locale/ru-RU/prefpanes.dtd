@@ -81,7 +81,7 @@
 <!ENTITY uipane.appearance.caption "Отображение">
 <!ENTITY uipane.namesonly.label "Показывать только имена файлов в окне Менеджера">
 <!ENTITY uipane.integration.caption "Интеграция">
-<!ENTITY uipane.downloadwin.label "Добавить DownThemAll! в окно &apos;&apos;Сохранить файл&apos;&apos;">
+<!ENTITY uipane.downloadwin.label "Добавить DownThemAll! в окно ''Сохранить файл''">
 <!ENTITY uipane.context.caption "Контекстное меню">
 <!ENTITY uipane.tools.caption "Меню Инструменты">
 <!ENTITY uipane.tbbuttons.caption "Кнопки панели инструментов">

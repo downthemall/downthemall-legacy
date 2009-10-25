@@ -81,7 +81,7 @@
 <!ENTITY uipane.appearance.caption "Ulkonäkö">
 <!ENTITY uipane.namesonly.label "Näytä hallintaikkunassa vain tiedostonimet">
 <!ENTITY uipane.integration.caption "Sulauttaminen">
-<!ENTITY uipane.downloadwin.label "Lisää DownThemAll! &apos;Tallenna tiedosto&apos;-ikkunaan">
+<!ENTITY uipane.downloadwin.label "Lisää DownThemAll! 'Tallenna tiedosto'-ikkunaan">
 <!ENTITY uipane.context.caption "Ponnahdusvalikko">
 <!ENTITY uipane.tools.caption "Työkalut-valikko">
 <!ENTITY uipane.tbbuttons.caption "Työkalurivin painikkeet">

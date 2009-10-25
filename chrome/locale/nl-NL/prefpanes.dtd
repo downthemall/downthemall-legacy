@@ -45,12 +45,12 @@
 <!ENTITY privacypane.updates.caption "Updates/Internet">
 <!ENTITY privacypane.information.label "DownThemAll! toestaan het laatste nieuws en meldingen te downloaden en op nieuwe versies te controleren">
 <!ENTITY privacypane.statistics.label "DownThemAll! toestaan anonieme gebruiksstatistieken te verzamelen en te verzenden.">
-<!ENTITY privacypane.dropdowns.caption "Uitklapmenu&apos;s">
+<!ENTITY privacypane.dropdowns.caption "Uitklapmenu's">
 <!ENTITY privacypane.dropdownresults.label "Aantal te behouden ingevoerde items">
 <!ENTITY privacypane.logs.caption "Diagnose log">
 <!ENTITY privacypane.enablelogs.label "Diagnose log inschakelen">
 <!ENTITY privacypane.notice.caption "Opmerking">
-<!ENTITY privacypane.notice.desc "DownThemAll! integreert ook met de ingebouwde functie &apos;Privégegevens opruimen&apos; (indien beschikbaar)">
+<!ENTITY privacypane.notice.desc "DownThemAll! integreert ook met de ingebouwde functie 'Privégegevens opruimen' (indien beschikbaar)">
 <!ENTITY privacypane.privacynotice.label "Privacy opmerkingen">
 <!ENTITY advancedpane.label "Geavanceerd">
 <!ENTITY advancedpane.multipart.caption "Download in meerdere delen">

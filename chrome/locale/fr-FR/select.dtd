@@ -13,6 +13,6 @@
 <!ENTITY tab.pics.label "Images et objets incorporés">
 <!ENTITY header.desc.label "Description">
 <!ENTITY selectfiltered.label "Sélectionner les éléments filtrés">
-<!ENTITY disableother.label "Désactiver d&apos;autres filtres">
-<!ENTITY disableother.tooltip "Désactiver d&apos;autres filtres et n&apos;utiliser que le filtrage rapide (ce paramètre n&apos;est pas mémorisé pour le moment).">
+<!ENTITY disableother.label "Désactiver d'autres filtres">
+<!ENTITY disableother.tooltip "Désactiver d'autres filtres et n'utiliser que le filtrage rapide (ce paramètre n'est pas mémorisé pour le moment).">
 <!ENTITY resname.value "Nom de la ressource">

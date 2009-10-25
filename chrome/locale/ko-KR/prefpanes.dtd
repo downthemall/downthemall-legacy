@@ -81,7 +81,7 @@
 <!ENTITY uipane.appearance.caption "모양">
 <!ENTITY uipane.namesonly.label "관리자 창에 파일명만 보이기">
 <!ENTITY uipane.integration.caption "통합">
-<!ENTITY uipane.downloadwin.label "DownThemAll!을 &apos;파일 저장&apos; 창에 추가">
+<!ENTITY uipane.downloadwin.label "DownThemAll!을 '파일 저장' 창에 추가">
 <!ENTITY uipane.context.caption "컨텍스트 메뉴">
 <!ENTITY uipane.tools.caption "도구 메뉴">
 <!ENTITY uipane.tbbuttons.caption "도구 모음 버튼">

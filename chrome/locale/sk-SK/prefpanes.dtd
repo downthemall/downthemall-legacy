@@ -81,7 +81,7 @@
 <!ENTITY uipane.appearance.caption "Vzhľad">
 <!ENTITY uipane.namesonly.label "Zobraziť v okne Správcu len názvy súborov">
 <!ENTITY uipane.integration.caption "Integrácia">
-<!ENTITY uipane.downloadwin.label "Pridať položku DownThemAll! do okna &apos;Uložiť súbor&apos;">
+<!ENTITY uipane.downloadwin.label "Pridať položku DownThemAll! do okna 'Uložiť súbor'">
 <!ENTITY uipane.context.caption "Kontextová ponuka">
 <!ENTITY uipane.tools.caption "Ponuka Nástroje">
 <!ENTITY uipane.tbbuttons.caption "Tlačidlá panela s nástrojmi">

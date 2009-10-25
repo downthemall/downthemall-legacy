@@ -11,8 +11,8 @@
 <!ENTITY mask.d "Jour">
 <!ENTITY mask.m "Mois">
 <!ENTITY mask.y "Année">
-<!ENTITY mask.subdirs "Sous-dossier de l&apos;URL">
-<!ENTITY mask.flatsubdirs "Sous-dossier de l&apos;URL plate">
+<!ENTITY mask.subdirs "Sous-dossier de l'URL">
+<!ENTITY mask.flatsubdirs "Sous-dossier de l'URL plate">
 <!ENTITY mask.text "Description du lien">
 <!ENTITY mask.flattext "Description du lien plat">
 <!ENTITY mask.refer "URL de provenance">
