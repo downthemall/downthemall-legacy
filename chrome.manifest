@@ -66,7 +66,6 @@ overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overl
 ## Seamonkey ##
 overlay	chrome://navigator/content/navigator.xul chrome://dta/content/integration/seamonkey.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
 overlay	chrome://dta/content/integration/seamonkey.xul chrome://dta/content/integration/elements.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
-overlay chrome://dta/content/preferences/interfacePane.xul chrome://dta/content/preferences/toolbarButtons.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
 style	chrome://navigator/content/navigator.xul chrome://dta/skin/integration/style.css application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
 
 ## Thunderbird ##
