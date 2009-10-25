@@ -64,7 +64,7 @@
 <!ENTITY advancedpane.hour "ora">
 <!ENTITY advancedpane.hours "ore">
 <!ENTITY advancedpane.misc.caption "Impostazioni varie">
-<!ENTITY advancedpane.settime.label "Imposta l&apos;ora dei file a quella dell&apos;ultima modifica (server) o a quella di accodamento.">
+<!ENTITY advancedpane.settime.label "Imposta l'ora dei file a quella dell'ultima modifica (server) o a quella di accodamento.">
 <!ENTITY advancedpane.rememberoneclick.label "Fai ricordare a dTa OneClick se deve agire su tutte le schede o solo su quella in uso">
 <!ENTITY advancedpane.tempfiles.caption "File temporanei">
 <!ENTITY advancedpane.usetemp.label "Salva i segmenti in una cartella temporanea">

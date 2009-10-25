@@ -81,7 +81,7 @@
 <!ENTITY uipane.appearance.caption "Videz">
 <!ENTITY uipane.namesonly.label "V oknu upravitelja pokaži le imena datotek">
 <!ENTITY uipane.integration.caption "Vključitev">
-<!ENTITY uipane.downloadwin.label "Dodaj PrenesiVse! v okno &apos;Shrani datoteko&apos;">
+<!ENTITY uipane.downloadwin.label "Dodaj PrenesiVse! v okno 'Shrani datoteko'">
 <!ENTITY uipane.context.caption "Pojavni meni">
 <!ENTITY uipane.tools.caption "Meni Orodja">
 <!ENTITY uipane.tbbuttons.caption "Gumbi orodne vrstice">

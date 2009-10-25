@@ -81,7 +81,7 @@
 <!ENTITY uipane.appearance.caption "Aparência">
 <!ENTITY uipane.namesonly.label "Mostrar somente os nomes de arquivos na janela do Gerenciador">
 <!ENTITY uipane.integration.caption "Integração">
-<!ENTITY uipane.downloadwin.label "Adicionar o DownThemAll! para a janela &apos;Salvar Arquivo&apos;">
+<!ENTITY uipane.downloadwin.label "Adicionar o DownThemAll! para a janela 'Salvar Arquivo'">
 <!ENTITY uipane.context.caption "Menu de contexto">
 <!ENTITY uipane.tools.caption "Menu de Ferramentas">
 <!ENTITY uipane.tbbuttons.caption "Botões da Barra de Ferramentas">

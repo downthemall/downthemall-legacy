@@ -7,7 +7,7 @@
 <!ENTITY url.value "URL:">
 <!ENTITY dest.caption "Shrani datoteke v:">
 <!ENTITY referrer.value "URL sklicatelja:">
-<!ENTITY description.value "Description:">
+<!ENTITY description.value "Opis:">
 <!ENTITY checksum.value "Kontrolna vsota (izvleček):">
 <!ENTITY browse.tip "Prebrskaj za ciljno mapo ...">
 <!ENTITY mask.label "Maska preimenovanja">
