@@ -1,0 +1,21 @@
+<!ENTITY mask.title "Adlandırma Etiketleri">
+<!ENTITY mask.name "Dosya adı">
+<!ENTITY mask.ext "Uzantı">
+<!ENTITY mask.url "Temel URL">
+<!ENTITY mask.curl "Tam URL">
+<!ENTITY mask.flatcurl "Kesin Tam URL">
+<!ENTITY mask.num "Artan sayı">
+<!ENTITY mask.hh "Saat">
+<!ENTITY mask.mm "Dakika">
+<!ENTITY mask.ss "Saniye">
+<!ENTITY mask.d "Gün">
+<!ENTITY mask.m "Ay">
+<!ENTITY mask.y "Yıl">
+<!ENTITY mask.subdirs "URL altklasörler">
+<!ENTITY mask.flatsubdirs "Kesin URL altklasörler">
+<!ENTITY mask.text "Bağlantı tanımı">
+<!ENTITY mask.flattext "Kesin bağlantı tanımı">
+<!ENTITY mask.refer "Gönderen URL">
+<!ENTITY mask.qstring "Sorgu Dizgisi">
+<!ENTITY mask.tip "Adlandırma maskesine sürükle veya tıkla">
+<!ENTITY mask.open.tip "Yeniden adlandırma biçimleri başvuru tablosu">

@@ -1,0 +1,3 @@
+<!ENTITY title "Yeniden adlandırma maskesini değiştir...">
+<!ENTITY choose.desc "Belirtilen bağlantı(lar) için yeniden adlandırma maskesi seçiniz. Özel yeniden adlandırma etiketleri veya yalnızca basit bir metin kullanmak mümkündür.">
+<!ENTITY mask.tip "Seçilen dosyalar bu maske kullanılarak kaydedilecek ve yeniden adlandırılacak">
