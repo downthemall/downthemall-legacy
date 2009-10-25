@@ -1,0 +1,18 @@
+<!ENTITY title "Seçiminizi yapın">
+<!ENTITY filters.caption "Süzgeçler">
+<!ENTITY additional.caption "Hızlı süzme">
+<!ENTITY additional.tip "Metinsel süzgeçler: Virgül kullanarak aynı anda birden fazla metinsel süzgeç belirleyebilirsiniz.">
+<!ENTITY regex.label "Düz. İfa.">
+<!ENTITY filter.tip "Metinsel süzgeçlerinizi buraya yazın! (Açılır menüde bazı örnekler mevcuttur)">
+<!ENTITY status.label "Bağlantıları seçtikten sonra, Başlat'a tıklayın!">
+<!ENTITY menu.mask.title "Adlandırma maskesini değiştir">
+<!ENTITY menu.check.label "Seçilenleri işaretle">
+<!ENTITY menu.uncheck.label "Seçilenlerin işaretini kaldır">
+<!ENTITY menu.toggle.label "Seçimi tersine çevir">
+<!ENTITY tab.links.label "Bağlantılar">
+<!ENTITY tab.pics.label "Resimler ve Gömülüler">
+<!ENTITY header.desc.label "Tanım">
+<!ENTITY selectfiltered.label "Süzülenleri Seç">
+<!ENTITY disableother.label "Diğer dosyalar devre dışı">
+<!ENTITY disableother.tooltip "Diğer süzgeçleri devre dışı bırak ve yalnızca hızlı süzmeyi kullan. (Bu ayar bu noktada hatırlanmaz)">
+<!ENTITY resname.value "Kaynak adı">

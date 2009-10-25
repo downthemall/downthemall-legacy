@@ -1,0 +1,12 @@
+<!ENTITY language "Türkçe">
+<!ENTITY transAutor "Aycan Demirel">
+<!ENTITY about.subtitle "Firefox için toplu indirici">
+<!ENTITY about.nowarr "KESİNLİKLE HİÇBİR GARANTİ içermez">
+<!ENTITY about.freesoft "Bu özgür bir yazılımdır!">
+<!ENTITY about.privacy "gizliliğinize önem verir">
+<!ENTITY about.read "Gizlilik uyarısını">
+<!ENTITY about.pnot "okuyun">
+<!ENTITY about.by "çeviriyi yapan">
+<!ENTITY about.redistr "Dağıtımını lisanstaki şartlar altında yaptığınız için teşekkürler">
+<!ENTITY about.icons "Simge ve düğmeler:">
+<!ENTITY about.based "Mike Matas, Jakub Steiner ve Mark James'in çalışmalarını temel alır.">
