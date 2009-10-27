@@ -52,10 +52,14 @@ Observers.prototype = {
 	_obs: null,
 	_timer: null,
 	register: function(observer) {
-		this._obs.push(observer);
+		if (this._obs) {
+			this._obs.push(observer);
+		}
 	},
 	unregister: function(observer) {
-		this._obs = this._obs.filter(function(e) e != observer);
+		if (this._obs) {
+			this._obs = this._obs.filter(function(e) e != observer);
+		}
 	},
 	notify: function() {
 		for each (let o in this._obs) {
@@ -76,6 +80,7 @@ Observers.prototype = {
 	kill: function() {
 		this.stop();
 		delete this._obs;
+		this._obs = [];
 	},
 	observe: function() {
 		this._obs.sort(function() Math.round(Math.random() - 0.5));
