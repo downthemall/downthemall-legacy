@@ -1,4 +1,4 @@
-<?xml version="1.0"?> 
+<?xml version="1.0"?>
 <!-- ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -40,93 +40,59 @@
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
 <overlay id="DTAUIElements" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
-	<script type="application/x-javascript" src="chrome://dta/content/integration/elements.js"/>
-	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
-	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
+	<script type="application/x-javascript" src="chrome://dta/content/integration/elements.js" />
+	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js" />
+	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js" />
 
 	<menu id="dtaCtxCompact" label="DownThemAll!" class="menu-iconic dta">
 		<menupopup id="dtaCtxSubmenu">
-			<menuseparator class="thin" id="dtaCtxSepFront"/>
-			<menuitem class="menuitem-iconic dta" id="dtaCtxDTA" label="&dta-regular.label;" oncommand="DTA_ContextOverlay.findLinks(false);"/>
-			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxTDTA" label="&dta-regular-turbo.label;" oncommand="DTA_ContextOverlay.findLinks(true);"/>
+			<menuseparator class="thin" id="dtaCtxSepFront" />
+			<menuitem class="menuitem-iconic dta" id="dtaCtxDTA" label="&dta-regular.label;" />
+			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxTDTA" label="&dta-regular-turbo.label;" />
 
-			<menuitem class="menuitem-iconic dta" id="dtaCtxDTASel" label="&dta-selection.label;" oncommand="DTA_ContextOverlay.findLinks(false);"/>
-			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxTDTASel" label="&dta-selection-turbo.label;" oncommand="DTA_ContextOverlay.findLinks(true);"/>
-			
-			<menuitem class="menuitem-iconic dta" id="dtaCtxSaveLink" label="&dta-link-save.label;" oncommand="DTA_ContextOverlay.findSingleLink(false);"/>
-			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxSaveLinkT" label="&dta-link-save-turbo.label;" oncommand="DTA_ContextOverlay.findSingleLink(true);"/>
-			
-			<menuitem class="menuitem-iconic dta" id="dtaCtxSaveImg" label="&dta-img-save.label;" oncommand="DTA_ContextOverlay.findSingleImg(false);"/>
-			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxSaveImgT" label="&dta-img-save-turbo.label;" oncommand="DTA_ContextOverlay.findSingleImg(true);"/>			
+			<menuitem class="menuitem-iconic dta" id="dtaCtxDTASel" label="&dta-selection.label;" />
+			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxTDTASel" label="&dta-selection-turbo.label;" />
 
-			<menuitem class="menuitem-iconic dta" id="dtaCtxSaveForm" label="&dta-form-save.label;" oncommand="DTA_ContextOverlay.findForm(false);"/>			
-			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxSaveFormT" label="&dta-form-save-turbo.label;" oncommand="DTA_ContextOverlay.findForm(true);"/>
-			
-			<menuseparator class="thin" id="dtaCtxSepPref"/>
-			<menuitem class="menuitem-iconic" id="dtaCtxPref" label="&dta-pref.label;" oncommand="DTA_showPreferences();" />
-			<menuseparator class="thin" id="dtaCtxSepBack"/>
+			<menuitem class="menuitem-iconic dta" id="dtaCtxSaveLink" label="&dta-link-save.label;" />
+			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxSaveLinkT" label="&dta-link-save-turbo.label;" />
+
+			<menuitem class="menuitem-iconic dta" id="dtaCtxSaveImg" label="&dta-img-save.label;" />
+			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxSaveImgT" label="&dta-img-save-turbo.label;" />
+
+			<menuitem class="menuitem-iconic dta" id="dtaCtxSaveForm" label="&dta-form-save.label;" />
+			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxSaveFormT" label="&dta-form-save-turbo.label;" />
+
+			<menuseparator class="thin" id="dtaCtxSepPref" />
+			<menuitem class="menuitem-iconic" id="dtaCtxPref" label="&dta-pref.label;" />
+			<menuseparator class="thin" id="dtaCtxSepBack" />
 		</menupopup>
 	</menu>
 
-	<toolbarbutton
-		id="dta-button"
-		class="chromeclass-toolbar-additional toolbarbutton-1" 
-		ondragover="nsDragAndDrop.dragOver(event, DTA_DropDTA);"
-		ondragdrop="nsDragAndDrop.drop(event, DTA_DropDTA);"
-		oncommand="if (event.target == this) DTA_ContextOverlay.findLinks(false);"
-		label="&dta-regular.label;"
-		tooltiptext="&dta-regular.label;"
-		type="menu-button"
-	>
+	<toolbarbutton id="dta-button" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-regular.label;" tooltiptext="&dta-regular.label;" type="menu-button">
 		<menupopup>
-			<menuitem id="dta-tb-dta" label="DownThemAll! (&dta-tb-single.label;)" oncommand="DTA_ContextOverlay.findLinks();"  class="menuitem-iconic dta" tooltiptext="&dta-regular.label;"/>
-			<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all.label;)" oncommand="DTA_ContextOverlay.findLinks(false, true);" class="menuitem-iconic dta" tooltiptext="&dta-regular.label;"/>
-			<menuseparator/>
-			<menuitem id="dta-tb-manager" label="&dta-manager-button;" oncommand="DTA.openManager(window);" class="menuitem-iconic dtamanager" tooltiptext="&dta-manager-button;"/>
+			<menuitem id="dta-tb-dta" label="DownThemAll! (&dta-tb-single.label;)" class="menuitem-iconic dta" tooltiptext="&dta-regular.label;" />
+			<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all.label;)" class="menuitem-iconic dta" tooltiptext="&dta-regular.label;" />
+			<menuseparator />
+			<menuitem id="dta-tb-manager" label="&dta-manager-button;" class="menuitem-iconic dtamanager" tooltiptext="&dta-manager-button;" />
 		</menupopup>
 	</toolbarbutton>
-	<toolbarbutton 
-		id="dta-turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1"
-		ondragover="nsDragAndDrop.dragOver(event, DTA_DropTDTA);"
-		ondragdrop="nsDragAndDrop.drop(event, DTA_DropTDTA);"
-		oncommand="if (event.target == this) DTA_ContextOverlay.findLinks(true);"
-		label="&dta-regular-turbo.label;"
-		tooltiptext="&dta-regular-turbo.label;"
-		type="menu-button"
-	>
+	<toolbarbutton id="dta-turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-regular-turbo.label;" tooltiptext="&dta-regular-turbo.label;" type="menu-button">
 		<menupopup>
-			<menuitem id="dta-tb-turbo" label="dTa OneClick! (&dta-tb-single.label;)" oncommand="DTA_ContextOverlay.findLinks(true, false);" tooltiptext="&dta-regular-turbo.label;" class="menuitem-iconic dtaturbo"/>
-			<menuitem id="dta-tb-allturbo" label="dTa OneClick! (&dta-tb-all.label;)" oncommand="DTA_ContextOverlay.findLinks(true, true);" tooltiptext="&dta-regular-turbo.label;" class="menuitem-iconic dtaturbo"/>
-		</menupopup>		
+			<menuitem id="dta-tb-turbo" label="dTa OneClick! (&dta-tb-single.label;)" tooltiptext="&dta-regular-turbo.label;" class="menuitem-iconic dtaturbo" />
+			<menuitem id="dta-tb-allturbo" label="dTa OneClick! (&dta-tb-all.label;)" tooltiptext="&dta-regular-turbo.label;" class="menuitem-iconic dtaturbo" />
+		</menupopup>
 	</toolbarbutton>
-	<toolbarbutton
-		id="dta-manager-button"
-		class="chromeclass-toolbar-additional toolbarbutton-1"
-		oncommand="DTA.openManager(window);"
-		label="&dta-manager-button;"
-		tooltiptext="&dta-manager-button;"
-	/>
-	<toolbarbutton 
-		id="dta-turboselect-button" class="chromeclass-toolbar-additional toolbarbutton-1"
-		oncommand="if (event.target == this) DTA_ContextOverlay.toggleOneClick(event);"
-		label="&dta-selector-button;"
-		tooltiptext="&dta-selector-button;"
-		type="checkbox"
-	/>	
+	<toolbarbutton id="dta-manager-button" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-manager-button;" tooltiptext="&dta-manager-button;" />
+	<toolbarbutton id="dta-turboselect-button" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-selector-button;" tooltiptext="&dta-selector-button;" type="checkbox" />
 	<menu id="dtaToolsMenu" label="DownThemAll" class="menu-iconic dta">
 		<menupopup id="dtaToolsPopup">
-			<menuitem id="dtaToolsDTA" oncommand="DTA_ContextOverlay.findLinks(false)" 
-				label="&dta-regular.label;" class="menuitem-iconic dta" />
-			<menuitem id="dtaToolsTDTA" oncommand="DTA_ContextOverlay.findLinks(true)" 
-				label="&dta-regular-turbo.label;" class="menuitem-iconic dtaturbo" />
-			<menuitem id="dtaToolsManager" oncommand="DTA.openManager(window)" 
-				label="&dta-manager-button;" class="menuitem-iconic dtamanager" />	
-			<menuseparator id="dtaToolsSep"/>
-			<menuitem id="dtaToolsPrefs" oncommand="DTA_showPreferences();"
-				label="&dta-pref.label;" class="menuitem-iconic dtaprefs" />
-			<menuitem id="dtaToolsAbout" oncommand="window.openDialog('chrome://dta/content/about/about.xul','_blank','chrome,centerscreen,modal');"
-				label="&dta-about.label;" class="menuitem-iconic" />
+			<menuitem id="dtaToolsDTA" label="&dta-regular.label;" class="menuitem-iconic dta" />
+			<menuitem id="dtaToolsTDTA" label="&dta-regular-turbo.label;" class="menuitem-iconic dtaturbo" />
+			<menuitem id="dtaToolsManager" label="&dta-manager-button;" class="menuitem-iconic dtamanager" />
+			<menuseparator id="dtaToolsSep" />
+			<menuitem id="dtaToolsPrefs" label="&dta-pref.label;" class="menuitem-iconic dtaprefs" />
+			<menuitem id="dtaToolsAbout" label="&dta-about.label;" class="menuitem-iconic" />
 		</menupopup>
 	</menu>
 </overlay>

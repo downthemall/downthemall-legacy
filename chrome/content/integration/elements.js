@@ -36,33 +36,143 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-var DTA_Prompts = {};
-Components.utils.import('resource://dta/prompts.jsm', DTA_Prompts);
- 
-// DTA context overlay
-var DTA_ContextOverlay = {
+addEventListener('load', function() {
+	removeEventListener('load', arguments.callee, true);
+	
+	let Cc = Components.classes;
+	let Ci = Components.interfaces;
+		
 
-	_str: Components.classes['@mozilla.org/intl/stringbundle;1']
-		.getService(Components.interfaces.nsIStringBundleService)
-		.createBundle('chrome://dta/locale/menu.properties'),
+	let prompts = {};
+	Components.utils.import('resource://dta/prompts.jsm', prompts);
 	
-	_ch: Components.classes['@downthemall.net/contenthandling;2']
-		.getService(Components.interfaces.dtaIContentHandling),
+	function debug(msg, ex) {
+		let _d = DTA.Debug;
+		return (debug = function debug(msg, ex) {
+			if (ex) {
+				return _d.log(msg, ex);
+			}
+			return _d.logString(msg);
+		})(msg, ex);
+	}
 	
-	getString: function(n) {
-		try {
-			return this._str.GetStringFromName(n);
-		} catch (ex) {
-			DTA.Debug.log("locale error: " + n, ex);
-			return '<error>';
+	function $() {
+		if (arguments.length == 1) {
+			return document.getElementById(arguments[0]);
 		}
-	},
+		let elements = [];
+		for (let i = 0, e = arguments.length; i < e; ++i) {
+			let id = arguments[i];
+			let element = document.getElementById(id);
+			if (element) {
+				elements.push(element);
+			}
+			else {
+				debug("requested a non-existing element: " + id);
+			}
+		}
+		return elements;
+	}
+
 	
-	trim: function(t) {
+	function getString(n) {
+		let _str = Cc['@mozilla.org/intl/stringbundle;1']
+			.getService(Ci.nsIStringBundleService)
+			.createBundle('chrome://dta/locale/menu.properties');
+		return (getString = function(n) {
+			try {
+				return _str.GetStringFromName(n);
+			}
+			catch (ex) {
+				debug("locale error: " + n, ex);
+				return '<error>';
+			}
+		})(n);
+	}
+	
+	function trim(t) {
 		return t.replace(/^[ \t_]+|[ \t_]+$/gi, '').replace(/(_){2,}/g, "_");
-	},
+	}
 	
-	addLinksToArray: function(lnks, urls, doc) {
+	function extractDescription(child) {
+		let rv = [];
+		try {
+			var fmt = function(s) {
+				try {
+					return trim(s.replace(/(\n){1,}/gi, " ").replace(/(\s){2,}/gi, " "));
+				}
+				catch (ex) { /* no-op */ }
+				return "";
+			};
+			for (let i = 0, e = child.childNodes.length; i < e; ++i) {
+				let c = child.childNodes[i];
+
+				if (c.nodeValue && c.nodeValue != "") {
+					rv.push(fmt(c.nodeValue));
+				}
+
+				if (c.nodeType == 1) {
+					rv.push(arguments.callee(c));
+				}
+
+				if (c && 'hasAttribute' in c) { 
+					if (c.hasAttribute('title')) {
+						rv.push(fmt(c.getAttribute('title')));	
+					}
+					else if (c.hasAttribute('alt')) {
+						rv.push(fmt(c.getAttribute('alt')));
+					}
+				}
+			}
+		}
+		catch(ex) {
+			debug('extractDescription', ex);
+		}
+		return trim(rv.join(" "));
+	}
+
+		
+	let _ch = Cc['@downthemall.net/contenthandling;2']
+		.getService(Ci.dtaIContentHandling);
+	
+	let direct = {};
+	let compact = {};
+	let tools = {};
+	let ctxBase = $('dtaCtxCompact');
+	let toolsBase = $('dtaToolsMenu');
+	let toolsMenu = $('dtaToolsPopup');
+	let toolsSep = $('dtaToolsSep');
+	
+	(function() {
+		try {
+			let ctxItem = $("dtaCtxCompact");
+			let ctx = ctxItem.parentNode;
+			let cont = $('dtaCtxSubmenu');
+	
+			for each (let id in ['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveFormT', 'SaveForm', 'SepFront']) {
+				compact[id] = $('dtaCtx' + id);
+				let node = $('dtaCtx' + id).cloneNode(true);
+				node.setAttribute('id', node.id + "-direct");
+				ctx.insertBefore(node, ctxItem.nextSibling);
+				direct[id] = node;
+			}
+	
+			let menu = $("dtaToolsMenu").parentNode;
+			ctx.addEventListener("popupshowing", onContextShowing, false);
+			menu.addEventListener("popupshowing", onToolsShowing, false);
+		
+			// prepare tools
+			for each (let e in ['DTA', 'TDTA', 'Manager']) {
+				tools[e] = $('dtaTools' + e);
+			}
+		}
+		catch (ex) {
+			Components.utils.reportError(ex);
+			debug("DCO::init()", ex);
+		}
+	})();
+	
+	function addLinksToArray(lnks, urls, doc) {
 		if (!lnks || !lnks.length) {
 			return;
 		}
@@ -71,28 +181,27 @@ var DTA_ContextOverlay = {
 		
 		for (var i = 0; i < lnks.length; ++i) {
 			// remove anchor from url
-			var link = lnks[i];
+			let link = lnks[i];
 			// if it's valid and it's new
 			if (!DTA.isLinkOpenable(link.href)) {
 				continue;
 			}
 				
-			var title = '';
+			let title = '';
 			if (link.hasAttribute('title')) {
-				title = this.trim(link.getAttribute('title'));
+				title = trim(link.getAttribute('title'));
 			}
 			if (!title && link.hasAttribute('alt')) {
-				title = this.trim(link.getAttribute('alt'));
+				title = trim(link.getAttribute('alt'));
 			}
 			let url = DTA.IOService.newURI(link.href, doc.characterSet, null);
 			urls.push({
 				'url': new DTA.URL(url),
 				'referrer': ref,
-				'description': this.extractDescription(link),
+				'description': extractDescription(link),
 				'title': title
 			});
-			
-			var ml = DTA.getLinkPrintMetalink(url.ref);
+			let ml = DTA.getLinkPrintMetalink(url.ref);
 			if (ml) {
 				urls.push({
 					'url': new DTA.URL(ml),
@@ -103,22 +212,22 @@ var DTA_ContextOverlay = {
 				});
 			}
 		}
-	},
+	}
 	
-	addImagesToArray: function(lnks, images, doc)	{
+	function addImagesToArray(lnks, images, doc)	{
 		if (!lnks || !lnks.length) {
 			return;
 		}
 		
-		var ref = DTA.getRef(doc);
+		let ref = DTA.getRef(doc);
 
-		for (var i = 0; i < lnks.length; ++i) {
-			var src = lnks[i].src;
+		for (let i = 0; i < lnks.length; ++i) {
+			let src = lnks[i].src;
 			try {
 				src = DTA.composeURL(doc, src);
 			}
 			catch (ex) {
-				DTA.Debug.log("failed to compose: " + src, ex);
+				debug("failed to compose: " + src, ex);
 				continue;
 			}
 			// if it's valid and it's new
@@ -126,12 +235,12 @@ var DTA_ContextOverlay = {
 			if (!DTA.isLinkOpenable(src)) {
 				continue;
 			}
-			var desc = '';
+			let desc = '';
 			if (lnks[i].hasAttribute('alt')) {
-				desc = this.trim(lnks[i].getAttribute('alt'));
+				desc = trim(lnks[i].getAttribute('alt'));
 			}
 			else if (lnks[i].hasAttribute('title')) {
-				desc = this.trim(lnks[i].getAttribute('title'));
+				desc = trim(lnks[i].getAttribute('title'));
 			}
 			images.push({
 				'url': new DTA.URL(src),
@@ -139,19 +248,47 @@ var DTA_ContextOverlay = {
 				'description': desc
 			});
 		}
-	},
+	}
 	
-	get recognizeTextLinks() {
+	function recognizeTextLinks() {
 		return DTA.Preferences.getExt("textlinks", true);
-	},
-	getTextLinks: function(text, fakeLinks) {
-		delete this.getTextLinks;
-		Components.utils.import("resource://dta/textlinks.jsm", this);
-		return this.getTextLinks(text, fakeLinks);
-	},
+	}
+	function getTextLinks(text, fakeLinks) {
+		let _tl = {};			
+		Components.utils.import("resource://dta/textlinks.jsm", _tl);
+		return (getTextLinks = function(text, fakeLinks) _tl.getTextLinks(text, fakeLinks))(text, fakeLinks);
+	}
+
+	function selectButton() {
+		return $('dta-turboselect-button') || {checked: false};
+	}
+	function contextMenu() {
+		if (window.gContextMenu !=  null) {
+			return gContextMenu;
+		}
+		var cm = {
+			onLink: false,
+			onImage: false,
+			target: document.popupNode,
+			fake: true
+		};
+		if (cm.target) {
+			var node = cm.target;
+			if (node instanceof Ci.nsIImageLoadingContent && node.currentURI) {
+				cm.onImage = true;
+			}
+			while (node && !cm.onLink) {
+				if (node instanceof HTMLAnchorElement && node.href) {
+					cm.onLink = true;
+				}				
+				node = node.parentNode;
+			}
+		}
+		return cm;
+	}		
 	
 	// recursively add stuff.
-	addLinks: function(aWin, aURLs, aImages, honorSelection) {
+	function addLinks(aWin, aURLs, aImages, honorSelection) {
 
 		function filterElements(nodes, set) {
 			var filtered = [];
@@ -164,37 +301,36 @@ var DTA_ContextOverlay = {
 		}
 	
 		try {
-		 
 			let links = Array.map(aWin.document.links, function(e) e);
 			let images = aWin.document.images;
 			let embeds = aWin.document.embeds;
 			let rawInputs = aWin.document.getElementsByTagName('input');
 			let inputs = [];
-			for (var i = 0; i < rawInputs.length; ++i) {
-				var rit = rawInputs[i].getAttribute('type');
+			for (let i = 0; i < rawInputs.length; ++i) {
+				let rit = rawInputs[i].getAttribute('type');
 				if (!rit || rit.toLowerCase() != 'image') {
 					continue;
 				}
 				inputs.push(rawInputs[i]);
 			}
 			
-			var sel = aWin.getSelection();
+			let sel = aWin.getSelection();
 			if (honorSelection && sel && !sel.isCollapsed) {
-				DTA.Debug.logString("selection only");
+				debug("selection only");
 				[links, images, embeds, inputs] = [links, images, embeds, inputs].map(
 					function(e) {
 						return filterElements(e, sel);
 					}
 				);
-				if (this.recognizeTextLinks) {
+				if (recognizeTextLinks()) {
 					let selText = new String(sel.toString());
-					links = links.concat(this.getTextLinks(selText, true));
+					links = links.concat(getTextLinks(selText, true));
 				}
 			}
 			else {
 				if (DTA.Preferences.getExt('listsniffedvideos', false)) {
 					let sniffed = Array.map(
-						this._ch.getSniffedVideosFor(DTA.IOService.newURI(aWin.location.href, aWin.document.characterSet, null)),
+						_ch.getSniffedVideosFor(DTA.IOService.newURI(aWin.location.href, aWin.document.characterSet, null)),
 						function(e) e
 					);
 					let ref = DTA.getRef(aWin.document);
@@ -202,16 +338,16 @@ var DTA_ContextOverlay = {
 						let o = {
 							'url': new DTA.URL(s),
 							'referrer': ref,
-							'description': this.getString('sniffedvideo')
+							'description': getString('sniffedvideo')
 						}
 						aURLs.push(o);
 						aImages.push(o);
 					}
 				}
-				if (this.recognizeTextLinks) {
+				if (recognizeTextLinks()) {
 					let body = aWin.document.getElementsByTagName("body");
 					if (body.length) {
-						links = links.concat(this.getTextLinks(body[0].textContent, true));
+						links = links.concat(getTextLinks(body[0].textContent, true));
 					}
 				}
 				
@@ -220,16 +356,13 @@ var DTA_ContextOverlay = {
 				honorSelection = false;
 			}
 			
-			this.addLinksToArray(links, aURLs, aWin.document);
-			[images, embeds, inputs].forEach(
-				function(e) {
-					this.addImagesToArray(e, aImages, aWin.document);
-				},
-				this
-			);
+			addLinksToArray(links, aURLs, aWin.document);
+			for each (let e in [images, embeds, inputs]) {
+				addImagesToArray(e, aImages, aWin.document);
+			}
 		}
 		catch (ex) {
-			DTA.Debug.log('addLinks', ex);
+			debug('addLinks', ex);
 		}
 		
 		// do not process further as we just filtered the selection
@@ -239,55 +372,31 @@ var DTA_ContextOverlay = {
 		
 		// recursively process any frames
 		if (aWin.frames) {
-			for (var i = 0, e = aWin.frames.length; i < e; ++i) {
-				this.addLinks(aWin.frames[i], aURLs, aImages);
+			for (let i = 0, e = aWin.frames.length; i < e; ++i) {
+				arguments.callee(aWin.frames[i], aURLs, aImages);
 			}
 		}
-	},
+	}
 	
-	findWindowsNavigator: function(all) {
-		var windows = [];
+	function findWindowsNavigator(all) {
+		let windows = [];
 		if (!all) {
-			var sel = document.commandDispatcher.focusedWindow.getSelection();
+			let sel = document.commandDispatcher.focusedWindow.getSelection();
 			if (sel.isCollapsed) {
 				windows.push(gBrowser.selectedBrowser.contentWindow.top);
 			}
 			else {
 				windows.push(document.commandDispatcher.focusedWindow);
 			}
+			return windows;
 		}
-		else {
-			gBrowser.browsers.forEach(
-				function(e) {
-					windows.push(e.contentWindow.top);
-				}
-			);
+		for each (let e in gBrowser.browsers) {
+			windows.push(e.contentWindow.top);
 		}
 		return windows;
-	},
-	findWindowsMail: function(all) {
-		var windows = [];
-		if (document.documentElement.getAttribute('windowtype') == 'mail:3pane') {
-			windows.push(document.getElementById('messagepane').contentWindow);
-		}
-		else if (!all) {
-			windows.push(document.commandDispatcher.focusedWindow);
-		}
-		else {
-			windows = DTA_Mediator
-				.getAllByType('mail:messageWindow')
-				.map(function(w) {
-					return w.content;
-				});
-		}
-		return windows;
-	},
-	_types: {
-		'mail:3pane': 'findWindowsMail',
-		'mail:messageWindow': 'findWindowsMail'
-	},
+	}
 	
-	findLinks: function(turbo, all) {
+	function findLinks(turbo, all) {
 		try {
 			if (all == undefined && turbo && DTA.Preferences.getExt('rememberoneclick', false)) {
 				all = DTA.Preferences.getExt('lastalltabs', false);
@@ -301,30 +410,25 @@ var DTA_ContextOverlay = {
 			}		
 			
 			if (turbo) {
-				DTA.Debug.logString("findLinks(): DtaOneClick request from the user");
+				debug("findLinks(): DtaOneClick request from the user");
 			}
 			else {
-				DTA.Debug.logString("findLinks(): DtaStandard request from the user");
+				debug("findLinks(): DtaStandard request from the user");
 			}
 
-			var wt = document.documentElement.getAttribute('windowtype');
-			if (wt in this._types) {
-				var windows = this[this._types[wt]](all);
-			}
-			else {
-				var windows = this.findWindowsNavigator(all);
-			}
-			
-			var urls = [];
-			var images = [];
+			let wt = document.documentElement.getAttribute('windowtype');
+			let windows = findWindowsNavigator(all);
+
+			let urls = [];
+			let images = [];
 			for each (let win in windows) {
-				this.addLinks(win, urls, images, !all);
+				addLinks(win, urls, images, !all);
 			}
 			urls = unique(urls);
 			images = unique(images);
 
 			if (!urls.length && !images.length) {
-				DTA_Prompts.alert(window, this.getString('error'), this.getString('errornolinks'));
+				prompts.alert(window, getString('error'), getString('errornolinks'));
 				return;
 			}
 			
@@ -334,47 +438,47 @@ var DTA_ContextOverlay = {
 					return;
 				}
 				catch (ex) {
-					DTA.Debug.log('findLinks', ex);
-					//DTA_Prompts.alert(window, this.getString('error'), );
-					DTA.saveLinkArray(window, urls, images, this.getString('errorinformation'));
+					debug('findLinks', ex);
+					DTA.saveLinkArray(window, urls, images, getString('errorinformation'));
 				}
+				return;
 			}
-			else {
-				DTA.saveLinkArray(window, urls, images);
-			}
+			DTA.saveLinkArray(window, urls, images);
 		}
 		catch(ex) {
-			DTA.Debug.log('findLinks', ex);
+			debug('findLinks', ex);
 		}
-	},
+	}
 	
-	findSingleLink: function(turbo) {
+	function findSingleLink(turbo) {
 		try {
-			var cur = this.contextMenu.target;
+			var cur = contextMenu().target;
 			while (!("tagName" in cur) || !cur.tagName.match(/^a$/i)) {
 				cur = cur.parentNode;
 			}
-			this.saveSingleLink(turbo, cur.href, cur);
+			saveSingleLink(turbo, cur.href, cur);
 		}
 		catch (ex) {
-			DTA_Prompts.alert(window, this.getString('error'), this.getString('errornodownload'));
-			DTA.Debug.log('findSingleLink: ', ex);
+			prompts.alert(window, getString('error'), getString('errornodownload'));
+			debug('findSingleLink: ', ex);
 		}
-	},
-	findSingleImg: function(turbo) {
+	}
+	
+	function findSingleImg(turbo) {
 		try {
-			var cur = this.contextMenu.target;
+			var cur = contextMenu().target;
 			while (!("tagName" in cur) || !cur.tagName.match(/^img$/i)) {
 				cur = cur.parentNode;
 			}
-			this.saveSingleLink(turbo, cur.src, cur);
+			saveSingleLink(turbo, cur.src, cur);
 		}
 		catch (ex) {
-			DTA_Prompts.alert(window, this.getString('error'), this.getString('errornodownload'));
-			DTA.Debug.log('findSingleLink: ', ex);
+			prompts.alert(window, getString('error'), getString('errornodownload'));
+			debug('findSingleLink: ', ex);
 		}		
-	},
-	saveSingleLink: function(turbo, url, elem) {
+	}
+	
+	function saveSingleLink(turbo, url, elem) {
 		if (!DTA.isLinkOpenable(url)) {
 			throw Error("not downloadable");
 			return;
@@ -385,22 +489,22 @@ var DTA_ContextOverlay = {
 		url = new DTA.URL(ml ? ml : url);
 		
 		let ref = DTA.getRef(elem.ownerDocument);
-		let desc = this.extractDescription(elem);
+		let desc = extractDescription(elem);
 		if (turbo) {
 			try {
 				DTA.saveSingleLink(window, true, url, ref, desc);
 				return;
 			}
 			catch (ex) {
-				DTA.Debug.log('saveSingleLink', ex);
-				DTA_Prompts.alert(window, this.getString('error'), this.getString('errorinformation'));
+				debug('saveSingleLink', ex);
+				prompts.alert(window, getString('error'), getString('errorinformation'));
 			}
 		}
 		DTA.saveSingleLink(window, false, url, ref, desc);		
-	},
-	findForm: function(turbo) {
+	}
+	function findForm(turbo) {
 		try {
-			var ctx = this.contextMenu;
+			let ctx = contextMenu();
 			if (!('form' in ctx.target)) {
 				throw new Components.Exception("No form");
 			}
@@ -410,7 +514,7 @@ var DTA_ContextOverlay = {
 			if (!DTA.isLinkOpenable(action.spec)) {
 				throw new Components.Exception('Unsupported URL');
 			}
-			action = action.QueryInterface(Components.interfaces.nsIURL);
+			action = action.QueryInterface(Ci.nsIURL);
 			
 			var charset = form.ownerDocument.characterSet;
 			if (form.acceptCharset) {
@@ -420,16 +524,16 @@ var DTA_ContextOverlay = {
 				charset = 'utf-8';
 			}
 						
-			var encoder = Components.classes['@mozilla.org/intl/texttosuburi;1']
-				.getService(Components.interfaces.nsITextToSubURI);
+			let encoder = Cc['@mozilla.org/intl/texttosuburi;1']
+				.getService(Ci.nsITextToSubURI);
 			
-			var values = []; 
+			let values = []; 
 			
-			for (var i = 0; i < form.elements.length; ++i) {
+			for (let i = 0; i < form.elements.length; ++i) {
 				if (form.elements[i].name ==  '') {
 					continue;
 				}
-				var v = encoder.ConvertAndEscape(charset, form.elements[i].name) + "=";
+				let v = encoder.ConvertAndEscape(charset, form.elements[i].name) + "=";
 				if (form.elements[i].value != '') {
 					v += encoder.ConvertAndEscape(charset, form.elements[i].value);
 				}
@@ -438,21 +542,21 @@ var DTA_ContextOverlay = {
 			values = values.join("&");
 
 			if (form.method.toLowerCase() == 'post') {
-				var ss = Components.classes['@mozilla.org/io/string-input-stream;1']
-					.createInstance(Components.interfaces.nsIStringInputStream);
+				let ss = Cc['@mozilla.org/io/string-input-stream;1']
+					.createInstance(Ci.nsIStringInputStream);
 				ss.setData(values, -1);
 				
-				var ms = Components.classes['@mozilla.org/network/mime-input-stream;1']
-					.createInstance(Components.interfaces.nsIMIMEInputStream);
+				let ms = Cc['@mozilla.org/network/mime-input-stream;1']
+					.createInstance(Ci.nsIMIMEInputStream);
 				ms.addContentLength = true;
 				ms.addHeader('Content-Type', 'application/x-www-form-urlencoded');
 				ms.setData(ss);
 				
-				var sis = Components.classes['@mozilla.org/scriptableinputstream;1']
-					.createInstance(Components.interfaces.nsIScriptableInputStream);
+				let sis = Cc['@mozilla.org/scriptableinputstream;1']
+					.createInstance(Ci.nsIScriptableInputStream);
 				sis.init(ms);
-				var postData = '';
-				var avail = 0;
+				let postData = '';
+				let avail = 0;
 				while ((avail = sis.available()) != 0) {
 					postData += sis.read(avail);
 				}
@@ -469,9 +573,8 @@ var DTA_ContextOverlay = {
 				action = new DTA.URL(DTA.IOService.newURI(action.spec, form.ownerDocument.characterSet, null));
 			}			
 
-			
-			var ref = DTA.getRef(document.commandDispatcher.focusedWindow.document);
-			var desc = this.extractDescription(form);
+			let ref = DTA.getRef(document.commandDispatcher.focusedWindow.document);
+			let desc = extractDescription(form);
 			
 			if (turbo) {
 				try {
@@ -479,120 +582,50 @@ var DTA_ContextOverlay = {
 					return;
 				}
 				catch (ex) {
-					DTA.Debug.log('findSingleLink', ex);
-					DTA_Prompts.alert(window, this.getString('error'), this.getString('errorinformation'));
+					debug('findSingleLink', ex);
+					prompts.alert(window, getString('error'), getString('errorinformation'));
 				}
 			}
 			DTA.saveSingleLink(window, window, false, action, ref, desc);
 		}
 		catch (ex) {
-			DTA.Debug.log('findForm', ex);
+			debug('findForm', ex);
 		}
-	},
+	}
 	
-	init: function() {
+	function onContextShowing(evt) {
 		try {
-			this.direct = {};
-			this.compact = {};
-			
-			var ctxItem = document.getElementById("dtaCtxCompact");
-			var ctx = ctxItem.parentNode;
-			var cont = document.getElementById('dtaCtxSubmenu');
-
-			['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveFormT', 'SaveForm', 'SepFront'].forEach(
-				function(id) {
-					this.compact[id] = document.getElementById('dtaCtx' + id);
-					var node = document.getElementById('dtaCtx' + id).cloneNode(true);
-					node.setAttribute('id', node.id + "-direct");
-					ctx.insertBefore(node, ctxItem.nextSibling);
-					this.direct[id] = node;
-				},
-				this
-			);
-
-			var menu = document.getElementById("dtaToolsMenu").parentNode;
-			ctx.addEventListener("popupshowing", function (evt) { DTA_ContextOverlay.onContextShowing(evt); }, false);
-			menu.addEventListener("popupshowing", function (evt) { DTA_ContextOverlay.onToolsShowing(evt); }, false);
-
-			this.ctxBase = document.getElementById('dtaCtxCompact');
-			
-			// prepare tools
-			this.tools = {};
-			['DTA', 'TDTA', 'Manager'].forEach(
-				function (e) {
-					this.tools[e] = document.getElementById('dtaTools' + e);
-				},
-				this
-			);
-			this.toolsBase = document.getElementById('dtaToolsMenu');
-			this.toolsMenu = document.getElementById('dtaToolsPopup');
-			this.toolsSep = document.getElementById('dtaToolsSep');
-		}
-		catch (ex) {
-			Components.utils.reportError(ex);
-			DTA.Debug.log("DCO::init()", ex);
-		}
-	},
-	get selectButton() {
-		return document.getElementById('dta-turboselect-button') || {checked: false};
-	},
-	get contextMenu() {
-		if (window.gContextMenu !=  null) {
-			return gContextMenu;
-		}
-		var cm = {
-			onLink: false,
-			onImage: false,
-			target: document.popupNode,
-			fake: true
-		};
-		if (cm.target) {
-			var node = cm.target;
-			if (node instanceof Components.interfaces.nsIImageLoadingContent && node.currentURI) {
-				cm.onImage = true;
-			}
-			while (node && !cm.onLink) {
-				if (node instanceof HTMLAnchorElement && node.href) {
-					cm.onLink = true;
-				}				
-				node = node.parentNode;
-			}
-		}
-		return cm;
-	},
-	onContextShowing: function(evt) {
-		try {
-			var ctx = this.contextMenu;
+			let ctx = contextMenu();
 			// get settings
-			var items = DTA.Preferences.getExt("ctxmenu", "1,1,0").split(",").map(function(e) parseInt(e));
-			var compact = DTA.Preferences.getExt("ctxcompact", false);
+			let items = DTA.Preferences.getExt("ctxmenu", "1,1,0").split(",").map(function(e) parseInt(e));
+			let showCompact = DTA.Preferences.getExt("ctxcompact", false);
 			
-			var menu;
-			if (compact) {
-				this.ctxBase.hidden = false;
-				menu = this.compact;
-				}
+			let menu;
+			if (showCompact) {
+				ctxBase.hidden = false;
+				menu = compact;
+			}
 			else {
-				this.ctxBase.hidden = true;
-				menu = this.direct;
+				ctxBase.hidden = true;
+				menu = direct;
 			}
 			
 			// hide all
-			for (var i in menu) {
-				this.direct[i].hidden = true;
-				this.compact[i].hidden = true;
+			for (let i in menu) {
+				direct[i].hidden = true;
+				compact[i].hidden = true;
 			}
 			// show nothing!
 			if (items.indexOf(1) == -1) {
-				this.ctxBase.hidden = true;
+				ctxBase.hidden = true;
 				return;
 			} 
 			
 			// setup menu items
 			// show will hold those that will be shown
-			var show = [];
+			let show = [];
 			
-			var sel = document.commandDispatcher.focusedWindow.getSelection();
+			let sel = document.commandDispatcher.focusedWindow.getSelection();
 			if (sel && !sel.isCollapsed) {
 				if (items[0]) {
 					show.push(menu.DTASel);
@@ -651,7 +684,7 @@ var DTA_ContextOverlay = {
 			}
 			
 			// show the seperators, if required.
-			var n = menu.SepFront;
+			let n = menu.SepFront;
 			while ((n = n.previousSibling)) {
 				if (n.hidden) {
 					continue;
@@ -660,50 +693,47 @@ var DTA_ContextOverlay = {
 					show.push(menu.SepFront);
 				}
 				break;
-				}
+			}
 			n = menu.SepBack;
 			while ((n = n.nextSibling)) {
 				if (n.hidden) {
 					continue;
-			}
+				}
 				if (n.nodeName != 'menuseparator') {
 					show.push(menu.SepBack);
 				}
 				break;
-				}
-			
-			show.forEach(
-				function (node) {
-					node.hidden = false;
-				}
-			);
+			}
+			for each (let node in show) {
+				node.hidden = false;
+			}
 		}
 		catch(ex) {
-			DTA.Debug.log("DTAContext(): ", ex);
+			debug("DTAContext(): ", ex);
 		}		 
-	},
+	}
 	
-	onToolsShowing : function(evt) {
+	function onToolsShowing(evt) {
 		try {
 			
 			// get settings
-			var menu = DTA.Preferences.getExt("toolsmenu", "1,1,1").split(",").map(function(e){return parseInt(e);});
+			let menu = DTA.Preferences.getExt("toolsmenu", "1,1,1").split(",").map(function(e){return parseInt(e);});
 			
 			// all hidden...
-			var hidden = DTA.Preferences.getExt("toolshidden", false);
-			for (var i in this.tools) {
-				this.tools[i].hidden = hidden;
+			let hidden = DTA.Preferences.getExt("toolshidden", false);
+			for (let i in tools) {
+				tools[i].hidden = hidden;
 			}
-			this.toolsBase.hidden = hidden;
+			toolsBase.hidden = hidden;
 			if (hidden) {
 				return;
 			}
 
-			var compact = menu.indexOf(0) != -1;
+			let compact = menu.indexOf(0) != -1;
 			
 			// setup menu items
 			// show will hold those that will be shown
-			var show = [];
+			let show = [];
 			
 			if (menu[0]) {
 				show.push('DTA');
@@ -715,393 +745,438 @@ var DTA_ContextOverlay = {
 			if (menu[2]) {
 				show.push('Manager');
 			}
-			this.toolsSep.hidden = menu.indexOf(0) == -1;
-			this.toolsBase.setAttribute('label', this.getString(menu.indexOf(1) != -1 ? 'moredtatools' : 'simpledtatools'));
+			toolsSep.hidden = menu.indexOf(0) == -1;
+			toolsBase.setAttribute('label', getString(menu.indexOf(1) != -1 ? 'moredtatools' : 'simpledtatools'));
 		
 			// show the items.
-			for (var i in this.tools) {
-				var cur = this.tools[i];
+			for (let i in tools) {
+				var cur = tools[i];
 				if (show.indexOf(i) == -1) {
-					this.toolsMenu.insertBefore(cur, this.toolsSep);
+					toolsMenu.insertBefore(cur, toolsSep);
 				}
 				else {
-					this.toolsBase.parentNode.insertBefore(cur, this.toolsBase);
+					toolsBase.parentNode.insertBefore(cur, toolsBase);
 				}
 			}
 		}
 		catch(ex) {
-			DTA.Debug.log("DTATools(): ", ex);
+			debug("DTATools(): ", ex);
 		}
-	},
+	}
 	
-	extractDescription: function(child) {
-		var rv = "";
-		try {
-			var fmt = function(s) {
-				try {
-					return s.replace(/(\n){1,}/gi, " ").replace(/(\s){2,}/gi, " ") + " ";
-				} catch (ex) { /* no-op */ }
-				return "";
-			};
-			for (var i = 0, e = child.childNodes.length; i < e; ++i) {
-				var c = child.childNodes[i];
-
-				if (c.nodeValue && c.nodeValue != "") {
-					rv += fmt(c.nodeValue);
-				}
-
-				if (c.nodeType == 1) {
-					rv += this.extractDescription(c);
-				}
-
-				if (c && 'hasAttribute' in c) { 
-					if (c.hasAttribute('title')) {
-						rv += fmt(c.getAttribute('title'));	
-					}
-					else if (c.hasAttribute('alt')) {
-						rv += fmt(c.getAttribute('alt'));
-					}
-				}
-			}
+	let _selector = null;
+	function attachOneClick(evt) {
+		if (!!_selector) {
+			return;
 		}
-		catch(ex) {
-			DTA.Debug.log('extractDescription', ex);
+		_selector = new Selector();
+	}
+	function detachOneClick(evt) {
+		if (!_selector) {
+			return;
 		}
-		return this.trim(rv);
-	},
-	_keyActive: false,
-	onKeyDown: function(evt) {
-		if (this._keyActive) {
+		_selector.dispose();
+		_selector = null;
+	}
+
+	let _keyActive =  false;
+	function onKeyDown(evt) {
+		if (_keyActive) {
 			return;
 		}
 		if (evt.shiftKey && evt.ctrlKey) {
-			this._keyActive = true;
-			this.selectButton.checked = true;
-			this.attachOneClick();
+			_keyActive = true;
+			selectButton().checked = true;
+			attachOneClick();
 		}
-	},
-	onKeyUp: function(evt) {
-		if (!this._keyActive) {
+	}
+	function onKeyUp(evt) {
+		if (!_keyActive) {
 			return;
 		}
 		if (evt.shiftKey) {
-			this._keyActive = false;
-			this.selectButton.checked = false;
-			this.detachOneClick();
+			_keyActive = false;
+			selectButton().checked = false;
+			detachOneClick();
 		}
-	},
-	onBlur: function (evt) {
+	}
+	
+	function onBlur(evt) {
 		// when the window loses focus the keyup might not be received.
 		// better toggle back
-		if (!this._keyActive) {
+		if (!_keyActive) {
 			return;
 		}
-		this._keyActive = false;
-		this.selectButton.checked = false;
-		this.detachOneClick();
-	},
-	toggleOneClick: function(evt) {
-		if (this.selectButton.checked) {
-			this.attachOneClick(evt);
+		_keyActive = false;
+		selectButton().checked = false;
+		detachOneClick();
+	}
+	
+	function toggleOneClick(evt) {
+		if (selectButton().checked) {
+			attachOneClick(evt);
 		}
 		else {
-			this.detachOneClick(evt);
+			detachOneClick(evt);
 		}
-	},
-	_selector: null,
-	attachOneClick: function(evt) {
-		if (!!this._selector) {
-			return;
-		}
-		this._selector = new this.Selector();
-	},
-	detachOneClick: function(evt) {
-		if (!this._selector) {
-			return;
-		}
-		this._selector.dispose();
-		delete this._selector;
-	},
+	}
 	
-};
-DTA_ContextOverlay.Selector = function() {
-	let tp = this;
-	this._callback = function(evt) tp.onClickOneClick(evt);
-	
-	window.addEventListener('click', this._callback, false);
-	window.addEventListener('mouseup', this._callback, false);
-	window.addEventListener('mousemove', this._callback, false);
-	
-	this._detachObserver = DTA.Preferences.addObserver('extensions.dta.selectbgimages', this);
-	this.observe();
-}
-DTA_ContextOverlay.Selector.prototype = {
-	dispose: function() {
-		window.removeEventListener('click', this._callback, false);
-		window.removeEventListener('mouseup', this._callback, false);
-		window.removeEventListener('mousemove', this._callback, false);
-		this.detachHilight();
-		this._detachObserver();
-	},
-	detachHilight: function () {
-		if (this._hilight) {
-			this._hilight.hide();
-			delete this._hilight;
-		}
-	},
-	getBgImage: function(e) {
-		if (!e || !e.ownerDocument) {
-			return null;
-		}
-		let url = e.ownerDocument.defaultView.getComputedStyle(e, "").getPropertyCSSValue('background-image');
-		if (url && url.primitiveType == CSSPrimitiveValue.CSS_URI) {
-			return {elem: e, url: url.getStringValue()};
-		}
-		return getBgImage(e.parentNode);
-	},
-	findElemUnderCursor: function (e, n, a) {
-		if (n == 'bgimg') {
-			return this.getBgImage(e);
-		}
-		if (!e) {
-			return null;
-		}
-		if (e.localName == n && e[a]) {
-			return {elem: e, url: e[a] };
-		}
-		return this.findElemUnderCursor(e.parentNode, n, a);
-	},
-	cancelEvent: function (evt) {
-		if (!evt.cancelable) {
-			return;
-		}
-		evt.preventDefault();
-		evt.stopPropagation();
-	},	
-	onClickOneClick: function(evt) {
-		function processRegular(e) {
-			let m = this.findElemUnderCursor(target, e[0], e[1]);
-			if (!m) {
-				return false;
+	function Selector() {
+		let tp = this;
+		this._callback = function(evt) tp.onClickOneClick(evt);
+		
+		window.addEventListener('click', this._callback, false);
+		window.addEventListener('mouseup', this._callback, false);
+		window.addEventListener('mousemove', this._callback, false);
+		
+		this._detachObserver = DTA.Preferences.addObserver('extensions.dta.selectbgimages', this);
+		this.observe();
+	}
+	Selector.prototype = {
+		dispose: function() {
+			window.removeEventListener('click', this._callback, false);
+			window.removeEventListener('mouseup', this._callback, false);
+			window.removeEventListener('mousemove', this._callback, false);
+			this.detachHilight();
+			this._detachObserver();
+		},
+		detachHilight: function () {
+			if (this._hilight) {
+				this._hilight.hide();
+				delete this._hilight;
 			}
-			DTA.Debug.logString("searching");
-			this.cancelEvent(evt);
-			try {
-				DTA_ContextOverlay.saveSingleLink(true, m.url, m.elem);
-				this.detachHilight();
-				new this.Flasher(m.elem).hide();
+		},
+		getBgImage: function(e) {
+			if (!e || !e.ownerDocument) {
+				return null;
 			}
-			catch (ex) {
-				DTA.Debug.log("failed to process " + e[0], ex);
+			let url = e.ownerDocument.defaultView.getComputedStyle(e, "").getPropertyCSSValue('background-image');
+			if (url && url.primitiveType == CSSPrimitiveValue.CSS_URI) {
+				return {elem: e, url: url.getStringValue()};
 			}
-			return true;
-		}
-		function highlightElement(e) {
-			let m = this.findElemUnderCursor(target, e[0], e[1]);
-			if (!m) {
-				return false;
+			return getBgImage(e.parentNode);
+		},
+		findElemUnderCursor: function (e, n, a) {
+			if (n == 'bgimg') {
+				return this.getBgImage(e);
 			}
-			if (this._hilight && this._hilight.elem == m.elem) {
+			if (!e) {
+				return null;
+			}
+			if (e.localName == n && e[a]) {
+				return {elem: e, url: e[a] };
+			}
+			return this.findElemUnderCursor(e.parentNode, n, a);
+		},
+		cancelEvent: function (evt) {
+			if (!evt.cancelable) {
+				return;
+			}
+			evt.preventDefault();
+			evt.stopPropagation();
+		},	
+		onClickOneClick: function(evt) {
+			function processRegular(e) {
+				let m = this.findElemUnderCursor(target, e[0], e[1]);
+				if (!m) {
+					return false;
+				}
+				debug("searching");
+				this.cancelEvent(evt);
+				try {
+					saveSingleLink(true, m.url, m.elem);
+					this.detachHilight();
+					new this.Flasher(m.elem).hide();
+				}
+				catch (ex) {
+					debug("failed to process " + e[0], ex);
+				}
 				return true;
 			}
-			this.detachHilight();
-			this._hilight = new this.Highlighter(m.elem);
-			return true;
-		}		
-		
-		target = evt.target;
-		let doc = target.ownerDocument;
-		
-		if (evt.type == 'click') {
-			if (evt.button == 0 && !!target && target.nodeType == 1 && (!target.namespaceURI || target.namespaceURI == 'http://www.w3.org/1999/xhtml')) {
-				this._searchee.some(processRegular, this);
-			}			
-		}
-		else if (evt.type == 'mousemove') {
-			if (!this._searchee.some(highlightElement, this)) {
-				this.detachHilight();
-			}
-		}
-		else {
-			this.cancelEvent(evt);
-		}
-	},
-	observe: function() {
-		let searchee = [
-			['A', 'href'],
-			['IMG', 'src']
-		];
-		if (DTA.Preferences.getExt('selectbgimages', false)) {
-			searchee.push(['bgimg', 'bgimg']);
-		}
-		this._searchee = searchee;
-	}
-};
-
-DTA_ContextOverlay.Selector.prototype.Flasher = function(elem) {
-	this.elem = elem;
-	this.doc = elem.ownerDocument;
-	this.init();
-}
-DTA_ContextOverlay.Selector.prototype.Flasher.prototype = {
-	BACKGROUND: '#1def39 no-repeat center',
-	PADDING: 6,
-	OPACITY: 0.6,
-	RADIUS: 5,
-	FSTEP: 0.05,
-	FINTERVAL: 60,
-	FWAIT: 350,
-	
-	calcPosition: function(parent) {
-		let ow = parent.offsetWidth;
-		let oh = parent.offsetHeight;
-		let ol = parent.offsetLeft;
-		let ot = parent.offsetTop;
-		// enlarge the box to include all (overflowing) child elements
-		// useful for example for inline <A><IMG></A>
-		if (parent.nodeName != 'IMG') {
-			let boxen = parent.getElementsByTagName('*');
-			for (let i = 0; i < boxen.length; ++i) {
-				let box = boxen[i];
-				if (!!box.style.float || box.style.position == 'fixed' || box.style.position == 'absolute') {
-					continue;
+			function highlightElement(e) {
+				let m = this.findElemUnderCursor(target, e[0], e[1]);
+				if (!m) {
+					return false;
 				}
-				ow = Math.max(ow, box.offsetWidth);
-				oh = Math.max(oh, box.offsetHeight);
-				ol = Math.min(ol, box.offsetLeft);
-				ot = Math.min(ot, box.offsetTop);
+				if (this._hilight && this._hilight.elem == m.elem) {
+					return true;
+				}
+				this.detachHilight();
+				this._hilight = new this.Highlighter(m.elem);
+				return true;
+			}		
+			
+			let target = evt.target;
+			let doc = target.ownerDocument;
+			
+			if (evt.type == 'click') {
+				if (evt.button == 0 && !!target && target.nodeType == 1 && (!target.namespaceURI || target.namespaceURI == 'http://www.w3.org/1999/xhtml')) {
+					this._searchee.some(processRegular, this);
+				}			
 			}
+			else if (evt.type == 'mousemove') {
+				if (!this._searchee.some(highlightElement, this)) {
+					this.detachHilight();
+				}
+			}
+			else {
+				this.cancelEvent(evt);
+			}
+		},
+		observe: function() {
+			let searchee = [
+				['A', 'href'],
+				['IMG', 'src']
+			];
+			if (DTA.Preferences.getExt('selectbgimages', false)) {
+				searchee.push(['bgimg', 'bgimg']);
+			}
+			this._searchee = searchee;
 		}
-		// calculate the real offset coordinates
-		parent = parent.offsetParent;
-		let pos = (this.elem.style.position && this.elem.style.position == 'fixed') ? 'fixed' : 'absolute';
-		while (parent) {
-			ot += parent.offsetTop;
-			ol += parent.offsetLeft;
-			if (parent.style.position == 'fixed') {
-				pos = 'fixed';
+	};
+
+	Selector.prototype.Flasher = function(elem) {
+		this.elem = elem;
+		this.doc = elem.ownerDocument;
+		this.init();
+	}
+	Selector.prototype.Flasher.prototype = {
+		BACKGROUND: '#1def39 no-repeat center',
+		PADDING: 6,
+		OPACITY: 0.6,
+		RADIUS: 5,
+		FSTEP: 0.05,
+		FINTERVAL: 60,
+		FWAIT: 350,
+		
+		calcPosition: function(parent) {
+			let ow = parent.offsetWidth;
+			let oh = parent.offsetHeight;
+			let ol = parent.offsetLeft;
+			let ot = parent.offsetTop;
+			// enlarge the box to include all (overflowing) child elements
+			// useful for example for inline <A><IMG></A>
+			if (parent.nodeName != 'IMG') {
+				let boxen = parent.getElementsByTagName('*');
+				for (let i = 0; i < boxen.length; ++i) {
+					let box = boxen[i];
+					if (!!box.style.float || box.style.position == 'fixed' || box.style.position == 'absolute') {
+						continue;
+					}
+					ow = Math.max(ow, box.offsetWidth);
+					oh = Math.max(oh, box.offsetHeight);
+					ol = Math.min(ol, box.offsetLeft);
+					ot = Math.min(ot, box.offsetTop);
+				}
 			}
+			// calculate the real offset coordinates
 			parent = parent.offsetParent;
-		}
-		return {
-			width: ow,
-			height: oh,
-			left: ol,
-			top: ot,
-			position: pos
-		};
-	},	
-	
-	init: function() {
-		let div = this.doc.createElement('div');
-		this.doc.documentElement.appendChild(div);
+			let pos = (this.elem.style.position && this.elem.style.position == 'fixed') ? 'fixed' : 'absolute';
+			while (parent) {
+				ot += parent.offsetTop;
+				ol += parent.offsetLeft;
+				if (parent.style.position == 'fixed') {
+					pos = 'fixed';
+				}
+				parent = parent.offsetParent;
+			}
+			return {
+				width: ow,
+				height: oh,
+				left: ol,
+				top: ot,
+				position: pos
+			};
+		},	
 		
-		div.style.MozBorderRadius = this.RADIUS + 'px';
-		div.style.zIndex = 2147483647;
-		div.style.opacity = this.OPACITY;
-		div.style.background = this.BACKGROUND;
-		div.style.display = 'block';
+		init: function() {
+			let div = this.doc.createElement('div');
+			this.doc.documentElement.appendChild(div);
+			
+			with (div.style) {
+				MozBorderRadius = this.RADIUS + 'px';
+				zIndex = 2147483647;
+				opacity = this.OPACITY;
+				background = this.BACKGROUND;
+				display = 'block';
 
-		// put the div where it belongs
-		let pos = this.calcPosition(this.elem);
-		div.style.width = (pos.width + 2 * this.PADDING) + "px";
-		div.style.height = (pos.height + 2 * this.PADDING) + "px";
-		div.style.top = (pos.top - this.PADDING) + "px";
-		div.style.left = (pos.left - this.PADDING) + "px";
-		div.style.position = pos.position;
-		
-		// add the adding icon if the element covers enough space
-		if (Math.min(pos.width, pos.height) >= 36) {
-			div.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_large.png)';
-		} 
-		if (Math.min(pos.width, pos.height) >= 18) {
-			div.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_small.png)';
+				// put the div where it belongs
+				let pos = this.calcPosition(this.elem);
+				width = (pos.width + 2 * this.PADDING) + "px";
+				height = (pos.height + 2 * this.PADDING) + "px";
+				top = (pos.top - this.PADDING) + "px";
+				left = (pos.left - this.PADDING) + "px";
+				position = pos.position;
+			
+				// add the adding icon if the element covers enough space
+				if (Math.min(pos.width, pos.height) >= 36) {
+					backgroundImage = 'url(chrome://dta-public/skin/integration/added_large.png)';
+				} 
+				if (Math.min(pos.width, pos.height) >= 18) {
+					backgroundImage = 'url(chrome://dta-public/skin/integration/added_small.png)';
+				}
+			}
+			
+			this._div = div;
+		},
+		fade: function() {
+			let o = (parseFloat(this._div.style.opacity) - this.FSTEP);
+			if (o - 0.03 < 0) {
+				this._div.parentNode.removeChild(this._div);
+				return false;
+			}
+			this._div.style.opacity = o.toString();
+			let tp = this;
+			setTimeout(function() tp.fade(), this.FINTERVAL);
+			return true;
+		},
+		hide: function() {
+			let tp = this;
+			setTimeout(function() tp.fade(), this.FWAIT);
 		}
-		
-		this._div = div;
-	},
-	fade: function() {
-		let o = (parseFloat(this._div.style.opacity) - this.FSTEP);
-		if (o - 0.03 < 0) {
-			this._div.parentNode.removeChild(this._div);
-			return false;
-		}
-		this._div.style.opacity = o.toString();
-		let tp = this;
-		setTimeout(function() tp.fade(), this.FINTERVAL);
-		return true;
-	},
-	hide: function() {
-		let tp = this;
-		setTimeout(function() tp.fade(), this.FWAIT);
+	};
+
+	Selector.prototype.Highlighter = function(elem) {
+		this.elem = elem;
+		this.doc = elem.ownerDocument;
+		this.init();
 	}
-};
+	Selector.prototype.Highlighter.prototype = {
+		BACKGROUND: 'red',
+		OPACITY: 0.4,
+		RADIUS: 9,
+		WIDTH: 3,
+		
+		calcPosition: Selector.prototype.Flasher.prototype.calcPosition, 
+		
+		init: function() {
+			let doc = this.doc;
+			let elem = doc.documentElement;
+			function div() doc.createElement('div');
+			
+			let leftD = div();
+			elem.appendChild(leftD);
+			let rightD = div();
+			elem.appendChild(rightD);
+			let topD = div();
+			elem.appendChild(topD);
+			let bottomD = div();
+			elem.appendChild(bottomD);
+			
+			this._divs = [leftD, rightD, topD, bottomD];
 
-DTA_ContextOverlay.Selector.prototype.Highlighter = function(elem) {
-	this.elem = elem;
-	this.doc = elem.ownerDocument;
-	this.init();
-}
-DTA_ContextOverlay.Selector.prototype.Highlighter.prototype = {
-	BACKGROUND: 'red',
-	OPACITY: 0.4,
-	RADIUS: 9,
-	WIDTH: 3,
-	
-	calcPosition: DTA_ContextOverlay.Selector.prototype.Flasher.prototype.calcPosition, 
-	
-	init: function() {
-		let left = this.doc.createElement('div');
-		this.doc.documentElement.appendChild(left);
-		let right = this.doc.createElement('div');
-		this.doc.documentElement.appendChild(right);
-		let top = this.doc.createElement('div');
-		this.doc.documentElement.appendChild(top);
-		let bottom = this.doc.createElement('div');
-		this.doc.documentElement.appendChild(bottom);
-		
-		let pos = this.calcPosition(this.elem);
-		for each (let div in [left, right, top, bottom]) {
-			div.style.zIndex = 2147483647;
-			div.style.opacity = this.OPACITY;
-			div.style.background = this.BACKGROUND;
-			div.style.display = 'block';
-			div.style.position = pos.position;
-			div.style.width = this.WIDTH + 'px';
-			div.style.height = this.WIDTH + 'px';
-		}
-		
-		left.style.MozBorderRadiusTopleft = this.RADIUS + 'px';
-		left.style.MozBorderRadiusBottomleft = this.RADIUS + 'px';
-		left.style.left = (pos.left - this.WIDTH) + 'px';
-		left.style.top = (pos.top - this.WIDTH) + 'px';
-		left.style.height = (pos.height + this.WIDTH * 2) + 'px';
+			let pos = this.calcPosition(this.elem);
+			for each (let div in this._divs) {
+				with (div.style) {
+					zIndex = 2147483647;
+					opacity = this.OPACITY;
+					background = this.BACKGROUND;
+					display = 'block';
+					position = pos.position;
+					width = this.WIDTH + 'px';
+					height = this.WIDTH + 'px';
+				}
+			}
+			
+			with (leftD.style) {
+				MozBorderRadiusTopleft = this.RADIUS + 'px';
+				MozBorderRadiusBottomleft = this.RADIUS + 'px';
+				left = (pos.left - this.WIDTH) + 'px';
+				top = (pos.top - this.WIDTH) + 'px';
+				height = (pos.height + this.WIDTH * 2) + 'px';
+			}
 
-		right.style.MozBorderRadiusTopright = this.RADIUS + 'px';
-		right.style.MozBorderRadiusBottomright = this.RADIUS + 'px';
-		right.style.top = left.style.top;
-		right.style.left = (pos.left + pos.width) + 'px';
-		right.style.height = left.style.height;
-		
-		
-		top.style.left = pos.left + 'px';
-		top.style.top = (pos.top - this.WIDTH) + 'px';
-		top.style.width = pos.width + 'px';
-		
-		bottom.style.left = pos.left + 'px';
-		bottom.style.top = (pos.top + pos.height) + 'px';
-		bottom.style.width = pos.width + 'px';
-		
-		this._divs = [left, right, top, bottom];
-	},
-	hide: function() {
-		for each (let div in this._divs) {
-			div.parentNode.removeChild(div);
+			with (rightD.style) {
+				MozBorderRadiusTopright = this.RADIUS + 'px';
+				MozBorderRadiusBottomright = this.RADIUS + 'px';
+				top = leftD.style.top;
+				left = (pos.left + pos.width) + 'px';
+				height = leftD.style.height;
+			}
+			
+			with (topD.style) {
+				left = pos.left + 'px';
+				top = (pos.top - this.WIDTH) + 'px';
+				width = pos.width + 'px';
+			}
+			
+			with (bottomD.style) {
+				left = pos.left + 'px';
+				top = (pos.top + pos.height) + 'px';
+				width = pos.width + 'px';
+			}			
+		},
+		hide: function() {
+			for each (let div in this._divs) {
+				div.parentNode.removeChild(div);
+			}
 		}
+	};
+
+	addEventListener("keydown", onKeyDown, false);
+	addEventListener("keyup", onKeyUp, false);
+	addEventListener("blur", onBlur, true);	
+	
+	function bindEvt(evt, fn) function(e) e.addEventListener(evt, fn, true); 
+	
+	$(
+		'dtaCtxDTA',
+		'dtaCtxDTA-direct',
+		'dtaCtxDTASel',
+		'dtaCtxDTASel-direct',
+		'dta-tb-dta',
+		'dtaToolsDTA'
+	).forEach(bindEvt('command', function() findLinks(false)));
+	$(
+		'dtaCtxTDTA',
+		'dtaCtxTDTA-direct',
+		'dtaCtxTDTASel',
+		'dtaCtxTDTASel-direct',
+		'dta-tb-turbo',
+		'dtaToolsTDTA'
+	).forEach(bindEvt('command', function() findLinks(true)));
+	$(
+		'dta-manager-button',
+		'dta-tb-manager',
+		'dtaToolsManager'
+	).forEach(bindEvt('command', function() DTA.openManager(window)));
+	
+	$('dta-tb-all').addEventListener('command', function() findLinks(false, true), true);
+	$('dta-tb-allturbo').addEventListener('command', function() findLinks(true, true), true);
+	
+	function bindCtxEvt(ctx, evt, fn) {
+		$(ctx, ctx + "-direct").forEach(bindEvt(evt, fn));
 	}
-};
-
-addEventListener("load", function() DTA_ContextOverlay.init(), false);
-addEventListener("keydown", function(evt) DTA_ContextOverlay.onKeyDown(evt), false);
-addEventListener("keyup", function(evt) DTA_ContextOverlay.onKeyUp(evt), false);
-addEventListener("blur", function(evt) DTA_ContextOverlay.onBlur(evt), true);
+	
+	bindCtxEvt('dtaCtxSaveLink', 'command', function() findSingleLink(false));
+	bindCtxEvt('dtaCtxSaveLinkT', 'command', function() findSingleLink(true));
+	bindCtxEvt('dtaCtxSaveImg', 'command', function() findSingleImg(false));
+	bindCtxEvt('dtaCtxSaveImgT', 'command', function() findSingleImg(true));
+	bindCtxEvt('dtaCtxSaveForm', 'command', function() findForm(false));
+	bindCtxEvt('dtaCtxSaveFormT', 'command', function() findForm(true));
+	
+	$('dtaCtxPref', 'dtaCtxPref-direct', 'dtaToolsPrefs').forEach(bindEvt('command', function() DTA_showPreferences()));
+	
+	with ($('dta-button')) {
+		addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA), true);
+		addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DTA_DropDTA), true);
+		addEventListener('command', function(event) { if (event.target == $('dta-button')) findLinks(false); }, true);
+	}
+	with ($('dta-turbo-button')) {
+		addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropTDTA), true);
+		addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DTA_DropTDTA), true);
+		addEventListener('command', function(event) { if (event.target == $('dta-turbo-button')) findLinks(true); }, true);
+	}
+	
+	$('dta-turboselect-button').addEventListener(
+			'command',
+			function(event) { if (event.target == $('dta-turboselect-button')) toggleOneClick(event); },
+			true
+			);
+	$('dtaToolsAbout').addEventListener(
+			'command',
+			function() DTA_Mediator.showAbout(window),
+			true
+			);
+	
+}, true);
