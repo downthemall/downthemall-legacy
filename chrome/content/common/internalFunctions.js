@@ -441,8 +441,8 @@ function getIcon(link, metalink, size) {
 				}
 				catch (ex) { /* no op */ }
 			}
-			if (_favIcons && url && url instanceof Ci.nsIURL) {
-				if (/(?:\/|html?|aspx?|php\d?)$|\/[^.]$/i.test(url.filePath)) {
+			if (url && url instanceof Ci.nsIURL) {
+				if (_favIcons && /(?:\/|html?|aspx?|php\d?)$|\/[^.]$/i.test(url.filePath)) {
 					return  _favIcons.getFaviconImageForPage(url).spec;
 				}
 				url = url.spec;
