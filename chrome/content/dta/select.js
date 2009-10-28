@@ -673,7 +673,8 @@ let Dialog = {
 			checkbox.setAttribute("checked", f.active);
 			checkbox.setAttribute("id", f.id);
 			checkbox.setAttribute("label", f.label);
-			checkbox.setAttribute("oncommand", "Dialog.toggleBox(this);");
+			checkbox.setAttribute("crop", "end");
+			checkbox.addEventListener('command', function(evt) Dialog.toggleBox(evt.target), true);
 			checkbox.filter = f;
 			boxes.push(checkbox);
 		}
@@ -688,7 +689,7 @@ let Dialog = {
 			cols.removeChild(cols.lastChild);
 		}
 		let count = boxes.length;
-		for (let i = 0; i < 4; ++i) {
+		for (let i = 0; i < 3; ++i) {
 			cols.appendChild(document.createElement('column'));
 			cols.lastChild.setAttribute('flex', '1');
 		}
@@ -696,7 +697,7 @@ let Dialog = {
 		let row = null;
 		boxes.forEach(
 			function(b, i) {
-				if (i % 4 == 0) {
+				if (i % 3 == 0) {
 					row = document.createElement('row');
 					row.setAttribute('pack', 'center');
 					rows.appendChild(row);
