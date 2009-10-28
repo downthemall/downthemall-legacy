@@ -385,7 +385,7 @@ Utils.merge(
  * @return String containing the icon URI
  */
 function getIcon(link, metalink, size) {
-
+	let _getIcon;
 	const _recognizedMac = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
 
 	function _getIconMac(url, size) {
@@ -396,48 +396,64 @@ function getIcon(link, metalink, size) {
 		return "moz-icon://file.html?size=" + size;
 	}
 	
+	
 	function _getIconOther(url, size) {
 		return "moz-icon://" + url + "?size=" + size;
 	};
 	
-	function _getIcon(url, size) {
-		if (/mac/i.test(navigator.platform)) {
-			_getIcon = _getIconMac; 
-		}
-		else {
-			_getIcon = _getIconOther;
-		}
-		return _getIcon(url, size);
-	};
-
-	if (metalink) {
-		return "chrome://dta/skin/icons/metalink.png";
+	if (/mac/i.test(navigator.platform)) {
+		_getIcon = _getIconMac; 
 	}
-	if (typeof(size) != 'number') {
-		size = 16;
+	else {
+		_getIcon = _getIconOther;
 	}
+	
+	let _favIcons = null;
 	try {
-		var url;
-		if (link instanceof DTA.URL) {
-			url = link.url.spec;
-		}
-		else if (link instanceof Ci.nsIURI) {
-			url = link.spec;
-		}
-		else if (link && link.url) {
-			url = link.url;
-		}
-		else {
-			url = link.toString();
-		}
-		let ext = url.getExtension();
-		url = 'file' + (ext ? '.' + ext : '');
-		return _getIcon(url, size);
+		_favIcons = Cc['@mozilla.org/browser/favicon-service;1']
+       .getService(Ci.nsIFaviconService);
 	}
 	catch (ex) {
-		Debug.log("updateIcon: failed to grab icon", ex);
+		Debug.log("FavIcon Service not available", ex);
 	}
-	return "moz-icon://foo.html?size=" + size;
+	return (getIcon = function(link, metalink, size) {
+
+		if (metalink) {
+			return "chrome://dta/skin/icons/metalink.png";
+		}
+		if (typeof(size) != 'number') {
+			size = 16;
+		}
+		try {
+			let url = link;
+			if (link instanceof DTA.URL) {
+				url = link.url;
+			}
+			else if (link instanceof Ci.nsIURI) {
+				url = link.QueryInterface(Ci.nsIURL);
+			}
+			else if (link && link.url) {
+				url = link.url;
+			}
+			if (typeof url == 'string' || url instanceof String) {
+				url = url.toURL();
+			}
+			if (!url || !(url instanceof Ci.nsIURL)) {
+				throw new Error("Cannot process URL");
+			}
+			if (_favIcons && /(?:\/|html?|aspx?|php\d?)$|\/[^.]$/i.test(url.filePath)) {
+				return  _favIcons.getFaviconImageForPage(url).spec;
+			}
+			url = url.spec;
+			let ext = url.getExtension();
+			url = 'file' + (ext ? '.' + ext : '');
+			return _getIcon(url, size);
+		}
+		catch (ex) {
+			Debug.log("updateIcon: failed to grab icon", ex);
+		}
+		return "moz-icon://foo.html?size=" + size;
+	})(link, metalink, size);
 }
 
 /**
