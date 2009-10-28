@@ -187,3 +187,9 @@ treechildren::-moz-tree-cell-text(fastFiltered, selected) {
 #maskeditor-buttons {
 	margin-top: 1em;
 }
+
+#checkcontainer checkbox {
+	font-size: smaller;
+	white-space: nowrap !important;
+	overflow: hidden;
+}
