@@ -436,15 +436,17 @@ function getIcon(link, metalink, size) {
 				url = link.url;
 			}
 			if (typeof url == 'string' || url instanceof String) {
-				url = url.toURL();
+				try {
+					url = url.toURL();
+				}
+				catch (ex) { /* no op */ }
 			}
-			if (!url || !(url instanceof Ci.nsIURL)) {
-				throw new Error("Cannot process URL");
+			if (_favIcons && url && url instanceof Ci.nsIURL) {
+				if (/(?:\/|html?|aspx?|php\d?)$|\/[^.]$/i.test(url.filePath)) {
+					return  _favIcons.getFaviconImageForPage(url).spec;
+				}
+				url = url.spec;
 			}
-			if (_favIcons && /(?:\/|html?|aspx?|php\d?)$|\/[^.]$/i.test(url.filePath)) {
-				return  _favIcons.getFaviconImageForPage(url).spec;
-			}
-			url = url.spec;
 			let ext = url.getExtension();
 			url = 'file' + (ext ? '.' + ext : '');
 			return _getIcon(url, size);
