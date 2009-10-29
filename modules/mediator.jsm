@@ -36,9 +36,9 @@
 
 const EXPORTED_SYMBOLS = [
 	'getMostRecent', 'getMostRecentByUrl', 'getAllByType',
-	'openExternal', 'openUrl', 'tryOpenUrl',
+	'openExternal', 'openUrl', 'tryOpenUrl', 'openWindow',
 	'addListener', 'removeListener',
-	'showNotice'
+	'showNotice', 'showAbout'
 ];
 	
 const Cc = Components.classes;
@@ -49,12 +49,15 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 module("resource://dta/utils.jsm");
+let Prefs = {};
+module("resource://dta/preferences.jsm", Prefs);
 
 ServiceGetter(this, "mediator", "@mozilla.org/appshell/window-mediator;1", "nsIWindowMediator");
 ServiceGetter(this, "ioservice", "@mozilla.org/network/io-service;1", "nsIIOService");
 ServiceGetter(this, "protoservice", "@mozilla.org/uriloader/external-protocol-service;1", "nsIExternalProtocolService");
 ServiceGetter(this, "logger", "@downthemall.net/debug-service;1", "dtaIDebugService");
 ServiceGetter(this, "windowwatcher", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
+ServiceGetter(this, "sbs", "@mozilla.org/intl/stringbundle;1", "nsIStringBundleService");
 
 function objToString(obj) {
 	if (obj == null || obj == undefined) {
@@ -141,7 +144,29 @@ function openExternal(link) {
 	logger.logString("Mediator: Using external handler for " + link);
 	protoservice.loadUrl(objToUri(link));
 }
+
+
+this.__defineGetter__(
+	'homePage',
+	function() {
+		let hp = Prefs.get('browser.startup.homepage', null);
+		if (hp && !/^resource:/.test(hp)) {
+			return hp;
+		}
+		try {
+			return sbs.createBundle(hp || 'resource:/browserconfig.properties').GetStringFromName('browser.startup.homepage');
+		}
+		catch (ex) {
+			logger.logString("No luck getting hp");
+		}
+		return 'about:blank';
+	}
+);
+
 function openUrl(window, link, ref) {
+	if (!link) {
+		link = homePage;
+	}
 	logger.logString("Mediator: Request to open " + link);
 	if (!tryOpenUrl(window, link, ref)) {
 		try {
@@ -182,6 +207,7 @@ function tryOpenUrl(window, link, ref) {
 			let tb = win.document.getElementById('tabmail');
 			if (tb && ('openTab' in tb)) {
 				tb.openTab('contentTab', link, link);
+				alert('tm');
 				return true;
 			}
 		}
@@ -190,6 +216,13 @@ function tryOpenUrl(window, link, ref) {
 		logger.log('Mediator: Failed to open tab', ex);
 	}
 	return false;
+}
+
+function openWindow(window, link) {
+	if (!link) {
+		link = homePage;
+	}
+	window.open(link);
 }
 
 function addListener(listener) {
@@ -201,4 +234,7 @@ function removeListener(listener) {
 
 function showNotice(window) {
 	openUrl(window, 'about:downthemall#privacy');
+}
+function showAbout(window) {
+	openUrl(window, 'about:downthemall');
 }
