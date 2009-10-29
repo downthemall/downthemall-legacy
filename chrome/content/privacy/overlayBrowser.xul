@@ -38,24 +38,26 @@
 <!DOCTYPE overlay>
   
 <overlay id="dtaPrivacy" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<script type="application/x-javascript"><![CDATA[
- 	// doing this in a function is better, as we do not have do deal with vars of other xuls
- 	function dtaSanitize() {
- 		try {
-			 Components.classes["@downthemall.net/privacycontrol;1"]
-				.getService(Components.interfaces.nsIObserver)
-				.observe(null, 'sanitize', null);
-		} catch (ex) {
-			try { Components.utils.reportError(ex); } catch(ex) {}
-		}
- 	}
- 	function dtaInit() {
- 		// extent the oncommand code.
- 		var cmd = document.getElementById('Tools:Sanitize');
- 		if (cmd) {
- 			cmd.setAttribute('oncommand', 'dtaSanitize(); ' + cmd.getAttribute('oncommand'));
- 		}
-	}
-	dtaInit();
+	<script type="text/javascript"><![CDATA[
+	 	// doing this in a function is better, as we do not have do deal with vars of other xuls
+	 	addEventListener('load', function() {
+
+		 	function dtaSanitize() {
+		 		try {
+					 Components.classes["@downthemall.net/privacycontrol;1"]
+						.getService(Components.interfaces.nsIObserver)
+						.observe(null, 'sanitize', null);
+				} catch (ex) {
+					try { Components.utils.reportError(ex); } catch(ex) {}
+				}
+		 	}
+		 	
+		 	removeEventListener('load', arguments.callee, true);
+	
+	 		let cmd = document.getElementById('Tools:Sanitize');
+	 		if (cmd) {
+	 			cmd.addEventListener('command', dtaSanitize, true);
+	 		}
+		}, true);
  ]]></script>
 </overlay>
