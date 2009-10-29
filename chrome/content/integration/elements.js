@@ -35,9 +35,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
-addEventListener('load', function() {
-	removeEventListener('load', arguments.callee, true);
+
+(function() {
 	
 	let Cc = Components.classes;
 	let Ci = Components.interfaces;
@@ -134,43 +133,6 @@ addEventListener('load', function() {
 		
 	let _ch = Cc['@downthemall.net/contenthandling;2']
 		.getService(Ci.dtaIContentHandling);
-	
-	let direct = {};
-	let compact = {};
-	let tools = {};
-	let ctxBase = $('dtaCtxCompact');
-	let toolsBase = $('dtaToolsMenu');
-	let toolsMenu = $('dtaToolsPopup');
-	let toolsSep = $('dtaToolsSep');
-	
-	(function() {
-		try {
-			let ctxItem = $("dtaCtxCompact");
-			let ctx = ctxItem.parentNode;
-			let cont = $('dtaCtxSubmenu');
-	
-			for each (let id in ['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveFormT', 'SaveForm', 'SepFront']) {
-				compact[id] = $('dtaCtx' + id);
-				let node = $('dtaCtx' + id).cloneNode(true);
-				node.setAttribute('id', node.id + "-direct");
-				ctx.insertBefore(node, ctxItem.nextSibling);
-				direct[id] = node;
-			}
-	
-			let menu = $("dtaToolsMenu").parentNode;
-			ctx.addEventListener("popupshowing", onContextShowing, false);
-			menu.addEventListener("popupshowing", onToolsShowing, false);
-		
-			// prepare tools
-			for each (let e in ['DTA', 'TDTA', 'Manager']) {
-				tools[e] = $('dtaTools' + e);
-			}
-		}
-		catch (ex) {
-			Components.utils.reportError(ex);
-			debug("DCO::init()", ex);
-		}
-	})();
 	
 	function addLinksToArray(lnks, urls, doc) {
 		if (!lnks || !lnks.length) {
@@ -1113,70 +1075,164 @@ addEventListener('load', function() {
 		}
 	};
 
-	addEventListener("keydown", onKeyDown, false);
-	addEventListener("keyup", onKeyUp, false);
-	addEventListener("blur", onBlur, true);	
-	
-	function bindEvt(evt, fn) function(e) e.addEventListener(evt, fn, true); 
-	
-	$(
-		'dtaCtxDTA',
-		'dtaCtxDTA-direct',
-		'dtaCtxDTASel',
-		'dtaCtxDTASel-direct',
-		'dta-tb-dta',
-		'dtaToolsDTA'
-	).forEach(bindEvt('command', function() findLinks(false)));
-	$(
-		'dtaCtxTDTA',
-		'dtaCtxTDTA-direct',
-		'dtaCtxTDTASel',
-		'dtaCtxTDTASel-direct',
-		'dta-tb-turbo',
-		'dtaToolsTDTA'
-	).forEach(bindEvt('command', function() findLinks(true)));
-	$(
-		'dta-manager-button',
-		'dta-tb-manager',
-		'dtaToolsManager'
-	).forEach(bindEvt('command', function() DTA.openManager(window)));
-	
-	$('dta-tb-all').addEventListener('command', function() findLinks(false, true), true);
-	$('dta-tb-allturbo').addEventListener('command', function() findLinks(true, true), true);
-	
-	function bindCtxEvt(ctx, evt, fn) {
-		$(ctx, ctx + "-direct").forEach(bindEvt(evt, fn));
-	}
-	
-	bindCtxEvt('dtaCtxSaveLink', 'command', function() findSingleLink(false));
-	bindCtxEvt('dtaCtxSaveLinkT', 'command', function() findSingleLink(true));
-	bindCtxEvt('dtaCtxSaveImg', 'command', function() findSingleImg(false));
-	bindCtxEvt('dtaCtxSaveImgT', 'command', function() findSingleImg(true));
-	bindCtxEvt('dtaCtxSaveForm', 'command', function() findForm(false));
-	bindCtxEvt('dtaCtxSaveFormT', 'command', function() findForm(true));
-	
-	$('dtaCtxPref', 'dtaCtxPref-direct', 'dtaToolsPrefs').forEach(bindEvt('command', function() DTA_showPreferences()));
-	
-	with ($('dta-button')) {
-		addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA), true);
-		addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DTA_DropDTA), true);
-		addEventListener('command', function(event) { if (event.target == $('dta-button')) findLinks(false); }, true);
-	}
-	with ($('dta-turbo-button')) {
-		addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropTDTA), true);
-		addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DTA_DropTDTA), true);
-		addEventListener('command', function(event) { if (event.target == $('dta-turbo-button')) findLinks(true); }, true);
-	}
-	
-	$('dta-turboselect-button').addEventListener(
-			'command',
-			function(event) { if (event.target == $('dta-turboselect-button')) toggleOneClick(event); },
-			true
+	(function() {
+		function hookTB(node) {
+			with (node) {
+				addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA), true);
+				addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DTA_DropDTA), true);
+				addEventListener('command', function(event) {
+					switch (event.target.id) {
+					case 'dta-button':
+					case 'dta-tb-dta':
+						findLinks();
+						break;
+					case 'dta-tb-all':
+						findLinks(false, true);
+						break;
+					case 'dta-tb-manager':
+						DTA.openManager(window);
+						break;
+					default:
+						alert(event.target.id);
+						break;
+					}
+				}, true);
+			}
+		}
+		
+		function hookTurbo(node) {
+			with (node) {
+				addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropTDTA), true);
+				addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DTA_DropTDTA), true);
+				addEventListener('command', function(event) {
+					switch (event.target.id) {
+					case 'dta-turbo-button':
+					case 'dta-tb-turbo':
+						findLinks(true);
+						break;
+					case 'dta-tb-allturbo':
+						findLinks(true, true);
+						break;
+					default:
+						alert(event.target.id);
+						break;
+					}
+				}, true);
+			}
+		}
+		function hookTurboSelect(node) {
+			node.addEventListener(
+				'command',
+				function(event) { if (event.target.ID == $('dta-turboselect-button')) toggleOneClick(event); },
+				true
+				);
+		}
+		function hookManager(node) {
+			node.addEventListener(
+				'command',
+				function() DTA.openManager(window),
+				true
+				);
+		}
+		let nodes = [['dta-button', hookTB], ['dta-turbo-button', hookTurbo], ['dta-turboselect-button', hookTurboSelect], ['dta-manager-button', hookManager]];
+		for each(let [id,fn] in nodes) {
+			let nid = id;
+			let nfn = fn;
+			addEventListener(
+				'DOMNodeInserted',
+				function(evt) {
+					if (evt.target.id == nid) {
+						removeEventListener('DOMNodeInserted', arguments.callee, true);
+						nfn(evt.target);
+					}
+				},
+				true
 			);
-	$('dtaToolsAbout').addEventListener(
-			'command',
-			function() DTA_Mediator.showAbout(window),
-			true
-			);
-	
-}, true);
+		}
+	})();
+
+	addEventListener('load', function() {
+		removeEventListener('load', arguments.callee, true);	
+		
+		let direct = {};
+		let compact = {};
+		let tools = {};
+		let ctxBase = $('dtaCtxCompact');
+		let toolsBase = $('dtaToolsMenu');
+		let toolsMenu = $('dtaToolsPopup');
+		let toolsSep = $('dtaToolsSep');
+		
+		(function() {
+			try {
+				let ctxItem = $("dtaCtxCompact");
+				let ctx = ctxItem.parentNode;
+				let cont = $('dtaCtxSubmenu');
+		
+				for each (let id in ['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveFormT', 'SaveForm', 'SepFront']) {
+					compact[id] = $('dtaCtx' + id);
+					let node = $('dtaCtx' + id).cloneNode(true);
+					node.setAttribute('id', node.id + "-direct");
+					ctx.insertBefore(node, ctxItem.nextSibling);
+					direct[id] = node;
+				}
+		
+				let menu = $("dtaToolsMenu").parentNode;
+				ctx.addEventListener("popupshowing", onContextShowing, false);
+				menu.addEventListener("popupshowing", onToolsShowing, false);
+			
+				// prepare tools
+				for each (let e in ['DTA', 'TDTA', 'Manager']) {
+					tools[e] = $('dtaTools' + e);
+				}
+			}
+			catch (ex) {
+				Components.utils.reportError(ex);
+				debug("DCO::init()", ex);
+			}
+		})();
+			
+		addEventListener("keydown", onKeyDown, false);
+		addEventListener("keyup", onKeyUp, false);
+		addEventListener("blur", onBlur, true);	
+		
+		function bindEvt(evt, fn) function(e) e.addEventListener(evt, fn, true); 
+		
+		$(
+			'dtaCtxDTA',
+			'dtaCtxDTA-direct',
+			'dtaCtxDTASel',
+			'dtaCtxDTASel-direct',
+			'dtaToolsDTA'
+		).forEach(bindEvt('command', function() findLinks(false)));
+		$(
+			'dtaCtxTDTA',
+			'dtaCtxTDTA-direct',
+			'dtaCtxTDTASel',
+			'dtaCtxTDTASel-direct',
+			'dtaToolsTDTA'
+		).forEach(bindEvt('command', function() findLinks(true)));
+		
+		$('dtaToolsManager').addEventListener('command', function() DTA.openManager(window), true);
+			
+		function bindCtxEvt(ctx, evt, fn) {
+			$(ctx, ctx + "-direct").forEach(bindEvt(evt, fn));
+		}
+		
+		bindCtxEvt('dtaCtxSaveLink', 'command', function() findSingleLink(false));
+		bindCtxEvt('dtaCtxSaveLinkT', 'command', function() findSingleLink(true));
+		bindCtxEvt('dtaCtxSaveImg', 'command', function() findSingleImg(false));
+		bindCtxEvt('dtaCtxSaveImgT', 'command', function() findSingleImg(true));
+		bindCtxEvt('dtaCtxSaveForm', 'command', function() findForm(false));
+		bindCtxEvt('dtaCtxSaveFormT', 'command', function() findForm(true));
+		
+		$('dtaCtxPref', 'dtaCtxPref-direct', 'dtaToolsPrefs').forEach(bindEvt('command', function() DTA_showPreferences()));
+		
+		$('dtaToolsAbout').addEventListener(
+				'command',
+				function() DTA_Mediator.showAbout(window),
+				true
+				);
+		
+	}, true);
+
+})();
