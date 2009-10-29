@@ -555,6 +555,16 @@
 		}
 	}
 	
+	// these are only valid after the load event.
+	let direct = {};
+	let compact = {};
+	let tools = {};
+	let ctxBase = null;
+	let toolsBase = null;
+	let toolsMenu = null;
+	let toolsSep = null;
+
+	
 	function onContextShowing(evt) {
 		try {
 			let ctx = contextMenu();
@@ -1154,13 +1164,10 @@
 	addEventListener('load', function() {
 		removeEventListener('load', arguments.callee, true);	
 		
-		let direct = {};
-		let compact = {};
-		let tools = {};
-		let ctxBase = $('dtaCtxCompact');
-		let toolsBase = $('dtaToolsMenu');
-		let toolsMenu = $('dtaToolsPopup');
-		let toolsSep = $('dtaToolsSep');
+		ctxBase = $('dtaCtxCompact');
+		toolsBase = $('dtaToolsMenu');
+		toolsMenu = $('dtaToolsPopup');
+		toolsSep = $('dtaToolsSep');
 		
 		(function() {
 			try {
