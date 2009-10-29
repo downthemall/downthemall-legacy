@@ -131,30 +131,6 @@ this.__defineGetter__('DTA_Mediator', function() {
 	return this.DTA_Mediator;
 });
 
-/**
- * Gets user's home page's address 
- *
- * @return sanitized URL
-**/
-function DTA_getHomePage() {
-	
-	var pref = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2);
-	var URL;
-    try {
-    	URL = pref.getComplexValue("browser.startup.homepage",
-                                Components.interfaces.nsIPrefLocalizedString).data;
-    } catch (e) {
-    }
-	
-    if (!URL) {
-    	var sbService = Cc["@mozilla.org/intl/stringbundle;1"].getService(Ci.nsIStringBundleService);
-    	var configBundle = sbService.createBundle("resource:/browserconfig.properties");
-    	URL = configBundle.GetStringFromName("browser.startup.homepage");
-    }
-
-	return URL;
-}
-
 /* DownloadHelper */
 const DTA_DownloadHelper = {};
 Components.utils.import("resource://dta/downloadHelper.jsm", DTA_DownloadHelper);
