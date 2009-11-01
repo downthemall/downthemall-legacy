@@ -2393,7 +2393,9 @@ Chunk.prototype = {
 		if (this.parent.is(CANCELED)) {
 			this.parent.removeTmpFile();
 		}
-		this.buckets.unregister(this);
+		if (this.buckets) {
+			this.buckets.unregister(this);
+		}
 		delete this._req;
 		this._sessionBytes = 0;
 	},
