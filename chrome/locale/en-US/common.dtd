@@ -16,6 +16,7 @@
 <!ENTITY description.value "Description:">
 <!ENTITY checksum.value "Checksum (Hash):">
 <!ENTITY browse.tip "Browse for target folder...">
+<!ENTITY mirrormanager.tip "Manage download mirrors">
 <!ENTITY mask.label "Renaming mask">
 <!ENTITY mask.tip "Selected files will be saved and renamed using this mask">
 

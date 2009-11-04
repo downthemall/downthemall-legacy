@@ -40,6 +40,7 @@ var Timers = new TimerManager();
 
 
 var Dialog = {
+	downloads: null,
 	get isFullyDisabled() {
 		return $('directory', 'renaming', 'hash').every(
 			function(e) {
@@ -50,9 +51,9 @@ var Dialog = {
 	load: function DTA_load() {
 		try {
 			// d is an Array of Downloads
-			var downloads = window.arguments[0];
-			if (downloads.length == 1) {
-				var d = downloads[0];
+			this.downloads = window.arguments[0];
+			if (this.downloads.length == 1) {
+				let d = this.downloads[0];
 				$("infoIcon").src = d.largeIcon;
 				$("infoURL").value = d.urlManager.url.spec;
 				$("infoDest").value = d.destinationFile;
@@ -81,20 +82,20 @@ var Dialog = {
 				$("hash").setAttribute('readonly', 'true');
 				$("hash").setAttribute('disabled', 'true');
 	
-				var mask = downloads[0].mask;
+				let mask = this.downloads[0].mask;
 				$('renaming').value = 
-					downloads.every(function(e, i, a) { return e.mask == mask; })
+					this.downloads.every(function(e, i, a) { return e.mask == mask; })
 					? mask
 					: '';
 	
-				var dir = String(downloads[0].pathName);
+				let dir = String(this.downloads[0].pathName);
 				$('directory').value = 
-					downloads.every(function(e) { return e.pathName == dir; })
+					this.downloads.every(function(e) { return e.pathName == dir; })
 					? dir
 					: '';
 				$('canvasGrid').hidden = true;
 			}				
-			if (downloads.every(function(d) { return d.isOf(COMPLETE, FINISHING); })) {
+			if (this.downloads.every(function(d) { return d.isOf(COMPLETE, FINISHING); })) {
 				for each (let e in $('directory', 'renaming', 'mask', 'browsedir')) {
 					e.setAttribute('readonly', 'true');
 					e.setAttribute('disabled', 'true');
@@ -117,26 +118,25 @@ var Dialog = {
 			return false;
 		}
 		
-		var t = window.arguments[0];
-		var win = window.arguments[1];
+		let win = window.arguments[1];
 
-		var directory = $('directory').value.trim();
+		let directory = $('directory').value.trim();
 		directory = directory.length ? directory.addFinalSlash() : null;
 		
-		var mask = $('renaming').value;
+		let mask = $('renaming').value;
 		mask = mask.length ? mask : null;
 		
 		var description = $('description').value;
 		description = description.length ? description : null;
 		
-		var sp = $('sourcePage');
-		var newRef = null;
+		let sp = $('sourcePage');
+		let newRef = null;
 		if (!sp.hasAttribute('readonly') && sp._value != sp.value) {
 			newRef = sp.value;
 		}
 		
-		if (t.length == 1) {
-			var d = t[0];
+		if (this.downloads.length == 1) {
+			let d = this.downloads[0];
 			if ($('hash').isValid) {
 				var h = $('hash').value;
 				if (!h || !d.hash || h.sum != d.hash.sum) {
@@ -149,7 +149,7 @@ var Dialog = {
 			}
 		}
 		
-		for each (let d in t) {
+		for each (let d in this.downloads) {
 			if (!d.isOf(COMPLETE, FINISHING)) {
 				if (directory) {
 					d.pathName = directory;
@@ -183,6 +183,24 @@ var Dialog = {
 		);
 		if (newDir) {
 			$('directory').value = newDir;
+		}
+	},
+	manageMirrors: function DTA_manageMirrors() {
+		if (this.downloads.length != 1) {
+			// only manage single downloads
+			return;
+		}
+		let download = this.downloads[0];
+		let mirrors = download.urlManager.toArray();
+		openDialog(
+			'chrome://dta/content/dta/mirrors.xul',
+			null,
+			"chrome,dialog,resizable,modal,centerscreen",
+			mirrors
+		);
+		if (mirrors.length) {
+			download.urlManager.initByArray(mirrors);
+			Debug.logString("New mirrors set " + mirrors);
 		}
 	},
 	check: function DTA_check() {

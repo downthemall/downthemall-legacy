@@ -1,0 +1,240 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is DownThemAll!
+ *
+ * The Initial Developer of the Original Code is Nils Maier
+ * Portions created by the Initial Developer are Copyright (C) 2009
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *    Nils Maier <MaierMan@web.de>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** */
+
+let Prompts = {};
+module('resource://dta/prompts.jsm', Prompts);
+
+this.__defineGetter__(
+	'mirrors',
+	function() {
+		delete this.mirrors;
+		return (this.mirrors = $('mirrors'));
+	}
+);
+
+this.__defineGetter__(
+	'allMirrors',
+	function() {
+		for (let m = 0; m < mirrors.itemCount; ++m) {
+			yield mirrors.getItemAtIndex(m);
+		}
+	}
+);
+
+
+function load() {
+	removeEventListener('load', arguments.callee, true);
+	if (window.arguments && window.arguments.length) {
+		let downloads = window.arguments[0];
+		downloads.sort(function(a, b) b.preference - a.preference);
+		for each (let a in downloads) {
+			try {
+				let mirror = document.createElement('richlistitem');
+				mirror.setAttribute('mirror', a.url.spec);
+				mirror.setAttribute('preference', a.preference);
+				mirror.url = a;
+				mirrors.appendChild(mirror);
+			}
+			catch (ex) {
+				Debug.log("Failed to add" + a, ex);
+			}
+		}
+		// clear the array; we'll reuse it for return values
+		window.arguments[0].splice(0);
+	}
+	addEventListener('dialogaccept', accept, true);
+
+	with (mirrors) {
+		addEventListener('select', select, true);
+		addEventListener('MirrorChanged', changedMirror, true);
+	}
+	select();
+}
+
+function accept() {
+	if (!window.arguments || !window.arguments.length) {
+		return;
+	}
+	let rv = window.arguments[0];
+	for (let m in allMirrors) {
+		rv.push(new DTA.URL(m.mirror.toURL(m.charset), m.preference));
+	}
+	return true;
+}
+
+function select() {
+	let removeDisabled = !mirrors.selectedCount || (mirrors.itemCount - mirrors.selectedCount) < 1;
+	$('cmdRemove', 'mirrorRemove').forEach(function(e) e.setAttribute("disabled", removeDisabled));	
+}
+
+function changedMirror(event) {
+	// clear the state
+	event.target.removeAttribute('state');
+}
+
+function addMirror() {
+	let url = '';
+	try {
+		let clip = Cc["@mozilla.org/widget/clipboard;1"]
+			.getService(Ci.nsIClipboard);
+		let trans = Cc["@mozilla.org/widget/transferable;1"]
+			.createInstance(Ci.nsITransferable);
+		trans.addDataFlavor("text/unicode");
+		clip.getData(trans, clip.kGlobalClipboard);
+		    					
+		let str = {}, length = {};
+		trans.getTransferData(
+			"text/unicode",
+			str,
+			length
+		);
+		if (length.value) {
+			str = str.value
+				.QueryInterface(Ci.nsISupportsString).data;
+			if (str.length && DTA.isLinkOpenable(str)) {
+				url = str.replace(/#.*$/, '');
+			}
+		}
+	}
+	catch (ex) {
+		Debug.log("cb", ex);
+		alert(ex);
+	}
+	let mirror = document.createElement('richlistitem');
+	mirror.setAttribute('mirror', url);
+	mirror.setAttribute('preference', 50);
+	mirror.setAttribute('editing', true);
+	$('mirrors').appendChild(mirror);
+	mirror.textbox.select();
+	mirror.addEventListener(
+		'MirrorEditDone',
+		function() {
+			if (!mirror.getAttribute('mirror')) {
+				mirror.parentNode.removeChild(mirror);
+			}
+		},
+		true
+	);
+}
+
+function removeMirrors() {
+	for each (let item in mirrors.selectedItems) {
+		mirrors.removeChild(item);
+	}
+	select();
+}
+
+function checkMirrors() {
+	let button = $('mirrorCheck');
+	
+	let pending = mirrors.itemCount;
+	let bad = [];
+	
+	function makeRequest(m) {
+		let req = new XMLHttpRequest();
+		req.mirror = m;
+		req.onload = req.onerror = function() {
+			finishRequest(req);
+		};
+		try {
+			req.open('HEAD', m.mirror);
+			req.send(null);
+		}
+		catch (ex) {
+			alert(ex + "\n" + m.mirror);
+			finishRequest(req);
+		}
+	}
+	
+	function finishRequest(req, error) {
+		let m = req.mirror;
+		let state = 'bad';
+		error = error || 'n/a';
+		try {
+			error = req.statusText || error;
+		}
+		catch (ex) {
+			// no op
+		}
+		if (req.status >= 200 && req.status < 300) {
+			state = 'good';
+			error = '';
+		}
+		m.setAttribute("state", state);
+		//m.setAttribute("error", error);		
+		if (state == 'bad') {
+			bad.push(m);
+		}
+		if (--pending == 0) {
+			finish();
+		}
+	}
+	function finish() {
+		// XXX ask to remove bad mirrors
+		if (bad.length && (mirrors.itemCount - bad.length) > 0 && 0 == Prompts.confirm(
+			window,
+			_('removebadmirrors.caption'),
+			_('removebadmirrors.message', [bad.length]),
+			_('removebadmirrors.remove'),
+			_('removebadmirrors.keep')
+		)) {
+			for each (let b in bad) {
+				b.parentNode.removeChild(b);
+			}
+		}
+		button.disabled = false;
+	}
+
+	for (let m in allMirrors) {
+		if (m.hasAttribute('state')) {
+			if (m.getAttribute('state') == 'bad') {
+				bad.push(m);
+			}
+			// skip already tested mirrors
+			--pending;
+			continue;
+		}
+		makeRequest(m);
+	}
+	if (pending > 0) {
+		button.disabled = true;
+	}
+	else {
+		finish();
+	}
+}
+
+addEventListener('load', load, true);

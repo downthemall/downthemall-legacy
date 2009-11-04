@@ -37,6 +37,8 @@
 <!DOCTYPE bindings [
 	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
 	%globalDTD;
+	<!ENTITY % mirrorsDTD SYSTEM "chrome://dta/locale/mirrors.dtd">
+	%mirrorsDTD;
 ]>
 
 <bindings xmlns="http://www.mozilla.org/xbl" xmlns:xbl="http://www.mozilla.org/xbl"
@@ -485,6 +487,152 @@
 				}
 			]]></handler>
 		</handlers>
+	</binding>
+	
+	<binding id="mirror-item-base" extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
+		<implementation>
+			<property name="mirror" onget="return this.getAttribute('mirror');" onset="this.setAttribute('mirror', nv);"/>
+			<property name="preference" onget="return parseInt(this.getAttribute('preference')) || 50;">
+				<setter><![CDATA[
+					val = parseInt(val);
+					if (isFinite(val)){
+						val = Math.min(200, Math.max(1, val));
+						this.setAttribute('preference', val);
+					}
+					val = this.preference;
+					let tt;
+					if (val > 130) {
+						tt = _("prefHigh", [val]);
+					}
+					else if (val > 80) {
+						tt = _("prefMedium", [val]);
+					} 
+					else {
+						tt = _("prefLow", [val]);
+					}
+					this.setAttribute("_preftooltip", tt);
+				]]></setter>
+			</property>
+			<property name="charset" onget="return this.getAttribute('charset');"/>
+		</implementation>
+	</binding>
+	<binding id="mirror-item" extends="chrome://dta/content/common/bindings.xml#mirror-item-base">
+		<content>
+			<xul:vbox>
+				<xul:spacer flex="1" />
+				<xul:image class="mirror-item-icon" />
+				<xul:spacer flex="1" />
+			</xul:vbox>
+			<xul:hbox flex="1" align="center">
+				<xul:label anonid="mirror" flex="1" crop="center" class="mirror-item-url text-link" xbl:inherits="value=mirror" />
+			</xul:hbox>
+			<xul:hbox align="center">
+				<xul:label value="&preference;" />
+				<xul:scale anonid="preference" class="mirror-item-preference" min="1" max="200" increment="5" pageincrement="30" xbl:inherits="value=preference,tooltiptext=_preftooltip" />
+			</xul:hbox>
+			<xul:hbox align="center">
+				<xul:label value="" class="mirror-item-error" xbl:inherits="value=error"/>
+			</xul:hbox>
+		</content>
+		<implementation>
+			<field name="mirrorElement">document.getAnonymousElementByAttribute(this, 'anonid', 'mirror');</field>
+			<field name="preferenceElement">document.getAnonymousElementByAttribute(this, 'anonid', 'preference');</field>
+			<constructor><![CDATA[
+				// cheat to init
+				this.preference = this.getAttribute('preference');
+			]]></constructor>
+		</implementation>
+		<handlers>
+			<handler event="click" clickcount="1"><![CDATA[
+				if (event.originalTarget == this.mirrorElement) {
+					this.setAttribute("editing", true);
+				}
+			]]></handler>
+			<handler event="click" clickcount="2">
+				this.setAttribute("editing", true);
+			</handler>
+			<handler event="change"><![CDATA[
+				if (event.originalTarget == this.preferenceElement) {
+					this.preference = this.preferenceElement.value;
+				}
+			]]></handler>
+		</handlers>
+	</binding>
+	<binding id="mirror-item-editing" extends="chrome://dta/content/common/bindings.xml#mirror-item-base">
+		<content>
+			<xul:vbox>
+				<xul:spacer flex="1" />
+				<xul:image class="mirror-item-icon" />
+				<xul:spacer flex="1" />
+			</xul:vbox>
+			<xul:hbox flex="1" align="center">
+				<xul:label value="&mirrorurl;" />
+				<xul:textbox class="mirror-item-textbox" xbl:inherits="value=mirror" type="autocomplete" wantreturns="true" autocompletesearch="history" completedefaultindex="true" flex="1"/>
+			</xul:hbox>
+		</content>
+		<implementation>
+			<field name="textbox">document.getAnonymousElementByAttribute(this, 'class', 'mirror-item-textbox');</field>
+			<constructor><![CDATA[
+				this.parentNode.selectedItem = this;
+				this.textbox.focus();
+				
+				// looks a little nasty, but else we will immediately blur/focus :p
+				let tp = this;
+				setTimeout(function() tp.textbox.addEventListener('blur', function() tp.commit(), false), 0);
+			]]></constructor>
+			<method name="commit">
+				<parameter name="forget"/>
+				<body><![CDATA[
+					let original = this.getAttribute('mirror');
+					let uri = this.textbox.value;
+					
+					if (!!forget) {
+						uri = "";
+					}
+					
+					if (!!uri) {
+						let fs = Cc['@mozilla.org/docshell/urifixup;1'].getService(Ci.nsIURIFixup);
+						uri = fs.createFixupURI(uri, 0).spec;
+						this.setAttribute('mirror', uri);
+					}
+					this.textbox.blur();
+					this.removeAttribute('editing');
+					this.blur();
+					if (!!uri) {
+						let evt = document.createEvent('MutationEvents');
+						evt.initMutationEvent('MirrorChanged', true, true, this, original, uri, 'mirror', evt.MODIFICATION);
+						this.dispatchEvent(evt);
+					}
+					let evt = document.createEvent('UIEvents');
+					evt.initUIEvent('MirrorEditDone', true, true, null, 0);
+					this.dispatchEvent(evt);					
+				]]></body>
+			</method>
+		</implementation>
+		<handlers>
+			<handler event="keydown" phase="capturing"><![CDATA[
+				switch(event.keyCode) {
+				case KeyEvent.DOM_VK_RETURN:
+				case KeyEvent.DOM_VK_ESCAPE:
+					event.stopPropagation();
+					event.preventDefault();
+					break;
+				}				
+			]]></handler>
+			<handler event="keyup" phase="capturing"><![CDATA[
+				if (event.keyCode == KeyEvent.DOM_VK_RETURN) {
+					event.stopPropagation();
+					event.preventDefault();
+					this.commit();
+				}
+				if (event.keyCode == KeyEvent.DOM_VK_ESCAPE) {
+					event.stopPropagation();
+					event.preventDefault();
+					this.commit(true);
+					this.removeAttribute('editing');
+				}				
+			]]></handler>
+		</handlers>	
 	</binding>
 
 </bindings>
