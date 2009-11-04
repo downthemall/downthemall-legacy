@@ -890,16 +890,7 @@ var Dialog = {
 addEventListener('load', function() Dialog.init(), false);
 
 function UrlManager(urls) {
-	this._urls = [];
-	this._idx = -1;
-
-	if (urls instanceof Array) {
-		this.initByArray(urls);
-		this._hasFresh = this._urls.length != 0;
-	}
-	else if (urls) {
-		throw "Feeding the UrlManager with some bad stuff is usually a bad idea!";
-	}
+	this.initByArray(urls);
 }
 UrlManager.prototype = {
 	_sort: function(a,b) {
@@ -907,6 +898,11 @@ UrlManager.prototype = {
 		return rv ? rv : (a.url < b.url ? -1 : 1);
 	},
 	initByArray: function um_initByArray(urls) {
+		this._urls = [];
+		this._idx = -1;
+		if (!(urls instanceof Array)) {
+			throw new Exception("Feeding the UrlManager with some bad stuff is usually a bad idea!");
+		}
 		for each (let u in urls) {
 			if (u instanceof DTA.URL || (u.url && u.url instanceof Ci.nsIURI)) {
 				this.add(u);
@@ -925,6 +921,8 @@ UrlManager.prototype = {
 		}
 		this._urls.sort(this._sort);
 		this._usable = this._urls[0].usable;
+
+		this._hasFresh = this._urls.length != 0;		
 	},
 	add: function um_add(url) {
 		if (!url instanceof DTA.URL) {
@@ -979,7 +977,9 @@ UrlManager.prototype = {
 	},
 	toString: function() {
 		return this._urls.reduce(function(v, u) v + u.preference + " " + u.url + "\n");
-	}
+	},
+	// clone ;)
+	toArray: function() this._urls.map(function(e) e)
 };
 
 function Visitor() {

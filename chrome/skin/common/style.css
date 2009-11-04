@@ -36,12 +36,17 @@ maskbutton {
 /* ~maskbutton */
 
 #browsedir {
-	list-style-image: url("chrome://dta/skin/common/browse.png");
+	list-style-image: url(browse.png);
 }
+
+#mirrorManager {
+	list-style-image: url(mirrorManager.png);
+}
+		
 
 /* maskbutton */
 maskbutton toolbarbutton {
-	list-style-image: url("chrome://dta/skin/common/mask.png");
+	list-style-image: url(mask.png);
 }
 
 /* maskbutton/browsedir common */
@@ -209,6 +214,6 @@ statusbarpanel > label {
 }
 
 statusbarpanel#preferences {
-	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	list-style-image: url(smalltools.png);
 	-moz-image-region: rect(0px, 64px, 16px, 48px);	
 }
