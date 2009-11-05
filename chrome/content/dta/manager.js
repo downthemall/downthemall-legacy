@@ -85,12 +85,13 @@ const REFRESH_FREQ = 1000;
 const STREAMS_FREQ = 250;
 
 let Prompts = {}, Preallocator = {};
-Components.utils.import('resource://dta/prompts.jsm', Prompts);
-Components.utils.import('resource://dta/speedstats.jsm');
-Components.utils.import('resource://dta/preallocator.jsm', Preallocator);
-Components.utils.import('resource://dta/cothread.jsm');
-Components.utils.import('resource://dta/queuestore.jsm');
-Components.utils.import('resource://dta/timers.jsm');
+module('resource://dta/prompts.jsm', Prompts);
+module('resource://dta/speedstats.jsm');
+module('resource://dta/preallocator.jsm', Preallocator);
+module('resource://dta/cothread.jsm');
+module('resource://dta/queuestore.jsm');
+module('resource://dta/timers.jsm');
+module("resource://gre/modules/XPCOMUtils.jsm");
 
 var TEXT_PAUSED;
 var TEXT_QUEUED;
@@ -2494,21 +2495,31 @@ Chunk.prototype = {
 }
 
 let AuthPrompts = {
-	_authPrompter: null,
-	_prompter: null,
 	get authPrompter() {
-		if (!this._authPrompter) {
-			this._authPrompter = WindowWatcherService.getNewAuthPrompter(window)
-				.QueryInterface(Ci.nsIAuthPrompt);		
-		}
-		return this._authPrompter;
+		delete this.authPrompter;
+		this.authPrompter = WindowWatcherService
+			.getNewAuthPrompter(window)
+			.QueryInterface(Ci.nsIAuthPrompt);
+		return this.authPrompter;
 	},
 	get prompter() {
-		if (!this._prompter) {
-			this._prompter = WindowWatcherService.getNewPrompter(window)
-				.QueryInterface(Ci.nsIPrompt);
+		let _p = WindowWatcherService
+			.getNewPrompter(window)
+			.QueryInterface(Ci.nsIPrompt);		
+		let _dp = {
+			QueryInterface: XPCOMUtils.generateQI([Ci.nsIPrompt]),
+			alert: function(title, text) Debug.log(text, title),
+			alertCheck: function(title, text, cm, cv) Debug.log(text, title),
+			confirm: function(title, text) _p.confirm(title, text),
+			confirmCheck: function(title, text, cm, cv) _p.confirmCheck(title, text, cm, cv),
+			confirmEx: function(title, text, bflags, bt0, bt1, bt2, cm, cv) _p.confirmEx(title, text, bflags, bt0, bt1, bt2, cm, cv),
+			prompt: function(title, text, value, cm, cv) _p.prompt(title, text, value, cm, cv),
+			promptPassword: function(title, text, password, cm, cv) _p.promptPassword(title, text, password, cm, cv),
+			promptUsernameAndPassword: function(title, text, un, pw, cm, cv) _p.promptUsernameAndPassword(title, text, un, pw, cm, cv),
+			select: function(title, text, count, list, selection) _p.select(title, text, count, list, selection)
 		}
-		return this._prompter;
+		delete this.prompter;
+		return (this.prompter = _dp);
 	}
 };
 
@@ -2717,13 +2728,6 @@ Connection.prototype = {
 		if (!server) {
 			this._wasRetr = /^RETR/.test(msg) || /^REST/.test(msg);
 		}
-		else if (/^5(?!30)/.test(msg) || (this._wasRetr && /^4/.test(msg))) {
-			Debug.logString("Server didn't allow retrieving stuff!");
-			if (!this.handleError()) {
-				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
-			}
-		}
-		// Debug.logString((server ? 's' : 'c') + ': ' + msg);
 	},
 	
 	handleError: function DL_handleError() {
@@ -3148,6 +3152,7 @@ Connection.prototype = {
 		if (aStatusCode == NS_ERROR_FTP_CWD) {
 			Debug.logString("Cannot change to directory :p", aStatusCode);
 			d.cancel();
+			d.status = _("servererror");
 			return;
 		}
 			
