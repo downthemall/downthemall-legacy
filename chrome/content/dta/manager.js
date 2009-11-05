@@ -91,7 +91,9 @@ module('resource://dta/preallocator.jsm', Preallocator);
 module('resource://dta/cothread.jsm');
 module('resource://dta/queuestore.jsm');
 module('resource://dta/timers.jsm');
-module("resource://gre/modules/XPCOMUtils.jsm");
+module('resource://dta/loggedprompter.jsm');
+
+const AuthPrompts = new LoggedPrompter(window);
 
 var TEXT_PAUSED;
 var TEXT_QUEUED;
@@ -2493,35 +2495,6 @@ Chunk.prototype = {
 			+ Utils.formatNumber(this.remainder, len);
 	}
 }
-
-let AuthPrompts = {
-	get authPrompter() {
-		delete this.authPrompter;
-		this.authPrompter = WindowWatcherService
-			.getNewAuthPrompter(window)
-			.QueryInterface(Ci.nsIAuthPrompt);
-		return this.authPrompter;
-	},
-	get prompter() {
-		let _p = WindowWatcherService
-			.getNewPrompter(window)
-			.QueryInterface(Ci.nsIPrompt);		
-		let _dp = {
-			QueryInterface: XPCOMUtils.generateQI([Ci.nsIPrompt]),
-			alert: function(title, text) Debug.log(text, title),
-			alertCheck: function(title, text, cm, cv) Debug.log(text, title),
-			confirm: function(title, text) _p.confirm(title, text),
-			confirmCheck: function(title, text, cm, cv) _p.confirmCheck(title, text, cm, cv),
-			confirmEx: function(title, text, bflags, bt0, bt1, bt2, cm, cv) _p.confirmEx(title, text, bflags, bt0, bt1, bt2, cm, cv),
-			prompt: function(title, text, value, cm, cv) _p.prompt(title, text, value, cm, cv),
-			promptPassword: function(title, text, password, cm, cv) _p.promptPassword(title, text, password, cm, cv),
-			promptUsernameAndPassword: function(title, text, un, pw, cm, cv) _p.promptUsernameAndPassword(title, text, un, pw, cm, cv),
-			select: function(title, text, count, list, selection) _p.select(title, text, count, list, selection)
-		}
-		delete this.prompter;
-		return (this.prompter = _dp);
-	}
-};
 
 function Connection(d, c, isInfoGetter) {
 
