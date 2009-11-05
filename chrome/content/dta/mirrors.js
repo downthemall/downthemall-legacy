@@ -36,6 +36,10 @@
 
 let Prompts = {};
 module('resource://dta/prompts.jsm', Prompts);
+module("resource://gre/modules/XPCOMUtils.jsm");
+module('resource://dta/loggedprompter.jsm');
+
+LoggedPrompter = new LoggedPrompter(window).prompter;
 
 this.__defineGetter__(
 	'mirrors',
@@ -58,8 +62,7 @@ this.__defineGetter__(
 function load() {
 	removeEventListener('load', arguments.callee, true);
 	if (window.arguments && window.arguments.length) {
-		let downloads = window.arguments[0];
-		downloads.sort(function(a, b) b.preference - a.preference);
+		let downloads = Utils.naturalSort(window.arguments[0], function(e) e.url.host + "/" + e.url.spec);
 		for each (let a in downloads) {
 			try {
 				let mirror = document.createElement('richlistitem');
@@ -175,6 +178,20 @@ function checkMirrors() {
 		m._cl = cl;
 	}
 	
+	function Callbacks(req) {
+		this._old = req.channel.notificationCallbacks;
+		req.channel.notificationCallbacks = this;
+	}
+	Callbacks.prototype = {
+		QueryInterface: XPCOMUtils.generateQI([Ci.nsIInterfaceRequestor]),
+		getInterface: function(iid) {
+			if (iid.equals(Ci.nsIPrompt)) {
+				return LoggedPrompter;
+			}
+			return this._old.getInterface(iid);
+		}
+	};
+	
 	function makeRequest(m) {
 		let req = new XMLHttpRequest();
 		req.mirror = m;
@@ -184,6 +201,7 @@ function checkMirrors() {
 		requests[m.mirror] = req;
 		try {
 			req.open('HEAD', m.mirror);
+			new Callbacks(req);
 			req.send(null);
 		}
 		catch (ex) {
@@ -196,7 +214,7 @@ function checkMirrors() {
 		let m = req.mirror;
 		let state = 'bad';
 		delete requests[m.mirror];
-		error = error || 'n/a';
+		error = error || _('genericcheckerror');
 		try {
 			error = req.statusText || error;
 		}
@@ -208,13 +226,13 @@ function checkMirrors() {
 			if (req.channel instanceof Ci.nsIFTPChannel) {
 				if (cl > 0) {
 					state = 'good';
-					error = '';
+					error = _('mirrorok');
 					addGood(cl, m);
 				}
 			}
 			else if (req.status >= 200 && req.status < 300) {
 				state = 'good';
-				error = '';
+				error = _('mirrorok');
 				addGood(cl, m);
 			}
 		}
@@ -232,7 +250,25 @@ function checkMirrors() {
 	}
 	function finish() {
 		if (numGoodLengths > 1) {
-			// XXX implement
+			let max;
+			let maxCl;
+			for (let cl in good) {
+				if (!max || good[cl].length > max) {
+					max = good[cl].length;
+					maxCL = cl;
+				}
+			}
+			for (let cl in good) {
+				if (cl == maxCL) {
+					continue;
+				}
+				for each (let m in good[cl]) {
+					Debug.logString(m.mirror + " has a cl of " + cl + " but the majority of mirrors uses " + maxCL);
+					m.setAttribute('state', 'bad');
+					m.setAttribute('error', _('sizecheckerror'));
+					bad.push(m);
+				}
+			}
 		}
 		if (bad.length && (mirrors.itemCount - bad.length) > 0 && 1 == Prompts.confirm(
 			window,
@@ -276,7 +312,7 @@ function checkMirrors() {
 		finish();
 	}
 	// 15 seconds
-	setTimeout(timeout, 2000);
+	setTimeout(timeout, 20000);
 }
 
 addEventListener('load', load, true);
