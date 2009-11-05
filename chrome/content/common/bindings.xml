@@ -519,9 +519,12 @@
 	<binding id="mirror-item" extends="chrome://dta/content/common/bindings.xml#mirror-item-base">
 		<content>
 			<xul:vbox>
-				<xul:spacer flex="1" />
-				<xul:image class="mirror-item-icon" />
-				<xul:spacer flex="1" />
+				<xul:hbox>
+					<xul:spacer flex="1" />
+					<xul:image class="mirror-item-icon" />
+					<xul:spacer flex="1" />
+				</xul:hbox>
+				<xul:label value="" class="mirror-item-error" xbl:inherits="value=error"/>
 			</xul:vbox>
 			<xul:hbox flex="1" align="center">
 				<xul:label anonid="mirror" flex="1" crop="center" class="mirror-item-url text-link" xbl:inherits="value=mirror" />
@@ -529,9 +532,6 @@
 			<xul:hbox align="center">
 				<xul:label value="&preference;" />
 				<xul:scale anonid="preference" class="mirror-item-preference" min="1" max="200" increment="5" pageincrement="30" xbl:inherits="value=preference,tooltiptext=_preftooltip" />
-			</xul:hbox>
-			<xul:hbox align="center">
-				<xul:label value="" class="mirror-item-error" xbl:inherits="value=error"/>
 			</xul:hbox>
 		</content>
 		<implementation>
