@@ -60,6 +60,9 @@ dialog {
 richlistbox:focus richlistitem[selected="true"] .mirror-item-url {
 	color: HighlightText !important;
 }
+.mirror-item-error {
+	font-size: small;
+}
 .mirror-item-error[value=""] {
 	display: none;	
 }

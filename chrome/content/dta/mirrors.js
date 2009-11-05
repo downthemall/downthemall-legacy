@@ -162,6 +162,18 @@ function checkMirrors() {
 	
 	let pending = mirrors.itemCount;
 	let bad = [];
+	let requests = {};
+	let good = {};
+	let numGoodLengths = 0;
+	
+	function addGood(cl, m) {
+		if (!(cl in good)) {
+			good[cl] = [];
+			numGoodLengths++;
+		}
+		good[cl].push(m);
+		m._cl = cl;
+	}
 	
 	function makeRequest(m) {
 		let req = new XMLHttpRequest();
@@ -169,6 +181,7 @@ function checkMirrors() {
 		req.onload = req.onerror = function() {
 			finishRequest(req);
 		};
+		requests[m.mirror] = req;
 		try {
 			req.open('HEAD', m.mirror);
 			req.send(null);
@@ -182,6 +195,7 @@ function checkMirrors() {
 	function finishRequest(req, error) {
 		let m = req.mirror;
 		let state = 'bad';
+		delete requests[m.mirror];
 		error = error || 'n/a';
 		try {
 			error = req.statusText || error;
@@ -189,12 +203,26 @@ function checkMirrors() {
 		catch (ex) {
 			// no op
 		}
-		if (req.status >= 200 && req.status < 300) {
-			state = 'good';
-			error = '';
+		try {
+			let cl = req.channel.QueryInterface(Ci.nsIPropertyBag2).getPropertyAsUint64('content-length');
+			if (req.channel instanceof Ci.nsIFTPChannel) {
+				if (cl > 0) {
+					state = 'good';
+					error = '';
+					addGood(cl, m);
+				}
+			}
+			else if (req.status >= 200 && req.status < 300) {
+				state = 'good';
+				error = '';
+				addGood(cl, m);
+			}
+		}
+		catch (ex) {
+			Debug.log("Check Request failed", ex);
 		}
 		m.setAttribute("state", state);
-		//m.setAttribute("error", error);		
+		m.setAttribute("error", error);		
 		if (state == 'bad') {
 			bad.push(m);
 		}
@@ -203,13 +231,15 @@ function checkMirrors() {
 		}
 	}
 	function finish() {
-		// XXX ask to remove bad mirrors
-		if (bad.length && (mirrors.itemCount - bad.length) > 0 && 0 == Prompts.confirm(
+		if (numGoodLengths > 1) {
+			// XXX implement
+		}
+		if (bad.length && (mirrors.itemCount - bad.length) > 0 && 1 == Prompts.confirm(
 			window,
 			_('removebadmirrors.caption'),
 			_('removebadmirrors.message', [bad.length]),
-			_('removebadmirrors.remove'),
-			_('removebadmirrors.keep')
+			_('removebadmirrors.keep'), // XXX swap
+			_('removebadmirrors.remove')
 		)) {
 			for each (let b in bad) {
 				b.parentNode.removeChild(b);
@@ -217,11 +247,21 @@ function checkMirrors() {
 		}
 		button.disabled = false;
 	}
+	function timeout() {
+		for each (let req in requests) {
+			Debug.logString(req.mirror.mirror + " is a timeout");
+			req.abort();
+			finishRequest(req);
+		}
+	}
 
 	for (let m in allMirrors) {
 		if (m.hasAttribute('state')) {
 			if (m.getAttribute('state') == 'bad') {
 				bad.push(m);
+			}
+			else {
+				addGood(m._cl, m);
 			}
 			// skip already tested mirrors
 			--pending;
@@ -235,6 +275,8 @@ function checkMirrors() {
 	else {
 		finish();
 	}
+	// 15 seconds
+	setTimeout(timeout, 2000);
 }
 
 addEventListener('load', load, true);
