@@ -593,16 +593,20 @@
 					if (!!uri) {
 						let fs = Cc['@mozilla.org/docshell/urifixup;1'].getService(Ci.nsIURIFixup);
 						uri = fs.createFixupURI(uri, 0).spec;
-						this.setAttribute('mirror', uri);
 					}
-					this.textbox.blur();
-					this.removeAttribute('editing');
-					this.blur();
 					if (!!uri) {
 						let evt = document.createEvent('MutationEvents');
-						evt.initMutationEvent('MirrorChanged', true, true, this, original, uri, 'mirror', evt.MODIFICATION);
-						this.dispatchEvent(evt);
+						evt.initMutationEvent('MirrorChanging', true, true, this, original, uri, 'mirror', evt.MODIFICATION);
+						if (this.dispatchEvent(evt)) {
+							this.setAttribute('mirror', uri);
+						}
 					}
+					try {
+						this.textbox.blur();
+					}
+					catch (ex) {}
+					this.removeAttribute('editing');
+					this.blur();
 					let evt = document.createEvent('UIEvents');
 					evt.initUIEvent('MirrorEditDone', true, true, null, 0);
 					this.dispatchEvent(evt);					
