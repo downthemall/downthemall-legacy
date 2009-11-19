@@ -82,7 +82,7 @@ function load() {
 
 	with (mirrors) {
 		addEventListener('select', select, true);
-		addEventListener('MirrorChanged', changedMirror, true);
+		addEventListener('MirrorChanging', changingMirror, true);
 	}
 	select();
 }
@@ -103,7 +103,17 @@ function select() {
 	$('cmdRemove', 'mirrorRemove').forEach(function(e) e.setAttribute("disabled", removeDisabled));	
 }
 
-function changedMirror(event) {
+function changingMirror(event) {
+	for (let m in allMirrors) {
+		if (event.target == m) {
+			continue;
+		}
+		if (event.newValue == m.mirror) {
+			Prompts.alert(window, _('duplicatetitle'), _('duplicatetext'));
+			event.preventDefault();
+			return;
+		}
+	}
 	// clear the state
 	event.target.removeAttribute('state');
 }
@@ -134,13 +144,12 @@ function addMirror() {
 	}
 	catch (ex) {
 		Debug.log("cb", ex);
-		alert(ex);
 	}
 	let mirror = document.createElement('richlistitem');
-	mirror.setAttribute('mirror', url);
 	mirror.setAttribute('preference', 50);
 	mirror.setAttribute('editing', true);
 	$('mirrors').appendChild(mirror);
+	mirror.textbox.value = url;
 	mirror.textbox.select();
 	mirror.addEventListener(
 		'MirrorEditDone',
