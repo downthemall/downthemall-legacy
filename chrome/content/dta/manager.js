@@ -87,6 +87,9 @@ const STREAMS_FREQ = 200;
 let Prompts = {}, Preallocator = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
 Components.utils.import('resource://dta/preallocator.jsm', Preallocator);
+Components.utils.import('resource://dta/loggedprompter.jsm'); 
+
+const AuthPrompts = new LoggedPrompter(window); 
 
 var TEXT_PAUSED;
 var TEXT_QUEUED;
@@ -2116,25 +2119,6 @@ Chunk.prototype = {
 			+ Utils.formatNumber(this.remainder, len);
 	}
 }
-
-let AuthPrompts = {
-	_authPrompter: null,
-	_prompter: null,
-	get authPrompter() {
-		if (!this._authPrompter) {
-			this._authPrompter = WindowWatcherService.getNewAuthPrompter(window)
-				.QueryInterface(Ci.nsIAuthPrompt);		
-		}
-		return this._authPrompter;
-	},
-	get prompter() {
-		if (!this._prompter) {
-			this._prompter = WindowWatcherService.getNewPrompter(window)
-				.QueryInterface(Ci.nsIPrompt);
-		}
-		return this._prompter;
-	}
-};
 
 function Connection(d, c, getInfo) {
 
