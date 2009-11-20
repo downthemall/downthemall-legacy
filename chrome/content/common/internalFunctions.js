@@ -442,8 +442,15 @@ function getIcon(link, metalink, size) {
 				catch (ex) { /* no op */ }
 			}
 			if (url && url instanceof Ci.nsIURL) {
-				if (_favIcons && /(?:\/|html?|aspx?|php\d?)$|\/[^.]$/i.test(url.filePath)) {
-					return  _favIcons.getFaviconImageForPage(url).spec;
+				if (_favIcons && /(?:\/|html?|aspx?|php\d?)$|\/[^.]*$/i.test(url.filePath)) {
+					let icon = _favIcons.getFaviconImageForPage(url);
+					if (icon.spec == _favIcons.defaultFavicon.spec) {
+						let host = url.clone().QueryInterface(Ci.nsIURL);
+						host.ref = host.query = host.filePath = "";
+						Debug.logString("Retry using " + host.spec);
+						icon = _favIcons.getFaviconImageForPage(host);
+					}
+					return icon.spec;
 				}
 				url = url.spec;
 			}
