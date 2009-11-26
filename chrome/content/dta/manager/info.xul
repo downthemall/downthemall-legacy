@@ -56,7 +56,7 @@
 				<column flex="1"/>
 			</columns>
 			<rows>
-				<row align="center">
+				<row align="center" id="mirrorRow">
 					<label control="mirrorManager" id="mirrorsTitle" value="&mirrors.value;"/>
 					<hbox align="center" flex="1">
 						<label id="mirrorsText" class="text-link" flex="1" onclick="Dialog.manageMirrors();"/>
