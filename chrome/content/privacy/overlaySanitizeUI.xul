@@ -73,7 +73,7 @@
 				// If you don't believe: http://developer.mozilla.org/en/docs/DOM:element.insertBefore#Example
 				chk.parentNode.insertBefore(check, chk.nextSibling);
 				
-				if (gSanitizePromptDialog) {
+				if ('gSanitizePromptDialog' in this) {
 					pref.setAttribute('readonly', 'true');
 			 		check.setAttribute('onsyncfrompreference', 'return gSanitizePromptDialog.onReadGeneric();');
 				}
