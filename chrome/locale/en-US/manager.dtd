@@ -55,5 +55,8 @@
 <!ENTITY perdownloadspeedlimit.label "Speed limit">
 <!ENTITY perdownloadspeedlimit.tooltip "Change speed limit. The global speed limit will be still obeyed.">
 
+<!ENTITY mirrors.label "Manage mirrors">
+<!ENTITY mirrors.tooltip "Manage download mirror locations">
+
 <!ENTITY toolbar.icons "Use icons">
 <!ENTITY toolbar.full "Use icons and text">

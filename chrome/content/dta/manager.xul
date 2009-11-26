@@ -83,6 +83,8 @@
 		
 		<command id="cmdAddChunk" oncommand="Tree.changeChunks(true);"/>
 		<command id="cmdRemoveChunk" oncommand="Tree.changeChunks(false);"/>
+
+		<command id="cmdMirrors" oncommand="Tree.manageMirrors();"/>
 		
 		<command id="cmdCleanGone" oncommand="Tree.removeGone();"/>
 		
@@ -165,6 +167,8 @@
 				<menupopup id="popupmisc">
 					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" command="cmdAddChunk" />
 					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" command="cmdRemoveChunk" />
+					<menuseparator/>
+					<menuitem id="mirrors" class="menuitem-iconic" label="&mirrors.label;" tooltiptext="&mirrors.tooltip;" command="cmdMirrors" />
 					<menuseparator/>
 					<menuitem id="cleangone" class="menuitem-iconic" label="&removeGone.label;" key="kCleanGone" command="cmdCleanGone" />
 					<menuitem id="removeDupes" class="menuitem-iconic" label="&removeDupes.label;" command="cmdRemoveDupes"/>

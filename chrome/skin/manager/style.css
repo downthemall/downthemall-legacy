@@ -451,6 +451,13 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 	-moz-image-region: rect(80px,64px,96px,48px);
 }
 
+#mirrors .menu-iconic-icon {
+	-moz-image-region: rect(64px,80px,80px,64px);
+}
+#mirrors[disabled="true"] .menu-iconic-icon {
+	-moz-image-region: rect(80px,80px,96px,64px);
+}
+
 /* menuitem common */
 #selectall .menu-iconic-icon {
 	list-style-image: url(chrome://dta/skin/common/selection.png);
