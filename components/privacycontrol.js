@@ -35,8 +35,8 @@
  * ***** END LICENSE BLOCK ***** */
 
 function include(uri) {
-	Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(
-		Components.interfaces.mozIJSSubScriptLoader).loadSubScript(uri);
+	Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+		.getService(Components.interfaces.mozIJSSubScriptLoader).loadSubScript(uri);
 }
 include('chrome://dta/content/common/xpcom.jsm');
 
@@ -118,7 +118,7 @@ var PrivacyControl = {
 		debug("sanitize()");
 		const prefs = Components.classes["@mozilla.org/preferences-service;1"]
 			.getService(Components.interfaces.nsIPrefService).getBranch('privacy.');
-
+		
 		// in case UI should be used the cleaning will be processed there.
 		// Furthermore we have to ensure user wants us to sanitize.
 		if (!prefs.getBoolPref('sanitize.promptOnSanitize')
@@ -127,14 +127,27 @@ var PrivacyControl = {
 			}
 
 	},
-
+	
+	get is190() {
+		let ai = Cc['@mozilla.org/xre/app-info;1'].getService(Ci.nsIXULAppInfo);
+		let vc = Cc['@mozilla.org/xpcom/version-comparator;1'].getService(Ci.nsIVersionComparator);
+		return vc.compare(ai.platformVersion, '1.9.1') < 0;
+	},
+	
 	onShutdown : function() {
 		const prefs = Components.classes["@mozilla.org/preferences-service;1"]
 			.getService(Components.interfaces.nsIPrefService).getBranch('privacy.');
-
-		// has user pref'ed to sanitize on shutdown?
-		if (prefs.getBoolPref('sanitize.sanitizeOnShutdown')){
-			this.sanitize();
+		
+		if (this.is190) {
+			// has user pref'ed to sanitize on shutdown?
+			if (prefs.getBoolPref('sanitize.sanitizeOnShutdown')){
+				this.sanitize();
+			}
+			return;
+		}
+		
+		if (prefs.getBoolPref('sanitize.sanitizeOnShutdown') && prefs.getBoolPref('clearOnShutdown.extensions-dta')){
+			this.clean();
 		}
 	}
 };
