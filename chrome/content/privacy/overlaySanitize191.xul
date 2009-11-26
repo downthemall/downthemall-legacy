@@ -37,27 +37,50 @@
  
 <!DOCTYPE overlay>
   
-<overlay id="dtaPrivacy" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<overlay id="dtaSanitize" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<preferences id="sanitizePreferences">
+		<preference id="privacy.cpd.extensions-dta" name="privacy.cpd.extensions-dta" type="bool"/>
+	</preferences>
+	<listbox id="itemList">
+		<listitem
+			id="dtaSanitizeItem"
+			type="checkbox"
+			preference="privacy.cpd.extensions-dta"
+			onsyncfrompreference="return gSanitizePromptDialog.onReadGeneric();"
+			/>
+	</listbox>
 	<script type="text/javascript"><![CDATA[
-	 	// doing this in a function is better, as we do not have do deal with vars of other xuls
-	 	addEventListener('load', function() {
 
-		 	function dtaSanitize() {
-		 		try {
-					 Components.classes["@downthemall.net/privacycontrol;1"]
-						.getService(Components.interfaces.nsIObserver)
-						.observe(null, 'sanitize', null);
-				} catch (ex) {
-					try { Components.utils.reportError(ex); } catch(ex) {}
+		if ('Sanitizer' in this) {
+			Sanitizer.prototype.items['extensions-dta'] = {
+				clear: function() {
+					try	{
+						Components.classes["@downthemall.net/privacycontrol;1"]
+							.getService(Components.interfaces.nsIObserver)
+							.observe(null, 'clean', null);
+					}
+					catch (ex) {
+						Components.utils.reportError(ex);
+					}
+				},
+				get canClear() {
+					return true;
 				}
-		 	}
-		 	
-		 	removeEventListener('load', arguments.callee, true);
+			};
+		}
+		addEventListener('load', function() {
+			removeEventListener('load', arguments.callee, true);
+
+			let msg = Components.classes['@mozilla.org/intl/stringbundle;1']
+				.getService(Components.interfaces.nsIStringBundleService)
+				.createBundle('chrome://dta/locale/sanitize.properties')
+				.GetStringFromName('sanitizeitem');
+			document.getElementById('dtaSanitizeItem').setAttribute('label', msg);
 	
-	 		let cmd = document.getElementById('Tools:Sanitize');
-	 		if (cmd) {
-	 			cmd.addEventListener('command', dtaSanitize, true);
-	 		}
+			if (!('Sanitizer' in this)) {
+				return;
+			}
 		}, true);
- ]]></script>
+	]]></script>
+
 </overlay>

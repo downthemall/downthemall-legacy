@@ -35,54 +35,47 @@
  *
  * ***** END LICENSE BLOCK ***** -->
  
-<!DOCTYPE overlay>
+ <!DOCTYPE overlay>
   
-<overlay id="dta" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<script type="application/x-javascript"><![CDATA[
-	 	function dtaInit() {
-			var msg = Components.classes['@mozilla.org/intl/stringbundle;1']
-				.getService(Components.interfaces.nsIStringBundleService)
-				.createBundle('chrome://dta/locale/sanitize.properties')
-				.GetStringFromName('sanitizeitem');
-
-			// looks nasty. I know :p
-			// but the pref-window does not provide an id for preferences.
-			// and the tools-window had an id-less groupbox.
-			// hence we cannot simply use overlay elements, but must add the stuff "on-the-fly"
+ <overlay id="dtaSanitizePref" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+ 
+	<script type="text/javascript"><![CDATA[
+		addEventListener('load', function() {
+			removeEventListener('load', arguments.callee, true);
 			
-			var prefs = document.getElementsByTagName('preferences')[0];
+			const PREF = 'privacy.clearOnShutdown.extensions-dta';
 			
-			var chk = document.getElementsByTagName('checkbox');
-			if (!chk.length) {
-				chk = document.getElementsByTagName('listitem');
-			}
-			chk = chk[chk.length - 1];
-			if (prefs && chk) {
-				var pref = document.createElement('preference');
-				pref.setAttribute('id', 'privacy.item.extensions-dta');
-				pref.setAttribute('name', 'privacy.item.extensions-dta');
-				pref.setAttribute('type', 'bool'); 	
+			try {
+			
+				let prefs = document.getElementsByTagName('preferences')[0];
+				let pref = document.createElement('preference');
+				pref.setAttribute('id', PREF);
+				pref.setAttribute('name', PREF);
+				pref.setAttribute('type', 'bool');
 				prefs.appendChild(pref);
-				
-				var check = document.createElement(chk.localName);
-				check.setAttribute('type', 'checkbox');
-				check.setAttribute('label', msg);
-				check.setAttribute('preference', 'privacy.item.extensions-dta');
-				
-				// insertAfter
-				// If you don't believe: http://developer.mozilla.org/en/docs/DOM:element.insertBefore#Example
-				chk.parentNode.insertBefore(check, chk.nextSibling);
-				
-				if (gSanitizePromptDialog) {
-					pref.setAttribute('readonly', 'true');
-			 		check.setAttribute('onsyncfrompreference', 'return gSanitizePromptDialog.onReadGeneric();');
-				}
-			}
-			else {
-				Components.utils.reportError("Cannot overlay!" + pref + chk);
-			}
-		}
-		dtaInit();
-]]></script>
 
-</overlay>
+				let rows = document.getElementsByTagName('rows');
+				rows = rows[rows.length - 1];
+
+				let msg = Components.classes['@mozilla.org/intl/stringbundle;1']
+					.getService(Components.interfaces.nsIStringBundleService)
+					.createBundle('chrome://dta/locale/sanitize.properties')
+					.GetStringFromName('sanitizeitem');
+				
+				let check = document.createElement('checkbox');
+				check.setAttribute('label', msg);
+				check.setAttribute('preference', PREF);			
+				
+				let row = document.createElement('row');
+				row.appendChild(check);
+				rows.appendChild(row);
+				
+				pref.updateElements();
+				
+			}
+			catch (ex) {
+				Components.utils.reportError(ex);
+			}
+		}, true);
+ ]]></script>
+ </overlay>

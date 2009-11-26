@@ -118,10 +118,6 @@ PrivacyControl.prototype = {
 			this.onShutdown();
 			break;
 
-		case 'sanitize':
-			this.sanitize();
-			break;
-
 		case 'clean':
 			this.clean();
 			break;
@@ -163,24 +159,12 @@ PrivacyControl.prototype = {
 		}
 	},
 
-	sanitize : function() {
-		debug("sanitize()");
-		let branch = Preferences.getBranch('privacy.');
-
-		// in case UI should be used the cleaning will be processed there.
-		// Furthermore we have to ensure user wants us to sanitize.
-		if (!branch.getBoolPref('sanitize.promptOnSanitize')
-			&& branch.getBoolPref('item.extensions-dta')){
-			this.clean(prefs);
-		}
-	},
-
 	onShutdown : function() {
 		let branch = Preferences.getBranch('privacy.');
 
 		// has user pref'ed to sanitize on shutdown?
-		if (branch.getBoolPref('sanitize.sanitizeOnShutdown')){
-			this.sanitize();
+		if (branch.getBoolPref('sanitize.sanitizeOnShutdown') && branch.getBoolPref('clearOnShutdown.extensions-dta')){
+			this.clean();
 		}
 	}
 };
