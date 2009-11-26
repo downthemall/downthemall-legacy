@@ -77,9 +77,11 @@ var Dialog = {
 			else {
 				// more than just one download
 				$('infoDest').value = document.title;
-				for each (let e in $('infoURL', 'infoSize', 'sourcePage')) {
+				for each (let e in $('infoURL', 'infoSize', 'sourcePage', 'mirrorsText')) {
 					e.value = "---";
+					e.disabled = true;
 				}
+				$('mirrorRow').collapsed = true;
 				$("hash").setAttribute('readonly', 'true');
 				$("hash").setAttribute('disabled', 'true');
 	
@@ -202,7 +204,8 @@ var Dialog = {
 		if (mirrors.length) {
 			download.urlManager.initByArray(mirrors);
 			Debug.logString("New mirrors set " + mirrors);
-		}
+			$("mirrorsText").value = _("mirrorsText", [download.urlManager.length]);			
+		}		
 	},
 	check: function DTA_check() {
 		var dir = $('directory').value.trim();
