@@ -50,19 +50,8 @@
 			/>
 	</listbox>
 	<script type="text/javascript"><![CDATA[
-		addEventListener('load', function() {
-			removeEventListener('load', arguments.callee, true);
 
-			let msg = Components.classes['@mozilla.org/intl/stringbundle;1']
-				.getService(Components.interfaces.nsIStringBundleService)
-				.createBundle('chrome://dta/locale/sanitize.properties')
-				.GetStringFromName('sanitizeitem');
-			document.getElementById('dtaSanitizeItem').setAttribute('label', msg);
-	
-			if (!('Sanitizer' in this)) {
-				return;
-			}
-			
+		if ('Sanitizer' in this) {
 			Sanitizer.prototype.items['extensions-dta'] = {
 				clear: function() {
 					try	{
@@ -78,6 +67,19 @@
 					return true;
 				}
 			};
+		}
+		addEventListener('load', function() {
+			removeEventListener('load', arguments.callee, true);
+
+			let msg = Components.classes['@mozilla.org/intl/stringbundle;1']
+				.getService(Components.interfaces.nsIStringBundleService)
+				.createBundle('chrome://dta/locale/sanitize.properties')
+				.GetStringFromName('sanitizeitem');
+			document.getElementById('dtaSanitizeItem').setAttribute('label', msg);
+	
+			if (!('Sanitizer' in this)) {
+				return;
+			}
 		}, true);
 	]]></script>
 
