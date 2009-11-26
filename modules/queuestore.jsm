@@ -102,7 +102,7 @@ var QueueStore = {
 			try {
 				_timer.cancel();
 			}
-			catch (ex) { /* don' care */ }
+			catch (ex) { /* don't care */ }
 			
 			_timer = null;
 			this._saveDownloadQueue();
@@ -174,7 +174,8 @@ var QueueStore = {
 		}
 		_saveQueue[id] = download;
 		if (!_timer) {
-			_timer = Timers.createOneshot(500, this._saveDownloadQueue, this);
+			// delay up to 2500 msecs
+			_timer = Timers.createOneshot(2500, this._saveDownloadQueue, this);
 		}
 	},
 	_saveDownloadQueue: function() {
@@ -243,7 +244,7 @@ var QueueStore = {
 	}
 };
 
-const SHUTDOWN_TOPIC = 'quit-application'; 
+const SHUTDOWN_TOPIC = 'profile-change-teardown'; 
 
 var ShutdownObserver = {
 	get obs() {
