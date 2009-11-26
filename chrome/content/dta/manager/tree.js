@@ -453,6 +453,22 @@ const Tree = {
 			}
 		}
 	},
+	manageMirrors: function T_manageMirrors() {
+		if (!this.current) {
+			return;
+		}
+		let mirrors = this.current.urlManager.toArray();
+		openDialog(
+			'chrome://dta/content/dta/mirrors.xul',
+			null,
+			"chrome,dialog,resizable,modal,centerscreen",
+			mirrors
+		);
+		if (mirrors.length) {
+			this.current.urlManager.initByArray(mirrors);
+			Debug.logString("New mirrors set " + mirrors);
+		}		
+	},
 	export: function T_export() {
 		try {
 			let fp = new FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
@@ -588,6 +604,7 @@ const Tree = {
 			modifySome($('cmdDelete'), function(d) d.is(COMPLETE));
 			
 			modifySome($('cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'), function(d) !!d.count);
+			modifySome($('cmdMirrors'), function(d) d.count == 1);
 			
 			modifySome($('cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'), function(d) d.isOf(QUEUED, RUNNING, PAUSED, CANCELED));
 			modifySome($('cmdMoveTop', 'cmdMoveUp'), function(d) d.min > 0); 
