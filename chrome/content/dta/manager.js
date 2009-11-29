@@ -642,7 +642,7 @@ function UrlManager(urls) {
 UrlManager.prototype = {
 	_sort: function(a,b) {
 		const rv = b.preference - a.preference;
-		return rv ? rv : (a.url < b.url ? -1 : 1);
+		return rv ? rv : (Math.floor(Math.random() * 3) - 1);
 	},
 	initByArray: function um_initByArray(urls) {
 		for each (let u in urls) {
@@ -2269,11 +2269,34 @@ Connection.prototype = {
 
 	// nsIChannelEventSink
 	onChannelRedirect: function DL_onChannelRedirect(oldChannel, newChannel, flags) {
+		let c = this.c;
+		try {
+			if (!(oldChannel instanceof Ci.nsIChannel) || !(newChannel instanceof Ci.nsIChannel)) {
+				throw new Exception("redirect: requests not channels");
+			}
+			
+			// When we get redirected from, say, http to ftp, we need to explicitly
+			// call resumeAt() as this won't be propagated from the old channel.
+			if (c.start + c.written > 0 && !(newChannel instanceof Ci.nsIHttpChannel)) {
+				let resumable = newChannel.QueryInterface(Ci.nsIResumableChannel);
+				resumable.resumeAt(c.start + c.written, '');
+				Debug.logString("redirect: set resumeAt on " + newChannel.URI.spec + "/" + newChannel.originalURI.spec + " at " + (c.start + c.written));
+			}
+		}
+		catch (ex) {
+			Debug.log("redirect: cannot resumeAt", ex);
+			if (!this.handleError()) {
+				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
+				return;
+			}
+		}
+			
+		this._chan = newChannel;
+		
 		if (!this.isInfoGetter) {
 			return;
 		}
 		try {
-			this._chan == newChannel;
 			let newurl = new DTA_URL(newChannel.URI.QueryInterface(Ci.nsIURL), this.url.preference);
 			this.d.urlManager.replace(this.url, newurl);
 			this.url = newurl;
@@ -2516,9 +2539,21 @@ Connection.prototype = {
 		let d = this.d;
 		try {
 			let pb = aChannel.QueryInterface(Ci.nsIPropertyBag2);
-			d.totalSize = Math.max(pb.getPropertyAsInt64('content-length'), 0);
+			let totalSize = Math.max(pb.getPropertyAsInt64('content-length'), 0);
+			if (d.totalSize && totalSize != this.totalSize && !this.handleError()) {
+				Debug.logString("ftp: total size mismatch " + totalSize + " " + this.totalSize);
+				d.fail(_('servererror'), _('ftperrortext'), _('servererror')); 
+				return false;
+			}
+			Debug.logString("ftp: total size is: " + totalSize + " for: " + this.url);
+			d.totalSize = totalSize;
 		}
 		catch (ex) {
+			Debug.log("ftp: no totalsize", ex);
+			if (c.start != 0 && !this.handleError()) {
+				d.fail(_('servererror'), _('ftperrortext'), _('servererror')); 
+				return false;
+			}
 			d.totalSize = 0;
 			d.resumable = false;
 		}
@@ -2610,13 +2645,12 @@ Connection.prototype = {
 			}
 
 			if (this.isInfoGetter) {
-				// Checks for available disk space.
-				
 				if (d.fileName.getExtension() == 'metalink') {
 					d.isMetalink = true;
 					d.resumable = false;
 				}				
 				
+				// Checks for available disk space.
 				var tsd = d.totalSize;
 				try {
 					if (tsd) {
@@ -2729,7 +2763,9 @@ Connection.prototype = {
 		// and tries to advance into said directory
 		if (aStatusCode == NS_ERROR_FTP_CWD) {
 			Debug.logString("Cannot change to directory :p", aStatusCode);
-			d.cancel();
+			if (!this.handleError()) {
+				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
+			}
 			return;
 		}
 			
