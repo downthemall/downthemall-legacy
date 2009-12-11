@@ -166,7 +166,7 @@ var Utils = {
 				// from nsIFile
 				parent = parent.QueryInterface(Ci.nsILocalFile);
 				// we look for a directory that is writable and has some disk-space
-				if (parent.isDirectory() && parent.isWritable()) {
+				if (parent.isDirectory() && parent.isReadable() && parent.isWritable()) {
 					try {
 						return parent.diskSpaceAvailable ? directory : false;
 					}
