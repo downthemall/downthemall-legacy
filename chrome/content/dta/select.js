@@ -407,8 +407,10 @@ let Dialog = {
 		// directory valid?
 		if (!dir.length || !Utils.validateDir(dir)) {
 			this.addNotification(_(dir.length ? 'alertinvaliddir' : 'alertnodir'), this.PRIORITY_CRITICAL_MEDIUM);
-			let newDir = Utils.askForDir(null, _("validdestination"));
-			this.ddDirectory.value = newDir ? newDir : '';
+			if (!dir.length) {
+				let newDir = Utils.askForDir(null, _("validdestination"));
+				this.ddDirectory.value = newDir ? newDir : '';
+			}
 			return false;
 		}
 		return true;

@@ -400,28 +400,36 @@ var Metalinker = {
 		}
 	}, 	
 	download: function ML_download(start) {
-		if ($('directory', 'renaming').some(
-			function(e) {
-				if (!e.value) {
-					e.focus();
-					e.style.border = "1px solid red";
-					return true;
-				}
-				return false;
-			}
-		)) {
+		let [notifications, directory, mask] = $('notifications', 'directory', 'renaming');
+		notifications.removeAllNotifications(true);
+		
+		function err(msg) {
+			notifications.appendNotification(msg, 0, null, notifications.PRIORITY_CRITICAL_MEDIUM, null);
+		}
+		if (!mask.value) {
+			err(_('alertmask'));
+			return false;
+		}
+		if (!directory.value || !Utils.validateDir(directory.value)) {
+			err(_(directory.value ? 'alertinvaliddir' : 'alertnodir'));
 			return false;
 		}
 		
+		let selected = false;
 		Array.forEach(
 			document.getElementsByTagName('richlistitem'),
 			function(n) {
-				n.download.dirSave =  $('directory').value;
-				n.download.mask =  $('renaming').value;		
+				n.download.dirSave = directory.value;
+				n.download.mask = mask.value;		
 				n.download.selected = n.checked;
+				selected |= n.checked;
 			},
 			this
 		);
+		if (!selected) {
+			err(_('nolinks'));
+			return false;
+		}
 		window.arguments[1].start = start;
 		self.close();
 		return true;
