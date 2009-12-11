@@ -1,0 +1,24 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/* Mac uses the window menu bar, and there is no support for sprites */
+#dtaToolsMenu,
+#dtaToolsDTA {
+	list-style-image: url(chrome://dta/skin/common/dta.png);
+	-moz-image-region: auto;
+}
+#dtaToolsTDTA {
+	list-style-image: url(chrome://dta/skin/common/turbo.png);
+	-moz-image-region: auto;
+}
+#dtaToolsManager {
+	list-style-image: url(chrome://dta/skin/common/manager.png);
+	-moz-image-region: auto;	
+}
+#dtaToolsPrefs {
+	list-style-image: url(chrome://dta/skin/common/prefs.png);
+	-moz-image-region: auto;
+}
+#dtaToolsAbout {
+	list-style-image: url(chrome://dta/skin/common/about.png);
+	-moz-image-region: auto;
+}
