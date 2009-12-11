@@ -2,7 +2,7 @@
 <!ENTITY header "Mirror Management">
 <!ENTITY byline1 "Downloads can be loaded from different locations. The file is then automatically recombined.">
 <!ENTITY byline2 "Feel free to add and remove URLs pointing to the same file.">
-<!ENTITY byline3 "Adding URLs pointing to differnent files will cause a corrupt download, however">
+<!ENTITY byline3 "Adding URLs pointing to different files will cause a corrupt download">
 
 <!ENTITY addmirror.tip "Add a download mirror">
 <!ENTITY removemirror.tip "Remove selected download mirrors">
