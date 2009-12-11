@@ -113,6 +113,7 @@ treechildren::-moz-tree-row(f4, selected) {
 	background-color: #FBCCFF !important;
 }
 treechildren::-moz-tree-row(f5) {
+	background-color: #DDFFF4;
 }
 treechildren::-moz-tree-row(f5, selected) {
 	background-color: #A8FFE4 !important;
@@ -135,14 +136,14 @@ treechildren::-moz-tree-row(fastFiltered) {
 treechildren::-moz-tree-row(fastFiltered, selected) {
 	background-color: #DFC2C2 !important;
 }
-treechildren::-moz-tree-cell-text(manuallySelected, selected),
-treechildren::-moz-tree-cell-text(f1, selected),
-treechildren::-moz-tree-cell-text(f2, selected),
-treechildren::-moz-tree-cell-text(f3, selected),
-treechildren::-moz-tree-cell-text(f4, selected),
-treechildren::-moz-tree-cell-text(f5, selected),
-treechildren::-moz-tree-cell-text(f6, selected),
-treechildren::-moz-tree-cell-text(f7, selected),
-treechildren::-moz-tree-cell-text(fastFiltered, selected) {
+treechildren::-moz-tree-cell-text(manuallySelected),
+treechildren::-moz-tree-cell-text(f1),
+treechildren::-moz-tree-cell-text(f2),
+treechildren::-moz-tree-cell-text(f3),
+treechildren::-moz-tree-cell-text(f4),
+treechildren::-moz-tree-cell-text(f5),
+treechildren::-moz-tree-cell-text(f6),
+treechildren::-moz-tree-cell-text(f7),
+treechildren::-moz-tree-cell-text(fastFiltered) {
 	color: black !important;
 }
