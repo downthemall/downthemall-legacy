@@ -50,92 +50,88 @@
 	%managerDTD;
 ]>
 
-<window
-	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	xmlns:html="http://www.w3.org/1999/xhtml"
-	onload="Metalinker.load()"
-	title="&title;"
-	id="metaselect"
-	persist="width height"
-	onclose="Metalinker.cancel();"
->
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" onload="Metalinker.load()" title="&title;" id="metaselect" persist="width height" onclose="Metalinker.cancel();">
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
 	<script type="application/x-javascript" src="chrome://dta/content/dta/manager/metalinker.js" />
-	
+
 	<keyset>
-		<key keycode="VK_ESCAPE" oncommand="Metalinker.cancel();"/>
+		<key keycode="VK_ESCAPE" oncommand="Metalinker.cancel();" />
 	</keyset>
-	
+
 
 	<stringbundleset>
-		<stringbundle src="chrome://dta/locale/common.properties"/>
-		<stringbundle src="chrome://dta/locale/metalinker.properties"/>		
-		<stringbundle src="chrome://dta/locale/manager.properties"/>
-		<stringbundle src="chrome://dta/locale/prefpanes.properties"/>
-		<stringbundle src="chrome://global/locale/dialog.properties"/>		
+		<stringbundle src="chrome://dta/locale/common.properties" />
+		<stringbundle src="chrome://dta/locale/metalinker.properties" />
+		<stringbundle src="chrome://dta/locale/manager.properties" />
+		<stringbundle src="chrome://dta/locale/prefpanes.properties" />
+		<stringbundle src="chrome://global/locale/dialog.properties" />
 	</stringbundleset>
-	
+
 	<popupset id="popups">
 		<popup id="context">
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" oncommand="Metalinker.select('all');" />
 			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" oncommand="Metalinker.select('invert');" />
 			<menuitem id="selectnone" class="menuitem-iconic" label="&selectnone.label;" oncommand="Metalinker.select('none');" />
 		</popup>
-	</popupset>	
-		
+	</popupset>
+
 	<hbox id="header">
 		<vbox>
-			<spacer flex="1"/>
-			<html:canvas width="48" height="48" id="icon" class="icon"/>
-			<spacer flex="1"/>
-		</vbox>	
+			<spacer flex="1" />
+			<html:canvas width="48" height="48" id="icon" class="icon" />
+			<spacer flex="1" />
+		</vbox>
 		<vbox flex="1">
 			<grid flex="1">
-				<columns><column flex="1"/><column/><column/></columns>
+				<columns>
+					<column flex="1" />
+					<column />
+					<column />
+				</columns>
 				<rows>
 					<row>
-						<label id="identity" crop="end"/>
+						<label id="identity" crop="end" />
 						<hbox id="boxPublisher">
-							<label value="&publisher;"/>
-							<description id="publisher" class="text-link" onclick="Metalinker.openLink(this);"/>
+							<label value="&publisher;" />
+							<description id="publisher" class="text-link" onclick="Metalinker.openLink(this);" />
 						</hbox>
 						<hbox id="boxLicense">
-							<label value="&license;"/>
-							<description id="license" class="text-link" onclick="Metalinker.openLink(this);"/>
+							<label value="&license;" />
+							<description id="license" class="text-link" onclick="Metalinker.openLink(this);" />
 						</hbox>
 					</row>
-				</rows>					
+				</rows>
 			</grid>
-			<description id="desc"/>	
-			<spacer flex="1"/>	
+			<description id="desc" />
+			<spacer flex="1" />
 		</vbox>
 	</hbox>
-	
-	<richlistbox context="context" id="downloads" class="metalinker" flex="1" suppressonselect="true"/>
-	
-	<hbox style="margin:7px 7px 3px 7px;" >
-		<vbox autostretch="never" flex="1">
-			<caption label="&dest.caption;" />
-			<hbox>
-				<saveddropdown id="directory" preference="directory" flex="1"/>
-				<toolbarbutton id="browsedir" oncommand="Metalinker.browseDir();" tooltiptext="&browse.tip;" />
-			</hbox>
-		</vbox>
-		<vbox id="renamingbox">
-			<caption label="&mask.label;:" />
-			<hbox>
-				<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
-				<maskbutton/>
-			</hbox>
-		</vbox>
-	</hbox>	
-	
- 	<hbox align="baseline" style="margin: 2px 7px 4px 7px" >
-		<spacer flex="1"/>
-		<button accesskey="&start.key;" label="&start.label;" id="startbutton" oncommand="Metalinker.download(true);" default="true"/>
+	<notificationbox id="notifications" flex="1">
+		<richlistbox context="context" id="downloads" class="metalinker" flex="1" suppressonselect="true" />
+
+		<hbox style="margin:7px 7px 3px 7px;">
+			<vbox autostretch="never" flex="1">
+				<caption label="&dest.caption;" />
+				<hbox>
+					<saveddropdown id="directory" preference="directory" flex="1" />
+					<toolbarbutton id="browsedir" oncommand="Metalinker.browseDir();" tooltiptext="&browse.tip;" />
+				</hbox>
+			</vbox>
+			<vbox id="renamingbox">
+				<caption label="&mask.label;:" />
+				<hbox>
+					<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;" />
+					<maskbutton />
+				</hbox>
+			</vbox>
+		</hbox>
+	</notificationbox>
+
+	<hbox align="baseline" style="margin: 2px 7px 4px 7px">
+		<spacer flex="1" />
+		<button accesskey="&start.key;" label="&start.label;" id="startbutton" oncommand="Metalinker.download(true);" default="true" />
 		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" oncommand="Metalinker.download(false);" />
 		<button id="cancelbutton" oncommand="Metalinker.cancel();" />
 	</hbox>
-	
 </window>
