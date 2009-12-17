@@ -19,7 +19,7 @@
 		<tree id="filterTable" flex="1" seltype="single" onselect="Filters.selectionChanged()">
 			<treecols>
 				<treecol label="&listhead1.label;" flex="1" id="filtername" />
-				<splitter class="splitt" />
+				<splitter class="tree-splitter" />
 				<treecol label="&listhead2.label;" flex="2" id="filtertest" />
 			</treecols>
 			<treechildren id="listafile" tooltip="t1">
