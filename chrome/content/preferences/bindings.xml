@@ -247,6 +247,24 @@
 					}
 				]]></body>
 			</method>
+			<method name="changedConnections">
+				<body><![CDATA[
+					if (this._connectionsGroup.value != 'limited') {
+						return;
+					}
+					this._connections.value = this.limit.connections || 3;
+					this.refresh();
+				]]></body>
+			</method>
+			<method name="changedSpeed">
+				<body><![CDATA[
+					if (this._speedGroup.value != 'limited') {
+						return;
+					}
+					this._speed.value = this.limit.speed || 100;
+					this.refresh();
+				]]></body>
+			</method>
 		</implementation>
 		<handlers>
 			<handler event="change">this.refresh();</handler>
@@ -259,6 +277,17 @@
 						this.cancelEdit();
 						break;
 				}
+			]]></handler>
+			<handler event="select"><![CDATA[
+				switch (event.originalTarget.getAttribute('anonid')) {
+					case 'connectionsGroup':
+						this.changedConnections();
+						break;
+					case 'speedGroup':
+						this.changedSpeed();
+						break;
+				}
+				this.refresh();
 			]]></handler>
 			<handler event="click" clickcount="2"><![CDATA[
 				this.cancelEdit();
