@@ -67,7 +67,7 @@ function Limit(host, isNew) {
 	this._host = host;
 	this._isNew = isNew;
 	this.enabled = Prefs.get(HOSTS_PREF + this._host, true);
-	this.connections = Prefs.get(CONNECTIONS_PREF + this._host, 0);
+	this.connections = Prefs.get(CONNECTIONS_PREF + this._host, 2);
 	this.speed = Prefs.get(SPEEDS_PREF + this._host, 0);
 }
 Limit.prototype = {
