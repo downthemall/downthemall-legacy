@@ -514,6 +514,7 @@ var Servers = {
   }
 };
 Components.utils.import('resource://dta/serverlimits.jsm', Servers);
+ServiceGetter(Servers, 'prompts', '@mozilla.org/embedcomp/prompt-service;1', 'nsIPromptService');
 
 var Prefs = {
 	load: function() {
