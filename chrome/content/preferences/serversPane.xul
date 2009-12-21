@@ -49,20 +49,20 @@
 			<caption label="&serverspane.downloads.caption;" />
 			<grid flex="1">
 				<columns>
-					<column flex="1" />
+					<column />
 					<column flex="1" />
 				</columns>
 				<rows>
 					<row>
 						<hbox align="center" flex="1">
-							<label value="&serverspane.concurrent.label;" flex="1" />
+							<label value="&serverspane.concurrent.label;" />
 							<scale min="1" max="16" id="maxtasks" preference-editable="true" onchange="Servers.changedMaxTasks();" />
-							<label id="maxtaskslabel" style="min-width: 3em;" />
+							<label id="maxtaskslabel" style="width: 3em;" />
 						</hbox>
 						<hbox align="center" flex="1">
-							<label value="&serverspane.perserver.label;" flex="1" />
+							<label value="&serverspane.perserver.label;" />
 							<scale min="1" max="10" id="maxtasksperserver" preference-editable="true" onchange="Servers.changedMaxTasksPerServer();" />
-							<label id="maxtasksperserverlabel" style="min-width: 3em;" />
+							<label id="maxtasksperserverlabel" style="width: 3em;" />
 						</hbox>
 					</row>
 				</rows>
