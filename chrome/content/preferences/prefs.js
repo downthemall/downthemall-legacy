@@ -475,6 +475,7 @@ var Servers = {
 			e.limit = limit;
 			this._list.appendChild(e);
 		}
+		$('noitemsbox').hidden = !!this._list.itemCount;
 	},
 	newFilter: function() {
   	let rv = {};
@@ -502,8 +503,8 @@ var Servers = {
 		}
 		catch (ex) {
 			Debug.log("failed to add limit", ex);
-			alert(ex);
 		}
+		$('noitemsbox').hidden = !!this._list.itemCount;		
 	},
 	reload: function(removed) {
 		let selectedItem = this._list.selectedItem;

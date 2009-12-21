@@ -102,7 +102,14 @@
 		</groupbox>
 		<groupbox pack="center" flex="1" id="serversBox" orient="vertical">
 			<caption label="&serverspane.limits.label;" />
-			<richlistbox id="serverLimits" flex="1" />
+			<stack flex="1">
+				<richlistbox id="serverLimits" flex="1" />
+				<vbox align="center" flex="1" id="noitemsbox">
+					<spacer flex="1" />
+					<label value="&serverpane.limits.noitems;" disabled="true" />
+					<spacer flex="1" />
+				</vbox>
+			</stack>
 			<separator class="thin" />
 			<hbox pack="end">
 				<button id="newServerLimit" label="&serverspane.new.label;" oncommand="Servers.newFilter();" />
