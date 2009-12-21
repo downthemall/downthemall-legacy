@@ -39,12 +39,13 @@
 	</stringbundleset>
 	
 	<prefpane id="paneMain" label="&mainpane.label;" src="chrome://dta/content/preferences/mainPane.xul" />
+	<prefpane id="paneInterface" label="&uipane.label;" />
+	<prefpane id="paneServers" label="&serverspane.label;" src="chrome://dta/content/preferences/serversPane.xul" />
 	<prefpane id="paneFilters" label="&filterspane.label;" src="chrome://dta/content/preferences/filtersPane.xul" />
 	<prefpane id="panePrivacy" label="&privacypane.label;" src="chrome://dta/content/preferences/privacyPane.xul" />
-	<prefpane id="paneInterface" label="&uipane.label;" />
 	<prefpane id="paneAdvanced" label="&advancedpane.label;" src="chrome://dta/content/preferences/advPane.xul" />
 	
-	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
+	<script type="application/javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js"/>
 	<script type="application/javascript" src="chrome://dta/content/preferences/prefs.js"/>
 </prefwindow>
