@@ -51,7 +51,7 @@
 			<method name="refresh">
 				<body><![CDATA[
 					this._connectionsLabel.value = (this.connections != 0) ? this.connections : _('unlimited');
-					this._speedLabel.value = (this.speed != 0) ? _('sizeKBs', [this.speed]) : _('unlimited');
+					this._speedLabel.value = (this.speed != 0) ? Utils.formatSpeed(this.speed * 1024) : _('unlimited');
 				]]></body>
 			</method>
 		</implementation>
