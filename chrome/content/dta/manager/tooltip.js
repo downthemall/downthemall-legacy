@@ -143,7 +143,7 @@ var Tooltip = {
 		try {
 			if (file.speeds.length && file.is(RUNNING)) {
 				$('speedAverage').value = file.speed;
-				$('speedCurrent').value = Utils.formatBytes(file.speeds.last) + "/s";;
+				$('speedCurrent').value = Utils.formatSpeed(file.speeds.last);
 			}
 			else if (file.is(RUNNING)) {
 				$('speedCurrent').value = $('speedAverage').value = _('unknown');

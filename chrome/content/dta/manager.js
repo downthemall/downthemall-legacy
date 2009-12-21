@@ -542,9 +542,9 @@ var Dialog = {
 						d.status = Utils.formatTimeDelta(remaining);
 					}
 				}
-				d.speed = Utils.formatBytes(d.speeds.avg) + "/s";
+				d.speed = Utils.formatSpeed(d.speeds.avg);
 				if (d.speedLimit > 0) {
-					d.speed += " (" + Utils.formatKBytes(d.speedLimit, 0) + "/s)";
+					d.speed += " (" + Utils.formatSpeed(d.speedLimit, 0) + ")";
 				}
 			}
 			this._speeds.add(this._sum, now);
