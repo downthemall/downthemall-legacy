@@ -45,14 +45,7 @@ Components.utils.import('resource://dta/prompts.jsm', Prompts);
 var Main = {
 	load: function() {
 		$('alert2').hidden = !('nsIAlertsService' in Ci);
-		
-		// delay these assignments, or else we get messed up by the slider c'tor
-		$('maxtasks').setAttribute('preference', 'dtamaxtasks');
-		$('dtamaxtasks').updateElements();		
-	},
-	changedMaxTasks: function() {
-		$('maxtaskslabel').value = $('maxtasks').value;
-	}	
+	}
 }
 
 var Privacy = {
@@ -443,6 +436,84 @@ var Filters = {
 	getColumnProperties: function(column, element, prop) {},
 	setCellValue: function(idx, col, value) {}
 };
+
+var Servers = {
+	_limits: [],
+	init: function() {
+		this._list = $('serverLimits');
+		try {
+			this._load();
+		} catch (ex) {
+			Debug.log("Failed to load Servers", ex);
+		}
+		
+		// delay these assignments, or else we get messed up by the slider c'tor
+		$('maxtasks').setAttribute('preference', 'dtamaxtasks');
+		$('dtamaxtasks').updateElements();		
+		$('maxtasksperserver').setAttribute('preference', 'dtamaxtasksperserver');
+		$('dtamaxtasksperserver').updateElements();				
+	},
+	changedMaxTasks: function() {
+		$('maxtaskslabel').value = $('maxtasks').value;
+	},	
+	changedMaxTasksPerServer: function() {
+		$('maxtasksperserverlabel').value = $('maxtasksperserver').value;
+	},	
+	_load: function() {
+		// clear the list
+		while (this._list.firstChild){
+			this._list.removeChild(this._list.firstChild);
+		}
+		for each (let limit in this.listLimits()) {
+			let e = document.createElement('richlistitem');
+			e.setAttribute('class', 'serverlimit');
+			e.setAttribute('id', "host" + limit.host);
+			e.setAttribute('host', limit.host);
+			e.setAttribute('searchlabel', limit.host);			
+			e.setAttribute('connections', limit.connections);
+			e.setAttribute('speed', limit.speed);
+			e.limit = limit;
+			this._list.appendChild(e);
+		}
+	},
+	newFilter: function() {
+  	let rv = {};
+  	if (!this.prompts.prompt(window, _('newlimittitle'), _('newlimitdesc'), rv, null, {}) || !rv.value) {
+  		return;
+  	}
+		try {
+			let limit = this.addLimit(rv.value);
+			if (!limit.isNew) {
+				this._list.selectedItem = document.getElementById("host" + limit.host);
+				this._list.selectedItem.setAttribute('editing', 'true');
+				return;
+			}
+			let e = document.createElement('richlistitem');
+			e.setAttribute('class', 'serverlimit');
+			e.setAttribute('id', "host" + limit.host);
+			e.setAttribute('host', limit.host);
+			e.setAttribute('searchlabel', limit.host);
+			e.setAttribute('connections', limit.connections);
+			e.setAttribute('speed', limit.speed);
+			e.setAttribute('editing', 'true');
+			e.limit = limit;
+			this._list.appendChild(e);
+			this._list.selectedItem = e;
+		}
+		catch (ex) {
+			Debug.log("failed to add limit", ex);
+			alert(ex);
+		}
+	},
+	reload: function(removed) {
+		let selectedItem = this._list.selectedItem;
+  	this._load();
+  	if (!removed) {
+  		this._list.selectedItem = selectedItem;
+  	}
+  }
+};
+Components.utils.import('resource://dta/serverlimits.jsm', Servers);
 
 var Prefs = {
 	load: function() {

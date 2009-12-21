@@ -10,86 +10,25 @@
  * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<prefpane
-		id="paneMain"
-		label="&mainpane.label;"
-		onpaneload="Main.load();"
-	>
+	<prefpane id="paneMain" label="&mainpane.label;" onpaneload="Main.load();">
 
 		<preferences>
-		  <preference id="dtaexisting" name="extensions.dta.conflictresolution" type="int"/>
-		  <preference id="dtamaxtasks" name="extensions.dta.ntask" type="int"/>
-		  <preference id="dtaarinterval" name="extensions.dta.autoretryinterval" type="int"/>
-		  <preference id="dtaarmax" name="extensions.dta.maxautoretries" type="int"/>
-		  <preference id="dtaalert" name="extensions.dta.alertbox" type="int"/>
-		  <preference id="dtadone" name="extensions.dta.sounds.done" type="bool"/>
-		  <preference id="dtaerror" name="extensions.dta.sounds.error" type="bool"/>
-		  <preference id="dtaautoclose" name="extensions.dta.closedta" type="bool"/>
+			<preference id="dtaexisting" name="extensions.dta.conflictresolution" type="int" />
+			<preference id="dtaalert" name="extensions.dta.alertbox" type="int" />
+			<preference id="dtadone" name="extensions.dta.sounds.done" type="bool" />
+			<preference id="dtaerror" name="extensions.dta.sounds.error" type="bool" />
+			<preference id="dtaautoclose" name="extensions.dta.closedta" type="bool" />
 		</preferences>
 
-	<grid>
-			<columns><column flex="3"/><column flex="2"/></columns>
-			<rows>
-				<row>
-					<vbox>		
-						<groupbox>
-							<caption label="&mainpane.downloads.caption;"/>
-	
-							<hbox align="center" flex="1">
-								<label value="&mainpane.concurrent.label;" flex="1"/>
-								<scale min="1" max="10" id="maxtasks" preference-editable="true" onchange="Main.changedMaxTasks();"/>
-								<label id="maxtaskslabel" style="min-width: 3em;" />
-							</hbox>
-	
-							<separator class="groove-thin"/>
-							<checkbox label="&mainpane.sounderror.label;" preference="dtaerror"/>
-	
-							
-						</groupbox>
-						<groupbox orient="horizontal" align="center">
-							<caption label="&mainpane.autoretry.caption;"/>
-							<label value="&mainpane.autoretry.interval.label;" flex="1"/>
-							<menulist preference="dtaarinterval">
-								<menupopup>
-									<menuitem label="&advancedpane.chunksdisabled;" value="0"/>
-									<menuitem label="1 &advancedpane.minute;" value="60"/>
-									<menuitem label="5 &advancedpane.minutes;" value="300"/>
-									<menuitem label="10 &advancedpane.minutes;" value="600"/>
-									<menuitem label="30 &advancedpane.minutes;" value="1800"/>
-									<menuitem label="1 &advancedpane.hour;" value="3600"/>
-									<menuitem label="3 &advancedpane.hours;" value="10800"/>
-								</menupopup>
-							</menulist>
-							<label value="&mainpane.autoretry.max.label;" flex="1"/>
-							<menulist preference="dtaarmax">
-								<menupopup>
-									<menuitem label="&mainpane.autoretry.unlimited;" value="0"/>
-									<menuitem label="1" value="1"/>
-									<menuitem label="2" value="2"/>
-									<menuitem label="3" value="3"/>
-									<menuitem label="4" value="4"/>
-									<menuitem label="5" value="5"/>
-									<menuitem label="10" value="10"/>
-									<menuitem label="15" value="15"/>
-									<menuitem label="20" value="20"/>
-									<menuitem label="50" value="50"/>
-								</menupopup>
-							</menulist>
-						</groupbox>						
-					</vbox>
-					
-					<groupbox>
-						<caption id="ren" label="&mainpane.rename.caption;" />
-						<radiogroup id="scelta" preference="dtaexisting">
-							<radio id="rename1" label="&mainpane.rename.label;" value="0"/>
-							<radio id="overwrite" label="&mainpane.overwrite.label;" value="1"/>
-							<radio id="skip" label="&mainpane.skip.label;" value="2"/>
-							<radio id="ask" label="&mainpane.ask.label;" value="3"/>
-						</radiogroup>
-					</groupbox>
-				</row>
-			</rows>
-		</grid>
+		<groupbox>
+			<caption id="ren" label="&mainpane.rename.caption;" />
+			<radiogroup id="scelta" preference="dtaexisting" orient="horizontal">
+				<radio id="rename1" label="&mainpane.rename.label;" value="0" />
+				<radio id="overwrite" label="&mainpane.overwrite.label;" value="1" />
+				<radio id="skip" label="&mainpane.skip.label;" value="2" />
+				<radio id="ask" label="&mainpane.ask.label;" value="3" />
+			</radiogroup>
+		</groupbox>
 
 		<groupbox>
 			<caption label="&mainpane.alert.caption;" />
@@ -99,10 +38,10 @@
 				<radio id="alert3" label="&mainpane.alertnone.label;" value="2" />
 			</radiogroup>
 
-			<separator class="groove-thin"/>
-
-			<checkbox id="soundDone" label="&mainpane.sounddone.label;" preference="dtadone"/>
-			<checkbox id="closedta" label="&mainpane.closedta.label;" preference="dtaautoclose"/>
+			<separator class="groove-thin" />
+			<checkbox label="&mainpane.sounderror.label;" preference="dtaerror" />
+			<checkbox id="soundDone" label="&mainpane.sounddone.label;" preference="dtadone" />
+			<checkbox id="closedta" label="&mainpane.closedta.label;" preference="dtaautoclose" />
 		</groupbox>
 	</prefpane>
 </overlay>
