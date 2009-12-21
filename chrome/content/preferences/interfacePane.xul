@@ -30,18 +30,14 @@
 		</preferences>
 		
 		<groupbox>
-			<caption label="&uipane.appearance.caption;"/>
-			<checkbox label="&uipane.namesonly.label;" preference="dtaHideUrl" />
-			<checkbox label="&uipane.showtooltip.label;" preference="dtaShowTooltip" />
-		</groupbox>
-		
-		<groupbox>
 			<caption label="&uipane.manager.caption;"/>
 			<checkbox label="&uipane.startminimized.label;" preference="dtaStartMinimized"/>
 			<hbox>
 				<checkbox flex="1" id="minimizetotray" label="&uipane.minimizetotray.label;" preference="dtaMinimizeToTray"/>
 				<label id="minimizetotray_link" value="Get MinTrayR" onclick="Interface.openMinTrayR();" hidden="true" class="text-link"/>
 			</hbox>
+			<checkbox label="&uipane.namesonly.label;" preference="dtaHideUrl" />
+			<checkbox label="&uipane.showtooltip.label;" preference="dtaShowTooltip" />
 		</groupbox>
 		
 		<groupbox>
