@@ -232,33 +232,6 @@ var Utils = {
 		}
 	},
 
-	/**
-	 * returns a formated representation of a (file) size
-	 * 
-	 * @param aNumber
-	 *          The number to format
-	 * @author Nils
-	 */
-	formatBytes: function U_formatBytes(aNumber, decimalPlace) {
-		const formatBytes_units = [['sizeB', 0], ['sizeKB', 1], ['sizeMB', 2], ['sizeGB', 2], ['sizeTB', 3]];
-		const formatBytes_nunits = formatBytes_units.length;
-
-		aNumber = Number(aNumber);
-		
-		if (!isFinite(aNumber)) {
-			return 'NaN';
-		}
-		
-		let unit = formatBytes_units[0];
-		
-		for (let i = 1; aNumber > 875 && i < formatBytes_nunits; ++i) {
-			aNumber /= 1024;
-			unit = formatBytes_units[i];
-		}
-		decimalPlace = decimalPlace || unit[1];
-		return _(unit[0], [aNumber.toFixed(decimalPlace)]);
-	},
-	
 	formatKBytes: function U_formatKBytes(aNumber, decimalPlace) {
 		aNumber = Number(aNumber) / 1024;
 		
@@ -267,7 +240,6 @@ var Utils = {
 		}
 		return _('sizeKB', [aNumber.toFixed(arguments.length > 1 ? decimalPlace : 1)]);
 	},
-
 
 	formatConflictName: function U_formatConflictName(basename, conflicts) {
 		if (!conflicts) {
@@ -281,6 +253,29 @@ var Utils = {
 		return basename + '_' + Utils.formatNumber(conflicts) + ext;
 	}
 };
+
+(function() {
+	function createFormatter(units, scale) {
+		const sunits = units;
+		const nunits = sunits.length;
+		const s = scale;
+		return function(val, decimalPlace) {
+			val = Number(val);
+			if (!isFinite(val)) {
+				return 'NaN';
+			}
+			let unit = sunits[0];
+			for (let i = 1; val > s && i < nunits; ++i) {
+				val /= 1024;
+				unit = sunits[i];
+			}
+			decimalPlace = arguments.length > 1 ? decimalPlace : unit[1];
+			return _(unit[0], [val.toFixed(decimalPlace)]);			
+		}
+	}
+	Utils.formatBytes = createFormatter([['sizeB', 0], ['sizeKB', 1], ['sizeMB', 2], ['sizeGB', 2], ['sizeTB', 3]], 875);
+	Utils.formatSpeed = createFormatter([['sizeBs', 0], ['sizeKBs', 1], ['sizeMBs', 1], ['sizeGBs', 2]], 1023);
+})();
 
 Components.utils.import('resource://dta/utils.jsm', Utils);
 
