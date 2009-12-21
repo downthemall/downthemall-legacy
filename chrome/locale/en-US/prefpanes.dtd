@@ -57,8 +57,8 @@
 
 <!ENTITY serverspane.label "Network">
 <!ENTITY serverspane.downloads.caption "Downloads">
-<!ENTITY serverspane.concurrent.label "Max. concurrent downloads:">
-<!ENTITY serverspane.perserver.label "Max. downloads per server:">
+<!ENTITY serverspane.concurrent.label "Concurrent downloads:">
+<!ENTITY serverspane.perserver.label "Downloads per server:">
 <!ENTITY serverspane.new.label "New Limit">
 <!ENTITY serverspane.del.label "Remove Limit">
 <!ENTITY serverspane.limits.label "Per-Server limits">
