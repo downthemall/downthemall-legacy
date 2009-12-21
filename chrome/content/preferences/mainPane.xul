@@ -18,6 +18,10 @@
 			<preference id="dtadone" name="extensions.dta.sounds.done" type="bool" />
 			<preference id="dtaerror" name="extensions.dta.sounds.error" type="bool" />
 			<preference id="dtaautoclose" name="extensions.dta.closedta" type="bool" />
+			<preference id="dtasettime" name="extensions.dta.settime" type="bool" />
+			<preference id="dtarememberoneclick" name="extensions.dta.rememberoneclick" type="bool" />
+			<preference id="dtaconfirmremove" name="extensions.dta.confirmremove" type="bool" />
+			<preference id="dtatextlinks" name="extensions.dta.textlinks" type="bool" />
 		</preferences>
 
 		<groupbox>
@@ -37,11 +41,19 @@
 				<radio id="alert2" label="&mainpane.alertslides.label;" value="1" />
 				<radio id="alert3" label="&mainpane.alertnone.label;" value="2" />
 			</radiogroup>
-
 			<separator class="groove-thin" />
 			<checkbox label="&mainpane.sounderror.label;" preference="dtaerror" />
 			<checkbox id="soundDone" label="&mainpane.sounddone.label;" preference="dtadone" />
 			<checkbox id="closedta" label="&mainpane.closedta.label;" preference="dtaautoclose" />
 		</groupbox>
+
+		<groupbox>
+			<caption label="&mainpane.misc.caption;" />
+			<checkbox label="&mainpane.settime.label;" preference="dtasettime" />
+			<checkbox label="&mainpane.rememberoneclick.label;" preference="dtarememberoneclick" />
+			<checkbox label="&mainpane.confirmremove.label;" preference="dtaconfirmremove" />
+			<checkbox label="&mainpane.textlinks.label;" preference="dtatextlinks" />
+		</groupbox>
+
 	</prefpane>
 </overlay>

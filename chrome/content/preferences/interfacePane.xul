@@ -36,7 +36,7 @@
 		</groupbox>
 		
 		<groupbox>
-			<caption label="&uipane.window.caption;"/>
+			<caption label="&uipane.manager.caption;"/>
 			<checkbox label="&uipane.startminimized.label;" preference="dtaStartMinimized"/>
 			<hbox>
 				<checkbox flex="1" id="minimizetotray" label="&uipane.minimizetotray.label;" preference="dtaMinimizeToTray"/>

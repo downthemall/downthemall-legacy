@@ -23,12 +23,8 @@
 			<preference id="dtatemporary" name="extensions.dta.saveTemp" type="bool" />
 			<preference id="dtatimeout" name="extensions.dta.timeout" type="int" />
 			<preference id="dtatemplocation" name="extensions.dta.tempLocation" type="unichar" />
-			<preference id="dtasettime" name="extensions.dta.settime" type="bool" />
-			<preference id="dtarememberoneclick" name="extensions.dta.rememberoneclick" type="bool" />
-			<preference id="dtaconfirmremove" name="extensions.dta.confirmremove" type="bool" />
 			<preference id="dtapermissions" name="extensions.dta.permissions" type="int" />
 			<preference id="dtaloadendfirst" name="extensions.dta.loadendfirst" type="int" />			
-			<preference id="dtatextlinks" name="extensions.dta.textlinks" type="bool" />
 		</preferences>
 		
 		<groupbox orient="horizontal" align="center">
@@ -58,18 +54,13 @@
 		</groupbox>
 
 		<groupbox>
-			<caption label="&advancedpane.misc.caption;" />
-			<checkbox label="&advancedpane.settime.label;" preference="dtasettime"/>
-			<checkbox label="&advancedpane.rememberoneclick.label;" preference="dtarememberoneclick"/>
-			<checkbox label="&advancedpane.confirmremove.label;" preference="dtaconfirmremove"/>
-			<checkbox label="&advancedpane.textlinks.label;" preference="dtatextlinks"/>
+			<caption label="&mainpane.misc.caption;" />
 			<hbox align="center">
 				<label value="&advancedpane.loadendfirst.label;" control="loadendfirst"/>
 				<spacer flex="1"/>
 				<scale min="0" max="4096" id="loadendfirst" increment="4" pageincrement="16" preference-editable="true" onchange="Advanced.changedLoadEndFirst();"/>
 				<label id="loadendfirstlabel" style="min-width: 6em;" />
 			</hbox>
-			
 		</groupbox>
 		
 		<grid id="gridFiles">
