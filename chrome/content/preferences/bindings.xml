@@ -51,7 +51,7 @@
 			<method name="refresh">
 				<body><![CDATA[
 					this._connectionsLabel.value = (this.connections != 0) ? this.connections : _('unlimited');
-					this._speedLabel.value = (this.speed != 0) ? this.speed : _('unlimited');
+					this._speedLabel.value = (this.speed != 0) ? _('sizeKBs', [this.speed]) : _('unlimited');
 				]]></body>
 			</method>
 		</implementation>
@@ -146,6 +146,9 @@
 						break;
 				}
 			]]></handler>
+			<handler event="click" clickcount="2"><![CDATA[
+				this.setAttribute('editing', 'true');
+			]]></handler>
 		</handlers>
 	</binding>	
 	<binding id="serverlimit-editing" extends="chrome://dta/content/preferences/bindings.xml#serverlimit-base">
@@ -182,7 +185,7 @@
 								<xul:radio label="&serverspane.unlimited;" value="unlimited"/>
 								<xul:radio label="&serverspane.limited;" value="limited"/>
 								<xul:hbox align="center">
-									<xul:scale min="1" max="10240" anonid="speed" xbl:inherits="value=speed" />
+									<xul:scale min="1" max="2048" increment="4" pageincrement="16" anonid="speed" xbl:inherits="value=speed" />
 									<xul:label class="serverlimit-speed-label serverlimit-scale-label" anonid="speedLabel" />
 								</xul:hbox>
 							</xul:radiogroup>
@@ -257,6 +260,9 @@
 						break;
 				}
 			]]></handler>
+			<handler event="click" clickcount="2"><![CDATA[
+				this.cancelEdit();
+			]]></handler>			
 		</handlers>	
 	</binding>
 </bindings>
