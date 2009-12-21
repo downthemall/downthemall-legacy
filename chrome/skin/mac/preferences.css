@@ -19,3 +19,7 @@ separator.groove-thin {
 #filterTable {
 	min-height: 200px;
 }
+
+#serversBox {
+	min-height: 250px;
+}

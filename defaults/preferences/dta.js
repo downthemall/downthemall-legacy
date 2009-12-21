@@ -82,5 +82,6 @@ pref("extensions.dta.listsniffedvideos", false);
 pref("extensions.dta.nokeepalive", true);
 pref("extensions.dta.resumeonerror", false);
 pref("extensions.dta.textlinks", true);
+pref("extensions.dta.tasksperserver", 3);
 // Non-customizable-toolbar specific
 pref("extensions.dta.tb.buttons", "1,1,0");

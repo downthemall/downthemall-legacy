@@ -20,8 +20,6 @@
 <!ENTITY mainpane.overwrite.label "Overwrite">
 <!ENTITY mainpane.skip.label "Skip">
 <!ENTITY mainpane.ask.label "Ask">
-<!ENTITY mainpane.downloads.caption "Downloads">
-<!ENTITY mainpane.concurrent.label "Max concurrent downloads:">
 <!ENTITY mainpane.sounderror.label "Play a sound in case of error">
 <!ENTITY mainpane.alert.caption "When downloads are complete:">
 <!ENTITY mainpane.alertboxes.label "Alert me using alertboxes">
@@ -29,10 +27,6 @@
 <!ENTITY mainpane.alertnone.label "Don't alert me">
 <!ENTITY mainpane.sounddone.label "Play a sound when all downloads are complete">
 <!ENTITY mainpane.closedta.label "Close DownThemAll when downloads are complete">
-<!ENTITY mainpane.autoretry.caption "Auto Retries">
-<!ENTITY mainpane.autoretry.interval.label "Retry each">
-<!ENTITY mainpane.autoretry.max.label "Max. Retries">
-<!ENTITY mainpane.autoretry.unlimited "Unlimited">
 
 <!ENTITY privacypane.label "Privacy">
 <!ENTITY privacypane.closing.caption "When Manager window is closed">
@@ -54,6 +48,22 @@
 <!ENTITY privacypane.notice.caption "Notice">
 <!ENTITY privacypane.notice.desc "DownThemAll also integrates with the built-in Clear Private Data feature (if available).">
 <!ENTITY privacypane.privacynotice.label "Our Privacy Notice">
+
+<!ENTITY serverspane.label "Network">
+<!ENTITY serverspane.downloads.caption "Downloads">
+<!ENTITY serverspane.concurrent.label "Max. concurrent downloads:">
+<!ENTITY serverspane.perserver.label "Max. downloads per server:">
+<!ENTITY serverspane.new.label "New Limit">
+<!ENTITY serverspane.del.label "Remove Limit">
+<!ENTITY serverspane.limits.label "Per-Server limits">
+<!ENTITY serverspane.server.label "Server:">
+<!ENTITY serverspane.connections.label "Connections:">
+<!ENTITY serverspane.speed.label "Speed Limit:">
+<!ENTITY serverspane.unlimited "Unlimited">
+<!ENTITY serverspane.limited "Limited">
+<!ENTITY serverspane.autoretry.caption "Automatic retries">
+<!ENTITY serverspane.autoretry.interval.label "Retry each">
+<!ENTITY serverspane.autoretry.max.label "Max. Retries">
 
 <!ENTITY advancedpane.label "Advanced">
 <!ENTITY advancedpane.multipart.caption "Multipart download">
