@@ -94,7 +94,6 @@
 <!ENTITY advancedpane.loadendfirst.label "Load last few kilobytes first">
 
 <!ENTITY uipane.label "Interface">
-<!ENTITY uipane.appearance.caption "Appearance">
 <!ENTITY uipane.namesonly.label "Show only file names in Manager window">
 <!ENTITY uipane.integration.caption "Integration">
 <!ENTITY uipane.downloadwin.label "Add DownThemAll! to the 'Save File' window">
