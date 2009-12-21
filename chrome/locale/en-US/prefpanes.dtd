@@ -62,6 +62,7 @@
 <!ENTITY serverspane.new.label "New Limit">
 <!ENTITY serverspane.del.label "Remove Limit">
 <!ENTITY serverspane.limits.label "Per-Server limits">
+<!ENTITY serverpane.limits.noitems "No per-server limits specified">
 <!ENTITY serverspane.server.label "Server:">
 <!ENTITY serverspane.connections.label "Connections:">
 <!ENTITY serverspane.speed.label "Speed Limit:">
