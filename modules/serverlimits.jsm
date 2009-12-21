@@ -124,16 +124,17 @@ function load() {
 	obs.notifyObservers(null, TOPIC, null);
 }
 
-function getEffectiveHost(url) tlds.getBaseDomain(url);
-
-function addLimit(host) {
-	host = fixups.createFixupURI(host, 0x0);
+function getEffectiveHost(url) {
 	try {
-		host = getEffectiveHost(host);
+		return tlds.getBaseDomain(url);
 	}
 	catch (ex) {
-		host = host.host;
+		return url.host;
 	}
+}
+
+function addLimit(host) {
+	host = getEffectiveHost(fixups.createFixupURI(host, 0x0));
 	if (host in limits) {
 		return limits[host];
 	}
