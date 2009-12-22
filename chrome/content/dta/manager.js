@@ -84,7 +84,7 @@ const MIN_BUFFER_SIZE = 1 * 1024 * 1024;
 const REFRESH_FREQ = 1000;
 const STREAMS_FREQ = 250;
 
-let Prompts = {}, Preallocator = {};
+let Prompts = {}, Preallocator = {}, Limits = {};
 module('resource://dta/prompts.jsm', Prompts);
 module('resource://dta/speedstats.jsm');
 module('resource://dta/preallocator.jsm', Preallocator);
@@ -92,6 +92,7 @@ module('resource://dta/cothread.jsm');
 module('resource://dta/queuestore.jsm');
 module('resource://dta/timers.jsm');
 module('resource://dta/loggedprompter.jsm');
+module('resource://dta/serverlimits.jsm', Limits);
 
 const AuthPrompts = new LoggedPrompter(window);
 
@@ -671,16 +672,23 @@ var Dialog = {
 	startNext: function D_startNext() {
 		try {
 			var rv = false;
-			for (let d in Tree.all) {
-				if (this._running.length >= Prefs.maxInProgress) {
-					return rv;
-				}				
+			// pre-condition, do check prior to loop, or else we'll have the generator cost.
+			if (this._running.length >= Prefs.maxInProgress) {
+				return false;
+			}				
+			let gen = Limits.getScheduler(Tree.all, this._running);
+			for (let d in gen) {
 				if (!d.is(QUEUED)) {
+					Debug.logString("FIXME: scheduler returned unqueued download");
 					continue;
 				}
 				this.run(d);
+				if (this._running.length >= Prefs.maxInProgress) {
+					return true;
+				}
 				rv = true;
 			}
+			delete gen;
 			return rv;
 		}
 		catch(ex){
@@ -924,6 +932,7 @@ UrlManager.prototype = {
 		}
 		this._urls.sort(this._sort);
 		this._usable = this._urls[0].usable;
+		this.eHost = Limits.getEffectiveHost(this._urls[0].url); 
 
 		this._hasFresh = this._urls.length != 0;		
 	},
