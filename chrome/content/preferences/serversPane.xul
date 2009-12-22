@@ -40,7 +40,7 @@
 	<prefpane id="paneServers" label="&serverspane.label;" orient="vertical" onpaneload="Servers.init();">
 		<preferences>
 			<preference id="dtamaxtasks" name="extensions.dta.ntask" type="int" />
-			<preference id="dtamaxtasksperserver" name="extensions.dta.tasksperserver" type="int" />
+			<preference id="dtamaxtasksperserver" name="extensions.dta.serverlimit.perserver" type="int" />
 			<preference id="dtaarinterval" name="extensions.dta.autoretryinterval" type="int" />
 			<preference id="dtaarmax" name="extensions.dta.maxautoretries" type="int" />
 		</preferences>

@@ -38,7 +38,8 @@ var EXPORTED_SYMBOLS = [
 	'addLimit',
 	'Limit',
 	'listLimits',
-	'getEffectiveHost'
+	'getEffectiveHost',
+	'getScheduler'
 ];
 
 const Cc = Components.classes;
@@ -49,6 +50,7 @@ const Exception = Components.Exception;
 let Prefs = {};
 module("resource://dta/preferences.jsm", Prefs);
 module("resource://dta/utils.jsm");
+module("resource://dta/constants.jsm");
 
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 ServiceGetter(this, 'tlds', '@mozilla.org/network/effective-tld-service;1', 'nsIEffectiveTLDService');
@@ -60,6 +62,9 @@ const PREFS = 'extensions.dta.serverlimit.';
 const HOSTS_PREF  = 'extensions.dta.serverlimit.host.';
 const CONNECTIONS_PREF  = 'extensions.dta.serverlimit.connections.';
 const SPEEDS_PREF  = 'extensions.dta.serverlimit.speed.';
+
+const SCHEDULER_FAST = 'fast';
+const SCHEDULER_EVEN = 'even';
 
 let limits = {};
 
@@ -106,7 +111,7 @@ Limit.prototype = {
 	toString: function() this._host	+ " conn: " + this._connections + " speed: " + this._speed
 }
 
-function load() {
+function loadLimits() {
 	limits = {};
 	let hosts = Prefs.getChildren(HOSTS_PREF).map(function(e) e.substr(HOSTS_PREF.length));
 	hosts.sort();
@@ -145,13 +150,152 @@ function listLimits() {
 	return limits;
 }
 
-// first load the limits
-load();
+
+let globalConnections = 0;
+function SchedItem(host) {
+	this.host = host;
+	this.limit = 0;
+	if (host in limits) {
+		this.limit = limits[host].connections;
+	}
+	else {
+		this.limit = globalConnections;
+	}
+	Debug.logString("SchedItem: " + host + ": " + this.limit);
+	this.n = 1;
+	this.downloads = [];
+};
+SchedItem.prototype = {
+	cmp: function(a, b)  a.n - b.n,
+	get available() {
+		return (this.limit == 0 || this.n < this.limit);
+	},
+	get queued() {
+		return (this.limit == 0 || this.n < this.limit) && this.downloads.length != 0;
+	},
+	inc: function() ++this.n,
+	pop: function() {
+		++this.n;	
+		return this.downloads.shift();
+	},
+	push: function(d) this.downloads.push(d),
+	toString: function() this.host
+};
+
+// Fast generator: Start downloads as in queue
+// Ofast(running)
+function FastScheduler(downloads, running) {
+	let downloadSet = {};
+	for each (let d in running) {
+		let host = d.urlManager.eHost;
+		let knownHost = (host in downloadSet);
+		if (!knownHost) {
+			downloadSet[host] = new SchedItem(host);
+		}
+		else {
+			downloadSet[host].inc();
+		}
+	}		
+	for (let d in downloads) {
+		if (!d.is(QUEUED)) {
+			continue;
+		}
+		const host = d.urlManager.eHost;
+		const knownHost = (host in downloadSet);
+		if (!knownHost) {
+			Debug.logString("immediate return");
+			downloadSet[host] = new SchedItem(host);
+			yield d;
+			continue;
+		}
+		let item = downloadSet[host];
+		if (item.available) {
+			Debug.logString("counted return");
+			yield d;
+			item.inc();
+		}
+	}
+}
+// Even Generator: evenly distribute slots
+// Performs far worse than FastScheduler but is more precise.
+// Oeven = O(running) + O(downloads) + O(downloadSet) + Osort(sorted)  
+function EvenScheduler(downloads, running) {
+	let downloadSet = {};
+	
+	// Count the running tasks
+	for each (let d in running) {
+		let host = d.urlManager.eHost;
+		if (!(host in downloadSet)) {
+			downloadSet[host] = new SchedItem(host);
+		}
+		else {
+			downloadSet[host].inc();
+		}
+	}
+
+	for (let d in downloads) {
+		if (!d.is(QUEUED)) {
+			continue;
+		}
+		let host = d.urlManager.eHost;
+		if (!(host in downloadSet)) {
+			downloadSet[host] = new SchedItem(host);
+			yield d;
+			continue;			
+		}
+		downloadSet[host].push(d);
+	}
+	let sorted = [];
+	for (let s in downloadSet) {
+		let c = downloadSet[s];
+		if (!c.available) {
+			continue;
+		}
+		sorted.push(c);
+	}
+	sorted.sort(SchedItem.prototype.cmp);
+	while (sorted.length) {
+		// short-circuit: only one host left
+		if (sorted.length == 1) {
+			let s = sorted.shift();
+			while (s.queued) {
+				yield s.pop();
+			} 		
+			return;
+		}
+		// round robin		
+		for (i in sorted) {
+			let s = sorted[i];
+			yield s.pop();
+			if (!s.queued) {
+				sorted.splice(i, 1);
+				break;
+			}
+		}
+	}
+}
+
+let scheduler;
+function loadScheduler() {
+	switch (Prefs.getExt('serverlimit.connectionscheduler', SCHEDULER_FAST)) {
+	case SCHEDULER_EVEN:
+		scheduler = EvenScheduler;
+		break;
+	default:
+		scheduler = FastScheduler;
+	}
+}
+function getScheduler(downloads, running) {
+	return scheduler(downloads, running);
+}
 
 // install our pref-observer
 const PrefObserver = {
 	observe: function(topic, subject, data) {
-		load();
+		globalConnections = Prefs.getExt("serverlimit.perserver", 4);
+		loadLimits();
+		loadScheduler();
 	}
 }
 Prefs.addObserver(PREFS, PrefObserver);
+PrefObserver.observe();

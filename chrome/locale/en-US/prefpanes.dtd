@@ -93,6 +93,9 @@
 <!ENTITY advancedpane.permissions.read "May read">
 <!ENTITY advancedpane.permissions.write "May write">
 <!ENTITY advancedpane.loadendfirst.label "Load last few kilobytes first">
+<!ENTITY advancedpane.scheduler.caption "Download start order">
+<!ENTITY advancedpane.scheduler.fast "As queued (fast)">
+<!ENTITY advancedpane.scheduler.even "Evenly distributed across servers (slow)">
 
 <!ENTITY uipane.label "Interface">
 <!ENTITY uipane.namesonly.label "Show only file names in Manager window">

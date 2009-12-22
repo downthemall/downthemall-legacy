@@ -41,7 +41,7 @@ pref("extensions.dta.closedta", false);
 pref("extensions.dta.saveTemp", false);
 pref("extensions.dta.downloadWin", true);
 pref("extensions.dta.conflictresolution", 3);
-pref("extensions.dta.ntask", 4);
+pref("extensions.dta.ntask", 8);
 pref("extensions.dta.timeout", 300);
 pref("extensions.dta.maxchunks", 4);
 pref("extensions.dta.history", 5);
@@ -82,6 +82,7 @@ pref("extensions.dta.listsniffedvideos", false);
 pref("extensions.dta.nokeepalive", true);
 pref("extensions.dta.resumeonerror", false);
 pref("extensions.dta.textlinks", true);
-pref("extensions.dta.tasksperserver", 3);
+pref("extensions.dta.serverlimit.perserver", 4);
+pref("extensions.dta.serverlimit.connectionscheduler", 'fast');
 // Non-customizable-toolbar specific
 pref("extensions.dta.tb.buttons", "1,1,0");
