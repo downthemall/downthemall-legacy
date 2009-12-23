@@ -112,7 +112,7 @@
 			</stack>
 			<separator class="thin" />
 			<hbox pack="end">
-				<button id="newServerLimit" label="&serverspane.new.label;" oncommand="Servers.newFilter();" />
+				<button id="newServerLimit" label="&serverspane.new.label;" oncommand="Servers.newLimit();" />
 			</hbox>
 		</groupbox>
 	</prefpane>

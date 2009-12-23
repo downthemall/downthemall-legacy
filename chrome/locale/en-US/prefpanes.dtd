@@ -71,6 +71,9 @@
 <!ENTITY serverspane.autoretry.caption "Automatic retries">
 <!ENTITY serverspane.autoretry.interval.label "Retry each">
 <!ENTITY serverspane.autoretry.max.label "Max. Retries">
+<!ENTITY serverspane.cancel.label "Cancel">
+<!ENTITY serverspane.edit.label "Edit">
+<!ENTITY serverspane.remove.label "Remove">
 
 <!ENTITY advancedpane.label "Advanced">
 <!ENTITY advancedpane.multipart.caption "Multipart download">

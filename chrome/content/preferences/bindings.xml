@@ -43,15 +43,30 @@
 			<field name="_host">document.getAnonymousElementByAttribute(this, 'anonid', 'host');</field>
 			<field name="_connectionsLabel">document.getAnonymousElementByAttribute(this, 'anonid', 'connectionsLabel');</field>
 			<field name="_speedLabel">document.getAnonymousElementByAttribute(this, 'anonid', 'speedLabel');</field>
-			
+
 			<property name="host" onget="return this._host.value;" />
 
 			<constructor>this.refresh();</constructor>
+
+			<method name="postEvent">
+				<parameter name="eventType" />
+				<body><![CDATA[
+					let evt = document.createEvent('UIEvents');
+					evt.initUIEvent(eventType, true, true, null, 0);
+					return this.dispatchEvent(evt);				
+				]]></body>
+			</method>
 
 			<method name="refresh">
 				<body><![CDATA[
 					this._connectionsLabel.value = (this.connections != 0) ? this.connections : _('unlimited');
 					this._speedLabel.value = (this.speed != 0) ? Utils.formatSpeed(this.speed * 1024) : _('unlimited');
+				]]></body>
+			</method>
+
+			<method name="edit">
+				<body><![CDATA[
+					this.postEvent('LimitsEdit');
 				]]></body>
 			</method>
 		</implementation>
@@ -60,9 +75,9 @@
 		<content>
 			<xul:grid flex="1">
 				<xul:columns>
-					<xul:column flex="1"/>
-					<xul:column/>
-					<xul:column/>
+					<xul:column flex="1" />
+					<xul:column />
+					<xul:column />
 				</xul:columns>
 				<xul:rows>
 					<xul:row>
@@ -84,8 +99,8 @@
 			</xul:grid>
 		</content>
 		<implementation>
-			<property name="connections" onget="return parseInt(this.getAttribute('connections'));"/>			
-			<property name="speed" onget="return parseInt(this.getAttribute('speed'));"/>			
+			<property name="connections" onget="return parseInt(this.getAttribute('connections'));" />
+			<property name="speed" onget="return parseInt(this.getAttribute('speed'));" />
 		</implementation>
 	</binding>
 	<binding id="serverlimit-selected" extends="chrome://dta/content/preferences/bindings.xml#serverlimit-base">
@@ -93,9 +108,9 @@
 			<xul:vbox flex="1">
 				<xul:grid flex="1">
 					<xul:columns>
-						<xul:column flex="1"/>
-						<xul:column/>
-						<xul:column/>
+						<xul:column flex="1" />
+						<xul:column />
+						<xul:column />
 					</xul:columns>
 					<xul:rows>
 						<xul:row>
@@ -116,30 +131,30 @@
 					</xul:rows>
 				</xul:grid>
 				<xul:hbox flex="1">
-						<xul:spacer flex="1"/>
-						<xul:button label="Edit" anonid="editButton"/>			
-						<xul:button label="Remove" anonid="removeButton"/>			
+					<xul:spacer flex="1" />
+					<xul:button label="&serverspane.edit.label;" anonid="editButton" />
+					<xul:button label="&serverspane.remove.label;" anonid="removeButton" />
 				</xul:hbox>
 			</xul:vbox>
 		</content>
 		<implementation>
-			<property name="connections" onget="return parseInt(this.getAttribute('connections'));"/>			
-			<property name="speed" onget="return parseInt(this.getAttribute('speed'));"/>
+			<property name="connections" onget="return parseInt(this.getAttribute('connections'));" />
+			<property name="speed" onget="return parseInt(this.getAttribute('speed'));" />
 			<method name="removeLimit">
 				<body><![CDATA[
-					if (Prompts.confirm(window, _('removelimittitle'), _('removelimitdesc', [this.host]), _('removelimit'), Prompts.CANCEL, null, 1) == 1) {
+					if (!this.postEvent('LimitsCanRemove')) {
 						return;
 					}
 					this.limit.remove();
-					Servers.reload(true);
+					this.postEvent('LimitsRemoved');
 				]]></body>
-			</method>			
+			</method>
 		</implementation>
 		<handlers>
 			<handler event="command"><![CDATA[
 				switch (event.originalTarget.getAttribute('anonid')) {
 					case 'editButton':
-						this.setAttribute('editing', 'true');
+						this.edit();
 						break;
 					case 'removeButton':
 						this.removeLimit();
@@ -147,18 +162,18 @@
 				}
 			]]></handler>
 			<handler event="click" clickcount="2"><![CDATA[
-				this.setAttribute('editing', 'true');
+				this.edit();
 			]]></handler>
 		</handlers>
-	</binding>	
+	</binding>
 	<binding id="serverlimit-editing" extends="chrome://dta/content/preferences/bindings.xml#serverlimit-base">
 		<content>
 			<xul:vbox flex="1">
 				<xul:grid flex="1" class="serverlimit-grid">
 					<xul:columns>
-						<xul:column/>
-						<xul:column/>
-						<xul:column flex="1"/>
+						<xul:column />
+						<xul:column />
+						<xul:column flex="1" />
 					</xul:columns>
 					<xul:rows>
 						<xul:row align="center">
@@ -167,11 +182,11 @@
 							<xul:label anonid="host" xbl:inherits="value=host" class="serverlimit-host-label" crop="right" />
 						</xul:row>
 						<xul:row align="center">
-							<xul:box/>
+							<xul:box />
 							<xul:label value="&serverspane.connections.label;" />
 							<xul:radiogroup anonid="connectionsGroup" orient="horizontal" class="serverlimit-radiogroup">
-								<xul:radio label="&serverspane.unlimited;" value="unlimited"/>
-								<xul:radio label="&serverspane.limited;" value="limited"/>
+								<xul:radio label="&serverspane.unlimited;" value="unlimited" />
+								<xul:radio label="&serverspane.limited;" value="limited" />
 								<xul:hbox align="center">
 									<xul:scale min="1" max="10" anonid="connections" xbl:inherits="value=connections" />
 									<xul:label class="serverlimit-connections-label serverlimit-scale-label" anonid="connectionsLabel" />
@@ -179,11 +194,11 @@
 							</xul:radiogroup>
 						</xul:row>
 						<xul:row>
-							<xul:box/>
+							<xul:box />
 							<xul:label value="&serverspane.speed.label;" />
 							<xul:radiogroup anonid="speedGroup" orient="horizontal" class="serverlimit-radiogroup">
-								<xul:radio label="&serverspane.unlimited;" value="unlimited"/>
-								<xul:radio label="&serverspane.limited;" value="limited"/>
+								<xul:radio label="&serverspane.unlimited;" value="unlimited" />
+								<xul:radio label="&serverspane.limited;" value="limited" />
 								<xul:hbox align="center">
 									<xul:scale min="1" max="2048" increment="4" pageincrement="16" anonid="speed" xbl:inherits="value=speed" />
 									<xul:label class="serverlimit-speed-label serverlimit-scale-label" anonid="speedLabel" />
@@ -193,10 +208,10 @@
 					</xul:rows>
 				</xul:grid>
 				<xul:hbox flex="1">
-						<xul:spacer flex="1"/>
-						<xul:button label="Save" anonid="saveButton"/>			
-						<xul:button label="Cancel" anonid="cancelButton"/>			
-				</xul:hbox>				
+					<xul:spacer flex="1" />
+					<xul:button anonid="saveButton" />
+					<xul:button label="&serverspane.cancel.label;" anonid="cancelButton" />
+				</xul:hbox>
 			</xul:vbox>
 		</content>
 		<implementation>
@@ -204,7 +219,8 @@
 			<field name="_connections">document.getAnonymousElementByAttribute(this, 'anonid', 'connections');</field>
 			<field name="_speedGroup">document.getAnonymousElementByAttribute(this, 'anonid', 'speedGroup');</field>
 			<field name="_speed">document.getAnonymousElementByAttribute(this, 'anonid', 'speed');</field>
-			
+			<field name="_saveButton">document.getAnonymousElementByAttribute(this, 'anonid', 'saveButton');</field>
+
 			<property name="connections">
 				<getter><![CDATA[
 					if (this._connectionsGroup.value == "unlimited") {
@@ -213,7 +229,7 @@
 					return parseInt(this._connections.value);
 				]]></getter>
 			</property>
-			
+
 			<property name="speed">
 				<getter><![CDATA[
 					if (this._speedGroup.value == "unlimited") {
@@ -222,29 +238,29 @@
 					return parseInt(this._speed.value);
 				]]></getter>
 			</property>
-			
+
 			<constructor><![CDATA[
 				this._connectionsGroup.value = this.getAttribute('connections') == 0 ? 'unlimited' : 'limited';
 				this._speedGroup.value = this.getAttribute('speed') == 0 ? 'unlimited' : 'limited';
+				this._saveButton.label = _(this.limit.isNew ? 'createlimit' : 'savelimit');
 			]]></constructor>
+
 			<method name="saveEdit">
 				<body><![CDATA[
+					if (!this.postEvent("LimitsEditSave")) {
+						return;
+					}
 					this.limit.connections = this.connections;
 					this.limit.speed = this.speed;
-					this.limit.save();
-					
 					this.setAttribute('connections', this.connections);
 					this.setAttribute('speed', this.speed);
-					
-					this.removeAttribute('editing');
+					this.limit.save();
 				]]></body>
 			</method>
+
 			<method name="cancelEdit">
 				<body><![CDATA[
-					this.removeAttribute('editing');
-					if (this.limit.isNew) {
-						Servers.reload(true);
-					}
+					this.postEvent("LimitsEditCancel");
 				]]></body>
 			</method>
 			<method name="changedConnections">
@@ -291,7 +307,7 @@
 			]]></handler>
 			<handler event="click" clickcount="2"><![CDATA[
 				this.cancelEdit();
-			]]></handler>			
-		</handlers>	
+			]]></handler>
+		</handlers>
 	</binding>
 </bindings>

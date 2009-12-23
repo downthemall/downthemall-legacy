@@ -439,6 +439,7 @@ var Filters = {
 
 var Servers = {
 	_limits: [],
+	_editing: null,
 	init: function() {
 		this._list = $('serverLimits');
 		try {
@@ -451,7 +452,56 @@ var Servers = {
 		$('maxtasks').setAttribute('preference', 'dtamaxtasks');
 		$('dtamaxtasks').updateElements();		
 		$('maxtasksperserver').setAttribute('preference', 'dtamaxtasksperserver');
-		$('dtamaxtasksperserver').updateElements();				
+		$('dtamaxtasksperserver').updateElements();
+		
+		let _tp = this;
+		this._list.addEventListener('LimitsEdit', function(evt) _tp.editLimit(evt), true);
+		this._list.addEventListener('LimitsEditCancel', function(evt) _tp.cancelEditLimit(evt), true);
+		this._list.addEventListener('LimitsEditSave', function(evt) _tp.saveEditLimit(evt), true);
+		this._list.addEventListener('LimitsCanRemove', function(evt) _tp.canRemoveLimit(evt), true);
+		this._list.addEventListener('LimitsRemoved', function(evt) _tp.removedLimit(evt), true);
+	},
+	editLimit: function(evt) {
+		if (this._editing) {
+			if (this._editing == evt.originalTarget) {
+				return;
+			}
+			this._editing.removeAttribute('editing');
+		}
+		this._editing = evt.originalTarget;
+		this._editing.setAttribute('editing', 'true');
+	},
+	cancelEditLimit: function(evt) {
+		if (evt.originalTarget != this._editing) {
+			return;
+		}
+		if (this._editing.limit.isNew) {
+			this._list.removeChild(this._editing);
+		}
+		this._editing.removeAttribute('editing');
+		this._editing = null;
+	},
+	saveEditLimit: function(evt) {
+		if (evt.originalTarget != this._editing) {
+			return;
+		}
+		this._editing.removeAttribute('editing');
+		this._editing = null;
+		return true;
+	},
+	canRemoveLimit: function(evt) {
+		return Prompts.confirm(
+			window,
+			_('removelimittitle'),
+			_('removelimitdesc', [evt.originalTarget.host]),
+			_('removelimit'),
+			Prompts.CANCEL,
+			null,
+			1
+		) == 0;
+	},		
+	removedLimit: function(evt) {
+		this._list.removeChild(evt.originalTarget);
 	},
 	changedMaxTasks: function() {
 		$('maxtaskslabel').value = $('maxtasks').value;
@@ -477,7 +527,7 @@ var Servers = {
 		}
 		$('noitemsbox').hidden = !!this._list.itemCount;
 	},
-	newFilter: function() {
+	newLimit: function() {
   	let rv = {};
   	if (!this.prompts.prompt(window, _('newlimittitle'), _('newlimitdesc'), rv, null, {}) || !rv.value) {
   		return;
@@ -485,8 +535,8 @@ var Servers = {
 		try {
 			let limit = this.addLimit(rv.value);
 			if (!limit.isNew) {
-				this._list.selectedItem = document.getElementById("host" + limit.host);
-				this._list.selectedItem.setAttribute('editing', 'true');
+				this._list.selectedItem = $("host" + limit.host);
+				this._list.selectedItem.edit();
 				return;
 			}
 			let e = document.createElement('richlistitem');
@@ -496,23 +546,16 @@ var Servers = {
 			e.setAttribute('searchlabel', limit.host);
 			e.setAttribute('connections', limit.connections);
 			e.setAttribute('speed', limit.speed);
-			e.setAttribute('editing', 'true');
 			e.limit = limit;
 			this._list.appendChild(e);
 			this._list.selectedItem = e;
+			this._list.selectedItem.edit();
 		}
 		catch (ex) {
 			Debug.log("failed to add limit", ex);
 		}
 		$('noitemsbox').hidden = !!this._list.itemCount;		
-	},
-	reload: function(removed) {
-		let selectedItem = this._list.selectedItem;
-  	this._load();
-  	if (!removed) {
-  		this._list.selectedItem = selectedItem;
-  	}
-  }
+	}
 };
 Components.utils.import('resource://dta/serverlimits.jsm', Servers);
 ServiceGetter(Servers, 'prompts', '@mozilla.org/embedcomp/prompt-service;1', 'nsIPromptService');
