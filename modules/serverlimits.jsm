@@ -65,6 +65,7 @@ const SPEEDS_PREF  = 'extensions.dta.serverlimit.speed.';
 
 const SCHEDULER_FAST = 'fast';
 const SCHEDULER_EVEN = 'even';
+const SCHEDULER_LEGACY = 'legacy';
 
 let limits = {};
 
@@ -182,6 +183,17 @@ SchedItem.prototype = {
 	toString: function() this.host
 };
 
+// Legacy scheduler. Does not respect limits
+// Basically Olegacy(1)
+function LegacyScheduler(downloads, running) {
+	for (let d in downloads) {
+		if (!d.is(QUEUED)) {
+			continue;
+		}
+		yield d;
+	}
+}
+
 // Fast generator: Start downloads as in queue
 // Ofast(running)
 function FastScheduler(downloads, running) {
@@ -281,9 +293,14 @@ function loadScheduler() {
 	case SCHEDULER_EVEN:
 		scheduler = EvenScheduler;
 		break;
+	case SCHEDULER_LEGACY:
+		scheduler = LegacyScheduler;
+		break;
 	default:
 		scheduler = FastScheduler;
+		break;
 	}
+	Debug.logString("Using scheduler " + scheduler.name);
 }
 function getScheduler(downloads, running) {
 	return scheduler(downloads, running);
