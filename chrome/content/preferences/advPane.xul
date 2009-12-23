@@ -51,13 +51,14 @@
 
 		<groupbox>
 			<caption label="&mainpane.misc.caption;" />
-			<hbox align="center">
+			<hbox align="baseline">
 				<label value="&advancedpane.scheduler.caption;" />
-				<spacer flex="1" />
-				<radiogroup id="scheduler" preference="dtascheduler" orient="horizontal">
+				<radiogroup id="scheduler" preference="dtascheduler">
 					<radio label="&advancedpane.scheduler.fast;" value="fast" />
 					<radio label="&advancedpane.scheduler.even;" value="even" />
+					<radio label="&advancedpane.scheduler.legacy;" value="legacy" />
 				</radiogroup>
+				<spacer flex="1"/>
 			</hbox>
 			<hbox align="center">
 				<label value="&advancedpane.loadendfirst.label;" control="loadendfirst" />
