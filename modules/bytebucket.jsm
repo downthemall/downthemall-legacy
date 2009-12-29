@@ -141,8 +141,10 @@ ByteBucket.prototype = {
 			return bytes;
 		}
 		let rv = Math.max(0, Math.min(bytes, this._available));
-		this._available -= rv;
 		return rv;
+	},
+	commitBytes: function(bytes) {
+		this._available -= bytes;
 	},
 	_obs: null,
 	register: function(observer) {
@@ -190,6 +192,11 @@ ByteBucketTee.prototype = {
 				bytes = bucket.requestBytes(bytes);
 				if (!bytes) {
 					break;
+				}
+			}
+			if (bytes > 0) {
+				for each (let bucket in this._buckets) {
+					bucket.commitBytes(bytes);
 				}
 			}
 			return bytes;

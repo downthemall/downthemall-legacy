@@ -879,6 +879,8 @@ var Dialog = {
 
 	unload: function D_unload() {
 		GlobalBucket.kill();
+		Limits.killServerBuckets();
+		
 		Timers.killAllTimers();
 		if (this._loader) {
 			this._loader.cancel();
@@ -2391,7 +2393,11 @@ Chunk.prototype = {
 		seekable.seek(0x00, this.start + this.written);
 		this._outStream = new BufferedOutputStream(outStream, CHUNK_BUFFER_SIZE);
 		
-		this.buckets = new ByteBucketTee(this.parent.bucket, GlobalBucket);
+		this.buckets = new ByteBucketTee(
+				this.parent.bucket,
+				Limits.getServerBucket(this.parent),
+				GlobalBucket
+				);
 		this.buckets.register(this);
 	},
 	close: function CH_close() {
