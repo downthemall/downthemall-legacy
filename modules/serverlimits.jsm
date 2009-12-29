@@ -39,7 +39,9 @@ var EXPORTED_SYMBOLS = [
 	'Limit',
 	'listLimits',
 	'getEffectiveHost',
-	'getScheduler'
+	'getScheduler',
+	'getServerBucket',
+	'killServerBuckets'
 ];
 
 const Cc = Components.classes;
@@ -51,6 +53,7 @@ let Prefs = {};
 module("resource://dta/preferences.jsm", Prefs);
 module("resource://dta/utils.jsm");
 module("resource://dta/constants.jsm");
+module("resource://dta/bytebucket.jsm");
 
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 ServiceGetter(this, 'tlds', '@mozilla.org/network/effective-tld-service;1', 'nsIEffectiveTLDService');
@@ -62,6 +65,7 @@ const PREFS = 'extensions.dta.serverlimit.';
 const HOSTS_PREF  = 'extensions.dta.serverlimit.host.';
 const CONNECTIONS_PREF  = 'extensions.dta.serverlimit.connections.';
 const SPEEDS_PREF  = 'extensions.dta.serverlimit.speed.';
+const SHUTDOWN_TOPIC = 'profile-change-teardown';
 
 const SCHEDULER_FAST = 'fast';
 const SCHEDULER_EVEN = 'even';
@@ -306,13 +310,57 @@ function getScheduler(downloads, running) {
 	return scheduler(downloads, running);
 }
 
-// install our pref-observer
-const PrefObserver = {
+var buckets = {};
+var unlimitedBucket = new ByteBucket(-1);
+function loadServerBuckets() {
+	for (let b in buckets) {
+		if (b in limits) {
+			buckets[b].byteRate = limits[b].speed * 1024;
+		}
+		else {
+			buckets[b].byteRate = -1;
+		}
+	}
+}
+function killServerBuckets() {
+	for each (let bucket in buckets) {
+		bucket.kill();
+	}
+	buckets = {};
+}
+function getServerBucket(d) {
+	let host = d.urlManager.eHost;
+	if (host in buckets) {
+		return buckets[host];
+	}
+	if (host in limits) {
+		return (buckets[host] = new ByteBucket(limits[host].speed * 1024, 1.2));
+	}
+	return unlimitedBucket; 
+}
+
+// install our observer
+const Observer = {
 	observe: function(topic, subject, data) {
+		if (topic == SHUTDOWN_TOPIC) {
+			try {
+				killServerBuckets();
+				unlimitedBucket.kill();
+				delete unlimitedBucket; 
+			}
+			catch (ex) {
+				// nothing we can do
+			}
+			obs.removeObserver(this, SHUTDOWN_TOPIC);
+			return;
+		}
+		
 		globalConnections = Prefs.getExt("serverlimit.perserver", 4);
 		loadLimits();
+		loadServerBuckets();
 		loadScheduler();
 	}
 }
-Prefs.addObserver(PREFS, PrefObserver);
-PrefObserver.observe();
+Prefs.addObserver(PREFS, Observer);
+obs.addObserver(Observer, SHUTDOWN_TOPIC, true);
+Observer.observe();
