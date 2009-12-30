@@ -130,6 +130,7 @@
 						</xul:row>
 					</xul:rows>
 				</xul:grid>
+				<xul:separator class="thin"/>
 				<xul:hbox flex="1">
 					<xul:spacer flex="1" />
 					<xul:button label="&serverspane.edit.label;" anonid="editButton" />
@@ -243,6 +244,7 @@
 				this._connectionsGroup.value = this.getAttribute('connections') == 0 ? 'unlimited' : 'limited';
 				this._speedGroup.value = this.getAttribute('speed') == 0 ? 'unlimited' : 'limited';
 				this._saveButton.label = _(this.limit.isNew ? 'createlimit' : 'savelimit');
+				this.parentNode.ensureElementIsVisible(this);
 			]]></constructor>
 
 			<method name="saveEdit">

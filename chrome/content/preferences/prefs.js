@@ -476,7 +476,7 @@ var Servers = {
 			return;
 		}
 		if (this._editing.limit.isNew) {
-			this._list.removeChild(this._editing);
+			this.removedLimit(evt);
 		}
 		this._editing.removeAttribute('editing');
 		this._editing = null;
@@ -501,7 +501,12 @@ var Servers = {
 		) == 0;
 	},		
 	removedLimit: function(evt) {
+		let ns = evt.originalTarget.nextSibling || evt.originalTarget.previousSibling;
 		this._list.removeChild(evt.originalTarget);
+		if (ns) {
+			this._list.selectedItem = ns;
+			this._list.ensureElementIsVisible(ns);
+		}
 	},
 	changedMaxTasks: function() {
 		$('maxtaskslabel').value = $('maxtasks').value;
