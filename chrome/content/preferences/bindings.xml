@@ -60,7 +60,7 @@
 			<method name="refresh">
 				<body><![CDATA[
 					this._connectionsLabel.value = (this.connections != 0) ? this.connections : _('unlimited');
-					this._speedLabel.value = (this.speed != 0) ? Utils.formatSpeed(this.speed * 1024) : _('unlimited');
+					this._speedLabel.value = (this.speed > 0) ? Utils.formatSpeed(this.speed * 1024) : _('unlimited');
 				]]></body>
 			</method>
 
@@ -234,7 +234,7 @@
 			<property name="speed">
 				<getter><![CDATA[
 					if (this._speedGroup.value == "unlimited") {
-						return 0;
+						return -1;
 					}
 					return parseInt(this._speed.value);
 				]]></getter>
