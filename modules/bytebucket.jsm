@@ -109,7 +109,7 @@ ByteBucket.prototype = {
 		}
 		nv = Math.round(nv);
 		if (nv == 0) {
-			throw new Error("Invalid byte rate");
+			nv = -1;
 		}		
 		this._available = this._byteRate = nv;
 		this._obs.notify();
@@ -118,7 +118,7 @@ ByteBucket.prototype = {
 			this._timer = Timers.createRepeating(100, this.observe, this, false, true);
 			this._obs.start();
 		}
-		else if (nv == -1 && this._timer) {
+		else if (nv <= 0 && this._timer) {
 			this.observe();
 			Timers.killTimer(this._timer);
 			this._timer = null;
@@ -137,7 +137,7 @@ ByteBucket.prototype = {
 		return this._burstFactor = nv; 
 	},
 	requestBytes: function(bytes) {
-		if (this._available < 0) {
+		if (this._available <= 0) {
 			return bytes;
 		}
 		let rv = Math.max(0, Math.min(bytes, this._available));

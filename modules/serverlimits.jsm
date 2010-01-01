@@ -96,7 +96,7 @@ Limit.prototype = {
 	},
 	get speed() { return this._speed; },
 	set speed(value) {
-		if (!isFinite(value) || value < 0) {
+		if (!isFinite(value)) {
 			throw new Exception("Invalid Limit");
 		}
 		this._speed = value;
