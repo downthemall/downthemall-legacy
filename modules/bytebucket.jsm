@@ -137,7 +137,7 @@ ByteBucket.prototype = {
 		return this._burstFactor = nv; 
 	},
 	requestBytes: function(bytes) {
-		if (this._available <= 0) {
+		if (this._available < 0) {
 			return bytes;
 		}
 		let rv = Math.max(0, Math.min(bytes, this._available));
@@ -180,7 +180,7 @@ ByteBucketTee.prototype = {
 		get byteRate() {
 			return this._buckets
 				.map(function(e) e.byteRange)
-				.reduce(function(p, c) Math.min(p,c)); 
+				.reduce(function(p, c) c > 0 ? Math.min(p,c) : p); 
 		},
 		get burstFactor() {
 			return this._buckets
@@ -191,13 +191,11 @@ ByteBucketTee.prototype = {
 			for each (let bucket in this._buckets) {
 				bytes = bucket.requestBytes(bytes);
 				if (!bytes) {
-					break;
+					return 0;
 				}
 			}
-			if (bytes > 0) {
-				for each (let bucket in this._buckets) {
-					bucket.commitBytes(bytes);
-				}
+			for each (let bucket in this._buckets) {
+				bucket.commitBytes(bytes);
 			}
 			return bytes;
 		},
