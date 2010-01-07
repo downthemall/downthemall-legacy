@@ -5,8 +5,8 @@
 <!ENTITY filter.label "Extensions filtrades:">
 <!ENTITY regex.label "Reg. Exp.">
 <!ENTITY useAs.label "Empra això com a:">
-<!ENTITY imagesf.label "Filtre d&apos;imatges i objectes incrustats">
-<!ENTITY linksf.label "Filtre d&apos;enllaços">
+<!ENTITY imagesf.label "Filtre d'imatges i objectes incrustats">
+<!ENTITY linksf.label "Filtre d'enllaços">
 <!ENTITY add.label "Afegeix un nou filtre">
 <!ENTITY highlight.label "Realça els fitxers activats pels filtres">
 <!ENTITY dtacontext2.label "Preferències">
@@ -21,11 +21,11 @@
 <!ENTITY mainpane.ask.label "Pregunta">
 <!ENTITY mainpane.downloads.caption "Descàrregues">
 <!ENTITY mainpane.concurrent.label "Màxim de descàrregues concurrents:">
-<!ENTITY mainpane.sounderror.label "Reprodueix un so en cas d&apos;error">
+<!ENTITY mainpane.sounderror.label "Reprodueix un so en cas d'error">
 <!ENTITY mainpane.alert.caption "Quan les descàrregues siguin completes:">
-<!ENTITY mainpane.alertboxes.label "Alerta&apos;m emprant caselles d&apos;alerta">
+<!ENTITY mainpane.alertboxes.label "Alerta'm emprant caselles d'alerta">
 <!ENTITY mainpane.alertslides.label "Alerteu-me emprant notificacions de diapositives">
-<!ENTITY mainpane.alertnone.label "No m&apos;alerteu">
+<!ENTITY mainpane.alertnone.label "No m'alerteu">
 <!ENTITY mainpane.sounddone.label "Reproduïu un so quan totes les descàrregues estiguin completades">
 <!ENTITY mainpane.closedta.label "Tanqueu el DownThemAll quan totes les descàrregues estiguin completades">
 <!ENTITY mainpane.autoretry.caption "Reintents automàtics">
@@ -44,9 +44,9 @@
 <!ENTITY privacypane.deletelog.label "Suprimeix el registre">
 <!ENTITY privacypane.updates.caption "Actualitzacions/Internet">
 <!ENTITY privacypane.information.label "Permet al dTa descarregar les darreres notícies i missatges i comprovar les actualitzacions">
-<!ENTITY privacypane.statistics.label "Permet al dTa recollir i transferir estadístiques d&apos;ús anònimes">
+<!ENTITY privacypane.statistics.label "Permet al dTa recollir i transferir estadístiques d'ús anònimes">
 <!ENTITY privacypane.dropdowns.caption "Menús desplegables">
-<!ENTITY privacypane.dropdownresults.label "Nombre d&apos;entrades a desar">
+<!ENTITY privacypane.dropdownresults.label "Nombre d'entrades a desar">
 <!ENTITY privacypane.logs.caption "Registre del diagnòstic">
 <!ENTITY privacypane.enablelogs.label "Habilita el registre per a diagnòstic">
 <!ENTITY privacypane.notice.caption "Avís">
@@ -64,14 +64,14 @@
 <!ENTITY advancedpane.hour "hora">
 <!ENTITY advancedpane.hours "hores">
 <!ENTITY advancedpane.misc.caption "Paràmetres miscel·lanis">
-<!ENTITY advancedpane.settime.label "Estableix la data dels fitxers a l&apos;última data modificada (del servidor) o al temps de cua.">
-<!ENTITY advancedpane.rememberoneclick.label "Tingues un recordadori del dTa OneClick si s&apos;aplica a Totes les pestanyes o a la Pestanya actual">
+<!ENTITY advancedpane.settime.label "Estableix la data dels fitxers a l'última data modificada (del servidor) o al temps de cua.">
+<!ENTITY advancedpane.rememberoneclick.label "Tingues un recordadori del dTa OneClick si s'aplica a Totes les pestanyes o a la Pestanya actual">
 <!ENTITY advancedpane.tempfiles.caption "Fitxers temporals">
 <!ENTITY advancedpane.usetemp.label "Desa els fragments descarregats en un directori temporal">
 <!ENTITY advancedpane.tempdir.label "Empra aquest directori:">
-<!ENTITY advancedpane.confirmremove.label "L&apos;usuari ha de confirmar la supressió de les descàrregues">
+<!ENTITY advancedpane.confirmremove.label "L'usuari ha de confirmar la supressió de les descàrregues">
 <!ENTITY advancedpane.permissions.caption "Permisos de fitxer per defecte">
-<!ENTITY advancedpane.permissions.desc "Afectat per la màscara d&apos;usuari">
+<!ENTITY advancedpane.permissions.desc "Afectat per la màscara d'usuari">
 <!ENTITY advancedpane.permissions.group "Grup">
 <!ENTITY advancedpane.permissions.everybody "Tothom">
 <!ENTITY advancedpane.permissions.read "Pot llegir">
@@ -81,10 +81,10 @@
 <!ENTITY uipane.appearance.caption "Aparença">
 <!ENTITY uipane.namesonly.label "Mostra només els noms dels fitxers en la finestra del Gestor">
 <!ENTITY uipane.integration.caption "Integració">
-<!ENTITY uipane.downloadwin.label "Afegeix el DownThemAll! a la finestra de &apos;Desa fitxer&apos;">
+<!ENTITY uipane.downloadwin.label "Afegeix el DownThemAll! a la finestra de 'Desa fitxer'">
 <!ENTITY uipane.context.caption "Menú contextual">
-<!ENTITY uipane.tools.caption "Menú d&apos;eines">
-<!ENTITY uipane.tbbuttons.caption "Botons de la barra d&apos;eines">
+<!ENTITY uipane.tools.caption "Menú d'eines">
+<!ENTITY uipane.tbbuttons.caption "Botons de la barra d'eines">
 <!ENTITY uipane.compact.label "Empra un menú compacte">
 <!ENTITY uipane.hide.label "Amaga aquest menú">
 <!ENTITY uipane.showtooltip.label "Mostra els indicadors de descàrrega">
