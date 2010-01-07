@@ -16,7 +16,7 @@ locale dta de-DE chrome/locale/de-DE/
 locale dta el-GR chrome/locale/el-GR/
 locale dta es-ES chrome/locale/es-ES/
 locale dta fi-FI chrome/locale/fi-FI/
-locale dta fr-FR chrome/locale/fr-FR/
+locale dta fr chrome/locale/fr/
 locale dta gl-ES chrome/locale/gl-ES/
 locale dta hu-HU chrome/locale/hu-HU/
 locale dta it-IT chrome/locale/it-IT/
