@@ -41,17 +41,23 @@ const Ci = Components.interfaces;
 const module = Components.utils.import;
 const Exception = Components.Exception;
 
-const regLinks = /\b(?:(?:h(?:x+|tt)?ps?|ftp):\/\/|www\d?\.)[\d\w.-]+\.\w+(?:\/[\d\w+&@#\/%?=~_|!:,.;\(\)-]*)?/ig;
+const regLinks = /\b(?:(?:h(?:x+|tt)?ps?|ftp):\/\/|www\d?\.)[\d\w.-]+\.\w+\.?(?:\/[\d\w+&@#\/%?=~_|!:,.;\(\)-]*)?/ig;
+const regHttp = /^h(?:x+|tt)?p(s?)/i;
+const regFtp = /^f(?:x|t)p/i; 
+const regWWW = /^www/i;
+const regDTrim = /[._#-]+$/;
 
 function getTextLinks(text, fakeLinks) {
 	return Array.map( 
 		text.match(regLinks),
 		function(e) {
 			try {
-				if (/^www/.test(e)) {
+				if (regWWW.test(e)) {
 					e = "http://" + e;
 				}
-				e = e.replace(/^h(?:x+|tt)?p(s?)/i, "http$1").replace(/^ftp/i, "ftp");
+				e = e.replace(regHttp, "http$1")
+					.replace(regFtp, "ftp")
+					.replace(regDTrim, "");
 				return fakeLinks ? new FakeLink(e) : e.toString();
 			}
 			catch (ex) {
