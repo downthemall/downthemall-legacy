@@ -1,4 +1,4 @@
-<!ENTITY mask.title "S&apos;està canviant el nom als marcadors">
+<!ENTITY mask.title "S'està canviant el nom als marcadors">
 <!ENTITY mask.name "Nom del fitxer">
 <!ENTITY mask.ext "Extensió">
 <!ENTITY mask.url "URL de base">
@@ -13,8 +13,8 @@
 <!ENTITY mask.y "Any">
 <!ENTITY mask.subdirs "Subdirectoris de la URL">
 <!ENTITY mask.flatsubdirs "URL completa amb subdirectoris">
-<!ENTITY mask.text "Descripció de l&apos;enllaç">
-<!ENTITY mask.flattext "Descripció de l&apos;enllaç">
+<!ENTITY mask.text "Descripció de l'enllaç">
+<!ENTITY mask.flattext "Descripció de l'enllaç">
 <!ENTITY mask.refer "URL de referència">
 <!ENTITY mask.qstring "Cadena de la petició">
 <!ENTITY mask.tip "Feu clic o arressegueu per a canviar el nom a la màscara">

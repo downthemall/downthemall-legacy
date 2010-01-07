@@ -13,6 +13,6 @@
 <!ENTITY tab.pics.label "Imatges i objectes incrustats">
 <!ENTITY header.desc.label "Descripció">
 <!ENTITY selectfiltered.label "Selecciona els filtrats">
-<!ENTITY disableother.label "Deshabilita d&apos;altres filtres">
-<!ENTITY disableother.tooltip "Deshabilita d&apos;altres filtres i usa només el filtre ràpid (Aquest paràmetre no es recorda al moment).">
+<!ENTITY disableother.label "Deshabilita d'altres filtres">
+<!ENTITY disableother.tooltip "Deshabilita d'altres filtres i usa només el filtre ràpid (Aquest paràmetre no es recorda al moment).">
 <!ENTITY resname.value "Nom del recurs">

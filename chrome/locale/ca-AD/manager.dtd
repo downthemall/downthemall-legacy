@@ -35,10 +35,10 @@
 <!ENTITY misc.label "Misc">
 <!ENTITY addchunk.label "Un fragment més">
 <!ENTITY removechunk.label "Un fragment menys">
-<!ENTITY force.label "Força l&apos;arrencada">
-<!ENTITY import.label "Importa des d&apos;un fitxer">
+<!ENTITY force.label "Força l'arrencada">
+<!ENTITY import.label "Importa des d'un fitxer">
 <!ENTITY export.label "Exporta seleccionats">
 <!ENTITY options.caption "Opcions">
-<!ENTITY loading.label "S&apos;està carregant...">
+<!ENTITY loading.label "S'està carregant...">
 <!ENTITY restore.label "Restaura">
 <!ENTITY close.label "Tanca">
