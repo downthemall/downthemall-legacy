@@ -19,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Federico Parodi <f.parodi@tiscali.it>
+ *   Federico Parodi <jimmy2k@gmail.com>
  *   Stefano Verna <stefano.verna@gmail.com>
  *   Nils Maier <MaierMan@web.de>
  *
