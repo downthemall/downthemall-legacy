@@ -30,7 +30,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Federico Parodi <f.parodi@tiscali.it>
+ *   Federico Parodi <jimmy2k@gmail.com>
  *   Stefano Verna <stefano.verna@gmail.com>
  *   Nils Maier <MaierMan@web.de>
  *
@@ -94,7 +94,7 @@
 	</dialogheader>
 			
 	<groupbox orient="vertical">
-		<label value="Copyright © 2004-2008 By:" style="font-weight: bold;"/>
+		<label value="Copyright © 2004-2010 By:" style="font-weight: bold;"/>
 		<html:ul>
 			<html:li><label value="Federico Parodi" class="text-link" onclick="openTab('http://www.jimmy2k.it'); "/></html:li>
 			<html:li><label value="Stefano Verna" class="text-link" onclick="openTab('http://steffoz.altervista.org/'); "/></html:li>
@@ -110,6 +110,9 @@
 				<html:li>© <html:span class="text-link" onclick="openTab('http://www.famfamfam.com/lab/icons/silk/');">Mark James</html:span> (famfamfam silk icons)</html:li>
 				<html:li>© The mozilla contributors</html:li>
 			</html:ul>
+			For original artwork Copyright © 2004-2010 by Stefano Verna and Federico Parodi, licensed under: <html:br/><label class="text-link" value="Creative Commons Attribution-Noncommercial-Share Alike 2.5 Italy license." onclick="openTab('http://creativecommons.org/licenses/by-nc-sa/2.5/it/deed.en');"/><html:br/>
+			For DownThemAll! logo Copyright © 2004-2010 by Stefano Verna.<html:br/>
+			The DownThemAll! name and logo cannot be used without permission in any derivative work, <html:br/>with exception of credits and license-related notices.
 		</description>
 	  <separator class="thin"/>
 	  <description>
