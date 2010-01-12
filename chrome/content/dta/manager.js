@@ -66,7 +66,7 @@ ServiceGetter(this, "MimeService", "@mozilla.org/uriloader/external-helper-app-s
 ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIObserverService");
 ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 ServiceGetter(this, "MimeHeaderParams", "@mozilla.org/network/mime-hdrparam;1", "nsIMIMEHeaderParam");
-ServiceGetter(this, "JSONSerializer", "@mozilla.org/dom/json;1", "nsIJSON");
+
 
 
 const MIN_CHUNK_SIZE = 512 * 1024;
@@ -84,7 +84,7 @@ const MIN_BUFFER_SIZE = 1 * 1024 * 1024;
 const REFRESH_FREQ = 1000;
 const STREAMS_FREQ = 250;
 
-let Prompts = {}, Preallocator = {}, Limits = {};
+let Prompts = {}, Preallocator = {}, Limits = {}, JSONCompat = {};
 module('resource://dta/prompts.jsm', Prompts);
 module('resource://dta/speedstats.jsm');
 module('resource://dta/preallocator.jsm', Preallocator);
@@ -93,6 +93,7 @@ module('resource://dta/queuestore.jsm');
 module('resource://dta/timers.jsm');
 module('resource://dta/loggedprompter.jsm');
 module('resource://dta/serverlimits.jsm', Limits);
+module('resource://dta/json.jsm', JSONCompat);
 
 const AuthPrompts = new LoggedPrompter(window);
 
@@ -257,7 +258,7 @@ var Dialog = {
 				}
 				
 				try {
-					let down = JSONSerializer.decode(dbItem.serial);
+					let down = JSONCompat.parse(dbItem.serial);
 					
 					let get = function(attr, def) {
 						return (attr in down) ? down[attr] : (def ? def : '');
@@ -913,9 +914,6 @@ UrlManager.prototype = {
 	initByArray: function um_initByArray(urls) {
 		this._urls = [];
 		this._idx = -1;
-		if (!(urls instanceof Array)) {
-			throw new Exception("Feeding the UrlManager with some bad stuff is usually a bad idea!");
-		}
 		for each (let u in urls) {
 			if (u instanceof DTA.URL || (u.url && u.url instanceof Ci.nsIURI)) {
 				this.add(u);
@@ -2324,7 +2322,7 @@ QueueItem.prototype = {
 				e.chunks.push({start: c.start, end: c.end, written: c.safeBytes});
 			}
 		}
-		return JSONSerializer.encode(e);
+		return JSONCompat.stringify(e);
 	}
 }
 
