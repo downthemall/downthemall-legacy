@@ -55,8 +55,6 @@ function Serv(c, i) {
 }
 
 const BufferedOutputStream = Construct('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
-const BinaryOutputStream = Construct('@mozilla.org/binaryoutputstream;1', 'nsIBinaryOutputStream', 'setOutputStream');
-const BinaryInputStream = Construct('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
 const FileInputStream = Construct('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
 const FileOutputStream = Construct('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const StringInputStream = Construct('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
@@ -69,15 +67,9 @@ ServiceGetter(this, "MimeHeaderParams", "@mozilla.org/network/mime-hdrparam;1", 
 
 const MIN_CHUNK_SIZE = 512 * 1024;
 
-// ammount to buffer in BufferedOutputStream
+// amount to buffer in BufferedOutputStream
 // furthermore up to this ammount will automagically discared after crashes
 const CHUNK_BUFFER_SIZE = 96 * 1024;
-
-// in use by chunk.writer...
-// in use by decompressor... beware, actual size might be more than twice as
-// big!
-const MAX_BUFFER_SIZE = 5 * 1024 * 1024;
-const MIN_BUFFER_SIZE = 1 * 1024 * 1024;
 
 const REFRESH_FREQ = 1000;
 const STREAMS_FREQ = 250;
@@ -94,6 +86,7 @@ module('resource://dta/serverlimits.jsm', Limits);
 module('resource://dta/json.jsm', JSONCompat);
 module('resource://dta/urlmanager.jsm');
 module('resource://dta/visitormanager.jsm');
+module('resource://dta/decompressor.jsm');
 
 const AuthPrompts = new LoggedPrompter(window);
 
@@ -1365,7 +1358,8 @@ QueueItem.prototype = {
 			}
 			// move file
 			if (this.compression) {
-				DTA_include("dta/manager/decompressor.js");
+				this.state = FINISHING;
+				this.status =  _("decompress");
 				new Decompressor(this);
 			}
 			else {
