@@ -727,8 +727,8 @@ function Visitor() {
 	}
 
 	let nodes = arguments[0];
-	for (x in nodes) {
-		if (!name || !(name in this.cmpKeys))	{
+	for (let x in nodes) {
+		if (!(x in this.cmpKeys))	{
 			continue;
 		}
 		this[x] = nodes[x];
@@ -741,7 +741,7 @@ Visitor.prototype = {
 			return;
 		}
 
-		for (x in this.cmpKeys) {
+		for (let x in this.cmpKeys) {
 			// we don't have this header
 			if (!(x in this)) {
 				continue;
@@ -765,7 +765,7 @@ Visitor.prototype = {
 	save: function vi_save(node) {
 		var rv = {};
 		// salva su file le informazioni sugli headers
-		for (x in this.cmpKeys) {
+		for (let x in this.cmpKeys) {
 			if (!(x in this)) {
 				continue;
 			}
@@ -2076,7 +2076,7 @@ Chunk.prototype = {
 			if (!this._outStream) {
 				this.open();
 			}
-			bytes = this.remainder;
+			let bytes = this.remainder;
 			if (!this.total || aCount < bytes) {
 				bytes = aCount;
 			}
