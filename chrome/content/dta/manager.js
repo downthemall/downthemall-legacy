@@ -87,6 +87,7 @@ module('resource://dta/json.jsm', JSONCompat);
 module('resource://dta/urlmanager.jsm');
 module('resource://dta/visitormanager.jsm');
 module('resource://dta/decompressor.jsm');
+module('resource://dta/verificator.jsm');
 
 const AuthPrompts = new LoggedPrompter(window);
 
@@ -1382,9 +1383,32 @@ QueueItem.prototype = {
 		}
 	},
 	verifyHash: function() {
-		DTA_include("dta/manager/verificator.js");
-		new Verificator(this);
+		this.state = FINISHING;
+		this.status = _("verify");
+		new Verificator(this, this.verifyHashOk, this.verifyHashError);
 	},
+	verifyHashOk: function() {
+		this.complete();
+	},
+	verifyHashError: function() {
+		let file = new FileFactory(this.destinationFile);
+		function deleteFile() { 
+			try {
+				if (file.exists()) {
+					file.remove(false);
+				}
+			}
+			catch (ex) {
+				Debug.log("Failed to remove file after checksum mismatch", ex);
+			}
+		}
+		let act = Prompts.confirm(window, _('verifyerrortitle'), _('verifyerrortext'), _('retry'), _('delete'), _('keep'));
+		switch (act) {
+			case 0: deleteFile(); this.safeRetry(); return;
+			case 1: deleteFile(); this.cancel(); return;
+		}
+		this.verifyHashOk();
+	},		
 	customFinishEvent: function() {
 		DTA_include("dta/manager/customevent.js");
 		new CustomEvent(this, Prefs.finishEvent);

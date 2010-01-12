@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll!
+ * The Original Code is DownThemAll! Verificator module
  *
  * The Initial Developer of the Original Code is Nils Maier
  * Portions created by the Initial Developer are Copyright (C) 2007
@@ -33,23 +33,51 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
-const Hash = Components.Constructor('@mozilla.org/security/hash;1', 'nsICryptoHash', 'init');
-const InputStreamPump = Components.Constructor('@mozilla.org/network/input-stream-pump;1', 'nsIInputStreamPump', 'init');
 
-function Verificator(download) {
+const EXPORTED_SYMBOLS = ['Verificator'];
+
+const FREQ = 250;
+
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const Cu = Components.utils;
+const Ctor = Components.Constructor;
+const module = Cu.import;
+const Exception = Components.Exception;
+
+const Prefs = {}, DTA = {};
+module("resource://dta/preferences.jsm", Prefs);
+module("resource://dta/utils.jsm");
+module("resource://dta/timers.jsm");
+module("resource://dta/api.jsm", DTA);
+
+const IOService = DTA.IOService;
+
+ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
+
+const Timers = new TimerManager();
+
+const nsICryptoHash = Ci.nsICryptoHash;
+
+const File = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
+const Hash = new Ctor('@mozilla.org/security/hash;1', 'nsICryptoHash', 'init');
+const InputStreamPump = new Ctor('@mozilla.org/network/input-stream-pump;1', 'nsIInputStreamPump', 'init');
+
+function Verificator(download, completeCallback, errorCallback) {
 	this.download = download;
-	this.file = new FileFactory(download.destinationFile);
+	this.completeCallback = completeCallback;
+	this.errorCallback = errorCallback;
+	
+	this.file = new File(download.destinationFile);
 	this._pending = this.file.fileSize;
-	this.CH = Ci.nsICryptoHash;
 
-	download.state = FINISHING;
-	download.status = _("verify");
 	try {
-		if (!(download.hash.type in this.CH)) {
-			throw new Components.Exception("hash method unsupported!");
+		if (!(download.hash.type in nsICryptoHash)) {
+			throw new Exception("hash method unsupported!");
 		}
-		this.type = this.CH[download.hash.type];
+		this.type = nsICryptoHash[download.hash.type];
 		
 		this.hash = new Hash(this.type);
 		
@@ -57,7 +85,7 @@ function Verificator(download) {
 		this.download.partialSize = 0;
 		this._readNextChunk();
 	
-		this._timer = Timers.createRepeating(STREAMS_FREQ, this._invalidate, this, true);
+		this._timer = Timers.createRepeating(FREQ, this._invalidate, this, true);
 	}
 	catch (ex) {
 		try {
@@ -67,39 +95,28 @@ function Verificator(download) {
 		}
 		catch (ex) {
 		}
-		alert("Failed to verify the file!\n" + ex);
-		download.complete();
+		Debug.log("verificator::Failed to calculate hash", ex);
+		this.errorCallback.call(this.download);
 	}
 }
 Verificator.prototype = {
-	_delete: function() {
-		try {
-			if (this.file.exists()) {
-				this.file.remove(false);
-			}
-		}
-		catch (ex) {
-			alert("Failed to remove file\n" + ex);
-		}
-	},
 	_finish: function() {		
 		try {
 			this.download.partialSize = this.download.totalSize;
 			this.download.invalidate();
 			
-			this.hash = Utils.hexdigest(this.hash.finish(false));
+			this.hash = hexdigest(this.hash.finish(false));
 			if (this.hash != this.download.hash.sum) {
 				Debug.logString("hash mismatch, actual: " + this.hash + " expected: " + this.download.hash.sum);
-				var act = Prompts.confirm(window, _('verifyerrortitle'), _('verifyerrortext'), _('retry'), _('delete'), _('keep'));
-				switch (act) {
-					case 0: this._delete(); this.download.safeRetry(); return;
-					case 1: this._delete(); this.download.cancel(); return;
-				}
+				this.errorCallback.call(this.download);
 			}
-			this.download.complete();
+			else {
+				this.completeCallback.call(this.download);
+			}
 		}
 		catch (ex) {
 			Debug.log("verificator::_finish", ex);
+			this.errorCallback.call(this.download);
 		}
 	},
 	_readNextChunk: function() {
@@ -120,7 +137,7 @@ Verificator.prototype = {
 		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIStreamListener) || iid.equals(cI.nsIRequestObserver)) {
 			return this;
 		}
-		throw Components.results.NS_ERROR_NO_INTERFACE;
+		throw Cr.NS_ERROR_NO_INTERFACE;
 	},
 	onStartRequest: function(r, c) {
 	},
@@ -133,7 +150,7 @@ Verificator.prototype = {
 			this.download.partialSize += count;
 		}
 		catch (ex) {
-			Debug.log("hash update failed!", ex);
+			Debug.log("verificator::hash update failed!", ex);
 			var reason = 0x804b0002; // NS_BINDING_ABORTED;
 			request.cancel(reason);
 		}
