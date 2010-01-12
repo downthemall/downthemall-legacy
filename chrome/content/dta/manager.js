@@ -67,8 +67,6 @@ ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIOb
 ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 ServiceGetter(this, "MimeHeaderParams", "@mozilla.org/network/mime-hdrparam;1", "nsIMIMEHeaderParam");
 
-
-
 const MIN_CHUNK_SIZE = 512 * 1024;
 
 // ammount to buffer in BufferedOutputStream
@@ -94,6 +92,7 @@ module('resource://dta/timers.jsm');
 module('resource://dta/loggedprompter.jsm');
 module('resource://dta/serverlimits.jsm', Limits);
 module('resource://dta/json.jsm', JSONCompat);
+module('resource://dta/urlmanager.jsm');
 
 const AuthPrompts = new LoggedPrompter(window);
 
@@ -902,97 +901,6 @@ var Dialog = {
 	}
 };
 addEventListener('load', function() Dialog.init(), false);
-
-function UrlManager(urls) {
-	this.initByArray(urls);
-}
-UrlManager.prototype = {
-	_sort: function(a,b) {
-		const rv = b.preference - a.preference;
-		return rv ? rv : (Math.floor(Math.random() * 3) - 1);
-	},
-	initByArray: function um_initByArray(urls) {
-		this._urls = [];
-		this._idx = -1;
-		for each (let u in urls) {
-			if (u instanceof DTA.URL || (u.url && u.url instanceof Ci.nsIURI)) {
-				this.add(u);
-			}
-			else if (u instanceof Ci.nsIURI) {
-				this.add(new DTA.URL(u));
-			}
-			else {
-				this.add(
-					new DTA.URL(
-						IOService.newURI(u.url,	u.charset, null),
-						u.preference
-					)
-				);
-			}
-		}
-		this._urls.sort(this._sort);
-		this._usable = this._urls[0].usable;
-		this.eHost = Limits.getEffectiveHost(this._urls[0].url); 
-
-		this._hasFresh = this._urls.length != 0;		
-	},
-	add: function um_add(url) {
-		if (!url instanceof DTA.URL) {
-			throw (url + " is not an DTA.URL");
-		}
-		if (!this._urls.some(function(ref) ref.url.spec == url.url.spec)) {
-			this._urls.push(url);
-		}
-	},
-	getURL: function um_getURL(idx) {
-		if (typeof(idx) != 'number') {
-			this._idx++;
-			if (this._idx >= this._urls.length) {
-				this._idx = 0;
-			}
-			idx = this._idx;
-		}
-		return this._urls[idx];
-	},
-	get url() {
-		return this._urls[0].url;
-	},
-	get usable() {
-		return this._urls[0].usable;
-	},
-	get length() {
-		return this._urls.length;
-	},
-	get all() {
-		for each (let i in this._urls) {
-			yield i;
-		}
-	},
-	replace: function(url, newurl) {
-		this._urls = this._urls.map(function(u) u.url.spec == url.url.spec ? newurl : u);
-	},
-	markBad: function um_markBad(url) {
-		if (this._urls.length > 1) {
-			this._urls = this._urls.filter(function(u) u != url);
-		}
-		else if (this._urls[0] == url) {
-			return false;
-		}
-		return true;
-	},
-	toSource: function um_toSource() {
-		let rv = [];
-		for each (let url in this._urls) {
-			rv.push(url.toSource());
-		}
-		return rv;
-	},
-	toString: function() {
-		return this._urls.reduce(function(v, u) v + u.preference + " " + u.url + "\n");
-	},
-	// clone ;)
-	toArray: function() this._urls.map(function(e) e)
-};
 
 function Visitor() {
 	// sanity check
