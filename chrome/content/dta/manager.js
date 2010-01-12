@@ -2345,6 +2345,9 @@ Connection.prototype = {
 		
 		let max = -1, found = null;
 		for each (let cmp in d.chunks) {
+			if (!cmp.running) {
+				continue;
+			}
 			if (cmp.start < c.start && cmp.start > max) {
 				found = cmp;
 				max = cmp.start;
@@ -2401,11 +2404,16 @@ Connection.prototype = {
 		}
 		 
 		if (code >= 400) {
+			// any data that we got over this channel should be considered "corrupt"
+			c.rollback();
+			
+			if (c.starter && d.urlManager.markBad(this.url)) {
+				Debug.log("caught bad server (Error: " + code + ")", d.toString());
+				d.cancel();
+				d.safeRetry();
+				return false;
+			}
 			if (!this.handleError()) {
-				
-				// any data that we got over this channel should be considered "corrupt"
-				c.rollback();
-				
 				Debug.log("handleError: Cannot recover from problem!", code);
 				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1 || Prefs.recoverAllHttpErrors) {
 					Debug.log("we got temp failure!", code);
@@ -2426,7 +2434,7 @@ Connection.prototype = {
 					if (Prefs.resumeOnError) {
 						Dialog.markAutoRetry(d);
 						d.pause();
-						d.status = _('temperror')
+						d.status = _('temperror');
 					}
 					else {
 						d.fail(
@@ -2734,18 +2742,25 @@ Connection.prototype = {
 				return;
 			}
 		}
-
+		
 		if (c.starter && -1 != [
 			NS_ERROR_CONNECTION_REFUSED,
 			NS_ERROR_UNKNOWN_HOST,
 			NS_ERROR_NET_TIMEOUT,
 			NS_ERROR_NET_RESET
 		].indexOf(aStatusCode)) {
-			Debug.log(d + ": Server error or disconnection", "(type 3)");
-			Dialog.markAutoRetry(d);
-			d.pause();
-			d.status = _("servererror");
-			return;
+			if (!d.urlManager.markBad(this.url)) {
+				Debug.log(d + ": Server error or disconnection", "(type 3)");
+				Dialog.markAutoRetry(d);
+				d.pause();
+				d.status = _("servererror");
+			}
+			else {
+				Debug.log("caught bad server", d.toString());
+				d.cancel();
+				d.safeRetry();
+			}
+			return;			
 		}
 		
 		// work-around for ftp crap
@@ -2777,6 +2792,19 @@ Connection.prototype = {
 				d.safeRetry();
 			}
 			return;			
+		}
+		
+		// Server did not return any data.
+		// Try to mark the URL bad
+		// else pause + autoretry
+		if (!c.written  && !!c.remainder) {
+			if (!d.urlManager.markBad(this.url)) {
+				Debug.log(d + ": Server error or disconnection", "(type 1)");
+				Dialog.markAutoRetry(d);
+				d.pause();
+				d.status = _("servererror");
+			}
+			return;
 		}
 
 		if (!d.isOf(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
