@@ -45,8 +45,7 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-const Utils = {};
-module("resource://dta/utils.jsm", Utils);
+module("resource://dta/utils.jsm");
 
 const DTA = {};
 module("resource://dta/api.jsm", DTA);
@@ -173,7 +172,7 @@ HttpVisitor.prototype = {
 				break;
 				case 'last-modified':
 					try {
-						this.time = Utils.getTimestamp(aValue);
+						this.time = getTimestamp(aValue);
 					}
 					catch (ex) {
 						Debug.log("gts", ex);
@@ -186,7 +185,7 @@ HttpVisitor.prototype = {
 							if (!v) {
 								continue;
 							}
-							v = Utils.hexdigest(atob(v));
+							v = hexdigest(atob(v));
 							v = new DTA.Hash(v, t);
 							if (!this.hash || this.hash.q < v.q) {
 								this.hash = v;
@@ -259,7 +258,7 @@ FtpVisitor.prototype = {
 					if (m.length >= 7) {
 						time += ':' + m[6];
 					}
-					this.time = Utils.getTimestamp(time);
+					this.time = getTimestamp(time);
 					Debug.logString(this.time);
 				}
 			}
