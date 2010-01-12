@@ -65,7 +65,6 @@ function UrlManager(urls) {
 UrlManager.prototype = {
 	initByArray: function um_initByArray(urls) {
 		this._urls = [];
-		this._idx = -1;
 		for each (let u in urls) {
 			if (u instanceof DTA.URL || (u.url && u.url instanceof Ci.nsIURI)) {
 				this.add(u);
@@ -84,9 +83,8 @@ UrlManager.prototype = {
 		}
 		this._urls.sort(compareFn);
 		this._usable = this._urls[0].usable;
-		this.eHost = Limits.getEffectiveHost(this._urls[0].url); 
-
-		this._hasFresh = this._urls.length != 0;		
+		this.eHost = Limits.getEffectiveHost(this._urls[0].url);
+		this._makeGood();	
 	},
 	add: function um_add(url) {
 		if (!url instanceof DTA.URL) {
@@ -96,15 +94,24 @@ UrlManager.prototype = {
 			this._urls.push(url);
 		}
 	},
-	getURL: function um_getURL(idx) {
-		if (typeof(idx) != 'number') {
-			this._idx++;
-			if (this._idx >= this._urls.length) {
-				this._idx = 0;
+	_rotate: function um_rotate() {
+		this.good.push(this.good.shift());
+	},
+	_makeGood: function um_makeGood() {
+		this.good = this._urls.filter(function(u) !('bad' in u));
+		if (!this.good.length) {
+			// all marked bad; actually a bug
+			Cu.reportError("UM: all marked bad");
+			for each (let u in this._urls) {
+				delete u.bad;
 			}
-			idx = this._idx;
+			this.good = this._urls.map(function(e) e);
 		}
-		return this._urls[idx];
+	},
+	getURL: function um_getURL(idx) {
+		let rv = this.good[0];
+		this._rotate();
+		return rv;
 	},
 	get url() {
 		return this._urls[0].url;
@@ -122,14 +129,23 @@ UrlManager.prototype = {
 	},
 	replace: function(url, newurl) {
 		this._urls = this._urls.map(function(u) u.url.spec == url.url.spec ? newurl : u);
+		this._makeGood();
 	},
 	markBad: function um_markBad(url) {
-		if (this._urls.length > 1) {
-			this._urls = this._urls.filter(function(u) u != url);
-		}
-		else if (this._urls[0] == url) {
+		if (this.good.length == 1) {
+			// cannot mark the last url bad :p
 			return false;
 		}
+		for each (let u in this._urls) {
+			if (u != url) {
+				continue;
+			}
+			u.bad = true;
+			// lower the preference
+			u.preference = 0;
+			break;
+		}
+		this._makeGood();
 		return true;
 	},
 	toSource: function um_toSource() {
