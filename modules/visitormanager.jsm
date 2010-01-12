@@ -45,7 +45,8 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-module("resource://dta/utils.jsm");
+const Utils = {};
+module("resource://dta/utils.jsm", Utils);
 
 const DTA = {};
 module("resource://dta/api.jsm", DTA);
