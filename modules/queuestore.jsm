@@ -44,6 +44,7 @@ const module = Components.utils.import;
 const Exception = Components.Exception;
 
 const DB_FILE = 'dta_queue.sqlite';
+const DB_FILE_BROKEN = 'dta_queue.broken';
 const DB_FILE_BAK = DB_FILE + ".bak";
 const DB_VERSION = 1;
 
@@ -53,7 +54,7 @@ module("resource://dta/utils.jsm");
 const Timers = new TimerManager();
 
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
-
+ServiceGetter(this, "Storage", "@mozilla.org/storage/service;1", "mozIStorageService");
 var _connection = null;
 var _saveQueue = {};
 var _timer = 0;
@@ -64,8 +65,26 @@ var QueueStore = {
 		let db = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
 		db.append(DB_FILE);
 		
-		_connection = Cc['@mozilla.org/storage/service;1'].getService(Ci.mozIStorageService)
-			.openDatabase(db);
+		try {
+			_connection = Storage.openDatabase(db);
+		}
+		catch (ex) {
+			Debug.log("DB appears broken; backing up and restart", ex);
+			try {
+				let cbroken = db.clone();
+				cbroken.leafName = DB_FILE_BROKEN;
+				if (cbroken.exists()) {
+					cbroken.remove(false);
+				}
+			}
+			catch (iex) {
+				Debug.log("Couldn't remove old broken queue file", iex);
+			}
+			let broken = db.clone();
+			broken.moveTo(null, DB_FILE_BROKEN);
+			_connection = Storage.openDatabase(db);
+		}
+			
 		try {
 			if (('schemaVersion' in _connection) && _connection.schemaVersion != DB_VERSION) {
 				/*
