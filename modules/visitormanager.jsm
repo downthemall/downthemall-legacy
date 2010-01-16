@@ -52,6 +52,7 @@ module("resource://dta/api.jsm", DTA);
 const IOService = DTA.IOService;
 
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
+ServiceGetter(this, "MimeHeaderParams", "@mozilla.org/network/mime-hdrparam;1", "nsIMIMEHeaderParam");
 
 function Visitor() {
 	// sanity check
@@ -107,7 +108,8 @@ Visitor.prototype = {
 	}
 };
 
-function HttpVisitor() {
+function HttpVisitor(chan) {
+	this._charset = chan.URI.originCharset;
 	Visitor.apply(this, arguments);
 	// assume ranges are accepted unless indicated otherwise
 	this.acceptRanges = true;
@@ -142,7 +144,7 @@ HttpVisitor.prototype = {
 					var ch = aValue.match(/charset=['"]?([\w\d_-]+)/i);
 					if (ch && ch[1].length) {
 						Debug.logString("visitHeader: found override to " + ch[1]);
-						this.overrideCharset = ch[1];
+						this._charset = this.overrideCharset = ch[1];
 					}
 				}
 				break;
@@ -181,7 +183,7 @@ HttpVisitor.prototype = {
 				case 'digest': {
 					for (let t in DTA.SUPPORTED_HASHES_ALIASES) {
 						try {
-							let v = MimeHeaderParams.getParameter(aValue, t, '', true, {});
+							let v = MimeHeaderParams.getParameter(aValue, t, this._charset, true, {});
 							if (!v) {
 								continue;
 							}
@@ -213,21 +215,21 @@ HttpVisitor.prototype = {
 			if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
 				let fn;
 				try {
-					fn = MimeHeaderParams.getParameter(aValue, 'filename', '', true, {});
+					fn = MimeHeaderParams.getParameter(aValue, 'filename', this._charset, true, {});
 				}
 				catch (ex) {
 					// no-op; handled below
 				}
 				if (!fn) {
 					try {
-						fn = mhp.getParameter(aValue, 'name', '', true, {});
+						fn = MimeHeaderParams.getParameter(aValue, 'name', this._charset, true, {});
 					}
 					catch (ex) {
 						// no-op; handled below
 					}
 				}
 				if (fn) {
-					this.fileName = fn.getUsableFileName();
+					this.fileName = fn;
 				}
 			}
 		}
@@ -237,7 +239,7 @@ HttpVisitor.prototype = {
 	}
 };
 
-function FtpVisitor() {
+function FtpVisitor(chan) {
 	Visitor.apply(this, arguments);
 }
 
@@ -338,7 +340,7 @@ VisitorManager.prototype = {
 		switch(chan.URI.scheme) {
 		case 'http':
 		case 'https':
-			visitor = new HttpVisitor();
+			visitor = new HttpVisitor(chan);
 			chan.visitResponseHeaders(visitor);
 			break;
 		

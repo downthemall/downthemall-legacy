@@ -63,7 +63,6 @@ ServiceGetter(this, "ContentHandling", "@downthemall.net/contenthandling;2", "dt
 ServiceGetter(this, "MimeService", "@mozilla.org/uriloader/external-helper-app-service;1", "nsIMIMEService");
 ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIObserverService");
 ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
-ServiceGetter(this, "MimeHeaderParams", "@mozilla.org/network/mime-hdrparam;1", "nsIMIMEHeaderParam");
 
 const MIN_CHUNK_SIZE = 512 * 1024;
 
@@ -2543,7 +2542,7 @@ Connection.prototype = {
 		
 		if (visitor.fileName && visitor.fileName.length > 0) {
 			// if content disposition hasn't an extension we use extension of URL
-			let newName = visitor.fileName;
+			let newName = visitor.fileName.getUsableFileName();
 			let ext = this.url.usable.getExtension();
 			if (visitor.fileName.lastIndexOf('.') == -1 && ext) {
 				newName += '.' + ext;
