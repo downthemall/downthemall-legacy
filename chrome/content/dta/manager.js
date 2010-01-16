@@ -567,6 +567,7 @@ var Dialog = {
 					++finishing;
 				}
 				d.cancelPreallocation();
+				return true;
 			},
 			this
 		);
