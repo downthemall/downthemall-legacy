@@ -365,7 +365,7 @@ VisitorManager.prototype = {
 	get time() {
 		for each (let v in this._visitors) {
 			if (v.time && v.time > 0) {
-				return this._visitors[i].time;
+				return v.time;
 			}
 		}
 		throw new Exception("No Date registered");
