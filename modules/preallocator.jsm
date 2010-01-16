@@ -57,8 +57,8 @@ const log = (function() {
 	}
 })();
 
-const SIZE_MIN = 10 * 1024 * 1024; // will not prealloc below
-const SIZE_STEP = 5 * 1024 * 1024; // prealloc will NOT use co-threads up to this size
+const SIZE_MIN = 5 * 1024 * 1024; // will not prealloc below
+const SIZE_STEP = 100 * 1024 * 1024;
 
 Components.utils.import('resource://dta/cothread.jsm');
 Components.utils.import('resource://dta/utils.jsm');
