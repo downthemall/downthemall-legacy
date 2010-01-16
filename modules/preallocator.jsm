@@ -61,65 +61,23 @@ const SIZE_MIN = 10 * 1024 * 1024; // will not prealloc below
 const SIZE_STEP = 5 * 1024 * 1024; // prealloc will NOT use co-threads up to this size
 
 Components.utils.import('resource://dta/cothread.jsm');
+Components.utils.import('resource://dta/utils.jsm');
+
+const workers = {};
 
 function prealloc(file, size, perms, callback, tp) {
-	tp = !!tp ? tp : {};
+	tp = tp || null;
 	if (size <= SIZE_MIN || !isFinite(size)) {
+		log("pa: not preallocating");
 		if (callback) {
 			callback.call(tp, false);
 		}
 		return null;
 	}
 	
-	//new WorkerJob(file.path, size, perms, callback, tp);
-	let rv = new CoThreadListWalker(function() true, realPrealloc(file.clone(), size, perms, callback, tp), 1)
-	rv.run();
-	return rv;
+	return new WorkerJob(file.path, size, perms, callback, tp);
 }
 
-function realPrealloc(file, size, perms, callback, tp) {
-	let rv = false;
-	try {
-		for (let ok = true; ok;) {
-			let stream = new FileOutputStream(file, 0x02 | 0x08, perms, 0);
-			try {
-				let seekable = stream.QueryInterface(Ci.nsISeekableStream);
-				seekable.seek(0x02, 0);
-				let i = Math.min((size - seekable.tell()) - 1, SIZE_STEP);
-				if (i <= 0) {
-					stream.close();
-					break;
-				}
-				seekable.seek(0x01, i);
-				// XXX: This will force the OS to write the file out to this position
-				// However I'm not quite sure yet if this may overwrite already received data
-				// I guess it might (on a very fast connection)
-				// On the other hand, at the moment all IO is running on the main thread
-				// and event execution cannot be "suspended", so we should be safe
-				// "a" is used to avoid sparse file "optimizations"
-				stream.write("a", 1);
-				cont = true;
-			}
-			catch (ex) {
-				log("prealloc: failed", ex);
-				ok = false;
-			}
-			stream.close();
-			yield true;
-		}
-		rv = true;
-	}
-	catch (ex) {
-		log("prealloc: Failed to run prealloc worker", ex);
-	}
-	if (callback) {
-		callback.call(tp, rv);
-	}
-}
-
-/*
- * The following code is not in use. Threading will reproducible (but not always) crash the app 
- * 
 function WorkerJob(path, size, perms, callback, tp) {
 	this.path = path;
 	this.size = size;
@@ -130,12 +88,14 @@ function WorkerJob(path, size, perms, callback, tp) {
 	let tm = Cc['@mozilla.org/thread-manager;1'].getService(Ci.nsIThreadManager);
 	this.thread = tm.newThread(0);
 	this.main = tm.mainThread;
+	this.uuid = newUUIDString();
+	workers[this.uuid] = this;
 	this.thread.dispatch(this, this.thread.DISPATCH_NORMAL);
 }
 
 WorkerJob.prototype = {
 	QueryInterface: function worker_QueryInterface(iid) {
-		if (iid.equals(Ci.nsISupports) || iid.equals(iid.nsIRunnable)) {
+		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIRunnable)) {
 			return this;
 		}
 		throw Cr.NS_ERROR_NO_INTERFACE;
@@ -145,26 +105,35 @@ WorkerJob.prototype = {
 		try {
 			let file = new File(this.path);
 			let stream = new FileOutputStream(file, 0x02 | 0x08, this.perms, 0);
-			let seekable = stream.QueryInterface(Ci.nsISeekableStream);
-			seekable.seek(0x02, 0);
-			let i = seekable.tell() + SIZE_STEP;
-			for (i = Math.min(this.size - 1, i); i < this.size - 1; i = Math.min(this.size - 1, i + SIZE_STEP)) {
-				seekable.seek(0x00, i);
-				stream.write("a", 1);
+			try {
+				let seekable = stream.QueryInterface(Ci.nsISeekableStream);
+				seekable.seek(0x02, 0);
+				let i = seekable.tell() + SIZE_STEP;
+				for (i = Math.min(this.size - 1, i); !this.terminated && i < this.size - 1; i = Math.min(this.size - 1, i + SIZE_STEP)) {
+					seekable.seek(0x00, i);
+					stream.write("a", 1);
+				}
+				rv = true;				
 			}
-			
-			//seekable.setEOF();
+			catch (iex) {
+				log("pa: Failed to run prealloc loop", iex);
+			}
 			stream.close();
-			rv = true;
 		}
 		catch (ex) {
-			log("prealloc: Failed to run prealloc worker", ex);
+			log("pa: Failed to run prealloc worker", ex);
 		}
-		this.main.dispatch(new MainJob(this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);		
+		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);		
+	},
+	cancel: function() {
+		log("pa: cancel called!");
+		this.terminated = true;
+		this.thread.shutdown();
 	}
 };
 
-function MainJob(thread, callback, tp, result) {
+function MainJob(uuid, thread, callback, tp, result) {
+	this.uuid = uuid;
 	this.thread = thread;
 	this.callback = callback;
 	this.tp = tp;
@@ -174,16 +143,22 @@ MainJob.prototype = {
 	QueryInterface: WorkerJob.prototype.QueryInterface,
 	
 	run: function main_run() {
-		this.thread.shutdown();
+		try {
+			this.thread.shutdown();
+		}
+		catch (ex) {
+			// might throw; see Worker.cancel
+		}
 		if (this.callback) {
 			try {
 				this.callback.call(this.tp, this.result);
-				log("Prealloc done");
+				log("pa: prealloc done");
 			}
 			catch (ex) {
-				log("Callback throw", ex);
+				log("pa: callback throw", ex);
 			}
 		}
+		workers[this.uuid] = 0;
+		delete workers[this.uuid];
 	}
 };
-*/
