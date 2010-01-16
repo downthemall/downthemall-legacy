@@ -153,7 +153,7 @@ var Dialog = {
 
 		(function initListeners() {
 			addEventListener('unload', function() Dialog.unload(), false);
-			addEventListener('close', function() Dialog.close(), false)
+			addEventListener('close', function() Dialog.close(), true);
 			addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA), true);
 			addEventListener('drop', function(event) nsDragAndDrop.drop(event, DTA_DropDTA), true);
 			
@@ -806,8 +806,10 @@ var Dialog = {
 			Timers.killTimer(this._updTimer);
 			delete this._updTimer;
 		}
+		
 		let chunks = 0;
 		let finishing = 0;
+		Debug.logString("Going to close all");
 		Tree.updateAll(
 			function(d) {
 				if (d.isOf(RUNNING, QUEUED)) {
@@ -827,9 +829,11 @@ var Dialog = {
 					++finishing;
 				}
 				d.cancelPreallocation();
+				return true;
 			},
 			this
 		);
+		Debug.logString("Still running: " + chunks + " Finishing: " + finishing);
 		if (chunks || finishing) {
 			if (this._safeCloseAttempts < 20) {
 				++this._safeCloseAttempts;
@@ -1161,9 +1165,6 @@ QueueItem.prototype = {
 	_totalSize: 0,
 	get totalSize() { return this._totalSize; },
 	set totalSize(nv) {
-		if (this._totalSize == nv) {
-			return nv;
-		}
 		if (nv >= 0 && !isNaN(nv)) {
 			this._totalSize = Math.floor(nv);
 		}
@@ -1676,7 +1677,7 @@ QueueItem.prototype = {
 			if (pa) {
 				this.preallocating = true;
 				this._preallocator = pa;
-				Debug.logString("started");
+				Debug.logString("pa: started");
 			}
 		}
 		else {
@@ -1685,17 +1686,23 @@ QueueItem.prototype = {
 		return this.preallocating;
 	},
 	cancelPreallocation: function() {
+		Debug.logString("pa: cancel requested");
 		if (this._preallocator) {
+			Debug.logString("pa: going to cancel");
 			this._preallocator.cancel();
+			delete this._preallocator;
+			this._preallocator = null;
+			Debug.logString("pa: cancelled");
 		}
 		this.preallocating = false;
 	},
 	
 	_donePrealloc: function QI__donePrealloc(res) {
 		Debug.logString("pa: done");
-		delete this._preallocator; 
+		delete this._preallocator;
+		this._preallocator = null;
 		this.preallocating = false;
-		if (this.resumable && this.is(RUNNING)) {
+		if (this.is(RUNNING)) {
 			this.resumeDownload();
 		}
 	},
@@ -1744,11 +1751,6 @@ QueueItem.prototype = {
 		this.status = TEXT_QUEUED;
 	},
 	resumeDownload: function QI_resumeDownload() {
-		if (this.preallocating && this.activeChunks) {
-			Debug.logString("not resuming download " + this + " because preallocating");
-			return false;
-		}
-		
 		Debug.logString("resumeDownload: " + this);
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat
@@ -1798,7 +1800,11 @@ QueueItem.prototype = {
 			let paused = this.chunks.filter(function (chunk) !(chunk.running || chunk.complete));
 			
 			while (this.activeChunks < this.maxChunks) {
-
+				if (this.preallocating && this.activeChunks) {
+					Debug.logString("not resuming download " + this + " because preallocating");
+					return false;
+				}
+				
 				// restart paused chunks
 				if (paused.length) {
 					downloadChunk(this, paused.shift());
