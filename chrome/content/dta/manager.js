@@ -1021,10 +1021,9 @@ VisitorManager.prototype = {
 	 * @author Nils
 	 */
 	get time() {
-		for (let i in this._visitors) {
-			let v = this._visitors[i];
+		for each (let v in this._visitors) {
 			if (v.time && v.time > 0) {
-				return this._visitors[i].time;
+				return v.time;
 			}
 		}
 		throw new Exception("No Date registered");
