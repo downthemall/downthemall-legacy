@@ -109,14 +109,17 @@ Visitor.prototype = {
 };
 
 function HttpVisitor(chan) {
-	this._charset = chan.URI.originCharset;
-	Visitor.apply(this, arguments);
-	// assume ranges are accepted unless indicated otherwise
-	this.acceptRanges = true;
+	if (chan instanceof Ci.nsIChannel) {
+		this._charset = chan.URI.originCharset;
+	}
+	else {
+		Visitor.apply(this, arguments);
+	}
 }
 
 HttpVisitor.prototype = {
 	__proto__: Visitor.prototype,
+	acceptRanges: true,
 	cmpKeys: {
 		'etag': true, // must not be modified from 200 to 206:
 									// http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.7
@@ -334,7 +337,7 @@ VisitorManager.prototype = {
 	 *           "compatible")
 	 */
 	visit: function vm_visit(chan) {
-		let url = chan.URI.spec;
+		chan.URI.spec;
 		
 		let visitor;
 		switch(chan.URI.scheme) {
