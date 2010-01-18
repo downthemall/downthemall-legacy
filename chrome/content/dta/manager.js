@@ -99,7 +99,7 @@ var TEXT_CANCELED;
 var GlobalBucket = null;
 var Timers = new TimerManager();
 
-var Dialog = {
+const Dialog = {
 	_observes: [
 		'quit-application-requested',
 		'quit-application-granted',
@@ -900,6 +900,57 @@ var Dialog = {
 };
 addEventListener('load', function() Dialog.init(), false);
 
+const Metalinker = {
+ 	handleDownload: function ML_handleDownload(download) {
+		download.state = CANCELED;
+		Tree.remove(download, false);
+		let file = new FileFactory(download.destinationFile);
+		
+		this.handleFile(file, download.referrer);
+		
+		try {
+			file.remove(false);
+		}
+		catch (ex) {
+			Debug.log("failed to remove metalink file!", ex);
+		}
+	},
+	handleFile: function ML_handleFile(aFile, aReferrer) {
+		try {
+			let res = this.parse(aFile, aReferrer);
+			if (!res.downloads.length) {
+				throw new Error(_('mlnodownloads'));
+			}
+			res.downloads.forEach(function(e) {
+				e.size = Utils.formatBytes(e.size);
+				e.fileName = e.fileName.getUsableFileName();
+			});
+			window.openDialog(
+				'chrome://dta/content/dta/manager/metaselect.xul',
+				'_blank',
+				'chrome,centerscreen,dialog=yes,modal',
+				res.downloads,
+				res.info
+			);
+			res.downloads = res.downloads.filter(function(d) { return d.selected; });
+			if (res.downloads.length) {
+				startDownloads(res.info.start, res.downloads);
+			}
+		}
+		catch (ex) {
+			Debug.log("Metalinker::handleDownload", ex);			
+			if (!(ex instanceof Error)) {
+				ex = new Error(_('mlerror', [ex.message ? ex.message : (ex.error ? ex.error : ex.toString())]));
+			}
+			if (ex instanceof Error) {
+				AlertService.show(_('mlerrortitle'), ex.message, false);
+			}
+		}
+	}	
+};
+module('resource://dta/metalinker.jsm', Metalinker);
+
+
 function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 
 	this.visitors = new VisitorManager();
@@ -1375,7 +1426,6 @@ QueueItem.prototype = {
 	},
 	handleMetalink: function QI_handleMetaLink() {
 		try {
-			DTA_include("dta/manager/metalinker.js");
 			Metalinker.handleDownload(this);
 		}
 		catch (ex) {

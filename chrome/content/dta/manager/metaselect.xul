@@ -12,11 +12,11 @@
    - for the specific language governing rights and limitations under the
    - License.
    -
-   - The Original Code is DownThemAll! metalinker
+   - The Original Code is DownThemAll!
    -
    - The Initial Developer of the Original Code is
    - Nils Maier.
-   - Portions created by the Initial Developer are Copyright (C) 2007
+   - Portions created by the Initial Developer are Copyright (C) 2010
    - the Initial Developer. All Rights Reserved.
    -
    - Contributor(s):
@@ -50,13 +50,13 @@
 	%managerDTD;
 ]>
 
-<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" onload="Metalinker.load()" title="&title;" id="metaselect" persist="width height" onclose="Metalinker.cancel();">
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" id="metaselect" persist="width height">
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
-	<script type="application/x-javascript" src="chrome://dta/content/dta/manager/metalinker.js" />
+	<script type="application/x-javascript" src="metaselect.js" />
 
 	<keyset>
-		<key keycode="VK_ESCAPE" oncommand="Metalinker.cancel();" />
+		<key keycode="VK_ESCAPE" oncommand="MetaSelect.cancel();" />
 	</keyset>
 
 
@@ -70,9 +70,9 @@
 
 	<popupset id="popups">
 		<popup id="context">
-			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" oncommand="Metalinker.select('all');" />
-			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" oncommand="Metalinker.select('invert');" />
-			<menuitem id="selectnone" class="menuitem-iconic" label="&selectnone.label;" oncommand="Metalinker.select('none');" />
+			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" oncommand="MetaSelect.select('all');" />
+			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" oncommand="MetaSelect.select('invert');" />
+			<menuitem id="selectnone" class="menuitem-iconic" label="&selectnone.label;" oncommand="MetaSelect.select('none');" />
 		</popup>
 	</popupset>
 
@@ -94,11 +94,11 @@
 						<label id="identity" crop="end" />
 						<hbox id="boxPublisher">
 							<label value="&publisher;" />
-							<description id="publisher" class="text-link" onclick="Metalinker.openLink(this);" />
+							<description id="publisher" class="text-link" onclick="MetaSelect.openLink(this);" />
 						</hbox>
 						<hbox id="boxLicense">
 							<label value="&license;" />
-							<description id="license" class="text-link" onclick="Metalinker.openLink(this);" />
+							<description id="license" class="text-link" onclick="MetaSelect.openLink(this);" />
 						</hbox>
 					</row>
 				</rows>
@@ -115,7 +115,7 @@
 				<caption label="&dest.caption;" />
 				<hbox>
 					<saveddropdown id="directory" preference="directory" flex="1" />
-					<toolbarbutton id="browsedir" oncommand="Metalinker.browseDir();" tooltiptext="&browse.tip;" />
+					<toolbarbutton id="browsedir" oncommand="MetaSelect.browseDir();" tooltiptext="&browse.tip;" />
 				</hbox>
 			</vbox>
 			<vbox id="renamingbox">
@@ -130,8 +130,8 @@
 
 	<hbox align="baseline" style="margin: 2px 7px 4px 7px">
 		<spacer flex="1" />
-		<button accesskey="&start.key;" label="&start.label;" id="startbutton" oncommand="Metalinker.download(true);" default="true" />
-		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" oncommand="Metalinker.download(false);" />
-		<button id="cancelbutton" oncommand="Metalinker.cancel();" />
+		<button accesskey="&start.key;" label="&start.label;" id="startbutton" oncommand="MetaSelect.download(true);" default="true" />
+		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" oncommand="MetaSelect.download(false);" />
+		<button id="cancelbutton" oncommand="MetaSelect.cancel();" />
 	</hbox>
 </window>

@@ -58,9 +58,9 @@ const EXPORTED_SYMBOLS = [
 	"turboSendLinksToManager",
 	"saveLinkArray",
 	"turboSaveLinkArray",
-	"openManager"
-	
-	
+	"openManager",
+	"currentSeries",
+	"incrementSeries"
 ];
 
 const Cc = Components.classes;
@@ -470,3 +470,15 @@ function openManager(window, quiet) {
 	}
 	return null;
 };
+
+function currentSeries() Preferences.getExt("counter", 1);
+
+function incrementSeries() {
+	let rv = Preferences.getExt("counter", 1);
+	let store = rv;
+	if (++store > 999) {
+		store = 1;
+	}
+	Preferences.setExt("counter", store);
+	return rv;
+}

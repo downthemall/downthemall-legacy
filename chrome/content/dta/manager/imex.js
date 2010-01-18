@@ -60,7 +60,7 @@ var ImEx = {
 			n = doc.createElement('link');
 			n.setAttribute('rel', 'stylesheet');
 			n.setAttribute('type', 'text/css');
-			n.setAttribute('href', 'chrome://dta/skin/common/exporthtml.css');
+			n.setAttribute('href', 'chrome://dta-public/skin/exporthtml.css');
 			head.appendChild(n);
 			
 			root.appendChild(head);
@@ -68,6 +68,7 @@ var ImEx = {
 		{
 			let addDesc = function(key, value, element) {
 				let div = doc.createElement('div');
+				div.className = 'desc';
 				
 				div.appendChild(doc.createTextNode(key + ": "));
 				
@@ -149,44 +150,46 @@ var ImEx = {
 		cs.close();
 	},
 	exportToMetalink: function(downloads, file) {
-		let doc = document.implementation.createDocument(NS_METALINKER, 'metalink', null);
+		let doc = document.implementation.createDocument(Metalinker.NS_METALINKER3, 'metalink', null);
 		let root = doc.documentElement;
 		root.setAttribute('type', 'static');
 		root.setAttribute('version', '3.0');
 		root.setAttribute('generator', 'DownThemAll! ' + DTA.BASE_VERSION + ' <http://downthemall.net/>');
-		root.setAttributeNS(NS_DTA, 'version', DTA.VERSION);
+		root.setAttributeNS(Metalinker.NS_DTA, 'version', DTA.VERSION);
 		root.setAttribute('pubdate', new Date().toUTCString());
 		
-		root.appendChild(doc.createComment("metalink as exported by DownThemAll!\r\nmay contain DownThemAll! specific information in the DownThemAll! namespace: " + NS_DTA));  
+		root.appendChild(doc.createComment(
+				"metalink as exported by DownThemAll!\r\nmay contain DownThemAll! specific information in the DownThemAll! namespace: "
+				+ Metalinker.NS_DTA));  
 		
-		let files = doc.createElementNS(NS_METALINKER, 'files');
+		let files = doc.createElementNS(Metalinker.NS_METALINKER3, 'files');
 		for (let d in downloads) {
-			let f = doc.createElementNS(NS_METALINKER, 'file');
+			let f = doc.createElementNS(Metalinker.NS_METALINKER3, 'file');
 			f.setAttribute('name', d.fileName);
-			f.setAttributeNS(NS_DTA, 'num', d.numIstance);
-			f.setAttributeNS(NS_DTA, 'startDate', d.startDate.getTime());
+			f.setAttributeNS(Metalinker.NS_DTA, 'num', d.numIstance);
+			f.setAttributeNS(Metalinker.NS_DTA, 'startDate', d.startDate.getTime());
 			if (d.referrer) {
-				f.setAttributeNS(NS_DTA, 'referrer', d.referrer.spec);
+				f.setAttributeNS(Metalinker.NS_DTA, 'referrer', d.referrer.spec);
 			}
 			
 			if (d.description) {
-				let n = doc.createElementNS(NS_METALINKER, 'description');
+				let n = doc.createElementNS(Metalinker.NS_METALINKER3, 'description');
 				n.textContent = d.description;
 				f.appendChild(n);
 			} 
-			let r = doc.createElementNS(NS_METALINKER, 'resources');
+			let r = doc.createElementNS(Metalinker.NS_METALINKER3, 'resources');
 			for (let u in d.urlManager.all) {
-				let n = doc.createElementNS(NS_METALINKER, 'url');
+				let n = doc.createElementNS(Metalinker.NS_METALINKER3, 'url');
 				let t = u.url.spec.match(/^(\w+):/);
 				n.setAttribute('type', t[1]);
 				n.setAttribute('preference', u.preference);
-				n.setAttributeNS(NS_DTA, 'usable', u.usable);
+				n.setAttributeNS(Metalinker.NS_DTA, 'usable', u.usable);
 				n.textContent = u.url.spec;
 				r.appendChild(n);
 			}
 			if (d.hash) {
-				let v = doc.createElementNS(NS_METALINKER, 'verification');
-				let h = doc.createElementNS(NS_METALINKER, 'hash');
+				let v = doc.createElementNS(Metalinker.NS_METALINKER3, 'verification');
+				let h = doc.createElementNS(Metalinker.NS_METALINKER3, 'hash');
 				h.setAttribute('type', d.hash.type.toLowerCase());
 				h.textContent = d.hash.sum.toLowerCase();
 				v.appendChild(h);
@@ -195,7 +198,7 @@ var ImEx = {
 			f.appendChild(r);
 			
 			if (d.totalSize > 0) {
-				let s = doc.createElementNS(NS_METALINKER, 'size');
+				let s = doc.createElementNS(Metalinker.NS_METALINKER3, 'size');
 				s.textContent = d.totalSize;
 				f.appendChild(s);
 			}
