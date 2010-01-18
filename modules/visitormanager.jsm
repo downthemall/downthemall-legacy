@@ -337,7 +337,7 @@ VisitorManager.prototype = {
 	 *           "compatible")
 	 */
 	visit: function vm_visit(chan) {
-		chan.URI.spec;
+		let url = chan.URI.spec;
 		
 		let visitor;
 		switch(chan.URI.scheme) {
