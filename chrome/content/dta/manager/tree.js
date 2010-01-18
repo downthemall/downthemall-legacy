@@ -169,7 +169,7 @@ const Tree = {
 				case CANCELED: prop.AppendElement(this._canceled); return;
 				case COMPLETE:
 					prop.AppendElement(this._completed);
-					if (d.hash) {
+					if (d.hashCollection) {
 						prop.AppendElement(this._verified);
 					}
 				return;

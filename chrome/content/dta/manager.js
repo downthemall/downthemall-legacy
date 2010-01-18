@@ -321,8 +321,11 @@ const Dialog = {
 					// don't trigger prealloc!
 					d._totalSize = down.totalSize ? down.totalSize : 0;
 	
-					if (down.hash) {
-						d.hash = new DTA.Hash(down.hash, down.hashType);
+					if (down.hashCollection) {
+						d.hashCollection = DTA.HashCollection.load(down.hashCollection);
+					}
+					else if (down.hash) {
+						d.hashCollection = new DTA.HashCollection(new DTA.Hash(down.hash, down.hashType));
 					}
 					if ('maxChunks' in down) {
 						d._maxChunks = down.maxChunks;
@@ -1143,13 +1146,18 @@ QueueItem.prototype = {
 		}
 		return this._tmpFile;
 	},
-	_hash: null,
-	get hash() {
-		return this._hash;
+	_hashCollection: null,
+	get hashCollection() {
+		return this._hashCollection;
 	},
-	set hash(nv) {
-		this._hash = nv;
-		this._prettyHash = this.hash ? _('prettyhash', [this.hash.type, this.hash.sum]) : _('nas');
+	set hashCollection(nv) {
+		if (nv != null && !(nv instanceof DTA.HashCollection)) {
+			throw new Exception("Not a hash collection");
+		}
+		this._hashCollection = nv;
+		this._prettyHash = this._hashCollection
+			? _('prettyhash', [this._hashCollection.full.type, this._hashCollection.full.sum])
+			: _('nas');
 	},
 	_prettyHash: null,
 	get prettyHash() {
@@ -1493,7 +1501,7 @@ QueueItem.prototype = {
 	finishDownload: function QI_finishDownload(exception) {
 		Debug.logString("finishDownload, connections: " + this.sessionConnections);
 		this._completeEvents = ['moveCompleted', 'setAttributes'];
-		if (this.hash) {
+		if (this.hashCollection) {
 			this._completeEvents.push('verifyHash');
 		}
 		if ('isMetalink' in this) {
@@ -1938,9 +1946,8 @@ QueueItem.prototype = {
 			},
 			this
 		);
-		if (this.hash) {
-			e.hash = Utils.atos(this.hash.sum);
-			e.hashType = Utils.atos(this.hash.type);
+		if (this.hashCollection) {
+			e.hashCollection = this.hashCollection.toSource();
 		}
 		if (this.autoRetrying || this.is(RUNNING)) {
 			e.state = QUEUED;
@@ -2571,8 +2578,8 @@ Connection.prototype = {
 			d.compression = null;
 		}
 		
-		if (visitor.hash && (!d.hash || d.hash.q < visitor.hash.q)) {
-			d.hash = visitor.hash;
+		if (visitor.hash && (!d.hashCollection || !d.hashCollection.full || d.hashCollection.full.q < visitor.hash.q)) {
+			d.hashCollection = new DTA.HashCollection(visitor.hash);
 		}
 
 		// accept range
@@ -2995,14 +3002,22 @@ function startDownloads(start, downloads) {
 		if (e.startDate) {
 			qi.startDate = e.startDate;
 		}
-		if (e.url.hash) {
-			qi.hash = e.url.hash;
+		
+		// hash?
+		if (e.hashCollection) {
+			qi.hashCollection = e.hashCollection;
+		}
+		else if (e.url.hashCollection) {
+			qi.hashCollection = e.url.hashCollection;
 		}
 		else if (e.hash) {
-			qi.hash = e.hash;
+			qi.hashCollection = new DTA.HashCollection(e.hash);
+		}
+		else if (e.url.hash) {
+			qi.hashCollection = new DTA.HashCollection(e.url.hash);
 		}
 		else {
-			qi.hash = null; // to initialize prettyHash
+			qi.hashCollection = null; // to initialize prettyHash
 		}
 
 		let postData = ContentHandling.getPostDataFor(qi.urlManager.url);
