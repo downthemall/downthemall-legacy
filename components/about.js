@@ -40,7 +40,7 @@ const Cr = Components.results;
 const log = Components.utils.reportError;
 
 // URI to the chrome part
-const REAL_URI = 'http://code.downthemall.net/about/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_NAME%&version=%APP_VERSION%';
+const REAL_URI = 'http://code.downthemall.net/about/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_ID%&version=%APP_VERSION%';
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
