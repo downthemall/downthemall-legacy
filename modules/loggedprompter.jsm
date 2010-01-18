@@ -49,7 +49,16 @@ module("resource://dta/utils.jsm");
 ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 
+/**
+ * Provides nsIPrompt/nsIAuthPrompt
+ * The nsIPrompt implementation will log any alerts instead of actually displaying them
+ * 
+ * @param window Associated window (that will be the parent of any prompt dialogs)
+ */
 function LoggedPrompter(window) {
+	/**
+	 * Property providing nsIAuthPrompt
+	 */
 	setNewGetter(
 		this,
 		'authPrompter',
@@ -60,13 +69,19 @@ function LoggedPrompter(window) {
 		}
 	);
 
+	/**
+	 * Property providing nsIPrompt
+	 */
 	setNewGetter(
 		this,
 		'prompter',
 		function() {
 			let _p = WindowWatcherService
 				.getNewPrompter(window)
-				.QueryInterface(Ci.nsIPrompt);		
+				.QueryInterface(Ci.nsIPrompt);
+
+			// Log any alerts instead of showing a dialog.
+			// Everything else pass thru to the actual prompter.
 			let _dp = {
 				QueryInterface: XPCOMUtils.generateQI([Ci.nsIPrompt]),
 				alert: function(title, text) Debug.log(text, title),
