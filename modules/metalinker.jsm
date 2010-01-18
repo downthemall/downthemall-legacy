@@ -36,6 +36,7 @@
 
 const EXPORTED_SYMBOLS = [
 	"parse",
+	"Metalink",
 	"NS_DTA",
 	"NS_HTML",
 	"NS_METALINKER3",
@@ -85,6 +86,30 @@ setNewGetter(this, "Locale", function() {
 	let loc = Preferences.get('general.useragent.locale', 'en-US');
 	return loc.split('-').map(function(l) { return l.slice(0, 2).toLowerCase(); }).reverse();
 });
+
+/**
+ * Parsed Metalink representation
+ * (Do not construct yourself unless you know what you're doing)
+ */
+function Metalink(downloads, info, parser) {
+	this.downloads = downloads;
+	this.info = info;
+	this.parser = parser;
+}
+Metalink.prototype = {
+	/**
+	 * Array of downloads
+	 */
+	downloads: [],
+	/**
+	 * Dict of general information
+	 */
+	info: {},
+	/**
+	 * Parser identifaction
+	 */
+	parser: ""
+};
 
 function Base(doc, NS) {
 	this._doc = doc;
@@ -305,11 +330,7 @@ Metalinker3.prototype = {
 			'publisher': this.getLinkRes(root, "publisher"),
 			'start': false
 		};
-		return {
-			parser: "Metalinker Version 3.0",
-			downloads: downloads,
-			info: info
-		};
+		return new Metalink(downloads, info, "Metalinker Version 3.0");
 	}
 };
 
@@ -317,6 +338,12 @@ const __parsers__ = [
 	Metalinker3
 ];
 
+/**
+ * Parse a metalink
+ * @param aFile (nsIFile) Metalink file
+ * @param aReferrer (String) Optional. Referrer
+ * @return (Metalink) Parsed metalink data 
+ */
 function parse(aFile, aReferrer) {
 	let fiStream = new FileInputStream(aFile, 1, 0, false);
 	let doc;
