@@ -69,7 +69,7 @@ var Dialog = {
 				
 				$('renaming').value = d.mask;
 				$('directory').value = d.pathName;
-				$('hash').value = d.hash;
+				$('hash').value = d.hashCollection.full;
 				$('description').value = d.description;
 				this.item = d;
 				Tooltip.start(d);
@@ -142,8 +142,8 @@ var Dialog = {
 			let d = this.downloads[0];
 			if ($('hash').isValid) {
 				var h = $('hash').value;
-				if (!h || !d.hash || h.sum != d.hash.sum) {
-					d.hash = h;
+				if (!h || !d.hashCollection || h.sum != d.hashCollection.full.sum || h.type != d.hashCollection.full.type) {
+					d.hashCollection = new DTA.HashCollection(h);
 					if (h && d.is(COMPLETE)) {
 						// have to manually start this guy ;)
 						d.verifyHash();

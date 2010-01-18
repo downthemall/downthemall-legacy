@@ -89,8 +89,8 @@ var ImEx = {
 			let list = doc.createElement('ol');
 			for (let d in downloads) {
 				let url = d.urlManager.url.spec;
-				if (d.hash) {
-					url += '#hash(' + d.hash.type + ":" + d.hash.sum + ")";
+				if (d.hashCollection) {
+					url += '#hash(' + d.hashCollection.full.type + ":" + d.hashCollection.full.sum + ")";
 				}
 				let desc = d.description;
 				if (!desc) {
@@ -109,8 +109,8 @@ var ImEx = {
 				if (d.referrer) {
 					addDesc('Referrer', d.referrer.spec, li);				
 				}
-				if (d.hash) {
-					addDesc(d.hash.type, d.hash.sum.toLowerCase(), li);
+				if (d.hashCollection) {
+					addDesc(d.hashCollection.full.type, d.hashCollection.full.sum.toLowerCase(), li);
 				}					
 				list.appendChild(li);
 			}			
@@ -141,8 +141,8 @@ var ImEx = {
 		);
 		for (let d in downloads) {
 			let url = d.urlManager.url.spec;
-			if (d.hash) {
-				url += '#hash(' + d.hash.type + ":" + d.hash.sum + ")";
+			if (d.hashCollection) {
+				url += '#hash(' + d.hashCollection.full.type + ":" + d.hashCollection.full.sum + ")";
 			}
 			url += "\r\n";
 			cs.writeString(url); 
@@ -187,12 +187,13 @@ var ImEx = {
 				n.textContent = u.url.spec;
 				r.appendChild(n);
 			}
-			if (d.hash) {
+			if (d.hashCollection) {
 				let v = doc.createElementNS(Metalinker.NS_METALINKER3, 'verification');
 				let h = doc.createElementNS(Metalinker.NS_METALINKER3, 'hash');
-				h.setAttribute('type', d.hash.type.toLowerCase());
-				h.textContent = d.hash.sum.toLowerCase();
+				h.setAttribute('type', d.hashCollection.full.type.toLowerCase());
+				h.textContent = d.hashCollection.full.sum.toLowerCase();
 				v.appendChild(h);
+				// XXX implement chunks
 				f.appendChild(v);
 			}
 			f.appendChild(r);

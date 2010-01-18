@@ -72,12 +72,13 @@ function Verificator(download, completeCallback, errorCallback) {
 	
 	this.file = new File(download.destinationFile);
 	this._pending = this.file.fileSize;
+	this.full = download.hashCollection.full;
 
 	try {
-		if (!(download.hash.type in nsICryptoHash)) {
+		if (!(this.full.type in nsICryptoHash)) {
 			throw new Exception("hash method unsupported!");
 		}
-		this.type = nsICryptoHash[download.hash.type];
+		this.type = nsICryptoHash[this.full.type];
 		
 		this.hash = new Hash(this.type);
 		
@@ -106,8 +107,8 @@ Verificator.prototype = {
 			this.download.invalidate();
 			
 			this.hash = hexdigest(this.hash.finish(false));
-			if (this.hash != this.download.hash.sum) {
-				Debug.logString("hash mismatch, actual: " + this.hash + " expected: " + this.download.hash.sum);
+			if (this.hash != this.full.sum) {
+				Debug.logString("hash mismatch, actual: " + this.hash + " expected: " + this.full.sum);
 				this.errorCallback.call(this.download);
 			}
 			else {

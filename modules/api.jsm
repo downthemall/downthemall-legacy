@@ -45,6 +45,7 @@ const EXPORTED_SYMBOLS = [
 	"SUPPORTED_HASHES_ALIASES",
 	"WANT_DIGEST_STRING",
 	"Hash",
+	"HashCollection",
 	"getLinkPrintHash",
 	"getLinkPrintMetalink",
 	"isLinkOpenable",
@@ -209,6 +210,96 @@ Hash.prototype = {
 	},
 	toString: function() {
 		return this.type + " [" + this.sum + "]";
+	},
+	toSource: function() {
+		return {
+			type: this.type,
+			sum: this.sum
+		};
+	}
+};
+
+/**
+ * Collection of hashes (checksums) about a single download
+ * @param fullHash Full hash covering the whole download
+ */
+function HashCollection(fullHash) {
+	if (!(fullHash instanceof Hash)) {
+		throw new Exception("Cannot init empty HashCollection");
+	}
+	this.full = fullHash;
+	this.partials = [];
+}
+/**
+ * Load HashCollection from a serialized object
+ * (Static)
+ * @see toSource
+ * @param obj (object) Serialized object
+ */
+HashCollection.load = function(obj) {
+	let rv = new HashCollection(new Hash(obj.full.sum, obj.full.type));
+	for each (let par in obj.partials) {
+		rv.add(par.start, par.end, new Hash(par.hash.sum, par.hash.type));
+	}
+	return rv;
+},
+
+HashCollection.prototype = {
+	/**
+	 * Iterator over all partial hashes
+	 * Gives {hash,start,end} dict
+	 */		
+	__iterator__: function() {
+		for (let start in this._partials) {
+			let p = this._partials[start];
+			yield {start: start, end: p.end, hash: p.hash}; 
+		}
+	},
+
+	/**
+	 * HashCollection has parital hashes
+	 */
+	get hasPartials() { return this.partials.length; },
+	add: function(start, end, hash) {
+		try {
+			this.getPartialFor(start);
+		}
+		catch (ex) {
+			// new hash
+			this.partials[start] = {end: end, hash: hash};
+			return;
+		}
+		throw Exception("Hash for position already exists?!");
+	},
+	/**
+	 * Gets the partial hash for a given position
+	 * @return partial hash
+	 * @throw (Exception) No hash at that position 
+	 */
+	getPartialFor: function(position) {
+		for (let start in this.partials) {
+			let p = this.partials[start];
+			if (start > position || p.end < position) {
+				continue;
+			}
+			return p.hash;
+		}
+		throw new Exception("No hash for this position");
+	},
+	
+	/**
+	 * Serializes HashCollection
+	 * @return (object) Serialized HashCollection
+	 */
+	toSource: function() {
+		return {
+			full: this.full.toSource(),
+			partials: this.partials.map(
+				function(p,i) {
+					return {start: i, end: p.end, hash: p.hash.toSource()};
+				}
+			)
+		};
 	}
 };
 
