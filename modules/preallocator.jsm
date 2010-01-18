@@ -57,14 +57,32 @@ const log = (function() {
 	}
 })();
 
-const SIZE_MIN = 5 * 1024 * 1024; // will not prealloc below
+// Minimum size of a preallocation.
+// If requested size is less then no actual pre-allocation will be performed.
+const SIZE_MIN = 5 * 1024 * 1024;
+
+// Step size of the allocation
+// Do this step wise to avoid certain "sparse files" cases
 const SIZE_STEP = 100 * 1024 * 1024;
 
 Components.utils.import('resource://dta/cothread.jsm');
 Components.utils.import('resource://dta/utils.jsm');
 
+// Store workers here.
+// Not storing workers (in this context) will cause gc havoc.
 const workers = {};
 
+/**
+ * Pre-allocates a given file on disk
+ * and calls given callback when done
+ * 
+ * @param file (nsIFile) file to allocate
+ * @param size (int) Size to allocate  
+ * @param perms (int) *nix file permissions
+ * @param callback (function) Callback called once done
+ * @param tp (function) Scope (this) to call the callback function in 
+ * @return (nsICancelable) Pre-allocation object.
+ */
 function prealloc(file, size, perms, callback, tp) {
 	tp = tp || null;
 	if (size <= SIZE_MIN || !isFinite(size)) {
@@ -84,18 +102,19 @@ function WorkerJob(path, size, perms, callback, tp) {
 	this.perms = perms;
 	this.callback = callback;
 	this.tp = tp;
+	this.uuid = newUUIDString();
 	
+	// Create thread and dispatch
 	let tm = Cc['@mozilla.org/thread-manager;1'].getService(Ci.nsIThreadManager);
 	this.thread = tm.newThread(0);
 	this.main = tm.mainThread;
-	this.uuid = newUUIDString();
 	workers[this.uuid] = this;
 	this.thread.dispatch(this, this.thread.DISPATCH_NORMAL);
 }
 
 WorkerJob.prototype = {
 	QueryInterface: function worker_QueryInterface(iid) {
-		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIRunnable)) {
+		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIRunnable) || iid.equals(Ci.nsICancelable)) {
 			return this;
 		}
 		throw Cr.NS_ERROR_NO_INTERFACE;
@@ -123,6 +142,8 @@ WorkerJob.prototype = {
 		catch (ex) {
 			log("pa: Failed to run prealloc worker", ex);
 		}
+		
+		// Dispatch event back to the main thread
 		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);		
 	},
 	cancel: function() {
@@ -143,14 +164,19 @@ MainJob.prototype = {
 	QueryInterface: WorkerJob.prototype.QueryInterface,
 	
 	run: function main_run() {
+		// thread is done
+	
 		try {
+			// wait for thread to actually join, if not already joined
 			this.thread.shutdown();
 		}
 		catch (ex) {
 			// might throw; see Worker.cancel
 		}
+		
 		if (this.callback) {
 			try {
+				// call the user callback
 				this.callback.call(this.tp, this.result);
 				log("pa: prealloc done");
 			}
@@ -158,6 +184,8 @@ MainJob.prototype = {
 				log("pa: callback throw", ex);
 			}
 		}
+		
+		// cleanup
 		workers[this.uuid] = 0;
 		delete workers[this.uuid];
 	}
