@@ -41,17 +41,34 @@ const Ci = Components.interfaces;
 const module = Components.utils.import;
 const Exception = Components.Exception;
 
+// Link matcher
 const regLinks = /\b(?:(?:h(?:x+|tt)?ps?|ftp):\/\/|www\d?\.)[\d\w.-]+\.\w+\.?(?:\/[\d\w+&@#\/%?=~_|!:,.;\(\)-]*)?/ig;
+// Match more exactly or more than 3 dots. Links are then assumed "cropped" and will be ignored. 
+const regShortened = /\.{3,}/;
+// http cleanup
 const regHttp = /^h(?:x+|tt)?p(s?)/i;
-const regFtp = /^f(?:x|t)p/i; 
+// ftp cleanup
+const regFtp = /^f(?:x|t)p/i;
+// www (sans protocol) match
 const regWWW = /^www/i;
+// Right-trim (sanitize) link
 const regDTrim = /[._#-]+$/;
 
+/**
+ * Parses a text looking for any URLs with supported protocols
+ * 
+ * @param text (string) Text to parse
+ * @param fakeLinks (boolean) Whether an array of plain text links will be returned or an array of FakeLinks 
+ * @return (array) results 
+ */
 function getTextLinks(text, fakeLinks) {
 	return Array.map( 
 		text.match(regLinks),
 		function(e) {
 			try {
+				if (regShortened.test(e)) {
+					return null;
+				}
 				if (regWWW.test(e)) {
 					e = "http://" + e;
 				}
@@ -68,6 +85,13 @@ function getTextLinks(text, fakeLinks) {
 	).filter(function(e) !!e);
 }
 
+/**
+ * Minimal Link representation (partially) implementing DOMElement
+ * 
+ * @param url (string) URL (href) of the Links 
+ * @param title (string) Optional. Title/description
+ * @see DOMElement
+ */
 function FakeLink (url, title) {
 	this.href = url;
 	if (!!title) {
