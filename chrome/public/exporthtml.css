@@ -23,7 +23,7 @@ h1 {
 	font-size: 1em;
 	line-height: 1.1em;
 	color: black;
-	background: white url(chrome://dta/skin/common/logo.png) no-repeat right top;
+	background: white url(logo.png) no-repeat right top;
 	border-bottom: 1px solid rgb(255, 227, 145);
 	height: 33px;
 	padding-top: 10px;
@@ -49,6 +49,10 @@ a, a:visited {
 a:hover {
 	color: #1271A9;
 }
+li a:before {
+	content: 'Download: ';
+	color: gray;
+}
 
 p {
 	font-size: small;
@@ -64,4 +68,7 @@ p {
 	bottom: 0;
 	left: 0;
 	right: 0;
+}
+.desc {
+	font-size: smaller;
 }
