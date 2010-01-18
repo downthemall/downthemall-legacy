@@ -1,6 +1,6 @@
 const EXPORTED_SYMBOLS = [
 	'ID', 'ITEM', 'VERSION', 'BASE_VERSION', 'NAME',
-	'LOCALE', 'APP_NAME', 'APP_VERSION',
+	'LOCALE', 'APP_NAME', 'APP_VERSION', 'APP_ID',
 	'compareVersion'
 ];
 
@@ -23,6 +23,7 @@ const runtime = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULAppInfo).Q
 const APP_NAME = runtime.name.toLowerCase().replace(/ /, '');
 // Application version
 const APP_VERSION = runtime.version;
+const APP_ID = runtime.ID;
 
 // Extension version
 const VERSION = ITEM.version;
