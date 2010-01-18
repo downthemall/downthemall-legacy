@@ -60,6 +60,12 @@ const Cr = Components.results;
 const log = Components.utils.reportError;
 const Exception = Components.Exception;
 
+/**
+ * Installs a new lazy getter
+ * @param aObject (object) Object to install the getter to
+ * @param aName (string) Name of the getter property
+ * @param aLambda (function) Initializer function (called once, return value becomes getter value)
+ */
 function setNewGetter(aObject, aName, aLambda) {
 	if (aName in aObject) {
 		throw new Exception(aName + " is already defined in context " + aObject);
@@ -77,6 +83,13 @@ function setNewGetter(aObject, aName, aLambda) {
 	}
 }
 
+/**
+ * Install lazy service getter
+ * @param context (object) Object to install the getter to
+ * @param name Name of the getter property
+ * @param contract (string) Contract id of the service
+ * @param iface (string) Interface of the service
+ */
 function ServiceGetter(context, name, contract, iface) {
 	if (!iface) {
 		iface = Ci.nsISupports;
@@ -101,6 +114,16 @@ function ServiceGetter(context, name, contract, iface) {
 	);	
 }
 
+/**
+ * Installs lazy instance getter.
+ * The instance will be created only once and then reused
+ * @param context (object) Object to install the getter to
+ * @param name Name of the getter property
+ * @param contract (string) Contract id of the class
+ * @param iface (string) Interface of the class
+ * @param initFuncName (string) Optional. Name of the function to call on the object instance once created.
+ * @param ... (mixed) Optional. Any arguments to initFunc
+ */
 function InstanceGetter(context, name, contract, iface, initFuncName/*, args */) {
 	if (!iface) {
 		iface = Ci.nsISupports;
@@ -124,12 +147,17 @@ function InstanceGetter(context, name, contract, iface, initFuncName/*, args */)
 	);
 }
 
+/**
+ * Creates anonymous function with context
+ * @param context (object) Context object
+ * @param func (function) Function to call
+ * @return (function) anonymous function binding func to context 
+ */
 function bind(context, func) (function() func.apply(context, arguments));
 
 /**
  * returns a new UUID in string representation
  * @return String UUID
- * @author Nils
  */
 setNewGetter(this, "newUUIDString", function() {
 	let uuidgen = Cc["@mozilla.org/uuid-generator;1"].getService(Ci.nsIUUIDGenerator);
@@ -143,7 +171,6 @@ setNewGetter(this, "newUUIDString", function() {
  * @param start Optional. Start value (default: 0)
  * @param stop Stop value (exclusive)
  * @param step Optional. Step value (default: 1/-1)
- * @author Nils
  */
 function range() {
 	if (arguments.length == 0) {
@@ -279,6 +306,13 @@ function getTimestamp(str) {
 	return rv;
 }
 
+/**
+ * Sorts an array with natural sort order.
+ * Unlike Array.sort the array is NOT sorted in-situ.
+ * @param arr (array) Array to sort
+ * @param mapper (function) Optional. Mapping function mapping array items to search keys.
+ * @return (array) Sorted array
+ */
 function naturalSort(arr, mapper) {
 	if (typeof mapper != 'function' && !(mapper instanceof Function)) {
 		mapper = function(e) e;
@@ -342,8 +376,14 @@ function naturalSort(arr, mapper) {
 	return arr.map(function(a) a.elem);
 }
 
+/**
+ * Simple Iterator encapsulating nsISimpleEnumerator for easy access 
+ * @param obj (nsISimpleEnumerator) Enumerator to convert to an iterator
+ * @param iface (Interface) Optional. Interface of elements 
+ * @return
+ */
 function SimpleIterator(obj, iface) {
-	this.iface = iface ? iface : Ci.nsISupport;
+	this.iface = iface || Ci.nsISupport;
 	this.obj = obj.QueryInterface(Ci.nsISimpleEnumerator);
 }
 SimpleIterator.prototype = {
@@ -354,6 +394,12 @@ SimpleIterator.prototype = {
 	}
 };
 
+/**
+ * Construct object from nsIProperties.
+ * Properties elements will be mapped to this newly created object as
+ * regular JS properties.
+ * @param properties (nsIProperties) initial properties
+ */
 function Properties(properties) {
 	if (!properties) {
 		return;
@@ -429,10 +475,18 @@ function Properties(properties) {
 	}
 }
 
+/**
+ * Mime quality param constructor
+ */
 function MimeQuality() {
 	this._q = {};
 }
 MimeQuality.prototype = {
+	/**
+	 * Add new item
+	 * @param v (string) Parameter value
+	 * @param q (number) Quality number
+	 */
 	add: function(v, q) {
 		if (typeof q != "number" || q > 1 || q < 0) {
 			throw new Error("Invalid q");
@@ -444,6 +498,10 @@ MimeQuality.prototype = {
 		this._q[q].push(v);
 		return this;
 	},
+	/**
+	 * String representation to be used as Mime parameter literal
+	 * @return Representation
+	 */
 	toString: function() {
 		let rv = [];
 		for (let x in this._q) {
