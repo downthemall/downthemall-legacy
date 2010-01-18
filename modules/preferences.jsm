@@ -54,10 +54,15 @@ const EXPORTED_SYMBOLS = [
 	'makeObserver'
 ];
 
+// Base extension branch
+// Third parties reusing this module must specify own branch!
 const EXT = 'extensions.dta.';
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+const Ctor = Components.Constructor;
+const log = Components.utils.reportError;
+
 const nsIPrefBranch = Ci.nsIPrefBranch;
 const nsIPrefBranch2 = Ci.nsIPrefBranch2;
 
@@ -65,10 +70,16 @@ const PREF_STRING = nsIPrefBranch.PREF_STRING;
 const PREF_INT = nsIPrefBranch.PREF_INT;
 const PREF_BOOL = nsIPrefBranch.PREF_BOOL;
 
-const SupportsString = Components.Constructor('@mozilla.org/supports-string;1', 'nsISupportsString');
+const SupportsString = new Ctor('@mozilla.org/supports-string;1', 'nsISupportsString');
 
 const prefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch);
 
+/**
+ * Gets a preference (based on root)
+ * @param key (string) Key of the preference
+ * @param defaultValue (mixed) Default value to be returned if preference does not exist 
+ * @return (mixed) Value of the preference or defaultValue
+ */
 function get(key, defaultValue){
 	try {
 		let rv;
@@ -94,14 +105,31 @@ function get(key, defaultValue){
 	return defaultValue;
 }
 
+/**
+ * Gets a preference (based on extension branch)
+ * @param key (string) Key of the preference
+ * @param defaultValue (mixed) Default value to be returned if preference does not exist 
+ * @return (mixed) Value of the preference or defaultValue
+ */
 function getExt(key, defaultValue) {
 		return get(EXT + key, defaultValue);
 }
 
+/**
+ * Gets a preference branch 
+ * @param branch (string) Branch to get
+ * @return (nsIPrefBranch) Requested branch 
+ */
 function getBranch(branch) {
 	return prefs.getBranch(branch);
 }
 
+/**
+ * Sets a preference (based on root)
+ * @param key (string) Key of the preference to set
+ * @param value (mixed) value of the preference to set
+ * @throws Value-type/Preference-type mismatch
+ */
 function set(key, value){
 	if (typeof value == 'number' || value instanceof Number) {
 		return prefs.setIntPref(key, value);
@@ -112,10 +140,17 @@ function set(key, value){
 	return setMultiByte(key, value);
 }
 
+/**
+ * Sets a preference (based on branch)
+ * @param key (string) Key of the preference to set
+ * @param value (mixed) value of the preference to set
+ * @throws Value-type/Preference-type mismatch
+ */
 function setExt(key, value){
 	return set(EXT + key, value);
 }
 
+// Helper: get a (multi-byte) string
 function getMultiByte(key, defaultValue){
 	try {
 		return prefs.getComplexValue(key, Ci.nsISupportsString).data;
@@ -126,12 +161,18 @@ function getMultiByte(key, defaultValue){
 	return defaultValue;
 }
 
+//Helper: Set a (multi-byte) string
 function setMultiByte(key, value) {
 	let str = new SupportsString();
 	str.data = value.toString();
 	prefs.setComplexValue(key, Ci.nsISupportsString, str);
 }
 
+/**
+ * Preference has a user provided value, i.e. not the default value (based on root)
+ * @param key (string) Key of the preference to check
+ * @return (boolean) Has user value
+ */
 function hasUserValue(key) {
 	try {
 		return prefs.prefHasUserValue(key);
@@ -142,18 +183,38 @@ function hasUserValue(key) {
 	return false;
 }
 
+/**
+ * Preference has a user provided value, i.e. not the default value (based on branch)
+ * @param key (string) Key of the preference to check
+ * @return (boolean) Has user value
+ */
 function hasUserValueExt(key) {
 	return hasUserValue(EXT + key);
 }
 
+/**
+ * Enumerate all children of a preference (based on root)
+ * @param key (string) Key of the preference
+ * @return (array) Sub-preferences
+ */
 function getChildren(key) {
 	return prefs.getChildList(key, {});
 }
 
+/**
+ * Enumerate all children of a preference (based on branch)
+ * @param key (string) Key of the preference
+ * @return (array) Sub-preferences
+ */
 function getChildrenExt(key) {
 	return getChildren(EXT + key);
 }
 
+/**
+ * Resets a preference to the original value
+ * @param key (string) Key of the preference
+ * @return (boolean) Preference reset
+ */
 function reset(key) {
 	try {
 		return prefs.clearUserPref(key);
@@ -164,7 +225,11 @@ function reset(key) {
 	return false;
 }
 
-
+/**
+ * Resets a preference to the original value (based on branch)
+ * @param key (string) Key of the preference
+ * @return (boolean) Preference reset
+ */
 function resetExt(key) {
 	if (key.search(new RegExp('/^' + EXT + '/')) != 0) {
 		key = EXT + key;
@@ -172,6 +237,10 @@ function resetExt(key) {
 	return reset(key);
 }
 
+/**
+ * Resets a whole branch
+ * @param branch (string) Branch to reset
+ */
 function resetBranch(branch) {
 	try {
 		prefs.resetBranch(branch);
@@ -184,25 +253,49 @@ function resetBranch(branch) {
 		}
 	}
 }
+/**
+ * Resets a whole branch (based on extension branch)
+ * @param branch (string) Branch to reset
+ */
 
 function resetBranchExt(branch) {
 	resetBranch(EXT + branch);
 }
 
+/**
+ * Resets the whole extension branch (aka. restore all)
+ */
 function resetAllExt() {
 	resetBranchExt('');
 }
 
+/**
+ * Adds a preference observer
+ * @param branch (string) Branch to add the preference observer for
+ * @param obj (object) Preference observer. Must implement observe(). QueryInterface added as required.
+ * @return
+ */
 function addObserver(branch, obj) {
 	makeObserver(obj);
 	prefs.QueryInterface(nsIPrefBranch2).addObserver(branch, obj, true);
 	return function() removeObserver(branch, obj);
 }
 
+/**
+ * Removes a preference observer again
+ * @param branch (string) Branch to add the preference observer for
+ * @param obj (object) Preference observer. Must have been added before
+ */
 function removeObserver(branch, obj) {
 	prefs.QueryInterface(nsIPrefBranch2).removeObserver(branch, obj);
 }
 
+/**
+ * Converts/encapsulates object into weak nsIObserser.
+ * Object must already implement observe().
+ * Object may already implement QueryInterface
+ * @param obj (object) Object to convert
+ */
 function makeObserver(obj) {
 	try {
 		if (
@@ -215,7 +308,13 @@ function makeObserver(obj) {
 	catch (ex) {
 		// fall-through
 	}
+	
+	// Need to convert/encapsulate object
+	
+	// Store old QI
 	let __QueryInterface = obj.QueryInterface;
+	
+	// Rewrite QI to support required interfaces
 	obj.QueryInterface = function(iid) {
 		try {
 			if (
@@ -227,20 +326,22 @@ function makeObserver(obj) {
 				return obj;
 			}
 			if (__QueryInterface) {
-				debug("calling original: " + iid);
+				log("calling original: " + iid);
 				return __QueryInterface.call(this, iid);
 			}
 			throw Components.results.NS_ERROR_NO_INTERFACE;
 		}
 		catch (ex) {
-			debug("requested interface not available: " + iid);
+			log("requested interface not available: " + iid);
 			throw ex;
 		}
 	};
+	
 	// nsiWeakReference
 	obj.QueryReferent = function(iid) {
 		return obj.QueryInterface(iid);
 	};
+	
 	// nsiSupportsWeakReference
 	obj.GetWeakReference = function() {
 		return obj;
