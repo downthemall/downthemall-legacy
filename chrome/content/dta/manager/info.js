@@ -69,7 +69,9 @@ var Dialog = {
 				
 				$('renaming').value = d.mask;
 				$('directory').value = d.pathName;
-				$('hash').value = d.hashCollection.full;
+				if (d.hashCollection) {
+					$('hash').value = d.hashCollection.full;
+				}
 				$('description').value = d.description;
 				this.item = d;
 				Tooltip.start(d);
