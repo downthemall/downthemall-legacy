@@ -403,14 +403,14 @@ const Dialog = {
 					let nb = $('notifications');
 					try {
 						let seq = QueueStore.getQueueSeq();
-						let nagnext = Preferences.getExt('nagnext', 50);
+						let nagnext = Preferences.getExt('nagnext', 100);
 						Debug.logString("nag: " + seq + "/" + nagnext + "/" + (seq - nagnext));
 						if (seq < nagnext) {
 							return;
 						}
-						for (nagnext = isFinite(nagnext) && nagnext > 0 ? nagnext : 50; seq > nagnext; nagnext *= 2);
+						for (nagnext = isFinite(nagnext) && nagnext > 0 ? nagnext : 100; seq >= nagnext; nagnext *= 2);
 						
-						seq = Math.floor(seq / 50) * 50;
+						seq = Math.floor(seq / 100) * 100;
 
 						setTimeout(function() {
 							let ndonation = nb.appendNotification(
