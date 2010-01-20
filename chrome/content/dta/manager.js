@@ -1244,9 +1244,6 @@ QueueItem.prototype = {
 	_totalSize: 0,
 	get totalSize() { return this._totalSize; },
 	set totalSize(nv) {
-		if (this._totalSize == nv) {
-			return nv;
-		}
 		if (nv >= 0 && !isNaN(nv)) {
 			this._totalSize = Math.floor(nv);
 		}
@@ -1801,11 +1798,6 @@ QueueItem.prototype = {
 		this.status = TEXT_QUEUED;
 	},
 	resumeDownload: function QI_resumeDownload() {
-		if (this.preallocating && this.activeChunks) {
-			Debug.logString("not resuming download " + this + " because preallocating");
-			return false;
-		}
-		
 		Debug.logString("resumeDownload: " + this);
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat
@@ -1855,6 +1847,10 @@ QueueItem.prototype = {
 			let paused = this.chunks.filter(function (chunk) !(chunk.running || chunk.complete));
 			
 			while (this.activeChunks < this.maxChunks) {
+				if (this.preallocating && this.activeChunks) {
+					Debug.logString("not resuming download " + this + " because preallocating");
+					return true;
+				}
 
 				// restart paused chunks
 				if (paused.length) {
