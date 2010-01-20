@@ -113,11 +113,13 @@ SpeedStats.prototype = {
 			if (this._speeds.length > this._maxSpeeds) {
 				this._speeds.shift();
 			}
+			
+			let weights = this._speeds.map(function(e, i) Math.pow(this._speeds.length - i, 4), this).reverse();
+			let sweight = weights.reduce(function(e, p) e + p);
+
 			this._avg = 0;
-			for each (let s in this._speeds) {
-				this._avg += s;
-			}
-			this._avg = Math.round(this._avg / this._speeds.length);
+			this._speeds.forEach(function(e, i) this._avg += e * weights[i], this);
+			this._avg = Math.round(this._avg / sweight);
 		}
 		this._lastTime = time;
 		this._lastBytes = bytes;
