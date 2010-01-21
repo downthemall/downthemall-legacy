@@ -161,7 +161,7 @@ const Dialog = {
 		
 		Tree.init($("downloads"));
 		try {
-			this._loadDownloads();
+			Timers.createOneshot(100, this._loadDownloads, this);
 		}
 		catch (ex) {
 			Debug.log("Failed to load any downloads from queuefile", ex);
@@ -225,6 +225,64 @@ const Dialog = {
 		Components.utils.import('resource://dta/bytebucket.jsm');
 		GlobalBucket = new ByteBucket(Prefs.speedLimit, 1.3);
 		$('listSpeeds').limit = Prefs.speedLimit;
+		
+		(function nagging() {
+			if (Preferences.getExt('nagnever', false)) {
+				return;
+			}
+			let nb = $('notifications');
+			try {
+				let seq = QueueStore.getQueueSeq();
+				let nagnext = Preferences.getExt('nagnext', 100);
+				Debug.logString("nag: " + seq + "/" + nagnext + "/" + (seq - nagnext));
+				if (seq < nagnext) {
+					return;
+				}
+				for (nagnext = isFinite(nagnext) && nagnext > 0 ? nagnext : 100; seq >= nagnext; nagnext *= 2);
+				
+				seq = Math.floor(seq / 100) * 100;
+
+				setTimeout(function() {
+					let ndonation = nb.appendNotification(
+							_('nagtext', [seq]),
+							"donation",
+							null,
+							nb.PRIORITY_INFO_HIGH,
+							[
+								{
+									accessKey: '',
+									label: _('nagdonate'),
+									callback: function() {
+										nb.removeNotification(ndonation);
+										Preferences.setExt('nagnext', nagnext);
+										Dialog.openDonate();
+									}
+								},
+								{
+									accessKey: '',
+									label: _('naghide'),
+									callback: function() {
+										Preferences.setExt('nagnext', nagnext);
+										nb.removeNotification(ndonation);
+									}
+								},
+								{
+									accessKey: '',
+									label: _('nagneveragain'),
+									callback: function() {
+										nb.removeNotification(ndonation);
+										Preferences.setExt('nagnever', true);
+									}
+								}
+
+							]
+					)
+				}, 1000);
+			}
+			catch (ex) {
+				Debug.log('nagger', ex);
+			}
+		})();		
 	},
 	
 	customizeToolbar: function(evt) {
@@ -240,223 +298,168 @@ const Dialog = {
 	},
 	
 	_loadDownloads: function D__loadDownloads() {
-		let loading = $('loading');
+		this._loading = $('loading');
 		Tree.beginUpdate();
 		this._brokenDownloads = [];
 		Debug.logString("loading of the queue started!");
 		this._loader = new CoThreadListWalker(
-			function D__loader_loadItem(dbItem, idx) {
-				if (idx % 400 == 0) {
-					loading.label = _('loading', [idx, dbItem.count, Math.floor(idx * 100 / dbItem.count)]);
-				}
-				
-				try {
-					let down = JSONCompat.parse(dbItem.serial);
-					
-					let get = function(attr, def) {
-						return (attr in down) ? down[attr] : (def ? def : '');
-					}
-	
-					let d = new QueueItem();
-					d.dbId = dbItem.id;
-					let state = get('state'); 
-					if (state) {
-						d._state = state;
-					}					
-					d.urlManager = new UrlManager(down.urlManager);
-					d.numIstance = get("numIstance");
-	
-					let referrer = get('referrer');
-					if (referrer) {
-						try {
-							d.referrer = referrer.toURL();
-						}
-						catch (ex) {
-							// We might have been fed with about:blank or other crap. so ignore.
-						}
-					}
-				
-					// only access the setter of the last so that we don't generate stuff trice.
-					d._pathName = get('pathName', '');
-					d._description = get('description', '');
-					d._title = get('title', '');
-					d._mask = get('mask');
-					d.fileName = get('fileName');
-					
-					let tmpFile = get('tmpFile');
-					if (tmpFile) {
-						try {
-							tmpFile = new FileFactory(tmpFile);
-							if (tmpFile.exists()) {
-								d._tmpFile = tmpFile;
-							}
-							else {
-								// Download partfile is gone!
-								// XXX find appropriate error message!
-								d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
-							}
-						}
-						catch (ex) {
-							Debug.log("tried to construct with invalid tmpFile", ex);
-							d.cancel();
-						}
-					}				
-	
-					d.startDate = new Date(get("startDate"));
-					d.visitors = new VisitorManager(down.visitors);
-					
-					for each (let e in [
-						'contentType',
-						'conflicts',
-						'postData',
-						'destinationName',
-						'resumable',
-						'compression',
-						'fromMetalink',
-						'speedLimit',
-					].filter(function(e) e in down)) {
-						d[e] = down[e];
-					}
-					
-					// don't trigger prealloc!
-					d._totalSize = down.totalSize ? down.totalSize : 0;
-	
-					if (down.hashCollection) {
-						d.hashCollection = DTA.HashCollection.load(down.hashCollection);
-					}
-					else if (down.hash) {
-						d.hashCollection = new DTA.HashCollection(new DTA.Hash(down.hash, down.hashType));
-					}
-					if ('maxChunks' in down) {
-						d._maxChunks = down.maxChunks;
-					}
-	
-					d.started = d.partialSize != 0;
-					switch (d._state) {
-						case PAUSED:
-						case QUEUED:
-						{
-							for each (let c in down.chunks) {
-								d.chunks.push(new Chunk(d, c.start, c.end, c.written));
-							}
-							d.refreshPartialSize();
-							if (d._state == PAUSED) {
-								d.status = TEXT_PAUSED;
-							}
-							else {
-								d.status = TEXT_QUEUED;
-							}
-						}
-						break;
-						
-						case COMPLETE:
-							d.partialSize = d.totalSize;
-							d.status = TEXT_COMPLETE;
-						break;
-						
-						case CANCELED:
-							d.status = TEXT_CANCELED;
-						break;
-					}
-					
-					// XXX better call this only once
-					// See above
-					d.rebuildDestination();
-
-					d._position = Tree.add(d);
-				}
-				catch (ex) {
-					Debug.log('failed to init download #' + dbItem.id + ' from queuefile', ex);
-					this._brokenDownloads.push(dbItem.id);
-				}
-				return true;
-			},
+			this._loadDownloads_item,
 			QueueStore.loadGenerator(),
-			200,
+			250,
 			this,
-			function D__loader_finish() {
-				delete this._loader;
-				Tree.endUpdate();
-				Tree.invalidate();
-				
-				if (this._brokenDownloads.length) {
-					QueueStore.beginUpdate();
-					try {
-						for each (let id in this._brokenDownloads) {
-							QueueStore.deleteDownload(id);
-							Debug.logString("Removed broken download #" + id);
-						}
-					}
-					catch (ex) {
-						Debug.log("failed to remove broken downloads", ex);
-					}
-					QueueStore.endUpdate();
-				}
-				delete this._brokenDownloads;				
-				
-				this.start();
-				
-				(function nagging() {
-					if (Preferences.getExt('nagnever', false)) {
-						return;
-					}
-					let nb = $('notifications');
-					try {
-						let seq = QueueStore.getQueueSeq();
-						let nagnext = Preferences.getExt('nagnext', 100);
-						Debug.logString("nag: " + seq + "/" + nagnext + "/" + (seq - nagnext));
-						if (seq < nagnext) {
-							return;
-						}
-						for (nagnext = isFinite(nagnext) && nagnext > 0 ? nagnext : 100; seq >= nagnext; nagnext *= 2);
-						
-						seq = Math.floor(seq / 100) * 100;
-
-						setTimeout(function() {
-							let ndonation = nb.appendNotification(
-									_('nagtext', [seq]),
-									"donation",
-									null,
-									nb.PRIORITY_INFO_HIGH,
-									[
-										{
-											accessKey: '',
-											label: _('nagdonate'),
-											callback: function() {
-												nb.removeNotification(ndonation);
-												Preferences.setExt('nagnext', nagnext);
-												Dialog.openDonate();
-											}
-										},
-										{
-											accessKey: '',
-											label: _('naghide'),
-											callback: function() {
-												Preferences.setExt('nagnext', nagnext);
-												nb.removeNotification(ndonation);
-											}
-										},
-										{
-											accessKey: '',
-											label: _('nagneveragain'),
-											callback: function() {
-												nb.removeNotification(ndonation);
-												Preferences.setExt('nagnever', true);
-											}
-										}
-
-									]
-							)
-						}, 1000);
-					}
-					catch (ex) {
-						Debug.log('nagger', ex);
-					}
-				})();				
-			}
+			this._loadDownloads_finish
 		);
 		this._loader.run();		
 	},
+	_loadDownloads_item: function D__loadDownloads_item(dbItem, idx) {
+		if (idx % 500 == 0) {
+			this._loading.label = _('loading', [idx, dbItem.count, Math.floor(idx * 100 / dbItem.count)]);
+		}
+		
+		try {
+			let down = JSONCompat.parse(dbItem.serial);
+			
+			let get = function(attr, def) {
+				return (attr in down) ? down[attr] : (def ? def : '');
+			}
+
+			let d = new QueueItem();
+			d.dbId = dbItem.id;
+			let state = get('state'); 
+			if (state) {
+				d._state = state;
+			}					
+			d.urlManager = new UrlManager(down.urlManager);
+			d.numIstance = get("numIstance");
+
+			let referrer = get('referrer');
+			if (referrer) {
+				try {
+					d.referrer = referrer.toURL();
+				}
+				catch (ex) {
+					// We might have been fed with about:blank or other crap. so ignore.
+				}
+			}
+		
+			// only access the setter of the last so that we don't generate stuff trice.
+			d._pathName = get('pathName', '');
+			d._description = get('description', '');
+			d._title = get('title', '');
+			d._mask = get('mask');
+			d.fileName = get('fileName');
+			
+			let tmpFile = get('tmpFile');
+			if (tmpFile) {
+				try {
+					tmpFile = new FileFactory(tmpFile);
+					if (tmpFile.exists()) {
+						d._tmpFile = tmpFile;
+					}
+					else {
+						// Download partfile is gone!
+						// XXX find appropriate error message!
+						d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+					}
+				}
+				catch (ex) {
+					Debug.log("tried to construct with invalid tmpFile", ex);
+					d.cancel();
+				}
+			}				
+
+			d.startDate = new Date(get("startDate"));
+			d.visitors = new VisitorManager(down.visitors);
+			
+			for each (let e in [
+				'contentType',
+				'conflicts',
+				'postData',
+				'destinationName',
+				'resumable',
+				'compression',
+				'fromMetalink',
+				'speedLimit',
+			].filter(function(e) e in down)) {
+				d[e] = down[e];
+			}
+			
+			// don't trigger prealloc!
+			d._totalSize = down.totalSize ? down.totalSize : 0;
+
+			if (down.hashCollection) {
+				d.hashCollection = DTA.HashCollection.load(down.hashCollection);
+			}
+			else if (down.hash) {
+				d.hashCollection = new DTA.HashCollection(new DTA.Hash(down.hash, down.hashType));
+			}
+			if ('maxChunks' in down) {
+				d._maxChunks = down.maxChunks;
+			}
+
+			d.started = d.partialSize != 0;
+			switch (d._state) {
+				case PAUSED:
+				case QUEUED:
+				{
+					for each (let c in down.chunks) {
+						d.chunks.push(new Chunk(d, c.start, c.end, c.written));
+					}
+					d.refreshPartialSize();
+					if (d._state == PAUSED) {
+						d.status = TEXT_PAUSED;
+					}
+					else {
+						d.status = TEXT_QUEUED;
+					}
+				}
+				break;
+				
+				case COMPLETE:
+					d.partialSize = d.totalSize;
+					d.status = TEXT_COMPLETE;
+				break;
+				
+				case CANCELED:
+					d.status = TEXT_CANCELED;
+				break;
+			}
+			
+			// XXX better call this only once
+			// See above
+			d.rebuildDestination();
+
+			d._position = Tree.add(d);
+		}
+		catch (ex) {
+			Debug.log('failed to init download #' + dbItem.id + ' from queuefile', ex);
+			this._brokenDownloads.push(dbItem.id);
+		}
+		return true;
+	},
+	_loadDownloads_finish: function D__loadDownloads_finish() {
+		delete this._loader;
+		Tree.endUpdate();
+		Tree.invalidate();
+		
+		if (this._brokenDownloads.length) {
+			QueueStore.beginUpdate();
+			try {
+				for each (let id in this._brokenDownloads) {
+					QueueStore.deleteDownload(id);
+					Debug.logString("Removed broken download #" + id);
+				}
+			}
+			catch (ex) {
+				Debug.log("failed to remove broken downloads", ex);
+			}
+			QueueStore.endUpdate();
+		}
+		delete this._brokenDownloads;
+		delete this._loading;
+		
+		this.start();
+	},	
 	
 	openAdd: function D_openAdd() {
 		window.openDialog(
@@ -500,7 +503,7 @@ const Dialog = {
 		Timers.createRepeating(100, this.refreshWritten, this, true);
 		Timers.createRepeating(10000, this.saveRunning, this);
 		
-		$('loadingbox').parentNode.removeChild($('loadingbox'));		
+		$('loadingbox').parentNode.removeChild($('loadingbox'));
 	},
 	
 	observe: function D_observe(subject, topic, data) {
