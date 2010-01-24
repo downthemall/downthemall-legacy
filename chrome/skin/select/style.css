@@ -13,6 +13,9 @@ toolbox, toolbox toolbar, toolbox toolbarbutton {
 	background: white;
 	color: black;
 }
+#views .toolbarbutton-text {
+	color: black;
+}
 
 #views {
 	margin: 0;
