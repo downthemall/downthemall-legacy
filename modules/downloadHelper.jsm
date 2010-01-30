@@ -67,53 +67,86 @@ ProcessorImpl.prototype = {
 	get provider() { return "DownThemAll!"; },
 	get enabled() { return true; },
 	
-	canHandle: function(desc) desc.has("media-url"),
+	canHandle: function(desc) desc.has("media-url") || desc.has("links"),
 	
 	requireDownload: function(desc) false,
 	preDownload: function(desc) false,
 	
 	handle: function(props) {
 		try {
-			props = new Properties(props);
-			let win = ('window' in props) ? props.window : null;
-			let doc = ('document' in props) ? props.document : null;
-			let url = new URL(IOService.newURI(props.mediaUrl, doc ? doc.characterSet : null, null));
-			let item = {
-				url: url,
-				referrer: props.documentUrl || props.pageUrl || null,
-			};
-			if (props.youtubeTitle) {
-				item.description = props.youtubeTitle;
-				item.ultDescription = props.label || null;
-			}
-			else if (props.snName) {
-				item.description = props.snName;
-				item.ultDescription = props.label || null;
+			if (props.has('links')) {
+				this.handleLinks(props);
 			}
 			else {
-				item.description = props.label || null;
+				this.handleSingle(props);
 			}
-			if (item.description && props.fileExtension) {
-				item.fileName = item.destinationName = item.description + "." + props.fileExtension;
-			}
-				
-			saveSingleItem(win, this.turbo, item);
 		}
 		catch (ex) {
 			Debug.log("failed to handle", ex);
 			throw ex;
+		}				
+	},
+	getWindow: function(props) {
+		return ('window' in props) ? props.window : null;
+	},
+	createItem: function(props) {
+		let win = this.getWindow(props);
+		let doc = ('document' in props) ? props.document : null;
+		let url = new URL(IOService.newURI(props.mediaUrl, doc ? doc.characterSet : null, null));
+		let item = {
+			url: url,
+			referrer: props.documentUrl || props.pageUrl || null,
+		};
+		if (props.youtubeTitle) {
+			item.description = props.youtubeTitle;
+			item.ultDescription = props.label || null;
+		}
+		else if (props.snName) {
+			item.description = props.snName;
+			item.ultDescription = props.label || null;
+		}
+		else {
+			item.description = props.label || null;
+		}
+		if (item.description && props.fileExtension) {
+			item.fileName = item.destinationName = item.description + "." + props.fileExtension;
+		}
+		return item;
+	},
+	handleLinks: function(desc) {
+		let links = desc.get('links', Ci.nsIArray).enumerate();
+		let urls = [];
+		for (let link in new SimpleIterator(links, Ci.nsIProperties)) {
+			let props = new Properties(link, desc);
+			let item = null;
+			try {
+				urls.push(this.createItem(props));					
+			}
+			catch (ex) {
+				continue;
+			}
+		}
+		if (!urls.length) {
+			return;
+		}
+
+		let win = this.getWindow(new Properties(desc));
+		if (urls.length == 1) {
+			saveSingleItem(win, this.turbo, urls[0]);
+			return;
+		}
+		if (this.turbo) {
+			turboSaveLinkArray(win, urls, []);
+		}
+		else {
+			saveLinkArray(win, urls, []);
 		}
 	},
-	
-	getPropsString: function(props, key) {
-		try {
-			return props.get(key, Ci.nsISupportsString).toString();
-		}
-		catch(e) {
-			// no op
-		}
-		return null;		
-	}	
+	handleSingle: function(props)	{
+		props = new Properties(props);
+		let item = this.createItem(props);
+		saveSingleItem(this.getWindow(props), this.turbo, item);
+	}
 };
 
 const processors = [];
