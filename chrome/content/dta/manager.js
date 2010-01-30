@@ -1862,7 +1862,7 @@ QueueItem.prototype = {
 			while (this.activeChunks < this.maxChunks) {
 				if (this.preallocating && this.activeChunks) {
 					Debug.logString("not resuming download " + this + " because preallocating");
-					return false;
+					return true;
 				}
 				
 				// restart paused chunks
