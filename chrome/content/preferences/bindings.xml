@@ -201,7 +201,7 @@
 								<xul:radio label="&serverspane.unlimited;" value="unlimited" />
 								<xul:radio label="&serverspane.limited;" value="limited" />
 								<xul:hbox align="center">
-									<xul:scale min="1" max="2048" increment="4" pageincrement="16" anonid="speed" xbl:inherits="value=speed" />
+									<xul:textbox type="number" min="1" max="20480" size="5" increment="4" pageincrement="16" anonid="speed" xbl:inherits="value=speed" />
 									<xul:label class="serverlimit-speed-label serverlimit-scale-label" anonid="speedLabel" />
 								</xul:hbox>
 							</xul:radiogroup>
@@ -306,9 +306,6 @@
 						break;
 				}
 				this.refresh();
-			]]></handler>
-			<handler event="click" clickcount="2"><![CDATA[
-				this.cancelEdit();
 			]]></handler>
 		</handlers>
 	</binding>
