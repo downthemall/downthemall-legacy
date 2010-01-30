@@ -470,6 +470,9 @@ const Tree = {
 		}		
 	},
 	export: function T_export() {
+		let imex = {};
+		module('resource://dta/imex.jsm', imex);
+
 		try {
 			let fp = new FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
 			fp.appendFilters(Ci.nsIFilePicker.filterHTML | Ci.nsIFilePicker.filterText);
@@ -480,9 +483,9 @@ const Tree = {
 			let rv = fp.show();
 			if (rv == Ci.nsIFilePicker.returnOK || rv == Ci.nsIFilePicker.returnReplace) {
 				switch (fp.filterIndex) {
-					case 0: ImEx.exportToHtml(this.selected, fp.file); return;
-					case 1: ImEx.exportToTxt(this.selected, fp.file); return;
-					case 2: ImEx.exportToMetalink(this.selected, fp.file); return;
+					case 0: imex.exportToHtmlFile(this.selected, document, fp.file, Prefs.permissions); return;
+					case 1: imex.exportToTextFile(this.selected, fp.file, Prefs.permissions); return;
+					case 2: imex.exportToMetalinkFile(this.selected, document, fp.file, Prefs.permissions); return;
 				} 
 			}
 		}
@@ -502,8 +505,16 @@ const Tree = {
 			let rv = fp.show();
 			if (rv == Ci.nsIFilePicker.returnOK) {
 				switch (fp.filterIndex) {
-					case 0: ImEx.importFromTxt(fp.file); return;
-					case 1: ImEx.importFromMetalink(fp.file); return;
+					case 0: {
+						let im = {};
+						module('resource://dta/imex.jsm', im);
+						let links = im.parseTextfile(fp.file);
+						if (links.length) {
+							DTA.saveLinkArray(window, links, []);
+						}						
+						return;
+					}
+					case 1: Metalinker.handleFile(fp.file); return;
 				} 
 			}
 		}
