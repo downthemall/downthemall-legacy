@@ -400,80 +400,87 @@ SimpleIterator.prototype = {
  * regular JS properties.
  * @param properties (nsIProperties) initial properties
  */
-function Properties(properties) {
-	if (!properties) {
-		return;
-	}
-	let keys = properties.getKeys({});
-	for each (let key in keys) {
-		try {
-			let prop =  properties.get(key, Ci.nsISupports);
-			if (prop instanceof Ci.nsIVariant);
-			else if (prop instanceof Ci.nsISupportsPrimitive) {
-				prop = prop.QueryInterface(Ci.nsISupportsPrimitive);
-				switch(prop.type || prop.TYPE_STRING) {
-				case prop.TYPE_CSTRING:
-					prop = prop.QueryInterface(Ci.nsISupportsCString);
-					break;
-				case prop.TYPE_STRING:
-					prop = prop.QueryInterface(Ci.nsISupportsString);
-					break;
-				case prop.TYPE_PRBOOL:
-					prop = prop.QueryInterface(Ci.nsISupportsPRBool);
-					break;
-				case prop.TYPE_PRUINT8:
-					prop = prop.QueryInterface(Ci.nsISupportsPRUint8);
-					break;		
-				case prop.TYPE_PRUINT16:
-					prop = prop.QueryInterface(Ci.nsISupportsPRUint16);
-					break;					
-				case prop.TYPE_PRUINT32:
-					prop = prop.QueryInterface(Ci.nsISupportsPRUint32);
-					break;					
-				case prop.TYPE_PRUINT64:
-					prop = prop.QueryInterface(Ci.nsISupportsPRUint64);
-					break;					
-				case prop.TYPE_PRINT8:
-					prop = prop.QueryInterface(Ci.nsISupportsPRInt8);
-					break;		
-				case prop.TYPE_PRINT16:
-					prop = prop.QueryInterface(Ci.nsISupportsPRInt16);
-					break;					
-				case prop.TYPE_PRINT32:
-					prop = prop.QueryInterface(Ci.nsISupportsPRInt32);
-					break;					
-				case prop.TYPE_PRINT64:
-					prop = prop.QueryInterface(Ci.nsISupportsPRInt64);
-					break;
-				case prop.TYPE_FLOAT:
-					prop = prop.QueryInterface(Ci.nsISupportsFloat);
-					break;
-				case prop.TYPE_DOUBLE:
-					prop = prop.QueryInterface(Ci.nsISupportsDouble);
-					break;
-				case prop.TYPE_CHAR:
-					prop = prop.QueryInterface(Ci.nsISupportsChar);
-					break;
-				case prop.TYPE_PRTIME:
-					prop = prop.QueryInterface(Ci.nsISupportsPRTime);
-					break;
-				case TYPE_INTERFACE_POINTER:
-					prop = prop.QueryInterface(Ci.nsISupportsInterfacePointer);
-					break;
-				default:
-					throw new Exception("Invalid type");
-					break;
-				}
-				prop = prop.data;
-			}
-			key = key.replace(/[.-](.)/g, function(str, n) n.toUpperCase());
-			this[key] = prop;
-		}
-		catch (ex) {
-			Components.utils.reportError("Failed to convert property: " + ex);
-		}
+function Properties() {
+	for each (let p in Array.map(arguments, function(e) e)) {
+		this._parse(p);
 	}
 }
+Properties.prototype = {
+	_parse: function(properties) {
+		if (!properties) {
+			return;
+		}
+		let keys = properties.getKeys({});
+		for each (let key in keys) {
+			try {
+				let prop =  properties.get(key, Ci.nsISupports);
+				if (prop instanceof Ci.nsIVariant);
+				else if (prop instanceof Ci.nsISupportsPrimitive) {
+					prop = prop.QueryInterface(Ci.nsISupportsPrimitive);
+					switch(prop.type || prop.TYPE_STRING) {
+					case prop.TYPE_CSTRING:
+						prop = prop.QueryInterface(Ci.nsISupportsCString);
+						break;
+					case prop.TYPE_STRING:
+						prop = prop.QueryInterface(Ci.nsISupportsString);
+						break;
+					case prop.TYPE_PRBOOL:
+						prop = prop.QueryInterface(Ci.nsISupportsPRBool);
+						break;
+					case prop.TYPE_PRUINT8:
+						prop = prop.QueryInterface(Ci.nsISupportsPRUint8);
+						break;		
+					case prop.TYPE_PRUINT16:
+						prop = prop.QueryInterface(Ci.nsISupportsPRUint16);
+						break;					
+					case prop.TYPE_PRUINT32:
+						prop = prop.QueryInterface(Ci.nsISupportsPRUint32);
+						break;					
+					case prop.TYPE_PRUINT64:
+						prop = prop.QueryInterface(Ci.nsISupportsPRUint64);
+						break;					
+					case prop.TYPE_PRINT8:
+						prop = prop.QueryInterface(Ci.nsISupportsPRInt8);
+						break;		
+					case prop.TYPE_PRINT16:
+						prop = prop.QueryInterface(Ci.nsISupportsPRInt16);
+						break;					
+					case prop.TYPE_PRINT32:
+						prop = prop.QueryInterface(Ci.nsISupportsPRInt32);
+						break;					
+					case prop.TYPE_PRINT64:
+						prop = prop.QueryInterface(Ci.nsISupportsPRInt64);
+						break;
+					case prop.TYPE_FLOAT:
+						prop = prop.QueryInterface(Ci.nsISupportsFloat);
+						break;
+					case prop.TYPE_DOUBLE:
+						prop = prop.QueryInterface(Ci.nsISupportsDouble);
+						break;
+					case prop.TYPE_CHAR:
+						prop = prop.QueryInterface(Ci.nsISupportsChar);
+						break;
+					case prop.TYPE_PRTIME:
+						prop = prop.QueryInterface(Ci.nsISupportsPRTime);
+						break;
+					case TYPE_INTERFACE_POINTER:
+						prop = prop.QueryInterface(Ci.nsISupportsInterfacePointer);
+						break;
+					default:
+						throw new Exception("Invalid type");
+						break;
+					}
+					prop = prop.data;
+				}
+				key = key.replace(/[.-](.)/g, function(str, n) n.toUpperCase());
+				this[key] = prop;
+			}
+			catch (ex) {
+				Components.utils.reportError("Failed to convert property: " + ex);
+			}
+		}
+	}
+};
 
 /**
  * Mime quality param constructor
