@@ -215,10 +215,21 @@
 	function recognizeTextLinks() {
 		return DTA.Preferences.getExt("textlinks", true);
 	}
-	function getTextLinks(text, fakeLinks) {
+	function getTextLinks(set, fakeLinks) {
 		let _tl = {};			
 		Components.utils.import("resource://dta/textlinks.jsm", _tl);
-		return (getTextLinks = function(text, fakeLinks) _tl.getTextLinks(text, fakeLinks))(text, fakeLinks);
+		
+		return (getTextLinks = function(set, fakeLinks) {
+			let text = [];
+			for (let r = set.iterateNext(); r; r = set.iterateNext()) {
+				r = r.textContent.replace(/^\s+|\s+$/g, "");
+				if (r) {
+					text.push(r);
+				}
+			}
+			text = text.join(" \n");			
+			return _tl.getTextLinks(text, fakeLinks)
+		})(set, fakeLinks);
 	}
 
 	function selectButton() {
@@ -285,8 +296,25 @@
 					}
 				);
 				if (recognizeTextLinks()) {
-					let selText = new String(sel.toString());
-					links = links.concat(getTextLinks(selText, true));
+					let copy = aWin.document.createElement('div');
+					for (let i = 0; i < sel.rangeCount; ++i) {
+						let r = sel.getRangeAt(i);
+						copy.appendChild(r.cloneContents());
+					}
+				  let cdoc = document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
+				  copy = cdoc.adoptNode(copy);
+				  cdoc.documentElement.appendChild(cdoc.adoptNode(copy));
+				  delete copy;
+				  
+					let set = cdoc.evaluate(
+						'/*//*[not(*) and not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
+						copy.ownerDocument,
+						null,
+						XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+						null
+					);					
+					links = links.concat(getTextLinks(set, true));
+					delete cdoc;
 				}
 			}
 			else {
@@ -307,10 +335,14 @@
 					}
 				}
 				if (recognizeTextLinks()) {
-					let body = aWin.document.getElementsByTagName("body");
-					if (body.length) {
-						links = links.concat(getTextLinks(body[0].textContent, true));
-					}
+					let set = aWin.document.evaluate(
+						'//body//*[not(*) and not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
+						aWin.document,
+						null,
+						XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+						null
+					);
+					links = links.concat(getTextLinks(set, true));
 				}
 				
 				// we were asked to honor the selection, but we didn't actually have one.
@@ -753,6 +785,7 @@
 
 	let _keyActive =  false;
 	function onKeyDown(evt) {
+		return; // XXX reenable when polished
 		if (_keyActive) {
 			return;
 		}
@@ -763,6 +796,7 @@
 		}
 	}
 	function onKeyUp(evt) {
+		return; // XXX reenable when polished
 		if (!_keyActive) {
 			return;
 		}
@@ -774,6 +808,7 @@
 	}
 	
 	function onBlur(evt) {
+		return; // XXX reenable when polished
 		// when the window loses focus the keyup might not be received.
 		// better toggle back
 		if (!_keyActive) {
@@ -1103,7 +1138,6 @@
 						DTA.openManager(window);
 						break;
 					default:
-						alert(event.target.id);
 						break;
 					}
 				}, true);
@@ -1124,7 +1158,7 @@
 						findLinks(true, true);
 						break;
 					default:
-						alert(event.target.id);
+
 						break;
 					}
 				}, true);
