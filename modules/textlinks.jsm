@@ -52,7 +52,7 @@ const regFtp = /^f(?:x|t)p/i;
 // www (sans protocol) match
 const regWWW = /^www/i;
 // Right-trim (sanitize) link
-const regDTrim = /[._#-]+$/;
+const regDTrim = /[<>._#-]+$/;
 
 /**
  * Parses a text looking for any URLs with supported protocols
