@@ -85,7 +85,6 @@ var Tooltip = {
 				mr = true;
 			}
 			catch (ex) {
-				Debug.log("tt", ex);
 				Timers.createOneshot(25, this.initUpdate, this);				
 				return;
 			}
