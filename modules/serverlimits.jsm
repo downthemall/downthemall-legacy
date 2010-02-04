@@ -166,7 +166,7 @@ function SchedItem(host) {
 	else {
 		this.limit = globalConnections;
 	}
-	Debug.logString("SchedItem: " + host + ": " + this.limit);
+	//Debug.logString("SchedItem: " + host + ": " + this.limit);
 	this.n = 1;
 	this.downloads = [];
 };
