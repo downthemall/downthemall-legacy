@@ -427,10 +427,7 @@ let Dialog = {
 
 			let dir = this.ddDirectory.value;
 			let mask = this.ddRenaming.value;
-			let counter = Preferences.getExt("counter", 1);
-			if (++counter > 999) {
-				counter = 1;
-			}
+			let counter = DTA.currentSeries();
 			
 			function prepare(link, dir, counter, mask) {
 				link.dirSave = dir;
@@ -470,7 +467,6 @@ let Dialog = {
 			['ddDirectory', 'ddRenaming', 'ddFilter'].forEach(function (e) { Dialog[e].save(); });
 
 			// save the counter, queued state
-			Preferences.setExt("counter", counter);
 			Preferences.setExt("lastqueued", !start);
 			
 			let boxen = this.boxen;
@@ -478,6 +474,7 @@ let Dialog = {
 				boxen[i].filter.active = boxen[i].checked;
 			}
 			DTA.FilterManager.save();
+			DTA.incrementSeries();
 
 			// unload ourselves.
 			return this.unload();

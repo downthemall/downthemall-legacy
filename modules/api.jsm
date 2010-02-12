@@ -76,6 +76,10 @@ const Preferences = {};
 module("resource://dta/preferences.jsm", Preferences);
 const Mediator = {};
 module("resource://dta/mediator.jsm", Mediator);
+const Histories = {};
+module("resource://dta/historymanager.jsm", Histories);
+const pbm = {};
+module("resource://dta/pbm.jsm", pbm);
 
 ServiceGetter(this, "TextToSubURI", "@mozilla.org/intl/texttosuburi;1", "nsITextToSubURI");
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
@@ -416,7 +420,7 @@ function getRef(doc) {
 }	
 
 function getDropDownValue(name) {
-	let values = eval(Preferences.getExt(name, '[]'));
+	let values = Histories.getHistory(name).values;
 	return values.length ? values[0] : '';
 }
 
@@ -469,11 +473,7 @@ function turboSendLinksToManager(window, urlsArray) {
 		throw new Exception("missing required information");
 	}
 
-	var num = Preferences.getExt("counter", 0);
-	if (++num > 999) {
-		num = 1;
-	}
-	Preferences.setExt("counter", num);
+	let num = incrementSeries();
 
 	for (var i = 0; i < urlsArray.length; i++) {
 		urlsArray[i].mask = mask;
@@ -562,14 +562,34 @@ function openManager(window, quiet) {
 	return null;
 };
 
-function currentSeries() Preferences.getExt("counter", 1);
-
-function incrementSeries() {
-	let rv = Preferences.getExt("counter", 1);
-	let store = rv;
-	if (++store > 999) {
-		store = 1;
+const Series = {
+	_session: 1,
+	_persist: true,
+	enterPrivateBrowsing: function() {
+		Debug.logString("epbm");
+		this._session = 1;
+		this._persist = false;
+	},
+	exitPrivateBrowsing: function() {
+		this._persist = true;
+	},
+	get value() {
+		return this._persist ? Preferences.getExt("counter", 1) : this._session;
+	},
+	set value(nv) {
+		this._persist ? Preferences.setExt("counter", nv) : (this._session = nv);
+	},
+	increment: function() {
+		let rv = this.value;
+		let store = rv;
+		if (++store > 999) {
+			store = 1;
+		}
+		this.value = store;
+		return rv;
 	}
-	Preferences.setExt("counter", store);
-	return rv;
-}
+};
+pbm.registerCallbacks(Series);
+
+function currentSeries() Series.value;
+function incrementSeries() Series.increment();
