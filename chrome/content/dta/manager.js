@@ -478,7 +478,13 @@ const Dialog = {
 		this.reinit();
 	},
 	exitPrivateBrowsing: function() {
-		this.enterPrivateBrowsing();
+		Tree.updateAll(function(download) {
+			if (!download.is(COMPLETE)) {
+				download.cancel();
+			}
+			return true;
+		});
+		this.reinit();
 	},
 	canEnterPrivateBrowsing: function() {
 		if (Tree.some(function(d) { return d.started && !d.resumable && d.isOf(RUNNING); })) {
@@ -493,8 +499,18 @@ const Dialog = {
 		}
 		return (this._forceClose = true);
 	},
-	canLeavePrivateBrowsing: function() {
-		return this.canEnterPrivateBrowsing();
+	canExitPrivateBrowsing: function() {
+		if (Tree.some(function(d) { return d.isOf(RUNNING, QUEUED, PAUSED); })) {
+			var rv = Prompts.confirmYN(
+				window,
+				_("confleavepbm"),
+				_("nonleavepbm")
+			);
+			if (rv) {
+				return false;
+			}
+		}
+		return (this._forceClose = true);
 	},
 	
 	openAdd: function D_openAdd() {
