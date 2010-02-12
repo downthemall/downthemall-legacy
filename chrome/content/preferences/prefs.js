@@ -55,13 +55,8 @@ var Privacy = {
 			$("butShowLog", 'butDelLog', 'butRevealLog')
 				.forEach(function(e) { e.disabled = log; });
 			
-			var history = uneval(Preferences.getExt("filter", ''));
-			history = !history || !history.length;
-			$("butFiltDel").disabled = history;
-				
-			history = uneval(Preferences.getExt("directory", ''));
-			history = !history || !history.length;
-			$("butFoldDel").disabled = history;
+			$("butFiltDel").disabled = !DTA.getDropDownValue("filter");
+			$("butFoldDel").disabled = !DTA.getDropDownValue("directory");
 		}
 		catch(ex) {
 			Debug.log("privacyLoad(): ", ex);
