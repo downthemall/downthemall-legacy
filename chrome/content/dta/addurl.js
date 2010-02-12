@@ -219,10 +219,7 @@ var Dialog = {
 			return false;
 		}		
 
-		var num = Preferences.getExt("counter", 0);
-		if (++num > 999) {
-			num = 1;
-		}			
+		let num = DTA.currentSeries();
 		
 		try {
 			var batch = new BatchGenerator(url);
@@ -261,7 +258,7 @@ var Dialog = {
 		}
 		DTA.sendLinksToManager(window, start, batch);
 
-		Preferences.setExt("counter", num);
+		DTA.incrementCurrentSeries();
 		Preferences.setExt("lastqueued", !start);
 	
 		['ddRenaming', 'ddDirectory'].forEach(function(e) { Dialog[e].save(); });
