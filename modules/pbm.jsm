@@ -129,7 +129,7 @@ if ('nsIPrivateBrowsingService' in Ci) {
 			ps.removeObserver(this, "private-browsing");
 			os.removeObserver(this, "private-browsing-cancel-vote");
 			os.removeObserver(this, "quit-application");
-			delete _callbacks;
+			_callbacks = [];
 			delete os;
 		}
 	};
