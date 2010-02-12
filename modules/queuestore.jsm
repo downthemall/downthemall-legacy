@@ -48,41 +48,56 @@ const DB_FILE_BROKEN = 'dta_queue.broken';
 const DB_FILE_BAK = DB_FILE + ".bak";
 const DB_VERSION = 1;
 
+let pbm = {};
 module("resource://dta/timers.jsm");
+module("resource://dta/pbm.jsm", pbm);
 module("resource://dta/utils.jsm");
 
 const Timers = new TimerManager();
 
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 ServiceGetter(this, "Storage", "@mozilla.org/storage/service;1", "mozIStorageService");
-var _connection = null;
-var _saveQueue = {};
-var _timer = 0;
+let _connection = null;
+let _saveQueue = {};
+let _timer = 0;
 
-var QueueStore = {
-	init: function() {
-		Debug.logString("QueueStore: initialzing");
+const QueueStore = {
+	_initialized: false,
+	init: function(pb) {
+		if (this._initialized) {
+			return;
+		}
+		this._initialized = true;
+		
+		Debug.logString("QueueStore: initialzing in " + (pb ? "private" : "normal") + " mode");
 		let db = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
 		db.append(DB_FILE);
 		
 		try {
-			_connection = Storage.openDatabase(db);
+			if (pb) {
+				_connection = Storage.openSpecialDatabase("memory");
+			}
+			else {
+				_connection = Storage.openDatabase(db);
+			}
 		}
 		catch (ex) {
-			Debug.log("DB appears broken; backing up and restart", ex);
-			try {
-				let cbroken = db.clone();
-				cbroken.leafName = DB_FILE_BROKEN;
-				if (cbroken.exists()) {
-					cbroken.remove(false);
+			if (!pb) {
+				Debug.log("DB appears broken; backing up and restart", ex);
+				try {
+					let cbroken = db.clone();
+					cbroken.leafName = DB_FILE_BROKEN;
+					if (cbroken.exists()) {
+						cbroken.remove(false);
+					}
 				}
+				catch (iex) {
+					Debug.log("Couldn't remove old broken queue file", iex);
+				}
+				let broken = db.clone();
+				broken.moveTo(null, DB_FILE_BROKEN);
+				_connection = Storage.openDatabase(db);
 			}
-			catch (iex) {
-				Debug.log("Couldn't remove old broken queue file", iex);
-			}
-			let broken = db.clone();
-			broken.moveTo(null, DB_FILE_BROKEN);
-			_connection = Storage.openDatabase(db);
 		}
 			
 		try {
@@ -103,7 +118,9 @@ var QueueStore = {
 			// no-op
 		}
 		try {
-			_connection.executeSimpleSQL("PRAGMA journal_mode = MEMORY");
+			if (!pb) {
+				_connection.executeSimpleSQL("PRAGMA journal_mode = MEMORY");
+			}
 			_connection.executeSimpleSQL("PRAGMA synchronous = NORMAL");
 			this._addStmt = _connection.createStatement('INSERT INTO queue (pos, item) VALUES (?1, ?2)');
 			this._saveStmt = _connection.createStatement('UPDATE queue SET item = ?2 WHERE uuid = ?1');
@@ -113,10 +130,14 @@ var QueueStore = {
 		catch (ex) {
 			Debug.log("SQLite", _connection.lastErrorString);
 		}
-		Debug.logString("QueueStore: done initialzing");
+		Debug.logString("QueueStore: done initialzing");		
 	},
 	shutdown: function() {
-		// fnish any pending operations
+		if (!this._initialized) {
+			return;
+		}
+		this._initialized = false;
+		// finish any pending operations
 		if (_timer) {
 			try {
 				_timer.cancel();
@@ -143,12 +164,24 @@ var QueueStore = {
 		}
 		try {
 			_connection.close();
-			delete _connection;
+			_connection = null;
 		}
 		catch (ex) {
 			Debug.log("Cannot close!", ex);
 		}
 		Debug.logString("QueueStore: shutdown complete!");
+	},
+	reinit: function(pb) {
+		this.shutdown();
+		this.init(pb);
+	},
+	enterPrivateBrowsing: function() {
+		Debug.logString("QueueManager: entering pbm");
+		this.reinit(true);
+	},
+	exitPrivateBrowsing: function() {
+		Debug.logString("QueueManager: exiting pbm");
+		this.reinit(false);
 	},
 	beginUpdate: function() {
 		if (_connection.transactionInProgress) {
@@ -274,19 +307,21 @@ var ShutdownObserver = {
 	},
 	uninstall: function() {
 		this.obs.removeObserver(this, SHUTDOWN_TOPIC);
+		pbm.unregisterCallbacks(QueueStore);
 	},
 	observe: function(subject, topic, data) {
 		if (topic == SHUTDOWN_TOPIC) {
+			this.uninstall();
 			try {
 				QueueStore.shutdown();
 			}
 			catch (ex) {
 				Debug.log("Failed to shutdown QueueStore", ex);
 			}
-			this.uninstall();
 		}
 	}
 };
 
+pbm.registerCallbacks(QueueStore);
 QueueStore.init();
 ShutdownObserver.install();
