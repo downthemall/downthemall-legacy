@@ -73,7 +73,7 @@ const CHUNK_BUFFER_SIZE = 96 * 1024;
 const REFRESH_FREQ = 1000;
 const STREAMS_FREQ = 250;
 
-let Prompts = {}, Preallocator = {}, Limits = {}, JSONCompat = {};
+let Prompts = {}, Preallocator = {}, Limits = {}, JSONCompat = {}, PrivateBrowsing = {};
 module('resource://dta/prompts.jsm', Prompts);
 module('resource://dta/speedstats.jsm');
 module('resource://dta/preallocator.jsm', Preallocator);
@@ -87,6 +87,8 @@ module('resource://dta/urlmanager.jsm');
 module('resource://dta/visitormanager.jsm');
 module('resource://dta/decompressor.jsm');
 module('resource://dta/verificator.jsm');
+module('resource://dta/bytebucket.jsm');
+module('resource://dta/pbm.jsm', PrivateBrowsing);
 
 const AuthPrompts = new LoggedPrompter(window);
 
@@ -222,7 +224,6 @@ const Dialog = {
 			
 			$('tbp_' + $('tools').getAttribute('mode')).setAttribute('checked', "true");
 		})();
-		Components.utils.import('resource://dta/bytebucket.jsm');
 		GlobalBucket = new ByteBucket(Prefs.speedLimit, 1.3);
 		$('listSpeeds').limit = Prefs.speedLimit;
 		
@@ -299,7 +300,11 @@ const Dialog = {
 	
 	_loadDownloads: function D__loadDownloads() {
 		this._loading = $('loading');
+		if (!this._loading) {
+			this._loading = {};
+		}
 		Tree.beginUpdate();
+		Tree.clear();
 		this._brokenDownloads = [];
 		Debug.logString("loading of the queue started!");
 		this._loader = new CoThreadListWalker(
@@ -461,6 +466,13 @@ const Dialog = {
 		this.start();
 	},	
 	
+	enterPrivateBrowsing: function() {
+		this.reinit();
+	},
+	exitPrivateBrowsing: function() {
+		this.reinit();
+	},
+	
 	openAdd: function D_openAdd() {
 		window.openDialog(
 			'chrome://dta/content/dta/addurl.xul',
@@ -490,6 +502,12 @@ const Dialog = {
 	},
 	
 	start: function D_start() {
+		if (this._initialized) {
+			return;
+		}
+
+		PrivateBrowsing.registerCallbacks(this);
+		
 		if ("arguments" in window) {
 			startDownloads(window.arguments[0], window.arguments[1]);
 		}
@@ -504,6 +522,19 @@ const Dialog = {
 		Timers.createRepeating(10000, this.saveRunning, this);
 		
 		$('loadingbox').parentNode.removeChild($('loadingbox'));
+	},
+	
+	reinit: function() {
+		if (!this._initialized) {
+			return;
+		}
+		try {
+			Debug.logString("reinit initiated");
+			Timers.createOneshot(10, this._loadDownloads, this);
+		}
+		catch (ex) {
+			Debug.log("Failed to reload any downloads from queuefile", ex);
+		}
 	},
 	
 	observe: function D_observe(subject, topic, data) {
