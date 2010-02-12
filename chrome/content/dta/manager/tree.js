@@ -70,11 +70,10 @@ const Tree = {
 		this.refreshTools();
 	},
 	clear: function() {
+		Debug.logString("Tree: clearing");
 		this.beginUpdate();
-		if (this._downloads.length) {
-			this._box.rowCountChanged(0, -this._downloads.length);
-		}
 		this._downloads = [];
+		this.elem.view = this;
 		this.endUpdate();
 	},
 
@@ -127,9 +126,11 @@ const Tree = {
 
 	// will grab the "icon" for a cell.
 	getImageSrc: function T_getImageSrc(idx, col) {
+		try {
 		switch (col.index) {
 			case 0: return this._downloads[idx].icon;
 		}
+		}catch (ex) { Debug.log("inv idx " + idx, ex); }
 		return null;
 	},
 	getProgressMode : function T_getProgressMode(idx, col) {

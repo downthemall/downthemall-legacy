@@ -154,7 +154,13 @@ const Dialog = {
 
 		(function initListeners() {
 			addEventListener('unload', function() Dialog.unload(), false);
-			addEventListener('close', function() Dialog.close(), true);
+			addEventListener('close', function(evt) {
+				let rv = Dialog.close();
+				if (!rv) {
+					evt.preventDefault();
+				}
+				return rv;
+			}, true);
 			addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA), true);
 			addEventListener('drop', function(event) nsDragAndDrop.drop(event, DTA_DropDTA), true);
 			
@@ -463,6 +469,8 @@ const Dialog = {
 		delete this._brokenDownloads;
 		delete this._loading;
 		
+		this._updTimer = Timers.createRepeating(REFRESH_FREQ, this.checkDownloads, this, true);		
+		
 		this.start();
 	},	
 	
@@ -470,7 +478,23 @@ const Dialog = {
 		this.reinit();
 	},
 	exitPrivateBrowsing: function() {
-		this.reinit();
+		this.enterPrivateBrowsing();
+	},
+	canEnterPrivateBrowsing: function() {
+		if (Tree.some(function(d) { return d.started && !d.resumable && d.isOf(RUNNING); })) {
+			var rv = Prompts.confirmYN(
+				window,
+				_("confpbm"),
+				_("nonrespbm")
+			);
+			if (rv) {
+				return false;
+			}
+		}
+		return (this._forceClose = true);
+	},
+	canLeavePrivateBrowsing: function() {
+		return this.canEnterPrivateBrowsing();
 	},
 	
 	openAdd: function D_openAdd() {
@@ -517,7 +541,6 @@ const Dialog = {
 				this.run(d);
 			}
 		}
-		this._updTimer = Timers.createRepeating(REFRESH_FREQ, this.checkDownloads, this, true);
 		Timers.createRepeating(100, this.refreshWritten, this, true);
 		Timers.createRepeating(10000, this.saveRunning, this);
 		
@@ -530,11 +553,20 @@ const Dialog = {
 		}
 		try {
 			Debug.logString("reinit initiated");
-			Timers.createOneshot(10, this._loadDownloads, this);
+			let tp = this;
+			Timers.createOneshot(10, function() tp.shutdown(tp._continueReinit), this);
 		}
 		catch (ex) {
 			Debug.log("Failed to reload any downloads from queuefile", ex);
 		}
+	},
+	_continueReinit: function() {
+		this._running = [];
+		delete this._forceQuit;
+		this._speeds.clear();
+		this.offlineForced = false;
+		
+		this._loadDownloads();
 	},
 	
 	observe: function D_observe(subject, topic, data) {
@@ -816,7 +848,7 @@ const Dialog = {
 			var rv = Prompts.confirmYN(
 				window,
 				_("confclose"),
-				_("nonres")
+				_("nonresclose")
 			);
 			if (rv) {
 				return false;
@@ -824,7 +856,13 @@ const Dialog = {
 		}
 		return (this._forceClose = true);
 	},
-	close: function D_close() {
+	close: function() {
+		this.shutdown(this._doneClosing);
+	},
+	_doneClosing: function() {
+		closeWindow(true);
+	},
+	shutdown: function D_close(callback) {
 		Debug.logString("Close request");
 		if (!this._initialized) {
 			Debug.logString("not initialized. Going down immediately!");
@@ -832,9 +870,10 @@ const Dialog = {
 		}
 		if (!this._forceClose && !this._canClose()) {
 			delete this._forceClose;
+			Debug.logString("Not going to close!");
 			return false;
 		}
-		this.offline = true;
+		this.offlineForced = true;
 
 		// stop everything!
 		// enumerate everything we'll have to wait for!
@@ -873,12 +912,13 @@ const Dialog = {
 		if (chunks || finishing) {
 			if (this._safeCloseAttempts < 20) {
 				++this._safeCloseAttempts;
-				Timers.createOneshot(250, this.close, this);				
+				let tp = this;
+				Timers.createOneshot(250, function() tp.shutdown(callback), this);				
 				return false;
 			}
 			Debug.logString("Going down even if queue was not probably closed yet!");
 		}
-		closeWindow(true);
+		callback.call(this);
 		return true;
 	},
 	_cleanTmpDir: function D__cleanTmpDir() {
@@ -913,6 +953,7 @@ const Dialog = {
 	_safeCloseAttempts: 0,
 
 	unload: function D_unload() {
+		PrivateBrowsing.unregisterCallbacks(this);
 		GlobalBucket.kill();
 		Limits.killServerBuckets();
 		

@@ -115,11 +115,11 @@ if ('nsIPrivateBrowsingService' in Ci) {
 				// already canceled
 				return;
 			}
-			cancel.data = _callback.some(function(c) {
+			cancel.data = !_callbacks.every(function(c) {
 				if (prop in c) {
-					return !c[prop].call(c);
+					return c[prop].call(c);
 				}
-				return false;				
+				return true;				
 			});
 		},
 		notify: function(prop) {
