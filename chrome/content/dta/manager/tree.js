@@ -69,6 +69,14 @@ const Tree = {
 		
 		this.refreshTools();
 	},
+	clear: function() {
+		this.beginUpdate();
+		if (this._downloads.length) {
+			this._box.rowCountChanged(0, -this._downloads.length);
+		}
+		this._downloads = [];
+		this.endUpdate();
+	},
 
 	/*
 	 * actual nsITreeView follows
