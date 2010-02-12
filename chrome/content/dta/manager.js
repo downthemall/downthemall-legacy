@@ -500,7 +500,7 @@ const Dialog = {
 		return (this._forceClose = true);
 	},
 	canExitPrivateBrowsing: function() {
-		if (Tree.some(function(d) { return d.isOf(RUNNING, QUEUED, PAUSED); })) {
+		if (Tree.some(function(d) { return d.isOf(RUNNING, QUEUED, PAUSED, FINISHING); })) {
 			var rv = Prompts.confirmYN(
 				window,
 				_("confleavepbm"),
