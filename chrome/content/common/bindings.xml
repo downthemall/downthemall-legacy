@@ -102,6 +102,9 @@
 		<implementation>
 			<constructor><![CDATA[
 				try {
+					var hist = {};
+					Components.utils.import("resource://dta/historymanager.jsm", hist);
+					this.hist = hist.getHistory(this._pref, this.getAttribute('default'));					
 					this._load();
 				}
 				catch (ex) {
@@ -116,30 +119,15 @@
 			<property name="_pref" onget="return this.getAttribute('preference')" />
 			<property name="_values">
 				<getter><![CDATA[
-					var rv = this.getAttribute('default');
-					if (rv.length == 0) {
-						rv = '[]';
-					}
-					if (rv[0] != '[') {
-						rv = '[\'' + rv + '\']';
-					}
-					try {
-						return eval(DTA.Preferences.getExt(this._pref, rv));
-					}
-					catch (ex) {
-						DTA.Debug.log("Cannot initialize from preferences:", ex);
-						return eval(rv);
-					}
+					return this.hist.values;				
 				]]></getter>
 			</property>
-			<property name="_max"
-				onget="return DTA.Preferences.getExt('history', 5);" />
 			<property name="inputField" onget="return this._list.inputField" />
 			<property name="value" onget="return this._list.label">
 				<setter>
-					val = String(val);
+					val = val.toString();
 					if (this.value == val) {
-					return;
+						return;
 					}
 					this._list.label = val;
 					this._modified = true;
@@ -182,25 +170,12 @@
 					if ((!this.modified && this._list.selectedIndex == 0) || (n.length == 0 && !this.hasAttribute('allowempty'))) {
 						return;
 					}
-					var inValues = this._values;
-					var max = this._max;
-					var outValues = [n];
-					for (var i = 0; i < inValues.length && i < max - 1 && outValues.length < max; ++i) {
-						if (n != inValues[i] && inValues[i].length) {
-							outValues.push(inValues[i]);
-						}
-					}
-					try {
-						DTA.Preferences.setExt(this._pref, outValues.toSource());
-					}
-					catch (ex) {
-						DTA.Debug.log("Cannot save saveddropdown", ex);
-					} 
+					this.hist.push(n);
 				]]></body>
 			</method>
 			<method name="clear">
 				<body>
-					DTA.Preferences.resetExt(this._pref);
+					this.hist.reset();
 				</body>
 			</method>
 		</implementation>
