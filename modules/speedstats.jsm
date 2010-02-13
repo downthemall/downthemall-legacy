@@ -109,7 +109,8 @@ SpeedStats.prototype = {
 		if (this._lastTime) {
 			let elapsed = (time - this._lastTime) / 1000;
 			received = bytes - this._lastBytes;
-			this._speeds.push(Math.round(received / elapsed));
+			let last = Math.round(received / elapsed);
+			this._speeds.push(last);
 			if (this._speeds.length > this._maxSpeeds) {
 				this._speeds.shift();
 			}
@@ -118,8 +119,10 @@ SpeedStats.prototype = {
 			let sweight = weights.reduce(function(e, p) e + p);
 
 			this._avg = 0;
-			this._speeds.forEach(function(e, i) this._avg += e * weights[i], this);
-			this._avg = Math.round(this._avg / sweight);
+			if (last != 0) {
+				this._speeds.forEach(function(e, i) this._avg += e * weights[i], this);
+				this._avg = Math.round(this._avg / sweight);
+			}
 		}
 		this._lastTime = time;
 		this._lastBytes = bytes;
