@@ -352,6 +352,7 @@ FilterManager.prototype = {
 	},
 
 	reload: function FM_reload() {
+		debug("FM: reload requested");
 		if (!this._mustReload) {
 			return;
 		}
@@ -409,6 +410,7 @@ FilterManager.prototype = {
 		this._active = this._all.filter(function(f) { return f.active; });
 		
 		// notify all observers
+		debug("FM: reload done");
 		this._os.notifyObservers(this, TOPIC_FILTERSCHANGED, null);
 	},
 
@@ -497,7 +499,7 @@ FilterManager.prototype = {
 		if (topic == 'app-startup') {
 			this._os.addObserver(this, 'final-ui-startup', true);
 		}
-		else if (topic = "final-ui-startup") {
+		else if (topic == "final-ui-startup") {
 			this._os.removeObserver(this, 'final-ui-startup');
 			this.init();
 		}
