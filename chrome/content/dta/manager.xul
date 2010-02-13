@@ -31,7 +31,7 @@
 	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
 
-	<script type="application/javascript" src="chrome://dta/content/dta/manager.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/manager.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/tooltip.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/tree.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/tray.js" />
