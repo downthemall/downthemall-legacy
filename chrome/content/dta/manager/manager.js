@@ -105,7 +105,8 @@ const Dialog = {
 	_observes: [
 		'quit-application-requested',
 		'quit-application-granted',
-		'network:offline-status-changed'
+		'network:offline-status-changed',
+		'DTA:filterschanged'
 	],
 	_initialized: false,
 	_autoRetrying: [],
@@ -603,6 +604,9 @@ const Dialog = {
 		}
 		else if (topic == 'network:offline-status-changed') {
 			this.offline = data == "offline";
+		}
+		else if (topic == 'DTA:filterschanged') {
+			Tree.assembleMenus();
 		}
 	},
 	refresh: function D_refresh() {
