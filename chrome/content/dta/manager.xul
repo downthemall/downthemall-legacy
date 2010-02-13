@@ -66,6 +66,7 @@
 		<command id="cmdSelectInv" oncommand="Tree.selectInv();" />
 
 		<command id="cmdRemoveSelected" oncommand="Tree.removeWithConfirmation();" />
+		<command id="cmdRemoveAll" oncommand="Tree.removeAllWithConfirmation();" />
 		<command id="cmdRemoveCompleted" oncommand="Tree.removeCompleted();" />
 		<command id="cmdRemoveDupes" oncommand="Tree.removeDupes();" />
 
@@ -141,8 +142,22 @@
 			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" key="kPause" command="cmdPause" />
 			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" key="kCancel" command="cmdCancel" />
 			<menuseparator />
-			<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeCompleted.label;" key="kRemoveCompleted" command="cmdRemoveCompleted" />
-			<menuitem id="remove" class="menuitem-iconic" label="&remove.label;" key="kRemoveSelected" command="cmdRemoveSelected" />
+			<menu id="removeCompleted" class="menu-iconic" label="&removeCompleted.label;">
+				<menupopup id="removeCompletedPopup">
+					<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeAll.label;" key="kRemoveCompleted" command="cmdRemoveCompleted" />
+					<menuseparator/>
+				</menupopup>
+			</menu>
+			<menu id="remove" class="menu-iconic" label="&removemenu.label;">
+				<menupopup id="removePopup">
+					<menuitem id="removeselected" class="menuitem-iconic" label="&removeselected.label;" key="kRemoveSelected" command="cmdRemoveSelected" />
+					<menuitem id="cleangone" class="menuitem-iconic" label="&removeGone.label;" key="kCleanGone" command="cmdCleanGone" />					
+					<menuitem id="removeDupes" class="menuitem-iconic" label="&removeDupes.label;" command="cmdRemoveDupes" />					
+					<menuseparator/>
+					<menuitem id="removeAll" class="menuitem-iconic" label="&removeAll.label;" command="cmdRemoveAll" />
+					<menuseparator/>
+				</menupopup>
+			</menu>
 			<menuseparator />
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" key="kSelectAll" command="cmdSelectAll" />
 			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" key="kSelectInv" command="cmdSelectInv" />
@@ -162,9 +177,6 @@
 					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" command="cmdRemoveChunk" />
 					<menuseparator />
 					<menuitem id="mirrors" class="menuitem-iconic" label="&mirrors.label;" tooltiptext="&mirrors.tooltip;" command="cmdMirrors" />
-					<menuseparator />
-					<menuitem id="cleangone" class="menuitem-iconic" label="&removeGone.label;" key="kCleanGone" command="cmdCleanGone" />
-					<menuitem id="removeDupes" class="menuitem-iconic" label="&removeDupes.label;" command="cmdRemoveDupes" />
 					<menuseparator />
 					<menuitem id="force" class="menuitem-iconic" label="&force.label;" key="kForceStart" command="cmdForceStart" />
 					<menuseparator />
