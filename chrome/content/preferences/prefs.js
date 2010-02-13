@@ -247,6 +247,7 @@ var Filters = {
 			}
 			else if (old.length == this._filters.length && index != -1) {
 				this.selection.select(index);
+				this._box.scrollToRow(index);
 			}
 			else if (this._filters.length){
 				this.selection.select(0);
