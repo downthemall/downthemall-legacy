@@ -882,6 +882,7 @@ const Dialog = {
 		Debug.logString("Close request");
 		if (!this._initialized) {
 			Debug.logString("not initialized. Going down immediately!");
+			callback.call(this);
 			return true;
 		}
 		if (!this._forceClose && !this._canClose()) {
