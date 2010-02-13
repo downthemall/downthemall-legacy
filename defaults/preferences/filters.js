@@ -46,7 +46,7 @@ pref("extensions.dta.filters.deffilter-arch.active", false);
 pref("extensions.dta.filters.deffilter-arch.type", 1);
 
 pref("extensions.dta.filters.deffilter-vid.label", "Videos");
-pref("extensions.dta.filters.deffilter-vid.test", "/\\.(?:mpeg|ra?m|avi|mp(?:g|e|4)|mov|divx|asf|qt|wmv|m\dv|rv|vob|asx|ogm)$/i");
+pref("extensions.dta.filters.deffilter-vid.test", "/\\.(?:mpeg|ra?m|avi|mp(?:g|e|4)|mov|divx|asf|qt|wmv|m\dv|rv|vob|asx|ogm|ogg)$/i");
 pref("extensions.dta.filters.deffilter-vid.active", true);
 pref("extensions.dta.filters.deffilter-vid.type", 3);
 
@@ -62,8 +62,13 @@ pref("extensions.dta.filters.deffilter-img.type", 3);
 
 pref("extensions.dta.filters.deffilter-bin.label", "Software");
 pref("extensions.dta.filters.deffilter-bin.test", "/\\.(?:exe|msi|dmg|bin|xpi|iso)$/i");
-pref("extensions.dta.filters.deffilter-bin.active", true);
+pref("extensions.dta.filters.deffilter-bin.active", false);
 pref("extensions.dta.filters.deffilter-bin.type", 1);
+
+pref("extensions.dta.filters.deffilter-doc.label", "Documents");
+pref("extensions.dta.filters.deffilter-doc.test", "/\\.(?:pdf|xlsx?|docx?|odf|odt|rtf)$/i");
+pref("extensions.dta.filters.deffilter-doc.active", false);
+pref("extensions.dta.filters.deffilter-doc.type", 1);
 
 pref("extensions.dta.filters.deffilter-imgjpg.label", "JPEG");
 pref("extensions.dta.filters.deffilter-imgjpg.test", "/\\.jp(e?g|e|2)$/i");
