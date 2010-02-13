@@ -32,9 +32,11 @@
 <!ENTITY pause.label "Pause">
 <!ENTITY resume.label "Resume">
 <!ENTITY cancel.label "Cancel">
-<!ENTITY remove.label "Remove selected downloads">
+<!ENTITY removemenu.label "Remove tasks">
+<!ENTITY removeselected.label "Selected">
 <!ENTITY removeCompleted.label "Remove completed tasks">
-<!ENTITY removeDupes.label "Remove duplicates">
+<!ENTITY removeAll.label "All">
+<!ENTITY removeDupes.label "Duplicates">
 <!ENTITY removeGone.label "Clean gone files">
 <!ENTITY advanced.label "Advanced">
 <!ENTITY addchunk.label "One more segment">

@@ -66,8 +66,30 @@ const Tree = {
 			this['_' + e] = this._as.getAtom(e);
 		}
 		this.elem.view = this;	
-		
+		this.assembleMenus();
 		this.refreshTools();
+	},
+	assembleMenus: function() {
+		for each (let popup in $('removeCompletedPopup', 'removePopup')) {
+			while (popup.lastChild) {
+				if (popup.lastChild.localName == 'menuseparator') {
+					break;
+				}
+				popup.removeChild(popup.lastChild);
+			}
+			let id = popup.id;
+			for (let f in new Utils.SimpleIterator(DTA.FilterManager.enumAll(), Ci.dtaIFilter)) {
+				if (f.id == 'deffilter-all') {
+					continue;
+				}
+				let filter = f; // clone for closure
+				let mi = document.createElementNS(popup.namespaceURI, 'menuitem');
+				mi.setAttribute('label', filter.label);
+				mi.setAttribute('class', 'menuitem-non-iconic');
+				popup.appendChild(mi);
+				mi.addEventListener('command', function() Tree.removeByFilter(filter, id), true);
+			}
+		}
 	},
 	clear: function() {
 		Debug.logString("Tree: clearing");
@@ -294,6 +316,65 @@ const Tree = {
 			}
 		}
 		this.remove(null, true);
+	},
+	removeAllWithConfirmation: function T_removeAllWithConfirmation() {
+		let res = Prompts.confirm(window, _('removetitle'), _('removeallquestion'), Prompts.YES, Prompts.NO);
+		if (res) {
+			return;
+		}
+		this.remove(this._downloads.map(function(e) e), true);
+	},
+	removeByFilter: function T_removeByFilter(filter, id) {
+		if (!(filter instanceof Ci.dtaIFilter)) {
+			throw new Exception("Invalid access");
+		}
+		
+		let pref = null;
+		let mask = -1;
+		let msg = null;
+		switch (id) {
+		case 'removePopup':
+			pref = 'confirmremove.' + filter.id;
+			msg = 'removefilterquestion';
+			mask = COMPLETE | QUEUED | CANCELED | PAUSED;
+			break;
+		case 'removeCompletedPopup':
+			pref = 'confirmremovecompleted.' + filter.id;
+			msg = 'removecompletedfilterquestion';
+			mask = COMPLETE;
+			break;
+		default:
+			throw new Exception("Invalid access");
+		}
+		
+		if (Preferences.getExt(pref, true)) {
+			let res = Prompts.confirm(
+				window,
+				_('removetitle'),
+				_(msg, [filter.label]),
+				Prompts.YES, Prompts.NO,
+				null, 0, false, _('removecheck'));
+			if (res.checked) {
+				Preferences.setExt(pref, false);
+			}
+			if (res.button) {
+				return;
+			}
+		}		
+		
+		let downloads = [];
+		for (let d in this.all) {
+			if (!(d.state & mask)) {
+				continue;
+			}
+			if (!filter.match(d.urlManager.url) && !filter.match(d.destinationName)) {
+				continue;
+			}
+			downloads.push(d);
+		}
+		if (downloads.length) {
+			Tree.remove(downloads);
+		}
 	},
 	remove: function T_remove(downloads, performJump) {
 		if (downloads && !(downloads instanceof Array)) {
