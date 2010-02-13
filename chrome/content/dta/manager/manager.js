@@ -971,7 +971,9 @@ const Dialog = {
 
 	unload: function D_unload() {
 		PrivateBrowsing.unregisterCallbacks(this);
-		GlobalBucket.kill();
+		if (GlobalBucket) { 
+			GlobalBucket.kill();
+		}
 		Limits.killServerBuckets();
 		
 		Timers.killAllTimers();
