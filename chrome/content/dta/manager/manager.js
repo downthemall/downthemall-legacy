@@ -1835,7 +1835,6 @@ QueueItem.prototype = {
 		return this.preallocating;
 	},
 	cancelPreallocation: function() {
-		Debug.logString("pa: cancel requested");
 		if (this._preallocator) {
 			Debug.logString("pa: going to cancel");
 			this._preallocator.cancel();
