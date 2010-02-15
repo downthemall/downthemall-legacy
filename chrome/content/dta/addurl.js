@@ -258,7 +258,7 @@ var Dialog = {
 		}
 		DTA.sendLinksToManager(window, start, batch);
 
-		DTA.incrementCurrentSeries();
+		DTA.incrementSeries();
 		Preferences.setExt("lastqueued", !start);
 	
 		['ddRenaming', 'ddDirectory'].forEach(function(e) { Dialog[e].save(); });
