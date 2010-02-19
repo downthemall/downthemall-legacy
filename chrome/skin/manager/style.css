@@ -348,7 +348,6 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 #speedLimit,
 #perDownloadSpeedLimit .menu-iconic-icon {
 	-moz-image-region: rect(48px,144px,64px,128px);
-	
 }
 #speedLimit[value="-1"],
 #perDownloadSpeedLimit[value="-1"] .menu-iconic-icon {
@@ -475,8 +474,10 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 /* menuitem dupes */
 
 #removeDupes .menu-iconic-icon {
-	list-style-image: url(chrome://dta/skin/manager/dupes.png);
-	-moz-image-region: auto;
+	-moz-image-region: rect(64px,96px,80px,80px);
+}
+#removeDupes[disabled="true"] .menu-iconic-icon {
+	-moz-image-region: rect(80px,96px,96px,80px);
 }
 
 .menu-iconic-accel {
