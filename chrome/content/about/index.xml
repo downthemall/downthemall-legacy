@@ -235,7 +235,7 @@
 				</h2>
 				<p>&lp.yr.usage;
 				</p>
-				<ul>
+				<ul id="rightsexplained">
 					<li id="mayuse">&lp.yr.usageuse;
 					</li>
 					<li id="maymodify">&lp.yr.usagemod;
