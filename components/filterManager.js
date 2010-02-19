@@ -58,7 +58,7 @@ const TOPIC_FILTERSCHANGED = 'DTA:filterschanged';
 const nsITimer = Ci.nsITimer;
 const Timer = ctor('@mozilla.org/timer;1', 'nsITimer', 'init');
  
-let Preferences = {};
+let Preferences = {}, pbm = {};
 
 this.__defineGetter__(
 	"debug",
@@ -95,6 +95,18 @@ Filter.prototype = {
 	contractID: "@downthemall.net/filter;1",
 	classID: Components.ID("1CF86DC0-33A7-43b3-BDDE-7ADC3B35D114"),		
 	QueryInterface: XPCOMUtils.generateQI([Ci.dtaIFilter]),		
+	
+	_persist: true,
+	_sessionActive: null,	
+	get persist() {
+		return this._persist;
+	},
+	set persist(nv) {
+		this._persist = !!nv;
+		if (!this._persist) {
+			this._sessionActive = this._active;
+		}
+	},
 	
 	// exported
 	get id() {
@@ -175,14 +187,19 @@ Filter.prototype = {
 
 	// exported
 	get active() {
-		return this._active;
+		return this._persist ? this._active : this._sessionActive;
 	},
 	set active(value) {
-		if (this._active == value) {
+		if (this.active == !!value) {
 			return;
 		}
-		this._active = value;
-		this._modified = true;
+		if (this._persist) {
+			this._active = !!value;
+			this._modified = true;
+		}
+		else {
+			this._sessionActive = !!value;
+		}
 	},
 
 	// exported
@@ -317,6 +334,8 @@ FilterManager.prototype = {
 	
 	init: function FM_init() {
 		module('resource://dta/preferences.jsm', Preferences);
+		module('resource://dta/pbm.jsm', pbm);
+		pbm.registerCallbacks(this);
 
 		// load those localized labels for default filters.
 		this._localizedLabels = {};
@@ -332,6 +351,17 @@ FilterManager.prototype = {
 		// register (the observer) and initialize our timer, so that we'll get a reload event.
 		this.reload();
 		this.register();
+	},
+	
+	enterPrivateBrowsing: function() {
+		for each (let f in this._all) {
+			f.persist = false; 
+		}
+	},
+	exitPrivateBrowsing: function() {
+		for each (let f in this._all) {
+			f.persist = true; 
+		}		
 	},
 		
 	_done: true,
