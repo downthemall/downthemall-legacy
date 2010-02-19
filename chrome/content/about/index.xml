@@ -115,223 +115,227 @@
 			</p>
 		</div>
 		<h2>Tab headlines</h2>
-		<div class="pager pager-with-tabs pager-no-history localizable">
-			<ul class="pager-tabs">
-				<li class="first">
-					<a href="#tutorial">&lp.gettingstarted;
-					</a>
-				</li>
-				<li>
-					<a href="#toolbar">&lp.toolbar;
-					</a>
-				</li>
-				<li>
-					<a href="#privacy">&lp.privacy;
-					</a>
-				</li>
-				<li>
-					<a href="#license">&lp.yourrights;
-					</a>
-				</li>
-				<li class="pager-not-tab">
-					<a href="http://www.downthemall.net/howto/donate/">&lp.donate;
-					</a>
-				</li>
-				<li class="last">
-					<a href="#contact">&lp.contact;
-					</a>
-				</li>
-			</ul>
+		<div id="pager">
+			<div class="pager pager-with-tabs pager-no-history localizable">
+				<ul class="pager-tabs">
+					<li class="first">
+						<a href="#tutorial">&lp.gettingstarted;
+						</a>
+					</li>
+					<li>
+						<a href="#toolbar">&lp.toolbar;
+						</a>
+					</li>
+					<li>
+						<a href="#privacy">&lp.privacy;
+						</a>
+					</li>
+					<li>
+						<a href="#license">&lp.yourrights;
+						</a>
+					</li>
+					<li class="pager-not-tab">
+						<a href="http://www.downthemall.net/howto/donate/">&lp.donate;
+						</a>
+					</li>
+					<li class="last">
+						<a href="#contact">&lp.contact;
+						</a>
+					</li>
+				</ul>
+			</div>
 		</div>
-		<h2>Welcome page/tutorial</h2>
-		<div id="tutorial" class="localizable">
-			<h2>&lp.tut.firsttitle;
-			</h2>
-			<div class="player" href="first-download">Video: First download</div>
-			<p>&lp.tut.fd1;
-			</p>
+		<div id="content">
+			<h2>Welcome page/tutorial</h2>
+			<div id="tutorial" class="localizable">
+				<h2>&lp.tut.firsttitle;
+				</h2>
+				<div class="player" href="first-download">Video: First download</div>
+				<p>&lp.tut.fd1;
+				</p>
 
-			<h2>&lp.tut.selecttitle;
-			</h2>
-			<div class="player" href="select-window">Video: Selection window</div>
-			<p>The context menu of a website offers a new DownThemAll! item. Using this item will show the DownThemAll! selection window, which you can use to easily select one or more links from a page.</p>
-			<p>In the selection window you have multiple ways to select which files to download:</p>
-			<ul>
-				<li>You may check the links you want to download by hand</li>
-				<li>You may use the build-in or own Filters, e.g. to download all linked images.</li>
-				<li>Additionally you may type in your own filter in the Fast filtering box.</li>
-			</ul>
-			<p>The selection window contains to tabs, for two different types of downloads:</p>
-			<ol>
-				<li>The Links tab containing all downloadable links found on the page.</li>
-				<li>And the Pictures and Media tab containing all pictures and other media from the page.</li>
-			</ol>
-			<p>Once you selected the files to download hit either Start! or Add paused.</p>
+				<h2>&lp.tut.selecttitle;
+				</h2>
+				<div class="player" href="select-window">Video: Selection window</div>
+				<p>The context menu of a website offers a new DownThemAll! item. Using this item will show the DownThemAll! selection window, which you can use to easily select one or more links from a page.</p>
+				<p>In the selection window you have multiple ways to select which files to download:</p>
+				<ul>
+					<li>You may check the links you want to download by hand</li>
+					<li>You may use the build-in or own Filters, e.g. to download all linked images.</li>
+					<li>Additionally you may type in your own filter in the Fast filtering box.</li>
+				</ul>
+				<p>The selection window contains to tabs, for two different types of downloads:</p>
+				<ol>
+					<li>The Links tab containing all downloadable links found on the page.</li>
+					<li>And the Pictures and Media tab containing all pictures and other media from the page.</li>
+				</ol>
+				<p>Once you selected the files to download hit either Start! or Add paused.</p>
 
-			<h2>&lp.tut.oneclicktitle;
-			</h2>
-			<p>&lp.tut.oneclick1;
-			</p>
-			<p>&lp.tut.oneclick2;
-			</p>
-			<p class="note">&lp.pleasenote; &lp.tut.oneclickn;
-			</p>
+				<h2>&lp.tut.oneclicktitle;
+				</h2>
+				<p>&lp.tut.oneclick1;
+				</p>
+				<p>&lp.tut.oneclick2;
+				</p>
+				<p class="note">&lp.pleasenote; &lp.tut.oneclickn;
+				</p>
 
 
-			<h2>&lp.tut.batchestitle;
-			</h2>
-			<div class="player" href="batches">Video: batch downloads</div>
-			<p>&lp.tut.batches1;
-			</p>
-			<p>&lp.tut.batches2;
-			</p>
-			<p>&lp.tut.batches3;
-			</p>
-		</div>
-		<h2>Toolbar/tutorial</h2>
-		<div id="toolbar" class="localizable">
-			<p>&lp.tb.intro;
-			</p>
-			<h2>&lp.tb.addingtitle;
-			</h2>
-			<div class="player" href="toolbar-add">Video: Add toolbar items</div>
-			<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-				dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-				Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
+				<h2>&lp.tut.batchestitle;
+				</h2>
+				<div class="player" href="batches">Video: batch downloads</div>
+				<p>&lp.tut.batches1;
+				</p>
+				<p>&lp.tut.batches2;
+				</p>
+				<p>&lp.tut.batches3;
+				</p>
+			</div>
+			<h2>Toolbar/tutorial</h2>
+			<div id="toolbar" class="localizable">
+				<p>&lp.tb.intro;
+				</p>
+				<h2>&lp.tb.addingtitle;
+				</h2>
+				<div class="player" href="toolbar-add">Video: Add toolbar items</div>
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+					dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+					Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
 
-			<h3>&lp.tb.dndtitle;
-			</h3>
-			<div class="player" href="dnd">Video: Drag'n'Drop</div>
-			<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-				dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-				Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
+				<h3>&lp.tb.dndtitle;
+				</h3>
+				<div class="player" href="dnd">Video: Drag'n'Drop</div>
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+					dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+					Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
 
-			<h3>&lp.tb.selectortitle;
-			</h3>
-			<div class="player" href="selector">Video: Selector</div>
-			<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-				dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-				Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
-		</div>
-		<h2>Privacy information</h2>
-		<div id="privacy" class="localizable">
-			<h2>&lp.pr.title;
-			</h2>
-			<p>&lp.pr.intro;
-			</p>
-			<p>&lp.pr.settings;
-			</p>
-			<p>&lp.pr.diag;
-			</p>
-			<p>&lp.pr.link;
-			</p>
-		</div>
-		<h2>License/Your rights</h2>
-		<div id="license" class="localizable">
-			<h2>&lp.yr.usagetitle;
-			</h2>
-			<p>&lp.yr.usage;
-			</p>
-			<ul>
-				<li>&lp.yr.usageuse;
-				</li>
-				<li>&lp.yr.usagemod;
-				</li>
-				<li>&lp.yr.usagedist;
-				</li>
-			</ul>
-			<p>&lp.yr.usagemore;
-			</p>
+				<h3>&lp.tb.selectortitle;
+				</h3>
+				<div class="player" href="selector">Video: Selector</div>
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+					dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+					Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
+			</div>
+			<h2>Privacy information</h2>
+			<div id="privacy" class="localizable">
+				<h2>&lp.pr.title;
+				</h2>
+				<p>&lp.pr.intro;
+				</p>
+				<p>&lp.pr.settings;
+				</p>
+				<p>&lp.pr.diag;
+				</p>
+				<p>&lp.pr.link;
+				</p>
+			</div>
+			<h2>License/Your rights</h2>
+			<div id="license" class="localizable">
+				<h2>&lp.yr.usagetitle;
+				</h2>
+				<p>&lp.yr.usage;
+				</p>
+				<ul>
+					<li>&lp.yr.usageuse;
+					</li>
+					<li>&lp.yr.usagemod;
+					</li>
+					<li>&lp.yr.usagedist;
+					</li>
+				</ul>
+				<p>&lp.yr.usagemore;
+				</p>
 
-			<h2>&lp.yr.licensetitle;
-			</h2>
+				<h2>&lp.yr.licensetitle;
+				</h2>
 
-			<p class="alwaysleft aligntolocale">
-				Copyright © 2004-2007 Federico Parodi and Stefano Verna
-				<br />
-				Copyright © 2007-2010 Nils Maier, Federico Parodi and Stefano Verna
-			</p>
+				<p class="alwaysleft aligntolocale">
+					Copyright © 2004-2007 Federico Parodi and Stefano Verna
+					<br />
+					Copyright © 2007-2010 Nils Maier, Federico Parodi and Stefano Verna
+				</p>
 
-			<p>&lp.yr.licensed;
-			</p>
+				<p>&lp.yr.licensed;
+				</p>
 
-			<p>&lp.yr.morelicense;
-			</p>
+				<p>&lp.yr.morelicense;
+				</p>
 
-			<p>&lp.yr.gplintro;
-			</p>
+				<p>&lp.yr.gplintro;
+				</p>
 
-			<h3 class="alwaysleft">NO WARRANTY</h3>
-			<p class="alwaysleft">11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
-				FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
-				OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
-				PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
-				OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-				MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS
-				TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE
-				PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
-				REPAIR OR CORRECTION.</p>
+				<h3 class="alwaysleft">NO WARRANTY</h3>
+				<p class="alwaysleft">11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+					FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+					OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+					PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
+					OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+					MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS
+					TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE
+					PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
+					REPAIR OR CORRECTION.</p>
 
-			<p class="alwaysleft">12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
-				WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
-				REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,
-				INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING
-				OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED
-				TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY
-				YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER
-				PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
-				POSSIBILITY OF SUCH DAMAGES.</p>
+				<p class="alwaysleft">12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+					WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+					REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,
+					INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING
+					OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED
+					TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY
+					YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER
+					PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
+					POSSIBILITY OF SUCH DAMAGES.</p>
 
-			<h3>&lp.yr.icons;
-			</h3>
-			<p>&lp.yr.iconsbased;
-			</p>
-			<ul class="alwaysleft aligntolocale">
-				<li>© Michael Matas,</li>
-				<li>© Jakub Steiner, © Novell, Inc.</li>
-				<li>© Mark James (famfamfam silk icons)</li>
-				<li>Tango Project - public domain</li>
-			</ul>
+				<h3>&lp.yr.icons;
+				</h3>
+				<p>&lp.yr.iconsbased;
+				</p>
+				<ul class="alwaysleft aligntolocale">
+					<li>© Michael Matas,</li>
+					<li>© Jakub Steiner, © Novell, Inc.</li>
+					<li>© Mark James (famfamfam silk icons)</li>
+					<li>Tango Project - public domain</li>
+				</ul>
 
-			<p>&lp.yr.artwork;
-				<br />
+				<p>&lp.yr.artwork;
+					<br />
 		&lp.yr.artworklicense;
-			</p>
-			<ul class="cc alwaysleft aligntolocale">
-				<li>
-					<a href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported</a>
-				</li>
-				<li>
-					Or
-					<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/it/">Creative Commons Attribution-Noncommercial-Share Alike 2.5 Italy</a>
-				</li>
-			</ul>
+				</p>
+				<ul class="cc alwaysleft aligntolocale">
+					<li>
+						<a href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported</a>
+					</li>
+					<li>
+						Or
+						<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/it/">Creative Commons Attribution-Noncommercial-Share Alike 2.5 Italy</a>
+					</li>
+				</ul>
 
-			<p>&lp.yr.logo;
-				<br />
+				<p>&lp.yr.logo;
+					<br />
 		&lp.yr.logopermissions;
-			</p>
+				</p>
 
-			<h3>&lp.languagetitle;
-			</h3>
-			<p>
-				<strong>&language; &lp.translation.by;
-				</strong> &transAutor;
-			</p>
-		</div>
-		<h2>Contacts</h2>
-		<div id="contacts" class="localizable">
-			<h2>&lp.ct.bugstitle;
-			</h2>
-			<p>&lp.ct.bugs;
-			</p>
+				<h3>&lp.languagetitle;
+				</h3>
+				<p>
+					<strong>&language; &lp.translation.by;
+					</strong> &transAutor;
+				</p>
+			</div>
+			<h2>Contacts</h2>
+			<div id="contacts" class="localizable">
+				<h2>&lp.ct.bugstitle;
+				</h2>
+				<p>&lp.ct.bugs;
+				</p>
 
-			<h2>&lp.ct.contactstitle;
-			</h2>
-			<p>&lp.ct.contactsfeed;
-			</p>
-			<p>&lp.ct.contacts;
-			</p>
+				<h2>&lp.ct.contactstitle;
+				</h2>
+				<p>&lp.ct.contactsfeed;
+				</p>
+				<p>&lp.ct.contacts;
+				</p>
+			</div>
 		</div>
 	</body>
 </html>
