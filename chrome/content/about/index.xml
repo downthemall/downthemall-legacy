@@ -236,11 +236,11 @@
 				<p>&lp.yr.usage;
 				</p>
 				<ul>
-					<li>&lp.yr.usageuse;
+					<li id="mayuse">&lp.yr.usageuse;
 					</li>
-					<li>&lp.yr.usagemod;
+					<li id="maymodify">&lp.yr.usagemod;
 					</li>
-					<li>&lp.yr.usagedist;
+					<li id="mayshare">&lp.yr.usagedist;
 					</li>
 				</ul>
 				<p>&lp.yr.usagemore;
