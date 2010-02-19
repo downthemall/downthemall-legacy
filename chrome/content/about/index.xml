@@ -218,16 +218,12 @@
 			</div>
 			<h2>Privacy information</h2>
 			<div id="privacy" class="localizable">
-				<h2>&lp.pr.title;
-				</h2>
-				<p>&lp.pr.intro;
-				</p>
-				<p>&lp.pr.settings;
-				</p>
-				<p>&lp.pr.diag;
-				</p>
-				<p>&lp.pr.link;
-				</p>
+				<h2>&lp.pr.title;</h2>
+				<p>&lp.pr.intro;</p>
+				<p>&lp.pr.settings;</p>
+				<p>&lp.pr.pbm;</p>
+				<p>&lp.pr.diag;</p>
+				<p>&lp.pr.link;</p>
 			</div>
 			<h2>License/Your rights</h2>
 			<div id="license" class="localizable">
