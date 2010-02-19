@@ -443,6 +443,7 @@
 					}
 					this.appendChild(sep);
 					let item = this.appendItem(_('unlimitedspeed'), -1);
+					item.className = "menuitem-iconic"; 
 					if (iv == -1) {
 						this.selectedItem = item;
 					}
