@@ -243,7 +243,7 @@
 					<li id="mayshare">&lp.yr.usagedist;
 					</li>
 				</ul>
-				<p>&lp.yr.usagemore;
+				<p id="morelicense">&lp.yr.usagemore;
 				</p>
 
 				<h2>&lp.yr.licensetitle;
