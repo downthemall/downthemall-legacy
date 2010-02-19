@@ -1,14 +1,5 @@
-﻿<?xml version="1.0"?>
-<!DOCTYPE dialog [
-	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
-	%globalDTD;
-	<!ENTITY % aboutDTD
-		SYSTEM "chrome://dta/locale/about.dtd">
-	%aboutDTD;
-	<!ENTITY % htmlDTD
-		PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-	%htmlDTD;	
-]>
+﻿﻿<?xml version="1.0"?>
+<!DOCTYPE dialog>
 <!--
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -23,7 +14,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is downTHEMall.
+ * The Original Code is DownThemAll!.
  *
  * The Initial Developer of the Original Code is Nils Maier
  * Portions created by the Initial Developer are Copyright (C) 2007
@@ -49,101 +40,10 @@
  * ***** END LICENSE BLOCK ***** */
  -->
 
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="style.css" type="text/css"?>
-<?xml-stylesheet href="resource://gre/res/html.css" type="text/css"?>
-<?xml-stylesheet href="chrome://dta-platform/skin/common.css" type="text/css"?>
-
-<dialog 
-	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	xmlns:html="http://www.w3.org/1999/xhtml"
-	onload="sizeToContent(); versionFill();"
-	title="About DownThemAll!"
-	buttons="accept"
-	id="DownThemAll"
->
-	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
-
-	<script type="application/x-javascript"><![CDATA[
-		let DTA = {};
-		Components.utils.import('resource://dta/version.jsm', DTA);
-		function openTab(url) {
-			DTA_Mediator.open(url);
-			self.close();
-		}
-		function versionFill() {
-			var logo = document.getElementById('logo');
-			var title = DTA.NAME + ' ' + DTA.VERSION;
-			logo.setAttribute('title', title);
-			document.title = 'About ' + title;
-		}
-		function openNotice() {
-			DTA_Mediator.showNotice(window);
-		}
-  ]]></script>
-	
-	<keyset>
-		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
-	</keyset>
-	
-	<dialogheader id="logo" chromedir="&locale.dir;" style="font-size: smaller;">
-		<vbox>
-			<label class="dialogheader-title" value="DownThemAll!"/>
-			<label class="dialogheader-description" value="&about.subtitle;"/>
-		</vbox>
-	</dialogheader>
-			
-	<groupbox orient="vertical">
-		<label value="Copyright © 2004-2010 By:" style="font-weight: bold;"/>
-		<html:ul>
-			<html:li><label value="Federico Parodi" class="text-link" onclick="openTab('http://www.jimmy2k.it'); "/></html:li>
-			<html:li><label value="Stefano Verna" class="text-link" onclick="openTab('http://steffoz.altervista.org/'); "/></html:li>
-			<html:li><label value="Nils Maier" class="text-link" onclick="openTab('http://tn123.ath.cx/about/'); "/></html:li>
-		</html:ul>
-
-	  <separator class="thin"/>
-	  <description>
-			<html:b>&about.icons;</html:b>&nbsp;&about.based;
-			<html:ul>
-				<html:li>© Michael Matas</html:li>
-				<html:li>© <html:span class="text-link" onclick="openTab('http://jimmac.musichall.cz/icons.php');">Jakub 'jimmac' Steiner</html:span>; © Novell, Inc.</html:li>
-				<html:li>© <html:span class="text-link" onclick="openTab('http://www.famfamfam.com/lab/icons/silk/');">Mark James</html:span> (famfamfam silk icons)</html:li>
-				<html:li>© The mozilla contributors</html:li>
-			</html:ul>
-			For original artwork Copyright © 2004-2010 by Stefano Verna and Federico Parodi, licensed under: <html:br/><label class="text-link" value="Creative Commons Attribution-Noncommercial-Share Alike 2.5 Italy license." onclick="openTab('http://creativecommons.org/licenses/by-nc-sa/2.5/it/deed.en');"/><html:br/>
-			For DownThemAll! logo Copyright © 2004-2010 by Stefano Verna.<html:br/>
-			The DownThemAll! name and logo cannot be used without permission in any derivative work, <html:br/>with exception of credits and license-related notices.
-		</description>
-	  <separator class="thin"/>
-	  <description>
-			DownThemAll! &about.nowarr;<html:br/>
-			&about.freesoft;<html:br/>
-			&about.redistr;:
-		</description>
-		<label class="text-link" value="License (GPL)" onclick="openTab('http://www.gnu.org/licenses/gpl.txt');"/>
-		<separator class="thin"/>
-		<description>
-			DownThemAll! &about.privacy;.<html:br/>
-			&about.read; <html:span class="text-link" onclick="openNotice();">&about.pnot;</html:span>.
-		</description>
-
-	  <separator class="thin"/>
-
-	  <label value="&language; &about.by;" style="font-weight: bold;"/>
-	  <label value="&transAutor;"/>
-	  <separator class="thin"/>
-		
-		<grid flex="1">
-			<columns>
-				<column flex="1"/>
-				<column flex="2" />
-			</columns>
-			<rows>
-				<row>
-					<label value="DownThemAll!" style="font-weight: bold;"/>
-					<label value="http://www.downthemall.net/" class="text-link" onclick="openTab('http://www.downthemall.net/'); "/>
-				</row>
-			</rows>
-		</grid>
-	</groupbox>
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<script type="text/javascript"><![CDATA[
+		Components.utils.import("resource://dta/mediator.jsm");
+		showAbout(window.opener);
+		close();
+	]]></script>
 </dialog>

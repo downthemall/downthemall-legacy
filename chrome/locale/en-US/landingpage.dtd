@@ -1,5 +1,8 @@
 <!ENTITY lp.localedir "ltr">
 
+<!ENTITY language "English">
+<!ENTITY transAutor "The dTa Team">
+
 <!ENTITY lp.title "About DownThemAll!">
 <!ENTITY lp.welcome "Welcome to DownThemAll!">
 <!ENTITY lp.info "This page is designed to get you started using DownThemAll!">
@@ -10,10 +13,19 @@
 <!ENTITY lp.yourrights "Your rights">
 <!ENTITY lp.donate "Donate">
 <!ENTITY lp.contact "Contact">
+<!ENTITY lp.pleasenote "Please note:">
 
 <!ENTITY lp.tut.firsttitle "Your first download">
+<!ENTITY lp.tut.fd1 "Downloading a file in dTa is fairly easy but also very powerful. If prompted to open or save a file you may use the DownThemAll! item. This will show a dialog where you may choose which folder to save the file along with some more advanced features.">
 <!ENTITY lp.tut.selecttitle "Using the selection window">
 <!ENTITY lp.tut.batchestitle "Downloading Batches">
+<!ENTITY lp.tut.batches1 "A lot of users want to download batches of sequentially numbered files. DownThemAll! lets you specify batches quite easily as the video shows.">
+<!ENTITY lp.tut.batches2 "The basic syntax is: <code>[start:end]</code> or <code>[start:end:step]</code> where both <code>start</code> and <code>end</code> may either be a number or a simple character. <code>step</code> defines the step width and is simply 1 if omitted.">
+<!ENTITY lp.tut.batches3 "For example if you'd like to download pictures from 001 to 100 you may change the URL to: <code>http://example.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
+<!ENTITY lp.tut.oneclick1 "Once you made your initial download another item will be available: DownThemAll! OneClick. You may use this to download directly using the previous settings skipping the download adding and/or selection dialog.">
+<!ENTITY lp.tut.oneclick2 "Hence OneClick enables you to rapidly queue a lot of links.">
+<!ENTITY lp.tut.oneclickn "After using the Clear Private Data feature in Firefox OneClick won't be available until start a regular DownThemAll! download again.">
 
 <!ENTITY lp.tb.intro "DownThemAll! offers some toolbar buttons that give you a convenient way to access DownThemAll! features.">
 <!ENTITY lp.tb.addingtitle "Adding and using toolbar buttons">
@@ -34,11 +46,18 @@
 <!ENTITY lp.yr.usagemore "See the licenses for more information.">
 
 <!ENTITY lp.languagetitle "Language">
+<!ENTITY lp.translation.by " translation by">
 
 <!ENTITY lp.yr.licensetitle "Copyright and License">
 <!ENTITY lp.yr.licensed "DownThemAll! is licensed under <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. See the GPL file. This applies to all source code files.">
 <!ENTITY lp.yr.morelicense "Individual files may have different licenses. See the corresponding repository files available from <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Many files are tri-licensed under a MPL 1.1/GPL 2.0/LGPL 2.1 license; See the MPL, GPL, LGPL files respectively.">
-<!ENTITY lp.yr.gplintro "Most important parts from the GPL 2.0">
+<!ENTITY lp.yr.gplintro "Most important sections from the GPL 2.0, the no warranty and damages disclaimer, follow:">
+<!ENTITY lp.yr.icons "Artwork, icons and buttons">
+<!ENTITY lp.yr.iconsbased "are based on the works of Mike Matas, Jakub Steiner, Mark James and the Tango project">
+<!ENTITY lp.yr.artwork "The original artwork is: Copyright © 2004-2010 by Stefano Verna, Federico Parodi and Nils Maier">
+<!ENTITY lp.yr.artworklicense "The original artwork is licensed under:">
+<!ENTITY lp.yr.logo "The DownThemAll! logo is: Copyright © 2004-2010 by Stefano Verna.">
+<!ENTITY lp.yr.logopermissions "The DownThemAll! name and logo cannot be used without permission in any derivative work, with exception of credits and license-related notices.">
 
 <!ENTITY lp.ct.bugstitle "Reporting bugs/Feature requests">
 <!ENTITY lp.ct.bugs "Please report bug and feature requests at our <a href='http://bugs.code.downthemall.net/'>bug tracker</a>.">
