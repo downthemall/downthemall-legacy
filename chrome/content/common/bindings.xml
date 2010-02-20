@@ -168,6 +168,7 @@
 				<body><![CDATA[
 					var n = this.value;
 					if ((!this.modified && this._list.selectedIndex == 0) || (n.length == 0 && !this.hasAttribute('allowempty'))) {
+						Debug.logString("Not saving dropdown: Not modified");
 						return;
 					}
 					this.hist.push(n);
