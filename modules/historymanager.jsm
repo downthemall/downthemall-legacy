@@ -96,29 +96,43 @@ History.prototype = {
 			return parse(json);
 		}
 		catch (ex) {
-			Debug.log("Parsing of history failed: " + json, ex);
+			Debug.log("Histories: Parsing of history failed: " + json, ex);
 			return [];
 		}
 	},
 	_setValues: function(values) {
 		if (!this._persisting) {
+			Debug.logString("Set session history for " this._key);
 			this._sessionHistory = values;
 		}
 		else {
-			prefs.setExt(this._key, stringify(values));
+			try {
+				prefs.setExt(this._key, stringify(values));
+				Debug.logString("Set normal history for " this._key);
+			}
+			catch (ex) {
+				Debug.log("Histories: Setting values failed" + values, ex);
+				throw ex;
+			}
 		}
 	},
 	push: function(value) {
-		value = value.toString();
-		let values = this.values.filter(function(e) e != value);
-		values.unshift(value);
-		let max = prefs.getExt('history', 5);
-		while (values.length > max) {
-			values.pop();
+		try {
+			value = value.toString();
+			let values = this.values.filter(function(e) e != value);
+			values.unshift(value);
+			let max = prefs.getExt('history', 5);
+			while (values.length > max) {
+				values.pop();
+			}
+			this._setValues(values);
 		}
-		this._setValues(values);
+		catch (ex) {
+			Debug.log("Histories: Push failed!", ex);
+		}
 	},
 	reset: function(value) {
+		Debug.logString("Histories: Reset called");
 		this._setValues([]);
 	}
 };
