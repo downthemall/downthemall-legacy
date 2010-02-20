@@ -442,7 +442,6 @@ function getIcon(link, metalink, size) {
 					if (icon.spec == _favIcons.defaultFavicon.spec) {
 						let host = url.clone().QueryInterface(Ci.nsIURL);
 						host.ref = host.query = host.filePath = "";
-						Debug.logString("Retry using " + host.spec);
 						icon = _favIcons.getFaviconImageForPage(host);
 					}
 					return icon.spec;
