@@ -345,11 +345,15 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 	-moz-image-region: rect(16px,112px,32px,96px);
 }
 
-#speedLimit,
+#speedLimit {
+	-moz-image-region: rect(64px,108px,76px,96px);	
+}
 #perDownloadSpeedLimit .menu-iconic-icon {
 	-moz-image-region: rect(48px,144px,64px,128px);
 }
-#speedLimit[value="-1"],
+#speedLimit[value="-1"] {
+	-moz-image-region: rect(64px,124px,76px,112px);
+}
 #perDownloadSpeedLimit[value="-1"] .menu-iconic-icon {
 	-moz-image-region: rect(32px,160px,48px,144px);
 }
