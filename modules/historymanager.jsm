@@ -102,13 +102,13 @@ History.prototype = {
 	},
 	_setValues: function(values) {
 		if (!this._persisting) {
-			Debug.logString("Set session history for " this._key);
+			Debug.logString("Set session history for " + this._key);
 			this._sessionHistory = values;
 		}
 		else {
 			try {
 				prefs.setExt(this._key, stringify(values));
-				Debug.logString("Set normal history for " this._key);
+				Debug.logString("Set normal history for " + this._key);
 			}
 			catch (ex) {
 				Debug.log("Histories: Setting values failed" + values, ex);
