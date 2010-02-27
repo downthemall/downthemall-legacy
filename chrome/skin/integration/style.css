@@ -2,32 +2,32 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 #dta-turbo-button {
-	list-style-image: url("chrome://dta/skin/common/tools.png");
+	list-style-image: url(../common/tools.png);
 	-moz-image-region: rect(0px,96px,24px,72px);
 }
 #dta-turbo-button:hover {
 	-moz-image-region: rect(0px,72px,24px,48px);
 }
 toolbar[iconsize="small"] #dta-turbo-button {
-	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	list-style-image: url(../common/smalltools.png);
 	-moz-image-region: rect(0px, 32px, 16px, 16px);
 }
 
 #dta-turboselect-button {
-	list-style-image: url("chrome://dta/skin/common/tools.png");
+	list-style-image: url(../common/tools.png);
 	-moz-image-region: rect(0px,192px,24px,168px);
 }
 #dta-turboselect-button:hover {
 	-moz-image-region: rect(0px,168px,24px,144px);
 }
 toolbar[iconsize="small"] #dta-turboselect-button {
-	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	list-style-image: url(../common/smalltools.png);
 	-moz-image-region: rect(0px,112px,16px,96px);
 }
 
 
 #dta-button {
-	list-style-image: url("chrome://dta/skin/common/tools.png");
+	list-style-image: url(../common/tools.png);
 	-moz-image-region: rect(0px,48px,24px,24px);
 }
 
@@ -36,39 +36,39 @@ toolbar[iconsize="small"] #dta-turboselect-button {
 
 }
 toolbar[iconsize="small"] #dta-button {
-	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	list-style-image: url(../common/smalltools.png);
 	-moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 
 #dta-manager-button {
-	list-style-image: url("chrome://dta/skin/common/tools.png");
+	list-style-image: url(../common/tools.png);
 	-moz-image-region: rect(0px,144px,24px,120px);
 }
 #dta-manager-button:hover {
 	-moz-image-region: rect(0px,120px,24px,96px);
 }
 toolbar[iconsize="small"] #dta-manager-button {
-	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	list-style-image: url(../common/smalltools.png);
 	-moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 
 .dta {
-	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	list-style-image: url(../common/smalltools.png);
 	-moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 .dtaturbo {
-	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	list-style-image: url(../common/smalltools.png);
 	-moz-image-region: rect(0px, 32px, 16px, 16px);
 }
 .dtaprefs {
-	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	list-style-image: url(../common/smalltools.png);
 	-moz-image-region: rect(0px, 64px, 16px, 48px);	
 }
 .dtamanager {
-	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	list-style-image: url(../common/smalltools.png);
 	-moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 #dtaToolsAbout {
-	list-style-image: url("chrome://dta/skin/common/smalltools.png");
+	list-style-image: url(../common/smalltools.png);
 	-moz-image-region: rect(0px, 96px, 16px, 80px);
 }
