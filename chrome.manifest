@@ -48,5 +48,4 @@ overlay	chrome://dta/content/integration/songbird.xul chrome://dta/content/integ
 style	chrome://songbird/content/xul/mainScriptsOverlay.xul	chrome://dta/skin/integration/style.css application=songbird@songbirdnest.com
 style	chrome://dta/content/dta/manager.xul	chrome://dta/skin/common/songbird.css application=songbird@songbirdnest.com
 style	chrome://dta/content/dta/select.xul	chrome://dta/skin/common/songbird.css application=songbird@songbirdnest.com
-style	chrome://dta/content/preferences/prefs.xul	chrome://dta/skin/common/songbird07.css application=songbird@songbirdnest.com appversion=0.7
 overlay chrome://dta/content/preferences/interfacePane.xul chrome://dta/content/preferences/toolbarButtons.xul application=songbird@songbirdnest.com
