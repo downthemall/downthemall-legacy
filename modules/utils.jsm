@@ -52,14 +52,19 @@ const EXPORTED_SYMBOLS = [
 	'SimpleIterator',
 	'Properties',
 	'MimeQuality',
-	'StringBundles'
+	'StringBundles',
+	'launch',
+	'reveal'
 ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const ctor = Components.Constructor;
 const log = Components.utils.reportError;
 const Exception = Components.Exception;
+
+const File = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 
 /**
  * Installs a new lazy getter
@@ -166,6 +171,9 @@ setNewGetter(this, "newUUIDString", function() {
 		return uuidgen.generateUUID().toString();
 	};
 });
+
+ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService");
+ServiceGetter(this, "ExternalProtocolService", "@mozilla.org/uriloader/external-protocol-service;1", "nsIExternalProtocolService");
 
 /**
  * Range generator (python style). Difference: step direction is initialized accordingly if corresponding parameter is omitted.
@@ -555,3 +563,67 @@ StringBundles.prototype = {
 		return fmt.replace(/%S/gi, repl);
 	}
 };
+
+/**
+ * XP compatible reveal/launch
+ * 
+ * @author Nils (derived from DownloadManager code)
+ */
+
+function OpenExternal_prepare(file) {
+	if (file instanceof Ci.nsIFile) {
+		return file.QueryInterface(Ci.nsILocalFile);
+	}
+	if (!(file instanceof Ci.nsILocalFile)) {
+		file = new File(file);
+	}
+	return file;
+}
+function OpenExternal_nixLaunch(file) {
+	ExternalProtocolService.loadUrl(IOService.newFileURI(file));	 
+}
+
+/**
+ * Launch/Execute a file
+ * 
+ * @param nsILocalFile/String
+ *          pointing to the desired file
+ */
+function launch(file) {
+	file = OpenExternal_prepare(file);
+	if (!file.exists()) {
+		throw new Exception("OpenExternal: file not found!");
+	}
+	try {
+		file.launch();
+	}
+	catch (ex) {
+		// *nix will throw as not implemented
+		OpenExternal_nixLaunch(file);
+	}
+}
+
+/**
+ * Reveal a file, which will open the directory and furthermore select the
+ * file on some platforms.
+ * 
+ * @param nsILocalFile/String
+ *          pointing to the desired file
+ */
+function reveal(file) {
+	file = OpenExternal_prepare(file);
+	try {
+		if (!file.exists()) {
+			throw new Exception("File does not exist");
+		}
+		else {
+			file.reveal();
+		}
+	}
+	catch (ex) {
+		// try to open the directory instead
+		// (either because the file does not exist anymore
+		// or because the platform does not implement reveal);
+		launch(file.parent);
+	}
+}

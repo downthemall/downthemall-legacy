@@ -46,25 +46,13 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
+const ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-const FileFactory = new Components.Constructor(
-	'@mozilla.org/file/local;1',
-	'nsILocalFile',
-	'initWithPath'
-);
-
-const SoundFactory = new Components.Constructor(
-	'@mozilla.org/sound;1',
-	'nsISound',
-	'play'
-);
-const CryptoHash = new Components.Constructor(
-	"@mozilla.org/security/hash;1",
-	"nsICryptoHash"
-);
-	
+const FileFactory = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+const SoundFactory = new ctor('@mozilla.org/sound;1', 'nsISound', 'play');
+const CryptoHash = new ctor("@mozilla.org/security/hash;1", "nsICryptoHash");
 	
 const SYSTEMSLASH = (DTA.getProfileFile('dummy').path.indexOf('/') != -1) ? '/' : '\\';
 
@@ -480,75 +468,6 @@ setNewGetter(this, "_", function() {
 		return bundles.getFormattedString.apply(bundles, arguments);
 	} 
 });
-
-/**
- * XP compatible reveal/launch
- * 
- * @author Nils (derived from DownloadManager code)
- */
-var OpenExternal = {
-	_prepare: function(file) {
-		if (typeof(file) == 'string' || file instanceof String) {
-			return new FileFactory(file);
-		}
-		if (file instanceof Ci.nsIFile) {
-			return file.QueryInterface(Ci.nsILocalFile);
-		}
-		if (file instanceof Ci.nsILocalFile) {
-			return file;
-		}
-		throw new Components.Exception('OpenExternal: feed me with nsILocalFile or String');
-	},
-	_nixLaunch: function(file) {
-		this._proto.loadUrl(IOService.newFileURI(file));	 
-	},
-	/**
-	 * Launch/Execute a file
-	 * 
-	 * @param nsILocalFile/String
-	 *          pointing to the desired file
-	 */
-	launch: function(file) {
-		file = this._prepare(file);
-		if (!file.exists()) {
-			throw new Components.Exception("OpenExternal: file not found!");
-		}
-		
-		try {
-			file.launch();
-		}
-		catch (ex) {
-			// *nix will throw as not implemented
-			this._nixLaunch(file);
-		}
-	},
-	/**
-	 * Reveal a file, which will open the directory and furthermore select the
-	 * file on some platforms.
-	 * 
-	 * @param nsILocalFile/String
-	 *          pointing to the desired file
-	 */
-	reveal: function(file) {
-		file = this._prepare(file);
-		try {
-			if (!file.exists()) {
-				throw new Components.Exception("File does not exist");
-			}
-			else {
-				file.reveal();
-			}
-		}
-		catch (ex) {
-			// try to open the directory instead
-			// (either because the file does not exist anymore
-			// or because the platform does not implement reveal);
-			this.launch(file.parent);
-		}
-	}
-};
-
-ServiceGetter(OpenExternal, "_proto", "@mozilla.org/uriloader/external-protocol-service;1", "nsIExternalProtocolService");
 
 InstanceGetter(this, "converter", "@mozilla.org/intl/scriptableunicodeconverter", "nsIScriptableUnicodeConverter");
 

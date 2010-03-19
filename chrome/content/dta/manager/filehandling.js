@@ -53,7 +53,7 @@
 		for (d in Tree.selected) {
 			try {
 				if (new FileFactory(d.destinationPath).exists()) {
-					OpenExternal.reveal(d.destinationFile);
+					Utils.reveal(d.destinationFile);
 				}
 			}
 			catch (ex) {
@@ -65,7 +65,7 @@
 		var cur = Tree.current;
 		if (cur && cur.is(COMPLETE)) {
 			try {
-				OpenExternal.launch(cur.destinationFile);
+				Utils.launch(cur.destinationFile);
 			}
 			catch (ex) {
 				Debug.log('launch', ex);
