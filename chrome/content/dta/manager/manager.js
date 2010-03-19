@@ -838,7 +838,7 @@ const Dialog = {
 			else if (dp && Prefs.alertingSystem == 0) {
 				if (confirm(_('suc') + "\n "+ _("folder")) == 1) {
 					try {
-						OpenExternal.launch(dp);
+						Utils.launch(dp);
 					}
 					catch (ex){
 						// no-op

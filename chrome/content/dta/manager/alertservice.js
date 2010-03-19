@@ -81,7 +81,7 @@
 			case "alertclickcallback":
 				if (aData != "errore") {
 					try {
-						OpenExternal.launch(aData);
+						Utils.launch(aData);
 					}
 					catch (ex) {
 						// no-op

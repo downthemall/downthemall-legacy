@@ -82,7 +82,7 @@ var Privacy = {
 	},
 	revealLog: function() {
 		if (Debug.file.exists()) {
-			OpenExternal.reveal(Debug.file);
+			Utils.reveal(Debug.file);
 		}
 	},
 	deleteLog: function() {
