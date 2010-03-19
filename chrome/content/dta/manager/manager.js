@@ -73,7 +73,7 @@ const CHUNK_BUFFER_SIZE = 96 * 1024;
 const REFRESH_FREQ = 1000;
 const STREAMS_FREQ = 250;
 
-let Prompts = {}, Preallocator = {}, Limits = {}, JSONCompat = {}, PrivateBrowsing = {};
+let Prompts = {}, Preallocator = {}, Limits = {}, JSONCompat = {}, PrivateBrowsing = {}, AlertService = {};
 module('resource://dta/prompts.jsm', Prompts);
 module('resource://dta/speedstats.jsm');
 module('resource://dta/preallocator.jsm', Preallocator);
@@ -89,6 +89,7 @@ module('resource://dta/decompressor.jsm');
 module('resource://dta/verificator.jsm');
 module('resource://dta/bytebucket.jsm');
 module('resource://dta/pbm.jsm', PrivateBrowsing);
+module('resource://dta/alertservice.jsm', AlertService);
 
 const AuthPrompts = new LoggedPrompter(window);
 
@@ -833,10 +834,10 @@ const Dialog = {
 				dp = dp.destinationPath;
 			}
 			if (Prefs.alertingSystem == 1) {
-				AlertService.show(_("dcom"), _('suc'), dp, dp);
+				AlertService.show(_("dcom"), _('suc'), function() Utils.launch(dp));
 			}
 			else if (dp && Prefs.alertingSystem == 0) {
-				if (confirm(_('suc') + "\n "+ _("folder")) == 1) {
+				if (Prompts.confirmYN(window, _('suc'),  _("folder")) == 0) {
 					try {
 						Utils.launch(dp);
 					}
@@ -1044,7 +1045,7 @@ const Metalinker = {
 				ex = new Error(_('mlerror', [ex.message ? ex.message : (ex.error ? ex.error : ex.toString())]));
 			}
 			if (ex instanceof Error) {
-				AlertService.show(_('mlerrortitle'), ex.message, false);
+				AlertService.show(_('mlerrortitle'), ex.message);
 			}
 		}
 	}	
@@ -1760,7 +1761,7 @@ QueueItem.prototype = {
 
 		switch (Prefs.alertingSystem) {
 			case 1:
-				AlertService.show(title, msg, false);
+				AlertService.show(title, msg);
 				break;
 			case 0:
 				alert(msg);
