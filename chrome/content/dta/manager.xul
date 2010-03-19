@@ -36,7 +36,6 @@
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/tree.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/tray.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/prefs.js" />
-	<script type="application/javascript" src="chrome://dta/content/dta/manager/filehandling.js" />
 
 	<stringbundleset>
 		<stringbundle src="chrome://dta/locale/common.properties" />
