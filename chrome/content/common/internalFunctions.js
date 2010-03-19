@@ -460,42 +460,6 @@ function getIcon(link, metalink, size) {
 }
 
 /**
- * Encapulates all stringbundles of the current document and provides unified
- * access
- * 
- * @author Nils
- * @see _
- */
-function StringBundles() {
-	this._bundles = [];
-	this._strings = {};
-	this.init();
-}
-StringBundles.prototype = {
-	init: function() {
-		this._bundles = document.getElementsByTagName('stringbundle');
-		for each (let bundle in Array.map(this._bundles, function(s) s.strings)) {
-			for (let s in new Utils.SimpleIterator(bundle, Ci.nsIPropertyElement)) {
-				this._strings[s.key] = s.value;
-			}
-		}
-	},
-	getString: function(id) {
-		let rv = this._strings[id];
-		if (!rv) {
-			throw new Components.Exception('BUNDLE STRING NOT FOUND (' + id + ')');
-		}
-		return rv;
-	},
-	getFormattedString: function(id, params) {
-		let fmt = this.getString(id);
-		function repl() {
-			return params.shift();
-		}
-		return fmt.replace(/%S/gi, repl);
-	}
-};
-/**
  * Get a (formatted) locale property string.
  * 
  * @param stringId
@@ -508,7 +472,7 @@ StringBundles.prototype = {
  * @author Nils
  */
 setNewGetter(this, "_", function() {
-	let bundles = new StringBundles();
+	let bundles = new Utils.StringBundles(document);
 	return function() {
 		if (arguments.length == 1) {
 			return bundles.getString(arguments[0]);

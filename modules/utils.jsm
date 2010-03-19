@@ -51,7 +51,8 @@ const EXPORTED_SYMBOLS = [
 	'naturalSort',
 	'SimpleIterator',
 	'Properties',
-	'MimeQuality'
+	'MimeQuality',
+	'StringBundles'
 ];
 
 const Cc = Components.classes;
@@ -521,3 +522,36 @@ MimeQuality.prototype = {
 		return rv;
 	}
 }
+
+/**
+ * Encapulates all stringbundles of the current document and provides unified
+ * access
+ * 
+ * @author Nils
+ * @see _
+ */
+function StringBundles(document) {
+	this._strings = {};
+	this._bundles = document.getElementsByTagName('stringbundle');
+	for each (let bundle in Array.map(this._bundles, function(s) s.strings)) {
+		for (let s in new SimpleIterator(bundle, Ci.nsIPropertyElement)) {
+			this._strings[s.key] = s.value;
+		}
+	}
+}
+StringBundles.prototype = {
+	getString: function(id) {
+		let rv = this._strings[id];
+		if (!rv) {
+			throw new Exception('BUNDLE STRING NOT FOUND (' + id + ')');
+		}
+		return rv;
+	},
+	getFormattedString: function(id, params) {
+		let fmt = this.getString(id);
+		function repl() {
+			return params.shift();
+		}
+		return fmt.replace(/%S/gi, repl);
+	}
+};
