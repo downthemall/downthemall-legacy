@@ -3270,6 +3270,7 @@ var ConflictManager = {
 addEventListener(
 	"load",
 	function() {
+		removeEventListener("load", arguments.callee, false);
 		if (!Preferences.getExt('startminimized', false)) {
 			return;
 		}
