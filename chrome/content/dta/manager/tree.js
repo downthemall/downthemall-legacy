@@ -769,7 +769,7 @@ const Tree = {
 	},
 	// returns an ASC sorted array of IDs that are currently selected.
 	_getSelectedIds: function T_getSelectedIds(getReversed) {
-		var rv = [];
+		let rv = [];
 		let select = this.selection;
 		// loop through the selection as usual
 		for (let i = 0, e = select.getRangeCount(); i < e; ++i) {
@@ -891,7 +891,7 @@ const Tree = {
 	up: function T_up() {
 		try {
 			this.beginUpdate();
-			var ids = this._getSelectedIds().map(
+			let ids = this._getSelectedIds().map(
 				function(id, idx) {
 					if (id - idx != 0) {
 						[this._downloads[id], this._downloads[id - 1]] = [this._downloads[id - 1], this._downloads[id]];
@@ -953,5 +953,81 @@ const Tree = {
 	changePerDownloadSpeedLimit: function() {
 		let limit = $('perDownloadSpeedLimitList').limit;
 		this.updateSelected(function(d) (d.speedLimit = limit) || true); 
+	}
+};
+
+const FileHandling = {
+ 	get _uniqueList() {
+ 		let u = {};
+ 		for (d in Tree.selected) {
+ 			if (d.is(COMPLETE)) {
+ 				let f = d.destinationFile;
+ 				if (SYSTEMSLASH == "\\") {
+ 					f = f.toLowerCase();	
+ 				}
+ 				if (!(f in u)) {
+ 					u[f] = null;
+ 					yield d;
+ 				}
+ 			}
+ 		}
+ 	},
+	openFolder: function() {
+		for (d in Tree.selected) {
+			try {
+				if (new FileFactory(d.destinationPath).exists()) {
+					Utils.reveal(d.destinationFile);
+				}
+			}
+			catch (ex) {
+				Debug.log('reveal', ex);
+			}
+		}
+	},
+	openFile: function() {
+		let cur = Tree.current;
+		if (cur && cur.is(COMPLETE)) {
+			try {
+				Utils.launch(cur.destinationFile);
+			}
+			catch (ex) {
+				Debug.log('launch', ex);
+			}
+		}
+	},
+	deleteFile: function() {
+		let list = [];
+		
+		for (d in this._uniqueList) {
+			let file = new FileFactory(d.destinationFile);
+			if (file.exists()) {
+				list.push(d);
+			}
+		}
+		let msg = '';
+		if (list.length < 25) {
+			msg = _('deletetexts');
+			for each (let d in list) {
+				msg += "\n" + (new FileFactory(d.destinationFile)).leafName;
+			}
+		}
+		else {
+			msg = _('deletetextl', [list.length]);
+		}
+		if (list.length && Prompts.confirm(window, _('deletetitle'), msg, _('delete'), Prompts.CANCEL, null, 1)) {
+			return;
+		}
+		for each (let d in list) {
+			try {
+				let file = new FileFactory(d.destinationFile);
+				if (file.exists()) {
+					file.remove(false);
+				}
+			}
+			catch (ex) {
+				// no-op
+			}
+		}
+		Tree.remove(null, true);
 	}
 };
