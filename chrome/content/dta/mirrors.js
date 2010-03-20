@@ -172,7 +172,8 @@ function removeMirrors() {
 function checkMirrors() {
 	let button = $('mirrorCheck');
 	
-	let pending = mirrors.itemCount;
+	let pending = [];
+	let running = 0;
 	let bad = [];
 	let requests = {};
 	let good = {};
@@ -197,7 +198,10 @@ function checkMirrors() {
 			if (iid.equals(Ci.nsIPrompt)) {
 				return LoggedPrompter;
 			}
-			return this._old.getInterface(iid);
+			if (this._old) {
+				return this._old.getInterface(iid);
+			}
+			throw Components.results.NS_ERROR_NO_INTERFACE;
 		}
 	};
 	
@@ -210,11 +214,10 @@ function checkMirrors() {
 		requests[m.mirror] = req;
 		try {
 			req.open('HEAD', m.mirror);
-			new Callbacks(req);
+			req._callbacks = new Callbacks(req);
 			req.send(null);
 		}
 		catch (ex) {
-			alert(ex + "\n" + m.mirror);
 			finishRequest(req);
 		}
 	}
@@ -253,8 +256,11 @@ function checkMirrors() {
 		if (state == 'bad') {
 			bad.push(m);
 		}
-		if (--pending == 0) {
+		if (--running == 0) {
 			finish();
+		}
+		else if (pending.length) {
+			makeRequest(pending.shift());
 		}
 	}
 	function finish() {
@@ -299,7 +305,7 @@ function checkMirrors() {
 			finishRequest(req);
 		}
 	}
-
+	
 	for (let m in allMirrors) {
 		if (m.hasAttribute('state')) {
 			if (m.getAttribute('state') == 'bad') {
@@ -309,18 +315,19 @@ function checkMirrors() {
 				addGood(m._cl, m);
 			}
 			// skip already tested mirrors
-			--pending;
 			continue;
 		}
-		makeRequest(m);
+		pending.push(m);
 	}
-	if (pending > 0) {
+	if ((running = pending.length) > 0) {
 		button.disabled = true;
+		for (let i = 0, e = Math.min(running, 16); i < e; ++i) {
+			makeRequest(pending.shift());
+		}
 	}
 	else {
 		finish();
 	}
-	// 15 seconds
 	setTimeout(timeout, 20000);
 }
 
