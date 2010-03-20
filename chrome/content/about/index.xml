@@ -113,6 +113,7 @@
 			</p>
 			<p class="remark">&lp.moreinfo;
 			</p>
+			<p class="donate remark">&lp.donate;</p>
 		</div>
 		<h2>Tab headlines</h2>
 		<div id="pager">
@@ -132,10 +133,6 @@
 					</li>
 					<li>
 						<a href="#license">&lp.yourrights;
-						</a>
-					</li>
-					<li class="pager-not-tab">
-						<a href="http://www.downthemall.net/howto/donate/">&lp.donate;
 						</a>
 					</li>
 					<li class="last">
