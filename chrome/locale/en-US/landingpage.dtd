@@ -11,9 +11,11 @@
 <!ENTITY lp.toolbar "Toolbar buttons">
 <!ENTITY lp.privacy "Privacy">
 <!ENTITY lp.yourrights "Your rights">
-<!ENTITY lp.donate "Donate">
 <!ENTITY lp.contact "Contact">
 <!ENTITY lp.pleasenote "Please note:">
+
+
+<!ENTITY lp.donate "Please consider a contribution">
 
 <!ENTITY lp.tut.firsttitle "Your first download">
 <!ENTITY lp.tut.fd1 "Downloading a file in dTa is fairly easy but also very powerful. If prompted to open or save a file you may use the DownThemAll! item. This will show a dialog where you may choose which folder to save the file along with some more advanced features.">
