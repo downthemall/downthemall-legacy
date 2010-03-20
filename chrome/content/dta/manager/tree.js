@@ -55,7 +55,7 @@ const Tree = {
 		dtree.addEventListener('mousemove', function(event) tp.hovering(event), false);
 		dtree.addEventListener('draggesture', function(event) nsDragAndDrop.startDrag(event, tp), false);
 		
-		$('popup').addEventListener('popupshowing', function(event) tp.showSpeedLimitList(event), true);
+		$('popup').addEventListener('popupshowing', function(event) tp.onPopupShowing(event), true);
 
 		
 		ServiceGetter(this, "_ds", "@mozilla.org/widget/dragservice;1", "nsIDragService");
@@ -68,6 +68,13 @@ const Tree = {
 		this.elem.view = this;	
 		this.assembleMenus();
 		this.refreshTools();
+	},
+	onPopupShowing: function(event) {
+		let cascadeMirrors = this.current.urlManager.length < 2;
+		$('mirrors', 'mirrors-sep').forEach(function(e) e.hidden = cascadeMirrors);
+		$('mirrors-cascaded', 'mirrors-cascaded-sep').forEach(function(e) e.hidden = !cascadeMirrors);
+		
+		tp.showSpeedLimitList(event);
 	},
 	assembleMenus: function() {
 		for each (let popup in $('removeCompletedPopup', 'removePopup')) {
