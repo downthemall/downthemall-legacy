@@ -555,7 +555,7 @@ const Tree = {
 			mirrors
 		);
 		if (mirrors.length) {
-			this.current.urlManager.initByArray(mirrors);
+			this.current.replaceMirrors(mirrors);
 			Debug.logString("New mirrors set " + mirrors);
 		}		
 	},
