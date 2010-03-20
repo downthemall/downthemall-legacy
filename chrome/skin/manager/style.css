@@ -346,13 +346,13 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 }
 
 #speedLimit {
-	-moz-image-region: rect(64px,124px,76px,112px);
+	-moz-image-region: rect(64px,128px,76px,112px);
 }
 #perDownloadSpeedLimit .menu-iconic-icon {
 	-moz-image-region: rect(48px,144px,64px,128px);
 }
 #speedLimit[value="-1"] {
-	-moz-image-region: rect(64px,108px,76px,96px);	
+	-moz-image-region: rect(64px,112px,76px,96px);	
 }
 #perDownloadSpeedLimit[value="-1"] .menu-iconic-icon {
 	-moz-image-region: rect(32px,160px,48px,144px);
