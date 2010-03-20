@@ -164,17 +164,19 @@
 			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" key="kMoveDown" command="cmdMoveDown" />
 			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" key="kMoveBottom" command="cmdMoveBottom" />
 			<menuseparator />
+			<menuitem id="mirrors" class="menuitem-iconic" label="&mirrors.label;" tooltiptext="&mirrors.tooltip;" command="cmdMirrors" />
+			<menuseparator id="mirrors-sep" />
 			<menu class="menu-iconic" label="&perdownloadspeedlimit.label;" id="perDownloadSpeedLimit" tooltiptext="&perdownloadspeedlimit.tooltip;">
 				<menupopup id="perDownloadSpeedLimitList" class="speedlimitlist-popup" command="cmdPerDownloadSpeedLimit" />
 			</menu>
-			<menuseparator />
+			<menuseparator />			
 			<menu id="advanced" class="menu-iconic" label="&advanced.label;">
 				<menupopup id="popupmisc">
 					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" command="cmdAddChunk" />
 					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" command="cmdRemoveChunk" />
 					<menuseparator />
-					<menuitem id="mirrors" class="menuitem-iconic" label="&mirrors.label;" tooltiptext="&mirrors.tooltip;" command="cmdMirrors" />
-					<menuseparator />
+					<menuitem id="mirrors-cascaded" class="menuitem-iconic" label="&mirrors.label;" tooltiptext="&mirrors.tooltip;" command="cmdMirrors" />
+					<menuseparator id="mirrors-cascaded-sep" />
 					<menuitem id="force" class="menuitem-iconic" label="&force.label;" key="kForceStart" command="cmdForceStart" />
 					<menuseparator />
 					<menuitem id="import" class="menuitem-iconic" label="&import.label;" command="cmdImport" />
