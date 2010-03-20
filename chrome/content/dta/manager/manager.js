@@ -2004,6 +2004,18 @@ QueueItem.prototype = {
 		}
 		return false;
 	},
+	replaceMirrors: function(mirrors) {
+		let restart = this.urlManager.length < 3;
+		this.urlManager.initByArray(mirrors);
+		if (restart && this.resumable && this.is(RUNNING) && this.maxChunks > 2) {
+			// stop some chunks and restart them
+			Debug.logString("Stopping some chunks and restarting them after mirrors change");
+			let omc = this.maxChunks;
+			this.maxChunks = 2;
+			this.maxChunks = omc;
+		}
+		this.save();
+	},
 	dumpScoreboard: function QI_dumpScoreboard() {
 		let scoreboard = '';
 		let len = this.totalSize.toString().length;

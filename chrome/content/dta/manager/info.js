@@ -204,7 +204,7 @@ var Dialog = {
 			mirrors
 		);
 		if (mirrors.length) {
-			download.urlManager.initByArray(mirrors);
+			download.replaceMirrors(mirrors);
 			Debug.logString("New mirrors set " + mirrors);
 			$("mirrorsText").value = _("mirrorsText", [download.urlManager.length]);			
 		}		
