@@ -22,6 +22,7 @@
 			<preference id="dtarememberoneclick" name="extensions.dta.rememberoneclick" type="bool" />
 			<preference id="dtaconfirmremove" name="extensions.dta.confirmremove" type="bool" />
 			<preference id="dtatextlinks" name="extensions.dta.textlinks" type="bool" />
+			<preference id="dtalistsniffedvideos" name="extensions.dta.listsniffedvideos" type="bool" />
 		</preferences>
 
 		<groupbox>
@@ -36,12 +37,17 @@
 
 		<groupbox>
 			<caption label="&mainpane.alert.caption;" />
-			<radiogroup preference="dtaalert">
-				<radio id="alert1" label="&mainpane.alertboxes.label;" value="0" />
-				<radio id="alert2" label="&mainpane.alertslides.label;" value="1" />
-				<radio id="alert3" label="&mainpane.alertnone.label;" value="2" />
-			</radiogroup>
-			<separator class="groove-thin" />
+			<hbox flex="1" align="center">
+				<label value="&mainpane.alert.label;" control="menualert" />
+				<menulist preference="dtaalert" readonly="true" id="menualert">
+					<menupopup>
+						<menuitem id="alert1" label="&mainpane.alertboxes.label;" value="0" />
+						<menuitem id="alert2" label="&mainpane.alertslides.label;" value="1" />
+						<menuitem id="alert3" label="&mainpane.alertnone.label;" value="2" />
+					</menupopup>
+				</menulist>
+				<spacer flex="1"/>
+			</hbox>
 			<checkbox label="&mainpane.sounderror.label;" preference="dtaerror" />
 			<checkbox id="soundDone" label="&mainpane.sounddone.label;" preference="dtadone" />
 			<checkbox id="closedta" label="&mainpane.closedta.label;" preference="dtaautoclose" />
@@ -53,6 +59,7 @@
 			<checkbox label="&mainpane.rememberoneclick.label;" preference="dtarememberoneclick" />
 			<checkbox label="&mainpane.confirmremove.label;" preference="dtaconfirmremove" />
 			<checkbox label="&mainpane.textlinks.label;" preference="dtatextlinks" />
+			<checkbox label="&mainpane.listsniffedvideos.label;" preference="dtalistsniffedvideos"/>
 		</groupbox>
 
 	</prefpane>
