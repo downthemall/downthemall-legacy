@@ -97,9 +97,9 @@
 <!ENTITY advancedpane.permissions.write "May write">
 <!ENTITY advancedpane.loadendfirst.label "Load last few kilobytes first">
 <!ENTITY advancedpane.scheduler.caption "Download start order:">
-<!ENTITY advancedpane.scheduler.fast "As queued (default, fast)">
-<!ENTITY advancedpane.scheduler.even "Evenly distributed across servers (slow)">
-<!ENTITY advancedpane.scheduler.legacy "Legacy, not respecting per-server limits (fast)">
+<!ENTITY advancedpane.scheduler.fast "Fast - As queued, obeying per-server limits (default)">
+<!ENTITY advancedpane.scheduler.even "Slow - Evenly distributed across servers">
+<!ENTITY advancedpane.scheduler.legacy "Legacy - not respecting per-server limits (fast)">
 
 <!ENTITY uipane.label "Interface">
 <!ENTITY uipane.namesonly.label "Show only file names in Manager window">
