@@ -123,8 +123,7 @@ HttpVisitor.prototype = {
 	cmpKeys: {
 		'etag': true, // must not be modified from 200 to 206:
 									// http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.7
-		// 'content-length': false,
-		'content-type': true,
+		//'content-length': false,
 		'last-modified': true, // may get omitted later, but should not change
 		'content-encoding': true // must not change, or download will become
 															// corrupt.
