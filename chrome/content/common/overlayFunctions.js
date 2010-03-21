@@ -36,34 +36,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-/**
- * include other chrome js files
- * 
- * @param uri
- *          Relative URI to the dta content path
- * @param many
- *          Optional. If set, then include that file more than once
- */
-var DTA_include = function() {
-	var _loaded = {};
-	return function(uri, many) {
-		if (!many && uri in _loaded) {
-			return true;
-		}
-		try {
-			Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-				.getService(Components.interfaces.mozIJSSubScriptLoader)
-				.loadSubScript("chrome://dta/content/" + uri);			
-			_loaded[uri] = true;
-			return true;
-		}
-		catch (ex) {
-			Components.utils.reportError(ex);
-		}
-		return false;
-	}
-}();
-
 const DTA = {};
 Components.utils.import("resource://dta/api.jsm", DTA);
 
@@ -136,7 +108,7 @@ const DTA_DownloadHelper = {};
 Components.utils.import("resource://dta/downloadHelper.jsm", DTA_DownloadHelper);
 
 /* Compat; mostly FlashGot, maybe others */
-// Obsolete; will be removed in 1.3 timeframe
+// Obsolete; will be removed in 2.++ timeframe
 const DTA_AddingFunctions = {
 	ios: DTA.IOService,
 	composeURL: function() DTA.composeURL.apply(this, arguments),

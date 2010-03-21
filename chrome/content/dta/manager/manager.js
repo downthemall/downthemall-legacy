@@ -58,6 +58,7 @@ const BufferedOutputStream = Construct('@mozilla.org/network/buffered-output-str
 const FileInputStream = Construct('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
 const FileOutputStream = Construct('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const StringInputStream = Construct('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
+const Process = Construct('@mozilla.org/process/util;1', 'nsIProcess', 'init');
 
 ServiceGetter(this, "ContentHandling", "@downthemall.net/contenthandling;2", "dtaIContentHandling");
 ServiceGetter(this, "MimeService", "@mozilla.org/uriloader/external-helper-app-service;1", "nsIMIMEService");
@@ -1567,7 +1568,6 @@ QueueItem.prototype = {
 		this.verifyHashOk();
 	},		
 	customFinishEvent: function() {
-		DTA_include("dta/manager/customevent.js");
 		new CustomEvent(this, Prefs.finishEvent);
 	},
 	setAttributes: function() {
@@ -3306,3 +3306,40 @@ addEventListener(
 	},
 	false
 );
+
+function CustomEvent(download, command) {
+ 	try {
+ 		// may I introduce you to a real bastard way of commandline parsing?! :p
+ 		var uuids = {};
+ 		function callback(u) {
+ 			u = u.substr(1, u.length - 2);
+ 			id = Utils.newUUIDString();
+ 			uuids[id] = u;
+ 			return id;
+ 		}
+ 		function mapper(arg, i) {
+			if (arg == "%f") {
+				if (i == 0) {
+					throw new Components.Exception("Will not execute the file itself");
+				}
+				arg = download.destinationFile;
+			}
+			else if (arg in uuids) {
+				arg = uuids[arg];
+			}
+			return arg;
+ 		}
+ 		var args = command
+ 			.replace(/(["'])(.*?)\1/g, callback)
+ 			.split(/ /g)
+ 			.map(mapper);
+ 		var program = new FileFactory(args.shift());
+		var process = new Process(program);
+		process.run(false, args, args.length); 		
+ 	}
+ 	catch (ex) {
+ 		Debug.log("failed to execute custom event", ex);
+ 		alert("failed to execute custom event", ex);
+ 	}
+ 	download.complete();
+} 
