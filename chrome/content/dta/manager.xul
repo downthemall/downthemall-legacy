@@ -32,10 +32,8 @@
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
 
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/manager.js" />
-	<script type="application/javascript" src="chrome://dta/content/dta/manager/tooltip.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/utils.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/tree.js" />
-	<script type="application/javascript" src="chrome://dta/content/dta/manager/tray.js" />
-	<script type="application/javascript" src="chrome://dta/content/dta/manager/prefs.js" />
 
 	<stringbundleset>
 		<stringbundle src="chrome://dta/locale/common.properties" />
