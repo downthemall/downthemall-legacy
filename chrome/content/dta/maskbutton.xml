@@ -91,9 +91,6 @@
 				xbl:inherits="disabled=readonly,popup=readonly"
 			/>
 		</xbl:content>
-		<xbl:implementation>
-			<xbl:constructor>DTA_include("dta/maskbutton.js");</xbl:constructor>
-		</xbl:implementation>
 	</xbl:binding>
 	
 	<xbl:binding id="maskitem">
@@ -101,9 +98,19 @@
 			<label
 				xbl:inherits="value=tag"
 				class="masktag"
-				onclick="appendTag(event);"
 				tooltiptext="&mask.tip;"/>
 			<label xbl:inherits="value=desc"/>
 		</xbl:content>
+		<xbl:handlers>
+			<xbl:handler event="click"><![CDATA[
+				let text = $('renaming');
+				let value = event.originalTarget.value;
+				let s = text.inputField.selectionStart;
+				text.value = text.value.substring(0, s)
+					+ value
+					+ text.value.substring(text.inputField.selectionEnd, text.value.length);
+				text.inputField.setSelectionRange(s + value.length, s + value.length);
+			]]></xbl:handler>
+		</xbl:handlers>
 	</xbl:binding>
 </xbl:bindings>

@@ -83,11 +83,12 @@
 	<binding id="closebox-caption"
 		extends="chrome://global/content/bindings/groupbox.xml#caption">
 		<handlers>
-			<handler event="click">
-				this.parentNode.closed =
-				!this.parentNode.closed; if (this.parentNode.shouldResize) {
-				window.sizeToContent(); }
-			</handler>
+			<handler event="click"><![CDATA[
+				this.parentNode.closed = !this.parentNode.closed;
+				if (this.parentNode.shouldResize) {
+					window.sizeToContent();
+				}
+			]]></handler>
 		</handlers>
 	</binding>
 
