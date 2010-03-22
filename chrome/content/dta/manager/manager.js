@@ -882,7 +882,7 @@ const Dialog = {
 		this.shutdown(this._doneClosing);
 	},
 	_doneClosing: function() {
-		closeWindow(true);
+		close();
 	},
 	shutdown: function D_close(callback) {
 		Debug.logString("Close request");
