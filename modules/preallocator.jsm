@@ -78,7 +78,7 @@ function prealloc(file, size, perms, callback, tp) {
 }
 
 function realPrealloc(file, size, perms, callback, tp) {
-	let rv = false;
+	let rv = true;
 	try {
 		for (let ok = true; ok;) {
 			let stream = new FileOutputStream(file, 0x02 | 0x08, perms, 0);
@@ -102,14 +102,14 @@ function realPrealloc(file, size, perms, callback, tp) {
 			}
 			catch (ex) {
 				log("prealloc: failed", ex);
-				ok = false;
+				rv = ok = false;
 			}
 			stream.close();
 			yield true;
 		}
-		rv = true;
 	}
 	catch (ex) {
+		rv = false;
 		log("prealloc: Failed to run prealloc worker", ex);
 	}
 	if (callback) {
