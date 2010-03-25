@@ -70,14 +70,23 @@ var MigrationService = {
 			}
 			if (DTA.compareVersion(lastVersion, "1.0.1") < 0) {
 				this._execute(['ResetMaxConnections']);
-			}			
-    	var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
+			}
+			
+			try {
+				Preferences.setExt('version', DTA.BASE_VERSION);
+			}
+			catch (ex) {
+				debug("MigrationManager, setVersion:", ex);
+			}
+			
+			
+    	/*var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
 				.createInstance(Components.interfaces.nsIDialogParamBlock);
     	params.SetNumberStrings(1);
     	params.SetString(0, DTA.BASE_VERSION);
     	let mediator = {};
     	Components.utils.import('resource://dta/mediator.jsm', mediator);
-    	mediator.showNotice(null, params);		
+    	mediator.showNotice(null, params);		*/
 		}
 		catch(ex) {
 			debug("MigrationManager:", ex);
