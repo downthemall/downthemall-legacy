@@ -60,6 +60,12 @@
 			<menuitem class="menuitem-iconic dta" id="dtaCtxSaveImg" label="&dta-img-save.label;" />
 			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxSaveImgT" label="&dta-img-save-turbo.label;" />
 
+			<menuitem class="menuitem-iconic dta" id="dtaCtxSaveVideo" label="&dta-video-save.label;" />
+			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxSaveVideoT" label="&dta-video-save-turbo.label;" />
+
+			<menuitem class="menuitem-iconic dta" id="dtaCtxSaveAudio" label="&dta-audio-save.label;" />
+			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxSaveAudioT" label="&dta-audio-save-turbo.label;" />
+
 			<menuitem class="menuitem-iconic dta" id="dtaCtxSaveForm" label="&dta-form-save.label;" />
 			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxSaveFormT" label="&dta-form-save-turbo.label;" />
 

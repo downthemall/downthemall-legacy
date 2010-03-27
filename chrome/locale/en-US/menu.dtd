@@ -10,6 +10,10 @@
 <!ENTITY dta-regular-turbo.label "dTa OneClick...">
 <!ENTITY dta-img-save.label "Save image with DownThemAll!">
 <!ENTITY dta-img-save-turbo.label "Start saving image with dTa OneClick!">
+<!ENTITY dta-video-save.label "Save video with DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Start saving video with dTa OneClick!">
+<!ENTITY dta-audio-save.label "Save audio with DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Start saving audio with dTa OneClick!">
 <!ENTITY dta-link-save.label "Save link with DownThemAll!">
 <!ENTITY dta-link-save-turbo.label "Start saving link with dTa OneClick!">
 <!ENTITY dta-form-save.label "Save form target with DownThemAll!">
