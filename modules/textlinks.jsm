@@ -92,8 +92,8 @@ function getTextLinks(text, fakeLinks) {
  * @param title (string) Optional. Title/description
  * @see DOMElement
  */
-function FakeLink (url, title) {
-	this.href = url;
+function FakeLink(url, title) {
+	this.src = this.href = url;
 	if (!!title) {
 		this.title = title;
 	}
