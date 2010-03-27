@@ -96,7 +96,7 @@
 	function extractDescription(child) {
 		let rv = [];
 		try {
-			var fmt = function(s) {
+			let fmt = function(s) {
 				try {
 					return trim(s.replace(/(\n){1,}/gi, " ").replace(/(\s){2,}/gi, " "));
 				}
@@ -141,9 +141,7 @@
 		
 		let ref = DTA.getRef(doc);
 		
-		for (var i = 0; i < lnks.length; ++i) {
-			// remove anchor from url
-			let link = lnks[i];
+		for each (let link in lnks) {
 			// if it's valid and it's new
 			if (!DTA.isLinkOpenable(link.href)) {
 				continue;
@@ -236,14 +234,16 @@
 		if (window.gContextMenu !=  null) {
 			return gContextMenu;
 		}
-		var cm = {
+		let cm = {
 			onLink: false,
 			onImage: false,
+			onVideo: false,
+			onAudio: false,
 			target: document.popupNode,
 			fake: true
 		};
 		if (cm.target) {
-			var node = cm.target;
+			let node = cm.target;
 			if (node instanceof Ci.nsIImageLoadingContent && node.currentURI) {
 				cm.onImage = true;
 			}
@@ -458,7 +458,7 @@
 	
 	function findSingleLink(turbo) {
 		try {
-			var cur = contextMenu().target;
+			let cur = contextMenu().target;
 			while (!("tagName" in cur) || !cur.tagName.match(/^a$/i)) {
 				cur = cur.parentNode;
 			}
@@ -472,7 +472,7 @@
 	
 	function findSingleImg(turbo) {
 		try {
-			var cur = contextMenu().target;
+			let cur = contextMenu().target;
 			while (!("tagName" in cur) || !cur.tagName.match(/^img$/i)) {
 				cur = cur.parentNode;
 			}
@@ -482,6 +482,29 @@
 			prompts.alert(window, getString('error'), getString('errornodownload'));
 			debug('findSingleLink: ', ex);
 		}		
+	}
+	
+	function _findSingleMedia(turbo, matching) {
+		try {
+			let cur = contextMenu().target;
+			while (!("tagName" in cur) || !cur.tagName.match(matching)) {
+				cur = cur.parentNode;
+			}
+			if (!cur.src) {
+				cur = cur.getElementsByTagName('source')[0];
+			}
+			saveSingleLink(turbo, cur.src, cur);
+		}
+		catch (ex) {
+			prompts.alert(window, getString('error'), getString('errornodownload'));
+			debug('_findSingleMedia: ', ex);
+		}		
+	}
+	function findSingleVideo(turbo) {
+		_findSingleMedia(turbo, /^video/i);
+	}
+	function findSingleAudio(turbo) {
+		_findSingleMedia(turbo, /^audio/i);
 	}
 	
 	function saveSingleLink(turbo, url, elem) {
@@ -514,15 +537,15 @@
 			if (!('form' in ctx.target)) {
 				throw new Components.Exception("No form");
 			}
-			var form = ctx.target.form;
+			let form = ctx.target.form;
 			
-			var action = DTA.composeURL(form.ownerDocument, form.action);
+			let action = DTA.composeURL(form.ownerDocument, form.action);
 			if (!DTA.isLinkOpenable(action.spec)) {
 				throw new Components.Exception('Unsupported URL');
 			}
 			action = action.QueryInterface(Ci.nsIURL);
 			
-			var charset = form.ownerDocument.characterSet;
+			let charset = form.ownerDocument.characterSet;
 			if (form.acceptCharset) {
 				charset = form.acceptCharset;
 			}
@@ -652,13 +675,19 @@
 			}
 			
 			// hovering an image or link
-			if (ctx && (ctx.onLink || ctx.onImage)) {
+			if (ctx && (ctx.onLink || ctx.onImage || ctx.onVideo || ctx.onAudio)) {
 				if (items[0]) {
 					if (ctx.onLink) {
 						show.push(menu.SaveLink);
 					}
 					if (ctx.onImage) {
 						show.push(menu.SaveImg);
+					}
+					if (ctx.onVideo) {
+						show.push(menu.SaveVideo);
+					}
+					if (ctx.onAudio) {
+						show.push(menu.SaveAudio);
 					}
 				}
 				if (items[1]) {
@@ -667,6 +696,12 @@
 					}
 					if (ctx.onImage) {
 						show.push(menu.SaveImgT);
+					}
+					if (ctx.onVideo) {
+						show.push(menu.SaveVideoT);
+					}
+					if (ctx.onAudio) {
+						show.push(menu.SaveAudioT);
 					}
 				}
 			}
@@ -766,7 +801,7 @@
 		
 			// show the items.
 			for (let i in tools) {
-				var cur = tools[i];
+				let cur = tools[i];
 				if (show.indexOf(i) == -1) {
 					toolsMenu.insertBefore(cur, toolsSep);
 				}
@@ -1221,7 +1256,7 @@
 				let ctx = ctxItem.parentNode;
 				let cont = $('dtaCtxSubmenu');
 		
-				for each (let id in ['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveFormT', 'SaveForm', 'SepFront']) {
+				for each (let id in ['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveVideoT', 'SaveVideo', 'SaveAudioT', 'SaveAudio', 'SaveFormT', 'SaveForm', 'SepFront']) {
 					compact[id] = $('dtaCtx' + id);
 					let node = $('dtaCtx' + id).cloneNode(true);
 					node.setAttribute('id', node.id + "-direct");
@@ -1275,6 +1310,10 @@
 		bindCtxEvt('dtaCtxSaveLinkT', 'command', function() findSingleLink(true));
 		bindCtxEvt('dtaCtxSaveImg', 'command', function() findSingleImg(false));
 		bindCtxEvt('dtaCtxSaveImgT', 'command', function() findSingleImg(true));
+		bindCtxEvt('dtaCtxSaveVideo', 'command', function() findSingleVideo(false));
+		bindCtxEvt('dtaCtxSaveVideoT', 'command', function() findSingleVideo(true));
+		bindCtxEvt('dtaCtxSaveAudio', 'command', function() findSingleAudio(false));
+		bindCtxEvt('dtaCtxSaveAudioT', 'command', function() findSingleAudio(true));
 		bindCtxEvt('dtaCtxSaveForm', 'command', function() findForm(false));
 		bindCtxEvt('dtaCtxSaveFormT', 'command', function() findForm(true));
 		
