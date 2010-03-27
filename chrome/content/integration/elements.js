@@ -182,11 +182,11 @@
 		}
 		
 		let ref = DTA.getRef(doc);
-
-		for (let i = 0; i < lnks.length; ++i) {
-			let src = lnks[i].src;
+		
+		for each (let l in lnks) {
+			let src = l.src;
 			try {
-				src = DTA.composeURL(doc, src);
+				src = DTA.composeURL(doc, l.src);
 			}
 			catch (ex) {
 				debug("failed to compose: " + src, ex);
@@ -198,11 +198,11 @@
 				continue;
 			}
 			let desc = '';
-			if (lnks[i].hasAttribute('alt')) {
-				desc = trim(lnks[i].getAttribute('alt'));
+			if (l.hasAttribute('alt')) {
+				desc = trim(l.getAttribute('alt'));
 			}
-			else if (lnks[i].hasAttribute('title')) {
-				desc = trim(lnks[i].getAttribute('title'));
+			else if (l.hasAttribute('title')) {
+				desc = trim(l.getAttribute('title'));
 			}
 			images.push({
 				'url': new DTA.URL(src),
@@ -215,21 +215,18 @@
 	function recognizeTextLinks() {
 		return DTA.Preferences.getExt("textlinks", true);
 	}
+	let TextLinks = {};
+	Components.utils.import("resource://dta/textlinks.jsm", TextLinks);
 	function getTextLinks(set, fakeLinks) {
-		let _tl = {};			
-		Components.utils.import("resource://dta/textlinks.jsm", _tl);
-		
-		return (getTextLinks = function(set, fakeLinks) {
-			let text = [];
-			for (let r = set.iterateNext(); r; r = set.iterateNext()) {
-				r = r.textContent.replace(/^\s+|\s+$/g, "");
-				if (r) {
-					text.push(r);
-				}
+		let text = [];
+		for (let r = set.iterateNext(); r; r = set.iterateNext()) {
+			r = r.textContent.replace(/^\s+|\s+$/g, "");
+			if (r) {
+				text.push(r);
 			}
-			text = text.join(" \n");			
-			return _tl.getTextLinks(text, fakeLinks)
-		})(set, fakeLinks);
+		}
+		text = text.join(" \n");			
+		return TextLinks.getTextLinks(text, fakeLinks)
 	}
 
 	function selectButton() {
@@ -264,10 +261,10 @@
 	function addLinks(aWin, aURLs, aImages, honorSelection) {
 
 		function filterElements(nodes, set) {
-			var filtered = [];
-			for (var i = 0, e = nodes.length; i < e; ++i) {
-				if (set.containsNode(nodes[i], true)) {
-					filtered.push(nodes[i]);
+			let filtered = [];
+			for each (let n in nodes) {
+				if (set.containsNode(n, true)) {
+					filtered.push(n);
 				}
 			}
 			return filtered;
@@ -275,8 +272,18 @@
 	
 		try {
 			let links = Array.map(aWin.document.links, function(e) e);
-			let images = aWin.document.images;
-			let embeds = aWin.document.embeds;
+			
+			let images = Array.map(aWin.document.images, function(e) e);
+			let videos = Array.map(aWin.document.getElementsByTagName('video'), function(e) e);
+			videos = videos.concat(Array.map(aWin.document.getElementsByTagName('audio'), function(e) e));
+			let sources = [];
+			for each (let v in videos) {
+				sources = sources.concat(Array.map(v.getElementsByTagName('source'), function(e) e));
+			}
+			videos = videos.concat(sources);
+			videos = videos.filter(function(e) !!e.src);
+			
+			let embeds = Array.map(aWin.document.embeds, function(e) e);
 			let rawInputs = aWin.document.getElementsByTagName('input');
 			let inputs = [];
 			for (let i = 0; i < rawInputs.length; ++i) {
@@ -290,7 +297,7 @@
 			let sel = aWin.getSelection();
 			if (honorSelection && sel && !sel.isCollapsed) {
 				debug("selection only");
-				[links, images, embeds, inputs] = [links, images, embeds, inputs].map(
+				[links, images, videos, embeds, inputs] = [links, images, videos, embeds, inputs].map(
 					function(e) {
 						return filterElements(e, sel);
 					}
@@ -301,7 +308,7 @@
 						let r = sel.getRangeAt(i);
 						copy.appendChild(r.cloneContents());
 					}
-				  let cdoc = document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
+				  let cdoc = aWin.document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
 				  copy = cdoc.adoptNode(copy);
 				  cdoc.documentElement.appendChild(cdoc.adoptNode(copy));
 				  delete copy;
@@ -351,9 +358,14 @@
 			}
 			
 			addLinksToArray(links, aURLs, aWin.document);
-			for each (let e in [images, embeds, inputs]) {
+			for each (let e in [images, videos, embeds, inputs]) {
 				addImagesToArray(e, aImages, aWin.document);
 			}
+			addImagesToArray(
+				videos.filter(function(e) !!e.poster).map(function(e) new TextLinks.FakeLink(e.poster)),
+				aImages,
+				aWin.document
+			);
 		}
 		catch (ex) {
 			debug('addLinks', ex);
