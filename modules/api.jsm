@@ -343,7 +343,7 @@ function getLinkPrintMetalink(url) {
 	if (!(url instanceof Components.interfaces.nsIURL)) {
 		return null;
 	}
-	let lp = url.ref.match(/^!metalink3!(.+)$/);
+	let lp = url.ref.match(/^!meta(?:link)?(?:3|4)!(.+)$/);
 	if (lp) {
 		let rv = lp[1];
 		try {
