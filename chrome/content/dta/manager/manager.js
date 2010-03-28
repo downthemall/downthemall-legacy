@@ -36,11 +36,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-const NS_DTA = 'http://www.downthemall.net/properties#';
-const NS_METALINKER = 'http://www.metalinker.org/';
-const NS_HTML = 'http://www.w3.org/1999/xhtml';
- 
- 
 const NS_ERROR_MODULE_NETWORK = 0x804B0000;
 const NS_ERROR_BINDING_ABORTED = NS_ERROR_MODULE_NETWORK + 2;
 const NS_ERROR_UNKNOWN_HOST = NS_ERROR_MODULE_NETWORK + 30;
@@ -2317,7 +2312,7 @@ function Connection(d, c, isInfoGetter) {
 			}
 			if (this.isInfoGetter) {
 				if (!d.fromMetalink) {
-					http.setRequestHeader('Accept', 'application/metalink+xml;q=0.9', true);
+					http.setRequestHeader('Accept', 'application/metalink4+xml;q=0.9,application/metalink+xml;q=0.8', true);
 				}
 				http.setRequestHeader('Want-Digest', DTA.WANT_DIGEST_STRING, false);
 			}
@@ -2693,7 +2688,7 @@ Connection.prototype = {
 		// accept range
 		d.resumable &= visitor.acceptRanges;
 
-		if (visitor.type && visitor.type.search(/application\/metalink\+xml/) != -1) {
+		if (visitor.type && visitor.type.search(/application\/metalink4?\+xml/) != -1) {
 			d.isMetalink = true;
 			d.resumable = false;
 		}
@@ -2830,7 +2825,7 @@ Connection.prototype = {
 			}
 
 			if (this.isInfoGetter) {
-				if (d.fileName.getExtension() == 'metalink') {
+				if (d.fileName.getExtension().match(/^meta(?:4|link)$/i)) {
 					d.isMetalink = true;
 					d.resumable = false;
 				}				
