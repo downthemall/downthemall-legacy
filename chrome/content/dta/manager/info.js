@@ -215,7 +215,7 @@ var Dialog = {
 			return false;
 		}
 		if (!Utils.validateDir(dir)) {
-			alert(_('alertinvalidfolder'));
+			alert(_(dir.length ? 'alertinvaliddir' : 'alertnodir'));
 			var newDir = Utils.askForDir(null, _("validdestination"));
 			$('directory').value = newDir ? newDir : '';
 			return false;
