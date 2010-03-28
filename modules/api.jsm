@@ -147,7 +147,7 @@ URL.prototype = {
 			preference: this.preference
 		}
 	},
-	toString: function() this._url.spec
+	toString: function() this._usable
 };
 
 /**
@@ -537,7 +537,8 @@ function turboSaveLinkArray(window, urls, images) {
 	if (links.length == 0) {
 		throw new Exception('no links remaining');
 	}
-	this.turboSendLinksToManager(window, links);		
+	this.turboSendLinksToManager(window, links);
+	return links.length > 1 ? links.length : links[0];
 }
 
 function openManager(window, quiet) {

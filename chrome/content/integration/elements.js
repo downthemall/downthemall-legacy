@@ -74,11 +74,10 @@
 	}
 
 	
-	function getString(n) {
 		let _str = Cc['@mozilla.org/intl/stringbundle;1']
 			.getService(Ci.nsIStringBundleService)
 			.createBundle('chrome://dta/locale/menu.properties');
-		return (getString = function(n) {
+		function getString(n) {
 			try {
 				return _str.GetStringFromName(n);
 			}
@@ -86,8 +85,43 @@
 				debug("locale error: " + n, ex);
 				return '<error>';
 			}
-		})(n);
+		};
+		function getFormattedString(n) {
+			let args = Array.map(arguments, function(e) e);
+			args.shift();
+			try {
+				return _str.formatStringFromName(n, args, args.length);
+			}
+			catch (ex) {
+				debug("locale error: " + n, ex);
+				return '<error>';
+			}	
+		}
+	
+	function _notify(title, message, priority, mustAlert, timeout) {
+		try {
+			timeout = timeout || 2500;
+			let nb = gBrowser.getNotificationBox();
+			let notification = nb.appendNotification(
+				message,
+				0,
+				'chrome://dta/skin/common/dta.png',
+				nb[priority]
+				);
+			setTimeout(function() {
+				nb.removeNotification(notification);
+			}, timeout);
+		}
+		catch (ex) {
+			if (mustAlert) {
+				prompts.alert(window, title, message);
+			}
+		}
 	}
+	
+	function notifyError(title, message) _notify(title, message, 'PRIORITY_CRITICAL_HIGH', true, 1500);
+	function notifyInfo(message) _notify('', message, 'PRIORITY_INFO_MEDIUM', false);
+	
 	
 	function trim(t) {
 		return t.replace(/^[ \t_]+|[ \t_]+$/gi, '').replace(/(_){2,}/g, "_");
@@ -434,13 +468,19 @@
 			images = unique(images);
 
 			if (!urls.length && !images.length) {
-				prompts.alert(window, getString('error'), getString('errornolinks'));
+				notifyError(getString('error'), getString('errornolinks'));
 				return;
 			}
 			
 			if (turbo) {
 				try {
-					DTA.turboSaveLinkArray(window, urls, images);
+					let queued = DTA.turboSaveLinkArray(window, urls, images);
+					if (typeof queued == 'number') {
+						notifyInfo(getFormattedString('queuedn', queued));
+					}
+					else {
+						notifyInfo(getFormattedString('queued', queued));
+					}
 					return;
 				}
 				catch (ex) {
@@ -465,7 +505,7 @@
 			saveSingleLink(turbo, cur.href, cur);
 		}
 		catch (ex) {
-			prompts.alert(window, getString('error'), getString('errornodownload'));
+			notifyError(getString('error'), getString('errornodownload'));
 			debug('findSingleLink: ', ex);
 		}
 	}
@@ -479,7 +519,7 @@
 			saveSingleLink(turbo, cur.src, cur);
 		}
 		catch (ex) {
-			prompts.alert(window, getString('error'), getString('errornodownload'));
+			notifyError(getString('error'), getString('errornodownload'));
 			debug('findSingleLink: ', ex);
 		}		
 	}
@@ -496,7 +536,7 @@
 			saveSingleLink(turbo, cur.src, cur);
 		}
 		catch (ex) {
-			prompts.alert(window, getString('error'), getString('errornodownload'));
+			notifyError(getString('error'), getString('errornodownload'));
 			debug('_findSingleMedia: ', ex);
 		}		
 	}
@@ -522,11 +562,12 @@
 		if (turbo) {
 			try {
 				DTA.saveSingleLink(window, true, url, ref, desc);
+				notifyInfo(getFormattedString('queued', url));
 				return;
 			}
 			catch (ex) {
 				debug('saveSingleLink', ex);
-				prompts.alert(window, getString('error'), getString('errorinformation'));
+				notifyError(getString('error'), getString('errorinformation'));
 			}
 		}
 		DTA.saveSingleLink(window, false, url, ref, desc);		
@@ -612,7 +653,7 @@
 				}
 				catch (ex) {
 					debug('findSingleLink', ex);
-					prompts.alert(window, getString('error'), getString('errorinformation'));
+					notifyError(getString('error'), getString('errorinformation'));
 				}
 			}
 			DTA.saveSingleLink(window, window, false, action, ref, desc);
