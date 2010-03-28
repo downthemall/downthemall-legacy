@@ -503,6 +503,7 @@ var Servers = {
 			this._list.selectedItem = ns;
 			this._list.ensureElementIsVisible(ns);
 		}
+		$('noitemsbox').hidden = !!this._list.itemCount;
 	},
 	changedMaxTasks: function() {
 		$('maxtaskslabel').value = $('maxtasks').value;

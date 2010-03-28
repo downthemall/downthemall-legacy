@@ -37,7 +37,7 @@
  
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<prefpane id="paneServers" label="&serverspane.label;" orient="vertical" onpaneload="Servers.init();">
+	<prefpane id="paneServers" label="&serverspane.label;" orient="vertical" onpaneload="Servers.init();" flex="1">
 		<preferences>
 			<preference id="dtamaxtasks" name="extensions.dta.ntask" type="int" />
 			<preference id="dtamaxtasksperserver" name="extensions.dta.serverlimit.perserver" type="int" />

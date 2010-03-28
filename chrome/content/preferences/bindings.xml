@@ -83,7 +83,6 @@
 					<xul:row>
 						<xul:hbox class="serverlimit-host" align="center">
 							<xul:image class="serverlimit-host-image" />
-							<xul:label value="&serverspane.server.label;" />
 							<xul:label anonid="host" xbl:inherits="value=host" class="serverlimit-host-label" crop="right" />
 						</xul:hbox>
 						<xul:hbox class="serverlimit-connections" align="center">
@@ -116,7 +115,6 @@
 						<xul:row>
 							<xul:hbox class="serverlimit-host" align="center">
 								<xul:image class="serverlimit-host-image" />
-								<xul:label value="&serverspane.server.label;" />
 								<xul:label anonid="host" xbl:inherits="value=host" class="serverlimit-host-label" crop="right" />
 							</xul:hbox>
 							<xul:hbox class="serverlimit-connections" align="center">
@@ -179,7 +177,6 @@
 					<xul:rows>
 						<xul:row align="center">
 							<xul:image class="serverlimit-host-image" />
-							<xul:label value="&serverspane.server.label;" />
 							<xul:label anonid="host" xbl:inherits="value=host" class="serverlimit-host-label" crop="right" />
 						</xul:row>
 						<xul:row align="center">
