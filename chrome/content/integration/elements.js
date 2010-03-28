@@ -74,29 +74,29 @@
 	}
 
 	
-		let _str = Cc['@mozilla.org/intl/stringbundle;1']
-			.getService(Ci.nsIStringBundleService)
-			.createBundle('chrome://dta/locale/menu.properties');
-		function getString(n) {
-			try {
-				return _str.GetStringFromName(n);
-			}
-			catch (ex) {
-				debug("locale error: " + n, ex);
-				return '<error>';
-			}
-		};
-		function getFormattedString(n) {
-			let args = Array.map(arguments, function(e) e);
-			args.shift();
-			try {
-				return _str.formatStringFromName(n, args, args.length);
-			}
-			catch (ex) {
-				debug("locale error: " + n, ex);
-				return '<error>';
-			}	
+	let _str = Cc['@mozilla.org/intl/stringbundle;1']
+		.getService(Ci.nsIStringBundleService)
+		.createBundle('chrome://dta/locale/menu.properties');
+	function getString(n) {
+		try {
+			return _str.GetStringFromName(n);
 		}
+		catch (ex) {
+			debug("locale error: " + n, ex);
+			return '<error>';
+		}
+	};
+	function getFormattedString(n) {
+		let args = Array.map(arguments, function(e) e);
+		args.shift();
+		try {
+			return _str.formatStringFromName(n, args, args.length);
+		}
+		catch (ex) {
+			debug("locale error: " + n, ex);
+			return '<error>';
+		}	
+	}
 	
 	function _notify(title, message, priority, mustAlert, timeout) {
 		try {
@@ -248,7 +248,7 @@
 		return DTA.Preferences.getExt("textlinks", true);
 	}
 	let TextLinks = {};
-	Components.utils.import("resource://dta/textlinks.jsm", TextLinks);
+	Components.utils.import("resource://dta/support/textlinks.jsm", TextLinks);
 	function getTextLinks(set, fakeLinks) {
 		let text = [];
 		for (let r = set.iterateNext(); r; r = set.iterateNext()) {

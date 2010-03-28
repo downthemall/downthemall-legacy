@@ -42,7 +42,7 @@
 
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<script type="text/javascript"><![CDATA[
-		Components.utils.import("resource://dta/mediator.jsm");
+		Components.utils.import("resource://dta/support/mediator.jsm");
 		showAbout(window.opener);
 		close();
 	]]></script>

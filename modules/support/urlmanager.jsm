@@ -52,7 +52,7 @@ module("resource://dta/api.jsm", DTA);
 const IOService = DTA.IOService;
 
 const Limits = {};
-module("resource://dta/serverlimits.jsm", Limits);
+module("resource://dta/support/serverlimits.jsm", Limits);
 
 function compareFn(a, b) {
 	const rv = b.preference - a.preference;

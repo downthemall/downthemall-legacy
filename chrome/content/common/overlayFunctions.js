@@ -36,8 +36,10 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const DTA = {};
+const DTA = {_dh: {}};
 Components.utils.import("resource://dta/api.jsm", DTA);
+Components.utils.import("resource://dta/support/downloadHelper.jsm", DTA._dh);
+
 
 function DTA_showPreferences() {
 	var instantApply = DTA.Preferences.get("browser.preferences.instantApply", false);
@@ -99,13 +101,9 @@ this.__defineGetter__('DTA_Mediator', function() {
 			this.openUrl(window, url, ref);
 		}
 	};
-	Components.utils.import('resource://dta/mediator.jsm', this.DTA_Mediator);
+	Components.utils.import('resource://dta/support/support/mediator.jsm', this.DTA_Mediator);
 	return this.DTA_Mediator;
 });
-
-/* DownloadHelper */
-const DTA_DownloadHelper = {};
-Components.utils.import("resource://dta/downloadHelper.jsm", DTA_DownloadHelper);
 
 /* Compat; mostly FlashGot, maybe others */
 // Obsolete; will be removed in 2.++ timeframe

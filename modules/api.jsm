@@ -61,7 +61,7 @@ const EXPORTED_SYMBOLS = [
 	"turboSaveLinkArray",
 	"openManager",
 	"currentSeries",
-	"incrementSeries"
+	"incrementSeries",
 ];
 
 const Cc = Components.classes;
@@ -75,11 +75,11 @@ module("resource://dta/utils.jsm");
 const Preferences = {};
 module("resource://dta/preferences.jsm", Preferences);
 const Mediator = {};
-module("resource://dta/mediator.jsm", Mediator);
+module("resource://dta/support/mediator.jsm", Mediator);
 const Histories = {};
-module("resource://dta/historymanager.jsm", Histories);
+module("resource://dta/support/historymanager.jsm", Histories);
 const pbm = {};
-module("resource://dta/pbm.jsm", pbm);
+module("resource://dta/support/pbm.jsm", pbm);
 
 ServiceGetter(this, "TextToSubURI", "@mozilla.org/intl/texttosuburi;1", "nsITextToSubURI");
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");

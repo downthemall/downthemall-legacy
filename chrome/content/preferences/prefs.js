@@ -559,7 +559,7 @@ var Servers = {
 		$('noitemsbox').hidden = !!this._list.itemCount;		
 	}
 };
-Components.utils.import('resource://dta/serverlimits.jsm', Servers);
+Components.utils.import('resource://dta/support/serverlimits.jsm', Servers);
 ServiceGetter(Servers, 'prompts', '@mozilla.org/embedcomp/prompt-service;1', 'nsIPromptService');
 
 var Prefs = {

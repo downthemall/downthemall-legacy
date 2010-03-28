@@ -79,7 +79,7 @@ this.__defineGetter__(
 	'pbm',
 	function() {
 		let pbm = {};
-		module('resource://dta/pbm.jsm', pbm);
+		module('resource://dta/support/pbm.jsm', pbm);
 		delete this.pbm;
 		return (this.pbm = pbm); 
 	}
@@ -430,7 +430,7 @@ MigrationService.prototype = {
 			
 			Preferences.setExt('version', DTA.BASE_VERSION);
 
-			module('resource://dta/mediator.jsm', this._mediator);
+			module('resource://dta/support/mediator.jsm', this._mediator);
 			this._mediator.addListener(this);
 		}
 		catch(ex) {

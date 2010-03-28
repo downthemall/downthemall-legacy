@@ -59,7 +59,7 @@ function QueueItem(url, num, desc, hash) {
 
 setNewGetter(this, "BatchGenerator", function() {
 	let bg = {};
-	Components.utils.import("resource://dta/batchgen.jsm", bg);
+	Components.utils.import("resource://dta/support/batchgen.jsm", bg);
 	return bg.BatchGenerator;
 });
 

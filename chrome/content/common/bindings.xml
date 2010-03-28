@@ -104,7 +104,7 @@
 			<constructor><![CDATA[
 				try {
 					var hist = {};
-					Components.utils.import("resource://dta/historymanager.jsm", hist);
+					Components.utils.import("resource://dta/support/historymanager.jsm", hist);
 					this.hist = hist.getHistory(this._pref, this.getAttribute('default'));					
 					this._load();
 				}

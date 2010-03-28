@@ -40,7 +40,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://dta/timers.jsm");
+Components.utils.import("resource://dta/support/timers.jsm");
 
 const Timers = new TimerManager();
 

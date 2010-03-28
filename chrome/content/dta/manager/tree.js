@@ -36,7 +36,10 @@
  
 const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init');
 
-Components.utils.import('resource://dta/version.jsm', DTA);
+module('resource://dta/version.jsm', DTA);
+let ImportExport = {};
+module('resource://dta/manager/imex.jsm', ImportExport);
+
  
 const Tree = {
 	init: function T_init(elem) {
@@ -567,9 +570,6 @@ const Tree = {
 		}		
 	},
 	export: function T_export() {
-		let imex = {};
-		module('resource://dta/imex.jsm', imex);
-
 		try {
 			let fp = new FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
 			fp.appendFilters(Ci.nsIFilePicker.filterHTML | Ci.nsIFilePicker.filterText);
@@ -580,9 +580,9 @@ const Tree = {
 			let rv = fp.show();
 			if (rv == Ci.nsIFilePicker.returnOK || rv == Ci.nsIFilePicker.returnReplace) {
 				switch (fp.filterIndex) {
-					case 0: imex.exportToHtmlFile(this.selected, document, fp.file, Prefs.permissions); return;
-					case 1: imex.exportToTextFile(this.selected, fp.file, Prefs.permissions); return;
-					case 2: imex.exportToMetalinkFile(this.selected, document, fp.file, Prefs.permissions); return;
+					case 0: ImportExport.exportToHtmlFile(this.selected, document, fp.file, Prefs.permissions); return;
+					case 1: ImportExport.exportToTextFile(this.selected, fp.file, Prefs.permissions); return;
+					case 2: ImportExport.exportToMetalinkFile(this.selected, document, fp.file, Prefs.permissions); return;
 				} 
 			}
 		}
@@ -603,9 +603,7 @@ const Tree = {
 			if (rv == Ci.nsIFilePicker.returnOK) {
 				switch (fp.filterIndex) {
 					case 0: {
-						let im = {};
-						module('resource://dta/imex.jsm', im);
-						let links = im.parseTextfile(fp.file);
+						let links = ImportExport.parseTextfile(fp.file);
 						if (links.length) {
 							DTA.saveLinkArray(window, links, []);
 						}						
