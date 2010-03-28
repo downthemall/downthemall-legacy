@@ -151,7 +151,18 @@ ProcessorImpl.prototype = {
 
 const processors = [];
 if (available) {
-	// XXX l10n
-	processors.push(new ProcessorImpl(false, "dta-regular", "DownThemAll!", "Download with DownThemAll!"));
-	processors.push(new ProcessorImpl(true, "dta-turbo", "dta! OneClick", "Download with DownThemAll! OneClick"));
+	let _str = Cc['@mozilla.org/intl/stringbundle;1']
+		.getService(Ci.nsIStringBundleService)
+		.createBundle('chrome://dta/locale/downloadHelper.properties');
+	function getString(n) {
+		try {
+			return _str.GetStringFromName(n);
+		}
+		catch (ex) {
+			debug("locale error: " + n, ex);
+			return '<error>';
+		}
+	};
+	processors.push(new ProcessorImpl(false, "dta-regular", getString('dta-regular'), getString('dta-regular-desc')));
+	processors.push(new ProcessorImpl(true, "dta-turbo", getString('dta-turbo'), getString('dta-turbo-desc')));
 }

@@ -49,8 +49,9 @@ const Exception = Components.Exception;
 const Prefs = {}, DTA = {};
 module("resource://dta/preferences.jsm", Prefs);
 module("resource://dta/utils.jsm");
-module("resource://dta/timers.jsm");
 module("resource://dta/api.jsm", DTA);
+
+module("resource://dta/support/timers.jsm");
 
 const IOService = DTA.IOService;
 

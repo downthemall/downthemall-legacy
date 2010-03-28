@@ -35,9 +35,9 @@
  * ***** END LICENSE BLOCK ***** */
 
 let Prompts = {};
-module('resource://dta/prompts.jsm', Prompts);
 module("resource://gre/modules/XPCOMUtils.jsm");
-module('resource://dta/loggedprompter.jsm');
+module('resource://dta/support/loggedprompter.jsm');
+module('resource://dta/prompts.jsm', Prompts);
 
 LoggedPrompter = new LoggedPrompter(window).prompter;
 

@@ -69,23 +69,26 @@ const CHUNK_BUFFER_SIZE = 96 * 1024;
 const REFRESH_FREQ = 1000;
 const STREAMS_FREQ = 250;
 
-let Prompts = {}, Preallocator = {}, Limits = {}, JSONCompat = {}, PrivateBrowsing = {}, AlertService = {};
-module('resource://dta/prompts.jsm', Prompts);
-module('resource://dta/speedstats.jsm');
-module('resource://dta/preallocator.jsm', Preallocator);
+let Prompts = {}, Limits = {}, JSONCompat = {}, PrivateBrowsing = {}, AlertService = {};
 module('resource://dta/cothread.jsm');
-module('resource://dta/queuestore.jsm');
-module('resource://dta/timers.jsm');
-module('resource://dta/loggedprompter.jsm');
-module('resource://dta/serverlimits.jsm', Limits);
 module('resource://dta/json.jsm', JSONCompat);
-module('resource://dta/urlmanager.jsm');
-module('resource://dta/visitormanager.jsm');
-module('resource://dta/decompressor.jsm');
-module('resource://dta/verificator.jsm');
-module('resource://dta/bytebucket.jsm');
-module('resource://dta/pbm.jsm', PrivateBrowsing);
-module('resource://dta/alertservice.jsm', AlertService);
+module('resource://dta/support/urlmanager.jsm');
+module('resource://dta/prompts.jsm', Prompts);
+
+module('resource://dta/support/alertservice.jsm', AlertService);
+module('resource://dta/support/bytebucket.jsm');
+module('resource://dta/support/loggedprompter.jsm');
+module('resource://dta/support/pbm.jsm', PrivateBrowsing);
+module('resource://dta/support/serverlimits.jsm', Limits);
+module('resource://dta/support/timers.jsm');
+
+let Preallocator = {};
+module('resource://dta/manager/decompressor.jsm');
+module('resource://dta/manager/preallocator.jsm', Preallocator);
+module('resource://dta/manager/queuestore.jsm');
+module('resource://dta/manager/speedstats.jsm');
+module('resource://dta/manager/verificator.jsm');
+module('resource://dta/manager/visitormanager.jsm');
 
 const AuthPrompts = new LoggedPrompter(window);
 
@@ -1048,7 +1051,7 @@ const Metalinker = {
 		}
 	}	
 };
-module('resource://dta/metalinker.jsm', Metalinker);
+module('resource://dta/support/metalinker.jsm', Metalinker);
 
 
 function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {

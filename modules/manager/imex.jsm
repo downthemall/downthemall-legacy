@@ -55,8 +55,8 @@ module("resource://dta/preferences.jsm", Preferences);
 module("resource://dta/api.jsm", DTA);
 module("resource://dta/utils.jsm");
 module("resource://dta/version.jsm", DTA);
-module("resource://dta/textlinks.jsm");
-module("resource://dta/metalinker.jsm");
+module("resource://dta/support/textlinks.jsm");
+module("resource://dta/support/metalinker.jsm");
 
 const IOService = DTA.IOService;
 const XPathResult = Ci.nsIDOMXPathResult;

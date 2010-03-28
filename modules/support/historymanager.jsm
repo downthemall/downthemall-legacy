@@ -47,7 +47,7 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 let pbm = {}, prefs = {};
-module("resource://dta/pbm.jsm", pbm);
+module("resource://dta/support/pbm.jsm", pbm);
 module("resource://dta/preferences.jsm", prefs);
 module("resource://dta/json.jsm");
 module("resource://dta/utils.jsm");

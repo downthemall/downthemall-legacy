@@ -48,10 +48,11 @@ const DB_FILE_BROKEN = 'dta_queue.broken';
 const DB_FILE_BAK = DB_FILE + ".bak";
 const DB_VERSION = 1;
 
-let pbm = {};
-module("resource://dta/timers.jsm");
-module("resource://dta/pbm.jsm", pbm);
 module("resource://dta/utils.jsm");
+
+let pbm = {};
+module("resource://dta/support/pbm.jsm", pbm);
+module("resource://dta/support/timers.jsm");
 
 const Timers = new TimerManager();
 

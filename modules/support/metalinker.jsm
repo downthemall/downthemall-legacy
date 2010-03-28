@@ -73,7 +73,7 @@ module("resource://dta/preferences.jsm", Preferences);
 module("resource://dta/api.jsm", DTA);
 module("resource://dta/version.jsm", Version);
 module("resource://dta/utils.jsm");
-module("resource://dta/urlmanager.jsm");
+module("resource://dta/support/urlmanager.jsm");
 
 const IOService = DTA.IOService;
 const XPathResult = Ci.nsIDOMXPathResult;
