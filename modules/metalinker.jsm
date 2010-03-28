@@ -40,7 +40,7 @@ const EXPORTED_SYMBOLS = [
 	"NS_DTA",
 	"NS_HTML",
 	"NS_METALINKER3",
-	"NS_METALINKER4"
+	"NS_METALINKER4",
 ];
 
 const Cc = Components.classes;
@@ -68,9 +68,10 @@ const NS_METALINKER3 = 'http://www.metalinker.org/';
  */
 const NS_METALINKER4 = 'urn:ietf:params:xml:ns:metalink';
 
-const Preferences = {}, DTA = {};
+const Preferences = {}, DTA = {}, Version = {};
 module("resource://dta/preferences.jsm", Preferences);
 module("resource://dta/api.jsm", DTA);
+module("resource://dta/version.jsm", Version);
 module("resource://dta/utils.jsm");
 module("resource://dta/urlmanager.jsm");
 
@@ -82,10 +83,6 @@ const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'ns
 const DOMParser = new Ctor("@mozilla.org/xmlextras/domparser;1", 'nsIDOMParser');
 
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
-setNewGetter(this, "Locale", function() {
-	let loc = Preferences.get('general.useragent.locale', 'en-US');
-	return loc.split('-').map(function(l) { return l.slice(0, 2).toLowerCase(); }).reverse();
-});
 
 /**
  * Parsed Metalink representation
@@ -161,10 +158,13 @@ Base.prototype = {
  		return null;
  	},
  	checkURL: function Base_checkURL(url, allowed) {
+ 		if (!url) {
+ 			return null;
+ 		}
  		try {
 			url = IOService.newURI(url, this._doc.characterSet, null);
 			if (url.scheme == 'file') {
-				throw new Exception("file protocol invalid");
+				throw new Exception("file protocol invalid!");
 			}
 			// check for some popular bad links :p
 			if (['http', 'https', 'ftp'].indexOf(url.scheme) == -1 || url.host.indexOf('.') == -1) {
@@ -172,13 +172,13 @@ Base.prototype = {
 					throw new Exception("bad link!");
 				}
 				if (allowed.indexOf(url.scheme) == -1) {
-						throw new Exception("not allowed");
+						throw new Exception("not allowed!");
 					}
 			}
 			return url.spec;
  		}
  		catch (ex) {
- 			Debug.log("woot", ex);
+ 			Debug.log("checkURL: failed to parse " + url, ex);
  			// no-op
  		}
 		return null; 		
@@ -231,7 +231,7 @@ Metalinker3.prototype = {
 				}
 			}
 			if (!num) {
-				num = DTA.incrementSeries();
+				num = DTA.currentSeries();
 			}
 			let startDate = new Date();
 			if (file.hasAttributeNS(NS_DTA, 'date')) {
@@ -276,7 +276,7 @@ Metalinker3.prototype = {
 				}
 				if (url.hasAttribute('location')) {
 					var a = url.getAttribute('location').slice(0,2).toLowerCase();
-					if (Locale.indexOf(a) != -1) {
+					if (Version.LOCALE.indexOf(a) != -1) {
 						preference = 100 + preference;
 					}
 				}
@@ -386,7 +386,7 @@ Metalinker4.prototype = {
 				}
 			}
 			if (!num) {
-				num = DTA.incrementSeries();
+				num = DTA.currentSeries();
 			}
 			let startDate = new Date();
 			if (file.hasAttributeNS(NS_DTA, 'date')) {
@@ -428,7 +428,7 @@ Metalinker4.prototype = {
 				}
 				if (url.hasAttribute('location')) {
 					let a = url.getAttribute('location').slice(0,2).toLowerCase();
-					if (Locale.indexOf(a) != -1) {
+					if (Version.LOCALE.indexOf(a) != -1) {
 						preference = Math.max(preference / 4, 1);
 					}
 				}
@@ -439,7 +439,7 @@ Metalinker4.prototype = {
 			}
 			// normalize preferences
 			let pmax = urls.reduce(function(p,c) isFinite(c.preference) ? Math.max(c.preference, p) : p, 1)
-			let pmin = urls.reduce(function(p,c) isFinite(c.preference) ? Math.min(c.preference, p) : p, pmax);
+			let pmin = urls.reduce(function(p,c) isFinite(c.preference) ? Math.min(c.preference, p) : p, pmax - 1);
 			urls.forEach(function(url) {
 				url.preference = Math.max(100 - ((url.preference - pmin) *  100 / (pmax - pmin)).toFixed(0), 10);
 			});
@@ -474,22 +474,22 @@ Metalinker4.prototype = {
 				'hash': hash,
 				'license': this.getLinkRes(file, "license"),
 				'publisher': this.getLinkRes(file, "publisher"),
-				'identity': this.getSingle(file, 'identity'),
-				'copyright': this.getSingle(file, 'copyright'),
+				'identity': this.getSingle(file, "identity"),
+				'copyright': this.getSingle(file, "copyright"),
 				'size': size,
-				'version': this.getSingle(file, 'version'),
-				'logo': this.checkURL(this.getSingle(file, 'logo', ['data'])),
-				'lang': this.getSingle(file, 'language'),
-				'sys': this.getSingle(file, 'os'),
+				'version': this.getSingle(file, "version"),
+				'logo': this.checkURL(this.getSingle(file, "logo", ['data'])),
+				'lang': this.getSingle(file, "language"),
+				'sys': this.getSingle(file, "os"),
 				'mirrors': urls.length, 
 				'selected': true,
 				'fromMetalink': true
 			});
 		}
 		let info = {
-				'identity': this.getSingle(root, 'identity'),
-				'description': this.getSingle(root, 'description'),
-				'logo': this.checkURL(this.getSingle(root, 'logo', ['data'])),
+				'identity': this.getSingle(root, "identity"),
+				'description': this.getSingle(root, "description"),
+				'logo': this.checkURL(this.getSingle(root, "logo", ['data'])),
 				'license': this.getLinkRes(root, "license"),
 				'publisher': this.getLinkRes(root, "publisher"),
 				'start': false
@@ -519,6 +519,9 @@ function parse(aFile, aReferrer) {
 				aFile.fileSize,
 				"application/xml"
 		);
+		if (doc.documentElement.nodeName == 'parsererror') {
+			throw new Exception("Failed to parse XML");
+		}
 	}
 	finally {
 		fiStream.close();

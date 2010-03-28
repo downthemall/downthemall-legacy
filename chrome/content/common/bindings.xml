@@ -231,7 +231,7 @@
 					if (dl[e]) {
 						var n = document.createElement('description');
 						n.setAttribute('class', 'text-link');
-						n.setAttribute('onclick', 'Metalinker.openLink(this)');
+						n.setAttribute('onclick', 'MetaSelect.openLink(this)');
 						n.setAttribute('crop', 'center');
 						n.setAttribute('flex', '1');
 						n.link = dl[e][1];							
