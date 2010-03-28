@@ -87,7 +87,7 @@ const Prefs = {
 	},
 
 	_refreshPrefs: function(prefName) {
-		Debug.logString("pref reload");
+		Debug.logString("pref reload due to: " + prefName);
 		for each (let e in this.mappings) {
 			let key, pref, def;
 			if (!e) {

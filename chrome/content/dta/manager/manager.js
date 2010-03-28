@@ -1020,7 +1020,9 @@ const Metalinker = {
 				throw new Error(_('mlnodownloads'));
 			}
 			res.downloads.forEach(function(e) {
-				e.size = Utils.formatBytes(e.size);
+				if (e.size) {
+					e.size = Utils.formatBytes(e.size);
+				}
 				e.fileName = e.fileName.getUsableFileName();
 			});
 			window.openDialog(

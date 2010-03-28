@@ -37,18 +37,23 @@
 const METALINK_LOGO = 'chrome://dta/skin/icons/metalink48.png';
 
 const MetaSelect = {
+	Version: {},
  	_insertDownload: function(d) {
- 		if (d.lang && d.lang.search(/^\w{2}(?:-\w{2})?$/) != -1) {
- 			let locale = this.locale;
- 			d.selected = locale.slice(0,2) == d.lang.slice(0,2);
- 		}
- 		var e = document.createElement('richlistitem');
- 		e.setAttribute("class", "item");
- 		e.download = d;
- 		$('downloads').appendChild(e); 		
+		try {
+	 		if (d.lang && d.lang.search(/^\w{2}(?:-\w{2})?$/) != -1) {
+	 			d.selected = this.Version.LOCALE.slice(0,2) == d.lang.slice(0,2);
+	 		}
+	 		let e = document.createElement('richlistitem');
+	 		e.setAttribute("class", "item");
+	 		e.download = d;
+	 		$('downloads').appendChild(e);
+		}
+		catch (ex) {
+			Debug.log("Failed to add download from metalink", ex);
+		}
  	},
  	load: function ML_load() {
- 		
+ 		Components.utils.import("resource://dta/version.jsm", this.Version);
  		$('cancelbutton').label = _('button-cancel');
  		
  		try {
@@ -58,9 +63,10 @@ const MetaSelect = {
  			}
  		}
  		catch(ex) {
+ 			Debug.log("Failed to load downloads from Metalink", ex);
  			// no-op
  		}
- 		var info = {
+ 		let info = {
  			'identity': _('mlidentity'),
  			'description': _('mldescription'),
  			'logo': null,
@@ -208,7 +214,12 @@ const MetaSelect = {
 };
 addEventListener('load', function() {
 	removeEventListener('load', arguments.callee, false);
-	MetaSelect.load();
+	try {
+		MetaSelect.load();
+	}
+	catch (ex) {
+		Debug.log("Failed to load", ex);
+	}
 }, false);
 addEventListener('close', function() {
 	removeEventListener('close', arguments.callee, false);
