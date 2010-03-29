@@ -279,9 +279,6 @@ ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOServ
 Utils.merge(
 	String.prototype,
 	{ 
-		trim: function() {
-			return this.replace(/^\s+|\s+$/g, '');
-		},
 		removeBadChars: function() {
 			return this
 				.replace(/[\n\r\v?:<>*|"]/g, '_')
