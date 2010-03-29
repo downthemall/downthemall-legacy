@@ -210,7 +210,7 @@ function Hash(hash, type) {
 Hash.prototype = {
 	_q: 0,
 	get q() {
-		return this._hashLength;
+		return this._q;
 	},
 	toString: function() {
 		return this.type + " [" + this.sum + "]";
