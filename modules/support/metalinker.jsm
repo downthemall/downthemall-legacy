@@ -289,7 +289,9 @@ Metalinker3.prototype = {
 			for each (let h in this.getNodes(file, 'ml:verification/ml:hash')) {
 				try {
 					h = new DTA.Hash(h.textContent.trim(), h.getAttribute('type'));
-					hash = h;		
+					if (!hash || hash.q < h.q) {
+						hash = h;
+					}
 				}
 				catch (ex) {
 					Debug.log("Failed to parse hash: " + h.textContent.trim() + "/" + h.getAttribute('type'), ex);
@@ -448,7 +450,9 @@ Metalinker4.prototype = {
 			for each (let h in this.getNodes(file, 'ml:hash')) {
 				try {
 					h = new DTA.Hash(h.textContent.trim(), h.getAttribute('type'));
-					hash = h;		
+					if (!hash || hash.q < h.q) {
+						hash = h;
+					}
 				}
 				catch (ex) {
 					Debug.log("Failed to parse hash: " + h.textContent.trim() + "/" + h.getAttribute('type'), ex);
@@ -487,12 +491,12 @@ Metalinker4.prototype = {
 			});
 		}
 		let info = {
-				'identity': this.getSingle(root, "identity"),
-				'description': this.getSingle(root, "description"),
-				'logo': this.checkURL(this.getSingle(root, "logo", ['data'])),
-				'license': this.getLinkRes(root, "license"),
-				'publisher': this.getLinkRes(root, "publisher"),
-				'start': false
+			'identity': this.getSingle(root, "identity"),
+			'description': this.getSingle(root, "description"),
+			'logo': this.checkURL(this.getSingle(root, "logo", ['data'])),
+			'license': this.getLinkRes(root, "license"),
+			'publisher': this.getLinkRes(root, "publisher"),
+			'start': false
 		};
 		return new Metalink(downloads, info, "Metalinker Version 4.0 (IETF)");
 	}
