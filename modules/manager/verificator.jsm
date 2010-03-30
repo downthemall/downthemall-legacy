@@ -36,7 +36,8 @@
 
 const EXPORTED_SYMBOLS = ['verify'];
 
-const FREQ = 250;
+const PARTIAL_CHUNK = 1<<19; // power of two
+const REGULAR_CHUNK = PARTIAL_CHUNK * 2; 
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -60,6 +61,7 @@ const nsICryptoHash = Ci.nsICryptoHash;
 
 const File = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
+const BinaryInputStream = new Ctor('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
 const Hash = new Ctor('@mozilla.org/security/hash;1', 'nsICryptoHash', 'init');
 
 const _jobs = {};
@@ -74,10 +76,12 @@ function unregisterJob(job) {
 }
 
 function verify(download, completeCallback, progressCallback){
-	let file = download.destinationFile;
-	let hash = download.hashCollection.full;
-	Debug.logString(hash.sum + " " + hash.type)
-	return new Verificator(file, hash.sum, hash.type, completeCallback, progressCallback);
+	return new (download.hashCollection.hasPartials ? MultiVerificator : Verificator)(
+		download.destinationFile,
+		download.hashCollection,
+		completeCallback,
+		progressCallback
+		);
 }
 
 function Callback(func, sync) {
@@ -102,10 +106,9 @@ Callback.prototype = {
 	}
 };
 
-function Verificator(file, hashSum, hashType, completeCallback, progressCallback) {
+function Verificator(file, hashCollection, completeCallback, progressCallback) {
 	this._file = file;
-	this._hashSum = hashSum;
-	this._hashType = hashType;
+	this._hashCollection = hashCollection;
 	this._completeCallback = completeCallback;
 	this._progressCallback = progressCallback;
 	
@@ -130,8 +133,9 @@ Verificator.prototype = {
 		let pending = file.fileSize;
 		let completed = 0;
 		let rv = true;
-		let hash = new Hash(nsICryptoHash[this._hashType]);
+		let hashCollection = this._hashCollection;
 		try {
+			let mainHash = new Hash(nsICryptoHash[hashCollection.full.type]);
 			let stream = new FileInputStream(file, 0x01, 0766, 0);
 			try {
 				while (pending) {
@@ -139,7 +143,7 @@ Verificator.prototype = {
 						throw new Exception("terminated");
 					}
 					let count = Math.min(pending, 10485760);
-					hash.updateFromStream(stream, count);
+					mainHash.updateFromStream(stream, count);
 					pending -= count;
 					completed += count;
 					new Callback(this._progressCallback, false, completed);
@@ -148,8 +152,8 @@ Verificator.prototype = {
 			finally {
 				stream.close();
 			}
-			let actual = hexdigest(hash.finish(false));
-			new Callback(this._completeCallback, true, actual, this._hashSum);
+			let actual = hexdigest(mainHash.finish(false));
+			new Callback(this._completeCallback, true, actual, hashCollection.full.sum);
 		}
 		catch (ex) {
 			new Callback(this._completeCallback, true);
@@ -159,5 +163,75 @@ Verificator.prototype = {
 	cancel: function() {
 		this.terminated = true;
 		try { this._thread.shutdown(); } catch (ex) { /* no op */ }
+	}
+};
+
+function MultiVerificator() {
+	Debug.logString("MultiVerificator");
+	Verificator.apply(this, Array.map(arguments, function(e) e));
+}
+MultiVerificator.prototype = {
+	__proto__: Verificator.prototype,
+	run: function() {
+		let file = new File(this._file);
+		let pending = file.fileSize;
+		let completed = 0;
+		let rv = true;
+		let hashCollection = this._hashCollection;
+		try {
+			let mainHash = new Hash(nsICryptoHash[hashCollection.full.type]);
+			let stream = new FileInputStream(file, 0x01, 0766, 0);
+			let bis = new BinaryInputStream(stream);
+			try {
+				for each (let partial in hashCollection.partials) {
+					let pendingPartial = hashCollection.parLength;
+					let partialHash = new Hash(nsICryptoHash[partial.type]);
+					while (pendingPartial) {
+						if (this.terminated) {
+							throw new Exception("terminated");
+						}
+						let count = Math.min(pendingPartial, PARTIAL_CHUNK);
+						
+						// nsIStorageStream would be an alternative
+						// doesn't implement writeFrom, however
+						let bytes = bis.readByteArray(count);
+						partialHash.update(bytes, bytes.length);
+						mainHash.update(bytes, bytes.length);
+						delete bytes;
+						
+						pending -= count;
+						pendingPartial -= count;
+						completed += count;
+						new Callback(this._progressCallback, false, completed);						
+					}
+					let partialActual = hexdigest(partialHash.finish(false));
+					delete partialHash;
+					Components.utils.reportError("partial: " + partialActual);
+				}
+				
+				// any remainder
+				while (pending) {
+					if (this.terminated) {
+						throw new Exception("terminated");
+					}
+					let count = Math.min(pending, REGULAR_CHUNK);
+					mainHash.updateFromStream(stream, count);
+					pending -= count;
+					completed += count;
+					new Callback(this._progressCallback, false, completed);
+				}
+			}
+			finally {
+				stream.close();
+				bis.close();
+			}
+			let actual = hexdigest(mainHash.finish(false));
+			new Callback(this._completeCallback, true, actual, hashCollection.full.sum);
+		}
+		catch (ex) {
+			Components.utils.reportError(ex);
+			new Callback(this._completeCallback, true);
+		}
+		new Callback(this._done, false, this);
 	}
 };
