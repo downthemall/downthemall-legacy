@@ -1546,21 +1546,23 @@ QueueItem.prototype = {
 		this.status = _("verify");
 		let tp = this;
 		this._verificator = Verificator.verify(
-			this,
-			function(actual, expected) {
+			this.tmpFile.exists() ? this.tmpFile.path : this.destinationFile,
+			this.hashCollection,
+			function(mismatches) {
 				delete tp._verificator;
 				tp._verificator = null;
-				if (!actual) {
+				
+				if (!mismatches) {
 					Debug.logString("hash not computed");
+					Prompts.alert(window, _('error'), _('verificationfailed', [tp.destinationFile]));
 					tp.complete();
 				}
-				else if (actual == expected) {
-					Debug.logString("hash match, actual: " + actual + " expected: " + expected);
-					tp.complete();
+				else if (mismatches.length) {
+					Debug.logString("Mismatches: " + mismatches.toSource());
+					tp.verifyHashError(mismatches);
 				}
 				else {
-					Debug.logString("hash mismatch, actual: " + actual + " expected: " + expected);
-					tp.verifyHashError();
+					tp.complete();
 				}
 			},
 			function(progress) {
@@ -1569,8 +1571,10 @@ QueueItem.prototype = {
 			}
 		);
 	},
-	verifyHashError: function() {
+	verifyHashError: function(mismatches) {
 		let file = new FileFactory(this.destinationFile);
+		mismatches = mismatches.filter(function(e) e.start != e.end);
+		
 		function deleteFile() { 
 			try {
 				if (file.exists()) {
@@ -1581,12 +1585,50 @@ QueueItem.prototype = {
 				Debug.log("Failed to remove file after checksum mismatch", ex);
 			}
 		}
-		let act = Prompts.confirm(window, _('verifyerrortitle'), _('verifyerrortext'), _('retry'), _('delete'), _('keep'));
-		switch (act) {
-			case 0: deleteFile(); this.safeRetry(); return;
-			case 1: deleteFile(); this.cancel(); return;
+		
+		function recoverPartials(download) {
+			// merge
+			for (let i = mismatches.length - 1; i > 0; --i) {
+				if (mismatches[i].start == mismatches[i-1].end + 1) {
+					mismatches[i-1].end = mismatches[i].end;
+					mismatches.splice(i, 1);
+				}
+			}
+			let chunks = [];
+			let next = 0;
+			for each (let mismatch in mismatches) {
+				if (next != mismatch.start) {
+					chunks.push(new Chunk(download, next, mismatch.start - 1, mismatch.start - next));
+				}
+				chunks.push(new Chunk(download, mismatch.start, mismatch.end));
+				next = mismatch.end + 1;
+			}
+			if (next != download.totalSize) {
+				Debug.logString("Inserting last");
+				chunks.push(new Chunk(download, next, download.totalSize - 1, download.totalSize - next));
+			}
+			download.chunks = chunks;
+			download.refreshPartialSize();
+			download.queue();
 		}
-		this.verifyHashOk();
+
+		if (mismatches.length) {
+			// partials
+			let act = Prompts.confirm(window, _('verifyerrortitle'), _('verifyerrorpartialstext'), _('recover'), _('delete'), _('keep'));
+			switch (act) {
+				case 0: deleteFile(); recoverPartials(this, mismatches); return;
+				case 1: deleteFile(); this.cancel(); return;
+			}
+			this.complete();
+		}
+		else {
+			let act = Prompts.confirm(window, _('verifyerrortitle'), _('verifyerrortext'), _('retry'), _('delete'), _('keep'));
+			switch (act) {
+				case 0: deleteFile(); this.safeRetry(); return;
+				case 1: deleteFile(); this.cancel(); return;
+			}
+			this.complete();
+		}
 	},
 	cancelVerification: function() {
 		if (!this._verificator) {
@@ -1628,7 +1670,13 @@ QueueItem.prototype = {
 		Debug.logString("finishDownload, connections: " + this.sessionConnections);
 		this._completeEvents = ['moveCompleted', 'setAttributes'];
 		if (this.hashCollection) {
-			this._completeEvents.push('verifyHash');
+			if (this.hashCollection.hasPartials) {
+				// need to verify first
+				this._completeEvents.unshift('verifyHash');
+			}
+			else {
+				this._completeEvents.push('verifyHash');
+			}
 		}
 		if ('isMetalink' in this) {
 			this._completeEvents.push('handleMetalink');
@@ -2346,12 +2394,17 @@ function Connection(d, c, isInfoGetter) {
 			if (c.start + c.written > 0) {
 				http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
 			}
+
+			// Cannot hash when compressed
+			http.setRequestHeader("Accept-Encoding", "", false);
+
 			if (this.isInfoGetter) {
 				if (!d.fromMetalink) {
 					http.setRequestHeader('Accept', 'application/metalink4+xml;q=0.9,application/metalink+xml;q=0.8', true);
 				}
 				http.setRequestHeader('Want-Digest', DTA.WANT_DIGEST_STRING, false);
 			}
+			
 			if (referrer instanceof Ci.nsIURI) {
 				http.referrer = referrer;
 			}
