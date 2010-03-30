@@ -82,12 +82,12 @@ module('resource://dta/support/pbm.jsm', PrivateBrowsing);
 module('resource://dta/support/serverlimits.jsm', Limits);
 module('resource://dta/support/timers.jsm');
 
-let Preallocator = {};
+let Preallocator = {}, Verificator = {};
 module('resource://dta/manager/decompressor.jsm');
 module('resource://dta/manager/preallocator.jsm', Preallocator);
 module('resource://dta/manager/queuestore.jsm');
 module('resource://dta/manager/speedstats.jsm');
-module('resource://dta/manager/verificator.jsm');
+module('resource://dta/manager/verificator.jsm', Verificator);
 module('resource://dta/manager/visitormanager.jsm');
 
 const AuthPrompts = new LoggedPrompter(window);
@@ -924,7 +924,7 @@ const Dialog = {
 				else if (d.is(FINISHING)) {
 					++finishing;
 				}
-				d.cancelPreallocation();
+				d.shutdown();
 				return true;
 			},
 			this
@@ -1540,13 +1540,34 @@ QueueItem.prototype = {
 			Debug.log("handleMetalink", ex);
 		}
 	},
+	_verificator: null,
 	verifyHash: function() {
 		this.state = FINISHING;
 		this.status = _("verify");
-		new Verificator(this, this.verifyHashOk, this.verifyHashError);
-	},
-	verifyHashOk: function() {
-		this.complete();
+		let tp = this;
+		this._verificator = Verificator.verify(
+			this,
+			function(actual, expected) {
+				delete tp._verificator;
+				tp._verificator = null;
+				if (!actual) {
+					Debug.logString("hash not computed");
+					tp.complete();
+				}
+				else if (actual == expected) {
+					Debug.logString("hash match, actual: " + actual + " expected: " + expected);
+					tp.complete();
+				}
+				else {
+					Debug.logString("hash mismatch, actual: " + actual + " expected: " + expected);
+					tp.verifyHashError();
+				}
+			},
+			function(progress) {
+				tp.partialSize = progress;
+				tp.invalidate();
+			}
+		);
 	},
 	verifyHashError: function() {
 		let file = new FileFactory(this.destinationFile);
@@ -1566,7 +1587,13 @@ QueueItem.prototype = {
 			case 1: deleteFile(); this.cancel(); return;
 		}
 		this.verifyHashOk();
-	},		
+	},
+	cancelVerification: function() {
+		if (!this._verificator) {
+			return;
+		}
+		this._verificator.cancel();
+	},
 	customFinishEvent: function() {
 		new CustomEvent(this, Prefs.finishEvent);
 	},
@@ -1790,7 +1817,7 @@ QueueItem.prototype = {
 			}
 			this.status = message;
 			
-			this.cancelPreallocation();
+			this.shutdown();
 			
 			this.removeTmpFile();
 
@@ -1862,6 +1889,10 @@ QueueItem.prototype = {
 		}
 	},
 	
+	shutdown: function() {
+		this.cancelPreallocation();
+		this.cancelVerification();
+	},	
 	
 	removeTmpFile: function QI_removeTmpFile() {
 		if (!!this._tmpFile && this._tmpFile.exists()) {
