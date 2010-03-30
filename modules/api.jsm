@@ -242,9 +242,8 @@ function HashCollection(fullHash) {
  */
 HashCollection.load = function(obj) {
 	let rv = new HashCollection(new Hash(obj.full.sum, obj.full.type));
-	for each (let par in obj.partials) {
-		rv.add(par.start, par.end, new Hash(par.hash.sum, par.hash.type));
-	}
+	rv.parLength = obj.parLength ? obj.parLength : 0;
+	rv.partials = obj.partials.map(function(e) new Hash(e.sum, e.type));
 	return rv;
 },
 
@@ -254,43 +253,21 @@ HashCollection.prototype = {
 	 * Gives {hash,start,end} dict
 	 */		
 	__iterator__: function() {
-		for (let start in this._partials) {
-			let p = this._partials[start];
-			yield {start: start, end: p.end, hash: p.hash}; 
+		for each (let partial in this._partials) {
+			yield partial;
 		}
 	},
 
 	/**
 	 * HashCollection has parital hashes
 	 */
-	get hasPartials() { return this.partials.length; },
-	add: function(start, end, hash) {
-		try {
-			this.getPartialFor(start);
+	get hasPartials() { return !!this.partials.length; },
+	add: function(hash) {
+		if (!(hash instanceof Hash)) {
+			throw Exception("Must supply hash");
 		}
-		catch (ex) {
-			// new hash
-			this.partials[start] = {end: end, hash: hash};
-			return;
-		}
-		throw Exception("Hash for position already exists?!");
+		this.partials.push(hash);
 	},
-	/**
-	 * Gets the partial hash for a given position
-	 * @return partial hash
-	 * @throw (Exception) No hash at that position 
-	 */
-	getPartialFor: function(position) {
-		for (let start in this.partials) {
-			let p = this.partials[start];
-			if (start > position || p.end < position) {
-				continue;
-			}
-			return p.hash;
-		}
-		throw new Exception("No hash for this position");
-	},
-	
 	/**
 	 * Serializes HashCollection
 	 * @return (object) Serialized HashCollection
@@ -298,9 +275,10 @@ HashCollection.prototype = {
 	toSource: function() {
 		return {
 			full: this.full.toSource(),
+			parLength: this.parLength,
 			partials: this.partials.map(
 				function(p,i) {
-					return {start: i, end: p.end, hash: p.hash.toSource()};
+					return p.toSource();
 				}
 			)
 		};
