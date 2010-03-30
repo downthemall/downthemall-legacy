@@ -36,7 +36,7 @@
 
 const EXPORTED_SYMBOLS = ['verify'];
 
-const PARTIAL_CHUNK = 1<<19; // power of two
+const PARTIAL_CHUNK = 1<<23; // power of two; make it 8M
 const REGULAR_CHUNK = PARTIAL_CHUNK * 2; 
 
 const Cc = Components.classes;
@@ -75,10 +75,10 @@ function unregisterJob(job) {
 	delete _jobs[job];
 }
 
-function verify(download, completeCallback, progressCallback){
-	return new (download.hashCollection.hasPartials ? MultiVerificator : Verificator)(
-		download.destinationFile,
-		download.hashCollection,
+function verify(file, hashCollection, completeCallback, progressCallback){
+	return new (hashCollection.hasPartials ? MultiVerificator : Verificator)(
+		file,
+		hashCollection,
 		completeCallback,
 		progressCallback
 		);
@@ -86,9 +86,7 @@ function verify(download, completeCallback, progressCallback){
 
 function Callback(func, sync) {
 	this._func = func;
-	this._args = Array.map(arguments, function(e) e);
-	this._args.shift();
-	this._args.shift();
+	this._args = Array.map(arguments, function(e) e).slice(2);
 	this._thread = ThreadManager.mainThread;
 	this._job = registerJob(this);
 	this._thread.dispatch(this, sync ? 0x1 : 0x0);	
@@ -130,7 +128,8 @@ Verificator.prototype = {
 	},
 	run: function() {
 		let file = new File(this._file);
-		let pending = file.fileSize;
+		let total = file.fileSize;
+		let pending = total;
 		let completed = 0;
 		let rv = true;
 		let hashCollection = this._hashCollection;
@@ -146,14 +145,19 @@ Verificator.prototype = {
 					mainHash.updateFromStream(stream, count);
 					pending -= count;
 					completed += count;
-					new Callback(this._progressCallback, false, completed);
+					new Callback(this._progressCallback, false, Math.min(completed, total));
 				}
 			}
 			finally {
 				stream.close();
 			}
 			let actual = hexdigest(mainHash.finish(false));
-			new Callback(this._completeCallback, true, actual, hashCollection.full.sum);
+			if (actual != hashCollection.full.sum) {
+				new Callback(this._completeCallback, true, [{start: 0, end: 0, actual: actual, expected: hashCollection.full.sum}]);
+			}
+			else {
+				new Callback(this._completeCallback, true, []);
+			}
 		}
 		catch (ex) {
 			new Callback(this._completeCallback, true);
@@ -174,18 +178,21 @@ MultiVerificator.prototype = {
 	__proto__: Verificator.prototype,
 	run: function() {
 		let file = new File(this._file);
-		let pending = file.fileSize;
+		let total = file.fileSize;
+		let pending = total;
 		let completed = 0;
 		let rv = true;
 		let hashCollection = this._hashCollection;
+		let mismatches = [];
 		try {
 			let mainHash = new Hash(nsICryptoHash[hashCollection.full.type]);
 			let stream = new FileInputStream(file, 0x01, 0766, 0);
 			let bis = new BinaryInputStream(stream);
 			try {
 				for each (let partial in hashCollection.partials) {
-					let pendingPartial = hashCollection.parLength;
+					let pendingPartial = Math.min(pending, hashCollection.parLength);
 					let partialHash = new Hash(nsICryptoHash[partial.type]);
+					let start = completed;
 					while (pendingPartial) {
 						if (this.terminated) {
 							throw new Exception("terminated");
@@ -202,11 +209,18 @@ MultiVerificator.prototype = {
 						pending -= count;
 						pendingPartial -= count;
 						completed += count;
-						new Callback(this._progressCallback, false, completed);						
+						new Callback(this._progressCallback, false, Math.min(completed, total));						
 					}
 					let partialActual = hexdigest(partialHash.finish(false));
 					delete partialHash;
-					Components.utils.reportError("partial: " + partialActual);
+					if (partial.sum != partialActual) {
+						mismatches.push({
+							start: start,
+							end: completed - 1,
+							actual: partialActual,
+							expected: partial.sum
+						});
+					}
 				}
 				
 				// any remainder
@@ -218,7 +232,7 @@ MultiVerificator.prototype = {
 					mainHash.updateFromStream(stream, count);
 					pending -= count;
 					completed += count;
-					new Callback(this._progressCallback, false, completed);
+					new Callback(this._progressCallback, false, Math.min(completed, total));
 				}
 			}
 			finally {
@@ -226,7 +240,15 @@ MultiVerificator.prototype = {
 				bis.close();
 			}
 			let actual = hexdigest(mainHash.finish(false));
-			new Callback(this._completeCallback, true, actual, hashCollection.full.sum);
+			if (actual != hashCollection.full.sum) {
+				mismatches.push({
+					start: 0,
+					end: 0,
+					actual: actual,
+					expected: hashCollection.full.sum
+				});
+			}
+			new Callback(this._completeCallback, true, mismatches);
 		}
 		catch (ex) {
 			Components.utils.reportError(ex);
