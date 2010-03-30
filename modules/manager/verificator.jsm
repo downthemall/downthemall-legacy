@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['Verificator'];
+const EXPORTED_SYMBOLS = ['verify'];
 
 const FREQ = 250;
 
@@ -51,110 +51,113 @@ module("resource://dta/preferences.jsm", Prefs);
 module("resource://dta/utils.jsm");
 module("resource://dta/api.jsm", DTA);
 
-module("resource://dta/support/timers.jsm");
-
-const IOService = DTA.IOService;
+module("resource://gre/modules/XPCOMUtils.jsm");
 
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
-
-const Timers = new TimerManager();
+ServiceGetter(this, "ThreadManager", "@mozilla.org/thread-manager;1", "nsIThreadManager");
 
 const nsICryptoHash = Ci.nsICryptoHash;
 
 const File = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
 const Hash = new Ctor('@mozilla.org/security/hash;1', 'nsICryptoHash', 'init');
-const InputStreamPump = new Ctor('@mozilla.org/network/input-stream-pump;1', 'nsIInputStreamPump', 'init');
 
-function Verificator(download, completeCallback, errorCallback) {
-	this.download = download;
-	this.completeCallback = completeCallback;
-	this.errorCallback = errorCallback;
-	
-	this.file = new File(download.destinationFile);
-	this._pending = this.file.fileSize;
-	this.full = download.hashCollection.full;
+const _jobs = {};
+function registerJob(obj) {
+	let rv = newUUIDString();
+	_jobs[rv] = obj;
+	return rv;
+}
+function unregisterJob(job) {
+	_jobs[job] = null;
+	delete _jobs[job];
+}
 
-	try {
-		if (!(this.full.type in nsICryptoHash)) {
-			throw new Exception("hash method unsupported!");
-		}
-		this.type = nsICryptoHash[this.full.type];
-		
-		this.hash = new Hash(this.type);
-		
-		this.stream = new FileInputStream(this.file, 0x01, 0766, 0);
-		this.download.partialSize = 0;
-		this._readNextChunk();
-	
-		this._timer = Timers.createRepeating(FREQ, this._invalidate, this, true);
-	}
-	catch (ex) {
+function verify(download, completeCallback, progressCallback){
+	let file = download.destinationFile;
+	let hash = download.hashCollection.full;
+	Debug.logString(hash.sum + " " + hash.type)
+	return new Verificator(file, hash.sum, hash.type, completeCallback, progressCallback);
+}
+
+function Callback(func, sync) {
+	this._func = func;
+	this._args = Array.map(arguments, function(e) e);
+	this._args.shift();
+	this._args.shift();
+	this._thread = ThreadManager.mainThread;
+	this._job = registerJob(this);
+	this._thread.dispatch(this, sync ? 0x1 : 0x0);	
+}
+Callback.prototype = {
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable]),
+	run: function() {
 		try {
-			if (this.stream) {
-				this.stream.close();
-			}
+			this._func.apply(this._func, this._args);
 		}
 		catch (ex) {
+			Debug.log("Callback threw", ex);
 		}
-		Debug.log("verificator::Failed to calculate hash", ex);
-		this.errorCallback.call(this.download);
+		unregisterJob(this._job);
 	}
+};
+
+function Verificator(file, hashSum, hashType, completeCallback, progressCallback) {
+	this._file = file;
+	this._hashSum = hashSum;
+	this._hashType = hashType;
+	this._completeCallback = completeCallback;
+	this._progressCallback = progressCallback;
+	
+	this._job = registerJob(this._job);
+	this._thread = ThreadManager.newThread(0);
+	this._thread.dispatch(this, 0x0);
 }
 Verificator.prototype = {
-	_finish: function() {		
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable, Ci.nsICancelable]),
+	terminated: false,
+	_done: function(obj) {
 		try {
-			this.download.partialSize = this.download.totalSize;
-			this.download.invalidate();
-			
-			this.hash = hexdigest(this.hash.finish(false));
-			if (this.hash != this.full.sum) {
-				Debug.logString("hash mismatch, actual: " + this.hash + " expected: " + this.full.sum);
-				this.errorCallback.call(this.download);
-			}
-			else {
-				this.completeCallback.call(this.download);
-			}
+			obj._thread.shutdown();
 		}
 		catch (ex) {
-			Debug.log("verificator::_finish", ex);
-			this.errorCallback.call(this.download);
+			// aborted before?!
 		}
+		unregisterJob(obj._job);
 	},
-	_readNextChunk: function() {
-		if (this._pending <= 0) {
-			this.stream.close();
-			Timers.killTimer(this._timer);
-			Timers.createOneshot(100, this._finish, this);
-			return;
-		}
-		var nextChunk = Math.min(this._pending, 2147483648 /* 2GB */);
-		this._pending -= nextChunk;
-		new InputStreamPump(this.stream, -1, nextChunk, 0, 0, false).asyncRead(this, null);		
-	},
-	_invalidate: function() {
-		this.download.invalidate();
-	},
-	QueryInterface: function(iid) {
-		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIStreamListener) || iid.equals(cI.nsIRequestObserver)) {
-			return this;
-		}
-		throw Cr.NS_ERROR_NO_INTERFACE;
-	},
-	onStartRequest: function(r, c) {
-	},
-	onStopRequest: function(request, c) {
-		this._readNextChunk();
-	},
-	onDataAvailable: function(request, c, stream, offset, count) {
+	run: function() {
+		let file = new File(this._file);
+		let pending = file.fileSize;
+		let completed = 0;
+		let rv = true;
+		let hash = new Hash(nsICryptoHash[this._hashType]);
 		try {
-			this.hash.updateFromStream(stream, count);
-			this.download.partialSize += count;
+			let stream = new FileInputStream(file, 0x01, 0766, 0);
+			try {
+				while (pending) {
+					if (this.terminated) {
+						throw new Exception("terminated");
+					}
+					let count = Math.min(pending, 10485760);
+					hash.updateFromStream(stream, count);
+					pending -= count;
+					completed += count;
+					new Callback(this._progressCallback, false, completed);
+				}
+			}
+			finally {
+				stream.close();
+			}
+			let actual = hexdigest(hash.finish(false));
+			new Callback(this._completeCallback, true, actual, this._hashSum);
 		}
 		catch (ex) {
-			Debug.log("verificator::hash update failed!", ex);
-			var reason = 0x804b0002; // NS_BINDING_ABORTED;
-			request.cancel(reason);
+			new Callback(this._completeCallback, true);
 		}
+		new Callback(this._done, false, this);
+	},
+	cancel: function() {
+		this.terminated = true;
+		try { this._thread.shutdown(); } catch (ex) { /* no op */ }
 	}
 };
