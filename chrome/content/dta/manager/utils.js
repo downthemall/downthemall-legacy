@@ -36,6 +36,61 @@
 
 const PREF_CONN = 'network.http.max-persistent-connections-per-server';
 
+function TrayHandler() {
+	this.available = !!('trayITrayService' in Ci);
+	if (!this.available) {
+		return;
+	}
+	ServiceGetter(this, "_trayService", "@tn123.ath.cx/trayservice;1", "trayITrayService");
+	window.addEventListener(
+		'TrayDblClick',
+		function(event) {
+			if (event.button == 0) {
+				TrayHandler.restore();
+			}
+		},
+		true
+	);
+	window.addEventListener(
+		'TrayClick',
+		function(event) {
+			if (event.button == 2) {
+				TrayHandler.showMenu(event.screenX, event.screenY);
+			}
+		},
+		true
+	);
+}
+
+TrayHandler.prototype = {
+	watch: function tray_watch() {
+		if (this.available) {
+			this._trayService.watchMinimize(window);
+		}
+	},
+	unwatch: function tray_unwatch() {
+		if (this.available) {
+			this._trayService.unwatchMinimize(window);
+		}
+	},
+	restore: function tray_restore() {
+		if (this.available) {
+			this._trayService.restore(window);
+		}
+	},
+	showMenu: function(x, y) {
+		$('traymenu').showPopup(
+			document.documentElement,
+			x,
+			y,
+			"context",
+			"",
+			"bottomleft"
+		);		
+	}
+};
+TrayHandler = new TrayHandler();
+
 const Prefs = {
 	tempLocation: null,
 	
@@ -552,58 +607,3 @@ const Tooltip = {
 	}
 };
 addEventListener('load', function() { Tooltip.init(); }, false);
-
-function TrayHandler() {
-	this.available = !!('trayITrayService' in Ci);
-	if (!this.available) {
-		return;
-	}
-	ServiceGetter(this, "_trayService", "@tn123.ath.cx/trayservice;1", "trayITrayService");
-	window.addEventListener(
-		'TrayDblClick',
-		function(event) {
-			if (event.button == 0) {
-				TrayHandler.restore();
-			}
-		},
-		true
-	);
-	window.addEventListener(
-		'TrayClick',
-		function(event) {
-			if (event.button == 2) {
-				TrayHandler.showMenu(event.screenX, event.screenY);
-			}
-		},
-		true
-	);
-}
-
-TrayHandler.prototype = {
-	watch: function tray_watch() {
-		if (this.available) {
-			this._trayService.watchMinimize(window);
-		}
-	},
-	unwatch: function tray_unwatch() {
-		if (this.available) {
-			this._trayService.unwatchMinimize(window);
-		}
-	},
-	restore: function tray_restore() {
-		if (this.available) {
-			this._trayService.restore(window);
-		}
-	},
-	showMenu: function(x, y) {
-		$('traymenu').showPopup(
-			document.documentElement,
-			x,
-			y,
-			"context",
-			"",
-			"bottomleft"
-		);		
-	}
-};
-TrayHandler = new TrayHandler();
