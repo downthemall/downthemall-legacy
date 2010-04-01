@@ -101,7 +101,7 @@ this.__defineGetter__('DTA_Mediator', function() {
 			this.openUrl(window, url, ref);
 		}
 	};
-	Components.utils.import('resource://dta/support/support/mediator.jsm', this.DTA_Mediator);
+	Components.utils.import('resource://dta/support/mediator.jsm', this.DTA_Mediator);
 	return this.DTA_Mediator;
 });
 
