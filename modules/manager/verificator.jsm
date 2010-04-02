@@ -36,7 +36,7 @@
 
 const EXPORTED_SYMBOLS = ['verify'];
 
-const PARTIAL_CHUNK = 1<<23; // power of two; make it 8M
+const PARTIAL_CHUNK = 1<<21; // power of two; make it 2M
 const REGULAR_CHUNK = PARTIAL_CHUNK * 2; 
 
 const Cc = Components.classes;
@@ -127,13 +127,13 @@ Verificator.prototype = {
 		unregisterJob(obj._job);
 	},
 	run: function() {
-		let file = new File(this._file);
-		let total = file.fileSize;
-		let pending = total;
-		let completed = 0;
-		let rv = true;
-		let hashCollection = this._hashCollection;
 		try {
+			let hashCollection = this._hashCollection;
+			let file = new File(this._file);
+			let total = file.fileSize;
+			let pending = total;
+			let completed = 0;
+
 			let mainHash = new Hash(nsICryptoHash[hashCollection.full.type]);
 			let stream = new FileInputStream(file, 0x01, 0766, 0);
 			try {
@@ -177,14 +177,15 @@ function MultiVerificator() {
 MultiVerificator.prototype = {
 	__proto__: Verificator.prototype,
 	run: function() {
-		let file = new File(this._file);
-		let total = file.fileSize;
-		let pending = total;
-		let completed = 0;
-		let rv = true;
-		let hashCollection = this._hashCollection;
-		let mismatches = [];
 		try {
+			let hashCollection = this._hashCollection;
+			let mismatches = [];
+
+			let file = new File(this._file);
+			let total = file.fileSize;
+			let pending = total;
+			let completed = 0;
+
 			let mainHash = new Hash(nsICryptoHash[hashCollection.full.type]);
 			let stream = new FileInputStream(file, 0x01, 0766, 0);
 			let bis = new BinaryInputStream(stream);
