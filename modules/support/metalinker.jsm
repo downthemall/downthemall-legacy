@@ -297,6 +297,45 @@ Metalinker3.prototype = {
 					Debug.log("Failed to parse hash: " + h.textContent.trim() + "/" + h.getAttribute('type'), ex);
 				}
 			}
+			if (hash) {
+				hash = new DTA.HashCollection(hash);
+				let pieces = this.getNodes(file, 'ml:verification/ml:pieces');
+				if (pieces.length) {
+					pieces = pieces[0];
+					let type = pieces.getAttribute('type').trim();
+					try {
+						hash.parLength = parseInt(pieces.getAttribute('length'));
+						if (!isFinite(hash.parLength) || hash.parLength < 1) {
+							throw new Exception("Invalid pieces length");
+						}
+						let collection = [];
+						for each (let piece in this.getNodes(pieces, 'ml:hash')) {
+							try {
+								collection.push({
+									piece: parseInt(piece.getAttribute('piece')),
+									hash: new DTA.Hash(piece.textContent.trim(), type)
+								});
+							}
+							catch (ex) {
+								Debug.log("Failed to parse piece", ex);
+								throw ex;
+							}
+						}
+						collection.sort(function(a, b) a.piece - b.piece);
+						for each (let piece in collection) {
+							hash.add(piece.hash);
+						}
+						if (size && hash.parLength * hash.partials.length < size) {
+							throw Exception("too few partials");
+						}
+						Debug.logString("loaded " + hash.partials.length + " partials");
+					}
+					catch (ex) {
+						Debug.log("Failed to parse pieces", ex);
+						hash = new DTA.HashCollection(hash.full);
+					}
+				}
+			}			
 			let desc = this.getSingle(file, 'description');
 			if (!desc) {
 				desc = this.getSingle(root, 'description');
@@ -314,7 +353,7 @@ Metalinker3.prototype = {
 				'title': '',
 				'description': desc,
 				'startDate': startDate,
-				'hash': hash,
+				'hashCollection': hash,
 				'license': this.getLinkRes(file, "license"),
 				'publisher': this.getLinkRes(file, "publisher"),
 				'identity': this.getSingle(file, 'identity'),
