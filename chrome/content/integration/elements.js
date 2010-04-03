@@ -1208,81 +1208,6 @@
 		}
 	};
 
-	(function() {
-		function hookTB(node) {
-			with (node) {
-				addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA), true);
-				addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DTA_DropDTA), true);
-				addEventListener('command', function(event) {
-					switch (event.target.id) {
-					case 'dta-button':
-					case 'dta-tb-dta':
-						findLinks();
-						break;
-					case 'dta-tb-all':
-						findLinks(false, true);
-						break;
-					case 'dta-tb-manager':
-						DTA.openManager(window);
-						break;
-					default:
-						break;
-					}
-				}, true);
-			}
-		}
-		
-		function hookTurbo(node) {
-			with (node) {
-				addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropTDTA), true);
-				addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DTA_DropTDTA), true);
-				addEventListener('command', function(event) {
-					switch (event.target.id) {
-					case 'dta-turbo-button':
-					case 'dta-tb-turbo':
-						findLinks(true);
-						break;
-					case 'dta-tb-allturbo':
-						findLinks(true, true);
-						break;
-					default:
-
-						break;
-					}
-				}, true);
-			}
-		}
-		function hookTurboSelect(node) {
-			node.addEventListener(
-				'command',
-				function(event) { if (event.target.ID == $('dta-turboselect-button')) toggleOneClick(event); },
-				true
-				);
-		}
-		function hookManager(node) {
-			node.addEventListener(
-				'command',
-				function() DTA.openManager(window),
-				true
-				);
-		}
-		let nodes = [['dta-button', hookTB], ['dta-turbo-button', hookTurbo], ['dta-turboselect-button', hookTurboSelect], ['dta-manager-button', hookManager]];
-		for each(let [id,fn] in nodes) {
-			let nid = id;
-			let nfn = fn;
-			addEventListener(
-				'DOMNodeInserted',
-				function(evt) {
-					if (evt.target.id == nid) {
-						removeEventListener('DOMNodeInserted', arguments.callee, true);
-						nfn(evt.target);
-					}
-				},
-				true
-			);
-		}
-	})();
-
 	addEventListener('load', function() {
 		removeEventListener('load', arguments.callee, true);	
 		
@@ -1361,11 +1286,52 @@
 		$('dtaCtxPref', 'dtaCtxPref-direct', 'dtaToolsPrefs').forEach(bindEvt('command', function() DTA_showPreferences()));
 		
 		$('dtaToolsAbout').addEventListener(
-				'command',
-				function() DTA_Mediator.showAbout(window),
-				true
-				);
+			'command',
+			function() DTA_Mediator.showAbout(window),
+			true
+		);
 		
 	}, true);
+	
+	DTA.onDTADragOver = function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA);
+	DTA.onDTADragDrop = function(event) nsDragAndDrop.drop(event, DTA_DropDTA);
+	DTA.onDTA = function(event) {
+		switch (event.target.id) {
+		case 'dta-button':
+		case 'dta-tb-dta':
+			findLinks();
+			break;
+		case 'dta-tb-all':
+			findLinks(false, true);
+			break;
+		case 'dta-tb-manager':
+			DTA.openManager(window);
+			break;
+		default:
+			break;
+			}
+	};
+	
+	
+	DTA.onTDTADragOver = function(event) nsDragAndDrop.dragOver(event, DTA_DropTDTA);
+	DTA.onTDTADragDrop = function(event) nsDragAndDrop.drop(event, DTA_DropTDTA);
+	DTA.onTDTA = function(event) {
+		switch (event.target.id) {
+		case 'dta-turbo-button':
+		case 'dta-tb-turbo':
+			findLinks(true);
+			break;
+		case 'dta-tb-allturbo':
+			findLinks(true, true);
+			break;
+		default:
+
+			break;
+		}
+	};
+	
+	DTA.onTurboSelect = function(event) { toggleOneClick(event); };
+	
+	DTA.onManager = function() DTA.openManager(window);
 
 })();

@@ -40,11 +40,12 @@
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
 <overlay id="DTAUIElements" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
-	<script type="application/x-javascript" src="chrome://dta/content/integration/elements.js" />
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js" />
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js" />
 
+	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
+	<script type="application/x-javascript" src="chrome://dta/content/integration/elements.js" />
+	
 	<menu id="dtaCtxCompact" label="DownThemAll!" class="menu-iconic dta">
 		<menupopup id="dtaCtxSubmenu">
 			<menuseparator class="thin" id="dtaCtxSepFront" />
@@ -75,7 +76,7 @@
 		</menupopup>
 	</menu>
 
-	<toolbarbutton id="dta-button" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-regular.label;" tooltiptext="&dta-regular.label;" type="menu-button">
+	<toolbarbutton id="dta-button" oncommand="DTA.onDTA(event)" ondragover="DTA.onDTADragOver(event)" ondragdrop="DTA.onDTADragDrop(event)" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-regular.label;" tooltiptext="&dta-regular.label;" type="menu-button">
 		<menupopup>
 			<menuitem id="dta-tb-dta" label="DownThemAll! (&dta-tb-single.label;)" class="menuitem-iconic dta" tooltiptext="&dta-regular.label;" />
 			<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all.label;)" class="menuitem-iconic dta" tooltiptext="&dta-regular.label;" />
@@ -83,14 +84,18 @@
 			<menuitem id="dta-tb-manager" label="&dta-manager-button;" class="menuitem-iconic dtamanager" tooltiptext="&dta-manager-button;" />
 		</menupopup>
 	</toolbarbutton>
-	<toolbarbutton id="dta-turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-regular-turbo.label;" tooltiptext="&dta-regular-turbo.label;" type="menu-button">
+	
+	<toolbarbutton id="dta-turbo-button" oncommand="DTA.onTDTA(event)" ondragover="DTA.onTDTADragOver(event)" ondragdrop="DTA.onTDTADragDrop(event)" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-regular-turbo.label;" tooltiptext="&dta-regular-turbo.label;" type="menu-button">
 		<menupopup>
 			<menuitem id="dta-tb-turbo" label="dTa OneClick! (&dta-tb-single.label;)" tooltiptext="&dta-regular-turbo.label;" class="menuitem-iconic dtaturbo" />
 			<menuitem id="dta-tb-allturbo" label="dTa OneClick! (&dta-tb-all.label;)" tooltiptext="&dta-regular-turbo.label;" class="menuitem-iconic dtaturbo" />
 		</menupopup>
 	</toolbarbutton>
-	<toolbarbutton id="dta-manager-button" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-manager-button;" tooltiptext="&dta-manager-button;" />
-	<toolbarbutton id="dta-turboselect-button" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-selector-button;" tooltiptext="&dta-selector-button;" type="checkbox" />
+	
+	<toolbarbutton id="dta-turboselect-button" oncommand="DTA.onTurboSelect(event)" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-selector-button;" tooltiptext="&dta-selector-button;" type="checkbox" />
+	
+	<toolbarbutton id="dta-manager-button" oncommand="DTA.onManager(event)" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-manager-button;" tooltiptext="&dta-manager-button;" />
+	
 	<menu id="dtaToolsMenu" label="DownThemAll" class="menu-iconic dta">
 		<menupopup id="dtaToolsPopup">
 			<menuitem id="dtaToolsDTA" label="&dta-regular.label;" class="menuitem-iconic dta" />
