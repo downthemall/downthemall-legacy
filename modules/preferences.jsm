@@ -316,25 +316,18 @@ function makeObserver(obj) {
 	
 	// Rewrite QI to support required interfaces
 	obj.QueryInterface = function(iid) {
-		try {
-			if (
-				iid.equals(Components.interfaces.nsISupports)
-				|| iid.equals(Components.interfaces.nsISupportsWeakReference)
-				|| iid.equals(Components.interfaces.nsIWeakReference)
-				|| iid.equals(Components.interfaces.nsIObserver)
-			) {
-				return obj;
-			}
-			if (__QueryInterface) {
-				log("calling original: " + iid);
-				return __QueryInterface.call(this, iid);
-			}
-			throw Components.results.NS_ERROR_NO_INTERFACE;
+		if (
+			iid.equals(Components.interfaces.nsISupports)
+			|| iid.equals(Components.interfaces.nsISupportsWeakReference)
+			|| iid.equals(Components.interfaces.nsIWeakReference)
+			|| iid.equals(Components.interfaces.nsIObserver)
+		) {
+			return obj;
 		}
-		catch (ex) {
-			log("requested interface not available: " + iid);
-			throw ex;
+		if (__QueryInterface) {
+			return __QueryInterface.call(this, iid);
 		}
+		throw Components.results.NS_ERROR_NO_INTERFACE;
 	};
 	
 	// nsiWeakReference
