@@ -41,7 +41,6 @@
 	let Cc = Components.classes;
 	let Ci = Components.interfaces;
 		
-
 	let prompts = {};
 	Components.utils.import('resource://dta/prompts.jsm', prompts);
 	
@@ -73,6 +72,7 @@
 		return elements;
 	}
 
+	let _selector = null;
 	
 	let _str = Cc['@mozilla.org/intl/stringbundle;1']
 		.getService(Ci.nsIStringBundleService)
@@ -120,7 +120,7 @@
 	}
 	
 	function notifyError(title, message) _notify(title, message, 'PRIORITY_CRITICAL_HIGH', true, 1500);
-	function notifyInfo(message) _notify('', message, 'PRIORITY_INFO_MEDIUM', false);
+	function notifyInfo(message) { if (!_selector) _notify('', message, 'PRIORITY_INFO_MEDIUM', false) };
 	
 	
 	function trim(t) {
@@ -856,7 +856,6 @@
 		}
 	}
 	
-	let _selector = null;
 	function attachOneClick(evt) {
 		if (!!_selector) {
 			return;
@@ -955,10 +954,10 @@
 			if (n == 'bgimg') {
 				return this.getBgImage(e);
 			}
-			if (!e) {
+			if (!e || !e.localName) {
 				return null;
 			}
-			if (e.localName == n && e[a]) {
+			if (e.localName.toLowerCase() == n && e[a]) {
 				return {elem: e, url: e[a] };
 			}
 			return this.findElemUnderCursor(e.parentNode, n, a);
@@ -971,6 +970,10 @@
 			evt.stopPropagation();
 		},	
 		onClickOneClick: function(evt) {
+
+			let target = evt.target;
+			let doc = target.ownerDocument;
+
 			function processRegular(e) {
 				let m = this.findElemUnderCursor(target, e[0], e[1]);
 				if (!m) {
@@ -1001,9 +1004,6 @@
 				return true;
 			}		
 			
-			let target = evt.target;
-			let doc = target.ownerDocument;
-			
 			if (evt.type == 'click') {
 				if (evt.button == 0 && !!target && target.nodeType == 1 && (!target.namespaceURI || target.namespaceURI == 'http://www.w3.org/1999/xhtml')) {
 					this._searchee.some(processRegular, this);
@@ -1020,8 +1020,8 @@
 		},
 		observe: function() {
 			let searchee = [
-				['A', 'href'],
-				['IMG', 'src']
+				['a', 'href'],
+				['img', 'src']
 			];
 			if (DTA.Preferences.getExt('selectbgimages', false)) {
 				searchee.push(['bgimg', 'bgimg']);
