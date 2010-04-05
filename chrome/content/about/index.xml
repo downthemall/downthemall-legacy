@@ -66,33 +66,34 @@
 		</p>
 		<p>This is the new "landing page" designed to give babelzilla.org localizers a way to translate things that are not directly part of dTa, or at least not directly accessible from the normal user interface.</p>
 		<h2>Usage</h2>
-		<p>This page is divided into different sections:</p>
-		<ul>
-			<li>General localizations</li>
-			<li>addons.mozilla.org localizations</li>
-			<li>Landing page localizations</li>
-		</ul>
-		<p>
-			The various sections contain some more descriptions. Texts will be taken from
-			<code>about.dtd</code>
-			and
-			<code>landingpage.dtd</code>
-			.
+		<p>This page will let you translate the various bits for addons.mozilla.org and the new "landing page".</p>
+		<p>Texts will be taken from <code>landingpage.dtd</code>.</p>
+		<p>A translatable block looks like this:</p>
+		<p class="localizable">Translate me
+			<div class="alwaysleft">Always left (for right-to-left locales)</div>
 		</p>
-		<p>The following marks blocks to translate:</p>
-		<p class="localizable">Translate me</p>
 		<p>
-			<em>Important</em>
-			: If you change anything on this page after we release the next major version to the public then drop us a note in babelzilla about that. Else we migth miss to update those changes, as they won't be automatically packed into the extension.
+			<em>Important</em>: If you change anything on this page after we release the next major version to the public then drop us a note in babelzilla about that.
+			Else we might miss to update those changes, as they won't be automatically packed into the extension.
 		</p>
-
-		<h1>General localizations</h1>
 
 		<h1>addons.mozilla.org localizations</h1>
+		<p>Various texts for addons.mozilla.org</p>
+		<h2>Summary</h2>
+		<p class="localizable">&amo.summary;</p>
+
+		<h2>Description</h2>
+		<div class="localizable">
+			<p>&amo.description.p1;</p>
+			<p>&amo.description.p2;</p>
+			<p>&amo.description.p3;</p>
+			<p>&amo.description.p4;</p>
+		</div>
+
 
 		<h1>Landing page</h1>
 		<p>
-			The new landing page will be shown after initial installation and whenever a user upgrades a major release (e.g. 1.1 -> 1.2, but not 1.1.1 -> 1.1.2)
+			The new landing page will be shown after initial installation and whenever a user upgrades a major release (e.g. 1.1 -> 2.0, but not 2.0.1 -> 2.0.2)
 			<br />
 			The landing page consists of a header and some "tabs". The header is always visible, while only one tab is visible at a time.
 		</p>
@@ -106,6 +107,7 @@
 		<p>This version of the landing page elements will not be fully themed. Browse the about URL to get an idea what the final result will look like.</p>
 
 		<h2>Header</h2>
+		<p>Displayed on top.</p>
 		<div id="welcome" class="localizable">
 			<h1>&lp.welcome;
 			</h1>
@@ -116,6 +118,7 @@
 			<p class="donate remark">&lp.donate;</p>
 		</div>
 		<h2>Tab headlines</h2>
+		<p>The site will feature various "tabs". The following are the headlines for each tab.</p>
 		<div id="pager">
 			<div class="pager pager-with-tabs pager-no-history localizable">
 				<ul class="pager-tabs">
@@ -192,26 +195,26 @@
 			<div id="toolbar" class="localizable">
 				<p>&lp.tb.intro;
 				</p>
-				<h2>&lp.tb.addingtitle;
-				</h2>
+				<h2>&lp.tb.add.title;</h2>
 				<div class="player" href="toolbar-add">Video: Add toolbar items</div>
-				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-					dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-					Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
+				<p>&lp.tb.add.p1;</p>
+				<ul id="tbitems">
+					<li id="tbdta">&lp.tb.add.dta;<br/>&lp.tb.add.dtadesc;</li>
+					<li id="tbtdta">&lp.tb.add.tdta;<br/>&lp.tb.add.tdtadesc;</li>
+					<li id="tbmanager">&lp.tb.add.manager;<br/>&lp.tb.add.managerdesc;</li>
+					<li id="tbselector">&lp.tb.add.selector;<br/>&lp.tb.add.selectordesc;</li>
+				</ul>
+				<p>&lp.tb.add.p2;</p>
 
-				<h3>&lp.tb.dndtitle;
-				</h3>
+				<h3>&lp.tb.dnd.title;</h3>
 				<div class="player" href="dnd">Video: Drag'n'Drop</div>
-				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-					dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-					Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
+				<p>&lp.tb.dnd.p1;<br/>&lp.tb.dnd.p2;</p>
+				<p>&lp.tb.dnd.p3;</p>
 
-				<h3>&lp.tb.selectortitle;
-				</h3>
+				<h3>&lp.tb.selector.title;</h3>
 				<div class="player" href="selector">Video: Selector</div>
-				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-					dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-					Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</p>
+				<p>&lp.tb.selector.p1;</p>
+				<p>&lp.tb.selector.p2;</p>
 			</div>
 			<h2>Privacy information</h2>
 			<div id="privacy" class="localizable">

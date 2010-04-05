@@ -3,6 +3,12 @@
 <!ENTITY language "English">
 <!ENTITY transAutor "The dTa Team">
 
+<!ENTITY amo.summary "The first and only download manager/accelerator built inside Firefox!">
+<!ENTITY amo.description.p1 "DownThemAll is all you can desire from a download manager: it features an advanced accelerator that increases speed up to 4x and it allows you to pause and resume downloads at any time.">
+<!ENTITY amo.description.p2 "DownThemAll is fast, reliable and easy-to-use! It lets you download all the links or images contained in a webpage and much more: you can refine your downloads by fully customizable criteria to get only what you really want!">
+<!ENTITY amo.description.p3 "DownThemAll is absolutely freeware and open-source. No Adware, no Spyware.">
+<!ENTITY amo.description.p4 "For more information see our <a href='http://www.downthemall.net/howto/features/'>Features page</a>.">
+
 <!ENTITY lp.title "About DownThemAll!">
 <!ENTITY lp.welcome "Welcome to DownThemAll!">
 <!ENTITY lp.info "Have a look at the videos showing how to use DownThemAll! and learn more about privacy and your rights">
@@ -13,7 +19,6 @@
 <!ENTITY lp.yourrights "Your rights">
 <!ENTITY lp.contact "Contact">
 <!ENTITY lp.pleasenote "Please note:">
-
 
 <!ENTITY lp.donate "Please consider a contribution">
 
@@ -30,9 +35,26 @@
 <!ENTITY lp.tut.oneclickn "After using the Clear Private Data feature in Firefox OneClick won't be available until start a regular DownThemAll! download again.">
 
 <!ENTITY lp.tb.intro "DownThemAll! offers some toolbar buttons that give you a convenient way to access DownThemAll! features.">
-<!ENTITY lp.tb.addingtitle "Adding and using toolbar buttons">
-<!ENTITY lp.tb.dndtitle "Drag'n'drop">
-<!ENTITY lp.tb.selectortitle "Using the DownThemAll! Selector">
+<!ENTITY lp.tb.add.title "Adding and using toolbar buttons">
+<!ENTITY lp.tb.add.p1 "DownThemAll! features four toolbar buttons to make it easier to find and queue downloads">
+<!ENTITY lp.tb.add.dta "DownThemAll! button">
+<!ENTITY lp.tb.add.dtadesc "Opens the DownThemAll! Selection window for the current tab.">
+<!ENTITY lp.tb.add.tdta "OneClick! button">
+<!ENTITY lp.tb.add.tdtadesc "Downloads all items from the current page according to the last used preferences and filters">
+<!ENTITY lp.tb.add.manager "DownThemAll! Manager button">
+<!ENTITY lp.tb.add.managerdesc "Opens the Manager window">
+<!ENTITY lp.tb.add.selector "DownThemAll! Selector button">
+<!ENTITY lp.tb.add.selectordesc "Adds items by left-clicking on them">
+<!ENTITY lp.tb.add.p2 "The toolbar buttons can be added via <code>View → Toolbars → Customize</code>.">
+
+<!ENTITY lp.tb.dnd.title "Drag'n'drop">
+<!ENTITY lp.tb.dnd.p1 "You can drag'n'drop every link or image onto the DownThemAll! or OneClick! button to download it.">
+<!ENTITY lp.tb.dnd.p2 "The Manager window also can be used to drop items to download on.">
+<!ENTITY lp.tb.dnd.p3 "You may order your download list with drag'n'drop as well. Just drag an items and drop it at the desired position.">
+
+<!ENTITY lp.tb.selector.title "Using the DownThemAll! Selector">
+<!ENTITY lp.tb.selector.p1 "When DownThemAll! Selector you may queue many downloads by simply clicking on the links or images.">
+<!ENTITY lp.tb.selector.p2 "To enable the Selector click the toolbar button, and to disable it once you're done click the button again.">
 
 <!ENTITY lp.pr.title "Privacy Notice">
 <!ENTITY lp.pr.intro "DownThemAll protects your privacy.">
