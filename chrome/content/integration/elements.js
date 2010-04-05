@@ -919,7 +919,7 @@
 		let tp = this;
 		this._callback = function(evt) tp.onClickOneClick(evt);
 		
-		window.addEventListener('click', this._callback, false);
+		window.addEventListener('click', this._callback, true);
 		window.addEventListener('mouseup', this._callback, false);
 		window.addEventListener('mousemove', this._callback, false);
 		
@@ -928,7 +928,7 @@
 	}
 	Selector.prototype = {
 		dispose: function() {
-			window.removeEventListener('click', this._callback, false);
+			window.removeEventListener('click', this._callback, true);
 			window.removeEventListener('mouseup', this._callback, false);
 			window.removeEventListener('mousemove', this._callback, false);
 			this.detachHilight();
@@ -979,15 +979,13 @@
 				if (!m) {
 					return false;
 				}
-				debug("searching");
-				this.cancelEvent(evt);
 				try {
 					saveSingleLink(true, m.url, m.elem);
 					this.detachHilight();
 					new this.Flasher(m.elem).hide();
 				}
 				catch (ex) {
-					debug("failed to process " + e[0], ex);
+					return false;
 				}
 				return true;
 			}
@@ -1007,8 +1005,7 @@
 			if (evt.type == 'click') {
 				if (evt.button == 0 && !!target && target.nodeType == 1 && (!target.namespaceURI || target.namespaceURI == 'http://www.w3.org/1999/xhtml')) {
 					if (this._searchee.some(processRegular, this)) {
-						event.preventDefault();
-						event.stopPropagation();
+						this.cancelEvent(evt);
 					}
 				}			
 			}
@@ -1016,9 +1013,6 @@
 				if (!this._searchee.some(highlightElement, this)) {
 					this.detachHilight();
 				}
-			}
-			else {
-				this.cancelEvent(evt);
 			}
 		},
 		observe: function() {
