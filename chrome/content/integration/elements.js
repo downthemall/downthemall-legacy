@@ -1006,7 +1006,10 @@
 			
 			if (evt.type == 'click') {
 				if (evt.button == 0 && !!target && target.nodeType == 1 && (!target.namespaceURI || target.namespaceURI == 'http://www.w3.org/1999/xhtml')) {
-					this._searchee.some(processRegular, this);
+					if (this._searchee.some(processRegular, this)) {
+						event.preventDefault();
+						event.stopPropagation();
+					}
 				}			
 			}
 			else if (evt.type == 'mousemove') {
