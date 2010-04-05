@@ -479,7 +479,7 @@
 						notifyInfo(getFormattedString('queuedn', queued));
 					}
 					else {
-						notifyInfo(getFormattedString('queued', queued));
+						notifyInfo(getFormattedString('queued', queued.url));
 					}
 					return;
 				}
