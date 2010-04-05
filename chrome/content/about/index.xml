@@ -199,10 +199,10 @@
 				<div class="player" href="toolbar-add">Video: Add toolbar items</div>
 				<p>&lp.tb.add.p1;</p>
 				<ul id="tbitems">
-					<li id="tbdta">&lp.tb.add.dta;<br/>&lp.tb.add.dtadesc;</li>
-					<li id="tbtdta">&lp.tb.add.tdta;<br/>&lp.tb.add.tdtadesc;</li>
-					<li id="tbmanager">&lp.tb.add.manager;<br/>&lp.tb.add.managerdesc;</li>
-					<li id="tbselector">&lp.tb.add.selector;<br/>&lp.tb.add.selectordesc;</li>
+					<li id="tbdta"><span>&lp.tb.add.dta;</span><br/>&lp.tb.add.dtadesc;</li>
+					<li id="tbtdta"><span>&lp.tb.add.tdta;</span><br/>&lp.tb.add.tdtadesc;</li>
+					<li id="tbmanager"><span>&lp.tb.add.manager;</span><br/>&lp.tb.add.managerdesc;</li>
+					<li id="tbselector"><span>&lp.tb.add.selector;</span><br/>&lp.tb.add.selectordesc;</li>
 				</ul>
 				<p>&lp.tb.add.p2;</p>
 
