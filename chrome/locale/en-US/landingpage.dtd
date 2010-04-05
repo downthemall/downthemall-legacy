@@ -40,11 +40,11 @@
 <!ENTITY lp.tb.add.dta "DownThemAll! button">
 <!ENTITY lp.tb.add.dtadesc "Opens the DownThemAll! Selection window for the current tab.">
 <!ENTITY lp.tb.add.tdta "OneClick! button">
-<!ENTITY lp.tb.add.tdtadesc "Downloads all items from the current page according to the last used preferences and filters">
+<!ENTITY lp.tb.add.tdtadesc "Downloads all items from the current page according to the last used preferences and filters.">
 <!ENTITY lp.tb.add.manager "DownThemAll! Manager button">
-<!ENTITY lp.tb.add.managerdesc "Opens the Manager window">
+<!ENTITY lp.tb.add.managerdesc "Opens the Manager window.">
 <!ENTITY lp.tb.add.selector "DownThemAll! Selector button">
-<!ENTITY lp.tb.add.selectordesc "Adds items by left-clicking on them">
+<!ENTITY lp.tb.add.selectordesc "Adds items by left-clicking on them.">
 <!ENTITY lp.tb.add.p2 "The toolbar buttons can be added via <code>View → Toolbars → Customize</code>.">
 
 <!ENTITY lp.tb.dnd.title "Drag'n'drop">
