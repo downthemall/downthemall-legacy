@@ -131,7 +131,7 @@
 						return;
 					}
 					this._list.label = val;
-					this._modified = true;
+					this.modified = true;
 				</setter>
 			</property>
 			<method name="_load">
@@ -159,7 +159,7 @@
 					if (this.hasAttribute('readonly')) {
 						this._list.removeAttribute('editable');
 					}
-					this._modified = false;
+					this.modified = false;
 				]]></body>
 			</method>
 			<method name="reload">
@@ -173,6 +173,7 @@
 						return;
 					}
 					this.hist.push(n);
+					this.modified = false;
 				]]></body>
 			</method>
 			<method name="clear">
