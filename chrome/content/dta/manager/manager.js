@@ -1612,7 +1612,7 @@ QueueItem.prototype = {
 			download.queue();
 		}
 
-		if (mismatches.length) {
+		if (mismatches.length && this.tmpFile.exists()) {
 			// partials
 			let act = Prompts.confirm(window, _('verifyerrortitle'), _('verifyerrorpartialstext'), _('recover'), _('delete'), _('keep'));
 			switch (act) {
