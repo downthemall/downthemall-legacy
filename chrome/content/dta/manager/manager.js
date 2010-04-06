@@ -60,37 +60,45 @@ ServiceGetter(this, "MimeService", "@mozilla.org/uriloader/external-helper-app-s
 ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIObserverService");
 ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 
-const MIN_CHUNK_SIZE = 512 * 1024;
+const MIN_CHUNK_SIZE = 1<<19; // 512K
 
 // amount to buffer in BufferedOutputStream
 // furthermore up to this ammount will automagically discared after crashes
-const CHUNK_BUFFER_SIZE = 96 * 1024;
+const CHUNK_BUFFER_SIZE = 1<<17; // 128K
 
 const REFRESH_FREQ = 1000;
-const STREAMS_FREQ = 250;
 
-let Prompts = {}, Limits = {}, JSONCompat = {}, PrivateBrowsing = {}, AlertService = {};
+let Prompts = {}, Limits = {}, JSONCompat = {}, PrivateBrowsing = {};
 module('resource://dta/cothread.jsm');
 module('resource://dta/json.jsm', JSONCompat);
 module('resource://dta/support/urlmanager.jsm');
 module('resource://dta/prompts.jsm', Prompts);
 
-module('resource://dta/support/alertservice.jsm', AlertService);
 module('resource://dta/support/bytebucket.jsm');
-module('resource://dta/support/loggedprompter.jsm');
 module('resource://dta/support/pbm.jsm', PrivateBrowsing);
 module('resource://dta/support/serverlimits.jsm', Limits);
 module('resource://dta/support/timers.jsm');
 
-let Preallocator = {}, Verificator = {};
-module('resource://dta/manager/decompressor.jsm');
+let Preallocator = {};
 module('resource://dta/manager/preallocator.jsm', Preallocator);
 module('resource://dta/manager/queuestore.jsm');
 module('resource://dta/manager/speedstats.jsm');
-module('resource://dta/manager/verificator.jsm', Verificator);
 module('resource://dta/manager/visitormanager.jsm');
 
-const AuthPrompts = new LoggedPrompter(window);
+function lazyModule(obj, name, url, symbol) {
+	setNewGetter(obj, name, function() {
+		let _o = {};
+		module(url, _o);
+		return symbol ? _o[symbol] : _o;
+	});
+}
+
+lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Decompressor');
+lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
+lazyModule(this, 'AlertService', 'resource://dta/support/alertservice.jsm');
+lazyModule(this, 'LoggedPrompter', 'resource://dta/support/loggedprompter.jsm');
+
+setNewGetter(this, 'AuthPrompts', function() new LoggedPrompter(window));
 
 var TEXT_PAUSED;
 var TEXT_QUEUED;
@@ -1052,7 +1060,6 @@ const Metalinker = {
 	}	
 };
 module('resource://dta/support/metalinker.jsm', Metalinker);
-
 
 function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 
