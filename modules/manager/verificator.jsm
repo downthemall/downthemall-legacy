@@ -36,7 +36,7 @@
 
 const EXPORTED_SYMBOLS = ['verify'];
 
-const PARTIAL_CHUNK = 1<<21; // power of two; make it 2M
+const PARTIAL_CHUNK = 1<<20; // power of two; make it 1M
 const REGULAR_CHUNK = PARTIAL_CHUNK * 2; 
 
 const Cc = Components.classes;
@@ -62,6 +62,8 @@ const nsICryptoHash = Ci.nsICryptoHash;
 const File = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
 const BinaryInputStream = new Ctor('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
+const StorageStream = new Ctor('@mozilla.org/storagestream;1', 'nsIStorageStream', 'init');
+
 const Hash = new Ctor('@mozilla.org/security/hash;1', 'nsICryptoHash', 'init');
 
 const _jobs = {};
@@ -189,6 +191,7 @@ MultiVerificator.prototype = {
 			let mainHash = new Hash(nsICryptoHash[hashCollection.full.type]);
 			let stream = new FileInputStream(file, 0x01, 0766, 0);
 			let bis = new BinaryInputStream(stream);
+			let ss = new StorageStream(PARTIAL_CHUNK, PARTIAL_CHUNK, null);
 			try {
 				for each (let partial in hashCollection.partials) {
 					let pendingPartial = Math.min(pending, hashCollection.parLength);
@@ -200,12 +203,23 @@ MultiVerificator.prototype = {
 						}
 						let count = Math.min(pendingPartial, PARTIAL_CHUNK);
 						
-						// nsIStorageStream would be an alternative
-						// doesn't implement writeFrom, however
-						let bytes = bis.readByteArray(count);
-						partialHash.update(bytes, bytes.length);
-						mainHash.update(bytes, bytes.length);
-						delete bytes;
+						let os = ss.getOutputStream(0);
+						count = os.write(bis.readBytes(count), count);
+						if (!count) {
+							throw new Exception("read nothing");
+						}
+						os.close();
+						delete os;
+
+						let is = ss.newInputStream(0);
+						partialHash.updateFromStream(is, count);
+						is.close();
+						delete is;
+						
+						is = ss.newInputStream(0);
+						mainHash.updateFromStream(is, count);
+						is.close();
+						delete is;
 						
 						pending -= count;
 						pendingPartial -= count;
@@ -223,6 +237,7 @@ MultiVerificator.prototype = {
 						});
 					}
 				}
+				delete ss;
 				
 				// any remainder
 				while (pending) {
