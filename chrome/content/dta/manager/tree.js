@@ -77,7 +77,7 @@ const Tree = {
 		$('mirrors', 'mirrors-sep').forEach(function(e) e.hidden = cascadeMirrors);
 		$('mirrors-cascaded', 'mirrors-cascaded-sep').forEach(function(e) e.hidden = !cascadeMirrors);
 		
-		tp.showSpeedLimitList(event);
+		this.showSpeedLimitList(event);
 	},
 	assembleMenus: function() {
 		for each (let popup in $('removeCompletedPopup', 'removePopup')) {
