@@ -74,9 +74,8 @@ function registerCallbacks() {};
  */
 function unregisterCallbacks() {};
 
-if ('nsIPrivateBrowsingService' in Ci) {
-	
-	const pbm = Cc["@mozilla.org/privatebrowsing;1"].getService(Ci.nsIPrivateBrowsingService);
+if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingService" in Ci)) {
+	const pbm = Cc["@mozilla.org/privatebrowsing-wrapper;1"].getService(Ci.nsIPrivateBrowsingService);
 	const os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
 
 	delete browsingPrivately;
