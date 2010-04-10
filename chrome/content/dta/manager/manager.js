@@ -2921,7 +2921,8 @@ Connection.prototype = {
 			}
 
 			if (this.isInfoGetter) {
-				if (d.fileName.getExtension().match(/^meta(?:4|link)$/i)) {
+				let ext = d.fileName.getExtension();
+				if (ext && ext.match(/^meta(?:4|link)$/i)) {
 					d.isMetalink = true;
 					d.resumable = false;
 				}				
@@ -2989,6 +2990,8 @@ Connection.prototype = {
 		}
 		catch (ex) {
 			Debug.log("onStartRequest", ex);
+			d.fail(_("unknownerror"), _('unknownerrortext'), _("unknownerror"));
+			return;
 		}
 	},
 	onStopRequest: function DL_onStopRequest(aRequest, aContext, aStatusCode) {
