@@ -107,6 +107,13 @@ function WorkerJob(path, size, perms, callback, tp) {
 	// Create thread and dispatch
 	let tm = Cc['@mozilla.org/thread-manager;1'].getService(Ci.nsIThreadManager);
 	this.thread = tm.newThread(0);
+	try {
+		let tp = this.thread.QueryInterface(Ci.nsISupportsPriority);
+		tp.priority = Ci.nsISupportsPriority.PRIORITY_LOWEST;
+	}
+	catch (ex) {
+		// no op
+	}
 	this.main = tm.mainThread;
 	workers[this.uuid] = this;
 	this.thread.dispatch(this, this.thread.DISPATCH_NORMAL);
