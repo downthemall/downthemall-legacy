@@ -93,10 +93,11 @@ function lazyModule(obj, name, url, symbol) {
 	});
 }
 
-lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Decompressor');
-lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
 lazyModule(this, 'AlertService', 'resource://dta/support/alertservice.jsm');
 lazyModule(this, 'LoggedPrompter', 'resource://dta/support/loggedprompter.jsm');
+lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Decompressor');
+lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
+lazyModule(this, 'RequestManipulation', 'resource://dta/manager/requestmanipulation.jsm');
 
 setNewGetter(this, 'AuthPrompts', function() new LoggedPrompter(window));
 
@@ -2373,10 +2374,14 @@ function Connection(d, c, isInfoGetter) {
 	this.c = c;
 	this.isInfoGetter = isInfoGetter;
 	this.url = d.urlManager.getURL();
+	
+	let url = this.url.url;
+	RequestManipulation.modifyURL(url);
+	
 	let referrer = d.referrer;
-	Debug.logString("starting: " + this.url.url.spec);
+	Debug.logString("starting: " + url.spec);
 
-	this._chan = IOService.newChannelFromURI(this.url.url);
+	this._chan = IOService.newChannelFromURI(url);
 	let r = Ci.nsIRequest;
 	let loadFlags = r.LOAD_NORMAL
 	if (!Preferences.getExt('useCache', false)) {
@@ -2398,6 +2403,9 @@ function Connection(d, c, isInfoGetter) {
 		try {
 			Debug.logString("http");
 			let http = this._chan.QueryInterface(Ci.nsIHttpChannel);
+			
+			RequestManipulation.modifyHttp(http);
+			
 			if (c.start + c.written > 0) {
 				http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
 			}
@@ -2537,6 +2545,10 @@ Connection.prototype = {
 		try {
 			if (!(oldChannel instanceof Ci.nsIChannel) || !(newChannel instanceof Ci.nsIChannel)) {
 				throw new Exception("redirect: requests not channels");
+			}
+			
+			if (newChannel instanceof Ci.nsIHttpChannel) {
+				RequestManipulation.modifyHttp(newChannel);
 			}
 			
 			// When we get redirected from, say, http to ftp, we need to explicitly
