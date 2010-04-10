@@ -94,12 +94,15 @@ function lazyModule(obj, name, url, symbol) {
 }
 
 lazyModule(this, 'AlertService', 'resource://dta/support/alertservice.jsm');
-lazyModule(this, 'LoggedPrompter', 'resource://dta/support/loggedprompter.jsm');
 lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Decompressor');
 lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
 lazyModule(this, 'RequestManipulation', 'resource://dta/manager/requestmanipulation.jsm');
 
-setNewGetter(this, 'AuthPrompts', function() new LoggedPrompter(window));
+setNewGetter(this, 'AuthPrompts', function() {
+	let _l = {};
+	module('resource://dta/support/loggedprompter.jsm', _l);
+	return new _l.LoggedPrompter(window);
+});
 
 var TEXT_PAUSED;
 var TEXT_QUEUED;
