@@ -91,6 +91,13 @@ function Callback(func, sync) {
 	this._args = Array.map(arguments, function(e) e).slice(2);
 	this._thread = ThreadManager.mainThread;
 	this._job = registerJob(this);
+	try {
+		let tp = this._thread.QueryInterface(Ci.nsISupportsPriority);
+		tp.priority = Ci.nsISupportsPriority.PRIORITY_LOWEST;
+	}
+	catch (ex) {
+		// no op
+	}
 	this._thread.dispatch(this, sync ? 0x1 : 0x0);	
 }
 Callback.prototype = {
