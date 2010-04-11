@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = [];
+const EXPORTED_SYMBOLS = ['overrideUA'];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -83,10 +83,15 @@ for each (let [m, sp] in [['URL', function(c) c.spec], ['Http', function(c) c.UR
 	EXPORTED_SYMBOLS.splice(EXPORTED_SYMBOLS.length, 3, 'register' + m, 'unregister' + m, 'modify' + m);
 }
 
+function overrideUA() {
+	this.setRequestHeader('User-Agent', 'DownThemAll!', false);
+	this.setRequestHeader('Referer', '', false);
+}
+
 // Sourceforge
 registerHttp(
 	/^https?:\/\/(?:[\w\d_.-]+\.)?(?:sf|sourceforge)\.net\/.*\/files\//,
-	function() this.setRequestHeader('User-Agent', 'DownThemAll!', false)
+	overrideUA
 );
 
 // Rapidshare direct
