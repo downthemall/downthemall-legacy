@@ -4,7 +4,8 @@
 <!ENTITY mask.url "Base URL">
 <!ENTITY mask.curl "Full URL">
 <!ENTITY mask.flatcurl "Flat Full URL">
-<!ENTITY mask.num "Progressive number">
+<!ENTITY mask.num "Batch number">
+<!ENTITY mask.inum "Item number">
 <!ENTITY mask.hh "Hours">
 <!ENTITY mask.mm "Minutes">
 <!ENTITY mask.ss "Seconds">
