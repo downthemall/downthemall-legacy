@@ -90,7 +90,7 @@ function overrideUA() {
 
 // Sourceforge
 registerHttp(
-	/^https?:\/\/(?:[\w\d_.-]+\.)?(?:sf|sourceforge)\.net\/.*\/files\//,
+	/(?:sf|sourceforge)\.net\/.*(?:\/files\/|use_mirror)/,
 	overrideUA
 );
 
