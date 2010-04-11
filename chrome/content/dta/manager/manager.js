@@ -354,7 +354,8 @@ const Dialog = {
 				d._state = state;
 			}					
 			d.urlManager = new UrlManager(down.urlManager);
-			d.numIstance = get("numIstance");
+			d.bNum = get("numIstance");
+			d.iNum = get("iNum");
 
 			let referrer = get('referrer');
 			if (referrer) {
@@ -1135,7 +1136,8 @@ QueueItem.prototype = {
 	postData: null,
 	
 	fromMetalink: false,
-	numIstance: 0,
+	bNum: 0,
+	iNum: 0,
 	
 	_fileName: null,
 	get fileName() {
@@ -1739,12 +1741,18 @@ QueueItem.prototype = {
 				.removeLeadingSlash()
 				.removeFinalSlash();
 
-			let uripath = uri.path.removeLeadingChar("/");
-			if (uripath.length) {
-				uripath = uripath.substring(0, uri.path.lastIndexOf("/"))
-					.normalizeSlashes()
-					.removeFinalSlash();
-			}
+			let uripath = {
+				get value() {
+					let rv = uri.path.removeLeadingChar("/");
+					if (rv.length) {
+						rv = rv.substring(0, uri.path.lastIndexOf("/"))
+							.normalizeSlashes()
+							.removeFinalSlash();
+					}
+					delete this.value;
+					return (this.value = rv);
+				}
+			};
 
 			let query = '';
 			try {
@@ -1754,9 +1762,6 @@ QueueItem.prototype = {
 				// no-op
 			}
 
-			let description = this.description.removeBadChars().replaceSlashes(' ').trim();
-			let title = this.title.removeBadChars().trim();
-			
 			let name = this.fileName;
 			let ext = name.getExtension();
 			if (ext) {
@@ -1779,36 +1784,35 @@ QueueItem.prototype = {
 				name = this.fileName;
 				ext = '';
 			}
-			let ref = this.referrer ? this.referrer.host.toString() : '';
 			
-			let curl = (uri.host + ((uripath=="") ? "" : (SYSTEMSLASH + uripath))); 
-			
-			var replacements = {
-				"name": name,
-				"ext": ext,
-				"text": description,
-				"flattext": description.replaceSlashes(Prefs.flatReplacementChar).replace(/[\n\r\s]+/g, ' ').trim(),
-				'title': title,
-				'flattitle': title.replaceSlashes(Prefs.flatReplacementChar).replace(/[\n\r\s]+/g, ' ').trim(),
-				"url": host,
-				"subdirs": uripath,
-				"flatsubdirs": uripath.replaceSlashes(Prefs.flatReplacementChar).trim(),
-				"refer": ref,
-				"qstring": query,
-				"curl": curl,
-				"flatcurl": curl.replaceSlashes(Prefs.flatReplacementChar),
-				"num": Utils.formatNumber(this.numIstance),
-				"hh": Utils.formatNumber(this.startDate.getHours(), 2),
-				"mm": Utils.formatNumber(this.startDate.getMinutes(), 2),
-				"ss": Utils.formatNumber(this.startDate.getSeconds(), 2),
-				"d": Utils.formatNumber(this.startDate.getDate(), 2),
-				"m": Utils.formatNumber(this.startDate.getMonth() + 1, 2),
-				"y": String(this.startDate.getFullYear())
+			let tp = this;
+			let replacements = {
+				"name": function() name,
+				"ext": function() ext,
+				"text": function() tp.description.removeBadChars().replaceSlashes(' ').trim(),
+				"flattext": function() tp.description.removeBadChars().replaceSlashes(Prefs.flatReplacementChar).replace(/[\n\r\s]+/g, ' ').trim(),
+				'title': function() tp.title.removeBadChars().trim(),
+				'flattitle': function() tp.title.removeBadChars().replaceSlashes(Prefs.flatReplacementChar).replace(/[\n\r\s]+/g, ' ').trim(),
+				"url": function() host,
+				"subdirs": function() uripath.value,
+				"flatsubdirs": function() uripath.value.replaceSlashes(Prefs.flatReplacementChar).trim(),
+				"refer": function() tp.referrer ? tp.referrer.host.toString() : '',
+				"qstring": function() query,
+				"curl": function() uri.host + ((uripath.value == "") ? "" : (SYSTEMSLASH + uripath.value)),
+				"flatcurl": function() curl.replaceSlashes(Prefs.flatReplacementChar),
+				"num": function() Utils.formatNumber(tp.bNum),
+				"inum": function() Utils.formatNumber(tp.iNum),
+				"hh": function() Utils.formatNumber(tp.startDate.getHours(), 2),
+				"mm": function() Utils.formatNumber(tp.startDate.getMinutes(), 2),
+				"ss": function() Utils.formatNumber(tp.startDate.getSeconds(), 2),
+				"d": function() Utils.formatNumber(tp.startDate.getDate(), 2),
+				"m": function() Utils.formatNumber(tp.startDate.getMonth() + 1, 2),
+				"y": function() tp.startDate.getFullYear().toString()
 			}
 			function replacer(type) {
 				let t = type.substr(1, type.length - 2);
 				if (t in replacements) {
-					return replacements[t];
+					return replacements[t]();
 				}
 				return type;
 			}
@@ -2125,7 +2129,6 @@ QueueItem.prototype = {
 		[
 		 	'fileName',
 			'postData',
-			'numIstance',
 			'description',
 			'title',
 			'resumable',
@@ -2161,6 +2164,8 @@ QueueItem.prototype = {
 		if (this.referrer) {
 			e.referrer = this.referrer.spec;
 		}
+		e.numIstance = this.bNum; 
+		e.iNum = this.iNum; 
 		// Store this so we can later resume.
 		if (!this.isOf(CANCELED, COMPLETE) && this.partialSize) {
 			e.tmpFile = this.tmpFile.path;
@@ -2407,8 +2412,6 @@ function Connection(d, c, isInfoGetter) {
 			Debug.logString("http");
 			let http = this._chan.QueryInterface(Ci.nsIHttpChannel);
 			
-			RequestManipulation.modifyHttp(http);
-			
 			if (c.start + c.written > 0) {
 				http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
 			}
@@ -2435,6 +2438,8 @@ function Connection(d, c, isInfoGetter) {
 				uc.setUploadStream(new StringInputStream(d.postData, d.postData.length), null, -1);
 				http.requestMethod = 'POST';
 			}			 
+
+			RequestManipulation.modifyHttp(http);
 		}
 		catch (ex) {
 			Debug.log("error setting up http channel", ex);
@@ -3181,6 +3186,7 @@ function startDownloads(start, downloads) {
 	let removeableTabs = {};
 	Tree.beginUpdate();
 	QueueStore.beginUpdate();
+	let iNum = 0;
 	for (let e in g) {
 		let qi = new QueueItem();
 		let lnk = e.url;
@@ -3193,7 +3199,8 @@ function startDownloads(start, downloads) {
 		else {
 			qi.urlManager = new UrlManager([lnk]);
 		}
-		qi.numIstance = e.numIstance;
+		qi.bNum = e.numIstance;
+		qi.iNum = ++iNum;
 	
 		if (e.referrer) {
 			try {
