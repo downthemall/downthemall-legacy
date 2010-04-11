@@ -112,15 +112,23 @@ const DTA_AddingFunctions = {
 	composeURL: function() DTA.composeURL.apply(this, arguments),
 	applyWithWindow: function(func, args) {
 		DTA.Debug.logString("Obsolete function called: " + func.name);
-		let args = Array.map(args, function(e) e);
-		args[0] = window;
+		args.unshift(window);
 		return func.apply(DTA, args);
 	},
-	saveSingleLink: function() this.applyWithWindow(DTA.saveSingleLink, arguments),
-	saveLinkArray: function() this.applyWithWindow(DTA.saveLinkArray, arguments),
-	turboSaveLinkArray: function() this.applyWithWindow(DTA.turboSaveLinkArray, arguments),
-	sendToDown: function() this.applyWithWindow(DTA.sendToDown, arguments),
-	turboSendToDown: function() this.applyWithWindow(DTA.turboSendToDown, arguments)
+	saveSingleLink: function() this.applyWithWindow(DTA.saveSingleLink, Array.map(arguments, function(e) e)),
+	saveLinkArray: function() {
+		let args = Array.map(arguments, function(e) e);
+		let turbo = args.shift();
+		if (turbo) {
+			this.applyWithWindow(DTA.turboSaveLinkArray, args);
+		}
+		else {
+			this.applyWithWindow(DTA.saveLinkArray, args);
+		}
+	},
+	turboSaveLinkArray: function() this.applyWithWindow(DTA.turboSaveLinkArray, Array.map(arguments, function(e) e)),
+	sendToDown: function() this.applyWithWindow(DTA.sendToDown, Array.map(arguments, function(e) e)),
+	turboSendToDown: function() this.applyWithWindow(DTA.turboSendToDown, Array.map(arguments, function(e) e))
 };
 const DTA_getLinkPrintMetalink = DTA.getLinkPrintMetalink;
 const DTA_URL = DTA.URL;
