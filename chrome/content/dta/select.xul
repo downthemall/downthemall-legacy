@@ -41,7 +41,7 @@
 	<script type="text/javascript" src="chrome://dta/content/common/internalFunctions.js" />
 	<script type="text/javascript" src="chrome://dta/content/dta/select.js" />
 
-	<stringbundleset>
+	<stringbundleset xmlns="http://www.downthemall.net/properties#">
 		<stringbundle src="chrome://dta/locale/common.properties"/>
 		<stringbundle src="chrome://dta/locale/select.properties"/>
 		<stringbundle src="chrome://global/locale/dialog.properties"/>

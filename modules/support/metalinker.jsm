@@ -52,14 +52,6 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 /**
- * DownThemAll! Properties namespace
- */
-const NS_DTA = 'http://www.downthemall.net/properties#';
-/**
- * XHTML namespace
- */
-const NS_HTML = 'http://www.w3.org/1999/xhtml';
-/**
  * Metalinker3 namespace
  */
 const NS_METALINKER3 = 'http://www.metalinker.org/';
