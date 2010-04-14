@@ -1,10 +1,13 @@
 @import 'chrome://dta/content/common/bindings.css';
 @import 'chrome://dta-platform/skin/common.css';
 
-@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
-@namespace html url("http://www.w3.org/1999/xhtml");
+@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+@namespace html url(http://www.w3.org/1999/xhtml);
+@namespace dta url(http://www.downthemall.net/properties#);
 
-
+dta|* {
+	display: none;
+}
 		
 dialogheader {
 	border: 2px solid -moz-use-text-color;
@@ -167,11 +170,7 @@ scrollbarbutton[sbattr="scrollbar-up-bottom"]{
 	
 }
 treechildren::-moz-tree-cell-text(selected) {
-	color: white;
 	font-weight: bold;
-}
-treechildren::-moz-tree-row(selected) {
-	background-color: #7aa3cc !important;
 }
 
 treechildren::-moz-tree-row {

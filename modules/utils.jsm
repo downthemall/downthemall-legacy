@@ -54,7 +54,8 @@ const EXPORTED_SYMBOLS = [
 	'MimeQuality',
 	'StringBundles',
 	'launch',
-	'reveal'
+	'reveal',
+	'NS_XUL', 'NS_DTA', 'NS_HTML'
 ];
 
 const Cc = Components.classes;
@@ -65,6 +66,22 @@ const log = Components.utils.reportError;
 const Exception = Components.Exception;
 
 const File = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+
+
+/**
+ * XUL namespace
+ */
+const NS_XUL = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
+
+/**
+ * DownThemAll! Properties namespace
+ */
+const NS_DTA = 'http://www.downthemall.net/properties#';
+
+/**
+ * XHTML namespace
+ */
+const NS_HTML = 'http://www.w3.org/1999/xhtml';
 
 /**
  * Installs a new lazy getter
@@ -174,6 +191,7 @@ setNewGetter(this, "newUUIDString", function() {
 
 ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService");
 ServiceGetter(this, "ExternalProtocolService", "@mozilla.org/uriloader/external-protocol-service;1", "nsIExternalProtocolService");
+ServiceGetter(this, "StringBundleService", "@mozilla.org/intl/stringbundle;1", "nsIStringBundleService");
 
 /**
  * Range generator (python style). Difference: step direction is initialized accordingly if corresponding parameter is omitted.
@@ -531,6 +549,34 @@ MimeQuality.prototype = {
 	}
 }
 
+const _bundles = {};
+function _loadBundle(url) {
+	if (url in _bundles) {
+		return _bundles[url];
+	}
+	let strings = {};
+	for (let s in new SimpleIterator(StringBundleService.createBundle(url).getSimpleEnumeration(), Ci.nsIPropertyElement)) {
+		strings[s.key] = s.value;
+	}	
+	return _bundles[url] = strings; 
+}
+function _loadBundles(urls) {
+	urls = urls.filter(
+		function(e) !((e in this) || (this[e] = null)), {}
+	);
+	urls.sort();
+	let key = urls.toString();
+	if (key in _bundles) {
+		return _bundles[key];
+	}
+	let rv = {};
+	for each (let b in urls.map(function(e) _loadBundle(e))) {
+		merge(rv, b);
+	}
+	return _bundles[key] = rv; 
+}
+const _br = /%S/gi;
+
 /**
  * Encapulates all stringbundles of the current document and provides unified
  * access
@@ -539,13 +585,15 @@ MimeQuality.prototype = {
  * @see _
  */
 function StringBundles(document) {
-	this._strings = {};
-	this._bundles = document.getElementsByTagName('stringbundle');
-	for each (let bundle in Array.map(this._bundles, function(s) s.strings)) {
-		for (let s in new SimpleIterator(bundle, Ci.nsIPropertyElement)) {
-			this._strings[s.key] = s.value;
-		}
-	}
+	this._strings = _loadBundles(Array.map(
+		document.getElementsByTagNameNS(NS_DTA, 'stringbundle'),
+		function(e) e.getAttribute('src')
+	).concat(
+		Array.map(
+			document.getElementsByTagNameNS(NS_XUL, 'stringbundle'),
+			function(e) e.getAttribute('src')
+		)
+	));
 }
 StringBundles.prototype = {
 	getString: function(id) {
@@ -560,7 +608,7 @@ StringBundles.prototype = {
 		function repl() {
 			return params.shift();
 		}
-		return fmt.replace(/%S/gi, repl);
+		return fmt.replace(_br, repl);
 	}
 };
 

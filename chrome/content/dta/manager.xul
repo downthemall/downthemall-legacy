@@ -35,7 +35,7 @@
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/utils.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/tree.js" />
 
-	<stringbundleset>
+	<stringbundleset xmlns="http://www.downthemall.net/properties#">
 		<stringbundle src="chrome://dta/locale/common.properties" />
 		<stringbundle src="chrome://dta/locale/manager.properties" />
 		<stringbundle src="chrome://dta/locale/prefpanes.properties" />
