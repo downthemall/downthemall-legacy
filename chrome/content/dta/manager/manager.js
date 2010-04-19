@@ -1341,9 +1341,14 @@ QueueItem.prototype = {
 		}
 		this.invalidate(3);
 		this.prealloc();
-		return this._totalSize;
 	},
-	partialSize: 0,
+	_partialSize: 0,
+	get partialSize() { return this._partialSize },
+	set partialSize(nv) {
+		this._partialSize = nv;
+		this.progress = Math.round(nv * 100.0 / this._totalSize);  
+	},
+	progress: 0,
 
 	startDate: null,
 
@@ -1462,7 +1467,7 @@ QueueItem.prototype = {
 		else if (this.is(COMPLETE)) {
 			return "100%";
 		}
-		return Math.floor(this.partialSize / this.totalSize * 100) + "%";
+		return this.progress + "%";
 	},
 	_destinationPath: '',
 	get destinationPath() {
