@@ -774,7 +774,7 @@ const Dialog = {
 			}				
 			let gen = Limits.getScheduler(Tree.all, this._running);
 			for (let d in gen) {
-				if (!d.is(QUEUED)) {
+				if (!d || !d.is(QUEUED)) {
 					Debug.logString("FIXME: scheduler returned unqueued download");
 					continue;
 				}
@@ -2474,6 +2474,7 @@ Connection.prototype = {
 		Ci.nsISupports,
 		Ci.nsISupportsWeakReference,
 		Ci.nsIWeakReference,
+		Ci.nsIClassInfo,
 		Ci.nsICancelable,
 		Ci.nsIInterfaceRequestor,
 		Ci.nsIStreamListener,
@@ -2489,7 +2490,6 @@ Connection.prototype = {
 		if (this._interfaces.some(function(i) { return iid.equals(i); })) {
 			return this;
 		}
-		Debug.log("Interface not implemented " + iid, Components.results.NS_ERROR_NO_INTERFACE);
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
 	// nsISupportsWeakReference
@@ -2518,17 +2518,7 @@ Connection.prototype = {
 		}
 	},
 	// nsIInterfaceRequestor
-	_notImplemented: [
-		Ci.nsIDocShellTreeItem, // cookie same-origin checks
-		Ci.nsIDOMWindow, // cookie same-origin checks
-		Ci.nsIWebProgress, 
-	],
 	getInterface: function DL_getInterface(iid) {
-		if (this._notImplemented.some(function(i) { return iid.equals(i); })) {
-			// we don't want to implement these
-			// and we don't want them to pop up in our logs
-			throw Components.results.NS_ERROR_NO_INTERFACE;
-		}
 		if (iid.equals(Ci.nsIAuthPrompt)) {
 			return AuthPrompts.authPrompter;
 		}
@@ -2538,15 +2528,21 @@ Connection.prototype = {
 		if ('nsIAuthPrompt2' in Ci && iid.equals(Ci.nsIAuthPrompt2)) {
 			return AuthPrompts.authPrompter.QueryInterface(Ci.nsIAuthPrompt2);
 		}
-		try {
-			return this.QueryInterface(iid);
-		}
-		catch (ex) {
-			Debug.log("interface not implemented: " + iid, ex);
-			throw ex;
-		}
+		return this.QueryInterface(iid);
 	},
-
+	
+	// nsIClassInfo
+	getInterfaces: function(aCount) {
+		aCount.value = this._interfaces.length;
+		return this._interfaces;
+	},
+	getHelperForLanguage: function(aLanguage) null,
+	contractID: null,
+	classDescription: "DownThemAll! connection",
+	classID: null,
+	implementationLanguage: Ci.nsIProgrammingLanguage.JAVASCRIPT,
+	flags: Ci.nsIClassInfo.MAIN_THREAD_ONLY,
+	
 	// nsIChannelEventSink
 	onChannelRedirect: function DL_onChannelRedirect(oldChannel, newChannel, flags) {
 		let c = this.c;
