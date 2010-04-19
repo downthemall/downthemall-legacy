@@ -397,9 +397,12 @@ let Dialog = {
 	check: function DTA_check() {
 		this.clearNotifications();
 		let dir = this.ddDirectory.value.trim();
+		dir = this.ddDirectory.value = !!dir ? dir.addFinalSlash() : '';
 
 		// mask set?
-		if (!this.ddRenaming.value.trim().length) {
+		let mask = this.ddRenaming.value.trim();
+		mask = this.ddRenaming.value = mask || '';
+		if (!mask.length) {
 			this.addNotification(_('alertmask'), this.PRIORITY_CRITICAL_MEDIUM);
 			return false;
 		}

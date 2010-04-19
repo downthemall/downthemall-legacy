@@ -153,12 +153,14 @@ var Dialog = {
 		
 		// check the directory
 		var dir = this.ddDirectory.value.trim();
+		dir = this.ddDirectory.value = !!dir ? dir.addFinalSlash() : '';
 		if (!dir.length || !Utils.validateDir(dir)) {
 			errors.push('directory');
 		}
 		
 		// check mask
-		var mask = this.ddRenaming.value;
+		var mask = this.ddRenaming.value.trim();
+		mask = this.ddRenaming.value = mask || '';
 		if (!mask.length) {
 			errors.push('renaming');
 		}

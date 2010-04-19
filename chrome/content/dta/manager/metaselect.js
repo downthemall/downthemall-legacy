@@ -148,6 +148,10 @@ const MetaSelect = {
 		function err(msg) {
 			notifications.appendNotification(msg, 0, null, notifications.PRIORITY_CRITICAL_MEDIUM, null);
 		}
+		
+		directory.value = directory.value.trim();
+		mask.value = mask.value.trim();
+		
 		if (!mask.value) {
 			err(_('alertmask'));
 			return false;

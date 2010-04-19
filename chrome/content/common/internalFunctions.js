@@ -99,8 +99,9 @@ var Utils = {
 	askForDir: function (predefined, text) {
 		try {
 			// nsIFilePicker object
-			var nsIFilePicker = Ci.nsIFilePicker;
-			var fp = new Utils.FilePicker(window, text, nsIFilePicker.modeGetFolder);
+			predefined = predefined ? predefined.trim() : '';
+			let nsIFilePicker = Ci.nsIFilePicker;
+			let fp = new Utils.FilePicker(window, text, nsIFilePicker.modeGetFolder);
 			fp.appendFilters(nsIFilePicker.filterAll);
 		
 			// locate current directory

@@ -126,13 +126,15 @@ var Dialog = {
 		let win = window.arguments[1];
 
 		let directory = $('directory').value.trim();
-		directory = directory.length ? directory.addFinalSlash() : null;
+		directory = !!directory ? directory.addFinalSlash() : '';
+		$('directory').value = directory;
 		
-		let mask = $('renaming').value;
-		mask = mask.length ? mask : null;
+		let mask = $('renaming').value.trim();
+		mask = mask || '';
+		$('renaming').value = mask;
 		
-		var description = $('description').value;
-		description = description.length ? description : null;
+		let description = $('description').value;
+		description = description.length ? description : '';
 		
 		let sp = $('sourcePage');
 		let newRef = null;
@@ -144,7 +146,10 @@ var Dialog = {
 			let d = this.downloads[0];
 			if ($('hash').isValid) {
 				var h = $('hash').value;
-				if (!h || !d.hashCollection || h.sum != d.hashCollection.full.sum || h.type != d.hashCollection.full.type) {
+				if (!h) {
+					d.hashCollection = null;
+				}
+				else if (!d.hashCollection || h.sum != d.hashCollection.full.sum || h.type != d.hashCollection.full.type) {
 					d.hashCollection = new DTA.HashCollection(h);
 					if (h && d.is(COMPLETE)) {
 						// have to manually start this guy ;)
