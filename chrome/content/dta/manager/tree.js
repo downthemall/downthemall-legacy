@@ -168,7 +168,7 @@ const Tree = {
 	getProgressMode : function T_getProgressMode(idx, col) {
 		if (col.index == 1) {
 			let d = this._downloads[idx]; 
-			if (d.is(PAUSED) && (!d.totalSize || d.partialSize / d.totalSize < .05)) {
+			if (d.is(PAUSED) && (!d.totalSize || d.progress < 5)) {
 				return 2; // PROGRESS_UNDETERMINED;
 			}
 			if (d.is(RUNNING) && !d.totalSize) {
@@ -185,7 +185,7 @@ const Tree = {
 			if (d.isOf(CANCELED, COMPLETE)) {
 				return 100; 
 			}
-			return d.totalSize ? d.partialSize * 100 / d.totalSize : 0;
+			return d.progress || 0;
 		}
 		return null;
 	},
@@ -198,7 +198,7 @@ const Tree = {
 			switch (d.state) {
 				case PAUSED:
 					prop.AppendElement(this._paused);
-					if (!d.totalSize || d.partialSize / d.totalSize < .05) {
+					if (!d.totalSize || d.progress < 5) {
 						prop.AppendElement(this._pausedUndetermined);
 					}
 					if (d.autoRetrying) {
