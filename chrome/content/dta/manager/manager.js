@@ -680,9 +680,7 @@ const Dialog = {
 	},
 	refreshWritten: function D_refreshWritten() {
 		for each (let d in this._running) {
-			d.invalidate(1);
-			d.invalidate(2);
-			d.invalidate(3);
+			d.invalidate();
 		}
 	},
 	saveRunning: function D_saveRunning() {
@@ -1342,12 +1340,7 @@ QueueItem.prototype = {
 		this.invalidate(3);
 		this.prealloc();
 	},
-	_partialSize: 0,
-	get partialSize() { return this._partialSize },
-	set partialSize(nv) {
-		this._partialSize = nv;
-		this.progress = Math.round(nv * 100.0 / this._totalSize);  
-	},
+	partialSize: 0,
 	progress: 0,
 
 	startDate: null,
@@ -1493,8 +1486,11 @@ QueueItem.prototype = {
 
 	refreshPartialSize: function QI_refreshPartialSize(){
 		let size = 0;
-		this.chunks.forEach(function(c) { size += c.written; });
+		for each (let c in this.chunks) {
+			size += c.written;
+		}
 		this.partialSize = size;
+		this.progress = Math.round(size * 100.0 / this._totalSize);
 	},
 
 	pause: function QI_pause(){
@@ -3145,7 +3141,6 @@ Connection.prototype = {
 				}
 			}
 
-			// update download tree row
 			if (d.is(RUNNING)) {
 				d.refreshPartialSize();
 
