@@ -762,7 +762,7 @@ let Dialog = {
 		for (let r = 0; r < rangeCount; ++r) {
 			tree.selection.getRangeAt(r, start, end);
 			for (let i = start.value; i <= end.value; ++i) {
-				DTA_Mediator.open(tree._links[i].url.url, tree._links[i].referrer);
+				DTA.Mediator.open(tree._links[i].url.url, tree._links[i].referrer);
 			}
 		}
 	},

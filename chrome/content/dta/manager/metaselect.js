@@ -36,12 +36,13 @@
 
 const METALINK_LOGO = 'chrome://dta/skin/icons/metalink48.png';
 
+module("resource://dta/version.jsm");
+
 const MetaSelect = {
-	Version: {},
  	_insertDownload: function(d) {
 		try {
 	 		if (d.lang && d.lang.search(/^\w{2}(?:-\w{2})?$/) != -1) {
-	 			d.selected = this.Version.LOCALE.slice(0,2) == d.lang.slice(0,2);
+	 			d.selected = Version.LOCALE.slice(0,2) == d.lang.slice(0,2);
 	 		}
 	 		let e = document.createElement('richlistitem');
 	 		e.setAttribute("class", "item");
@@ -53,7 +54,6 @@ const MetaSelect = {
 		}
  	},
  	load: function ML_load() {
- 		Components.utils.import("resource://dta/version.jsm", this.Version);
  		$('cancelbutton').label = _('button-cancel');
  		
  		try {
@@ -192,7 +192,7 @@ const MetaSelect = {
 		return true;
 	},
 	openLink: function(e) {
-		DTA_Mediator.open(e.link);
+		DTA.Mediator.open(e.link);
 	},
 	select: function(type) {
 		let f;

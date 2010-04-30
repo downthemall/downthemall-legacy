@@ -120,8 +120,8 @@
 		<key id="kMoveBottom" modifiers="alt" keycode="VK_END" command="cmdMoveBottom" />
 
 		<!-- new window/tab shortcuts  -->
-		<key id="kNewTab" modifiers="accel" key="T" oncommand="DTA_Mediator.open('about:blank');" />
-		<key id="kNewWin" modifiers="accel" key="N" oncommand="DTA_Mediator.openWindow(window);" />
+		<key id="kNewTab" modifiers="accel" key="T" oncommand="DTA.Mediator.open('about:blank');" />
+		<key id="kNewWin" modifiers="accel" key="N" oncommand="DTA.Mediator.openWindow(window);" />
 	</keyset>
 
 

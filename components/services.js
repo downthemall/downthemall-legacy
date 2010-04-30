@@ -405,43 +405,43 @@ MigrationService.prototype = {
 	classID: Components.ID("F66539C8-2590-4e69-B189-F9F8595A7670"),
 	_xpcom_categories: [{category: 'app-startup', service: true}],
 	
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference, Ci.nsIWindowMediatorListener]),
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference]),
 	
 	QueryReferent: function(iid) this.QueryInterface(iid),
 	GetWeakReference: function() this,
 	
-	_mediator: {},
-
 	_migrate: function MM_migrate() {
-		let DTA = {};
-		module('resource://dta/version.jsm', DTA);		
+		let _tp = this;
 		
-		try {
-			log("current " + DTA.VERSION);
-
-			let lastVersion = Preferences.getExt('version', '0');
-			if (0 == DTA.compareVersion(DTA.BASE_VERSION, lastVersion)) {
-				return;
-			}
-			log("MigrationManager: migration started");
-			if (DTA.compareVersion(lastVersion, "1.0.1") < 0) {
-				this._execute(['ResetMaxConnections']);
-			}			
-			
-			Preferences.setExt('version', DTA.BASE_VERSION);
-
-			module('resource://dta/support/mediator.jsm', this._mediator);
-			this._mediator.addListener(this);
-		}
-		catch(ex) {
-			log("MigrationManager:", ex);
+		module("resource://dta/version.jsm");
+		Version.getInfo(function(v) {
 			try {
-				Preferences.resetExt("version");
+				log("current " + v.VERSION);
+	
+				let lastVersion = Preferences.getExt('version', '0');
+				if (0 == v.compareVersion(v.BASE_VERSION, lastVersion)) {
+					return;
+				}
+				log("MigrationManager: migration started");
+				if (v.compareVersion(lastVersion, "1.0.1") < 0) {
+					_tp._execute(['ResetMaxConnections']);
+				}			
+				
+				Preferences.setExt('version', v.BASE_VERSION);
+				
+				v.showAbout = true;
+				Observers.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
 			}
-			catch (ex) {
-				// XXX
+			catch(ex) {
+				log("MigrationManager:", ex);
+				try {
+					Preferences.resetExt("version");
+				}
+				catch (ex) {
+					// XXX
+				}
 			}
-		}
+		});
 	},
 	_execute: function MM_execute(types) {
 		for each (let e in types) {
@@ -463,7 +463,7 @@ MigrationService.prototype = {
 	},
 	
 	// nsIObserver
-	observe: function MM_observe(subject, topic, prefName) {
+	observe: function MM_observe(subject, topic, aData) {
 		if (topic == 'app-startup') {
 			try {
 				Observers.removeObserver(this, 'app-startup');
@@ -478,32 +478,6 @@ MigrationService.prototype = {
 			}
 			catch (ex) { /* no-op */ }			
 			this._migrate();
-		}
-	},
-	onWindowTitleChange: function() {},
-	onOpenWindow: function(window) {
-		try {
-		let dw = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowInternal);
-		let tp = this;
-		this._loadFunc = function() {
-			dw.removeEventListener('load', tp._loadFunc, false);
-			dw.setTimeout(function() { tp.onWindowLoad(dw); }, 600);
-		};
-		dw.addEventListener('load', this._loadFunc, false);
-		}
-		catch (ex) {
-			log(ex);
-		}
-	},
-	onCloseWindow: function() {},
-	onWindowLoad: function(window) {
-		log("loaded: " + window.location);
-		if (this._loaded) {
-			return;
-		}
-		if (this._mediator.tryOpenUrl(window, 'about:downthemall')) {
-			this._loaded = true;
-			this._mediator.removeListener(this);
 		}
 	}
 };
@@ -758,7 +732,8 @@ ContentHandling.prototype = {
 /**
  * AboutModule
  */
-function AboutModule() {}
+function AboutModule() {
+}
 AboutModule.prototype = {
 	classDescription: "DownThemAll! about module",
 	classID: Components.ID('bbaedbd9-9567-4d11-9255-0bbae236ecab'),
@@ -770,13 +745,15 @@ AboutModule.prototype = {
 		try {
 		    let io = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
 		    let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
-		    
-		    let version = {};
-		    Components.utils.import('resource://dta/version.jsm', version);
-		    
+
+	    	module('resource://dta/version.jsm');
+	    	if (!Version.ready) {
+	    		throw new Exception("Cannot build about:downthemall, version.jsm not ready");
+	    	}
+
 		    let ru = ABOUT_URI.replace(
 		    	/%(.+?)%/g,
-		    	function (m, m1) (m1 in version) ? version[m1] : m
+		    	function (m, m1) (m1 in Version) ? Version[m1] : m
 		    );
 		    
 		    let uri = io.newURI(ru, null, null);

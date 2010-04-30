@@ -77,7 +77,7 @@ var Privacy = {
 	},
 	showLog: function() {
 		if (Debug.file.exists()) {
-			DTA_Mediator.open("file://" + Debug.file.path);
+			DTA.Mediator.open("file://" + Debug.file.path);
 		}
 	},
 	revealLog: function() {
@@ -96,7 +96,7 @@ var Privacy = {
 		}
 	},
 	showNotice: function() {
-		DTA_Mediator.showNotice(window);
+		DTA.Mediator.showNotice(window);
 	}
 };
 
@@ -175,7 +175,7 @@ var Interface = {
 		return menu.toString();
 	},
 	openMinTrayR: function() {
-		DTA_Mediator.open('http://tn123.ath.cx/mintrayr/?fromdta');
+		DTA.Mediator.open('http://tn123.ath.cx/mintrayr/?fromdta');
 	}
 };
 

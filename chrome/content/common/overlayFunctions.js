@@ -39,7 +39,16 @@
 const DTA = {_dh: {}};
 Components.utils.import("resource://dta/api.jsm", DTA);
 Components.utils.import("resource://dta/support/downloadHelper.jsm", DTA._dh);
-
+DTA.__defineGetter__('Mediator', function() {
+	delete DTA.Mediator;
+	DTA.Mediator = {
+		open: function DTA_Mediator_open(url, ref) {
+			this.openUrl(window, url, ref);
+		}
+	};
+	Components.utils.import('resource://dta/support/mediator.jsm', DTA.Mediator);
+	return DTA.Mediator;
+});
 
 function DTA_showPreferences() {
 	var instantApply = DTA.Preferences.get("browser.preferences.instantApply", false);
@@ -93,17 +102,6 @@ DTA_DropProcessor.prototype = {
 
 var DTA_DropTDTA = new DTA_DropProcessor(function(url, ref) { DTA.saveSingleLink(window, true, url, ref); });
 var DTA_DropDTA = new DTA_DropProcessor(function(url, ref) { DTA.saveSingleLink(window, false, url, ref); });
-
-this.__defineGetter__('DTA_Mediator', function() {
-	delete this.DTA_Mediator;
-	this.DTA_Mediator = {
-		open: function DTA_Mediator_open(url, ref) {
-			this.openUrl(window, url, ref);
-		}
-	};
-	Components.utils.import('resource://dta/support/mediator.jsm', this.DTA_Mediator);
-	return this.DTA_Mediator;
-});
 
 /* Compat; mostly FlashGot, maybe others */
 // Obsolete; will be removed in 2.++ timeframe

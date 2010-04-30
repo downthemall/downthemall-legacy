@@ -1241,6 +1241,8 @@
 				debug("DCO::init()", ex);
 			}
 		})();
+		
+
 			
 		addEventListener("keydown", onKeyDown, false);
 		addEventListener("keyup", onKeyUp, false);
@@ -1284,11 +1286,56 @@
 		
 		$('dtaToolsAbout').addEventListener(
 			'command',
-			function() DTA_Mediator.showAbout(window),
+			function() DTA.Mediator.showAbout(window),
 			true
 		);
 		
 	}, true);
+	
+	// About page stuff
+	addEventListener('load', function() {
+		removeEventListener('load', arguments.callee, true);
+		try {
+			let Version = {};
+			Components.utils.import("resource://dta/version.jsm", Version);			
+			Version = Version.Version;
+			
+			function openAbout() {
+				Version.showAbout = false;
+				setTimeout(function() DTA.Mediator.showAbout(window), 600);
+			}
+			
+			function registerObserver() {
+				Components.utils.import("resource://gre/modules/XPCOMUtils.jsm", Version);
+				
+				let os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
+				
+				let obs = {
+					QueryInterface: Version.XPCOMUtils.generateQI([Ci.nsIObserver,Ci.nsISupportsWeakReference]),									
+					observe: function(s,t,d) {
+						os.removeObserver(this, Version.TOPIC_SHOWABOUT);
+						if (Version.showAbout) {
+							openAbout();
+						}
+					}
+				};
+				
+				os.addObserver(obs, Version.TOPIC_SHOWABOUT, true);
+			}
+			
+			if (Version.showAbout === null) {
+				registerObserver();
+				return;
+			}
+			if (Version.showAbout === true) {
+				openAbout();
+				return;
+			}
+		}
+		catch (ex) {
+			DTA.Debug.log("Failed to process about", ex);
+		}
+	}, true);	
 	
 	DTA.onDTADragOver = function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA);
 	DTA.onDTADragDrop = function(event) nsDragAndDrop.drop(event, DTA_DropDTA);
