@@ -11,8 +11,6 @@ const ID = 'dta@downthemall.net';
 const runtime = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULAppInfo).QueryInterface(Ci.nsIXULRuntime);
 ServiceGetter(this, "comparator", "@mozilla.org/xpcom/version-comparator;1", "nsIVersionComparator");
 
-Components.utils.reportError("new version");
-
 let _callbacks = [];
 
 const Version = {
