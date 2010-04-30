@@ -1213,34 +1213,32 @@
 		toolsMenu = $('dtaToolsPopup');
 		toolsSep = $('dtaToolsSep');
 		
-		(function() {
-			try {
-				let ctxItem = $("dtaCtxCompact");
-				let ctx = ctxItem.parentNode;
-				let cont = $('dtaCtxSubmenu');
-		
-				for each (let id in ['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveVideoT', 'SaveVideo', 'SaveAudioT', 'SaveAudio', 'SaveFormT', 'SaveForm', 'SepFront']) {
-					compact[id] = $('dtaCtx' + id);
-					let node = $('dtaCtx' + id).cloneNode(true);
-					node.setAttribute('id', node.id + "-direct");
-					ctx.insertBefore(node, ctxItem.nextSibling);
-					direct[id] = node;
-				}
-		
-				let menu = $("dtaToolsMenu").parentNode;
-				ctx.addEventListener("popupshowing", onContextShowing, false);
-				menu.addEventListener("popupshowing", onToolsShowing, false);
-			
-				// prepare tools
-				for each (let e in ['DTA', 'TDTA', 'Manager']) {
-					tools[e] = $('dtaTools' + e);
-				}
+		try {
+			let ctxItem = $("dtaCtxCompact");
+			let ctx = ctxItem.parentNode;
+			let cont = $('dtaCtxSubmenu');
+	
+			for each (let id in ['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveVideoT', 'SaveVideo', 'SaveAudioT', 'SaveAudio', 'SaveFormT', 'SaveForm', 'SepFront']) {
+				compact[id] = $('dtaCtx' + id);
+				let node = $('dtaCtx' + id).cloneNode(true);
+				node.setAttribute('id', node.id + "-direct");
+				ctx.insertBefore(node, ctxItem.nextSibling);
+				direct[id] = node;
 			}
-			catch (ex) {
-				Components.utils.reportError(ex);
-				debug("DCO::init()", ex);
+	
+			let menu = $("dtaToolsMenu").parentNode;
+			ctx.addEventListener("popupshowing", onContextShowing, false);
+			menu.addEventListener("popupshowing", onToolsShowing, false);
+		
+			// prepare tools
+			for each (let e in ['DTA', 'TDTA', 'Manager']) {
+				tools[e] = $('dtaTools' + e);
 			}
-		})();
+		}
+		catch (ex) {
+			Components.utils.reportError(ex);
+			debug("DCO::init()", ex);
+		}
 		
 
 			
@@ -1249,6 +1247,9 @@
 		addEventListener("blur", onBlur, true);	
 		
 		function bindEvt(evt, fn) function(e) e.addEventListener(evt, fn, true); 
+		function bindCtxEvt(ctx, evt, fn) {
+			$(ctx, ctx + "-direct").forEach(bindEvt(evt, fn));
+		}
 		
 		$(
 			'dtaCtxDTA',
@@ -1267,10 +1268,6 @@
 		
 		$('dtaToolsManager').addEventListener('command', function() DTA.openManager(window), true);
 			
-		function bindCtxEvt(ctx, evt, fn) {
-			$(ctx, ctx + "-direct").forEach(bindEvt(evt, fn));
-		}
-		
 		bindCtxEvt('dtaCtxSaveLink', 'command', function() findSingleLink(false));
 		bindCtxEvt('dtaCtxSaveLinkT', 'command', function() findSingleLink(true));
 		bindCtxEvt('dtaCtxSaveImg', 'command', function() findSingleImg(false));
@@ -1290,11 +1287,80 @@
 			true
 		);
 		
-	}, true);
-	
-	// About page stuff
-	addEventListener('load', function() {
-		removeEventListener('load', arguments.callee, true);
+		/* Toolbar buttons */
+		
+		// Santas little helper, palette items + lookup
+		let paletteItems = {};
+		try {
+			let palette = $('navigator-toolbox').palette;			
+			for (let c = palette.firstChild; c; c = c.nextSibling) {
+				if (c.id) {
+					paletteItems[c.id] = c;
+				}
+			}
+		}
+		catch (ex) {
+			debug("Failed to parse palette", ex);
+		}
+		function $t() {
+			let rv = [];
+			for (let i = 0, e = arguments.length; i < e; ++i) {
+				let id = arguments[i];
+				let element = document.getElementById(id);
+				if (element) {
+						rv.push(element);
+						continue;
+				}
+				if (id in paletteItems) {
+					rv.push(paletteItems[id]);
+					continue;
+				}
+			}
+			return rv.length == 1 ? rv[0] : rv;
+		}
+
+		let b = $t('dta-button');
+		b.addEventListener('command', function(event) {
+			switch (event.target.id) {
+			case 'dta-button':
+			case 'dta-tb-dta':
+				findLinks();
+				break;
+			case 'dta-tb-all':
+				findLinks(false, true);
+				break;
+			case 'dta-tb-manager':
+				DTA.openManager(window);
+				break;
+			default:
+				break;
+				}
+		}, true);
+		b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA), true);
+		b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DTA_DropDTA), true);
+		
+		let b = $t('dta-turbo-button');
+		b.addEventListener('command', function(event) {
+			switch (event.target.id) {
+			case 'dta-turbo-button':
+			case 'dta-tb-turbo':
+				findLinks(true);
+				break;
+			case 'dta-tb-allturbo':
+				findLinks(true, true);
+				break;
+			default:
+
+				break;
+			}
+		}, true);
+		b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropTDTA), true);
+		b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DTA_DropTDTA), true);
+		
+		$t('dta-turboselect-button').addEventListener('command', function(event) { toggleOneClick(event); }, true);
+		$t('dta-manager-button').addEventListener('command', function() DTA.openManager(window), true);		
+		
+		// "Show about" stuff
 		try {
 			let Version = {};
 			Components.utils.import("resource://dta/version.jsm", Version);			
@@ -1336,46 +1402,5 @@
 			DTA.Debug.log("Failed to process about", ex);
 		}
 	}, true);	
-	
-	DTA.onDTADragOver = function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA);
-	DTA.onDTADragDrop = function(event) nsDragAndDrop.drop(event, DTA_DropDTA);
-	DTA.onDTA = function(event) {
-		switch (event.target.id) {
-		case 'dta-button':
-		case 'dta-tb-dta':
-			findLinks();
-			break;
-		case 'dta-tb-all':
-			findLinks(false, true);
-			break;
-		case 'dta-tb-manager':
-			DTA.openManager(window);
-			break;
-		default:
-			break;
-			}
-	};
-	
-	
-	DTA.onTDTADragOver = function(event) nsDragAndDrop.dragOver(event, DTA_DropTDTA);
-	DTA.onTDTADragDrop = function(event) nsDragAndDrop.drop(event, DTA_DropTDTA);
-	DTA.onTDTA = function(event) {
-		switch (event.target.id) {
-		case 'dta-turbo-button':
-		case 'dta-tb-turbo':
-			findLinks(true);
-			break;
-		case 'dta-tb-allturbo':
-			findLinks(true, true);
-			break;
-		default:
-
-			break;
-		}
-	};
-	
-	DTA.onTurboSelect = function(event) { toggleOneClick(event); };
-	
-	DTA.onManager = function() DTA.openManager(window);
 
 })();
