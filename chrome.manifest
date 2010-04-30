@@ -49,3 +49,7 @@ style	chrome://songbird/content/xul/mainScriptsOverlay.xul	chrome://dta/skin/int
 style	chrome://dta/content/dta/manager.xul	chrome://dta/skin/common/songbird.css application=songbird@songbirdnest.com
 style	chrome://dta/content/dta/select.xul	chrome://dta/skin/common/songbird.css application=songbird@songbirdnest.com
 overlay chrome://dta/content/preferences/interfacePane.xul chrome://dta/content/preferences/toolbarButtons.xul application=songbird@songbirdnest.com
+
+
+# Hack to prevent .Net Framework Assistant from messing up the browser, courtesy of AdBlock Plus
+override chrome://dotnetassistant/content/bootstrap.xul data:text/xml,<nada/>
