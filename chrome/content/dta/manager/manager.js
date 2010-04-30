@@ -202,38 +202,42 @@ const Dialog = {
 			},
 			this
 		);
-			
+		
+		// Autofit
 		(function autofit() {
 			let de = document.documentElement;
-			let version = {};
-			Components.utils.import('resource://dta/version.jsm', version);
-			let cv = version.VERSION + ".toolitems" + $('tools').childNodes.length;
-			let shouldAutofit = !de.hasAttribute('dtaAutofitted');
-			if (!shouldAutofit) {
-				try {
-					let lv = de.getAttribute('dtaAutofitted');
-					shouldAutofit = !!version.compareVersion(cv, lv);
+			Components.utils.import('resource://dta/version.jsm', this);
+			this.Version.getInfo(function(version) {			
+				let cv = version.VERSION + ".toolitems" + $('tools').childNodes.length;
+				let shouldAutofit = !de.hasAttribute('dtaAutofitted');
+				if (!shouldAutofit) {
+					try {
+						let lv = de.getAttribute('dtaAutofitted');
+						shouldAutofit = !!version.compareVersion(cv, lv);
+					}
+					catch (ex) {
+						shouldAutofit = true;
+					}
 				}
-				catch (ex) {
-					shouldAutofit = true;
+				if (shouldAutofit) {
+					document.documentElement.setAttribute('dtaAutofitted', cv);
+					setTimeout(
+						function() {
+							let tdb = $('tooldonate').boxObject;
+							let db = de.boxObject
+							let cw = tdb.width + tdb.x;
+							if (db.width < cw) {
+								window.resizeTo(cw, window.outerHeight);
+								Debug.logString("manager was autofit");
+							}
+						},
+						10
+					);
 				}
-			}
-			if (shouldAutofit) {
-				document.documentElement.setAttribute('dtaAutofitted', cv);
-				setTimeout(
-					function() {
-						let tdb = $('tooldonate').boxObject;
-						let db = de.boxObject
-						let cw = tdb.width + tdb.x;
-						if (db.width < cw) {
-							window.resizeTo(cw, window.outerHeight);
-							Debug.logString("manager was autofit");
-						}
-					},
-					10
-				);
-			}
+			});
 		})();
+		
+		// Set tooltip texts for each tb button lacking one (copy label)
 		(function() {
 			for each (let e in Array.map(document.getElementsByTagName('toolbarbutton'), function(e) e)) {
 				if (!e.hasAttribute('tooltiptext')) {
@@ -243,6 +247,7 @@ const Dialog = {
 			
 			$('tbp_' + $('tools').getAttribute('mode')).setAttribute('checked', "true");
 		})();
+		
 		GlobalBucket = new ByteBucket(Prefs.speedLimit, 1.3);
 		$('listSpeeds').limit = Prefs.speedLimit;
 		
@@ -537,7 +542,7 @@ const Dialog = {
 	
 	openDonate: function D_openDonate() {
 		try {
-			DTA_Mediator.open('http://www.downthemall.net/howto/donate/');
+			DTA.Mediator.open('http://www.downthemall.net/howto/donate/');
 		}
 		catch(ex) {
 			alert(ex);

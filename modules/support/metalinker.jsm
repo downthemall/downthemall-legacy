@@ -60,10 +60,10 @@ const NS_METALINKER3 = 'http://www.metalinker.org/';
  */
 const NS_METALINKER4 = 'urn:ietf:params:xml:ns:metalink';
 
-const Preferences = {}, DTA = {}, Version = {};
+const Preferences = {}, DTA = {};
 module("resource://dta/preferences.jsm", Preferences);
 module("resource://dta/api.jsm", DTA);
-module("resource://dta/version.jsm", Version);
+module("resource://dta/version.jsm");
 module("resource://dta/utils.jsm");
 module("resource://dta/support/urlmanager.jsm");
 

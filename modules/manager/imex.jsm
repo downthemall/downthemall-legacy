@@ -54,7 +54,7 @@ const Preferences = {}, DTA = {};
 module("resource://dta/preferences.jsm", Preferences);
 module("resource://dta/api.jsm", DTA);
 module("resource://dta/utils.jsm");
-module("resource://dta/version.jsm", DTA);
+module("resource://dta/version.jsm");
 module("resource://dta/support/textlinks.jsm");
 module("resource://dta/support/metalinker.jsm");
 
@@ -208,7 +208,7 @@ function exportToHtmlFile(aDownloads, aDocument, aFile, aPermissions) {
 		foot.appendChild(document.createTextNode('Exported by '));
 		n = document.createElement('a');
 		n.setAttribute('href', 'http://www.downthemall.net/');
-		n.textContent = 'DownThemAll! ' + DTA.VERSION;
+		n.textContent = 'DownThemAll! ' + Version.VERSION;
 		foot.appendChild(n);
 		body.appendChild(foot);		
 		
@@ -226,13 +226,16 @@ function exportToMetalinkFile(aDownloads, aDocument, aFile, aPermissions) {
 	let root = document.documentElement;
 	root.setAttribute('type', 'static');
 	root.setAttribute('version', '3.0');
-	root.setAttribute('generator', 'DownThemAll! ' + DTA.BASE_VERSION + ' <http://downthemall.net/>');
-	root.setAttributeNS(NS_DTA, 'version', DTA.VERSION);
+	root.setAttribute('generator', 'DownThemAll!/' + Version.BASE_VERSION);
+	root.setAttributeNS(NS_DTA, 'version', Version.VERSION);
 	root.setAttribute('pubdate', new Date().toUTCString());
 	
 	root.appendChild(document.createComment(
-			"metalink as exported by DownThemAll!\r\nmay contain DownThemAll! specific information in the DownThemAll! namespace: "
-			+ NS_DTA));  
+			"metalink as exported by DownThemAll! on "
+			+ Version.APP_NAME + "/" + Version.APP_VERSION
+			+ "\r\nMay contain DownThemAll! specific information in the DownThemAll! namespace: "
+			+ NS_DTA
+			));  
 	
 	let files = document.createElementNS(NS_METALINKER3, 'files');
 	for (let d in aDownloads) {

@@ -36,10 +36,8 @@
  
 const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init');
 
-module('resource://dta/version.jsm', DTA);
 let ImportExport = {};
 module('resource://dta/manager/imex.jsm', ImportExport);
-
  
 const Tree = {
 	init: function T_init(elem) {
