@@ -706,11 +706,9 @@ const Dialog = {
 		if (!this._running.length) {
 			return;
 		}
-		QueueStore.beginUpdate();
 		for each (let d in this._running) {
 			d.save();
 		}
-		QueueStore.endUpdate();
 	},
 	
 	_processOfflineChange: function D__processOfflineChange() {
