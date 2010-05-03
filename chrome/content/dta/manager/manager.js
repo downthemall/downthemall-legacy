@@ -118,7 +118,9 @@ const Dialog = {
 		'quit-application-requested',
 		'quit-application-granted',
 		'network:offline-status-changed',
-		'DTA:filterschanged'
+		'DTA:filterschanged',
+		'DTA:clearedQueueStore',
+		'DTA:shutdownQueueStore'
 	],
 	_initialized: false,
 	_autoRetrying: [],
@@ -494,16 +496,12 @@ const Dialog = {
 	},	
 	
 	enterPrivateBrowsing: function() {
-		this.reinit();
+		Debug.logString("enterPrivateBrowsing");
+		this.reinit(false);
 	},
 	exitPrivateBrowsing: function() {
-		Tree.updateAll(function(download) {
-			if (!download.is(COMPLETE)) {
-				download.cancel();
-			}
-			return true;
-		});
-		this.reinit();
+		Debug.logString("exitPrivateBrowsing");
+		this.reinit(true);
 	},
 	canEnterPrivateBrowsing: function() {
 		if (Tree.some(function(d) { return d.started && !d.resumable && d.isOf(RUNNING); })) {
@@ -582,17 +580,26 @@ const Dialog = {
 		$('loadingbox').parentNode.removeChild($('loadingbox'));
 	},
 	
-	reinit: function() {
+	reinit: function(mustClear) {
 		if (!this._initialized) {
+			Debug.logString("reinit canceled");
 			return;
 		}
+		let method = mustClear ? 'cancel' : 'pause';
+		Tree.updateAll(function(download) {
+			if (!download.is(COMPLETE)) {
+				download[method]();
+			}
+			return true;
+		});
+		Debug.logString("reinit downloads canceled");			
 		try {
 			Debug.logString("reinit initiated");
 			let tp = this;
 			Timers.createOneshot(10, function() tp.shutdown(tp._continueReinit), this);
 		}
 		catch (ex) {
-			Debug.log("Failed to reload any downloads from queuefile", ex);
+			Debug.log("reinit: Failed to reload any downloads from queuefile", ex);
 		}
 	},
 	_continueReinit: function() {
@@ -625,6 +632,13 @@ const Dialog = {
 		}
 		else if (topic == 'DTA:filterschanged') {
 			Tree.assembleMenus();
+		}
+		else if (topic == 'DTA:clearedQueueStore') {
+			this.reinit(true);
+		}
+		else if (topic == 'DTA:shutdownQueueStore') {
+			Debug.logString("saving running");
+			this.saveRunning();
 		}
 	},
 	refresh: function D_refresh() {

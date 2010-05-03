@@ -55,7 +55,7 @@
 			Sanitizer.prototype.items['extensions-dta'] = {
 				clear: function() {
 					try	{
-						Components.classes["@downthemall.net/privacycontrol;1"]
+						Components.classes["@downthemall.net/stuff;1"]
 							.getService(Components.interfaces.nsIObserver)
 							.observe(null, 'clean', null);
 					}

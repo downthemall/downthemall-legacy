@@ -146,7 +146,11 @@ DebugService.prototype = {
 	observe: function DS_observe(subject, topic, prefName) {
 		this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));	
 	},
-	
+	clear: function DS_clear() {
+		if (this._file.exists()) {
+			this._file.remove(false);
+		}
+	},	
 	get _cs() {
 		delete DebugService.prototype._cs;
 		return (DebugService.prototype._cs = Cc['@mozilla.org/consoleservice;1'].getService(Ci.nsIConsoleService));
@@ -311,105 +315,38 @@ DebugService.prototype = {
 };
 
 /**
- * Privacy Controls
+ * Stuff
  */
-function PrivacyControls() {};
-PrivacyControls.prototype = {
-	classDescription: "DownThemAll! Privacy Control",
-	contractID: "@downthemall.net/privacycontrol;1",
-	classID: Components.ID("db7a8d60-a4c7-11da-a746-0800200c9a66"),		
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference]),				
-	_xpcom_categories: [{category: 'app-startup', service: true}],		
+function Stuff() {}
+Stuff.prototype = {
+	classDescription: "DownThemAll! stuff",
+	contractID: "@downthemall.net/stuff;1",
+	classID: Components.ID("27a344f4-7c1b-43f3-af7f-bb9dd65114bb"),		
+	_xpcom_categories: [{category: 'app-startup', service: true}],
 
-	init: function() {
-		Observers.addObserver(this, 'profile-change-teardown', false);
-		Observers.addObserver(this, 'xpcom-shutdown', false);
-	},
-	dispose: function() {
-		// always remove observers ;)
-		Observers.removeObserver(this, 'profile-change-teardown');
-		Observers.removeObserver(this, 'xpcom-shutdown');
-	},
-	observe: function(subject, topic, data) {
-		switch (topic) {
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference]),
+	QueryReferent: function(iid) this.QueryInterface(iid),
+	GetWeakReference: function() this,
+	
+	observe: function(aSubject, aTopic, aData) {
+		switch (aTopic) {
 		case 'app-startup':
-			this.init();
+			Observers.addObserver(this, 'final-ui-startup', true);
+			Observers.addObserver(this, 'profile-change-teardown', true);
 			break;
-			
-		case 'xpcom-shutdown':
-			this.dispose();
+		case 'final-ui-startup':
+			Observers.removeObserver(this, 'final-ui-startup');
+			this._migrate();
 			break;
-
 		case 'profile-change-teardown':
+			Observers.removeObserver(this, 'profile-change-teardown');
 			this.onShutdown();
 			break;
-
 		case 'clean':
 			this.clean();
 			break;
 		}
 	},
-
-	clean: function() {
-		log('clean()');
-		
-		// Cleaning prefs
-		for each (let e in ['directory', 'filter', 'renaming']) {
-			try {
-				resetExt.resetExt(e);
-			}
-			catch (ex) {
-				log("Cannot clear pref: " + e, ex);
-			}
-		}
-		
-		// Cleaning files
-		try {
-			let prof = Cc["@mozilla.org/file/directory_service;1"]
-				.getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
-			for each (let e in ['dta_history.xml', 'dta_log.txt', 'dta_queue.sqlite']) {
-				try {
-					var file = prof.clone();
-					file.append(e);
-					if (file.exists()) {
-						file.remove(false);
-					}
-				}
-				catch (ex) {
-					log('Cannot remove: ' + e, ex);
-				}
-			}
-		}
-		catch (oex) {
-			log('failed to clean files: ', oex);
-		}
-	},
-
-	onShutdown : function() {
-		let branch = Preferences.getBranch('privacy.');
-
-		// has user pref'ed to sanitize on shutdown?
-		if (branch.getBoolPref('sanitize.sanitizeOnShutdown') && branch.getBoolPref('clearOnShutdown.extensions-dta')){
-			this.clean();
-		}
-	}
-};
-
-/**
- * MigrationService
- */
-function MigrationService() {}
-MigrationService.prototype = {
-	classDescription: "DownThemAll! Migration Service",
-	contractID: "@downthemall.net/migration-service;1",
-	classID: Components.ID("F66539C8-2590-4e69-B189-F9F8595A7670"),
-	_xpcom_categories: [{category: 'app-startup', service: true}],
-	
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference]),
-	
-	QueryReferent: function(iid) this.QueryInterface(iid),
-	GetWeakReference: function() this,
-	
 	_migrate: function MM_migrate() {
 		let _tp = this;
 		
@@ -424,7 +361,7 @@ MigrationService.prototype = {
 				}
 				log("MigrationManager: migration started");
 				if (v.compareVersion(lastVersion, "1.0.1") < 0) {
-					_tp._execute(['ResetMaxConnections']);
+					_tp._migrateExecute(['ResetMaxConnections']);
 				}			
 				
 				Preferences.setExt('version', v.BASE_VERSION);
@@ -443,7 +380,7 @@ MigrationService.prototype = {
 			}
 		});
 	},
-	_execute: function MM_execute(types) {
+	_migrateExecute: function MM_execute(types) {
 		for each (let e in types) {
 			try {
 				this['_migrate' + e]();
@@ -461,25 +398,67 @@ MigrationService.prototype = {
 			Preferences.reset(e);
 		}
 	},
-	
-	// nsIObserver
-	observe: function MM_observe(subject, topic, aData) {
-		if (topic == 'app-startup') {
+	clean: function() {
+		log('clean()');
+		
+		// Cleaning prefs
+		for each (let e in ['directory', 'filter', 'renaming']) {
 			try {
-				Observers.removeObserver(this, 'app-startup');
+				Preferences.resetExt(e);
 			}
-			catch (ex) { /* no-op */ }
-			Observers.addObserver(this, 'final-ui-startup', false);
+			catch (ex) {
+				log("Cannot clear pref: " + e, ex);
+			}
 		}
 		
-		else if (topic == "final-ui-startup") {
-			try {
-				Observers.removeObserver(this, 'final-ui-startup');
+		// Cleaning files
+		try {
+			let prof = Cc["@mozilla.org/file/directory_service;1"]
+				.getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
+			for each (let e in ['dta_history.xml']) {
+				try {
+					var file = prof.clone();
+					file.append(e);
+					if (file.exists()) {
+						file.remove(false);
+					}
+				}
+				catch (ex) {
+					log('Cannot remove: ' + e, ex);
+				}
 			}
-			catch (ex) { /* no-op */ }			
-			this._migrate();
 		}
-	}
+		catch (oex) {
+			log('failed to clean files: ', oex);
+		}
+		
+		// Diagnostic log
+		try {
+			let _debugServ = Cc['@downthemall.net/debug-service;1']
+				.getService(Ci.dtaIDebugService);
+			_debugServ.clear();
+		}
+		catch (ex) {
+			log("Cannot clear diagnostic log", ex);
+		}
+		
+		try {
+			let mod = {};
+			module('resource://dta/manager/queuestore.jsm', mod);
+			mod.QueueStore.clear();
+		}
+		catch (ex) {
+			log("Cannot clear queue", ex);
+		}
+	},
+	onShutdown : function() {
+		let branch = Preferences.getBranch('privacy.');
+
+		// has user pref'ed to sanitize on shutdown?
+		if (branch.getBoolPref('sanitize.sanitizeOnShutdown') && branch.getBoolPref('clearOnShutdown.extensions-dta')){
+			this.clean();
+		}
+	}	
 };
 
 /**
@@ -1242,4 +1221,4 @@ FilterManager.prototype = {
 /**
  * Module
  */
-function NSGetModule(mgr, spec) XPCOMUtils.generateModule([DebugService, PrivacyControls, MigrationService, ContentHandling, AboutModule, FilterManager]);
+function NSGetModule(mgr, spec) XPCOMUtils.generateModule([DebugService, Stuff, ContentHandling, AboutModule, FilterManager]);

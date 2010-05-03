@@ -58,12 +58,21 @@ const Timers = new TimerManager();
 
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 ServiceGetter(this, "Storage", "@mozilla.org/storage/service;1", "mozIStorageService");
+ServiceGetter(this, "Observers", "@mozilla.org/observer-service;1", "nsIObserverService");
+
 let _connection = null;
 let _saveQueue = {};
 let _timer = 0;
 
+setNewGetter(this, '__db', function() {
+	let db = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
+	db.append(DB_FILE);
+	return db;
+});
+
 const QueueStore = {
 	_initialized: false,
+	_private: false,
 	init: function(pb) {
 		if (this._initialized) {
 			return;
@@ -71,22 +80,22 @@ const QueueStore = {
 		this._initialized = true;
 		
 		Debug.logString("QueueStore: initialzing in " + (pb ? "private" : "normal") + " mode");
-		let db = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
-		db.append(DB_FILE);
 		
 		try {
 			if (pb) {
 				_connection = Storage.openSpecialDatabase("memory");
+				this._private = true;
 			}
 			else {
-				_connection = Storage.openDatabase(db);
+				_connection = Storage.openDatabase(__db);
+				this._private = false;
 			}
 		}
 		catch (ex) {
 			if (!pb) {
 				Debug.log("DB appears broken; backing up and restart", ex);
 				try {
-					let cbroken = db.clone();
+					let cbroken = __db.clone();
 					cbroken.leafName = DB_FILE_BROKEN;
 					if (cbroken.exists()) {
 						cbroken.remove(false);
@@ -95,9 +104,9 @@ const QueueStore = {
 				catch (iex) {
 					Debug.log("Couldn't remove old broken queue file", iex);
 				}
-				let broken = db.clone();
+				let broken = __db.clone();
 				broken.moveTo(null, DB_FILE_BROKEN);
-				_connection = Storage.openDatabase(db);
+				_connection = Storage.openDatabase(__db);
 			}
 		}
 			
@@ -137,6 +146,10 @@ const QueueStore = {
 		if (!this._initialized) {
 			return;
 		}
+		
+		// give manager a chance to save running
+		Observers.notifyObservers(null, 'DTA:shutdownQueueStore', null);
+		
 		this._initialized = false;
 		// finish any pending operations
 		if (_timer) {
@@ -175,6 +188,19 @@ const QueueStore = {
 	reinit: function(pb) {
 		this.shutdown();
 		this.init(pb);
+	},
+	clear: function() {
+		this.shutdown();
+		try {
+			if (__db.exists()) {
+				__db.remove(false);
+			}
+		}
+		catch (ex) {
+			Debug.log("QueueStore: Cannot remove DB", ex);
+		}
+		this.init(this._private);
+		Observers.notifyObservers(null, 'DTA:clearedQueueStore', null);
 	},
 	enterPrivateBrowsing: function() {
 		Debug.logString("QueueManager: entering pbm");
@@ -226,9 +252,9 @@ const QueueStore = {
 			throw new Exception("You must provide a Download to save!");
 		}
 		_saveQueue[id] = download;
-		if (!_timer) {
-			// delay up to 2500 msecs
-			_timer = Timers.createOneshot(2500, this._saveDownloadQueue, this);
+		else if (!_timer) {
+			// delay up to 5000 msecs
+			_timer = Timers.createOneshot(5000, this._saveDownloadQueue, this);
 		}
 	},
 	_saveDownloadQueue: function() {
@@ -300,14 +326,11 @@ const QueueStore = {
 const SHUTDOWN_TOPIC = 'profile-change-teardown'; 
 
 var ShutdownObserver = {
-	get obs() {
-		return Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
-	},
 	install: function() {
-		this.obs.addObserver(this, SHUTDOWN_TOPIC, false);
+		Observers.addObserver(this, SHUTDOWN_TOPIC, false);
 	},
 	uninstall: function() {
-		this.obs.removeObserver(this, SHUTDOWN_TOPIC);
+		Observers.removeObserver(this, SHUTDOWN_TOPIC);
 		pbm.unregisterCallbacks(QueueStore);
 	},
 	observe: function(subject, topic, data) {
