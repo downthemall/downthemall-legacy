@@ -39,9 +39,6 @@
 
 /* dTa-only code! - DO NOT include in overlays or such! */
 
-var Debug = DTA.Debug;
-var Preferences = DTA.Preferences;
-
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
@@ -54,11 +51,37 @@ const FileFactory = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initW
 const SoundFactory = new ctor('@mozilla.org/sound;1', 'nsISound', 'play');
 const CryptoHash = new ctor("@mozilla.org/security/hash;1", "nsICryptoHash");
 	
-const SYSTEMSLASH = (DTA.getProfileFile('dummy').path.indexOf('/') != -1) ? '/' : '\\';
-
 // shared state defines
 
 Components.utils.import("resource://dta/constants.jsm", this);
+
+const DTA = {
+	showPreferences: function () {
+		var instantApply = DTA.Preferences.get("browser.preferences.instantApply", false);
+		window.openDialog(
+			'chrome://dta/content/preferences/prefs.xul',
+			'dtaPrefs',
+			'chrome,titlebar,toolbar,resizable,centerscreen'+ (instantApply ? ',dialog=no' : '')
+		);
+	}
+};
+Components.utils.import("resource://dta/api.jsm", DTA);
+
+DTA.__defineGetter__('Mediator', function() {
+	delete DTA.Mediator;
+	DTA.Mediator = {
+		open: function DTA_Mediator_open(url, ref) {
+			this.openUrl(window, url, ref);
+		}
+	};
+	Components.utils.import('resource://dta/support/mediator.jsm', DTA.Mediator);
+	return DTA.Mediator;
+});
+
+const Debug = DTA.Debug;
+const Preferences = DTA.Preferences;
+const SYSTEMSLASH = (DTA.getProfileFile('dummy').path.indexOf('/') != -1) ? '/' : '\\';
+
 
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!

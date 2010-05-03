@@ -40,8 +40,6 @@
 	buttonaccesskeyextra1="&queue.key;"	
 	>
 	
-	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
-	<!-- internalFunctions needs overlayFunctions -->
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js"/>
 	<script type="application/javascript" src="chrome://dta/content/dta/addurl.js"/>
 	

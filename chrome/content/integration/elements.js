@@ -41,8 +41,8 @@
 	let Cc = Components.classes;
 	let Ci = Components.interfaces;
 		
-	let prompts = {};
-	Components.utils.import('resource://dta/prompts.jsm', prompts);
+	let Preferences = {};
+	Components.utils.import('resource://dta/preferences.jsm', Preferences);	
 	
 	function debug(msg, ex) {
 		let _d = DTA.Debug;
@@ -114,6 +114,8 @@
 		}
 		catch (ex) {
 			if (mustAlert) {
+				let prompts = {};
+				Components.utils.import('resource://dta/prompts.jsm', prompts);				
 				prompts.alert(window, title, message);
 			}
 		}
@@ -245,7 +247,7 @@
 	}
 	
 	function recognizeTextLinks() {
-		return DTA.Preferences.getExt("textlinks", true);
+		return Preferences.getExt("textlinks", true);
 	}
 	let TextLinks = {};
 	Components.utils.import("resource://dta/support/textlinks.jsm", TextLinks);
@@ -359,7 +361,7 @@
 				}
 			}
 			else {
-				if (DTA.Preferences.getExt('listsniffedvideos', false)) {
+				if (Preferences.getExt('listsniffedvideos', false)) {
 					let sniffed = Array.map(
 						_ch.getSniffedVideosFor(DTA.IOService.newURI(aWin.location.href, aWin.document.characterSet, null)),
 						function(e) e
@@ -438,11 +440,11 @@
 	
 	function findLinks(turbo, all) {
 		try {
-			if (all == undefined && turbo && DTA.Preferences.getExt('rememberoneclick', false)) {
-				all = DTA.Preferences.getExt('lastalltabs', false);
+			if (all == undefined && turbo && Preferences.getExt('rememberoneclick', false)) {
+				all = Preferences.getExt('lastalltabs', false);
 			}
 			if (turbo && all != undefined) {
-				DTA.Preferences.setExt('lastalltabs', all);
+				Preferences.setExt('lastalltabs', all);
 			}
 			
 			function unique(i) {
@@ -672,13 +674,12 @@
 	let toolsMenu = null;
 	let toolsSep = null;
 
-	
 	function onContextShowing(evt) {
 		try {
 			let ctx = contextMenu();
 			// get settings
-			let items = DTA.Preferences.getExt("ctxmenu", "1,1,0").split(",").map(function(e) parseInt(e));
-			let showCompact = DTA.Preferences.getExt("ctxcompact", false);
+			let items = Preferences.getExt("ctxmenu", "1,1,0").split(",").map(function(e) parseInt(e));
+			let showCompact = Preferences.getExt("ctxcompact", false);
 			
 			let menu;
 			if (showCompact) {
@@ -809,10 +810,10 @@
 		try {
 			
 			// get settings
-			let menu = DTA.Preferences.getExt("toolsmenu", "1,1,1").split(",").map(function(e){return parseInt(e);});
+			let menu = Preferences.getExt("toolsmenu", "1,1,1").split(",").map(function(e){return parseInt(e);});
 			
 			// all hidden...
-			let hidden = DTA.Preferences.getExt("toolshidden", false);
+			let hidden = Preferences.getExt("toolshidden", false);
 			for (let i in tools) {
 				tools[i].hidden = hidden;
 			}
@@ -923,7 +924,7 @@
 		window.addEventListener('mouseup', this._callback, false);
 		window.addEventListener('mousemove', this._callback, false);
 		
-		this._detachObserver = DTA.Preferences.addObserver('extensions.dta.selectbgimages', this);
+		this._detachObserver = Preferences.addObserver('extensions.dta.selectbgimages', this);
 		this.observe();
 	}
 	Selector.prototype = {
@@ -1020,7 +1021,7 @@
 				['a', 'href'],
 				['img', 'src']
 			];
-			if (DTA.Preferences.getExt('selectbgimages', false)) {
+			if (Preferences.getExt('selectbgimages', false)) {
 				searchee.push(['bgimg', 'bgimg']);
 			}
 			this._searchee = searchee;
@@ -1205,6 +1206,47 @@
 		}
 	};
 
+	function DropProcessor(func, multiple) {
+		this.func = func;
+		if (multiple) {
+			this.canHandleMultipleItems = true;
+		}
+	};
+	DropProcessor.prototype = {
+		getSupportedFlavours: function() {
+			if (!this._flavors) {
+				this._flavors = new FlavourSet();
+				this._flavors.appendFlavour('text/x-moz-url');
+			}	
+			return this._flavors;
+		},
+		onDragOver: function() {},
+		onDrop: function (evt, dropdata, session) {
+			if (!dropdata) {
+				return;
+			}
+			let url = null;
+			try {
+				url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
+				if (!DTA.isLinkOpenable(url)) {
+					throw new Components.Exception("Link cannot be opened!");
+				}
+				url = DTA.IOService.newURI(url, null, null);
+			}
+			catch (ex) {
+				DTA.Debug.log("Failed to process drop", ex);
+				return;
+			}
+			let doc = document.commandDispatcher.focusedWindow.document;
+			let ref = doc ? DTA.getRef(doc) : null;		
+			
+			if (url) {
+				url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
+				this.func(url, ref);			
+			}
+		}
+	};
+
 	addEventListener('load', function() {
 		removeEventListener('load', arguments.callee, true);	
 		
@@ -1279,7 +1321,7 @@
 		bindCtxEvt('dtaCtxSaveForm', 'command', function() findForm(false));
 		bindCtxEvt('dtaCtxSaveFormT', 'command', function() findForm(true));
 		
-		$('dtaCtxPref', 'dtaCtxPref-direct', 'dtaToolsPrefs').forEach(bindEvt('command', function() DTA_showPreferences()));
+		$('dtaCtxPref', 'dtaCtxPref-direct', 'dtaToolsPrefs').forEach(bindEvt('command', function() DTA.showPreferences()));
 		
 		$('dtaToolsAbout').addEventListener(
 			'command',
@@ -1319,6 +1361,10 @@
 			return rv.length == 1 ? rv[0] : rv;
 		}
 
+		let DropTDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, true, url, ref); });
+		let DropDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, false, url, ref); });	
+		
+		
 		let b = $t('dta-button');
 		b.addEventListener('command', function(event) {
 			switch (event.target.id) {
@@ -1336,8 +1382,8 @@
 				break;
 				}
 		}, true);
-		b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA), true);
-		b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DTA_DropDTA), true);
+		b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropDTA), true);
+		b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DropDTA), true);
 		
 		let b = $t('dta-turbo-button');
 		b.addEventListener('command', function(event) {
@@ -1354,8 +1400,8 @@
 				break;
 			}
 		}, true);
-		b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropTDTA), true);
-		b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DTA_DropTDTA), true);
+		b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropTDTA), true);
+		b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DropTDTA), true);
 		
 		$t('dta-turboselect-button').addEventListener('command', function(event) { toggleOneClick(event); }, true);
 		$t('dta-manager-button').addEventListener('command', function() DTA.openManager(window), true);		
@@ -1401,6 +1447,11 @@
 		catch (ex) {
 			DTA.Debug.log("Failed to process about", ex);
 		}
-	}, true);	
-
+	}, true);
+	
+	// DownloadHelper integration
+	(function() {
+		let _dh = {};
+		Components.utils.import("resource://dta/support/downloadHelper.jsm", _dh);
+	})();
 })();

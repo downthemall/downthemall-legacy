@@ -31,7 +31,6 @@
 	
 	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" /> 
 	
-	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js"/>
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/info.js"/>
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/utils.js"/>
