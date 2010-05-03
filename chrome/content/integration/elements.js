@@ -1346,12 +1346,15 @@
 					function() DTA.Mediator.showAbout(window),
 					true
 				);
+				
+				ctx.addEventListener('popupshowing', onContextShowing, true);
+				menu.addEventListener('popupshowing', onToolsShowing, true);
+				
 			}
 			catch (ex) {
 				Components.utils.reportError(ex);
 				debug("DCO::init()", ex);
 			}
-			alert(evt.target.id);
 			evt.target == ctx ? onContextShowing(evt) : onToolsShowing(evt);
 		}
 		
