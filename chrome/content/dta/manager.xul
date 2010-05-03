@@ -28,7 +28,6 @@
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js" />
 	<script type="application/x-javascript" src="chrome://browser/content/utilityOverlay.js" />
 
-	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js" />
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
 
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/manager.js" />
@@ -83,7 +82,7 @@
 		<command id="cmdChangeSpeedLimit" oncommand="Dialog.changeSpeedLimit();" />
 		<command id="cmdPerDownloadSpeedLimit" oncommand="Tree.changePerDownloadSpeedLimit();" />
 
-		<command id="cmdPreferences" oncommand="DTA_showPreferences();" />
+		<command id="cmdPreferences" oncommand="DTA.showPreferences();" />
 
 		<command id="cmdCustomizeToolbar" oncommand="Dialog.customizeToolbar(event);" />
 

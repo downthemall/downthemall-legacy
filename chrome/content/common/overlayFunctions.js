@@ -36,97 +36,63 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const DTA = {_dh: {}};
-Components.utils.import("resource://dta/api.jsm", DTA);
-Components.utils.import("resource://dta/support/downloadHelper.jsm", DTA._dh);
-DTA.__defineGetter__('Mediator', function() {
-	delete DTA.Mediator;
-	DTA.Mediator = {
-		open: function DTA_Mediator_open(url, ref) {
-			this.openUrl(window, url, ref);
+__defineGetter__('DTA', function(){
+	delete this.DTA;
+	let DTA = {
+		showPreferences: function () {
+			var instantApply = DTA.Preferences.get("browser.preferences.instantApply", false);
+			window.openDialog(
+				'chrome://dta/content/preferences/prefs.xul',
+				'dtaPrefs',
+				'chrome,titlebar,toolbar,resizable,centerscreen'+ (instantApply ? ',dialog=no' : '')
+			);
 		}
 	};
-	Components.utils.import('resource://dta/support/mediator.jsm', DTA.Mediator);
-	return DTA.Mediator;
-});
-
-function DTA_showPreferences() {
-	var instantApply = DTA.Preferences.get("browser.preferences.instantApply", false);
-	window.openDialog(
-		'chrome://dta/content/preferences/prefs.xul',
-		'dtaPrefs',
-		'chrome,titlebar,toolbar,resizable,centerscreen'+ (instantApply ? ',dialog=no' : '')
-	);
-}
-
-function DTA_DropProcessor(func, multiple) {
-	this.func = func;
-	if (multiple) {
-		this.canHandleMultipleItems = true;
-	}
-};
-DTA_DropProcessor.prototype = {
-	getSupportedFlavours: function() {
-		if (!this._flavors) {
-			this._flavors = new FlavourSet();
-			this._flavors.appendFlavour('text/x-moz-url');
-		}	
-		return this._flavors;
-	},
-	onDragOver: function() {},
-	onDrop: function (evt, dropdata, session) {
-		if (!dropdata) {
-			return;
-		}
-		let url = null;
-		try {
-			url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
-			if (!DTA.isLinkOpenable(url)) {
-				throw new Components.Exception("Link cannot be opened!");
+	Components.utils.import("resource://dta/api.jsm", DTA);
+	
+	DTA.__defineGetter__('Mediator', function() {
+		delete DTA.Mediator;
+		DTA.Mediator = {
+			open: function DTA_Mediator_open(url, ref) {
+				this.openUrl(window, url, ref);
 			}
-			url = DTA.IOService.newURI(url, null, null);
-		}
-		catch (ex) {
-			DTA.Debug.log("Failed to process drop", ex);
-			return;
-		}
-		let doc = document.commandDispatcher.focusedWindow.document;
-		let ref = doc ? DTA.getRef(doc) : null;		
-		
-		if (url) {
-			url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
-			this.func(url, ref);			
-		}
-	}
-};
-
-var DTA_DropTDTA = new DTA_DropProcessor(function(url, ref) { DTA.saveSingleLink(window, true, url, ref); });
-var DTA_DropDTA = new DTA_DropProcessor(function(url, ref) { DTA.saveSingleLink(window, false, url, ref); });
+		};
+		Components.utils.import('resource://dta/support/mediator.jsm', DTA.Mediator);
+		return DTA.Mediator;
+	});
+	return (this.DTA = DTA);
+});
 
 /* Compat; mostly FlashGot, maybe others */
 // Obsolete; will be removed in 2.++ timeframe
-const DTA_AddingFunctions = {
-	ios: DTA.IOService,
-	composeURL: function() DTA.composeURL.apply(this, arguments),
-	applyWithWindow: function(func, args) {
-		DTA.Debug.logString("Obsolete function called: " + func.name);
-		args.unshift(window);
-		return func.apply(DTA, args);
-	},
-	saveSingleLink: function() this.applyWithWindow(DTA.saveSingleLink, Array.map(arguments, function(e) e)),
-	saveLinkArray: function() {
-		let args = Array.map(arguments, function(e) e);
-		let turbo = args.shift();
-		if (turbo) {
-			this.applyWithWindow(DTA.turboSaveLinkArray, args);
-		}
-		else {
-			this.applyWithWindow(DTA.saveLinkArray, args);
-		}
-	},
-	turboSaveLinkArray: function() this.applyWithWindow(DTA.turboSaveLinkArray, Array.map(arguments, function(e) e)),
-	sendToDown: function() this.applyWithWindow(DTA.sendToDown, Array.map(arguments, function(e) e)),
-	turboSendToDown: function() this.applyWithWindow(DTA.turboSendToDown, Array.map(arguments, function(e) e))
-};
-const DTA_getLinkPrintMetalink = DTA.getLinkPrintMetalink;
-const DTA_URL = DTA.URL;
+__defineGetter__('DTA_AddingFunctions', function() {
+ 	let rv = {
+		get ios() {
+			return DTA.IOService
+		},
+		composeURL: function() DTA.composeURL.apply(this, arguments),
+		applyWithWindow: function(func, args) {
+			DTA.Debug.logString("Obsolete function called: " + func.name);
+			args.unshift(window);
+			return func.apply(DTA, args);
+		},
+		saveSingleLink: function() this.applyWithWindow(DTA.saveSingleLink, Array.map(arguments, function(e) e)),
+		saveLinkArray: function() {
+			let args = Array.map(arguments, function(e) e);
+			let turbo = args.shift();
+			if (turbo) {
+				this.applyWithWindow(DTA.turboSaveLinkArray, args);
+			}
+			else {
+				this.applyWithWindow(DTA.saveLinkArray, args);
+			}
+		},
+		turboSaveLinkArray: function() this.applyWithWindow(DTA.turboSaveLinkArray, Array.map(arguments, function(e) e)),
+		sendToDown: function() this.applyWithWindow(DTA.sendToDown, Array.map(arguments, function(e) e)),
+		turboSendToDown: function() this.applyWithWindow(DTA.turboSendToDown, Array.map(arguments, function(e) e))
+	};
+ 	delete this.DTA_AddingFunctions;
+ 	return (this.DTA_AddingFunctions = rv);
+});
+__defineGetter__('DTA_getLinkPrintMetalink', function() DTA.getLinkPrintMetalink);
+__defineGetter__('DTA_URL', function() DTA.URL);

@@ -26,7 +26,6 @@
 		<stringbundleset>
 			<stringbundle src="chrome://dta/locale/conflicts.properties"/>
 		</stringbundleset>
-		<script type="application/javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 		<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js"/>
 	
 		<script type="application/javascript"><![CDATA[

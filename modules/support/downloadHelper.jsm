@@ -45,7 +45,6 @@ const Exception = Components.Exception;
 
 module("resource://gre/modules/XPCOMUtils.jsm");
 module("resource://dta/utils.jsm");
-module("resource://dta/api.jsm");
 
 const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 
@@ -73,6 +72,7 @@ ProcessorImpl.prototype = {
 	preDownload: function(desc) false,
 	
 	handle: function(props) {
+		module("resource://dta/api.jsm");
 		try {
 			if (props.has('links')) {
 				this.handleLinks(props);
@@ -90,6 +90,7 @@ ProcessorImpl.prototype = {
 		return ('window' in props) ? props.window : null;
 	},
 	createItem: function(props) {
+		module("resource://dta/api.jsm");
 		let win = this.getWindow(props);
 		let doc = ('document' in props) ? props.document : null;
 		let url = new URL(IOService.newURI(props.mediaUrl, doc ? doc.characterSet : null, null));
@@ -159,7 +160,7 @@ if (available) {
 			return _str.GetStringFromName(n);
 		}
 		catch (ex) {
-			debug("locale error: " + n, ex);
+			Cu.reportError("locale error: " + n + ex);
 			return '<error>';
 		}
 	};
