@@ -13,7 +13,7 @@
 <?xml-stylesheet href="chrome://dta/skin/manager/info.css" type="text/css" ?>
 
 <!DOCTYPE dialog [
-	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
 	%commonDTD;
 	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
 	%managerDTD;	
