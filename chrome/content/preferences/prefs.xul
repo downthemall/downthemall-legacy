@@ -13,11 +13,11 @@
 <?xml-stylesheet href="chrome://dta-platform/skin/preferences.css"?>
 
 <!DOCTYPE prefwindow [
-	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/">
 	%globalDTD;
 	<!ENTITY % prefpanesDTD SYSTEM "chrome://dta/locale/prefpanes.dtd">
 	%prefpanesDTD;
-	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
 	%commonDTD;
 ]>
 

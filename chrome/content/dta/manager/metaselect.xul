@@ -40,7 +40,7 @@
 <?xml-stylesheet href="chrome://dta/skin/manager/metalinker.css" type="text/css" ?>
 
 <!DOCTYPE window [
-	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
 	%commonDTD;
 	<!ENTITY % metalinkerDTD SYSTEM "chrome://dta/locale/metalinker.dtd">
 	%metalinkerDTD;	

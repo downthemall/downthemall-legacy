@@ -16,9 +16,9 @@
 
 
 <!DOCTYPE dialog [
-	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/">
 	%globalDTD;
-	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/common.dtd">
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
 	%commonDTD;
 	<!ENTITY % mirrorsDTD SYSTEM "chrome://dta/locale/mirrors.dtd">
 	%mirrorsDTD;
