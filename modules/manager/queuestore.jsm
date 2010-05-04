@@ -252,7 +252,7 @@ const QueueStore = {
 			throw new Exception("You must provide a Download to save!");
 		}
 		_saveQueue[id] = download;
-		else if (!_timer) {
+		if (!_timer) {
 			// delay up to 5000 msecs
 			_timer = Timers.createOneshot(5000, this._saveDownloadQueue, this);
 		}
