@@ -67,7 +67,7 @@ pref("extensions.dta.maxautoretries", 10);
 pref("extensions.dta.autoclearcomplete", false);
 pref("extensions.dta.confirmremove", true);
 pref("extensions.dta.confirmremovecompleted", true);
-pref("extensions.dta.permissions", 384);
+pref("extensions.dta.permissions", 416);
 pref("extensions.dta.loadendfirst", 0);
 pref("extensions.dta.loadendfirst", 0);
 pref("extensions.dta.startminimized", false);

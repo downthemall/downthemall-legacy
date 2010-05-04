@@ -173,29 +173,9 @@ const Prefs = {
 		}
 		this.dirPermissions = perms;		
 
-		if (Preferences.getExt("saveTemp", true)) {
-			try {
-				this.tempLocation = Preferences.getExt("tempLocation", '');
-				if (this.tempLocation == '') {
-					// #44: generate a default tmp dir on per-profile basis
-					// hash the profD, as it would be otherwise a minor information leak
-					this.tempLocation = this._dsp.get("TmpD", Ci.nsIFile);
-					let profD = hash(this._dsp.get("ProfD", Ci.nsIFile).leafName);
-					this.tempLocation.append("dtatmp-" + profD);
-					Debug.log(this.tempLocation.path);
-				}
-				else {
-					this.tempLocation = new FileFactory(this.tempLocation);
-				}
-			} catch (ex) {
-				this.tempLocation = null;
-				// XXX: error handling
-			}
+		if (!prefName || prefName == 'extensions.dta.saveTemp' || prefName == 'extensions.dta.tempLocation') {
+			this._constructTemp();
 		}
-		else {
-			this.tempLocation = null;
-		}
-		
 		// Make this KB
 		this.loadEndFirst *= 1024;
 		
@@ -217,6 +197,83 @@ const Prefs = {
 			TrayHandler.unwatch();
 		}
 	},
+	_constructTemp: function() {
+		this.tempLocation = null;		
+		if (!Preferences.getExt("saveTemp", true)) {
+			return;
+		}
+		try {
+			this.tempLocation = Preferences.getExt("tempLocation", '');
+			if (this.tempLocation == '') {
+				// #44: generate a default tmp dir on per-profile basis
+				// hash the profD, as it would be otherwise a minor information leak
+				this.tempLocation = this._dsp.get("TmpD", Ci.nsIFile);
+				let profD = hash(this._dsp.get("ProfD", Ci.nsIFile).leafName);
+				this.tempLocation.append("dtatmp-" + profD);
+			}
+			else {
+				this.tempLocation = new FileFactory(this.tempLocation);
+			}
+			if (!(this.tempLocation instanceof Ci.nsIFile)) {
+				throw new Exception("invalid value");
+			}
+			
+			let tl = this.tempLocation.clone();
+			try {
+				if (!tl.exists()) {
+					try {
+						tl.create(tl.DIRECTORY_TYPE, this.dirPermissions);
+					}
+					catch (ex) {
+						Debug.log("Failed to create temp dir", ex);
+						throw new Exception("tempnotaccessible");
+					}
+				}
+				else if (!tl.isDirectory()) {
+					throw new Exception("tempnotdir");
+				}
+				else {
+					// Hacky way to check if directory is indeed writable
+					tl.append('.dta-check');
+					try {
+						if (!tl.exists()) {
+							tl.create(tl.NORMAL_FILE_TYPE, this.permissions);
+						}
+						if (tl.exists()) {
+							tl.remove(false);
+						}
+					}
+					catch (ex) {
+						Debug.log("Failed to check temp dir", ex);
+						throw new Exception("tempnotaccessible");
+					}
+				}
+			}
+			catch (ex) {
+				let nb = $('notifications');
+				nb.appendNotification(_(ex.message), 0, null, nb.PRIORITY_WARNING_HIGH, [
+					{
+						accessKey: null,
+						label: _('autofix'),
+						callback: function() {
+							Preferences.resetExt('saveTemp');
+							Preferences.resetExt('tempLocation');
+						}
+					},
+					{
+						accessKey: null,
+						label: _('manualfix'),
+						callback: function() DTA.showPreferences('paneAdvanced')
+					}
+				]);
+				throw ex;
+			}
+		}
+		catch (ex) {
+			this.tempLocation = null;
+			// XXX: error handling
+		}
+	},
 	shutdown: function() {
 		Preferences.removeObserver('extensions.dta.', this);
 		Preferences.removeObserver('network.', this);
@@ -230,7 +287,6 @@ const Prefs = {
 		}
 	}
 };
-Prefs.init();
 
 const TOOLTIP_FREQ = 500;
 const SPEED_COUNT = 100;

@@ -102,12 +102,6 @@ var Privacy = {
 
 let Advanced = {
 	load: function() {
-		if (/win/i.test(navigator.platform)) {
-			let grid = $("gridFiles");
-			grid.parentNode.insertBefore($("advTempFiles"), grid);
-			grid.parentNode.removeChild(grid);
-			//$('advPermissions').hidden = true;
-		}
 		// delay these assignments, or else we get messed up by the slider c'tor
 		$('maxchunks').setAttribute('preference', 'dtamaxchunks');
 		$('dtamaxchunks').updateElements();
