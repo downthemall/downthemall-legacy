@@ -56,12 +56,13 @@ const CryptoHash = new ctor("@mozilla.org/security/hash;1", "nsICryptoHash");
 Components.utils.import("resource://dta/constants.jsm", this);
 
 const DTA = {
-	showPreferences: function () {
+	showPreferences: function(pane) {
 		var instantApply = DTA.Preferences.get("browser.preferences.instantApply", false);
 		window.openDialog(
 			'chrome://dta/content/preferences/prefs.xul',
 			'dtaPrefs',
-			'chrome,titlebar,toolbar,resizable,centerscreen'+ (instantApply ? ',dialog=no' : '')
+			'chrome,titlebar,toolbar,resizable,centerscreen'+ (instantApply ? ',dialog=no' : ''),
+			pane || null
 		);
 	}
 };

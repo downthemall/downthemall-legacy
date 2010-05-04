@@ -162,6 +162,8 @@ const Dialog = {
 	init: function D_init() {
 		removeEventListener('load', arguments.callee, false);
 		
+		Prefs.init();
+		
 		TEXT_PAUSED = _('paused');
 		TEXT_QUEUED = _('queued');
 		TEXT_COMPLETE = _('complete');
