@@ -60,6 +60,7 @@
 <!ENTITY serverspane.downloads.caption "Downloads">
 <!ENTITY serverspane.concurrent.label "Concurrent downloads:">
 <!ENTITY serverspane.perserver.label "Downloads per server:">
+<!ENTITY serverspane.url.label "URL or domain:">
 <!ENTITY serverspane.new.label "New Limit">
 <!ENTITY serverspane.del.label "Remove Limit">
 <!ENTITY serverspane.limits.label "Per-Server limits">
@@ -76,10 +77,9 @@
 <!ENTITY serverspane.remove.label "Remove">
 
 <!ENTITY advancedpane.label "Advanced">
-<!ENTITY advancedpane.multipart.caption "Multipart download">
+<!ENTITY advancedpane.downloads.caption "Advanced download settings">
 <!ENTITY advancedpane.chunks.label "Max. number of segments per download:">
 <!ENTITY advancedpane.chunksdisabled "Disabled">
-<!ENTITY advancedpane.timeouts.caption "Download timeout">
 <!ENTITY advancedpane.timeout.label "Download timeout after ">
 <!ENTITY advancedpane.seconds "seconds">
 <!ENTITY advancedpane.minute "minute">
@@ -100,6 +100,7 @@
 <!ENTITY advancedpane.scheduler.fast "Fast - As queued, obeying per-server limits (default)">
 <!ENTITY advancedpane.scheduler.even "Slow - Evenly distributed across servers">
 <!ENTITY advancedpane.scheduler.legacy "Legacy - not respecting per-server limits (fast)">
+<!ENTITY advancedpane.exposeinua.label "Expose DownThemAll! in the User-Agent">
 
 <!ENTITY uipane.label "Interface">
 <!ENTITY uipane.namesonly.label "Show only file names in Manager window">
