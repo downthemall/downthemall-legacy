@@ -12,7 +12,6 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 	<prefpane id="paneAdvanced" label="&advancedpane.label;" orient="vertical" onpaneload="Advanced.load();">
-
 		<preferences>
 			<preference id="dtamaxchunks" name="extensions.dta.maxchunks" type="int" />
 			<preference id="dtatemporary" name="extensions.dta.saveTemp" type="bool" />
@@ -21,73 +20,101 @@
 			<preference id="dtapermissions" name="extensions.dta.permissions" type="int" />
 			<preference id="dtaloadendfirst" name="extensions.dta.loadendfirst" type="int" />
 			<preference id="dtascheduler" name="extensions.dta.serverlimit.connectionscheduler" type="string" />
+			<preference id="dtaexposeinua" name="extensions.dta.exposeInUA" type="bool" />
 		</preferences>
 
-		<groupbox orient="horizontal" align="center">
-			<caption id="dtampd" label="&advancedpane.multipart.caption;" />
-			<label value="&advancedpane.chunks.label;" id="maxchunk" />
-			<spacer flex="1" />
-			<scale min="1" max="10" id="maxchunks" preference-editable="true" onchange="Advanced.changedMaxChunks();" />
-			<label id="maxchunkslabel" style="min-width: 6em;" />
-		</groupbox>
-
-		<groupbox orient="horizontal" align="center">
-			<caption label="&advancedpane.timeouts.caption;" />
-			<label value="&advancedpane.timeout.label;" flex="1" />
-			<menulist preference="dtatimeout">
-				<menupopup>
-					<menuitem id="t0" value="10" label="10 &advancedpane.seconds;" />
-					<menuitem id="t1" value="30" label="30 &advancedpane.seconds;" />
-					<menuitem id="t2" value="60" label="1 &advancedpane.minute;" />
-					<menuitem id="t3" value="120" label="2 &advancedpane.minutes;" />
-					<menuitem id="t4" value="180" label="3 &advancedpane.minutes;" />
-					<menuitem id="t5" value="240" label="4 &advancedpane.minutes;" />
-					<menuitem id="t6" value="300" label="5 &advancedpane.minutes;" />
-					<menuitem id="t7" value="600" label="10 &advancedpane.minutes;" />
-					<menuitem id="t8" value="900" label="15 &advancedpane.minutes;" />
-				</menupopup>
-			</menulist>
+		<groupbox>
+			<caption id="dtampd" label="&advancedpane.downloads.caption;" />
+			<grid>
+				<columns>
+					<column />
+					<column flex="1" />
+				</columns>
+				<rows>
+					<row align="center">
+						<label value="&advancedpane.chunks.label;" id="maxchunk" />
+						<hbox align="center">
+							<scale min="1" max="10" id="maxchunks" preference-editable="true" onchange="Advanced.changedMaxChunks();" />
+							<label id="maxchunkslabel" style="min-width: 6em;" />
+						</hbox>
+					</row>
+					<separator class="groove" />
+					<row align="center">
+						<label value="&advancedpane.timeout.label;" />
+						<hbox align="center">
+							<menulist preference="dtatimeout">
+								<menupopup>
+									<menuitem id="t0" value="10" label="10 &advancedpane.seconds;" />
+									<menuitem id="t1" value="30" label="30 &advancedpane.seconds;" />
+									<menuitem id="t2" value="60" label="1 &advancedpane.minute;" />
+									<menuitem id="t3" value="120" label="2 &advancedpane.minutes;" />
+									<menuitem id="t4" value="180" label="3 &advancedpane.minutes;" />
+									<menuitem id="t5" value="240" label="4 &advancedpane.minutes;" />
+									<menuitem id="t6" value="300" label="5 &advancedpane.minutes;" />
+									<menuitem id="t7" value="600" label="10 &advancedpane.minutes;" />
+									<menuitem id="t8" value="900" label="15 &advancedpane.minutes;" />
+								</menupopup>
+							</menulist>
+							<spacer flex="1" />
+						</hbox>
+					</row>
+				</rows>
+			</grid>
 		</groupbox>
 
 		<groupbox>
 			<caption label="&mainpane.misc.caption;" />
-			<hbox align="baseline">
-				<label value="&advancedpane.scheduler.caption;" />
-				<radiogroup id="scheduler" preference="dtascheduler">
-					<radio label="&advancedpane.scheduler.fast;" value="fast" />
-					<radio label="&advancedpane.scheduler.even;" value="even" />
-					<radio label="&advancedpane.scheduler.legacy;" value="legacy" />
-				</radiogroup>
-				<spacer flex="1"/>
-			</hbox>
-			<hbox align="center">
-				<label value="&advancedpane.loadendfirst.label;" control="loadendfirst" />
-				<spacer flex="1" />
-				<scale min="0" max="4096" id="loadendfirst" increment="4" pageincrement="16" preference-editable="true" onchange="Advanced.changedLoadEndFirst();" />
-				<label id="loadendfirstlabel" style="min-width: 6em;" />
-			</hbox>
+			<grid>
+				<columns>
+					<column />
+					<column flex="1" />
+				</columns>
+				<rows>
+					<row align="baseline">
+						<label value="&advancedpane.scheduler.caption;" />
+						<menulist preference="dtascheduler">
+							<menupopup>
+								<menuitem label="&advancedpane.scheduler.fast;" value="fast" />
+								<menuitem label="&advancedpane.scheduler.even;" value="even" />
+								<menuitem label="&advancedpane.scheduler.legacy;" value="legacy" />
+							</menupopup>
+						</menulist>
+					</row>
+					<separator class="groove" />
+					<row align="center">
+						<label value="&advancedpane.loadendfirst.label;" control="loadendfirst" />
+						<hbox align="center">
+							<scale min="0" max="4096" id="loadendfirst" increment="4" pageincrement="16" preference-editable="true" onchange="Advanced.changedLoadEndFirst();" />
+							<label id="loadendfirstlabel" style="min-width: 6em;" />
+						</hbox>
+					</row>
+					<separator class="groove" />
+					<checkbox label="&advancedpane.exposeinua.label;" preference="dtaexposeinua" />
+				</rows>
+			</grid>
 		</groupbox>
 
 		<grid id="gridFiles">
 			<columns id="colsFiles">
+				<column flex="10" />
 				<column flex="1" />
-				<column flex="2" />
 			</columns>
 			<rows>
-				<row id="rowFiles">
-					<groupbox id="advTempFiles">
-						<caption label="&advancedpane.tempfiles.caption;" />
-						<checkbox id="useTemp" label="&advancedpane.usetemp.label;" preference="dtatemporary" oncommand="Advanced.toggleTemp();" />
-						<hbox>
-							<label value="&advancedpane.tempdir.label;" />
-							<textbox id="temp" preference="dtatemplocation" flex="1" />
-							<toolbarbutton id="browsedir" oncommand="Advanced.browse();" />
-						</hbox>
-					</groupbox>
-
-					<groupbox id="advPermissions">
+				<row>
+					<vbox>
+						<groupbox id="advTempFiles">
+							<caption label="&advancedpane.tempfiles.caption;" />
+							<checkbox id="useTemp" label="&advancedpane.usetemp.label;" preference="dtatemporary" oncommand="Advanced.toggleTemp();" />
+							<hbox align="center">
+								<label value="&advancedpane.tempdir.label;" />
+								<textbox id="temp" preference="dtatemplocation" flex="1" />
+								<toolbarbutton id="browsedir" oncommand="Advanced.browse();" />
+							</hbox>
+						</groupbox>
+						<spacer flex="1" />
+					</vbox>
+					<groupbox id="advPermissions" tooltiptext="&advancedpane.permissions.desc;">
 						<caption id="dtaperms" label="&advancedpane.permissions.caption;" />
-						<description value="&advancedpane.permissions.desc;" />
 						<grid>
 							<columns>
 								<column flex="1" />

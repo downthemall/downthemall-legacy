@@ -109,6 +109,7 @@ let Advanced = {
 		$('loadendfirst').setAttribute('preference', 'dtaloadendfirst');
 		$('dtaloadendfirst').updateElements();
 		this.changedLoadEndFirst();
+		this.toggleTemp();
 	},
 	browse: function() {
 		// let's check and create the directory
@@ -523,13 +524,13 @@ var Servers = {
 		}
 		$('noitemsbox').hidden = !!this._list.itemCount;
 	},
+	newInput: function() {
+		$('newServerLimit').disabled = !$('spnewurl').value;
+	},
 	newLimit: function() {
-  	let rv = {};
-  	if (!this.prompts.prompt(window, _('newlimittitle'), _('newlimitdesc'), rv, null, {}) || !rv.value) {
-  		return;
-  	}
+		let newurl = $('spnewurl');
 		try {
-			let limit = this.addLimit(rv.value);
+			let limit = this.addLimit(newurl.value);
 			if (!limit.isNew) {
 				this._list.selectedItem = $("host" + limit.host);
 				this._list.selectedItem.edit();
@@ -546,6 +547,8 @@ var Servers = {
 			this._list.appendChild(e);
 			this._list.selectedItem = e;
 			this._list.selectedItem.edit();
+			newurl.value = '';
+			this.newInput();
 		}
 		catch (ex) {
 			Debug.log("failed to add limit", ex);
