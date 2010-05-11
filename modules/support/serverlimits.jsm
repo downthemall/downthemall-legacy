@@ -219,14 +219,12 @@ function FastScheduler(downloads, running) {
 		const host = d.urlManager.eHost;
 		const knownHost = (host in downloadSet);
 		if (!knownHost) {
-			Debug.logString("immediate return");
 			downloadSet[host] = new SchedItem(host);
 			yield d;
 			continue;
 		}
 		let item = downloadSet[host];
 		if (item.available) {
-			Debug.logString("counted return");
 			yield d;
 			item.inc();
 		}
@@ -273,14 +271,17 @@ function EvenScheduler(downloads, running) {
 	while (sorted.length) {
 		// short-circuit: only one host left
 		if (sorted.length == 1) {
+			Debug.logString("Sched: ss");
 			let s = sorted.shift();
 			while (s.queued) {
 				yield s.pop();
 			} 		
 			return;
 		}
+
 		// round robin		
-		for (i in sorted) {
+		Debug.logString("Sched: rr");		
+		for (let i = 0, e = sorted.length; i < e; ++i) {
 			let s = sorted[i];
 			yield s.pop();
 			if (!s.queued) {

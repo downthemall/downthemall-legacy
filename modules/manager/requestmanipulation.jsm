@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['overrideUA'];
+const EXPORTED_SYMBOLS = ['overrideUA', 'amendUA'];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -44,20 +44,21 @@ const Ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
+module('resource://dta/version.jsm');
+
 function Manipulator() {
 	this._m = {};
 }
 Manipulator.prototype = {
-	register: function(matcher, func) {
-		this._m[matcher.toString()] = {
+	register: function(id, matcher, func) {
+		this._m[id] = {
 				matcher: matcher,
 				func: func
 		};	
 	},
-	unregister: function(matcher) {
-		matcher = matcher.toString();
-		if (matcher in this._m) {
-			delete this._m[matcher];
+	unregister: function(id) {
+		if (id in this._m) {
+			delete this._m[id];
 		}
 	},
 	modify: function(context, spec) {
@@ -77,25 +78,32 @@ Manipulator.prototype = {
 for each (let [m, sp] in [['URL', function(c) c.spec], ['Http', function(c) c.URI.spec]]) {
 	let _m = new Manipulator();
 	let _sp = sp;
-	this['register' + m] = function(matcher, func) _m.register(matcher, func);
-	this['unregister' + m] = function(matcher) _m.unregister(matcher, func);
+	this['register' + m] = function(id, matcher, func) _m.register(id, matcher, func);
+	this['unregister' + m] = function(id) _m.unregister(id);
 	this['modify' + m] = function(context) _m.modify(context, _sp(context));
 	EXPORTED_SYMBOLS.splice(EXPORTED_SYMBOLS.length, 3, 'register' + m, 'unregister' + m, 'modify' + m);
 }
 
+_uaextra = "DownThemAll!";
+Version.getInfo(function(v) _uaextra += "/" + v.BASE_VERSION);
+
 function overrideUA() {
-	this.setRequestHeader('User-Agent', 'DownThemAll!', false);
+	this.setRequestHeader('User-Agent', _uaextra, false);
 	this.setRequestHeader('Referer', '', false);
 }
 
+function amendUA() this.setRequestHeader('User-Agent', this.getRequestHeader('User-Agent') + " " + _uaextra, false);
+
 // Sourceforge
 registerHttp(
+	'sourceforge.net',
 	/(?:https?:\/\/|\.)(?:sf|sourceforge)\.net\//,
 	overrideUA
 );
 
 // Rapidshare direct
 registerURL(
+	'rapidshare direct',
 	/^https?:\/\/(?:[\w\d_.-]+\.)?rapidshare\.com\/files\/[^?]*?(?!\?directstart=1)$/,
 	function() this.spec += "?directstart=1"
 );
