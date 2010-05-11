@@ -84,6 +84,7 @@ pref("extensions.dta.resumeonerror", false);
 pref("extensions.dta.textlinks", true);
 pref("extensions.dta.serverlimit.perserver", 4);
 pref("extensions.dta.serverlimit.connectionscheduler", 'fast');
+pref("extensions.dta.exposeInUA", true);
 // Non-customizable-toolbar specific
 pref("extensions.dta.tb.buttons", "1,1,0");
 

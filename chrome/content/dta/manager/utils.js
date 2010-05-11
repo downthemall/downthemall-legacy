@@ -196,6 +196,13 @@ const Prefs = {
 		else {
 			TrayHandler.unwatch();
 		}
+		
+		if (Preferences.getExt('exposeInUA', true)) {
+			RequestManipulation.registerHttp('dtaua', /./, RequestManipulation.amendUA);
+		}
+		else {
+			RequestManipulation.unregisterHttp('dtaua');
+		}
 	},
 	_constructTemp: function() {
 		this.tempLocation = null;		

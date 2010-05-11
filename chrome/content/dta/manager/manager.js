@@ -79,11 +79,12 @@ module('resource://dta/support/pbm.jsm', PrivateBrowsing);
 module('resource://dta/support/serverlimits.jsm', Limits);
 module('resource://dta/support/timers.jsm');
 
-let Preallocator = {};
+let Preallocator = {}, RequestManipulation = {};
 module('resource://dta/manager/preallocator.jsm', Preallocator);
 module('resource://dta/manager/queuestore.jsm');
 module('resource://dta/manager/speedstats.jsm');
 module('resource://dta/manager/visitormanager.jsm');
+module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
 
 function lazyModule(obj, name, url, symbol) {
 	setNewGetter(obj, name, function() {
@@ -96,7 +97,6 @@ function lazyModule(obj, name, url, symbol) {
 lazyModule(this, 'AlertService', 'resource://dta/support/alertservice.jsm');
 lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Decompressor');
 lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
-lazyModule(this, 'RequestManipulation', 'resource://dta/manager/requestmanipulation.jsm');
 
 setNewGetter(this, 'AuthPrompts', function() {
 	let _l = {};
