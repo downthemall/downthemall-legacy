@@ -117,11 +117,7 @@ SpeedStats.prototype = {
 			
 			this._avg = 0;
 			if (last != 0) {
-				let weights = this._speeds.map(function(e, i) Math.pow(this._speeds.length - i, 5), this).reverse();
-				let sweight = weights.reduce(function(e, p) e + p);
-
-				this._speeds.forEach(function(e, i) this._avg += e * weights[i], this);
-				this._avg = Math.round(this._avg / sweight);
+				this._avg = this._speeds.reduce(function(p, c) (0.7 * p) + (0.3 * c));
 			}
 		}
 		this._lastTime = time;
