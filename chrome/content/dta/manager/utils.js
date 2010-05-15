@@ -296,7 +296,6 @@ const Prefs = {
 };
 
 const TOOLTIP_FREQ = 500;
-const SPEED_COUNT = 100;
 
 const Tooltip = {
 	_current: null,

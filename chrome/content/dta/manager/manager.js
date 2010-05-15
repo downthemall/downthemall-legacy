@@ -65,8 +65,8 @@ const MIN_CHUNK_SIZE = 1<<19; // 512K
 // amount to buffer in BufferedOutputStream
 // furthermore up to this ammount will automagically discared after crashes
 const CHUNK_BUFFER_SIZE = 1<<17; // 128K
-
 const REFRESH_FREQ = 1000;
+const SPEED_COUNT = 100;
 
 let Prompts = {}, Limits = {}, JSONCompat = {}, PrivateBrowsing = {};
 module('resource://dta/cothread.jsm');
@@ -831,6 +831,9 @@ const Dialog = {
 		}
 		else {
 			Debug.logString("Let's resume " + download + " at " + download.partialSize);
+		}
+		if (!this._running.length) {
+			this._speeds.clear(); // started to run; remove old global speed stats
 		}
 		this._running.push(download);
 		download.prealloc();
