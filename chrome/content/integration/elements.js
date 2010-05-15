@@ -354,7 +354,7 @@
 				  delete copy;
 				  
 					let set = cdoc.evaluate(
-						'/*//*[not(*) and not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
+						'//*[not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
 						copy.ownerDocument,
 						null,
 						XPathResult.ORDERED_NODE_ITERATOR_TYPE,
@@ -383,7 +383,7 @@
 				}
 				if (recognizeTextLinks()) {
 					let set = aWin.document.evaluate(
-						'//body//*[not(*) and not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
+						'//*[not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
 						aWin.document,
 						null,
 						XPathResult.ORDERED_NODE_ITERATOR_TYPE,
