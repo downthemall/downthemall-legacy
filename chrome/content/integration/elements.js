@@ -41,7 +41,10 @@
 	let Cc = Components.classes;
 	let Ci = Components.interfaces;
 	let Cu = Components.utils;
-	
+
+	let _loader = {};
+	Components.utils.import("resource://dta/_apiloader.jsm", _loader);
+	_loader.inject(window);
 		
 	let Preferences = {};
 	Components.utils.import('resource://dta/preferences.jsm', Preferences);	
