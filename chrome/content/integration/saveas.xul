@@ -43,12 +43,8 @@
  
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/saveas.dtd">
 <overlay id="downthemallDownloadSaveAs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
-	<script type="application/x-javascript" src="chrome://dta/content/common/overlayFunctions.js"/>
 	<script type="application/x-javascript" src="chrome://dta/content/integration/saveas.js"/>
 
-	<stringbundle id="stringsB" src="chrome://dta/locale/saveas.properties"/>
-	
 	<radiogroup id="mode">
 		<vbox insertbefore="save" id="downthemallcontainer" collapsed="true" flex="1">
 			<hbox flex="1">
@@ -56,9 +52,9 @@
 			</hbox>
 			<hbox id="tdta" flex="1">
 				<radio id="turbodta" disabled="true" label="dTa OneClick!"/>
-				<toolbarbutton id="turbodtaexec" disabled="true" oncommand="DTA_SaveAs.download(true);"/>
+				<toolbarbutton id="turbodtaexec" disabled="true" />
 				<spacer flex="1"/>
-				<saveddropdown id="tdtalist" preference="directory" readonly="true" crop="center" onclick="return DTA_SaveAs.selectTurbo();"  flex="1"/>
+				<saveddropdown id="tdtalist" preference="directory" readonly="true" crop="center" flex="1"/>
 			</hbox>
 		</vbox>
 	</radiogroup>

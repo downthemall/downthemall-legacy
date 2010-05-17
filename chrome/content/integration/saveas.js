@@ -36,124 +36,57 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-var DTA_SaveAs = {
-	init: function dd_init() {
+addEventListener('load', function() {
+	removeEventListener('load', arguments.callee, true);
 
-		var basicBox = document.getElementById('basicBox');
-		var normalBox = document.getElementById('normalBox');
-		const doRevert = basicBox && (!basicBox.collapsed || (normalBox && normalBox.collapsed));
-		const doOverlay = DTA.Preferences.getExt("downloadWin", true);
-		if (
-			!doOverlay
-			&& typeof(gFlashGotDMDialog) == 'undefined'
-		) {
-			// we do not actually overlay!
-			return;
+	function $() {
+		if (arguments.length == 1) {
+			return document.getElementById(arguments[0]);
 		}
-		if (doRevert) {
-			this.revertUI();
-		}
-		
-		if (!doOverlay) {
-			// we do not actually overlay!
-			// but we revert to help FlashGot ;)
-			return;
-		}
-		
-		this.normal = document.getElementById('downthemall');
-		this.turbo = document.getElementById('turbodta');
-		this.turboExec = document.getElementById('turbodtaexec');
-		this.mode = document.getElementById('mode');
-		this.remember = document.getElementById("rememberChoice");
-		this.settingsChange = document.getElementById("settingsChange");
-		
-		document.getElementById('downthemallcontainer').collapsed = false;
-		this.normal.disabled = false;
-		
-		this.dialog = dialog;
-		this.url = dialog.mLauncher.source;
-		try {
-			this.referrer = dialog.mContext.QueryInterface(Components.interfaces.nsIWebNavigation).currentURI.spec;
-		}
-		catch(ex) {
-			this.referrer = this.url.spec;
-		}
-		
-		var ml = DTA.getLinkPrintMetalink(this.url);
-		this.url = new DTA.URL(ml ? ml : this.url);
-
-		this.ddDirectory = document.getElementById('tdtalist');
-		var mask = DTA.getDropDownValue('renaming');
-		if (!(document.getElementById("tdta").hidden = (DTA.getDropDownValue('directory') == '' || !mask))) {
-			this.turbo.disabled = false;
-			this.turboExec.disabled = false;
-		}
-		
-		try {
-			switch (DTA.Preferences.getExt('saveasmode', 0)) {
-				case 1:
-					this.mode.selectedItem = this.normal;
-					break;
-				case 2:
-					this.mode.selectedItem = this.turbo.disabled ? this.normal : this.turbo;
-					break;
+		let elements = [];
+		for (let i = 0, e = arguments.length; i < e; ++i) {
+			let id = arguments[i];
+			let element = document.getElementById(id);
+			if (element) {
+				elements.push(element);
 			}
-			if (DTA.Preferences.getExt('saveasmode', 0)) {
-				this.remember.checked = true;
-				this.remember.disabled = false;
+			else {
+				debug("requested a non-existing element: " + id);
 			}
 		}
-		catch (ex) {}
-
-		document.documentElement.setAttribute(
-			'ondialogaccept',
-			'if(DTA_SaveAs.dialogAccepted()) { '
-			+ document.documentElement.getAttribute('ondialogaccept')
-			+ '}'
-		);
-		this.mode.addEventListener(
-			'select',
-			function(evt) {
-				DTA_SaveAs.select(evt);
-			},
-			false
-		);
-	},
+		return elements;
+	}	
 	
-	revertUI: function dd_revertUI() {
+	function revertUI() {
 		['open'].forEach(
 			function(e) {
-				e = document.getElementById(e);
+				e = $(e);
 				e.parentNode.collapsed = true;		
 				e.disabled = true;
 			}
 		);
-		document.getElementById('normalBox').collapsed = false;
-		var nodes = document.getElementById('normalBox')
+		$('normalBox').collapsed = false;
+		var nodes = $('normalBox')
 			.getElementsByTagName('separator');
 		
 		for (var i = 0; i < nodes.length; ++i) {
 			nodes[i].collapsed = true;
 		} 
 
-		document.getElementById('basicBox').collapsed = true;
-		document.getElementById('normalBox').collapsed = false;
+		$('basicBox').collapsed = true;
+		$('normalBox').collapsed = false;
 		
 		// take care of FlashGot... for now.
 		// need to negotiate with the author (and possible other extension authors)
 		try {
 			gFlashGotDMDialog.init();
-			document.getElementById("flashgot-basic").collapsed = true;
+			$("flashgot-basic").collapsed = true;
 		}
 		catch (ex) {
 			// no op
 		}
-		this.sizeToContent();
-				
-	},
-	
-	// Workaround for bug 371508
-	sizeToContent: function() {
+		
+		// Workaround for bug 371508
 		try {
 			window.sizeToContent();	
 		}
@@ -166,46 +99,130 @@ var DTA_SaveAs = {
 			catch (ex) {
 				DTA.Debug.log("setting height failed", ex);
 			}		
-		}
-	},	
-	select: function dd_select(evt) {
-		var mode = this.mode.selectedItem;
-		this.remember.checked = false;
-		if (this.normal == mode || this.turbo == mode) {
-			this.remember.disabled = false;
-		}
-	},
+		}				
+	}
 	
-	selectTurbo: function dd_selectTurbo(event) {
-		document.getElementById("mode").selectedItem = document.getElementById("turbodta");
-		return true;
-	},
+	function download(turbo) {
+		ddDirectory.save();
+		DTA.saveSingleLink(window, turbo, url, referrer, "");
+		let de = document.documentElement;
+		try {
+			de.removeAttribute('ondialogaccept');
+		}
+		catch (ex) {
+			// no op
+		}
+		de.cancelDialog();
+	}
 
-	dialogAccepted: function dd_accept() {
-		var mode = this.mode.selectedItem;
-		if (mode == this.normal || mode == this.turbo) {
-			if (this.remember.checked) {
-				DTA.Preferences.setExt("saveasmode", mode == this.normal ? 1 : 2);
+	let basicBox = $('basicBox');
+	let normalBox = $('normalBox');
+	const doRevert = basicBox && (!basicBox.collapsed || (normalBox && normalBox.collapsed));
+	const doOverlay = DTA.Preferences.getExt("downloadWin", true);
+	if (
+		!doOverlay
+		&& typeof(gFlashGotDMDialog) == 'undefined'
+	) {
+		// we do not actually overlay!
+		return;
+	}
+	if (doRevert) {
+		revertUI();
+	}
+	
+	if (!doOverlay) {
+		// we do not actually overlay!
+		// but we revert to help FlashGot ;)
+		return;
+	}
+	
+	const normal = $('downthemall');
+	const turbo = $('turbodta');
+	const turboExec = $('turbodtaexec');
+	const mode = $('mode');
+	const remember = $("rememberChoice");
+	const settingsChange = $("settingsChange");
+	
+	$('downthemallcontainer').collapsed = false;
+	normal.disabled = false;
+	
+	let url = dialog.mLauncher.source;
+	let referrer;
+	try {
+		referrer = dialog.mContext.QueryInterface(Components.interfaces.nsIWebNavigation).currentURI.spec;
+	}
+	catch(ex) {
+		referrer = url.spec;
+	}
+	
+	let ml = DTA.getLinkPrintMetalink(url);
+	url = new DTA.URL(ml ? ml : url);
+
+	const ddDirectory = $('tdtalist');
+	let mask = DTA.getDropDownValue('renaming');
+	if (!($("tdta").hidden = (DTA.getDropDownValue('directory') == '' || !mask))) {
+		turbo.disabled = false;
+		turboExec.disabled = false;
+	}
+	
+	try {
+		switch (DTA.Preferences.getExt('saveasmode', 0)) {
+			case 1:
+				mode.selectedItem = normal;
+				break;
+			case 2:
+				mode.selectedItem = turbo.disabled ? normal : turbo;
+				break;
+		}
+		if (DTA.Preferences.getExt('saveasmode', 0)) {
+			remember.checked = true;
+			remember.disabled = false;
+		}
+	}
+	catch (ex) {
+		// no op
+	}
+
+	mode.addEventListener(
+		'select',
+		function() {
+			let selMode = mode.selectedItem;
+			remember.checked = false;
+			if (normal == selMode || turbo == selMode) {
+				remember.disabled = false;
+			}
+		},
+		false
+	);
+	ddDirectory.addEventListener('command', function() {
+		mode.selectedItem = turbo;
+	}, true);
+
+	turboExec.addEventListener('command', function() {
+		download(true);
+	}, true);
+
+	addEventListener('dialogaccept', function(evt) {
+		let selMode = mode.selectedItem;
+		if (selMode == normal || selMode == turbo) {
+			if (remember.checked) {
+				DTA.Preferences.setExt("saveasmode", selMode == normal ? 1 : 2);
 			}
 			else {
 				DTA.Preferences.setExt("saveasmode", 0);
 			}
-			this.download(mode == this.turbo);			
-			return false;
+			download(selMode == turbo);			
+			evt.stopPropagation();
+			evt.preventDefault();
+			return;
 		}
 		DTA.Preferences.setExt("saveasmode", 0);
-		return true;
-	},
+	}, false); // dialogaccept
 	
-	download: function(turbo) {
-		this.ddDirectory.save();
-		DTA.saveSingleLink(window, turbo, this.url, this.referrer, "");
-		document.documentElement.removeAttribute('ondialogaccept');
-		document.documentElement.cancelDialog();
-	}
-}
-addEventListener(
-	"load",
-	function(){ DTA_SaveAs.init(); },
-	false
-);
+}, true); // load
+
+(function() {
+	let _loader = {};
+	Components.utils.import("resource://dta/_apiloader.jsm", _loader);
+	_loader.inject(window);
+})();

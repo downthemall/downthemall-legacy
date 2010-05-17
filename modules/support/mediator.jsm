@@ -38,7 +38,7 @@ const EXPORTED_SYMBOLS = [
 	'getMostRecent', 'getMostRecentByUrl', 'getAllByType',
 	'openExternal', 'openUrl', 'tryOpenUrl', 'openWindow',
 	'addListener', 'removeListener',
-	'showNotice', 'showAbout'
+	'showNotice', 'showAbout', 'showPreferences'
 ];
 	
 const Cc = Components.classes;
@@ -237,4 +237,13 @@ function showNotice(window) {
 }
 function showAbout(window) {
 	openUrl(window, 'about:downthemall');
+}
+function showPreferences(window, pane) {
+	var instantApply = Prefs.get("browser.preferences.instantApply", false);
+	window.openDialog(
+		'chrome://dta/content/preferences/prefs.xul',
+		'dtaPrefs',
+		'chrome,titlebar,toolbar,resizable,centerscreen'+ (instantApply ? ',dialog=no' : ''),
+		pane
+	);
 }
