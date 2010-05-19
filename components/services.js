@@ -605,8 +605,8 @@ ContentHandling.prototype = {
 				}
 			}
 			if (
-					(/\.(flv|ogg|ogm|ogv|avi|divx|mp4)\b/i.test(channel.URI.spec) && !/\.swf\b/i.test(channel.URI.spec)) 
-					|| ct.match(/\b(flv|ogg|ogm|avi|divx|mp4)\b/i)
+					(/\.(flv|ogg|ogm|ogv|avi|divx|mp4v?|webm)\b/i.test(channel.URI.spec) && !/\.swf\b/i.test(channel.URI.spec)) 
+					|| ct.match(/\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i)
 			) {
 				let wp = null;
 				if (channel.loadGroup && channel.loadGroup.groupObserver) {
