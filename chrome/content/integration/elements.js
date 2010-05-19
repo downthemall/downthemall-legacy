@@ -539,27 +539,44 @@
 		}		
 	}
 	
-	function _findSingleMedia(turbo, matching) {
+	function _findSingleMedia(turbo, tag) {
+		let ctx = contextMenu();
 		try {
-			let cur = contextMenu().target;
-			while (!("tagName" in cur) || !cur.tagName.match(matching)) {
+			function isMedia(n) 'tagName' in n && n.tagName == tag;
+			
+			let cur = ctx.target;
+			while (cur && !isMedia(cur)) {
+				let cn = cur.getElementsByTagName(tag);
+				if (cn.length) {
+					cur = cn[0];
+					break;
+				}
 				cur = cur.parentNode;
 			}
+			
 			if (!cur.src) {
 				cur = cur.getElementsByTagName('source')[0];
 			}
 			saveSingleLink(turbo, cur.src, cur);
+			return;
 		}
 		catch (ex) {
-			notifyError(getString('error'), getString('errornodownload'));
-			debug('_findSingleMedia: ', ex);
+			try {
+				if (ctx.mediaURL) {
+					saveSingleLink(turbo, ctx.mediaURL, ctx.target);
+				}
+			}
+			catch (ex) {
+				notifyError(getString('error'), getString('errornodownload'));
+				debug('_findSingleMedia: ', ex);
+			}
 		}		
 	}
 	function findSingleVideo(turbo) {
-		_findSingleMedia(turbo, /^video/i);
+		_findSingleMedia(turbo, 'video');
 	}
 	function findSingleAudio(turbo) {
-		_findSingleMedia(turbo, /^audio/i);
+		_findSingleMedia(turbo, 'audio');
 	}
 	
 	function saveSingleLink(turbo, url, elem) {
