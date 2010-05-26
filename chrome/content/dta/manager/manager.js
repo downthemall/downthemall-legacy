@@ -178,8 +178,39 @@ const Dialog = {
 				}
 				return rv;
 			}, true);
-			addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DTA_DropDTA), true);
-			addEventListener('drop', function(event) nsDragAndDrop.drop(event, DTA_DropDTA), true);
+			
+			DropProcessor = {
+				getSupportedFlavours: function() {
+					if (!this._flavors) {
+						this._flavors = new FlavourSet();
+						this._flavors.appendFlavour('text/x-moz-url');
+					}	
+					return this._flavors;
+				},
+				onDragOver: function() {},
+				onDrop: function (evt, dropdata, session) {
+					if (!dropdata) {
+						return;
+					}
+					let url = null;
+					try {
+						url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
+						if (!DTA.isLinkOpenable(url)) {
+							throw new Components.Exception("Link cannot be opened!");
+						}
+						url = DTA.IOService.newURI(url, null, null);
+					}
+					catch (ex) {
+						DTA.Debug.log("Failed to process drop", ex);
+						return;
+					}
+					url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
+					DTA.saveSingleLink(window, false, url);
+				}
+			};			
+			
+			addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropProcessor), true);
+			addEventListener('drop', function(event) nsDragAndDrop.drop(event, DropProcessor), true);
 			
 			$('tooldonate').addEventListener('click', function() Dialog.openDonate(), false);
 		})();		
