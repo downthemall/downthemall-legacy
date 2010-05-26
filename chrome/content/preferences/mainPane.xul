@@ -18,12 +18,15 @@
 			<preference id="dtadone" name="extensions.dta.sounds.done" type="bool" />
 			<preference id="dtaerror" name="extensions.dta.sounds.error" type="bool" />
 			<preference id="dtaautoclose" name="extensions.dta.closedta" type="bool" />
-			<preference id="dtasettime" name="extensions.dta.settime" type="bool" />
-			<preference id="dtarememberoneclick" name="extensions.dta.rememberoneclick" type="bool" />
 			<preference id="dtaconfirmremove" name="extensions.dta.confirmremove" type="bool" />
 			<preference id="dtatextlinks" name="extensions.dta.textlinks" type="bool" />
 			<preference id="dtalistsniffedvideos" name="extensions.dta.listsniffedvideos" type="bool" />
 		</preferences>
+
+		<groupbox>
+			<caption label="&mainpane.defaults.caption;"/>
+			<description>&mainpane.defaults.desc;</description>
+		</groupbox>
 
 		<groupbox>
 			<caption id="ren" label="&mainpane.rename.caption;" />
@@ -55,8 +58,6 @@
 
 		<groupbox>
 			<caption label="&mainpane.misc.caption;" />
-			<checkbox label="&mainpane.settime.label;" preference="dtasettime" />
-			<checkbox label="&mainpane.rememberoneclick.label;" preference="dtarememberoneclick" />
 			<checkbox label="&mainpane.confirmremove.label;" preference="dtaconfirmremove" />
 			<checkbox label="&mainpane.textlinks.label;" preference="dtatextlinks" />
 			<checkbox label="&mainpane.listsniffedvideos.label;" preference="dtalistsniffedvideos"/>
