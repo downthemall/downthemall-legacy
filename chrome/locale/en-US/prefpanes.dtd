@@ -15,6 +15,8 @@
 <!ENTITY manager "dTa Manager">
 
 <!ENTITY mainpane.label "Main">
+<!ENTITY mainpane.defaults.caption "Defaults">
+<!ENTITY mainpane.defaults.desc "The download directory, renaming mask and filters as used by OneClick are configured using the regular DownThemAll! dialog. Please use the regular dialog if you want to change these preferences.">
 <!ENTITY mainpane.rename.caption "If a filename already exists:">
 <!ENTITY mainpane.rename.label "Rename">
 <!ENTITY mainpane.overwrite.label "Overwrite">

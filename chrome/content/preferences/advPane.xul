@@ -21,6 +21,8 @@
 			<preference id="dtaloadendfirst" name="extensions.dta.loadendfirst" type="int" />
 			<preference id="dtascheduler" name="extensions.dta.serverlimit.connectionscheduler" type="string" />
 			<preference id="dtaexposeinua" name="extensions.dta.exposeInUA" type="bool" />
+			<preference id="dtasettime" name="extensions.dta.settime" type="bool" />
+			<preference id="dtarememberoneclick" name="extensions.dta.rememberoneclick" type="bool" />			
 		</preferences>
 
 		<groupbox>
@@ -80,7 +82,7 @@
 							</menupopup>
 						</menulist>
 					</row>
-					<separator class="groove" />
+					<separator class="thin" />
 					<row align="center">
 						<label value="&advancedpane.loadendfirst.label;" control="loadendfirst" />
 						<hbox align="center">
@@ -90,6 +92,8 @@
 					</row>
 					<separator class="groove" />
 					<checkbox label="&advancedpane.exposeinua.label;" preference="dtaexposeinua" />
+					<checkbox label="&mainpane.settime.label;" preference="dtasettime" />
+					<checkbox label="&mainpane.rememberoneclick.label;" preference="dtarememberoneclick" />
 				</rows>
 			</grid>
 		</groupbox>
