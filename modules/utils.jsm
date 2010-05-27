@@ -628,7 +628,12 @@ function OpenExternal_prepare(file) {
 	return file;
 }
 function OpenExternal_nixLaunch(file) {
-	ExternalProtocolService.loadUrl(IOService.newFileURI(file));	 
+	try {
+		ExternalProtocolService.loadURI(IOService.newFileURI(file));
+	}
+	catch (ex) {
+		ExternalProtocolService.loadUrl(IOService.newFileURI(file));
+	}
 }
 
 /**
