@@ -84,10 +84,10 @@
 
 		<h2>Description</h2>
 		<div class="localizable">
-			<p>&amo.description.p1;</p>
-			<p>&amo.description.p2;</p>
-			<p>&amo.description.p3;</p>
-			<p>&amo.description.p4;</p>
+			<p>&amo.description.intro;</p>
+			<p>&amo.description.feat;</p>
+			<p>&amo.description.free;</p>
+			<p>&amo.description.more;</p>
 		</div>
 
 
