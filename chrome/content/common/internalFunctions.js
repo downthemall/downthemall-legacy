@@ -382,29 +382,6 @@ Utils.merge(
  * @return String containing the icon URI
  */
 function getIcon(link, metalink, size) {
-	let _getIcon;
-	const _recognizedMac = /\.(?:gz|zip|gif|jpe?g|jpe|mp3|pdf|avi|mpe?g)$/i;
-
-	function _getIconMac(url, size) {
-		let uri = url.toURI();
-		if (_recognizedMac.test(uri.path)) {
-			return "moz-icon://" + url + "?size=" + size;
-		}
-		return "moz-icon://file.html?size=" + size;
-	}
-	
-	
-	function _getIconOther(url, size) {
-		return "moz-icon://" + url + "?size=" + size;
-	};
-	
-	if (/mac/i.test(navigator.platform)) {
-		_getIcon = _getIconMac; 
-	}
-	else {
-		_getIcon = _getIconOther;
-	}
-	
 	let _favIcons = null;
 	try {
 		_favIcons = Cc['@mozilla.org/browser/favicon-service;1']
@@ -451,8 +428,7 @@ function getIcon(link, metalink, size) {
 				url = url.spec;
 			}
 			let ext = url.getExtension();
-			url = 'file' + (ext ? '.' + ext : '');
-			return _getIcon(url, size);
+			return "moz-icon://file." + (ext ? '.' + ext : '') + "?size=" + size;
 		}
 		catch (ex) {
 			Debug.log("updateIcon: failed to grab icon", ex);
