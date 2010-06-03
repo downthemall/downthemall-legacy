@@ -20,3 +20,8 @@ dialogheader#logo .dialogheader-title {
 	border-width: 0px;
 	display: block;
 }
+
+notificationbox {
+	/* avoid horizontal scrollbar */
+	overflow: hidden;
+}
