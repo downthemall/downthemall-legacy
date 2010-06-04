@@ -115,10 +115,7 @@ SpeedStats.prototype = {
 				this._speeds.shift();
 			}
 			
-			this._avg = 0;
-			if (last != 0) {
-				this._avg = this._speeds.slice(-10).reduce(function(p, c) (0.7 * p) + (0.3 * c));
-			}
+			this._avg = this._speeds.slice(-10).reduce(function(p, c) (0.8 * p) + (0.2 * c));
 		}
 		this._lastTime = time;
 		this._lastBytes = bytes;
