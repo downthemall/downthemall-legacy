@@ -64,7 +64,6 @@ const MIN_CHUNK_SIZE = 1<<19; // 512K
 
 // amount to buffer in BufferedOutputStream
 // furthermore up to this ammount will automagically discared after crashes
-const CHUNK_BUFFER_SIZE = 1<<17; // 128K
 const REFRESH_FREQ = 1000;
 const SPEED_COUNT = 100;
 
@@ -2310,7 +2309,7 @@ Chunk.prototype = {
 		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 		seekable.seek(0x00, this.start + this.written);
-		this._outStream = new BufferedOutputStream(outStream, CHUNK_BUFFER_SIZE);
+		this._outStream = new BufferedOutputStream(outStream, MIN_CHUNK_SIZE);
 		
 		this.buckets = new ByteBucketTee(
 				this.parent.bucket,
@@ -2394,7 +2393,7 @@ Chunk.prototype = {
 			}
 			this._written += bytes;
 			this._sessionBytes += bytes;
-			this._buffered = Math.min(CHUNK_BUFFER_SIZE, this._buffered + bytes);
+			this._buffered = Math.min(MIN_CHUNK_SIZE, this._buffered + bytes);
 
 			this.parent.timeLastProgress = Utils.getTimestamp();
 
