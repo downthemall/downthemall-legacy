@@ -85,14 +85,24 @@ for each (let [m, sp] in [['URL', function(c) c.spec], ['Http', function(c) c.UR
 }
 
 _uaextra = "DownThemAll!";
-Version.getInfo(function(v) _uaextra += "/" + v.BASE_VERSION);
+_uaplatform = (function() {
+	let ph = Cc["@mozilla.org/network/protocol;1?name=http"].getService(Ci.nsIHttpProtocolHandler);
+	return ph.platform + "; " + ph.oscpu + "; " + ph.language;
+})();
+_uaextrap = _uaextra + " (" + _uaplatform + ")";
+Version.getInfo(function(v) {
+	_uaextrap = _uaextra + " (" + _uaplatform + "; " + v.BASE_VERSION + ")";
+	_uaextra += "/" + v.BASE_VERSION;
+});
 
 function overrideUA() {
-	this.setRequestHeader('User-Agent', _uaextra, false);
+	this.setRequestHeader('User-Agent', _uaextrap, false);
 	this.setRequestHeader('Referer', '', false);
 }
 
-function amendUA() this.setRequestHeader('User-Agent', this.getRequestHeader('User-Agent') + " " + _uaextra, false);
+function amendUA() {
+	this.setRequestHeader('User-Agent', this.getRequestHeader('User-Agent') + " " + _uaextra, false);
+}
 
 // Sourceforge
 registerHttp(
