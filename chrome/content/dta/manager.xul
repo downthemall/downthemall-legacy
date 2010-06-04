@@ -139,17 +139,17 @@
 			<menu id="removeCompleted" class="menu-iconic" label="&removeCompleted.label;">
 				<menupopup id="removeCompletedPopup">
 					<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeAll.label;" key="kRemoveCompleted" command="cmdRemoveCompleted" />
-					<menuseparator/>
+					<menuseparator />
 				</menupopup>
 			</menu>
 			<menu id="remove" class="menu-iconic" label="&removemenu.label;">
 				<menupopup id="removePopup">
 					<menuitem id="removeselected" class="menuitem-iconic" label="&removeselected.label;" key="kRemoveSelected" command="cmdRemoveSelected" />
-					<menuitem id="cleangone" class="menuitem-iconic" label="&removeGone.label;" key="kCleanGone" command="cmdCleanGone" />					
-					<menuitem id="removeDupes" class="menuitem-iconic" label="&removeDupes.label;" command="cmdRemoveDupes" />					
-					<menuseparator/>
+					<menuitem id="cleangone" class="menuitem-iconic" label="&removeGone.label;" key="kCleanGone" command="cmdCleanGone" />
+					<menuitem id="removeDupes" class="menuitem-iconic" label="&removeDupes.label;" command="cmdRemoveDupes" />
+					<menuseparator />
 					<menuitem id="removeAll" class="menuitem-iconic" label="&removeAll.label;" command="cmdRemoveAll" />
-					<menuseparator/>
+					<menuseparator />
 				</menupopup>
 			</menu>
 			<menuseparator />
@@ -166,7 +166,7 @@
 			<menu class="menu-iconic" label="&perdownloadspeedlimit.label;" id="perDownloadSpeedLimit" tooltiptext="&perdownloadspeedlimit.tooltip;">
 				<menupopup id="perDownloadSpeedLimitList" class="speedlimitlist-popup" command="cmdPerDownloadSpeedLimit" />
 			</menu>
-			<menuseparator />			
+			<menuseparator />
 			<menu id="advanced" class="menu-iconic" label="&advanced.label;">
 				<menupopup id="popupmisc">
 					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" command="cmdAddChunk" />
@@ -199,11 +199,12 @@
 		</menupopup>
 	</popupset>
 
+
 	<notificationbox id="notifications" flex="1" dir="reverse">
 		<stack flex="1" id="mainstack">
 			<vbox flex="1">
 				<toolbox chromedir="&locale.dir;" context="toolbarpopup">
-					<toolbar id="tools" mode="full" persist="mode">
+					<toolbar id="tools" mode="full" persist="mode" class="toolbar-primary">
 						<spacer />
 						<toolbarbutton label="&tooladd.label;" id="tooladd" command="cmdAddUrl" tooltiptext="&tooladd.tooltip;" />
 						<spacer class="visible" />
@@ -219,8 +220,6 @@
 						<image chromedir="&locale.dir;" id="tooldonate" tooltiptext="&tooldonate.tooltiptext;" />
 					</toolbar>
 				</toolbox>
-
-
 				<tree id="downloads" flex="1" hidecolumnpicker="false" context="popup" seltype="multiple" enableColumnDrag="true" style="margin:0px;" chromedir="&locale.dir;">
 					<treecols>
 						<treecol id="task" label="&task.label;" ordinal="1" flex="30" crop="center" persist="width ordinal hidden" />
@@ -246,7 +245,6 @@
 					<treechildren id="downloadList" tooltip="tooltip">
 					</treechildren>
 				</tree>
-
 			</vbox>
 			<vbox align="center" flex="1" id="loadingbox">
 				<spacer flex="1" />
