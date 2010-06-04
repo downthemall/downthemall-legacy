@@ -399,6 +399,7 @@
           if (description) {
             item.setAttribute("description", description);
           }
+          item.className = 'menuitem-iconic';
           this.appendChild(item);
           return item;
 				]]></body>
@@ -446,7 +447,6 @@
 					}
 					this.appendChild(sep);
 					let item = this.appendItem(_('unlimitedspeed'), -1);
-					item.className = "menuitem-iconic"; 
 					if (iv == -1) {
 						this.selectedItem = item;
 					}

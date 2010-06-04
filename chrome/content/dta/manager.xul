@@ -125,7 +125,11 @@
 
 
 	<popupset>
-		<popup id="popup" onpopupshowing="Tree.refreshTools(); return true;">
+		<tooltip id="tooltip" position="at_pointer" noautohide="true" onpopupshowing="return Tree.showTip(event);" onpopuphiding="Tree.stopTip();" orient="vertical">
+			<hbox id="infoBox" />
+			<grid id="canvasGrid" />
+		</tooltip>	
+		<menupopup id="popup" onpopupshowing="Tree.refreshTools(); return true;">
 			<menuitem id="info" class="menuitem-iconic" label="&infos.label;" key="kGetInfo" command="cmdGetInfo" />
 			<menuseparator />
 			<menuitem id="launch" class="menuitem-iconic" label="&launch.label;" key="kLaunch" command="cmdLaunch" />
@@ -136,13 +140,13 @@
 			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" key="kPause" command="cmdPause" />
 			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" key="kCancel" command="cmdCancel" />
 			<menuseparator />
-			<menu id="removeCompleted" class="menu-iconic" label="&removeCompleted.label;">
+			<menu id="removeCompletedMenu" class="menu-iconic" label="&removeCompleted.label;">
 				<menupopup id="removeCompletedPopup">
 					<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeAll.label;" key="kRemoveCompleted" command="cmdRemoveCompleted" />
 					<menuseparator />
 				</menupopup>
 			</menu>
-			<menu id="remove" class="menu-iconic" label="&removemenu.label;">
+			<menu id="removeMenu" class="menu-iconic" label="&removemenu.label;">
 				<menupopup id="removePopup">
 					<menuitem id="removeselected" class="menuitem-iconic" label="&removeselected.label;" key="kRemoveSelected" command="cmdRemoveSelected" />
 					<menuitem id="cleangone" class="menuitem-iconic" label="&removeGone.label;" key="kCleanGone" command="cmdCleanGone" />
@@ -167,7 +171,7 @@
 				<menupopup id="perDownloadSpeedLimitList" class="speedlimitlist-popup" command="cmdPerDownloadSpeedLimit" />
 			</menu>
 			<menuseparator />
-			<menu id="advanced" class="menu-iconic" label="&advanced.label;">
+			<menu id="advancedMenu" class="menu-iconic" label="&advanced.label;">
 				<menupopup id="popupmisc">
 					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" command="cmdAddChunk" />
 					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" command="cmdRemoveChunk" />
@@ -178,15 +182,9 @@
 					<menuseparator />
 					<menuitem id="import" class="menuitem-iconic" label="&import.label;" command="cmdImport" />
 					<menuitem id="export" class="menuitem-iconic" label="&export.label;" command="cmdExport" />
-					<menuseparator />
-					<menuitem id="prefs" class="menuitem-iconic" label="&options.label;" command="cmdPreferences" />
 				</menupopup>
 			</menu>
-		</popup>
-		<tooltip id="tooltip" position="at_pointer" noautohide="true" onpopupshowing="return Tree.showTip(event);" onpopuphiding="Tree.stopTip();" orient="vertical">
-			<hbox id="infoBox" />
-			<grid id="canvasGrid" />
-		</tooltip>
+		</menupopup>
 		<menupopup id="traymenu">
 			<menuitem label="&tooladd.label;" command="cmdAddUrl" />
 			<menuseparator />

@@ -93,7 +93,7 @@ const Tree = {
 				let filter = f; // clone for closure
 				let mi = document.createElementNS(popup.namespaceURI, 'menuitem');
 				mi.setAttribute('label', filter.label);
-				mi.setAttribute('class', 'menuitem-non-iconic');
+				mi.setAttribute('class', 'menuitem-iconic menuitem-filter');
 				popup.appendChild(mi);
 				mi.addEventListener('command', function() Tree.removeByFilter(filter, id), true);
 			}
