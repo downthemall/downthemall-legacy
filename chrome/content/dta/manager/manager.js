@@ -211,7 +211,7 @@ const Dialog = {
 			addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropProcessor), true);
 			addEventListener('drop', function(event) nsDragAndDrop.drop(event, DropProcessor), true);
 			
-			$('tooldonate').addEventListener('click', function() Dialog.openDonate(), false);
+			$('tooldonate').addEventListener('click', function(evt) { if (evt.button == 0) Dialog.openDonate() }, false);
 		})();		
 		
 		Tree.init($("downloads"));
