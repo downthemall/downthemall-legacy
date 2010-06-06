@@ -148,10 +148,10 @@ toolbox {
 }
 
 #tools[mode="icons"] #tooldonate {
-	-moz-image-region: rect(58px,360px,94px,180px);
+	-moz-image-region: rect(60px,360px,96px,180px);
 }
 #tools[mode="icons"] #tooldonate:hover {
-	-moz-image-region: rect(58px,180px,94px,0px);
+	-moz-image-region: rect(60px,180px,96px,0px);
 }
 
 #tooldonate[chromedir="rtl"], #tooldonate:-moz-locale-dir(rtl) {
@@ -161,10 +161,10 @@ toolbox {
 	-moz-image-region: rect(0px,180px,51px,0px);
 }
 #tools[mode="icons"] #tooldonate[chromedir="rtl"], #tools[mode="icons"] #tooldonate:-moz-locale-dir(rtl):hover {
-	-moz-image-region: rect(7px,360px,43px,180px);
+	-moz-image-region: rect(9px,360px,45px,180px);
 }
 #tools[mode="icons"] #tooldonate[chromedir="rtl"]:hover, #tools[mode="icons"] #tooldonate:-moz-locale-dir(rtl):hover {
-	-moz-image-region: rect(7px,180px,43px,0px);
+	-moz-image-region: rect(9px,180px,45px,0px);
 }
 
 /** :: Tooltip :: **/
