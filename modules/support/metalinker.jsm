@@ -40,7 +40,7 @@ const EXPORTED_SYMBOLS = [
 	"NS_DTA",
 	"NS_HTML",
 	"NS_METALINKER3",
-	"NS_METALINKER4",
+	"NS_METALINK_RFC5854",
 ];
 
 const Cc = Components.classes;
@@ -58,7 +58,7 @@ const NS_METALINKER3 = 'http://www.metalinker.org/';
 /**
  * Metalinker 4 namespace
  */
-const NS_METALINKER4 = 'urn:ietf:params:xml:ns:metalink';
+const NS_METALINK_RFC5854 = 'urn:ietf:params:xml:ns:metalink';
 
 const Preferences = {}, DTA = {};
 module("resource://dta/preferences.jsm", Preferences);
@@ -373,19 +373,19 @@ Metalinker3.prototype = {
 };
 
 /**
- * Metalink4 (IETF) Parser
+ * Metalink RFC5854 (IETF) Parser
  * @param doc document to parse
  * @return Metalink
  */
-function Metalinker4(doc) {
+function MetalinkerRFC5854(doc) {
 	let root = doc.documentElement;
-	if (root.nodeName != 'metalink' || root.namespaceURI != NS_METALINKER4 ) {
+	if (root.nodeName != 'metalink' || root.namespaceURI != NS_METALINK_RFC5854 ) {
 		Debug.logString(root.nodeName + "\nns:" + root.namespaceURI);
 		throw new Exception('mlinvalid');
 	}
-	Base.call(this, doc, NS_METALINKER4);
+	Base.call(this, doc, NS_METALINK_RFC5854);
 }
-Metalinker4.prototype = {
+MetalinkerRFC5854.prototype = {
 	__proto__: Base.prototype,
 	parse: function ML4_parse(aReferrer) {
 		if (aReferrer && 'spec' in aReferrer) {
@@ -561,13 +561,13 @@ Metalinker4.prototype = {
 			'publisher': this.getLinkRes(root, "publisher"),
 			'start': false
 		};
-		return new Metalink(downloads, info, "Metalinker Version 4.0 (IETF)");
+		return new Metalink(downloads, info, "Metalinker Version 4.0 (RFC5854/IETF)");
 	}
 };
 
 const __parsers__ = [
 	Metalinker3,
-	Metalinker4
+	MetalinkerRFC5854
 ];
 
 /**
