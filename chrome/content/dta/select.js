@@ -55,10 +55,8 @@ function Tree(links, type) {
 			link.__defineGetter__(
 				'icon',
 				function() {
-					if (!this._icon) {
-						this._icon = getIcon(this.url.url.spec, 'metalink' in this);
-					}
-					return this._icon;
+					delete this.icon;
+					return (this.icon = getIcon(this.url.url.spec, 'metalink' in this));
 				}
 			);
 	
@@ -66,25 +64,22 @@ function Tree(links, type) {
 			link.__defineGetter__(
 				'desc',
 				function() {
-					if (!this._desc) {
-						this._desc = "";
-						if ("description" in this && this.description.length > 0) {
-							this._desc += this.description;
-						}
-						if ("title" in this && this.title.length > 0) {
-							this._desc += ((this._desc.length > 0) ? ' - ' : '') + this.title;
-						}
+					delete this.dec;
+					this.desc = "";
+					if ("description" in this && this.description.length > 0) {
+						this.desc += this.description;
 					}
-					return this._desc;
+					if ("title" in this && this.title.length > 0) {
+						this.desc += ((this.desc.length > 0) ? ' - ' : '') + this.title;
+					}
+					return this.desc;
 				}
 			);
 			link.__defineGetter__(
 				'resname',
 				function() {
-					if (!this._resname) {
-						this._resname = this.url.usable.getUsableFileName();
-					}
-					return this._resname;
+					delete this.resname;
+					return (this.resname = this.url.usable.getUsableFileName());
 				}
 			);
 
