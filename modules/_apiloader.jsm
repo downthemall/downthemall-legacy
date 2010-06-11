@@ -45,19 +45,12 @@ function inject(window) {
 	window.__defineGetter__('DTA', function(){
 		delete this.DTA;
 		let DTA = {
-			get Mediator() {
-				let _m = {
-					open: function DTA_Mediator_open(url, ref) {
-						this.openUrl(window, url, ref);
-					}
-				};
-				Components.utils.import('resource://dta/support/mediator.jsm', _m);
-				delete this.Mediator;
-				return (this.Mediator = _m);
-			},
 			showPreferences: function(pane) this.Mediator.showPreferences(window, pane)
 		};
 		Components.utils.import("resource://dta/api.jsm", DTA);
+		DTA.Mediator.open = function DTA_Mediator_open(url, ref) {
+			this.openUrl(window, url, ref);
+		}
 		return (window.DTA = DTA);
 	});
 	
