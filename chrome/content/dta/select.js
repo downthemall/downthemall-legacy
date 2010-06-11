@@ -64,7 +64,7 @@ function Tree(links, type) {
 			link.__defineGetter__(
 				'desc',
 				function() {
-					delete this.dec;
+					delete this.desc;
 					this.desc = "";
 					if ("description" in this && this.description.length > 0) {
 						this.desc += this.description;
