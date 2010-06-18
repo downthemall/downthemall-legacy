@@ -1,0 +1,13 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+@media all and (-moz-windows-compositor) {
+	window:not(:-moz-lwtheme) {
+		-moz-appearance: -moz-win-glass;
+		background: transparent;
+	}
+	toolbox:not(:-moz-lwtheme) {
+		background: transparent;
+		-moz-appearance: -moz-win-glass !important;
+		text-shadow: 0 0 .8em white, 0 0 .8em white, 0 1px 0 rgba(255,255,255,.4);
+	}
+}
