@@ -19,9 +19,10 @@
 
 	<toolbar id="nav-bar">
 		<spacer id="dta-toolbar-spacer" insertbefore="mediapages-container"/>
-		<toolbarbutton id="dta-manager-button" insertbefore="mediapages-container"/>
-		<toolbarbutton id="dta-turbo-button" insertbefore="mediapages-container"/>
-		<toolbarbutton id="dta-button" insertbefore="mediapages-container"/>
+		<toolbarbutton id="dta-button"/>
+		<toolbarbutton id="dta-turbo-button" />
+		<toolbarbutton id="dta-turboselect-button"/>
+		<toolbarbutton id="dta-manager-button"/>
 	</toolbar>
 	<menupopup id="menu_ToolsPopup">	
 		<menu id="dtaToolsMenu" insertbefore="flashgot-menu" insertafter="javascriptConsole"/>
