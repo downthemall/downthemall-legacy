@@ -20,7 +20,6 @@ overlay chrome://dta/content/dta/manager/info.xul chrome://dta/content/dta/manag
 # work-around bugs in loadOverlay preventing seamonkey integration otherwise
 overlay chrome://dta/content/preferences/prefs.xul chrome://dta/content/preferences/interfacePane.xul
 style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/integration/style.css
-override chrome://dta/skin/manager/netstatus.png chrome://dta-platform/skin/netstatus-aero.png os=WINNT osversion>=6
 
 ## toolkit ##
 overlay	chrome://mozapps/content/downloads/unknownContentType.xul	chrome://dta/content/integration/saveas.xul
@@ -50,6 +49,9 @@ style	chrome://dta/content/dta/manager.xul	chrome://dta/skin/common/songbird.css
 style	chrome://dta/content/dta/select.xul	chrome://dta/skin/common/songbird.css application=songbird@songbirdnest.com
 overlay chrome://dta/content/preferences/interfacePane.xul chrome://dta/content/preferences/toolbarButtons.xul application=songbird@songbirdnest.com
 
+## Aero ##
+style chrome://dta/content/dta/manager.xul chrome://dta/skin/manager/aero.css os=WINNT osversion>=6 application={ec8030f7-c20a-464f-9b0e-13a3a9e97384} appversion>=3.7a5
+override chrome://dta/skin/manager/netstatus.png chrome://dta-platform/skin/netstatus-aero.png os=WINNT osversion>=6
 
 # Hack to prevent .Net Framework Assistant from messing up the browser, courtesy of AdBlock Plus
 override chrome://dotnetassistant/content/bootstrap.xul data:text/xml,<nada/>
