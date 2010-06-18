@@ -166,7 +166,6 @@ function SchedItem(host) {
 	else {
 		this.limit = globalConnections;
 	}
-	//Debug.logString("SchedItem: " + host + ": " + this.limit);
 	this.n = 1;
 	this.downloads = [];
 };
@@ -271,7 +270,6 @@ function EvenScheduler(downloads, running) {
 	while (sorted.length) {
 		// short-circuit: only one host left
 		if (sorted.length == 1) {
-			Debug.logString("Sched: ss");
 			let s = sorted.shift();
 			while (s.queued) {
 				yield s.pop();
@@ -280,7 +278,6 @@ function EvenScheduler(downloads, running) {
 		}
 
 		// round robin		
-		Debug.logString("Sched: rr");		
 		for (let i = 0, e = sorted.length; i < e; ++i) {
 			let s = sorted[i];
 			yield s.pop();
