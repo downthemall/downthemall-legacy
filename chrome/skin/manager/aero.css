@@ -16,7 +16,7 @@
 	  -moz-appearance: none;
 	  padding: 1px 5px;
 	  background: rgba(151,152,153,.05)
-	              -moz-linear-gradient(rgba(251,252,253,.95), rgba(246,247,248,.3) 5%, 
+	              -moz-linear-gradient(rgba(251,252,253,.95), rgba(246,247,248,.85) 5%, rgba(246,247,248,.3) 25%, 
 	                                   rgba(231,232,233,0.0) 35%, rgba(225,226,229,.3));
 	  background-clip: padding-box;
 	  -moz-border-radius: 6.5px;
@@ -52,8 +52,8 @@
 	}
 	#tooladd:not(:-moz-lwtheme):not([disabled="true"]):not([checked="true"]):not(:active):hover {
  		background: rgba(8,111,253,.05)
- 		  	-moz-linear-gradient(rgba(8,111,253,.95), rgba(8,111,253,.3) 5%, 
-				rgba(8,111,253,0.0) 35%, rgba(225,226,229,3));
+ 		  	-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.85) 5%, rgba(8,111,253,.4) 35%, 
+				rgba(8,111,253,.5) 50%, rgba(225,226,229,0.9));
 		border-color: rgba(4,39,117,.8);
   	-moz-box-shadow: 0 0 0 1px rgba(88,191,253,.3) inset,
     	               0 0 0 2px rgba(88,191,253,.1) inset,
@@ -62,8 +62,8 @@
 	}	
 	#toolplay:not(:-moz-lwtheme):not([disabled="true"]):not([checked="true"]):not(:active):hover {
  		background: rgba(18,173,0,.05)
- 		  	-moz-linear-gradient(rgba(18,173,0,.95), rgba(18,173,0,.3) 5%, 
-				rgba(18,173,0,0.0) 35%, rgba(225,226,229,3));
+ 		  	-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.85) 5%, rgba(18,173,0,.4) 35%,
+				rgba(18,173,0,.5) 50%, rgba(225,226,229,0.9));
 		border-color: rgba(5,98,0,.8);
   	-moz-box-shadow: 0 0 0 1px rgba(88,173,80,.3) inset,
     	               0 0 0 2px rgba(88,173,80,.1) inset,
@@ -72,8 +72,8 @@
 	}	
 	#toolpause:not(:-moz-lwtheme):not([disabled="true"]):not([checked="true"]):not(:active):hover {
  		background: rgba(255,175,0,.05)
- 		  	-moz-linear-gradient(rgba(255,175,0,.95), rgba(255,175,0,.3) 5%, 
-				rgba(255,175,0,0.0) 35%, rgba(225,226,229,3));
+ 		  	-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.95) 5%, rgba(255,175,0,.4) 35%, 
+				rgba(255,175,0,0.5) 50%, rgba(225,226,229,0.9));
 		border-color: rgba(150,96,6,.8);
   	-moz-box-shadow: 0 0 0 1px rgba(255,215,70,.3) inset,
     	               0 0 0 2px rgba(255,215,70,.1) inset,
@@ -82,8 +82,8 @@
 	}	
 	#toolcancel:not(:-moz-lwtheme):not([disabled="true"]):not([checked="true"]):not(:active):hover {
  		background: rgba(255,72,0,.05)
- 		  	-moz-linear-gradient(rgba(255,72,0,.95), rgba(255,72,0,.3) 5%, 
-				rgba(255,72,0,0.0) 35%, rgba(225,226,229,3));
+ 		  	-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.95) 5%, rgba(255,72,0,.4) 35%, 
+				rgba(255,72,0,.5) 50%, rgba(225,226,229,0.9));
 		border-color: rgba(165,7,7,.8);
   	-moz-box-shadow: 0 0 0 1px rgba(253,128,128,.3) inset,
     	               0 0 0 2px rgba(253,128,128,.1) inset,
