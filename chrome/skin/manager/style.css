@@ -18,7 +18,6 @@ toolbox {
 	list-style-image: url(chrome://dta/skin/manager/tools.png);
 	-moz-box-orient: vertical !important;
 	-moz-box-align: center !important;
-	border: 0;
 	margin-top: 3px;
 	margin-bottom: 2px;
 	text-align: center;
