@@ -84,6 +84,7 @@ module('resource://dta/manager/queuestore.jsm');
 module('resource://dta/manager/speedstats.jsm');
 module('resource://dta/manager/visitormanager.jsm');
 module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
+module('resource://dta/manager/globalprogress.jsm');
 
 function lazyModule(obj, name, url, symbol) {
 	setNewGetter(obj, name, function() {
@@ -110,6 +111,7 @@ var TEXT_CANCELED;
 
 
 var GlobalBucket = null;
+GlobalProgress = new GlobalProgress(window);
 var Timers = new TimerManager();
 
 const Dialog = {
@@ -126,6 +128,7 @@ const Dialog = {
 	_offline: false,
 	_maxObservedSpeed: 0,
 	_infoWindows: [],
+	
 	get offline() {
 		return this._offline || this._offlineForced;
 	},
@@ -365,6 +368,8 @@ const Dialog = {
 		Tree.clear();
 		this._brokenDownloads = [];
 		Debug.logString("loading of the queue started!");
+		GlobalProgress.reset();
+		GlobalProgress.pause();
 		this._loader = new CoThreadListWalker(
 			this._loadDownloads_item,
 			QueueStore.loadGenerator(),
@@ -375,7 +380,13 @@ const Dialog = {
 		this._loader.run();		
 	},
 	_loadDownloads_item: function D__loadDownloads_item(dbItem, idx) {
-		if (idx % 500 == 0) {
+		if (!idx) {
+			GlobalProgress.total = dbItem.count;
+		}
+		if (idx % 50 == 0) {
+			GlobalProgress.value = idx;
+		}
+		if (idx % 100 == 0) {
 			this._loading.label = _('loading', [idx, dbItem.count, Math.floor(idx * 100 / dbItem.count)]);
 		}
 		
@@ -521,6 +532,8 @@ const Dialog = {
 		}
 		delete this._brokenDownloads;
 		delete this._loading;
+		
+		GlobalProgress.reset();
 		
 		this._updTimer = Timers.createRepeating(REFRESH_FREQ, this.checkDownloads, this, true);		
 		
@@ -713,15 +726,49 @@ const Dialog = {
 					+ ' - '
 					+ this.completed + "/" + Tree.rowCount + " - "
 					+ $('statusSpeed').label + ' - DownThemAll!';
+				if (this._running[0].totalSize) {
+					GlobalProgress.activate(this._running[0].progress * 10, 1000);
+				}
+				else {
+					GlobalProgress.unknown();
+				}
 			}
 			else if (this._running.length > 0) {
+				let p = Math.floor(this.completed * 1000 / Tree.rowCount);
 				document.title =
 					Math.floor(this.completed * 100 / Tree.rowCount) + '%'
 					+ ' - '				
 					+ this.completed + "/" + Tree.rowCount + " - "
 					+ $('statusSpeed').label + ' - DownThemAll!';
+				GlobalProgress.activate(p, 100);
 			}
 			else {
+				if (Tree.rowCount) {
+					let state = COMPLETE;
+					for (let d in Tree.all) {
+						if (d.is(CANCELED)) {
+							state = CANCELED;
+							break;
+						}
+						if (d.is(PAUSED)) {
+							state = PAUSED;
+						}
+					}
+					let p = Math.floor(this.completed * 1000 / Tree.rowCount);
+					switch (state) {
+					case CANCELED:
+						GlobalProgress.error(p, 1000);
+						break;
+					case PAUSED:
+						GlobalProgress.pause(p, 1000);
+						break;
+					default:
+						GlobalProgress.complete(p, 1000);
+					}
+				}
+				else {
+					GlobalProgress.hide();
+				}
 				document.title = this.completed + "/" + Tree.rowCount + " - DownThemAll!";
 			}
 		}
@@ -3506,4 +3553,4 @@ function CustomEvent(download, command) {
  		alert("failed to execute custom event", ex);
  	}
  	download.complete();
-} 
+}
