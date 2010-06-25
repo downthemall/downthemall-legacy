@@ -91,7 +91,7 @@ _uaplatform = (function() {
 })();
 _uaextrap = _uaextra + " (" + _uaplatform + ")";
 Version.getInfo(function(v) {
-	_uaextrap = _uaextra + " (" + _uaplatform + "; " + v.BASE_VERSION + ")";
+	_uaextrap = _uaextra + "/" + v.BASE_VERSION + " (" + _uaplatform + "; 2.0)";
 	_uaextra += "/" + v.BASE_VERSION;
 });
 
@@ -101,7 +101,10 @@ function overrideUA() {
 }
 
 function amendUA() {
-	this.setRequestHeader('User-Agent', this.getRequestHeader('User-Agent') + " " + _uaextra, false);
+	let ua = this.getRequestHeader('User-Agent');
+	if (!/^DownThemAll/.test(ua)) {
+		this.setRequestHeader('User-Agent', ua + " " + _uaextra, false);
+	}
 }
 
 // Sourceforge
