@@ -740,7 +740,7 @@ const Dialog = {
 					+ ' - '				
 					+ this.completed + "/" + Tree.rowCount + " - "
 					+ $('statusSpeed').label + ' - DownThemAll!';
-				GlobalProgress.activate(p, 100);
+				GlobalProgress.activate(p, 1000);
 			}
 			else {
 				if (Tree.rowCount) {
