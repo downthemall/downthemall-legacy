@@ -752,6 +752,7 @@ const Dialog = {
 						}
 						if (d.is(PAUSED)) {
 							state = PAUSED;
+							break;
 						}
 					}
 					let p = Math.floor(this.completed * 1000 / Tree.rowCount);
@@ -763,7 +764,7 @@ const Dialog = {
 						GlobalProgress.pause(p, 1000);
 						break;
 					default:
-						GlobalProgress.complete(p, 1000);
+						GlobalProgress.hide();
 					}
 				}
 				else {
@@ -1572,7 +1573,7 @@ QueueItem.prototype = {
 
 	safeRetry: function QI_safeRetry() {
 		// reset flags
-		this.totalSize = this.partialSize = 0;
+		this.progress = this.totalSize = this.partialSize = 0;
 		this.compression = null;
 		this.activeChunks = this.maxChunks = 0;
 		this.chunks.forEach(function(c) { c.cancel(); });
@@ -1986,7 +1987,7 @@ QueueItem.prototype = {
 
 			// gc
 			this.chunks = [];
-			this.totalSize = this.partialSize = 0;
+			this.progress = this.totalSize = this.partialSize = 0;
 			this.maxChunks = this.activeChunks = 0;
 			this.conflicts = 0;
 			this.resumable = true;
