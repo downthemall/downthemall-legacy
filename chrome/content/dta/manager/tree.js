@@ -133,6 +133,7 @@ const Tree = {
 	},
 	getCellText: function T_getCellText(idx, col) {
 		let d = this._downloads[idx];
+		if (!d) return '';
 
 		switch (col.index) {
 			case 0: return Prefs.showOnlyFilenames ? d.destinationName : d.urlManager.usable;
@@ -165,7 +166,8 @@ const Tree = {
 	},
 	getProgressMode : function T_getProgressMode(idx, col) {
 		if (col.index == 1) {
-			let d = this._downloads[idx]; 
+			let d = this._downloads[idx];
+			if (!d) return 2;
 			if (d.is(PAUSED) && (!d.totalSize || d.progress < 5)) {
 				return 2; // PROGRESS_UNDETERMINED;
 			}
@@ -180,6 +182,7 @@ const Tree = {
 	getCellValue: function T_getCellValue(idx, col) {
 		if (col.index == 1) {
 			let d = this._downloads[idx];
+			if (!d) return 0;
 			if (d.isOf(CANCELED, COMPLETE)) {
 				return 100; 
 			}
@@ -193,6 +196,7 @@ const Tree = {
 			prop.AppendElement(this._iconic);
 			prop.AppendElement(this._progress);
 			let d = this._downloads[idx];
+			if (!d) return;
 			switch (d.state) {
 				case PAUSED:
 					prop.AppendElement(this._paused);
