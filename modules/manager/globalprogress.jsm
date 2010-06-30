@@ -150,7 +150,6 @@ try {
 			this._setState();
 		},
 		_setState: function() {
-			Debug.logString("State is " + this._state);
 			if (this._state <= INDETERMINATE) {
 				this._progress.setProgressState(this._state);
 			}
