@@ -72,6 +72,7 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 module("resource://dta/utils.jsm");
+
 const Preferences = {};
 module("resource://dta/preferences.jsm", Preferences);
 const Mediator = {};
@@ -85,7 +86,6 @@ ServiceGetter(this, "TextToSubURI", "@mozilla.org/intl/texttosuburi;1", "nsIText
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService");
 ServiceGetter(this, "FilterManager", "@downthemall.net/filtermanager;2", "dtaIFilterManager");
-ServiceGetter(this, "DirectoryService", "@mozilla.org/file/directory_service;1", "nsIProperties");
 
 function _decodeCharset(text, charset) {
 	let rv = text;

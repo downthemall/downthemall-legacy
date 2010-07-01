@@ -40,6 +40,7 @@ const EXPORTED_SYMBOLS = [
 	'setNewGetter',
 	'ServiceGetter',
 	'InstanceGetter',
+	'DirectoryService',
 	'newUUIDString',
 	'range',
 	'hexdigest',
@@ -55,6 +56,8 @@ const EXPORTED_SYMBOLS = [
 	'StringBundles',
 	'launch',
 	'reveal',
+	'extendString',
+	'SYSTEMSLASH',
 	'NS_XUL', 'NS_DTA', 'NS_HTML'
 ];
 
@@ -66,7 +69,7 @@ const log = Components.utils.reportError;
 const Exception = Components.Exception;
 
 const File = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
-
+const DirectoryService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
 
 /**
  * XUL namespace
@@ -82,6 +85,12 @@ const NS_DTA = 'http://www.downthemall.net/properties#';
  * XHTML namespace
  */
 const NS_HTML = 'http://www.w3.org/1999/xhtml';
+
+const SYSTEMSLASH = (function() {
+	let f = DirectoryService.get("TmpD", Ci.nsIFile);
+	f.append('dummy');
+	return (f.path.indexOf('/') != -1) ? '/' : '\\';
+})(); 
 
 /**
  * Installs a new lazy getter
@@ -584,16 +593,21 @@ const _br = /%S/gi;
  * @author Nils
  * @see _
  */
-function StringBundles(document) {
-	this._strings = _loadBundles(Array.map(
-		document.getElementsByTagNameNS(NS_DTA, 'stringbundle'),
-		function(e) e.getAttribute('src')
-	).concat(
-		Array.map(
-			document.getElementsByTagNameNS(NS_XUL, 'stringbundle'),
+function StringBundles(documentOrStrings) {
+	if (!('getElementsByTagNameNS' in documentOrStrings)) {
+		this._string = documentOrStrings;
+	}
+	else {
+		this._strings = _loadBundles(Array.map(
+			documentOrStrings.getElementsByTagNameNS(NS_DTA, 'stringbundle'),
 			function(e) e.getAttribute('src')
-		)
-	));
+		).concat(
+			Array.map(
+				documentOrStrings.getElementsByTagNameNS(NS_XUL, 'stringbundle'),
+				function(e) e.getAttribute('src')
+			)
+		));
+	}
 }
 StringBundles.prototype = {
 	getString: function(id) {
@@ -680,3 +694,81 @@ function reveal(file) {
 		launch(file.parent);
 	}
 }
+
+function extendString(_s) {
+	merge(
+		_s.prototype,
+		{ 
+			removeBadChars: function() {
+				return this
+					.replace(/[\n\r\v?:<>*|"]/g, '_')
+					.replace(/%(?:25)?20/g, ' ');
+			},
+			addFinalSlash: function() {
+				if (this.length == 0) {
+					return SYSTEMSLASH;
+				}
+				
+				if (this[this.length - 1] != SYSTEMSLASH) {
+					return this + SYSTEMSLASH;
+				}
+				return this;
+			},
+			removeFinalChar: function(c) {
+				if (this.length == 0) {
+					return this;
+				}
+				if (this[this.length - 1] == c) {
+					return this.substring(0, this.length - 1);
+				}
+				return this;
+			},
+			removeLeadingChar: function(c) {
+				if (this.length == 0) {
+					return this;
+				}
+				if (this[0] == c) {
+					return this.slice(1);
+				}
+				return this;
+			},
+			removeFinalSlash: function() {
+				return this.removeFinalChar(SYSTEMSLASH);
+			},
+			replaceSlashes: function(replaceWith) {
+				return this.replace(/[\\/]/g, replaceWith);
+			},
+			normalizeSlashes: function() {
+				return this.replaceSlashes(SYSTEMSLASH);
+			},
+			removeLeadingSlash: function() {
+				return this.removeLeadingChar(SYSTEMSLASH);
+			},
+			getUsableFileName: function() {
+				let t = this.replace(/\?.*$/, '')
+					.normalizeSlashes()
+					.trim()
+					.removeFinalSlash();
+				return t.split(SYSTEMSLASH).pop().removeBadChars().trim();
+			},
+			getExtension: function() {
+				let name = this.getUsableFileName();
+				let c = name.lastIndexOf('.');
+				return (c == - 1) ? null : name.slice(++c);
+			},
+			cropCenter : function(newLength) {
+				if (this.length > newLength) {
+					return this.substring(0, newLength / 2) + "..." + this.substring(this.length - newLength / 2, this.length);
+				}
+				return this;
+			},
+			toURI: function(charset, baseURI) {
+				return IOService.newURI(this, charset, baseURI);			
+			},
+			toURL: function(charset, baseURI) {
+				return this.toURI(charset, baseURI).QueryInterface(Ci.nsIURL);
+			}
+		}
+	);	
+}
+extendString(String);

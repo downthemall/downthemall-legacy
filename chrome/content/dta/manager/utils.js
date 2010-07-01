@@ -42,7 +42,7 @@ function TrayHandler() {
 		return;
 	}
 	ServiceGetter(this, "_trayService", "@tn123.ath.cx/trayservice;1", "trayITrayService");
-	window.addEventListener(
+	addEventListener(
 		'TrayDblClick',
 		function(event) {
 			if (event.button == 0) {
@@ -51,7 +51,7 @@ function TrayHandler() {
 		},
 		true
 	);
-	window.addEventListener(
+	addEventListener(
 		'TrayClick',
 		function(event) {
 			if (event.button == 2) {
@@ -119,7 +119,6 @@ const Prefs = {
 		['flatReplacementChar', '-'],
 		['recoverAllHttpErrors', false],
 		['speedLimit', -1],
-		['noKeepAlive', true],
 		['resumeOnError', false]
 	],
 
