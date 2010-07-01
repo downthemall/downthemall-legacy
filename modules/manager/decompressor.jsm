@@ -48,13 +48,13 @@ const Ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-const Prefs = {}, DTA = {};
-module("resource://dta/preferences.jsm", Prefs);
+const DTA = {};
 module("resource://dta/utils.jsm");
 module("resource://dta/api.jsm", DTA);
 module("resource://dta/support/timers.jsm");
 
 const IOService = DTA.IOService;
+const Prefs = DTA.Preferences;
 
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 

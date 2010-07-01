@@ -73,8 +73,6 @@ DTA.__defineGetter__('Mediator', function() {
 
 const Debug = DTA.Debug;
 const Preferences = DTA.Preferences;
-const SYSTEMSLASH = (DTA.getProfileFile('dummy').path.indexOf('/') != -1) ? '/' : '\\';
-
 
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!
@@ -283,6 +281,7 @@ var Utils = {
 })();
 
 Components.utils.import('resource://dta/utils.jsm', Utils);
+const SYSTEMSLASH = Utils.SYSTEMSLASH;
 
 
 //XXX Copy from utils.jsm
@@ -293,80 +292,7 @@ for each (let copy in ["setNewGetter", "ServiceGetter", "InstanceGetter", "bind"
 
 ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService2");
 
-Utils.merge(
-	String.prototype,
-	{ 
-		removeBadChars: function() {
-			return this
-				.replace(/[\n\r\v?:<>*|"]/g, '_')
-				.replace(/%(?:25)?20/g, ' ');
-		},
-		addFinalSlash: function() {
-			if (this.length == 0) {
-				return SYSTEMSLASH;
-			}
-			
-			if (this[this.length - 1] != SYSTEMSLASH) {
-				return this + SYSTEMSLASH;
-			}
-			return this;
-		},
-		removeFinalChar: function(c) {
-			if (this.length == 0) {
-				return this;
-			}
-			if (this[this.length - 1] == c) {
-				return this.substring(0, this.length - 1);
-			}
-			return this;
-		},
-		removeLeadingChar: function(c) {
-			if (this.length == 0) {
-				return this;
-			}
-			if (this[0] == c) {
-				return this.slice(1);
-			}
-			return this;
-		},
-		removeFinalSlash: function() {
-			return this.removeFinalChar(SYSTEMSLASH);
-		},
-		replaceSlashes: function(replaceWith) {
-			return this.replace(/[\\/]/g, replaceWith);
-		},
-		normalizeSlashes: function() {
-			return this.replaceSlashes(SYSTEMSLASH);
-		},
-		removeLeadingSlash: function() {
-			return this.removeLeadingChar(SYSTEMSLASH);
-		},
-		getUsableFileName: function() {
-			let t = this.replace(/\?.*$/, '')
-				.normalizeSlashes()
-				.trim()
-				.removeFinalSlash();
-			return t.split(SYSTEMSLASH).pop().removeBadChars().trim();
-		},
-		getExtension: function() {
-			let name = this.getUsableFileName();
-			let c = name.lastIndexOf('.');
-			return (c == - 1) ? null : name.slice(++c);
-		},
-		cropCenter : function(newLength) {
-			if (this.length > newLength) {
-				return this.substring(0, newLength / 2) + "..." + this.substring(this.length - newLength / 2, this.length);
-			}
-			return this;
-		},
-		toURI: function(charset, baseURI) {
-			return IOService.newURI(this, charset, baseURI);			
-		},
-		toURL: function(charset, baseURI) {
-			return this.toURI(charset, baseURI).QueryInterface(Ci.nsIURL);
-		}
-	}
-);
+Utils.extendString(String);
 
 /**
  * Get the icon URI corresponding to an URI (special mac handling)
