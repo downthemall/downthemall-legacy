@@ -2585,7 +2585,7 @@ function startDownloads(start, downloads) {
 			qi.postData = postData;
 		}		
 
-		qi.state = start ? QUEUED : PAUSED;
+		qi._state = start ? QUEUED : PAUSED;
 		if (qi.is(QUEUED)) {
 			qi.status = TEXT_QUEUED;
 		}
