@@ -135,7 +135,7 @@ function DebugService() {
 DebugService.prototype = {
 	classDescription: "DownThemAll! Debug and Logging Service",
 	contractID: "@downthemall.net/debug-service;1",
-	classID: Components.ID("0B82FEBB-59A1-41d7-B31D-D5A686E11A69"),
+	classID: Components.ID("{0B82FEBB-59A1-41d7-B31D-D5A686E11A69}"),
 	
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference, Ci.dtaIDebugService]),
 	
@@ -321,18 +321,16 @@ function Stuff() {}
 Stuff.prototype = {
 	classDescription: "DownThemAll! stuff",
 	contractID: "@downthemall.net/stuff;1",
-	classID: Components.ID("27a344f4-7c1b-43f3-af7f-bb9dd65114bb"),		
-	_xpcom_categories: [{category: 'app-startup', service: true}],
+	classID: Components.ID("{27a344f4-7c1b-43f3-af7f-bb9dd65114bb}"),		
+	_xpcom_categories: [{category: 'profile-after-change'}],
 
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference]),
-	QueryReferent: function(iid) this.QueryInterface(iid),
-	GetWeakReference: function() this,
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
 	
 	observe: function(aSubject, aTopic, aData) {
 		switch (aTopic) {
-		case 'app-startup':
-			Observers.addObserver(this, 'final-ui-startup', true);
-			Observers.addObserver(this, 'profile-change-teardown', true);
+		case 'profile-after-change':
+			Observers.addObserver(this, 'final-ui-startup', false);
+			Observers.addObserver(this, 'profile-change-teardown', false);
 			break;
 		case 'final-ui-startup':
 			Observers.removeObserver(this, 'final-ui-startup');
@@ -467,12 +465,12 @@ Stuff.prototype = {
 function ContentHandling() {}
 ContentHandling.prototype = {
 	classDescription: 'DownThemAll! Content Handling',
-	classID: Components.ID('35eabb45-6bca-408a-b90c-4b22e543caf4'),
+	classID: Components.ID('{35eabb45-6bca-408a-b90c-4b22e543caf4}'),
 	contractID: '@downthemall.net/contenthandling;2',
 	
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.dtaIContentHandling]),
 	
-	_xpcom_categories: [{category: 'app-startup', service: true}],
+	_xpcom_categories: [{category: 'profile-after-change'}],
 	
 	// ensure that there is only one instance of this service around
 	_xpcom_factory: {
@@ -507,29 +505,32 @@ ContentHandling.prototype = {
 		this._ps.removeObserver('extensions.dta.listsniffedvideos', this);
 	},
 	observe: function ct_observe(subject, topic, data) {
-		if (topic == 'app-startup') {
+		switch(topic) {
+		case 'profile-after-change':
 			this._init();
-		}
-		else if (topic == 'xpcom-shutdown') {
+			break;
+		case 'xpcom-shutdown':
 			this._uninit();
-		}
-		else if (topic == 'http-on-modify-request') {
+			break;
+		case 'http-on-modify-request':
 			this.observeRequest(subject, topic, data);
-		}
-		else if (topic == 'http-on-examine-response' || topic == 'http-on-examine-cached-response') {
+			break;
+		case 'http-on-examine-response':
+		case 'http-on-examine-cached-response':
 			this.observeResponse(subject, topic, data);
-		}
-		else if (topic == 'nsPref:changed') {
+			break;
+		case 'nsPref:changed':
 			try {
 				this.sniffVideos = subject.QueryInterface(Ci.nsIPrefBranch).getBoolPref(PREF_SNIFFVIDEOS);
 			}
 			catch (ex) {
 				log("Failed to get sniffVideos pref", ex);
 			}
-		}
-		else if (topic == 'private-browsing') {
+			break;
+		case 'private-browsing':
 			this._clearPostData();
 			this._clearVideos();
+			break;
 		}
 	},
 	observeRequest: function ct_observeRequest(subject, topic, data) {
@@ -715,7 +716,7 @@ function AboutModule() {
 }
 AboutModule.prototype = {
 	classDescription: "DownThemAll! about module",
-	classID: Components.ID('bbaedbd9-9567-4d11-9255-0bbae236ecab'),
+	classID: Components.ID('{bbaedbd9-9567-4d11-9255-0bbae236ecab}'),
 	contractID: '@mozilla.org/network/protocol/about;1?what=downthemall',
 	
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule]),
@@ -748,9 +749,7 @@ AboutModule.prototype = {
 		}
 	},
 	
-	getURIFlags: function(aURI) {
-	    return Ci.nsIAboutModule.URI_SAFE_FOR_UNTRUSTED_CONTENT;
-	}	
+	getURIFlags: function(aURI) Ci.nsIAboutModule.URI_SAFE_FOR_UNTRUSTED_CONTENT
 };
 
 /**
@@ -763,7 +762,7 @@ function Filter(name) {
 Filter.prototype = {
 	classDescription: "DownThemAll! Filter",
 	contractID: "@downthemall.net/filter;1",
-	classID: Components.ID("1CF86DC0-33A7-43b3-BDDE-7ADC3B35D114"),		
+	classID: Components.ID("{1CF86DC0-33A7-43b3-BDDE-7ADC3B35D114}"),		
 	QueryInterface: XPCOMUtils.generateQI([Ci.dtaIFilter]),		
 	
 	_persist: true,
@@ -990,9 +989,9 @@ function FilterManager() {};
 FilterManager.prototype = {
 	classDescription: "DownThemAll! Filtermanager",
 	contractID: "@downthemall.net/filtermanager;2",
-	classID: Components.ID("435FC5E5-D4F0-47a1-BDC1-F325B78188F3"),		
+	classID: Components.ID("{435FC5E5-D4F0-47a1-BDC1-F325B78188F3}"),		
 	QueryInterface: XPCOMUtils.generateQI([Ci.dtaIFilterManager, Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference]),				
-	_xpcom_categories: [{category: 'app-startup', service: true}],
+	_xpcom_categories: [{category: 'profile-after-change'}],
 
 	QueryReferent: function(iid) this.QueryInterface(iid),
 	GetWeakReference: function() this,
@@ -1189,18 +1188,20 @@ FilterManager.prototype = {
 
 	// nsIObserver
 	observe: function FM_observe(subject, topic, prefName) {
-		if (topic == 'app-startup') {
-			Observers.addObserver(this, 'final-ui-startup', true);
-		}
-		else if (topic == "final-ui-startup") {
-			Observers.removeObserver(this, 'final-ui-startup');
-			this.init();
-		}
-		else if (topic == 'timer-callback') {
-			this.reload();
-		}
-		else {
-			this._delayedReload();
+		switch (topic){
+			case 'profile-after-change':
+				Observers.addObserver(this, 'final-ui-startup', true);
+				break;
+			case 'final-ui-startup':
+				Observers.removeObserver(this, 'final-ui-startup');
+				this.init();
+				break;
+			case 'timer-callback':
+				this.reload();
+				break;
+			default:
+				this._delayedReload();
+				break;
 		}
 	},
 
@@ -1218,7 +1219,10 @@ FilterManager.prototype = {
 	}
 };
 
-/**
- * Module
- */
-function NSGetModule(mgr, spec) XPCOMUtils.generateModule([DebugService, Stuff, ContentHandling, AboutModule, FilterManager]);
+
+if (XPCOMUtils.generateNSGetFactory) {
+    var NSGetFactory = XPCOMUtils.generateNSGetFactory([DebugService, Stuff, ContentHandling, AboutModule, FilterManager]);
+}
+else {
+    function NSGetModule() XPCOMUtils.generateModule([DebugService, Stuff, ContentHandling, AboutModule, FilterManager]);
+}
