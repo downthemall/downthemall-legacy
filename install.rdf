@@ -14,7 +14,7 @@
 		<em:developer>Nils Maier</em:developer>
 		
 		<em:aboutURL>chrome://dta/content/about/about.xul</em:aboutURL>
-		<em:iconURL>chrome://dta/skin/common/icon.png</em:iconURL>
+		<em:iconURL>chrome://dtaicon/content/icon.png</em:iconURL>
 		<em:homepageURL>http://downthemall.net/</em:homepageURL>
 		<em:optionsURL>chrome://dta/content/preferences/prefs.xul</em:optionsURL>
 		
