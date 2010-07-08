@@ -65,6 +65,7 @@ pref("extensions.dta.rememberoneclick", false);
 pref("extensions.dta.autoretryinterval", 300);
 pref("extensions.dta.maxautoretries", 5);
 pref("extensions.dta.autoclearcomplete", false);
+pref("extensions.dta.confirmcancel", true);
 pref("extensions.dta.confirmremove", true);
 pref("extensions.dta.confirmremovecompleted", true);
 pref("extensions.dta.permissions", 416);

@@ -111,6 +111,7 @@ const Prefs = {
 		['maxAutoRetries', 10],
 		['autoRetryInterval', 0],
 		['autoClearComplete', false],
+		['confirmCancel', true],
 		['confirmRemove', true],
 		['confirmRemoveCompleted', true],
 		['permissions', 384],
