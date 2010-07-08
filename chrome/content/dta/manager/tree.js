@@ -520,7 +520,23 @@ const Tree = {
 		);
 	},
 	cancel: function T_cancel() {
-		this.updateSelected(function(d) { d.cancel(); return true; });
+		if (Prefs.confirmCancel) {
+			let many = this.selection.count > 1;
+			let res = Prompts.confirm(
+					window,
+					_('canceltitle'),
+					_(many ? 'cancelmanytext' : 'canceltext' ), 
+					_(many ? 'docancelmany' : 'docancel'), 
+					_('dontcancel'), 
+					null, 1, false, _('removecheck'));
+			if (res.checked) {
+				Preferences.setExt('confirmcancel', false);
+			}
+			if (res.button) {
+				return;
+			}
+		}
+		this.updateSelected(function(d) d.cancel() || true);
 	},
 	selectAll: function T_selectAll() {
 		this.selection.selectAll();
