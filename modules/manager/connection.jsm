@@ -430,7 +430,7 @@ Connection.prototype = {
 				Debug.log("handleError: Cannot recover from problem!", code);
 				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1 || Preferences.getExt('recoverallhttperrors', false)) {
 					Debug.log("we got temp failure!", code);
-					Dialog.markAutoRetry(d);
+					d.initAutoRetry();
 					d.pause();
 					d.status = code >= 500 ? _('temperror') : _('autherror');
 				}
@@ -445,7 +445,7 @@ Connection.prototype = {
 					var file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
 					code = Utils.formatNumber(code, 3);
 					if (Preferences.getExt('resumeonerror', false)) {
-						Dialog.markAutoRetry(d);
+						d.initAutoRetry();
 						d.pause();
 						d.status = _('temperror');
 					}
@@ -601,7 +601,7 @@ Connection.prototype = {
 		if (c.start != 0 && d.is(RUNNING)) {
 			if (!this.handleError()) {
 				Debug.log(d + ": Server error or disconnection", "(type 1)");
-				Dialog.markAutoRetry(d);
+				d.initAutoRetry();
 				d.status = _("servererror");
 				d.pause();
 			}
@@ -733,7 +733,7 @@ Connection.prototype = {
 		].indexOf(aStatusCode)) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.log(d + ": Server error or disconnection", "(type 3)");
-				Dialog.markAutoRetry(d);
+				d.initAutoRetry();
 				d.pause();
 				d.status = _("servererror");
 			}
@@ -764,7 +764,7 @@ Connection.prototype = {
 		if (c.starter && d.is(RUNNING)) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.log(d + ": Server error or disconnection", "(type 2)");
-				Dialog.markAutoRetry(d);
+				d.initAutoRetry();
 				d.pause();
 				d.status = _("servererror");
 			}
@@ -782,7 +782,7 @@ Connection.prototype = {
 		if (!c.written  && !!c.remainder) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.log(d + ": Server error or disconnection", "(type 1)");
-				Dialog.markAutoRetry(d);
+				d.initAutoRetry();
 				d.pause();
 				d.status = _("servererror");
 			}
@@ -791,7 +791,7 @@ Connection.prototype = {
 
 		if (!d.isOf(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
 			if (d.resumable || Preferences.getExt('resumeonerror', false)) {
-				Dialog.markAutoRetry(d);
+				d.initAutoRetry();
 				d.pause();
 				d.status = _('errmismatchtitle');
 			}

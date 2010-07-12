@@ -810,7 +810,7 @@ const Dialog = {
 				// checks for timeout
 				if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
 					if (d.resumable || !d.totalSize || !d.partialSize || Prefs.resumeOnError) {
-						Dialog.markAutoRetry(d);
+						d.initAutoRetry();
 						d.pause();
 						d.status = _("timeout");
 					}
@@ -953,7 +953,6 @@ const Dialog = {
 		}
 	},
 	markAutoRetry: function D_markAutoRetry(d) {
-		d.initAutoRetry();
 		if (this._autoRetrying.indexOf(d) == -1) {
 			this._autoRetrying.push(d);
 		}
@@ -2109,6 +2108,7 @@ QueueItem.prototype = {
 		if (!Prefs.autoRetryInterval || (Prefs.maxAutoRetries && Prefs.maxAutoRetries <= this._autoRetries)) {
 			 return;
 		}
+		Dialog.markAutoRetry(this);
 		this._autoRetryTime = Utils.getTimestamp();
 		Debug.logString("marked auto-retry: " + this);
 		this.save();
