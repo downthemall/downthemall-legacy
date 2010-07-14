@@ -1958,7 +1958,7 @@ QueueItem.prototype = {
 				required *= 2.5;
 			}
 			if (nsd < required) {
-				Debug.logString("nsd: " +  nsd + ", tsd: " + tsd);
+				Debug.logString("nsd: " +  nsd + ", tsd: " + required);
 				this.fail(_("ndsa"), _("spacedir"), _("freespace"));
 				return false;
 			}		
@@ -1966,7 +1966,7 @@ QueueItem.prototype = {
 		}
 		catch (ex) {
 			Debug.log("size check threw", ex);
-			d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 		}
 		return false;		
 	},
