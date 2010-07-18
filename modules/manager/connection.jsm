@@ -430,8 +430,7 @@ Connection.prototype = {
 				Debug.log("handleError: Cannot recover from problem!", code);
 				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1 || Preferences.getExt('recoverallhttperrors', false)) {
 					Debug.log("we got temp failure!", code);
-					d.initAutoRetry();
-					d.pause();
+					d.pauseAndRetry();
 					d.status = code >= 500 ? _('temperror') : _('autherror');
 				}
 				else if (code == 450) {
@@ -445,8 +444,7 @@ Connection.prototype = {
 					var file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
 					code = Utils.formatNumber(code, 3);
 					if (Preferences.getExt('resumeonerror', false)) {
-						d.initAutoRetry();
-						d.pause();
+						d.pauseAndRetry();
 						d.status = _('temperror');
 					}
 					else {
@@ -601,9 +599,8 @@ Connection.prototype = {
 		if (c.start != 0 && d.is(RUNNING)) {
 			if (!this.handleError()) {
 				Debug.log(d + ": Server error or disconnection", "(type 1)");
-				d.initAutoRetry();
+				d.pauseAndRetry();
 				d.status = _("servererror");
-				d.pause();
 			}
 			return false;
 		}			
@@ -733,8 +730,7 @@ Connection.prototype = {
 		].indexOf(aStatusCode)) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.log(d + ": Server error or disconnection", "(type 3)");
-				d.initAutoRetry();
-				d.pause();
+				d.pauseAndRetry();
 				d.status = _("servererror");
 			}
 			else {
@@ -764,8 +760,7 @@ Connection.prototype = {
 		if (c.starter && d.is(RUNNING)) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.log(d + ": Server error or disconnection", "(type 2)");
-				d.initAutoRetry();
-				d.pause();
+				d.pauseAndRetry();
 				d.status = _("servererror");
 			}
 			else {
@@ -782,8 +777,7 @@ Connection.prototype = {
 		if (!c.written  && !!c.remainder) {
 			if (!d.urlManager.markBad(this.url)) {
 				Debug.log(d + ": Server error or disconnection", "(type 1)");
-				d.initAutoRetry();
-				d.pause();
+				d.pauseAndRetry();
 				d.status = _("servererror");
 			}
 			return;
@@ -791,8 +785,7 @@ Connection.prototype = {
 
 		if (!d.isOf(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
 			if (d.resumable || Preferences.getExt('resumeonerror', false)) {
-				d.initAutoRetry();
-				d.pause();
+				d.pauseAndRetry();
 				d.status = _('errmismatchtitle');
 			}
 			else {
