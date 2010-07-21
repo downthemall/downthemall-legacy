@@ -246,6 +246,7 @@ const Dialog = {
 				}
 				if (shouldAutofit) {
 					document.documentElement.setAttribute('dtaAutofitted', cv);
+					$('tools').setAttribute('mode', 'icons');
 					setTimeout(
 						function() {
 							let tdb = $('tooldonate').boxObject;
