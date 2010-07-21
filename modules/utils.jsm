@@ -595,7 +595,7 @@ const _br = /%S/gi;
  */
 function StringBundles(documentOrStrings) {
 	if (!('getElementsByTagNameNS' in documentOrStrings)) {
-		this._string = documentOrStrings;
+		this._strings = documentOrStrings;
 	}
 	else {
 		this._strings = _loadBundles(Array.map(

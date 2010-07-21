@@ -76,7 +76,7 @@ ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOServ
 		.getSimpleEnumeration(), Ci.nsIPropertyElement)) {
 		strings[s.key] = s.value;
 	}
-	let bundle = new StringBundles(strings);
+	let bundles = new StringBundles(strings);
 	this['_'] = function() (arguments.length == 1) ? bundles.getString(arguments[0]) : bundles.getFormattedString.apply(bundles, arguments);
 })();
 
@@ -839,7 +839,7 @@ Connection.prototype = {
 			}
 		}
 		catch(ex) {
-			Debug.log("onProgressChange():", e);
+			Debug.log("onProgressChange():", ex);
 		}
 	},
 	onStatus: function  DL_onStatus(aRequest, aContext, aStatus, aStatusArg) {}
