@@ -82,10 +82,11 @@ ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOServ
 
 
 let _window = null;
+let _m = this;
 function setAuthPrompterWindow(_wnd) {
 	_window = _wnd;
-	delete AuthPrompts;
-	setNewGetter(this, 'AuthPrompts', function() {
+	delete _m.AuthPrompts;
+	setNewGetter(_m, 'AuthPrompts', function() {
 			let _l = {};
 			module('resource://dta/support/loggedprompter.jsm', _l);
 			return new _l.LoggedPrompter(_window);
