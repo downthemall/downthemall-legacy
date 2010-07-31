@@ -350,7 +350,7 @@ Connection.prototype = {
 		
 		if (d.urlManager.markBad(this.url)) {
 			Debug.logString("handleError: fresh urls available, kill this one and use another!");
-			d.timeLastProgress = Utils.getTimestamp();
+			d.timeLastProgress = getTimestamp();
 			return true;
 		}
 		
@@ -443,7 +443,7 @@ Connection.prototype = {
 				}
 				else {
 					var file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
-					code = Utils.formatNumber(code, 3);
+					code = formatNumber(code, 3);
 					if (Preferences.getExt('resumeonerror', false)) {
 						d.pauseAndRetry();
 						d.status = _('temperror');
