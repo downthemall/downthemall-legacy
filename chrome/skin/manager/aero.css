@@ -15,9 +15,9 @@
 	toolbox:not(:-moz-lwtheme) toolbarbutton {
 	  -moz-appearance: none;
 	  padding: 1px 5px;
-	  background: rgba(151,152,153,.05)
-	              -moz-linear-gradient(rgba(251,252,253,.95), rgba(246,247,248,.85) 5%, rgba(246,247,248,.3) 25%, 
-	                                   rgba(231,232,233,0.0) 35%, rgba(225,226,229,.3));
+	  background: rgba(151,152,153,.6)
+	              -moz-linear-gradient(rgba(251,252,253,.95), rgba(246,247,248,.85) 5%, rgba(246,247,248,.5) 25%, 
+	                                   rgba(231,232,233,0.3) 35%, rgba(225,226,229,.9));
 	  background-clip: padding-box;
 	  -moz-border-radius: 6.5px;
 	  border: 1px solid;
@@ -30,10 +30,10 @@
 	  margin: 1px 4px;
 	}
 	toolbox:not(:-moz-lwtheme) toolbarbutton[disabled="true"] {
-	  opacity: .5;
+	  opacity: .3;
 	}
 	toolbox:not(:-moz-lwtheme) toolbarbutton[disabled="true"] > .toolbarbutton-icon {
-  	opacity: .3;
+  	opacity: .2;
 	}
 	#tools[mode="icons"]:not(:-moz-lwtheme) {
 		-moz-border-radius: 4.5px;
