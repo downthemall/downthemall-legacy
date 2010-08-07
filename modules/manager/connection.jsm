@@ -261,6 +261,10 @@ Connection.prototype = {
 	flags: Ci.nsIClassInfo.MAIN_THREAD_ONLY,
 	
 	// nsIChannelEventSink
+	asyncOnChannelRedirect: function(oldChannel, newChannel, flags, callback) {
+		this.onChannelRedirect(oldChannel, newChannel, flags);
+		callback.onRedirectVerifyCallback(0);
+	},
 	onChannelRedirect: function DL_onChannelRedirect(oldChannel, newChannel, flags) {
 		let c = this.c;
 		try {
