@@ -2,8 +2,14 @@
 
 @media all and (-moz-windows-compositor) {
 	window:not(:-moz-lwtheme) {
-		-moz-appearance: -moz-win-glass;
+		-moz-appearance: -moz-win-borderless-glass;
 		background: transparent;
+	}
+	#titlebox {
+		display: -moz-box;
+		-moz-binding: url(chrome://dta/content/common/bindings.xml#titlebox);
+		list-style-image: url(chrome://dtaicon/content/chrome/icons/default/DownThemAll.ico);
+		text-shadow: 0 0 .9em white, 0 0 .9em white, 0 2px 0 rgba(255,255,255,.6);
 	}
 	toolbox:not(:-moz-lwtheme) {
 		background: transparent;
@@ -34,6 +40,10 @@
 	}
 	toolbox:not(:-moz-lwtheme) toolbarbutton[disabled="true"] > .toolbarbutton-icon {
   	opacity: .2;
+	}
+	#tools {
+		/* draggable glass toolbar (bugzilla 555081) */
+		-moz-binding: url(chrome://global/content/bindings/toolbar.xml#toolbar-drag);
 	}
 	#tools[mode="icons"]:not(:-moz-lwtheme) {
 		-moz-border-radius: 4.5px;

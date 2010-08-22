@@ -113,10 +113,8 @@
 				}
 			]]></constructor>
 			<field name="modified">false</field>
-			<property name="_list"
-				onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'list');" />
-			<property name="_popup"
-				onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'popup');" />
+			<field name="_list">document.getAnonymousElementByAttribute(this, 'anonid', 'list');</field>
+			<field name="_popup">document.getAnonymousElementByAttribute(this, 'anonid', 'popup');</field>
 			<property name="_pref" onget="return this.getAttribute('preference')" />
 			<property name="_values">
 				<getter><![CDATA[
@@ -617,7 +615,26 @@
 			]]></handler>
 		</handlers>	
 	</binding>
-
+	
+	<binding id="titlebox" extends="chrome://global/content/bindings/general.xml#windowdragbox">
+		<resources>
+			<stylesheet src="chrome://dta/content/common/titlebox.css"/>
+		</resources>
+		<content>
+			<xul:hbox class="titlebox-iconbox">
+				<xul:image class="titlebox-icon"/>
+			</xul:hbox>
+			<xul:hbox class="titlebox-titlebox">
+				<xul:label anonid="label" class="titlebox-title"/>
+			</xul:hbox>
+		</content>
+		<implementation>
+			<constructor/>
+			<field name="label">document.getAnonymousElementByAttribute(this, 'anonid', 'label');</field>
+			<property name="value">
+				<getter>return this.label.value;</getter>
+				<setter>this.label.value = val;</setter>
+			</property>
+		</implementation>
+	</binding>
 </bindings>
-				
-		
