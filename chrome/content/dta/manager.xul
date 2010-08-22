@@ -21,7 +21,7 @@
 	%managerDTD;
 ]>
 
-<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" windowtype="DTA:Manager" title="DownThemAll!" id="DownThemAll" class="downlinks" flex="1" persist="width height screenX screenY sizemode dtaAutofitted">
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" windowtype="DTA:Manager" title="DownThemAll!" id="DownThemAll" class="downlinks" flex="1" persist="width height screenX screenY sizemode dtaAutofitted" chromemargin="0,-1,-1,-1">
 
 	<script type="application/x-javascript" src="chrome://global/content/globalOverlay.js" />
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js" />
@@ -197,7 +197,7 @@
 		</menupopup>
 	</popupset>
 
-
+	<hbox id="titlebox"/>
 	<notificationbox id="notifications" flex="1" dir="reverse">
 		<stack flex="1" id="mainstack">
 			<vbox flex="1">
@@ -253,7 +253,7 @@
 	</notificationbox>
 
 	<statusbar id="footer" chromedir="&locale.dir;">
-		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline" />
+		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline"><label value="test"/></statusbarpanel>
 		<statusbarpanel id="statusText" label="" flex="3" />
 		<statusbarpanel id="statusSpeed" label="" />
 		<statusbarpanel id="statusSpeeds">
