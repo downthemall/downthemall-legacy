@@ -253,7 +253,7 @@
 	</notificationbox>
 
 	<statusbar id="footer" chromedir="&locale.dir;">
-		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline"><label value="test"/></statusbarpanel>
+		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline"/>
 		<statusbarpanel id="statusText" label="" flex="3" />
 		<statusbarpanel id="statusSpeed" label="" />
 		<statusbarpanel id="statusSpeeds">
