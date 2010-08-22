@@ -42,10 +42,10 @@ toolbox {
 	text-align: center;
 }
 
-#tools spacer {
+#tools toolbarspacer {
 	min-width: 5px;
 }
-#tools spacer.visible {
+#tools toolbarspacer.visible {
 	background: url(chrome://dta/skin/common/toolbarspacer.png) no-repeat 50% 50%;
 	min-width: 13px;
 	padding: 0;
