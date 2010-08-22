@@ -201,20 +201,20 @@
 	<notificationbox id="notifications" flex="1" dir="reverse">
 		<stack flex="1" id="mainstack">
 			<vbox flex="1">
-				<toolbox chromedir="&locale.dir;" context="toolbarpopup">
+				<toolbox chromedir="&locale.dir;" context="toolbarpopup" mousethrough="never">
 					<toolbar id="tools" mode="icons" persist="mode" class="toolbar-primary">
-						<spacer />
+						<toolbarspacer />
 						<toolbarbutton label="&tooladd.label;" id="tooladd" command="cmdAddUrl" tooltiptext="&tooladd.tooltip;" />
-						<spacer class="visible" />
+						<toolbarspacer class="visible" />
 						<toolbarbutton label="&resume.label;" id="toolplay" command="cmdResume" />
 						<toolbarbutton label="&pause.label;" id="toolpause" command="cmdPause" />
 						<toolbarbutton label="&cancel.label;" id="toolcancel" command="cmdCancel" />
-						<spacer class="visible" />
+						<toolbarspacer class="visible" />
 						<toolbarbutton label="&movetop.label;" id="toolmovetop" command="cmdMoveTop" />
 						<toolbarbutton label="&moveup.label;" id="toolmoveup" command="cmdMoveUp" />
 						<toolbarbutton label="&movedown.label;" id="toolmovedown" command="cmdMoveDown" />
 						<toolbarbutton label="&movebottom.label;" id="toolmovebottom" command="cmdMoveBottom" />
-						<spacer flex="1" />
+						<toolbarspacer flex="1" />
 						<image chromedir="&locale.dir;" id="tooldonate" tooltiptext="&tooldonate.tooltiptext;" />
 					</toolbar>
 				</toolbox>
