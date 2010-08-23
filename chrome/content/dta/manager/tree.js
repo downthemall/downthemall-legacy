@@ -863,7 +863,7 @@ const Tree = {
 	updateAll: function T_updateAll(f, t) {
 		this.beginUpdate();
 		QueueStore.beginUpdate();
-		for (d in this.all) {
+		for (let d in this.all) {
 			if (!f.call(t, d)) {
 				break;
 			}
