@@ -89,6 +89,7 @@ function lazyModule(obj, name, url, symbol) {
 lazyModule(this, 'AlertService', 'resource://dta/support/alertservice.jsm');
 lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Decompressor');
 lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
+lazyModule(this, 'Version', 'resource://dta/version.jsm', 'Version');
 
 setAuthPrompterWindow(window);
 
@@ -568,7 +569,7 @@ const Dialog = {
 		window.openDialog(
 			'chrome://dta/content/dta/addurl.xul',
 			'_blank',
-			'chrome, centerscreen, dialog=no, dependent=yes'
+			Version.OS == 'darwin' ? 'chrome,modal,dependent=yes' : 'chrome,centerscreen,dialog=no,dependent=yes'
 		);
 	},
 	

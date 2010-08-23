@@ -54,6 +54,7 @@ const Version = {
 		ID: ID,
 		LOCALE: Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).getSelectedLocale('global'),
 		APP_NAME: runtime.name.toLowerCase().replace(/ /, ''),
+		OS: runtime.OS.toLowerCase(),
 		APP_VERSION: runtime.version,
 		APP_ID: runtime.ID,
 		VERSION: '0.0',

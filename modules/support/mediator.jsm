@@ -150,7 +150,7 @@ this.__defineGetter__(
 	'homePage',
 	function() {
 		let hp = Prefs.get('browser.startup.homepage', null);
-		if (hp && !/^resource:/.test(hp)) {
+		if (hp && !/^(?:resource|chrome):/.test(hp)) {
 			return hp;
 		}
 		try {
@@ -191,25 +191,6 @@ function tryOpenUrl(window, link, ref) {
 			}
 			win.getBrowser().addTab(objToString(link), objToString(ref));
 			return true;
-		}
-		win = getMostRecent('Songbird:Main');
-		if (win) {
-			// Songbird
-			let tb = win.document.getElementById('content');
-			if (tb) {
-				tb.loadOneTab(objToString(link), objToUri(ref), null, null, null);
-				return true;
-			}
-		}
-		win = getMostRecent('mail:3pane');
-		if (win) {
-			// thunderbird 3+
-			let tb = win.document.getElementById('tabmail');
-			if (tb && ('openTab' in tb)) {
-				tb.openTab('contentTab', link, link);
-				alert('tm');
-				return true;
-			}
 		}
 	}
 	catch (ex) {
