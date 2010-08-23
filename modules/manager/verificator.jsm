@@ -114,7 +114,7 @@ Callback.prototype = {
 };
 
 function Verificator(file, hashCollection, completeCallback, progressCallback) {
-	this._file = file;
+	this._file = new File(file);
 	this._hashCollection = hashCollection;
 	this._completeCallback = completeCallback;
 	this._progressCallback = progressCallback;
@@ -138,7 +138,7 @@ Verificator.prototype = {
 	run: function() {
 		try {
 			let hashCollection = this._hashCollection;
-			let file = new File(this._file);
+			let file = this._file;
 			let total = file.fileSize;
 			let pending = total;
 			let completed = 0;
@@ -190,7 +190,7 @@ MultiVerificator.prototype = {
 			let hashCollection = this._hashCollection;
 			let mismatches = [];
 
-			let file = new File(this._file);
+			let file = this._file;
 			let total = file.fileSize;
 			let pending = total;
 			let completed = 0;
