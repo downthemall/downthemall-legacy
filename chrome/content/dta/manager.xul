@@ -203,7 +203,7 @@
 			<vbox flex="1">
 				<toolbox chromedir="&locale.dir;" context="toolbarpopup" mousethrough="never">
 					<toolbar id="tools" mode="icons" persist="mode" class="toolbar-primary">
-						<toolbarspacer />
+						<toolbarspacer id="prespacer"/>
 						<toolbarbutton label="&tooladd.label;" id="tooladd" command="cmdAddUrl" tooltiptext="&tooladd.tooltip;" />
 						<toolbarspacer class="visible" />
 						<toolbarbutton label="&resume.label;" id="toolplay" command="cmdResume" />
