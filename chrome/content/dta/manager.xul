@@ -86,6 +86,8 @@
 
 		<command id="cmdCustomizeToolbar" oncommand="Dialog.customizeToolbar(event);" />
 
+		<command id="cmdNewTab" oncommand="DTA.Mediator.open('about:blank');" />
+		<command id="cmdNewWin" oncommand="DTA.Mediator.openWindow(window);" />
 	</commandset>
 
 	<keyset id="mainkeys">
@@ -118,9 +120,9 @@
 		<key id="kMoveDown" modifiers="alt" keycode="VK_PAGE_DOWN" command="cmdMoveDown" />
 		<key id="kMoveBottom" modifiers="alt" keycode="VK_END" command="cmdMoveBottom" />
 
-		<!-- new window/tab shortcuts  -->
-		<key id="kNewTab" modifiers="accel" key="T" oncommand="DTA.Mediator.open('about:blank');" />
-		<key id="kNewWin" modifiers="accel" key="N" oncommand="DTA.Mediator.openWindow(window);" />
+		<!-- new window/tab shortcuts -->
+		<key id="kNewTab" modifiers="accel" key="T" command="cmdNewTab" />
+		<key id="kNewWin" modifiers="accel" key="N" oncommand="cmdNewWin" />
 	</keyset>
 
 
@@ -128,7 +130,7 @@
 		<tooltip id="tooltip" position="at_pointer" noautohide="true" onpopupshowing="return Tree.showTip(event);" onpopuphiding="Tree.stopTip();" orient="vertical">
 			<hbox id="infoBox" />
 			<grid id="canvasGrid" />
-		</tooltip>	
+		</tooltip>
 		<menupopup id="popup" onpopupshowing="Tree.refreshTools(); return true;">
 			<menuitem id="info" class="menuitem-iconic" label="&infos.label;" key="kGetInfo" command="cmdGetInfo" />
 			<menuseparator />
@@ -197,14 +199,14 @@
 		</menupopup>
 	</popupset>
 
-	<hbox id="titlebox"/>
+	<hbox id="titlebox" />
 	<notificationbox id="notifications" flex="1" dir="reverse">
 		<stack flex="1" id="mainstack">
 			<vbox flex="1">
 				<toolbox chromedir="&locale.dir;" context="toolbarpopup" mousethrough="never">
 					<toolbar id="tools" mode="icons" persist="mode" class="toolbar-primary">
-						<toolbarspacer id="prespacer"/>
-						<toolbarbutton label="&tooladd.label;" id="tooladd" command="cmdAddUrl" tooltiptext="&tooladd.tooltip;" />
+						<toolbarspacer id="prespacer" />
+						<toolbarbutton label="&tooladd.label;" key="kAddUrl" id="tooladd" command="cmdAddUrl" tooltiptext="&tooladd.tooltip;" />
 						<toolbarspacer class="visible" />
 						<toolbarbutton label="&resume.label;" id="toolplay" command="cmdResume" />
 						<toolbarbutton label="&pause.label;" id="toolpause" command="cmdPause" />
@@ -253,7 +255,7 @@
 	</notificationbox>
 
 	<statusbar id="footer" chromedir="&locale.dir;">
-		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline"/>
+		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline" />
 		<statusbarpanel id="statusText" label="" flex="3" />
 		<statusbarpanel id="statusSpeed" label="" />
 		<statusbarpanel id="statusSpeeds">
