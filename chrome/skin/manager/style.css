@@ -27,8 +27,7 @@ toolbox {
 	text-align: center;
 }
 #tools[mode="icons"] toolbarbutton {
-	padding-top: 5px;
-	padding-bottom: 5px;
+	padding: 5px;
 }
 #tools[mode="full"] toolbarbutton {
 	min-width: 50px;
