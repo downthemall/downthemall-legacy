@@ -5,11 +5,17 @@
 		-moz-appearance: -moz-win-borderless-glass;
 		background: transparent;
 	}
+	window[sizemode="maximized"]:not(:-moz-lwtheme) {
+		margin-top: 6px;
+	}
 	#titlebox {
 		display: -moz-box;
 		-moz-binding: url(chrome://dta/content/common/bindings.xml#titlebox);
 		list-style-image: url(chrome://dtaicon/content/chrome/icons/default/DownThemAll.ico);
-		text-shadow: 0 0 .9em white, 0 0 .9em white, 0 2px 0 rgba(255,255,255,.6);
+		text-shadow: 0 0 0.6em white, 0 0 0.9em white, 1px 1px 1px rgba(255,255,255,.6);
+	}
+	window[sizemode="maximized"]:not(:-moz-lwtheme) #titlebox {
+		margin-left: 10px;
 	}
 	toolbox:not(:-moz-lwtheme) {
 		background: transparent;
@@ -40,6 +46,9 @@
 	}
 	toolbox:not(:-moz-lwtheme) toolbarbutton[disabled="true"] > .toolbarbutton-icon {
   	opacity: .2;
+	}
+	#prespacer {
+		display: -moz-box;
 	}
 	#tools {
 		/* draggable glass toolbar (bugzilla 555081) */
