@@ -11,3 +11,11 @@ statusbarpanel#netstatus {
 statusbarpanel#netstatus[offline] {
 	-moz-image-region: rect(16px, 32px, 32px, 16px);
 }
+
+/* pinestripe makes this important at 32px :p */
+toolbarspacer {
+	min-width: 6px !important;
+}
+toolbarspacer.visible {
+	min-width: 13px !important;
+}
