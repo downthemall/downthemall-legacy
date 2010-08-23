@@ -3,12 +3,11 @@
  * Version: GPL 2.0
  *
  * This code is part of DownThemAll! - dTa!
- * Copyright Â© 2004-2010 Nils Maier
+ * Copyright © 2010 Nils Maier
  * 
  * See LICENSE and GPL for details.
  *
  * ***** END LICENSE BLOCK ***** -->
-
 <!DOCTYPE overlay [
 	<!ENTITY % mainmenuDTD SYSTEM "chrome://dta/locale/mainmenu.dtd">
 	%mainmenuDTD;
