@@ -495,11 +495,9 @@
 	</binding>
 	<binding id="mirror-item" extends="chrome://dta/content/common/bindings.xml#mirror-item-base">
 		<content>
-			<xul:vbox>
-				<xul:hbox>
-					<xul:spacer flex="1" />
+			<xul:vbox pack="center">
+				<xul:hbox pack="center">
 					<xul:image class="mirror-item-icon" />
-					<xul:spacer flex="1" />
 				</xul:hbox>
 				<xul:label value="" class="mirror-item-error" xbl:inherits="value=error"/>
 			</xul:vbox>
@@ -537,11 +535,11 @@
 	</binding>
 	<binding id="mirror-item-editing" extends="chrome://dta/content/common/bindings.xml#mirror-item-base">
 		<content>
-			<xul:vbox>
-				<xul:spacer flex="1" />
-				<xul:image class="mirror-item-icon" />
-				<xul:spacer flex="1" />
-			</xul:vbox>
+			<xul:vbox pack="center">
+				<xul:hbox pack="center">
+					<xul:image class="mirror-item-icon" />
+				</xul:hbox>
+			</xul:vbox>				
 			<xul:hbox flex="1" align="center">
 				<xul:label value="&mirrorurl;" />
 				<xul:textbox class="mirror-item-textbox" xbl:inherits="value=mirror" type="autocomplete" wantreturns="true" autocompletesearch="history" completedefaultindex="true" flex="1"/>

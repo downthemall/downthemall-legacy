@@ -76,12 +76,10 @@
 	</popupset>
 
 	<hbox id="header">
-		<vbox>
-			<spacer flex="1" />
+		<vbox pack="center">
 			<html:canvas width="48" height="48" id="icon" class="icon" />
-			<spacer flex="1" />
 		</vbox>
-		<vbox flex="1">
+		<vbox flex="1" pack="start">
 			<grid flex="1">
 				<columns>
 					<column flex="1" />
@@ -103,7 +101,6 @@
 				</rows>
 			</grid>
 			<description id="desc" />
-			<spacer flex="1" />
 		</vbox>
 	</hbox>
 	<notificationbox id="notifications" flex="1">
@@ -127,8 +124,7 @@
 		</hbox>
 	</notificationbox>
 
-	<hbox align="baseline" style="margin: 2px 7px 4px 7px">
-		<spacer flex="1" />
+	<hbox pack="end" align="baseline" style="margin: 2px 7px 4px 7px">
 		<button accesskey="&start.key;" label="&start.label;" id="startbutton" oncommand="MetaSelect.download(true);" default="true" />
 		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" oncommand="MetaSelect.download(false);" />
 		<button id="cancelbutton" oncommand="MetaSelect.cancel();" />

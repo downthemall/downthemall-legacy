@@ -104,10 +104,8 @@
 			<caption label="&serverspane.limits.label;" />
 			<stack flex="1">
 				<richlistbox id="serverLimits" flex="1" />
-				<vbox align="center" flex="1" id="noitemsbox">
-					<spacer flex="1" />
+				<vbox align="center" pack="center" flex="1" id="noitemsbox">
 					<label value="&serverpane.limits.noitems;" disabled="true" />
-					<spacer flex="1" />
 				</vbox>
 			</stack>
 			<separator class="thin" />

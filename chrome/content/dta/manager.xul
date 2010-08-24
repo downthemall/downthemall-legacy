@@ -246,10 +246,8 @@
 					</treechildren>
 				</tree>
 			</vbox>
-			<vbox align="center" flex="1" id="loadingbox">
-				<spacer flex="1" />
+			<vbox align="center" pack="center" flex="1" id="loadingbox">
 				<button id="loading" disabled="true" label="&loading.label;" />
-				<spacer flex="1" />
 			</vbox>
 		</stack>
 	</notificationbox>

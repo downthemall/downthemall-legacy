@@ -10,12 +10,7 @@
  * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
 <overlay id="filterspaneoverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<prefpane
-		id="paneFilters"
-		label="&filterspane.label;"
-		onpaneload="Filters.load();"
-		flex="1"
-	>
+	<prefpane id="paneFilters" label="&filterspane.label;" onpaneload="Filters.load();" flex="1">
 		<tree id="filterTable" flex="1" seltype="single" onselect="Filters.selectionChanged()">
 			<treecols>
 				<treecol label="&listhead1.label;" flex="1" id="filtername" />
@@ -29,19 +24,19 @@
 			<grid flex="1">
 				<columns>
 					<column />
-					<column flex="1"/>
+					<column flex="1" />
 				</columns>
 				<rows>
 					<row id="captionRow" align="center">
-						<label value="&listhead1.label;:"/>
+						<label value="&listhead1.label;:" />
 						<textbox id="filterLabel" oninput="Filters.onFilterEdit();" onblur="Filters.onFinishedFilterEdit();" />
 					</row>
 					<row id="filterRow" align="center">
-						<label value="&filter.label;"/>
+						<label value="&filter.label;" />
 						<textbox id="filterExpression" oninput="Filters.onFilterEdit();" onblur="Filters.onFinishedFilterEdit();" />
 					</row>
 					<row align="center">
-						<label id="useAs" value="&useAs.label;"/> 
+						<label id="useAs" value="&useAs.label;" />
 						<hbox id="linkPicRow">
 							<checkbox id="filterText" label="&linksf.label;" oncommand="Filters.onCheckboxChange();" />
 							<checkbox id="filterImage" label="&imagesf.label;" oncommand="Filters.onCheckboxChange();" />
@@ -50,11 +45,9 @@
 				</rows>
 			</grid>
 		</groupbox>
-		<hbox>
-			<spacer flex="1"/>
-			<button label="&add.label;" oncommand="Filters.createFilter();"/>
-			<button label="" oncommand="Filters.restoreRemoveFilter();" id="restoreremovebutton"/>
-			<spacer flex="1"/>
-		 </hbox>
+		<hbox pack="center">
+			<button label="&add.label;" oncommand="Filters.createFilter();" />
+			<button label="" oncommand="Filters.restoreRemoveFilter();" id="restoreremovebutton" />
+		</hbox>
 	</prefpane>
 </overlay>

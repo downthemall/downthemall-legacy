@@ -48,9 +48,8 @@
 		<rows>
 			<row>
 				<hbox id="header">
-					<vbox>
+					<vbox pack="start">
 						<image id="mirrorLogo" />
-						<spacer flex="1" />
 					</vbox>
 					<vbox flex="1">
 						<label value="&header;" />
