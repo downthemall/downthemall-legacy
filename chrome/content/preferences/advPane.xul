@@ -57,7 +57,6 @@
 									<menuitem id="t8" value="900" label="15 &advancedpane.minutes;" />
 								</menupopup>
 							</menulist>
-							<spacer flex="1" />
 						</hbox>
 					</row>
 				</rows>
@@ -105,7 +104,7 @@
 			</columns>
 			<rows>
 				<row>
-					<vbox>
+					<vbox pack="start">
 						<groupbox id="advTempFiles">
 							<caption label="&advancedpane.tempfiles.caption;" />
 							<checkbox id="useTemp" label="&advancedpane.usetemp.label;" preference="dtatemporary" oncommand="Advanced.toggleTemp();" />
@@ -115,7 +114,6 @@
 								<toolbarbutton id="browsedir" oncommand="Advanced.browse();" />
 							</hbox>
 						</groupbox>
-						<spacer flex="1" />
 					</vbox>
 					<groupbox id="advPermissions" tooltiptext="&advancedpane.permissions.desc;">
 						<caption id="dtaperms" label="&advancedpane.permissions.caption;" />

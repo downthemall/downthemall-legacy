@@ -129,8 +129,7 @@
 					</xul:rows>
 				</xul:grid>
 				<xul:separator class="thin"/>
-				<xul:hbox flex="1">
-					<xul:spacer flex="1" />
+				<xul:hbox flex="1" pack="end">
 					<xul:button label="&serverspane.edit.label;" anonid="editButton" />
 					<xul:button label="&serverspane.remove.label;" anonid="removeButton" />
 				</xul:hbox>
@@ -205,8 +204,7 @@
 						</xul:row>
 					</xul:rows>
 				</xul:grid>
-				<xul:hbox flex="1">
-					<xul:spacer flex="1" />
+				<xul:hbox flex="1" pack="end">
 					<xul:button anonid="saveButton" />
 					<xul:button label="&serverspane.cancel.label;" anonid="cancelButton" />
 				</xul:hbox>
