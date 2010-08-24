@@ -20,6 +20,6 @@ separator.groove-thin {
 	min-height: 200px;
 }
 
-#serversBox {
-	min-height: 170px;
+#serverLimits {
+	height: 200px;
 }
