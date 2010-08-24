@@ -447,27 +447,27 @@ var Servers = {
 		
 		let _tp = this;
 		this._list.addEventListener('LimitsEdit', function(evt) _tp.editLimit(evt), true);
-		this._list.addEventListener('LimitsEditCancel', function(evt) _tp.cancelEditLimit(evt), true);
+		this._list.addEventListener('LimitsEditCancel', function(evt) _tp.cancelEditLimit(evt.originalTarget), true);
 		this._list.addEventListener('LimitsEditSave', function(evt) _tp.saveEditLimit(evt), true);
 		this._list.addEventListener('LimitsCanRemove', function(evt) _tp.canRemoveLimit(evt), true);
-		this._list.addEventListener('LimitsRemoved', function(evt) _tp.removedLimit(evt), true);
+		this._list.addEventListener('LimitsRemoved', function(evt) _tp.removedLimit(evt.originalTarget), true);
 	},
 	editLimit: function(evt) {
 		if (this._editing) {
 			if (this._editing == evt.originalTarget) {
 				return;
 			}
-			this._editing.removeAttribute('editing');
+			this.cancelEditLimit(this._editing);
 		}
 		this._editing = evt.originalTarget;
 		this._editing.setAttribute('editing', 'true');
 	},
-	cancelEditLimit: function(evt) {
-		if (evt.originalTarget != this._editing) {
+	cancelEditLimit: function(target) {
+		if (target != this._editing) {
 			return;
 		}
 		if (this._editing.limit.isNew) {
-			this.removedLimit(evt);
+			this.removedLimit(target);
 		}
 		this._editing.removeAttribute('editing');
 		this._editing = null;
@@ -481,7 +481,7 @@ var Servers = {
 		return true;
 	},
 	canRemoveLimit: function(evt) {
-		return Prompts.confirm(
+		if(Prompts.confirm(
 			window,
 			_('removelimittitle'),
 			_('removelimitdesc', [evt.originalTarget.host]),
@@ -489,11 +489,13 @@ var Servers = {
 			Prompts.CANCEL,
 			null,
 			1
-		) == 0;
+		) != 0) {
+			evt.preventDefault();
+		}
 	},		
-	removedLimit: function(evt) {
-		let ns = evt.originalTarget.nextSibling || evt.originalTarget.previousSibling;
-		this._list.removeChild(evt.originalTarget);
+	removedLimit: function(target) {
+		let ns = target.nextSibling || target.previousSibling;
+		this._list.removeChild(target);
 		if (ns) {
 			this._list.selectedItem = ns;
 			this._list.ensureElementIsVisible(ns);
