@@ -100,7 +100,7 @@
 <!ENTITY advancedpane.loadendfirst.label "Load last few kilobytes first">
 <!ENTITY advancedpane.scheduler.caption "Download start order:">
 <!ENTITY advancedpane.scheduler.fast "Fast - As queued, obeying per-server limits (default)">
-<!ENTITY advancedpane.scheduler.even "Slow - Evenly distributed across servers">
+<!ENTITY advancedpane.scheduler.fair "Fair+Slow - Evenly distributed across servers">
 <!ENTITY advancedpane.scheduler.legacy "Legacy - not respecting per-server limits (fast)">
 <!ENTITY advancedpane.exposeinua.label "Expose DownThemAll! in the User-Agent">
 

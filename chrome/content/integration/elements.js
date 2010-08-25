@@ -49,6 +49,24 @@
 	let Preferences = {};
 	Components.utils.import('resource://dta/preferences.jsm', Preferences);	
 	
+	let cothreads = {
+		load: function() {
+			delete this.CoThread;
+			delete this.CoThreadListWalker;
+			Components.utils.import('resource://dta/cothread.jsm', this);
+		},
+		loadCoThread: function() {
+			this.load();
+			return this.CoThread;
+		},
+		loadCoThreadListWalker: function() {
+			this.load();
+			return this.CoThreadListWalker;
+		}		
+	};
+	cothreads.__defineGetter__('CoThread', cothreads.loadCoThread);
+	cothreads.__defineGetter__('CoThreadListWalker', cothreads.loadCoThreadListWalker);
+	
 	function debug(msg, ex) {
 		let _d = DTA.Debug;
 		return (debug = function debug(msg, ex) {
@@ -494,7 +512,8 @@
 						notifyInfo(getFormattedString('queuedn', queued));
 					}
 					else {
-						notifyInfo(getFormattedString('queued', queued.url));
+						// disable for now. too much scroll "jitter"
+						// notifyInfo(getFormattedString('queued', queued.url));
 					}
 					return;
 				}
@@ -594,7 +613,8 @@
 		if (turbo) {
 			try {
 				DTA.saveSingleLink(window, true, url, ref, desc);
-				notifyInfo(getFormattedString('queued', url));
+				// Disable for now. Too much scroll "jitter"
+				// notifyInfo(getFormattedString('queued', url));
 				return;
 			}
 			catch (ex) {
