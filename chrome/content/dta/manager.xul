@@ -122,7 +122,7 @@
 
 		<!-- new window/tab shortcuts -->
 		<key id="kNewTab" modifiers="accel" key="T" command="cmdNewTab" />
-		<key id="kNewWin" modifiers="accel" key="N" oncommand="cmdNewWin" />
+		<key id="kNewWin" modifiers="accel" key="N" command="cmdNewWin" />
 	</keyset>
 
 
