@@ -76,7 +76,7 @@
 						<menulist preference="dtascheduler">
 							<menupopup>
 								<menuitem label="&advancedpane.scheduler.fast;" value="fast" />
-								<menuitem label="&advancedpane.scheduler.even;" value="even" />
+								<menuitem label="&advancedpane.scheduler.fair;" value="fair" />
 								<menuitem label="&advancedpane.scheduler.legacy;" value="legacy" />
 							</menupopup>
 						</menulist>

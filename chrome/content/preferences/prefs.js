@@ -42,13 +42,13 @@ const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
 let Prompts = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
 
-var Main = {
+const Main = {
 	load: function() {
 		$('alert2').hidden = !('nsIAlertsService' in Ci);
 	}
 }
 
-var Privacy = {
+const Privacy = {
 	load: function PP_load() {
 		try {
 			var log = !DTA.getProfileFile('dta_log.txt').exists();
@@ -100,7 +100,7 @@ var Privacy = {
 	}
 };
 
-let Advanced = {
+const Advanced = {
 	load: function() {
 		// delay these assignments, or else we get messed up by the slider c'tor
 		$('maxchunks').setAttribute('preference', 'dtamaxchunks');
@@ -153,7 +153,7 @@ let Advanced = {
 	}
 };
 
-var Interface = {
+const Interface = {
 	init: function(pref, which) {
 		if (!('trayITrayService' in Components.interfaces)) {
 			$('minimizetotray').disabled = true;
@@ -174,7 +174,7 @@ var Interface = {
 	}
 };
 
-var Filters = {
+const Filters = {
 	_filters: [],
 	_lastRowEdited : -1,
 	
@@ -428,7 +428,7 @@ var Filters = {
 	setCellValue: function(idx, col, value) {}
 };
 
-var Servers = {
+const Servers = {
 	_limits: [],
 	_editing: null,
 	init: function() {
@@ -561,7 +561,7 @@ var Servers = {
 Components.utils.import('resource://dta/support/serverlimits.jsm', Servers);
 ServiceGetter(Servers, 'prompts', '@mozilla.org/embedcomp/prompt-service;1', 'nsIPromptService');
 
-var Prefs = {
+const Prefs = {
 	load: function() {
 	},
 	restoreAll: function() {

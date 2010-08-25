@@ -59,7 +59,7 @@
 
 			<method name="refresh">
 				<body><![CDATA[
-					this._connectionsLabel.value = (this.connections != 0) ? this.connections : _('unlimited');
+					this._connectionsLabel.value = (this.connections > 0) ? this.connections : _('unlimited');
 					this._speedLabel.value = (this.speed > 0) ? Utils.formatSpeed(this.speed * 1024) : _('unlimited');
 				]]></body>
 			</method>
@@ -220,7 +220,7 @@
 			<property name="connections">
 				<getter><![CDATA[
 					if (this._connectionsGroup.value == "unlimited") {
-						return 0;
+						return -1;
 					}
 					return parseInt(this._connections.value);
 				]]></getter>
@@ -236,8 +236,8 @@
 			</property>
 
 			<constructor><![CDATA[
-				this._connectionsGroup.value = this.getAttribute('connections') == 0 ? 'unlimited' : 'limited';
-				this._speedGroup.value = this.getAttribute('speed') == 0 ? 'unlimited' : 'limited';
+				this._connectionsGroup.value = this.getAttribute('connections') <= 0 ? 'unlimited' : 'limited';
+				this._speedGroup.value = this.getAttribute('speed') <= 0 ? 'unlimited' : 'limited';
 				this._saveButton.label = _(this.limit.isNew ? 'createlimit' : 'savelimit');
 				this.parentNode.ensureElementIsVisible(this);
 			]]></constructor>
@@ -265,7 +265,7 @@
 					if (this._connectionsGroup.value != 'limited') {
 						return;
 					}
-					this._connections.value = this.limit.connections || 3;
+					this._connections.value = Math.max(this.limit.connections, 0) || 2;
 					this.refresh();
 				]]></body>
 			</method>
@@ -274,7 +274,7 @@
 					if (this._speedGroup.value != 'limited') {
 						return;
 					}
-					this._speed.value = this.limit.speed || 100;
+					this._speed.value = Math.max(this.limit.speed, 0) || 100;
 					this.refresh();
 				]]></body>
 			</method>

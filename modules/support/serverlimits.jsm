@@ -53,6 +53,7 @@ let Prefs = {};
 module("resource://dta/preferences.jsm", Prefs);
 module("resource://dta/utils.jsm");
 module("resource://dta/constants.jsm");
+module("resource://dta/json.jsm");
 module("resource://dta/support/bytebucket.jsm");
 
 ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
@@ -62,13 +63,11 @@ ServiceGetter(this, 'obs', '@mozilla.org/observer-service;1', 'nsIObserverServic
 
 const TOPIC = 'DTA:serverlimits-changed';
 const PREFS = 'extensions.dta.serverlimit.';
-const HOSTS_PREF  = 'extensions.dta.serverlimit.host.';
-const CONNECTIONS_PREF  = 'extensions.dta.serverlimit.connections.';
-const SPEEDS_PREF  = 'extensions.dta.serverlimit.speed.';
+const LIMITS_PREF  = 'extensions.dta.serverlimit.limits.';
 const SHUTDOWN_TOPIC = 'profile-change-teardown';
 
 const SCHEDULER_FAST = 'fast';
-const SCHEDULER_EVEN = 'even';
+const SCHEDULER_FAIR = 'fair';
 const SCHEDULER_LEGACY = 'legacy';
 
 let limits = {};
@@ -76,20 +75,23 @@ let limits = {};
 function Limit(host, isNew) {
 	this._host = host;
 	this._isNew = isNew;
-	this.enabled = Prefs.get(HOSTS_PREF + this._host, true);
-	this.connections = Prefs.get(CONNECTIONS_PREF + this._host, 2);
-	this.speed = Prefs.get(SPEEDS_PREF + this._host, 0);
+	this._connections = 2;
+	this._speed = -1;
+	try {
+		let o = parse(Prefs.get(LIMITS_PREF + this._host, ""));
+		this.connections = o.c;
+		this.speed = o.s;
+	}
+	catch (ex) {
+		// no op;
+	}
 }
 Limit.prototype = {
 	get host() { return this._host; },
 	get isNew() { return this._isNew; },
-	get enabled() { return this._enabled; },
-	set enabled(value) {
-		this._enabled = !!value;
-	},
 	get connections() { return this._connections; },
 	set connections(value) {
-		if (!isFinite(value) || value < 0) {
+		if (!isFinite(value)) {
 			throw new Exception("Invalid Limit");
 		}
 		this._connections = value;
@@ -102,15 +104,11 @@ Limit.prototype = {
 		this._speed = value;
 	},	
 	save: function() {
-		Prefs.set(HOSTS_PREF + this._host, this._enabled);
-		Prefs.set(CONNECTIONS_PREF + this._host, this._connections);
-		Prefs.set(SPEEDS_PREF + this._host, this._speed);
+		Prefs.set(LIMITS_PREF + this._host, stringify({c: this._connections, s: this._speed}));
 		this._isNew = false;
 	},
 	remove: function() {
-		Prefs.reset(HOSTS_PREF + this._host);
-		Prefs.reset(CONNECTIONS_PREF + this._host);
-		Prefs.reset(SPEEDS_PREF + this._host);
+		Prefs.reset(LIMITS_PREF + this._host);
 		delete this;
 	},
 	toString: function() this._host	+ " conn: " + this._connections + " speed: " + this._speed
@@ -118,7 +116,7 @@ Limit.prototype = {
 
 function loadLimits() {
 	limits = {};
-	let hosts = Prefs.getChildren(HOSTS_PREF).map(function(e) e.substr(HOSTS_PREF.length));
+	let hosts = Prefs.getChildren(LIMITS_PREF).map(function(e) e.substr(LIMITS_PREF.length));
 	hosts.sort();
 	
 	for each (let host in hosts) {
@@ -156,7 +154,7 @@ function listLimits() {
 }
 
 
-let globalConnections = 0;
+let globalConnections = -1;
 function SchedItem(host) {
 	this.host = host;
 	this.limit = 0;
@@ -172,10 +170,10 @@ function SchedItem(host) {
 SchedItem.prototype = {
 	cmp: function(a, b)  a.n - b.n,
 	get available() {
-		return (this.limit == 0 || this.n < this.limit);
+		return (this.limit <= 0 || this.n < this.limit);
 	},
 	get queued() {
-		return (this.limit == 0 || this.n < this.limit) && this.downloads.length != 0;
+		return (this.limit <= 0 || this.n < this.limit) && this.downloads.length != 0;
 	},
 	inc: function() ++this.n,
 	pop: function() {
@@ -229,10 +227,11 @@ function FastScheduler(downloads, running) {
 		}
 	}
 }
-// Even Generator: evenly distribute slots
+
+// Fair Scheduler: evenly distribute slots
 // Performs far worse than FastScheduler but is more precise.
 // Oeven = O(running) + O(downloads) + O(downloadSet) + Osort(sorted)  
-function EvenScheduler(downloads, running) {
+function FairScheduler(downloads, running) {
 	let downloadSet = {};
 	
 	// Count the running tasks
@@ -292,8 +291,8 @@ function EvenScheduler(downloads, running) {
 let scheduler;
 function loadScheduler() {
 	switch (Prefs.getExt('serverlimit.connectionscheduler', SCHEDULER_FAST)) {
-	case SCHEDULER_EVEN:
-		scheduler = EvenScheduler;
+	case SCHEDULER_FAIR:
+		scheduler = FairScheduler;
 		break;
 	case SCHEDULER_LEGACY:
 		scheduler = LegacyScheduler;
