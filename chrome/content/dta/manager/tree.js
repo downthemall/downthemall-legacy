@@ -498,11 +498,12 @@ const Tree = {
 		}
 	},
 	pause: function T_pause() {
+		let paused = _("paused");
 		this.updateSelected(
 			function(d) {
 				if (d.is(QUEUED) || (d.is(RUNNING) && d.resumable)) {
 					d.pause();
-					d.status = _("paused");
+					d.status = paused;
 					d.state = PAUSED;
 				}
 				return true;
