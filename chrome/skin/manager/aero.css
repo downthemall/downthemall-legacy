@@ -10,11 +10,14 @@
 	}
 	#titlebox {
 		display: -moz-box;
+		-moz-box-pack: start;
+		-moz-appearance: -moz-window-titlebar;
 		-moz-binding: url(chrome://dta/content/common/bindings.xml#titlebox);
 		list-style-image: url(chrome://dtaicon/content/chrome/icons/default/DownThemAll.ico);
 		text-shadow: 0 0 0.6em white, 0 0 0.9em white, 1px 1px 1px rgba(255,255,255,.6);
 	}
-	window[sizemode="maximized"]:not(:-moz-lwtheme) #titlebox {
+	window[sizemode="maximized"] #titlebox {
+		-moz-appearance: -moz-appearance: -moz-window-button-box-maximized;
 		margin-left: 10px;
 	}
 	toolbox:not(:-moz-lwtheme) {
