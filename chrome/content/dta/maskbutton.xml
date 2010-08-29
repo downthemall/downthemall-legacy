@@ -49,7 +49,7 @@
 	<xbl:binding id="maskbutton">
 		<xbl:content>
 			<popupset>
-				<popup id="maskPopup" orient="vertical" position="before_end" style="padding: 8px; margin-bottom: -10px;">
+				<panel id="maskPopup" orient="vertical" position="before_end" style="padding: 8px; margin-bottom: -10px;">
 					<label class="masktitle" value="&mask.title;"/>
 					<hbox id="maskitems">
 						<grid flex="1">
@@ -84,7 +84,7 @@
 							</rows>
 						</grid>
 					</hbox>
-				</popup>
+				</panel>
 			</popupset>
 			<toolbarbutton
 				popup="maskPopup"

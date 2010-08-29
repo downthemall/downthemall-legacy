@@ -68,11 +68,11 @@
 	</stringbundleset>
 
 	<popupset id="popups">
-		<popup id="context">
+		<menupopup id="context">
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" oncommand="MetaSelect.select('all');" />
 			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" oncommand="MetaSelect.select('invert');" />
 			<menuitem id="selectnone" class="menuitem-iconic" label="&selectnone.label;" oncommand="MetaSelect.select('none');" />
-		</popup>
+		</menupopup>
 	</popupset>
 
 	<hbox id="header">
