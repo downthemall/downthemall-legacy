@@ -199,7 +199,7 @@
 		</menupopup>
 	</popupset>
 
-	<hbox id="titlebox" />
+	<vbox id="titlebar" />
 	<notificationbox id="notifications" flex="1" dir="reverse">
 		<stack flex="1" id="mainstack">
 			<vbox flex="1">

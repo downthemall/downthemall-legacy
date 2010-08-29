@@ -762,7 +762,7 @@ const Dialog = {
 				}
 				document.title = this.completed + "/" + Tree.rowCount + " - DownThemAll!";
 			}
-			$('titlebox').value = document.title;
+			$('titlebar').value = document.title;
 		}
 		catch(ex) {
 			Debug.log("refresh():", ex);

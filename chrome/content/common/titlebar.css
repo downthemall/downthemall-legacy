@@ -1,0 +1,57 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#titlebar {
+  -moz-appearance: -moz-window-titlebar;
+  margin-left: -15px;
+  margin-right: -15px;
+	list-style-image: url(chrome://dtaicon/content/chrome/icons/default/DownThemAll.ico);
+	text-shadow: 0 0 0.6em white, 0 0 0.9em white, 1px 1px 1px rgba(255,255,255,.6);
+}
+
+window[sizemode="maximized"] > #titlebar {
+  -moz-appearance: -moz-window-titlebar-maximized;
+}
+
+#titlebar-content {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+#titlebar-buttonbox {
+  -moz-appearance: -moz-window-button-box;
+  -moz-box-align: start;
+}
+window[sizemode="maximized"] #titlebar-buttonbox {
+  -moz-appearance: -moz-window-button-box-maximized;
+}
+
+#titlebar-min {
+  -moz-appearance: -moz-window-button-minimize;
+}
+#titlebar-max {
+  -moz-appearance: -moz-window-button-maximize;
+}
+window[sizemode="maximized"] #titlebar-max {
+  -moz-appearance: -moz-window-button-restore;
+}
+
+#titlebar-close {
+  -moz-appearance: -moz-window-button-close;
+}
+
+@media all and (-moz-windows-compositor) {
+  #titlebar-buttonbox {
+    display: none;
+  }
+}
+
+#titlebar-iconbox,
+#titlebar-titlebox {
+	-moz-box-align: center;
+	-moz-box-pack: center;
+	margin-top: 4px;
+	padding: 2px;
+}
+#titlebar-iconbox {
+	padding-right: 4px;
+}

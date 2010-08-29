@@ -614,25 +614,38 @@
 		</handlers>	
 	</binding>
 	
-	<binding id="titlebox" extends="chrome://global/content/bindings/general.xml#windowdragbox">
+	<binding id="titlebar" extends="chrome://global/content/bindings/general.xml#windowdragbox">
 		<resources>
-			<stylesheet src="chrome://dta/content/common/titlebox.css"/>
+			<stylesheet src="chrome://dta/content/common/titlebar.css"/>
 		</resources>
 		<content>
-			<xul:hbox class="titlebox-iconbox">
-				<xul:image class="titlebox-icon"/>
+			<xul:hbox id="titlebar-content" align="start">
+				<xul:hbox id="titlebar-iconbox">
+					<xul:image id="titlebar-icon"/>
+				</xul:hbox>
+				<xul:hbox id="titlebar-titlebox">
+					<xul:label id="titlebar-title"/>
+				</xul:hbox>
 			</xul:hbox>
-			<xul:hbox class="titlebox-titlebox">
-				<xul:label anonid="label" class="titlebox-title"/>
+			<xul:spacer flex="1" class="titlebar-spacer"/>
+			<xul:hbox id="titlebar-buttonbox">
+				<toolbarbutton id="titlebar-min" oncommand="window.minimize();"/>
+				<toolbarbutton id="titlebar-max" oncommand="this.onTitlebarMaxClick();"/>
+				<toolbarbutton id="titlebar-close" oncommand="window.close();"/>
 			</xul:hbox>
 		</content>
 		<implementation>
 			<constructor/>
-			<field name="label">document.getAnonymousElementByAttribute(this, 'anonid', 'label');</field>
+			<field name="label">document.getAnonymousElementByAttribute(this, 'id', 'titlebar-title');</field>
 			<property name="value">
 				<getter>return this.label.value;</getter>
 				<setter>this.label.value = val;</setter>
 			</property>
+			<method name="onTitlebarMaxClick">
+				<body><![CDATA[
+					(window.windowState == window.STATE_MAXIMIZED) ? window.restore() : window.maximize();
+				]]></body>
+			</method>
 		</implementation>
 	</binding>
 </bindings>
