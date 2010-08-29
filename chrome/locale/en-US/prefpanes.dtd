@@ -12,11 +12,11 @@
 <!ENTITY dtacontext2.label "Preferences">
 <!ENTITY buttonlabelextra2 "Restore default settings">
 <!ENTITY dtaPreferences.title "DownThemAll! Preferences...">
-<!ENTITY manager "dTa Manager">
+<!ENTITY manager "dTa! Manager">
 
 <!ENTITY mainpane.label "Main">
 <!ENTITY mainpane.defaults.caption "Defaults">
-<!ENTITY mainpane.defaults.desc "The download directory, renaming mask and filters as used by OneClick are configured using the regular DownThemAll! dialog. Please use the regular dialog if you want to change these preferences.">
+<!ENTITY mainpane.defaults.desc "The download directory, renaming mask and filters as used by OneClick! can be configured in the regular DownThemAll! selection dialog.">
 <!ENTITY mainpane.rename.caption "If a filename already exists:">
 <!ENTITY mainpane.rename.label "Rename">
 <!ENTITY mainpane.overwrite.label "Overwrite">
@@ -91,8 +91,7 @@
 <!ENTITY advancedpane.tempfiles.caption "Temporary files">
 <!ENTITY advancedpane.usetemp.label "Save download segments in a temporary directory">
 <!ENTITY advancedpane.tempdir.label "Use this directory:">
-<!ENTITY advancedpane.permissions.caption "Default file permissions">
-<!ENTITY advancedpane.permissions.desc "Affected by user umask">
+<!ENTITY advancedpane.permissions.caption "Default permissions">
 <!ENTITY advancedpane.permissions.group "Group">
 <!ENTITY advancedpane.permissions.everybody "Everybody">
 <!ENTITY advancedpane.permissions.read "May read">
