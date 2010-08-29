@@ -68,6 +68,7 @@ const SHUTDOWN_TOPIC = 'profile-change-teardown';
 
 const SCHEDULER_FAST = 'fast';
 const SCHEDULER_FAIR = 'fair';
+const SCHEDULER_RND = 'rnd';
 const SCHEDULER_LEGACY = 'legacy';
 
 let limits = {};
@@ -288,11 +289,31 @@ function FairScheduler(downloads, running) {
 	}
 }
 
+//Random scheduler. Does not respect limits
+//Basically Ornd(1)
+function RndScheduler(downloads, running) {
+	function rndOrd() 0.5 - Math.random();
+	let _d = [];
+	for (let d in downloads) {
+		if (!d.is(QUEUED)) {
+			continue;
+		}
+		_d.push(d);
+	}
+	_d.sort(rndOrd);
+	for each (let d in _d) {
+		yield d;
+	}
+}
+
 let scheduler;
 function loadScheduler() {
 	switch (Prefs.getExt('serverlimit.connectionscheduler', SCHEDULER_FAST)) {
 	case SCHEDULER_FAIR:
 		scheduler = FairScheduler;
+		break;
+	case SCHEDULER_RND:
+		scheduler = RndScheduler;
 		break;
 	case SCHEDULER_LEGACY:
 		scheduler = LegacyScheduler;
