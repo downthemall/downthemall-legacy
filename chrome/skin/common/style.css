@@ -9,14 +9,6 @@ dta|* {
 	display: none;
 }
 		
-dialogheader {
-	border: 2px solid -moz-use-text-color;
-	-moz-border-top-colors: threedshadow threeddarkshadow;
-	-moz-border-right-colors: threedhighlight threeddarkshadow;
-	-moz-border-bottom-colors: threedhighlight threeddarkshadow;
-	-moz-border-left-colors: threedshadow threeddarkshadow;
-}
-
 /* maskbutton */
 maskbutton {
 	-moz-binding: url(chrome://dta/content/dta/maskbutton.xml#maskbutton);
@@ -100,15 +92,6 @@ maskbutton .toolbarbutton-text,
 }	
 #logo[chromedir="rtl"], #logo:-moz-locale-dir(rtl) {
 	background: white url(chrome://dta/skin/common/logo-rtl.png) no-repeat left top;
-}
-#logo .dialogheader-title {
-	padding-top: 2px;
-	font-weight: bold;
-	font-size: larger;
-	margin-top: auto;
-	margin-bottom: auto;
-	padding-left: 0.7em;
-	background: transparent left center no-repeat;
 }
 #logo.renamingmask {
 	list-style-image: url('chrome://dta/skin/select/mask.png');
