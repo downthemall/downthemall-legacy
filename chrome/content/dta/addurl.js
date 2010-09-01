@@ -141,9 +141,6 @@ var Dialog = {
 			if (hash) {
 				$('hash').value = hash;
 			}
-			if (Version.OS == 'darwin') {
-				$('logo').hidden = true;
-			}
 			sizeToContent();
 		}
 		catch(ex) {

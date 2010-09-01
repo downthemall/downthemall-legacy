@@ -10,10 +10,10 @@
 
 <!ENTITY options.label "Preferences">
 
-<!ENTITY url.value "URL">
+<!ENTITY url.value "Download">
 <!ENTITY dest.caption "Save files in:">
 <!ENTITY mirrors.value "Mirrors:">
-<!ENTITY referrer.value "Referrer URL:">
+<!ENTITY referrer.value "Referring page:">
 <!ENTITY description.value "Description:">
 <!ENTITY checksum.value "Checksum (Hash):">
 <!ENTITY browse.tip "Browse for target folder...">
