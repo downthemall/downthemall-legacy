@@ -1,5 +1,5 @@
-<!ENTITY tooladd.label "Add URL(s)">
-<!ENTITY tooladd.tooltip "Manually add an URL to DownThemAll">
+<!ENTITY tooladd.label "Add Downloads">
+<!ENTITY tooladd.tooltip "Manually add a download to DownThemAll">
 <!ENTITY tooldonate.tooltiptext "You can help us make DownThemAll even better. Consider making a small donation!">
 
 <!ENTITY movetop.label "Top">
@@ -7,7 +7,7 @@
 <!ENTITY moveup.label "Up">
 <!ENTITY movedown.label "Down">
 
-<!ENTITY task.label "URL/Name">
+<!ENTITY task.label "Download/Name">
 <!ENTITY per.label "Completion">
 <!ENTITY pct.label "Progress">
 <!ENTITY dim.label "Size">

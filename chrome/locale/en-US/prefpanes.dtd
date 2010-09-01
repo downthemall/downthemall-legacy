@@ -62,7 +62,7 @@
 <!ENTITY serverspane.downloads.caption "Downloads">
 <!ENTITY serverspane.concurrent.label "Concurrent downloads:">
 <!ENTITY serverspane.perserver.label "Downloads per server:">
-<!ENTITY serverspane.url.label "URL or domain:">
+<!ENTITY serverspane.url.label "Location or domain:">
 <!ENTITY serverspane.new.label "New Limit">
 <!ENTITY serverspane.del.label "Remove Limit">
 <!ENTITY serverspane.limits.label "Per-Server limits">
