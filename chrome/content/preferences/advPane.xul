@@ -99,7 +99,7 @@
 
 		<grid id="gridFiles">
 			<columns id="colsFiles">
-				<column flex="10" />
+				<column flex="1" />
 				<column flex="1" />
 			</columns>
 			<rows>
@@ -115,7 +115,7 @@
 							</hbox>
 						</groupbox>
 					</vbox>
-					<groupbox id="advPermissions" tooltiptext="&advancedpane.permissions.desc;">
+					<groupbox id="advPermissions">
 						<caption id="dtaperms" label="&advancedpane.permissions.caption;" />
 						<grid>
 							<columns>
