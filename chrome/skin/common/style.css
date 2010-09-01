@@ -57,6 +57,10 @@ maskbutton toolbarbutton:hover .toolbarbutton-icon,
 	opacity: 0.7;
 }
 
+#browsedir[disabled="true"] .toolbarbutton-icon {
+	opacity: 0.3;
+}
+
 maskbutton .toolbarbutton-text,
 #browsedir .toolbarbutton-text {
 	display: none;
