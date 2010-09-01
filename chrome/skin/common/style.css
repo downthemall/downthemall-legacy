@@ -30,40 +30,33 @@ maskbutton {
 }
 /* ~maskbutton */
 
-#browsedir {
-	list-style-image: url(browse.png);
-}
-
 #mirrorManager {
 	list-style-image: url(mirrorManager.png);
 }
-		
 
-/* maskbutton */
+#browsedir {
+	list-style-image: url(chrome://global/skin/dirListing/folder.png);
+}
+
 maskbutton toolbarbutton {
 	list-style-image: url(mask.png);
 }
 
-/* maskbutton/browsedir common */
-maskbutton toolbarbutton,
-#browsedir {
-	-moz-image-region: rect(0px,48px,21px,24px) !important;
-}
-
-maskbutton toolbarbutton:hover,
-#browsedir:hover {
-	-moz-image-region: rect(0px,24px,21px,0px) !important;
-}
-
-maskbutton toolbarbutton:active,
-#browsedir:active {
-	-moz-image-region: rect(0px,72px,21px,48px) !important;
+#browsedir, maskbutton toolbarbutton {
+	min-height: 30px;
+	min-width: 30px;
+	-moz-box-pack: center;
 }
 
 maskbutton .toolbarbutton-icon,
 #browsedir .toolbarbutton-icon {
 	-moz-margin-end: 0;
 }
+maskbutton toolbarbutton:hover .toolbarbutton-icon,
+#browsedir:hover .toolbarbutton-icon {
+	opacity: 0.7;
+}
+
 maskbutton .toolbarbutton-text,
 #browsedir .toolbarbutton-text {
 	display: none;
