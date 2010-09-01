@@ -549,8 +549,15 @@ Connection.prototype = {
 		let c = this.c;
 		let d = this.d;
 		try {
-			let pb = aChannel.QueryInterface(Ci.nsIPropertyBag2);
-			let totalSize = Math.max(pb.getPropertyAsInt64('content-length'), 0);
+			let totalSize = 0;
+			try {
+				let pb = aChannel.QueryInterface(Ci.nsIPropertyBag2);
+				totalSize = Math.max(pb.getPropertyAsInt64('content-length'), 0);
+			}
+			catch (ex) {
+				// Firefox 4 support 64bit contentLength
+				totalSize = Math.max(aChannel.contentLength, 0); 
+			}
 			if (d.totalSize && totalSize != this.totalSize && !this.handleError()) {
 				Debug.logString("ftp: total size mismatch " + totalSize + " " + this.totalSize);
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror')); 
