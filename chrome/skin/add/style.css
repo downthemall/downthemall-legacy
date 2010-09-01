@@ -7,9 +7,9 @@ dialog {
 	max-width: 540px;
 }
 
-
-#logo {
-	list-style-image: url(add.png);
+#icon {
+	list-style-image: url(../common/icon.png);
+	padding: 1ex;
 }
 
 textbox[error="true"],
