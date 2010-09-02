@@ -85,9 +85,6 @@ maskbutton .toolbarbutton-text,
 #logo[chromedir="rtl"], #logo:-moz-locale-dir(rtl) {
 	background: white url(chrome://dta/skin/common/logo-rtl.png) no-repeat left top;
 }
-#logo.renamingmask {
-	list-style-image: url('chrome://dta/skin/select/mask.png');
-}
 
 /* snip */
 
