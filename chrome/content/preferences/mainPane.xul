@@ -18,14 +18,14 @@
 			<preference id="dtadone" name="extensions.dta.sounds.done" type="bool" />
 			<preference id="dtaerror" name="extensions.dta.sounds.error" type="bool" />
 			<preference id="dtaautoclose" name="extensions.dta.closedta" type="bool" />
-			<preference id="dtaconfirmremove" name="extensions.dta.confirmremove" type="bool" />
 			<preference id="dtatextlinks" name="extensions.dta.textlinks" type="bool" />
 			<preference id="dtalistsniffedvideos" name="extensions.dta.listsniffedvideos" type="bool" />
 		</preferences>
 
 		<groupbox>
-			<caption label="&mainpane.defaults.caption;"/>
-			<description>&mainpane.defaults.desc;</description>
+			<caption label="&mainpane.defaults.caption;" />
+			<description>&mainpane.defaults.desc;
+			</description>
 		</groupbox>
 
 		<groupbox>
@@ -50,17 +50,17 @@
 					</menupopup>
 				</menulist>
 			</hbox>
-			<checkbox label="&mainpane.sounderror.label;" preference="dtaerror" />
-			<checkbox id="soundDone" label="&mainpane.sounddone.label;" preference="dtadone" />
+			<hbox pack="start">
+				<checkbox label="&mainpane.sounderror.label;" preference="dtaerror" />
+				<checkbox id="soundDone" label="&mainpane.sounddone.label;" preference="dtadone" />
+			</hbox>
 			<checkbox id="closedta" label="&mainpane.closedta.label;" preference="dtaautoclose" />
 		</groupbox>
 
 		<groupbox>
 			<caption label="&mainpane.misc.caption;" />
-			<checkbox label="&mainpane.confirmremove.label;" preference="dtaconfirmremove" />
 			<checkbox label="&mainpane.textlinks.label;" preference="dtatextlinks" />
-			<checkbox label="&mainpane.listsniffedvideos.label;" preference="dtalistsniffedvideos"/>
+			<checkbox label="&mainpane.listsniffedvideos.label;" preference="dtalistsniffedvideos" />
 		</groupbox>
-
 	</prefpane>
 </overlay>
