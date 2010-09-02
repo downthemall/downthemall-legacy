@@ -1,4 +1,4 @@
-<!ENTITY winstyle "width:52em;height:39em;">
+<!ENTITY winstyle "width:45em;height:36em;">
 <!ENTITY filterspane.label "Filters">
 <!ENTITY listhead1.label "Caption">
 <!ENTITY listhead2.label "Extensions">
@@ -22,6 +22,7 @@
 <!ENTITY mainpane.overwrite.label "Overwrite">
 <!ENTITY mainpane.skip.label "Skip">
 <!ENTITY mainpane.ask.label "Ask">
+<!ENTITY mainpane.misc.caption "Miscellaneous settings">
 <!ENTITY mainpane.sounderror.label "Play a sound in case of error">
 <!ENTITY mainpane.alert.caption "When downloads are complete:">
 <!ENTITY mainpane.alert.label "Alert me:">
@@ -30,7 +31,6 @@
 <!ENTITY mainpane.alertnone.label "Don't alert me">
 <!ENTITY mainpane.sounddone.label "Play a sound when all downloads are complete">
 <!ENTITY mainpane.closedta.label "Close DownThemAll when downloads are complete">
-<!ENTITY mainpane.misc.caption "Miscellaneous settings">
 <!ENTITY mainpane.settime.label "Set file time to last modified time (server) or time of queuing">
 <!ENTITY mainpane.rememberoneclick.label "Have dTa OneClick remember if it applies to All Tabs or Current Tab">
 <!ENTITY mainpane.confirmremove.label "User must confirm removal of downloads">
@@ -79,7 +79,9 @@
 <!ENTITY serverspane.remove.label "Remove">
 
 <!ENTITY advancedpane.label "Advanced">
-<!ENTITY advancedpane.downloads.caption "Advanced download settings">
+<!ENTITY advancedpane.downloads.caption "Advanced download control">
+<!ENTITY advancedpane.misc.caption "Miscellaneous settings">
+<!ENTITY advancedpane.files.caption "File control">
 <!ENTITY advancedpane.chunks.label "Max. number of segments per download:">
 <!ENTITY advancedpane.chunksdisabled "Disabled">
 <!ENTITY advancedpane.timeout.label "Download timeout after ">
@@ -91,16 +93,16 @@
 <!ENTITY advancedpane.tempfiles.caption "Temporary files">
 <!ENTITY advancedpane.usetemp.label "Save download segments in a temporary directory">
 <!ENTITY advancedpane.tempdir.label "Use this directory:">
-<!ENTITY advancedpane.permissions.caption "Default permissions">
-<!ENTITY advancedpane.permissions.group "Group">
-<!ENTITY advancedpane.permissions.everybody "Everybody">
-<!ENTITY advancedpane.permissions.read "May read">
-<!ENTITY advancedpane.permissions.write "May write">
+<!ENTITY advancedpane.permissions.caption "File permissions">
+<!ENTITY advancedpane.permissions.group "Group members may">
+<!ENTITY advancedpane.permissions.everybody "Everybody else may">
+<!ENTITY advancedpane.permissions.read "Read">
+<!ENTITY advancedpane.permissions.write "Write">
 <!ENTITY advancedpane.loadendfirst.label "Load last few kilobytes first">
 <!ENTITY advancedpane.scheduler.caption "Download start order:">
-<!ENTITY advancedpane.scheduler.fast "Fast - As queued, obeying per-server limits (default)">
-<!ENTITY advancedpane.scheduler.fair "Fair+Slow - Evenly distributed across servers">
-<!ENTITY advancedpane.scheduler.legacy "Legacy - not respecting per-server limits (fast)">
+<!ENTITY advancedpane.scheduler.fast "Fast - As queued">
+<!ENTITY advancedpane.scheduler.fair "Fair+Slow - Evenly distributed">
+<!ENTITY advancedpane.scheduler.legacy "Legacy - no limits">
 <!ENTITY advancedpane.exposeinua.label "Expose DownThemAll! in the User-Agent">
 
 <!ENTITY uipane.label "Interface">
