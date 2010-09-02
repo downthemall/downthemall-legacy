@@ -14,28 +14,17 @@ menu.menu-iconic {
 	margin-left: 13px;
 }
 
-.closer caption {
-	-moz-binding: url(chrome://dta/content/common/bindings.xml#closebox-caption);
+.closer > .closebox-title {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#closebox-title);
 }
-.closer caption:hover {
-	text-decoration: underline;
-}
-.closer caption, .closer caption * {
+.closebox-title {
 	cursor: pointer !important;
+}	
+.closebox-title:hover {
+	text-decoration: underline;
 }
 .closer[closed="true"] {
 	border:0px; margin: 0px; padding: 0px;
-}
-.closer caption .caption-icon {
-	height: 10px;
-	width: 10px;
-	background: transparent url("chrome://dta/skin/common/twisty-clsd.png") no-repeat center center;
-	-moz-margin-start: 1px;
-	-moz-margin-end: 3px;
-	padding: 0;
-}
-.closer[closed="true"] caption .caption-icon {
-	background-image: url("chrome://dta/skin/common/twisty-open.png");
 }
 
 /* saveddropdown */

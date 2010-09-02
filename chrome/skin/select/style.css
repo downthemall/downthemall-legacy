@@ -1,4 +1,5 @@
 @import 'chrome://dta/skin/common/style.css';
+@import 'chrome://dta-platform/skin/common.css';
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
 
 #renamingbox {

@@ -47,8 +47,8 @@
 	<binding id="closebox"
 		extends="chrome://global/content/bindings/groupbox.xml#groupbox">
 		<content>
-			<xul:hbox class="groupbox-title" align="center" pack="start">
-				<children includes="caption" />
+			<xul:hbox class="groupbox-title closebox-title" align="center" pack="start">
+				<xul:caption xbl:inherits="label=caption"/>
 			</xul:hbox>
 			<xul:box flex="1" class="childrenbox" xbl:inherits="orient,align,pack,collapsed=closed">
 				<children />
@@ -80,8 +80,13 @@
 			</property>
 		</implementation>
 	</binding>
-	<binding id="closebox-caption"
-		extends="chrome://global/content/bindings/groupbox.xml#caption">
+	<binding id="closebox-title">
+		<content>
+			<xul:vbox pack="center" align="center" class="closebox-twisty">
+				<xul:image class="closebox-icon"/>
+			</xul:vbox>
+			<children includes="caption" />
+		</content>
 		<handlers>
 			<handler event="click"><![CDATA[
 				this.parentNode.closed = !this.parentNode.closed;
