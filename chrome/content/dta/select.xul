@@ -189,7 +189,7 @@
 	
 	<statusbar id="footer">
 		<statusbarpanel id="status" flex="1" />
-		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text" label="&options.label;" command="cmdPreferences"/>
+		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text text-link" label="&options.label;" command="cmdPreferences"/>
 	</statusbar>
 
 </window>
