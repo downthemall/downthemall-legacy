@@ -157,16 +157,19 @@ treechildren::-moz-tree-cell-text(fastFiltered) {
 }
 
 #mcheck {
-	list-style-image: url(chrome://dta/skin/select/check.png);
+	list-style-image: url(checks16.png);
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 #muncheck {
-	list-style-image: url(chrome://dta/skin/select/uncheck.png);
+	list-style-image: url(checks16.png);
+	-moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 #mtoggle {
-	list-style-image: url(chrome://dta/skin/select/uncheck2.png);
+	list-style-image: url(checks16.png);
+	-moz-image-region: rect(0px, 32px, 16px, 16px);
 }
 #mrenaming {
-	list-style-image: url(chrome://dta/skin/select/modrenaming.png);
+	list-style-image: url(chrome://dta/skin/common/mask.png);
 }
 #selectall {
 	list-style-image: url(chrome://dta/skin/common/selection.png);
@@ -177,7 +180,7 @@ treechildren::-moz-tree-cell-text(fastFiltered) {
 	-moz-image-region: rect(0px, 48px, 16px, 32px);  
 }
 #selectfiltered {
-	list-style-image: url(chrome://dta/skin/select/selectfiltered.png);
+	list-style-image: url(selectfiltered.png);
 }
 #mopen {
 	list-style-image: url(chrome://dta/skin/common/openurl.png);
