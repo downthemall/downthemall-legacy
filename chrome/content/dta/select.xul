@@ -166,15 +166,13 @@
 		</vbox>
 	</hbox>
 
-	<box style="margin:3px 7px;" orient="vertical" id="filterbox" class="closer" autostretch="never" persist="closed">
-		<caption label="&filters.caption;"/>
+	<box style="margin:3px 7px;" orient="vertical" id="filterbox" class="closer" autostretch="never" closed="true" persist="closed" caption="&filters.caption;">
 		<grid flex="1" id="checkcontainer">
 			<columns id="checkcontainercols"/>
 			<rows id="checkcontainerrows"/>
 		</grid>
 	</box>
-	<vbox style="margin:3px 7px;" class="closer" id="regexcontainer" closed="true" persist="closed">
-		<caption id="additional" tooltiptext="&additional.tip;" label="&additional.caption;"/>
+	<vbox style="margin:3px 7px;" class="closer" id="regexcontainer" closed="true" persist="closed" caption="&additional.caption;" tooltiptext="&additional.tip;">
 		<hbox flex="1">
 			<saveddropdown id="filter" flex="1" tooltiptext="&filter.tip;" preference="filter" allowempty="true" onchange="Dialog.notify();"/>
 			<checkbox id="disableothers" label="&disableother.label;" tooltiptext="&disableother.tooltip;" oncommand="Dialog.notify();"/>
