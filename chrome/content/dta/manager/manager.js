@@ -99,7 +99,6 @@ var TEXT_COMPLETE;
 var TEXT_CANCELED;
 
 
-var GlobalBucket = null;
 GlobalProgress = new GlobalProgress(window);
 var Timers = new TimerManager();
 
@@ -275,7 +274,6 @@ const Dialog = {
 			$('tbp_' + $('tools').getAttribute('mode')).setAttribute('checked', "true");
 		})();
 		
-		GlobalBucket = new ByteBucket(Prefs.speedLimit, 1.3);
 		$('listSpeeds').limit = Prefs.speedLimit;
 		
 		(function nagging() {
@@ -1077,9 +1075,6 @@ const Dialog = {
 
 	unload: function D_unload() {
 		PrivateBrowsing.unregisterCallbacks(this);
-		if (GlobalBucket) { 
-			GlobalBucket.kill();
-		}
 		Limits.killServerBuckets();
 		
 		Timers.killAllTimers();

@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
  
-const EXPORTED_SYMBOLS = ['setAuthPrompterWindow', 'Connection'];
+const EXPORTED_SYMBOLS = ['setAuthPrompterWindow', 'Connection', 'GlobalBucket'];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -58,8 +58,8 @@ module("resource://gre/modules/XPCOMUtils.jsm");
 module('resource://dta/api.jsm', DTA);
 module('resource://dta/constants.jsm');
 module('resource://dta/utils.jsm');
-module('resource://dta/preferences.jsm');
 module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
+module('resource://dta/support/bytebucket.jsm');
 
 const Preferences = DTA.Preferences;
 const Debug = DTA.Debug;
@@ -856,3 +856,4 @@ Connection.prototype = {
 	},
 	onStatus: function  DL_onStatus(aRequest, aContext, aStatus, aStatusArg) {}
 };
+const GlobalBucket = new ByteBucket(Preferences.getExt('speedlimit', -1), 1.3);
