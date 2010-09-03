@@ -140,7 +140,7 @@ URL.prototype = {
 	get usable() {
 		return this._usable;
 	},
-	toSource: function DU_toSource() {
+	serialize: function DU_serialize() {
 		return {
 			url: this._url.spec,
 			charset: this._url.originCharset,
@@ -215,7 +215,7 @@ Hash.prototype = {
 	toString: function() {
 		return this.type + " [" + this.sum + "]";
 	},
-	toSource: function() {
+	serialize: function() {
 		return {
 			type: this.type,
 			sum: this.sum
@@ -237,7 +237,7 @@ function HashCollection(fullHash) {
 /**
  * Load HashCollection from a serialized object
  * (Static)
- * @see toSource
+ * @see serialize
  * @param obj (object) Serialized object
  */
 HashCollection.load = function(obj) {
@@ -272,15 +272,11 @@ HashCollection.prototype = {
 	 * Serializes HashCollection
 	 * @return (object) Serialized HashCollection
 	 */
-	toSource: function() {
+	serialize: function() {
 		return {
-			full: this.full.toSource(),
+			full: this.full.serialize(),
 			parLength: this.parLength,
-			partials: this.partials.map(
-				function(p,i) {
-					return p.toSource();
-				}
-			)
+			partials: this.partials.map(function(p,i) p.serialize())
 		};
 	}
 };
