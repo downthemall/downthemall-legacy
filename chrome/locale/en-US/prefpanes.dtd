@@ -2,16 +2,16 @@
 <!ENTITY filterspane.label "Filters">
 <!ENTITY listhead1.label "Caption">
 <!ENTITY listhead2.label "Extensions">
-<!ENTITY filter.label "Filtered extensions:">
+<!ENTITY filter.label "Filtered Extensions:">
 <!ENTITY regex.label "Reg. Exp.">
-<!ENTITY useAs.label "Use this as:">
-<!ENTITY imagesf.label "Pictures and embedded filter">
-<!ENTITY linksf.label "Links filter">
-<!ENTITY add.label "Add new filter">
+<!ENTITY useAs.label "Use Filter as:">
+<!ENTITY imagesf.label "Pictures and Embedded Filter">
+<!ENTITY linksf.label "Links Filter">
+<!ENTITY add.label "Add New Filter">
 <!ENTITY highlight.label "Highlight files checked by filters">
 <!ENTITY dtacontext2.label "Preferences">
-<!ENTITY buttonlabelextra2 "Restore default settings">
-<!ENTITY dtaPreferences.title "DownThemAll! Preferences...">
+<!ENTITY buttonlabelextra2 "Restore Default Settings">
+<!ENTITY dtaPreferences.title "DownThemAll! Preferences">
 <!ENTITY manager "dTa! Manager">
 
 <!ENTITY mainpane.label "General">
@@ -22,13 +22,13 @@
 <!ENTITY mainpane.overwrite.label "Overwrite">
 <!ENTITY mainpane.skip.label "Skip">
 <!ENTITY mainpane.ask.label "Ask">
-<!ENTITY mainpane.misc.caption "Miscellaneous settings">
+<!ENTITY mainpane.misc.caption "Miscellaneous">
 <!ENTITY mainpane.sounderror.label "Play a sound in case of error">
 <!ENTITY mainpane.alert.caption "When downloads are complete:">
 <!ENTITY mainpane.alert.label "Alert me:">
-<!ENTITY mainpane.alertboxes.label "Using alertboxes">
-<!ENTITY mainpane.alertslides.label "Using slide notifications">
-<!ENTITY mainpane.alertnone.label "Don't alert me">
+<!ENTITY mainpane.alertboxes.label "Using Alert Boxes">
+<!ENTITY mainpane.alertslides.label "Using Slide Notifications">
+<!ENTITY mainpane.alertnone.label "Don't Alert Me">
 <!ENTITY mainpane.sounddone.label "Play a sound when all downloads are complete">
 <!ENTITY mainpane.closedta.label "Close DownThemAll when downloads are complete">
 <!ENTITY mainpane.settime.label "Set file time to last modified time (server) or time of queuing">
@@ -39,9 +39,9 @@
 
 <!ENTITY privacypane.label "Privacy">
 <!ENTITY privacypane.closing.caption "When Manager window is closed">
-<!ENTITY privacypane.removecompleted.label "Remove completed downloads">
-<!ENTITY privacypane.removecanceled.label "Remove canceled/failed downloads">
-<!ENTITY privacypane.removeaborted.label "Remove unfinished downloads">
+<!ENTITY privacypane.removecompleted.label "Remove Completed Downloads">
+<!ENTITY privacypane.removecanceled.label "Remove Canceled/Failed Downloads">
+<!ENTITY privacypane.removeaborted.label "Remove Unfinished Downloads">
 <!ENTITY privacypane.deletefoldershistory.label "Empty Folderlist">
 <!ENTITY privacypane.deletefiltershistory.label "Empty Additional Filters">
 <!ENTITY privacypane.showlog.label "View Log">
@@ -50,8 +50,8 @@
 <!ENTITY privacypane.updates.caption "Updates/Internet">
 <!ENTITY privacypane.information.label "Let dTa download latest news and messages and check for updates">
 <!ENTITY privacypane.statistics.label "Let dTa collect and transfer anonymous usage statistics">
-<!ENTITY privacypane.dropdowns.caption "Dropdown menus">
-<!ENTITY privacypane.dropdownresults.label "Number of entries to keep">
+<!ENTITY privacypane.dropdowns.caption "Dropdown Menus">
+<!ENTITY privacypane.dropdownresults.label "Number of Entries to Keep">
 <!ENTITY privacypane.logs.caption "Diagnostic Log">
 <!ENTITY privacypane.enablelogs.label "Enable diagnostic logging">
 <!ENTITY privacypane.notice.caption "Notice">
@@ -60,18 +60,18 @@
 
 <!ENTITY serverspane.label "Network">
 <!ENTITY serverspane.downloads.caption "Downloads">
-<!ENTITY serverspane.concurrent.label "Concurrent downloads:">
-<!ENTITY serverspane.perserver.label "Downloads per server:">
+<!ENTITY serverspane.concurrent.label "Concurrent Downloads:">
+<!ENTITY serverspane.perserver.label "Downloads Per Server:">
 <!ENTITY serverspane.url.label "Location or domain:">
 <!ENTITY serverspane.new.label "New Limit">
 <!ENTITY serverspane.del.label "Remove Limit">
-<!ENTITY serverspane.limits.label "Per-Server limits">
+<!ENTITY serverspane.limits.label "Per-Server Limits">
 <!ENTITY serverpane.limits.noitems "No per-server limits specified">
 <!ENTITY serverspane.connections.label "Connections:">
 <!ENTITY serverspane.speed.label "Speed Limit:">
 <!ENTITY serverspane.unlimited "Unlimited">
 <!ENTITY serverspane.limited "Limited">
-<!ENTITY serverspane.autoretry.caption "Automatic retries">
+<!ENTITY serverspane.autoretry.caption "Automatic Retries">
 <!ENTITY serverspane.autoretry.interval.label "Retry each">
 <!ENTITY serverspane.autoretry.max.label "Max. Retries">
 <!ENTITY serverspane.cancel.label "Cancel">
@@ -80,25 +80,25 @@
 
 <!ENTITY advancedpane.label "Advanced">
 <!ENTITY advancedpane.downloads.caption "Advanced download control">
-<!ENTITY advancedpane.misc.caption "Miscellaneous settings">
-<!ENTITY advancedpane.files.caption "File control">
-<!ENTITY advancedpane.chunks.label "Max. number of segments per download:">
+<!ENTITY advancedpane.misc.caption "Miscellaneous">
+<!ENTITY advancedpane.files.caption "Files">
+<!ENTITY advancedpane.chunks.label "Max. Number of Segments Per Download:">
 <!ENTITY advancedpane.chunksdisabled "Disabled">
-<!ENTITY advancedpane.timeout.label "Download timeout after ">
-<!ENTITY advancedpane.seconds "seconds">
-<!ENTITY advancedpane.minute "minute">
-<!ENTITY advancedpane.minutes "minutes">
-<!ENTITY advancedpane.hour "hour">
-<!ENTITY advancedpane.hours "hours">
-<!ENTITY advancedpane.tempfiles.caption "Temporary files">
+<!ENTITY advancedpane.timeout.label "Download Timeout After">
+<!ENTITY advancedpane.seconds "Seconds">
+<!ENTITY advancedpane.minute "Minute">
+<!ENTITY advancedpane.minutes "Minutes">
+<!ENTITY advancedpane.hour "Hour">
+<!ENTITY advancedpane.hours "Hours">
+<!ENTITY advancedpane.tempfiles.caption "Temporary Files">
 <!ENTITY advancedpane.usetemp.label "Save download segments in a temporary directory">
 <!ENTITY advancedpane.tempdir.label "Use this directory:">
-<!ENTITY advancedpane.permissions.caption "File permissions">
+<!ENTITY advancedpane.permissions.caption "File Permissions">
 <!ENTITY advancedpane.permissions.group "Group members may">
 <!ENTITY advancedpane.permissions.everybody "Everybody else may">
 <!ENTITY advancedpane.permissions.read "Read">
 <!ENTITY advancedpane.permissions.write "Write">
-<!ENTITY advancedpane.loadendfirst.label "Load last few kilobytes first">
+<!ENTITY advancedpane.loadendfirst.label "Load Last Few Kilobytes First">
 <!ENTITY advancedpane.scheduler.caption "Download start order:">
 <!ENTITY advancedpane.scheduler.fast "Fast - As queued">
 <!ENTITY advancedpane.scheduler.fair "Fair+Slow - Evenly distributed">
@@ -109,12 +109,12 @@
 <!ENTITY uipane.namesonly.label "Show only file names in Manager window">
 <!ENTITY uipane.integration.caption "Integration">
 <!ENTITY uipane.downloadwin.label "Add DownThemAll! to the 'Save File' window">
-<!ENTITY uipane.context.caption "Context menu">
+<!ENTITY uipane.context.caption "Context Menu">
 <!ENTITY uipane.tools.caption "Tools Menu">
 <!ENTITY uipane.tbbuttons.caption "Toolbar Buttons">
 <!ENTITY uipane.compact.label "Use a compact menu">
 <!ENTITY uipane.hide.label "Hide this menu">
 <!ENTITY uipane.showtooltip.label "Show download tooltips">
-<!ENTITY uipane.manager.caption "Manager window">
+<!ENTITY uipane.manager.caption "Manager Window">
 <!ENTITY uipane.startminimized.label "Start minimized">
 <!ENTITY uipane.minimizetotray.label "Minimize to system tray">

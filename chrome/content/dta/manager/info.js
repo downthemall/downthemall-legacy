@@ -226,7 +226,7 @@ var Dialog = {
 			return false;
 		}
 		if (!$('hash').isValid) {
-			alert(_('alertinfo'));
+			alert(_('alerthash'));
 			return false;
 		}
 		return true;
