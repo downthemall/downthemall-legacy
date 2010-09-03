@@ -680,6 +680,7 @@ const Dialog = {
 		try {
 			const now = Utils.getTimestamp();
 			for each (let d in this._running) {
+				d.refreshPartialSize();
 				let advanced = d.speeds.add(d.partialSize, now);
 				this._sum += advanced;
 				
@@ -770,6 +771,7 @@ const Dialog = {
 	},
 	refreshWritten: function D_refreshWritten() {
 		for each (let d in this._running) {
+			d.refreshPartialSize();
 			d.invalidate();
 		}
 	},
@@ -1393,11 +1395,11 @@ QueueItem.prototype = {
 			return false;			
 		}			
 		if (this.dbId) {
-			QueueStore.saveDownload(this.dbId, this.toSource());
+			QueueStore.saveDownload(this.dbId, this.serialize());
 			return true;
 		}
 
-		this.dbId = QueueStore.addDownload(this.toSource(), this.position);
+		this.dbId = QueueStore.addDownload(this.serialize(), this.position);
 		return true;
 	},
 	remove: function QI_remove() {
@@ -2257,7 +2259,7 @@ QueueItem.prototype = {
 		Debug.logString("scoreboard\n" + scoreboard);
 	},	
 	toString: function() this.urlManager.usable,
-	toSource: function() {
+	serialize: function() {
 		let e = {};
 		[
 		 	'fileName',
@@ -2283,7 +2285,7 @@ QueueItem.prototype = {
 			this
 		);
 		if (this.hashCollection) {
-			e.hashCollection = this.hashCollection.toSource();
+			e.hashCollection = this.hashCollection.serialize();
 		}
 		if (this.autoRetrying || this.is(RUNNING)) {
 			e.state = QUEUED;
@@ -2305,8 +2307,8 @@ QueueItem.prototype = {
 		}
 		e.startDate = this.startDate.getTime();
 
-		e.urlManager = this.urlManager.toSource();
-		e.visitors = this.visitors.toSource();
+		e.urlManager = this.urlManager.serialize();
+		e.visitors = this.visitors.serialize();
 
 		if (!this.resumable && !this.is(COMPLETE)) {
 			e.totalSize = 0;
@@ -2389,7 +2391,7 @@ Chunk.prototype = {
 		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 		seekable.seek(0x00, this.start + this.written);
-		this._outStream = new BufferedOutputStream(outStream, MIN_CHUNK_SIZE);
+		this._outStream = new BufferedOutputStream(outStream, MIN_CHUNK_SIZE * 2);
 		
 		this.buckets = new ByteBucketTee(
 				this.parent.bucket,
@@ -2473,7 +2475,7 @@ Chunk.prototype = {
 			}
 			this._written += bytes;
 			this._sessionBytes += bytes;
-			this._buffered = Math.min(MIN_CHUNK_SIZE, this._buffered + bytes);
+			this._buffered = Math.min(MIN_CHUNK_SIZE * 2, this._buffered + bytes);
 
 			this.parent.timeLastProgress = Utils.getTimestamp();
 

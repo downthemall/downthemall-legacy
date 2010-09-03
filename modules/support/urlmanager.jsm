@@ -148,10 +148,10 @@ UrlManager.prototype = {
 		this._makeGood();
 		return true;
 	},
-	toSource: function um_toSource() {
+	serialize: function um_serialize() {
 		let rv = [];
 		for each (let url in this._urls) {
-			rv.push(url.toSource());
+			rv.push(url.serialize());
 		}
 		return rv;
 	},

@@ -190,24 +190,26 @@ function Connection(d, c, isInfoGetter) {
 
 Connection.prototype = {
 	_interfaces: [
-		Ci.nsISupports,
-		Ci.nsISupportsWeakReference,
-		Ci.nsIWeakReference,
-		Ci.nsIClassInfo,
-		Ci.nsICancelable,
 		Ci.nsIInterfaceRequestor,
 		Ci.nsIStreamListener,
 		Ci.nsIRequestObserver,
 		Ci.nsIProgressEventSink,
 		Ci.nsIChannelEventSink,
 		Ci.nsIFTPEventSink,
+		Ci.nsISupports,
+		Ci.nsISupportsWeakReference,
+		Ci.nsIWeakReference,
+		Ci.nsIClassInfo,
+		Ci.nsICancelable,
 	],
 		
 	cantCount: false,
 
 	QueryInterface: function DL_QI(iid) {
-		if (this._interfaces.some(function(i) { return iid.equals(i); })) {
-			return this;
+		for each (let i in this._interfaces) {
+			if (iid.equals(i)) {
+				return this;
+			}
 		}
 		throw Cr.NS_ERROR_NO_INTERFACE;
 	},
@@ -830,8 +832,6 @@ Connection.prototype = {
 			}
 
 			if (d.is(RUNNING)) {
-				d.refreshPartialSize();
-
 				if (!this.resumable && d.totalSize) {
 					// basic integrity check
 					if (d.partialSize > d.totalSize) {
