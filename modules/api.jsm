@@ -233,6 +233,7 @@ function HashCollection(fullHash) {
 	}
 	this.full = fullHash;
 	this.partials = [];
+	this._serialize();
 }
 /**
  * Load HashCollection from a serialized object
@@ -244,6 +245,7 @@ HashCollection.load = function(obj) {
 	let rv = new HashCollection(new Hash(obj.full.sum, obj.full.type));
 	rv.parLength = obj.parLength ? obj.parLength : 0;
 	rv.partials = obj.partials.map(function(e) new Hash(e.sum, e.type));
+	rv._serialize();
 	return rv;
 },
 
@@ -267,13 +269,16 @@ HashCollection.prototype = {
 			throw Exception("Must supply hash");
 		}
 		this.partials.push(hash);
+		this._serialize();
 	},
 	/**
 	 * Serializes HashCollection
 	 * @return (object) Serialized HashCollection
 	 */
-	serialize: function() {
-		return {
+	serialize: function() this._serialized,
+	_serialized: null,
+	_serialize: function() {
+		this._serialized = {
 			full: this.full.serialize(),
 			parLength: this.parLength,
 			partials: this.partials.map(function(p,i) p.serialize())
