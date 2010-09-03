@@ -4,9 +4,9 @@
 <!ENTITY byline2 "Feel free to add and remove locations pointing to the same file.">
 <!ENTITY byline3 "Adding locations pointing to different files will cause a corrupt download">
 
-<!ENTITY addmirror.tip "Add a download mirror">
-<!ENTITY removemirror.tip "Remove selected download mirrors">
-<!ENTITY checkmirrors.tip "Check all download mirrors">
+<!ENTITY addmirror.tip "Add a Download Mirror">
+<!ENTITY removemirror.tip "Remove Selected Download Mirrors">
+<!ENTITY checkmirrors.tip "Check All Download Mirrors">
 
 <!ENTITY mirrorurl "Location:">
 <!ENTITY preference "Priority:">

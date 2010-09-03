@@ -8,7 +8,7 @@
 <!ENTITY movedown.label "Down">
 
 <!ENTITY task.label "Download/Name">
-<!ENTITY per.label "Completion">
+<!ENTITY per.label "Percent">
 <!ENTITY pct.label "Progress">
 <!ENTITY dim.label "Size">
 <!ENTITY time.label "Est. time">
@@ -25,25 +25,25 @@
 <!ENTITY mask.label "Renaming Mask">
 <!ENTITY hash.label "Checksum">
 
-<!ENTITY infos.label "Download information">
-<!ENTITY launch.label "Open file">
-<!ENTITY delete.label "Delete file(s)">
-<!ENTITY targetdir.label "Open directory">
+<!ENTITY infos.label "Download Information">
+<!ENTITY launch.label "Open File">
+<!ENTITY delete.label "Delete File(s)">
+<!ENTITY targetdir.label "Open Directory">
 <!ENTITY pause.label "Pause">
 <!ENTITY resume.label "Resume">
 <!ENTITY cancel.label "Cancel">
-<!ENTITY removemenu.label "Remove tasks">
-<!ENTITY removeselected.label "Selected">
-<!ENTITY removeCompleted.label "Remove completed tasks">
-<!ENTITY removeAll.label "All">
-<!ENTITY removeDupes.label "Duplicates">
-<!ENTITY removeGone.label "Clean gone files">
+<!ENTITY removemenu.label "Remove Downloads">
+<!ENTITY removeselected.label "Remove Selected">
+<!ENTITY removeCompleted.label "Remove Completed Downloads">
+<!ENTITY removeAll.label "Remove All">
+<!ENTITY removeDupes.label "Remove Duplicates">
+<!ENTITY removeGone.label "Clean Gone Files">
 <!ENTITY advanced.label "Advanced">
-<!ENTITY addchunk.label "One more segment">
-<!ENTITY removechunk.label "One less segment">
-<!ENTITY force.label "Force start">
-<!ENTITY import.label "Import from file">
-<!ENTITY export.label "Export selected">
+<!ENTITY addchunk.label "One More Segment">
+<!ENTITY removechunk.label "One Less Segment">
+<!ENTITY force.label "Force Start">
+<!ENTITY import.label "Import from File">
+<!ENTITY export.label "Export Selected to File">
 
 <!ENTITY options.caption "Options">
 <!ENTITY loading.label "Loading...">
@@ -57,8 +57,8 @@
 <!ENTITY perdownloadspeedlimit.label "Speed limit">
 <!ENTITY perdownloadspeedlimit.tooltip "Change speed limit. The global speed limit will be still obeyed.">
 
-<!ENTITY mirrors.label "Manage mirrors">
+<!ENTITY mirrors.label "Manage Mirrors">
 <!ENTITY mirrors.tooltip "Manage download mirror locations">
 
-<!ENTITY toolbar.icons "Use icons">
-<!ENTITY toolbar.full "Use icons and text">
+<!ENTITY toolbar.icons "Use Icons">
+<!ENTITY toolbar.full "Use Icons and Text">
