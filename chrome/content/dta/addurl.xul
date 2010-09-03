@@ -75,7 +75,7 @@
 				</vbox>
 			</row> 
 			<row align="center">
-				<label control="address" value="&url.value;:"/>
+				<label control="address" value="&url.value;:" class="header"/>
 				<textbox id="address" type="autocomplete" autocompletesearch="history" completedefaultindex="true"/>
 			</row>
 			<row align="center">
