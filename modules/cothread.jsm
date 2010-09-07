@@ -181,11 +181,8 @@ function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx, finishF
 		// make a generator
 		this._generator = (i for each (i in arrayOrGenerator));
 	}
-	else if (typeof arrayOrGenerator != 'function' && !(arrayOrGenerator instanceof Function)) {
-		this._generator = arrayOrGenerator;
-	}
 	else {
-		throw Cr.NS_ERROR_INVALID_ARG;
+		this._generator = arrayOrGenerator;
 	}
 	
 	this._finishFunc = finishFunc;
