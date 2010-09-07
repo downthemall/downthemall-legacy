@@ -45,19 +45,6 @@ const Transferable = new Components.Constructor("@mozilla.org/widget/transferabl
 
 var dropDowns = {};
 
-function QueueItem(url, num, desc, hash) {
-	this.url = url;
-	this.numIstance = num;
-	this.referrer = $('URLref').value,
-	this.description = desc;
-	this.title = '';
-	this.mask = Dialog.ddRenaming.value;
-	this.dirSave = Dialog.ddDirectory.value;
-	if (hash) {
-		this.url.hash = hash;
-	}
-}
-
 setNewGetter(this, "BatchGenerator", function() {
 	let bg = {};
 	Components.utils.import("resource://dta/support/batchgen.jsm", bg);
@@ -246,19 +233,41 @@ var Dialog = {
 			}
 			rv = rv == 0;
 		}
-		var desc = $('description').value;
-		if (rv) {
-			var g = batch.getURLs();
-			batch = function() {
-				for (let i in g) {
-					yield new QueueItem(new DTA.URL(IOService.newURI(i, null, null)), num, desc);
+		
+		let downloads = (function() {
+			let desc = $('description').value;
+			let ref = $('URLref').value;
+			let URL = DTA.URL;
+			let newURI = IOService.newURI;
+
+			function QueueItem(url) {
+				this.url = new URL(newURI(url, null, null));
+				if (hash) {
+					this.url.hash = hash;
 				}
-			}();
-		}
-		else {
-			batch = [new QueueItem(url, num, desc, hash)];
-		}
-		DTA.sendLinksToManager(window, start, batch);
+			}
+			QueueItem.prototype = {
+				title: '',
+				description: desc,
+				referrer: $('URLref').value,
+				numIstance: num,
+				mask: mask,
+				dirSave: dir
+			};
+		
+			if (rv) {
+				let g = batch.getURLs();
+				return (function() {
+					for (let i in g) {
+						yield new QueueItem(i);
+					}
+				})();
+			}
+
+			return batch = [new QueueItem(url)];
+		})();
+		
+		DTA.sendLinksToManager(window, start, downloads);
 
 		DTA.incrementSeries();
 		Preferences.setExt("lastqueued", !start);
@@ -267,7 +276,7 @@ var Dialog = {
 		
 		self.close();
 		
-		return true;
+		return false;
 	},
 	browseDir: function DTA_browseDir() {
 		// let's check and create the directory
