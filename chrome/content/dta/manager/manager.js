@@ -761,7 +761,7 @@ const Dialog = {
 				}
 				document.title = this.completed + "/" + Tree.rowCount + " - DownThemAll!";
 			}
-			$('titlebar').value = document.title;
+			($('titlebar') || {}).value = document.title;
 		}
 		catch(ex) {
 			Debug.log("refresh():", ex);
@@ -2507,106 +2507,110 @@ Chunk.prototype = {
 }
 
 function startDownloads(start, downloads) {
-
-	var numbefore = Tree.rowCount - 1;
+	
+	let iNum = 0;
+	
+	function addItem(e) {
+		try {
+			let qi = new QueueItem();
+			let lnk = e.url;
+			if (typeof lnk == 'string') {
+				qi.urlManager = new UrlManager([new DTA.URL(IOService.newURI(lnk, null, null))]);
+			}
+			else if (lnk instanceof UrlManager) {
+				qi.urlManager = lnk;
+			}
+			else {
+				qi.urlManager = new UrlManager([lnk]);
+			}
+			qi.bNum = e.numIstance;
+			qi.iNum = ++iNum;
+		
+			if (e.referrer) {
+				try {
+					qi.referrer = e.referrer.toURL();
+				}
+				catch (ex) {
+					// We might have been fed with about:blank or other crap. so ignore.
+				}
+			}
+			// only access the setter of the last so that we don't generate stuff trice.
+			qi._pathName = e.dirSave.addFinalSlash().toString();
+			qi._description = !!e.description ? e.description : '';
+			qi._title = !!e.title ? e.title : '';
+			qi._mask = e.mask;
+			qi.fromMetalink = !!e.fromMetalink;
+			qi.fileName = qi.urlManager.usable.getUsableFileName();
+			if (e.fileName) {
+				qi.fileName = e.fileName.getUsableFileName();
+			}
+			if (e.destinationName) {
+				qi.destinationName = e.destinationName.getUsableFileName();
+			}
+			if (e.startDate) {
+				qi.startDate = e.startDate;
+			}
+			
+			// hash?
+			if (e.hashCollection) {
+				qi.hashCollection = e.hashCollection;
+			}
+			else if (e.url.hashCollection) {
+				qi.hashCollection = e.url.hashCollection;
+			}
+			else if (e.hash) {
+				qi.hashCollection = new DTA.HashCollection(e.hash);
+			}
+			else if (e.url.hash) {
+				qi.hashCollection = new DTA.HashCollection(e.url.hash);
+			}
+			else {
+				qi.hashCollection = null; // to initialize prettyHash
+			}
+	
+			let postData = ContentHandling.getPostDataFor(qi.urlManager.url);
+			if (e.url.postData) {
+				postData = e.url.postData;
+			}
+			if (postData) {
+				qi.postData = postData;
+			}		
+	
+			qi._state = start ? QUEUED : PAUSED;
+			if (qi.is(QUEUED)) {
+				qi.status = TEXT_QUEUED;
+			}
+			else {
+				qi.status = TEXT_PAUSED;
+			}
+			qi._position = Tree.add(qi);
+			qi.save();
+		}
+		catch (ex) {
+			Debug.log("addItem", ex);
+		}
+		
+		return true;
+	}	
 	
 	let g = downloads;
 	if ('length' in downloads) {
 		g = (i for each (i in downloads));
 	}
 
-	let added = 0;
-	let removeableTabs = {};
 	Tree.beginUpdate();
 	QueueStore.beginUpdate();
-	let iNum = 0;
-	for (let e in g) {
-		let qi = new QueueItem();
-		let lnk = e.url;
-		if (typeof lnk == 'string') {
-			qi.urlManager = new UrlManager([new DTA.URL(IOService.newURI(lnk, null, null))]);
+	let ct = new CoThreadListWalker(
+		addItem,
+		g,
+		100,
+		null,
+		function() {
+			QueueStore.endUpdate();
+			Tree.endUpdate();
+			delete ct;
 		}
-		else if (lnk instanceof UrlManager) {
-			qi.urlManager = lnk;
-		}
-		else {
-			qi.urlManager = new UrlManager([lnk]);
-		}
-		qi.bNum = e.numIstance;
-		qi.iNum = ++iNum;
-	
-		if (e.referrer) {
-			try {
-				qi.referrer = e.referrer.toURL();
-			}
-			catch (ex) {
-				// We might have been fed with about:blank or other crap. so ignore.
-			}
-		}
-		// only access the setter of the last so that we don't generate stuff trice.
-		qi._pathName = e.dirSave.addFinalSlash().toString();
-		qi._description = !!e.description ? e.description : '';
-		qi._title = !!e.title ? e.title : '';
-		qi._mask = e.mask;
-		qi.fromMetalink = !!e.fromMetalink;
-		qi.fileName = qi.urlManager.usable.getUsableFileName();
-		if (e.fileName) {
-			qi.fileName = e.fileName.getUsableFileName();
-		}
-		if (e.destinationName) {
-			qi.destinationName = e.destinationName.getUsableFileName();
-		}
-		if (e.startDate) {
-			qi.startDate = e.startDate;
-		}
-		
-		// hash?
-		if (e.hashCollection) {
-			qi.hashCollection = e.hashCollection;
-		}
-		else if (e.url.hashCollection) {
-			qi.hashCollection = e.url.hashCollection;
-		}
-		else if (e.hash) {
-			qi.hashCollection = new DTA.HashCollection(e.hash);
-		}
-		else if (e.url.hash) {
-			qi.hashCollection = new DTA.HashCollection(e.url.hash);
-		}
-		else {
-			qi.hashCollection = null; // to initialize prettyHash
-		}
-
-		let postData = ContentHandling.getPostDataFor(qi.urlManager.url);
-		if (e.url.postData) {
-			postData = e.url.postData;
-		}
-		if (postData) {
-			qi.postData = postData;
-		}		
-
-		qi._state = start ? QUEUED : PAUSED;
-		if (qi.is(QUEUED)) {
-			qi.status = TEXT_QUEUED;
-		}
-		else {
-			qi.status = TEXT_PAUSED;
-		}
-		qi._position = Tree.add(qi);
-		qi.save();		
-		++added;
-	}
-	QueueStore.endUpdate();
-	Tree.endUpdate();
-
-	var boxobject = Tree._box;
-	boxobject.QueryInterface(Ci.nsITreeBoxObject);
-	if (added <= boxobject.getPageLength()) {
-		boxobject.scrollToRow(Tree.rowCount - boxobject.getPageLength());
-	}
-	else {
-		boxobject.scrollToRow(numbefore);
-	}
+	).run();
 }
 
 var ConflictManager = {
