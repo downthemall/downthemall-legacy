@@ -42,6 +42,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
+const module = Cu.import;
 const Exception = Components.Exception;
 
 const FileOutputStream = Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
@@ -65,8 +66,9 @@ const SIZE_MIN = 5 * 1024 * 1024;
 // Do this step wise to avoid certain "sparse files" cases
 const SIZE_STEP = 100 * 1024 * 1024;
 
-Components.utils.import('resource://dta/cothread.jsm');
-Components.utils.import('resource://dta/utils.jsm');
+module('resource://dta/cothread.jsm');
+module('resource://dta/utils.jsm');
+module('resource://dta/version.jsm');
 
 // Store workers here.
 // Not storing workers (in this context) will cause gc havoc.
@@ -159,6 +161,31 @@ WorkerJob.prototype = {
 		this.thread.shutdown();
 	}
 };
+
+if (Version.OS == 'winnt') {
+ WorkerJob.prototype.run = function workerwin_run() {
+		let rv = false;
+		try {
+			let file = new File(this.path);
+			let stream = new FileOutputStream(file, 0x02 | 0x08, this.perms, 0);
+			try {
+				let seekable = stream.QueryInterface(Ci.nsISeekableStream);
+				seekable.seek(0x02, this.size);
+				seekable.setEOF();
+			}
+			finally {
+				stream.close();
+			}
+			rv = true;
+		}
+		catch (ex) {
+			log("pa: Failed to run prealloc worker", ex);
+		}
+		
+		// Dispatch event back to the main thread
+		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);		
+	}
+}
 
 function MainJob(uuid, thread, callback, tp, result) {
 	this.uuid = uuid;
