@@ -140,8 +140,7 @@ ByteBucket.prototype = {
 		if (this._available < 0) {
 			return bytes;
 		}
-		let rv = Math.max(0, Math.min(bytes, this._available));
-		return rv;
+		return Math.max(0, Math.min(bytes, this._available));
 	},
 	commitBytes: function(bytes) {
 		this._available -= bytes;
