@@ -60,7 +60,7 @@ const log = (function() {
 
 // Minimum size of a preallocation.
 // If requested size is less then no actual pre-allocation will be performed.
-const SIZE_MIN = 5 * 1024 * 1024;
+let SIZE_MIN = 5 * 1024 * 1024;
 
 // Step size of the allocation
 // Do this step wise to avoid certain "sparse files" cases
@@ -163,7 +163,8 @@ WorkerJob.prototype = {
 };
 
 if (Version.OS == 'winnt') {
- WorkerJob.prototype.run = function workerwin_run() {
+	SIZE_MIN = 30 * 1024;
+ 	WorkerJob.prototype.run = function workerwin_run() {
 		let rv = false;
 		try {
 			let file = new File(this.path);
