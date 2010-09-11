@@ -299,21 +299,17 @@ const Tooltip = {
 	_current: null,
 	_mustDraw: true,
 	init: function() {
-		try {
-			// check if we support 2d-canvas
-			$('chunkCanvas').getContext('2d');
-			this.progress = $('infoPercent');
-			$('chunkAlt').parentNode.removeChild($('chunkAlt'));
-		}
-		catch (ex) {
-			// we don't support 2d-canvas
-			this.updateChunks = this.updateChunksAlt;
-			this.updateSpeeds = function() {};
-			for each (var node in $('chunkStack', 'speedCanvas')) {
-				node.parentNode.removeChild(node);
-			}
-			$('infoPercentAlt').id = 'infoPercent';
-		}
+		$(
+			'infoPercent',
+			'infoSize',
+			'canvasGrid',
+			'chunkCanvas',
+			'speedCanvas',
+			'speedAverage',
+			'speedCurrent',
+			'timeRemaining',
+			'timeElapsed'
+		).forEach(function(e) this[e.id] = e, this);
 	},		 
 	start: function(d) {
 		this._current = d;
@@ -324,8 +320,8 @@ const Tooltip = {
 	initUpdate: function() {
 		Debug.logString("init");
 		let mr = false;
-		let box = $('canvasGrid').boxObject;
-		for each (let canvas in $('chunkCanvas', 'speedCanvas')) {
+		let box = this.canvasGrid.boxObject;
+		for each (let canvas in [this.speedCanvas, this.chunkCanvas]) {
 			try {
 				let w = Math.min(box.width, canvas.clientWidth);
 				let h = parseInt(canvas.getAttribute('height'));
@@ -397,25 +393,25 @@ const Tooltip = {
 	updateMetrics: function(file) {
 		try {
 			if (file.speeds.length && file.is(RUNNING)) {
-				$('speedAverage').value = file.speed;
-				$('speedCurrent').value = Utils.formatSpeed(file.speeds.last);
+				this.speedAverage.value = file.speed;
+				this.speedCurrent.value = Utils.formatSpeed(file.speeds.last);
 			}
 			else if (file.is(RUNNING)) {
-				$('speedCurrent').value = $('speedAverage').value = _('unknown');
+				this.speedCurrent.value = this.speedAverage.value = _('unknown');
 			}
 			else {
-				$('speedCurrent').value = $('speedAverage').value = _('nal');
+				this.speedCurrent.value = this.speedAverage.value = _('nal');
 			}
 
-			$('infoSize').value = file.dimensionString;//file.totalSize > 0 ? Utils.formatBytes(file.totalSize) : _('unknown');
-			$('timeRemaining').value = file.status;
+			this.infoSize.value = file.dimensionString;//file.totalSize > 0 ? Utils.formatBytes(file.totalSize) : _('unknown');
+			this.timeRemaining.value = file.status;
 			if (file.is(RUNNING)) {
-				$('timeElapsed').value = Utils.formatTimeDelta((Utils.getTimestamp() - file.timeStart) / 1000);
+				this.timeElapsed.value = Utils.formatTimeDelta((Utils.getTimestamp() - file.timeStart) / 1000);
 			}
 			else {
-				$('timeElapsed').value = _('nal');
+				this.timeElapsed.value = _('nal');
 			}
-			$('infoPercent').value = file.percent;
+			this.progress.value = file.percent;
 		}
 		catch (ex) {
 			Debug.log("Tooltip.updateMetrics: ", ex);
@@ -436,7 +432,7 @@ const Tooltip = {
 			this._usBytes = file.speeds.lastBytes;
 			
 			// we need to take care about with/height
-			let canvas = $("speedCanvas");
+			let canvas = this.speedCanvas;
 			let w = canvas.width;
 			let h = canvas.height;
 			let ctx = canvas.getContext("2d");
@@ -539,16 +535,6 @@ const Tooltip = {
 			Debug.log("updateSpeedCanvas(): ", ex);
 		}
 	},
-	updateChunksAlt: function(file) {
-		let meter = $('chunkProgressAlt');
-		if (file.is(RUNNING) && 0 >= file.totalSize) {
-			meter.mode = 'undetermined';
-		}
-		else {
-			meter.mode = 'determined';
-			meter.setAttribute('value', file.percent);
-		}
-	},
 	_ucFile: null,
 	_ucDim: null,
 	_ucTotal: null,
@@ -562,7 +548,7 @@ const Tooltip = {
 			this._ucState = file.state;
 			this._ucDim = file.dimensionString;
 			
-			let canvas = $("chunkCanvas");
+			let canvas = this.chunkCanvas;
 			let width = canvas.width;
 			let height = canvas.height;
 			let ctx = canvas.getContext("2d");
@@ -666,4 +652,7 @@ const Tooltip = {
 		}
 	}
 };
-addEventListener('load', function() { Tooltip.init(); }, false);
+addEventListener('load', function() {
+	removeEventListener('load', arguments.callee, false);
+	Tooltip.init();
+}, false);
