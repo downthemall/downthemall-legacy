@@ -175,9 +175,6 @@ toolbox {
 }
 #infoIcon {
 	margin: 1.6ex;
-	width: 32px !important;
-	height: 32px !important;
-	-moz-box-flex: 0 !important;
 }
 #tooltip grid {
 	-moz-box-flex: 1;
