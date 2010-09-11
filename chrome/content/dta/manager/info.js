@@ -36,7 +36,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 Components.utils.import('resource://dta/support/timers.jsm');
-var Timers = new TimerManager();
+const Timers = new TimerManager();
 
 
 var Dialog = {

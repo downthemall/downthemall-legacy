@@ -4,7 +4,11 @@ var EXPORTED_SYMBOLS = [
 	'FINISHING',
 	'COMPLETE',
 	'CANCELED',
-	'QUEUED'
+	'QUEUED',
+	'SPEED_COUNT',
+	'MIN_CHUNK_SIZE',
+	'REFRESH_FREQ',
+	'TOOLTIP_FREQ',
 ];
 
 // Download is paused
@@ -19,3 +23,15 @@ const COMPLETE =  1<<4;
 const CANCELED =  1<<5;
 // Download is queued
 const QUEUED =    1<<6;
+
+// Number of speed data points to keep
+const SPEED_COUNT = 100;
+
+// Minimal size a chunk may take
+const MIN_CHUNK_SIZE = 1<<19; // 512K
+
+// Refresh frequency
+const REFRESH_FREQ = 1000;
+
+// Tooltip refresh frequency
+const TOOLTIP_FREQ = 500;
