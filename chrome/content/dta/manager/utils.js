@@ -295,8 +295,6 @@ const Prefs = {
 	}
 };
 
-const TOOLTIP_FREQ = 500;
-
 const Tooltip = {
 	_current: null,
 	_mustDraw: true,

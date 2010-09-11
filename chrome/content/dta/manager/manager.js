@@ -51,13 +51,6 @@ ServiceGetter(this, "MimeService", "@mozilla.org/uriloader/external-helper-app-s
 ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIObserverService");
 ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 
-const MIN_CHUNK_SIZE = 1<<19; // 512K
-
-// amount to buffer in BufferedOutputStream
-// furthermore up to this ammount will automagically discared after crashes
-const REFRESH_FREQ = 1000;
-const SPEED_COUNT = 100;
-
 let Prompts = {}, Limits = {}, JSONCompat = {}, PrivateBrowsing = {};
 module('resource://dta/cothread.jsm');
 module('resource://dta/json.jsm', JSONCompat);
