@@ -46,10 +46,10 @@
 			<tab label="&options.caption;" />
 		</tabs>
 		<tabpanels>
-			<tabpanel id="canvasTab" orient="vertical" flex="1">
-				<grid id="canvasGrid" flex="1" style="overflow: hidden;" />
+			<tabpanel id="canvasTab" orient="vertical" flex="1" pack="start">
+				<grid id="canvasGrid" style="overflow: hidden;" />
 			</tabpanel>
-			<tabpanel id="paramsBox" orient="vertical" flex="1">
+			<tabpanel id="paramsBox" orient="vertical" flex="1" pack="start">
 				<grid>
 					<columns>
 						<column />
