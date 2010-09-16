@@ -43,7 +43,6 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 module("resource://dta/utils.jsm");
-ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 
 function GlobalProgress(window) {
 	this.init(window);

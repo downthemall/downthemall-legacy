@@ -67,15 +67,7 @@
 	cothreads.__defineGetter__('CoThread', cothreads.loadCoThread);
 	cothreads.__defineGetter__('CoThreadListWalker', cothreads.loadCoThreadListWalker);
 	
-	function debug(msg, ex) {
-		let _d = DTA.Debug;
-		return (debug = function debug(msg, ex) {
-			if (ex) {
-				return _d.log(msg, ex);
-			}
-			return _d.logString(msg);
-		})(msg, ex);
-	}
+	function debug(msg, ex) DTA.Debug.log(msg, ex);
 	
 	function $() {
 		if (arguments.length == 1) {

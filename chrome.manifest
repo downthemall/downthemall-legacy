@@ -16,9 +16,6 @@ skin	dta-platform	classic/1.0 chrome/skin/
 ## Components ##
 interfaces components/services.xpt
 
-component {0B82FEBB-59A1-41d7-B31D-D5A686E11A69} components/services.js
-contract @downthemall.net/debug-service;1 {0B82FEBB-59A1-41d7-B31D-D5A686E11A69}
-
 component {27a344f4-7c1b-43f3-af7f-bb9dd65114bb} components/services.js
 contract @downthemall.net/stuff;1 {27a344f4-7c1b-43f3-af7f-bb9dd65114bb}
 

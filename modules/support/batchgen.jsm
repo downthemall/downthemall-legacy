@@ -43,8 +43,6 @@ const Exception = Components.Exception;
 
 module("resource://dta/utils.jsm");
 
-ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
-
 /**
  * Simple literal
  * @param str (string) Literal

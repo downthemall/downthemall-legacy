@@ -62,8 +62,6 @@ const nsITimer = Ci.nsITimer;
 
 const Timer = ctor('@mozilla.org/timer;1', 'nsITimer', 'init');
 const ScriptableInputStream = new ctor('@mozilla.org/scriptableinputstream;1', 'nsIScriptableInputStream', 'init');
-const FileStream = new ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const ScriptError = new ctor('@mozilla.org/scripterror;1', 'nsIScriptError', 'init');
 
 this.__defineGetter__(
 	'Preferences',
@@ -98,221 +96,15 @@ this.__defineGetter__(
 
 function log(str, ex) {
 	try {
-		let _debugServ = Cc['@downthemall.net/debug-service;1']
-			.getService(Ci.dtaIDebugService);
-		log = function(str, ex) {
-			if (ex) {
-				_debugServ.log(str, ex);
-			}
-			else {
-				_debugServ.logString(str);
-			}
-		}
+		let _u = {};
+		module('resource://dta/utils.jsm', _u);
+		log = function() _u.Debug.log.apply(_u.Debug, arguments);
 		log(str, ex);
 	}
 	catch (oex) {
 		error(str + ": " + ex);
 	}
 }
-
-/**
- * DebugService
- */
-function DebugService() {
-	this._pb.addObserver('extensions.dta.logging', this, true);
-	this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));
-	
-	try {
-		if (this._file.fileSize > (200 * 1024)) {
-			this.remove();
-		}
-	}
-	catch(ex) {
-		// No-Op
-	}
-}
-
-DebugService.prototype = {
-	classDescription: "DownThemAll! Debug and Logging Service",
-	contractID: "@downthemall.net/debug-service;1",
-	classID: Components.ID("{0B82FEBB-59A1-41d7-B31D-D5A686E11A69}"),
-	
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference, Ci.dtaIDebugService]),
-	
-	QueryReferent: function(iid) this.QueryInterface(iid),
-	GetWeakReference: function() this,
-	
-	// nsIObserver
-	observe: function DS_observe(subject, topic, prefName) {
-		this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));	
-	},
-	clear: function DS_clear() {
-		if (this._file.exists()) {
-			this._file.remove(false);
-		}
-	},	
-	get _cs() {
-		delete DebugService.prototype._cs;
-		return (DebugService.prototype._cs = Cc['@mozilla.org/consoleservice;1'].getService(Ci.nsIConsoleService));
-	},
-	get _pb() {
-		delete DebugService.prototype._pb;
-		return (DebugService.prototype._pb = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2));
-	},
-	
-	get _file() {
-		let file = Cc["@mozilla.org/file/directory_service;1"]
-			.getService(Ci.nsIProperties)
-			.get("ProfD", Ci.nsILocalFile);
-		 file.append('dta_log.txt');
-		 delete DebugService.prototype._file;
-		 return (DebugService.prototype._file = file);
-	},
-	
-	get file() {
-		return this._file;
-	},
-	get enabled() {
-		return this._enabled;
-	},
-	_setEnabled: function DS_setEnabled(nv) {
-		this._enabled = nv;
-		if (nv) {
-			this.logString = this.log = this._log;
-		}
-		else {
-			this.logString = this.log = this._logDisabled;
-		}
-	},
-	_formatTimeDate: function DS_formatTimeDate(value) {
-		return String(value).replace(/\b(\d)\b/g, "0$1");
-	},
-	_log: function DS__log(msg, exception) {
-		try {
-			if (!msg || (msg == "" && typeof(exception) != "object")) {
-				return;
-			}
-			if (!(msg instanceof String) && typeof(msg) != 'string') {
-				for (var i = 0; i < 10 && msg.wrappedJSObject; ++i) {
-					msg = msg.wrappedJSObject;
-				}
-				msg = msg.toSource();
-			}
-			let time = new Date();
-			let text = [];
-			text.push(this._formatTimeDate(time.getHours()));
-			text.push(':');
-			text.push(this._formatTimeDate(time.getMinutes()));
-			text.push(':');
-			text.push(this._formatTimeDate(time.getSeconds()));
-			text.push('::');
-			text.push(time.getMilliseconds());
-			text.push('\n');
-
-			if (msg != "") {
-				text.push(msg.replace(/\n/g, "\n\t") + " ");
-			}
-			if (exception) {
-				text.push("\tError: " + exception);
-			}
-			text.push('\n');
-			let stack = Components.stack;
-			if (stack) {
-				stack = stack.caller.caller;
-			}
-			let lineNumber = 0;
-			let columnNumber = 0;
-			let fileName = null;
-			let sourceLine = '';
-			
-			
-			if (exception && exception.location) {
-				lineNumber = exception.lineNumber;
-				fileName = exception.filename;
-				columnNumber = exception.columnNumber;
-				stack = exception.location;
-
-				let initialLine = "Source Frame :: " + fileName;
-				initialLine += " :: " + exception.location;
-				initialLine += " :: line: " + lineNumber;
-				text.push('\t>');
-				text.push(initialLine);
-				text.push('\n');
-			}
-			else if (exception && exception.stack) {
-				lineNumber = exception.lineNumber;
-				fileName = exception.fileName;
-				columnNumber = 0;
-				let initialLine = "Source Frame (error) :: " + fileName;
-				initialLine += " :: " + exception.name;
-				initialLine += " :: line: " + lineNumber;
-				text.push("\t>" + initialLine + "\n");
-				
-			}
-			else if (exception && stack) {
-				lineNumber = stack.lineNumber;
-				fileName = stack.filename;
-				let initialLine = "Source Frame (stack) :: " + fileName;
-				initialLine += " :: " + stack.name;
-				initialLine += " :: line: " + lineNumber;
-				text.push('\t>');
-				text.push(initialLine);
-				text.push('\n');
-			}
-			else if (stack) {
-				text.push('\t>');
-				text.push(stack.toString());
-				text.push('\n');
-				lineNumber = stack.lineNumber;
-				fileName = stack.filename;
-			}
-			
-			if (stack instanceof Ci.nsIStackFrame) {
-				let sourceLine = stack.sourceLine;
-				let s = stack.caller;
-				for (let i = 0; i < 4 && s; ++i) {
-					text.push('\t>');
-					text.push(s.toString());
-					text.push('\n');
-					s = s.caller;
-				}
-				text = text.join('');
-				if (stack && exception) {
-					this._cs.logMessage(new ScriptError(text, fileName, sourceLine, lineNumber, columnNumber, 0x2, 'component javascript'));
-					 
-				} 
-				else {
-					this._cs.logStringMessage(text);
-				}
-			}
-			else {
-				text = text.join('');
-				this._cs.logStringMessage(text);
-			}
-			var f = new FileStream(this.file, 0x04 | 0x08 | 0x10, 0664, 0);
-			f.write(text, text.length);
-			f.close();
-		}
-		catch(ex) {
-			error(ex);
-		}	
-	
-	},
-	_logDisabled: function DS__dumpDisabled() {
-		// no-op;
-	},
-	log: this._log,
-	logString: this._log,
-		
-	remove: function DS_remove() {
-		try {
-			this._file.remove(false);
-		}
-		catch (ex) {
-			throw Cr.NS_ERROR_FAILURE;
-		}
-	}
-};
 
 /**
  * Stuff
@@ -351,8 +143,6 @@ Stuff.prototype = {
 		module("resource://dta/version.jsm");
 		Version.getInfo(function(v) {
 			try {
-				log("current " + v.VERSION);
-	
 				let lastVersion = Preferences.getExt('version', '0');
 				if (0 == v.compareVersion(v.BASE_VERSION, lastVersion)) {
 					return;
@@ -432,9 +222,9 @@ Stuff.prototype = {
 		
 		// Diagnostic log
 		try {
-			let _debugServ = Cc['@downthemall.net/debug-service;1']
-				.getService(Ci.dtaIDebugService);
-			_debugServ.clear();
+			let _d = {};
+			module('resource://dta/debug.jsm', _d);
+			_d.Debug.clear();
 		}
 		catch (ex) {
 			log("Cannot clear diagnostic log", ex);
@@ -1011,7 +801,7 @@ FilterManager.prototype = {
 		}
 		
 		// register (the observer) and initialize our timer, so that we'll get a reload event.
-		this.reload();
+		this._reload();
 		this.register();
 	},
 	
@@ -1042,15 +832,16 @@ FilterManager.prototype = {
 	get count() {
 		return this._count;
 	},
-
 	reload: function FM_reload() {
 		log("FM: reload requested");
 		if (!this._mustReload) {
 			return;
 		}
 		this._mustReload = false;
-		
-
+		this._reload();
+		log("FM: reload done");		
+	},
+	_reload: function FM__reload() {
 		this._filters = {};
 		this._all = [];
 
@@ -1102,7 +893,6 @@ FilterManager.prototype = {
 		this._active = this._all.filter(function(f) { return f.active; });
 		
 		// notify all observers
-		log("FM: reload done");
 		Observers.notifyObservers(this, TOPIC_FILTERSCHANGED, null);
 	},
 
@@ -1221,8 +1011,8 @@ FilterManager.prototype = {
 
 
 if (XPCOMUtils.generateNSGetFactory) {
-    var NSGetFactory = XPCOMUtils.generateNSGetFactory([DebugService, Stuff, ContentHandling, AboutModule, FilterManager]);
+    var NSGetFactory = XPCOMUtils.generateNSGetFactory([Stuff, ContentHandling, AboutModule, FilterManager]);
 }
 else {
-    function NSGetModule() XPCOMUtils.generateModule([DebugService, Stuff, ContentHandling, AboutModule, FilterManager]);
+    function NSGetModule() XPCOMUtils.generateModule([Stuff, ContentHandling, AboutModule, FilterManager]);
 }

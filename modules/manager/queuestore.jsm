@@ -56,7 +56,6 @@ module("resource://dta/support/timers.jsm");
 
 const Timers = new TimerManager();
 
-ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 ServiceGetter(this, "Storage", "@mozilla.org/storage/service;1", "mozIStorageService");
 ServiceGetter(this, "Observers", "@mozilla.org/observer-service;1", "nsIObserverService");
 

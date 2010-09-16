@@ -48,16 +48,6 @@ const Exception = Components.Exception;
 const FileOutputStream = Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const File = Components.Constructor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 
-const log = (function() {
-	let logger = Cc['@downthemall.net/debug-service;1'].getService(Ci.dtaIDebugService);
-	return function pa_log(msg, ex) {
-		if (ex) {
-			return logger.log(msg, ex);
-		}
-		return logger.logString(msg);
-	}
-})();
-
 // Minimum size of a preallocation.
 // If requested size is less then no actual pre-allocation will be performed.
 let SIZE_MIN = 5 * 1024 * 1024;
@@ -88,7 +78,7 @@ const workers = {};
 function prealloc(file, size, perms, callback, tp) {
 	tp = tp || null;
 	if (size <= SIZE_MIN || !isFinite(size)) {
-		log("pa: not preallocating");
+		Debug.log("pa: not preallocating");
 		if (callback) {
 			callback.call(tp, false);
 		}
@@ -144,19 +134,19 @@ WorkerJob.prototype = {
 				rv = true;				
 			}
 			catch (iex) {
-				log("pa: Failed to run prealloc loop", iex);
+				Debug.log("pa: Failed to run prealloc loop", iex);
 			}
 			stream.close();
 		}
 		catch (ex) {
-			log("pa: Failed to run prealloc worker", ex);
+			Debug.log("pa: Failed to run prealloc worker", ex);
 		}
 		
 		// Dispatch event back to the main thread
 		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);		
 	},
 	cancel: function() {
-		log("pa: cancel called!");
+		Debug.log("pa: cancel called!");
 		this.terminated = true;
 		this.thread.shutdown();
 	}
@@ -180,7 +170,7 @@ if (Version.OS == 'winnt') {
 			rv = true;
 		}
 		catch (ex) {
-			log("pa: Failed to run prealloc worker", ex);
+			Debug.log("pa: Failed to run prealloc worker", ex);
 		}
 		
 		// Dispatch event back to the main thread
@@ -213,10 +203,10 @@ MainJob.prototype = {
 			try {
 				// call the user callback
 				this.callback.call(this.tp, this.result);
-				log("pa: prealloc done");
+				Debug.log("pa: prealloc done");
 			}
 			catch (ex) {
-				log("pa: callback throw", ex);
+				Debug.log("pa: callback throw", ex);
 			}
 		}
 		

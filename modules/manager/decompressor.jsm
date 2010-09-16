@@ -56,8 +56,6 @@ module("resource://dta/support/timers.jsm");
 const IOService = DTA.IOService;
 const Prefs = DTA.Preferences;
 
-ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
-
 const File = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileOutputStream = new Ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const BinaryOutputStream = new Ctor('@mozilla.org/binaryoutputstream;1', 'nsIBinaryOutputStream', 'setOutputStream');
