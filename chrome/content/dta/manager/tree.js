@@ -622,7 +622,7 @@ const Tree = {
 			if (rv == Ci.nsIFilePicker.returnOK) {
 				switch (fp.filterIndex) {
 					case 0: {
-						let links = ImportExport.parseTextfile(fp.file);
+						let links = ImportExport.parseTextFile(fp.file);
 						if (links.length) {
 							DTA.saveLinkArray(window, links, []);
 						}						
