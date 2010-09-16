@@ -55,7 +55,6 @@ module("resource://dta/preferences.jsm", Prefs);
 ServiceGetter(this, "mediator", "@mozilla.org/appshell/window-mediator;1", "nsIWindowMediator");
 ServiceGetter(this, "ioservice", "@mozilla.org/network/io-service;1", "nsIIOService");
 ServiceGetter(this, "protoservice", "@mozilla.org/uriloader/external-protocol-service;1", "nsIExternalProtocolService");
-ServiceGetter(this, "logger", "@downthemall.net/debug-service;1", "dtaIDebugService");
 ServiceGetter(this, "windowwatcher", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 ServiceGetter(this, "sbs", "@mozilla.org/intl/stringbundle;1", "nsIStringBundleService");
 
@@ -141,7 +140,7 @@ function getAllByType(type) {
 }
 
 function openExternal(link) {
-	logger.logString("Mediator: Using external handler for " + link);
+	Debug.log("Mediator: Using external handler for " + link);
 	protoservice.loadUrl(objToUri(link));
 }
 
@@ -157,7 +156,7 @@ this.__defineGetter__(
 			return sbs.createBundle(hp || 'resource:/browserconfig.properties').GetStringFromName('browser.startup.homepage');
 		}
 		catch (ex) {
-			logger.logString("No luck getting hp");
+			Debug.log("No luck getting hp");
 		}
 		return 'about:blank';
 	}
@@ -167,7 +166,7 @@ function openUrl(window, link, ref) {
 	if (!link) {
 		link = homePage;
 	}
-	logger.logString("Mediator: Request to open " + link);
+	Debug.log("Mediator: Request to open " + link);
 	if (!tryOpenUrl(window, link, ref)) {
 		try {
 			window.open(link);
@@ -194,7 +193,7 @@ function tryOpenUrl(window, link, ref) {
 		}
 	}
 	catch (ex) {
-		logger.log('Mediator: Failed to open tab', ex);
+		Debug.log('Mediator: Failed to open tab', ex);
 	}
 	return false;
 }

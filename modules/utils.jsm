@@ -35,6 +35,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 const EXPORTED_SYMBOLS = [
+  'Debug',
 	'atos',
 	'bind',
 	'setNewGetter',
@@ -65,10 +66,16 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const ctor = Components.Constructor;
-const log = Components.utils.reportError;
+const error = Components.utils.reportError;
+const module = Components.utils.import;
 const Exception = Components.Exception;
 
+module("resource://gre/modules/XPCOMUtils.jsm");
+
 const File = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+const FileStream = new ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
+const ScriptError = new ctor('@mozilla.org/scripterror;1', 'nsIScriptError', 'init');
+
 const DirectoryService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
 
 /**
@@ -110,8 +117,8 @@ function setNewGetter(aObject, aName, aLambda) {
 
 	}
 	catch (ex) {
-		log(aName);
-		log(ex);
+		Debug.log(aName);
+		Debug.log(ex);
 	}
 }
 
@@ -137,9 +144,9 @@ function ServiceGetter(context, name, contract, iface) {
 				return Cc[contract].getService(iface);
 			}
 			catch (ex) {
-				log(ex);
-				log(contract);
-				log(iface);
+				Debug.log(ex);
+				Debug.log(contract);
+				Debug.log(iface);
 				throw ex;
 			}
 		}
@@ -201,6 +208,195 @@ setNewGetter(this, "newUUIDString", function() {
 ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService");
 ServiceGetter(this, "ExternalProtocolService", "@mozilla.org/uriloader/external-protocol-service;1", "nsIExternalProtocolService");
 ServiceGetter(this, "StringBundleService", "@mozilla.org/intl/stringbundle;1", "nsIStringBundleService");
+
+/**
+ * DebugService
+ */
+function DebugService() {
+	this._pb = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2);
+	this._pb.addObserver('extensions.dta.logging', this, true);
+	this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));
+	try {
+		if (this._file.fileSize > (200 * 1024)) {
+			this.remove();
+		}
+	}
+	catch(ex) {
+		// No-Op
+	}
+	this.log("Debug: init");
+}
+
+DebugService.prototype = {
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference, Ci.dtaIDebugService]),
+	
+	QueryReferent: function(iid) this.QueryInterface(iid),
+	GetWeakReference: function() this,
+	
+	// nsIObserver
+	observe: function DS_observe(subject, topic, prefName) {
+		this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));	
+	},
+	clear: function DS_clear() {
+		if (this._file.exists()) {
+			this._file.remove(false);
+		}
+	},	
+	get _cs() {
+		delete DebugService.prototype._cs;
+		return (DebugService.prototype._cs = Cc['@mozilla.org/consoleservice;1'].getService(Ci.nsIConsoleService));
+	},
+	get _file() {
+		let file = Cc["@mozilla.org/file/directory_service;1"]
+			.getService(Ci.nsIProperties)
+			.get("ProfD", Ci.nsILocalFile);
+		 file.append('dta_log.txt');
+		 delete DebugService.prototype._file;
+		 return (DebugService.prototype._file = file);
+	},
+	
+	get file() {
+		return this._file;
+	},
+	get enabled() {
+		return this._enabled;
+	},
+	_setEnabled: function DS_setEnabled(nv) {
+		this._enabled = nv;
+		if (nv) {
+			this.logString = this.log = this._log;
+		}
+		else {
+			this.logString = this.log = this._logDisabled;
+		}
+	},
+	_formatTimeDate: function(value) value.toString().replace(/\b(\d)\b/g, "0$1"),
+	_log: function DS__log(msg, exception) {
+		try {
+			if (!msg || (msg == "" && typeof(exception) != "object")) {
+				return;
+			}
+			if (!(msg instanceof String) && typeof(msg) != 'string') {
+				msg = msg.toSource();
+			}
+			let time = new Date();
+			let text = [];
+			text.push(this._formatTimeDate(time.getHours()));
+			text.push(':');
+			text.push(this._formatTimeDate(time.getMinutes()));
+			text.push(':');
+			text.push(this._formatTimeDate(time.getSeconds()));
+			text.push('::');
+			text.push(time.getMilliseconds());
+			text.push('\n');
+
+			if (msg != "") {
+				text.push(msg.replace(/\n/g, "\n\t") + " ");
+			}
+			if (exception) {
+				text.push("\tError: " + exception);
+			}
+			text.push('\n');
+			let stack = Components.stack;
+			if (stack) {
+				stack = stack.caller.caller;
+			}
+			let lineNumber = 0;
+			let columnNumber = 0;
+			let fileName = null;
+			let sourceLine = '';
+			
+			
+			if (exception && exception.location) {
+				lineNumber = exception.lineNumber;
+				fileName = exception.filename;
+				columnNumber = exception.columnNumber;
+				stack = exception.location;
+
+				let initialLine = "Source Frame :: " + fileName;
+				initialLine += " :: " + exception.location;
+				initialLine += " :: line: " + lineNumber;
+				text.push('\t>');
+				text.push(initialLine);
+				text.push('\n');
+			}
+			else if (exception && exception.stack) {
+				lineNumber = exception.lineNumber;
+				fileName = exception.fileName;
+				columnNumber = 0;
+				let initialLine = "Source Frame (error) :: " + fileName;
+				initialLine += " :: " + exception.name;
+				initialLine += " :: line: " + lineNumber;
+				text.push("\t>" + initialLine + "\n");
+				
+			}
+			else if (exception && stack) {
+				lineNumber = stack.lineNumber;
+				fileName = stack.filename;
+				let initialLine = "Source Frame (stack) :: " + fileName;
+				initialLine += " :: " + stack.name;
+				initialLine += " :: line: " + lineNumber;
+				text.push('\t>');
+				text.push(initialLine);
+				text.push('\n');
+			}
+			else if (stack) {
+				text.push('\t>');
+				text.push(stack.toString());
+				text.push('\n');
+				lineNumber = stack.lineNumber;
+				fileName = stack.filename;
+			}
+			
+			if (stack instanceof Ci.nsIStackFrame) {
+				let sourceLine = stack.sourceLine;
+				let s = stack.caller;
+				for (let i = 0; i < 4 && s; ++i) {
+					text.push('\t>');
+					text.push(s.toString());
+					text.push('\n');
+					s = s.caller;
+				}
+				text = text.join('');
+				if (stack && exception) {
+					this._cs.logMessage(new ScriptError(text, fileName, sourceLine, lineNumber, columnNumber, 0x2, 'component javascript'));
+					 
+				} 
+				else {
+					this._cs.logStringMessage(text);
+				}
+			}
+			else {
+				text = text.join('');
+				this._cs.logStringMessage(text);
+			}
+			var f = new FileStream(this.file, 0x04 | 0x08 | 0x10, 0664, 0);
+			f.write(text, text.length);
+			f.close();
+		}
+		catch(ex) {
+			error(ex);
+			error(this.toSource());
+		}	
+	
+	},
+	_logDisabled: function DS__dumpDisabled() {
+		// no-op;
+	},
+	log: this._log,
+	logString: this._log,
+		
+	remove: function DS_remove() {
+		try {
+			this._file.remove(false);
+		}
+		catch (ex) {
+			throw Cr.NS_ERROR_FAILURE;
+		}
+	}
+};
+
+const Debug = new DebugService();
 
 /**
  * Range generator (python style). Difference: step direction is initialized accordingly if corresponding parameter is omitted.

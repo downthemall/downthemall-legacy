@@ -67,7 +67,6 @@ const FileOutputStream = new Ctor('@mozilla.org/network/file-output-stream;1', '
 const DOMParser = new Ctor("@mozilla.org/xmlextras/domparser;1", 'nsIDOMParser');
 const ConverterOutputStream = Ctor('@mozilla.org/intl/converter-output-stream;1', 'nsIConverterOutputStream', 'init');
 
-ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 InstanceGetter(this, "Serializer", "@mozilla.org/xmlextras/xmlserializer;1", "nsIDOMSerializer");
 
 function unique(i) {

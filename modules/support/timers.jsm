@@ -47,8 +47,6 @@ const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'init')
 module("resource://gre/modules/XPCOMUtils.jsm");
 module("resource://dta/utils.jsm")
 
-ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
-
 // Represents the (private) timer data and observer
 function TimerData(owner, time, type, func, ctx) {
 	this.owner = owner;

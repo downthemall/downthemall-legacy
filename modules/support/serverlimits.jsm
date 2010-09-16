@@ -56,7 +56,6 @@ module("resource://dta/constants.jsm");
 module("resource://dta/json.jsm");
 module("resource://dta/support/bytebucket.jsm");
 
-ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 ServiceGetter(this, 'tlds', '@mozilla.org/network/effective-tld-service;1', 'nsIEffectiveTLDService');
 ServiceGetter(this, 'fixups', '@mozilla.org/docshell/urifixup;1', 'nsIURIFixup');
 ServiceGetter(this, 'obs', '@mozilla.org/observer-service;1', 'nsIObserverService');

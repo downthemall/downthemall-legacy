@@ -83,7 +83,6 @@ const pbm = {};
 module("resource://dta/support/pbm.jsm", pbm);
 
 ServiceGetter(this, "TextToSubURI", "@mozilla.org/intl/texttosuburi;1", "nsITextToSubURI");
-ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService");
 ServiceGetter(this, "FilterManager", "@downthemall.net/filtermanager;2", "dtaIFilterManager");
 

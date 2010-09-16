@@ -47,7 +47,6 @@ module("resource://gre/modules/XPCOMUtils.jsm");
 module("resource://dta/utils.jsm");
 
 ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
-ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 
 /**
  * Provides nsIPrompt/nsIAuthPrompt

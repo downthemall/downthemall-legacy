@@ -54,7 +54,6 @@ module("resource://dta/api.jsm", DTA);
 
 module("resource://gre/modules/XPCOMUtils.jsm");
 
-ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 ServiceGetter(this, "ThreadManager", "@mozilla.org/thread-manager;1", "nsIThreadManager");
 
 const nsICryptoHash = Ci.nsICryptoHash;

@@ -74,8 +74,6 @@ const File = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath
 const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
 const DOMParser = new Ctor("@mozilla.org/xmlextras/domparser;1", 'nsIDOMParser');
 
-ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
-
 /**
  * Parsed Metalink representation
  * (Do not construct yourself unless you know what you're doing)

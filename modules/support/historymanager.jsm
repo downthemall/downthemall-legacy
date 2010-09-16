@@ -52,8 +52,6 @@ module("resource://dta/preferences.jsm", prefs);
 module("resource://dta/json.jsm");
 module("resource://dta/utils.jsm");
 
-ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
-
 function History(key, defaultValues) {
 	this._key = key;
 	this._setPersisting(!pbm.browsingPrivately());

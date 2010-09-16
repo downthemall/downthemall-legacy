@@ -51,7 +51,6 @@ const DTA = {};
 module("resource://dta/api.jsm", DTA);
 const IOService = DTA.IOService;
 
-ServiceGetter(this, "Debug", "@downthemall.net/debug-service;1", "dtaIDebugService");
 ServiceGetter(this, "MimeHeaderParams", "@mozilla.org/network/mime-hdrparam;1", "nsIMIMEHeaderParam");
 
 function Visitor() {

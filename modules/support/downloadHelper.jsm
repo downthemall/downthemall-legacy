@@ -44,114 +44,116 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 module("resource://gre/modules/XPCOMUtils.jsm");
-module("resource://dta/utils.jsm");
 
 const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 
-function ProcessorImpl(turbo, name, title, description) {
-	this.init(name, title, description);
-	this.turbo = !!turbo;
-}
-ProcessorImpl.prototype = {
-	init: function(name, title, description) {
-		ServiceGetter(this, "core", "@downloadhelper.net/core;1", "dhICore");
-		this.__defineGetter__("name", function() name);
-		this.__defineGetter__("title", function() title);
-		this.__defineGetter__("description", function() description);
-		this.core.registerProcessor(this);
-	},
+if (available) {
+	const core = Cc["@downloadhelper.net/core;1"].getService(Ci.dhICore);
 	
-	QueryInterface: XPCOMUtils.generateQI([Ci.dhIProcessor, Ci.sehISecretHelperProcessorExtra]),
-	
-	get provider() { return "DownThemAll!"; },
-	get enabled() { return true; },
-	
-	canHandle: function(desc) desc.has("media-url") || desc.has("links"),
-	
-	requireDownload: function(desc) false,
-	preDownload: function(desc) false,
-	
-	handle: function(props) {
-		module("resource://dta/api.jsm");
-		try {
-			if (props.has('links')) {
-				this.handleLinks(props);
-			}
-			else {
-				this.handleSingle(props);
-			}
-		}
-		catch (ex) {
-			Debug.log("failed to handle", ex);
-			throw ex;
-		}				
-	},
-	getWindow: function(props) {
-		return ('window' in props) ? props.window : null;
-	},
-	createItem: function(props) {
-		module("resource://dta/api.jsm");
-		let win = this.getWindow(props);
-		let doc = ('document' in props) ? props.document : null;
-		let url = new URL(IOService.newURI(props.mediaUrl, doc ? doc.characterSet : null, null));
-		let item = {
-			url: url,
-			referrer: props.documentUrl || props.pageUrl || null,
-		};
-		if (props.youtubeTitle) {
-			item.description = props.youtubeTitle;
-			item.ultDescription = props.label || null;
-		}
-		else if (props.snName) {
-			item.description = props.snName;
-			item.ultDescription = props.label || null;
-		}
-		else {
-			item.description = props.label || null;
-		}
-		if (item.description && props.fileExtension) {
-			item.fileName = item.destinationName = item.description + "." + props.fileExtension;
-		}
-		return item;
-	},
-	handleLinks: function(desc) {
-		let links = desc.get('links', Ci.nsIArray).enumerate();
-		let urls = [];
-		for (let link in new SimpleIterator(links, Ci.nsIProperties)) {
-			let props = new Properties(link, desc);
-			let item = null;
+	function ProcessorImpl(turbo, name, title, description) {
+		this.init(name, title, description);
+		this.turbo = !!turbo;
+	}
+	ProcessorImpl.prototype = {
+		init: function(name, title, description) {
+			this.__defineGetter__("name", function() name);
+			this.__defineGetter__("title", function() title);
+			this.__defineGetter__("description", function() description);
+			core.registerProcessor(this);
+		},
+		
+		QueryInterface: XPCOMUtils.generateQI([Ci.dhIProcessor, Ci.sehISecretHelperProcessorExtra]),
+		
+		get provider() { return "DownThemAll!"; },
+		get enabled() { return true; },
+		
+		canHandle: function(desc) desc.has("media-url") || desc.has("links"),
+		
+		requireDownload: function(desc) false,
+		preDownload: function(desc) false,
+		
+		handle: function(props) {
+			module("resource://dta/utils.jsm");			
+			module("resource://dta/api.jsm");
 			try {
-				urls.push(this.createItem(props));					
+				if (props.has('links')) {
+					this.handleLinks(props);
+				}
+				else {
+					this.handleSingle(props);
+				}
 			}
 			catch (ex) {
-				continue;
+				Debug.log("failed to handle", ex);
+				throw ex;
+			}				
+		},
+		getWindow: function(props) {
+			return ('window' in props) ? props.window : null;
+		},
+		createItem: function(props) {
+			module("resource://dta/api.jsm");
+			let win = this.getWindow(props);
+			let doc = ('document' in props) ? props.document : null;
+			let url = new URL(IOService.newURI(props.mediaUrl, doc ? doc.characterSet : null, null));
+			let item = {
+				url: url,
+				referrer: props.documentUrl || props.pageUrl || null,
+			};
+			if (props.youtubeTitle) {
+				item.description = props.youtubeTitle;
+				item.ultDescription = props.label || null;
 			}
+			else if (props.snName) {
+				item.description = props.snName;
+				item.ultDescription = props.label || null;
+			}
+			else {
+				item.description = props.label || null;
+			}
+			if (item.description && props.fileExtension) {
+				item.fileName = item.destinationName = item.description + "." + props.fileExtension;
+			}
+			return item;
+		},
+		handleLinks: function(desc) {
+			let links = desc.get('links', Ci.nsIArray).enumerate();
+			let urls = [];
+			for (let link in new SimpleIterator(links, Ci.nsIProperties)) {
+				let props = new Properties(link, desc);
+				let item = null;
+				try {
+					urls.push(this.createItem(props));					
+				}
+				catch (ex) {
+					continue;
+				}
+			}
+			if (!urls.length) {
+				return;
+			}
+	
+			let win = this.getWindow(new Properties(desc));
+			if (urls.length == 1) {
+				saveSingleItem(win, this.turbo, urls[0]);
+				return;
+			}
+			if (this.turbo) {
+				turboSaveLinkArray(win, urls, []);
+			}
+			else {
+				saveLinkArray(win, urls, []);
+			}
+		},
+		handleSingle: function(props)	{
+			props = new Properties(props);
+			let item = this.createItem(props);
+			saveSingleItem(this.getWindow(props), this.turbo, item);
 		}
-		if (!urls.length) {
-			return;
-		}
+	};
+	
+	const processors = [];
 
-		let win = this.getWindow(new Properties(desc));
-		if (urls.length == 1) {
-			saveSingleItem(win, this.turbo, urls[0]);
-			return;
-		}
-		if (this.turbo) {
-			turboSaveLinkArray(win, urls, []);
-		}
-		else {
-			saveLinkArray(win, urls, []);
-		}
-	},
-	handleSingle: function(props)	{
-		props = new Properties(props);
-		let item = this.createItem(props);
-		saveSingleItem(this.getWindow(props), this.turbo, item);
-	}
-};
-
-const processors = [];
-if (available) {
 	let _str = Cc['@mozilla.org/intl/stringbundle;1']
 		.getService(Ci.nsIStringBundleService)
 		.createBundle('chrome://dta/locale/downloadHelper.properties');

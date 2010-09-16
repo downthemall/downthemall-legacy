@@ -40,12 +40,10 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const module = Components.utils.import;
 
-module("resource://dta/utils.jsm");
-
 const ID = 'dta@downthemall.net'; 
 
 const runtime = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULAppInfo).QueryInterface(Ci.nsIXULRuntime);
-ServiceGetter(this, "comparator", "@mozilla.org/xpcom/version-comparator;1", "nsIVersionComparator");
+const comparator = Cc["@mozilla.org/xpcom/version-comparator;1"].getService(Ci.nsIVersionComparator);
 
 let _callbacks = [];
 
