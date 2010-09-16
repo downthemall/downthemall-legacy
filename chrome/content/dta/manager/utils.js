@@ -411,7 +411,7 @@ const Tooltip = {
 			else {
 				this.timeElapsed.value = _('nal');
 			}
-			this.progress.value = file.percent;
+			this.infoPercent.value = file.percent;
 		}
 		catch (ex) {
 			Debug.log("Tooltip.updateMetrics: ", ex);
