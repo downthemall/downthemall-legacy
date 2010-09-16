@@ -39,7 +39,7 @@
 <?xml-stylesheet href="chrome://dta/skin/manager/aero.css" type="text/css"?>
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/manager.dtd">
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<window id="DownThemAll" chromemargin="0,-1,-1,-1">
+	<window id="DownThemAll" drawintitlebar="true">
 		<vbox id="titlebar" insertbefore="notifications" />
 	</window>
 </overlay>

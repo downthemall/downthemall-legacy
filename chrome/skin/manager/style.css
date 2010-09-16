@@ -199,21 +199,6 @@ toolbox {
 	background: transparent !important;
 	color: black !important;
 }
-stack > #infoPercent {
-	padding-top: 7px;
-	height: 40px;
-}
-#chunkAlt {
-	height: 32px;
-	margin-top: 1ex;
-	margin-bottom: 1ex;
-}	
-#chunkAlt > #infoPercent {
-	margin-top: auto;
-	margin-bottom: auto;
-	padding-top: 6px;
-	min-width: 4.2ex;
-}
 #infoDest {
 	font-weight: bold !important;
 	font-size: 105%;

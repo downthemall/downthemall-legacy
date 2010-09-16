@@ -44,7 +44,7 @@
 	>
 	<hbox id="infoBox">
 		<vbox>		
-			<image id="infoIcon" src="chrome://dtaicon/content/icon.png" />
+			<image id="infoIcon" />
 		</vbox>
 		<grid id="infoBox" flex="1">
 			<columns>
