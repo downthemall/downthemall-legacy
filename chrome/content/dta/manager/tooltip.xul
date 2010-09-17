@@ -69,9 +69,9 @@
 		<columns><column/><column flex="1"/><column/><column flex="1"/></columns>
 		<rows>
 			<separator class="thin"/>		
-			<stack id="chunkStack" flex="1">
+			<stack id="chunkStack" flex="1" align="center">
 				<html:canvas id="chunkCanvas" height="45"/>
-				<label id="infoPercent" top="4" />
+				<label id="infoPercent" />
 			</stack>
 			<row>
 				<label value="&elapsedTitle.value;"/>

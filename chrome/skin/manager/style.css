@@ -194,9 +194,11 @@ toolbox {
 	text-align: center;
 	margin: 0;
 	padding: 0;
+	padding-top: 4px;
+	width: 100%;
 	font-size: 14px;
 	font-weight: bold;
-	background: transparent !important;
+	background: !important;
 	color: black !important;
 }
 #infoDest {
