@@ -45,6 +45,26 @@
 
 	<script type="application/x-javascript" src="chrome://dta/content/integration/elements.js" />
 	
+	<!-- Firefox/Seamonkey  -->
+	<popup id="contentAreaContextMenu">
+		<menu id="dtaCtxCompact" insertafter="context-sep-selectall"/>
+	</popup>
+
+	<toolbarpalette id="BrowserToolbarPalette"> 
+		<toolbarbutton id="dta-button"/>
+		<toolbarbutton id="dta-turbo-button" />
+		<toolbarbutton id="dta-turboselect-button"/>
+		<toolbarbutton id="dta-manager-button"/>
+	</toolbarpalette>
+	
+	<menupopup id="menu_ToolsPopup">	
+		<menu id="dtaToolsMenu" insertafter="javascriptConsole"/>
+	</menupopup>
+		<menupopup id="taskPopup">	
+		<menu id="dtaToolsMenu" class="menu-iconic dta" insertafter="navBeginGlobalItems"/>
+	</menupopup>	
+	
+	<!-- Integration  -->
 	<menu id="dtaCtxCompact" label="DownThemAll!" class="menu-iconic dta">
 		<menupopup id="dtaCtxSubmenu">
 			<menuseparator class="thin" id="dtaCtxSepFront" />

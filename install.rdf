@@ -45,14 +45,5 @@
 		  </Description>
 		</em:targetApplication>
 		
-		<!-- Songbird -->
-		<em:targetApplication>
-			<Description>
-				<em:id>songbird@songbirdnest.com</em:id>
-				<em:minVersion>1.2</em:minVersion>
-				<em:maxVersion>1.4.*</em:maxVersion>
-			</Description>
-		</em:targetApplication>		
-
 	</Description>
 </RDF>
