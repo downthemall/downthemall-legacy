@@ -9,9 +9,6 @@ radio[pane="paneMain"] {
 	list-style-image: url(preferences-toolkit.png);
 	-moz-image-region: rect(0px, 32px,  32px, 0px);
 }
-radio[pane="paneMain"]:hover,
-radio[pane="paneMain"][selected="true"] {
-}
 
 radio[pane="paneFilters"] {
 	-moz-image-region: rect(0px, 64px, 32px, 32px);
@@ -25,17 +22,9 @@ radio[pane="panePrivacy"] {
 	list-style-image: url(preferences-toolkit.png);
 	-moz-image-region: rect(0px, 160px,  32px, 128px);
 }
-radio[pane="panePrivacy"]:hover,
-radio[pane="panePrivacy"][selected="true"] {
-}
-
 radio[pane="paneInterface"] {
 	list-style-image: url(preferences-toolkit.png);
 	-moz-image-region: rect(0px, 128px,  32px, 96px);
-}
-radio[pane="paneInterface"]:hover,
-radio[pane="paneInterface"][selected="true"] {
-	-moz-image-region: rect(32px, 128px,  64px, 96px);
 }
 radio[pane="paneServers"] {
 	-moz-image-region: rect(0px, 192px,  32px, 160px);
@@ -47,9 +36,6 @@ radio[pane="paneServers"][selected="true"] {
 radio[pane="paneAdvanced"] {
 	list-style-image: url(preferences-toolkit.png);
 	-moz-image-region: rect(0px, 224px,  32px, 192px);
-}
-radio[pane="paneAdvanced"]:hover,
-radio[pane="paneAdvanced"][selected="true"] {
 }
 
 caption {
