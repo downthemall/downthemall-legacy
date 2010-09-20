@@ -319,7 +319,7 @@ Connection.prototype = {
 			// we want to kill ftp chans as well which do not seem to respond to
 			// cancel correctly.
 			if (this.c.write(aRequest, aInputStream, aCount) < 0) {
-				if (this.isInfoGetter && !this.d.chunks.every(function(c) !!c.sessionBytes)) {
+				if (this.isInfoGetter && !this.d.chunks.every(function(c) !c.running || !!c.sessionBytes)) {
 					// Other downloads didn't start; assume the worst
 					Debug.log("Need to recombine chunks; not all started");
 					this.d.dumpScoreboard();
