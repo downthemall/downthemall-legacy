@@ -105,7 +105,7 @@ function Connection(d, c, isInfoGetter) {
 	RequestManipulation.modifyURL(url);
 	
 	let referrer = d.referrer;
-	Debug.logString("starting: " + url.spec);
+	Debug.log("starting: " + url.spec);
 
 	this._chan = IOService.newChannelFromURI(url);
 	let r = Ci.nsIRequest;
@@ -114,7 +114,7 @@ function Connection(d, c, isInfoGetter) {
 		loadFlags = loadFlags | r.LOAD_BYPASS_CACHE;
 	}
 	else {
-		Debug.logString("using cache");
+		Debug.log("using cache");
 	}
 	this._chan.loadFlags = loadFlags;
 	this._chan.notificationCallbacks = this;
@@ -127,7 +127,7 @@ function Connection(d, c, isInfoGetter) {
 	}
 	if (this._chan instanceof Ci.nsIHttpChannel) {
 		try {
-			Debug.logString("http");
+			Debug.log("http");
 			let http = this._chan.QueryInterface(Ci.nsIHttpChannel);
 			
 			if (c.start + c.written > 0) {
@@ -185,7 +185,7 @@ function Connection(d, c, isInfoGetter) {
 	}
 	this.c.running = true;
 	this._chan.asyncOpen(this, null);
-	Debug.logString(this.c + "is now open");
+	Debug.log(this.c + "is now open");
 }
 
 Connection.prototype = {
@@ -224,7 +224,7 @@ Connection.prototype = {
 			if (this._closed) {
 				return;
 			}
-			Debug.logString("cancel");
+			Debug.log("cancel");
 			if (!aReason) {
 				aReason = NS_ERROR_BINDING_ABORTED;
 			}
@@ -283,7 +283,7 @@ Connection.prototype = {
 			if (c.start + c.written > 0 && !(newChannel instanceof Ci.nsIHttpChannel)) {
 				let resumable = newChannel.QueryInterface(Ci.nsIResumableChannel);
 				resumable.resumeAt(c.start + c.written, '');
-				Debug.logString("redirect: set resumeAt on " + newChannel.URI.spec + "/" + newChannel.originalURI.spec + " at " + (c.start + c.written));
+				Debug.log("redirect: set resumeAt on " + newChannel.URI.spec + "/" + newChannel.originalURI.spec + " at " + (c.start + c.written));
 			}
 		}
 		catch (ex) {
@@ -318,7 +318,30 @@ Connection.prototype = {
 		try {
 			// we want to kill ftp chans as well which do not seem to respond to
 			// cancel correctly.
-			if (0 > this.c.write(aRequest, aInputStream, aCount)) {
+			if (this.c.write(aRequest, aInputStream, aCount) < 0) {
+				if (this.isInfoGetter && !this.d.chunks.every(function(c) !!c.sessionBytes)) {
+					// Other downloads didn't start; assume the worst
+					Debug.log("Need to recombine chunks; not all started");
+					this.d.dumpScoreboard();
+
+					let oldChunks = this.d.chunks.filter(function(c) c != this.c, this);
+					this.d.chunks = [this.c];
+					this.d.activeChunks = this.d.maxChunks = 1;
+					
+					for each (let chunk in oldChunks) {
+						if (this.c.end < chunk.end) {
+							this.c.end = chunk.end;
+						}
+						chunk.cancel();
+					}
+					
+					this.d.dumpScoreboard();
+					if (this.c.write(aRequest, aInputStream, aCount) >= 0) {
+						Debug.log("successfully respun");
+						return;
+					}
+				}
+
 				// we already got what we wanted
 				this.cancel();
 			}
@@ -352,15 +375,15 @@ Connection.prototype = {
 			return true;
 		}
 
-		Debug.logString("handleError: problem found; trying to recover");
+		Debug.log("handleError: problem found; trying to recover");
 		
 		if (d.urlManager.markBad(this.url)) {
-			Debug.logString("handleError: fresh urls available, kill this one and use another!");
+			Debug.log("handleError: fresh urls available, kill this one and use another!");
 			d.timeLastProgress = getTimestamp();
 			return true;
 		}
 		
-		Debug.logString("affected: " + c);
+		Debug.log("affected: " + c);
 		d.dumpScoreboard();
 		
 		let max = -1, found = null;
@@ -374,7 +397,7 @@ Connection.prototype = {
 			}
 		}
 		if (found) {
-			Debug.logString("handleError: found joinable chunk; recovering suceeded, chunk: " + found);
+			Debug.log("handleError: found joinable chunk; recovering suceeded, chunk: " + found);
 			found.end = c.end;
 			if (--d.maxChunks == 1) {
 				// d.resumable = false;
@@ -391,7 +414,7 @@ Connection.prototype = {
 					if (c2.running) {
 						// should never ever happen :p
 						d.dumpScoreboard();
-						Debug.logString("overlapping:\n" + c1 + "\n" + c2);
+						Debug.log("overlapping:\n" + c1 + "\n" + c2);
 						d.fail("Internal error", "Please notify the developers that there were 'overlapping chunks'!", "Internal error (please report)");
 						return false;
 					}
@@ -407,7 +430,7 @@ Connection.prototype = {
 			d.dumpScoreboard();
 			return true;
 		}
-		Debug.logString("recovery failed");
+		Debug.log("recovery failed");
 		return false;
 	},
 	handleHttp: function DL_handleHttp(aChannel) {
@@ -474,10 +497,10 @@ Connection.prototype = {
 			if (!this.handleError()) {
 				vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
 				aChannel.visitRequestHeaders(vis);
-				Debug.logString("Request Headers\n\n" + vis.value);
+				Debug.log("Request Headers\n\n" + vis.value);
 				vis.value = '';
 				aChannel.visitResponseHeaders(vis);
-				Debug.logString("Response Headers\n\n" + vis.value);
+				Debug.log("Response Headers\n\n" + vis.value);
 				d.cancel();
 				d.resumable = false;
 				d.safeRetry();
@@ -561,11 +584,11 @@ Connection.prototype = {
 				totalSize = Math.max(aChannel.contentLength, 0); 
 			}
 			if (d.totalSize && totalSize != this.totalSize && !this.handleError()) {
-				Debug.logString("ftp: total size mismatch " + totalSize + " " + this.totalSize);
+				Debug.log("ftp: total size mismatch " + totalSize + " " + this.totalSize);
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror')); 
 				return false;
 			}
-			Debug.logString("ftp: total size is: " + totalSize + " for: " + this.url);
+			Debug.log("ftp: total size is: " + totalSize + " for: " + this.url);
 			d.totalSize = totalSize;
 		}
 		catch (ex) {
@@ -582,7 +605,7 @@ Connection.prototype = {
 			aChannel.QueryInterface(Ci.nsIResumableChannel).entityID;
 		}
 		catch (ex) {
-			Debug.logString("likely not resumable or connection refused!");
+			Debug.log("likely not resumable or connection refused!");
 			if (!this.handleError()) {
 				// restart download from the beginning
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror')); 
@@ -645,9 +668,14 @@ Connection.prototype = {
 	onStartRequest: function DL_onStartRequest(aRequest, aContext) {
 		let c = this.c;
 		let d = this.d;
-		Debug.logString('StartRequest: ' + c);
+		Debug.log('StartRequest: ' + c);
 	
 		this.started = true;
+		
+		if (d.chunks.indexOf(c) == -1) {
+			return;
+		}
+		
 		try {
 			for each (let sc in this._supportedChannels) {
 				let chan = null;
@@ -665,7 +693,7 @@ Connection.prototype = {
 			}
 
 			if (this.isInfoGetter) {
-				Debug.logString("Infogetter");
+				Debug.log("Infogetter");
 				let ext = d.fileName.getExtension();
 				if (ext && ext.match(/^meta(?:4|link)$/i)) {
 					d.isMetalink = true;
@@ -687,7 +715,6 @@ Connection.prototype = {
 					d.maxChunks = 1;
 				}
 				c.end = d.totalSize - 1;
-				delete this.isInfoGetter;
 				
 				// Explicitly trigger rebuildDestination here, as we might have received
 				// a html content type and need to rewrite the file
@@ -707,7 +734,7 @@ Connection.prototype = {
 	},
 	onStopRequest: function DL_onStopRequest(aRequest, aContext, aStatusCode) {
 		try {
-			Debug.logString('StopRequest');
+			Debug.log('StopRequest');
 		}
 		catch (ex) {
 			return;
@@ -730,7 +757,7 @@ Connection.prototype = {
 		if (d.is(RUNNING) && d.chunks.every(function(e) { return e.complete; })) {
 			if (!d.resumeDownload()) {
 				d.state = FINISHING;
-				Debug.logString(d + ": Download is complete!");
+				Debug.log(d + ": Download is complete!");
 				d.finishDownload();
 				return;
 			}
@@ -759,7 +786,7 @@ Connection.prototype = {
 		// nsiftpchan for some reason assumes that if RETR fails it is a directory
 		// and tries to advance into said directory
 		if (aStatusCode == NS_ERROR_FTP_CWD) {
-			Debug.logString("Cannot change to directory :p", aStatusCode);
+			Debug.log("Cannot change to directory :p", aStatusCode);
 			if (!this.handleError()) {
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 			}
@@ -767,7 +794,7 @@ Connection.prototype = {
 		}
 			
 		// routine for normal chunk
-		Debug.logString(this.url + ": Chunk " + c.start + "-" + c.end + " finished.");
+		Debug.log(this.url + ": Chunk " + c.start + "-" + c.end + " finished.");
 		
 		// rude way to determine disconnection: if connection is closed before
 		// download is started we assume a server error/disconnection
@@ -824,7 +851,7 @@ Connection.prototype = {
 			let d = this.d;
 			
 			if (this.reexamine) {
-				Debug.logString(d + ": reexamine");
+				Debug.log(d + ": reexamine");
 				this.onStartRequest(aRequest, aContext);
 				if (this.reexamine) {
 					return;
@@ -836,7 +863,7 @@ Connection.prototype = {
 					// basic integrity check
 					if (d.partialSize > d.totalSize) {
 						d.dumpScoreboard();
-						Debug.logString(d + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");
+						Debug.log(d + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");
 						d.fail(
 							_('errmismatchtitle'),
 							_('errmismatchtext', [d.partialSize, d.totalSize]),

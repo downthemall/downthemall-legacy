@@ -2363,6 +2363,9 @@ Chunk.prototype = {
 	get parent() {
 		return this._parent;
 	},
+	get sessionBytes() {
+		return this._sessionBytes;
+	},
 	merge: function CH_merge(ch) {
 		if (!this.complete && !ch.complete) {
 			throw new Error("Cannot merge incomplete chunks this way!");
@@ -2426,7 +2429,7 @@ Chunk.prototype = {
 		try {
 			// not running: do not write anything
 			if (!this.running) {
-				return 0;
+				return -1;
 			}
 			if (!this._outStream) {
 				this.open();
@@ -2492,10 +2495,12 @@ Chunk.prototype = {
 			+ Utils.formatNumber(this.total, len)
 			+ " running:"
 			+ this.running
-			+ " written/remain:"
+			+ " written/remain/sb:"
 			+ Utils.formatNumber(this.written, len)
 			+ "/"
-			+ Utils.formatNumber(this.remainder, len);
+			+ Utils.formatNumber(this.remainder, len)
+			+ "/"
+			+ Utils.formatNumber(this._sessionBytes, len);
 	}
 }
 
