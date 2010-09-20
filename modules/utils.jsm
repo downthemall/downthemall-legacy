@@ -299,7 +299,7 @@ DebugService.prototype = {
 			text.push('\n');
 			let stack = Components.stack;
 			if (stack) {
-				stack = stack.caller.caller;
+				stack = stack.caller;
 			}
 			let lineNumber = 0;
 			let columnNumber = 0;
