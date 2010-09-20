@@ -2324,7 +2324,7 @@ function Chunk(download, start, end, written) {
 	this._end = end;
 	this.end = end;
 	this._parent = download;
-	this._sessionbytes = 0;
+	this._sessionBytes = 0;
 }
 
 Chunk.prototype = {
