@@ -1,9 +1,15 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
+@media all and (-moz-windows-compositor:0) {
+	window {
+		-moz-binding: url(chrome://dta/content/common/bindings.xml#regularwindow);
+	}		
+}
 @media all and (-moz-windows-compositor) {
 	window:not(:-moz-lwtheme) {
 		-moz-appearance: -moz-win-borderless-glass;
 		background: transparent;
+		-moz-binding: url(chrome://dta/content/common/bindings.xml#drawablewindow);
 	}
 	window[sizemode="maximized"]:not(:-moz-lwtheme) {
 		margin-top: 6px;
