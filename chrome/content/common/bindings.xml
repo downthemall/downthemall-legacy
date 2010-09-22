@@ -619,6 +619,35 @@
 		</handlers>	
 	</binding>
 	
+	<binding id="regularwindow">
+		<content>
+			<children/>
+		</content>
+		<implementation>
+			<constructor><![CDATA[
+				if (this.hasAttribute('drawintitlebar')) {
+					this.removeAttribute('drawintitlebar');
+				}
+			]]></constructor>
+		</implementation>	
+	</binding>
+	<binding id="drawablewindow">
+		<content>
+			<xul:vbox id="titlebar" insertbefore="notifications" />
+			<children/>
+		</content>
+		<implementation>
+			<field name="titlebar">document.getAnonymousElementByAttribute(this, 'id', 'titlebar');</field>
+			<constructor><![CDATA[
+				this.setAttribute('drawintitlebar', 'true');
+				this.titlebar.value = document.title;
+			]]></constructor>
+			<destructor><![CDATA[
+				this.removeAttribute('drawintitlebar');
+			]]></destructor>
+		</implementation>
+	</binding>
+	
 	<binding id="titlebar" extends="chrome://global/content/bindings/general.xml#windowdragbox">
 		<resources>
 			<stylesheet src="chrome://dta/content/common/titlebar.css"/>
