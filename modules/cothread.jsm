@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['CoThread', 'CoThreadListWalker'];
+const EXPORTED_SYMBOLS = ['CoThread', 'CoThreadInterleaved', 'CoThreadListWalker'];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -66,12 +66,12 @@ CoThreadBase.prototype = {
 		this.init = function() {};
 	},
 	
-	run: function CoThreadBase_run() {
+	run: function CoThreadBase_run(finishFunc) {
 		if (this._ran) {
 			throw new Error("You cannot run a CoThread/CoThreadListWalker instance more than once.");
 		}
+		this._finishFunc = finishFunc;
 		this._ran = true;
-		
 		this._timer = new Timer(this, 10, TYPE_REPEATING_SLACK);		
 	},
 	
@@ -144,6 +144,41 @@ CoThread.prototype = {
 		return func.call(ctx, idx);
 	}
 }
+/**
+ * Constructs a new CoThreadInterleaved (aka. pseudo-thread).
+ * The CoThread will process a interleaved function (generator)
+ * 
+ * Example:
+ *        Components.utils.import('resource://dta/cothread.jsm');
+ *        new CoThread(
+ *          function(count) {
+ *          	do_some();
+ *          	yield true;
+ *          	do_more();
+ *          	yield true;
+ *          	if (!do_even_more()) {
+ *          		return;
+ *          	}
+ *          	do_last();
+ *          },
+ *          // When to turn over Control?
+ *          // Each 2 items
+ *          2
+ *        ).run();
+ *   
+ * @param {Function} func Function to be called. Is passed call count as argument. Returning false will cancel the operation. 
+ * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
+ * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
+ */
+function CoThreadInterleaved(generator, yieldEvery, thisCtx) {
+		this.init(function() true, yieldEvery, thisCtx);
+		this._generator = generator;
+}
+CoThreadInterleaved.prototype = {
+	__proto__: CoThreadBase.prototype,
+	
+	_callf: function() true
+};
 
 /**
  * Constructs a new CoThreadListWalker (aka. pseudo-thread).
@@ -165,16 +200,14 @@ CoThread.prototype = {
  *          // Each 1000 items
  *          1000,
  *          null,
- *          function() alert('done')
- *        ).run();
+ *        ).run(function() alert('done'));
  *   
  * @param {Function} func Function to be called on each item. Is passed item and index as arguments. Returning false will cancel the operation. 
  * @param {Array/Generator} arrayOrGenerator Array or Generator object to be used as the input list 
  * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
  * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
- * @param {Function} finishFunc Optional. This function will be called once the operation finishes or is cancelled.
  */
-function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx, finishFunc) {
+function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
 	this.init(func, yieldEvery, thisCtx);
 	
 	if (arrayOrGenerator instanceof Array) {
@@ -185,7 +218,6 @@ function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx, finishF
 		this._generator = arrayOrGenerator;
 	}
 	
-	this._finishFunc = finishFunc;
 	if (this._lastFunc && (typeof func != 'function' && !(func instanceof Function))) {
 		throw Cr.NS_ERROR_INVALID_ARG;
 	} 
