@@ -327,8 +327,12 @@
 		function filterElements(nodes, set) {
 			let rv = [];
 			for each (let n in nodes) {
-				if (set.containsNode(n, true)) {
-					rv.push(n);
+				try {
+					if (n && set.containsNode(n, true)) {
+						rv.push(n);
+					}
+				}
+				catch (ex) {
 				}
 			}
 			return rv;
@@ -336,16 +340,16 @@
 	
 		try {
 			let links = new Array(aWin.document.links.length);
-			for each (let link in aWin.document.links) {
-				links.push(link);
+			for (let i = 0, e = aWin.document.links.length; i < e; ++i) {
+				links.push(aWin.document.links[i]);
 				yield true;
 			}
 			
 			let images = new Array(aWin.document.images.length);
-			for each (let img in aWin.document.images) {
-				images.push(img);
-				yield true;				
-			}
+			for (let i = 0, e = aWin.document.images.length; i < e; ++i) {
+				images.push(aWin.document.images[i]);
+				yield true;
+			}			
 			
 			let videos = Array.map(aWin.document.getElementsByTagName('video'), function(e) e);
 			videos = videos.concat(Array.map(aWin.document.getElementsByTagName('audio'), function(e) e));
@@ -359,14 +363,14 @@
 			yield true;
 			
 			let embeds = new Array(aWin.document.embeds.length);
-			for each (let embed in aWin.document.embeds) {
-				embeds.push(embed);
+			for (let i = 0, e = aWin.document.embeds.length; i < e; ++i) {
+				embeds.push(aWin.document.embeds[i]);
 				yield true;
 			}
 			
 			let rawInputs = aWin.document.getElementsByTagName('input');
 			let inputs = [];
-			for (let i = 0; i < rawInputs.length; ++i) {
+			for (let i = 0, e = rawInputs.length; i < e; ++i) {
 				let rit = rawInputs[i].getAttribute('type');
 				if (!rit || rit.toLowerCase() != 'image') {
 					continue;
