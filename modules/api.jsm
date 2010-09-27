@@ -444,8 +444,8 @@ function sendLinksToManager(window, start, links) {
 }
 
 function turboSendLinksToManager(window, urlsArray) {
-	let dir = this.getDropDownValue('directory');
-	let  mask = this.getDropDownValue('renaming');
+	let dir = getDropDownValue('directory');
+	let  mask = getDropDownValue('renaming');
 
 	if (!mask || !dir) {
 		throw new Exception("missing required information");
@@ -496,7 +496,7 @@ function turboSaveLinkArray(window, urls, images) {
 
 	let fast = null;
 	try {
-		fast = FilterManager.getTmpFromString(this.getDropDownValue('filter'));
+		fast = FilterManager.getTmpFromString(getDropDownValue('filter'));
 	}
 	catch (ex) {
 		// fall-through
