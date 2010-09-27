@@ -49,25 +49,7 @@
 	let Preferences = {};
 	Components.utils.import('resource://dta/preferences.jsm', Preferences);	
 	
-	let cothreads = {
-		load: function() {
-			delete this.CoThread;
-			delete this.CoThreadListWalker;
-			Components.utils.import('resource://dta/cothread.jsm', this);
-		},
-		loadCoThread: function() {
-			this.load();
-			return this.CoThread;
-		},
-		loadCoThreadListWalker: function() {
-			this.load();
-			return this.CoThreadListWalker;
-		}		
-	};
-	cothreads.__defineGetter__('CoThread', cothreads.loadCoThread);
-	cothreads.__defineGetter__('CoThreadListWalker', cothreads.loadCoThreadListWalker);
-	
-	function debug(msg, ex) DTA.Debug.log(msg, ex);
+	let debug = DTA.Debug;
 	
 	function $() {
 		if (arguments.length == 1) {
@@ -81,7 +63,7 @@
 				elements.push(element);
 			}
 			else {
-				debug("requested a non-existing element: " + id);
+				debug.log("requested a non-existing element: " + id);
 			}
 		}
 		return elements;
@@ -94,7 +76,7 @@
 			return getString.__str.GetStringFromName(n);
 		}
 		catch (ex) {
-			debug("locale error: " + n, ex);
+			debug.log("locale error: " + n, ex);
 			return '<error>';
 		}
 	};
@@ -113,7 +95,7 @@
 			return getString.__str.formatStringFromName(n, args, args.length);
 		}
 		catch (ex) {
-			debug("locale error: " + n, ex);
+			debug.log("locale error: " + n, ex);
 			return '<error>';
 		}	
 	}
@@ -143,7 +125,6 @@
 	
 	function notifyError(title, message) _notify(title, message, 'PRIORITY_CRITICAL_HIGH', true, 1500);
 	function notifyInfo(message) { if (!_selector) _notify('', message, 'PRIORITY_INFO_MEDIUM', false) };
-	
 	
 	function trimMore(t) {
 		return t.replace(/^[\s_]+|[\s_]+$/gi, '').replace(/(_){2,}/g, "_")
@@ -181,12 +162,11 @@
 			}
 		}
 		catch(ex) {
-			debug('extractDescription', ex);
+			debug.log('extractDescription', ex);
 		}
 		return trimMore(rv.join(" "));
 	}
-
-		
+	
 	function addLinksToArray(lnks, urls, doc) {
 		if (!lnks || !lnks.length) {
 			return;
@@ -224,6 +204,7 @@
 					'metalink': true
 				});
 			}
+			yield true;
 		}
 	}
 	
@@ -240,7 +221,7 @@
 				src = DTA.composeURL(doc, l.src);
 			}
 			catch (ex) {
-				debug("failed to compose: " + src, ex);
+				debug.log("failed to compose: " + src, ex);
 				continue;
 			}
 			// if it's valid and it's new
@@ -260,6 +241,7 @@
 				'referrer': ref,
 				'description': desc
 			});
+			yield true;
 		}
 	}
 	
@@ -268,16 +250,16 @@
 	}
 	let TextLinks = {};
 	Components.utils.import("resource://dta/support/textlinks.jsm", TextLinks);
-	function getTextLinks(set, fakeLinks) {
-		let text = [];
+	function getTextLinks(set, out, fakeLinks) {
 		for (let r = set.iterateNext(); r; r = set.iterateNext()) {
 			r = r.textContent.replace(/^\s+|\s+$/g, "");
 			if (r) {
-				text.push(r);
+				for each (let link in TextLinks.getTextLinks(r, fakeLinks)) {
+					out.push(link);
+				}
+				yield true;
 			}
 		}
-		text = text.join(" \n");			
-		return TextLinks.getTextLinks(text, fakeLinks)
 	}
 
 	function selectButton() {
@@ -314,29 +296,45 @@
 	function addLinks(aWin, aURLs, aImages, honorSelection) {
 
 		function filterElements(nodes, set) {
-			let filtered = [];
+			let rv = [];
 			for each (let n in nodes) {
 				if (set.containsNode(n, true)) {
-					filtered.push(n);
+					rv.push(n);
 				}
 			}
-			return filtered;
+			return rv;
 		}
 	
 		try {
-			let links = Array.map(aWin.document.links, function(e) e);
+			let links = new Array(aWin.document.links.length);
+			for each (let link in aWin.document.links) {
+				links.push(link);
+				yield true;
+			}
 			
-			let images = Array.map(aWin.document.images, function(e) e);
+			let images = new Array(aWin.document.images.length);
+			for each (let img in aWin.document.images) {
+				images.push(img);
+				yield true;				
+			}
+			
 			let videos = Array.map(aWin.document.getElementsByTagName('video'), function(e) e);
 			videos = videos.concat(Array.map(aWin.document.getElementsByTagName('audio'), function(e) e));
 			let sources = [];
 			for each (let v in videos) {
 				sources = sources.concat(Array.map(v.getElementsByTagName('source'), function(e) e));
+				yield true;
 			}
 			videos = videos.concat(sources);
 			videos = videos.filter(function(e) !!e.src);
+			yield true;
 			
-			let embeds = Array.map(aWin.document.embeds, function(e) e);
+			let embeds = new Array(aWin.document.embeds.length);
+			for each (let embed in aWin.document.embeds) {
+				embeds.push(embed);
+				yield true;
+			}
+			
 			let rawInputs = aWin.document.getElementsByTagName('input');
 			let inputs = [];
 			for (let i = 0; i < rawInputs.length; ++i) {
@@ -345,11 +343,12 @@
 					continue;
 				}
 				inputs.push(rawInputs[i]);
+				yield true;
 			}
 			
-			let sel = aWin.getSelection();
-			if (honorSelection && sel && !sel.isCollapsed) {
-				debug("selection only");
+			let sel = null;
+			if (honorSelection && (sel = aWin.getSelection()) && !sel.isCollapsed) {
+				debug.log("selection only");
 				[links, images, videos, embeds, inputs] = [links, images, videos, embeds, inputs].map(
 					function(e) {
 						return filterElements(e, sel);
@@ -361,10 +360,13 @@
 						let r = sel.getRangeAt(i);
 						copy.appendChild(r.cloneContents());
 					}
+					yield true;
+					
 				  let cdoc = aWin.document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
 				  copy = cdoc.adoptNode(copy);
 				  cdoc.documentElement.appendChild(cdoc.adoptNode(copy));
 				  delete copy;
+				  yield true;
 				  
 					let set = cdoc.evaluate(
 						'//*[not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
@@ -372,9 +374,14 @@
 						null,
 						XPathResult.ORDERED_NODE_ITERATOR_TYPE,
 						null
-					);					
-					links = links.concat(getTextLinks(set, true));
+					);
+					yield true;
+					
+					for (let y in getTextLinks(set, links, true)) {
+						yield true;
+					}
 					delete cdoc;
+					yield true;
 				}
 			}
 			else {
@@ -393,6 +400,7 @@
 						aURLs.push(o);
 						aImages.push(o);
 					}
+					yield true;
 				}
 				if (recognizeTextLinks()) {
 					let set = aWin.document.evaluate(
@@ -402,7 +410,9 @@
 						XPathResult.ORDERED_NODE_ITERATOR_TYPE,
 						null
 					);
-					links = links.concat(getTextLinks(set, true));
+					for each (let y in getTextLinks(set, links, true)) {
+						yield true;
+					}
 				}
 				
 				// we were asked to honor the selection, but we didn't actually have one.
@@ -410,18 +420,25 @@
 				honorSelection = false;
 			}
 			
-			addLinksToArray(links, aURLs, aWin.document);
-			for each (let e in [images, videos, embeds, inputs]) {
-				addImagesToArray(e, aImages, aWin.document);
+			debug.log("adding links to array");
+			for (let y in addLinksToArray(links, aURLs, aWin.document)) {
+				yield true;
 			}
-			addImagesToArray(
+			for each (let e in [images, videos, embeds, inputs]) {
+				for (let y in addImagesToArray(e, aImages, aWin.document)) {
+					yield true;
+				}				
+			}
+			for (let y in addImagesToArray(
 				videos.filter(function(e) !!e.poster).map(function(e) new TextLinks.FakeLink(e.poster)),
 				aImages,
 				aWin.document
-			);
+			)) {
+				yield true;
+			}
 		}
 		catch (ex) {
-			debug('addLinks', ex);
+			debug.log('addLinks', ex);
 		}
 		
 		// do not process further as we just filtered the selection
@@ -432,7 +449,9 @@
 		// recursively process any frames
 		if (aWin.frames) {
 			for (let i = 0, e = aWin.frames.length; i < e; ++i) {
-				arguments.callee(aWin.frames[i], aURLs, aImages);
+				for (let y in arguments.callee(aWin.frames[i], aURLs, aImages)) {
+					yield true;
+				}
 			}
 		}
 	}
@@ -475,10 +494,10 @@
 			}		
 			
 			if (turbo) {
-				debug("findLinks(): DtaOneClick request from the user");
+				debug.log("findLinks(): DtaOneClick request from the user");
 			}
 			else {
-				debug("findLinks(): DtaStandard request from the user");
+				debug.log("findLinks(): DtaStandard request from the user");
 			}
 
 			let wt = document.documentElement.getAttribute('windowtype');
@@ -486,39 +505,52 @@
 
 			let urls = [];
 			let images = [];
-			for each (let win in windows) {
-				addLinks(win, urls, images, !all);
-			}
-			urls = unique(urls);
-			images = unique(images);
-
-			if (!urls.length && !images.length) {
-				notifyError(getString('error'), getString('errornolinks'));
-				return;
-			}
-			
-			if (turbo) {
-				try {
-					let queued = DTA.turboSaveLinkArray(window, urls, images);
-					if (typeof queued == 'number') {
-						notifyInfo(getFormattedString('queuedn', queued));
+			let cothreads = {};
+			Components.utils.import('resource://dta/cothread.jsm', cothreads);
+			new cothreads.CoThreadInterleaved(
+				(function() {
+					debug.log("findLinks(): running");
+					for each (let win in windows) {
+						debug.log("findLinks(): running...");
+						for (let y in addLinks(win, urls, images, !all)) {
+							yield true;
+						}
 					}
-					else {
-						// disable for now. too much scroll "jitter"
-						// notifyInfo(getFormattedString('queued', queued.url));
+					urls = unique(urls);
+					images = unique(images);
+					debug.log("findLinks(): done running...");
+				})(),
+				25
+			).run(function() {
+				debug.log("findLinks(): finishing...");
+				if (!urls.length && !images.length) {
+					notifyError(getString('error'), getString('errornolinks'));
+					return;
+				}
+				
+				if (turbo) {
+					try {
+						let queued = DTA.turboSaveLinkArray(window, urls, images);
+						if (typeof queued == 'number') {
+							notifyInfo(getFormattedString('queuedn', queued));
+						}
+						else {
+							// disable for now. too much scroll "jitter"
+							// notifyInfo(getFormattedString('queued', queued.url));
+						}
+						return;
+					}
+					catch (ex) {
+						debug.log('findLinks', ex);
+						DTA.saveLinkArray(window, urls, images, getString('errorinformation'));
 					}
 					return;
 				}
-				catch (ex) {
-					debug('findLinks', ex);
-					DTA.saveLinkArray(window, urls, images, getString('errorinformation'));
-				}
-				return;
-			}
-			DTA.saveLinkArray(window, urls, images);
+				DTA.saveLinkArray(window, urls, images);				
+			});
 		}
 		catch(ex) {
-			debug('findLinks', ex);
+			debug.log('findLinks', ex);
 		}
 	}
 	
@@ -532,7 +564,7 @@
 		}
 		catch (ex) {
 			notifyError(getString('error'), getString('errornodownload'));
-			debug('findSingleLink: ', ex);
+			debug.log('findSingleLink: ', ex);
 		}
 	}
 	
@@ -546,7 +578,7 @@
 		}
 		catch (ex) {
 			notifyError(getString('error'), getString('errornodownload'));
-			debug('findSingleLink: ', ex);
+			debug.log('findSingleLink: ', ex);
 		}		
 	}
 	
@@ -579,7 +611,7 @@
 			}
 			catch (ex) {
 				notifyError(getString('error'), getString('errornodownload'));
-				debug('_findSingleMedia: ', ex);
+				debug.log('_findSingleMedia: ', ex);
 			}
 		}		
 	}
@@ -610,7 +642,7 @@
 				return;
 			}
 			catch (ex) {
-				debug('saveSingleLink', ex);
+				debug.log('saveSingleLink', ex);
 				notifyError(getString('error'), getString('errorinformation'));
 			}
 		}
@@ -696,14 +728,14 @@
 					return;
 				}
 				catch (ex) {
-					debug('findSingleLink', ex);
+					debug.log('findSingleLink', ex);
 					notifyError(getString('error'), getString('errorinformation'));
 				}
 			}
 			DTA.saveSingleLink(window, window, false, action, ref, desc);
 		}
 		catch (ex) {
-			debug('findForm', ex);
+			debug.log('findForm', ex);
 		}
 	}
 	
@@ -844,7 +876,7 @@
 			}
 		}
 		catch(ex) {
-			debug("DTAContext(): ", ex);
+			debug.log("DTAContext(): ", ex);
 		}		 
 	}
 	
@@ -895,7 +927,7 @@
 			}
 		}
 		catch(ex) {
-			debug("DTATools(): ", ex);
+			debug.log("DTATools(): ", ex);
 		}
 	}
 	
@@ -1385,7 +1417,7 @@
 			}
 			catch (ex) {
 				Components.utils.reportError(ex);
-				debug("DCO::init()", ex);
+				debug.log("DCO::init()", ex);
 			}
 			evt.target == ctx ? onContextShowing(evt) : onToolsShowing(evt);
 		}
@@ -1410,7 +1442,7 @@
 			}
 		}
 		catch (ex) {
-			debug("Failed to parse palette", ex);
+			debug.log("Failed to parse palette", ex);
 		}
 		
 		try {
@@ -1459,7 +1491,7 @@
 			$t('dta-manager-button').addEventListener('command', function() DTA.openManager(window), true);
 		}
 		catch (ex) {
-			debug("Init TBB failed", ex);
+			debug.log("Init TBB failed", ex);
 		}
 		
 		// "Show about" stuff
