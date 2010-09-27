@@ -355,10 +355,9 @@ const Dialog = {
 			this._loadDownloads_item,
 			QueueStore.loadGenerator(),
 			250,
-			this,
-			this._loadDownloads_finish
+			this
 		);
-		this._loader.run();		
+		this._loader.run(this._loadDownloads_finish);		
 	},
 	_loadDownloads_item: function D__loadDownloads_item(dbItem, idx) {
 		if (!idx) {
@@ -2601,14 +2600,12 @@ function startDownloads(start, downloads) {
 	let ct = new CoThreadListWalker(
 		addItem,
 		g,
-		100,
-		null,
-		function() {
-			QueueStore.endUpdate();
-			Tree.endUpdate();
-			delete ct;
-		}
-	).run();
+		100
+	).run(function() {
+		QueueStore.endUpdate();
+		Tree.endUpdate();
+		delete ct;
+	});
 }
 
 var ConflictManager = {
