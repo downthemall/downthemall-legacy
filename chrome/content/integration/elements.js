@@ -125,6 +125,35 @@
 	
 	function notifyError(title, message) _notify(title, message, 'PRIORITY_CRITICAL_HIGH', true, 1500);
 	function notifyInfo(message) { if (!_selector) _notify('', message, 'PRIORITY_INFO_MEDIUM', false) };
+	function notifyProgress(message) {
+		try {
+			let nb = gBrowser.getNotificationBox();
+			let _n = null;
+			return (notifyProgress = function(message) { 
+				if (!message && _n) {
+					nb.removeNotification(_n);
+					_n = null;
+					return;
+				}
+				if (!message) {
+					return;
+				}
+				if (_n) {
+					_n.label = message;
+					return;
+				}
+				_n = nb.appendNotification(
+					message,
+					0,
+					'chrome://dta/skin/common/dta.png',
+					nb.PRIORITY_INFO_LOW
+					);
+			})(message);
+		}
+		catch (ex) {
+			notifyProgress = function() {}
+		}
+	}	
 	
 	function trimMore(t) {
 		return t.replace(/^[\s_]+|[\s_]+$/gi, '').replace(/(_){2,}/g, "_")
@@ -509,6 +538,22 @@
 			Components.utils.import('resource://dta/cothread.jsm', cothreads);
 			new cothreads.CoThreadInterleaved(
 				(function() {
+					
+					// long running fetching may confuse users, hence give them a hint that
+					// stuff is happening
+					let _updateInterval = setInterval(function(isStarter) {
+						if (isStarter) {
+							clearInterval(_updateInterval);
+							_updateInterval = setInterval(arguments.callee, 100, false);
+						}
+						if (urls.length + images.length) {
+							notifyProgress(getFormattedString('processing', urls.length, images.length));
+						}
+						else {
+							notifyProgress(getString('preparing'));
+						}
+					}, 1500, true);
+					
 					debug.log("findLinks(): running");
 					for each (let win in windows) {
 						debug.log("findLinks(): running...");
@@ -516,9 +561,17 @@
 							yield true;
 						}
 					}
+					
 					urls = unique(urls);
+					yield true;
 					images = unique(images);
+					yield true;
+					
 					debug.log("findLinks(): done running...");
+					
+					// clean up the "hint" notification from above
+					clearInterval(_updateInterval);
+					notifyProgress();
 				})(),
 				25
 			).run(function() {
