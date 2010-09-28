@@ -538,26 +538,27 @@
 
 			let urls = [];
 			let images = [];
+
+			// long running fetching may confuse users, hence give them a hint that
+			// stuff is happening
+			let _updateInterval = setInterval(function(isStarter) {
+				if (isStarter) {
+					clearInterval(_updateInterval);
+					_updateInterval = setInterval(arguments.callee, 150, false);
+				}
+				if (urls.length + images.length) {
+					notifyProgress(getFormattedString('processing', urls.length, images.length));
+				}
+				else {
+					notifyProgress(getString('preparing'));
+				}
+			}, 1750, true);
+
 			let cothreads = {};
 			Components.utils.import('resource://dta/cothread.jsm', cothreads);
+			
 			new cothreads.CoThreadInterleaved(
 				(function() {
-					
-					// long running fetching may confuse users, hence give them a hint that
-					// stuff is happening
-					let _updateInterval = setInterval(function(isStarter) {
-						if (isStarter) {
-							clearInterval(_updateInterval);
-							_updateInterval = setInterval(arguments.callee, 100, false);
-						}
-						if (urls.length + images.length) {
-							notifyProgress(getFormattedString('processing', urls.length, images.length));
-						}
-						else {
-							notifyProgress(getString('preparing'));
-						}
-					}, 1500, true);
-					
 					debug.log("findLinks(): running");
 					for each (let win in windows) {
 						debug.log("findLinks(): running...");
@@ -573,12 +574,13 @@
 					
 					debug.log("findLinks(): done running...");
 					
-					// clean up the "hint" notification from above
-					clearInterval(_updateInterval);
-					notifyProgress();
 				})(),
 				25
 			).run(function() {
+				// clean up the "hint" notification from above
+				clearInterval(_updateInterval);
+				notifyProgress();
+
 				debug.log("findLinks(): finishing...");
 				if (!urls.length && !images.length) {
 					notifyError(getString('error'), getString('errornolinks'));
