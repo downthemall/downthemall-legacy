@@ -77,7 +77,7 @@ pref("extensions.dta.flatreplacementchar", "-");
 pref("extensions.dta.recoverallhttperrors", false);
 pref("extensions.dta.selectbgimages", false);
 pref("extensions.dta.nagnever", false);
-pref("extensions.dta.nagnext", 100);
+pref("extensions.dta.nagnext", 500);
 pref("extensions.dta.speedlimit", -1);
 pref("extensions.dta.listsniffedvideos", false);
 pref("extensions.dta.nokeepalive", true);
