@@ -298,6 +298,7 @@ const Dialog = {
 									callback: function() {
 										nb.removeNotification(ndonation);
 										Preferences.setExt('nagnext', nagnext);
+										Preferences.setExt('nagnever', true);
 										Dialog.openDonate();
 									}
 								},
