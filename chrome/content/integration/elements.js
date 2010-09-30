@@ -127,7 +127,6 @@
 	function notifyInfo(message) { if (!_selector) _notify('', message, 'PRIORITY_INFO_MEDIUM', false) };
 	function notifyProgress(message) {
 		try {
-			let nb = gBrowser.getNotificationBox();
 			let _n = null;
 			return (notifyProgress = function(message) { 
 				if (!message && _n) {
@@ -142,6 +141,7 @@
 					_n.label = message;
 					return;
 				}
+				let nb = gBrowser.getNotificationBox();
 				_n = nb.appendNotification(
 					message,
 					0,
