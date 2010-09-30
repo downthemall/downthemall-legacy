@@ -575,7 +575,7 @@
 					debug.log("findLinks(): done running...");
 					
 				})(),
-				25
+				100
 			).run(function() {
 				// clean up the "hint" notification from above
 				clearInterval(_updateInterval);
