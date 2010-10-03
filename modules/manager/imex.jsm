@@ -103,7 +103,7 @@ function parseTextFile(aFile) {
 		l = IOService.newURI(l, null, null);
 		links.push({
 			url: new DTA.URL(l),
-			referrer: '',
+			referrer: null,
 			description: 'imported from ' + aFile.leafName 
 		});
 	}
