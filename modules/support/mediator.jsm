@@ -59,8 +59,8 @@ ServiceGetter(this, "windowwatcher", "@mozilla.org/embedcomp/window-watcher;1", 
 ServiceGetter(this, "sbs", "@mozilla.org/intl/stringbundle;1", "nsIStringBundleService");
 
 function objToString(obj) {
-	if (obj == null || obj == undefined) {
-		return obj;
+	if (obj == null || obj == undefined || !obj) {
+		return null;
 	}
 	if (
 		typeof obj == 'string'
@@ -80,7 +80,7 @@ function objToString(obj) {
 	throw new Exception("Not a valid type");
 }
 function objToUri(obj) {
-	if (obj == null || obj == undefined) {
+	if (obj == null || obj == undefined || !obj) {
 		return null;
 	}
 	if (obj instanceof Ci.nsIURL || obj instanceof Ci.nsIURI) {
@@ -169,7 +169,7 @@ function openUrl(window, link, ref) {
 	Debug.log("Mediator: Request to open " + link);
 	if (!tryOpenUrl(window, link, ref)) {
 		try {
-			window.open(link);
+			window.open(objToString(link));
 		}
 		catch (ex) {
 			openExternal(link);
@@ -178,9 +178,6 @@ function openUrl(window, link, ref) {
 }
 function tryOpenUrl(window, link, ref) {
 	try {
-		if (link instanceof Ci.nsIURI) {
-			link = link.spec;
-		}		
 		let win = getMostRecent('navigator:browser');
 		if (win) {
 			// browser
