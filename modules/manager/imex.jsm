@@ -74,6 +74,7 @@ function unique(i) {
 }		
 
 function parseTextFile(aFile) {
+	Debug.log("Parsing text file: " + aFile.spec);
 	// Open the file in a line reader
 	let is = new FileInputStream(aFile, 0x01, 0, 0);
 	let ls = is.QueryInterface(Ci.nsILineInputStream);
@@ -83,7 +84,7 @@ function parseTextFile(aFile) {
 	function addLine(line) {
 		try {
 			// try to parse the URI and and see if it is of the correct type.
-			line = line.value.replace(/^\s+|\s+$/g);
+			line = line.value.replace(/^\s+|\s+$/g, '');
 			lines.push(line);
 		}
 		catch (ex) {
@@ -95,6 +96,7 @@ function parseTextFile(aFile) {
 	}
 	addLine(line);
 	is.close();
+	Debug.log("Got lines: " + lines.length);
 	
 	let links = [];
 	for each (let l in getTextLinks(lines.join("\n"), false)) {
@@ -105,6 +107,7 @@ function parseTextFile(aFile) {
 			description: 'imported from ' + aFile.leafName 
 		});
 	}
+	Debug.log("parsed text file, links: " + links.length);
 	return unique(links);
 }
 
