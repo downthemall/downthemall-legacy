@@ -128,7 +128,8 @@
 	function notifyProgress(message) {
 		try {
 			let _n = null;
-			return (notifyProgress = function(message) { 
+			return (notifyProgress = function(message) {
+				let nb = gBrowser.getNotificationBox();
 				if (!message && _n) {
 					nb.removeNotification(_n);
 					_n = null;
@@ -141,7 +142,6 @@
 					_n.label = message;
 					return;
 				}
-				let nb = gBrowser.getNotificationBox();
 				_n = nb.appendNotification(
 					message,
 					0,
