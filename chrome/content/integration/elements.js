@@ -280,13 +280,22 @@
 	let TextLinks = {};
 	Components.utils.import("resource://dta/support/textlinks.jsm", TextLinks);
 	function getTextLinks(set, out, fakeLinks) {
+		let rset = [];
 		for (let r = set.iterateNext(); r; r = set.iterateNext()) {
-			r = r.textContent.replace(/^\s+|\s+$/g, "");
-			if (r) {
-				for each (let link in TextLinks.getTextLinks(r, fakeLinks)) {
-					out.push(link);
+			rset.push(r);
+		}
+		for each (let r in rset) {
+			try {
+				r = r.textContent.replace(/^\s+|\s+$/g, "");
+				if (r) {
+					for each (let link in TextLinks.getTextLinks(r, fakeLinks)) {
+						out.push(link);
+					}
+					yield true;
 				}
-				yield true;
+			}
+			catch (ex) {
+				// no op: might be an already removed node
 			}
 		}
 	}
