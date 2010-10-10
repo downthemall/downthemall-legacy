@@ -99,6 +99,9 @@ const SYSTEMSLASH = (function() {
 	return (f.path.indexOf('/') != -1) ? '/' : '\\';
 })(); 
 
+
+const MAX_STACK = 6; 
+
 /**
  * Installs a new lazy getter
  * @param aObject (object) Object to install the getter to
@@ -351,7 +354,7 @@ DebugService.prototype = {
 			if (stack instanceof Ci.nsIStackFrame) {
 				let sourceLine = stack.sourceLine;
 				let s = stack.caller;
-				for (let i = 0; i < 4 && s; ++i) {
+				for (let i = 0; i < MAX_STACK && s; ++i) {
 					text.push('\t>');
 					text.push(s.toString());
 					text.push('\n');
