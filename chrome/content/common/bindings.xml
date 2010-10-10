@@ -172,7 +172,7 @@
 				<body><![CDATA[
 					var n = this.value;
 					if ((!this.modified && this._list.selectedIndex == 0) || (n.length == 0 && !this.hasAttribute('allowempty'))) {
-						DTA.Debug.logString("Not saving dropdown: Not modified");
+						DTA.Debug.log("Not saving dropdown: Not modified");
 						return;
 					}
 					this.hist.push(n);
