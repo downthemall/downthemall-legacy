@@ -100,7 +100,7 @@ const Tree = {
 		}
 	},
 	clear: function() {
-		Debug.logString("Tree: clearing");
+		Debug.log("Tree: clearing");
 		this.beginUpdate();
 		this._downloads = [];
 		this.elem.view = this;
@@ -256,7 +256,7 @@ const Tree = {
 		return ds && ds.isDataFlavorSupported('application/x-dta-position');
 	},
 	drop: function T_drop(row, orientation) {
-		Debug.logString("drop");
+		Debug.log("drop");
 		if (!this.canDrop()) {
 			return;
 		}
@@ -585,7 +585,7 @@ const Tree = {
 		);
 		if (mirrors.length) {
 			this.current.replaceMirrors(mirrors);
-			Debug.logString("New mirrors set " + mirrors);
+			Debug.log("New mirrors set " + mirrors);
 		}		
 	},
 	export: function T_export() {

@@ -267,10 +267,10 @@ DebugService.prototype = {
 	_setEnabled: function DS_setEnabled(nv) {
 		this._enabled = nv;
 		if (nv) {
-			this.logString = this.log = this._log;
+			this.log = this._log;
 		}
 		else {
-			this.logString = this.log = this._logDisabled;
+			this.log = this._logDisabled;
 		}
 	},
 	_formatTimeDate: function(value) value.toString().replace(/\b(\d)\b/g, "0$1"),
@@ -387,7 +387,6 @@ DebugService.prototype = {
 		// no-op;
 	},
 	log: this._log,
-	logString: this._log,
 		
 	remove: function DS_remove() {
 		try {

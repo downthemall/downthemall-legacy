@@ -63,7 +63,7 @@ function inject(window) {
 			},
 			composeURL: function() DTA.composeURL.apply(this, arguments),
 			applyWithWindow: function(func, args) {
-				DTA.Debug.logString("Obsolete function called: " + func.name);
+				DTA.Debug.log("Obsolete function called: " + func.name);
 				args.unshift(window);
 				return func.apply(DTA, args);
 			},

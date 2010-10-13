@@ -318,7 +318,7 @@ Metalinker3.prototype = {
 						if (size && hash.parLength * hash.partials.length < size) {
 							throw Exception("too few partials");
 						}
-						Debug.logString("loaded " + hash.partials.length + " partials");
+						Debug.log("loaded " + hash.partials.length + " partials");
 					}
 					catch (ex) {
 						Debug.log("Failed to parse pieces", ex);
@@ -378,7 +378,7 @@ Metalinker3.prototype = {
 function MetalinkerRFC5854(doc) {
 	let root = doc.documentElement;
 	if (root.nodeName != 'metalink' || root.namespaceURI != NS_METALINK_RFC5854 ) {
-		Debug.logString(root.nodeName + "\nns:" + root.namespaceURI);
+		Debug.log(root.nodeName + "\nns:" + root.namespaceURI);
 		throw new Exception('mlinvalid');
 	}
 	Base.call(this, doc, NS_METALINK_RFC5854);
@@ -510,7 +510,7 @@ MetalinkerRFC5854.prototype = {
 						if (size && hash.parLength * hash.partials.length < size) {
 							throw Exception("too few partials");
 						}
-						Debug.logString("loaded " + hash.partials.length + " partials");
+						Debug.log("loaded " + hash.partials.length + " partials");
 					}
 					catch (ex) {
 						Debug.log("Failed to parse pieces", ex);

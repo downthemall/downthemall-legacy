@@ -142,7 +142,7 @@ const Prefs = {
 	},
 
 	_refreshPrefs: function(prefName) {
-		Debug.logString("pref reload due to: " + prefName);
+		Debug.log("pref reload due to: " + prefName);
 		for each (let e in this.mappings) {
 			let key, pref, def;
 			if (!e) {
@@ -318,7 +318,7 @@ const Tooltip = {
 		this.initUpdate();
 	},
 	initUpdate: function() {
-		Debug.logString("init");
+		Debug.log("init");
 		let mr = false;
 		let box = this.canvasGrid.boxObject;
 		for each (let canvas in [this.speedCanvas, this.chunkCanvas]) {
@@ -333,7 +333,7 @@ const Tooltip = {
 				}
 				canvas.width = w; 
 				canvas.height = h;
-				Debug.logString("set " + canvas.id + " to " + w + "/" + h);
+				Debug.log("set " + canvas.id + " to " + w + "/" + h);
 				mr = true;
 			}
 			catch (ex) {

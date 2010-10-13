@@ -247,7 +247,7 @@ const Dialog = {
 							let cw = tdb.width + tdb.x;
 							if (db.width < cw) {
 								window.resizeTo(cw, window.outerHeight);
-								Debug.logString("manager was autofit");
+								Debug.log("manager was autofit");
 							}
 						},
 						10
@@ -277,7 +277,7 @@ const Dialog = {
 			try {
 				let seq = QueueStore.getQueueSeq();
 				let nagnext = Preferences.getExt('nagnext', 100);
-				Debug.logString("nag: " + seq + "/" + nagnext + "/" + (seq - nagnext));
+				Debug.log("nag: " + seq + "/" + nagnext + "/" + (seq - nagnext));
 				if (seq < nagnext) {
 					return;
 				}
@@ -349,7 +349,7 @@ const Dialog = {
 		Tree.beginUpdate();
 		Tree.clear();
 		this._brokenDownloads = [];
-		Debug.logString("loading of the queue started!");
+		Debug.log("loading of the queue started!");
 		GlobalProgress.reset();
 		GlobalProgress.pause();
 		this._loader = new CoThreadListWalker(
@@ -503,7 +503,7 @@ const Dialog = {
 			try {
 				for each (let id in this._brokenDownloads) {
 					QueueStore.deleteDownload(id);
-					Debug.logString("Removed broken download #" + id);
+					Debug.log("Removed broken download #" + id);
 				}
 			}
 			catch (ex) {
@@ -522,11 +522,11 @@ const Dialog = {
 	},	
 	
 	enterPrivateBrowsing: function() {
-		Debug.logString("enterPrivateBrowsing");
+		Debug.log("enterPrivateBrowsing");
 		this.reinit(false);
 	},
 	exitPrivateBrowsing: function() {
-		Debug.logString("exitPrivateBrowsing");
+		Debug.log("exitPrivateBrowsing");
 		this.reinit(true);
 	},
 	canEnterPrivateBrowsing: function() {
@@ -608,7 +608,7 @@ const Dialog = {
 	
 	reinit: function(mustClear) {
 		if (!this._initialized) {
-			Debug.logString("reinit canceled");
+			Debug.log("reinit canceled");
 			return;
 		}
 		let method = mustClear ? 'cancel' : 'pause';
@@ -618,9 +618,9 @@ const Dialog = {
 			}
 			return true;
 		});
-		Debug.logString("reinit downloads canceled");			
+		Debug.log("reinit downloads canceled");			
 		try {
-			Debug.logString("reinit initiated");
+			Debug.log("reinit initiated");
 			let tp = this;
 			Timers.createOneshot(10, function() tp.shutdown(tp._continueReinit), this);
 		}
@@ -663,7 +663,7 @@ const Dialog = {
 			this.reinit(true);
 		}
 		else if (topic == 'DTA:shutdownQueueStore') {
-			Debug.logString("saving running");
+			Debug.log("saving running");
 			this.saveRunning();
 		}
 	},
@@ -812,7 +812,7 @@ const Dialog = {
 					else {
 						d.cancel(_("timeout"));
 					}
-					Debug.logString(d + " is a timeout");
+					Debug.log(d + " is a timeout");
 				}
 			}
 			
@@ -853,7 +853,7 @@ const Dialog = {
 			let gen = Limits.getScheduler(Tree.all, this._running);
 			for (let d in gen) {
 				if (!d || !d.is(QUEUED)) {
-					Debug.logString("FIXME: scheduler returned unqueued download");
+					Debug.log("FIXME: scheduler returned unqueued download");
 					continue;
 				}
 				this.run(d);
@@ -879,7 +879,7 @@ const Dialog = {
 			// we might encounter renaming issues;
 			// but we cannot handle it because we don't know at which stage we crashed
 			download.partialSize = download.totalSize;
-			Debug.logString("Download seems to be complete; likely a left-over from a crash, finish it:" + download);
+			Debug.log("Download seems to be complete; likely a left-over from a crash, finish it:" + download);
 			download.finishDownload();
 			return;
 		}
@@ -888,10 +888,10 @@ const Dialog = {
 		download.state = RUNNING;
 		if (!download.started) {
 			download.started = true;
-			Debug.logString("Let's start " + download);
+			Debug.log("Let's start " + download);
 		}
 		else {
-			Debug.logString("Let's resume " + download + " at " + download.partialSize);
+			Debug.log("Let's resume " + download + " at " + download.partialSize);
 		}
 		if (!this._running.length) {
 			this._speeds.clear(); // started to run; remove old global speed stats
@@ -919,7 +919,7 @@ const Dialog = {
 			if (this.startNext() || Tree.some(function(d) { return d.isOf(FINISHING, RUNNING, QUEUED); } )) {
 				return;
 			}
-			Debug.logString("signal(): Queue finished");
+			Debug.log("signal(): Queue finished");
 			Utils.playSound("done");
 			
 			let dp = Tree.at(0);
@@ -976,15 +976,15 @@ const Dialog = {
 		close();
 	},
 	shutdown: function D_close(callback) {
-		Debug.logString("Close request");
+		Debug.log("Close request");
 		if (!this._initialized) {
-			Debug.logString("not initialized. Going down immediately!");
+			Debug.log("not initialized. Going down immediately!");
 			callback.call(this);
 			return true;
 		}
 		if (!this._forceClose && !this._canClose()) {
 			delete this._forceClose;
-			Debug.logString("Not going to close!");
+			Debug.log("Not going to close!");
 			return false;
 		}
 		this.offlineForced = true;
@@ -998,7 +998,7 @@ const Dialog = {
 		
 		let chunks = 0;
 		let finishing = 0;
-		Debug.logString("Going to close all");
+		Debug.log("Going to close all");
 		Tree.updateAll(
 			function(d) {
 				if (d.isOf(RUNNING, QUEUED)) {
@@ -1022,7 +1022,7 @@ const Dialog = {
 			},
 			this
 		);
-		Debug.logString("Still running: " + chunks + " Finishing: " + finishing);
+		Debug.log("Still running: " + chunks + " Finishing: " + finishing);
 		if (chunks || finishing) {
 			if (this._safeCloseAttempts < 20) {
 				++this._safeCloseAttempts;
@@ -1030,7 +1030,7 @@ const Dialog = {
 				Timers.createOneshot(250, function() tp.shutdown(callback), this);				
 				return false;
 			}
-			Debug.logString("Going down even if queue was not probably closed yet!");
+			Debug.log("Going down even if queue was not probably closed yet!");
 		}
 		callback.call(this);
 		return true;
@@ -1463,7 +1463,7 @@ QueueItem.prototype = {
 			
 		}
 		this.invalidate(6);
-		Debug.logString("mc set to " + nv);
+		Debug.log("mc set to " + nv);
 		return this._maxChunks;
 	},
 	timeLastProgress: 0,
@@ -1599,7 +1599,7 @@ QueueItem.prototype = {
 			// safeguard against some failed chunks.
 			this.chunks.forEach(function(c) { c.close(); });
 			var destination = new FileFactory(this.destinationPath);
-			Debug.logString(this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
+			Debug.log(this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
 
 			if (!destination.exists()) {
 				destination.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
@@ -1646,12 +1646,12 @@ QueueItem.prototype = {
 				tp._verificator = null;
 				
 				if (!mismatches) {
-					Debug.logString("hash not computed");
+					Debug.log("hash not computed");
 					Prompts.alert(window, _('error'), _('verificationfailed', [tp.destinationFile]));
 					tp.complete();
 				}
 				else if (mismatches.length) {
-					Debug.logString("Mismatches: " + mismatches.toSource());
+					Debug.log("Mismatches: " + mismatches.toSource());
 					tp.verifyHashError(mismatches);
 				}
 				else {
@@ -1697,7 +1697,7 @@ QueueItem.prototype = {
 				next = mismatch.end + 1;
 			}
 			if (next != download.totalSize) {
-				Debug.logString("Inserting last");
+				Debug.log("Inserting last");
 				chunks.push(new Chunk(download, next, download.totalSize - 1, download.totalSize - next));
 			}
 			download.chunks = chunks;
@@ -1760,7 +1760,7 @@ QueueItem.prototype = {
 		this.complete();
 	},
 	finishDownload: function QI_finishDownload(exception) {
-		Debug.logString("finishDownload, connections: " + this.sessionConnections);
+		Debug.log("finishDownload, connections: " + this.sessionConnections);
 		this._completeEvents = ['moveCompleted', 'setAttributes'];
 		if (this.hashCollection) {
 			if (this.hashCollection.hasPartials) {
@@ -1950,7 +1950,7 @@ QueueItem.prototype = {
 				required *= 2.5;
 			}
 			if (nsd < required) {
-				Debug.logString("nsd: " +  nsd + ", tsd: " + required);
+				Debug.log("nsd: " +  nsd + ", tsd: " + required);
 				this.fail(_("ndsa"), _("spacedir"), _("freespace"));
 				return false;
 			}		
@@ -1964,7 +1964,7 @@ QueueItem.prototype = {
 	},
 
 	fail: function QI_fail(title, msg, state) {
-		Debug.logString("failDownload invoked");
+		Debug.log("failDownload invoked");
 
 		this.cancel(state);
 
@@ -1992,7 +1992,7 @@ QueueItem.prototype = {
 				this.pause();
 			}
 			this.state = CANCELED;			
-			Debug.logString(this.fileName + ": canceled");
+			Debug.log(this.fileName + ": canceled");
 
 			this.visitors = new VisitorManager();
 
@@ -2028,11 +2028,11 @@ QueueItem.prototype = {
 		}
 		
 		if (!this.totalSize) {
-			Debug.logString("pa: no totalsize");
+			Debug.log("pa: no totalsize");
 			return false;
 		}
 		if (this.preallocating) {
-			Debug.logString("pa: already working");
+			Debug.log("pa: already working");
 			return true;
 		}
 		
@@ -2044,27 +2044,27 @@ QueueItem.prototype = {
 			if (pa) {
 				this.preallocating = true;
 				this._preallocator = pa;
-				Debug.logString("pa: started");
+				Debug.log("pa: started");
 			}
 		}
 		else {
-			Debug.logString("pa: already allocated");
+			Debug.log("pa: already allocated");
 		}
 		return this.preallocating;
 	},
 	cancelPreallocation: function() {
 		if (this._preallocator) {
-			Debug.logString("pa: going to cancel");
+			Debug.log("pa: going to cancel");
 			this._preallocator.cancel();
 			delete this._preallocator;
 			this._preallocator = null;
-			Debug.logString("pa: cancelled");
+			Debug.log("pa: cancelled");
 		}
 		this.preallocating = false;
 	},
 	
 	_donePrealloc: function QI__donePrealloc(res) {
-		Debug.logString("pa: done");
+		Debug.log("pa: done");
 		delete this._preallocator;
 		this._preallocator = null;
 		this.preallocating = false;
@@ -2100,7 +2100,7 @@ QueueItem.prototype = {
 		if (Prefs.autoRetryInterval && !(Prefs.maxAutoRetries && Prefs.maxAutoRetries <= this._autoRetries)) {
 			Dialog.markAutoRetry(this);
 			this._autoRetryTime = Utils.getTimestamp();
-			Debug.logString("marked auto-retry: " + this);
+			Debug.log("marked auto-retry: " + this);
 		}
 
 		this.pause();
@@ -2114,7 +2114,7 @@ QueueItem.prototype = {
 		this._autoRetryTime = 0;
 		++this._autoRetries;
 		this.queue();
-		Debug.logString("Requeued due to auto-retry: " + this);
+		Debug.log("Requeued due to auto-retry: " + this);
 		return true;
 	},
 	queue: function QI_queue() {
@@ -2123,7 +2123,7 @@ QueueItem.prototype = {
 		this.status = TEXT_QUEUED;
 	},
 	resumeDownload: function QI_resumeDownload() {
-		Debug.logString("resumeDownload: " + this);
+		Debug.log("resumeDownload: " + this);
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat
 			// that much
@@ -2144,7 +2144,7 @@ QueueItem.prototype = {
 		function downloadChunk(download, chunk, header) {
 			chunk.running = true;
 			download.state = RUNNING;
-			Debug.logString("started: " + chunk);
+			Debug.log("started: " + chunk);
 			chunk.download = new Connection(download, chunk, header);
 			++download.activeChunks;
 			++download.sessionConnections;
@@ -2173,7 +2173,7 @@ QueueItem.prototype = {
 			
 			while (this.activeChunks < this.maxChunks) {
 				if (this.preallocating && this.activeChunks) {
-					Debug.logString("not resuming download " + this + " because preallocating");
+					Debug.log("not resuming download " + this + " because preallocating");
 					return true;
 				}
 				
@@ -2226,7 +2226,7 @@ QueueItem.prototype = {
 		this.urlManager.initByArray(mirrors);
 		if (restart && this.resumable && this.is(RUNNING) && this.maxChunks > 2) {
 			// stop some chunks and restart them
-			Debug.logString("Stopping some chunks and restarting them after mirrors change");
+			Debug.log("Stopping some chunks and restarting them after mirrors change");
 			let omc = this.maxChunks;
 			this.maxChunks = 2;
 			this.maxChunks = omc;
@@ -2244,7 +2244,7 @@ QueueItem.prototype = {
 					+ "\n";
 			}
 		);
-		Debug.logString("scoreboard\n" + scoreboard);
+		Debug.log("scoreboard\n" + scoreboard);
 	},	
 	toString: function() this.urlManager.usable,
 	serialize: function() {
@@ -2620,12 +2620,12 @@ var ConflictManager = {
 		}
 		for each (let item in this._items.length) {
 			if (item.download == download) {
-				Debug.logString("conflict resolution updated to: " + reentry);
+				Debug.log("conflict resolution updated to: " + reentry);
 				item.reentry = reentry;
 				return;
 			}
 		}
-		Debug.logString("conflict resolution queued to: " + reentry);
+		Debug.log("conflict resolution queued to: " + reentry);
 		this._items.push({download: download, reentry: reentry});
 		this._process();
 	},
@@ -2635,7 +2635,7 @@ var ConflictManager = {
 		if (download.is(RUNNING)) {
 			sn = Dialog.checkSameName(download, download.destinationFile);
 		}
-		Debug.logString("conflict check: " + sn + "/" + dest.exists() + " for " + download.destinationFile);
+		Debug.log("conflict check: " + sn + "/" + dest.exists() + " for " + download.destinationFile);
 		return dest.exists() || sn;
 	},
 	_process: function CM__process() {

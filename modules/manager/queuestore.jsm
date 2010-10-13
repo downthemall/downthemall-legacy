@@ -78,7 +78,7 @@ const QueueStore = {
 		}
 		this._initialized = true;
 		
-		Debug.logString("QueueStore: initialzing in " + (pb ? "private" : "normal") + " mode");
+		Debug.log("QueueStore: initialzing in " + (pb ? "private" : "normal") + " mode");
 		
 		try {
 			if (pb) {
@@ -115,7 +115,7 @@ const QueueStore = {
 					migrate data
 				*/
 				_connection.schemaVersion = DB_VERSION;
-				Debug.logString("setting schema version");				
+				Debug.log("setting schema version");				
 			}
 			if (!_connection.tableExists('queue')) {
 				_connection.executeSimpleSQL('PRAGMA page_size = 4096');
@@ -139,7 +139,7 @@ const QueueStore = {
 		catch (ex) {
 			Debug.log("SQLite", _connection.lastErrorString);
 		}
-		Debug.logString("QueueStore: done initialzing");		
+		Debug.log("QueueStore: done initialzing");		
 	},
 	shutdown: function() {
 		if (!this._initialized) {
@@ -182,7 +182,7 @@ const QueueStore = {
 		catch (ex) {
 			Debug.log("Cannot close!", ex);
 		}
-		Debug.logString("QueueStore: shutdown complete!");
+		Debug.log("QueueStore: shutdown complete!");
 	},
 	reinit: function(pb) {
 		this.shutdown();
@@ -202,11 +202,11 @@ const QueueStore = {
 		Observers.notifyObservers(null, 'DTA:clearedQueueStore', null);
 	},
 	enterPrivateBrowsing: function() {
-		Debug.logString("QueueManager: entering pbm");
+		Debug.log("QueueManager: entering pbm");
 		this.reinit(true);
 	},
 	exitPrivateBrowsing: function() {
-		Debug.logString("QueueManager: exiting pbm");
+		Debug.log("QueueManager: exiting pbm");
 		this.reinit(false);
 	},
 	beginUpdate: function() {
@@ -223,7 +223,7 @@ const QueueStore = {
 	},
 	backup: function() {
 		if (!('backupDB' in _connection)) {
-			Debug.logString("DB Backup not possible");
+			Debug.log("DB Backup not possible");
 			return;
 		}
 		try {

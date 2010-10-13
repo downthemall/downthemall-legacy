@@ -210,7 +210,7 @@ var Dialog = {
 		);
 		if (mirrors.length) {
 			download.replaceMirrors(mirrors);
-			Debug.logString("New mirrors set " + mirrors);
+			Debug.log("New mirrors set " + mirrors);
 			$("mirrorsText").value = _("mirrorsText", [download.urlManager.length]);			
 		}		
 	},

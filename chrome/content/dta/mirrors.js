@@ -278,7 +278,7 @@ function checkMirrors() {
 					continue;
 				}
 				for each (let m in good[cl]) {
-					Debug.logString(m.mirror + " has a cl of " + cl + " but the majority of mirrors uses " + maxCL);
+					Debug.log(m.mirror + " has a cl of " + cl + " but the majority of mirrors uses " + maxCL);
 					m.setAttribute('state', 'bad');
 					m.setAttribute('error', _('sizecheckerror'));
 					bad.push(m);
@@ -300,7 +300,7 @@ function checkMirrors() {
 	}
 	function timeout() {
 		for each (let req in requests) {
-			Debug.logString(req.mirror.mirror + " is a timeout");
+			Debug.log(req.mirror.mirror + " is a timeout");
 			req.abort();
 			finishRequest(req);
 		}
