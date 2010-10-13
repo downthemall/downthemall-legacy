@@ -123,7 +123,7 @@ function loadLimits() {
 		try {
 			let limit = new Limit(host);
 			limits[limit.host] = limit;
-			Debug.logString("loaded limit: " + limit);
+			Debug.log("loaded limit: " + limit);
 		}
 		catch (ex) {
 			Debug.log("Failed to load: " + limit, ex);
@@ -321,7 +321,7 @@ function loadScheduler() {
 		scheduler = FastScheduler;
 		break;
 	}
-	Debug.logString("Using scheduler " + scheduler.name);
+	Debug.log("Using scheduler " + scheduler.name);
 }
 function getScheduler(downloads, running) {
 	return scheduler(downloads, running);

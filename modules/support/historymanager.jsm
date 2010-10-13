@@ -100,13 +100,13 @@ History.prototype = {
 	},
 	_setValues: function(values) {
 		if (!this._persisting) {
-			Debug.logString("Set session history for " + this._key);
+			Debug.log("Set session history for " + this._key);
 			this._sessionHistory = values;
 		}
 		else {
 			try {
 				prefs.setExt(this._key, stringify(values));
-				Debug.logString("Set normal history for " + this._key);
+				Debug.log("Set normal history for " + this._key);
 			}
 			catch (ex) {
 				Debug.log("Histories: Setting values failed" + values, ex);
@@ -130,7 +130,7 @@ History.prototype = {
 		}
 	},
 	reset: function(value) {
-		Debug.logString("Histories: Reset called");
+		Debug.log("Histories: Reset called");
 		this._setValues([]);
 	}
 };
@@ -139,13 +139,13 @@ const _histories = {};
 
 const callbacks = {
 	enterPrivateBrowsing: function() {
-		Debug.logString("entering pbm: switching to session histories");
+		Debug.log("entering pbm: switching to session histories");
 		for each (let h in _histories) {
 			h._setPersisting(false);
 		}
 	},
 	exitPrivateBrowsing: function() {
-		Debug.logString("exiting pbm: switching to persisted histories");
+		Debug.log("exiting pbm: switching to persisted histories");
 		for each (let h in _histories) {
 			h._setPersisting(true);
 		}

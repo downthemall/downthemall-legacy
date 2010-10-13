@@ -179,7 +179,7 @@ Verificator.prototype = {
 };
 
 function MultiVerificator() {
-	Debug.logString("MultiVerificator");
+	Debug.log("MultiVerificator");
 	Verificator.apply(this, Array.map(arguments, function(e) e));
 }
 MultiVerificator.prototype = {

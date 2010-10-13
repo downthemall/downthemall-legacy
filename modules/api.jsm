@@ -481,7 +481,7 @@ function turboSaveLinkArray(window, urls, images) {
 	if (urls.length == 0 && images.length == 0) {
 		throw new Exception("no links");
 	}
-	Debug.logString("turboSaveLinkArray(): DtaOneClick filtering started");
+	Debug.log("turboSaveLinkArray(): DtaOneClick filtering started");
 
 	let links;
 	let type;
@@ -510,7 +510,7 @@ function turboSaveLinkArray(window, urls, images) {
 		}
 	);
 
-	Debug.logString("turboSaveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
+	Debug.log("turboSaveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
 
 	if (links.length == 0) {
 		throw new Exception('no links remaining');
@@ -545,7 +545,7 @@ const Series = {
 	_session: 1,
 	_persist: true,
 	enterPrivateBrowsing: function() {
-		Debug.logString("epbm");
+		Debug.log("epbm");
 		this._session = 1;
 		this._persist = false;
 	},

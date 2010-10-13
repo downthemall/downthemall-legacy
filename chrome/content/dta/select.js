@@ -214,7 +214,7 @@ Tree.prototype = {
 			this._sortDirection = !this._sortDirection;
 		}
 		else {
-			Debug.logString("setting sortColumn = " + col.index);
+			Debug.log("setting sortColumn = " + col.index);
 			this._sortColumn = col.index;
 			this._sortDirection = false;
 		}
@@ -594,7 +594,7 @@ let Dialog = {
 
 		// whoops, somebody called us that has no filter attached
 		if (!('filter') in box) {
-			Debug.logString("toggleBox: invalid element");
+			Debug.log("toggleBox: invalid element");
 			return;
 		}
 

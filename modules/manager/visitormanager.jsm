@@ -85,12 +85,12 @@ Visitor.prototype = {
 				if (this.cmpKeys[x]) {
 					continue;
 				}
-				Debug.logString(x + " missing");
+				Debug.log(x + " missing");
 				throw new Exception(x + " is missing");
 			}
 			// header is there, but differs
 			else if (this[x] != v[x]) {
-				Debug.logString(x + " nm: [" + this[x] + "] [" + v[x] + "]");
+				Debug.log(x + " nm: [" + this[x] + "] [" + v[x] + "]");
 				throw new Exception("Header " + x + " doesn't match");
 			}
 		}
@@ -144,7 +144,7 @@ HttpVisitor.prototype = {
 					this.type = aValue;
 					var ch = aValue.match(/charset=['"]?([\w\d_-]+)/i);
 					if (ch && ch[1].length) {
-						Debug.logString("visitHeader: found override to " + ch[1]);
+						Debug.log("visitHeader: found override to " + ch[1]);
 						this._charset = this.overrideCharset = ch[1];
 					}
 				}
@@ -156,7 +156,7 @@ HttpVisitor.prototype = {
 
 				case 'accept-ranges':
 					this.acceptRanges = aValue.toLowerCase().indexOf('bytes') != -1;
-					Debug.logString("acceptrange = " + aValue.toLowerCase());
+					Debug.log("acceptrange = " + aValue.toLowerCase());
 				break;
 
 				case 'content-length':
@@ -208,7 +208,7 @@ HttpVisitor.prototype = {
 					.replace(/^(?:[Ww]\/)?"(.+)"$/, '$1')
 					.replace(/^[a-f\d]+-([a-f\d]+)-([a-f\d]+)$/, '$1-$2')
 					.replace(/^([a-f\d]+):[a-f\d]{1,6}$/, '$1');
-					Debug.logString("Etag: " + this[header] + " - " + aValue);
+					Debug.log("Etag: " + this[header] + " - " + aValue);
 			}
 			else if (header in this.cmpKeys) {
 				this[header] = aValue;
@@ -262,7 +262,7 @@ FtpVisitor.prototype = {
 						time += ':' + m[6];
 					}
 					this.time = getTimestamp(time);
-					Debug.logString(this.time);
+					Debug.log(this.time);
 				}
 			}
 		}
