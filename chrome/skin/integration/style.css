@@ -72,3 +72,15 @@ toolbar[iconsize="small"] #dta-manager-button {
 	list-style-image: url(../common/smalltools.png);
 	-moz-image-region: rect(0px, 96px, 16px, 80px);
 }
+
+#notification-popup-box[anchorid="downthemall-notification-icon"] > #downthemall-notification-icon {
+	display: -moz-box;
+}
+#downthemall-notification-icon {
+  list-style-image: url(../common/smalltools.png);
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+
+.popup-notification-icon[popupid="downthemall"] {
+  list-style-image: url(chrome://dta/skin/common/icon.png);
+}
