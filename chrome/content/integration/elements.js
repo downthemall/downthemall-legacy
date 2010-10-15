@@ -101,26 +101,54 @@
 	}
 	
 	function _notify(title, message, priority, mustAlert, timeout) {
-		try {
-			timeout = timeout || 2500;
-			let nb = gBrowser.getNotificationBox();
-			let notification = nb.appendNotification(
-				message,
-				0,
-				'chrome://dta/skin/common/dta.png',
-				nb[priority]
-				);
-			setTimeout(function() {
-				nb.removeNotification(notification);
-			}, timeout);
-		}
-		catch (ex) {
-			if (mustAlert) {
-				let prompts = {};
-				Components.utils.import('resource://dta/prompts.jsm', prompts);				
-				prompts.alert(window, title, message);
+		if ('PopupNotifications' in this) {
+			_notify = function(title, message, priority, mustAlert, timeout) {
+				try {
+					timeout = timeout || 2500;
+					let notification = PopupNotifications.show(
+							gBrowser.selectedBrowser,
+							'downthemall',
+							message,
+							'downthemall-notification-icon',
+							null,
+							null,
+							{timeout: timeout}
+							);
+					setTimeout(function() {
+						PopupNotifications.remove(notification);
+					}, timeout);					
+				}
+				catch (ex) {
+					alert(ex);
+					// no op
+				}
+			}
+		} 
+		else {
+			_notify = function(title, message, priority, mustAlert, timeout) {
+				try {
+					timeout = timeout || 2500;
+					let nb = gBrowser.getNotificationBox();
+					let notification = nb.appendNotification(
+						message,
+						0,
+						'chrome://dta/skin/common/dta.png',
+						nb[priority]
+						);
+					setTimeout(function() {
+						nb.removeNotification(notification);
+					}, timeout);
+				}
+				catch (ex) {
+					if (mustAlert) {
+						let prompts = {};
+						Components.utils.import('resource://dta/prompts.jsm', prompts);				
+						prompts.alert(window, title, message);
+					}
+				}				
 			}
 		}
+		return _notify(title, message, priority, mustAlert, timeout);
 	}
 	
 	function notifyError(title, message) _notify(title, message, 'PRIORITY_CRITICAL_HIGH', true, 1500);
@@ -128,6 +156,24 @@
 	function notifyProgress(message) {
 		try {
 			let _n = null;
+			if ('PopupNotifications' in this) {
+				return (notifyProgress = function(message) {
+					if (!message && _n) {
+						PopupNotifications.remove(_n);
+						_n = null;
+						return;
+					}
+					if (!message) {
+						return;
+					}
+					_n = PopupNotifications.show(
+						gBrowser.selectedBrowser,
+						'downthemall',
+						message,
+						'downthemall-notification-icon'
+						);
+				})(message);				
+			}
 			return (notifyProgress = function(message) {
 				let nb = gBrowser.getNotificationBox();
 				if (!message && _n) {
@@ -151,6 +197,7 @@
 			})(message);
 		}
 		catch (ex) {
+			debug.log("np", ex);
 			notifyProgress = function() {}
 		}
 	}	
@@ -1376,7 +1423,7 @@
 				url = DTA.IOService.newURI(url, null, null);
 			}
 			catch (ex) {
-				DTA.Debug.log("Failed to process drop", ex);
+				debug.log("Failed to process drop", ex);
 				return;
 			}
 			let doc = document.commandDispatcher.focusedWindow.document;
@@ -1390,7 +1437,7 @@
 	};
 
 	addEventListener('load', function() {
-		removeEventListener('load', arguments.callee, true);	
+		removeEventListener('load', arguments.callee, true);
 		
 		ctxBase = $('dtaCtxCompact');
 		toolsBase = $('dtaToolsMenu');
@@ -1601,7 +1648,7 @@
 			}
 		}
 		catch (ex) {
-			DTA.Debug.log("Failed to process about", ex);
+			debug.log("Failed to process about", ex);
 		}
 	}, true); // load
 	
