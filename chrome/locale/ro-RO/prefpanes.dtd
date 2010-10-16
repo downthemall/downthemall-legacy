@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Filtre">
+<!ENTITY listhead1.label "Titlu">
+<!ENTITY listhead2.label "Extensii">
+<!ENTITY regex.label "Exp. reg.">
+<!ENTITY highlight.label "Evidențiează fișierele trecute prin filtre">
+<!ENTITY dtacontext2.label "Preferințe">
+<!ENTITY mainpane.rename.caption "Dacă un fișier există deja:">
+<!ENTITY mainpane.rename.label "Redenumește">
+<!ENTITY mainpane.overwrite.label "Suprascrie">
+<!ENTITY mainpane.skip.label "Sări peste">
+<!ENTITY mainpane.ask.label "Întreabă">
+<!ENTITY mainpane.sounderror.label "Redă un sunet în caz de eroare">
+<!ENTITY mainpane.alert.caption "Când descărcările sunt încheiate:">
+<!ENTITY mainpane.sounddone.label "Redă un sunet când toate descărcările s-au încheiat">
+<!ENTITY mainpane.closedta.label "Închide DownThemAll când descărcările s-au încheiat">
+<!ENTITY privacypane.label "Intimitate">
+<!ENTITY privacypane.closing.caption "Când gestionarul este închis">
+<!ENTITY privacypane.deletefoldershistory.label "Șterge lista de dosare">
+<!ENTITY privacypane.deletefiltershistory.label "Șterge filtrele adiționale">
+<!ENTITY privacypane.showlog.label "Vezi jurnalul">
+<!ENTITY privacypane.reveallog.label "Arată fișierul">
+<!ENTITY privacypane.deletelog.label "Șterge jurnalul">
+<!ENTITY privacypane.updates.caption "Actualizări/Internet">
+<!ENTITY privacypane.information.label "Permite dTa să descarce știri actualizate, mesaje și ultima versiune">
+<!ENTITY privacypane.statistics.label "Permite dTa să colecteze și transfere statistici anonime despre utilizare">
+<!ENTITY privacypane.logs.caption "Jurnal pentru diagnosticare">
+<!ENTITY privacypane.enablelogs.label "Activează înregistrările pentru diagnostic">
+<!ENTITY privacypane.notice.caption "Important">
+<!ENTITY privacypane.notice.desc "DownThemAll funcționează cu caracteristica „Curăță datele private” (dacă e disponibilă).">
+<!ENTITY privacypane.privacynotice.label "Declarația noastră cu privire la intimitate">
+<!ENTITY advancedpane.label "Avansat">
+<!ENTITY advancedpane.chunksdisabled "1 (Dezactivat)">
+<!ENTITY advancedpane.usetemp.label "Salvează părțile descărcărilor într-un director temporar">
+<!ENTITY advancedpane.tempdir.label "Folosește acest director:">
+<!ENTITY uipane.label "Interfață">
+<!ENTITY uipane.namesonly.label "Arată numai nume de fișiere în fereastra gestionarului">
+<!ENTITY uipane.integration.caption "Integrare">
+<!ENTITY uipane.tools.caption "Meniu unelte">
+<!ENTITY uipane.compact.label "Folosește un meniu compact">
+<!ENTITY uipane.hide.label "Ascunde acest meniu">
+<!ENTITY uipane.showtooltip.label "Arată informații la trecerea cu mausul pe descărcări">
+<!ENTITY uipane.startminimized.label "Pornește minimizat">
+<!ENTITY uipane.minimizetotray.label "Minimizează în zona de notificare">

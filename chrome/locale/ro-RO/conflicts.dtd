@@ -1,0 +1,5 @@
+<!ENTITY text.value "Ține minte această setare:">
+<!ENTITY session.label "Doar pentru această sesiune">
+<!ENTITY always.label "De acum înainte">
+<!ENTITY overwrite.label "Suprascrie fișierul existent">
+<!ENTITY skip.label "Sari/Anulează">

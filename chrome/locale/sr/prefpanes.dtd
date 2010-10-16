@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Филтери">
+<!ENTITY listhead1.label "Назив филтера">
+<!ENTITY listhead2.label "Наставци (врста датотеке)">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY highlight.label "Истакни датотеке које су обележене од стране филтера">
+<!ENTITY dtacontext2.label "Подешавања">
+<!ENTITY mainpane.rename.caption "Уколико датотека са датим именом већ постоји:">
+<!ENTITY mainpane.rename.label "Преименуј">
+<!ENTITY mainpane.overwrite.label "Замени">
+<!ENTITY mainpane.skip.label "Прескочи">
+<!ENTITY mainpane.ask.label "Питај">
+<!ENTITY mainpane.sounderror.label "Звучно обавештење у случају грешке">
+<!ENTITY mainpane.alert.caption "Када су сва преузимања завршена:">
+<!ENTITY mainpane.sounddone.label "Звучно обавештење по завршетку свих преузимања">
+<!ENTITY mainpane.closedta.label "Затвори DownThemAll по завршетку свих преузимања">
+<!ENTITY privacypane.label "Приватност">
+<!ENTITY privacypane.closing.caption "Када се прозор управљача затвори">
+<!ENTITY privacypane.deletefoldershistory.label "Обриши листу директоријума">
+<!ENTITY privacypane.deletefiltershistory.label "Обриши додатне филтере">
+<!ENTITY privacypane.showlog.label "Види дневник">
+<!ENTITY privacypane.reveallog.label "Прикажи датотеку дневника">
+<!ENTITY privacypane.deletelog.label "Обриши дневник">
+<!ENTITY privacypane.updates.caption "Унапређења и интернет">
+<!ENTITY privacypane.information.label "Дозвола DownThemAll!-у, да преузима информације о новим верзијама програма">
+<!ENTITY privacypane.statistics.label "Дозвола DownThemAll!-у, да сакупља и шаље анонимну статистику коришћења">
+<!ENTITY privacypane.logs.caption "Дневник дијагнозе">
+<!ENTITY privacypane.enablelogs.label "Омогући дневник дијагнозе">
+<!ENTITY privacypane.notice.caption "Назнаке">
+<!ENTITY privacypane.notice.desc "DownThemAll сарађује и са уграђеном опцијом за чишћење приватних података (уколико је доступна).">
+<!ENTITY privacypane.privacynotice.label "Наше обавештење о приватности">
+<!ENTITY advancedpane.label "Напредна">
+<!ENTITY advancedpane.chunksdisabled "Онемогућено">
+<!ENTITY advancedpane.usetemp.label "Сачувај преузете делове у привременом директоријуму">
+<!ENTITY advancedpane.tempdir.label "Користи овај директоријум:">
+<!ENTITY uipane.label "Изглед">
+<!ENTITY uipane.namesonly.label "У прозору управљача прикажи само имена датотека">
+<!ENTITY uipane.integration.caption "Интеграција">
+<!ENTITY uipane.tools.caption "Листа алата">
+<!ENTITY uipane.compact.label "Користи компактну листу">
+<!ENTITY uipane.hide.label "Сакри ову листу">
+<!ENTITY uipane.showtooltip.label "Прикажи објашњења код преузимања">
+<!ENTITY uipane.startminimized.label "Покрени програм умањен">
+<!ENTITY uipane.minimizetotray.label "Умањи програм у системску траку">

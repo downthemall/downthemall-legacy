@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Penapis">
+<!ENTITY listhead1.label "Keterangan Gambar">
+<!ENTITY listhead2.label "Sambungan">
+<!ENTITY regex.label "Daf. Eks.">
+<!ENTITY highlight.label "Tonjolkan fail diperiksa penapis">
+<!ENTITY dtacontext2.label "Pengubahan">
+<!ENTITY mainpane.rename.caption "Jika nama fail sudah wujud:">
+<!ENTITY mainpane.rename.label "Namakan semula">
+<!ENTITY mainpane.overwrite.label "Tulis Lampau">
+<!ENTITY mainpane.skip.label "Langkau">
+<!ENTITY mainpane.ask.label "Tanya">
+<!ENTITY mainpane.sounderror.label "Bunyikan jika ada kesilapan">
+<!ENTITY mainpane.alert.caption "Apabila muat turun selesai:">
+<!ENTITY mainpane.sounddone.label "Bunyikan bila semua muat turun selesai">
+<!ENTITY mainpane.closedta.label "Tutup DownThemAll bila muat turun selesai">
+<!ENTITY privacypane.label "Privasi">
+<!ENTITY privacypane.closing.caption "Apabila tetingkap Pengurus ditutup">
+<!ENTITY privacypane.deletefoldershistory.label "Kosongkan Senarai Fail">
+<!ENTITY privacypane.deletefiltershistory.label "Kosongkan Penapis Tambahan">
+<!ENTITY privacypane.showlog.label "Papar Rekod">
+<!ENTITY privacypane.reveallog.label "Tunjuk Fail">
+<!ENTITY privacypane.deletelog.label "Padam Log">
+<!ENTITY privacypane.updates.caption "Kemaskini/Internet">
+<!ENTITY privacypane.information.label "Biar dTa muat turun berita terbaru, pesanan dan kemaskini">
+<!ENTITY privacypane.statistics.label "Biar dTa kumpul dan pindah statistik penggunaan dalam privasi">
+<!ENTITY privacypane.logs.caption "Rekod Diagnostik">
+<!ENTITY privacypane.enablelogs.label "Bolehkan perekodan diagnostik">
+<!ENTITY privacypane.notice.caption "Notis">
+<!ENTITY privacypane.notice.desc "DownThemAll juga bersepadu dengan Bersihkan Data Peribadi terbina-dalam (jika ada).">
+<!ENTITY privacypane.privacynotice.label "Notis Privasi Kami">
+<!ENTITY advancedpane.label "Maju">
+<!ENTITY advancedpane.chunksdisabled "Lumpuhkan">
+<!ENTITY advancedpane.usetemp.label "Simpan segmen muat turun ke dalam direktori sementara">
+<!ENTITY advancedpane.tempdir.label "Gunakan direktori ini:">
+<!ENTITY uipane.label "Antaramuka">
+<!ENTITY uipane.namesonly.label "Tunjuk nama fail sahaja dalam tetingkap Pengurus">
+<!ENTITY uipane.integration.caption "Persepaduan">
+<!ENTITY uipane.tools.caption "Menu Alatan">
+<!ENTITY uipane.compact.label "Gunakan menu padat">
+<!ENTITY uipane.hide.label "Sembunyi menu ini">
+<!ENTITY uipane.showtooltip.label "Tunjuk tip alatan muat turun">
+<!ENTITY uipane.startminimized.label "Minimumkan semasa mula">
+<!ENTITY uipane.minimizetotray.label "Minimumkan ke talam sistem">

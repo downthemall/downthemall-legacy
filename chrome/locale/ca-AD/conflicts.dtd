@@ -1,0 +1,5 @@
+<!ENTITY text.value "Recordeu aquest paràmetre:">
+<!ENTITY session.label "Només per aquesta sessió">
+<!ENTITY always.label "Des d&apos;ara a">
+<!ENTITY overwrite.label "Sobreescriviu el fitxer existent">
+<!ENTITY skip.label "Omet/Cancel·la">

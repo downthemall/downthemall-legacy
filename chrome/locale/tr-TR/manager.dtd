@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "DownThemAll'ı daha iyi hale getirmemiz için bize yardım edebilirsiniz. Küçük bir bağış yapmayı düşünün!">
+<!ENTITY movetop.label "Üste">
+<!ENTITY movebottom.label "Alta">
+<!ENTITY moveup.label "Yukarı">
+<!ENTITY movedown.label "Aşağı">
+<!ENTITY pct.label "İlerleme">
+<!ENTITY dim.label "Boyut">
+<!ENTITY time.label "Tahmini zaman">
+<!ENTITY parts.label "Parçalar">
+<!ENTITY speed.label "Hız">
+<!ENTITY infoURLTitle.value "Nereden:">
+<!ENTITY infoSizeTitle.value "Boyut:">
+<!ENTITY infoMultiple.value "Çoklu Öğe">
+<!ENTITY elapsedTitle.value "Geçen:">
+<!ENTITY remainingTitle.value "Kalan:">
+<!ENTITY currentSpeedTitle.value "Şu anki hız:">
+<!ENTITY avgSpeedTitle.value "Ortalama Hız:">
+<!ENTITY path.label "Kayıt yolu">
+<!ENTITY mask.label "Adlandırma maskesi">
+<!ENTITY hash.label "Sağlama toplamı">
+<!ENTITY pause.label "Duraklat">
+<!ENTITY resume.label "Sürdür">
+<!ENTITY cancel.label "İptal">
+<!ENTITY options.caption "Seçenekler">
+<!ENTITY loading.label "Yükleniyor...">
+<!ENTITY restore.label "Geri yükle">
+<!ENTITY close.label "Kapat">

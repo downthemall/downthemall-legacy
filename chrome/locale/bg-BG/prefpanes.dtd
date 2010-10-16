@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Филтри">
+<!ENTITY listhead1.label "Заглавие">
+<!ENTITY listhead2.label "Добавки">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY highlight.label "Откроявай файловете проверени от филтрите">
+<!ENTITY dtacontext2.label "Настройки">
+<!ENTITY mainpane.rename.caption "Ако такова име за файл вече съществува:">
+<!ENTITY mainpane.rename.label "Преименувай">
+<!ENTITY mainpane.overwrite.label "Презапиши">
+<!ENTITY mainpane.skip.label "Прескочи">
+<!ENTITY mainpane.ask.label "Попитай">
+<!ENTITY mainpane.sounderror.label "Пускай звук при грешка">
+<!ENTITY mainpane.alert.caption "Когато даунлоудите са завършени:">
+<!ENTITY mainpane.sounddone.label "Пускай звук когато всички даунлоуди са завършени">
+<!ENTITY mainpane.closedta.label "Затвори DownThemAll когато даунлоудите са се изтеглили">
+<!ENTITY privacypane.label "Поверителност">
+<!ENTITY privacypane.closing.caption "Когато прозорецът за Управление е затворен">
+<!ENTITY privacypane.deletefoldershistory.label "Изтрии историята на папките">
+<!ENTITY privacypane.deletefiltershistory.label "Изтрии допълнителната филтър история">
+<!ENTITY privacypane.showlog.label "Виж лог-а">
+<!ENTITY privacypane.reveallog.label "Покажи Файл">
+<!ENTITY privacypane.deletelog.label "Изтрии лог-а">
+<!ENTITY privacypane.updates.caption "Нови Версии/Интернет">
+<!ENTITY privacypane.information.label "Позволи на dTa да тегли новини, съобщения и последната версия">
+<!ENTITY privacypane.statistics.label "Позволи на dTa да събира и предава анонимна информация при използването му.">
+<!ENTITY privacypane.logs.caption "Диагностичен лог">
+<!ENTITY privacypane.enablelogs.label "Включи създаване на диагностичен лог">
+<!ENTITY privacypane.notice.caption "Предупреждение">
+<!ENTITY privacypane.notice.desc "dTa също се интегрира с вградената опция за почистване на Личната Информация (ако има такава).">
+<!ENTITY privacypane.privacynotice.label "Относно Сигурността">
+<!ENTITY advancedpane.label "Настройки за Напреднали">
+<!ENTITY advancedpane.chunksdisabled "1 (недостъпен)">
+<!ENTITY advancedpane.usetemp.label "Запазвай даунлоуд частите във временна директория">
+<!ENTITY advancedpane.tempdir.label "Използвай тази директория:">
+<!ENTITY uipane.label "Потребителски Интерфейс">
+<!ENTITY uipane.namesonly.label "Показвай само файлови имена в прозореца за Управление">
+<!ENTITY uipane.integration.caption "Интеграция">
+<!ENTITY uipane.tools.caption "Меню Инструменти">
+<!ENTITY uipane.compact.label "Използвай компаткно менщ">
+<!ENTITY uipane.hide.label "Скрий това меню">
+<!ENTITY uipane.showtooltip.label "Показвай прозорчета за даунлоудие">
+<!ENTITY uipane.startminimized.label "Стартирай минимизиран">
+<!ENTITY uipane.minimizetotray.label "Минимизирай в системната лента">

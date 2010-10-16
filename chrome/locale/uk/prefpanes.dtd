@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Фільтри">
+<!ENTITY listhead1.label "Заголовок">
+<!ENTITY listhead2.label "Розширення">
+<!ENTITY regex.label "Регулярний вираз">
+<!ENTITY highlight.label "Підсвічувати файли відмічені фільтрами">
+<!ENTITY dtacontext2.label "Вподобання">
+<!ENTITY mainpane.rename.caption "Якщо файл існує, тоді:">
+<!ENTITY mainpane.rename.label "Перейменувати">
+<!ENTITY mainpane.overwrite.label "Перезаписати">
+<!ENTITY mainpane.skip.label "Пропустити">
+<!ENTITY mainpane.ask.label "Запитати">
+<!ENTITY mainpane.sounderror.label "Звукове сповіщення при виникненні помилки">
+<!ENTITY mainpane.alert.caption "Повідомляти про завершення завантажень за допомогою:">
+<!ENTITY mainpane.sounddone.label "Повідомляти при виконанні усіх завантаженнь">
+<!ENTITY mainpane.closedta.label "Закривати DownThemAll при завершенні завантажень">
+<!ENTITY privacypane.label "Приватність">
+<!ENTITY privacypane.closing.caption "При закритті вікна Менеджеру">
+<!ENTITY privacypane.deletefoldershistory.label "Вилучати теки історії">
+<!ENTITY privacypane.deletefiltershistory.label "Вилучати історію додаткових фільтрів">
+<!ENTITY privacypane.showlog.label "Переглянути журнал">
+<!ENTITY privacypane.reveallog.label "Переглянути файл">
+<!ENTITY privacypane.deletelog.label "Вилучити журнал">
+<!ENTITY privacypane.updates.caption "Поновлення/Інтернет">
+<!ENTITY privacypane.information.label "Заборонити dTa завантажувати новини, повідомлення та інформацію про оновлення">
+<!ENTITY privacypane.statistics.label "Дозволити dTa збирати та відправляти анонімну статистику">
+<!ENTITY privacypane.logs.caption "Журнал діагностики">
+<!ENTITY privacypane.enablelogs.label "Увімкнути ведення журналу діагностики">
+<!ENTITY privacypane.notice.caption "Зауваження">
+<!ENTITY privacypane.notice.desc "DownThemAll інтегрується з вбудованою функцією очищення приватної інформації (якщо вона увімкнена).">
+<!ENTITY privacypane.privacynotice.label "Наше повідомлення про конфіденційність">
+<!ENTITY advancedpane.label "Розширені">
+<!ENTITY advancedpane.chunksdisabled "(Вимкнено)">
+<!ENTITY advancedpane.usetemp.label "Зберігати частини завантаження у тимчасовій теці">
+<!ENTITY advancedpane.tempdir.label "Використовувати теку:">
+<!ENTITY uipane.label "Інтерфейс">
+<!ENTITY uipane.namesonly.label "Відображати тільки назви файлів у вікні Менеджера">
+<!ENTITY uipane.integration.caption "Інтеграція">
+<!ENTITY uipane.tools.caption "Меню інструментів">
+<!ENTITY uipane.compact.label "Використовувати компактне меню">
+<!ENTITY uipane.hide.label "Приховати це меню">
+<!ENTITY uipane.showtooltip.label "Показувати виринаюче вікно">
+<!ENTITY uipane.startminimized.label "Запускати з прихованим вікном">
+<!ENTITY uipane.minimizetotray.label "Згорнути до системного трею">

@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Filtre">
+<!ENTITY listhead1.label "Názov">
+<!ENTITY listhead2.label "Prípony">
+<!ENTITY regex.label "Regul. výraz">
+<!ENTITY highlight.label "Zvýrazniť súbory kontrolované filtrami">
+<!ENTITY dtacontext2.label "Predvoľby">
+<!ENTITY mainpane.rename.caption "Ak už názov súboru existuje:">
+<!ENTITY mainpane.rename.label "Premenovať">
+<!ENTITY mainpane.overwrite.label "Prepísať">
+<!ENTITY mainpane.skip.label "Preskočiť">
+<!ENTITY mainpane.ask.label "Opýtať sa">
+<!ENTITY mainpane.sounderror.label "Prehrať zvuk v prípade chyby">
+<!ENTITY mainpane.alert.caption "Keď je preberanie dokončené:">
+<!ENTITY mainpane.sounddone.label "Prehrať zvuk po dokončení všetkých preberaní">
+<!ENTITY mainpane.closedta.label "Zavrieť DownThemAll po dokončení preberania">
+<!ENTITY privacypane.label "Súkromie">
+<!ENTITY privacypane.closing.caption "Ak je okno Správca zatvorené">
+<!ENTITY privacypane.deletefoldershistory.label "Odstrániť zoznam priečinkov">
+<!ENTITY privacypane.deletefiltershistory.label "Odstrániť ďalšie filtre">
+<!ENTITY privacypane.showlog.label "Zobraziť denník">
+<!ENTITY privacypane.reveallog.label "Zobraziť súbor">
+<!ENTITY privacypane.deletelog.label "Odstrániť denník">
+<!ENTITY privacypane.updates.caption "Aktualizácie/Internet">
+<!ENTITY privacypane.information.label "Umožniť dTa prevziať aktualizované novinky a správy a číslo najnovšej verzie">
+<!ENTITY privacypane.statistics.label "Umožniť dTa zbierať a prenášať anonymné štatistiky používania">
+<!ENTITY privacypane.logs.caption "Denník diagnostiky">
+<!ENTITY privacypane.enablelogs.label "Povoliť denník diagnostiky">
+<!ENTITY privacypane.notice.caption "Poznámka">
+<!ENTITY privacypane.notice.desc "DownThemAll je integrovaný s funkciou Odstrániť súkromné údaje (ak je k dispozícii).">
+<!ENTITY privacypane.privacynotice.label "Poznámka k našim zásadám ochrany súkromia">
+<!ENTITY advancedpane.label "Spresniť">
+<!ENTITY advancedpane.chunksdisabled "Zakázané">
+<!ENTITY advancedpane.usetemp.label "Uložiť prevzaté časti do dočasného priečinka">
+<!ENTITY advancedpane.tempdir.label "Použiť tento priečinok:">
+<!ENTITY uipane.label "Použív. prostredie">
+<!ENTITY uipane.namesonly.label "Zobraziť v okne Správcu len názvy súborov">
+<!ENTITY uipane.integration.caption "Integrácia">
+<!ENTITY uipane.tools.caption "Ponuka Nástroje">
+<!ENTITY uipane.compact.label "Použiť kompaktnú ponuku">
+<!ENTITY uipane.hide.label "Skryť túto ponuku">
+<!ENTITY uipane.showtooltip.label "Zobraziť popisy preberania">
+<!ENTITY uipane.startminimized.label "Spustiť minimalizované">
+<!ENTITY uipane.minimizetotray.label "Minimalizovať do oznamovacej oblasti">

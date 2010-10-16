@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "Anda boleh bantu kami jadikan DownThemAll lebih baik. Fikirkan untuk sedikit derma!">
+<!ENTITY movetop.label "Puncak">
+<!ENTITY movebottom.label "Dasar">
+<!ENTITY moveup.label "Atas">
+<!ENTITY movedown.label "Bawah">
+<!ENTITY pct.label "Kemajuan">
+<!ENTITY dim.label "Saiz">
+<!ENTITY time.label "Masa jangkaan">
+<!ENTITY parts.label "Segmen">
+<!ENTITY speed.label "Kelajuan">
+<!ENTITY infoURLTitle.value "Daripada:">
+<!ENTITY infoSizeTitle.value "Saiz:">
+<!ENTITY infoMultiple.value "Pelbagai Butiran">
+<!ENTITY elapsedTitle.value "Sesudah">
+<!ENTITY remainingTitle.value "Tinggal">
+<!ENTITY currentSpeedTitle.value "Kelajuan semasa:">
+<!ENTITY avgSpeedTitle.value "Kelajuan purata:">
+<!ENTITY path.label "Laluan Simpan">
+<!ENTITY mask.label "Penama Tutupan">
+<!ENTITY hash.label "Semakan ralat">
+<!ENTITY pause.label "Henti Seketika">
+<!ENTITY resume.label "Sambung Semula">
+<!ENTITY cancel.label "Batal">
+<!ENTITY options.caption "Pilihan">
+<!ENTITY loading.label "Pemuatan...">
+<!ENTITY restore.label "Kembalikan">
+<!ENTITY close.label "Tutup">

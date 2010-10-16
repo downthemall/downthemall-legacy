@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Filtre">
+<!ENTITY listhead1.label "Navn">
+<!ENTITY listhead2.label "Filendelser">
+<!ENTITY regex.label "Regulært udtryk">
+<!ENTITY highlight.label "Fremhæv filer som er blevet tjekket af filtre">
+<!ENTITY dtacontext2.label "Indstillinger">
+<!ENTITY mainpane.rename.caption "Hvis et filnavn allerede eksisterer:">
+<!ENTITY mainpane.rename.label "Omdøb">
+<!ENTITY mainpane.overwrite.label "Overskriv">
+<!ENTITY mainpane.skip.label "Spring over">
+<!ENTITY mainpane.ask.label "Spørg">
+<!ENTITY mainpane.sounderror.label "Afspil en lyd i tilfælde af en fejl">
+<!ENTITY mainpane.alert.caption "Når downloads er færdige:">
+<!ENTITY mainpane.sounddone.label "Afspil en lyd når alle downloads er færdige">
+<!ENTITY mainpane.closedta.label "Luk DownThemAll når alle downloads er færdige">
+<!ENTITY privacypane.label "Privatliv">
+<!ENTITY privacypane.closing.caption "Når manager vinduet lukkes">
+<!ENTITY privacypane.deletefoldershistory.label "Slet mappehistorik">
+<!ENTITY privacypane.deletefiltershistory.label "Slet filterhistorik">
+<!ENTITY privacypane.showlog.label "Vis log">
+<!ENTITY privacypane.reveallog.label "Åbn fil">
+<!ENTITY privacypane.deletelog.label "Slet log">
+<!ENTITY privacypane.updates.caption "Opdateringer">
+<!ENTITY privacypane.information.label "Lad dTa downloade opdaterede nyheder, beskeder og seneste versionsnummer">
+<!ENTITY privacypane.statistics.label "Lad dTa indsamle og sende brugsstatistik i anonym form">
+<!ENTITY privacypane.logs.caption "Diagnosticeringslog">
+<!ENTITY privacypane.enablelogs.label "Aktiver diagnosticeringslog">
+<!ENTITY privacypane.notice.caption "Besked">
+<!ENTITY privacypane.notice.desc "DownThemAll integreres også med den indbyggede funktion til at slette privat data.">
+<!ENTITY privacypane.privacynotice.label "Vores besked om private oplysninger">
+<!ENTITY advancedpane.label "Avanceret">
+<!ENTITY advancedpane.chunksdisabled "Deaktiveret">
+<!ENTITY advancedpane.usetemp.label "Gem dele af downloads i en midlertidig mappe">
+<!ENTITY advancedpane.tempdir.label "Brug denne mappe:">
+<!ENTITY uipane.label "Brugerflade">
+<!ENTITY uipane.namesonly.label "Vis kun filnavne i manager vinduet">
+<!ENTITY uipane.integration.caption "Integration">
+<!ENTITY uipane.tools.caption "Værktøjsmenu">
+<!ENTITY uipane.compact.label "Brug en kompakt menu">
+<!ENTITY uipane.hide.label "Gem denne menu">
+<!ENTITY uipane.showtooltip.label "Vis download tooltips">
+<!ENTITY uipane.startminimized.label "Start minimeret">
+<!ENTITY uipane.minimizetotray.label "Minimer til systray">

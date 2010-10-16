@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Filtres">
+<!ENTITY additional.tip "Filtre texte : vous pouvez définir plusieurs filtres texte en les séparant par une virgule.">
+<!ENTITY regex.label "Exp. reg.">
+<!ENTITY filter.tip "Saisissez vos filtres textes ici ! (voyez des exemples dans le menu déroulant)">
+<!ENTITY status.label "Après sélection des liens, cliquez sur Démarrer!">
+<!ENTITY menu.mask.title "Modifier le masque de renommage">
+<!ENTITY tab.links.label "Liens">
+<!ENTITY header.desc.label "Description">
+<!ENTITY disableother.label "Désactiver d'autres filtres">
+<!ENTITY disableother.tooltip "Désactiver d'autres filtres et n'utiliser que le filtrage rapide (ce paramètre n'est pas mémorisé pour le moment).">

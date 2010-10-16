@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Süzgeçler">
+<!ENTITY listhead1.label "Başlık">
+<!ENTITY listhead2.label "Uzantılar">
+<!ENTITY regex.label "Düz. İfa.">
+<!ENTITY highlight.label "Süzgeçler tarafından seçilen dosyaları vurgula">
+<!ENTITY dtacontext2.label "Tercihler">
+<!ENTITY mainpane.rename.caption "Bir dosya zaten mevcutsa:">
+<!ENTITY mainpane.rename.label "Yeniden adlandır">
+<!ENTITY mainpane.overwrite.label "Üzerine yaz">
+<!ENTITY mainpane.skip.label "Atla">
+<!ENTITY mainpane.ask.label "Sor">
+<!ENTITY mainpane.sounderror.label "Bir hata oluştuğunda ses çal">
+<!ENTITY mainpane.alert.caption "İndirmeler tamamlanınca:">
+<!ENTITY mainpane.sounddone.label "Tüm indirmeler tamamlandığında bir ses çal">
+<!ENTITY mainpane.closedta.label "Tüm indirmeler tamamlandığında DownThemAll'ı kapat">
+<!ENTITY privacypane.label "Gizlilik">
+<!ENTITY privacypane.closing.caption "Yönetici penceresi kapatıldığında">
+<!ENTITY privacypane.deletefoldershistory.label "Klasör listesini sil">
+<!ENTITY privacypane.deletefiltershistory.label "Ek süzgeçleri sil">
+<!ENTITY privacypane.showlog.label "Günlüğü göster">
+<!ENTITY privacypane.reveallog.label "Dosyayı göster">
+<!ENTITY privacypane.deletelog.label "Günlüğü sil">
+<!ENTITY privacypane.updates.caption "Güncellemeler/Internet">
+<!ENTITY privacypane.information.label "dTa'ın güncel sürüm numarasını, haberleri ve iletileri indirmesine izin ver.">
+<!ENTITY privacypane.statistics.label "dTa'ya anonim kullanım istatistiklerini toplama ve gönderme izni ver">
+<!ENTITY privacypane.logs.caption "Tanılayıcı Günlüğü">
+<!ENTITY privacypane.enablelogs.label "Tanılayıcı günlüğü etkin">
+<!ENTITY privacypane.notice.caption "Uyarı">
+<!ENTITY privacypane.notice.desc "DownThemAll, Firefox'un yerleşik Özel Verileri Temizle özelliğine de entegre olur (mevcutsa).">
+<!ENTITY privacypane.privacynotice.label "Gizlilik uyarımız">
+<!ENTITY advancedpane.label "Gelişmiş">
+<!ENTITY advancedpane.chunksdisabled "Devre dışı">
+<!ENTITY advancedpane.usetemp.label "İndirme parçalarını geçici bir klasöre kaydet">
+<!ENTITY advancedpane.tempdir.label "Bu klasörü kullan:">
+<!ENTITY uipane.label "Arayüz">
+<!ENTITY uipane.namesonly.label "Yönetici penceresinde yalnızca dosya isimlerini göster">
+<!ENTITY uipane.integration.caption "Bütünleşme">
+<!ENTITY uipane.tools.caption "Araçlar Menüsü">
+<!ENTITY uipane.compact.label "Küçük boyutlu menü kullan">
+<!ENTITY uipane.hide.label "Bu menüyü gizle">
+<!ENTITY uipane.showtooltip.label "İndirme ipuçlarını göster">
+<!ENTITY uipane.startminimized.label "Simge durumunda başla">
+<!ENTITY uipane.minimizetotray.label "Sistem tepsisine küçült">

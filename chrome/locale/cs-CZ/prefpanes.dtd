@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Filtry">
+<!ENTITY listhead1.label "Popis">
+<!ENTITY listhead2.label "Přípony">
+<!ENTITY regex.label "Reg. výraz">
+<!ENTITY highlight.label "Zvýraznit soubory vybrané pomocí filtrů">
+<!ENTITY dtacontext2.label "Předvolby">
+<!ENTITY mainpane.rename.caption "Pokud jméno souboru již existuje tak:">
+<!ENTITY mainpane.rename.label "Přejmenovat">
+<!ENTITY mainpane.overwrite.label "Přepsat">
+<!ENTITY mainpane.skip.label "Přeskočit">
+<!ENTITY mainpane.ask.label "Zeptat se">
+<!ENTITY mainpane.sounderror.label "Zahrát zvuk v případě chyby">
+<!ENTITY mainpane.alert.caption "Po dokončení stahování:">
+<!ENTITY mainpane.sounddone.label "Zahrát zvuk, pokud jsou včechna stahování kompletní">
+<!ENTITY mainpane.closedta.label "Zavřít okno rozšíření, pokud jsou stahování dokončena">
+<!ENTITY privacypane.label "Soukromí">
+<!ENTITY privacypane.closing.caption "Pokud je okno manažeru zavřeno.">
+<!ENTITY privacypane.deletefoldershistory.label "Smazat historii složek">
+<!ENTITY privacypane.deletefiltershistory.label "Smazat historii filtrů">
+<!ENTITY privacypane.showlog.label "Zobrazit zprávu">
+<!ENTITY privacypane.reveallog.label "Zobrazit soubor">
+<!ENTITY privacypane.deletelog.label "Smazat zprávu">
+<!ENTITY privacypane.updates.caption "Aktualizace/Internet">
+<!ENTITY privacypane.information.label "Nechat rozšíření stahovat novinky, informace a čísla posledních verzí">
+<!ENTITY privacypane.statistics.label "Dovolit dTa sbírat a zasílat statistiky používání.">
+<!ENTITY privacypane.logs.caption "Diagnostické zprávy">
+<!ENTITY privacypane.enablelogs.label "Povolit logování diagnostik">
+<!ENTITY privacypane.notice.caption "Upozornění">
+<!ENTITY privacypane.notice.desc "Integrovat DownThemAll  taký do dialogu Vymazat důvěrná data... (pokuk je dostupné)">
+<!ENTITY privacypane.privacynotice.label "Poznámka k našim zásadám ochrany soukromí">
+<!ENTITY advancedpane.label "Rozšířené">
+<!ENTITY advancedpane.chunksdisabled "1 (Zakázáno)">
+<!ENTITY advancedpane.usetemp.label "Ukládat stahované části v dočasném adresáři">
+<!ENTITY advancedpane.tempdir.label "Použít tuto složku:">
+<!ENTITY uipane.label "Uživatelské rozhraní">
+<!ENTITY uipane.namesonly.label "Zobrazit v okně Správce jen názvy souború">
+<!ENTITY uipane.integration.caption "Integrace">
+<!ENTITY uipane.tools.caption "Nabídka nástrojů:">
+<!ENTITY uipane.compact.label "Použít složenou nabídku">
+<!ENTITY uipane.hide.label "Skrýt nabítku">
+<!ENTITY uipane.showtooltip.label "Zobrazit Místní nápovědu">
+<!ENTITY uipane.startminimized.label "Spustit minimalizovaně">
+<!ENTITY uipane.minimizetotray.label "Minimalizovat do systémové lišty">

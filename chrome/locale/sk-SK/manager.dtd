@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "Môžete nám pomôcť vylepšiť DownThemAll. Pouvažujte nad malým darom!">
+<!ENTITY movetop.label "Navrch">
+<!ENTITY movebottom.label "Naspodok">
+<!ENTITY moveup.label "Nahor">
+<!ENTITY movedown.label "Nadol">
+<!ENTITY pct.label "Priebeh">
+<!ENTITY dim.label "Veľkosť">
+<!ENTITY time.label "Odhad. čas">
+<!ENTITY parts.label "Časti">
+<!ENTITY speed.label "Rýchlosť">
+<!ENTITY infoURLTitle.value "Z:">
+<!ENTITY infoSizeTitle.value "Veľkosť:">
+<!ENTITY infoMultiple.value "Viac položiek">
+<!ENTITY elapsedTitle.value "Uplynuté:">
+<!ENTITY remainingTitle.value "Zostávajúce:">
+<!ENTITY currentSpeedTitle.value "Aktuál. rýchlosť:">
+<!ENTITY avgSpeedTitle.value "Priem. rýchlosť:">
+<!ENTITY path.label "Cesta uloženia">
+<!ENTITY mask.label "Maska premenovania">
+<!ENTITY hash.label "Kontr. súčet">
+<!ENTITY pause.label "Pozastaviť">
+<!ENTITY resume.label "Pokračovať">
+<!ENTITY cancel.label "Zrušiť">
+<!ENTITY options.caption "Možnosti">
+<!ENTITY loading.label "Načítava sa...">
+<!ENTITY restore.label "Obnoviť">
+<!ENTITY close.label "Zavrieť">

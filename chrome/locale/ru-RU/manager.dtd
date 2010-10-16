@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "Вы можете помочь сделать DownThemAll еще лучше. Рассмотрите возможность небольшого пожертвования!">
+<!ENTITY movetop.label "В начало">
+<!ENTITY movebottom.label "В конец">
+<!ENTITY moveup.label "Вверх">
+<!ENTITY movedown.label "Вниз">
+<!ENTITY pct.label "Выполнение">
+<!ENTITY dim.label "Размер">
+<!ENTITY time.label "Ост.время">
+<!ENTITY parts.label "Части">
+<!ENTITY speed.label "Скорость">
+<!ENTITY infoURLTitle.value "От:">
+<!ENTITY infoSizeTitle.value "Размер:">
+<!ENTITY infoMultiple.value "Multiple Items">
+<!ENTITY elapsedTitle.value "Завершено:">
+<!ENTITY remainingTitle.value "Выполняется:">
+<!ENTITY currentSpeedTitle.value "Текущая скорость:">
+<!ENTITY avgSpeedTitle.value "Средняя скорость:">
+<!ENTITY path.label "Сохранено в..">
+<!ENTITY mask.label "Маска переименования">
+<!ENTITY hash.label "Контрольная сумма">
+<!ENTITY pause.label "Пауза">
+<!ENTITY resume.label "Старт">
+<!ENTITY cancel.label "Отмена">
+<!ENTITY options.caption "Настройки">
+<!ENTITY loading.label "Загрузка...">
+<!ENTITY restore.label "Восстановить">
+<!ENTITY close.label "Закрыть">

@@ -1,0 +1,5 @@
+<!ENTITY text.value "Bu ayarı hatırla:">
+<!ENTITY session.label "Yalnızca bu oturum için">
+<!ENTITY always.label "Bu andan itibaren">
+<!ENTITY overwrite.label "Varolan dosyanın üzerine yaz">
+<!ENTITY skip.label "Atla/İptal et">

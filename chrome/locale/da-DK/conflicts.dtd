@@ -1,0 +1,5 @@
+<!ENTITY text.value "Husk dette valg:">
+<!ENTITY session.label "Kun for denne session">
+<!ENTITY always.label "Altid">
+<!ENTITY overwrite.label "Overskrive den eksisterende fil">
+<!ENTITY skip.label "Spring over/Afbryd">

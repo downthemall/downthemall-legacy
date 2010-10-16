@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Филтри">
+<!ENTITY listhead1.label "Наслов">
+<!ENTITY listhead2.label "Екстензии">
+<!ENTITY regex.label "Регуларен Израз">
+<!ENTITY highlight.label "Означи датотеки проверени од филтрите">
+<!ENTITY dtacontext2.label "Параметри">
+<!ENTITY mainpane.rename.caption "Ако веќе постои името на датотеката:">
+<!ENTITY mainpane.rename.label "Преименувај">
+<!ENTITY mainpane.overwrite.label "Запиши врз">
+<!ENTITY mainpane.skip.label "Прескокни">
+<!ENTITY mainpane.ask.label "Прашај">
+<!ENTITY mainpane.sounderror.label "Пушти звук при грешка">
+<!ENTITY mainpane.alert.caption "Кога симнувањата се комплетирани:">
+<!ENTITY mainpane.sounddone.label "Пушти звук кога сите симнувања се завршени">
+<!ENTITY mainpane.closedta.label "Затвори го DownThemAll кога симнувањата се завршени">
+<!ENTITY privacypane.label "Приватност">
+<!ENTITY privacypane.closing.caption "Кога менаџерот на прозорци е затворен">
+<!ENTITY privacypane.deletefoldershistory.label "Отстрани историјат на папките">
+<!ENTITY privacypane.deletefiltershistory.label "Отстрани додатни филтри">
+<!ENTITY privacypane.showlog.label "Прегледај дневник">
+<!ENTITY privacypane.reveallog.label "Прикажи датотека">
+<!ENTITY privacypane.deletelog.label "Избриши дневник">
+<!ENTITY privacypane.updates.caption "Надградби/Интернет">
+<!ENTITY privacypane.information.label "Овозможи на dTa да симне најнови вести, пораки и да провери за надградби">
+<!ENTITY privacypane.statistics.label "Дозволи на dTa да собира и праќа анонимна статистика за користењето">
+<!ENTITY privacypane.logs.caption "Дневник на дијагностика">
+<!ENTITY privacypane.enablelogs.label "Овозможи дијагностички дневник">
+<!ENTITY privacypane.notice.caption "Соопштение">
+<!ENTITY privacypane.notice.desc "DownThemAll се интегрира и со вградената опција &quot;Исчисти Приватни Податоци&quot; (ако е достапна).">
+<!ENTITY privacypane.privacynotice.label "Наше Соопштение за Приватноста">
+<!ENTITY advancedpane.label "Напредно">
+<!ENTITY advancedpane.chunksdisabled "Оневозможен">
+<!ENTITY advancedpane.usetemp.label "Зачувај симнати делови во привремениот директориум">
+<!ENTITY advancedpane.tempdir.label "Користете го овај директориум:">
+<!ENTITY uipane.label "Интерфејс">
+<!ENTITY uipane.namesonly.label "Прикажете ги само имињата во менаџерот на прозорци">
+<!ENTITY uipane.integration.caption "Интеграција">
+<!ENTITY uipane.tools.caption "Мени со алатки">
+<!ENTITY uipane.compact.label "Користи компактно мени">
+<!ENTITY uipane.hide.label "Скриј го ова мени">
+<!ENTITY uipane.showtooltip.label "Прикажи балончиња со совети за симнувањата">
+<!ENTITY uipane.startminimized.label "Стартувај минимизирано">
+<!ENTITY uipane.minimizetotray.label "Минимизирај во системската лента">

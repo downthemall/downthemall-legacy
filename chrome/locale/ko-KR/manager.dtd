@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "dTa팀에 기부해 주시면 DownThemAll이 더욱 발전할 수 있습니다. 감사합니다!">
+<!ENTITY movetop.label "맨 위">
+<!ENTITY movebottom.label "맨 아래">
+<!ENTITY moveup.label "위로">
+<!ENTITY movedown.label "아래로">
+<!ENTITY pct.label "진행">
+<!ENTITY dim.label "크기">
+<!ENTITY time.label "예상 시간">
+<!ENTITY parts.label "부분">
+<!ENTITY speed.label "속도">
+<!ENTITY infoURLTitle.value "원본:">
+<!ENTITY infoSizeTitle.value "크기:">
+<!ENTITY infoMultiple.value "복수 항목">
+<!ENTITY elapsedTitle.value "경과 시간:">
+<!ENTITY remainingTitle.value "남은 시간:">
+<!ENTITY currentSpeedTitle.value "현재 속도:">
+<!ENTITY avgSpeedTitle.value "평균 속도:">
+<!ENTITY path.label "경로 저장">
+<!ENTITY mask.label "이름 바꾸기 마스크">
+<!ENTITY hash.label "체크섬">
+<!ENTITY pause.label "중지">
+<!ENTITY resume.label "계속">
+<!ENTITY cancel.label "취소">
+<!ENTITY options.caption "설정">
+<!ENTITY loading.label "가져오는 중...">
+<!ENTITY restore.label "복구">
+<!ENTITY close.label "닫기">

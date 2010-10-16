@@ -1,0 +1,5 @@
+<!ENTITY text.value "Зачувај го ова подесување:">
+<!ENTITY session.label "Само за оваа сесија">
+<!ENTITY always.label "Отсега натаму">
+<!ENTITY overwrite.label "Презапиши ја тековната датотека">
+<!ENTITY skip.label "Прескокни/Откажи">

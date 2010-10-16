@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "Help mee DownThemAll te verbeteren. Overweeg het doen van een kleine donatie!">
+<!ENTITY movetop.label "Bovenkant">
+<!ENTITY movebottom.label "Onderkant">
+<!ENTITY moveup.label "Omhoog">
+<!ENTITY movedown.label "Omlaag">
+<!ENTITY pct.label "Voortgang">
+<!ENTITY dim.label "Grootte">
+<!ENTITY time.label "Rest. tijd">
+<!ENTITY parts.label "Delen">
+<!ENTITY speed.label "Snelheid">
+<!ENTITY infoURLTitle.value "Van:">
+<!ENTITY infoSizeTitle.value "Grootte:">
+<!ENTITY infoMultiple.value "Meervoudige items">
+<!ENTITY elapsedTitle.value "Verstreken:">
+<!ENTITY remainingTitle.value "Overblijvend:">
+<!ENTITY currentSpeedTitle.value "Huidige snelheid:">
+<!ENTITY avgSpeedTitle.value "Gem. snelheid:">
+<!ENTITY path.label "Pad opslaan">
+<!ENTITY mask.label "Masker voor te hernoemen">
+<!ENTITY hash.label "Controlegetal">
+<!ENTITY pause.label "Pauzeren">
+<!ENTITY resume.label "Hervatten">
+<!ENTITY cancel.label "Annuleren">
+<!ENTITY options.caption "Opties">
+<!ENTITY loading.label "Laden...">
+<!ENTITY restore.label "Herstelln">
+<!ENTITY close.label "Sluiten">

@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Filtros">
+<!ENTITY listhead1.label "Título">
+<!ENTITY listhead2.label "Extensiones">
+<!ENTITY regex.label "Exp. Reg.">
+<!ENTITY highlight.label "Resaltar archivos marcados por los filtros">
+<!ENTITY dtacontext2.label "Preferencias">
+<!ENTITY mainpane.rename.caption "Si el nombre de archivo ya existe:">
+<!ENTITY mainpane.rename.label "Renombrar">
+<!ENTITY mainpane.overwrite.label "Sobrescribir">
+<!ENTITY mainpane.skip.label "Descartar">
+<!ENTITY mainpane.ask.label "Preguntar">
+<!ENTITY mainpane.sounderror.label "Emitir un sonido en caso de error">
+<!ENTITY mainpane.alert.caption "Tras completar las descargas:">
+<!ENTITY mainpane.sounddone.label "Emitir un sonido tras completar todas las descargas">
+<!ENTITY mainpane.closedta.label "Cerrar DownThemAll tras completar todas las descargas">
+<!ENTITY privacypane.label "Privacidad">
+<!ENTITY privacypane.closing.caption "Tras cerrar la ventana del Administrador ...">
+<!ENTITY privacypane.deletefoldershistory.label "Borrar historial carpetas">
+<!ENTITY privacypane.deletefiltershistory.label "Borrar historial filtros">
+<!ENTITY privacypane.showlog.label "Ver registro">
+<!ENTITY privacypane.reveallog.label "Mostrar archivo">
+<!ENTITY privacypane.deletelog.label "Borrar registro">
+<!ENTITY privacypane.updates.caption "Actualizaciones/Internet">
+<!ENTITY privacypane.information.label "Permitir que dTa descargue las últimas noticias y mensajes, y compruebe si hay actualizaciones">
+<!ENTITY privacypane.statistics.label "Permitir que dTa recoja y envíe estadísticas anónimas de uso">
+<!ENTITY privacypane.logs.caption "Registro de diagnóstico">
+<!ENTITY privacypane.enablelogs.label "Habilitar registro de diagnóstico">
+<!ENTITY privacypane.notice.caption "Aviso">
+<!ENTITY privacypane.notice.desc "DownThemAll se integra con la función del navegador de Limpiar información privada (si está disponible).">
+<!ENTITY privacypane.privacynotice.label "Nuestro aviso sobre privacidad">
+<!ENTITY advancedpane.label "Avanzadas">
+<!ENTITY advancedpane.chunksdisabled "Deshabilitado">
+<!ENTITY advancedpane.usetemp.label "Guardar partes durante la descarga en un directorio temporal">
+<!ENTITY advancedpane.tempdir.label "Usar este directorio:">
+<!ENTITY uipane.label "Interfaz usuario">
+<!ENTITY uipane.namesonly.label "Mostrar solamente nombres de archivo en la ventana del Administrador">
+<!ENTITY uipane.integration.caption "Integración">
+<!ENTITY uipane.tools.caption "Menú herramientas">
+<!ENTITY uipane.compact.label "Usar menú compacto">
+<!ENTITY uipane.hide.label "Ocultar este menú">
+<!ENTITY uipane.showtooltip.label "Mostrar mensajes informativos (tooltips) de las descargas">
+<!ENTITY uipane.startminimized.label "Iniciar minimizada">
+<!ENTITY uipane.minimizetotray.label "Minimizar a bandeja de sistema">

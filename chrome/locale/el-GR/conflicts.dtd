@@ -1,0 +1,5 @@
+<!ENTITY text.value "Διατήρηση αυτής της ρύθμισης:">
+<!ENTITY session.label "Μόνο γι&apos; αυτή τη συνεδρία">
+<!ENTITY always.label "Από &apos;δω και στο εξής">
+<!ENTITY overwrite.label "Αντικατάσταση υπάρχοντος αρχείου">
+<!ENTITY skip.label "Παράβλεψη/Ακύρωση">

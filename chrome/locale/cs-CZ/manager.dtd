@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "Můžeš nám pomoci udělat rozšíření DownThemAll ještě lepší. Popřemýšlej o menším obdarování autorů!">
+<!ENTITY movetop.label "Vršek">
+<!ENTITY movebottom.label "Spodek">
+<!ENTITY moveup.label "Nahoru">
+<!ENTITY movedown.label "Dolů">
+<!ENTITY pct.label "Hotovo">
+<!ENTITY dim.label "Rozměr">
+<!ENTITY time.label "Odhadovaný čas">
+<!ENTITY parts.label "Části">
+<!ENTITY speed.label "Rychlost">
+<!ENTITY infoURLTitle.value "Z:">
+<!ENTITY infoSizeTitle.value "Velikost:">
+<!ENTITY infoMultiple.value "Více položek">
+<!ENTITY elapsedTitle.value "Proběhlo:">
+<!ENTITY remainingTitle.value "Zbývá:">
+<!ENTITY currentSpeedTitle.value "Současná rychlost:">
+<!ENTITY avgSpeedTitle.value "Průměrná rychlost:">
+<!ENTITY path.label "Uložit cestu">
+<!ENTITY mask.label "Přejmenování masky">
+<!ENTITY hash.label "Kontrolní součet">
+<!ENTITY pause.label "Pauza">
+<!ENTITY resume.label "Pokračovat">
+<!ENTITY cancel.label "Zrušit">
+<!ENTITY options.caption "Možnosti">
+<!ENTITY loading.label "Načítání...">
+<!ENTITY restore.label "Obnovit">
+<!ENTITY close.label "Zavřít">

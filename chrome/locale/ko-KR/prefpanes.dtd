@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "필터">
+<!ENTITY listhead1.label "설명">
+<!ENTITY listhead2.label "확장자">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY highlight.label "필터링된 파일 강조하기">
+<!ENTITY dtacontext2.label "설정">
+<!ENTITY mainpane.rename.caption "파일명이 이미 존재하면:">
+<!ENTITY mainpane.rename.label "이름 바꾸기">
+<!ENTITY mainpane.overwrite.label "덮어쓰기">
+<!ENTITY mainpane.skip.label "건너뛰기">
+<!ENTITY mainpane.ask.label "물어보기">
+<!ENTITY mainpane.sounderror.label "오류가 발생하면 소리로 알림">
+<!ENTITY mainpane.alert.caption "다운로드가 완료되면:">
+<!ENTITY mainpane.sounddone.label "다운로드가 완료되면 소리로 알림">
+<!ENTITY mainpane.closedta.label "다운로드가 완료되면 DownThemAll 닫기">
+<!ENTITY privacypane.label "개인 정보">
+<!ENTITY privacypane.closing.caption "관리자 창을 닫으면">
+<!ENTITY privacypane.deletefoldershistory.label "폴더 히스토리 삭제">
+<!ENTITY privacypane.deletefiltershistory.label "추가 필터 히스토리 삭제">
+<!ENTITY privacypane.showlog.label "로그 보기">
+<!ENTITY privacypane.reveallog.label "파일 보이기">
+<!ENTITY privacypane.deletelog.label "로그 삭제">
+<!ENTITY privacypane.updates.caption "업데이트/인터넷">
+<!ENTITY privacypane.information.label "dTa가 최신 뉴스, 메시지 및 마지막 버전 번호를 다운로드하도록 합니다.">
+<!ENTITY privacypane.statistics.label "dTa가 익명으로 사용 통계를 수집하여 전송하게 합니다.">
+<!ENTITY privacypane.logs.caption "진단 로그">
+<!ENTITY privacypane.enablelogs.label "진단 로깅 사용">
+<!ENTITY privacypane.notice.caption "알림">
+<!ENTITY privacypane.notice.desc "DownThemAll은 또한 개인 정보 삭제 기능을 통합했습니다. (가능할 경우)">
+<!ENTITY privacypane.privacynotice.label "개인 정보 알림">
+<!ENTITY advancedpane.label "고급">
+<!ENTITY advancedpane.chunksdisabled "사용 안 함">
+<!ENTITY advancedpane.usetemp.label "분할 파일을 임시 폴더에 저장">
+<!ENTITY advancedpane.tempdir.label "이 디렉토리 사용:">
+<!ENTITY uipane.label "인터페이스">
+<!ENTITY uipane.namesonly.label "관리자 창에 파일명만 보이기">
+<!ENTITY uipane.integration.caption "통합">
+<!ENTITY uipane.tools.caption "도구 메뉴">
+<!ENTITY uipane.compact.label "단축 메뉴 사용">
+<!ENTITY uipane.hide.label "이 메뉴 숨기기">
+<!ENTITY uipane.showtooltip.label "다운로드 풍선 도움말 보이기">
+<!ENTITY uipane.startminimized.label "최소화로 시작">
+<!ENTITY uipane.minimizetotray.label "시스템 트레이로 최소화">

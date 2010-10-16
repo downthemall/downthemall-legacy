@@ -1,0 +1,5 @@
+<!ENTITY text.value "Запам’ятати налаштування:">
+<!ENTITY session.label "Тільки для цієї сесії">
+<!ENTITY always.label "Завжди використовувати">
+<!ENTITY overwrite.label "Перезаписати існуючий файл">
+<!ENTITY skip.label "Пропустити/Скасувати">

@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Penapis">
+<!ENTITY additional.tip "Penapis teks: anda boleh tetapkan pelbagai penapis teks serentak menggunakan koma.">
+<!ENTITY regex.label "Daf. Eks.">
+<!ENTITY filter.tip "Taipkan penapis teks anda di sini! (contoh ada di bawah)">
+<!ENTITY status.label "Selepas memilih penghubung, klik pada Mula!">
+<!ENTITY menu.mask.title "Ubah Penama Tutupan">
+<!ENTITY tab.links.label "Penghubung">
+<!ENTITY header.desc.label "Gambaran">
+<!ENTITY disableother.label "Lumpuhkan penapis lain">
+<!ENTITY disableother.tooltip "Lumpuhkan penapis lain dan gunakan penapis pantas. (Tetapan ini tidak akan diingat pada masa sekarang)">

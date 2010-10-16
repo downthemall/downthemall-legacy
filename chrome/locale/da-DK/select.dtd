@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Filtre">
+<!ENTITY additional.tip "Tekstfilter: du kan angive flere tekstfiltre på samme tid ved at adskille den med komma.">
+<!ENTITY regex.label "Regulært udtryk">
+<!ENTITY filter.tip "Indtast dit tekstfilter her! (eksempler findes i dropdownmenuen)">
+<!ENTITY status.label "Efter du har valgt links, klik Start!">
+<!ENTITY menu.mask.title "Rediger mønster til omdøbning">
+<!ENTITY tab.links.label "Links">
+<!ENTITY header.desc.label "Beskrivelse">
+<!ENTITY disableother.label "Deaktiver alle andre filtre">
+<!ENTITY disableother.tooltip "Deaktiver alle andre filtre og brug kun hurtig filtrering. (Denne indstilling gemmes ikke)">

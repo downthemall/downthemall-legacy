@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Filtri">
+<!ENTITY listhead1.label "Napis">
+<!ENTITY listhead2.label "Razširitve">
+<!ENTITY regex.label "Logični izraz">
+<!ENTITY highlight.label "Obarvaj datoteke, preverjene s filtri">
+<!ENTITY dtacontext2.label "Nastavitve">
+<!ENTITY mainpane.rename.caption "Če datoteka s takšnim imenom že obstaja:">
+<!ENTITY mainpane.rename.label "Preimenuj">
+<!ENTITY mainpane.overwrite.label "Prepiši">
+<!ENTITY mainpane.skip.label "Preskoči">
+<!ENTITY mainpane.ask.label "Vprašaj">
+<!ENTITY mainpane.sounderror.label "Predvajaj zvok ob napaki">
+<!ENTITY mainpane.alert.caption "Ob zaključku prenosov:">
+<!ENTITY mainpane.sounddone.label "Predvajaj zvočno datoteko, ko so vsi prenosi dokončani">
+<!ENTITY mainpane.closedta.label "Zapri PrenesiVse, ko so prenosi dokončani">
+<!ENTITY privacypane.label "Zasebnost">
+<!ENTITY privacypane.closing.caption "Ko je okno upravitelja zaprto">
+<!ENTITY privacypane.deletefoldershistory.label "Izbriši zgodovino map">
+<!ENTITY privacypane.deletefiltershistory.label "Izbriši zgodovino dodatnih filtrov">
+<!ENTITY privacypane.showlog.label "Pokaži zapisnik">
+<!ENTITY privacypane.reveallog.label "Pokaži datoteko">
+<!ENTITY privacypane.deletelog.label "Izbriši zapisnik">
+<!ENTITY privacypane.updates.caption "Posodobitve/Splet">
+<!ENTITY privacypane.information.label "PV naj prenese zadnje novice, sporočila in številko zadnje različice">
+<!ENTITY privacypane.statistics.label "PV naj zbira in prenese anonimno statistiko uporabe">
+<!ENTITY privacypane.logs.caption "Diagnostični zapisnik">
+<!ENTITY privacypane.enablelogs.label "Omogoči diagnostično beleženje">
+<!ENTITY privacypane.notice.caption "Opozorilo">
+<!ENTITY privacypane.notice.desc "PrenesiVse! lahko vključi tudi vgrajeno funkcionalnost Počisti zasebne podatke (če je na voljo).">
+<!ENTITY privacypane.privacynotice.label "Naše Opozorilo o zasebnosti">
+<!ENTITY advancedpane.label "Napredno">
+<!ENTITY advancedpane.chunksdisabled "1 (onemogočeno)">
+<!ENTITY advancedpane.usetemp.label "Shrani prenesene koščke v začasni mapi">
+<!ENTITY advancedpane.tempdir.label "Uporabi naslednjo mapo:">
+<!ENTITY uipane.label "Uporabniški vmesnik">
+<!ENTITY uipane.namesonly.label "V oknu upravitelja pokaži le imena datotek">
+<!ENTITY uipane.integration.caption "Vključitev">
+<!ENTITY uipane.tools.caption "Meni Orodja">
+<!ENTITY uipane.compact.label "Uporabi strnjeni meni">
+<!ENTITY uipane.hide.label "Skrij ta meni">
+<!ENTITY uipane.showtooltip.label "Pokaži nasvete za prenos">
+<!ENTITY uipane.startminimized.label "Zaženi pomanjšano">
+<!ENTITY uipane.minimizetotray.label "Pomanjšaj v sistemski pladenj">

@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "Можете да ни помогнете да направим DownThemAll даже по-добра добавка. Помислете върху едно малко дарение!">
+<!ENTITY movetop.label "Горе">
+<!ENTITY movebottom.label "Долу">
+<!ENTITY moveup.label "Нагоре">
+<!ENTITY movedown.label "Надолу">
+<!ENTITY pct.label "Напредък">
+<!ENTITY dim.label "Размер">
+<!ENTITY time.label "Ост. време">
+<!ENTITY parts.label "Части">
+<!ENTITY speed.label "Скорост">
+<!ENTITY infoURLTitle.value "От:">
+<!ENTITY infoSizeTitle.value "Размер:">
+<!ENTITY infoMultiple.value "Множество файлове">
+<!ENTITY elapsedTitle.value "Изтекло">
+<!ENTITY remainingTitle.value "Оставащо">
+<!ENTITY currentSpeedTitle.value "Текуща скорост">
+<!ENTITY avgSpeedTitle.value "Средна скорост">
+<!ENTITY path.label "Запази пътя">
+<!ENTITY mask.label "Преименуваме Маската">
+<!ENTITY hash.label "Сума за проверка">
+<!ENTITY pause.label "Пауза">
+<!ENTITY resume.label "Продължи">
+<!ENTITY cancel.label "Откажи">
+<!ENTITY options.caption "Опции">
+<!ENTITY loading.label "Зареждам...">
+<!ENTITY restore.label "Възстанови">
+<!ENTITY close.label "Затвори">

@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Фильтры">
+<!ENTITY additional.tip "Фильтры: Можно использовать несколько текстовых фильтров разделяя их запятыми">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY filter.tip "Введите здесь текстовые фильтры! (некоторые примеры можете найти в выпадающем списке)">
+<!ENTITY status.label "После выбора ссылок, нажмите Старт!">
+<!ENTITY menu.mask.title "Изменить маску переименования...">
+<!ENTITY tab.links.label "Ссылки">
+<!ENTITY header.desc.label "Описание">
+<!ENTITY disableother.label "Отключить другие фильтры">
+<!ENTITY disableother.tooltip "Отключение других фильтров и использовать только быструю фильтрацию (эта настройка пока не запоминается)">

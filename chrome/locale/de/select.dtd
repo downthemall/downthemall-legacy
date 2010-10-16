@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Filter">
+<!ENTITY additional.tip "Textfilter: Es können mehrere Textfilter gleichzeitig kommagetrennt angegeben werden.">
+<!ENTITY regex.label "Regulärer Ausdruck">
+<!ENTITY filter.tip "Geben Sie hier Ihre Textfilter ein (Beispiele siehe Auswahlliste)">
+<!ENTITY status.label "Nach dem Auswählen von Links auf Start klicken!">
+<!ENTITY menu.mask.title "Umbenennungsschema ändern...">
+<!ENTITY tab.links.label "Links">
+<!ENTITY header.desc.label "Beschreibung">
+<!ENTITY disableother.label "Andere Filter deaktivieren">
+<!ENTITY disableother.tooltip "Andere filter deaktivieren und nur Schnelles Filtern benutzen. (Diese Einstellung wird derzeit nicht gespeichert)">

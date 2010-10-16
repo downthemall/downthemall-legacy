@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Szűrők">
+<!ENTITY listhead1.label "Elnevezés">
+<!ENTITY listhead2.label "Kiterjesztések">
+<!ENTITY regex.label "Reguláris kifejezés">
+<!ENTITY highlight.label "Szűrők által megjelölt fájlok kiemelése">
+<!ENTITY dtacontext2.label "Tulajdonságok">
+<!ENTITY mainpane.rename.caption "Ha a fájlnév már foglalt:">
+<!ENTITY mainpane.rename.label "Átnevezés">
+<!ENTITY mainpane.overwrite.label "Felülírás">
+<!ENTITY mainpane.skip.label "Kihagyás">
+<!ENTITY mainpane.ask.label "Kérdés">
+<!ENTITY mainpane.sounderror.label "Hang lejátszása hiba esetén">
+<!ENTITY mainpane.alert.caption "A letöltések befejeztével:">
+<!ENTITY mainpane.sounddone.label "Hang lejátszása az összes letöltése befejezésekor">
+<!ENTITY mainpane.closedta.label "DownThemAll  bezárása az összes letöltés befejezésekor">
+<!ENTITY privacypane.label "Személyes szféra">
+<!ENTITY privacypane.closing.caption "Amikor a kezelő ablak zárva van">
+<!ENTITY privacypane.deletefoldershistory.label "Mappaelőzmények törlése">
+<!ENTITY privacypane.deletefiltershistory.label "Saját szűrőelőzmények törlése">
+<!ENTITY privacypane.showlog.label "Napló megjelenítése">
+<!ENTITY privacypane.reveallog.label "Fájl megjelenítése">
+<!ENTITY privacypane.deletelog.label "Napló törlése">
+<!ENTITY privacypane.updates.caption "Frissítések az interneten">
+<!ENTITY privacypane.information.label "A dTa jelenítse meg a legújabb híreket, üzeneteket és verziókat">
+<!ENTITY privacypane.statistics.label "A dTa gyűjthet és elküldhet felhasználási statisztikákat névtelenül">
+<!ENTITY privacypane.logs.caption "Hibakereső napló">
+<!ENTITY privacypane.enablelogs.label "Hibakereső naplózás engedélyezése">
+<!ENTITY privacypane.notice.caption "Megjegyzés">
+<!ENTITY privacypane.notice.desc "DownThemAll tartalmazza a Személyes adatok törlése funkciót (ha az elérhető)">
+<!ENTITY privacypane.privacynotice.label "Megjegyzések a magánszféra védelméről">
+<!ENTITY advancedpane.label "Haladó beállítások">
+<!ENTITY advancedpane.chunksdisabled "1 (kikapcsolva)">
+<!ENTITY advancedpane.usetemp.label "Szeletek letöltése átmeneti mappába">
+<!ENTITY advancedpane.tempdir.label "Mappa használata:">
+<!ENTITY uipane.label "Felhasználói felület">
+<!ENTITY uipane.namesonly.label "Csak fájlnevek megjelenítése a kezelő ablakban">
+<!ENTITY uipane.integration.caption "Integráció">
+<!ENTITY uipane.tools.caption "Eszközök menü">
+<!ENTITY uipane.compact.label "Kompakt menü használata">
+<!ENTITY uipane.hide.label "Menü elrejtése">
+<!ENTITY uipane.showtooltip.label "Gyorstippek megjelenítése">
+<!ENTITY uipane.startminimized.label "Indítás minimalizált ablakban">
+<!ENTITY uipane.minimizetotray.label "Minimalizálás a rendszertálcára">

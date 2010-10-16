@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Фільтри">
+<!ENTITY additional.tip "Текстові фільтри: можна використовувати декілька текстових фільтрів розмежовуючи їх комою.">
+<!ENTITY regex.label "Регулярний вираз">
+<!ENTITY filter.tip "Уведіть Ваші текстові фільтри тут! (деякі приклади у списку)">
+<!ENTITY status.label "Після вибору посилань натисніть Розпочати!">
+<!ENTITY menu.mask.title "Змінити маску перейменування...">
+<!ENTITY tab.links.label "Посилання">
+<!ENTITY header.desc.label "Опис">
+<!ENTITY disableother.label "Вимкнути інші фільтри">
+<!ENTITY disableother.tooltip "Вимкнути інші фільтри та використовувати тільки швидке фільтрування (це налаштування не запам’ятовується)">

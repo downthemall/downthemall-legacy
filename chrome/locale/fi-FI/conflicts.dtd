@@ -1,0 +1,5 @@
+<!ENTITY text.value "Muista tämä asetus:">
+<!ENTITY session.label "Vain tässä istunnossa">
+<!ENTITY always.label "Aina jatkossa">
+<!ENTITY overwrite.label "Korvaa olemassa oleva tiedosto">
+<!ENTITY skip.label "Ohita/Peruuta">

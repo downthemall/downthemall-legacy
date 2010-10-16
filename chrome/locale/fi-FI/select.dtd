@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Suodattimet">
+<!ENTITY additional.tip "Tekstisuodatin: Voit asettaa useita tekstisuodattimia samaan aikaan käyttämällä pilkkua.">
+<!ENTITY regex.label "Sään. lauseke">
+<!ENTITY filter.tip "Kirjoita tekstisuodattimet tähän (esimerkkejä pudotusvalikossa)">
+<!ENTITY status.label "Linkkien valinnan jälkeen paina Aloita">
+<!ENTITY menu.mask.title "Muokkaa nimeämismaskia...">
+<!ENTITY tab.links.label "Linkit">
+<!ENTITY header.desc.label "Kuvaus">
+<!ENTITY disableother.label "Poista muut suodattimet käytöstä">
+<!ENTITY disableother.tooltip "Poista muut suodattimet käytöstä ja käytä nopeaa suodatusta. (Tätä asetusta ei muisteta)">

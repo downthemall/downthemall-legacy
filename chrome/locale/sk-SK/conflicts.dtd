@@ -1,0 +1,5 @@
+<!ENTITY text.value "Pamätať si toto nastavenie:">
+<!ENTITY session.label "Len pre túto reláciu">
+<!ENTITY always.label "Odteraz">
+<!ENTITY overwrite.label "Prepísať existujúci súbor">
+<!ENTITY skip.label "Preskočiť/Zrušiť">

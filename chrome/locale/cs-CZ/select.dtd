@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Filtry">
+<!ENTITY additional.tip "Textový filtr: pomocí čárek můžete definovat více textových filtrů v jednom okamžiku.">
+<!ENTITY regex.label "Reg. výr.">
+<!ENTITY filter.tip "Napište textový filtr (příklady pro spuštění)">
+<!ENTITY status.label "Po výběru odkazů, klepněte na Start!">
+<!ENTITY menu.mask.title "Upravit masku přejmenování...">
+<!ENTITY tab.links.label "Odkazy">
+<!ENTITY header.desc.label "Popis">
+<!ENTITY disableother.label "Zakázat ostatní filtry">
+<!ENTITY disableother.tooltip "Zakázat ostatní filtry a používat jen rychlé filtrování. (toto nastavení se momentálně neukládá)">

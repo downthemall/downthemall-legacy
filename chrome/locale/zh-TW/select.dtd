@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "過濾器">
+<!ENTITY additional.tip "文字過濾：您可以同時設定多重的文字過濾，中間以逗號分開。">
+<!ENTITY regex.label "正則表示式">
+<!ENTITY filter.tip "在這輸入您的過濾條件(下拉選單中有一些範例)">
+<!ENTITY status.label "勾選連結後，按 &quot;開始&quot; 進行下載">
+<!ENTITY menu.mask.title "修改重新命名規則">
+<!ENTITY tab.links.label "連結">
+<!ENTITY header.desc.label "描述">
+<!ENTITY disableother.label "關閉其它過濾器">
+<!ENTITY disableother.tooltip "關閉其它過濾器，只使用最快過濾方式(現階段不建議使用這個設定)">

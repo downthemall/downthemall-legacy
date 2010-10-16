@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "Ви можете допомогти зробити DownThemAll краще. Розгляньте можливість невеличкої пожертви!">
+<!ENTITY movetop.label "Угору">
+<!ENTITY movebottom.label "Униз">
+<!ENTITY moveup.label "Вище">
+<!ENTITY movedown.label "Нижче">
+<!ENTITY pct.label "Виконання">
+<!ENTITY dim.label "Розмір">
+<!ENTITY time.label "Залишилось часу">
+<!ENTITY parts.label "Частини">
+<!ENTITY speed.label "Швидкість">
+<!ENTITY infoURLTitle.value "Від:">
+<!ENTITY infoSizeTitle.value "Розмір:">
+<!ENTITY infoMultiple.value "Багаточастинні елементи">
+<!ENTITY elapsedTitle.value "Минуло:">
+<!ENTITY remainingTitle.value "Залишилось:">
+<!ENTITY currentSpeedTitle.value "Поточна швидкість:">
+<!ENTITY avgSpeedTitle.value "Середня швидкість:">
+<!ENTITY path.label "Шлях збереження">
+<!ENTITY mask.label "Маска перейменування">
+<!ENTITY hash.label "Контрольна сума">
+<!ENTITY pause.label "Призупинити">
+<!ENTITY resume.label "Розпочати">
+<!ENTITY cancel.label "Скасувати">
+<!ENTITY options.caption "Параметри">
+<!ENTITY loading.label "Завантаження…">
+<!ENTITY restore.label "Відновити">
+<!ENTITY close.label "Закрити">

@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Bộ lọc">
+<!ENTITY listhead1.label "Đầu đề">
+<!ENTITY listhead2.label "Đuôi mở rộng">
+<!ENTITY regex.label "Biểu thức Quy tắc">
+<!ENTITY highlight.label "Tô sáng các tập tin được kiểm tra bởi bộ lọc">
+<!ENTITY dtacontext2.label "Tùy chỉnh">
+<!ENTITY mainpane.rename.caption "Nếu tập tin đã tồn tại:">
+<!ENTITY mainpane.rename.label "Đổi tên">
+<!ENTITY mainpane.overwrite.label "Ghi đè">
+<!ENTITY mainpane.skip.label "Bỏ qua">
+<!ENTITY mainpane.ask.label "Hỏi">
+<!ENTITY mainpane.sounderror.label "Phát tiếng khi có lỗi">
+<!ENTITY mainpane.alert.caption "Khi các phiên tải xuống hoàn tất:">
+<!ENTITY mainpane.sounddone.label "Phát tiếng khi tất cả các phiên tải xuống hoàn tất">
+<!ENTITY mainpane.closedta.label "Đóng DownThemAll khi các phiên tải xuống hoàn tất">
+<!ENTITY privacypane.label "Riêng tư">
+<!ENTITY privacypane.closing.caption "Khi cửa sổ quản lí bị đóng">
+<!ENTITY privacypane.deletefoldershistory.label "Dọn trống Danh sách thư mục">
+<!ENTITY privacypane.deletefiltershistory.label "Dọn trống Bộ lọc Phụ thêm">
+<!ENTITY privacypane.showlog.label "Xem lưu kí">
+<!ENTITY privacypane.reveallog.label "Hiển thị Tập tin">
+<!ENTITY privacypane.deletelog.label "Xóa lưu kí">
+<!ENTITY privacypane.updates.caption "Cập nhật/Internet">
+<!ENTITY privacypane.information.label "Để dTa kiểm tra bản cập nhật, tải tin tức và tin nhắn mới nhất">
+<!ENTITY privacypane.statistics.label "Để dTa thu thập và truyền tải các thống kê sử dụng vô danh">
+<!ENTITY privacypane.logs.caption "Lưu kí Chẩn đoán">
+<!ENTITY privacypane.enablelogs.label "Bật lưu kí chẩn đoán">
+<!ENTITY privacypane.notice.caption "Lưu ý">
+<!ENTITY privacypane.notice.desc "DownThemAll cũng tích hợp trong tính năng Xóa các Dữ liệu cá nhân (nếu được).">
+<!ENTITY privacypane.privacynotice.label "Lưu ý Riêng tư của Chúng tôi">
+<!ENTITY advancedpane.label "Nâng cao">
+<!ENTITY advancedpane.chunksdisabled "Vô hiệu hoá">
+<!ENTITY advancedpane.usetemp.label "Lưu mảnh ghép của phiên tải xuống trong thư mục tạm thời">
+<!ENTITY advancedpane.tempdir.label "Dùng thư mục này:">
+<!ENTITY uipane.label "Giao diện">
+<!ENTITY uipane.namesonly.label "Chỉ hiện tên tập tin trong cửa sổ Quản lí">
+<!ENTITY uipane.integration.caption "Tích hợp">
+<!ENTITY uipane.tools.caption "Trình đơn Công cụ">
+<!ENTITY uipane.compact.label "Dùng trình đơn tối giản">
+<!ENTITY uipane.hide.label "Ẩn trình đơn này">
+<!ENTITY uipane.showtooltip.label "Hiện mẹo tải xuống">
+<!ENTITY uipane.startminimized.label "Bắt đầu cực tiểu hóa">
+<!ENTITY uipane.minimizetotray.label "Cực tiểu hóa vào khay hệ thống">

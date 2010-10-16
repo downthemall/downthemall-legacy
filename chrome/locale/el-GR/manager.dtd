@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "Μπορείτε να μας βοηθήσετε να κάνουμε το DownThemAll ακόμα καλύτερο. Κάντε μια μικρή δωρεά!">
+<!ENTITY movetop.label "Κορυφή">
+<!ENTITY movebottom.label "Τέλος">
+<!ENTITY moveup.label "Πάνω">
+<!ENTITY movedown.label "Κάτω">
+<!ENTITY pct.label "Πρόοδος">
+<!ENTITY dim.label "Μέγεθος">
+<!ENTITY time.label "Υπολογισμένος χρόνος">
+<!ENTITY parts.label "Τμήματα">
+<!ENTITY speed.label "Ταχύτητα">
+<!ENTITY infoURLTitle.value "Από:">
+<!ENTITY infoSizeTitle.value "Μέγεθος:">
+<!ENTITY infoMultiple.value "Πολλαπλά στοιχεία">
+<!ENTITY elapsedTitle.value "Χρόνος που πέρασε:">
+<!ENTITY remainingTitle.value "Χρόνος που απομένει:">
+<!ENTITY currentSpeedTitle.value "Τρέχουσα ταχύτητα:">
+<!ENTITY avgSpeedTitle.value "Μέση ταχύτητα:">
+<!ENTITY path.label "Διαδρομή αποθήκευσης">
+<!ENTITY mask.label "Μάσκα μετονομασίας">
+<!ENTITY hash.label "Άθροισμα ελέγχου">
+<!ENTITY pause.label "Παύση">
+<!ENTITY resume.label "Συνέχιση">
+<!ENTITY cancel.label "Ακύρωση">
+<!ENTITY options.caption "Επιλογές">
+<!ENTITY loading.label "Φόρτωση...">
+<!ENTITY restore.label "Επαναφορά">
+<!ENTITY close.label "Κλείσιμο">

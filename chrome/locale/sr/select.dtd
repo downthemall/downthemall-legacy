@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Филтери">
+<!ENTITY additional.tip "Текстуални филтер: коришћењем зареза, можете поставити више текстуалних филтера истовремено.">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY filter.tip "Унесите ваше текстуалне филтере! Примери су дати у падајућој листи.">
+<!ENTITY status.label "После избора веза, кликните на Преузми!">
+<!ENTITY menu.mask.title "Уреди образац за преименовање">
+<!ENTITY tab.links.label "Везе">
+<!ENTITY header.desc.label "Опис">
+<!ENTITY disableother.label "Искључи остале филтере">
+<!ENTITY disableother.tooltip "Искључи остале филтере и користи само брзо филтрирање. (Ово подешавање тренутно није могуће сачувати)">

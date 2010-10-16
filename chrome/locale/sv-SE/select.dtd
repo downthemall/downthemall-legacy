@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Filter">
+<!ENTITY additional.tip "Textfiler: Här kan du ange flera (kommaseparerade) filter">
+<!ENTITY regex.label "Reg.utr.">
+<!ENTITY filter.tip "Ange här dina filter!">
+<!ENTITY status.label "Klicka på Börja! efter att ha markerat länkar">
+<!ENTITY menu.mask.title "Ändra omdöpningsschablon">
+<!ENTITY tab.links.label "Länkar">
+<!ENTITY header.desc.label "Beskrivning">
+<!ENTITY disableother.label "Avaktivera andra filter">
+<!ENTITY disableother.tooltip "Avaktivera övriga filter och använd senaste filter">

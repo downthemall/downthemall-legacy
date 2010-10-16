@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Filtros">
+<!ENTITY listhead1.label "Nome">
+<!ENTITY listhead2.label "Extensões">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY highlight.label "Destacar arquivos selecionado pelos filtros">
+<!ENTITY dtacontext2.label "Opções">
+<!ENTITY mainpane.rename.caption "Se o arquivo já existir:">
+<!ENTITY mainpane.rename.label "Renomear">
+<!ENTITY mainpane.overwrite.label "Sobrescrever">
+<!ENTITY mainpane.skip.label "Omitir">
+<!ENTITY mainpane.ask.label "Perguntar">
+<!ENTITY mainpane.sounderror.label "Tocar um som em caso de erro">
+<!ENTITY mainpane.alert.caption "Quando os downloads terminarem:">
+<!ENTITY mainpane.sounddone.label "Tocar um som quando todos os downloads terminarem">
+<!ENTITY mainpane.closedta.label "Fechar o DownThemAll quando os downloads terminarem">
+<!ENTITY privacypane.label "Privacidade">
+<!ENTITY privacypane.closing.caption "Quando a janela do gerenciador é fechada">
+<!ENTITY privacypane.deletefoldershistory.label "Excluir Histórico de Pastas">
+<!ENTITY privacypane.deletefiltershistory.label "Excluir Histórico de Filtros Adicionais">
+<!ENTITY privacypane.showlog.label "Exibir Log">
+<!ENTITY privacypane.reveallog.label "Mostrar arquivo">
+<!ENTITY privacypane.deletelog.label "Excluir Log">
+<!ENTITY privacypane.updates.caption "Atualizações/Internet">
+<!ENTITY privacypane.information.label "Permitir que o dTa baixe notícias atualizadas, mensagens, e informações da última versão">
+<!ENTITY privacypane.statistics.label "Deixar o dTa coletar e transferir estatísticas de uso anônimas">
+<!ENTITY privacypane.logs.caption "Logs de Diagnóstico">
+<!ENTITY privacypane.enablelogs.label "Ativar diagnóstico de logs">
+<!ENTITY privacypane.notice.caption "Alerta">
+<!ENTITY privacypane.notice.desc "O DownThemAll também integra a opção Limpar dados pessoais (se disponível).">
+<!ENTITY privacypane.privacynotice.label "Nossa política de privacidade">
+<!ENTITY advancedpane.label "Avançado">
+<!ENTITY advancedpane.chunksdisabled "Desativado">
+<!ENTITY advancedpane.usetemp.label "Salvar partes do download no diretório temporário">
+<!ENTITY advancedpane.tempdir.label "Usar esta pasta:">
+<!ENTITY uipane.label "Interface">
+<!ENTITY uipane.namesonly.label "Mostrar somente os nomes de arquivos na janela do Gerenciador">
+<!ENTITY uipane.integration.caption "Integração">
+<!ENTITY uipane.tools.caption "Menu de Ferramentas">
+<!ENTITY uipane.compact.label "Usar menu compacto">
+<!ENTITY uipane.hide.label "Ocultar esse menu">
+<!ENTITY uipane.showtooltip.label "Mostrar dicas para os downloads">
+<!ENTITY uipane.startminimized.label "Iniciar minimizado">
+<!ENTITY uipane.minimizetotray.label "Minimizar para a bandeja do sistema">

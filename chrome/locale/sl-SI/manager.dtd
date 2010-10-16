@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "Lahko nam pomagate narediti razširitev PrenesiVse še boljšo. Razmislite o manjši donaciji!">
+<!ENTITY movetop.label "Na vrh">
+<!ENTITY movebottom.label "Na dno">
+<!ENTITY moveup.label "Navzgor">
+<!ENTITY movedown.label "Navzdol">
+<!ENTITY pct.label "Napredek">
+<!ENTITY dim.label "Mera">
+<!ENTITY time.label "Pribl. čas">
+<!ENTITY parts.label "Deli">
+<!ENTITY speed.label "Hitrost">
+<!ENTITY infoURLTitle.value "Od:">
+<!ENTITY infoSizeTitle.value "Velikost:">
+<!ENTITY infoMultiple.value "Več kosov">
+<!ENTITY elapsedTitle.value "Pretečeni čas:">
+<!ENTITY remainingTitle.value "Preostali čas:">
+<!ENTITY currentSpeedTitle.value "Trenutna hitrost:">
+<!ENTITY avgSpeedTitle.value "Povprečna hitrost:">
+<!ENTITY path.label "Shrani pot">
+<!ENTITY mask.label "Maska preimenovanja">
+<!ENTITY hash.label "Kontrolna vsota">
+<!ENTITY pause.label "Prekini">
+<!ENTITY resume.label "Nadaljuj">
+<!ENTITY cancel.label "Prekliči">
+<!ENTITY options.caption "Možnosti">
+<!ENTITY loading.label "Nalaganje ...">
+<!ENTITY restore.label "Obnovi">
+<!ENTITY close.label "Zapri">

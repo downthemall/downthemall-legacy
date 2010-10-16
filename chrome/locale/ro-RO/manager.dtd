@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "Ne puteți ajuta să facem DownThemAll și mai bun. Faceți o mică donație!">
+<!ENTITY movetop.label "Sus de tot">
+<!ENTITY movebottom.label "Jos de tot">
+<!ENTITY moveup.label "Sus">
+<!ENTITY movedown.label "Jos">
+<!ENTITY pct.label "Progres">
+<!ENTITY dim.label "Dimensiune">
+<!ENTITY time.label "Estimat">
+<!ENTITY parts.label "Părți">
+<!ENTITY speed.label "Viteză">
+<!ENTITY infoURLTitle.value "De la:">
+<!ENTITY infoSizeTitle.value "Mărime:">
+<!ENTITY infoMultiple.value "Elemente multiple">
+<!ENTITY elapsedTitle.value "Timp trecut:">
+<!ENTITY remainingTitle.value "Rămas:">
+<!ENTITY currentSpeedTitle.value "Viteza curentă:">
+<!ENTITY avgSpeedTitle.value "Viteza medie:">
+<!ENTITY path.label "Cale salvare">
+<!ENTITY mask.label "Mască redenumire">
+<!ENTITY hash.label "Sumă de control">
+<!ENTITY pause.label "Pauză">
+<!ENTITY resume.label "Reia">
+<!ENTITY cancel.label "Anulează">
+<!ENTITY options.caption "Opțiuni">
+<!ENTITY loading.label "Se încarcă...">
+<!ENTITY restore.label "Restaurează">
+<!ENTITY close.label "Închide">

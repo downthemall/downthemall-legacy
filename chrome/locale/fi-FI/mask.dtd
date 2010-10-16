@@ -1,0 +1,17 @@
+<!ENTITY mask.name "Tiedostonimi">
+<!ENTITY mask.ext "Pääte">
+<!ENTITY mask.url "Perusosoite">
+<!ENTITY mask.curl "Koko osoite">
+<!ENTITY mask.flatcurl "Typistä koko osoite">
+<!ENTITY mask.hh "Tunnit">
+<!ENTITY mask.mm "Minuutit">
+<!ENTITY mask.ss "Sekunnit">
+<!ENTITY mask.d "Päivä">
+<!ENTITY mask.m "Kuukausi">
+<!ENTITY mask.y "Vuosi">
+<!ENTITY mask.subdirs "Osoitteen alihakemistot">
+<!ENTITY mask.flatsubdirs "Typistä osoitteen alihakemistot">
+<!ENTITY mask.refer "Viittaava osoite">
+<!ENTITY mask.qstring "Kysely merkkijono">
+<!ENTITY mask.tip "Napsauta tai vedä nimeämismaskiin">
+<!ENTITY mask.open.tip "Nimeämismerkinnät">

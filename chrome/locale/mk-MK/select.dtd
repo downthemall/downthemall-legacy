@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Филтри">
+<!ENTITY additional.tip "Текстуален филтер: можете да поставите повеќе текстуални филтри користејќи запирки.">
+<!ENTITY regex.label "Регуларен Израз">
+<!ENTITY filter.tip "Внесете ги вашите тектсуални филтри тука! (примери се наведени на симнувачкото мени)">
+<!ENTITY status.label "После избирањето на врски, притиснете Старт!">
+<!ENTITY menu.mask.title "Промени ја преименувачката маска">
+<!ENTITY tab.links.label "Врски">
+<!ENTITY header.desc.label "Опис">
+<!ENTITY disableother.label "Исклучи ги другите филтри">
+<!ENTITY disableother.tooltip "Исклучи ги другите филтри и користи само брзо филтрирање. (Ова поставување не е запаметено во моментот)">

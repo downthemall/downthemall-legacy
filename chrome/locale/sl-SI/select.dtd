@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Filtri">
+<!ENTITY additional.tip "Besedilni filter: naenkrat lahko nastavite več besedilnih filtrov z uporabo vejic med njimi.">
+<!ENTITY regex.label "Regularni izraz">
+<!ENTITY filter.tip "Vnesite svoje besedilne filtre! (nekaj primerov v spustnem meniju)">
+<!ENTITY status.label "Po izboru povezav kliknite Začni!">
+<!ENTITY menu.mask.title "Spremeni masko preimenovanja ...">
+<!ENTITY tab.links.label "Povezave">
+<!ENTITY header.desc.label "Opis">
+<!ENTITY disableother.label "Onemogoči druge filtre">
+<!ENTITY disableother.tooltip "Onemogoči druge filtre in uporabi le hitro filtriranje. (Ta nastavitev se trenutno ne pomni)">

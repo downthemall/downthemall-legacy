@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Filtros">
+<!ENTITY additional.tip "Filtro textual: pode aplicar múltiples filtros textuais ao mesmo tempo empregando comas.">
+<!ENTITY regex.label "Exp. Reg.">
+<!ENTITY filter.tip "Insira os seus filtros textuais aquí! (hai algúns exemplos no despregable)">
+<!ENTITY status.label "Despois de escoller as ligazóns, prema en Comezar!">
+<!ENTITY menu.mask.title "Modificar a máscara para renomear">
+<!ENTITY tab.links.label "Ligazóns">
+<!ENTITY header.desc.label "Descrición">
+<!ENTITY disableother.label "Desactivar os outros filtros">
+<!ENTITY disableother.tooltip "Desactivar os outros filtros e usar só o filtrado rápido. (Non se recomenda esta opción polo momento)">

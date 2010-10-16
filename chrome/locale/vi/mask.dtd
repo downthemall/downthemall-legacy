@@ -1,0 +1,17 @@
+<!ENTITY mask.name "Tên tập tin">
+<!ENTITY mask.ext "Đuôi mở rộng">
+<!ENTITY mask.url "URL Cơ sở">
+<!ENTITY mask.curl "URL Đầy đủ">
+<!ENTITY mask.flatcurl "URL Đầy đủ Phẳng">
+<!ENTITY mask.hh "Giờ">
+<!ENTITY mask.mm "Phút">
+<!ENTITY mask.ss "Giây">
+<!ENTITY mask.d "Ngày">
+<!ENTITY mask.m "Tháng">
+<!ENTITY mask.y "Năm">
+<!ENTITY mask.subdirs "Thư mục con của URL">
+<!ENTITY mask.flatsubdirs "Thư mục con của URL Phẳng">
+<!ENTITY mask.refer "URL Referer">
+<!ENTITY mask.qstring "Chuỗi truy vấn">
+<!ENTITY mask.tip "Nhấp hoặc kéo tới mặt nạ đổi tên">
+<!ENTITY mask.open.tip "Bảng tham khảo tag đổi tên">

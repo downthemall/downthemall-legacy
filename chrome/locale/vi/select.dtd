@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Bộ lọc">
+<!ENTITY additional.tip "Lọc nguyên văn: Bạn có thể thiết lập nhiều bộ lọc nguyên văn cùng lúc bằng cách sử dụng dấu phẩy.">
+<!ENTITY regex.label "Biểu thức Quy tắc">
+<!ENTITY filter.tip "Gõ những bộ lọc nguyên văn của bạn vào đây! (xem ví dụ trên trình đơn thả xuống)">
+<!ENTITY status.label "Sau khi chọn liên kết, nhấn lên nút Bắt đầu!">
+<!ENTITY menu.mask.title "Sửa đổi Mặt nạ Đổi tên">
+<!ENTITY tab.links.label "Liên kết">
+<!ENTITY header.desc.label "Mô tả">
+<!ENTITY disableother.label "Vô hiệu hóa các bộ lọc khác">
+<!ENTITY disableother.tooltip "Vô hiệu hóa các bộ lọc khác và chỉ dùng bộ lọc nhanh. (Thiết lập này hiện tại không được ghi nhớ)">

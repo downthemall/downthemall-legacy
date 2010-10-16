@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "Pode axudarnos a facer DownThemAll incluso mellor. Considere facer unha pequena doazón!">
+<!ENTITY movetop.label "O máis arriba">
+<!ENTITY movebottom.label "O máis abaixo">
+<!ENTITY moveup.label "Arriba">
+<!ENTITY movedown.label "Abaixo">
+<!ENTITY pct.label "Avance">
+<!ENTITY dim.label "Tamaño">
+<!ENTITY time.label "Tempo estimado">
+<!ENTITY parts.label "Partes">
+<!ENTITY speed.label "Velocidade">
+<!ENTITY infoURLTitle.value "De:">
+<!ENTITY infoSizeTitle.value "Tamaño:">
+<!ENTITY infoMultiple.value "Múltiples elementos">
+<!ENTITY elapsedTitle.value "Transcorrido:">
+<!ENTITY remainingTitle.value "Falta:">
+<!ENTITY currentSpeedTitle.value "Velocidade actual:">
+<!ENTITY avgSpeedTitle.value "Velocidade media:">
+<!ENTITY path.label "Gardar camiño">
+<!ENTITY mask.label "Renomear máscara">
+<!ENTITY hash.label "Suma de verificación">
+<!ENTITY pause.label "Parar">
+<!ENTITY resume.label "Retomar">
+<!ENTITY cancel.label "Cancelar">
+<!ENTITY options.caption "Opcións">
+<!ENTITY loading.label "Cargando...">
+<!ENTITY restore.label "Restaurar">
+<!ENTITY close.label "Pechar">

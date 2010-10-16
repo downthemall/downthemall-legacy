@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Filter">
+<!ENTITY listhead1.label "Rubrik">
+<!ENTITY listhead2.label "Filnamnstillägg">
+<!ENTITY regex.label "Reg. Ut.">
+<!ENTITY highlight.label "Markera filerna som återspeglar de valda filterreglerna">
+<!ENTITY dtacontext2.label "Alternativ">
+<!ENTITY mainpane.rename.caption "Åtgärder vid namnkonflikt:">
+<!ENTITY mainpane.rename.label "Döp om">
+<!ENTITY mainpane.overwrite.label "Ersätt">
+<!ENTITY mainpane.skip.label "Hoppa över">
+<!ENTITY mainpane.ask.label "Fråga">
+<!ENTITY mainpane.sounderror.label "Spela upp ett ljud vid fel">
+<!ENTITY mainpane.alert.caption "Åtgärder vid slutförda filhämtningar:">
+<!ENTITY mainpane.sounddone.label "Spela upp ett ljud när samtliga filhämtningar är slutförda">
+<!ENTITY mainpane.closedta.label "Stäng DownThemAll när alla filer har hämtats">
+<!ENTITY privacypane.label "Sekretess">
+<!ENTITY privacypane.closing.caption "När hanteraren stängs">
+<!ENTITY privacypane.deletefoldershistory.label "Rensa mapphistorik">
+<!ENTITY privacypane.deletefiltershistory.label "Rensa filterhistorik">
+<!ENTITY privacypane.showlog.label "Visa logg">
+<!ENTITY privacypane.reveallog.label "Visa fil">
+<!ENTITY privacypane.deletelog.label "Radera logg">
+<!ENTITY privacypane.updates.caption "Uppdateringar/Internet">
+<!ENTITY privacypane.information.label "Tillåt dTa att erhålla nyheter, meddelanden samt uppdaterade versioner.">
+<!ENTITY privacypane.statistics.label "Tillåt dTa att skicka anonym användarstatistik">
+<!ENTITY privacypane.logs.caption "Logg">
+<!ENTITY privacypane.enablelogs.label "Aktivera diagnostisk logg">
+<!ENTITY privacypane.notice.caption "Meddelande">
+<!ENTITY privacypane.notice.desc "DownThemAll samverkar även med Clear Private Data om tillgängligt.">
+<!ENTITY privacypane.privacynotice.label "Vårt sekretessmeddelande">
+<!ENTITY advancedpane.label "Avancerat">
+<!ENTITY advancedpane.chunksdisabled "Avaktiverat">
+<!ENTITY advancedpane.usetemp.label "Spara hämtningsdelarna i en tillfällig mapp">
+<!ENTITY advancedpane.tempdir.label "Använd denna mapp:">
+<!ENTITY uipane.label "Gränssnitt">
+<!ENTITY uipane.namesonly.label "Visa endast filnamn i hanterarfönstret">
+<!ENTITY uipane.integration.caption "Integration">
+<!ENTITY uipane.tools.caption "Verktygsmeny">
+<!ENTITY uipane.compact.label "Använd kompakt meny">
+<!ENTITY uipane.hide.label "Dölj denna meny">
+<!ENTITY uipane.showtooltip.label "Visa verktygstips">
+<!ENTITY uipane.startminimized.label "Starta minimerad">
+<!ENTITY uipane.minimizetotray.label "Minimera till aktivitetsfältet">

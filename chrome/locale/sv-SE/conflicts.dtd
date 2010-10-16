@@ -1,0 +1,5 @@
+<!ENTITY text.value "Spara denna inställning:">
+<!ENTITY session.label "Endast under denna session">
+<!ENTITY always.label "Alltid">
+<!ENTITY overwrite.label "Skriv över befintlig fil">
+<!ENTITY skip.label "Hoppa över/Avbryt">

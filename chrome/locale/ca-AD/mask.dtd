@@ -1,0 +1,17 @@
+<!ENTITY mask.name "Nom del fitxer">
+<!ENTITY mask.ext "Extensió">
+<!ENTITY mask.url "URL de base">
+<!ENTITY mask.curl "URL completa">
+<!ENTITY mask.flatcurl "URL completa">
+<!ENTITY mask.hh "Hores">
+<!ENTITY mask.mm "Minuts">
+<!ENTITY mask.ss "Segons">
+<!ENTITY mask.d "Dia">
+<!ENTITY mask.m "Mes">
+<!ENTITY mask.y "Any">
+<!ENTITY mask.subdirs "Subdirectoris de la URL">
+<!ENTITY mask.flatsubdirs "URL completa amb subdirectoris">
+<!ENTITY mask.refer "URL de referència">
+<!ENTITY mask.qstring "Cadena de la petició">
+<!ENTITY mask.tip "Feu clic o arressegueu per a canviar el nom a la màscara">
+<!ENTITY mask.open.tip "Canvieu el nom als marcadors de la taula de referència">

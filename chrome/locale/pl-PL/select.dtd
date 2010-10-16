@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Filtry">
+<!ENTITY additional.tip "Używając przecinków można ustanowić jednocześnie wiele filtrów tekstowych">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY filter.tip "Wprowadź tutaj swój filtr tekstowy! (przykłady w menu rozwijanym)">
+<!ENTITY status.label "Po zaznaczeniu odnośników naciśnij przycisk &quot;Pobierz&quot;">
+<!ENTITY menu.mask.title "Modyfikuj maskę zmiany nazwy">
+<!ENTITY tab.links.label "Odnośniki">
+<!ENTITY header.desc.label "Opis">
+<!ENTITY disableother.label "Wyłącz inne filtry">
+<!ENTITY disableother.tooltip "Wyłącza inne filtry i używa tylko szybkiego filtrowania. (Opcja ta nie jest w tej chwili polecana)">

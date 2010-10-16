@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Szűrők">
+<!ENTITY additional.tip "Szöveges szűrők: egyszerre több szöveges szűrőt vesszővel elválasztva adhat meg.">
+<!ENTITY regex.label "Reguláris kifejezés">
+<!ENTITY filter.tip "Adja meg a szöveges szűrőket (néhány példa a legördülő menüben)">
+<!ENTITY status.label "A hivatkozások kiválasztása után kattintson a Indítás gombra.">
+<!ENTITY menu.mask.title "Átnevezési maszk módosítása...">
+<!ENTITY tab.links.label "Hivatkozások">
+<!ENTITY header.desc.label "Leírás">
+<!ENTITY disableother.label "Egyéb szűrők letiltása">
+<!ENTITY disableother.tooltip "Letiltja a további szűrőket és csak a „Gyorsszűrés”-t alkalmazza. (Ez a beállítás nem kerül eltárolásra.)">

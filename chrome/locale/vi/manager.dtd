@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "Bạn có thể giúp chúng tôi làm cho DownThemAll tốt hơn. Hãy cân nhắc đến việc quyên góp nhé!">
+<!ENTITY movetop.label "Trên cùng">
+<!ENTITY movebottom.label "Dưới cùng">
+<!ENTITY moveup.label "Lên">
+<!ENTITY movedown.label "Xuống">
+<!ENTITY pct.label "Tiến trình">
+<!ENTITY dim.label "Dung lượng">
+<!ENTITY time.label "Thời gian ước tính">
+<!ENTITY parts.label "Phân mảnh">
+<!ENTITY speed.label "Tốc độ">
+<!ENTITY infoURLTitle.value "Từ:">
+<!ENTITY infoSizeTitle.value "Dung lượng:">
+<!ENTITY infoMultiple.value "Đa mục">
+<!ENTITY elapsedTitle.value "Tổng thời gian:">
+<!ENTITY remainingTitle.value "Còn lại:">
+<!ENTITY currentSpeedTitle.value "Tốc độ hiện tại:">
+<!ENTITY avgSpeedTitle.value "Tốc độ trung bình:">
+<!ENTITY path.label "Lưu đường dẫn">
+<!ENTITY mask.label "Mặt nạ đổi tên">
+<!ENTITY hash.label "Mã kiểm tra (Checksum)">
+<!ENTITY pause.label "Tạm dừng">
+<!ENTITY resume.label "Tiếp tục">
+<!ENTITY cancel.label "Hủy bỏ">
+<!ENTITY options.caption "Tùy chọn">
+<!ENTITY loading.label "Đang tải...">
+<!ENTITY restore.label "Khôi phục">
+<!ENTITY close.label "Đóng">

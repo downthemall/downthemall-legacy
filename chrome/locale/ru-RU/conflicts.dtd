@@ -1,0 +1,5 @@
+<!ENTITY text.value "Выполнять эту настройку:">
+<!ENTITY session.label "Только для этой сессии">
+<!ENTITY always.label "Только сейчас">
+<!ENTITY overwrite.label "Перезаписать существующий файл">
+<!ENTITY skip.label "Пропустить/Отмена">

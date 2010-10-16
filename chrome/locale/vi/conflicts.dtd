@@ -1,0 +1,5 @@
+<!ENTITY text.value "Ghi nhớ thiết lập này:">
+<!ENTITY session.label "Chỉ cho phiên này">
+<!ENTITY always.label "Từ bây giờ trở đi">
+<!ENTITY overwrite.label "Ghi đè lên tập tin đã có">
+<!ENTITY skip.label "Bỏ qua/Hủy bỏ">

@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Süzgeçler">
+<!ENTITY additional.tip "Metinsel süzgeçler: Virgül kullanarak aynı anda birden fazla metinsel süzgeç belirleyebilirsiniz.">
+<!ENTITY regex.label "Düz. İfa.">
+<!ENTITY filter.tip "Metinsel süzgeçlerinizi buraya yazın! (Açılır menüde bazı örnekler mevcuttur)">
+<!ENTITY status.label "Bağlantıları seçtikten sonra, Başlat'a tıklayın!">
+<!ENTITY menu.mask.title "Adlandırma maskesini değiştir">
+<!ENTITY tab.links.label "Bağlantılar">
+<!ENTITY header.desc.label "Tanım">
+<!ENTITY disableother.label "Diğer dosyalar devre dışı">
+<!ENTITY disableother.tooltip "Diğer süzgeçleri devre dışı bırak ve yalnızca hızlı süzmeyi kullan. (Bu ayar bu noktada hatırlanmaz)">

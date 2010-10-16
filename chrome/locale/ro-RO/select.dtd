@@ -1,0 +1,10 @@
+<!ENTITY filters.caption "Filtre">
+<!ENTITY additional.tip "Filtru textual: puteți seta mai multe filtre textuale în același timp folosind virgula.">
+<!ENTITY regex.label "Expr. reg.">
+<!ENTITY filter.tip "Tastați aici filtrele textuale! (câteva exemple sunt în listă)">
+<!ENTITY status.label "După ce selectați legăturile, apăsați pe Start!">
+<!ENTITY menu.mask.title "Modificați masca de redenumire...">
+<!ENTITY tab.links.label "Legături">
+<!ENTITY header.desc.label "Descriere">
+<!ENTITY disableother.label "Dezactivează alte filtre">
+<!ENTITY disableother.tooltip "Dezactivează alte filtre și folosește doar filtrarea rapidă. (Această setare nu este memorată actualmente)">

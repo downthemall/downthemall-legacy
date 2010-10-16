@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Filters">
+<!ENTITY listhead1.label "Afvangen">
+<!ENTITY listhead2.label "Extensies">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY highlight.label "Door filters gecontroleerde bestanden markeren">
+<!ENTITY dtacontext2.label "Voorkeuren">
+<!ENTITY mainpane.rename.caption "Als een bestandsnaam al bestaat:">
+<!ENTITY mainpane.rename.label "hernoemen">
+<!ENTITY mainpane.overwrite.label "overschrijven">
+<!ENTITY mainpane.skip.label "overslaan">
+<!ENTITY mainpane.ask.label "vragen">
+<!ENTITY mainpane.sounderror.label "Een geluid afspelen als er een fout optreed">
+<!ENTITY mainpane.alert.caption "Wanneer downloads compleet zijn:">
+<!ENTITY mainpane.sounddone.label "Een geluid afspelen als alle downloads voltooid zijn">
+<!ENTITY mainpane.closedta.label "DownThemAll sluiten als de downloads voltooid zijn">
+<!ENTITY privacypane.label "Privacy">
+<!ENTITY privacypane.closing.caption "Wanneer Beheerder-venster gesloten wordt:">
+<!ENTITY privacypane.deletefoldershistory.label "Mappen geschiedenis wissen">
+<!ENTITY privacypane.deletefiltershistory.label "Toegevoegde filters geschiedenis wissen">
+<!ENTITY privacypane.showlog.label "Log weergeven">
+<!ENTITY privacypane.reveallog.label "Bestand weergeven">
+<!ENTITY privacypane.deletelog.label "Log verwijderen">
+<!ENTITY privacypane.updates.caption "Updates/Internet">
+<!ENTITY privacypane.information.label "DownThemAll! toestaan het laatste nieuws en meldingen te downloaden en op nieuwe versies te controleren">
+<!ENTITY privacypane.statistics.label "DownThemAll! toestaan anonieme gebruiksstatistieken te verzamelen en te verzenden.">
+<!ENTITY privacypane.logs.caption "Diagnose log">
+<!ENTITY privacypane.enablelogs.label "Diagnose log inschakelen">
+<!ENTITY privacypane.notice.caption "Opmerking">
+<!ENTITY privacypane.notice.desc "DownThemAll! integreert ook met de ingebouwde functie 'Privégegevens opruimen' (indien beschikbaar)">
+<!ENTITY privacypane.privacynotice.label "Privacy opmerkingen">
+<!ENTITY advancedpane.label "Geavanceerd">
+<!ENTITY advancedpane.chunksdisabled "Uitgeschakeld">
+<!ENTITY advancedpane.usetemp.label "Delen van downloads in een tijdelijke map opslaan">
+<!ENTITY advancedpane.tempdir.label "Te gebruiken map:">
+<!ENTITY uipane.label "Gebruikers interface">
+<!ENTITY uipane.namesonly.label "Alleen bestandsnamen in het beheerdersvenster weergeven">
+<!ENTITY uipane.integration.caption "Integratie">
+<!ENTITY uipane.tools.caption "Menu Extra">
+<!ENTITY uipane.compact.label "Een compact menu gebruiken">
+<!ENTITY uipane.hide.label "Dit menu verbergen">
+<!ENTITY uipane.showtooltip.label "Download tooltips weergeven">
+<!ENTITY uipane.startminimized.label "Geminimaliseerd starten">
+<!ENTITY uipane.minimizetotray.label "Naar systeembalk minimaliseren">

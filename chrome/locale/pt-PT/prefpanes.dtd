@@ -1,0 +1,43 @@
+<!ENTITY filterspane.label "Filtros">
+<!ENTITY listhead1.label "Captura">
+<!ENTITY listhead2.label "Extensões">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY highlight.label "Assinalar ficheiros verificados pelos filtros">
+<!ENTITY dtacontext2.label "Definições">
+<!ENTITY mainpane.rename.caption "Se o nome de um ficheiro já existir:">
+<!ENTITY mainpane.rename.label "Mudar nome">
+<!ENTITY mainpane.overwrite.label "Sobrescrever">
+<!ENTITY mainpane.skip.label "Saltar">
+<!ENTITY mainpane.ask.label "Perguntar">
+<!ENTITY mainpane.sounderror.label "Tocar um som em caso de erro">
+<!ENTITY mainpane.alert.caption "Quando as transferências são finalizadas:">
+<!ENTITY mainpane.sounddone.label "Tocar um som quando todas as transferências forem finalizadas">
+<!ENTITY mainpane.closedta.label "Fechar o DownThemAll quando as transferências forem finalizadas">
+<!ENTITY privacypane.label "Privacidade">
+<!ENTITY privacypane.closing.caption "Quando a janela do Gestor é fechada">
+<!ENTITY privacypane.deletefoldershistory.label "Esvaziar a lista de pastas">
+<!ENTITY privacypane.deletefiltershistory.label "Esvaziar Filtros Adicionais">
+<!ENTITY privacypane.showlog.label "Ver Registo">
+<!ENTITY privacypane.reveallog.label "Mostrar Ficheiro">
+<!ENTITY privacypane.deletelog.label "Apagar Registo">
+<!ENTITY privacypane.updates.caption "Actualizações/Internet">
+<!ENTITY privacypane.information.label "Deixar o dTa transferir notícias actualizadas, mensagens e o número da última versão">
+<!ENTITY privacypane.statistics.label "Deixar o dTa reunir e transferir estatísticas anónimas">
+<!ENTITY privacypane.logs.caption "Registo de Diagnóstico">
+<!ENTITY privacypane.enablelogs.label "Activar o registo de Diagnóstico">
+<!ENTITY privacypane.notice.caption "Informação">
+<!ENTITY privacypane.notice.desc "O DownThemAll também se integra com a funcionalidade limpar dados privados do Firefox.">
+<!ENTITY privacypane.privacynotice.label "A nossa informação de privacidade">
+<!ENTITY advancedpane.label "Avançado">
+<!ENTITY advancedpane.chunksdisabled "Desactivado">
+<!ENTITY advancedpane.usetemp.label "Guardar as partes da transferência numa directoria temporária">
+<!ENTITY advancedpane.tempdir.label "Usar esta Directoria:">
+<!ENTITY uipane.label "Interface">
+<!ENTITY uipane.namesonly.label "Mostrar apenas nomes de ficheiros na janela do gestor">
+<!ENTITY uipane.integration.caption "Integração">
+<!ENTITY uipane.tools.caption "Menu Ferramentas">
+<!ENTITY uipane.compact.label "Usar um menu compacto">
+<!ENTITY uipane.hide.label "Esconder este menu">
+<!ENTITY uipane.showtooltip.label "Mostrar Dicas sobre transferências">
+<!ENTITY uipane.startminimized.label "Iniciar minimizado">
+<!ENTITY uipane.minimizetotray.label "Minimizar o a área de notificação">

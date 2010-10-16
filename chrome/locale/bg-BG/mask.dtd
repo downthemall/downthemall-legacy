@@ -1,0 +1,17 @@
+<!ENTITY mask.name "Име на файла">
+<!ENTITY mask.ext "Добавка">
+<!ENTITY mask.url "Базов URL">
+<!ENTITY mask.curl "Пълен URL">
+<!ENTITY mask.flatcurl "Плосък пълен URL">
+<!ENTITY mask.hh "Часове">
+<!ENTITY mask.mm "Минути">
+<!ENTITY mask.ss "Секунди">
+<!ENTITY mask.d "Ден">
+<!ENTITY mask.m "Месец">
+<!ENTITY mask.y "Година">
+<!ENTITY mask.subdirs "URL под-директории">
+<!ENTITY mask.flatsubdirs "Плосък URL поддиректории">
+<!ENTITY mask.refer "URL на реферала">
+<!ENTITY mask.qstring "Запитващ низ">
+<!ENTITY mask.tip "Кликни или издърпай до преименуващата маска">
+<!ENTITY mask.open.tip "Преименуващи маркери - Справочна таблица">

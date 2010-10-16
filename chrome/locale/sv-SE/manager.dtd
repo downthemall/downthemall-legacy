@@ -1,0 +1,27 @@
+<!ENTITY tooldonate.tooltiptext "Ditt bidrag kan hjälpa oss att utveckla och förbättra DownThemAll!">
+<!ENTITY movetop.label "Först">
+<!ENTITY movebottom.label "Sist">
+<!ENTITY moveup.label "Upp">
+<!ENTITY movedown.label "Ner">
+<!ENTITY pct.label "Förlopp">
+<!ENTITY dim.label "Storlek">
+<!ENTITY time.label "Återstående tid">
+<!ENTITY parts.label "Delar">
+<!ENTITY speed.label "Hastighet">
+<!ENTITY infoURLTitle.value "Från:">
+<!ENTITY infoSizeTitle.value "Storlek:">
+<!ENTITY infoMultiple.value "Mångfaldiga objekt">
+<!ENTITY elapsedTitle.value "Förfluten:">
+<!ENTITY remainingTitle.value "Återstående:">
+<!ENTITY currentSpeedTitle.value "Aktuell hastighet:">
+<!ENTITY avgSpeedTitle.value "Medelhastighet:">
+<!ENTITY path.label "Sökväg">
+<!ENTITY mask.label "Omdöpningsschablon">
+<!ENTITY hash.label "Kontrollsumma">
+<!ENTITY pause.label "Pausa">
+<!ENTITY resume.label "Återuppta">
+<!ENTITY cancel.label "Avbryt">
+<!ENTITY options.caption "Alternativ">
+<!ENTITY loading.label "Laddar...">
+<!ENTITY restore.label "Återställ">
+<!ENTITY close.label "Stäng">
