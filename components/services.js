@@ -53,7 +53,7 @@ const PREF_SNIFFVIDEOS = 'extensions.dta.listsniffedvideos';
 const PREF_FILTERS_BASE = 'extensions.dta.filters.';
 
 //const ABOUT_URI = 'http://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_ID%&version=%APP_VERSION%&os=%OS%';
-const ABOUT_URI = 'http://dta/content/about/index.xml';
+const ABOUT_URI = 'chrome://dta/content/about/index.xml';
 
 const LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
 const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
