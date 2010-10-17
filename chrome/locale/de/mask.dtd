@@ -19,5 +19,5 @@
 <!ENTITY mask.refer "Verweisende URL">
 <!ENTITY mask.qstring "Abfrage-Parameter">
 <!ENTITY mask.flattitle "Flacher Title des Link">
-<!ENTITY mask.tip "Zur Übernahme anklicken oder ins Umbenennungsschema ziehen">
+<!ENTITY mask.tip "Zur Übernahme anklicken oder ins Umbenennungs-Tags Feld ziehen">
 <!ENTITY mask.open.tip "Referenzübersicht der Umbenennungs-Tags">

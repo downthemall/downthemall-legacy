@@ -5,7 +5,7 @@
 <!ENTITY regex.label "Regulärer Ausdruck">
 <!ENTITY filter.tip "Geben Sie hier Ihre Textfilter ein (Beispiele siehe Auswahlliste)">
 <!ENTITY status.label "Nach dem Auswählen von Links auf Start klicken!">
-<!ENTITY menu.mask.title "Umbenennungsschema ändern...">
+<!ENTITY menu.mask.title "Umbenennungs-Tags ändern...">
 <!ENTITY menu.check.label "Ausgewählte Einträge markieren">
 <!ENTITY menu.uncheck.label "Ausgewählte Einträge abwählen">
 <!ENTITY menu.toggle.label "Markierung für ausgewählte Einträge umkehren">
