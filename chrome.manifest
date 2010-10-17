@@ -9,6 +9,9 @@ locale	dta	en-US	chrome/locale/en-US/
 content dta-public	chrome/public/ contentaccessible
 skin	dta-public	classic/1.0 chrome/public/
 
+## locales ##
+locale dta de chrome/locale/de/
+
 ## platform package ##
 content dta-platform	chrome/content/ platform
 skin	dta-platform	classic/1.0 chrome/skin/
