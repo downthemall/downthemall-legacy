@@ -20,7 +20,7 @@
 <!ENTITY currentSpeedTitle.value "Aktuell:">
 <!ENTITY avgSpeedTitle.value "Durchschnittlich:">
 <!ENTITY path.label "Zielordner">
-<!ENTITY mask.label "Umbenennungsschema">
+<!ENTITY mask.label "Umbenennungs-Tags">
 <!ENTITY hash.label "Prüfsumme">
 <!ENTITY infos.label "Downloadinformationen">
 <!ENTITY launch.label "Datei öffnen">
