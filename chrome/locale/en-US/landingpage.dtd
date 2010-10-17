@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logopermissions "The DownThemAll! name and logo cannot be used without permission in any derivative work, with exception of credits and license-related notices.">
 
 <!ENTITY lp.ct.bugstitle "Reporting bugs/Feature requests">
-<!ENTITY lp.ct.bugs "Please report bug and feature requests at our <a href='http://bugs.code.downthemall.net/'>bug tracker</a>.">
+<!ENTITY lp.ct.bugs "Please report bug and feature requests at our <a href='https://bugs.downthemall.net/'>bug tracker</a>.">
 
 <!ENTITY lp.ct.contactstitle "Contacts">
 <!ENTITY lp.ct.contactsfeed "We like to receive your feedback, suggestions or offers to help.">
