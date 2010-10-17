@@ -175,7 +175,7 @@
 					<li>&lp.tut.seloptfilters;</li>
 					<li>&lp.tut.seloptfast;</li>
 				</ul>
-				<p>The selection window contains to tabs, for two different types of downloads:</p>
+				<p>&lp.tut.seltypes;:</p>
 				<ol>
 					<li>&lp.tut.seltypelinks;</li>
 					<li>&lp.tut.seltypepics;</li>
