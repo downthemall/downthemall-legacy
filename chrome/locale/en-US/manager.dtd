@@ -1,4 +1,4 @@
-<!ENTITY tooladd.label "Add Downloads">
+<!ENTITY tooladddownload.label "Add Downloads">
 <!ENTITY tooladd.tooltip "Manually add a download to DownThemAll">
 <!ENTITY tooldonate.tooltiptext "You can help us make DownThemAll even better. Consider making a small donation!">
 
@@ -7,8 +7,8 @@
 <!ENTITY moveup.label "Up">
 <!ENTITY movedown.label "Down">
 
-<!ENTITY task.label "Download/Name">
-<!ENTITY per.label "Percent">
+<!ENTITY download.label "Download/Name">
+<!ENTITY percent.label "Percent">
 <!ENTITY pct.label "Progress">
 <!ENTITY dim.label "Size">
 <!ENTITY time.label "Est. time">
@@ -34,7 +34,7 @@
 <!ENTITY cancel.label "Cancel">
 <!ENTITY removemenu.label "Remove Downloads">
 <!ENTITY removeselected.label "Remove Selected">
-<!ENTITY removeCompleted.label "Remove Completed Downloads">
+<!ENTITY removecompleted.label "Remove Completed Downloads">
 <!ENTITY removeAll.label "Remove All">
 <!ENTITY removeDupes.label "Remove Duplicates">
 <!ENTITY removeGone.label "Clean Gone Files">
@@ -43,7 +43,7 @@
 <!ENTITY removechunk.label "One Less Segment">
 <!ENTITY force.label "Force Start">
 <!ENTITY import.label "Import from File">
-<!ENTITY export.label "Export Selected to File">
+<!ENTITY exportto.label "Export Selected to File">
 
 <!ENTITY options.caption "Options">
 <!ENTITY loading.label "Loading...">

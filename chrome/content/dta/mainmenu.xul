@@ -26,7 +26,7 @@
 		<menubar insertbefore="mainstack" id="mainmenu">
 			<menu id="file-menu" label="&fileMenu.label;" accesskey="&fileMenu.accesskey;">
 				<menupopup id="menu_FilePopup">
-					<menuitem id="menu_addnewdownload" label="&tooladd.label;" command="cmdAddUrl" key="kAddUrl" tooltiptext="&tooladd.tooltip;" />
+					<menuitem id="menu_addnewdownload" label="&tooladddownload.label;" command="cmdAddUrl" key="kAddUrl" tooltiptext="&tooladd.tooltip;" />
 					<menuseparator />
 					<menuitem id="menu_newNavigator" label="&newNavigatorCmd.label;" key="kNewWin" command="cmdNewWin" />
 					<menuitem id="menu_newNavigatorTab" label="&tabCmd.label;" command="cmdNewTab" key="kNewTab" />
