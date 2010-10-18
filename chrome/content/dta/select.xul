@@ -120,7 +120,7 @@
 		<toolbox id="views">
 			<toolbar class="findfiles" chromedir="&locale.dir;">
 				<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&tab.links.label;" command="cmdChangeToLinks" />
-				<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.pics.label;" command="cmdChangeToImages" />
+				<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.media.label;" command="cmdChangeToImages" />
 				<spacer flex="1" id="logo" chromedir="&locale.dir;"/>
 			</toolbar>
 		</toolbox>
