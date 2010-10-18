@@ -221,13 +221,13 @@ var Dialog = {
 		var rv = !('_realURL' in address) && batch.length > 1;
 		if (rv) {
 			var message = _(
-				'tasks',
+				'batchtasks',
 				[batch.length, batch.parts, batch.first, batch.last]
 			);
 			if (batch.length > 1000) {
 				message += _('manytasks');
 			}
-			rv = Prompts.confirm(window, _('batchtitle'), message, _('batchtitle'), Prompts.CANCEL, _('single'));
+			rv = Prompts.confirm(window, _('batchtitle'), message, _('batchtitle'), Prompts.CANCEL, _('singledownload'));
 			if (rv == 1) {
 				return false;
 			}
