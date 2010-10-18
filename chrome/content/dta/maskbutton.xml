@@ -50,7 +50,7 @@
 		<xbl:content>
 			<popupset>
 				<panel id="maskPopup" orient="vertical" position="before_end" style="padding: 8px; margin-bottom: -10px;">
-					<label class="masktitle" value="&mask.title;"/>
+					<label class="masktitle" value="&mask.tags;"/>
 					<hbox id="maskitems">
 						<grid flex="1">
 							<columns><column/><column flex="1"/></columns>
@@ -62,8 +62,8 @@
 								<row tag="*flatcurl*" desc="&mask.flatcurl;"/>
 								<row tag="*subdirs*" desc="&mask.subdirs;"/>
 								<row tag="*flatsubdirs*" desc="&mask.flatsubdirs;"/>
-								<row tag="*text*" desc="&mask.text;"/>
-								<row tag="*flattext*" desc="&mask.flattext;"/>
+								<row tag="*text*" desc="&mask.linktext;"/>
+								<row tag="*flattext*" desc="&mask.flatlinktext;"/>
 								<row tag="*title*" desc="&mask.title;"/>
 								<row tag="*flattitle*" desc="&mask.flattitle;"/>
 							</rows>
@@ -73,7 +73,7 @@
 							<rows>
 								<row tag="*qstring*" desc="&mask.qstring;"/>							
 								<row tag="*refer*" desc="&mask.refer;"/>
-								<row tag="*num*" desc="&mask.num;"/>
+								<row tag="*num*" desc="&mask.batch;"/>
 								<row tag="*inum*" desc="&mask.inum;"/>
 								<row tag="*hh*" desc="&mask.hh;"/>
 								<row tag="*mm*" desc="&mask.mm;"/>
