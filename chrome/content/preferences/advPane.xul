@@ -29,7 +29,7 @@
 		<tabbox>
 			<tabs>
 				<tab label="&advancedpane.downloads.caption;" />
-				<tab label="&advancedpane.misc.caption;" />
+				<tab label="&advancedpane.miscellaneous.caption;" />
 				<tab label="&advancedpane.files.caption;" />
 			</tabs>
 			<tabpanels>
@@ -114,7 +114,7 @@
 						</groupbox>
 					</vbox>
 					<groupbox id="advPermissions">
-						<caption id="dtaperms" label="&advancedpane.permissions.caption;" />
+						<caption id="dtaperms" label="&advancedpane.permissions;" />
 						<grid>
 							<columns>
 								<column flex="1" />
@@ -123,12 +123,12 @@
 							<rows>
 								<row>
 									<vbox>
-										<label value="&advancedpane.permissions.group;" />
+										<label value="&advancedpane.permissions.groupmay;" />
 										<checkbox label="&advancedpane.permissions.read;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(0040);" onsynctopreference="return Advanced.setPerm(0040);" />
 										<checkbox label="&advancedpane.permissions.read;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(0004);" onsynctopreference="return Advanced.setPerm(0004);" />
 									</vbox>
 									<vbox>
-										<label value="&advancedpane.permissions.everybody;" />
+										<label value="&advancedpane.permissions.everybodymay;" />
 										<checkbox label="&advancedpane.permissions.write;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(0020);" onsynctopreference="return Advanced.setPerm(0020);" />
 										<checkbox label="&advancedpane.permissions.write;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(0002);" onsynctopreference="return Advanced.setPerm(0002);" />
 									</vbox>
