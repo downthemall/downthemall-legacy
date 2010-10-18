@@ -1,6 +1,6 @@
 <!ENTITY windowtitle "File Name Conflict!">
 <!ENTITY text.value "Remember this setting:">
-<!ENTITY file.label "Just for this download">
+<!ENTITY download.label "Just for this download">
 <!ENTITY session.label "Just for this session">
 <!ENTITY always.label "From now on">
 <!ENTITY overwrite.label "Overwrite existing file">
