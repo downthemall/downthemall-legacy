@@ -67,7 +67,7 @@
 			<caption label="&text.value;" />
 			<menulist id="context">
 				<menupopup>
-					<menuitem label="&file.label;"/>
+					<menuitem label="&download.label;"/>
 					<menuitem label="&session.label;"/>
 					<menuitem label="&always.label;"/>
 				</menupopup>
