@@ -678,7 +678,7 @@
 			saveSingleLink(turbo, cur.href, cur);
 		}
 		catch (ex) {
-			notifyError(getString('error'), getString('errornodownload'));
+			notifyError(getString('error'), getString('errorcannotdownload'));
 			debug.log('findSingleLink: ', ex);
 		}
 	}
@@ -692,7 +692,7 @@
 			saveSingleLink(turbo, cur.src, cur);
 		}
 		catch (ex) {
-			notifyError(getString('error'), getString('errornodownload'));
+			notifyError(getString('error'), getString('errorcannotdownload'));
 			debug.log('findSingleLink: ', ex);
 		}		
 	}
@@ -725,7 +725,7 @@
 				}
 			}
 			catch (ex) {
-				notifyError(getString('error'), getString('errornodownload'));
+				notifyError(getString('error'), getString('errorcannotdownload'));
 				debug.log('_findSingleMedia: ', ex);
 			}
 		}		
