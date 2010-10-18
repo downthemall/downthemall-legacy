@@ -319,7 +319,7 @@ const Tree = {
 	},
 	removeWithConfirmation: function T_removeWithConfirmation() {
 		if (Prefs.confirmRemove) {
-			let res = Prompts.confirm(window, _('removetitle'), _('removequestion'), Prompts.YES, Prompts.NO, null, 0, false, _('removecheck'));
+			let res = Prompts.confirm(window, _('removecaption'), _('removequestion'), Prompts.YES, Prompts.NO, null, 0, false, _('removecheck'));
 			if (res.checked) {
 				Preferences.setExt('confirmremove', false);
 			}
@@ -330,7 +330,7 @@ const Tree = {
 		this.remove(null, true);
 	},
 	removeAllWithConfirmation: function T_removeAllWithConfirmation() {
-		let res = Prompts.confirm(window, _('removetitle'), _('removeallquestion'), Prompts.YES, Prompts.NO);
+		let res = Prompts.confirm(window, _('removecaption'), _('removeallquestion'), Prompts.YES, Prompts.NO);
 		if (res) {
 			return;
 		}
@@ -362,7 +362,7 @@ const Tree = {
 		if (Preferences.getExt(pref, true)) {
 			let res = Prompts.confirm(
 				window,
-				_('removetitle'),
+				_('removecaption'),
 				_(msg, [filter.label]),
 				Prompts.YES, Prompts.NO,
 				null, 0, false, _('removecheck'));
@@ -451,7 +451,7 @@ const Tree = {
 	},
 	removeCompleted: function T_removeCompleted() {
 		if (Prefs.confirmRemoveCompleted) {
-			let res = Prompts.confirm(window, _('removetitle'), _('removecompletedquestion'), Prompts.YES, Prompts.NO, null, 0, false, _('removecheck'));
+			let res = Prompts.confirm(window, _('removecaption'), _('removecompletedquestion'), Prompts.YES, Prompts.NO, null, 0, false, _('removecheck'));
 			if (res.checked) {
 				Preferences.setExt('confirmremovecompleted', false);
 			}
@@ -1038,7 +1038,7 @@ const FileHandling = {
 		else {
 			msg = _('deletetextl', [list.length]);
 		}
-		if (list.length && Prompts.confirm(window, _('deletetitle'), msg, _('delete'), Prompts.CANCEL, null, 1)) {
+		if (list.length && Prompts.confirm(window, _('deletecaption'), msg, _('delete'), Prompts.CANCEL, null, 1)) {
 			return;
 		}
 		for each (let d in list) {
