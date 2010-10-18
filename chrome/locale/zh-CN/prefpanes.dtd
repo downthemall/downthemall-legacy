@@ -21,7 +21,7 @@
 <!ENTITY mainpane.overwrite.label "覆盖">
 <!ENTITY mainpane.skip.label "跳过">
 <!ENTITY mainpane.ask.label "询问">
-<!ENTITY mainpane.misc.caption "杂项">
+<!ENTITY mainpane.misc.caption "其它">
 <!ENTITY mainpane.sounderror.label "出错时播放声音">
 <!ENTITY mainpane.alert.caption "当下载结束:">
 <!ENTITY mainpane.alert.label "提示我：">
@@ -34,7 +34,7 @@
 <!ENTITY mainpane.rememberoneclick.label "如果应用到所有标签页或当前标签页,让dTa OneClick记住设置">
 <!ENTITY mainpane.confirmremove.label "移除下载需要用户确认">
 <!ENTITY mainpane.textlinks.label "识别文本链接">
-<!ENTITY mainpane.listsniffedvideos.label "识别并列出(Falsh)视频">
+<!ENTITY mainpane.listsniffedvideos.label "识别并列出(Flash)视频">
 <!ENTITY privacypane.label "隐私">
 <!ENTITY privacypane.closing.caption "当管理窗口关闭时">
 <!ENTITY privacypane.removecompleted.label "从列表中移除已完成的下载项">
@@ -54,7 +54,7 @@
 <!ENTITY privacypane.enablelogs.label "启用诊断日志">
 <!ENTITY privacypane.notice.caption "注意">
 <!ENTITY privacypane.notice.desc "DownThemAll将集成到Firefox的隐私数据清理功能中(如果可用)">
-<!ENTITY privacypane.privacynotice.label "我们的隐私说明">
+<!ENTITY privacypane.privacynotice.label "我们的隐私声明">
 <!ENTITY serverspane.label "网络">
 <!ENTITY serverspane.downloads.caption "下载">
 <!ENTITY serverspane.concurrent.label "当前下载：">
@@ -65,8 +65,8 @@
 <!ENTITY serverspane.limits.label "每服务器限制">
 <!ENTITY serverpane.limits.noitems "无指定每服务器限制">
 <!ENTITY serverspane.connections.label "连接：">
-<!ENTITY serverspane.speed.label "速度限制">
-<!ENTITY serverspane.unlimited "无限">
+<!ENTITY serverspane.speed.label "速度限制：">
+<!ENTITY serverspane.unlimited "无限制">
 <!ENTITY serverspane.limited "限制">
 <!ENTITY serverspane.autoretry.caption "自动重试">
 <!ENTITY serverspane.autoretry.interval.label "重试每">
@@ -77,7 +77,7 @@
 <!ENTITY advancedpane.label "高级">
 <!ENTITY advancedpane.downloads.caption "高级下载控制">
 <!ENTITY advancedpane.misc.caption "其它">
-<!ENTITY advancedpane.files.caption "过滤器">
+<!ENTITY advancedpane.files.caption "文件">
 <!ENTITY advancedpane.chunks.label "每下载最大块数">
 <!ENTITY advancedpane.chunksdisabled "禁用">
 <!ENTITY advancedpane.timeout.label "下载超时时间">
@@ -100,7 +100,7 @@
 <!ENTITY advancedpane.scheduler.fair "公平+慢速-平均分布">
 <!ENTITY advancedpane.scheduler.legacy "旧方式-无限制">
 <!ENTITY advancedpane.exposeinua.label "在User-Agent中显示DownThemAll!">
-<!ENTITY uipane.label "用户界面">
+<!ENTITY uipane.label "界面">
 <!ENTITY uipane.namesonly.label "在管理窗口中只显示文件名">
 <!ENTITY uipane.integration.caption "集成">
 <!ENTITY uipane.downloadwin.label "增加DownThemAll!到&quot;保存文件&quot;窗口">
