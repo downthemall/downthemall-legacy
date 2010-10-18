@@ -15,7 +15,7 @@
 
 <dialog
 	id="DownThemAll" 
-	title="&title.value;" 
+	title="&windowtitle;" 
 	onload="load();" 
 	buttons="accept" 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
