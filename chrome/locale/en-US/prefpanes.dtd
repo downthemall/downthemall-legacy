@@ -1,4 +1,4 @@
-<!ENTITY winstyle "width:46em;height:37em;">
+<!ENTITY windowstyle "width:46em;height:37em;">
 <!ENTITY filterspane.label "Filters">
 <!ENTITY listhead1.label "Caption">
 <!ENTITY listhead2.label "Extensions">
@@ -26,8 +26,8 @@
 <!ENTITY mainpane.sounderror.label "Play a sound in case of error">
 <!ENTITY mainpane.alert.caption "When downloads are complete:">
 <!ENTITY mainpane.alert.label "Alert me:">
-<!ENTITY mainpane.alertboxes.label "Using Alert Boxes">
-<!ENTITY mainpane.alertslides.label "Using Slide Notifications">
+<!ENTITY mainpane.alertbox.label "Using Alert Boxes">
+<!ENTITY mainpane.alertnotifications.label "Using Slide Notifications">
 <!ENTITY mainpane.alertnone.label "Don't Alert Me">
 <!ENTITY mainpane.sounddone.label "Play a sound when all downloads are complete">
 <!ENTITY mainpane.closedta.label "Close DownThemAll when downloads are complete">
@@ -80,7 +80,7 @@
 
 <!ENTITY advancedpane.label "Advanced">
 <!ENTITY advancedpane.downloads.caption "Advanced download control">
-<!ENTITY advancedpane.misc.caption "Miscellaneous">
+<!ENTITY advancedpane.miscellaneous.caption "Miscellaneous">
 <!ENTITY advancedpane.files.caption "Files">
 <!ENTITY advancedpane.chunks.label "Max. Number of Segments Per Download:">
 <!ENTITY advancedpane.chunksdisabled "Disabled">
@@ -93,9 +93,9 @@
 <!ENTITY advancedpane.tempfiles.caption "Temporary Files">
 <!ENTITY advancedpane.usetemp.label "Save download segments in a temporary directory">
 <!ENTITY advancedpane.tempdir.label "Use this directory:">
-<!ENTITY advancedpane.permissions.caption "File Permissions">
-<!ENTITY advancedpane.permissions.group "Group members may">
-<!ENTITY advancedpane.permissions.everybody "Everybody else may">
+<!ENTITY advancedpane.permissions "File Permissions">
+<!ENTITY advancedpane.permissions.groupmay "Group members may">
+<!ENTITY advancedpane.permissions.everybodymay "Everybody else may">
 <!ENTITY advancedpane.permissions.read "Read">
 <!ENTITY advancedpane.permissions.write "Write">
 <!ENTITY advancedpane.loadendfirst.label "Load Last Few Kilobytes First">
