@@ -45,7 +45,7 @@
 <!ENTITY loading.label "加载中...">
 <!ENTITY restore.label "恢复">
 <!ENTITY close.label "关闭">
-<!ENTITY speedlimit.label "限制：">
+<!ENTITY speedlimit.label "限速：">
 <!ENTITY speedlimit.tooltip "改变速度限制。列表动态更新。">
 <!ENTITY perdownloadspeedlimit.label "速度限制">
 <!ENTITY perdownloadspeedlimit.tooltip "改变速度限制。仍遵守全局速度限制。">
