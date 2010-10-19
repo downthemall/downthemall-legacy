@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Preferencias">
+<!ENTITY dta-about.label "Acerca de...">
+<!ENTITY dta-manager-button "Xestor">
+<!ENTITY dta-selector-button "Selector dTa OneClick">
+<!ENTITY dta-tb-all.label "Todos as lapelas">
+<!ENTITY dta-tb-single.label "Lapela actual">
+<!ENTITY dta-selection.label "Selección de DownThemAll!...">
+<!ENTITY dta-selection-turbo.label "Selección de dTa OneClick...">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa OneClick...">
+<!ENTITY dta-img-save.label "Gardar a imaxe con DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Iniciar gardando a imaxe con dTa OneClick">
+<!ENTITY dta-video-save.label "Gardar o vídeo con DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Iniciar gardando o vídeo con dTa OneClick">
+<!ENTITY dta-audio-save.label "Gardar o áudio con DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Iniciar gardando o áudio con dTa OneClick">
+<!ENTITY dta-link-save.label "Gardar a ligazón con DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Iniciar gardando a ligazón con dTa OneClick">
+<!ENTITY dta-form-save.label "Gardar o formulario de destino con DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Comezar a gardar o formulario de destino con dTa OenClick!">

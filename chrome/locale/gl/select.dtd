@@ -1,0 +1,18 @@
+<!ENTITY title "Faga a súa selección">
+<!ENTITY filters.caption "Filtros">
+<!ENTITY additional.caption "Filtrado rápido">
+<!ENTITY additional.tip "Filtro textual: pode aplicar múltiples filtros textuais ao mesmo tempo empregando comas.">
+<!ENTITY regex.label "Exp. Reg.">
+<!ENTITY filter.tip "Introduza os seus filtros textuais aquí (hai algúns exemplos no despregable)">
+<!ENTITY status.label "Despois de escoller as ligazóns, prema en Comezar">
+<!ENTITY menu.mask.title "Modificar a máscara de renomeado">
+<!ENTITY menu.check.label "Marcar os obxectos seleccionados">
+<!ENTITY menu.uncheck.label "Desmarcar os obxectos seleccionados">
+<!ENTITY menu.toggle.label "Marcar ou desmarcar os obxectos seleccionados">
+<!ENTITY tab.links.label "Ligazóns">
+<!ENTITY tab.pics.label "Imaxes e ficheiros multimedia">
+<!ENTITY header.desc.label "Descrición">
+<!ENTITY selectfiltered.label "Escoller os filtrados">
+<!ENTITY disableother.label "Desactivar os outros filtros">
+<!ENTITY disableother.tooltip "Desactivar os outros filtros e usar só o filtrado rápido. (Non se recomenda esta opción polo momento)">
+<!ENTITY resname.value "Nome do recurso">

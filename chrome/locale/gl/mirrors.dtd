@@ -1,0 +1,10 @@
+<!ENTITY title "Xestión de espellos de DownThemAll!">
+<!ENTITY header "Xestión de espellos">
+<!ENTITY byline1 "As descargas pódense cargar desde diferentes localizacións. O ficheiro recombinarase automaticamente.">
+<!ENTITY byline2 "Pode engadir ou eliminar localizacións que apunten cara ao mesmo ficheiro.">
+<!ENTITY byline3 "Engadir localizacións que apunten a diferentes ficheiros provocará a corrupción do mesmo.">
+<!ENTITY addmirror.tip "Engadir un espello de descarga">
+<!ENTITY removemirror.tip "Eliminar os espellos de descarga seleccionados">
+<!ENTITY checkmirrors.tip "Marcar todos os espellos de descarga">
+<!ENTITY mirrorurl "Localización:">
+<!ENTITY preference "Prioridade:">
