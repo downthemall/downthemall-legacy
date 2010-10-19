@@ -30,7 +30,7 @@
 <!ENTITY lp.tut.selopthand "You may check the links you want to download by hand">
 <!ENTITY lp.tut.seloptfilters "You may use the build-in or own Filters, e.g. to download all linked images">
 <!ENTITY lp.tut.seloptfast "Additionally you may type in your own filter in the Fast filtering box, for example <code>*.pdf,*.doc</code> or even a regular expression">
-<!ENTITY lp.tut.seltypes "The selection window contains to tabs, for two different types of downloads:">
+<!ENTITY lp.tut.seltypes "The selection window contains two tabs, for two different types of downloads:">
 <!ENTITY lp.tut.seltypelinks "The Links tab containing all downloadable links found on the page">
 <!ENTITY lp.tut.seltypepics "And the Pictures and Media tab containing all pictures and other media as shown on the page">
 <!ENTITY lp.tut.selgalleries "Full-size images are often only linked from gallery pages, hence you'll find them in the Links tab">
@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logopermissions "The DownThemAll! name and logo cannot be used without permission in any derivative work, with exception of credits and license-related notices.">
 
 <!ENTITY lp.ct.bugstitle "Reporting bugs/Feature requests">
-<!ENTITY lp.ct.bugs "Please report bug and feature requests at our <a href='http://bugs.code.downthemall.net/'>bug tracker</a>.">
+<!ENTITY lp.ct.bugs "Please report bug and feature requests at our <a href='https://bugs.downthemall.net/'>bug tracker</a>.">
 
 <!ENTITY lp.ct.contactstitle "Contacts">
 <!ENTITY lp.ct.contactsfeed "We like to receive your feedback, suggestions or offers to help.">
