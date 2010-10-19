@@ -11,6 +11,7 @@ skin	dta-public	classic/1.0 chrome/public/
 
 ## locales ##
 locale dta de chrome/locale/de/
+locale dta gl chrome/locale/gl/
 locale dta zh-CN chrome/locale/zh-CN/
 
 ## platform package ##
