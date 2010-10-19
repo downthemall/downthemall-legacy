@@ -142,7 +142,7 @@
 			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" key="kPause" command="cmdPause" />
 			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" key="kCancel" command="cmdCancel" />
 			<menuseparator />
-			<menu id="removeCompletedMenu" class="menu-iconic" label="&removeCompleted.label;">
+			<menu id="removeCompletedMenu" class="menu-iconic" label="&removecompleted.label;">
 				<menupopup id="removeCompletedPopup">
 					<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeAll.label;" key="kRemoveCompleted" command="cmdRemoveCompleted" />
 					<menuseparator />
