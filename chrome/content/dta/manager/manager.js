@@ -268,6 +268,8 @@ const Dialog = {
 		})();
 		
 		$('listSpeeds').limit = Prefs.speedLimit;
+		$('listSpeedsSpinners').addEventListener('up', function() Dialog.changeSpeedLimitUp(), false);
+		$('listSpeedsSpinners').addEventListener('down', function() Dialog.changeSpeedLimitDown(), false);
 		
 		(function nagging() {
 			if (Preferences.getExt('nagnever', false)) {
@@ -340,7 +342,14 @@ const Dialog = {
 		GlobalBucket.byteRate = val;
 		this._speeds.clear();
 	},
-	
+	changeSpeedLimitUp: function() {
+		$('listSpeeds').limit = Math.max(0, $('listSpeeds').limit) + 25600;
+		this.changeSpeedLimit();
+	},
+	changeSpeedLimitDown: function() {
+		$('listSpeeds').limit -= 25600;
+		this.changeSpeedLimit();
+	},
 	_loadDownloads: function D__loadDownloads() {
 		this._loading = $('loading');
 		if (!this._loading) {

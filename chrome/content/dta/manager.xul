@@ -260,6 +260,7 @@
 			<menulist class="plain" id="speedLimit" tooltiptext="&speedlimit.tooltip;" sizetopopup="none" command="cmdChangeSpeedLimit">
 				<menupopup id="listSpeeds" class="speedlimitlist-popup" position="before_start" />
 			</menulist>
+			<spinbuttons id="listSpeedsSpinners"/>
 		</statusbarpanel>
 		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text text-link" label="&options.label;" command="cmdPreferences" />
 	</statusbar>
