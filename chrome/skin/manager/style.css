@@ -1,3 +1,5 @@
+@import 'chrome://global/skin/';
+@import 'chrome://global/skin/toolbar.css';
 @import 'chrome://dta/skin/common/style.css';
 @import 'chrome://dta-platform/skin/manager.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
@@ -198,7 +200,6 @@ toolbox {
 	width: 100%;
 	font-size: 14px;
 	font-weight: bold;
-	background: !important;
 	color: black !important;
 }
 #infoDest {
@@ -270,12 +271,29 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 	display: list-item;
 }
 #speedLimit,
+#actions,
 #popup > menu,
 #popup > menuitem,
 #removeCompletedMenu menuitem, 	
 #removeMenu menuitem, 
 #advancedMenu menuitem {
 	list-style-image: url(menu.png);
+}
+
+#actions {
+	padding: 2pt;
+}
+#actions > toolbarbutton[disabled="true"] {
+	opacity: 0.5;
+}
+#actions > toolbarseparator {
+  -moz-appearance: none;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+  -moz-border-top-colors: transparent transparent ThreeDShadow;
+  -moz-border-bottom-colors: transparent transparent ThreeDHighlight;
 }
 
 #advancedMenu {
@@ -286,52 +304,52 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 }
 
 /* menuitem element (row 1) */
-#info {
+.info {
 	-moz-image-region: rect(0px,16px,16px,0px);
 }
-#info[disabled="true"] {
+.info[disabled="true"] {
 	-moz-image-region: rect(16px,16px,32px,0px);
 }
 
-#launch {
+.launch {
 	-moz-image-region: rect(0px,32px,16px,16px);
 }
-#launch[disabled="true"] {
+.launch[disabled="true"] {
 	-moz-image-region: rect(16px,32px,32px,16px);
 }
 
-#delete {
+.delete {
 	-moz-image-region: rect(0px,48px,16px,32px);
 }
-#delete[disabled="true"] {
+.delete[disabled="true"] {
 	-moz-image-region: rect(16px,48px,32px,32px);
 }
 
-#folder {
+.folder {
 	-moz-image-region: rect(0px,64px,16px,48px);
 }
-#folder[disabled="true"] {
+.folder[disabled="true"] {
 	-moz-image-region: rect(16px,64px,32px,48px);
 }
 
-#play {
+.play {
 	-moz-image-region: rect(0px,80px,16px,64px);
 }
-#play[disabled="true"] {
+.play[disabled="true"] {
 	-moz-image-region: rect(16px,80px,32px,64px);
 }
 
-#pause {
+.pause {
 	-moz-image-region: rect(0px,96px,16px,80px);
 }
-#pause[disabled="true"] {
+.pause[disabled="true"] {
 	-moz-image-region: rect(16px,96px,32px,80px);
 }
 
-#cancel {
+.cancel {
 	-moz-image-region: rect(0px,112px,16px,96px);
 }
-#cancel[disabled="true"] {
+.cancel[disabled="true"] {
 	-moz-image-region: rect(16px,112px,32px,96px);
 }
 
@@ -350,24 +368,24 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 #perDownloadSpeedLimit[disabled="true"] {
 	-moz-image-region: rect(48px,160px,64px,144px);
 }
-#import {
+.import {
 	-moz-image-region: rect(0px,128px,16px,112px);
 }
-#import[disabled="true"] {
+-import[disabled="true"] {
 	-moz-image-region: rect(16px,128px,32px,112px);
 }
 
-#export {
+.export {
 	-moz-image-region: rect(0px,144px,16px,128px);
 }
-#export[disabled="true"] {
+.export[disabled="true"] {
 	-moz-image-region: rect(16px,144px,32px,128px);
 }
 
-#force {
+.force {
 	-moz-image-region: rect(0px,160px,16px,144px);
 }
-#force[disabled="true"] {
+.force[disabled="true"] {
 	-moz-image-region: rect(16px,160px,32px,144px);
 }
 
@@ -392,10 +410,10 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 	-moz-image-region: rect(48px,32px,64px,16px);
 }
 
-#cleangone {
+.cleangone {
 	-moz-image-region: rect(32px,48px,48px,32px);
 }
-#cleanegone[disabled="true"] {
+.cleanegone[disabled="true"] {
 	-moz-image-region: rect(48px,48px,64px,32px);
 }
 
@@ -407,63 +425,63 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 	-moz-image-region: rect(48px,64px,64px,48px);
 }*/
 
-#addchunk {
+.addchunk {
 	-moz-image-region: rect(32px,80px,48px,64px);
 }
-#addchunk[disabled="true"] {
+.addchunk[disabled="true"] {
 	-moz-image-region: rect(48px,80px,64px,64px);
 }
 
-#removechunk {
+.removechunk {
 	-moz-image-region: rect(32px,96px,48px,80px);
 }
-#removechunk[disabled="true"] {
+.removechunk[disabled="true"] {
 	-moz-image-region: rect(48px,96px,64px,80px);
 }
 
 /* menuitem element (row 3) */
-#movetop {
+.movetop {
 	-moz-image-region: rect(64px,16px,80px,0px);
 }
-#movetop[disabled="true"] {
+.movetop[disabled="true"] {
 	-moz-image-region: rect(80px,16px,96px,0px);
 }
 
-#moveup {
+.moveup {
 	-moz-image-region: rect(64px,32px,80px,16px);
 }
-#moveup[disabled="true"] {
+.moveup[disabled="true"] {
 	-moz-image-region: rect(80px,32px,96px,16px);
 }
 
-#movedown {
+.movedown {
 	-moz-image-region: rect(64px,48px,80px,32px);
 }
-#movedown[disabled="true"] {
+.movedown[disabled="true"] {
 	-moz-image-region: rect(80px,48px,96px,32px);
 }
 
-#movebottom {
+.movebottom {
 	-moz-image-region: rect(64px,64px,80px,48px);
 }
-#movebottom[disabled="true"] {
+.movebottom[disabled="true"] {
 	-moz-image-region: rect(80px,64px,96px,48px);
 }
 
-#mirrors,
-#mirrors-cascaded {
+.mirrors,
+.mirrors-cascaded {
 	-moz-image-region: rect(64px,80px,80px,64px);
 }
-#mirrors[disabled="true"] {
+.mirrors[disabled="true"] {
 	-moz-image-region: rect(80px,80px,96px,64px);
 }
 
 /* menuitem common */
-menuitem#selectall {
+toolbarbutton.listselectall,  menuitem#listselectall {
 	list-style-image: url(chrome://dta/skin/common/selection.png);
 	-moz-image-region: rect(0px, 16px, 16px, 0px);  
 }
-menuitem#selectinv {
+toolbarbutton.listselectinv, menuitem#listselectinv {
 	list-style-image: url(chrome://dta/skin/common/selection.png);
 	-moz-image-region: rect(0px, 48px, 16px, 32px);  
 }

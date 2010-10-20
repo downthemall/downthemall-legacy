@@ -48,6 +48,7 @@
   	opacity: .2;
 	}
 	#prespacer {
+	  width: 20px;
 		display: -moz-box;
 	}
 	#tools {

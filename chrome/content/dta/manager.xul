@@ -8,8 +8,6 @@
  * See LICENSE and GPL for details.
  *
  * ***** END LICENSE BLOCK ***** -->
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://global/skin/toolbar.css" type="text/css"?>
 <?xml-stylesheet href="chrome://dta/skin/manager/style.css" type="text/css" ?>
 
 <!DOCTYPE dialog [
@@ -132,11 +130,11 @@
 			<grid id="canvasGrid" />
 		</tooltip>
 		<menupopup id="popup" onpopupshowing="Tree.refreshTools(); return true;">
-			<menuitem id="info" class="menuitem-iconic" label="&infos.label;" key="kGetInfo" command="cmdGetInfo" />
-			<menuseparator />
-			<menuitem id="launch" class="menuitem-iconic" label="&launch.label;" key="kLaunch" command="cmdLaunch" />
-			<menuitem id="delete" class="menuitem-iconic" label="&delete.label;" key="kDelete" command="cmdDelete" />
-			<menuitem id="folder" class="menuitem-iconic" label="&targetdir.label;" key="kOpenFolder" command="cmdOpenFolder" />
+			<menuitem id="info" class="action menuitem-iconic" label="&infos.label;" key="kGetInfo" command="cmdGetInfo" />
+			<menuseparator class="action" />
+			<menuitem id="launch" class="action menuitem-iconic" label="&launch.label;" key="kLaunch" command="cmdLaunch" />
+			<menuitem id="delete" class="action menuitem-iconic" label="&delete.label;" key="kDelete" command="cmdDelete" />
+			<menuitem id="folder" class="action menuitem-iconic" label="&targetdir.label;" key="kOpenFolder" command="cmdOpenFolder" />
 			<menuseparator />
 			<menuitem id="play" class="menuitem-iconic" label="&resume.label;" key="kResume" command="cmdResume" />
 			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" key="kPause" command="cmdPause" />
@@ -158,16 +156,16 @@
 					<menuseparator />
 				</menupopup>
 			</menu>
-			<menuseparator />
-			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" key="kSelectAll" command="cmdSelectAll" />
-			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" key="kSelectInv" command="cmdSelectInv" />
-			<menuseparator />
+			<menuseparator class="action"/>
+			<menuitem id="listselectall" class="action menuitem-iconic" label="&selectall.label;" key="kSelectAll" command="cmdSelectAll" />
+			<menuitem id="listselectinv" class="action menuitem-iconic" label="&selectinv.label;" key="kSelectInv" command="cmdSelectInv" />
+			<menuseparator class="action" />
 			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" key="kMoveTop" command="cmdMoveTop" />
 			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" key="kMoveUp" command="cmdMoveUp" />
 			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" key="kMoveDown" command="cmdMoveDown" />
 			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" key="kMoveBottom" command="cmdMoveBottom" />
 			<menuseparator />
-			<menuitem id="mirrors" class="menuitem-iconic" label="&mirrors.label;" tooltiptext="&mirrors.tooltip;" command="cmdMirrors" />
+			<menuitem id="mirrors" class="action menuitem-iconic" label="&mirrors.label;" tooltiptext="&mirrors.tooltip;" command="cmdMirrors" />
 			<menuseparator id="mirrors-sep" />
 			<menu class="menu-iconic" label="&perdownloadspeedlimit.label;" id="perDownloadSpeedLimit" tooltiptext="&perdownloadspeedlimit.tooltip;">
 				<menupopup id="perDownloadSpeedLimitList" class="speedlimitlist-popup" command="cmdPerDownloadSpeedLimit" />
@@ -175,15 +173,15 @@
 			<menuseparator />
 			<menu id="advancedMenu" class="menu-iconic" label="&advanced.label;">
 				<menupopup id="popupmisc">
-					<menuitem id="addchunk" class="menuitem-iconic" label="&addchunk.label;" command="cmdAddChunk" />
-					<menuitem id="removechunk" class="menuitem-iconic" label="&removechunk.label;" command="cmdRemoveChunk" />
-					<menuseparator />
+					<menuitem id="addchunk" class="action menuitem-iconic" label="&addchunk.label;" command="cmdAddChunk" />
+					<menuitem id="removechunk" class="action menuitem-iconic" label="&removechunk.label;" command="cmdRemoveChunk" />
+					<menuseparator class="action"/>
 					<menuitem id="mirrors-cascaded" class="menuitem-iconic" label="&mirrors.label;" tooltiptext="&mirrors.tooltip;" command="cmdMirrors" />
 					<menuseparator id="mirrors-cascaded-sep" />
-					<menuitem id="force" class="menuitem-iconic" label="&force.label;" key="kForceStart" command="cmdForceStart" />
+					<menuitem id="force" class="action menuitem-iconic" label="&force.label;" key="kForceStart" command="cmdForceStart" />
 					<menuseparator />
-					<menuitem id="import" class="menuitem-iconic" label="&import.label;" command="cmdImport" />
-					<menuitem id="export" class="menuitem-iconic" label="&exportto.label;" command="cmdExport" />
+					<menuitem id="import" class="action menuitem-iconic" label="&import.label;" command="cmdImport" />
+					<menuitem id="export" class="action menuitem-iconic" label="&exportto.label;" command="cmdExport" />
 				</menupopup>
 			</menu>
 		</menupopup>
@@ -199,26 +197,27 @@
 		</menupopup>
 	</popupset>
 
-	<notificationbox id="notifications" flex="1" dir="reverse">
-		<stack flex="1" id="mainstack">
-			<vbox flex="1">
-				<toolbox chromedir="&locale.dir;" context="toolbarpopup" mousethrough="never">
-					<toolbar id="tools" mode="icons" persist="mode" class="toolbar-primary">
-						<toolbarspacer id="prespacer" />
-						<toolbarbutton label="&tooladddownload.label;" key="kAddUrl" id="tooladd" command="cmdAddUrl" tooltiptext="&tooladd.tooltip;" />
-						<toolbarspacer class="visible" />
-						<toolbarbutton label="&resume.label;" id="toolplay" command="cmdResume" />
-						<toolbarbutton label="&pause.label;" id="toolpause" command="cmdPause" />
-						<toolbarbutton label="&cancel.label;" id="toolcancel" command="cmdCancel" />
-						<toolbarspacer class="visible" />
-						<toolbarbutton label="&movetop.label;" id="toolmovetop" command="cmdMoveTop" />
-						<toolbarbutton label="&moveup.label;" id="toolmoveup" command="cmdMoveUp" />
-						<toolbarbutton label="&movedown.label;" id="toolmovedown" command="cmdMoveDown" />
-						<toolbarbutton label="&movebottom.label;" id="toolmovebottom" command="cmdMoveBottom" />
-						<toolbarspacer flex="1" />
-						<image chromedir="&locale.dir;" id="tooldonate" tooltiptext="&tooldonate.tooltiptext;" />
-					</toolbar>
-				</toolbox>
+  <toolbox chromedir="&locale.dir;" context="toolbarpopup" mousethrough="never">
+    <toolbar id="tools" mode="icons" persist="mode" class="toolbar-primary">
+      <toolbarspacer id="prespacer" />
+      <toolbarbutton label="&tooladddownload.label;" key="kAddUrl" id="tooladd" command="cmdAddUrl" tooltiptext="&tooladd.tooltip;" />
+      <toolbarspacer class="visible" />
+      <toolbarbutton label="&resume.label;" id="toolplay" command="cmdResume" />
+      <toolbarbutton label="&pause.label;" id="toolpause" command="cmdPause" />
+      <toolbarbutton label="&cancel.label;" id="toolcancel" command="cmdCancel" />
+      <toolbarspacer class="visible" />
+      <toolbarbutton label="&movetop.label;" id="toolmovetop" command="cmdMoveTop" />
+      <toolbarbutton label="&moveup.label;" id="toolmoveup" command="cmdMoveUp" />
+      <toolbarbutton label="&movedown.label;" id="toolmovedown" command="cmdMoveDown" />
+      <toolbarbutton label="&movebottom.label;" id="toolmovebottom" command="cmdMoveBottom" />
+      <toolbarspacer flex="1" />
+      <image chromedir="&locale.dir;" id="tooldonate" tooltiptext="&tooldonate.tooltiptext;" />
+    </toolbar>
+  </toolbox>
+  <hbox flex="1">
+    <toolbar id="actions" orient="vertical" />
+    <notificationbox id="notifications" flex="1" dir="reverse">
+	 	  <stack flex="1" id="mainstack">
 				<tree id="downloads" flex="1" hidecolumnpicker="false" context="popup" seltype="multiple" enableColumnDrag="true" style="margin:0px;" chromedir="&locale.dir;">
 					<treecols>
 						<treecol id="task" label="&download.label;" ordinal="1" flex="5" style="width: 18em;" crop="center" persist="width ordinal hidden" />
@@ -244,12 +243,12 @@
 					<treechildren id="downloadList" tooltip="tooltip">
 					</treechildren>
 				</tree>
-			</vbox>
-			<vbox align="center" pack="center" flex="1" id="loadingbox">
-				<button id="loading" disabled="true" label="&loading.label;" />
-			</vbox>
-		</stack>
-	</notificationbox>
+				<vbox align="center" pack="center" flex="1" id="loadingbox">
+					<button id="loading" disabled="true" label="&loading.label;" />
+				</vbox>
+			</stack>
+		</notificationbox>
+	</hbox>
 
 	<statusbar id="footer" chromedir="&locale.dir;">
 		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline" />
