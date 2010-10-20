@@ -1,15 +1,15 @@
 <!ENTITY lp.localedir "ltr">
-<!ENTITY language "Inglés">
-<!ENTITY transAutor "O equipo dTa">
+<!ENTITY language "Galego">
+<!ENTITY transAutor "Marcos Lans">
 <!ENTITY amo.summary "O primeiro e único xestor/acelerador de descargas interno do Firefox">
 <!ENTITY amo.description.intro "DownThemAll! ten todo o que pode precisar un xestor de descargas: incorpora un avanzado acelerador que incrementa a velocidade até 4 veces e permite pausar e continuar as descargas en calquera momento.">
 <!ENTITY amo.description.feat "DownThemAll! é rápido, fiable e doado de usar. Permite a descarga de todas as ligazóns ou imaxes contidas nunha páxina web e moitas outras cousas: pode refinar as descargas con criterios personalizados para obter unicamente o que vostede desexa. Teña o control sobre as descargas, velocidade asignada e o número de conexións paralelas en todo momento. Use metaligazóns ou engada espellos manualmente para descargar un ficheiro desde diferentes servidores ao mesmo tempo.">
 <!ENTITY amo.description.free "DownThemAll! é software aberto e gratuíto. Sen publicidade nen spyware, sen custos ocultos.">
-<!ENTITY amo.description.more "Para máis información vexa a <a href='http://www.downthemall.net/howto/features/'>nosa paxina de características</a>.">
+<!ENTITY amo.description.more "Para máis información vexa a nosa <a href='http://www.downthemall.net/howto/features/'>Páxina de características</a>.">
 <!ENTITY lp.title "Sobre DownThemAll!">
 <!ENTITY lp.welcome "Benvido a DownThemAll!">
 <!ENTITY lp.info "Bote unha ollada aos vídeos que mostran como usar DownThemAll! e aprenda máis sobre privacidade e dereitos.">
-<!ENTITY lp.moreinfo "Para máis información vexa a <a href='http://www.downthemall.net/howto/features/'>nosa paxina de características</a>.">
+<!ENTITY lp.moreinfo "Para máis información vexa a nosa paxina de características <a href='http://www.downthemall.net/howto/features/'>.">
 <!ENTITY lp.gettingstarted "Empezando">
 <!ENTITY lp.toolbar "Botóns da barra de ferramentas">
 <!ENTITY lp.privacy "Privacidade">
@@ -49,7 +49,7 @@
 <!ENTITY lp.tb.add.managerdesc "Abre a xanela do xestor.">
 <!ENTITY lp.tb.add.selector "Botón do selector de DownThemAll!">
 <!ENTITY lp.tb.add.selectordesc "Engade elementos premendo sobre eles.">
-<!ENTITY lp.tb.add.p2 "Os botóns da barra de ferramentas engádense vía <code>Visualización → Barra de ferramentas → Personalizar</code>.">
+<!ENTITY lp.tb.add.p2 "Os botóns da barra de ferramentas engádense vía  <code>Ver → Barra de ferramentas → Personalizar</code>.">
 <!ENTITY lp.tb.dnd.title "Arrastrar e soltar">
 <!ENTITY lp.tb.dnd.p1 "Pode arrastrar e soltar cada ligazón ou imaxe dentro do botón de DownThemAll! ou OneClick para descargala.">
 <!ENTITY lp.tb.dnd.p2 "A xanela do xestor tamén pode usarse para arrastrar dentro elementos para descargar.">
