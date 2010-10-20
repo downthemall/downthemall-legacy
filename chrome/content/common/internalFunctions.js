@@ -99,6 +99,29 @@ function $() {
 	return elements;
 }
 
+function $$(query, el) {
+	let rv = document.querySelectorAll(query, el || document);
+	if (rv.length == 1) {
+		return rv[0];
+	}
+	return Array.map(rv, function(e) e);
+}
+
+function $e(name, attrs, ns) {
+	let rv;
+	if (ns) {
+		rv = document.createElementNS(ns, name);
+	}
+	else {
+		rv = document.createElement(name);
+	}
+	for (let a in (attrs || {})) {
+		rv.setAttribute(a, attrs[a]);
+	}
+	return rv;
+}
+
+
 var Utils = {
 	/**
 	 * Opens up a directory picker and returns the user selected path.

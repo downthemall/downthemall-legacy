@@ -151,7 +151,37 @@ const Dialog = {
 		TEXT_QUEUED = _('queued');
 		TEXT_COMPLETE = _('complete');
 		TEXT_CANCELED = _('canceled');
-
+		
+		// Set tooltip texts for each tb button lacking one (copy label)
+		(function addTooltips() {
+			for each (let e in Array.map(document.getElementsByTagName('toolbarbutton'), function(e) e)) {
+				if (!e.hasAttribute('tooltiptext')) {
+					e.setAttribute('tooltiptext', e.getAttribute('label'));
+				}
+			}
+			$('tbp_' + $('tools').getAttribute('mode')).setAttribute('checked', "true");
+		})();
+		
+		
+		(function initActions() {
+			let tb = $('actions');
+			for each (let e in $$('#popup menuitem')) {
+				e.className += " " + e.id;
+			}
+			for each (let e in $$('#popup .action')) {
+				if (e.localName == 'menuseparator') {
+					tb.appendChild($e('toolbarseparator'));
+					continue;
+				}
+				tb.appendChild($e('toolbarbutton', {
+					id: 'act' + e.id,
+					'class': e.id,
+					command: e.getAttribute('command'),
+					tooltiptext: e.getAttribute('tooltiptext') || e.label
+				}));
+			}
+		})();
+		
 		(function initListeners() {
 			addEventListener('unload', function() Dialog.unload(), false);
 			addEventListener('close', function(evt) {
@@ -255,18 +285,7 @@ const Dialog = {
 				}
 			});
 		})();
-		
-		// Set tooltip texts for each tb button lacking one (copy label)
-		(function() {
-			for each (let e in Array.map(document.getElementsByTagName('toolbarbutton'), function(e) e)) {
-				if (!e.hasAttribute('tooltiptext')) {
-					e.setAttribute('tooltiptext', e.getAttribute('label'));
-				}
-			}
-			
-			$('tbp_' + $('tools').getAttribute('mode')).setAttribute('checked', "true");
-		})();
-		
+				
 		$('listSpeeds').limit = Prefs.speedLimit;
 		
 		(function nagging() {
