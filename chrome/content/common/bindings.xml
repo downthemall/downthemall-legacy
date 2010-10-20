@@ -374,8 +374,12 @@
 					if (!isFinite(val)) {
 						throw new Error("Provide a valid number");
 					}
-					if (this.parentNode.value != val) {
-						this.parentNode.value = val;
+					let nval = this.scale(val / 1024);
+					if (nval > 0) {
+						nval *= 1024;
+					}
+					if (this.parentNode.value != nval) {
+						this.parentNode.value = nval;
 						this.fill();
 					}
 				]]></setter>
@@ -407,17 +411,30 @@
           return item;
 				]]></body>
 			</method>
+			<method name="scale">
+				<parameter name="e"/>
+				<body><![CDATA[
+					if (e <= 0) {
+					  return -1;
+					}
+					if (e >= 1000) {
+					  return Math.round(e / 25) * 25;
+					}
+					if (e >= 400) {
+					  return Math.round(e / 5) * 5;
+					}
+					return e;
+				]]></body>
+			</method> 
 			<method name="fill">
 				<body><![CDATA[
-					function scale(e) e >= 1000 ? Math.round(e / 50) * 50 : (e >= 400 ? Math.round(e / 5) * 5 : e);
-
 					while (this.firstChild) {
 						this.removeChild(this.firstChild);
 					}
 					
 					let iv = Math.max(this.limit, -1);
 					let m = Math.round((iv > 0 ? iv : this.hint / 2) / 1024);
-					m = scale(iv > 1 ? m : 150);
+					m = this.scale(iv > 1 ? m : 150);
 					let vals = [0,1,2,5,10,20,50];
 					if (m >= 1000) {
 						vals = [0,100,200,500,1000];
@@ -434,7 +451,7 @@
 						items.push(m + v);
 					}
 					items = items
-						.map(scale)
+						.map(this.scale)
 						.filter(function(e) !((e in this) || (this[e] = null)), {}) // makes array unique
 						.sort(function(a, b) a - b);
 					let sep = document.createElement('menuseparator');
@@ -462,6 +479,9 @@
 				this.fill();
 			]]></handler>
 			<handler phase="capturing" event="command"><![CDATA[
+				if (this != event.originalTarget) {
+					return;
+				}   
 				this.parentNode.blur();
 				let nv = parseInt(event.originalTarget.value);
 				if (nv != this.limit) {
