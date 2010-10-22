@@ -42,7 +42,7 @@
 <!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
 <!ENTITY lp.tut.oneclick1 "Once you made your initial download another item will be available: DownThemAll! OneClick. You may use this to download directly using the previous settings skipping the download adding and/or selection dialog.">
 <!ENTITY lp.tut.oneclick2 "Hence OneClick enables you to rapidly queue a lot of links.">
-<!ENTITY lp.tut.oneclickn "After using the Clear Private Data feature in Firefox the OneClick feature won't be available until you start a regular DownThemAll! download again.">
+<!ENTITY lp.tut.oneclickn "After using the Clear Recent History feature in Firefox the OneClick feature won't be available until you start a regular DownThemAll! download again.">
 
 <!ENTITY lp.tb.intro "DownThemAll! offers some toolbar buttons that give you a convenient way to access DownThemAll! features.">
 <!ENTITY lp.tb.add.title "Adding and using toolbar buttons">
