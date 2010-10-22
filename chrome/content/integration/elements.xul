@@ -90,7 +90,7 @@
 			<menuitem class="menuitem-iconic dtaturbo" id="dtaCtxSaveFormT" label="&dta-form-save-turbo.label;" />
 
 			<menuseparator class="thin" id="dtaCtxSepPref" />
-			<menuitem class="menuitem-iconic" id="dtaCtxPref" label="&dta-pref.label;" />
+			<menuitem class="menuitem-iconic dtaprefs" id="dtaCtxPref" label="&dta-pref.label;" />
 			<menuseparator class="thin" id="dtaCtxSepBack" />
 		</menupopup>
 	</menu>
