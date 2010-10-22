@@ -1,0 +1,18 @@
+<!ENTITY title "Επιλέξτε">
+<!ENTITY filters.caption "Φίλτρα">
+<!ENTITY additional.caption "Γρήγορο φιλτράρισμα">
+<!ENTITY additional.tip "Φίλτρα κειμένου: Μπορείτε να ορίσετε πολλαπλά φίλτρα κειμένου ταυτόχρονα, χρησιμοποιώντας κόμματα σαν διαχωριστικά">
+<!ENTITY regex.label "Καν. έκφρ.">
+<!ENTITY filter.tip "Πληκτρολογήστε τα φίλτρα κειμένου εδώ (παραδείγματα στο αναδυόμενο)">
+<!ENTITY status.label "Αφού επιλέξετε δεσμούς, κάντε κλικ στο κουμπί «Εκκίνηση»">
+<!ENTITY menu.mask.title "Μετατροπή μάσκας μετονομασίας...">
+<!ENTITY menu.check.label "Εμπλοκή επιλεγμένων στοιχείων">
+<!ENTITY menu.uncheck.label "Απεμπλοκή επιλεγμένων στοιχείων">
+<!ENTITY menu.toggle.label "Εναλλαγή εμπλοκής για τα επιλεγμένα στοιχεία">
+<!ENTITY tab.links.label "Δεσμοί">
+<!ENTITY tab.pics.label "Εικόνες και ενσωματωμένα">
+<!ENTITY header.desc.label "Περιγραφή">
+<!ENTITY selectfiltered.label "Επιλογή φιλτραρισμένων">
+<!ENTITY disableother.label "Απενεργοποίηση άλλων φίλτρων">
+<!ENTITY disableother.tooltip "Απενεργοποίηση των άλλων φίλτρων και χρήση μόνο γρήγορου φιλτραρίσματος. (Αυτή η ρύθμιση δεν απομνημονεύεται προς το παρόν)">
+<!ENTITY resname.value "όνομα πηγής">

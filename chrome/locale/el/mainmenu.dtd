@@ -1,0 +1,5 @@
+<!ENTITY fileMenu.label "Αρχείο">
+<!ENTITY fileMenu.accesskey "Α">
+<!ENTITY newNavigatorCmd.label "Νέο παράθυρο του περιηγητή">
+<!ENTITY tabCmd.label "Νέα καρτέλα του περιηγητή">
+<!ENTITY closeWindow.label "Κλείσιμο του DownThemAll!">
