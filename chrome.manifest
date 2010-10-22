@@ -38,6 +38,8 @@ category profile-after-change @downthemall.net/filtermanager;2 @downthemall.net/
 overlay chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager/tooltip.xul
 overlay chrome://dta/content/dta/manager/info.xul chrome://dta/content/dta/manager/tooltip.xul
 override chrome://dta/skin/preferences/preferences-toolkit.png chrome://browser/skin/preferences/Options.png application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+override chrome://dta/skin/integration/style.css chrome://dta/skin/integration/stylesvg.css application={ec8030f7-c20a-464f-9b0e-13a3a9e97384} appversion>=4.0b8pre
+override chrome://dta/skin/common/appspecific.css chrome://dta/skin/common/appspecificfx4.css application={ec8030f7-c20a-464f-9b0e-13a3a9e97384} appversion>=4.0b8pre
 # work-around bugs in loadOverlay preventing seamonkey integration otherwise
 overlay chrome://dta/content/preferences/prefs.xul chrome://dta/content/preferences/interfacePane.xul
 style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/integration/style.css
