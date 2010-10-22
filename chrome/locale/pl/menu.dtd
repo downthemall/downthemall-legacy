@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Ustawienia">
+<!ENTITY dta-about.label "dTa! - informacje">
+<!ENTITY dta-manager-button "Menedżer pobrań">
+<!ENTITY dta-selector-button "Selektor OneClick!">
+<!ENTITY dta-tb-all.label "Wszystkie karty">
+<!ENTITY dta-tb-single.label "Aktywna karta">
+<!ENTITY dta-selection.label "Wybór DownThemAll!…">
+<!ENTITY dta-selection-turbo.label "Wybór dTa OneClick…">
+<!ENTITY dta-regular.label "DownThemAll!…">
+<!ENTITY dta-regular-turbo.label "dTa OneClick…">
+<!ENTITY dta-img-save.label "Zapisz obrazki za pomocą DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Zapisz obrazki za pomocą dTa OneClick!">
+<!ENTITY dta-video-save.label "Zapisz wideo za pomocą DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Zapisz wideo za pomocą dTa OneClick!">
+<!ENTITY dta-audio-save.label "Zapisz audio za pomocą DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Zapisz audio za pomocą dTa OneClick!">
+<!ENTITY dta-link-save.label "Zapisz odnośnik za pomocą DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Zapisz odnośnik za pomocą dTa OneClick!">
+<!ENTITY dta-form-save.label "Zapisz formularz za pomocą DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Zapisz formularz za pomocą dTa OneClick!">

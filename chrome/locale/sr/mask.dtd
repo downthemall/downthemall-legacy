@@ -1,0 +1,23 @@
+<!ENTITY mask.title "Ознаке преименовања">
+<!ENTITY mask.name "Назив датотеке">
+<!ENTITY mask.ext "Врста датотеке">
+<!ENTITY mask.url "Основна адреса">
+<!ENTITY mask.curl "Пуна адреса">
+<!ENTITY mask.flatcurl "Пуна кратка адреса">
+<!ENTITY mask.num "Растући број">
+<!ENTITY mask.inum "Број ставке">
+<!ENTITY mask.hh "сати">
+<!ENTITY mask.mm "минути">
+<!ENTITY mask.ss "секунде">
+<!ENTITY mask.d "дан">
+<!ENTITY mask.m "месец">
+<!ENTITY mask.y "година">
+<!ENTITY mask.subdirs "Поддиректоријуми адресе">
+<!ENTITY mask.flatsubdirs "Поддиректоријуми кратке адресе">
+<!ENTITY mask.text "Опис везе">
+<!ENTITY mask.flattext "Опис кратке адресе">
+<!ENTITY mask.refer "Референтна адреса">
+<!ENTITY mask.qstring "Ниска упита">
+<!ENTITY mask.flattitle "Наслов повезан са везом">
+<!ENTITY mask.tip "Кликните или превуците на образац за преименовање">
+<!ENTITY mask.open.tip "Таблица са ознакама за преименовање">
