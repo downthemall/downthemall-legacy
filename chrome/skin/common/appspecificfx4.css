@@ -1,0 +1,10 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+statusbarpanel#preferences {
+	list-style-image: url(prefs.svg);
+}
+statusbarpanel#preferences .statusbarpanel-icon {
+	width: 16px;
+	height: 16px;
+	padding-left: 1px;
+}

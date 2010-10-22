@@ -1,0 +1,6 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+statusbarpanel#preferences {
+	list-style-image: url(smalltools.png);
+	-moz-image-region: rect(0px, 64px, 16px, 48px);	
+}
