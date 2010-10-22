@@ -8,7 +8,7 @@
 <!ENTITY amo.description.more "更多信息请查看我们的 <a href='http://www.downthemall.net/howto/features/'>产品特点页面</a>。">
 <!ENTITY lp.title "关于DownThemAll!">
 <!ENTITY lp.welcome "欢迎使用DownThemAll!">
-<!ENTITY lp.info "查看视频了解如何使用DownThemAll!并了解更多关于隐私与您的权限的内容">
+<!ENTITY lp.info "查看视频了解如何使用DownThemAll!以及更多关于隐私与您的权限的内容">
 <!ENTITY lp.moreinfo "更多信息请查看我们的 <a href='http://www.downthemall.net/howto/features/'>产品特点页面</a>。">
 <!ENTITY lp.gettingstarted "开始使用">
 <!ENTITY lp.toolbar "工具栏按钮">
@@ -32,7 +32,7 @@
 <!ENTITY lp.tut.seldone "一但你选择完要下载的文件，点击开始或队列。">
 <!ENTITY lp.tut.batchestitle "批量下载">
 <!ENTITY lp.tut.batches1 "许多用户想要批量下载连续的文件。DownThemAll!让您十分容易地指定批量下载，如视频所展示。">
-<!ENTITY lp.tut.batches2 "基本语法：<code>[开始:结果]</code>或<code>[开始:结束:步长]</code>，<code>开始</code>和<code>结束</code>可以为数字或简单的字母。<code>步长</code>定义增量步长，如果省略，默认为1。">
+<!ENTITY lp.tut.batches2 "基本语法：<code>[开始:结束]</code>或<code>[开始:结束:步长]</code>，<code>开始</code>和<code>结束</code>可以为数字或简单的字母。<code>步长</code>定义增量步长，如果省略，默认为1。">
 <!ENTITY lp.tut.batches3 "例如您想下载从001到100的图像，您可以将链接改为：<code>http://example.org/[001:100].jpg</code>">
 <!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
 <!ENTITY lp.tut.oneclick1 "一但您完成第一次下载，将有另一项功能可以使用：DownThemAll! OneClick。您可以使用上一次的下载设置直接下载，跳过增加下载或选择窗口。">
