@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Preferencias...">
+<!ENTITY dta-about.label "Acerca de ...">
+<!ENTITY dta-manager-button "Administrador de dTa!">
+<!ENTITY dta-selector-button "Selector dTa">
+<!ENTITY dta-tb-all.label "Todas las pestañas">
+<!ENTITY dta-tb-single.label "Pestaña actual">
+<!ENTITY dta-selection.label "Selección de DownThemAll!">
+<!ENTITY dta-selection-turbo.label "Selección de dTa OneClick...">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa OneClick...">
+<!ENTITY dta-img-save.label "Guardar imagen con DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Empezar a guardar la imagen con dTa OneClick!">
+<!ENTITY dta-video-save.label "Guardar vídeo con DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Empezar a guardar el vídeo con dTa OneClick!">
+<!ENTITY dta-audio-save.label "Guardar audio con DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Empezar a guardar el audio con dTa OneClick!">
+<!ENTITY dta-link-save.label "Guardar enlace con DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Empezar a guardar el enlace con dTa OneClick!">
+<!ENTITY dta-form-save.label "Guardar el formulario de destino con DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Empezar a guardar el formulario de destino con dTa OneClick!">

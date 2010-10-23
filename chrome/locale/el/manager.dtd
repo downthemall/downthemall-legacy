@@ -6,10 +6,10 @@
 <!ENTITY moveup.label "Πάνω">
 <!ENTITY movedown.label "Κάτω">
 <!ENTITY task.label "Όνομα/URL">
-<!ENTITY per.label "Ποσοστό &#37;">
+<!ENTITY per.label "&#37;">
 <!ENTITY pct.label "Πρόοδος">
 <!ENTITY dim.label "Μέγεθος">
-<!ENTITY time.label "Υπολογισμένος χρόνος">
+<!ENTITY time.label "Χρόνος">
 <!ENTITY parts.label "Τμήματα">
 <!ENTITY speed.label "Ταχύτητα">
 <!ENTITY infoURLTitle.value "Από:">

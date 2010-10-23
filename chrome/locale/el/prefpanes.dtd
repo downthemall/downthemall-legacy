@@ -15,7 +15,7 @@
 <!ENTITY manager "Διαχειριστής dTa">
 <!ENTITY mainpane.label "Γενικά">
 <!ENTITY mainpane.defaults.caption "Αρχικές ρυθμίσεις">
-<!ENTITY mainpane.defaults.desc "Ο κατάλογος αποθήκευσης λήψεων, η μάσκα μετονομασίας και τα φίλτρα που χρησιμοποιεί το OneClick!, μπορούν να ρυθμιστούν μέσα από τον διάλογο επιλογής του DownThemAll!.">
+<!ENTITY mainpane.defaults.desc "Ο κατάλογος αποθήκευσης, η μάσκα μετονομασίας και τα φίλτρα του OneClick!, μπορούν να ρυθμιστούν από τον διάλογο επιλογής του DownThemAll!.">
 <!ENTITY mainpane.rename.caption "Αν υπάρχει ήδη το όνομα αρχείου:">
 <!ENTITY mainpane.rename.label "Μετονομασία">
 <!ENTITY mainpane.overwrite.label "Αντικατάσταση">
@@ -30,8 +30,8 @@
 <!ENTITY mainpane.alertnone.label "Να μην προβάλλετε ειδοποίηση">
 <!ENTITY mainpane.sounddone.label "Αναπαραγωγή ενός ήχου όταν ολοκληρωθούν οι λήψεις">
 <!ENTITY mainpane.closedta.label "Κλείσιμο του DownThemAll όταν ολοκληρωθούν οι λήψεις">
-<!ENTITY mainpane.settime.label "Ορισμός χρονοσήμανσης του αρχείου σύμφωνα με τον χρόνο τελευταίας μεταβολής του (στο διακομιστή) ή με το χρόνο που προστέθηκε στην ουρά αναμονής.">
-<!ENTITY mainpane.rememberoneclick.label "Να απομνημονεύεται από το dTa OneClick αν θα έχει εφαρμογή σε όλες ή μόνο στην τρέχουσα καρτέλα.">
+<!ENTITY mainpane.settime.label "Χρονοσήμανση αρχείων με το χρόνο τελευταίας μεταβολής (στο διακομιστή) ή με το χρόνο που προστέθηκε στις λήψεις.">
+<!ENTITY mainpane.rememberoneclick.label "Απομνημόνευση επιλογής για την εφαρμογή dTa OneClick σε όλες ή μόνο στην τρέχουσα καρτέλα.">
 <!ENTITY mainpane.confirmremove.label "Επιβεβαίωση για την αφαίρεση λήψεων">
 <!ENTITY mainpane.textlinks.label "Αναγνώριση δεσμών σε κείμενο">
 <!ENTITY mainpane.listsniffedvideos.label "Εγγραφή και προβολή σε λίστα των βίντεο (Flash)">
@@ -91,7 +91,7 @@
 <!ENTITY advancedpane.tempdir.label "Χρήση αυτού του καταλόγου:">
 <!ENTITY advancedpane.permissions.caption "Αρχικά δικαιώματα αρχείων">
 <!ENTITY advancedpane.permissions.group "Ομάδα">
-<!ENTITY advancedpane.permissions.everybody "Όλοι">
+<!ENTITY advancedpane.permissions.everybody "Άλλοι">
 <!ENTITY advancedpane.permissions.read "δικαίωμα ανάγνωσης">
 <!ENTITY advancedpane.permissions.write "δικαίωμα εγγραφής">
 <!ENTITY advancedpane.loadendfirst.label "Φόρτωση των τελευταίων Kb πρώτα">
@@ -107,7 +107,7 @@
 <!ENTITY uipane.context.caption "Μενού περιεχομένου">
 <!ENTITY uipane.tools.caption "Μενού εργαλείων">
 <!ENTITY uipane.compact.label "Χρήση συμπαγούς μενού">
-<!ENTITY uipane.hide.label "Απόκρυψη αυτού του μενού">
+<!ENTITY uipane.hide.label "Απόκρυψη από το μενού">
 <!ENTITY uipane.showtooltip.label "Προβολή συμβουλών εργαλείων λήψης">
 <!ENTITY uipane.manager.caption "Παράθυρο διαχειριστή">
 <!ENTITY uipane.startminimized.label "Ελαχιστοποιημένη εκκίνηση">

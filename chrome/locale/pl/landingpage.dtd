@@ -11,7 +11,7 @@
 <!ENTITY lp.info "Obejrzyj filmy wido przedstawiające, jak używać DownThemAll! i dowiedzieć się więcej o zachowaniu prywatności i swoich prawach.">
 <!ENTITY lp.moreinfo "Więcej informacji uzyskasz na naszej stronie z <a href='http://www.downthemall.net/howto/features/'>opisem funkcji</a>.">
 <!ENTITY lp.gettingstarted "Wprowadzenie">
-<!ENTITY lp.toolbar "Przyciski paska narzędziowego">
+<!ENTITY lp.toolbar "Przyciski narzędziowe">
 <!ENTITY lp.privacy "Prywatność">
 <!ENTITY lp.yourrights "Twoje prawa">
 <!ENTITY lp.contact "Kontakt">
@@ -30,14 +30,14 @@
 <!ENTITY lp.tut.seltypepics "Karta Obrazki i media zawiera wszystkie obrazki i inne media wyświetlane na stronie.">
 <!ENTITY lp.tut.selgalleries "Pełnowymiarowe obrazki często są tylko połączone odnośnikiem ze stronami galerii, więc można je znaleźć na karcie Odnośniki.">
 <!ENTITY lp.tut.seldone "Po zaznaczeniu plików do pobrania naciśnij przycisk Pobierz lub Dodaj jako wstrzymane.">
-<!ENTITY lp.tut.batchestitle "Pobieranie grup">
-<!ENTITY lp.tut.batches1 "Wielu użytkowników chce pobierać grupy kolejno ponumerowanych plików. DownThemAll!, jak pokazano na wideo, umożliwia łatwe określanie grup.">
+<!ENTITY lp.tut.batchestitle "Pobieranie pakietów">
+<!ENTITY lp.tut.batches1 "Wielu użytkowników chce pobierać pakiety kolejno ponumerowanych plików. DownThemAll!, jak pokazano na wideo, umożliwia łatwe określanie pakietów.">
 <!ENTITY lp.tut.batches2 "Podstawowa składnia to: <code>[start:end]</code> lub <code>[start:end:step]</code>, gdzie zarówno <code>start</code>, jak i <code>end</code> mogą być liczbą lub pojedynczym znakiem. Parametr <code>step</code> definiuje szerokość kroku i przybiera wartość 1 jeśli zostanie pominięty.">
 <!ENTITY lp.tut.batches3 "Na przykład jeśli chcesz pobrać obrazki od 001 do 100, możesz zmienić URL na <code>http://example.org/[001:100].jpg</code>">
 <!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
 <!ENTITY lp.tut.oneclick1 "Po dokonaniu pierwszego pobrania będzie dostępny inny element: DownThemAll! OneClick. Można użyć go, pomijając okno dialogowe dodawania i wyboru, do bezpośredniego pobrania z zachowaniem poprzednich ustawień.">
 <!ENTITY lp.tut.oneclick2 "OneClick pozwala na szybkie kolejkowanie wieku odnośników.">
-<!ENTITY lp.tut.oneclickn "Po użyciu funkcji Firefoksa Wyczyść prywatne dane, funkcja OneClick nie będzie dostępna do czasu ponownego uruchomienia DownThemAll!">
+<!ENTITY lp.tut.oneclickn "Po użyciu funkcji Firefoksa Wyczyść historię przeglądania, funkcja OneClick nie będzie dostępna do czasu ponownego uruchomienia DownThemAll!">
 <!ENTITY lp.tb.intro "DownThemAll! oferuje kilka przycisków narzędziowych umożliwiających wygodny sposób dostępu do funkcji DownThemAll!">
 <!ENTITY lp.tb.add.title "Dodawanie i używanie przycisków narzędziowych">
 <!ENTITY lp.tb.add.p1 "DownThemAll! ma cztery przyciski narzędziowe ułatwiające znalezienie i kolejkowanie pobrań:">
