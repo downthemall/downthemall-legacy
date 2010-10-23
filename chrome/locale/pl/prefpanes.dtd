@@ -30,7 +30,7 @@
 <!ENTITY mainpane.alertnone.label "nie powiadamiaj">
 <!ENTITY mainpane.sounddone.label "Odtwarzaj dźwięk po zakończeniu pobierania">
 <!ENTITY mainpane.closedta.label "Zamykaj DownThemAll! po zakończeniu pobierania">
-<!ENTITY mainpane.settime.label "Ustaw czas pliku na ostatnio zmodyfikowany czas (serwera) lub czas kolejki">
+<!ENTITY mainpane.settime.label "Ustaw ostatnio zmodyfikowany czas pliku na czas serwera lub czas kolejki">
 <!ENTITY mainpane.rememberoneclick.label "dTa OneClick! ma zapamiętać czy ma to zastosowanie do wszystkich kart, czy do aktywnej karty">
 <!ENTITY mainpane.confirmremove.label "Użytkownik musi potwierdzać usunięcie pobrań">
 <!ENTITY mainpane.textlinks.label "Rozpoznaj odnośniki tekstowe">

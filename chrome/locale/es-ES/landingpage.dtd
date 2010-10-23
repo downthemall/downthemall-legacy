@@ -6,7 +6,7 @@
 <!ENTITY amo.description.feat "DownThemAll es rápido, fiable y fácil de usar. Le permite descargar todos los enlaces o imágenes de una página web, y muchas otras cosas: puede optimizar sus descargas mediante criterios completamente personalizables para obtener sólo lo que realmente quiere descargar. En todo momento tendrá pleno control sobre las descargas, su velocidad y el número de conexiones en paralelo. Podrá usar metaenlaces o añadir mirrors de forma manual para descargar un archivo de varios servidores al mismo tiempo.">
 <!ENTITY amo.description.free "DownThemAll es freeware y código abierto. No es, ni contiene, Adware ni Spyware, ni tiene ningún coste oculto.">
 <!ENTITY amo.description.more "Para más información puede consultar nuestra <a href='http://www.downthemall.net/howto/features/'>página de características</a>.">
-<!ENTITY lp.title "DownThemAll!">
+<!ENTITY lp.title "Acerca de DownThemAll!">
 <!ENTITY lp.welcome "Bienvenido a DownThemAll!">
 <!ENTITY lp.info "Eche un vistazo a los vídeos que muestran como usar DownThemAll! y obtenga más información sobre su privacidad y sus derechos">
 <!ENTITY lp.moreinfo "Para más información visite nuestra <a href='http://www.downthemall.net/howto/features/'>página de características</a>.">
@@ -27,7 +27,7 @@
 <!ENTITY lp.tut.seloptfast "También puede introducir su propio filtro en la ventana desplegable de filtrado rápido, por ejemplo <code>*.pdf,*.doc</code>, o una expresión regular.">
 <!ENTITY lp.tut.seltypes "La ventana de selección contiene dos pestañas, para dos tipos diferentes de descargas:">
 <!ENTITY lp.tut.seltypelinks "La pestaña Enlaces contiene todos los enlaces descargables hallados en la página">
-<!ENTITY lp.tut.seltypepics "La pestaña Imágenes y objetos incrustados contiene todas las imágenes y archivos multimedia mostrados por la página">
+<!ENTITY lp.tut.seltypepics "La pestaña Imágenes y multimedia contiene todas las imágenes y archivos multimedia mostrados por la página">
 <!ENTITY lp.tut.selgalleries "Las imágenes a tamaño real a menudo están enlazadas a galerías externas; en ese caso aparecerán en la pestaña Enlaces">
 <!ENTITY lp.tut.seldone "Una vez haya seleccionado los archivos a descargar pulse Iniciar o En pausa">
 <!ENTITY lp.tut.batchestitle "Descargar lotes">
