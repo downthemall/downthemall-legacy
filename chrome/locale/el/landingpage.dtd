@@ -1,5 +1,5 @@
 <!ENTITY lp.localedir "ltr">
-<!ENTITY language "Απόδοση">
+<!ENTITY language "Ελληνική">
 <!ENTITY transAutor "Sonickydon">
 <!ENTITY amo.summary "Ο πρώτος και μόνος διαχειριστής/επιταχυντής λήψεων που ενσωματώνεται στον Firefox!">
 <!ENTITY amo.description.intro "To DownThemAll έχει ό,τι χρειάζεται ένας διαχειριστής λήψεων: με εξελιγμένο επιταχυντή που αυξάνει την ταχύτητα ως και 4 φορές και δυνατότητα παύσης και συνέχισης των λήψεων οποιαδήποτε στιγμή.">
@@ -70,7 +70,7 @@
 <!ENTITY lp.yr.usagedist "Να αναδιανείμετε το DownThemAll!, με ή χωρίς τροποποιήσεις">
 <!ENTITY lp.yr.usagemore "Δείτε τις άδειες για περισσότερες πληροφορίες.">
 <!ENTITY lp.languagetitle "Μετάφραση">
-<!ENTITY lp.translation.by "στα Ελληνικά από τον">
+<!ENTITY lp.translation.by "απόδοση του κειμένου και της επέκτασης από τον">
 <!ENTITY lp.yr.licensetitle "Πνευματικά δικαιώματα και άδεια χρήσης">
 <!ENTITY lp.yr.licensed "Το DownThemAll! εκδίδεται υπό την άδεια <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Δείτε το αρχείο GPL. Η άδεια αυτή έχει ισχύ σε όλα τα αρχεία πηγαίου κώδικα.">
 <!ENTITY lp.yr.morelicense "Ορισμένα αρχεία μπορεί να έχουν διαφορετικές άδειες. Δείτε τα αντίστοιχα αρχεία των αποθετηρίων που είναι διαθέσιμα στο <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Πολλά αρχεία διέπονται από την τριπλή άδεια MPL 1.1/GPL 2.0/LGPL 2.1· δείτε τα αρχεία MPL, GPL, LGPL αντιστοίχως.">

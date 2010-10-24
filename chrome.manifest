@@ -14,6 +14,7 @@ locale dta de chrome/locale/de/
 locale dta el chrome/locale/el/
 locale dta es-ES chrome/locale/es-ES/
 locale dta gl chrome/locale/gl/
+locale dta nl chrome/locale/nl/
 locale dta pl chrome/locale/pl/
 locale dta sr chrome/locale/sr/
 locale dta zh-CN chrome/locale/zh-CN/
