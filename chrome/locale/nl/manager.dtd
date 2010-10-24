@@ -1,0 +1,55 @@
+<!ENTITY tooladd.label "Webadres toevoegen">
+<!ENTITY tooladd.tooltip "Handmatig een webadres aan DownThemAll! toevoegen">
+<!ENTITY tooldonate.tooltiptext "Help mee DownThemAll! te verbeteren. Overweeg het doen van een kleine donatie!">
+<!ENTITY movetop.label "Bovenkant">
+<!ENTITY movebottom.label "Onderkant">
+<!ENTITY moveup.label "Omhoog">
+<!ENTITY movedown.label "Omlaag">
+<!ENTITY task.label "Webadres/Naam">
+<!ENTITY per.label "Voltooiing">
+<!ENTITY pct.label "Voortgang">
+<!ENTITY dim.label "Grootte">
+<!ENTITY time.label "Rest. tijd">
+<!ENTITY parts.label "Delen">
+<!ENTITY speed.label "Snelheid">
+<!ENTITY infoURLTitle.value "Van:">
+<!ENTITY infoSizeTitle.value "Grootte:">
+<!ENTITY infoMultiple.value "Meervoudige items">
+<!ENTITY elapsedTitle.value "Verstreken:">
+<!ENTITY remainingTitle.value "Overblijvend:">
+<!ENTITY currentSpeedTitle.value "Huidige snelheid:">
+<!ENTITY avgSpeedTitle.value "Gem. snelheid:">
+<!ENTITY path.label "Pad opslaan">
+<!ENTITY mask.label "Masker voor te hernoemen">
+<!ENTITY hash.label "Controlegetal">
+<!ENTITY infos.label "Download info">
+<!ENTITY launch.label "Bestand openen">
+<!ENTITY delete.label "Bestand(en) verwijderen">
+<!ENTITY targetdir.label "Doelmap openen">
+<!ENTITY pause.label "Pauzeren">
+<!ENTITY resume.label "Hervatten">
+<!ENTITY cancel.label "Annuleren">
+<!ENTITY removemenu.label "Downloads verwijderen">
+<!ENTITY removeselected.label "Geselcteerde verwijderen">
+<!ENTITY removeCompleted.label "Voltooide taken uit lijst verwijderen">
+<!ENTITY removeAll.label "Alles verwijderen">
+<!ENTITY removeDupes.label "Duplicaten verwijderen">
+<!ENTITY removeGone.label "Verwijderde bestanden wissen">
+<!ENTITY advanced.label "Geavanceerd">
+<!ENTITY addchunk.label "Deel toevoegen">
+<!ENTITY removechunk.label "Deel verwijderen">
+<!ENTITY force.label "Starten forceren">
+<!ENTITY import.label "Vanuit bestand importeren">
+<!ENTITY export.label "Geselecteerde export">
+<!ENTITY options.caption "Opties">
+<!ENTITY loading.label "Laden...">
+<!ENTITY restore.label "Herstelln">
+<!ENTITY close.label "Sluiten">
+<!ENTITY speedlimit.label "Limiet:">
+<!ENTITY speedlimit.tooltip "Snelheidslimiet gewijzigd. De lijst wordt dynamisch bijgewerkt.">
+<!ENTITY perdownloadspeedlimit.label "Snelheid limiet">
+<!ENTITY perdownloadspeedlimit.tooltip "Snelheidslimiet gewijzigd. De algemene snelheidslimiet zal gehandhaafd blijven.">
+<!ENTITY mirrors.label "Mirrors beheren">
+<!ENTITY mirrors.tooltip "Download mirrors locaties beheren">
+<!ENTITY toolbar.icons "Pictogrammen gebruiken">
+<!ENTITY toolbar.full "Pictogrammen en tekst gebruiken">
