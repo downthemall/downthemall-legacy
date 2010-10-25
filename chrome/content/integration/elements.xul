@@ -125,7 +125,7 @@
 			<menuitem id="dtaToolsManager" label="&dta-manager-button;" class="menuitem-iconic dtamanager" />
 			<menuseparator id="dtaToolsSep" />
 			<menuitem id="dtaToolsPrefs" label="&dta-pref.label;" class="menuitem-iconic dtaprefs" />
-			<menuitem id="dtaToolsAbout" label="&dta-about.label;" class="menuitem-iconic" />
+			<menuitem id="dtaToolsAbout" label="&dta-about.label;" class="menuitem-iconic dtaToolsAbout" />
 		</menupopup>
 	</menu>
 </overlay>
