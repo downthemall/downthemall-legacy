@@ -33,7 +33,7 @@
 <!ENTITY lp.tut.batchestitle "Descarramento em lotes">
 <!ENTITY lp.tut.batches1 "Muitos utilizadores querem descarregar ficheiros em lote numerados sequencialmente. O DownThemAll! permite que especifique lotes muito facilmente como mostra o video.">
 <!ENTITY lp.tut.batches2 "A sintaxe básica é: <code>[início:fim]</code> ou <code>[início:fim:passo]</code> onde ambos <code>início</code> e <code>fim</code> podem ser ambos um número ou um simples caractér. <code>passo</code> define a largura do passo e é simplesmente 1 se omitido.">
-<!ENTITY lp.tut.batches3 "Por exemplo se quiser descarregar imagens de 001 a 100 pode modificar o URL para: <code>http://example.org/[001:100].jpg</code> /[001:100].jpg</code>">
+<!ENTITY lp.tut.batches3 "Por exemplo se quiser descarregar imagens de 001 a 100 pode modificar o URL para: <code>http://example.org/[001:100].jpg</code>">
 <!ENTITY lp.tut.oneclicktitle "DownThemAll! UmClique">
 <!ENTITY lp.tut.oneclick1 "Uma vez feito o seu descarregamento inicial outro item ficará disponível: O DownThemAll! UmClique. Pode usar isto para descarregar directamente usando as definições anteriores, saltando o diálogo adicionar e/ou seleccionar.">
 <!ENTITY lp.tut.oneclick2 "Portanto o UmCLique permite-lhe rapidamente enfileirar muitos links.">
