@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Preferências">
+<!ENTITY dta-about.label "sobre dTa!">
+<!ENTITY dta-manager-button "Gestor">
+<!ENTITY dta-selector-button "Seleccionador dTa UmCLique!">
+<!ENTITY dta-tb-all.label "Todos os separadores">
+<!ENTITY dta-tb-single.label "Separador Actual">
+<!ENTITY dta-selection.label "Selecção DownThemAll!...">
+<!ENTITY dta-selection-turbo.label "Selecção dTa UmCLique!...">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa UmClique...">
+<!ENTITY dta-img-save.label "Salvar imagem com o DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Começar a salvar imagem com o dTa UmClique!">
+<!ENTITY dta-video-save.label "Salvar video com o DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Começar a salvar video com o  dTa UmClique!">
+<!ENTITY dta-audio-save.label "Salvar Audio com o DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Começar a salvar Audio com o dTa UmClique!">
+<!ENTITY dta-link-save.label "Salvar Link com o DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Começar a salvar Link com o dTa UmClique!">
+<!ENTITY dta-form-save.label "Guardar o destino de formulários com o DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Começar a guardar o destino de formulários com o dTa OneClick!">
