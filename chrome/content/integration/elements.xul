@@ -110,7 +110,7 @@
 			<menuitem id="dtaToolsPrefs" oncommand="DTA_showPreferences();"
 				label="&dta-pref.label;" class="menuitem-iconic dtaprefs" />
 			<menuitem id="dtaToolsAbout" oncommand="window.openDialog('chrome://dta/content/about/about.xul','_blank','chrome,centerscreen,modal');"
-				label="&dta-about.label;" class="menuitem-iconic" />
+				label="&dta-about.label;" class="menuitem-iconic dtaToolsAbout" />
 		</menupopup>
 	</menu>
 </overlay>
