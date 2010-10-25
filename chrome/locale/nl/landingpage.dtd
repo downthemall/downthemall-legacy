@@ -24,15 +24,15 @@
 <!ENTITY lp.tut.seloptions "In het selectie venster zijn verschillende manieren mogelijk om de te downloaden bestanden te selecteren:">
 <!ENTITY lp.tut.selopthand "De gewenste koppelingen kunnen handmatig worden geselecteerd.">
 <!ENTITY lp.tut.seloptfilters "De ingebouwde of eigen filters kunnen gebruikt worden om bijv. alle gekoppelde afbeeldingen te downloaden.">
-<!ENTITY lp.tut.seloptfast "Aanvullend kan er een eigen filter ingevoerd worden in het Snel filteren veld, bijv. <code>*.pdf,*.doc</code> of zelf een reguliere expressie.">
-<!ENTITY lp.tut.seltypes "Het selectie venster bevat 2 tabbladen voor 2 verschillende type downloads:">
+<!ENTITY lp.tut.seloptfast "Aanvullend kan er een eigen filter ingevoerd worden in het Snel filteren veld, bijv. <code>*.pdf,*.doc</code> of zelfs een reguliere expressie.">
+<!ENTITY lp.tut.seltypes "Het selectie venster bevat 2 tabbladen voor 2 verschillende type downloads">
 <!ENTITY lp.tut.seltypelinks "Het Koppelingen tabblad bevat alle te downloaden koppelingen die op de pagina gevonden zijn">
-<!ENTITY lp.tut.seltypepics "En het Afbeeldingen en Media tabblad bevat all afbeeldingen en overige media zoals deze op de pagina worden weergegeven.">
+<!ENTITY lp.tut.seltypepics "Het Afbeeldingen en Media tabblad bevat alle afbeeldingen en overige media, zoals deze op de pagina worden weergegeven.">
 <!ENTITY lp.tut.selgalleries "Afbeeldingen op volledige grootte zijn meestal gekoppeld vanuit pagina's met galerijen, zodat deze onder het Koppelingen tabblad gevonden kunnen worden.">
 <!ENTITY lp.tut.seldone "Nadat de te downloaden bestanden geselecteerd zijn, kan op Starten of Gepauzeerd toevoegen geklikt worden.">
 <!ENTITY lp.tut.batchestitle "Verzamelingen downloaden">
 <!ENTITY lp.tut.batches1 "Veel gebruikers willen verzamelingen van opeenvolgend genummerde bestanden downloaden. Met DownThemAll! kunnen vrij eenvoudig verzamelingen gespecificeerd worden, zoals de video laat zien.">
-<!ENTITY lp.tut.batches2 "De basis syntax is: <code>[start:end]</code> or <code>[start:end:step]</code> waar zowel de <code>start</code> als de <code>end</code> zowel een nummer als een eenvoudig karakter kunnen zijn. <code>step</code> definieert de stap breedte en is gewoon 1 als deze wordt weggelaten.">
+<!ENTITY lp.tut.batches2 "De basis syntax is: <code>[start:eind]</code> of <code>[start:eind:stap]</code>, waar zowel de <code>start</code> als de <code>eind</code> zowel een nummer als een eenvoudig karakter kunnen zijn. <code>stap</code> definieert de stap grootte en is gewoon 1 als deze wordt weggelaten.">
 <!ENTITY lp.tut.batches3 "Bijvoorbeeld: als er afbeeldingen van 001 tot 100 gedownload moeten worden, kan het webadres gewijzigd worden naar: <code>http://example.org/[001:100].jpg</code>">
 <!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick!">
 <!ENTITY lp.tut.oneclick1 "Nadat er een initiële download is gedaan, zal er een ander item beschikbaar zijn: DownThemAll! OneClick!. Deze kan gebruikt worden om direct te downloaden met gebruikmaking van de vorige instellingen, waarbij het toevoegen en/of selecteren in het selectie venster wordt overgeslagen.">
@@ -47,12 +47,12 @@
 <!ENTITY lp.tb.add.tdtadesc "Download alle items van de huidige pagina overeenkomstig de laatst gebruikte instellingen en filters.">
 <!ENTITY lp.tb.add.manager "DownThemAll! Beheerder knop">
 <!ENTITY lp.tb.add.managerdesc "Opent het beheerders venster,">
-<!ENTITY lp.tb.add.selector "DownThemAll! Selectie knop">
+<!ENTITY lp.tb.add.selector "DownThemAll! Selecteur knop">
 <!ENTITY lp.tb.add.selectordesc "Items toevoegen door er rechts op te klikken.">
 <!ENTITY lp.tb.add.p2 "De werkbalkknoppen kunnen toegevoegd worden via <code>Beeld → Werkbalken → Aanpassen...</code>.">
 <!ENTITY lp.tb.dnd.title "Slepen-en-plakken">
 <!ENTITY lp.tb.dnd.p1 "Elke koppeling of afbeelding kan door deze te slepen-en-plakken naar de DownThemAll! knop gedownload worden.">
-<!ENTITY lp.tb.dnd.p2 "Het beheerder venster kan ook gebruikt worden om te downloaden item te slepen-en-plakken.">
+<!ENTITY lp.tb.dnd.p2 "Het beheerder venster kan ook gebruikt worden om te downloaden items te slepen-en-plakken.">
 <!ENTITY lp.tb.dnd.p3 "De downloadlijst kan ook via slepen-en-plakken gesorteerd worden. Sleep gewoon een item en plak het op de gewenste positie.">
 <!ENTITY lp.tb.selector.title "De DownThemAll! Selecteur gebruiken">
 <!ENTITY lp.tb.selector.p1 "Door de DownThemAll! Selecteur te gebruiken, kunnen vele downloads in de wachtrij geplaatst worden door eenvoudig op de koppelingen of de afbeeldingen te klikken.">
@@ -74,7 +74,7 @@
 <!ENTITY lp.yr.licensetitle "Auteursrecht en licentie">
 <!ENTITY lp.yr.licensed "DownThemAll! is gelicensieerd onder <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Bekijk ook het GPL-bestand. Dit is van toepassing op alle bronbestanden.">
 <!ENTITY lp.yr.morelicense "Individuele bestanden kunnen verschillende licenties hebben. Zie de overeenkomstige opgeslagen bestanden op <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Veel bestanden zijn drievoudig gelicensieerd onder een MPL 1.1/GPL 2.0/LGPL 2.1 licentie; Zie de respectievelijke MPL, GPL, LGPL bestanden.">
-<!ENTITY lp.yr.gplintro "Meest belangrijke onderdeel van GPL 2.0, de geen garantie en beschadigingen disclaimer, volgt:">
+<!ENTITY lp.yr.gplintro "Meest belangrijke onderdeel van GPL 2.0, de geen garantie en beschadigingen disclaimer:">
 <!ENTITY lp.yr.icons "Kunstwerk, pictogrammen en knoppen">
 <!ENTITY lp.yr.iconsbased "zijn gebaseerd op het werk van Mike Matas, Jakub Steiner, Mark James en het Tango project">
 <!ENTITY lp.yr.artwork "Het originele kunstwerk valt onder: Copyright © 2004-2010 door Stefano Verna, Federico Parodi en Nils Maier">
