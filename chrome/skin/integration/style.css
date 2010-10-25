@@ -68,7 +68,7 @@ toolbar[iconsize="small"] #dta-manager-button {
 	list-style-image: url(../common/smalltools.png);
 	-moz-image-region: rect(0px, 48px, 16px, 32px);
 }
-#dtaToolsAbout {
+.dtaToolsAbout {
 	list-style-image: url(../common/smalltools.png);
 	-moz-image-region: rect(0px, 96px, 16px, 80px);
 }
