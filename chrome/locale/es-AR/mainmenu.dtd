@@ -1,0 +1,5 @@
+<!ENTITY fileMenu.label "Archivo">
+<!ENTITY fileMenu.accesskey "A">
+<!ENTITY newNavigatorCmd.label "Nueva ventana de Explorador">
+<!ENTITY tabCmd.label "Nueva pestaña de Explorador">
+<!ENTITY closeWindow.label "Cerrar DownThemAll!">
