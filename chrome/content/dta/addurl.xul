@@ -66,7 +66,7 @@
 					<image/>
 				</vbox>
 				<vbox flex="1">
-					<description class="header" id="descr">&description.value; <html:span id="batcheslabel">&desc.batches.value;</html:span></description>
+					<description class="header" id="descr">&adddescription.value; <html:span id="batcheslabel">&desc.batches.value;</html:span></description>
 					<vbox id="batches">
 						<label flex="1">&examples.value;</label>
 						<label class="monospace indent">.../mygallery[A:C]/photo[001:100:2].jpg</label>
