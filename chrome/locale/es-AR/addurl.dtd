@@ -1,0 +1,4 @@
+<!ENTITY title "Agregar URL(s)">
+<!ENTITY desc.value "Introduzca la URL aquí y (opcionalmente) la página de referencia del archivo que desea descargar.">
+<!ENTITY desc.batches.value "También puede usar descriptores de lote para descargar múltiples archivos a la vez.">
+<!ENTITY examples.value "Ejemplos:">

@@ -12,6 +12,7 @@ skin	dta-public	classic/1.0 chrome/public/
 ## locales ##
 locale dta de chrome/locale/de/
 locale dta el chrome/locale/el/
+locale dta es-AR chrome/locale/es-AR/
 locale dta es-ES chrome/locale/es-ES/
 locale dta gl chrome/locale/gl/
 locale dta nl chrome/locale/nl/
