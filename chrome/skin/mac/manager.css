@@ -4,6 +4,11 @@
 	list-style-image: url(chrome://global/skin/icons/information-32.png);
 }
 
+/* mac doesn't use resizers */
+#footer > resizer {
+	display: none;
+}
+
 statusbarpanel#netstatus {
 	list-style-image: url(chrome://dta/skin/manager/netstatus.png);
 	-moz-image-region: rect(16px, 16px, 32px, 0px);

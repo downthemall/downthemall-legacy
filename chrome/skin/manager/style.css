@@ -8,7 +8,11 @@
 #prespacer {
 	display: none;
 }
-	
+
+window[sizemode="maximized"] #footer > resizer {
+	display: none;
+}
+
 /** :: Toolbar :: **/	
 toolbox {
 	border-width: 0px;

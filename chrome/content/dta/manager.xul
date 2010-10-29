@@ -249,8 +249,7 @@
 			</stack>
 		</notificationbox>
 	</hbox>
-
-	<statusbar id="footer" chromedir="&locale.dir;">
+	<windowdragbox id="footer" chromedir="&locale.dir;">
 		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline" />
 		<statusbarpanel id="statusText" label="" flex="3" />
 		<statusbarpanel id="statusSpeed" label="" />
@@ -262,6 +261,6 @@
 			<spinbuttons id="listSpeedsSpinners"/>
 		</statusbarpanel>
 		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text text-link" label="&options.label;" command="cmdPreferences" />
-	</statusbar>
-
+		<resizer dir="bottomend"/>
+	</windowdragbox>
 </window>
