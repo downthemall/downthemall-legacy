@@ -11,9 +11,6 @@
 		background: transparent;
 		-moz-binding: url(chrome://dta/content/common/bindings.xml#drawablewindow);
 	}
-	window[sizemode="maximized"]:not(:-moz-lwtheme) {
-		margin-top: 6px;
-	}
 	#titlebar {
 		-moz-binding: url(chrome://dta/content/common/bindings.xml#titlebar);
 	}
