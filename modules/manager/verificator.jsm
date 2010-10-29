@@ -36,8 +36,7 @@
 
 const EXPORTED_SYMBOLS = ['verify'];
 
-const PARTIAL_CHUNK = 1<<20; // power of two; make it 1M
-const REGULAR_CHUNK = PARTIAL_CHUNK * 2; 
+const REGULAR_CHUNK = (1 << 24); // 16MB 
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -60,8 +59,6 @@ const nsICryptoHash = Ci.nsICryptoHash;
 
 const File = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
-const BinaryInputStream = new Ctor('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
-const StorageStream = new Ctor('@mozilla.org/storagestream;1', 'nsIStorageStream', 'init');
 
 const Hash = new Ctor('@mozilla.org/security/hash;1', 'nsICryptoHash', 'init');
 
@@ -149,7 +146,7 @@ Verificator.prototype = {
 					if (this.terminated) {
 						throw new Exception("terminated");
 					}
-					let count = Math.min(pending, 10485760);
+					let count = Math.min(pending, REGULAR_CHUNK);
 					mainHash.updateFromStream(stream, count);
 					pending -= count;
 					completed += count;
@@ -195,9 +192,8 @@ MultiVerificator.prototype = {
 			let completed = 0;
 
 			let mainHash = new Hash(nsICryptoHash[hashCollection.full.type]);
-			let stream = new FileInputStream(file, 0x01, 0766, 0);
-			let bis = new BinaryInputStream(stream);
-			let ss = new StorageStream(PARTIAL_CHUNK, PARTIAL_CHUNK, null);
+			let stream = new FileInputStream(file, 0x01, 0766, 0).QueryInterface(Ci.nsISeekableStream);
+			let flushBytes = REGULAR_CHUNK;
 			try {
 				for each (let partial in hashCollection.partials) {
 					let pendingPartial = Math.min(pending, hashCollection.parLength);
@@ -207,33 +203,25 @@ MultiVerificator.prototype = {
 						if (this.terminated) {
 							throw new Exception("terminated");
 						}
-						let count = Math.min(pendingPartial, PARTIAL_CHUNK);
-						
-						let os = ss.getOutputStream(0);
-						count = os.write(bis.readBytes(count), count);
+						let count = Math.min(pendingPartial, REGULAR_CHUNK);
 						if (!count) {
 							throw new Exception("read nothing");
 						}
-						os.close();
-						delete os;
 
-						let is = ss.newInputStream(0);
-						partialHash.updateFromStream(is, count);
-						is.close();
-						delete is;
-						
-						is = ss.newInputStream(0);
-						mainHash.updateFromStream(is, count);
-						is.close();
-						delete is;
-						
+						partialHash.updateFromStream(stream, count);
+						stream.seek(0x1, -count);
+						mainHash.updateFromStream(stream, count);
+
 						pending -= count;
 						pendingPartial -= count;
 						completed += count;
-						new Callback(this._progressCallback, false, Math.min(completed, total));						
+						flushBytes = Math.max(flushBytes - count, 0);
+						if (!flushBytes){
+							flushBytes = REGULAR_CHUNK;
+							new Callback(this._progressCallback, false, Math.min(completed, total));
+						}
 					}
 					let partialActual = hexdigest(partialHash.finish(false));
-					delete partialHash;
 					if (partial.sum != partialActual) {
 						mismatches.push({
 							start: start,
@@ -243,7 +231,6 @@ MultiVerificator.prototype = {
 						});
 					}
 				}
-				delete ss;
 				
 				// any remainder
 				while (pending) {
@@ -259,7 +246,6 @@ MultiVerificator.prototype = {
 			}
 			finally {
 				stream.close();
-				bis.close();
 			}
 			let actual = hexdigest(mainHash.finish(false));
 			if (actual != hashCollection.full.sum) {
