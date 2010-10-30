@@ -903,7 +903,7 @@ const Tree = {
 		return null;		
 	},
 	at: function T_at(idx) {
-		return this._downloads[idx];
+		return this._filtered[idx];
 	},
 	some: function T_some(f, t) {
 		return this._downloads.some(f, t);
