@@ -178,7 +178,12 @@ function Connection(d, c, isInfoGetter) {
 	}
 	try {
 		let prio = this._chan.QueryInterface(Ci.nsISupportsPriority);
-		prio.adjustPriority(Ci.nsISupportsPriority.PRIORITY_LOW);
+		if (d.forced) {
+			prio.adjustPriority(Ci.nsISupportsPriority.PRIORITY_HIGHEST);
+		}
+		else {
+			prio.adjustPriority(Ci.nsISupportsPriority.PRIORITY_LOW);
+		}
 	}
 	catch (ex) {
 		Debug.log("Failed setting priority", ex);

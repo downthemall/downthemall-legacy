@@ -898,10 +898,11 @@ const Dialog = {
 		}
 		return false;
 	},
-	run: function D_run(download) {
+	run: function D_run(download, forced) {
 		if (this.offline) {
 			return;
 		}
+		download.forced = !!forced;
 		download.status = _("starting");
 		if (download.is(FINISHING) || (download.partialSize >= download.totalSize && download.totalSize)) {
 			// we might encounter renaming issues;
