@@ -722,11 +722,16 @@
 			</method>
 			<method name="_search">
 				<body><![CDATA[
-					this._timer = null;
-									
-					var evt = document.createEvent('UIEvents');
-					evt.initEvent('search', true, true);
-					this.dispatchEvent(evt);					
+					Debug.log("search called!");
+					try {
+						this._timer = null;
+						var evt = document.createEvent('UIEvents');
+						evt.initEvent('search', true, true);
+						this.dispatchEvent(evt);
+					}
+					catch (ex) {
+						Debug.log("_search", ex);
+					}					
 				]]></body>
 			</method>
 		</implementation>
