@@ -87,6 +87,8 @@
 
 		<command id="cmdNewTab" oncommand="DTA.Mediator.open('about:blank');" />
 		<command id="cmdNewWin" oncommand="DTA.Mediator.openWindow(window);" />
+		
+		<command id="cmdSearchFocus" oncommand="$('search').focus()" />
 	</commandset>
 
 	<keyset id="mainkeys">
@@ -122,6 +124,8 @@
 		<!-- new window/tab shortcuts -->
 		<key id="kNewTab" modifiers="accel" key="T" command="cmdNewTab" />
 		<key id="kNewWin" modifiers="accel" key="N" command="cmdNewWin" />
+		
+		<key id="kSearch" modifiers="accel" key="F" command="cmdSearchFocus"/>
 	</keyset>
 
 
@@ -254,6 +258,9 @@
 	</hbox>
 	<windowdragbox id="footer" chromedir="&locale.dir;">
 		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline" />
+		<statusbarpanel id="statusSearch">
+			<textbox id="search" emptytext="&search.placeholder;" placeholder="&search.placeholder;"/>
+		</statusbarpanel>
 		<statusbarpanel id="statusText" label="" flex="3" />
 		<statusbarpanel id="statusSpeed" label="" />
 		<statusbarpanel id="statusSpeeds">

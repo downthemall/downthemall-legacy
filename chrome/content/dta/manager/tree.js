@@ -43,6 +43,7 @@ const Tree = {
 	init: function T_init(elem) {
 		this.elem = elem;
 		this._downloads = [];
+		this._filtered = this._downloads;
 		this._speedLimitList = $('perDownloadSpeedLimitList');
 		
 		addEventListener('blur', function() Tree.stopTip(), false);
@@ -57,7 +58,7 @@ const Tree = {
 		dtree.addEventListener('draggesture', function(event) nsDragAndDrop.startDrag(event, tp), false);
 		
 		$('popup').addEventListener('popupshowing', function(event) tp.onPopupShowing(event), true);
-
+		$('search').addEventListener('search', function(event) tp.setFilter(event.target.value), true);
 		
 		ServiceGetter(this, "_ds", "@mozilla.org/widget/dragservice;1", "nsIDragService");
 		ServiceGetter(this, "_ww", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
@@ -104,15 +105,16 @@ const Tree = {
 		Debug.log("Tree: clearing");
 		this.beginUpdate();
 		this._downloads = [];
+		$('search').clear();
 		this.elem.view = this;
 		this.endUpdate();
 	},
 
-	/*
-	 * actual nsITreeView follows
-	 */
-	get rowCount() {
+	get downloadCount() {
 		return this._downloads.length;
+	},
+	get rowCount() {
+		return this._filtered.length;
 	},
 	setTree: function T_setTree(box) {
 		this._box = box;
@@ -124,6 +126,57 @@ const Tree = {
 			this._cols.push(box.columns.getColumnAt(i));
 		}
 	},
+	_filter: '',
+	_filterExpr: null,
+	doFilter: function T__doFilter() {
+		this.beginUpdate();
+		this._downloads.forEach(function(e) e.filteredPosition = -1);
+		
+		this._box.rowCountChanged(0, -this._filtered.length);
+		if (!this._filter) {
+			this._filtered = this._downloads;
+		}
+		else {
+			this._filtered = this._downloads.filter(
+				function(e) this._filterExpr.test([e.urlManager.usable, e.description, e.fileName, e.destinationName].join(' ')),
+				this
+			);
+		}
+		this._box.rowCountChanged(0, this._filtered.length);
+		this._filtered.forEach(function(e, i) e.filteredPosition = i);		
+		this.endUpdate();		
+	},
+	setFilter: function T_setFilter(nv) {
+		if (nv == this._filter) {
+			return;
+		}
+		this._filter = nv;
+		this._filterExpr = new RegExp(
+			this._filter
+			.replace(/^\s+|\s+$/g, '')
+      .replace(/([/{}()\[\]\\^$.])/g, "\\$1")
+      .replace(/\*/g, ".*")
+      .replace(/\?/g, '.'),
+      'i'
+    );
+    // save selection
+    let selectedIds = this._getSelectedIds().map(function(id) this._filtered[id].position, this);
+    // apply filters
+		this.doFilter();
+		
+		// restore selection
+		let visible = -1;
+		for each (let id in selectedIds) {
+			let fid = this._downloads[id].filteredPosition;
+			if (fid >= 0) {
+				if (visible < 0) {
+					visible = fid;
+				}
+				this.selection.rangedSelect(fid, fid, true);
+			}
+		}
+		this._box.ensureRowIsVisible(Math.max(visible, 0));
+	},
 	getParentIndex: function T_getParentIndex(idx) {
 		// no parents, as we are actually a list
 		return -1;
@@ -133,7 +186,7 @@ const Tree = {
 		return 0;
 	},
 	getCellText: function T_getCellText(idx, col) {
-		let d = this._downloads[idx];
+		let d = this._filtered[idx];
 		if (!d) return '';
 
 		switch (col.index) {
@@ -160,14 +213,14 @@ const Tree = {
 	getImageSrc: function T_getImageSrc(idx, col) {
 		try {
 		switch (col.index) {
-			case 0: return this._downloads[idx].icon;
+			case 0: return this._filtered[idx].icon;
 		}
 		}catch (ex) { Debug.log("inv idx " + idx, ex); }
 		return null;
 	},
 	getProgressMode : function T_getProgressMode(idx, col) {
 		if (col.index == 1) {
-			let d = this._downloads[idx];
+			let d = this._filtered[idx];
 			if (!d) return 2;
 			if (d.is(PAUSED) && (!d.totalSize || d.progress < 5)) {
 				return 2; // PROGRESS_UNDETERMINED;
@@ -182,7 +235,7 @@ const Tree = {
 	// will be called for cells other than textcells
 	getCellValue: function T_getCellValue(idx, col) {
 		if (col.index == 1) {
-			let d = this._downloads[idx];
+			let d = this._filtered[idx];
 			if (!d) return 0;
 			if (d.isOf(CANCELED, COMPLETE)) {
 				return 100; 
@@ -196,7 +249,7 @@ const Tree = {
 		if (cidx == 1) {
 			prop.AppendElement(this._iconic);
 			prop.AppendElement(this._progress);
-			let d = this._downloads[idx];
+			let d = this._filtered[idx];
 			if (!d) return;
 			switch (d.state) {
 				case PAUSED:
@@ -267,6 +320,9 @@ const Tree = {
 			if (orientation == 1) {
 				++row;
 			}
+			// translate row from filtered list to full list
+			let realRow = this._filtered[row].position;
+			
 			/* first we remove the dragged items from the list
 			 * then we reinsert them
 			 * if the dragged item is location before the drop position we need to adjust it (as we remove the item first)
@@ -275,19 +331,19 @@ const Tree = {
 			 */
 			let downloads = this._getSelectedIds(true).map(
 				function(id) {
-					let qi = this._downloads[id];
+					let qi = this._filtered[id];
 					if (id < row) {
 						--row;
 					}
-					this._downloads.splice(id, 1);
+					this._downloads.splice(qi.position, 1);
 					return qi;					
 				},
 				this
 			);
 			for each (let qi in downloads) {
-				this._downloads.splice(row, 0, qi);
+				this._downloads.splice(realRow, 0, qi);
 			}
-			
+			this.doFilter();
 			this.endUpdate();
 			this.invalidate();
 			this._box.ensureRowIsVisible(Math.max(row, 0));
@@ -314,7 +370,7 @@ const Tree = {
 		this._downloads.push(download);
 		let pos = this._downloads.length - 1;
 		if (!this._updating) {
-			this._box.rowCountChanged(pos, 1);
+			this.doFilter();
 		}
 		return pos;
 	},
@@ -402,7 +458,7 @@ const Tree = {
 			downloads = [downloads];
 		}
 		else if (!downloads) {
-			downloads = this._getSelectedIds(true).map(function(idx) this._downloads[idx], this);
+			downloads = this._getSelectedIds(true).map(function(idx) this._filtered[idx], this);
 		}
 		if (!downloads.length) {
 			return;
@@ -428,6 +484,7 @@ const Tree = {
 			Dialog.wasRemoved(d);
 		}
 		QueueStore.endUpdate();
+		this.doFilter();
 		this.endUpdate();
 		this.invalidate();
 		if (performJump) {
@@ -456,6 +513,7 @@ const Tree = {
 		if (delta == this._downloads.length) {
 			return;
 		}
+		this.doFilter();
 		this.invalidate();		
 	},
 	removeCompleted: function T_removeCompleted() {
@@ -767,15 +825,15 @@ const Tree = {
 		}
 		else if (d instanceof Array) {
 			this.beginUpdate();
-			this._box.invalidateRange(d[0].position, d[d.length - 1].position);
+			this._box.invalidateRange(d[0].filteredPosition, d[d.length - 1].filteredPosition);
 			this.endUpdate();
 		}
 		else if (d.position >= 0) {
 			if (cell !== undefined) {
-				this._box.invalidateCell(d.position, this._cols[cell]);
+				this._box.invalidateCell(d.filteredPosition, this._cols[cell]);
 			}
 			else {
-				this._box.invalidateRow(d.position);
+				this._box.invalidateRow(d.filteredPosition);
 			}
 		}
 	},
@@ -784,8 +842,8 @@ const Tree = {
 	},
 	// generator for all download elements.
 	get all() {
-		for (let i = 0, e = this._downloads.length; i < e; ++i) {
-			yield this._downloads[i];
+		for each (let d in this._downloads) {
+			yield d;
 		}
 	},
 	// generator for selected download elements.
@@ -796,7 +854,7 @@ const Tree = {
 			let start = {}, end = {value: -1};
 			this.selection.getRangeAt(i, start, end);
 			for (let j = start.value, k = end.value; j <= k; ++j) {
-					yield this._downloads[j];
+					yield this._filtered[j];
 			}
 		}
 	},
@@ -828,7 +886,7 @@ const Tree = {
 			let ci = {value: -1};
 			this.selection.getRangeAt(0, ci, {});			
 			if (ci.value > -1 && ci.value < this.rowCount) {
-				return this._downloads[ci.value];
+				return this._filtered[ci.value];
 			}
 		}
 		catch (ex) {
@@ -840,7 +898,7 @@ const Tree = {
 	get focused() {
 		let ci = this.selection.currentIndex;
 		if (ci > -1 && ci < this.rowCount) {
-			return this._downloads[ci];
+			return this._filtered[ci];
 		}
 		return null;		
 	},
@@ -884,7 +942,7 @@ const Tree = {
 	top: function T_top() {
 		try {
 			this.beginUpdate();
-			let ids = this._getSelectedIds(true); 
+			let ids = this._getSelectedIds(true).map(function(i) this._filtered[i].position, this); 
 			ids.forEach(
 				function(id, idx) {
 					id = id + idx;
@@ -892,6 +950,7 @@ const Tree = {
 				},
 				this
 			);
+			this.doFilter();
 			this.endUpdate();
 			this.invalidate();
 			this.selection.rangedSelect(0, ids.length - 1, true);
@@ -904,7 +963,7 @@ const Tree = {
 	bottom: function T_bottom() {
 		try {
 			this.beginUpdate();
-			let ids = this._getSelectedIds();
+			let ids = this._getSelectedIds().map(function(i) this._filtered[i].position, this);
 			ids = ids.map(
 				function(id, idx) {
 					id = id - idx;
@@ -912,9 +971,10 @@ const Tree = {
 				},
 				this
 			);
+			this.doFilter();
 			this.endUpdate();
 			this.invalidate();
-			this.selection.rangedSelect(this._downloads.length - ids.length, this._downloads.length - 1, true);
+			this.selection.rangedSelect(this._filtered.length - ids.length, this._filtered.length - 1, true);
 			this._box.ensureRowIsVisible(this.rowCount - 1);
 		}
 		catch (ex) {
@@ -923,6 +983,9 @@ const Tree = {
 	},
 	up: function T_up() {
 		try {
+			if (this._filter) {
+				throw Error("not implemented");				
+			}
 			this.beginUpdate();
 			let ids = this._getSelectedIds().map(
 				function(id, idx) {
@@ -945,6 +1008,9 @@ const Tree = {
 	},
 	down: function T_down() {
 		try {
+			if (this._filter) {
+				throw Error("not implemented");				
+			}
 			this.beginUpdate();
 			let rowCount = this.rowCount;
 			let ids = this._getSelectedIds(true).map(
