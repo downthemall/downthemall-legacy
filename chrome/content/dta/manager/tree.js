@@ -393,13 +393,21 @@ const Tree = {
 		}
 		this.remove(this._downloads.map(function(e) e), true);
 	},
+	getBaseDomain: function T_getBaseDomain(url) {
+		try {
+			return this._tld.getBaseDomain(url);
+		}
+		catch (ex) {
+			return url.host;
+		}
+	},
 	removeHostWithConfirmation: function T_removeHostWithConfirmation() {
-		let host = this._tld.getBaseDomain(this.current.urlManager.url);
+		let host = this.getBaseDomain(this.current.urlManager.url);
 		let res = Prompts.confirm(window, _('removecaption'), _('removehostquestion', [host]), Prompts.YES, Prompts.NO);
 		if (res) {
 			return;
 		}
-		this.remove(this._downloads.filter(function(e) this._tld.getBaseDomain(e.urlManager.url) == host, this), true);		
+		this.remove(this._downloads.filter(function(e) this.getBaseDomain(e.urlManager.url) == host, this), true);		
 	},
 	removeByFilter: function T_removeByFilter(filter, id) {
 		if (!(filter instanceof Ci.dtaIFilter)) {
