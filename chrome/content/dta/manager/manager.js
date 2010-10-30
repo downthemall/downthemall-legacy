@@ -523,6 +523,7 @@ const Dialog = {
 	},
 	_loadDownloads_finish: function D__loadDownloads_finish() {
 		delete this._loader;
+		Tree.doFilter();
 		Tree.endUpdate();
 		Tree.invalidate();
 		
@@ -726,7 +727,7 @@ const Dialog = {
 			}
 
 			// Refresh status bar
-			$('statusText').label = _("currentdownloads", [this.completed, Tree.rowCount, this._running.length]);
+			$('statusText').label = _("currentdownloads", [this.completed, Tree.downloadCount, this._running.length]);
 			$('statusSpeed').label = _("currentspeed", [speed]);
 
 			// Refresh window title
@@ -734,7 +735,7 @@ const Dialog = {
 				document.title =
 					this._running[0].percent
 					+ ' - '
-					+ this.completed + "/" + Tree.rowCount + " - "
+					+ this.completed + "/" + Tree.downloadCount + " - "
 					+ $('statusSpeed').label + ' - DownThemAll!';
 				if (this._running[0].totalSize) {
 					GlobalProgress.activate(this._running[0].progress * 10, 1000);
@@ -744,16 +745,16 @@ const Dialog = {
 				}
 			}
 			else if (this._running.length > 0) {
-				let p = Math.floor(this.completed * 1000 / Tree.rowCount);
+				let p = Math.floor(this.completed * 1000 / Tree.downloadCount);
 				document.title =
-					Math.floor(this.completed * 100 / Tree.rowCount) + '%'
+					Math.floor(this.completed * 100 / Tree.downloadCount) + '%'
 					+ ' - '				
-					+ this.completed + "/" + Tree.rowCount + " - "
+					+ this.completed + "/" + Tree.downloadCount + " - "
 					+ $('statusSpeed').label + ' - DownThemAll!';
 				GlobalProgress.activate(p, 1000);
 			}
 			else {
-				if (Tree.rowCount) {
+				if (Tree.downloadCount) {
 					let state = COMPLETE;
 					for (let d in Tree.all) {
 						if (d.is(CANCELED)) {
@@ -765,7 +766,7 @@ const Dialog = {
 							break;
 						}
 					}
-					let p = Math.floor(this.completed * 1000 / Tree.rowCount);
+					let p = Math.floor(this.completed * 1000 / Tree.downloadCount);
 					switch (state) {
 					case CANCELED:
 						GlobalProgress.error(p, 1000);
@@ -780,7 +781,7 @@ const Dialog = {
 				else {
 					GlobalProgress.hide();
 				}
-				document.title = this.completed + "/" + Tree.rowCount + " - DownThemAll!";
+				document.title = this.completed + "/" + Tree.downloadCount + " - DownThemAll!";
 			}
 			($('titlebar') || {}).value = document.title;
 		}
@@ -2633,6 +2634,7 @@ function startDownloads(start, downloads) {
 		100
 	).run(function() {
 		QueueStore.endUpdate();
+		Tree.doFilter();
 		Tree.endUpdate();
 		delete ct;
 	});
