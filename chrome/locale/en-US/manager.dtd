@@ -34,6 +34,7 @@
 <!ENTITY cancel.label "Cancel">
 <!ENTITY removemenu.label "Remove Downloads">
 <!ENTITY removeselected.label "Remove Selected">
+<!ENTITY removehost.label "Remove domain downloads">
 <!ENTITY removecompleted.label "Remove Completed Downloads">
 <!ENTITY removeAll.label "Remove All">
 <!ENTITY removeDupes.label "Remove Duplicates">
