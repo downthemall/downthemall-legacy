@@ -62,6 +62,7 @@ const Tree = {
 		ServiceGetter(this, "_ds", "@mozilla.org/widget/dragservice;1", "nsIDragService");
 		ServiceGetter(this, "_ww", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 		ServiceGetter(this, "_as", "@mozilla.org/atom-service;1", "nsIAtomService");
+		ServiceGetter(this, '_tld', '@mozilla.org/network/effective-tld-service;1', 'nsIEffectiveTLDService');
 		
 		for each (let e in ['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined', 'pausedAutoretrying', 'verified', 'progress']) {
 			this['_' + e] = this._as.getAtom(e);
@@ -335,6 +336,14 @@ const Tree = {
 			return;
 		}
 		this.remove(this._downloads.map(function(e) e), true);
+	},
+	removeHostWithConfirmation: function T_removeHostWithConfirmation() {
+		let host = this._tld.getBaseDomain(this.current.urlManager.url);
+		let res = Prompts.confirm(window, _('removecaption'), _('removehostquestion', [host]), Prompts.YES, Prompts.NO);
+		if (res) {
+			return;
+		}
+		this.remove(this._downloads.filter(function(e) this._tld.getBaseDomain(e.urlManager.url) == host, this), true);		
 	},
 	removeByFilter: function T_removeByFilter(filter, id) {
 		if (!(filter instanceof Ci.dtaIFilter)) {

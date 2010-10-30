@@ -396,6 +396,7 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 /* menuitem element (row 2) */
 #removeMenu ,
 #removeselected,
+#removeHost,
 #removeAll {
 	-moz-image-region: rect(32px,16px,48px,0px);
 }
