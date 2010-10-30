@@ -479,7 +479,7 @@ const Tree = {
 			}
 			this._downloads.splice(d.position, 1);
 			this._box.rowCountChanged(d.position, -1);
-			last = Math.max(d.position, last);
+			last = Math.max(d.filteredPosition, last);
 			d.remove();
 			Dialog.wasRemoved(d);
 		}
@@ -488,7 +488,7 @@ const Tree = {
 		this.endUpdate();
 		this.invalidate();
 		if (performJump) {
-			this._removeJump(downloads.length, last);
+			this._removeJump(downloads.filter(function(e) e.filteredPosition >= 0).length, last);
 		}
 	},
 	_removeCompleted: function T__removeCompleted(onlyGone) {
