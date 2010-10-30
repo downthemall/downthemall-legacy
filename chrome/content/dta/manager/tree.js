@@ -577,7 +577,7 @@ const Tree = {
 		for (let d in Tree.selected) {
 			if (d.isOf(QUEUED, PAUSED, CANCELED)) {
 				d.queue();
-				Dialog.run(d);
+				Dialog.run(d, true);
 			}
 		}
 	},
