@@ -53,12 +53,12 @@ const CryptoHash = new ctor("@mozilla.org/security/hash;1", "nsICryptoHash");
 	
 // shared state defines
 
-Components.utils.import("resource://dta/constants.jsm", this);
+module("resource://dta/constants.jsm", this);
 
 const DTA = {
 	showPreferences: function(pane) DTA.Mediator.showPreferences(window, pane)
 };
-Components.utils.import("resource://dta/api.jsm", DTA);
+module("resource://dta/api.jsm", DTA);
 
 DTA.__defineGetter__('Mediator', function() {
 	delete DTA.Mediator;
@@ -73,6 +73,8 @@ DTA.__defineGetter__('Mediator', function() {
 
 const Debug = DTA.Debug;
 const Preferences = DTA.Preferences;
+
+module("resource://dta/support/icons.jsm");
 
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!
@@ -293,75 +295,6 @@ for each (let copy in ["setNewGetter", "ServiceGetter", "InstanceGetter", "bind"
 ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService2");
 
 Utils.extendString(String);
-
-/**
- * Get the icon URI corresponding to an URI (special mac handling)
- * 
- * @author Nils
- * @author Stefano
- * @param link
- *          Some sort of DTA.URL, nsIURI or string to get the icon for
- * @param metalink
- *          Is it a metalink?
- * @param size
- *          The desired iconsize;
- * @return String containing the icon URI
- */
-function getIcon(link, metalink, size) {
-	let _favIcons = null;
-	try {
-		_favIcons = Cc['@mozilla.org/browser/favicon-service;1']
-       .getService(Ci.nsIFaviconService);
-	}
-	catch (ex) {
-		Debug.log("FavIcon Service not available", ex);
-	}
-	return (getIcon = function(link, metalink, size) {
-
-		if (metalink) {
-			return "chrome://dta/skin/icons/metalink.png";
-		}
-		if (typeof(size) != 'number') {
-			size = 16;
-		}
-		try {
-			let url = link;
-			if (link instanceof DTA.URL) {
-				url = link.url;
-			}
-			else if (link instanceof Ci.nsIURI) {
-				url = link.QueryInterface(Ci.nsIURL);
-			}
-			else if (link && link.url) {
-				url = link.url;
-			}
-			if (typeof url == 'string' || url instanceof String) {
-				try {
-					url = url.toURL();
-				}
-				catch (ex) { /* no op */ }
-			}
-			if (url && url instanceof Ci.nsIURL) {
-				if (_favIcons && /(?:\/|html?|aspx?|php\d?)$|\/[^.]*$/i.test(url.filePath)) {
-					let icon = _favIcons.getFaviconImageForPage(url);
-					if (icon.spec == _favIcons.defaultFavicon.spec) {
-						let host = url.clone().QueryInterface(Ci.nsIURL);
-						host.ref = host.query = host.filePath = "";
-						icon = _favIcons.getFaviconImageForPage(host);
-					}
-					return icon.spec;
-				}
-				url = url.spec;
-			}
-			let ext = url.getExtension();
-			return "moz-icon://file." + (ext ? '.' + ext : '') + "?size=" + size;
-		}
-		catch (ex) {
-			Debug.log("updateIcon: failed to grab icon", ex);
-		}
-		return "moz-icon://foo.html?size=" + size;
-	})(link, metalink, size);
-}
 
 /**
  * Get a (formatted) locale property string.
