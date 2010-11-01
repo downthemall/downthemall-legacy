@@ -38,7 +38,6 @@
 Components.utils.import('resource://dta/support/timers.jsm');
 const Timers = new TimerManager();
 
-
 var Dialog = {
 	downloads: null,
 	get isFullyDisabled() {
@@ -185,6 +184,8 @@ var Dialog = {
 	},
 	unload: function() {
 		Tooltip.stop();
+		Timers.killAllTimers();
+		return true;
 	},
 	browseDir: function DTA_browseDir() {
 		// let's check and create the directory
