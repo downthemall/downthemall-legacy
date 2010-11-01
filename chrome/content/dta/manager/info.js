@@ -181,9 +181,10 @@ var Dialog = {
 			}
 			d.save();
 		}
-		
-		Tooltip.stop();
 		return true;
+	},
+	unload: function() {
+		Tooltip.stop();
 	},
 	browseDir: function DTA_browseDir() {
 		// let's check and create the directory
@@ -237,3 +238,4 @@ var Dialog = {
 	}
 };
 addEventListener("resize", function() Dialog.resize(), true);
+addEventListener('unload', function() Dialog.unload(), true);
