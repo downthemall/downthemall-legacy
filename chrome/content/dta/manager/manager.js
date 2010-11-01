@@ -13,8 +13,9 @@
  *
  * The Original Code is DownThemAll!
  *
- * The Initial Developers of the Original Code are Stefano Verna and Federico Parodi
- * Portions created by the Initial Developers are Copyright (C) 2004-2007
+ * The Initial Developers of the Original Code are
+ * Nils Maier, Stefano Verna and Federico Parodi
+ * Portions created by the Initial Developers are Copyright (C) 2004-2010
  * the Initial Developers. All Rights Reserved.
  *
  * Contributor(s):
@@ -61,6 +62,7 @@ module('resource://dta/support/bytebucket.jsm');
 module('resource://dta/support/pbm.jsm', PrivateBrowsing);
 module('resource://dta/support/serverlimits.jsm', Limits);
 module('resource://dta/support/timers.jsm');
+module('resource://dta/support/fileextsheet.jsm');
 
 let Preallocator = {}, RequestManipulation = {};
 module('resource://dta/manager/preallocator.jsm', Preallocator);
@@ -84,6 +86,7 @@ lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Dec
 lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
 lazyModule(this, 'Version', 'resource://dta/version.jsm', 'Version');
 
+setNewGetter(this, 'FileExts', function() new FileExtensionSheet(window));
 setAuthPrompterWindow(window);
 
 var TEXT_PAUSED;
@@ -1500,9 +1503,9 @@ QueueItem.prototype = {
 	timeStart: 0,
 
 	_icon: null,
-	get icon() {
+	get iconAtom() {
 		if (!this._icon) {
-			this._icon = getIcon(this.destinationName, 'metalink' in this);
+			this._icon = FileExts.getAtom(this.destinationName, 'metalink' in this);
 		}
 		return this._icon;
 	},
