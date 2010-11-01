@@ -210,14 +210,7 @@ const Tree = {
 	isEditable: function T_isEditable(idx) true,
 
 	// will grab the "icon" for a cell.
-	getImageSrc: function T_getImageSrc(idx, col) {
-		try {
-		switch (col.index) {
-			case 0: return this._filtered[idx].icon;
-		}
-		}catch (ex) { Debug.log("inv idx " + idx, ex); }
-		return null;
-	},
+	getImageSrc: function T_getImageSrc(idx, col) {},
 	getProgressMode : function T_getProgressMode(idx, col) {
 		if (col.index == 1) {
 			let d = this._filtered[idx];
@@ -274,6 +267,7 @@ const Tree = {
 		}
 		else if (cidx == 0) { 
 			prop.AppendElement(this._iconic);
+			prop.AppendElement(this._filtered[idx].iconAtom);
 		}
 	},
 	// just some stubs we need to provide anyway to implement a full nsITreeView
