@@ -35,7 +35,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 const EXPORTED_SYMBOLS = [
-  'Debug',
+	'Debug',
 	'atos',
 	'bind',
 	'setNewGetter',
