@@ -38,7 +38,6 @@
 Components.utils.import('resource://dta/support/timers.jsm');
 const Timers = new TimerManager();
 
-
 var Dialog = {
 	downloads: null,
 	get isFullyDisabled() {
@@ -181,8 +180,11 @@ var Dialog = {
 			}
 			d.save();
 		}
-		
+		return true;
+	},
+	unload: function() {
 		Tooltip.stop();
+		Timers.killAllTimers();
 		return true;
 	},
 	browseDir: function DTA_browseDir() {
@@ -237,3 +239,4 @@ var Dialog = {
 	}
 };
 addEventListener("resize", function() Dialog.resize(), true);
+addEventListener('unload', function() Dialog.unload(), true);
