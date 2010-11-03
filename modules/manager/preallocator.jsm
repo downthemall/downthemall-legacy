@@ -48,17 +48,20 @@ const Exception = Components.Exception;
 const FileOutputStream = Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const File = Components.Constructor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 
-// Minimum size of a preallocation.
-// If requested size is less then no actual pre-allocation will be performed.
-let SIZE_MIN = 5 * 1024 * 1024;
-
-// Step size of the allocation
-// Do this step wise to avoid certain "sparse files" cases
-const SIZE_STEP = 100 * 1024 * 1024;
-
 module('resource://dta/cothread.jsm');
 module('resource://dta/utils.jsm');
 module('resource://dta/version.jsm');
+
+const runOnMainThread = Version.moz2;
+
+//Minimum size of a preallocation.
+//If requested size is less then no actual pre-allocation will be performed.
+let SIZE_MIN = 2 * 1024 * 1024;
+
+//Step size of the allocation
+//Do this step wise to avoid certain "sparse files" cases
+let SIZE_STEP = (runOnMainThread ? 10 : 100) * 1024 * 1024;
+
 
 // Store workers here.
 // Not storing workers (in this context) will cause gc havoc.
@@ -95,18 +98,24 @@ function WorkerJob(path, size, perms, callback, tp) {
 	this.callback = callback;
 	this.tp = tp;
 	this.uuid = newUUIDString();
-	
-	// Create thread and dispatch
+
 	let tm = Cc['@mozilla.org/thread-manager;1'].getService(Ci.nsIThreadManager);
-	this.thread = tm.newThread(0);
-	try {
-		let tp = this.thread.QueryInterface(Ci.nsISupportsPriority);
-		tp.priority = Ci.nsISupportsPriority.PRIORITY_LOWEST;
-	}
-	catch (ex) {
-		// no op
-	}
 	this.main = tm.mainThread;
+
+	if (runOnMainThread) {
+		this.thread = this.main;
+	}
+	else {
+		// Create thread and dispatch
+		this.thread = tm.newThread(0);
+		try {
+			let tp = this.thread.QueryInterface(Ci.nsISupportsPriority);
+			tp.priority = Ci.nsISupportsPriority.PRIORITY_LOWEST;
+		}
+		catch (ex) {
+			// no op
+		}
+	}
 	workers[this.uuid] = this;
 	this.thread.dispatch(this, this.thread.DISPATCH_NORMAL);
 }
@@ -130,8 +139,13 @@ WorkerJob.prototype = {
 				for (i = Math.min(this.size - 1, i); !this.terminated && i < this.size - 1; i = Math.min(this.size - 1, i + SIZE_STEP)) {
 					seekable.seek(0x00, i);
 					stream.write("a", 1);
+					if (runOnMainThread) {
+						while (this.main.hasPendingEvents()) {
+							this.main.processNextEvent(false);
+						}
+					}
 				}
-				rv = true;				
+				rv = true;
 			}
 			catch (iex) {
 				Debug.log("pa: Failed to run prealloc loop", iex);
@@ -148,11 +162,13 @@ WorkerJob.prototype = {
 	cancel: function() {
 		Debug.log("pa: cancel called!");
 		this.terminated = true;
-		this.thread.shutdown();
+		if (!runOnMainThread) {
+			this.thread.shutdown();
+		}
 	}
 };
 
-if (Version.OS == 'winnt') {
+if (Version.OS == 'winnt' && !runOnMainThread) {
 	SIZE_MIN = 30 * 1024;
  	WorkerJob.prototype.run = function workerwin_run() {
 		let rv = false;
@@ -193,7 +209,9 @@ MainJob.prototype = {
 	
 		try {
 			// wait for thread to actually join, if not already joined
-			this.thread.shutdown();
+			if (!runOnMainThread) {
+				this.thread.shutdown();
+			}
 		}
 		catch (ex) {
 			// might throw; see Worker.cancel
