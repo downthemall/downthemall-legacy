@@ -543,10 +543,10 @@
 		}
 	}
 	addLinks.__defineGetter__('__ch', function() {
-		let _ch = Cc['@downthemall.net/contenthandling;2']
-			.getService(Ci.dtaIContentHandling);
+		let _ch = {};
+		Components.utils.import('resource://dta/support/contenthandling.jsm', _ch);
 		delete addLinks.__ch;
-		return (addLinks.__ch = _ch);
+		return (addLinks.__ch = _ch.ContentHandling);
 	});
 	
 	function findWindowsNavigator(all) {

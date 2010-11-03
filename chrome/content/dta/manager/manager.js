@@ -47,7 +47,6 @@ const FileOutputStream = Construct('@mozilla.org/network/file-output-stream;1', 
 const StringInputStream = Construct('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
 const Process = Construct('@mozilla.org/process/util;1', 'nsIProcess', 'init');
 
-ServiceGetter(this, "ContentHandling", "@downthemall.net/contenthandling;2", "dtaIContentHandling");
 ServiceGetter(this, "MimeService", "@mozilla.org/uriloader/external-helper-app-service;1", "nsIMIMEService");
 ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIObserverService");
 ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
@@ -82,6 +81,7 @@ function lazyModule(obj, name, url, symbol) {
 }
 
 lazyModule(this, 'AlertService', 'resource://dta/support/alertservice.jsm');
+lazyModule(this, 'ContentHandling', 'resource://dta/support/alertservice.jsm', 'ContentHandling');
 lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Decompressor');
 lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
 lazyModule(this, 'Version', 'resource://dta/version.jsm', 'Version');
