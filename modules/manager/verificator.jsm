@@ -36,8 +36,6 @@
 
 const EXPORTED_SYMBOLS = ['verify'];
 
-const REGULAR_CHUNK = (1 << 24); // 16MB 
-
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
@@ -49,7 +47,11 @@ const Exception = Components.Exception;
 const Prefs = {}, DTA = {};
 module("resource://dta/preferences.jsm", Prefs);
 module("resource://dta/utils.jsm");
+module("resource://dta/version.jsm");
 module("resource://dta/api.jsm", DTA);
+
+const RUN_ON_MAINTHREAD = Version.moz2;
+const REGULAR_CHUNK = (1 << (RUN_ON_MAINTHREAD ? 21 : 24)); // 2/16MB 
 
 module("resource://gre/modules/XPCOMUtils.jsm");
 
@@ -82,22 +84,38 @@ function verify(file, hashCollection, completeCallback, progressCallback){
 		);
 }
 
+function Spinnable() {}
+Spinnable.prototype = {
+	terminated: false,
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable, Ci.nsICancelable]),
+	spin: function() {
+		if (!RUN_ON_MAINTHREAD) {
+			return;
+		}
+		while (this._thread.hasPendingEvents()) {
+			this._thread.processNextEvent(false);
+		}
+	},
+	cancel: function() {
+		this.terminated = true;
+		if (!RUN_ON_MAINTHREAD) {
+			try { this._thread.shutdown(); } catch (ex) { /* no op */ }			
+		}
+	}
+};
+
 function Callback(func, sync) {
 	this._func = func;
 	this._args = Array.map(arguments, function(e) e).slice(2);
 	this._thread = ThreadManager.mainThread;
 	this._job = registerJob(this);
-	try {
-		let tp = this._thread.QueryInterface(Ci.nsISupportsPriority);
-		tp.priority = Ci.nsISupportsPriority.PRIORITY_LOWEST;
+	this._thread.dispatch(this, sync ? 0x1 : 0x0);
+	if (sync) {
+		this.spin();
 	}
-	catch (ex) {
-		// no op
-	}
-	this._thread.dispatch(this, sync ? 0x1 : 0x0);	
 }
 Callback.prototype = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable]),
+	__proto__: Spinnable.prototype,
 	run: function() {
 		try {
 			this._func.apply(this._func, this._args);
@@ -116,15 +134,28 @@ function Verificator(file, hashCollection, completeCallback, progressCallback) {
 	this._progressCallback = progressCallback;
 	
 	this._job = registerJob(this._job);
-	this._thread = ThreadManager.newThread(0);
+	if (RUN_ON_MAINTHREAD) {
+		this._thread = ThreadManager.mainThread;		
+	}
+	else {
+		this._thread = ThreadManager.newThread(0);
+		try {
+			let tp = this._thread.QueryInterface(Ci.nsISupportsPriority);
+			tp.priority = Ci.nsISupportsPriority.PRIORITY_LOWEST;
+		}
+		catch (ex) {
+			// no op
+		}		
+	}
 	this._thread.dispatch(this, 0x0);
 }
 Verificator.prototype = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable, Ci.nsICancelable]),
-	terminated: false,
+	__proto__: Spinnable.prototype,
 	_done: function(obj) {
 		try {
-			obj._thread.shutdown();
+			if (!RUN_ON_MAINTHREAD) {
+				obj._thread.shutdown();
+			}
 		}
 		catch (ex) {
 			// aborted before?!
@@ -151,6 +182,7 @@ Verificator.prototype = {
 					pending -= count;
 					completed += count;
 					new Callback(this._progressCallback, false, Math.min(completed, total));
+					this.spin();
 				}
 			}
 			finally {
@@ -168,10 +200,6 @@ Verificator.prototype = {
 			new Callback(this._completeCallback, true);
 		}
 		new Callback(this._done, false, this);
-	},
-	cancel: function() {
-		this.terminated = true;
-		try { this._thread.shutdown(); } catch (ex) { /* no op */ }
 	}
 };
 
@@ -219,7 +247,8 @@ MultiVerificator.prototype = {
 						if (!flushBytes){
 							flushBytes = REGULAR_CHUNK;
 							new Callback(this._progressCallback, false, Math.min(completed, total));
-						}
+							this.spin();							
+						}						
 					}
 					let partialActual = hexdigest(partialHash.finish(false));
 					if (partial.sum != partialActual) {
@@ -242,6 +271,7 @@ MultiVerificator.prototype = {
 					pending -= count;
 					completed += count;
 					new Callback(this._progressCallback, false, Math.min(completed, total));
+					this.spin();					
 				}
 			}
 			finally {
