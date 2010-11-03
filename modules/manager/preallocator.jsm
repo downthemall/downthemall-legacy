@@ -52,7 +52,7 @@ module('resource://dta/cothread.jsm');
 module('resource://dta/utils.jsm');
 module('resource://dta/version.jsm');
 
-const runOnMainThread = Version.moz2;
+const RUN_ON_MAINTHREAD = Version.moz2;
 
 //Minimum size of a preallocation.
 //If requested size is less then no actual pre-allocation will be performed.
@@ -60,7 +60,7 @@ let SIZE_MIN = 2 * 1024 * 1024;
 
 //Step size of the allocation
 //Do this step wise to avoid certain "sparse files" cases
-let SIZE_STEP = (runOnMainThread ? 10 : 100) * 1024 * 1024;
+let SIZE_STEP = (1 << (RUN_ON_MAINTHREAD ? 23 : 27)); // 8/128MB
 
 
 // Store workers here.
@@ -102,7 +102,7 @@ function WorkerJob(path, size, perms, callback, tp) {
 	let tm = Cc['@mozilla.org/thread-manager;1'].getService(Ci.nsIThreadManager);
 	this.main = tm.mainThread;
 
-	if (runOnMainThread) {
+	if (RUN_ON_MAINTHREAD) {
 		this.thread = this.main;
 	}
 	else {
@@ -139,7 +139,7 @@ WorkerJob.prototype = {
 				for (i = Math.min(this.size - 1, i); !this.terminated && i < this.size - 1; i = Math.min(this.size - 1, i + SIZE_STEP)) {
 					seekable.seek(0x00, i);
 					stream.write("a", 1);
-					if (runOnMainThread) {
+					if (RUN_ON_MAINTHREAD) {
 						while (this.main.hasPendingEvents()) {
 							this.main.processNextEvent(false);
 						}
@@ -162,13 +162,13 @@ WorkerJob.prototype = {
 	cancel: function() {
 		Debug.log("pa: cancel called!");
 		this.terminated = true;
-		if (!runOnMainThread) {
+		if (!RUN_ON_MAINTHREAD) {
 			this.thread.shutdown();
 		}
 	}
 };
 
-if (Version.OS == 'winnt' && !runOnMainThread) {
+if (Version.OS == 'winnt' && !RUN_ON_MAINTHREAD) {
 	SIZE_MIN = 30 * 1024;
  	WorkerJob.prototype.run = function workerwin_run() {
 		let rv = false;
@@ -209,7 +209,7 @@ MainJob.prototype = {
 	
 		try {
 			// wait for thread to actually join, if not already joined
-			if (!runOnMainThread) {
+			if (!RUN_ON_MAINTHREAD) {
 				this.thread.shutdown();
 			}
 		}
