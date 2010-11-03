@@ -119,6 +119,7 @@ Stuff.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
 	
 	observe: function(aSubject, aTopic, aData) {
+		error(aTopic);
 		switch (aTopic) {
 		case 'profile-after-change':
 			Observers.addObserver(this, 'final-ui-startup', false);
@@ -138,52 +139,13 @@ Stuff.prototype = {
 		}
 	},
 	_migrate: function MM_migrate() {
-		let _tp = this;
-		
-		module("resource://dta/version.jsm");
-		Version.getInfo(function(v) {
-			try {
-				let lastVersion = Preferences.getExt('version', '0');
-				if (0 == v.compareVersion(v.BASE_VERSION, lastVersion)) {
-					return;
-				}
-				log("MigrationManager: migration started");
-				if (v.compareVersion(lastVersion, "1.0.1") < 0) {
-					_tp._migrateExecute(['ResetMaxConnections']);
-				}			
-				
-				Preferences.setExt('version', v.BASE_VERSION);
-				
-				v.showAbout = true;
-				Observers.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
-			}
-			catch(ex) {
-				log("MigrationManager:", ex);
-				try {
-					Preferences.resetExt("version");
-				}
-				catch (ex) {
-					// XXX
-				}
-			}
-		});
-	},
-	_migrateExecute: function MM_execute(types) {
-		for each (let e in types) {
-			try {
-				this['_migrate' + e]();
-			}
-			catch (ex) {
-				log('MigrationManager: failed to migrate ' + e, ex);
-			}
+		try {
+			let _mm = {};
+			module("resource://dta/support/migration.jsm", _mm);
+			_mm.migrate();
 		}
-	},
-	
-	// 1.0.1: #613 Multiple "slow-down" reports
-	_migrateResetMaxConnections: function() {
-		log("resetting connection prefs");
-		for each (let e in ['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server']) {
-			Preferences.reset(e);
+		catch (ex) {
+			log("m", ex);
 		}
 	},
 	clean: function() {
