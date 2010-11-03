@@ -91,7 +91,6 @@ Stuff.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
 	
 	observe: function(aSubject, aTopic, aData) {
-		error(aTopic);
 		switch (aTopic) {
 		case 'profile-after-change':
 			Observers.addObserver(this, 'final-ui-startup', false);
