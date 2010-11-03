@@ -53,7 +53,7 @@
 <!ENTITY privacypane.logs.caption "Diagnoseprotokoll">
 <!ENTITY privacypane.enablelogs.label "Diagnoseprotokoll aufzeichnen">
 <!ENTITY privacypane.notice.caption "Hinweis">
-<!ENTITY privacypane.notice.desc "DownThemAll! integriert sich auch in die Funktion &quot;Private Daten löschen&quot; (falls verfügbar).">
+<!ENTITY privacypane.notice.desc "DownThemAll! integriert sich auch in die Funktion Neuste Chronik löschen (falls verfügbar).">
 <!ENTITY privacypane.privacynotice.label "Datenschutzerklärung (engl.) zu DownThemAll!">
 <!ENTITY serverspane.label "Netzwerk">
 <!ENTITY serverspane.downloads.caption "Downloads">
