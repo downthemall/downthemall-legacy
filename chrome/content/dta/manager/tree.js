@@ -88,7 +88,7 @@ const Tree = {
 				popup.removeChild(popup.lastChild);
 			}
 			let id = popup.id;
-			for (let f in new Utils.SimpleIterator(DTA.FilterManager.enumAll(), Ci.dtaIFilter)) {
+			for (let f in DTA.FilterManager.enumAll()) {
 				if (f.id == 'deffilter-all') {
 					continue;
 				}
@@ -404,10 +404,6 @@ const Tree = {
 		this.remove(this._downloads.filter(function(e) this.getBaseDomain(e.urlManager.url) == host, this), true);		
 	},
 	removeByFilter: function T_removeByFilter(filter, id) {
-		if (!(filter instanceof Ci.dtaIFilter)) {
-			throw new Exception("Invalid access");
-		}
-		
 		let pref = null;
 		let mask = -1;
 		let msg = null;

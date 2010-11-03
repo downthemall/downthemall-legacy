@@ -36,8 +36,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
-const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
+const LINK_FILTER = DTA.FilterManager.LINK_FILTER;
+const IMAGE_FILTER = DTA.FilterManager.IMAGE_FILTER;
 
 let Prompts = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
@@ -220,7 +220,7 @@ const Filters = {
 			this._box.rowCountChanged(0, -this.rowCount);
 			this._filters = [];
 
-			for (let filter in new Utils.SimpleIterator(DTA.FilterManager.enumAll(), Ci.dtaIFilter)) {
+			for (let filter in DTA.FilterManager.enumAll()) {
 				this._filters.push(filter);
 			}
 			this._box.rowCountChanged(0, this.rowCount);
