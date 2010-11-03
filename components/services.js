@@ -44,16 +44,7 @@ const error = Components.utils.reportError;
 
 module("resource://gre/modules/XPCOMUtils.jsm");
 
-const NS_ERROR_NO_INTERFACE = Cr.NS_ERROR_NO_INTERFACE;
-const NS_ERROR_FAILURE = Cr.NS_ERROR_FAILURE;
-const NS_ERROR_NO_AGGREGATION = Cr.NS_ERROR_NO_AGGREGATION;
-const NS_ERROR_INVALID_ARG = Cr.NS_ERROR_INVALID_ARG;
-
-const PREF_SNIFFVIDEOS = 'extensions.dta.listsniffedvideos';
-
 const ABOUT_URI = 'https://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_ID%&version=%APP_VERSION%&os=%OS%';
-
-const ScriptableInputStream = new ctor('@mozilla.org/scriptableinputstream;1', 'nsIScriptableInputStream', 'init');
 
 this.__defineGetter__(
 	'Preferences',
@@ -108,7 +99,7 @@ Stuff.prototype = {
 			break;
 		case 'final-ui-startup':
 			Observers.removeObserver(this, 'final-ui-startup');
-			this._migrate();
+			this.bootstrap();
 			break;
 		case 'profile-change-teardown':
 			Observers.removeObserver(this, 'profile-change-teardown');
@@ -119,7 +110,7 @@ Stuff.prototype = {
 			break;
 		}
 	},
-	_migrate: function MM_migrate() {
+	bootstrap: function MM_bootstrap() {
 		try {
 			let _mm = {};
 			module("resource://dta/support/migration.jsm", _mm);
@@ -127,6 +118,14 @@ Stuff.prototype = {
 		}
 		catch (ex) {
 			log("m", ex);
+		}
+		try {
+			// init module at this point
+			let _ch = {};
+			module("resource://dta/support/contenthandling.jsm", _ch);
+		}
+		catch (ex) {
+			log("ch", ex);
 		}
 	},
 	clean: function() {
@@ -193,256 +192,6 @@ Stuff.prototype = {
 };
 
 /**
- * ContentHandling
- */
-function ContentHandling() {}
-ContentHandling.prototype = {
-	classDescription: 'DownThemAll! Content Handling',
-	classID: Components.ID('{35eabb45-6bca-408a-b90c-4b22e543caf4}'),
-	contractID: '@downthemall.net/contenthandling;2',
-	
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.dtaIContentHandling]),
-	
-	_xpcom_categories: [{category: 'profile-after-change'}],
-	
-	// ensure that there is only one instance of this service around
-	_xpcom_factory: {
-		_instance: null,
-		createInstance: function(outer, iid) {
-			if (outer) {
-				throw Cr.NS_ERROR_NO_AGGREGATION;
-			}
-			if (!this._instance) {
-				this._instance = new ContentHandling();
-			}
-			return this._instance.QueryInterface(iid);
-		}
-	},
-	
-	_init: function ct__init() {
-		Observers.addObserver(this, 'http-on-modify-request', false);
-		Observers.addObserver(this, 'http-on-examine-response', false);
-		Observers.addObserver(this, 'http-on-examine-cached-response', false);
-		Observers.addObserver(this, 'xpcom-shutdown', false);
-		Observers.addObserver(this, 'private-browsing', false);
-		this._ps = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2);
-		this._ps.addObserver(PREF_SNIFFVIDEOS, this, false);
-		this.sniffVideos = this._ps.getBoolPref(PREF_SNIFFVIDEOS);
-	},
-	_uninit: function ct__uninit() {
-		Observers.removeObserver(this, 'http-on-modify-request');
-		Observers.removeObserver(this, 'http-on-examine-response');
-		Observers.removeObserver(this, 'http-on-examine-cached-response');
-		Observers.removeObserver(this, 'xpcom-shutdown');
-		Observers.removeObserver(this, 'private-browsing');
-		this._ps.removeObserver('extensions.dta.listsniffedvideos', this);
-	},
-	observe: function ct_observe(subject, topic, data) {
-		switch(topic) {
-		case 'profile-after-change':
-			this._init();
-			break;
-		case 'xpcom-shutdown':
-			this._uninit();
-			break;
-		case 'http-on-modify-request':
-			this.observeRequest(subject, topic, data);
-			break;
-		case 'http-on-examine-response':
-		case 'http-on-examine-cached-response':
-			this.observeResponse(subject, topic, data);
-			break;
-		case 'nsPref:changed':
-			try {
-				this.sniffVideos = subject.QueryInterface(Ci.nsIPrefBranch).getBoolPref(PREF_SNIFFVIDEOS);
-			}
-			catch (ex) {
-				log("Failed to get sniffVideos pref", ex);
-			}
-			break;
-		case 'private-browsing':
-			this._clearPostData();
-			this._clearVideos();
-			break;
-		}
-	},
-	observeRequest: function ct_observeRequest(subject, topic, data) {
-		if (
-			!(subject instanceof Ci.nsIHttpChannel)
-			|| !(subject instanceof Ci.nsIUploadChannel)
-		) {
-			return;
-		}
-		var channel = subject.QueryInterface(Ci.nsIHttpChannel);
-				
-		if (channel.requestMethod != 'POST') {
-			return;
-		}
-				
-		var post;
-		
-		try {
-			var us = subject.QueryInterface(Ci.nsIUploadChannel).uploadStream;
-			if (!us) {
-				return;
-			}
-			try {
-				us.QueryInterface(Ci.nsIMultiplexInputStream);
-				log("ignoring multiplex stream");
-				return;
-			}
-			catch (ex) {
-				// no op
-			}
-				
-			let ss = us.QueryInterface(Ci.nsISeekableStream);
-			if (!ss) {
-				return;
-			}
-			let op = ss.tell();
-		
-			ss.seek(0, 0);
-			
-			let is = new ScriptableInputStream(us);
-			
-			// we'll read max 64k
-			let available = Math.min(is.available(), 1 << 16);
-			if (available) {
-				post = is.read(available);
-			}
-			ss.seek(0, op);
-			
-			if (post) {
-				this._registerData(channel.URI, post);
-			}
-		}
-		catch (ex) {
-			log("cannot get post-data", ex);
-		}
- 	},
-	observeResponse: function ct_observeResponse(subject, topic, data) {
-		if (!this.sniffVideos || !(subject instanceof Ci.nsIHttpChannel)) {
-			return;
-		}
-		let channel = subject.QueryInterface(Ci.nsIHttpChannel);
-		try {
-			if (!channel.requestSucceeded) {
-				return;
-			}
-			let ct = '';
-			for each (let x in ['Content-Type', 'Content-Disposition']) {
-				try {
-					ct += channel.getResponseHeader('Content-Type');
-				}
-				catch (ex) {
-					// no op
-				}
-			}
-			if (
-					(/\.(flv|ogg|ogm|ogv|avi|divx|mp4v?|webm)\b/i.test(channel.URI.spec) && !/\.swf\b/i.test(channel.URI.spec)) 
-					|| ct.match(/\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i)
-			) {
-				let wp = null;
-				if (channel.loadGroup && channel.loadGroup.groupObserver) {
-					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);					
-				}
-				if (!wp) {
-					wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
-				}
-				 
-				if (!wp || !wp.DOMWindow) {
-					return 
-				}
-				let wn = wp.DOMWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
-				if (!wn || !wn.currentURI) {
-					return;
-				}
-				let parentURI = wn.currentURI;
-				if (!parentURI.schemeIs('http') && !parentURI.schemeIs('https') && !parentURI.schemeIs('ftp')) {
-					return;
-				}
-				this._registerVideo(parentURI, channel.URI);
-			}
-		}
-		catch (ex) {
-			// no op
-		}
-	},
-	_dataDict: {},
-	_dataArray: [],
-	_clearPostData: function ct__clearPostData() {
-		this._dataDict = {};
-		this._dataArray = [];
-	},
-	_registerData: function ct__registerData(uri, data) {
-		uri = uri.spec;
-
-		if (!(uri in this._dataDict)) {
-			if (this._dataArray.length > 5) {
-				delete this._dataDict[this._dataArray.pop()];
-			}
-			this._dataArray.push(uri);
-		}
-		
-		this._dataDict[uri] = data;  	
-	},
-	
-	_sniffVideos: false,
-	get sniffVideos() {
-		return this._sniffVideos;
-	},
-	set sniffVideos(nv) {
-		this._sniffVideos = nv;
-		if (!nv) {
-			this._clearVideos();
-		}
-		return nv;
-	},
-	_vidDict: {},
-	_vidArray: [],
-	_clearVideos: function ct__clearVideos() {
-		this._vidDict = {};
-		this._vidArray = [];
-	},
-	_registerVideo: function ct__registerVideo(uri, vid) {
-		uri = uri.spec;
-		if (!(uri in this._vidDict)) {
-			if (this._vidArray.length > 20) {
-				delete this._vidDict[this._vidArray.pop()];
-			}
-			this._vidArray.push(uri);
-			this._vidDict[uri] = {};
-		}
-		this._vidDict[uri][vid.spec] = vid;
-	},
-	
-	getPostDataFor: function ct_getPostDataFor(uri) {
-		if (uri instanceof Ci.nsIURI) {
-			uri = uri.spec;
-		}
-		if (!(uri in this._dataDict)) {
-			return '';
-		}
-		return this._dataDict[uri];
-	},
-	getSniffedVideosFor: function ct_getSniffedVideosFor(uri) {
-		if (uri instanceof Ci.nsIURI) {
-			uri = uri.spec;
-		}
-		let rv = [];
-		if (!(uri in this._vidDict)) {
-			return rv;
-		}
-		let vids = this._vidDict[uri];
-		for each (let v in vids) {
-			log(v.spec);
-			rv.push(v.clone());
-		}
-		return rv;
-	}
-};
-
-/**
  * AboutModule
  */
 function AboutModule() {
@@ -454,7 +203,7 @@ AboutModule.prototype = {
 	
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule]),
 	
-  newChannel : function(aURI) {
+	newChannel : function(aURI) {
 		try {
 		    let io = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
 		    let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
@@ -486,8 +235,8 @@ AboutModule.prototype = {
 };
 
 if (XPCOMUtils.generateNSGetFactory) {
-    var NSGetFactory = XPCOMUtils.generateNSGetFactory([Stuff, ContentHandling, AboutModule]);
+    var NSGetFactory = XPCOMUtils.generateNSGetFactory([Stuff, AboutModule]);
 }
 else {
-    function NSGetModule() XPCOMUtils.generateModule([Stuff, ContentHandling, AboutModule]);
+    function NSGetModule() XPCOMUtils.generateModule([Stuff, AboutModule]);
 }
