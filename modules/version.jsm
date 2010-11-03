@@ -58,6 +58,7 @@ const Version = {
 		VERSION: '0.0',
 		BASE_VERSION: '0.0',
 		NAME: 'DownThemAll!',
+		moz2: false,
 		ready: false,
 		showAbout: null,
 		compareVersion: function(version, cmp) {
@@ -98,6 +99,7 @@ function completeVersion(addon) {
 try {
 	// moz-1.9.3+
 	module("resource://gre/modules/AddonManager.jsm");
+	Version.moz2 = true;
 	AddonManager.getAddonByID(Version.ID, function(addon) {
 		completeVersion(addon);
 	});

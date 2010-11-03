@@ -48,17 +48,27 @@ const Exception = Components.Exception;
 const FileOutputStream = Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const File = Components.Constructor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 
-// Minimum size of a preallocation.
-// If requested size is less then no actual pre-allocation will be performed.
-let SIZE_MIN = 5 * 1024 * 1024;
-
-// Step size of the allocation
-// Do this step wise to avoid certain "sparse files" cases
-const SIZE_STEP = 100 * 1024 * 1024;
-
 module('resource://dta/cothread.jsm');
 module('resource://dta/utils.jsm');
 module('resource://dta/version.jsm');
+
+// Must we run on main thread?
+// See: https://bugzilla.mozilla.org/show_bug.cgi?id=608142
+const RUN_ON_MAINTHREAD = Version.moz2;
+
+// Should we use the optimized Windows implementation?
+const WINDOWSIMPL = Version.OS == 'winnt';
+// Size cap: Use Windows implementation (on Windows) even if run on main thread
+const WINDOWSIMPL_SIZEMAX = (1 << 25) // 32MB
+
+//Minimum size of a preallocation.
+//If requested size is less then no actual pre-allocation will be performed.
+const SIZE_MIN = (WINDOWSIMPL && !RUN_ON_MAINTHREAD ? 30 : 2048) * 1024;
+
+//Step size of the allocation
+//Do this step wise to avoid certain "sparse files" cases
+const SIZE_STEP = (1 << (RUN_ON_MAINTHREAD ? 23 : 27)); // 8/128MB
+
 
 // Store workers here.
 // Not storing workers (in this context) will cause gc havoc.
@@ -95,18 +105,24 @@ function WorkerJob(path, size, perms, callback, tp) {
 	this.callback = callback;
 	this.tp = tp;
 	this.uuid = newUUIDString();
-	
-	// Create thread and dispatch
+
 	let tm = Cc['@mozilla.org/thread-manager;1'].getService(Ci.nsIThreadManager);
-	this.thread = tm.newThread(0);
-	try {
-		let tp = this.thread.QueryInterface(Ci.nsISupportsPriority);
-		tp.priority = Ci.nsISupportsPriority.PRIORITY_LOWEST;
-	}
-	catch (ex) {
-		// no op
-	}
 	this.main = tm.mainThread;
+
+	if (RUN_ON_MAINTHREAD) {
+		this.thread = this.main;
+	}
+	else {
+		// Create thread and dispatch
+		this.thread = tm.newThread(0);
+		try {
+			let tp = this.thread.QueryInterface(Ci.nsISupportsPriority);
+			tp.priority = Ci.nsISupportsPriority.PRIORITY_LOWEST;
+		}
+		catch (ex) {
+			// no op
+		}
+	}
 	workers[this.uuid] = this;
 	this.thread.dispatch(this, this.thread.DISPATCH_NORMAL);
 }
@@ -119,42 +135,21 @@ WorkerJob.prototype = {
 		throw Cr.NS_ERROR_NO_INTERFACE;
 	},
 	run: function worker_run() {
-		let rv = false;
-		try {
-			let file = new File(this.path);
-			let stream = new FileOutputStream(file, 0x02 | 0x08, this.perms, 0);
-			try {
-				let seekable = stream.QueryInterface(Ci.nsISeekableStream);
-				seekable.seek(0x02, 0);
-				let i = seekable.tell() + SIZE_STEP;
-				for (i = Math.min(this.size - 1, i); !this.terminated && i < this.size - 1; i = Math.min(this.size - 1, i + SIZE_STEP)) {
-					seekable.seek(0x00, i);
-					stream.write("a", 1);
-				}
-				rv = true;				
-			}
-			catch (iex) {
-				Debug.log("pa: Failed to run prealloc loop", iex);
-			}
-			stream.close();
+		if (!RUN_ON_MAINTHREAD && WINDOWSIMPL) {
+			// Always opt-branch
+			this._run_windows();
 		}
-		catch (ex) {
-			Debug.log("pa: Failed to run prealloc worker", ex);
+		else if (WINDOWSIMPL && this.size <= WINDOWSIMPL_SIZEMAX) {
+			// On main thread, but file is small enough
+			Debug.log("taking opt");
+			this._run_windows();
 		}
-		
-		// Dispatch event back to the main thread
-		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);		
+		else {
+			Debug.log("taking other");
+			this._run_other();
+		}
 	},
-	cancel: function() {
-		Debug.log("pa: cancel called!");
-		this.terminated = true;
-		this.thread.shutdown();
-	}
-};
-
-if (Version.OS == 'winnt') {
-	SIZE_MIN = 30 * 1024;
- 	WorkerJob.prototype.run = function workerwin_run() {
+	_run_windows: function worker_run_windows() {
 		let rv = false;
 		try {
 			let file = new File(this.path);
@@ -175,9 +170,47 @@ if (Version.OS == 'winnt') {
 		
 		// Dispatch event back to the main thread
 		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);		
+	},	
+	_run_other: function worker_run_other() {
+		let rv = false;
+		try {
+			let file = new File(this.path);
+			let stream = new FileOutputStream(file, 0x02 | 0x08, this.perms, 0);
+			try {
+				let seekable = stream.QueryInterface(Ci.nsISeekableStream);
+				seekable.seek(0x02, 0);
+				let i = seekable.tell() + SIZE_STEP;
+				for (i = Math.min(this.size - 1, i); !this.terminated && i < this.size - 1; i = Math.min(this.size - 1, i + SIZE_STEP)) {
+					seekable.seek(0x00, i);
+					stream.write("a", 1);
+					if (RUN_ON_MAINTHREAD) {
+						while (this.main.hasPendingEvents()) {
+							this.main.processNextEvent(false);
+						}
+					}
+				}
+				rv = true;
+			}
+			catch (iex) {
+				Debug.log("pa: Failed to run prealloc loop", iex);
+			}
+			stream.close();
+		}
+		catch (ex) {
+			Debug.log("pa: Failed to run prealloc worker", ex);
+		}
+		
+		// Dispatch event back to the main thread
+		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);		
+	},
+	cancel: function() {
+		Debug.log("pa: cancel called!");
+		this.terminated = true;
+		if (!RUN_ON_MAINTHREAD) {
+			this.thread.shutdown();
+		}
 	}
-}
-
+};
 function MainJob(uuid, thread, callback, tp, result) {
 	this.uuid = uuid;
 	this.thread = thread;
@@ -193,7 +226,9 @@ MainJob.prototype = {
 	
 		try {
 			// wait for thread to actually join, if not already joined
-			this.thread.shutdown();
+			if (!RUN_ON_MAINTHREAD) {
+				this.thread.shutdown();
+			}
 		}
 		catch (ex) {
 			// might throw; see Worker.cancel
