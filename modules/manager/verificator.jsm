@@ -139,6 +139,13 @@ function Verificator(file, hashCollection, completeCallback, progressCallback) {
 	}
 	else {
 		this._thread = ThreadManager.newThread(0);
+		try {
+			let tp = this._thread.QueryInterface(Ci.nsISupportsPriority);
+			tp.priority = Ci.nsISupportsPriority.PRIORITY_LOWEST;
+		}
+		catch (ex) {
+			// no op
+		}		
 	}
 	this._thread.dispatch(this, 0x0);
 }
