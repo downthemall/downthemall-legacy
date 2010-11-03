@@ -15,7 +15,7 @@
 <!ENTITY manager "Gestor dTa">
 <!ENTITY mainpane.label "Principal">
 <!ENTITY mainpane.defaults.caption "Padrões">
-<!ENTITY mainpane.defaults.desc "A directoria de descarregamento, máscaras de renomeação e filtros usados pelo UmClique! podem ser configuradas no diálogo de selecção regular do DownThemAll!">
+<!ENTITY mainpane.defaults.desc "A pasta de transferências, máscaras de renomeação e filtros usados pelo Um Clique! podem ser configuradas no diálogo de selecção regular do DownThemAll!">
 <!ENTITY mainpane.rename.caption "Se o nome de um ficheiro já existir:">
 <!ENTITY mainpane.rename.label "Mudar nome">
 <!ENTITY mainpane.overwrite.label "Sobrescrever">
@@ -31,10 +31,10 @@
 <!ENTITY mainpane.sounddone.label "Tocar um som quando todas as transferências forem finalizadas">
 <!ENTITY mainpane.closedta.label "Fechar o DownThemAll quando as transferências forem finalizadas">
 <!ENTITY mainpane.settime.label "Definir hora do ficheiro para última vez modificado (servidor) ou hora da fila">
-<!ENTITY mainpane.rememberoneclick.label "Ter o dTa UmClique a lembrar se se aplica a Todas os Separadores ou ao Separador Actual">
-<!ENTITY mainpane.confirmremove.label "Utilizador deve confirmar remoção dos descarregamentos">
-<!ENTITY mainpane.textlinks.label "Reconhecer links de texto">
-<!ENTITY mainpane.listsniffedvideos.label "Gravar e listar videos (Flash)">
+<!ENTITY mainpane.rememberoneclick.label "Ter o dTa Um Clique a lembrar se se aplica a todos os separadores ou ao separador actual">
+<!ENTITY mainpane.confirmremove.label "Utilizador deve confirmar remoção das transferências">
+<!ENTITY mainpane.textlinks.label "Reconhecer ligações de texto">
+<!ENTITY mainpane.listsniffedvideos.label "Gravar e listar vídeos (Flash)">
 <!ENTITY privacypane.label "Privacidade">
 <!ENTITY privacypane.closing.caption "Quando a janela do Gestor é fechada">
 <!ENTITY privacypane.removecompleted.label "Remover transferências finalizadas">
@@ -57,12 +57,12 @@
 <!ENTITY privacypane.privacynotice.label "A nossa informação de privacidade">
 <!ENTITY serverspane.label "Rede">
 <!ENTITY serverspane.downloads.caption "Descarregamentos">
-<!ENTITY serverspane.concurrent.label "Descarregamentos Simultâneos:">
-<!ENTITY serverspane.perserver.label "Descarregamentos Por Servidor:">
+<!ENTITY serverspane.concurrent.label "Transferências simultâneas:">
+<!ENTITY serverspane.perserver.label "Transferências por servidor:">
 <!ENTITY serverspane.url.label "Localização ou domínio:">
-<!ENTITY serverspane.new.label "Novo Limite">
-<!ENTITY serverspane.del.label "Remover Limite">
-<!ENTITY serverspane.limits.label "Limites Por-Servidor">
+<!ENTITY serverspane.new.label "Novo limite">
+<!ENTITY serverspane.del.label "Remover limite">
+<!ENTITY serverspane.limits.label "Limites por-servidor">
 <!ENTITY serverpane.limits.noitems "Nenhuns limites por-servidor especificados">
 <!ENTITY serverspane.connections.label "Conexões:">
 <!ENTITY serverspane.speed.label "Limite de Velocidade:">
@@ -95,11 +95,11 @@
 <!ENTITY advancedpane.permissions.read "podem ler">
 <!ENTITY advancedpane.permissions.write "podem escrever">
 <!ENTITY advancedpane.loadendfirst.label "Carregar primeiro os últimos kilobytes">
-<!ENTITY advancedpane.scheduler.caption "Ordem de início do descarregamento:">
+<!ENTITY advancedpane.scheduler.caption "Ordem de início da transferência:">
 <!ENTITY advancedpane.scheduler.fast "Rápido - Como enfileirado">
 <!ENTITY advancedpane.scheduler.fair "Justo+Lento - Distribuído uniformemente">
 <!ENTITY advancedpane.scheduler.legacy "Legado - sem limites">
-<!ENTITY advancedpane.exposeinua.label "Expor o DownThemAll! no Agente-de-utilizador">
+<!ENTITY advancedpane.exposeinua.label "Expor o DownThemAll! no agente-de-utilizador">
 <!ENTITY uipane.label "Interface">
 <!ENTITY uipane.namesonly.label "Mostrar apenas nomes de ficheiros na janela do gestor">
 <!ENTITY uipane.integration.caption "Integração">
@@ -108,7 +108,7 @@
 <!ENTITY uipane.tools.caption "Menu Ferramentas">
 <!ENTITY uipane.compact.label "Usar um menu compacto">
 <!ENTITY uipane.hide.label "Esconder este menu">
-<!ENTITY uipane.showtooltip.label "Mostrar Dicas sobre transferências">
+<!ENTITY uipane.showtooltip.label "Mostrar dicas sobre transferências">
 <!ENTITY uipane.manager.caption "Janela do Gestor">
 <!ENTITY uipane.startminimized.label "Iniciar minimizado">
 <!ENTITY uipane.minimizetotray.label "Minimizar o a área de notificação">

@@ -1,20 +1,20 @@
 <!ENTITY dta-pref.label "Preferências">
-<!ENTITY dta-about.label "sobre dTa!">
+<!ENTITY dta-about.label "Sobre o dTa!">
 <!ENTITY dta-manager-button "Gestor">
-<!ENTITY dta-selector-button "Seleccionador dTa UmCLique!">
+<!ENTITY dta-selector-button "Seleccionador dTa Um CLique!">
 <!ENTITY dta-tb-all.label "Todos os separadores">
-<!ENTITY dta-tb-single.label "Separador Actual">
+<!ENTITY dta-tb-single.label "Separador actual">
 <!ENTITY dta-selection.label "Selecção DownThemAll!...">
-<!ENTITY dta-selection-turbo.label "Selecção dTa UmCLique!...">
+<!ENTITY dta-selection-turbo.label "Selecção dTa Um CLique!...">
 <!ENTITY dta-regular.label "DownThemAll!...">
-<!ENTITY dta-regular-turbo.label "dTa UmClique...">
-<!ENTITY dta-img-save.label "Salvar imagem com o DownThemAll!">
-<!ENTITY dta-img-save-turbo.label "Começar a salvar imagem com o dTa UmClique!">
-<!ENTITY dta-video-save.label "Salvar video com o DownThemAll!">
-<!ENTITY dta-video-save-turbo.label "Começar a salvar video com o  dTa UmClique!">
-<!ENTITY dta-audio-save.label "Salvar Audio com o DownThemAll!">
-<!ENTITY dta-audio-save-turbo.label "Começar a salvar Audio com o dTa UmClique!">
-<!ENTITY dta-link-save.label "Salvar Link com o DownThemAll!">
-<!ENTITY dta-link-save-turbo.label "Começar a salvar Link com o dTa UmClique!">
+<!ENTITY dta-regular-turbo.label "dTa Um Clique...">
+<!ENTITY dta-img-save.label "Guardar imagem com o DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Começar a guardar imagem com o dTa Um Clique!">
+<!ENTITY dta-video-save.label "Guardar vídeo com o DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Começar a guardar vídeo com o  dTa Um Clique!">
+<!ENTITY dta-audio-save.label "Guardar Áudio com o DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Começar a guardar Áudio com o dTa Um Clique!">
+<!ENTITY dta-link-save.label "Guardar ligação com o DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Começar a guardar ligação com o dTa Um Clique!">
 <!ENTITY dta-form-save.label "Guardar o destino de formulários com o DownThemAll!">
-<!ENTITY dta-form-save-turbo.label "Começar a guardar o destino de formulários com o dTa OneClick!">
+<!ENTITY dta-form-save-turbo.label "Começar a guardar o destino de formulários com o dTa Um Clique!">
