@@ -41,7 +41,7 @@ ServiceGetter(this, "os", "@mozilla.org/observer-service;1", "nsIObserverService
  */
 function Tree(links, type) {
 
-	// type corresponding to dtaIFilterManager
+	// type corresponding to FilterManager
 	this._type = type;
 
 	// internal list of links.
@@ -318,7 +318,7 @@ let Dialog = {
 			}
 
 			// intialize our Trees (nsITreeview)
-			// type parameter corresponds to dtaIFilter types
+			// type parameter corresponds to Filter types
 			this.links = new Tree(links, 1);
 			this.images = new Tree(images, 2);			
 
@@ -358,7 +358,7 @@ let Dialog = {
 		}
 
 		// will install our observer
-		// currently just observes dtaIFilterManager
+		// currently just observes FilterManager
 		this.registerObserver();
 	},
 	
@@ -662,7 +662,7 @@ let Dialog = {
 		}
 
 		let boxes = [];
-		for (let f in new Utils.SimpleIterator(DTA.FilterManager.enumAll(), Ci.dtaIFilter)) {
+		for (let f in DTA.FilterManager.enumAll()) {
 			if (!(f.type & type)) {
 				continue;
 			}

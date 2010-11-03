@@ -49,8 +49,6 @@
 	let Preferences = {};
 	Components.utils.import('resource://dta/preferences.jsm', Preferences);	
 	
-	let debug = DTA.Debug;
-	
 	function $() {
 		if (arguments.length == 1) {
 			return document.getElementById(arguments[0]);
@@ -63,7 +61,7 @@
 				elements.push(element);
 			}
 			else {
-				debug.log("requested a non-existing element: " + id);
+				DTA.Debug.log("requested a non-existing element: " + id);
 			}
 		}
 		return elements;
@@ -76,7 +74,7 @@
 			return getString.__str.GetStringFromName(n);
 		}
 		catch (ex) {
-			debug.log("locale error: " + n, ex);
+			DTA.Debug.log("locale error: " + n, ex);
 			return '<error>';
 		}
 	};
@@ -95,7 +93,7 @@
 			return getString.__str.formatStringFromName(n, args, args.length);
 		}
 		catch (ex) {
-			debug.log("locale error: " + n, ex);
+			DTA.Debug.log("locale error: " + n, ex);
 			return '<error>';
 		}	
 	}
@@ -197,7 +195,7 @@
 			})(message);
 		}
 		catch (ex) {
-			debug.log("np", ex);
+			DTA.Debug.log("np", ex);
 			notifyProgress = function() {}
 		}
 	}	
@@ -238,7 +236,7 @@
 			}
 		}
 		catch(ex) {
-			debug.log('extractDescription', ex);
+			DTA.Debug.log('extractDescription', ex);
 		}
 		return trimMore(rv.join(" "));
 	}
@@ -297,7 +295,7 @@
 				src = DTA.composeURL(doc, l.src);
 			}
 			catch (ex) {
-				debug.log("failed to compose: " + src, ex);
+				DTA.Debug.log("failed to compose: " + src, ex);
 				continue;
 			}
 			// if it's valid and it's new
@@ -437,7 +435,7 @@
 			
 			let sel = null;
 			if (honorSelection && (sel = aWin.getSelection()) && !sel.isCollapsed) {
-				debug.log("selection only");
+				DTA.Debug.log("selection only");
 				[links, images, videos, embeds, inputs] = [links, images, videos, embeds, inputs].map(
 					function(e) {
 						return filterElements(e, sel);
@@ -509,7 +507,7 @@
 				honorSelection = false;
 			}
 			
-			debug.log("adding links to array");
+			DTA.Debug.log("adding links to array");
 			for (let y in addLinksToArray(links, aURLs, aWin.document)) {
 				yield true;
 			}
@@ -527,7 +525,7 @@
 			}
 		}
 		catch (ex) {
-			debug.log('addLinks', ex);
+			DTA.Debug.log('addLinks', ex);
 		}
 		
 		// do not process further as we just filtered the selection
@@ -583,10 +581,10 @@
 			}		
 			
 			if (turbo) {
-				debug.log("findLinks(): DtaOneClick request from the user");
+				DTA.Debug.log("findLinks(): DtaOneClick request from the user");
 			}
 			else {
-				debug.log("findLinks(): DtaStandard request from the user");
+				DTA.Debug.log("findLinks(): DtaStandard request from the user");
 			}
 
 			let wt = document.documentElement.getAttribute('windowtype');
@@ -615,9 +613,9 @@
 			
 			new cothreads.CoThreadInterleaved(
 				(function() {
-					debug.log("findLinks(): running");
+					DTA.Debug.log("findLinks(): running");
 					for each (let win in windows) {
-						debug.log("findLinks(): running...");
+						DTA.Debug.log("findLinks(): running...");
 						for (let y in addLinks(win, urls, images, !all)) {
 							yield true;
 						}
@@ -628,7 +626,7 @@
 					images = unique(images);
 					yield true;
 					
-					debug.log("findLinks(): done running...");
+					DTA.Debug.log("findLinks(): done running...");
 					
 				})(),
 				100
@@ -637,7 +635,7 @@
 				clearInterval(_updateInterval);
 				notifyProgress();
 
-				debug.log("findLinks(): finishing...");
+				DTA.Debug.log("findLinks(): finishing...");
 				if (!urls.length && !images.length) {
 					notifyError(getString('error'), getString('errornolinks'));
 					return;
@@ -656,7 +654,7 @@
 						return;
 					}
 					catch (ex) {
-						debug.log('findLinks', ex);
+						DTA.Debug.log('findLinks', ex);
 						DTA.saveLinkArray(window, urls, images, getString('errorinformation'));
 					}
 					return;
@@ -665,7 +663,7 @@
 			});
 		}
 		catch(ex) {
-			debug.log('findLinks', ex);
+			DTA.Debug.log('findLinks', ex);
 		}
 	}
 	
@@ -679,7 +677,7 @@
 		}
 		catch (ex) {
 			notifyError(getString('error'), getString('errorcannotdownload'));
-			debug.log('findSingleLink: ', ex);
+			DTA.Debug.log('findSingleLink: ', ex);
 		}
 	}
 	
@@ -693,7 +691,7 @@
 		}
 		catch (ex) {
 			notifyError(getString('error'), getString('errorcannotdownload'));
-			debug.log('findSingleLink: ', ex);
+			DTA.Debug.log('findSingleLink: ', ex);
 		}		
 	}
 	
@@ -726,7 +724,7 @@
 			}
 			catch (ex) {
 				notifyError(getString('error'), getString('errorcannotdownload'));
-				debug.log('_findSingleMedia: ', ex);
+				DTA.Debug.log('_findSingleMedia: ', ex);
 			}
 		}		
 	}
@@ -757,7 +755,7 @@
 				return;
 			}
 			catch (ex) {
-				debug.log('saveSingleLink', ex);
+				DTA.Debug.log('saveSingleLink', ex);
 				notifyError(getString('error'), getString('errorinformation'));
 			}
 		}
@@ -843,14 +841,14 @@
 					return;
 				}
 				catch (ex) {
-					debug.log('findSingleLink', ex);
+					DTA.Debug.log('findSingleLink', ex);
 					notifyError(getString('error'), getString('errorinformation'));
 				}
 			}
 			DTA.saveSingleLink(window, window, false, action, ref, desc);
 		}
 		catch (ex) {
-			debug.log('findForm', ex);
+			DTA.Debug.log('findForm', ex);
 		}
 	}
 	
@@ -991,7 +989,7 @@
 			}
 		}
 		catch(ex) {
-			debug.log("DTAContext(): ", ex);
+			DTA.Debug.log("DTAContext(): ", ex);
 		}		 
 	}
 	
@@ -1042,7 +1040,7 @@
 			}
 		}
 		catch(ex) {
-			debug.log("DTATools(): ", ex);
+			DTA.Debug.log("DTATools(): ", ex);
 		}
 	}
 	
@@ -1423,7 +1421,7 @@
 				url = DTA.IOService.newURI(url, null, null);
 			}
 			catch (ex) {
-				debug.log("Failed to process drop", ex);
+				DTA.Debug.log("Failed to process drop", ex);
 				return;
 			}
 			let doc = document.commandDispatcher.focusedWindow.document;
@@ -1532,7 +1530,7 @@
 			}
 			catch (ex) {
 				Components.utils.reportError(ex);
-				debug.log("DCO::init()", ex);
+				DTA.Debug.log("DCO::init()", ex);
 			}
 			evt.target == ctx ? onContextShowing(evt) : onToolsShowing(evt);
 		}
@@ -1557,7 +1555,7 @@
 			}
 		}
 		catch (ex) {
-			debug.log("Failed to parse palette", ex);
+			DTA.Debug.log("Failed to parse palette", ex);
 		}
 		
 		try {
@@ -1606,7 +1604,7 @@
 			$t('dta-manager-button').addEventListener('command', function() DTA.openManager(window), true);
 		}
 		catch (ex) {
-			debug.log("Init TBB failed", ex);
+			DTA.Debug.log("Init TBB failed", ex);
 		}
 		
 		// "Show about" stuff
@@ -1648,7 +1646,7 @@
 			}
 		}
 		catch (ex) {
-			debug.log("Failed to process about", ex);
+			DTA.Debug.log("Failed to process about", ex);
 		}
 	}, true); // load
 	

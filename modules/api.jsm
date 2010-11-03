@@ -84,7 +84,11 @@ module("resource://dta/support/pbm.jsm", pbm);
 
 ServiceGetter(this, "TextToSubURI", "@mozilla.org/intl/texttosuburi;1", "nsITextToSubURI");
 ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService");
-ServiceGetter(this, "FilterManager", "@downthemall.net/filtermanager;2", "dtaIFilterManager");
+setNewGetter(this, "FilterManager", function() {
+	let _fm = {};
+	module("resource://dta/support/filtermanager.jsm", _fm);
+	return _fm.FilterManager;
+});
 
 function _decodeCharset(text, charset) {
 	let rv = text;
