@@ -52,15 +52,22 @@ module('resource://dta/cothread.jsm');
 module('resource://dta/utils.jsm');
 module('resource://dta/version.jsm');
 
+// Must we run on main thread?
+// See: https://bugzilla.mozilla.org/show_bug.cgi?id=608142
 const RUN_ON_MAINTHREAD = Version.moz2;
+
+// Should we use the optimized Windows implementation?
+const WINDOWSIMPL = Version.OS == 'winnt';
+// Size cap: Use Windows implementation (on Windows) even if run on main thread
+const WINDOWSIMPL_SIZEMAX = (1 << 25) // 32MB
 
 //Minimum size of a preallocation.
 //If requested size is less then no actual pre-allocation will be performed.
-let SIZE_MIN = 2 * 1024 * 1024;
+const SIZE_MIN = (WINDOWSIMPL && !RUN_ON_MAINTHREAD ? 30 : 2048) * 1024;
 
 //Step size of the allocation
 //Do this step wise to avoid certain "sparse files" cases
-let SIZE_STEP = (1 << (RUN_ON_MAINTHREAD ? 23 : 27)); // 8/128MB
+const SIZE_STEP = (1 << (RUN_ON_MAINTHREAD ? 23 : 27)); // 8/128MB
 
 
 // Store workers here.
@@ -128,6 +135,43 @@ WorkerJob.prototype = {
 		throw Cr.NS_ERROR_NO_INTERFACE;
 	},
 	run: function worker_run() {
+		if (!RUN_ON_MAINTHREAD && WINDOWSIMPL) {
+			// Always opt-branch
+			this._run_windows();
+		}
+		else if (WINDOWSIMPL && this.size <= WINDOWSIMPL_SIZEMAX) {
+			// On main thread, but file is small enough
+			Debug.log("taking opt");
+			this._run_windows();
+		}
+		else {
+			Debug.log("taking other");
+			this._run_other();
+		}
+	},
+	_run_windows: function worker_run_windows() {
+		let rv = false;
+		try {
+			let file = new File(this.path);
+			let stream = new FileOutputStream(file, 0x02 | 0x08, this.perms, 0);
+			try {
+				let seekable = stream.QueryInterface(Ci.nsISeekableStream);
+				seekable.seek(0x02, this.size);
+				seekable.setEOF();
+			}
+			finally {
+				stream.close();
+			}
+			rv = true;
+		}
+		catch (ex) {
+			Debug.log("pa: Failed to run prealloc worker", ex);
+		}
+		
+		// Dispatch event back to the main thread
+		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);		
+	},	
+	_run_other: function worker_run_other() {
 		let rv = false;
 		try {
 			let file = new File(this.path);
@@ -167,33 +211,6 @@ WorkerJob.prototype = {
 		}
 	}
 };
-
-if (Version.OS == 'winnt' && !RUN_ON_MAINTHREAD) {
-	SIZE_MIN = 30 * 1024;
- 	WorkerJob.prototype.run = function workerwin_run() {
-		let rv = false;
-		try {
-			let file = new File(this.path);
-			let stream = new FileOutputStream(file, 0x02 | 0x08, this.perms, 0);
-			try {
-				let seekable = stream.QueryInterface(Ci.nsISeekableStream);
-				seekable.seek(0x02, this.size);
-				seekable.setEOF();
-			}
-			finally {
-				stream.close();
-			}
-			rv = true;
-		}
-		catch (ex) {
-			Debug.log("pa: Failed to run prealloc worker", ex);
-		}
-		
-		// Dispatch event back to the main thread
-		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);		
-	}
-}
-
 function MainJob(uuid, thread, callback, tp, result) {
 	this.uuid = uuid;
 	this.thread = thread;
