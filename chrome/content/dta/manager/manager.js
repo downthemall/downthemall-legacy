@@ -58,6 +58,7 @@ module('resource://dta/support/urlmanager.jsm');
 module('resource://dta/prompts.jsm', Prompts);
 
 module('resource://dta/support/bytebucket.jsm');
+module('resource://dta/support/contenthandling.jsm');
 module('resource://dta/support/pbm.jsm', PrivateBrowsing);
 module('resource://dta/support/serverlimits.jsm', Limits);
 module('resource://dta/support/timers.jsm');
@@ -81,7 +82,6 @@ function lazyModule(obj, name, url, symbol) {
 }
 
 lazyModule(this, 'AlertService', 'resource://dta/support/alertservice.jsm');
-lazyModule(this, 'ContentHandling', 'resource://dta/support/alertservice.jsm', 'ContentHandling');
 lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Decompressor');
 lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
 lazyModule(this, 'Version', 'resource://dta/version.jsm', 'Version');
