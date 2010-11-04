@@ -190,13 +190,15 @@ Filter.prototype = {
 
 	match: function F_match(str) {
 		if (!str) {
-			return;
+			return false;
 		}
-		return this._regs.some(
-			function(reg) {
-				return str.search(reg) != -1;
+		str = str.toString();		
+		for each (let r in this._regs) {
+			if (r.test(str)) {
+				return true;
 			}
-		);
+		}
+		return false;
 	},
 
 	/**
