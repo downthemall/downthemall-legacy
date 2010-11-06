@@ -1,0 +1,4 @@
+<!ENTITY title "Přidat URL">
+<!ENTITY desc.value "Zde zadejte URL souboru, který si přejete stáhnout (a volitelně stránku na něj odkazující).">
+<!ENTITY desc.batches.value "Pro stažení více souborů najednou můžete použít dávkové řetězce.">
+<!ENTITY examples.value "Příklady:">

@@ -1,0 +1,24 @@
+<!--
+	commonly used.
+	CHECK BEFORE MODIFY
+
+
+-->
+<!ENTITY start.label "Letöltés!">
+<!ENTITY start.key "s">
+<!ENTITY queue.label "Ütemezés!">
+<!ENTITY queue.key "t">
+<!ENTITY options.label "Tulajdonságok">
+<!ENTITY url.value "Letöltés">
+<!ENTITY dest.caption "Fájlok mentése a következő mappába:">
+<!ENTITY mirrors.value "Tükrök:">
+<!ENTITY referrer.value "Beajánló oldal">
+<!ENTITY description.value "Leírás:">
+<!ENTITY checksum.value "Ellenőrzőösszeg (Hash):">
+<!ENTITY browse.tip "Célmappa tallózása…">
+<!ENTITY mirrormanager.tip "Letöltési tükrök kezelése">
+<!ENTITY mask.label "Átnevezési maszk">
+<!ENTITY mask.tip "A kiválasztott fájlok mentésre kerülnek, majd a maszk alapján át lesznek nevezve">
+<!ENTITY selectall.label "Minden kijelölése">
+<!ENTITY selectinv.label "Kijelölés megfordítása">
+<!ENTITY selectnone.label "Nincs kiválasztva">
