@@ -1,0 +1,23 @@
+<!ENTITY mask.title "Címkék átnevezése">
+<!ENTITY mask.name "Fájlnév">
+<!ENTITY mask.ext "Kiterjesztés">
+<!ENTITY mask.url "Alap URL">
+<!ENTITY mask.curl "Teljes URL">
+<!ENTITY mask.flatcurl "Egyszerű teljes URL">
+<!ENTITY mask.num "Hatékonyság">
+<!ENTITY mask.inum "Elemek száma">
+<!ENTITY mask.hh "óra">
+<!ENTITY mask.mm "perc">
+<!ENTITY mask.ss "másodperc">
+<!ENTITY mask.d "nap">
+<!ENTITY mask.m "hónap">
+<!ENTITY mask.y "év">
+<!ENTITY mask.subdirs "URL almappák">
+<!ENTITY mask.flatsubdirs "Egyszerű URL almappák">
+<!ENTITY mask.text "Link leírás">
+<!ENTITY mask.flattext "Egyszerű link leírás">
+<!ENTITY mask.refer "Beajánló URL">
+<!ENTITY mask.qstring "Lekérdező karakterlánc">
+<!ENTITY mask.flattitle "Címkék átnevezése">
+<!ENTITY mask.tip "Kattintson vagy húzza a maszk átnevezéséhez">
+<!ENTITY mask.open.tip "Címkék átnevezésének referencia-táblája">

@@ -1,0 +1,5 @@
+<!ENTITY fileMenu.label "Fájl">
+<!ENTITY fileMenu.accesskey "F">
+<!ENTITY newNavigatorCmd.label "Új böngészőablak">
+<!ENTITY tabCmd.label "Új böngészőlap">
+<!ENTITY closeWindow.label "DownThemAll! bezárása">
