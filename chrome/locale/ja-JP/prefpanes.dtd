@@ -103,7 +103,7 @@
 <!ENTITY uipane.label "操作">
 <!ENTITY uipane.namesonly.label "マネージャーウィンドウにファイル名だけを表示">
 <!ENTITY uipane.integration.caption "統合">
-<!ENTITY uipane.downloadwin.label "&apos;ファイルを保存&apos; ダイアログに DownThemAll! を追加">
+<!ENTITY uipane.downloadwin.label "'ファイルを保存' ダイアログに DownThemAll! を追加">
 <!ENTITY uipane.context.caption "コンテキストメニュー">
 <!ENTITY uipane.tools.caption "ツールメニュー">
 <!ENTITY uipane.compact.label "コンパクトなメニューを使用">

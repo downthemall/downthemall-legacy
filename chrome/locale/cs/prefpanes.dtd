@@ -103,7 +103,7 @@
 <!ENTITY uipane.label "Rozhraní">
 <!ENTITY uipane.namesonly.label "Ve správci zobrazovat pouze názvy souborů">
 <!ENTITY uipane.integration.caption "Integrace">
-<!ENTITY uipane.downloadwin.label "Přidat DownThemAll! do dialogového okna &quot;Stáhnout Soubor&quot;">
+<!ENTITY uipane.downloadwin.label "Přidat DownThemAll! do dialogového okna 'Stáhnout Soubor'">
 <!ENTITY uipane.context.caption "Kontextová nabídka">
 <!ENTITY uipane.tools.caption "Nabídka Nástroje">
 <!ENTITY uipane.compact.label "Použít kompaktní nabídku">

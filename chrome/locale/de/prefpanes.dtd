@@ -105,7 +105,7 @@
 <!ENTITY uipane.integration.caption "Integration">
 <!ENTITY uipane.downloadwin.label "DownThemAll! im 'Datei speichern'-Fenster anzeigen">
 <!ENTITY uipane.context.caption "Einträge im Kontextmenü">
-<!ENTITY uipane.tools.caption "Einträge im Menü &quot;Extras&quot;">
+<!ENTITY uipane.tools.caption "Einträge im Menü 'Extras'">
 <!ENTITY uipane.compact.label "Kompakte Menüdarstellung verwenden">
 <!ENTITY uipane.hide.label "Dieses Menü ausblenden">
 <!ENTITY uipane.showtooltip.label "Download-Tooltips anzeigen">

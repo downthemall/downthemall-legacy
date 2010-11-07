@@ -103,7 +103,7 @@
 <!ENTITY uipane.label "界面">
 <!ENTITY uipane.namesonly.label "在管理窗口中只显示文件名">
 <!ENTITY uipane.integration.caption "集成">
-<!ENTITY uipane.downloadwin.label "增加DownThemAll!到&quot;保存文件&quot;窗口">
+<!ENTITY uipane.downloadwin.label "增加DownThemAll!到'保存文件'窗口">
 <!ENTITY uipane.context.caption "右键菜单">
 <!ENTITY uipane.tools.caption "工具菜单">
 <!ENTITY uipane.compact.label "使用紧凑菜单">

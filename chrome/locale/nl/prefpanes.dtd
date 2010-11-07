@@ -103,7 +103,7 @@
 <!ENTITY uipane.label "Interface">
 <!ENTITY uipane.namesonly.label "Alleen bestandsnamen in het beheerdersvenster weergeven">
 <!ENTITY uipane.integration.caption "Integratie">
-<!ENTITY uipane.downloadwin.label "DownThemAll! toevoegen aan het &quot;Bestand opslaan&quot;-venster">
+<!ENTITY uipane.downloadwin.label "DownThemAll! toevoegen aan het 'Bestand opslaan'-venster">
 <!ENTITY uipane.context.caption "Contextmenu">
 <!ENTITY uipane.tools.caption "Menu Extra">
 <!ENTITY uipane.compact.label "Een compact menu gebruiken">
