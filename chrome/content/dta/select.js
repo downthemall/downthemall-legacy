@@ -295,6 +295,7 @@ let Dialog = {
 		this.ddFilter = $('filter');
 		this.ddDirectory = $('directory');
 		if (!this.ddDirectory.value) {
+			Debug.log("Using default download directory, value was " + this.ddDirectory.value);
 			this.ddDirectory.value = DefaultDownloadsDirectory.path;
 		}
 		this.ddRenaming = $('renaming');

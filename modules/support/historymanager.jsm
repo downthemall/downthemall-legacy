@@ -106,7 +106,7 @@ History.prototype = {
 		else {
 			try {
 				prefs.setExt(this._key, stringify(values));
-				Debug.log("Set normal history for " + this._key);
+				Debug.log("Set normal history for " + this._key + " to " + stringify(values));
 			}
 			catch (ex) {
 				Debug.log("Histories: Setting values failed" + values, ex);
