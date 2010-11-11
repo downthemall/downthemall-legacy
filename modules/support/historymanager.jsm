@@ -89,7 +89,7 @@ History.prototype = {
 		if (!this._persisting) {
 			return this._sessionHistory;
 		}
-		json = prefs.getExt(this._key, '[]');
+		let json = prefs.getExt(this._key, '[]');
 		try {
 			return parse(json);
 		}
