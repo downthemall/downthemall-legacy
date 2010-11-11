@@ -117,7 +117,6 @@
 					DTA.Debug.log("Loading of saveddropdown failed:", ex);
 				}
 			]]></constructor>
-			<field name="modified">false</field>
 			<field name="_list">document.getAnonymousElementByAttribute(this, 'anonid', 'list');</field>
 			<field name="_popup">document.getAnonymousElementByAttribute(this, 'anonid', 'popup');</field>
 			<property name="_pref" onget="return this.getAttribute('preference')" />
@@ -134,7 +133,6 @@
 						return;
 					}
 					this._list.label = val;
-					this.modified = true;
 				</setter>
 			</property>
 			<method name="_load">
@@ -162,7 +160,6 @@
 					if (this.hasAttribute('readonly')) {
 						this._list.removeAttribute('editable');
 					}
-					this.modified = false;
 				]]></body>
 			</method>
 			<method name="reload">
@@ -171,12 +168,11 @@
 			<method name="save">
 				<body><![CDATA[
 					var n = this.value;
-					if ((!this.modified && this._list.selectedIndex == 0) || (n.length == 0 && !this.hasAttribute('allowempty'))) {
-						DTA.Debug.log("Not saving dropdown: Not modified");
+					if (n.length == 0 && !this.hasAttribute('allowempty')) {
+						DTA.Debug.log("Not saving dropdown: empty");
 						return;
 					}
 					this.hist.push(n);
-					this.modified = false;
 				]]></body>
 			</method>
 			<method name="clear">
