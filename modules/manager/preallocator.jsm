@@ -154,10 +154,15 @@ WorkerJob.prototype = {
 		try {
 			let file = new File(this.path);
 			let stream = new FileOutputStream(file, 0x02 | 0x08, this.perms, 0);
+			let size = this.size;
 			try {
 				let seekable = stream.QueryInterface(Ci.nsISeekableStream);
-				seekable.seek(0x02, this.size);
-				seekable.setEOF();
+				while (size > 0) {
+					let count = Math.min(size, 1 << 27 /* 128MB */);
+					size -= count;
+					seekable.seek(0x01, count);
+					seekable.setEOF();
+				}
 			}
 			finally {
 				stream.close();
@@ -165,7 +170,9 @@ WorkerJob.prototype = {
 			rv = true;
 		}
 		catch (ex) {
-			Debug.log("pa: Failed to run prealloc worker", ex);
+			Debug.log("pa: Failed to run prealloc windows worker", ex);
+			this._run_other();
+			return;
 		}
 		
 		// Dispatch event back to the main thread
