@@ -13,9 +13,10 @@
 <!ENTITY buttonlabelextra2 "設定を初期設定に戻す">
 <!ENTITY dtaPreferences.title "DownThemAll! の設定...">
 <!ENTITY manager "dTa! マネージャー">
+
 <!ENTITY mainpane.label "全般">
-<!ENTITY mainpane.defaults.caption "Defaults">
-<!ENTITY mainpane.defaults.desc "The download directory, renaming mask and filters as used by OneClick! can be configured in the regular DownThemAll! selection dialog.">
+<!ENTITY mainpane.defaults.caption "デフォルトの設定">
+<!ENTITY mainpane.defaults.desc "OneClick! で使用される、ファイルの保存先や別名保存ルールとフィルターは、通常の DownThemAll! 選択ダイアログで設定します。">
 <!ENTITY mainpane.rename.caption "ファイル名が既に存在する場合:">
 <!ENTITY mainpane.rename.label "名前を変更">
 <!ENTITY mainpane.overwrite.label "上書き">
@@ -30,11 +31,12 @@
 <!ENTITY mainpane.alertnone.label "通知しない">
 <!ENTITY mainpane.sounddone.label "すべてのダウンロードが完了した時に音で知らせる">
 <!ENTITY mainpane.closedta.label "ダウンロードの完了時に DownThemAll を閉じる">
-<!ENTITY mainpane.settime.label "Set file time to last modified time (server) or time of queuing">
-<!ENTITY mainpane.rememberoneclick.label "Have dTa OneClick remember if it applies to All Tabs or Current Tab">
-<!ENTITY mainpane.confirmremove.label "User must confirm removal of downloads">
-<!ENTITY mainpane.textlinks.label "Recognize text links">
-<!ENTITY mainpane.listsniffedvideos.label "Record and list (Flash) videos">
+<!ENTITY mainpane.settime.label "ファイルのタイムスタンプをサーバーの変更日時かダウンロードリストへの登録日時に設定する">
+<!ENTITY mainpane.rememberoneclick.label "dTa OneClick の設定がすべてのタブに適用されるか、表示中のタブにだけ適用されるか記憶する">
+<!ENTITY mainpane.confirmremove.label "ダウンロードの削除時に確認する">
+<!ENTITY mainpane.textlinks.label "テキストのリンクを認識">
+<!ENTITY mainpane.listsniffedvideos.label "(Flash) 動画の録画と一覧での表示">
+
 <!ENTITY privacypane.label "プライバシー">
 <!ENTITY privacypane.closing.caption "管理ウィンドウが閉じられた時">
 <!ENTITY privacypane.removecompleted.label "完了したダウンロードをリストから削除">
@@ -55,13 +57,14 @@
 <!ENTITY privacypane.notice.caption "注意">
 <!ENTITY privacypane.notice.desc "DownThemAll を(利用できる場合のみ)プライバシー情報の消去機能に統合できます。">
 <!ENTITY privacypane.privacynotice.label "プライバシーについて">
+
 <!ENTITY serverspane.label "ネットワーク">
 <!ENTITY serverspane.downloads.caption "ダウンロード">
 <!ENTITY serverspane.concurrent.label "ダウンロード数:">
 <!ENTITY serverspane.perserver.label "サーバーごとのダウンロード数:">
-<!ENTITY serverspane.url.label "Location or domain:">
-<!ENTITY serverspane.new.label "New Limit">
-<!ENTITY serverspane.del.label "Remove Limit">
+<!ENTITY serverspane.url.label "アドレスかドメイン:">
+<!ENTITY serverspane.new.label "新しい制限">
+<!ENTITY serverspane.del.label "制限を削除">
 <!ENTITY serverspane.limits.label "サーバーごとの設定">
 <!ENTITY serverpane.limits.noitems "サーバーごとの設定がありません">
 <!ENTITY serverspane.connections.label "接続数:">
@@ -74,10 +77,11 @@
 <!ENTITY serverspane.cancel.label "キャンセル">
 <!ENTITY serverspane.edit.label "編集">
 <!ENTITY serverspane.remove.label "削除">
+
 <!ENTITY advancedpane.label "詳細">
-<!ENTITY advancedpane.downloads.caption "Advanced download control">
-<!ENTITY advancedpane.misc.caption "Miscellaneous">
-<!ENTITY advancedpane.files.caption "Files">
+<!ENTITY advancedpane.downloads.caption "詳細なダウンロード管理">
+<!ENTITY advancedpane.misc.caption "その他の設定">
+<!ENTITY advancedpane.files.caption "ファイル">
 <!ENTITY advancedpane.chunks.label "最大分割数:">
 <!ENTITY advancedpane.chunksdisabled "無効">
 <!ENTITY advancedpane.timeout.label "タイムアウトまでの無通信時間">
@@ -89,17 +93,18 @@
 <!ENTITY advancedpane.tempfiles.caption "一時ファイル">
 <!ENTITY advancedpane.usetemp.label "ダウンロードした断片ファイルを一時フォルダに保存">
 <!ENTITY advancedpane.tempdir.label "このフォルダを使用:">
-<!ENTITY advancedpane.permissions.caption "File Permissions">
+<!ENTITY advancedpane.permissions.caption "ファイルのアクセス権限">
 <!ENTITY advancedpane.permissions.group "グループ">
-<!ENTITY advancedpane.permissions.everybody "Everybody else may">
-<!ENTITY advancedpane.permissions.read "Read">
-<!ENTITY advancedpane.permissions.write "Write">
-<!ENTITY advancedpane.loadendfirst.label "Load Last Few Kilobytes First">
-<!ENTITY advancedpane.scheduler.caption "Download start order:">
-<!ENTITY advancedpane.scheduler.fast "Fast - As queued">
-<!ENTITY advancedpane.scheduler.fair "Fair+Slow - Evenly distributed">
-<!ENTITY advancedpane.scheduler.legacy "Legacy - no limits">
-<!ENTITY advancedpane.exposeinua.label "Expose DownThemAll! in the User-Agent">
+<!ENTITY advancedpane.permissions.everybody "その他">
+<!ENTITY advancedpane.permissions.read "読み込み">
+<!ENTITY advancedpane.permissions.write "書き込み">
+<!ENTITY advancedpane.loadendfirst.label "最後の数キロバイトを先に読み込む">
+<!ENTITY advancedpane.scheduler.caption "ダウンロード開始順序:">
+<!ENTITY advancedpane.scheduler.fast "待機順">
+<!ENTITY advancedpane.scheduler.fair "均一に配分">
+<!ENTITY advancedpane.scheduler.legacy "無制限">
+<!ENTITY advancedpane.exposeinua.label "DownThemAll! をユーザーエージェントに設定">
+
 <!ENTITY uipane.label "操作">
 <!ENTITY uipane.namesonly.label "マネージャーウィンドウにファイル名だけを表示">
 <!ENTITY uipane.integration.caption "統合">
