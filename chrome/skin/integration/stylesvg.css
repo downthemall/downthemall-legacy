@@ -1,3 +1,4 @@
+@import 'chrome://dta-platform/skin/integration.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 #dta-turbo-button {
@@ -49,5 +50,3 @@
 .popup-notification-icon[popupid="downthemall"] {
   list-style-image: url(chrome://dta/skin/common/icon.png);
 }
-
-@import 'chrome://dta-platform/skin/integration.css';
