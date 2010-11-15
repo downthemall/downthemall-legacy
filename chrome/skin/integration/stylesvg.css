@@ -1,4 +1,3 @@
-@import 'chrome://dta-platform/skin/integration.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 #dta-turbo-button {
@@ -22,11 +21,6 @@
 
 #dta-manager-button {
 	list-style-image: url(chrome://dta/skin/common/manager.svg);
-}
-
-toolbarbutton.toolbarbutton-dta > .toolbarbutton-icon {
-	min-width: 16px;
-	min-height: 16px;
 }
 
 .dta {
@@ -55,3 +49,5 @@ toolbarbutton.toolbarbutton-dta > .toolbarbutton-icon {
 .popup-notification-icon[popupid="downthemall"] {
   list-style-image: url(chrome://dta/skin/common/icon.png);
 }
+
+@import 'chrome://dta-platform/skin/integration.css';
