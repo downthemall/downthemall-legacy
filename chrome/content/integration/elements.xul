@@ -95,7 +95,7 @@
 		</menupopup>
 	</menu>
 
-	<toolbarbutton id="dta-button" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-regular.label;" tooltiptext="&dta-regular.label;" type="menu-button">
+	<toolbarbutton id="dta-button" class="chromeclass-toolbar-additional toolbarbutton-1 toolbarbutton-dta" label="&dta-regular.label;" tooltiptext="&dta-regular.label;" type="menu-button">
 		<menupopup>
 			<menuitem id="dta-tb-dta" label="DownThemAll! (&dta-tb-single.label;)" class="menuitem-iconic dta" tooltiptext="&dta-regular.label;" />
 			<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all.label;)" class="menuitem-iconic dta" tooltiptext="&dta-regular.label;" />
@@ -108,15 +108,15 @@
 		<image id="downthemall-notification-icon" class="notification-anchor-icon" role="button" />
 	</box>
 
-	<toolbarbutton id="dta-turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-regular-turbo.label;" tooltiptext="&dta-regular-turbo.label;" type="menu-button">
+	<toolbarbutton id="dta-turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1 toolbarbutton-dta" label="&dta-regular-turbo.label;" tooltiptext="&dta-regular-turbo.label;" type="menu-button">
 		<menupopup>
 			<menuitem id="dta-tb-turbo" label="dTa OneClick! (&dta-tb-single.label;)" tooltiptext="&dta-regular-turbo.label;" class="menuitem-iconic dtaturbo" />
 			<menuitem id="dta-tb-allturbo" label="dTa OneClick! (&dta-tb-all.label;)" tooltiptext="&dta-regular-turbo.label;" class="menuitem-iconic dtaturbo" />
 		</menupopup>
 	</toolbarbutton>
 
-	<toolbarbutton id="dta-turboselect-button" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-selector-button;" tooltiptext="&dta-selector-button;" type="checkbox" />
-	<toolbarbutton id="dta-manager-button" class="chromeclass-toolbar-additional toolbarbutton-1" label="&dta-manager-button;" tooltiptext="&dta-manager-button;" />
+	<toolbarbutton id="dta-turboselect-button" class="chromeclass-toolbar-additional toolbarbutton-1 toolbarbutton-dta" label="&dta-selector-button;" tooltiptext="&dta-selector-button;" type="checkbox" />
+	<toolbarbutton id="dta-manager-button" class="chromeclass-toolbar-additional toolbarbutton-1 toolbarbutton-dta" label="&dta-manager-button;" tooltiptext="&dta-manager-button;" />
 
 	<menu id="dtaToolsMenu" label="DownThemAll" class="menu-iconic dta">
 		<menupopup id="dtaToolsPopup">
