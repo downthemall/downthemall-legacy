@@ -120,9 +120,12 @@ History.prototype = {
 			let values = this.values.filter(function(e) e != value);
 			values.unshift(value);
 			let max = prefs.getExt('history', 5);
+			Debug.log("Histories: " + this._key + ", before " + values.toSource());
+			Debug.log("Histories: " + this._key + ", max " + max);
 			while (values.length > max) {
 				values.pop();
 			}
+			Debug.log("Histories: " + this._key + ", after" + values.toSource());
 			this._setValues(values);
 		}
 		catch (ex) {
