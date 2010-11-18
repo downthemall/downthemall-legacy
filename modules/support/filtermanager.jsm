@@ -333,7 +333,7 @@ FilterManagerImpl.prototype = {
 	},
 		
 	_done: true,
-	_mustReload: true,
+	_mustReload: false,
 	
 	_timer: null,
 
