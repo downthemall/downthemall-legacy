@@ -630,7 +630,7 @@
 					
 				})(),
 				100
-			).run(function() {
+			).start(function() {
 				// clean up the "hint" notification from above
 				clearInterval(_updateInterval);
 				notifyProgress();

@@ -389,7 +389,7 @@ const Dialog = {
 			250,
 			this
 		);
-		this._loader.run(this._loadDownloads_finish);		
+		this._loader.start(this._loadDownloads_finish);		
 	},
 	_loadDownloads_item: function D__loadDownloads_item(dbItem, idx) {
 		if (!idx) {
@@ -2635,7 +2635,7 @@ function startDownloads(start, downloads) {
 		addItem,
 		g,
 		100
-	).run(function() {
+	).start(function() {
 		QueueStore.endUpdate();
 		Tree.doFilter();
 		Tree.endUpdate();
