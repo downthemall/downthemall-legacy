@@ -39,9 +39,14 @@ const EXPORTED_SYMBOLS = ['CoThread', 'CoThreadInterleaved', 'CoThreadListWalker
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const Cu = Components.utils;
+const module = Cu.import;
 
-const TYPE_REPEATING_SLACK = Ci.nsITimer.TYPE_REPEATING_SLACK;
-const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'initWithCallback');
+module("resource://gre/modules/XPCOMUtils.jsm");
+
+const ThreadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
+const MainThread = ThreadManager.mainThread;
+
 
 // "Abstract" base c'tor
 function CoThreadBase() {}
@@ -66,33 +71,37 @@ CoThreadBase.prototype = {
 		this.init = function() {};
 	},
 	
-	run: function CoThreadBase_run(finishFunc) {
+	start: function CoThreadBase_run(finishFunc) {
 		if (this._ran) {
 			throw new Error("You cannot run a CoThread/CoThreadListWalker instance more than once.");
 		}
 		this._finishFunc = finishFunc;
 		this._ran = true;
-		this._timer = new Timer(this, 10, TYPE_REPEATING_SLACK);		
+		MainThread.dispatch(this, 0);
 	},
 	
-	QueryInterface: function CoThreadBase_QueryInterface(iid) {
-		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsITimerCallback)) {
-			return this;
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports, Ci.nsICancelable, Ci.nsIRunnable]),
+	
+	_terminated: false,
+	
+	run: function CoThreadBase_run() {
+		if (this._terminated) {
+			return;
 		}
-		throw Cr.NS_ERROR_NO_INTERFACE;
-	},
 	
-	notify: function CoThreadBase_notify() {
 		let y = this._yieldEvery;
 		let g = this._generator;
 		let f = this._func;
 		let ctx = this._thisCtx;
 		let callf = this._callf;
-		try {		
+		try {
 			for (let i = 0; i < y; ++i) {
 				if (!callf(ctx, g.next(), this._idx++, f)) {
 					throw 'complete';
 				}
+			}
+			if (!this._terminated) {
+				MainThread.dispatch(this, 0);
 			}
 		}
 		catch (ex) {
@@ -101,7 +110,10 @@ CoThreadBase.prototype = {
 	},
 	
 	cancel: function CoThreadBase_cancel() {
-		this._timer.cancel();
+		if (this._terminated) {
+			return;
+		}
+		this._terminated = true;
 		if (this._finishFunc) {
 			this._finishFunc.call(this._thisCtx);
 		}		
@@ -124,7 +136,7 @@ CoThreadBase.prototype = {
  *          // When to turn over Control?
  *          // Each 1000 items
  *          1000
- *        ).run();
+ *        ).start();
  *   
  * @param {Function} func Function to be called. Is passed call count as argument. Returning false will cancel the operation. 
  * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
@@ -164,7 +176,7 @@ CoThread.prototype = {
  *          // When to turn over Control?
  *          // Each 2 items
  *          2
- *        ).run();
+ *        ).start();
  *   
  * @param {Function} func Function to be called. Is passed call count as argument. Returning false will cancel the operation. 
  * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
@@ -200,7 +212,7 @@ CoThreadInterleaved.prototype = {
  *          // Each 1000 items
  *          1000,
  *          null,
- *        ).run(function() alert('done'));
+ *        ).start(function() alert('done'));
  *   
  * @param {Function} func Function to be called on each item. Is passed item and index as arguments. Returning false will cancel the operation. 
  * @param {Array/Generator} arrayOrGenerator Array or Generator object to be used as the input list 
