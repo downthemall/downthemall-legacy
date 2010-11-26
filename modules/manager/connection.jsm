@@ -118,46 +118,25 @@ function Connection(d, c, isInfoGetter) {
 	}
 	this._chan.loadFlags = loadFlags;
 	this._chan.notificationCallbacks = this;
-	try {
-		let encodedChannel = this._chan.QueryInterface(Ci.nsIEncodedChannel);
-		encodedChannel.applyConversion = false;
-	}
-	catch (ex) {
-		// no-op
-	}
+
+	this.prepareChannel(this._chan);
+	
 	if (this._chan instanceof Ci.nsIHttpChannel) {
 		try {
 			Debug.log("http");
-			let http = this._chan.QueryInterface(Ci.nsIHttpChannel);
 			
 			if (c.start + c.written > 0) {
 				http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
 			}
 
-			// Cannot hash when compressed
-			http.setRequestHeader("Accept-Encoding", "", false);
-
-			if (this.isInfoGetter) {
-				if (!d.fromMetalink) {
-					http.setRequestHeader('Accept', 'application/metalink4+xml;q=0.9,application/metalink+xml;q=0.8', true);
-				}
-				http.setRequestHeader('Want-Digest', DTA.WANT_DIGEST_STRING, false);
-			}
-			
 			if (referrer instanceof Ci.nsIURI) {
-				http.referrer = referrer;
-			}
-			if (Preferences.getExt('nokeepalive', true)) {
-				http.setRequestHeader('Keep-Alive', '', false);
-				http.setRequestHeader('Connection', 'close', false);
+				this._chan.referrer = referrer;
 			}
 			if (d.postData) {
-				let uc = http.QueryInterface(Ci.nsIUploadChannel);
+				let uc = this._chan.QueryInterface(Ci.nsIUploadChannel);
 				uc.setUploadStream(new StringInputStream(d.postData, d.postData.length), null, -1);
 				http.requestMethod = 'POST';
 			}			 
-
-			RequestManipulation.modifyHttp(http);
 		}
 		catch (ex) {
 			Debug.log("error setting up http channel", ex);
@@ -166,27 +145,14 @@ function Connection(d, c, isInfoGetter) {
 	}
 	else if (this._chan instanceof Ci.nsIFTPChannel) {
 		try {
-			let ftp = this._chan.QueryInterface(Ci.nsIFTPChannel);
 			if (c.start + c.written > 0) {
-					let resumable = ftp.QueryInterface(Ci.nsIResumableChannel);
+					let resumable = this._chan.QueryInterface(Ci.nsIResumableChannel);
 					resumable.resumeAt(c.start + c.written, '');
 			}				
 		}
 		catch (ex) {
 			Debug.log('error setting up ftp channel', ex);
 		}
-	}
-	try {
-		let prio = this._chan.QueryInterface(Ci.nsISupportsPriority);
-		if (d.forced) {
-			prio.adjustPriority(Ci.nsISupportsPriority.PRIORITY_HIGHEST);
-		}
-		else {
-			prio.adjustPriority(Ci.nsISupportsPriority.PRIORITY_LOW);
-		}
-	}
-	catch (ex) {
-		Debug.log("Failed setting priority", ex);
 	}
 	this.c.running = true;
 	this._chan.asyncOpen(this, null);
@@ -209,6 +175,56 @@ Connection.prototype = {
 	],
 		
 	cantCount: false,
+	
+	prepareChannel: function(chan) {
+		try {
+			if (chan instanceof Ci.nsISupportsPriority) {
+				if (this.d.forced) {
+					chan.adjustPriority(Ci.nsISupportsPriority.PRIORITY_HIGHEST);
+				}
+				else {
+					chan.adjustPriority(Ci.nsISupportsPriority.PRIORITY_LOW);
+				}
+			}
+
+			if (chan instanceof Ci.nsIEncodedChannel) {
+				// Cannot hash when conversation is active
+				chan.applyConversion = false;
+			}
+			
+			if (chan instanceof Ci.nsIHttpChannel) {
+
+				// Cannot hash when compressed
+				chan.setRequestHeader("Accept-Encoding", "", false);
+
+				if (this.isInfoGetter) {
+					if (!this.d.fromMetalink) {
+						chan.setRequestHeader('Accept', 'application/metalink4+xml;q=0.9,application/metalink+xml;q=0.8', true);
+					}
+					chan.setRequestHeader('Want-Digest', DTA.WANT_DIGEST_STRING, false);
+				}
+				
+				if (Preferences.getExt('nokeepalive', true)) {
+					chan.setRequestHeader('Keep-Alive', '', false);
+					chan.setRequestHeader('Connection', 'close', false);
+				}			
+
+				RequestManipulation.modifyHttp(chan);
+				
+				try {
+					// Users want this so they can have no-third-party when browsing regularly,
+					// but still download from sites authenticating using cookies
+					if (chan instanceof Ci.nsIHttpChannelInternal) {
+						chan.forceAllowThirdPartyCookie = true;
+					}
+				}
+				catch (ex) { /* no op */ } 
+			}
+		}
+		catch (ex) {
+			Debug.log("Failed to prepare channel", ex);
+		}
+	},
 
 	QueryInterface: function DL_QI(iid) {
 		for each (let i in this._interfaces) {
@@ -216,6 +232,7 @@ Connection.prototype = {
 				return this;
 			}
 		}
+		Debug.log("not implemented " + iid);
 		throw Cr.NS_ERROR_NO_INTERFACE;
 	},
 	// nsISupportsWeakReference
@@ -279,9 +296,7 @@ Connection.prototype = {
 				throw new Exception("redirect: requests not channels");
 			}
 			
-			if (newChannel instanceof Ci.nsIHttpChannel) {
-				RequestManipulation.modifyHttp(newChannel);
-			}
+			this.prepareChannel(newChannel);
 			
 			// When we get redirected from, say, http to ftp, we need to explicitly
 			// call resumeAt() as this won't be propagated from the old channel.
