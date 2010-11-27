@@ -1,0 +1,23 @@
+<!ENTITY mask.title "Etichette di rinomina">
+<!ENTITY mask.name "Nome file">
+<!ENTITY mask.ext "Estensione">
+<!ENTITY mask.url "URL base">
+<!ENTITY mask.curl "URL completa">
+<!ENTITY mask.flatcurl "Stringa dell'intero URL">
+<!ENTITY mask.num "Numero progressivo">
+<!ENTITY mask.inum "Numero di elementi">
+<!ENTITY mask.hh "Ore">
+<!ENTITY mask.mm "Minuti">
+<!ENTITY mask.ss "Secondi">
+<!ENTITY mask.d "Giorno">
+<!ENTITY mask.m "Mese">
+<!ENTITY mask.y "Anno">
+<!ENTITY mask.subdirs "Sottocartelle dell'URL">
+<!ENTITY mask.flatsubdirs "Stringa delle sottocartelle dell'URL">
+<!ENTITY mask.text "Descrizione del link">
+<!ENTITY mask.flattext "Stringa della descrizione del link">
+<!ENTITY mask.refer "Referrer URL">
+<!ENTITY mask.qstring "Stringa query">
+<!ENTITY mask.flattitle "Titolo associato al link">
+<!ENTITY mask.tip "Clicca o trascina sulla maschera di rinomina">
+<!ENTITY mask.open.tip "Legenda delle etichette di rinomina">

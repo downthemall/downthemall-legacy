@@ -1,0 +1,4 @@
+<!ENTITY title "Inserisci URL">
+<!ENTITY desc.value "Aggiungi l&apos;URL qui e, se vuoi, la pagina di riferimento del file che vuoi scaricare.">
+<!ENTITY desc.batches.value "Puoi anche usare descrittori batch per scaricare più file alla volta.">
+<!ENTITY examples.value "Esempi:">
