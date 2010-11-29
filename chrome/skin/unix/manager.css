@@ -16,9 +16,9 @@ treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined, 
 }
 
 statusbarpanel#netstatus {
-	list-style-image: url(moz-icon://stock/network-transmit);
+	list-style-image: url(moz-icon://stock/gtk-network?size=button);
 }
 
 statusbarpanel#netstatus[offline] {
-	list-style-image: url(moz-icon://stock/network-offline);
+	list-style-image: url(moz-icon://stock/gtk-network?size=button&state=disabled);
 }
