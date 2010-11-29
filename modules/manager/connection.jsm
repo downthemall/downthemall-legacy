@@ -126,7 +126,7 @@ function Connection(d, c, isInfoGetter) {
 			Debug.log("http");
 			
 			if (c.start + c.written > 0) {
-				http.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
+				this._chan.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
 			}
 
 			if (referrer instanceof Ci.nsIURI) {
