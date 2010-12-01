@@ -126,7 +126,10 @@
 			_notify = function(title, message, priority, mustAlert, timeout) {
 				try {
 					timeout = timeout || 2500;
-					let nb = gBrowser.getNotificationBox();
+					let nb = $('dtaNotifications');
+					if (!nb) {
+						throw new Error("no notifications");
+					}
 					let notification = nb.appendNotification(
 						message,
 						0,
@@ -173,7 +176,10 @@
 				})(message);				
 			}
 			return (notifyProgress = function(message) {
-				let nb = gBrowser.getNotificationBox();
+				let nb = $('dtaNotifications');
+				if (!nb) {
+					throw new Error("no notifications");
+				}
 				if (!message && _n) {
 					nb.removeNotification(_n);
 					_n = null;
