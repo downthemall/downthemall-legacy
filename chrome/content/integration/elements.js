@@ -654,8 +654,7 @@
 							notifyInfo(getFormattedString('queuedn', queued));
 						}
 						else {
-							// disable for now. too much scroll "jitter"
-							// notifyInfo(getFormattedString('queued', queued.url));
+							notifyInfo(getFormattedString('queued', queued.url));
 						}
 						return;
 					}
@@ -756,8 +755,7 @@
 		if (turbo) {
 			try {
 				DTA.saveSingleLink(window, true, url, ref, desc);
-				// Disable for now. Too much scroll "jitter"
-				// notifyInfo(getFormattedString('queued', url));
+				notifyInfo(getFormattedString('queued', url));
 				return;
 			}
 			catch (ex) {
