@@ -103,7 +103,10 @@
 	function _notify(title, message, priority, mustAlert, timeout) {
 		try {
 			timeout = timeout || 2500;
-			let nb = gBrowser.getNotificationBox();
+			let nb = $('dtaNotifications');
+			if (!nb) {
+				throw new Error("no notifications");
+			}
 			let notification = nb.appendNotification(
 				message,
 				0,
@@ -129,7 +132,10 @@
 		try {
 			let _n = null;
 			return (notifyProgress = function(message) {
-				let nb = gBrowser.getNotificationBox();
+				let nb = $('dtaNotifications');
+					if (!nb) {
+						throw new Error("no notifications");
+					}
 				if (!message && _n) {
 					nb.removeNotification(_n);
 					_n = null;
@@ -603,8 +609,7 @@
 							notifyInfo(getFormattedString('queuedn', queued));
 						}
 						else {
-							// disable for now. too much scroll "jitter"
-							// notifyInfo(getFormattedString('queued', queued.url));
+							notifyInfo(getFormattedString('queued', queued.url));
 						}
 						return;
 					}
@@ -705,8 +710,7 @@
 		if (turbo) {
 			try {
 				DTA.saveSingleLink(window, true, url, ref, desc);
-				// Disable for now. Too much scroll "jitter"
-				// notifyInfo(getFormattedString('queued', url));
+				notifyInfo(getFormattedString('queued', url));
 				return;
 			}
 			catch (ex) {
