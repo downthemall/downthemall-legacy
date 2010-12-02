@@ -370,6 +370,11 @@ function hash(value, algorithm, encoding, datalen) {
 	return rv;
 }
 
+(function() {
+	let _ic = {};
+	module("resource://dta/support/iconcheat.jsm", _ic);
+	_ic.loadWindow(window);
+})();
 
 setNewGetter(
 	this,
