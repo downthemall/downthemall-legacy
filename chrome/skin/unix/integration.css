@@ -1,11 +1,13 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-toolbarbutton.toolbarbutton-dta > .toolbarbutton-icon {
+toolbarbutton.toolbarbutton-dta .toolbarbutton-icon {
 	min-width: 24px;
 	min-height: 24px;
 }
 
-toolbar[iconsize="small"] toolbarbutton.toolbarbutton-dta > .toolbarbutton-icon {
+toolbar[iconsize="small"] toolbarbutton.toolbarbutton-dta .toolbarbutton-icon,
+#addon-bar toolbarbutton.toolbarbutton-dta .toolbarbutton-icon,
+#toolbar-menubar toolbarbutton.toolbarbutton-dta .toolbarbutton-icon {
 	min-width: 16px;
 	min-height: 16px;
 }
