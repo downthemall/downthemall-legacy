@@ -117,7 +117,6 @@ const Prefs = {
 		['permissions', 384],
 		['loadEndFirst', 0],
 		['minimizeToTray', false],
-		['flatReplacementChar', '-'],
 		['recoverAllHttpErrors', false],
 		['speedLimit', -1],
 		['resumeOnError', false]
