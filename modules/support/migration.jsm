@@ -92,6 +92,10 @@ function migrate() Version.getInfo(function(v) {
 		Cc["@mozilla.org/observer-service;1"]
 			.getService(Ci.nsIObserverService)
 			.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
+		let _ic = {};
+		
+		// Need to extract icons
+		module('resource://dta/support/iconcheat.jsm');
 	}
 	catch (ex) {
 		log("MigrationManager:", ex);
