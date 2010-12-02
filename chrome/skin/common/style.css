@@ -1,5 +1,6 @@
 @import 'chrome://dta/content/common/bindings.css';
 @import 'chrome://dta-platform/skin/common.css';
+@import 'appspecific.css';
 
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
 @namespace html url(http://www.w3.org/1999/xhtml);
@@ -182,9 +183,4 @@ statusbarpanel {
 statusbarpanel > label {
 	margin-top: 1px;
 	margin-bottom: 2px;
-}
-
-statusbarpanel#preferences {
-	list-style-image: url(smalltools.png);
-	-moz-image-region: rect(0px, 64px, 16px, 48px);	
 }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs>
+  <linearGradient id="linearGradient4386">
+   <stop stop-color="#FFF" offset="0"/>
+   <stop stop-color="#ffe373" offset="0.5"/>
+   <stop stop-color="#ffc176" offset="1"/>
+  </linearGradient>
+  <radialGradient id="radialGradient3016" gradientUnits="userSpaceOnUse" cx="11.75" cy="17.413" r="10.752" gradientTransform="matrix(0.13526823,0,2.9614463e-8,0.53901461,6.2787361,-2.1980309)">
+   <stop stop-color="#fffe99" offset="0"/>
+   <stop stop-color="#f69706" offset="0.41873"/>
+   <stop stop-color="#0f5b88" offset="1"/>
+  </radialGradient>
+  <linearGradient id="linearGradient5755" y2="625.63" gradientUnits="userSpaceOnUse" x2="-251.41" gradientTransform="matrix(-0.33693482,-0.12219387,0.06264371,0.35289118,-117.0953,-248.05282)" y1="625.63" x1="-276.05">
+   <stop stop-color="#cd5c23" offset="0"/>
+   <stop stop-color="#ffe373" offset="0.5"/>
+   <stop stop-color="#ffcc8e" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient5758" y2="877.57" xlink:href="#linearGradient4386" gradientUnits="userSpaceOnUse" x2="252.41" gradientTransform="matrix(0.27429133,-0.23069608,0.06264371,0.35289118,-117.0953,-248.05282)" y1="877.57" x1="227.72"/>
+  <linearGradient id="linearGradient5761" y2="762.91" gradientUnits="userSpaceOnUse" x2="218.63" gradientTransform="matrix(0.35289118,-0.06264371,0.06264371,0.35289118,-117.0953,-248.05282)" y1="777.21" x1="239.03">
+   <stop stop-color="#7c3815" offset="0"/>
+   <stop stop-color="#ffe373" offset="0.62857"/>
+   <stop stop-color="#ffcc8e" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient5764" y2="776.71" xlink:href="#linearGradient4386" gradientUnits="userSpaceOnUse" x2="211.53" gradientTransform="matrix(0.35289118,-0.06264371,0.06264371,0.35289118,-117.0953,-248.05282)" y1="759.24" x1="202.84"/>
+  <linearGradient id="linearGradient5767" y2="762.45" gradientUnits="userSpaceOnUse" x2="233.47" gradientTransform="matrix(0.35289118,-0.06264371,0.06264371,0.35289118,-117.0953,-248.05282)" y1="762.45" x1="218.16">
+   <stop stop-color="#e2ddcf" offset="0"/>
+   <stop stop-color="#756847" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient5770" y2="762.45" gradientUnits="userSpaceOnUse" x2="218.16" gradientTransform="matrix(0.35289118,-0.06264371,0.06264371,0.35289118,-117.0953,-248.05282)" y1="762.45" x1="202.84">
+   <stop stop-color="#FFF" offset="0"/>
+   <stop stop-color="#ba9a77" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient5773" y2="652.92" gradientUnits="userSpaceOnUse" x2="-233.69" gradientTransform="matrix(0.35840817,0,0,0.35840817,83.066049,-223.16794)" y1="652.92" x1="-252.45">
+   <stop stop-color="#ffe373" offset="0"/>
+   <stop stop-color="#ff8f07" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient5776" y2="904.83" gradientUnits="userSpaceOnUse" x2="270.13" gradientTransform="matrix(0.35840817,0,0,0.35840817,-83.066049,-306.2337)" y1="904.83" x1="251.38">
+   <stop stop-color="#ffda67" offset="0"/>
+   <stop stop-color="#806000" offset="1"/>
+  </linearGradient>
+ </defs>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <rect stroke-linejoin="round" stroke-dasharray="none" fill-rule="evenodd" transform="matrix(0.76530436,-0.64366858,0.17478314,0.98460695,0,0)" height="5.4427" width="6.3375" stroke="#000" stroke-linecap="round" stroke-miterlimit="4" y="15.344" x="7.2221" stroke-width="0.38513" fill="url(#linearGradient5776)"/>
+ <rect stroke-linejoin="round" stroke-dasharray="none" fill-rule="evenodd" transform="matrix(-0.94008689,-0.34093495,0.17478314,0.98460695,0,0)" height="5.4427" width="6.3375" stroke="#000" stroke-linecap="round" stroke-miterlimit="4" y="8.122" x="-7.2221" stroke-width="0.38513" fill="url(#linearGradient5773)"/>
+ <path fill-rule="evenodd" fill="url(#linearGradient5770)" d="M7.0985,4.2205,2.2489,8.3006,8.2065,10.462,7.0985,4.2205z"/>
+ <path fill-rule="evenodd" fill="url(#linearGradient5767)" d="M7.0985,4.2205,8.2065,10.462,13.056,6.3822,7.0985,4.2205z"/>
+ <path stroke-linejoin="round" d="M8.209,10.459,2.2513,8.2986,0.29947,10.648,6.2091,12.791z" fill-rule="evenodd" stroke="#400000" stroke-width="0.35840818" fill="url(#linearGradient5764)"/>
+ <path stroke-linejoin="round" d="M8.209,10.459,13.059,6.38,15.7,7.9141,10.889,11.96z" fill-rule="evenodd" stroke="#400000" stroke-width="0.35840818" fill="url(#linearGradient5761)"/>
+ <path stroke-linejoin="round" d="M0.35427,8.2804,5.1646,4.2346,7.1013,4.2194,2.2513,8.2986z" fill-rule="evenodd" stroke="#400000" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="0.33367801" fill="url(#linearGradient5758)"/>
+ <path stroke-linejoin="round" d="M14.813,5.6846,8.9677,3.5648,7.1013,4.2194,13.059,6.38z" fill-rule="evenodd" stroke="#400000" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="0.33367801" fill="url(#linearGradient5755)"/>
+ <path d="m5.7406,0.58769,0,4.7869-1.6766,0,1.9078,2.1506,1.8962,2.1622,1.9078-2.1622,1.8962-2.1506-1.8384,0,0-4.7869-4.0931,0z" stroke="#072739" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="0.39773505999999997" fill="url(#radialGradient3016)"/>
+</svg>
