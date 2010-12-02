@@ -577,12 +577,13 @@ Connection.prototype = {
 		
 		if (visitor.fileName && visitor.fileName.length > 0) {
 			// if content disposition hasn't an extension we use extension of URL
-			let newName = visitor.fileName.getUsableFileName();
+			let newName = visitor.fileName.replace(/\\/g, '').getUsableFileNameWithFlatten();
 			let ext = this.url.usable.getExtension();
 			if (visitor.fileName.lastIndexOf('.') == -1 && ext) {
-				newName += '.' + ext;
+				newName += ('.' + ext);
+				newName = newName.getUsableFileNameWithFlatten();
 			}
-			d.fileName = newName.getUsableFileName();
+			d.fileName = newName;
 		}
 
 		return false;
