@@ -156,6 +156,10 @@ Stuff.prototype = {
 				
 				v.showAbout = true;
 				Observers.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
+				
+				let _ic = {};
+				// Need to extract icons
+				module('resource://dta/support/iconcheat.jsm');				
 			}
 			catch(ex) {
 				log("MigrationManager:", ex);
