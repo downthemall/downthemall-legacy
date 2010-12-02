@@ -71,6 +71,8 @@ const module = Components.utils.import;
 const Exception = Components.Exception;
 
 module("resource://gre/modules/XPCOMUtils.jsm");
+const Prefs = {};
+module("resource://dta/preferences.jsm", Prefs);
 
 const File = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileStream = new ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
@@ -950,6 +952,7 @@ function extendString(_s) {
 					.removeFinalSlash();
 				return t.split(SYSTEMSLASH).pop().removeBadChars().trim();
 			},
+			getUsableFileNameWithFlatten: function() this.replaceSlashes(Prefs.getExt('flatReplacementChar', '-')).getUsableFileName(),
 			getExtension: function() {
 				let name = this.getUsableFileName();
 				let c = name.lastIndexOf('.');
