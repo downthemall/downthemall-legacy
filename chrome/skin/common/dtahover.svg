@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs>
+  <radialGradient id="radialGradient3642" gradientUnits="userSpaceOnUse" cy="17.413" cx="11.75" gradientTransform="matrix(0.42132009,0,0,1.1799812,3.1080658,-8.6414029)" r="10.752">
+   <stop stop-color="#fffe99" offset="0"/>
+   <stop stop-color="#f69706" offset="0.2"/>
+   <stop stop-color="#136fa7" offset="1"/>
+  </radialGradient>
+  <filter id="filter3802" height="1.48" width="1.48" color-interpolation-filters="sRGB" y="-0.23999999" x="-0.23999999">
+   <feGaussianBlur stdDeviation="0.6937624"/>
+  </filter>
+ </defs>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <path d="m4.5207,0.95346,0,7.9457-2.5385,0,0,0.26829,2.9306,3.3021,2.6417,3.0338,0.99063,0,2.6829-3.0338,2.8274-3.2195,0-0.35085-2.7242,0,0-7.9457-6.8106,0z" stroke="#0a3b56" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="0.64281517" fill="url(#radialGradient3642)"/>
+ <g fill-rule="evenodd" transform="matrix(0.63881522,0,0,0.63881522,1.2454322,5.1303407)">
+  <g transform="translate(-2.0722772,0.58564357)" fill="#FFF">
+   <path d="m-3.649,16.792c0,1.9158-1.553,3.4688-3.4688,3.4688s-3.4688-1.553-3.4688-3.4688,1.553-3.4688,3.4688-3.4688,3.4688,1.553,3.4688,3.4688z" transform="matrix(1.2613946,0,0,1.2613946,26.727887,-22.660647)" filter="url(#filter3802)" stroke="#FFF"/>
+   <path d="m-3.649,16.792c0,1.9158-1.553,3.4688-3.4688,3.4688s-3.4688-1.553-3.4688-3.4688,1.553-3.4688,3.4688-3.4688,3.4688,1.553,3.4688,3.4688z" transform="translate(24.867327,-18.271287)" stroke="#000"/>
+  </g>
+  <rect height="3.649" width="0.99109" y="-2.6054" x="15.141" fill="#1a1a1a"/>
+  <rect transform="matrix(0,-1,1,0,0,0)" height="3.649" width="0.99109" y="13.812" x="0.2854" fill="#1a1a1a"/>
+ </g>
+</svg>

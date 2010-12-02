@@ -1,0 +1,52 @@
+@import 'chrome://dta-platform/skin/integration.css';
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#dta-turbo-button {
+	list-style-image: url(chrome://dta/skin/common/turbonormal.svg);
+}
+#dta-turbo-button:hover {
+	list-style-image: url(chrome://dta/skin/common/turbohover.svg);
+}
+#dta-turboselect-button {
+	list-style-image: url(chrome://dta/skin/common/selectornormal.svg);
+}
+#dta-turboselect-button:hover {
+	list-style-image: url(chrome://dta/skin/common/selectorhover.svg);
+}
+#dta-button {
+	list-style-image: url(chrome://dta/skin/common/dtanormal.svg);
+}
+#dta-button:hover {
+	list-style-image: url(chrome://dta/skin/common/dtahover.svg);
+}
+
+#dta-manager-button {
+	list-style-image: url(chrome://dta/skin/common/manager.svg);
+}
+
+.dta {
+	list-style-image: url(chrome://dta/skin/common/dtanormal.svg);
+}
+.dtaturbo {
+	list-style-image: url(chrome://dta/skin/common/turbonormal.svg);
+}
+.dtaprefs {
+	list-style-image: url(chrome://dta/skin/common/prefs.svg);
+}
+.dtamanager {
+	list-style-image: url(chrome://dta/skin/common/manager.svg);
+}
+.dtaToolsAbout {
+	list-style-image: url(chrome://dta/skin/common/about.svg);
+}
+
+#notification-popup-box[anchorid="downthemall-notification-icon"] > #downthemall-notification-icon {
+	display: -moz-box;
+}
+#downthemall-notification-icon {
+  list-style-image: url(chrome://dta/skin/common/dtahover.svg);
+}
+
+.popup-notification-icon[popupid="downthemall"] {
+  list-style-image: url(chrome://dta/skin/common/icon.png);
+}
