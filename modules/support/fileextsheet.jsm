@@ -56,7 +56,7 @@ extendString(String);
 function FileExtensionSheet(window) {
 	this._windowUtils = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowUtils);
 	
-	document = window.document;
+	let document = window.document;
 	this._stylesheet = null;
 	try {
 		for each (let ss in document.styleSheets) {
