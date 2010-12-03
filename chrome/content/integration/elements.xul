@@ -109,7 +109,7 @@
 			<menuitem id="dta-tb-dta" label="DownThemAll! (&dta-tb-single.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular.label;" />
 			<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular.label;" />
 			<menuseparator />
-			<menuitem id="dta-tb-manager" label="&dta-manager-button;" class="menuitem-iconic dtamanager" tooltiptext="&dta-manager-button;" />
+			<menuitem id="dta-tb-manager" label="&dta-manager-button;" class="menuitem-iconic dta-menuitem dta-manager" tooltiptext="&dta-manager-button;" />
 		</menupopup>
 	</toolbarbutton>
 
