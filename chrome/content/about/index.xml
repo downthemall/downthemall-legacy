@@ -175,7 +175,7 @@
 					<li>&lp.tut.seloptfilters;</li>
 					<li>&lp.tut.seloptfast;</li>
 				</ul>
-				<p>&lp.tut.seltypes;:</p>
+				<p>&lp.tut.seltypes;</p>
 				<ol>
 					<li>&lp.tut.seltypelinks;</li>
 					<li>&lp.tut.seltypepics;</li>
