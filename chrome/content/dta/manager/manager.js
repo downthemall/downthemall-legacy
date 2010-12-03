@@ -195,7 +195,7 @@ const Dialog = {
 				return rv;
 			}, true);
 			
-			DropProcessor = {
+			window.DropProcessor = {
 				getSupportedFlavours: function() {
 					if (!this._flavors) {
 						this._flavors = new FlavourSet();
