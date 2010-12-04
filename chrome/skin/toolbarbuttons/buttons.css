@@ -1,7 +1,7 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 #dta-button,
-#dta-turbobutton,
+#dta-turbo-button,
 #dta-turboselect-button,
 #dta-manager-button,
 .dta-toolbarbutton {
@@ -9,7 +9,7 @@
 }
 
 toolbar[iconsize="small"] #dta-button,
-toolbar[iconsize="small"] #dta-turbobutton,
+toolbar[iconsize="small"] #dta-turbo-button,
 toolbar[iconsize="small"] #dta-turboselect-button,
 toolbar[iconsize="small"] #dta-manager-button,
 toolbar[iconsize="small"] .dta-toolbarbutton {
