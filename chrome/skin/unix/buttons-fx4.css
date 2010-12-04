@@ -1,0 +1,63 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#dta-button,
+#dta-turbo-button,
+#dta-turboselect-button,
+#dta-manager-button,
+.dta-toolbarbutton {
+	list-style-image: url(buttons24.png);
+}
+
+toolbar[iconsize="small"] #dta-button,
+toolbar[iconsize="small"] #dta-turbo-button,
+toolbar[iconsize="small"] #dta-turboselect-button,
+toolbar[iconsize="small"] #dta-manager-button,
+toolbar[iconsize="small"] .dta-toolbarbutton {
+	list-style-image: url(buttons16.png);
+}
+
+#dta-button {
+	-moz-image-region: rect(0px,48px,24px,24px);
+}
+#dta-button:hover {
+	-moz-image-region: rect(0px,24px,24px,0px);
+}
+toolbar[iconsize="small"] #dta-button {
+	-moz-image-region: rect(0px,32px,16px,16px);
+}
+toolbar[iconsize="small"] #dta-button:hover {
+	-moz-image-region: rect(0px,16px,16px,0px);
+}
+
+#dta-turbo-button {
+	-moz-image-region: rect(0px,96px,24px,72px);
+}
+#dta-turbo-button:hover {
+	-moz-image-region: rect(0px,72px,24px,48px);
+}
+toolbar[iconsize="small"] #dta-turbo-button {
+	-moz-image-region: rect(0px,64px,16px,48px);
+}
+toolbar[iconsize="small"] #dta-turbo-button:hover {
+	-moz-image-region: rect(0px,48px,16px,32px);
+}
+
+#dta-turboselect-button {
+	-moz-image-region: rect(0px,144px,24px,120px);
+}
+#dta-turboselect-button:hover {
+	-moz-image-region: rect(0px,120px,24px,96px);
+}
+toolbar[iconsize="small"] #dta-turboselect-button {
+	-moz-image-region: rect(0px,96px,16px,80px);
+}
+toolbar[iconsize="small"] #dta-turboselect-button:hover {
+	-moz-image-region: rect(0px,80px,16px,64px);
+}
+
+#dta-manager-button {
+	-moz-image-region: rect(0px,168px,24px,144px);
+}
+toolbar[iconsize="small"] #dta-manager-button {
+	-moz-image-region: rect(0px, 112px, 16px, 96px);
+}
