@@ -218,7 +218,12 @@ Filter.prototype = {
 		this._active = Preferences.get(this.pref('active'));
 		this._type = Preferences.get(this.pref('type'));
 		this._defFilter = this._id.search(/deffilter/) != -1;
-		
+		if (this._defFilter) {
+			let ext = Preferences.get(this.pref('icon'));
+			if (ext) {
+				this.iconExt = ext;
+			}
+		}
 		// may throw
 		this.expression = Preferences.get(this.pref('test'));
 		
