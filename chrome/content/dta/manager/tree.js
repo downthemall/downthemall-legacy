@@ -95,9 +95,16 @@ const Tree = {
 				let filter = f; // clone for closure
 				let mi = document.createElementNS(popup.namespaceURI, 'menuitem');
 				mi.setAttribute('label', filter.label);
-				mi.setAttribute('class', 'menuitem-iconic menuitem-filter');
-				popup.appendChild(mi);
+				if (filter.iconExt) {
+					mi.setAttribute('class', 'menuitem-iconic');
+					mi.style.listStyleImage = "url(" + getIcon("file." + filter.iconExt) + ")";
+					mi.style.MozImageRegion = 'auto';
+				}
+				else {
+					mi.setAttribute('class', 'menuitem-iconic menuitem-filter');					
+				}
 				mi.addEventListener('command', function() Tree.removeByFilter(filter, id), true);
+				popup.appendChild(mi);
 			}
 		}
 	},
