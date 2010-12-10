@@ -981,9 +981,7 @@ const Dialog = {
 		}
 		return (this._forceClose = true);
 	},
-	close: function() {
-		this.shutdown(this._doneClosing);
-	},
+	close: function() this.shutdown(this._doneClosing),
 	_doneClosing: function() {
 		close();
 	},
