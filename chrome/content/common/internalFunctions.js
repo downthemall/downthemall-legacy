@@ -95,7 +95,7 @@ function $() {
 			elements.push(element);
 		}
 		else {
-			Debug.log("requested a non-existing element: " + id);
+			Debug.log("requested a non-existing element: " + arguments[i]);
 		}
 	}
 	return elements;
