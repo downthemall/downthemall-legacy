@@ -170,7 +170,6 @@ WorkerJob.prototype = {
 			rv = true;
 		}
 		catch (ex) {
-			Debug.log("pa: Failed to run prealloc windows worker", ex);
 			this._run_other();
 			return;
 		}
@@ -199,12 +198,12 @@ WorkerJob.prototype = {
 				rv = true;
 			}
 			catch (iex) {
-				Debug.log("pa: Failed to run prealloc loop", iex);
+				Components.utils.reportError("pa: Failed to run prealloc loop: " + iex);
 			}
 			stream.close();
 		}
 		catch (ex) {
-			Debug.log("pa: Failed to run prealloc worker", ex);
+			Components.utils.reportError("pa: Failed to run prealloc loop: " + ex);
 		}
 		
 		// Dispatch event back to the main thread
