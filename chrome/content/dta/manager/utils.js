@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const PREF_CONN = 'network.http.max-persistent-connections-per-server';
+const PREF_CONN = 'network.http.max-connections';
 
 function TrayHandler() {
 	this.available = !!('trayITrayService' in Ci);
