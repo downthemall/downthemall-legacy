@@ -170,7 +170,10 @@ Verificator.prototype = {
 			let pending = total;
 			let completed = 0;
 
-			let mainHash = new Hash(nsICryptoHash[hashCollection.full.type]);
+			let mainHash;
+			new Callback(function() {
+				mainHash = new Hash(nsICryptoHash[hashCollection.full.type]);
+			}, true);
 			let stream = new FileInputStream(file, 0x01, 0766, 0);
 			try {
 				while (pending) {
@@ -219,13 +222,19 @@ MultiVerificator.prototype = {
 			let pending = total;
 			let completed = 0;
 
-			let mainHash = new Hash(nsICryptoHash[hashCollection.full.type]);
+			let mainHash;
+			new Callback(function() {
+				mainHash = new Hash(nsICryptoHash[hashCollection.full.type]);
+			}, true);
 			let stream = new FileInputStream(file, 0x01, 0766, 0).QueryInterface(Ci.nsISeekableStream);
 			let flushBytes = REGULAR_CHUNK;
 			try {
 				for each (let partial in hashCollection.partials) {
 					let pendingPartial = Math.min(pending, hashCollection.parLength);
-					let partialHash = new Hash(nsICryptoHash[partial.type]);
+					let partialHash; 
+					new Callback(function() {
+						partialHash = new Hash(nsICryptoHash[partial.type]);
+					}, true);					
 					let start = completed;
 					while (pendingPartial) {
 						if (this.terminated) {
