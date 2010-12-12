@@ -48,6 +48,8 @@ const DB_FILE_BROKEN = 'dta_queue.broken';
 const DB_FILE_BAK = DB_FILE + ".bak";
 const DB_VERSION = 1;
 
+const STMT_SELECT = 'SELECT uuid, item FROM queue ORDER BY pos';
+
 module("resource://dta/utils.jsm");
 
 let pbm = {};
@@ -289,7 +291,12 @@ const QueueStore = {
 		ctx = ctx || null;
 		let stmt;
 		try {
-			stmt = _connection.createStatement('SELECT uuid, item FROM queue ORDER BY pos');
+			if (_connection.createAsyncStatement) {
+				stmt = _connection.createAsyncStatement(STMT_SELECT);
+			}
+			else {
+				stmt = _connection.createStatement(STMT_SELECT);
+			}
 		}
 		catch (ex) {
 			Debug.log("SQLite", _connection.lastErrorString);
