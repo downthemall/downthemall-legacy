@@ -222,7 +222,7 @@ CoThreadInterleaved.prototype = {
 function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
 	this.init(func, yieldEvery, thisCtx);
 	
-	if (arrayOrGenerator instanceof Array) {
+	if (arrayOrGenerator instanceof Array || 'length' in arrayOrGenerator) {
 		// make a generator
 		this._generator = (i for each (i in arrayOrGenerator));
 	}
