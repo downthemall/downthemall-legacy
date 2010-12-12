@@ -285,30 +285,38 @@ const QueueStore = {
 		this._delStmt.reset();
 	},
 
-	loadGenerator: function() {
-		let stmt = _connection.createStatement('SELECT COUNT(*) FROM queue');
-		stmt.executeStep();
-		let count = stmt.getInt64(0);
-		stmt.finalize();
-		delete stmt;
-		if (!count) {
-			return;			
+	loadItems: function(callback, ctx) {
+		ctx = ctx || null;
+		let stmt;
+		try {
+			stmt = _connection.createStatement('SELECT uuid, item FROM queue ORDER BY pos');
 		}
-		stmt = _connection.createStatement('SELECT uuid, item FROM queue ORDER BY pos');
-		this.beginUpdate();
-		while (stmt.executeStep()) {
-			try {
-				let dbId = stmt.getInt64(0);
-				let elem = stmt.getString(1);
-				yield { id: dbId, serial: elem, count: count };
-			}
-			catch (ex) {
-				Debug.log('failed to init a download from queuefile', ex);
-			}
+		catch (ex) {
+			Debug.log("SQLite", _connection.lastErrorString);
+			callback.call(ctx, null);
 		}
-		stmt.finalize();
-		this.endUpdate();
-		delete stmt;
+		let rows = [];
+		stmt.executeAsync({
+			handleResult: function(aResult) {
+				for (let row = aResult.getNextRow(); row; row = aResult.getNextRow()) {
+					rows.push({
+						id: row.getResultByIndex(0),
+						serial: row.getResultByIndex(1)
+						});
+				}
+			},
+			handleError: function(aError) {
+				Debug.log('failed load queue file', aError);
+				callback.call(ctx, null);
+			},
+			handleCompletion: function(aReason) {
+				stmt.finalize();
+				let count = rows.length;
+				rows.forEach(function(e) e.count = count);
+				Debug.log("All your callback are belong to us");
+				callback.call(ctx, rows);
+			}
+		});
 	},
 	getQueueSeq: function() {
 		let stmt = _connection.createStatement("SELECT seq FROM SQLITE_SEQUENCE WHERE name LIKE '%queue%'");

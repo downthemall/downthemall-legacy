@@ -380,16 +380,24 @@ const Dialog = {
 		Tree.beginUpdate();
 		Tree.clear();
 		this._brokenDownloads = [];
-		Debug.log("loading of the queue started!");
+		Debug.log("loading of the queue started!");		
 		GlobalProgress.reset();
 		GlobalProgress.pause();
-		this._loader = new CoThreadListWalker(
-			this._loadDownloads_item,
-			QueueStore.loadGenerator(),
-			250,
-			this
-		);
-		this._loader.start(this._loadDownloads_finish);		
+		QueueStore.loadItems(function(result) {
+			if (!result || !result.length) {
+				Debug.log("The cake is a lie");
+				this._loadDownloads_finish();
+				return;
+			}
+			Debug.log("Result has arrived: " + result.length);
+			this._loader = new CoThreadListWalker(
+				this._loadDownloads_item,
+				result,
+				250,
+				this
+			);
+			this._loader.start(this._loadDownloads_finish);
+		}, this);
 	},
 	_loadDownloads_item: function D__loadDownloads_item(dbItem, idx) {
 		if (!idx) {
@@ -525,6 +533,7 @@ const Dialog = {
 		return true;
 	},
 	_loadDownloads_finish: function D__loadDownloads_finish() {
+		Debug.log("Result was processed");
 		delete this._loader;
 		Tree.doFilter();
 		Tree.endUpdate();
