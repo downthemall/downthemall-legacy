@@ -65,12 +65,22 @@ function TrayHandler() {
 TrayHandler.prototype = {
 	watch: function tray_watch() {
 		if (this.available) {
-			this._trayService.watchMinimize(window);
+			try {
+				this._trayService.watchMinimize(window);
+			}
+			catch (ex) {
+				// no op
+			}
 		}
 	},
 	unwatch: function tray_unwatch() {
 		if (this.available) {
-			this._trayService.unwatchMinimize(window);
+			try {
+				this._trayService.unwatchMinimize(window);
+			}
+			catch (ex) {
+				// no op
+			}
 		}
 	},
 	restore: function tray_restore() {
