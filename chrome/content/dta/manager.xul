@@ -264,7 +264,7 @@
 		<statusbarpanel id="statusText" label="" flex="3" />
 		<statusbarpanel id="statusSpeed" label="" />
 		<statusbarpanel id="statusSpeeds">
-			<label control="listSpeeds" value="&speedlimit.label;" />
+			<label control="listSpeeds" class="statusbarpanel-text" value="&speedlimit.label;" />
 			<menulist class="plain" id="speedLimit" tooltiptext="&speedlimit.tooltip;" sizetopopup="none" command="cmdChangeSpeedLimit">
 				<menupopup id="listSpeeds" class="speedlimitlist-popup" position="before_start" />
 			</menulist>
