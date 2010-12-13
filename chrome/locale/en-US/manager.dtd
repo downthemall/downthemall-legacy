@@ -47,6 +47,7 @@
 <!ENTITY force.label "Force Start">
 <!ENTITY import.label "Import from File">
 <!ENTITY exportto.label "Export Selected to File">
+<!ENTITY addlimits.label "Add domain specific limits">
 
 <!ENTITY options.caption "Options">
 <!ENTITY loading.label "Loading...">

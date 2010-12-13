@@ -45,7 +45,7 @@ function inject(window) {
 	window.__defineGetter__('DTA', function(){
 		delete this.DTA;
 		let DTA = {
-			showPreferences: function(pane) this.Mediator.showPreferences(window, pane)
+			showPreferences: function(pane, command) this.Mediator.showPreferences(window, pane, command)
 		};
 		Components.utils.import("resource://dta/api.jsm", DTA);
 		DTA.Mediator.open = function DTA_Mediator_open(url, ref) {
