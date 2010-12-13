@@ -709,6 +709,15 @@ const Tree = {
 			Prompts.alert(window, _('importtitle'), _('importfailed'));
 		}
 	},
+	addLimits: function T_addLimits() {
+		DTA.showPreferences(
+			"paneServers",
+			{
+				action: "addlimits",
+				url: this.current.urlManager.url.spec
+			}
+		);
+	},
 	showInfo: function T_showInfo() {
 		this.beginUpdate();
 		let downloads = [];
@@ -801,7 +810,7 @@ const Tree = {
 			modifySome($('cmdDelete'), function(d) d.is(COMPLETE));
 			
 			modifySome($('cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'), function(d) !!d.count);
-			modifySome($('cmdMirrors'), function(d) d.count == 1);
+			modifySome($('cmdMirrors', 'cmdAddLimits'), function(d) d.count == 1);
 			
 			modifySome($('cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'), function(d) d.isOf(QUEUED, RUNNING, PAUSED, CANCELED));
 			modifySome($('cmdMoveTop', 'cmdMoveUp'), function(d) d.min > 0); 

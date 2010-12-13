@@ -360,6 +360,8 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 #speedLimit {
 	-moz-image-region: rect(64px,128px,76px,112px);
 }
+
+#addlimits,
 #perDownloadSpeedLimit {
 	-moz-image-region: rect(48px,144px,64px,128px);
 }
@@ -369,6 +371,7 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 #perDownloadSpeedLimit[value="-1"] {
 	-moz-image-region: rect(32px,160px,48px,144px);
 }
+#addlimits[disabled="true"],
 #perDownloadSpeedLimit[disabled="true"] {
 	-moz-image-region: rect(48px,160px,64px,144px);
 }

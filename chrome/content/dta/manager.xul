@@ -77,6 +77,8 @@
 
 		<command id="cmdImport" oncommand="Tree.import();" />
 		<command id="cmdExport" oncommand="Tree.export();" />
+    
+    <command id="cmdAddLimits" oncommand="Tree.addLimits();" />
 
 		<command id="cmdChangeSpeedLimit" oncommand="Dialog.changeSpeedLimit();" />
 		<command id="cmdPerDownloadSpeedLimit" oncommand="Tree.changePerDownloadSpeedLimit();" />
@@ -189,6 +191,8 @@
 					<menuseparator />
 					<menuitem id="import" class="action menuitem-iconic" label="&import.label;" command="cmdImport" />
 					<menuitem id="export" class="action menuitem-iconic" label="&exportto.label;" command="cmdExport" />
+          <menuseperator />
+          <menuitem id="addlimits" class="menuitem-iconic" label="&addlimits.label;" command="cmdAddLimits"/>
 				</menupopup>
 			</menu>
 		</menupopup>

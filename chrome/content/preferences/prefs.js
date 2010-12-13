@@ -529,10 +529,11 @@ const Servers = {
 	newInput: function() {
 		$('newServerLimit').disabled = !$('spnewurl').value;
 	},
-	newLimit: function() {
+	newLimit: function(url) {
 		let newurl = $('spnewurl');
+		url = url || newurl.value;
 		try {
-			let limit = this.addLimit(newurl.value);
+			let limit = this.addLimit(url);
 			if (!limit.isNew) {
 				this._list.selectedItem = $("host" + limit.host);
 				this._list.selectedItem.edit();
@@ -563,6 +564,22 @@ ServiceGetter(Servers, 'prompts', '@mozilla.org/embedcomp/prompt-service;1', 'ns
 
 const Prefs = {
 	load: function() {
+		if (!("arguments" in window)) {
+			return;
+		}
+		if (window.arguments.length == 2) {
+			let cmd = window.arguments[1];
+			if (!cmd) {
+				return;
+			}
+			setTimeout(function() {			
+				switch (cmd.action) {
+				case 'addlimits':
+					Servers.newLimit(cmd.url);
+					break;
+				}
+			}, 0);
+		}
 	},
 	restoreAll: function() {
 		if (Prompts.confirm(window, _('restoreprefstitle'), _('restoreprefstext'), _('restore'), Prompts.CANCEL, null, 1) == 1) {

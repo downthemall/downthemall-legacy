@@ -215,12 +215,13 @@ function showNotice(window) {
 function showAbout(window) {
 	openUrl(window, 'about:downthemall');
 }
-function showPreferences(window, pane) {
+function showPreferences(window, pane, command) {
 	var instantApply = Prefs.get("browser.preferences.instantApply", false);
 	window.openDialog(
 		'chrome://dta/content/preferences/prefs.xul',
 		'dtaPrefs',
 		'chrome,titlebar,toolbar,resizable,centerscreen'+ (instantApply ? ',dialog=no' : ''),
-		pane
+		pane,
+		command
 	);
 }

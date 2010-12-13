@@ -56,7 +56,7 @@ const CryptoHash = new ctor("@mozilla.org/security/hash;1", "nsICryptoHash");
 module("resource://dta/constants.jsm", this);
 
 const DTA = {
-	showPreferences: function(pane) DTA.Mediator.showPreferences(window, pane)
+	showPreferences: function(pane, command) DTA.Mediator.showPreferences(window, pane, command)
 };
 module("resource://dta/api.jsm", DTA);
 
