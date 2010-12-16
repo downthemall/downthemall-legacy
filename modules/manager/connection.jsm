@@ -119,8 +119,6 @@ function Connection(d, c, isInfoGetter) {
 	this._chan.loadFlags = loadFlags;
 	this._chan.notificationCallbacks = this;
 
-	this.prepareChannel(this._chan);
-	
 	if (this._chan instanceof Ci.nsIHttpChannel) {
 		try {
 			Debug.log("http");
@@ -154,6 +152,8 @@ function Connection(d, c, isInfoGetter) {
 			Debug.log('error setting up ftp channel', ex);
 		}
 	}
+	this.prepareChannel(this._chan);
+	
 	this.c.running = true;
 	this._chan.asyncOpen(this, null);
 	Debug.log(this.c + "is now open");
