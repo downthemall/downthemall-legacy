@@ -50,10 +50,10 @@ function Manipulator() {
 	this._m = {};
 }
 Manipulator.prototype = {
-	register: function(id, matcher, func) {
+	register: function(id, matcher) {
 		this._m[id] = {
 				matcher: matcher,
-				func: func
+				funcs: Array.map(arguments, function(e) e).slice(2)
 		};	
 	},
 	unregister: function(id) {
@@ -65,7 +65,9 @@ Manipulator.prototype = {
 		for each (let m in this._m) {
 			if (m.matcher.test(spec)) {
 				try {
-					m.func.apply(context);
+					for each (let func in m.funcs) {
+						func.apply(context);
+					}
 				}
 				catch (ex) {
 					Cu.reportError(ex);
@@ -78,7 +80,7 @@ Manipulator.prototype = {
 for each (let [m, sp] in [['URL', function(c) c.spec], ['Http', function(c) c.URI.spec]]) {
 	let _m = new Manipulator();
 	let _sp = sp;
-	this['register' + m] = function(id, matcher, func) _m.register(id, matcher, func);
+	this['register' + m] = function() _m.register.apply(_m, arguments);
 	this['unregister' + m] = function(id) _m.unregister(id);
 	this['modify' + m] = function(context) _m.modify(context, _sp(context));
 	EXPORTED_SYMBOLS.splice(EXPORTED_SYMBOLS.length, 3, 'register' + m, 'unregister' + m, 'modify' + m);
@@ -89,15 +91,20 @@ _uaplatform = (function() {
 	let ph = Cc["@mozilla.org/network/protocol;1?name=http"].getService(Ci.nsIHttpProtocolHandler);
 	return ph.platform + "; " + ph.oscpu + "; " + ph.language;
 })();
-_uaextrap = _uaextra + " (" + _uaplatform + ")";
+_uaextrap = _uaextra + " (" + _uaplatform + "; like wget)";
 Version.getInfo(function(v) {
-	_uaextrap = _uaextra + "/" + v.BASE_VERSION + " (" + _uaplatform + "; 2.0)";
+	_uaextrap = _uaextra + "/" + v.BASE_VERSION + " (" + _uaplatform + "; 2.0; like wget)";
 	_uaextra += "/" + v.BASE_VERSION;
 });
 
 function overrideUA() {
 	this.setRequestHeader('User-Agent', _uaextrap, false);
+}
+function makeAnonymous() {
+	try { this.referrer = null; } catch (ex) { /* no op */ }
 	this.setRequestHeader('Referer', '', false);
+	this.loadFlags |= Ci.nsIRequest.LOAD_ANONYMOUS;
+	this.setRequestHeader('Cookie', '', false);
 }
 
 function amendUA() {
@@ -111,7 +118,8 @@ function amendUA() {
 registerHttp(
 	'sourceforge.net',
 	/(?:https?:\/\/|\.)(?:sf|sourceforge)\.net\//,
-	overrideUA
+	overrideUA,
+	makeAnonymous
 );
 
 // Rapidshare direct
