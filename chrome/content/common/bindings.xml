@@ -475,7 +475,7 @@
 				this.fill();
 			]]></handler>
 			<handler phase="capturing" event="command"><![CDATA[
-				if (this != event.originalTarget) {
+				if (event.originalTarget.localName != "menuitem") {
 					return;
 				}   
 				this.parentNode.blur();
