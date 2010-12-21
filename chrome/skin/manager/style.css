@@ -611,3 +611,7 @@ statusbarpanel#netstatus {
 #search > toolbarbutton[disabled] {
   display: none;
 }
+
+treecol[params] > .treecol-sortdirection {
+	list-style-image: url("chrome://global/skin/checkbox/cbox-check.gif");
+}
