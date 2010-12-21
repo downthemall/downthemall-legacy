@@ -36,15 +36,16 @@
  
 const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init');
 
-let ImportExport = {};
-module('resource://dta/manager/imex.jsm', ImportExport);
- 
+lazyModule(this, 'ImportExport', 'resource://dta/manager/imex.jsm');
+
 const Tree = {
 	init: function T_init(elem) {
 		this.elem = elem;
 		this._downloads = [];
 		this._filtered = this._downloads;
 		this._speedLimitList = $('perDownloadSpeedLimitList');
+		this._matcher = new this.Matcher();
+		this._matcherPopup = $('matcher');
 		
 		addEventListener('blur', function() Tree.stopTip(), false);
 		
@@ -56,6 +57,8 @@ const Tree = {
 		let dtree = $('downloadList');
 		dtree.addEventListener('mousemove', function(event) tp.hovering(event), false);
 		dtree.addEventListener('draggesture', function(event) nsDragAndDrop.startDrag(event, tp), false);
+		
+		this._matcherPopup.addEventListener('command', function(event) tp.handleMatcherPopup(event), true);
 		
 		$('popup').addEventListener('popupshowing', function(event) tp.onPopupShowing(event), true);
 		$('search').addEventListener('search', function(event) tp.setFilter(event.target.value), true);
@@ -108,6 +111,68 @@ const Tree = {
 			}
 		}
 	},
+	handleMatcherPopup: function(event) {
+		let matcher = this._matcherPopup.element.getAttribute('matcher');
+		let popup = this._matcherPopup;
+		let element = popup.element;
+		let target = event.originalTarget;
+		
+		if (target.id == 'clearmatcher') {
+			element.removeAttribute('params');
+			this._matcher.removeMatcher(matcher);
+			this.doFilter();
+			return;
+		}
+		if (target.hasAttribute('param')) {
+			let active = [];
+			let params = element.getAttribute('params');
+			if (params) {
+				active = params.split(',');
+			}
+			let param = target.getAttribute('param');
+			
+			// remove other radio params for this name
+			if (target.getAttribute('type') == 'radio') {
+				// find other params for name
+				let others = $$(
+					'menuitem[name="' + target.getAttribute('name') + '"]',
+					popup
+				).map(
+					function(n) n.getAttribute('param')
+				).filter(
+					function(p) p != param
+				);
+				// filter out other params
+				active = active.filter(function(p) others.indexOf(p) < 0);
+			}
+			let idx = active.indexOf(param);
+			if (idx === -1) {
+				active.push(param);					
+			}
+			else {
+				active.splice(idx, 1);
+			}
+			active = active.filter(function(e) !((e in this) || (this[e] = null)), {});
+			active.sort();
+			let newParams = active.join(',');
+			if (active.length) {
+				element.setAttribute('params', newParams);
+				Debug.log("newParams: " + newParams);
+				if (newParams != params) {
+					this._matcher.addMatcher(matcher, active);
+					this.doFilter();
+				}
+			}
+			else {
+				element.removeAttribute('params');
+				if (newParams != params) {
+					this._matcher.removeMatcher(matcher);
+					this.doFilter();
+				}					
+			}
+			return;
+		}
+	},
 	clear: function() {
 		Debug.log("Tree: clearing");
 		this.beginUpdate();
@@ -136,18 +201,18 @@ const Tree = {
 	_filter: '',
 	_filterExpr: null,
 	doFilter: function T__doFilter() {
+		Debug.log("doFilter");
 		this.beginUpdate();
 		this._downloads.forEach(function(e) e.filteredPosition = -1);
 		
 		this._box.rowCountChanged(0, -this._filtered.length);
-		if (!this._filter) {
-			this._filtered = this._downloads;
+		if (this._matcher.filtering) {
+			Debug.log("filtering");
+			this._filtered = this._matcher.filter(this._downloads);
 		}
 		else {
-			this._filtered = this._downloads.filter(
-				function(e) this._filterExpr.test([e.urlManager.usable, e.description, e.fileName, e.destinationName].join(' ')),
-				this
-			);
+			Debug.log("not filtering");
+			this._filtered = this._downloads;
 		}
 		this._box.rowCountChanged(0, this._filtered.length);
 		this._filtered.forEach(function(e, i) e.filteredPosition = i);		
@@ -158,17 +223,15 @@ const Tree = {
 			return;
 		}
 		this._filter = nv;
-		this._filterExpr = new RegExp(
-			this._filter
-			.replace(/^\s+|\s+$/g, '')
-      .replace(/([/{}()\[\]\\^$.])/g, "\\$1")
-      .replace(/\*/g, ".*")
-      .replace(/\?/g, '.'),
-      'i'
-    );
-    // save selection
-    let selectedIds = this._getSelectedIds().map(function(id) this._filtered[id].position, this);
-    // apply filters
+		if (!!nv) {
+			this._matcher.addMatcher('textmatch', [this._filter]);
+		}
+		else {
+			this._matcher.removeMatcher('textmatch');
+		}
+		// save selection
+		let selectedIds = this._getSelectedIds().map(function(id) this._filtered[id].position, this);
+		// apply filters
 		this.doFilter();
 		
 		// restore selection
@@ -277,8 +340,49 @@ const Tree = {
 			prop.AppendElement(this._filtered[idx].iconAtom);
 		}
 	},
+	cycleHeader: function T_cycleHeader(col) {
+		let processor = col.element.getAttribute('matcher');
+		if (!processor) {
+			return;
+		}
+		let popup = this._matcherPopup;
+		let fi = $('fixedItems');
+		while (popup.firstChild.id != 'fixedItems') {
+			popup.removeChild(this._matcherPopup.firstChild);
+		}
+		let active = (col.element.getAttribute('params') || "").split(",");
+		let newActive = [];
+		for (let i in this._matcher.getItems(processor, this._downloads)) {
+			if (i.label == '-') {
+				popup.insertBefore($e('menuseparator'), fi);
+				continue;
+			}
+			let checked = active.indexOf(i.param) >= 0;
+			let attrs = {
+				type: "checkbox",
+				label: i.label,
+				param: i.param,
+				checked: checked
+			};
+			if (i.radio) {
+				attrs.type = 'radio';
+				attrs.name = popup.id + "_" + i.radio;
+			}
+			popup.insertBefore($e('menuitem', attrs), fi);
+			if (checked) {
+				newActive.push(i.param);
+			}
+		}
+		if (newActive.length) {
+			col.element.setAttribute('params', newActive.join(','));
+		}
+		else {
+			col.element.removeAttribute('params');
+		}
+		popup.element = col.element;
+		popup.openPopup(col.element, 'after_end', 0, 0, false, false);
+	},
 	// just some stubs we need to provide anyway to implement a full nsITreeView
-	cycleHeader: function T_cycleHeader(col, elem) {},
 	cycleCell: function(idx, column) {},
 	performAction: function(action) {},
 	performActionOnRow: function(action, index, column) {},
@@ -1068,6 +1172,7 @@ const Tree = {
 		this.updateSelected(function(d) (d.speedLimit = limit) || true); 
 	}
 };
+module('resource://dta/manager/matcher.jsm', Tree);
 
 const FileHandling = {
  	get _uniqueList() {

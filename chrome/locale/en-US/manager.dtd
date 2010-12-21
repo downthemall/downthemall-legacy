@@ -55,6 +55,8 @@
 <!ENTITY restore.label "Restore">
 <!ENTITY close.label "Close">
 
+<!ENTITY clearmatcher.label "Clear column filters">
+
 <!ENTITY speedlimit.label "Limit:">
 <!ENTITY speedlimit.tooltip "Change speed limit. The list is dynamicly updated.">
 

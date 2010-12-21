@@ -721,9 +721,11 @@ const Dialog = {
 					let remaining = Math.ceil((d.totalSize - d.partialSize) / d.speeds.avg);
 					if (!isFinite(remaining)) {
 						d.status = _("unknown");
+						d.estimated = 0;
 					}
 					else {
 						d.status = Utils.formatTimeDelta(remaining);
+						d.estimated = remaining;
 					}
 				}
 				d.speed = Utils.formatSpeed(d.speeds.avg);
