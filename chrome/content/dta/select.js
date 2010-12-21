@@ -225,16 +225,20 @@ Tree.prototype = {
 	cycleHeader: function(col) {
 		if (col.index == this._sortColumn) {
 			this._sortDirection = !this._sortDirection;
+			this._links.reverse();
 			this.setSortMarker();
+			this.invalidate();
+			return;
 		}
-		else {
-			this.removeSortMarker();
-			Debug.log("setting sortColumn = " + col.index);
-			this._sortColumn = col.index;
-			this._sortDirection = false;
-			this._sortColumnElem = col.element;
-			this.setSortMarker();
-		}
+
+		this.removeSortMarker();
+		
+		Debug.log("setting sortColumn = " + col.index);
+		this._sortColumn = col.index;
+		this._sortDirection = false;
+		this._sortColumnElem = col.element;
+		this.setSortMarker();
+		
 		let sd;
 		this._links.forEach(function(e, i) { e._sortId = i; });
 		
