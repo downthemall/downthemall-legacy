@@ -208,15 +208,32 @@ Tree.prototype = {
 	// called when a header is called.
 	// apply sorting here
 	_sortColumn: null,
+	_sortColumnElem: null,
 	_sortDirection: false,
-	cycleHeader: function(col, elem) {
+	removeSortMarker: function() {
+		if (!this._sortColumnElem) {
+			return;
+		}
+		this._sortColumnElem.removeAttribute('sortDirection');
+	},
+	setSortMarker: function() {
+		if (!this._sortColumnElem) {
+			return;
+		}
+		this._sortColumnElem.setAttribute("sortDirection", this._sortDirection ? "descending" : "ascending");
+	},
+	cycleHeader: function(col) {
 		if (col.index == this._sortColumn) {
 			this._sortDirection = !this._sortDirection;
+			this.setSortMarker();
 		}
 		else {
+			this.removeSortMarker();
 			Debug.log("setting sortColumn = " + col.index);
 			this._sortColumn = col.index;
 			this._sortDirection = false;
+			this._sortColumnElem = col.element;
+			this.setSortMarker();
 		}
 		let sd;
 		this._links.forEach(function(e, i) { e._sortId = i; });
@@ -643,14 +660,17 @@ let Dialog = {
 
 	changeTab: function (tab) {
 		// BEWARE: Other functions will call us to reinitalize the filters/selection
-
 		// first of all: remember the currently selected/displayed tab
+		if (this.current) {
+			this.current.removeSortMarker();
+		}
 		this.current = this[tab];
 		this.current.tab = tab;
 
 		// ... and set it to the actual tree
 		$("urlList").view = this.current;
-
+		this.current.setSortMarker();
+		
 		// ... and update the UI
 		let type = this.current.type;
 		if (type == 1) {
