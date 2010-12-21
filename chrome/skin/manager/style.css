@@ -613,5 +613,9 @@ statusbarpanel#netstatus {
 }
 
 treecol[params] > .treecol-sortdirection {
-	list-style-image: url("chrome://global/skin/checkbox/cbox-check.gif");
+	list-style-image: url(chrome://global/skin/checkbox/cbox-check.gif);
+}
+treecol[matcher]:hover > .treecol-sortdirection {
+	list-style-image: url(chrome://global/skin/arrow/arrow-down.png);
+	-moz-appearance: button-arrow-down;
 }
