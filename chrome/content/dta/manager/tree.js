@@ -272,6 +272,7 @@ const Tree = {
 	},
 	_filter: '',
 	_mustFilter: false,
+	get filtered() this._matcher.filtering,
 	doFilter: function T__doFilter() {
 		if (this._updating) {
 			this._mustFilter = true;

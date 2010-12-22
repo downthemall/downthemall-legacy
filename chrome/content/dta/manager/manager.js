@@ -741,16 +741,29 @@ const Dialog = {
 			}
 
 			// Refresh status bar
-			$('statusText').label = _("currentdownloads", [this.completed, Tree.downloadCount, this._running.length]);
-			$('statusSpeed').label = _("currentspeed", [speed]);
+			$('statusText').label = _("currentdownloadstatus", [this.completed, Tree.downloadCount, Tree.rowCount, this._running.length]);
+			let statusSpeed = $('statusSpeed'); 
+			statusSpeed.label = _("currentspeed", [speed]);
 
 			// Refresh window title
 			if (this._running.length == 1 && this._running[0].totalSize > 0) {
-				document.title =
-					this._running[0].percent
-					+ ' - '
-					+ this.completed + "/" + Tree.downloadCount + " - "
-					+ $('statusSpeed').label + ' - DownThemAll!';
+				if (Tree.filtered) {
+					document.title = _('titlerunningfiltered', [
+						this._running[0].percent,
+						this.completed,
+						Tree.downloadCount,
+						Tree.rowCount,
+						statusSpeed.label
+					]);
+				}
+				else {
+					document.title = _('titlerunning', [
+						this._running[0].percent,
+						this.completed,
+						Tree.downloadCount,
+						statusSpeed.label
+					]);
+				}
 				if (this._running[0].totalSize) {
 					GlobalProgress.activate(this._running[0].progress * 10, 1000);
 				}
@@ -760,11 +773,24 @@ const Dialog = {
 			}
 			else if (this._running.length > 0) {
 				let p = Math.floor(this.completed * 1000 / Tree.downloadCount);
-				document.title =
-					Math.floor(this.completed * 100 / Tree.downloadCount) + '%'
-					+ ' - '				
-					+ this.completed + "/" + Tree.downloadCount + " - "
-					+ $('statusSpeed').label + ' - DownThemAll!';
+				let pt = Math.floor(this.completed * 100 / Tree.downloadCount) + '%';
+				if (Tree.filtered) {
+					document.title = _('titlerunningfiltered', [
+						pt,
+						this.completed,
+						Tree.downloadCount,
+						Tree.rowCount,
+						statusSpeed.label
+					]);
+				}
+				else {
+					document.title = _('titlerunning', [
+						pt,
+						this.completed,
+						Tree.downloadCount,
+						statusSpeed.label
+					]);
+				}
 				GlobalProgress.activate(p, 1000);
 			}
 			else {
@@ -795,7 +821,19 @@ const Dialog = {
 				else {
 					GlobalProgress.hide();
 				}
-				document.title = this.completed + "/" + Tree.downloadCount + " - DownThemAll!";
+				if (Tree.filtered) {
+					document.title = _('titleidlefiltered', [
+						this.completed,
+						Tree.downloadCount,
+						Tree.rowCount
+					]);
+				}
+				else {
+					document.title = _('titleidle', [
+						this.completed,
+						Tree.downloadCount
+					]);					
+				}
 			}
 			($('titlebar') || {}).value = document.title;
 		}
