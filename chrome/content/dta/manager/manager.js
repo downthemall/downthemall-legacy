@@ -1459,6 +1459,7 @@ QueueItem.prototype = {
 			this._totalSize = Math.floor(nv);
 		}
 		this.invalidate(3);
+		Tree.doFilter();
 		this.prealloc();
 	},
 	partialSize: 0,
@@ -1562,6 +1563,7 @@ QueueItem.prototype = {
 		if (nv != this._status) {
 			this._status = nv;
 			this.invalidate();
+			Tree.doFilter();
 		}
 		return this._status;
 	},
