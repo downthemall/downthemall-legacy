@@ -1256,6 +1256,7 @@ QueueItem.prototype = {
 		}		
 		Dialog.signal(this);
 		this.invalidate();
+		Tree.doFilter();
 		Tree.refreshTools();
 		return nv;
 	},
@@ -1601,7 +1602,6 @@ QueueItem.prototype = {
 		if (nv != this._status) {
 			this._status = nv;
 			this.invalidate();
-			Tree.doFilter();
 		}
 		return this._status;
 	},
