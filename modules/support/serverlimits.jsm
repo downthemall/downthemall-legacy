@@ -200,7 +200,7 @@ function LegacyScheduler(downloads, running) {
 function FastScheduler(downloads, running) {
 	let downloadSet = {};
 	for each (let d in running) {
-		let host = d.urlManager.eHost;
+		let host = d.urlManager.domain;
 		let knownHost = (host in downloadSet);
 		if (!knownHost) {
 			downloadSet[host] = new SchedItem(host);
@@ -213,7 +213,7 @@ function FastScheduler(downloads, running) {
 		if (!d.is(QUEUED)) {
 			continue;
 		}
-		const host = d.urlManager.eHost;
+		const host = d.urlManager.domain;
 		const knownHost = (host in downloadSet);
 		if (!knownHost) {
 			downloadSet[host] = new SchedItem(host);
@@ -236,7 +236,7 @@ function FairScheduler(downloads, running) {
 	
 	// Count the running tasks
 	for each (let d in running) {
-		let host = d.urlManager.eHost;
+		let host = d.urlManager.domain;
 		if (!(host in downloadSet)) {
 			downloadSet[host] = new SchedItem(host);
 		}
@@ -249,7 +249,7 @@ function FairScheduler(downloads, running) {
 		if (!d.is(QUEUED)) {
 			continue;
 		}
-		let host = d.urlManager.eHost;
+		let host = d.urlManager.domain;
 		if (!(host in downloadSet)) {
 			downloadSet[host] = new SchedItem(host);
 			yield d;
@@ -346,7 +346,7 @@ function killServerBuckets() {
 	buckets = {};
 }
 function getServerBucket(d) {
-	let host = d.urlManager.eHost;
+	let host = d.urlManager.domain;
 	if (host in buckets) {
 		return buckets[host];
 	}
