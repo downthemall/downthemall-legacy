@@ -66,7 +66,7 @@ function flatten(arr) arr.reduce(function(a,b) {
 		b = flatten(b);
 	}
 	return Array.concat(a, b);
-});
+},[]);
 
 /**
  * Helper: Consolidates regular expressions by combining
