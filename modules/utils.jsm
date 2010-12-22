@@ -566,7 +566,11 @@ function naturalSort(arr, mapper) {
 			if (e == null || e == undefined || typeof e == 'number') {
 				return {elem: b, chunks: [e]};
 			}
-			let a = e.toString().replace(/\b(?:a|one|the)\b/g, ' ').replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' ').toLowerCase();
+			let a = e.toString()
+				.replace(/\b(?:a|one|the)\b/g, ' ')
+				.replace(/^\s+|\s+$/g, '')
+				.replace(/\s+/g, ' ')
+				.toLowerCase();
 			let len = a.length;
 			if (!len) {
 				return {elem: b, chunks: [a]};

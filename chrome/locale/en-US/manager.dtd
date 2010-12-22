@@ -68,3 +68,6 @@
 
 <!ENTITY toolbar.icons "Use Icons">
 <!ENTITY toolbar.full "Use Icons and Text">
+
+<!ENTITY sortascending.label "Sort by column (ascending)">
+<!ENTITY sortdescending.label "Sort by column (descending)">
