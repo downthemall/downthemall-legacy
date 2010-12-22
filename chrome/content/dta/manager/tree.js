@@ -580,7 +580,7 @@ const Tree = {
 		if (res) {
 			return;
 		}
-		this.remove(this._downloads.filter(function(e) e.urlManager.domain == host, this), true);		
+		this.remove(this._downloads.filter(function(e) e.urlManager.domain == domain, this), true);		
 	},
 	removeByFilter: function T_removeByFilter(filter, id) {
 		let pref = null;
