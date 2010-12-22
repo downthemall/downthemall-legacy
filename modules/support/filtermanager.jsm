@@ -480,6 +480,16 @@ FilterManagerImpl.prototype = {
 		let regs = consolidateRegs(flatten(
 			filters.map(function(f) f._regs)
 		));
+		if (regs.length == 1) {
+			regs = regs[0];
+			return function(test) {
+				test = test.toString();
+				if (!test) {
+					return false;
+				}
+				return regs.test(test);
+			}		
+		}
 		return function(test) {
 			test = test.toString();
 			if (!test) {
