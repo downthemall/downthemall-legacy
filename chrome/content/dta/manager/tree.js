@@ -66,7 +66,6 @@ const Tree = {
 		ServiceGetter(this, "_ds", "@mozilla.org/widget/dragservice;1", "nsIDragService");
 		ServiceGetter(this, "_ww", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 		ServiceGetter(this, "_as", "@mozilla.org/atom-service;1", "nsIAtomService");
-		ServiceGetter(this, '_tld', '@mozilla.org/network/effective-tld-service;1', 'nsIEffectiveTLDService');
 		
 		for each (let e in ['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined', 'pausedAutoretrying', 'verified', 'progress']) {
 			this['_' + e] = this._as.getAtom(e);
@@ -542,21 +541,13 @@ const Tree = {
 		}
 		this.remove(this._downloads.map(function(e) e), true);
 	},
-	getBaseDomain: function T_getBaseDomain(url) {
-		try {
-			return this._tld.getBaseDomain(url);
-		}
-		catch (ex) {
-			return url.host;
-		}
-	},
 	removeHostWithConfirmation: function T_removeHostWithConfirmation() {
-		let host = this.getBaseDomain(this.current.urlManager.url);
-		let res = Prompts.confirm(window, _('removecaption'), _('removehostquestion', [host]), Prompts.YES, Prompts.NO);
+		let domain = this.current.urlManager.domain;
+		let res = Prompts.confirm(window, _('removecaption'), _('removehostquestion', [domain]), Prompts.YES, Prompts.NO);
 		if (res) {
 			return;
 		}
-		this.remove(this._downloads.filter(function(e) this.getBaseDomain(e.urlManager.url) == host, this), true);		
+		this.remove(this._downloads.filter(function(e) e.urlManager.domain == host, this), true);		
 	},
 	removeByFilter: function T_removeByFilter(filter, id) {
 		let pref = null;

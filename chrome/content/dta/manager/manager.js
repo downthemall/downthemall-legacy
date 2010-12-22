@@ -1855,7 +1855,6 @@ QueueItem.prototype = {
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
 			let uri = this.urlManager.usable.toURL();
-			let host = uri.host.toString();
 
 			// normalize slashes
 			let mask = this.mask
@@ -1915,7 +1914,8 @@ QueueItem.prototype = {
 				"flattext": function() tp.description.removeBadChars().getUsableFileNameWithFlatten(),
 				'title': function() tp.title.removeBadChars().trim(),
 				'flattitle': function() tp.title.removeBadChars().getUsableFileNameWithFlatten(),
-				"url": function() host,
+				"url": function() tp.urlManager.host,
+				"domain": function() tp.urlManager.domain,
 				"subdirs": function() uripath.value,
 				"flatsubdirs": function() uripath.value.getUsableFileNameWithFlatten(),
 				"refer": function() tp.referrer ? tp.referrer.host.toString() : '',
@@ -2273,6 +2273,7 @@ QueueItem.prototype = {
 			this.maxChunks = 2;
 			this.maxChunks = omc;
 		}
+		Tree.doFilter();
 		this.save();
 	},
 	dumpScoreboard: function QI_dumpScoreboard() {
