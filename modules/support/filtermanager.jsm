@@ -152,7 +152,18 @@ Filter.prototype = {
 		this._regs = [];
 		this._makeRegs(this._expr);
 		this._regs = consolidateRegs(this._regs);
-		
+		if (this._regs.length == 1) {
+			let r = this._regs[0];
+			this.match = function(str) {
+				if (!str) {
+					return false;
+				}
+				return r.test(str.toString());
+			}
+		}
+		else if (this.hasOwnProperty('match')) {
+			delete this.match;
+		}
 		this._modified = true;		
 	},
 	_makeRegs: function FM__makeRegs(str) {
@@ -233,13 +244,8 @@ Filter.prototype = {
 		if (!str) {
 			return false;
 		}
-		str = str.toString();		
-		for each (let r in this._regs) {
-			if (r.test(str)) {
-				return true;
-			}
-		}
-		return false;
+		str = str.toString();
+		return this._regs.some(function(r) r.test(str));
 	},
 
 	/**
