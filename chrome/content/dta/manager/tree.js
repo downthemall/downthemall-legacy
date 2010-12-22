@@ -122,6 +122,34 @@ const Tree = {
 			this.doFilter();
 			return;
 		}
+		if (target.id == 'invertmatcher') {
+			let active = [];
+			let params = element.getAttribute('params');
+			if (params) {
+				active = params.split(',');
+			}
+			let newActive = $$('menuitem[type="checkbox"][param]', element)
+				.map(function(e) e.getAttribute('param'))
+				.filter(function(e) active.indexOf(e) == -1);
+			active = newActive;
+			active.sort();
+			let newParams = active.join(',');
+			if (active.length) {
+				element.setAttribute('params', newParams);
+				if (newParams != params) {
+					this._matcher.addMatcher(matcher, active);
+					this.doFilter();
+				}
+			}
+			else {
+				element.removeAttribute('params');
+				if (newParams != params) {
+					this._matcher.removeMatcher(matcher);
+					this.doFilter();
+				}					
+			}
+			return;
+		}
 		if (target.id == 'sortAscending') {
 			this.sort(element.id, false);
 			return;
@@ -164,7 +192,6 @@ const Tree = {
 			let newParams = active.join(',');
 			if (active.length) {
 				element.setAttribute('params', newParams);
-				Debug.log("newParams: " + newParams);
 				if (newParams != params) {
 					this._matcher.addMatcher(matcher, active);
 					this.doFilter();
