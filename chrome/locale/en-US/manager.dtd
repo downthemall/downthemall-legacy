@@ -10,6 +10,7 @@
 <!ENTITY search.placeholder "Search downloads">
 
 <!ENTITY download.label "Download/Name">
+<!ENTITY domain.label "Domain">
 <!ENTITY percent.label "Percent">
 <!ENTITY pct.label "Progress">
 <!ENTITY dim.label "Size">
