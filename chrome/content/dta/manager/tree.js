@@ -123,6 +123,14 @@ const Tree = {
 			this.doFilter();
 			return;
 		}
+		if (target.id == 'sortAscending') {
+			this.sort(element.id, false);
+			return;
+		}
+		if (target.id == 'sortDescending') {
+			this.sort(element.id, true);
+			return;
+		}
 		if (target.hasAttribute('param')) {
 			let active = [];
 			let params = element.getAttribute('params');
@@ -198,8 +206,43 @@ const Tree = {
 			this._cols.push(box.columns.getColumnAt(i));
 		}
 	},
+	sort: function(id, descending) {
+		if (Prompts.confirm(
+			window,
+			_('sortqueuetitle'),
+			_('sortqueuemsg'),
+			_('sortqueue'),
+			_('cancel')
+		)) {
+			return;
+		}
+		
+		let cmpFun = (function () {
+			switch (id) {
+			case 'task':
+				if (Prefs.showOnlyFilenames) {
+					return function(d) d.destinationName;
+				}
+				return function(d) d.urlManager.usable;
+			case 'dim':
+				return function(d) d.totalSize;
+			case 'status':
+				return function(d) d.status;
+			case 'path':
+				return function(d) d.destinationPath;
+			};
+			throw new Exception("cmpFun not implemented");
+		})();
+		this.beginUpdate();
+		this._downloads = Utils.naturalSort(this._downloads, cmpFun);
+		if (descending) {
+			this._downloads.reverse();
+		}
+		this.doFilter();
+		this.endUpdate();
+		this.invalidate();
+	},
 	_filter: '',
-	_filterExpr: null,
 	doFilter: function T__doFilter() {
 		Debug.log("doFilter");
 		this.beginUpdate();
@@ -379,6 +422,7 @@ const Tree = {
 		else {
 			col.element.removeAttribute('params');
 		}
+		popup.colidx = col.index;
 		popup.element = col.element;
 		popup.openPopup(col.element, 'after_end', 0, 0, false, false);
 	},

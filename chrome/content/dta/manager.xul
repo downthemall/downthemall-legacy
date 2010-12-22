@@ -139,6 +139,9 @@
 		<menupopup id="matcher">
 			<menuseparator id="fixedItems"/>
 			<menuitem id="clearmatcher" label="&clearmatcher.label;"/>
+			<menuseparator id="beforeColumnSort"/>
+			<menuitem id="sortAscending" label="&sortascending.label;"/>
+			<menuitem id="sortDescending" label="&sortdescending.label;"/>
 		</menupopup>
 		<menupopup id="popup" onpopupshowing="Tree.refreshTools(); return true;">
 			<menuitem id="info" class="action menuitem-iconic" label="&infos.label;" key="kGetInfo" command="cmdGetInfo" />
