@@ -364,7 +364,7 @@ let Dialog = {
 			);
 			
 			this._notifications = $('notifications');
-			for (x in this._notifications) {
+			for (let x in this._notifications) {
 				if (!x.match(/^PRIORITY/)) {
 					break;
 				}
