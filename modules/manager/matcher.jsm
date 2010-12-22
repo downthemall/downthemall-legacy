@@ -261,6 +261,25 @@ const SizeMatch = {
 	}
 };
 
+const DomainMatch = {
+	get name() 'domainmatch',
+	getItems: function(downloads) {
+		let domains = downloads.map(function(d) d.urlManager.domain)
+			.filter(function(e) !((e in this) || (this[e] = null)), {});
+		domains.sort();
+		for each (let p in domains) {
+			yield {
+				label: p,
+				param: btoa(p)
+			};
+		}
+	},
+	getMatcher: function(params) {
+		params = params.map(function(e) atob(e));
+		return function(d) params.indexOf(d.urlManager.domain) >= 0;
+	}
+};
+
 function Matcher() {
 	this._matchers = [];
 }
@@ -270,7 +289,8 @@ Matcher.prototype = {
 		'filtermatch': FilterMatch,
 		'pathmatch': PathMatch,
 		'statusmatch': StatusMatch,
-		'sizematch': SizeMatch
+		'sizematch': SizeMatch,
+		'domainmatch': DomainMatch
 	},
 	getItems: function(name, downloads) {
 		for (let i in this._available[name].getItems(downloads)) {

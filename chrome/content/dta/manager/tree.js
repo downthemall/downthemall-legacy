@@ -229,6 +229,8 @@ const Tree = {
 				return function(d) d.status;
 			case 'path':
 				return function(d) d.destinationPath;
+			case 'domain':
+				return function(d) d.urlManager.domain;
 			};
 			throw new Exception("cmpFun not implemented");
 		})();
@@ -302,15 +304,16 @@ const Tree = {
 		if (!d) return '';
 
 		switch (col.index) {
-			case 0: return Prefs.showOnlyFilenames ? d.destinationName : d.urlManager.usable;
-			case 2: return d.percent;
-			case 3: return d.dimensionString;
-			case 4: return d.status;
-			case 5: return d.speed;
-			case 6: return d.parts;
-			case 7: return d.mask;
-			case 8: return d.destinationPath;
-			case 9: return d.prettyHash;
+			case 0:  return Prefs.showOnlyFilenames ? d.destinationName : d.urlManager.usable;
+			case 2:  return d.percent;
+			case 3:  return d.dimensionString;
+			case 4:  return d.status;
+			case 5:  return d.speed;
+			case 6:  return d.parts;
+			case 7:  return d.mask;
+			case 8:  return d.destinationPath;
+			case 9:  return d.prettyHash;
+			case 10: return d.urlManager.domain;
 		}
 		return '';
 	},
