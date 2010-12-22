@@ -1173,7 +1173,7 @@ const Tree = {
 	},
 	up: function T_up() {
 		try {
-			if (this._filter) {
+			if (this._matcher.filtering) {
 				throw Error("not implemented");				
 			}
 			this.beginUpdate();
@@ -1198,7 +1198,7 @@ const Tree = {
 	},
 	down: function T_down() {
 		try {
-			if (this._filter) {
+			if (this._matcher.filtering) {
 				throw Error("not implemented");				
 			}
 			this.beginUpdate();
