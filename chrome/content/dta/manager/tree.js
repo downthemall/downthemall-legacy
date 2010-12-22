@@ -244,9 +244,16 @@ const Tree = {
 		this.invalidate();
 	},
 	_filter: '',
+	_mustFilter: false,
 	doFilter: function T__doFilter() {
+		if (this._updating) {
+			this._mustFilter = true;
+			return;
+		}
 		Debug.log("doFilter");
 		this.beginUpdate();
+		// save selection
+		let selectedIds = this._getSelectedIds().map(function(id) this._filtered[id].position, this);
 		this._downloads.forEach(function(e) e.filteredPosition = -1);
 		
 		this._box.rowCountChanged(0, -this._filtered.length);
@@ -260,7 +267,20 @@ const Tree = {
 		}
 		this._box.rowCountChanged(0, this._filtered.length);
 		this._filtered.forEach(function(e, i) e.filteredPosition = i);		
+
+		// restore selection
+		let visible = -1;
+		for each (let id in selectedIds) {
+			let fid = this._downloads[id].filteredPosition;
+			if (fid >= 0) {
+				if (visible < 0) {
+					visible = fid;
+				}
+				this.selection.rangedSelect(fid, fid, true);
+			}
+		}
 		this.endUpdate();		
+		this._box.ensureRowIsVisible(Math.max(visible, 0));
 	},
 	setFilter: function T_setFilter(nv) {
 		if (nv == this._filter) {
@@ -273,23 +293,8 @@ const Tree = {
 		else {
 			this._matcher.removeMatcher('textmatch');
 		}
-		// save selection
-		let selectedIds = this._getSelectedIds().map(function(id) this._filtered[id].position, this);
 		// apply filters
 		this.doFilter();
-		
-		// restore selection
-		let visible = -1;
-		for each (let id in selectedIds) {
-			let fid = this._downloads[id].filteredPosition;
-			if (fid >= 0) {
-				if (visible < 0) {
-					visible = fid;
-				}
-				this.selection.rangedSelect(fid, fid, true);
-			}
-		}
-		this._box.ensureRowIsVisible(Math.max(visible, 0));
 	},
 	getParentIndex: function T_getParentIndex(idx) {
 		// no parents, as we are actually a list
@@ -515,14 +520,16 @@ const Tree = {
 		if (--this._updating == 0) {
 			this._box.endUpdateBatch();
 			this.refreshTools();
+			if (this._mustFilter) {
+				this._mustFilter = false;
+				this.doFilter();
+			}
 		}
 	},
 	add: function T_add(download) {
 		this._downloads.push(download);
 		let pos = this._downloads.length - 1;
-		if (!this._updating) {
-			this.doFilter();
-		}
+		this.doFilter();
 		return pos;
 	},
 	removeWithConfirmation: function T_removeWithConfirmation() {
