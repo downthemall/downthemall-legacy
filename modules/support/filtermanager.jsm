@@ -58,6 +58,46 @@ module('resource://dta/support/pbm.jsm', PBM);
 const nsITimer = Ci.nsITimer;
 const Timer = ctor('@mozilla.org/timer;1', 'nsITimer', 'init');
 
+function flatten(arr) arr.reduce(function(a,b) {
+	if (a instanceof Array) {
+		a = flatten(a);
+	}
+	if (b instanceof Array) {
+		b = flatten(b);
+	}
+	return Array.concat(a, b);
+});
+
+/**
+ * Helper: Consolidates regular expressions by combining
+ * @param (Array) regs
+ * @returns (Array) consolidated regs
+ */
+function consolidateRegs(regs) {
+	regs = regs;
+	if (!regs || regs.length == 1) {
+		return regs;
+	}
+	let nc = [];
+	let ic = [];
+	for (let i = 0; i < regs.length; ++i) {
+		let reg = regs[i];
+		if (reg.ignoreCase) {
+			ic.push(reg.source);
+		}
+		else {
+			nc.push(reg.source);
+		}
+	}
+	let rv = [];
+	if (ic.length) {
+		rv.push(new RegExp(ic.map(function(r) '(?:' + r + ')').join("|"), 'i'));
+	}
+	if (nc.length) {
+		rv.push(new RegExp(nc.map(function(r) '(?:' + r + ')').join("|")));		
+	}
+	return rv;
+}
 /**
  * FilterManager
  */
@@ -111,6 +151,7 @@ Filter.prototype = {
 		this._expr = value;
 		this._regs = [];
 		this._makeRegs(this._expr);
+		this._regs = consolidateRegs(this._regs);
 		
 		this._modified = true;		
 	},
@@ -408,9 +449,14 @@ FilterManagerImpl.prototype = {
 				var i = a.label.toLowerCase(), ii = b.label.toLowerCase();
 				return i < ii ? -1 : (i > ii ? 1 : 0);
 			}
-		);		
-		this._active = this._all.filter(function(f) { return f.active; });
-		
+		);
+		this._active = {};
+		this._active[LINK_FILTER]  = this._all.filter(function(f) (f.type & LINK_FILTER) && f.active),
+		this._active[IMAGE_FILTER] = this._all.filter(function(f) (f.type & IMAGE_FILTER) && f.active)
+		this._activeRegs = {};
+		this._activeRegs[LINK_FILTER]  = this.getMatcherFor(this._active[LINK_FILTER]);
+		this._activeRegs[IMAGE_FILTER] = this.getMatcherFor(this._active[IMAGE_FILTER]);
+
 		// notify all observers
 		Cc["@mozilla.org/observer-service;1"]
 			.getService(Ci.nsIObserverService)
@@ -421,13 +467,7 @@ FilterManagerImpl.prototype = {
 		return new FilterEnumerator(this._all);
 	},
 	enumActive: function FM_enumActive(type) {
-		return new FilterEnumerator(
-			this._active.filter(
-				function(i) {
-					return i.type & type;
-				}
-			)
-		);
+		return new FilterEnumerator(this._active[type]);
 	},
 
 	getFilter: function FM_getFilter(id) {
@@ -436,10 +476,19 @@ FilterManagerImpl.prototype = {
 		}
 		throw new Exception("invalid filter specified: " + id);
 	},
-
-	matchActive: function FM_matchActive(test, type) {
-		return this._active.some(function(i) { return (i.type & type) && i.match(test); });
+	getMatcherFor: function FM_getMatcherFor(filters) {
+		let regs = consolidateRegs(flatten(
+			filters.map(function(f) f._regs)
+		));
+		return function(test) {
+			test = test.toString();
+			if (!test) {
+				return false;
+			}
+			return regs.some(function(r) r.test(test));
+		}
 	},
+	matchActive: function FM_matchActive(test, type) this._activeRegs[type](test),
 
 	create: function FM_create(label, expression, active, type) {
 

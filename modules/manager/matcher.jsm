@@ -54,7 +54,7 @@ extendString(String);
 (function() {
 	let strings = {};
 	let ss = Cc["@mozilla.org/intl/stringbundle;1"]
-	.getService(Ci.nsIStringBundleService);
+		.getService(Ci.nsIStringBundleService);
 	for each (let f in ['common.properties', 'manager.properties']) {
 		for (let s in new SimpleIterator(
 			ss.createBundle('chrome://dta/locale/' + f)
@@ -115,7 +115,8 @@ const FilterMatch = {
 			Debug.log("No filters available for: " + params);
 			return null;
 		}
-		return function(d) filters.some(function(f) f.match(d.urlManager.url.spec));
+		let _m = DTA.FilterManager.getMatcherFor(filters);
+		return function(d) _m(d.urlManager.url.spec);
 	}
 };
 
