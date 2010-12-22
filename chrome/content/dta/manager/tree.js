@@ -309,7 +309,6 @@ const Tree = {
 				i++;
 			}
 			if (fid >= 0) {
-				Debug.log("rs " + fid + " " + eid);
 				this.selection.rangedSelect(fid, eid, true);
 			}
 		}
