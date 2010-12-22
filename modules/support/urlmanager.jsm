@@ -82,8 +82,9 @@ UrlManager.prototype = {
 			}
 		}
 		this._urls.sort(compareFn);
+		this._url = this._urls[0].url;
 		this._usable = this._urls[0].usable;
-		this.eHost = Limits.getEffectiveHost(this._urls[0].url);
+		this._domain = Limits.getEffectiveHost(this._url);
 		this._makeGood();	
 	},
 	add: function um_add(url) {
@@ -113,15 +114,11 @@ UrlManager.prototype = {
 		this._rotate();
 		return rv;
 	},
-	get url() {
-		return this._urls[0].url;
-	},
-	get usable() {
-		return this._urls[0].usable;
-	},
-	get length() {
-		return this._urls.length;
-	},
+	get url() this._url,
+	get usable() this._usable,
+	get length() this._urls.length,
+	get host() this._host,
+	get domain() this._domain,
 	get all() {
 		for each (let i in this._urls) {
 			yield i;
