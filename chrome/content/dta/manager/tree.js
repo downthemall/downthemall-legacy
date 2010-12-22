@@ -297,18 +297,13 @@ const Tree = {
 		this._filtered.forEach(function(e, i) e.filteredPosition = i);		
 
 		// restore selection
-		let visible = -1;
-		for each (let id in selectedIds) {
-			let fid = this._downloads[id].filteredPosition;
+		for (let i; 0; i < selectedIds.length; i++) {
+			let fid = this._downloads[selectedIds[i]].filteredPosition;
 			if (fid >= 0) {
-				if (visible < 0) {
-					visible = fid;
-				}
 				this.selection.rangedSelect(fid, fid, true);
 			}
 		}
 		this.endUpdate();		
-		this._box.ensureRowIsVisible(Math.max(visible, 0));
 	},
 	setFilter: function T_setFilter(nv) {
 		if (nv == this._filter) {
