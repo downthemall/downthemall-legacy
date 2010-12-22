@@ -56,6 +56,7 @@
 <!ENTITY restore.label "Restore">
 <!ENTITY close.label "Close">
 
+<!ENTITY invertmatcher.label "Invert column filters">
 <!ENTITY clearmatcher.label "Clear column filters">
 
 <!ENTITY speedlimit.label "Limit:">

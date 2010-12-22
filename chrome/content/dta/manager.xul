@@ -138,6 +138,7 @@
 		</tooltip>
 		<menupopup id="matcher">
 			<menuseparator id="fixedItems"/>
+			<menuitem id="invertmatcher" label="&invertmatcher.label;"/>
 			<menuitem id="clearmatcher" label="&clearmatcher.label;"/>
 			<menuseparator id="beforeColumnSort"/>
 			<menuitem id="sortAscending" label="&sortascending.label;"/>
