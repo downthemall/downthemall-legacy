@@ -297,7 +297,7 @@ const Tree = {
 		this._filtered.forEach(function(e, i) e.filteredPosition = i);		
 
 		// restore selection
-		for (let i; 0; i < selectedIds.length; i++) {
+		for (let i = 0; i < selectedIds.length; i++) {
 			let fid = this._downloads[selectedIds[i]].filteredPosition;
 			if (fid >= 0) {
 				this.selection.rangedSelect(fid, fid, true);
