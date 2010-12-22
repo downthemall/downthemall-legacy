@@ -62,8 +62,9 @@ Observers.prototype = {
 		}
 	},
 	notify: function() {
-		for each (let o in this._obs) {
-			o.observe.call(o);
+		let obs = this._obs;
+		for (let o = 0, e = obs.length; o < e; o++) {
+			obs[o].observe.call(obs[o]);
 		}		
 	},
 	start: function() {
@@ -187,14 +188,14 @@ ByteBucketTee.prototype = {
 				.reduce(function(p, c) Math.min(p,c));
 		},
 		requestBytes: function(bytes) {
-			for each (let bucket in this._buckets) {
-				bytes = bucket.requestBytes(bytes);
+			for (let bucket = 0; bucket < this._buckets; bucket++) {
+				bytes = this._buckets[bucket].requestBytes(bytes);
 				if (!bytes) {
 					return 0;
 				}
 			}
-			for each (let bucket in this._buckets) {
-				bucket.commitBytes(bytes);
+			for (let bucket = 0; bucket < this._buckets; bucket++) {
+				this._buckets[bucket].commitBytes(bytes);
 			}
 			return bytes;
 		},
