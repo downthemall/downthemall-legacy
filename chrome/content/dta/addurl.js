@@ -85,12 +85,16 @@ var Dialog = {
 					$('batcheslabel').style.display = 'none';
 					$('batches').collapsed = true;
 				}
-				var referrer = DTA.isLinkOpenable(a.referrer) ? a.referrer : null;
-				if (referrer) {
+				try {
+					let referrer = (new DTA.URL(IOService.newURI(a.referrer, null, null))).url.spec;
 					try {
 						referrer = decodeURIComponent(referrer);
 					} catch (ex) {}
-					$("URLref").value	 = referrer;
+					$("URLref").value	= referrer;
+				}
+				catch (ex) {
+					Cu.reportError(ex);
+					// no op
 				}
 				if (a.mask) {
 					this.ddRenaming.value = a.mask;
@@ -111,15 +115,14 @@ var Dialog = {
 						str,
 						length
 					);
-					if (length.value) {
-						str = str.value
-							.QueryInterface(Ci.nsISupportsString);
-						str = str.data;
-						if (str.length && DTA.isLinkOpenable(str)) {
-							hash = DTA.getLinkPrintHash(str);
-							address.value = str.replace(/#.*$/, '');
-							address.select();
+					if (length.value && (str.value instanceof Ci.nsISupportsString)) {
+						let url = new DTA.URL(IOService.newURI(str.value.data, null, null));
+						if (url.hash) {
+							hash = url.hash;
+							delete url.hash;
 						}
+						address.value = url.url.spec;
+						address.select();
 					}
 				}
 				catch (ex) {
@@ -170,13 +173,11 @@ var Dialog = {
 				catch (ex) {
 					url = uri.spec;
 				}
-				var hash = DTA.getLinkPrintHash(url);
-				if (hash) {
+				url = new DTA.URL(IOService.newURI(url, null, null));				
+				if (url.hash) {
 					$('hash').value = hash;
 				}
-				url = url.replace(/#.*$/, '');
 				address.value = url;
-				url = new DTA.URL(IOService.newURI(url, null, null));				
 			}
 			catch (ex) {
 				errors.push('address');
