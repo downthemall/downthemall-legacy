@@ -134,12 +134,8 @@ function addMirror() {
 			str,
 			length
 		);
-		if (length.value) {
-			str = str.value
-				.QueryInterface(Ci.nsISupportsString).data;
-			if (str.length && DTA.isLinkOpenable(str)) {
-				url = str.replace(/#.*$/, '');
-			}
+		if (length.value && (str.value instanceof Ci.nsISupportsString)) {
+			url = (new DTA.URL(IOService.newURI(str.value.data, null, null))).url.spec;
 		}
 	}
 	catch (ex) {
