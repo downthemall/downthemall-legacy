@@ -112,9 +112,6 @@ function URL(url, preference) {
 	this.preference = preference || 100;
 
 	try {
-		if (url instanceof Ci.nsIURI) {
-			url = url.QueryInterface(Ci.nsIURL);
-		}
 		if (!(url instanceof Ci.nsIURL)) {
 			throw new Exception("You must pass a nsIURL");
 		}
