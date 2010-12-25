@@ -41,13 +41,34 @@
 	let Cc = Components.classes;
 	let Ci = Components.interfaces;
 	let Cu = Components.utils;
+	
+	// There might still be some users around, so allow them to access window.DTA
+	// window.DTA should, however, stay our own global symbol at the moment
+	window.__defineGetter__('DTA', function() {
+		delete window.DTA;
+		let rv = {};
+		rv.showPreferences = function(pane, command) this.Mediator.showPreferences(window, pane, command);
+		Components.utils.import("resource://dta/api.jsm", rv);
+		rv.Mediator.open = function DTA_Mediator_open(url, ref) {
+			this.openUrl(window, url, ref);
+		}
+		if ('freeze' in Object) {
+			Object.freeze(rv);
+		}
+		return (window.DTA = rv);
+	});
 
-	let _loader = {};
-	Components.utils.import("resource://dta/_apiloader.jsm", _loader);
-	_loader.inject(window);
-		
-	let Preferences = {};
-	Components.utils.import('resource://dta/preferences.jsm', Preferences);	
+	// anonymous lazy getter (only methods
+	let Preferences = {
+		__noSuchMethod__: function(id, args) {
+			delete this.__noSuchMethod__;
+			Components.utils.import('resource://dta/preferences.jsm', this);
+			if ('freeze' in Object) {
+				Object.freeze(this);
+			}
+			return this[id].apply(this, args);
+		}
+	};
 	
 	function $() {
 		if (arguments.length == 1) {
@@ -663,6 +684,7 @@
 			});
 		}
 		catch(ex) {
+			Cu.reportError(ex);
 			DTA.Debug.log('findLinks', ex);
 		}
 	}
