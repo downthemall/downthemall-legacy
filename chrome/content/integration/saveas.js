@@ -38,7 +38,10 @@
 
 addEventListener('load', function() {
 	removeEventListener('load', arguments.callee, true);
-
+	
+	const DTA = {};
+	Components.utils.import('resource://dta/api.jsm', DTA);
+	
 	function $() {
 		if (arguments.length == 1) {
 			return document.getElementById(arguments[0]);
@@ -220,9 +223,3 @@ addEventListener('load', function() {
 	}, false); // dialogaccept
 	
 }, true); // load
-
-(function() {
-	let _loader = {};
-	Components.utils.import("resource://dta/_apiloader.jsm", _loader);
-	_loader.inject(window);
-})();
