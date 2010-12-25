@@ -208,20 +208,21 @@ const Dialog = {
 					if (!dropdata) {
 						return;
 					}
-					let url = null;
 					try {
-						url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
-						if (!DTA.isLinkOpenable(url)) {
-							throw new Components.Exception("Link cannot be opened!");
-						}
-						url = DTA.IOService.newURI(url, null, null);
+						let url = DTA.IOService.newURI(
+							transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType),
+							null,
+							null
+							);
+						DTA.saveSingleLink(
+							window,
+							false,
+							new DTA.URL(DTA.getLinkPrintMetalink(url) || url)
+							);
 					}
 					catch (ex) {
 						DTA.Debug.log("Failed to process drop", ex);
-						return;
 					}
-					url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
-					DTA.saveSingleLink(window, false, url);
 				}
 			};			
 			
