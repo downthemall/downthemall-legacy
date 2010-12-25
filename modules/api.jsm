@@ -111,27 +111,21 @@ function _decodeCharset(text, charset) {
 function URL(url, preference) {
 	this.preference = preference || 100;
 
-	try {
-		if (!(url instanceof Ci.nsIURL)) {
-			throw new Exception("You must pass a nsIURL");
-		}
-		if (['http', 'https', 'ftp'].indexOf(url.scheme) == -1) {
-			throw new Exception("Not a supported URL");
-		}
+	if (!(url instanceof Ci.nsIURL)) {
+		throw new Exception("You must pass a nsIURL");
+	}
+	if (['http', 'https', 'ftp'].indexOf(url.scheme) == -1) {
+		throw new Exception("Not a supported URL");
+	}
 
-		this._url = url.clone();
-	
-		let hash = getLinkPrintHash(this._url);
-		this._url.ref = '';		
-		if (hash) {
-			this.hash = hash;
-		}
-		this._usable = _decodeCharset(this._url.spec, this._url.originCharset);
+	this._url = url.clone();
+
+	let hash = getLinkPrintHash(this._url);
+	this._url.ref = '';		
+	if (hash) {
+		this.hash = hash;
 	}
-	catch (ex) {
-		Debug.log("failed to set URL", ex);
-		throw ex;
-	}
+	this._usable = _decodeCharset(this._url.spec, this._url.originCharset);
 };
 URL.prototype = {
 	get url() {
