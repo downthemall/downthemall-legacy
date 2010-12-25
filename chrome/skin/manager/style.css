@@ -185,6 +185,9 @@ toolbox {
 #tooltip grid {
 	-moz-box-flex: 1;
 }
+tooltip textbox.plain {
+	color: InfoText;
+}
 #infoGrid label {
 	margin-bottom: 0;
 	font-weight: bold;
