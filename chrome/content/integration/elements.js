@@ -255,34 +255,35 @@
 		let ref = DTA.getRef(doc);
 		
 		for each (let link in lnks) {
-			// if it's valid and it's new
-			if (!DTA.isLinkOpenable(link.href)) {
-				continue;
-			}
+			try {
+				let url = new DTA.URL(DTA.IOService.newURI(link.href, doc.characterSet, null));
 				
-			let title = '';
-			if (link.hasAttribute('title')) {
-				title = trimMore(link.getAttribute('title'));
-			}
-			if (!title && link.hasAttribute('alt')) {
-				title = trimMore(link.getAttribute('alt'));
-			}
-			let url = DTA.IOService.newURI(link.href, doc.characterSet, null);
-			urls.push({
-				'url': new DTA.URL(url),
-				'referrer': ref,
-				'description': extractDescription(link),
-				'title': title
-			});
-			let ml = DTA.getLinkPrintMetalink(url.ref);
-			if (ml) {
+				let title = '';
+				if (link.hasAttribute('title')) {
+					title = trimMore(link.getAttribute('title'));
+				}
+				if (!title && link.hasAttribute('alt')) {
+					title = trimMore(link.getAttribute('alt'));
+				}
 				urls.push({
-					'url': new DTA.URL(ml),
+					'url': url,
 					'referrer': ref,
-					'description': '[metalink] http://www.metalinker.org/',
-					'title': title,
-					'metalink': true
+					'description': extractDescription(link),
+					'title': title
 				});
+				let ml = DTA.getLinkPrintMetalink(url.url);
+				if (ml) {
+					urls.push({
+						'url': new DTA.URL(ml),
+						'referrer': ref,
+						'description': '[metalink] http://www.metalinker.org/',
+						'title': title,
+						'metalink': true
+					});
+				}
+			}
+			catch (ex) {
+				// no op
 			}
 			yield true;
 		}
@@ -296,31 +297,25 @@
 		let ref = DTA.getRef(doc);
 		
 		for each (let l in lnks) {
-			let src = l.src;
 			try {
-				src = DTA.composeURL(doc, l.src);
+				let url = new DTA.URL(DTA.composeURL(doc, l.src));
+				
+				let desc = '';
+				if (l.hasAttribute('alt')) {
+					desc = trimMore(l.getAttribute('alt'));
+				}
+				else if (l.hasAttribute('title')) {
+					desc = trimMore(l.getAttribute('title'));
+				}
+				images.push({
+					'url': url,
+					'referrer': ref,
+					'description': desc
+				});
 			}
 			catch (ex) {
-				DTA.Debug.log("failed to compose: " + src, ex);
-				continue;
+				// no op
 			}
-			// if it's valid and it's new
-			// better double check :p
-			if (!DTA.isLinkOpenable(src)) {
-				continue;
-			}
-			let desc = '';
-			if (l.hasAttribute('alt')) {
-				desc = trimMore(l.getAttribute('alt'));
-			}
-			else if (l.hasAttribute('title')) {
-				desc = trimMore(l.getAttribute('title'));
-			}
-			images.push({
-				'url': new DTA.URL(src),
-				'referrer': ref,
-				'description': desc
-			});
 			yield true;
 		}
 	}
@@ -741,11 +736,6 @@
 	}
 	
 	function saveSingleLink(turbo, url, elem) {
-		if (!DTA.isLinkOpenable(url)) {
-			throw Error("not downloadable");
-			return;
-		}
-		
 		url = DTA.IOService.newURI(url, elem.ownerDocument.characterSet, null);
 		let ml = DTA.getLinkPrintMetalink(url);
 		url = new DTA.URL(ml ? ml : url);
@@ -773,11 +763,7 @@
 			}
 			let form = ctx.target.form;
 			
-			let action = DTA.composeURL(form.ownerDocument, form.action);
-			if (!DTA.isLinkOpenable(action.spec)) {
-				throw new Components.Exception('Unsupported URL');
-			}
-			action = action.QueryInterface(Ci.nsIURL);
+			let action = DTA.URL(DTA.composeURL(form.ownerDocument, form.action));
 			
 			let charset = form.ownerDocument.characterSet;
 			if (form.acceptCharset) {
@@ -827,13 +813,11 @@
 				ms.close();
 				ss.close();
 				
-				action = new DTA.URL(DTA.IOService.newURI(action.spec, form.ownerDocument.characterSet, null));
 				action.postData = postData;
 			}
 			else {
-				action.query = values;
-				action.ref = '';
-				action = new DTA.URL(DTA.IOService.newURI(action.spec, form.ownerDocument.characterSet, null));
+				action.url.query = values;
+				action.url.ref = '';
 			}			
 
 			let ref = DTA.getRef(document.commandDispatcher.focusedWindow.document);
@@ -1416,24 +1400,16 @@
 			if (!dropdata) {
 				return;
 			}
-			let url = null;
 			try {
-				url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
-				if (!DTA.isLinkOpenable(url)) {
-					throw new Components.Exception("Link cannot be opened!");
-				}
+				let url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
 				url = DTA.IOService.newURI(url, null, null);
+				url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
+				let doc = document.commandDispatcher.focusedWindow.document;
+				let ref = doc ? DTA.getRef(doc) : null;
+				this.func(url, ref);
 			}
 			catch (ex) {
 				DTA.Debug.log("Failed to process drop", ex);
-				return;
-			}
-			let doc = document.commandDispatcher.focusedWindow.document;
-			let ref = doc ? DTA.getRef(doc) : null;		
-			
-			if (url) {
-				url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
-				this.func(url, ref);			
 			}
 		}
 	};
