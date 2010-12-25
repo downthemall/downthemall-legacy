@@ -93,7 +93,6 @@ var Dialog = {
 					$("URLref").value	= referrer;
 				}
 				catch (ex) {
-					Cu.reportError(ex);
 					// no op
 				}
 				if (a.mask) {

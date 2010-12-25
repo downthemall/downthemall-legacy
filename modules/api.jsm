@@ -329,10 +329,7 @@ function getLinkPrintMetalink(url) {
 	if (lp) {
 		let rv = lp[1];
 		try {
-			rv = IOService.newURI(rv, url.originCharset, url);
-			if (isLinkOpenable(rv.spec)) {
-				return rv;
-			}
+			return new URL(IOService.newURI(rv, url.originCharset, url)).url;
 		}
 		catch (ex) {
 			// not a valid link, ignore it.
@@ -342,6 +339,7 @@ function getLinkPrintMetalink(url) {
 }
 
 function isLinkOpenable(url) {
+	Debug.log("Deprecation: do not use isLinkOpenable; just try to create a DTA.URL");
 	if (url instanceof URL) {
 		url = url.url.spec;
 	}
@@ -382,24 +380,25 @@ function composeURL(doc, rel) {
 }
 
 function getRef(doc) {
-	let ref = doc.URL;
-	if (!isLinkOpenable(ref)) {
+	try {
+		Debug.log(doc.URL);
+		return (new URL(IOService.newURI(doc.URL, doc.characterSet, null))).url.spec;
+	}
+	catch (ex) {
 		let b = doc.getElementsByTagName('base');
 		for (let i = 0; i < b.length; ++i) {
 			if (!b[i].hasAttribute('href')) {
 				continue;
 			}
 			try {
-				ref = composeURL(doc, b[i].getAttribute('href')).spec;
+				return composeURL(doc, b[i].getAttribute('href')).spec;
 			}
 			catch (ex) {
 				continue;
 			}
-			break;
 		}
 	}
-	return isLinkOpenable(ref) ? ref: '';
-}	
+}
 
 function getDropDownValue(name) {
 	let values = Histories.getHistory(name).values;
