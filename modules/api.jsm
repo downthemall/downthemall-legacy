@@ -108,9 +108,7 @@ function _decodeCharset(text, charset) {
 	}
 	return rv;
 }
-// FlashGot compat.
-// XXX Remove in 1.3
-function DTA_URL(url, preference) {
+function URL(url, preference) {
 	this.preference = preference || 100;
 
 	try {
@@ -118,7 +116,10 @@ function DTA_URL(url, preference) {
 			url = url.QueryInterface(Ci.nsIURL);
 		}
 		if (!(url instanceof Ci.nsIURL)) {
-			throw new Exception("you must pass an nsIURL");
+			throw new Exception("You must pass a nsIURL");
+		}
+		if (['http', 'https', 'ftp'].indexOf(url.scheme) == -1) {
+			throw new Exception("Not a supported URL");
 		}
 
 		this._url = url.clone();
@@ -135,7 +136,6 @@ function DTA_URL(url, preference) {
 		throw ex;
 	}
 };
-var URL = DTA_URL;
 URL.prototype = {
 	get url() {
 		return this._url;
