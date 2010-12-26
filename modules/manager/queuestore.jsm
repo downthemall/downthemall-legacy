@@ -213,6 +213,7 @@ const QueueStore = {
 	},
 	beginUpdate: function() {
 		if (_connection.transactionInProgress) {
+			Debug.log("Transaction already in progress; FIXME");
 			return;
 		}
 		_connection.beginTransactionAs(_connection.TRANSACTION_DEFERRED);
