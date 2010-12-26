@@ -262,13 +262,17 @@ const Tree = {
 			throw new Exception("cmpFun not implemented");
 		})();
 		this.beginUpdate();
-		this._downloads = Utils.naturalSort(this._downloads, cmpFun);
-		if (descending) {
-			this._downloads.reverse();
+		try {
+			this._downloads = Utils.naturalSort(this._downloads, cmpFun);
+			if (descending) {
+				this._downloads.reverse();
+			}
+			this.doFilter();
 		}
-		this.doFilter();
-		this.endUpdate();
-		this.invalidate();
+		finally {
+			this.endUpdate();
+			this.invalidate();
+		}
 	},
 	_filter: '',
 	_mustFilter: false,
@@ -280,39 +284,43 @@ const Tree = {
 		}
 		Debug.log("doFilter");
 		this.beginUpdate();
-		// save selection
-		let selectedIds = this._getSelectedIds().map(function(id) this._filtered[id].position, this);
-		this._downloads.forEach(function(e) e.filteredPosition = -1);
-		
-		this._box.rowCountChanged(0, -this._filtered.length);
-		if (this._matcher.filtering) {
-			Debug.log("filtering");
-			this._filtered = this._matcher.filter(this._downloads);
-		}
-		else {
-			Debug.log("not filtering");
-			this._filtered = this._downloads;
-		}
-		this._box.rowCountChanged(0, this._filtered.length);
-		this._filtered.forEach(function(e, i) e.filteredPosition = i);		
-
-		// restore selection
-		for (let i = 0; i < selectedIds.length; i++) {
-			let fid = this._downloads[selectedIds[i]].filteredPosition;
-			let eid = fid;
-			for (let e = i + 1; e < selectedIds.length; e++) {
-				let oid = this._downloads[selectedIds[e]].filteredPosition;
-				if (oid != eid + 1) {
-					break;
+		try {
+			// save selection
+			let selectedIds = this._getSelectedIds().map(function(id) this._filtered[id].position, this);
+			this._downloads.forEach(function(e) e.filteredPosition = -1);
+			
+			this._box.rowCountChanged(0, -this._filtered.length);
+			if (this._matcher.filtering) {
+				Debug.log("filtering");
+				this._filtered = this._matcher.filter(this._downloads);
+			}
+			else {
+				Debug.log("not filtering");
+				this._filtered = this._downloads;
+			}
+			this._box.rowCountChanged(0, this._filtered.length);
+			this._filtered.forEach(function(e, i) e.filteredPosition = i);		
+	
+			// restore selection
+			for (let i = 0; i < selectedIds.length; i++) {
+				let fid = this._downloads[selectedIds[i]].filteredPosition;
+				let eid = fid;
+				for (let e = i + 1; e < selectedIds.length; e++) {
+					let oid = this._downloads[selectedIds[e]].filteredPosition;
+					if (oid != eid + 1) {
+						break;
+					}
+					eid = oid;
+					i++;
 				}
-				eid = oid;
-				i++;
-			}
-			if (fid >= 0) {
-				this.selection.rangedSelect(fid, eid, true);
+				if (fid >= 0) {
+					this.selection.rangedSelect(fid, eid, true);
+				}
 			}
 		}
-		this.endUpdate();		
+		finally {
+			this.endUpdate();
+		}
 	},
 	setFilter: function T_setFilter(nv) {
 		if (nv == this._filter) {
@@ -504,36 +512,41 @@ const Tree = {
 		}
 		try {
 			this.beginUpdate();
-			// means insert_after, so we need to adjust the row
-			if (orientation == 1) {
-				++row;
+			let downloads;
+			try {
+				// means insert_after, so we need to adjust the row
+				if (orientation == 1) {
+					++row;
+				}
+				// translate row from filtered list to full list
+				let realRow = this._filtered[row].position;
+				
+				/* first we remove the dragged items from the list
+				 * then we reinsert them
+				 * if the dragged item is location before the drop position we need to adjust it (as we remove the item first)
+				 * after we collected all items we simply reinsert them and invalidate our list.
+				 * This might not be the most performant way, but at least it kinda works ;)
+				 */
+				downloads = this._getSelectedIds(true).map(
+					function(id) {
+						let qi = this._filtered[id];
+						if (id < row) {
+							--row;
+						}
+						this._downloads.splice(qi.position, 1);
+						return qi;					
+					},
+					this
+				);
+				for each (let qi in downloads) {
+					this._downloads.splice(realRow, 0, qi);
+				}
+				this.doFilter();
 			}
-			// translate row from filtered list to full list
-			let realRow = this._filtered[row].position;
-			
-			/* first we remove the dragged items from the list
-			 * then we reinsert them
-			 * if the dragged item is location before the drop position we need to adjust it (as we remove the item first)
-			 * after we collected all items we simply reinsert them and invalidate our list.
-			 * This might not be the most performant way, but at least it kinda works ;)
-			 */
-			let downloads = this._getSelectedIds(true).map(
-				function(id) {
-					let qi = this._filtered[id];
-					if (id < row) {
-						--row;
-					}
-					this._downloads.splice(qi.position, 1);
-					return qi;					
-				},
-				this
-			);
-			for each (let qi in downloads) {
-				this._downloads.splice(realRow, 0, qi);
+			finally {
+				this.endUpdate();
+				this.invalidate();
 			}
-			this.doFilter();
-			this.endUpdate();
-			this.invalidate();
 			this._box.ensureRowIsVisible(Math.max(row, 0));
 			this.selection.rangedSelect(row, row + downloads.length - 1, true);
 		}
@@ -650,57 +663,66 @@ const Tree = {
 			return;
 		}
 	
-		downloads = downloads.sort(function(a, b) b.position - a.position);	 
-		QueueStore.beginUpdate();
+		downloads = downloads.sort(function(a, b) b.position - a.position);
 		this.beginUpdate();
-		let last = 0;
-		for each (let d in downloads) {
-			if (d.is(FINISHING)) {
-				// un-removable :p
-				return;
+		try {
+			QueueStore.beginUpdate();
+			let last = 0;
+			for each (let d in downloads) {
+				if (d.is(FINISHING)) {
+					// un-removable :p
+					return;
+				}
+				// wipe out any info/tmpFiles
+				if (!d.isOf(COMPLETE, CANCELED)) {
+					d.cancel();
+				}
+				this._downloads.splice(d.position, 1);
+				this._box.rowCountChanged(d.position, -1);
+				last = Math.max(d.filteredPosition, last);
+				d.remove();
+				Dialog.wasRemoved(d);
 			}
-			// wipe out any info/tmpFiles
-			if (!d.isOf(COMPLETE, CANCELED)) {
-				d.cancel();
-			}
-			this._downloads.splice(d.position, 1);
-			this._box.rowCountChanged(d.position, -1);
-			last = Math.max(d.filteredPosition, last);
-			d.remove();
-			Dialog.wasRemoved(d);
+			QueueStore.endUpdate();
+			this.doFilter();
 		}
-		QueueStore.endUpdate();
-		this.doFilter();
-		this.endUpdate();
-		this.invalidate();
+		finally {
+			this.endUpdate();
+			this.invalidate();
+		}
 		if (performJump) {
 			this._removeJump(downloads.filter(function(e) e.filteredPosition >= 0).length, last);
 		}
 	},
 	_removeCompleted: function T__removeCompleted(onlyGone) {
-		QueueStore.beginUpdate();
 		this.beginUpdate();
-		let delta = this._downloads.length, last = 0;
-		for (let i = delta - 1; i > -1; --i) {
-			let d = this._downloads[i];
-			if (!d.is(COMPLETE)) {
-				continue;
+		try {
+			QueueStore.beginUpdate();
+			let delta = this._downloads.length, last = 0;
+			for (let i = delta - 1; i > -1; --i) {
+				let d = this._downloads[i];
+				if (!d.is(COMPLETE)) {
+					continue;
+				}
+				if (onlyGone && (new FileFactory(d.destinationFile).exists())) {
+					continue;
+				}
+				this._downloads.splice(d.position, 1);
+				this._box.rowCountChanged(d.position, -1);
+				last = Math.max(d.position, last);
+				d.remove();						
 			}
-			if (onlyGone && (new FileFactory(d.destinationFile).exists())) {
-				continue;
+			QueueStore.endUpdate();
+			this.endUpdate();	
+			if (delta == this._downloads.length) {
+				return;
 			}
-			this._downloads.splice(d.position, 1);
-			this._box.rowCountChanged(d.position, -1);
-			last = Math.max(d.position, last);
-			d.remove();						
+			this.doFilter();
 		}
-		QueueStore.endUpdate();
-		this.endUpdate();	
-		if (delta == this._downloads.length) {
-			return;
+		finally {
+			this.endUpdate();
+			this.invalidate();
 		}
-		this.doFilter();
-		this.invalidate();		
 	},
 	removeCompleted: function T_removeCompleted() {
 		if (Prefs.confirmRemoveCompleted) {
@@ -901,14 +923,18 @@ const Tree = {
 	},
 	showInfo: function T_showInfo() {
 		this.beginUpdate();
-		let downloads = [];
-		for (let d in Tree.selected) {
-			downloads.push(d);
+		try {
+			let downloads = [];
+			for (let d in Tree.selected) {
+				downloads.push(d);
+			}
+			if (downloads.length) {
+				Dialog.openInfo(downloads);		 
+			}
 		}
-		if (downloads.length) {
-			Dialog.openInfo(downloads);		 
+		finally {
+			this.endUpdate();
 		}
-		this.endUpdate();
 	},
 	_hoverItem: null,
 	hovering: function(event) {
@@ -1017,13 +1043,19 @@ const Tree = {
 			this._box.invalidate();
 			this.refreshTools(this);
 			Dialog.completed = complete;
+			return;
 		}
-		else if (d instanceof Array) {
+		if (d instanceof Array) {
 			this.beginUpdate();
-			this._box.invalidateRange(d[0].filteredPosition, d[d.length - 1].filteredPosition);
-			this.endUpdate();
+			try {
+				this._box.invalidateRange(d[0].filteredPosition, d[d.length - 1].filteredPosition);
+			}
+			finally {
+				this.endUpdate();
+			}
+			return;
 		}
-		else if (d.position >= 0) {
+		if (d.position >= 0) {
 			if (cell !== undefined) {
 				this._box.invalidateCell(d.filteredPosition, this._cols[cell]);
 			}
@@ -1107,47 +1139,82 @@ const Tree = {
 		return this._downloads.every(f, t);
 	},
 	update: function T_update(f, t) {
-		this.beginUpdate();
-		f.call(t);
-		this.endUpdate();
+		try {
+			this.beginUpdate();
+			try {
+				f.call(t);
+			}
+			finally {
+				this.endUpdate();
+			}
+		}
+		catch (ex) {
+			Debug.log("function threw during update", ex);
+			throw ex;
+		}
 	},
 	updateSelected: function T_updateSelected(f, t) {
-		this.beginUpdate();
-		QueueStore.beginUpdate();
-		for (d in this.selected) {
-			if (!f.call(t, d)) {
-				break;
+		try {
+			this.beginUpdate();
+			try {
+				QueueStore.beginUpdate();
+				for (d in this.selected) {
+					if (!f.call(t, d)) {
+						break;
+					}
+				}
+				QueueStore.endUpdate();
+			}
+			finally {
+				this.endUpdate();
+				this.invalidate();
 			}
 		}
-		QueueStore.endUpdate();
-		this.endUpdate();
-		this.invalidate();
+		catch (ex) {
+			Debug.log("function threw during updateSelected", ex);
+			throw ex;
+		}
 	},
 	updateAll: function T_updateAll(f, t) {
-		this.beginUpdate();
-		QueueStore.beginUpdate();
-		for (let d in this.all) {
-			if (!f.call(t, d)) {
-				break;
+		try {
+			this.beginUpdate();
+			try {
+				QueueStore.beginUpdate();
+				for (let d in this.all) {
+					if (!f.call(t, d)) {
+						break;
+					}
+				}
+				QueueStore.endUpdate();
+			}
+			finally {
+				this.endUpdate();
 			}
 		}
-		QueueStore.endUpdate();
-		this.endUpdate();
+		catch (ex) {
+			Debug.log("function threw during updateAll", ex);
+			throw ex;
+		}
 	},
 	top: function T_top() {
 		try {
 			this.beginUpdate();
-			let ids = this._getSelectedIds(true).map(function(i) this._filtered[i].position, this); 
-			ids.forEach(
-				function(id, idx) {
-					id = id + idx;
-					this._downloads.unshift(this._downloads.splice(id, 1)[0]);
-				},
-				this
-			);
-			this.doFilter();
-			this.endUpdate();
-			this.invalidate();
+			let ids;
+			try {
+				ids = this._getSelectedIds(true).map(function(i) this._filtered[i].position, this); 
+				ids.forEach(
+					function(id, idx) {
+						id = id + idx;
+						this._downloads.unshift(this._downloads.splice(id, 1)[0]);
+					},
+					this
+				);
+				this.doFilter();
+			}
+			finally {
+				this.endUpdate();
+				this.invalidate();
+			}
 			this.selection.rangedSelect(0, ids.length - 1, true);
 			this._box.ensureRowIsVisible(0);
 		}
@@ -1158,17 +1225,22 @@ const Tree = {
 	bottom: function T_bottom() {
 		try {
 			this.beginUpdate();
-			let ids = this._getSelectedIds().map(function(i) this._filtered[i].position, this);
-			ids = ids.map(
-				function(id, idx) {
-					id = id - idx;
-					this._downloads.push(this._downloads.splice(id, 1)[0]);
-				},
-				this
-			);
-			this.doFilter();
-			this.endUpdate();
-			this.invalidate();
+			let ids;
+			try {
+				ids = this._getSelectedIds().map(function(i) this._filtered[i].position, this);
+				ids = ids.map(
+					function(id, idx) {
+						id = id - idx;
+						this._downloads.push(this._downloads.splice(id, 1)[0]);
+					},
+					this
+				);
+				this.doFilter();
+			}
+			finally {
+				this.endUpdate();
+				this.invalidate();
+			}
 			this.selection.rangedSelect(this._filtered.length - ids.length, this._filtered.length - 1, true);
 			this._box.ensureRowIsVisible(this.rowCount - 1);
 		}
@@ -1182,19 +1254,24 @@ const Tree = {
 				throw Error("not implemented");				
 			}
 			this.beginUpdate();
-			let ids = this._getSelectedIds().map(
-				function(id, idx) {
-					if (id - idx != 0) {
-						[this._downloads[id], this._downloads[id - 1]] = [this._downloads[id - 1], this._downloads[id]];
-						--id;
-					}
-					this.selection.rangedSelect(id, id, true);
-					return id;
-				},
-				this
-			);
-			this.endUpdate();
-			this.invalidate();
+			let ids;
+			try {
+				ids = this._getSelectedIds().map(
+					function(id, idx) {
+						if (id - idx != 0) {
+							[this._downloads[id], this._downloads[id - 1]] = [this._downloads[id - 1], this._downloads[id]];
+							--id;
+						}
+						this.selection.rangedSelect(id, id, true);
+						return id;
+					},
+					this
+				);
+			}
+			finally {
+				this.endUpdate();
+				this.invalidate();
+			}
 			this._box.ensureRowIsVisible(Math.max(ids.shift() - 1, 0));
 		}
 		catch (ex) {
@@ -1207,22 +1284,27 @@ const Tree = {
 				throw Error("not implemented");				
 			}
 			this.beginUpdate();
-			let rowCount = this.rowCount;
-			let ids = this._getSelectedIds(true).map(
-				function(id, idx) {
-					if (id + idx != rowCount - 1) {
-						let tmp = this._downloads[id];
-						this._downloads[id] = this._downloads[id + 1];
-						this._downloads[id + 1] = tmp;
-						++id;
-					}
-					this.selection.rangedSelect(id , id, true);
-					return id;
-				},
-				this
-			);
-			this.endUpdate();
-			this.invalidate();
+			let ids;
+			try {
+				let rowCount = this.rowCount;
+				ids = this._getSelectedIds(true).map(
+					function(id, idx) {
+						if (id + idx != rowCount - 1) {
+							let tmp = this._downloads[id];
+							this._downloads[id] = this._downloads[id + 1];
+							this._downloads[id + 1] = tmp;
+							++id;
+						}
+						this.selection.rangedSelect(id , id, true);
+						return id;
+					},
+					this
+				);
+			}
+			finally {
+				this.endUpdate();
+				this.invalidate();
+			}
 			// readjust view
 			this._box.ensureRowIsVisible(Math.min(ids.shift(), this.rowCount - 1));
 		}
