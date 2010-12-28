@@ -314,5 +314,6 @@ Matcher.prototype = {
 		this._matchers = this._matchers.filter(function(m) m.name != name);
 	},
 	get filtering() !!this._matchers.length,
-	filter: function(array) array.filter(function(e) this._matchers.every(function(m) m.isMatch(e)), this)
+	filter: function(array) array.filter(function(e) this._matchers.every(function(m) m.isMatch(e)), this),
+	shouldDisplay: function(d) this._matchers.every(function(m) m.isMatch(d))
 };
