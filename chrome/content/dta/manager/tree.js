@@ -288,22 +288,28 @@ const Tree = {
 			// save selection
 			let selectedIds = this._getSelectedIds().map(function(id) this._filtered[id].position, this);
 			this._downloads.forEach(function(e) e.filteredPosition = -1);
-			
-			this._box.rowCountChanged(0, -this._filtered.length);
+			let _delta = this.rowCount;
 			if (this._matcher.filtering) {
-				Debug.log("filtering");
+				Cu.reportError("filtering");
 				this._filtered = this._matcher.filter(this._downloads);
 			}
 			else {
 				Debug.log("not filtering");
 				this._filtered = this._downloads;
 			}
-			this._box.rowCountChanged(0, this._filtered.length);
 			this._filtered.forEach(function(e, i) e.filteredPosition = i);		
+			_delta -= this.rowCount;
+			if (_delta) {
+				this._box.rowCountChanged(0, _delta);
+			}
 	
 			// restore selection
+			// (with range merging)
 			for (let i = 0; i < selectedIds.length; i++) {
 				let fid = this._downloads[selectedIds[i]].filteredPosition;
+				if (fid < 0) {
+					continue;
+				}
 				let eid = fid;
 				for (let e = i + 1; e < selectedIds.length; e++) {
 					let oid = this._downloads[selectedIds[e]].filteredPosition;
@@ -313,9 +319,7 @@ const Tree = {
 					eid = oid;
 					i++;
 				}
-				if (fid >= 0) {
-					this.selection.rangedSelect(fid, eid, true);
-				}
+				this.selection.rangedSelect(fid, eid, true);
 			}
 		}
 		finally {
@@ -571,10 +575,12 @@ const Tree = {
 			}
 		}
 	},
+	fastLoad: function T_add(download) this._downloads.push(download) -1,
 	add: function T_add(download) {
-		this._downloads.push(download);
-		let pos = this._downloads.length - 1;
-		this.doFilter();
+		let pos = this.fastLoad(download);
+		if (this._matcher.shouldDisplay(download)) {
+			this.doFilter();
+		}
 		return pos;
 	},
 	removeWithConfirmation: function T_removeWithConfirmation() {
@@ -684,9 +690,9 @@ const Tree = {
 				Dialog.wasRemoved(d);
 			}
 			QueueStore.endUpdate();
-			this.doFilter();
 		}
 		finally {
+			this.doFilter();
 			this.endUpdate();
 			this.invalidate();
 		}
@@ -1051,6 +1057,9 @@ const Tree = {
 				this._box.invalidateRange(d[0].filteredPosition, d[d.length - 1].filteredPosition);
 			}
 			finally {
+				if (this._matcher.filter(d).length != d.filter(function(e) e.filteredPosition > -1).length) {
+					this.doFilter();
+				}
 				this.endUpdate();
 			}
 			return;
@@ -1061,6 +1070,9 @@ const Tree = {
 			}
 			else {
 				this._box.invalidateRow(d.filteredPosition);
+			}
+			if (this._matcher.shouldDisplay(d) == (d.filteredPosition < 0)) {
+				this.doFilter();
 			}
 		}
 	},

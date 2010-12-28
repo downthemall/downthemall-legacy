@@ -525,7 +525,7 @@ const Dialog = {
 			// See above
 			d.rebuildDestination();
 
-			d._position = Tree.add(d);
+			d._position = Tree.fastLoad(d);
 		}
 		catch (ex) {
 			Debug.log('failed to init download #' + dbItem.id + ' from queuefile', ex);
@@ -1257,7 +1257,6 @@ QueueItem.prototype = {
 		}		
 		Dialog.signal(this);
 		this.invalidate();
-		Tree.doFilter();
 		Tree.refreshTools();
 		return nv;
 	},
@@ -1499,7 +1498,6 @@ QueueItem.prototype = {
 			this._totalSize = Math.floor(nv);
 		}
 		this.invalidate(3);
-		Tree.doFilter();
 		this.prealloc();
 	},
 	partialSize: 0,
@@ -2314,7 +2312,7 @@ QueueItem.prototype = {
 			this.maxChunks = 2;
 			this.maxChunks = omc;
 		}
-		Tree.doFilter();
+		this.invalidate();
 		this.save();
 	},
 	dumpScoreboard: function QI_dumpScoreboard() {
@@ -2688,7 +2686,6 @@ function startDownloads(start, downloads) {
 		100
 	).start(function() {
 		QueueStore.endUpdate();
-		Tree.doFilter();
 		Tree.endUpdate();
 		delete ct;
 	});
