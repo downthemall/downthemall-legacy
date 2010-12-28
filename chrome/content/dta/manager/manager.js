@@ -397,7 +397,11 @@ const Dialog = {
 				250,
 				this
 			);
-			this._loader.start(this._loadDownloads_finish);
+			let self = this;
+			this._loader.start(function() {
+				delete result;
+				self._loadDownloads_finish();
+			});
 		}, this);
 	},
 	_loadDownloads_item: function D__loadDownloads_item(dbItem, idx) {
@@ -1167,7 +1171,19 @@ const Dialog = {
 				w.close();
 			}
 		}
-		return true;		
+		
+		// some more gc
+		Tree._downloads.forEach(function(d) delete d._icon);
+		delete Tree._downloads;
+		delete Tree._filtered;
+		delete Tree;
+		delete FileExts;
+		delete Dialog;
+		window
+			.QueryInterface(Ci.nsIInterfaceRequestor)
+        	.getInterface(Ci.nsIDOMWindowUtils).garbageCollect();
+		
+		return true;
 	}
 };
 addEventListener('load', function() Dialog.init(), false);
