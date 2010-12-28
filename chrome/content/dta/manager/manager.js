@@ -2632,6 +2632,7 @@ function startDownloads(start, downloads) {
 		QueueStore.endUpdate();
 		Tree.endUpdate();
 		delete ct;
+		delete g;
 	});
 }
 
