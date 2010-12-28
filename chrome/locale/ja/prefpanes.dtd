@@ -13,7 +13,6 @@
 <!ENTITY buttonlabelextra2 "設定を初期設定に戻す">
 <!ENTITY dtaPreferences.title "DownThemAll! の設定...">
 <!ENTITY manager "dTa! マネージャー">
-
 <!ENTITY mainpane.label "全般">
 <!ENTITY mainpane.defaults.caption "デフォルトの設定">
 <!ENTITY mainpane.defaults.desc "OneClick! で使用される、ファイルの保存先や別名保存ルールとフィルターは、通常の DownThemAll! 選択ダイアログで設定します。">
@@ -36,7 +35,6 @@
 <!ENTITY mainpane.confirmremove.label "ダウンロードの削除時に確認する">
 <!ENTITY mainpane.textlinks.label "テキストのリンクを認識">
 <!ENTITY mainpane.listsniffedvideos.label "(Flash) 動画の録画と一覧での表示">
-
 <!ENTITY privacypane.label "プライバシー">
 <!ENTITY privacypane.closing.caption "管理ウィンドウが閉じられた時">
 <!ENTITY privacypane.removecompleted.label "完了したダウンロードをリストから削除">
@@ -57,7 +55,6 @@
 <!ENTITY privacypane.notice.caption "注意">
 <!ENTITY privacypane.notice.desc "DownThemAll を(利用できる場合のみ)プライバシー情報の消去機能に統合できます。">
 <!ENTITY privacypane.privacynotice.label "プライバシーについて">
-
 <!ENTITY serverspane.label "ネットワーク">
 <!ENTITY serverspane.downloads.caption "ダウンロード">
 <!ENTITY serverspane.concurrent.label "ダウンロード数:">
@@ -77,7 +74,6 @@
 <!ENTITY serverspane.cancel.label "キャンセル">
 <!ENTITY serverspane.edit.label "編集">
 <!ENTITY serverspane.remove.label "削除">
-
 <!ENTITY advancedpane.label "詳細">
 <!ENTITY advancedpane.downloads.caption "詳細なダウンロード管理">
 <!ENTITY advancedpane.misc.caption "その他の設定">
@@ -104,7 +100,6 @@
 <!ENTITY advancedpane.scheduler.fair "均一に配分">
 <!ENTITY advancedpane.scheduler.legacy "無制限">
 <!ENTITY advancedpane.exposeinua.label "DownThemAll! をユーザーエージェントに設定">
-
 <!ENTITY uipane.label "操作">
 <!ENTITY uipane.namesonly.label "マネージャーウィンドウにファイル名だけを表示">
 <!ENTITY uipane.integration.caption "統合">

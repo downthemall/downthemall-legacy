@@ -1,4 +1,4 @@
-<!ENTITY mask.title "タグの一覧">
+<!ENTITY mask.title "リンクに付与されたタイトル">
 <!ENTITY mask.name "ファイルの名前">
 <!ENTITY mask.ext "拡張子">
 <!ENTITY mask.url "ベース URL">
@@ -18,7 +18,6 @@
 <!ENTITY mask.flattext "フラットリンクテキスト">
 <!ENTITY mask.refer "参照元の URL">
 <!ENTITY mask.qstring "処理要求文字列">
-<!ENTITY mask.title "リンクに付与されたタイトル">
 <!ENTITY mask.flattitle "リンクに付与されたタイトル">
 <!ENTITY mask.tip "クリックかドラッグで追加できます">
 <!ENTITY mask.open.tip "名前の変更に使用できるタグの一覧を表示します">

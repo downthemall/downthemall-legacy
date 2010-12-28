@@ -1,15 +1,13 @@
 <!--
 	commonly used.
 	CHECK BEFORE MODIFY
+
 -->
-
 <!ENTITY start.label "ダウンロード!">
-<!ENTITY start.key "s" >
+<!ENTITY start.key "s">
 <!ENTITY queue.label "一覧に追加">
-<!ENTITY queue.key "p" >
-
+<!ENTITY queue.key "p">
 <!ENTITY options.label "設定">
-
 <!ENTITY url.value "ダウンロード">
 <!ENTITY dest.caption "ファイルの保存先:">
 <!ENTITY mirrors.value "ミラー:">
@@ -20,7 +18,6 @@
 <!ENTITY mirrormanager.tip "ダウンロードミラーの管理">
 <!ENTITY mask.label "別名で保存">
 <!ENTITY mask.tip "選択したファイルの保存後、このマスクを使用して名前を変更します">
-
 <!ENTITY selectall.label "すべて選択">
 <!ENTITY selectinv.label "選択を反転">
 <!ENTITY selectnone.label "選択を解除">
