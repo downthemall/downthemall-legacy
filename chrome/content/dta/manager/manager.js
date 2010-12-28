@@ -364,13 +364,18 @@ const Dialog = {
 		Debug.logString("loading of the queue started!");
 		GlobalProgress.reset();
 		GlobalProgress.pause();
+		let gen = QueueStore.loadGenerator();
 		this._loader = new CoThreadListWalker(
 			this._loadDownloads_item,
-			QueueStore.loadGenerator(),
+			gen,
 			250,
 			this
 		);
-		this._loader.run(this._loadDownloads_finish);		
+		let self = this;
+		this._loader.run(function() {
+			delete gen;
+			this._loadDownloads_finish();			
+		});
 	},
 	_loadDownloads_item: function D__loadDownloads_item(dbItem, idx) {
 		if (!idx) {
@@ -1096,6 +1101,17 @@ const Dialog = {
 				w.close();
 			}
 		}
+
+		// some more gc
+		Tree._downloads.forEach(function(d) delete d._icon);
+		delete Tree._downloads;
+		delete Tree;
+		delete FileExts;
+		delete Dialog;
+		window
+			.QueryInterface(Ci.nsIInterfaceRequestor)
+        	.getInterface(Ci.nsIDOMWindowUtils).garbageCollect();
+		
 		return true;		
 	}
 };
