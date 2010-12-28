@@ -2480,7 +2480,12 @@ Chunk.prototype = {
 		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 		seekable.seek(0x00, this.start + this.written);
-		this._outStream = new BufferedOutputStream(outStream, MIN_CHUNK_SIZE * 2);
+		if (this.remaining > 0) {
+			this._outStream = new BufferedOutputStream(outStream, Math.min(this.remaining, MIN_CHUNK_SIZE * 2));
+		}
+		else {
+			this._outStream = new BufferedOutputStream(outStream, MIN_CHUNK_SIZE * 2);			
+		}
 		
 		this.buckets = new ByteBucketTee(
 				this.parent.bucket,
@@ -2704,6 +2709,7 @@ function startDownloads(start, downloads) {
 		QueueStore.endUpdate();
 		Tree.endUpdate();
 		delete ct;
+		delete g;
 	});
 }
 
