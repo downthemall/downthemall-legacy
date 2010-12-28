@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Настройки...">
+<!ENTITY dta-about.label "О DownThemall...">
+<!ENTITY dta-manager-button "Менеджер dTa!">
+<!ENTITY dta-selector-button "dTa OneClick!">
+<!ENTITY dta-tb-all.label "Все вкладки">
+<!ENTITY dta-tb-single.label "Текущая вкладка">
+<!ENTITY dta-selection.label "DownThemAll! Выбрать...">
+<!ENTITY dta-selection-turbo.label "dTa OneClick Выбрать...">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa OneClick...">
+<!ENTITY dta-img-save.label "Сохранить изображение с помощью DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Сохраните изображение с помощью dTa OneClick!">
+<!ENTITY dta-video-save.label "Сохранить Видео с помощью DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Сохраните изображение с помощью dTa OneClick!">
+<!ENTITY dta-audio-save.label "Сохранить Аудио с помощью DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Сохраните Аудио с помощью dTa OneClick!">
+<!ENTITY dta-link-save.label "Сохранить ссылку с помощью DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Сохраните ссылку с помощью dTa OneClick!">
+<!ENTITY dta-form-save.label "Сохранить выбранную форму с DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Стартовать загрузку выбранной формы с dTa OneClick!">
