@@ -282,26 +282,20 @@ const Tree = {
 			this._mustFilter = true;
 			return;
 		}
-		Debug.log("doFilter");
 		this.beginUpdate();
 		try {
 			// save selection
 			let selectedIds = this._getSelectedIds().map(function(id) this._filtered[id].position, this);
 			this._downloads.forEach(function(e) e.filteredPosition = -1);
-			let _delta = this.rowCount;
+			this._box.rowCountChanged(0, -this.rowCount);
 			if (this._matcher.filtering) {
-				Cu.reportError("filtering");
 				this._filtered = this._matcher.filter(this._downloads);
 			}
 			else {
-				Debug.log("not filtering");
 				this._filtered = this._downloads;
 			}
 			this._filtered.forEach(function(e, i) e.filteredPosition = i);		
-			_delta -= this.rowCount;
-			if (_delta) {
-				this._box.rowCountChanged(0, _delta);
-			}
+			this._box.rowCountChanged(0, this.rowCount);
 	
 			// restore selection
 			// (with range merging)
