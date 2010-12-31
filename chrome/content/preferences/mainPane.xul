@@ -22,9 +22,9 @@
 			<preference id="dtalistsniffedvideos" name="extensions.dta.listsniffedvideos" type="bool" />
 		</preferences>
 
-		<groupbox>
+		<groupbox id="defaultsdesc">
 			<caption label="&mainpane.defaults.caption;" />
-			<description id="defaultsdesc">&mainpane.defaults.desc;
+			<description>&mainpane.defaults.desc;
 			</description>
 		</groupbox>
 
