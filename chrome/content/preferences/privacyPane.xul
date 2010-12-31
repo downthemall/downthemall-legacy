@@ -28,7 +28,7 @@
 		</preferences>
 		
 		<grid>
-			<columns><column flex="3"/><column flex="2"/></columns>
+			<columns><column flex="3"/><column flex="1"/></columns>
 			<rows>
 				<row>
 					<groupbox>
@@ -40,15 +40,17 @@
 
 					<groupbox>
 						<caption id="dtaddown" label="&privacypane.dropdowns.caption;"/>
-						<hbox flex="1" align="center">
+						<vbox flex="1" align="center">
 							<label value="&privacypane.dropdownresults.label;" flex="1" />
-							<scale min="0" max="15" id="history" preference-editable="true" onchange="Privacy.changedHistory();"/>
-							<label id="historylabel" style="min-width: 3em;" />
-						</hbox>
-						<hbox align="right">
+							<hbox>
+								<scale min="0" max="15" id="history" preference-editable="true" onchange="Privacy.changedHistory();"/>
+								<label id="historylabel" style="min-width: 3em;" />
+							</hbox>
+						</vbox>
+						<vbox>
 							<button id="butFoldDel" label="&privacypane.deletefoldershistory.label;" oncommand="Privacy.delDirectories();" />
 							<button id="butFiltDel" label="&privacypane.deletefiltershistory.label;" oncommand="Privacy.delFilters();" />
-						</hbox>
+						</vbox>
 					</groupbox>
 				</row>
 			</rows>
