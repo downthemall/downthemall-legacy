@@ -23,3 +23,7 @@ separator.groove-thin {
 #serverLimits {
 	height: 200px;
 }
+
+#defaultsdesc {
+	min-height: 4.5em;
+}
