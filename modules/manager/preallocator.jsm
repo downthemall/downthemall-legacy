@@ -145,7 +145,6 @@ WorkerJob.prototype = {
 			this._run_windows();
 		}
 		else {
-			Debug.log("taking other");
 			this._run_other();
 		}
 	},
