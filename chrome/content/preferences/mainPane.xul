@@ -24,7 +24,7 @@
 
 		<groupbox>
 			<caption label="&mainpane.defaults.caption;" />
-			<description>&mainpane.defaults.desc;
+			<description id="defaultsdesc">&mainpane.defaults.desc;
 			</description>
 		</groupbox>
 
