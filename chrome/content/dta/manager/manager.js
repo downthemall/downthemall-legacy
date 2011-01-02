@@ -157,13 +157,7 @@ const Dialog = {
 
 		(function initListeners() {
 			addEventListener('unload', function() Dialog.unload(), false);
-			addEventListener('close', function(evt) {
-				let rv = Dialog.close();
-				if (!rv) {
-					evt.preventDefault();
-				}
-				return rv;
-			}, true);
+			addEventListener('close', function(evt) Dialog.onclose(evt), false);
 			
 			DropProcessor = {
 				getSupportedFlavours: function() {
@@ -972,6 +966,13 @@ const Dialog = {
 	wasRemoved: function D_wasRemoved(d) {
 		this._running = this._running.filter(function(r) r != d);
 		this._autoRetrying = this._autoRetrying.filter(function(r) r != d);
+	},
+	onclose: function(evt) { 
+		let rv = Dialog.close();
+		if (!rv) {
+			evt.preventDefault();
+		}
+		return rv;
 	},
 	_canClose: function D__canClose() {
 		if (Tree.some(function(d) { return d.started && !d.resumable && d.isOf(RUNNING); })) {
