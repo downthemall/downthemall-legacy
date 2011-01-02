@@ -67,6 +67,14 @@ TrayHandler.prototype = {
 		if (this.available) {
 			try {
 				this._trayService.watchMinimize(window);
+				let _oc = this.oncloseOriginal = Dialog.onclose;
+				Dialog.onclose = function(evt) {
+					if (Preferences.get('extensions.mintrayr.minimizeon', 1) & (1<<1)) {
+						evt.preventDefault();
+						return false;
+					}
+					return _oc.apply(Dialog, arguments); 
+				}
 			}
 			catch (ex) {
 				// no op
@@ -77,6 +85,10 @@ TrayHandler.prototype = {
 		if (this.available) {
 			try {
 				this._trayService.unwatchMinimize(window);
+				if (this.oncloseOriginal) {
+					Dialog.onclose = this.oncloseOriginal;
+					delete this.oncloseOriginal;
+				}
 			}
 			catch (ex) {
 				// no op
