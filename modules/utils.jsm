@@ -37,7 +37,6 @@
 const EXPORTED_SYMBOLS = [
   'Debug',
 	'atos',
-	'bind',
 	'setNewGetter',
 	'ServiceGetter',
 	'InstanceGetter',
@@ -190,14 +189,6 @@ function InstanceGetter(context, name, contract, iface, initFuncName/*, args */)
 		}
 	);
 }
-
-/**
- * Creates anonymous function with context
- * @param context (object) Context object
- * @param func (function) Function to call
- * @return (function) anonymous function binding func to context 
- */
-function bind(context, func) (function() func.apply(context, arguments));
 
 /**
  * returns a new UUID in string representation
