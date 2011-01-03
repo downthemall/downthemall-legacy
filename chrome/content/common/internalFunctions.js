@@ -288,9 +288,103 @@ const SYSTEMSLASH = Utils.SYSTEMSLASH;
 
 //XXX Copy from utils.jsm
 //XXX Cannot use directly; yields NS_ERROR_INVALID_VALUE then
-for each (let copy in ["setNewGetter", "ServiceGetter", "InstanceGetter", "bind"]) {
-	eval(Utils[copy].toSource());
+/**
+ * Installs a new lazy getter
+ * @param aObject (object) Object to install the getter to
+ * @param aName (string) Name of the getter property
+ * @param aLambda (function) Initializer function (called once, return value becomes getter value)
+ */
+function setNewGetter(aObject, aName, aLambda) {
+	if (aName in aObject) {
+		throw new Exception(aName + " is already defined in context " + aObject);
+	}
+	try {
+		aObject.__defineGetter__(aName, function() {
+			delete aObject[aName];
+			return aObject[aName] = aLambda.apply(aObject);
+		});
+
+	}
+	catch (ex) {
+		Debug.log(aName);
+		Debug.log(ex);
+	}
 }
+
+/**
+ * Install lazy service getter
+ * @param context (object) Object to install the getter to
+ * @param name Name of the getter property
+ * @param contract (string) Contract id of the service
+ * @param iface (string) Interface of the service
+ */
+function ServiceGetter(context, name, contract, iface) {
+	if (!iface) {
+		iface = Ci.nsISupports;
+	}
+	else if (typeof iface == "string") {
+		iface = Ci[iface];
+	}
+	setNewGetter(
+		context,
+		name,
+		function() {
+			try {
+				return Cc[contract].getService(iface);
+			}
+			catch (ex) {
+				Debug.log(ex);
+				Debug.log(contract);
+				Debug.log(iface);
+				throw ex;
+			}
+		}
+	);	
+}
+
+/**
+ * Installs lazy instance getter.
+ * The instance will be created only once and then reused
+ * @param context (object) Object to install the getter to
+ * @param name Name of the getter property
+ * @param contract (string) Contract id of the class
+ * @param iface (string) Interface of the class
+ * @param initFuncName (string) Optional. Name of the function to call on the object instance once created.
+ * @param ... (mixed) Optional. Any arguments to initFunc
+ */
+function InstanceGetter(context, name, contract, iface, initFuncName/*, args */) {
+	if (!iface) {
+		iface = Ci.nsISupports;
+	}
+	else if (typeof iface == "string") {
+		iface = Ci[iface];
+	}
+
+	// build an arguments array for the initFunc, stripping the first 5 arguments
+	let args = Array.filter(arguments, function(e, i) i > 4);
+	setNewGetter(
+		context,
+		name,
+		function() {
+			let rv = Cc[contract].createInstance(iface);
+			if (initFuncName) {
+				rv[initFuncName].apply(rv, args);
+			}
+			return rv;
+		}
+	);
+}
+
+/**
+ * returns a new UUID in string representation
+ * @return String UUID
+ */
+setNewGetter(this, "newUUIDString", function() {
+	let uuidgen = Cc["@mozilla.org/uuid-generator;1"].getService(Ci.nsIUUIDGenerator);
+	return function() {
+		return uuidgen.generateUUID().toString();
+	};
+});
 
 ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService2");
 
