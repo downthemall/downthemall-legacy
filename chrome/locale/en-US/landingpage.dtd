@@ -1,6 +1,9 @@
+<!-- UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible --> 
 <!ENTITY lp.localedir "ltr">
 
+<!-- Your language in your language -->
 <!ENTITY language "English">
+<!-- Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAutor "The dTa Team">
 
 <!ENTITY amo.summary "The first and only download manager/accelerator built inside Firefox!">
@@ -55,7 +58,7 @@
 <!ENTITY lp.tb.add.managerdesc "Opens the Manager window.">
 <!ENTITY lp.tb.add.selector "DownThemAll! Selector button">
 <!ENTITY lp.tb.add.selectordesc "Adds items by left-clicking on them.">
-<!ENTITY lp.tb.add.p2 "The toolbar buttons can be added via <code>View → Toolbars → Customize</code>.">
+<!ENTITY lp.tb.add.p2 "The toolbar buttons can be added via <code>View â†’ Toolbars â†’ Customize</code>.">
 
 <!ENTITY lp.tb.dnd.title "Drag'n'drop">
 <!ENTITY lp.tb.dnd.p1 "You can drag'n'drop every link or image onto the DownThemAll! or OneClick! button to download it.">
@@ -68,8 +71,8 @@
 
 <!ENTITY lp.pr.title "Privacy Notice">
 <!ENTITY lp.pr.intro "DownThemAll protects your privacy.">
-<!ENTITY lp.pr.settings "You can have DownThemAll! remove all complete, canceled, and unfinished downloads from the download list when closed by changing the settings in the Preferences → Privacy panel.">
-<!ENTITY lp.pr.diag "You can enable diagnostic messages, which will be logged to both the error console and written to the dta_log.txt file, by the Preferences → Privacy panel. Diagnostic messages will likely contain sensitive information like URLs, file paths, filenames you're downloading, or even cookie information. This option is DISABLED by default to protect your privacy. If you submit a diagnostic message, you may wish to censor this sensitive information. No diagnostic log will ever get published in an automated fashion.">
+<!ENTITY lp.pr.settings "You can have DownThemAll! remove all complete, canceled, and unfinished downloads from the download list when closed by changing the settings in the Preferences â†’ Privacy panel.">
+<!ENTITY lp.pr.diag "You can enable diagnostic messages, which will be logged to both the error console and written to the dta_log.txt file, by the Preferences â†’ Privacy panel. Diagnostic messages will likely contain sensitive information like URLs, file paths, filenames you're downloading, or even cookie information. This option is DISABLED by default to protect your privacy. If you submit a diagnostic message, you may wish to censor this sensitive information. No diagnostic log will ever get published in an automated fashion.">
 <!ENTITY lp.pr.pbm "DownThemAll! supports the Firefox Private Browsing Mode: When in Private Browsing Mode, DownThemAll! will not store any information about downloaded files, download folders or used renaming masks. Please note that other data - such as newly created filters, or, of course, the actual downloads - is still written to your harddisk.">
 <!ENTITY lp.pr.link "This notice is always available from this page (about:downthemall) and is additionally linked in the Preferences window">
 
@@ -89,9 +92,9 @@
 <!ENTITY lp.yr.gplintro "Most important sections from the GPL 2.0, the no warranty and damages disclaimer, follow:">
 <!ENTITY lp.yr.icons "Artwork, icons and buttons">
 <!ENTITY lp.yr.iconsbased "are based on the works of Mike Matas, Jakub Steiner, Mark James and the Tango project">
-<!ENTITY lp.yr.artwork "The original artwork is: Copyright © 2004-2010 by Stefano Verna, Federico Parodi and Nils Maier">
+<!ENTITY lp.yr.artwork "The original artwork is: Copyright Â© 2004-2010 by Stefano Verna, Federico Parodi and Nils Maier">
 <!ENTITY lp.yr.artworklicense "The original artwork is licensed under:">
-<!ENTITY lp.yr.logo "The DownThemAll! logo is: Copyright © 2004-2010 by Stefano Verna.">
+<!ENTITY lp.yr.logo "The DownThemAll! logo is: Copyright Â© 2004-2010 by Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "The DownThemAll! name and logo cannot be used without permission in any derivative work, with exception of credits and license-related notices.">
 
 <!ENTITY lp.ct.bugstitle "Reporting bugs/Feature requests">
