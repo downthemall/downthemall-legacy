@@ -139,18 +139,9 @@ const PathMatch = {
 	}
 };
 
-const StatusMatch = {
-	get name() 'statusmatch',
+const RemainderMatch = {
+	get name() 'remainder',
 	getItems: function() {
-		for each (let s in ['QUEUED', 'PAUSED', 'RUNNING', 'COMPLETE', 'CANCELED']) {
-			yield {
-				label: _(s.toLowerCase()),
-				param: s
-			};
-		}
-		yield {
-			label: '-'
-		};
 		yield {
 			label: _('soonfinished'),
 			param: '120',
@@ -181,27 +172,31 @@ const StatusMatch = {
 		let state = 0;
 		let est = 0;
 		for each (let p in params) {
-			if (p in this) {
+			let n = parseInt(p, 10);
+			if (isFinite(n) && n > est) {
+				est = n;
+			}
+		}
+		return function(d) d.estimated <= est;
+	}
+}
+const StatusMatch = {
+		get name() 'statusmatch',
+		getItems: function() {
+			for each (let s in ['QUEUED', 'PAUSED', 'RUNNING', 'COMPLETE', 'CANCELED']) {
+				yield {
+					label: _(s.toLowerCase()),
+					param: s
+				};
+			}
+		},
+		getMatcher: function(params) {
+			let state = 0;
+			for each (let p in params) {
 				state |= this[p];
 			}
-			else {
-				let n = parseInt(p, 10);
-				if (isFinite(n) && n > est) {
-					est = n;
-				}
-			}
-		}
-		if (state && est) {
-			return function(d) (d.state & state) || (d.estimated <= est);
-		}
-		if (state) {
 			return function(d) d.state & state;
 		}
-		if (est) {
-			return function(d) d.estimated <= est;
-		}
-		return null;
-	}
 }
 module('resource://dta/constants.jsm', StatusMatch);
 
@@ -281,15 +276,50 @@ const DomainMatch = {
 	}
 };
 
+function MatcherTee(a, b) {
+	this.a = a;
+	this.b = b;
+}
+MatcherTee.prototype = {
+	get name() this.a + ";" + this.b,
+	getItems: function(downloads) {
+		for (let a in this.a.getItems(downloads)) {
+			a.param = "a:" + a.param;
+			yield a;
+		}
+		yield {label: '-'};
+		for (let b in this.b.getItems(downloads)) {
+			b.param = "b:" + b.param;
+			yield b;
+		}
+	},
+	getMatcher: function(params) {
+		let a = [], b = [];
+		params.forEach(function(p) this[p[0]].push(p.substr(2)), {a:a, b:b});
+		if (a.length && !b.length) {
+			return this.a.getMatcher(a);
+		}
+		if (!a.length && b.length) {
+			return this.b.getMatcher(b);
+		}
+		if (!a.length && !b.length) {
+			return null;
+		}
+		a = this.a.getMatcher(a);
+		b = this.a.getMatcher(b);
+		return function(d) a(d) && b(d);
+	}
+};
+
 function Matcher() {
 	this._matchers = [];
 }
 Matcher.prototype = {
 	_available: {
 		'textmatch': TextMatch,
-		'filtermatch': FilterMatch,
+		'downloadmatch': new MatcherTee(FilterMatch, DomainMatch),
 		'pathmatch': PathMatch,
-		'statusmatch': StatusMatch,
+		'statusmatch': new MatcherTee(StatusMatch, RemainderMatch),
 		'sizematch': SizeMatch,
 		'domainmatch': DomainMatch
 	},
