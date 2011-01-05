@@ -48,10 +48,18 @@ const Exception = Components.Exception;
 
 let Preferences = {};
 module("resource://dta/preferences.jsm", Preferences);
+module("resource://dta/version.jsm");
 
 let available = false;
 let service = null;
 let alerting = false;
+let supportsClickable = true;
+(function() {
+	// XXX enhance: query libnotify via ctypes.
+	if (Version.OS == 'linux') {
+		supportsClickable = false; 
+	}	
+})();
 
 const Observer = {
 	_func: null,
@@ -96,7 +104,9 @@ function show(title, msg, callback) {
 
 	let clickable = false;
 	Observer._func = null;
-	if (typeof callback == 'function') {
+	
+	// don't make clickable on *nix, so that libnotify will be used more often
+	if (typeof callback == 'function' && supportsClickable) {
 		clickable = true;
 		Observer._func = callback;
 	}
