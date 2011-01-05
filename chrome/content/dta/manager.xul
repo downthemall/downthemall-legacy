@@ -239,7 +239,7 @@
 	 	  <stack flex="1" id="mainstack">
 				<tree id="downloads" flex="1" hidecolumnpicker="false" context="popup" seltype="multiple" enableColumnDrag="true" style="margin:0px;" chromedir="&locale.dir;">
 					<treecols>
-						<treecol id="task" matcher="filtermatch" label="&download.label;" ordinal="1" flex="5" style="width: 18em;" crop="center" persist="width ordinal hidden" />
+						<treecol id="task" matcher="downloadmatch" label="&download.label;" ordinal="1" flex="5" style="width: 18em;" crop="center" persist="width ordinal hidden" />
 						<splitter class="tree-splitter" />
 						<treecol id="pct" label="&pct.label;" ordinal="3" type="progressmeter" flex="5" style="width: 9em;" persist="width ordinal hidden" />
 						<splitter class="tree-splitter" />
