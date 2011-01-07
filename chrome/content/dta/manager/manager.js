@@ -534,9 +534,9 @@ const Dialog = {
 	_loadDownloads_finish: function D__loadDownloads_finish() {
 		Debug.log("Result was processed");
 		delete this._loader;
+		Tree.invalidate();
 		Tree.doFilter();
 		Tree.endUpdate();
-		Tree.invalidate();
 		
 		if (this._brokenDownloads.length) {
 			QueueStore.beginUpdate();
