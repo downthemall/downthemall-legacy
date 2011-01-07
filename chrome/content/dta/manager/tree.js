@@ -270,8 +270,8 @@ const Tree = {
 			this.doFilter();
 		}
 		finally {
-			this.endUpdate();
 			this.invalidate();
+			this.endUpdate();
 		}
 	},
 	_filter: '',
@@ -542,8 +542,8 @@ const Tree = {
 				this.doFilter();
 			}
 			finally {
-				this.endUpdate();
 				this.invalidate();
+				this.endUpdate();
 			}
 			this._box.ensureRowIsVisible(Math.max(row, 0));
 			this.selection.rangedSelect(row, row + downloads.length - 1, true);
@@ -686,9 +686,9 @@ const Tree = {
 			QueueStore.endUpdate();
 		}
 		finally {
+			this.invalidate();
 			this.doFilter();
 			this.endUpdate();
-			this.invalidate();
 		}
 		if (performJump) {
 			this._removeJump(downloads.filter(function(e) e.filteredPosition >= 0).length, last);
@@ -720,8 +720,8 @@ const Tree = {
 			this.doFilter();
 		}
 		finally {
-			this.endUpdate();
 			this.invalidate();
+			this.endUpdate();
 		}
 	},
 	removeCompleted: function T_removeCompleted() {
@@ -1172,8 +1172,8 @@ const Tree = {
 				QueueStore.endUpdate();
 			}
 			finally {
-				this.endUpdate();
 				this.invalidate();
+				this.endUpdate();
 			}
 		}
 		catch (ex) {
@@ -1218,8 +1218,8 @@ const Tree = {
 				this.doFilter();
 			}
 			finally {
-				this.endUpdate();
 				this.invalidate();
+				this.endUpdate();
 			}
 			this.selection.rangedSelect(0, ids.length - 1, true);
 			this._box.ensureRowIsVisible(0);
@@ -1244,8 +1244,8 @@ const Tree = {
 				this.doFilter();
 			}
 			finally {
-				this.endUpdate();
 				this.invalidate();
+				this.endUpdate();
 			}
 			this.selection.rangedSelect(this._filtered.length - ids.length, this._filtered.length - 1, true);
 			this._box.ensureRowIsVisible(this.rowCount - 1);
@@ -1275,8 +1275,8 @@ const Tree = {
 				);
 			}
 			finally {
-				this.endUpdate();
 				this.invalidate();
+				this.endUpdate();
 			}
 			this._box.ensureRowIsVisible(Math.max(ids.shift() - 1, 0));
 		}
@@ -1308,8 +1308,8 @@ const Tree = {
 				);
 			}
 			finally {
-				this.endUpdate();
 				this.invalidate();
+				this.endUpdate();
 			}
 			// readjust view
 			this._box.ensureRowIsVisible(Math.min(ids.shift(), this.rowCount - 1));
