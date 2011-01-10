@@ -42,7 +42,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const Ctor = Components.Constructor;
+const ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
@@ -52,8 +52,29 @@ module("resource://dta/preferences.jsm", prefs);
 module("resource://dta/json.jsm");
 module("resource://dta/utils.jsm");
 
+const LocalFile = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+
+const validators = {
+	'directory': function(s) {
+		try {
+			new LocalFile(s);
+			return true;
+		}
+		catch (ex) {
+			Cu.reportError(ex);
+		}
+		return false;
+	}
+};
+
 function History(key, defaultValues) {
 	this._key = key;
+	if (key in validators) {
+		this._validator = validators[key]; 
+	}
+	else {
+		this._validator = function() true;
+	}
 	this._setPersisting(!pbm.browsingPrivately());
 	if (!this.values.length && !!defaultValues) {
 		try {
@@ -85,7 +106,7 @@ History.prototype = {
 		}			
 		this._persisting = !!persist;
 	},
-	get values() {
+	get _values() {
 		if (!this._persisting) {
 			return this._sessionHistory;
 		}
@@ -97,6 +118,9 @@ History.prototype = {
 			Debug.log("Histories: Parsing of history failed: " + json, ex);
 			return [];
 		}
+	},
+	get values() {
+		return this._values.filter(this._validator);
 	},
 	_setValues: function(values) {
 		if (!this._persisting) {
@@ -117,7 +141,7 @@ History.prototype = {
 	push: function(value) {
 		try {
 			value = value.toString();
-			let values = this.values.filter(function(e) e != value);
+			let values = this._values.filter(function(e) e != value);
 			values.unshift(value);
 			let max = prefs.getExt('history', 5);
 			Debug.log("Histories: " + this._key + ", before " + values.toSource());
