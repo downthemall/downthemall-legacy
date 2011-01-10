@@ -144,13 +144,13 @@ var Utils = {
 			fp.appendFilters(nsIFilePicker.filterAll);
 		
 			// locate current directory
-			var dest = this.validateDir(predefined);
+			let dest = this.validateDir(predefined);
 			if (dest) {
 				fp.displayDirectory = dest;
 			}
 		
 			// open file picker
-			var res = fp.show();
+			let res = fp.show();
 	
 			if (res == nsIFilePicker.returnOK) {
 				return fp.file.path.addFinalSlash();
@@ -172,14 +172,19 @@ var Utils = {
 	 */
 	validateDir: function(path) {
 		let directory = null;
-		if (!(path instanceof Ci.nsILocalFile)) {
-			if (!path || !String(path).trim().length) {
-				return false;
+		try {
+			if (!(path instanceof Ci.nsILocalFile)) {
+				if (!path || !String(path).trim().length) {
+					return false;
+				}
+				directory = new FileFactory(path);
 			}
-			directory = new FileFactory(path);
+			else {
+				directory = path.clone();
+			}
 		}
-		else {
-			directory = path.clone();
+		catch (ex) {
+			Debug.log("Invalid path supplied", ex);
 		}
 		if (!directory) {
 			return false;
@@ -206,7 +211,7 @@ var Utils = {
 			}
 		}
 		catch(ex) {
-			Debug.log('Utils.validateDir()', ex);
+			Debug.log('Checking permissions threw', ex);
 		}
 		return false;
 	},
