@@ -109,7 +109,6 @@ Limit.prototype = {
 	},
 	remove: function() {
 		Prefs.reset(LIMITS_PREF + this._host);
-		delete this;
 	},
 	toString: function() this._host	+ " conn: " + this._connections + " speed: " + this._speed
 }
@@ -363,7 +362,7 @@ const Observer = {
 			try {
 				killServerBuckets();
 				unlimitedBucket.kill();
-				delete unlimitedBucket; 
+				unlimitedBucket = null; 
 			}
 			catch (ex) {
 				// nothing we can do

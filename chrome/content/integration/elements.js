@@ -474,7 +474,7 @@
 				  let cdoc = aWin.document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
 				  copy = cdoc.adoptNode(copy);
 				  cdoc.documentElement.appendChild(cdoc.adoptNode(copy));
-				  delete copy;
+				  copy = null;
 				  yield true;
 				  
 					let set = cdoc.evaluate(
@@ -489,7 +489,7 @@
 					for (let y in getTextLinks(set, links, true)) {
 						yield true;
 					}
-					delete cdoc;
+					cdoc = null;
 					yield true;
 				}
 			}

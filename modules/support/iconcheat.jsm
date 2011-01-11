@@ -151,7 +151,7 @@ try {
 			window.removeEventListener('load', arguments.callee, true);
 			window.setTimeout(function() {
 				DirectoryService.unregisterProvider(_p);
-				delete _p;				
+				_p = null;				
 			}, 0);
 		}, true);
 	}	
