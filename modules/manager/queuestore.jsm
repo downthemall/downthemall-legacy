@@ -333,7 +333,7 @@ const QueueStore = {
 			rv = stmt.getInt64(0);
 		}
 		stmt.finalize();
-		delete stmt;
+		stmt = null;
 		return rv.toString();
 	}
 };

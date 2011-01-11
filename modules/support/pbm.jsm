@@ -78,10 +78,6 @@ if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingServ
 	const pbm = Cc["@mozilla.org/privatebrowsing-wrapper;1"].getService(Ci.nsIPrivateBrowsingService);
 	const os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
 
-	delete browsingPrivately;
-	delete registerCallbacks;
-	delete unregisterCallbacks;
-
 	let _callbacks = [];
 	
 	function Observer() {
@@ -129,7 +125,7 @@ if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingServ
 			os.removeObserver(this, "private-browsing-cancel-vote");
 			os.removeObserver(this, "quit-application");
 			_callbacks = [];
-			delete os;
+			os = null;
 		}
 	};
 	const observer = new Observer();
