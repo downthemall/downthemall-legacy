@@ -393,7 +393,7 @@ const Dialog = {
 			);
 			let self = this;
 			this._loader.start(function() {
-				delete result;
+				result = null;
 				self._loadDownloads_finish();
 			});
 		}, this);
@@ -942,7 +942,7 @@ const Dialog = {
 				}
 				rv = true;
 			}
-			delete gen;
+			gen = null;
 			return rv;
 		}
 		catch(ex){
@@ -1177,13 +1177,9 @@ const Dialog = {
 		Tree._downloads.forEach(function(d) delete d._icon);
 		delete Tree._downloads;
 		delete Tree._filtered;
-		delete Tree;
-		delete FileExts;
-		delete Dialog;
-		window
-			.QueryInterface(Ci.nsIInterfaceRequestor)
-        	.getInterface(Ci.nsIDOMWindowUtils).garbageCollect();
-		
+		Tree = null;
+		FileExts = null;
+		Dialog = null;
 		return true;
 	}
 };
@@ -2709,8 +2705,8 @@ function startDownloads(start, downloads) {
 	).start(function() {
 		QueueStore.endUpdate();
 		Tree.endUpdate();
-		delete ct;
-		delete g;
+		ct = null;
+		g = null;
 	});
 }
 
