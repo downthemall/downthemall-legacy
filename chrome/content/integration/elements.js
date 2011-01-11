@@ -470,12 +470,11 @@
 						copy.appendChild(r.cloneContents());
 					}
 					yield true;
-					
-				  let cdoc = aWin.document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
-				  copy = cdoc.adoptNode(copy);
-				  cdoc.documentElement.appendChild(cdoc.adoptNode(copy));
-				  copy = null;
-				  yield true;
+
+					let cdoc = aWin.document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
+					copy = cdoc.adoptNode(copy);
+					cdoc.documentElement.appendChild(cdoc.adoptNode(copy));
+					yield true;
 				  
 					let set = cdoc.evaluate(
 						'//*[not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
@@ -490,6 +489,7 @@
 						yield true;
 					}
 					cdoc = null;
+					copy = null;
 					yield true;
 				}
 			}
