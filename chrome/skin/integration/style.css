@@ -32,6 +32,4 @@
 }	
 .dta-about {
 	-moz-image-region: rect(0px,144px,16px,128px);
-}	
-
-@import 'chrome://dta-platform/skin/integration.css';
+}
