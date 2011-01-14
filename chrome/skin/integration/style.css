@@ -1,4 +1,5 @@
 @import 'chrome://dta/skin/toolbarbuttons/buttons.css';
+@import 'chrome://dta-platform/skin/integration.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 	
 #notification-popup-box[anchorid="downthemall-notification-icon"] > #downthemall-notification-icon {
@@ -33,4 +34,3 @@
 	-moz-image-region: rect(0px,144px,16px,128px);
 }	
 
-@import 'chrome://dta-platform/skin/integration.css';
