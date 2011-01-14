@@ -3,7 +3,7 @@
 /* Mac uses the window menu bar, and there is no support for sprites */
 #dtaToolsMenu,
 #dtaToolsDTA {
-	list-style-image: url(chrome://dta/skin/common/dta.png);
+	list-style-image: url(chrome://dta/skin/toolbarbuttons/normal.png);
 	-moz-image-region: auto;
 }
 #dtaToolsTDTA {
