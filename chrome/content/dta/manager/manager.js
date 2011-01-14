@@ -1959,6 +1959,7 @@ QueueItem.prototype = {
 			}
 			
 			let tp = this;
+			function curl() uri.host + ((uripath.value == "") ? "" : (SYSTEMSLASH + uripath.value));
 			let replacements = {
 				"name": function() name,
 				"ext": function() ext,
@@ -1972,8 +1973,8 @@ QueueItem.prototype = {
 				"flatsubdirs": function() uripath.value.getUsableFileNameWithFlatten(),
 				"refer": function() tp.referrer ? tp.referrer.host.toString() : '',
 				"qstring": function() query,
-				"curl": function() uri.host + ((uripath.value == "") ? "" : (SYSTEMSLASH + uripath.value)),
-				"flatcurl": function() curl.getUsableFileNameWithFlatten(),
+				"curl": function() curl(),
+				"flatcurl": function() curl().getUsableFileNameWithFlatten(),
 				"num": function() Utils.formatNumber(tp.bNum),
 				"inum": function() Utils.formatNumber(tp.iNum),
 				"hh": function() Utils.formatNumber(tp.startDate.getHours(), 2),
