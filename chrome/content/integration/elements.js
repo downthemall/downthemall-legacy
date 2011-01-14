@@ -110,7 +110,7 @@
 			let notification = nb.appendNotification(
 				message,
 				0,
-				'chrome://dta/skin/common/dta.png',
+				'chrome://dta/skin/toolbarbuttons/turbo.png',
 				nb[priority]
 				);
 			setTimeout(function() {
@@ -151,7 +151,7 @@
 				_n = nb.appendNotification(
 					message,
 					0,
-					'chrome://dta/skin/common/dta.png',
+					'chrome://dta/skin/toolbarbuttons/turbo.png',
 					nb.PRIORITY_INFO_LOW
 					);
 			})(message);
