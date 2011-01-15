@@ -311,6 +311,19 @@ const Tree = {
 		}
 		return pos;
 	},
+	scrollToNearest: function(download) {
+		if (!download || download.position < 0) {
+			// Cannot scroll to a deleted download
+			return;
+		}
+		let pageLength = this._box.getPageLength();
+		if (this.rowCount - download.position <= pageLength) {
+			this._box.scrollToRow(this.rowCount - pageLength);	
+		}
+		else {
+			this._box.scrollToRow(download.position);
+		}
+	},	
 	removeWithConfirmation: function T_removeWithConfirmation() {
 		if (Prefs.confirmRemove) {
 			let res = Prompts.confirm(window, _('removetitle'), _('removequestion'), Prompts.YES, Prompts.NO, null, 0, false, _('removecheck'));
