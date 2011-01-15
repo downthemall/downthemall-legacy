@@ -575,3 +575,9 @@ const Prefs = {
 		}
 	}
 }
+
+Components.utils.import('resource://dta/version.jsm');
+
+if (Version.APP_ID == "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}" && !Preferences.hasUserValue("general.skins.selectedSkin")) {
+	document.documentElement.setAttribute("firefoxtheme", true);
+}
