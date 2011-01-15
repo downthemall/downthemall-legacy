@@ -578,7 +578,7 @@ const Tree = {
 		return pos;
 	},
 	scrollToNearest: function(download) {
-		if (download.position < 0) {
+		if (!download || download.position < 0) {
 			// Cannot scroll to a deleted download
 			return;
 		}
