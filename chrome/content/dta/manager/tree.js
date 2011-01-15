@@ -223,10 +223,10 @@ const Tree = {
 		return this._filtered.length;
 	},
 	setTree: function T_setTree(box) {
-		this._box = box;
 		if (!box) {
 			return;
 		}
+		this._box = box.QueryInterface(Ci.nsITreeBoxObject);
 		this._cols = [];
 		for (let i = 0; i < box.columns.count; ++i) {
 			this._cols.push(box.columns.getColumnAt(i));
@@ -576,6 +576,29 @@ const Tree = {
 			this.doFilter();
 		}
 		return pos;
+	},
+	scrollToNearest: function(download) {
+		if (download.position < 0) {
+			// Cannot scroll to a deleted download
+			return;
+		}
+		// find the first visible download
+		for (let i = download.position; i < this._downloads.length; ++i) {
+			let fp = this._downloads[i].filteredPosition;
+			if (fp < 0) {
+				continue;
+			}
+
+			let pageLength = this._box.getPageLength();
+			if (this.rowCount - fp <= pageLength) {
+				this._box.scrollToRow(this.rowCount - pageLength);	
+			}
+			else {
+				this._box.scrollToRow(fp);
+			}
+			return;				
+		}
+		// nothing found; do not scroll
 	},
 	removeWithConfirmation: function T_removeWithConfirmation() {
 		if (Prefs.confirmRemove) {
