@@ -77,14 +77,14 @@
 	<menu id="dtaCtxCompact" label="DownThemAll!" class="menu-iconic dta-menuitem dta-normal">
 		<menupopup id="dtaCtxSubmenu">
 			<menuseparator class="thin" id="dtaCtxSepFront" />
-			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxDTA" label="&dta-regular.label;" />
-			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxTDTA" label="&dta-regular-turbo.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxDTA"  accesskey="n" label="&dta-regular.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxTDTA" accesskey="o" label="&dta-regular-turbo.label;" />
 
-			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxDTASel" label="&dta-selection.label;" />
-			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxTDTASel" label="&dta-selection-turbo.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxDTASel" accesskey="n" label="&dta-selection.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxTDTASel" accesskey="o" label="&dta-selection-turbo.label;" />
 
-			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveLink" label="&dta-link-save.label;" />
-			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveLinkT" label="&dta-link-save-turbo.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveLink" accesskey="n" label="&dta-link-save.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveLinkT" accesskey="o" label="&dta-link-save-turbo.label;" />
 
 			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveImg" label="&dta-img-save.label;" />
 			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveImgT" label="&dta-img-save-turbo.label;" />
