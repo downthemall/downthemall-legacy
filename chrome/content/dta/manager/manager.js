@@ -2531,6 +2531,7 @@ Chunk.prototype = {
 function startDownloads(start, downloads) {
 	
 	let iNum = 0;
+	let first = null;
 	
 	function addItem(e) {
 		try {
@@ -2607,6 +2608,7 @@ function startDownloads(start, downloads) {
 			}
 			qi._position = Tree.add(qi);
 			qi.save();
+			first = first || qi;
 		}
 		catch (ex) {
 			Debug.log("addItem", ex);
@@ -2631,6 +2633,7 @@ function startDownloads(start, downloads) {
 		Tree.endUpdate();
 		ct = null;
 		g = null;
+		Tree.scrollToNearest(first);
 	});
 }
 
