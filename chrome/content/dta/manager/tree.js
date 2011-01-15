@@ -114,10 +114,10 @@ const Tree = {
 		return this._downloads.length;
 	},
 	setTree: function T_setTree(box) {
-		this._box = box;
 		if (!box) {
 			return;
 		}
+		this._box = box.QueryInterface(Ci.nsITreeBoxObject);
 		this._cols = [];
 		for (let i = 0; i < box.columns.count; ++i) {
 			this._cols.push(box.columns.getColumnAt(i));
