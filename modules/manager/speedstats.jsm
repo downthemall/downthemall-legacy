@@ -109,7 +109,7 @@ SpeedStats.prototype = {
 		if (this._lastTime) {
 			let elapsed = (time - this._lastTime) / 1000;
 			received = bytes - this._lastBytes;
-			let last = Math.round(received / elapsed);
+			let last = Math.max(0, Math.round(received / elapsed));
 			this._speeds.push(last);
 			if (this._speeds.length > this._maxSpeeds) {
 				this._speeds.shift();
