@@ -2108,6 +2108,7 @@ QueueItem.prototype = {
 			this.resumable = true;
 			this._autoRetries = 0;
 			delete this._autoRetryTime;
+			this.speeds.clear();
 			this.save();
 		}
 		catch(ex) {
