@@ -289,6 +289,7 @@ Filter.prototype = {
 			
 		// save this last as FM will test for it.
 		Preferences.set(this.pref('label'), this._label);
+		FilterManager._delayedReload();
 
 		this._modified = false;
 	},
@@ -345,7 +346,6 @@ FilterEnumerator.prototype = {
 };
 
 function FilterManagerImpl() {
-	this.init();
 };
 FilterManagerImpl.prototype = {
 	LINK_FILTER: LINK_FILTER,
@@ -549,6 +549,7 @@ FilterManagerImpl.prototype = {
 				error(ex);
 			}
 		}
+		this._delayedReload();
 	},
 	
 	getTmpFromString: function FM_getTmpFromString(expression) {
@@ -588,5 +589,5 @@ FilterManagerImpl.prototype = {
 		return true;
 	}
 };
-
 const FilterManager = new FilterManagerImpl();
+FilterManager.init();
