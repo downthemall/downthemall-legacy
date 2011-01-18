@@ -50,10 +50,11 @@ const Exception = Components.Exception;
 const module = Components.utils.import;
 const error = Components.utils.reportError;
 
-let Preferences = {}, PBM = {};
+let Preferences = {}, PBM = {}, RegExpMerger = {};
 module("resource://gre/modules/XPCOMUtils.jsm");
 module("resource://dta/preferences.jsm", Preferences);
 module('resource://dta/support/pbm.jsm', PBM);
+module('resource://dta/support/regexpmerger.jsm', RegExpMerger);
 
 const nsITimer = Ci.nsITimer;
 const Timer = ctor('@mozilla.org/timer;1', 'nsITimer', 'init');
@@ -91,10 +92,10 @@ function consolidateRegs(regs) {
 	}
 	let rv = [];
 	if (ic.length) {
-		rv.push(new RegExp(ic.map(function(r) '(?:' + r + ')').join("|"), 'i'));
+		rv.push(new RegExp(RegExpMerger.merge(ic), 'i'));
 	}
 	if (nc.length) {
-		rv.push(new RegExp(nc.map(function(r) '(?:' + r + ')').join("|")));		
+		rv.push(new RegExp(RegExpMerger.merge(nc)));
 	}
 	return rv;
 }
