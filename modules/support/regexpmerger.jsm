@@ -168,10 +168,6 @@ function largestPrefixGroup(patterns, low, high, level) {
 	let head = heads[besti];
 	
 	if (tails.some(function(p) p.length == 0)) {
-		if (isBracket) {
-			// cannot end with an opening bracket
-			return [0,0,0];
-		}
 		return [besti, beste, head];
 	}
 	let [nlow, nhigh, np] = largestPrefixGroup(tails, besti, beste, level + 1);
