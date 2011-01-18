@@ -67,18 +67,19 @@ const validators = {
 	}
 };
 
-function History(key, defaultValues) {
+function History(key) {
 	this._key = key;
 	if (key in validators) {
 		this._validator = validators[key]; 
 	}
 	else {
 		this._validator = function() true;
-	}	
+	}
 	this._setPersisting(!pbm.browsingPrivately());
-	if (!this.values.length && !!defaultValues) {
+	if (!this.values.length) {
 		try {
-			this._setValues(parse(defaultValues));
+			let defaultValues = parse(prefs.getExt(this._key + ".default", '[]'));
+			this._setValues(defaultValues);
 		}
 		catch (ex) {
 			Debug.log("Cannot apply default values", ex);
@@ -185,9 +186,9 @@ pbm.registerCallbacks(callbacks);
  * @param key History to get
  * @return
  */
-function getHistory(key, defaultValues) {
+function getHistory(key) {
 	if (!(key in _histories)) {
-		return (_histories[key] = new History(key, defaultValues));
+		return (_histories[key] = new History(key));
 	}
 	return _histories[key];
 }
