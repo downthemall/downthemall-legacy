@@ -201,7 +201,11 @@ function mergePatterns(patterns, low, high, prefix) {
 	// slice the largest group, and chop of the common prefix
 	let lg = patterns.splice(low, high - low).map(function(p) p.substring(pl));
 	// build a prefix pattern
-	let lgp = head + "(?:" + lg.join("|") + ")";
+	let lgp = prefix + "(?:" + lg.map(function(p) {
+		if (p.indexOf('|') == -1)
+			return p;
+		return "(?:" + p + ")";
+	}).join("|") + ")";
 
 	patterns.push(lgp);
 	// need to return sorted as largestPrefixGroup relies on sorting
