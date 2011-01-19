@@ -65,7 +65,7 @@ Observers.prototype = {
 		let obs = this._obs;
 		for (let o = 0, e = obs.length; o < e; o++) {
 			obs[o].observe.call(obs[o]);
-		}		
+		}
 	},
 	start: function() {
 		if (!this._timer) {
@@ -111,10 +111,10 @@ ByteBucket.prototype = {
 		nv = Math.round(nv);
 		if (nv == 0) {
 			nv = -1;
-		}		
+		}
 		this._available = this._byteRate = nv;
 		this._obs.notify();
-		
+
 		if (nv > 0 && !this._timer) {
 			this._timer = Timers.createRepeating(100, this.observe, this, false, true);
 			this._obs.start();
@@ -125,7 +125,7 @@ ByteBucket.prototype = {
 			this._timer = null;
 			this._obs.stop();
 		}
-		
+
 		return this._byteRate;
 	},
 	get burstFactor() {
@@ -135,7 +135,7 @@ ByteBucket.prototype = {
 		if (!isFinite(nv) || nv <= 1) {
 			throw new Error("Invalid burst factor");
 		}
-		return this._burstFactor = nv; 
+		return this._burstFactor = nv;
 	},
 	requestBytes: function(bytes) {
 		if (this._available < 0) {
@@ -180,7 +180,7 @@ ByteBucketTee.prototype = {
 		get byteRate() {
 			return this._buckets
 				.map(function(e) e.byteRange)
-				.reduce(function(p, c) c > 0 ? Math.min(p,c) : p); 
+				.reduce(function(p, c) c > 0 ? Math.min(p,c) : p);
 		},
 		get burstFactor() {
 			return this._buckets

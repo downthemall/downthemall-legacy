@@ -38,10 +38,10 @@
 
 addEventListener('load', function() {
 	removeEventListener('load', arguments.callee, true);
-	
+
 	const DTA = {};
 	Components.utils.import('resource://dta/api.jsm', DTA);
-	
+
 	function $() {
 		if (arguments.length == 1) {
 			return document.getElementById(arguments[0]);
@@ -58,27 +58,27 @@ addEventListener('load', function() {
 			}
 		}
 		return elements;
-	}	
-	
+	}
+
 	function revertUI() {
 		['open'].forEach(
 			function(e) {
 				e = $(e);
-				e.parentNode.collapsed = true;		
+				e.parentNode.collapsed = true;
 				e.disabled = true;
 			}
 		);
 		$('normalBox').collapsed = false;
 		var nodes = $('normalBox')
 			.getElementsByTagName('separator');
-		
+
 		for (var i = 0; i < nodes.length; ++i) {
 			nodes[i].collapsed = true;
-		} 
+		}
 
 		$('basicBox').collapsed = true;
 		$('normalBox').collapsed = false;
-		
+
 		// take care of FlashGot... for now.
 		// need to negotiate with the author (and possible other extension authors)
 		try {
@@ -88,23 +88,23 @@ addEventListener('load', function() {
 		catch (ex) {
 			// no op
 		}
-		
+
 		// Workaround for bug 371508
 		try {
-			window.sizeToContent();	
+			window.sizeToContent();
 		}
 		catch (ex) {
 			DTA.Debug.log("sizeToContent Bug: 371508", ex);
 			try {
 				var btn = document.documentElement.getButton('accept');
-				window.innerHeight = btn.boxObject.y + 10; 
+				window.innerHeight = btn.boxObject.y + 10;
 			}
 			catch (ex) {
 				DTA.Debug.log("setting height failed", ex);
-			}		
-		}				
+			}
+		}
 	}
-	
+
 	function download(turbo) {
 		ddDirectory.save();
 		DTA.saveSingleLink(window, turbo, url, referrer, "");
@@ -132,23 +132,23 @@ addEventListener('load', function() {
 	if (doRevert) {
 		revertUI();
 	}
-	
+
 	if (!doOverlay) {
 		// we do not actually overlay!
 		// but we revert to help FlashGot ;)
 		return;
 	}
-	
+
 	const normal = $('downthemall');
 	const turbo = $('turbodta');
 	const turboExec = $('turbodtaexec');
 	const mode = $('mode');
 	const remember = $("rememberChoice");
 	const settingsChange = $("settingsChange");
-	
+
 	$('downthemallcontainer').collapsed = false;
 	normal.disabled = false;
-	
+
 	let url = dialog.mLauncher.source;
 	let referrer;
 	try {
@@ -157,7 +157,7 @@ addEventListener('load', function() {
 	catch(ex) {
 		referrer = url.spec;
 	}
-	
+
 	let ml = DTA.getLinkPrintMetalink(url);
 	url = new DTA.URL(ml ? ml : url);
 
@@ -167,7 +167,7 @@ addEventListener('load', function() {
 		turbo.disabled = false;
 		turboExec.disabled = false;
 	}
-	
+
 	try {
 		switch (DTA.Preferences.getExt('saveasmode', 0)) {
 			case 1:
@@ -214,12 +214,12 @@ addEventListener('load', function() {
 			else {
 				DTA.Preferences.setExt("saveasmode", 0);
 			}
-			download(selMode == turbo);			
+			download(selMode == turbo);
 			evt.stopPropagation();
 			evt.preventDefault();
 			return;
 		}
 		DTA.Preferences.setExt("saveasmode", 0);
 	}, false); // dialogaccept
-	
+
 }, true); // load

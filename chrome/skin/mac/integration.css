@@ -12,7 +12,7 @@
 }
 #dtaToolsManager {
 	list-style-image: url(chrome://dta/skin/toolbarbuttons/manager.png);
-	-moz-image-region: auto;	
+	-moz-image-region: auto;
 }
 #dtaToolsPrefs {
 	list-style-image: url(chrome://dta/skin/toolbarbuttons/prefs.png);

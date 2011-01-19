@@ -55,7 +55,7 @@ const MetaSelect = {
  	},
  	load: function ML_load() {
  		$('cancelbutton').label = _('button-cancel');
- 		
+
  		try {
  			let downloads = window.arguments[0];
  			if (downloads.length) {
@@ -93,16 +93,16 @@ const MetaSelect = {
 				canvas.width = canvas.clientWidth;
 				canvas.height = canvas.clientHeight;
 				let ctx = canvas.getContext('2d');
-				
+
 				let w = logo.naturalWidth;
 				let h = logo.naturalHeight;
 				let d = Math.max(canvas.width, w, h);
-				
+
 				if (d != canvas.width) {
 					ctx.scale(canvas.width / d, canvas.height / d);
 				}
-				
-				ctx.drawImage(logo, (d - w) /2, (d - h) / 2);								
+
+				ctx.drawImage(logo, (d - w) /2, (d - h) / 2);
 			}
 			catch (ex) {
 				Debug.log("Cannot load logo", ex);
@@ -116,7 +116,7 @@ const MetaSelect = {
  		if (info.publisher) {
  			let e = $('publisher');
  			e.value = info.publisher[0];
- 			e.link = info.publisher[1]; 			
+ 			e.link = info.publisher[1];
  		}
  		else {
  			$('boxPublisher').hidden = true;
@@ -124,11 +124,11 @@ const MetaSelect = {
  		if (info.license) {
  			let e = $('license');
  			e.value = info.license[0];
- 			e.link = info.license[1]; 			
+ 			e.link = info.license[1];
  		}
  		else {
  			$('boxLicense').hidden = true;
- 		} 		
+ 		}
  	},
 	browseDir: function() {
 		// get a new directory
@@ -140,18 +140,18 @@ const MetaSelect = {
 		if (newDir) {
 			$('directory').value = newDir;
 		}
-	}, 	
+	},
 	download: function ML_download(start) {
 		let [notifications, directory, mask] = $('notifications', 'directory', 'renaming');
 		notifications.removeAllNotifications(true);
-		
+
 		function err(msg) {
 			notifications.appendNotification(msg, 0, null, notifications.PRIORITY_CRITICAL_MEDIUM, null);
 		}
-		
+
 		directory.value = directory.value.trim();
 		mask.value = mask.value.trim();
-		
+
 		if (!mask.value) {
 			err(_('alertmask'));
 			return false;
@@ -160,13 +160,13 @@ const MetaSelect = {
 			err(_(directory.value ? 'alertinvaliddir' : 'alertnodir'));
 			return false;
 		}
-		
+
 		let selected = false;
 		Array.forEach(
 			document.getElementsByTagName('richlistitem'),
 			function(n) {
 				n.download.dirSave = directory.value;
-				n.download.mask = mask.value;		
+				n.download.mask = mask.value;
 				n.download.selected = n.checked;
 				selected |= n.checked;
 			},

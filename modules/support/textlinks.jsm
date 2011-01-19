@@ -43,7 +43,7 @@ const Exception = Components.Exception;
 
 // Link matcher
 const regLinks = /\b(?:(?:h(?:x+|tt)?ps?|ftp):\/\/|www\d?\.)[\d\w.-]+\.\w+\.?(?:\/[\d\w+&@#\/%?=~_|!:,.;\(\)-]*)?/ig;
-// Match more exactly or more than 3 dots. Links are then assumed "cropped" and will be ignored. 
+// Match more exactly or more than 3 dots. Links are then assumed "cropped" and will be ignored.
 const regShortened = /\.{3,}/;
 // http cleanup
 const regHttp = /^h(?:x+|tt)?p(s?)/i;
@@ -56,13 +56,13 @@ const regDTrim = /[<>._#-]+$/;
 
 /**
  * Parses a text looking for any URLs with supported protocols
- * 
+ *
  * @param text (string) Text to parse
- * @param fakeLinks (boolean) Whether an array of plain text links will be returned or an array of FakeLinks 
- * @return (array) results 
+ * @param fakeLinks (boolean) Whether an array of plain text links will be returned or an array of FakeLinks
+ * @return (array) results
  */
 function getTextLinks(text, fakeLinks) {
-	return Array.map( 
+	return Array.map(
 		text.match(regLinks),
 		function(e) {
 			try {
@@ -87,8 +87,8 @@ function getTextLinks(text, fakeLinks) {
 
 /**
  * Minimal Link representation (partially) implementing DOMElement
- * 
- * @param url (string) URL (href) of the Links 
+ *
+ * @param url (string) URL (href) of the Links
  * @param title (string) Optional. Title/description
  * @see DOMElement
  */

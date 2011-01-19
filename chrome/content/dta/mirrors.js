@@ -100,7 +100,7 @@ function accept() {
 
 function select() {
 	let removeDisabled = !mirrors.selectedCount || (mirrors.itemCount - mirrors.selectedCount) < 1;
-	$('cmdRemove', 'mirrorRemove').forEach(function(e) e.setAttribute("disabled", removeDisabled));	
+	$('cmdRemove', 'mirrorRemove').forEach(function(e) e.setAttribute("disabled", removeDisabled));
 }
 
 function changingMirror(event) {
@@ -127,7 +127,7 @@ function addMirror() {
 			.createInstance(Ci.nsITransferable);
 		trans.addDataFlavor("text/unicode");
 		clip.getData(trans, clip.kGlobalClipboard);
-		    					
+
 		let str = {}, length = {};
 		trans.getTransferData(
 			"text/unicode",
@@ -167,14 +167,14 @@ function removeMirrors() {
 
 function checkMirrors() {
 	let button = $('mirrorCheck');
-	
+
 	let pending = [];
 	let running = 0;
 	let bad = [];
 	let requests = {};
 	let good = {};
 	let numGoodLengths = 0;
-	
+
 	function addGood(cl, m) {
 		if (!(cl in good)) {
 			good[cl] = [];
@@ -183,7 +183,7 @@ function checkMirrors() {
 		good[cl].push(m);
 		m._cl = cl;
 	}
-	
+
 	function Callbacks(req) {
 		this._old = req.channel.notificationCallbacks;
 		req.channel.notificationCallbacks = this;
@@ -200,7 +200,7 @@ function checkMirrors() {
 			throw Components.results.NS_ERROR_NO_INTERFACE;
 		}
 	};
-	
+
 	function makeRequest(m) {
 		let req = new XMLHttpRequest();
 		req.mirror = m;
@@ -217,7 +217,7 @@ function checkMirrors() {
 			finishRequest(req);
 		}
 	}
-	
+
 	function finishRequest(req, error) {
 		let m = req.mirror;
 		let state = 'bad';
@@ -248,7 +248,7 @@ function checkMirrors() {
 			Debug.log("Check Request failed", ex);
 		}
 		m.setAttribute("state", state);
-		m.setAttribute("error", error);		
+		m.setAttribute("error", error);
 		if (state == 'bad') {
 			bad.push(m);
 		}
@@ -301,7 +301,7 @@ function checkMirrors() {
 			finishRequest(req);
 		}
 	}
-	
+
 	for (let m in allMirrors) {
 		if (m.hasAttribute('state')) {
 			if (m.getAttribute('state') == 'bad') {

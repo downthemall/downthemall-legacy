@@ -73,7 +73,7 @@ TrayHandler.prototype = {
 						evt.preventDefault();
 						return false;
 					}
-					return _oc.apply(Dialog, arguments); 
+					return _oc.apply(Dialog, arguments);
 				}
 			}
 			catch (ex) {
@@ -108,14 +108,14 @@ TrayHandler.prototype = {
 			"context",
 			"",
 			"bottomleft"
-		);		
+		);
 	}
 };
 TrayHandler = new TrayHandler();
 
 const Prefs = {
 	tempLocation: null,
-	
+
 	mappings: [
 		['removeCompleted', true],
 		['removeAborted', false],
@@ -181,29 +181,29 @@ const Prefs = {
 			}
 			this[key] = Preferences.getExt(pref, def);
 		}
-		
+
 		let perms = Prefs.permissions;
 		if (perms & 0600) {
 			perms |= 0100;
 		}
 		if (perms & 0060) {
 			perms |= 0010;
-		}				
+		}
 		if (perms & 0006) {
 			perms |= 0001;
 		}
-		this.dirPermissions = perms;		
+		this.dirPermissions = perms;
 
 		if (!prefName || prefName == 'extensions.dta.saveTemp' || prefName == 'extensions.dta.tempLocation') {
 			this._constructTemp();
 		}
 		// Make this KB
 		this.loadEndFirst *= 1024;
-		
+
 		if (!prefName || prefName == PREF_CONN) {
 			let conns = (this.maxInProgress * this.maxChunks) + 2;
 			let cur = Preferences.get(PREF_CONN, conns);
-						
+
 			if (conns != cur) {
 				Preferences.setExt(PREF_CONN, cur);
 			}
@@ -217,7 +217,7 @@ const Prefs = {
 		else {
 			TrayHandler.unwatch();
 		}
-		
+
 		if (Preferences.getExt('exposeInUA', true)) {
 			RequestManipulation.registerHttp('dtaua', /./, RequestManipulation.amendUA);
 		}
@@ -226,7 +226,7 @@ const Prefs = {
 		}
 	},
 	_constructTemp: function() {
-		this.tempLocation = null;		
+		this.tempLocation = null;
 		if (!Preferences.getExt("saveTemp", true)) {
 			return;
 		}
@@ -245,7 +245,7 @@ const Prefs = {
 			if (!(this.tempLocation instanceof Ci.nsIFile)) {
 				throw new Exception("invalid value");
 			}
-			
+
 			let tl = this.tempLocation.clone();
 			try {
 				if (!tl.exists()) {
@@ -331,7 +331,7 @@ const Tooltip = {
 			'timeRemaining',
 			'timeElapsed'
 		).forEach(function(e) this[e.id] = e, this);
-	},		 
+	},
 	start: function(d) {
 		this._current = d;
 		this._mustDraw = true;
@@ -352,13 +352,13 @@ const Tooltip = {
 				if (w == canvas.width && h == canvas.height) {
 					continue;
 				}
-				canvas.width = w; 
+				canvas.width = w;
 				canvas.height = h;
 				Debug.log("set " + canvas.id + " to " + w + "/" + h);
 				mr = true;
 			}
 			catch (ex) {
-				Timers.createOneshot(25, this.initUpdate, this);				
+				Timers.createOneshot(25, this.initUpdate, this);
 				return;
 			}
 		}
@@ -375,7 +375,7 @@ const Tooltip = {
 			Timers.killTimer(this._timer);
 			delete this._timer;
 		}
-	},	
+	},
 	update: function() {
 		let file = this._current;
 		if (!file) {
@@ -436,7 +436,7 @@ const Tooltip = {
 		}
 		catch (ex) {
 			Debug.log("Tooltip.updateMetrics: ", ex);
-		}	
+		}
 	},
 	_usFile: null,
 	_usUpdate: -1,
@@ -451,33 +451,33 @@ const Tooltip = {
 			this._usState = file.state;
 			this._usUpdate = file.speeds.lastUpdate;
 			this._usBytes = file.speeds.lastBytes;
-			
+
 			// we need to take care about with/height
 			let canvas = this.speedCanvas;
 			let w = canvas.width;
 			let h = canvas.height;
 			let ctx = canvas.getContext("2d");
 			--w; --h;
-			
+
 			let boxFillStyle = this._createInnerShadowGradient(ctx, h, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
 			let boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
 			let graphFillStyle = this._createVerticalGradient(ctx, h - 7, "#FF8B00", "#FFDF38");
-			
+
 			ctx.clearRect(0, 0, w, h);
 			ctx.save();
 			ctx.translate(.5, .5);
-			
+
 			ctx.lineWidth = 1;
 			ctx.strokeStyle = boxStrokeStyle;
 			ctx.fillStyle = boxFillStyle;
-				
+
 			// draw container chunks back
 			ctx.fillStyle = boxFillStyle;
 			this._makeRoundedRectPath(ctx, 0, 0, w, h, 5);
 			ctx.fill();
-	
+
 			let step = w / SPEED_COUNT;
-	
+
 			if (file.speeds.length > 1) {
 				let maxH, minH;
 				maxH = minH = file.speeds.first;
@@ -508,25 +508,25 @@ const Tooltip = {
 						ctx.fillStyle = pass.f;
 						let y = h + pass.y;
 						let x = pass.x + 0.5;
-								
+
 						ctx.beginPath();
 						ctx.moveTo(x, y);
-								
+
 						y -= speeds[0];
 						ctx.lineTo(x, y);
-								
+
 						let slope = (speeds[1] - speeds[0]);
 						x += step * .7;
 						y -= slope * .7;
 						ctx.lineTo(x, y);
-								
+
 						for (let j = 1, e = speeds.length - 1; j < e; ++j) {
 							y -= slope *.3;
 							slope = (speeds[j+1] - speeds[j]);
 							y -= slope * .3;
-							
+
 							ctx.quadraticCurveTo(step * j, h + pass.y - speeds[j], (x + step * .6), y);
-	
+
 							x += step;
 							y -= slope * .4;
 
@@ -535,10 +535,10 @@ const Tooltip = {
 						x += step * .3;
 						y -= slope * .3;
 						ctx.lineTo(x, y);
-	
+
 						ctx.lineTo(x, h);
 						ctx.fill();
-								
+
 						if (pass.s) {
 							ctx.strokeStyle = pass.s;
 							ctx.stroke();
@@ -549,7 +549,7 @@ const Tooltip = {
 			}
 			this._makeRoundedRectPath(ctx, 0, 0, w, h, 3);
 			ctx.stroke();
-				
+
 			ctx.restore();
 		}
 		catch(ex) {
@@ -568,33 +568,33 @@ const Tooltip = {
 			this._ucFile = file;
 			this._ucState = file.state;
 			this._ucDim = file.dimensionString;
-			
+
 			let canvas = this.chunkCanvas;
 			let width = canvas.width;
 			let height = canvas.height;
 			let ctx = canvas.getContext("2d");
 			--width; --height;
-			
+
 			let cheight = height - 15;
-	
+
 			// Create gradients
 			let chunkFillStyle = this._createVerticalGradient(ctx, cheight, "#A7D533", "#D3F047");
 			let boxFillStyle = this._createInnerShadowGradient(ctx, cheight, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
 			let boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
 			let partialBoxFillStyle = this._createInnerShadowGradient(ctx, 8, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
-	
+
 			// clear all
 			ctx.clearRect(0, 0, width, height);
 			ctx.save();
 			ctx.translate(.5, .5);
-	
+
 			// draw container chunks back
 			ctx.lineWidth = 1;
 			ctx.strokeStyle = boxStrokeStyle;
 			ctx.fillStyle = boxFillStyle;
 			this._makeRoundedRectPath(ctx, 0, 0, width, cheight, 5);
 			ctx.fill();
-	
+
 			let b = [];
 			if (file.is(COMPLETE)) {
 				b.push({
@@ -615,17 +615,17 @@ const Tooltip = {
 					}
 				).sort(function(a, b) { return b.s - a.s; });
 			}
-	
+
 			ctx.save();
 			ctx.clip();
-	
+
 			var passes = [
 				{ x:0, f: this._createInnerShadowGradient(ctx, cheight, "#AFA259", "#E8D675", "#F2E17E", "#F5F1B8") },
 				{ x:1, f: this._createInnerShadowGradient(ctx, cheight, "#9A8F4E", "#B0A359", "#B3A75D", "#BAB78B") },
 				{ x:2, f: this._createInnerShadowGradient(ctx, cheight, "#8E8746", "#B0A359", "#8E8746", "#CACB96") },
 				{ x:3, f: chunkFillStyle, s:chunkFillStyle }
 			];
-			
+
 			for each (var chunk in b) {
 				for each (var pass in passes) {
 					ctx.fillStyle = pass.f;
@@ -639,17 +639,17 @@ const Tooltip = {
 				}
 			}
 			ctx.restore();
-	
+
 			// draw container chunks border
 			this._makeRoundedRectPath(ctx, 0, 0, width, cheight, 5);
 			ctx.stroke();
-	
+
 			// draw progress back
 			ctx.translate(0, cheight + 1);
 			ctx.fillStyle = partialBoxFillStyle;
 			this._makeRoundedRectPath(ctx, 0, 0, width, 8, 3);
 			ctx.fill();
-	
+
 			// draw progress
 			if (file.totalSize > 0) {
 				ctx.fillStyle = this._createVerticalGradient(ctx, 8, "#5BB136", "#A6D73E");
@@ -661,11 +661,11 @@ const Tooltip = {
 				this._makeRoundedRectPath(ctx, 0, 0, width, 8, 3);
 				ctx.fill();
 			}
-	
+
 			// draw progress border
 			this._makeRoundedRectPath(ctx, 0, 0, width, 8, 3);
 			ctx.stroke();
-	
+
 			ctx.restore();
 		}
 		catch(ex) {

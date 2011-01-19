@@ -43,7 +43,7 @@
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
 	%commonDTD;
 	<!ENTITY % metalinkerDTD SYSTEM "chrome://dta/locale/metalinker.dtd">
-	%metalinkerDTD;	
+	%metalinkerDTD;
 	<!ENTITY % selectDTD SYSTEM "chrome://dta/locale/select.dtd">
 	%selectDTD;
 	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">

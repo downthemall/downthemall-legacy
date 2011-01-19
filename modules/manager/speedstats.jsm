@@ -114,7 +114,7 @@ SpeedStats.prototype = {
 			if (this._speeds.length > this._maxSpeeds) {
 				this._speeds.shift();
 			}
-			
+
 			this._avg = this._speeds.slice(-10).reduce(function(p, c) (0.8 * p) + (0.2 * c));
 		}
 		this._lastTime = time;

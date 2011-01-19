@@ -55,7 +55,7 @@ extendString(String);
 
 function FileExtensionSheet(window) {
 	this._windowUtils = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowUtils);
-	
+
 	let document = window.document;
 	this._stylesheet = null;
 	try {
@@ -91,7 +91,7 @@ FileExtensionSheet.prototype = {
 		let entry = this._entries[key];
 		if (!entry) {
 			entry = Atoms.getAtom("icon" + newUUIDString().replace(/\W/g, ''));
-			let rule = 'treechildren::-moz-tree-image(iconic,' 
+			let rule = 'treechildren::-moz-tree-image(iconic,'
 				+ entry.toString()
 				+ ') { list-style-image: url('
 				+ getIcon('file.' + ext, metalink || ext == 'metalink')

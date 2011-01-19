@@ -77,7 +77,7 @@ const prefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBran
 /**
  * Gets a preference (based on root)
  * @param key (string) Key of the preference
- * @param defaultValue (mixed) Default value to be returned if preference does not exist 
+ * @param defaultValue (mixed) Default value to be returned if preference does not exist
  * @return (mixed) Value of the preference or defaultValue
  */
 function get(key, defaultValue){
@@ -97,18 +97,18 @@ function get(key, defaultValue){
 		if (rv != undefined) {
 			return rv;
 		}
-	} 
+	}
 	catch (ex) {
 		// no-op
 	}
-	
+
 	return defaultValue;
 }
 
 /**
  * Gets a preference (based on extension branch)
  * @param key (string) Key of the preference
- * @param defaultValue (mixed) Default value to be returned if preference does not exist 
+ * @param defaultValue (mixed) Default value to be returned if preference does not exist
  * @return (mixed) Value of the preference or defaultValue
  */
 function getExt(key, defaultValue) {
@@ -116,9 +116,9 @@ function getExt(key, defaultValue) {
 }
 
 /**
- * Gets a preference branch 
+ * Gets a preference branch
  * @param branch (string) Branch to get
- * @return (nsIPrefBranch) Requested branch 
+ * @return (nsIPrefBranch) Requested branch
  */
 function getBranch(branch) {
 	return prefs.getBranch(branch);
@@ -154,7 +154,7 @@ function setExt(key, value){
 function getMultiByte(key, defaultValue){
 	try {
 		return prefs.getComplexValue(key, Ci.nsISupportsString).data;
-	} 
+	}
 	catch (ex) {
 		// no-op
 	}
@@ -308,12 +308,12 @@ function makeObserver(obj) {
 	catch (ex) {
 		// fall-through
 	}
-	
+
 	// Need to convert/encapsulate object
-	
+
 	// Store old QI
 	let __QueryInterface = obj.QueryInterface;
-	
+
 	// Rewrite QI to support required interfaces
 	obj.QueryInterface = function(iid) {
 		if (
@@ -329,14 +329,14 @@ function makeObserver(obj) {
 		}
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	};
-	
+
 	// nsiWeakReference
 	obj.QueryReferent = function(iid) {
 		return obj.QueryInterface(iid);
 	};
-	
+
 	// nsiSupportsWeakReference
 	obj.GetWeakReference = function() {
 		return obj;
-	};	
+	};
 }

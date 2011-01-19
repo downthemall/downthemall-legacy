@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
 const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init');
 
 lazyModule(this, 'ImportExport', 'resource://dta/manager/imex.jsm');
@@ -46,31 +46,31 @@ const Tree = {
 		this._speedLimitList = $('perDownloadSpeedLimitList');
 		this._matcher = new this.Matcher();
 		this._matcherPopup = $('matcher');
-		
+
 		addEventListener('blur', function() Tree.stopTip(), false);
-		
+
 		let tp = this;
 		this.elem.addEventListener('dblclick', function() FileHandling.openFile(), false);
 		this.elem.addEventListener('select', function() tp.selectionChanged(), false);
 		this.elem.addEventListener('click', function(evt) { if (evt.button == 1) tp.showInfo(); }, false);
-		
+
 		let dtree = $('downloadList');
 		dtree.addEventListener('mousemove', function(event) tp.hovering(event), false);
 		dtree.addEventListener('draggesture', function(event) nsDragAndDrop.startDrag(event, tp), false);
-		
+
 		this._matcherPopup.addEventListener('command', function(event) tp.handleMatcherPopup(event), true);
-		
+
 		$('popup').addEventListener('popupshowing', function(event) tp.onPopupShowing(event), true);
 		$('search').addEventListener('search', function(event) tp.setFilter(event.target.value), true);
-		
+
 		ServiceGetter(this, "_ds", "@mozilla.org/widget/dragservice;1", "nsIDragService");
 		ServiceGetter(this, "_ww", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 		ServiceGetter(this, "_as", "@mozilla.org/atom-service;1", "nsIAtomService");
-		
+
 		for each (let e in ['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined', 'pausedAutoretrying', 'verified', 'progress']) {
 			this['_' + e] = this._as.getAtom(e);
 		}
-		this.elem.view = this;	
+		this.elem.view = this;
 		this.assembleMenus();
 		this.refreshTools();
 	},
@@ -78,7 +78,7 @@ const Tree = {
 		let cascadeMirrors = this.current.urlManager.length < 2;
 		$('mirrors', 'mirrors-sep').forEach(function(e) e.hidden = cascadeMirrors);
 		$('mirrors-cascaded', 'mirrors-cascaded-sep').forEach(function(e) e.hidden = !cascadeMirrors);
-		
+
 		this.showSpeedLimitList(event);
 	},
 	assembleMenus: function() {
@@ -103,7 +103,7 @@ const Tree = {
 					mi.style.MozImageRegion = 'auto';
 				}
 				else {
-					mi.setAttribute('class', 'menuitem-iconic menuitem-filter');					
+					mi.setAttribute('class', 'menuitem-iconic menuitem-filter');
 				}
 				mi.addEventListener('command', function() Tree.removeByFilter(filter, id), true);
 				popup.appendChild(mi);
@@ -115,7 +115,7 @@ const Tree = {
 		let popup = this._matcherPopup;
 		let element = popup.element;
 		let target = event.originalTarget;
-		
+
 		if (target.id == 'clearmatcher') {
 			element.removeAttribute('params');
 			this._matcher.removeMatcher(matcher);
@@ -146,7 +146,7 @@ const Tree = {
 				if (newParams != params) {
 					this._matcher.removeMatcher(matcher);
 					this.doFilter();
-				}					
+				}
 			}
 			return;
 		}
@@ -165,7 +165,7 @@ const Tree = {
 				active = params.split(',');
 			}
 			let param = target.getAttribute('param');
-			
+
 			// remove other radio params for this name
 			if (target.getAttribute('type') == 'radio') {
 				// find other params for name
@@ -182,7 +182,7 @@ const Tree = {
 			}
 			let idx = active.indexOf(param);
 			if (idx === -1) {
-				active.push(param);					
+				active.push(param);
 			}
 			else {
 				active.splice(idx, 1);
@@ -202,7 +202,7 @@ const Tree = {
 				if (newParams != params) {
 					this._matcher.removeMatcher(matcher);
 					this.doFilter();
-				}					
+				}
 			}
 			return;
 		}
@@ -242,7 +242,7 @@ const Tree = {
 		)) {
 			return;
 		}
-		
+
 		let cmpFun = (function () {
 			switch (id) {
 			case 'task':
@@ -294,9 +294,9 @@ const Tree = {
 			else {
 				this._filtered = this._downloads;
 			}
-			this._filtered.forEach(function(e, i) e.filteredPosition = i);		
+			this._filtered.forEach(function(e, i) e.filteredPosition = i);
 			this._box.rowCountChanged(0, this.rowCount);
-	
+
 			// restore selection
 			// (with range merging)
 			for (let i = 0; i < selectedIds.length; i++) {
@@ -377,7 +377,7 @@ const Tree = {
 				return 2; // PROGRESS_UNDETERMINED;
 			}
 			if (d.is(RUNNING) && !d.totalSize) {
-				return 2; // PROGRESS_UNDETERMINED;			
+				return 2; // PROGRESS_UNDETERMINED;
 			}
 			return 1; // PROGRESS_NORMAL;
 		}
@@ -389,7 +389,7 @@ const Tree = {
 			let d = this._filtered[idx];
 			if (!d) return 0;
 			if (d.isOf(CANCELED, COMPLETE)) {
-				return 100; 
+				return 100;
 			}
 			return d.progress || 0;
 		}
@@ -423,7 +423,7 @@ const Tree = {
 				return;
 			}
 		}
-		else if (cidx == 0) { 
+		else if (cidx == 0) {
 			prop.AppendElement(this._iconic);
 			prop.AppendElement(this._filtered[idx].iconAtom);
 		}
@@ -482,7 +482,7 @@ const Tree = {
 	selectionChanged: function T_selectionChanged() {
 		this.refreshTools();
 	},
-	
+
 	onDragStart: function T_onDragStart(evt, transferData, dragAction) {
 		for (qi in this.selected) {
 			let item = new TransferData();
@@ -491,9 +491,9 @@ const Tree = {
 				transferData.data = item;
 			}
 			catch (ex) {
-				Debug.log("dnd failure", ex);	
+				Debug.log("dnd failure", ex);
 			}
-			return;			
+			return;
 		}
 	},
 	onDragOver: function T_onDragOver(aEvent, aFlavor, aDragSession) {
@@ -518,7 +518,7 @@ const Tree = {
 				}
 				// translate row from filtered list to full list
 				let realRow = this._filtered[row].position;
-				
+
 				/* first we remove the dragged items from the list
 				 * then we reinsert them
 				 * if the dragged item is location before the drop position we need to adjust it (as we remove the item first)
@@ -532,7 +532,7 @@ const Tree = {
 							--row;
 						}
 						this._downloads.splice(qi.position, 1);
-						return qi;					
+						return qi;
 					},
 					this
 				);
@@ -550,9 +550,9 @@ const Tree = {
 		}
 		catch (ex) {
 			Debug.log("_dropSelection", ex);
-		}		
+		}
 	},
-	
+
 	_updating: 0,
 	beginUpdate: function T_beginUpdate() {
 		if (++this._updating == 1) {
@@ -591,12 +591,12 @@ const Tree = {
 
 			let pageLength = this._box.getPageLength();
 			if (this.rowCount - fp <= pageLength) {
-				this._box.scrollToRow(this.rowCount - pageLength);	
+				this._box.scrollToRow(this.rowCount - pageLength);
 			}
 			else {
 				this._box.scrollToRow(fp);
 			}
-			return;				
+			return;
 		}
 		// nothing found; do not scroll
 	},
@@ -625,7 +625,7 @@ const Tree = {
 		if (res) {
 			return;
 		}
-		this.remove(this._downloads.filter(function(e) e.urlManager.domain == domain, this), true);		
+		this.remove(this._downloads.filter(function(e) e.urlManager.domain == domain, this), true);
 	},
 	removeByFilter: function T_removeByFilter(filter, id) {
 		let pref = null;
@@ -645,7 +645,7 @@ const Tree = {
 		default:
 			throw new Exception("Invalid access");
 		}
-		
+
 		if (Preferences.getExt(pref, true)) {
 			let res = Prompts.confirm(
 				window,
@@ -659,8 +659,8 @@ const Tree = {
 			if (res.button) {
 				return;
 			}
-		}		
-		
+		}
+
 		let downloads = [];
 		for (let d in this.all) {
 			if (!(d.state & mask)) {
@@ -685,7 +685,7 @@ const Tree = {
 		if (!downloads.length) {
 			return;
 		}
-	
+
 		downloads = downloads.sort(function(a, b) b.position - a.position);
 		this.beginUpdate();
 		try {
@@ -733,10 +733,10 @@ const Tree = {
 				this._downloads.splice(d.position, 1);
 				this._box.rowCountChanged(d.position, -1);
 				last = Math.max(d.position, last);
-				d.remove();						
+				d.remove();
 			}
 			QueueStore.endUpdate();
-			this.endUpdate();	
+			this.endUpdate();
 			if (delta == this._downloads.length) {
 				return;
 			}
@@ -763,11 +763,11 @@ const Tree = {
 		let known = {};
 		let dupes = [];
 		for (let d in this.all) {
-			let url = d.urlManager.url.spec; 
+			let url = d.urlManager.url.spec;
 			if (url in known) {
 				if (d.isOf(COMPLETE, FINISHING)) {
 					continue;
-				}				
+				}
 				dupes.push(d);
 			}
 			else {
@@ -824,9 +824,9 @@ const Tree = {
 			let res = Prompts.confirm(
 					window,
 					_('canceltitle'),
-					_(many ? 'cancelmanytext' : 'canceltext' ), 
-					_(many ? 'docancelmany' : 'docancel'), 
-					_('dontcancel'), 
+					_(many ? 'cancelmanytext' : 'canceltext' ),
+					_(many ? 'docancelmany' : 'docancel'),
+					_('dontcancel'),
 					null, 1, false, _('removecheck'));
 			if (res.checked) {
 				Preferences.setExt('confirmcancel', false);
@@ -884,7 +884,7 @@ const Tree = {
 		if (mirrors.length) {
 			this.current.replaceMirrors(mirrors);
 			Debug.log("New mirrors set " + mirrors);
-		}		
+		}
 	},
 	export: function T_export() {
 		try {
@@ -893,18 +893,18 @@ const Tree = {
 			fp.appendFilter(_('filtermetalink'), '*.metalink');
 			fp.defaultExtension = "metalink";
 			fp.filterIndex = 2;
-			
+
 			let rv = fp.show();
 			if (rv == Ci.nsIFilePicker.returnOK || rv == Ci.nsIFilePicker.returnReplace) {
 				switch (fp.filterIndex) {
 					case 0: ImportExport.exportToHtmlFile(this.selected, document, fp.file, Prefs.permissions); return;
 					case 1: ImportExport.exportToTextFile(this.selected, fp.file, Prefs.permissions); return;
 					case 2: ImportExport.exportToMetalinkFile(this.selected, document, fp.file, Prefs.permissions); return;
-				} 
+				}
 			}
 		}
 		catch (ex) {
-			Debug.log("Cannot export downloads", ex);		
+			Debug.log("Cannot export downloads", ex);
 			Prompts.alert(window, _('exporttitle'), _('exportfailed'));
 		}
 	},
@@ -915,7 +915,7 @@ const Tree = {
 			fp.appendFilter(_('filtermetalink'), '*.metalink');
 			fp.defaultExtension = "metalink";
 			fp.filterIndex = 1;
-			
+
 			let rv = fp.show();
 			if (rv == Ci.nsIFilePicker.returnOK) {
 				switch (fp.filterIndex) {
@@ -923,15 +923,15 @@ const Tree = {
 						let links = ImportExport.parseTextFile(fp.file);
 						if (links.length) {
 							DTA.saveLinkArray(window, links, []);
-						}						
+						}
 						return;
 					}
 					case 1: Metalinker.handleFile(fp.file); return;
-				} 
+				}
 			}
 		}
 		catch (ex) {
-			Debug.log("Cannot import downloads", ex);		
+			Debug.log("Cannot import downloads", ex);
 			Prompts.alert(window, _('importtitle'), _('importfailed'));
 		}
 	},
@@ -952,7 +952,7 @@ const Tree = {
 				downloads.push(d);
 			}
 			if (downloads.length) {
-				Dialog.openInfo(downloads);		 
+				Dialog.openInfo(downloads);
 			}
 		}
 		finally {
@@ -982,10 +982,10 @@ const Tree = {
 		$("infoIcon").src = d.largeIcon;
 		$("infoURL").value = d.urlManager.url.spec;
 		$("infoDest").value = d.destinationFile;
-	
-		Tooltip.start(d);			
+
+		Tooltip.start(d);
 		return true;
-	},	
+	},
 	stopTip: function T_stopTip() {
 		Tooltip.stop();
 	},
@@ -995,11 +995,11 @@ const Tree = {
 		}
 		try {
 			let empty = this.current == null;
-				
+
 			let states = {
 				_state: 0,
 				resumable: false,
-				is: function(s) this._state & s,  
+				is: function(s) this._state & s,
 				isOf: QueueItem.prototype.isOf,
 				count: this.selection.count,
 				rows: this.rowCount,
@@ -1015,7 +1015,7 @@ const Tree = {
 			let cur = this.current;
 			states.curFile = (cur && cur.is(COMPLETE) && (new FileFactory(cur.destinationFile)).exists());
 			states.curFolder = (cur && (new FileFactory(cur.destinationPath)).exists());
-							
+
 			function modifySome(items, f) {
 				let disabled;
 				if (empty) {
@@ -1027,24 +1027,24 @@ const Tree = {
 				if (!(items instanceof Array)) {
 					items = [items];
 				}
-				for each (let o in items) { 
+				for each (let o in items) {
 					o.setAttribute('disabled', disabled);
 				}
 			}
 			modifySome($('cmdResume'), function(d) !d.isOf(COMPLETE, RUNNING, QUEUED, FINISHING));
 			modifySome($('cmdPause'), function(d) (d.is(RUNNING) && d.resumable) || d.is(QUEUED));
 			modifySome($('cmdCancel'), function(d) !d.isOf(FINISHING, CANCELED));
-			
+
 			modifySome($('cmdLaunch'), function(d) !!d.curFile);
 			modifySome($('cmdOpenFolder'), function(d) !!d.curFolder);
 			modifySome($('cmdDelete'), function(d) d.is(COMPLETE));
-			
+
 			modifySome($('cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'), function(d) !!d.count);
 			modifySome($('cmdMirrors', 'cmdAddLimits'), function(d) d.count == 1);
-			
+
 			modifySome($('cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'), function(d) d.isOf(QUEUED, RUNNING, PAUSED, CANCELED));
-			modifySome($('cmdMoveTop', 'cmdMoveUp'), function(d) d.min > 0); 
-			modifySome($('cmdMoveDown', 'cmdMoveBottom'), function(d) d.max != d.rows - 1);  
+			modifySome($('cmdMoveTop', 'cmdMoveUp'), function(d) d.min > 0);
+			modifySome($('cmdMoveDown', 'cmdMoveBottom'), function(d) d.max != d.rows - 1);
 		}
 		catch (ex) {
 			Debug.log("rt", ex);
@@ -1140,7 +1140,7 @@ const Tree = {
 		let select = this.selection;
 		try {
 			let ci = {value: -1};
-			this.selection.getRangeAt(0, ci, {});			
+			this.selection.getRangeAt(0, ci, {});
 			if (ci.value > -1 && ci.value < this.rowCount) {
 				return this._filtered[ci.value];
 			}
@@ -1148,7 +1148,7 @@ const Tree = {
 		catch (ex) {
 			// fall-through
 		}
-		return null;		
+		return null;
 	},
 	// get the currently focused item.
 	get focused() {
@@ -1156,7 +1156,7 @@ const Tree = {
 		if (ci > -1 && ci < this.rowCount) {
 			return this._filtered[ci];
 		}
-		return null;		
+		return null;
 	},
 	at: function T_at(idx) {
 		return this._filtered[idx];
@@ -1230,7 +1230,7 @@ const Tree = {
 			this.beginUpdate();
 			let ids;
 			try {
-				ids = this._getSelectedIds(true).map(function(i) this._filtered[i].position, this); 
+				ids = this._getSelectedIds(true).map(function(i) this._filtered[i].position, this);
 				ids.forEach(
 					function(id, idx) {
 						id = id + idx;
@@ -1249,7 +1249,7 @@ const Tree = {
 		}
 		catch (ex) {
 			Debug.log("Mover::top", ex);
-		} 
+		}
 	},
 	bottom: function T_bottom() {
 		try {
@@ -1275,12 +1275,12 @@ const Tree = {
 		}
 		catch (ex) {
 			Debug.log("Mover::bottom", ex);
-		} 
+		}
 	},
 	up: function T_up() {
 		try {
 			if (this._matcher.filtering) {
-				throw Error("not implemented");				
+				throw Error("not implemented");
 			}
 			this.beginUpdate();
 			let ids;
@@ -1305,12 +1305,12 @@ const Tree = {
 		}
 		catch (ex) {
 			Debug.log("Mover::up", ex);
-		}	 
+		}
 	},
 	down: function T_down() {
 		try {
 			if (this._matcher.filtering) {
-				throw Error("not implemented");				
+				throw Error("not implemented");
 			}
 			this.beginUpdate();
 			let ids;
@@ -1339,7 +1339,7 @@ const Tree = {
 		}
 		catch (ex) {
 			Debug.log("Mover::down", ex);
-		}	 
+		}
 	},
 	showSpeedLimitList: function(event) {
 		if (!this.selection.count) {
@@ -1357,7 +1357,7 @@ const Tree = {
 	},
 	changePerDownloadSpeedLimit: function() {
 		let limit = $('perDownloadSpeedLimitList').limit;
-		this.updateSelected(function(d) (d.speedLimit = limit) || true); 
+		this.updateSelected(function(d) (d.speedLimit = limit) || true);
 	}
 };
 module('resource://dta/manager/matcher.jsm', Tree);
@@ -1369,7 +1369,7 @@ const FileHandling = {
  			if (d.is(COMPLETE)) {
  				let f = d.destinationFile;
  				if (SYSTEMSLASH == "\\") {
- 					f = f.toLowerCase();	
+ 					f = f.toLowerCase();
  				}
  				if (!(f in u)) {
  					u[f] = null;
@@ -1403,7 +1403,7 @@ const FileHandling = {
 	},
 	deleteFile: function() {
 		let list = [];
-		
+
 		for (d in this._uniqueList) {
 			let file = new FileFactory(d.destinationFile);
 			if (file.exists()) {

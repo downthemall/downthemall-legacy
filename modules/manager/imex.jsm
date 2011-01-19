@@ -36,7 +36,7 @@
 
 const EXPORTED_SYMBOLS = [
 	"parseTextFile",
-	
+
 	"exportToTextFile",
 	"exportToHtmlFile",
 	"exportToMetalinkFile"
@@ -71,7 +71,7 @@ InstanceGetter(this, "Serializer", "@mozilla.org/xmlextras/xmlserializer;1", "ns
 
 function unique(i) {
 	return i.filter(function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)), {});
-}		
+}
 
 function parseTextFile(aFile) {
 	Debug.log("Parsing text file: " + aFile.spec);
@@ -80,7 +80,7 @@ function parseTextFile(aFile) {
 	let ls = is.QueryInterface(Ci.nsILineInputStream);
 	let line = {};
 	let lines = [];
-	
+
 	function addLine(line) {
 		try {
 			// try to parse the URI and and see if it is of the correct type.
@@ -97,14 +97,14 @@ function parseTextFile(aFile) {
 	addLine(line);
 	is.close();
 	Debug.log("Got lines: " + lines.length);
-	
+
 	let links = [];
 	for each (let l in getTextLinks(lines.join("\n"), false)) {
 		l = IOService.newURI(l, null, null);
 		links.push({
 			url: new DTA.URL(l),
 			referrer: null,
-			description: 'imported from ' + aFile.leafName 
+			description: 'imported from ' + aFile.leafName
 		});
 	}
 	Debug.log("parsed text file, links: " + links.length);
@@ -120,7 +120,7 @@ function exportToTextFile(aDownloads, aFile, aPermissions) {
 			url += '#hash(' + d.hashCollection.full.type + ":" + d.hashCollection.full.sum + ")";
 		}
 		url += "\r\n";
-		cs.writeString(url); 
+		cs.writeString(url);
 	}
 	cs.close();
 	try { fs.close(); } catch (ex) { /* no op */ }
@@ -129,53 +129,53 @@ function exportToTextFile(aDownloads, aFile, aPermissions) {
 function exportToHtmlFile(aDownloads, aDocument, aFile, aPermissions) {
 	// do not localize?!
 	let title = "DownThemAll: exported on " + (new Date).toUTCString();
-	
-	
+
+
 	let doctype = aDocument.implementation.createDocumentType('html', null, null);
 	let document = aDocument.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', doctype);
 	let root = document.documentElement;
-	
+
 	{
 		let head = document.createElement('head');
-		
+
 		let n = document.createElement('title');
 		n.textContent = title;
 		head.appendChild(n);
-		
+
 		n = document.createElement('meta')
 		n.setAttribute('http-equiv', 'content-type');
 		n.setAttribute('content', 'application/xhtml+xml;charset=utf-8');
 		head.appendChild(n);
-		
+
 		n = document.createElement('link');
 		n.setAttribute('rel', 'stylesheet');
 		n.setAttribute('type', 'text/css');
 		n.setAttribute('href', 'chrome://dta-public/skin/exporthtml.css');
 		head.appendChild(n);
-		
+
 		root.appendChild(head);
 	}
 	{
 		let addDesc = function(key, value, element) {
 			let div = document.createElement('div');
 			div.className = 'desc';
-			
+
 			div.appendChild(document.createTextNode(key + ": "));
-			
+
 			let b = document.createElement('strong');
 			b.textContent = value;
 			div.appendChild(b);
-			
-			element.appendChild(div);				
+
+			element.appendChild(div);
 		};
-	
-	
+
+
 		let body = document.createElement('body');
-		
+
 		let n = document.createElement('h1');
 		n.textContent = title;
 		body.appendChild(n);
-		
+
 		let list = document.createElement('ol');
 		for (let d in aDownloads) {
 			let url = d.urlManager.url.spec;
@@ -194,34 +194,34 @@ function exportToHtmlFile(aDownloads, aDocument, aFile, aPermissions) {
 			n.textContent = desc;
 			div.appendChild(n);
 			li.appendChild(div);
-			
+
 			addDesc('URL', d.urlManager.usable, li);
 			if (d.referrer) {
-				addDesc('Referrer', d.referrer.spec, li);				
+				addDesc('Referrer', d.referrer.spec, li);
 			}
 			if (d.hashCollection) {
 				addDesc(d.hashCollection.full.type, d.hashCollection.full.sum.toLowerCase(), li);
-			}					
+			}
 			list.appendChild(li);
-		}			
+		}
 		body.appendChild(list);
-		
+
 		let foot = document.createElement('p');
 		foot.appendChild(document.createTextNode('Exported by '));
 		n = document.createElement('a');
 		n.setAttribute('href', 'http://www.downthemall.net/');
 		n.textContent = 'DownThemAll! ' + Version.VERSION;
 		foot.appendChild(n);
-		body.appendChild(foot);		
-		
+		body.appendChild(foot);
+
 		root.appendChild(body);
 	}
-	
+
 
 	let fs = new FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
 	Serializer.serializeToStream(document, fs, 'utf-8');
-	fs.close();		
-	
+	fs.close();
+
 }
 function exportToMetalinkFile(aDownloads, aDocument, aFile, aPermissions) {
 	let document = aDocument.implementation.createDocument(NS_METALINKER3, 'metalink', null);
@@ -231,14 +231,14 @@ function exportToMetalinkFile(aDownloads, aDocument, aFile, aPermissions) {
 	root.setAttribute('generator', 'DownThemAll!/' + Version.BASE_VERSION);
 	root.setAttributeNS(NS_DTA, 'version', Version.VERSION);
 	root.setAttribute('pubdate', new Date().toUTCString());
-	
+
 	root.appendChild(document.createComment(
 			"metalink as exported by DownThemAll! on "
 			+ Version.APP_NAME + "/" + Version.APP_VERSION
 			+ "\r\nMay contain DownThemAll! specific information in the DownThemAll! namespace: "
 			+ NS_DTA
-			));  
-	
+			));
+
 	let files = document.createElementNS(NS_METALINKER3, 'files');
 	for (let d in aDownloads) {
 		let f = document.createElementNS(NS_METALINKER3, 'file');
@@ -248,12 +248,12 @@ function exportToMetalinkFile(aDownloads, aDocument, aFile, aPermissions) {
 		if (d.referrer) {
 			f.setAttributeNS(NS_DTA, 'referrer', d.referrer.spec);
 		}
-		
+
 		if (d.description) {
 			let n = document.createElementNS(NS_METALINKER3, 'description');
 			n.textContent = d.description;
 			f.appendChild(n);
-		} 
+		}
 		let r = document.createElementNS(NS_METALINKER3, 'resources');
 		for (let u in d.urlManager.all) {
 			let n = document.createElementNS(NS_METALINKER3, 'url');
@@ -274,21 +274,21 @@ function exportToMetalinkFile(aDownloads, aDocument, aFile, aPermissions) {
 			f.appendChild(v);
 		}
 		f.appendChild(r);
-		
+
 		if (d.totalSize > 0) {
 			let s = document.createElementNS(NS_METALINKER3, 'size');
 			s.textContent = d.totalSize;
 			f.appendChild(s);
 		}
-		
+
 		files.appendChild(f);
-		
+
 	}
 	root.appendChild(files);
-	
+
 	let fs = new FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
 	let xml = '<?xml version="1.0"?>\r\n';
 	fs.write(xml, xml.length);
 	Serializer.serializeToStream(document, fs, 'utf-8');
-	fs.close();	
+	fs.close();
 }

@@ -43,7 +43,7 @@
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	>
 	<hbox id="infoBox">
-		<vbox>		
+		<vbox>
 			<image id="infoIcon" />
 		</vbox>
 		<grid id="infoBox" flex="1">
@@ -63,12 +63,12 @@
 				</row>
 			</rows>
 		</grid>
-	</hbox>	
-	
-	<grid id="canvasGrid">	
+	</hbox>
+
+	<grid id="canvasGrid">
 		<columns><column/><column flex="1"/><column/><column flex="1"/></columns>
 		<rows>
-			<separator class="thin"/>		
+			<separator class="thin"/>
 			<stack id="chunkStack" flex="1" align="center">
 				<html:canvas id="chunkCanvas" height="45"/>
 				<label id="infoPercent" />
@@ -88,5 +88,5 @@
 				<label id="speedAverage"/>
 			</row>
 		</rows>
-	</grid>	
+	</grid>
 </overlay>

@@ -54,17 +54,17 @@ const Privacy = {
 			var log = !DTA.getProfileFile('dta_log.txt').exists();
 			$("butShowLog", 'butDelLog', 'butRevealLog')
 				.forEach(function(e) { e.disabled = log; });
-			
+
 			$("butFiltDel").disabled = !DTA.getDropDownValue("filter");
 			$("butFoldDel").disabled = !DTA.getDropDownValue("directory");
 		}
 		catch(ex) {
 			Debug.log("privacyLoad(): ", ex);
 		}
-		
+
 		// delay this assignment, or else we get messed up by the slider c'tor
 		$('history').setAttribute('preference', 'dtahistory');
-		$('dtahistory').updateElements();		
+		$('dtahistory').updateElements();
 	},
 	changedHistory: function() {
 		$('historylabel').value = $('history').value;
@@ -177,7 +177,7 @@ const Interface = {
 const Filters = {
 	_filters: [],
 	_lastRowEdited : -1,
-	
+
 	Observer: {
 		registerObserver: function() {
 			try {
@@ -190,7 +190,7 @@ const Filters = {
 				return false;
 			}
 			return true;
-		},	
+		},
 		// nsIObserver::observe
 		observe : function(subject, topic, prefName) {
 			// filterManager will throw this topic at us.
@@ -205,7 +205,7 @@ const Filters = {
 	load: function() {
 		this._elem = $("filterTable");
 		this._elem.view = this;
-		
+
 		this.Observer.registerObserver();
 		this.reloadFilters();
 	},
@@ -215,7 +215,7 @@ const Filters = {
 			// i'm saving the old filters positions and the selected row for a later use
 			var old = this._filters.map(function(f) { return f.id; } );
 			var index = this.current;
-			
+
 			// let's get the new filters
 			this._box.rowCountChanged(0, -this.rowCount);
 			this._filters = [];
@@ -224,7 +224,7 @@ const Filters = {
 				this._filters.push(filter);
 			}
 			this._box.rowCountChanged(0, this.rowCount);
-			
+
 			// if we added a new filter
 			if (old.length < this._filters.length) {
 				this._filters.some(
@@ -259,9 +259,9 @@ const Filters = {
 	onFilterEdit: function() {
 		let filter = this.filter;
 		let newType = ($("filterText").checked ? LINK_FILTER : 0) | ($("filterImage").checked ? IMAGE_FILTER : 0);
-		
+
 		if (
-			$("filterLabel").value != filter.label 
+			$("filterLabel").value != filter.label
 			|| $("filterExpression").value != filter.expression
 			|| filter.type != newType
 		)
@@ -269,7 +269,7 @@ const Filters = {
 			filter.label = $("filterLabel").value;
 			filter.type = newType;
 			filter.expression = $("filterExpression").value;
-			
+
 			var idx = this.selection.currentIndex;
 			this.box.invalidateRow(idx);
 			this._lastRowEdited = idx;
@@ -283,7 +283,7 @@ const Filters = {
 	},
 	createFilter: function() {
 		DTA.FilterManager.create(
-			_("newfilt"), 
+			_("newfilt"),
 			_("inserthere"),
 			false,
 			1,
@@ -305,8 +305,8 @@ const Filters = {
 		} else {
 			this._removeFilter();
 		}
-	},	
-	
+	},
+
 	get rowCount() {
 		return this._filters.length;
 	},
@@ -362,15 +362,15 @@ const Filters = {
 	},
 	isSeparator: function(idx) {
 		return false;
-	},	
+	},
 	isEditable: function(idx) {
 		return false;
-	},	
+	},
 	getImageSrc: function(idx, col) {
 		return null;
 	},
 	getProgressMode : function(idx,column) {
-		
+
 	},
 	getCellValue: function(idx, column) {
 		return false;
@@ -397,7 +397,7 @@ const Filters = {
 			);
 			return;
 		}
-		
+
 		var currentFilter = this._filters[idx];
 		// invalid idx
 		if (!currentFilter) {
@@ -413,7 +413,7 @@ const Filters = {
 				a.disabled = false
 			}
 		);
-		
+
 		$("restoreremovebutton").label = currentFilter.defFilter
 			? _('restorebutton')
 			: _('removebutton');
@@ -438,13 +438,13 @@ const Servers = {
 		} catch (ex) {
 			Debug.log("Failed to load Servers", ex);
 		}
-		
+
 		// delay these assignments, or else we get messed up by the slider c'tor
 		$('maxtasks').setAttribute('preference', 'dtamaxtasks');
-		$('dtamaxtasks').updateElements();		
+		$('dtamaxtasks').updateElements();
 		$('maxtasksperserver').setAttribute('preference', 'dtamaxtasksperserver');
 		$('dtamaxtasksperserver').updateElements();
-		
+
 		let _tp = this;
 		this._list.addEventListener('LimitsEdit', function(evt) _tp.editLimit(evt), true);
 		this._list.addEventListener('LimitsEditCancel', function(evt) _tp.cancelEditLimit(evt.originalTarget), true);
@@ -492,7 +492,7 @@ const Servers = {
 		) != 0) {
 			evt.preventDefault();
 		}
-	},		
+	},
 	removedLimit: function(target) {
 		let ns = target.nextSibling || target.previousSibling;
 		this._list.removeChild(target);
@@ -504,10 +504,10 @@ const Servers = {
 	},
 	changedMaxTasks: function() {
 		$('maxtaskslabel').value = $('maxtasks').value;
-	},	
+	},
 	changedMaxTasksPerServer: function() {
 		$('maxtasksperserverlabel').value = $('maxtasksperserver').value;
-	},	
+	},
 	_load: function() {
 		// clear the list
 		while (this._list.firstChild){
@@ -518,7 +518,7 @@ const Servers = {
 			e.setAttribute('class', 'serverlimit');
 			e.setAttribute('id', "host" + limit.host);
 			e.setAttribute('host', limit.host);
-			e.setAttribute('searchlabel', limit.host);			
+			e.setAttribute('searchlabel', limit.host);
 			e.setAttribute('connections', limit.connections);
 			e.setAttribute('speed', limit.speed);
 			e.limit = limit;
@@ -556,7 +556,7 @@ const Servers = {
 		catch (ex) {
 			Debug.log("failed to add limit", ex);
 		}
-		$('noitemsbox').hidden = !!this._list.itemCount;		
+		$('noitemsbox').hidden = !!this._list.itemCount;
 	}
 };
 Components.utils.import('resource://dta/support/serverlimits.jsm', Servers);
@@ -568,7 +568,7 @@ const Prefs = {
 		if (Version.APP_ID == "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}" && !Preferences.hasUserValue("general.skins.selectedSkin")) {
 			document.documentElement.setAttribute("firefoxtheme", true);
 		}
-		
+
 		if (!("arguments" in window)) {
 			return;
 		}
@@ -577,7 +577,7 @@ const Prefs = {
 			if (!cmd) {
 				return;
 			}
-			setTimeout(function() {			
+			setTimeout(function() {
 				switch (cmd.action) {
 				case 'addlimits':
 					Servers.newLimit(cmd.url);

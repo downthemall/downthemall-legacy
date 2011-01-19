@@ -1,7 +1,7 @@
 @import 'chrome://dta/skin/common/style.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 @namespace html url("http://www.w3.org/1999/xhtml");
-	
+
 #metaselect {
 	width: 600px;
 	height: 430px;
@@ -47,11 +47,11 @@ richlistitem {
 	list-style-image: url(chrome://dta/skin/common/selection.png);
 }
 #selectall {
-	-moz-image-region: rect(0px, 16px, 16px, 0px);  
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 #selectinv {
-	-moz-image-region: rect(0px, 48px, 16px, 32px);  
+	-moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 #selectnone {
-	-moz-image-region: rect(0px, 32px, 16px, 16px);  
+	-moz-image-region: rect(0px, 32px, 16px, 16px);
 }

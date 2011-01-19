@@ -49,7 +49,7 @@ const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 
 if (available) {
 	const core = Cc["@downloadhelper.net/core;1"].getService(Ci.dhICore);
-	
+
 	function ProcessorImpl(turbo, name, title, description) {
 		this.init(name, title, description);
 		this.turbo = !!turbo;
@@ -61,19 +61,19 @@ if (available) {
 			this.__defineGetter__("description", function() description);
 			core.registerProcessor(this);
 		},
-		
+
 		QueryInterface: XPCOMUtils.generateQI([Ci.dhIProcessor, Ci.sehISecretHelperProcessorExtra]),
-		
+
 		get provider() { return "DownThemAll!"; },
 		get enabled() { return true; },
-		
+
 		canHandle: function(desc) desc.has("media-url") || desc.has("links"),
-		
+
 		requireDownload: function(desc) false,
 		preDownload: function(desc) false,
-		
+
 		handle: function(props) {
-			module("resource://dta/utils.jsm");			
+			module("resource://dta/utils.jsm");
 			module("resource://dta/api.jsm");
 			try {
 				if (props.has('links')) {
@@ -86,7 +86,7 @@ if (available) {
 			catch (ex) {
 				Debug.log("failed to handle", ex);
 				throw ex;
-			}				
+			}
 		},
 		getWindow: function(props) {
 			return ('window' in props) ? props.window : null;
@@ -123,7 +123,7 @@ if (available) {
 				let props = new Properties(link, desc);
 				let item = null;
 				try {
-					urls.push(this.createItem(props));					
+					urls.push(this.createItem(props));
 				}
 				catch (ex) {
 					continue;
@@ -132,7 +132,7 @@ if (available) {
 			if (!urls.length) {
 				return;
 			}
-	
+
 			let win = this.getWindow(new Properties(desc));
 			if (urls.length == 1) {
 				saveSingleItem(win, this.turbo, urls[0]);
@@ -151,7 +151,7 @@ if (available) {
 			saveSingleItem(this.getWindow(props), this.turbo, item);
 		}
 	};
-	
+
 	const processors = [];
 
 	let _str = Cc['@mozilla.org/intl/stringbundle;1']

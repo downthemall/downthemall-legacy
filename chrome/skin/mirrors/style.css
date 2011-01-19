@@ -53,7 +53,7 @@ dialog {
 #mirrors > richlistitem[editing] {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#mirror-item-editing);
 }
-	
+
 .mirror-item-url {
 	font-weight: bold;
 }
@@ -64,7 +64,7 @@ richlistbox:focus richlistitem[selected="true"] .mirror-item-url {
 	font-size: small;
 }
 .mirror-item-error[value=""] {
-	display: none;	
+	display: none;
 }
 
 .mirror-item-icon {

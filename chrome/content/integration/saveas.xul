@@ -40,7 +40,7 @@
 
 <?xml-stylesheet type="text/css" href="chrome://dta/content/common/bindings.css"?>
 <?xml-stylesheet type="text/css" href="chrome://dta/skin/common/saveas.css"?>
- 
+
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/saveas.dtd">
 <overlay id="downthemallDownloadSaveAs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<script type="application/x-javascript" src="chrome://dta/content/integration/saveas.js"/>

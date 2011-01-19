@@ -34,19 +34,19 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** -->
- 
+
  <!DOCTYPE overlay>
-  
+
  <overlay id="dtaSanitizePref" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
- 
+
 	<script type="text/javascript"><![CDATA[
 		addEventListener('load', function() {
 			removeEventListener('load', arguments.callee, true);
-			
+
 			const PREF = 'privacy.clearOnShutdown.extensions-dta';
-			
+
 			try {
-			
+
 				let prefs = document.getElementsByTagName('preferences')[0];
 				let pref = document.createElement('preference');
 				pref.setAttribute('id', PREF);
@@ -61,17 +61,17 @@
 					.getService(Components.interfaces.nsIStringBundleService)
 					.createBundle('chrome://dta/locale/sanitize.properties')
 					.GetStringFromName('sanitizeitem');
-				
+
 				let check = document.createElement('checkbox');
 				check.setAttribute('label', msg);
-				check.setAttribute('preference', PREF);			
-				
+				check.setAttribute('preference', PREF);
+
 				let row = document.createElement('row');
 				row.appendChild(check);
 				rows.appendChild(row);
-				
+
 				pref.updateElements();
-				
+
 			}
 			catch (ex) {
 				Components.utils.reportError(ex);

@@ -19,7 +19,7 @@
  *
  * Contributor(s):
  *   Nils Maier <MaierMan@web.de>
- *   Stefano Verna <stefano.verna@gmail.com>   
+ *   Stefano Verna <stefano.verna@gmail.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -62,7 +62,7 @@ setNewGetter(this, "FavIcons", function() {
 
 /**
  * Get the icon URI corresponding to an URI (special mac handling)
- * 
+ *
  * @author Nils
  * @author Stefano
  * @param link

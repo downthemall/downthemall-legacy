@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
 const EXPORTED_SYMBOLS = ['Matcher'];
 
 const Cc = Components.classes;
@@ -248,7 +248,7 @@ const SizeMatch = {
 			}
 			return function(size) size > low && size <= high;
 		});
-		
+
 		if (ranges.length == 1) {
 			let rf = ranges.shift();
 			return function(d) rf(d.totalSize);

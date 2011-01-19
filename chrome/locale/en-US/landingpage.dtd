@@ -1,4 +1,4 @@
-<!-- UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible --> 
+<!-- UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
 
 <!-- Your language in your language -->

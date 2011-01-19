@@ -1,4 +1,4 @@
-* { 
+* {
 	font-family: "Lucida Grande", "Lucida Sans Unicode", Arial;
 	text-align: justify;
 	color: #333;
@@ -8,18 +8,18 @@
 html, body {
 	margin: 0;
 	padding: 0;
-	background-color: white;	
+	background-color: white;
 }
 
 h1 {
 	margin: 0;
 	padding: 0;
-	
+
 	position: fixed;
 	top: 0;
 	left: 0;
-	right: 0;	
-	
+	right: 0;
+
 	font-size: 1em;
 	line-height: 1.1em;
 	color: black;
@@ -29,7 +29,7 @@ h1 {
 	padding-top: 10px;
 	padding-left: 1em;
 	padding-right: 220px;
-	
+
 }
 
 ol {

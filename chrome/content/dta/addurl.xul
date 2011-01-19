@@ -4,7 +4,7 @@
  *
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- * 
+ *
  * See LICENSE and GPL for details.
  *
  * Contributers:
@@ -25,11 +25,11 @@
 ]>
 
 <dialog
-	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	title="&windowtitle;"
-	id="DownThemAll" 
-	onload="Dialog.load();" 
+	id="DownThemAll"
+	onload="Dialog.load();"
 	persist="screenX screenY width"
 	ondialogaccept="return Dialog.download(true);"
 	ondialogextra1="return Dialog.download(false);"
@@ -37,24 +37,24 @@
 	buttonlabelaccept="&start.label;"
 	buttonlabelextra1="&queue.label;"
 	buttonaccesskeyaccept="&start.key;"
-	buttonaccesskeyextra1="&queue.key;"	
+	buttonaccesskeyextra1="&queue.key;"
 	>
-	
+
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js"/>
 	<script type="application/javascript" src="chrome://dta/content/dta/addurl.js"/>
-	
+
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
-	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/> 
-	
+	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/>
+
 	<stringbundleset xmlns="http://www.downthemall.net/properties#">
 		<stringbundle src="chrome://dta/locale/addurl.properties"/>
 		<stringbundle src="chrome://dta/locale/common.properties"/>
 	</stringbundleset>
-	
+
 	<keyset>
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 	</keyset>
-	
+
 	<grid onclick="event.stopPropagation();" >
 		<columns>
 			<column />
@@ -73,7 +73,7 @@
 						<label class="monospace indent">.../mygallery[1:3]/photo[01:10][3:01:-1].jpg</label>
 					</vbox>
 				</vbox>
-			</row> 
+			</row>
 			<row align="center">
 				<label control="address" value="&url.value;:" class="header"/>
 				<textbox id="address" type="autocomplete" autocompletesearch="history" completedefaultindex="true"/>
@@ -85,7 +85,7 @@
 			<row align="center">
 				<label control="description" value="&description.value;" style="font-style: italic;"/>
 				<textbox id="description" type="autocomplete" />
-			</row>			
+			</row>
 			<row align="center">
 				<label control="directory" id="destinationPath" value="&dest.caption;" />
 				<hbox flex="1">

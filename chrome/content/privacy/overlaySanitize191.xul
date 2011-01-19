@@ -34,9 +34,9 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** -->
- 
+
 <!DOCTYPE overlay>
-  
+
 <overlay id="dtaSanitize" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<preferences id="sanitizePreferences">
 		<preference id="privacy.cpd.extensions-dta" name="privacy.cpd.extensions-dta" type="bool"/>
@@ -76,7 +76,7 @@
 				.createBundle('chrome://dta/locale/sanitize.properties')
 				.GetStringFromName('sanitizeitem');
 			document.getElementById('dtaSanitizeItem').setAttribute('label', msg);
-	
+
 			if (!('Sanitizer' in this)) {
 				return;
 			}

@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
 const EXPORTED_SYMBOLS = ['Decompressor'];
 
 
@@ -113,7 +113,7 @@ Decompressor.prototype = {
 		throw Cr.NS_ERROR_NO_INTERFACE;
 	},
 	onStartRequest: function(r, c) {
-		this._timer = Timers.createRepeating(FREQ, this.download.invalidate, this.download); 
+		this._timer = Timers.createRepeating(FREQ, this.download.invalidate, this.download);
 	},
 	onStopRequest: function(request, c) {
 		Timers.killTimer(this._timer);

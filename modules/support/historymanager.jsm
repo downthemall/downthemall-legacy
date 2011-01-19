@@ -70,7 +70,7 @@ const validators = {
 function History(key) {
 	this._key = key;
 	if (key in validators) {
-		this._validator = validators[key]; 
+		this._validator = validators[key];
 	}
 	else {
 		this._validator = function() true;
@@ -104,7 +104,7 @@ History.prototype = {
 		if (!persist) {
 			// need to clone
 			this._sessionHistory = this.values;
-		}			
+		}
 		this._persisting = !!persist;
 	},
 	get _values() {

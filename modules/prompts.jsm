@@ -91,7 +91,7 @@ function confirm(aWindow, aTitle, aText, aButton0, aButton1, aButton2, aDefault,
 	else if (aDefault == 2) {
 		flags += prompts.BUTTON_POS_2_DEFAULT;
 	}
-	
+
 	// Checkmark requested?
 	let rv = null;
 	let check = {};
@@ -108,14 +108,14 @@ function confirm(aWindow, aTitle, aText, aButton0, aButton1, aButton2, aDefault,
 					.getBoolPref(aCheck);
 			}
 			catch (ex) {
-				// no-op				
+				// no-op
 			}
 			if (check.value == undefined) {
 				check.value = false;
 			}
 		}
 	}
-	
+
 	let cr = prompts.confirmEx(
 		aWindow,
 		aTitle,
@@ -127,14 +127,14 @@ function confirm(aWindow, aTitle, aText, aButton0, aButton1, aButton2, aDefault,
 		aCheckText,
 		check
 	);
-	
+
 	// We've got a checkmark request
 	if (rv) {
 		rv.checked = check.value;
 		rv.button = cr;
 		return rv;
 	}
-	
+
 	// Just return as usual
 	return cr;
 }

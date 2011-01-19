@@ -40,7 +40,7 @@ const EXPORTED_SYMBOLS = [
 	'addListener', 'removeListener',
 	'showNotice', 'showAbout', 'showPreferences'
 ];
-	
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
@@ -91,7 +91,7 @@ function objToUri(obj) {
 	}
 	if (obj.url) {
 		return objToUri(obj.url);
-	}	
+	}
 	throw new Exception("Not a valid type");
 }
 
@@ -112,7 +112,7 @@ function getMostRecent(type) {
 }
 
 /**
- * Gets the most recent window by url instead of type 
+ * Gets the most recent window by url instead of type
  */
 function getMostRecentByUrl(url) {
 	if (!url) {
@@ -127,7 +127,7 @@ function getMostRecentByUrl(url) {
 			return win;
 		}
 	}
-	return null;	
+	return null;
 }
 
 function getAllByType(type) {
@@ -136,7 +136,7 @@ function getAllByType(type) {
 	while (enumerator.hasMoreElements()) {
 		rv.push(enumerator.getNext());
 	}
-	return rv;	
+	return rv;
 }
 
 function openExternal(link) {

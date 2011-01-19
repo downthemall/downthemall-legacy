@@ -4,7 +4,7 @@
  *
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- * 
+ *
  * See LICENSE and GPL for details.
  *
  * ***** END LICENSE BLOCK ***** -->
@@ -26,7 +26,7 @@
 		  <preference id="dtadump" name="extensions.dta.logging" type="bool" />
 		  <preference id="dtahistory" name="extensions.dta.history" type="int" />
 		</preferences>
-		
+
 		<grid>
 			<columns><column flex="3"/><column flex="1"/></columns>
 			<rows>
@@ -63,19 +63,19 @@
 			<button id="butRevealLog" label="&privacypane.reveallog.label;" oncommand="Privacy.revealLog();" />
 			<button id="butDelLog" label="&privacypane.deletelog.label;" oncommand="Privacy.deleteLog();" />
 		</groupbox>
-		
+
 		<!-- Does not apply, not in use
 		<groupbox>
 			<caption label="&privacypane.updates.caption;"/>
-			<checkbox id="infoAndDonation" 
+			<checkbox id="infoAndDonation"
 				label="&privacypane.information.label;"
 				preference="dtadonation" />
-			<checkbox id="infoAndDonation" 
+			<checkbox id="infoAndDonation"
 				label="&privacypane.statistics.label;"
-				preference="dtastatistics" />				
+				preference="dtastatistics" />
 		</groupbox>
 		-->
-		
+
 		<groupbox>
 			<caption label="&privacypane.notice.caption;"/>
 			<description value="&privacypane.notice.desc;"/>

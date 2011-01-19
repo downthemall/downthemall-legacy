@@ -61,7 +61,7 @@ function ContentHandlingImpl() {
 }
 ContentHandlingImpl.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener]),
-	
+
 	_init: function ct__init() {
 		Observers.addObserver(this, 'http-on-modify-request', false);
 		Observers.addObserver(this, 'http-on-examine-response', false);
@@ -113,13 +113,13 @@ ContentHandlingImpl.prototype = {
 			return;
 		}
 		var channel = subject.QueryInterface(Ci.nsIHttpChannel);
-				
+
 		if (channel.requestMethod != 'POST') {
 			return;
 		}
-				
+
 		let post;
-		
+
 		try {
 			let us = subject.QueryInterface(Ci.nsIUploadChannel).uploadStream;
 			if (!us) {
@@ -132,24 +132,24 @@ ContentHandlingImpl.prototype = {
 			catch (ex) {
 				// no op
 			}
-				
+
 			let ss = us.QueryInterface(Ci.nsISeekableStream);
 			if (!ss) {
 				return;
 			}
 			let op = ss.tell();
-		
+
 			ss.seek(0, 0);
-			
+
 			let is = new ScriptableInputStream(us);
-			
+
 			// we'll read max 64k
 			let available = Math.min(is.available(), 1 << 16);
 			if (available) {
 				post = is.read(available);
 			}
 			ss.seek(0, op);
-			
+
 			if (post) {
 				this._registerData(channel.URI, post);
 			}
@@ -177,19 +177,19 @@ ContentHandlingImpl.prototype = {
 				}
 			}
 			if (
-					(/\.(flv|ogg|ogm|ogv|avi|divx|mp4v?|webm)\b/i.test(channel.URI.spec) && !/\.swf\b/i.test(channel.URI.spec)) 
+					(/\.(flv|ogg|ogm|ogv|avi|divx|mp4v?|webm)\b/i.test(channel.URI.spec) && !/\.swf\b/i.test(channel.URI.spec))
 					|| ct.match(/\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i)
 			) {
 				let wp = null;
 				if (channel.loadGroup && channel.loadGroup.groupObserver) {
-					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);					
+					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);
 				}
 				if (!wp) {
 					wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
 				}
-				 
+
 				if (!wp || !wp.DOMWindow) {
-					return 
+					return
 				}
 				let wn = wp.DOMWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
 				if (!wn || !wn.currentURI) {
@@ -221,10 +221,10 @@ ContentHandlingImpl.prototype = {
 			}
 			this._dataArray.push(uri);
 		}
-		
-		this._dataDict[uri] = data;  	
+
+		this._dataDict[uri] = data;
 	},
-	
+
 	_sniffVideos: false,
 	get sniffVideos() {
 		return this._sniffVideos;
@@ -253,7 +253,7 @@ ContentHandlingImpl.prototype = {
 		}
 		this._vidDict[uri][vid.spec] = vid;
 	},
-	
+
 	getPostDataFor: function ct_getPostDataFor(uri) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;

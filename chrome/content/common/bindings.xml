@@ -109,7 +109,7 @@
 				try {
 					var hist = {};
 					Components.utils.import("resource://dta/support/historymanager.jsm", hist);
-					this.hist = hist.getHistory(this._pref);					
+					this.hist = hist.getHistory(this._pref);
 					this._load();
 				}
 				catch (ex) {
@@ -121,7 +121,7 @@
 			<property name="_pref" onget="return this.getAttribute('preference')" />
 			<property name="_values">
 				<getter><![CDATA[
-					return this.hist.values;				
+					return this.hist.values;
 				]]></getter>
 			</property>
 			<property name="inputField" onget="return this._list.inputField" />
@@ -138,7 +138,7 @@
 				<body><![CDATA[
 					var values = this._values;
 					var popup = this._popup;
-					
+
 					while (popup.hasChildNodes()) {
 						popup.removeChild(popup.lastChild);
 					}
@@ -155,7 +155,7 @@
 					if (values.length) {
 						this._list.selectedIndex = 0;
 						this.value = values[0];
-					}				
+					}
 					if (this.hasAttribute('readonly')) {
 						this._list.removeAttribute('editable');
 					}
@@ -217,7 +217,7 @@
 				this.setAttribute('identity', id);
 				this.setAttribute('iconURL', dl.logo ? dl.logo : getIcon(dl.url.usable, false, 32));
 				this.setAttribute('url', dl.url.usable);
-				
+
 				function addSimple(e) {
 					if (dl[e]) {
 						var n = document.createElement('description');
@@ -233,14 +233,14 @@
 						n.setAttribute('onclick', 'MetaSelect.openLink(this)');
 						n.setAttribute('crop', 'center');
 						n.setAttribute('flex', '1');
-						n.link = dl[e][1];							
+						n.link = dl[e][1];
 						n.appendChild(document.createTextNode(dl[e][0]));
 						this._additionalLinks.appendChild(n);
 					}
 				};
 				['size', 'version', 'sys', 'lang', 'copyright', 'mirrors'].forEach(addSimple, this);
 				['publisher', 'license'].forEach(addLink, this);
-				
+
 				if (dl.description) {
 					this._desc.appendChild(document.createTextNode(dl.description));
 				}
@@ -278,7 +278,7 @@
 					e.setAttribute('label', x);
 					this._types.appendChild(e);
 					this._typemap[x] = e;
-				}			
+				}
 			]]></constructor>
 			<property name="_type"
 				onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'type');" />
@@ -356,7 +356,7 @@
 					if (!isFinite(val)) {
 						throw new Error("Provide a valid number");
 					}
-					if (this._hint != val) { 
+					if (this._hint != val) {
 						this._hint = val;
 					}
 				</setter>
@@ -420,13 +420,13 @@
 					}
 					return e;
 				]]></body>
-			</method> 
+			</method>
 			<method name="fill">
 				<body><![CDATA[
 					while (this.firstChild) {
 						this.removeChild(this.firstChild);
 					}
-					
+
 					let iv = Math.max(this.limit, -1);
 					let m = Math.round((iv > 0 ? iv : this.hint / 2) / 1024);
 					m = this.scale(iv > 1 ? m : 150);
@@ -437,7 +437,7 @@
 					else if (m > 400) {
 						vals = [0,50,100,200,500];
 					}
-					
+
 					let items = [10, 50, 100, 250, 1000]; // always include these
 					for each (let v in vals) {
 						if (v && m - v > 1) {
@@ -453,7 +453,7 @@
 					for each (let v in items.map(function(e) e * 1024)) {
 						let item = this.appendItem(Utils.formatKBytes(v, 0) + '/s', v);
 						if (v == iv) {
-							if (item.previousSibling) { 
+							if (item.previousSibling) {
 								this.insertBefore(sep.cloneNode(false), item);
 							}
 							this.selectedItem = item;
@@ -476,7 +476,7 @@
 			<handler phase="capturing" event="command"><![CDATA[
 				if (event.originalTarget.localName != "menuitem") {
 					return;
-				}   
+				}
 				this.parentNode.blur();
 				let nv = parseInt(event.originalTarget.value);
 				if (nv != this.limit) {
@@ -485,7 +485,7 @@
 			]]></handler>
 		</handlers>
 	</binding>
-	
+
 	<binding id="mirror-item-base" extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
 		<implementation>
 			<property name="mirror" onget="return this.getAttribute('mirror');" onset="this.setAttribute('mirror', nv);"/>
@@ -503,7 +503,7 @@
 					}
 					else if (val > 80) {
 						tt = _("prefMedium", [val]);
-					} 
+					}
 					else {
 						tt = _("prefLow", [val]);
 					}
@@ -559,7 +559,7 @@
 				<xul:hbox pack="center">
 					<xul:image class="mirror-item-icon" />
 				</xul:hbox>
-			</xul:vbox>				
+			</xul:vbox>
 			<xul:hbox flex="1" align="center">
 				<xul:label value="&mirrorurl;" />
 				<xul:textbox class="mirror-item-textbox" xbl:inherits="value=mirror" type="autocomplete" wantreturns="true" autocompletesearch="history" completedefaultindex="true" flex="1"/>
@@ -570,7 +570,7 @@
 			<constructor><![CDATA[
 				this.parentNode.selectedItem = this;
 				this.textbox.focus();
-				
+
 				// looks a little nasty, but else we will immediately blur/focus :p
 				let tp = this;
 				setTimeout(function() tp.textbox.addEventListener('blur', function() tp.commit(), false), 0);
@@ -580,11 +580,11 @@
 				<body><![CDATA[
 					let original = this.getAttribute('mirror');
 					let uri = this.textbox.value;
-					
+
 					if (!!forget) {
 						uri = "";
 					}
-					
+
 					if (!!uri) {
 						let fs = Cc['@mozilla.org/docshell/urifixup;1'].getService(Ci.nsIURIFixup);
 						uri = fs.createFixupURI(uri, 0).spec;
@@ -604,7 +604,7 @@
 					this.blur();
 					let evt = document.createEvent('UIEvents');
 					evt.initUIEvent('MirrorEditDone', true, true, null, 0);
-					this.dispatchEvent(evt);					
+					this.dispatchEvent(evt);
 				]]></body>
 			</method>
 		</implementation>
@@ -616,7 +616,7 @@
 					event.stopPropagation();
 					event.preventDefault();
 					break;
-				}				
+				}
 			]]></handler>
 			<handler event="keyup" phase="capturing"><![CDATA[
 				if (event.keyCode == KeyEvent.DOM_VK_RETURN) {
@@ -629,11 +629,11 @@
 					event.preventDefault();
 					this.commit(true);
 					this.removeAttribute('editing');
-				}				
+				}
 			]]></handler>
-		</handlers>	
+		</handlers>
 	</binding>
-	
+
 	<binding id="regularwindow">
 		<content>
 			<children/>
@@ -644,7 +644,7 @@
 					this.removeAttribute('drawintitlebar');
 				}
 			]]></constructor>
-		</implementation>	
+		</implementation>
 	</binding>
 	<binding id="drawablewindow">
 		<content>
@@ -662,7 +662,7 @@
 			]]></destructor>
 		</implementation>
 	</binding>
-	
+
 	<binding id="titlebar" extends="chrome://global/content/bindings/general.xml#windowdragbox">
 		<resources>
 			<stylesheet src="chrome://dta/content/common/titlebar.css"/>
@@ -697,7 +697,7 @@
 			</method>
 		</implementation>
 	</binding>
-	
+
 	<binding id="downloadsearch" extends="chrome://global/content/bindings/textbox.xml#textbox">
 		<content>
 			<xul:image/>
@@ -727,7 +727,7 @@
 					}
 					catch (ex) {
 						Debug.log("_search", ex);
-					}					
+					}
 				]]></body>
 			</method>
 		</implementation>
@@ -742,7 +742,7 @@
        		this._search();
        		return;
         }
-       	
+
        	this.clearButton.removeAttribute('disabled');
 				if (!this._timer) {
         	let tp = this;
@@ -761,5 +761,5 @@
 				}
 			]]></handler>
 		</handlers>
-	</binding>	
+	</binding>
 </bindings>

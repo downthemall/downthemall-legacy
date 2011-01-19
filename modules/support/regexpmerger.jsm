@@ -38,7 +38,7 @@ const EXPORTED_SYMBOLS = ['merge'];
 
 /**
  * Return a good prefix, with no bracket mismatches
- * 
+ *
  * @param string Calculate the prefix from
  * @returns {String} Calculated prefix
  */
@@ -114,7 +114,7 @@ function killInvalidBrackets(string) {
 /**
  * Recursively determine the the largest group with a common prefix
  * The group is guaranteed to contain at least 3 items
- *   
+ *
  * @param patterns Patterns to process. Must be sorted.
  * @param low Optional. Low bound. Default = 0
  * @param high Optional. High bound. Default = patterns.length
@@ -123,23 +123,23 @@ function killInvalidBrackets(string) {
 function largestPrefixGroup(patterns, low, high, level) {
 	level = level || 0;
 	low = low || 0;
-	high = high || patterns.length; 
-	
+	high = high || patterns.length;
+
 	// split patterns in heading char and tails
 	let heads = patterns.map(function(p) p.charAt(0));
 	let tails = patterns.map(function(p) p.substring(1));
-	
+
 	let besti = -1;
 	let beste = 0;
 	let bestc = 0;
-	
+
 	for (let i = low; i < high - 1; ++i) {
 		let allgood = true;
 		for (let e = i + 1; e < high; ++e) {
 			if (heads[i] == heads[e]) {
 				continue;
 			}
-			
+
 			// mismatched!
 			let c = e - i;
 			if (bestc < c) {
@@ -159,14 +159,14 @@ function largestPrefixGroup(patterns, low, high, level) {
 			}
 		}
 	}
-	
+
 	if (bestc < 4) {
 		// at least 3 items in the group are required
 		return [0,0,0];
 	}
-	
+
 	let head = heads[besti];
-	
+
 	if (tails.some(function(p) p.length == 0)) {
 		return [besti, beste, head];
 	}
@@ -186,7 +186,7 @@ function largestPrefixGroup(patterns, low, high, level) {
 
 /**
  * Merge prefix group with set of patterns according to bounds and prefix
- * 
+ *
  * @param patterns Set of patterns
  * @param low Lower bound
  * @param high Higher bound
@@ -218,7 +218,7 @@ function merge(patterns) {
 	if (patterns.length == 0) {
 		return patterns[0];
 	}
-	
+
 	for (;;) {
 		let [i, e, head] = largestPrefixGroup(patterns);
 		if (!e) {

@@ -108,7 +108,7 @@ function Filter(name) {
 }
 Filter.prototype = {
 	_persist: true,
-	_sessionActive: null,	
+	_sessionActive: null,
 	get persist() {
 		return this._persist;
 	},
@@ -118,7 +118,7 @@ Filter.prototype = {
 			this._sessionActive = this._active;
 		}
 	},
-	
+
 	// exported
 	get id() {
 		return this._id.slice(PREF_FILTERS_BASE.length);
@@ -165,12 +165,12 @@ Filter.prototype = {
 		else if (this.hasOwnProperty('match')) {
 			delete this.match;
 		}
-		this._modified = true;		
+		this._modified = true;
 	},
 	_makeRegs: function FM__makeRegs(str) {
-	
+
 		str = str.replace(/^\s+|\s+$/g, '');
-		
+
 		// first of all: check if we are are a regexp.
 		if (str.length > 2 && str[0] == '/') {
 			try {
@@ -188,11 +188,11 @@ Filter.prototype = {
 				// fall-through
 			}
 		}
-	
+
 		var parts = str.split(',');
 		// we contain multiple filters
 		if (parts.length > 1) {
-			for each (var s in parts) { 
+			for each (var s in parts) {
 				this._makeRegs(s);
 			}
 			return;
@@ -203,7 +203,7 @@ Filter.prototype = {
 			.replace(/([/{}()\[\]\\^$.])/g, "\\$1")
 			.replace(/\*/g, ".*")
 			.replace(/\?/g, '.');
-		if (str.length) {				
+		if (str.length) {
 			this._regs.push(new RegExp(str, 'i'));
 		}
 	},
@@ -262,7 +262,7 @@ Filter.prototype = {
 		if (localizedLabel && !Preferences.hasUserValue(this.pref('label'))) {
 			this._label = localizedLabel;
 		}
-				
+
 		this._active = Preferences.get(this.pref('active'));
 		this._type = Preferences.get(this.pref('type'));
 		this._defFilter = this._id.search(/deffilter/) != -1;
@@ -274,7 +274,7 @@ Filter.prototype = {
 		}
 		// may throw
 		this.expression = Preferences.get(this.pref('test'));
-		
+
 		this._modified = false;
 	},
 
@@ -286,7 +286,7 @@ Filter.prototype = {
 		Preferences.set(this.pref('active'), this._active);
 		Preferences.set(this.pref('test'), this._expr);
 		Preferences.set(this.pref('type'), this._type);
-			
+
 		// save this last as FM will test for it.
 		Preferences.set(this.pref('label'), this._label);
 		FilterManager._delayedReload();
@@ -351,10 +351,10 @@ FilterManagerImpl.prototype = {
 	LINK_FILTER: LINK_FILTER,
 	IMAGE_FILTER: IMAGE_FILTER,
 
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference]),				
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference]),
 	QueryReferent: function(iid) this.QueryInterface(iid),
 	GetWeakReference: function() this,
-	
+
 	init: function FM_init() {
 		PBM.registerCallbacks(this);
 
@@ -368,26 +368,26 @@ FilterManagerImpl.prototype = {
 			let prop = e.getNext().QueryInterface(Ci.nsIPropertyElement);
 			this._localizedLabels[prop.key] = prop.value;
 		}
-		
+
 		// register (the observer) and initialize our timer, so that we'll get a reload event.
 		this._reload();
 		this.register();
 	},
-	
+
 	enterPrivateBrowsing: function() {
 		for each (let f in this._all) {
-			f.persist = false; 
+			f.persist = false;
 		}
 	},
 	exitPrivateBrowsing: function() {
 		for each (let f in this._all) {
-			f.persist = true; 
-		}		
+			f.persist = true;
+		}
 	},
-		
+
 	_done: true,
 	_mustReload: false,
-	
+
 	_timer: null,
 
 	_delayedReload: function FM_delayedReload() {
@@ -436,9 +436,9 @@ FilterManagerImpl.prototype = {
 				error(ex);
 			}
 		}
-		
+
 		this._count = this._all.length;
-		
+
 		this._all.sort(
 			function(a,b) {
 				if (a.defFilter && !b.defFilter) {
@@ -495,7 +495,7 @@ FilterManagerImpl.prototype = {
 					return false;
 				}
 				return regs.test(test);
-			}		
+			}
 		}
 		return function(test) {
 			test = test.toString();
@@ -551,7 +551,7 @@ FilterManagerImpl.prototype = {
 		}
 		this._delayedReload();
 	},
-	
+
 	getTmpFromString: function FM_getTmpFromString(expression) {
 		if (!expression.length) {
 			throw NS_ERROR_INVALID_ARG;

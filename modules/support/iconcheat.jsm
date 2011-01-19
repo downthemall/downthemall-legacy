@@ -51,12 +51,12 @@ function loadWindow() {};
 try {
 	// moz-1.9.3+
 	module("resource://gre/modules/AddonManager.jsm");
-	
+
 	const ZipReader = Ctor("@mozilla.org/libjar/zip-reader;1", "nsIZipReader", "open");
-	
+
 	module("resource://dta/version.jsm");
 	module("resource://gre/modules/XPCOMUtils.jsm");
-	
+
 	const DirectoryService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
 	if (!(DirectoryService instanceof Ci.nsIDirectoryService)) {
 		throw new Exception("eek");
@@ -65,7 +65,7 @@ try {
 	let iconDir = profileDir.clone();
 	iconDir.append('icons');
 	iconDir.append('default');
-	
+
 	// xpi version
 	function extract(file) {
 		let jar = new ZipReader(file);
@@ -83,7 +83,7 @@ try {
 			}
 		}
 	}
-	
+
 	// flat-package version
 	function copy(directory) {
 		let srcDirectory = directory.clone();
@@ -98,7 +98,7 @@ try {
 			}
 		}
 	}
-	
+
 	// Directory Provider we use to check the system :p
 	function CheatDirProvider() {}
 	CheatDirProvider.prototype = {
@@ -111,7 +111,7 @@ try {
 			if (prop == "AChromDL") {
 				this.hasMore = true;
 				return this;
-			} 
+			}
 			throw Cr.NS_ERROR_FAILURE;
 		},
 		hasMoreElements: function() this.hasMore,
@@ -123,7 +123,7 @@ try {
 			return profileDir.clone();
 		}
 	};
-	
+
 	// Create icons if not there yet, or if we got a major version update
 	if (!iconDir.exists() || Version.showAbout) {
 		if (!iconDir.exists()) {
@@ -142,7 +142,7 @@ try {
 			}
 		});
 	}
-	
+
 	// exported
 	loadWindow = function(window) {
 		let _p = new CheatDirProvider();
@@ -151,10 +151,10 @@ try {
 			window.removeEventListener('load', arguments.callee, true);
 			window.setTimeout(function() {
 				DirectoryService.unregisterProvider(_p);
-				_p = null;				
+				_p = null;
 			}, 0);
 		}, true);
-	}	
+	}
 }
 catch (ex) {
 	// moz-1.9.2-

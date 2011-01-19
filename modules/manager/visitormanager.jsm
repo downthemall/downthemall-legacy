@@ -162,7 +162,7 @@ HttpVisitor.prototype = {
 				case 'content-length':
 					let contentLength = new Number(aValue);
 					if (contentLength > 0 && !isNaN(contentLength)) {
-						this.contentLength = Math.floor(contentLength); 
+						this.contentLength = Math.floor(contentLength);
 					}
 				break;
 
@@ -274,7 +274,7 @@ FtpVisitor.prototype = {
 
 /**
  * Visitor Manager c'tor
- * 
+ *
  * @author Nils
  */
 function VisitorManager(nodes) {
@@ -308,7 +308,7 @@ VisitorManager.prototype = {
 	},
 	/**
 	 * Saves/serializes the Manager and associated Visitors to an JS Array
-	 * 
+	 *
 	 * @return A ::load compatible Array
 	 */
 	serialize: function vm_serialize() {
@@ -328,7 +328,7 @@ VisitorManager.prototype = {
 	},
 	/**
 	 * Visit and compare a channel
-	 * 
+	 *
 	 * @returns visitor for channel
 	 * @throws Exception
 	 *           if comparision yield a difference (i.e. channels are not
@@ -336,7 +336,7 @@ VisitorManager.prototype = {
 	 */
 	visit: function vm_visit(chan) {
 		let url = chan.URI.spec;
-		
+
 		let visitor;
 		switch(chan.URI.scheme) {
 		case 'http':
@@ -344,16 +344,16 @@ VisitorManager.prototype = {
 			visitor = new HttpVisitor(chan);
 			chan.visitResponseHeaders(visitor);
 			break;
-		
+
 		case 'ftp':
 			visitor = new FtpVisitor(chan);
 			visitor.visitChan(chan);
 			break;
-		
+
 		default:
 			return;
 		}
-		
+
 		if (url in this._visitors) {
 			this._visitors[url].compare(visitor);
 		}
@@ -361,7 +361,7 @@ VisitorManager.prototype = {
 	},
 	/**
 	 * return the first timestamp registered with a visitor
-	 * 
+	 *
 	 * @throws Exception
 	 *           if no timestamp found
 	 */
