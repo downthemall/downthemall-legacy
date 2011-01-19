@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
 let Prompts = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
 Components.utils.import('resource://dta/version.jsm');
@@ -59,10 +59,10 @@ var Dialog = {
 			if (!this.ddDirectory.value) {
 				Debug.log("Using default download directory, value was " + this.ddDirectory.value);
 				this.ddDirectory.value = DefaultDownloadsDirectory.path;
-			}			
-			this.ddRenaming = $("renaming");			
+			}
+			this.ddRenaming = $("renaming");
 			var address = $('address');
-			
+
 			var hash = null;
 			if (window.arguments) {
 				var a = window.arguments[0];
@@ -107,7 +107,7 @@ var Dialog = {
 				try {
 					trans.addDataFlavor("text/unicode");
 					Clipboard.getData(trans, Clipboard.kGlobalClipboard);
-					
+
 					let str = {}, length = {};
 					trans.getTransferData(
 						"text/unicode",
@@ -135,26 +135,26 @@ var Dialog = {
 		}
 		catch(ex) {
 			Debug.log("load():", ex);
-		}		
+		}
 	},
 	download: function DTA_download(start) {
-		
+
 		var errors = [];
-		
+
 		// check the directory
 		var dir = this.ddDirectory.value.trim();
 		dir = this.ddDirectory.value = !!dir ? dir.addFinalSlash() : '';
 		if (!dir.length || !Utils.validateDir(dir)) {
 			errors.push('directory');
 		}
-		
+
 		// check mask
 		var mask = this.ddRenaming.value.trim();
 		mask = this.ddRenaming.value = mask || '';
 		if (!mask.length) {
 			errors.push('renaming');
 		}
-		
+
 		var address = $('address');
 		var url = address.value;
 		if ('_realURL' in address) {
@@ -172,7 +172,7 @@ var Dialog = {
 				catch (ex) {
 					url = uri.spec;
 				}
-				url = new DTA.URL(IOService.newURI(url, null, null));				
+				url = new DTA.URL(IOService.newURI(url, null, null));
 				if (url.hash) {
 					$('hash').value = hash;
 				}
@@ -182,7 +182,7 @@ var Dialog = {
 				errors.push('address');
 			}
 		}
-		
+
 		var hash = null;
 		if (!$('hash').isValid) {
 			errors.push('hash');
@@ -199,7 +199,7 @@ var Dialog = {
 				}
 			}
 		);
-		
+
 		if (errors.length) {
 			errors.forEach(
 				function(e) {
@@ -207,10 +207,10 @@ var Dialog = {
 				}
 			);
 			return false;
-		}		
+		}
 
 		let num = DTA.currentSeries();
-		
+
 		try {
 			var batch = new BatchGenerator(url);
 		}
@@ -218,7 +218,7 @@ var Dialog = {
 			Debug.log("Cannot create batch", ex);
 			return;
 		}
-	
+
 		var rv = !('_realURL' in address) && batch.length > 1;
 		if (rv) {
 			var message = _(
@@ -234,7 +234,7 @@ var Dialog = {
 			}
 			rv = rv == 0;
 		}
-		
+
 		let downloads = (function() {
 			let desc = $('description').value;
 			let ref = $('URLref').value;
@@ -255,7 +255,7 @@ var Dialog = {
 				mask: mask,
 				dirSave: dir
 			};
-		
+
 			if (rv) {
 				let g = batch.getURLs();
 				return (function() {
@@ -267,16 +267,16 @@ var Dialog = {
 
 			return batch = [new QueueItem(url)];
 		})();
-		
+
 		DTA.sendLinksToManager(window, start, downloads);
 
 		DTA.incrementSeries();
 		Preferences.setExt("lastqueued", !start);
-	
+
 		['ddRenaming', 'ddDirectory'].forEach(function(e) { Dialog[e].save(); });
-		
+
 		self.close();
-		
+
 		return false;
 	},
 	browseDir: function DTA_browseDir() {

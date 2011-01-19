@@ -45,48 +45,48 @@
 		<stringbundle src="chrome://dta/locale/select.properties"/>
 		<stringbundle src="chrome://global/locale/dialog.properties"/>
 	</stringbundleset>
-	
+
 	<commandset>
 		<command id="cmdClose" oncommand="self.close();"/>
-		
+
 		<command id="cmdSelectAll" oncommand="Dialog.selectAll();"/>
 		<command id="cmdSelectInv" oncommand="Dialog.invertSelection();"/>
 		<command id="cmdSelectFiltered" oncommand="Dialog.selectFiltered();"/>
 		<command id="cmdOpenSelection" oncommand="Dialog.openSelection();"/>
-		
+
 		<command id="cmdStartEditMask" oncommand="Dialog.editMask();"/>
 		<command id="cmdAcceptEditMask" oncommand="Dialog.acceptEditMask();"/>
 		<command id="cmdCancelEditMask" oncommand="$('maskeditor').hidePopup();"/>
-		
+
 		<command id="cmdCheck" oncommand="Dialog.toggleSelection(true);"/>
 		<command id="cmdUncheck" oncommand="Dialog.toggleSelection(false);"/>
 		<command id="cmdToggle" oncommand="Dialog.toggleSelection();"/>
-		
+
 		<command id="cmdStart" oncommand="Dialog.download(true);"/>
 		<command id="cmdQueue" oncommand="Dialog.download(false);"/>
-		
+
 		<command id="cmdBrowseDirectory" oncommand="Dialog.browseDir();"/>
-		
+
 		<command id="cmdChangeToLinks" oncommand="Dialog.changeTab('links')"/>
 		<command id="cmdChangeToImages" oncommand="Dialog.changeTab('images')"/>
-		
+
 		<command id="cmdPreferences" oncommand="DTA.showPreferences();"/>
 	</commandset>
 
 	<keyset>
 		<key id="kClose" keycode="VK_ESCAPE" command="cmdClose"/>
 		<key id="kCloseMac" modifiers="accel" key="W" command="cmdClose"/>
-		
+
 		<key id="kSelectAll" modifiers="accel" key="A" command="cmdSelectAll"/>
 		<key id="kSelectInv" modifiers="accel" key="I" command="cmdSelectInv"/>
 		<key id="kSelectFiltered" modifiers="accel" key="F" command="cmdSelectFiltered"/>
 		<key id="kOpenSelection" modifiers="accel" key="O" command="cmdOpenSelection"/>
-		
+
 		<key id="kStart" keycode="VK_RETURN" command="cmdStart"/>
 		<key id="kStartAlt" keycode="VK_ENTER" command="cmdStart"/>
 
 		<key id="kQueue" modifiers="alt" keycode="VK_RETURN" command="cmdQueue"/>
-		<key id="kQueueAlt" modifiers="alt" keycode="VK_ENTER" command="cmdQueue"/>		
+		<key id="kQueueAlt" modifiers="alt" keycode="VK_ENTER" command="cmdQueue"/>
 	</keyset>
 
 	<popupset id="popups">
@@ -98,7 +98,7 @@
 			<menuitem class="menuitem-iconic" id="mrenaming" label="&mask.label;" command="cmdStartEditMask" />
 			<menuseparator id="msep2" />
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" command="cmdSelectAll" key="kSelectAll" />
-			<menuitem id="selectfiltered" class="menuitem-iconic" label="&selectfiltered.label;" command="cmdSelectFiltered" key="kSelectFiltered" />						
+			<menuitem id="selectfiltered" class="menuitem-iconic" label="&selectfiltered.label;" command="cmdSelectFiltered" key="kSelectFiltered" />
 			<menuitem id="selectinvert" class="menuitem-iconic" label="&selectinv.label;" command="cmdSelectInv" key="kSelectInv" />
 			<menuseparator id="msep3" />
 			<menuitem id="mopen" crop="center" class="menuitem-iconic" command="cmdOpenSelection" key="kOpenSelection" />
@@ -115,7 +115,7 @@
 			</hbox>
 		</panel>
 	</popupset>
-	
+
 	<notificationbox id="notifications" flex="1">
 		<toolbox id="views">
 			<toolbar class="findfiles" chromedir="&locale.dir;">
@@ -144,10 +144,10 @@
 				<splitter class="tree-splitter"/>
 				<treecol id="colMask" label="&mask.label;" flex="5" persist="width hidden"/>
 			</treecols>
-			
+
 			<treechildren/>
 		</tree>
-	</notificationbox>	
+	</notificationbox>
 
 	<hbox style="margin:7px 7px 3px 7px;" >
 		<vbox autostretch="never" flex="1">
@@ -184,7 +184,7 @@
 		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" command="cmdQueue" />
 		<button id="cancelbutton" command="cmdClose" />
 	</hbox>
-	
+
 	<statusbar id="footer">
 		<statusbarpanel id="status" flex="1" />
 		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text text-link" label="&options.label;" command="cmdPreferences"/>

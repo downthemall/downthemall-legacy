@@ -51,7 +51,7 @@ ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watch
 /**
  * Provides nsIPrompt/nsIAuthPrompt
  * The nsIPrompt implementation will log any alerts instead of actually displaying them
- * 
+ *
  * @param window Associated window (that will be the parent of any prompt dialogs)
  */
 function LoggedPrompter(window) {
@@ -95,5 +95,5 @@ function LoggedPrompter(window) {
 			}
 			return _dp;
 		}
-	);	
+	);
 }

@@ -85,7 +85,7 @@ UrlManager.prototype = {
 		this._url = this._urls[0].url;
 		this._usable = this._urls[0].usable;
 		this._domain = Limits.getEffectiveHost(this._url);
-		this._makeGood();	
+		this._makeGood();
 	},
 	add: function um_add(url) {
 		if (!url instanceof DTA.URL) {

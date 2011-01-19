@@ -54,7 +54,7 @@ Manipulator.prototype = {
 		this._m[id] = {
 				matcher: matcher,
 				funcs: Array.map(arguments, function(e) e).slice(2)
-		};	
+		};
 	},
 	unregister: function(id) {
 		if (id in this._m) {
@@ -73,7 +73,7 @@ Manipulator.prototype = {
 					Cu.reportError(ex);
 				}
 			}
-		}		
+		}
 	}
 }
 

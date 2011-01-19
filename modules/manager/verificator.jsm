@@ -51,7 +51,7 @@ module("resource://dta/version.jsm");
 module("resource://dta/api.jsm", DTA);
 
 const RUN_ON_MAINTHREAD = Version.moz2;
-const REGULAR_CHUNK = (1 << (RUN_ON_MAINTHREAD ? 21 : 24)); // 2/16MB 
+const REGULAR_CHUNK = (1 << (RUN_ON_MAINTHREAD ? 21 : 24)); // 2/16MB
 
 module("resource://gre/modules/XPCOMUtils.jsm");
 
@@ -99,7 +99,7 @@ Spinnable.prototype = {
 	cancel: function() {
 		this.terminated = true;
 		if (!RUN_ON_MAINTHREAD) {
-			try { this._thread.shutdown(); } catch (ex) { /* no op */ }			
+			try { this._thread.shutdown(); } catch (ex) { /* no op */ }
 		}
 	}
 };
@@ -132,10 +132,10 @@ function Verificator(file, hashCollection, completeCallback, progressCallback) {
 	this._hashCollection = hashCollection;
 	this._completeCallback = completeCallback;
 	this._progressCallback = progressCallback;
-	
+
 	this._job = registerJob(this._job);
 	if (RUN_ON_MAINTHREAD) {
-		this._thread = ThreadManager.mainThread;		
+		this._thread = ThreadManager.mainThread;
 	}
 	else {
 		this._thread = ThreadManager.newThread(0);
@@ -145,7 +145,7 @@ function Verificator(file, hashCollection, completeCallback, progressCallback) {
 		}
 		catch (ex) {
 			// no op
-		}		
+		}
 	}
 	this._thread.dispatch(this, 0x0);
 }
@@ -231,10 +231,10 @@ MultiVerificator.prototype = {
 			try {
 				for each (let partial in hashCollection.partials) {
 					let pendingPartial = Math.min(pending, hashCollection.parLength);
-					let partialHash; 
+					let partialHash;
 					new Callback(function() {
 						partialHash = new Hash(nsICryptoHash[partial.type]);
-					}, true);					
+					}, true);
 					let start = completed;
 					while (pendingPartial) {
 						if (this.terminated) {
@@ -256,8 +256,8 @@ MultiVerificator.prototype = {
 						if (!flushBytes){
 							flushBytes = REGULAR_CHUNK;
 							new Callback(this._progressCallback, false, Math.min(completed, total));
-							this.spin();							
-						}						
+							this.spin();
+						}
 					}
 					let partialActual = hexdigest(partialHash.finish(false));
 					if (partial.sum != partialActual) {
@@ -269,7 +269,7 @@ MultiVerificator.prototype = {
 						});
 					}
 				}
-				
+
 				// any remainder
 				while (pending) {
 					if (this.terminated) {
@@ -280,7 +280,7 @@ MultiVerificator.prototype = {
 					pending -= count;
 					completed += count;
 					new Callback(this._progressCallback, false, Math.min(completed, total));
-					this.spin();					
+					this.spin();
 				}
 			}
 			finally {

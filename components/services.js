@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
@@ -52,7 +52,7 @@ this.__defineGetter__(
 		let prefs = {};
 		module('resource://dta/preferences.jsm', prefs);
 		delete this.Preferences;
-		return (this.Preferences = prefs); 
+		return (this.Preferences = prefs);
 	}
 );
 
@@ -61,7 +61,7 @@ this.__defineGetter__(
 	function() {
 		let obs = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
 		delete this.Observers;
-		return (this.Observers = obs); 
+		return (this.Observers = obs);
 	}
 );
 
@@ -85,11 +85,11 @@ function Stuff() {}
 Stuff.prototype = {
 	classDescription: "DownThemAll! stuff",
 	contractID: "@downthemall.net/stuff;1",
-	classID: Components.ID("{27a344f4-7c1b-43f3-af7f-bb9dd65114bb}"),		
+	classID: Components.ID("{27a344f4-7c1b-43f3-af7f-bb9dd65114bb}"),
 	_xpcom_categories: [{category: 'profile-after-change'}],
 
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
-	
+
 	observe: function(aSubject, aTopic, aData) {
 		switch (aTopic) {
 		case 'profile-after-change':
@@ -129,7 +129,7 @@ Stuff.prototype = {
 	},
 	clean: function() {
 		log('clean()');
-		
+
 		// Cleaning prefs
 		for each (let e in ['directory', 'filter', 'renaming']) {
 			try {
@@ -139,7 +139,7 @@ Stuff.prototype = {
 				log("Cannot clear pref: " + e, ex);
 			}
 		}
-		
+
 		// Cleaning files
 		try {
 			let prof = Cc["@mozilla.org/file/directory_service;1"]
@@ -160,7 +160,7 @@ Stuff.prototype = {
 		catch (oex) {
 			log('failed to clean files: ', oex);
 		}
-		
+
 		// Diagnostic log
 		try {
 			let _d = {};
@@ -170,7 +170,7 @@ Stuff.prototype = {
 		catch (ex) {
 			log("Cannot clear diagnostic log", ex);
 		}
-		
+
 		try {
 			let mod = {};
 			module('resource://dta/manager/queuestore.jsm', mod);
@@ -187,7 +187,7 @@ Stuff.prototype = {
 		if (branch.getBoolPref('sanitize.sanitizeOnShutdown') && branch.getBoolPref('clearOnShutdown.extensions-dta')){
 			this.clean();
 		}
-	}	
+	}
 };
 
 /**
@@ -199,9 +199,9 @@ AboutModule.prototype = {
 	classDescription: "DownThemAll! about module",
 	classID: Components.ID('{bbaedbd9-9567-4d11-9255-0bbae236ecab}'),
 	contractID: '@mozilla.org/network/protocol/about;1?what=downthemall',
-	
+
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule]),
-	
+
 	newChannel : function(aURI) {
 		try {
 		    let io = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
@@ -216,12 +216,12 @@ AboutModule.prototype = {
 		    	/%(.+?)%/g,
 		    	function (m, m1) (m1 in Version) ? Version[m1] : m
 		    );
-		    
+
 		    let uri = io.newURI(ru, null, null);
 		    let chan = io.newChannelFromURI(uri);
 		    chan.originalURI = aURI;
 		    chan.owner = sec.getCodebasePrincipal(uri);
-		    
+
 		    return chan;
 		}
 		catch (ex) {
@@ -229,7 +229,7 @@ AboutModule.prototype = {
 			throw ex;
 		}
 	},
-	
+
 	getURIFlags: function(aURI) Ci.nsIAboutModule.URI_SAFE_FOR_UNTRUSTED_CONTENT
 };
 

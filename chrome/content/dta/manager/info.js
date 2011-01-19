@@ -58,14 +58,14 @@ var Dialog = {
 				$("infoDest").value = d.destinationFile;
 				$("mirrorsText").value = _("mirrorsText", [d.urlManager.length]);
 				document.title = d.destinationName;
-			
+
 				if (d.referrer) {
 					$('sourcePage')._value = $("sourcePage").value = d.referrer.spec;
 				}
 				if (!d.isOf(FINISHING, COMPLETE)) {
 					$('sourcePage').removeAttribute('readonly');
 				}
-				
+
 				$('renaming').value = d.mask;
 				$('directory').value = d.pathName;
 				if (d.hashCollection) {
@@ -85,20 +85,20 @@ var Dialog = {
 				$('mirrorRow').collapsed = true;
 				$("hash").setAttribute('readonly', 'true');
 				$("hash").setAttribute('disabled', 'true');
-	
+
 				let mask = this.downloads[0].mask;
-				$('renaming').value = 
+				$('renaming').value =
 					this.downloads.every(function(e, i, a) { return e.mask == mask; })
 					? mask
 					: '';
-	
+
 				let dir = String(this.downloads[0].pathName);
-				$('directory').value = 
+				$('directory').value =
 					this.downloads.every(function(e) { return e.pathName == dir; })
 					? dir
 					: '';
 				$('canvasGrid').hidden = true;
-			}				
+			}
 			if (this.downloads.every(function(d) { return d.isOf(COMPLETE, FINISHING); })) {
 				for each (let e in $('directory', 'renaming', 'mask', 'browsedir')) {
 					e.setAttribute('readonly', 'true');
@@ -107,7 +107,7 @@ var Dialog = {
 			}
 			if (this.isFullyDisabled) {
 				$('dTaDownloadInfo').buttons = 'accept';
-			}			
+			}
 		}
 		catch(ex) {
 			Debug.log('load', ex);
@@ -117,30 +117,30 @@ var Dialog = {
 	accept: function DTA_accept() {
 		if (this.isFullyDisabled) {
 			return true;
-		}		
+		}
 		if (!this.check()) {
 			return false;
 		}
-		
+
 		let win = window.arguments[1];
 
 		let directory = $('directory').value.trim();
 		directory = !!directory ? directory.addFinalSlash() : '';
 		$('directory').value = directory;
-		
+
 		let mask = $('renaming').value.trim();
 		mask = mask || '';
 		$('renaming').value = mask;
-		
+
 		let description = $('description').value;
 		description = description.length ? description : '';
-		
+
 		let sp = $('sourcePage');
 		let newRef = null;
 		if (!sp.hasAttribute('readonly') && sp._value != sp.value) {
 			newRef = sp.value;
 		}
-		
+
 		if (this.downloads.length == 1) {
 			let d = this.downloads[0];
 			if ($('hash').isValid) {
@@ -157,7 +157,7 @@ var Dialog = {
 				}
 			}
 		}
-		
+
 		for each (let d in this.downloads) {
 			if (!d.isOf(COMPLETE, FINISHING)) {
 				if (directory) {
@@ -213,8 +213,8 @@ var Dialog = {
 		if (mirrors.length) {
 			download.replaceMirrors(mirrors);
 			Debug.log("New mirrors set " + mirrors);
-			$("mirrorsText").value = _("mirrorsText", [download.urlManager.length]);			
-		}		
+			$("mirrorsText").value = _("mirrorsText", [download.urlManager.length]);
+		}
 	},
 	check: function DTA_check() {
 		var dir = $('directory').value.trim();

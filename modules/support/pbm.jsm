@@ -61,10 +61,10 @@ function browsingPrivately() false;
  * 		The callback object can implement enter-/exitPrivateBrowsing.
  *    These functions have no parameters. No return value is expected.
  *    If Private Browsing Mode is currently active enterPrivateBrowsingMode will be called immediately
- *    
+ *
  *    Furthermore canEnterPrivateBrowsing/canLeavePrivateBrowsing functions may be implemented.
  *    These have no parameters, but a boolean return value is expected stating whether a mode switch might be performed.
- *    
+ *
  *    All callbacks will be called in the scope of obj.
  */
 function registerCallbacks() {};
@@ -79,14 +79,14 @@ if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingServ
 	const os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
 
 	let _callbacks = [];
-	
+
 	function Observer() {
 		os.addObserver(this, "private-browsing", false);
 		os.addObserver(this, "private-browsing-cancel-vote", false);
 		os.addObserver(this, "quit-application", false);
 	}
 	Observer.prototype = {
-		QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),			
+		QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
 		observe: function(aSubject, aTopic, aData) {
 			switch (aTopic) {
 			case 'private-browsing-cancel-vote':
@@ -114,7 +114,7 @@ if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingServ
 				if (prop in c) {
 					return c[prop].call(c);
 				}
-				return true;				
+				return true;
 			});
 		},
 		notify: function(prop) {
@@ -129,7 +129,7 @@ if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingServ
 		}
 	};
 	const observer = new Observer();
-	
+
 	function browsingPrivately() pbm.privateBrowsingEnabled;
 	function registerCallbacks(obj) {
 		_callbacks.push(obj);
@@ -138,6 +138,6 @@ if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingServ
 		}
 	}
 	function unregisterCallbacks(obj) {
-		_callbacks = _callbacks.filter(function(e) e != obj); 
-	}	
+		_callbacks = _callbacks.filter(function(e) e != obj);
+	}
 }

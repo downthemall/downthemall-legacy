@@ -102,7 +102,7 @@ Limit.prototype = {
 			throw new Exception("Invalid Limit");
 		}
 		this._speed = value;
-	},	
+	},
 	save: function() {
 		Prefs.set(LIMITS_PREF + this._host, stringify({c: this._connections, s: this._speed}));
 		this._isNew = false;
@@ -117,7 +117,7 @@ function loadLimits() {
 	limits = {};
 	let hosts = Prefs.getChildren(LIMITS_PREF).map(function(e) e.substr(LIMITS_PREF.length));
 	hosts.sort();
-	
+
 	for each (let host in hosts) {
 		try {
 			let limit = new Limit(host);
@@ -176,7 +176,7 @@ SchedItem.prototype = {
 	},
 	inc: function() ++this.n,
 	pop: function() {
-		++this.n;	
+		++this.n;
 		return this.downloads.shift();
 	},
 	push: function(d) this.downloads.push(d),
@@ -207,7 +207,7 @@ function FastScheduler(downloads, running) {
 		else {
 			downloadSet[host].inc();
 		}
-	}		
+	}
 	for (let d in downloads) {
 		if (!d.is(QUEUED)) {
 			continue;
@@ -229,10 +229,10 @@ function FastScheduler(downloads, running) {
 
 // Fair Scheduler: evenly distribute slots
 // Performs far worse than FastScheduler but is more precise.
-// Oeven = O(running) + O(downloads) + O(downloadSet) + Osort(sorted)  
+// Oeven = O(running) + O(downloads) + O(downloadSet) + Osort(sorted)
 function FairScheduler(downloads, running) {
 	let downloadSet = {};
-	
+
 	// Count the running tasks
 	for each (let d in running) {
 		let host = d.urlManager.domain;
@@ -252,7 +252,7 @@ function FairScheduler(downloads, running) {
 		if (!(host in downloadSet)) {
 			downloadSet[host] = new SchedItem(host);
 			yield d;
-			continue;			
+			continue;
 		}
 		downloadSet[host].push(d);
 	}
@@ -271,11 +271,11 @@ function FairScheduler(downloads, running) {
 			let s = sorted.shift();
 			while (s.queued) {
 				yield s.pop();
-			} 		
+			}
 			return;
 		}
 
-		// round robin		
+		// round robin
 		for (let i = 0, e = sorted.length; i < e; ++i) {
 			let s = sorted[i];
 			yield s.pop();
@@ -352,7 +352,7 @@ function getServerBucket(d) {
 	if (host in limits) {
 		return (buckets[host] = new ByteBucket(limits[host].speed * 1024, 1.2));
 	}
-	return unlimitedBucket; 
+	return unlimitedBucket;
 }
 
 // install our observer
@@ -362,7 +362,7 @@ const Observer = {
 			try {
 				killServerBuckets();
 				unlimitedBucket.kill();
-				unlimitedBucket = null; 
+				unlimitedBucket = null;
 			}
 			catch (ex) {
 				// nothing we can do
@@ -370,7 +370,7 @@ const Observer = {
 			obs.removeObserver(this, SHUTDOWN_TOPIC);
 			return;
 		}
-		
+
 		globalConnections = Prefs.getExt("serverlimit.perserver", 4);
 		loadLimits();
 		loadServerBuckets();

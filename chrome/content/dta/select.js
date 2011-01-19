@@ -59,7 +59,7 @@ function Tree(links, type) {
 					return (this.icon = getIcon(this.url.url.spec, 'metalink' in this));
 				}
 			);
-	
+
 			// same here for description
 			link.__defineGetter__(
 				'desc',
@@ -150,23 +150,23 @@ Tree.prototype = {
 
 	getParentIndex: function(idx) -1,
 	getLevel: function(idx) 0,
-	
+
 	getCellText: function(idx, col) {
 
 		// corresponding link
 		let l = this._links[idx];
 
 		switch (col.index) {
-			
+
 			// check mark, sort compat
 			case 0: return this.getCellValue(idx, col);
-			
+
 			// col 1 is the name
 			case 1: return l.url.usable;
 
 			// col 2 is the resname
 			case 2: return l.resname;
-			
+
 			// col 3 is the description
 			case 3: return l.desc;
 
@@ -232,16 +232,16 @@ Tree.prototype = {
 		}
 
 		this.removeSortMarker();
-		
+
 		Debug.log("setting sortColumn = " + col.index);
 		this._sortColumn = col.index;
 		this._sortDirection = false;
 		this._sortColumnElem = col.element;
 		this.setSortMarker();
-		
+
 		let sd;
 		this._links.forEach(function(e, i) { e._sortId = i; });
-		
+
 		let tp = this;
 		this._links = Utils.naturalSort(this._links, function(e) tp.getCellText(e._sortId, col));
 		if (this._sortDirection) {
@@ -304,14 +304,14 @@ ServiceGetter(Tree.prototype, "_as", "@mozilla.org/atom-service;1", "nsIAtomServ
  * Our real, kicks ass implementation of the UI
  */
 let Dialog = {
-	
+
 	get boxen() {
 		return $('checkcontainer').getElementsByTagName('checkbox');
 	},
-	
+
 	// will be called to initialize the dialog
 	load: function DTA_load() {
-	
+
 		// construct or dropdowns.
 		this.ddFilter = $('filter');
 		this.ddDirectory = $('directory');
@@ -320,7 +320,7 @@ let Dialog = {
 			this.ddDirectory.value = DefaultDownloadsDirectory.path;
 		}
 		this.ddRenaming = $('renaming');
-		
+
 		$('maskeditor-accept').label = _('button-accept');
 		$('cancelbutton').label = $('maskeditor-cancel').label = _('button-cancel');
 
@@ -342,7 +342,7 @@ let Dialog = {
 			// intialize our Trees (nsITreeview)
 			// type parameter corresponds to Filter types
 			this.links = new Tree(links, 1);
-			this.images = new Tree(images, 2);			
+			this.images = new Tree(images, 2);
 
 			// changeTab will initialize the filters and do the selection for us
 			let preferredTab = Preferences.getExt("seltab", 0);
@@ -362,7 +362,7 @@ let Dialog = {
 				},
 				true
 			);
-			
+
 			this._notifications = $('notifications');
 			for (let x in this._notifications) {
 				if (!x.match(/^PRIORITY/)) {
@@ -370,10 +370,10 @@ let Dialog = {
 				}
 				this[x] = this._notifications[x];
 			}
-			
+
 			if (window.arguments[2]) {
 				this.setNotification(window.arguments[2], this.PRIORITY_WARNING_HIGH, 4500);
-			}			
+			}
 		}
 		catch(ex) {
 			Debug.log("load():", ex);
@@ -383,7 +383,7 @@ let Dialog = {
 		// currently just observes FilterManager
 		this.registerObserver();
 	},
-	
+
 	addNotification: function DTA_addNotification(label, priority, timeout, buttons) {
 		let nb = this._notifications;
 		let n = nb.appendNotification(label, 0, null, priority, buttons);
@@ -448,7 +448,7 @@ let Dialog = {
 			let dir = this.ddDirectory.value;
 			let mask = this.ddRenaming.value;
 			let counter = DTA.currentSeries();
-			
+
 			function prepare(link, dir, counter, mask) {
 				link.dirSave = dir;
 				link.numIstance = counter;
@@ -481,14 +481,14 @@ let Dialog = {
 			DTA.sendLinksToManager(window, start, out);
 
 			// save tab
-			
+
 			Preferences.setExt('seltab', this.current.type == 1 ? 0 : 1);
 			// save history
 			['ddDirectory', 'ddRenaming', 'ddFilter'].forEach(function (e) { Dialog[e].save(); });
 
 			// save the counter, queued state
 			Preferences.setExt("lastqueued", !start);
-			
+
 			let boxen = this.boxen;
 			for (let i = 0; i < boxen.length; ++i) {
 				boxen[i].filter.active = boxen[i].checked;
@@ -515,17 +515,17 @@ let Dialog = {
 		if (!this.current.selection.count) {
 			return;
 		}
-		
+
 		$('maskeditor-selector').reload();
 		$('maskeditor').openPopup($('urlList'), 'overlap', 20, 20, false, false);
 	},
-	
+
 	acceptEditMask: function() {
 		let selector = $('maskeditor-selector');
 		if (!selector.value || selector.value.length == 0) {
 			return;
 		}
-		
+
 		// set the new mask for each selected item
 		const rangeCount = this.current.selection.getRangeCount();
 		let start = {}, end = {};
@@ -574,7 +574,7 @@ let Dialog = {
 		catch (ex) {
 			// no op
 		}
-		
+
 		for each (let link in tree._links) {
 			link.checked = '';
 			if (link.manuallyChecked) {
@@ -674,7 +674,7 @@ let Dialog = {
 		// ... and set it to the actual tree
 		$("urlList").view = this.current;
 		this.current.setSortMarker();
-		
+
 		// ... and update the UI
 		let type = this.current.type;
 		if (type == 1) {
@@ -700,7 +700,7 @@ let Dialog = {
 			checkbox.filter = f;
 			boxes.push(checkbox);
 		}
-		
+
 		// clean all filterboxen
 		let rows = $('checkcontainerrows');
 		let cols = $('checkcontainercols');
@@ -715,7 +715,7 @@ let Dialog = {
 			cols.appendChild(document.createElement('column'));
 			cols.lastChild.setAttribute('flex', '1');
 		}
-		
+
 		let row = null;
 		boxes.forEach(
 			function(b, i) {
@@ -751,14 +751,14 @@ let Dialog = {
 		let items = $('popup').getElementsByTagName('menuitem');
 		let open = $('mopen');
 		let tree = this.current;
-		
+
 		const hideItems = tree.selection.count == 0;
 		$('mopen', 'mcheck', 'muncheck', 'mtoggle', 'mrenaming', 'msep1', 'msep2', 'msep3').forEach(
 			function(e) {
 				e.setAttribute('hidden', hideItems);
 			}
 		);
-		
+
 		let otext = '';
 		if (tree.selection.count == 1) {
 			let s = {}, e = {};
@@ -773,7 +773,7 @@ let Dialog = {
 		// display the popup
 		return true;
 	},
-	
+
 	// will open the curretly selected links in new tabs
 	openSelection: function() {
 		let tree = this.current;
@@ -786,7 +786,7 @@ let Dialog = {
 			}
 		}
 	},
-	
+
 	selectAll: function() {
 		this.current.selection.selectAll();
 	},
@@ -797,7 +797,7 @@ let Dialog = {
 		let selection = tree.selection;
 		for (let i = 0, e = tree.rowCount; i < e; ++i) {
 			selection.toggleSelect(i);
-		}		
+		}
 	},
 	selectFiltered: function() {
 		let tree = this.current;

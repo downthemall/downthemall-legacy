@@ -4,7 +4,7 @@
  *
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- * 
+ *
  * See LICENSE and GPL for details.
  *
  * ***** END LICENSE BLOCK ***** -->
@@ -16,7 +16,7 @@
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
 	%commonDTD;
 	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
-	%managerDTD;	
+	%managerDTD;
 ]>
 
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&infoMultiple.value;" id="DownThemAll" onload="Dialog.load();" buttons="accept,cancel" ondialogaccept="return Dialog.accept();" ondialogcancel="Tooltip.stop(); return true;">

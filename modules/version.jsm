@@ -40,7 +40,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const module = Components.utils.import;
 
-const ID = 'dta@downthemall.net'; 
+const ID = 'dta@downthemall.net';
 
 const runtime = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULAppInfo).QueryInterface(Ci.nsIXULRuntime);
 const comparator = Cc["@mozilla.org/xpcom/version-comparator;1"].getService(Ci.nsIVersionComparator);
@@ -84,7 +84,7 @@ function completeVersion(addon) {
 		Version.NAME = addon.name;
 		Version.ready = true;
 	}
-	
+
 	_callbacks.forEach(function(c) c.call(c, Version));
 	_callbacks = [];
 }

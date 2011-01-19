@@ -57,8 +57,8 @@ let supportsClickable = true;
 (function() {
 	// XXX enhance: query libnotify via ctypes.
 	if (Version.OS == 'linux') {
-		supportsClickable = false; 
-	}	
+		supportsClickable = false;
+	}
 })();
 
 const Observer = {
@@ -104,7 +104,7 @@ function show(title, msg, callback) {
 
 	let clickable = false;
 	Observer._func = null;
-	
+
 	// don't make clickable on *nix, so that libnotify will be used more often
 	if (typeof callback == 'function' && supportsClickable) {
 		clickable = true;

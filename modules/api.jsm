@@ -121,7 +121,7 @@ function URL(url, preference) {
 	this._url = url.clone();
 
 	let hash = getLinkPrintHash(this._url);
-	this._url.ref = '';		
+	this._url.ref = '';
 	if (hash) {
 		this.hash = hash;
 	}
@@ -147,7 +147,7 @@ URL.prototype = {
 /**
  * Checks if a provided strip has the correct hash format Supported are: md5,
  * sha1, sha256, sha384, sha512
- * 
+ *
  * @param hash
  *          Hash to check
  * @return hash type or null
@@ -188,7 +188,7 @@ function Hash(hash, type) {
 	if (typeof(type) != 'string' && (!type instanceof String)) {
 		throw new Exception("hashtype is invalid");
 	}
-	
+
 	type = type.toUpperCase().replace(/[\s-]/g, '');
 	if (!(type in SUPPORTED_HASHES_ALIASES)) {
 		throw new Exception("hashtype is invalid: " + type);
@@ -247,7 +247,7 @@ HashCollection.prototype = {
 	/**
 	 * Iterator over all partial hashes
 	 * Gives {hash,start,end} dict
-	 */		
+	 */
 	__iterator__: function() {
 		for each (let partial in this._partials) {
 			yield partial;
@@ -282,7 +282,7 @@ HashCollection.prototype = {
 
 /**
  * Get a link-fingerprint hash from an url (or just the hash component)
- * 
+ *
  * @param url.
  *          Either String or nsIURI
  * @return Valid hash string or null
@@ -291,7 +291,7 @@ function getLinkPrintHash(url) {
 	if (!(url instanceof Ci.nsIURL)) {
 		return null;
 	}
-	var lp = url.ref.match(/^hash\((md5|sha(?:-?(?:1|256|384|512))?):([\da-f]+)\)$/i); 
+	var lp = url.ref.match(/^hash\((md5|sha(?:-?(?:1|256|384|512))?):([\da-f]+)\)$/i);
 	if (lp) {
 		try {
 			return new Hash(lp[2], lp[1]);
@@ -305,7 +305,7 @@ function getLinkPrintHash(url) {
 
 /**
  * Get a link-fingerprint metalink from an url (or just the hash component
- * 
+ *
  * @param url.
  *          Either String or nsIURI
  * @param charset.
@@ -409,7 +409,7 @@ function saveSingleItem(window, turbo, item) {
 		turboSendLinksToManager(window, [item]);
 		return;
 	}
-	
+
 	// else open addurl.xul
 	window = window || Mediator.getMostRecent();
 	window.openDialog(
@@ -426,7 +426,7 @@ function sendLinksToManager(window, start, links) {
 		win.self.startDownloads(start, links);
 		return;
 	}
-	
+
 	window = window || Mediator.getMostRecent();
 	window.openDialog(
 		"chrome://dta/content/dta/manager.xul",
@@ -470,7 +470,7 @@ function saveLinkArray(window, urls, images, error) {
 		error
 	);
 }
-		
+
 function turboSaveLinkArray(window, urls, images) {
 	if (urls.length == 0 && images.length == 0) {
 		throw new Exception("no links");

@@ -72,7 +72,7 @@ const fn1_0 = [
 		}
 	},
 ];
-   
+
 
 /**
  * Migration entry point
@@ -85,15 +85,15 @@ function migrate() Version.getInfo(function(v) {
 		}
 		if (v.compareVersion(lastVersion, "1.0.1") < 0) {
 			fn1_0.forEach(function(fn) fn());
-		}			
+		}
 		Preferences.setExt('version', v.BASE_VERSION);
-		
+
 		v.showAbout = true;
 		Cc["@mozilla.org/observer-service;1"]
 			.getService(Ci.nsIObserverService)
 			.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
 		let _ic = {};
-		
+
 		// Need to extract icons
 		module('resource://dta/support/iconcheat.jsm');
 	}

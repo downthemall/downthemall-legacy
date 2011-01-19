@@ -57,20 +57,20 @@ CoThreadBase.prototype = {
 
 	init: function CoThreadBase_init(func, yieldEvery, thisCtx) {
 		this._thisCtx = thisCtx ? thisCtx : this;
-		
+
 		// default to 1
 		this._yieldEvery = typeof yieldEvery == 'number' ? Math.floor(yieldEvery) : 1;
 		if (yieldEvery < 1) {
 			throw Cr.NS_ERROR_INVALID_ARG;
 		}
-		
+
 		if (typeof func != 'function' && !(func instanceof Function)) {
 			throw Cr.NS_ERROR_INVALID_ARG;
-		} 
+		}
 		this._func = func;
 		this.init = function() {};
 	},
-	
+
 	start: function CoThreadBase_run(finishFunc) {
 		if (this._ran) {
 			throw new Error("You cannot run a CoThread/CoThreadListWalker instance more than once.");
@@ -79,16 +79,16 @@ CoThreadBase.prototype = {
 		this._ran = true;
 		MainThread.dispatch(this, 0);
 	},
-	
+
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports, Ci.nsICancelable, Ci.nsIRunnable]),
-	
+
 	_terminated: false,
-	
+
 	run: function CoThreadBase_run() {
 		if (this._terminated) {
 			return;
 		}
-	
+
 		let y = this._yieldEvery;
 		let g = this._generator;
 		let f = this._func;
@@ -108,7 +108,7 @@ CoThreadBase.prototype = {
 			this.cancel();
 		}
 	},
-	
+
 	cancel: function CoThreadBase_cancel() {
 		if (this._terminated) {
 			return;
@@ -116,7 +116,7 @@ CoThreadBase.prototype = {
 		this._terminated = true;
 		if (this._finishFunc) {
 			this._finishFunc.call(this._thisCtx);
-		}		
+		}
 	}
 }
 
@@ -126,7 +126,7 @@ CoThreadBase.prototype = {
  * the operation temporarily after a certain amount of calls,
  * so that the main thread gets a chance to process any outstanding
  * events.
- * 
+ *
  * Example:
  *        Components.utils.import('resource://dta/cothread.jsm');
  *        new CoThread(
@@ -137,21 +137,21 @@ CoThreadBase.prototype = {
  *          // Each 1000 items
  *          1000
  *        ).start();
- *   
- * @param {Function} func Function to be called. Is passed call count as argument. Returning false will cancel the operation. 
+ *
+ * @param {Function} func Function to be called. Is passed call count as argument. Returning false will cancel the operation.
  * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
  * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
  */
 function CoThread(func, yieldEvery, thisCtx) {
 	this.init(func, yieldEvery, thisCtx);
-	
+
 	// fake generator so we may use a common implementation. ;)
 	this._generator = (function() { for(;;) { yield null }; })();
 }
 
 CoThread.prototype = {
 	__proto__: CoThreadBase.prototype,
-	
+
 	_callf: function CoThread__callf(ctx, item, idx, func) {
 		return func.call(ctx, idx);
 	}
@@ -159,7 +159,7 @@ CoThread.prototype = {
 /**
  * Constructs a new CoThreadInterleaved (aka. pseudo-thread).
  * The CoThread will process a interleaved function (generator)
- * 
+ *
  * Example:
  *        Components.utils.import('resource://dta/cothread.jsm');
  *        new CoThread(
@@ -177,8 +177,8 @@ CoThread.prototype = {
  *          // Each 2 items
  *          2
  *        ).start();
- *   
- * @param {Function} func Function to be called. Is passed call count as argument. Returning false will cancel the operation. 
+ *
+ * @param {Function} func Function to be called. Is passed call count as argument. Returning false will cancel the operation.
  * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
  * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
  */
@@ -188,7 +188,7 @@ function CoThreadInterleaved(generator, yieldEvery, thisCtx) {
 }
 CoThreadInterleaved.prototype = {
 	__proto__: CoThreadBase.prototype,
-	
+
 	_callf: function() true
 };
 
@@ -198,7 +198,7 @@ CoThreadInterleaved.prototype = {
  * on each item, but "breaking" the operation temporarily after a
  * certain amount of processed items, so that the main thread may
  * process any outstanding events.
- * 
+ *
  * Example:
  *        Components.utils.import('resource://dta/cothread.jsm');
  *        new CoThreadListWalker(
@@ -213,15 +213,15 @@ CoThreadInterleaved.prototype = {
  *          1000,
  *          null,
  *        ).start(function() alert('done'));
- *   
- * @param {Function} func Function to be called on each item. Is passed item and index as arguments. Returning false will cancel the operation. 
- * @param {Array/Generator} arrayOrGenerator Array or Generator object to be used as the input list 
+ *
+ * @param {Function} func Function to be called on each item. Is passed item and index as arguments. Returning false will cancel the operation.
+ * @param {Array/Generator} arrayOrGenerator Array or Generator object to be used as the input list
  * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
  * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
  */
 function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
 	this.init(func, yieldEvery, thisCtx);
-	
+
 	if (arrayOrGenerator instanceof Array || 'length' in arrayOrGenerator) {
 		// make a generator
 		this._generator = (i for each (i in arrayOrGenerator));
@@ -229,12 +229,12 @@ function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
 	else {
 		this._generator = arrayOrGenerator;
 	}
-	
+
 	if (this._lastFunc && (typeof func != 'function' && !(func instanceof Function))) {
 		throw Cr.NS_ERROR_INVALID_ARG;
-	} 
+	}
 }
- 
+
 CoThreadListWalker.prototype = {
 	__proto__: CoThreadBase.prototype,
 	_callf: function CoThreadListWalker__callf(ctx, item, idx, func) {

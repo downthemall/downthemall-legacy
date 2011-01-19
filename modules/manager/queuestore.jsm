@@ -79,9 +79,9 @@ const QueueStore = {
 			return;
 		}
 		this._initialized = true;
-		
+
 		Debug.log("QueueStore: initialzing in " + (pb ? "private" : "normal") + " mode");
-		
+
 		try {
 			if (pb) {
 				_connection = Storage.openSpecialDatabase("memory");
@@ -110,19 +110,19 @@ const QueueStore = {
 				_connection = Storage.openDatabase(__db);
 			}
 		}
-			
+
 		try {
 			if (('schemaVersion' in _connection) && _connection.schemaVersion != DB_VERSION) {
 				/*
 					migrate data
 				*/
 				_connection.schemaVersion = DB_VERSION;
-				Debug.log("setting schema version");				
+				Debug.log("setting schema version");
 			}
 			if (!_connection.tableExists('queue')) {
 				_connection.executeSimpleSQL('PRAGMA page_size = 4096');
 				_connection.createTable('queue', 'uuid INTEGER PRIMARY KEY AUTOINCREMENT, pos INTEGER, item TEXT');
-			}			
+			}
 		}
 		catch (ex) {
 			Debug.log("failed to create table", ex);
@@ -141,16 +141,16 @@ const QueueStore = {
 		catch (ex) {
 			Debug.log("SQLite", _connection.lastErrorString);
 		}
-		Debug.log("QueueStore: done initialzing");		
+		Debug.log("QueueStore: done initialzing");
 	},
 	shutdown: function() {
 		if (!this._initialized) {
 			return;
 		}
-		
+
 		// give manager a chance to save running
 		Observers.notifyObservers(null, 'DTA:shutdownQueueStore', null);
-		
+
 		this._initialized = false;
 		// finish any pending operations
 		if (_timer) {
@@ -158,7 +158,7 @@ const QueueStore = {
 				_timer.cancel();
 			}
 			catch (ex) { /* don't care */ }
-			
+
 			_timer = null;
 			this._saveDownloadQueue();
 		}
@@ -232,11 +232,11 @@ const QueueStore = {
 		try {
 			if (!_connection.backupDB(DB_FILE_BAK).exists()) {
 				throw new Exception("DB Backup failed!");
-			} 
+			}
 		}
 		catch (ex) {
 			Debug.log("QueueStore: Cannot backup queue", ex);
-		} 
+		}
 	},
 	addDownload: function(download, position) {
 		if (!download) {
@@ -265,7 +265,7 @@ const QueueStore = {
 		for (let id in _saveQueue) {
 			s.bindInt64Parameter(0, id);
 			s.bindStringParameter(1, _saveQueue[id]);
-			s.execute();			
+			s.execute();
 		}
 		s.reset();
 		_saveQueue = {};
@@ -273,7 +273,7 @@ const QueueStore = {
 		this.endUpdate();
 	},
 	savePosition: function(id, position) {
-		let s = this._savePosStmt; 
+		let s = this._savePosStmt;
 		s.bindInt64Parameter(0, id);
 		s.bindInt64Parameter(1, position);
 		s.execute();
@@ -338,7 +338,7 @@ const QueueStore = {
 	}
 };
 
-const SHUTDOWN_TOPIC = 'profile-change-teardown'; 
+const SHUTDOWN_TOPIC = 'profile-change-teardown';
 
 var ShutdownObserver = {
 	install: function() {

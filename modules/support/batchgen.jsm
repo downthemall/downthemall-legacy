@@ -70,7 +70,7 @@ Range.prototype = {
 	init: function(name, start, stop, step) {
 		stop += -Math.abs(step)/step;
 		stop += step - ((stop - start) % step);
-		
+
 		this.name = name;
 		this.start = start;
 		this.stop = stop;
@@ -109,7 +109,7 @@ NumericRange.prototype = {
 			return '-' + rv;
 		}
 		return rv;
-	}	
+	}
 };
 
 /**
@@ -131,7 +131,7 @@ CharRange.prototype = {
  * Batch generator.
  * The provide URL will be parsed for any batch descriptors.
  * If some are found they are replaced accordingly
- * 
+ *
  * @param link URL to parse
  */
 function BatchGenerator(link) {
@@ -140,7 +140,7 @@ function BatchGenerator(link) {
 	this._length = 1;
 	this._pats = [];
 	let i;
-	
+
 	// search all batchdescriptors
 	while ((i = url.search(/\[.*?]/)) != -1) {
 		// Heading string is a simple Literal
@@ -148,7 +148,7 @@ function BatchGenerator(link) {
 			this._pats.push(new Literal(url.substring(0, i)));
 			url = url.slice(i);
 		}
-		
+
 		let m;
 		// Numeric range syntax
 		if ((m = url.match(/^\[(-?\d+):(-?\d+)(?::(-?\d+))?\]/)) != null) {
@@ -178,7 +178,7 @@ function BatchGenerator(link) {
 			}
 			continue;
 		}
-		
+
 		// Alpha range syntax
 		if ((m = url.match(/^\[([a-z]):([a-z])(?::(-?\d))?\]/)) || (m = url.match(/\[([A-Z]):([A-Z])(?::(-?\d))?\]/))) {
 			url = url.slice(m[0].length);
@@ -202,7 +202,7 @@ function BatchGenerator(link) {
 			}
 			continue;
 		}
-		
+
 		// Unknown/invalid descriptor
 		// Insert as Literal
 		if ((m = url.match(/^\[.*?]/)) != null) {
@@ -210,7 +210,7 @@ function BatchGenerator(link) {
 			this._pats.push(new Literal(m[0]));
 			continue;
 		}
-		
+
 		// Something very bad happened. Should never get here.
 		throw new Exception("Failed to parse the expression");
 	}
@@ -218,7 +218,7 @@ function BatchGenerator(link) {
 	if (url.length) {
 		this._pats.push(new Literal(url));
 	}
-	
+
 	// Join successive Literals. This will produce a faster generation later.
 	for (i = this._pats.length - 2; i >= 0; --i) {
 		if ((this._pats[i] instanceof Literal) && (this._pats[i + 1] instanceof Literal)) {
@@ -226,7 +226,7 @@ function BatchGenerator(link) {
 			this._pats.splice(i + 1, 1);
 		}
 	}
-	
+
 	// Calculate the total length of the batch
 	for each (let i in this._pats) {
 		this._length *= i.length;
@@ -242,7 +242,7 @@ BatchGenerator.prototype = {
 	_process: function(pats) {
 		// Recursively called ;)
 		// Keep this "static"
-		
+
 		if (pats.length == 0) {
 			yield '';
 			return;
@@ -254,24 +254,24 @@ BatchGenerator.prototype = {
 			}
 		}
 	},
-	
+
 	/**
 	 * Generates all URLs
-	 * @return (generator) All URLs according to any batch descriptors 
+	 * @return (generator) All URLs according to any batch descriptors
 	 */
 	getURLs: function() {
 		for (let i in this._process(this._pats)) {
 			yield i;
 		}
 	},
-	
+
 	/**
 	 * Expected number of generated Links
 	 */
 	get length() {
 		return this._length;
 	},
-	
+
 	/**
 	 * All matched batch descriptors
 	 * @return (array) Parts/descriptors
@@ -282,7 +282,7 @@ BatchGenerator.prototype = {
 			.map(function(e) { return e.name; })
 			.join(", ");
 	},
-	
+
 	/**
 	 * First URL that will be generated
 	 */

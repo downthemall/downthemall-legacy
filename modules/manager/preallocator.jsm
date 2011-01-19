@@ -37,7 +37,7 @@
 const EXPORTED_SYMBOLS = [
 	'prealloc'
 ];
-	
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
@@ -77,12 +77,12 @@ const workers = {};
 /**
  * Pre-allocates a given file on disk
  * and calls given callback when done
- * 
+ *
  * @param file (nsIFile) file to allocate
- * @param size (int) Size to allocate  
+ * @param size (int) Size to allocate
  * @param perms (int) *nix file permissions
  * @param callback (function) Callback called once done
- * @param tp (function) Scope (this) to call the callback function in 
+ * @param tp (function) Scope (this) to call the callback function in
  * @return (nsICancelable) Pre-allocation object.
  */
 function prealloc(file, size, perms, callback, tp) {
@@ -94,7 +94,7 @@ function prealloc(file, size, perms, callback, tp) {
 		}
 		return null;
 	}
-	
+
 	return new WorkerJob(file.path, size, perms, callback, tp);
 }
 
@@ -173,10 +173,10 @@ WorkerJob.prototype = {
 			this._run_other();
 			return;
 		}
-		
+
 		// Dispatch event back to the main thread
-		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);		
-	},	
+		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);
+	},
 	_run_other: function worker_run_other() {
 		let rv = false;
 		try {
@@ -205,9 +205,9 @@ WorkerJob.prototype = {
 		catch (ex) {
 			Components.utils.reportError("pa: Failed to run prealloc loop: " + ex);
 		}
-		
+
 		// Dispatch event back to the main thread
-		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);		
+		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);
 	},
 	cancel: function() {
 		Debug.log("pa: cancel called!");
@@ -226,10 +226,10 @@ function MainJob(uuid, thread, callback, tp, result) {
 }
 MainJob.prototype = {
 	QueryInterface: WorkerJob.prototype.QueryInterface,
-	
+
 	run: function main_run() {
 		// thread is done
-	
+
 		try {
 			// wait for thread to actually join, if not already joined
 			if (!RUN_ON_MAINTHREAD) {
@@ -239,7 +239,7 @@ MainJob.prototype = {
 		catch (ex) {
 			// might throw; see Worker.cancel
 		}
-		
+
 		if (this.callback) {
 			try {
 				// call the user callback
@@ -250,7 +250,7 @@ MainJob.prototype = {
 				Debug.log("pa: callback throw", ex);
 			}
 		}
-		
+
 		// cleanup
 		workers[this.uuid] = 0;
 		delete workers[this.uuid];

@@ -50,7 +50,7 @@ const Exception = Components.Exception;
 const FileFactory = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const SoundFactory = new ctor('@mozilla.org/sound;1', 'nsISound', 'play');
 const CryptoHash = new ctor("@mozilla.org/security/hash;1", "nsICryptoHash");
-	
+
 // shared state defines
 
 module("resource://dta/constants.jsm", this);
@@ -78,7 +78,7 @@ module("resource://dta/support/icons.jsm");
 
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!
- * 
+ *
  * @param ids
  *          One of more Ids
  * @return Either the element when there was just one parameter, or an array of
@@ -127,7 +127,7 @@ function $e(name, attrs, ns) {
 var Utils = {
 	/**
 	 * Opens up a directory picker and returns the user selected path.
-	 * 
+	 *
 	 * @param predefined
 	 *          The starting path to display when dialog opens up
 	 * @text text The description text to be displayed
@@ -142,16 +142,16 @@ var Utils = {
 			let nsIFilePicker = Ci.nsIFilePicker;
 			let fp = new Utils.FilePicker(window, text, nsIFilePicker.modeGetFolder);
 			fp.appendFilters(nsIFilePicker.filterAll);
-		
+
 			// locate current directory
 			let dest = this.validateDir(predefined);
 			if (dest) {
 				fp.displayDirectory = dest;
 			}
-		
+
 			// open file picker
 			let res = fp.show();
-	
+
 			if (res == nsIFilePicker.returnOK) {
 				return fp.file.path.addFinalSlash();
 			}
@@ -164,7 +164,7 @@ var Utils = {
 	/**
 	 * Performs all the needed controls to see if the specified path is valid, is
 	 * creable and writable and his drive has some free disk space.
-	 * 
+	 *
 	 * @param path
 	 *          The path to test
 	 * @return a nsILocalFile to the specified path if it's valid, false if it
@@ -218,7 +218,7 @@ var Utils = {
 	/**
 	 * Gets the disk-space available for a nsILocalFile. Here, because
 	 * diskSpaceAvailable requires valid path and/or path to be a directory
-	 * 
+	 *
 	 * @param file
 	 *          Valid nsILocalFile
 	 * @return the disk-space available to the caller
@@ -234,7 +234,7 @@ var Utils = {
 					// Solaris compat: #889
 					// As we cannot get a correct value simply return max int64_t
 					return 9223372036854775807;
-				}					
+				}
 			}
 			file = file.parent;
 		}
@@ -242,20 +242,20 @@ var Utils = {
 	},
 	/**
 	 * Play a sound file (if prefs allow to do so)
-	 * 
+	 *
 	 * @param name
 	 *          Name of the sound (corresponding to the pref name and the file
 	 *          name of desired sound)
 	 */
 	playSound: function(name) {
-		
+
 		try {
 			var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"]
 				.getService(Ci.nsIXULRuntime);
 			if (/linux|sun|bsd|aix|hp|dragonfly|irix/i.test(xulRuntime.OS) && /64/.test(xulRuntime.XPCOMABI)) {
 				throw new Components.Exception("*nix 64 - freeze problems");
 			}
-			
+
 			if (Preferences.getExt("sounds." + name, false)) {
 				new SoundFactory(("chrome://dta/skin/sounds/" + name + ".wav").toURI());
 			}
@@ -267,7 +267,7 @@ var Utils = {
 
 	formatKBytes: function U_formatKBytes(aNumber, decimalPlace) {
 		aNumber = Number(aNumber) / 1024;
-		
+
 		if (!isFinite(aNumber)) {
 			return 'NaN';
 		}
@@ -303,7 +303,7 @@ var Utils = {
 				unit = sunits[i];
 			}
 			decimalPlace = arguments.length > 1 ? decimalPlace : unit[1];
-			return _(unit[0], [val.toFixed(decimalPlace)]);			
+			return _(unit[0], [val.toFixed(decimalPlace)]);
 		}
 	}
 	Utils.formatBytes = createFormatter([['sizeB', 0], ['sizeKB', 1], ['sizeMB', 2], ['sizeGB', 2], ['sizeTB', 3]], 875);
@@ -326,7 +326,7 @@ Utils.extendString(String);
 
 /**
  * Get a (formatted) locale property string.
- * 
+ *
  * @param stringId
  *          Id of desired string corresponding to the .properties file(s)
  * @param ...
@@ -343,14 +343,14 @@ setNewGetter(this, "_", function() {
 			return bundles.getString(arguments[0]);
 		}
 		return bundles.getFormattedString.apply(bundles, arguments);
-	} 
+	}
 });
 
 InstanceGetter(this, "converter", "@mozilla.org/intl/scriptableunicodeconverter", "nsIScriptableUnicodeConverter");
 
 /**
  * Convert a value into a hash
- * 
+ *
  * @param data
  *          Data to hash. Either an nsInputStream or String-castable.
  * @param algorithm
@@ -378,7 +378,7 @@ function hash(value, algorithm, encoding, datalen) {
 	}
 	if (typeof(algorithm) == 'string' || algorithm instanceof String) {
 		ch.initWithString(algorithm);
-	} 
+	}
 	else {
 		ch.init(algorithm);
 	}
@@ -387,7 +387,7 @@ function hash(value, algorithm, encoding, datalen) {
 		ch.updateFromStream(value, datalen > 0 ? datalen : 0xffffffff);
 	}
 	else {
-		converter.charset = 'utf8';		
+		converter.charset = 'utf8';
 		value = converter.convertToByteArray(Utils.atos(value), {});
 		ch.update(value, value.length);
 	}

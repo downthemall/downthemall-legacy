@@ -173,11 +173,11 @@ treechildren::-moz-tree-cell-text(fastFiltered) {
 }
 #selectall {
 	list-style-image: url(chrome://dta/skin/common/selection.png);
-	-moz-image-region: rect(0px, 16px, 16px, 0px);  
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 #selectinvert {
 	list-style-image: url(chrome://dta/skin/common/selection.png);
-	-moz-image-region: rect(0px, 48px, 16px, 32px);  
+	-moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 #selectfiltered {
 	list-style-image: url(selectfiltered.png);

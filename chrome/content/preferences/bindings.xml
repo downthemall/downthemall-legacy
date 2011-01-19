@@ -34,7 +34,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** -->
- 
+
 <!DOCTYPE bindings SYSTEM "chrome://dta/locale/prefpanes.dtd">
 
 <bindings xmlns="http://www.mozilla.org/xbl" xmlns:xbl="http://www.mozilla.org/xbl" xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -53,7 +53,7 @@
 				<body><![CDATA[
 					let evt = document.createEvent('UIEvents');
 					evt.initUIEvent(eventType, true, true, null, 0);
-					return this.dispatchEvent(evt);				
+					return this.dispatchEvent(evt);
 				]]></body>
 			</method>
 

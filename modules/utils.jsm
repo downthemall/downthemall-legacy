@@ -99,10 +99,10 @@ const SYSTEMSLASH = (function() {
 	let f = DirectoryService.get("TmpD", Ci.nsIFile);
 	f.append('dummy');
 	return (f.path.indexOf('/') != -1) ? '/' : '\\';
-})(); 
+})();
 
 
-const MAX_STACK = 6; 
+const MAX_STACK = 6;
 
 /**
  * Installs a new lazy getter
@@ -155,7 +155,7 @@ function ServiceGetter(context, name, contract, iface) {
 				throw ex;
 			}
 		}
-	);	
+	);
 }
 
 /**
@@ -195,7 +195,7 @@ function InstanceGetter(context, name, contract, iface, initFuncName/*, args */)
  * Creates anonymous function with context
  * @param context (object) Context object
  * @param func (function) Function to call
- * @return (function) anonymous function binding func to context 
+ * @return (function) anonymous function binding func to context
  */
 function bind(context, func) (function() func.apply(context, arguments));
 
@@ -234,19 +234,19 @@ function DebugService() {
 
 DebugService.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference, Ci.dtaIDebugService]),
-	
+
 	QueryReferent: function(iid) this.QueryInterface(iid),
 	GetWeakReference: function() this,
-	
+
 	// nsIObserver
 	observe: function DS_observe(subject, topic, prefName) {
-		this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));	
+		this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));
 	},
 	clear: function DS_clear() {
 		if (this._file.exists()) {
 			this._file.remove(false);
 		}
-	},	
+	},
 	get _cs() {
 		delete DebugService.prototype._cs;
 		return (DebugService.prototype._cs = Cc['@mozilla.org/consoleservice;1'].getService(Ci.nsIConsoleService));
@@ -259,7 +259,7 @@ DebugService.prototype = {
 		 delete DebugService.prototype._file;
 		 return (DebugService.prototype._file = file);
 	},
-	
+
 	get file() {
 		return this._file;
 	},
@@ -310,8 +310,8 @@ DebugService.prototype = {
 			let columnNumber = 0;
 			let fileName = null;
 			let sourceLine = '';
-			
-			
+
+
 			if (exception && exception.location) {
 				lineNumber = exception.lineNumber;
 				fileName = exception.filename;
@@ -333,7 +333,7 @@ DebugService.prototype = {
 				initialLine += " :: " + exception.name;
 				initialLine += " :: line: " + lineNumber;
 				text.push("\t>" + initialLine + "\n");
-				
+
 			}
 			else if (exception && stack) {
 				lineNumber = stack.lineNumber;
@@ -352,7 +352,7 @@ DebugService.prototype = {
 				lineNumber = stack.lineNumber;
 				fileName = stack.filename;
 			}
-			
+
 			if (stack instanceof Ci.nsIStackFrame) {
 				let sourceLine = stack.sourceLine;
 				let s = stack.caller;
@@ -365,8 +365,8 @@ DebugService.prototype = {
 				text = text.join('');
 				if (stack && exception) {
 					this._cs.logMessage(new ScriptError(text, fileName, sourceLine, lineNumber, columnNumber, 0x2, 'component javascript'));
-					 
-				} 
+
+				}
 				else {
 					this._cs.logStringMessage(text);
 				}
@@ -382,14 +382,14 @@ DebugService.prototype = {
 		catch(ex) {
 			error(ex);
 			error(this.toSource());
-		}	
-	
+		}
+
 	},
 	_logDisabled: function DS__dumpDisabled() {
 		// no-op;
 	},
 	log: this._log,
-		
+
 	remove: function DS_remove() {
 		try {
 			this._file.remove(false);
@@ -421,7 +421,7 @@ function range() {
 		step = new Number(arguments[2]);
 	}
 	else {
-		step = stop - start > 0 ? 1 : -1; 
+		step = stop - start > 0 ? 1 : -1;
 	}
 	if (!isFinite(start) || !isFinite(stop) || !isFinite(step) || step == 0) {
 		throw Cr.NS_ERROR_INVALID_ARG;
@@ -445,11 +445,11 @@ function range() {
  */
 function hexdigest(data) {
 	data = data.toString();
-	return [('0' + data.charCodeAt(i).toString(16)).slice(-2) for (i in range(data.length))].join('');	
+	return [('0' + data.charCodeAt(i).toString(16)).slice(-2) for (i in range(data.length))].join('');
 }
 
 /**
- * Merges the enumeratable properties of two objects   
+ * Merges the enumeratable properties of two objects
  * @param {Object} me Object that has the properties added the properties
  * @param {Object} that Object of which the properties are taken
  */
@@ -520,7 +520,7 @@ function formatTimeDelta(delta) {
 	let h = Math.floor(delta / 3600);
 	let m = Math.floor((delta % 3600) / 60);
 	let s = Math.floor(delta % 60);
-	
+
 	if (h) {
 		rv += formatNumber(h, 2) + ':';
 	}
@@ -579,7 +579,7 @@ function naturalSort(arr, mapper) {
 			let last = isDigit(a, 0);
 			let cur = last;
 			start = 0;
-		
+
 			for (let i = 0; i < len; ++i) {
 				cur = isDigit(a, i);
 				if (cur != last) {
@@ -617,9 +617,9 @@ function naturalSort(arr, mapper) {
 }
 
 /**
- * Simple Iterator encapsulating nsISimpleEnumerator for easy access 
+ * Simple Iterator encapsulating nsISimpleEnumerator for easy access
  * @param obj (nsISimpleEnumerator) Enumerator to convert to an iterator
- * @param iface (Interface) Optional. Interface of elements 
+ * @param iface (Interface) Optional. Interface of elements
  * @return
  */
 function SimpleIterator(obj, iface) {
@@ -669,25 +669,25 @@ Properties.prototype = {
 						break;
 					case prop.TYPE_PRUINT8:
 						prop = prop.QueryInterface(Ci.nsISupportsPRUint8);
-						break;		
+						break;
 					case prop.TYPE_PRUINT16:
 						prop = prop.QueryInterface(Ci.nsISupportsPRUint16);
-						break;					
+						break;
 					case prop.TYPE_PRUINT32:
 						prop = prop.QueryInterface(Ci.nsISupportsPRUint32);
-						break;					
+						break;
 					case prop.TYPE_PRUINT64:
 						prop = prop.QueryInterface(Ci.nsISupportsPRUint64);
-						break;					
+						break;
 					case prop.TYPE_PRINT8:
 						prop = prop.QueryInterface(Ci.nsISupportsPRInt8);
-						break;		
+						break;
 					case prop.TYPE_PRINT16:
 						prop = prop.QueryInterface(Ci.nsISupportsPRInt16);
-						break;					
+						break;
 					case prop.TYPE_PRINT32:
 						prop = prop.QueryInterface(Ci.nsISupportsPRInt32);
-						break;					
+						break;
 					case prop.TYPE_PRINT64:
 						prop = prop.QueryInterface(Ci.nsISupportsPRInt64);
 						break;
@@ -770,8 +770,8 @@ function _loadBundle(url) {
 	let strings = {};
 	for (let s in new SimpleIterator(StringBundleService.createBundle(url).getSimpleEnumeration(), Ci.nsIPropertyElement)) {
 		strings[s.key] = s.value;
-	}	
-	return _bundles[url] = strings; 
+	}
+	return _bundles[url] = strings;
 }
 function _loadBundles(urls) {
 	urls = urls.filter(
@@ -786,14 +786,14 @@ function _loadBundles(urls) {
 	for each (let b in urls.map(function(e) _loadBundle(e))) {
 		merge(rv, b);
 	}
-	return _bundles[key] = rv; 
+	return _bundles[key] = rv;
 }
 const _br = /%S/gi;
 
 /**
  * Encapulates all stringbundles of the current document and provides unified
  * access
- * 
+ *
  * @author Nils
  * @see _
  */
@@ -833,7 +833,7 @@ StringBundles.prototype = {
 
 /**
  * XP compatible reveal/launch
- * 
+ *
  * @author Nils (derived from DownloadManager code)
  */
 
@@ -857,7 +857,7 @@ function OpenExternal_nixLaunch(file) {
 
 /**
  * Launch/Execute a file
- * 
+ *
  * @param nsILocalFile/String
  *          pointing to the desired file
  */
@@ -878,7 +878,7 @@ function launch(file) {
 /**
  * Reveal a file, which will open the directory and furthermore select the
  * file on some platforms.
- * 
+ *
  * @param nsILocalFile/String
  *          pointing to the desired file
  */
@@ -903,7 +903,7 @@ function reveal(file) {
 function extendString(_s) {
 	merge(
 		_s.prototype,
-		{ 
+		{
 			removeBadChars: function() {
 				return this
 					.replace(/[\n\r\v?:<>*|"]/g, '_')
@@ -913,7 +913,7 @@ function extendString(_s) {
 				if (this.length == 0) {
 					return SYSTEMSLASH;
 				}
-				
+
 				if (this[this.length - 1] != SYSTEMSLASH) {
 					return this + SYSTEMSLASH;
 				}
@@ -969,12 +969,12 @@ function extendString(_s) {
 				return this;
 			},
 			toURI: function(charset, baseURI) {
-				return IOService.newURI(this, charset, baseURI);			
+				return IOService.newURI(this, charset, baseURI);
 			},
 			toURL: function(charset, baseURI) {
 				return this.toURI(charset, baseURI).QueryInterface(Ci.nsIURL);
 			}
 		}
-	);	
+	);
 }
 extendString(String);

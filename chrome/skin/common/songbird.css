@@ -23,7 +23,7 @@ treechildren::-moz-tree-row(odd) {
 	background-color: white;
 }
 treechildren::-moz-tree-cell-text {
-	color: black;	
+	color: black;
 }
 toolbar *{
 	color: windowText !important;

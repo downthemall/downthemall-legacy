@@ -54,17 +54,17 @@ function GlobalProgress(window) {
  * but that may change in the future (UNFROZEN)
  */
 GlobalProgress.prototype = {
-	
+
 	init: function() {},
 	exit: function() {},
 	reset: function() {},
-	
+
 	hide: function() {},
 	unknown: function() {},
 	pause: function() {},
 	activate: function() {},
 	error: function() {},
-	
+
 	total: 0,
 	value: 0
 };
@@ -73,7 +73,7 @@ try {
 	// Windows7, mozilla 1.9.2
 	const wtb = Cc["@mozilla.org/windows-taskbar;1"]
          .getService(Ci.nsIWinTaskbar);
-	
+
 	if (!wtb.available) {
 		// Service is present but not supported
 		throw new Exception("not available");
@@ -124,7 +124,7 @@ try {
 				this._total = total;
 			}
 			this._state = NORMAL;
-			this._setState();			
+			this._setState();
 		},
 		error: function(value, total) {
 			if (arguments.length) {
@@ -154,8 +154,8 @@ try {
 			}
 			else {
 				this._progress.setProgressState(
-					this._state, 
-					this._value, 
+					this._state,
+					this._value,
 					this._total
 					);
 			}
