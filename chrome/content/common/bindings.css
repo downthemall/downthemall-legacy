@@ -9,17 +9,15 @@ menu.menu-iconic {
 .closer {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#closebox);
 }
-
 .closer .childrenbox {
 	margin-left: 13px;
 }
-
 .closer > .closebox-title {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#closebox-title);
 }
 .closebox-title {
 	cursor: pointer !important;
-}	
+}
 .closebox-title:hover {
 	text-decoration: underline;
 }
@@ -32,14 +30,17 @@ saveddropdown {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#saveddropdown);
 }
 
+/* metalinker */
 richlistbox.metalinker .item {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#metalinker-item);
 }
 
+/* hashinput */
 hashinput {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#hashinput);
 }
 
+/* speed list */
 menupopup.speedlimitlist-popup {
     -moz-binding: url(chrome://dta/content/common/bindings.xml#speed-limit-list-popup);
 }
