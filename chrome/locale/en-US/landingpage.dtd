@@ -92,9 +92,9 @@
 <!ENTITY lp.yr.gplintro "Most important sections from the GPL 2.0, the no warranty and damages disclaimer, follow:">
 <!ENTITY lp.yr.icons "Artwork, icons and buttons">
 <!ENTITY lp.yr.iconsbased "are based on the works of Mike Matas, Jakub Steiner, Mark James and the Tango project">
-<!ENTITY lp.yr.artwork "The original artwork is: Copyright Â© 2004-2010 by Stefano Verna, Federico Parodi and Nils Maier">
+<!ENTITY lp.yr.artwork11 "The original artwork is: Copyright © 2004-2011 by Stefano Verna, Federico Parodi and Nils Maier">
 <!ENTITY lp.yr.artworklicense "The original artwork is licensed under:">
-<!ENTITY lp.yr.logo "The DownThemAll! logo is: Copyright Â© 2004-2010 by Stefano Verna.">
+<!ENTITY lp.yr.logo11 "The DownThemAll! logo is: Copyright © 2004-2011 by Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "The DownThemAll! name and logo cannot be used without permission in any derivative work, with exception of credits and license-related notices.">
 
 <!ENTITY lp.ct.bugstitle "Reporting bugs/Feature requests">
