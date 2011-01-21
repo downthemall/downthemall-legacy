@@ -1,0 +1,18 @@
+<!ENTITY title "Faites votre choix">
+<!ENTITY filters.caption "Filtres">
+<!ENTITY additional.caption "Filtrage rapide">
+<!ENTITY additional.tip "Filtre texte : vous pouvez définir plusieurs filtres texte en les séparant par une virgule.">
+<!ENTITY regex.label "Exp. reg.">
+<!ENTITY filter.tip "Saisissez vos filtres textes ici ! (voyez des exemples dans le menu déroulant)">
+<!ENTITY status.label "Après sélection des liens, cliquez sur Démarrer !">
+<!ENTITY menu.mask.title "Modifier le masque de renommage">
+<!ENTITY menu.check.label "Cocher les options sélectionnées">
+<!ENTITY menu.uncheck.label "Décocher les options sélectionnées">
+<!ENTITY menu.toggle.label "Inverser la sélection">
+<!ENTITY tab.links.label "Liens">
+<!ENTITY tab.pics.label "Images et objets incorporés">
+<!ENTITY header.desc.label "Description">
+<!ENTITY selectfiltered.label "Sélectionner les éléments filtrés">
+<!ENTITY disableother.label "Désactiver d'autres filtres">
+<!ENTITY disableother.tooltip "Désactiver d'autres filtres et n'utiliser que le filtrage rapide (ce paramètre n'est pas mémorisé pour le moment)">
+<!ENTITY resname.value "Nom de la ressource">
