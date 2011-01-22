@@ -36,6 +36,8 @@
 
 const EXPORTED_SYMBOLS = ['merge'];
 
+const RE_GROUPSTRIP = /\(.*\)/g;
+
 /**
  * Return a good prefix, with no bracket mismatches
  *
@@ -160,7 +162,7 @@ function largestPrefixGroup(patterns, low, high, level) {
 		}
 	}
 
-	if (bestc < 4) {
+	if (bestc < Math.min(4, Math.max(2, patterns.length))) {
 		// at least 3 items in the group are required
 		return [0,0,0];
 	}
@@ -197,13 +199,20 @@ function mergePatterns(patterns, low, high, prefix) {
 	// slice the largest group, and chop of the common prefix
 	let lg = patterns.splice(low, high - low).map(function(p) p.substring(pl));
 	// build a prefix pattern
-	let lgp = prefix + "(?:" + lg.map(function(p) {
-		if (p.indexOf('|') == -1)
+	let lgp = lg
+	.map(function(p) {
+		if (p.replace(RE_GROUPSTRIP, '').indexOf('|') == -1) {
 			return p;
+		}
 		return "(?:" + p + ")";
-	}).join("|") + ")";
-
-	patterns.push(lgp);
+	})
+	.join("|");
+	if (prefix) {
+		patterns.push(prefix + "(?:" + lgp + ")");
+	}
+	else {
+		patterns.push(lgp);
+	}
 	// need to return sorted as largestPrefixGroup relies on sorting
 	return patterns.sort();
 }
