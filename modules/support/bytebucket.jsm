@@ -188,13 +188,13 @@ ByteBucketTee.prototype = {
 				.reduce(function(p, c) Math.min(p,c));
 		},
 		requestBytes: function(bytes) {
-			for (let bucket = 0; bucket < this._buckets; bucket++) {
+			for (let bucket = 0; bucket < this._buckets.length; bucket++) {
 				bytes = this._buckets[bucket].requestBytes(bytes);
 				if (!bytes) {
 					return 0;
 				}
 			}
-			for (let bucket = 0; bucket < this._buckets; bucket++) {
+			for (let bucket = 0; bucket < this._buckets.length; bucket++) {
 				this._buckets[bucket].commitBytes(bytes);
 			}
 			return bytes;
