@@ -155,13 +155,13 @@
 			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" key="kPause" command="cmdPause" />
 			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" key="kCancel" command="cmdCancel" />
 			<menuseparator />
-			<menu id="removeCompletedMenu" class="menu-iconic" label="&removecompleted.label;">
+			<splitmenu id="removeCompletedMenu" class="menuitem-iconic" label="&removecompleted.label;" command="cmdRemoveCompleted">
 				<menupopup id="removeCompletedPopup">
 					<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeAll.label;" key="kRemoveCompleted" command="cmdRemoveCompleted" />
 					<menuseparator />
 				</menupopup>
-			</menu>
-			<menu id="removeMenu" class="menu-iconic" label="&removemenu.label;">
+			</splitmenu>
+			<splitmenu id="removeMenu" class="menuitem-iconic" label="&removemenu.label;" command="cmdRemoveSelected">
 				<menupopup id="removePopup">
 					<menuitem id="removeselected" class="menuitem-iconic" label="&removeselected.label;" key="kRemoveSelected" command="cmdRemoveSelected" />
 					<menuitem id="removeHost" class="menuitem-iconic" label="&removehost.label;" key="kRemoveHost" command="cmdRemoveHost"/>
@@ -172,7 +172,7 @@
 					<menuitem id="removeAll" class="menuitem-iconic" label="&removeAll.label;" command="cmdRemoveAll" />
 					<menuseparator />
 				</menupopup>
-			</menu>
+			</splitmenu>
 			<menuseparator class="action"/>
 			<menuitem id="listselectall" class="action menuitem-iconic" label="&selectall.label;" key="kSelectAll" command="cmdSelectAll" />
 			<menuitem id="listselectinv" class="action menuitem-iconic" label="&selectinv.label;" key="kSelectInv" command="cmdSelectInv" />
