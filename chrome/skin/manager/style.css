@@ -400,7 +400,7 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 }
 
 /* menuitem element (row 2) */
-#removeMenu ,
+#removeMenu > menuitem,
 #removeselected,
 #removeHost,
 #removeAll {
@@ -412,7 +412,7 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 	-moz-image-region: rect(48px,16px,64px,0px);
 }
 
-#removeCompletedMenu,
+#removeCompletedMenu > menuitem,
 #removeCompleted {
 	-moz-image-region: rect(32px,32px,48px,16px);
 }

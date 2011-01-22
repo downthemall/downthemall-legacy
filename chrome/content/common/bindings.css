@@ -5,6 +5,11 @@ menu.menu-iconic {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#menu-iconic-addressable);
 }
 
+/* splitmenu */
+splitmenu {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#splitmenu);
+}
+
 /* closebox */
 .closer {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#closebox);
