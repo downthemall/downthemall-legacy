@@ -343,8 +343,8 @@
 
 	<binding id="splitmenu">
 		<content>
-			<xul:menuitem xbl:inherits="class,label" flex="1"/>
-			<xul:menu class="splitmenu-menuitem-menu" pack="end" oncommand="event.stopPropagation();">
+			<xul:menuitem class="menuitem-iconic splitmenu-menuitem" flex="1" xbl:inherits="label,disabled"/>
+			<xul:menu class="splitmenu-menu" pack="end" oncommand="event.stopPropagation();" xbl:inherits="disabled">
 				<children includes="menupopup"/>
 			</xul:menu>
 		</content>

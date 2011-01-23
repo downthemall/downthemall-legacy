@@ -9,6 +9,11 @@ menu.menu-iconic {
 splitmenu {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#splitmenu);
 }
+.splitmenu-menu > .menu-text,
+.splitmenu-menu > .menu-accel-container,
+.splitmenu-menuitem > .menu-accel-container {
+	display: none;
+}
 
 /* closebox */
 .closer {
