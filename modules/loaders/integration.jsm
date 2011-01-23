@@ -353,7 +353,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 					'//*[not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
 					copy.ownerDocument,
 					null,
-					XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+					aWin.XPathResult.ORDERED_NODE_ITERATOR_TYPE,
 					null
 				);
 				yield true;
