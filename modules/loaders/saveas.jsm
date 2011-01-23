@@ -11,16 +11,14 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll!
+ * The Original Code is DownThemAll API saveas loader.
  *
- * The Initial Developers of the Original Code are Stefano Verna and Federico Parodi
- * Portions created by the Initial Developers are Copyright (C) 2004-2007
- * the Initial Developers. All Rights Reserved.
+ * The Initial Developer of the Original Code is Nils Maier
+ * Portions created by the Initial Developer are Copyright (C) 2011
+ * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *    Stefano Verna
- *    Federico Parodi <jimmy2k@gmail.com>
- *    Nils Maier <MaierMan@web.de>
+ *   Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -36,11 +34,38 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-addEventListener('load', function() {
-	removeEventListener('load', arguments.callee, true);
+const EXPORTED_SYMBOLS = ["load"];
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
+const ctor = Components.Constructor;
+const module = Cu.import;
 
-	const DTA = {};
-	Components.utils.import('resource://dta/api.jsm', DTA);
+module("resource://gre/modules/XPCOMUtils.jsm");
+
+/* **
+ * Lazy getters
+ */
+XPCOMUtils.defineLazyGetter(this, 'DTA', function() {
+	let rv = {};
+	rv.showPreferences = function(pane, command) this.Mediator.showPreferences(window, pane, command);
+	module("resource://dta/api.jsm", rv);
+	rv.Mediator.open = function DTA_Mediator_open(url, ref) {
+		this.openUrl(window, url, ref);
+	}
+	if ('freeze' in Object) {
+		Object.freeze(rv);
+	}
+	return rv;
+});
+
+
+/* **
+ * Loader
+ */
+function load(window) {
+	let document = window.document;
+	let dialog = window.dialog;
 
 	function $() {
 		if (arguments.length == 1) {
@@ -205,7 +230,7 @@ addEventListener('load', function() {
 		download(true);
 	}, true);
 
-	addEventListener('dialogaccept', function(evt) {
+	window.addEventListener('dialogaccept', function(evt) {
 		let selMode = mode.selectedItem;
 		if (selMode == normal || selMode == turbo) {
 			if (remember.checked) {
@@ -221,5 +246,4 @@ addEventListener('load', function() {
 		}
 		DTA.Preferences.setExt("saveasmode", 0);
 	}, false); // dialogaccept
-
-}, true); // load
+}

@@ -12,7 +12,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is downTHEMall
+ * The Original Code is DownThemAll!
  *
  * The Initial Developers of the Original Code are
  * Federico Parodi and Stefano Verna
@@ -43,19 +43,27 @@
 
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/saveas.dtd">
 <overlay id="downthemallDownloadSaveAs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<script type="application/x-javascript" src="chrome://dta/content/integration/saveas.js"/>
-
-	<radiogroup id="mode">
-		<vbox insertbefore="save" id="downthemallcontainer" collapsed="true" flex="1">
-			<hbox flex="1">
-				<radio id="downthemall" label="DownThemAll!" disabled="true"/>
-			</hbox>
-			<hbox id="tdta" flex="1">
-				<radio id="turbodta" disabled="true" label="dTa OneClick!"/>
-				<toolbarbutton id="turbodtaexec" disabled="true" />
-				<spacer flex="1"/>
-				<saveddropdown id="tdtalist" preference="directory" readonly="true" crop="center" flex="1"/>
-			</hbox>
-		</vbox>
-	</radiogroup>
+		<script type="application/x-javascript"><![CDATA[
+			addEventListener('load', function() {
+				removeEventListener('load', arguments.callee, false);
+				let _loader = {};
+				Components.utils.import('resource://dta/loaders/saveas.jsm', _loader);
+				_loader.load(window);
+			}, false);
+		]]></script>
+		<radiogroup id="mode">
+				<vbox insertbefore="save" id="downthemallcontainer" collapsed="true"
+						flex="1">
+						<hbox flex="1">
+								<radio id="downthemall" label="DownThemAll!" disabled="true" />
+						</hbox>
+						<hbox id="tdta" flex="1">
+								<radio id="turbodta" disabled="true" label="dTa OneClick!" />
+								<toolbarbutton id="turbodtaexec" disabled="true" />
+								<spacer flex="1" />
+								<saveddropdown id="tdtalist" preference="directory"
+										readonly="true" crop="center" flex="1" />
+						</hbox>
+				</vbox>
+		</radiogroup>
 </overlay>
