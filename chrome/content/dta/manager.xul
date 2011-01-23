@@ -4,7 +4,7 @@
  *
  * This code is part of DownThemAll! - dTa!
  * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- * 
+ *
  * See LICENSE and GPL for details.
  *
  * ***** END LICENSE BLOCK ***** -->
@@ -142,13 +142,13 @@
 			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" key="kPause" command="cmdPause" />
 			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" key="kCancel" command="cmdCancel" />
 			<menuseparator />
-			<menu id="removeCompletedMenu" class="menu-iconic" label="&removeCompleted.label;">
+			<splitmenu id="removeCompletedMenu" class="menuitem-iconic" label="&removeCompleted.label;" command="cmdRemoveCompleted">
 				<menupopup id="removeCompletedPopup">
 					<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeAll.label;" key="kRemoveCompleted" command="cmdRemoveCompleted" />
 					<menuseparator />
 				</menupopup>
-			</menu>
-			<menu id="removeMenu" class="menu-iconic" label="&removemenu.label;">
+			</splitmenu>
+			<splitmenu id="removeMenu" class="menuitem-iconic" label="&removemenu.label;" command="cmdRemoveSelected">
 				<menupopup id="removePopup">
 					<menuitem id="removeselected" class="menuitem-iconic" label="&removeselected.label;" key="kRemoveSelected" command="cmdRemoveSelected" />
 					<menuitem id="cleangone" class="menuitem-iconic" label="&removeGone.label;" key="kCleanGone" command="cmdCleanGone" />
@@ -157,7 +157,7 @@
 					<menuitem id="removeAll" class="menuitem-iconic" label="&removeAll.label;" command="cmdRemoveAll" />
 					<menuseparator />
 				</menupopup>
-			</menu>
+			</splitmenu>
 			<menuseparator />
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" key="kSelectAll" command="cmdSelectAll" />
 			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" key="kSelectInv" command="cmdSelectInv" />

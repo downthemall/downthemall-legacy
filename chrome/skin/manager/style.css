@@ -6,8 +6,8 @@
 #prespacer {
 	display: none;
 }
-	
-/** :: Toolbar :: **/	
+
+/** :: Toolbar :: **/
 toolbox {
 	border-width: 0px;
 }
@@ -63,7 +63,7 @@ toolbox {
 	-moz-image-region: rect(0px,26px,26px,0px);
 }
 #tooladd[disabled="true"] {
-	-moz-image-region: rect(0px,78px,26px,52px);    
+	-moz-image-region: rect(0px,78px,26px,52px);
 }
 
 
@@ -74,7 +74,7 @@ toolbox {
 	-moz-image-region: rect(26px,26px,52px,0px);
 }
 #toolcancel[disabled="true"] {
-	-moz-image-region: rect(26px,78px,52px,52px);    
+	-moz-image-region: rect(26px,78px,52px,52px);
 }
 
 #toolplay {
@@ -84,7 +84,7 @@ toolbox {
 	-moz-image-region: rect(52px,26px,78px,0px);
 }
 #toolplay[disabled="true"] {
-	-moz-image-region: rect(52px,78px,78px,52px);    
+	-moz-image-region: rect(52px,78px,78px,52px);
 }
 
 
@@ -95,7 +95,7 @@ toolbox {
 	-moz-image-region: rect(78px,26px,104px,0px);
 }
 #toolpause[disabled="true"] {
-	-moz-image-region: rect(78px,78px,104px,52px);    
+	-moz-image-region: rect(78px,78px,104px,52px);
 }
 
 #toolmovetop {
@@ -105,7 +105,7 @@ toolbox {
 	-moz-image-region: rect(104px,26px,130px,0px);
 }
 #toolmovetop[disabled="true"] {
-	-moz-image-region: rect(104px,78px,130px,52px);    
+	-moz-image-region: rect(104px,78px,130px,52px);
 }
 
 #toolmoveup {
@@ -115,7 +115,7 @@ toolbox {
 	-moz-image-region: rect(130px,26px,156px,0px);
 }
 #toolmoveup[disabled="true"] {
-	-moz-image-region: rect(130px,78px,156px,52px);    
+	-moz-image-region: rect(130px,78px,156px,52px);
 }
 
 #toolmovedown {
@@ -125,7 +125,7 @@ toolbox {
 	-moz-image-region: rect(156px,26px,182px,0px);
 }
 #toolmovedown[disabled="true"] {
-	-moz-image-region: rect(156px,78px,182px,52px);    
+	-moz-image-region: rect(156px,78px,182px,52px);
 }
 
 #toolmovebottom {
@@ -135,7 +135,7 @@ toolbox {
 	-moz-image-region: rect(182px,26px,208px,0px);
 }
 #toolmovebottom[disabled="true"] {
-	-moz-image-region: rect(182px,78px,208px,52px);    
+	-moz-image-region: rect(182px,78px,208px,52px);
 }
 
 #tooldonate {
@@ -188,7 +188,7 @@ tooltip textbox.plain {
 }
 #infoGrid label[crop] {
 	font-weight: normal;
-	max-width: 300px;	
+	max-width: 300px;
 }
 #canvasGrid label[id] {
 	font-weight: bold;
@@ -213,7 +213,7 @@ tooltip textbox.plain {
 
 #downloads > treechildren::-moz-tree-progressmeter {
 	padding: 1px; /* songbird compat */
-	background-image: none !important; /* songbird compat */ 
+	background-image: none !important; /* songbird compat */
 	margin-left: 0;
 }
 treechildren::-moz-tree-progressmeter(completed) {
@@ -240,11 +240,11 @@ treechildren::-moz-tree-progressmeter(inprogress) {
 
 treechildren::-moz-tree-image(iconic) {
 	list-style-image: url(menu.png);
-	-moz-image-region: rect(16px,96px,32px,80px);	
+	-moz-image-region: rect(16px,96px,32px,80px);
 }
 treechildren::-moz-tree-image(iconic,progress) {
 	list-style-image: url(menu.png);
-	-moz-image-region: rect(16px,96px,32px,80px);	
+	-moz-image-region: rect(16px,96px,32px,80px);
 	padding-right: 0.2ex !important;
 }
 treechildren::-moz-tree-image(iconic,canceled) {
@@ -275,8 +275,8 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 #speedLimit,
 #popup > menu,
 #popup > menuitem,
-#removeCompletedMenu menuitem, 	
-#removeMenu menuitem, 
+#removeCompletedMenu menuitem,
+#removeMenu menuitem,
 #advancedMenu menuitem {
 	list-style-image: url(menu.png);
 }
@@ -345,7 +345,7 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 	-moz-image-region: rect(48px,144px,64px,128px);
 }
 #speedLimit[value="-1"] {
-	-moz-image-region: rect(64px,112px,76px,96px);	
+	-moz-image-region: rect(64px,112px,76px,96px);
 }
 #perDownloadSpeedLimit[value="-1"] {
 	-moz-image-region: rect(32px,160px,48px,144px);
@@ -375,7 +375,7 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 }
 
 /* menuitem element (row 2) */
-#removeMenu ,
+#removeMenu > menuitem,
 #removeselected,
 #removeAll {
 	-moz-image-region: rect(32px,16px,48px,0px);
@@ -386,7 +386,7 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 	-moz-image-region: rect(48px,16px,64px,0px);
 }
 
-#removeCompletedMenu,
+#removeCompletedMenu > menuitem,
 #removeCompleted {
 	-moz-image-region: rect(32px,32px,48px,16px);
 }
@@ -464,11 +464,11 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 /* menuitem common */
 menuitem#selectall {
 	list-style-image: url(chrome://dta/skin/common/selection.png);
-	-moz-image-region: rect(0px, 16px, 16px, 0px);  
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 menuitem#selectinv {
 	list-style-image: url(chrome://dta/skin/common/selection.png);
-	-moz-image-region: rect(0px, 48px, 16px, 32px);  
+	-moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 
 /* menuitem dupes */
