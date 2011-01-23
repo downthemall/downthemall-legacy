@@ -1,0 +1,7 @@
+<!ENTITY title.value "檔名衝突">
+<!ENTITY text.value "記住此設定：">
+<!ENTITY file.label "只針對這個檔案">
+<!ENTITY session.label "只對這次">
+<!ENTITY always.label "從現在起">
+<!ENTITY overwrite.label "覆寫已存在的檔案">
+<!ENTITY skip.label "略過/取消">
