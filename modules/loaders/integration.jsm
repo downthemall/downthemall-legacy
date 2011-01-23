@@ -11,16 +11,14 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll!
+ * The Original Code is DownThemAll API integration loader.
  *
- * The Initial Developers of the Original Code are Stefano Verna and Federico Parodi
- * Portions created by the Initial Developers are Copyright (C) 2004-2007
- * the Initial Developers. All Rights Reserved.
+ * The Initial Developer of the Original Code is Nils Maier
+ * Portions created by the Initial Developer are Copyright (C) 2011
+ * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *    Stefano Verna
- *    Federico Parodi <jimmy2k@gmail.com>
- *    Nils Maier <MaierMan@web.de>
+ *   Nils Maier <MaierMan@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -36,39 +34,419 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-(function() {
+const EXPORTED_SYMBOLS = ["load"];
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
+const ctor = Components.Constructor;
+const module = Cu.import;
 
-	let Cc = Components.classes;
-	let Ci = Components.interfaces;
-	let Cu = Components.utils;
+module("resource://gre/modules/XPCOMUtils.jsm");
 
-	// There might still be some users around, so allow them to access window.DTA
-	// window.DTA should, however, stay our own global symbol at the moment
-	window.__defineGetter__('DTA', function() {
-		delete window.DTA;
-		let rv = {};
-		rv.showPreferences = function(pane, command) this.Mediator.showPreferences(window, pane, command);
-		Components.utils.import("resource://dta/api.jsm", rv);
-		rv.Mediator.open = function DTA_Mediator_open(url, ref) {
-			this.openUrl(window, url, ref);
-		}
-		if ('freeze' in Object) {
-			Object.freeze(rv);
-		}
-		return (window.DTA = rv);
-	});
+/* **
+ * Constructors
+ */
+const StringInputStream = ctor('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream');
+const MimeInputStream = ctor('@mozilla.org/network/mime-input-stream;1', 'nsIMIMEInputStream');
+const ScriptableInputStream = ctor('@mozilla.org/scriptableinputstream;1', 'nsIScriptableInputStream');
 
-	// anonymous lazy getter (only methods
-	let Preferences = {
-		__noSuchMethod__: function(id, args) {
-			delete this.__noSuchMethod__;
-			Components.utils.import('resource://dta/preferences.jsm', this);
-			if ('freeze' in Object) {
-				Object.freeze(this);
+/* **
+ * Lazy getters
+ */
+XPCOMUtils.defineLazyGetter(this, 'DTA', function() {
+	let rv = {};
+	rv.showPreferences = function(pane, command) this.Mediator.showPreferences(window, pane, command);
+	module("resource://dta/api.jsm", rv);
+	rv.Mediator.open = function DTA_Mediator_open(url, ref) {
+		this.openUrl(window, url, ref);
+	}
+	if ('freeze' in Object) {
+		Object.freeze(rv);
+	}
+	return rv;
+});
+XPCOMUtils.defineLazyGetter(this, 'Version', function() {
+	let rv = {};
+	module('resource://dta/Version.jsm', rv);
+	return rv.Version;
+});
+XPCOMUtils.defineLazyGetter(this, 'Preferences', function() {
+	let rv = {};
+	module('resource://dta/preferences.jsm', rv);
+	if ('freeze' in Object) {
+		Object.freeze(rv);
+	}
+	return rv;
+});
+this.__defineGetter__('recognizeTextLinks', function() Preferences.getExt("textlinks", true));
+XPCOMUtils.defineLazyGetter(this, 'TextLinks', function() {
+	let rv = {};
+	module('resource://dta/support/textlinks.jsm', rv);
+	if ('freeze' in Object) {
+		Object.freeze(rv);
+	}
+	return rv;
+});
+XPCOMUtils.defineLazyGetter(this, 'ContentHandling', function() {
+	let rv = {};
+	module('resource://dta/support/contenthandling.jsm', rv);
+	rv = rv.ContentHandling;
+	if ('freeze' in Object) {
+		Object.freeze(rv);
+	}
+	return rv;
+});
+XPCOMUtils.defineLazyGetter(this, 'CoThreads', function() {
+	let rv = {};
+	module('resource://dta/cothread.jsm', rv);
+	if ('freeze' in Object) {
+		Object.freeze(rv);
+	}
+	return rv;
+});
+XPCOMUtils.defineLazyServiceGetter(this, 'TextToSubURI', '@mozilla.org/intl/texttosuburi;1', 'nsITextToSubURI');
+
+XPCOMUtils.defineLazyGetter(this, 'getString_str', function() {
+	return Cc['@mozilla.org/intl/stringbundle;1']
+		.getService(Ci.nsIStringBundleService)
+		.createBundle('chrome://dta/locale/menu.properties');
+});
+
+/* **
+ * Helpers and tools
+ */
+function getString(n) {
+	try {
+		return getString_str.GetStringFromName(n);
+	}
+	catch (ex) {
+		DTA.Debug.log("locale error: " + n, ex);
+		return '<error>';
+	}
+}
+function getFormattedString(n) {
+	let args = Array.map(arguments, function(e) e);
+	args.shift();
+	try {
+		return getString_str.formatStringFromName(n, args, args.length);
+	}
+	catch (ex) {
+		DTA.Debug.log("locale error: " + n, ex);
+		return '<error>';
+	}
+}
+
+function trimMore(t) {
+	return t.replace(/^[\s_]+|[\s_]+$/gi, '').replace(/(_){2,}/g, "_")
+}
+
+function extractDescription(child) {
+	let rv = [];
+	try {
+		let fmt = function(s) {
+			try {
+				return trimMore(s.replace(/(\n){1,}/gi, " ").replace(/(\s){2,}/gi, " "));
 			}
-			return this[id].apply(this, args);
+			catch (ex) { /* no-op */ }
+			return "";
+		};
+		for (let i = 0, e = child.childNodes.length; i < e; ++i) {
+			let c = child.childNodes[i];
+
+			if (c.nodeValue && c.nodeValue != "") {
+				rv.push(fmt(c.nodeValue));
+			}
+
+			if (c.nodeType == 1) {
+				rv.push(arguments.callee(c));
+			}
+
+			if (c && 'hasAttribute' in c) {
+				if (c.hasAttribute('title')) {
+					rv.push(fmt(c.getAttribute('title')));
+				}
+				else if (c.hasAttribute('alt')) {
+					rv.push(fmt(c.getAttribute('alt')));
+				}
+			}
 		}
-	};
+	}
+	catch(ex) {
+		DTA.Debug.log('extractDescription', ex);
+	}
+	return trimMore(rv.join(" "));
+}
+
+function addLinksToArray(lnks, urls, doc) {
+	if (!lnks || !lnks.length) {
+		return;
+	}
+
+	let ref = DTA.getRef(doc);
+
+	for each (let link in lnks) {
+		try {
+			let url = new DTA.URL(DTA.IOService.newURI(link.href, doc.characterSet, null));
+
+			let title = '';
+			if (link.hasAttribute('title')) {
+				title = trimMore(link.getAttribute('title'));
+			}
+			if (!title && link.hasAttribute('alt')) {
+				title = trimMore(link.getAttribute('alt'));
+			}
+			urls.push({
+				'url': url,
+				'referrer': ref,
+				'description': extractDescription(link),
+				'title': title
+			});
+			let ml = DTA.getLinkPrintMetalink(url.url);
+			if (ml) {
+				urls.push({
+					'url': new DTA.URL(ml),
+					'referrer': ref,
+					'description': '[metalink] http://www.metalinker.org/',
+					'title': title,
+					'metalink': true
+				});
+			}
+		}
+		catch (ex) {
+			// no op
+		}
+		yield true;
+	}
+}
+
+function addImagesToArray(lnks, images, doc)	{
+	if (!lnks || !lnks.length) {
+		return;
+	}
+
+	let ref = DTA.getRef(doc);
+
+	for each (let l in lnks) {
+		try {
+			let url = new DTA.URL(DTA.composeURL(doc, l.src));
+
+			let desc = '';
+			if (l.hasAttribute('alt')) {
+				desc = trimMore(l.getAttribute('alt'));
+			}
+			else if (l.hasAttribute('title')) {
+				desc = trimMore(l.getAttribute('title'));
+			}
+			images.push({
+				'url': url,
+				'referrer': ref,
+				'description': desc
+			});
+		}
+		catch (ex) {
+			// no op
+		}
+		yield true;
+	}
+}
+
+function getTextLinks(set, out, fakeLinks) {
+	let rset = [];
+	for (let r = set.iterateNext(); r; r = set.iterateNext()) {
+		rset.push(r);
+	}
+	for each (let r in rset) {
+		try {
+			r = r.textContent.replace(/^\s+|\s+$/g, "");
+			if (r) {
+				for each (let link in TextLinks.getTextLinks(r, fakeLinks)) {
+					out.push(link);
+				}
+				yield true;
+			}
+		}
+		catch (ex) {
+			// no op: might be an already removed node
+		}
+	}
+}
+
+function filterElements(nodes, set) {
+	let rv = [];
+	for each (let n in nodes) {
+		try {
+			if (n && set.containsNode(n, true)) {
+				rv.push(n);
+			}
+		}
+		catch (ex) {
+		}
+	}
+	return rv;
+}
+
+//recursively add stuff.
+function addLinks(aWin, aURLs, aImages, honorSelection) {
+	try {
+		let links = new Array(aWin.document.links.length);
+		for (let i = 0, e = aWin.document.links.length; i < e; ++i) {
+			links.push(aWin.document.links[i]);
+			yield true;
+		}
+
+		let images = new Array(aWin.document.images.length);
+		for (let i = 0, e = aWin.document.images.length; i < e; ++i) {
+			images.push(aWin.document.images[i]);
+			yield true;
+		}
+
+		let videos = Array.map(aWin.document.getElementsByTagName('video'), function(e) e);
+		videos = videos.concat(Array.map(aWin.document.getElementsByTagName('audio'), function(e) e));
+		let sources = [];
+		for each (let v in videos) {
+			sources = sources.concat(Array.map(v.getElementsByTagName('source'), function(e) e));
+			yield true;
+		}
+		videos = videos.concat(sources);
+		videos = videos.filter(function(e) !!e.src);
+		yield true;
+
+		let embeds = new Array(aWin.document.embeds.length);
+		for (let i = 0, e = aWin.document.embeds.length; i < e; ++i) {
+			embeds.push(aWin.document.embeds[i]);
+			yield true;
+		}
+
+		let rawInputs = aWin.document.getElementsByTagName('input');
+		let inputs = [];
+		for (let i = 0, e = rawInputs.length; i < e; ++i) {
+			let rit = rawInputs[i].getAttribute('type');
+			if (!rit || rit.toLowerCase() != 'image') {
+				continue;
+			}
+			inputs.push(rawInputs[i]);
+			yield true;
+		}
+
+		let sel = null;
+		if (honorSelection && (sel = aWin.getSelection()) && !sel.isCollapsed) {
+			DTA.Debug.log("selection only");
+			[links, images, videos, embeds, inputs] = [links, images, videos, embeds, inputs].map(
+				function(e) {
+					return filterElements(e, sel);
+				}
+			);
+			if (recognizeTextLinks) {
+				let copy = aWin.document.createElement('div');
+				for (let i = 0; i < sel.rangeCount; ++i) {
+					let r = sel.getRangeAt(i);
+					copy.appendChild(r.cloneContents());
+				}
+				yield true;
+
+				let cdoc = aWin.document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
+				copy = cdoc.adoptNode(copy);
+				cdoc.documentElement.appendChild(cdoc.adoptNode(copy));
+				yield true;
+
+				let set = cdoc.evaluate(
+					'//*[not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
+					copy.ownerDocument,
+					null,
+					XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+					null
+				);
+				yield true;
+
+				for (let y in getTextLinks(set, links, true)) {
+					yield true;
+				}
+				cdoc = null;
+				copy = null;
+				yield true;
+			}
+		}
+		else {
+			if (Preferences.getExt('listsniffedvideos', false)) {
+				let sniffed = Array.map(
+					ContentHandling.getSniffedVideosFor(DTA.IOService.newURI(aWin.location.href, aWin.document.characterSet, null)),
+					function(e) e
+				);
+				let ref = DTA.getRef(aWin.document);
+				for each (let s in sniffed) {
+					let o = {
+						'url': new DTA.URL(s),
+						'referrer': ref,
+						'description': getString('sniffedvideo')
+					}
+					aURLs.push(o);
+					aImages.push(o);
+				}
+				yield true;
+			}
+			if (recognizeTextLinks) {
+				let set = aWin.document.evaluate(
+					'//*[not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
+					aWin.document,
+					null,
+					aWin.XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+					null
+				);
+				for each (let y in getTextLinks(set, links, true)) {
+					yield true;
+				}
+			}
+
+			// we were asked to honor the selection, but we didn't actually have one.
+			// so reset this flag so that we can continue processing frames below.
+			honorSelection = false;
+		}
+
+		DTA.Debug.log("adding links to array");
+		for (let y in addLinksToArray(links, aURLs, aWin.document)) {
+			yield true;
+		}
+		for each (let e in [images, videos, embeds, inputs]) {
+			for (let y in addImagesToArray(e, aImages, aWin.document)) {
+				yield true;
+			}
+		}
+		for (let y in addImagesToArray(
+			videos.filter(function(e) !!e.poster).map(function(e) new TextLinks.FakeLink(e.poster)),
+			aImages,
+			aWin.document
+		)) {
+			yield true;
+		}
+	}
+	catch (ex) {
+		DTA.Debug.log('addLinks', ex);
+	}
+
+	// do not process further as we just filtered the selection
+	if (honorSelection) {
+		return;
+	}
+
+	// recursively process any frames
+	if (aWin.frames) {
+		for (let i = 0, e = aWin.frames.length; i < e; ++i) {
+			for (let y in arguments.callee(aWin.frames[i], aURLs, aImages)) {
+				yield true;
+			}
+		}
+	}
+}
+
+/* **
+ * LOADER
+ */
+function load(window) {
+	let document = window.document;
+	let setTimeout = window.setTimeout;
+	let setInterval = window.setInterval;
+	let clearInterval = window.clearInterval;
+	let gBrowser = window.gBrowser;
 
 	function $() {
 		if (arguments.length == 1) {
@@ -90,41 +468,13 @@
 
 	let _selector = null;
 
-	function getString(n) {
-		try {
-			return getString.__str.GetStringFromName(n);
-		}
-		catch (ex) {
-			DTA.Debug.log("locale error: " + n, ex);
-			return '<error>';
-		}
-	};
-	getString.__defineGetter__('__str', function() {
-		let _str = Cc['@mozilla.org/intl/stringbundle;1']
-			.getService(Ci.nsIStringBundleService)
-		  .createBundle('chrome://dta/locale/menu.properties');
-		delete getString.__str;
-		return (getString.__str = _str);
-	});
-
-	function getFormattedString(n) {
-		let args = Array.map(arguments, function(e) e);
-		args.shift();
-		try {
-			return getString.__str.formatStringFromName(n, args, args.length);
-		}
-		catch (ex) {
-			DTA.Debug.log("locale error: " + n, ex);
-			return '<error>';
-		}
-	}
 
 	function _notify(title, message, priority, mustAlert, timeout) {
-		if ('PopupNotifications' in this) {
+		if ('PopupNotifications' in window) {
 			_notify = function(title, message, priority, mustAlert, timeout) {
 				try {
 					timeout = timeout || 2500;
-					let notification = PopupNotifications.show(
+					let notification = window.PopupNotifications.show(
 							gBrowser.selectedBrowser,
 							'downthemall',
 							message,
@@ -134,7 +484,7 @@
 							{timeout: timeout}
 							);
 					setTimeout(function() {
-						PopupNotifications.remove(notification);
+						window.PopupNotifications.remove(notification);
 					}, timeout);
 				}
 				catch (ex) {
@@ -178,17 +528,17 @@
 	function notifyProgress(message) {
 		try {
 			let _n = null;
-			if ('PopupNotifications' in this) {
+			if ('PopupNotifications' in window) {
 				return (notifyProgress = function(message) {
 					if (!message && _n) {
-						PopupNotifications.remove(_n);
+						window.PopupNotifications.remove(_n);
 						_n = null;
 						return;
 					}
 					if (!message) {
 						return;
 					}
-					_n = PopupNotifications.show(
+					_n = window.PopupNotifications.show(
 						gBrowser.selectedBrowser,
 						'downthemall',
 						message,
@@ -227,152 +577,12 @@
 		}
 	}
 
-	function trimMore(t) {
-		return t.replace(/^[\s_]+|[\s_]+$/gi, '').replace(/(_){2,}/g, "_")
-	}
-
-	function extractDescription(child) {
-		let rv = [];
-		try {
-			let fmt = function(s) {
-				try {
-					return trimMore(s.replace(/(\n){1,}/gi, " ").replace(/(\s){2,}/gi, " "));
-				}
-				catch (ex) { /* no-op */ }
-				return "";
-			};
-			for (let i = 0, e = child.childNodes.length; i < e; ++i) {
-				let c = child.childNodes[i];
-
-				if (c.nodeValue && c.nodeValue != "") {
-					rv.push(fmt(c.nodeValue));
-				}
-
-				if (c.nodeType == 1) {
-					rv.push(arguments.callee(c));
-				}
-
-				if (c && 'hasAttribute' in c) {
-					if (c.hasAttribute('title')) {
-						rv.push(fmt(c.getAttribute('title')));
-					}
-					else if (c.hasAttribute('alt')) {
-						rv.push(fmt(c.getAttribute('alt')));
-					}
-				}
-			}
-		}
-		catch(ex) {
-			DTA.Debug.log('extractDescription', ex);
-		}
-		return trimMore(rv.join(" "));
-	}
-
-	function addLinksToArray(lnks, urls, doc) {
-		if (!lnks || !lnks.length) {
-			return;
-		}
-
-		let ref = DTA.getRef(doc);
-
-		for each (let link in lnks) {
-			try {
-				let url = new DTA.URL(DTA.IOService.newURI(link.href, doc.characterSet, null));
-
-				let title = '';
-				if (link.hasAttribute('title')) {
-					title = trimMore(link.getAttribute('title'));
-				}
-				if (!title && link.hasAttribute('alt')) {
-					title = trimMore(link.getAttribute('alt'));
-				}
-				urls.push({
-					'url': url,
-					'referrer': ref,
-					'description': extractDescription(link),
-					'title': title
-				});
-				let ml = DTA.getLinkPrintMetalink(url.url);
-				if (ml) {
-					urls.push({
-						'url': new DTA.URL(ml),
-						'referrer': ref,
-						'description': '[metalink] http://www.metalinker.org/',
-						'title': title,
-						'metalink': true
-					});
-				}
-			}
-			catch (ex) {
-				// no op
-			}
-			yield true;
-		}
-	}
-
-	function addImagesToArray(lnks, images, doc)	{
-		if (!lnks || !lnks.length) {
-			return;
-		}
-
-		let ref = DTA.getRef(doc);
-
-		for each (let l in lnks) {
-			try {
-				let url = new DTA.URL(DTA.composeURL(doc, l.src));
-
-				let desc = '';
-				if (l.hasAttribute('alt')) {
-					desc = trimMore(l.getAttribute('alt'));
-				}
-				else if (l.hasAttribute('title')) {
-					desc = trimMore(l.getAttribute('title'));
-				}
-				images.push({
-					'url': url,
-					'referrer': ref,
-					'description': desc
-				});
-			}
-			catch (ex) {
-				// no op
-			}
-			yield true;
-		}
-	}
-
-	function recognizeTextLinks() {
-		return Preferences.getExt("textlinks", true);
-	}
-	let TextLinks = {};
-	Components.utils.import("resource://dta/support/textlinks.jsm", TextLinks);
-	function getTextLinks(set, out, fakeLinks) {
-		let rset = [];
-		for (let r = set.iterateNext(); r; r = set.iterateNext()) {
-			rset.push(r);
-		}
-		for each (let r in rset) {
-			try {
-				r = r.textContent.replace(/^\s+|\s+$/g, "");
-				if (r) {
-					for each (let link in TextLinks.getTextLinks(r, fakeLinks)) {
-						out.push(link);
-					}
-					yield true;
-				}
-			}
-			catch (ex) {
-				// no op: might be an already removed node
-			}
-		}
-	}
-
 	function selectButton() {
 		return $('dta-turboselect-button') || {checked: false};
 	}
 	function contextMenu() {
 		if (window.gContextMenu !=  null) {
-			return gContextMenu;
+			return window.gContextMenu;
 		}
 		let cm = {
 			onLink: false,
@@ -396,180 +606,6 @@
 		}
 		return cm;
 	}
-
-	// recursively add stuff.
-	function addLinks(aWin, aURLs, aImages, honorSelection) {
-
-		function filterElements(nodes, set) {
-			let rv = [];
-			for each (let n in nodes) {
-				try {
-					if (n && set.containsNode(n, true)) {
-						rv.push(n);
-					}
-				}
-				catch (ex) {
-				}
-			}
-			return rv;
-		}
-
-		try {
-			let links = new Array(aWin.document.links.length);
-			for (let i = 0, e = aWin.document.links.length; i < e; ++i) {
-				links.push(aWin.document.links[i]);
-				yield true;
-			}
-
-			let images = new Array(aWin.document.images.length);
-			for (let i = 0, e = aWin.document.images.length; i < e; ++i) {
-				images.push(aWin.document.images[i]);
-				yield true;
-			}
-
-			let videos = Array.map(aWin.document.getElementsByTagName('video'), function(e) e);
-			videos = videos.concat(Array.map(aWin.document.getElementsByTagName('audio'), function(e) e));
-			let sources = [];
-			for each (let v in videos) {
-				sources = sources.concat(Array.map(v.getElementsByTagName('source'), function(e) e));
-				yield true;
-			}
-			videos = videos.concat(sources);
-			videos = videos.filter(function(e) !!e.src);
-			yield true;
-
-			let embeds = new Array(aWin.document.embeds.length);
-			for (let i = 0, e = aWin.document.embeds.length; i < e; ++i) {
-				embeds.push(aWin.document.embeds[i]);
-				yield true;
-			}
-
-			let rawInputs = aWin.document.getElementsByTagName('input');
-			let inputs = [];
-			for (let i = 0, e = rawInputs.length; i < e; ++i) {
-				let rit = rawInputs[i].getAttribute('type');
-				if (!rit || rit.toLowerCase() != 'image') {
-					continue;
-				}
-				inputs.push(rawInputs[i]);
-				yield true;
-			}
-
-			let sel = null;
-			if (honorSelection && (sel = aWin.getSelection()) && !sel.isCollapsed) {
-				DTA.Debug.log("selection only");
-				[links, images, videos, embeds, inputs] = [links, images, videos, embeds, inputs].map(
-					function(e) {
-						return filterElements(e, sel);
-					}
-				);
-				if (recognizeTextLinks()) {
-					let copy = aWin.document.createElement('div');
-					for (let i = 0; i < sel.rangeCount; ++i) {
-						let r = sel.getRangeAt(i);
-						copy.appendChild(r.cloneContents());
-					}
-					yield true;
-
-					let cdoc = aWin.document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
-					copy = cdoc.adoptNode(copy);
-					cdoc.documentElement.appendChild(cdoc.adoptNode(copy));
-					yield true;
-
-					let set = cdoc.evaluate(
-						'//*[not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
-						copy.ownerDocument,
-						null,
-						XPathResult.ORDERED_NODE_ITERATOR_TYPE,
-						null
-					);
-					yield true;
-
-					for (let y in getTextLinks(set, links, true)) {
-						yield true;
-					}
-					cdoc = null;
-					copy = null;
-					yield true;
-				}
-			}
-			else {
-				if (Preferences.getExt('listsniffedvideos', false)) {
-					let sniffed = Array.map(
-						addLinks.__ch.getSniffedVideosFor(DTA.IOService.newURI(aWin.location.href, aWin.document.characterSet, null)),
-						function(e) e
-					);
-					let ref = DTA.getRef(aWin.document);
-					for each (let s in sniffed) {
-						let o = {
-							'url': new DTA.URL(s),
-							'referrer': ref,
-							'description': getString('sniffedvideo')
-						}
-						aURLs.push(o);
-						aImages.push(o);
-					}
-					yield true;
-				}
-				if (recognizeTextLinks()) {
-					let set = aWin.document.evaluate(
-						'//*[not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
-						aWin.document,
-						null,
-						XPathResult.ORDERED_NODE_ITERATOR_TYPE,
-						null
-					);
-					for each (let y in getTextLinks(set, links, true)) {
-						yield true;
-					}
-				}
-
-				// we were asked to honor the selection, but we didn't actually have one.
-				// so reset this flag so that we can continue processing frames below.
-				honorSelection = false;
-			}
-
-			DTA.Debug.log("adding links to array");
-			for (let y in addLinksToArray(links, aURLs, aWin.document)) {
-				yield true;
-			}
-			for each (let e in [images, videos, embeds, inputs]) {
-				for (let y in addImagesToArray(e, aImages, aWin.document)) {
-					yield true;
-				}
-			}
-			for (let y in addImagesToArray(
-				videos.filter(function(e) !!e.poster).map(function(e) new TextLinks.FakeLink(e.poster)),
-				aImages,
-				aWin.document
-			)) {
-				yield true;
-			}
-		}
-		catch (ex) {
-			DTA.Debug.log('addLinks', ex);
-		}
-
-		// do not process further as we just filtered the selection
-		if (honorSelection) {
-			return;
-		}
-
-		// recursively process any frames
-		if (aWin.frames) {
-			for (let i = 0, e = aWin.frames.length; i < e; ++i) {
-				for (let y in arguments.callee(aWin.frames[i], aURLs, aImages)) {
-					yield true;
-				}
-			}
-		}
-	}
-	addLinks.__defineGetter__('__ch', function() {
-		let _ch = {};
-		Components.utils.import('resource://dta/support/contenthandling.jsm', _ch);
-		delete addLinks.__ch;
-		return (addLinks.__ch = _ch.ContentHandling);
-	});
 
 	function findWindowsNavigator(all) {
 		let windows = [];
@@ -630,10 +666,7 @@
 				}
 			}, 1750, true);
 
-			let cothreads = {};
-			Components.utils.import('resource://dta/cothread.jsm', cothreads);
-
-			new cothreads.CoThreadInterleaved(
+			new CoThreads.CoThreadInterleaved(
 				(function() {
 					DTA.Debug.log("findLinks(): running");
 					for each (let win in windows) {
@@ -720,7 +753,7 @@
 	function _findSingleMedia(turbo, tag) {
 		let ctx = contextMenu();
 		try {
-			function isMedia(n) 'tagName' in n && n.tagName == tag;
+			function isMedia(n) 'tagName' in n && n.tagName.toLowerCase() == tag;
 
 			let cur = ctx.target;
 			while (cur && !isMedia(cur)) {
@@ -795,36 +828,30 @@
 				charset = 'utf-8';
 			}
 
-			let encoder = Cc['@mozilla.org/intl/texttosuburi;1']
-				.getService(Ci.nsITextToSubURI);
-
 			let values = [];
 
 			for (let i = 0; i < form.elements.length; ++i) {
 				if (form.elements[i].name ==  '') {
 					continue;
 				}
-				let v = encoder.ConvertAndEscape(charset, form.elements[i].name) + "=";
+				let v = TextToSubURI.ConvertAndEscape(charset, form.elements[i].name) + "=";
 				if (form.elements[i].value != '') {
-					v += encoder.ConvertAndEscape(charset, form.elements[i].value);
+					v += TextToSubURI.ConvertAndEscape(charset, form.elements[i].value);
 				}
 				values.push(v);
 			}
 			values = values.join("&");
 
 			if (form.method.toLowerCase() == 'post') {
-				let ss = Cc['@mozilla.org/io/string-input-stream;1']
-					.createInstance(Ci.nsIStringInputStream);
+				let ss = new StringInputStream();
 				ss.setData(values, -1);
 
-				let ms = Cc['@mozilla.org/network/mime-input-stream;1']
-					.createInstance(Ci.nsIMIMEInputStream);
+				let ms = new MimeInputStream();
 				ms.addContentLength = true;
 				ms.addHeader('Content-Type', 'application/x-www-form-urlencoded');
 				ms.setData(ss);
 
-				let sis = Cc['@mozilla.org/scriptableinputstream;1']
-					.createInstance(Ci.nsIScriptableInputStream);
+				let sis = new ScriptableInputStream();
 				sis.init(ms);
 				let postData = '';
 				let avail = 0;
@@ -866,10 +893,15 @@
 	let direct = {};
 	let compact = {};
 	let tools = {};
-	let ctxBase = null;
-	let toolsBase = null;
-	let toolsMenu = null;
-	let toolsSep = null;
+
+	let ctxBase = $('dtaCtxCompact');
+	let toolsBase = $('dtaToolsMenu');
+	let toolsMenu = $('dtaToolsPopup');
+	let toolsSep = $('dtaToolsSep');
+
+	let ctx = ctxBase.parentNode;
+	let menu = toolsBase.parentNode;
+
 
 	function onContextShowing(evt) {
 		try {
@@ -1412,7 +1444,7 @@
 	DropProcessor.prototype = {
 		getSupportedFlavours: function() {
 			if (!this._flavors) {
-				this._flavors = new FlavourSet();
+				this._flavors = new window.FlavourSet();
 				this._flavors.appendFlavour('text/x-moz-url');
 			}
 			return this._flavors;
@@ -1423,7 +1455,7 @@
 				return;
 			}
 			try {
-				let url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
+				let url = window.transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
 				url = DTA.IOService.newURI(url, null, null);
 				url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
 				let doc = document.commandDispatcher.focusedWindow.document;
@@ -1436,228 +1468,203 @@
 		}
 	};
 
-	addEventListener('load', function() {
-		removeEventListener('load', arguments.callee, true);
-
-		ctxBase = $('dtaCtxCompact');
-		toolsBase = $('dtaToolsMenu');
-		toolsMenu = $('dtaToolsPopup');
-		toolsSep = $('dtaToolsSep');
-
-		let ctx = ctxBase.parentNode;
-		let menu = toolsBase.parentNode;
-
-		function $t() {
-			let rv = [];
-			for (let i = 0, e = arguments.length; i < e; ++i) {
-				let id = arguments[i];
-				let element = document.getElementById(id);
-				if (element) {
-						rv.push(element);
-						continue;
-				}
-				if (id in paletteItems) {
-					rv.push(paletteItems[id]);
+	function $t() {
+		let rv = [];
+		for (let i = 0, e = arguments.length; i < e; ++i) {
+			let id = arguments[i];
+			let element = document.getElementById(id);
+			if (element) {
+					rv.push(element);
 					continue;
-				}
 			}
-			return rv.length == 1 ? rv[0] : rv;
-		}
-
-		function initMenus(evt) {
-			function bindEvt(evt, fn) function(e) e.addEventListener(evt, fn, true);
-			function bindCtxEvt(ctx, evt, fn) {
-				$(ctx, ctx + "-direct").forEach(bindEvt(evt, fn));
-			}
-
-			ctx.removeEventListener('popupshowing', arguments.callee, true);
-			menu.removeEventListener('popupshowing', arguments.callee, true);
-
-			try {
-				let cont = $('dtaCtxSubmenu');
-
-				for each (let id in ['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveVideoT', 'SaveVideo', 'SaveAudioT', 'SaveAudio', 'SaveFormT', 'SaveForm', 'SepFront']) {
-					compact[id] = $('dtaCtx' + id);
-					let node = $('dtaCtx' + id).cloneNode(true);
-					node.setAttribute('id', node.id + "-direct");
-					ctx.insertBefore(node, ctxBase.nextSibling);
-					direct[id] = node;
-				}
-
-				// prepare tools
-				for each (let e in ['DTA', 'TDTA', 'Manager']) {
-					tools[e] = $('dtaTools' + e);
-				}
-
-
-				$(
-					'dtaCtxDTA',
-					'dtaCtxDTA-direct',
-					'dtaCtxDTASel',
-					'dtaCtxDTASel-direct',
-					'dtaToolsDTA'
-				).forEach(bindEvt('command', function() findLinks(false)));
-				$(
-					'dtaCtxTDTA',
-					'dtaCtxTDTA-direct',
-					'dtaCtxTDTASel',
-					'dtaCtxTDTASel-direct',
-					'dtaToolsTDTA'
-				).forEach(bindEvt('command', function() findLinks(true)));
-
-				$('dtaToolsManager').addEventListener('command', function() DTA.openManager(window), true);
-
-				bindCtxEvt('dtaCtxSaveLink', 'command', function() findSingleLink(false));
-				bindCtxEvt('dtaCtxSaveLinkT', 'command', function() findSingleLink(true));
-				bindCtxEvt('dtaCtxSaveImg', 'command', function() findSingleImg(false));
-				bindCtxEvt('dtaCtxSaveImgT', 'command', function() findSingleImg(true));
-				bindCtxEvt('dtaCtxSaveVideo', 'command', function() findSingleVideo(false));
-				bindCtxEvt('dtaCtxSaveVideoT', 'command', function() findSingleVideo(true));
-				bindCtxEvt('dtaCtxSaveAudio', 'command', function() findSingleAudio(false));
-				bindCtxEvt('dtaCtxSaveAudioT', 'command', function() findSingleAudio(true));
-				bindCtxEvt('dtaCtxSaveForm', 'command', function() findForm(false));
-				bindCtxEvt('dtaCtxSaveFormT', 'command', function() findForm(true));
-
-				$('dtaCtxPref', 'dtaCtxPref-direct', 'dtaToolsPrefs').forEach(bindEvt('command', function() DTA.showPreferences()));
-
-				$('dtaToolsAbout').addEventListener(
-					'command',
-					function() DTA.Mediator.showAbout(window),
-					true
-				);
-
-				ctx.addEventListener('popupshowing', onContextShowing, true);
-				menu.addEventListener('popupshowing', onToolsShowing, true);
-
-			}
-			catch (ex) {
-				Components.utils.reportError(ex);
-				DTA.Debug.log("DCO::init()", ex);
-			}
-			evt.target == ctx ? onContextShowing(evt) : onToolsShowing(evt);
-		}
-
-		ctx.addEventListener('popupshowing', initMenus, true);
-		menu.addEventListener('popupshowing', initMenus, true);
-
-		addEventListener("keydown", onKeyDown, false);
-		addEventListener("keyup", onKeyUp, false);
-		addEventListener("blur", onBlur, true);
-
-		/* Toolbar buttons */
-
-		// Santas little helper, palette items + lookup
-		let paletteItems = {};
-		try {
-			let palette = $('navigator-toolbox').palette;
-			for (let c = palette.firstChild; c; c = c.nextSibling) {
-				if (c.id) {
-					paletteItems[c.id] = c;
-				}
+			if (id in paletteItems) {
+				rv.push(paletteItems[id]);
+				continue;
 			}
 		}
-		catch (ex) {
-			DTA.Debug.log("Failed to parse palette", ex);
+		return rv.length == 1 ? rv[0] : rv;
+	}
+
+	function initMenus(evt) {
+		function bindEvt(evt, fn) function(e) e.addEventListener(evt, fn, true);
+		function bindCtxEvt(ctx, evt, fn) {
+			$(ctx, ctx + "-direct").forEach(bindEvt(evt, fn));
 		}
+
+		ctx.removeEventListener('popupshowing', arguments.callee, true);
+		menu.removeEventListener('popupshowing', arguments.callee, true);
 
 		try {
-			let DropTDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, true, url, ref); });
-			let DropDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, false, url, ref); });
+			let cont = $('dtaCtxSubmenu');
 
-			let b = $t('dta-button');
-			b.addEventListener('command', function(event) {
-				switch (event.target.id) {
-				case 'dta-button':
-				case 'dta-tb-dta':
-					findLinks();
-					break;
-				case 'dta-tb-all':
-					findLinks(false, true);
-					break;
-				case 'dta-tb-manager':
-					DTA.openManager(window);
-					break;
-				default:
-					break;
-					}
-			}, true);
-			b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropDTA), true);
-			b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DropDTA), true);
+			for each (let id in ['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveVideoT', 'SaveVideo', 'SaveAudioT', 'SaveAudio', 'SaveFormT', 'SaveForm', 'SepFront']) {
+				compact[id] = $('dtaCtx' + id);
+				let node = $('dtaCtx' + id).cloneNode(true);
+				node.setAttribute('id', node.id + "-direct");
+				ctx.insertBefore(node, ctxBase.nextSibling);
+				direct[id] = node;
+			}
 
-			b = $t('dta-turbo-button');
-			b.addEventListener('command', function(event) {
-				switch (event.target.id) {
-				case 'dta-turbo-button':
-				case 'dta-tb-turbo':
-					findLinks(true);
-					break;
-				case 'dta-tb-allturbo':
-					findLinks(true, true);
-					break;
-				default:
+			// prepare tools
+			for each (let e in ['DTA', 'TDTA', 'Manager']) {
+				tools[e] = $('dtaTools' + e);
+			}
 
-					break;
-				}
-			}, true);
-			b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropTDTA), true);
-			b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DropTDTA), true);
 
-			$t('dta-turboselect-button').addEventListener('command', function(event) { toggleOneClick(event); }, true);
-			$t('dta-manager-button').addEventListener('command', function() DTA.openManager(window), true);
+			$(
+				'dtaCtxDTA',
+				'dtaCtxDTA-direct',
+				'dtaCtxDTASel',
+				'dtaCtxDTASel-direct',
+				'dtaToolsDTA'
+			).forEach(bindEvt('command', function() findLinks(false)));
+			$(
+				'dtaCtxTDTA',
+				'dtaCtxTDTA-direct',
+				'dtaCtxTDTASel',
+				'dtaCtxTDTASel-direct',
+				'dtaToolsTDTA'
+			).forEach(bindEvt('command', function() findLinks(true)));
+
+			$('dtaToolsManager').addEventListener('command', function() DTA.openManager(window), true);
+
+			bindCtxEvt('dtaCtxSaveLink', 'command', function() findSingleLink(false));
+			bindCtxEvt('dtaCtxSaveLinkT', 'command', function() findSingleLink(true));
+			bindCtxEvt('dtaCtxSaveImg', 'command', function() findSingleImg(false));
+			bindCtxEvt('dtaCtxSaveImgT', 'command', function() findSingleImg(true));
+			bindCtxEvt('dtaCtxSaveVideo', 'command', function() findSingleVideo(false));
+			bindCtxEvt('dtaCtxSaveVideoT', 'command', function() findSingleVideo(true));
+			bindCtxEvt('dtaCtxSaveAudio', 'command', function() findSingleAudio(false));
+			bindCtxEvt('dtaCtxSaveAudioT', 'command', function() findSingleAudio(true));
+			bindCtxEvt('dtaCtxSaveForm', 'command', function() findForm(false));
+			bindCtxEvt('dtaCtxSaveFormT', 'command', function() findForm(true));
+
+			$('dtaCtxPref', 'dtaCtxPref-direct', 'dtaToolsPrefs').forEach(bindEvt('command', function() DTA.showPreferences()));
+
+			$('dtaToolsAbout').addEventListener(
+				'command',
+				function() DTA.Mediator.showAbout(window),
+				true
+			);
+
+			ctx.addEventListener('popupshowing', onContextShowing, true);
+			menu.addEventListener('popupshowing', onToolsShowing, true);
+
 		}
 		catch (ex) {
-			DTA.Debug.log("Init TBB failed", ex);
+			Components.utils.reportError(ex);
+			DTA.Debug.log("DCO::init()", ex);
 		}
+		evt.target == ctx ? onContextShowing(evt) : onToolsShowing(evt);
+	}
 
-		// "Show about" stuff
-		try {
-			let Version = {};
-			Components.utils.import("resource://dta/version.jsm", Version);
-			Version = Version.Version;
+	ctx.addEventListener('popupshowing', initMenus, true);
+	menu.addEventListener('popupshowing', initMenus, true);
 
-			function openAbout() {
-				Version.showAbout = false;
-				setTimeout(function() DTA.Mediator.showAbout(window), 600);
-			}
+	window.addEventListener("keydown", onKeyDown, false);
+	window.addEventListener("keyup", onKeyUp, false);
+	window.addEventListener("blur", onBlur, true);
 
-			function registerObserver() {
-				Components.utils.import("resource://gre/modules/XPCOMUtils.jsm", Version);
+	/* Toolbar buttons */
 
-				let os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
-
-				let obs = {
-					QueryInterface: Version.XPCOMUtils.generateQI([Ci.nsIObserver,Ci.nsISupportsWeakReference]),
-					observe: function(s,t,d) {
-						os.removeObserver(this, Version.TOPIC_SHOWABOUT);
-						if (Version.showAbout) {
-							openAbout();
-						}
-					}
-				};
-
-				os.addObserver(obs, Version.TOPIC_SHOWABOUT, true);
-			}
-
-			if (Version.showAbout === null) {
-				registerObserver();
-				return;
-			}
-			if (Version.showAbout === true) {
-				openAbout();
-				return;
-			}
-		}
-		catch (ex) {
-			DTA.Debug.log("Failed to process about", ex);
-		}
-	}, true); // load
-
+	// Santas little helper, palette items + lookup
+	let paletteItems = {};
 	try {
-		// DownloadHelper integration
-		let _dh = {};
-		Components.utils.import("resource://dta/support/downloadHelper.jsm", _dh);
+		let palette = $('navigator-toolbox').palette;
+		for (let c = palette.firstChild; c; c = c.nextSibling) {
+			if (c.id) {
+				paletteItems[c.id] = c;
+			}
+		}
 	}
 	catch (ex) {
-		Cu.reportError(ex);
+		DTA.Debug.log("Failed to parse palette", ex);
 	}
-})();
+
+	try {
+		let DropTDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, true, url, ref); });
+		let DropDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, false, url, ref); });
+
+		let b = $t('dta-button');
+		b.addEventListener('command', function(event) {
+			switch (event.target.id) {
+			case 'dta-button':
+			case 'dta-tb-dta':
+				findLinks();
+				break;
+			case 'dta-tb-all':
+				findLinks(false, true);
+				break;
+			case 'dta-tb-manager':
+				DTA.openManager(window);
+				break;
+			default:
+				break;
+				}
+		}, true);
+		b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropDTA), true);
+		b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DropDTA), true);
+
+		b = $t('dta-turbo-button');
+		b.addEventListener('command', function(event) {
+			switch (event.target.id) {
+			case 'dta-turbo-button':
+			case 'dta-tb-turbo':
+				findLinks(true);
+				break;
+			case 'dta-tb-allturbo':
+				findLinks(true, true);
+				break;
+			default:
+
+				break;
+			}
+		}, true);
+		b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropTDTA), true);
+		b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DropTDTA), true);
+
+		$t('dta-turboselect-button').addEventListener('command', function(event) { toggleOneClick(event); }, true);
+		$t('dta-manager-button').addEventListener('command', function() DTA.openManager(window), true);
+	}
+	catch (ex) {
+		DTA.Debug.log("Init TBB failed", ex);
+	}
+
+	// "Show about" stuff
+	try {
+		function openAbout() {
+			Version.showAbout = false;
+			setTimeout(function() DTA.Mediator.showAbout(window), 600);
+		}
+
+		function registerObserver() {
+			Components.utils.import("resource://gre/modules/XPCOMUtils.jsm", Version);
+
+			let os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
+
+			let obs = {
+				QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver,Ci.nsISupportsWeakReference]),
+				observe: function(s,t,d) {
+					os.removeObserver(this, Version.TOPIC_SHOWABOUT);
+					if (Version.showAbout) {
+						openAbout();
+					}
+				}
+			};
+
+			os.addObserver(obs, Version.TOPIC_SHOWABOUT, true);
+		}
+
+		if (Version.showAbout === null) {
+			registerObserver();
+			return;
+		}
+		if (Version.showAbout === true) {
+			openAbout();
+			return;
+		}
+	}
+	catch (ex) {
+		DTA.Debug.log("Failed to process about", ex);
+	}
+}

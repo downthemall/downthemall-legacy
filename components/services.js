@@ -119,12 +119,19 @@ Stuff.prototype = {
 			log("m", ex);
 		}
 		try {
-			// init module at this point
 			let _ch = {};
 			module("resource://dta/support/contenthandling.jsm", _ch);
 		}
 		catch (ex) {
 			log("ch", ex);
+		}
+		try {
+			// DownloadHelper integration
+			let _dh = {};
+			module("resource://dta/support/downloadHelper.jsm", _dh);
+		}
+		catch (ex) {
+			log("dh", ex);
 		}
 	},
 	clean: function() {
