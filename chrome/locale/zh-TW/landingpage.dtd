@@ -1,6 +1,6 @@
 <!ENTITY lp.localedir "ltr">
 <!ENTITY language "英文">
-<!ENTITY transAutor "dTa 團隊">
+<!ENTITY transAutor "rayx000, scsi, tiffblue, Goldie.">
 <!ENTITY amo.summary "這既是第一又是唯一一個建置於 Firefox 的下載管理加速器 。">
 <!ENTITY amo.description.intro "DownThemAll! 可以滿足您對下載的需求；安裝後不僅可以加速下載至 4 倍速，而且可隨時暫停／續傳。">
 <!ENTITY amo.description.feat "DownThemAll! 很快，很可靠，很簡單！安裝後即可下載網頁中的所有鏈結或圖片，並且可以讓您自由設定一連串規則來下載您想要的東西！您隨時都可以完全操控您要載的東西、速度限制、並行下載連線數。除此之外，也能同時使用 Metalinks 或其它 Mirror 從不同伺服器中下載檔案。">
