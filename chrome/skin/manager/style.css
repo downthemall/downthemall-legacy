@@ -293,12 +293,15 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 #actions > toolbarbutton[disabled="true"] {
 	opacity: 0.5;
 }
+#actions > toolbarbutton > .toolbarbutton-text {
+	display: none;
+}
 #actions > toolbarseparator {
   -moz-appearance: none;
   border-top: 3px solid transparent;
   border-bottom: 3px solid transparent;
-  border-left: 2px solid transparent;
-  border-right: 2px solid transparent;
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
   -moz-border-top-colors: transparent transparent ThreeDShadow;
   -moz-border-bottom-colors: transparent transparent ThreeDHighlight;
 }
