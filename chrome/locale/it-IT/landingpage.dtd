@@ -18,9 +18,9 @@
 <!ENTITY lp.pleasenote "Nota Bene:">
 <!ENTITY lp.donate "Valuta la possibilità di fare una donazione">
 <!ENTITY lp.tut.firsttitle "Il tuo primo download">
-<!ENTITY lp.tut.fd1 "dTa è molto potente, ma usarlo è parecchio semplice. Nella richiesta di apertura/scaricamento di un file, puoi scegliere di usare DownThemAll!. Ti verrà mostrata una finestra in cui potrei scegliere la cartella in cui salvare il file, insieme ad alcune opzioni più avanzate.">
+<!ENTITY lp.tut.fd1 "dTa è molto potente, ma usarlo è parecchio semplice. Nella richiesta di apertura/scaricamento di un file, puoi scegliere di usare DownThemAll!. Ti verrà mostrata una finestra in cui potrai scegliere la cartella in cui salvare il file, insieme ad alcune opzioni più avanzate.">
 <!ENTITY lp.tut.selecttitle "Usare la finestra di selezione">
-<!ENTITY lp.tut.selintro "DownThemAll! è presente nel menù contestuale che appare cliccando col taso destro del mouse sulle pagine web. In questo modo si può visualizzare la finestra di selezione di DownThemAll!, che si può usare con semplicità per selezionare uno o più link presenti nella pagina.">
+<!ENTITY lp.tut.selintro "DownThemAll! è presente nel menù contestuale che appare cliccando col tasto destro del mouse sulle pagine web. In questo modo si può visualizzare la finestra di selezione di DownThemAll!, che si può usare con semplicità per selezionare uno o più link presenti nella pagina.">
 <!ENTITY lp.tut.seloptions "Nella finestra di selezione hai diversi modi per scegliere quali file scaricare:">
 <!ENTITY lp.tut.selopthand "Puoi segnare a mano i link che vuoi scaricare">
 <!ENTITY lp.tut.seloptfilters "Puoi usare i filtri incorporati, ad esempio per scaricare tutte le immagini collegate">
