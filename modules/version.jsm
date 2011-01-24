@@ -58,6 +58,7 @@ const Version = {
 		VERSION: '0.0',
 		BASE_VERSION: '0.0',
 		NAME: 'DownThemAll!',
+		moz1: false,
 		moz2: false,
 		ready: false,
 		showAbout: null,
@@ -106,6 +107,7 @@ try {
 }
 catch (ex) {
 	// moz-1.9.2-
+	Version.moz1 = true;
 	const ITEM = Cc["@mozilla.org/extensions/manager;1"].getService(Ci.nsIExtensionManager).getItemForID(ID);
 	completeVersion(ITEM);
 }
