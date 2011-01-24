@@ -11,10 +11,10 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll preallocator module.
+ * The Original Code is DownThemAll preallocator ChromeWorker module.
  *
  * The Initial Developer of the Original Code is Nils Maier
- * Portions created by the Initial Developer are Copyright (C) 2009
+ * Portions created by the Initial Developer are Copyright (C) 2011
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -34,8 +34,11 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+/* ********
+ * This module currently does not work due to thread-safety issues of ALL file APIs
+ */
 const EXPORTED_SYMBOLS = [
-	'prealloc', 'test'
+	'prealloc'
 ];
 
 const Cc = Components.classes;
@@ -45,27 +48,68 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-module('resource://dta/version.jsm');
-if (Version.moz1) {
-	module('resource://dta/manager/preallocator/nsithread.jsm');
-}
-else {
-	module('resource://dta/manager/preallocator/cothreads.jsm');
-}
-//var p = {}; Components.utils.import("resource://dta/manager/preallocator.jsm", p); p.test()
-function test() {
-	let file = Cc["@mozilla.org/file/directory_service;1"]
-		.getService(Ci.nsIProperties)
-		.get("TmpD", Ci.nsIFile);
-	file.append("dta_prealloc_test.tmp");
-	prealloc(file, (1<<28), 416, function(result){
-		Cu.reportError("Allocating " + (result ? "succeeded!" : "FAILED!"));
-		if (result) {
-			Cu.reportError("file size: " + file.fileSize + " expected: " + (1<<28) + " diff: " + (file.fileSize - (1<<28)));
-		}
+const SIZE_MIN = 30 * 1024;
+
+module("resource://dta/utils.jsm");
+
+const WorkerFactory = Cc["@mozilla.org/threads/workerfactory;1"].createInstance(Ci.nsIWorkerFactory);
+const Worker = WorkerFactory.newChromeWorker("resource://dta/manager/preallocator/worker.js");
+
+const JobQueue = {
+	_jobs: {},
+	queue: function JobQueue_queue(file, size, perms, callback) {
+		let id = newUUIDString();
+		let job = {
+			file: file,
+			perms: perms,
+			callback: callback
+		};
+		this._jobs[id] = job;
+		Worker.postMessage({
+			action: 'start',
+			id: id,
+			file: file,
+			perms: perms,
+		});
+		return {
+			cancel: JobQueue.cancel.bind(JobQueue, id)
+		};
+	},
+	finish: function JobQueue_finish(id, result) {
+		let job = this._jobs[id];
 		try {
-			file.remove(false);
+			job.callback(result);
 		}
-		catch (ex) {}
-	});
+		finally {
+			delete this._jobs[id];
+		}
+	},
+	cancel: function JobQueue_cancel(id) {
+		Worker.postMessage({
+			action: 'cancel',
+			id: id,
+		});
+	}
+};
+
+Worker.onmessage = function prealloc_worker_message(event) {
+	let msg = event.data;
+	if (!msg.result) {
+		Debug.log("pa: failed to run", msg.resultString);
+	}
+	JobQueue.finish(msg.id, msg.result);
+};
+Worker.onerror = function prealloc_worker_error(event) {
+	Debug.log("Something horrible happend", event.message);
+	Worker = null;
+}
+
+function prealloc(file, size, perms, callback, tp) {
+	callback = (callback || function(){}).bind(tp || null);
+	if (size <= SIZE_MIN || !isFinite(size) || !Worker) {
+		Debug.log("pa: not preallocating");
+		callback(false);
+		return null;
+	}
+	return JobQueue.queue(file.path, size, perms, callback);
 }
