@@ -76,15 +76,6 @@ function History(key) {
 		this._validator = function() true;
 	}
 	this._setPersisting(!pbm.browsingPrivately());
-	if (!this.values.length) {
-		try {
-			let defaultValues = parse(prefs.getExt(this._key + ".default", '[]'));
-			this._setValues(defaultValues);
-		}
-		catch (ex) {
-			Debug.log("Cannot apply default values", ex);
-		}
-	}
 }
 History.prototype = {
 	_key: null,
@@ -112,13 +103,22 @@ History.prototype = {
 			return this._sessionHistory;
 		}
 		let json = prefs.getExt(this._key, '[]');
+		let rv = [];
 		try {
-			return parse(json);
+			rv = parse(json);
 		}
 		catch (ex) {
 			Debug.log("Histories: Parsing of history failed: " + json, ex);
-			return [];
 		}
+		if (!rv.length) {
+			try {
+				rv = parse(prefs.getExt(this._key + ".default", '[]'));
+			}
+			catch (ex) {
+				Debug.log("Cannot apply default values", ex);
+			}
+		}
+		return rv;
 	},
 	get values() {
 		return this._values.filter(this._validator);
