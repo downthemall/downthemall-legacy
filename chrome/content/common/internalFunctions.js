@@ -284,7 +284,7 @@ var Utils = {
 		}
 	}
 	Utils.formatBytes = createFormatter([['sizeB', 0], ['sizeKB', 1], ['sizeMB', 2], ['sizeGB', 2], ['sizeTB', 3]], 875);
-	Utils.formatSpeed = createFormatter([['sizeBs', 0], ['sizeKBs', 1], ['sizeMBs', 1], ['sizeGBs', 2]], 1023);
+	Utils.formatSpeed = createFormatter([['sizeBs', 0], ['sizeKBs', 1], ['sizeMBs', 2], ['sizeGBs', 3]], 1023);
 })();
 
 Components.utils.import('resource://dta/utils.jsm', Utils);
