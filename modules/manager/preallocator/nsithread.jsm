@@ -174,15 +174,14 @@ WorkerJob.prototype = {
 				let seekable = stream.QueryInterface(Ci.nsISeekableStream);
 				seekable.seek(0x02, 0);
 				let i = seekable.tell();
-				if (i >= this.size - 1) {
-					return;
+				if (i < this.size - 1) {
+					i += SIZE_STEP;
+					for (; !this.terminated && i < this.size + SIZE_STEP; i += SIZE_STEP) {
+						seekable.seek(0x00, Math.min(i, this.size - 1));
+						stream.write("a", 1);
+					}
+					rv = true;
 				}
-				i += SIZE_STEP;
-				for (; !this.terminated && i < this.size + SIZE_STEP; i += SIZE_STEP) {
-					seekable.seek(0x00, Math.min(i, this.size - 1));
-					stream.write("a", 1);
-				}
-				rv = true;
 			}
 			finally {
 				stream.close();
