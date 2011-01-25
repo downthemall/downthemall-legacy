@@ -733,7 +733,7 @@ const Dialog = {
 				}
 			}
 			this._speeds.add(this._sum, now);
-			speed = Utils.formatBytes(this._speeds.avg);
+			speed = Utils.formatSpeed(this._speeds.avg);
 			this._maxObservedSpeed = Math.max(this._speeds.avg, this._maxObservedSpeed);
 			for each (let e in $('listSpeeds', 'perDownloadSpeedLimitList')) {
 				e.hint = this._maxObservedSpeed;
