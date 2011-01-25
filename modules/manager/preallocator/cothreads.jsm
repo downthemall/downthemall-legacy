@@ -123,8 +123,6 @@ WorkerJob.prototype = {
 				size -= seekable.tell();
 				while (size > 0) {
 					let count = Math.min(size, 1 << 26 /* 64MB */);
-					Debug.log(count);
-					Debug.log(size);
 					size -= count;
 					seekable.seek(0x01, count);
 					seekable.setEOF();
@@ -145,19 +143,16 @@ WorkerJob.prototype = {
 		try {
 			let stream = new FileOutputStream(this.file, 0x02 | 0x08, this.perms, 0);
 			try {
-				let seekable = stream.QueryInterface(Ci.nsISeekableStream);
-				seekable.seek(0x02, 0);
-				let i = seekable.tell() + SIZE_STEP;
-				if (i == this.size - 1) {
-					return;
+				let i = seekable.tell();
+				if (i < this.size - 1) {
+					i += SIZE_STEP;
+					for (; !this.terminated && i < this.size + SIZE_STEP; i += SIZE_STEP) {
+						seekable.seek(0x00, Math.min(i, this.size - 1));
+						stream.write("a", 1);
+						yield true;
+					}
+					this.result = true;
 				}
-				for (; !this.terminated && i < this.size + SIZE_STEP; i += SIZE_STEP) {
-					seekable.seek(0x00, Math.min(i, this.size - 1));
-					Debug.log(i);
-					stream.write("a", 1);
-					yield true;
-				}
-				this.result = true;
 			}
 			finally {
 				stream.close();
