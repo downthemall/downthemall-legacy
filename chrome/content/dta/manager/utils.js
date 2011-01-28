@@ -155,7 +155,6 @@ const Prefs = {
 			this._resetConnPrefs();
 			this._refreshPrefs();
 			Preferences.addObserver('extensions.dta.', this);
-			Preferences.addObserver('network.', this);
 		}
 		catch (ex) {
 			Debug.log("failed to add pref-observer", ex);
@@ -200,17 +199,11 @@ const Prefs = {
 		// Make this KB
 		this.loadEndFirst *= 1024;
 
-		if (!prefName || prefName == PREF_CONN) {
-			let conns = (this.maxInProgress * this.maxChunks) + 2;
-			let cur = Preferences.get(PREF_CONN, conns);
-
-			if (conns != cur) {
-				Preferences.setExt(PREF_CONN, cur);
-			}
-			if (conns > cur) {
-				Preferences.set(PREF_CONN, conns);
-			}
+		if (!prefName) {
+			this._baselineConns = Preferences.get(PREF_CONN, this._baselineConns);
+			Preferences.setExt(PREF_CONN, this._baselineConns);
 		}
+
 		if (this.minimizeToTray) {
 			TrayHandler.watch();
 		}
@@ -223,6 +216,16 @@ const Prefs = {
 		}
 		else {
 			RequestManipulation.unregisterHttp('dtaua');
+		}
+	},
+	_baselineConns: 30,
+	_currentConns: 0,
+	refreshConnPrefs: function(downloads) {
+		let conns = downloads.reduce(function(p, d) p + d.activeChunks, 0);
+		conns = Math.max(this._baselineConns, Math.min(50, conns));
+		if (this._currentConns != conns) {
+			Preferences.set(PREF_CONN, conns);
+			this._currentConns = conns;
 		}
 	},
 	_constructTemp: function() {
@@ -304,7 +307,6 @@ const Prefs = {
 	},
 	shutdown: function() {
 		Preferences.removeObserver('extensions.dta.', this);
-		Preferences.removeObserver('network.', this);
 		this._resetConnPrefs();
 	},
 	_resetConnPrefs: function() {
