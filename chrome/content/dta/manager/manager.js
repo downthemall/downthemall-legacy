@@ -640,7 +640,7 @@ const Dialog = {
 				this.run(d);
 			}
 		}
-		Timers.createRepeating(100, this.refreshWritten, this, true);
+		Timers.createRepeating(200, this.refreshWritten, this, true);
 		Timers.createRepeating(10000, this.saveRunning, this);
 
 		$('loadingbox').parentNode.removeChild($('loadingbox'));
@@ -879,6 +879,8 @@ const Dialog = {
 	},
 
 	checkDownloads: function D_checkDownloads() {
+		Prefs.refreshConnPrefs(this._running);
+
 		try {
 			this.refresh();
 
