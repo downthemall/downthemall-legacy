@@ -617,11 +617,17 @@ statusbarpanel#netstatus {
 #search > toolbarbutton[disabled] {
   display: none;
 }
-
-treecol[params] > .treecol-sortdirection {
-	list-style-image: url(chrome://global/skin/checkbox/cbox-check.gif);
+treecol[matcher] {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#treecol-matcher);
 }
-treecol[matcher]:hover > .treecol-sortdirection {
-	list-style-image: url(chrome://global/skin/arrow/arrow-down.png);
-	-moz-appearance: button-arrow-down;
+.treecol-marker {
+	padding: 1px;
+	margin: 0;
+	border: 0;
+}
+treecol[params] .treecol-marker {
+	-moz-appearance: none;
+	border: 0;
+	background-color: transparent;
+	list-style-image: url(chrome://global/skin/checkbox/cbox-check.gif);
 }
