@@ -306,7 +306,7 @@ MatcherTee.prototype = {
 			return null;
 		}
 		a = this.a.getMatcher(a);
-		b = this.a.getMatcher(b);
+		b = this.b.getMatcher(b);
 		return function(d) a(d) && b(d);
 	}
 };
