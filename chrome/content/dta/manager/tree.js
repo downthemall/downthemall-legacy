@@ -45,7 +45,6 @@ const Tree = {
 		this._filtered = this._downloads;
 		this._speedLimitList = $('perDownloadSpeedLimitList');
 		this._matcher = new this.Matcher();
-		this._matcherPopup = $('matcher');
 
 		addEventListener('blur', function() Tree.stopTip(), false);
 
@@ -58,7 +57,15 @@ const Tree = {
 		dtree.addEventListener('mousemove', function(event) tp.hovering(event), false);
 		dtree.addEventListener('draggesture', function(event) nsDragAndDrop.startDrag(event, tp), false);
 
-		this._matcherPopup.addEventListener('command', function(event) tp.handleMatcherPopup(event), true);
+		let matcherPopup = $('matcher');
+		for each (let col in $$("treecol[matcher]")) {
+			let cloned = matcherPopup.cloneNode(true);
+			col.appendChild(cloned);
+			col.menupopup = cloned;
+			col.menupopup.fixedItems = cloned.firstChild;
+			cloned.addEventListener('popupshowing', function(event) tp.handleMatcherPopupshowing(event), true);
+			cloned.addEventListener('click', function(event) tp.handleMatcherPopup(event), true);
+		}
 
 		$('popup').addEventListener('popupshowing', function(event) tp.onPopupShowing(event), true);
 		$('search').addEventListener('search', function(event) tp.setFilter(event.target.value), true);
@@ -110,26 +117,77 @@ const Tree = {
 			}
 		}
 	},
+	handleMatcherPopupshowing: function(event) {
+		let popup = event.currentTarget;
+		let col = popup.parentNode;
+		let processor = col.getAttribute('matcher');
+		if (!processor) {
+			return;
+		}
+		while (popup.firstChild != popup.fixedItems) {
+			popup.removeChild(popup.firstChild);
+		}
+		let active = (col.getAttribute('params') || "").split(",");
+		let newActive = [];
+		for (let i in this._matcher.getItems(processor, this._downloads)) {
+			if (i.label == '-') {
+				popup.insertBefore($e('menuseparator'), popup.fixedItems);
+				continue;
+			}
+			let checked = active.indexOf(i.param) >= 0;
+			let attrs = {
+				type: "checkbox",
+				closemenu: "none",
+				label: i.label,
+				param: i.param,
+				checked: checked
+			};
+			if (i.radio) {
+				attrs.type = 'radio';
+				attrs.name = popup.id + "_" + i.radio;
+			}
+			popup.insertBefore($e('menuitem', attrs), popup.fixedItems);
+			if (checked) {
+				newActive.push(i.param);
+			}
+		}
+		if (newActive.length) {
+			col.setAttribute('params', newActive.join(','));
+		}
+		else {
+			col.removeAttribute('params');
+		}
+	},
 	handleMatcherPopup: function(event) {
-		let matcher = this._matcherPopup.element.getAttribute('matcher');
-		let popup = this._matcherPopup;
-		let element = popup.element;
-		let target = event.originalTarget;
+		let target = event.target;
+		let popup = target.parentNode;
+		let element = popup.parentNode;
+		let matcher = element.getAttribute('matcher');
+		let action = target.getAttribute('action');
 
-		if (target.id == 'clearmatcher') {
+		if (action == 'clearmatcher') {
 			element.removeAttribute('params');
+			$$('menuitem[param]', popup).forEach(function(n) n.removeAttribute('checked'));
 			this._matcher.removeMatcher(matcher);
 			this.doFilter();
 			return;
 		}
-		if (target.id == 'invertmatcher') {
+		if (action == 'invertmatcher') {
 			let active = [];
 			let params = element.getAttribute('params');
 			if (params) {
 				active = params.split(',');
 			}
-			let newActive = $$('menuitem[type="checkbox"][param]', element)
-				.map(function(e) e.getAttribute('param'))
+			let newActive = $$('menuitem[type="checkbox"][param]', popup)
+				.map(function(e) {
+					if (e.getAttribute('checked') == "true") {
+						e.removeAttribute('checked');
+					}
+					else {
+						e.setAttribute('checked', 'true');
+					}
+					return e.getAttribute('param');
+				})
 				.filter(function(e) active.indexOf(e) == -1);
 			active = newActive;
 			active.sort();
@@ -150,11 +208,11 @@ const Tree = {
 			}
 			return;
 		}
-		if (target.id == 'sortAscending') {
+		if (action == 'sortAscending') {
 			this.sort(element.id, false);
 			return;
 		}
-		if (target.id == 'sortDescending') {
+		if (action == 'sortDescending') {
 			this.sort(element.id, true);
 			return;
 		}
@@ -172,11 +230,8 @@ const Tree = {
 				let others = $$(
 					'menuitem[name="' + target.getAttribute('name') + '"]',
 					popup
-				).map(
-					function(n) n.getAttribute('param')
-				).filter(
-					function(p) p != param
-				);
+				).map(function(n) n.getAttribute('param'))
+					.filter(function(p) p != param);
 				// filter out other params
 				active = active.filter(function(p) others.indexOf(p) < 0);
 			}
@@ -428,49 +483,7 @@ const Tree = {
 			prop.AppendElement(this._filtered[idx].iconAtom);
 		}
 	},
-	cycleHeader: function T_cycleHeader(col) {
-		let processor = col.element.getAttribute('matcher');
-		if (!processor) {
-			return;
-		}
-		let popup = this._matcherPopup;
-		let fi = $('fixedItems');
-		while (popup.firstChild.id != 'fixedItems') {
-			popup.removeChild(this._matcherPopup.firstChild);
-		}
-		let active = (col.element.getAttribute('params') || "").split(",");
-		let newActive = [];
-		for (let i in this._matcher.getItems(processor, this._downloads)) {
-			if (i.label == '-') {
-				popup.insertBefore($e('menuseparator'), fi);
-				continue;
-			}
-			let checked = active.indexOf(i.param) >= 0;
-			let attrs = {
-				type: "checkbox",
-				label: i.label,
-				param: i.param,
-				checked: checked
-			};
-			if (i.radio) {
-				attrs.type = 'radio';
-				attrs.name = popup.id + "_" + i.radio;
-			}
-			popup.insertBefore($e('menuitem', attrs), fi);
-			if (checked) {
-				newActive.push(i.param);
-			}
-		}
-		if (newActive.length) {
-			col.element.setAttribute('params', newActive.join(','));
-		}
-		else {
-			col.element.removeAttribute('params');
-		}
-		popup.colidx = col.index;
-		popup.element = col.element;
-		popup.openPopup(col.element, 'after_end', 0, 0, false, false);
-	},
+	cycleHeader: function T_cycleHeader(col) {},
 	// just some stubs we need to provide anyway to implement a full nsITreeView
 	cycleCell: function(idx, column) {},
 	performAction: function(action) {},
