@@ -219,7 +219,7 @@ const Prefs = {
 			TrayHandler.unwatch();
 		}
 		
-		if (Preferences.getExt('exposeInUA', true)) {
+		if (Preferences.getExt('exposeInUA', false)) {
 			RequestManipulation.registerHttp('dtaua', /./, RequestManipulation.amendUA);
 		}
 		else {
