@@ -1,0 +1,88 @@
+<!ENTITY lp.localedir "ltr">
+<!ENTITY language "简体中文">
+<!ENTITY transAutor "Blacko,Cye3s">
+<!ENTITY amo.summary "独一无二的Firefox内建下载管理器/加速器">
+<!ENTITY amo.description.intro "DownThemAll满足您对一个下载管理器的需求:提供高级加速器可增加4倍以上的加速并且允许您随时暂停并恢复下载。">
+<!ENTITY amo.description.feat "DownThemAll快速，可靠并且容易使用！它让您可以下载页面中的所有链接和图像，还有更多：您可以用可高度可定制的条件提纯您的下载，来获取您想要的！可完全控制下载，随时指定速度和并发连接数量。使用Metalinks或手动增加镜像从其它服务器同时下载文件。">
+<!ENTITY amo.description.free "DownThemAll开源，免费。无广告，无间谍软件，无吸费陷阱！">
+<!ENTITY amo.description.more "更多信息请查看我们的 <a href='http://www.downthemall.net/howto/features/'>产品特点页面</a>。">
+<!ENTITY lp.title "关于DownThemAll!">
+<!ENTITY lp.welcome "欢迎使用DownThemAll!">
+<!ENTITY lp.info "查看视频了解如何使用DownThemAll!以及更多关于隐私与您的权限的内容">
+<!ENTITY lp.moreinfo "更多信息请查看我们的 <a href='http://www.downthemall.net/howto/features/'>产品特点页面</a>。">
+<!ENTITY lp.gettingstarted "开始使用">
+<!ENTITY lp.toolbar "工具栏按钮">
+<!ENTITY lp.privacy "隐私">
+<!ENTITY lp.yourrights "您的权利">
+<!ENTITY lp.contact "联系方式">
+<!ENTITY lp.pleasenote "请注意：">
+<!ENTITY lp.donate "请考虑提供捐助">
+<!ENTITY lp.tut.firsttitle "您的第一次下载">
+<!ENTITY lp.tut.fd1 "用dTa下载文件十分简单但同时功能也十分强大。如果提示打开或保存文件，你可以使用DownThemAll!。将显示一个对话框供您选择文件保存的位置，同时提供一些高级选项。">
+<!ENTITY lp.tut.selecttitle "使用选择窗口">
+<!ENTITY lp.tut.selintro "网页右键菜单提供一个新DownThemAll!功能。点击它可以显示DownThemAll!选择窗口，您可以用它选择页面上的一个或多个链接。">
+<!ENTITY lp.tut.seloptions "在选择窗口中你有多种方式来选择下载哪些文件：">
+<!ENTITY lp.tut.selopthand "您可以手动选择你要下载的链接">
+<!ENTITY lp.tut.seloptfilters "您也可以使用内建的自带过滤器，例如下载所有链接指向的图像。">
+<!ENTITY lp.tut.seloptfast "另外您可以在快速过滤框中输入您自己的过滤器，例如<code>*.pdf,*.doc</code>或是正则表达式">
+<!ENTITY lp.tut.seltypes "选择窗口包含两个标签，对应两种不同的下载类型：">
+<!ENTITY lp.tut.seltypelinks "链接标签包含页面中找到的所有可下载的链接">
+<!ENTITY lp.tut.seltypepics "图像和媒体标签包含页面上显示的所有图像和媒体">
+<!ENTITY lp.tut.selgalleries "全尺寸图像往往链接自缩略图，因此您将在链接标签中找到它们">
+<!ENTITY lp.tut.seldone "一但你选择完要下载的文件，点击开始或队列。">
+<!ENTITY lp.tut.batchestitle "批量下载">
+<!ENTITY lp.tut.batches1 "许多用户想要批量下载连续的文件。DownThemAll!让您十分容易地指定批量下载，如视频所展示。">
+<!ENTITY lp.tut.batches2 "基本语法：<code>[开始:结束]</code>或<code>[开始:结束:步长]</code>，<code>开始</code>和<code>结束</code>可以为数字或简单的字母。<code>步长</code>定义增量步长，如果省略，默认为1。">
+<!ENTITY lp.tut.batches3 "例如您想下载从001到100的图像，您可以将链接改为：<code>http://example.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
+<!ENTITY lp.tut.oneclick1 "一但您完成第一次下载，将有另一项功能可以使用：DownThemAll! OneClick。您可以使用上一次的下载设置直接下载，跳过增加下载或选择窗口。">
+<!ENTITY lp.tut.oneclick2 "因此一键下载可以让您快速增加下载队列。">
+<!ENTITY lp.tut.oneclickn "使用Firefox的清除隐私数据功能后，一键下载功能将不可用，直到你再次开始一次普通下载。">
+<!ENTITY lp.tb.intro "DownThemAll!提供一些工具栏按钮让您可以方便地访问DownThemAll!的功能。">
+<!ENTITY lp.tb.add.title "增加并使用工具栏按钮">
+<!ENTITY lp.tb.add.p1 "DownThemAll!提供四个工具栏按钮用于方便地查找并增加下载队列">
+<!ENTITY lp.tb.add.dta "DownThemAll!按钮">
+<!ENTITY lp.tb.add.dtadesc "为当前标签页打开DownThemAll!选择窗口。">
+<!ENTITY lp.tb.add.tdta "OneClick!按钮">
+<!ENTITY lp.tb.add.tdtadesc "使用上次的选项和过滤器下载当前页面上的所有项目。">
+<!ENTITY lp.tb.add.manager "DownThemAll!管理器按钮">
+<!ENTITY lp.tb.add.managerdesc "打开管理器窗口">
+<!ENTITY lp.tb.add.selector "DownThemAll!选择器按钮">
+<!ENTITY lp.tb.add.selectordesc "在项目上左键点击来添加它们。">
+<!ENTITY lp.tb.add.p2 "工具栏按钮可以用以下方式添加：<code>查看 → 工具栏 → 自定义</code>。">
+<!ENTITY lp.tb.dnd.title "拖放">
+<!ENTITY lp.tb.dnd.p1 "您可以拖放链接和图像到DownThemAll! 或 OneClick!按钮上来下载它。">
+<!ENTITY lp.tb.dnd.p2 "管理器窗口也可以拖放项目来下载。">
+<!ENTITY lp.tb.dnd.p3 "您也可以用拖放来排序下载列表。只要拖动项目到目标位置即可。">
+<!ENTITY lp.tb.selector.title "使用DownThemAll!选择器">
+<!ENTITY lp.tb.selector.p1 "使用DownThemAll!选择器时你可以简单点击链接和图像来增加下载队列。">
+<!ENTITY lp.tb.selector.p2 "点击工具栏按钮启用选择器，完成点击后再次点击工具栏按钮禁用它。">
+<!ENTITY lp.pr.title "隐私声明">
+<!ENTITY lp.pr.intro "DownThemAll保护您的隐私。">
+<!ENTITY lp.pr.settings "您可以让DownThemAll!在关闭时移除下载列表中所有完成，取消和未完成的下载，在以下位置修改设置：选项 → 隐私标签。">
+<!ENTITY lp.pr.diag "您可以启用诊断消息，它可以记录到错误控制台与 dta_log.txt 文件，在选项 → 隐私标签中设置。诊断消息可能包含敏感数据如您正在下载的链接，文件路径，文件名甚至cookie信息。该功能默认被禁用来保护您的隐私。如果您提交诊断信息，您可能希望审查敏感数据。诊断日志不会以自动的方式公开。">
+<!ENTITY lp.pr.pbm "DownThemAll!支持Firefox的隐私浏览模式：在隐私浏览模式中，DownThemAll! 不会存储任何关于下载文件，下载文件夹或重命名掩码的信息。请注意其它信息-例如新创建的过滤器，或者下载的文件当然会保存在您的硬盘上。">
+<!ENTITY lp.pr.link "该声明永远可以从这个页面(about:downthemall)获取，并且在选项窗口中有额外的链接">
+<!ENTITY lp.yr.usagetitle "使用和分发">
+<!ENTITY lp.yr.usage "作者授权您可以自由地对DownThemAll!进行：">
+<!ENTITY lp.yr.usageuse "使用DownThemAll!">
+<!ENTITY lp.yr.usagemod "修改DownThemAll!">
+<!ENTITY lp.yr.usagedist "重新分发DownThemAll!，修改或不做修改">
+<!ENTITY lp.yr.usagemore "查看授权获取更多信息">
+<!ENTITY lp.languagetitle "语言">
+<!ENTITY lp.translation.by "翻译：">
+<!ENTITY lp.yr.licensetitle "版权和授权">
+<!ENTITY lp.yr.licensed "DownThemAll!使用<a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>。查看GPL文件。应用到所有源代码文件。">
+<!ENTITY lp.yr.morelicense "个别文件可能使用不同的授权。查看对应的代码仓库文件于<a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>。许多文件同时使用MPL 1.1/GPL 2.0/LGPL 2.1;分别查看MPL 1.1/GPL 2.0/LGPL 2.1。">
+<!ENTITY lp.yr.gplintro "GPL 2.0中最重要的部分，无担保和损害免责，如下：">
+<!ENTITY lp.yr.icons "美工，图标与按钮">
+<!ENTITY lp.yr.iconsbased "基于Mike Matas, Jakub Steiner, Mark James 和 Tango 项目">
+<!ENTITY lp.yr.artwork "原始美工为：Copyright © 2004-2010 by Stefano Verna, Federico Parodi and Nils Maier">
+<!ENTITY lp.yr.artworklicense "原始美工授权：">
+<!ENTITY lp.yr.logo "The DownThemAll! logo is: Copyright © 2004-2010 by Stefano Verna.">
+<!ENTITY lp.yr.logopermissions "The DownThemAll! name and logo cannot be used without permission in any derivative work, with exception of credits and license-related notices.">
+<!ENTITY lp.ct.bugstitle "报告Bug/功能请求">
+<!ENTITY lp.ct.bugs "请在我们的<a href='http://bugs.code.downthemall.net/'>bug tracker</a>报告Bug和功能请求。">
+<!ENTITY lp.ct.contactstitle "联系方式">
+<!ENTITY lp.ct.contactsfeed "我们乐意收到您的反馈，建议或提供帮助。">
+<!ENTITY lp.ct.contacts "请查看我们的在线<a href='http://www.downthemall.net/main/contacts/'>联系方式页面</a>。">

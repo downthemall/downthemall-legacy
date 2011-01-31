@@ -1,0 +1,88 @@
+<!ENTITY lp.localedir "ltr">
+<!ENTITY language "Nederlands">
+<!ENTITY transAutor "Alf (BabelZilla)">
+<!ENTITY amo.summary "De eerste en enige in Firefox ingebouwde download beheerder/versneller!">
+<!ENTITY amo.description.intro "DownThemAll! is alles wat een download beheerder nodig heeft: het heeft een geavanceerde versneller, die de snelheid tot 4x toe verhoogt en staat de gebruiker op elke moment toe downloads te pauzeren en te hervatten.">
+<!ENTITY amo.description.feat "DownThemAll! is snel, betrouwbaar en gemakkelijk te gebruiken! Het geeft de mogelijkheid alle koppelingen of afbeeldingen die een webpagina bevat te downloaden en nog veel meer: de downloads kunnen worden verfijnt door middel van volledig aanpasbare criteria om zo alleen te krijgen wat werkelijk de bedoeling is! Het biedt altijd volledige controle over de downloads, specifieke snelheid en aantal gelijktijdige verbindingen. Meervoudige koppelingen of het handmatig toevoegen van mirrors om een bestand gelijktijdig van verschillende servers te downloaden.">
+<!ENTITY amo.description.free "DownThemAll! is open-source en freeware. Geen Adware, geen Spyware en geen verborgen kosten!">
+<!ENTITY amo.description.more "Bezoek voor meer informatie de <a href='http://www.downthemall.net/howto/features/'>Mogelijkheden pagina</a>.">
+<!ENTITY lp.title "Over DownThemAll!">
+<!ENTITY lp.welcome "Welkom bij DownThemAll!">
+<!ENTITY lp.info "Bekijk de video's die weergeven hoe DownThemAll! gebruikt kan worden en leer meer over privacy en rechten.">
+<!ENTITY lp.moreinfo "Bezoek voor meer informatie de <a href='http://www.downthemall.net/howto/features/'>Mogelijkheden pagina</a>.">
+<!ENTITY lp.gettingstarted "Van start gaan">
+<!ENTITY lp.toolbar "Werkbalk knoppen">
+<!ENTITY lp.privacy "Privacy">
+<!ENTITY lp.yourrights "Gebruikersrechten">
+<!ENTITY lp.contact "Contact">
+<!ENTITY lp.pleasenote "Let op:">
+<!ENTITY lp.donate "Overweeg a.u.b. een donatie">
+<!ENTITY lp.tut.firsttitle "De eerste download">
+<!ENTITY lp.tut.fd1 "Een bestand downloaden in dTa! is betrekkelijk eenvoudig, maar ook erg krachtig. Indien er gevraagd wordt om een bestand te openen of op te slaan, kan DownThemAll! gebruikt worden. Er wordt dan een venster weergegeven, waarin gekozen kan worden in welke map het bestand opgeslagen moet worden, samen met meer geavanceerde opties.">
+<!ENTITY lp.tut.selecttitle "Het selectie venster gebruiken">
+<!ENTITY lp.tut.selintro "Het contextmenu van een website bevat een nieuw DownThemAll! item. Door dit item te gebruiken, zal het DownThemAll! selectie venster worden weergegeven, dat gebruikt kan worden om eenvoudig één of meer koppelingen van die pagina te selecteren.">
+<!ENTITY lp.tut.seloptions "In het selectie venster zijn verschillende manieren mogelijk om de te downloaden bestanden te selecteren:">
+<!ENTITY lp.tut.selopthand "De gewenste koppelingen kunnen handmatig worden geselecteerd.">
+<!ENTITY lp.tut.seloptfilters "De ingebouwde of eigen filters kunnen gebruikt worden om bijv. alle gekoppelde afbeeldingen te downloaden.">
+<!ENTITY lp.tut.seloptfast "Aanvullend kan er een eigen filter ingevoerd worden in het Snel filteren veld, bijv. <code>*.pdf,*.doc</code> of zelfs een reguliere expressie.">
+<!ENTITY lp.tut.seltypes "Het selectie venster bevat 2 tabbladen voor 2 verschillende type downloads">
+<!ENTITY lp.tut.seltypelinks "Het Koppelingen tabblad bevat alle te downloaden koppelingen die op de pagina gevonden zijn">
+<!ENTITY lp.tut.seltypepics "Het Afbeeldingen en Media tabblad bevat alle afbeeldingen en overige media, zoals deze op de pagina worden weergegeven.">
+<!ENTITY lp.tut.selgalleries "Afbeeldingen op volledige grootte zijn meestal gekoppeld vanuit pagina's met galerijen, zodat deze onder het Koppelingen tabblad gevonden kunnen worden.">
+<!ENTITY lp.tut.seldone "Nadat de te downloaden bestanden geselecteerd zijn, kan op Starten of Gepauzeerd toevoegen geklikt worden.">
+<!ENTITY lp.tut.batchestitle "Verzamelingen downloaden">
+<!ENTITY lp.tut.batches1 "Veel gebruikers willen verzamelingen van opeenvolgend genummerde bestanden downloaden. Met DownThemAll! kunnen vrij eenvoudig verzamelingen gespecificeerd worden, zoals de video laat zien.">
+<!ENTITY lp.tut.batches2 "De basis syntax is: <code>[start:eind]</code> of <code>[start:eind:stap]</code>, waar zowel de <code>start</code> als de <code>eind</code> zowel een nummer als een eenvoudig karakter kunnen zijn. <code>stap</code> definieert de stap grootte en is gewoon 1 als deze wordt weggelaten.">
+<!ENTITY lp.tut.batches3 "Bijvoorbeeld: als er afbeeldingen van 001 tot 100 gedownload moeten worden, kan het webadres gewijzigd worden naar: <code>http://example.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick!">
+<!ENTITY lp.tut.oneclick1 "Nadat er een initiële download is gedaan, zal er een ander item beschikbaar zijn: DownThemAll! OneClick!. Deze kan gebruikt worden om direct te downloaden met gebruikmaking van de vorige instellingen, waarbij het toevoegen en/of selecteren in het selectie venster wordt overgeslagen.">
+<!ENTITY lp.tut.oneclick2 "Daardoor geeft OneClick! de mogelijkheid tot het snel in de wachtrij plaatsen van een grote hoeveelheid koppelingen.">
+<!ENTITY lp.tut.oneclickn "Na het gebruik van de mogelijkheid om privégegevens te wissen in Firefox, zal de OneClick! mogelijkheid niet beschikbaar zijn totdat er een reguliere download met DownThemAll! gestart wordt.">
+<!ENTITY lp.tb.intro "DownThemAll! biedt enkele werkbalkknoppen om op een handige manier de DownThemAll! mogelijkheden te benaderen.">
+<!ENTITY lp.tb.add.title "Werkbalkknoppen toevoegen en gebruiken">
+<!ENTITY lp.tb.add.p1 "DownThemAll! biedt vier werkbalkknoppen om downloads te vinden en in de wachtrij te plaatsen">
+<!ENTITY lp.tb.add.dta "DownThemAll! knop">
+<!ENTITY lp.tb.add.dtadesc "Opent het DownThemAll! selectie venster voor het huidige tabblad.">
+<!ENTITY lp.tb.add.tdta "OneClick! knop">
+<!ENTITY lp.tb.add.tdtadesc "Download alle items van de huidige pagina overeenkomstig de laatst gebruikte instellingen en filters.">
+<!ENTITY lp.tb.add.manager "DownThemAll! Beheerder knop">
+<!ENTITY lp.tb.add.managerdesc "Opent het beheerders venster,">
+<!ENTITY lp.tb.add.selector "DownThemAll! Selecteur knop">
+<!ENTITY lp.tb.add.selectordesc "Items toevoegen door er rechts op te klikken.">
+<!ENTITY lp.tb.add.p2 "De werkbalkknoppen kunnen toegevoegd worden via <code>Beeld → Werkbalken → Aanpassen...</code>.">
+<!ENTITY lp.tb.dnd.title "Slepen-en-plakken">
+<!ENTITY lp.tb.dnd.p1 "Elke koppeling of afbeelding kan door deze te slepen-en-plakken naar de DownThemAll! knop gedownload worden.">
+<!ENTITY lp.tb.dnd.p2 "Het beheerder venster kan ook gebruikt worden om te downloaden items te slepen-en-plakken.">
+<!ENTITY lp.tb.dnd.p3 "De downloadlijst kan ook via slepen-en-plakken gesorteerd worden. Sleep gewoon een item en plak het op de gewenste positie.">
+<!ENTITY lp.tb.selector.title "De DownThemAll! Selecteur gebruiken">
+<!ENTITY lp.tb.selector.p1 "Door de DownThemAll! Selecteur te gebruiken, kunnen vele downloads in de wachtrij geplaatst worden door eenvoudig op de koppelingen of de afbeeldingen te klikken.">
+<!ENTITY lp.tb.selector.p2 "Klik op de werkbalkknop om de Selecteur in te schakelen, en nog een keer om deze na het selecteren weer uit te schakelen.">
+<!ENTITY lp.pr.title "Privacy opmerking">
+<!ENTITY lp.pr.intro "DownThemAll! beschermt de privacy.">
+<!ENTITY lp.pr.settings "DownThemAll! kan bij afsluiten alle voltooide, geannuleerde en incomplete downloads uit de downloadlijst verwijderen, door de instellingen te wijzigen in het Voorkeuren → Privacy venster.">
+<!ENTITY lp.pr.diag "Diagnostische berichten kunnen ingeschakeld worden, welke dan gelogd worden in zowel de foutconsole als in het bestand dta_log.txt via het Voorkeuren → Privacy venster. Diagnostische berichten zullen zeer waarschijnlijk gevoelige informatie bevatten, zoals webadressen, bestandspaden en -namen van de downloads, en zelfs cookie informatie. Deze optie is standaard UITGESCHAKELD om de privacy te beschermen. Indien een diagnostisch bericht doorgestuurd wordt, is het aan te bevelen deze gevoelige informatie te censureren. Geen enkele diagnostische log zal ooit op een geautomatiseerde wijze gepubliceerd worden.">
+<!ENTITY lp.pr.pbm "DownThemAll! ondersteunt de Privénavigatie modus van Firefox: in deze modus zal DownThemAll! geen enkele informatie over gedownloade bestanden, gedownloade mappen of gebruikte hernoem maskers opslaan. Merk a.u.b. op dat overige gegevens, zoals nieuw aangemaakte filters, of natuurlijk de huidige downloads nog steeds naar de harddik worden weggeschreven.">
+<!ENTITY lp.pr.link "Deze opmerking is altijd via deze pagina (about:downthemall) beschikbaar en er wordt aanvullend naar verwezen in het Voorkeuren venster.">
+<!ENTITY lp.yr.usagetitle "Gebruik en verspreiding">
+<!ENTITY lp.yr.usage "De maker licensieert DownThemAll! zodanig dat DownThemAll! vrijuit">
+<!ENTITY lp.yr.usageuse "gebruikt mag worden">
+<!ENTITY lp.yr.usagemod "gewijzigd mag worden">
+<!ENTITY lp.yr.usagedist "verspreid mag worden, met of zonder modificaties">
+<!ENTITY lp.yr.usagemore "Bekijk de licentie voor meer informatie.">
+<!ENTITY lp.languagetitle "Taal">
+<!ENTITY lp.translation.by "vertaald door">
+<!ENTITY lp.yr.licensetitle "Auteursrecht en licentie">
+<!ENTITY lp.yr.licensed "DownThemAll! is gelicensieerd onder <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Bekijk ook het GPL-bestand. Dit is van toepassing op alle bronbestanden.">
+<!ENTITY lp.yr.morelicense "Individuele bestanden kunnen verschillende licenties hebben. Zie de overeenkomstige opgeslagen bestanden op <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Veel bestanden zijn drievoudig gelicensieerd onder een MPL 1.1/GPL 2.0/LGPL 2.1 licentie; Zie de respectievelijke MPL, GPL, LGPL bestanden.">
+<!ENTITY lp.yr.gplintro "Meest belangrijke onderdeel van GPL 2.0, de geen garantie en beschadigingen disclaimer:">
+<!ENTITY lp.yr.icons "Kunstwerk, pictogrammen en knoppen">
+<!ENTITY lp.yr.iconsbased "zijn gebaseerd op het werk van Mike Matas, Jakub Steiner, Mark James en het Tango project">
+<!ENTITY lp.yr.artwork "Het originele kunstwerk valt onder: Copyright © 2004-2010 door Stefano Verna, Federico Parodi en Nils Maier">
+<!ENTITY lp.yr.artworklicense "Het originele kunstwerk valt onder licentie:">
+<!ENTITY lp.yr.logo "Het DownThemAll! logo is: Copyright © 2004-2010 door Stefano Verna.">
+<!ENTITY lp.yr.logopermissions "De naam en het logo van DownThemAll! mogen zonder toestemming niet gebruikt worden in elk afgeleid product, met uitzondering van credits en op de licentie betrekking hebbende opmerkingen.">
+<!ENTITY lp.ct.bugstitle "Fouten melden/Functie verzoeken">
+<!ENTITY lp.ct.bugs "Rapporteer a.u.b. fouten en functie verzoeken op onze <a href='http://bugs.code.downthemall.net/'>fouten volger</a>.">
+<!ENTITY lp.ct.contactstitle "Contacten">
+<!ENTITY lp.ct.contactsfeed "We stellen het op prijs om terugkoppelingen, suggesties of aanbiedingen voor ondersteuning te ontvangen.">
+<!ENTITY lp.ct.contacts "Bekijk hiervoor onze <a href='http://www.downthemall.net/main/contacts/'>contact pagina</a> online.">
