@@ -520,10 +520,6 @@ toolbarbutton.listselectinv, menuitem#listselectinv {
 
 /** :: Speedlist :: **/
 
-#statusSpeeds {
-	text-align: right;
-}
-
 #listSpeeds .menulist-label,
 #listSpeeds menuitem {
 	font-size: 85%;
@@ -627,6 +623,8 @@ statusbarpanel#netstatus {
 	-moz-image-region: rect(64px,160px,80px,144px);
 }
 #statusSpeed {
+	text-align: right;
+	min-width: 8em;
 	list-style-image: url(menu.png);
 	-moz-image-region: rect(80px,160px,96px,144px);
 }
