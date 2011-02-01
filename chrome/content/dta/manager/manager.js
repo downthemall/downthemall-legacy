@@ -742,7 +742,7 @@ const Dialog = {
 			// Refresh status bar
 			$('statusText').label = _("currentdownloadstats", [this.completed, Tree.downloadCount, Tree.rowCount, this._running.length]);
 			let statusSpeed = $('statusSpeed');
-			if (!this._speeds.avg) {
+			if (!this._running.length) {
 				statusSpeed.hidden = true;
 			}
 			else {
@@ -1120,8 +1120,7 @@ const Dialog = {
 		if (chunks || finishing) {
 			if (this._safeCloseAttempts < 20) {
 				++this._safeCloseAttempts;
-				let tp = this;
-				Timers.createOneshot(250, function() tp.shutdown(callback), this);
+				Timers.createOneshot(250, function() this.shutdown(callback), this);
 				return false;
 			}
 			Debug.log("Going down even if queue was not probably closed yet!");
