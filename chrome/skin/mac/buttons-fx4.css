@@ -5,35 +5,27 @@
 #dta-turboselect-button,
 #dta-manager-button,
 .dta-toolbarbutton {
-	list-style-image: url(buttons20.png);
-}
-.dta-toolbarbutton .toolbarbutton-icon {
-  margin: 0px !important;
-  width: auto !important;
-  height: auto !important;
+	list-style-image: url(buttons16.png);
 }
 
 #dta-button {
-		-moz-image-region: rect(0px,40px,20px,20px);
+	-moz-image-region: rect(0px,32px,16px,16px);
 }
 #dta-button:hover {
-	-moz-image-region: rect(0px,20px,20px,0px);
+	-moz-image-region: rect(0px,16px,16px,0px);
 }
-
 #dta-turbo-button {
-	-moz-image-region: rect(0px,80px,20px,60px);
+	-moz-image-region: rect(0px,64px,16px,48px);
 }
 #dta-turbo-button:hover {
-	-moz-image-region: rect(0px,60px,20px,40px);
+	-moz-image-region: rect(0px,48px,16px,32px);
 }
-
 #dta-turboselect-button {
-	-moz-image-region: rect(0px,120px,20px,100px);
+	-moz-image-region: rect(0px,96px,16px,80px);
 }
 #dta-turboselect-button:hover {
-	-moz-image-region: rect(0px,100px,20px,80px);
+	-moz-image-region: rect(0px,80px,16px,64px);
 }
-
 #dta-manager-button {
-	-moz-image-region: rect(0px,140px,20px,120px);
+	-moz-image-region: rect(0px, 112px, 16px, 96px);
 }

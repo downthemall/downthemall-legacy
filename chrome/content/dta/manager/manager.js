@@ -740,9 +740,9 @@ const Dialog = {
 			}
 
 			// Refresh status bar
-			$('statusText').label = _("currentdownloadstatus", [this.completed, Tree.downloadCount, Tree.rowCount, this._running.length]);
+			$('statusText').label = _("currentdownloadstats", [this.completed, Tree.downloadCount, Tree.rowCount, this._running.length]);
 			let statusSpeed = $('statusSpeed');
-			statusSpeed.label = _("currentspeed", [speed]);
+			statusSpeed.label = speed;
 
 			// Refresh window title
 			if (this._running.length == 1 && this._running[0].totalSize > 0) {
@@ -1188,7 +1188,7 @@ const Dialog = {
 addEventListener('load', function() Dialog.init(), false);
 
 const Metalinker = {
- 	handleDownload: function ML_handleDownload(download) {
+	handleDownload: function ML_handleDownload(download) {
 		download.state = CANCELED;
 		Tree.remove(download, false);
 		let file = new FileFactory(download.destinationFile);
@@ -2349,7 +2349,7 @@ QueueItem.prototype = {
 	serialize: function() {
 		let e = {};
 		[
-		 	'fileName',
+			'fileName',
 			'postData',
 			'description',
 			'title',
@@ -2866,16 +2866,16 @@ addEventListener(
 );
 
 function CustomEvent(download, command) {
- 	try {
- 		// may I introduce you to a real bastard way of commandline parsing?! :p
- 		var uuids = {};
- 		function callback(u) {
- 			u = u.substr(1, u.length - 2);
- 			id = Utils.newUUIDString();
- 			uuids[id] = u;
- 			return id;
- 		}
- 		function mapper(arg, i) {
+	try {
+		// may I introduce you to a real bastard way of commandline parsing?! :p
+		var uuids = {};
+		function callback(u) {
+			u = u.substr(1, u.length - 2);
+			id = Utils.newUUIDString();
+			uuids[id] = u;
+			return id;
+		}
+		function mapper(arg, i) {
 			if (arg == "%f") {
 				if (i == 0) {
 					throw new Components.Exception("Will not execute the file itself");
@@ -2886,18 +2886,18 @@ function CustomEvent(download, command) {
 				arg = uuids[arg];
 			}
 			return arg;
- 		}
- 		var args = command
- 			.replace(/(["'])(.*?)\1/g, callback)
- 			.split(/ /g)
- 			.map(mapper);
- 		var program = new FileFactory(args.shift());
+		}
+		var args = command
+			.replace(/(["'])(.*?)\1/g, callback)
+			.split(/ /g)
+			.map(mapper);
+		var program = new FileFactory(args.shift());
 		var process = new Process(program);
 		process.run(false, args, args.length);
- 	}
- 	catch (ex) {
- 		Debug.log("failed to execute custom event", ex);
- 		alert("failed to execute custom event", ex);
- 	}
- 	download.complete();
+	}
+	catch (ex) {
+		Debug.log("failed to execute custom event", ex);
+		alert("failed to execute custom event", ex);
+	}
+	download.complete();
 }
