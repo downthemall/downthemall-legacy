@@ -742,7 +742,13 @@ const Dialog = {
 			// Refresh status bar
 			$('statusText').label = _("currentdownloadstats", [this.completed, Tree.downloadCount, Tree.rowCount, this._running.length]);
 			let statusSpeed = $('statusSpeed');
-			statusSpeed.label = speed;
+			if (!this._speeds.avg) {
+				statusSpeed.hidden = true;
+			}
+			else {
+				statusSpeed.hidden = false;
+				statusSpeed.label = speed;
+			}
 
 			// Refresh window title
 			if (this._running.length == 1 && this._running[0].totalSize > 0) {
