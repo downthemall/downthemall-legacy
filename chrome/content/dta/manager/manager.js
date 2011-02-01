@@ -710,7 +710,7 @@ const Dialog = {
 
 			// Refresh status bar
 			$('statusText').label = _("currentdownloads", [this.completed, Tree.rowCount, this._running.length]);
-			$('statusSpeed').label = _("currentspeed", [speed]);
+			$('statusSpeed').label = speed;
 
 			// Refresh window title
 			if (this._running.length == 1 && this._running[0].totalSize > 0) {
