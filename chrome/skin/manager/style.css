@@ -222,25 +222,25 @@ tooltip textbox.plain {
 	margin-left: 0;
 }
 treechildren::-moz-tree-progressmeter(completed) {
-  color: #008F00 !important;
+	color: #008F00 !important;
 }
 
 treechildren::-moz-tree-progressmeter(paused) {
-  color: #FFCC00 !important;
+	color: #FFCC00 !important;
 }
 treechildren::-moz-tree-progressmeter(paused, pausedAutoretrying) {
 	color: #849FFF !important;
 }
 treechildren::-moz-tree-progressmeter(canceled) {
-  color: #B12801 !important;
+	color: #B12801 !important;
 }
 
 treechildren::-moz-tree-progressmeter(queued) {
-  color: #BFDEFF !important;
+	color: #BFDEFF !important;
 }
 
 treechildren::-moz-tree-progressmeter(inprogress) {
-  color: #AAE061 !important;
+	color: #AAE061 !important;
 }
 
 treechildren::-moz-tree-image(iconic) {
@@ -297,13 +297,13 @@ treechildren::-moz-tree-image(iconic,completed,verified) {
 	display: none;
 }
 #actions > toolbarseparator {
-  -moz-appearance: none;
-  border-top: 3px solid transparent;
-  border-bottom: 3px solid transparent;
-  border-left: 1px solid transparent;
-  border-right: 1px solid transparent;
-  -moz-border-top-colors: transparent transparent ThreeDShadow;
-  -moz-border-bottom-colors: transparent transparent ThreeDHighlight;
+	-moz-appearance: none;
+	border-top: 3px solid transparent;
+	border-bottom: 3px solid transparent;
+	border-left: 1px solid transparent;
+	border-right: 1px solid transparent;
+	-moz-border-top-colors: transparent transparent ThreeDShadow;
+	-moz-border-bottom-colors: transparent transparent ThreeDHighlight;
 }
 
 #advancedMenu {
@@ -555,17 +555,17 @@ toolbarbutton.listselectinv, menuitem#listselectinv {
 }
 
 #loadingbox {
-  opacity: 0.6;
-  background-color: -moz-Field;
+	opacity: 0.6;
+	background-color: -moz-Field;
 }
 
 #loading {
-  -moz-appearance: none;
-  -moz-user-focus: ignore;
-  border: none !important;
-  min-width: 0;
-  background-color: transparent;
-  color: -moz-fieldText;
+	-moz-appearance: none;
+	-moz-user-focus: ignore;
+	border: none !important;
+	min-width: 0;
+	background-color: transparent;
+	color: -moz-fieldText;
 
 	font-size: large;
 	font-weight: bold;
@@ -579,6 +579,10 @@ textbox.plain {
 	background-color: transparent !important;
 }
 
+/** status panels **/
+.statusbarpanel-iconic-text {
+	padding-left: 4pt;
+}
 statusbarpanel#netstatus {
 	padding-left: 4px;
 	padding-right: 6px;
@@ -587,36 +591,47 @@ statusbarpanel#netstatus {
 /* search */
 #search {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#downloadsearch);
-  width: 22ex;
+	width: 22ex;
 }
 #search > image {
-  list-style-image: url(search.png);
-  margin-right: 4px;
+	list-style-image: url(search.png);
+	margin-right: 4px;
 }
 #search > toolbarbutton {
-  margin: 0;
-  margin-left: 3px;
-  padding: 0;
-  border: 0;
-  height: 16px;
+	margin: 0;
+	margin-left: 3px;
+	padding: 0;
+	border: 0;
+	height: 16px;
 
-  cursor: default;
-  list-style-image: url(clear.png);
-  -moz-appearance: none;
-  -moz-image-region: rect(0px, 16px, 16px, 0px);
+	cursor: default;
+	list-style-image: url(clear.png);
+	-moz-appearance: none;
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 #search > toolbarbutton:hover {
-  -moz-image-region: rect(0px, 16px, 16px, 0px);
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 #search toolbarbutton:hover:active {
-  -moz-image-region: rect(0px, 48px, 16px, 32px);
+	-moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 #search .toolbarbutton-icon {
-  -moz-margin-end: 0px !important;
+	-moz-margin-end: 0px !important;
 }
 #search > toolbarbutton[disabled] {
-  display: none;
+	display: none;
 }
+
+#statusText {
+	list-style-image: url(menu.png);
+	-moz-image-region: rect(64px,160px,80px,144px);
+}
+#statusSpeed {
+	list-style-image: url(menu.png);
+	-moz-image-region: rect(80px,160px,96px,144px);
+}
+
+
 treecol[matcher] {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#treecol-matcher);
 }
