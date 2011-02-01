@@ -492,8 +492,16 @@ const Tree = {
 	getColumnProperties: function(column, element, prop) {},
 	getRowProperties: function(idx, prop) {},
 	setCellValue: function(idx, col, value) {},
+
+	_changeTimer: null,
 	selectionChanged: function T_selectionChanged() {
-		this.refreshTools();
+		if (this._changeTimer) {
+			Timers.killTimer(this._changeTimer);
+		}
+		this._changeTimer = Timers.createOneshot(100, function() {
+			this._changeTimer = null;
+			this.refreshTools()
+		}, this);
 	},
 
 	onDragStart: function T_onDragStart(evt, transferData, dragAction) {
