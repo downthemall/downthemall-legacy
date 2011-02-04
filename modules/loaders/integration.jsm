@@ -55,11 +55,7 @@ const ScriptableInputStream = ctor('@mozilla.org/scriptableinputstream;1', 'nsIS
  */
 XPCOMUtils.defineLazyGetter(this, 'DTA', function() {
 	let rv = {};
-	rv.showPreferences = function(pane, command) this.Mediator.showPreferences(window, pane, command);
 	module("resource://dta/api.jsm", rv);
-	rv.Mediator.open = function DTA_Mediator_open(url, ref) {
-		this.openUrl(window, url, ref);
-	}
 	if ('freeze' in Object) {
 		Object.freeze(rv);
 	}
@@ -1539,7 +1535,9 @@ function load(window) {
 			bindCtxEvt('dtaCtxSaveForm', 'command', function() findForm(false));
 			bindCtxEvt('dtaCtxSaveFormT', 'command', function() findForm(true));
 
-			$('dtaCtxPref', 'dtaCtxPref-direct', 'dtaToolsPrefs').forEach(bindEvt('command', function() DTA.showPreferences()));
+			$('dtaCtxPref', 'dtaCtxPref-direct', 'dtaToolsPrefs').forEach(
+				bindEvt('command', function() DTA.Mediator.showPreferences(window))
+			);
 
 			$('dtaToolsAbout').addEventListener(
 				'command',
