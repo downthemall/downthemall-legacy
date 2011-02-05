@@ -1123,7 +1123,8 @@ function load(window) {
 		// white list good locations
 		// note that this is only performed to keep the number of event listeners down
 		// The remote site does not get special privileges!
-		if (event.target.location != "about:downthemall" && event.target.location.host != "about.downthemall.net") {
+		if (!/^about:downthemall/.test(event.target.location)
+			&& event.target.location.host != "about.downthemall.net") {
 			return;
 		}
 
