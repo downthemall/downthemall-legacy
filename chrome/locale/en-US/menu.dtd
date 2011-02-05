@@ -1,13 +1,17 @@
 <!ENTITY dta-pref.label "Preferences">
 <!ENTITY dta-about.label "About dTa!">
 <!ENTITY dta-manager-button "Manager">
+<!ENTITY dta-manager-button.desc "Opens the Manager window.">
 <!ENTITY dta-selector-button "dTa OneClick! Selector">
+<!ENTITY dta-selector-button.desc "Adds items by left-clicking on them.">
 <!ENTITY dta-tb-all.label "All Tabs">
 <!ENTITY dta-tb-single.label "Current Tab">
 <!ENTITY dta-selection.label "DownThemAll! Selection...">
 <!ENTITY dta-selection-turbo.label "dTa OneClick Selection...">
 <!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular.desc "Opens the DownThemAll! Selection window for the current tab.">
 <!ENTITY dta-regular-turbo.label "dTa OneClick...">
+<!ENTITY dta-regular-turbo.desc "Downloads all items from the current page according to the last used preferences and filters.">
 <!ENTITY dta-img-save.label "Save Image with DownThemAll!">
 <!ENTITY dta-img-save-turbo.label "Start saving Image with dTa OneClick!">
 <!ENTITY dta-video-save.label "Save Video with DownThemAll!">

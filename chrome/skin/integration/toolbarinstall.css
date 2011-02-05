@@ -2,3 +2,36 @@
 @import 'chrome://dta/skin/common/style.css';
 @import 'chrome://dta-platform/skin/common.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+grid {
+	margin-bottom: 1em;
+}
+row {
+	padding: 1ex;
+}
+
+checkbox {
+	font-weight: bold;
+}
+
+description {
+	max-width: 25em;
+}
+
+.icon {
+	list-style-image: url(../toolbarbuttons/buttons24.png);
+	margin: 1em;
+}
+
+#dta-icon {
+	-moz-image-region: rect(0px,48px,24px,24px);
+}
+#dta-turbo-icon {
+	-moz-image-region: rect(0px,96px,24px,72px);
+}
+#dta-turboselect-icon {
+	-moz-image-region: rect(0px,144px,24px,120px);
+}
+#dta-manager-icon {
+	-moz-image-region: rect(0px,168px,24px,144px);
+}

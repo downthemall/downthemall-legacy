@@ -51,10 +51,40 @@
 					.filter(function(b) $(b).checked));
 			}, true);
 		]]></script>
-		<vbox>
-				<button id="dta-button" type="checkbox" label="&dta-regular.label;" />
-				<button id="dta-turbo-button" type="checkbox" label="&dta-regular-turbo.label;" />
-				<button id="dta-turboselect-button" type="checkbox" label="&dta-selector-button;" />
-				<button id="dta-manager-button" type="checkbox" label="&dta-manager-button;" />
-		</vbox>
+		<grid>
+			<columns><column/><column flex="1"/></columns>
+			<rows>
+				<row align="center" pack="center">
+					<image id="dta-icon" class="icon" />
+					<vbox flex="1">
+						<checkbox id="dta-button" label="&dta-regular.label;" />
+						<description>&dta-regular.desc;</description>
+					</vbox>
+				</row>
+				<separator class="groove" />
+				<row align="center" pack="center">
+					<image id="dta-turbo-icon" class="icon" />
+					<vbox flex="1">
+						<checkbox id="dta-turbo-button" label="&dta-regular-turbo.label;" />
+						<description>&dta-regular-turbo.desc;</description>
+					</vbox>
+				</row>
+				<separator class="groove" />
+				<row align="center" pack="center">
+					<image id="dta-turboselect-icon" class="icon" />
+					<vbox>
+						<checkbox id="dta-turboselect-button" label="&dta-selector-button;" />
+						<description>&dta-selector-button.desc;</description>
+					</vbox>
+				</row>
+				<separator class="groove" />
+				<row align="center" pack="center">
+					<image id="dta-manager-icon" class="icon" />
+					<vbox flex="1">
+						<checkbox id="dta-manager-button" label="&dta-manager-button;" />
+						<description>&dta-manager-button.desc;</description>
+					</vbox>
+				</row>
+			</rows>
+		</grid>
 </dialog>
