@@ -155,7 +155,7 @@ HttpVisitor.prototype = {
 				break;
 
 				case 'accept-ranges':
-					this.acceptRanges = aValue.toLowerCase().indexOf('bytes') != -1;
+					this.acceptRanges = aValue.toLowerCase().indexOf('none') == -1;
 					Debug.log("acceptrange = " + aValue.toLowerCase());
 				break;
 
