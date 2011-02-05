@@ -49,7 +49,7 @@
 
 <!ENTITY lp.tb.intro "DownThemAll! offers some toolbar buttons that give you a convenient way to access DownThemAll! features.">
 <!-- Text for the toolbar install button -->
-<!ENTITY lp.tb.install "Install toolbar buttons">
+<!ENTITY lp.tb.install "Add toolbar buttons">
 <!ENTITY lp.tb.add.title "Adding and using toolbar buttons">
 <!ENTITY lp.tb.add.p1 "DownThemAll! features four toolbar buttons to make it easier to find and queue downloads">
 <!ENTITY lp.tb.add.dta "DownThemAll! button">
