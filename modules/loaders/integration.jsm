@@ -1129,10 +1129,7 @@ function load(window) {
 		}
 
 		event.target.addEventListener("DTA:toolbarinstall", function() {
-			window.openDialog(
-				"chrome://dta/content/integration/toolbarinstall.xul",
-				null,
-				"chrome,dialog,centerscreen,modal");
+			DTA.Mediator.showToolbarInstall(window);
 		}, true);
 	}
 
