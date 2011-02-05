@@ -214,8 +214,8 @@
 				<ul id="tbitems">
 					<li id="tbdta"><span>&lp.tb.add.dta;</span><br/>&lp.tb.add.dtadesc;</li>
 					<li id="tbtdta"><span>&lp.tb.add.tdta;</span><br/>&lp.tb.add.tdtadesc;</li>
-					<li id="tbmanager"><span>&lp.tb.add.manager;</span><br/>&lp.tb.add.managerdesc;</li>
 					<li id="tbselector"><span>&lp.tb.add.selector;</span><br/>&lp.tb.add.selectordesc;</li>
+					<li id="tbmanager"><span>&lp.tb.add.manager;</span><br/>&lp.tb.add.managerdesc;</li>
 				</ul>
 				<p>&lp.tb.add.p2;</p>
 
