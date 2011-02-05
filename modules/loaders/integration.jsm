@@ -1129,42 +1129,10 @@ function load(window) {
 		}
 
 		event.target.addEventListener("DTA:toolbarinstall", function() {
-			//event.target.removeEventListener("DTA:toolbarinstall", arguments.callee, true);
-			let all = ['dta-button', 'dta-turbo-button', 'dta-turboselect-button', 'dta-manager-button'];
-			let active = all.filter(function(b) $(b) != null);
-			let newActive = window.openDialog(
+			window.openDialog(
 				"chrome://dta/content/integration/toolbarinstall.xul",
 				null,
-				"chrome,dialog,centerscreen,modal",
-				active,
-				function(newActive) {
-					let tb = $('nav-bar');
-					for each (let b in all) {
-						let btn = $(b);
-						if (newActive.indexOf(b) != -1 && !btn) {
-							// add the button
-							let currentSet = tb.currentSet.split(',');
-							currentSet.push(b);
-							tb.currentSet = currentSet.join(",");
-							tb.setAttribute("currentSet", tb.currentSet);
-							document.persist(tb.id, "currentSet");
-						}
-						else if (newActive.indexOf(b) == -1 && btn) {
-							// Remove a button again
-							// Note that the toolbar is not necessarily nav-bar
-							let tbb = btn.parentNode;
-							tbb.currentSet = tbb.currentSet
-								.split(',')
-								.filter(function(id) id != b)
-								.join(",");
-							tbb.setAttribute("currentSet", tbb.currentSet);
-							document.persist(tbb.id, "currentSet");
-						}
-					}
-					try {
-						BrowserToolboxCustomizeDone(true);
-					} catch(ex) {}
-				});
+				"chrome,dialog,centerscreen,modal");
 		}, true);
 	}
 
