@@ -38,7 +38,7 @@ const EXPORTED_SYMBOLS = [
 	'getMostRecent', 'getMostRecentByUrl', 'getAllByType',
 	'openExternal', 'openUrl', 'tryOpenUrl', 'openWindow',
 	'addListener', 'removeListener',
-	'showNotice', 'showAbout', 'showPreferences'
+	'showNotice', 'showAbout', 'showPreferences', 'showToolbarInstall'
 ];
 
 const Cc = Components.classes;
@@ -224,4 +224,10 @@ function showPreferences(window, pane, command) {
 		pane,
 		command
 	);
+}
+function showToolbarInstall(browserWindow) {
+	browserWindow.openDialog(
+		"chrome://dta/content/integration/toolbarinstall.xul",
+		null,
+		"chrome,dialog,centerscreen,modal");
 }
