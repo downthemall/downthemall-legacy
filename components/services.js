@@ -144,15 +144,22 @@ Stuff.prototype = {
 		Version.getInfo(function(v) {
 			try {
 				let lastVersion = Preferences.getExt('version', '0');
-				if (0 == v.compareVersion(v.BASE_VERSION, lastVersion)) {
+				if (0 == v.compareVersion(v.VERSION, lastVersion)) {
 					return;
 				}
 				log("MigrationManager: migration started");
 				if (v.compareVersion(lastVersion, "1.0.1") < 0) {
 					_tp._migrateExecute(['ResetMaxConnections']);
-				}			
-				
-				Preferences.setExt('version', v.BASE_VERSION);
+				}
+				if (v.compareVersion(lastVersion, "2.0.1") < 0) {
+					_tp._migrateExecute(['MaybeFixHistory']);
+				}	
+
+				Preferences.setExt('version', v.VERSION);
+
+				if (0 >= v.compareVersion(v.BASE_VERSION, lastVersion)) {
+					return;
+				}
 				
 				v.showAbout = true;
 				Observers.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
@@ -188,6 +195,17 @@ Stuff.prototype = {
 		log("resetting connection prefs");
 		for each (let e in ['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server']) {
 			Preferences.reset(e);
+		}
+	},
+	// 2.0.1: A lot of users have histories set to 0 from a previous version
+	// and wonder why dTa does not store histories any longer
+	// Do a one-time reset, to solve stuff for most of the users
+	// Users who actually want to set it to zero (the very minority) are free to
+	// do so afterwards
+	_migrateMaybeFixHistory: function() {
+		if (Preferences.getExt('history', 5) < 1) {
+			log("resetting history pref");
+			Preferences.resetExt('history');
 		}
 	},
 	clean: function() {
