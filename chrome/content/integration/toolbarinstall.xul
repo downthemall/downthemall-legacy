@@ -38,17 +38,80 @@
  * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
 <dialog id="DTAToolbarInstall" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-		<script type="application/x-javascript"><![CDATA[
+		<script type="text/javascript"><![CDATA[
+			const all = ['dta-button', 'dta-turbo-button', 'dta-turboselect-button', 'dta-manager-button'];
+
 			function $(id) document.getElementById(id);
+			function $o(id) opener.document.getElementById(id);
 
 			addEventListener("load", function() {
-				window.arguments[0].forEach(function(b) $(b).checked = true);
+				removeEventListener("load", arguments.callee, false);
+
+				all.forEach(function(b) $(b).checked = !!$o(b));
 				sizetoContent();
-			}, true);
+
+			}, false);
 
 			addEventListener("dialogaccept", function() {
-				window.arguments[1](['dta-button', 'dta-turbo-button', 'dta-turboselect-button', 'dta-manager-button']
-					.filter(function(b) $(b).checked));
+				removeEventListener("dialogaccept", arguments.callee, true);
+				try {
+
+				let newActive = all.filter(function(b) $(b).checked);
+				let tb = $o('nav-bar');
+
+				for each (let b in all) {
+					let btn = $o(b);
+					if (newActive.indexOf(b) != -1 && !btn) {
+						// add the button
+						let currentSet = tb.currentSet.split(',');
+
+						// find the best position
+						let spliceIdx = -1;
+						let dist = (1<<30);
+						for each (let rb in all) {
+							let cidx = currentSet.indexOf(rb);
+							if (cidx == -1) {
+								continue;
+							}
+							let cdiff = all.indexOf(rb) - all.indexOf(b);
+							let cdist = Math.abs(cdiff);
+							if (cdist < dist) {
+								dist = cdist;
+								spliceIdx = cdiff < 0 ? cidx + 1 : cidx;
+							}
+						}
+
+						// insert button at the best position
+						if (spliceIdx != -1) {
+							currentSet.splice(spliceIdx, 0, b);
+						}
+						else {
+							currentSet.push(b);
+						}
+						tb.currentSet = currentSet.join(",");
+						tb.setAttribute("currentSet", tb.currentSet);
+						opener.document.persist(tb.id, "currentSet");
+					}
+					else if (newActive.indexOf(b) == -1 && btn) {
+						// Remove a button again
+						// Note that the toolbar is not necessarily nav-bar
+						let tbb = btn.parentNode;
+						tbb.currentSet = tbb.currentSet
+							.split(',')
+							.filter(function(id) id != b)
+							.join(",");
+						tbb.setAttribute("currentSet", tbb.currentSet);
+						opener.document.persist(tbb.id, "currentSet");
+					}
+				}
+
+				try {
+					opener.BrowserToolboxCustomizeDone(true);
+				} catch(ex) {}
+				}
+				catch (ex) {
+					Components.utils.reportError(ex);
+				}
 			}, true);
 		]]></script>
 		<grid>
