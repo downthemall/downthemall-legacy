@@ -38,6 +38,14 @@
 Components.utils.import('resource://dta/support/timers.jsm');
 const Timers = new TimerManager();
 
+function discard() {
+	if (opener) opener.removeEventListener("unload", discard, false);
+	removeEventListener("unload", discard, false);
+	close();
+}
+opener.addEventListener("unload", discard, false);
+addEventListener("unload", discard, false);
+
 var Dialog = {
 	downloads: null,
 	get isFullyDisabled() {
