@@ -88,8 +88,8 @@
 							currentSet.push(b);
 						}
 						tb.currentSet = currentSet.join(",");
-						tb.setAttribute("currentSet", tb.currentSet);
-						opener.document.persist(tb.id, "currentSet");
+						tb.setAttribute("currentset", tb.currentSet);
+						opener.document.persist(tb.id, "currentset");
 					}
 					else if (newActive.indexOf(b) == -1 && btn) {
 						// Remove a button again
@@ -99,8 +99,8 @@
 							.split(',')
 							.filter(function(id) id != b)
 							.join(",");
-						tbb.setAttribute("currentSet", tbb.currentSet);
-						opener.document.persist(tbb.id, "currentSet");
+						tbb.setAttribute("currentset", tbb.currentSet);
+						opener.document.persist(tbb.id, "currentset");
 					}
 				}
 
