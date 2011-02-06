@@ -1656,7 +1656,7 @@ QueueItem.prototype = {
 		this.progress = this.totalSize = this.partialSize = 0;
 		this.compression = null;
 		this.activeChunks = this.maxChunks = 0;
-		this.chunks.forEach(function(c) { c.cancel(); });
+		this.chunks.forEach(function(c) c.cancel());
 		this.chunks = [];
 		this.speeds.clear();
 		this.visitors = new VisitorManager();
