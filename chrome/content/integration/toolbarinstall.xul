@@ -37,18 +37,27 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
-<dialog id="DTAToolbarInstall" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&dta-tbinstall;" id="DownThemAll" windowtype="DTA:TBInstall">
 		<script type="text/javascript"><![CDATA[
 			const all = ['dta-button', 'dta-turbo-button', 'dta-turboselect-button', 'dta-manager-button'];
 
 			function $(id) document.getElementById(id);
 			function $o(id) opener.document.getElementById(id);
 
+			function discard() {
+				if (opener) opener.removeEventListener("unload", discard, false);
+				removeEventListener("unload", discard, false);
+				close();
+			}
+
+			opener.addEventListener("unload", discard, false);
+			addEventListener("unload", discard, false);
+
 			addEventListener("load", function() {
 				removeEventListener("load", arguments.callee, false);
 
 				all.forEach(function(b) $(b).checked = !!$o(b));
-				sizetoContent();
+				window.sizeToContent();
 
 			}, false);
 

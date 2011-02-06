@@ -229,5 +229,5 @@ function showToolbarInstall(browserWindow) {
 	browserWindow.openDialog(
 		"chrome://dta/content/integration/toolbarinstall.xul",
 		null,
-		"chrome,dialog,centerscreen,modal");
+		"chrome,dialog,centerscreen");
 }
