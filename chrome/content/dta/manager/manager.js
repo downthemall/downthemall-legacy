@@ -111,7 +111,6 @@ const Dialog = {
 	_autoRetrying: [],
 	_offline: false,
 	_maxObservedSpeed: 0,
-	_infoWindows: [],
 
 	get offline() {
 		return this._offline || this._offlineForced;
@@ -619,9 +618,6 @@ const Dialog = {
 			downloads,
 			this
 			);
-		if (w) {
-			this._infoWindows.push(w);
-		}
 	},
 
 	start: function D_start() {
@@ -1173,11 +1169,6 @@ const Dialog = {
 		}
 		catch(ex) {
 			Debug.log("_safeClose", ex);
-		}
-		for each (let w in this._infoWindows) {
-			if (!w.closed) {
-				w.close();
-			}
 		}
 
 		// some more gc
