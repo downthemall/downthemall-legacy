@@ -138,6 +138,7 @@
 			<menuitem id="dtaToolsTDTA" label="&dta-regular-turbo.label;" class="menuitem-iconic dta-menuitem dta-turbo" />
 			<menuitem id="dtaToolsManager" label="&dta-manager-button;" class="menuitem-iconic dta-menuitem dta-manager" />
 			<menuseparator id="dtaToolsSep" />
+			<menuitem id="dtaToolsTBInstall" label="&dta-tbinstall;" class="" />
 			<menuitem id="dtaToolsPrefs" label="&dta-pref.label;" class="menuitem-iconic dta-menuitem dta-prefs" />
 			<menuitem id="dtaToolsAbout" label="&dta-about.label;" class="menuitem-iconic dta-menuitem dta-about" />
 		</menupopup>
