@@ -1076,6 +1076,10 @@ function load(window) {
 					toolsBase.parentNode.insertBefore(cur, toolsBase);
 				}
 			}
+
+			// show Add toolbar buttons if there are no buttons
+			$('dtaToolsTBInstall').hidden = ['dta-button', 'dta-turbo-button', 'dta-turboselect-button', 'dta-manager-button']
+				.some(function(b) !!$(b));
 		}
 		catch(ex) {
 			DTA.Debug.log("DTATools(): ", ex);
@@ -1555,6 +1559,11 @@ function load(window) {
 			$('dtaToolsAbout').addEventListener(
 				'command',
 				function() DTA.Mediator.showAbout(window),
+				true
+			);
+			$('dtaToolsTBInstall').addEventListener(
+				'command',
+				function() DTA.Mediator.showToolbarInstall(window),
 				true
 			);
 
