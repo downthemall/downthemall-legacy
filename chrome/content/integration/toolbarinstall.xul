@@ -54,7 +54,6 @@
 
 			addEventListener("dialogaccept", function() {
 				removeEventListener("dialogaccept", arguments.callee, true);
-				try {
 
 				let newActive = all.filter(function(b) $(b).checked);
 				let tb = $o('nav-bar');
@@ -108,10 +107,6 @@
 				try {
 					opener.BrowserToolboxCustomizeDone(true);
 				} catch(ex) {}
-				}
-				catch (ex) {
-					Components.utils.reportError(ex);
-				}
 			}, true);
 		]]></script>
 		<grid>
