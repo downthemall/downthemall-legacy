@@ -757,11 +757,9 @@ const Tree = {
 				d.remove();
 			}
 			QueueStore.endUpdate();
-			this.endUpdate();
-			if (delta == this._downloads.length) {
-				return;
+			if (delta != this._downloads.length) {
+				this.doFilter();
 			}
-			this.doFilter();
 		}
 		finally {
 			this.invalidate();
