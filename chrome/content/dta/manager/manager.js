@@ -1450,19 +1450,8 @@ QueueItem.prototype = {
 	 * Takes one or more state indicators and returns if this download is in state
 	 * of any of them
 	 */
-	is: function QI_is(state) {
-		return this._state == state;
-	},
-	isOf: function QI_isOf() {
-		let state = this._state;
-		for (let i = 0, e = arguments.length; i < e; ++i) {
-			if (state == arguments[i]) {
-				return true;
-			}
-		}
-		return false;
-	},
-
+	is: function QI_is(state) this._state == state,
+	isOf: function QI_isOf() this._state & Array.reduce(arguments, function(p,c) p | c, 0),
 	save: function QI_save() {
 		if (
 			(Prefs.removeCompleted && this.is(COMPLETE))
