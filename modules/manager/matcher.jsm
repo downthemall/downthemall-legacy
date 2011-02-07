@@ -46,6 +46,7 @@ const Exception = Components.Exception;
 
 let DTA = {};
 module('resource://dta/api.jsm', DTA);
+module('resource://dta/constants.jsm', DTA);
 module('resource://dta/utils.jsm');
 
 const Debug = DTA.Debug;
@@ -191,10 +192,7 @@ const StatusMatch = {
 			}
 		},
 		getMatcher: function(params) {
-			let state = 0;
-			for each (let p in params) {
-				state |= this[p];
-			}
+			let state = params.reduce(function(p,c) p | DTA[c], 0);
 			return function(d) d.state & state;
 		}
 }
