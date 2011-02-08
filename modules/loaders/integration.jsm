@@ -1587,7 +1587,7 @@ function load(window) {
 	window.addEventListener("blur", onBlur, true);
 	let appcontent = document.getElementById("appcontent");
 	if (appcontent) {
-		appcontent.addEventListener("load", onToolbarInstall, true);
+		appcontent.addEventListener("DOMContentLoaded", onToolbarInstall, true);
 	}
 
 	/* Toolbar buttons */
