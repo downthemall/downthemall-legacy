@@ -1028,8 +1028,8 @@ const Tree = {
 			for (let d in this.selected) {
 				states._state |= d.state;
 				states.resumable |= d.resumable;
-				states.min = Math.min(d.position, states.min);
-				states.max = Math.max(d.position, states.max);
+				states.min = Math.min(d.filteredPosition, states.min);
+				states.max = Math.max(d.filteredPosition, states.max);
 			}
 			let cur = this.current;
 			states.curFile = (cur && cur.is(COMPLETE) && (new FileFactory(cur.destinationFile)).exists());
@@ -1052,7 +1052,7 @@ const Tree = {
 			}
 			modifySome($('cmdResume'), function(d) !d.isOf(COMPLETE, RUNNING, QUEUED, FINISHING));
 			modifySome($('cmdPause'), function(d) (d.is(RUNNING) && d.resumable) || d.is(QUEUED));
-			modifySome($('cmdCancel'), function(d) !d.isOf(FINISHING, CANCELED));
+			modifySome($('cmdCancel'), function(d) !d.isOf(FINISHING));
 
 			modifySome($('cmdLaunch'), function(d) !!d.curFile);
 			modifySome($('cmdOpenFolder'), function(d) !!d.curFolder);
