@@ -1451,7 +1451,7 @@ QueueItem.prototype = {
 	 * of any of them
 	 */
 	is: function QI_is(state) this._state == state,
-	isOf: function QI_isOf() this._state & Array.reduce(arguments, function(p,c) p | c, 0),
+	isOf: function QI_isOf() (this._state & Array.reduce(arguments, function(p,c) p | c, 0)) != 0,
 	save: function QI_save() {
 		if (
 			(Prefs.removeCompleted && this.is(COMPLETE))
