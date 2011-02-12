@@ -59,8 +59,8 @@ toolbarbutton[disabled="true"] {
 	display: -moz-box;
 }
 
+#titlebar,
 #tools {
-	/* draggable glass toolbar (bugzilla 555081) */
 	-moz-binding: url(chrome://global/content/bindings/toolbar.xml#toolbar-drag);
 }
 
