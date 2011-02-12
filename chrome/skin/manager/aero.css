@@ -1,18 +1,22 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
+/* lwtheme background */
+window:-moz-lwtheme {
+	background-repeat: no-repeat;
+	background-position: right top;
+}
+#footer:-moz-lwtheme {
+	background-repeat: no-repeat;
+	background-position: left bottom;
+}
+
+/* titlebar */
 #titlebar {
 	-moz-appearance: -moz-window-titlebar !important;
 }
 window[sizemode="maximized"] #titlebar {
 	-moz-appearance: -moz-window-titlebar-maximized !important;
 }
-
-window > toolbox,
-#actions {
-	-moz-appearance: none;
-	background-color: rgb(207, 219, 236);
-}
-
 #titlebar-buttonbox {
 	-moz-appearance: -moz-window-button-box;
 }
@@ -32,6 +36,25 @@ window[sizemode="maximized"] #titlebar-max {
 	-moz-appearance: -moz-window-button-close;
 }
 
+/* draggable title and main toolbar */
+#titlebar,
+#tools {
+	-moz-binding: url(chrome://global/content/bindings/toolbar.xml#toolbar-drag);
+}
+
+
+
+/* default style for toolbars */
+window > toolbox,
+#actions {
+	-moz-appearance: none;
+	background-color: rgb(207, 219, 236);
+}
+window[sizemode="maximized"] #titlebar {
+	margin-bottom: -24px;
+	}
+
+/* toolbar button styles */
 toolbox > toolbar > toolbarbutton {
 	-moz-appearance: none;
 	padding: 1px 5px;
@@ -49,25 +72,16 @@ toolbox > toolbar > toolbarbutton {
 	text-shadow: 0 0 3px white;
 	margin: 1px 4px;
 }
-
 toolbarbutton[disabled="true"] {
 	opacity: .6;
 }
-
 #prespacer {
 	width: 20px;
 	display: -moz-box;
 }
-
-#titlebar,
-#tools {
-	-moz-binding: url(chrome://global/content/bindings/toolbar.xml#toolbar-drag);
-}
-
 #tools[mode="icons"] {
 	-moz-border-radius: 4.5px;
 }
-
 toolbarbutton:not([disabled="true"]):not([checked="true"]):not(:active):hover {
 	background-color: hsla(190,60%,70%,.5);
 	border-color: hsla(190,50%,65%,.8) hsla(190,50%,50%,.8) hsla(190,50%,40%,.8);
@@ -79,7 +93,6 @@ toolbarbutton:not([disabled="true"]):not([checked="true"]):not(:active):hover {
 		border-color .2s ease-in,
 		box-shadow 0.3s ease-in;
 }
-
 #tooladd:not([disabled="true"]):not([checked="true"]):not(:active):hover {
 		background: rgba(8,111,253,.05)
 		-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.85) 5%, rgba(8,111,253,.4) 35%,
@@ -90,40 +103,6 @@ toolbarbutton:not([disabled="true"]):not([checked="true"]):not(:active):hover {
 		0 1px 0 rgba(88,191,253,.1),
 		0 0 5px rgb(128,128,255);
 }
-
-#toolplay:not([disabled="true"]):not([checked="true"]):not(:active):hover {
-	background: rgba(18,173,0,.05)
-		-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.85) 5%, rgba(18,173,0,.4) 35%,
-		rgba(18,173,0,.5) 50%, rgba(225,226,229,0.9));
-	border-color: rgba(5,98,0,.8);
-	box-shadow: 0 0 0 1px rgba(88,173,80,.3) inset,
-		0 0 0 2px rgba(88,173,80,.1) inset,
-		0 1px 0 rgba(88,173,0,.1),
-		0 0 5px rgb(128,255,128);
-}
-
-#toolpause:not([disabled="true"]):not([checked="true"]):not(:active):hover {
-	background: rgba(255,175,0,.05)
-		-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.95) 5%, rgba(255,175,0,.4) 35%,
-			rgba(255,175,0,0.5) 50%, rgba(225,226,229,0.9));
-	border-color: rgba(150,96,6,.8);
-	box-shadow: 0 0 0 1px rgba(255,215,70,.3) inset,
-		0 0 0 2px rgba(255,215,70,.1) inset,
-		0 1px 0 rgba(255,215,70,.1),
-		0 0 5px rgb(255,252,107);
-}
-
-#toolcancel:not([disabled="true"]):not([checked="true"]):not(:active):hover {
-	background: rgba(255,72,0,.05)
-		-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.95) 5%, rgba(255,72,0,.4) 35%,
-		rgba(255,72,0,.5) 50%, rgba(225,226,229,0.9));
-	border-color: rgba(165,7,7,.8);
-	box-shadow: 0 0 0 1px rgba(253,128,128,.3) inset,
-		0 0 0 2px rgba(253,128,128,.1) inset,
-		0 1px 0 rgba(253,128,128,.1),
-		0 0 5px rgb(255,128,128);
-}
-
 toolbarbutton:not([disabled="true"]):hover:active,
 toolbarbutton[checked="true"],
 toolbarbutton[open="true"] {
@@ -144,33 +123,127 @@ toolbarbutton > .toolbarbutton-icon {
 	-moz-margin-end: 0;
 }
 
+/* specialized toolbarbutton styles */
+#toolplay:not([disabled="true"]):not([checked="true"]):not(:active):hover {
+	background: rgba(18,173,0,.05)
+		-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.85) 5%, rgba(18,173,0,.4) 35%,
+		rgba(18,173,0,.5) 50%, rgba(225,226,229,0.9));
+	border-color: rgba(5,98,0,.8);
+	box-shadow: 0 0 0 1px rgba(88,173,80,.3) inset,
+		0 0 0 2px rgba(88,173,80,.1) inset,
+		0 1px 0 rgba(88,173,0,.1),
+		0 0 5px rgb(128,255,128);
+}
+#toolpause:not([disabled="true"]):not([checked="true"]):not(:active):hover {
+	background: rgba(255,175,0,.05)
+		-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.95) 5%, rgba(255,175,0,.4) 35%,
+			rgba(255,175,0,0.5) 50%, rgba(225,226,229,0.9));
+	border-color: rgba(150,96,6,.8);
+	box-shadow: 0 0 0 1px rgba(255,215,70,.3) inset,
+		0 0 0 2px rgba(255,215,70,.1) inset,
+		0 1px 0 rgba(255,215,70,.1),
+		0 0 5px rgb(255,252,107);
+}
+#toolcancel:not([disabled="true"]):not([checked="true"]):not(:active):hover {
+	background: rgba(255,72,0,.05)
+		-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.95) 5%, rgba(255,72,0,.4) 35%,
+		rgba(255,72,0,.5) 50%, rgba(225,226,229,0.9));
+	border-color: rgba(165,7,7,.8);
+	box-shadow: 0 0 0 1px rgba(253,128,128,.3) inset,
+		0 0 0 2px rgba(253,128,128,.1) inset,
+		0 1px 0 rgba(253,128,128,.1),
+		0 0 5px rgb(255,128,128);
+}
+
+#tooldonate:-moz-lwtheme,
+window[sizemode="maximized"] #tooldonate {
+	/* XXX: special, more transculent image? */
+	display: none;
+}
+
+/* special lwtheme rules */
+treecol:-moz-lwtheme-brighttext {
+	text-shadow: none;
+}
+
+/* non-compositor rules */
 @media all and (-moz-windows-compositor:0) {
+  window[sizemode="maximized"] #titlebar:-moz-lwtheme {
+    visibility: hidden;
+  }
+ 	window[sizemode="maximized"] #titlebar-buttonbox {
+ 		visibility: visible;
+		position: relative;
+	}
+  #titlebar-min {
+    -moz-margin-end: 2px;
+  }
 	#footer {
 		-moz-appearance: none;
 		background-image: -moz-linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
 	}
 }
-
+/* non-compositor rules */
 @media all and (-moz-windows-compositor) {
-	window {
+
+	/* specifity issues ahead; beware */
+	#DownThemAll {
 		-moz-appearance: -moz-win-borderless-glass;
-		background: transparent;
+	}
+	window {
+		background-color: transparent;
+		background-image: none;
+		background-repeat: repeat;
+		background-attachment: scroll;
+		background-position: 0% 0%;
+		background-clip: border-box;
+		background-origin: padding-box;
+		background-size: auto auto;
 	}
 
+	/* special handling of the title bar here */
+	#titlebar {
+		/* can do this (transculent) */
+		margin-bottom: -10px;
+	}
+	window[sizemode="maximized"] #titlebar-buttonbox {
+    -moz-margin-end: 3px;
+  }
 	.titlebar-button {
 		display: none;
 	}
 
-	toolbox, #actions {
-		background: transparent;
-		-moz-appearance: -moz-win-glass !important;
-		text-shadow: 0 0 .8em white, 0 0 .8em white, 0 1px 0 rgba(255,255,255,.4);
-	}
 	toolbarbutton[disabled="true"] {
 		opacity: .4;
 	}
 
-	.statusbarpanel-text {
-		text-shadow: 0 0 0.5em white, 0 0 1.2em white, 2px 2px 2px rgba(255,255,255,.8);
+  /* Artificially draw window borders that are covered by lwtheme, see bug 591930. */
+  window[sizemode="normal"] > #titlebar > #titlebar-content:-moz-lwtheme {
+    border-top: 2px solid;
+    -moz-border-top-colors: rgb(37, 44, 51) rgba(255,255,255,.6);
+  }
+  window[sizemode="normal"] > #titlebar > #titlebar-content:-moz-lwtheme:-moz-window-inactive {
+    -moz-border-top-colors: rgb(102, 102, 102) rgba(255,255,255,.6);
+  }
+
+  #main-window[sizemode="normal"] #titlebar-buttonbox:-moz-lwtheme {
+    margin-top: -2px;
+  }
+	toolbox, #actions:not(:-moz-lwtheme) {
+		background: transparent;
+		-moz-appearance: -moz-win-glass !important;
+		text-shadow: 0 0 .8em white, 0 0 .8em white, 0 1px 0 rgba(255,255,255,.4);
+	}
+	#actions::-moz-lwtheme {
+		background: -moz-Dialog;
+	}
+
+	.statusbarpanel-text:not(:-moz-lwtheme-darktext) {
+		color: white;
+		text-shadow: 1px 1px 1.5px black;
+	}
+	.statusbarpanel-text:-moz-lwtheme-darktext {
+		color: black;
+		text-shadow: 1px 1px 1.5px gray;
 	}
 }
