@@ -216,7 +216,7 @@
 		</menupopup>
 	</popupset>
 
-	<toolbox chromedir="&locale.dir;" context="toolbarpopup" mousethrough="never">
+	<toolbox id="toolbox" chromedir="&locale.dir;" context="toolbarpopup" mousethrough="never">
 		<toolbar id="tools" mode="icons" persist="mode" class="toolbar-primary">
 			<toolbarspacer id="prespacer" />
 			<toolbarbutton label="&tooladddownload.label;" key="kAddUrl" id="tooladd" command="cmdAddUrl" tooltiptext="&tooladd.tooltip;" />
