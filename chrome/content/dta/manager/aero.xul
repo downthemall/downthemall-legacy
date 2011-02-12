@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2010
+ *
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<?xml-stylesheet href="chrome://dta/skin/manager/aero.css" type="text/css" ?>
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<window id="DownThemAll" drawintitlebar="true" chromemargin="0,-1,-1,-1">
+		<hbox id="titlebar" pack="end" insertbefore="toolbox">
+			<hbox id="titlebar-buttonbox" pack="end" align="top">
+				<toolbarbutton class="titlebar-button" id="titlebar-min" oncommand="window.minimize();"/>
+				<toolbarbutton class="titlebar-button" id="titlebar-max" oncommand="(window.windowState == window.STATE_MAXIMIZED) ? window.restore() : window.maximize();"/>
+				<toolbarbutton class="titlebar-button" id="titlebar-close" command="cmdClose"/>
+			</hbox>
+		</hbox>
+	</window>
+</overlay>
