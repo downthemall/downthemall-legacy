@@ -11,13 +11,15 @@
 <?xml-stylesheet href="chrome://dta/skin/manager/aero.css" type="text/css" ?>
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<window id="DownThemAll" drawintitlebar="true" chromemargin="0,-1,-1,-1">
-		<hbox id="titlebar" pack="end" insertbefore="toolbox">
-			<hbox id="titlebar-buttonbox" pack="end" align="top">
-				<toolbarbutton class="titlebar-button" id="titlebar-min" oncommand="window.minimize();"/>
-				<toolbarbutton class="titlebar-button" id="titlebar-max" oncommand="(window.windowState == window.STATE_MAXIMIZED) ? window.restore() : window.maximize();"/>
-				<toolbarbutton class="titlebar-button" id="titlebar-close" command="cmdClose"/>
+	<window id="DownThemAll" chromemargin="0,-1,-1,-1">
+		<vbox id="titlebar" insertbefore="toolbox">
+			<hbox id="titlebar-content" pack="end">
+				<hbox id="titlebar-buttonbox" pack="end" align="top">
+					<toolbarbutton class="titlebar-button" id="titlebar-min" oncommand="window.minimize();"/>
+					<toolbarbutton class="titlebar-button" id="titlebar-max" oncommand="(window.windowState == window.STATE_MAXIMIZED) ? window.restore() : window.maximize();"/>
+					<toolbarbutton class="titlebar-button" id="titlebar-close" command="cmdClose"/>
+				</hbox>
 			</hbox>
-		</hbox>
+		</vbox>
 	</window>
 </overlay>
