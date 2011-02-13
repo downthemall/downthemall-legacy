@@ -40,7 +40,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const Ctor = Components.Constructor;
+const ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
@@ -60,6 +60,8 @@ module('resource://dta/constants.jsm');
 module('resource://dta/utils.jsm');
 module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
 module('resource://dta/support/bytebucket.jsm');
+
+const StringInputStream = ctor('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
 
 const Preferences = DTA.Preferences;
 const Debug = DTA.Debug;
