@@ -45,7 +45,7 @@ window[sizemode="maximized"] #titlebar-max {
 
 
 /* default style for toolbars */
-window > toolbox,
+#toolbox,
 #actions {
 	-moz-appearance: none;
 	background-color: rgb(207, 219, 236);
@@ -58,7 +58,7 @@ window[sizemode="maximized"] #titlebar {
 }
 
 /* toolbar button styles */
-toolbox > toolbar > toolbarbutton {
+#tools > toolbarbutton {
 	-moz-appearance: none;
 	padding: 1px 5px;
 	background: rgba(151,152,153,.6)
@@ -75,7 +75,7 @@ toolbox > toolbar > toolbarbutton {
 	text-shadow: 0 0 3px white;
 	margin: 1px 4px;
 }
-toolbox > toolbar > toolbarbutton:-moz-lwtheme {
+#tools > toolbarbutton:-moz-lwtheme {
 	background: rgba(151,152,153,.8)
 		-moz-linear-gradient(rgba(251,252,253,.95), rgba(246,247,248,.85) 5%, rgba(246,247,248,.15) 25%,
 			rgba(231,232,233,0.30) 35%, rgba(225,226,229,.40));
@@ -237,7 +237,7 @@ treecol:-moz-lwtheme-brighttext {
 	#main-window[sizemode="normal"] #titlebar-buttonbox:-moz-lwtheme {
 		margin-top: -2px;
 	}
-	toolbox, #actions:not(:-moz-lwtheme) {
+	#toolbox, #actions:not(:-moz-lwtheme) {
 		background: transparent;
 		-moz-appearance: -moz-win-glass !important;
 		text-shadow: 0 0 .8em white, 0 0 .8em white, 0 1px 0 rgba(255,255,255,.4);
