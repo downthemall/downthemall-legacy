@@ -75,6 +75,11 @@ toolbox > toolbar > toolbarbutton {
 	text-shadow: 0 0 3px white;
 	margin: 1px 4px;
 }
+toolbox > toolbar > toolbarbutton:-moz-lwtheme {
+	background: rgba(151,152,153,.8)
+		-moz-linear-gradient(rgba(251,252,253,.95), rgba(246,247,248,.85) 5%, rgba(246,247,248,.15) 25%,
+			rgba(231,232,233,0.30) 35%, rgba(225,226,229,.40));
+}
 toolbarbutton[disabled="true"] {
 	opacity: .6;
 }
@@ -220,18 +225,18 @@ treecol:-moz-lwtheme-brighttext {
 		opacity: .4;
 	}
 
-  /* Artificially draw window borders that are covered by lwtheme, see bug 591930. */
-  window[sizemode="normal"] > #titlebar > #titlebar-content:-moz-lwtheme {
-    border-top: 2px solid;
-    -moz-border-top-colors: rgb(37, 44, 51) rgba(255,255,255,.6);
-  }
-  window[sizemode="normal"] > #titlebar > #titlebar-content:-moz-lwtheme:-moz-window-inactive {
-    -moz-border-top-colors: rgb(102, 102, 102) rgba(255,255,255,.6);
-  }
+	/* Artificially draw window borders that are covered by lwtheme, see bug 591930. */
+	window[sizemode="normal"] > #titlebar > #titlebar-content:-moz-lwtheme {
+		border-top: 2px solid;
+		-moz-border-top-colors: rgb(37, 44, 51) rgba(255,255,255,.6);
+	}
+	window[sizemode="normal"] > #titlebar > #titlebar-content:-moz-lwtheme:-moz-window-inactive {
+		-moz-border-top-colors: rgb(102, 102, 102) rgba(255,255,255,.6);
+	}
 
-  #main-window[sizemode="normal"] #titlebar-buttonbox:-moz-lwtheme {
-    margin-top: -2px;
-  }
+	#main-window[sizemode="normal"] #titlebar-buttonbox:-moz-lwtheme {
+		margin-top: -2px;
+	}
 	toolbox, #actions:not(:-moz-lwtheme) {
 		background: transparent;
 		-moz-appearance: -moz-win-glass !important;
@@ -242,11 +247,9 @@ treecol:-moz-lwtheme-brighttext {
 	}
 
 	.statusbarpanel-text:not(:-moz-lwtheme-darktext) {
-		color: white;
 		text-shadow: 1px 1px 1.5px black;
 	}
 	.statusbarpanel-text:-moz-lwtheme-darktext {
-		color: black;
 		text-shadow: 1px 1px 1.5px gray;
 	}
 }
