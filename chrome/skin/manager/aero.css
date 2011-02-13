@@ -50,9 +50,12 @@ window > toolbox,
 	-moz-appearance: none;
 	background-color: rgb(207, 219, 236);
 }
+#actions:-moz-lwtheme {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#toolbar-lwauto);
+}
 window[sizemode="maximized"] #titlebar {
 	margin-bottom: -24px;
-	}
+}
 
 /* toolbar button styles */
 toolbox > toolbar > toolbarbutton {

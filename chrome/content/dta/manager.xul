@@ -234,7 +234,7 @@
 		</toolbar>
 	</toolbox>
 	<hbox flex="1">
-		<toolbar id="actions" orient="vertical" />
+		<toolbar id="actions" orient="vertical" lwreftop="tools" lwrefbottom="footer"/>
 		<notificationbox id="notifications" flex="1" dir="reverse">
 			<stack flex="1" id="mainstack">
 				<tree id="downloads" flex="1" hidecolumnpicker="false" context="popup" seltype="multiple" enableColumnDrag="true" style="margin:0px;" chromedir="&locale.dir;">
