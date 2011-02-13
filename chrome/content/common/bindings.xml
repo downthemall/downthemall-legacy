@@ -784,7 +784,7 @@
 						// recursively extrapolate the best color
 						return (function(ref, l) {
 							l = l || 0;
-							if (l > 10) {
+							if (l > 4) {
 								return ref;
 							}
 							let r = [], g = [], b = [], a = [];
