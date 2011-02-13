@@ -715,4 +715,115 @@
 			<xul:dropmarker class="treecol-marker" xbl:inherits="sortDirection,hidden=hideheader,pack,align,orient,disabled"/>
 		</content>
 	</binding>
+
+	<binding id="toolbar-lwauto" extends="chrome://global/content/bindings/toolbar.xml#toolbar">
+		<implementation>
+			<field name="_lwreftop">document.getElementById(this.getAttribute("lwreftop"))</field>
+			<field name="_lwrefbottom">document.getElementById(this.getAttribute("lwrefbottom"))</field>
+			<field name="_lwobs">Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService)</field>
+			<constructor><![CDATA[
+				let _rl = this._resizeListener = this._refreshLWAuto.bind(this);
+				function doAfterPaint(i) {
+					i = i || 8; // recalculate a few times here, as the bg images might be loaded asynchronously
+					window.addEventListener("MozAfterPaint", function() {
+						if (--i == 0) {
+							window.removeEventListener("MozAfterPaint", arguments.callee, false);
+						}
+						_rl();
+					}, false);
+				}
+
+				doAfterPaint(4);
+
+				this._lwobm = {
+					observe: function(s,t,d) {
+						doAfterPaint();
+					}
+				};
+				this._lwobs.addObserver(this._lwobm, "lightweight-theme-styling-update", false);
+				this._lwobs.addObserver(this._lwobm, "lightweight-theme-changed", false);
+
+				window.addEventListener("resize", this._resizeListener, true);
+			]]></constructor>
+			<destructor><![CDATA[
+				this._lwobs.removeObserver(this._lwobm, "lightweight-theme-styling-update");
+				this._lwobs.removeObserver(this._lwobm, "lightweight-theme-changed");
+
+				window.removeEventListener("resize", this._resizeListener, true);
+
+				this.style.background = '';
+			]]></destructor>
+			<method name="_refreshLWAuto">
+				<body><![CDATA[
+					function poorMansSimilarity(a, b) {
+						let sim = 0;
+						for (let i = 0; i < a.length; ++i) {
+							sim += Math.abs(a[i] - b[i]);
+						}
+						return sim;
+					}
+
+					function getElementAreaColor(elem, w, h) {
+						// get pixel colors
+						let bo = elem.boxObject;
+						let canvas = document.createElementNS("http://www.w3.org/1999/xhtml","canvas");
+						canvas.width = w;
+						canvas.height = h;
+						let ctx = canvas.getContext("2d");
+						ctx.save();
+						ctx.drawWindow(
+							window,
+							bo.x,
+							bo.y + bo.height - canvas.height, w,
+							canvas.height,
+							"rgba(0,0,0,0)"
+							);
+						ctx.restore();
+						let idata = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+						// recursively extrapolate the best color
+						return (function(ref, l) {
+							l = l || 0;
+							if (l > 10) {
+								return ref;
+							}
+							let r = [], g = [], b = [], a = [];
+							for (let i = 0; i < idata.length;) {
+								let cr = idata[i++];
+								let cg = idata[i++];
+								let cb = idata[i++];
+								let ca = idata[i++];
+								if (l && poorMansSimilarity([cr, cg, cb, ca], ref) > 50) {
+									continue;
+								}
+								r.push(cr);
+								g.push(cg);
+								b.push(cb);
+								a.push(ca);
+							}
+							if (r.length < 5) {
+								// whoops, removed a little too many colors :p
+								return ref;
+							}
+							let newRef = [r,g,b,a].map(function(i) Math.round(i.reduce(function(p,c) p + c, 0) / i.length));
+							if (l && poorMansSimilarity(newRef, ref) < 5) {
+								return newRef;
+							}
+							return arguments.callee(newRef, ++l);
+						})();
+					}
+
+					let w = this.boxObject.width;
+					let tc = getElementAreaColor(this._lwreftop, w, w);
+					let bc = getElementAreaColor(this._lwrefbottom, w, 4);
+					if (poorMansSimilarity(tc, bc) < 30) {
+						this.style.background = "rgba(" + tc.toString() + ")";
+					}
+					else {
+						this.style.background = "-moz-linear-gradient(110deg, rgba(" + bc.toString() + "), rgba(" + tc.toString() + ") 40%)";
+					}
+				]]></body>
+			</method>
+		</implementation>
+	</binding>
 </bindings>
