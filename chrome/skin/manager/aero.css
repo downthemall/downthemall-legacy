@@ -42,8 +42,6 @@ window[sizemode="maximized"] #titlebar-max {
 	-moz-binding: url(chrome://global/content/bindings/toolbar.xml#toolbar-drag);
 }
 
-
-
 /* default style for toolbars */
 #toolbox,
 #actions {
@@ -84,8 +82,14 @@ toolbarbutton[disabled="true"] {
 	opacity: .6;
 }
 #prespacer {
-	width: 20px;
+	width: 22px;
 	display: -moz-box;
+}
+#tools {
+	padding-bottom: 6px;
+}
+window[sizemode="maximized"] #tools {
+	padding-top: 6px;
 }
 #tools[mode="icons"] {
 	-moz-border-radius: 4.5px;
@@ -102,7 +106,7 @@ toolbarbutton:not([disabled="true"]):not([checked="true"]):not(:active):hover {
 		box-shadow 0.3s ease-in;
 }
 #tooladd:not([disabled="true"]):not([checked="true"]):not(:active):hover {
-		background: rgba(8,111,253,.05)
+	background: rgba(8,111,253,.05)
 		-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.85) 5%, rgba(8,111,253,.4) 35%,
 		rgba(8,111,253,.5) 50%, rgba(225,226,229,0.9));
 	border-color: rgba(4,39,117,.8);
