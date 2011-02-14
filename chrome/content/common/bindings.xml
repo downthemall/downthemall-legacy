@@ -814,7 +814,7 @@
 					}
 
 					let w = this.boxObject.width;
-					let tc = getElementAreaColor(this._lwreftop, w, w);
+					let tc = getElementAreaColor(this._lwreftop, w, 10);
 					let bc = getElementAreaColor(this._lwrefbottom, w, 4);
 					if (poorMansSimilarity(tc, bc) < 30) {
 						this.style.background = "rgba(" + tc.toString() + ")";
