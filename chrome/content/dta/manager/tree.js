@@ -915,11 +915,16 @@ const Tree = {
 
 			let rv = fp.show();
 			if (rv == Ci.nsIFilePicker.returnOK || rv == Ci.nsIFilePicker.returnReplace) {
-				switch (fp.filterIndex) {
-					case 0: ImportExport.exportToHtmlFile(this.selected, document, fp.file, Prefs.permissions); return;
-					case 1: ImportExport.exportToTextFile(this.selected, fp.file, Prefs.permissions); return;
-					case 2: ImportExport.exportToMetalinkFile(this.selected, document, fp.file, Prefs.permissions); return;
+				if (/\.x?html$/i.test(fp.file.leafName)) {
+					ImportExport.exportToHtmlFile(this.selected, document, fp.file, Prefs.permissions);
+					return;
 				}
+				if (/\.metalink$/i.test(fp.file.leafName)) {
+					ImportExport.exportToMetalinkFile(this.selected, document, fp.file, Prefs.permissions);
+					return;
+				}
+				ImportExport.exportToTextFile(this.selected, fp.file, Prefs.permissions);
+				return;
 			}
 		}
 		catch (ex) {
@@ -937,8 +942,8 @@ const Tree = {
 
 			let rv = fp.show();
 			if (rv == Ci.nsIFilePicker.returnOK) {
-				if (/\.(xml|meta(4|link))$/.test(fp.file.leafName)) {
-					Metalinker.handoleFile(fp.file);
+				if (/\.(xml|meta(4|link))$/i.test(fp.file.leafName)) {
+					Metalinker.handleFile(fp.file);
 					return;
 				}
 				let links = ImportExport.parseTextFile(fp.file);
