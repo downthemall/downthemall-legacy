@@ -937,16 +937,15 @@ const Tree = {
 
 			let rv = fp.show();
 			if (rv == Ci.nsIFilePicker.returnOK) {
-				switch (fp.filterIndex) {
-					case 0: {
-						let links = ImportExport.parseTextFile(fp.file);
-						if (links.length) {
-							DTA.saveLinkArray(window, links, []);
-						}
-						return;
-					}
-					case 1: Metalinker.handleFile(fp.file); return;
+				if (/\.(xml|meta(4|link))$/.test(fp.file.leafName)) {
+					Metalinker.handoleFile(fp.file);
+					return;
 				}
+				let links = ImportExport.parseTextFile(fp.file);
+				if (links.length) {
+					DTA.saveLinkArray(window, links, []);
+				}
+				return;
 			}
 		}
 		catch (ex) {
