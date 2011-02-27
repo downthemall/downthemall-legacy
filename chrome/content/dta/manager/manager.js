@@ -1077,6 +1077,7 @@ const Dialog = {
 			Debug.log("Not going to close!");
 			return false;
 		}
+		Debug.log("Forcing offline");
 		this.offlineForced = true;
 
 		// stop everything!
@@ -2483,7 +2484,7 @@ Chunk.prototype = {
 	close: function CH_close() {
 		this.running = false;
 		if (this._outStream) {
-			this._outStream.flush();
+			// Close will flush the buffered data
 			this._outStream.close();
 			delete this._outStream;
 		}
@@ -2511,9 +2512,15 @@ Chunk.prototype = {
 			this.download.cancel();
 		}
 	},
-	_wnd: 0,
 	_written: 0,
 	_outStream: null,
+	_noteBytesWritten: function(bytes) {
+		this._written += bytes;
+		this._sessionBytes += bytes;
+		this._buffered = Math.min(MIN_CHUNK_SIZE * 2, this._buffered + bytes);
+
+		this.parent.timeLastProgress = Utils.getTimestamp();
+	},
 	write: function CH_write(aRequest, aInputStream, aCount) {
 		try {
 			// not running: do not write anything
@@ -2522,7 +2529,6 @@ Chunk.prototype = {
 			}
 			if (!this._outStream) {
 				this.open();
-				this._wnd = 1024;
 			}
 			let bytes = this.remainder;
 			if (!this.total || aCount < bytes) {
@@ -2532,33 +2538,30 @@ Chunk.prototype = {
 				// we got what we wanted
 				return -1;
 			}
-			bytes = Math.min(Math.round(this._wnd), bytes);
 			let got = this.buckets.requestBytes(bytes);
+			// didn't get enough
 			if (got < bytes) {
-				this._wnd = Math.max(this._wnd * 0.5, 512);
-				this._req = aRequest;
-				this._req.suspend();
-			}
-			else {
-				this._wnd += 256;
-			}
-			bytes = got;
-			if (!bytes) {
-				return bytes;
+				if (this._req) {
+					this._reqPending += bytes - got;
+				}
+				else {
+					this._req = aRequest;
+					this._req.suspend();
+					this._reqPending = bytes - got;
+				}
 			}
 			if (bytes < 0) {
 				throw new Exception("bytes negative");
 			}
 			// we're using nsIFileOutputStream
+			// per e10n contract we must consume all bytes
+			// or in our case all remainder bytes
+			// reqPending from above makes sure that we won't re-schedule
+			// the download to early
 			if (this._outStream.writeFrom(aInputStream, bytes) != bytes) {
 				throw ("chunks::write: read/write count mismatch!");
 			}
-			this._written += bytes;
-			this._sessionBytes += bytes;
-			this._buffered = Math.min(MIN_CHUNK_SIZE * 2, this._buffered + bytes);
-
-			this.parent.timeLastProgress = Utils.getTimestamp();
-
+			this._noteBytesWritten(got);
 			return bytes;
 		}
 		catch (ex) {
@@ -2571,9 +2574,22 @@ Chunk.prototype = {
 		if (!this._req) {
 			return;
 		}
+		// Still have pending bytes?
+		let got = this.buckets.requestBytes(this._reqPending);
+		this._noteBytesWritten(got);
+
+		if (got < this._reqPending) {
+			// Not enough
+			this._reqPending -= got;
+			return;
+		}
+
+		// Ready to resume the download
 		let req = this._req;
 		delete this._req;
+		delete this._reqPending;
 		req.resume();
+		this.parent.timeLastProgress = Utils.getTimestamp();
 	},
 	toString: function() {
 		let len = this.parent.totalSize ? String(this.parent.totalSize).length  : 10;
