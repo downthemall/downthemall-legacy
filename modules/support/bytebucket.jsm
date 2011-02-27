@@ -44,39 +44,36 @@ Components.utils.import("resource://dta/support/timers.jsm");
 
 const Timers = new TimerManager();
 
-function Observers() {
+function ObserversBase() {
 	this._obs = [];
 }
-Observers.prototype = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
+ObserversBase.prototype = {
 	_obs: null,
-	_timer: null,
 	register: function(observer) {
-		if (this._obs) {
-			this._obs.push(observer);
-		}
+		this._obs.push(observer);
 	},
 	unregister: function(observer) {
-		if (this._obs) {
-			this._obs = this._obs.filter(function(e) e != observer);
-		}
+		this._obs = this._obs.filter(function(e) e != observer);
 	},
 	notify: function() {
 		let obs = this._obs;
 		for (let o = 0, e = obs.length; o < e; o++) {
 			obs[o].observe.call(obs[o]);
 		}
-	},
+	}
+}
+
+function Observers() {
+	ObserversBase.call(this);
+}
+Observers.prototype = {
+	__proto__: ObserversBase.prototype,
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
 	start: function() {
-		if (!this._timer) {
-			this._timer = Timers.createRepeating(5000, this.observe, this);
-		}
+		Observers.Manager.register(this);
 	},
 	stop: function() {
-		if (this._timer) {
-			Timers.killTimer(this._timer);
-			this._timer = null;
-		}
+		Observers.Manager.unregister(this);
 	},
 	kill: function() {
 		this.stop();
@@ -87,6 +84,16 @@ Observers.prototype = {
 		this._obs.sort(function() Math.round(Math.random() - 0.5));
 	}
 }
+Observers.Manager = (function() {
+	function Manager() {
+		ObserversBase.call(this);
+		this._timer = Timers.createRepeating(1000, this.notify, this);
+	}
+	Manager.prototype = {
+		__proto__: ObserversBase.prototype
+	};
+	return new Manager();
+})();
 
 function ByteBucket(byteRate, burstFactor) {
 	this._obs = new Observers();
@@ -154,14 +161,16 @@ ByteBucket.prototype = {
 		return this._obs.unregister(observer);
 	},
 	observe: function() {
-		if (this._byteRate > 0) {
-			this._available = Math.round(
-				Math.min(
-					this._available + (this._byteRate / 10),
-					this.byteRate * this._burstFactor
+		if (this._byteRate <= 0) {
+			// Do not notify, as there is no limit imposed
+			return;
+		}
+		this._available = Math.round(
+			Math.min(
+				this._available + (this._byteRate / 10),
+				this.byteRate * this._burstFactor
 				)
 			);
-		}
 		this._obs.notify();
 	},
 	kill: function() {
@@ -177,32 +186,32 @@ function ByteBucketTee() {
 	}
 }
 ByteBucketTee.prototype = {
-		get byteRate() {
-			return this._buckets
-				.map(function(e) e.byteRange)
-				.reduce(function(p, c) c > 0 ? Math.min(p,c) : p);
-		},
-		get burstFactor() {
-			return this._buckets
-				.map(function(e) e.burstFactor)
-				.reduce(function(p, c) Math.min(p,c));
-		},
-		requestBytes: function(bytes) {
-			for (let bucket = 0; bucket < this._buckets.length; bucket++) {
-				bytes = this._buckets[bucket].requestBytes(bytes);
-				if (!bytes) {
-					return 0;
-				}
+	get byteRate() {
+		return this._buckets
+			.map(function(e) e.byteRange)
+			.reduce(function(p, c) c > 0 ? Math.min(p,c) : p);
+	},
+	get burstFactor() {
+		return this._buckets
+			.map(function(e) e.burstFactor)
+			.reduce(function(p, c) Math.min(p,c));
+	},
+	requestBytes: function(bytes) {
+		for (let bucket = 0; bucket < this._buckets.length; bucket++) {
+			bytes = this._buckets[bucket].requestBytes(bytes);
+			if (!bytes) {
+				return 0;
 			}
-			for (let bucket = 0; bucket < this._buckets.length; bucket++) {
-				this._buckets[bucket].commitBytes(bytes);
-			}
-			return bytes;
-		},
-		register: function(observer) {
-			this._buckets.forEach(function(e) e.register(observer));
-		},
-		unregister: function(observer) {
-			this._buckets.forEach(function(e) e.unregister(observer));
 		}
+		for (let bucket = 0; bucket < this._buckets.length; bucket++) {
+			this._buckets[bucket].commitBytes(bytes);
+		}
+		return bytes;
+	},
+	register: function(observer) {
+		this._buckets.forEach(function(e) e.register(observer));
+	},
+	unregister: function(observer) {
+		this._buckets.forEach(function(e) e.unregister(observer));
+	}
 };
