@@ -2570,13 +2570,21 @@ Chunk.prototype = {
 		}
 		return 0;
 	},
+	_wnd: 2048,
 	observe: function() {
 		if (!this._req) {
 			return;
 		}
 		// Still have pending bytes?
-		let got = this.buckets.requestBytes(this._reqPending);
+		let requested = Math.min(this._wnd, this._reqPending);
+		let got = this.buckets.requestBytes(requested);
 		this._noteBytesWritten(got);
+		if (got < requested) {
+			this._wnd = Math.round(Math.min(this._wnd / 2, 1024));
+		}
+		else if (requested == this._wnd) {
+			this._wnd += 256;
+		}
 
 		if (got < this._reqPending) {
 			// Not enough
