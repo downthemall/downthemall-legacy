@@ -708,10 +708,11 @@ const Tree = {
 		}
 
 		downloads = downloads.sort(function(a, b) b.position - a.position);
+		let last = 0;
+
 		this.beginUpdate();
 		try {
 			QueueStore.beginUpdate();
-			let last = 0;
 			for each (let d in downloads) {
 				if (d.is(FINISHING)) {
 					// un-removable :p
