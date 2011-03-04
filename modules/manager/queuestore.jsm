@@ -62,7 +62,8 @@ ServiceGetter(this, "Storage", "@mozilla.org/storage/service;1", "mozIStorageSer
 ServiceGetter(this, "Observers", "@mozilla.org/observer-service;1", "nsIObserverService");
 
 let _connection = null;
-let _saveQueue = {};
+let _saveStmt = null;
+let _saveStmtParams = null;
 let _timer = 0;
 
 setNewGetter(this, '__db', function() {
@@ -133,9 +134,6 @@ const QueueStore = {
 				_connection.executeSimpleSQL("PRAGMA journal_mode = MEMORY");
 			}
 			_connection.executeSimpleSQL("PRAGMA synchronous = NORMAL");
-			this._addStmt = _connection.createStatement('INSERT INTO queue (pos, item) VALUES (?1, ?2)');
-			this._saveStmt = _connection.createStatement('UPDATE queue SET item = ?2 WHERE uuid = ?1');
-			this._delStmt = _connection.createStatement('DELETE FROM queue WHERE uuid = ?1');
 		}
 		catch (ex) {
 			Debug.log("SQLite", _connection.lastErrorString);
@@ -160,15 +158,6 @@ const QueueStore = {
 
 			_timer = null;
 			this._saveDownloadQueue();
-		}
-		for each (let e in ['_addStmt', '_saveStmt', '_delStmt']) {
-			try {
-				this[e].finalize();
-				delete this[e];
-			}
-			catch (ex) {
-				// no-op
-			}
 		}
 		try {
 			_connection.executeSimpleSQL('VACUUM');
@@ -241,35 +230,43 @@ const QueueStore = {
 		if (!download) {
 			throw new Exception("You must provide a Download to save!");
 		}
-		let s = this._addStmt;
-		s.bindStringParameter(0, position);
-		s.bindStringParameter(1, download);
-		s.execute();
-		s.reset();
+		let stmt = _connection.createStatement('INSERT INTO queue (pos, item) VALUES (:position, :item)');
+		stmt.params.position = position;
+		stmt.params.item = download;
+		stmt.execute();
+		stmt.finalize();
 		return _connection.lastInsertRowID;
 	},
 	saveDownload: function(id, download) {
 		if (!download) {
 			throw new Exception("You must provide a Download to save!");
 		}
-		_saveQueue[id] = download;
+		if (!_saveStmt) {
+			_saveStmt = _connection.createAsyncStatement('UPDATE queue SET item = :item WHERE uuid = :uuid');
+			_saveStmtParams = _saveStmt.newBindingParamsArray();
+		}
+
+		let bp = _saveStmtParams.newBindingParams();
+		bp.bindByName("item", download);
+		bp.bindByName("uuid", id);
+		_saveStmtParams.addParams(bp);
+
 		if (!_timer) {
 			// delay up to 5000 msecs
 			_timer = Timers.createOneshot(5000, this._saveDownloadQueue, this);
 		}
 	},
 	_saveDownloadQueue: function() {
-		this.beginUpdate();
-		let s = this._saveStmt;
-		for (let id in _saveQueue) {
-			s.bindInt64Parameter(0, id);
-			s.bindStringParameter(1, _saveQueue[id]);
-			s.execute();
+		if (!_saveStmt) {
+			return;
 		}
-		s.reset();
-		_saveQueue = {};
+		let stmt = _saveStmt;
+		stmt.bindParameters(_saveStmtParams);
+		_saveStmt = null;
+		_saveStmtParams = null;
 		_timer = null;
-		this.endUpdate();
+
+		stmt.executeAsync();
 	},
 	asyncSavePosition: function(downloads) {
 		if (downloads.length == 0) {
@@ -291,9 +288,9 @@ const QueueStore = {
 		if (!id) {
 			return;
 		}
-		this._delStmt.bindInt64Parameter(0, id);
-		this._delStmt.execute();
-		this._delStmt.reset();
+		let stmt = _connection.createAsyncStatement('DELETE FROM queue WHERE uuid = :uuid');
+		stmt.params.uuid = id;
+		stmt.executeAsync();
 	},
 
 	loadItems: function(callback, ctx) {
