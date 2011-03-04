@@ -580,8 +580,9 @@ textbox.plain {
 	padding-left: 4pt;
 }
 statusbarpanel#netstatus {
-	padding-left: 4px;
+	padding-left: 6px;
 	padding-right: 6px;
+	min-width: 16px;
 }
 
 /* search */
