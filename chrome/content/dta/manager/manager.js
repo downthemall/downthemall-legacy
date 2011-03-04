@@ -522,7 +522,7 @@ const Dialog = {
 			// See above
 			d.rebuildDestination();
 
-			d._position = Tree.fastLoad(d);
+			d.position = Tree.fastLoad(d);
 		}
 		catch (ex) {
 			Debug.log('failed to init download #' + dbItem.id + ' from queuefile', ex);
@@ -1476,20 +1476,7 @@ QueueItem.prototype = {
 		QueueStore.deleteDownload(this.dbId);
 		delete this.dbId;
 	},
-	_position: -1,
-	get position() {
-		return this._position;
-	},
-	set position(nv) {
-		if (nv == this._position) {
-			return;
-		}
-		this._position = nv;
-		if (this.dbId && this._position != -1) {
-			QueueStore.savePosition(this.dbId, this._position);
-		}
-	},
-
+	position: -1,
 	contentType: "",
 	visitors: null,
 	_totalSize: 0,
@@ -2695,7 +2682,7 @@ function startDownloads(start, downloads) {
 			else {
 				qi.status = TEXT_PAUSED;
 			}
-			qi._position = Tree.add(qi);
+			qi.position = Tree.add(qi);
 			qi.save();
 			first = first || qi;
 		}

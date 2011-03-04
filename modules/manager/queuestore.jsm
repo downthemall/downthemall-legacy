@@ -135,7 +135,6 @@ const QueueStore = {
 			_connection.executeSimpleSQL("PRAGMA synchronous = NORMAL");
 			this._addStmt = _connection.createStatement('INSERT INTO queue (pos, item) VALUES (?1, ?2)');
 			this._saveStmt = _connection.createStatement('UPDATE queue SET item = ?2 WHERE uuid = ?1');
-			this._savePosStmt = _connection.createStatement('UPDATE queue SET pos = ?2 WHERE uuid = ?1');
 			this._delStmt = _connection.createStatement('DELETE FROM queue WHERE uuid = ?1');
 		}
 		catch (ex) {
@@ -162,7 +161,7 @@ const QueueStore = {
 			_timer = null;
 			this._saveDownloadQueue();
 		}
-		for each (let e in ['_addStmt', '_saveStmt', '_savePosStmt', '_delStmt']) {
+		for each (let e in ['_addStmt', '_saveStmt', '_delStmt']) {
 			try {
 				this[e].finalize();
 				delete this[e];
@@ -272,12 +271,21 @@ const QueueStore = {
 		_timer = null;
 		this.endUpdate();
 	},
-	savePosition: function(id, position) {
-		let s = this._savePosStmt;
-		s.bindInt64Parameter(0, id);
-		s.bindInt64Parameter(1, position);
-		s.execute();
-		s.reset();
+	asyncSavePosition: function(downloads) {
+		if (downloads.length == 0) {
+			Debug.log("no position changes");
+			return;
+		}
+		let stmt = _connection.createAsyncStatement("UPDATE queue SET pos = :pos WHERE uuid = :uuid");
+		let params = stmt.newBindingParamsArray();
+		for each (let d in downloads) {
+			let bp = params.newBindingParams();
+			bp.bindByName("pos", d.position);
+			bp.bindByName("uuid", d.dbId);
+			params.addParams(bp);
+		}
+		stmt.bindParameters(params);
+		stmt.executeAsync();
 	},
 	deleteDownload: function(id) {
 		if (!id) {
