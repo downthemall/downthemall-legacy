@@ -554,6 +554,7 @@ const Dialog = {
 		delete this._loading;
 
 		GlobalProgress.reset();
+		$('statusText').hidden = false;
 
 		this._updTimer = Timers.createRepeating(REFRESH_FREQ, this.checkDownloads, this, true);
 
