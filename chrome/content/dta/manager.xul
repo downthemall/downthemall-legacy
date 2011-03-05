@@ -272,11 +272,11 @@
 	</hbox>
 	<windowdragbox id="footer" chromedir="&locale.dir;">
 		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline" />
-		<statusbarpanel id="statusSearch">
+		<statusbarpanel id="statusSearch" flex="1" pack="start">
 			<textbox id="search" emptytext="&search.placeholder;" placeholder="&search.placeholder;"/>
 		</statusbarpanel>
-		<statusbarpanel id="statusText" class="statusbarpanel-iconic-text" pack="start" label="" flex="3" />
-		<statusbarpanel id="statusSpeed" class="statusbarpanel-iconic-text" label="" />
+		<statusbarpanel id="statusText" class="statusbarpanel-iconic-text" pack="start" crop="right" hidden="true" label="" flex="3" />
+		<statusbarpanel id="statusSpeed" class="statusbarpanel-iconic-text" crop="right" hidden="true" label="" />
 		<statusbarpanel id="statusSpeeds">
 			<label control="listSpeeds" class="statusbarpanel-text" value="&speedlimit.label;" />
 			<menulist class="plain" id="speedLimit" tooltiptext="&speedlimit.tooltip;" sizetopopup="none" command="cmdChangeSpeedLimit">
