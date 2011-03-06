@@ -66,10 +66,17 @@ let _saveStmt = null;
 let _saveStmtParams = null;
 let _timer = 0;
 
+
 setNewGetter(this, '__db', function() {
 	let db = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
 	db.append(DB_FILE);
 	return db;
+});
+setNewGetter(this, '_asyncStatement', function() {
+	if ('createAsyncStatement' in _connection) {
+		return _connection.createAsyncStatement;
+	}
+	return _connection.createStatement;
 });
 
 const QueueStore = {
@@ -242,7 +249,7 @@ const QueueStore = {
 			throw new Exception("You must provide a Download to save!");
 		}
 		if (!_saveStmt) {
-			_saveStmt = _connection.createAsyncStatement('UPDATE queue SET item = :item WHERE uuid = :uuid');
+			_saveStmt = _asyncStatement('UPDATE queue SET item = :item WHERE uuid = :uuid');
 			_saveStmtParams = _saveStmt.newBindingParamsArray();
 		}
 
@@ -273,7 +280,7 @@ const QueueStore = {
 			Debug.log("no position changes");
 			return;
 		}
-		let stmt = _connection.createAsyncStatement("UPDATE queue SET pos = :pos WHERE uuid = :uuid");
+		let stmt = _asyncStatement("UPDATE queue SET pos = :pos WHERE uuid = :uuid");
 		let params = stmt.newBindingParamsArray();
 		for each (let d in downloads) {
 			let bp = params.newBindingParams();
@@ -288,7 +295,7 @@ const QueueStore = {
 		if (!id) {
 			return;
 		}
-		let stmt = _connection.createAsyncStatement('DELETE FROM queue WHERE uuid = :uuid');
+		let stmt = _asyncStatement('DELETE FROM queue WHERE uuid = :uuid');
 		stmt.params.uuid = id;
 		stmt.executeAsync();
 	},
@@ -297,12 +304,7 @@ const QueueStore = {
 		ctx = ctx || null;
 		let stmt;
 		try {
-			if (_connection.createAsyncStatement) {
-				stmt = _connection.createAsyncStatement(STMT_SELECT);
-			}
-			else {
-				stmt = _connection.createStatement(STMT_SELECT);
-			}
+			stmt = _asyncStatement(STMT_SELECT);
 		}
 		catch (ex) {
 			Debug.log("SQLite", _connection.lastErrorString);
