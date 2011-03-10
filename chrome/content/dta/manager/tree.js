@@ -1290,7 +1290,7 @@ const Tree = {
 			let ids;
 			try {
 				ids = this._getSelectedFilteredIds();
-				ids = ids.forEach(
+				ids.forEach(
 					function(id, idx) {
 						id = id - idx;
 						this._downloads.push(this._downloads.splice(id, 1)[0]);
