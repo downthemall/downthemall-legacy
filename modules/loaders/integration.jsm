@@ -636,7 +636,7 @@ function load(window) {
 			}
 
 			function unique(i) {
-				return i.filter(function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)), {});
+				return filterInSitu(function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)), {});
 			}
 
 			if (turbo) {
@@ -677,9 +677,9 @@ function load(window) {
 						}
 					}
 
-					urls = unique(urls);
+					unique(urls);
 					yield true;
-					images = unique(images);
+					unique(images);
 					yield true;
 
 					DTA.Debug.log("findLinks(): done running...");
