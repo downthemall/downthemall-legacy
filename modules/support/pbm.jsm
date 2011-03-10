@@ -138,6 +138,9 @@ if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingServ
 		}
 	}
 	function unregisterCallbacks(obj) {
-		_callbacks = _callbacks.filter(function(e) e != obj);
+		let idx = _callbacks.indexOf(obj);
+		if (idx > -1) {
+			_callbacks.slice(idx, 1);
+		}
 	}
 }

@@ -69,10 +69,6 @@ const ConverterOutputStream = Ctor('@mozilla.org/intl/converter-output-stream;1'
 
 InstanceGetter(this, "Serializer", "@mozilla.org/xmlextras/xmlserializer;1", "nsIDOMSerializer");
 
-function unique(i) {
-	return i.filter(function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)), {});
-}
-
 function parseTextFile(aFile) {
 	Debug.log("Parsing text file: " + aFile.spec);
 	// Open the file in a line reader
@@ -108,7 +104,7 @@ function parseTextFile(aFile) {
 		});
 	}
 	Debug.log("parsed text file, links: " + links.length);
-	return unique(links);
+	return filterInSitu(links, function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)), {});
 }
 
 function exportToTextFile(aDownloads, aFile, aPermissions) {

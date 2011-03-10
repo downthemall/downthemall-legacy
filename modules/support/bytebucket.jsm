@@ -53,7 +53,10 @@ ObserversBase.prototype = {
 		this._obs.push(observer);
 	},
 	unregister: function(observer) {
-		this._obs = this._obs.filter(function(e) e != observer);
+		let idx = this._obs.indexOf(observer);
+		if (idx > -1) {
+			this._obs.slice(idx, 1);
+		}
 	},
 	notify: function() {
 		let obs = this._obs;
