@@ -495,7 +495,8 @@ function turboSaveLinkArray(window, urls, images) {
 	catch (ex) {
 		// fall-through
 	}
-	links = links.filter(
+	filterInSitu(
+		links,
 		function(link) {
 			if (fast && (fast.match(link.url.usable) || fast.match(link.description))) {
 				return true;
