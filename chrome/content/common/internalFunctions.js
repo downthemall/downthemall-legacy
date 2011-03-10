@@ -397,6 +397,12 @@ function hash(value, algorithm, encoding, datalen) {
 	}
 	return rv;
 }
+if ('freeze' in Object) {
+	Object.freeze(Utils);
+}
+
+const mapInSitu = Utils.mapInSitu;
+const filterInSitu = Utils.filterInSitu;
 
 (function() {
 	let _ic = {};
