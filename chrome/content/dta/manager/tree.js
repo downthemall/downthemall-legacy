@@ -1085,7 +1085,7 @@ const Tree = {
 				function(e, i) {
 					if (e.position != i) {
 						e.position = i;
-						saveArray.push({dbId: e.dbID, position: i});
+						saveArray.push({dbId: e.dbId, position: i});
 					}
 					if (e.is(COMPLETE)) {
 						complete++;
