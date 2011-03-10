@@ -318,7 +318,7 @@ const Tree = {
 		})();
 		this.beginUpdate();
 		try {
-			this._downloads = Utils.naturalSort(this._downloads, cmpFun);
+			Utils.naturalSort(this._downloads, cmpFun);
 			if (descending) {
 				this._downloads.reverse();
 			}
@@ -1055,7 +1055,7 @@ const Tree = {
 					o.setAttribute('disabled', disabled);
 				}
 			}
-			modifySome($('cmdResume'), function(d) !d.isOf(COMPLETE, RUNNING, QUEUED, FINISHING));
+			modifySome($('cmdResume'), function(d) d.isOf(PAUSED, QUEUED, CANCELED));
 			modifySome($('cmdPause'), function(d) (d.is(RUNNING) && d.resumable) || d.is(QUEUED));
 			modifySome($('cmdCancel'), function(d) !d.isOf(FINISHING));
 
