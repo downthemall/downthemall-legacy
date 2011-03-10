@@ -413,7 +413,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 			}
 		}
 		for (let y in addImagesToArray(
-			mapInSitu(filterInSitu(function(e) !!e.poster), function(e) new TextLinks.FakeLink(e.poster)),
+			mapInSitu(filterInSitu(videos, function(e) !!e.poster), function(e) new TextLinks.FakeLink(e.poster)),
 			aImages,
 			aWin.document
 		)) {
