@@ -54,6 +54,23 @@ const regWWW = /^www/i;
 // Right-trim (sanitize) link
 const regDTrim = /[<>._#-]+$/;
 
+function mapper(e) {
+	try {
+		if (regShortened.test(e)) {
+			return null;
+		}
+		if (regWWW.test(e)) {
+			e = "http://" + e;
+		}
+		return e.replace(regHttp, "http$1")
+			.replace(regFtp, "ftp")
+			.replace(regDTrim, "");
+	}
+	catch (ex) {
+		return null;
+	}
+}
+
 /**
  * Parses a text looking for any URLs with supported protocols
  *
@@ -62,27 +79,17 @@ const regDTrim = /[<>._#-]+$/;
  * @return (array) results
  */
 function getTextLinks(text, fakeLinks) {
-	return Array.map(
-		text.match(regLinks),
-		function(e) {
-			try {
-				if (regShortened.test(e)) {
-					return null;
-				}
-				if (regWWW.test(e)) {
-					e = "http://" + e;
-				}
-				e = e.replace(regHttp, "http$1")
-					.replace(regFtp, "ftp")
-					.replace(regDTrim, "");
-				return fakeLinks ? new FakeLink(e) : e.toString();
-			}
-			catch (ex) {
-				return null;
-			}
-		},
-		this
-	).filter(function(e) !!e);
+	let rv = text.match(regLinks);
+	let i, k, e;
+	for (i = 0, k = 0, e = rv.length; i < e; i++) {
+		let a = mapper(rv[i]);
+		if (a) {
+			rv[k] = fakeLinks ? new FakeLink(a) : a;
+			k += 1;
+		}
+	}
+	rv.length = k; // truncate
+	return rv;
 }
 
 /**
