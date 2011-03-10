@@ -267,18 +267,27 @@ function getTextLinks(set, out, fakeLinks) {
 	}
 }
 
-function filterElements(nodes, set) {
-	let rv = [];
-	for each (let n in nodes) {
-		try {
-			if (n && set.containsNode(n, true)) {
-				rv.push(n);
-			}
-		}
-		catch (ex) {
-		}
+function filterInSitu(arr, cb, tp) {
+	tp = tp || null;
+
+	// courtesy of firefox-sync
+	let i, k, e;
+	for (i = 0, k = 0, e = arr.length; i < e; i++) {
+	  let a = arr[k] = arr[i]; // replace filtered items
+	  if (a && cb.call(tp, a, i, arr)) {
+	    k += 1;
+	  }
 	}
-	return rv;
+	arr.length = k; // truncate
+	return arr;
+}
+
+function mapInSitu(arr, cb, tp) {
+	tp = tp || null;
+	for (let i = 0, e = arr.length; i < e; i++) {
+	  arr[i] = cb.call(tp, arr[i], i, arr);
+	}
+	return arr;
 }
 
 //recursively add stuff.
@@ -304,7 +313,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 			yield true;
 		}
 		videos = videos.concat(sources);
-		videos = videos.filter(function(e) !!e.src);
+		filterInSitu(function(e) !!e.src);
 		yield true;
 
 		let embeds = new Array(aWin.document.embeds.length);
@@ -327,11 +336,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 		let sel = null;
 		if (honorSelection && (sel = aWin.getSelection()) && !sel.isCollapsed) {
 			DTA.Debug.log("selection only");
-			[links, images, videos, embeds, inputs] = [links, images, videos, embeds, inputs].map(
-				function(e) {
-					return filterElements(e, sel);
-				}
-			);
+			[links, images, videos, embeds, inputs].forEach(function(e) filterInSitu(e, function(n) sel.containsNode(n, true)));
 			if (recognizeTextLinks) {
 				let copy = aWin.document.createElement('div');
 				for (let i = 0; i < sel.rangeCount; ++i) {
@@ -408,7 +413,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 			}
 		}
 		for (let y in addImagesToArray(
-			videos.filter(function(e) !!e.poster).map(function(e) new TextLinks.FakeLink(e.poster)),
+			mapInSitu(filterInSitu(function(e) !!e.poster), function(e) new TextLinks.FakeLink(e.poster)),
 			aImages,
 			aWin.document
 		)) {
