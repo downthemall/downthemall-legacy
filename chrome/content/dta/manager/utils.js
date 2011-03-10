@@ -491,11 +491,11 @@ const Tooltip = {
 				}
 				// special case: all speeds are the same
 				if (minH == maxH) {
-					speeds = speeds.map(function(speed) { return 12; });
+					mapInSitu(speeds, function(speed) { return 12; });
 				}
 				else {
 					let r = (maxH - minH);
-					speeds = speeds.map(function(speed) { return 3 + Math.round((h - 6) * (speed - minH) / r); });
+					mapInSitu(speeds, function(speed) { return 3 + Math.round((h - 6) * (speed - minH) / r); });
 				}
 
 				ctx.save();
