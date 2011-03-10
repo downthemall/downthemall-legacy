@@ -235,7 +235,7 @@ const Tree = {
 					function(p) p != param
 					);
 				// filter out other params
-				active = active.filter(function(p) others.indexOf(p) < 0);
+				filterInSitu(active, function(p) others.indexOf(p) < 0);
 			}
 			let idx = active.indexOf(param);
 			if (idx === -1) {
@@ -244,7 +244,7 @@ const Tree = {
 			else {
 				active.splice(idx, 1);
 			}
-			active = active.filter(function(e) !((e in this) || (this[e] = null)), {});
+			filterInSitu(active, function(e) !((e in this) || (this[e] = null)), {});
 			active.sort();
 			let newParams = active.join(',');
 			if (active.length) {
@@ -739,7 +739,7 @@ const Tree = {
 			this.endUpdate();
 		}
 		if (performJump) {
-			this._removeJump(downloads.filter(function(e) e.filteredPosition >= 0).length, last);
+			this._removeJump(filterInSitu(downloads, function(e) e.filteredPosition >= 0).length, last);
 		}
 	},
 	_removeCompleted: function T__removeCompleted(onlyGone) {
