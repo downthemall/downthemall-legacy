@@ -273,10 +273,10 @@ function filterInSitu(arr, cb, tp) {
 	// courtesy of firefox-sync
 	let i, k, e;
 	for (i = 0, k = 0, e = arr.length; i < e; i++) {
-	  let a = arr[k] = arr[i]; // replace filtered items
-	  if (a && cb.call(tp, a, i, arr)) {
-	    k += 1;
-	  }
+		let a = arr[k] = arr[i]; // replace filtered items
+		if (a && cb.call(tp, a, i, arr)) {
+			k += 1;
+		}
 	}
 	arr.length = k; // truncate
 	return arr;
@@ -286,13 +286,11 @@ function filterMapInSitu(arr, filterStep, mapStep, tp) {
 	tp = tp || null;
 	let i, k, e;
 	for (i = 0, k = 0, e = arr.length; i < e; i++) {
-	  let a = arr[i]; // replace filtered items
-	  if (a && filterStep.call(tp, a, i, arr)) {
-	    k += 1;
-	  }
-	  else {
-		  arr[k] = mapStep.call(tp, a, i, arr);
-	  }
+		let a = arr[i]; // replace filtered items
+		if (a && filterStep.call(tp, a, i, arr)) {
+			arr[k] = mapStep.call(tp, a, i, arr);
+			k += 1;
+		}
 	}
 	arr.length = k; // truncate
 	return arr;
