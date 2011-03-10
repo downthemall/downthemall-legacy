@@ -558,10 +558,10 @@ function filterInSitu(arr, cb, tp) {
 	tp = tp || null;
 	let i, k, e;
 	for (i = 0, k = 0, e = arr.length; i < e; i++) {
-	  let a = arr[k] = arr[i]; // replace filtered items
-	  if (a && cb.call(tp, a, i, arr)) {
-	    k += 1;
-	  }
+		let a = arr[k] = arr[i]; // replace filtered items
+		if (a && cb.call(tp, a, i, arr)) {
+			k += 1;
+		}
 	}
 	arr.length = k; // truncate
 	return arr;
@@ -577,7 +577,7 @@ function filterInSitu(arr, cb, tp) {
 function mapInSitu(arr, cb, tp) {
 	tp = tp || null;
 	for (let i = 0, e = arr.length; i < e; i++) {
-	  arr[i] = cb.call(tp, arr[i], i, arr);
+		arr[i] = cb.call(tp, arr[i], i, arr);
 	}
 	return arr;
 }
@@ -594,13 +594,11 @@ function filterMapInSitu(arr, filterStep, mapStep, tp) {
 	tp = tp || null;
 	let i, k, e;
 	for (i = 0, k = 0, e = arr.length; i < e; i++) {
-	  let a = arr[i]; // replace filtered items
-	  if (a && filterStep.call(tp, a, i, arr)) {
-	    k += 1;
-	  }
-	  else {
-		  arr[k] = mapStep.call(tp, a, i, arr);
-	  }
+		let a = arr[i]; // replace filtered items
+		if (a && filterStep.call(tp, a, i, arr)) {
+			arr[k] = mapStep.call(tp, a, i, arr);
+			k += 1;
+		}
 	}
 	arr.length = k; // truncate
 	return arr;
