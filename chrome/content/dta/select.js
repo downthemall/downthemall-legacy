@@ -243,7 +243,7 @@ Tree.prototype = {
 		this._links.forEach(function(e, i) { e._sortId = i; });
 
 		let tp = this;
-		this._links = Utils.naturalSort(this._links, function(e) tp.getCellText(e._sortId, col));
+		Utils.naturalSort(this._links, function(e) tp.getCellText(e._sortId, col));
 		if (this._sortDirection) {
 			this._links.reverse();
 		}
