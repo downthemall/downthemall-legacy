@@ -46,7 +46,8 @@ function Tree(links, type) {
 
 	// internal list of links.
 	// better make this a real array (links parameter is usually an object)
-	this._links = links.map(
+	this._links = mapInSitu(
+		links,
 		function(link) {
 			// "lazy initialize" the icons.
 			// cache them so that we don't have to lookup them again and again.
