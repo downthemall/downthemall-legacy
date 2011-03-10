@@ -704,7 +704,7 @@ const Tree = {
 			downloads = [downloads];
 		}
 		else if (!downloads) {
-			downloads = this._getSelectedFilteredIds();
+			downloads = this.getSelected();
 		}
 		if (!downloads.length) {
 			return;
@@ -1144,6 +1144,20 @@ const Tree = {
 			}
 		}
 	},
+	getSelected: function() {
+		let rv = [];
+		// loop through the selection as usual
+		for (let i = 0, e = this.selection.getRangeCount(); i < e; ++i) {
+			let start = {}, end = {value: -1};
+			this.selection.getRangeAt(i, start, end);
+			for (let j = start.value, k = end.value; j <= k; ++j) {
+				rv.push(this._filtered[j]);
+			}
+		}
+		this.selection.clearSelection();
+		return rv;
+	},
+
 	// returns an ASC sorted array of IDs that are currently selected.
 	_getSelectedIds: function T_getSelectedIds(getReversed) {
 		let rv = [];
