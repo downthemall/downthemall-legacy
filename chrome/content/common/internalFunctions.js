@@ -403,6 +403,8 @@ if ('freeze' in Object) {
 
 const mapInSitu = Utils.mapInSitu;
 const filterInSitu = Utils.filterInSitu;
+const mapFilterInSitu = Utils.mapFilterInSitu;
+const filterMapInSitu = Utils.filterMapInSitu;
 
 (function() {
 	let _ic = {};
