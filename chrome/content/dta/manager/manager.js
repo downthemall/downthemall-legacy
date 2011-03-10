@@ -2884,10 +2884,11 @@ function CustomEvent(download, command) {
 			}
 			return arg;
 		}
-		var args = command
-			.replace(/(["'])(.*?)\1/g, callback)
-			.split(/ /g)
-			.map(mapper);
+		var args = mapInSitu(
+			command
+				.replace(/(["'])(.*?)\1/g, callback)
+				.split(/ /g),
+			mapper);
 		var program = new FileFactory(args.shift());
 		var process = new Process(program);
 		process.run(false, args, args.length);

@@ -178,8 +178,9 @@ const Tree = {
 			if (params) {
 				active = params.split(',');
 			}
-			let newActive = $$('menuitem[type="checkbox"][param]', popup)
-				.map(function(e) {
+			let newActive = mapFilterInSitu(
+				$$('menuitem[type="checkbox"][param]', popup),
+				function(e) {
 					if (e.getAttribute('checked') == "true") {
 						e.removeAttribute('checked');
 					}
@@ -187,8 +188,9 @@ const Tree = {
 						e.setAttribute('checked', 'true');
 					}
 					return e.getAttribute('param');
-				})
-				.filter(function(e) active.indexOf(e) == -1);
+				},
+				function(e) active.indexOf(e) == -1
+			);
 			active = newActive;
 			active.sort();
 			let newParams = active.join(',');
@@ -227,11 +229,11 @@ const Tree = {
 			// remove other radio params for this name
 			if (target.getAttribute('type') == 'radio') {
 				// find other params for name
-				let others = $$(
-					'menuitem[name="' + target.getAttribute('name') + '"]',
-					popup
-				).map(function(n) n.getAttribute('param'))
-					.filter(function(p) p != param);
+				let others = mapFilterInSitu(
+					$$('menuitem[name="' + target.getAttribute('name') + '"]', popup),
+					function(n) n.getAttribute('param'),
+					function(p) p != param
+					);
 				// filter out other params
 				active = active.filter(function(p) others.indexOf(p) < 0);
 			}
@@ -340,7 +342,7 @@ const Tree = {
 		this.beginUpdate();
 		try {
 			// save selection
-			let selectedIds = this._getSelectedIds().map(function(id) this._filtered[id].position, this);
+			let selectedIds = mapInSitu(this._getSelectedIds(), function(id) this._filtered[id].position, this);
 			this._downloads.forEach(function(e) e.filteredPosition = -1);
 			this._box.rowCountChanged(0, -this.rowCount);
 			if (this._matcher.filtering) {
@@ -546,7 +548,8 @@ const Tree = {
 				 * after we collected all items we simply reinsert them and invalidate our list.
 				 * This might not be the most performant way, but at least it kinda works ;)
 				 */
-				downloads = this._getSelectedIds(true).map(
+				downloads = mapInSitu(
+					this._getSelectedIds(true),
 					function(id) {
 						let qi = this._filtered[id];
 						if (id < row) {
@@ -701,7 +704,7 @@ const Tree = {
 			downloads = [downloads];
 		}
 		else if (!downloads) {
-			downloads = this._getSelectedIds(true).map(function(idx) this._filtered[idx], this);
+			downloads = mapInSitu(this._getSelectedIds(true), function(idx) this._filtered[idx], this);
 		}
 		if (!downloads.length) {
 			return;
@@ -1257,7 +1260,7 @@ const Tree = {
 			this.beginUpdate();
 			let ids;
 			try {
-				ids = this._getSelectedIds(true).map(function(i) this._filtered[i].position, this);
+				ids = mapInSitu(this._getSelectedIds(true), function(i) this._filtered[i].position, this);
 				ids.forEach(
 					function(id, idx) {
 						id = id + idx;
@@ -1283,8 +1286,8 @@ const Tree = {
 			this.beginUpdate();
 			let ids;
 			try {
-				ids = this._getSelectedIds().map(function(i) this._filtered[i].position, this);
-				ids = ids.map(
+				ids = mapInSitu(this._getSelectedIds(), function(i) this._filtered[i].position, this);
+				ids = ids.forEach(
 					function(id, idx) {
 						id = id - idx;
 						this._downloads.push(this._downloads.splice(id, 1)[0]);
@@ -1312,7 +1315,8 @@ const Tree = {
 			this.beginUpdate();
 			let ids;
 			try {
-				ids = this._getSelectedIds().map(
+				ids = mapInSitu(
+					this._getSelectedIds(),
 					function(id, idx) {
 						if (id - idx != 0) {
 							[this._downloads[id], this._downloads[id - 1]] = [this._downloads[id - 1], this._downloads[id]];
@@ -1343,7 +1347,8 @@ const Tree = {
 			let ids;
 			try {
 				let rowCount = this.rowCount;
-				ids = this._getSelectedIds(true).map(
+				ids = mapInSitu(
+					this._getSelectedIds(true),
 					function(id, idx) {
 						if (id + idx != rowCount - 1) {
 							let tmp = this._downloads[id];
