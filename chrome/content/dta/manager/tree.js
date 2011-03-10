@@ -342,7 +342,7 @@ const Tree = {
 		this.beginUpdate();
 		try {
 			// save selection
-			let selectedIds = mapInSitu(this._getSelectedIds(), function(id) this._filtered[id].position, this);
+			let selectedIds = this._getSelectedFilteredIds();
 			this._downloads.forEach(function(e) e.filteredPosition = -1);
 			this._box.rowCountChanged(0, -this.rowCount);
 			if (this._matcher.filtering) {
@@ -704,7 +704,7 @@ const Tree = {
 			downloads = [downloads];
 		}
 		else if (!downloads) {
-			downloads = mapInSitu(this._getSelectedIds(true), function(idx) this._filtered[idx], this);
+			downloads = this._getSelectedFilteredIds();
 		}
 		if (!downloads.length) {
 			return;
@@ -1165,6 +1165,9 @@ const Tree = {
 		}
 		return rv;
 	},
+	_getSelectedFilteredIds: function T_getSelectedFilteredIds()
+		mapInSitu(this._getSelectedIds(), function(id) this._filtered[id].position, this),
+
 	// get the first selected item, NOT the item which has the input focus.
 	get current() {
 		let select = this.selection;
@@ -1260,7 +1263,7 @@ const Tree = {
 			this.beginUpdate();
 			let ids;
 			try {
-				ids = mapInSitu(this._getSelectedIds(true), function(i) this._filtered[i].position, this);
+				ids = this._getSelectedFilteredIds();
 				ids.forEach(
 					function(id, idx) {
 						id = id + idx;
@@ -1286,7 +1289,7 @@ const Tree = {
 			this.beginUpdate();
 			let ids;
 			try {
-				ids = mapInSitu(this._getSelectedIds(), function(i) this._filtered[i].position, this);
+				ids = this._getSelectedFilteredIds();
 				ids = ids.forEach(
 					function(id, idx) {
 						id = id - idx;
