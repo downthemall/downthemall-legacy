@@ -52,6 +52,8 @@ const EXPORTED_SYMBOLS = [
 	'getTimestamp',
 	'filterInSitu',
 	'mapInSitu',
+	'filterMapInSitu',
+	'mapFilterInSitu',
 	'naturalSort',
 	'SimpleIterator',
 	'Properties',
@@ -577,6 +579,52 @@ function mapInSitu(arr, cb, tp) {
 	for (let i = 0, e = arr.length; i < e; i++) {
 	  arr[i] = cb.call(tp, arr[i], i, arr);
 	}
+	return arr;
+}
+
+/**
+ * Filters and then maps an array in-situ
+ * @param {Array} arr
+ * @param {Function} filterStep
+ * @param {Function} mapStep
+ * @param {Object} tp
+ * @returns {Array} Filtered and mapped array (identity)
+ */
+function filterMapInSitu(arr, filterStep, mapStep, tp) {
+	tp = tp || null;
+	let i, k, e;
+	for (i = 0, k = 0, e = arr.length; i < e; i++) {
+	  let a = arr[i]; // replace filtered items
+	  if (a && filterStep.call(tp, a, i, arr)) {
+	    k += 1;
+	  }
+	  else {
+		  arr[k] = mapStep.call(tp, a, i, arr);
+	  }
+	}
+	arr.length = k; // truncate
+	return arr;
+}
+
+/**
+ * Map and then filter an array in place
+ *
+ * @param {Array} arr
+ * @param {Function} mapStep
+ * @param {Function} filterStep
+ * @param {Object} tp
+ * @returns {Array} Mapped and filtered array (identity)
+ */
+function mapFilterInSitu(arr, mapStep, filterStep, tp) {
+	tp = tp || null;
+	let i, k, e;
+	for (i = 0, k = 0, e = arr.length; i < e; i++) {
+	  let a = arr[k] = mapStep.call(tp, arr[i], i, arr); // replace filtered items
+	  if (a && filterStep.call(tp, a, i, arr)) {
+	    k += 1;
+	  }
+	}
+	arr.length = k; // truncate
 	return arr;
 }
 
