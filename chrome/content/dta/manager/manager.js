@@ -983,7 +983,7 @@ const Dialog = {
 	wasStopped: function D_wasStopped(download) {
 		let idx = this._running.indexOf(download);
 		if (idx > -1) {
-			this._running.slice(idx, 1);
+			this._running.splice(idx, 1);
 		}
 	},
 	signal: function D_signal(download) {
@@ -1038,11 +1038,11 @@ const Dialog = {
 	wasRemoved: function D_wasRemoved(download) {
 		let idx = this._running.indexOf(download);
 		if (idx > -1) {
-			this._running.slice(idx, 1);
+			this._running.splice(idx, 1);
 		}
 		idx = this._autoRetrying.indexOf(download);
 		if (idx > -1) {
-			this._autoRetrying.slice(idx, 1);
+			this._autoRetrying.splice(idx, 1);
 		}
 	},
 	onclose: function(evt) {
@@ -1469,10 +1469,11 @@ QueueItem.prototype = {
 			return false;
 		}
 		if (this.dbId) {
+			Debug.log("saveDownload:" + this);
 			QueueStore.saveDownload(this.dbId, this.serialize());
 			return true;
 		}
-
+		Debug.log("addDownload:" + this);
 		this.dbId = QueueStore.addDownload(this.serialize(), this.position);
 		return true;
 	},
