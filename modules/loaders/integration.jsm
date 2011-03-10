@@ -282,11 +282,19 @@ function filterInSitu(arr, cb, tp) {
 	return arr;
 }
 
-function mapInSitu(arr, cb, tp) {
+function filterMapInSitu(arr, filterStep, mapStep, tp) {
 	tp = tp || null;
-	for (let i = 0, e = arr.length; i < e; i++) {
-	  arr[i] = cb.call(tp, arr[i], i, arr);
+	let i, k, e;
+	for (i = 0, k = 0, e = arr.length; i < e; i++) {
+	  let a = arr[i]; // replace filtered items
+	  if (a && filterStep.call(tp, a, i, arr)) {
+	    k += 1;
+	  }
+	  else {
+		  arr[k] = mapStep.call(tp, a, i, arr);
+	  }
 	}
+	arr.length = k; // truncate
 	return arr;
 }
 
@@ -413,7 +421,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 			}
 		}
 		for (let y in addImagesToArray(
-			mapInSitu(filterInSitu(videos, function(e) !!e.poster), function(e) new TextLinks.FakeLink(e.poster)),
+			filterMapInSitu(videos, function(e) !!e.poster, function(e) new TextLinks.FakeLink(e.poster)),
 			aImages,
 			aWin.document
 		)) {
