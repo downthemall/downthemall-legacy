@@ -454,12 +454,14 @@
 						}
 						items.push(m + v);
 					}
-					items = items
-						.map(this.scale)
-						.filter(function(e) !((e in this) || (this[e] = null)), {}) // makes array unique
-						.sort(function(a, b) a - b);
+					mapFilterInSitu(
+						items,
+						this.scale,
+						function(e) !((e in this) || (this[e] = null)),
+						{}
+						).sort();
 					let sep = document.createElement('menuseparator');
-					for each (let v in items.map(function(e) e * 1024)) {
+					for each (let v in mapInSitu(items, function(e) e * 1024)) {
 						let item = this.appendItem(Utils.formatKBytes(v, 0) + '/s', v);
 						if (v == iv) {
 							if (item.previousSibling) {
