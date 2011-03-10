@@ -397,6 +397,7 @@ const Dialog = {
 			});
 		}, this);
 	},
+	_loadDownloads_props: ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'],
 	_loadDownloads_item: function D__loadDownloads_item(dbItem, idx) {
 		if (!idx) {
 			GlobalProgress.total = dbItem.count;
@@ -411,7 +412,7 @@ const Dialog = {
 		try {
 			let down = JSONCompat.parse(dbItem.serial);
 
-			let get = function(attr, def) {
+			function get(attr, def) {
 				return (attr in down) ? down[attr] : (def ? def : '');
 			}
 
@@ -464,17 +465,10 @@ const Dialog = {
 			d.startDate = new Date(get("startDate"));
 			d.visitors = new VisitorManager(down.visitors);
 
-			for each (let e in [
-				'contentType',
-				'conflicts',
-				'postData',
-				'destinationName',
-				'resumable',
-				'compression',
-				'fromMetalink',
-				'speedLimit',
-			].filter(function(e) e in down)) {
-				d[e] = down[e];
+			for each (let e in this._loadDownloads_props) {
+				if (e in down) {
+					d[e] = down[e];
+				}
 			}
 
 			// don't trigger prealloc!
@@ -908,7 +902,7 @@ const Dialog = {
 
 			if (!this.offline) {
 				if (Prefs.autoRetryInterval) {
-					this._autoRetrying = this._autoRetrying.filter(function(d) !d.autoRetry());
+					filterInSitu(this._autoRetrying, function(d) !d.autoRetry());
 				}
 				this.startNext();
 			}
@@ -987,7 +981,10 @@ const Dialog = {
 		download.resumeDownload();
 	},
 	wasStopped: function D_wasStopped(download) {
-		this._running = this._running.filter(function (d) d != download);
+		let idx = this._running.indexOf(download);
+		if (idx > -1) {
+			this.running.slice(idx, 1);
+		}
 	},
 	signal: function D_signal(download) {
 		download.save();
@@ -1033,14 +1030,20 @@ const Dialog = {
 			Debug.log("signal():", ex);
 		}
 	},
-	markAutoRetry: function D_markAutoRetry(d) {
-		if (this._autoRetrying.indexOf(d) == -1) {
-			this._autoRetrying.push(d);
+	markAutoRetry: function D_markAutoRetry(download) {
+		if (this._autoRetrying.indexOf(download) == -1) {
+			this._autoRetrying.push(download);
 		}
 	},
-	wasRemoved: function D_wasRemoved(d) {
-		this._running = this._running.filter(function(r) r != d);
-		this._autoRetrying = this._autoRetrying.filter(function(r) r != d);
+	wasRemoved: function D_wasRemoved(download) {
+		let idx = this._running.indexOf(download);
+		if (idx > -1) {
+			this._running.slice(idx, 1);
+		}
+		idx = this._autoRetrying.indexOf(download);
+		if (idx > -1) {
+			this._autoRetrying.slice(idx, 1);
+		}
 	},
 	onclose: function(evt) {
 		let rv = Dialog.close();
@@ -1219,7 +1222,7 @@ const Metalinker = {
 				res.downloads,
 				res.info
 			);
-			res.downloads = res.downloads.filter(function(d) { return d.selected; });
+			filterInSitu(res.downloads, function(d) { return d.selected; });
 			if (res.downloads.length) {
 				startDownloads(res.info.start, res.downloads);
 			}
@@ -1736,7 +1739,7 @@ QueueItem.prototype = {
 	},
 	verifyHashError: function(mismatches) {
 		let file = new FileFactory(this.destinationFile);
-		mismatches = mismatches.filter(function(e) e.start != e.end);
+		filterInSitu(mismatches, function(e) e.start != e.end);
 
 		function deleteFile() {
 			try {
@@ -2320,23 +2323,10 @@ QueueItem.prototype = {
 		Debug.log("scoreboard\n" + scoreboard);
 	},
 	toString: function() this.urlManager.usable,
+	serialize_props: ['fileName', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'maxChunks', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'],
 	serialize: function() {
 		let e = {};
-		[
-			'fileName',
-			'postData',
-			'description',
-			'title',
-			'resumable',
-			'mask',
-			'pathName',
-			'compression',
-			'maxChunks',
-			'contentType',
-			'conflicts',
-			'fromMetalink',
-			'speedLimit'
-		].forEach(
+		this.serialze_props.forEach(
 			function(u) {
 				// only save what is changed
 				if (this.__proto__[u] !== this[u]) {
