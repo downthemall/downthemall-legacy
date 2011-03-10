@@ -50,6 +50,8 @@ const EXPORTED_SYMBOLS = [
 	'formatNumber',
 	'formatTimeDelta',
 	'getTimestamp',
+	'filterInSitu',
+	'mapInSitu',
 	'naturalSort',
 	'SimpleIterator',
 	'Properties',
@@ -543,6 +545,42 @@ function getTimestamp(str) {
 }
 
 /**
+ * Filter arrays in-situ. Like Array.filter, but in place
+ *
+ * @param {Array} arr
+ * @param {Function} cb
+ * @param {Object} tp
+ * @returns {Array} Filtered array (identity)
+ */
+function filterInSitu(arr, cb, tp) {
+	tp = tp || null;
+	let i, k, e;
+	for (i = 0, k = 0, e = arr.length; i < e; i++) {
+	  let a = arr[k] = arr[i]; // replace filtered items
+	  if (a && cb.call(tp, a, i, arr)) {
+	    k += 1;
+	  }
+	}
+	arr.length = k; // truncate
+	return arr;
+}
+
+/**
+ * Map arrays in-situ. Like Array.map, but in place.
+ * @param {Array} arr
+ * @param {Function} cb
+ * @param {Object} tp
+ * @returns {Array} Mapped array (identity)
+ */
+function mapInSitu(arr, cb, tp) {
+	tp = tp || null;
+	for (let i = 0, e = arr.length; i < e; i++) {
+	  arr[i] = cb.call(tp, arr[i], i, arr);
+	}
+	return arr;
+}
+
+/**
  * Sorts an array with natural sort order.
  * Unlike Array.sort the array is NOT sorted in-situ.
  * @param arr (array) Array to sort
@@ -551,16 +589,10 @@ function getTimestamp(str) {
  */
 function naturalSort(arr, mapper) {
 	if (typeof mapper != 'function' && !(mapper instanceof Function)) {
-		mapper = function(e) e;
+		mapper = naturalSort.identity;
 	}
-	let isDigit = function(a, i) {
-		i = a[i];
-		return i >= '0' && i <= '9';
-	};
-	let compare = function(a, b) {
-		return a === b ? 0 : (a < b ? -1 : 1);
-	}
-	arr = arr.map(
+	mapInSitu(
+		arr,
 		function(b) {
 			let e = mapper(b);
 			if (e == null || e == undefined || typeof e == 'number') {
@@ -576,12 +608,12 @@ function naturalSort(arr, mapper) {
 				return {elem: b, chunks: [a]};
 			}
 			let rv = [];
-			let last = isDigit(a, 0);
+			let last = naturalSort.isDigit(a, 0);
 			let cur = last;
 			start = 0;
 
 			for (let i = 0; i < len; ++i) {
-				cur = isDigit(a, i);
+				cur = naturalSort.isDigit(a, i);
 				if (cur != last) {
 					rv.push(cur ? a.substr(start, i - start) : Number(a.substr(start, i - start)));
 					start = i;
@@ -601,11 +633,11 @@ function naturalSort(arr, mapper) {
 			let m = Math.max(a.length, b.length);
 			for (let i = 0; i < m; ++i) {
 				let ai = a[i], bi = b[i];
-				let rv = compare(typeof ai, typeof bi);
+				let rv = naturalSort.compare(typeof ai, typeof bi);
 				if (rv) {
 					return rv;
 				}
-				rv = compare(ai, bi);
+				rv = naturalSort.compare(ai, bi);
 				if (rv) {
 					return rv;
 				}
@@ -613,8 +645,17 @@ function naturalSort(arr, mapper) {
 			return a.length - b.length;
 		}
 	);
-	return arr.map(function(a) a.elem);
+	return mapInSitu(arr, function(a) a.elem);
 }
+naturalSort.identity = function(e) e;
+naturalSort.isDigit = function(a, i) {
+	i = a[i];
+	return i >= '0' && i <= '9';
+};
+naturalSort.compare = function(a, b) {
+	return a === b ? 0 : (a < b ? -1 : 1);
+};
+
 
 /**
  * Simple Iterator encapsulating nsISimpleEnumerator for easy access
@@ -757,7 +798,7 @@ MimeQuality.prototype = {
 			rv.push({q: x, v: e.join(", ")});
 		}
 		rv.sort(function(a, b) (a.q > b.q) ? -1 : ((a.q < b.q) ? 1 : 0));
-		rv = rv.map(function(e) e.v + ";q=" + e.q).join(", ");
+		mapInSitu(rv, function(e) e.v + ";q=" + e.q).join(", ");
 		return rv;
 	}
 }
@@ -774,7 +815,8 @@ function _loadBundle(url) {
 	return _bundles[url] = strings;
 }
 function _loadBundles(urls) {
-	urls = urls.filter(
+	filterInSitu(
+		urls,
 		function(e) !((e in this) || (this[e] = null)), {}
 	);
 	urls.sort();
@@ -783,7 +825,7 @@ function _loadBundles(urls) {
 		return _bundles[key];
 	}
 	let rv = {};
-	for each (let b in urls.map(function(e) _loadBundle(e))) {
+	for each (let b in mapInSitu(urls, function(e) _loadBundle(e))) {
 		merge(rv, b);
 	}
 	return _bundles[key] = rv;
