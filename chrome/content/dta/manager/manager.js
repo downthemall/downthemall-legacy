@@ -1941,33 +1941,33 @@ QueueItem.prototype = {
 			let tp = this;
 			function curl() uri.host + ((uripath.value == "") ? "" : (SYSTEMSLASH + uripath.value));
 			let replacements = {
-				"name": function() name,
-				"ext": function() ext,
-				"text": function() tp.description.removeBadChars().replaceSlashes(' ').trim(),
-				"flattext": function() tp.description.removeBadChars().getUsableFileNameWithFlatten(),
-				'title': function() tp.title.removeBadChars().trim(),
-				'flattitle': function() tp.title.removeBadChars().getUsableFileNameWithFlatten(),
-				"url": function() tp.urlManager.host,
-				"domain": function() tp.urlManager.domain,
-				"subdirs": function() uripath.value,
-				"flatsubdirs": function() uripath.value.getUsableFileNameWithFlatten(),
-				"refer": function() tp.referrer ? tp.referrer.host.toString() : '',
-				"qstring": function() query,
-				"curl": function() curl(),
-				"flatcurl": function() curl().getUsableFileNameWithFlatten(),
-				"num": function() Utils.formatNumber(tp.bNum),
-				"inum": function() Utils.formatNumber(tp.iNum),
-				"hh": function() Utils.formatNumber(tp.startDate.getHours(), 2),
-				"mm": function() Utils.formatNumber(tp.startDate.getMinutes(), 2),
-				"ss": function() Utils.formatNumber(tp.startDate.getSeconds(), 2),
-				"d": function() Utils.formatNumber(tp.startDate.getDate(), 2),
-				"m": function() Utils.formatNumber(tp.startDate.getMonth() + 1, 2),
-				"y": function() tp.startDate.getFullYear().toString()
+				name: name,
+				ext: ext,
+				get text() tp.description.removeBadChars().replaceSlashes(' ').trim(),
+				get flattext() tp.description.removeBadChars().getUsableFileNameWithFlatten(),
+				get title() tp.title.removeBadChars().trim(),
+				get flattitle() tp.title.removeBadChars().getUsableFileNameWithFlatten(),
+				url: tp.urlManager.host,
+				domain: tp.urlManager.domain,
+				subdirs: uripath.value,
+				get flatsubdirs() uripath.value.getUsableFileNameWithFlatten(),
+				refer: tp.referrer ? tp.referrer.host.toString() : '',
+				qstring: query,
+				get curl() curl(),
+				get flatcurl() curl().getUsableFileNameWithFlatten(),
+				get num() Utils.formatNumber(tp.bNum),
+				get inum() Utils.formatNumber(tp.iNum),
+				get hh() Utils.formatNumber(tp.startDate.getHours(), 2),
+				get mm() Utils.formatNumber(tp.startDate.getMinutes(), 2),
+				get ss() Utils.formatNumber(tp.startDate.getSeconds(), 2),
+				get d() Utils.formatNumber(tp.startDate.getDate(), 2),
+				get m() Utils.formatNumber(tp.startDate.getMonth() + 1, 2),
+				get y() tp.startDate.getFullYear().toString()
 			}
 			function replacer(type) {
 				let t = type.substr(1, type.length - 2);
 				if (t in replacements) {
-					return replacements[t]();
+					return replacements[t];
 				}
 				return type;
 			}
