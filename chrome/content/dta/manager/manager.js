@@ -983,7 +983,7 @@ const Dialog = {
 	wasStopped: function D_wasStopped(download) {
 		let idx = this._running.indexOf(download);
 		if (idx > -1) {
-			this.running.slice(idx, 1);
+			this._running.slice(idx, 1);
 		}
 	},
 	signal: function D_signal(download) {
@@ -2326,7 +2326,7 @@ QueueItem.prototype = {
 	serialize_props: ['fileName', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'maxChunks', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'],
 	serialize: function() {
 		let e = {};
-		this.serialze_props.forEach(
+		this.serialize_props.forEach(
 			function(u) {
 				// only save what is changed
 				if (this.__proto__[u] !== this[u]) {
