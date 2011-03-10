@@ -420,11 +420,15 @@ Connection.prototype = {
 		}
 		if (found) {
 			Debug.log("handleError: found joinable chunk; recovering suceeded, chunk: " + found);
+
+			// map current failed chunk into the found one
 			found.end = c.end;
-			if (--d.maxChunks == 1) {
-				// d.resumable = false;
+
+			// remove the current chunk
+			let cidx = d.chunks.indexOf(c);
+			if (cidx > -1) {
+				d.chunks.splice(cidx, 1);
 			}
-			d.chunks = d.chunks.filter(function(ch) ch != c);
 			d.chunks.sort(function(a, b) a.start - b.start);
 
 			// check for overlapping ranges we might have created
@@ -444,7 +448,7 @@ Connection.prototype = {
 				}
 			}
 			let ac = 0;
-			d.chunks.forEach(function(c) { if (c.running) { ++ac;	}});
+			d.chunks.forEach(function(c) { if (c.running) { ++ac; }});
 			d.activeChunks = ac;
 			c.close();
 
