@@ -94,6 +94,14 @@ function WorkerJob(file, size, perms, callback) {
 	this.size = size;
 	this.perms = perms;
 	this.callback = callback;
+	try {
+		this._stream = new FileOutputStream(this.file, 0x02 | 0x08, this.perms, 0);
+	}
+	catch (ex) {
+		this.callback(false);
+		return;
+	}
+
 	let g = this.run.bind(this);
 	this.coThread = new CoThreadInterleaved((i for (i in g())), 1);
 	this.coThread.start(this.finish.bind(this));
@@ -102,7 +110,7 @@ function WorkerJob(file, size, perms, callback) {
 WorkerJob.prototype = {
 	result: false,
 	run: function worker_run() {
-		if (WINDOWSIMPL) {
+		if (WINDOWSIMPL && this.size < WINDOWSIMPL_SIZEMAX) {
 			for (let i in this._run_windows()) yield i;
 		}
 		else {
@@ -110,29 +118,24 @@ WorkerJob.prototype = {
 		}
 	},
 	finish: function() {
+		this._close();
 		delete this.coThread;
 		this.callback(this.result);
 	},
 	_run_windows: function worker_run_windows() {
+		let size = this.size;
 		try {
-			let stream = new FileOutputStream(this.file, 0x02 | 0x08, this.perms, 0);
-			let size = this.size;
-			try {
-				let seekable = stream.QueryInterface(Ci.nsISeekableStream);
-				seekable.seek(0x02, 0);
-				size -= seekable.tell();
-				while (size > 0) {
-					let count = Math.min(size, 1 << 26 /* 64MB */);
-					size -= count;
-					seekable.seek(0x01, count);
-					seekable.setEOF();
-					yield true;
-				}
-				this.result = true;
+			let seekable = this._stream.QueryInterface(Ci.nsISeekableStream);
+			seekable.seek(0x02, 0);
+			size -= seekable.tell();
+			while (!this.terminated && size > 0) {
+				let count = Math.min(size, 1 << 26 /* 64MB */);
+				size -= count;
+				seekable.seek(0x01, count);
+				seekable.setEOF();
+				yield true;
 			}
-			finally {
-				stream.close();
-			}
+			this.result = true;
 		}
 		catch (ex) {
 			Debug.log("pa: Windows implementation failed!", ex);
@@ -141,28 +144,28 @@ WorkerJob.prototype = {
 	},
 	_run_other: function worker_run_other() {
 		try {
-			let stream = new FileOutputStream(this.file, 0x02 | 0x08, this.perms, 0);
-			try {
-				let i = seekable.tell();
-				if (i < this.size - 1) {
-					i += SIZE_STEP;
-					for (; !this.terminated && i < this.size + SIZE_STEP; i += SIZE_STEP) {
-						seekable.seek(0x00, Math.min(i, this.size - 1));
-						stream.write("a", 1);
-						yield true;
-					}
-					this.result = true;
+			let seekable = this._stream.QueryInterface(Ci.nsISeekableStream);
+			let i = seekable.tell();
+			if (i < this.size - 1) {
+				i += SIZE_STEP;
+				for (; !this.terminated && i < this.size + SIZE_STEP; i += SIZE_STEP) {
+					seekable.seek(0x00, Math.min(i, this.size - 1));
+					seekable.write("a", 1);
+					yield true;
 				}
-			}
-			finally {
-				stream.close();
+				this.result = true;
 			}
 		}
 		catch (ex) {
 			Debug.log("pa: Failed to run prealloc loop", ex);
 		}
 	},
+	_close: function() {
+		try { this._stream.close(); } catch (ex) { }
+		delete this._stream;
+	},
 	cancel: function() {
 		this.terminated = true;
+		this._close();
 	}
 };
