@@ -124,8 +124,11 @@ const FilterMatch = {
 const PathMatch = {
 	get name() 'pathmatch',
 	getItems: function(downloads) {
-		let paths = downloads.map(function(d) d.destinationPath)
-			.filter(function(e) !((e in this) || (this[e] = null)), {});
+		let paths = filterInSitu(
+			downloads.map(function(d) d.destinationPath),
+			function(e) !((e in this) || (this[e] = null)),
+			{}
+			);
 		paths.sort();
 		for each (let p in paths) {
 			yield {
@@ -258,8 +261,11 @@ const SizeMatch = {
 const DomainMatch = {
 	get name() 'domainmatch',
 	getItems: function(downloads) {
-		let domains = downloads.map(function(d) d.urlManager.domain)
-			.filter(function(e) !((e in this) || (this[e] = null)), {});
+		let domains = filterInSitu(
+				downloads.map(function(d) d.urlManager.domain),
+				function(e) !((e in this) || (this[e] = null)),
+				{}
+				);
 		domains.sort();
 		for each (let p in domains) {
 			yield {
@@ -339,7 +345,7 @@ Matcher.prototype = {
 		}
 	},
 	removeMatcher: function(name) {
-		this._matchers = this._matchers.filter(function(m) m.name != name);
+		filterInSitu(function(m) m.name != name);
 	},
 	get filtering() !!this._matchers.length,
 	filter: function(array) array.filter(function(e) this._matchers.every(function(m) m.isMatch(e)), this),
