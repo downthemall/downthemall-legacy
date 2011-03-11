@@ -1,3 +1,5 @@
+"use strict";
+
 var EXPORTED_SYMBOLS = [
 	'PAUSED',
 	'RUNNING',
