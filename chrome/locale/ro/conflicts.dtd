@@ -1,0 +1,7 @@
+<!ENTITY title.value "Conflict la denumirea fișierului!">
+<!ENTITY text.value "Memorare opțiune">
+<!ENTITY file.label "Doar pentru această descărcare">
+<!ENTITY session.label "Doar pentru această sesiune de descărcări">
+<!ENTITY always.label "De acum înainte">
+<!ENTITY overwrite.label "Să înlocuiți fișierul existent">
+<!ENTITY skip.label "Să renunțați la el">
