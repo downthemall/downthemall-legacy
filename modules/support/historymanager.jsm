@@ -34,6 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 const EXPORTED_SYMBOLS = [
 	'getHistory'
 ];
@@ -104,14 +106,14 @@ History.prototype = {
 		let json = prefs.getExt(this._key, '[]');
 		let rv = [];
 		try {
-			rv = parse(json);
+			rv = JSON.parse(json);
 		}
 		catch (ex) {
 			Debug.log("Histories: Parsing of history failed: " + json, ex);
 		}
 		if (!rv.length) {
 			try {
-				rv = parse(prefs.getExt(this._key + ".default", '[]'));
+				rv = JSON.parse(prefs.getExt(this._key + ".default", '[]'));
 			}
 			catch (ex) {
 				Debug.log("Cannot apply default values", ex);
@@ -129,8 +131,8 @@ History.prototype = {
 		}
 		else {
 			try {
-				prefs.setExt(this._key, stringify(values));
-				Debug.log("Set normal history for " + this._key + " to " + stringify(values));
+				prefs.setExt(this._key, JSON.stringify(values));
+				Debug.log("Set normal history for " + this._key + " to " + JSON.stringify(values));
 			}
 			catch (ex) {
 				Debug.log("Histories: Setting values failed" + values, ex);
