@@ -1,0 +1,18 @@
+<!ENTITY title "Faga a sua selección">
+<!ENTITY filters.caption "Filtros">
+<!ENTITY additional.caption "Filtrado rápido">
+<!ENTITY additional.tip "Filtro de texto: pode establecer varios filtros de texto separados por comas">
+<!ENTITY regex.label "Exp. Reg.">
+<!ENTITY filter.tip "Escriba aquí os seus filtros de texto (ver exemplos no menú despregable)">
+<!ENTITY status.label "Tras seleccionar os enlaces, faga clic en Iniciar">
+<!ENTITY menu.mask.title "Modificar máscara de renomeado...">
+<!ENTITY menu.check.label "Marcar seleccionados">
+<!ENTITY menu.uncheck.label "Desmarcar seleccionados">
+<!ENTITY menu.toggle.label "Conmutar marcado/desmarcado nos seleccionados">
+<!ENTITY tab.links.label "Enlaces">
+<!ENTITY tab.pics.label "Imáxenes e multimedia">
+<!ENTITY header.desc.label "Descripción">
+<!ENTITY selectfiltered.label "Seleccionar filtrado">
+<!ENTITY disableother.label "Deshabilitar os outros filtros">
+<!ENTITY disableother.tooltip "Deshabilitar os outros filtros e usar só o filtrado rápido (esta predisposición non se memoriza por agora)">
+<!ENTITY resname.value "Nome do recurso">
