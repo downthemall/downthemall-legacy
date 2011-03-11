@@ -34,6 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 const EXPORTED_SYMBOLS = ['setAuthPrompterWindow', 'Connection', 'GlobalBucket'];
 
 const Cc = Components.classes;
@@ -70,7 +72,7 @@ extendString(String);
 
 ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService2");
 
-(function() {
+(function(global) {
 	let strings = {};
 	for (let s in new SimpleIterator(Cc["@mozilla.org/intl/stringbundle;1"]
 		.getService(Ci.nsIStringBundleService)
@@ -79,8 +81,8 @@ ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOServ
 		strings[s.key] = s.value;
 	}
 	let bundles = new StringBundles(strings);
-	this['_'] = function() (arguments.length == 1) ? bundles.getString(arguments[0]) : bundles.getFormattedString.apply(bundles, arguments);
-})();
+	global['_'] = function() (arguments.length == 1) ? bundles.getString(arguments[0]) : bundles.getFormattedString.apply(bundles, arguments);
+})(this);
 
 
 let _window = null;
