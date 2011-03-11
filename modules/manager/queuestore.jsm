@@ -36,6 +36,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 var EXPORTED_SYMBOLS = ['QueueStore'];
 
 const Cc = Components.classes;
