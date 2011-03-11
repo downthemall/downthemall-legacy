@@ -34,6 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 const EXPORTED_SYMBOLS = ['verify'];
 
 const Cc = Components.classes;
@@ -174,7 +176,7 @@ Verificator.prototype = {
 			new Callback(function() {
 				mainHash = new Hash(nsICryptoHash[hashCollection.full.type]);
 			}, true);
-			let stream = new FileInputStream(file, 0x01, 0766, 0);
+			let stream = new FileInputStream(file, 0x01, 502 /* 0766*/, 0);
 			try {
 				while (pending) {
 					if (this.terminated) {
@@ -226,7 +228,7 @@ MultiVerificator.prototype = {
 			new Callback(function() {
 				mainHash = new Hash(nsICryptoHash[hashCollection.full.type]);
 			}, true);
-			let stream = new FileInputStream(file, 0x01, 0766, 0).QueryInterface(Ci.nsISeekableStream);
+			let stream = new FileInputStream(file, 0x01, 502 /* 0766 */, 0).QueryInterface(Ci.nsISeekableStream);
 			let flushBytes = REGULAR_CHUNK;
 			try {
 				for each (let partial in hashCollection.partials) {
