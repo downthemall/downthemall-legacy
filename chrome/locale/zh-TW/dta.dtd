@@ -1,8 +1,3 @@
-<!--
-	commonly used.
-	CHECK BEFORE MODIFY
-
--->
 <!ENTITY start.label "開始">
 <!ENTITY start.key "S">
 <!ENTITY queue.label "加入並暫停">
