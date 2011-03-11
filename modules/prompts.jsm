@@ -34,6 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 var EXPORTED_SYMBOLS = ['confirm', 'confirmOC', 'confirmYN', 'alert'];
 
 const Cc = Components.classes;
