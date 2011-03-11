@@ -34,6 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 const EXPORTED_SYMBOLS = ['overrideUA', 'amendUA'];
 
 const Cc = Components.classes;
@@ -86,12 +88,12 @@ for each (let [m, sp] in [['URL', function(c) c.spec], ['Http', function(c) c.UR
 	EXPORTED_SYMBOLS.splice(EXPORTED_SYMBOLS.length, 3, 'register' + m, 'unregister' + m, 'modify' + m);
 }
 
-_uaextra = "DownThemAll!";
-_uaplatform = (function() {
+var _uaextra = "DownThemAll!";
+var _uaplatform = (function() {
 	let ph = Cc["@mozilla.org/network/protocol;1?name=http"].getService(Ci.nsIHttpProtocolHandler);
 	return ph.platform + "; " + ph.oscpu + "; " + ph.language;
 })();
-_uaextrap = _uaextra + " (" + _uaplatform + "; like wget)";
+var _uaextrap = _uaextra + " (" + _uaplatform + "; like wget)";
 Version.getInfo(function(v) {
 	_uaextrap = _uaextra + "/" + v.BASE_VERSION + " (" + _uaplatform + "; 2.0; like wget)";
 	_uaextra += "/" + v.BASE_VERSION;
