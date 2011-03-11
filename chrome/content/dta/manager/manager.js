@@ -51,9 +51,8 @@ ServiceGetter(this, "MimeService", "@mozilla.org/uriloader/external-helper-app-s
 ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIObserverService");
 ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 
-let Prompts = {}, Limits = {}, JSONCompat = {}, PrivateBrowsing = {};
+let Prompts = {}, Limits = {}, PrivateBrowsing = {};
 module('resource://dta/cothread.jsm');
-module('resource://dta/json.jsm', JSONCompat);
 module('resource://dta/support/urlmanager.jsm');
 module('resource://dta/prompts.jsm', Prompts);
 
@@ -410,7 +409,7 @@ const Dialog = {
 		}
 
 		try {
-			let down = JSONCompat.parse(dbItem.serial);
+			let down = JSON.parse(dbItem.serial);
 
 			function get(attr, def) {
 				return (attr in down) ? down[attr] : (def ? def : '');
@@ -1469,11 +1468,9 @@ QueueItem.prototype = {
 			return false;
 		}
 		if (this.dbId) {
-			Debug.log("saveDownload:" + this);
 			QueueStore.saveDownload(this.dbId, this.serialize());
 			return true;
 		}
-		Debug.log("addDownload:" + this);
 		this.dbId = QueueStore.addDownload(this.serialize(), this.position);
 		return true;
 	},
@@ -2376,7 +2373,7 @@ QueueItem.prototype = {
 				e.chunks.push({start: c.start, end: c.end, written: c.safeBytes});
 			}
 		}
-		return JSONCompat.stringify(e);
+		return JSON.stringify(e);
 	}
 }
 
