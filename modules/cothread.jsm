@@ -34,6 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 const EXPORTED_SYMBOLS = ['CoThread', 'CoThreadInterleaved', 'CoThreadListWalker'];
 
 const Cc = Components.classes;
