@@ -1,8 +1,3 @@
-<!--
-	commonly used.
-	CHECK BEFORE MODIFY
-
--->
 <!ENTITY start.label "Inizia!">
 <!ENTITY start.key "i">
 <!ENTITY queue.label "Accoda">
