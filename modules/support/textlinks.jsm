@@ -34,6 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 var EXPORTED_SYMBOLS = ["getTextLinks", "FakeLink"];
 
 const Cc = Components.classes;
