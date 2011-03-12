@@ -34,6 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 const EXPORTED_SYMBOLS = ['Matcher'];
 
 const Cc = Components.classes;
@@ -52,7 +54,7 @@ module('resource://dta/utils.jsm');
 const Debug = DTA.Debug;
 extendString(String);
 
-(function() {
+(function(global) {
 	let strings = {};
 	let ss = Cc["@mozilla.org/intl/stringbundle;1"]
 		.getService(Ci.nsIStringBundleService);
@@ -66,8 +68,8 @@ extendString(String);
 		}
 	}
 	let bundles = new StringBundles(strings);
-	this['_'] = function() (arguments.length == 1) ? bundles.getString(arguments[0]) : bundles.getFormattedString.apply(bundles, arguments);
-})();
+	global['_'] = function() (arguments.length == 1) ? bundles.getString(arguments[0]) : bundles.getFormattedString.apply(bundles, arguments);
+})(this);
 
 
 const TextMatch = {
@@ -345,7 +347,7 @@ Matcher.prototype = {
 		}
 	},
 	removeMatcher: function(name) {
-		filterInSitu(function(m) m.name != name);
+		filterInSitu(this._matchers, function(m) m.name != name);
 	},
 	get filtering() !!this._matchers.length,
 	filter: function(array) array.filter(function(e) this._matchers.every(function(m) m.isMatch(e)), this),
