@@ -35,6 +35,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 const EXPORTED_SYMBOLS = ['loadWindow'];
 
 const Cc = Components.classes;
@@ -49,11 +51,9 @@ const Exception = Components.Exception;
 function loadWindow() {};
 
 try {
-	// moz-1.9.3+
-	module("resource://gre/modules/AddonManager.jsm");
-
+	// moz-2.0+
 	const ZipReader = Ctor("@mozilla.org/libjar/zip-reader;1", "nsIZipReader", "open");
-
+	module("resource://gre/modules/AddonManager.jsm");
 	module("resource://dta/version.jsm");
 	module("resource://gre/modules/XPCOMUtils.jsm");
 
@@ -61,102 +61,106 @@ try {
 	if (!(DirectoryService instanceof Ci.nsIDirectoryService)) {
 		throw new Exception("eek");
 	}
-	let profileDir = DirectoryService.get("ProfD", Ci.nsILocalFile);
-	let iconDir = profileDir.clone();
-	iconDir.append('icons');
-	iconDir.append('default');
-
-	// xpi version
-	function extract(file) {
-		let jar = new ZipReader(file);
-		let entries = jar.findEntries("chrome/icons/default/*.(ico|png|xpm)$");
-		while (entries.hasMore()) {
-			let entry = entries.getNext();
-			try {
-				let name = entry.split(/[/\\]/).pop();
-				let dst = iconDir.clone();
-				dst.append(name);
-				jar.extract(entry, dst);
-			}
-			catch (ex) {
-				re(ex);
-			}
-		}
-	}
-
-	// flat-package version
-	function copy(directory) {
-		let srcDirectory = directory.clone();
-		srcDirectory.append('chrome');
-		srcDirectory.append('icons');
-		srcDirectory.append('default');
-		let icons = srcDirectory.directoryEntries;
-		while (icons.hasMoreElements()) {
-			let icon = icons.getNext();
-			if ((icon instanceof Ci.nsIFile) && icon.isFile()) {
-				icon.copyTo(iconDir, icon.leafName);
-			}
-		}
-	}
-
-	// Directory Provider we use to check the system :p
-	function CheatDirProvider() {}
-	CheatDirProvider.prototype = {
-		hasMore: false,
-		QueryInterface: XPCOMUtils.generateQI([Ci.nsIDirectoryServiceProvider, Ci.nsIDirectoryServiceProvider2, Ci.nsISimpleEnumerator]),
-		getFile: function(prop, persist) {
-			throw Cr.NS_ERROR_FAILURE;
-		},
-		getFiles: function(prop, persist) {
-			if (prop == "AChromDL") {
-				this.hasMore = true;
-				return this;
-			}
-			throw Cr.NS_ERROR_FAILURE;
-		},
-		hasMoreElements: function() this.hasMore,
-		getNext: function() {
-			if (!this.hasMore) {
-				throw Cr.NS_ERROR_FAILURE;
-			}
-			this.hasMore = false;
-			return profileDir.clone();
-		}
-	};
-
-	// Create icons if not there yet, or if we got a major version update
-	if (!iconDir.exists() || Version.showAbout) {
-		if (!iconDir.exists()) {
-			iconDir.create(Ci.nsIFile.DIRECTORY_TYPE, 0755);
-		}
-		AddonManager.getAddonByID(Version.ID, function(addon) {
-			let uri = addon.getResourceURI('icon.png');
-			if (uri instanceof Ci.nsIJARURI) {
-				uri = uri.JARFile;
-				if (uri instanceof Ci.nsIFileURL) {
-					extract(uri.file);
-				}
-			}
-			else if (uri instanceof Ci.nsIFileURL) {
-				copy(uri.file.parent);
-			}
-		});
-	}
 
 	// exported
-	loadWindow = function(window) {
-		let _p = new CheatDirProvider();
-		DirectoryService.registerProvider(_p);
-		window.addEventListener('load', function() {
-			window.removeEventListener('load', arguments.callee, true);
-			window.setTimeout(function() {
-				DirectoryService.unregisterProvider(_p);
-				_p = null;
-			}, 0);
-		}, true);
-	}
+	loadWindow = (function() {
+		// xpi version
+		function extract(file) {
+			let jar = new ZipReader(file);
+			let entries = jar.findEntries("chrome/icons/default/*.(ico|png|xpm)$");
+			while (entries.hasMore()) {
+				let entry = entries.getNext();
+				try {
+					let name = entry.split(/[/\\]/).pop();
+					let dst = iconDir.clone();
+					dst.append(name);
+					jar.extract(entry, dst);
+				}
+				catch (ex) {
+					re(ex);
+				}
+			}
+		}
+
+		// flat-package version
+		function copy(directory) {
+			let srcDirectory = directory.clone();
+			srcDirectory.append('chrome');
+			srcDirectory.append('icons');
+			srcDirectory.append('default');
+			let icons = srcDirectory.directoryEntries;
+			while (icons.hasMoreElements()) {
+				let icon = icons.getNext();
+				if ((icon instanceof Ci.nsIFile) && icon.isFile()) {
+					icon.copyTo(iconDir, icon.leafName);
+				}
+			}
+		}
+
+		// Directory Provider we use to check the system :p
+		function CheatDirProvider() {}
+		CheatDirProvider.prototype = {
+			hasMore: false,
+			QueryInterface: XPCOMUtils.generateQI([Ci.nsIDirectoryServiceProvider, Ci.nsIDirectoryServiceProvider2, Ci.nsISimpleEnumerator]),
+			getFile: function(prop, persist) {
+				throw Cr.NS_ERROR_FAILURE;
+			},
+			getFiles: function(prop, persist) {
+				if (prop == "AChromDL") {
+					this.hasMore = true;
+					return this;
+				}
+				throw Cr.NS_ERROR_FAILURE;
+			},
+			hasMoreElements: function() this.hasMore,
+			getNext: function() {
+				if (!this.hasMore) {
+					throw Cr.NS_ERROR_FAILURE;
+				}
+				this.hasMore = false;
+				return profileDir.clone();
+			}
+		};
+
+		let profileDir = DirectoryService.get("ProfD", Ci.nsILocalFile);
+		let iconDir = profileDir.clone();
+		iconDir.append('icons');
+		iconDir.append('default');
+
+		// Create icons if not there yet, or if we got a major version update
+		if (!iconDir.exists() || Version.showAbout) {
+			if (!iconDir.exists()) {
+				iconDir.create(Ci.nsIFile.DIRECTORY_TYPE, 493 /* 0755 */);
+			}
+			AddonManager.getAddonByID(Version.ID, function(addon) {
+				let uri = addon.getResourceURI('icon.png');
+				if (uri instanceof Ci.nsIJARURI) {
+					uri = uri.JARFile;
+					if (uri instanceof Ci.nsIFileURL) {
+						extract(uri.file);
+					}
+				}
+				else if (uri instanceof Ci.nsIFileURL) {
+					copy(uri.file.parent);
+				}
+			});
+		}
+
+		return function(window) {
+			let _p = new CheatDirProvider();
+			DirectoryService.registerProvider(_p);
+			window.addEventListener('load', function() {
+				window.removeEventListener('load', arguments.callee, true);
+				window.setTimeout(function() {
+					DirectoryService.unregisterProvider(_p);
+					_p = null;
+				}, 0);
+			}, true);
+		}
+	})();
 }
 catch (ex) {
 	// moz-1.9.2-
 	// no need to do anything;
+	Components.utils.reportError(ex);
 }
