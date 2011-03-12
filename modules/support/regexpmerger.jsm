@@ -34,6 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 const EXPORTED_SYMBOLS = ['merge'];
 
 const RE_GROUPSTRIP = /\(.*\)/g;
@@ -200,13 +202,13 @@ function mergePatterns(patterns, low, high, prefix) {
 	let lg = patterns.splice(low, high - low).map(function(p) p.substring(pl));
 	// build a prefix pattern
 	let lgp = lg
-	.map(function(p) {
-		if (p.replace(RE_GROUPSTRIP, '').indexOf('|') == -1) {
-			return p;
-		}
-		return "(?:" + p + ")";
-	})
-	.join("|");
+		.map(function(p) {
+			if (p.replace(RE_GROUPSTRIP, '').indexOf('|') == -1) {
+				return p;
+			}
+			return "(?:" + p + ")";
+		})
+		.join("|");
 	if (prefix) {
 		patterns.push(prefix + "(?:" + lgp + ")");
 	}
