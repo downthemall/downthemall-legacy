@@ -34,6 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 var EXPORTED_SYMBOLS = [
 	'addLimit',
 	'Limit',
@@ -77,7 +79,7 @@ function Limit(host, isNew) {
 	this._connections = 2;
 	this._speed = -1;
 	try {
-		let o = parse(Prefs.get(LIMITS_PREF + this._host, ""));
+		let o = JSON.parse(Prefs.get(LIMITS_PREF + this._host, ""));
 		this.connections = o.c;
 		this.speed = o.s;
 	}
@@ -103,7 +105,7 @@ Limit.prototype = {
 		this._speed = value;
 	},
 	save: function() {
-		Prefs.set(LIMITS_PREF + this._host, stringify({c: this._connections, s: this._speed}));
+		Prefs.set(LIMITS_PREF + this._host, JSON.stringify({c: this._connections, s: this._speed}));
 		this._isNew = false;
 	},
 	remove: function() {
