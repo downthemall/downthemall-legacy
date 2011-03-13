@@ -642,7 +642,7 @@ function load(window) {
 			}
 
 			function unique(i) {
-				return filterInSitu(function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)), {});
+				return filterInSitu(i, function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)), {});
 			}
 
 			if (turbo) {
