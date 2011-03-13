@@ -149,13 +149,14 @@ try {
 		return function(window) {
 			let _p = new CheatDirProvider();
 			DirectoryService.registerProvider(_p);
-			window.addEventListener('load', function() {
-				window.removeEventListener('load', arguments.callee, true);
+			let _load = function() {
+				window.removeEventListener('load', _load, true);
 				window.setTimeout(function() {
 					DirectoryService.unregisterProvider(_p);
 					_p = null;
 				}, 0);
-			}, true);
+			};
+			window.addEventListener('load', _load, true);
 		}
 	})();
 }
