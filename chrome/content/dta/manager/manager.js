@@ -1886,33 +1886,11 @@ QueueItem.prototype = {
 		this.status = TEXT_COMPLETE;
 		this.visitors = new VisitorManager();
 	},
+	get maskURL() this.urlManager.usableURL,
+	get maskURLPath() this.urlManager.usableURLPath,
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
-			let uri = this.urlManager.usable.toURL();
-
-			// normalize slashes
 			let mask = this.mask;
-
-			let uripath = {
-				get value() {
-					let rv = uri.path.removeLeadingChar("/");
-					if (rv.length) {
-						rv = rv.substring(0, uri.path.lastIndexOf("/"))
-							.normalizeSlashes()
-							.removeFinalSlash();
-					}
-					delete this.value;
-					return (this.value = rv);
-				}
-			};
-
-			let query = '';
-			try {
-				query = uri.query;
-			}
-			catch (ex) {
-				// no-op
-			}
 
 			let name = this.fileName;
 			let ext = name.getExtension();
@@ -1938,7 +1916,7 @@ QueueItem.prototype = {
 			}
 
 			let tp = this;
-			function curl() uri.host + ((uripath.value == "") ? "" : (SYSTEMSLASH + uripath.value));
+			function curl() tp.maskURL.host + ((tp.maskURLPath == "") ? "" : (SYSTEMSLASH + tp.maskURLPath));
 			let replacements = {
 				name: name,
 				ext: ext,
@@ -1948,10 +1926,10 @@ QueueItem.prototype = {
 				get flattitle() tp.title.removeBadChars().getUsableFileNameWithFlatten(),
 				url: tp.urlManager.host,
 				domain: tp.urlManager.domain,
-				subdirs: uripath.value,
-				get flatsubdirs() uripath.value.getUsableFileNameWithFlatten(),
+				get subdirs() tp.maskURLPath,
+				get flatsubdirs() tp.maskURLPath.getUsableFileNameWithFlatten(),
 				refer: tp.referrer ? tp.referrer.host.toString() : '',
-				qstring: query,
+				get qstring() tp.maskURL.query || '',
 				get curl() curl(),
 				get flatcurl() curl().getUsableFileNameWithFlatten(),
 				get num() Utils.formatNumber(tp.bNum),

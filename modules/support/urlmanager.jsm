@@ -48,6 +48,7 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 module("resource://dta/utils.jsm");
+extendString(String);
 
 const DTA = {};
 module("resource://dta/api.jsm", DTA);
@@ -86,6 +87,14 @@ UrlManager.prototype = {
 		this._urls.sort(compareFn);
 		this._url = this._urls[0].url;
 		this._usable = this._urls[0].usable;
+		this._usableURL = this._usable.toURL();
+		this._usableURLPath = this._usableURL.path.removeLeadingChar("/");
+		if (this._usableURLPath.length) {
+			this._usableURLPath = this._usableURLPath
+				.substring(0, this._usableURLPath.lastIndexOf("/"))
+				.normalizeSlashes()
+				.removeFinalSlash();
+		}
 		this._domain = Limits.getEffectiveHost(this._url);
 		this._makeGood();
 	},
@@ -118,6 +127,8 @@ UrlManager.prototype = {
 	},
 	get url() this._url,
 	get usable() this._usable,
+	get usableURL() this._usableURL,
+	get usableURLPath() this._usableURLPath,
 	get length() this._urls.length,
 	get host() this._host,
 	get domain() this._domain,
