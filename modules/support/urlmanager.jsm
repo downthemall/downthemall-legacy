@@ -102,11 +102,17 @@ UrlManager.prototype = {
 		if (!url instanceof DTA.URL) {
 			throw new Exception(url + " is not an DTA.URL");
 		}
-		if (!this._urls.some(function(ref) ref.url.spec == url.url.spec)) {
-			this._urls.push(url);
+		for (let i = 0; i < this._urls.length; ++i) {
+			if (this._urls[i].url.spec == url.url.spec) {
+				return;
+			}
 		}
+		this._urls.push(url);
 	},
 	_rotate: function um_rotate() {
+		if (this.good.length < 2) {
+			return;
+		}
 		this.good.push(this.good.shift());
 	},
 	_makeGood: function um_makeGood() {
