@@ -199,23 +199,25 @@ function LegacyScheduler(downloads, running) {
 // Ofast(running)
 function FastScheduler(downloads, running) {
 	let downloadSet = {};
-	for each (let d in running) {
+	let i, e;
+	for (i = 0, e = running.length; i < e; ++i) {
+		let d = running[i];
 		let host = d.urlManager.domain;
-		let knownHost = (host in downloadSet);
-		if (!knownHost) {
+		if (!(host in downloadSet)) {
 			downloadSet[host] = new SchedItem(host);
 		}
 		else {
 			downloadSet[host].inc();
 		}
 	}
-	for (let d in downloads) {
+
+	for (i = 0, e = downloads.length; i < e; ++i) {
+		let d = downloads[i];
 		if (!d.is(QUEUED)) {
 			continue;
 		}
-		const host = d.urlManager.domain;
-		const knownHost = (host in downloadSet);
-		if (!knownHost) {
+		let host = d.urlManager.domain;
+		if (!(host in downloadSet)) {
 			downloadSet[host] = new SchedItem(host);
 			yield d;
 			continue;
@@ -233,9 +235,11 @@ function FastScheduler(downloads, running) {
 // Oeven = O(running) + O(downloads) + O(downloadSet) + Osort(sorted)
 function FairScheduler(downloads, running) {
 	let downloadSet = {};
+	let i, e;
 
 	// Count the running tasks
-	for each (let d in running) {
+	for (i = 0, e = running.length; i < e; ++i) {
+		let d = running[i];
 		let host = d.urlManager.domain;
 		if (!(host in downloadSet)) {
 			downloadSet[host] = new SchedItem(host);
@@ -245,7 +249,8 @@ function FairScheduler(downloads, running) {
 		}
 	}
 
-	for (let d in downloads) {
+	for (i = 0, e = downloads.length; i < e; ++i) {
+		let d = downloads[i];
 		if (!d.is(QUEUED)) {
 			continue;
 		}
@@ -277,7 +282,7 @@ function FairScheduler(downloads, running) {
 		}
 
 		// round robin
-		for (let i = 0, e = sorted.length; i < e; ++i) {
+		for (i = 0, e = sorted.length; i < e; ++i) {
 			let s = sorted[i];
 			yield s.pop();
 			if (!s.queued) {

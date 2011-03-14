@@ -439,7 +439,10 @@ const Dialog = {
 			d._pathName = get('pathName', '');
 			d._description = get('description', '');
 			d._title = get('title', '');
-			d._mask = get('mask');
+			d._mask = get('mask')
+				.normalizeSlashes()
+				.removeLeadingSlash()
+				.removeFinalSlash();
 			d.fileName = get('fileName');
 
 			let tmpFile = get('tmpFile');
@@ -625,7 +628,7 @@ const Dialog = {
 			startDownloads(window.arguments[0], window.arguments[1]);
 		}
 		this._initialized = true;
-		for (let d in Tree.all) {
+		for each (let d in Tree.all) {
 			if (d.is(FINISHING)) {
 				this.run(d);
 			}
@@ -791,7 +794,7 @@ const Dialog = {
 			else {
 				if (Tree.downloadCount) {
 					let state = COMPLETE;
-					for (let d in Tree.all) {
+					for each (let d in Tree.all) {
 						if (d.is(CANCELED)) {
 							state = CANCELED;
 							break;
@@ -860,7 +863,7 @@ const Dialog = {
 		if (this.offline) {
 			de.setAttribute('offline', true);
 			$('netstatus').setAttribute('offline', true);
-			for (let d in Tree.all) {
+			for each (let d in Tree.all) {
 				if (d.is(RUNNING)) {
 					d.pause();
 					d.queue();
@@ -1137,7 +1140,7 @@ const Dialog = {
 			return;
 		}
 		let known = [];
-		for (d in Tree.all) {
+		for each (d in Tree.all) {
 			known.push(d.tmpFile.leafName);
 		}
 		let tmpEnum = Prefs.tempLocation.directoryEntries;
@@ -1374,7 +1377,10 @@ QueueItem.prototype = {
 		if (this._mask == nv) {
 			return nv;
 		}
-		this._mask = nv;
+		this._mask = nv
+			.normalizeSlashes()
+			.removeLeadingSlash()
+			.removeFinalSlash();
 		this.rebuildDestination();
 		this.invalidate(7);
 		return nv;
@@ -1886,10 +1892,7 @@ QueueItem.prototype = {
 			let uri = this.urlManager.usable.toURL();
 
 			// normalize slashes
-			let mask = this.mask
-				.normalizeSlashes()
-				.removeLeadingSlash()
-				.removeFinalSlash();
+			let mask = this.mask;
 
 			let uripath = {
 				get value() {
@@ -2626,7 +2629,10 @@ function startDownloads(start, downloads) {
 			qi._pathName = e.dirSave.addFinalSlash().toString();
 			qi._description = !!e.description ? e.description : '';
 			qi._title = !!e.title ? e.title : '';
-			qi._mask = e.mask;
+			qi._mask = e.mask
+				.normalizeSlashes()
+				.removeLeadingSlash()
+				.removeFinalSlash();
 			qi.fromMetalink = !!e.fromMetalink;
 			qi.fileName = qi.urlManager.usable.getUsableFileName();
 			if (e.fileName) {

@@ -686,7 +686,7 @@ const Tree = {
 		}
 
 		let downloads = [];
-		for (let d in this.all) {
+		for each (let d in this.all) {
 			if (!(d.state & mask)) {
 				continue;
 			}
@@ -785,7 +785,7 @@ const Tree = {
 	removeDupes: function() {
 		let known = {};
 		let dupes = [];
-		for (let d in this.all) {
+		for each (let d in this.all) {
 			let url = d.urlManager.url.spec;
 			if (url in known) {
 				if (d.isOf(COMPLETE, FINISHING)) {
@@ -865,7 +865,7 @@ const Tree = {
 		this.selectionChanged();
 	},
 	selectInv: function T_selectInv() {
-		for (let d in this.all) {
+		for each (let d in this.all) {
 			this.selection.toggleSelect(d.position);
 		}
 		this.selectionChanged();
@@ -1126,12 +1126,8 @@ const Tree = {
 	get box() {
 		return this._box;
 	},
-	// generator for all download elements.
-	get all() {
-		for each (let d in this._downloads) {
-			yield d;
-		}
-	},
+	get all() this._downloads,
+
 	// generator for selected download elements.
 	// do not make any assumptions about the order.
 	get selected() {
@@ -1256,7 +1252,7 @@ const Tree = {
 			this.beginUpdate();
 			try {
 				QueueStore.beginUpdate();
-				for (let d in this.all) {
+				for each (let d in this.all) {
 					if (!f.call(t, d)) {
 						break;
 					}
@@ -1412,21 +1408,21 @@ const Tree = {
 module('resource://dta/manager/matcher.jsm', Tree);
 
 const FileHandling = {
- 	get _uniqueList() {
- 		let u = {};
- 		for (d in Tree.selected) {
- 			if (d.is(COMPLETE)) {
- 				let f = d.destinationFile;
- 				if (SYSTEMSLASH == "\\") {
- 					f = f.toLowerCase();
- 				}
- 				if (!(f in u)) {
- 					u[f] = null;
- 					yield d;
- 				}
- 			}
- 		}
- 	},
+	get _uniqueList() {
+		let u = {};
+		for (d in Tree.selected) {
+			if (d.is(COMPLETE)) {
+				let f = d.destinationFile;
+				if (SYSTEMSLASH == "\\") {
+					f = f.toLowerCase();
+				}
+				if (!(f in u)) {
+					u[f] = null;
+					yield d;
+				}
+			}
+		}
+	},
 	openFolder: function() {
 		for (d in Tree.selected) {
 			try {
