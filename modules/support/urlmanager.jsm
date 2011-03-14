@@ -115,8 +115,9 @@ UrlManager.prototype = {
 		}
 		this.good.push(this.good.shift());
 	},
+	_makeGood_check: function(u) !('bad' in u),
 	_makeGood: function um_makeGood() {
-		this.good = this._urls.filter(function(u) !('bad' in u));
+		this.good = this._urls.filter(this._makeGood_check);
 		if (!this.good.length) {
 			// all marked bad; actually a bug
 			Cu.reportError("UM: all marked bad");
