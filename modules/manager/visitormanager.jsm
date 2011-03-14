@@ -277,17 +277,14 @@ FtpVisitor.prototype = {
  *
  * @author Nils
  */
-function VisitorManager(nodes) {
+function VisitorManager() {
 	this._visitors = {};
-	if (nodes) {
-		this._load(nodes);
-	}
 }
 VisitorManager.prototype = {
 	/**
 	 * Loads a ::save'd JS Array Will silently bypass failed items!
 	 */
-	_load: function vm_init(nodes) {
+	load: function vm_init(nodes) {
 		for each (let n in nodes) {
 			try {
 				let uri = IOService.newURI(n.url, null, null);
