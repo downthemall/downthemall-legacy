@@ -442,7 +442,7 @@ const Dialog = {
 				.normalizeSlashes()
 				.removeLeadingSlash()
 				.removeFinalSlash();
-			d.fileName = Dialog_loadDownloads_get(down, "fileName");
+			d._fileName = Dialog_loadDownloads_get(down, "fileName");
 
 			let tmpFile = Dialog_loadDownloads_get(down, "tmpFile");
 			if (tmpFile) {
@@ -1891,8 +1891,6 @@ QueueItem.prototype = {
 	get maskCURL() this.maskURL.host + ((this.maskURLPath == "") ? "" : (SYSTEMSLASH + this.maskURLPath)),
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
-			let mask = this.mask;
-
 			let name = this.fileName;
 			let ext = name.getExtension();
 			if (ext) {
@@ -1949,9 +1947,9 @@ QueueItem.prototype = {
 				return type;
 			}
 
-			mask = mask.replace(/\*\w+\*/gi, replacer);
-
+			let mask = this.mask.replace(/\*\w+\*/gi, replacer);
 			mask = mask.removeBadChars().removeFinalChar(".").trim().split(SYSTEMSLASH);
+
 			let file = new FileFactory(this.pathName.addFinalSlash());
 			while (mask.length) {
 				file.append(mask.shift());
