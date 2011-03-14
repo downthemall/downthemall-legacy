@@ -1638,8 +1638,8 @@ QueueItem.prototype = {
 
 	refreshPartialSize: function QI_refreshPartialSize(){
 		let size = 0;
-		for each (let c in this.chunks) {
-			size += c.written;
+		for (let c = 0; c < this.chunks.length; ++c) {
+			size += this.chunks[c].written;
 		}
 		this.partialSize = size;
 		this.progress = Math.round(size * 100.0 / this._totalSize);
