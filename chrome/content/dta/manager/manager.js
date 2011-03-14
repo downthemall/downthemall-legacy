@@ -97,6 +97,11 @@ var TEXT_CANCELED;
 GlobalProgress = new GlobalProgress(window);
 var Timers = new TimerManager();
 
+const Dialog_loadDownloads_props = ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'];
+function Dialog_loadDownloads_get(down, attr, def) (attr in down) ? down[attr] : (def ? def : '');
+
+const serialize_props = ['fileName', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'maxChunks', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'];
+
 const Dialog = {
 	_observes: [
 		'quit-application-requested',
@@ -396,7 +401,6 @@ const Dialog = {
 			});
 		}, this);
 	},
-	_loadDownloads_props: ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'],
 	_loadDownloads_item: function D__loadDownloads_item(dbItem, idx) {
 		if (!idx) {
 			GlobalProgress.total = dbItem.count;
@@ -410,22 +414,17 @@ const Dialog = {
 
 		try {
 			let down = JSON.parse(dbItem.serial);
-
-			function get(attr, def) {
-				return (attr in down) ? down[attr] : (def ? def : '');
-			}
-
 			let d = new QueueItem();
 			d.dbId = dbItem.id;
-			let state = get('state');
+			let state = Dialog_loadDownloads_get(down, "state");
 			if (state) {
 				d._state = state;
 			}
 			d.urlManager = new UrlManager(down.urlManager);
-			d.bNum = get("numIstance");
-			d.iNum = get("iNum");
+			d.bNum = Dialog_loadDownloads_get(down, "numIstance");
+			d.iNum = Dialog_loadDownloads_get(down, "iNum");
 
-			let referrer = get('referrer');
+			let referrer = Dialog_loadDownloads_get(down, "referrer");
 			if (referrer) {
 				try {
 					d.referrer = referrer.toURL();
@@ -436,16 +435,16 @@ const Dialog = {
 			}
 
 			// only access the setter of the last so that we don't generate stuff trice.
-			d._pathName = get('pathName', '');
-			d._description = get('description', '');
-			d._title = get('title', '');
-			d._mask = get('mask')
+			d._pathName = Dialog_loadDownloads_get(down, "pathName");
+			d._description = Dialog_loadDownloads_get(down, "description");
+			d._title = Dialog_loadDownloads_get(down, "title");
+			d._mask = Dialog_loadDownloads_get(down, "mask")
 				.normalizeSlashes()
 				.removeLeadingSlash()
 				.removeFinalSlash();
-			d.fileName = get('fileName');
+			d.fileName = Dialog_loadDownloads_get(down, "fileName");
 
-			let tmpFile = get('tmpFile');
+			let tmpFile = Dialog_loadDownloads_get(down, "tmpFile");
 			if (tmpFile) {
 				try {
 					tmpFile = new FileFactory(tmpFile);
@@ -464,10 +463,10 @@ const Dialog = {
 				}
 			}
 
-			d.startDate = new Date(get("startDate"));
+			d.startDate = new Date(Dialog_loadDownloads_get(down, "startDate"));
 			d.visitors = new VisitorManager(down.visitors);
 
-			for each (let e in this._loadDownloads_props) {
+			for each (let e in Dialog_loadDownloads_props) {
 				if (e in down) {
 					d[e] = down[e];
 				}
@@ -2324,10 +2323,9 @@ QueueItem.prototype = {
 		Debug.log("scoreboard\n" + scoreboard);
 	},
 	toString: function() this.urlManager.usable,
-	serialize_props: ['fileName', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'maxChunks', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'],
 	serialize: function() {
 		let e = {};
-		this.serialize_props.forEach(
+		Dialog_serialize_props.forEach(
 			function(u) {
 				// only save what is changed
 				if (this.__proto__[u] !== this[u]) {
