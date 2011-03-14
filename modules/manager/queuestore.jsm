@@ -318,7 +318,7 @@ const QueueStore = {
 				for (let row = aResult.getNextRow(); row; row = aResult.getNextRow()) {
 					rows.push({
 						id: row.getResultByIndex(0),
-						serial: row.getResultByIndex(1)
+						item: JSON.parse(row.getResultByIndex(1))
 						});
 				}
 			},
