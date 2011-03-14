@@ -438,10 +438,7 @@ const Dialog = {
 			d._pathName = Dialog_loadDownloads_get(down, "pathName");
 			d._description = Dialog_loadDownloads_get(down, "description");
 			d._title = Dialog_loadDownloads_get(down, "title");
-			d._mask = Dialog_loadDownloads_get(down, "mask")
-				.normalizeSlashes()
-				.removeLeadingSlash()
-				.removeFinalSlash();
+			d._mask = Dialog_loadDownloads_get(down, "mask");
 			d._fileName = Dialog_loadDownloads_get(down, "fileName");
 
 			let tmpFile = Dialog_loadDownloads_get(down, "tmpFile");
