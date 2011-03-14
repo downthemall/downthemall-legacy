@@ -1077,27 +1077,26 @@ const Tree = {
 			Debug.log("rt", ex);
 		}
 	},
+	_invalidate_all: function(e, i) {
+		if (e.position != i) {
+			e.position = i;
+			this.push({dbId: e.dbId, position: i});
+		}
+		if (e.is(COMPLETE)) {
+			Dialog.completed++;
+		}
+	},
 	invalidate: function T_invalidate(d, cell) {
 		if (!d) {
-			let complete = 0;
 			let saveArray = [];
-			this._downloads.forEach(
-				function(e, i) {
-					if (e.position != i) {
-						e.position = i;
-						saveArray.push({dbId: e.dbId, position: i});
-					}
-					if (e.is(COMPLETE)) {
-						complete++;
-					}
-				}
-			);
+			Dialog.completed = 0;
+			this._downloads.forEach(this._invalidate_all, saveArray);
 			QueueStore.asyncSavePosition(saveArray);
 			this._box.invalidate();
 			this.refreshTools(this);
-			Dialog.completed = complete;
 			return;
 		}
+
 		if (d instanceof Array) {
 			this.beginUpdate();
 			try {
@@ -1111,6 +1110,7 @@ const Tree = {
 			}
 			return;
 		}
+
 		if (d.position >= 0) {
 			if (cell !== undefined) {
 				this._box.invalidateCell(d.filteredPosition, this._cols[cell]);
