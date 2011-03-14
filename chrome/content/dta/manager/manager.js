@@ -405,10 +405,10 @@ const Dialog = {
 		if (!idx) {
 			GlobalProgress.total = dbItem.count;
 		}
-		if (idx % 50 == 0) {
+		if (idx % 250 == 0) {
 			GlobalProgress.value = idx;
 		}
-		if (idx % 100 == 0) {
+		if (idx % 500 == 0) {
 			this._loading.label = _('loading', [idx, dbItem.count, Math.floor(idx * 100 / dbItem.count)]);
 		}
 
@@ -463,7 +463,8 @@ const Dialog = {
 			d.startDate = new Date(Dialog_loadDownloads_get(down, "startDate"));
 			d.visitors.load(down.visitors);
 
-			for each (let e in Dialog_loadDownloads_props) {
+			for (let i = 0, e; i < Dialog_loadDownloads_props.length; ++i) {
+				e = Dialog_loadDownloads_props[i];
 				if (e in down) {
 					d[e] = down[e];
 				}
