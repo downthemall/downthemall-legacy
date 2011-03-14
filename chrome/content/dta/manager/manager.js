@@ -1888,6 +1888,7 @@ QueueItem.prototype = {
 	},
 	get maskURL() this.urlManager.usableURL,
 	get maskURLPath() this.urlManager.usableURLPath,
+	get maskCURL() this.maskURL.host + ((this.maskURLPath == "") ? "" : (SYSTEMSLASH + this.maskURLPath)),
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
 			let mask = this.mask;
@@ -1916,7 +1917,6 @@ QueueItem.prototype = {
 			}
 
 			let tp = this;
-			function curl() tp.maskURL.host + ((tp.maskURLPath == "") ? "" : (SYSTEMSLASH + tp.maskURLPath));
 			let replacements = {
 				name: name,
 				ext: ext,
@@ -1930,8 +1930,8 @@ QueueItem.prototype = {
 				get flatsubdirs() tp.maskURLPath.getUsableFileNameWithFlatten(),
 				refer: tp.referrer ? tp.referrer.host.toString() : '',
 				get qstring() tp.maskURL.query || '',
-				get curl() curl(),
-				get flatcurl() curl().getUsableFileNameWithFlatten(),
+				get curl() tp.maskCURL,
+				get flatcurl() tp.maskCURL.getUsableFileNameWithFlatten(),
 				get num() Utils.formatNumber(tp.bNum),
 				get inum() Utils.formatNumber(tp.iNum),
 				get hh() Utils.formatNumber(tp.startDate.getHours(), 2),
