@@ -116,12 +116,11 @@ function URL(url, preference) {
 	if (!(url instanceof Ci.nsIURL)) {
 		throw new Exception("You must pass a nsIURL");
 	}
-	if (['http', 'https', 'ftp'].indexOf(url.scheme) == -1) {
+	if (URL.schemes.indexOf(url.scheme) == -1) {
 		throw new Exception("Not a supported URL");
 	}
 
 	this._url = url.clone();
-
 	let hash = getLinkPrintHash(this._url);
 	this._url.ref = '';
 	if (hash) {
@@ -129,6 +128,8 @@ function URL(url, preference) {
 	}
 	this._usable = _decodeCharset(this._url.spec, this._url.originCharset);
 };
+URL.schemes = ['http', 'https', 'ftp'];
+
 URL.prototype = {
 	get url() {
 		return this._url;
