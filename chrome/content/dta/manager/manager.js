@@ -487,7 +487,8 @@ const Dialog = {
 				case PAUSED:
 				case QUEUED:
 				{
-					for each (let c in down.chunks) {
+					for (let i = 0, c; i < down.chunks; ++i) {
+						c = down.chunks[i];
 						d.chunks.push(new Chunk(d, c.start, c.end, c.written));
 					}
 					d.refreshPartialSize();
