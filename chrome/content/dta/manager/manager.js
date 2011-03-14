@@ -100,7 +100,7 @@ var Timers = new TimerManager();
 const Dialog_loadDownloads_props = ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'];
 function Dialog_loadDownloads_get(down, attr, def) (attr in down) ? down[attr] : (def ? def : '');
 
-const serialize_props = ['fileName', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'maxChunks', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'];
+const Dialog_serialize_props = ['fileName', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'maxChunks', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'];
 
 const Dialog = {
 	_observes: [
@@ -413,7 +413,7 @@ const Dialog = {
 		}
 
 		try {
-			let down = JSON.parse(dbItem.serial);
+			let down = dbItem.item;
 			let d = new QueueItem();
 			d.dbId = dbItem.id;
 			let state = Dialog_loadDownloads_get(down, "state");
@@ -464,7 +464,7 @@ const Dialog = {
 			}
 
 			d.startDate = new Date(Dialog_loadDownloads_get(down, "startDate"));
-			d.visitors = new VisitorManager(down.visitors);
+			d.visitors.load(down.visitors);
 
 			for each (let e in Dialog_loadDownloads_props) {
 				if (e in down) {
