@@ -259,9 +259,9 @@ DebugService.prototype = {
 		let file = Cc["@mozilla.org/file/directory_service;1"]
 			.getService(Ci.nsIProperties)
 			.get("ProfD", Ci.nsILocalFile);
-		 file.append('dta_log.txt');
-		 delete DebugService.prototype._file;
-		 return (DebugService.prototype._file = file);
+		file.append('dta_log.txt');
+		delete DebugService.prototype._file;
+		return (DebugService.prototype._file = file);
 	},
 
 	get file() {
@@ -617,10 +617,10 @@ function mapFilterInSitu(arr, mapStep, filterStep, tp) {
 	tp = tp || null;
 	let i, k, e;
 	for (i = 0, k = 0, e = arr.length; i < e; i++) {
-	  let a = arr[k] = mapStep.call(tp, arr[i], i, arr); // replace filtered items
-	  if (a && filterStep.call(tp, a, i, arr)) {
-	    k += 1;
-	  }
+		let a = arr[k] = mapStep.call(tp, arr[i], i, arr); // replace filtered items
+		if (a && filterStep.call(tp, a, i, arr)) {
+			k += 1;
+		}
 	}
 	arr.length = k; // truncate
 	return arr;
