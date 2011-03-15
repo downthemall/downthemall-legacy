@@ -70,7 +70,7 @@ var Dialog = {
 				if (d.referrer) {
 					$('sourcePage')._value = $("sourcePage").value = d.referrer.spec;
 				}
-				if (!d.isOf(FINISHING, COMPLETE)) {
+				if (!d.isOf(FINISHING | COMPLETE)) {
 					$('sourcePage').removeAttribute('readonly');
 				}
 
@@ -107,7 +107,7 @@ var Dialog = {
 					: '';
 				$('canvasGrid').hidden = true;
 			}
-			if (this.downloads.every(function(d) { return d.isOf(COMPLETE, FINISHING); })) {
+			if (this.downloads.every(function(d) { return d.isOf(COMPLETE | FINISHING); })) {
 				for each (let e in $('directory', 'renaming', 'mask', 'browsedir')) {
 					e.setAttribute('readonly', 'true');
 					e.setAttribute('disabled', 'true');
@@ -167,7 +167,7 @@ var Dialog = {
 		}
 
 		for each (let d in this.downloads) {
-			if (!d.isOf(COMPLETE, FINISHING)) {
+			if (!d.isOf(COMPLETE | FINISHING)) {
 				if (directory) {
 					d.pathName = directory;
 				}

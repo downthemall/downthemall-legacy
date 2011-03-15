@@ -564,7 +564,7 @@ const Dialog = {
 		this.reinit(true);
 	},
 	canEnterPrivateBrowsing: function() {
-		if (Tree.some(function(d) { return d.started && !d.resumable && d.isOf(RUNNING); })) {
+		if (Tree.some(function(d) { return d.started && !d.resumable && d.is(RUNNING); })) {
 			var rv = Prompts.confirmYN(
 				window,
 				_("confpbm"),
@@ -577,7 +577,7 @@ const Dialog = {
 		return (this._forceClose = true);
 	},
 	canExitPrivateBrowsing: function() {
-		if (Tree.some(function(d) { return d.isOf(RUNNING, QUEUED, PAUSED, FINISHING); })) {
+		if (Tree.some(function(d) { return d.isOf(RUNNING | QUEUED | PAUSED | FINISHING); })) {
 			var rv = Prompts.confirmYN(
 				window,
 				_("confleavepbm"),
@@ -999,7 +999,7 @@ const Dialog = {
 		}
 		try {
 			// check if there is something running or scheduled
-			if (this.startNext() || Tree.some(function(d) { return d.isOf(FINISHING, RUNNING, QUEUED); } )) {
+			if (this.startNext() || Tree.some(function(d) { return d.isOf(FINISHING | RUNNING | QUEUED); } )) {
 				return;
 			}
 			Debug.log("signal(): Queue finished");
@@ -1053,7 +1053,7 @@ const Dialog = {
 		return rv;
 	},
 	_canClose: function D__canClose() {
-		if (Tree.some(function(d) { return d.started && !d.resumable && d.isOf(RUNNING); })) {
+		if (Tree.some(function(d) { return d.started && !d.resumable && d.is(RUNNING); })) {
 			var rv = Prompts.confirmYN(
 				window,
 				_("confclose"),
@@ -1096,7 +1096,7 @@ const Dialog = {
 		Debug.log("Going to close all");
 		Tree.updateAll(
 			function(d) {
-				if (d.isOf(RUNNING, QUEUED)) {
+				if (d.isOf(RUNNING | QUEUED)) {
 					// enumerate all running chunks
 					d.chunks.forEach(
 						function(c) {
@@ -1528,7 +1528,7 @@ QueueItem.prototype = {
 	 * of any of them
 	 */
 	is: function QI_is(state) this._state == state,
-	isOf: function QI_isOf() (this._state & Array.reduce(arguments, function(p,c) p | c, 0)) != 0,
+	isOf: function QI_isOf(states) this._state & states != 0,
 	save: function QI_save() {
 		if (this.deleting) {
 			return false;
@@ -1634,7 +1634,7 @@ QueueItem.prototype = {
 	get size() {
 		try {
 			let file = null;
-			if (!this.isOf(COMPLETE, FINISHING)) {
+			if (!this.isOf(COMPLETE | FINISHING)) {
 				file = this._tmpFile || null;
 			}
 			else {
@@ -1663,7 +1663,7 @@ QueueItem.prototype = {
 	},
 	_status : '',
 	get status() {
-		if (Dialog.offline && this.isOf(QUEUED, PAUSED)) {
+		if (Dialog.offline && this.isOf(QUEUED | PAUSED)) {
 			return _('offline');
 		}
 		return this._status + (this.autoRetrying ? ' *' : '');
@@ -2388,7 +2388,7 @@ QueueItem.prototype = {
 		e.numIstance = this.bNum;
 		e.iNum = this.iNum;
 		// Store this so we can later resume.
-		if (!this.isOf(CANCELED, COMPLETE) && this.partialSize) {
+		if (!this.isOf(CANCELED | COMPLETE) && this.partialSize) {
 			e.tmpFile = this.tmpFile.path;
 		}
 		e.startDate = this.startDate.getTime();
@@ -2405,7 +2405,7 @@ QueueItem.prototype = {
 
 		e.chunks = [];
 
-		if (this.isOf(RUNNING, PAUSED, QUEUED) && this.resumable) {
+		if (this.isOf(RUNNING | PAUSED | QUEUED) && this.resumable) {
 			for each (let c in this.chunks) {
 				e.chunks.push({start: c.start, end: c.end, written: c.safeBytes});
 			}
