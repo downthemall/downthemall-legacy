@@ -304,11 +304,12 @@ const QueueStore = {
 	deleteDownloads: function(downloads) {
 		this.beginUpdate();
 		try {
-			let stmt = _conn.createStatement('DELETE FROM queue WHERE uuid = :uuid');
+			let stmt = _connection.createStatement('DELETE FROM queue WHERE uuid = :uuid');
 			try {
 				for (let i = 0; i < downloads.length; ++i) {
 					stmt.params.uuid = downloads[i].dbId;
 					stmt.execute();
+					stmt.reset();
 				}
 			}
 			finally {

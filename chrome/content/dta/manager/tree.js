@@ -724,6 +724,7 @@ const Tree = {
 				}
 				// wipe out any info/tmpFiles
 				if (!d.isOf(COMPLETE, CANCELED)) {
+					d.deleting = true;
 					d.cancel();
 				}
 				this._downloads.splice(d.position, 1);
