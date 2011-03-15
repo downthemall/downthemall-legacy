@@ -1278,10 +1278,8 @@ function createReplacer(o) {
 	}
 }
 
-function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
+function QueueItem() {
 	this.visitors = new VisitorManager();
-
-	this.startDate = new Date();
 
 	this.chunks = [];
 	this.speeds = new SpeedStats(SPEED_COUNT);
@@ -1574,7 +1572,8 @@ QueueItem.prototype = {
 	partialSize: 0,
 	progress: 0,
 
-	startDate: null,
+	get startDate() this._startDate || (this.startDate = new Date()),
+	set startDate(nv) this._startDate = nv,
 
 	compression: null,
 
