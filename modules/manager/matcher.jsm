@@ -319,6 +319,7 @@ MatcherTee.prototype = {
 
 function Matcher() {
 	this._matchers = [];
+	this._matchersLength = 0;
 }
 Matcher.prototype = {
 	_available: {
@@ -344,12 +345,20 @@ Matcher.prototype = {
 		if (m) {
 			Debug.log("adding the matcher");
 			this._matchers.push({name: name, isMatch: m});
+			this._matchersLength = this._matchers.length;
 		}
 	},
 	removeMatcher: function(name) {
-		filterInSitu(this._matchers, function(m) m.name != name);
+		this._matchersLength = filterInSitu(this._matchers, function(m) m.name != name).length;
 	},
-	get filtering() !!this._matchers.length,
+	get filtering() !!this._matchersLength,
 	filter: function(array) array.filter(function(e) this._matchers.every(function(m) m.isMatch(e)), this),
-	shouldDisplay: function(d) this._matchers.every(function(m) m.isMatch(d))
+	shouldDisplay: function(d) {
+		for (let i = 0; i < this._matchersLength; ++i) {
+			if (!this._matchers[i].isMatch(d)) {
+				return false;
+			}
+		}
+		return true;
+	}
 };
