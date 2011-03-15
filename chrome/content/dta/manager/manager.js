@@ -1530,6 +1530,9 @@ QueueItem.prototype = {
 	is: function QI_is(state) this._state == state,
 	isOf: function QI_isOf() (this._state & Array.reduce(arguments, function(p,c) p | c, 0)) != 0,
 	save: function QI_save() {
+		if (this.deleting) {
+			return false;
+		}
 		if (
 			(Prefs.removeCompleted && this.is(COMPLETE))
 			|| (Prefs.removeCanceled && this.is(CANCELED))
@@ -2095,27 +2098,33 @@ QueueItem.prototype = {
 			this.state = CANCELED;
 			Debug.log(this.fileName + ": canceled");
 
-			this.visitors = new VisitorManager();
-
-			if (message == "" || !message) {
-				message = _("canceled");
-			}
-			this.status = message;
-
 			this.shutdown();
 
 			this.removeTmpFile();
 
 			// gc
-			this.chunks = [];
-			this.progress = this.totalSize = this.partialSize = 0;
-			this.maxChunks = this.activeChunks = 0;
-			this.conflicts = 0;
-			this.resumable = true;
-			this._autoRetries = 0;
-			delete this._autoRetryTime;
-			this.speeds.clear();
-			this.save();
+			if (!this.deleting) {
+				if (message == "" || !message) {
+					message = _("canceled");
+				}
+
+				this.status = message;
+				this.visitors = new VisitorManager();
+				this.chunks = [];
+				this.progress = this.totalSize = this.partialSize = 0;
+				this.conflicts = 0;
+				this.resumable = true;
+				this._maxChunks = this._activeChunks = 0;
+				this._autoRetries = 0;
+				delete this._autoRetryTime;
+				this.speeds.clear();
+				this.save();
+			}
+			else {
+				this.visitors = null;
+				this.chunks = null;
+				this.speeds = null;
+			}
 		}
 		catch(ex) {
 			Debug.log("cancel():", ex);
