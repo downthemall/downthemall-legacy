@@ -715,8 +715,9 @@ const Tree = {
 
 		this.beginUpdate();
 		try {
-			QueueStore.beginUpdate();
-			for each (let d in downloads) {
+			let async = downloads.length < 100;
+			for (let i = 0; i < downloads.length; ++i) {
+				let d = downloads[i];
 				if (d.is(FINISHING)) {
 					// un-removable :p
 					return;
@@ -728,10 +729,16 @@ const Tree = {
 				this._downloads.splice(d.position, 1);
 				this._box.rowCountChanged(d.position, -1);
 				last = Math.max(d.filteredPosition, last);
-				d.remove();
-				Dialog.wasRemoved(d);
+				if (async) {
+					d.remove();
+				}
+				if (!d.isOf(RUNNING, PAUSED)) {
+					Dialog.wasRemoved(d);
+				}
 			}
-			QueueStore.endUpdate();
+			if (!async) {
+				QueueStore.deleteDownloads(downloads);
+			}
 		}
 		finally {
 			this.invalidate();
