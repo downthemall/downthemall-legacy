@@ -711,7 +711,7 @@ Connection.prototype = {
 				try {
 					chan = aRequest.QueryInterface(sc.i);
 					if ((this.rexamine = this[sc.f](chan))) {
-						 return;
+						return;
 					}
 					break;
 				}
@@ -853,7 +853,7 @@ Connection.prototype = {
 			return;
 		}
 
-		if (!d.isOf(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
+		if (!d.isOf(PAUSED | CANCELED | FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
 			if (d.resumable || Preferences.getExt('resumeonerror', false)) {
 				d.pauseAndRetry();
 				d.status = _('errmismatchtitle');
@@ -867,13 +867,13 @@ Connection.prototype = {
 			}
 			return;
 		}
-		if (!d.isOf(PAUSED, CANCELED)) {
+		if (!d.isOf(PAUSED | CANCELED)) {
 			d.resumeDownload();
 		}
 	},
 
 	// nsIProgressEventSink
-  onProgress: function DL_onProgress(aRequest, aContext, aProgress, aProgressMax) {
+	onProgress: function DL_onProgress(aRequest, aContext, aProgress, aProgressMax) {
 		try {
 			// shortcuts
 			let c = this.c;

@@ -445,7 +445,7 @@ const Tree = {
 		if (col.index == 1) {
 			let d = this._filtered[idx];
 			if (!d) return 0;
-			if (d.isOf(CANCELED, COMPLETE)) {
+			if (d.isOf(CANCELED | COMPLETE)) {
 				return 100;
 			}
 			return d.progress || 0;
@@ -723,7 +723,7 @@ const Tree = {
 					return;
 				}
 				// wipe out any info/tmpFiles
-				if (!d.isOf(COMPLETE, CANCELED)) {
+				if (!d.isOf(COMPLETE | CANCELED)) {
 					d.deleting = true;
 					d.cancel();
 				}
@@ -733,7 +733,7 @@ const Tree = {
 				if (async) {
 					d.remove();
 				}
-				if (!d.isOf(RUNNING, PAUSED)) {
+				if (!d.isOf(RUNNING | PAUSED)) {
 					Dialog.wasRemoved(d);
 				}
 			}
@@ -796,7 +796,7 @@ const Tree = {
 		for each (let d in this.all) {
 			let url = d.urlManager.url.spec;
 			if (url in known) {
-				if (d.isOf(COMPLETE, FINISHING)) {
+				if (d.isOf(COMPLETE | FINISHING)) {
 					continue;
 				}
 				dupes.push(d);
@@ -842,7 +842,7 @@ const Tree = {
 	resume: function T_resume(d) {
 		this.updateSelected(
 			function(d) {
-				if (d.isOf(PAUSED, CANCELED)) {
+				if (d.isOf(PAUSED | CANCELED)) {
 					d.queue();
 				}
 				return true;
@@ -895,7 +895,7 @@ const Tree = {
 	},
 	force: function T_force() {
 		for (let d in Tree.selected) {
-			if (d.isOf(QUEUED, PAUSED, CANCELED)) {
+			if (d.isOf(QUEUED | PAUSED | CANCELED)) {
 				d.queue();
 				Dialog.run(d, true);
 			}
@@ -1066,9 +1066,9 @@ const Tree = {
 					o.setAttribute('disabled', disabled);
 				}
 			}
-			modifySome($('cmdResume'), function(d) d.isOf(PAUSED, QUEUED, CANCELED));
+			modifySome($('cmdResume'), function(d) d.isOf(PAUSED | QUEUED | CANCELED));
 			modifySome($('cmdPause'), function(d) (d.is(RUNNING) && d.resumable) || d.is(QUEUED));
-			modifySome($('cmdCancel'), function(d) !d.isOf(FINISHING));
+			modifySome($('cmdCancel'), function(d) !d.is(FINISHING));
 
 			modifySome($('cmdLaunch'), function(d) !!d.curFile);
 			modifySome($('cmdOpenFolder'), function(d) !!d.curFolder);
@@ -1077,7 +1077,7 @@ const Tree = {
 			modifySome($('cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'), function(d) !!d.count);
 			modifySome($('cmdMirrors', 'cmdAddLimits'), function(d) d.count == 1);
 
-			modifySome($('cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'), function(d) d.isOf(QUEUED, RUNNING, PAUSED, CANCELED));
+			modifySome($('cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'), function(d) d.isOf(QUEUED | RUNNING | PAUSED | CANCELED));
 			modifySome($('cmdMoveTop', 'cmdMoveUp'), function(d) d.min > 0);
 			modifySome($('cmdMoveDown', 'cmdMoveBottom'), function(d) d.max != d.rows - 1);
 		}
