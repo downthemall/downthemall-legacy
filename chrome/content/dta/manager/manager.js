@@ -1965,40 +1965,6 @@ QueueItem.prototype = {
 	get maskURL() this.urlManager.usableURL,
 	get maskURLPath() this.urlManager.usableURLPath,
 	get maskCURL() this.maskURL.host + ((this.maskURLPath == "") ? "" : (SYSTEMSLASH + this.maskURLPath)),
-	rebuildDestination_init: function() {
-		let tp = this;
-		let replacements = {
-			get name() tp.fileNameAndExtension.name,
-			get ext() tp.fileNameAndExtension.extension,
-			get text() tp.description.replaceSlashes(' ').trim(),
-			get flattext() tp.description.getUsableFileNameWithFlatten(),
-			get title() tp.title.trim(),
-			get flattitle() tp.title.getUsableFileNameWithFlatten(),
-			get url() tp.urlManager.host,
-			get domain() tp.urlManager.domain,
-			get subdirs() tp.maskURLPath,
-			get flatsubdirs() tp.maskURLPath.getUsableFileNameWithFlatten(),
-			get refer() tp.referrer ? tp.referrer.host.toString() : '',
-			get qstring() tp.maskURL.query || '',
-			get curl() tp.maskCURL,
-			get flatcurl() tp.maskCURL.getUsableFileNameWithFlatten(),
-			get num() Utils.formatNumber(tp.bNum),
-			get inum() Utils.formatNumber(tp.iNum),
-			get hh() Utils.formatNumber(tp.startDate.getHours(), 2),
-			get mm() Utils.formatNumber(tp.startDate.getMinutes(), 2),
-			get ss() Utils.formatNumber(tp.startDate.getSeconds(), 2),
-			get d() Utils.formatNumber(tp.startDate.getDate(), 2),
-			get m() Utils.formatNumber(tp.startDate.getMonth() + 1, 2),
-			get y() tp.startDate.getFullYear().toString()
-		}
-		return function replacer(type) {
-			let t = type.substr(1, type.length - 2);
-			if (t in replacements) {
-				return replacements[t];
-			}
-			return type;
-		}
-	},
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
 			let mask = this.mask.replace(/\*\w+\*/gi, this.rebuildDestination_replacer);
