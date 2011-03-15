@@ -301,7 +301,24 @@ const QueueStore = {
 		stmt.params.uuid = id;
 		stmt.executeAsync();
 	},
-
+	deleteDownloads: function(downloads) {
+		this.beginUpdate();
+		try {
+			let stmt = _conn.createStatement('DELETE FROM queue WHERE uuid = :uuid');
+			try {
+				for (let i = 0; i < downloads.length; ++i) {
+					stmt.params.uuid = downloads[i].dbId;
+					stmt.execute();
+				}
+			}
+			finally {
+				stmt.finalize();
+			}
+		}
+		finally {
+			this.endUpdate();
+		}
+	},
 	loadItems: function(callback, ctx) {
 		ctx = ctx || null;
 		let stmt;
