@@ -1322,9 +1322,39 @@ QueueItem.prototype = {
 			return nv;
 		}
 		this._fileName = nv;
+		delete this._fileNameAndExtension;
 		this.rebuildDestination();
 		this.invalidate(0);
 		return nv;
+	},
+	get fileNameWithoutExtension() {
+		if (!this._fileNameAndExtension) {
+			let name = this.fileName;
+			let ext = name.getExtension();
+			if (ext) {
+				name = name.substring(0, name.length - ext.length - 1);
+
+				if (this.contentType && /htm/.test(this.contentType) && !/htm/.test(ext)) {
+					ext += ".html";
+				}
+			}
+			// mime-service method
+			else if (this.contentType && /^(?:image|text)/.test(this.contentType)) {
+				try {
+					let info = MimeService.getFromTypeAndExtension(this.contentType.split(';')[0], "");
+					ext = info.primaryExtension;
+				} catch (ex) {
+					ext = '';
+				}
+			}
+			else {
+				name = this.fileName;
+				ext = '';
+			}
+
+			this._fileNameAndExtension = {name: name, extension: ext };
+		}
+		return this._fileNameAndExtension;
 	},
 	_description: null,
 	get description() {
@@ -1483,7 +1513,12 @@ QueueItem.prototype = {
 		delete this.dbId;
 	},
 	position: -1,
-	contentType: "",
+	_contentType: "",
+	get contentType() this._contentType,
+	set contentType(nv) {
+		this._contentType = nv;
+		delete this._fileNameAndExtension;
+	},
 	visitors: null,
 	_totalSize: 0,
 	get totalSize() { return this._totalSize; },
@@ -1890,33 +1925,10 @@ QueueItem.prototype = {
 	get maskCURL() this.maskURL.host + ((this.maskURLPath == "") ? "" : (SYSTEMSLASH + this.maskURLPath)),
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
-			let name = this.fileName;
-			let ext = name.getExtension();
-			if (ext) {
-				name = name.substring(0, name.length - ext.length - 1);
-
-				if (this.contentType && /htm/.test(this.contentType) && !/htm/.test(ext)) {
-					ext += ".html";
-				}
-			}
-			// mime-service method
-			else if (this.contentType && /^(?:image|text)/.test(this.contentType)) {
-				try {
-					let info = MimeService.getFromTypeAndExtension(this.contentType.split(';')[0], "");
-					ext = info.primaryExtension;
-				} catch (ex) {
-					ext = '';
-				}
-			}
-			else {
-				name = this.fileName;
-				ext = '';
-			}
-
 			let tp = this;
 			let replacements = {
-				name: name,
-				ext: ext,
+				name: tp.fileNameAndExtension.name,
+				ext: tp.fileNameAndExtension.extension,
 				get text() tp.description.replaceSlashes(' ').trim(),
 				get flattext() tp.description.getUsableFileNameWithFlatten(),
 				get title() tp.title.trim(),
