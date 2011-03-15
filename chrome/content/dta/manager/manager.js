@@ -1528,7 +1528,7 @@ QueueItem.prototype = {
 	 * of any of them
 	 */
 	is: function QI_is(state) this._state == state,
-	isOf: function QI_isOf(states) this._state & states != 0,
+	isOf: function QI_isOf(states) (this._state & states) != 0,
 	save: function QI_save() {
 		if (this.deleting) {
 			return false;
