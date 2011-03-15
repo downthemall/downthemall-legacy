@@ -92,7 +92,7 @@ var TEXT_PAUSED;
 var TEXT_QUEUED;
 var TEXT_COMPLETE;
 var TEXT_CANCELED;
-
+var TEXT_NAS;
 
 GlobalProgress = new GlobalProgress(window);
 var Timers = new TimerManager();
@@ -157,6 +157,7 @@ const Dialog = {
 		TEXT_QUEUED = _('queued');
 		TEXT_COMPLETE = _('complete');
 		TEXT_CANCELED = _('canceled');
+		TEXT_NAS = _('nas');
 
 		// Set tooltip texts for each tb button lacking one (copy label)
 		(function addTooltips() {
@@ -1514,7 +1515,7 @@ QueueItem.prototype = {
 		this._hashCollection = nv;
 		this._prettyHash = this._hashCollection
 			? _('prettyhash', [this._hashCollection.full.type, this._hashCollection.full.sum])
-			: _('nas');
+			: TEXT_NAS;
 	},
 	_prettyHash: null,
 	get prettyHash() {
@@ -1653,7 +1654,7 @@ QueueItem.prototype = {
 			return _('unknown');
 		}
 		else if (this.totalSize <= 0) {
-			return _('transfered', [Utils.formatBytes(this.partialSize), _('nas')]);
+			return _('transfered', [Utils.formatBytes(this.partialSize), TEXT_NAS]);
 		}
 		else if (this.is(COMPLETE)) {
 			return Utils.formatBytes(this.totalSize);
@@ -1682,7 +1683,7 @@ QueueItem.prototype = {
 	},
 	get percent() {
 		if (!this.totalSize && this.is(RUNNING)) {
-			return _('nas');
+			return TEXT_NAS;
 		}
 		else if (!this.totalSize) {
 			return "0%";
