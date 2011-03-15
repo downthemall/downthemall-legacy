@@ -1068,7 +1068,7 @@ const Tree = {
 			}
 			modifySome($('cmdResume'), function(d) d.isOf(PAUSED | QUEUED | CANCELED));
 			modifySome($('cmdPause'), function(d) (d.is(RUNNING) && d.resumable) || d.is(QUEUED));
-			modifySome($('cmdCancel'), function(d) !d.is(FINISHING));
+			modifySome($('cmdCancel'), function(d) d.isOf(PAUSED | RUNNING | QUEUED | COMPLETE));
 
 			modifySome($('cmdLaunch'), function(d) !!d.curFile);
 			modifySome($('cmdOpenFolder'), function(d) !!d.curFolder);
