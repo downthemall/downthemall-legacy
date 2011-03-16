@@ -426,6 +426,9 @@ Connection.prototype = {
 			// map current failed chunk into the found one
 			found.end = c.end;
 
+			// one less chunk
+			--d.maxChunks;
+
 			// remove the current chunk
 			let cidx = d.chunks.indexOf(c);
 			if (cidx > -1) {
