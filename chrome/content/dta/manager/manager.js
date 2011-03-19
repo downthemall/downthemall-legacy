@@ -1721,7 +1721,7 @@ QueueItem.prototype = {
 			size += this.chunks[c].written;
 		}
 		this.partialSize = size;
-		this.progress = Math.round(size * 100.0 / this._totalSize);
+		this.progress = Math.floor(size * 100.0 / this._totalSize);
 	},
 
 	pause: function QI_pause(){
