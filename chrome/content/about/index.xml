@@ -322,10 +322,7 @@
 
 				<h3>&lp.languagetitle;
 				</h3>
-				<p>
-					<strong>&language; &lp.translation.by;
-					</strong> &transAutor;
-				</p>
+				<p>&fulltranslation;</p>
 			</div>
 			<h2>&lp.ct.contactstitle;</h2>
 			<div id="contacts" class="localizable">
