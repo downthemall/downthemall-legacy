@@ -1639,8 +1639,22 @@ QueueItem.prototype = {
 				new Decompressor(this);
 			}
 			else {
-				this.tmpFile.clone().moveTo(destination, this.destinationName);
-				this.complete();
+				function move(self, x) {
+					try {
+						self.tmpFile.clone().moveTo(destination, self.destinationName);
+					}
+					catch (ex) {
+						x = x || 0;
+						if (x >= 4) {
+							self.complete(ex);
+							return;
+						}
+						window.setTimeout(function() move(self, ++x), 250);
+						return;
+					}
+					self.complete();
+				}
+				move(this);				
 			}
 		}
 		catch(ex) {
