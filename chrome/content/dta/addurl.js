@@ -228,7 +228,7 @@ var Dialog = {
 			if (batch.length > 1000) {
 				message += _('manytasks');
 			}
-			rv = Prompts.confirm(window, _('batchtitle'), message, _('batchtitle'), Prompts.CANCEL, _('singledownload'));
+			rv = Prompts.confirm(window, _('batchtitle'), message, _('batchdownload'), Prompts.CANCEL, _('singledownload'));
 			if (rv == 1) {
 				return false;
 			}
