@@ -4,7 +4,10 @@
 <!-- Your language in your language -->
 <!ENTITY language "English">
 <!-- Your credit; or leave as dTa Team if you don't want credit -->
-<!ENTITY transAutor "The dTa Team">
+<!ENTITY transAuthor "The dTa Team">
+<!-- Your credit and language combined -->
+<!ENTITY fulltranslation "English translation by: The dTa Team">
+
 
 <!ENTITY amo.summary "The first and only download manager/accelerator built inside Firefox!">
 <!ENTITY amo.description.intro "DownThemAll is all you can desire from a download manager: it features an advanced accelerator that increases speed up to 4x and it allows you to pause and resume downloads at any time.">
@@ -86,7 +89,6 @@
 <!ENTITY lp.yr.usagemore "See the licenses for more information.">
 
 <!ENTITY lp.languagetitle "Language">
-<!ENTITY lp.translation.by " translation by">
 
 <!ENTITY lp.yr.licensetitle "Copyright and License">
 <!ENTITY lp.yr.licensed "DownThemAll! is licensed under <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. See the GPL file. This applies to all source code files.">
