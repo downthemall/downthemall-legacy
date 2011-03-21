@@ -526,7 +526,7 @@ Connection.prototype = {
 			Debug.log(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206", this.isInfoGetter);
 
 			if (!this.handleError()) {
-				vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
+				let vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
 				aChannel.visitRequestHeaders(vis);
 				Debug.log("Request Headers\n\n" + vis.value);
 				vis.value = '';
