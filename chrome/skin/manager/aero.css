@@ -43,8 +43,8 @@ window[sizemode="maximized"] #titlebar-max {
 }
 
 /* default style for toolbars */
-#toolbox,
-#actions {
+#toolbox:not(:-moz-lwtheme),
+#actions:not(:-moz-lwtheme) {
 	-moz-appearance: none;
 	background-color: rgb(207, 219, 236);
 }
@@ -123,7 +123,7 @@ toolbarbutton[open="true"] {
 	box-shadow: 0 0 9px rgba(0,0,0,.4) inset,
 		0 0 3px rgba(0,0,0,.4) inset,
 		0 1px 0 rgba(255,255,255,.4);
-  text-shadow: none;
+	text-shadow: none;
 }
 
 toolbarbutton[checked="true"]:not(:active):hover {
@@ -180,16 +180,16 @@ treecol:-moz-lwtheme-brighttext {
 
 /* non-compositor rules */
 @media all and (-moz-windows-compositor:0) {
-  window[sizemode="maximized"] #titlebar:-moz-lwtheme {
-    visibility: hidden;
-  }
- 	window[sizemode="maximized"] #titlebar-buttonbox {
- 		visibility: visible;
+	window[sizemode="maximized"] #titlebar:-moz-lwtheme {
+		visibility: hidden;
+	}
+	window[sizemode="maximized"] #titlebar-buttonbox {
+		visibility: visible;
 		position: relative;
 	}
-  #titlebar-min {
-    -moz-margin-end: 2px;
-  }
+	#titlebar-min {
+		-moz-margin-end: 2px;
+	}
 	#footer {
 		-moz-appearance: none;
 		background-image: -moz-linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
@@ -219,8 +219,8 @@ treecol:-moz-lwtheme-brighttext {
 		margin-bottom: -10px;
 	}
 	window[sizemode="maximized"] #titlebar-buttonbox {
-    -moz-margin-end: 3px;
-  }
+		-moz-margin-end: 3px;
+	}
 	.titlebar-button {
 		display: none;
 	}
