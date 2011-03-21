@@ -72,9 +72,9 @@
 			</property>
 			<property name="accessibleType" readonly="true">
 				<getter>
-          <![CDATA[
-            return Components.interfaces.nsIAccessibleProvider.XULGroupbox;
-          ]]>
+					<![CDATA[
+						return Components.interfaces.nsIAccessibleProvider.XULGroupbox;
+					]]>
 				</getter>
 			</property>
 		</implementation>
@@ -405,27 +405,27 @@
 				<parameter name="description"/>
 				<body><![CDATA[
 					let item = document.createElement('menuitem');
-        	item.setAttribute("label", label);
-          item.setAttribute("value", value);
-          if (description) {
-            item.setAttribute("description", description);
-          }
-          item.className = 'menuitem-iconic';
-          this.appendChild(item);
-          return item;
+					item.setAttribute("label", label);
+					item.setAttribute("value", value);
+					if (description) {
+						item.setAttribute("description", description);
+					}
+					item.className = 'menuitem-iconic';
+					this.appendChild(item);
+					return item;
 				]]></body>
 			</method>
 			<method name="scale">
 				<parameter name="e"/>
 				<body><![CDATA[
 					if (e <= 0) {
-					  return -1;
+						return -1;
 					}
 					if (e >= 1000) {
-					  return Math.round(e / 25) * 25;
+						return Math.round(e / 25) * 25;
 					}
 					if (e >= 400) {
-					  return Math.round(e / 5) * 5;
+						return Math.round(e / 5) * 5;
 					}
 					return e;
 				]]></body>
@@ -649,9 +649,9 @@
 		<content>
 			<xul:image/>
 			<children/>
-      <xul:hbox class="textbox-input-box" flex="1" xbl:inherits="context,spellcheck">
-        <html:input class="textbox-input" flex="1" anonid="input" xbl:inherits="onfocus,onblur,value,type,maxlength,disabled,size,readonly,tabindex,accesskey,noinitialfocus"/>
-      </xul:hbox>
+			<xul:hbox class="textbox-input-box" flex="1" xbl:inherits="context,spellcheck">
+				<html:input class="textbox-input" flex="1" anonid="input" xbl:inherits="onfocus,onblur,value,type,maxlength,disabled,size,readonly,tabindex,accesskey,noinitialfocus"/>
+			</xul:hbox>
 			<xul:toolbarbutton anonid="clearbutton" disabled="true" onclick="this.parentNode.clear();"/>
 		</content>
 		<implementation>
@@ -680,23 +680,23 @@
 		</implementation>
 		<handlers>
 			<handler event="input">
-      	if (!this.value) {
-      		this.clearButton.setAttribute('disabled', 'true');
-        	if (this._timer) {
-        		clearTimeout(this._timer);
-        		this._timer = null;
-       		}
-       		this._search();
-       		return;
-        }
+				if (!this.value) {
+					this.clearButton.setAttribute('disabled', 'true');
+					if (this._timer) {
+						clearTimeout(this._timer);
+						this._timer = null;
+					}
+					this._search();
+					return;
+				}
 
-       	this.clearButton.removeAttribute('disabled');
+				this.clearButton.removeAttribute('disabled');
 				if (!this._timer) {
-        	let tp = this;
-        	this._timer = setTimeout(function() {
-        		tp._search();
-        	}, 750);
-      	}
+					let tp = this;
+					this._timer = setTimeout(function() {
+						tp._search();
+					}, 750);
+				}
 			</handler>
 			<handler event="keypress" phase="capturing"><![CDATA[
 				if (event.keyCode == KeyEvent.DOM_VK_ESCAPE) {
@@ -724,37 +724,50 @@
 			<field name="_lwrefbottom">document.getElementById(this.getAttribute("lwrefbottom"))</field>
 			<field name="_lwobs">Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService)</field>
 			<constructor><![CDATA[
-				let _rl = this._resizeListener = this._refreshLWAuto.bind(this);
 				function doAfterPaint(i) {
 					i = i || 8; // recalculate a few times here, as the bg images might be loaded asynchronously
 					window.addEventListener("MozAfterPaint", function() {
 						if (--i == 0) {
 							window.removeEventListener("MozAfterPaint", arguments.callee, false);
 						}
-						_rl();
+						try {
+							_rl();
+						}
+						catch (ex) {}
 					}, false);
 				}
 
-				doAfterPaint(4);
+				let _rl = this._resizeListener = this._refreshLWAuto.bind(this);
+				let _rs = this._resetLWAuto.bind(this);
 
 				this._lwobm = {
 					observe: function(s,t,d) {
-						doAfterPaint();
+						if (d && d != "null") {
+							doAfterPaint();
+						}
+						else {
+							_rs();
+						}
 					}
 				};
+				this._lwobm._self = this;
 				this._lwobs.addObserver(this._lwobm, "lightweight-theme-styling-update", false);
-				this._lwobs.addObserver(this._lwobm, "lightweight-theme-changed", false);
 
 				window.addEventListener("resize", this._resizeListener, true);
+				doAfterPaint(4);
 			]]></constructor>
 			<destructor><![CDATA[
 				this._lwobs.removeObserver(this._lwobm, "lightweight-theme-styling-update");
-				this._lwobs.removeObserver(this._lwobm, "lightweight-theme-changed");
-
 				window.removeEventListener("resize", this._resizeListener, true);
 
-				this.style.background = '';
+				this._resetLWAuto();
+				delete this._lwobm;
 			]]></destructor>
+			<method name="_resetLWAuto">
+				<body><![CDATA[
+					this.style.background = "";
+				]]></body>
+			</method>
 			<method name="_refreshLWAuto">
 				<body><![CDATA[
 					function poorMansSimilarity(a, b) {
