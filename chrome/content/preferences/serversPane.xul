@@ -55,12 +55,12 @@
 				</columns>
 				<rows>
 					<row align="center">
-						<label value="&serverspane.concurrent.label;" />
+						<label value="&serverspane.concurrent.label;" control="maxtasks" />
 						<scale min="1" max="20" id="maxtasks" preference-editable="true" onchange="Servers.changedMaxTasks();" />
 						<label id="maxtaskslabel" style="width: 3em;" />
 					</row>
 					<row align="center">
-						<label value="&serverspane.perserver.label;" />
+						<label value="&serverspane.perserver.label;" control="maxtasksperserver" />
 						<scale min="1" max="10" id="maxtasksperserver" preference-editable="true" onchange="Servers.changedMaxTasksPerServer();" />
 						<label id="maxtasksperserverlabel" style="width: 3em;" />
 					</row>

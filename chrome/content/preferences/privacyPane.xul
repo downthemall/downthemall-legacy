@@ -41,7 +41,7 @@
 					<groupbox>
 						<caption id="dtaddown" label="&privacypane.dropdowns.caption;"/>
 						<vbox flex="1" align="center">
-							<label value="&privacypane.dropdownresults.label;" flex="1" />
+							<label value="&privacypane.dropdownresults.label;" flex="1" control="history" />
 							<hbox>
 								<scale min="0" max="15" id="history" preference-editable="true" onchange="Privacy.changedHistory();"/>
 								<label id="historylabel" style="min-width: 3em;" />
