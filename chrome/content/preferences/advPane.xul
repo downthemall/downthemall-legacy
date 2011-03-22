@@ -41,7 +41,7 @@
 						</columns>
 						<rows>
 							<row align="center">
-								<label value="&advancedpane.chunks.label;" id="maxchunk" />
+								<label value="&advancedpane.chunks.label;" id="maxchunk" contol="maxchunks" />
 								<hbox align="center">
 									<scale min="1" max="10" id="maxchunks" preference-editable="true" onchange="Advanced.changedMaxChunks();" />
 									<label id="maxchunkslabel" style="min-width: 6em;" />
