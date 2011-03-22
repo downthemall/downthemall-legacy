@@ -187,7 +187,9 @@ SchedItem.prototype = {
 // Legacy scheduler. Does not respect limits
 // Basically Olegacy(1)
 function LegacyScheduler(downloads, running) {
-	for (let d in downloads) {
+	let i, e, d;
+	for (i = 0, e = downloads.length; i < e; ++i) {
+		d = downloads[i];
 		if (!d.is(QUEUED)) {
 			continue;
 		}
@@ -199,10 +201,10 @@ function LegacyScheduler(downloads, running) {
 // Ofast(running)
 function FastScheduler(downloads, running) {
 	let downloadSet = {};
-	let i, e;
+	let i, e, d, host, item;
 	for (i = 0, e = running.length; i < e; ++i) {
-		let d = running[i];
-		let host = d.urlManager.domain;
+		d = running[i];
+		host = d.urlManager.domain;
 		if (!(host in downloadSet)) {
 			downloadSet[host] = new SchedItem(host);
 		}
@@ -212,17 +214,17 @@ function FastScheduler(downloads, running) {
 	}
 
 	for (i = 0, e = downloads.length; i < e; ++i) {
-		let d = downloads[i];
+		d = downloads[i];
 		if (!d.is(QUEUED)) {
 			continue;
 		}
-		let host = d.urlManager.domain;
+		host = d.urlManager.domain;
 		if (!(host in downloadSet)) {
 			downloadSet[host] = new SchedItem(host);
 			yield d;
 			continue;
 		}
-		let item = downloadSet[host];
+		item = downloadSet[host];
 		if (item.available) {
 			yield d;
 			item.inc();
@@ -235,12 +237,12 @@ function FastScheduler(downloads, running) {
 // Oeven = O(running) + O(downloads) + O(downloadSet) + Osort(sorted)
 function FairScheduler(downloads, running) {
 	let downloadSet = {};
-	let i, e;
+	let i, e, d, host, item;
 
 	// Count the running tasks
 	for (i = 0, e = running.length; i < e; ++i) {
-		let d = running[i];
-		let host = d.urlManager.domain;
+		d = running[i];
+		host = d.urlManager.domain;
 		if (!(host in downloadSet)) {
 			downloadSet[host] = new SchedItem(host);
 		}
@@ -250,11 +252,11 @@ function FairScheduler(downloads, running) {
 	}
 
 	for (i = 0, e = downloads.length; i < e; ++i) {
-		let d = downloads[i];
+		d = downloads[i];
 		if (!d.is(QUEUED)) {
 			continue;
 		}
-		let host = d.urlManager.domain;
+		host = d.urlManager.domain;
 		if (!(host in downloadSet)) {
 			downloadSet[host] = new SchedItem(host);
 			yield d;
@@ -274,17 +276,17 @@ function FairScheduler(downloads, running) {
 	while (sorted.length) {
 		// short-circuit: only one host left
 		if (sorted.length == 1) {
-			let s = sorted.shift();
-			while (s.queued) {
-				yield s.pop();
+			item = sorted.shift();
+			while (item.queued) {
+				yield item.pop();
 			}
 			return;
 		}
 
 		// round robin
 		for (i = 0, e = sorted.length; i < e; ++i) {
-			let s = sorted[i];
-			yield s.pop();
+			item = sorted[i];
+			yield item.pop();
 			if (!s.queued) {
 				sorted.splice(i, 1);
 				break;
@@ -296,19 +298,21 @@ function FairScheduler(downloads, running) {
 //Random scheduler. Does not respect limits
 //Basically Ornd(1)
 function RndScheduler(downloads, running) {
-	function rndOrd() 0.5 - Math.random();
 	let _d = [];
-	for (let d in downloads) {
+	let i, e, d;
+	for (i = 0, e = downloads.length; i < e; ++i) {
+		d = downloads[i];
 		if (!d.is(QUEUED)) {
 			continue;
 		}
 		_d.push(d);
 	}
-	_d.sort(rndOrd);
-	for each (let d in _d) {
-		yield d;
+	_d.sort(RndScheduler.rndOrd);
+	for (i = 0, e = _d.length; i < e; ++i) {
+		yield _d[i];
 	}
 }
+RndScheduler.rndOrd = function() 0.5 - Math.random();
 
 let scheduler;
 function loadScheduler() {
