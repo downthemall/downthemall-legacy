@@ -37,9 +37,10 @@
 "use strict";
 
 var EXPORTED_SYMBOLS = [
-	'addLimit',
 	'Limit',
+	'addLimit',
 	'listLimits',
+	'getLimitFor',
 	'getEffectiveHost',
 	'getScheduler',
 	'getServerBucket',
@@ -73,45 +74,65 @@ const SCHEDULER_LEGACY = 'legacy';
 
 let limits = {};
 
+const LIMIT_PROTO = {
+	c: 2,
+	s: -1,
+	seg: 0
+};
+if ('freeze' in Object) {
+	Object.freeze(LIMIT_PROTO);
+}
+
 function Limit(host, isNew) {
 	this._host = host;
 	this._isNew = isNew;
-	this._connections = 2;
-	this._speed = -1;
+	let o = LIMIT_PROTO;
 	try {
-		let o = JSON.parse(Prefs.get(LIMITS_PREF + this._host, ""));
-		this.connections = o.c;
-		this.speed = o.s;
+		o = JSON.parse(Prefs.get(LIMITS_PREF + this._host, ""));
+		o.prototype = LIMIT_PROTO;
 	}
 	catch (ex) {
 		// no op;
 	}
+	this.connections = o.c;
+	this.speed = o.s;
+	this.segments = o.seg;
 }
 Limit.prototype = {
-	get host() { return this._host; },
-	get isNew() { return this._isNew; },
-	get connections() { return this._connections; },
+	get host() this._host,
+	get isNew() this._isNew,
+	get connections() this._connections,
 	set connections(value) {
 		if (!isFinite(value)) {
 			throw new Exception("Invalid Limit");
 		}
 		this._connections = value;
 	},
-	get speed() { return this._speed; },
+	get speed() this._speed,
 	set speed(value) {
 		if (!isFinite(value)) {
 			throw new Exception("Invalid Limit");
 		}
 		this._speed = value;
 	},
+	get segments() this._segments,
+	set segments(value) {
+		if (!isFinite(value)) {
+			throw new Exception("Invalid Limit");
+		}
+		this._segments = value;
+	},
 	save: function() {
-		Prefs.set(LIMITS_PREF + this._host, JSON.stringify({c: this._connections, s: this._speed}));
+		Prefs.set(LIMITS_PREF + this._host, JSON.stringify({c: this._connections, s: this._speed, seg: this._segments}));
 		this._isNew = false;
 	},
 	remove: function() {
 		Prefs.reset(LIMITS_PREF + this._host);
 	},
-	toString: function() this._host	+ " conn: " + this._connections + " speed: " + this._speed
+	toString: function() this._host
+		+ " conn: " + this._connections
+		+ " speed: " + this._speed
+		+ " segments:" + this._segments
 }
 
 function loadLimits() {
@@ -126,7 +147,7 @@ function loadLimits() {
 			Debug.log("loaded limit: " + limit);
 		}
 		catch (ex) {
-			Debug.log("Failed to load: " + limit, ex);
+			Debug.log("Failed to load: " + host, ex);
 		}
 	}
 	obs.notifyObservers(null, TOPIC, null);
@@ -151,6 +172,16 @@ function addLimit(host) {
 
 function listLimits() {
 	return limits;
+}
+
+function getLimitFor(d) {
+	Debug.log("d is " + d);
+	Debug.log("d is " + d.toSource());
+	let host = d.urlManager.domain;
+	if (host in limits) {
+		return limits[host];
+	}
+	return null;
 }
 
 

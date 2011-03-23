@@ -1593,8 +1593,12 @@ QueueItem.prototype = {
 	},
 	_maxChunks: 0,
 	get maxChunks() {
+		if (!this.urlManager) {
+			return Prefs.maxChunks;
+		}
 		if (!this._maxChunks) {
-				this._maxChunks = Prefs.maxChunks;
+			let limit = Limits.getLimitFor(this);
+			this._maxChunks = (limit ? limit.segments : 0) || Prefs.maxChunks;
 		}
 		return this._maxChunks;
 	},
