@@ -22,3 +22,7 @@ statusbarpanel#netstatus {
 statusbarpanel#netstatus[offline] {
 	list-style-image: url(moz-icon://stock/gtk-network?size=button&state=disabled);
 }
+
+treecol > dropmarker {
+	-moz-appearance: treetwistyopen;
+}
