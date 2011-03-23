@@ -70,6 +70,7 @@
 <!ENTITY serverpane.limits.noitems "No per-server limits specified">
 <!ENTITY serverspane.connections.label "Connections:">
 <!ENTITY serverspane.speed.label "Speed Limit:">
+<!ENTITY serverspane.segments.label "Segments:">
 <!ENTITY serverspane.unlimited "Unlimited">
 <!ENTITY serverspane.limited "Limited">
 <!ENTITY serverspane.autoretry.caption "Automatic Retries">
