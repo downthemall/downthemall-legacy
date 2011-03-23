@@ -521,6 +521,7 @@ const Servers = {
 			e.setAttribute('searchlabel', limit.host);
 			e.setAttribute('connections', limit.connections);
 			e.setAttribute('speed', limit.speed);
+			e.setAttribute('segments', limit.segments);
 			e.limit = limit;
 			this._list.appendChild(e);
 		}

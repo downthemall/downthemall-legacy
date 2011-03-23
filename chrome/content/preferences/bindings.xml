@@ -43,6 +43,7 @@
 			<field name="_host">document.getAnonymousElementByAttribute(this, 'anonid', 'host');</field>
 			<field name="_connectionsLabel">document.getAnonymousElementByAttribute(this, 'anonid', 'connectionsLabel');</field>
 			<field name="_speedLabel">document.getAnonymousElementByAttribute(this, 'anonid', 'speedLabel');</field>
+			<field name="_segmentsLabel">document.getAnonymousElementByAttribute(this, 'anonid', 'segmentsLabel');</field>
 
 			<property name="host" onget="return this._host.value;" />
 
@@ -61,6 +62,7 @@
 				<body><![CDATA[
 					this._connectionsLabel.value = (this.connections > 0) ? this.connections : _('unlimited');
 					this._speedLabel.value = (this.speed > 0) ? Utils.formatSpeed(this.speed * 1024) : _('unlimited');
+					this._segmentsLabel.value = (this.segments > 0) ? this.segments : _('unlimited');
 				]]></body>
 			</method>
 
@@ -78,6 +80,7 @@
 					<xul:column flex="1" />
 					<xul:column />
 					<xul:column />
+					<xul:column />
 				</xul:columns>
 				<xul:rows>
 					<xul:row>
@@ -93,6 +96,10 @@
 							<xul:label value="&serverspane.speed.label;" />
 							<xul:label class="serverlimit-speed-label serverlimit-value-label" anonid="speedLabel" />
 						</xul:hbox>
+						<xul:hbox class="serverlimit-segments" align="center">
+							<xul:label value="&serverspane.segments.label;" />
+							<xul:label class="serverlimit-segments-label serverlimit-value-label" anonid="segmentsLabel" />
+						</xul:hbox>
 					</xul:row>
 				</xul:rows>
 			</xul:grid>
@@ -100,6 +107,7 @@
 		<implementation>
 			<property name="connections" onget="return parseInt(this.getAttribute('connections'));" />
 			<property name="speed" onget="return parseInt(this.getAttribute('speed'));" />
+			<property name="segments" onget="return parseInt(this.getAttribute('segments'));" />
 		</implementation>
 	</binding>
 	<binding id="serverlimit-selected" extends="chrome://dta/content/preferences/bindings.xml#serverlimit-base">
@@ -108,6 +116,7 @@
 				<xul:grid flex="1">
 					<xul:columns>
 						<xul:column flex="1" />
+						<xul:column />
 						<xul:column />
 						<xul:column />
 					</xul:columns>
@@ -125,6 +134,10 @@
 								<xul:label value="&serverspane.speed.label;" />
 								<xul:label class="serverlimit-speed-label serverlimit-value-label" anonid="speedLabel" />
 							</xul:hbox>
+							<xul:hbox class="serverlimit-segments" align="center">
+								<xul:label value="&serverspane.segments.label;" />
+								<xul:label class="serverlimit-segments-label serverlimit-value-label" anonid="segmentsLabel" />
+							</xul:hbox>
 						</xul:row>
 					</xul:rows>
 				</xul:grid>
@@ -138,6 +151,7 @@
 		<implementation>
 			<property name="connections" onget="return parseInt(this.getAttribute('connections'));" />
 			<property name="speed" onget="return parseInt(this.getAttribute('speed'));" />
+			<property name="segments" onget="return parseInt(this.getAttribute('segments'));" />
 			<method name="removeLimit">
 				<body><![CDATA[
 					if (!this.postEvent('LimitsCanRemove')) {
@@ -202,6 +216,18 @@
 								</xul:hbox>
 							</xul:radiogroup>
 						</xul:row>
+						<xul:row>
+							<xul:box />
+							<xul:label value="&serverspane.segments.label;" />
+							<xul:radiogroup anonid="segmentsGroup" orient="horizontal" class="serverlimit-radiogroup">
+								<xul:radio label="&serverspane.unlimited;" value="unlimited" />
+								<xul:radio label="&serverspane.limited;" value="limited" />
+								<xul:hbox align="center">
+									<xul:scale min="1" max="10" anonid="segments" xbl:inherits="value=segments" />
+									<xul:label class="serverlimit-segments-label serverlimit-scale-label" anonid="segmentsLabel" />
+								</xul:hbox>
+							</xul:radiogroup>
+						</xul:row>
 					</xul:rows>
 				</xul:grid>
 				<xul:hbox flex="1" pack="end">
@@ -213,8 +239,13 @@
 		<implementation>
 			<field name="_connectionsGroup">document.getAnonymousElementByAttribute(this, 'anonid', 'connectionsGroup');</field>
 			<field name="_connections">document.getAnonymousElementByAttribute(this, 'anonid', 'connections');</field>
+
 			<field name="_speedGroup">document.getAnonymousElementByAttribute(this, 'anonid', 'speedGroup');</field>
 			<field name="_speed">document.getAnonymousElementByAttribute(this, 'anonid', 'speed');</field>
+
+			<field name="_segmentsGroup">document.getAnonymousElementByAttribute(this, 'anonid', 'segmentsGroup');</field>
+			<field name="_segments">document.getAnonymousElementByAttribute(this, 'anonid', 'segments');</field>
+
 			<field name="_saveButton">document.getAnonymousElementByAttribute(this, 'anonid', 'saveButton');</field>
 
 			<property name="connections">
@@ -235,9 +266,20 @@
 				]]></getter>
 			</property>
 
+			<property name="segments">
+				<getter><![CDATA[
+					if (this._segmentsGroup.value == "unlimited") {
+						return 0;
+					}
+					return parseInt(this._segments.value);
+				]]></getter>
+			</property>
+
 			<constructor><![CDATA[
 				this._connectionsGroup.value = this.getAttribute('connections') <= 0 ? 'unlimited' : 'limited';
 				this._speedGroup.value = this.getAttribute('speed') <= 0 ? 'unlimited' : 'limited';
+				this._segmentsGroup.value = this.getAttribute('segments') <= 0 ? 'unlimited' : 'limited';
+
 				this._saveButton.label = _(this.limit.isNew ? 'createlimit' : 'savelimit');
 				this.parentNode.ensureElementIsVisible(this);
 			]]></constructor>
@@ -247,10 +289,15 @@
 					if (!this.postEvent("LimitsEditSave")) {
 						return;
 					}
+
 					this.limit.connections = this.connections;
 					this.limit.speed = this.speed;
+					this.limit.segments = this.segments;
+
 					this.setAttribute('connections', this.connections);
 					this.setAttribute('speed', this.speed);
+					this.setAttribute('segments', this.segments);
+
 					this.limit.save();
 				]]></body>
 			</method>
@@ -278,6 +325,15 @@
 					this.refresh();
 				]]></body>
 			</method>
+			<method name="changedSegments">
+				<body><![CDATA[
+					if (this._segmentsGroup.value != 'limited') {
+						return;
+					}
+					this._segments.value = Math.max(this.limit.segments, 0) || 1;
+					this.refresh();
+				]]></body>
+			</method>
 		</implementation>
 		<handlers>
 			<handler event="change">this.refresh();</handler>
@@ -298,6 +354,9 @@
 						break;
 					case 'speedGroup':
 						this.changedSpeed();
+						break;
+					case 'segmentsGroup':
+						this.changedSegments();
 						break;
 				}
 				this.refresh();
