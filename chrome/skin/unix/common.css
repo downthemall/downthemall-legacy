@@ -37,3 +37,8 @@ treechildren::-moz-tree-progressmeter {
   background-color: -moz-Dialog;
   color: ThreeDShadow;
 }
+
+/* we don't care about the gtk2 stubbornness of not showing menu icons by default */
+.menu-iconic-left {
+	visibility: visible !important;
+}
