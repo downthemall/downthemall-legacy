@@ -188,7 +188,7 @@ function Hash(hash, type) {
 	if (typeof(hash) != 'string' && !(hash instanceof String)) {
 		throw new Exception("hash is invalid");
 	}
-	if (typeof(type) != 'string' && (!type instanceof String)) {
+	if (typeof(type) != 'string' && !(type instanceof String)) {
 		throw new Exception("hashtype is invalid");
 	}
 
