@@ -338,12 +338,24 @@ function RndScheduler(downloads, running) {
 		}
 		_d.push(d);
 	}
-	_d.sort(RndScheduler.rndOrd);
+	RndScheduler.shuffle(_d);
 	for (i = 0, e = _d.length; i < e; ++i) {
 		yield _d[i];
 	}
 }
-RndScheduler.rndOrd = function() 0.5 - Math.random();
+// Fisher-Yates based shuffle
+RndScheduler.shuffle = function shuffle(a) {
+    let c, e = a.length;
+    if (e < 4) {
+    	// no need to shuffle for such small sets
+    	return;
+    }
+	while (e > 1) {
+        c = Math.floor(Math.random() * (e--));
+        // swap
+        [a[e], a[c]] = [a[c], a[e]];
+    }
+}
 
 let scheduler;
 function loadScheduler() {
