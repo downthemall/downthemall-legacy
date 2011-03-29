@@ -141,12 +141,10 @@ Stuff.prototype = {
 				Preferences.setExt('version', v.BASE_VERSION);
 
 				v.showAbout = true;
-				Cc["@mozilla.org/observer-service;1"]
-					.getService(Ci.nsIObserverService)
-					.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
-				let _ic = {};
+				Observers.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
 
 				// Need to extract icons
+				let _ic = {};
 				module('resource://dta/support/iconcheat.jsm');
 			}
 			catch (ex) {
@@ -158,7 +156,7 @@ Stuff.prototype = {
 					// XXX
 				}
 			}
-		})).call({});
+		}))();
 	},
 	bootstrap: function MM_bootstrap() {
 		this.migrate();
