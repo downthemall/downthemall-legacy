@@ -109,15 +109,59 @@ Stuff.prototype = {
 			break;
 		}
 	},
+	migrate: function MM_migrate() {
+		// called only once
+
+		/*
+		 * Various migration
+		 */
+		const fn1_0 = [
+			function() {
+				// 1.0.1: #613 Multiple "slow-down" reports
+				log("resetting connection prefs");
+				for each (let e in ['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server']) {
+					Preferences.reset(e);
+				}
+			},
+		];
+
+		let Version = {};
+		module("resource://dta/version.jsm", Version);
+		Version = Version.Version;
+
+		(function migrate() Version.getInfo(function(v) {
+			try {
+				let lastVersion = Preferences.getExt('version', '0');
+				if (0 == v.compareVersion(v.BASE_VERSION, lastVersion)) {
+					return;
+				}
+				if (v.compareVersion(lastVersion, "1.0.1") < 0) {
+					fn1_0.forEach(function(fn) fn());
+				}
+				Preferences.setExt('version', v.BASE_VERSION);
+
+				v.showAbout = true;
+				Cc["@mozilla.org/observer-service;1"]
+					.getService(Ci.nsIObserverService)
+					.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
+				let _ic = {};
+
+				// Need to extract icons
+				module('resource://dta/support/iconcheat.jsm');
+			}
+			catch (ex) {
+				log("MigrationManager:", ex);
+				try {
+					Preferences.resetExt("version");
+				}
+				catch (iex) {
+					// XXX
+				}
+			}
+		})).call({});
+	},
 	bootstrap: function MM_bootstrap() {
-		try {
-			let _mm = {};
-			module("resource://dta/support/migration.jsm", _mm);
-			_mm.migrate();
-		}
-		catch (ex) {
-			log("m", ex);
-		}
+		this.migrate();
 		try {
 			let _ch = {};
 			module("resource://dta/support/contenthandling.jsm", _ch);
@@ -211,25 +255,25 @@ AboutModule.prototype = {
 
 	newChannel : function(aURI) {
 		try {
-		    let io = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
-		    let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
+				let io = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
+				let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
 
-	    	module('resource://dta/version.jsm');
-	    	if (!Version.ready) {
-	    		throw new Exception("Cannot build about:downthemall, version.jsm not ready");
-	    	}
+				module('resource://dta/version.jsm');
+				if (!Version.ready) {
+					throw new Exception("Cannot build about:downthemall, version.jsm not ready");
+				}
 
-		    let ru = ABOUT_URI.replace(
-		    	/%(.+?)%/g,
-		    	function (m, m1) (m1 in Version) ? Version[m1] : m
-		    );
+				let ru = ABOUT_URI.replace(
+					/%(.+?)%/g,
+					function (m, m1) (m1 in Version) ? Version[m1] : m
+				);
 
-		    let uri = io.newURI(ru, null, null);
-		    let chan = io.newChannelFromURI(uri);
-		    chan.originalURI = aURI;
-		    chan.owner = sec.getCodebasePrincipal(uri);
+				let uri = io.newURI(ru, null, null);
+				let chan = io.newChannelFromURI(uri);
+				chan.originalURI = aURI;
+				chan.owner = sec.getCodebasePrincipal(uri);
 
-		    return chan;
+				return chan;
 		}
 		catch (ex) {
 			log(ex);
@@ -241,8 +285,8 @@ AboutModule.prototype = {
 };
 
 if (XPCOMUtils.generateNSGetFactory) {
-    var NSGetFactory = XPCOMUtils.generateNSGetFactory([Stuff, AboutModule]);
+		var NSGetFactory = XPCOMUtils.generateNSGetFactory([Stuff, AboutModule]);
 }
 else {
-    function NSGetModule() XPCOMUtils.generateModule([Stuff, AboutModule]);
+		function NSGetModule() XPCOMUtils.generateModule([Stuff, AboutModule]);
 }
