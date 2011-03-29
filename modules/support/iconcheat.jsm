@@ -92,7 +92,12 @@ try {
 			while (icons.hasMoreElements()) {
 				let icon = icons.getNext();
 				if ((icon instanceof Ci.nsIFile) && icon.isFile()) {
-					icon.copyTo(iconDir, icon.leafName);
+					try {
+						icon.copyTo(iconDir, icon.leafName);
+					}
+					catch (ex) {
+						// no op
+					}
 				}
 			}
 		}
