@@ -36,7 +36,6 @@
 
 ServiceGetter(this, "os", "@mozilla.org/observer-service;1", "nsIObserverService");
 
-
 /* tree helpers */
 function treeIconGetter() {
 	delete this.icon;
@@ -88,20 +87,9 @@ function Tree(links, type) {
 	this._links = mapInSitu(links, treeLinksMapper);
 
 	// atom cache. See getAtom
-	this._atoms = {};
-	this._iconic = this._as.getAtom('iconic');
+	this._atoms = new this.Atoms();
 }
 Tree.prototype = {
-	// get atoms, but provide caching.
-	// we have a limited set of atoms anyway, so we don't have to expect a huge
-	// cache.
-	getAtom: function(str) {
-		if (!(str in this._atoms)) {
-			this._atoms[str] = this._as.getAtom(str);
-		}
-		return this._atoms[str];
-	},
-
 	// getter only -> readonly
 	get type() {
 		return this._type;
@@ -258,16 +246,16 @@ Tree.prototype = {
 		let l = this._links[idx];
 		// AppendElement will just accept nsIAtom.
 		// no documentation on devmo, xulplanet though :p
-		prop.AppendElement(this.getAtom(l.checked));
+		prop.AppendElement(this._atoms.getAtom(l.checked));
 	},
 	getCellProperties: function(idx, column, prop) {
 		// col 1 is our url... it should display the type icon
 		// to better be able to style add a property.
 		if (column.index == 1) {
-			prop.AppendElement(this._iconic);
+			prop.AppendElement(this.iconicAtom);
 		}
 		let l = this._links[idx];
-		prop.AppendElement(this.getAtom(l.checked));
+		prop.AppendElement(this._atoms.getAtom(l.checked));
 	},
 
 	// called when the user clicks our checkboxen
@@ -293,8 +281,7 @@ Tree.prototype = {
 		}
 	}
 };
-ServiceGetter(Tree.prototype, "_as", "@mozilla.org/atom-service;1", "nsIAtomService");
-
+module("resource://dta/support/atoms.jsm", Tree.prototype);
 
 /**
  * Our real, kicks ass implementation of the UI

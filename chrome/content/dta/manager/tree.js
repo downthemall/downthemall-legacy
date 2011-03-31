@@ -72,11 +72,6 @@ const Tree = {
 
 		ServiceGetter(this, "_ds", "@mozilla.org/widget/dragservice;1", "nsIDragService");
 		ServiceGetter(this, "_ww", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
-		ServiceGetter(this, "_as", "@mozilla.org/atom-service;1", "nsIAtomService");
-
-		for each (let e in ['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined', 'pausedAutoretrying', 'verified', 'progress']) {
-			this['_' + e] = this._as.getAtom(e);
-		}
 		this.elem.view = this;
 		this.assembleMenus();
 		this.refreshTools();
@@ -455,33 +450,33 @@ const Tree = {
 	getCellProperties: function T_getCellProperties(idx, col, prop) {
 		let cidx = col.index;
 		if (cidx == 1) {
-			prop.AppendElement(this._iconic);
-			prop.AppendElement(this._progress);
+			prop.AppendElement(this.iconicAtom);
+			prop.AppendElement(this.progressAtom);
 			let d = this._filtered[idx];
 			if (!d) return;
 			switch (d.state) {
 				case PAUSED:
-					prop.AppendElement(this._paused);
+					prop.AppendElement(this.pausedAtom);
 					if (!d.totalSize || d.progress < 5) {
-						prop.AppendElement(this._pausedUndetermined);
+						prop.AppendElement(this.pausedUndeterminedAtom);
 					}
 					if (d.autoRetrying) {
-						prop.AppendElement(this._pausedAutoretrying);
+						prop.AppendElement(this.pausedAutoretryingAtom);
 					}
 				return;
 				case FINISHING:
-				case RUNNING: prop.AppendElement(this._inprogress); return;
-				case CANCELED: prop.AppendElement(this._canceled); return;
+				case RUNNING: prop.AppendElement(this.inprogressAtom); return;
+				case CANCELED: prop.AppendElement(this.canceledAtom); return;
 				case COMPLETE:
-					prop.AppendElement(this._completed);
+					prop.AppendElement(this.completedAtom);
 					if (d.hashCollection) {
-						prop.AppendElement(this._verified);
+						prop.AppendElement(this.verifiedAtom);
 					}
 				return;
 			}
 		}
 		else if (cidx == 0) {
-			prop.AppendElement(this._iconic);
+			prop.AppendElement(this.iconicAtom);
 			prop.AppendElement(this._filtered[idx].iconAtom);
 		}
 	},
@@ -1414,6 +1409,7 @@ const Tree = {
 	}
 };
 module('resource://dta/manager/matcher.jsm', Tree);
+module('resource://dta/support/atoms.jsm', Tree);
 
 const FileHandling = {
 	get _uniqueList() {
