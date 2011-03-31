@@ -44,12 +44,11 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 module("resource://dta/utils.jsm");
+module("resource://dta/support/atoms.jsm");
 module("resource://dta/support/icons.jsm");
 module("resource://dta/support/timers.jsm");
 
 const Timers = new TimerManager();
-
-ServiceGetter(this, "Atoms", "@mozilla.org/atom-service;1", "nsIAtomService");
 
 extendString(String);
 
@@ -74,11 +73,11 @@ function FileExtensionSheet(window) {
 	catch (ex) {
 		Debug.log("sheet:", ex);
 	}
-
 	this._entries = {};
 }
 
 FileExtensionSheet.prototype = {
+	_atoms: new Atoms(),
 	getAtom: function FES_getAtom(fileName, metalink) {
 		let ext = fileName.getExtension();
 		if (!ext) {
@@ -90,7 +89,7 @@ FileExtensionSheet.prototype = {
 		let key = 'ext:' + ext;
 		let entry = this._entries[key];
 		if (!entry) {
-			entry = Atoms.getAtom("icon" + newUUIDString().replace(/\W/g, ''));
+			entry = this._atoms.getAtom("FileIcon" + ext.replace(/\W/g, ''));
 			let rule = 'treechildren::-moz-tree-image(iconic,'
 				+ entry.toString()
 				+ ') { list-style-image: url('
