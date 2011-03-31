@@ -36,6 +36,45 @@
 
 ServiceGetter(this, "os", "@mozilla.org/observer-service;1", "nsIObserverService");
 
+
+/* tree helpers */
+function treeIconGetter() {
+	delete this.icon;
+	return (this.icon = getIcon(this.url.url.spec, 'metalink' in this));
+}
+function treeDescGetter() {
+	delete this.desc;
+	this.desc = "";
+	if ("description" in this && this.description.length > 0) {
+		this.desc += this.description;
+	}
+	if ("title" in this && this.title.length > 0) {
+		this.desc += ((this.desc.length > 0) ? ' - ' : '') + this.title;
+	}
+	return this.desc;
+}
+function treeResnameGetter() {
+	delete this.resname;
+	return (this.resname = this.url.usable.getUsableFileName());
+}
+function treeLinksMapper(link) {
+	// "lazy initialize" the icons.
+	// cache them so that we don't have to lookup them again and again.
+	// but do not precompute them, as we don't know if we'll ever display
+	// them.
+	link.__defineGetter__('icon', treeIconGetter);
+
+	// same here for description
+	link.__defineGetter__('desc', treeDescGetter);
+	link.__defineGetter__('resname', treeResnameGetter);
+
+	// .checked will hold the correspoding 'property' string, either none,
+	// manuallySelected, or f0-f8
+	link.checked = '';
+	link.mask = null;
+	return link;
+}
+
 /**
  * implemtents nsITreeView manages our link trees
  */
@@ -46,51 +85,7 @@ function Tree(links, type) {
 
 	// internal list of links.
 	// better make this a real array (links parameter is usually an object)
-	this._links = mapInSitu(
-		links,
-		function(link) {
-			// "lazy initialize" the icons.
-			// cache them so that we don't have to lookup them again and again.
-			// but do not precompute them, as we don't know if we'll ever display
-			// them.
-			link.__defineGetter__(
-				'icon',
-				function() {
-					delete this.icon;
-					return (this.icon = getIcon(this.url.url.spec, 'metalink' in this));
-				}
-			);
-
-			// same here for description
-			link.__defineGetter__(
-				'desc',
-				function() {
-					delete this.desc;
-					this.desc = "";
-					if ("description" in this && this.description.length > 0) {
-						this.desc += this.description;
-					}
-					if ("title" in this && this.title.length > 0) {
-						this.desc += ((this.desc.length > 0) ? ' - ' : '') + this.title;
-					}
-					return this.desc;
-				}
-			);
-			link.__defineGetter__(
-				'resname',
-				function() {
-					delete this.resname;
-					return (this.resname = this.url.usable.getUsableFileName());
-				}
-			);
-
-			// .checked will hold the correspoding 'property' string, either none,
-			// manuallySelected, or f0-f8
-			link.checked = '';
-			link.mask = null;
-			return link;
-		}
-	);
+	this._links = mapInSitu(links, treeLinksMapper);
 
 	// atom cache. See getAtom
 	this._atoms = {};
