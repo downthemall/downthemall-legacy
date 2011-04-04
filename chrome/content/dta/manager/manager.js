@@ -489,7 +489,7 @@ const Dialog = {
 				case PAUSED:
 				case QUEUED:
 				{
-					for (let i = 0, c; i < down.chunks; ++i) {
+					for (let i = 0, c; i < down.chunks.length; ++i) {
 						c = down.chunks[i];
 						d.chunks.push(new Chunk(d, c.start, c.end, c.written));
 					}
@@ -702,7 +702,11 @@ const Dialog = {
 	refresh: function D_refresh() {
 		try {
 			const now = Utils.getTimestamp();
-			for each (let d in this._running) {
+			for (let i = 0, e = this._running.length; i < e; ++i) {
+				let d = this._running[i];
+				if (!d) {
+					continue;
+				}
 				d.refreshPartialSize();
 				let advanced = d.speeds.add(d.partialSize, now);
 				this._sum += advanced;
@@ -839,7 +843,11 @@ const Dialog = {
 		}
 	},
 	refreshWritten: function D_refreshWritten() {
-		for each (let d in this._running) {
+		for (let i = 0, e = this._running.length; i < e; ++i) {
+			let d = this._running[i];
+			if (!d) {
+				continue;
+			}
 			d.refreshPartialSize();
 			d.invalidate();
 		}
@@ -848,8 +856,8 @@ const Dialog = {
 		if (!this._running.length) {
 			return;
 		}
-		for each (let d in this._running) {
-			d.save();
+		for (let i = 0, e = this._running.length; i < e; ++i) {
+			this._running[i].save();
 		}
 	},
 
@@ -882,7 +890,11 @@ const Dialog = {
 		try {
 			this.refresh();
 
-			for each (let d in this._running) {
+			for (let i = 0, e = this._running.length; i < e; ++i) {
+				let d = this._running[i];
+				if (!d) {
+					continue;
+				}
 				// checks for timeout
 				if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
 					if (d.resumable || !d.totalSize || !d.partialSize || Prefs.resumeOnError) {
