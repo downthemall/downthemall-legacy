@@ -100,7 +100,7 @@ var Timers = new TimerManager();
 const Dialog_loadDownloads_props = ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'];
 function Dialog_loadDownloads_get(down, attr, def) (attr in down) ? down[attr] : (def ? def : '');
 
-const Dialog_serialize_props = ['fileName', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'maxChunks', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'];
+const Dialog_serialize_props = ['fileName', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'];
 
 const Dialog = {
 	_observes: [
@@ -2356,6 +2356,9 @@ QueueItem.prototype = {
 			},
 			this
 		);
+		if (this._maxChunks) {
+			e.maxChunks = this.maxChunks;
+		}
 		if (this.hashCollection) {
 			e.hashCollection = this.hashCollection.serialize();
 		}
