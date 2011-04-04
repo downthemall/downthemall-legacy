@@ -175,8 +175,6 @@ function listLimits() {
 }
 
 function getLimitFor(d) {
-	Debug.log("d is " + d);
-	Debug.log("d is " + d.toSource());
 	let host = d.urlManager.domain;
 	if (host in limits) {
 		return limits[host];
