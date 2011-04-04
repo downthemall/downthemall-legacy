@@ -1572,6 +1572,7 @@ QueueItem.prototype = {
 	},
 	partialSize: 0,
 	progress: 0,
+	mustGetInfo: false,
 
 	get startDate() this._startDate || (this.startDate = new Date()),
 	set startDate(nv) this._startDate = nv,
@@ -2240,7 +2241,8 @@ QueueItem.prototype = {
 			chunk.running = true;
 			download.state = RUNNING;
 			Debug.log("started: " + chunk);
-			chunk.download = new Connection(download, chunk, header);
+			chunk.download = new Connection(download, chunk, header || download.mustGetInfo);
+			download.mustGetInfo = false;
 			++download.activeChunks;
 			++download.sessionConnections;
 		}
