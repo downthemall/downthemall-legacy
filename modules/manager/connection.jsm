@@ -580,11 +580,14 @@ Connection.prototype = {
 			d.resumable = false;
 		}
 
-		if (visitor.contentLength > 0) {
-			d.totalSize = visitor.contentLength;
-		}
-		else {
-			d.totalSize = 0;
+		if (code != 206) {
+			if (visitor.contentLength > 0) {
+				d.totalSize = visitor.contentLength;
+			}
+			else {
+				d.totalSize = 0;
+			}
+			Debug.log("set total size");
 		}
 
 		if (visitor.fileName && visitor.fileName.length > 0) {
@@ -746,7 +749,9 @@ Connection.prototype = {
 				if (!d.resumable) {
 					d.maxChunks = 1;
 				}
-				c.end = d.totalSize - 1;
+				if (c.end < 1) {
+					c.end = d.totalSize - 1;
+				}
 
 				// Explicitly trigger rebuildDestination here, as we might have received
 				// a html content type and need to rewrite the file
