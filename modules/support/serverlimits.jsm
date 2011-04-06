@@ -89,7 +89,11 @@ function Limit(host, isNew) {
 	let o = LIMIT_PROTO;
 	try {
 		o = JSON.parse(Prefs.get(LIMITS_PREF + this._host, ""));
-		o.prototype = LIMIT_PROTO;
+		for (let p in LIMIT_PROTO) {
+			if (!o.hasOwnProperty(p)) {
+				o[p] = LIMIT_PROTO[p];
+			}
+		}
 	}
 	catch (ex) {
 		// no op;
