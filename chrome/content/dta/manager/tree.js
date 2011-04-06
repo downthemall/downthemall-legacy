@@ -324,6 +324,7 @@ const Tree = {
 		finally {
 			this.invalidate();
 			this.endUpdate();
+			this.fireChangeEvent();
 		}
 	},
 	_filter: '',
