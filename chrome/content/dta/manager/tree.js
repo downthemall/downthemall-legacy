@@ -586,6 +586,10 @@ const Tree = {
 				this._mustFilter = false;
 				this.doFilter();
 			}
+			if (this._mustFireChangeEvent) {
+				this._mustFireChangeEvent = false;
+				this.fireChangeEvent();
+			}
 		}
 	},
 	fastLoad: function T_add(download) this._downloads.push(download) -1,
@@ -594,6 +598,7 @@ const Tree = {
 		if (this._matcher.shouldDisplay(download)) {
 			this.doFilter();
 		}
+		this.fireChangeEvent();
 		return pos;
 	},
 	scrollToNearest: function(download) {
@@ -694,6 +699,16 @@ const Tree = {
 			Tree.remove(downloads);
 		}
 	},
+	_mustFireChangeEvent: false,
+	fireChangeEvent: function() {
+		if (this._updating) {
+			this._mustFireChangeEvent = true;
+			return;
+		}
+		let evt = document.createEvent("UIEvents");
+		evt.initUIEvent("change", true, true, null, 0);
+		return this.elem.dispatchEvent(evt);
+	},
 	remove: function T_remove(downloads, performJump) {
 		if (downloads && !(downloads instanceof Array)) {
 			downloads = [downloads];
@@ -740,6 +755,7 @@ const Tree = {
 			this.invalidate();
 			this.doFilter();
 			this.endUpdate();
+			this.fireChangeEvent();
 		}
 		if (performJump) {
 			this._removeJump(filterInSitu(downloads, function(e) e.filteredPosition >= 0).length, last);
@@ -1055,7 +1071,8 @@ const Tree = {
 					disabled = !f(states);
 				}
 				if (!(items instanceof Array)) {
-					items = [items];
+					items.setAttribute('disabled', disabled);
+					return;
 				}
 				for each (let o in items) {
 					o.setAttribute('disabled', disabled);

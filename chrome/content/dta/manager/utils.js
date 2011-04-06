@@ -217,6 +217,8 @@ const Prefs = {
 		else {
 			RequestManipulation.unregisterHttp('dtaua');
 		}
+
+		Dialog.scheduler = null;
 	},
 	_baselineConns: 30,
 	_currentConns: 0,
