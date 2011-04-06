@@ -42,7 +42,7 @@ var EXPORTED_SYMBOLS = [
 	'listLimits',
 	'getLimitFor',
 	'getEffectiveHost',
-	'getScheduler',
+	'getConnectionScheduler',
 	'getServerBucket',
 	'killServerBuckets'
 ];
@@ -184,7 +184,167 @@ function getLimitFor(d) {
 
 
 let globalConnections = -1;
-function SchedItem(host) {
+
+function BaseScheduler() {}
+BaseScheduler.prototype = {
+	_queuedFilter: function(e) e.is(QUEUED),
+	next: function() {
+		for (let d; this._schedule.length;) {
+			d = this._schedule.shift();
+			if (!d.is(QUEUED)) {
+				continue;
+			}
+			return d;
+		}
+		return null;
+	}
+};
+
+// Legacy scheduler. Does not respect limits
+// Basically Olegacy(1)
+function LegacyScheduler(downloads) {
+	this._schedule = downloads.filter(this._queuedFilter);
+}
+LegacyScheduler.prototype = {
+	__proto__: BaseScheduler.prototype
+};
+
+// Fast generator: Start downloads as in queue
+function FastScheduler(downloads, running) {
+	this._downloads = downloads.filter(this._queuedFilter);
+}
+FastScheduler.prototype = {
+	__proto__: BaseScheduler.prototype,
+
+	_runCount: 0,
+	next: function(running) {
+		if (!this._downloads.length) {
+			return null;
+		}
+
+		let downloadSet = {};
+		let i, e, d, host;
+
+		if (this._runCount > 50) {
+			filterInSitu(this._downloads, this._queuedFilter);
+			this._runCount = 0;
+		}
+
+		// count running downloads per host
+		for (i = 0, e = running.length; i < e; ++i) {
+			host = running[i].urlManager.domain;
+			downloadSet[host] = ++downloadSet[host] || 1;
+		}
+
+		// calculate available slots
+		// negative means: available, else not available;
+		for (host in downloadSet) {
+			if (host in limits) {
+				i = limits[host].connections;
+			}
+			else {
+				i = globalConnections;
+			}
+			if (i <= 0) {
+				// no limit
+				downloadSet[host] = -1;
+			}
+			else {
+				downloadSet[host] -= i;
+			}
+		}
+
+		for (i = 0, e = this._downloads.length; i < e; ++i) {
+			d = this._downloads[i];
+
+			if (d._state != QUEUED) {
+				continue;
+			}
+			host = d.urlManager.domain;
+
+			// no running downloads for this host yet
+			if (!(host in downloadSet)) {
+				this._runCount++;
+				return d;
+			}
+
+			if (downloadSet[host] < 0) {
+				this._runCount++;
+				return d;
+			}
+		}
+		return null;
+	}
+};
+
+// Fair Scheduler: evenly distribute slots
+// Performs worse than FastScheduler but is more precise.
+function FairScheduler(downloads) {
+	this._downloadSet = {};
+
+	// set up our internal state
+	for (let i = 0, e = downloads.length, d, host; i < e; ++i) {
+		d = downloads[i];
+		if (!d.is(QUEUED)) {
+			continue;
+		}
+		host = d.urlManager.domain;
+		if (!(host in this._downloadSet)) {
+			this._downloadSet[host] = new FairScheduler.SchedItem(host);
+		}
+		this._downloadSet[host].push(d);
+	}
+}
+FairScheduler.prototype = {
+	__proto__: BaseScheduler.prototype,
+
+	next: function(running) {
+		let i, e, d, host;
+
+		// reset all counters
+		for (i in this._downloadSet) {
+			this._downloadSet[i].resetCounter();
+		}
+
+		// Count the running tasks
+		for (i = 0, e = running.length; i < e; ++i) {
+			d = running[i];
+			host = d.urlManager.domain;
+			if (!(host in this._downloadSet)) {
+				// we don't care, because we don't have any more queued downloads for this host
+				continue;
+			}
+			this._downloadSet[host].inc();
+		}
+
+		// Find the host with the least running downloads that still has slots available
+		e = null;
+		for (i in this._downloadSet) {
+			d = this._downloadSet[i];
+			if ((!e || e.n > d.n) && d.available) {
+				e = d;
+			}
+		}
+
+		// found an item?
+		if (e) {
+			while (e.length) {
+				d = e.pop();
+				if (d._state == QUEUED) {
+					break;
+				}
+				d = null;
+			}
+			// host queue is now empty, hence remove
+			if (!e.length) {
+				delete this._downloadSet[e.host];
+			}
+			return d;
+		}
+		return null;
+	}
+};
+FairScheduler.SchedItem = function(host) {
 	this.host = host;
 	this.limit = 0;
 	if (host in limits) {
@@ -193,167 +353,43 @@ function SchedItem(host) {
 	else {
 		this.limit = globalConnections;
 	}
-	this.n = 1;
 	this.downloads = [];
+	this.resetCounter();
 };
-SchedItem.prototype = {
-	cmp: function(a, b)  a.n - b.n,
-	get available() {
-		return (this.limit <= 0 || this.n < this.limit);
-	},
-	get queued() {
-		return (this.limit <= 0 || this.n < this.limit) && this.downloads.length != 0;
-	},
-	inc: function() ++this.n,
+FairScheduler.SchedItem.prototype = {
+	get available() (this.limit <= 0 || this.n < this.limit),
+	inc: function() { this.n++; },
+	resetCounter: function() this.n = 0,
+	toString: function() this.host,
+	get length() this.downloads.length,
 	pop: function() {
 		++this.n;
 		return this.downloads.shift();
 	},
 	push: function(d) this.downloads.push(d),
-	toString: function() this.host
 };
 
-// Legacy scheduler. Does not respect limits
-// Basically Olegacy(1)
-function LegacyScheduler(downloads, running) {
-	let i, e, d;
-	for (i = 0, e = downloads.length; i < e; ++i) {
-		d = downloads[i];
-		if (!d.is(QUEUED)) {
-			continue;
-		}
-		yield d;
-	}
-}
-
-// Fast generator: Start downloads as in queue
-// Ofast(running)
-function FastScheduler(downloads, running) {
-	let downloadSet = {};
-	let i, e, d, host, item;
-	for (i = 0, e = running.length; i < e; ++i) {
-		d = running[i];
-		host = d.urlManager.domain;
-		if (!(host in downloadSet)) {
-			downloadSet[host] = new SchedItem(host);
-		}
-		else {
-			downloadSet[host].inc();
-		}
-	}
-
-	for (i = 0, e = downloads.length; i < e; ++i) {
-		d = downloads[i];
-		if (!d.is(QUEUED)) {
-			continue;
-		}
-		host = d.urlManager.domain;
-		if (!(host in downloadSet)) {
-			downloadSet[host] = new SchedItem(host);
-			yield d;
-			continue;
-		}
-		item = downloadSet[host];
-		if (item.available) {
-			yield d;
-			item.inc();
-		}
-	}
-}
-
-// Fair Scheduler: evenly distribute slots
-// Performs far worse than FastScheduler but is more precise.
-// Oeven = O(running) + O(downloads) + O(downloadSet) + Osort(sorted)
-function FairScheduler(downloads, running) {
-	let downloadSet = {};
-	let i, e, d, host, item;
-
-	// Count the running tasks
-	for (i = 0, e = running.length; i < e; ++i) {
-		d = running[i];
-		host = d.urlManager.domain;
-		if (!(host in downloadSet)) {
-			downloadSet[host] = new SchedItem(host);
-		}
-		else {
-			downloadSet[host].inc();
-		}
-	}
-
-	for (i = 0, e = downloads.length; i < e; ++i) {
-		d = downloads[i];
-		if (!d.is(QUEUED)) {
-			continue;
-		}
-		host = d.urlManager.domain;
-		if (!(host in downloadSet)) {
-			downloadSet[host] = new SchedItem(host);
-			yield d;
-			continue;
-		}
-		downloadSet[host].push(d);
-	}
-	let sorted = [];
-	for (let s in downloadSet) {
-		let c = downloadSet[s];
-		if (!c.available) {
-			continue;
-		}
-		sorted.push(c);
-	}
-	sorted.sort(SchedItem.prototype.cmp);
-	while (sorted.length) {
-		// short-circuit: only one host left
-		if (sorted.length == 1) {
-			item = sorted.shift();
-			while (item.queued) {
-				yield item.pop();
-			}
-			return;
-		}
-
-		// round robin
-		for (i = 0, e = sorted.length; i < e; ++i) {
-			item = sorted[i];
-			yield item.pop();
-			if (!s.queued) {
-				sorted.splice(i, 1);
-				break;
-			}
-		}
-	}
-}
-
 //Random scheduler. Does not respect limits
-//Basically Ornd(1)
 function RndScheduler(downloads, running) {
-	let _d = [];
-	let i, e, d;
-	for (i = 0, e = downloads.length; i < e; ++i) {
-		d = downloads[i];
-		if (!d.is(QUEUED)) {
-			continue;
-		}
-		_d.push(d);
-	}
-	RndScheduler.shuffle(_d);
-	for (i = 0, e = _d.length; i < e; ++i) {
-		yield _d[i];
-	}
+	this._schedule = downloads.filter(this._queuedFilter);
+	this.shuffle(this._schedule);
 }
 // Fisher-Yates based shuffle
-RndScheduler.shuffle = function shuffle(a) {
-    let c, e = a.length;
-    if (e < 4) {
-    	// no need to shuffle for such small sets
-    	return;
-    }
-	while (e > 1) {
-        c = Math.floor(Math.random() * (e--));
-        // swap
-        [a[e], a[c]] = [a[c], a[e]];
-    }
-}
+RndScheduler.prototype = {
+	__proto__: BaseScheduler.prototype,
+	shuffle: function shuffle(a) {
+		let c, e = a.length;
+		if (e < 4) {
+			// no need to shuffle for such small sets
+			return;
+		}
+		while (e > 1) {
+			c = Math.floor(Math.random() * (e--));
+			// swap
+			[a[e], a[c]] = [a[c], a[e]];
+		}
+	}
+};
 
 let scheduler;
 function loadScheduler() {
@@ -373,8 +409,8 @@ function loadScheduler() {
 	}
 	Debug.log("Using scheduler " + scheduler.name);
 }
-function getScheduler(downloads, running) {
-	return scheduler(downloads, running);
+function getConnectionScheduler(downloads) {
+	return new scheduler(downloads);
 }
 
 var buckets = {};
