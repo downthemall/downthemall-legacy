@@ -230,7 +230,12 @@ const Dialog = {
 			$('tooldonate').addEventListener('click', function(evt) { if (evt.button == 0) Dialog.openDonate() }, false);
 		})();
 
-		Tree.init($("downloads"));
+		let tree = $("downloads");
+		Tree.init(tree);
+		tree.addEventListener("change", function() {
+			Debug.log("tree change");
+			Dialog.scheduler = null;
+		}, true);
 		try {
 			Timers.createOneshot(100, this._loadDownloads, this);
 		}
@@ -890,13 +895,14 @@ const Dialog = {
 		try {
 			this.refresh();
 
+			let ts = Utils.getTimestamp();
 			for (let i = 0, e = this._running.length; i < e; ++i) {
 				let d = this._running[i];
 				if (!d) {
 					continue;
 				}
 				// checks for timeout
-				if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
+				if (d.is(RUNNING) && (ts - d.timeLastProgress) >= Prefs.timeout * 1000) {
 					if (d.resumable || !d.totalSize || !d.partialSize || Prefs.resumeOnError) {
 						d.pauseAndRetry();
 						d.status = _("timeout");
@@ -935,6 +941,7 @@ const Dialog = {
 		}
 		return false;
 	},
+	scheduler: null,
 	startNext: function D_startNext() {
 		try {
 			var rv = false;
@@ -942,19 +949,22 @@ const Dialog = {
 			if (this._running.length >= Prefs.maxInProgress) {
 				return false;
 			}
-			let gen = Limits.getScheduler(Tree.all, this._running);
-			for (let d in gen) {
-				if (!d || !d.is(QUEUED)) {
+			if (!this.scheduler) {
+				this.scheduler = Limits.getConnectionScheduler(Tree.all, this._running);
+				Debug.log("rebuild scheduler");
+			}
+			while (this._running.length < Prefs.maxInProgress) {
+				let d = this.scheduler.next(this._running);
+				if (!d) {
+					break;
+				}
+				if (!d.is(QUEUED)) {
 					Debug.log("FIXME: scheduler returned unqueued download");
 					continue;
 				}
 				this.run(d);
-				if (this._running.length >= Prefs.maxInProgress) {
-					return true;
-				}
 				rv = true;
 			}
-			gen = null;
 			return rv;
 		}
 		catch(ex){
@@ -1001,6 +1011,10 @@ const Dialog = {
 	},
 	signal: function D_signal(download) {
 		download.save();
+		if (download.is(QUEUED)) {
+			Dialog.scheduler = null;
+			return;
+		}
 		if (download.is(RUNNING)) {
 			this._wasRunning = true;
 		}
