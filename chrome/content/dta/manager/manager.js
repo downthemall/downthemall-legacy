@@ -2486,22 +2486,25 @@ Chunk.prototype = {
 		this.end = ch.end;
 		this._written += ch._written;
 	},
+	openStream: function(file, at) {
+		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
+		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
+		seekable.seek(0x00, at);
+		if (this.remaining > 0) {
+			outStream = new BufferedOutputStream(outStream, Math.min(this.remaining, MIN_CHUNK_SIZE * 2));
+		}
+		else {
+			outStream = new BufferedOutputStream(outStream, MIN_CHUNK_SIZE * 2);
+		}
+		return outStream;
+	},
 	open: function CH_open() {
 		this._sessionBytes = 0;
 		let file = this.parent.tmpFile;
 		if (!file.parent.exists()) {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
 		}
-		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
-		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
-		seekable.seek(0x00, this.start + this.written);
-		if (this.remaining > 0) {
-			this._outStream = new BufferedOutputStream(outStream, Math.min(this.remaining, MIN_CHUNK_SIZE * 2));
-		}
-		else {
-			this._outStream = new BufferedOutputStream(outStream, MIN_CHUNK_SIZE * 2);
-		}
-
+		this._outStream = this.openStream(file, this.start + this.written);
 		this.buckets = new ByteBucketTee(
 				this.parent.bucket,
 				Limits.getServerBucket(this.parent),
@@ -2585,7 +2588,7 @@ Chunk.prototype = {
 			// per e10n contract we must consume all bytes
 			// or in our case all remainder bytes
 			// reqPending from above makes sure that we won't re-schedule
-			// the download to early
+			// the download too early
 			if (this._outStream.writeFrom(aInputStream, bytes) != bytes) {
 				throw ("chunks::write: read/write count mismatch!");
 			}
