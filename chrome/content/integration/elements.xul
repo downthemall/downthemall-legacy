@@ -42,90 +42,85 @@
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js" />
 	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js" />
 	<script type="application/x-javascript"><![CDATA[
-		(function dta_init(window) {
+		window.addEventListener("load", function dta_load() {
 			"use strict";
+			window.removeEventListener("load", dta_load, false);
 
-			function fire(event) {
-				fire._runUnloaders();
+			setTimeout(function dta_firewalkswithme() {
+				function $(id) window.document.getElementById(id);
+				function fire(event) {
+					fire._runUnloaders();
 
-				let _loader = {};
-				Components.utils.import('resource://dta/loaders/integration.jsm', _loader);
-				_loader.load(window, event);
-			}
-			fire._unloaders = [];
-			fire._runUnloaders = function() {
-				for (let i = 0; i < fire._unloaders.length; ++i) {
-					try {
-						fire._unloaders[i]();
-					}
-					catch (ex) {
-					}
+					let _loader = {};
+					Components.utils.import('resource://dta/loaders/integration.jsm', _loader);
+					_loader.load(window, event);
 				}
-			};
-			fire.addFireListener = function(elem, type) {
-				if (!elem) {
-					return;
-				}
-				fire._unloaders.push(function() elem.removeEventListener(type, fire, false));
-				elem.addEventListener(type, fire, false);
-			};
-
-			window.addEventListener("load", function dta_load() {
-				window.removeEventListener("load", dta_load, false);
-
-				setTimeout(function dta_firewalkswithme() {
-					function $(id) window.document.getElementById(id);
-					fire.addFireListener($("dtaCtxCompact").parentNode, "popupshowing");
-					fire.addFireListener($("dtaToolsMenu").parentNode, "popupshowing");
-					fire.addFireListener($("dta-button"), "command");
-					fire.addFireListener($("dta-turbo-button"), "command");
-					fire.addFireListener($("dta-turboselect-button"), "command");
-					fire.addFireListener($("dta-manager-button"), "command");
-				}, 100);
-
-				setTimeout(function dta_showabout() {
-					function dta_showabout_i(Version) {
-						function openAbout() {
-							Version.showAbout = false;
-							let _m = {};
-							Components.utils.import("resource://dta/support/mediator.jsm", _m);
-							setTimeout(function() _m.showAbout(window), 0);
-						}
-						function registerObserver() {
-							let os = Services.obs
-								|| Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
-
-							os.addObserver({
-								observe: function(s,t,d) {
-									os.removeObserver(this, Version.TOPIC_SHOWABOUT);
-									if (Version.showAbout) {
-										openAbout();
-									}
-								}
-							}, Version.TOPIC_SHOWABOUT, true);
-						}
-
+				fire._unloaders = [];
+				fire._runUnloaders = function() {
+					for (let i = 0; i < fire._unloaders.length; ++i) {
 						try {
-							if (Version.showAbout === null) {
-								registerObserver();
-								return;
-							}
-							if (Version.showAbout === true) {
-								openAbout();
-								return;
-							}
+							fire._unloaders[i]();
 						}
 						catch (ex) {
 						}
 					}
+				};
+				fire.addFireListener = function(elem, type) {
+					if (!elem) {
+						return;
+					}
+					fire._unloaders.push(function() elem.removeEventListener(type, fire, false));
+					elem.addEventListener(type, fire, false);
+				};
+				fire.addFireListener($("dtaCtxCompact").parentNode, "popupshowing");
+				fire.addFireListener($("dtaToolsMenu").parentNode, "popupshowing");
+				fire.addFireListener($("dta-button"), "command");
+				fire.addFireListener($("dta-turbo-button"), "command");
+				fire.addFireListener($("dta-turboselect-button"), "command");
+				fire.addFireListener($("dta-manager-button"), "command");
+			}, 100);
 
-					let _v = {};
-					Components.utils.import("resource://dta/version.jsm", _v);
-					dta_showabout_i(_v.Version);
-				}, 2000);
+			setTimeout(function dta_showabout() {
+				function dta_showabout_i(Version) {
+					function openAbout() {
+						Version.showAbout = false;
+						let _m = {};
+						Components.utils.import("resource://dta/support/mediator.jsm", _m);
+						setTimeout(function() _m.showAbout(window), 0);
+					}
+					function registerObserver() {
+						let os = Services.obs
+							|| Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
 
-			}, false);
-		}).call(window, window);
+						os.addObserver({
+							observe: function(s,t,d) {
+								os.removeObserver(this, Version.TOPIC_SHOWABOUT);
+								if (Version.showAbout) {
+									openAbout();
+								}
+							}
+						}, Version.TOPIC_SHOWABOUT, true);
+					}
+
+					try {
+						if (Version.showAbout === null) {
+							registerObserver();
+							return;
+						}
+						if (Version.showAbout === true) {
+							openAbout();
+							return;
+						}
+					}
+					catch (ex) {
+					}
+				}
+
+				let _v = {};
+				Components.utils.import("resource://dta/version.jsm", _v);
+				dta_showabout_i(_v.Version);
+			}, 750);
+		}, false);
 	]]></script>
 
 	<!-- Firefox/Seamonkey -->
