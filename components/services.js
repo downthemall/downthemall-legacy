@@ -169,8 +169,10 @@ Stuff.prototype = {
 		}
 		try {
 			// DownloadHelper integration
-			let _dh = {};
-			module("resource://dta/support/downloadHelper.jsm", _dh);
+			if (("dhICore" in Ci) && ("dhIProcessor" in Ci)) {
+				let _dh = {};
+				module("resource://dta/support/downloadHelper.jsm", _dh);
+			}
 		}
 		catch (ex) {
 			log("dh", ex);
