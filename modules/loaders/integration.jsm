@@ -448,7 +448,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 /* **
  * LOADER
  */
-function load(window) {
+function load(window, outerEvent) {
 	let document = window.document;
 	let setTimeout = window.setTimeout;
 	let setInterval = window.setInterval;
@@ -1666,46 +1666,23 @@ function load(window) {
 
 		$t('dta-turboselect-button').addEventListener('command', function(event) { toggleOneClick(event); }, true);
 		$t('dta-manager-button').addEventListener('command', function() DTA.openManager(window), true);
+
 	}
 	catch (ex) {
 		DTA.Debug.log("Init TBB failed", ex);
 	}
 
-	// "Show about" stuff
-	try {
-		function openAbout() {
-			Version.showAbout = false;
-			setTimeout(function() DTA.Mediator.showAbout(window), 600);
+	if (outerEvent) {
+		let target = outerEvent.target;
+		let type = outerEvent.type;
+		if (target === ctx || target == menu) {
+			initMenus(outerEvent);
 		}
-
-		function registerObserver() {
-			Components.utils.import("resource://gre/modules/XPCOMUtils.jsm", Version);
-
-			let os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
-
-			let obs = {
-				QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver,Ci.nsISupportsWeakReference]),
-				observe: function(s,t,d) {
-					os.removeObserver(this, Version.TOPIC_SHOWABOUT);
-					if (Version.showAbout) {
-						openAbout();
-					}
-				}
-			};
-
-			os.addObserver(obs, Version.TOPIC_SHOWABOUT, true);
+		else if (type == "command") {
+			target.doCommand();
 		}
-
-		if (Version.showAbout === null) {
-			registerObserver();
-			return;
+		else {
+			DTA.Debug.log("huh? Unknown id passed: " + target.id + "/" + type);
 		}
-		if (Version.showAbout === true) {
-			openAbout();
-			return;
-		}
-	}
-	catch (ex) {
-		DTA.Debug.log("Failed to process about", ex);
 	}
 }
