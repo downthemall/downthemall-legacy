@@ -250,10 +250,15 @@ treecol:-moz-lwtheme-brighttext {
 		background: -moz-Dialog;
 	}
 
-	.statusbarpanel-text:not(:-moz-lwtheme-darktext) {
+	.statusbarpanel-text:-moz-lwtheme-lighttext {
 		text-shadow: 1px 1px 1.5px black;
 	}
+
 	.statusbarpanel-text:-moz-lwtheme-darktext {
 		text-shadow: 1px 1px 1.5px gray;
 	}
+	.statusbarpanel-text:not(:-moz-lwtheme) {
+		text-shadow: 1px 1px 1.5px white;
+	}
+
 }
