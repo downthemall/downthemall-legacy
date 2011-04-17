@@ -127,9 +127,8 @@ Stuff.prototype = {
 
 		let Version = {};
 		module("resource://dta/version.jsm", Version);
-		Version = Version.Version;
 
-		(function migrate() Version.getInfo(function(v) {
+		(function migrate(Version) Version.getInfo(function(v) {
 			try {
 				let lastVersion = Preferences.getExt('version', '0');
 				if (0 == v.compareVersion(v.BASE_VERSION, lastVersion)) {
@@ -156,7 +155,7 @@ Stuff.prototype = {
 					// XXX
 				}
 			}
-		}))();
+		}))(Version.Version);
 	},
 	bootstrap: function MM_bootstrap() {
 		this.migrate();
