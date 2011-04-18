@@ -87,17 +87,11 @@ ContentHandlingImpl.prototype = {
 		Observers.removeObserver(this, 'private-browsing');
 	},
 	registerHttpObservers: function ct_registerHttpObservers() {
-		if (!this.sniffVideos) {
-			return;
-		}
 		Observers.addObserver(this, 'http-on-modify-request', false);
 		Observers.addObserver(this, 'http-on-examine-response', false);
 		Observers.addObserver(this, 'http-on-examine-cached-response', false);
 	},
 	unregisterHttpObservers: function ct_unregisterHttpObservers() {
-		if (this.sniffVideos) {
-			return;
-		}
 		Observers.removeObserver(this, 'http-on-modify-request');
 		Observers.removeObserver(this, 'http-on-examine-response');
 		Observers.removeObserver(this, 'http-on-examine-cached-response');
