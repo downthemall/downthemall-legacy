@@ -1678,11 +1678,8 @@ function load(window, outerEvent) {
 		if (target === ctx || target == menu) {
 			initMenus(outerEvent);
 		}
-		else if (type == "command") {
+		else if (type == "command" && target.id != "cmd_CustomizeToolbars") {
 			target.doCommand();
-		}
-		else {
-			DTA.Debug.log("huh? Unknown id passed: " + target.id + "/" + type);
 		}
 	}
 }
