@@ -53,6 +53,12 @@ const ScriptableInputStream = new ctor('@mozilla.org/scriptableinputstream;1', '
 const Observers = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
 const Prefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2);
 
+const HEADER_CT = ['Content-Type', 'Content-Disposition'];
+
+const REGEXP_MEDIA = /\.(flv|ogg|ogm|ogv|avi|divx|mp4v?|webm)\b/i;
+const REGEXP_SWF = /\.swf\b/i;
+const REGEXP_CT = /\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i;
+
 /**
  * ContentHandling
  */
@@ -63,21 +69,38 @@ ContentHandlingImpl.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener]),
 
 	_init: function ct__init() {
-		Observers.addObserver(this, 'http-on-modify-request', false);
-		Observers.addObserver(this, 'http-on-examine-response', false);
-		Observers.addObserver(this, 'http-on-examine-cached-response', false);
 		Observers.addObserver(this, 'xpcom-shutdown', false);
 		Observers.addObserver(this, 'private-browsing', false);
 		Prefs.addObserver(PREF_SNIFFVIDEOS, this, false);
 		this.sniffVideos = Prefs.getBoolPref(PREF_SNIFFVIDEOS);
+		if (this.sniffVideos) {
+			this.registerHttpObservers();
+		}
 	},
-	_uninit: function ct__uninit() {
+	_uinit: function ct__uninit() {
+		Prefs.removeObserver('extensions.dta.listsniffedvideos', this);
+		if (this.sniffVideos) {
+			this.sniffVideos = false;
+			this.unregisterHttpObservers();
+		}
+		Observers.removeObserver(this, 'xpcom-shutdown');
+		Observers.removeObserver(this, 'private-browsing');
+	},
+	registerHttpObservers: function ct_registerHttpObservers() {
+		if (!this.sniffVideos) {
+			return;
+		}
+		Observers.addObserver(this, 'http-on-modify-request', false);
+		Observers.addObserver(this, 'http-on-examine-response', false);
+		Observers.addObserver(this, 'http-on-examine-cached-response', false);
+	},
+	unregisterHttpObservers: function ct_unregisterHttpObservers() {
+		if (this.sniffVideos) {
+			return;
+		}
 		Observers.removeObserver(this, 'http-on-modify-request');
 		Observers.removeObserver(this, 'http-on-examine-response');
 		Observers.removeObserver(this, 'http-on-examine-cached-response');
-		Observers.removeObserver(this, 'xpcom-shutdown');
-		Observers.removeObserver(this, 'private-browsing');
-		Prefs.removeObserver('extensions.dta.listsniffedvideos', this);
 	},
 	observe: function ct_observe(subject, topic, data) {
 		switch(topic) {
@@ -93,7 +116,17 @@ ContentHandlingImpl.prototype = {
 			break;
 		case 'nsPref:changed':
 			try {
-				this.sniffVideos = Prefs.getBoolPref(PREF_SNIFFVIDEOS);
+				let newValue = Prefs.getBoolPref(PREF_SNIFFVIDEOS);
+				let differs = newValue == this.sniffVideos;
+				this.sniffVideos = newValue;
+				if (differs) {
+					if (newValue) {
+						this.registerHttpObservers();
+					}
+					else {
+						this.unregisterHttpObservers();
+					}
+				}
 			}
 			catch (ex) {
 				error(ex);
@@ -157,7 +190,7 @@ ContentHandlingImpl.prototype = {
 		catch (ex) {
 			error(ex);
 		}
- 	},
+	},
 	observeResponse: function ct_observeResponse(subject, topic, data) {
 		if (!this.sniffVideos || !(subject instanceof Ci.nsIHttpChannel)) {
 			return;
@@ -168,18 +201,18 @@ ContentHandlingImpl.prototype = {
 				return;
 			}
 			let ct = '';
-			for each (let x in ['Content-Type', 'Content-Disposition']) {
+			for (let i = 0; i < HEADER_CT.length; ++i) {
 				try {
-					ct += channel.getResponseHeader('Content-Type');
+					ct += channel.getResponseHeader(HEADER_CT[i]);
 				}
 				catch (ex) {
 					// no op
 				}
 			}
-			if (
-					(/\.(flv|ogg|ogm|ogv|avi|divx|mp4v?|webm)\b/i.test(channel.URI.spec) && !/\.swf\b/i.test(channel.URI.spec))
-					|| ct.match(/\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i)
-			) {
+			let spec = channel.URI.spec;
+			if ((REGEXP_MEDIA.test(spec) && !REGEXP_SWF.test(spec))
+				|| REGEXP_CT.test(ct)) {
+
 				let wp = null;
 				if (channel.loadGroup && channel.loadGroup.groupObserver) {
 					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);
