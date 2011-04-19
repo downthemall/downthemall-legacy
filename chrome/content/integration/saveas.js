@@ -112,6 +112,11 @@ addEventListener('load', function() {
 		catch (ex) {
 			// no op
 		}
+		try {
+			const NS_BINDING_ABORTED = 0x804b0002;
+			dialog.mLauncher.cancel(NS_BINDING_ABORTED);
+		}
+		catch (ex) {}		
 		de.cancelDialog();
 	}
 
