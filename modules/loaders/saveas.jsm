@@ -140,6 +140,12 @@ function load(window) {
 		catch (ex) {
 			// no op
 		}
+		try {
+			const NS_BINDING_ABORTED = 0x804b0002;
+			dialog.mLauncher.cancel(NS_BINDING_ABORTED);
+		}
+		catch (ex) {}
+
 		de.cancelDialog();
 	}
 
@@ -177,7 +183,7 @@ function load(window) {
 	let url = dialog.mLauncher.source;
 	let referrer;
 	try {
-		referrer = dialog.mContext.QueryInterface(Components.interfaces.nsIWebNavigation).currentURI.spec;
+		referrer = dialog.mContext.QueryInterface(Ci.nsIWebNavigation).currentURI.spec;
 	}
 	catch(ex) {
 		referrer = url.spec;
