@@ -190,6 +190,7 @@ Connection.prototype = {
 			}
 			
 			if (chan instanceof Ci.nsIHttpChannel) {
+				let c = this.c;
 
 				// Cannot hash when compressed
 				chan.setRequestHeader("Accept-Encoding", "", false);
