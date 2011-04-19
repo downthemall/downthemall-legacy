@@ -378,7 +378,7 @@ function loadScheduler() {
 		scheduler = FastScheduler;
 		break;
 	}
-	Debug.log("Using scheduler " + scheduler.name);
+	Debug.logString("Using scheduler " + scheduler.name);
 }
 function getConnectionScheduler(downloads) {
 	return new scheduler(downloads);
