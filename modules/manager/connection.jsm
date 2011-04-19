@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
 const EXPORTED_SYMBOLS = ['setAuthPrompterWindow', 'Connection', 'GlobalBucket'];
 
 const Cc = Components.classes;
@@ -124,11 +124,6 @@ function Connection(d, c, isInfoGetter) {
 	if (this._chan instanceof Ci.nsIHttpChannel) {
 		try {
 			Debug.log("http");
-			
-			if (c.start + c.written > 0) {
-				this._chan.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
-			}
-
 			if (referrer instanceof Ci.nsIURI) {
 				this._chan.referrer = referrer;
 			}
@@ -209,7 +204,12 @@ Connection.prototype = {
 				if (Preferences.getExt('nokeepalive', true)) {
 					chan.setRequestHeader('Keep-Alive', '', false);
 					chan.setRequestHeader('Connection', 'close', false);
-				}			
+				}
+
+				if (c.start + c.written > 0) {
+					chan.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
+					Debug.log("setting range");
+				}
 
 				RequestManipulation.modifyHttp(chan);
 				
@@ -319,6 +319,15 @@ Connection.prototype = {
 		
 		if (!this.isInfoGetter) {
 			return;
+		}
+		try {
+			if (oldChannel instanceof Ci.nsIHttpChannel && oldChannel.responseStatus == 302) {
+				return;
+			}
+			Debug.log("oldChannel: " + oldChannel.responseStatus);
+		}
+		catch (ex) {
+			// no op
 		}
 		try {
 			let newurl = new DTA.URL(newChannel.URI.QueryInterface(Ci.nsIURL), this.url.preference);
@@ -466,7 +475,7 @@ Connection.prototype = {
 		catch (ex) {
 			return true;
 		}
-		 
+		
 		if (code >= 400) {
 			// any data that we got over this channel should be considered "corrupt"
 			c.rollback();
@@ -704,7 +713,7 @@ Connection.prototype = {
 				try {
 					chan = aRequest.QueryInterface(sc.i);
 					if ((this.rexamine = this[sc.f](chan))) {
-						 return;
+						return;
 					}
 					break;
 				}
@@ -866,7 +875,7 @@ Connection.prototype = {
 	},
 
 	// nsIProgressEventSink
-  onProgress: function DL_onProgress(aRequest, aContext, aProgress, aProgressMax) {
+	onProgress: function DL_onProgress(aRequest, aContext, aProgress, aProgressMax) {
 		try {
 			// shortcuts
 			let c = this.c;
