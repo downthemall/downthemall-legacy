@@ -33,12 +33,12 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
 const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init');
 
 let ImportExport = {};
 module('resource://dta/manager/imex.jsm', ImportExport);
- 
+
 const Tree = {
 	init: function T_init(elem) {
 		this.elem = elem;
@@ -301,6 +301,10 @@ const Tree = {
 		if (--this._updating == 0) {
 			this._box.endUpdateBatch();
 			this.refreshTools();
+			if (this._mustFireChangeEvent) {
+				this._mustFireChangeEvent = false;
+				this.fireChangeEvent();
+			}
 		}
 	},
 	add: function T_add(download) {
@@ -309,6 +313,7 @@ const Tree = {
 		if (!this._updating) {
 			this._box.rowCountChanged(pos, 1);
 		}
+		this.fireChangeEvent();
 		return pos;
 	},
 	scrollToNearest: function(download) {
@@ -395,6 +400,16 @@ const Tree = {
 			Tree.remove(downloads);
 		}
 	},
+	_mustFireChangeEvent: false,
+	fireChangeEvent: function() {
+		if (this._updating) {
+			this._mustFireChangeEvent = true;
+			return;
+		}
+		let evt = document.createEvent("UIEvents");
+		evt.initUIEvent("change", true, true, null, 0);
+		return this.elem.dispatchEvent(evt);
+	},
 	remove: function T_remove(downloads, performJump) {
 		if (downloads && !(downloads instanceof Array)) {
 			downloads = [downloads];
@@ -428,6 +443,8 @@ const Tree = {
 		QueueStore.endUpdate();
 		this.endUpdate();
 		this.invalidate();
+		this.fireChangeEvent();
+		
 		if (performJump) {
 			this._removeJump(downloads.length, last);
 		}
@@ -605,16 +622,16 @@ const Tree = {
 			
 			let rv = fp.show();
 			if (rv == Ci.nsIFilePicker.returnOK || rv == Ci.nsIFilePicker.returnReplace) {
-                if (/\.x?html$/i.test(fp.file.leafName)) { 
-                    ImportExport.exportToHtmlFile(this.selected, document, fp.file, Prefs.permissions); 
-                    return; 
-	            } 
-	            if (/\.metalink$/i.test(fp.file.leafName)) { 
-	                    ImportExport.exportToMetalinkFile(this.selected, document, fp.file, Prefs.permissions); 
-	                    return; 
-	            } 
-	            ImportExport.exportToTextFile(this.selected, fp.file, Prefs.permissions); 
-	            return;
+								if (/\.x?html$/i.test(fp.file.leafName)) { 
+										ImportExport.exportToHtmlFile(this.selected, document, fp.file, Prefs.permissions); 
+										return; 
+							} 
+							if (/\.metalink$/i.test(fp.file.leafName)) { 
+											ImportExport.exportToMetalinkFile(this.selected, document, fp.file, Prefs.permissions); 
+											return; 
+							} 
+							ImportExport.exportToTextFile(this.selected, fp.file, Prefs.permissions); 
+							return;
 			}
 		}
 		catch (ex) {
@@ -632,16 +649,16 @@ const Tree = {
 			
 			let rv = fp.show();
 			if (rv == Ci.nsIFilePicker.returnOK) {
-                if (/\.(xml|meta(4|link))$/.test(fp.file.leafName)) { 
-                    Metalinker.handleFile(fp.file); 
-                    return; 
-	            } 
-	            let links = ImportExport.parseTextFile(fp.file); 
-	            if (links.length) { 
-	                    DTA.saveLinkArray(window, links, []); 
-	            } 
-	            return; 
-            }
+								if (/\.(xml|meta(4|link))$/.test(fp.file.leafName)) { 
+										Metalinker.handleFile(fp.file); 
+										return; 
+							} 
+							let links = ImportExport.parseTextFile(fp.file); 
+							if (links.length) { 
+											DTA.saveLinkArray(window, links, []); 
+							} 
+							return; 
+						}
 		}
 		catch (ex) {
 			Debug.log("Cannot import downloads", ex);		
@@ -725,7 +742,8 @@ const Tree = {
 					disabled = !f(states);
 				}
 				if (!(items instanceof Array)) {
-					items = [items];
+					items.setAttribute('disabled', disabled);
+					return;
 				}
 				for each (let o in items) { 
 					o.setAttribute('disabled', disabled);
@@ -992,21 +1010,21 @@ const Tree = {
 };
 
 const FileHandling = {
- 	get _uniqueList() {
- 		let u = {};
- 		for (d in Tree.selected) {
- 			if (d.is(COMPLETE)) {
- 				let f = d.destinationFile;
- 				if (SYSTEMSLASH == "\\") {
- 					f = f.toLowerCase();	
- 				}
- 				if (!(f in u)) {
- 					u[f] = null;
- 					yield d;
- 				}
- 			}
- 		}
- 	},
+	get _uniqueList() {
+		let u = {};
+		for (d in Tree.selected) {
+			if (d.is(COMPLETE)) {
+				let f = d.destinationFile;
+				if (SYSTEMSLASH == "\\") {
+					f = f.toLowerCase();	
+				}
+				if (!(f in u)) {
+					u[f] = null;
+					yield d;
+				}
+			}
+		}
+	},
 	openFolder: function() {
 		for (d in Tree.selected) {
 			try {

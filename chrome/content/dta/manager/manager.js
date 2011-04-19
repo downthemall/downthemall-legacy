@@ -36,7 +36,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
 const Construct = Components.Constructor;
 function Serv(c, i) { // leave in; anticontainer and others compat
 	return Cc[c].getService(i ? Ci[i] : null);
@@ -195,7 +195,12 @@ const Dialog = {
 			$('tooldonate').addEventListener('click', function(evt) { if (evt.button == 0) Dialog.openDonate() }, false);
 		})();		
 		
-		Tree.init($("downloads"));
+		let tree = $("downloads");
+		Tree.init(tree);
+		tree.addEventListener("change", function() { 
+			Debug.log("tree change"); 
+			Dialog.scheduler = null; 
+		}, true); 		
 		try {
 			Timers.createOneshot(100, this._loadDownloads, this);
 		}
@@ -813,9 +818,10 @@ const Dialog = {
 		try {
 			this.refresh();
 			
+			let ts = Utils.getTimestamp();
 			for each (let d in this._running) {
 				// checks for timeout
-				if (d.is(RUNNING) && (Utils.getTimestamp() - d.timeLastProgress) >= Prefs.timeout * 1000) {
+				if (d.is(RUNNING) && (ts - d.timeLastProgress) >= Prefs.timeout * 1000) {
 					if (d.resumable || !d.totalSize || !d.partialSize || Prefs.resumeOnError) {
 						d.pauseAndRetry();
 						d.status = _("timeout");
@@ -854,26 +860,30 @@ const Dialog = {
 		}
 		return false;
 	},
+	scheduler: null,
 	startNext: function D_startNext() {
 		try {
 			var rv = false;
 			// pre-condition, do check prior to loop, or else we'll have the generator cost.
 			if (this._running.length >= Prefs.maxInProgress) {
 				return false;
-			}				
-			let gen = Limits.getScheduler(Tree.all, this._running);
-			for (let d in gen) {
-				if (!d || !d.is(QUEUED)) {
+			}
+			if (!this.scheduler) {
+				this.scheduler = Limits.getConnectionScheduler(Tree._downloads, this._running);
+				Debug.log("rebuild scheduler");
+			}
+			while (this._running.length < Prefs.maxInProgress) {
+				let d = this.scheduler.next(this._running);
+				if (!d) {
+					break;
+				}
+				if (!d.is(QUEUED)) { 
 					Debug.logString("FIXME: scheduler returned unqueued download");
 					continue;
 				}
 				this.run(d);
-				if (this._running.length >= Prefs.maxInProgress) {
-					return true;
-				}
 				rv = true;
 			}
-			gen = null;
 			return rv;
 		}
 		catch(ex){
@@ -916,6 +926,10 @@ const Dialog = {
 	},
 	signal: function D_signal(download) {
 		download.save();
+		if (download.is(QUEUED)) {
+			Dialog.scheduler = null;
+			return;
+		}
 		if (download.is(RUNNING)) {
 			this._wasRunning = true;
 		}
@@ -1115,7 +1129,7 @@ const Dialog = {
 addEventListener('load', function() Dialog.init(), false);
 
 const Metalinker = {
- 	handleDownload: function ML_handleDownload(download) {
+	handleDownload: function ML_handleDownload(download) {
 		download.state = CANCELED;
 		Tree.remove(download, false);
 		let file = new FileFactory(download.destinationFile);
@@ -2288,7 +2302,7 @@ QueueItem.prototype = {
 	serialize: function() {
 		let e = {};
 		[
-		 	'fileName',
+			'fileName',
 			'postData',
 			'description',
 			'title',
@@ -2799,16 +2813,16 @@ addEventListener(
 );
 
 function CustomEvent(download, command) {
- 	try {
- 		// may I introduce you to a real bastard way of commandline parsing?! :p
- 		var uuids = {};
- 		function callback(u) {
- 			u = u.substr(1, u.length - 2);
- 			id = Utils.newUUIDString();
- 			uuids[id] = u;
- 			return id;
- 		}
- 		function mapper(arg, i) {
+	try {
+		// may I introduce you to a real bastard way of commandline parsing?! :p
+		var uuids = {};
+		function callback(u) {
+			u = u.substr(1, u.length - 2);
+			id = Utils.newUUIDString();
+			uuids[id] = u;
+			return id;
+		}
+		function mapper(arg, i) {
 			if (arg == "%f") {
 				if (i == 0) {
 					throw new Components.Exception("Will not execute the file itself");
@@ -2819,18 +2833,18 @@ function CustomEvent(download, command) {
 				arg = uuids[arg];
 			}
 			return arg;
- 		}
- 		var args = command
- 			.replace(/(["'])(.*?)\1/g, callback)
- 			.split(/ /g)
- 			.map(mapper);
- 		var program = new FileFactory(args.shift());
+		}
+		var args = command
+			.replace(/(["'])(.*?)\1/g, callback)
+			.split(/ /g)
+			.map(mapper);
+		var program = new FileFactory(args.shift());
 		var process = new Process(program);
 		process.run(false, args, args.length); 		
- 	}
- 	catch (ex) {
- 		Debug.log("failed to execute custom event", ex);
- 		alert("failed to execute custom event", ex);
- 	}
- 	download.complete();
+	}
+	catch (ex) {
+		Debug.log("failed to execute custom event", ex);
+		alert("failed to execute custom event", ex);
+	}
+	download.complete();
 }

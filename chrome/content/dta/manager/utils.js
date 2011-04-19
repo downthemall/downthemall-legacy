@@ -225,6 +225,7 @@ const Prefs = {
 		else {
 			RequestManipulation.unregisterHttp('dtaua');
 		}
+		Dialog.scheduler = null;
 	},
 	_constructTemp: function() {
 		this.tempLocation = null;		
