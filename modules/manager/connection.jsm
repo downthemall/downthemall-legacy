@@ -126,18 +126,12 @@ function Connection(d, c, isInfoGetter) {
 	if (this._chan instanceof Ci.nsIHttpChannel) {
 		try {
 			Debug.log("http");
-
-			if (c.start + c.written > 0) {
-				this._chan.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
-			}
-
 			if (referrer instanceof Ci.nsIURI) {
 				this._chan.referrer = referrer;
 			}
-			if (d.postData) {
-				let uc = this._chan.QueryInterface(Ci.nsIUploadChannel);
-				uc.setUploadStream(new StringInputStream(d.postData, d.postData.length), null, -1);
-				http.requestMethod = 'POST';
+			if (d.postData && this._chan instanceof Ci.nsIUploadChannel) {
+				this._chan.setUploadStream(new StringInputStream(d.postData, d.postData.length), null, -1);
+				this._chan.requestMethod = 'POST';
 			}
 		}
 		catch (ex) {
@@ -197,6 +191,7 @@ Connection.prototype = {
 			}
 
 			if (chan instanceof Ci.nsIHttpChannel) {
+				let c = this.c;
 
 				// Cannot hash when compressed
 				chan.setRequestHeader("Accept-Encoding", "", false);
@@ -211,6 +206,11 @@ Connection.prototype = {
 				if (Preferences.getExt('nokeepalive', true)) {
 					chan.setRequestHeader('Keep-Alive', '', false);
 					chan.setRequestHeader('Connection', 'close', false);
+				}
+
+				if (c.start + c.written > 0) {
+					chan.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
+					Debug.log("setting range");
 				}
 
 				RequestManipulation.modifyHttp(chan);
@@ -322,6 +322,16 @@ Connection.prototype = {
 
 		if (!this.isInfoGetter) {
 			return;
+		}
+		try {
+			if (oldChannel instanceof Ci.nsIHttpChannel && oldChannel.responseStatus == 302) {
+				return;
+			}
+			Debug.log("oldChannel: " + oldChannel.responseStatus);
+		}
+		catch (ex) {
+			Debug.log("oldChannel", ex);
+			// no op
 		}
 		try {
 			let newurl = new DTA.URL(newChannel.URI.QueryInterface(Ci.nsIURL), this.url.preference);
