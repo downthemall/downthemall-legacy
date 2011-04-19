@@ -47,6 +47,9 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 module('resource://dta/version.jsm');
+module('resource://dta/utils.jsm');
+
+ServiceGetter(this, "CookieManager", "@mozilla.org/cookiemanager;1", "nsICookieManager2");
 
 function Manipulator() {
 	this._m = {};
@@ -129,4 +132,25 @@ registerURL(
 	'rapidshare direct',
 	/^https?:\/\/(?:[\w\d_.-]+\.)?rapidshare\.com\/files\/[^?]*?(?!\?directstart=1)$/,
 	function() this.spec += "?directstart=1"
+);
+
+// Filesonic premium original
+// This is here because filesonic is fucking lazy/stupid when it comes to premium links:
+// p-links still time out (wtf?!)
+// This is furthermore here, nsHelperAppLauncher does not expose the originating channel (wtf?!)
+registerURL(
+	'filesonic premium original',
+	/^https?:\/\/s\d+\.filesonic\.com\/download\//,
+	function() {
+		try {
+			for (let c in new SimpleIterator(CookieManager.getCookiesFromHost(this.host), Ci.nsICookie)) {
+				if (c.name == "role" && c.value == "premium") {
+					// only for premium :p
+					this.spec = this.spec.replace(/^https?:\/\/s\d+\.filesonic\.com\/download\//, 'http://www.filesonic.com/file/');
+					return;
+				}
+			}
+		}
+		catch (ex) {}
+	}
 );
