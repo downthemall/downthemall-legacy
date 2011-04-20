@@ -322,19 +322,13 @@ Connection.prototype = {
 			return;
 		}
 		try {
+			let newurl = new DTA.URL(newChannel.URI.QueryInterface(Ci.nsIURL), this.url.preference);
+			this.d.fileName = newurl.usable.getUsableFileName();
 			if (oldChannel instanceof Ci.nsIHttpChannel && oldChannel.responseStatus == 302) {
 				return;
 			}
-			Debug.log("oldChannel: " + oldChannel.responseStatus);
-		}
-		catch (ex) {
-			// no op
-		}
-		try {
-			let newurl = new DTA.URL(newChannel.URI.QueryInterface(Ci.nsIURL), this.url.preference);
 			this.d.urlManager.replace(this.url, newurl);
 			this.url = newurl;
-			this.d.fileName = this.url.usable.getUsableFileName();
 		}
 		catch (ex) {
 			Debug.log("Failed to reset data on channel redirect", ex);
