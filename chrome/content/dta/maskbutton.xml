@@ -34,14 +34,14 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** -->
- 
+
 <!--
 	pretty lame overlay like stuff.
 	overalying itself is not possible, as this will crash fx
 -->
- 
+
 <!DOCTYPE bindings SYSTEM "chrome://dta/locale/mask.dtd">
- 
+
 <xbl:bindings
 	xmlns:xbl="http://www.mozilla.org/xbl"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -71,7 +71,7 @@
 						<grid flex="1">
 							<columns><column/><column flex="1"/></columns>
 							<rows>
-								<row tag="*qstring*" desc="&mask.qstring;"/>							
+								<row tag="*qstring*" desc="&mask.qstring;"/>
 								<row tag="*refer*" desc="&mask.refer;"/>
 								<row tag="*num*" desc="&mask.num;"/>
 								<row tag="*inum*" desc="&mask.inum;"/>
@@ -93,7 +93,7 @@
 			/>
 		</xbl:content>
 	</xbl:binding>
-	
+
 	<xbl:binding id="maskitem">
 		<xbl:content>
 			<label
@@ -104,6 +104,9 @@
 		</xbl:content>
 		<xbl:handlers>
 			<xbl:handler event="click"><![CDATA[
+				if (event.originalTarget.className != "masktag") {
+					return;
+				}
 				let text = $('renaming');
 				let value = event.originalTarget.value;
 				let s = text.inputField.selectionStart;
