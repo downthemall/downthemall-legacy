@@ -104,6 +104,9 @@
 		</xbl:content>
 		<xbl:handlers>
 			<xbl:handler event="click"><![CDATA[
+				if (event.originalTarget.className != "masktag") {
+					return;
+				}
 				let text = $('renaming');
 				let value = event.originalTarget.value;
 				let s = text.inputField.selectionStart;
