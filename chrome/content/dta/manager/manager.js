@@ -1804,12 +1804,12 @@ QueueItem.prototype = {
 						self.tmpFile.clone().moveTo(destination, self.destinationName);
 					}
 					catch (ex) {
-						x = x || 0;
-						if (x >= 4) {
+						x = x || 1;
+						if (x > 5) {
 							self.complete(ex);
 							return;
 						}
-						window.setTimeout(function() move(self, ++x), 250);
+						window.setTimeout(function() move(self, ++x), x * 250);
 						return;
 					}
 					self.complete();
