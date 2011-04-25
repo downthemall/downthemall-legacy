@@ -108,8 +108,12 @@ function overrideUA() {
 function makeAnonymous() {
 	try { this.referrer = null; } catch (ex) { /* no op */ }
 	this.setRequestHeader('Referer', '', false);
-	this.loadFlags |= Ci.nsIRequest.LOAD_ANONYMOUS;
+	//this.loadFlags |= Ci.nsIRequest.LOAD_ANONYMOUS;
 	this.setRequestHeader('Cookie', '', false);
+}
+function makeCompletelyAnonymous() {
+	makeAnonymous();
+	this.loadFlags |= Ci.nsIRequest.LOAD_ANONYMOUS;
 }
 
 function amendUA() {
