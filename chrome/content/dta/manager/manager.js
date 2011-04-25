@@ -2012,12 +2012,14 @@ QueueItem.prototype = {
 	get maskCURL() this.maskURL.host + ((this.maskURLPath == "") ? "" : (SYSTEMSLASH + this.maskURLPath)),
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
-			let mask = this.mask.replace(/\*\w+\*/gi, this.rebuildDestination_replacer);
-			mask = mask.removeBadChars().removeFinalChar(".").trim().split(SYSTEMSLASH);
-
+			let mask = this.mask.replace(/\*\w+\*/gi, this.rebuildDestination_replacer)
+				.removeFinalChar(".")
+				.normalizeSlashes()
+				.removeFinalSlash()
+				.split(SYSTEMSLASH);
 			let file = new FileFactory(this.pathName.addFinalSlash());
 			while (mask.length) {
-				file.append(mask.shift());
+				file.append(mask.shift().removeBadChars().trim());
 			}
 			this._destinationName = file.leafName;
 			this._destinationPath = file.parent.path;
