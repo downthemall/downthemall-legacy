@@ -98,6 +98,11 @@ var TEXT_CANCELED;
 GlobalProgress = new GlobalProgress(window);
 var Timers = new TimerManager();
 
+const Dialog_loadDownloads_props = ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'];
+function Dialog_loadDownloads_get(down, attr, def) (attr in down) ? down[attr] : (def ? def : '');
+
+const Dialog_serialize_props = ['fileName', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'maxChunks', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'];
+
 const Dialog = {
 	_observes: [
 		'quit-application-requested',
@@ -396,15 +401,15 @@ const Dialog = {
 
 			let d = new QueueItem();
 			d.dbId = dbItem.id;
-			let state = get('state');
+			let state = Dialog_loadDownloads_get(down, 'state');
 			if (state) {
 				d._state = state;
 			}
 			d.urlManager = new UrlManager(down.urlManager);
-			d.bNum = get("numIstance");
-			d.iNum = get("iNum");
+			d.bNum = Dialog_loadDownloads_get(down, "numIstance");
+			d.iNum = Dialog_loadDownloads_get(down, "iNum");
 
-			let referrer = get('referrer');
+			let referrer = Dialog_loadDownloads_get(down, 'referrer');
 			if (referrer) {
 				try {
 					d.referrer = referrer.toURL();
@@ -415,13 +420,13 @@ const Dialog = {
 			}
 
 			// only access the setter of the last so that we don't generate stuff trice.
-			d._pathName = get('pathName', '');
-			d._description = get('description', '');
-			d._title = get('title', '');
-			d._mask = get('mask');
-			d.fileName = get('fileName');
+			d._pathName = Dialog_loadDownloads_get(down, 'pathName');
+			d._description = Dialog_loadDownloads_get(down, 'description');
+			d._title = Dialog_loadDownloads_get(down, 'title');
+			d._mask = Dialog_loadDownloads_get(down, 'mask');
+			d.fileName = Dialog_loadDownloads_get(down, 'fileName');
 
-			let tmpFile = get('tmpFile');
+			let tmpFile = Dialog_loadDownloads_get(down, 'tmpFile');
 			if (tmpFile) {
 				try {
 					tmpFile = new FileFactory(tmpFile);
@@ -440,20 +445,14 @@ const Dialog = {
 				}
 			}
 
-			d.startDate = new Date(get("startDate"));
-			d.visitors = new VisitorManager(down.visitors);
+			d.startDate = new Date(Dialog_loadDownloads_get(down, "startDate"));
+			d.visitors.load(down.visitors);
 
-			for each (let e in [
-				'contentType',
-				'conflicts',
-				'postData',
-				'destinationName',
-				'resumable',
-				'compression',
-				'fromMetalink',
-				'speedLimit',
-			].filter(function(e) e in down)) {
+			for (let i = 0, e; i < Dialog_loadDownloads_props.length; ++i) {
+				e = Dialog_loadDownloads_props[i];
+				if (e in down) {
 				d[e] = down[e];
+			}
 			}
 
 			// don't trigger prealloc!
@@ -474,7 +473,8 @@ const Dialog = {
 				case PAUSED:
 				case QUEUED:
 				{
-					for each (let c in down.chunks) {
+					for (let i = 0, c; i < down.chunks.length; ++i) {
+						c = down.chunks[c];
 						d.chunks.push(new Chunk(d, c.start, c.end, c.written));
 					}
 					d.refreshPartialSize();
@@ -546,7 +546,7 @@ const Dialog = {
 		this.reinit(true);
 	},
 	canEnterPrivateBrowsing: function() {
-		if (Tree.some(function(d) { return d.started && !d.resumable && d.isOf(RUNNING); })) {
+		if (Tree.some(function(d) { return d.started && !d.resumable && d.is(RUNNING); })) {
 			var rv = Prompts.confirmYN(
 				window,
 				_("confpbm"),
@@ -559,7 +559,7 @@ const Dialog = {
 		return (this._forceClose = true);
 	},
 	canExitPrivateBrowsing: function() {
-		if (Tree.some(function(d) { return d.isOf(RUNNING, QUEUED, PAUSED, FINISHING); })) {
+		if (Tree.some(function(d) { return d.isOf(RUNNING | QUEUED | PAUSED | FINISHING); })) {
 			var rv = Prompts.confirmYN(
 				window,
 				_("confleavepbm"),
@@ -941,7 +941,7 @@ const Dialog = {
 		}
 		try {
 			// check if there is something running or scheduled
-			if (this.startNext() || Tree.some(function(d) { return d.isOf(FINISHING, RUNNING, QUEUED); } )) {
+			if (this.startNext() || Tree.some(function(d) { return d.isOf(FINISHING | RUNNING | QUEUED); } )) {
 				return;
 			}
 			Debug.logString("signal(): Queue finished");
@@ -989,7 +989,7 @@ const Dialog = {
 		return rv;
 	},
 	_canClose: function D__canClose() {
-		if (Tree.some(function(d) { return d.started && !d.resumable && d.isOf(RUNNING); })) {
+		if (Tree.some(function(d) { return d.started && !d.resumable && d.is(RUNNING); })) {
 			var rv = Prompts.confirmYN(
 				window,
 				_("confclose"),
@@ -1031,7 +1031,7 @@ const Dialog = {
 		Debug.logString("Going to close all");
 		Tree.updateAll(
 			function(d) {
-				if (d.isOf(RUNNING, QUEUED)) {
+				if (d.isOf(RUNNING | QUEUED)) {
 					// enumerate all running chunks
 					d.chunks.forEach(
 						function(c) {
@@ -1395,20 +1395,13 @@ QueueItem.prototype = {
 	 * Takes one or more state indicators and returns if this download is in state
 	 * of any of them
 	 */
-	is: function QI_is(state) {
-		return this._state == state;
-	},
-	isOf: function QI_isOf() {
-		let state = this._state;
-		for (let i = 0, e = arguments.length; i < e; ++i) {
-			if (state == arguments[i]) {
-				return true;
-			}
-		}
-		return false;
-	},
+	is: function QI_is(state) this._state == state,
+	isOf: function QI_isOf(states) (this._state & states) != 0,
 
 	save: function QI_save() {
+		if (this.deleting) {
+			return false;
+		}
 		if (
 			(Prefs.removeCompleted && this.is(COMPLETE))
 			|| (Prefs.removeCanceled && this.is(CANCELED))
@@ -1519,7 +1512,7 @@ QueueItem.prototype = {
 	get size() {
 		try {
 			let file = null;
-			if (!this.isOf(COMPLETE, FINISHING)) {
+			if (!this.isOf(COMPLETE | FINISHING)) {
 				file = this._tmpFile || null;
 			}
 			else {
@@ -1548,7 +1541,7 @@ QueueItem.prototype = {
 	},
 	_status : '',
 	get status() {
-		if (Dialog.offline && this.isOf(QUEUED, PAUSED)) {
+		if (Dialog.offline && this.isOf(QUEUED | PAUSED)) {
 			return _('offline');
 		}
 		return this._status + (this.autoRetrying ? ' *' : '');
@@ -1602,8 +1595,8 @@ QueueItem.prototype = {
 
 	refreshPartialSize: function QI_refreshPartialSize(){
 		let size = 0;
-		for each (let c in this.chunks) {
-			size += c.written;
+		for (let c in this.chunks) {
+			size += this.chunks[c].written;
 		}
 		this.partialSize = size;
 		this.progress = Math.round(size * 100.0 / this._totalSize);
@@ -2046,26 +2039,31 @@ QueueItem.prototype = {
 			this.state = CANCELED;
 			Debug.logString(this.fileName + ": canceled");
 
-			this.visitors = new VisitorManager();
-
-			if (message == "" || !message) {
-				message = _("canceled");
-			}
-			this.status = message;
-
 			this.shutdown();
 
 			this.removeTmpFile();
 
 			// gc
-			this.chunks = [];
-			this.progress = this.totalSize = this.partialSize = 0;
-			this.maxChunks = this.activeChunks = 0;
-			this.conflicts = 0;
-			this.resumable = true;
-			this._autoRetries = 0;
-			delete this._autoRetryTime;
-			this.save();
+			if (!this.deleting) {
+				if (message == "" || !message) {
+					message = _("canceled");
+				}
+				this.status = message;
+				this.visitors = new VisitorManager();
+				this.chunks = [];
+				this.progress = this.totalSize = this.partialSize = 0;
+				this.maxChunks = this.activeChunks = 0;
+				this.conflicts = 0;
+				this.resumable = true;
+				this._autoRetries = 0;
+				delete this._autoRetryTime;
+				this.save();
+			}
+			else {
+				this.visitors = null;
+				this.chunks = null;
+				this.speeds = null
+			}
 		}
 		catch(ex) {
 			Debug.log("cancel():", ex);
@@ -2301,20 +2299,7 @@ QueueItem.prototype = {
 	toString: function() this.urlManager.usable,
 	serialize: function() {
 		let e = {};
-		[
-			'fileName',
-			'postData',
-			'description',
-			'title',
-			'resumable',
-			'mask',
-			'pathName',
-			'compression',
-			'contentType',
-			'conflicts',
-			'fromMetalink',
-			'speedLimit'
-		].forEach(
+		Dialog_serialize_props.forEach(
 			function(u) {
 				// only save what is changed
 				if (this.__proto__[u] !== this[u]) {
@@ -2344,7 +2329,7 @@ QueueItem.prototype = {
 		e.numIstance = this.bNum;
 		e.iNum = this.iNum;
 		// Store this so we can later resume.
-		if (!this.isOf(CANCELED, COMPLETE) && this.partialSize) {
+		if (!this.isOf(CANCELED | COMPLETE) && this.partialSize) {
 			e.tmpFile = this.tmpFile.path;
 		}
 		e.startDate = this.startDate.getTime();
@@ -2361,7 +2346,7 @@ QueueItem.prototype = {
 
 		e.chunks = [];
 
-		if (this.isOf(RUNNING, PAUSED, QUEUED) && this.resumable) {
+		if (this.isOf(RUNNING | PAUSED | QUEUED) && this.resumable) {
 			for each (let c in this.chunks) {
 				e.chunks.push({start: c.start, end: c.end, written: c.safeBytes});
 			}
