@@ -850,7 +850,7 @@ Connection.prototype = {
 			return;
 		}
 
-		if (!d.isOf(PAUSED, CANCELED, FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
+		if (!d.isOf(PAUSED | CANCELED | FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
 			if (d.resumable || Preferences.getExt('resumeonerror', false)) {
 				d.pauseAndRetry();
 				d.status = _('errmismatchtitle');
@@ -864,7 +864,7 @@ Connection.prototype = {
 			}
 			return;			
 		}
-		if (!d.isOf(PAUSED, CANCELED)) {
+		if (!d.isOf(PAUSED | CANCELED)) {
 			d.resumeDownload();
 		}
 	},
