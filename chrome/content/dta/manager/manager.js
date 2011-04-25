@@ -1942,12 +1942,14 @@ QueueItem.prototype = {
 				return type;
 			}
 
-			mask = mask.replace(/\*\w+\*/gi, replacer);
-
-			mask = mask.removeBadChars().removeFinalChar(".").trim().split(SYSTEMSLASH);
+			mask = mask.replace(/\*\w+\*/gi, replacer)
+				.removeFinalChar(".")
+				.normalizeSlashes()
+				.removeFinalSlash()
+				.split(SYSTEMSLASH);
 			let file = new FileFactory(this.pathName.addFinalSlash());
 			while (mask.length) {
-				file.append(mask.shift());
+				file.append(mask.shift().removeBadChars().trim());
 			}
 			this._destinationName = file.leafName;
 			this._destinationPath = file.parent.path;
