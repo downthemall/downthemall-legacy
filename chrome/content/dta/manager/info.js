@@ -118,7 +118,7 @@ var Dialog = {
 			}
 		}
 		catch(ex) {
-			Debug.log('load', ex);
+			Logger.log('load', ex);
 		}
 		window.setTimeout('window.sizeToContent()', 0);
 	},
@@ -183,7 +183,7 @@ var Dialog = {
 					d.referrer.spec = newRef;
 				}
 				catch (ex) {
-					Debug.log("failed to set referrer to", newRef);
+					Logger.log("failed to set referrer to", newRef);
 				}
 			}
 			d.save();
@@ -220,7 +220,7 @@ var Dialog = {
 		);
 		if (mirrors.length) {
 			download.replaceMirrors(mirrors);
-			Debug.log("New mirrors set " + mirrors);
+			Logger.log("New mirrors set " + mirrors);
 			$("mirrorsText").value = _("mirrorsText", [download.urlManager.length]);
 		}
 	},

@@ -219,7 +219,7 @@ const Dialog = {
 							);
 					}
 					catch (ex) {
-						DTA.Debug.log("Failed to process drop", ex);
+						DTA.Logger.log("Failed to process drop", ex);
 					}
 				}
 			};
@@ -233,21 +233,21 @@ const Dialog = {
 		let tree = $("downloads");
 		Tree.init(tree);
 		tree.addEventListener("change", function() {
-			Debug.log("tree change");
+			Logger.log("tree change");
 			Dialog.scheduler = null;
 		}, true);
 		try {
 			Timers.createOneshot(100, this._loadDownloads, this);
 		}
 		catch (ex) {
-			Debug.log("Failed to load any downloads from queuefile", ex);
+			Logger.log("Failed to load any downloads from queuefile", ex);
 		}
 
 		try {
 			this.offline = IOService.offline;
 		}
 		catch (ex) {
-			Debug.log("Cannot get offline status", ex);
+			Logger.log("Cannot get offline status", ex);
 		}
 
 		Preferences.makeObserver(this);
@@ -284,7 +284,7 @@ const Dialog = {
 							let cw = tdb.width + tdb.x;
 							if (db.width < cw) {
 								window.resizeTo(cw, window.outerHeight);
-								Debug.log("manager was autofit");
+								Logger.log("manager was autofit");
 							}
 						},
 						10
@@ -305,7 +305,7 @@ const Dialog = {
 			try {
 				let seq = QueueStore.getQueueSeq();
 				let nagnext = Preferences.getExt('nagnext', 100);
-				Debug.log("nag: " + seq + "/" + nagnext + "/" + (seq - nagnext));
+				Logger.log("nag: " + seq + "/" + nagnext + "/" + (seq - nagnext));
 				if (seq < nagnext) {
 					return;
 				}
@@ -352,7 +352,7 @@ const Dialog = {
 				}, 1000);
 			}
 			catch (ex) {
-				Debug.log('nagger', ex);
+				Logger.log('nagger', ex);
 			}
 		})();
 	},
@@ -384,16 +384,16 @@ const Dialog = {
 		Tree.beginUpdate();
 		Tree.clear();
 		this._brokenDownloads = [];
-		Debug.log("loading of the queue started!");
+		Logger.log("loading of the queue started!");
 		GlobalProgress.reset();
 		GlobalProgress.pause();
 		QueueStore.loadItems(function(result) {
 			if (!result || !result.length) {
-				Debug.log("The cake is a lie");
+				Logger.log("The cake is a lie");
 				this._loadDownloads_finish();
 				return;
 			}
-			Debug.log("Result has arrived: " + result.length);
+			Logger.log("Result has arrived: " + result.length);
 			this._loader = new CoThreadListWalker(
 				this._loadDownloads_item,
 				result,
@@ -461,7 +461,7 @@ const Dialog = {
 					}
 				}
 				catch (ex) {
-					Debug.log("tried to construct with invalid tmpFile", ex);
+					Logger.log("tried to construct with invalid tmpFile", ex);
 					d.cancel();
 				}
 			}
@@ -525,13 +525,13 @@ const Dialog = {
 			d.position = Tree.fastLoad(d);
 		}
 		catch (ex) {
-			Debug.log('failed to init download #' + dbItem.id + ' from queuefile', ex);
+			Logger.log('failed to init download #' + dbItem.id + ' from queuefile', ex);
 			this._brokenDownloads.push(dbItem.id);
 		}
 		return true;
 	},
 	_loadDownloads_finish: function D__loadDownloads_finish() {
-		Debug.log("Result was processed");
+		Logger.log("Result was processed");
 		delete this._loader;
 		Tree.invalidate();
 		Tree.doFilter();
@@ -542,11 +542,11 @@ const Dialog = {
 			try {
 				for each (let id in this._brokenDownloads) {
 					QueueStore.deleteDownload(id);
-					Debug.log("Removed broken download #" + id);
+					Logger.log("Removed broken download #" + id);
 				}
 			}
 			catch (ex) {
-				Debug.log("failed to remove broken downloads", ex);
+				Logger.log("failed to remove broken downloads", ex);
 			}
 			QueueStore.endUpdate();
 		}
@@ -562,11 +562,11 @@ const Dialog = {
 	},
 
 	enterPrivateBrowsing: function() {
-		Debug.log("enterPrivateBrowsing");
+		Logger.log("enterPrivateBrowsing");
 		this.reinit(false);
 	},
 	exitPrivateBrowsing: function() {
-		Debug.log("exitPrivateBrowsing");
+		Logger.log("exitPrivateBrowsing");
 		this.reinit(true);
 	},
 	canEnterPrivateBrowsing: function() {
@@ -645,7 +645,7 @@ const Dialog = {
 
 	reinit: function(mustClear) {
 		if (!this._initialized) {
-			Debug.log("reinit canceled");
+			Logger.log("reinit canceled");
 			return;
 		}
 		let method = mustClear ? 'cancel' : 'pause';
@@ -655,14 +655,14 @@ const Dialog = {
 			}
 			return true;
 		});
-		Debug.log("reinit downloads canceled");
+		Logger.log("reinit downloads canceled");
 		try {
-			Debug.log("reinit initiated");
+			Logger.log("reinit initiated");
 			let tp = this;
 			Timers.createOneshot(10, function() tp.shutdown(tp._continueReinit), this);
 		}
 		catch (ex) {
-			Debug.log("reinit: Failed to reload any downloads from queuefile", ex);
+			Logger.log("reinit: Failed to reload any downloads from queuefile", ex);
 		}
 	},
 	_continueReinit: function() {
@@ -683,7 +683,7 @@ const Dialog = {
 					cancelQuit.data = true;
 				}
 				catch (ex) {
-					Debug.log("cannot set cancelQuit", ex);
+					Logger.log("cannot set cancelQuit", ex);
 				}
 			}
 		}
@@ -700,7 +700,7 @@ const Dialog = {
 			this.reinit(true);
 		}
 		else if (topic == 'DTA:shutdownQueueStore') {
-			Debug.log("saving running");
+			Logger.log("saving running");
 			this.saveRunning();
 		}
 	},
@@ -844,7 +844,7 @@ const Dialog = {
 			($('titlebar') || {}).value = document.title;
 		}
 		catch(ex) {
-			Debug.log("refresh():", ex);
+			Logger.log("refresh():", ex);
 		}
 	},
 	refreshWritten: function D_refreshWritten() {
@@ -910,7 +910,7 @@ const Dialog = {
 					else {
 						d.cancel(_("timeout"));
 					}
-					Debug.log(d + " is a timeout");
+					Logger.log(d + " is a timeout");
 				}
 			}
 
@@ -927,7 +927,7 @@ const Dialog = {
 			}
 		}
 		catch(ex) {
-			Debug.log("checkDownloads():", ex);
+			Logger.log("checkDownloads():", ex);
 		}
 	},
 	checkSameName: function D_checkSameName(download, path) {
@@ -951,7 +951,7 @@ const Dialog = {
 			}
 			if (!this.scheduler) {
 				this.scheduler = Limits.getConnectionScheduler(Tree.all, this._running);
-				Debug.log("rebuild scheduler");
+				Logger.log("rebuild scheduler");
 			}
 			while (this._running.length < Prefs.maxInProgress) {
 				let d = this.scheduler.next(this._running);
@@ -959,7 +959,7 @@ const Dialog = {
 					break;
 				}
 				if (!d.is(QUEUED)) {
-					Debug.log("FIXME: scheduler returned unqueued download");
+					Logger.log("FIXME: scheduler returned unqueued download");
 					continue;
 				}
 				this.run(d);
@@ -968,7 +968,7 @@ const Dialog = {
 			return rv;
 		}
 		catch(ex){
-			Debug.log("startNext():", ex);
+			Logger.log("startNext():", ex);
 		}
 		return false;
 	},
@@ -982,7 +982,7 @@ const Dialog = {
 			// we might encounter renaming issues;
 			// but we cannot handle it because we don't know at which stage we crashed
 			download.partialSize = download.totalSize;
-			Debug.log("Download seems to be complete; likely a left-over from a crash, finish it:" + download);
+			Logger.log("Download seems to be complete; likely a left-over from a crash, finish it:" + download);
 			download.finishDownload();
 			return;
 		}
@@ -991,10 +991,10 @@ const Dialog = {
 		download.state = RUNNING;
 		if (!download.started) {
 			download.started = true;
-			Debug.log("Let's start " + download);
+			Logger.log("Let's start " + download);
 		}
 		else {
-			Debug.log("Let's resume " + download + " at " + download.partialSize);
+			Logger.log("Let's resume " + download + " at " + download.partialSize);
 		}
 		if (!this._running.length) {
 			this._speeds.clear(); // started to run; remove old global speed stats
@@ -1029,7 +1029,7 @@ const Dialog = {
 			if (this.startNext() || Tree.some(function(d) { return d.isOf(FINISHING | RUNNING | QUEUED); } )) {
 				return;
 			}
-			Debug.log("signal(): Queue finished");
+			Logger.log("signal(): Queue finished");
 			Utils.playSound("done");
 
 			let dp = Tree.at(0);
@@ -1054,7 +1054,7 @@ const Dialog = {
 			}
 		}
 		catch(ex) {
-			Debug.log("signal():", ex);
+			Logger.log("signal():", ex);
 		}
 	},
 	markAutoRetry: function D_markAutoRetry(download) {
@@ -1097,18 +1097,18 @@ const Dialog = {
 		close();
 	},
 	shutdown: function D_close(callback) {
-		Debug.log("Close request");
+		Logger.log("Close request");
 		if (!this._initialized) {
-			Debug.log("not initialized. Going down immediately!");
+			Logger.log("not initialized. Going down immediately!");
 			callback.call(this);
 			return true;
 		}
 		if (!this._forceClose && !this._canClose()) {
 			delete this._forceClose;
-			Debug.log("Not going to close!");
+			Logger.log("Not going to close!");
 			return false;
 		}
-		Debug.log("Forcing offline");
+		Logger.log("Forcing offline");
 		this.offlineForced = true;
 
 		// stop everything!
@@ -1120,7 +1120,7 @@ const Dialog = {
 
 		let chunks = 0;
 		let finishing = 0;
-		Debug.log("Going to close all");
+		Logger.log("Going to close all");
 		Tree.updateAll(
 			function(d) {
 				if (d.isOf(RUNNING | QUEUED)) {
@@ -1144,14 +1144,14 @@ const Dialog = {
 			},
 			this
 		);
-		Debug.log("Still running: " + chunks + " Finishing: " + finishing);
+		Logger.log("Still running: " + chunks + " Finishing: " + finishing);
 		if (chunks || finishing) {
 			if (this._safeCloseAttempts < 20) {
 				++this._safeCloseAttempts;
 				Timers.createOneshot(250, function() this.shutdown(callback), this);
 				return false;
 			}
-			Debug.log("Going down even if queue was not probably closed yet!");
+			Logger.log("Going down even if queue was not probably closed yet!");
 		}
 		callback.call(this);
 		return true;
@@ -1200,7 +1200,7 @@ const Dialog = {
 			this._cleanTmpDir();
 		}
 		catch(ex) {
-			Debug.log("_safeClose", ex);
+			Logger.log("_safeClose", ex);
 		}
 
 		// some more gc
@@ -1227,7 +1227,7 @@ const Metalinker = {
 			file.remove(false);
 		}
 		catch (ex) {
-			Debug.log("failed to remove metalink file!", ex);
+			Logger.log("failed to remove metalink file!", ex);
 		}
 	},
 	handleFile: function ML_handleFile(aFile, aReferrer) {
@@ -1255,7 +1255,7 @@ const Metalinker = {
 			}
 		}
 		catch (ex) {
-			Debug.log("Metalinker::handleDownload", ex);
+			Logger.log("Metalinker::handleDownload", ex);
 			if (!(ex instanceof Error)) {
 				ex = new Error(_('mlerror', [ex.message ? ex.message : (ex.error ? ex.error : ex.toString())]));
 			}
@@ -1646,7 +1646,7 @@ QueueItem.prototype = {
 
 		}
 		this.invalidate(6);
-		Debug.log("mc set to " + nv);
+		Logger.log("mc set to " + nv);
 		return this._maxChunks;
 	},
 	timeLastProgress: 0,
@@ -1676,7 +1676,7 @@ QueueItem.prototype = {
 			}
 		}
 		catch (ex) {
-			Debug.log("download::getSize(): ", ex);
+			Logger.log("download::getSize(): ", ex);
 		}
 		return 0;
 	},
@@ -1782,7 +1782,7 @@ QueueItem.prototype = {
 			// safeguard against some failed chunks.
 			this.chunks.forEach(function(c) { c.close(); });
 			var destination = new FileFactory(this.destinationPath);
-			Debug.log(this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
+			Logger.log(this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
 
 			if (!destination.exists()) {
 				destination.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
@@ -1818,7 +1818,7 @@ QueueItem.prototype = {
 			}
 		}
 		catch(ex) {
-			Debug.log("continueMoveCompleted encountered an error", ex);
+			Logger.log("continueMoveCompleted encountered an error", ex);
 			this.complete(ex);
 		}
 	},
@@ -1827,7 +1827,7 @@ QueueItem.prototype = {
 			Metalinker.handleDownload(this);
 		}
 		catch (ex) {
-			Debug.log("handleMetalink", ex);
+			Logger.log("handleMetalink", ex);
 		}
 	},
 	_verificator: null,
@@ -1843,12 +1843,12 @@ QueueItem.prototype = {
 				tp._verificator = null;
 
 				if (!mismatches) {
-					Debug.log("hash not computed");
+					Logger.log("hash not computed");
 					Prompts.alert(window, _('error'), _('verificationfailed', [tp.destinationFile]));
 					tp.complete();
 				}
 				else if (mismatches.length) {
-					Debug.log("Mismatches: " + mismatches.toSource());
+					Logger.log("Mismatches: " + mismatches.toSource());
 					tp.verifyHashError(mismatches);
 				}
 				else {
@@ -1872,7 +1872,7 @@ QueueItem.prototype = {
 				}
 			}
 			catch (ex) {
-				Debug.log("Failed to remove file after checksum mismatch", ex);
+				Logger.log("Failed to remove file after checksum mismatch", ex);
 			}
 		}
 
@@ -1894,7 +1894,7 @@ QueueItem.prototype = {
 				next = mismatch.end + 1;
 			}
 			if (next != download.totalSize) {
-				Debug.log("Inserting last");
+				Logger.log("Inserting last");
 				chunks.push(new Chunk(download, next, download.totalSize - 1, download.totalSize - next));
 			}
 			download.chunks = chunks;
@@ -1948,7 +1948,7 @@ QueueItem.prototype = {
 				file.lastModifiedTime = time;
 			}
 			catch (ex) {
-				Debug.log("Setting timestamp on file failed: ", ex);
+				Logger.log("Setting timestamp on file failed: ", ex);
 			}
 		}
 		this.totalSize = this.partialSize = this.size;
@@ -1957,7 +1957,7 @@ QueueItem.prototype = {
 		this.complete();
 	},
 	finishDownload: function QI_finishDownload(exception) {
-		Debug.log("finishDownload, connections: " + this.sessionConnections);
+		Logger.log("finishDownload, connections: " + this.sessionConnections);
 		this._completeEvents = ['moveCompleted', 'setAttributes'];
 		if (this.hashCollection) {
 			if (this.hashCollection.hasPartials) {
@@ -1982,7 +1982,7 @@ QueueItem.prototype = {
 		this.speeds.clear();
 		if (exception) {
 			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
-			Debug.log("complete: ", exception);
+			Logger.log("complete: ", exception);
 			return;
 		}
 		if (this._completeEvents.length) {
@@ -1994,7 +1994,7 @@ QueueItem.prototype = {
 						tp[evt]();
 					}
 					catch(ex) {
-						Debug.log("completeEvent failed: " + evt, ex);
+						Logger.log("completeEvent failed: " + evt, ex);
 						tp.complete();
 					}
 				},
@@ -2027,7 +2027,7 @@ QueueItem.prototype = {
 		catch(ex) {
 			this._destinationName = this.fileName;
 			this._destinationPath = this.pathName.addFinalSlash();
-			Debug.log("rebuildDestination():", ex);
+			Logger.log("rebuildDestination():", ex);
 		}
 		this._destinationNameFull = Utils.formatConflictName(
 			this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
@@ -2067,21 +2067,21 @@ QueueItem.prototype = {
 				required *= 2.5;
 			}
 			if (nsd < required) {
-				Debug.log("nsd: " +  nsd + ", tsd: " + required);
+				Logger.log("nsd: " +  nsd + ", tsd: " + required);
 				this.fail(_("ndsa"), _("spacedir"), _("freespace"));
 				return false;
 			}
 			return true;
 		}
 		catch (ex) {
-			Debug.log("size check threw", ex);
+			Logger.log("size check threw", ex);
 			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 		}
 		return false;
 	},
 
 	fail: function QI_fail(title, msg, state) {
-		Debug.log("failDownload invoked");
+		Logger.log("failDownload invoked");
 
 		this.cancel(state);
 
@@ -2109,7 +2109,7 @@ QueueItem.prototype = {
 				this.pause();
 			}
 			this.state = CANCELED;
-			Debug.log(this.fileName + ": canceled");
+			Logger.log(this.fileName + ": canceled");
 
 			this.shutdown();
 
@@ -2140,7 +2140,7 @@ QueueItem.prototype = {
 			}
 		}
 		catch(ex) {
-			Debug.log("cancel():", ex);
+			Logger.log("cancel():", ex);
 		}
 	},
 
@@ -2152,11 +2152,11 @@ QueueItem.prototype = {
 		}
 
 		if (!this.totalSize) {
-			Debug.log("pa: no totalsize");
+			Logger.log("pa: no totalsize");
 			return false;
 		}
 		if (this.preallocating) {
-			Debug.log("pa: already working");
+			Logger.log("pa: already working");
 			return true;
 		}
 
@@ -2168,27 +2168,27 @@ QueueItem.prototype = {
 			if (pa) {
 				this.preallocating = true;
 				this._preallocator = pa;
-				Debug.log("pa: started");
+				Logger.log("pa: started");
 			}
 		}
 		else {
-			Debug.log("pa: already allocated");
+			Logger.log("pa: already allocated");
 		}
 		return this.preallocating;
 	},
 	cancelPreallocation: function() {
 		if (this._preallocator) {
-			Debug.log("pa: going to cancel");
+			Logger.log("pa: going to cancel");
 			this._preallocator.cancel();
 			delete this._preallocator;
 			this._preallocator = null;
-			Debug.log("pa: cancelled");
+			Logger.log("pa: cancelled");
 		}
 		this.preallocating = false;
 	},
 
 	_donePrealloc: function QI__donePrealloc(res) {
-		Debug.log("pa: done");
+		Logger.log("pa: done");
 		delete this._preallocator;
 		this._preallocator = null;
 		this.preallocating = false;
@@ -2208,7 +2208,7 @@ QueueItem.prototype = {
 				this._tmpFile.remove(false);
 			}
 			catch (ex) {
-				Debug.log("failed to remove tmpfile: " + this.tmpFile.path, ex);
+				Logger.log("failed to remove tmpfile: " + this.tmpFile.path, ex);
 			}
 		}
 		this._tmpFile = null;
@@ -2224,7 +2224,7 @@ QueueItem.prototype = {
 		if (Prefs.autoRetryInterval && !(Prefs.maxAutoRetries && Prefs.maxAutoRetries <= this._autoRetries)) {
 			Dialog.markAutoRetry(this);
 			this._autoRetryTime = Utils.getTimestamp();
-			Debug.log("marked auto-retry: " + this);
+			Logger.log("marked auto-retry: " + this);
 		}
 
 		this.pause();
@@ -2238,7 +2238,7 @@ QueueItem.prototype = {
 		this._autoRetryTime = 0;
 		++this._autoRetries;
 		this.queue();
-		Debug.log("Requeued due to auto-retry: " + this);
+		Logger.log("Requeued due to auto-retry: " + this);
 		return true;
 	},
 	queue: function QI_queue() {
@@ -2247,7 +2247,7 @@ QueueItem.prototype = {
 		this.status = TEXT_QUEUED;
 	},
 	resumeDownload: function QI_resumeDownload() {
-		Debug.log("resumeDownload: " + this);
+		Logger.log("resumeDownload: " + this);
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat
 			// that much
@@ -2268,7 +2268,7 @@ QueueItem.prototype = {
 		function downloadChunk(download, chunk, header) {
 			chunk.running = true;
 			download.state = RUNNING;
-			Debug.log("started: " + chunk);
+			Logger.log("started: " + chunk);
 			chunk.download = new Connection(download, chunk, header || download.mustGetInfo);
 			download.mustGetInfo = false;
 			++download.activeChunks;
@@ -2298,7 +2298,7 @@ QueueItem.prototype = {
 
 			while (this.activeChunks < this.maxChunks) {
 				if (this.preallocating && this.activeChunks) {
-					Debug.log("not resuming download " + this + " because preallocating");
+					Logger.log("not resuming download " + this + " because preallocating");
 					return true;
 				}
 
@@ -2342,7 +2342,7 @@ QueueItem.prototype = {
 			return rv;
 		}
 		catch(ex) {
-			Debug.log("resumeDownload():", ex);
+			Logger.log("resumeDownload():", ex);
 		}
 		return false;
 	},
@@ -2351,7 +2351,7 @@ QueueItem.prototype = {
 		this.urlManager.initByArray(mirrors);
 		if (restart && this.resumable && this.is(RUNNING) && this.maxChunks > 2) {
 			// stop some chunks and restart them
-			Debug.log("Stopping some chunks and restarting them after mirrors change");
+			Logger.log("Stopping some chunks and restarting them after mirrors change");
 			let omc = this.maxChunks;
 			this.maxChunks = 2;
 			this.maxChunks = omc;
@@ -2370,7 +2370,7 @@ QueueItem.prototype = {
 					+ "\n";
 			}
 		);
-		Debug.log("scoreboard\n" + scoreboard);
+		Logger.log("scoreboard\n" + scoreboard);
 	},
 	toString: function() this.urlManager.usable,
 	serialize: function() {
@@ -2598,7 +2598,7 @@ Chunk.prototype = {
 			return bytes;
 		}
 		catch (ex) {
-			Debug.log('write: ' + this.parent.tmpFile.path, ex);
+			Logger.log('write: ' + this.parent.tmpFile.path, ex);
 			throw ex;
 		}
 		return 0;
@@ -2736,7 +2736,7 @@ function startDownloads(start, downloads) {
 			first = first || qi;
 		}
 		catch (ex) {
-			Debug.log("addItem", ex);
+			Logger.log("addItem", ex);
 		}
 
 		return true;
@@ -2774,12 +2774,12 @@ var ConflictManager = {
 		}
 		for each (let item in this._items.length) {
 			if (item.download == download) {
-				Debug.log("conflict resolution updated to: " + reentry);
+				Logger.log("conflict resolution updated to: " + reentry);
 				item.reentry = reentry;
 				return;
 			}
 		}
-		Debug.log("conflict resolution queued to: " + reentry);
+		Logger.log("conflict resolution queued to: " + reentry);
 		this._items.push({download: download, reentry: reentry});
 		this._process();
 	},
@@ -2789,7 +2789,7 @@ var ConflictManager = {
 		if (download.is(RUNNING)) {
 			sn = Dialog.checkSameName(download, download.destinationFile);
 		}
-		Debug.log("conflict check: " + sn + "/" + dest.exists() + " for " + download.destinationFile);
+		Logger.log("conflict check: " + sn + "/" + dest.exists() + " for " + download.destinationFile);
 		return dest.exists() || sn;
 	},
 	_process: function CM__process() {
@@ -2942,7 +2942,7 @@ function CustomEvent(download, command) {
 		process.run(false, args, args.length);
 	}
 	catch (ex) {
-		Debug.log("failed to execute custom event", ex);
+		Logger.log("failed to execute custom event", ex);
 		alert("failed to execute custom event", ex);
 	}
 	download.complete();

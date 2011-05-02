@@ -260,7 +260,7 @@ const Tree = {
 		}
 	},
 	clear: function() {
-		Debug.log("Tree: clearing");
+		Logger.log("Tree: clearing");
 		this.beginUpdate();
 		this._downloads = [];
 		$('search').clear();
@@ -510,7 +510,7 @@ const Tree = {
 				transferData.data = item;
 			}
 			catch (ex) {
-				Debug.log("dnd failure", ex);
+				Logger.log("dnd failure", ex);
 			}
 			return;
 		}
@@ -523,7 +523,7 @@ const Tree = {
 		return ds && ds.isDataFlavorSupported('application/x-dta-position');
 	},
 	drop: function T_drop(row, orientation) {
-		Debug.log("drop");
+		Logger.log("drop");
 		if (!this.canDrop()) {
 			return;
 		}
@@ -569,7 +569,7 @@ const Tree = {
 			this.selection.rangedSelect(row, row + downloads.length - 1, true);
 		}
 		catch (ex) {
-			Debug.log("_dropSelection", ex);
+			Logger.log("_dropSelection", ex);
 		}
 	},
 
@@ -926,7 +926,7 @@ const Tree = {
 		);
 		if (mirrors.length) {
 			this.current.replaceMirrors(mirrors);
-			Debug.log("New mirrors set " + mirrors);
+			Logger.log("New mirrors set " + mirrors);
 		}
 	},
 	export: function T_export() {
@@ -952,7 +952,7 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			Debug.log("Cannot export downloads", ex);
+			Logger.log("Cannot export downloads", ex);
 			Prompts.alert(window, _('exporttitle'), _('exportfailed'));
 		}
 	},
@@ -978,7 +978,7 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			Debug.log("Cannot import downloads", ex);
+			Logger.log("Cannot import downloads", ex);
 			Prompts.alert(window, _('importtitle'), _('importfailed'));
 		}
 	},
@@ -1095,7 +1095,7 @@ const Tree = {
 			modifySome($('cmdMoveDown', 'cmdMoveBottom'), function(d) d.max != d.rows - 1);
 		}
 		catch (ex) {
-			Debug.log("rt", ex);
+			Logger.log("rt", ex);
 		}
 	},
 	_invalidate_all: function(e, i) {
@@ -1242,7 +1242,7 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			Debug.log("function threw during update", ex);
+			Logger.log("function threw during update", ex);
 			throw ex;
 		}
 	},
@@ -1264,7 +1264,7 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			Debug.log("function threw during updateSelected", ex);
+			Logger.log("function threw during updateSelected", ex);
 			throw ex;
 		}
 	},
@@ -1285,7 +1285,7 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			Debug.log("function threw during updateAll", ex);
+			Logger.log("function threw during updateAll", ex);
 			throw ex;
 		}
 	},
@@ -1312,7 +1312,7 @@ const Tree = {
 			this._box.ensureRowIsVisible(0);
 		}
 		catch (ex) {
-			Debug.log("Mover::top", ex);
+			Logger.log("Mover::top", ex);
 		}
 	},
 	bottom: function T_bottom() {
@@ -1338,7 +1338,7 @@ const Tree = {
 			this._box.ensureRowIsVisible(this.rowCount - 1);
 		}
 		catch (ex) {
-			Debug.log("Mover::bottom", ex);
+			Logger.log("Mover::bottom", ex);
 		}
 	},
 	up: function T_up() {
@@ -1369,7 +1369,7 @@ const Tree = {
 			this._box.ensureRowIsVisible(Math.max(ids.shift() - 1, 0));
 		}
 		catch (ex) {
-			Debug.log("Mover::up", ex);
+			Logger.log("Mover::up", ex);
 		}
 	},
 	down: function T_down() {
@@ -1404,7 +1404,7 @@ const Tree = {
 			this._box.ensureRowIsVisible(Math.min(ids.shift(), this.rowCount - 1));
 		}
 		catch (ex) {
-			Debug.log("Mover::down", ex);
+			Logger.log("Mover::down", ex);
 		}
 	},
 	showSpeedLimitList: function(event) {
@@ -1453,7 +1453,7 @@ const FileHandling = {
 				}
 			}
 			catch (ex) {
-				Debug.log('reveal', ex);
+				Logger.log('reveal', ex);
 			}
 		}
 	},
@@ -1464,7 +1464,7 @@ const FileHandling = {
 				Utils.launch(cur.destinationFile);
 			}
 			catch (ex) {
-				Debug.log('launch', ex);
+				Logger.log('launch', ex);
 			}
 		}
 	},

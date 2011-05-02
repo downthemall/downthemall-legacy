@@ -40,7 +40,7 @@ const EXPORTED_SYMBOLS = [
 	"FilterManager",
 	"Preferences",
 	"Mediator",
-	"Debug",
+	"Logger",
 	"IOService",
 	"URL",
 	"SUPPORTED_HASHES",
@@ -105,7 +105,7 @@ function _decodeCharset(text, charset) {
 			rv = decodeURIComponent(text);
 		}
 		catch (ex) {
-			Debug.log("decodeCharset: failed to decode: " + text, ex);
+			Logger.log("decodeCharset: failed to decode: " + text, ex);
 		}
 	}
 	return rv;
@@ -333,7 +333,7 @@ function getLinkPrintMetalink(url) {
 }
 
 function isLinkOpenable(url) {
-	Debug.log("Deprecation: do not use isLinkOpenable; just try to create a DTA.URL");
+	Logger.log("Deprecation: do not use isLinkOpenable; just try to create a DTA.URL");
 	if (url instanceof URL) {
 		url = url.url.spec;
 	}
@@ -375,7 +375,7 @@ function composeURL(doc, rel) {
 
 function getRef(doc) {
 	try {
-		Debug.log(doc.URL);
+		Logger.log(doc.URL);
 		return (new URL(IOService.newURI(doc.URL, doc.characterSet, null))).url.spec;
 	}
 	catch (ex) {
@@ -478,7 +478,7 @@ function turboSaveLinkArray(window, urls, images) {
 	if (urls.length == 0 && images.length == 0) {
 		throw new Exception("no links");
 	}
-	Debug.log("turboSaveLinkArray(): DtaOneClick filtering started");
+	Logger.log("turboSaveLinkArray(): DtaOneClick filtering started");
 
 	let links;
 	let type;
@@ -507,7 +507,7 @@ function turboSaveLinkArray(window, urls, images) {
 		}
 	);
 
-	Debug.log("turboSaveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
+	Logger.log("turboSaveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
 
 	if (links.length == 0) {
 		throw new Exception('no links remaining');
@@ -533,7 +533,7 @@ function openManager(window, quiet) {
 		);
 		return Mediator.getMostRecent('DTA:Manager');
 	} catch(ex) {
-		Debug.log("openManager():", ex);
+		Logger.log("openManager():", ex);
 	}
 	return null;
 };
@@ -542,7 +542,7 @@ const Series = {
 	_session: 1,
 	_persist: true,
 	enterPrivateBrowsing: function() {
-		Debug.log("epbm");
+		Logger.log("epbm");
 		this._session = 1;
 		this._persist = false;
 	},

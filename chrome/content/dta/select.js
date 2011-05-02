@@ -217,7 +217,7 @@ Tree.prototype = {
 
 		this.removeSortMarker();
 
-		Debug.log("setting sortColumn = " + col.index);
+		Logger.log("setting sortColumn = " + col.index);
 		this._sortColumn = col.index;
 		this._sortDirection = false;
 		this._sortColumnElem = col.element;
@@ -299,7 +299,7 @@ let Dialog = {
 		this.ddFilter = $('filter');
 		this.ddDirectory = $('directory');
 		if (!this.ddDirectory.value) {
-			Debug.log("Using default download directory, value was " + this.ddDirectory.value);
+			Logger.log("Using default download directory, value was " + this.ddDirectory.value);
 			this.ddDirectory.value = DefaultDownloadsDirectory.path;
 		}
 		this.ddRenaming = $('renaming');
@@ -359,7 +359,7 @@ let Dialog = {
 			}
 		}
 		catch(ex) {
-			Debug.log("load():", ex);
+			Logger.log("load():", ex);
 		}
 
 		// will install our observer
@@ -450,7 +450,7 @@ let Dialog = {
 					out.push(prepare(i, dir, counter, mask));
 				}
 				catch (ex) {
-					Debug.log("err: " + i.toSource(), ex);
+					Logger.log("err: " + i.toSource(), ex);
 				}
 			}
 
@@ -483,7 +483,7 @@ let Dialog = {
 			return this.unload();
 		}
 		catch(ex) {
-			Debug.log("Downloadfile:", ex);
+			Logger.log("Downloadfile:", ex);
 		}
 
 		// if we get here some error occured - just close.
@@ -599,7 +599,7 @@ let Dialog = {
 
 		// whoops, somebody called us that has no filter attached
 		if (!('filter') in box) {
-			Debug.log("toggleBox: invalid element");
+			Logger.log("toggleBox: invalid element");
 			return;
 		}
 
@@ -810,7 +810,7 @@ let Dialog = {
 			os.addObserver(this, 'DTA:filterschanged', true);
 		}
 		catch (ex) {
-			Debug.log("cannot install filterManager observer!", ex);
+			Logger.log("cannot install filterManager observer!", ex);
 			return false;
 		}
 		return true;

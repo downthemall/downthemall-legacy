@@ -157,12 +157,12 @@ const Prefs = {
 			Preferences.addObserver('extensions.dta.', this);
 		}
 		catch (ex) {
-			Debug.log("failed to add pref-observer", ex);
+			Logger.log("failed to add pref-observer", ex);
 		}
 	},
 
 	_refreshPrefs: function(prefName) {
-		Debug.log("pref reload due to: " + prefName);
+		Logger.log("pref reload due to: " + prefName);
 		for each (let e in this.mappings) {
 			let key, pref, def;
 			if (!e) {
@@ -258,7 +258,7 @@ const Prefs = {
 						tl.create(tl.DIRECTORY_TYPE, this.dirPermissions);
 					}
 					catch (ex) {
-						Debug.log("Failed to create temp dir", ex);
+						Logger.log("Failed to create temp dir", ex);
 						throw new Exception("tempnotaccessible");
 					}
 				}
@@ -277,7 +277,7 @@ const Prefs = {
 						}
 					}
 					catch (ex) {
-						Debug.log("Failed to check temp dir", ex);
+						Logger.log("Failed to check temp dir", ex);
 						throw new Exception("tempnotaccessible");
 					}
 				}
@@ -343,7 +343,7 @@ const Tooltip = {
 		this.initUpdate();
 	},
 	initUpdate: function() {
-		Debug.log("init");
+		Logger.log("init");
 		let mr = false;
 		let box = this.canvasGrid.boxObject;
 		for each (let canvas in [this.speedCanvas, this.chunkCanvas]) {
@@ -358,7 +358,7 @@ const Tooltip = {
 				}
 				canvas.width = w;
 				canvas.height = h;
-				Debug.log("set " + canvas.id + " to " + w + "/" + h);
+				Logger.log("set " + canvas.id + " to " + w + "/" + h);
 				mr = true;
 			}
 			catch (ex) {
@@ -439,7 +439,7 @@ const Tooltip = {
 			this.infoPercent.value = file.percent;
 		}
 		catch (ex) {
-			Debug.log("Tooltip.updateMetrics: ", ex);
+			Logger.log("Tooltip.updateMetrics: ", ex);
 		}
 	},
 	_usFile: null,
@@ -557,7 +557,7 @@ const Tooltip = {
 			ctx.restore();
 		}
 		catch(ex) {
-			Debug.log("updateSpeedCanvas(): ", ex);
+			Logger.log("updateSpeedCanvas(): ", ex);
 		}
 	},
 	_ucFile: null,
@@ -673,7 +673,7 @@ const Tooltip = {
 			ctx.restore();
 		}
 		catch(ex) {
-			Debug.log("updateChunkCanvas(): ", ex);
+			Logger.log("updateChunkCanvas(): ", ex);
 		}
 	}
 };

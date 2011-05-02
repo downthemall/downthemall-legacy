@@ -51,7 +51,6 @@ module('resource://dta/api.jsm', DTA);
 module('resource://dta/constants.jsm', DTA);
 module('resource://dta/utils.jsm');
 
-const Debug = DTA.Debug;
 extendString(String);
 
 (function(global) {
@@ -110,12 +109,12 @@ const FilterMatch = {
 				filters.push(DTA.FilterManager.getFilter(id));
 			}
 			catch (ex) {
-				Debug.log("not a filter: " + id, ex);
+				Logger.log("not a filter: " + id, ex);
 				// no op; might have changed
 			}
 		}
 		if (!filters.length) {
-			Debug.log("No filters available for: " + params);
+			Logger.log("No filters available for: " + params);
 			return null;
 		}
 		let _m = DTA.FilterManager.getMatcherFor(filters);
@@ -337,13 +336,13 @@ Matcher.prototype = {
 	},
 	addMatcher: function(name, params) {
 		if (!(name in this._available)) {
-			Debug.log("trying to add a matcher that does not exist");
+			Logger.log("trying to add a matcher that does not exist");
 			return;
 		}
 		this.removeMatcher(name);
 		let m = this._available[name].getMatcher(params);
 		if (m) {
-			Debug.log("adding the matcher");
+			Logger.log("adding the matcher");
 			this._matchers.push({name: name, isMatch: m});
 			this._matchersLength = this._matchers.length;
 		}

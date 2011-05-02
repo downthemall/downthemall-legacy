@@ -113,7 +113,7 @@
 					this._load();
 				}
 				catch (ex) {
-					DTA.Debug.log("Loading of saveddropdown failed:", ex);
+					DTA.Logger.log("Loading of saveddropdown failed:", ex);
 				}
 			]]></constructor>
 			<field name="_list">document.getAnonymousElementByAttribute(this, 'anonid', 'list');</field>
@@ -168,7 +168,7 @@
 				<body><![CDATA[
 					var n = this.value;
 					if (n.length == 0 && !this.hasAttribute('allowempty')) {
-						DTA.Debug.log("Not saving dropdown: empty");
+						DTA.Logger.log("Not saving dropdown: empty");
 						return;
 					}
 					this.hist.push(n);
@@ -665,7 +665,7 @@
 			</method>
 			<method name="_search">
 				<body><![CDATA[
-					Debug.log("search called!");
+					Logger.log("search called!");
 					try {
 						this._timer = null;
 						var evt = document.createEvent('UIEvents');
@@ -673,7 +673,7 @@
 						this.dispatchEvent(evt);
 					}
 					catch (ex) {
-						Debug.log("_search", ex);
+						Logger.log("_search", ex);
 					}
 				]]></body>
 			</method>

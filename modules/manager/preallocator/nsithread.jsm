@@ -51,7 +51,7 @@ const File = Components.Constructor('@mozilla.org/file/local;1', 'nsILocalFile',
 module('resource://dta/utils.jsm');
 module('resource://dta/version.jsm');
 
-Debug.log("pa: using nsIThread implementation");
+Logger.log("pa: using nsIThread implementation");
 
 // Should we use the optimized Windows implementation?
 const WINDOWSIMPL = Version.OS == 'winnt';
@@ -85,7 +85,7 @@ const workers = {};
 function prealloc(file, size, perms, callback, tp) {
 	tp = tp || null;
 	if (size <= SIZE_MIN || !isFinite(size)) {
-		Debug.log("pa: not preallocating");
+		Logger.log("pa: not preallocating");
 		if (callback) {
 			callback.call(tp, false);
 		}
@@ -195,7 +195,7 @@ WorkerJob.prototype = {
 		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);
 	},
 	cancel: function() {
-		Debug.log("pa: cancel called!");
+		Logger.log("pa: cancel called!");
 		this.terminated = true;
 		this.thread.shutdown();
 	}
@@ -225,10 +225,10 @@ MainJob.prototype = {
 			try {
 				// call the user callback
 				this.callback.call(this.tp, this.result);
-				Debug.log("pa: prealloc done");
+				Logger.log("pa: prealloc done");
 			}
 			catch (ex) {
-				Debug.log("pa: callback throw", ex);
+				Logger.log("pa: callback throw", ex);
 			}
 		}
 

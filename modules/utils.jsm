@@ -35,7 +35,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 const EXPORTED_SYMBOLS = [
-	'Debug',
+	'Logger',
 	'atos',
 	'bind',
 	'setNewGetter',
@@ -126,8 +126,8 @@ function setNewGetter(aObject, aName, aLambda) {
 
 	}
 	catch (ex) {
-		Debug.log(aName);
-		Debug.log(ex);
+		Logger.log(aName);
+		Logger.log(ex);
 	}
 }
 
@@ -153,9 +153,9 @@ function ServiceGetter(context, name, contract, iface) {
 				return Cc[contract].getService(iface);
 			}
 			catch (ex) {
-				Debug.log(ex);
-				Debug.log(contract);
-				Debug.log(iface);
+				Logger.log(ex);
+				Logger.log(contract);
+				Logger.log(iface);
 				throw ex;
 			}
 		}
@@ -219,9 +219,9 @@ ServiceGetter(this, "ExternalProtocolService", "@mozilla.org/uriloader/external-
 ServiceGetter(this, "StringBundleService", "@mozilla.org/intl/stringbundle;1", "nsIStringBundleService");
 
 /**
- * DebugService
+ * LoggerService
  */
-function DebugService() {
+function LoggerService() {
 	this._pb = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2);
 	this._pb.addObserver('extensions.dta.logging', this, true);
 	this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));
@@ -233,11 +233,11 @@ function DebugService() {
 	catch(ex) {
 		// No-Op
 	}
-	this.log("Debug: init");
+	this.log("Logger: init");
 }
 
-DebugService.prototype = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference, Ci.dtaIDebugService]),
+LoggerService.prototype = {
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference, Ci.dtaILoggerService]),
 
 	QueryReferent: function(iid) this.QueryInterface(iid),
 	GetWeakReference: function() this,
@@ -252,16 +252,16 @@ DebugService.prototype = {
 		}
 	},
 	get _cs() {
-		delete DebugService.prototype._cs;
-		return (DebugService.prototype._cs = Cc['@mozilla.org/consoleservice;1'].getService(Ci.nsIConsoleService));
+		delete LoggerService.prototype._cs;
+		return (LoggerService.prototype._cs = Cc['@mozilla.org/consoleservice;1'].getService(Ci.nsIConsoleService));
 	},
 	get _file() {
 		let file = Cc["@mozilla.org/file/directory_service;1"]
 			.getService(Ci.nsIProperties)
 			.get("ProfD", Ci.nsILocalFile);
 		file.append('dta_log.txt');
-		delete DebugService.prototype._file;
-		return (DebugService.prototype._file = file);
+		delete LoggerService.prototype._file;
+		return (LoggerService.prototype._file = file);
 	},
 
 	get file() {
@@ -404,7 +404,7 @@ DebugService.prototype = {
 	}
 };
 
-const Debug = new DebugService();
+const Logger = new LoggerService();
 
 /**
  * Range generator (python style). Difference: step direction is initialized accordingly if corresponding parameter is omitted.
