@@ -100,7 +100,7 @@ function Decompressor(download) {
 		catch (exx) {
 			// XXX: what now?
 		}
-		Debug.log("err. :p", ex);
+		Logger.log("err. :p", ex);
 		download.complete(ex);
 	}
 }
@@ -131,7 +131,7 @@ Decompressor.prototype = {
 		}
 		catch (ex) {
 			// huh?
-			Debug.log("Decompressor: close streams", ex);
+			Logger.log("Decompressor: close streams", ex);
 		}
 		if (this.exception) {
 			try {
@@ -145,7 +145,7 @@ Decompressor.prototype = {
 			this.from.remove(false);
 		}
 		catch (ex) {
-			Debug.log("Failed to remove tmpFile", ex);
+			Logger.log("Failed to remove tmpFile", ex);
 		}
 
 		this.download.complete(this.exception);

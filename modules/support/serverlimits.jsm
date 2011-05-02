@@ -148,10 +148,10 @@ function loadLimits() {
 		try {
 			let limit = new Limit(host);
 			limits[limit.host] = limit;
-			Debug.log("loaded limit: " + limit);
+			Logger.log("loaded limit: " + limit);
 		}
 		catch (ex) {
-			Debug.log("Failed to load: " + host, ex);
+			Logger.log("Failed to load: " + host, ex);
 		}
 	}
 	obs.notifyObservers(null, TOPIC, null);
@@ -411,7 +411,7 @@ function loadScheduler() {
 		scheduler = FastScheduler;
 		break;
 	}
-	Debug.log("Using scheduler " + scheduler.name);
+	Logger.log("Using scheduler " + scheduler.name);
 }
 function getConnectionScheduler(downloads) {
 	return new scheduler(downloads);

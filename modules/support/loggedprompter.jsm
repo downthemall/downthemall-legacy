@@ -83,8 +83,8 @@ function LoggedPrompter(window) {
 			// Everything else pass thru to the actual prompter.
 			let _dp = {
 				QueryInterface: XPCOMUtils.generateQI([Ci.nsIPrompt]),
-				alert: function(title, text) Debug.log(text, title),
-				alertCheck: function(title, text, cm, cv) Debug.log(text, title),
+				alert: function(title, text) Logger.log(text, title),
+				alertCheck: function(title, text, cm, cv) Logger.log(text, title),
 				confirm: function(title, text) _p.confirm(title, text),
 				confirmCheck: function(title, text, cm, cv) _p.confirmCheck(title, text, cm, cv),
 				confirmEx: function(title, text, bflags, bt0, bt1, bt2, cm, cv) _p.confirmEx(title, text, bflags, bt0, bt1, bt2, cm, cv),

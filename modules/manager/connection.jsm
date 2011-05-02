@@ -66,7 +66,7 @@ module('resource://dta/support/bytebucket.jsm');
 const StringInputStream = ctor('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
 
 const Preferences = DTA.Preferences;
-const Debug = DTA.Debug;
+const Logger = DTA.Logger;
 
 extendString(String);
 
@@ -109,7 +109,7 @@ function Connection(d, c, isInfoGetter) {
 	RequestManipulation.modifyURL(url);
 
 	let referrer = d.referrer;
-	Debug.log("starting: " + url.spec);
+	Logger.log("starting: " + url.spec);
 
 	this._chan = IOService.newChannelFromURI(url);
 	let r = Ci.nsIRequest;
@@ -118,14 +118,14 @@ function Connection(d, c, isInfoGetter) {
 		loadFlags = loadFlags | r.LOAD_BYPASS_CACHE;
 	}
 	else {
-		Debug.log("using cache");
+		Logger.log("using cache");
 	}
 	this._chan.loadFlags = loadFlags;
 	this._chan.notificationCallbacks = this;
 
 	if (this._chan instanceof Ci.nsIHttpChannel) {
 		try {
-			Debug.log("http");
+			Logger.log("http");
 			if (referrer instanceof Ci.nsIURI) {
 				this._chan.referrer = referrer;
 			}
@@ -135,7 +135,7 @@ function Connection(d, c, isInfoGetter) {
 			}
 		}
 		catch (ex) {
-			Debug.log("error setting up http channel", ex);
+			Logger.log("error setting up http channel", ex);
 			// no-op
 		}
 	}
@@ -147,14 +147,14 @@ function Connection(d, c, isInfoGetter) {
 			}
 		}
 		catch (ex) {
-			Debug.log('error setting up ftp channel', ex);
+			Logger.log('error setting up ftp channel', ex);
 		}
 	}
 	this.prepareChannel(this._chan);
 
 	this.c.running = true;
 	this._chan.asyncOpen(this, null);
-	Debug.log(this.c + "is now open");
+	Logger.log(this.c + "is now open");
 }
 
 Connection.prototype = {
@@ -210,7 +210,7 @@ Connection.prototype = {
 
 				if (c.start + c.written > 0) {
 					chan.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
-					Debug.log("setting range");
+					Logger.log("setting range");
 				}
 
 				RequestManipulation.modifyHttp(chan);
@@ -226,7 +226,7 @@ Connection.prototype = {
 			}
 		}
 		catch (ex) {
-			Debug.log("Failed to prepare channel", ex);
+			Logger.log("Failed to prepare channel", ex);
 		}
 	},
 
@@ -236,7 +236,7 @@ Connection.prototype = {
 				return this;
 			}
 		}
-		//Debug.log("not implemented " + iid);
+		//Logger.log("not implemented " + iid);
 		throw Cr.NS_ERROR_NO_INTERFACE;
 	},
 	// nsISupportsWeakReference
@@ -250,7 +250,7 @@ Connection.prototype = {
 			if (this._closed) {
 				return;
 			}
-			Debug.log("cancel");
+			Logger.log("cancel");
 			if (!aReason) {
 				aReason = NS_ERROR_BINDING_ABORTED;
 			}
@@ -258,7 +258,7 @@ Connection.prototype = {
 			this._closed = true;
 		}
 		catch (ex) {
-			Debug.log("cancel", ex);
+			Logger.log("cancel", ex);
 		}
 	},
 	// nsIInterfaceRequestor
@@ -307,11 +307,11 @@ Connection.prototype = {
 			if (c.start + c.written > 0 && !(newChannel instanceof Ci.nsIHttpChannel)) {
 				let resumable = newChannel.QueryInterface(Ci.nsIResumableChannel);
 				resumable.resumeAt(c.start + c.written, '');
-				Debug.log("redirect: set resumeAt on " + newChannel.URI.spec + "/" + newChannel.originalURI.spec + " at " + (c.start + c.written));
+				Logger.log("redirect: set resumeAt on " + newChannel.URI.spec + "/" + newChannel.originalURI.spec + " at " + (c.start + c.written));
 			}
 		}
 		catch (ex) {
-			Debug.log("redirect: cannot resumeAt", ex);
+			Logger.log("redirect: cannot resumeAt", ex);
 			if (!this.handleError()) {
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 				return;
@@ -333,7 +333,7 @@ Connection.prototype = {
 			this.url = newurl;
 		}
 		catch (ex) {
-			Debug.log("Failed to reset data on channel redirect", ex);
+			Logger.log("Failed to reset data on channel redirect", ex);
 		}
 	},
 
@@ -348,7 +348,7 @@ Connection.prototype = {
 			if (this.c.write(aRequest, aInputStream, aCount) < 0) {
 				if (this.isInfoGetter && !this.d.chunks.every(function(c) !c.running || !!c.sessionBytes)) {
 					// Other downloads didn't start; assume the worst
-					Debug.log("Need to recombine chunks; not all started");
+					Logger.log("Need to recombine chunks; not all started");
 					this.d.dumpScoreboard();
 
 					let oldChunks = this.d.chunks.filter(function(c) c != this.c, this);
@@ -364,7 +364,7 @@ Connection.prototype = {
 
 					this.d.dumpScoreboard();
 					if (this.c.write(aRequest, aInputStream, aCount) >= 0) {
-						Debug.log("successfully respun");
+						Logger.log("successfully respun");
 						return;
 					}
 				}
@@ -374,7 +374,7 @@ Connection.prototype = {
 			}
 		}
 		catch (ex) {
-			Debug.log('onDataAvailable', ex);
+			Logger.log('onDataAvailable', ex);
 			this.d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 		}
 	},
@@ -402,15 +402,15 @@ Connection.prototype = {
 			return true;
 		}
 
-		Debug.log("handleError: problem found; trying to recover");
+		Logger.log("handleError: problem found; trying to recover");
 
 		if (d.urlManager.markBad(this.url)) {
-			Debug.log("handleError: fresh urls available, kill this one and use another!");
+			Logger.log("handleError: fresh urls available, kill this one and use another!");
 			d.timeLastProgress = getTimestamp();
 			return true;
 		}
 
-		Debug.log("affected: " + c);
+		Logger.log("affected: " + c);
 		d.dumpScoreboard();
 
 		let max = -1, found = null;
@@ -424,7 +424,7 @@ Connection.prototype = {
 			}
 		}
 		if (found) {
-			Debug.log("handleError: found joinable chunk; recovering suceeded, chunk: " + found);
+			Logger.log("handleError: found joinable chunk; recovering suceeded, chunk: " + found);
 
 			// map current failed chunk into the found one
 			found.end = c.end;
@@ -448,7 +448,7 @@ Connection.prototype = {
 					if (c2.running) {
 						// should never ever happen :p
 						d.dumpScoreboard();
-						Debug.log("overlapping:\n" + c1 + "\n" + c2);
+						Logger.log("overlapping:\n" + c1 + "\n" + c2);
 						d.fail("Internal error", "Please notify the developers that there were 'overlapping chunks'!", "Internal error (please report)");
 						return false;
 					}
@@ -464,7 +464,7 @@ Connection.prototype = {
 			d.dumpScoreboard();
 			return true;
 		}
-		Debug.log("recovery failed");
+		Logger.log("recovery failed");
 		return false;
 	},
 	handleHttp: function DL_handleHttp(aChannel) {
@@ -485,15 +485,15 @@ Connection.prototype = {
 			c.rollback();
 
 			if (c.starter && d.urlManager.markBad(this.url)) {
-				Debug.log("caught bad server (Error: " + code + ")", d.toString());
+				Logger.log("caught bad server (Error: " + code + ")", d.toString());
 				d.cancel();
 				d.safeRetry();
 				return false;
 			}
 			if (!this.handleError()) {
-				Debug.log("handleError: Cannot recover from problem!", code);
+				Logger.log("handleError: Cannot recover from problem!", code);
 				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1 || Preferences.getExt('recoverallhttperrors', false)) {
-					Debug.log("we got temp failure!", code);
+					Logger.log("we got temp failure!", code);
 					d.pauseAndRetry();
 					d.status = code >= 500 ? _('temperror') : _('autherror');
 				}
@@ -526,15 +526,15 @@ Connection.prototype = {
 
 		// not partial content altough we are multi-chunk
 		if (code != 206 && !this.isInfoGetter) {
-			Debug.log(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206", this.isInfoGetter);
+			Logger.log(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206", this.isInfoGetter);
 
 			if (!this.handleError()) {
 				let vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
 				aChannel.visitRequestHeaders(vis);
-				Debug.log("Request Headers\n\n" + vis.value);
+				Logger.log("Request Headers\n\n" + vis.value);
 				vis.value = '';
 				aChannel.visitResponseHeaders(vis);
-				Debug.log("Response Headers\n\n" + vis.value);
+				Logger.log("Response Headers\n\n" + vis.value);
 				d.cancel();
 				d.resumable = false;
 				d.safeRetry();
@@ -547,7 +547,7 @@ Connection.prototype = {
 			visitor = d.visitors.visit(aChannel);
 		}
 		catch (ex) {
-			Debug.log("header failed! " + d, ex);
+			Logger.log("header failed! " + d, ex);
 			// restart download from the beginning
 			d.cancel();
 			d.resumable = false;
@@ -590,7 +590,7 @@ Connection.prototype = {
 			else {
 				d.totalSize = 0;
 			}
-			Debug.log("set total size");
+			Logger.log("set total size");
 		}
 
 		if (visitor.fileName && visitor.fileName.length > 0) {
@@ -622,15 +622,15 @@ Connection.prototype = {
 				totalSize = Math.max(aChannel.contentLength, 0);
 			}
 			if (d.totalSize && totalSize != this.totalSize && !this.handleError()) {
-				Debug.log("ftp: total size mismatch " + totalSize + " " + this.totalSize);
+				Logger.log("ftp: total size mismatch " + totalSize + " " + this.totalSize);
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 				return false;
 			}
-			Debug.log("ftp: total size is: " + totalSize + " for: " + this.url);
+			Logger.log("ftp: total size is: " + totalSize + " for: " + this.url);
 			d.totalSize = totalSize;
 		}
 		catch (ex) {
-			Debug.log("ftp: no totalsize", ex);
+			Logger.log("ftp: no totalsize", ex);
 			if (c.start != 0 && !this.handleError()) {
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 				return false;
@@ -643,7 +643,7 @@ Connection.prototype = {
 			aChannel.QueryInterface(Ci.nsIResumableChannel).entityID;
 		}
 		catch (ex) {
-			Debug.log("likely not resumable or connection refused!");
+			Logger.log("likely not resumable or connection refused!");
 			if (!this.handleError()) {
 				// restart download from the beginning
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
@@ -655,7 +655,7 @@ Connection.prototype = {
 			let visitor = d.visitors.visit(aChannel.QueryInterface(Ci.nsIChannel));
 		}
 		catch (ex) {
-			Debug.log("header failed! " + d, ex);
+			Logger.log("header failed! " + d, ex);
 			// restart download from the beginning
 			d.cancel();
 			d.resumable = false;
@@ -673,7 +673,7 @@ Connection.prototype = {
 		// if so something bad happened, 'cause we aren't supposed to be multi-part
 		if (c.start != 0 && d.is(RUNNING)) {
 			if (!this.handleError()) {
-				Debug.log(d + ": Server error or disconnection", "(type 1)");
+				Logger.log(d + ": Server error or disconnection", "(type 1)");
 				d.pauseAndRetry();
 				d.status = _("servererror");
 			}
@@ -706,7 +706,7 @@ Connection.prototype = {
 	onStartRequest: function DL_onStartRequest(aRequest, aContext) {
 		let c = this.c;
 		let d = this.d;
-		Debug.log('StartRequest: ' + c);
+		Logger.log('StartRequest: ' + c);
 
 		this.started = true;
 
@@ -725,13 +725,13 @@ Connection.prototype = {
 					break;
 				}
 				catch (ex) {
-					Debug.log("examine", ex);
+					Logger.log("examine", ex);
 					// continue
 				}
 			}
 
 			if (this.isInfoGetter) {
-				Debug.log("Infogetter");
+				Logger.log("Infogetter");
 				let ext = d.fileName.getExtension();
 				if (ext && ext.match(/^meta(?:4|link)$/i)) {
 					d.isMetalink = true;
@@ -767,14 +767,14 @@ Connection.prototype = {
 			}
 		}
 		catch (ex) {
-			Debug.log("onStartRequest", ex);
+			Logger.log("onStartRequest", ex);
 			d.fail(_("unknownerror"), _('unknownerrortext'), _("unknownerror"));
 			return;
 		}
 	},
 	onStopRequest: function DL_onStopRequest(aRequest, aContext, aStatusCode) {
 		try {
-			Debug.log('StopRequest');
+			Logger.log('StopRequest');
 		}
 		catch (ex) {
 			return;
@@ -797,7 +797,7 @@ Connection.prototype = {
 		if (d.is(RUNNING) && d.chunks.every(function(e) { return e.complete; })) {
 			if (!d.resumeDownload()) {
 				d.state = FINISHING;
-				Debug.log(d + ": Download is complete!");
+				Logger.log(d + ": Download is complete!");
 				d.finishDownload();
 				return;
 			}
@@ -810,12 +810,12 @@ Connection.prototype = {
 			NS_ERROR_NET_RESET
 		].indexOf(aStatusCode)) {
 			if (!d.urlManager.markBad(this.url)) {
-				Debug.log(d + ": Server error or disconnection", "(type 3)");
+				Logger.log(d + ": Server error or disconnection", "(type 3)");
 				d.pauseAndRetry();
 				d.status = _("servererror");
 			}
 			else {
-				Debug.log("caught bad server", d.toString());
+				Logger.log("caught bad server", d.toString());
 				d.cancel();
 				d.safeRetry();
 			}
@@ -826,7 +826,7 @@ Connection.prototype = {
 		// nsiftpchan for some reason assumes that if RETR fails it is a directory
 		// and tries to advance into said directory
 		if (aStatusCode == NS_ERROR_FTP_CWD) {
-			Debug.log("Cannot change to directory :p", aStatusCode);
+			Logger.log("Cannot change to directory :p", aStatusCode);
 			if (!this.handleError()) {
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 			}
@@ -834,18 +834,18 @@ Connection.prototype = {
 		}
 
 		// routine for normal chunk
-		Debug.log(this.url + ": Chunk " + c.start + "-" + c.end + " finished.");
+		Logger.log(this.url + ": Chunk " + c.start + "-" + c.end + " finished.");
 
 		// rude way to determine disconnection: if connection is closed before
 		// download is started we assume a server error/disconnection
 		if (c.starter && d.is(RUNNING)) {
 			if (!d.urlManager.markBad(this.url)) {
-				Debug.log(d + ": Server error or disconnection", "(type 2)");
+				Logger.log(d + ": Server error or disconnection", "(type 2)");
 				d.pauseAndRetry();
 				d.status = _("servererror");
 			}
 			else {
-				Debug.log("caught bad server", d.toString());
+				Logger.log("caught bad server", d.toString());
 				d.cancel();
 				d.safeRetry();
 			}
@@ -857,7 +857,7 @@ Connection.prototype = {
 		// else pause + autoretry
 		if (!c.written  && !!c.remainder) {
 			if (!d.urlManager.markBad(this.url)) {
-				Debug.log(d + ": Server error or disconnection", "(type 1)");
+				Logger.log(d + ": Server error or disconnection", "(type 1)");
 				d.pauseAndRetry();
 				d.status = _("servererror");
 			}
@@ -891,7 +891,7 @@ Connection.prototype = {
 			let d = this.d;
 
 			if (this.reexamine) {
-				Debug.log(d + ": reexamine");
+				Logger.log(d + ": reexamine");
 				this.onStartRequest(aRequest, aContext);
 				if (this.reexamine) {
 					return;
@@ -903,7 +903,7 @@ Connection.prototype = {
 					// basic integrity check
 					if (d.partialSize > d.totalSize) {
 						d.dumpScoreboard();
-						Debug.log(d + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");
+						Logger.log(d + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");
 						d.fail(
 							_('errmismatchtitle'),
 							_('errmismatchtext', [d.partialSize, d.totalSize]),
@@ -918,7 +918,7 @@ Connection.prototype = {
 			}
 		}
 		catch(ex) {
-			Debug.log("onProgressChange():", ex);
+			Logger.log("onProgressChange():", ex);
 		}
 	},
 	onStatus: function  DL_onStatus(aRequest, aContext, aStatus, aStatusArg) {}

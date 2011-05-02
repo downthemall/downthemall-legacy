@@ -57,7 +57,7 @@ setNewGetter(this, "FavIcons", function() {
 	       .getService(Ci.nsIFaviconService);
 	}
 	catch (ex) {
-		Debug.log("FavIcon Service not available", ex);
+		Logger.log("FavIcon Service not available", ex);
 		return null;
 	}
 });
@@ -115,7 +115,7 @@ function getIcon(link, metalink, size) {
 		return "moz-icon://file" + (ext ? '.' + ext : '') + "?size=" + size;
 	}
 	catch (ex) {
-		Debug.log("updateIcon: failed to grab icon", ex);
+		Logger.log("updateIcon: failed to grab icon", ex);
 	}
 	return "moz-icon://foo.html?size=" + size;
 };

@@ -90,7 +90,7 @@ const QueueStore = {
 		}
 		this._initialized = true;
 
-		Debug.log("QueueStore: initialzing in " + (pb ? "private" : "normal") + " mode");
+		Logger.log("QueueStore: initialzing in " + (pb ? "private" : "normal") + " mode");
 
 		try {
 			if (pb) {
@@ -104,7 +104,7 @@ const QueueStore = {
 		}
 		catch (ex) {
 			if (!pb) {
-				Debug.log("DB appears broken; backing up and restart", ex);
+				Logger.log("DB appears broken; backing up and restart", ex);
 				try {
 					let cbroken = __db.clone();
 					cbroken.leafName = DB_FILE_BROKEN;
@@ -113,7 +113,7 @@ const QueueStore = {
 					}
 				}
 				catch (iex) {
-					Debug.log("Couldn't remove old broken queue file", iex);
+					Logger.log("Couldn't remove old broken queue file", iex);
 				}
 				let broken = __db.clone();
 				broken.moveTo(null, DB_FILE_BROKEN);
@@ -127,7 +127,7 @@ const QueueStore = {
 					migrate data
 				*/
 				_connection.schemaVersion = DB_VERSION;
-				Debug.log("setting schema version");
+				Logger.log("setting schema version");
 			}
 			if (!_connection.tableExists('queue')) {
 				_connection.executeSimpleSQL('PRAGMA page_size = 4096');
@@ -135,7 +135,7 @@ const QueueStore = {
 			}
 		}
 		catch (ex) {
-			Debug.log("failed to create table", ex);
+			Logger.log("failed to create table", ex);
 			// no-op
 		}
 		try {
@@ -145,9 +145,9 @@ const QueueStore = {
 			_connection.executeSimpleSQL("PRAGMA synchronous = NORMAL");
 		}
 		catch (ex) {
-			Debug.log("SQLite", _connection.lastErrorString);
+			Logger.log("SQLite", _connection.lastErrorString);
 		}
-		Debug.log("QueueStore: done initialzing");
+		Logger.log("QueueStore: done initialzing");
 	},
 	shutdown: function() {
 		if (!this._initialized) {
@@ -179,9 +179,9 @@ const QueueStore = {
 			_connection = null;
 		}
 		catch (ex) {
-			Debug.log("Cannot close!", ex);
+			Logger.log("Cannot close!", ex);
 		}
-		Debug.log("QueueStore: shutdown complete!");
+		Logger.log("QueueStore: shutdown complete!");
 	},
 	reinit: function(pb) {
 		this.shutdown();
@@ -195,22 +195,22 @@ const QueueStore = {
 			}
 		}
 		catch (ex) {
-			Debug.log("QueueStore: Cannot remove DB", ex);
+			Logger.log("QueueStore: Cannot remove DB", ex);
 		}
 		this.init(this._private);
 		Observers.notifyObservers(null, 'DTA:clearedQueueStore', null);
 	},
 	enterPrivateBrowsing: function() {
-		Debug.log("QueueManager: entering pbm");
+		Logger.log("QueueManager: entering pbm");
 		this.reinit(true);
 	},
 	exitPrivateBrowsing: function() {
-		Debug.log("QueueManager: exiting pbm");
+		Logger.log("QueueManager: exiting pbm");
 		this.reinit(false);
 	},
 	beginUpdate: function() {
 		if (_connection.transactionInProgress) {
-			Debug.log("Transaction already in progress; FIXME");
+			Logger.log("Transaction already in progress; FIXME");
 			return;
 		}
 		_connection.beginTransactionAs(_connection.TRANSACTION_DEFERRED);
@@ -223,7 +223,7 @@ const QueueStore = {
 	},
 	backup: function() {
 		if (!('backupDB' in _connection)) {
-			Debug.log("DB Backup not possible");
+			Logger.log("DB Backup not possible");
 			return;
 		}
 		try {
@@ -232,7 +232,7 @@ const QueueStore = {
 			}
 		}
 		catch (ex) {
-			Debug.log("QueueStore: Cannot backup queue", ex);
+			Logger.log("QueueStore: Cannot backup queue", ex);
 		}
 	},
 	addDownload: function(download, position) {
@@ -279,7 +279,7 @@ const QueueStore = {
 	},
 	asyncSavePosition: function(downloads) {
 		if (downloads.length == 0) {
-			Debug.log("no position changes");
+			Logger.log("no position changes");
 			return;
 		}
 		let stmt = _asyncStatement("UPDATE queue SET pos = :pos WHERE uuid = :uuid");
@@ -327,7 +327,7 @@ const QueueStore = {
 			stmt = _asyncStatement(STMT_SELECT);
 		}
 		catch (ex) {
-			Debug.log("SQLite", _connection.lastErrorString);
+			Logger.log("SQLite", _connection.lastErrorString);
 			callback.call(ctx, null);
 		}
 		let rows = [];
@@ -341,14 +341,14 @@ const QueueStore = {
 				}
 			},
 			handleError: function(aError) {
-				Debug.log('failed load queue file', aError);
+				Logger.log('failed load queue file', aError);
 				callback.call(ctx, null);
 			},
 			handleCompletion: function(aReason) {
 				stmt.finalize();
 				let count = rows.length;
 				rows.forEach(function(e) e.count = count);
-				Debug.log("All your callback are belong to us");
+				Logger.log("All your callback are belong to us");
 				callback.call(ctx, rows);
 			}
 		});
@@ -382,7 +382,7 @@ var ShutdownObserver = {
 				QueueStore.shutdown();
 			}
 			catch (ex) {
-				Debug.log("Failed to shutdown QueueStore", ex);
+				Logger.log("Failed to shutdown QueueStore", ex);
 			}
 		}
 	}

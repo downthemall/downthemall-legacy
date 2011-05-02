@@ -70,7 +70,7 @@ const ConverterOutputStream = Ctor('@mozilla.org/intl/converter-output-stream;1'
 InstanceGetter(this, "Serializer", "@mozilla.org/xmlextras/xmlserializer;1", "nsIDOMSerializer");
 
 function parseTextFile(aFile) {
-	Debug.log("Parsing text file: " + aFile.spec);
+	Logger.log("Parsing text file: " + aFile.spec);
 	// Open the file in a line reader
 	let is = new FileInputStream(aFile, 0x01, 0, 0);
 	let ls = is.QueryInterface(Ci.nsILineInputStream);
@@ -84,7 +84,7 @@ function parseTextFile(aFile) {
 			lines.push(line);
 		}
 		catch (ex) {
-			Debug.log("not processing line " + line.value, ex);
+			Logger.log("not processing line " + line.value, ex);
 		}
 	}
 	while(ls.readLine(line)) {
@@ -92,7 +92,7 @@ function parseTextFile(aFile) {
 	}
 	addLine(line);
 	is.close();
-	Debug.log("Got lines: " + lines.length);
+	Logger.log("Got lines: " + lines.length);
 
 	let links = [];
 	for each (let l in getTextLinks(lines.join("\n"), false)) {
@@ -103,7 +103,7 @@ function parseTextFile(aFile) {
 			description: 'imported from ' + aFile.leafName
 		});
 	}
-	Debug.log("parsed text file, links: " + links.length);
+	Logger.log("parsed text file, links: " + links.length);
 	return filterInSitu(links, function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)), {});
 }
 

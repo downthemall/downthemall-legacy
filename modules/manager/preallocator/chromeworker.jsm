@@ -95,19 +95,19 @@ const JobQueue = {
 Worker.onmessage = function prealloc_worker_message(event) {
 	let msg = event.data;
 	if (!msg.result) {
-		Debug.log("pa: failed to run", msg.resultString);
+		Logger.log("pa: failed to run", msg.resultString);
 	}
 	JobQueue.finish(msg.id, msg.result);
 };
 Worker.onerror = function prealloc_worker_error(event) {
-	Debug.log("Something horrible happend", event.message);
+	Logger.log("Something horrible happend", event.message);
 	Worker = null;
 }
 
 function prealloc(file, size, perms, callback, tp) {
 	callback = (callback || function(){}).bind(tp || null);
 	if (size <= SIZE_MIN || !isFinite(size) || !Worker) {
-		Debug.log("pa: not preallocating");
+		Logger.log("pa: not preallocating");
 		callback(false);
 		return null;
 	}
