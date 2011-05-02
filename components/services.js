@@ -70,7 +70,7 @@ function log(str, ex) {
 	try {
 		let _u = {};
 		module('resource://dta/utils.jsm', _u);
-		log = function() _u.Debug.log.apply(_u.Debug, arguments);
+		log = function() _u.Logger.log.apply(_u.Logger, arguments);
 		log(str, ex);
 	}
 	catch (oex) {
@@ -214,8 +214,8 @@ Stuff.prototype = {
 		// Diagnostic log
 		try {
 			let _d = {};
-			module('resource://dta/debug.jsm', _d);
-			_d.Debug.clear();
+			module('resource://dta/Logger.jsm', _d);
+			_d.Logger.clear();
 		}
 		catch (ex) {
 			log("Cannot clear diagnostic log", ex);

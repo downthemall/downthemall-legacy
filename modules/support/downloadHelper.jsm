@@ -84,7 +84,7 @@ if (available) {
 				}
 			}
 			catch (ex) {
-				Debug.log("failed to handle", ex);
+				Logger.log("failed to handle", ex);
 				throw ex;
 			}
 		},

@@ -109,14 +109,14 @@ History.prototype = {
 			rv = JSON.parse(json);
 		}
 		catch (ex) {
-			Debug.log("Histories: Parsing of history failed: " + json, ex);
+			Logger.log("Histories: Parsing of history failed: " + json, ex);
 		}
 		if (!rv.length) {
 			try {
 				rv = JSON.parse(prefs.getExt(this._key + ".default", '[]'));
 			}
 			catch (ex) {
-				Debug.log("Cannot apply default values", ex);
+				Logger.log("Cannot apply default values", ex);
 			}
 		}
 		return rv;
@@ -126,16 +126,16 @@ History.prototype = {
 	},
 	_setValues: function(values) {
 		if (!this._persisting) {
-			Debug.log("Set session history for " + this._key);
+			Logger.log("Set session history for " + this._key);
 			this._sessionHistory = values;
 		}
 		else {
 			try {
 				prefs.setExt(this._key, JSON.stringify(values));
-				Debug.log("Set normal history for " + this._key + " to " + JSON.stringify(values));
+				Logger.log("Set normal history for " + this._key + " to " + JSON.stringify(values));
 			}
 			catch (ex) {
-				Debug.log("Histories: Setting values failed" + values, ex);
+				Logger.log("Histories: Setting values failed" + values, ex);
 				throw ex;
 			}
 		}
@@ -146,20 +146,20 @@ History.prototype = {
 			let values = this._values.filter(function(e) e != value);
 			values.unshift(value);
 			let max = prefs.getExt('history', 5);
-			Debug.log("Histories: " + this._key + ", before " + values.toSource());
-			Debug.log("Histories: " + this._key + ", max " + max);
+			Logger.log("Histories: " + this._key + ", before " + values.toSource());
+			Logger.log("Histories: " + this._key + ", max " + max);
 			while (values.length > max) {
 				values.pop();
 			}
-			Debug.log("Histories: " + this._key + ", after" + values.toSource());
+			Logger.log("Histories: " + this._key + ", after" + values.toSource());
 			this._setValues(values);
 		}
 		catch (ex) {
-			Debug.log("Histories: Push failed!", ex);
+			Logger.log("Histories: Push failed!", ex);
 		}
 	},
 	reset: function(value) {
-		Debug.log("Histories: Reset called");
+		Logger.log("Histories: Reset called");
 		this._setValues([]);
 	}
 };
@@ -168,13 +168,13 @@ const _histories = {};
 
 const callbacks = {
 	enterPrivateBrowsing: function() {
-		Debug.log("entering pbm: switching to session histories");
+		Logger.log("entering pbm: switching to session histories");
 		for each (let h in _histories) {
 			h._setPersisting(false);
 		}
 	},
 	exitPrivateBrowsing: function() {
-		Debug.log("exiting pbm: switching to persisted histories");
+		Logger.log("exiting pbm: switching to persisted histories");
 		for each (let h in _histories) {
 			h._setPersisting(true);
 		}

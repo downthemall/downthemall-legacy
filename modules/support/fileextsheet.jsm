@@ -59,10 +59,10 @@ function FileExtensionSheet(window) {
 	this._stylesheet = null;
 	try {
 		for each (let ss in document.styleSheets) {
-			Debug.log("sheet: " + ss.href);
+			Logger.log("sheet: " + ss.href);
 			if (/^chrome:\/\/dta\//.test(ss.href)) {
 				this._stylesheet = ss;
-				Debug.log("found stylesheet " + ss.href + ", rules: " + ss.cssRules.length);
+				Logger.log("found stylesheet " + ss.href + ", rules: " + ss.cssRules.length);
 				break;
 			}
 		}
@@ -71,7 +71,7 @@ function FileExtensionSheet(window) {
 		}
 	}
 	catch (ex) {
-		Debug.log("sheet:", ex);
+		Logger.log("sheet:", ex);
 	}
 	this._entries = {};
 }
@@ -96,7 +96,7 @@ FileExtensionSheet.prototype = {
 				+ getIcon('file.' + ext, metalink || ext == 'metalink')
 				+ ') !important; }';
 			this._stylesheet.insertRule(rule, this._stylesheet.cssRules.length);
-			Debug.log("sheet: " + rule);
+			Logger.log("sheet: " + rule);
 			if (!this._timer) {
 				// this is a moz-2 hack, as it will otherwise not correctly redraw!
 				this._timer = Timers.createOneshot(0, this._updateSheet, this);

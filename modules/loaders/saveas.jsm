@@ -79,7 +79,7 @@ function load(window) {
 				elements.push(element);
 			}
 			else {
-				debug("requested a non-existing element: " + id);
+				Cu.reportError("requested a non-existing element: " + id);
 			}
 		}
 		return elements;
@@ -119,13 +119,13 @@ function load(window) {
 			window.sizeToContent();
 		}
 		catch (ex) {
-			DTA.Debug.log("sizeToContent Bug: 371508", ex);
+			DTA.Logger.log("sizeToContent Bug: 371508", ex);
 			try {
 				var btn = document.documentElement.getButton('accept');
 				window.innerHeight = btn.boxObject.y + 10;
 			}
 			catch (ex) {
-				DTA.Debug.log("setting height failed", ex);
+				DTA.Logger.log("setting height failed", ex);
 			}
 		}
 	}

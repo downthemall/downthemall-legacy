@@ -71,7 +71,12 @@ DTA.__defineGetter__('Mediator', function() {
 	return DTA.Mediator;
 });
 
-const Debug = DTA.Debug;
+const Logger = DTA.Logger;
+if (!('Debug' in this)) {
+	// XXX: compat; Debug is old style stuff
+	// Remove it later
+	this['Debug'] = DTA.Logger;
+}
 const Preferences = DTA.Preferences;
 
 module("resource://dta/support/icons.jsm");
@@ -95,7 +100,7 @@ function $() {
 			elements.push(element);
 		}
 		else {
-			Debug.log("requested a non-existing element: " + arguments[i]);
+			Logger.log("requested a non-existing element: " + arguments[i]);
 		}
 	}
 	return elements;
@@ -157,7 +162,7 @@ var Utils = {
 			}
 		}
 		catch (ex) {
-			Debug.log("Utils.askForDir():", ex);
+			Logger.log("Utils.askForDir():", ex);
 		}
 		return false;
 	},
@@ -184,7 +189,7 @@ var Utils = {
 			}
 		}
 		catch (ex) {
-			Debug.log("Invalid path supplied", ex);
+			Logger.log("Invalid path supplied", ex);
 		}
 		if (!directory) {
 			return false;
@@ -211,7 +216,7 @@ var Utils = {
 			}
 		}
 		catch(ex) {
-			Debug.log('Checking permissions threw', ex);
+			Logger.log('Checking permissions threw', ex);
 		}
 		return false;
 	},
@@ -261,7 +266,7 @@ var Utils = {
 			}
 		}
 		catch(ex) {
-			Debug.log("Playing " + name + " sound failed", ex);
+			Logger.log("Playing " + name + " sound failed", ex);
 		}
 	},
 

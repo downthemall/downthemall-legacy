@@ -116,7 +116,7 @@ function getString(n) {
 		return getString_str.GetStringFromName(n);
 	}
 	catch (ex) {
-		DTA.Debug.log("locale error: " + n, ex);
+		DTA.Logger.log("locale error: " + n, ex);
 		return '<error>';
 	}
 }
@@ -127,7 +127,7 @@ function getFormattedString(n) {
 		return getString_str.formatStringFromName(n, args, args.length);
 	}
 	catch (ex) {
-		DTA.Debug.log("locale error: " + n, ex);
+		DTA.Logger.log("locale error: " + n, ex);
 		return '<error>';
 	}
 }
@@ -168,7 +168,7 @@ function extractDescription(child) {
 		}
 	}
 	catch(ex) {
-		DTA.Debug.log('extractDescription', ex);
+		DTA.Logger.log('extractDescription', ex);
 	}
 	return trimMore(rv.join(" "));
 }
@@ -341,7 +341,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 
 		let sel = null;
 		if (honorSelection && (sel = aWin.getSelection()) && !sel.isCollapsed) {
-			DTA.Debug.log("selection only");
+			DTA.Logger.log("selection only");
 			[links, images, videos, embeds, inputs].forEach(function(e) filterInSitu(e, function(n) sel.containsNode(n, true)));
 			if (recognizeTextLinks) {
 				let copy = aWin.document.createElement('div');
@@ -409,7 +409,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 			honorSelection = false;
 		}
 
-		DTA.Debug.log("adding links to array");
+		DTA.Logger.log("adding links to array");
 		for (let y in addLinksToArray(links, aURLs, aWin.document)) {
 			yield true;
 		}
@@ -427,7 +427,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 		}
 	}
 	catch (ex) {
-		DTA.Debug.log('addLinks', ex);
+		DTA.Logger.log('addLinks', ex);
 	}
 
 	// do not process further as we just filtered the selection
@@ -467,7 +467,7 @@ function load(window, outerEvent) {
 				elements.push(element);
 			}
 			else {
-				DTA.Debug.log("requested a non-existing element: " + id);
+				DTA.Logger.log("requested a non-existing element: " + id);
 			}
 		}
 		return elements;
@@ -579,7 +579,7 @@ function load(window, outerEvent) {
 			})(message);
 		}
 		catch (ex) {
-			DTA.Debug.log("np", ex);
+			DTA.Logger.log("np", ex);
 			notifyProgress = function() {}
 		}
 	}
@@ -646,10 +646,10 @@ function load(window, outerEvent) {
 			}
 
 			if (turbo) {
-				DTA.Debug.log("findLinks(): DtaOneClick request from the user");
+				DTA.Logger.log("findLinks(): DtaOneClick request from the user");
 			}
 			else {
-				DTA.Debug.log("findLinks(): DtaStandard request from the user");
+				DTA.Logger.log("findLinks(): DtaStandard request from the user");
 			}
 
 			let wt = document.documentElement.getAttribute('windowtype');
@@ -675,9 +675,9 @@ function load(window, outerEvent) {
 
 			new CoThreads.CoThreadInterleaved(
 				(function() {
-					DTA.Debug.log("findLinks(): running");
+					DTA.Logger.log("findLinks(): running");
 					for each (let win in windows) {
-						DTA.Debug.log("findLinks(): running...");
+						DTA.Logger.log("findLinks(): running...");
 						for (let y in addLinks(win, urls, images, !all)) {
 							yield true;
 						}
@@ -688,7 +688,7 @@ function load(window, outerEvent) {
 					unique(images);
 					yield true;
 
-					DTA.Debug.log("findLinks(): done running...");
+					DTA.Logger.log("findLinks(): done running...");
 
 				})(),
 				100
@@ -697,7 +697,7 @@ function load(window, outerEvent) {
 				clearInterval(_updateInterval);
 				notifyProgress();
 
-				DTA.Debug.log("findLinks(): finishing...");
+				DTA.Logger.log("findLinks(): finishing...");
 				if (!urls.length && !images.length) {
 					notifyError(getString('error'), getString('errornolinks'));
 					return;
@@ -715,7 +715,7 @@ function load(window, outerEvent) {
 						return;
 					}
 					catch (ex) {
-						DTA.Debug.log('findLinks', ex);
+						DTA.Logger.log('findLinks', ex);
 						DTA.saveLinkArray(window, urls, images, getString('errorinformation'));
 					}
 					return;
@@ -725,7 +725,7 @@ function load(window, outerEvent) {
 		}
 		catch(ex) {
 			Cu.reportError(ex);
-			DTA.Debug.log('findLinks', ex);
+			DTA.Logger.log('findLinks', ex);
 		}
 	}
 
@@ -739,7 +739,7 @@ function load(window, outerEvent) {
 		}
 		catch (ex) {
 			notifyError(getString('error'), getString('errorcannotdownload'));
-			DTA.Debug.log('findSingleLink: ', ex);
+			DTA.Logger.log('findSingleLink: ', ex);
 		}
 	}
 
@@ -753,7 +753,7 @@ function load(window, outerEvent) {
 		}
 		catch (ex) {
 			notifyError(getString('error'), getString('errorcannotdownload'));
-			DTA.Debug.log('findSingleLink: ', ex);
+			DTA.Logger.log('findSingleLink: ', ex);
 		}
 	}
 
@@ -786,7 +786,7 @@ function load(window, outerEvent) {
 			}
 			catch (ex) {
 				notifyError(getString('error'), getString('errorcannotdownload'));
-				DTA.Debug.log('_findSingleMedia: ', ex);
+				DTA.Logger.log('_findSingleMedia: ', ex);
 			}
 		}
 	}
@@ -811,7 +811,7 @@ function load(window, outerEvent) {
 				return;
 			}
 			catch (ex) {
-				DTA.Debug.log('saveSingleLink', ex);
+				DTA.Logger.log('saveSingleLink', ex);
 				notifyError(getString('error'), getString('errorinformation'));
 			}
 		}
@@ -885,14 +885,14 @@ function load(window, outerEvent) {
 					return;
 				}
 				catch (ex) {
-					DTA.Debug.log('findSingleLink', ex);
+					DTA.Logger.log('findSingleLink', ex);
 					notifyError(getString('error'), getString('errorinformation'));
 				}
 			}
 			DTA.saveSingleLink(window, window, false, action, ref, desc);
 		}
 		catch (ex) {
-			DTA.Debug.log('findForm', ex);
+			DTA.Logger.log('findForm', ex);
 		}
 	}
 
@@ -1038,7 +1038,7 @@ function load(window, outerEvent) {
 			}
 		}
 		catch(ex) {
-			DTA.Debug.log("DTAContext(): ", ex);
+			DTA.Logger.log("DTAContext(): ", ex);
 		}
 	}
 
@@ -1093,7 +1093,7 @@ function load(window, outerEvent) {
 				.some(function(b) !!$(b));
 		}
 		catch(ex) {
-			DTA.Debug.log("DTATools(): ", ex);
+			DTA.Logger.log("DTATools(): ", ex);
 		}
 	}
 
@@ -1493,7 +1493,7 @@ function load(window, outerEvent) {
 				this.func(url, ref);
 			}
 			catch (ex) {
-				DTA.Debug.log("Failed to process drop", ex);
+				DTA.Logger.log("Failed to process drop", ex);
 			}
 		}
 	};
@@ -1590,7 +1590,7 @@ function load(window, outerEvent) {
 		}
 		catch (ex) {
 			Components.utils.reportError(ex);
-			DTA.Debug.log("DCO::init()", ex);
+			DTA.Logger.log("DCO::init()", ex);
 		}
 		evt.target == ctx ? onContextShowing(evt) : onToolsShowing(evt);
 	}
@@ -1619,7 +1619,7 @@ function load(window, outerEvent) {
 		}
 	}
 	catch (ex) {
-		DTA.Debug.log("Failed to parse palette", ex);
+		DTA.Logger.log("Failed to parse palette", ex);
 	}
 
 	try {
@@ -1669,7 +1669,7 @@ function load(window, outerEvent) {
 
 	}
 	catch (ex) {
-		DTA.Debug.log("Init TBB failed", ex);
+		DTA.Logger.log("Init TBB failed", ex);
 	}
 
 	if (outerEvent) {

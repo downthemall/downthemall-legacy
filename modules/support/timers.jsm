@@ -78,7 +78,7 @@ TimerData.prototype = {
 			this.func.call(this.ctx);
 		}
 		catch (ex) {
-			Debug.log("Failed to execute timer callback", ex);
+			Logger.log("Failed to execute timer callback", ex);
 		}
 	}
 };
