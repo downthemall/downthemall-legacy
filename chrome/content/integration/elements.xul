@@ -120,6 +120,8 @@
 					}
 				}
 
+				Components.utils.import("resource://dta/support/scheduleautostart.jsm");
+
 				let _v = {};
 				Components.utils.import("resource://dta/version.jsm", _v);
 				dta_showabout_i(_v.Version);

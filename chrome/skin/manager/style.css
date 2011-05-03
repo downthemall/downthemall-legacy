@@ -579,11 +579,25 @@ textbox.plain {
 .statusbarpanel-iconic-text {
 	padding-left: 4pt;
 }
-statusbarpanel#netstatus {
+.statusbarpanel-iconic {
 	padding-left: 6px;
 	padding-right: 6px;
 	min-width: 16px;
 }
+
+/* schedule */
+statusbarpanel#schedule {
+	list-style-image: url(chrome://dta/skin/manager/schedule.png);
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+statusbarpanel#schedule[disabled] {
+	display: none;
+}
+statusbarpanel#schedule:not([running]) {
+	-moz-image-region: rect(0px, 32px, 16px, 16px);
+}
+
+
 
 /* search */
 #search {
