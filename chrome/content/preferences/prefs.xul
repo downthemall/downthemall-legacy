@@ -43,6 +43,7 @@
 	<prefpane id="paneServers" label="&serverspane.label;" src="chrome://dta/content/preferences/serversPane.xul" />
 	<prefpane id="panePrivacy" label="&privacypane.label;" src="chrome://dta/content/preferences/privacyPane.xul" />
 	<prefpane id="paneFilters" label="&filterspane.label;" src="chrome://dta/content/preferences/filtersPane.xul" />
+	<prefpane id="paneSchedule" label="&schedpane.label;" src="chrome://dta/content/preferences/schedulePane.xul" />
 	<prefpane id="paneAdvanced" label="&advancedpane.label;" src="chrome://dta/content/preferences/advPane.xul" />
 
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js"/>

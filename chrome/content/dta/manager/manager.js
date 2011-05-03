@@ -230,6 +230,8 @@ const Dialog = {
 			$('tooldonate').addEventListener('click', function(evt) { if (evt.button == 0) Dialog.openDonate() }, false);
 		})();
 
+		this.paneSchedule = $("schedule");
+
 		let tree = $("downloads");
 		Tree.init(tree);
 		tree.addEventListener("change", function() {
@@ -948,6 +950,31 @@ const Dialog = {
 			// pre-condition, do check prior to loop, or else we'll have the generator cost.
 			if (this._running.length >= Prefs.maxInProgress) {
 				return false;
+			}
+			if (Prefs.schedEnabled) {
+				this.paneSchedule.removeAttribute("disabled");
+
+				let current = new Date();
+				current = current.getHours() * 60 + current.getMinutes();
+				let disabled;
+				if (Prefs.schedStart < Prefs.schedEnd) {
+					disabled = current < Prefs.schedStart || current > Prefs.schedEnd;
+				}
+				else {
+					disabled = current < Prefs.schedStart && current > Prefs.schedEnd;
+				}
+
+				if (disabled) {
+					this.paneSchedule.removeAttribute("running");
+					this.paneSchedule.setAttribute("tooltiptext", _("schedule.paused"));
+					return false;
+				}
+
+				this.paneSchedule.setAttribute("running", "true");
+				this.paneSchedule.setAttribute("tooltiptext", _("schedule.running"));
+			}
+			else {
+				this.paneSchedule.setAttribute("disabled", "true");
 			}
 			if (!this.scheduler) {
 				this.scheduler = Limits.getConnectionScheduler(Tree.all, this._running);
