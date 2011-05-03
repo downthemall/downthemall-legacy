@@ -563,6 +563,24 @@ const Servers = {
 Components.utils.import('resource://dta/support/serverlimits.jsm', Servers);
 ServiceGetter(Servers, 'prompts', '@mozilla.org/embedcomp/prompt-service;1', 'nsIPromptService');
 
+const Schedule = {
+	init: function() {
+		this.setupSchedDeck();
+		$("schedenable").addEventListener("command", function() Schedule.setupSchedDeck(), false);
+	},
+	setupSchedDeck: function() {
+		$("scheddeck").selectedIndex = $("schedenable").checked ? 1 : 0;
+	},
+	syncFromPref: function(element) {
+		let pref = $(element.getAttribute("preference"));
+		let val = pref.value;
+		return Math.floor(val / 60) + ":" + (val % 60);
+	},
+	syncToPref: function(element) {
+		return element.hour * 60 + element.minute;
+	}
+};
+
 const Prefs = {
 	load: function() {
 		Components.utils.import('resource://dta/version.jsm');

@@ -363,4 +363,15 @@
 			]]></handler>
 		</handlers>
 	</binding>
+
+	<binding id="timepicker" extends="chrome://global/content/bindings/datetimepicker.xml#timepicker">
+		<implementation>
+			<field name="is24HourClock">false</field>
+			<field name="hourLeadingZero">false</field>
+			<field name="minuteLeadingZero">true</field>
+			<field name="secondLeadingZero">true</field>
+			<field name="amIndicator">"AM"</field>
+			<field name="pmIndicator">"PM"</field>
+		</implementation>
+	</binding>
 </bindings>

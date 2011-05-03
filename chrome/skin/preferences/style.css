@@ -45,6 +45,14 @@ radio[pane="paneServers"][selected="true"] {
 	-moz-image-region: rect(32px, 192px,  64px, 160px);
 }
 
+radio[pane="paneSchedule"] {
+	-moz-image-region: rect(0px, 224px,  32px, 192px);
+}
+radio[pane="paneSchedule"]:hover,
+radio[pane="paneSchedule"][selected="true"] {
+	-moz-image-region: rect(32px, 224px,  64px, 192px);
+}
+
 radio[pane="paneAdvanced"] {
 	list-style-image: url(preferences-toolkit.png);
 	-moz-image-region: rect(0px, 224px,  32px, 192px);
@@ -92,4 +100,9 @@ richlistitem.serverlimit[editing="true"] {
 .serverlimit-value-label {
 	margin-right: 2em;
 	font-style: italic;
+}
+
+/* rebind to work around bug 637234 */
+timepicker {
+	-moz-binding: url(chrome://dta/content/preferences/bindings.xml#timepicker);
 }

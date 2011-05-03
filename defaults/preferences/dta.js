@@ -90,6 +90,14 @@ pref("extensions.dta.exposeInUA", false);
 pref("extensions.dta.tb.buttons", "1,1,0");
 
 /**
+ * Schedule
+ */
+pref("extensions.dta.schedule.enabled", false);
+pref("extensions.dta.schedule.start", 0);
+pref("extensions.dta.schedule.end", 1380); // 23:00
+pref("extensions.dta.schedule.open", true);
+
+/**
  * Privacy Controls
  */
 pref("privacy.cpd.extensions-dta", false);
