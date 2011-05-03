@@ -231,6 +231,9 @@ const Dialog = {
 		})();
 
 		this.paneSchedule = $("schedule");
+		this.paneSchedule.addEventListener("command", function() {
+			DTA.showPreferences("paneSchedule");
+		}, false);
 
 		let tree = $("downloads");
 		Tree.init(tree);
