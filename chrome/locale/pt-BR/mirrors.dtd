@@ -1,0 +1,10 @@
+<!ENTITY title "Gerenciamento de Mirrors do DownThemAll!">
+<!ENTITY header "Gerenciamento de Mirrors">
+<!ENTITY byline1 "Downloads podem ser carregados de diferentes endereços. O arquivo é então automaticamente recombinado.">
+<!ENTITY byline2 "Sinta-se à vontade para adicionar e remover endereços que apontem para o mesmo arquivo.">
+<!ENTITY byline3 "Adicionar endereços apontando para arquivos diferentes pode resultar num download corrompido">
+<!ENTITY addmirror.tip "Adicionar um Mirror">
+<!ENTITY removemirror.tip "Remover os Mirrors Selecionados">
+<!ENTITY checkmirrors.tip "Selecionar Todos os Mirrors">
+<!ENTITY mirrorurl "Localização:">
+<!ENTITY preference "Prioridade:">

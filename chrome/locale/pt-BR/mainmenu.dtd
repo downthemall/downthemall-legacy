@@ -1,0 +1,5 @@
+<!ENTITY fileMenu.label "Arquivo">
+<!ENTITY fileMenu.accesskey "A">
+<!ENTITY newNavigatorCmd.label "Nova Janela do Navegador">
+<!ENTITY tabCmd.label "Nova Aba do Navegador">
+<!ENTITY closeWindow.label "Fechar DownThemAll!">

@@ -1,0 +1,23 @@
+<!ENTITY mask.title "Máscaras de Renomeação">
+<!ENTITY mask.name "Nome do Arquivo">
+<!ENTITY mask.ext "Extensão">
+<!ENTITY mask.url "Endereço Base">
+<!ENTITY mask.curl "Endereço Completo">
+<!ENTITY mask.flatcurl "Endereço Completo">
+<!ENTITY mask.num "Número do Lote">
+<!ENTITY mask.inum "Número do Item">
+<!ENTITY mask.hh "Horas">
+<!ENTITY mask.mm "Minutos">
+<!ENTITY mask.ss "Segundos">
+<!ENTITY mask.d "Dia">
+<!ENTITY mask.m "Mês">
+<!ENTITY mask.y "Ano">
+<!ENTITY mask.subdirs "Subdiretórios do Endereço">
+<!ENTITY mask.flatsubdirs "Subdiretórios do Endereço">
+<!ENTITY mask.text "Descrição do Link">
+<!ENTITY mask.flattext "Descrição do Link">
+<!ENTITY mask.refer "Endereço da Referência">
+<!ENTITY mask.qstring "Query String">
+<!ENTITY mask.flattitle "Máscaras de Renomeação">
+<!ENTITY mask.tip "Clique ou arraste para a máscara de renomeação">
+<!ENTITY mask.open.tip "Tabela de referência de tags de renomeação">
