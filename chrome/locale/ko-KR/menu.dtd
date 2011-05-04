@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "설정">
+<!ENTITY dta-about.label "dTa! 정보">
+<!ENTITY dta-manager-button "dTa! 관리자">
+<!ENTITY dta-selector-button "dTa OneClick! 선택자">
+<!ENTITY dta-tb-all.label "모든 탭">
+<!ENTITY dta-tb-single.label "현재 탭">
+<!ENTITY dta-selection.label "DownThemAll! 선택...">
+<!ENTITY dta-selection-turbo.label "dTa OneClick 선택...">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa OneClick...">
+<!ENTITY dta-img-save.label "DownThemAll!로 이미지 저장">
+<!ENTITY dta-img-save-turbo.label "dTa OneClick!으로 이미지 저장 시작">
+<!ENTITY dta-video-save.label "DownThemAll!로 비디오 저장">
+<!ENTITY dta-video-save-turbo.label "dTa OneClick!으로 비디오 저장 시작">
+<!ENTITY dta-audio-save.label "DownThemAll!로 오디오 저장">
+<!ENTITY dta-audio-save-turbo.label "dTa OneClick!으로 오디오 저장 시작">
+<!ENTITY dta-link-save.label "DownThemAll!로 링크 저장">
+<!ENTITY dta-link-save-turbo.label "dTa OneClick!으로 링크 저장 시작">
+<!ENTITY dta-form-save.label "DownThemAll!로 폼 타겟 저장">
+<!ENTITY dta-form-save-turbo.label "dTa OneClick!으로 폼 타겟 저장 시작">
