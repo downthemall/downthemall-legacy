@@ -1112,7 +1112,10 @@ const Tree = {
 			let saveArray = [];
 			Dialog.completed = 0;
 			this._downloads.forEach(this._invalidate_all, saveArray);
-			QueueStore.asyncSavePosition(saveArray);
+			if (saveArray.length) {
+				QueueStore.asyncSavePosition(saveArray);
+				this.fireChangeEvent();
+			}
 			this._box.invalidate();
 			this.refreshTools(this);
 			return;
