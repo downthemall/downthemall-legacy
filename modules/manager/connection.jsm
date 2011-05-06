@@ -64,7 +64,6 @@ module('resource://dta/support/bytebucket.jsm');
 const StringInputStream = ctor('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
 
 const Preferences = DTA.Preferences;
-const Debug = DTA.Debug;
 
 extendString(String);
 
