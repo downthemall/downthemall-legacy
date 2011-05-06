@@ -85,12 +85,16 @@ Visitor.prototype = {
 				if (this.cmpKeys[x]) {
 					continue;
 				}
-				Logger.log(x + " missing");
+				if (Logger.enabled) {
+					Logger.log(x + " missing");
+				}
 				throw new Exception(x + " is missing");
 			}
 			// header is there, but differs
 			else if (this[x] != v[x]) {
-				Logger.log(x + " nm: [" + this[x] + "] [" + v[x] + "]");
+				if (Logger.enabled) {
+					Logger.log(x + " nm: [" + this[x] + "] [" + v[x] + "]");
+				}
 				throw new Exception("Header " + x + " doesn't match");
 			}
 		}
@@ -144,7 +148,9 @@ HttpVisitor.prototype = {
 					this.type = aValue;
 					var ch = aValue.match(/charset=['"]?([\w\d_-]+)/i);
 					if (ch && ch[1].length) {
-						Logger.log("visitHeader: found override to " + ch[1]);
+						if (Logger.enabled) {
+							Logger.log("visitHeader: found override to " + ch[1]);
+						}
 						this._charset = this.overrideCharset = ch[1];
 					}
 				}
@@ -156,7 +162,9 @@ HttpVisitor.prototype = {
 
 				case 'accept-ranges':
 					this.acceptRanges = aValue.toLowerCase().indexOf('none') == -1;
-					Logger.log("acceptrange = " + aValue.toLowerCase());
+					if (Logger.enabled) {
+						Logger.log("acceptrange = " + aValue.toLowerCase());
+					}
 				break;
 
 				case 'content-length':
@@ -178,7 +186,9 @@ HttpVisitor.prototype = {
 						this.time = getTimestamp(aValue);
 					}
 					catch (ex) {
-						Logger.log("gts", ex);
+						if (Logger.enabled) {
+							Logger.log("gts", ex);
+						}
 					}
 				break;
 				case 'digest': {
@@ -208,7 +218,9 @@ HttpVisitor.prototype = {
 					.replace(/^(?:[Ww]\/)?"(.+)"$/, '$1')
 					.replace(/^[a-f\d]+-([a-f\d]+)-([a-f\d]+)$/, '$1-$2')
 					.replace(/^([a-f\d]+):[a-f\d]{1,6}$/, '$1');
+				if (Logger.enabled) {
 					Logger.log("Etag: " + this[header] + " - " + aValue);
+				}
 			}
 			else if (header in this.cmpKeys) {
 				this[header] = aValue;
@@ -235,7 +247,9 @@ HttpVisitor.prototype = {
 			}
 		}
 		catch (ex) {
-			Logger.log("Error parsing header", ex);
+			if (Logger.enabled) {
+				Logger.log("Error parsing header", ex);
+			}
 		}
 	}
 };
@@ -262,12 +276,16 @@ FtpVisitor.prototype = {
 						time += ':' + m[6];
 					}
 					this.time = getTimestamp(time);
-					Logger.log(this.time);
+					if (Logger.enabled) {
+						Logger.log(this.time);
+					}
 				}
 			}
 		}
 		catch (ex) {
-			Logger.log("visitChan:", ex);
+			if (Logger.enabled) {
+				Logger.log("visitChan:", ex);
+			}
 		}
 	}
 };
@@ -299,7 +317,9 @@ VisitorManager.prototype = {
 				}
 			}
 			catch (ex) {
-				Logger.log("failed to read one visitor", ex);
+				if (Logger.enabled) {
+					Logger.log("failed to read one visitor", ex);
+				}
 			}
 		}
 	},
@@ -318,7 +338,9 @@ VisitorManager.prototype = {
 				rv.push(v);
 			}
 			catch(ex) {
-				Logger.log(x, ex);
+				if (Logger.enabled) {
+					Logger.log(x, ex);
+				}
 			}
 		}
 		return rv;

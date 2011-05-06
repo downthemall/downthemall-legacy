@@ -54,7 +54,9 @@ module('resource://dta/utils.jsm');
 module('resource://dta/version.jsm');
 module('resource://dta/cothread.jsm');
 
-Logger.log("Using CoThread implementation");
+if (Logger.enabled) {
+	Logger.log("Using CoThread implementation");
+}
 
 // Should we use the optimized Windows implementation?
 const WINDOWSIMPL = Version.OS == 'winnt';
@@ -84,7 +86,9 @@ function prealloc(file, size, perms, callback, tp) {
 	tp = tp || null;
 	callback = (callback || function(){}).bind(tp);
 	if (size <= SIZE_MIN || !isFinite(size)) {
-		Logger.log("pa: not preallocating");
+		if (Logger.enabled) {
+			Logger.log("pa: not preallocating");
+		}
 		callback(false);
 		return null;
 	}
@@ -140,7 +144,9 @@ WorkerJob.prototype = {
 			this.result = true;
 		}
 		catch (ex) {
-			Logger.log("pa: Windows implementation failed!", ex);
+			if (Logger.enabled) {
+				Logger.log("pa: Windows implementation failed!", ex);
+			}
 			for (let i in this._run_other()) yield i;
 		}
 	},
@@ -159,7 +165,9 @@ WorkerJob.prototype = {
 			}
 		}
 		catch (ex) {
-			Logger.log("pa: Failed to run prealloc loop", ex);
+			if (Logger.enabled) {
+				Logger.log("pa: Failed to run prealloc loop", ex);
+			}
 		}
 	},
 	_close: function() {

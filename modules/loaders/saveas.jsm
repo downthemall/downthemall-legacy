@@ -119,13 +119,17 @@ function load(window) {
 			window.sizeToContent();
 		}
 		catch (ex) {
-			DTA.Logger.log("sizeToContent Bug: 371508", ex);
+			if (Logger.enabled) {
+				DTA.Logger.log("sizeToContent Bug: 371508", ex);
+			}
 			try {
 				var btn = document.documentElement.getButton('accept');
 				window.innerHeight = btn.boxObject.y + 10;
 			}
 			catch (ex) {
-				DTA.Logger.log("setting height failed", ex);
+				if (Logger.enabled) {
+					DTA.Logger.log("setting height failed", ex);
+				}
 			}
 		}
 	}

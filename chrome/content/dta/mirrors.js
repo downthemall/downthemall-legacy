@@ -72,7 +72,9 @@ function load() {
 				mirrors.appendChild(mirror);
 			}
 			catch (ex) {
-				Logger.log("Failed to add" + a, ex);
+				if (Logger.enabled) {
+					Logger.log("Failed to add" + a, ex);
+				}
 			}
 		}
 		// clear the array; we'll reuse it for return values
@@ -139,7 +141,9 @@ function addMirror() {
 		}
 	}
 	catch (ex) {
-		Logger.log("cb", ex);
+		if (Logger.enabled) {
+			Logger.log("cb", ex);
+		}
 	}
 	let mirror = document.createElement('richlistitem');
 	mirror.setAttribute('preference', 50);
@@ -245,7 +249,9 @@ function checkMirrors() {
 			}
 		}
 		catch (ex) {
-			Logger.log("Check Request failed", ex);
+			if (Logger.enabled) {
+				Logger.log("Check Request failed", ex);
+			}
 		}
 		m.setAttribute("state", state);
 		m.setAttribute("error", error);
@@ -274,7 +280,9 @@ function checkMirrors() {
 					continue;
 				}
 				for each (let m in good[cl]) {
-					Logger.log(m.mirror + " has a cl of " + cl + " but the majority of mirrors uses " + maxCL);
+					if (Logger.enabled) {
+						Logger.log(m.mirror + " has a cl of " + cl + " but the majority of mirrors uses " + maxCL);
+					}
 					m.setAttribute('state', 'bad');
 					m.setAttribute('error', _('sizecheckerror'));
 					bad.push(m);
@@ -296,7 +304,9 @@ function checkMirrors() {
 	}
 	function timeout() {
 		for each (let req in requests) {
-			Logger.log(req.mirror.mirror + " is a timeout");
+			if (Logger.enabled) {
+				Logger.log(req.mirror.mirror + " is a timeout");
+			}
 			req.abort();
 			finishRequest(req);
 		}

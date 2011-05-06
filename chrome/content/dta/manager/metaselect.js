@@ -39,53 +39,57 @@ const METALINK_LOGO = 'chrome://dta/skin/icons/metalink48.png';
 module("resource://dta/version.jsm");
 
 const MetaSelect = {
- 	_insertDownload: function(d) {
+	_insertDownload: function(d) {
 		try {
-	 		if (d.lang && d.lang.search(/^\w{2}(?:-\w{2})?$/) != -1) {
-	 			d.selected = Version.LOCALE.slice(0,2) == d.lang.slice(0,2);
-	 		}
-	 		let e = document.createElement('richlistitem');
-	 		e.setAttribute("class", "item");
-	 		e.download = d;
-	 		$('downloads').appendChild(e);
+			if (d.lang && d.lang.search(/^\w{2}(?:-\w{2})?$/) != -1) {
+				d.selected = Version.LOCALE.slice(0,2) == d.lang.slice(0,2);
+			}
+			let e = document.createElement('richlistitem');
+			e.setAttribute("class", "item");
+			e.download = d;
+			$('downloads').appendChild(e);
 		}
 		catch (ex) {
-			Logger.log("Failed to add download from metalink", ex);
+			if (Logger.enabled) {
+				Logger.log("Failed to add download from metalink", ex);
+			}
 		}
- 	},
- 	load: function ML_load() {
- 		$('cancelbutton').label = _('button-cancel');
+	},
+	load: function ML_load() {
+		$('cancelbutton').label = _('button-cancel');
 
- 		try {
- 			let downloads = window.arguments[0];
- 			if (downloads.length) {
- 				downloads.forEach(this._insertDownload, this);
- 			}
- 		}
- 		catch(ex) {
- 			Logger.log("Failed to load downloads from Metalink", ex);
- 			// no-op
- 		}
- 		let info = {
- 			'identity': _('mlidentity'),
- 			'description': _('mldescription'),
- 			'logo': null,
- 			'publisher': null,
- 			'license': null
- 		}
- 		try {
- 			let oi = window.arguments[1];
- 			for (x in info) {
- 				if (x in oi && oi[x]) {
- 					info[x] = oi[x];
- 				}
- 			}
- 		}
- 		catch (ex) {
- 			// no-op
- 		}
- 		$('identity').value = info.identity;
- 		$('desc').appendChild(document.createTextNode(info.description));
+		try {
+			let downloads = window.arguments[0];
+			if (downloads.length) {
+				downloads.forEach(this._insertDownload, this);
+			}
+		}
+		catch(ex) {
+			if (Logger.enabled) {
+				Logger.log("Failed to load downloads from Metalink", ex);
+			}
+			// no-op
+		}
+		let info = {
+			'identity': _('mlidentity'),
+			'description': _('mldescription'),
+			'logo': null,
+			'publisher': null,
+			'license': null
+		}
+		try {
+			let oi = window.arguments[1];
+			for (x in info) {
+				if (x in oi && oi[x]) {
+					info[x] = oi[x];
+				}
+			}
+		}
+		catch (ex) {
+			// no-op
+		}
+		$('identity').value = info.identity;
+		$('desc').appendChild(document.createTextNode(info.description));
 		let logo = new Image();
 		logo.onload = function() {
 			let canvas = $('icon');
@@ -105,7 +109,9 @@ const MetaSelect = {
 				ctx.drawImage(logo, (d - w) /2, (d - h) / 2);
 			}
 			catch (ex) {
-				Logger.log("Cannot load logo", ex);
+				if (Logger.enabled) {
+					Logger.log("Cannot load logo", ex);
+				}
 				logo.src = METALINK_LOGO;
 			}
 		};
@@ -113,23 +119,23 @@ const MetaSelect = {
 			logo.src = METALINK_LOGO;
 		};
 		logo.src = info.logo ? info.logo : METALINK_LOGO;
- 		if (info.publisher) {
- 			let e = $('publisher');
- 			e.value = info.publisher[0];
- 			e.link = info.publisher[1];
- 		}
- 		else {
- 			$('boxPublisher').hidden = true;
- 		}
- 		if (info.license) {
- 			let e = $('license');
- 			e.value = info.license[0];
- 			e.link = info.license[1];
- 		}
- 		else {
- 			$('boxLicense').hidden = true;
- 		}
- 	},
+		if (info.publisher) {
+			let e = $('publisher');
+			e.value = info.publisher[0];
+			e.link = info.publisher[1];
+		}
+		else {
+			$('boxPublisher').hidden = true;
+		}
+		if (info.license) {
+			let e = $('license');
+			e.value = info.license[0];
+			e.link = info.license[1];
+		}
+		else {
+			$('boxLicense').hidden = true;
+		}
+	},
 	browseDir: function() {
 		// get a new directory
 		let newDir = Utils.askForDir(
@@ -222,7 +228,9 @@ addEventListener('load', function() {
 		MetaSelect.load();
 	}
 	catch (ex) {
-		Logger.log("Failed to load", ex);
+		if (Logger.enabled) {
+			Logger.log("Failed to load", ex);
+		}
 	}
 }, false);
 addEventListener('close', function() {

@@ -260,7 +260,9 @@ const Tree = {
 		}
 	},
 	clear: function() {
-		Logger.log("Tree: clearing");
+		if (Logger.enabled) {
+			Logger.log("Tree: clearing");
+		}
 		this.beginUpdate();
 		this._downloads = [];
 		$('search').clear();
@@ -510,7 +512,9 @@ const Tree = {
 				transferData.data = item;
 			}
 			catch (ex) {
-				Logger.log("dnd failure", ex);
+				if (Logger.enabled) {
+					Logger.log("dnd failure", ex);
+				}
 			}
 			return;
 		}
@@ -523,7 +527,9 @@ const Tree = {
 		return ds && ds.isDataFlavorSupported('application/x-dta-position');
 	},
 	drop: function T_drop(row, orientation) {
-		Logger.log("drop");
+		if (Logger.enabled) {
+			Logger.log("drop");
+		}
 		if (!this.canDrop()) {
 			return;
 		}
@@ -569,7 +575,9 @@ const Tree = {
 			this.selection.rangedSelect(row, row + downloads.length - 1, true);
 		}
 		catch (ex) {
-			Logger.log("_dropSelection", ex);
+			if (Logger.enabled) {
+				Logger.log("_dropSelection", ex);
+			}
 		}
 	},
 
@@ -925,7 +933,9 @@ const Tree = {
 		);
 		if (mirrors.length) {
 			this.current.replaceMirrors(mirrors);
-			Logger.log("New mirrors set " + mirrors);
+			if (Logger.enabled) {
+				Logger.log("New mirrors set " + mirrors);
+			}
 		}
 	},
 	export: function T_export() {
@@ -951,7 +961,9 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			Logger.log("Cannot export downloads", ex);
+			if (Logger.enabled) {
+				Logger.log("Cannot export downloads", ex);
+			}
 			Prompts.alert(window, _('exporttitle'), _('exportfailed'));
 		}
 	},
@@ -977,7 +989,9 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			Logger.log("Cannot import downloads", ex);
+			if (Logger.enabled) {
+				Logger.log("Cannot import downloads", ex);
+			}
 			Prompts.alert(window, _('importtitle'), _('importfailed'));
 		}
 	},
@@ -1094,7 +1108,9 @@ const Tree = {
 			modifySome($('cmdMoveDown', 'cmdMoveBottom'), function(d) d.max != d.rows - 1);
 		}
 		catch (ex) {
-			Logger.log("rt", ex);
+			if (Logger.enabled) {
+				Logger.log("rt", ex);
+			}
 		}
 	},
 	_invalidate_all: function(e, i) {
@@ -1244,7 +1260,9 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			Logger.log("function threw during update", ex);
+			if (Logger.enabled) {
+				Logger.log("function threw during update", ex);
+			}
 			throw ex;
 		}
 	},
@@ -1266,7 +1284,9 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			Logger.log("function threw during updateSelected", ex);
+			if (Logger.enabled) {
+				Logger.log("function threw during updateSelected", ex);
+			}
 			throw ex;
 		}
 	},
@@ -1287,7 +1307,9 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			Logger.log("function threw during updateAll", ex);
+			if (Logger.enabled) {
+				Logger.log("function threw during updateAll", ex);
+			}
 			throw ex;
 		}
 	},
@@ -1314,7 +1336,9 @@ const Tree = {
 			this._box.ensureRowIsVisible(0);
 		}
 		catch (ex) {
-			Logger.log("Mover::top", ex);
+			if (Logger.enabled) {
+				Logger.log("Mover::top", ex);
+			}
 		}
 	},
 	bottom: function T_bottom() {
@@ -1340,7 +1364,9 @@ const Tree = {
 			this._box.ensureRowIsVisible(this.rowCount - 1);
 		}
 		catch (ex) {
-			Logger.log("Mover::bottom", ex);
+			if (Logger.enabled) {
+				Logger.log("Mover::bottom", ex);
+			}
 		}
 	},
 	up: function T_up() {
@@ -1371,7 +1397,9 @@ const Tree = {
 			this._box.ensureRowIsVisible(Math.max(ids.shift() - 1, 0));
 		}
 		catch (ex) {
-			Logger.log("Mover::up", ex);
+			if (Logger.enabled) {
+				Logger.log("Mover::up", ex);
+			}
 		}
 	},
 	down: function T_down() {
@@ -1406,7 +1434,9 @@ const Tree = {
 			this._box.ensureRowIsVisible(Math.min(ids.shift(), this.rowCount - 1));
 		}
 		catch (ex) {
-			Logger.log("Mover::down", ex);
+			if (Logger.enabled) {
+				Logger.log("Mover::down", ex);
+			}
 		}
 	},
 	showSpeedLimitList: function(event) {
@@ -1455,7 +1485,9 @@ const FileHandling = {
 				}
 			}
 			catch (ex) {
-				Logger.log('reveal', ex);
+				if (Logger.enabled) {
+					Logger.log('reveal', ex);
+				}
 			}
 		}
 	},
@@ -1466,7 +1498,9 @@ const FileHandling = {
 				Utils.launch(cur.destinationFile);
 			}
 			catch (ex) {
-				Logger.log('launch', ex);
+				if (Logger.enabled) {
+					Logger.log('launch', ex);
+				}
 			}
 		}
 	},
