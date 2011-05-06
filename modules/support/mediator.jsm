@@ -140,7 +140,9 @@ function getAllByType(type) {
 }
 
 function openExternal(link) {
-	Logger.log("Mediator: Using external handler for " + link);
+	if (Logger.enabled) {
+		Logger.log("Mediator: Using external handler for " + link);
+	}
 	protoservice.loadUrl(objToUri(link));
 }
 
@@ -156,7 +158,9 @@ this.__defineGetter__(
 			return sbs.createBundle(hp || 'resource:/browserconfig.properties').GetStringFromName('browser.startup.homepage');
 		}
 		catch (ex) {
-			Logger.log("No luck getting hp");
+			if (Logger.enabled) {
+				Logger.log("No luck getting hp");
+			}
 		}
 		return 'about:blank';
 	}
@@ -166,7 +170,9 @@ function openUrl(window, link, ref) {
 	if (!link) {
 		link = homePage;
 	}
-	Logger.log("Mediator: Request to open " + link);
+	if (Logger.enabled) {
+		Logger.log("Mediator: Request to open " + link);
+	}
 	if (!tryOpenUrl(window, link, ref)) {
 		try {
 			window.open(objToString(link));
@@ -190,7 +196,9 @@ function tryOpenUrl(window, link, ref) {
 		}
 	}
 	catch (ex) {
-		Logger.log('Mediator: Failed to open tab', ex);
+		if (Logger.enabled) {
+			Logger.log('Mediator: Failed to open tab', ex);
+		}
 	}
 	return false;
 }

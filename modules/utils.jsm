@@ -126,8 +126,9 @@ function setNewGetter(aObject, aName, aLambda) {
 
 	}
 	catch (ex) {
-		Logger.log(aName);
-		Logger.log(ex);
+		if (Logger.enabled) {
+			Logger.log(aName, ex);
+		}
 	}
 }
 
@@ -153,9 +154,11 @@ function ServiceGetter(context, name, contract, iface) {
 				return Cc[contract].getService(iface);
 			}
 			catch (ex) {
-				Logger.log(ex);
-				Logger.log(contract);
-				Logger.log(iface);
+				if (Logger.enabled) {
+					Logger.log(ex);
+					Logger.log(contract);
+					Logger.log(iface);
+				}
 				throw ex;
 			}
 		}
@@ -267,11 +270,9 @@ LoggerService.prototype = {
 	get file() {
 		return this._file;
 	},
-	get enabled() {
-		return this._enabled;
-	},
+	enabled: false,
 	_setEnabled: function DS_setEnabled(nv) {
-		this._enabled = nv;
+		this.enabled = nv;
 		if (nv) {
 			this.log = this._log;
 		}

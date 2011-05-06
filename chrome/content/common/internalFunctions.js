@@ -107,7 +107,7 @@ function $() {
 		if (element) {
 			elements.push(element);
 		}
-		else {
+		else if (Logger.enabled) {
 			Logger.log("requested a non-existing element: " + arguments[i]);
 		}
 	}
@@ -170,7 +170,9 @@ var Utils = {
 			}
 		}
 		catch (ex) {
-			Logger.log("Utils.askForDir():", ex);
+			if (Logger.enabled) {
+				Logger.log("Utils.askForDir():", ex);
+			}
 		}
 		return false;
 	},
@@ -197,7 +199,9 @@ var Utils = {
 			}
 		}
 		catch (ex) {
-			Logger.log("Invalid path supplied", ex);
+			if (Logger.enabled) {
+				Logger.log("Invalid path supplied", ex);
+			}
 		}
 		if (!directory) {
 			return false;
@@ -224,7 +228,9 @@ var Utils = {
 			}
 		}
 		catch(ex) {
-			Logger.log('Checking permissions threw', ex);
+			if (Logger.enabled) {
+				Logger.log('Checking permissions threw', ex);
+			}
 		}
 		return false;
 	},
@@ -274,7 +280,9 @@ var Utils = {
 			}
 		}
 		catch(ex) {
-			Logger.log("Playing " + name + " sound failed", ex);
+			if (Logger.enabled) {
+				Logger.log("Playing " + name + " sound failed", ex);
+			}
 		}
 	},
 

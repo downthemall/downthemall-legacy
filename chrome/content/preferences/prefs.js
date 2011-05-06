@@ -59,7 +59,9 @@ const Privacy = {
 			$("butFoldDel").disabled = !DTA.getDropDownValue("directory");
 		}
 		catch(ex) {
-			Logger.log("privacyLoad(): ", ex);
+			if (DTA.Logger.enabled) {
+				Logger.log("privacyLoad(): ", ex);
+			}
 		}
 
 		// delay this assignment, or else we get messed up by the slider c'tor
@@ -186,7 +188,9 @@ const Filters = {
 				os.addObserver(this, 'DTA:filterschanged', true);
 			}
 			catch (ex) {
-				Logger.log("cannot install filterManager observer!", ex);
+				if (DTA.Logger.enabled) {
+					Logger.log("cannot install filterManager observer!", ex);
+				}
 				return false;
 			}
 			return true;
@@ -249,7 +253,9 @@ const Filters = {
 			}
 		}
 		catch(ex) {
-			Logger.log("reloadFilters():", ex);
+			if (DTA.Logger.enabled) {
+				Logger.log("reloadFilters():", ex);
+			}
 		}
 	},
 	onCheckboxChange : function() {
@@ -435,8 +441,11 @@ const Servers = {
 		this._list = $('serverLimits');
 		try {
 			this._load();
-		} catch (ex) {
-			Logger.log("Failed to load Servers", ex);
+		}
+		catch (ex) {
+			if (DTA.Logger.enabled) {
+				Logger.log("Failed to load Servers", ex);
+			}
 		}
 
 		// delay these assignments, or else we get messed up by the slider c'tor
@@ -555,7 +564,9 @@ const Servers = {
 			this.newInput();
 		}
 		catch (ex) {
-			Logger.log("failed to add limit", ex);
+			if (DTA.Logger.enabled) {
+				Logger.log("failed to add limit", ex);
+			}
 		}
 		$('noitemsbox').hidden = !!this._list.itemCount;
 	}

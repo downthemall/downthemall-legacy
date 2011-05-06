@@ -217,7 +217,9 @@ Tree.prototype = {
 
 		this.removeSortMarker();
 
-		Logger.log("setting sortColumn = " + col.index);
+		if (Logger.enabled) {
+			Logger.log("setting sortColumn = " + col.index);
+		}
 		this._sortColumn = col.index;
 		this._sortDirection = false;
 		this._sortColumnElem = col.element;
@@ -299,7 +301,9 @@ let Dialog = {
 		this.ddFilter = $('filter');
 		this.ddDirectory = $('directory');
 		if (!this.ddDirectory.value) {
-			Logger.log("Using default download directory, value was " + this.ddDirectory.value);
+			if (Logger.enabled) {
+				Logger.log("Using default download directory, value was " + this.ddDirectory.value);
+			}
 			this.ddDirectory.value = DefaultDownloadsDirectory.path;
 		}
 		this.ddRenaming = $('renaming');
@@ -359,7 +363,9 @@ let Dialog = {
 			}
 		}
 		catch(ex) {
-			Logger.log("load():", ex);
+			if (Logger.enabled) {
+				Logger.log("load():", ex);
+			}
 		}
 
 		// will install our observer
@@ -450,7 +456,9 @@ let Dialog = {
 					out.push(prepare(i, dir, counter, mask));
 				}
 				catch (ex) {
-					Logger.log("err: " + i.toSource(), ex);
+					if (Logger.enabled) {
+						Logger.log("err: " + i.toSource(), ex);
+					}
 				}
 			}
 
@@ -483,7 +491,9 @@ let Dialog = {
 			return this.unload();
 		}
 		catch(ex) {
-			Logger.log("Downloadfile:", ex);
+			if (Logger.enabled) {
+				Logger.log("Downloadfile:", ex);
+			}
 		}
 
 		// if we get here some error occured - just close.
@@ -599,7 +609,9 @@ let Dialog = {
 
 		// whoops, somebody called us that has no filter attached
 		if (!('filter') in box) {
-			Logger.log("toggleBox: invalid element");
+			if (Logger.enabled) {
+				Logger.log("toggleBox: invalid element");
+			}
 			return;
 		}
 
@@ -806,13 +818,6 @@ let Dialog = {
 	// * filterManager
 	registerObserver: function() {
 		Preferences.makeObserver(this);
-		try {
-			os.addObserver(this, 'DTA:filterschanged', true);
-		}
-		catch (ex) {
-			Logger.log("cannot install filterManager observer!", ex);
-			return false;
-		}
-		return true;
+		os.addObserver(this, 'DTA:filterschanged', true);
 	}
 };

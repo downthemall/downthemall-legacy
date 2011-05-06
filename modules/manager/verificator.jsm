@@ -123,7 +123,9 @@ Callback.prototype = {
 			this._func.apply(this._func, this._args);
 		}
 		catch (ex) {
-			Logger.log("Callback threw", ex);
+			if (Logger.enabled) {
+				Logger.log("Callback threw", ex);
+			}
 		}
 		unregisterJob(this._job);
 	}
@@ -209,7 +211,9 @@ Verificator.prototype = {
 };
 
 function MultiVerificator() {
-	Logger.log("MultiVerificator");
+	if (Logger.enabled) {
+		Logger.log("MultiVerificator");
+	}
 	Verificator.apply(this, Array.map(arguments, function(e) e));
 }
 MultiVerificator.prototype = {

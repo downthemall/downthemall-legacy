@@ -109,8 +109,8 @@ Base.prototype = {
 			return NS_HTML;
 		case 'dta':
 			return NS_DTA;
-	  }
-	  return this._NS;
+		}
+		return this._NS;
 	},
 	getNodes: function (elem, query) {
 		let rv = [];
@@ -133,25 +133,25 @@ Base.prototype = {
 		}
 		return null;
 	},
- 	getSingle: function BasegetSingle(elem, query) {
- 		let rv = this.getNode(elem, 'ml:' + query);
- 		return rv ? rv.textContent.trim() : '';
- 	},
- 	getLinkRes: function BasegetLinkRes(elem, query) {
- 		let rv = this.getNode(elem, 'ml:' + query);
- 		if (rv) {
- 			let n = this.getSingle(rv, 'name'), l = this.checkURL(this.getSingle(rv, 'url'));
- 			if (n && l) {
- 				return [n, l];
- 			}
- 		}
- 		return null;
- 	},
- 	checkURL: function Base_checkURL(url, allowed) {
- 		if (!url) {
- 			return null;
- 		}
- 		try {
+	getSingle: function BasegetSingle(elem, query) {
+		let rv = this.getNode(elem, 'ml:' + query);
+		return rv ? rv.textContent.trim() : '';
+	},
+	getLinkRes: function BasegetLinkRes(elem, query) {
+		let rv = this.getNode(elem, 'ml:' + query);
+		if (rv) {
+			let n = this.getSingle(rv, 'name'), l = this.checkURL(this.getSingle(rv, 'url'));
+			if (n && l) {
+				return [n, l];
+			}
+		}
+		return null;
+	},
+	checkURL: function Base_checkURL(url, allowed) {
+		if (!url) {
+			return null;
+		}
+		try {
 			url = IOService.newURI(url, this._doc.characterSet, null);
 			if (url.scheme == 'file') {
 				throw new Exception("file protocol invalid!");
@@ -166,13 +166,15 @@ Base.prototype = {
 					}
 			}
 			return url.spec;
- 		}
- 		catch (ex) {
- 			Logger.log("checkURL: failed to parse " + url, ex);
- 			// no-op
- 		}
+		}
+		catch (ex) {
+			if (Logger.enabled) {
+				Logger.log("checkURL: failed to parse " + url, ex);
+			}
+			// no-op
+		}
 		return null;
- 	}
+	}
 };
 
 /**
@@ -254,7 +256,9 @@ Metalinker3.prototype = {
 					uri = IOService.newURI(uri, charset, null);
 				}
 				catch (ex) {
-					Logger.log("Failed to parse URL" + url.textContent, ex);
+					if (Logger.enabled) {
+						Logger.log("Failed to parse URL" + url.textContent, ex);
+					}
 					continue;
 				}
 
@@ -284,7 +288,9 @@ Metalinker3.prototype = {
 					}
 				}
 				catch (ex) {
-					Logger.log("Failed to parse hash: " + h.textContent.trim() + "/" + h.getAttribute('type'), ex);
+					if (Logger.enabled) {
+						Logger.log("Failed to parse hash: " + h.textContent.trim() + "/" + h.getAttribute('type'), ex);
+					}
 				}
 			}
 			if (hash) {
@@ -307,7 +313,9 @@ Metalinker3.prototype = {
 								});
 							}
 							catch (ex) {
-								Logger.log("Failed to parse piece", ex);
+								if (Logger.enabled) {
+									Logger.log("Failed to parse piece", ex);
+								}
 								throw ex;
 							}
 						}
@@ -318,10 +326,14 @@ Metalinker3.prototype = {
 						if (size && hash.parLength * hash.partials.length < size) {
 							throw Exception("too few partials");
 						}
-						Logger.log("loaded " + hash.partials.length + " partials");
+						if (Logger.enabled) {
+							Logger.log("loaded " + hash.partials.length + " partials");
+						}
 					}
 					catch (ex) {
-						Logger.log("Failed to parse pieces", ex);
+						if (Logger.enabled) {
+							Logger.log("Failed to parse pieces", ex);
+						}
 						hash = new DTA.HashCollection(hash.full);
 					}
 				}
@@ -378,7 +390,9 @@ Metalinker3.prototype = {
 function MetalinkerRFC5854(doc) {
 	let root = doc.documentElement;
 	if (root.nodeName != 'metalink' || root.namespaceURI != NS_METALINK_RFC5854 ) {
-		Logger.log(root.nodeName + "\nns:" + root.namespaceURI);
+		if (Logger.enabled) {
+			Logger.log(root.nodeName + "\nns:" + root.namespaceURI);
+		}
 		throw new Exception('mlinvalid');
 	}
 	Base.call(this, doc, NS_METALINK_RFC5854);
@@ -447,7 +461,9 @@ MetalinkerRFC5854.prototype = {
 					uri = IOService.newURI(uri, charset, null);
 				}
 				catch (ex) {
-					Logger.log("Failed to parse URL" + url.textContent, ex);
+					if (Logger.enabled) {
+						Logger.log("Failed to parse URL" + url.textContent, ex);
+					}
 					continue;
 				}
 
@@ -484,7 +500,9 @@ MetalinkerRFC5854.prototype = {
 					}
 				}
 				catch (ex) {
-					Logger.log("Failed to parse hash: " + h.textContent.trim() + "/" + h.getAttribute('type'), ex);
+					if (Logger.enabled) {
+						Logger.log("Failed to parse hash: " + h.textContent.trim() + "/" + h.getAttribute('type'), ex);
+					}
 				}
 			}
 			if (hash) {
@@ -503,17 +521,23 @@ MetalinkerRFC5854.prototype = {
 								hash.add(new DTA.Hash(piece.textContent.trim(), type));
 							}
 							catch (ex) {
-								Logger.log("Failed to parse piece", ex);
+								if (Logger.enabled) {
+									Logger.log("Failed to parse piece", ex);
+								}
 								throw ex;
 							}
 						}
 						if (size && hash.parLength * hash.partials.length < size) {
 							throw Exception("too few partials");
 						}
-						Logger.log("loaded " + hash.partials.length + " partials");
+						if (Logger.enabled) {
+							Logger.log("loaded " + hash.partials.length + " partials");
+						}
 					}
 					catch (ex) {
-						Logger.log("Failed to parse pieces", ex);
+						if (Logger.enabled) {
+							Logger.log("Failed to parse pieces", ex);
+						}
 						hash = new DTA.HashCollection(hash.full);
 					}
 				}
@@ -597,7 +621,9 @@ function parse(aFile, aReferrer) {
 			parser = new parser(doc);
 		}
 		catch (ex) {
-			Logger.log(parser.name + " failed", ex);
+			if (Logger.enabled) {
+				Logger.log(parser.name + " failed", ex);
+			}
 			continue;
 		}
 		return parser.parse(aReferrer);
