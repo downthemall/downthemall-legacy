@@ -1,0 +1,114 @@
+<!ENTITY winstyle "width:46em;height:37em;">
+<!ENTITY filterspane.label "מסננים">
+<!ENTITY listhead1.label "כותרת">
+<!ENTITY listhead2.label "תוספים">
+<!ENTITY filter.label "תוספים מסוננים:">
+<!ENTITY regex.label "ביטוי רגולרי">
+<!ENTITY useAs.label "השתמש בתור:">
+<!ENTITY imagesf.label "מסנן תמונות:">
+<!ENTITY linksf.label "מסנן קישורים:">
+<!ENTITY add.label "הוסף מסנן חדש">
+<!ENTITY highlight.label "הבלט קבצים נבחרים על־ידי מסנן">
+<!ENTITY dtacontext2.label "העדפות">
+<!ENTITY buttonlabelextra2 "שחזר הגדרות מחדל">
+<!ENTITY dtaPreferences.title "העדפות DownThemAll!‎">
+<!ENTITY manager "מנהל DownThemAll!‎">
+<!ENTITY mainpane.label "ראשי">
+<!ENTITY mainpane.defaults.caption "הגדרות בררת מחדל">
+<!ENTITY mainpane.defaults.desc "אפשר להגדיר תיקיית הורדה, תבנית שינוי שם ומסננים למצב לחיצה אחת בתיבת דו־שיח רגילה של DownThemAll!‎">
+<!ENTITY mainpane.rename.caption "אם שם הקובץ כבר קיים:">
+<!ENTITY mainpane.rename.label "שינוי שם">
+<!ENTITY mainpane.overwrite.label "דריסה">
+<!ENTITY mainpane.skip.label "דלג">
+<!ENTITY mainpane.ask.label "שאל">
+<!ENTITY mainpane.misc.caption "שונות">
+<!ENTITY mainpane.sounderror.label "נגן צליל בעת שגיאה">
+<!ENTITY mainpane.alert.caption "כאשר ההורדות הסתיימו:">
+<!ENTITY mainpane.alert.label "להודיע לי:">
+<!ENTITY mainpane.alertboxes.label "התרע באמצעות תיבת התרעה">
+<!ENTITY mainpane.alertslides.label "התרע באמצעות התרעת פיירפוקס זזה">
+<!ENTITY mainpane.alertnone.label "אל תתריע">
+<!ENTITY mainpane.sounddone.label "נגן צליל כאשר ההורדות הסתיימו">
+<!ENTITY mainpane.closedta.label "סגור את DownThemAll!‎ כאשר ההורדות הסתיימו">
+<!ENTITY mainpane.settime.label "להגדיר את זמן הקובץ לזמן השינוי האחרון (בשרת) או לזמן ההכנסה לתור">
+<!ENTITY mainpane.rememberoneclick.label "DownThemAll!‎ צריך לזכור אם הוא מתייחס עם כל הלשוניות או עם הלשונית הנוכחית">
+<!ENTITY mainpane.confirmremove.label "משתמש צריך לאשר מחיקת הורדות">
+<!ENTITY mainpane.textlinks.label "לזהות קישורי טקסט">
+<!ENTITY mainpane.listsniffedvideos.label "להקליט ולהוסיף לרשימה קובצי וידאו (של Flash)">
+<!ENTITY privacypane.label "פרטיות">
+<!ENTITY privacypane.closing.caption "כאשר חלון המנהל סגור">
+<!ENTITY privacypane.removecompleted.label "הסר הורדות שצלחו מהרשימה">
+<!ENTITY privacypane.removecanceled.label "הסר הורדות שבוטלו/נכשלו מהרשימה">
+<!ENTITY privacypane.removeaborted.label "הסר הורדות שלא הסתיימו מהרשימה">
+<!ENTITY privacypane.deletefoldershistory.label "מחק רשימת תיקיות">
+<!ENTITY privacypane.deletefiltershistory.label "מחק מסננים נוספים">
+<!ENTITY privacypane.showlog.label "הצג יומן">
+<!ENTITY privacypane.reveallog.label "הצג קובץ">
+<!ENTITY privacypane.deletelog.label "מחק יומן">
+<!ENTITY privacypane.updates.caption "עדכונים/אינטרנט">
+<!ENTITY privacypane.information.label "אפשר ל־DownThemAll!‎ להוריד חדשות והודעות ולבדוק אם יש עדכונים">
+<!ENTITY privacypane.statistics.label "אפשר ל־DownThemAll!‎ לאסוף ולשלוח סטטיסטיקות שימוש אלמוניות">
+<!ENTITY privacypane.dropdowns.caption "תפריט נפתח">
+<!ENTITY privacypane.dropdownresults.label "כמה כניסות לשמור">
+<!ENTITY privacypane.logs.caption "רישום אבחוני">
+<!ENTITY privacypane.enablelogs.label "להפעיל רישום אבחוני ביומן">
+<!ENTITY privacypane.notice.caption "הודעה">
+<!ENTITY privacypane.notice.desc "DownThemAll!‎ משולבת גם ביכולת המובנית לנקות את כל המידע הפרטי (אם היא זמינה).">
+<!ENTITY privacypane.privacynotice.label "נודעת הפרטיות שלנו">
+<!ENTITY serverspane.label "רשת">
+<!ENTITY serverspane.downloads.caption "הורדות">
+<!ENTITY serverspane.concurrent.label "מספר מרבי של הורדות בו־זמניות:">
+<!ENTITY serverspane.perserver.label "מספר מרבי של הורדות בו־זמניות מאותו שרת:">
+<!ENTITY serverspane.url.label "מיקום או מתחם:">
+<!ENTITY serverspane.new.label "מגבלה חדשה">
+<!ENTITY serverspane.del.label "הסרת מגבלה">
+<!ENTITY serverspane.limits.label "מגבלה עבור כל שרת">
+<!ENTITY serverpane.limits.noitems "לא הוגדרו מגבלות עבור שרת">
+<!ENTITY serverspane.connections.label "חיבורים:">
+<!ENTITY serverspane.speed.label "הגבלת מהירות:">
+<!ENTITY serverspane.unlimited "אין הגבלה">
+<!ENTITY serverspane.limited "מוגבל">
+<!ENTITY serverspane.autoretry.caption "ניסיונות חוזרים">
+<!ENTITY serverspane.autoretry.interval.label "לנסות מחדש מדי">
+<!ENTITY serverspane.autoretry.max.label "ניסיונות חוזרים מרביים">
+<!ENTITY serverspane.cancel.label "ביטול">
+<!ENTITY serverspane.edit.label "עריכה">
+<!ENTITY serverspane.remove.label "הסרה">
+<!ENTITY advancedpane.label "מתקדם">
+<!ENTITY advancedpane.downloads.caption "בקרת הורדה מתקדמת">
+<!ENTITY advancedpane.misc.caption "שונות">
+<!ENTITY advancedpane.files.caption "קבצים">
+<!ENTITY advancedpane.chunks.label "מספר מקטעים מרבי להורדה:">
+<!ENTITY advancedpane.chunksdisabled "1 (מבוטל)">
+<!ENTITY advancedpane.timeout.label "לנתק את החיבור אחרי חוסר תנועה במשך">
+<!ENTITY advancedpane.seconds "שניות">
+<!ENTITY advancedpane.minute "דקה">
+<!ENTITY advancedpane.minutes "דקות">
+<!ENTITY advancedpane.hour "שעה">
+<!ENTITY advancedpane.hours "שעות">
+<!ENTITY advancedpane.tempfiles.caption "קבצים זמניים">
+<!ENTITY advancedpane.usetemp.label "שמור מקטעי הורדות בתיקייה זמנית">
+<!ENTITY advancedpane.tempdir.label "להשתמש בתיקייה הזאת:">
+<!ENTITY advancedpane.permissions.caption "הרשאות קבצים">
+<!ENTITY advancedpane.permissions.group "חברי הקבוצה יכולים">
+<!ENTITY advancedpane.permissions.everybody "כולם יכולים">
+<!ENTITY advancedpane.permissions.read "לקרוא">
+<!ENTITY advancedpane.permissions.write "לכתוב">
+<!ENTITY advancedpane.loadendfirst.label "לטעון את הקילובייטים האחרונים תחילה">
+<!ENTITY advancedpane.scheduler.caption "סדר תחילת ההורדה:">
+<!ENTITY advancedpane.scheduler.fast "מהיר – בסדר ההכנסה לתור">
+<!ENTITY advancedpane.scheduler.fair "הוגן+מהיר – מבוזר באופן שוויוני">
+<!ENTITY advancedpane.scheduler.legacy "מיושן – ללא הגבלה">
+<!ENTITY advancedpane.exposeinua.label "לחשוף את DownThemAll!‎ בתור User-Agent">
+<!ENTITY uipane.label "ממשק">
+<!ENTITY uipane.namesonly.label "להציג רק שמות קבצים בחלון מנהל">
+<!ENTITY uipane.integration.caption "אינטגרציה">
+<!ENTITY uipane.downloadwin.label "להוסיף את DownThemAll!‎ לחלון &quot;שמירה&quot;">
+<!ENTITY uipane.context.caption "תפריט הקשר">
+<!ENTITY uipane.tools.caption "תפריט כלים">
+<!ENTITY uipane.compact.label "תפריט מוקטן">
+<!ENTITY uipane.hide.label "הסתר את התפריט הזה">
+<!ENTITY uipane.showtooltip.label "להציג רמזים צצים על הורדות">
+<!ENTITY uipane.manager.caption "חלון מנהל">
+<!ENTITY uipane.startminimized.label "להריץ בחלון מוקטן">
+<!ENTITY uipane.minimizetotray.label "להקטין את החלון לאזור ההודעות">

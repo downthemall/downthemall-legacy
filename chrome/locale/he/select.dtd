@@ -1,0 +1,18 @@
+<!ENTITY title "בחירה">
+<!ENTITY filters.caption "מסננים">
+<!ENTITY additional.caption "סינון מהיר">
+<!ENTITY additional.tip "מסנן טקסטואלי: אפשר להגדיר מסננים טקסטואליים מרובים בו זמנית על־ידי שימוש בפסיק.">
+<!ENTITY regex.label "ביטוי רגולרי">
+<!ENTITY filter.tip "הכנס את את המסנן הטקסטואלי שלך כאן! (אפשר לראות דוגמאות ברשימה הנפתחת)">
+<!ENTITY status.label "לאחר בחירת הקישורים, לחץ על התחל!">
+<!ENTITY menu.mask.title "שנה תבנית שינוי שם">
+<!ENTITY menu.check.label "סמן פריטים מסומנים">
+<!ENTITY menu.uncheck.label "הסר סימון מפריטים מסומנים">
+<!ENTITY menu.toggle.label "היפוך סימון עבור פריטים מסומנים">
+<!ENTITY tab.links.label "קישורים">
+<!ENTITY tab.pics.label "תמונות ומדיה">
+<!ENTITY header.desc.label "תיאור">
+<!ENTITY selectfiltered.label "בחירת מסוננים">
+<!ENTITY disableother.label "ביטול המסננים האחרים">
+<!ENTITY disableother.tooltip "לבטל את המסננים האחרים ולהשתמש רק בסינון מהיר. (ההגדרה הזאת לא נשמרת כעת)">
+<!ENTITY resname.value "שם המשאב">
