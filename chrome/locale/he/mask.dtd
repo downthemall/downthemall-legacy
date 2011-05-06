@@ -1,0 +1,23 @@
+<!ENTITY mask.title "תגי שינוי שם">
+<!ENTITY mask.name "שם קובץ">
+<!ENTITY mask.ext "סיומת">
+<!ENTITY mask.url "כתובת מקור בסיסית">
+<!ENTITY mask.curl "כתובת מקור מלאה">
+<!ENTITY mask.flatcurl "כתובת מלאה שטוחה">
+<!ENTITY mask.num "מספר בקבוצה">
+<!ENTITY mask.inum "מספר פריט">
+<!ENTITY mask.hh "שעות">
+<!ENTITY mask.mm "דקות">
+<!ENTITY mask.ss "שניות">
+<!ENTITY mask.d "יום">
+<!ENTITY mask.m "חודש">
+<!ENTITY mask.y "שנה">
+<!ENTITY mask.subdirs "תת־תיקיות כתובת">
+<!ENTITY mask.flatsubdirs "תת־תיקיות כתובת שטוחות">
+<!ENTITY mask.text "טקסט קישור">
+<!ENTITY mask.flattext "טקסט קישור שטוח">
+<!ENTITY mask.refer "קישור מפנה">
+<!ENTITY mask.qstring "מחרוזת שאילתה">
+<!ENTITY mask.flattitle "הכותרת המשויכת לקישור">
+<!ENTITY mask.tip "לחץ או גרור לתבנית שינוי שם">
+<!ENTITY mask.open.tip "טבלת תגי שינוי שם">
