@@ -160,12 +160,16 @@ const Prefs = {
 			Preferences.addObserver('extensions.dta.', this);
 		}
 		catch (ex) {
-			Logger.log("failed to add pref-observer", ex);
+			if (Logger.enabled) {
+				Logger.log("failed to add pref-observer", ex);
+			}
 		}
 	},
 
 	_refreshPrefs: function(prefName) {
-		Logger.log("pref reload due to: " + prefName);
+		if (Logger.enabled) {
+			Logger.log("pref reload due to: " + prefName);
+		}
 		for each (let e in this.mappings) {
 			let key, pref, def;
 			if (!e) {
@@ -261,7 +265,9 @@ const Prefs = {
 						tl.create(tl.DIRECTORY_TYPE, this.dirPermissions);
 					}
 					catch (ex) {
-						Logger.log("Failed to create temp dir", ex);
+						if (Logger.enabled) {
+							Logger.log("Failed to create temp dir", ex);
+						}
 						throw new Exception("tempnotaccessible");
 					}
 				}
@@ -280,7 +286,9 @@ const Prefs = {
 						}
 					}
 					catch (ex) {
-						Logger.log("Failed to check temp dir", ex);
+						if (Logger.enabled) {
+							Logger.log("Failed to check temp dir", ex);
+						}
 						throw new Exception("tempnotaccessible");
 					}
 				}
@@ -346,7 +354,9 @@ const Tooltip = {
 		this.initUpdate();
 	},
 	initUpdate: function() {
-		Logger.log("init");
+		if (Logger.enabled) {
+			Logger.log("init");
+		}
 		let mr = false;
 		let box = this.canvasGrid.boxObject;
 		for each (let canvas in [this.speedCanvas, this.chunkCanvas]) {
@@ -361,7 +371,9 @@ const Tooltip = {
 				}
 				canvas.width = w;
 				canvas.height = h;
-				Logger.log("set " + canvas.id + " to " + w + "/" + h);
+				if (Logger.enabled) {
+					Logger.log("set " + canvas.id + " to " + w + "/" + h);
+				}
 				mr = true;
 			}
 			catch (ex) {
@@ -442,7 +454,9 @@ const Tooltip = {
 			this.infoPercent.value = file.percent;
 		}
 		catch (ex) {
-			Logger.log("Tooltip.updateMetrics: ", ex);
+			if (Logger.enabled) {
+				Logger.log("Tooltip.updateMetrics: ", ex);
+			}
 		}
 	},
 	_usFile: null,
@@ -560,7 +574,9 @@ const Tooltip = {
 			ctx.restore();
 		}
 		catch(ex) {
-			Logger.log("updateSpeedCanvas(): ", ex);
+			if (Logger.enabled) {
+				Logger.log("updateSpeedCanvas(): ", ex);
+			}
 		}
 	},
 	_ucFile: null,
@@ -676,7 +692,9 @@ const Tooltip = {
 			ctx.restore();
 		}
 		catch(ex) {
-			Logger.log("updateChunkCanvas(): ", ex);
+			if (Logger.enabled) {
+				Logger.log("updateChunkCanvas(): ", ex);
+			}
 		}
 	}
 };

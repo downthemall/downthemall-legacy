@@ -51,7 +51,9 @@ const File = Components.Constructor('@mozilla.org/file/local;1', 'nsILocalFile',
 module('resource://dta/utils.jsm');
 module('resource://dta/version.jsm');
 
-Logger.log("pa: using nsIThread implementation");
+if (Logger.enabled) {
+	Logger.log("pa: using nsIThread implementation");
+}
 
 // Should we use the optimized Windows implementation?
 const WINDOWSIMPL = Version.OS == 'winnt';
@@ -85,7 +87,9 @@ const workers = {};
 function prealloc(file, size, perms, callback, tp) {
 	tp = tp || null;
 	if (size <= SIZE_MIN || !isFinite(size)) {
-		Logger.log("pa: not preallocating");
+		if (Logger.enabled) {
+			Logger.log("pa: not preallocating");
+		}
 		if (callback) {
 			callback.call(tp, false);
 		}
@@ -195,7 +199,9 @@ WorkerJob.prototype = {
 		this.main.dispatch(new MainJob(this.uuid, this.thread, this.callback, this.tp, rv), this.main.DISPATCH_NORMAL);
 	},
 	cancel: function() {
-		Logger.log("pa: cancel called!");
+		if (Logger.enabled) {
+			Logger.log("pa: cancel called!");
+		}
 		this.terminated = true;
 		this.thread.shutdown();
 	}
@@ -225,10 +231,14 @@ MainJob.prototype = {
 			try {
 				// call the user callback
 				this.callback.call(this.tp, this.result);
-				Logger.log("pa: prealloc done");
+				if (Logger.enabled) {
+					Logger.log("pa: prealloc done");
+				}
 			}
 			catch (ex) {
-				Logger.log("pa: callback throw", ex);
+				if (Logger.enabled) {
+					Logger.log("pa: callback throw", ex);
+				}
 			}
 		}
 

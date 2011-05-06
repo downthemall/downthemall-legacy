@@ -109,12 +109,16 @@ const FilterMatch = {
 				filters.push(DTA.FilterManager.getFilter(id));
 			}
 			catch (ex) {
-				Logger.log("not a filter: " + id, ex);
+				if (Logger.enabled) {
+					Logger.log("not a filter: " + id, ex);
+				}
 				// no op; might have changed
 			}
 		}
 		if (!filters.length) {
-			Logger.log("No filters available for: " + params);
+			if (Logger.enabled) {
+				Logger.log("No filters available for: " + params);
+			}
 			return null;
 		}
 		let _m = DTA.FilterManager.getMatcherFor(filters);
@@ -336,13 +340,17 @@ Matcher.prototype = {
 	},
 	addMatcher: function(name, params) {
 		if (!(name in this._available)) {
-			Logger.log("trying to add a matcher that does not exist");
+			if (Logger.enabled) {
+				Logger.log("trying to add a matcher that does not exist");
+			}
 			return;
 		}
 		this.removeMatcher(name);
 		let m = this._available[name].getMatcher(params);
 		if (m) {
-			Logger.log("adding the matcher");
+			if (Logger.enabled) {
+				Logger.log("adding the matcher");
+			}
 			this._matchers.push({name: name, isMatch: m});
 			this._matchersLength = this._matchers.length;
 		}

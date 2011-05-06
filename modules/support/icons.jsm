@@ -54,10 +54,12 @@ extendString(String);
 setNewGetter(this, "FavIcons", function() {
 	try {
 		return Cc['@mozilla.org/browser/favicon-service;1']
-	       .getService(Ci.nsIFaviconService);
+				.getService(Ci.nsIFaviconService);
 	}
 	catch (ex) {
-		Logger.log("FavIcon Service not available", ex);
+		if (Logger.enabled) {
+			Logger.log("FavIcon Service not available", ex);
+		}
 		return null;
 	}
 });
@@ -115,7 +117,9 @@ function getIcon(link, metalink, size) {
 		return "moz-icon://file" + (ext ? '.' + ext : '') + "?size=" + size;
 	}
 	catch (ex) {
-		Logger.log("updateIcon: failed to grab icon", ex);
+		if (Logger.enabled) {
+			Logger.log("updateIcon: failed to grab icon", ex);
+		}
 	}
 	return "moz-icon://foo.html?size=" + size;
 };

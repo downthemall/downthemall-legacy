@@ -118,7 +118,9 @@ var Dialog = {
 			}
 		}
 		catch(ex) {
-			Logger.log('load', ex);
+			if (Logger.enabled) {
+				Logger.log('load', ex);
+			}
 		}
 		window.setTimeout('window.sizeToContent()', 0);
 	},
@@ -183,7 +185,9 @@ var Dialog = {
 					d.referrer.spec = newRef;
 				}
 				catch (ex) {
-					Logger.log("failed to set referrer to", newRef);
+					if (Logger.enabled) {
+						Logger.log("failed to set referrer to", newRef);
+					}
 				}
 			}
 			d.save();
@@ -220,8 +224,10 @@ var Dialog = {
 		);
 		if (mirrors.length) {
 			download.replaceMirrors(mirrors);
-			Logger.log("New mirrors set " + mirrors);
 			$("mirrorsText").value = _("mirrorsText", [download.urlManager.length]);
+			if (Logger.enabled) {
+				Logger.log("New mirrors set " + mirrors);
+			}
 		}
 	},
 	check: function DTA_check() {

@@ -47,7 +47,9 @@
 					return true;
 				}
 				catch (ex) {
-					Logger.log("accept() : ", ex);
+					if (Logger.enabled) {
+						Logger.log("accept() : ", ex);
+					}
 				}
 				return false;
 			}

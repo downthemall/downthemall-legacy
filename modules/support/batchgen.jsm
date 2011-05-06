@@ -173,7 +173,9 @@ function BatchGenerator(link) {
 				this._pats.push(new NumericRange(m[0], start, stop, step, sl));
 			}
 			catch (ex) {
-				Logger.log("Bad Numeric Range", ex);
+				if (Logger.enabled) {
+					Logger.log("Bad Numeric Range", ex);
+				}
 				this._pats.push(new Literal(m[0]));
 			}
 			continue;
@@ -197,7 +199,9 @@ function BatchGenerator(link) {
 				this._pats.push(new CharRange(m[0], start, stop, step));
 			}
 			catch (ex) {
-				Logger.log("Bad Char Range", ex);
+				if (Logger.enabled) {
+					Logger.log("Bad Char Range", ex);
+				}
 				this._pats.push(new Literal(m[0]));
 			}
 			continue;

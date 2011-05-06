@@ -119,11 +119,15 @@ const Observer = {
 	openIfQueued: function() {
 		QueueStore.loadItems(function(items) {
 			if (items.some(function(i) i.item.state == QueueStore.QUEUED)) {
-				Logger.log("auto-opening");
+				if (Logger.enabled) {
+					Logger.log("auto-opening");
+				}
 				DTA.openManager();
 			}
 			else {
-				Logger.log("No queued items");
+				if (Logger.enabled) {
+					Logger.log("No queued items");
+				}
 			}
 		}, null);
 	},
