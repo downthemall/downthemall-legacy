@@ -769,22 +769,27 @@ const Tree = {
 			Debug.log("rt", ex);
 		}
 	},
+	_invalidate_position: function(e, i) {
+		if (e.position != i) {
+			e.position = i;
+			this.updated = true;
+		}
+		if (e.is(COMPLETE)) {
+			this.complete++;
+		}
+	},
 	invalidate: function T_invalidate(d, cell) {
 		if (!d) {
-			let complete = 0;
+			let c = {complete: 0, updated: false };
 			QueueStore.beginUpdate();
-			this._downloads.forEach(
-				function(e, i) {
-					e.position = i;
-					if (e.is(COMPLETE)) {
-						complete++;
-					}
-				}
-			);
+			this._downloads.forEach(this._invalidate_position, c); 
 			QueueStore.endUpdate();
 			this._box.invalidate();
 			this.refreshTools(this);
-			Dialog.completed = complete;
+			Dialog.completed = c.complete;
+			if (c.updated) {
+				this.fireChangeEvent();
+			}
 		}
 		else if (d instanceof Array) {
 			this.beginUpdate();
