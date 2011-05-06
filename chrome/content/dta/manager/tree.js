@@ -839,12 +839,11 @@ const Tree = {
 		}
 	},
 	pause: function T_pause() {
-		let paused = _("paused");
 		this.updateSelected(
 			function(d) {
 				if (d.is(QUEUED) || (d.is(RUNNING) && d.resumable)) {
 					d.pause();
-					d.status = paused;
+					d.status = TextCache.PAUSED;
 					d.state = PAUSED;
 				}
 				return true;
