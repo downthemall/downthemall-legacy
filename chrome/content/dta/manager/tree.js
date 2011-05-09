@@ -264,7 +264,10 @@ const Tree = {
 			Logger.log("Tree: clearing");
 		}
 		this.beginUpdate();
+		delete this._downloads;
+		delete this._filtered;
 		this._downloads = [];
+		this._filtered = this._downloads;
 		$('search').clear();
 		this.elem.view = this;
 		this.endUpdate();

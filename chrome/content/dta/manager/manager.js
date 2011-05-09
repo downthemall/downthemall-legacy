@@ -1312,9 +1312,7 @@ const Dialog = {
 
 		// some more gc
 		Tree._downloads.forEach(function(d) delete d._icon);
-		delete Tree._downloads;
-		delete Tree._filtered;
-		Tree = null;
+		Tree.clear();
 		FileExts = null;
 		Dialog = null;
 		return true;
