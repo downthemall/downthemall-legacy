@@ -40,13 +40,13 @@
 
 	<hbox id="infoBox" flex="1" />
 	<separator />
-	<tabbox flex="1">
+	<tabbox flex="1" id="tabs">
 		<tabs>
-			<tab label="&infos.label;" />
+			<tab id="canvasTab" label="&infos.label;" />
 			<tab label="&options.caption;" />
 		</tabs>
 		<tabpanels>
-			<tabpanel id="canvasTab" orient="vertical" flex="1" pack="start">
+			<tabpanel id="canvasBox" orient="vertical" flex="1" pack="start">
 				<grid id="canvasGrid" style="overflow: hidden;" />
 			</tabpanel>
 			<tabpanel id="paramsBox" orient="vertical" flex="1" pack="start">
