@@ -105,7 +105,9 @@ var Dialog = {
 					this.downloads.every(function(e) { return e.pathName == dir; })
 					? dir
 					: '';
-				$('canvasGrid').hidden = true;
+				$('tabs').selectedIndex = 2;
+				$('canvasTab').hidden = true;
+				$('canvasBox').hidden = true;
 			}
 			if (this.downloads.every(function(d) { return d.isOf(COMPLETE | FINISHING); })) {
 				for each (let e in $('directory', 'renaming', 'mask', 'browsedir')) {
