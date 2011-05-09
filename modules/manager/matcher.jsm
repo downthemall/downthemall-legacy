@@ -201,6 +201,9 @@ const StatusMatch = {
 		},
 		getMatcher: function(params) {
 			let state = params.reduce(function(p,c) p | DTA[c], 0);
+			if (state & COMPLETE) {
+				state |= FINISHING;
+			}
 			return function(d) d.state & state;
 		}
 }
