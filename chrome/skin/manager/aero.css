@@ -195,7 +195,7 @@ treecol:-moz-lwtheme-brighttext {
 		background-image: -moz-linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
 	}
 }
-/* non-compositor rules */
+/* compositor rules */
 @media all and (-moz-windows-compositor) {
 
 	/* specifity issues ahead; beware */
@@ -213,11 +213,6 @@ treecol:-moz-lwtheme-brighttext {
 		background-size: auto auto;
 	}
 
-	/* special handling of the title bar here */
-	#titlebar {
-		/* can do this (transculent) */
-		margin-bottom: -10px;
-	}
 	window[sizemode="maximized"] #titlebar-buttonbox {
 		-moz-margin-end: 3px;
 	}
@@ -259,6 +254,16 @@ treecol:-moz-lwtheme-brighttext {
 	}
 	.statusbarpanel-text:not(:-moz-lwtheme) {
 		text-shadow: 1px 1px 1.5px white;
+	}
+
+	#tooldonate {
+		display: none;
+	}
+	#titlebar {
+		margin-bottom: -10px;
+	}
+	#tools[mode="icons"] {
+		margin-top: -12px;
 	}
 
 }
