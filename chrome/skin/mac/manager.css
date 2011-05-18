@@ -24,3 +24,15 @@ toolbarspacer {
 toolbarspacer.visible {
 	min-width: 13px !important;
 }
+
+#actionsbox {
+	-moz-appearance: toolbar;
+}
+#actions {
+	-moz-appearance: none;
+	background: transparent;
+}
+
+treecol > dropmarker {
+	-moz-appearance: none;
+}
