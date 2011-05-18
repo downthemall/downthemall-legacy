@@ -260,9 +260,9 @@ treecol:-moz-lwtheme-brighttext {
 		display: none;
 	}
 	#titlebar {
-		margin-bottom: -10px;
+		margin-bottom: -6px;
 	}
-	#tools[mode="icons"] {
+	window:not([sizemode="maximized"]) #tools[mode="icons"] {
 		margin-top: -12px;
 	}
 
