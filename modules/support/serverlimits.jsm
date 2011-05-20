@@ -197,7 +197,7 @@ FastScheduler.prototype = {
 		let i, e, d, host;
 
 		if (this._runCount > 50) {
-			filterInSitu(this._downloads, this._queuedFilter);
+			this._downloads = this._downloads.filter(this._queuedFilter);
 			this._runCount = 0;
 		}
 
