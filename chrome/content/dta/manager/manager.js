@@ -451,8 +451,8 @@ const Dialog = {
 			for (let i = 0, e; i < Dialog_loadDownloads_props.length; ++i) {
 				e = Dialog_loadDownloads_props[i];
 				if (e in down) {
-				d[e] = down[e];
-			}
+					d[e] = down[e];
+				}
 			}
 
 			// don't trigger prealloc!
@@ -474,7 +474,7 @@ const Dialog = {
 				case QUEUED:
 				{
 					for (let i = 0, c; i < down.chunks.length; ++i) {
-						c = down.chunks[c];
+						c = down.chunks[i];
 						d.chunks.push(new Chunk(d, c.start, c.end, c.written));
 					}
 					d.refreshPartialSize();
