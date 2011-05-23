@@ -203,7 +203,7 @@ FastScheduler.prototype = {
 
 		// count running downloads per host
 		for (i = 0, e = running.length; i < e; ++i) {
-			host = running[i].urlManager.domain;
+			host = running[i].urlManager.eHost;
 			downloadSet[host] = ++downloadSet[host] || 1;
 		}
 
@@ -231,7 +231,7 @@ FastScheduler.prototype = {
 			if (d._state != QUEUED) {
 				continue;
 			}
-			host = d.urlManager.domain;
+			host = d.urlManager.eHost;
 
 			// no running downloads for this host yet
 			if (!(host in downloadSet)) {
@@ -259,7 +259,7 @@ function FairScheduler(downloads) {
 		if (!d.is(QUEUED)) {
 			continue;
 		}
-		host = d.urlManager.domain;
+		host = d.urlManager.eHost;
 		if (!(host in this._downloadSet)) {
 			this._downloadSet[host] = new FairScheduler.SchedItem(host);
 		}
@@ -280,7 +280,7 @@ FairScheduler.prototype = {
 		// Count the running tasks
 		for (i = 0, e = running.length; i < e; ++i) {
 			d = running[i];
-			host = d.urlManager.domain;
+			host = d.urlManager.eHost;
 			if (!(host in this._downloadSet)) {
 				// we don't care, because we don't have any more queued downloads for this host
 				continue;
