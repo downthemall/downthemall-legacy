@@ -123,7 +123,6 @@ ByteBucket.prototype = {
 			nv = -1;
 		}
 		this._available = this._byteRate = nv;
-		this._obs.notify();
 
 		if (nv > 0 && !this._timer) {
 			this._timer = Timers.createRepeating(100, this.observe, this, false, true);
@@ -131,6 +130,7 @@ ByteBucket.prototype = {
 		}
 		else if (nv <= 0 && this._timer) {
 			this.observe();
+			this._obs.notify();
 			Timers.killTimer(this._timer);
 			this._timer = null;
 			this._obs.stop();

@@ -1178,7 +1178,10 @@ const Tree = {
 			let start = {}, end = {value: -1};
 			this.selection.getRangeAt(i, start, end);
 			for (let j = start.value, k = end.value; j <= k; ++j) {
-					yield this._filtered[j];
+					let d = this._filtered[j];
+					if (d) {
+						yield d;
+					}
 			}
 		}
 	},
