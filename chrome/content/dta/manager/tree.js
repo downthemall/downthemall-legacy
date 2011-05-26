@@ -750,20 +750,21 @@ const Tree = {
 					o.setAttribute('disabled', disabled);
 				}
 			}
-			modifySome($('cmdResume'), function(d) !d.isOf(COMPLETE | RUNNING | QUEUED | FINISHING));
-			modifySome($('cmdPause'), function(d) (d.is(RUNNING) && d.resumable) || d.is(QUEUED));
-			modifySome($('cmdCancel'), function(d) !d.isOf(FINISHING | CANCELED));
 			
+			modifySome($('cmdResume'), function(d) d.isOf(PAUSED | QUEUED | CANCELED));
+			modifySome($('cmdPause'), function(d) (d.is(RUNNING) && d.resumable) || d.is(QUEUED));
+			modifySome($('cmdCancel'), function(d) d.isOf(PAUSED | RUNNING | QUEUED | COMPLETE));
+
 			modifySome($('cmdLaunch'), function(d) !!d.curFile);
 			modifySome($('cmdOpenFolder'), function(d) !!d.curFolder);
 			modifySome($('cmdDelete'), function(d) d.is(COMPLETE));
-			
+
 			modifySome($('cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'), function(d) !!d.count);
 			modifySome($('cmdMirrors'), function(d) d.count == 1);
-			
+
 			modifySome($('cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'), function(d) d.isOf(QUEUED | RUNNING | PAUSED | CANCELED));
-			modifySome($('cmdMoveTop', 'cmdMoveUp'), function(d) d.min > 0); 
-			modifySome($('cmdMoveDown', 'cmdMoveBottom'), function(d) d.max != d.rows - 1);  
+			modifySome($('cmdMoveTop', 'cmdMoveUp'), function(d) d.min > 0);
+			modifySome($('cmdMoveDown', 'cmdMoveBottom'), function(d) d.max != d.rows - 1);
 		}
 		catch (ex) {
 			Debug.log("rt", ex);
