@@ -62,8 +62,10 @@ module('resource://dta/support/pbm.jsm', PrivateBrowsing);
 module('resource://dta/support/serverlimits.jsm', Limits);
 module('resource://dta/support/timers.jsm');
 module('resource://dta/support/fileextsheet.jsm');
+module('resource://dta/support/defer.jsm');
 
 let Preallocator = {}, RequestManipulation = {};
+module("resource://gre/modules/XPCOMUtils.jsm");
 module('resource://dta/manager/preallocator.jsm', Preallocator);
 module('resource://dta/manager/connection.jsm');
 module('resource://dta/manager/queuestore.jsm');
@@ -247,7 +249,7 @@ const Dialog = {
 			Dialog.scheduler = null;
 		}, true);
 		try {
-			Timers.createOneshot(100, this._loadDownloads, this);
+			defer(this._loadDownloads, this);
 		}
 		catch (ex) {
 			if (Logger.enabled) {
@@ -291,7 +293,7 @@ const Dialog = {
 				if (shouldAutofit) {
 					document.documentElement.setAttribute('dtaAutofitted', cv);
 					$('tools').setAttribute('mode', 'icons');
-					setTimeout(
+					defer(
 						function() {
 							let tdb = $('tooldonate').boxObject;
 							let db = de.boxObject
@@ -302,8 +304,7 @@ const Dialog = {
 									Logger.log("manager was autofit");
 								}
 							}
-						},
-						10
+						}
 					);
 				}
 			});
@@ -701,8 +702,7 @@ const Dialog = {
 			if (Logger.enabled) {
 				Logger.log("reinit initiated");
 			}
-			let tp = this;
-			Timers.createOneshot(10, function() tp.shutdown(tp._continueReinit), this);
+			defer(function() this.shutdown(this._continueReinit), this);
 		}
 		catch (ex) {
 			if (Logger.enabled) {
@@ -2121,19 +2121,19 @@ QueueItem.prototype = {
 		if (this._completeEvents.length) {
 			var evt = this._completeEvents.shift();
 			var tp = this;
-			window.setTimeout(
+			defer(
 				function() {
 					try {
-						tp[evt]();
+						this[evt]();
 					}
 					catch(ex) {
 						if (Logger.enabled) {
 							Logger.log("completeEvent failed: " + evt, ex);
 						}
-						tp.complete();
+						this.complete();
 					}
 				},
-				0
+				this
 			);
 			return;
 		}
@@ -2620,6 +2620,7 @@ function Chunk(download, start, end, written) {
 }
 
 Chunk.prototype = {
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable]),
 	running: false,
 	get starter() {
 		return this.end <= 0;
@@ -2784,23 +2785,30 @@ Chunk.prototype = {
 	},
 	_wnd: 2048,
 	observe: function() {
+		this.run();
+	},
+	run: function() {
 		if (!this._req) {
 			return;
 		}
-		// Still have pending bytes?
-		let requested = Math.min(this._wnd, this._reqPending);
-		let got = this.buckets.requestBytes(requested);
-		this._noteBytesWritten(got);
-		if (got < requested) {
-			this._wnd = Math.round(Math.min(this._wnd / 2, 1024));
-		}
-		else if (requested == this._wnd) {
-			this._wnd += 256;
-		}
-
-		if (got < this._reqPending) {
-			// Not enough
+		if (this._reqPending > 0) {
+			// Still have pending bytes?
+			let requested = Math.min(this._wnd, this._reqPending);
+			let got = this.buckets.requestBytes(requested);
+			if (!got) {
+				return;
+			}
+			this._noteBytesWritten(got);
+			if (got < requested) {
+				this._wnd = Math.round(Math.min(this._wnd / 2, 1024));
+			}
+			else if (requested == this._wnd) {
+				this._wnd += 256;
+			}
 			this._reqPending -= got;
+			this.parent.timeLastProgress = Utils.getTimestamp();
+
+			defer_runnable(this);
 			return;
 		}
 
