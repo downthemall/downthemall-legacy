@@ -377,13 +377,13 @@ const Tooltip = {
 				mr = true;
 			}
 			catch (ex) {
-				Timers.createOneshot(25, this.initUpdate, this);
+				defer(this.initUpdate, this);
 				return;
 			}
 		}
 		if (mr) {
 			this._mustDraw = true;
-			Timers.createOneshot(25, this.initUpdate, this);
+			defer(this.initUpdate, this);
 		}
 		this.update();
 		this._mustDraw = false;
