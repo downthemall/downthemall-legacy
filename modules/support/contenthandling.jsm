@@ -58,6 +58,7 @@ const HEADER_CT = ['Content-Type', 'Content-Disposition'];
 const REGEXP_MEDIA = /\.(flv|ogg|ogm|ogv|avi|divx|mp4v?|webm)\b/i;
 const REGEXP_SWF = /\.swf\b/i;
 const REGEXP_CT = /\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i;
+const REGEXP_STARTPARAM = /start=\d+&?/;
 
 /**
  * ContentHandling
@@ -270,6 +271,12 @@ ContentHandlingImpl.prototype = {
 		this._vidArray = [];
 	},
 	_registerVideo: function ct__registerVideo(uri, vid) {
+		// sanitize vid and remove the start param
+		vid = vid.clone();
+		if (vid instanceof Ci.nsIURL) {
+			vid.query = vid.query.replace(REGEXP_STARTPARAM, "");
+		}
+
 		uri = uri.spec;
 		if (!(uri in this._vidDict)) {
 			if (this._vidArray.length > 20) {
