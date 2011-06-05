@@ -230,7 +230,9 @@
 			<toolbarbutton label="&movedown.label;" id="toolmovedown" command="cmdMoveDown" />
 			<toolbarbutton label="&movebottom.label;" id="toolmovebottom" command="cmdMoveBottom" />
 			<toolbarspacer flex="1" />
-			<image chromedir="&locale.dir;" id="tooldonate" tooltiptext="&tooldonate.tooltiptext;" />
+			<vbox id="donatebox">
+				<image chromedir="&locale.dir;" id="tooldonate" tooltiptext="&tooldonate.tooltiptext;" />
+			</vbox>
 		</toolbar>
 	</toolbox>
 	<hbox flex="1">
