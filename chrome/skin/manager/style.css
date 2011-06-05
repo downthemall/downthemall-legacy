@@ -16,6 +16,8 @@ window[sizemode="maximized"] #footer > resizer {
 /** :: Toolbar :: **/
 toolbox {
 	border-width: 0px;
+	padding: 0;
+	margin: 0;
 }
 
 #tools {
@@ -144,34 +146,36 @@ toolbox {
 	-moz-image-region: rect(182px,78px,208px,52px);
 }
 
+#donatebox {
+	-moz-box-pack: center;
+}
 #tooldonate {
-	list-style-image: url(chrome://dta/skin/manager/donate.png);
-	-moz-image-region: rect(51px,360px,102px,180px);
-	min-width: 180px !important;
+	list-style-image: url(chrome://dta/skin/manager/donate51.png);
+	-moz-image-region: rect(0px,360px,51px,180px);
 	cursor: pointer;
 }
 #tooldonate:hover {
-	-moz-image-region: rect(51px,180px,102px,0px);
+	-moz-image-region: rect(51px,360px,102px,180px);
 }
-
 #tools[mode="icons"] #tooldonate {
-	-moz-image-region: rect(60px,360px,96px,180px);
+	list-style-image: url(chrome://dta/skin/manager/donate33.png);
+	-moz-image-region: rect(0px,228px,33px,114px);
 }
 #tools[mode="icons"] #tooldonate:hover {
-	-moz-image-region: rect(60px,180px,96px,0px);
+	-moz-image-region: rect(33px,228px,66px,114px);
 }
 
 #tooldonate[chromedir="rtl"], #tooldonate:-moz-locale-dir(rtl) {
-	-moz-image-region: rect(0px,360px,51px,180px);
-}
-#tooldonate[chromedir="rtl"]:hover, #tooldonate:-moz-locale-dir(rtl):hover {
 	-moz-image-region: rect(0px,180px,51px,0px);
 }
-#tools[mode="icons"] #tooldonate[chromedir="rtl"], #tools[mode="icons"] #tooldonate:-moz-locale-dir(rtl):hover {
-	-moz-image-region: rect(9px,360px,45px,180px);
+#tooldonate[chromedir="rtl"]:hover, #tooldonate:-moz-locale-dir(rtl):hover {
+	-moz-image-region: rect(51px,180px,102px,0px);
+}
+#tools[mode="icons"] #tooldonate[chromedir="rtl"], #tools[mode="icons"] #tooldonate:-moz-locale-dir(rtl) {
+	-moz-image-region: rect(0px,114px,33px,0px);
 }
 #tools[mode="icons"] #tooldonate[chromedir="rtl"]:hover, #tools[mode="icons"] #tooldonate:-moz-locale-dir(rtl):hover {
-	-moz-image-region: rect(9px,180px,45px,0px);
+	-moz-image-region: rect(33px,114px,66px,0px);
 }
 
 /** :: Tooltip :: **/

@@ -102,7 +102,7 @@ toolbarbutton[disabled="true"] {
 	display: -moz-box;
 }
 #tools {
-	padding-bottom: 6px;
+	margin-bottom: 3px;
 }
 window[sizemode="maximized"] #tools {
 	padding-top: 6px;
@@ -183,16 +183,15 @@ toolbarbutton > .toolbarbutton-icon {
 		0 0 5px rgb(255,128,128);
 }
 
-#tooldonate:-moz-lwtheme,
-window[sizemode="maximized"] #tooldonate {
-	/* XXX: special, more transculent image? */
-	display: none;
-}
-
 /* special lwtheme rules */
 treecol:-moz-lwtheme-brighttext {
 	text-shadow: none;
 }
+
+#tooldonate:-moz-lwtheme {
+	display: none;
+}
+
 
 /* non-compositor rules */
 @media all and (-moz-windows-compositor:0) {
@@ -211,6 +210,17 @@ treecol:-moz-lwtheme-brighttext {
 	}
 	#titlebar-min {
 		-moz-margin-end: 2px;
+	}
+	window[sizemode="maximized"] #donatebox {
+		-moz-box-pack: end;
+	}
+	window[sizemode="maximized"] #tooldonate {
+		list-style-image: url(chrome://dta/skin/manager/donate16.png) !important;
+		-moz-image-region: rect(0px,74px,16px,0px) !important;
+		-moz-margin-end: 4px;
+	}
+	window[sizemode="maximized"] #tooldonate:hover {
+		-moz-image-region: rect(16px,74px,32px,0px) !important;
 	}
 	#footer {
 		-moz-appearance: none;
@@ -286,9 +296,21 @@ treecol:-moz-lwtheme-brighttext {
 		border-top-right-radius: 0px;
 	}
 
-	#tooldonate {
-		display: none;
+	#donatebox {
+		-moz-box-pack: end;
 	}
+	#tooldonate {
+		-moz-box-pack: end;
+		list-style-image: url(chrome://dta/skin/manager/donate16.png) !important;
+		-moz-image-region: rect(0px,74px,16px,0px) !important;
+	}
+	#tooldonate:hover {
+		-moz-image-region: rect(16px,74px,32px,0px) !important;
+	}
+	window[sizemode="maximized"] #tooldonate:not(:-moz-lwtheme) {
+		-moz-margin-end: 4px;
+	}
+
 	#titlebar {
 		margin-bottom: -6px;
 	}
