@@ -61,6 +61,10 @@
 					<label value="&infoSizeTitle.value;" />
 					<textbox class="plain" id="infoSize" />
 				</row>
+				<row>
+					<label value="&infoDateTitle.value;" />
+					<textbox class="plain" id="infoDate" />
+				</row>
 			</rows>
 		</grid>
 	</hbox>

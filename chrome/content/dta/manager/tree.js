@@ -1048,6 +1048,7 @@ const Tree = {
 		$("infoIcon").src = d.largeIcon;
 		$("infoURL").value = d.urlManager.url.spec;
 		$("infoDest").value = d.destinationFile;
+		$("infoDate").value = d.startDate.toLocaleString();
 
 		Tooltip.start(d);
 		return true;
