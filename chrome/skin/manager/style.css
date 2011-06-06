@@ -232,6 +232,15 @@ treechildren::-moz-tree-progressmeter(completed) {
 treechildren::-moz-tree-progressmeter(paused) {
 	color: #FFCC00 !important;
 }
+treechildren::-moz-tree-progressmeter(progressUndetermined) {
+	list-style-image: url(chrome://dta/skin/manager/undetermined.png);
+}
+treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined) {
+	list-style-image: url(chrome://dta/skin/manager/paused-undetermined.png);
+}
+treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined, pausedAutoretrying) {
+	list-style-image: url(chrome://dta/skin/manager/paused-autoretry.png);
+}
 treechildren::-moz-tree-progressmeter(paused, pausedAutoretrying) {
 	color: #849FFF !important;
 }
