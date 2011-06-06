@@ -19,6 +19,7 @@
 <!ENTITY speed.label "Speed">
 <!ENTITY infoURLTitle.value "From:">
 <!ENTITY infoSizeTitle.value "Size:">
+<!ENTITY infoDateTitle.value "Date added:">
 <!ENTITY infoMultiple.value "Multiple Items">
 <!ENTITY elapsedTitle.value "Elapsed:">
 <!ENTITY remainingTitle.value "Remaining:">

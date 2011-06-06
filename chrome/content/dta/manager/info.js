@@ -64,6 +64,7 @@ var Dialog = {
 				$("infoIcon").src = d.largeIcon;
 				$("infoURL").value = d.urlManager.url.spec;
 				$("infoDest").value = d.destinationFile;
+				$("infoDate").value = d.startDate.toLocaleString();
 				$("mirrorsText").value = _("mirrorsText", [d.urlManager.length]);
 				document.title = d.destinationName;
 
