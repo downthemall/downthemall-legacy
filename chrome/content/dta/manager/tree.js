@@ -335,6 +335,8 @@ const Tree = {
 	_filter: '',
 	_mustFilter: false,
 	get filtered() this._matcher.filtering,
+	_doFilter_resetPositions: function(e) e.filteredPosition = -1,
+	_doFilter_setPositions: function(e, i) e.filteredPosition = i,
 	doFilter: function T__doFilter() {
 		if (this._updating) {
 			this._mustFilter = true;
@@ -344,7 +346,7 @@ const Tree = {
 		try {
 			// save selection
 			let selectedIds = this._getSelectedFilteredIds();
-			this._downloads.forEach(function(e) e.filteredPosition = -1);
+			this._downloads.forEach(this._doFilter_resetPositions);
 			this._box.rowCountChanged(0, -this.rowCount);
 			if (this._matcher.filtering) {
 				this._filtered = this._matcher.filter(this._downloads);
@@ -352,7 +354,7 @@ const Tree = {
 			else {
 				this._filtered = this._downloads;
 			}
-			this._filtered.forEach(function(e, i) e.filteredPosition = i);
+			this._filtered.forEach(this._doFilter_setPositions);
 			this._box.rowCountChanged(0, this.rowCount);
 
 			// restore selection
@@ -1173,6 +1175,10 @@ const Tree = {
 	// generator for selected download elements.
 	// do not make any assumptions about the order.
 	get selected() {
+		if (!this.selection.count) {
+			return;
+		}
+
 		// loop through the selection as usual
 		for (let i = 0, e = this.selection.getRangeCount(); i < e; ++i) {
 			let start = {}, end = {value: -1};
@@ -1186,13 +1192,16 @@ const Tree = {
 		}
 	},
 	getSelected: function() {
-		let rv = [];
+		if (!this.selection.count) {
+			return [];
+		}
+		let rv = new Array(this.selection.count);
 		// loop through the selection as usual
-		for (let i = 0, e = this.selection.getRangeCount(); i < e; ++i) {
+		for (let i = 0, e = this.selection.getRangeCount(), idx = 0; i < e; ++i) {
 			let start = {}, end = {value: -1};
 			this.selection.getRangeAt(i, start, end);
 			for (let j = start.value, k = end.value; j <= k; ++j) {
-				rv.push(this._filtered[j]);
+				rv[idx++] = this._filtered[j];
 			}
 		}
 		this.selection.clearSelection();
@@ -1200,28 +1209,60 @@ const Tree = {
 	},
 
 	// returns an ASC sorted array of IDs that are currently selected.
-	_getSelectedIds: function T_getSelectedIds(getReversed) {
-		let rv = [];
+	_getSelectedIds: null,
+	_getSelectedIds_legacy: function T_getSelectedIds(getReversed) {
 		let select = this.selection;
+		if (!select.count) {
+			return [];
+		}
+		let rv = new Array(select.count);
 		// loop through the selection as usual
-		for (let i = 0, e = select.getRangeCount(); i < e; ++i) {
+		for (let i = 0, e = select.getRangeCount(), idx = 0; i < e; ++i) {
+			let start = {}, end = {};
+			this.selection.getRangeAt(i, start, end);
+			for (let j = start.value, k = end.value; j <= k; ++j) {
+				rv[idx++] = j;
+				//rv.push(j);
+			}
+		}
+		this.selection.clearSelection();
+		if (getReversed) {
+			rv.sort(this._getSelectedIds_desc);
+		}
+		else {
+			rv.sort(this._getSelectedIds_asc);
+		}
+		return rv;
+	},
+	_getSelectedIds_typed: function T_getSelectedIds(getReversed) {
+		let select = this.selection;
+		if (!select.count) {
+			return [];
+		}
+		let rv = new Uint32Array(select.count);
+		// loop through the selection as usual
+		for (let i = 0, e = select.getRangeCount(), idx = 0; i < e; ++i) {
 				let start = {}, end = {};
 				this.selection.getRangeAt(i, start, end);
 				for (let j = start.value, k = end.value; j <= k; ++j) {
-					rv.push(j);
+					rv[idx++] = j;
+					//rv.push(j);
 				}
 		}
 		this.selection.clearSelection();
 		if (getReversed) {
-			rv.sort(function(a, b) { return b - a; });
+			Array.sort(rv, this._getSelectedIds_desc);
 		}
 		else {
-			rv.sort(function(a, b) { return a - b; });
+			Array.sort(rv, this._getSelectedIds_asc);
 		}
 		return rv;
 	},
+	_getSelectedIds_asc: function(a, b) a - b,
+	_getSelectedIds_desc: function(a, b) b - a,
+	_getSelectedFilteredIds_map: function(id) this._filtered[id].position,
 	_getSelectedFilteredIds: function T_getSelectedFilteredIds()
-		mapInSitu(this._getSelectedIds(), function(id) this._filtered[id].position, this),
+		mapInSitu(this._getSelectedIds(), this._getSelectedFilteredIds_map, this),
 
 	// get the first selected item, NOT the item which has the input focus.
 	get current() {
@@ -1546,3 +1587,10 @@ const FileHandling = {
 		Tree.remove(null, true);
 	}
 };
+
+if ("Uint32Array" in this) {
+	Tree._getSelectedIds = Tree._getSelectedIds_typed;
+}
+else {
+	Tree._getSelectedIds = Tree._getSelectedIds_legacy;
+}
