@@ -443,7 +443,7 @@ const Tooltip = {
 				this.speedCurrent.value = this.speedAverage.value = _('nal');
 			}
 
-			this.infoSize.value = file.dimensionString;//file.totalSize > 0 ? Utils.formatBytes(file.totalSize) : _('unknown');
+			this.infoSize.value = file.dimensionString;
 			this.timeRemaining.value = file.status;
 			if (file.is(RUNNING)) {
 				this.timeElapsed.value = Utils.formatTimeDelta((Utils.getTimestamp() - file.timeStart) / 1000);
