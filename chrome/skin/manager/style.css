@@ -180,8 +180,8 @@ toolbox {
 
 /** :: Tooltip :: **/
 #tooltip{
-	width: 500px;
-	padding: 5pt;
+	width: 540px;
+	padding: 1em;
 }
 #infoIcon {
 	margin: 1ex;
