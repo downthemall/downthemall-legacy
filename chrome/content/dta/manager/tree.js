@@ -74,6 +74,7 @@ const Tree = {
 		ServiceGetter(this, "_ww", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 		this.elem.view = this;
 		this.assembleMenus();
+		this._refreshTools_init();
 		this.refreshTools();
 	},
 	onPopupShowing: function(event) {
@@ -1054,12 +1055,44 @@ const Tree = {
 	stopTip: function T_stopTip() {
 		Tooltip.stop();
 	},
+	_refreshTools_item: [
+		{item: 'cmdResume', f: function(d) d.isOf(PAUSED | QUEUED | CANCELED)},
+		{item: 'cmdPause', f: function(d) (d.is(RUNNING) && d.resumable) || d.is(QUEUED)},
+		{item: 'cmdCancel', f: function(d) d.isOf(PAUSED | RUNNING | QUEUED | COMPLETE)},
+
+		{item: 'cmdLaunch', f: function(d) !!d.curFile},
+		{item: 'cmdOpenFolder', f: function(d) !!d.curFolder},
+		{item: 'cmdDelete', f: function(d) d.is(COMPLETE)}
+	],
+	_refreshTools_items: [
+		{items: ['cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'], f: function(d) !!d.count},
+		{items: ['cmdMirrors', 'cmdAddLimits'], f: function(d) d.count == 1},
+		{items: ['cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'], f: function(d) d.isOf(QUEUED | RUNNING | PAUSED | CANCELED)},
+		{items: ['cmdMoveTop', 'cmdMoveUp'], f: function(d) d.min > 0},
+		{items: ['cmdMoveDown', 'cmdMoveBottom'], f: function(d) d.max != d.rows - 1}
+	],
+	_refreshTools_init: function() {
+		this._refreshTools_item.forEach(function(e) e.item = $(e.item));
+		this._refreshTools_items.forEach(function(e) e.items = $.apply(null, e.items));
+	},
 	refreshTools: function T_refreshTools(d) {
 		if (this._updating || (d && ('position' in d) && !this.selection.isSelected(d.position))) {
 			return;
 		}
 		try {
 			let empty = this.current == null;
+			if (empty) {
+				for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
+					this._refreshTools_item[i].item.setAttribute("disabled", "true");
+				}
+				for (let i = 0, e = this._refreshTools_items.length; i < e; ++i) {
+					let items = this._refreshTools_items[i].items;
+					for (let ii = 0, ee = items.length; ii < ee; ++ii) {
+						items[ii].setAttribute("disabled", "true");
+					}
+				}
+				return;
+			}
 
 			let states = {
 				_state: 0,
@@ -1081,36 +1114,18 @@ const Tree = {
 			states.curFile = (cur && cur.is(COMPLETE) && (new FileFactory(cur.destinationFile)).exists());
 			states.curFolder = (cur && (new FileFactory(cur.destinationPath)).exists());
 
-			function modifySome(items, f) {
-				let disabled;
-				if (empty) {
-					disabled = true;
-				}
-				else {
-					disabled = !f(states);
-				}
-				if (!(items instanceof Array)) {
-					items.setAttribute('disabled', disabled);
-					return;
-				}
-				for each (let o in items) {
-					o.setAttribute('disabled', disabled);
+			for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
+				let item = this._refreshTools_item[i];
+				item.item.setAttribute("disabled", item.f(states) ? "false" : "true");
+			}
+			for (let i = 0, e = this._refreshTools_items.length; i < e; ++i) {
+				let items = this._refreshTools_items[i];
+				let disabled = items.f(states) ? "false" : "true";
+				items = items.items;
+				for (let ii = 0, ee = items.length; ii < ee; ++ii) {
+					items[ii].setAttribute("disabled", disabled);
 				}
 			}
-			modifySome($('cmdResume'), function(d) d.isOf(PAUSED | QUEUED | CANCELED));
-			modifySome($('cmdPause'), function(d) (d.is(RUNNING) && d.resumable) || d.is(QUEUED));
-			modifySome($('cmdCancel'), function(d) d.isOf(PAUSED | RUNNING | QUEUED | COMPLETE));
-
-			modifySome($('cmdLaunch'), function(d) !!d.curFile);
-			modifySome($('cmdOpenFolder'), function(d) !!d.curFolder);
-			modifySome($('cmdDelete'), function(d) d.is(COMPLETE));
-
-			modifySome($('cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'), function(d) !!d.count);
-			modifySome($('cmdMirrors', 'cmdAddLimits'), function(d) d.count == 1);
-
-			modifySome($('cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'), function(d) d.isOf(QUEUED | RUNNING | PAUSED | CANCELED));
-			modifySome($('cmdMoveTop', 'cmdMoveUp'), function(d) d.min > 0);
-			modifySome($('cmdMoveDown', 'cmdMoveBottom'), function(d) d.max != d.rows - 1);
 		}
 		catch (ex) {
 			if (Logger.enabled) {
