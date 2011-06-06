@@ -784,9 +784,16 @@ const Dialog = {
 			}
 			this._speeds.add(this._sum, now);
 			speed = Utils.formatSpeed(this._speeds.avg);
-			this._maxObservedSpeed = Math.max(this._speeds.avg, this._maxObservedSpeed);
+			this._maxObservedSpeed = Math.max(this._speeds.avg || this._maxObservedSpeed, this._maxObservedSpeed);
 			for each (let e in $('listSpeeds', 'perDownloadSpeedLimitList')) {
-				e.hint = this._maxObservedSpeed;
+				try {
+					e.hint = this._maxObservedSpeed;
+				}
+				catch (ex) {
+					if (Logger.enabled) {
+						Logger.log("set hint threw; mos is " + this._maxObservedSpeed, ex);
+					}
+				}
 			}
 
 			// Refresh status bar
