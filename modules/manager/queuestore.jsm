@@ -74,11 +74,17 @@ setNewGetter(this, '__db', function() {
 	db.append(DB_FILE);
 	return db;
 });
-setNewGetter(this, '_asyncStatement', function() {
+this.__defineGetter__('_asyncStatement', function() {
 	if ('createAsyncStatement' in _connection) {
 		return _connection.createAsyncStatement;
 	}
 	return _connection.createStatement;
+});
+this.__defineGetter__('_asyncClose', function() {
+	if ('asyncClose' in _connection) {
+		return _connection.asyncClose;
+	}
+	return _connection.close;
 });
 
 const QueueStore = {
@@ -189,7 +195,7 @@ const QueueStore = {
 			// no-op
 		}
 		try {
-			_connection.close();
+			_asyncClose();
 			_connection = null;
 		}
 		catch (ex) {
