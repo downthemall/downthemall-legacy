@@ -84,10 +84,11 @@ TimerData.prototype = {
 /**
  * Manage Timers
  */
-function TimerManager() {}
+function TimerManager() {
+	this._timers = {};
+}
 TimerManager.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
-	_timers: {},
 	/**
 	 * Creates one shot timer
 	 * @param delay (int) Delay before timer will expire
@@ -111,6 +112,7 @@ TimerManager.prototype = {
 	 * @return (Timer) Timer id
 	 */
 	createRepeating: function(interval, func, ctx, fireInitially, precise) {
+		return null;
 		ctx = ctx ? ctx : func.__proto__.__parent__;
 		let td = new TimerData(this, interval, precise ? nsITimer.TYPE_REPEATING_PRECISE : nsITimer.TYPE_REPEATING_SLACK, func, ctx);
 		this._timers[td] = td;
@@ -143,4 +145,4 @@ TimerManager.prototype = {
 		}
 		this._timers = {};
 	}
-};
+};	
