@@ -242,6 +242,10 @@ const Dialog = {
 
 		let tree = $("downloads");
 		Tree.init(tree);
+		addEventListener("unload", function() {
+			removeEventListener("unload", arguments.callee, false);
+			Tree.unlink();
+		}, false);
 		tree.addEventListener("change", function() {
 			if (Logger.enabled) {
 				Logger.log("tree change");
