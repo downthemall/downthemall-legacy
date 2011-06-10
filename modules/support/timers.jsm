@@ -88,10 +88,11 @@ TimerData.prototype = {
 /**
  * Manage Timers
  */
-function TimerManager() {}
+function TimerManager() {
+	this._timers = {};
+}
 TimerManager.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
-	_timers: {},
 	/**
 	 * Creates one shot timer
 	 * @param delay (int) Delay before timer will expire
