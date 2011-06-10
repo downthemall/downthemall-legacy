@@ -48,9 +48,6 @@ function inject(window) {
 			showPreferences: function(pane) this.Mediator.showPreferences(window, pane)
 		};
 		Components.utils.import("resource://dta/api.jsm", DTA);
-		DTA.Mediator.open = function DTA_Mediator_open(url, ref) {
-			this.openUrl(window, url, ref);
-		}
 		return (window.DTA = DTA);
 	});
 	
