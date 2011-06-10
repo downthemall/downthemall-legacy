@@ -1277,8 +1277,8 @@ const Tree = {
 	_getSelectedIds_asc: function(a, b) a - b,
 	_getSelectedIds_desc: function(a, b) b - a,
 	_getSelectedFilteredIds_map: function(id) this._filtered[id].position,
-	_getSelectedFilteredIds: function T_getSelectedFilteredIds()
-		mapInSitu(this._getSelectedIds(), this._getSelectedFilteredIds_map, this),
+	_getSelectedFilteredIds: function T_getSelectedFilteredIds(reverse)
+		mapInSitu(this._getSelectedIds(reverse), this._getSelectedFilteredIds_map, this),
 
 	// get the first selected item, NOT the item which has the input focus.
 	get current() {
@@ -1381,7 +1381,7 @@ const Tree = {
 			this.beginUpdate();
 			let ids;
 			try {
-				ids = this._getSelectedFilteredIds();
+				ids = this._getSelectedFilteredIds(true);
 				ids.forEach(
 					function(id, idx) {
 						id = id + idx;
