@@ -198,7 +198,7 @@ const MetaSelect = {
 		return true;
 	},
 	openLink: function(e) {
-		DTA.Mediator.open(e.link);
+		openUrl(e.link);
 	},
 	select: function(type) {
 		let f;

@@ -647,7 +647,7 @@ const Dialog = {
 
 	openDonate: function D_openDonate() {
 		try {
-			DTA.Mediator.open('http://www.downthemall.net/howto/donate/');
+			openUrl('http://www.downthemall.net/howto/donate/');
 		}
 		catch(ex) {
 			alert(ex);
