@@ -101,7 +101,7 @@ TimerManager.prototype = {
 	 * @return (Timer) Timer id
 	 */
 	createOneshot: function(delay, func, ctx) {
-		ctx = ctx ? ctx : func.__parent__;
+		ctx = ctx || null;
 		let td = new TimerData(this, delay, nsITimer.TYPE_ONE_SHOT, func, ctx);
 		this._timers[td] = td;
 		return td.uuid;
@@ -116,7 +116,7 @@ TimerManager.prototype = {
 	 * @return (Timer) Timer id
 	 */
 	createRepeating: function(interval, func, ctx, fireInitially, precise) {
-		ctx = ctx ? ctx : func.__proto__.__parent__;
+		ctx = ctx || null;
 		let td = new TimerData(this, interval, precise ? nsITimer.TYPE_REPEATING_PRECISE : nsITimer.TYPE_REPEATING_SLACK, func, ctx);
 		this._timers[td] = td;
 		if (fireInitially) {
