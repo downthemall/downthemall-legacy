@@ -77,6 +77,10 @@ const Tree = {
 		this._refreshTools_init();
 		this.refreshTools();
 	},
+	unlink: function() {
+		this.elem.view = null;
+		delete this.elem;
+	},
 	onPopupShowing: function(event) {
 		let cascadeMirrors = this.current.urlManager.length < 2;
 		$('mirrors', 'mirrors-sep').forEach(function(e) e.hidden = cascadeMirrors);
