@@ -77,7 +77,7 @@ const Privacy = {
 	},
 	showLog: function() {
 		if (Debug.file.exists()) {
-			DTA.Mediator.open("file://" + Debug.file.path);
+			openUrl("file://" + Debug.file.path);
 		}
 	},
 	revealLog: function() {
@@ -170,7 +170,7 @@ const Interface = {
 		return menu.toString();
 	},
 	openMinTrayR: function() {
-		DTA.Mediator.open('http://tn123.ath.cx/mintrayr/?fromdta');
+		openUrl('https://tn123.org/mintrayr/?fromdta');
 	}
 };
 
