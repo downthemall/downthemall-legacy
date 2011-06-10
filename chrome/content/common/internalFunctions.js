@@ -60,16 +60,7 @@ const DTA = {
 };
 module("resource://dta/api.jsm", DTA);
 
-DTA.__defineGetter__('Mediator', function() {
-	delete DTA.Mediator;
-	DTA.Mediator = {
-		open: function DTA_Mediator_open(url, ref) {
-			this.openUrl(window, url, ref);
-		}
-	};
-	Components.utils.import('resource://dta/support/mediator.jsm', DTA.Mediator);
-	return DTA.Mediator;
-});
+function openUrl(url, ref) DTA.Mediator.openUrl(window, url, ref);
 
 const Logger = DTA.Logger;
 if (!('Debug' in this)) {
