@@ -88,7 +88,6 @@ lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
 lazyModule(this, 'Version', 'resource://dta/version.jsm', 'Version');
 
 setNewGetter(this, 'FileExts', function() new FileExtensionSheet(window));
-setAuthPrompterWindow(window);
 
 const TextCache = {};
 addEventListener("load", function load_textCache() {
@@ -2618,6 +2617,11 @@ QueueItem.prototype = {
 		return JSON.stringify(e);
 	}
 }
+setNewGetter(QueueItem.prototype, 'AuthPrompts', function() {
+	let _l = {};
+	module('resource://dta/support/loggedprompter.jsm', _l);
+	return new _l.LoggedPrompter(window);
+});
 
 function Chunk(download, start, end, written) {
 	// saveguard against null or strings and such
