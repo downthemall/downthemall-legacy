@@ -63,8 +63,9 @@ const Tree = {
 			col.appendChild(cloned);
 			col.menupopup = cloned;
 			col.menupopup.fixedItems = cloned.firstChild;
-			cloned.addEventListener('popupshowing', function(event) tp.handleMatcherPopupshowing(event), true);
-			cloned.addEventListener('click', function(event) tp.handleMatcherPopup(event), true);
+			// Use Tree here, or else we will immediately leak!
+			cloned.addEventListener('popupshowing', function(event) Tree.handleMatcherPopupshowing(event), true);
+			cloned.addEventListener('click', function(event) Tree.handleMatcherPopup(event), true);
 		}
 
 		$('popup').addEventListener('popupshowing', function(event) tp.onPopupShowing(event), true);
