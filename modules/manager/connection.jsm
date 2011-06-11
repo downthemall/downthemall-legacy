@@ -36,7 +36,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = ['setAuthPrompterWindow', 'Connection', 'GlobalBucket'];
+const EXPORTED_SYMBOLS = ['Connection', 'GlobalBucket'];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -84,19 +84,6 @@ ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOServ
 	global['_'] = function() (arguments.length == 1) ? bundles.getString(arguments[0]) : bundles.getFormattedString.apply(bundles, arguments);
 })(this);
 
-
-let _window = null;
-let _m = this;
-function setAuthPrompterWindow(_wnd) {
-	_window = _wnd;
-	delete _m.AuthPrompts;
-	setNewGetter(_m, 'AuthPrompts', function() {
-			let _l = {};
-			module('resource://dta/support/loggedprompter.jsm', _l);
-			return new _l.LoggedPrompter(_window);
-		}
-	);
-}
 
 function Connection(d, c, isInfoGetter) {
 
@@ -281,13 +268,13 @@ Connection.prototype = {
 	// nsIInterfaceRequestor
 	getInterface: function DL_getInterface(iid) {
 		if (iid.equals(Ci.nsIAuthPrompt)) {
-			return AuthPrompts.authPrompter;
+			return this.d.AuthPrompts.authPrompter;
 		}
 		if (iid.equals(Ci.nsIPrompt)) {
-			return AuthPrompts.prompter;
+			return this.d.AuthPrompts.prompter;
 		}
 		if ('nsIAuthPrompt2' in Ci && iid.equals(Ci.nsIAuthPrompt2)) {
-			return AuthPrompts.authPrompter.QueryInterface(Ci.nsIAuthPrompt2);
+			return this.d.AuthPrompts.authPrompter.QueryInterface(Ci.nsIAuthPrompt2);
 		}
 		return this.QueryInterface(iid);
 	},
