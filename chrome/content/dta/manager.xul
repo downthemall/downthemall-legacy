@@ -131,13 +131,13 @@
 	</keyset>
 
 
-	<popupset>
+	<popupset id="mainPopupSet">
 		<tooltip id="tooltip" position="at_pointer" noautohide="true" onpopupshowing="return Tree.showTip(event);" onpopuphiding="Tree.stopTip();" orient="vertical">
 			<hbox id="infoBox" />
 			<grid id="canvasGrid" />
 		</tooltip>
 		<menupopup id="matcher">
-			<menuseparator />
+			<menuseparator id="matcher-fixed"/>
 			<menuitem action="invertmatcher" label="&invertmatcher.label;" closemenu="none" />
 			<menuitem action="clearmatcher" label="&clearmatcher.label;" closemenu="none" />
 			<menuseparator id="beforeColumnSort"/>
