@@ -57,16 +57,7 @@ const Tree = {
 		dtree.addEventListener('mousemove', function(event) tp.hovering(event), false);
 		dtree.addEventListener('draggesture', function(event) nsDragAndDrop.startDrag(event, tp), false);
 
-		let matcherPopup = $('matcher');
-		for each (let col in $$("treecol[matcher]")) {
-			let cloned = matcherPopup.cloneNode(true);
-			col.appendChild(cloned);
-			col.menupopup = cloned;
-			col.menupopup.fixedItems = cloned.firstChild;
-			// Use Tree here, or else we will immediately leak!
-			cloned.addEventListener('popupshowing', function(event) Tree.handleMatcherPopupshowing(event), true);
-			cloned.addEventListener('click', function(event) Tree.handleMatcherPopup(event), true);
-		}
+		$("matcher").addEventListener("command", function(event) tp.handleMatcherPopup(event), true);
 
 		$('popup').addEventListener('popupshowing', function(event) tp.onPopupShowing(event), true);
 		$('search').addEventListener('search', function(event) tp.setFilter(event.target.value), true);
@@ -118,21 +109,23 @@ const Tree = {
 			}
 		}
 	},
-	handleMatcherPopupshowing: function(event) {
-		let popup = event.currentTarget;
-		let col = popup.parentNode;
+	handleMatcherPopupshowing: function(col) {
 		let processor = col.getAttribute('matcher');
 		if (!processor) {
 			return;
 		}
-		while (popup.firstChild != popup.fixedItems) {
+
+		let popup = $("matcher");
+		while (popup.firstChild && popup.firstChild.id != "matcher-fixed") {
 			popup.removeChild(popup.firstChild);
 		}
+		let fixedItems = popup.firstChild;
+
 		let active = (col.getAttribute('params') || "").split(",");
 		let newActive = [];
 		for (let i in this._matcher.getItems(processor, this._downloads)) {
 			if (i.label == '-') {
-				popup.insertBefore($e('menuseparator'), popup.fixedItems);
+				popup.insertBefore($e('menuseparator'), fixedItems);
 				continue;
 			}
 			let checked = active.indexOf(i.param) >= 0;
@@ -147,7 +140,7 @@ const Tree = {
 				attrs.type = 'radio';
 				attrs.name = popup.id + "_" + i.radio;
 			}
-			popup.insertBefore($e('menuitem', attrs), popup.fixedItems);
+			popup.insertBefore($e('menuitem', attrs), fixedItems);
 			if (checked) {
 				newActive.push(i.param);
 			}
@@ -158,11 +151,13 @@ const Tree = {
 		else {
 			col.removeAttribute('params');
 		}
+		popup.col = col;
+		popup.openPopup(col, "after_start", -1, -1, true, false, null);
 	},
 	handleMatcherPopup: function(event) {
 		let target = event.target;
 		let popup = target.parentNode;
-		let element = popup.parentNode;
+		let element = popup.col;
 		let matcher = element.getAttribute('matcher');
 		let action = target.getAttribute('action');
 
@@ -494,7 +489,12 @@ const Tree = {
 			prop.AppendElement(this._filtered[idx].iconAtom);
 		}
 	},
-	cycleHeader: function T_cycleHeader(col) {},
+	cycleHeader: function T_cycleHeader(col) {
+		if (!col.element.hasAttribute("matcher")) {
+			return;
+		}
+		this.handleMatcherPopupshowing(col.element);
+	},
 	// just some stubs we need to provide anyway to implement a full nsITreeView
 	cycleCell: function(idx, column) {},
 	performAction: function(action) {},
