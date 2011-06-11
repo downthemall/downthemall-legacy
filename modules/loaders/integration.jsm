@@ -462,7 +462,6 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
  */
 function load(window, outerEvent) {
 	let document = window.document;
-	let gContextMenu = window.gContextMenu;
 	let setTimeout = window.setTimeout;
 	let setInterval = window.setInterval;
 	let clearInterval = window.clearInterval;
@@ -733,10 +732,10 @@ function load(window, outerEvent) {
 
 	function findSingleLink(turbo) {
 		try {
-			if (!gContextMenu.onSaveableLink) {
+			if (!window.gContextMenu.onSaveableLink) {
 				return;
 			}
-			let cur = gContextMenu.target;
+			let cur = window.gContextMenu.target;
 			while (!("tagName" in cur) || !cur.tagName.match(/^a$/i)) {
 				cur = cur.parentNode;
 			}
@@ -753,7 +752,7 @@ function load(window, outerEvent) {
 
 	function findSingleImg(turbo) {
 		try {
-			let cur = gContextMenu.target;
+			let cur = window.gContextMenu.target;
 			while (!("tagName" in cur) || !cur.tagName.match(/^img$/i)) {
 				cur = cur.parentNode;
 			}
@@ -768,7 +767,7 @@ function load(window, outerEvent) {
 	}
 
 	function _findSingleMedia(turbo, tag) {
-		let ctx = gContextMenu;
+		let ctx = window.gContextMenu;
 		try {
 			function isMedia(n) 'tagName' in n && n.tagName.toLowerCase() == tag;
 
@@ -833,7 +832,7 @@ function load(window, outerEvent) {
 	}
 	function findForm(turbo) {
 		try {
-			let ctx = gContextMenu;
+			let ctx = window.gContextMenu;
 			if (!('form' in ctx.target)) {
 				throw new Components.Exception("No form");
 			}
@@ -932,7 +931,7 @@ function load(window, outerEvent) {
 
 	function onContextShowing(evt) {
 		try {
-			let ctx = gContextMenu;
+			let ctx = window.gContextMenu;
 			// get settings
 			let items = Preferences.getExt("ctxmenu", "1,1,0").split(",").map(function(e) parseInt(e));
 			let showCompact = Preferences.getExt("ctxcompact", false);
