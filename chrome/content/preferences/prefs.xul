@@ -31,7 +31,7 @@
 	ondialogextra2="Prefs.restoreAll();"
 	persist="lastSelected screenX screenY"
 	onload="Prefs.load();"
-	style="&windowstyle;"
+	style="&windowstyle.3;"
 	>
 	<stringbundleset id="bundlesPrefs" xmlns="http://www.downthemall.net/properties#">
 		<stringbundle src="chrome://dta/locale/common.properties" />

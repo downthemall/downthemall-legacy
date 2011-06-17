@@ -1,5 +1,5 @@
 <!-- Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
-<!ENTITY windowstyle "width:46em;height:37em;">
+<!ENTITY windowstyle.3 "width:48em;height:44em;">
 <!ENTITY filterspane.label "Filters">
 <!ENTITY listhead1.label "Caption">
 <!ENTITY listhead2.label "Extensions">
