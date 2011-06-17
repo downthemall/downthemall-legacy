@@ -49,11 +49,9 @@ const Exception = Components.Exception;
 const Prefs = {}, DTA = {};
 module("resource://dta/preferences.jsm", Prefs);
 module("resource://dta/utils.jsm");
-module("resource://dta/version.jsm");
 module("resource://dta/api.jsm", DTA);
 
-const RUN_ON_MAINTHREAD = Version.moz2;
-const REGULAR_CHUNK = (1 << (RUN_ON_MAINTHREAD ? 21 : 24)); // 2/16MB
+const REGULAR_CHUNK = (1 << 21); // 2/16MB
 
 module("resource://gre/modules/XPCOMUtils.jsm");
 
@@ -86,23 +84,11 @@ function verify(file, hashCollection, completeCallback, progressCallback){
 		);
 }
 
-function Spinnable() {}
-Spinnable.prototype = {
-	terminated: false,
+function Runnable() {}
+Runnable.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable, Ci.nsICancelable]),
-	spin: function() {
-		if (!RUN_ON_MAINTHREAD) {
-			return;
-		}
-		while (this._thread.hasPendingEvents()) {
-			this._thread.processNextEvent(false);
-		}
-	},
 	cancel: function() {
 		this.terminated = true;
-		if (!RUN_ON_MAINTHREAD) {
-			try { this._thread.shutdown(); } catch (ex) { /* no op */ }
-		}
 	}
 };
 
@@ -112,12 +98,9 @@ function Callback(func, sync) {
 	this._thread = ThreadManager.mainThread;
 	this._job = registerJob(this);
 	this._thread.dispatch(this, sync ? 0x1 : 0x0);
-	if (sync) {
-		this.spin();
-	}
 }
 Callback.prototype = {
-	__proto__: Spinnable.prototype,
+	__proto__: Runnable.prototype,
 	run: function() {
 		try {
 			this._func.apply(this._func, this._args);
@@ -138,32 +121,12 @@ function Verificator(file, hashCollection, completeCallback, progressCallback) {
 	this._progressCallback = progressCallback;
 
 	this._job = registerJob(this._job);
-	if (RUN_ON_MAINTHREAD) {
-		this._thread = ThreadManager.mainThread;
-	}
-	else {
-		this._thread = ThreadManager.newThread(0);
-		try {
-			let tp = this._thread.QueryInterface(Ci.nsISupportsPriority);
-			tp.priority = Ci.nsISupportsPriority.PRIORITY_LOWEST;
-		}
-		catch (ex) {
-			// no op
-		}
-	}
+	this._thread = ThreadManager.mainThread;
 	this._thread.dispatch(this, 0x0);
 }
 Verificator.prototype = {
-	__proto__: Spinnable.prototype,
+	__proto__: Runnable.prototype,
 	_done: function(obj) {
-		try {
-			if (!RUN_ON_MAINTHREAD) {
-				obj._thread.shutdown();
-			}
-		}
-		catch (ex) {
-			// aborted before?!
-		}
 		unregisterJob(obj._job);
 	},
 	run: function() {
@@ -189,7 +152,6 @@ Verificator.prototype = {
 					pending -= count;
 					completed += count;
 					new Callback(this._progressCallback, false, Math.min(completed, total));
-					this.spin();
 				}
 			}
 			finally {
@@ -262,7 +224,6 @@ MultiVerificator.prototype = {
 						if (!flushBytes){
 							flushBytes = REGULAR_CHUNK;
 							new Callback(this._progressCallback, false, Math.min(completed, total));
-							this.spin();
 						}
 					}
 					let partialActual = hexdigest(partialHash.finish(false));
@@ -286,7 +247,6 @@ MultiVerificator.prototype = {
 					pending -= count;
 					completed += count;
 					new Callback(this._progressCallback, false, Math.min(completed, total));
-					this.spin();
 				}
 			}
 			finally {
