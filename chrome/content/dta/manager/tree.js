@@ -860,7 +860,7 @@ const Tree = {
 	pause: function T_pause() {
 		this.updateSelected(
 			function(d) {
-				if (d.is(QUEUED | PAUSED) || (d.is(RUNNING) && d.resumable)) {
+				if (d.isOf(QUEUED | PAUSED) || (d.is(RUNNING) && d.resumable)) {
 					d.pause();
 					d.clearAutoRetry();
 					d.status = TextCache.PAUSED;
