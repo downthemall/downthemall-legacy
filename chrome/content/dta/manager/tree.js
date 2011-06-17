@@ -526,8 +526,9 @@ const Tree = {
 		let paused = _("paused");
 		this.updateSelected(
 			function(d) {
-				if (d.is(QUEUED) || (d.is(RUNNING) && d.resumable)) {
+				if (d.isOf(QUEUED | PAUSED) || (d.is(RUNNING) && d.resumable)) {
 					d.pause();
+					d.clearAutoRetry();
 					d.status = paused;
 					d.state = PAUSED;
 				}
