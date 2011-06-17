@@ -77,17 +77,16 @@
 		<content>
 			<xul:grid flex="1">
 				<xul:columns>
-					<xul:column flex="1" />
-					<xul:column />
-					<xul:column />
-					<xul:column />
+					<xul:column/>
+					<xul:column/>
+					<xul:column flex="1"/>
 				</xul:columns>
 				<xul:rows>
+					<xul:hbox class="serverlimit-host" align="center">
+						<xul:image class="serverlimit-host-image" />
+						<xul:label anonid="host" xbl:inherits="value=host" class="serverlimit-host-label" crop="right" />
+					</xul:hbox>
 					<xul:row>
-						<xul:hbox class="serverlimit-host" align="center">
-							<xul:image class="serverlimit-host-image" />
-							<xul:label anonid="host" xbl:inherits="value=host" class="serverlimit-host-label" crop="right" />
-						</xul:hbox>
 						<xul:hbox class="serverlimit-connections" align="center">
 							<xul:label value="&serverspane.connections.label;" />
 							<xul:label class="serverlimit-connections-label serverlimit-value-label" anonid="connectionsLabel" />
@@ -115,17 +114,16 @@
 			<xul:vbox flex="1">
 				<xul:grid flex="1">
 					<xul:columns>
-						<xul:column flex="1" />
-						<xul:column />
-						<xul:column />
-						<xul:column />
+						<xul:column/>
+						<xul:column/>
+						<xul:column flex="1"/>
 					</xul:columns>
 					<xul:rows>
+						<xul:hbox class="serverlimit-host" align="center">
+							<xul:image class="serverlimit-host-image" />
+							<xul:label anonid="host" xbl:inherits="value=host" class="serverlimit-host-label" crop="right" />
+						</xul:hbox>
 						<xul:row>
-							<xul:hbox class="serverlimit-host" align="center">
-								<xul:image class="serverlimit-host-image" />
-								<xul:label anonid="host" xbl:inherits="value=host" class="serverlimit-host-label" crop="right" />
-							</xul:hbox>
 							<xul:hbox class="serverlimit-connections" align="center">
 								<xul:label value="&serverspane.connections.label;" />
 								<xul:label class="serverlimit-connections-label serverlimit-value-label" anonid="connectionsLabel" />
