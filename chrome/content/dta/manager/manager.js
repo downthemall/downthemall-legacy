@@ -971,7 +971,7 @@ const Dialog = {
 		if (this._autoRetrying.indexOf(d) == -1) {
 			this._autoRetrying.push(d);
 		}
-	},
+	},	
 	wasRemoved: function D_wasRemoved(d) {
 		this._running = this._running.filter(function(r) r != d);
 		this._autoRetrying = this._autoRetrying.filter(function(r) r != d);
@@ -2163,6 +2163,10 @@ QueueItem.prototype = {
 		this.queue();
 		Debug.logString("Requeued due to auto-retry: " + this);
 		return true;
+	},
+	clearAutoRetry: function QI_clearAutoRetry() {
+		this._autoRetryTime = 0;
+		this._autoRetries = 0;
 	},
 	queue: function QI_queue() {
 		this._autoRetryTime = 0;
