@@ -60,8 +60,6 @@ const Version = {
 		VERSION: '0.0',
 		BASE_VERSION: '0.0',
 		NAME: 'DownThemAll!',
-		moz1: false,
-		moz2: false,
 		ready: false,
 		showAbout: null,
 		compareVersion: function(version, cmp) {
@@ -92,24 +90,7 @@ function completeVersion(addon) {
 	_callbacks = [];
 }
 
-/**
- * Compares two version literals according to mozilla rules
- * @param version (string) Optional. Version.  If not given extension version will be used.
- * @param cmp (string) Version to compare to.
- * @return nsIVersionComparator result
- */
-
-try {
-	// moz-1.9.3+
-	module("resource://gre/modules/AddonManager.jsm");
-	Version.moz2 = true;
-	AddonManager.getAddonByID(Version.ID, function(addon) {
-		completeVersion(addon);
-	});
-}
-catch (ex) {
-	// moz-1.9.2-
-	Version.moz1 = true;
-	const ITEM = Cc["@mozilla.org/extensions/manager;1"].getService(Ci.nsIExtensionManager).getItemForID(ID);
-	completeVersion(ITEM);
-}
+module("resource://gre/modules/AddonManager.jsm");
+AddonManager.getAddonByID(Version.ID, function(addon) {
+	completeVersion(addon);
+});
