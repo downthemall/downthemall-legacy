@@ -2416,6 +2416,10 @@ QueueItem.prototype = {
 		}
 		return true;
 	},
+	clearAutoRetry: function QI_clearAutoRetry() {
+		this._autoRetryTime = 0;
+		this._autoRetries = 0;
+	},
 	queue: function QI_queue() {
 		this._autoRetryTime = 0;
 		this.state = QUEUED;
