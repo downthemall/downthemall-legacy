@@ -48,11 +48,7 @@ module("resource://gre/modules/XPCOMUtils.jsm");
  */
 XPCOMUtils.defineLazyGetter(this, 'DTA', function() {
 	let rv = {};
-	rv.showPreferences = function(pane, command) this.Mediator.showPreferences(window, pane, command);
 	module("resource://dta/api.jsm", rv);
-	rv.Mediator.open = function DTA_Mediator_open(url, ref) {
-		this.openUrl(window, url, ref);
-	}
 	if ('freeze' in Object) {
 		Object.freeze(rv);
 	}
@@ -135,7 +131,9 @@ function load(window) {
 	}
 
 	function download(turbo) {
-		ddDirectory.save();
+		if (turbo) {
+			ddDirectory.save();
+		}
 		DTA.saveSingleLink(window, turbo, url, referrer, "");
 		let de = document.documentElement;
 		try {
