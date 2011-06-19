@@ -49,9 +49,7 @@ module("resource://gre/modules/XPCOMUtils.jsm");
 XPCOMUtils.defineLazyGetter(this, 'DTA', function() {
 	let rv = {};
 	module("resource://dta/api.jsm", rv);
-	if ('freeze' in Object) {
-		Object.freeze(rv);
-	}
+	Object.freeze(rv);
 	return rv;
 });
 

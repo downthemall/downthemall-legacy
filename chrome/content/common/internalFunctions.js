@@ -72,14 +72,6 @@ const Preferences = DTA.Preferences;
 
 module("resource://dta/support/icons.jsm");
 
-// Compat
-if (!('freeze' in Object)) {
-	Object.freeze = function() {};
-}
-if (!('seal' in Object)) {
-	Object.seal = function() {};
-}
-
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!
  *

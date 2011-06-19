@@ -56,9 +56,7 @@ const ScriptableInputStream = ctor('@mozilla.org/scriptableinputstream;1', 'nsIS
 XPCOMUtils.defineLazyGetter(this, 'DTA', function() {
 	let rv = {};
 	module("resource://dta/api.jsm", rv);
-	if ('freeze' in Object) {
-		Object.freeze(rv);
-	}
+	Object.freeze(rv);
 	return rv;
 });
 XPCOMUtils.defineLazyGetter(this, 'Version', function() {
@@ -69,35 +67,27 @@ XPCOMUtils.defineLazyGetter(this, 'Version', function() {
 XPCOMUtils.defineLazyGetter(this, 'Preferences', function() {
 	let rv = {};
 	module('resource://dta/preferences.jsm', rv);
-	if ('freeze' in Object) {
-		Object.freeze(rv);
-	}
+	Object.freeze(rv);
 	return rv;
 });
 this.__defineGetter__('recognizeTextLinks', function() Preferences.getExt("textlinks", true));
 XPCOMUtils.defineLazyGetter(this, 'TextLinks', function() {
 	let rv = {};
 	module('resource://dta/support/textlinks.jsm', rv);
-	if ('freeze' in Object) {
-		Object.freeze(rv);
-	}
+	Object.freeze(rv);
 	return rv;
 });
 XPCOMUtils.defineLazyGetter(this, 'ContentHandling', function() {
 	let rv = {};
 	module('resource://dta/support/contenthandling.jsm', rv);
 	rv = rv.ContentHandling;
-	if ('freeze' in Object) {
-		Object.freeze(rv);
-	}
+	Object.freeze(rv);
 	return rv;
 });
 XPCOMUtils.defineLazyGetter(this, 'CoThreads', function() {
 	let rv = {};
 	module('resource://dta/cothread.jsm', rv);
-	if ('freeze' in Object) {
-		Object.freeze(rv);
-	}
+	Object.freeze(rv);
 	return rv;
 });
 XPCOMUtils.defineLazyServiceGetter(this, 'TextToSubURI', '@mozilla.org/intl/texttosuburi;1', 'nsITextToSubURI');
