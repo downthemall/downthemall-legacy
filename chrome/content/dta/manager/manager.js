@@ -2827,7 +2827,7 @@ Chunk.prototype = {
 			this._reqPending -= got;
 			this.parent.timeLastProgress = Utils.getTimestamp();
 
-			defer_runnable(this);
+			defer(this);
 			return;
 		}
 
