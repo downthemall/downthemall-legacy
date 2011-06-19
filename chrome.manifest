@@ -8,6 +8,7 @@ skin	dta	classic/1.0 chrome/skin/
 locale	dta	en-US	chrome/locale/en-US/
 content dta-public	chrome/public/ contentaccessible
 skin	dta-public	classic/1.0 chrome/public/
+content dta-tests tests/
 
 ## platform package ##
 content dta-platform	chrome/content/ platform
