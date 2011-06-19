@@ -36,7 +36,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = ["defer", "defer_runnable"];
+const EXPORTED_SYMBOLS = ["defer"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -48,19 +48,9 @@ module("resource://gre/modules/XPCOMUtils.jsm");
 const ThreadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
 const MainThread = ThreadManager.mainThread;
 
-function DeferredEvent(fn, ctx) {
-	this.fn = fn;
-	this.ctx = ctx || null;
-}
-DeferredEvent.prototype = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable]),
-	run: function() this.fn.call(this.ctx)
-};
-
 function defer(fn, ctx) {
-	defer_runnable(new DeferredEvent(fn, ctx));
-}
-
-function defer_runnable(obj) {
-	MainThread.dispatch(obj, 0);
+	if (ctx) {
+		fn = fn.bind(ctx);
+	}
+	MainThread.dispatch(fn, 0);
 }
