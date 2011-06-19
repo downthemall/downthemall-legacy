@@ -186,7 +186,12 @@ CoThread.prototype = {
  */
 function CoThreadInterleaved(generator, yieldEvery, thisCtx) {
 		this.init(function() true, yieldEvery, thisCtx);
-		this._generator = generator;
+		if (typeof generator == "function") {
+			this._generator = generator();
+		}
+		else {
+			this._generator = generator;
+		}
 }
 CoThreadInterleaved.prototype = {
 	__proto__: CoThreadBase.prototype,
