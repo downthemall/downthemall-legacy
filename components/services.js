@@ -42,6 +42,7 @@ const Exception = Components.Exception;
 const module = Components.utils.import;
 const error = Components.utils.reportError;
 
+module("resource://gre/modules/Services.jsm");
 module("resource://gre/modules/XPCOMUtils.jsm");
 
 const ABOUT_URI = 'https://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_ID%&version=%APP_VERSION%&os=%OS%';
@@ -55,16 +56,6 @@ this.__defineGetter__(
 		return (this.Preferences = prefs);
 	}
 );
-
-this.__defineGetter__(
-	'Observers',
-	function() {
-		let obs = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
-		delete this.Observers;
-		return (this.Observers = obs);
-	}
-);
-
 
 function log(str, ex) {
 	try {
@@ -93,15 +84,15 @@ Stuff.prototype = {
 	observe: function(aSubject, aTopic, aData) {
 		switch (aTopic) {
 		case 'profile-after-change':
-			Observers.addObserver(this, 'final-ui-startup', false);
-			Observers.addObserver(this, 'profile-change-teardown', false);
+			Services.obs.addObserver(this, 'final-ui-startup', false);
+			Services.obs.addObserver(this, 'profile-change-teardown', false);
 			break;
 		case 'final-ui-startup':
-			Observers.removeObserver(this, 'final-ui-startup');
+			Services.obs.removeObserver(this, 'final-ui-startup');
 			this.bootstrap();
 			break;
 		case 'profile-change-teardown':
-			Observers.removeObserver(this, 'profile-change-teardown');
+			Services.obs.removeObserver(this, 'profile-change-teardown');
 			this.onShutdown();
 			break;
 		case 'clean':
@@ -140,7 +131,7 @@ Stuff.prototype = {
 				Preferences.setExt('version', v.BASE_VERSION);
 
 				v.showAbout = true;
-				Observers.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
+				Services.obs.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
 
 				// Need to extract icons
 				let _ic = {};
@@ -192,8 +183,7 @@ Stuff.prototype = {
 
 		// Cleaning files
 		try {
-			let prof = Cc["@mozilla.org/file/directory_service;1"]
-				.getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
+			let prof = Services.dirsvc.get("ProfD", Ci.nsIFile);
 			for each (let e in ['dta_history.xml']) {
 				try {
 					var file = prof.clone();
@@ -254,9 +244,6 @@ AboutModule.prototype = {
 
 	newChannel : function(aURI) {
 		try {
-				let io = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
-				let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
-
 				module('resource://dta/version.jsm');
 				if (!Version.ready) {
 					throw new Exception("Cannot build about:downthemall, version.jsm not ready");
@@ -267,9 +254,11 @@ AboutModule.prototype = {
 					function (m, m1) (m1 in Version) ? Version[m1] : m
 				);
 
-				let uri = io.newURI(ru, null, null);
-				let chan = io.newChannelFromURI(uri);
+				let uri = Services.io.newURI(ru, null, null);
+				let chan = Services.io.newChannelFromURI(uri);
 				chan.originalURI = aURI;
+
+				let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
 				chan.owner = sec.getCodebasePrincipal(uri);
 
 				return chan;
