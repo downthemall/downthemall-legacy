@@ -44,17 +44,17 @@ const module = Components.utils.import;
 const Exception = Components.Exception;
 
 // Link matcher
-const regLinks = /\b(?:(?:h(?:x+|tt)?ps?|ftp):\/\/|www\d?\.)[\d\w.-]+\.\w+\.?(?:\/[\d\w+&@#\/%?=~_|!:,.;\(\)-]*)?/ig;
+const regLinks = /\b(?:(?:h(?:x+|tt)?ps?|f(?:x+|t)p):\/\/|www\d?\.)[\d\w.-]+\.\w+\.?(?:\/[\d\w+&@#\/%?=~_|!:,.;\(\)-]*)?/ig;
 // Match more exactly or more than 3 dots. Links are then assumed "cropped" and will be ignored.
 const regShortened = /\.{3,}/;
 // http cleanup
 const regHttp = /^h(?:x+|tt)?p(s?)/i;
 // ftp cleanup
-const regFtp = /^f(?:x|t)p/i;
+const regFtp = /^f(?:x+|t)p/i;
 // www (sans protocol) match
 const regWWW = /^www/i;
 // Right-trim (sanitize) link
-const regDTrim = /[<>._#-]+$/;
+const regDTrim = /[<>._-]+$|#.*?$/g;
 
 function mapper(e) {
 	try {
@@ -62,7 +62,13 @@ function mapper(e) {
 			return null;
 		}
 		if (regWWW.test(e)) {
-			e = "http://" + e;
+			if (e.indexOf("/") < 0) {
+				e = "http://" + e + "/";
+			}
+			else {
+				e = "http://" + e;
+			}
+
 		}
 		return e.replace(regHttp, "http$1")
 			.replace(regFtp, "ftp")
@@ -82,6 +88,9 @@ function mapper(e) {
  */
 function getTextLinks(text, fakeLinks) {
 	let rv = text.match(regLinks);
+	if (!rv) {
+		return [];
+	}
 	let i, k, e;
 	for (i = 0, k = 0, e = rv.length; i < e; i++) {
 		let a = mapper(rv[i]);
