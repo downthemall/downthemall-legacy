@@ -79,9 +79,7 @@ const LIMIT_PROTO = {
 	s: -1,
 	seg: 0
 };
-if ('freeze' in Object) {
-	Object.freeze(LIMIT_PROTO);
-}
+Object.freeze(LIMIT_PROTO);
 
 function Limit(host, isNew) {
 	this._host = host;
