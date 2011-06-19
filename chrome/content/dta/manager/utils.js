@@ -346,6 +346,7 @@ const Tooltip = {
 			'timeRemaining',
 			'timeElapsed'
 		).forEach(function(e) this[e.id] = e, this);
+		this.boundInitUpdate = this.initUpdate.bind(this);
 	},
 	start: function(d) {
 		this._current = d;
@@ -377,13 +378,13 @@ const Tooltip = {
 				mr = true;
 			}
 			catch (ex) {
-				defer(this.initUpdate, this);
+				defer(this.boundInitUpdate);
 				return;
 			}
 		}
 		if (mr) {
 			this._mustDraw = true;
-			defer(this.initUpdate, this);
+			defer(this.boundInitUpdate);
 		}
 		this.update();
 		this._mustDraw = false;
