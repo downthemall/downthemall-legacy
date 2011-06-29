@@ -41,6 +41,10 @@ const LINK_FILTER = (1<<0);
 const IMAGE_FILTER = (1<<1);
 const TOPIC_FILTERSCHANGED = 'DTA:filterschanged';
 
+const RE_ESCAPE = /[{}()\[\]\\^$.?]/g;
+const RE_WILD = /\*/g;
+const RE_WILD2 = /\./g;
+
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -169,7 +173,7 @@ Filter.prototype = {
 	},
 	_makeRegs: function FM__makeRegs(str) {
 
-		str = str.replace(/^\s+|\s+$/g, '');
+		str = str.trim();
 
 		// first of all: check if we are are a regexp.
 		if (str.length > 2 && str[0] == '/') {
@@ -200,9 +204,9 @@ Filter.prototype = {
 
 		// we are simple text
 		str = str
-			.replace(/([/{}()\[\]\\^$.])/g, "\\$1")
-			.replace(/\*/g, ".*")
-			.replace(/\?/g, '.');
+			.replace(REG_ESCAPE, "\\$&")
+			.replace(REG_WILD, ".*")
+			.replace(REG_WILD2, '.');
 		if (str.length) {
 			this._regs.push(new RegExp(str, 'i'));
 		}
