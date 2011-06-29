@@ -95,6 +95,7 @@ UrlManager.prototype = {
 				.normalizeSlashes()
 				.removeFinalSlash();
 		}
+		this._host = this.usableURL.host;
 		this._domain = Limits.getEffectiveHost(this._url);
 		this._makeGood();
 	},
