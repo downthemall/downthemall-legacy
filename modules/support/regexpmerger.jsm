@@ -226,7 +226,7 @@ function mergePatterns(patterns, low, high, prefix) {
  */
 function merge(patterns) {
 	patterns = patterns.slice(0).sort();
-	if (patterns.length == 0) {
+	if (patterns.length < 2) {
 		return patterns[0];
 	}
 
