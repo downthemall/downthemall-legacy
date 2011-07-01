@@ -91,18 +91,25 @@ function prealloc(file, size, perms, callback, sparseOk) {
 }
 
 function test() {
-  let file = Cc["@mozilla.org/file/directory_service;1"]
-    .getService(Ci.nsIProperties)
-    .get("TmpD", Ci.nsIFile);
-  file.append("dta_prealloc_test.tmp");
-  prealloc(file, (1<<28), 416, function(result){
-    Cu.reportError("Allocating " + (result ? "succeeded!" : "FAILED!"));
-    if (result) {
-      Cu.reportError("file size: " + file.fileSize + " expected: " + (1<<28) + " diff: " + (file.fileSize - (1<<28)));
-    }
-    try {
-      //file.remove(false);
-    }
-    catch (ex) {}
-  });
+	function callback(file, result){
+		Cu.reportError("Allocating " + (result ? "succeeded!" : "FAILED!"));
+		if (result) {
+			Cu.reportError("file size: " + file.fileSize + " expected: " + (1<<28) + " diff: " + (file.fileSize - (1<<28)));
+	    }
+	    try {
+	    	file.remove(false);
+	    }
+	    catch (ex) {}
+	}
+
+	let file = Cc["@mozilla.org/file/directory_service;1"]
+		.getService(Ci.nsIProperties)
+		.get("TmpD", Ci.nsIFile);
+	let file2 = file.clone();
+
+	file.append("dta_prealloc_test.tmp");
+	file2.append("dta_prealloc_test_sparse.tmp");
+
+	prealloc(file, (1<<28), 416, callback.bind(null, file));
+	prealloc(file2, (1<<28), 416, callback.bind(null, file2), true);
 }
