@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll preallocation ChromeWorker Worker_Win32 module.
+ * The Original Code is DownThemAll preallocation ChromeWorker Worker_linux module.
  *
  * The Initial Developer of the Original Code is Nils Maier
  * Portions created by the Initial Developer are Copyright (C) 2011
