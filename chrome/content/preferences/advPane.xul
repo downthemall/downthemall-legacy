@@ -24,6 +24,7 @@
 			<preference id="dtasettime" name="extensions.dta.settime" type="bool" />
 			<preference id="dtarememberoneclick" name="extensions.dta.rememberoneclick" type="bool" />
 			<preference id="dtaconfirmremove" name="extensions.dta.confirmremove" type="bool" />
+			<preference id="dtasparsefiles" name="extensions.dta.sparsefiles" type="bool" />
 		</preferences>
 
 		<tabbox>
@@ -102,6 +103,10 @@
 					</grid>
 				</tabpanel>
 				<tabpanel orient="vertical">
+					<groupbox tooltiptext="&advancedpane.sparsefiles.tooltip;">
+						<caption label="&advancedpane.sparsefiles.caption;"/>
+						<checkbox label="&advancedpane.sparsefiles.label;" preference="dtasparsefiles"/>
+					</groupbox>
 					<vbox pack="start">
 						<groupbox id="advTempFiles">
 							<caption label="&advancedpane.tempfiles.caption;" />
