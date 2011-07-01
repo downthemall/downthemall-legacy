@@ -78,6 +78,7 @@ function Job(file, size, perms, callback, sparseOk) {
 
 	this.worker = WorkerFactory.newChromeWorker(worker_impl);
 	this.worker.onmessage = this.onmessage.bind(this);
+	this.worker.onerror = this.onerror.bind(this);
 
 	this.alloc();
 }
