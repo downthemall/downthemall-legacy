@@ -158,7 +158,7 @@ function prealloc_impl(file, size, perms, sparseOk) {
 					// Calculate next seek
 					let seek = Math.min(remainder, (1<<22));
 					lseek(fd, ctypes.Int64(seek), 0x1);
-					if (write(fd, "\0", 1) != 1) {
+					if (write(fd, "a", 1) != 1) {
 						throw new Error("Failed to write byte");
 					}
 				}
