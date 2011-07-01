@@ -2325,7 +2325,13 @@ QueueItem.prototype = {
 			if (!file.parent.exists()) {
 				file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
 			}
-			let pa = Preallocator.prealloc(file, this.totalSize, Prefs.permissions, this._donePrealloc, this);
+			let pa = Preallocator.prealloc(
+				file,
+				this.totalSize,
+				Prefs.permissions,
+				this._donePrealloc.bind(this),
+				Prefs.sparseFiles
+				);
 			if (pa) {
 				this.preallocating = true;
 				this._preallocator = pa;

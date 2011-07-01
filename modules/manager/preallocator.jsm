@@ -78,9 +78,8 @@ const SIZE_MIN = (Version.OS == 'winnt' ? 256 : 2048) * 1024;
  * @param tp (function) Scope (this) to call the callback function in
  * @return (nsICancelable) Pre-allocation object.
  */
-function prealloc(file, size, perms, callback, tp, sparseOk) {
-	tp = tp || null;
-	callback = (callback || function(){}).bind(tp);
+function prealloc(file, size, perms, callback, sparseOk) {
+	callback = callback || function() {};
 	if (size <= SIZE_MIN || !isFinite(size)) {
 		if (Logger.enabled) {
 			Logger.log("pa: not preallocating");

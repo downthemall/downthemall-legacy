@@ -111,6 +111,9 @@
 <!ENTITY advancedpane.scheduler.fair "Fair+Slow - Evenly distributed">
 <!ENTITY advancedpane.scheduler.legacy "Legacy - no limits">
 <!ENTITY advancedpane.exposeinua.label "Expose DownThemAll! in the User-Agent">
+<!ENTITY advancedpane.sparsefiles.caption "Sparse-files">
+<!ENTITY advancedpane.sparsefiles.label "Use sparse files when supported">
+<!ENTITY advancedpane.sparsefiles.tooltip "Sparse files are files that are not immediately reserved on the harddisk. Sparse files might cause faster pre-allocation, but also less write performance and/or more file fragmentation!">
 
 <!ENTITY uipane.label "Interface">
 <!ENTITY uipane.namesonly.label "Show only file names in Manager window">
