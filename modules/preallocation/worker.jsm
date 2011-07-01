@@ -50,17 +50,17 @@ module("resource://dta/utils.jsm");
 var worker_impl = null;
 try {
 	// Window implementation
-	ctypes.open("kernel32.dll");
+	ctypes.open("kernel32.dll").close();
 	worker_impl = "worker_win32.js";
 }
 catch (ex) {
 	try {
-		ctypes.open("libc.so.6");
+		ctypes.open("libc.so.6").close();
 		worker_impl = "worker_linux.js";
 	}
 	catch (ex) {
 		try {
-			ctypes.open("libc.so");
+			ctypes.open("libc.so").close();
 			worker_impl = "worker_linux.js";
 		}
 		catch (ex) {
