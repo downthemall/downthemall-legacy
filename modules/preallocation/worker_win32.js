@@ -101,13 +101,13 @@ function prealloc_impl(file, size, sparseOk) {
 		let hFile = CreateFile(
 			file,
 			0x40000000, // GENERIC_WRITE
-			0x1, // FILE_SHARE_READ,
+			0x1 | 0x2, // FILE_SHARE_READ | FILE_SHARE_WRITE
 			null,
 			0x4, // OPEN_ALWAYS
 			0x80 | 0x08000000, // FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN
 			null
 			);
-		if (!hFile && hFile == -1) {
+		if (!hFile || hFile == -1) {
 			throw new Error("Failed to open file");
 		}
 		try {
