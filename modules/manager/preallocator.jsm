@@ -37,7 +37,7 @@
 "use strict";
 
 const EXPORTED_SYMBOLS = [
-	'prealloc'
+	'prealloc', 'test'
 ];
 
 const Cc = Components.classes;
@@ -47,29 +47,25 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-const FileOutputStream = Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const File = Components.Constructor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
-
 module('resource://dta/utils.jsm');
 module('resource://dta/version.jsm');
-module('resource://dta/cothread.jsm');
 
-if (Logger.enabled) {
-	Logger.log("Using CoThread implementation");
+try {
+	module("resource://dta/preallocation/worker.jsm");
+	if (Logger.enabled) {
+		Logger.log("Using ChromeWorker implementation");
+	}
 }
-
-// Should we use the optimized Windows implementation?
-const WINDOWSIMPL = Version.OS == 'winnt';
-// Size cap: Use Windows implementation (on Windows) even if run on main thread
-const WINDOWSIMPL_SIZEMAX = (1 << 25); // 32MB
+catch (ex) {
+	module("resource://dta/preallocation/cothread.jsm");
+	if (Logger.enabled) {
+		Logger.log("Using CoThread implementation");
+	}
+}
 
 //Minimum size of a preallocation.
 //If requested size is less then no actual pre-allocation will be performed.
-const SIZE_MIN = (WINDOWSIMPL ? 30 : 2048) * 1024;
-
-//Step size of the allocation
-//Do this step wise to avoid certain "sparse files" cases
-const SIZE_STEP = (1 << 23); // 8MB
+const SIZE_MIN = (Version.OS == 'winnt' ? 256 : 2048) * 1024;
 
 /**
  * Pre-allocates a given file on disk
@@ -82,7 +78,7 @@ const SIZE_STEP = (1 << 23); // 8MB
  * @param tp (function) Scope (this) to call the callback function in
  * @return (nsICancelable) Pre-allocation object.
  */
-function prealloc(file, size, perms, callback, tp) {
+function prealloc(file, size, perms, callback, tp, sparseOk) {
 	tp = tp || null;
 	callback = (callback || function(){}).bind(tp);
 	if (size <= SIZE_MIN || !isFinite(size)) {
@@ -92,90 +88,22 @@ function prealloc(file, size, perms, callback, tp) {
 		callback(false);
 		return null;
 	}
-	return new WorkerJob(file, size, perms, callback);
+	return prealloc_impl(file, size, perms, callback, sparseOk);
 }
 
-function WorkerJob(file, size, perms, callback) {
-	this.file = file;
-	this.size = size;
-	this.perms = perms;
-	this.callback = callback;
-	try {
-		this._stream = new FileOutputStream(this.file, 0x02 | 0x08, this.perms, 0);
-	}
-	catch (ex) {
-		this.callback(false);
-		return;
-	}
-
-	let g = this.run.bind(this);
-	this.coThread = new CoThreadInterleaved((i for (i in g())), 1);
-	this.coThread.start(this.finish.bind(this));
+function test() {
+  let file = Cc["@mozilla.org/file/directory_service;1"]
+    .getService(Ci.nsIProperties)
+    .get("TmpD", Ci.nsIFile);
+  file.append("dta_prealloc_test.tmp");
+  prealloc(file, (1<<28), 416, function(result){
+    Cu.reportError("Allocating " + (result ? "succeeded!" : "FAILED!"));
+    if (result) {
+      Cu.reportError("file size: " + file.fileSize + " expected: " + (1<<28) + " diff: " + (file.fileSize - (1<<28)));
+    }
+    try {
+      //file.remove(false);
+    }
+    catch (ex) {}
+  });
 }
-
-WorkerJob.prototype = {
-	result: false,
-	run: function worker_run() {
-		if (WINDOWSIMPL && this.size < WINDOWSIMPL_SIZEMAX) {
-			for (let i in this._run_windows()) yield i;
-		}
-		else {
-			for (let i in this._run_other()) yield i;
-		}
-	},
-	finish: function() {
-		this._close();
-		delete this.coThread;
-		this.callback(this.result);
-	},
-	_run_windows: function worker_run_windows() {
-		let size = this.size;
-		try {
-			let seekable = this._stream.QueryInterface(Ci.nsISeekableStream);
-			seekable.seek(0x02, 0);
-			size -= seekable.tell();
-			while (!this.terminated && size > 0) {
-				let count = Math.min(size, 1 << 26 /* 64MB */);
-				size -= count;
-				seekable.seek(0x01, count);
-				seekable.setEOF();
-				yield true;
-			}
-			this.result = true;
-		}
-		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("pa: Windows implementation failed!", ex);
-			}
-			for (let i in this._run_other()) yield i;
-		}
-	},
-	_run_other: function worker_run_other() {
-		try {
-			let seekable = this._stream.QueryInterface(Ci.nsISeekableStream);
-			let i = seekable.tell();
-			if (i < this.size - 1) {
-				i += SIZE_STEP;
-				for (; !this.terminated && i < this.size + SIZE_STEP; i += SIZE_STEP) {
-					seekable.seek(0x00, Math.min(i, this.size - 1));
-					seekable.write("a", 1);
-					yield true;
-				}
-				this.result = true;
-			}
-		}
-		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("pa: Failed to run prealloc loop", ex);
-			}
-		}
-	},
-	_close: function() {
-		try { this._stream.close(); } catch (ex) { }
-		delete this._stream;
-	},
-	cancel: function() {
-		this.terminated = true;
-		this._close();
-	}
-};
