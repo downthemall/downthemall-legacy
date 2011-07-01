@@ -191,6 +191,7 @@ onmessage = function(event) {
 
 	if (data.action == "cancel") {
 		_canceled = true;
+		libc.close();
 		close();
 		return;
 	}

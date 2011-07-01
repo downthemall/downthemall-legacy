@@ -181,6 +181,7 @@ onmessage = function(event) {
 
 	if (data.action == "cancel") {
 		_canceled = true;
+		kernel32.close();
 		close();
 		return;
 	}
