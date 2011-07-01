@@ -87,6 +87,8 @@ const DeviceIoControl = kernel32.declare(
   ctypes.voidptr_t // LPOVERLAPPED lpOverlapped
 );
 
+const _canceled = false;
+
 function log(ex) {
 	postMessage({
 		action: "log",
@@ -112,7 +114,7 @@ function prealloc_impl(file, size, sparseOk) {
 		}
 		try {
 			if (sparseOk) {
-				log("sparse");
+				log("allocating sparse");
 				let returned = ctypes.unsigned_int(0);
 				DeviceIoControl(
 					hFile,
@@ -125,17 +127,32 @@ function prealloc_impl(file, size, sparseOk) {
 					null
 					);
 			}
-			else {
-				log("not sparse");
+
+			while (!_canceled) {
+				let liSize = new LARGE_INTEGER;
+				let liCurrent = new LARGE_INTEGER;
+
+				// Get end of the file
+				SetFilePointerEx(hFile, liSize, liCurrent.address(), 0x2);
+
+				// See if we still need to preallocate
+				let remainder = size - ctypes.Int64.join(liCurrent.HighPart, liCurrent.LowPart);
+				if (remainder <= 0) {
+					break;
+				}
+
+				// Calculate next seek
+				let seek = Math.min(remainder, (1<<22));
+
+				// Seek
+				let i64Size = ctypes.Int64(seek);
+				liSize.LowPart = ctypes.Int64.lo(i64Size);
+				liSize.HighPart = ctypes.Int64.hi(i64Size);
+				SetFilePointerEx(hFile, liSize, null, 0x1);
+
+				// EOF
+				SetEndOfFile(hFile);
 			}
-
-			let liSize = new LARGE_INTEGER;
-			let i64Size = ctypes.Int64(size);
-			liSize.LowPart = ctypes.Int64.lo(i64Size);
-			liSize.HighPart = ctypes.Int64.hi(i64Size);
-			SetFilePointerEx(hFile, liSize, null, 0);
-
-			SetEndOfFile(hFile);
 
 			// all good
 			rv = true;
@@ -163,6 +180,7 @@ onmessage = function(event) {
 	}
 
 	if (data.action == "cancel") {
+		_canceled = true;
 		close();
 		return;
 	}
