@@ -50,18 +50,28 @@ module("resource://dta/utils.jsm");
 var worker_impl = null;
 try {
 	// Window implementation
-
-	const kernel32 = ctypes.open("kernel32.dll");
+	ctypes.open("kernel32.dll");
 	worker_impl = "worker_win32.js";
 }
 catch (ex) {
-	// other implementations?
+	try {
+		ctypes.open("libc.so.6");
+		worker_impl = "worker_linux.js";
+	}
+	catch (ex) {
+		try {
+			ctypes.open("libc.so");
+			worker_impl = "worker_linux.js";
+		}
+		catch (ex) {
+			// other implementations?
+		}
+	}
 }
 
 if (!worker_impl) {
 	throw new Error("not supported");
 }
-
 const _jobs = {};
 
 const WorkerFactory = Cc["@mozilla.org/threads/workerfactory;1"]
