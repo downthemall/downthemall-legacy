@@ -57,9 +57,22 @@ try {
 	}
 }
 catch (ex) {
-	module("resource://dta/preallocation/cothread.jsm");
-	if (Logger.enabled) {
-		Logger.log("Using CoThread implementation");
+	let _c = {};
+	module("resource://dta/preallocation/cothread.jsm", _c);
+	let cothread_impl = _c.prealloc_impl;
+	try {
+		let _a = {};
+		module("resource://dta/preallocation/asynccopier.jsm", _a);
+		let asynccopier_impl = _a.prealloc_impl;
+		this.prealloc_impl = function(file, size, perms, callback, sparseOk) {
+			if (size < (1<<24)) {
+				return cothread_impl(file, size, perms, callback, sparseOk);
+			}
+			return asynccopier_impl(file, size, perms, callback, sparseOk);
+		}
+	}
+	catch (ex) {
+		this.prealloc_impl = cothread_impl;
 	}
 }
 
