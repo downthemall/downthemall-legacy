@@ -47,7 +47,7 @@ module("preallocator.jsm");
 
 	asyncTest("cothread", function() {
 		var impl = importModule("resource://dta/preallocation/cothread.jsm").prealloc_impl;
-		_do_test("cothread", impl, (1<<28));
+		_do_test("cothread", impl, (1<<24));
 	});
 
 })();
