@@ -1,7 +1,11 @@
 module("pbm.js");
 
 test("exports", function() {
-	deepEqual(Object.keys(importModule("resource://dta/support/pbm.jsm")), ["browsingPrivately", "registerCallbacks", "unregisterCallbacks"], "Correct exports");
+	checkExports("resource://dta/support/pbm.jsm", [
+		"browsingPrivately",
+		"registerCallbacks",
+		"unregisterCallbacks"
+		]);
 });
 
 test("correct", function() {

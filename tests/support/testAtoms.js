@@ -1,7 +1,18 @@
 module("atoms.jsm");
 
 test("exports", function() {
-	deepEqual(Object.keys(importModule("resource://dta/support/atoms.jsm")), ["Atoms", "iconicAtom", "completedAtom", "inprogressAtom", "pausedAtom", "canceledAtom", "pausedUndeterminedAtom", "pausedAutoretryingAtom", "verifiedAtom", "progressAtom"], "Correct exports");
+	checkExports("resource://dta/support/atoms.jsm", [
+		"Atoms",
+		"iconicAtom",
+		"completedAtom",
+		"inprogressAtom",
+		"pausedAtom",
+		"canceledAtom",
+		"pausedUndeterminedAtom",
+		"pausedAutoretryingAtom",
+		"verifiedAtom",
+		"progressAtom"
+		]);
 });
 
 test("getAtoms", function() {
