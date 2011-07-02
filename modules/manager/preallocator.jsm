@@ -37,7 +37,7 @@
 "use strict";
 
 const EXPORTED_SYMBOLS = [
-	'prealloc', 'test'
+	'prealloc'
 ];
 
 const Cc = Components.classes;
@@ -88,28 +88,4 @@ function prealloc(file, size, perms, callback, sparseOk) {
 		return null;
 	}
 	return prealloc_impl(file, size, perms, callback, sparseOk);
-}
-
-function test() {
-	function callback(file, result){
-		Cu.reportError("Allocating " + (result ? "succeeded!" : "FAILED!"));
-		if (result) {
-			Cu.reportError("file size: " + file.fileSize + " expected: " + (1<<28) + " diff: " + (file.fileSize - (1<<28)));
-	    }
-	    try {
-	    	file.remove(false);
-	    }
-	    catch (ex) {}
-	}
-
-	let file = Cc["@mozilla.org/file/directory_service;1"]
-		.getService(Ci.nsIProperties)
-		.get("TmpD", Ci.nsIFile);
-	let file2 = file.clone();
-
-	file.append("dta_prealloc_test.tmp");
-	file2.append("dta_prealloc_test_sparse.tmp");
-
-	prealloc(file, (1<<28), 416, callback.bind(null, file));
-	prealloc(file2, (1<<28), 416, callback.bind(null, file2), true);
 }
