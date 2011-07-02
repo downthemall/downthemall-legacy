@@ -41,11 +41,13 @@ const Construct = Components.Constructor;
 function Serv(c, i) { // leave in; anticontainer and others compat
 	return Cc[c].getService(i ? Ci[i] : null);
 }
+const AsyncStreamCopier = Construct("@mozilla.org/network/async-stream-copier;1","nsIAsyncStreamCopier", "init");
 const BufferedOutputStream = Construct('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
-const FileInputStream = Construct('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
 const FileOutputStream = Construct('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const StringInputStream = Construct('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
 const Process = Construct('@mozilla.org/process/util;1', 'nsIProcess', 'init');
+const StorageStream = Construct("@mozilla.org/storagestream;1", "nsIStorageStream", "init");
+const ScriptableInputStream = Construct("@mozilla.org/scriptableinputstream;1", "nsIScriptableInputStream", "init");
+const SupportsUint32 = Construct("@mozilla.org/supports-PRUint32;1", "nsISupportsPRUint32");
 
 ServiceGetter(this, "MimeService", "@mozilla.org/uriloader/external-helper-app-service;1", "nsIMIMEService");
 ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIObserverService");
@@ -2096,6 +2098,9 @@ QueueItem.prototype = {
 		this.complete();
 	},
 	finishDownload: function QI_finishDownload(exception) {
+		if (!this.chunksReady(this.finishDownload.bind(this, exception))) {
+			return;
+		}
 		if (Logger.enabled) {
 			Logger.log("finishDownload, connections: " + this.sessionConnections);
 		}
@@ -2250,11 +2255,34 @@ QueueItem.prototype = {
 		}
 	},
 
+	_openChunks: 0,
+	chunkOpened: function() {
+		this._openChunks++;
+		Logger.log("chunkOpened: " + this._openChunks);
+	},
+	chunkClosed: function() {
+		this._openChunks--;
+		Logger.log("chunkClosed: " + this._openChunks);
+		if (!this._openChunks && this._chunksReady_next) {
+			if (Logger.enabled) {
+				Logger.log("Running chunksReady_next");
+			}
+			let fn = this._chunksReady_next;
+			delete this._chunksReady_next;
+			fn();
+		}
+	},
+	chunksReady: function(nextEvent) {
+		if (!this._openChunks) {
+			return true;
+		}
+		this._chunksReady_next = nextEvent;
+		Logger.log("chunksReady: reschedule");
+		return false;
+	},
+
 	cancel: function QI_cancel(message) {
 		try {
-			if (this.is(CANCELED)) {
-				return;
-			}
 			if (this.is(COMPLETE)) {
 				Dialog.completed--;
 			}
@@ -2262,6 +2290,9 @@ QueueItem.prototype = {
 				this.pause();
 			}
 			this.state = CANCELED;
+			if (!this.chunksReady(this.cancel.bind(this, message))) {
+				return;
+			}
 			if (Logger.enabled) {
 				Logger.log(this.fileName + ": canceled");
 			}
@@ -2636,7 +2667,6 @@ setNewGetter(QueueItem.prototype, 'AuthPrompts', function() {
 function Chunk(download, start, end, written) {
 	// saveguard against null or strings and such
 	this._written = written > 0 ? written : 0;
-	this._buffered = 0;
 	this._start = start;
 	this._end = end;
 	this.end = end;
@@ -2645,7 +2675,35 @@ function Chunk(download, start, end, written) {
 }
 
 Chunk.prototype = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable]),
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable, Ci.nsIRequestObserver]),
+	thread: (function() {
+		// Use a dedicated thread, so that we have serialized writes.
+		// As we use a single sink for various reasons, we need to ensure the
+		// shipped bytes arrive and are written to in the correct order.
+		// The assumption that writes will be properly serialized is based on the
+		// following assumptions
+		//  1. The thread event queue processes events fifo, always
+		//  2. The async stream copier writes a bufferStream in one event, i.e. it
+		//     does interrupt the copy and reschedule the rest in another event
+		//
+		// Why do we want to use all this cruft?
+		// - To keep the browser snappier by having the slow disk I/O stuff off the
+		//   main thread.
+		// - Having a single thread doing all the writes might reduce/avoid some
+		//   nasty performance issues, such as thrashing due to concurrency.
+		// - We cannot use ChromeWorkers, because we cannot do file I/O there
+		//   unless we reimplement file I/O using ctypes (and that's just not
+		//   reasonable).
+		//
+		// For the amo-validator context:
+		// Editor note: Safe use as an event target for nsIAsyncStreamCopier
+		let thread = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager).newThread(0);
+		if (thread instanceof Ci.nsISupportsPriority) {
+			thread.priority = thread.PRIORITY_LOW;
+			Logger.log("Our async copier thread is low priority now!");
+		}
+		return thread;
+	})(),
 	running: false,
 	get starter() {
 		return this.end <= 0;
@@ -2666,8 +2724,15 @@ Chunk.prototype = {
 	get written() {
 		return this._written;
 	},
+	_buffered: 0,
+	get buffered() {
+		if (!this._bufferStream) {
+			return this._buffered;
+		}
+		return this._buffered + this._bufferStream.length;
+	},
 	get safeBytes() {
-		return this.written - this._buffered;
+		return this.written - this.buffered;
 	},
 	get remainder() {
 		return this._total - this._written;
@@ -2691,16 +2756,11 @@ Chunk.prototype = {
 		this.end = ch.end;
 		this._written += ch._written;
 	},
-	openStream: function(file, at) {
+	openOutStream: function(file, at) {
 		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 		seekable.seek(0x00, at);
-		if (this.remaining > 0) {
-			outStream = new BufferedOutputStream(outStream, Math.min(this.remaining, MIN_CHUNK_SIZE * 2));
-		}
-		else {
-			outStream = new BufferedOutputStream(outStream, MIN_CHUNK_SIZE * 2);
-		}
+		outStream = new BufferedOutputStream(outStream, 0x8000);
 		return outStream;
 	},
 	open: function CH_open() {
@@ -2709,30 +2769,58 @@ Chunk.prototype = {
 		if (!file.parent.exists()) {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
 		}
-		this._outStream = this.openStream(file, this.start + this.written);
+		this._outStream = this.openOutStream(file, this.start + this.written);
 		this.buckets = new ByteBucketTee(
 				this.parent.bucket,
 				Limits.getServerBucket(this.parent),
 				GlobalBucket
 				);
 		this.buckets.register(this);
+		this.parent.chunkOpened(this);
 	},
 	close: function CH_close() {
 		this.running = false;
+		if (this._bufferStream) {
+			this._shipBufferStream();
+		}
+		if (!this._pendingCopies) {
+			this._finish();
+		}
+	},
+	_finish: function CH__finish() {
+		let notifyOwner = false;
 		if (this._outStream) {
 			// Close will flush the buffered data
 			this._outStream.close();
 			delete this._outStream;
-		}
-		this._buffered = 0;
-		if (this.parent.is(CANCELED)) {
-			this.parent.removeTmpFile();
+			notifyOwner = true;
 		}
 		if (this.buckets) {
 			this.buckets.unregister(this);
 		}
 		delete this._req;
 		this._sessionBytes = 0;
+		if (notifyOwner) {
+			this.parent.chunkClosed(this);
+		}
+	},
+	_pendingCopies: 0,
+	onStartRequest: function(aRequest, aContext) {},
+	onStopRequest: function(aRequest, aContext, aStatusCode) {
+		--this._pendingCopies;
+
+		if (!Components.isSuccessCode(aStatusCode)) {
+			this.download.writeFailed();
+			return;
+		}
+		if (aContext instanceof Ci.nsISupportsPRUint32) {
+			this._buffered -= aContext.data;
+		}
+
+		if (this.running || this._pendingCopies) {
+			return;
+		}
+		this._finish();
 	},
 	rollback: function CH_rollback() {
 		if (!this._sessionBytes || this._sessionBytes > this._written) {
@@ -2753,7 +2841,6 @@ Chunk.prototype = {
 	_noteBytesWritten: function(bytes) {
 		this._written += bytes;
 		this._sessionBytes += bytes;
-		this._buffered = Math.min(MIN_CHUNK_SIZE * 2, this._buffered + bytes);
 
 		this.parent.timeLastProgress = Utils.getTimestamp();
 	},
@@ -2789,14 +2876,24 @@ Chunk.prototype = {
 			if (bytes < 0) {
 				throw new Exception("bytes negative");
 			}
+
 			// we're using nsIFileOutputStream
 			// per e10n contract we must consume all bytes
 			// or in our case all remainder bytes
 			// reqPending from above makes sure that we won't re-schedule
 			// the download too early
-			if (this._outStream.writeFrom(aInputStream, bytes) != bytes) {
-				throw ("chunks::write: read/write count mismatch!");
+			if (!this._bufferStream) {
+				this._bufferStream = new StorageStream((1<<12), (1<<30), null);
 			}
+
+			let so = this._bufferStream.getOutputStream(this._bufferStream.length);
+			so.write(new ScriptableInputStream(aInputStream).readBytes(bytes), bytes);
+			so.close();
+
+			if (this._bufferStream.length + bytes > MIN_CHUNK_SIZE) {
+				this._shipBufferStream();
+			}
+
 			this._noteBytesWritten(got);
 			return bytes;
 		}
@@ -2807,6 +2904,33 @@ Chunk.prototype = {
 			throw ex;
 		}
 		return 0;
+	},
+	_shipBufferStream: function() {
+		let bytes = this._bufferStream.length;
+		let copier = new AsyncStreamCopier(
+			this._bufferStream.newInputStream(0),
+			this._outStream,
+			this.thread,
+			false, // source buffered
+			true, // sink buffered
+			bytes,
+			true, // close source
+			false // close sink
+			);
+		delete this._bufferStream;
+
+		let context = new SupportsUint32();
+		context.data = bytes;
+		try {
+			this._pendingCopies++;
+			this._buffered += bytes;
+			copier.asyncCopy(this, context);
+		}
+		catch (ex) {
+			this._buffered -= bytes;
+			this._pendingCopies--;
+			throw ex;
+		}
 	},
 	_wnd: 2048,
 	observe: function() {
@@ -2861,6 +2985,12 @@ Chunk.prototype = {
 			+ Utils.formatNumber(this._sessionBytes, len);
 	}
 }
+addEventListener("unload", function() {
+	try {
+		Chunk.prototype.thread.shutdown();
+	}
+	catch (ex) {}
+}, false);
 
 function startDownloads(start, downloads) {
 

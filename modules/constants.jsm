@@ -30,7 +30,7 @@ const QUEUED =    1<<6;
 const SPEED_COUNT = 100;
 
 // Minimal size a chunk may take
-const MIN_CHUNK_SIZE = 1<<19; // 512K
+const MIN_CHUNK_SIZE = 1<<18; // 256K
 
 // Refresh frequency
 const REFRESH_FREQ = 1000;
