@@ -1,7 +1,7 @@
 module("cothread.jsm");
 
 test("exports", function() {
-	deepEqual(Object.keys(importModule("resource://dta/cothread.jsm")), ['CoThread', 'CoThreadInterleaved', 'CoThreadListWalker'], "Correct exports");
+	checkExports("resource://dta/cothread.jsm", ['CoThread', 'CoThreadInterleaved', 'CoThreadListWalker']);
 });
 
 asyncTest("CoThread1", function() {

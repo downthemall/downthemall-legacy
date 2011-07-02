@@ -1,7 +1,7 @@
 module("textlinks.jsm");
 
 test("exports", function() {
-	deepEqual(Object.keys(importModule("resource://dta/support/textlinks.jsm")), ["getTextLinks", "FakeLink"], "Correct exports");
+	checkExports("resource://dta/support/textlinks.jsm", ["getTextLinks", "FakeLink"]);
 });
 
 test("regular", function() {

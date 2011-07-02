@@ -2,29 +2,25 @@ module("preferences.jsm");
 
 test("exports", function() {
 	var p = importModule("resource://dta/preferences.jsm");
-	deepEqual(
-		Object.keys(importModule("resource://dta/preferences.jsm")),
-		[
-			'get',
-			'getExt',
-			'getBranch',
-			'set',
-			'setExt',
-			'hasUserValue',
-			'hasUserValueExt',
-			'getChildren',
-			'getChildrenExt',
-			'reset',
-			'resetExt',
-			'resetBranch',
-			'resetBranchExt',
-			'resetAllExt',
-			'addObserver',
-			'removeObserver',
-			'makeObserver'
-		],
-		"Correct exports"
-	);
+	checkExports("resource://dta/preferences.jsm", [
+		'get',
+		'getExt',
+		'getBranch',
+		'set',
+		'setExt',
+		'hasUserValue',
+		'hasUserValueExt',
+		'getChildren',
+		'getChildrenExt',
+		'reset',
+		'resetExt',
+		'resetBranch',
+		'resetBranchExt',
+		'resetAllExt',
+		'addObserver',
+		'removeObserver',
+		'makeObserver'
+		]);
 });
 
 test("read", function() {

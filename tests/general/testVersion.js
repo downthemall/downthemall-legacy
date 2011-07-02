@@ -1,7 +1,7 @@
 module("version.jsm");
 
 test("exports", function() {
-	deepEqual(Object.keys(importModule("resource://dta/version.jsm")), ["Version"], "Correct exports");
+	checkExports("resource://dta/version.jsm", ["Version"]);
 });
 
 
