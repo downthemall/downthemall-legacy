@@ -14,6 +14,14 @@ function importModule(aSrc) {
 	return rv;
 }
 
+function checkExports(m, exports) {
+  deepEqual(
+    Object.keys(importModule(m)),
+    exports,
+    "Correct exports"
+    );
+}
+
 addEventListener("load", function load() {
 	"use strict";
 	removeEventListener("load", load, false);
