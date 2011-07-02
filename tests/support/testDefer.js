@@ -1,7 +1,7 @@
 module("defer.jsm");
 
 test("exports", function() {
-	deepEqual(Object.keys(importModule("resource://dta/support/defer.jsm")), ["defer"], "Correct exports");
+	checkExports("resource://dta/support/defer.jsm", ["defer"]);
 });
 
 asyncTest("defer", function() {

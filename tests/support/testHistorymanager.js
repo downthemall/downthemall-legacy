@@ -16,7 +16,7 @@ module("historymanager.jsm");
 	};
 
 	test("exports", function() {
-		deepEqual(Object.keys(importModule("resource://dta/support/historymanager.jsm")), ["getHistory"], "Correct exports");
+		checkExports("resource://dta/support/historymanager.jsm", ["getHistory"]);
 	});
 
 	test("regular", function() {
