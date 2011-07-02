@@ -393,8 +393,12 @@ Connection.prototype = {
 			if (Logger.enabled) {
 				Logger.log('onDataAvailable', ex);
 			}
-			this.d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+			this.writeFailed();
 		}
+	},
+
+	writeFailed: function() {
+		this.d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 	},
 
 	// nsIFTPEventSink
