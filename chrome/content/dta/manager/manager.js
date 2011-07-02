@@ -2702,6 +2702,12 @@ Chunk.prototype = {
 			thread.priority = thread.PRIORITY_LOW;
 			Logger.log("Our async copier thread is low priority now!");
 		}
+		addEventListener("unload", function() {
+			try {
+				thread.shutdown();
+			}
+			catch (ex) {}
+		}, false);
 		return thread;
 	})(),
 	running: false,
@@ -2985,12 +2991,6 @@ Chunk.prototype = {
 			+ Utils.formatNumber(this._sessionBytes, len);
 	}
 }
-addEventListener("unload", function() {
-	try {
-		Chunk.prototype.thread.shutdown();
-	}
-	catch (ex) {}
-}, false);
 
 function startDownloads(start, downloads) {
 
