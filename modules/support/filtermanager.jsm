@@ -41,9 +41,9 @@ const LINK_FILTER = (1<<0);
 const IMAGE_FILTER = (1<<1);
 const TOPIC_FILTERSCHANGED = 'DTA:filterschanged';
 
-const RE_ESCAPE = /[{}()\[\]\\^$.?]/g;
-const RE_WILD = /\*/g;
-const RE_WILD2 = /\./g;
+const REG_ESCAPE = /[{}()\[\]\\^$.?]/g;
+const REG_WILD = /\*/g;
+const REG_WILD2 = /\./g;
 
 
 const Cc = Components.classes;
