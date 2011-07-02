@@ -2,17 +2,16 @@
 module("preallocator.jsm");
 
 (function() {
-	function _do_test(sparse, title) {
-		var prealloc = importModule("resource://dta/manager/preallocator.jsm").prealloc;
+	function _do_test(title, impl, size, sparse) {
 		var file = Cc["@mozilla.org/file/directory_service;1"]
 			.getService(Ci.nsIProperties)
 			.get("TmpD", Ci.nsIFile);
-		file.append("dta_prealloc_test.tmp");
+		file.append("dta_prealloc_test" + title + ".tmp");
 
-		prealloc(file, (1<<28), 416, function callback(result) {
+		impl(file, size, 416, function callback(result) {
 			ok(result, title);
 			if (result) {
-				equal(file.fileSize, (1<<28), "file size correct");
+				equal(file.fileSize, size, "file size correct");
 	    }
 	    try {
 	    	file.remove(false);
@@ -27,27 +26,28 @@ module("preallocator.jsm");
 		checkExports("resource://dta/preallocation/cothread.jsm", ["prealloc_impl"]);
 	});
 
-	asyncTest("non-sparse", function() _do_test(false, "non-sparse"));
-	asyncTest("sparse", function() _do_test(true, "sparse"));
+	asyncTest("prealloc", function() {
+		var impl = importModule("resource://dta/manager/preallocator.jsm").prealloc;
+		_do_test("prealloc", impl, (1<<28), false);
+	});
+
+	try {
+		var impl = importModule("resource://dta/preallocation/worker.jsm").prealloc_impl;
+		asyncTest("worker non-sparse", function() _do_test("non-sparse", impl, (1<<28), false));
+		asyncTest("worker sparse", function() _do_test("non-sparse", impl, (1<<28), true));
+	}
+	catch(ex) {
+		ok(true, "omitting worker: " + ex.message);
+	}
+
+	asyncTest("asynccopier", function() {
+		var impl = importModule("resource://dta/preallocation/asynccopier.jsm").prealloc_impl;
+		_do_test("asynccopier", impl, (1<<24));
+	});
 
 	asyncTest("cothread", function() {
-		var prealloc = importModule("resource://dta/preallocation/cothread.jsm").prealloc_impl;
-		var file = Cc["@mozilla.org/file/directory_service;1"]
-			.getService(Ci.nsIProperties)
-			.get("TmpD", Ci.nsIFile);
-		file.append("dta_prealloc_test.tmp");
-
-		prealloc(file, (1<<24), 416, function callback(result) {
-			ok(result, "cothread");
-			if (result) {
-				equal(file.fileSize, (1<<24), "file size correct");
-	    }
-	    try {
-	    	file.remove(false);
-	    }
-	    catch (ex) {}
-	    start();
-		});
+		var impl = importModule("resource://dta/preallocation/cothread.jsm").prealloc_impl;
+		_do_test("cothread", impl, (1<<28));
 	});
 
 })();
