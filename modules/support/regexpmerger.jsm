@@ -39,7 +39,7 @@
 
 const EXPORTED_SYMBOLS = ['merge'];
 
-const RE_GROUPSTRIP = /\(.*\)/g;
+const RE_GROUPSTRIP = /\(.*?\)/g;
 
 /**
  * Array filter function to create an unique array
