@@ -159,6 +159,8 @@
 				<menupopup id="removeCompletedPopup">
 					<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeAll.label;" key="kRemoveCompleted" command="cmdRemoveCompleted" />
 					<menuseparator />
+					<menuitem id="cleangone" class="menuitem-iconic" label="&removeGone.label;" key="kCleanGone" command="cmdCleanGone" />
+					<menuseparator />
 				</menupopup>
 			</splitmenu>
 			<splitmenu id="removeMenu" class="menuitem-iconic" label="&removemenu.label;" command="cmdRemoveSelected">
@@ -166,7 +168,6 @@
 					<menuitem id="removeselected" class="menuitem-iconic" label="&removeselected.label;" key="kRemoveSelected" command="cmdRemoveSelected" />
 					<menuitem id="removeHost" class="menuitem-iconic" label="&removehost.label;" key="kRemoveHost" command="cmdRemoveHost"/>
 					<menuseparator />
-					<menuitem id="cleangone" class="menuitem-iconic" label="&removeGone.label;" key="kCleanGone" command="cmdCleanGone" />
 					<menuitem id="removeDupes" class="menuitem-iconic" label="&removeDupes.label;" command="cmdRemoveDupes" />
 					<menuseparator />
 					<menuitem id="removeAll" class="menuitem-iconic" label="&removeAll.label;" command="cmdRemoveAll" />
