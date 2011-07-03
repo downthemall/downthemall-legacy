@@ -155,7 +155,7 @@ function splitAlternates(pattern, rv) {
 			cur += char;
 			continue;
 		case ")":
-			--c;
+			if (!C) --c;
 			cur += char;
 			continue;
 		case "[":
@@ -178,7 +178,6 @@ function splitAlternates(pattern, rv) {
 		}
 	}
 	rv.push(cur);
-}
 }
 
 /**
