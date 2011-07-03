@@ -39,8 +39,6 @@
 
 const EXPORTED_SYMBOLS = ['merge'];
 
-const RE_GROUPSTRIP = /\(.*?\)/g;
-
 /**
  * Array filter function to create an unique array
  * @usage arr.filter(unique_filter, {});
@@ -137,7 +135,7 @@ function killInvalidBrackets(string) {
  * @param {Array} rv Result array patterns will be pushed to
  */
 function splitAlternates(pattern, rv) {
-	if (!pattern || pattern.replace(RE_GROUPSTRIP).indexOf("|") == -1) {
+	if (!pattern) {
 		rv.push(pattern);
 		return;
 	}
