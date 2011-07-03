@@ -94,7 +94,7 @@ Runnable.prototype = {
 
 function Callback(func, sync) {
 	this._func = func;
-	this._args = Array.map(arguments, function(e) e).slice(2);
+	this._args = Array.slice(arguments, 2);
 	this._thread = ThreadManager.mainThread;
 	this._job = registerJob(this);
 	this._thread.dispatch(this, sync ? 0x1 : 0x0);
@@ -176,7 +176,7 @@ function MultiVerificator() {
 	if (Logger.enabled) {
 		Logger.log("MultiVerificator");
 	}
-	Verificator.apply(this, Array.map(arguments, function(e) e));
+	Verificator.apply(this, arguments);
 }
 MultiVerificator.prototype = {
 	__proto__: Verificator.prototype,

@@ -113,7 +113,7 @@ function getString(n) {
 	}
 }
 function getFormattedString(n) {
-	let args = Array.map(arguments, function(e) e);
+	let args = Array.slice(arguments);
 	args.shift();
 	try {
 		return getString_str.formatStringFromName(n, args, args.length);
