@@ -58,7 +58,7 @@ Manipulator.prototype = {
 	register: function(id, matcher) {
 		this._m[id] = {
 				matcher: matcher,
-				funcs: Array.map(arguments, function(e) e).slice(2)
+				funcs: Array.slice(arguments, 2)
 		};
 	},
 	unregister: function(id) {

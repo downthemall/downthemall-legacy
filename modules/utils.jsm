@@ -729,7 +729,7 @@ SimpleIterator.prototype = {
  * @param properties (nsIProperties) initial properties
  */
 function Properties() {
-	for each (let p in Array.map(arguments, function(e) e)) {
+	for each (let p in Array.slice(arguments)) {
 		this._parse(p);
 	}
 }
