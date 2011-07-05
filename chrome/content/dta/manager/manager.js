@@ -1200,6 +1200,7 @@ const Dialog = {
 	},
 	close: function() this.shutdown(this._doneClosing),
 	_doneClosing: function() {
+		Chunk.prototype.shutdownThread();
 		close();
 	},
 	shutdown: function D_close(callback) {
@@ -2702,14 +2703,14 @@ Chunk.prototype = {
 			thread.priority = thread.PRIORITY_LOW;
 			Logger.log("Our async copier thread is low priority now!");
 		}
-		addEventListener("unload", function() {
-			try {
-				thread.shutdown();
-			}
-			catch (ex) {}
-		}, false);
 		return thread;
 	})(),
+	shutdownThread: function() {
+		try {
+			Chunk.prototype.thread.shutdown();
+		}
+		catch (ex) {}
+	},
 	running: false,
 	get starter() {
 		return this.end <= 0;
