@@ -197,7 +197,7 @@
 		</menupopup>
 	</toolbarbutton>
 
-	<box id="notification-popup-box" hidden="true" align="center">
+	<box id="notification-popup-box">
 		<image id="downthemall-notification-icon" class="notification-anchor-icon" role="button" />
 	</box>
 
