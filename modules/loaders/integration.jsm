@@ -612,6 +612,12 @@ function load(window, outerEvent) {
 		return windows;
 	}
 
+	function unique(i) filterInSitu(
+		i,
+		function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)),
+		Object.create(null)
+		);
+
 	function findLinks(turbo, all) {
 		try {
 			if (all == undefined && turbo && Preferences.getExt('rememberoneclick', false)) {
@@ -621,11 +627,7 @@ function load(window, outerEvent) {
 				Preferences.setExt('lastalltabs', all);
 			}
 
-			function unique(i) filterInSitu(
-				i,
-				function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)),
-				Object.create(null)
-				);
+
 
 			if (turbo && DTA.Logger.enabled) {
 				DTA.Logger.log("findLinks(): DtaOneClick request from the user");
