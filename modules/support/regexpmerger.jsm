@@ -136,7 +136,6 @@ function killInvalidBrackets(string) {
 			}
 			// force not ok
 			c = 1;
-			Components.utils.reportError(good);
 			break;
 		}
 	}
