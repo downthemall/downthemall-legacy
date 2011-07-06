@@ -1102,7 +1102,7 @@ const Dialog = {
 			this._speeds.clear(); // started to run; remove old global speed stats
 		}
 		this._running.push(download);
-		download.prealloc();
+		download.prealloc(download.maybeResumeDownload.bind(download));
 		download.resumeDownload();
 	},
 	wasStopped: function D_wasStopped(download) {
@@ -1716,7 +1716,7 @@ QueueItem.prototype = {
 			this._totalSize = Math.floor(nv);
 		}
 		this.invalidate(3);
-		this.prealloc();
+		this.prealloc(this.maybeResumeDownload.bind(this));
 	},
 	partialSize: 0,
 	progress: 0,
@@ -2291,7 +2291,11 @@ QueueItem.prototype = {
 				this.pause();
 			}
 			this.state = CANCELED;
-			if (!this.chunksReady(this.cancel.bind(this, message))) {
+			let bound = this.cancel.bind(this, message);
+			if (!this.chunksReady(bound)) {
+				return;
+			}
+			if (!this.cancelPreallocation(bound)) {
 				return;
 			}
 			if (Logger.enabled) {
@@ -2333,7 +2337,18 @@ QueueItem.prototype = {
 		}
 	},
 
-	prealloc: function QI_prealloc() {
+	_registerPreallocCallback: function(callback) {
+		if (!callback) {
+			return;
+		}
+		try {
+			this._notifyPreallocation.push(callback);
+		}
+		catch (ex) {
+			this._notifyPreallocation = [callback];
+		}
+	},
+	prealloc: function QI_prealloc(callback) {
 		let file = this.tmpFile;
 
 		if (!this.is(RUNNING)) {
@@ -2367,6 +2382,7 @@ QueueItem.prototype = {
 			if (pa) {
 				this.preallocating = true;
 				this._preallocator = pa;
+				this._registerPreallocCallback(callback);
 				if (Logger.enabled) {
 					Logger.log("pa: started");
 				}
@@ -2377,19 +2393,22 @@ QueueItem.prototype = {
 		}
 		return this.preallocating;
 	},
-	cancelPreallocation: function() {
+	cancelPreallocation: function(callback) {
 		if (this._preallocator) {
 			if (Logger.enabled) {
 				Logger.log("pa: going to cancel");
 			}
-			this._preallocator.cancel();
-			delete this._preallocator;
-			this._preallocator = null;
-			if (Logger.enabled) {
-				Logger.log("pa: cancelled");
+			try {
+				this._notifyPreallocationCancelled.push(callback);
 			}
+			catch (ex) {
+				this._notifyPreallocationCancelled.push(callback);
+			}
+			this._registerPreallocCallback(callback);
+			this._preallocator.cancel();
+			return false;
 		}
-		this.preallocating = false;
+		return true;
 	},
 
 	_donePrealloc: function QI__donePrealloc(res) {
@@ -2397,10 +2416,20 @@ QueueItem.prototype = {
 			Logger.log("pa: done");
 		}
 		delete this._preallocator;
-		this._preallocator = null;
 		this.preallocating = false;
-		if (this.is(RUNNING)) {
-			this.resumeDownload();
+
+		if (this._notifyPreallocation) {
+			for (let [,c] in Iterator(this._notifyPreallocation)) {
+				try {
+					c();
+				}
+				catch (ex) {
+					if (Logger.enabled) {
+						logger.log("pa: callback threw", ex);
+					}
+				}
+			}
+			delete this._notifyPreallocation;
 		}
 	},
 
@@ -2462,6 +2491,12 @@ QueueItem.prototype = {
 		this._autoRetryTime = 0;
 		this.state = QUEUED;
 		this.status = TextCache.QUEUED;
+	},
+	maybeResumeDownload: function QI_maybeResumeDownload() {
+		if (!this.is(RUNNING)) {
+			return;
+		}
+		this.resumeDownload();
 	},
 	resumeDownload: function QI_resumeDownload() {
 		if (Logger.enabled) {
