@@ -113,6 +113,32 @@ function killInvalidBrackets(string) {
 				good = i;
 			}
 		}
+		if (ch == "{") {
+			if (good == -1 || good != i - 1) {
+				good = i - 2;
+			}
+			else if (good != -1 && string[good] == ")" || string[good] == "]") {
+				// we don't really have a good position now :p
+				good = -1;
+				for (i = 0; i < e; ++i) {
+					ch = string[i];
+					if (ch == "\\") {
+						++i;
+					}
+					else if (ch == "(" || ch == "[") {
+						break;
+					}
+					++good;
+				}
+			}
+			else {
+				good -= 1;
+			}
+			// force not ok
+			c = 1;
+			Components.utils.reportError(good);
+			break;
+		}
 	}
 
 	if (c == 0 && C == 0) {
