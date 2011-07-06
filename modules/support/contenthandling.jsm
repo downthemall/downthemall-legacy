@@ -245,7 +245,7 @@ ContentHandlingImpl.prototype = {
 
 		if (!(uri in this._dataDict)) {
 			if (this._dataArray.length > 5) {
-				delete this._dataDict[this._dataArray.pop()];
+				delete this._dataDict[this._dataArray.shift()];
 			}
 			this._dataArray.push(uri);
 		}
@@ -280,12 +280,15 @@ ContentHandlingImpl.prototype = {
 		uri = uri.spec;
 		if (!(uri in this._vidDict)) {
 			if (this._vidArray.length > 20) {
-				delete this._vidDict[this._vidArray.pop()];
+				delete this._vidDict[this._vidArray.shift()];
 			}
 			this._vidArray.push(uri);
-			this._vidDict[uri] = {};
+			let nv = this._vidDict[uri] = {};
+			nv[vid.spec] = vid;
 		}
-		this._vidDict[uri][vid.spec] = vid;
+		else {
+			this._vidDict[uri][vid.spec] = vid;
+		}
 	},
 
 	getPostDataFor: function ct_getPostDataFor(uri) {
