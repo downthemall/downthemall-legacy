@@ -55,6 +55,13 @@
 		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
 	</keyset>
 
+	<popupset>
+		<menupopup id="batches">
+			<menuseparator/>
+			<menuitem id="create-batch-descriptor" label="&createbatchdescriptor.label;" tooltiptext="&createbatchdescriptor.tooltip;"/>
+		</menupopup>
+	</popupset>
+
 	<grid onclick="event.stopPropagation();" >
 		<columns>
 			<column />

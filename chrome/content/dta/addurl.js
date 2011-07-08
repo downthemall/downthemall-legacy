@@ -64,6 +64,56 @@ var Dialog = {
 			}
 			this.ddRenaming = $("renaming");
 			var address = $('address');
+			(function() {
+				let menu = document.getAnonymousElementByAttribute(
+					address,
+					"anonid",
+					"textbox-input-box"
+					);
+				if (!menu) {
+					return;
+				}
+
+				menu = document.getAnonymousElementByAttribute(
+						menu,
+					"anonid",
+					"input-box-contextmenu"
+					);
+				if (!menu) {
+					return;
+				}
+
+				let batches = $("batches");
+				let nodes = Array.slice(batches.childNodes);
+				for (let [,n] in Iterator(nodes)) {
+					menu.appendChild(n);
+				}
+				menu.addEventListener("popupshowing", function() {
+					Cu.reportError("ps");
+					let hidden = true;
+					if (address.selectionStart != -1) {
+						let text = address.value.substring(address.selectionStart, address.selectionEnd);
+						hidden = !/^\d+$/.test(text);
+					}
+					for (let [,n] in Iterator(nodes)) {
+						n.hidden = hidden
+					}
+				}, false);
+				$("create-batch-descriptor").addEventListener("command", function() {
+					let {selectionStart, selectionEnd} = address;
+					let value = address.value;
+					let text = value.substring(selectionStart, selectionEnd);
+					let start = "1";
+					while (start.length < text.length) {
+						start += "0";
+					}
+					text = "[" + start + ":" + text + "]";
+					address.value = value.substring(0, selectionStart)
+						+ text
+						+ value.substring(selectionEnd, value.length);
+					address.setSelectionRange(selectionStart + 1, selectionEnd + 1);
+				}, false);
+			})();
 
 			var hash = null;
 			if (window.arguments) {
