@@ -64,7 +64,13 @@ catch (ex) {
 			worker_impl = "worker_linux.js";
 		}
 		catch (ex) {
-			// other implementations?
+			try {
+				ctypes.open("libSystem.dylib").close();
+				worker_impl = "worker_mac.js";
+			}
+			catch (ex) {
+				// other implementations?
+			}
 		}
 	}
 }
