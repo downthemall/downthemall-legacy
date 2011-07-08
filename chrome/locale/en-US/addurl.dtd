@@ -1,4 +1,6 @@
 <!ENTITY windowtitle "Add Downloads">
 <!ENTITY adddescription.value "Enter the download here and (optionally) the referring page of the file.">
+<!ENTITY createbatchdescriptor.label "Create batch descriptor">
+<!ENTITY createbatchdescriptor.tooltip "Create batch descriptor from current text selection">
 <!ENTITY desc.batches.value "You can also use batch descriptors to download multiple files at one time.">
 <!ENTITY examples.value "Examples:">
