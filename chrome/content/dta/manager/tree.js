@@ -561,7 +561,7 @@ const Tree = {
 				 * after we collected all items we simply reinsert them and invalidate our list.
 				 * This might not be the most performant way, but at least it kinda works ;)
 				 */
-				downloads = mapInSitu(
+				downloads = Array.map(
 					this._getSelectedIds(true),
 					function(id) {
 						let qi = this._filtered[id];
@@ -1231,32 +1231,7 @@ const Tree = {
 	},
 
 	// returns an ASC sorted array of IDs that are currently selected.
-	_getSelectedIds: null,
-	_getSelectedIds_legacy: function T_getSelectedIds(getReversed) {
-		let select = this.selection;
-		if (!select.count) {
-			return [];
-		}
-		let rv = new Array(select.count);
-		// loop through the selection as usual
-		for (let i = 0, e = select.getRangeCount(), idx = 0; i < e; ++i) {
-			let start = {}, end = {};
-			this.selection.getRangeAt(i, start, end);
-			for (let j = start.value, k = end.value; j <= k; ++j) {
-				rv[idx++] = j;
-				//rv.push(j);
-			}
-		}
-		this.selection.clearSelection();
-		if (getReversed) {
-			rv.sort(this._getSelectedIds_desc);
-		}
-		else {
-			rv.sort(this._getSelectedIds_asc);
-		}
-		return rv;
-	},
-	_getSelectedIds_typed: function T_getSelectedIds(getReversed) {
+	_getSelectedIds: function T_getSelectedIds(getReversed) {
 		let select = this.selection;
 		if (!select.count) {
 			return [];
@@ -1447,7 +1422,7 @@ const Tree = {
 			let ids;
 			try {
 				ids = mapInSitu(
-					this._getSelectedIds(),
+					this._getSelectedFilteredIds(),
 					function(id, idx) {
 						if (id - idx != 0) {
 							[this._downloads[id], this._downloads[id - 1]] = [this._downloads[id - 1], this._downloads[id]];
@@ -1609,10 +1584,3 @@ const FileHandling = {
 		Tree.remove(null, true);
 	}
 };
-
-if ("Uint32Array" in this) {
-	Tree._getSelectedIds = Tree._getSelectedIds_typed;
-}
-else {
-	Tree._getSelectedIds = Tree._getSelectedIds_legacy;
-}
