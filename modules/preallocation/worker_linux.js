@@ -111,13 +111,13 @@ catch (ex) {
 		ctypes.int, // retval
 		ctypes.int, // fd
 		ctypes.int, // off_t off
-		ctpes.int // whence
+		cytpes.int // whence
 		);
 	log("lseek");
 }
 
 
-const _canceled = false;
+var _canceled = false;
 
 function log(ex) {
 	postMessage({

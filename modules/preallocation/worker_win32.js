@@ -87,7 +87,7 @@ const DeviceIoControl = kernel32.declare(
   ctypes.voidptr_t // LPOVERLAPPED lpOverlapped
 );
 
-const _canceled = false;
+var _canceled = false;
 
 function log(ex) {
 	postMessage({
