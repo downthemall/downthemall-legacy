@@ -104,7 +104,7 @@ var Dialog = {
 					let text = value.substring(selectionStart, selectionEnd);
 					let start = "1";
 					while (start.length < text.length) {
-						start += "0";
+						start = "0" + start;
 					}
 					text = "[" + start + ":" + text + "]";
 					address.value = value.substring(0, selectionStart)
