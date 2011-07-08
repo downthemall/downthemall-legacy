@@ -89,7 +89,6 @@ var Dialog = {
 					menu.appendChild(n);
 				}
 				menu.addEventListener("popupshowing", function() {
-					Cu.reportError("ps");
 					let hidden = true;
 					if (address.selectionStart != -1) {
 						let text = address.value.substring(address.selectionStart, address.selectionEnd);
