@@ -3,21 +3,25 @@ module("preallocator.jsm");
 
 (function() {
 	function _do_test(title, impl, size, sparse) {
+		var allocStart = Date.now();
 		var file = Cc["@mozilla.org/file/directory_service;1"]
 			.getService(Ci.nsIProperties)
 			.get("TmpD", Ci.nsIFile);
 		file.append("dta_prealloc_test" + title + ".tmp");
 
 		impl(file, size, 416, function callback(result) {
+			var allocEnd = Date.now();
+			var allocDiff = allocEnd - allocStart;
+			var bytesPerSecond = ((size / 1048576.0) / (allocDiff / 1000.0)).toFixed(0);
 			ok(result, title);
 			if (result) {
-				equal(file.fileSize, size, "file size correct");
-	    }
-	    try {
-	    	file.remove(false);
-	    }
-	    catch (ex) {}
-	    start();
+				equal(file.fileSize, size, "file size correct, run time " + (allocEnd - allocStart) + "ms, " + bytesPerSecond + " Mbytes/s");
+			}
+			try {
+				file.remove(false);
+			}
+			catch (ex) {}
+			start();
 		}, sparse);
 	}
 
