@@ -37,7 +37,8 @@ module("preallocator.jsm");
 		asyncTest("worker sparse", function() _do_test("non-sparse", impl, (1<<28), true));
 	}
 	catch(ex) {
-		ok(true, "omitting worker: " + ex.message);
+		console.error(ex);
+		test("worker", function() ok(true, "omitting worker: " + ex.message));
 	}
 
 	asyncTest("asynccopier", function() {
