@@ -1079,6 +1079,7 @@ const Dialog = {
 		if (download.is(FINISHING) || (download.partialSize >= download.totalSize && download.totalSize)) {
 			// we might encounter renaming issues;
 			// but we cannot handle it because we don't know at which stage we crashed
+			download.state = FINISHING;
 			download.partialSize = download.totalSize;
 			if (Logger.enabled) {
 				Logger.log("Download seems to be complete; likely a left-over from a crash, finish it:" + download);
