@@ -157,7 +157,10 @@ const Advanced = {
 
 const Interface = {
 	init: function(pref, which) {
-		if (!('trayITrayService' in Components.interfaces)) {
+		try {
+			Components.utils.import("resource://mintrayr/mintrayr.jsm", {});
+		}
+		catch (ex) {
 			$('minimizetotray').disabled = true;
 			$('minimizetotray_link').hidden = false;
 		}

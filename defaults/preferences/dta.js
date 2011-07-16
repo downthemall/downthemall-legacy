@@ -72,7 +72,6 @@ pref("extensions.dta.permissions", 416);
 pref("extensions.dta.loadendfirst", 0);
 pref("extensions.dta.loadendfirst", 0);
 pref("extensions.dta.startminimized", false);
-pref("extensions.dta.minimizetotray", false);
 pref("extensions.dta.flatreplacementchar", "-");
 pref("extensions.dta.recoverallhttperrors", false);
 pref("extensions.dta.selectbgimages", false);
@@ -166,3 +165,6 @@ pref("extensions.dta.filters.deffilter-imgpng.test", "/\\.png$/i");
 pref("extensions.dta.filters.deffilter-imgpng.active", false);
 pref("extensions.dta.filters.deffilter-imgpng.type", 2);
 pref("extensions.dta.filters.deffilter-imgpng.icon", "png");
+
+
+pref("extensions.mintrayr.downthemall.watchmanager", false);
