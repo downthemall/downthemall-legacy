@@ -36,83 +36,39 @@
 
 const PREF_CONN = 'network.http.max-connections';
 
-function TrayHandler() {
-	this.available = !!('trayITrayService' in Ci);
-	if (!this.available) {
-		return;
-	}
-	ServiceGetter(this, "_trayService", "@tn123.ath.cx/trayservice;1", "trayITrayService");
-	addEventListener(
-		'TrayDblClick',
-		function(event) {
-			if (event.button == 0) {
-				TrayHandler.restore();
+var gMinTrayR = {};
+try {
+	module("resource://mintrayr/mintrayr.jsm", gMinTrayR);
+	var init = function() {
+		let self = this;
+		let _oc = Dialog.onclose;
+		Dialog.onclose = function(evt) {
+			if (self.prefs.getExt("downthemall", false)
+				&& (self.prefs.getExt("minimizeon", 1) & (1<<1))) {
+				evt.preventDefault();
+				return false;
 			}
-		},
-		true
-	);
-	addEventListener(
-		'TrayClick',
-		function(event) {
-			if (event.button == 2) {
-				TrayHandler.showMenu(event.screenX, event.screenY);
-			}
-		},
-		true
-	);
+			return _oc.apply(Dialog, arguments);
+		}
+	};
+
+	addEventListener("load", function tray_init() {
+		removeEventListener("load", tray_init, false);
+
+		if (gMinTrayR.MinTrayR.length == 3) {
+			gMinTrayR = new gMinTrayR.MinTrayR($("traymenu"), "downthemall.watchmanager", init);
+		}
+		else {
+			gMinTrayR = new (function() {
+				gMinTrayR.MinTrayR.call(this, $("traymenu"), "downthemall.watchmanager");
+				init.call(this);
+			})();
+		}
+	}, false);
 }
-
-TrayHandler.prototype = {
-	watch: function tray_watch() {
-		if (this.available) {
-			try {
-				this._trayService.watchMinimize(window);
-				let _oc = this.oncloseOriginal = Dialog.onclose;
-				Dialog.onclose = function(evt) {
-					if (Preferences.get('extensions.mintrayr.minimizeon', 1) & (1<<1)) {
-						evt.preventDefault();
-						return false;
-					}
-					return _oc.apply(Dialog, arguments); 
-				}
-			}
-			catch (ex) {
-				// no op
-			}
-		}
-	},
-	unwatch: function tray_unwatch() {
-		if (this.available) {
-			try {
-				this._trayService.unwatchMinimize(window);
-				if (this.oncloseOriginal) {
-					Dialog.onclose = this.oncloseOriginal;
-					delete this.oncloseOriginal;
-				}
-			}
-			catch (ex) {
-				// no op
-			}
-		}
-	},
-	restore: function tray_restore() {
-		if (this.available) {
-			this._trayService.restore(window);
-		}
-	},
-	showMenu: function(x, y) {
-		$('traymenu').showPopup(
-			document.documentElement,
-			x,
-			y,
-			"context",
-			"",
-			"bottomleft"
-		);		
-	}
-};
-TrayHandler = new TrayHandler();
-
+catch (ex) {
+	// no op
+}
 const Prefs = {
 	tempLocation: null,
 	
@@ -138,7 +94,6 @@ const Prefs = {
 		['confirmRemoveCompleted', true],
 		['permissions', 384],
 		['loadEndFirst', 0],
-		['minimizeToTray', false],
 		['flatReplacementChar', '-'],
 		['recoverAllHttpErrors', false],
 		['speedLimit', -1],
@@ -212,13 +167,6 @@ const Prefs = {
 				Preferences.set(PREF_CONN, conns);
 			}
 		}
-		if (this.minimizeToTray) {
-			TrayHandler.watch();
-		}
-		else {
-			TrayHandler.unwatch();
-		}
-		
 		if (Preferences.getExt('exposeInUA', false)) {
 			RequestManipulation.registerHttp('dtaua', /./, RequestManipulation.amendUA);
 		}
