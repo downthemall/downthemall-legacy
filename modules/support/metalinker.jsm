@@ -70,7 +70,6 @@ module("resource://dta/support/urlmanager.jsm");
 const IOService = DTA.IOService;
 const XPathResult = Ci.nsIDOMXPathResult;
 
-const File = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
 const DOMParser = new Ctor("@mozilla.org/xmlextras/domparser;1", 'nsIDOMParser');
 
@@ -204,7 +203,7 @@ Metalinker3.prototype = {
 		for each (let file in files) {
 			let fileName = file.getAttribute('name');
 			if (!fileName) {
-				throw new Exception("File name not provided!");
+				throw new Exception("LocalFile name not provided!");
 			}
 			let referrer = null;
 			if (file.hasAttributeNS(NS_DTA, 'referrer')) {
@@ -412,7 +411,7 @@ MetalinkerRFC5854.prototype = {
 		for each (let file in files) {
 			let fileName = file.getAttribute('name');
 			if (!fileName) {
-				throw new Exception("File name not provided!");
+				throw new Exception("LocalFile name not provided!");
 			}
 			let referrer = null;
 			if (file.hasAttributeNS(NS_DTA, 'referrer')) {

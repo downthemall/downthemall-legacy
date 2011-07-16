@@ -78,7 +78,7 @@ module("resource://gre/modules/XPCOMUtils.jsm");
 const Prefs = {};
 module("resource://dta/preferences.jsm", Prefs);
 
-const File = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+const LocalFile = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileStream = new ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const ScriptError = new ctor('@mozilla.org/scripterror;1', 'nsIScriptError', 'init');
 
@@ -931,7 +931,7 @@ function OpenExternal_prepare(file) {
 		return file.QueryInterface(Ci.nsILocalFile);
 	}
 	if (!(file instanceof Ci.nsILocalFile)) {
-		file = new File(file);
+		file = new LocalFile(file);
 	}
 	return file;
 }
@@ -975,7 +975,7 @@ function reveal(file) {
 	file = OpenExternal_prepare(file);
 	try {
 		if (!file.exists()) {
-			throw new Exception("File does not exist");
+			throw new Exception("LocalFile does not exist");
 		}
 		else {
 			file.reveal();

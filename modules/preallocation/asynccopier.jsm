@@ -47,7 +47,6 @@ const Exception = Components.Exception;
 
 const AsyncStreamCopier = Components.Constructor("@mozilla.org/network/async-stream-copier;1","nsIAsyncStreamCopier", "init");
 const BufferedOutputStream = Components.Constructor('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
-const File = Components.Constructor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileOutputStream = Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const StringInputStream = Components.Constructor("@mozilla.org/io/string-input-stream;1", "nsIStringInputStream", "setData");
 

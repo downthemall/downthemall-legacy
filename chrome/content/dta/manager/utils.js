@@ -253,7 +253,7 @@ const Prefs = {
 				this.tempLocation.append("dtatmp-" + profD);
 			}
 			else {
-				this.tempLocation = new FileFactory(this.tempLocation);
+				this.tempLocation = new LocalFile(this.tempLocation);
 			}
 			if (!(this.tempLocation instanceof Ci.nsIFile)) {
 				throw new Exception("invalid value");
