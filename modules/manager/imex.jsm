@@ -61,7 +61,6 @@ module("resource://dta/support/metalinker.jsm");
 const IOService = DTA.IOService;
 const XPathResult = Ci.nsIDOMXPathResult;
 
-const File = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
 const FileOutputStream = new Ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const DOMParser = new Ctor("@mozilla.org/xmlextras/domparser;1", 'nsIDOMParser');

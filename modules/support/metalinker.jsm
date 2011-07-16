@@ -70,7 +70,6 @@ module("resource://dta/support/urlmanager.jsm");
 const IOService = DTA.IOService;
 const XPathResult = Ci.nsIDOMXPathResult;
 
-const File = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
 const DOMParser = new Ctor("@mozilla.org/xmlextras/domparser;1", 'nsIDOMParser');
 
@@ -109,8 +108,8 @@ Base.prototype = {
 			return NS_HTML;
 		case 'dta':
 			return NS_DTA;
-	  }
-	  return this._NS;		
+		}
+		return this._NS;		
 	},
 	getNodes: function (elem, query) {
 		let rv = [];
@@ -133,25 +132,25 @@ Base.prototype = {
 		}
 		return null;
 	},
- 	getSingle: function BasegetSingle(elem, query) {
- 		let rv = this.getNode(elem, 'ml:' + query);
- 		return rv ? rv.textContent.trim() : '';
- 	},
- 	getLinkRes: function BasegetLinkRes(elem, query) {
- 		let rv = this.getNode(elem, 'ml:' + query);
- 		if (rv) {
- 			let n = this.getSingle(rv, 'name'), l = this.checkURL(this.getSingle(rv, 'url'));
- 			if (n && l) {
- 				return [n, l];
- 			}
- 		}
- 		return null;
- 	},
- 	checkURL: function Base_checkURL(url, allowed) {
- 		if (!url) {
- 			return null;
- 		}
- 		try {
+	getSingle: function BasegetSingle(elem, query) {
+		let rv = this.getNode(elem, 'ml:' + query);
+		return rv ? rv.textContent.trim() : '';
+	},
+	getLinkRes: function BasegetLinkRes(elem, query) {
+		let rv = this.getNode(elem, 'ml:' + query);
+		if (rv) {
+			let n = this.getSingle(rv, 'name'), l = this.checkURL(this.getSingle(rv, 'url'));
+			if (n && l) {
+				return [n, l];
+			}
+		}
+		return null;
+	},
+	checkURL: function Base_checkURL(url, allowed) {
+		if (!url) {
+			return null;
+		}
+		try {
 			url = IOService.newURI(url, this._doc.characterSet, null);
 			if (url.scheme == 'file') {
 				throw new Exception("file protocol invalid!");
@@ -166,13 +165,13 @@ Base.prototype = {
 					}
 			}
 			return url.spec;
- 		}
- 		catch (ex) {
- 			Debug.log("checkURL: failed to parse " + url, ex);
- 			// no-op
- 		}
+		}
+		catch (ex) {
+			Debug.log("checkURL: failed to parse " + url, ex);
+			// no-op
+		}
 		return null; 		
- 	}
+	}
 };
 
 /**

@@ -59,7 +59,7 @@ ServiceGetter(this, "ThreadManager", "@mozilla.org/thread-manager;1", "nsIThread
 
 const nsICryptoHash = Ci.nsICryptoHash;
 
-const File = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+const LocalFile = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
 
 const Hash = new Ctor('@mozilla.org/security/hash;1', 'nsICryptoHash', 'init');
@@ -128,7 +128,7 @@ Callback.prototype = {
 };
 
 function Verificator(file, hashCollection, completeCallback, progressCallback) {
-	this._file = new File(file);
+	this._file = new LocalFile(file);
 	this._hashCollection = hashCollection;
 	this._completeCallback = completeCallback;
 	this._progressCallback = progressCallback;
