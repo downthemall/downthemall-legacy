@@ -36,82 +36,78 @@
 
 const PREF_CONN = 'network.http.max-connections';
 
-function TrayHandler() {
-	this.available = !!('trayITrayService' in Ci);
-	if (!this.available) {
-		return;
-	}
-	ServiceGetter(this, "_trayService", "@tn123.ath.cx/trayservice;1", "trayITrayService");
-	addEventListener(
-		'TrayDblClick',
-		function(event) {
-			if (event.button == 0) {
-				TrayHandler.restore();
+var gMinTrayR = {};
+try {
+	module("resource://mintrayr/mintrayr.jsm", gMinTrayR);
+	var init = function() {
+		function closeWindow(event){
+			if (Preferences.getExt('minimizetotray', false)
+				&& (self.prefs.getExt('minimizeon', 1) & (1<<1))) {
+				self.minimize();
+				event.preventDefault();
+				event.stopPropagation();
+				return false;
 			}
-		},
-		true
-	);
-	addEventListener(
-		'TrayClick',
-		function(event) {
-			if (event.button == 2) {
-				TrayHandler.showMenu(event.screenX, event.screenY);
+			// must be in sync with the original command
+			return Dialog.close();
+		}
+		function minimizeWindow(event) {
+			if (Preferences.getExt('minimizetotray', false)
+				&& (self.prefs.getExt('minimizeon', 1) & (1<<0))) {
+				self.minimize();
+				event.preventDefault();
+				event.stopPropagation();
+				return false;
 			}
-		},
-		true
-	);
-}
+			// must be in sync with the original command
+			return window.minimize();
+		}
+		function hijackButton(newCommand, id) {
+			let button = $(id);
+			if (!button) {
+				// Only available in Firefox 4
+				return;
+			}
 
-TrayHandler.prototype = {
-	watch: function tray_watch() {
-		if (this.available) {
-			try {
-				this._trayService.watchMinimize(window);
-				let _oc = this.oncloseOriginal = Dialog.onclose;
-				Dialog.onclose = function(evt) {
-					if (Preferences.get('extensions.mintrayr.minimizeon', 1) & (1<<1)) {
-						evt.preventDefault();
-						return false;
-					}
-					return _oc.apply(Dialog, arguments);
-				}
-			}
-			catch (ex) {
-				// no op
-			}
+			// Remove old command(s)
+			button.removeAttribute('command');
+			button.removeAttribute('oncommand');
+
+			// Add ourselves
+			button.addEventListener('command', newCommand, false);
 		}
-	},
-	unwatch: function tray_unwatch() {
-		if (this.available) {
-			try {
-				this._trayService.unwatchMinimize(window);
-				if (this.oncloseOriginal) {
-					Dialog.onclose = this.oncloseOriginal;
-					delete this.oncloseOriginal;
-				}
+
+		let self = this;
+		let _oc = Dialog.onclose;
+		Dialog.onclose = function(evt) {
+			if (self.prefs.getExt("downthemall", false)
+				&& (self.prefs.getExt("minimizeon", 1) & (1<<1))) {
+				evt.preventDefault();
+				return false;
 			}
-			catch (ex) {
-				// no op
-			}
+			return _oc.apply(Dialog, arguments);
 		}
-	},
-	restore: function tray_restore() {
-		if (this.available) {
-			this._trayService.restore(window);
+		hijackButton(closeWindow, "titlebar-close");
+		hijackButton(minimizeWindow, "titlebar-min");
+	};
+
+	addEventListener("load", function tray_init() {
+		removeEventListener("load", tray_init, false);
+
+		if (gMinTrayR.MinTrayR.length == 3) {
+			gMinTrayR = new gMinTrayR.MinTrayR($("traymenu"), "downthemall.watchmanager", init);
 		}
-	},
-	showMenu: function(x, y) {
-		$('traymenu').showPopup(
-			document.documentElement,
-			x,
-			y,
-			"context",
-			"",
-			"bottomleft"
-		);
-	}
-};
-TrayHandler = new TrayHandler();
+		else {
+			gMinTrayR = new (function() {
+				gMinTrayR.MinTrayR.call(this, $("traymenu"), "downthemall.watchmanager");
+				init.call(this);
+			})();
+		}
+	}, false);
+}
+catch (ex) {
+	Logger.log("MinTrayR.init", ex);
+}
 
 const Prefs = {
 	tempLocation: null,
@@ -138,7 +134,6 @@ const Prefs = {
 		['confirmRemoveCompleted', true],
 		['permissions', 384],
 		['loadEndFirst', 0],
-		['minimizeToTray', false],
 		['recoverAllHttpErrors', false],
 		['speedLimit', -1],
 		['resumeOnError', false],
@@ -210,13 +205,6 @@ const Prefs = {
 		if (!prefName) {
 			this._baselineConns = Preferences.get(PREF_CONN, this._baselineConns);
 			Preferences.setExt(PREF_CONN, this._baselineConns);
-		}
-
-		if (this.minimizeToTray) {
-			TrayHandler.watch();
-		}
-		else {
-			TrayHandler.unwatch();
 		}
 
 		if (Preferences.getExt('exposeInUA', false)) {
