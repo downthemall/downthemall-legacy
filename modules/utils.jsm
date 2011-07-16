@@ -35,7 +35,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 const EXPORTED_SYMBOLS = [
-  'Debug',
+	'Debug',
 	'atos',
 	'setNewGetter',
 	'ServiceGetter',
@@ -73,7 +73,7 @@ module("resource://gre/modules/XPCOMUtils.jsm");
 const Prefs = {};
 module("resource://dta/preferences.jsm", Prefs);
 
-const File = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+const LocalFile = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileStream = new ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const ScriptError = new ctor('@mozilla.org/scripterror;1', 'nsIScriptError', 'init');
 
@@ -246,9 +246,9 @@ DebugService.prototype = {
 		let file = Cc["@mozilla.org/file/directory_service;1"]
 			.getService(Ci.nsIProperties)
 			.get("ProfD", Ci.nsILocalFile);
-		 file.append('dta_log.txt');
-		 delete DebugService.prototype._file;
-		 return (DebugService.prototype._file = file);
+		file.append('dta_log.txt');
+		delete DebugService.prototype._file;
+		return (DebugService.prototype._file = file);
 	},
 	
 	get file() {
@@ -356,7 +356,7 @@ DebugService.prototype = {
 				text = text.join('');
 				if (stack && exception) {
 					this._cs.logMessage(new ScriptError(text, fileName, sourceLine, lineNumber, columnNumber, 0x2, 'component javascript'));
-					 
+					
 				} 
 				else {
 					this._cs.logStringMessage(text);
@@ -830,7 +830,7 @@ function OpenExternal_prepare(file) {
 		return file.QueryInterface(Ci.nsILocalFile);
 	}
 	if (!(file instanceof Ci.nsILocalFile)) {
-		file = new File(file);
+		file = new LocalFile(file);
 	}
 	return file;
 }

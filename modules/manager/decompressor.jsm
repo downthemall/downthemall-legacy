@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
 const EXPORTED_SYMBOLS = ['Decompressor'];
 
 
@@ -56,7 +56,7 @@ module("resource://dta/support/timers.jsm");
 const IOService = DTA.IOService;
 const Prefs = DTA.Preferences;
 
-const File = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+const LocalFile = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileOutputStream = new Ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const BinaryOutputStream = new Ctor('@mozilla.org/binaryoutputstream;1', 'nsIBinaryOutputStream', 'setOutputStream');
 const BufferedOutputStream = new Ctor('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
@@ -66,7 +66,7 @@ const Timers = new TimerManager();
 
 function Decompressor(download) {
 	this.download = download;
-	this.to = new File(download.destinationFile);
+	this.to = new LocalFile(download.destinationFile);
 	this.from = download.tmpFile.clone();
 
 	try {
