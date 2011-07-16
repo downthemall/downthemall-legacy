@@ -599,9 +599,11 @@ Connection.prototype = {
 				Logger.log("header failed! " + d, ex);
 			}
 			// restart download from the beginning
-			d.cancel();
-			d.resumable = false;
-			d.safeRetry();
+			if (!this.handleError()) {
+				d.cancel();
+				d.resumable = false;
+				d.safeRetry();
+			}
 			return false;
 		}
 
