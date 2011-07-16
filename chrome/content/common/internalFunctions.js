@@ -47,7 +47,7 @@ const ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-const FileFactory = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+const LocalFile = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const SoundFactory = new ctor('@mozilla.org/sound;1', 'nsISound', 'play');
 const CryptoHash = new ctor("@mozilla.org/security/hash;1", "nsICryptoHash");
 
@@ -175,7 +175,7 @@ var Utils = {
 				if (!path || !String(path).trim().length) {
 					return false;
 				}
-				directory = new FileFactory(path);
+				directory = new LocalFile(path);
 			}
 			else {
 				directory = path.clone();

@@ -482,7 +482,7 @@ const Dialog = {
 			let tmpFile = Dialog_loadDownloads_get(down, "tmpFile");
 			if (tmpFile) {
 				try {
-					tmpFile = new FileFactory(tmpFile);
+					tmpFile = new LocalFile(tmpFile);
 					if (tmpFile.exists()) {
 						d._tmpFile = tmpFile;
 					}
@@ -1338,7 +1338,7 @@ const Metalinker = {
 	handleDownload: function ML_handleDownload(download) {
 		download.state = CANCELED;
 		Tree.remove(download, false);
-		let file = new FileFactory(download.destinationFile);
+		let file = new LocalFile(download.destinationFile);
 
 		this.handleFile(file, download.referrer);
 
@@ -1643,7 +1643,7 @@ QueueItem.prototype = {
 		if (!this._tmpFile) {
 			var dest = Prefs.tempLocation
 				? Prefs.tempLocation.clone()
-				: new FileFactory(this.destinationPath);
+				: new LocalFile(this.destinationPath);
 			let name = this.fileName;
 			if (name.length > 60) {
 				name = name.substring(0, 60);
@@ -1794,7 +1794,7 @@ QueueItem.prototype = {
 				file = this._tmpFile || null;
 			}
 			else {
-				file = new FileFactory(this.destinationFile);
+				file = new LocalFile(this.destinationFile);
 			}
 			if (file && file.exists()) {
 				return file.fileSize;
@@ -1908,7 +1908,7 @@ QueueItem.prototype = {
 		try {
 			// safeguard against some failed chunks.
 			this.chunks.forEach(function(c) { c.close(); });
-			var destination = new FileFactory(this.destinationPath);
+			var destination = new LocalFile(this.destinationPath);
 			if (Logger.enabled) {
 				Logger.log(this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
 			}
@@ -1999,7 +1999,7 @@ QueueItem.prototype = {
 		);
 	},
 	verifyHashError: function(mismatches) {
-		let file = new FileFactory(this.destinationFile);
+		let file = new LocalFile(this.destinationFile);
 		filterInSitu(mismatches, function(e) e.start != e.end);
 
 		function deleteFile() {
@@ -2085,7 +2085,7 @@ QueueItem.prototype = {
 					throw new Exception("invalid date encountered: " + time + ", will not set it");
 				}
 				// have to unwrap
-				let file = new FileFactory(this.destinationFile);
+				let file = new LocalFile(this.destinationFile);
 				file.lastModifiedTime = time;
 			}
 			catch (ex) {
@@ -2169,7 +2169,7 @@ QueueItem.prototype = {
 				.normalizeSlashes()
 				.removeFinalSlash()
 				.split(SYSTEMSLASH);
-			let file = new FileFactory(this.pathName.addFinalSlash());
+			let file = new LocalFile(this.pathName.addFinalSlash());
 			while (mask.length) {
 				file.append(mask.shift().removeBadChars().trim());
 			}
@@ -2187,7 +2187,7 @@ QueueItem.prototype = {
 			this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
 			this.conflicts
 		);
-		let file = new FileFactory(this.destinationPath);
+		let file = new LocalFile(this.destinationPath);
 		file.append(this.destinationName);
 		this._destinationFile = file.path;
 		this._icon = null;
@@ -3169,7 +3169,7 @@ var ConflictManager = {
 		this._process();
 	},
 	_check: function CM__check(download) {
-		let dest = new FileFactory(download.destinationFile);
+		let dest = new LocalFile(download.destinationFile);
 		let sn = false;
 		if (download.is(RUNNING)) {
 			sn = Dialog.checkSameName(download, download.destinationFile);
@@ -3233,7 +3233,7 @@ var ConflictManager = {
 		let download = cur.download;
 		download.conflicts = 0;
 		let basename = download.destinationName;
-		let newDest = new FileFactory(download.destinationFile);
+		let newDest = new LocalFile(download.destinationFile);
 		let i = 1;
 		for (;; ++i) {
 			newDest.leafName = Utils.formatConflictName(basename, i);
@@ -3324,7 +3324,7 @@ function CustomEvent(download, command) {
 				.replace(/(["'])(.*?)\1/g, callback)
 				.split(/ /g),
 			mapper);
-		var program = new FileFactory(args.shift());
+		var program = new LocalFile(args.shift());
 		var process = new Process(program);
 		process.run(false, args, args.length);
 	}
