@@ -791,7 +791,7 @@ const Tree = {
 				if (!d.is(COMPLETE)) {
 					continue;
 				}
-				if (onlyGone && (new FileFactory(d.destinationFile).exists())) {
+				if (onlyGone && (new LocalFile(d.destinationFile).exists())) {
 					continue;
 				}
 				this._downloads.splice(d.position, 1);
@@ -1118,8 +1118,8 @@ const Tree = {
 				states.max = Math.max(d.filteredPosition, states.max);
 			}
 			let cur = this.current;
-			states.curFile = (cur && cur.is(COMPLETE) && (new FileFactory(cur.destinationFile)).exists());
-			states.curFolder = (cur && (new FileFactory(cur.destinationPath)).exists());
+			states.curFile = (cur && cur.is(COMPLETE) && (new LocalFile(cur.destinationFile)).exists());
+			states.curFolder = (cur && (new LocalFile(cur.destinationPath)).exists());
 
 			for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
 				let item = this._refreshTools_item[i];
@@ -1524,7 +1524,7 @@ const FileHandling = {
 	openFolder: function() {
 		for (d in Tree.selected) {
 			try {
-				if (new FileFactory(d.destinationPath).exists()) {
+				if (new LocalFile(d.destinationPath).exists()) {
 					Utils.reveal(d.destinationFile);
 				}
 			}
@@ -1552,7 +1552,7 @@ const FileHandling = {
 		let list = [];
 
 		for (d in this._uniqueList) {
-			let file = new FileFactory(d.destinationFile);
+			let file = new LocalFile(d.destinationFile);
 			if (file.exists()) {
 				list.push(d);
 			}
@@ -1561,7 +1561,7 @@ const FileHandling = {
 		if (list.length < 25) {
 			msg = _('deletetexts');
 			for each (let d in list) {
-				msg += "\n" + (new FileFactory(d.destinationFile)).leafName;
+				msg += "\n" + (new LocalFile(d.destinationFile)).leafName;
 			}
 		}
 		else {
@@ -1572,7 +1572,7 @@ const FileHandling = {
 		}
 		for each (let d in list) {
 			try {
-				let file = new FileFactory(d.destinationFile);
+				let file = new LocalFile(d.destinationFile);
 				if (file.exists()) {
 					file.remove(false);
 				}
