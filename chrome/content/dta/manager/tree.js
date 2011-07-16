@@ -38,6 +38,39 @@ const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init
 
 lazyModule(this, 'ImportExport', 'resource://dta/manager/imex.jsm');
 
+function FileDataProvider(download, file) {
+	this._download = download;
+	this._file = file;
+};
+FileDataProvider.prototype = {
+	_checks: 0,
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIFlavorDataProvider]),
+	get file() {
+		if (this._timer) {
+			Timers.killTimer(this._timer);
+			delete this._timer;
+		}
+		this._checks = 0;
+		this._timer = Timers.createOneshot(500, this.checkFile.bind(this));
+		return this._file;
+	},
+	checkFile: function() {
+		delete this._timer;
+		if (!this._file.exists()) {
+			Tree.remove(this._download);
+			return;
+		}
+		if (++this._checks < 10) {
+			this._timer = Timers.createOneshot(5000, this.checkFile.bind(this));
+		}
+	},
+	getFlavorData: function(dataTransfer, flavor, data, dataLen) {
+		data.value = this.file;
+		dataLen.value = 1;
+	}
+};
+
+
 const Tree = {
 	init: function T_init(elem) {
 		this.elem = elem;
@@ -55,7 +88,7 @@ const Tree = {
 
 		let dtree = $('downloadList');
 		dtree.addEventListener('mousemove', function(event) tp.hovering(event), false);
-		dtree.addEventListener('draggesture', function(event) nsDragAndDrop.startDrag(event, tp), false);
+		dtree.addEventListener('dragstart', function(event) tp.onDragStart(event), false);
 
 		$("matcher").addEventListener("command", function(event) tp.handleMatcherPopup(event), true);
 
@@ -515,12 +548,19 @@ const Tree = {
 		}, this);
 	},
 
-	onDragStart: function T_onDragStart(evt, transferData, dragAction) {
-		for (qi in this.selected) {
-			let item = new TransferData();
+	onDragStart: function T_onDragStart(event) {
+		let transfer = event.dataTransfer;
+		let i = 0;
+		transfer.effectAllowed = "copymove";
+		for (let qi in this.selected) {
 			try {
-				item.addDataForFlavour('application/x-dta-position', qi.position);
-				transferData.data = item;
+				if (qi.is(COMPLETE)) {
+					let file = new LocalFile(qi.destinationFile);
+					if (file.exists()) {
+						transfer.mozSetDataAt("application/x-moz-file", new FileDataProvider(qi, file), i++);
+					}
+				}
+				transfer.setData("application/x-dta-position", qi.position); i++;
 			}
 			catch (ex) {
 				if (Logger.enabled) {
