@@ -208,7 +208,7 @@
 		<menupopup id="traymenu">
 			<menuitem label="&tooladddownload.label;" command="cmdAddUrl" />
 			<menuseparator />
-			<menuitem label="&restore.label;" oncommand="TrayHandler.restore();" />
+			<menuitem label="&restore.label;" oncommand="gMinTrayR.restore()" />
 			<menuitem label="&close.label;" command="cmdClose" />
 		</menupopup>
 		<menupopup id="toolbarpopup" command="cmdCustomizeToolbar">

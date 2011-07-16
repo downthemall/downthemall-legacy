@@ -21,7 +21,7 @@
 			<preference id="dtaTool" name="extensions.dta.toolsmenu" type="string" />
 			<preference id="dtaShowTooltip" name="extensions.dta.showtooltip" type="bool" />
 			<preference id="dtaStartMinimized" name="extensions.dta.startminimized" type="bool" />
-			<preference id="dtaMinimizeToTray" name="extensions.dta.minimizetotray" type="bool" />
+			<preference id="dtaMinimizeToTray" name="extensions.mintrayr.downthemall.watchmanager" type="bool" />
 		</preferences>
 
 		<groupbox>
