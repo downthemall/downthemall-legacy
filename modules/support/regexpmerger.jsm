@@ -39,6 +39,18 @@
 
 const EXPORTED_SYMBOLS = ['merge'];
 
+const REG_TAINTED = /\\[ux]?\d/;
+const REG_TAINTED_ESCAPES = /\\\\/g;
+
+function tainted_filter(r) {
+	// No negative lookbehind in js :p
+	if (REG_TAINTED.test(r.replace(REG_TAINTED_ESCAPES, ""))) {
+		this.push(r);
+		return false;
+	}
+	return true;
+}
+
 /**
  * Array filter function to create an unique array
  * @usage arr.filter(unique_filter, Object.create(null));
@@ -316,6 +328,16 @@ function mergePatterns(patterns, low, high, prefix) {
 	return patterns.sort();
 }
 
+function merge_finish_map(e) "(?:" + e + ")";
+
+function merge_finish(patterns, tainted) {
+	patterns = patterns.concat(tainted);
+	if (patterns.length < 2) {
+		return patterns[0];
+	}
+	return patterns.map(merge_finish_map).join("|");
+}
+
 /**
  * Merge patterns with optimizations (prefixes)
  * @param {Array} patterns Patterns to merge
@@ -332,6 +354,11 @@ function merge(patterns) {
 		return patterns[0];
 	}
 
+	// Remove tainted patterns for now
+	let tainted = [];
+	patterns = patterns.filter(tainted_filter, tainted);
+
+
 	// split patterns into pieces by top-level alternates
 	let newpatterns = [];
 	for (let [,p] in Iterator(patterns)) {
@@ -339,7 +366,7 @@ function merge(patterns) {
 	}
 	patterns = newpatterns.filter(unique_filter, Object.create(null));
 	if (patterns.length < 2) {
-		return patterns[0];
+		return merge_finish(patterns, tainted);
 	}
 
 	// Good to go
@@ -357,10 +384,10 @@ function merge(patterns) {
 	let len = patterns.length;
 	if (len == 1) {
 		// already merged into a single pattern
-		return patterns[0];
+		return merge_finish(patterns, tainted);
 	}
 
 	// not yet a single pattern (i.e. not all patterns shared a common prefix)
 	// merge without a prefix to get single pattern
-	return mergePatterns(patterns, 0, len, "")[0];
+	return merge_finish(mergePatterns(patterns, 0, len, ""), tainted);
 }
