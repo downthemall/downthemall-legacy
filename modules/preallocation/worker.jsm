@@ -80,8 +80,18 @@ if (!worker_impl) {
 }
 const _jobs = {};
 
-const WorkerFactory = Cc["@mozilla.org/threads/workerfactory;1"]
-	.createInstance(Ci.nsIWorkerFactory);
+var newChromeWorker;
+if ("ChromeWorker" in this) {
+	newChromeWorker = function(f) new ChromeWorker(f);
+}
+else {
+	// XXX remove minVer 8
+	newChromeWorker = (function() {
+		var _factory = Cc["@mozilla.org/threads/workerfactory;1"]
+			.createInstance(Ci.nsIWorkerFactory);
+		return function(f) _factory.newChromeWorker(f);
+	})();
+}
 
 function Job(file, size, perms, callback, sparseOk) {
 	this.file = file;
@@ -92,7 +102,7 @@ function Job(file, size, perms, callback, sparseOk) {
 	this.uuid = newUUIDString();
 	_jobs[this.uuid] = this;
 
-	this.worker = WorkerFactory.newChromeWorker(worker_impl);
+	this.worker = newChromeWorker(worker_impl);
 	this.worker.onmessage = this.onmessage.bind(this);
 	this.worker.onerror = this.onerror.bind(this);
 
