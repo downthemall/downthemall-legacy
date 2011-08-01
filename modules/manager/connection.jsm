@@ -36,7 +36,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = ['Connection', 'GlobalBucket'];
+const EXPORTED_SYMBOLS = ['Connection'];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -1019,4 +1019,3 @@ Connection.prototype = {
 	},
 	onStatus: function  DL_onStatus(aRequest, aContext, aStatus, aStatusArg) {}
 };
-const GlobalBucket = new ByteBucket(Preferences.getExt('speedlimit', -1), 1.3);
