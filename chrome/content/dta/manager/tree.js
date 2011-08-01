@@ -97,7 +97,7 @@ const Tree = {
 
 		ServiceGetter(this, "_ds", "@mozilla.org/widget/dragservice;1", "nsIDragService");
 		ServiceGetter(this, "_ww", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
-		this.elem.view = this;
+		this.elem.treeBoxObject.view = this;
 		this.assembleMenus();
 		this._refreshTools_init();
 		this.refreshTools();
@@ -318,6 +318,7 @@ const Tree = {
 			return;
 		}
 		this._box = box.QueryInterface(Ci.nsITreeBoxObject);
+		this._box.view = this;
 		this._cols = [];
 		for (let i = 0; i < box.columns.count; ++i) {
 			this._cols.push(box.columns.getColumnAt(i));
