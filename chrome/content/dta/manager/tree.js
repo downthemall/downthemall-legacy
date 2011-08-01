@@ -1355,7 +1355,7 @@ const Tree = {
 			this.beginUpdate();
 			try {
 				QueueStore.beginUpdate();
-				for (d in this.selected) {
+				for (let d in this.selected) {
 					if (!f.call(t, d)) {
 						break;
 					}
