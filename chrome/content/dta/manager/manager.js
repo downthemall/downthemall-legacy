@@ -41,13 +41,7 @@ const Construct = Components.Constructor;
 function Serv(c, i) { // leave in; anticontainer and others compat
 	return Cc[c].getService(i ? Ci[i] : null);
 }
-const AsyncStreamCopier = Construct("@mozilla.org/network/async-stream-copier;1","nsIAsyncStreamCopier", "init");
-const BufferedOutputStream = Construct('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
-const FileOutputStream = Construct('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const Process = Construct('@mozilla.org/process/util;1', 'nsIProcess', 'init');
-const StorageStream = Construct("@mozilla.org/storagestream;1", "nsIStorageStream", "init");
-const ScriptableInputStream = Construct("@mozilla.org/scriptableinputstream;1", "nsIScriptableInputStream", "init");
-const SupportsUint32 = Construct("@mozilla.org/supports-PRUint32;1", "nsISupportsPRUint32");
 
 ServiceGetter(this, "MimeService", "@mozilla.org/uriloader/external-helper-app-service;1", "nsIMIMEService");
 ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIObserverService");
@@ -55,26 +49,27 @@ ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watch
 
 let Prompts = {}, Limits = {}, PrivateBrowsing = {};
 module('resource://dta/cothread.jsm');
-module('resource://dta/support/urlmanager.jsm');
 module('resource://dta/prompts.jsm', Prompts);
 
-module('resource://dta/support/bytebucket.jsm');
 module('resource://dta/support/contenthandling.jsm');
+module('resource://dta/support/defer.jsm');
+module('resource://dta/support/fileextsheet.jsm');
 module('resource://dta/support/pbm.jsm', PrivateBrowsing);
 module('resource://dta/support/serverlimits.jsm', Limits);
 module('resource://dta/support/timers.jsm');
-module('resource://dta/support/fileextsheet.jsm');
-module('resource://dta/support/defer.jsm');
+module('resource://dta/support/urlmanager.jsm');
 
 let Preallocator = {}, RequestManipulation = {};
 module("resource://gre/modules/XPCOMUtils.jsm");
-module('resource://dta/manager/preallocator.jsm', Preallocator);
+module('resource://dta/manager/chunk.jsm');
 module('resource://dta/manager/connection.jsm');
+module('resource://dta/manager/globalprogress.jsm');
+module('resource://dta/manager/globalbucket.jsm');
+module('resource://dta/manager/preallocator.jsm', Preallocator);
 module('resource://dta/manager/queuestore.jsm');
+module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
 module('resource://dta/manager/speedstats.jsm');
 module('resource://dta/manager/visitormanager.jsm');
-module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
-module('resource://dta/manager/globalprogress.jsm');
 
 function lazyModule(obj, name, url, symbol) {
 	setNewGetter(obj, name, function() {
@@ -1201,7 +1196,6 @@ const Dialog = {
 	},
 	close: function() this.shutdown(this._doneClosing),
 	_doneClosing: function() {
-		Chunk.shutdownThread();
 		close();
 	},
 	shutdown: function D_close(callback) {
@@ -2403,7 +2397,7 @@ QueueItem.prototype = {
 				this._notifyPreallocationCancelled.push(callback);
 			}
 			catch (ex) {
-				this._notifyPreallocationCancelled.push(callback);
+				this._notifyPreallocationCancelled = [callback];
 			}
 			this._registerPreallocCallback(callback);
 			this._preallocator.cancel();
@@ -2701,475 +2695,6 @@ setNewGetter(QueueItem.prototype, 'AuthPrompts', function() {
 	return new _l.LoggedPrompter(window);
 });
 
-function Chunk(download, start, end, written) {
-	// saveguard against null or strings and such
-	this._written = written > 0 ? written : 0;
-	this._start = start;
-	this._end = end;
-	this.end = end;
-	this._parent = download;
-	this._sessionBytes = 0;
-	this._copiers = [];
-}
-Chunk.thread = (function() {
-	// Use a dedicated thread, so that we have serialized writes.
-	// As we use a single sink for various reasons, we need to ensure the
-	// shipped bytes arrive and are written to in the correct order.
-	// The assumption that writes will be properly serialized is based on the
-	// following assumptions
-	//  1. The thread event queue processes events fifo, always
-	//  2. The async stream copier writes a bufferStream in one event, i.e. it
-	//     does interrupt the copy and reschedule the rest in another event
-	//
-	// Why do we want to use all this cruft?
-	// - To keep the browser snappier by having the slow disk I/O stuff off the
-	//   main thread.
-	// - Having a single thread doing all the writes might reduce/avoid some
-	//   nasty performance issues, such as thrashing due to concurrency.
-	// - We cannot use ChromeWorkers, because we cannot do file I/O there
-	//   unless we reimplement file I/O using ctypes (and that's just not
-	//   reasonable).
-	//
-	// For the amo-validator context:
-	// Editor note: Safe use as an event target for nsIAsyncStreamCopier
-	let thread = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager).newThread(0);
-	if (thread instanceof Ci.nsISupportsPriority) {
-		thread.priority = thread.PRIORITY_LOW;
-		Logger.log("Our async copier thread is low priority now!");
-	}
-	return thread;
-})();
-Chunk.shutdownThread = function CH_shutdownThread() {
-	try {
-		Chunk.thread.shutdown();
-	}
-	catch (ex) {}
-};
-
-Chunk.prototype = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable, Ci.nsIRequestObserver]),
-	running: false,
-	get starter() {
-		return this.end <= 0;
-	},
-	get start() {
-		return this._start;
-	},
-	get end() {
-		return this._end;
-	},
-	set end(nv) {
-		this._end = nv;
-		this._total = this._end - this._start + 1;
-	},
-	get total() {
-		return this._total;
-	},
-	get written() {
-		return this._written;
-	},
-	_buffered: 0,
-	get buffered() {
-		if (!this._bufferStream) {
-			return this._buffered;
-		}
-		return this._buffered + this._bufferStream.length;
-	},
-	get safeBytes() {
-		return this.written - this.buffered;
-	},
-	get remainder() {
-		return this._total - this._written;
-	},
-	get complete() {
-		if (this._end == -1) {
-			return this.written != 0;
-		}
-		return this._total == this.written;
-	},
-	get parent() {
-		return this._parent;
-	},
-	get sessionBytes() {
-		return this._sessionBytes;
-	},
-	merge: function CH_merge(ch) {
-		if (!this.complete && !ch.complete) {
-			throw new Error("Cannot merge incomplete chunks this way!");
-		}
-		this.end = ch.end;
-		this._written += ch._written;
-	},
-	openOutStream: function CH_openOutStream(file, at) {
-		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
-		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
-		seekable.seek(0x00, at);
-		outStream = new BufferedOutputStream(outStream, 0x8000);
-		return outStream;
-	},
-	open: function CH_open() {
-		this._sessionBytes = 0;
-		let file = this.parent.tmpFile;
-		if (!file.parent.exists()) {
-			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
-		}
-		this._outStream = this.openOutStream(file, this.start + this.written);
-		this.buckets = new ByteBucketTee(
-				this.parent.bucket,
-				Limits.getServerBucket(this.parent),
-				GlobalBucket
-				);
-		this.buckets.register(this);
-		this.parent.chunkOpened(this);
-	},
-	close: function CH_close() {
-		this.running = false;
-		if (this._bufferStream) {
-			this._shipBufferStream();
-		}
-		if (!this._copiers.length) {
-			this._finish();
-		}
-	},
-	_finish: function CH__finish() {
-		let notifyOwner = false;
-		if (this._outStream) {
-			// Close will flush the buffered data
-			this._outStream.close();
-			delete this._outStream;
-			notifyOwner = true;
-		}
-		if (this.buckets) {
-			this.buckets.unregister(this);
-		}
-		delete this._req;
-		this._sessionBytes = 0;
-		if (notifyOwner) {
-			this.parent.chunkClosed(this);
-		}
-	},
-	onStartRequest: function CH_onStartRequest(aRequest, aContext) {},
-	onStopRequest: function CH_onStopRequest(aRequest, aContext, aStatusCode) {
-		if (!(aRequest instanceof Ci.nsIAsyncStreamCopier)) {
-			if (Logger.enabled) {
-				Logger.log("Not a copier", aRequest);
-			}
-			throw new Exception("Not a copier");
-		}
-
-		// Untrack the copier
-		let idx = this._copiers.indexOf(aRequest);
-		if (idx >= 0) {
-			this._copiers.splice(idx, 1);
-		}
-
-		if (!this._canceled) {
-			if (!Components.isSuccessCode(aStatusCode)) {
-				this.download.writeFailed();
-				return;
-			}
-			if (aContext instanceof Ci.nsISupportsPRUint32) {
-				this._buffered -= aContext.data;
-			}
-		}
-		if (this.running || this._copiers.length) {
-			return;
-		}
-		this._finish();
-	},
-	rollback: function CH_rollback() {
-		if (!this._sessionBytes || this._sessionBytes > this._written) {
-			return;
-		}
-		this._written -= this._sessionBytes;
-		this._sessionBytes = 0;
-	},
-	cancel: function CH_cancel() {
-		this.running = false;
-		this._canceled = true;
-		for (let [i,c] in Iterator(this._copiers)) {
-			try {
-				c.cancel(Cr.NS_ERROR_ABORT);
-			}
-			catch (ex) {
-				Cu.reportError(ex);
-				// don't care just now ;)
-			}
-		}
-
-		// prevent shipping the current bufferStream
-		delete this._bufferStream;
-
-		this.close();
-		if (this.download) {
-			this.download.cancel();
-		}
-	},
-	_written: 0,
-	_outStream: null,
-	_noteBytesWritten: function CH_noteBytesWritten(bytes) {
-		this._written += bytes;
-		this._sessionBytes += bytes;
-
-		this.parent.timeLastProgress = Utils.getTimestamp();
-	},
-	write: function CH_write(aRequest, aInputStream, aCount) {
-		try {
-			// not running: do not write anything
-			if (!this.running) {
-				return -1;
-			}
-			if (!this._outStream) {
-				this.open();
-			}
-			let bytes = this.remainder;
-			if (!this.total || aCount < bytes) {
-				bytes = aCount;
-			}
-			if (!bytes) {
-				// we got what we wanted
-				return -1;
-			}
-			let got = this.buckets.requestBytes(bytes);
-			// didn't get enough
-			if (got < bytes) {
-				if (this._req) {
-					this._reqPending += bytes - got;
-				}
-				else {
-					this._req = aRequest;
-					this._req.suspend();
-					this._reqPending = bytes - got;
-				}
-			}
-			if (bytes < 0) {
-				throw new Exception("bytes negative");
-			}
-
-			// we're using nsIFileOutputStream
-			// per e10n contract we must consume all bytes
-			// or in our case all remainder bytes
-			// reqPending from above makes sure that we won't re-schedule
-			// the download too early
-			if (!this._bufferStream) {
-				this._bufferStream = new StorageStream((1<<12), (1<<30), null);
-			}
-
-			let so = this._bufferStream.getOutputStream(this._bufferStream.length);
-			so.write(new ScriptableInputStream(aInputStream).readBytes(bytes), bytes);
-			so.close();
-
-			if (this._bufferStream.length + bytes > MIN_CHUNK_SIZE) {
-				this._shipBufferStream();
-			}
-
-			this._noteBytesWritten(got);
-			return bytes;
-		}
-		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log('write: ' + this.parent.tmpFile.path, ex);
-			}
-			throw ex;
-		}
-		return 0;
-	},
-	_shipBufferStream: function CH__shipStreamBuffer() {
-		let bytes = this._bufferStream.length;
-		let copier = new AsyncStreamCopier(
-			this._bufferStream.newInputStream(0),
-			this._outStream,
-			Chunk.thread,
-			false, // source buffered
-			true, // sink buffered
-			bytes,
-			true, // close source
-			false // close sink
-			);
-		delete this._bufferStream;
-
-		let context = new SupportsUint32();
-		context.data = bytes;
-		try {
-			this._buffered += bytes;
-			this._copiers.push(copier);
-			copier.asyncCopy(this, context);
-		}
-		catch (ex) {
-			this._copiers.pop();
-			this._buffered -= bytes;
-			throw ex;
-		}
-	},
-	_wnd: 2048,
-	observe: function() {
-		this.run();
-	},
-	run: function CH_run() {
-		if (!this._req) {
-			return;
-		}
-		if (this._reqPending > 0) {
-			// Still have pending bytes?
-			let requested = Math.min(this._wnd, this._reqPending);
-			let got = this.buckets.requestBytes(requested);
-			if (!got) {
-				return;
-			}
-			this._noteBytesWritten(got);
-			if (got < requested) {
-				this._wnd = Math.round(Math.min(this._wnd / 2, 1024));
-			}
-			else if (requested == this._wnd) {
-				this._wnd += 256;
-			}
-			this._reqPending -= got;
-			this.parent.timeLastProgress = Utils.getTimestamp();
-
-			defer(this);
-			return;
-		}
-
-		// Ready to resume the download
-		let req = this._req;
-		delete this._req;
-		delete this._reqPending;
-		req.resume();
-		this.parent.timeLastProgress = Utils.getTimestamp();
-	},
-	toString: function CH_toString() {
-		let len = this.parent.totalSize ? String(this.parent.totalSize).length  : 10;
-		return Utils.formatNumber(this.start, len)
-			+ "/"
-			+ Utils.formatNumber(this.end, len)
-			+ "/"
-			+ Utils.formatNumber(this.total, len)
-			+ " running:"
-			+ this.running
-			+ " written/remain/sb:"
-			+ Utils.formatNumber(this.written, len)
-			+ "/"
-			+ Utils.formatNumber(this.remainder, len)
-			+ "/"
-			+ Utils.formatNumber(this._sessionBytes, len);
-	}
-}
-
-function startDownloads(start, downloads) {
-
-	let iNum = 0;
-	let first = null;
-
-	function addItem(e) {
-		try {
-			let qi = new QueueItem();
-			let lnk = e.url;
-			if (typeof lnk == 'string') {
-				qi.urlManager = new UrlManager([new DTA.URL(IOService.newURI(lnk, null, null))]);
-			}
-			else if (lnk instanceof UrlManager) {
-				qi.urlManager = lnk;
-			}
-			else {
-				qi.urlManager = new UrlManager([lnk]);
-			}
-			qi.bNum = e.numIstance;
-			qi.iNum = ++iNum;
-
-			if (e.referrer) {
-				try {
-					qi.referrer = e.referrer.toURL();
-				}
-				catch (ex) {
-					// We might have been fed with about:blank or other crap. so ignore.
-				}
-			}
-			// only access the setter of the last so that we don't generate stuff trice.
-			qi._pathName = e.dirSave.addFinalSlash().toString();
-			qi._description = !!e.description ? e.description : '';
-			qi._title = !!e.title ? e.title : '';
-			qi._mask = e.mask
-				.normalizeSlashes()
-				.removeLeadingSlash()
-				.removeFinalSlash();
-			qi.fromMetalink = !!e.fromMetalink;
-			qi.fileName = qi.urlManager.usable.getUsableFileName();
-			if (e.fileName) {
-				qi.fileName = e.fileName.getUsableFileName();
-			}
-			if (e.destinationName) {
-				qi.destinationName = e.destinationName.getUsableFileName();
-			}
-			if (e.startDate) {
-				qi.startDate = e.startDate;
-			}
-
-			// hash?
-			if (e.hashCollection) {
-				qi.hashCollection = e.hashCollection;
-			}
-			else if (e.url.hashCollection) {
-				qi.hashCollection = e.url.hashCollection;
-			}
-			else if (e.hash) {
-				qi.hashCollection = new DTA.HashCollection(e.hash);
-			}
-			else if (e.url.hash) {
-				qi.hashCollection = new DTA.HashCollection(e.url.hash);
-			}
-			else {
-				qi.hashCollection = null; // to initialize prettyHash
-			}
-
-			let postData = ContentHandling.getPostDataFor(qi.urlManager.url);
-			if (e.url.postData) {
-				postData = e.url.postData;
-			}
-			if (postData) {
-				qi.postData = postData;
-			}
-
-			qi._state = start ? QUEUED : PAUSED;
-			if (qi.is(QUEUED)) {
-				qi.status = TextCache.QUEUED;
-			}
-			else {
-				qi.status = TextCache.PAUSED;
-			}
-			qi.position = Tree.add(qi);
-			qi.save();
-			first = first || qi;
-		}
-		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("addItem", ex);
-			}
-		}
-
-		return true;
-	}
-
-	let g = downloads;
-	if ('length' in downloads) {
-		g = (i for each (i in downloads));
-	}
-
-	Tree.beginUpdate();
-	QueueStore.beginUpdate();
-	let ct = new CoThreadListWalker(
-		addItem,
-		g,
-		100
-	).start(function() {
-		QueueStore.endUpdate();
-		Tree.endUpdate();
-		Tree.invalidate();
-		ct = null;
-		g = null;
-		Tree.scrollToNearest(first);
-	});
-}
-
 var ConflictManager = {
 	_items: [],
 	resolve: function CM_resolve(download, reentry) {
@@ -3295,6 +2820,164 @@ var ConflictManager = {
 	}
 };
 
+
+function CustomEvent(download, command) {
+	try {
+		// may I introduce you to a real bastard way of commandline parsing?! :p
+		var uuids = {};
+		function callback(u) {
+			u = u.substr(1, u.length - 2);
+			id = Utils.newUUIDString();
+			uuids[id] = u;
+			return id;
+		}
+		function mapper(arg, i) {
+			if (arg == "%f") {
+				if (i == 0) {
+					throw new Error("Will not execute the file itself");
+				}
+				arg = download.destinationFile;
+			}
+			else if (arg in uuids) {
+				arg = uuids[arg];
+			}
+			return arg;
+		}
+		var args = mapInSitu(
+			command
+				.replace(/(["'])(.*?)\1/g, callback)
+				.split(/ /g),
+			mapper);
+		var program = new LocalFile(args.shift());
+		var process = new Process(program);
+		process.run(false, args, args.length);
+	}
+	catch (ex) {
+		if (Logger.enabled) {
+			Logger.log("failed to execute custom event", ex);
+		}
+		alert("failed to execute custom event", ex);
+	}
+	download.complete();
+}
+
+
+function startDownloads(start, downloads) {
+
+	let iNum = 0;
+	let first = null;
+
+	function addItem(e) {
+		try {
+			let qi = new QueueItem();
+			let lnk = e.url;
+			if (typeof lnk == 'string') {
+				qi.urlManager = new UrlManager([new DTA.URL(IOService.newURI(lnk, null, null))]);
+			}
+			else if (lnk instanceof UrlManager) {
+				qi.urlManager = lnk;
+			}
+			else {
+				qi.urlManager = new UrlManager([lnk]);
+			}
+			qi.bNum = e.numIstance;
+			qi.iNum = ++iNum;
+
+			if (e.referrer) {
+				try {
+					qi.referrer = e.referrer.toURL();
+				}
+				catch (ex) {
+					// We might have been fed with about:blank or other crap. so ignore.
+				}
+			}
+			// only access the setter of the last so that we don't generate stuff trice.
+			qi._pathName = e.dirSave.addFinalSlash().toString();
+			qi._description = !!e.description ? e.description : '';
+			qi._title = !!e.title ? e.title : '';
+			qi._mask = e.mask
+				.normalizeSlashes()
+				.removeLeadingSlash()
+				.removeFinalSlash();
+			qi.fromMetalink = !!e.fromMetalink;
+			qi.fileName = qi.urlManager.usable.getUsableFileName();
+			if (e.fileName) {
+				qi.fileName = e.fileName.getUsableFileName();
+			}
+			if (e.destinationName) {
+				qi.destinationName = e.destinationName.getUsableFileName();
+			}
+			if (e.startDate) {
+				qi.startDate = e.startDate;
+			}
+
+			// hash?
+			if (e.hashCollection) {
+				qi.hashCollection = e.hashCollection;
+			}
+			else if (e.url.hashCollection) {
+				qi.hashCollection = e.url.hashCollection;
+			}
+			else if (e.hash) {
+				qi.hashCollection = new DTA.HashCollection(e.hash);
+			}
+			else if (e.url.hash) {
+				qi.hashCollection = new DTA.HashCollection(e.url.hash);
+			}
+			else {
+				qi.hashCollection = null; // to initialize prettyHash
+			}
+
+			let postData = ContentHandling.getPostDataFor(qi.urlManager.url);
+			if (e.url.postData) {
+				postData = e.url.postData;
+			}
+			if (postData) {
+				qi.postData = postData;
+			}
+
+			qi._state = start ? QUEUED : PAUSED;
+			if (qi.is(QUEUED)) {
+				qi.status = TextCache.QUEUED;
+			}
+			else {
+				qi.status = TextCache.PAUSED;
+			}
+			qi.position = Tree.add(qi);
+			qi.save();
+			first = first || qi;
+		}
+		catch (ex) {
+			if (Logger.enabled) {
+				Logger.log("addItem", ex);
+			}
+		}
+
+		return true;
+	}
+
+	let g = downloads;
+	if ('length' in downloads) {
+		g = (i for each (i in downloads));
+	}
+
+	Tree.beginUpdate();
+	QueueStore.beginUpdate();
+	let ct = new CoThreadListWalker(
+		addItem,
+		g,
+		100
+	).start(function() {
+		QueueStore.endUpdate();
+		Tree.endUpdate();
+		Tree.invalidate();
+		ct = null;
+		g = null;
+		Tree.scrollToNearest(first);
+	});
+}
+
+
 addEventListener(
 	"load",
 	function() {
@@ -3322,43 +3005,3 @@ addEventListener(
 	},
 	false
 );
-
-function CustomEvent(download, command) {
-	try {
-		// may I introduce you to a real bastard way of commandline parsing?! :p
-		var uuids = {};
-		function callback(u) {
-			u = u.substr(1, u.length - 2);
-			id = Utils.newUUIDString();
-			uuids[id] = u;
-			return id;
-		}
-		function mapper(arg, i) {
-			if (arg == "%f") {
-				if (i == 0) {
-					throw new Components.Exception("Will not execute the file itself");
-				}
-				arg = download.destinationFile;
-			}
-			else if (arg in uuids) {
-				arg = uuids[arg];
-			}
-			return arg;
-		}
-		var args = mapInSitu(
-			command
-				.replace(/(["'])(.*?)\1/g, callback)
-				.split(/ /g),
-			mapper);
-		var program = new LocalFile(args.shift());
-		var process = new Process(program);
-		process.run(false, args, args.length);
-	}
-	catch (ex) {
-		if (Logger.enabled) {
-			Logger.log("failed to execute custom event", ex);
-		}
-		alert("failed to execute custom event", ex);
-	}
-	download.complete();
-}
