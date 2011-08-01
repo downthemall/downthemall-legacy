@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['ByteBucket', 'ByteBucketTee'];
+const EXPORTED_SYMBOLS = ["ByteBucket", "ByteBucketTee", "GlobalBucket"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
