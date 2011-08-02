@@ -990,39 +990,43 @@ function reveal(file) {
 }
 
 function extendString(_s) {
+	const rbc_u = /[\n\r\v?:<>*|"]/g;
+	const rbc_w = /%(?:25)?20/g;
+	const rsl_r = /[\/\\]/g;
+	const gufn_u = /\?.*$/;
+
 	merge(
 		_s.prototype,
 		{
 			removeBadChars: function() {
 				return this
-					.replace(/[\n\r\v?:<>*|"]/g, '_')
-					.replace(/%(?:25)?20/g, ' ');
+					.replace(rbc_u, '_')
+					.replace(rbc_w, ' ');
 			},
 			addFinalSlash: function() {
-				if (this.length == 0) {
+				if (!this) {
 					return SYSTEMSLASH;
 				}
-
-				if (this[this.length - 1] != SYSTEMSLASH) {
+				if (this.charAt(this.length - 1) != SYSTEMSLASH) {
 					return this + SYSTEMSLASH;
 				}
 				return this;
 			},
 			removeFinalChar: function(c) {
-				if (this.length == 0) {
+				if (!this) {
 					return this;
 				}
-				if (this[this.length - 1] == c) {
-					return this.substring(0, this.length - 1);
+				if (this.charAt(this.length - 1) == c) {
+					return this.substr(0, this.length - 1);
 				}
 				return this;
 			},
 			removeLeadingChar: function(c) {
-				if (this.length == 0) {
+				if (!this) {
 					return this;
 				}
-				if (this[0] == c) {
-					return this.slice(1);
+				if (this.charAt(0) == c) {
+					return this.substr(1);
 				}
 				return this;
 			},
@@ -1030,7 +1034,7 @@ function extendString(_s) {
 				return this.removeFinalChar(SYSTEMSLASH);
 			},
 			replaceSlashes: function(replaceWith) {
-				return this.replace(/[\\/]/g, replaceWith);
+				return this.replace(rsl_r, replaceWith);
 			},
 			normalizeSlashes: function() {
 				return this.replaceSlashes(SYSTEMSLASH);
@@ -1039,21 +1043,26 @@ function extendString(_s) {
 				return this.removeLeadingChar(SYSTEMSLASH);
 			},
 			getUsableFileName: function() {
-				let t = this.replace(/\?.*$/, '')
+				let i = this.indexOf("?");
+				let t = (~i ? this.substr(0, i) : this)
 					.normalizeSlashes()
 					.trim()
 					.removeFinalSlash();
-				return t.split(SYSTEMSLASH).pop().removeBadChars().trim();
+				i = t.lastIndexOf(SYSTEMSLASH);
+				return (~i ? t.substr(i + 1) : t).removeBadChars().trim();
 			},
-			getUsableFileNameWithFlatten: function() this.replaceSlashes(Prefs.getExt('flatReplacementChar', '-')).getUsableFileName(),
+			getUsableFileNameWithFlatten: (function()
+					this.replaceSlashes(Prefs.getExt('flatReplacementChar', '-')).getUsableFileName()),
 			getExtension: function() {
 				let name = this.getUsableFileName();
 				let c = name.lastIndexOf('.');
-				return (c == - 1) ? null : name.slice(++c);
+				return (c == - 1) ? null : name.substr(c + 1);
 			},
 			cropCenter : function(newLength) {
 				if (this.length > newLength) {
-					return this.substring(0, newLength / 2) + "..." + this.substring(this.length - newLength / 2, this.length);
+					return this.substr(0, newLength / 2)
+						+ "..."
+						+ this.substr(this.length - newLength / 2, this.length);
 				}
 				return this;
 			},
