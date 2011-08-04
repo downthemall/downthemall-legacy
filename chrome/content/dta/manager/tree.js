@@ -898,29 +898,28 @@ const Tree = {
 			this.selection.currentIndex = np;
 		}
 	},
+	_pause_item: function T_pause_item(d) {
+		if (d.isOf(QUEUED | PAUSED) || (d.is(RUNNING) && d.resumable)) {
+			d.pause();
+			d.clearAutoRetry();
+			d.status = TextCache.PAUSED;
+			d.state = PAUSED;
+		}
+		return true;
+	},
 	pause: function T_pause() {
-		this.updateSelected(
-			function(d) {
-				if (d.isOf(QUEUED | PAUSED) || (d.is(RUNNING) && d.resumable)) {
-					d.pause();
-					d.clearAutoRetry();
-					d.status = TextCache.PAUSED;
-					d.state = PAUSED;
-				}
-				return true;
-			}
-		);
+		this.updateSelected(this._pause_item);
+	},
+	_resume_item: function T_resumeItem(d) {
+		if (d.isOf(PAUSED | CANCELED)) {
+			d.queue();
+		}
+		return true;
 	},
 	resume: function T_resume(d) {
-		this.updateSelected(
-			function(d) {
-				if (d.isOf(PAUSED | CANCELED)) {
-					d.queue();
-				}
-				return true;
-			}
-		);
+		this.updateSelected(this._resume_item);
 	},
+	_cancel_item: function T_cancel_item(d) d.cancel() || true,
 	cancel: function T_cancel() {
 		if (Prefs.confirmCancel) {
 			let many = this.selection.count > 1;
@@ -938,7 +937,7 @@ const Tree = {
 				return;
 			}
 		}
-		this.updateSelected(function(d) d.cancel() || true);
+		this.updateSelected(this._cancel_item);
 	},
 	selectAll: function T_selectAll() {
 		this.selection.selectAll();
@@ -950,20 +949,23 @@ const Tree = {
 		}
 		this.selectionChanged();
 	},
+	_changeChunks_inc: function T_changeChunks_inc(d) {
+		if (d.maxChunks < 10 && d.resumable) {
+			++d.maxChunks;
+		}
+		return true;
+	},
+	_changeChunks_dec: function T_changeChunks_dec(d) {
+		if (d.maxChunks > 1) {
+			--d.maxChunks;
+		}
+		return true;
+	},
 	changeChunks: function T_changeChunks(increase) {
-		function inc(d) {
-			if (d.maxChunks < 10 && d.resumable) {
-				++d.maxChunks;
-			}
-			return true;
-		};
-		function dec(d) {
-			if (d.maxChunks > 1) {
-				--d.maxChunks;
-			}
-			return true;
-		};
-		Tree.updateSelected(increase ? inc : dec);
+		Tree.updateSelected(increase
+			? this._changeChunks_inc
+			: this._changeChunks_dec
+			);
 	},
 	force: function T_force() {
 		for (let d in Tree.selected) {
@@ -1538,9 +1540,12 @@ const Tree = {
 		this._speedLimitList.limit = limit;
 		return true;
 	},
+	_changePerDownloadSpeedLimit_item: function T_changePerDownloadSpeedLimit_item(limit, d) (
+		(d.speedLimit = limit) || true
+		),
 	changePerDownloadSpeedLimit: function() {
 		let limit = $('perDownloadSpeedLimitList').limit;
-		this.updateSelected(function(d) (d.speedLimit = limit) || true);
+		this.updateSelected(this._changePerDownloadSpeedLimit_item.bind(null, limit));
 	}
 };
 module('resource://dta/manager/matcher.jsm', Tree);

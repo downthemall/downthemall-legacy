@@ -1110,6 +1110,7 @@ const Dialog = {
 			this._running.splice(idx, 1);
 		}
 	},
+	_signal_some: function D_signal_some(d) d.isOf(FINISHING | RUNNING | QUEUED),
 	signal: function D_signal(download) {
 		download.save();
 		if (download.is(QUEUED)) {
@@ -1127,7 +1128,7 @@ const Dialog = {
 		}
 		try {
 			// check if there is something running or scheduled
-			if (this.startNext() || Tree.some(function(d) { return d.isOf(FINISHING | RUNNING | QUEUED); } )) {
+			if (this.startNext() || Tree.some(this._signal_some)) {
 				return;
 			}
 			if (Logger.enabled) {
