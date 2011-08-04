@@ -54,6 +54,7 @@ module('resource://dta/prompts.jsm', Prompts);
 module('resource://dta/support/contenthandling.jsm');
 module('resource://dta/support/defer.jsm');
 module('resource://dta/support/fileextsheet.jsm');
+module('resource://dta/support/memoize.jsm');
 module('resource://dta/support/pbm.jsm', PrivateBrowsing);
 module('resource://dta/support/serverlimits.jsm', Limits);
 module('resource://dta/support/timers.jsm');
@@ -101,6 +102,8 @@ addEventListener("load", function load_textCache() {
 
 GlobalProgress = new GlobalProgress(window);
 var Timers = new TimerManager();
+
+const getLargeIcon = memoize(function(name, metalink) getIcon(name, metalink, 32), 50);
 
 const Dialog_loadDownloads_props = ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'];
 function Dialog_loadDownloads_get(down, attr, def) (attr in down) ? down[attr] : (def ? def : '');
@@ -1779,7 +1782,7 @@ QueueItem.prototype = {
 		return this._icon;
 	},
 	get largeIcon() {
-		return getIcon(this.destinationName, 'metalink' in this, 32);
+		return getLargeIcon(this.destinationName, 'metalink' in this);
 	},
 	get size() {
 		try {
