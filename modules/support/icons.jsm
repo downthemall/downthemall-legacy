@@ -48,19 +48,42 @@ const Exception = Components.Exception;
 
 module("resource://dta/api.jsm");
 module("resource://dta/utils.jsm");
+module("resource://dta/support/memoize.jsm");
 
 extendString(String);
 
-setNewGetter(this, "FavIcons", function() {
+setNewGetter(this, "getFavIcon", function() {
 	try {
-		return Cc['@mozilla.org/browser/favicon-service;1']
-				.getService(Ci.nsIFaviconService);
+		const fs = Cc['@mozilla.org/browser/favicon-service;1']
+			.getService(Ci.nsIFaviconService);
+		const RE_HTML = /\/$|html?$|aspx?$|php\d?$|py$|\/[^.]*$/i;
+		const gfi = function getFavIconInternal(url) fs.getFaviconImageForPage(url);
+		const gfim = memoize(gfi, 200);
+		const defaultFavicon = fs.defaultFavicon;
+
+		return function getFavIcon(url) {
+			try {
+				if (RE_HTML.test(url.filePath)) {
+					let icon = gfi(url);
+					if (defaultFavicon.equals(icon)) {
+						let host = url.clone();
+						host.path = "";
+						return gfim(host).spec;
+					}
+					return icon.spec;
+				}
+			}
+			catch (ex) {
+				// nop op
+			}
+			return null;
+		};
 	}
 	catch (ex) {
 		if (Logger.enabled) {
 			Logger.log("FavIcon Service not available", ex);
 		}
-		return null;
+		return function getFavIconStub() null;
 	}
 });
 
@@ -102,14 +125,9 @@ function getIcon(link, metalink, size) {
 			catch (ex) { /* no op */ }
 		}
 		if (url && url instanceof Ci.nsIURL) {
-			if (FavIcons && /(?:\/|html?|aspx?|php\d?)$|\/[^.]*$/i.test(url.filePath)) {
-				let icon = FavIcons.getFaviconImageForPage(url);
-				if (icon.spec == FavIcons.defaultFavicon.spec) {
-					let host = url.clone().QueryInterface(Ci.nsIURL);
-					host.ref = host.query = host.filePath = "";
-					icon = FavIcons.getFaviconImageForPage(host);
-				}
-				return icon.spec;
+			let icon = getFavIcon(url);
+			if (icon) {
+				return icon;
 			}
 			url = url.spec;
 		}
