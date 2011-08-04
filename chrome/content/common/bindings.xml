@@ -219,7 +219,7 @@
 					id = dl.fileName;
 				}
 				this.setAttribute('identity', id);
-				this.setAttribute('iconURL', dl.logo ? dl.logo : getIcon(dl.url.usable, false, 32));
+				this.setAttribute('iconURL', dl.logo ? dl.logo : getIcon(dl.url, false, 32));
 				this.setAttribute('url', dl.url.usable);
 
 				function addSimple(e) {
