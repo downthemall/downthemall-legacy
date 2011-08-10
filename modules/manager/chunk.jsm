@@ -95,6 +95,10 @@ const _thread = (function() {
 
 function MemoryReporter() {
 	this.chunks = [];
+	this.session = {
+		chunks: 0,
+		written: 0
+	};
 	return Object.freeze(this);
 }
 MemoryReporter.prototype = {
@@ -138,8 +142,8 @@ MemoryReporter.prototype = {
 		callback.callback(
 			this.process,
 			"explicit/downthemall/downloads/pending",
-			1,
-			0,
+			Ci.nsIMemoryReporter.KIND_HEAP,
+			Ci.nsIMemoryReporter.UNITS_BYTES,
 			pending,
 			"Downloaded bytes waiting or in the process of being written to disk",
 			closure
@@ -147,33 +151,64 @@ MemoryReporter.prototype = {
 		callback.callback(
 			this.process,
 			"explicit/downthemall/downloads/cached",
-			1,
-			0,
+			Ci.nsIMemoryReporter.KIND_HEAP,
+			Ci.nsIMemoryReporter.UNITS_BYTES,
 			cached,
 			"Downloaded bytes in cache",
 			closure
 			);
 		callback.callback(
 			this.process,
-			"downthemall/connections-active",
-			2,
-			1,
+			"downthemall/connections/active",
+			Ci.nsIMemoryReporter.KIND_OTHER,
+			Ci.nsIMemoryReporter.UNITS_COUNT,
 			chunksActive,
 			"Currently active connections (chunks)",
 			closure
 			);
 		callback.callback(
 			this.process,
-			"downthemall/connections-scheduled",
-			2,
-			1,
+			"downthemall/connections/scheduled",
+			Ci.nsIMemoryReporter.KIND_OTHER,
+			Ci.nsIMemoryReporter.UNITS_COUNT,
 			chunksScheduled,
 			"Currently scheduled/suspended connections (chunks)",
 			closure
 			);
+		callback.callback(
+			this.process,
+			"downthemall/connections/total",
+			Ci.nsIMemoryReporter.KIND_OTHER,
+			Ci.nsIMemoryReporter.UNITS_COUNT,
+			this.chunks.length,
+			"Current total connections (chunks)",
+			closure
+			);
+		callback.callback(
+			this.process,
+			"downthemall/session/connections",
+			Ci.nsIMemoryReporter.KIND_OTHER,
+			Ci.nsIMemoryReporter.UNITS_COUNT_CUMULATIVE,
+			this.session.chunks,
+			"Total connections (chunks) in this session",
+			closure
+			);
+		callback.callback(
+			this.process,
+			"downthemall/session/bytes-received",
+			Ci.nsIMemoryReporter.KIND_OTHER,
+			Ci.nsIMemoryReporter.UNITS_BYTES,
+			this.session.written,
+			"Total bytes received in this session",
+			closure
+			);
+	},
+	noteBytesWritten: function(bytes) {
+		this.session.written += bytes;
 	},
 	registerChunk: function(chunk) {
 		this.chunks.push(chunk);
+		++this.session.chunks;
 	},
 	unregisterChunk: function(chunk) {
 		let idx = this.chunks.indexOf(chunk);
@@ -388,6 +423,7 @@ Chunk.prototype = {
 	_noteBytesWritten: function CH_noteBytesWritten(bytes) {
 		this._written += bytes;
 		this._sessionBytes += bytes;
+		MemoryReporter.noteBytesWritten(bytes);
 
 		this.parent.timeLastProgress = getTimestamp();
 	},
@@ -430,7 +466,7 @@ Chunk.prototype = {
 			// reqPending from above makes sure that we won't re-schedule
 			// the download too early
 			if (!this._bufferStream) {
-				this._bufferStream = new StorageStream((1<<12), (1<<30), null);
+				this._bufferStream = new StorageStream(BUFFER_SIZE, (1<<30), null);
 			}
 
 			let so = this._bufferStream.getOutputStream(this._bufferStream.length);
