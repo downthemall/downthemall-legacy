@@ -9,6 +9,7 @@ var EXPORTED_SYMBOLS = [
 	'QUEUED',
 	'SPEED_COUNT',
 	'MIN_CHUNK_SIZE',
+	'BUFFER_SIZE',
 	'REFRESH_FREQ',
 	'TOOLTIP_FREQ',
 ];
@@ -31,6 +32,9 @@ const SPEED_COUNT = 100;
 
 // Minimal size a chunk may take
 const MIN_CHUNK_SIZE = 1<<18; // 256K
+
+// Buffer size
+const BUFFER_SIZE = 1<<19; // 512K
 
 // Refresh frequency
 const REFRESH_FREQ = 1000;
