@@ -389,7 +389,6 @@ const Dialog = {
 		let list = $('listSpeeds');
 		let val = list.limit;
 		Preferences.setExt('speedlimit', val);
-		GlobalBucket.byteRate = val;
 		this._speeds.clear();
 	},
 	changeSpeedLimitUp: function() {
