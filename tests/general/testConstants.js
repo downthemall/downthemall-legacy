@@ -9,7 +9,7 @@ test("exports", function() {
 		'CANCELED',
 		'QUEUED',
 		'SPEED_COUNT',
-		'MIN_CHUNK_SIZE'
+		'MIN_CHUNK_SIZE',
 		'BUFFER_SIZE',
 		'REFRESH_FREQ',
 		'TOOLTIP_FREQ',
