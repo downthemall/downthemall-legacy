@@ -52,6 +52,7 @@ module("resource://dta/constants.jsm");
 const Prefs = {};
 module("resource://dta/preferences.jsm", Prefs);
 module("resource://dta/utils.jsm");
+module("resource://dta/support/defer.jsm");
 const Limits = {};
 module("resource://dta/support/serverlimits.jsm", Limits);
 
@@ -92,6 +93,107 @@ const _thread = (function() {
 	return thread;
 })();
 
+function MemoryReporter() {
+	this.chunks = [];
+	return Object.freeze(this);
+}
+MemoryReporter.prototype = {
+	kind: 1,
+	units: 0,
+	process: "",
+	path: "explicit/downthemall/downloads/buffered",
+	description: "Downloaded but not yet written bytes",
+	get memoryUsed() {
+		let rv = 0;
+		try {
+			for (let [,c] in Iterator(this.chunks)) {
+				rv += c.buffered;
+			}
+		}
+		catch (ex) {
+			return -1;
+		}
+		return rv;
+	},
+	collectReports: function(callback, closure) {
+		let pending = 0;
+		let cached = 0;
+		let chunksActive = 0;
+		let chunksScheduled = 0;
+		try {
+			for (let [,c] in Iterator(this.chunks)) {
+				pending += c.bufferedPending;
+				cached += c.bufferedCached;
+				if (c._req) {
+					++chunksScheduled;
+				}
+				else {
+					++chunksActive;
+				}
+			}
+		}
+		catch (ex) {
+			return;
+		}
+		callback.callback(
+			this.process,
+			"explicit/downthemall/downloads/pending",
+			1,
+			0,
+			pending,
+			"Downloaded bytes waiting or in the process of being written to disk",
+			closure
+			);
+		callback.callback(
+			this.process,
+			"explicit/downthemall/downloads/cached",
+			1,
+			0,
+			cached,
+			"Downloaded bytes in cache",
+			closure
+			);
+		callback.callback(
+			this.process,
+			"downthemall/connections-active",
+			2,
+			1,
+			chunksActive,
+			"Currently active connections (chunks)",
+			closure
+			);
+		callback.callback(
+			this.process,
+			"downthemall/connections-scheduled",
+			2,
+			1,
+			chunksScheduled,
+			"Currently scheduled/suspended connections (chunks)",
+			closure
+			);
+	},
+	registerChunk: function(chunk) {
+		this.chunks.push(chunk);
+	},
+	unregisterChunk: function(chunk) {
+		let idx = this.chunks.indexOf(chunk);
+		if (idx >= 0) {
+			this.chunks.splice(idx, 1);
+		}
+	}
+};
+MemoryReporter = new MemoryReporter();
+try {
+	let memrm = Cc["@mozilla.org/memory-reporter-manager;1"].getService(Ci.nsIMemoryReporterManager);
+	if ('registerMultiReporter' in memrm) {
+		memrm.registerMultiReporter(MemoryReporter);
+	}
+	else {
+		memrm.registerReporter(MemoryReporter);
+	}
+} catch (ex) {}
+
+
 const Observer = {
 	observe: function(s, topic, d) {
 		if (topic == "quit-application") {
@@ -101,6 +203,15 @@ const Observer = {
 				_thread.shutdown();
 			}
 			catch (ex) {}
+			try {
+				let memrm = Cc["@mozilla.org/memory-reporter-manager;1"].getService(Ci.nsIMemoryReporterManager);
+				if ('registerMultiReporter' in memrm) {
+					memrm.unregisterMultiReporter(MemoryReporter);
+				}
+				else {
+					memrm.unregisterReporter(MemoryReporter);
+				}
+			} catch (ex) {}
 			return;
 		}
 		let perms = Prefs.permissions = Prefs.getExt("permissions", 384);
@@ -133,50 +244,29 @@ function Chunk(download, start, end, written) {
 Chunk.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable, Ci.nsIRequestObserver]),
 	running: false,
-	get starter() {
-		return this.end <= 0;
-	},
-	get start() {
-		return this._start;
-	},
-	get end() {
-		return this._end;
-	},
+	get starter() this.end <= 0,
+	get start() this._start,
+	get end() this._end,
 	set end(nv) {
 		this._end = nv;
 		this._total = this._end - this._start + 1;
 	},
-	get total() {
-		return this._total;
-	},
-	get written() {
-		return this._written;
-	},
+	get total() this._total,
+	get written() this._written,
 	_buffered: 0,
-	get buffered() {
-		if (!this._bufferStream) {
-			return this._buffered;
-		}
-		return this._buffered + this._bufferStream.length;
-	},
-	get safeBytes() {
-		return this.written - this.buffered;
-	},
-	get remainder() {
-		return this._total - this._written;
-	},
+	get bufferedPending() this._buffered,
+	get bufferedCached() this._bufferStream ? this._bufferStream.length : 0,
+	get buffered() (this.bufferedPending + this.bufferedCached),
+	get safeBytes() (this.written - this.buffered),
+	get remainder() (this._total - this._written),
 	get complete() {
 		if (this._end == -1) {
 			return this.written != 0;
 		}
 		return this._total == this.written;
 	},
-	get parent() {
-		return this._parent;
-	},
-	get sessionBytes() {
-		return this._sessionBytes;
-	},
+	get parent() this._parent,
+	get sessionBytes() this._sessionBytes,
 	merge: function CH_merge(ch) {
 		if (!this.complete && !ch.complete) {
 			throw new Error("Cannot merge incomplete chunks this way!");
@@ -203,6 +293,7 @@ Chunk.prototype = {
 				GlobalBucket
 				);
 		this.buckets.register(this);
+		MemoryReporter.registerChunk(this);
 		this.parent.chunkOpened(this);
 	},
 	close: function CH_close() {
@@ -227,6 +318,7 @@ Chunk.prototype = {
 		}
 		delete this._req;
 		this._sessionBytes = 0;
+		MemoryReporter.unregisterChunk(this);
 		if (notifyOwner) {
 			this.parent.chunkClosed(this);
 		}
