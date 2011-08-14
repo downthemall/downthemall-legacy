@@ -943,7 +943,7 @@ Connection.prototype = {
 		// Server did not return any data.
 		// Try to mark the URL bad
 		// else pause + autoretry
-		if (!c.written  && !!c.remainder) {
+		if (!c.written && !!c.remainder) {
 			if (!d.urlManager.markBad(this.url)) {
 				if (Logger.enabled) {
 					Logger.log(d + ": Server error or disconnection", "(type 1)");
@@ -955,7 +955,11 @@ Connection.prototype = {
 		}
 
 		if (!d.isOf(PAUSED | CANCELED | FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
-			if (d.resumable || Preferences.getExt('resumeonerror', false)) {
+			if (d.resumable && c.sessionBytes > 0) {
+				// fast retry unless we didn't actually receive something
+				d.resumeDownload();
+			}
+			else if (d.resumable || Preferences.getExt('resumeonerror', false)) {
 				d.pauseAndRetry();
 				d.status = _('errmismatchtitle');
 			}
