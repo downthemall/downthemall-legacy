@@ -1400,19 +1400,16 @@ const Tree = {
 			throw ex;
 		}
 	},
-	top: function T_top() {
+	moveTop: function T_top() {
 		try {
 			this.beginUpdate();
 			let ids;
 			try {
 				ids = this._getSelectedFilteredIds(true);
-				ids.forEach(
-					function(id, idx) {
-						id = id + idx;
-						this._downloads.unshift(this._downloads.splice(id, 1)[0]);
-					},
-					this
-				);
+				for (let [idx, id] in Iterator(ids)) {
+					id = id + idx;
+					this._downloads.unshift(this._downloads.splice(id, 1)[0]);
+				}
 				this.doFilter();
 			}
 			finally {
@@ -1428,19 +1425,16 @@ const Tree = {
 			}
 		}
 	},
-	bottom: function T_bottom() {
+	moveBottom: function T_bottom() {
 		try {
 			this.beginUpdate();
 			let ids;
 			try {
 				ids = this._getSelectedFilteredIds();
-				ids.forEach(
-					function(id, idx) {
-						id = id - idx;
-						this._downloads.push(this._downloads.splice(id, 1)[0]);
-					},
-					this
-				);
+				for (let [idx, id] in Iterator(ids)) {
+					id = id - idx;
+					this._downloads.push(this._downloads.splice(id, 1)[0]);
+				}
 				this.doFilter();
 			}
 			finally {
@@ -1456,7 +1450,7 @@ const Tree = {
 			}
 		}
 	},
-	up: function T_up() {
+	moveUp: function T_up() {
 		try {
 			if (this._matcher.filtering) {
 				throw Error("not implemented");
@@ -1489,7 +1483,7 @@ const Tree = {
 			}
 		}
 	},
-	down: function T_down() {
+	moveDown: function T_down() {
 		try {
 			if (this._matcher.filtering) {
 				throw Error("not implemented");
