@@ -63,10 +63,10 @@
 		<command id="cmdRemoveCompleted" oncommand="Tree.removeCompleted();" />
 		<command id="cmdRemoveDupes" oncommand="Tree.removeDupes();" />
 
-		<command id="cmdMoveTop" oncommand="Tree.top();" />
-		<command id="cmdMoveUp" oncommand="Tree.up();" />
-		<command id="cmdMoveDown" oncommand="Tree.down();" />
-		<command id="cmdMoveBottom" oncommand="Tree.bottom();" />
+		<command id="cmdMoveTop" oncommand="Tree.moveTop();" />
+		<command id="cmdMoveUp" oncommand="Tree.moveUp();" />
+		<command id="cmdMoveDown" oncommand="Tree.moveDown();" />
+		<command id="cmdMoveBottom" oncommand="Tree.moveBottom();" />
 
 		<command id="cmdAddChunk" oncommand="Tree.changeChunks(true);" />
 		<command id="cmdRemoveChunk" oncommand="Tree.changeChunks(false);" />
