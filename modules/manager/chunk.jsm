@@ -317,6 +317,7 @@ Chunk.prototype = {
 	},
 	open: function CH_open() {
 		this._sessionBytes = 0;
+		this._canceled = false;
 		let file = this.parent.tmpFile;
 		if (!file.parent.exists()) {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
