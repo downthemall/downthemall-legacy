@@ -2466,6 +2466,7 @@ QueueItem.prototype = {
 		}
 
 		this.pause();
+		this.resumable = true;
 		this.save();
 	},
 	autoRetry: function QI_autoRetry() {
