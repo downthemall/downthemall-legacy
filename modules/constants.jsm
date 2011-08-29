@@ -34,7 +34,7 @@ const SPEED_COUNT = 100;
 const MIN_CHUNK_SIZE = 1<<18; // 256K
 
 // Buffer size
-const BUFFER_SIZE = 1<<19; // 512K
+const BUFFER_SIZE = 1<<21; // 2M
 
 // Refresh frequency
 const REFRESH_FREQ = 1000;
