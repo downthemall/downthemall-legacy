@@ -59,9 +59,8 @@ ObserversBase.prototype = {
 		}
 	},
 	notify: function() {
-		let obs = this._obs;
-		for (let o = 0, e = obs.length; o < e; o++) {
-			obs[o].observe.call(obs[o]);
+		for (let [,o] in Iterator(this._obs)) {
+			o.observe.call(o);
 		}
 	}
 }
