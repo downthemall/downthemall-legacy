@@ -119,6 +119,10 @@ SpeedStats.prototype = {
 
 			this._avg = this._speeds.slice(-10).reduce(function(p, c) (0.8 * p) + (0.2 * c));
 		}
+		if (received < 0) {
+			this.clear();
+			return 0;
+		}
 		this._lastTime = time;
 		this._lastBytes = bytes;
 		return received;
