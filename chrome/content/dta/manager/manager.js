@@ -1872,11 +1872,21 @@ QueueItem.prototype = {
 
 	refreshPartialSize: function QI_refreshPartialSize(){
 		let size = 0;
-		for (let c = 0; c < this.chunks.length; ++c) {
-			size += this.chunks[c].written;
+		for (let [,c] in Iterator(this.chunks)) {
+			size += c.written;
 		}
-		this.partialSize = size;
-		this.progress = Math.floor(size * 100.0 / this._totalSize);
+		if (isNaN(size) || size < 0) {
+			if (Logger.enabled) {
+				Logger.log("Bug: invalid partial size!", size);
+				for (let [i,c] in Iterator(this.chunks)) {
+					Logger.log("Chunk " + i + ": " + c);
+				}
+			}
+		}
+		else {
+			this.partialSize = size;
+			this.progress = Math.floor(size * 100.0 / this._totalSize);
+		}
 	},
 
 	pause: function QI_pause(){
