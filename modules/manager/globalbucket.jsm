@@ -45,7 +45,8 @@ Components.utils.import("resource://dta/preferences.jsm");
 Components.utils.import("resource://dta/support/bytebucket.jsm");
 
 const GlobalBucket = new ByteBucket(getExt('speedlimit', -1), 1.3);
-GlobalBucket.observe = function() {
-	this.byteRate = getExt("speedlimit", -1);
-};
-addObserver("extensions.dta.speedlimit", GlobalBucket);
+addObserver("extensions.dta.speedlimit", {
+	observe: function(s,t,d) {
+		GlobalBucket.byteRate = getExt("speedlimit", -1);
+	}
+});
