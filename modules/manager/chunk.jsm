@@ -292,7 +292,8 @@ Chunk.prototype = {
 	get bufferedPending() this._buffered,
 	get bufferedCached() this._bufferStream ? this._bufferStream.length : 0,
 	get buffered() (this.bufferedPending + this.bufferedCached),
-	get safeBytes() (this.written - this.buffered),
+	safeBytes: 0,
+	get currentPosition() (this.start + this.written),
 	get remainder() (this._total - this._written),
 	get complete() {
 		if (this._end == -1) {
@@ -322,7 +323,7 @@ Chunk.prototype = {
 		if (!file.parent.exists()) {
 			file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
 		}
-		this._outStream = this.openOutStream(file, this.start + this.written);
+		this._outStream = this.openOutStream(file, this.currentPosition);
 		this.buckets = new ByteBucketTee(
 				this.parent.bucket,
 				Limits.getServerBucket(this.parent),
@@ -353,8 +354,12 @@ Chunk.prototype = {
 			this.buckets.unregister(this);
 		}
 		delete this._req;
-		this._sessionBytes = 0;
 		MemoryReporter.unregisterChunk(this);
+
+		this._sessionBytes = 0;
+		this._buffered = 0;
+		this._written = this.safeBytes;
+
 		if (notifyOwner) {
 			this.parent.chunkClosed(this);
 		}
@@ -384,6 +389,7 @@ Chunk.prototype = {
 			}
 			if (aContext instanceof Ci.nsISupportsPRUint32) {
 				this._buffered -= aContext.data;
+				this.safeBytes += aContext.data;
 			}
 		}
 		if (this.running || this._copiers.length) {
@@ -401,7 +407,7 @@ Chunk.prototype = {
 	cancel: function CH_cancel() {
 		this.running = false;
 		this._canceled = true;
-		for (let [i,c] in Iterator(this._copiers)) {
+		for (let [,c] in Iterator(this._copiers)) {
 			try {
 				c.cancel(Cr.NS_ERROR_ABORT);
 			}
