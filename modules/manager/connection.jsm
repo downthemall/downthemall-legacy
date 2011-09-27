@@ -72,6 +72,13 @@ extendString(String);
 
 ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService2");
 
+const DISCONNECTION_CODES = [
+	NS_ERROR_CONNECTION_REFUSED,
+	NS_ERROR_UNKNOWN_HOST,
+	NS_ERROR_NET_TIMEOUT,
+	NS_ERROR_NET_RESET
+];
+
 (function(global) {
 	let strings = {};
 	for (let s in new SimpleIterator(Cc["@mozilla.org/intl/stringbundle;1"]
@@ -881,12 +888,7 @@ Connection.prototype = {
 			}
 		}
 
-		if (c.starter && -1 != [
-			NS_ERROR_CONNECTION_REFUSED,
-			NS_ERROR_UNKNOWN_HOST,
-			NS_ERROR_NET_TIMEOUT,
-			NS_ERROR_NET_RESET
-		].indexOf(aStatusCode)) {
+		if (c.starter && -1 != DISCONNECTION_CODES.indexOf(aStatusCode)) {
 			if (!d.urlManager.markBad(this.url)) {
 				Logger.log(d + ": Server error or disconnection", "(type 3)");
 				d.pauseAndRetry();
