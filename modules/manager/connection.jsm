@@ -371,7 +371,7 @@ Connection.prototype = {
 						if (this.c.end < chunk.end) {
 							this.c.end = chunk.end;
 						}
-						chunk.cancel();
+						chunk.cancelChunk();
 					}
 
 					if (Logger.enabled) {
@@ -417,7 +417,7 @@ Connection.prototype = {
 		let c = this.c;
 		let d = this.d;
 
-		c.cancel();
+		c.cancelChunk();
 		if (Logger.enabled) {
 			d.dumpScoreboard();
 		}
