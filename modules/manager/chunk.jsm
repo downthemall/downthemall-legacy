@@ -268,6 +268,7 @@ Services.obs.addObserver(Observer, "quit-application", true);
 function Chunk(download, start, end, written) {
 	// saveguard against null or strings and such
 	this._written = written > 0 ? written : 0;
+	this.safeBytes = this._written;
 	this._start = start;
 	this._end = end;
 	this.end = end;
