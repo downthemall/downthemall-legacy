@@ -404,7 +404,7 @@ Chunk.prototype = {
 		this._written -= this._sessionBytes;
 		this._sessionBytes = 0;
 	},
-	cancel: function CH_cancel() {
+	cancelChunk: function CH_cancel() {
 		this.running = false;
 		this._canceled = true;
 		for (let [,c] in Iterator(this._copiers)) {
@@ -420,6 +420,13 @@ Chunk.prototype = {
 		// prevent shipping the current bufferStream
 		delete this._bufferStream;
 
+		this.close();
+		if (this.download) {
+			this.download.cancel();
+		}
+	},
+	pauseChunk: function CH_pause() {
+		this.running = false;
 		this.close();
 		if (this.download) {
 			this.download.cancel();

@@ -1237,14 +1237,11 @@ const Dialog = {
 			function(d) {
 				if (d.isOf(RUNNING | QUEUED)) {
 					// enumerate all running chunks
-					d.chunks.forEach(
-						function(c) {
-							if (c.running) {
-								++chunks;
-							}
-						},
-						this
-					);
+					for (let [,c] in Iterator(d.chunks)) {
+						if (c.running) {
+							++chunks;
+						}
+					}
 					d.pause();
 					d.state = QUEUED;
 				}
@@ -1862,7 +1859,7 @@ QueueItem.prototype = {
 		this.progress = this.totalSize = this.partialSize = 0;
 		this.compression = null;
 		this.activeChunks = this.maxChunks = 0;
-		this.chunks.forEach(function(c) c.cancel());
+		this.chunks.forEach(function(c) c.cancelChunk());
 		this.chunks = [];
 		this.speeds.clear();
 		this.visitors = new VisitorManager();
@@ -1893,7 +1890,7 @@ QueueItem.prototype = {
 		if (this.chunks) {
 			for (let [,c] in Iterator(this.chunks)) {
 				if (c.running) {
-					c.cancel();
+					c.pauseChunk();
 				}
 			}
 		}
@@ -2296,7 +2293,14 @@ QueueItem.prototype = {
 				Dialog.completed--;
 			}
 			else if (this.is(RUNNING)) {
-				this.pause();
+				if (this.chunks) {
+					for (let [,c] in Iterator(this.chunks)) {
+						if (c.running) {
+							c.cancel();
+						}
+					}
+				}
+				this.activeChunks = 0;
 			}
 			this.state = CANCELED;
 			let bound = this.cancel.bind(this, message);
@@ -2467,6 +2471,10 @@ QueueItem.prototype = {
 		return !!this._autoRetryTime;
 	},
 	pauseAndRetry: function QI_markRetry() {
+		this.pause();
+		this.resumable = true;
+		this.save();
+
 		if (Prefs.autoRetryInterval && !(Prefs.maxAutoRetries && Prefs.maxAutoRetries <= this._autoRetries)) {
 			Dialog.markAutoRetry(this);
 			this._autoRetryTime = Utils.getTimestamp();
@@ -2474,10 +2482,6 @@ QueueItem.prototype = {
 				Logger.log("marked auto-retry: " + this);
 			}
 		}
-
-		this.pause();
-		this.resumable = true;
-		this.save();
 	},
 	autoRetry: function QI_autoRetry() {
 		if (!this.autoRetrying || Utils.getTimestamp() - (Prefs.autoRetryInterval * 1000) < this._autoRetryTime) {
