@@ -1891,7 +1891,7 @@ QueueItem.prototype = {
 
 	pause: function QI_pause(){
 		if (this.chunks) {
-			for each (let c in this.chunks) {
+			for (let [,c] in Iterator(this.chunks)) {
 				if (c.running) {
 					c.cancel();
 				}
@@ -2694,7 +2694,6 @@ QueueItem.prototype = {
 		}
 
 		e.chunks = [];
-
 		if (this.isOf(RUNNING | PAUSED | QUEUED) && this.resumable) {
 			for each (let c in this.chunks) {
 				e.chunks.push({start: c.start, end: c.end, written: c.safeBytes});

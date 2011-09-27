@@ -134,9 +134,9 @@ function Connection(d, c, isInfoGetter) {
 	}
 	else if (this._chan instanceof Ci.nsIFTPChannel) {
 		try {
-			if (c.start + c.written > 0) {
+			if (c.currentPosition > 0) {
 					let resumable = this._chan.QueryInterface(Ci.nsIResumableChannel);
-					resumable.resumeAt(c.start + c.written, '');
+					resumable.resumeAt(c.currentPosition, '');
 			}
 		}
 		catch (ex) {
@@ -205,8 +205,8 @@ Connection.prototype = {
 					chan.setRequestHeader('Connection', 'close', false);
 				}
 
-				if (c.start + c.written > 0) {
-					chan.setRequestHeader('Range', 'bytes=' + (c.start + c.written) + "-", false);
+				if (c.currentPosition > 0) {
+					chan.setRequestHeader('Range', 'bytes=' + (c.currentPosition) + "-", false);
 					if (Logger.enabled) {
 						Logger.log("setting range");
 					}
@@ -308,11 +308,11 @@ Connection.prototype = {
 
 			// When we get redirected from, say, http to ftp, we need to explicitly
 			// call resumeAt() as this won't be propagated from the old channel.
-			if (c.start + c.written > 0 && !(newChannel instanceof Ci.nsIHttpChannel)) {
+			if (c.currentPosition > 0 && !(newChannel instanceof Ci.nsIHttpChannel)) {
 				let resumable = newChannel.QueryInterface(Ci.nsIResumableChannel);
-				resumable.resumeAt(c.start + c.written, '');
+				resumable.resumeAt(c.currentPosition, '');
 				if (Logger.enabled) {
-					Logger.log("redirect: set resumeAt on " + newChannel.URI.spec + "/" + newChannel.originalURI.spec + " at " + (c.start + c.written));
+					Logger.log("redirect: set resumeAt on " + newChannel.URI.spec + "/" + newChannel.originalURI.spec + " at " + c.currentPosition);
 				}
 			}
 		}
