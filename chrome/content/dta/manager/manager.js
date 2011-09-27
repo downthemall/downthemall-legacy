@@ -1755,7 +1755,7 @@ QueueItem.prototype = {
 				if (c.remainder < 10240) {
 					continue;
 				}
-				c.cancel();
+				c.cancelChunk();
 			}
 		}
 		else if (this._maxChunks > this._activeChunks && this.is(RUNNING)) {
@@ -2296,7 +2296,7 @@ QueueItem.prototype = {
 				if (this.chunks) {
 					for (let [,c] in Iterator(this.chunks)) {
 						if (c.running) {
-							c.cancel();
+							c.cancelChunk();
 						}
 					}
 				}
