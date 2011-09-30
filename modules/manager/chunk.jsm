@@ -270,11 +270,11 @@ function Chunk(download, start, end, written) {
 	this._written = written > 0 ? written : 0;
 	this.safeBytes = this._written;
 	this._start = start;
-	this._end = end;
 	this.end = end;
 	this._parent = download;
 	this._sessionBytes = 0;
 	this._copiers = [];
+	Logger.log("chunk created: " + this);
 }
 
 Chunk.prototype = {
@@ -310,6 +310,7 @@ Chunk.prototype = {
 		}
 		this.end = ch.end;
 		this._written += ch._written;
+		this.safeBytes += ch.safeBytes;
 	},
 	openOutStream: function CH_openOutStream(file, at) {
 		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);

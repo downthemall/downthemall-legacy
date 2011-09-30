@@ -2520,7 +2520,7 @@ QueueItem.prototype = {
 			// that much
 			for (let i = d.chunks.length - 2; i > -1; --i) {
 				let c1 = d.chunks[i], c2 = d.chunks[i + 1];
-				if (c1.complete && c2.complete) {
+				if (c1.complete && c2.complete && !c1.buffered && !c2.buffered) {
 					c1.merge(c2);
 					d.chunks.splice(i + 1, 1);
 				}
