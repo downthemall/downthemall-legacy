@@ -208,9 +208,12 @@ function checkMirrors() {
 	function makeRequest(m) {
 		let req = new XMLHttpRequest();
 		req.mirror = m;
-		req.onload = req.onerror = function() {
+		req.addEventListener("load", function() {
 			finishRequest(req);
-		};
+		}, false);
+		req.addEventListener("error", function() {
+			finishRequest(req);
+		}, false);
 		requests[m.mirror] = req;
 		try {
 			req.open('HEAD', m.mirror);
