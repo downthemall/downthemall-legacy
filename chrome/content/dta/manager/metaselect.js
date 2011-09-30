@@ -91,7 +91,7 @@ const MetaSelect = {
 		$('identity').value = info.identity;
 		$('desc').appendChild(document.createTextNode(info.description));
 		let logo = new Image();
-		logo.onload = function() {
+		logo.addEventListener("load", function() {
 			let canvas = $('icon');
 			try {
 				canvas.width = canvas.clientWidth;
@@ -114,10 +114,10 @@ const MetaSelect = {
 				}
 				logo.src = METALINK_LOGO;
 			}
-		};
-		logo.onerror = function() {
+		}, false);
+		logo.addEventListener("error", function() {
 			logo.src = METALINK_LOGO;
-		};
+		}, false);
 		logo.src = info.logo ? info.logo : METALINK_LOGO;
 		if (info.publisher) {
 			let e = $('publisher');
