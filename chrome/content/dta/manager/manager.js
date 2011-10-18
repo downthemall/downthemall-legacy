@@ -812,20 +812,20 @@ const Dialog = {
 			// Refresh window title
 			if (this._running.length == 1 && this._running[0].totalSize > 0) {
 				if (Tree.filtered) {
-					document.title = _('titlerunningfiltered', [
+					document.title = _('titlespeedfiltered', [
 						this._running[0].percent,
+						statusSpeed.label,
 						this.completed,
 						Tree.downloadCount,
-						Tree.rowCount,
-						statusSpeed.label
+						Tree.rowCount
 					]);
 				}
 				else {
-					document.title = _('titlerunning', [
+					document.title = _('titlespeed', [
 						this._running[0].percent,
+						statusSpeed.label,
 						this.completed,
 						Tree.downloadCount,
-						statusSpeed.label
 					]);
 				}
 				if (this._running[0].totalSize) {
@@ -839,20 +839,20 @@ const Dialog = {
 				let p = Math.floor(this.completed * 1000 / Tree.downloadCount);
 				let pt = Math.floor(this.completed * 100 / Tree.downloadCount) + '%';
 				if (Tree.filtered) {
-					document.title = _('titlerunningfiltered', [
+					document.title = _('titlespeedfiltered', [
 						pt,
+						statusSpeed.label,
 						this.completed,
 						Tree.downloadCount,
-						Tree.rowCount,
-						statusSpeed.label
+						Tree.rowCount
 					]);
 				}
 				else {
-					document.title = _('titlerunning', [
+					document.title = _('titlespeed', [
 						pt,
+						statusSpeed.label,
 						this.completed,
-						Tree.downloadCount,
-						statusSpeed.label
+						Tree.downloadCount
 					]);
 				}
 				GlobalProgress.activate(p, 1000);
