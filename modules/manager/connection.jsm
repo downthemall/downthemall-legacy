@@ -116,7 +116,7 @@ function Connection(d, c, isInfoGetter) {
 			if (d.postData) {
 				let uc = this._chan.QueryInterface(Ci.nsIUploadChannel);
 				uc.setUploadStream(new StringInputStream(d.postData, d.postData.length), null, -1);
-				http.requestMethod = 'POST';
+				this._chan.requestMethod = 'POST';
 			}			 
 		}
 		catch (ex) {
