@@ -414,8 +414,11 @@ const filterMapInSitu = Utils.filterMapInSitu;
 	_ic.loadWindow(window);
 })();
 
-setNewGetter(
-	this,
-	"DefaultDownloadsDirectory",
-	function() Cc["@mozilla.org/download-manager;1"].getService(Ci.nsIDownloadManager).defaultDownloadsDirectory
-);
+__defineGetter__("DefaultDownloadsDirectory", function() {
+	let dlm = Cc["@mozilla.org/download-manager;1"].getService(Ci.nsIDownloadManager);
+	try {
+		return dlm.userDownloadsDirectory;
+	}
+	catch (ex) {}
+	return dlm.defaultDownloadsDirectory;
+});
