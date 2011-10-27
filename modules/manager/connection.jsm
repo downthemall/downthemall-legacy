@@ -595,8 +595,8 @@ Connection.prototype = {
 				// Firefox 4 support 64bit contentLength
 				totalSize = Math.max(aChannel.contentLength, 0); 
 			}
-			if (d.totalSize && totalSize != this.totalSize && !this.handleError()) {
-				Debug.log("ftp: total size mismatch " + totalSize + " " + this.totalSize);
+			if (d.totalSize && totalSize != d.totalSize && !this.handleError()) {
+				Debug.log("ftp: total size mismatch " + totalSize + " " + d.totalSize);
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror')); 
 				return false;
 			}
