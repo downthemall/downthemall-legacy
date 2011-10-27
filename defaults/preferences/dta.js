@@ -109,7 +109,7 @@ pref("extensions.dta.filters.deffilter-arch.active", false);
 pref("extensions.dta.filters.deffilter-arch.type", 1);
 
 pref("extensions.dta.filters.deffilter-vid.label", "Videos");
-pref("extensions.dta.filters.deffilter-vid.test", "/\\.(?:mpeg|ra?m|avi|mp(?:g|e|4)|mov|divx|asf|qt|wmv|m\dv|rv|vob|asx|ogm|ogg|webm)$/i");
+pref("extensions.dta.filters.deffilter-vid.test", "/\\.(?:mpeg|ra?m|avi|mp(?:g|e|4)|mov|divx|asf|qt|wmv|m\\dv|rv|vob|asx|ogm|ogv|webm)$/i");
 pref("extensions.dta.filters.deffilter-vid.active", true);
 pref("extensions.dta.filters.deffilter-vid.type", 3);
 
