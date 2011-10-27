@@ -682,9 +682,9 @@ Connection.prototype = {
 				// Firefox 4 support 64bit contentLength
 				totalSize = Math.max(aChannel.contentLength, 0);
 			}
-			if (d.totalSize && totalSize != this.totalSize && !this.handleError()) {
+			if (d.totalSize && totalSize != d.totalSize && !this.handleError()) {
 				if (Logger.enabled) {
-					Logger.log("ftp: total size mismatch " + totalSize + " " + this.totalSize);
+					Logger.log("ftp: total size mismatch " + totalSize + " " + d.totalSize);
 				}
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 				return false;
