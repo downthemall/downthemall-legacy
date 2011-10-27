@@ -45,7 +45,7 @@
 <!ENTITY removeGone.label "Clean Gone Files">
 <!ENTITY advanced.label "Advanced">
 <!ENTITY addchunk.label "One More Segment">
-<!ENTITY removechunk.label "One Less Segment">
+<!ENTITY removechunk.label "One Fewer Segment">
 <!ENTITY force.label "Force Start">
 <!ENTITY import.label "Import from File">
 <!ENTITY exportto.label "Export Selected to File">
