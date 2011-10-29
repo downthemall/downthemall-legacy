@@ -537,7 +537,7 @@ Connection.prototype = {
 		}
 
 		if (visitor.type) {
-			d.contentType = visitor.type;
+			d.contentType = aChannel.contentType || visitor.type;
 		}
 
 		// compression?
