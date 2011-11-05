@@ -15,3 +15,25 @@ statusbarpanel#netstatus[offline] {
 treecol > dropmarker {
 	-moz-appearance: treetwistyopen;
 }
+
+#tools {
+	-moz-appearance: menubar;
+}
+#tools > toolbarbutton {
+	-moz-appearance: none;
+	color: -moz-menubartext;
+	-moz-border-radius: 6.5px;
+}
+#tools > toolbarbutton[disabled="true"] {
+	color: rgba(128,128,128,0.5);
+}
+#tools > toolbarbutton:hover:not([disabled="true"]) {
+	border: 1px solid rgba(128,128,128,.5);
+	background-clip: padding-box;
+	background: rgba(128,128,128,.4)
+		-moz-linear-gradient(rgba(128,128,128,.65),
+			rgba(128,128,128,0) 35%, rgba(128,128,128,.6));
+}
+#tools > toolbarbutton:active:not([disabled="true"]) {
+	border: 1px inset rgba(128,128,128,.9);
+}
