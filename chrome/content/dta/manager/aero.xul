@@ -8,7 +8,7 @@
  * See LICENSE and GPL for details.
  *
  * ***** END LICENSE BLOCK ***** -->
-<?xml-stylesheet href="chrome://dta/skin/manager/aero.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://dta-platform/skin/manager-aero.css" type="text/css" ?>
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<window id="DownThemAll" chromemargin="0,-1,-1,-1" lightweightthemes="true" lightweightthemesfooter="footer">
