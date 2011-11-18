@@ -308,6 +308,7 @@ const Tooltip = {
 				mr = true;
 			}
 			catch (ex) {
+				Debug.log("initUpdate failed; retrying", ex);
 				Timers.createOneshot(25, this.initUpdate, this);				
 				return;
 			}
