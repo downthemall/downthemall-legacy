@@ -1887,6 +1887,7 @@ QueueItem.prototype = {
 	},
 
 	pause: function QI_pause(){
+		this.state = PAUSED;
 		if (this.chunks) {
 			for (let [,c] in Iterator(this.chunks)) {
 				if (c.running) {
@@ -1895,7 +1896,6 @@ QueueItem.prototype = {
 			}
 		}
 		this.activeChunks = 0;
-		this.state = PAUSED;
 		this.speeds.clear();
 	},
 
@@ -2294,6 +2294,8 @@ QueueItem.prototype = {
 			}
 			else if (this.is(RUNNING)) {
 				if (this.chunks) {
+					// must set state here, already, to avoid confusing the connections
+					this.state = CANCELED;
 					for (let [,c] in Iterator(this.chunks)) {
 						if (c.running) {
 							c.cancelChunk();
