@@ -354,6 +354,48 @@ Connection.prototype = {
 		}
 	},
 
+	verifyChunksStarted: function() {
+		// XXX always check, not just .isInfoGetter?
+		if (!this.isInfoGetter || this.d.chunks.every(function(c) !c.running || !!c.sessionBytes)) {
+			// All running chunks received something at this point
+			return false;
+		}
+		// Other downloads didn't start; assume the worst
+		if (Logger.enabled) {
+			Logger.log("Need to recombine chunks; not all started");
+			this.d.dumpScoreboard();
+		}
+
+		// recombine affected chunks
+		let chunks = this.d.chunks;
+		for (let c, i = chunks.length - 1; i > 1 && (c = chunks[i]); --i) {
+			if (!c.running || !!c.sessionBytes) {
+				// Only check running chunks without bytes received
+				Logger.log("skipping: " + i + " / " + c);
+				continue;
+			}
+			if (Logger.enabled) {
+				Logger.log("Respinning by merging: " + i + " / " + c);
+			}
+			// Merge with previous chunk
+			chunks[i-1].end = c.end;
+			c.cancelChunk();
+			chunks.splice(i, 1);
+
+			// We do not want to run into yet another timed out thing
+			// However, completely disabling chunks isn't really a great thing to do
+			if (this.d.maxChunks > 2) {
+				this.d.maxChunks--;
+			}
+		}
+		if (Logger.enabled) {
+			Logger.log("Done respinning, new score board follows");
+			this.d.dumpScoreboard();
+			return true;
+		}
+		return false;
+	},
+
 	// nsIStreamListener
 	onDataAvailable: function DL_onDataAvailable(aRequest, aContext, aInputStream, aOffset, aCount) {
 		if (this._closed) {
@@ -363,33 +405,10 @@ Connection.prototype = {
 			// we want to kill ftp chans as well which do not seem to respond to
 			// cancel correctly.
 			if (this.c.write(aRequest, aInputStream, aCount) < 0) {
-				if (this.isInfoGetter && !this.d.chunks.every(function(c) !c.running || !!c.sessionBytes)) {
-					// Other downloads didn't start; assume the worst
-					if (Logger.enabled) {
-						Logger.log("Need to recombine chunks; not all started");
-						this.d.dumpScoreboard();
-					}
-
-					let oldChunks = this.d.chunks.filter(function(c) c != this.c, this);
-					this.d.chunks = [this.c];
-					this.d.activeChunks = this.d.maxChunks = 1;
-
-					for each (let chunk in oldChunks) {
-						if (this.c.end < chunk.end) {
-							this.c.end = chunk.end;
-						}
-						chunk.cancelChunk();
-					}
-
-					if (Logger.enabled) {
-						this.d.dumpScoreboard();
-					}
-					if (this.c.write(aRequest, aInputStream, aCount) >= 0) {
-						if (Logger.enabled) {
-							Logger.log("successfully respun");
-						}
-						return;
-					}
+				// need to attempt another write after merging in verifyChunksStarted
+				if (this.verifyChunksStarted()
+						&& this.c.write(aRequest, aInputStream, aCount) >= 0) {
+					return;
 				}
 
 				// we already got what we wanted
