@@ -74,7 +74,7 @@ Visitor.prototype = {
 			return;
 		}
 
-		for (x in this.cmpKeys) {
+		for (let x in this.cmpKeys) {
 			// we don't have this header
 			if (!(x in this)) {
 				continue;
@@ -101,7 +101,7 @@ Visitor.prototype = {
 	},
 	save: function vi_save(node) {
 		var rv = {};
-		for (x in this.cmpKeys) {
+		for (let x in this.cmpKeys) {
 			if (!(x in this)) {
 				continue;
 			}
