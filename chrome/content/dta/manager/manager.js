@@ -2278,6 +2278,9 @@ QueueItem.prototype = {
 			delete this._chunksReady_next;
 			fn();
 		}
+		if (!this._openChunks) {
+			this.save();
+		}
 	},
 	chunksReady: function(nextEvent) {
 		if (!this._openChunks) {
@@ -2694,13 +2697,8 @@ QueueItem.prototype = {
 		else {
 			rv.totalSize = this.totalSize;
 		}
-
-		rv.chunks = [];
 		if (this.isOf(RUNNING | PAUSED | QUEUED) && this.resumable) {
-			for (let i = 0, e = this.chunks.length; i < e; ++i) {
-				let c = this.chunks[i];
-				rv.chunks.push({start: c.start, end: c.end, written: c.safeBytes});
-			}
+			rv.chunks = this.chunks;
 		}
 		return rv;
 	}
