@@ -1317,6 +1317,7 @@ const Dialog = {
 			delete d._icon;
 		}
 		Tree.clear();
+		QueueStore.flush();
 		FileExts = null;
 		Dialog = null;
 		return true;
