@@ -1868,8 +1868,8 @@ QueueItem.prototype = {
 
 	refreshPartialSize: function QI_refreshPartialSize(){
 		let size = 0;
-		for (let [,c] in Iterator(this.chunks)) {
-			size += c.written;
+		for (let i = 0, e = this.chunks.length; i < e; ++i) {
+			size += this.chunks[i].written;
 		}
 		if (isNaN(size) || size < 0) {
 			if (Logger.enabled) {
@@ -2269,7 +2269,11 @@ QueueItem.prototype = {
 	},
 	chunkClosed: function() {
 		this._openChunks--;
-		Logger.log("chunkClosed: " + this._openChunks);
+		if (Logger.enabled) {
+			Logger.log("chunkClosed: " + this._openChunks);
+		}
+		this.refreshPartialSize();
+		this.invalidate();
 		if (!this._openChunks && this._chunksReady_next) {
 			if (Logger.enabled) {
 				Logger.log("Running chunksReady_next");
