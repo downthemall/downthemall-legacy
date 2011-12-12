@@ -166,13 +166,7 @@ UrlManager.prototype = {
 		this._makeGood();
 		return true;
 	},
-	serialize: function um_serialize() {
-		let rv = [];
-		for each (let url in this._urls) {
-			rv.push(url.serialize());
-		}
-		return rv;
-	},
+	toJSON: function um_toJSON() this._urls,
 	toString: function() {
 		return this._urls.reduce(function(v, u) v + u.preference + " " + u.url + "\n");
 	},
