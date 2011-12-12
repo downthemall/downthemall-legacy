@@ -179,15 +179,7 @@ const QueueStore = {
 
 		this._initialized = false;
 		// finish any pending operations
-		if (_timer) {
-			try {
-				_timer.cancel();
-			}
-			catch (ex) { /* don't care */ }
-
-			_timer = null;
-			this._saveDownloadQueue();
-		}
+		this.flush();
 		try {
 			_connection.executeSimpleSQL('VACUUM');
 		}
@@ -396,6 +388,9 @@ const QueueStore = {
 				callback.call(ctx, rows);
 			}
 		});
+	},
+	flush: function() {
+		this._saveDownloadQueue();
 	},
 	getQueueSeq: function() {
 		let stmt = _connection.createStatement("SELECT seq FROM SQLITE_SEQUENCE WHERE name LIKE '%queue%'");
