@@ -1683,10 +1683,10 @@ QueueItem.prototype = {
 			return false;
 		}
 		if (this.dbId) {
-			QueueStore.saveDownload(this.dbId, this.serialize());
+			QueueStore.saveDownload(this.dbId, JSON.stringify(this));
 			return true;
 		}
-		this.dbId = QueueStore.addDownload(this.serialize(), this.position);
+		this.dbId = QueueStore.addDownload(JSON.stringify(this), this.position);
 		return true;
 	},
 	remove: function QI_remove() {
@@ -2649,7 +2649,7 @@ QueueItem.prototype = {
 		Logger.log("scoreboard\n" + scoreboard);
 	},
 	toString: function() this.urlManager.usable,
-	serialize: function() {
+	toJSON: function() {
 		let rv = Object.create(null);
 		let p = Object.getPrototypeOf(this);
 		for (let i = 0, e = Dialog_serialize_props.length; i < e; ++i) {
@@ -2663,7 +2663,7 @@ QueueItem.prototype = {
 			rv.maxChunks = this.maxChunks;
 		}
 		if (this.hashCollection) {
-			rv.hashCollection = this.hashCollection.serialize();
+			rv.hashCollection = this.hashCollection;
 		}
 		if (this.autoRetrying || this.is(RUNNING)) {
 			rv.state = QUEUED;
@@ -2685,8 +2685,8 @@ QueueItem.prototype = {
 		}
 		rv.startDate = this.startDate.getTime();
 
-		rv.urlManager = this.urlManager.serialize();
-		rv.visitors = this.visitors.serialize();
+		rv.urlManager = this.urlManager;
+		rv.visitors = this.visitors;
 
 		if (!this.resumable && !this.is(COMPLETE)) {
 			rv.totalSize = 0;
@@ -2702,7 +2702,7 @@ QueueItem.prototype = {
 				rv.chunks.push({start: c.start, end: c.end, written: c.safeBytes});
 			}
 		}
-		return JSON.stringify(rv);
+		return rv;
 	}
 }
 setNewGetter(QueueItem.prototype, 'AuthPrompts', function() {

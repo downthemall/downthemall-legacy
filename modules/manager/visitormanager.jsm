@@ -328,7 +328,7 @@ VisitorManager.prototype = {
 	 *
 	 * @return A ::load compatible Array
 	 */
-	serialize: function vm_serialize() {
+	toJSON: function vm_toJSON() {
 		let rv = [];
 		for (let x in this._visitors) {
 			try {
