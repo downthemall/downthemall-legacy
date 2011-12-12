@@ -412,12 +412,12 @@ const Tooltip = {
 		g.addColorStop(1, c2);
 		return g;
 	},
-	_createInnerShadowGradient: function(ctx, w, c1, c2, c3, c4) {
+	_createInnerShadowGradient: function(ctx, w, colors) {
 		let g = ctx.createLinearGradient(0, 0, 0, w);
-		g.addColorStop(0, c1);
-		g.addColorStop(3.0 / w, c2);
-		g.addColorStop(4.0 / w, c3);
-		g.addColorStop(1, c4);
+		g.addColorStop(0, colors[0]);
+		g.addColorStop(3.0 / w, colors[1]);
+		g.addColorStop(4.0 / w, colors[2]);
+		g.addColorStop(1, colors[3]);
 		return g;
 	},
 	updateMetrics: function(file) {
@@ -453,6 +453,12 @@ const Tooltip = {
 	_usUpdate: -1,
 	_usBytes: -1,
 	_usState: null,
+	_usPasses: [
+		{ x:4, y:0, f: ["#EADF91", "#F4EFB1"] },
+		{ x:2, y:0, f: ["#DFD58A", "#D3CB8B"] },
+		{ x:1, y:0, f: ["#D0BA70", "#DFCF6F"] },
+		{ x:0, y:0, f: ["#FF8B00", "#FFDF38"], s: ["#F98F00", "#FFBF37"] }
+	],
 	updateSpeeds: function(file) {
 		try {
 			if (!this._mustDraw && file === this._usFile && file.speeds.lastUpdate === this._usUpdate && file.speeds.lastBytes === this._usBytes && file.state == this._usState) {
@@ -470,9 +476,8 @@ const Tooltip = {
 			let ctx = canvas.getContext("2d");
 			--w; --h;
 
-			let boxFillStyle = this._createInnerShadowGradient(ctx, h, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
-			let boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
-			let graphFillStyle = this._createVerticalGradient(ctx, h - 7, "#FF8B00", "#FFDF38");
+			let boxFillStyle = this._createInnerShadowGradient(ctx, h, ["#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4"]);
+			let boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, ["#816A1D", "#E7BE34", "#F8CC38", "#D8B231"]);
 
 			ctx.clearRect(0, 0, w, h);
 			ctx.save();
@@ -509,53 +514,46 @@ const Tooltip = {
 
 				ctx.save();
 				ctx.clip();
-				[
-					{ x:4, y:0, f: this._createVerticalGradient(ctx, h - 7, "#EADF91", "#F4EFB1") },
-					{ x:2, y:0, f: this._createVerticalGradient(ctx, h - 7, "#DFD58A", "#D3CB8B") },
-					{ x:1, y:0, f: this._createVerticalGradient(ctx, h - 7, "#D0BA70", "#DFCF6F") },
-					{ x:0, y:0, f: graphFillStyle, s: this._createVerticalGradient(ctx, h - 7, "#F98F00", "#FFBF37") }
-				].forEach(
-					function(pass) {
-						ctx.fillStyle = pass.f;
-						let y = h + pass.y;
-						let x = pass.x + 0.5;
+				for (let [,pass] in Iterator(this._usPasses)) {
+					ctx.fillStyle = this._createVerticalGradient(ctx, h - 7, pass.f[0], pass.f[1]);
+					let y = h + pass.y;
+					let x = pass.x + 0.5;
 
-						ctx.beginPath();
-						ctx.moveTo(x, y);
+					ctx.beginPath();
+					ctx.moveTo(x, y);
 
-						y -= speeds[0];
-						ctx.lineTo(x, y);
+					y -= speeds[0];
+					ctx.lineTo(x, y);
 
-						let slope = (speeds[1] - speeds[0]);
-						x += step * .7;
-						y -= slope * .7;
-						ctx.lineTo(x, y);
+					let slope = (speeds[1] - speeds[0]);
+					x += step * .7;
+					y -= slope * .7;
+					ctx.lineTo(x, y);
 
-						for (let j = 1, e = speeds.length - 1; j < e; ++j) {
-							y -= slope *.3;
-							slope = (speeds[j+1] - speeds[j]);
-							y -= slope * .3;
-
-							ctx.quadraticCurveTo(step * j, h + pass.y - speeds[j], (x + step * .6), y);
-
-							x += step;
-							y -= slope * .4;
-
-							ctx.lineTo(x, y);
-						}
-						x += step * .3;
+					for (let j = 1, e = speeds.length - 1; j < e; ++j) {
+						y -= slope *.3;
+						slope = (speeds[j+1] - speeds[j]);
 						y -= slope * .3;
+
+						ctx.quadraticCurveTo(step * j, h + pass.y - speeds[j], (x + step * .6), y);
+
+						x += step;
+						y -= slope * .4;
+
 						ctx.lineTo(x, y);
-
-						ctx.lineTo(x, h);
-						ctx.fill();
-
-						if (pass.s) {
-							ctx.strokeStyle = pass.s;
-							ctx.stroke();
-						}
 					}
-				);
+					x += step * .3;
+					y -= slope * .3;
+					ctx.lineTo(x, y);
+
+					ctx.lineTo(x, h);
+					ctx.fill();
+
+					if (pass.s) {
+						ctx.strokeStyle = this._createVerticalGradient(ctx, h - 7, pass.s[0], pass.s[1]);
+						ctx.stroke();
+					}
+				}
 				ctx.restore();
 			}
 			this._makeRoundedRectPath(ctx, 0, 0, w, h, 3);
@@ -573,6 +571,12 @@ const Tooltip = {
 	_ucDim: null,
 	_ucTotal: null,
 	_ucState: null,
+	_ucPasses: [
+		{ x:0, fs: ["#AFA259", "#E8D675", "#F2E17E", "#F5F1B8"] },
+		{ x:1, fs: ["#9A8F4E", "#B0A359", "#B3A75D", "#BAB78B"] },
+		{ x:2, fs: ["#8E8746", "#B0A359", "#8E8746", "#CACB96"] },
+		{ x:3, f: ["#A7D533", "#D3F047"], s: true }
+	],
 	updateChunks: function (file) {
 		try {
 			if (!this._mustDraw && file === this._ucFile && file.state === this._ucState && file.dimensionString === this._ucDim) {
@@ -591,10 +595,9 @@ const Tooltip = {
 			let cheight = height - 15;
 
 			// Create gradients
-			let chunkFillStyle = this._createVerticalGradient(ctx, cheight, "#A7D533", "#D3F047");
-			let boxFillStyle = this._createInnerShadowGradient(ctx, cheight, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
-			let boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, "#816A1D", "#E7BE34", "#F8CC38", "#D8B231");
-			let partialBoxFillStyle = this._createInnerShadowGradient(ctx, 8, "#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4");
+			let boxFillStyle = this._createInnerShadowGradient(ctx, cheight, ["#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4"]);
+			let boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, ["#816A1D", "#E7BE34", "#F8CC38", "#D8B231"]);
+			let partialBoxFillStyle = this._createInnerShadowGradient(ctx, 8, ["#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4"]);
 
 			// clear all
 			ctx.clearRect(0, 0, width, height);
@@ -632,21 +635,19 @@ const Tooltip = {
 			ctx.save();
 			ctx.clip();
 
-			var passes = [
-				{ x:0, f: this._createInnerShadowGradient(ctx, cheight, "#AFA259", "#E8D675", "#F2E17E", "#F5F1B8") },
-				{ x:1, f: this._createInnerShadowGradient(ctx, cheight, "#9A8F4E", "#B0A359", "#B3A75D", "#BAB78B") },
-				{ x:2, f: this._createInnerShadowGradient(ctx, cheight, "#8E8746", "#B0A359", "#8E8746", "#CACB96") },
-				{ x:3, f: chunkFillStyle, s:chunkFillStyle }
-			];
-
-			for each (var chunk in b) {
-				for each (var pass in passes) {
-					ctx.fillStyle = pass.f;
+			for (let [,pass] in Iterator(this._ucPasses)) {
+				if (pass.fs) {
+					ctx.fillStyle = this._createInnerShadowGradient(ctx, cheight, pass.fs);
+				}
+				else if (pass.f) {
+					ctx.fillStyle = this._createVerticalGradient(ctx, cheight, pass.f[0], pass.f[1]);
+				}
+				for each (var chunk in b) {
 					this._makeRoundedRectPath(ctx, chunk.s, 0, chunk.w - pass.x + 2, cheight, 3);
 					ctx.fill();
 					if (pass.s) {
 						ctx.lineWidth = 2;
-						ctx.strokeStyle = pass.s;
+						ctx.strokeStyle = ctx.fillStyle;
 						ctx.stroke();
 					}
 				}

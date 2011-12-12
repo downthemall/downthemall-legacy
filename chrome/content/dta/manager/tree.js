@@ -92,7 +92,18 @@ const Tree = {
 
 		$("matcher").addEventListener("command", function(event) tp.handleMatcherPopup(event), true);
 
-		$('popup').addEventListener('popupshowing', function(event) tp.onPopupShowing(event), true);
+		let mirrorNodes = $('mirrors', 'mirrors-sep');
+		let mirrorCNodes = $('mirrors-cascaded', 'mirrors-cascaded-sep');
+		$('popup').addEventListener('popupshowing', function onPopupShowing(event) {
+			let cascadeMirrors = tp.current.urlManager.length < 2;
+			for (let [,e] in Iterator(mirrorNodes)) {
+				e.hidden = cascadeMirrors;
+			}
+			for (let [,e] in Iterator(mirrorCNodes)) {
+				e.hidden = !cascadeMirrors;
+			}
+			tp.showSpeedLimitList(event);
+		}, true);
 		$('search').addEventListener('search', function(event) tp.setFilter(event.target.value), true);
 
 		ServiceGetter(this, "_ds", "@mozilla.org/widget/dragservice;1", "nsIDragService");
@@ -105,13 +116,6 @@ const Tree = {
 	unlink: function() {
 		this.elem.view = null;
 		delete this.elem;
-	},
-	onPopupShowing: function(event) {
-		let cascadeMirrors = this.current.urlManager.length < 2;
-		$('mirrors', 'mirrors-sep').forEach(function(e) e.hidden = cascadeMirrors);
-		$('mirrors-cascaded', 'mirrors-cascaded-sep').forEach(function(e) e.hidden = !cascadeMirrors);
-
-		this.showSpeedLimitList(event);
 	},
 	assembleMenus: function() {
 		for each (let popup in $('removeCompletedPopup', 'removePopup')) {
@@ -196,7 +200,9 @@ const Tree = {
 
 		if (action == 'clearmatcher') {
 			element.removeAttribute('params');
-			$$('menuitem[param]', popup).forEach(function(n) n.removeAttribute('checked'));
+			for (let [,n] in Iterator($$('menuitem[param]', popup))) {
+				n.removeAttribute('checked')
+			}
 			this._matcher.removeMatcher(matcher);
 			this.doFilter();
 			return;
@@ -370,8 +376,6 @@ const Tree = {
 	_filter: '',
 	_mustFilter: false,
 	get filtered() this._matcher.filtering,
-	_doFilter_resetPositions: function(e) e.filteredPosition = -1,
-	_doFilter_setPositions: function(e, i) e.filteredPosition = i,
 	doFilter: function T__doFilter() {
 		if (this._updating) {
 			this._mustFilter = true;
@@ -381,7 +385,9 @@ const Tree = {
 		try {
 			// save selection
 			let selectedIds = this._getSelectedFilteredIds();
-			this._downloads.forEach(this._doFilter_resetPositions);
+			for (let i = 0, e = this._downloads.length; i < e; ++i) {
+				this._downloads[i].filteredPosition = -1;
+			}
 			this._box.rowCountChanged(0, -this.rowCount);
 			if (this._matcher.filtering) {
 				this._filtered = this._matcher.filter(this._downloads);
@@ -389,7 +395,9 @@ const Tree = {
 			else {
 				this._filtered = this._downloads;
 			}
-			this._filtered.forEach(this._doFilter_setPositions);
+			for (let i = 0, e = this._filtered.length; i < e; ++i) {
+				this._filtered[i].filteredPosition = i;
+			}
 			this._box.rowCountChanged(0, this.rowCount);
 
 			// restore selection

@@ -270,12 +270,9 @@ const Dialog = {
 		}
 
 		Preferences.makeObserver(this);
-		this._observes.forEach(
-			function(topic) {
-				ObserverService.addObserver(this, topic, true);
-			},
-			this
-		);
+		for (let [,topic] in Iterator(this._observes)) {
+			ObserverService.addObserver(this, topic, true);
+		}
 
 		// Autofit
 		(function autofit() {
@@ -1288,15 +1285,12 @@ const Dialog = {
 				unknown.push(f);
 			}
 		}
-		unknown.forEach(
-			function(f) {
-				try {
-					f.remove(false);
-				}
-				catch(ex) {
-				}
+		for (let [,f] in Iterator(unknown)) {
+			try {
+				f.remove(false);
 			}
-		);
+			catch (ex) {}
+		}
 	},
 	_safeCloseAttempts: 0,
 
@@ -1319,7 +1313,9 @@ const Dialog = {
 		}
 
 		// some more gc
-		Tree._downloads.forEach(function(d) delete d._icon);
+		for (let [,d] in Iterator(Tree._downloads)) {
+			delete d._icon;
+		}
 		Tree.clear();
 		FileExts = null;
 		Dialog = null;
@@ -1351,12 +1347,12 @@ const Metalinker = {
 			if (!res.downloads.length) {
 				throw new Error(_('mlnodownloads'));
 			}
-			res.downloads.forEach(function(e) {
+			for (let [,e] in Iterator(res.downloads)) {
 				if (e.size) {
 					e.size = Utils.formatBytes(e.size);
 				}
 				e.fileName = e.fileName.getUsableFileName();
-			});
+			}
 			window.openDialog(
 				'chrome://dta/content/dta/manager/metaselect.xul',
 				'_blank',
@@ -1859,7 +1855,9 @@ QueueItem.prototype = {
 		this.progress = this.totalSize = this.partialSize = 0;
 		this.compression = null;
 		this.activeChunks = this.maxChunks = 0;
-		this.chunks.forEach(function(c) c.cancelChunk());
+		for (let [,c] in Iterator(this.chunks)) {
+			c.cancelChunk();
+		}
 		this.chunks = [];
 		this.speeds.clear();
 		this.visitors = new VisitorManager();
@@ -1911,7 +1909,9 @@ QueueItem.prototype = {
 		}
 		try {
 			// safeguard against some failed chunks.
-			this.chunks.forEach(function(c) { c.close(); });
+			for (let [,c] in Iterator(this.chunks)) {
+				c.close();
+			}
 			var destination = new LocalFile(this.destinationPath);
 			if (Logger.enabled) {
 				Logger.log(this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
@@ -2637,75 +2637,71 @@ QueueItem.prototype = {
 		this.save();
 	},
 	dumpScoreboard: function QI_dumpScoreboard() {
+		if (!Logger.enabled) {
+			return;
+		}
 		let scoreboard = '';
 		let len = this.totalSize.toString().length;
-		this.chunks.forEach(
-			function(c,i) {
-				scoreboard += i
-					+ ": "
-					+ c
-					+ "\n";
-			}
-		);
-		if (Logger.enabled) {
-			Logger.log("scoreboard\n" + scoreboard);
+		for (let [i,c] in Iterator(this.chunks)) {
+			scoreboard += i + ": " + c + "\n";
 		}
+		Logger.log("scoreboard\n" + scoreboard);
 	},
 	toString: function() this.urlManager.usable,
 	serialize: function() {
-		let e = {};
-		Dialog_serialize_props.forEach(
-			function(u) {
-				// only save what is changed
-				if (this.__proto__[u] !== this[u]) {
-					e[u] = this[u];
-				}
-			},
-			this
-		);
-		if (this._maxChunks) {
-			e.maxChunks = this.maxChunks;
-		}
-		if (this.hashCollection) {
-			e.hashCollection = this.hashCollection.serialize();
-		}
-		if (this.autoRetrying || this.is(RUNNING)) {
-			e.state = QUEUED;
-		}
-		else {
-			e.state = this.state;
-		}
-		if (this.destinationNameOverride) {
-			e.destinationName = this.destinationNameOverride;
-		}
-		if (this.referrer) {
-			e.referrer = this.referrer.spec;
-		}
-		e.numIstance = this.bNum;
-		e.iNum = this.iNum;
-		// Store this so we can later resume.
-		if (!this.isOf(CANCELED | COMPLETE) && this.partialSize) {
-			e.tmpFile = this.tmpFile.path;
-		}
-		e.startDate = this.startDate.getTime();
-
-		e.urlManager = this.urlManager.serialize();
-		e.visitors = this.visitors.serialize();
-
-		if (!this.resumable && !this.is(COMPLETE)) {
-			e.totalSize = 0;
-		}
-		else {
-			e.totalSize = this.totalSize;
-		}
-
-		e.chunks = [];
-		if (this.isOf(RUNNING | PAUSED | QUEUED) && this.resumable) {
-			for each (let c in this.chunks) {
-				e.chunks.push({start: c.start, end: c.end, written: c.safeBytes});
+		let rv = Object.create(null);
+		let p = Object.getPrototypeOf(this);
+		for (let i = 0, e = Dialog_serialize_props.length; i < e; ++i) {
+			let u = Dialog_serialize_props[i];
+			// only save what is changed
+			if (p[u] !== this[u]) {
+				rv[u] = this[u];
 			}
 		}
-		return JSON.stringify(e);
+		if (this._maxChunks) {
+			rv.maxChunks = this.maxChunks;
+		}
+		if (this.hashCollection) {
+			rv.hashCollection = this.hashCollection.serialize();
+		}
+		if (this.autoRetrying || this.is(RUNNING)) {
+			rv.state = QUEUED;
+		}
+		else {
+			rv.state = this.state;
+		}
+		if (this.destinationNameOverride) {
+			rv.destinationName = this.destinationNameOverride;
+		}
+		if (this.referrer) {
+			rv.referrer = this.referrer.spec;
+		}
+		rv.numIstance = this.bNum;
+		rv.iNum = this.iNum;
+		// Store this so we can later resume.
+		if (!this.isOf(CANCELED | COMPLETE) && this.partialSize) {
+			rv.tmpFile = this.tmpFile.path;
+		}
+		rv.startDate = this.startDate.getTime();
+
+		rv.urlManager = this.urlManager.serialize();
+		rv.visitors = this.visitors.serialize();
+
+		if (!this.resumable && !this.is(COMPLETE)) {
+			rv.totalSize = 0;
+		}
+		else {
+			rv.totalSize = this.totalSize;
+		}
+
+		rv.chunks = [];
+		if (this.isOf(RUNNING | PAUSED | QUEUED) && this.resumable) {
+			for (let i = 0, e = this.chunks.length; i < e; ++i) {
+				let c = this.chunks[i];
+				rv.chunks.push({start: c.start, end: c.end, written: c.safeBytes});
+			}
+		}
+		return JSON.stringify(rv);
 	}
 }
 setNewGetter(QueueItem.prototype, 'AuthPrompts', function() {
