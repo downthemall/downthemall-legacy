@@ -35,6 +35,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+Components.utils.import('resource://dta/support/defer.jsm');
 Components.utils.import('resource://dta/support/timers.jsm');
 const Timers = new TimerManager();
 
@@ -57,6 +58,7 @@ var Dialog = {
 	},
 	load: function DTA_load() {
 		try {
+			Tooltip.init();
 			// d is an Array of Downloads
 			this.downloads = window.arguments[0];
 			if (this.downloads.length == 1) {
