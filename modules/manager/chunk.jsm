@@ -60,8 +60,7 @@ module("resource://dta/manager/globalbucket.jsm");
 
 const AsyncStreamCopier = ctor("@mozilla.org/network/async-stream-copier;1","nsIAsyncStreamCopier", "init");
 const FileOutputStream = ctor("@mozilla.org/network/file-output-stream;1", "nsIFileOutputStream", "init");
-const ScriptableInputStream = ctor("@mozilla.org/scriptableinputstream;1", "nsIScriptableInputStream", "init");
-const StorageStream = ctor("@mozilla.org/storagestream;1", "nsIStorageStream", "init");
+const Pipe = ctor("@mozilla.org/pipe;1", "nsIPipe", "init");
 const SupportsUint32 = ctor("@mozilla.org/supports-PRUint32;1", "nsISupportsPRUint32");
 
 const _thread = (function() {
@@ -71,26 +70,27 @@ const _thread = (function() {
 	// The assumption that writes will be properly serialized is based on the
 	// following assumptions
 	//  1. The thread event queue processes events fifo, always
-	//  2. The async stream copier writes a bufferStream in one event, i.e. it
-	//     does interrupt the copy and reschedule the rest in another event
+	//  2. The async stream copier writes a whole piped stream before processing
+	//     another stream write request.
 	//
 	// Why do we want to use all this cruft?
 	// - To keep the browser snappier by having the slow disk I/O stuff off the
 	//   main thread.
 	// - Having a single thread doing all the writes might reduce/avoid some
-	//   nasty performance issues, such as thrashing due to concurrency.
+	//   nasty performance issues, such as excessive disk thrashing due to
+	//   concurrency.
 	// - We cannot use ChromeWorkers, because we cannot do file I/O there
-	//   unless we reimplement file I/O using ctypes (and that's just not
-	//   reasonable).
+	//   unless we reimplement file I/O using ctypes (and while it's feasible, it
+	//   is not really reasonable)
 	//
 	// For the amo-validator context:
-	// Editor note: Safe use as an event target for nsIAsyncStreamCopier
-	let thread = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager).newThread(0);
-	if (thread instanceof Ci.nsISupportsPriority) {
-		thread.priority = thread.PRIORITY_LOW;
+	// Editor note: Safe use, as an event target for nsIAsyncStreamCopier (no js use)
+	let AsynCopierThread = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager).newThread(0);
+	if (AsynCopierThread instanceof Ci.nsISupportsPriority) {
+		AsynCopierThread.priority = AsynCopierThread.PRIORITY_LOW;
 		Logger.log("Our async copier thread is low priority now!");
 	}
-	return thread;
+	return AsynCopierThread;
 })();
 
 function MemoryReporter() {
@@ -291,7 +291,7 @@ Chunk.prototype = {
 	get written() this._written,
 	_buffered: 0,
 	get bufferedPending() this._buffered,
-	get bufferedCached() this._bufferStream ? this._bufferStream.length : 0,
+	get bufferedCached() this._hasCurrentStream ? this._currentInputStream.available() : 0,
 	get buffered() (this.bufferedPending + this.bufferedCached),
 	safeBytes: 0,
 	get currentPosition() (this.start + this.written),
@@ -337,8 +337,8 @@ Chunk.prototype = {
 	},
 	close: function CH_close() {
 		this.running = false;
-		if (this._bufferStream) {
-			this._shipBufferStream();
+		if (this._hasCurrentStream) {
+			this._shipCurrentStream();
 		}
 		if (!this._copiers.length) {
 			this._finish();
@@ -419,8 +419,13 @@ Chunk.prototype = {
 			}
 		}
 
-		// prevent shipping the current bufferStream
-		delete this._bufferStream;
+		// prevent shipping the current stream
+		if (this._hasCurrentStream) {
+			this._currentOutputStream.close();
+			delete this._currentOutputStream;
+			this._currentInputStream.close();
+			delete this._currentInputStream;
+		}
 
 		this.close();
 		if (this.download) {
@@ -481,16 +486,16 @@ Chunk.prototype = {
 			// or in our case all remainder bytes
 			// reqPending from above makes sure that we won't re-schedule
 			// the download too early
-			if (!this._bufferStream) {
-				this._bufferStream = new StorageStream(BUFFER_SIZE, (1<<30), null);
+			if (this._hasCurrentStream && this._currentInputStream.available() + bytes > BUFFER_SIZE) {
+				this._shipCurrentStream();
 			}
-
-			let so = this._bufferStream.getOutputStream(this._bufferStream.length);
-			so.write(new ScriptableInputStream(aInputStream).readBytes(bytes), bytes);
-			so.close();
-
-			if (this._bufferStream.length + bytes > MIN_CHUNK_SIZE) {
-				this._shipBufferStream();
+			if (!this._hasCurrentStream) {
+				let pipe = new Pipe(false, false, BUFFER_SIZE / 4, 4, null);
+				this._currentInputStream = pipe.inputStream;
+				this._currentOutputStream = pipe.outputStream;
+			}
+			if (this._currentOutputStream.writeFrom(aInputStream, bytes) != bytes) {
+				throw new Error("Failed to write all requested bytes to current stream: " + this);
 			}
 
 			this._noteBytesWritten(got);
@@ -504,10 +509,21 @@ Chunk.prototype = {
 		}
 		return 0;
 	},
-	_shipBufferStream: function CH__shipStreamBuffer() {
-		let bytes = this._bufferStream.length;
+	get _hasCurrentStream() !!this._currentInputStream,
+	_shipCurrentStream: function CH__shipCurrentPipe() {
+		let is = this._currentInputStream;
+		let os = this._currentOutputStream;
+		delete this._currentInputStream;
+		delete this._currentOutputStream;
+		if (!is || !os) {
+			return;
+		}
+
+		let bytes = is.available();
+		os.close();
+
 		let copier = new AsyncStreamCopier(
-			this._bufferStream.newInputStream(0),
+			is,
 			this._outStream,
 			_thread,
 			true, // source buffered
@@ -516,7 +532,6 @@ Chunk.prototype = {
 			true, // close source
 			false // close sink
 			);
-		delete this._bufferStream;
 
 		let context = new SupportsUint32();
 		context.data = bytes;
