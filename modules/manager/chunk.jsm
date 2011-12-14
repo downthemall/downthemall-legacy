@@ -127,7 +127,16 @@ MemoryReporter.prototype = {
 		}
 		return rv;
 	},
-	_calc: function() {
+	_calc: function(force) {
+		if (!this._generation) {
+			this._generation = 10;
+		}
+		else {
+			--this._generation;
+			if (!force) {
+				return;
+			}
+		}
 		this._pendingBytes = 0;
 		this._cachedBytes = 0;
 		this._chunksScheduled = 0;
@@ -154,7 +163,7 @@ MemoryReporter.prototype = {
 		return this._cachedBytes;
 	},
 	collectReports: function(callback, closure) {
-		this._calc();
+		this._calc(true);
 
 		callback.callback(
 			this.process,
