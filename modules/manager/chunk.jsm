@@ -190,14 +190,14 @@ MemoryReporter.prototype = {
 			closure
 			);
 		callback.callback(
-				this.process,
-				"explicit/downthemall/downloads/clown-shoes",
-				Ci.nsIMemoryReporter.KIND_HEAP,
-				Ci.nsIMemoryReporter.UNITS_BYTES,
-				this._clownShoes,
-				"Unused buffer space",
-				closure
-		);
+			this.process,
+			"explicit/downthemall/downloads/clown-shoes",
+			Ci.nsIMemoryReporter.KIND_HEAP,
+			Ci.nsIMemoryReporter.UNITS_BYTES,
+			this._clownShoes,
+			"Unused buffer space",
+			closure
+			);
 		callback.callback(
 			this.process,
 			"downthemall/connections/active",
