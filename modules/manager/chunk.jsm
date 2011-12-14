@@ -139,13 +139,19 @@ MemoryReporter.prototype = {
 		}
 		this._pendingBytes = 0;
 		this._cachedBytes = 0;
+		this._clownShoes = 0;
 		this._chunksScheduled = 0;
 		this._chunksActive = 0;
+		let bs = (BUFFER_SIZE>>1);
 
 		for (let i = 0, e = this.chunks.length; i < e; ++i) {
 			let c = this.chunks[i];
-			this._pendingBytes += c.bufferedPending;
-			this._cachedBytes += c.bufferedCached;
+			let pending = 0;
+			this._pendingBytes += pending;
+			this._clownShoes += (bs - (pending % bs)) % bs;
+			let cached = c.bufferedCached;
+			this._cachedBytes += cached;
+			this._clownShoes += (bs - (cached % bs)) % bs;
 			if (c._req) {
 				++this._chunksScheduled;
 			}
@@ -183,6 +189,15 @@ MemoryReporter.prototype = {
 			"Downloaded bytes in cache",
 			closure
 			);
+		callback.callback(
+				this.process,
+				"explicit/downthemall/downloads/clown-shoes",
+				Ci.nsIMemoryReporter.KIND_HEAP,
+				Ci.nsIMemoryReporter.UNITS_BYTES,
+				this._clownShoes,
+				"Unused buffer space",
+				closure
+		);
 		callback.callback(
 			this.process,
 			"downthemall/connections/active",
