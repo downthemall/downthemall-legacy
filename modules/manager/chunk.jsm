@@ -36,6 +36,10 @@
 
 "use strict";
 
+// XXX Consider using a real (single) pipe into the async stream copier
+// We don't do this for now, as the current scheme gives a little more control
+// about how data chunks are written to disk
+
 const EXPORTED_SYMBOLS = ["Chunk"];
 
 const Cc = Components.classes;
@@ -53,6 +57,7 @@ const Prefs = {};
 module("resource://dta/preferences.jsm", Prefs);
 module("resource://dta/utils.jsm");
 module("resource://dta/support/defer.jsm");
+module("resource://dta/support/timers.jsm");
 const Limits = {};
 module("resource://dta/support/serverlimits.jsm", Limits);
 
@@ -62,6 +67,8 @@ const AsyncStreamCopier = ctor("@mozilla.org/network/async-stream-copier;1","nsI
 const FileOutputStream = ctor("@mozilla.org/network/file-output-stream;1", "nsIFileOutputStream", "init");
 const Pipe = ctor("@mozilla.org/pipe;1", "nsIPipe", "init");
 const SupportsUint32 = ctor("@mozilla.org/supports-PRUint32;1", "nsISupportsPRUint32");
+
+const Timers = new TimerManager();
 
 const _thread = (function() {
 	// Use a dedicated thread, so that we have serialized writes.
@@ -85,12 +92,12 @@ const _thread = (function() {
 	//
 	// For the amo-validator context:
 	// Editor note: Safe use, as an event target for nsIAsyncStreamCopier (no js use)
-	let AsynCopierThread = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager).newThread(0);
-	if (AsynCopierThread instanceof Ci.nsISupportsPriority) {
-		AsynCopierThread.priority = AsynCopierThread.PRIORITY_LOW;
+	let AsyncCopierThread = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager).newThread(0);
+	/*if (AsyncCopierThread instanceof Ci.nsISupportsPriority) {
+		AsyncCopierThread.priority = AsyncCopierThread.PRIORITY_LOW;
 		Logger.log("Our async copier thread is low priority now!");
-	}
-	return AsynCopierThread;
+	}*/
+	return AsyncCopierThread;
 })();
 
 function MemoryReporter() {
@@ -99,7 +106,8 @@ function MemoryReporter() {
 		chunks: 0,
 		written: 0
 	};
-	return Object.freeze(this);
+	this._calc();
+	return Object.seal(this);
 }
 MemoryReporter.prototype = {
 	kind: 1,
@@ -119,32 +127,41 @@ MemoryReporter.prototype = {
 		}
 		return rv;
 	},
-	collectReports: function(callback, closure) {
-		let pending = 0;
-		let cached = 0;
-		let chunksActive = 0;
-		let chunksScheduled = 0;
-		try {
-			for (let [,c] in Iterator(this.chunks)) {
-				pending += c.bufferedPending;
-				cached += c.bufferedCached;
-				if (c._req) {
-					++chunksScheduled;
-				}
-				else {
-					++chunksActive;
-				}
+	_calc: function() {
+		this._pendingBytes = 0;
+		this._cachedBytes = 0;
+		this._chunksScheduled = 0;
+		this._chunksActive = 0;
+
+		for (let i = 0, e = this.chunks.length; i < e; ++i) {
+			let c = this.chunks[i];
+			this._pendingBytes += c.bufferedPending;
+			this._cachedBytes += c.bufferedCached;
+			if (c._req) {
+				++this._chunksScheduled;
+			}
+			else {
+				++this._chunksActive;
 			}
 		}
-		catch (ex) {
-			return;
-		}
+	},
+	get pendingBytes() {
+		this._calc();
+		return this._pendingBytes;
+	},
+	get cachedBytes() {
+		this._calc();
+		return this._cachedBytes;
+	},
+	collectReports: function(callback, closure) {
+		this._calc();
+
 		callback.callback(
 			this.process,
 			"explicit/downthemall/downloads/pending",
 			Ci.nsIMemoryReporter.KIND_HEAP,
 			Ci.nsIMemoryReporter.UNITS_BYTES,
-			pending,
+			this._pendingBytes,
 			"Downloaded bytes waiting or in the process of being written to disk",
 			closure
 			);
@@ -153,7 +170,7 @@ MemoryReporter.prototype = {
 			"explicit/downthemall/downloads/cached",
 			Ci.nsIMemoryReporter.KIND_HEAP,
 			Ci.nsIMemoryReporter.UNITS_BYTES,
-			cached,
+			this._cachedBytes,
 			"Downloaded bytes in cache",
 			closure
 			);
@@ -162,7 +179,7 @@ MemoryReporter.prototype = {
 			"downthemall/connections/active",
 			Ci.nsIMemoryReporter.KIND_OTHER,
 			Ci.nsIMemoryReporter.UNITS_COUNT,
-			chunksActive,
+			this._chunksActive,
 			"Currently active connections (chunks)",
 			closure
 			);
@@ -171,7 +188,7 @@ MemoryReporter.prototype = {
 			"downthemall/connections/scheduled",
 			Ci.nsIMemoryReporter.KIND_OTHER,
 			Ci.nsIMemoryReporter.UNITS_COUNT,
-			chunksScheduled,
+			this._chunksScheduled,
 			"Currently scheduled/suspended connections (chunks)",
 			closure
 			);
@@ -217,7 +234,9 @@ MemoryReporter.prototype = {
 		}
 	}
 };
+Object.freeze(MemoryReporter.prototype);
 MemoryReporter = new MemoryReporter();
+
 try {
 	let memrm = Cc["@mozilla.org/memory-reporter-manager;1"].getService(Ci.nsIMemoryReporterManager);
 	if ('registerMultiReporter' in memrm) {
@@ -230,9 +249,11 @@ try {
 
 
 const Observer = {
+	memoryPressure: 0,
 	observe: function(s, topic, d) {
 		if (topic == "quit-application") {
 			Services.obs.removeObserver(this, "quit-application");
+			Services.obs.removeObserver(this, "memory-pressure");
 			Prefs.removeObserver("extensions.dta.permissions", this);
 			try {
 				_thread.shutdown();
@@ -247,8 +268,21 @@ const Observer = {
 					memrm.unregisterReporter(MemoryReporter);
 				}
 			} catch (ex) {}
+			Timers.killAllTimers();
 			return;
 		}
+
+		if (topic == "memory-pressure") {
+			if (data == "low-memory") {
+				this.memoryPressure += 25;
+			}
+			else {
+				this.memoryPressure += 100;
+			}
+			this.schedulePressureDecrement();
+			return;
+		}
+
 		let perms = Prefs.permissions = Prefs.getExt("permissions", 384);
 		if (perms & 384) {
 			perms |= 64;
@@ -260,10 +294,20 @@ const Observer = {
 			perms |= 1;
 		}
 		Prefs.dirPermissions = perms;
+	},
+	decrementPressure: function() {
+		if (!(--this.memoryPressure)) {
+			return;
+		}
+		this.schedulePressureDecrement();
+	},
+	schedulePressureDecrement: function() {
+		Timers.createOneshot(100, this.decrementPressure, this);
 	}
 }
 Prefs.addObserver("extensions.dta.permissions", Observer);
 Services.obs.addObserver(Observer, "quit-application", true);
+Services.obs.addObserver(Observer, "memory-pressure", true);
 
 function Chunk(download, start, end, written) {
 	// saveguard against null or strings and such
@@ -465,7 +509,7 @@ Chunk.prototype = {
 				// we got what we wanted
 				return -1;
 			}
-			let got = this.buckets.requestBytes(bytes);
+			let got = this.requestBytes(bytes);
 			// didn't get enough
 			if (got < bytes) {
 				if (this._req) {
@@ -490,7 +534,7 @@ Chunk.prototype = {
 				this._shipCurrentStream();
 			}
 			if (!this._hasCurrentStream) {
-				let pipe = new Pipe(false, false, BUFFER_SIZE / 4, 4, null);
+				let pipe = new Pipe(false, false, BUFFER_SIZE>>1, 1<<2, null);
 				this._currentInputStream = pipe.inputStream;
 				this._currentOutputStream = pipe.outputStream;
 			}
@@ -550,6 +594,17 @@ Chunk.prototype = {
 	observe: function() {
 		this.run();
 	},
+	requestBytes: function CH_requestBytes(requested) {
+		if (Observer.memoryPressure || MemoryReporter.pendingBytes > MAX_PENDING_SIZE) {
+			if (Logger.enabled) {
+				Logger.log("Under pressure: " + MemoryReporter.pendingBytes + " : " + Observer.memoryPressure);
+			}
+			// basically stop processing while under memory pressure
+			Timers.createOneshot(500, this.run, this);
+			return 0;
+		}
+		return this.buckets.requestBytes(requested);
+	},
 	run: function CH_run() {
 		if (!this._req) {
 			return;
@@ -557,7 +612,7 @@ Chunk.prototype = {
 		if (this._reqPending > 0) {
 			// Still have pending bytes?
 			let requested = Math.min(this._wnd, this._reqPending);
-			let got = this.buckets.requestBytes(requested);
+			let got = this.requestBytes(requested);
 			if (!got) {
 				return;
 			}
