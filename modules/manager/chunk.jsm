@@ -582,5 +582,12 @@ Chunk.prototype = {
 			+ formatNumber(this.remainder, len)
 			+ "/"
 			+ formatNumber(this._sessionBytes, len);
+	},
+	toJSON: function() {
+		return {
+			start: this.start,
+			end: this.end,
+			written: this.safeBytes
+			};
 	}
 };
