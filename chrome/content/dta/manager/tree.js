@@ -1103,7 +1103,7 @@ const Tree = {
 		$("infoDest").value = d.destinationFile;
 		$("infoDate").value = d.startDate.toLocaleString();
 
-		Tooltip.start(d);
+		Tooltip.start(d, true);
 		return true;
 	},
 	stopTip: function T_stopTip() {

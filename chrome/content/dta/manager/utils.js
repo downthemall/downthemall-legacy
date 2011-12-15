@@ -329,6 +329,7 @@ const Tooltip = {
 			'canvasGrid',
 			'chunkCanvas',
 			'speedCanvas',
+			'speedRow',
 			'speedAverage',
 			'speedCurrent',
 			'timeRemaining',
@@ -336,9 +337,18 @@ const Tooltip = {
 		).forEach(function(e) this[e.id] = e, this);
 		this.boundInitUpdate = this.initUpdate.bind(this);
 	},
-	start: function(d) {
+	start: function(d, inTip) {
 		this._current = d;
 		this._mustDraw = true;
+		this._inTip = inTip;
+		if (this._inTip && !d.is(RUNNING)) {
+			this.speedCanvas.hidden = true;
+			this.speedRow.collapsed = true;
+		}
+		else {
+			this.speedCanvas.hidden = false;
+			this.speedRow.collapsed = false;
+		}
 		this._timer = Timers.createRepeating(TOOLTIP_FREQ, this.update, this, true);
 		this.initUpdate();
 	},
@@ -463,6 +473,7 @@ const Tooltip = {
 			if (!this._mustDraw && file === this._usFile && file.speeds.lastUpdate === this._usUpdate && file.speeds.lastBytes === this._usBytes && file.state == this._usState) {
 				return;
 			}
+
 			this._usFile = file;
 			this._usState = file.state;
 			this._usUpdate = file.speeds.lastUpdate;
@@ -574,7 +585,13 @@ const Tooltip = {
 		{ x:0, fs: ["#AFA259", "#E8D675", "#F2E17E", "#F5F1B8"] },
 		{ x:1, fs: ["#9A8F4E", "#B0A359", "#B3A75D", "#BAB78B"] },
 		{ x:2, fs: ["#8E8746", "#B0A359", "#8E8746", "#CACB96"] },
-		{ x:3, f: ["#A7D533", "#D3F047"], s: true }
+		{ x:3, f: function(i) {
+			function c(a) Math.max(0, Math.min(360, a));
+			return [
+				"hsl(" + c(77.64 + 7 * (i - 2)) + ",65.88%,51.76%)",
+				"hsl(" + c(70.59 + 4 * (2 - 1)) + ",85.10%,61.18%)"
+				];
+		}, s: true }
 	],
 	updateChunks: function (file) {
 		try {
@@ -634,14 +651,16 @@ const Tooltip = {
 			ctx.save();
 			ctx.clip();
 
+			let bl = b.length;
 			for (let [,pass] in Iterator(this._ucPasses)) {
-				if (pass.fs) {
-					ctx.fillStyle = this._createInnerShadowGradient(ctx, cheight, pass.fs);
-				}
-				else if (pass.f) {
-					ctx.fillStyle = this._createVerticalGradient(ctx, cheight, pass.f[0], pass.f[1]);
-				}
-				for each (var chunk in b) {
+				for (var [i, chunk] in Iterator(b)) {
+					if (pass.fs) {
+						ctx.fillStyle = this._createInnerShadowGradient(ctx, cheight, pass.fs);
+					}
+					if (pass.f) {
+						let [f1, f2] = pass.f(bl == 1 ? 2 : bl - i);
+						ctx.fillStyle = this._createVerticalGradient(ctx, cheight, f1, f2);
+					}
 					this._makeRoundedRectPath(ctx, chunk.s, 0, chunk.w - pass.x + 2, cheight, 3);
 					ctx.fill();
 					if (pass.s) {
@@ -665,12 +684,22 @@ const Tooltip = {
 
 			// draw progress
 			if (file.totalSize > 0) {
-				ctx.fillStyle = this._createVerticalGradient(ctx, 8, "#5BB136", "#A6D73E");
+				if (file.is(PAUSED)) {
+					ctx.fillStyle = this._createVerticalGradient(ctx, 8, "#e0b400", "#FFCC00");
+				}
+				else {
+					ctx.fillStyle = this._createVerticalGradient(ctx, 8, "#5BB136", "#A6D73E");
+				}
 				this._makeRoundedRectPath(ctx, 0, 0, Math.ceil(file.partialSize / file.totalSize * width), 8, 3);
 				ctx.fill();
 			}
-			else if (file.is(CANCELED)) {
-				ctx.fillStyle = this._createVerticalGradient(ctx, 8, "#B12801", "#FFFFFF");;
+			else if (file.isOf(CANCELED | PAUSED)) {
+				if (file.is(PAUSED)) {
+					ctx.fillStyle = this._createVerticalGradient(ctx, 8, "#e0b400", "#ffeea8");
+				}
+				else {
+					ctx.fillStyle = this._createVerticalGradient(ctx, 8, "#B12801", "#FFFFFF");
+				}
 				this._makeRoundedRectPath(ctx, 0, 0, width, 8, 3);
 				ctx.fill();
 			}
