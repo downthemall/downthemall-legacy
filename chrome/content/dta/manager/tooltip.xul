@@ -85,7 +85,7 @@
 			</row>
 			<separator class="thin" />
 			<html:canvas id="speedCanvas" height="50"/>
-			<row>
+			<row id="speedRow">
 				<label value="&currentSpeedTitle.value;"/>
 				<label id="speedCurrent"/>
 				<label value="&avgSpeedTitle.value;"/>
