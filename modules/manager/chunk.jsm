@@ -527,16 +527,23 @@ Chunk.prototype = {
 			// or in our case all remainder bytes
 			// reqPending from above makes sure that we won't re-schedule
 			// the download too early
-			if (this._hasCurrentStream && this._currentInputStream.available() + bytes > BUFFER_SIZE) {
+			let avail;
+			if (this._hasCurrentStream
+					&& (avail = this._currentInputStream.available()) + bytes > BUFFER_SIZE) {
+				let fill = BUFFER_SIZE - avail;
+				bytes -= fill;
+				if (fill && this._currentOutputStream.writeFrom(aInputStream, fill) != fill) {
+					throw new Error("Failed to fill current stream. fill: " + fill + " bytes: " + bytes + "chunk: " + this);
+				}
 				this._shipCurrentStream();
 			}
 			if (!this._hasCurrentStream) {
-				let pipe = new Instances.Pipe(false, false, BUFFER_SIZE>>1, 1<<2, null);
+				let pipe = new Instances.Pipe(false, false, BUFFER_SIZE>>1, 1<<1, null);
 				this._currentInputStream = pipe.inputStream;
 				this._currentOutputStream = pipe.outputStream;
 			}
 			if (this._currentOutputStream.writeFrom(aInputStream, bytes) != bytes) {
-				throw new Error("Failed to write all requested bytes to current stream: " + this);
+				throw new Error("Failed to write all requested bytes to current stream. bytes: " + bytes + " chunk: " + this);
 			}
 
 			this._noteBytesWritten(got);
