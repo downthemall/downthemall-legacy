@@ -39,9 +39,6 @@ const EXPORTED_SYMBOLS = [
 	'atos',
 	'bind',
 	'setNewGetter',
-	'ServiceGetter',
-	'InstanceGetter',
-	'DirectoryService',
 	'newUUIDString',
 	'range',
 	'hexdigest',
@@ -69,20 +66,13 @@ const EXPORTED_SYMBOLS = [
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
-const ctor = Components.Constructor;
 const error = Components.utils.reportError;
 const module = Components.utils.import;
 const Exception = Components.Exception;
 
-module("resource://gre/modules/XPCOMUtils.jsm");
+module("resource://dta/glue.jsm");
 const Prefs = {};
 module("resource://dta/preferences.jsm", Prefs);
-
-const LocalFile = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
-const FileStream = new ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const ScriptError = new ctor('@mozilla.org/scripterror;1', 'nsIScriptError', 'init');
-
-const DirectoryService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
 
 /**
  * XUL namespace
@@ -100,7 +90,7 @@ const NS_DTA = 'http://www.downthemall.net/properties#';
 const NS_HTML = 'http://www.w3.org/1999/xhtml';
 
 const SYSTEMSLASH = (function() {
-	let f = DirectoryService.get("TmpD", Ci.nsIFile);
+	let f = Services.dirsvc.get("TmpD", Ci.nsIFile);
 	f.append('dummy');
 	return (f.path.indexOf('/') != -1) ? '/' : '\\';
 })();
@@ -113,6 +103,7 @@ const MAX_STACK = 6;
  * @param aObject (object) Object to install the getter to
  * @param aName (string) Name of the getter property
  * @param aLambda (function) Initializer function (called once, return value becomes getter value)
+ * @deprecated Use XPCOMUtils or glue.jsm
  */
 function setNewGetter(aObject, aName, aLambda) {
 	if (aName in aObject) {
@@ -133,76 +124,11 @@ function setNewGetter(aObject, aName, aLambda) {
 }
 
 /**
- * Install lazy service getter
- * @param context (object) Object to install the getter to
- * @param name Name of the getter property
- * @param contract (string) Contract id of the service
- * @param iface (string) Interface of the service
- */
-function ServiceGetter(context, name, contract, iface) {
-	if (!iface) {
-		iface = Ci.nsISupports;
-	}
-	else if (typeof iface == "string") {
-		iface = Ci[iface];
-	}
-	setNewGetter(
-		context,
-		name,
-		function() {
-			try {
-				return Cc[contract].getService(iface);
-			}
-			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log(ex);
-					Logger.log(contract);
-					Logger.log(iface);
-				}
-				throw ex;
-			}
-		}
-	);
-}
-
-/**
- * Installs lazy instance getter.
- * The instance will be created only once and then reused
- * @param context (object) Object to install the getter to
- * @param name Name of the getter property
- * @param contract (string) Contract id of the class
- * @param iface (string) Interface of the class
- * @param initFuncName (string) Optional. Name of the function to call on the object instance once created.
- * @param ... (mixed) Optional. Any arguments to initFunc
- */
-function InstanceGetter(context, name, contract, iface, initFuncName/*, args */) {
-	if (!iface) {
-		iface = Ci.nsISupports;
-	}
-	else if (typeof iface == "string") {
-		iface = Ci[iface];
-	}
-
-	// build an arguments array for the initFunc, stripping the first 5 arguments
-	let args = Array.filter(arguments, function(e, i) i > 4);
-	setNewGetter(
-		context,
-		name,
-		function() {
-			let rv = Cc[contract].createInstance(iface);
-			if (initFuncName) {
-				rv[initFuncName].apply(rv, args);
-			}
-			return rv;
-		}
-	);
-}
-
-/**
  * Creates anonymous function with context
  * @param context (object) Context object
  * @param func (function) Function to call
  * @return (function) anonymous function binding func to context
+ * @deprecated Use XPCOMUtils or glue.jsm
  */
 function bind(context, func) (function() func.apply(context, arguments));
 
@@ -210,24 +136,14 @@ function bind(context, func) (function() func.apply(context, arguments));
  * returns a new UUID in string representation
  * @return String UUID
  */
-setNewGetter(this, "newUUIDString", function() {
-	let uuidgen = Cc["@mozilla.org/uuid-generator;1"].getService(Ci.nsIUUIDGenerator);
-	return function() {
-		return uuidgen.generateUUID().toString();
-	};
-});
-
-ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService");
-ServiceGetter(this, "ExternalProtocolService", "@mozilla.org/uriloader/external-protocol-service;1", "nsIExternalProtocolService");
-ServiceGetter(this, "StringBundleService", "@mozilla.org/intl/stringbundle;1", "nsIStringBundleService");
+function newUUIDString() Services.uuid.generateUUID().toString();
 
 /**
  * LoggerService
  */
 function LoggerService() {
-	this._pb = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2);
-	this._pb.addObserver('extensions.dta.logging', this, true);
-	this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));
+	Services.prefs.addObserver('extensions.dta.logging', this, true);
+	this._setEnabled(Services.prefs.getBoolPref('extensions.dta.logging'));
 	try {
 		if (this._file.fileSize > (200 * 1024)) {
 			this.remove();
@@ -247,21 +163,15 @@ LoggerService.prototype = {
 
 	// nsIObserver
 	observe: function DS_observe(subject, topic, prefName) {
-		this._setEnabled(this._pb.getBoolPref('extensions.dta.logging'));
+		this._setEnabled(Services.prefs.getBoolPref('extensions.dta.logging'));
 	},
 	clear: function DS_clear() {
 		if (this._file.exists()) {
 			this._file.remove(false);
 		}
 	},
-	get _cs() {
-		delete LoggerService.prototype._cs;
-		return (LoggerService.prototype._cs = Cc['@mozilla.org/consoleservice;1'].getService(Ci.nsIConsoleService));
-	},
 	get _file() {
-		let file = Cc["@mozilla.org/file/directory_service;1"]
-			.getService(Ci.nsIProperties)
-			.get("ProfD", Ci.nsILocalFile);
+		let file = Services.dirsvc.get("ProfD", Ci.nsILocalFile);
 		file.append('dta_log.txt');
 		delete LoggerService.prototype._file;
 		return (LoggerService.prototype._file = file);
@@ -369,18 +279,26 @@ LoggerService.prototype = {
 				}
 				text = text.join('');
 				if (stack && exception) {
-					this._cs.logMessage(new ScriptError(text, fileName, sourceLine, lineNumber, columnNumber, 0x2, 'component javascript'));
+					Services.console.logMessage(new Instances.ScriptError(
+						text,
+						fileName,
+						sourceLine,
+						lineNumber,
+						columnNumber,
+						0x2,
+						'component javascript'
+						));
 
 				}
 				else {
-					this._cs.logStringMessage(text);
+					Services.console.logStringMessage(text);
 				}
 			}
 			else {
 				text = text.join('');
-				this._cs.logStringMessage(text);
+				Services.console.logStringMessage(text);
 			}
-			var f = new FileStream(this.file, 0x04 | 0x08 | 0x10, 0664, 0);
+			var f = new Instances.FileOutputStream(this.file, 0x04 | 0x08 | 0x10, 0664, 0);
 			f.write(text, text.length);
 			f.close();
 		}
@@ -856,7 +774,7 @@ function _loadBundle(url) {
 		return _bundles[url];
 	}
 	let strings = {};
-	for (let s in new SimpleIterator(StringBundleService.createBundle(url).getSimpleEnumeration(), Ci.nsIPropertyElement)) {
+	for (let s in new SimpleIterator(Services.strings.createBundle(url).getSimpleEnumeration(), Ci.nsIPropertyElement)) {
 		strings[s.key] = s.value;
 	}
 	return _bundles[url] = strings;
@@ -931,16 +849,16 @@ function OpenExternal_prepare(file) {
 		return file.QueryInterface(Ci.nsILocalFile);
 	}
 	if (!(file instanceof Ci.nsILocalFile)) {
-		file = new LocalFile(file);
+		file = new Instances.LocalFile(file);
 	}
 	return file;
 }
 function OpenExternal_nixLaunch(file) {
 	try {
-		ExternalProtocolService.loadURI(IOService.newFileURI(file));
+		Services.eps.loadURI(Services.io.newFileURI(file));
 	}
 	catch (ex) {
-		ExternalProtocolService.loadUrl(IOService.newFileURI(file));
+		Services.eps.loadUrl(Services.io.newFileURI(file));
 	}
 }
 
@@ -1067,7 +985,7 @@ function extendString(_s) {
 				return this;
 			},
 			toURI: function(charset, baseURI) {
-				return IOService.newURI(this, charset, baseURI);
+				return Services.io.newURI(this, charset, baseURI);
 			},
 			toURL: function(charset, baseURI) {
 				return this.toURI(charset, baseURI).QueryInterface(Ci.nsIURL);

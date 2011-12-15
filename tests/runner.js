@@ -6,7 +6,7 @@ const Cr = Components.results;
 const Cu = Components.utils;
 const Exception = Components.Exception;
 
-Cu.import("resource://gre/modules/Services.jsm");
+Cu.import("resource://dta/glue.jsm");
 
 function importModule(aSrc) {
 	var rv = {};
@@ -15,11 +15,11 @@ function importModule(aSrc) {
 }
 
 function checkExports(m, exports) {
-  deepEqual(
-    Object.keys(importModule(m)),
-    exports,
-    "Correct exports"
-    );
+	deepEqual(
+		Object.keys(importModule(m)),
+		exports,
+		"Correct exports"
+		);
 }
 
 addEventListener("load", function load() {

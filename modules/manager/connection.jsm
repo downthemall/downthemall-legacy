@@ -42,7 +42,6 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
@@ -57,20 +56,17 @@ const NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
 let DTA = {}, RequestManipulation = {};
 module("resource://gre/modules/XPCOMUtils.jsm");
 
+module('resource://dta/glue.jsm');
 module('resource://dta/api.jsm', DTA);
 module('resource://dta/constants.jsm');
 module('resource://dta/utils.jsm');
 module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
 module('resource://dta/support/bytebucket.jsm');
 
-const StringInputStream = ctor('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
-
 const Preferences = DTA.Preferences;
 const Logger = DTA.Logger;
 
 extendString(String);
-
-ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService2");
 
 const DISCONNECTION_CODES = [
 	NS_ERROR_CONNECTION_REFUSED,
@@ -81,8 +77,7 @@ const DISCONNECTION_CODES = [
 
 (function(global) {
 	let strings = {};
-	for (let s in new SimpleIterator(Cc["@mozilla.org/intl/stringbundle;1"]
-		.getService(Ci.nsIStringBundleService)
+	for (let s in new SimpleIterator(Services.strings
 		.createBundle('chrome://dta/locale/manager.properties')
 		.getSimpleEnumeration(), Ci.nsIPropertyElement)) {
 		strings[s.key] = s.value;
@@ -107,7 +102,7 @@ function Connection(d, c, isInfoGetter) {
 		Logger.log("starting: " + url.spec);
 	}
 
-	this._chan = IOService.newChannelFromURI(url);
+	this._chan = Services.io.newChannelFromURI(url);
 	let r = Ci.nsIRequest;
 	let loadFlags = r.LOAD_NORMAL
 	if (!Preferences.getExt('useCache', false)) {
@@ -128,7 +123,7 @@ function Connection(d, c, isInfoGetter) {
 				this._chan.referrer = referrer;
 			}
 			if (d.postData && this._chan instanceof Ci.nsIUploadChannel) {
-				this._chan.setUploadStream(new StringInputStream(d.postData, d.postData.length), null, -1);
+				this._chan.setUploadStream(new Instances.StringInputStream(d.postData, d.postData.length), null, -1);
 				this._chan.requestMethod = 'POST';
 			}
 		}

@@ -45,17 +45,10 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-const AsyncStreamCopier = Components.Constructor("@mozilla.org/network/async-stream-copier;1","nsIAsyncStreamCopier", "init");
-const BufferedOutputStream = Components.Constructor('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
-const FileOutputStream = Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const StringInputStream = Components.Constructor("@mozilla.org/io/string-input-stream;1", "nsIStringInputStream", "setData");
-
-module('resource://gre/modules/XPCOMUtils.jsm');
+module('resource://dta/glue.jsm');
 module('resource://dta/utils.jsm');
 
-const ThreadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
-
-const ss = new StringInputStream("a", 1);
+const ss = new Instances.StringInputStream("a", 1);
 ss.QueryInterface(Ci.nsISeekableStream);
 
 function prealloc_impl(file, size, perms, callback, sparseOk) {
@@ -69,15 +62,11 @@ function WorkerJob(file, size, perms, callback) {
 	this.callback = callback;
 	try {
 		// Editor note: Safe use as an event target for nsIAsyncStreamCopier
-		this._thread = ThreadManager.newThread(0);
+		this._thread = Services.tm.newThread(0);
 		if (this._thread instanceof Ci.nsISupportsPriority) {
 			this._thread.priority = this._thread.PRIORITY_LOWEST;
 		}
-		this._stream = new FileOutputStream(this.file, 0x02 | 0x08, this.perms, 0);
-		/*this._stream = new BufferedOutputStream(
-				new FileOutputStream(this.file, 0x02 | 0x08, this.perms, 0),
-				(1<<24)
-				);*/
+		this._stream = new Instances.FileOutputStream(this.file, 0x02 | 0x08, this.perms, 0);
 		this._stream instanceof Ci.nsISeekableStream;
 		this.run();
 	}
@@ -116,7 +105,7 @@ WorkerJob.prototype = {
 			let seek = Math.min(remainder, (1<<26));
 			this._stream.seek(0x01, seek);
 			ss.seek(0, 0);
-			let copier = new AsyncStreamCopier(
+			let copier = new Instances.AsyncStreamCopier(
 				ss,
 				this._stream,
 				this._thread, // event target

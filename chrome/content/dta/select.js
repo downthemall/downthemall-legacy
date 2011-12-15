@@ -34,8 +34,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-ServiceGetter(this, "os", "@mozilla.org/observer-service;1", "nsIObserverService");
-
 /* tree helpers */
 function treeIconGetter() {
 	delete this.icon;
@@ -818,6 +816,6 @@ let Dialog = {
 	// * filterManager
 	registerObserver: function() {
 		Preferences.makeObserver(this);
-		os.addObserver(this, 'DTA:filterschanged', true);
+		Services.obs.addObserver(this, 'DTA:filterschanged', true);
 	}
 };

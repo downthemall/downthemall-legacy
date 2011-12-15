@@ -38,7 +38,6 @@ const EXPORTED_SYMBOLS = ["load"];
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
-const ctor = Components.Constructor;
 const module = Cu.import;
 
 module("resource://gre/modules/XPCOMUtils.jsm");

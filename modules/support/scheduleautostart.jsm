@@ -42,11 +42,11 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const Ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
 const Prefs = {};
+module("resource://dta/glue.jsm");
 module("resource://dta/preferences.jsm", Prefs);
 module("resource://dta/utils.jsm");
 module("resource://dta/support/timers.jsm");
@@ -79,7 +79,6 @@ merge(
 
 const Timers = new TimerManager();
 
-ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIObserverService");
 setNewGetter(this, "DTA", function() {
 	let _m = {};
 	module("resource://dta/api.jsm", _m);
@@ -96,14 +95,14 @@ setNewGetter(this, "QueueStore", function() {
 const Observer = {
 	init: function() {
 		Prefs.makeObserver(this);
-		ObserverService.addObserver(this, "quit-application", false);
+		Services.obs.addObserver(this, "quit-application", false);
 		Prefs.addObserver("extensions.dta.schedule", this);
 		this.immidiatelyOpened = this.openIfInRange();
 	},
 	observe: function(s, topic, d) {
 		if (topic == "quit-application") {
 			Timers.killAllTimers();
-			ObserverService.removeObserver(this, "quit-application");
+			Services.obs.removeObserver(this, "quit-application");
 			return;
 		}
 		if (topic == "nsPref:changed") {

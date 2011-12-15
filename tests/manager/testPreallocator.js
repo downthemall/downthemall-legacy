@@ -4,9 +4,7 @@ module("preallocator.jsm");
 (function() {
 	function _do_test(title, impl, size, sparse) {
 		var allocStart = Date.now();
-		var file = Cc["@mozilla.org/file/directory_service;1"]
-			.getService(Ci.nsIProperties)
-			.get("TmpD", Ci.nsIFile);
+		var file = Services.dirsvc.get("TmpD", Ci.nsIFile);
 		file.append("dta_prealloc_test" + title + ".tmp");
 
 		impl(file, size, 416, function callback(result) {

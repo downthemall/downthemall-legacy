@@ -48,15 +48,10 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
+module("resource://dta/glue.jsm");
 module("resource://dta/utils.jsm");
 let Prefs = {};
 module("resource://dta/preferences.jsm", Prefs);
-
-ServiceGetter(this, "mediator", "@mozilla.org/appshell/window-mediator;1", "nsIWindowMediator");
-ServiceGetter(this, "ioservice", "@mozilla.org/network/io-service;1", "nsIIOService");
-ServiceGetter(this, "protoservice", "@mozilla.org/uriloader/external-protocol-service;1", "nsIExternalProtocolService");
-ServiceGetter(this, "windowwatcher", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
-ServiceGetter(this, "sbs", "@mozilla.org/intl/stringbundle;1", "nsIStringBundleService");
 
 function objToString(obj) {
 	if (obj == null || obj == undefined || !obj) {
@@ -87,7 +82,7 @@ function objToUri(obj) {
 		return obj;
 	}
 	if (typeof obj == 'string' || obj instanceof String) {
-		return ioservice.newURI(obj.toString(), null, null);
+		return Services.io.newURI(obj.toString(), null, null);
 	}
 	if (obj.url) {
 		return objToUri(obj.url);
@@ -108,7 +103,7 @@ function getMostRecent(type) {
 			}
 		}
 	}
-	return mediator.getMostRecentWindow(type ? type.toString() : null);
+	return Services.wm.getMostRecentWindow(type ? type.toString() : null);
 }
 
 /**
@@ -120,7 +115,7 @@ function getMostRecentByUrl(url) {
 	}
 	url = objToString(url);
 
-	let enumerator = mediator.getEnumerator(null);
+	let enumerator = Services.wm.getEnumerator(null);
 	while (enumerator.hasMoreElements()) {
 		var win = enumerator.getNext();
 		if (win.location == url) {
@@ -132,7 +127,7 @@ function getMostRecentByUrl(url) {
 
 function getAllByType(type) {
 	let rv = [];
-	let enumerator = mediator.getEnumerator(type);
+	let enumerator = Services.wm.getEnumerator(type);
 	while (enumerator.hasMoreElements()) {
 		rv.push(enumerator.getNext());
 	}
@@ -143,7 +138,7 @@ function openExternal(link) {
 	if (Logger.enabled) {
 		Logger.log("Mediator: Using external handler for " + link);
 	}
-	protoservice.loadUrl(objToUri(link));
+	Services.eps.loadUrl(objToUri(link));
 }
 
 
@@ -155,7 +150,7 @@ this.__defineGetter__(
 			return hp;
 		}
 		try {
-			return sbs.createBundle(hp || 'resource:/browserconfig.properties').GetStringFromName('browser.startup.homepage');
+			return Services.strings.createBundle(hp || 'resource:/browserconfig.properties').GetStringFromName('browser.startup.homepage');
 		}
 		catch (ex) {
 			if (Logger.enabled) {
@@ -211,10 +206,10 @@ function openWindow(window, link) {
 }
 
 function addListener(listener) {
-	mediator.addListener(listener);
+	Services.wm.addListener(listener);
 }
 function removeListener(listener) {
-	mediator.removeListener(listener);
+	Services.wm.removeListener(listener);
 }
 
 function showNotice(window) {

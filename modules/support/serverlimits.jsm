@@ -53,14 +53,11 @@ const module = Components.utils.import;
 const Exception = Components.Exception;
 
 let Prefs = {};
+module("resource://dta/glue.jsm");
 module("resource://dta/preferences.jsm", Prefs);
 module("resource://dta/utils.jsm");
 module("resource://dta/constants.jsm");
 module("resource://dta/support/bytebucket.jsm");
-
-ServiceGetter(this, 'tlds', '@mozilla.org/network/effective-tld-service;1', 'nsIEffectiveTLDService');
-ServiceGetter(this, 'fixups', '@mozilla.org/docshell/urifixup;1', 'nsIURIFixup');
-ServiceGetter(this, 'obs', '@mozilla.org/observer-service;1', 'nsIObserverService');
 
 const TOPIC = 'DTA:serverlimits-changed';
 const PREFS = 'extensions.dta.serverlimit.';
@@ -156,12 +153,12 @@ function loadLimits() {
 			}
 		}
 	}
-	obs.notifyObservers(null, TOPIC, null);
+	Services.obs.notifyObservers(null, TOPIC, null);
 }
 
 function getEffectiveHost(url) {
 	try {
-		return tlds.getBaseDomain(url);
+		return Services.eTLD.getBaseDomain(url);
 	}
 	catch (ex) {
 		return url.host;
@@ -169,7 +166,7 @@ function getEffectiveHost(url) {
 }
 
 function addLimit(host) {
-	host = getEffectiveHost(fixups.createFixupURI(host, 0x0));
+	host = getEffectiveHost(Services.fixups.createFixupURI(host, 0x0));
 	if (host in limits) {
 		return limits[host];
 	}
@@ -462,7 +459,7 @@ const Observer = {
 			catch (ex) {
 				// nothing we can do
 			}
-			obs.removeObserver(this, SHUTDOWN_TOPIC);
+			Services.obs.removeObserver(this, SHUTDOWN_TOPIC);
 			return;
 		}
 
@@ -473,5 +470,5 @@ const Observer = {
 	}
 }
 Prefs.addObserver(PREFS, Observer);
-obs.addObserver(Observer, SHUTDOWN_TOPIC, true);
+Services.obs.addObserver(Observer, SHUTDOWN_TOPIC, true);
 Observer.observe();

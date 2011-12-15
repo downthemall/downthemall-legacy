@@ -43,10 +43,8 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-module("resource://gre/modules/XPCOMUtils.jsm");
+module("resource://dta/glue.jsm");
 module("resource://dta/utils.jsm");
-
-ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 
 /**
  * Provides nsIPrompt/nsIAuthPrompt
@@ -62,7 +60,7 @@ function LoggedPrompter(window) {
 		this,
 		'authPrompter',
 		function() {
-			return WindowWatcherService
+			return Services.ww
 				.getNewAuthPrompter(window)
 				.QueryInterface(Ci.nsIAuthPrompt);
 		}
@@ -75,7 +73,7 @@ function LoggedPrompter(window) {
 		this,
 		'prompter',
 		function() {
-			let _p = WindowWatcherService
+			let _p = Services.ww
 				.getNewPrompter(window)
 				.QueryInterface(Ci.nsIPrompt);
 

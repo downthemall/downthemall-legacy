@@ -47,7 +47,6 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const Ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
@@ -61,17 +60,14 @@ const NS_METALINKER3 = 'http://www.metalinker.org/';
 const NS_METALINK_RFC5854 = 'urn:ietf:params:xml:ns:metalink';
 
 const Preferences = {}, DTA = {};
+module("resource://dta/glue.jsm");
 module("resource://dta/preferences.jsm", Preferences);
 module("resource://dta/api.jsm", DTA);
 module("resource://dta/version.jsm");
 module("resource://dta/utils.jsm");
 module("resource://dta/support/urlmanager.jsm");
 
-const IOService = DTA.IOService;
 const XPathResult = Ci.nsIDOMXPathResult;
-
-const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
-const DOMParser = new Ctor("@mozilla.org/xmlextras/domparser;1", 'nsIDOMParser');
 
 /**
  * Parsed Metalink representation
@@ -151,7 +147,7 @@ Base.prototype = {
 			return null;
 		}
 		try {
-			url = IOService.newURI(url, this._doc.characterSet, null);
+			url = Services.io.newURI(url, this._doc.characterSet, null);
 			if (url.scheme == 'file') {
 				throw new Exception("file protocol invalid!");
 			}
@@ -252,7 +248,7 @@ Metalinker3.prototype = {
 					if (!uri) {
 						throw new Exception("Invalid url");
 					}
-					uri = IOService.newURI(uri, charset, null);
+					uri = Services.io.newURI(uri, charset, null);
 				}
 				catch (ex) {
 					if (Logger.enabled) {
@@ -457,7 +453,7 @@ MetalinkerRFC5854.prototype = {
 					if (!uri) {
 						throw new Exception("Invalid url");
 					}
-					uri = IOService.newURI(uri, charset, null);
+					uri = Services.io.newURI(uri, charset, null);
 				}
 				catch (ex) {
 					if (Logger.enabled) {
@@ -598,10 +594,10 @@ const __parsers__ = [
  * @return (Metalink) Parsed metalink data
  */
 function parse(aFile, aReferrer) {
-	let fiStream = new FileInputStream(aFile, 1, 0, false);
+	let fiStream = new Instances.FileInputStream(aFile, 1, 0, false);
 	let doc;
 	try {
-		doc = new DOMParser().parseFromStream(
+		doc = Instances.domparser.parseFromStream(
 				fiStream,
 				null,
 				aFile.fileSize,

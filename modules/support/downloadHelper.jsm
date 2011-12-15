@@ -43,7 +43,7 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-module("resource://gre/modules/XPCOMUtils.jsm");
+module("resource://dta/glue.jsm");
 
 const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 
@@ -97,7 +97,7 @@ if (available) {
 			module("resource://dta/api.jsm");
 			let win = this.getWindow(props);
 			let doc = ('document' in props) ? props.document : null;
-			let url = new URL(IOService.newURI(props.mediaUrl, doc ? doc.characterSet : null, null));
+			let url = new URL(Services.io.newURI(props.mediaUrl, doc ? doc.characterSet : null, null));
 			let item = {
 				url: url,
 				referrer: props.documentUrl || props.pageUrl || null,
@@ -156,8 +156,7 @@ if (available) {
 
 	const processors = [];
 
-	let _str = Cc['@mozilla.org/intl/stringbundle;1']
-		.getService(Ci.nsIStringBundleService)
+	let _str = Services.strings
 		.createBundle('chrome://dta/locale/downloadHelper.properties');
 	function getString(n) {
 		try {
