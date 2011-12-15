@@ -103,23 +103,7 @@ function MemoryReporter() {
 	return Object.seal(this);
 }
 MemoryReporter.prototype = {
-	kind: 1,
-	units: 0,
 	process: "",
-	path: "explicit/downthemall/downloads/buffered",
-	description: "Downloaded but not yet written bytes",
-	get memoryUsed() {
-		let rv = 0;
-		try {
-			for (let [,c] in Iterator(this.chunks)) {
-				rv += c.buffered;
-			}
-		}
-		catch (ex) {
-			return -1;
-		}
-		return rv;
-	},
 	_calc: function(force) {
 		if (!this._generation) {
 			this._generation = 10;
@@ -132,7 +116,7 @@ MemoryReporter.prototype = {
 		}
 		this._pendingBytes = 0;
 		this._cachedBytes = 0;
-		this._clownShoes = 0;
+		this._overflow = 0;
 		this._chunksScheduled = 0;
 		this._chunksActive = 0;
 		let bs = (BUFFER_SIZE>>1);
@@ -141,10 +125,10 @@ MemoryReporter.prototype = {
 			let c = this.chunks[i];
 			let pending = 0;
 			this._pendingBytes += pending;
-			this._clownShoes += (bs - (pending % bs)) % bs;
+			this._overflow += (bs - (pending % bs)) % bs;
 			let cached = c.bufferedCached;
 			this._cachedBytes += cached;
-			this._clownShoes += (bs - (cached % bs)) % bs;
+			this._overflow += (bs - (cached % bs)) % bs;
 			if (c._req) {
 				++this._chunksScheduled;
 			}
@@ -164,6 +148,8 @@ MemoryReporter.prototype = {
 	collectReports: function(callback, closure) {
 		this._calc(true);
 
+		// XXX Change to KIND_OTHER for releases to be compatible and avoid reporter
+		// overlaps when and if nsIPipe ever gets built-in reporters.
 		callback.callback(
 			this.process,
 			"explicit/downthemall/downloads/pending",
@@ -184,11 +170,11 @@ MemoryReporter.prototype = {
 			);
 		callback.callback(
 			this.process,
-			"explicit/downthemall/downloads/clown-shoes",
+			"explicit/downthemall/downloads/unused-overflow",
 			Ci.nsIMemoryReporter.KIND_HEAP,
 			Ci.nsIMemoryReporter.UNITS_BYTES,
-			this._clownShoes,
-			"Unused buffer space",
+			this._overflow,
+			"Unused (overflow) buffer space",
 			closure
 			);
 		callback.callback(
@@ -255,12 +241,7 @@ Object.freeze(MemoryReporter.prototype);
 MemoryReporter = new MemoryReporter();
 
 try {
-	if ('registerMultiReporter' in Services.memrm) {
-		Services.memrm.registerMultiReporter(MemoryReporter);
-	}
-	else {
-		Services.memrm.registerReporter(MemoryReporter);
-	}
+	Services.memrm.registerMultiReporter(MemoryReporter);
 } catch (ex) {}
 
 
@@ -276,12 +257,7 @@ const Observer = {
 			}
 			catch (ex) {}
 			try {
-				if ('registerMultiReporter' in Services.memrm) {
-					Services.memrm.unregisterMultiReporter(MemoryReporter);
-				}
-				else {
-					Services.memrm.unregisterReporter(MemoryReporter);
-				}
+				Services.memrm.unregisterMultiReporter(MemoryReporter);
 			} catch (ex) {}
 			Timers.killAllTimers();
 			return;
