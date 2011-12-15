@@ -62,7 +62,7 @@ const EXT = 'extensions.dta.';
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const Ctor = Components.Constructor;
+const ctor = Components.Constructor;
 const log = Components.utils.reportError;
 
 const nsIPrefBranch = Ci.nsIPrefBranch;
@@ -72,7 +72,7 @@ const PREF_STRING = nsIPrefBranch.PREF_STRING;
 const PREF_INT = nsIPrefBranch.PREF_INT;
 const PREF_BOOL = nsIPrefBranch.PREF_BOOL;
 
-const SupportsString = new Ctor('@mozilla.org/supports-string;1', 'nsISupportsString');
+const SupportsString = new ctor('@mozilla.org/supports-string;1', 'nsISupportsString');
 
 const prefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch);
 

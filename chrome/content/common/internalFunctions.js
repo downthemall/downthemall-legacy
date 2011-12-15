@@ -47,12 +47,9 @@ const ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-const LocalFile = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
-const SoundFactory = new ctor('@mozilla.org/sound;1', 'nsISound', 'play');
-const CryptoHash = new ctor("@mozilla.org/security/hash;1", "nsICryptoHash");
-
 // shared state defines
 
+module("resource://dta/glue.jsm", this);
 module("resource://dta/constants.jsm", this);
 
 const DTA = {
@@ -130,14 +127,11 @@ var Utils = {
 	 * @return A string containing the user selected path, or false if user
 	 *         cancels the dialog.
 	 */
-	FilePicker: Components.Constructor('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init'),
 	askForDir: function (predefined, text) {
 		try {
-			// nsIFilePicker object
 			predefined = predefined ? predefined.trim() : '';
-			let nsIFilePicker = Ci.nsIFilePicker;
-			let fp = new Utils.FilePicker(window, text, nsIFilePicker.modeGetFolder);
-			fp.appendFilters(nsIFilePicker.filterAll);
+			let fp = new Instances.FilePicker(window, text, Ci.nsIFilePicker.modeGetFolder);
+			fp.appendFilters(Ci.nsIFilePicker.filterAll);
 
 			// locate current directory
 			let dest = this.validateDir(predefined);
@@ -148,7 +142,7 @@ var Utils = {
 			// open file picker
 			let res = fp.show();
 
-			if (res == nsIFilePicker.returnOK) {
+			if (res == Ci.nsIFilePicker.returnOK) {
 				return fp.file.path.addFinalSlash();
 			}
 		}
@@ -175,7 +169,7 @@ var Utils = {
 				if (!path || !String(path).trim().length) {
 					return false;
 				}
-				directory = new LocalFile(path);
+				directory = new Instances.LocalFile(path);
 			}
 			else {
 				directory = path.clone();
@@ -252,14 +246,13 @@ var Utils = {
 	playSound: function(name) {
 
 		try {
-			var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"]
-				.getService(Ci.nsIXULRuntime);
-			if (/linux|sun|bsd|aix|hp|dragonfly|irix/i.test(xulRuntime.OS) && /64/.test(xulRuntime.XPCOMABI)) {
+			if (/linux|sun|bsd|aix|hp|dragonfly|irix|unix/i.test(Services.appinfo.OS)
+					&& /64/.test(Services.appinfo.XPCOMABI)) {
 				throw new Components.Exception("*nix 64 - freeze problems");
 			}
 
 			if (Preferences.getExt("sounds." + name, false)) {
-				new SoundFactory(("chrome://dta/skin/sounds/" + name + ".wav").toURI());
+				new Instances.Sound(("chrome://dta/skin/sounds/" + name + ".wav").toURI());
 			}
 		}
 		catch(ex) {
@@ -320,11 +313,9 @@ const SYSTEMSLASH = Utils.SYSTEMSLASH;
 
 //XXX Copy from utils.jsm
 //XXX Cannot use directly; yields NS_ERROR_INVALID_VALUE then
-for each (let copy in ["setNewGetter", "ServiceGetter", "InstanceGetter", "bind"]) {
+for each (let copy in ["setNewGetter", "bind"]) {
 	eval(Utils[copy].toSource());
 }
-
-ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService2");
 
 Utils.extendString(String);
 
@@ -350,8 +341,6 @@ setNewGetter(this, "_", function() {
 	}
 });
 
-InstanceGetter(this, "converter", "@mozilla.org/intl/scriptableunicodeconverter", "nsIScriptableUnicodeConverter");
-
 /**
  * Convert a value into a hash
  *
@@ -373,7 +362,7 @@ const HASH_HEX = 0x0;
 const HASH_BIN = 0x1;
 const HASH_B64 = 0x2;
 function hash(value, algorithm, encoding, datalen) {
-	var ch = new CryptoHash();
+	var ch = new Instances.PlainHash();
 	if (!algorithm) {
 		algorithm = ch.SHA1;
 	}
@@ -391,7 +380,7 @@ function hash(value, algorithm, encoding, datalen) {
 		ch.updateFromStream(value, datalen > 0 ? datalen : 0xffffffff);
 	}
 	else {
-		converter.charset = 'utf8';
+		Services.uniconverter.charset = 'utf8';
 		value = converter.convertToByteArray(Utils.atos(value), {});
 		ch.update(value, value.length);
 	}

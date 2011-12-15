@@ -45,8 +45,7 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-const FileOutputStream = Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-
+module('resource://dta/glue.jsm');
 module('resource://dta/utils.jsm');
 module('resource://dta/version.jsm');
 module('resource://dta/cothread.jsm');
@@ -70,7 +69,7 @@ function WorkerJob(file, size, perms, callback) {
 	this.perms = perms;
 	this.callback = callback;
 	try {
-		this._stream = new FileOutputStream(this.file, 0x02 | 0x08, this.perms, 0);
+		this._stream = new Instances.FileOutputStream(this.file, 0x02 | 0x08, this.perms, 0);
 	}
 	catch (ex) {
 		this.callback(false);

@@ -35,7 +35,6 @@
  * ***** END LICENSE BLOCK ***** */
 
 let Prompts = {};
-module("resource://gre/modules/XPCOMUtils.jsm");
 module('resource://dta/support/loggedprompter.jsm');
 module('resource://dta/prompts.jsm', Prompts);
 
@@ -123,12 +122,9 @@ function changingMirror(event) {
 function addMirror() {
 	let url = '';
 	try {
-		let clip = Cc["@mozilla.org/widget/clipboard;1"]
-			.getService(Ci.nsIClipboard);
-		let trans = Cc["@mozilla.org/widget/transferable;1"]
-			.createInstance(Ci.nsITransferable);
+		let trans = new Instances.Transferable();
 		trans.addDataFlavor("text/unicode");
-		clip.getData(trans, clip.kGlobalClipboard);
+		Services.clipbrd.getData(trans, Services.clipbrd.kGlobalClipboard);
 
 		let str = {}, length = {};
 		trans.getTransferData(
@@ -137,7 +133,7 @@ function addMirror() {
 			length
 		);
 		if (length.value && (str.value instanceof Ci.nsISupportsString)) {
-			url = (new DTA.URL(IOService.newURI(str.value.data, null, null))).url.spec;
+			url = (new DTA.URL(Services.io.newURI(str.value.data, null, null))).url.spec;
 		}
 	}
 	catch (ex) {

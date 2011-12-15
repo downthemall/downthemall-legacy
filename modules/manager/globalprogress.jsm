@@ -42,6 +42,7 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
+module("resource://dta/glue.jsm");
 module("resource://dta/utils.jsm");
 
 function GlobalProgress(window) {
@@ -71,10 +72,7 @@ GlobalProgress.prototype = {
 
 try {
 	// Windows7, mozilla 1.9.2
-	const wtb = Cc["@mozilla.org/windows-taskbar;1"]
-         .getService(Ci.nsIWinTaskbar);
-
-	if (!wtb.available) {
+	if (!Services.wintaskbar.available) {
 		// Service is present but not supported
 		throw new Exception("not available");
 	}
@@ -87,11 +85,11 @@ try {
 		_state: NO_PROGRESS,
 		init: function(window) {
 			let docShell = window.QueryInterface(Ci.nsIInterfaceRequestor).
-			    getInterface(Ci.nsIWebNavigation).
-			    QueryInterface(Ci.nsIDocShellTreeItem).treeOwner.
-			    QueryInterface(Ci.nsIInterfaceRequestor).
-			    getInterface(Ci.nsIXULWindow).docShell;
-			this._progress = wtb.getTaskbarProgress(docShell);
+					getInterface(Ci.nsIWebNavigation).
+					QueryInterface(Ci.nsIDocShellTreeItem).treeOwner.
+					QueryInterface(Ci.nsIInterfaceRequestor).
+					getInterface(Ci.nsIXULWindow).docShell;
+			this._progress = Services.wintaskbar.getTaskbarProgress(docShell);
 		},
 		exit: function() {
 			this.hide();

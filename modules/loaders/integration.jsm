@@ -38,17 +38,9 @@ const EXPORTED_SYMBOLS = ["load"];
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
-const ctor = Components.Constructor;
 const module = Cu.import;
 
-module("resource://gre/modules/XPCOMUtils.jsm");
-
-/* **
- * Constructors
- */
-const StringInputStream = ctor('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream');
-const MimeInputStream = ctor('@mozilla.org/network/mime-input-stream;1', 'nsIMIMEInputStream');
-const ScriptableInputStream = ctor('@mozilla.org/scriptableinputstream;1', 'nsIScriptableInputStream');
+module("resource://dta/glue.jsm");
 
 /* **
  * Lazy getters
@@ -90,13 +82,12 @@ XPCOMUtils.defineLazyGetter(this, 'CoThreads', function() {
 	Object.freeze(rv);
 	return rv;
 });
-XPCOMUtils.defineLazyServiceGetter(this, 'TextToSubURI', '@mozilla.org/intl/texttosuburi;1', 'nsITextToSubURI');
 
-XPCOMUtils.defineLazyGetter(this, 'getString_str', function() {
-	return Cc['@mozilla.org/intl/stringbundle;1']
-		.getService(Ci.nsIStringBundleService)
-		.createBundle('chrome://dta/locale/menu.properties');
-});
+XPCOMUtils.defineLazyGetter(
+	this,
+	'getString_str',
+	function() Services.strings.createBundle('chrome://dta/locale/menu.properties')
+);
 
 /* **
  * Helpers and tools
@@ -178,7 +169,7 @@ function addLinksToArray(lnks, urls, doc) {
 
 	for each (let link in lnks) {
 		try {
-			let url = new DTA.URL(DTA.IOService.newURI(link.href, doc.characterSet, null));
+			let url = new DTA.URL(Services.io.newURI(link.href, doc.characterSet, null));
 
 			let title = '';
 			if (link.hasAttribute('title')) {
@@ -374,7 +365,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 		else {
 			if (Preferences.getExt('listsniffedvideos', false)) {
 				let sniffed = Array.map(
-					ContentHandling.getSniffedVideosFor(DTA.IOService.newURI(aWin.location.href, aWin.document.characterSet, null)),
+					ContentHandling.getSniffedVideosFor(Services.io.newURI(aWin.location.href, aWin.document.characterSet, null)),
 					function(e) e
 				);
 				let ref = DTA.getRef(aWin.document);
@@ -803,7 +794,7 @@ function load(window, outerEvent) {
 	}
 
 	function saveSingleLink(turbo, url, elem) {
-		url = DTA.IOService.newURI(url, elem.ownerDocument.characterSet, null);
+		url = Services.io.newURI(url, elem.ownerDocument.characterSet, null);
 		let ml = DTA.getLinkPrintMetalink(url);
 		url = new DTA.URL(ml ? ml : url);
 
@@ -848,24 +839,22 @@ function load(window, outerEvent) {
 				if (form.elements[i].name ==  '') {
 					continue;
 				}
-				let v = TextToSubURI.ConvertAndEscape(charset, form.elements[i].name) + "=";
+				let v = Services.ttsu.ConvertAndEscape(charset, form.elements[i].name) + "=";
 				if (form.elements[i].value != '') {
-					v += TextToSubURI.ConvertAndEscape(charset, form.elements[i].value);
+					v += Services.ttsu.ConvertAndEscape(charset, form.elements[i].value);
 				}
 				values.push(v);
 			}
 			values = values.join("&");
 
 			if (form.method.toLowerCase() == 'post') {
-				let ss = new StringInputStream();
-				ss.setData(values, -1);
-
-				let ms = new MimeInputStream();
+				let ss = new Instances.StringInputStream(values, -1);
+				let ms = new Instances.MimeInputStream();
 				ms.addContentLength = true;
 				ms.addHeader('Content-Type', 'application/x-www-form-urlencoded');
 				ms.setData(ss);
 
-				let sis = new ScriptableInputStream();
+				let sis = new Instances.ScriptableInputStream();
 				sis.init(ms);
 				let postData = '';
 				let avail = 0;
@@ -1503,7 +1492,7 @@ function load(window, outerEvent) {
 			}
 			try {
 				let url = window.transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
-				url = DTA.IOService.newURI(url, null, null);
+				url = Services.io.newURI(url, null, null);
 				url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
 				let doc = document.commandDispatcher.focusedWindow.document;
 				let ref = doc ? DTA.getRef(doc) : null;

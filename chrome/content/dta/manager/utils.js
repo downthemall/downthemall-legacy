@@ -150,7 +150,6 @@ const Prefs = {
 
 	init: function() {
 		try {
-			ServiceGetter(this, "_dsp", "@mozilla.org/file/directory_service;1", "nsIProperties");
 			this._resetConnPrefs();
 			this._refreshPrefs();
 			Preferences.addObserver('extensions.dta.', this);
@@ -236,12 +235,12 @@ const Prefs = {
 			if (this.tempLocation == '') {
 				// #44: generate a default tmp dir on per-profile basis
 				// hash the profD, as it would be otherwise a minor information leak
-				this.tempLocation = this._dsp.get("TmpD", Ci.nsIFile);
-				let profD = hash(this._dsp.get("ProfD", Ci.nsIFile).leafName);
+				this.tempLocation = Service.dirsvc.get("TmpD", Ci.nsIFile);
+				let profD = hash(Service.dirsvc.get("ProfD", Ci.nsIFile).leafName);
 				this.tempLocation.append("dtatmp-" + profD);
 			}
 			else {
-				this.tempLocation = new LocalFile(this.tempLocation);
+				this.tempLocation = new Instances.LocalFile(this.tempLocation);
 			}
 			if (!(this.tempLocation instanceof Ci.nsIFile)) {
 				throw new Exception("invalid value");

@@ -43,130 +43,116 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const Ctor = Components.Constructor;
 const re = Cu.reportError;
 const module = Cu.import;
 const Exception = Components.Exception;
 
 function loadWindow() {};
 
-try {
-	// moz-2.0+
-	const ZipReader = Ctor("@mozilla.org/libjar/zip-reader;1", "nsIZipReader", "open");
-	module("resource://gre/modules/AddonManager.jsm");
-	module("resource://dta/version.jsm");
-	module("resource://gre/modules/XPCOMUtils.jsm");
+// moz-2.0+
+module("resource://gre/modules/AddonManager.jsm");
+module("resource://dta/glue.jsm");
+module("resource://dta/version.jsm");
 
-	const DirectoryService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
-	if (!(DirectoryService instanceof Ci.nsIDirectoryService)) {
-		throw new Exception("eek");
+// exported
+loadWindow = (function() {
+	// xpi version
+	function extract(file) {
+		let jar = new Instances.ZipReader(file);
+		let entries = jar.findEntries("chrome/icons/default/*.(ico|png|xpm)$");
+		while (entries.hasMore()) {
+			let entry = entries.getNext();
+			try {
+				let name = entry.split(/[/\\]/).pop();
+				let dst = iconDir.clone();
+				dst.append(name);
+				jar.extract(entry, dst);
+			}
+			catch (ex) {
+				re(ex);
+			}
+		}
 	}
 
-	// exported
-	loadWindow = (function() {
-		// xpi version
-		function extract(file) {
-			let jar = new ZipReader(file);
-			let entries = jar.findEntries("chrome/icons/default/*.(ico|png|xpm)$");
-			while (entries.hasMore()) {
-				let entry = entries.getNext();
+	// flat-package version
+	function copy(directory) {
+		let srcDirectory = directory.clone();
+		srcDirectory.append('chrome');
+		srcDirectory.append('icons');
+		srcDirectory.append('default');
+		let icons = srcDirectory.directoryEntries;
+		while (icons.hasMoreElements()) {
+			let icon = icons.getNext();
+			if ((icon instanceof Ci.nsIFile) && icon.isFile()) {
 				try {
-					let name = entry.split(/[/\\]/).pop();
-					let dst = iconDir.clone();
-					dst.append(name);
-					jar.extract(entry, dst);
+					icon.copyTo(iconDir, icon.leafName);
 				}
 				catch (ex) {
-					re(ex);
+					// no op
 				}
 			}
 		}
+	}
 
-		// flat-package version
-		function copy(directory) {
-			let srcDirectory = directory.clone();
-			srcDirectory.append('chrome');
-			srcDirectory.append('icons');
-			srcDirectory.append('default');
-			let icons = srcDirectory.directoryEntries;
-			while (icons.hasMoreElements()) {
-				let icon = icons.getNext();
-				if ((icon instanceof Ci.nsIFile) && icon.isFile()) {
-					try {
-						icon.copyTo(iconDir, icon.leafName);
-					}
-					catch (ex) {
-						// no op
-					}
-				}
+	// Directory Provider we use to check the system :p
+	function CheatDirProvider() {}
+	CheatDirProvider.prototype = {
+		hasMore: false,
+		QueryInterface: XPCOMUtils.generateQI([Ci.nsIDirectoryServiceProvider, Ci.nsIDirectoryServiceProvider2, Ci.nsISimpleEnumerator]),
+		getFile: function(prop, persist) {
+			throw Cr.NS_ERROR_FAILURE;
+		},
+		getFiles: function(prop, persist) {
+			if (prop == "AChromDL") {
+				this.hasMore = true;
+				return this;
 			}
+			throw Cr.NS_ERROR_FAILURE;
+		},
+		hasMoreElements: function() this.hasMore,
+		getNext: function() {
+			if (!this.hasMore) {
+				throw Cr.NS_ERROR_FAILURE;
+			}
+			this.hasMore = false;
+			return profileDir.clone();
 		}
+	};
 
-		// Directory Provider we use to check the system :p
-		function CheatDirProvider() {}
-		CheatDirProvider.prototype = {
-			hasMore: false,
-			QueryInterface: XPCOMUtils.generateQI([Ci.nsIDirectoryServiceProvider, Ci.nsIDirectoryServiceProvider2, Ci.nsISimpleEnumerator]),
-			getFile: function(prop, persist) {
-				throw Cr.NS_ERROR_FAILURE;
-			},
-			getFiles: function(prop, persist) {
-				if (prop == "AChromDL") {
-					this.hasMore = true;
-					return this;
+	let profileDir = Services.dirsvc.get("ProfD", Ci.nsILocalFile);
+	let iconDir = profileDir.clone();
+	iconDir.append('icons');
+	iconDir.append('default');
+
+	// Create icons if not there yet, or if we got a major version update
+	if (!iconDir.exists() || Version.showAbout) {
+		if (!iconDir.exists()) {
+			iconDir.create(Ci.nsIFile.DIRECTORY_TYPE, 493 /* 0755 */);
+		}
+		AddonManager.getAddonByID(Version.ID, function(addon) {
+			let uri = addon.getResourceURI('icon.png');
+			if (uri instanceof Ci.nsIJARURI) {
+				uri = uri.JARFile;
+				if (uri instanceof Ci.nsIFileURL) {
+					extract(uri.file);
 				}
-				throw Cr.NS_ERROR_FAILURE;
-			},
-			hasMoreElements: function() this.hasMore,
-			getNext: function() {
-				if (!this.hasMore) {
-					throw Cr.NS_ERROR_FAILURE;
-				}
-				this.hasMore = false;
-				return profileDir.clone();
 			}
+			else if (uri instanceof Ci.nsIFileURL) {
+				copy(uri.file.parent);
+			}
+		});
+	}
+
+	return function(window) {
+		let _p = new CheatDirProvider();
+		Services.dirsvc.registerProvider(_p);
+		let _load = function() {
+			window.removeEventListener('load', _load, true);
+			window.setTimeout(function() {
+				Services.dirsvc.unregisterProvider(_p);
+				_p = null;
+			}, 0);
 		};
-
-		let profileDir = DirectoryService.get("ProfD", Ci.nsILocalFile);
-		let iconDir = profileDir.clone();
-		iconDir.append('icons');
-		iconDir.append('default');
-
-		// Create icons if not there yet, or if we got a major version update
-		if (!iconDir.exists() || Version.showAbout) {
-			if (!iconDir.exists()) {
-				iconDir.create(Ci.nsIFile.DIRECTORY_TYPE, 493 /* 0755 */);
-			}
-			AddonManager.getAddonByID(Version.ID, function(addon) {
-				let uri = addon.getResourceURI('icon.png');
-				if (uri instanceof Ci.nsIJARURI) {
-					uri = uri.JARFile;
-					if (uri instanceof Ci.nsIFileURL) {
-						extract(uri.file);
-					}
-				}
-				else if (uri instanceof Ci.nsIFileURL) {
-					copy(uri.file.parent);
-				}
-			});
-		}
-
-		return function(window) {
-			let _p = new CheatDirProvider();
-			DirectoryService.registerProvider(_p);
-			let _load = function() {
-				window.removeEventListener('load', _load, true);
-				window.setTimeout(function() {
-					DirectoryService.unregisterProvider(_p);
-					_p = null;
-				}, 0);
-			};
-			window.addEventListener('load', _load, true);
-		}
-	})();
-}
-catch (ex) {
-	// moz-1.9.2-
-	// no need to do anything;
-	Components.utils.reportError(ex);
-}
+		window.addEventListener('load', _load, true);
+	}
+})();

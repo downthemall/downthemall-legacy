@@ -44,8 +44,7 @@ const module = Components.utils.import;
 
 const ID = 'dta@downthemall.net';
 
-const runtime = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULAppInfo).QueryInterface(Ci.nsIXULRuntime);
-const comparator = Cc["@mozilla.org/xpcom/version-comparator;1"].getService(Ci.nsIVersionComparator);
+module("resource://gre/modules/Services.jsm");
 
 let _callbacks = [];
 
@@ -53,10 +52,10 @@ const Version = {
 		TOPIC_SHOWABOUT: "DTA:showAbout",
 		ID: ID,
 		LOCALE: Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).getSelectedLocale('global'),
-		APP_NAME: runtime.name.toLowerCase().replace(/ /, ''),
-		OS: runtime.OS.toLowerCase(),
-		APP_VERSION: runtime.version,
-		APP_ID: runtime.ID,
+		APP_NAME: Services.appinfo.name.toLowerCase().replace(/ /, ''),
+		OS: Services.appinfo.OS.toLowerCase(),
+		APP_VERSION: Services.appinfo.version,
+		APP_ID: Services.appinfo.ID,
 		VERSION: '0.0',
 		BASE_VERSION: '0.0',
 		NAME: 'DownThemAll!',
@@ -66,7 +65,7 @@ const Version = {
 			if (!cmp) {
 				[version, cmp] = [this.VERSION, version];
 			}
-			return comparator.compare(version, cmp);
+			return Services.vc.compare(version, cmp);
 		},
 		getInfo: function(callback) {
 			if (this.ready) {

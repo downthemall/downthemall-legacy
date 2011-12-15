@@ -46,11 +46,9 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const ctor = Components.Constructor;
 const module = Cu.import;
 
-module("resource://gre/modules/Services.jsm");
-module("resource://gre/modules/XPCOMUtils.jsm");
+module("resource://dta/glue.jsm");
 
 module("resource://dta/constants.jsm");
 const Prefs = {};
@@ -62,11 +60,6 @@ const Limits = {};
 module("resource://dta/support/serverlimits.jsm", Limits);
 
 module("resource://dta/manager/globalbucket.jsm");
-
-const AsyncStreamCopier = ctor("@mozilla.org/network/async-stream-copier;1","nsIAsyncStreamCopier", "init");
-const FileOutputStream = ctor("@mozilla.org/network/file-output-stream;1", "nsIFileOutputStream", "init");
-const Pipe = ctor("@mozilla.org/pipe;1", "nsIPipe", "init");
-const SupportsUint32 = ctor("@mozilla.org/supports-PRUint32;1", "nsISupportsPRUint32");
 
 const Timers = new TimerManager();
 
@@ -92,7 +85,7 @@ const _thread = (function() {
 	//
 	// For the amo-validator context:
 	// Editor note: Safe use, as an event target for nsIAsyncStreamCopier (no js use)
-	let AsyncCopierThread = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager).newThread(0);
+	let AsyncCopierThread = Services.tm.newThread(0);
 	/*if (AsyncCopierThread instanceof Ci.nsISupportsPriority) {
 		AsyncCopierThread.priority = AsyncCopierThread.PRIORITY_LOW;
 		Logger.log("Our async copier thread is low priority now!");
@@ -262,12 +255,11 @@ Object.freeze(MemoryReporter.prototype);
 MemoryReporter = new MemoryReporter();
 
 try {
-	let memrm = Cc["@mozilla.org/memory-reporter-manager;1"].getService(Ci.nsIMemoryReporterManager);
-	if ('registerMultiReporter' in memrm) {
-		memrm.registerMultiReporter(MemoryReporter);
+	if ('registerMultiReporter' in Services.memrm) {
+		Services.memrm.registerMultiReporter(MemoryReporter);
 	}
 	else {
-		memrm.registerReporter(MemoryReporter);
+		Services.memrm.registerReporter(MemoryReporter);
 	}
 } catch (ex) {}
 
@@ -284,12 +276,11 @@ const Observer = {
 			}
 			catch (ex) {}
 			try {
-				let memrm = Cc["@mozilla.org/memory-reporter-manager;1"].getService(Ci.nsIMemoryReporterManager);
-				if ('registerMultiReporter' in memrm) {
-					memrm.unregisterMultiReporter(MemoryReporter);
+				if ('registerMultiReporter' in Services.memrm) {
+					Services.memrm.unregisterMultiReporter(MemoryReporter);
 				}
 				else {
-					memrm.unregisterReporter(MemoryReporter);
+					Services.memrm.unregisterReporter(MemoryReporter);
 				}
 			} catch (ex) {}
 			Timers.killAllTimers();
@@ -381,7 +372,7 @@ Chunk.prototype = {
 		this.safeBytes += ch.safeBytes;
 	},
 	openOutStream: function CH_openOutStream(file, at) {
-		let outStream = new FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
+		let outStream = new Instances.FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
 		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 		seekable.seek(0x00, at);
 		return outStream;
@@ -444,9 +435,15 @@ Chunk.prototype = {
 		}
 
 		// Untrack the copier
-		let idx = this._copiers.indexOf(aRequest);
-		if (idx >= 0) {
-			this._copiers.splice(idx, 1);
+		// XXX .indexOf does NOT work
+		for (let i = 0; i < this._copiers.length; ++i) {
+			if (aRequest == this._copiers[i]) {
+				this._copiers.splice(i, 1);
+				if (i != 0 && Logger.enabled) {
+					Logger.log("Out of order copier! at: " + i);
+				}
+				break;
+			}
 		}
 
 		if (!this._canceled) {
@@ -558,7 +555,7 @@ Chunk.prototype = {
 				this._shipCurrentStream();
 			}
 			if (!this._hasCurrentStream) {
-				let pipe = new Pipe(false, false, BUFFER_SIZE>>1, 1<<2, null);
+				let pipe = new Instances.Pipe(false, false, BUFFER_SIZE>>1, 1<<2, null);
 				this._currentInputStream = pipe.inputStream;
 				this._currentOutputStream = pipe.outputStream;
 			}
@@ -578,7 +575,7 @@ Chunk.prototype = {
 		return 0;
 	},
 	get _hasCurrentStream() !!this._currentInputStream,
-	_shipCurrentStream: function CH__shipCurrentPipe() {
+	_shipCurrentStream: function CH__shipCurrentStream() {
 		let is = this._currentInputStream;
 		let os = this._currentOutputStream;
 		delete this._currentInputStream;
@@ -590,7 +587,7 @@ Chunk.prototype = {
 		let bytes = is.available();
 		os.close();
 
-		let copier = new AsyncStreamCopier(
+		let copier = new Instances.AsyncStreamCopier(
 			is,
 			this._outStream,
 			_thread,
@@ -601,7 +598,7 @@ Chunk.prototype = {
 			false // close sink
 			);
 
-		let context = new SupportsUint32();
+		let context = new Instances.SupportsUint32();
 		context.data = bytes;
 		try {
 			this._buffered += bytes;

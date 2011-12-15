@@ -43,6 +43,7 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const module = Components.utils.import;
 
+module("resource://dta/glue.jsm")
 module("resource://dta/utils.jsm")
 
 // unpack the default button types
@@ -53,8 +54,6 @@ for (let x in Components.interfaces.nsIPromptService) {
 		EXPORTED_SYMBOLS.push(r[1]);
 	}
 }
-
-ServiceGetter(this, "prompts", "@mozilla.org/embedcomp/prompt-service;1", "nsIPromptService");
 
 /**
  * wrapper around confirmEx
@@ -75,11 +74,11 @@ function confirm(aWindow, aTitle, aText, aButton0, aButton1, aButton2, aDefault,
 	[aButton0, aButton1, aButton2].forEach(
 		function(button, idx) {
 			if (typeof button == 'number') {
-				flags += prompts['BUTTON_POS_' + idx] * button;
+				flags += Services.prompt['BUTTON_POS_' + idx] * button;
 				button = null;
 			}
 			else if (typeof button == 'string' || button instanceof String) {
-				flags |= prompts['BUTTON_POS_' + idx] * prompts.BUTTON_TITLE_IS_STRING;
+				flags |= Services.prompt['BUTTON_POS_' + idx] * Services.prompt.BUTTON_TITLE_IS_STRING;
 			}
 			else {
 				button = 0;
@@ -88,10 +87,10 @@ function confirm(aWindow, aTitle, aText, aButton0, aButton1, aButton2, aDefault,
 		this
 	);
 	if (aDefault == 1) {
-		flags += prompts.BUTTON_POS_1_DEFAULT;
+		flags += Services.prompt.BUTTON_POS_1_DEFAULT;
 	}
 	else if (aDefault == 2) {
-		flags += prompts.BUTTON_POS_2_DEFAULT;
+		flags += Services.prompt.BUTTON_POS_2_DEFAULT;
 	}
 
 	// Checkmark requested?
@@ -105,9 +104,7 @@ function confirm(aWindow, aTitle, aText, aButton0, aButton1, aButton2, aDefault,
 		else if (typeof(aCheck) == 'string' || aCheck instanceof String) {
 			check.value = undefined;
 			try {
-				check.value = Cc['@mozilla.org/preferences-service;1']
-					.getService(Ci.nsIPrefBranch)
-					.getBoolPref(aCheck);
+				check.value = Services.prefs.getBoolPref(aCheck);
 			}
 			catch (ex) {
 				// no-op
@@ -118,7 +115,7 @@ function confirm(aWindow, aTitle, aText, aButton0, aButton1, aButton2, aDefault,
 		}
 	}
 
-	let cr = prompts.confirmEx(
+	let cr = Services.prompt.confirmEx(
 		aWindow,
 		aTitle,
 		aText,
@@ -162,5 +159,5 @@ function confirmYN(aWindow, aTitle, aText) {
  * @author Nils
  */
 function alert(aWindow, aTitle, aText) {
-	prompts.alert(aWindow, aTitle, aText);
+	Services.prompt.alert(aWindow, aTitle, aText);
 }

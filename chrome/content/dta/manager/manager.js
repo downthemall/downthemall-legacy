@@ -37,16 +37,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const Construct = Components.Constructor;
-function Serv(c, i) { // leave in; anticontainer and others compat
-	return Cc[c].getService(i ? Ci[i] : null);
-}
-const Process = Construct('@mozilla.org/process/util;1', 'nsIProcess', 'init');
-
-ServiceGetter(this, "MimeService", "@mozilla.org/uriloader/external-helper-app-service;1", "nsIMIMEService");
-ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIObserverService");
-ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
-
 let Prompts = {}, Limits = {}, PrivateBrowsing = {};
 module('resource://dta/cothread.jsm');
 module('resource://dta/prompts.jsm', Prompts);
@@ -209,7 +199,7 @@ const Dialog = {
 						return;
 					}
 					try {
-						let url = DTA.IOService.newURI(
+						let url = Services.io.newURI(
 							transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType),
 							null,
 							null
@@ -261,7 +251,7 @@ const Dialog = {
 		}
 
 		try {
-			this.offline = IOService.offline;
+			this.offline = Services.io.offline;
 		}
 		catch (ex) {
 			if (Logger.enabled) {
@@ -271,7 +261,7 @@ const Dialog = {
 
 		Preferences.makeObserver(this);
 		for (let [,topic] in Iterator(this._observes)) {
-			ObserverService.addObserver(this, topic, true);
+			Services.obs.addObserver(this, topic, true);
 		}
 
 		// Autofit
@@ -476,7 +466,7 @@ const Dialog = {
 			let tmpFile = Dialog_loadDownloads_get(down, "tmpFile");
 			if (tmpFile) {
 				try {
-					tmpFile = new LocalFile(tmpFile);
+					tmpFile = new Instances.LocalFile(tmpFile);
 					if (tmpFile.exists()) {
 						d._tmpFile = tmpFile;
 					}
@@ -1329,7 +1319,7 @@ const Metalinker = {
 	handleDownload: function ML_handleDownload(download) {
 		download.state = CANCELED;
 		Tree.remove(download, false);
-		let file = new LocalFile(download.destinationFile);
+		let file = new Instances.LocalFile(download.destinationFile);
 
 		this.handleFile(file, download.referrer);
 
@@ -1519,7 +1509,7 @@ QueueItem.prototype = {
 			// mime-service method
 			else if (this.contentType && /^(?:image|text)/.test(this.contentType)) {
 				try {
-					let info = MimeService.getFromTypeAndExtension(this.contentType.split(';')[0], "");
+					let info = Services.mime.getFromTypeAndExtension(this.contentType.split(';')[0], "");
 					ext = info.primaryExtension;
 				} catch (ex) {
 					ext = '';
@@ -1634,7 +1624,7 @@ QueueItem.prototype = {
 		if (!this._tmpFile) {
 			var dest = Prefs.tempLocation
 				? Prefs.tempLocation.clone()
-				: new LocalFile(this.destinationPath);
+				: new Instances.LocalFile(this.destinationPath);
 			let name = this.fileName;
 			if (name.length > 60) {
 				name = name.substring(0, 60);
@@ -1785,7 +1775,7 @@ QueueItem.prototype = {
 				file = this._tmpFile || null;
 			}
 			else {
-				file = new LocalFile(this.destinationFile);
+				file = new Instances.LocalFile(this.destinationFile);
 			}
 			if (file && file.exists()) {
 				return file.fileSize;
@@ -1913,7 +1903,7 @@ QueueItem.prototype = {
 			for (let [,c] in Iterator(this.chunks)) {
 				c.close();
 			}
-			var destination = new LocalFile(this.destinationPath);
+			var destination = new Instances.LocalFile(this.destinationPath);
 			if (Logger.enabled) {
 				Logger.log(this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
 			}
@@ -2004,7 +1994,7 @@ QueueItem.prototype = {
 		);
 	},
 	verifyHashError: function(mismatches) {
-		let file = new LocalFile(this.destinationFile);
+		let file = new Instances.LocalFile(this.destinationFile);
 		filterInSitu(mismatches, function(e) e.start != e.end);
 
 		function deleteFile() {
@@ -2090,7 +2080,7 @@ QueueItem.prototype = {
 					throw new Exception("invalid date encountered: " + time + ", will not set it");
 				}
 				// have to unwrap
-				let file = new LocalFile(this.destinationFile);
+				let file = new Instances.LocalFile(this.destinationFile);
 				file.lastModifiedTime = time;
 			}
 			catch (ex) {
@@ -2174,7 +2164,7 @@ QueueItem.prototype = {
 				.normalizeSlashes()
 				.removeFinalSlash()
 				.split(SYSTEMSLASH);
-			let file = new LocalFile(this.pathName.addFinalSlash());
+			let file = new Instances.LocalFile(this.pathName.addFinalSlash());
 			while (mask.length) {
 				file.append(mask.shift().removeBadChars().trim());
 			}
@@ -2192,7 +2182,7 @@ QueueItem.prototype = {
 			this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
 			this.conflicts
 		);
-		let file = new LocalFile(this.destinationPath);
+		let file = new Instances.LocalFile(this.destinationPath);
 		file.append(this.destinationName);
 		this._destinationFile = file.path;
 		this._icon = null;
@@ -2738,7 +2728,7 @@ var ConflictManager = {
 		this._process();
 	},
 	_check: function CM__check(download) {
-		let dest = new LocalFile(download.destinationFile);
+		let dest = new Instances.LocalFile(download.destinationFile);
 		let sn = false;
 		if (download.is(RUNNING)) {
 			sn = Dialog.checkSameName(download, download.destinationFile);
@@ -2802,7 +2792,7 @@ var ConflictManager = {
 		let download = cur.download;
 		download.conflicts = 0;
 		let basename = download.destinationName;
-		let newDest = new LocalFile(download.destinationFile);
+		let newDest = new Instances.LocalFile(download.destinationFile);
 		let i = 1;
 		for (;; ++i) {
 			newDest.leafName = Utils.formatConflictName(basename, i);
@@ -2866,8 +2856,8 @@ function CustomEvent(download, command) {
 				.replace(/(["'])(.*?)\1/g, callback)
 				.split(/ /g),
 			mapper);
-		var program = new LocalFile(args.shift());
-		var process = new Process(program);
+		var program = new Instances.LocalFile(args.shift());
+		var process = new Instances.Process(program);
 		process.run(false, args, args.length);
 	}
 	catch (ex) {
@@ -2890,7 +2880,7 @@ function startDownloads(start, downloads) {
 			let qi = new QueueItem();
 			let lnk = e.url;
 			if (typeof lnk == 'string') {
-				qi.urlManager = new UrlManager([new DTA.URL(IOService.newURI(lnk, null, null))]);
+				qi.urlManager = new UrlManager([new DTA.URL(Services.io.newURI(lnk, null, null))]);
 			}
 			else if (lnk instanceof UrlManager) {
 				qi.urlManager = lnk;

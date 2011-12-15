@@ -44,34 +44,27 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const Ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
 const DTA = {};
+module("resource://dta/glue.jsm");
 module("resource://dta/utils.jsm");
 module("resource://dta/api.jsm", DTA);
 module("resource://dta/support/timers.jsm");
 
-const IOService = DTA.IOService;
 const Prefs = DTA.Preferences;
-
-const LocalFile = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
-const FileOutputStream = new Ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const BinaryOutputStream = new Ctor('@mozilla.org/binaryoutputstream;1', 'nsIBinaryOutputStream', 'setOutputStream');
-const BufferedOutputStream = new Ctor('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
-const BinaryInputStream = new Ctor('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
 
 const Timers = new TimerManager();
 
 function Decompressor(download) {
 	this.download = download;
-	this.to = new LocalFile(download.destinationFile);
+	this.to = new Instances.LocalFile(download.destinationFile);
 	this.from = download.tmpFile.clone();
 
 	try {
-		this._outStream = new FileOutputStream(this.to, 0x04 | 0x08, Prefs.getExt('permissions', 384), 0);
-		this.outStream = new BinaryOutputStream(new BufferedOutputStream(this._outStream, BUFFER_SIZE));
+		this._outStream = new Instances.FileOutputStream(this.to, 0x04 | 0x08, Prefs.getExt('permissions', 384), 0);
+		this.outStream = new Instances.BinaryOutputStream(new Instances.BufferedOutputStream(this._outStream, BUFFER_SIZE));
 
 		let converter = Cc["@mozilla.org/streamconv;1?from=" + download.compression + "&to=uncompressed"]
 			.createInstance(Ci.nsIStreamConverter);
@@ -83,7 +76,7 @@ function Decompressor(download) {
 			null
 		);
 
-		IOService.newChannelFromURI(IOService.newFileURI(this.from)).asyncOpen(converter, null);
+		Services.io.newChannelFromURI(Services.io.newFileURI(this.from)).asyncOpen(converter, null);
 	}
 	catch (ex) {
 		try {
@@ -158,7 +151,7 @@ Decompressor.prototype = {
 	},
 	onDataAvailable: function(request, c, stream, offset, count) {
 		try {
-			var binStream = new BinaryInputStream(stream);
+			var binStream = new Instances.BinaryInputStream(stream);
 			if (count != this.outStream.write(binStream.readBytes(count), count)) {
 				throw new Exception("Failed to write!");
 			}

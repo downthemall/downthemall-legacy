@@ -52,6 +52,7 @@ const DB_VERSION = 1;
 
 const STMT_SELECT = 'SELECT uuid, item FROM queue ORDER BY pos';
 
+module("resource://dta/glue.jsm");
 module("resource://dta/utils.jsm");
 
 let pbm = {};
@@ -60,9 +61,6 @@ module("resource://dta/support/timers.jsm");
 
 const Timers = new TimerManager();
 
-ServiceGetter(this, "Storage", "@mozilla.org/storage/service;1", "mozIStorageService");
-ServiceGetter(this, "Observers", "@mozilla.org/observer-service;1", "nsIObserverService");
-
 let _connection = null;
 let _saveStmt = null;
 let _saveStmtParams = null;
@@ -70,7 +68,7 @@ let _timer = 0;
 
 
 setNewGetter(this, '__db', function() {
-	let db = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
+	let db = Services.dirsvc.get("ProfD", Ci.nsIFile);
 	db.append(DB_FILE);
 	return db;
 });
@@ -102,11 +100,11 @@ const QueueStore = {
 
 		try {
 			if (pb) {
-				_connection = Storage.openSpecialDatabase("memory");
+				_connection = Services.storage.openSpecialDatabase("memory");
 				this._private = true;
 			}
 			else {
-				_connection = Storage.openDatabase(__db);
+				_connection = Services.storage.openDatabase(__db);
 				this._private = false;
 			}
 		}
@@ -129,7 +127,7 @@ const QueueStore = {
 				}
 				let broken = __db.clone();
 				broken.moveTo(null, DB_FILE_BROKEN);
-				_connection = Storage.openDatabase(__db);
+				_connection = Services.storage.openDatabase(__db);
 			}
 		}
 
@@ -175,7 +173,7 @@ const QueueStore = {
 		}
 
 		// give manager a chance to save running
-		Observers.notifyObservers(null, 'DTA:shutdownQueueStore', null);
+		Services.obs.notifyObservers(null, 'DTA:shutdownQueueStore', null);
 
 		this._initialized = false;
 		// finish any pending operations
@@ -216,7 +214,7 @@ const QueueStore = {
 			}
 		}
 		this.init(this._private);
-		Observers.notifyObservers(null, 'DTA:clearedQueueStore', null);
+		Services.storage.notifyObservers(null, 'DTA:clearedQueueStore', null);
 	},
 	enterPrivateBrowsing: function() {
 		if (Logger.enabled) {
@@ -408,10 +406,10 @@ const SHUTDOWN_TOPIC = 'profile-change-teardown';
 
 var ShutdownObserver = {
 	install: function() {
-		Observers.addObserver(this, SHUTDOWN_TOPIC, false);
+		Services.obs.addObserver(this, SHUTDOWN_TOPIC, false);
 	},
 	uninstall: function() {
-		Observers.removeObserver(this, SHUTDOWN_TOPIC);
+		Services.obs.removeObserver(this, SHUTDOWN_TOPIC);
 		pbm.unregisterCallbacks(QueueStore);
 	},
 	observe: function(subject, topic, data) {

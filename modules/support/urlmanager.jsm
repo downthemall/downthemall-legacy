@@ -51,8 +51,8 @@ module("resource://dta/utils.jsm");
 extendString(String);
 
 const DTA = {};
+module("resource://dta/glue.jsm");
 module("resource://dta/api.jsm", DTA);
-const IOService = DTA.IOService;
 
 const Limits = {};
 module("resource://dta/support/serverlimits.jsm", Limits);
@@ -78,7 +78,7 @@ UrlManager.prototype = {
 			else {
 				this.add(
 					new DTA.URL(
-						IOService.newURI(u.url,	u.charset, null),
+						Services.io.newURI(u.url,	u.charset, null),
 						u.preference
 					)
 				);

@@ -48,10 +48,8 @@ const Exception = Components.Exception;
 module("resource://dta/utils.jsm");
 
 const DTA = {};
+module("resource://dta/glue.jsm");
 module("resource://dta/api.jsm", DTA);
-const IOService = DTA.IOService;
-
-ServiceGetter(this, "MimeHeaderParams", "@mozilla.org/network/mime-hdrparam;1", "nsIMIMEHeaderParam");
 
 function Visitor() {
 	// sanity check
@@ -194,7 +192,7 @@ HttpVisitor.prototype = {
 				case 'digest': {
 					for (let t in DTA.SUPPORTED_HASHES_ALIASES) {
 						try {
-							let v = MimeHeaderParams.getParameter(aValue, t, this._charset, true, {});
+							let v = Services.mimeheader.getParameter(aValue, t, this._charset, true, {});
 							if (!v) {
 								continue;
 							}
@@ -228,14 +226,14 @@ HttpVisitor.prototype = {
 			if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
 				let fn;
 				try {
-					fn = MimeHeaderParams.getParameter(aValue, 'filename', this._charset, true, {});
+					fn = Services.mimeheader.getParameter(aValue, 'filename', this._charset, true, {});
 				}
 				catch (ex) {
 					// no-op; handled below
 				}
 				if (!fn) {
 					try {
-						fn = MimeHeaderParams.getParameter(aValue, 'name', this._charset, true, {});
+						fn = Services.mimeheader.getParameter(aValue, 'name', this._charset, true, {});
 					}
 					catch (ex) {
 						// no-op; handled below
@@ -305,7 +303,7 @@ VisitorManager.prototype = {
 	load: function vm_init(nodes) {
 		for each (let n in nodes) {
 			try {
-				let uri = IOService.newURI(n.url, null, null);
+				let uri = Services.io.newURI(n.url, null, null);
 				switch (uri.scheme) {
 				case 'http':
 				case 'https':
