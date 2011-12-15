@@ -42,14 +42,12 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const Ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
+module('resource://dta/glue.jsm');
 module('resource://dta/version.jsm');
 module('resource://dta/utils.jsm');
-
-ServiceGetter(this, "CookieManager", "@mozilla.org/cookiemanager;1", "nsICookieManager2");
 
 function Manipulator() {
 	this._m = {};
@@ -93,8 +91,9 @@ for each (let [m, sp] in [['URL', function(c) c.spec], ['Http', function(c) c.UR
 
 var _uaextra = "DownThemAll!";
 var _uaplatform = (function() {
-	let ph = Cc["@mozilla.org/network/protocol;1?name=http"].getService(Ci.nsIHttpProtocolHandler);
-	return ph.platform + "; " + ph.oscpu + "; " + ph.language;
+	return Services.httphandler.platform + "; "
+		+ Services.httphandler.oscpu + "; "
+		+ Services.httphandler.language;
 })();
 var _uaextrap = _uaextra + " (" + _uaplatform + "; like wget)";
 Version.getInfo(function(v) {
@@ -147,7 +146,7 @@ registerURL(
 	/^https?:\/\/s\d+\.filesonic\.com\/download\//,
 	function() {
 		try {
-			for (let c in new SimpleIterator(CookieManager.getCookiesFromHost(this.host), Ci.nsICookie)) {
+			for (let c in new SimpleIterator(Services.cookies.getCookiesFromHost(this.host), Ci.nsICookie)) {
 				if (c.name == "role" && c.value == "premium") {
 					// only for premium :p
 					this.spec = this.spec.replace(/^https?:\/\/s\d+\.filesonic\.com\/download\//, 'http://www.filesonic.com/file/');

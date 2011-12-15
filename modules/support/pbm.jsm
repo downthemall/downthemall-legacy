@@ -44,11 +44,10 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const Ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-module("resource://gre/modules/XPCOMUtils.jsm");
+module("resource://dta/glue.jsm");
 
 /**
  * Returns whether in PBM or not
@@ -76,14 +75,13 @@ function unregisterCallbacks() {};
 
 if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingService" in Ci)) {
 	const pbm = Cc["@mozilla.org/privatebrowsing-wrapper;1"].getService(Ci.nsIPrivateBrowsingService);
-	const os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
 
 	let _callbacks = [];
 
 	function Observer() {
-		os.addObserver(this, "private-browsing", false);
-		os.addObserver(this, "private-browsing-cancel-vote", false);
-		os.addObserver(this, "quit-application", false);
+		Services.obs.addObserver(this, "private-browsing", false);
+		Services.obs.addObserver(this, "private-browsing-cancel-vote", false);
+		Services.obs.addObserver(this, "quit-application", false);
 	}
 	Observer.prototype = {
 		QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
@@ -121,11 +119,10 @@ if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingServ
 			_callbacks.forEach(function(c) !(prop in c) || c[prop].call(c));
 		},
 		teardown: function() {
-			ps.removeObserver(this, "private-browsing");
-			os.removeObserver(this, "private-browsing-cancel-vote");
-			os.removeObserver(this, "quit-application");
+			Services.obs.removeObserver(this, "private-browsing");
+			Services.obs.removeObserver(this, "private-browsing-cancel-vote");
+			Services.obs.removeObserver(this, "quit-application");
 			_callbacks = [];
-			os = null;
 		}
 	};
 	const observer = new Observer();

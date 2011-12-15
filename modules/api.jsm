@@ -41,7 +41,6 @@ const EXPORTED_SYMBOLS = [
 	"Preferences",
 	"Mediator",
 	"Logger",
-	"IOService",
 	"URL",
 	"SUPPORTED_HASHES",
 	"SUPPORTED_HASHES_ALIASES",
@@ -73,6 +72,7 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
+module("resource://dta/glue.jsm");
 module("resource://dta/utils.jsm");
 
 const Preferences = {};
@@ -84,8 +84,6 @@ module("resource://dta/support/historymanager.jsm", Histories);
 const pbm = {};
 module("resource://dta/support/pbm.jsm", pbm);
 
-ServiceGetter(this, "TextToSubURI", "@mozilla.org/intl/texttosuburi;1", "nsITextToSubURI");
-ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService");
 setNewGetter(this, "FilterManager", function() {
 	let _fm = {};
 	module("resource://dta/support/filtermanager.jsm", _fm);
@@ -98,7 +96,7 @@ function _decodeCharset(text, charset) {
 		if (!charset.length) {
 			throw 'no charset';
 		}
-		rv = TextToSubURI.unEscapeURIForUI(charset || "UTF-8", text);
+		rv = Services.ttsu.unEscapeURIForUI(charset || "UTF-8", text);
 	}
 	catch (ex) {
 		try {
@@ -325,7 +323,7 @@ function getLinkPrintMetalink(url) {
 	if (lp) {
 		let rv = lp[1];
 		try {
-			return new URL(IOService.newURI(rv, url.originCharset, url)).url;
+			return new URL(Services.io.newURI(rv, url.originCharset, url)).url;
 		}
 		catch (ex) {
 			// not a valid link, ignore it.
@@ -348,7 +346,7 @@ function isLinkOpenable(url) {
 		url = url.spec;
 	}
 	try {
-		var scheme = IOService.extractScheme(url);
+		var scheme = Services.io.extractScheme(url);
 		return ['http', 'https', 'ftp'].indexOf(scheme) != -1;
 	}
 	catch (ex) {
@@ -358,7 +356,7 @@ function isLinkOpenable(url) {
 }
 
 setNewGetter(this, "getProfileFile", function() {
-	let _profile = DirectoryService.get("ProfD", Ci.nsIFile);
+	let _profile = Services.dirsvc.get("ProfD", Ci.nsIFile);
 	return function(fileName) {
 		var file = _profile.clone();
 		file.append(fileName);
@@ -377,7 +375,7 @@ function composeURL(doc, rel) {
 			break;
 		}
 	}
-	return IOService.newURI(rel, doc.characterSet, IOService.newURI(base, doc.characterSet, null));
+	return Services.io.newURI(rel, doc.characterSet, Services.io.newURI(base, doc.characterSet, null));
 }
 
 function getRef(doc) {
@@ -385,7 +383,7 @@ function getRef(doc) {
 		if (Logger.enabled) {
 			Logger.log(doc.URL);
 		}
-		return (new URL(IOService.newURI(doc.URL, doc.characterSet, null))).url.spec;
+		return (new URL(Services.io.newURI(doc.URL, doc.characterSet, null))).url.spec;
 	}
 	catch (ex) {
 		let b = doc.getElementsByTagName('base');

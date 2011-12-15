@@ -42,11 +42,11 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const Ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
 let DTA = {};
+module('resource://dta/glue.jsm');
 module('resource://dta/api.jsm', DTA);
 module('resource://dta/constants.jsm', DTA);
 module('resource://dta/utils.jsm');
@@ -55,11 +55,10 @@ extendString(String);
 
 (function(global) {
 	let strings = {};
-	let ss = Cc["@mozilla.org/intl/stringbundle;1"]
-		.getService(Ci.nsIStringBundleService);
 	for each (let f in ['common.properties', 'manager.properties']) {
 		for (let s in new SimpleIterator(
-			ss.createBundle('chrome://dta/locale/' + f)
+			Services.strings
+				.createBundle('chrome://dta/locale/' + f)
 				.getSimpleEnumeration(),
 			Ci.nsIPropertyElement
 		)) {

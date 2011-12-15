@@ -46,6 +46,7 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
+module("resource://dta/glue.jsm");
 module("resource://dta/api.jsm");
 module("resource://dta/utils.jsm");
 module("resource://dta/support/memoize.jsm");
@@ -54,8 +55,7 @@ extendString(String);
 
 setNewGetter(this, "getFavIcon", function() {
 	try {
-		const fs = Cc['@mozilla.org/browser/favicon-service;1']
-			.getService(Ci.nsIFaviconService);
+		const fs = Services.favicons;
 		const RE_HTML = /\/$|html?$|aspx?$|php\d?$|py$|\/[^.]*$/i;
 		const gfi = function getFavIconInternal(url) fs.getFaviconImageForPage(url);
 		const gfim = memoize(gfi, 200);

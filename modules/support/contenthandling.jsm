@@ -41,17 +41,11 @@ const PREF_SNIFFVIDEOS = 'extensions.dta.listsniffedvideos';
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
-const ctor = Components.Constructor;
 const Exception = Components.Exception;
 const module = Components.utils.import;
 const error = Components.utils.reportError;
 
-module("resource://gre/modules/XPCOMUtils.jsm");
-
-const ScriptableInputStream = new ctor('@mozilla.org/scriptableinputstream;1', 'nsIScriptableInputStream', 'init');
-
-const Observers = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
-const Prefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2);
+module("resource://dta/glue.jsm");
 
 const HEADER_CT = ['Content-Type', 'Content-Disposition'];
 
@@ -70,32 +64,32 @@ ContentHandlingImpl.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener]),
 
 	_init: function ct__init() {
-		Observers.addObserver(this, 'xpcom-shutdown', false);
-		Observers.addObserver(this, 'private-browsing', false);
-		Prefs.addObserver(PREF_SNIFFVIDEOS, this, false);
-		this.sniffVideos = Prefs.getBoolPref(PREF_SNIFFVIDEOS);
+		Services.obs.addObserver(this, 'xpcom-shutdown', false);
+		Services.obs.addObserver(this, 'private-browsing', false);
+		Services.prefs.addObserver(PREF_SNIFFVIDEOS, this, false);
+		this.sniffVideos = Services.prefs.getBoolPref(PREF_SNIFFVIDEOS);
 		if (this.sniffVideos) {
 			this.registerHttpObservers();
 		}
 	},
 	_uinit: function ct__uninit() {
-		Prefs.removeObserver('extensions.dta.listsniffedvideos', this);
+		Services.prefs.removeObserver('extensions.dta.listsniffedvideos', this);
 		if (this.sniffVideos) {
 			this.sniffVideos = false;
 			this.unregisterHttpObservers();
 		}
-		Observers.removeObserver(this, 'xpcom-shutdown');
-		Observers.removeObserver(this, 'private-browsing');
+		Services.obs.removeObserver(this, 'xpcom-shutdown');
+		Services.obs.removeObserver(this, 'private-browsing');
 	},
 	registerHttpObservers: function ct_registerHttpObservers() {
-		Observers.addObserver(this, 'http-on-modify-request', false);
-		Observers.addObserver(this, 'http-on-examine-response', false);
-		Observers.addObserver(this, 'http-on-examine-cached-response', false);
+		Services.obs.addObserver(this, 'http-on-modify-request', false);
+		Services.obs.addObserver(this, 'http-on-examine-response', false);
+		Services.obs.addObserver(this, 'http-on-examine-cached-response', false);
 	},
 	unregisterHttpObservers: function ct_unregisterHttpObservers() {
-		Observers.removeObserver(this, 'http-on-modify-request');
-		Observers.removeObserver(this, 'http-on-examine-response');
-		Observers.removeObserver(this, 'http-on-examine-cached-response');
+		Services.obs.removeObserver(this, 'http-on-modify-request');
+		Services.obs.removeObserver(this, 'http-on-examine-response');
+		Services.obs.removeObserver(this, 'http-on-examine-cached-response');
 	},
 	observe: function ct_observe(subject, topic, data) {
 		switch(topic) {
@@ -111,7 +105,7 @@ ContentHandlingImpl.prototype = {
 			break;
 		case 'nsPref:changed':
 			try {
-				let newValue = Prefs.getBoolPref(PREF_SNIFFVIDEOS);
+				let newValue = Services.prefs.getBoolPref(PREF_SNIFFVIDEOS);
 				let differs = newValue == this.sniffVideos;
 				this.sniffVideos = newValue;
 				if (differs) {
@@ -169,7 +163,7 @@ ContentHandlingImpl.prototype = {
 
 			ss.seek(0, 0);
 
-			let is = new ScriptableInputStream(us);
+			let is = new Instances.ScriptableInputStream(us);
 
 			// we'll read max 64k
 			let available = Math.min(is.available(), 1 << 16);

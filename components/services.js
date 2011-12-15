@@ -37,7 +37,6 @@
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
-const ctor = Components.Constructor;
 const Exception = Components.Exception;
 const module = Components.utils.import;
 const error = Components.utils.reportError;

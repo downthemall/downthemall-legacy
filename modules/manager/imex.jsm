@@ -46,11 +46,11 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const Ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
 const Preferences = {}, DTA = {};
+module("resource://dta/glue.jsm");
 module("resource://dta/preferences.jsm", Preferences);
 module("resource://dta/api.jsm", DTA);
 module("resource://dta/utils.jsm");
@@ -58,22 +58,14 @@ module("resource://dta/version.jsm");
 module("resource://dta/support/textlinks.jsm");
 module("resource://dta/support/metalinker.jsm");
 
-const IOService = DTA.IOService;
 const XPathResult = Ci.nsIDOMXPathResult;
-
-const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
-const FileOutputStream = new Ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const DOMParser = new Ctor("@mozilla.org/xmlextras/domparser;1", 'nsIDOMParser');
-const ConverterOutputStream = Ctor('@mozilla.org/intl/converter-output-stream;1', 'nsIConverterOutputStream', 'init');
-
-InstanceGetter(this, "Serializer", "@mozilla.org/xmlextras/xmlserializer;1", "nsIDOMSerializer");
 
 function parseTextFile(aFile) {
 	if (Logger.enabled) {
 		Logger.log("Parsing text file: " + aFile.spec);
 	}
 	// Open the file in a line reader
-	let is = new FileInputStream(aFile, 0x01, 0, 0);
+	let is = new Instances.FileInputStream(aFile, 0x01, 0, 0);
 	let ls = is.QueryInterface(Ci.nsILineInputStream);
 	let line = {};
 	let lines = [];
@@ -101,7 +93,7 @@ function parseTextFile(aFile) {
 
 	let links = [];
 	for each (let l in getTextLinks(lines.join("\n"), false)) {
-		l = IOService.newURI(l, null, null);
+		l = Services.io.newURI(l, null, null);
 		links.push({
 			url: new DTA.URL(l),
 			referrer: null,
@@ -115,8 +107,8 @@ function parseTextFile(aFile) {
 }
 
 function exportToTextFile(aDownloads, aFile, aPermissions) {
-	let fs = new FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
-	let cs = ConverterOutputStream(fs, null, 0, null);
+	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
+	let cs = new Instances.ConverterOutputStream(fs, null, 0, null);
 	for (let d in aDownloads) {
 		let url = d.urlManager.url.spec;
 		if (d.hashCollection) {
@@ -221,8 +213,8 @@ function exportToHtmlFile(aDownloads, aDocument, aFile, aPermissions) {
 	}
 
 
-	let fs = new FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
-	Serializer.serializeToStream(document, fs, 'utf-8');
+	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
+	Instances.domserializer.serializeToStream(document, fs, 'utf-8');
 	fs.close();
 
 }
@@ -289,9 +281,9 @@ function exportToMetalinkFile(aDownloads, aDocument, aFile, aPermissions) {
 	}
 	root.appendChild(files);
 
-	let fs = new FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
+	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
 	let xml = '<?xml version="1.0"?>\r\n';
 	fs.write(xml, xml.length);
-	Serializer.serializeToStream(document, fs, 'utf-8');
+	Instances.domserializer.serializeToStream(document, fs, 'utf-8');
 	fs.close();
 }

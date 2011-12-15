@@ -43,10 +43,9 @@ const Ci = Components.interfaces;
 const module = Components.utils.import;
 const Exception = Components.Exception;
 
-module("resource://gre/modules/XPCOMUtils.jsm");
+module("resource://dta/glue.jsm");
 
-const ThreadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
-const MainThread = ThreadManager.mainThread;
+const MainThread = Services.tm.mainThread;
 
 function defer(fn, ctx) {
 	if (ctx) {

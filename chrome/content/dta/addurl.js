@@ -38,11 +38,6 @@ let Prompts = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
 Components.utils.import('resource://dta/version.jsm');
 
-ServiceGetter(this, "Clipboard", "@mozilla.org/widget/clipboard;1", "nsIClipboard");
-ServiceGetter(this, "Fixups", "@mozilla.org/docshell/urifixup;1", "nsIURIFixup");
-
-const Transferable = new Components.Constructor("@mozilla.org/widget/transferable;1", "nsITransferable");
-
 var dropDowns = {};
 
 setNewGetter(this, "BatchGenerator", function() {
@@ -137,7 +132,7 @@ var Dialog = {
 					$('batches').collapsed = true;
 				}
 				try {
-					let referrer = (new DTA.URL(IOService.newURI(a.referrer, null, null))).url.spec;
+					let referrer = (new DTA.URL(Services.io.newURI(a.referrer, null, null))).url.spec;
 					try {
 						referrer = decodeURIComponent(referrer);
 					} catch (ex) {}
@@ -154,10 +149,10 @@ var Dialog = {
 			}
 			// check if there's some URL in clipboard
 			else {
-				let trans = new Transferable();
+				let trans = new Instances.Transferable();
 				try {
 					trans.addDataFlavor("text/unicode");
-					Clipboard.getData(trans, Clipboard.kGlobalClipboard);
+					Services.clipbrd.getData(trans, Services.clipbrd.kGlobalClipboard);
 
 					let str = {}, length = {};
 					trans.getTransferData(
@@ -166,7 +161,7 @@ var Dialog = {
 						length
 					);
 					if (length.value && (str.value instanceof Ci.nsISupportsString)) {
-						let url = new DTA.URL(IOService.newURI(str.value.data, null, null));
+						let url = new DTA.URL(Services.io.newURI(str.value.data, null, null));
 						if (url.hash) {
 							hash = url.hash;
 							delete url.hash;
@@ -220,14 +215,14 @@ var Dialog = {
 				if (url == '') {
 					throw new Components.Exception("Empty url");
 				}
-				let uri = Fixups.createFixupURI(url, 0);
+				let uri = Services.fixups.createFixupURI(url, 0);
 				try {
 					url = decodeURIComponent(uri.spec);
 				}
 				catch (ex) {
 					url = uri.spec;
 				}
-				url = new DTA.URL(IOService.newURI(url, null, null));
+				url = new DTA.URL(Services.io.newURI(url, null, null));
 				if (url.hash) {
 					$('hash').value = hash;
 				}
@@ -296,7 +291,7 @@ var Dialog = {
 			let desc = $('description').value;
 			let ref = $('URLref').value;
 			let URL = DTA.URL;
-			let newURI = IOService.newURI;
+			let newURI = Services.io.newURI;
 
 			function QueueItem(url) {
 				this.url = new URL(newURI(url, null, null));

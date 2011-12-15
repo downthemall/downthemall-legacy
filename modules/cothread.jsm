@@ -44,11 +44,10 @@ const Cr = Components.results;
 const Cu = Components.utils;
 const module = Cu.import;
 
+module("resource://gre/modules/Services.jsm");
 module("resource://gre/modules/XPCOMUtils.jsm");
 
-const ThreadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
-const MainThread = ThreadManager.mainThread;
-
+const MainThread = Services.tm.mainThread;
 
 // "Abstract" base c'tor
 function CoThreadBase() {}

@@ -34,8 +34,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init');
-
 lazyModule(this, 'ImportExport', 'resource://dta/manager/imex.jsm');
 
 function FileDataProvider(download, file) {
@@ -106,8 +104,6 @@ const Tree = {
 		}, true);
 		$('search').addEventListener('search', function(event) tp.setFilter(event.target.value), true);
 
-		ServiceGetter(this, "_ds", "@mozilla.org/widget/dragservice;1", "nsIDragService");
-		ServiceGetter(this, "_ww", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 		this.elem.treeBoxObject.view = this;
 		this.assembleMenus();
 		this._refreshTools_init();
@@ -564,7 +560,7 @@ const Tree = {
 		for (let qi in this.selected) {
 			try {
 				if (qi.is(COMPLETE)) {
-					let file = new LocalFile(qi.destinationFile);
+					let file = new Instances.LocalFile(qi.destinationFile);
 					if (file.exists()) {
 						transfer.mozSetDataAt("application/x-moz-file", new FileDataProvider(qi, file), i++);
 					}
@@ -583,7 +579,7 @@ const Tree = {
 		this.canDrop(aDragSession);
 	},
 	canDrop: function T_canDrop() {
-		let ds = this._ds.getCurrentSession();
+		let ds = Services.drags.getCurrentSession();
 		return ds && ds.isDataFlavorSupported('application/x-dta-position');
 	},
 	drop: function T_drop(row, orientation) {
@@ -840,7 +836,7 @@ const Tree = {
 				if (!d.is(COMPLETE)) {
 					continue;
 				}
-				if (onlyGone && (new LocalFile(d.destinationFile).exists())) {
+				if (onlyGone && (new Instances.LocalFile(d.destinationFile).exists())) {
 					continue;
 				}
 				this._downloads.splice(d.position, 1);
@@ -1003,7 +999,7 @@ const Tree = {
 	},
 	export: function T_export() {
 		try {
-			let fp = new FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
+			let fp = new Instances.FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
 			fp.appendFilters(Ci.nsIFilePicker.filterHTML | Ci.nsIFilePicker.filterText);
 			fp.appendFilter(_('filtermetalink'), '*.metalink');
 			fp.defaultExtension = "metalink";
@@ -1032,7 +1028,7 @@ const Tree = {
 	},
 	import: function T_import() {
 		try {
-			let fp = new FilePicker(window, _('importtitle'), Ci.nsIFilePicker.modeOpen);
+			let fp = new Instances.FilePicker(window, _('importtitle'), Ci.nsIFilePicker.modeOpen);
 			fp.appendFilters(Ci.nsIFilePicker.filterText);
 			fp.appendFilter(_('filtermetalink'), '*.metalink');
 			fp.defaultExtension = "metalink";
@@ -1084,13 +1080,13 @@ const Tree = {
 	},
 	_hoverItem: null,
 	hovering: function(event) {
-		if (!Prefs.showTooltip || this._ww.activeWindow != window) {
+		if (!Prefs.showTooltip || Services.ww.activeWindow != window) {
 			return;
 		}
 		this._hoverItem = {x: event.clientX, y: event.clientY};
 	},
 	showTip: function(event) {
-		if (!Prefs.showTooltip || !this._hoverItem || this._ww.activeWindow != window) {
+		if (!Prefs.showTooltip || !this._hoverItem || Services.ww.activeWindow != window) {
 			return false;
 		}
 		let row = {};
@@ -1169,8 +1165,8 @@ const Tree = {
 				states.max = Math.max(d.filteredPosition, states.max);
 			}
 			let cur = this.current;
-			states.curFile = (cur && cur.is(COMPLETE) && (new LocalFile(cur.destinationFile)).exists());
-			states.curFolder = (cur && (new LocalFile(cur.destinationPath)).exists());
+			states.curFile = (cur && cur.is(COMPLETE) && (new Instances.LocalFile(cur.destinationFile)).exists());
+			states.curFolder = (cur && (new Instances.LocalFile(cur.destinationPath)).exists());
 
 			for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
 				let item = this._refreshTools_item[i];
@@ -1572,7 +1568,7 @@ const FileHandling = {
 	openFolder: function() {
 		for (d in Tree.selected) {
 			try {
-				if (new LocalFile(d.destinationPath).exists()) {
+				if (new Instances.LocalFile(d.destinationPath).exists()) {
 					Utils.reveal(d.destinationFile);
 				}
 			}
@@ -1600,7 +1596,7 @@ const FileHandling = {
 		let list = [];
 
 		for (d in this._uniqueList) {
-			let file = new LocalFile(d.destinationFile);
+			let file = new Instances.LocalFile(d.destinationFile);
 			if (file.exists()) {
 				list.push(d);
 			}
@@ -1609,7 +1605,7 @@ const FileHandling = {
 		if (list.length < 25) {
 			msg = _('deletetexts');
 			for each (let d in list) {
-				msg += "\n" + (new LocalFile(d.destinationFile)).leafName;
+				msg += "\n" + (new Instances.LocalFile(d.destinationFile)).leafName;
 			}
 		}
 		else {
@@ -1620,7 +1616,7 @@ const FileHandling = {
 		}
 		for each (let d in list) {
 			try {
-				let file = new LocalFile(d.destinationFile);
+				let file = new Instances.LocalFile(d.destinationFile);
 				if (file.exists()) {
 					file.remove(false);
 				}

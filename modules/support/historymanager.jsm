@@ -44,21 +44,19 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const ctor = Components.Constructor;
 const module = Cu.import;
 const Exception = Components.Exception;
 
 let pbm = {}, prefs = {};
+module("resource://dta/glue.jsm");
+module("resource://dta/utils.jsm");
 module("resource://dta/support/pbm.jsm", pbm);
 module("resource://dta/preferences.jsm", prefs);
-module("resource://dta/utils.jsm");
-
-const LocalFile = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 
 const validators = {
 	'directory': function(s) {
 		try {
-			new LocalFile(s);
+			new Instances.LocalFile(s);
 			return true;
 		}
 		catch (ex) {

@@ -49,19 +49,17 @@ const REG_WILD2 = /\./g;
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
-const ctor = Components.Constructor;
 const Exception = Components.Exception;
 const module = Components.utils.import;
 const error = Components.utils.reportError;
 
 let Preferences = {}, PBM = {}, RegExpMerger = {};
-module("resource://gre/modules/XPCOMUtils.jsm");
+module("resource://dta/glue.jsm");
 module("resource://dta/preferences.jsm", Preferences);
 module('resource://dta/support/pbm.jsm', PBM);
 module('resource://dta/support/regexpmerger.jsm', RegExpMerger);
 
 const nsITimer = Ci.nsITimer;
-const Timer = ctor('@mozilla.org/timer;1', 'nsITimer', 'init');
 
 function flatten(arr) arr.reduce(function(a,b) {
 	if (a instanceof Array) {
@@ -364,8 +362,7 @@ FilterManagerImpl.prototype = {
 
 		// load those localized labels for default filters.
 		this._localizedLabels = {};
-		let b = Cc['@mozilla.org/intl/stringbundle;1']
-			.getService(Ci.nsIStringBundleService)
+		let b = Services.strings
 			.createBundle("chrome://dta/locale/filters.properties");
 		let e = b.getSimpleEnumeration();
 		while (e.hasMoreElements()) {
@@ -399,7 +396,7 @@ FilterManagerImpl.prototype = {
 			return;
 		}
 		this._mustReload = true;
-		this._timer = new Timer(this, 100, nsITimer.TYPE_ONE_SHOT);
+		this._timer = new Instances.Timer(this, 100, nsITimer.TYPE_ONE_SHOT);
 	},
 
 	get count() {
@@ -469,9 +466,7 @@ FilterManagerImpl.prototype = {
 		this._activeRegs[IMAGE_FILTER] = this.getMatcherFor(this._active[IMAGE_FILTER]);
 
 		// notify all observers
-		Cc["@mozilla.org/observer-service;1"]
-			.getService(Ci.nsIObserverService)
-			.notifyObservers(this, TOPIC_FILTERSCHANGED, null);
+		Services.obs.notifyObservers(this, TOPIC_FILTERSCHANGED, null);
 	},
 
 	enumAll: function FM_enumAll() {
@@ -515,12 +510,7 @@ FilterManagerImpl.prototype = {
 
 		// we will use unique ids for user-supplied filters.
 		// no need to keep track of the actual number of filters or an index.
-		let uuid = Cc["@mozilla.org/uuid-generator;1"]
-			.getService(Ci.nsIUUIDGenerator)
-			.generateUUID();
-
-		//
-		let filter = new Filter(PREF_FILTERS_BASE + uuid.toString());
+		let filter = new Filter(PREF_FILTERS_BASE + Services.uuid.generateUUID().toString());
 		// I'm a friend, hence I'm allowed to access private members :p
 		filter._label = label;
 		filter._active = active;

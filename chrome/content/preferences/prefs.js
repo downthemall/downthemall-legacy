@@ -575,7 +575,6 @@ const Servers = {
 	}
 };
 Components.utils.import('resource://dta/support/serverlimits.jsm', Servers);
-ServiceGetter(Servers, 'prompts', '@mozilla.org/embedcomp/prompt-service;1', 'nsIPromptService');
 
 const Schedule = {
 	init: function() {
