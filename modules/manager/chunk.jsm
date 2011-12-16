@@ -148,7 +148,7 @@ MemoryReporter.prototype = {
 	collectReports: function(callback, closure) {
 		this._calc(true);
 
-		// As per :njn, add-ons should not use use anything other than
+		// As per :njn, add-ons should not use anything other than
 		// KIND_OTHER to stay forwards-compatible.
 		callback.callback(
 			this.process,
