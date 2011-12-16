@@ -148,12 +148,12 @@ MemoryReporter.prototype = {
 	collectReports: function(callback, closure) {
 		this._calc(true);
 
-		// XXX Change to KIND_OTHER for releases to be compatible and avoid reporter
-		// overlaps when and if nsIPipe ever gets built-in reporters.
+		// As per :njn, add-ons should not use use anything other than
+		// KIND_OTHER to stay forwards-compatible.
 		callback.callback(
 			this.process,
-			"explicit/downthemall/downloads/pending",
-			Ci.nsIMemoryReporter.KIND_HEAP,
+			"downthemall/downloads/pending",
+			Ci.nsIMemoryReporter.KIND_OTHER,
 			Ci.nsIMemoryReporter.UNITS_BYTES,
 			this._pendingBytes,
 			"Downloaded bytes waiting or in the process of being written to disk",
@@ -161,8 +161,8 @@ MemoryReporter.prototype = {
 			);
 		callback.callback(
 			this.process,
-			"explicit/downthemall/downloads/cached",
-			Ci.nsIMemoryReporter.KIND_HEAP,
+			"downthemall/downloads/cached",
+			Ci.nsIMemoryReporter.KIND_OTHER,
 			Ci.nsIMemoryReporter.UNITS_BYTES,
 			this._cachedBytes,
 			"Downloaded bytes in cache",
@@ -170,8 +170,8 @@ MemoryReporter.prototype = {
 			);
 		callback.callback(
 			this.process,
-			"explicit/downthemall/downloads/unused-overflow",
-			Ci.nsIMemoryReporter.KIND_HEAP,
+			"downthemall/downloads/unused-overflow",
+			Ci.nsIMemoryReporter.KIND_OTHER,
 			Ci.nsIMemoryReporter.UNITS_BYTES,
 			this._overflow,
 			"Unused (overflow) buffer space",
