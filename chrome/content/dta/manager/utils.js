@@ -358,7 +358,11 @@ const Tooltip = {
 		}
 		let mr = false;
 		let box = this.canvasGrid.boxObject;
-		for each (let canvas in [this.speedCanvas, this.chunkCanvas]) {
+		let canvases = [this.chunkCanvas];
+		if (!this.speedCanvas.hidden) {
+			canvases.push(this.speedCanvas);
+		}
+		for each (let canvas in canvases) {
 			try {
 				let w = Math.min(box.width, canvas.clientWidth);
 				let h = parseInt(canvas.getAttribute('height'));
