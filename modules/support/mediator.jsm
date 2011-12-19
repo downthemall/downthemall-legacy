@@ -49,9 +49,14 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 module("resource://dta/glue.jsm");
-module("resource://dta/utils.jsm");
 let Prefs = {};
 module("resource://dta/preferences.jsm", Prefs);
+
+XPCOMUtils.defineLazyGetter(this, "Logger", function() {
+	let _u = {};
+	module("resource://dta/utils.jsm", _u);
+	return _u.Logger;
+});
 
 function objToString(obj) {
 	if (obj == null || obj == undefined || !obj) {

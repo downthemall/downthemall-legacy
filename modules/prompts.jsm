@@ -44,13 +44,12 @@ const Cr = Components.results;
 const module = Components.utils.import;
 
 module("resource://dta/glue.jsm")
-module("resource://dta/utils.jsm")
 
 // unpack the default button types
-for (let x in Components.interfaces.nsIPromptService) {
+for (let x in Ci.nsIPromptService) {
 	let r = new String(x).match(/BUTTON_TITLE_(\w+)$/);
 	if (r) {
-		this[r[1]] = Components.interfaces.nsIPromptService[x];
+		this[r[1]] = Ci.nsIPromptService[x];
 		EXPORTED_SYMBOLS.push(r[1]);
 	}
 }

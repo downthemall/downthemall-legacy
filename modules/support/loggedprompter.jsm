@@ -44,7 +44,12 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 module("resource://dta/glue.jsm");
-module("resource://dta/utils.jsm");
+
+XPCOMUtils.defineLazyGetter(this, "Logger", function() {
+	let _u = {};
+	module("resource://dta/utils.jsm", _u);
+	return _u.Logger;
+});
 
 /**
  * Provides nsIPrompt/nsIAuthPrompt
@@ -56,7 +61,7 @@ function LoggedPrompter(window) {
 	/**
 	 * Property providing nsIAuthPrompt
 	 */
-	setNewGetter(
+	XPCOMUtils.defineLazyGetter(
 		this,
 		'authPrompter',
 		function() {
@@ -69,7 +74,7 @@ function LoggedPrompter(window) {
 	/**
 	 * Property providing nsIPrompt
 	 */
-	setNewGetter(
+	XPCOMUtils.defineLazyGetter(
 		this,
 		'prompter',
 		function() {

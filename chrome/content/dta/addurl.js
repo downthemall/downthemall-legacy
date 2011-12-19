@@ -40,7 +40,7 @@ Components.utils.import('resource://dta/version.jsm');
 
 var dropDowns = {};
 
-setNewGetter(this, "BatchGenerator", function() {
+XPCOMUtils.defineLazyGetter(this, "BatchGenerator", function() {
 	let bg = {};
 	Components.utils.import("resource://dta/support/batchgen.jsm", bg);
 	return bg.BatchGenerator;

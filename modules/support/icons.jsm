@@ -53,7 +53,7 @@ module("resource://dta/support/memoize.jsm");
 
 extendString(String);
 
-setNewGetter(this, "getFavIcon", function() {
+XPCOMUtils.defineLazyGetter(this, "getFavIcon", function() {
 	try {
 		const fs = Services.favicons;
 		const RE_HTML = /\/$|html?$|aspx?$|php\d?$|py$|\/[^.]*$/i;

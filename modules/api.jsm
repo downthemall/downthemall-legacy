@@ -84,7 +84,7 @@ module("resource://dta/support/historymanager.jsm", Histories);
 const pbm = {};
 module("resource://dta/support/pbm.jsm", pbm);
 
-setNewGetter(this, "FilterManager", function() {
+XPCOMUtils.defineLazyGetter(this, "FilterManager", function() {
 	let _fm = {};
 	module("resource://dta/support/filtermanager.jsm", _fm);
 	return _fm.FilterManager;
@@ -355,7 +355,7 @@ function isLinkOpenable(url) {
 	return false;
 }
 
-setNewGetter(this, "getProfileFile", function() {
+XPCOMUtils.defineLazyGetter(this, "getProfileFile", function() {
 	let _profile = Services.dirsvc.get("ProfD", Ci.nsIFile);
 	return function(fileName) {
 		var file = _profile.clone();
