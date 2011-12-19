@@ -46,12 +46,12 @@ const Exception = Components.Exception;
 const nsITimer = Ci.nsITimer;
 
 module("resource://dta/glue.jsm");
-module("resource://dta/utils.jsm")
+function uuid() Services.uuid.generateUUID().toString();
 
 // Represents the (private) timer data and observer
 function TimerData(owner, time, type, func, ctx) {
 	this.owner = owner;
-	this.uuid = newUUIDString();
+	this.uuid = uuid();
 	this.func = func;
 	if (!this.func) {
 		throw new Exception("callback function is null");

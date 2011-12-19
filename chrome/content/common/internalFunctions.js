@@ -331,7 +331,7 @@ Utils.extendString(String);
  *           if stringID is not found or before the dialog was initialized
  * @author Nils
  */
-setNewGetter(this, "_", function() {
+XPCOMUtils.defineLazyGetter(this, "_", function() {
 	let bundles = new Utils.StringBundles(document);
 	return function() {
 		if (arguments.length == 1) {

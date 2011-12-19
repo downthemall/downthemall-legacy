@@ -63,7 +63,7 @@ module('resource://dta/manager/speedstats.jsm');
 module('resource://dta/manager/visitormanager.jsm');
 
 function lazyModule(obj, name, url, symbol) {
-	setNewGetter(obj, name, function() {
+	XPCOMUtils.defineLazyGetter(obj, name, function() {
 		let _o = {};
 		module(url, _o);
 		return symbol ? _o[symbol] : _o;
@@ -75,7 +75,7 @@ lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Dec
 lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
 lazyModule(this, 'Version', 'resource://dta/version.jsm', 'Version');
 
-setNewGetter(this, 'FileExts', function() new FileExtensionSheet(window));
+XPCOMUtils.defineLazyGetter(this, 'FileExts', function() new FileExtensionSheet(window));
 
 const TextCache = {};
 addEventListener("load", function load_textCache() {
@@ -2697,7 +2697,7 @@ QueueItem.prototype = {
 		return rv;
 	}
 }
-setNewGetter(QueueItem.prototype, 'AuthPrompts', function() {
+XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
 	let _l = {};
 	module('resource://dta/support/loggedprompter.jsm', _l);
 	return new _l.LoggedPrompter(window);
