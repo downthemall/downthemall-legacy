@@ -73,27 +73,42 @@ window[sizemode="maximized"] #titlebar {
 
 /* toolbar button styles */
 #tools > toolbarbutton {
+	list-style-image: url(tools-aero.png);
 	-moz-appearance: none;
+	margin: 1px 3px;
 	padding: 1px 5px;
-	background: rgba(151,152,153,.6)
-		-moz-linear-gradient(rgba(251,252,253,.95), rgba(246,247,248,.85) 5%, rgba(246,247,248,.5) 25%,
-			rgba(231,232,233,0.3) 35%, rgba(225,226,229,.9));
+	background: rgba(151,152,153,.05)
+		-moz-linear-gradient(rgba(251,252,253,.95), rgba(246,247,248,.47) 49%, rgba(231,232,233,.45) 51%, rgba(225,226,229,.3));
 	background-clip: padding-box;
-	-moz-border-radius: 6.5px;
+	border-radius: 6px;
 	border: 1px solid;
 	border-color: rgba(0,0,0,.12) rgba(0,0,0,.19) rgba(0,0,0,.38);
 	box-shadow: 0 0 0 1px rgba(255,255,255,.3) inset,
-		0 0 0 2px rgba(255,255,255,.1) inset,
-		0 1px 0 rgba(0,0,0,.15);
+		0 0 0 2px rgba(255,255,255,.1) inset;
 	color: black;
-	text-shadow: 0 0 3px white;
-	margin: 1px 4px;
+	text-shadow: 0 0 2px white;
 }
-#tools > toolbarbutton:-moz-lwtheme {
-	background: rgba(151,152,153,.8)
-		-moz-linear-gradient(rgba(251,252,253,.95), rgba(246,247,248,.85) 5%, rgba(246,247,248,.15) 25%,
-			rgba(231,232,233,0.30) 35%, rgba(225,226,229,.40));
+#tools > toolbarbutton:not([disabled="true"]):not([checked="true"]):not([open="true"]):not(:active):hover {
+	background-color: hsla(190,60%,70%,.5);
+	border-color: hsla(190,50%,65%,.8) hsla(190,50%,50%,.8) hsla(190,50%,40%,.8);
+	box-shadow: 0 0 0 1px rgba(255,255,255,.3) inset,
+		0 0 0 1.5px rgba(255,255,255,.1) inset,
+		0 0 3.5px hsl(190,90%,80%);
+	-moz-transition: background-color .4s ease-in,
+		border-color .3s ease-in,
+		box-shadow .3s ease-in;
 }
+#tools > toolbarbutton:not([disabled="true"]):hover:active {
+	background-color: transparent;
+	border-color: rgba(0,0,0,.65) rgba(0,0,0,.55) rgba(0,0,0,.5);
+	box-shadow: 0 0 6.5px rgba(0,0,0,.4) inset,
+		0 0 2px rgba(0,0,0,.4) inset,
+		0 1px 0 rgba(255,255,255,.4);
+	-moz-transition: background-color .2s ease-in,
+		border-color .3s ease-in,
+		box-shadow .3s ease-in;
+}
+
 toolbarbutton[disabled="true"] {
 	opacity: .6;
 }
@@ -110,41 +125,25 @@ window[sizemode="maximized"] #tools {
 #tools[mode="icons"] {
 	-moz-border-radius: 4.5px;
 }
+toolbarbutton {
+	background-color: hsla(190,60%,70%,.5);
+	border-color: hsla(190,50%,65%,.8) hsla(190,50%,50%,.8) hsla(190,50%,40%,.8);
+	box-shadow: 0 0 0 1px rgba(255,255,255,.3) inset,
+		0 0 0 1.5px rgba(255,255,255,.1) inset,
+		0 0 3.5px hsl(190,90%,80%);
+	-moz-transition: background-color .4s ease-in,
+		border-color .3s ease-in,
+		box-shadow .3s ease-in;
+}
 toolbarbutton:not([disabled="true"]):not([checked="true"]):not(:active):hover {
 	background-color: hsla(190,60%,70%,.5);
 	border-color: hsla(190,50%,65%,.8) hsla(190,50%,50%,.8) hsla(190,50%,40%,.8);
 	box-shadow: 0 0 0 1px rgba(255,255,255,.3) inset,
-		0 0 0 2px rgba(255,255,255,.1) inset,
-		0 1px 0 rgba(0,0,0,.1),
-		0 0 5px hsl(190,90%,80%);
+		0 0 0 1.5px rgba(255,255,255,.1) inset,
+		0 0 3.5px hsl(190,90%,80%);
 	-moz-transition: background-color .4s ease-in,
-		border-color .2s ease-in,
-		box-shadow 0.3s ease-in;
-}
-#tooladd:not([disabled="true"]):not([checked="true"]):not(:active):hover {
-	background: rgba(8,111,253,.05)
-		-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.85) 5%, rgba(8,111,253,.4) 35%,
-		rgba(8,111,253,.5) 50%, rgba(225,226,229,0.9));
-	border-color: rgba(4,39,117,.8);
-	box-shadow: 0 0 0 1px rgba(88,191,253,.3) inset,
-		0 0 0 2px rgba(88,191,253,.1) inset,
-		0 1px 0 rgba(88,191,253,.1),
-		0 0 5px rgb(128,128,255);
-}
-toolbarbutton:not([disabled="true"]):hover:active,
-toolbarbutton[checked="true"],
-toolbarbutton[open="true"] {
-	background-color: transparent;
-	border-color: rgba(0,0,0,.65) rgba(0,0,0,.55) rgba(0,0,0,.5);
-	box-shadow: 0 0 9px rgba(0,0,0,.4) inset,
-		0 0 3px rgba(0,0,0,.4) inset,
-		0 1px 0 rgba(255,255,255,.4);
-	text-shadow: none;
-}
-
-toolbarbutton[checked="true"]:not(:active):hover {
-	background-color: rgba(90%,90%,90%,.4);
-	-moz-transition: background-color .4s;
+		border-color .3s ease-in,
+		box-shadow .3s ease-in;
 }
 
 toolbarbutton > .toolbarbutton-icon {
@@ -152,36 +151,6 @@ toolbarbutton > .toolbarbutton-icon {
 }
 
 /* specialized toolbarbutton styles */
-#toolplay:not([disabled="true"]):not([checked="true"]):not(:active):hover {
-	background: rgba(18,173,0,.05)
-		-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.85) 5%, rgba(18,173,0,.4) 35%,
-		rgba(18,173,0,.5) 50%, rgba(225,226,229,0.9));
-	border-color: rgba(5,98,0,.8);
-	box-shadow: 0 0 0 1px rgba(88,173,80,.3) inset,
-		0 0 0 2px rgba(88,173,80,.1) inset,
-		0 1px 0 rgba(88,173,0,.1),
-		0 0 5px rgb(128,255,128);
-}
-#toolpause:not([disabled="true"]):not([checked="true"]):not(:active):hover {
-	background: rgba(255,175,0,.05)
-		-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.95) 5%, rgba(255,175,0,.4) 35%,
-			rgba(255,175,0,0.5) 50%, rgba(225,226,229,0.9));
-	border-color: rgba(150,96,6,.8);
-	box-shadow: 0 0 0 1px rgba(255,215,70,.3) inset,
-		0 0 0 2px rgba(255,215,70,.1) inset,
-		0 1px 0 rgba(255,215,70,.1),
-		0 0 5px rgb(255,252,107);
-}
-#toolcancel:not([disabled="true"]):not([checked="true"]):not(:active):hover {
-	background: rgba(255,72,0,.05)
-		-moz-linear-gradient(rgba(225,226,229,.95), rgba(225,226,229,.95) 5%, rgba(255,72,0,.4) 35%,
-		rgba(255,72,0,.5) 50%, rgba(225,226,229,0.9));
-	border-color: rgba(165,7,7,.8);
-	box-shadow: 0 0 0 1px rgba(253,128,128,.3) inset,
-		0 0 0 2px rgba(253,128,128,.1) inset,
-		0 1px 0 rgba(253,128,128,.1),
-		0 0 5px rgb(255,128,128);
-}
 
 /* special lwtheme rules */
 treecol:-moz-lwtheme-brighttext {
@@ -195,12 +164,12 @@ treecol:-moz-lwtheme-brighttext {
 
 /* non-compositor rules */
 @media all and (-moz-windows-compositor:0) {
-  window:-moz-system-metric(windows-default-theme) {
-    background-color: rgb(185,209,234);
-  }
-  window:-moz-system-metric(windows-default-theme):-moz-window-inactive {
-    background-color: rgb(215,228,242);
-  }
+	window:-moz-system-metric(windows-default-theme) {
+		background-color: rgb(185,209,234);
+	}
+	window:-moz-system-metric(windows-default-theme):-moz-window-inactive {
+		background-color: rgb(215,228,242);
+	}
 	window[sizemode="maximized"] #titlebar:-moz-lwtheme {
 		visibility: hidden;
 	}
