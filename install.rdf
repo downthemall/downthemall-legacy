@@ -15,6 +15,7 @@
 
 		<em:aboutURL>chrome://dta/content/about/about.xul</em:aboutURL>
 		<em:iconURL>chrome://dtaicon/content/icon.png</em:iconURL>
+		<em:icon64URL>chrome://dtaicon/content/icon64.png</em:icon64URL>
 		<em:homepageURL>http://downthemall.net/</em:homepageURL>
 		<em:optionsURL>chrome://dta/content/preferences/prefs.xul</em:optionsURL>
 
