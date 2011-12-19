@@ -67,7 +67,7 @@ let _saveStmtParams = null;
 let _timer = 0;
 
 
-setNewGetter(this, '__db', function() {
+XPCOMUtils.defineLazyGetter(this, '__db', function() {
 	let db = Services.dirsvc.get("ProfD", Ci.nsIFile);
 	db.append(DB_FILE);
 	return db;

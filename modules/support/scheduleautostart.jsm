@@ -48,43 +48,32 @@ const Exception = Components.Exception;
 const Prefs = {};
 module("resource://dta/glue.jsm");
 module("resource://dta/preferences.jsm", Prefs);
-module("resource://dta/utils.jsm");
 module("resource://dta/support/timers.jsm");
 
 //Add some helpers to Date
-//Notes to reviewer: Our scope, our rules ;)
-merge(
-	Date.prototype,
-	{
-		addMilliseconds: function(ms) this.setMilliseconds(this.getMilliseconds() + ms),
-		addSeconds: function(s) this.addMilliseconds(s * 1000),
-		addMinutes: function(m) this.addMilliseconds(m * 60000),
-		addHours: function(h) this.addMilliseconds(h * 3600000),
-		addDays: function(d) this.setDate(this.getDate() + d)
-	}
-);
-merge(
-	Date,
-	{
-		today: function() {
-			let rv = new Date();
-			rv.setHours(0);
-			rv.setMinutes(0);
-			rv.setSeconds(0);
-			rv.setMilliseconds(0);
-			return rv;
-		}
-	}
-);
+//Note to reviewers: Our scope, our rules ;)
+Date.prototype.addMilliseconds =  function(ms) this.setMilliseconds(this.getMilliseconds() + ms);
+Date.prototype.addSeconds = function(s) this.addMilliseconds(s * 1000);
+Date.prototype.addMinutes = function(m) this.addMilliseconds(m * 60000);
+Date.prototype.addHours = function(h) this.addMilliseconds(h * 3600000);
+Date.prototype.addDays =  function(d) this.setDate(this.getDate() + d);
+Date.__defineGetter__("today", function() {
+	let rv = new Date();
+	rv.setHours(0);
+	rv.setMinutes(0);
+	rv.setSeconds(0);
+	rv.setMilliseconds(0);
+	return rv;
+});
 
 const Timers = new TimerManager();
 
-setNewGetter(this, "DTA", function() {
+XPCOMUtils.defineLazyGetter(this, "DTA", function() {
 	let _m = {};
 	module("resource://dta/api.jsm", _m);
 	return _m;
 });
-setNewGetter(this, "QueueStore", function() {
+XPCOMUtils.defineLazyGetter(this, "QueueStore", function() {
 	let _m = {};
 	module("resource://dta/manager/queuestore.jsm", _m);
 	_m = _m.QueueStore;
@@ -164,7 +153,7 @@ const Observer = {
 	scheduleNext: function() {
 		this.cancelTimer();
 		let start = Prefs.getExt("schedule.start", 0);
-		let current = Date.today();
+		let current = Date.today;
 		let now = new Date();
 		current.addMinutes(start);
 		if (current < now) {
