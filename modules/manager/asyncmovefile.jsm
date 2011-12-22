@@ -84,7 +84,7 @@ try {
 			let job = _jobs[event.data.uuid];
 			delete _jobs[event.data.uuid];
 			if (!job) {
-				Cu.reportError("Invalid asnycMoveFile job; something is rotten in the state of Denmark!");
+				Cu.reportError("Invalid asyncMoveFile job; something is rotten in the state of Denmark!");
 				return;
 			}
 			job(event.data.result ? null : "Worker failed to move file");
