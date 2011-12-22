@@ -59,7 +59,7 @@ var _moveFile = _moveFile_plain;
 try {
 	var _jobs = Object.create(null);
 
-	var _worker = new ChromeWorker("asyncmovefile_worker_win.js");
+	var _worker = new ChromeWorker("asyncmovefile_worker.js");
 	_worker.onerror = function(event) {
 		Cu.reportError("worker bailed early: " + event.message + ":" + event.lineno);
 		_worker = null;
