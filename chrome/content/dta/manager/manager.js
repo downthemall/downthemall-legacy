@@ -51,11 +51,11 @@ module('resource://dta/support/timers.jsm');
 module('resource://dta/support/urlmanager.jsm');
 
 let Preallocator = {}, RequestManipulation = {};
-module("resource://gre/modules/XPCOMUtils.jsm");
 module('resource://dta/manager/chunk.jsm');
 module('resource://dta/manager/connection.jsm');
 module('resource://dta/manager/globalprogress.jsm');
 module('resource://dta/manager/globalbucket.jsm');
+module('resource://dta/manager/asyncmovefile.jsm');
 module('resource://dta/manager/preallocator.jsm', Preallocator);
 module('resource://dta/manager/queuestore.jsm');
 module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
@@ -1924,20 +1924,25 @@ QueueItem.prototype = {
 			}
 			else {
 				function move(self, x) {
-					try {
-						self.tmpFile.clone().moveTo(destination, self.destinationName);
-					}
-					catch (ex) {
-						x = x || 1;
-						if (x > 5) {
-							self.complete(ex);
+					asyncMoveFile(self.tmpFile, destination, function (ex) {
+						try {
+							if (ex) {
+								throw new Exception(ex);
+							}
+						}
+						catch (ex) {
+							x = x || 1;
+							if (x > 5) {
+								self.complete(ex);
+								return;
+							}
+							window.setTimeout(function() move(self, ++x), x * 250);
 							return;
 						}
-						window.setTimeout(function() move(self, ++x), x * 250);
-						return;
-					}
-					self.complete();
+						self.complete();
+					});
 				}
+				destination.append(this.destinationName);
 				move(this);
 			}
 		}
