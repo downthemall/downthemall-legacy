@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll asyncmovefile ChromeWorker Worker_Win32 module.
+ * The Original Code is DownThemAll asyncmovefile ChromeWorker module.
  *
  * The Initial Developer of the Original Code is Nils Maier
  * Portions created by the Initial Developer are Copyright (C) 2011
@@ -35,18 +35,27 @@
  * ***** END LICENSE BLOCK ***** */
 "use strict";
 
-const MOVEFILE_REPLACE_EXISTING = 0x1;
-const MOVEFILE_COPY_ALLOWED = 0x2;
-const MOVEFILE_WRITE_THROUGH = 0x8;
-const dwFlags = MOVEFILE_REPLACE_EXISTING | MOVEFILE_COPY_ALLOWED | MOVEFILE_WRITE_THROUGH;
-const kernel32 = ctypes.open("kernel32.dll");
-const MoveFileEx = kernel32.declare(
-	"MoveFileExW",
-	ctypes.winapi_abi,
-	ctypes.int, // BOOL retval,
-	ctypes.jschar.ptr, // LPCTSTR lpExistingFileName,
-	ctypes.jschar.ptr, // LPCTSTR lpNewFileName,
-	ctypes.unsigned_int // DWORD dwFlags
-	);
+try {
+	importScripts("asyncmovefile_worker_win.js");
+}
+catch (ex) {
+	throw ex;
+}
 
-function moveFile(src, dst) MoveFileEx(src, dst, dwFlags);
+onmessage = function(event) {
+	let data = event.data;
+	if (data == "close") {
+		close();
+		return;
+	}
+
+	try {
+		data.result = moveFile(data.src, data.dst);
+	}
+	catch (ex) {
+		data.result = false;
+	}
+	postMessage(data);
+}
+
+postMessage(false);
