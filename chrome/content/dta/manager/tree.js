@@ -93,7 +93,8 @@ const Tree = {
 		let mirrorNodes = $('mirrors', 'mirrors-sep');
 		let mirrorCNodes = $('mirrors-cascaded', 'mirrors-cascaded-sep');
 		$('popup').addEventListener('popupshowing', function onPopupShowing(event) {
-			let cascadeMirrors = tp.current.urlManager.length < 2;
+			let current = tp.current;
+			let cascadeMirrors = !current || current.urlManager.length < 2;
 			for (let [,e] in Iterator(mirrorNodes)) {
 				e.hidden = cascadeMirrors;
 			}
