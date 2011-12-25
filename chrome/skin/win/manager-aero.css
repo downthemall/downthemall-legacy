@@ -73,7 +73,6 @@ window[sizemode="maximized"] #titlebar {
 
 /* toolbar button styles */
 #tools > toolbarbutton {
-	list-style-image: url(tools-aero.png);
 	-moz-appearance: none;
 	margin: 1px 3px;
 	padding: 1px 5px;

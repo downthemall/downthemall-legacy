@@ -25,7 +25,7 @@ toolbox {
 	padding: 0;
 	margin: 0;
 }
-#tools toolbarbutton {
+#tools > toolbarbutton {
 	list-style-image: url(chrome://dta/skin/manager/tools.png);
 	-moz-box-orient: vertical !important;
 	-moz-box-align: center !important;
@@ -33,10 +33,10 @@ toolbox {
 	margin-bottom: 2px;
 	text-align: center;
 }
-#tools[mode="icons"] toolbarbutton {
+#tools[mode="icons"] > toolbarbutton {
 	padding: 5px;
 }
-#tools[mode="full"] toolbarbutton {
+#tools[mode="full"] > toolbarbutton {
 	min-width: 50px;
 }
 
