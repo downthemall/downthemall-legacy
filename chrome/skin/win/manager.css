@@ -11,3 +11,7 @@ statusbarpanel#netstatus {
 statusbarpanel#netstatus[offline] {
 	-moz-image-region: rect(0px, 32px, 16px, 16px);
 }
+
+toolbar#tools > toolbarbutton {
+	list-style-image: url(tools.png);
+}
