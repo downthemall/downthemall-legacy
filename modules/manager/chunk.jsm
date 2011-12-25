@@ -529,25 +529,30 @@ Chunk.prototype = {
 			// the download too early
 			let avail;
 			if (this._hasCurrentStream
-					&& (avail = this._currentInputStream.available()) + bytes > BUFFER_SIZE) {
-				let fill = BUFFER_SIZE - avail;
+					&& (avail = this._currentInputStream.available()) + bytes >= BUFFER_SIZE) {
+				let fill = Math.min(bytes, BUFFER_SIZE - avail);
 				bytes -= fill;
 				if (fill && this._currentOutputStream.writeFrom(aInputStream, fill) != fill) {
 					throw new Error("Failed to fill current stream. fill: " + fill + " bytes: " + bytes + "chunk: " + this);
 				}
 				this._shipCurrentStream();
 			}
-			if (!this._hasCurrentStream) {
-				let pipe = new Instances.Pipe(false, false, BUFFER_SIZE>>1, 1<<1, null);
-				this._currentInputStream = pipe.inputStream;
-				this._currentOutputStream = pipe.outputStream;
+			while (bytes >= BUFFER_SIZE) {
+				this._ensureStream(true);
+				if (this._currentOutputStream.writeFrom(aInputStream, BUFFER_SIZE) != BUFFER_SIZE) {
+					throw new Error("Failed to write full stream. " + this);
+				}
+				this._shipCurrentStream();
+				bytes -= BUFFER_SIZE;
 			}
-			if (this._currentOutputStream.writeFrom(aInputStream, bytes) != bytes) {
-				throw new Error("Failed to write all requested bytes to current stream. bytes: " + bytes + " chunk: " + this);
+			if (bytes) {
+				this._ensureStream();
+				if (this._currentOutputStream.writeFrom(aInputStream, bytes) != bytes) {
+					throw new Error("Failed to write all requested bytes to current stream. bytes: " + bytes + " chunk: " + this);
+				}
 			}
-
 			this._noteBytesWritten(got);
-			return bytes;
+			return aCount;
 		}
 		catch (ex) {
 			if (Logger.enabled) {
@@ -556,6 +561,19 @@ Chunk.prototype = {
 			throw ex;
 		}
 		return 0;
+	},
+	_ensureStream: function CH__ensureStream(solid) {
+		if (!this._hasCurrentStream) {
+			let pipe;
+			if (solid) {
+				pipe = new Instances.Pipe(false, true, BUFFER_SIZE, 1, null);
+			}
+			else {
+				pipe = new Instances.Pipe(false, true, BUFFER_SIZE>>2, 1<<2, null);
+			}
+			this._currentInputStream = pipe.inputStream;
+			this._currentOutputStream = pipe.outputStream;
+		}
 	},
 	get _hasCurrentStream() !!this._currentInputStream,
 	_shipCurrentStream: function CH__shipCurrentStream() {
