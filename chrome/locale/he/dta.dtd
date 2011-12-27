@@ -1,8 +1,4 @@
-<!--
-	commonly used.
-	CHECK BEFORE MODIFY
-
--->
+<!---->
 <!ENTITY start.label "התחל!">
 <!ENTITY start.key "ה">
 <!ENTITY queue.label "הוסף מושהה">
