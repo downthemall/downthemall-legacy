@@ -504,7 +504,7 @@
 		}
 	}
 	addLinks.__defineGetter__('__ch', function() {
-		let _ch = Cc['@downthemall.net/contenthandling;2']
+		let _ch = Cc['@downthemall.net/contenthandling;3']
 			.getService(Ci.dtaIContentHandling);
 		delete addLinks.__ch;
 		return (addLinks.__ch = _ch);

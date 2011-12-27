@@ -43,8 +43,8 @@ interfaces components/services.xpt
 component {27a344f4-7c1b-43f3-af7f-bb9dd65114bb} components/services.js
 contract @downthemall.net/stuff;1 {27a344f4-7c1b-43f3-af7f-bb9dd65114bb}
 
-component {35eabb45-6bca-408a-b90c-4b22e543caf4} components/services.js
-contract @downthemall.net/contenthandling;2 {35eabb45-6bca-408a-b90c-4b22e543caf4}
+component {c7b0d885-0a2b-4047-8816-183764c7fe2e} components/services.js
+contract @downthemall.net/contenthandling;3 {c7b0d885-0a2b-4047-8816-183764c7fe2e}
 
 component {bbaedbd9-9567-4d11-9255-0bbae236ecab} components/services.js
 contract @mozilla.org/network/protocol/about;1?what=downthemall {bbaedbd9-9567-4d11-9255-0bbae236ecab}
@@ -53,7 +53,8 @@ component {435FC5E5-D4F0-47a1-BDC1-F325B78188F3} components/services.js
 contract @downthemall.net/filtermanager;2 {435FC5E5-D4F0-47a1-BDC1-F325B78188F3}
 
 category profile-after-change @downthemall.net/stuff;1 @downthemall.net/stuff;1
-category profile-after-change @downthemall.net/contenthandling;2 @downthemall.net/contenthandling;2
+category profile-after-change @downthemall.net/contenthandling;3 @downthemall.net/contenthandling;3
+category net-channel-event-sinks @downthemall.net/contenthandling;3 @downthemall.net/contenthandling;3
 category profile-after-change @downthemall.net/filtermanager;2 @downthemall.net/filtermanager;2
 
 ### integration ###
