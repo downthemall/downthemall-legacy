@@ -51,6 +51,11 @@ XPCOMUtils.defineLazyGetter(this, 'DTA', function() {
 	Object.freeze(rv);
 	return rv;
 });
+XPCOMUtils.defineLazyGetter(this, 'ContentHandling', function() {
+	let rv = {};
+	module("resource://dta/support/contenthandling.jsm", rv);
+	return rv.ContentHandling;
+});
 
 
 /* **
@@ -179,7 +184,7 @@ function load(window) {
 	$('downthemallcontainer').collapsed = false;
 	normal.disabled = false;
 
-	let url = dialog.mLauncher.source;
+	let url = ContentHandling.getRedirect(dialog.mLauncher.source);
 	let referrer;
 	try {
 		referrer = dialog.mContext.QueryInterface(Ci.nsIWebNavigation).currentURI.spec;
