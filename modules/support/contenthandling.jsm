@@ -54,30 +54,89 @@ const REGEXP_SWF = /\.swf\b/i;
 const REGEXP_CT = /\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i;
 const REGEXP_STARTPARAM = /start=\d+&?/;
 
+function LimitedDict(limit) {
+	this._limit = limit;
+	this.clear();
+}
+LimitedDict.prototype = {
+	clear: function() {
+		this._dict = ('create' in Object) ? Object.create(null) : {};
+		this._arr = [];
+	},
+	getKey: function(key) this._dict[key] || null,
+	setKey: function(key, value) {
+		if (key in this._dict) {
+			this._dict[key] = value;
+			return;
+		}
+
+		if (this._arr.length == this._limit) {
+			delete this._dict[this._arr.pop()];
+		}
+		this._arr.push(this._dict[key] = value);
+	}
+};
+
 /**
  * ContentHandling
  */
+const REDIRECTS_IID = Components.ID("366982b8-9db9-4383-aae7-dbc2f40ba6f6");
+const REDIRECTS_CON = "@downthemall.net/content/redirects;1";
+
 function ContentHandlingImpl() {
 	this._init();
 }
 ContentHandlingImpl.prototype = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener]),
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.nsIFactory, Ci.nsIChannelEventSink]),
 
 	_init: function ct__init() {
 		Services.obs.addObserver(this, 'xpcom-shutdown', false);
 		Services.obs.addObserver(this, 'private-browsing', false);
 		Services.prefs.addObserver(PREF_SNIFFVIDEOS, this, false);
+
+		Components.manager.nsIComponentRegistrar.registerFactory(
+			REDIRECTS_IID,
+			REDIRECTS_CON,
+			REDIRECTS_CON,
+			this
+			);
+		Services.catman.addCategoryEntry(
+			"net-channel-event-sinks",
+			REDIRECTS_CON,
+			REDIRECTS_CON,
+			false,
+			false
+			);
+
+		this.clear();
+
 		this.sniffVideos = Services.prefs.getBoolPref(PREF_SNIFFVIDEOS);
 		if (this.sniffVideos) {
 			this.registerHttpObservers();
 		}
 	},
-	_uinit: function ct__uninit() {
+
+	// nsIFactory
+	createInstance: function(aOuter, iid) {
+		if (aOuter) {
+			throw Components.results.NS_ERROR_NO_AGGREGATION;
+		}
+		return this.QueryInterface(iid);
+	},
+	lockFactory: function eventsink_lockf(lock) {
+		throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+	},
+
+	_uninit: function ct__uninit() {
 		Services.prefs.removeObserver('extensions.dta.listsniffedvideos', this);
 		if (this.sniffVideos) {
 			this.sniffVideos = false;
 			this.unregisterHttpObservers();
 		}
+
+		Services.catman.deleteCategoryEntry("net-channel-event-sinks", REDIRECTS_CON, true);
+		Components.manager.nsIComponentRegistrar.unregisterFactory(REDIRECTS_IID, this);
+
 		Services.obs.removeObserver(this, 'xpcom-shutdown');
 		Services.obs.removeObserver(this, 'private-browsing');
 	},
@@ -122,8 +181,7 @@ ContentHandlingImpl.prototype = {
 			}
 			break;
 		case 'private-browsing':
-			this._clearPostData();
-			this._clearVideos();
+			this.clear();
 			break;
 		}
 	},
@@ -173,7 +231,7 @@ ContentHandlingImpl.prototype = {
 			ss.seek(0, op);
 
 			if (post) {
-				this._registerData(channel.URI, post);
+				this._data.setKey(channel.URI.spec, data);
 			}
 		}
 		catch (ex) {
@@ -228,24 +286,6 @@ ContentHandlingImpl.prototype = {
 			// no op
 		}
 	},
-	_dataDict: {},
-	_dataArray: [],
-	_clearPostData: function ct__clearPostData() {
-		this._dataDict = {};
-		this._dataArray = [];
-	},
-	_registerData: function ct__registerData(uri, data) {
-		uri = uri.spec;
-
-		if (!(uri in this._dataDict)) {
-			if (this._dataArray.length > 5) {
-				delete this._dataDict[this._dataArray.shift()];
-			}
-			this._dataArray.push(uri);
-		}
-
-		this._dataDict[uri] = data;
-	},
 
 	_sniffVideos: false,
 	get sniffVideos() {
@@ -254,15 +294,9 @@ ContentHandlingImpl.prototype = {
 	set sniffVideos(nv) {
 		this._sniffVideos = nv;
 		if (!nv) {
-			this._clearVideos();
+			this._videos.clear();
 		}
 		return nv;
-	},
-	_vidDict: {},
-	_vidArray: [],
-	_clearVideos: function ct__clearVideos() {
-		this._vidDict = {};
-		this._vidArray = [];
 	},
 	_registerVideo: function ct__registerVideo(uri, vid) {
 		// sanitize vid and remove the start param
@@ -272,41 +306,58 @@ ContentHandlingImpl.prototype = {
 		}
 
 		uri = uri.spec;
-		if (!(uri in this._vidDict)) {
-			if (this._vidArray.length > 20) {
-				delete this._vidDict[this._vidArray.shift()];
-			}
-			this._vidArray.push(uri);
-			let nv = this._vidDict[uri] = {};
-			nv[vid.spec] = vid;
-		}
-		else {
-			this._vidDict[uri][vid.spec] = vid;
-		}
+		let nv = this._videos.getKey(uri) || [];
+		nv.push(vid.clone());
+		this._videos.setKey(uri, nv);
 	},
 
 	getPostDataFor: function ct_getPostDataFor(uri) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
-		if (!(uri in this._dataDict)) {
-			return '';
-		}
-		return this._dataDict[uri];
+		return this._data.getKey(uri) || "";
 	},
 	getSniffedVideosFor: function ct_getSniffedVideosFor(uri) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
-		let rv = [];
-		if (!(uri in this._vidDict)) {
-			return rv;
+		return (this._videos.getKey(uri) || []).map(function(a) a.clone());
+	},
+
+	// nsIChannelEventSink
+	asyncOnChannelRedirect: function(oldChannel, newChannel, flags, callback) {
+		try {
+			this.onChannelRedirect(oldChannel, newChannel, flags);
 		}
-		let vids = this._vidDict[uri];
-		for each (let v in vids) {
-			rv.push(v.clone());
+		catch (ex) {
+			error(ex);
 		}
-		return rv;
+		callback.onRedirectVerifyCallback(0);
+	},
+	onChannelRedirect: function CH_onChannelRedirect(oldChannel, newChannel, flags) {
+		let oldURI = oldChannel.URI.spec;
+		let newURI = newChannel.URI.spec;
+		oldURI = this._revRedirects.getKey(oldURI) || oldURI;
+		this._redirects.setKey(oldURI, newURI);
+		this._revRedirects.setKey(newURI, oldURI);
+	},
+	getRedirect: function(uri) {
+		let rv = this._revRedirects.getKey(uri.spec);
+		if (!rv) {
+			return uri;
+		}
+		try {
+			return Services.io.newURI(rv, null, null);
+		}
+		catch (ex) {
+			return uri;
+		}
+	},
+	clear: function CH_clear() {
+		this._data = new LimitedDict(5);
+		this._videos = new LimitedDict(20);
+		this._redirects = new LimitedDict(20);
+		this._revRedirects = new LimitedDict(100);
 	}
 };
 
