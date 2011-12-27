@@ -151,7 +151,9 @@ addEventListener('load', function() {
 	$('downthemallcontainer').collapsed = false;
 	normal.disabled = false;
 	
-	let url = dialog.mLauncher.source;
+	let url = Cc["@downthemall.net/contenthandling;3"]
+		.getService(Ci.dtaIContentHandling)
+		.getRedirect(dialog.mLauncher.source);
 	let referrer;
 	try {
 		referrer = dialog.mContext.QueryInterface(Components.interfaces.nsIWebNavigation).currentURI.spec;

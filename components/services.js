@@ -49,7 +49,6 @@ const NS_ERROR_FAILURE = Cr.NS_ERROR_FAILURE;
 const NS_ERROR_NO_AGGREGATION = Cr.NS_ERROR_NO_AGGREGATION;
 const NS_ERROR_INVALID_ARG = Cr.NS_ERROR_INVALID_ARG;
 
-const PREF_SNIFFVIDEOS = 'extensions.dta.listsniffedvideos';
 const PREF_FILTERS_BASE = 'extensions.dta.filters.';
 
 const ABOUT_URI = 'http://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_ID%&version=%APP_VERSION%&os=%OS%';
@@ -274,15 +273,52 @@ Stuff.prototype = {
 /**
  * ContentHandling
  */
-function ContentHandling() {}
+function LimitedDict(limit) {
+	this._limit = limit;
+	this.clear();
+}
+LimitedDict.prototype = {
+	clear: function() {
+		this._dict = ('create' in Object) ? Object.create(null) : {};
+		this._arr = [];
+	},
+	getKey: function(key) this._dict[key] || null,
+	setKey: function(key, value) {
+		if (key in this._dict) {
+			this._dict[key] = value;
+			return;
+		}
+
+		if (this._arr.length == this._limit) {
+			delete this._dict[this._arr.pop()];
+		}
+		this._arr.push(this._dict[key] = value);
+	}
+};
+
+/**
+ * ContentHandling
+ */
+const HEADER_CT = ['Content-Type', 'Content-Disposition'];
+const PREF_SNIFFVIDEOS = 'extensions.dta.listsniffedvideos';
+const REGEXP_MEDIA = /\.(flv|ogg|ogm|ogv|avi|divx|mp4v?|webm)\b/i;
+const REGEXP_SWF = /\.swf\b/i;
+const REGEXP_CT = /\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i;
+const REGEXP_STARTPARAM = /start=\d+&?/;
+
+
+function ContentHandling() {
+	this._init();
+}
 ContentHandling.prototype = {
 	classDescription: 'DownThemAll! Content Handling',
-	classID: Components.ID('{35eabb45-6bca-408a-b90c-4b22e543caf4}'),
-	contractID: '@downthemall.net/contenthandling;2',
+	classID: Components.ID('{c7b0d885-0a2b-4047-8816-183764c7fe2e}'),
+	contractID: '@downthemall.net/contenthandling;3',
+
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.nsIChannelEventSink, Ci.dtaIContentHandling]),	
+
+	_xpcom_categories: [{category: 'profile-after-change'}, {category: "net-channel-event-sinks"},],
 	
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.dtaIContentHandling]),
-	
-	_xpcom_categories: [{category: 'profile-after-change'}],
 	
 	// ensure that there is only one instance of this service around
 	_xpcom_factory: {
@@ -297,30 +333,47 @@ ContentHandling.prototype = {
 			return this._instance.QueryInterface(iid);
 		}
 	},
-	
+
 	_init: function ct__init() {
+		Observers.addObserver(this, 'xpcom-shutdown', false);
+		Observers.addObserver(this, 'private-browsing', false);
+		this._prefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2);
+		this._prefs.addObserver(PREF_SNIFFVIDEOS, this, false);
+
+		this.clear();
+
+		this.sniffVideos = this._prefs.getBoolPref(PREF_SNIFFVIDEOS);
+		if (this.sniffVideos) {
+			this.registerHttpObservers();
+		}
+	},
+	get _io() {
+    delete ContentHandling.prototype._io;
+    return (ContentHandling.prototype._io = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService));
+	},
+
+	_uninit: function ct__uninit() {
+		this._prefs.removeObserver(PREF_SNIFFVIDEOS, this);
+		if (this.sniffVideos) {
+			this.sniffVideos = false;
+			this.unregisterHttpObservers();
+		}
+
+		Observers.removeObserver(this, 'xpcom-shutdown');
+		Observers.removeObserver(this, 'private-browsing');
+	},
+	registerHttpObservers: function ct_registerHttpObservers() {
 		Observers.addObserver(this, 'http-on-modify-request', false);
 		Observers.addObserver(this, 'http-on-examine-response', false);
 		Observers.addObserver(this, 'http-on-examine-cached-response', false);
-		Observers.addObserver(this, 'xpcom-shutdown', false);
-		Observers.addObserver(this, 'private-browsing', false);
-		this._ps = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2);
-		this._ps.addObserver(PREF_SNIFFVIDEOS, this, false);
-		this.sniffVideos = this._ps.getBoolPref(PREF_SNIFFVIDEOS);
 	},
-	_uninit: function ct__uninit() {
+	unregisterHttpObservers: function ct_unregisterHttpObservers() {
 		Observers.removeObserver(this, 'http-on-modify-request');
 		Observers.removeObserver(this, 'http-on-examine-response');
 		Observers.removeObserver(this, 'http-on-examine-cached-response');
-		Observers.removeObserver(this, 'xpcom-shutdown');
-		Observers.removeObserver(this, 'private-browsing');
-		this._ps.removeObserver('extensions.dta.listsniffedvideos', this);
 	},
 	observe: function ct_observe(subject, topic, data) {
 		switch(topic) {
-		case 'profile-after-change':
-			this._init();
-			break;
 		case 'xpcom-shutdown':
 			this._uninit();
 			break;
@@ -333,15 +386,24 @@ ContentHandling.prototype = {
 			break;
 		case 'nsPref:changed':
 			try {
-				this.sniffVideos = subject.QueryInterface(Ci.nsIPrefBranch).getBoolPref(PREF_SNIFFVIDEOS);
+				let newValue = this._prefs.getBoolPref(PREF_SNIFFVIDEOS);
+				let differs = newValue == this.sniffVideos;
+				this.sniffVideos = newValue;
+				if (differs) {
+					if (newValue) {
+						this.registerHttpObservers();
+					}
+					else {
+						this.unregisterHttpObservers();
+					}
+				}
 			}
 			catch (ex) {
-				log("Failed to get sniffVideos pref", ex);
+				error(ex);
 			}
 			break;
 		case 'private-browsing':
-			this._clearPostData();
-			this._clearVideos();
+			this.clear();
 			break;
 		}
 	},
@@ -353,52 +415,51 @@ ContentHandling.prototype = {
 			return;
 		}
 		var channel = subject.QueryInterface(Ci.nsIHttpChannel);
-				
+
 		if (channel.requestMethod != 'POST') {
 			return;
 		}
-				
-		var post;
-		
+
+		let post;
+
 		try {
-			var us = subject.QueryInterface(Ci.nsIUploadChannel).uploadStream;
+			let us = subject.QueryInterface(Ci.nsIUploadChannel).uploadStream;
 			if (!us) {
 				return;
 			}
 			try {
 				us.QueryInterface(Ci.nsIMultiplexInputStream);
-				log("ignoring multiplex stream");
 				return;
 			}
 			catch (ex) {
 				// no op
 			}
-				
+
 			let ss = us.QueryInterface(Ci.nsISeekableStream);
 			if (!ss) {
 				return;
 			}
 			let op = ss.tell();
-		
+
 			ss.seek(0, 0);
-			
+
 			let is = new ScriptableInputStream(us);
-			
+
 			// we'll read max 64k
 			let available = Math.min(is.available(), 1 << 16);
 			if (available) {
 				post = is.read(available);
 			}
 			ss.seek(0, op);
-			
+
 			if (post) {
-				this._registerData(channel.URI, post);
+				this._data.setKey(channel.URI.spec, data);
 			}
 		}
 		catch (ex) {
-			log("cannot get post-data", ex);
+			error(ex);
 		}
- 	},
+	},
 	observeResponse: function ct_observeResponse(subject, topic, data) {
 		if (!this.sniffVideos || !(subject instanceof Ci.nsIHttpChannel)) {
 			return;
@@ -409,28 +470,28 @@ ContentHandling.prototype = {
 				return;
 			}
 			let ct = '';
-			for each (let x in ['Content-Type', 'Content-Disposition']) {
+			for (let i = 0; i < HEADER_CT.length; ++i) {
 				try {
-					ct += channel.getResponseHeader('Content-Type');
+					ct += channel.getResponseHeader(HEADER_CT[i]);
 				}
 				catch (ex) {
 					// no op
 				}
 			}
-			if (
-					(/\.(flv|ogg|ogm|ogv|avi|divx|mp4v?|webm)\b/i.test(channel.URI.spec) && !/\.swf\b/i.test(channel.URI.spec)) 
-					|| ct.match(/\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i)
-			) {
+			let spec = channel.URI.spec;
+			if ((REGEXP_MEDIA.test(spec) && !REGEXP_SWF.test(spec))
+				|| REGEXP_CT.test(ct)) {
+
 				let wp = null;
 				if (channel.loadGroup && channel.loadGroup.groupObserver) {
-					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);					
+					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);
 				}
 				if (!wp) {
 					wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
 				}
-				 
+
 				if (!wp || !wp.DOMWindow) {
-					return 
+					return
 				}
 				let wn = wp.DOMWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
 				if (!wn || !wn.currentURI) {
@@ -444,28 +505,11 @@ ContentHandling.prototype = {
 			}
 		}
 		catch (ex) {
+			error(ex);
 			// no op
 		}
 	},
-	_dataDict: {},
-	_dataArray: [],
-	_clearPostData: function ct__clearPostData() {
-		this._dataDict = {};
-		this._dataArray = [];
-	},
-	_registerData: function ct__registerData(uri, data) {
-		uri = uri.spec;
 
-		if (!(uri in this._dataDict)) {
-			if (this._dataArray.length > 5) {
-				delete this._dataDict[this._dataArray.pop()];
-			}
-			this._dataArray.push(uri);
-		}
-		
-		this._dataDict[uri] = data;  	
-	},
-	
 	_sniffVideos: false,
 	get sniffVideos() {
 		return this._sniffVideos;
@@ -473,51 +517,72 @@ ContentHandling.prototype = {
 	set sniffVideos(nv) {
 		this._sniffVideos = nv;
 		if (!nv) {
-			this._clearVideos();
+			this._videos.clear();
 		}
 		return nv;
 	},
-	_vidDict: {},
-	_vidArray: [],
-	_clearVideos: function ct__clearVideos() {
-		this._vidDict = {};
-		this._vidArray = [];
-	},
 	_registerVideo: function ct__registerVideo(uri, vid) {
-		uri = uri.spec;
-		if (!(uri in this._vidDict)) {
-			if (this._vidArray.length > 20) {
-				delete this._vidDict[this._vidArray.pop()];
-			}
-			this._vidArray.push(uri);
-			this._vidDict[uri] = {};
+		// sanitize vid and remove the start param
+		vid = vid.clone();
+		if (vid instanceof Ci.nsIURL) {
+			vid.query = vid.query.replace(REGEXP_STARTPARAM, "");
 		}
-		this._vidDict[uri][vid.spec] = vid;
+
+		uri = uri.spec;
+		error("video: " + uri + " / " + vid.spec);
+		let nv = this._videos.getKey(uri) || [];
+		nv.push(vid.clone());
+		this._videos.setKey(uri, nv);
 	},
-	
+
 	getPostDataFor: function ct_getPostDataFor(uri) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
-		if (!(uri in this._dataDict)) {
-			return '';
-		}
-		return this._dataDict[uri];
+		return this._data.getKey(uri) || "";
 	},
 	getSniffedVideosFor: function ct_getSniffedVideosFor(uri) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
-		let rv = [];
-		if (!(uri in this._vidDict)) {
-			return rv;
+		return (this._videos.getKey(uri) || []).map(function(a) a.clone());
+	},
+
+	// nsIChannelEventSink
+	asyncOnChannelRedirect: function(oldChannel, newChannel, flags, callback) {
+		try {
+			this.onChannelRedirect(oldChannel, newChannel, flags);
 		}
-		let vids = this._vidDict[uri];
-		for each (let v in vids) {
-			log(v.spec);
-			rv.push(v.clone());
+		catch (ex) {
+			error(ex);
 		}
-		return rv;
+		callback.onRedirectVerifyCallback(0);
+	},
+	onChannelRedirect: function CH_onChannelRedirect(oldChannel, newChannel, flags) {
+		let oldURI = oldChannel.URI.spec;
+		let newURI = newChannel.URI.spec;
+		oldURI = this._revRedirects.getKey(oldURI) || oldURI;
+		error(oldURI + " / " + newURI);
+		this._redirects.setKey(oldURI, newURI);
+		this._revRedirects.setKey(newURI, oldURI);
+	},
+	getRedirect: function(uri) {
+		let rv = this._revRedirects.getKey(uri.spec);
+		if (!rv) {
+			return uri;
+		}
+		try {
+			return this._io.newURI(rv, null, null);
+		}
+		catch (ex) {
+			return uri;
+		}
+	},
+	clear: function CH_clear() {
+		this._data = new LimitedDict(5);
+		this._videos = new LimitedDict(20);
+		this._redirects = new LimitedDict(20);
+		this._revRedirects = new LimitedDict(100);
 	}
 };
 
@@ -1030,7 +1095,6 @@ FilterManager.prototype = {
 		return true;
 	}
 };
-
 
 if (XPCOMUtils.generateNSGetFactory) {
     var NSGetFactory = XPCOMUtils.generateNSGetFactory([Stuff, ContentHandling, AboutModule, FilterManager]);

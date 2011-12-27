@@ -38,7 +38,7 @@
 interface nsIURI;
 interface nsIVariant;
 
-[scriptable, uuid(35eabb45-6bca-408a-b90c-4b22e543caf4)]
+[scriptable, uuid(4c06bb72-1e81-4017-bf88-222abdd29614)]
 interface dtaIContentHandling : nsISupports {
 	/**
 		The dtaIContentHandling Service will store the last few post-data strings
@@ -49,5 +49,6 @@ interface dtaIContentHandling : nsISupports {
 		@return empty string when not found, otherwise mime-channel bytes
 	*/
 	AUTF8String getPostDataFor(in nsIURI uri);
+	nsIURI getRedirect(in nsIURI uri);
 	nsIVariant getSniffedVideosFor(in nsIURI uri);  
 }; 
