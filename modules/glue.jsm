@@ -21,6 +21,7 @@ Services.prototype = Services.Services;
 delete Services.Services;
 Services = new Services();
 
+XPCOMUtils.defineLazyServiceGetter(Services, "catman", "@mozilla.org/categorymanager;1", "nsICategoryManager");
 XPCOMUtils.defineLazyServiceGetter(Services, "clipbrd", "@mozilla.org/widget/clipboard;1", "nsIClipboard");
 XPCOMUtils.defineLazyServiceGetter(Services, "drags", "@mozilla.org/widget/dragservice;1", "nsIDragService");
 XPCOMUtils.defineLazyServiceGetter(Services, "eps", "@mozilla.org/uriloader/external-protocol-service;1", "nsIExternalProtocolService");
