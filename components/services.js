@@ -457,7 +457,7 @@ ContentHandling.prototype = {
 			}
 		}
 		catch (ex) {
-			error(ex);
+			// no op
 		}
 	},
 	observeResponse: function ct_observeResponse(subject, topic, data) {
@@ -505,7 +505,6 @@ ContentHandling.prototype = {
 			}
 		}
 		catch (ex) {
-			error(ex);
 			// no op
 		}
 	},
@@ -529,7 +528,6 @@ ContentHandling.prototype = {
 		}
 
 		uri = uri.spec;
-		error("video: " + uri + " / " + vid.spec);
 		let nv = this._videos.getKey(uri) || [];
 		nv.push(vid.clone());
 		this._videos.setKey(uri, nv);
@@ -562,7 +560,6 @@ ContentHandling.prototype = {
 		let oldURI = oldChannel.URI.spec;
 		let newURI = newChannel.URI.spec;
 		oldURI = this._revRedirects.getKey(oldURI) || oldURI;
-		error(oldURI + " / " + newURI);
 		this._redirects.setKey(oldURI, newURI);
 		this._revRedirects.setKey(newURI, oldURI);
 	},
