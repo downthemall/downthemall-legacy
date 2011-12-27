@@ -235,7 +235,7 @@ ContentHandlingImpl.prototype = {
 			}
 		}
 		catch (ex) {
-			error(ex);
+			// no op
 		}
 	},
 	observeResponse: function ct_observeResponse(subject, topic, data) {
