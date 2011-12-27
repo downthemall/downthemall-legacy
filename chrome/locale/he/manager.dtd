@@ -25,7 +25,7 @@
 <!ENTITY infos.label "מידע על ההורדה">
 <!ENTITY launch.label "פתח קובץ">
 <!ENTITY delete.label "מחק קובץ">
-<!ENTITY targetdir.label "פתח תיקיית יעד">
+<!ENTITY targetdir.label "פתח תיקית יעד">
 <!ENTITY pause.label "השהה">
 <!ENTITY resume.label "המשך">
 <!ENTITY cancel.label "ביטול">
@@ -36,8 +36,8 @@
 <!ENTITY removeDupes.label "להסיר כפולים">
 <!ENTITY removeGone.label "להסיר קבצים שנעלמו">
 <!ENTITY advanced.label "מתקדם">
-<!ENTITY addchunk.label "להוסיף מקטע אחד">
-<!ENTITY removechunk.label "להסיר מקטע אחד">
+<!ENTITY addchunk.label "עוד מקטע">
+<!ENTITY removechunk.label "פחות חתיכה">
 <!ENTITY force.label "לכפות התחלה">
 <!ENTITY import.label "לייבא מקובץ">
 <!ENTITY export.label "לייצא את הנבחרים לקובץ">
