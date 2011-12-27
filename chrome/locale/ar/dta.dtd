@@ -1,0 +1,24 @@
+<!--﻿
+	commonly used.
+	CHECK BEFORE MODIFY
+
+
+-->
+<!ENTITY start.label "ابدأ!">
+<!ENTITY start.key "د">
+<!ENTITY queue.label "أضِف وألبث">
+<!ENTITY queue.key "ث">
+<!ENTITY options.label "تفضيلات">
+<!ENTITY url.value "نزِّل">
+<!ENTITY dest.caption "احفظ الملفات في:">
+<!ENTITY mirrors.value "مرايا:">
+<!ENTITY referrer.value "صفحة الإشارة:">
+<!ENTITY description.value "الوصف:">
+<!ENTITY checksum.value "كود الفحص (تلبيد):">
+<!ENTITY browse.tip "استعرض للبحث عن مجلد مقصد ...">
+<!ENTITY mirrormanager.tip "أدِر مرايا التنزيل">
+<!ENTITY mask.label "أقنعة تغيير الاسم">
+<!ENTITY mask.tip "ستُحفظ الملفات المُختارة ويُغيَّر اسمها حسب هذا القناع">
+<!ENTITY selectall.label "اختر الكل">
+<!ENTITY selectinv.label "اعكس الاختيار">
+<!ENTITY selectnone.label "لا تختر شيئًا">

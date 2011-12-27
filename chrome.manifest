@@ -10,6 +10,7 @@ content dta-public	chrome/public/ contentaccessible
 skin	dta-public	classic/1.0 chrome/public/
 
 ## locales ##
+locale dta ar chrome/locale/ar/
 locale dta cs chrome/locale/cs/
 locale dta de chrome/locale/de/
 locale dta el chrome/locale/el/
