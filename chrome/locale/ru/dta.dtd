@@ -1,8 +1,4 @@
-<!--
-	commonly used.
-	CHECK BEFORE MODIFY
-
--->
+<!---->
 <!ENTITY start.label "Старт!">
 <!ENTITY start.key "С">
 <!ENTITY queue.label "Добавить в очередь">
