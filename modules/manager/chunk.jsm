@@ -223,6 +223,7 @@ MemoryReporter.prototype = {
 			closure
 			);
 	},
+	explicitNonHeap: 0,
 	noteBytesWritten: function(bytes) {
 		this.session.written += bytes;
 	},
