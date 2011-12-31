@@ -290,7 +290,7 @@ LimitedDict.prototype = {
 		}
 
 		if (this._arr.length == this._limit) {
-			delete this._dict[this._arr.pop()];
+			delete this._dict[this._arr.shift()];
 		}
 		this._arr.push(this._dict[key] = value);
 	}
