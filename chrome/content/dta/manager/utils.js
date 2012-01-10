@@ -385,10 +385,14 @@ const Tooltip = {
 			}
 			catch (ex) {
 				if (this._initUpdateRetries >= 10) {
-					Debug.log("initUpdate failed; not retrying", ex);
+					if (Logger.enabled) {
+						Logger.log("initUpdate failed; not retrying", ex);
+					}
 					return;
 				}
-				Debug.log("initUpdate failed; retrying", ex);
+				if (Logger.enabled) {
+					Logger.log("initUpdate failed; retrying", ex);
+				}
 				defer(this.boundInitUpdate);
 				return;
 			}
