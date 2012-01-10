@@ -201,7 +201,6 @@ tooltip textbox.plain {
 	width: 100%;
 	font-size: 14px;
 	font-weight: bold;
-	background: !important;
 	color: black !important;
 }
 #infoDest {
@@ -217,25 +216,25 @@ tooltip textbox.plain {
 	margin-left: 0;
 }
 treechildren::-moz-tree-progressmeter(completed) {
-  color: #008F00 !important;
+	color: #008F00 !important;
 }
 
 treechildren::-moz-tree-progressmeter(paused) {
-  color: #FFCC00 !important;
+	color: #FFCC00 !important;
 }
 treechildren::-moz-tree-progressmeter(paused, pausedAutoretrying) {
 	color: #849FFF !important;
 }
 treechildren::-moz-tree-progressmeter(canceled) {
-  color: #B12801 !important;
+	color: #B12801 !important;
 }
 
 treechildren::-moz-tree-progressmeter(queued) {
-  color: #BFDEFF !important;
+	color: #BFDEFF !important;
 }
 
 treechildren::-moz-tree-progressmeter(inprogress) {
-  color: #AAE061 !important;
+	color: #AAE061 !important;
 }
 
 treechildren::-moz-tree-image(iconic) {
@@ -526,17 +525,17 @@ menuitem#selectinv {
 }
 
 #loadingbox {
-  opacity: 0.6;
-  background-color: -moz-Field;
+	opacity: 0.6;
+	background-color: -moz-Field;
 }
 
 #loading {
-  -moz-appearance: none;
-  -moz-user-focus: ignore;
-  border: none !important;
-  min-width: 0;
-  background-color: transparent;
-  color: -moz-fieldText;
+	-moz-appearance: none;
+	-moz-user-focus: ignore;
+	border: none !important;
+	min-width: 0;
+	background-color: transparent;
+	color: -moz-fieldText;
 
 	font-size: large;
 	font-weight: bold;
