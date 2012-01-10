@@ -284,6 +284,7 @@ const Tooltip = {
 	},		 
 	start: function(d) {
 		this.stop();
+		Debug.log("Starting tooltip");
 		this._current = d;
 		this._mustDraw = true;
 		this._timer = Timers.createRepeating(TOOLTIP_FREQ, this.update, this, true);
@@ -329,6 +330,7 @@ const Tooltip = {
 		this._mustDraw = false;
 	},
 	stop: function() {
+		Debug.log("Stopping tooltip");
 		this._current = null;
 		if (this._timer) {
 			Timers.killTimer(this._timer);
