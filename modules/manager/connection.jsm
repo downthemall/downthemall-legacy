@@ -386,9 +386,8 @@ Connection.prototype = {
 		if (Logger.enabled) {
 			Logger.log("Done respinning, new score board follows");
 			this.d.dumpScoreboard();
-			return true;
 		}
-		return false;
+		return true;
 	},
 
 	// nsIStreamListener
