@@ -73,6 +73,7 @@ var Dialog = {
 				}
 				$('description').value = d.description;
 				this.item = d;
+				Tooltip.init();
 				Tooltip.start(d);
 			}
 			else {
