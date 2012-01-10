@@ -113,7 +113,10 @@ var Dialog = {
 		catch(ex) {
 			Debug.log('load', ex);
 		}
-		window.setTimeout('window.sizeToContent()', 0);
+		window.setTimeout(function() {
+			window.sizeToContent();
+			addEventListener("resize", function() Dialog.resize(), true);
+		}, 0);
 	},
 	accept: function DTA_accept() {
 		if (this.isFullyDisabled) {
@@ -239,5 +242,5 @@ var Dialog = {
 		return true;
 	}
 };
-addEventListener("resize", function() Dialog.resize(), true);
+addEventListener("load", function() Dialog.load(), true);
 addEventListener('unload', function() Dialog.unload(), true);
