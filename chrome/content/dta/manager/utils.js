@@ -283,15 +283,19 @@ const Tooltip = {
 		).forEach(function(e) this[e.id] = e, this);
 	},		 
 	start: function(d) {
+		this.stop();
 		this._current = d;
 		this._mustDraw = true;
 		this._timer = Timers.createRepeating(TOOLTIP_FREQ, this.update, this, true);
+		this._initUpdateRetries = 0;
 		this.initUpdate();
 	},
 	initUpdate: function() {
 		Debug.logString("init");
 		let mr = false;
 		let box = this.canvasGrid.boxObject;
+		this._initUpdateRetries = (this._initUpdateRetries || 0) + 1;
+		
 		for each (let canvas in [this.speedCanvas, this.chunkCanvas]) {
 			try {
 				let w = Math.min(box.width, canvas.clientWidth);
@@ -308,12 +312,16 @@ const Tooltip = {
 				mr = true;
 			}
 			catch (ex) {
+				if (this._initUpdateRetries >= 10) {
+					Debug.log("initUpdate failed; not retrying", ex);
+					return;
+				}
 				Debug.log("initUpdate failed; retrying", ex);
 				Timers.createOneshot(25, this.initUpdate, this);				
 				return;
 			}
 		}
-		if (mr) {
+		if (mr && this._initUpdateRetries < 10) {
 			this._mustDraw = true;
 			Timers.createOneshot(25, this.initUpdate, this);
 		}
