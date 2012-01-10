@@ -19,7 +19,7 @@
 	%managerDTD;
 ]>
 
-<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&infoMultiple.value;" id="DownThemAll" onload="Dialog.load();" buttons="accept,cancel" ondialogaccept="return Dialog.accept();" ondialogcancel="Tooltip.stop(); return true;">
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&infoMultiple.value;" id="DownThemAll" buttons="accept,cancel" ondialogaccept="return Dialog.accept();">
 
 	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
 
