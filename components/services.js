@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
@@ -348,8 +348,8 @@ ContentHandling.prototype = {
 		}
 	},
 	get _io() {
-    delete ContentHandling.prototype._io;
-    return (ContentHandling.prototype._io = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService));
+		delete ContentHandling.prototype._io;
+		return (ContentHandling.prototype._io = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService));
 	},
 
 	_uninit: function ct__uninit() {
@@ -453,7 +453,7 @@ ContentHandling.prototype = {
 			ss.seek(0, op);
 
 			if (post) {
-				this._data.setKey(channel.URI.spec, data);
+				this._data.setKey(channel.URI.spec, post);
 			}
 		}
 		catch (ex) {
@@ -595,27 +595,27 @@ AboutModule.prototype = {
 	
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule]),
 	
-  newChannel : function(aURI) {
+	newChannel : function(aURI) {
 		try {
-		    let io = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
-		    let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
+				let io = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
+				let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
 
-	    	module('resource://dta/version.jsm');
-	    	if (!Version.ready) {
-	    		throw new Exception("Cannot build about:downthemall, version.jsm not ready");
-	    	}
+				module('resource://dta/version.jsm');
+				if (!Version.ready) {
+					throw new Exception("Cannot build about:downthemall, version.jsm not ready");
+				}
 
-		    let ru = ABOUT_URI.replace(
-		    	/%(.+?)%/g,
-		    	function (m, m1) (m1 in Version) ? Version[m1] : m
-		    );
-		    
-		    let uri = io.newURI(ru, null, null);
-		    let chan = io.newChannelFromURI(uri);
-		    chan.originalURI = aURI;
-		    chan.owner = sec.getCodebasePrincipal(uri);
-		    
-		    return chan;
+				let ru = ABOUT_URI.replace(
+					/%(.+?)%/g,
+					function (m, m1) (m1 in Version) ? Version[m1] : m
+				);
+				
+				let uri = io.newURI(ru, null, null);
+				let chan = io.newChannelFromURI(uri);
+				chan.originalURI = aURI;
+				chan.owner = sec.getCodebasePrincipal(uri);
+				
+				return chan;
 		}
 		catch (ex) {
 			log(ex);
@@ -1094,8 +1094,8 @@ FilterManager.prototype = {
 };
 
 if (XPCOMUtils.generateNSGetFactory) {
-    var NSGetFactory = XPCOMUtils.generateNSGetFactory([Stuff, ContentHandling, AboutModule, FilterManager]);
+		var NSGetFactory = XPCOMUtils.generateNSGetFactory([Stuff, ContentHandling, AboutModule, FilterManager]);
 }
 else {
-    function NSGetModule() XPCOMUtils.generateModule([Stuff, ContentHandling, AboutModule, FilterManager]);
+		function NSGetModule() XPCOMUtils.generateModule([Stuff, ContentHandling, AboutModule, FilterManager]);
 }
