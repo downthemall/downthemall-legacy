@@ -231,7 +231,7 @@ ContentHandlingImpl.prototype = {
 			ss.seek(0, op);
 
 			if (post) {
-				this._data.setKey(channel.URI.spec, data);
+				this._data.setKey(channel.URI.spec, post);
 			}
 		}
 		catch (ex) {
