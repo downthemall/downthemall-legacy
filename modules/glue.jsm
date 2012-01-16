@@ -74,6 +74,3 @@ itor("ScriptError", "@mozilla.org/scripterror;1", "nsIScriptError", "init");
 itor("StringInputStream", "@mozilla.org/io/string-input-stream;1", "nsIStringInputStream", "setData");
 itor("Timer", "@mozilla.org/timer;1", "nsITimer", "init");
 itor("ZipReader", "@mozilla.org/libjar/zip-reader;1", "nsIZipReader", "open");
-
-Object.seal(Services);
-Object.seal(Instances);
