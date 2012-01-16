@@ -73,13 +73,14 @@ UrlManager.prototype = {
 				this.add(u);
 			}
 			else if (u instanceof Ci.nsIURI) {
-				this.add(new DTA.URL(u));
+				this.add(new DTA.URL(u, null, true));
 			}
 			else {
 				this.add(
 					new DTA.URL(
 						Services.io.newURI(u.url,	u.charset, null),
-						u.preference
+						u.preference,
+						true
 					)
 				);
 			}
@@ -104,7 +105,7 @@ UrlManager.prototype = {
 			throw new Exception(url + " is not an DTA.URL");
 		}
 		for (let i = 0; i < this._urls.length; ++i) {
-			if (this._urls[i].url.spec == url.url.spec) {
+			if (this._urls[i]._urlSpec == url._urlSpec) {
 				return;
 			}
 		}
