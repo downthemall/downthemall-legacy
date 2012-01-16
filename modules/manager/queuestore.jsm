@@ -349,6 +349,11 @@ const QueueStore = {
 		}
 	},
 	loadItems: function(callback, ctx) {
+		function Item(row) {
+			this.id = row.getResultByIndex(0);
+			this.item = JSON.parse(row.getResultByIndex(1));
+		}
+
 		ctx = ctx || null;
 		let stmt;
 		try {
@@ -364,10 +369,7 @@ const QueueStore = {
 		stmt.executeAsync({
 			handleResult: function(aResult) {
 				for (let row = aResult.getNextRow(); row; row = aResult.getNextRow()) {
-					rows.push({
-						id: row.getResultByIndex(0),
-						item: JSON.parse(row.getResultByIndex(1))
-						});
+					rows.push(new Item(row));
 				}
 			},
 			handleError: function(aError) {
