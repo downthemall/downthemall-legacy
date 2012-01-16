@@ -45,6 +45,7 @@ const Exception = Components.Exception;
 
 module("resource://dta/glue.jsm");
 
+// Only used to dispatch runnables to the main thread, as a cheap alternative to setTimeout/nsITimer
 const MainThread = Services.tm.mainThread;
 
 function defer(fn, ctx) {
