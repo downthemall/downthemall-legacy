@@ -234,8 +234,8 @@ Connection.prototype = {
 	},
 
 	QueryInterface: function DL_QI(iid) {
-		for each (let i in this._interfaces) {
-			if (iid.equals(i)) {
+		for (let i = 0, e = this._interfaces.length; i < e; i++) {
+			if (iid.equals(this._interfaces[i])) {
 				return this;
 			}
 		}
