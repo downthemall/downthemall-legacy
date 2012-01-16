@@ -220,7 +220,7 @@ const Prefs = {
 	refreshConnPrefs: function(downloads) {
 		let conns = 0;
 		for (let i = 0, e = downloads.length; i < e; i++) {
-			conns += dowloads[i].activeChunks;
+			conns += downloads[i].activeChunks;
 		}
 		conns = Math.max(this._baselineConns, Math.min(50, conns));
 		if (this._currentConns != conns) {
