@@ -110,23 +110,25 @@ function _decodeCharset(text, charset) {
 	}
 	return rv;
 }
-function URL(url, preference) {
+function URL(url, preference, _fast) {
 	this.preference = preference || 100;
 
 	if (!(url instanceof Ci.nsIURL)) {
 		throw new Exception("You must pass a nsIURL");
 	}
-	if (URL.schemes.indexOf(url.scheme) == -1) {
+	if (!_fast && URL.schemes.indexOf(url.scheme) == -1) {
 		throw new Exception("Not a supported URL");
 	}
 
 	this._url = url.clone();
 	this._urlSpec = url.spec;
 	this._urlCharset = url.originCharset;
-	let hash = getLinkPrintHash(this._url);
-	this._url.ref = '';
-	if (hash) {
-		this.hash = hash;
+	if (!_fast) {
+		let hash = getLinkPrintHash(this._url);
+		this._url.ref = '';
+		if (hash) {
+			this.hash = hash;
+		}
 	}
 	this._usable = _decodeCharset(this._urlSpec, this._urlCharset);
 };
@@ -284,6 +286,7 @@ HashCollection.prototype = {
 	}
 };
 
+const _rglph = /^hash\((md5|sha(?:-?(?:1|256|384|512))?):([\da-f]+)\)$/i;
 /**
  * Get a link-fingerprint hash from an url (or just the hash component)
  *
@@ -295,7 +298,7 @@ function getLinkPrintHash(url) {
 	if (!(url instanceof Ci.nsIURL)) {
 		return null;
 	}
-	var lp = url.ref.match(/^hash\((md5|sha(?:-?(?:1|256|384|512))?):([\da-f]+)\)$/i);
+	var lp = url.ref.match(_rglph);
 	if (lp) {
 		try {
 			return new Hash(lp[2], lp[1]);
