@@ -59,7 +59,8 @@ ObserversBase.prototype = {
 		}
 	},
 	notify: function() {
-		for (let [,o] in Iterator(this._obs)) {
+		for (let i = 0, e = this._obs.length, o; i < e; ++i) {
+			o = this._obs[i];
 			o.observe.call(o);
 		}
 	}
@@ -199,14 +200,14 @@ ByteBucketTee.prototype = {
 			.reduce(function(p, c) Math.min(p,c));
 	},
 	requestBytes: function(bytes) {
-		for (let [,bucket] in Iterator(this._buckets)) {
-			bytes = bucket.requestBytes(bytes);
+		for (let i = 0, e = this._buckets.length; i < e; ++i) {
+			bytes = this._buckets[i].requestBytes(bytes);
 			if (!bytes) {
 				return 0;
 			}
 		}
-		for (let [,bucket] in Iterator(this._buckets)) {
-			bucket.commitBytes(bytes);
+		for (let i = 0, e = this._buckets.length; i < e; ++i) {
+			this._buckets[i].commitBytes(bytes);
 		}
 		return bytes;
 	},
