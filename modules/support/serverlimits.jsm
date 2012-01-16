@@ -135,7 +135,7 @@ Limit.prototype = {
 }
 
 function loadLimits() {
-	limits = {};
+	limits = Object.create(null);
 	let hosts = Prefs.getChildren(LIMITS_PREF).map(function(e) e.substr(LIMITS_PREF.length));
 	hosts.sort();
 
@@ -225,7 +225,7 @@ FastScheduler.prototype = {
 			return null;
 		}
 
-		let downloadSet = {};
+		let downloadSet = Object.create(null);
 		let i, e, d, host;
 
 		if (this._runCount > 50) {
@@ -283,7 +283,7 @@ FastScheduler.prototype = {
 // Fair Scheduler: evenly distribute slots
 // Performs worse than FastScheduler but is more precise.
 function FairScheduler(downloads) {
-	this._downloadSet = {};
+	this._downloadSet = Object.create(null);
 
 	// set up our internal state
 	for (let i = 0, e = downloads.length, d, host; i < e; ++i) {
@@ -418,7 +418,7 @@ function getConnectionScheduler(downloads) {
 	return new scheduler(downloads);
 }
 
-var buckets = {};
+var buckets = Object.create(null);
 var unlimitedBucket = new ByteBucket(-1);
 function loadServerBuckets() {
 	for (let b in buckets) {
@@ -434,7 +434,7 @@ function killServerBuckets() {
 	for each (let bucket in buckets) {
 		bucket.kill();
 	}
-	buckets = {};
+	buckets = Object.create(null);
 }
 function getServerBucket(d) {
 	let host = d.urlManager.domain;
