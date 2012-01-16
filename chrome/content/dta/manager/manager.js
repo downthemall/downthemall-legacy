@@ -2176,10 +2176,14 @@ QueueItem.prototype = {
 			}
 			this._destinationName = file.leafName;
 			this._destinationPath = file.parent.path;
+			this._destinationFile = file.path;
 		}
 		catch(ex) {
 			this._destinationName = this.fileName;
 			this._destinationPath = this.pathName.addFinalSlash();
+			let file = new Instances.LocalFile(this.destinationPath);
+			file.append(this.destinationName);
+			this._destinationFile = file.path;
 			if (Logger.enabled) {
 				Logger.log("rebuildDestination():", ex);
 			}
@@ -2188,9 +2192,6 @@ QueueItem.prototype = {
 			this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
 			this.conflicts
 		);
-		let file = new Instances.LocalFile(this.destinationPath);
-		file.append(this.destinationName);
-		this._destinationFile = file.path;
 		this._icon = null;
 	},
 	resolveConflicts: function() {
