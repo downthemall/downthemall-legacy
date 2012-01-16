@@ -420,8 +420,7 @@ function atos(data) {
  * @param {Object} digits Number of digits the results must contain at least
  */
 function formatNumber(num, digits) {
-	let rv = atos(num);
-	digits = Number(digits);
+	let rv = num.toString();
 	if (!isFinite(digits)) {
 		digits = 3;
 	}
