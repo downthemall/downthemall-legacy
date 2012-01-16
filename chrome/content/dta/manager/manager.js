@@ -2142,20 +2142,17 @@ QueueItem.prototype = {
 		if (this._completeEvents.length) {
 			var evt = this._completeEvents.shift();
 			var tp = this;
-			defer(
-				function() {
-					try {
-						this[evt]();
+			defer(function() {
+				try {
+					tp[evt]();
+				}
+				catch(ex) {
+					if (Logger.enabled) {
+						Logger.log("completeEvent failed: " + evt, ex);
 					}
-					catch(ex) {
-						if (Logger.enabled) {
-							Logger.log("completeEvent failed: " + evt, ex);
-						}
-						this.complete();
-					}
-				},
-				this
-			);
+					tp.complete();
+				}
+			});
 			return;
 		}
 		this.activeChunks = 0;
