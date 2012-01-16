@@ -1398,6 +1398,7 @@ Replacer.prototype = {
 	get m() Utils.formatNumber(this._obj.startDate.getMonth() + 1, 2),
 	get y() this._obj.startDate.getFullYear().toString()
 };
+Replacer.expr = /\*\w+\*/gi;
 function createReplacer(o) {
 	let replacements = new Replacer(o);
 	return function replacer(type) {
@@ -1687,6 +1688,9 @@ QueueItem.prototype = {
 	_contentType: "",
 	get contentType() this._contentType,
 	set contentType(nv) {
+		if (nv == this._contentType) {
+			return;
+		}
 		this._contentType = nv;
 		delete this._fileNameAndExtension;
 	},
@@ -2164,7 +2168,7 @@ QueueItem.prototype = {
 	get maskCURL() this.maskURL.host + ((this.maskURLPath == "") ? "" : (SYSTEMSLASH + this.maskURLPath)),
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
-			let mask = this.mask.replace(/\*\w+\*/gi, this.rebuildDestination_replacer)
+			let mask = this.mask.replace(Replacer.expr, this.rebuildDestination_replacer)
 				.removeFinalChar(".")
 				.normalizeSlashes()
 				.removeFinalSlash()
