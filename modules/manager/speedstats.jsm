@@ -44,7 +44,6 @@ const EXPORTED_SYMBOLS = ['SpeedStats'];
  */
 function SpeedStats(maxSpeeds) {
 	this._maxSpeeds = maxSpeeds;
-	this._reduce = (function(pv,cv,i) (this._v += ++i, pv + i * cv)).bind(this);
 	this.clear();
 }
 
@@ -117,9 +116,14 @@ SpeedStats.prototype = {
 			if (this._speeds.length > this._maxSpeeds) {
 				this._speeds.shift();
 			}
-			this._v = 1;
-			this._avg = this._speeds.reduce(this._reduce);
-			this._avg /= this._v;
+			let v = 1;
+			let avg = this._speeds[0];
+			for (let _v, i = 1, e = this._speeds.length; i < e; i++) {
+				_v = i + 1;
+				v += _v;
+				avg = avg + _v * this._speeds[i];
+			}
+			this._avg = avg / v;
 		}
 		if (received < 0) {
 			this.clear();
