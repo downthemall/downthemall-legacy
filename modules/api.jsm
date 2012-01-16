@@ -121,15 +121,16 @@ function URL(url, preference) {
 	}
 
 	this._url = url.clone();
+	this._urlSpec = url.spec;
+	this._urlCharset = url.originCharset;
 	let hash = getLinkPrintHash(this._url);
 	this._url.ref = '';
 	if (hash) {
 		this.hash = hash;
 	}
-	this._usable = _decodeCharset(this._url.spec, this._url.originCharset);
+	this._usable = _decodeCharset(this._urlSpec, this._urlCharset);
 };
 URL.schemes = ['http', 'https', 'ftp'];
-
 URL.prototype = {
 	get url() {
 		return this._url;
@@ -138,11 +139,11 @@ URL.prototype = {
 		return this._usable;
 	},
 	toJSON: function DU_toJSON() {
-		return {
-			url: this._url.spec,
-			charset: this._url.originCharset,
+		return 	{
+			url: this._urlSpec,
+			charset: this._urlCharset,
 			preference: this.preference
-		}
+		};
 	},
 	toString: function() this._usable
 };
