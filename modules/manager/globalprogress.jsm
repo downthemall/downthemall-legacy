@@ -109,7 +109,7 @@ try {
 			this._setState();
 		},
 		pause: function(value, total) {
-			if (arguments.length) {
+			if (value && total) {
 				this._value = value;
 				this._total = total;
 			}
@@ -117,7 +117,7 @@ try {
 			this._setState();
 		},
 		activate: function(value, total) {
-			if (arguments.length) {
+			if (value && total) {
 				this._value = value;
 				this._total = total;
 			}
@@ -125,7 +125,7 @@ try {
 			this._setState();
 		},
 		error: function(value, total) {
-			if (arguments.length) {
+			if (value && total) {
 				this._value = value;
 				this._total = total;
 			}
