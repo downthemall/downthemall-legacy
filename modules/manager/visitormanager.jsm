@@ -110,8 +110,9 @@ Visitor.prototype = {
 };
 
 function HttpVisitor(chan) {
-	if (chan instanceof Ci.nsIChannel) {
+	if (chan instanceof Ci.nsIHttpChannel) {
 		this._charset = chan.URI.originCharset;
+		this.visit(chan);
 	}
 	else {
 		Visitor.apply(this, arguments);
@@ -138,116 +139,120 @@ HttpVisitor.prototype = {
 		}
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
-	visitHeader: function(aHeader, aValue) {
+	visit: function(chan) {
 		try {
-			const header = aHeader.toLowerCase();
-			switch (header) {
-				case 'content-type': {
-					this.type = aValue;
-					var ch = aValue.match(/charset=['"]?([\w\d_-]+)/i);
-					if (ch && ch[1].length) {
-						if (Logger.enabled) {
-							Logger.log("visitHeader: found override to " + ch[1]);
-						}
-						this._charset = this.overrideCharset = ch[1];
-					}
-				}
-				break;
-
-				case 'content-encoding':
-					this.encoding = aValue;
-				break;
-
-				case 'accept-ranges':
-					this.acceptRanges = aValue.toLowerCase().indexOf('none') == -1;
-					if (Logger.enabled) {
-						Logger.log("acceptrange = " + aValue.toLowerCase());
-					}
-				break;
-
-				case 'content-length':
-					let contentLength = new Number(aValue);
-					if (contentLength > 0 && !isNaN(contentLength)) {
-						this.contentLength = Math.floor(contentLength);
-					}
-				break;
-
-				case 'content-range': {
-					let contentLength = new Number(aValue.split('/').pop());
-					if (contentLength > 0 && !isNaN(contentLength)) {
-						this.contentLength = Math.floor(contentLength);
-					}
-				}
-				break;
-				case 'last-modified':
-					try {
-						this.time = getTimestamp(aValue);
-					}
-					catch (ex) {
-						if (Logger.enabled) {
-							Logger.log("gts", ex);
-						}
-					}
-				break;
-				case 'digest': {
-					for (let t in DTA.SUPPORTED_HASHES_ALIASES) {
-						try {
-							let v = Services.mimeheader.getParameter(aValue, t, this._charset, true, {});
-							if (!v) {
-								continue;
-							}
-							v = hexdigest(atob(v));
-							v = new DTA.Hash(v, t);
-							if (!this.hash || this.hash.q < v.q) {
-								this.hash = v;
-							}
-						}
-						catch (ex) {
-							// no-op
-						}
-					}
-				}
-				break;
-			}
-			if (header == 'etag') {
-				// strip off the "inode"-part apache and others produce, as
-				// mirrors/caches usually provide different/wrong numbers here :p
-				this[header] = aValue
-					.replace(/^(?:[Ww]\/)?"(.+)"$/, '$1')
-					.replace(/^[a-f\d]+-([a-f\d]+)-([a-f\d]+)$/, '$1-$2')
-					.replace(/^([a-f\d]+):[a-f\d]{1,6}$/, '$1');
+			this.type = chan.getResponseHeader("content-type");
+			var ch = this.type.match(/charset=['"]?([\w\d_-]+)/i);
+			if (ch && ch[1].length) {
 				if (Logger.enabled) {
-					Logger.log("Etag: " + this[header] + " - " + aValue);
+					Logger.log("visitHeader: found override to " + ch[1]);
 				}
+				this._charset = this.overrideCharset = ch[1];
 			}
-			else if (header in this.cmpKeys) {
-				this[header] = aValue;
-			}
-			if ((header == 'content-type' || header == 'content-disposition') && this.fileName == null) {
-				let fn;
+		}
+		catch (ex) {}
+
+		try {
+			this.encoding = chan.getResponseHeader("content-encoding");
+		}
+		catch (ex) {}
+
+		try {
+			this.acceptRanges = !/none/i.test(chan.getResponseHeader("accept-ranges"));
+		}
+		catch (ex) {}
+
+		try {
+			this.acceptRanges = aValue.toLowerCase().indexOf('none') == -1;
+		}
+		catch (ex) {}
+
+		let contentLength;
+		try {
+			contentLength = parseInt(chan.getResponseHeader("content-length"), 10);
+		}
+		catch (ex) {}
+		if (contentLength < 0 || isNaN(contentLength)) {
+			try {
+				contentLength = parseInt(chan.getResponseHeader("content-range").split("/").pop(), 10);
+			} catch (ex) {}
+		}
+		if (contentLength > 0 && !isNaN(contentLength)) {
+			this.contentLength = contentLength;
+		}
+
+		try {
+			let digest = chan.getResponseHeader("digest");
+			for (let t in DTA.SUPPORTED_HASHES_ALIASES) {
 				try {
-					fn = Services.mimeheader.getParameter(aValue, 'filename', this._charset, true, {});
+					let v = Services.mimeheader.getParameter(aValue, t, this._charset, true, {});
+					if (!v) {
+						continue;
+					}
+					v = hexdigest(atob(v));
+					v = new DTA.Hash(v, t);
+					if (!this.hash || this.hash.q < v.q) {
+						this.hash = v;
+					}
 				}
 				catch (ex) {
-					// no-op; handled below
-				}
-				if (!fn) {
-					try {
-						fn = Services.mimeheader.getParameter(aValue, 'name', this._charset, true, {});
-					}
-					catch (ex) {
-						// no-op; handled below
-					}
-				}
-				if (fn) {
-					this.fileName = fn;
+					// no-op
 				}
 			}
 		}
-		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Error parsing header", ex);
+		catch (ex) {}
+
+		for (let header in this.cmpKeys) {
+			try {
+				let value = chan.getResponseHeader(header);
+				this[header] = value;
 			}
+			catch (ex) {}
+		}
+
+		if ("etag" in this) {
+			let etag = this.etag;
+			this.etag = etag
+				.replace(/^(?:[Ww]\/)?"(.+)"$/, '$1')
+				.replace(/^[a-f\d]+-([a-f\d]+)-([a-f\d]+)$/, '$1-$2')
+				.replace(/^([a-f\d]+):[a-f\d]{1,6}$/, '$1');
+			if (Logger.enabled) {
+				Logger.log("Etag: " + this.etag + " - " + etag);
+			}
+		}
+		if ("last-modified" in this) {
+			try {
+				this.time = getTimestamp(this["last-modified"]);
+			}
+			catch (ex) {}
+		}
+
+		try {
+			this._checkFileName(chan.getResponseHeader("content-disposition"));
+		}
+		catch (ex) {}
+		if (!("fileName" in this) && ("type" in this)) {
+			this._checkFileName(this.type);
+		}
+	},
+	_checkFileName: function(aValue) {
+		let fn;
+		try {
+			fn = Services.mimeheader.getParameter(aValue, 'filename', this._charset, true, {});
+		}
+		catch (ex) {
+			// no-op; handled below
+		}
+		if (!fn) {
+			try {
+				fn = Services.mimeheader.getParameter(aValue, 'name', this._charset, true, {});
+			}
+			catch (ex) {
+				// no-op; handled below
+			}
+		}
+		if (fn) {
+			this.fileName = fn;
 		}
 	}
 };
@@ -359,7 +364,6 @@ VisitorManager.prototype = {
 		case 'http':
 		case 'https':
 			visitor = new HttpVisitor(chan);
-			chan.visitResponseHeaders(visitor);
 			break;
 
 		case 'ftp':
