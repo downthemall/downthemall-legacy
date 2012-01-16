@@ -185,14 +185,13 @@ ContentHandlingImpl.prototype = {
 			break;
 		}
 	},
-	observeRequest: function ct_observeRequest(subject, topic, data) {
+	observeRequest: function ct_observeRequest(channel, topic, data) {
 		if (
-			!(subject instanceof Ci.nsIHttpChannel)
-			|| !(subject instanceof Ci.nsIUploadChannel)
+			!(channel instanceof Ci.nsIHttpChannel)
+			|| !(channel instanceof Ci.nsIUploadChannel)
 		) {
 			return;
 		}
-		var channel = subject.QueryInterface(Ci.nsIHttpChannel);
 
 		if (channel.requestMethod != 'POST') {
 			return;
@@ -238,11 +237,10 @@ ContentHandlingImpl.prototype = {
 			// no op
 		}
 	},
-	observeResponse: function ct_observeResponse(subject, topic, data) {
-		if (!this.sniffVideos || !(subject instanceof Ci.nsIHttpChannel)) {
+	observeResponse: function ct_observeResponse(channel, topic, data) {
+		if (!this.sniffVideos || !(channel instanceof Ci.nsIHttpChannel)) {
 			return;
 		}
-		let channel = subject.QueryInterface(Ci.nsIHttpChannel);
 		try {
 			if (!channel.requestSucceeded) {
 				return;
