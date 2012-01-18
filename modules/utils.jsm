@@ -820,14 +820,7 @@ function StringBundles(documentOrStrings) {
 	}
 }
 StringBundles.prototype = {
-	getString: function(id) {
-		/*let rv = this._strings[id];
-		if (!rv) {
-			throw new Exception('BUNDLE STRING NOT FOUND (' + id + ')');
-		}
-		return rv;*/
-		return this._strings[id];
-	},
+	getString: function(id) this._strings[id],
 	getFormattedString: function(id, params) {
 		let fmt = this.getString(id);
 		function repl() {
