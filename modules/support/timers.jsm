@@ -46,6 +46,7 @@ const Exception = Components.Exception;
 const nsITimer = Ci.nsITimer;
 
 module("resource://dta/glue.jsm");
+module("resource://dta/utils.jsm");
 function uuid() Services.uuid.generateUUID().toString();
 
 // Represents the (private) timer data and observer
