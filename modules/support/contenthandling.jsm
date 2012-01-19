@@ -92,6 +92,8 @@ ContentHandlingImpl.prototype = {
 	_init: function ct__init() {
 		Services.obs.addObserver(this, 'xpcom-shutdown', false);
 		Services.obs.addObserver(this, 'private-browsing', false);
+		Services.obs.addObserver(this, 'http-on-modify-request', false);
+
 		Services.prefs.addObserver(PREF_SNIFFVIDEOS, this, false);
 
 		Components.manager.nsIComponentRegistrar.registerFactory(
@@ -139,14 +141,13 @@ ContentHandlingImpl.prototype = {
 
 		Services.obs.removeObserver(this, 'xpcom-shutdown');
 		Services.obs.removeObserver(this, 'private-browsing');
+		Services.obs.removeObserver(this, 'http-on-modify-request');
 	},
 	registerHttpObservers: function ct_registerHttpObservers() {
-		Services.obs.addObserver(this, 'http-on-modify-request', false);
 		Services.obs.addObserver(this, 'http-on-examine-response', false);
 		Services.obs.addObserver(this, 'http-on-examine-cached-response', false);
 	},
 	unregisterHttpObservers: function ct_unregisterHttpObservers() {
-		Services.obs.removeObserver(this, 'http-on-modify-request');
 		Services.obs.removeObserver(this, 'http-on-examine-response');
 		Services.obs.removeObserver(this, 'http-on-examine-cached-response');
 	},
