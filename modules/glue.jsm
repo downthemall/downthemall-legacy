@@ -48,7 +48,7 @@ function itor(name, cls, iface, init) {
 }
 
 // non-init
-itor("DOMParser", "@mozilla.org/xmlextras/domparser;1", "nsIDOMParser");
+itor("XHR", "@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
 itor("DOMSerializer", "@mozilla.org/xmlextras/xmlserializer;1", "nsIDOMSerializer");
 itor("MimeInputStream", "@mozilla.org/network/mime-input-stream;1", "nsIMIMEInputStream");
 itor("SupportsUint32","@mozilla.org/supports-PRUint32;1", "nsISupportsPRUint32");
