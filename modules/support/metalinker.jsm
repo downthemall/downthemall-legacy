@@ -591,37 +591,46 @@ const __parsers__ = [
  * Parse a metalink
  * @param aFile (nsIFile) Metalink file
  * @param aReferrer (String) Optional. Referrer
- * @return (Metalink) Parsed metalink data
+ * @param aCallback (Function) Receiving callback function of form f(result, exception || null)
+ * @return async (Metalink) Parsed metalink data
  */
-function parse(aFile, aReferrer) {
-	let fiStream = new Instances.FileInputStream(aFile, 1, 0, false);
-	let doc;
-	try {
-		doc = Instances.domparser.parseFromStream(
-				fiStream,
-				null,
-				aFile.fileSize,
-				"application/xml"
-		);
-		if (doc.documentElement.nodeName == 'parsererror') {
-			throw new Exception("Failed to parse XML");
-		}
-	}
-	finally {
-		fiStream.close();
-	}
+function parse(aFile, aReferrer, aCallback) {
+	let fu = Services.io.newFileURI(aFile);
+	let xhrLoad, xhrError;
+	let xhr = new Instances.XHR();
+	xhr.open("GET", fu.spec);
+	xhr.overrideMimeType("application/xml");
+	xhr.addEventListener("load", xhrLoad = (function() {
+		xhr.removeEventListener("load", xhrLoad, false);
+		xhr.removeEventListener("error", xhrError, false);
 
-	for each (let parser in __parsers__) {
 		try {
-			parser = new parser(doc);
+			doc = xhr.responseXML;
+			if (doc.documentElement.nodeName == 'parsererror') {
+				throw new Exception("Failed to parse XML");
+			}
+			for each (let parser in __parsers__) {
+				try {
+					parser = new parser(doc);
+				}
+				catch (ex) {
+					Logger.log(parser.name + " failed", ex);
+					continue;
+				}
+				aCallback(parser.parse(aReferrer));
+				return;
+			}
+			throw new Exception("no suitable parser found!");
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log(parser.name + " failed", ex);
-			}
-			continue;
+			aCallback(null, ex);
 		}
-		return parser.parse(aReferrer);
-	}
-	throw new Exception("");
+	}), false);
+	xhr.addEventListener("error", xhrError = (function() {
+		xhr.removeEventListener("load", xhrLoad, false);
+		xhr.removeEventListener("error", xhrError, false);
+
+		aCallback(null, new Exception("failed to load"));
+	}), false);
+	xhr.send();
 }
