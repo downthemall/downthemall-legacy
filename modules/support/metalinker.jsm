@@ -599,6 +599,7 @@ function parse(aFile, aReferrer, aCallback) {
 					continue;
 				}
 				aCallback(parser.parse(aReferrer));
+				return;
 			}
 			throw new Exception("no suitable parser found!");			
 		}
