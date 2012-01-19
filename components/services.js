@@ -337,6 +337,7 @@ ContentHandling.prototype = {
 	_init: function ct__init() {
 		Observers.addObserver(this, 'xpcom-shutdown', false);
 		Observers.addObserver(this, 'private-browsing', false);
+		Observers.addObserver(this, 'http-on-modify-request', false);
 		this._prefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch2);
 		this._prefs.addObserver(PREF_SNIFFVIDEOS, this, false);
 
@@ -361,14 +362,13 @@ ContentHandling.prototype = {
 
 		Observers.removeObserver(this, 'xpcom-shutdown');
 		Observers.removeObserver(this, 'private-browsing');
+		Observers.removeObserver(this, 'http-on-modify-request');
 	},
 	registerHttpObservers: function ct_registerHttpObservers() {
-		Observers.addObserver(this, 'http-on-modify-request', false);
 		Observers.addObserver(this, 'http-on-examine-response', false);
 		Observers.addObserver(this, 'http-on-examine-cached-response', false);
 	},
 	unregisterHttpObservers: function ct_unregisterHttpObservers() {
-		Observers.removeObserver(this, 'http-on-modify-request');
 		Observers.removeObserver(this, 'http-on-examine-response');
 		Observers.removeObserver(this, 'http-on-examine-cached-response');
 	},
