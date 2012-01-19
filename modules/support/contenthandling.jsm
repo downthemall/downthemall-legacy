@@ -201,25 +201,19 @@ ContentHandlingImpl.prototype = {
 		let post;
 
 		try {
-			let us = subject.QueryInterface(Ci.nsIUploadChannel).uploadStream;
+			let us = channel.uploadStream;
 			if (!us) {
 				return;
 			}
-			try {
-				us.QueryInterface(Ci.nsIMultiplexInputStream);
+			if (us instanceof Ci.nsIMultiplexInputStream) {
 				return;
 			}
-			catch (ex) {
-				// no op
-			}
-
-			let ss = us.QueryInterface(Ci.nsISeekableStream);
-			if (!ss) {
+			if (!(us instanceof Ci.nsISeekableStream)) {
 				return;
 			}
-			let op = ss.tell();
 
-			ss.seek(0, 0);
+			let op = us.tell();
+			us.seek(0, 0);
 
 			let is = new Instances.ScriptableInputStream(us);
 
@@ -228,7 +222,7 @@ ContentHandlingImpl.prototype = {
 			if (available) {
 				post = is.read(available);
 			}
-			ss.seek(0, op);
+			us.seek(0, op);
 
 			if (post) {
 				this._data.setKey(channel.URI.spec, post);
