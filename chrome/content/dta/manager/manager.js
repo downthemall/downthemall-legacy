@@ -151,6 +151,9 @@ const Dialog = {
 
 		Prefs.init();
 
+		this.statusText = $("statusText");
+		this.statusSpeed = $("statusSpeed");
+
 		// Set tooltip texts for each tb button lacking one (copy label)
 		(function addTooltips() {
 			for each (let e in Array.map(document.getElementsByTagName('toolbarbutton'), function(e) e)) {
@@ -580,7 +583,7 @@ const Dialog = {
 		delete this._loading;
 
 		GlobalProgress.reset();
-		$('statusText').hidden = false;
+		this.statusText.hidden = false;
 
 		this._updTimer = Timers.createRepeating(REFRESH_FREQ, this.checkDownloads, this, true);
 
@@ -786,14 +789,13 @@ const Dialog = {
 			}
 
 			// Refresh status bar
-			$('statusText').label = _("currentdownloadstats", [this.completed, Tree.downloadCount, Tree.rowCount, this._running.length]);
-			let statusSpeed = $('statusSpeed');
+			this.statusText.label = _("currentdownloadstats", [this.completed, Tree.downloadCount, Tree.rowCount, this._running.length]);
 			if (!this._running.length) {
-				statusSpeed.hidden = true;
+				this.statusSpeed.hidden = true;
 			}
 			else {
-				statusSpeed.hidden = false;
-				statusSpeed.label = speed;
+				this.statusSpeed.hidden = false;
+				this.statusSpeed.label = speed;
 			}
 
 			// Refresh window title
@@ -801,7 +803,7 @@ const Dialog = {
 				if (Tree.filtered) {
 					document.title = _('titlespeedfiltered', [
 						this._running[0].percent,
-						statusSpeed.label,
+						this.statusSpeed.label,
 						this.completed,
 						Tree.downloadCount,
 						Tree.rowCount
@@ -810,7 +812,7 @@ const Dialog = {
 				else {
 					document.title = _('titlespeed', [
 						this._running[0].percent,
-						statusSpeed.label,
+						this.statusSpeed.label,
 						this.completed,
 						Tree.downloadCount,
 					]);
@@ -828,7 +830,7 @@ const Dialog = {
 				if (Tree.filtered) {
 					document.title = _('titlespeedfiltered', [
 						pt,
-						statusSpeed.label,
+						this.statusSpeed.label,
 						this.completed,
 						Tree.downloadCount,
 						Tree.rowCount
@@ -837,7 +839,7 @@ const Dialog = {
 				else {
 					document.title = _('titlespeed', [
 						pt,
-						statusSpeed.label,
+						this.statusSpeed.label,
 						this.completed,
 						Tree.downloadCount
 					]);
