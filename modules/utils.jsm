@@ -794,7 +794,6 @@ function _loadBundles(urls) {
 	}
 	return _bundles[key] = rv;
 }
-const _br = /%S/gi;
 
 /**
  * Encapulates all stringbundles of the current document and provides unified
@@ -819,14 +818,22 @@ function StringBundles(documentOrStrings) {
 		));
 	}
 }
+StringBundles._br = /%S/gi;
+StringBundles._repl = function() {
+	return StringBundles._params.shift();
+}
 StringBundles.prototype = {
 	getString: function(id) this._strings[id],
 	getFormattedString: function(id, params) {
 		let fmt = this.getString(id);
-		function repl() {
-			return params.shift();
+		StringBundles._params = params;
+		try {
+			fmt = fmt.replace(StringBundles._br, StringBundles._repl);
 		}
-		return fmt.replace(_br, repl);
+		finally {
+			delete StringBundles._params;
+		}
+		return fmt;
 	}
 };
 
