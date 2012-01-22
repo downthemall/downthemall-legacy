@@ -50,7 +50,7 @@
 
 				let _loader = {};
 				Components.utils.import('resource://dta/loaders/integration.jsm', _loader);
-				_loader.load(window, event);
+				new _loader.load(window, event);
 			}
 
 			window.removeEventListener("load", dta_load, false);
