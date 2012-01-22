@@ -1154,10 +1154,16 @@ function load(window, outerEvent) {
 			// might be another location where there is no .host
 			return;
 		}
-
-		event.target.addEventListener("DTA:toolbarinstall", function() {
+		let tbinstall, tbunload, win = event.target;
+		win.addEventListener("DTA:toolbarinstall", tbinstall = (function() {
+			win.removeEventListener("DTA:toolbarinstall", tbinstall, true);
+			win.removeEventListener("unload", tbunload, true)
 			DTA.Mediator.showToolbarInstall(window);
-		}, true);
+		}), true);
+		win.addEventListener("unload", tbunload = (function() {
+			win.removeEventListener("DTA:toolbarinstall", tbinstall, true);
+			win.removeEventListener("unload", tbunload, true)
+		}), true);
 	}
 
 	function onBlur(evt) {
@@ -1524,7 +1530,12 @@ function load(window, outerEvent) {
 	}
 
 	function initMenus(evt) {
-		function bindEvt(evt, fn) function(e) e.addEventListener(evt, fn, true);
+		function bindEvt(evt, fn) {
+			return function (e) {
+				e.addEventListener(evt, fn, true);
+				unload(function() e.removeEventListener(evt, fn, true));
+			}
+		}
 		function bindCtxEvt(ctx, evt, fn) {
 			$(ctx, ctx + "-direct").forEach(bindEvt(evt, fn));
 		}
@@ -1564,7 +1575,7 @@ function load(window, outerEvent) {
 				'dtaToolsTDTA'
 			).forEach(bindEvt('command', function() findLinks(true)));
 
-			$('dtaToolsManager').addEventListener('command', function() DTA.openManager(window), true);
+			bindEvt("command", function() DTA.openManager(window))($('dtaToolsManager'));
 
 			bindCtxEvt('dtaCtxSaveLink', 'command', function() findSingleLink(false));
 			bindCtxEvt('dtaCtxSaveLinkT', 'command', function() findSingleLink(true));
@@ -1581,20 +1592,10 @@ function load(window, outerEvent) {
 				bindEvt('command', function() DTA.Mediator.showPreferences(window))
 			);
 
-			$('dtaToolsAbout').addEventListener(
-				'command',
-				function() DTA.Mediator.showAbout(window),
-				true
-			);
-			$('dtaToolsTBInstall').addEventListener(
-				'command',
-				function() DTA.Mediator.showToolbarInstall(window),
-				true
-			);
-
-			ctx.addEventListener('popupshowing', onContextShowing, true);
-			menu.addEventListener('popupshowing', onToolsShowing, true);
-
+			bindEvt("command", function() DTA.Mediator.showAbout(window))($('dtaToolsAbout'));
+			bindEvt("command", function() DTA.Mediator.showToolbarInstall(window))($('dtaToolsTBInstall'));
+			bindEvt("popupshowing", onContextShowing)(ctx);
+			bindEvt("popupshowing", onToolsShowing)(menu);
 		}
 		catch (ex) {
 			Components.utils.reportError(ex);
@@ -1605,15 +1606,49 @@ function load(window, outerEvent) {
 		evt.target == ctx ? onContextShowing(evt) : onToolsShowing(evt);
 	}
 
+	let unload = (function() {
+		function unload_i(cb) {
+			if (cb) {
+				unloaders.push(cb);
+				return;
+			}
+
+			while (unloaders.length) {
+				let u = unloaders.pop();
+				try {
+					u();
+				}
+				catch (ex) {}
+			}
+			unloaders = [];
+		}
+		let unloaders = [];
+		let listen;
+		window.addEventListener("unload", listen = (function() {
+			window.removeEventListener("unload", listen, false);
+			unload_i();
+			listen = null;
+		}), false);
+
+		return unload_i;
+	})();
+
 	ctx.addEventListener('popupshowing', initMenus, true);
 	menu.addEventListener('popupshowing', initMenus, true);
 
-	window.addEventListener("keydown", onKeyDown, false);
+	/*window.addEventListener("keydown", onKeyDown, false);
+	unload(function() window.removeEventListener("keydown", onKeyDown, false));
+
 	window.addEventListener("keyup", onKeyUp, false);
+	unload(function() window.removeEventListener("keyup", onKeyUp, false));
+
 	window.addEventListener("blur", onBlur, true);
+	unload(function() window.removeEventListener("blur", onBlur, true));*/
+
 	let appcontent = document.getElementById("appcontent");
 	if (appcontent) {
 		appcontent.addEventListener("DOMContentLoaded", onToolbarInstall, true);
+		unload(function() appcontent.removeEventListener("DOMContentLoaded", onToolbarInstall, true));
 	}
 
 	/* Toolbar buttons */
@@ -1635,11 +1670,7 @@ function load(window, outerEvent) {
 	}
 
 	try {
-		let DropTDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, true, url, ref); });
-		let DropDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, false, url, ref); });
-
-		let b = $t('dta-button');
-		b.addEventListener('command', function(event) {
+		function dta_button_command(event) {
 			switch (event.target.id) {
 			case 'dta-button':
 			case 'dta-tb-dta':
@@ -1654,12 +1685,12 @@ function load(window, outerEvent) {
 			default:
 				break;
 				}
-		}, true);
-		b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropDTA), true);
-		b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DropDTA), true);
+		}
+		function dta_button_drag(event) nsDragAndDrop.dragOver(event, DropDTA);
+		function dta_button_drop(event) nsDragAndDrop.drop(event, DropDTA);
 
-		b = $t('dta-turbo-button');
-		b.addEventListener('command', function(event) {
+
+		function dta_turbo_button_command(event) {
 			switch (event.target.id) {
 			case 'dta-turbo-button':
 			case 'dta-tb-turbo':
@@ -1672,12 +1703,41 @@ function load(window, outerEvent) {
 
 				break;
 			}
-		}, true);
-		b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropTDTA), true);
-		b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DropTDTA), true);
+		}
+		function dta_turbo_button_drag(event) nsDragAndDrop.dragOver(event, DropTDTA);
+		function dta_turbo_button_drop(event) nsDragAndDrop.drop(event, DropTDTA);
 
-		$t('dta-turboselect-button').addEventListener('command', function(event) { toggleOneClick(event); }, true);
-		$t('dta-manager-button').addEventListener('command', function() DTA.openManager(window), true);
+		function dta_turboselect_button_command(event) { toggleOneClick(event); }
+		function dta_manager_button_command() DTA.openManager(window);
+
+		let DropTDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, true, url, ref); });
+		let DropDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, false, url, ref); });
+
+		let dta_button = $t('dta-button');
+		dta_button.addEventListener('command', dta_button_command, true);
+		unload(function() dta_button.removeEventListener('command', dta_button_command, true));
+		dta_button.addEventListener('dragover', dta_button_drag, true);
+		unload(function() dta_button.removeEventListener('dragover', dta_button_drag, true));
+		dta_button.addEventListener('dragdrop', dta_button_drop, true);
+		unload(function() dta_button.removeEventListener('dragdrop', dta_button_drop, true));
+
+
+		let dta_turbo_button = $t('dta-turbo-button');
+		dta_turbo_button.addEventListener('command', dta_turbo_button_command, true);
+		unload(function() dta_turbo_button.removeEventListener('command', dta_turbo_button_command, true));
+		dta_turbo_button.addEventListener('dragover', dta_turbo_button_drag, true);
+		unload(function() dta_turbo_button.removeEventListener('dragover', dta_turbo_button_drag, true));
+		dta_turbo_button.addEventListener('dragdrop', dta_turbo_button_drop, true);
+		unload(function() dta_turbo_button.removeEventListener('dragdrop', dta_turbo_button_drop, true));
+
+		let dta_turboselect_button = $t('dta-turboselect-button');
+		dta_turboselect_button.addEventListener('command', dta_turboselect_button_command, true);
+		unload(function() dta_turboselect_button.removeEventListener('command', dta_turboselect_button_command, true));
+		unload(function() detachOneClick);
+
+		let dta_manager_button = $t('dta-manager-button')
+		dta_manager_button.addEventListener('command', dta_manager_button_command, true);
+		unload(function() dta_manager_button.removeEventListener('command', dta_manager_button_command, true));
 
 	}
 	catch (ex) {
