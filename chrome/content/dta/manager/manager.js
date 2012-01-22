@@ -754,7 +754,7 @@ const Dialog = {
 					continue;
 				}
 				d.refreshPartialSize();
-				let advanced = d.speeds.add(d.partialSize, now);
+				let advanced = d.speeds.add(d.partialSize + d.otherBytes, now);
 				this._sum += advanced;
 
 				// Calculate estimated time
@@ -1422,7 +1422,6 @@ function QueueItem() {
 
 	this.chunks = [];
 	this.speeds = new SpeedStats(SPEED_COUNT);
-
 	this.rebuildDestination_replacer = createReplacer(this);
 }
 
@@ -1482,6 +1481,7 @@ QueueItem.prototype = {
 		}
 		this.save();
 	},
+	otherBytes: 0,
 
 	postData: null,
 
@@ -1862,6 +1862,7 @@ QueueItem.prototype = {
 		}
 		this.chunks = [];
 		this.speeds.clear();
+		this.otherBytes = 0;
 		this.visitors = new VisitorManager();
 		this.state = QUEUED;
 		Dialog.run(this);
@@ -1897,6 +1898,7 @@ QueueItem.prototype = {
 		}
 		this.activeChunks = 0;
 		this.speeds.clear();
+		this.otherBytes = 0;
 	},
 
 	moveCompleted: function QI_moveCompleted() {
@@ -2182,12 +2184,22 @@ QueueItem.prototype = {
 				file.append(mask.shift().removeBadChars().trim());
 			}
 			this._destinationName = file.leafName;
-			this._destinationPath = file.parent.path;
-			this._destinationFile = file.path;
+			let parent = file.parent;
+			this._destinationPath = parent.path;
+			this._destinationNameFull = Utils.formatConflictName(
+					this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
+					this.conflicts
+				);
+			parent.append(this.destinationName);
+			this._destinationFile = parent.path;
 		}
 		catch(ex) {
 			this._destinationName = this.fileName;
 			this._destinationPath = this.pathName.addFinalSlash();
+			this._destinationNameFull = Utils.formatConflictName(
+					this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
+					this.conflicts
+				);
 			let file = new Instances.LocalFile(this.destinationPath);
 			file.append(this.destinationName);
 			this._destinationFile = file.path;
@@ -2195,10 +2207,6 @@ QueueItem.prototype = {
 				Logger.log("rebuildDestination():", ex);
 			}
 		}
-		this._destinationNameFull = Utils.formatConflictName(
-			this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
-			this.conflicts
-		);
 		this._icon = null;
 	},
 	resolveConflicts: function() {
@@ -2348,6 +2356,7 @@ QueueItem.prototype = {
 				this._autoRetries = 0;
 				delete this._autoRetryTime;
 				this.speeds.clear();
+				this.otherBytes = 0;
 				this.save();
 			}
 			else {
