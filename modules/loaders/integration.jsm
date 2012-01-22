@@ -139,7 +139,7 @@ function extractDescription(child) {
 			}
 
 			if (c.nodeType == 1) {
-				rv.push(arguments.callee(c));
+				rv.push(extractDescription(c));
 			}
 
 			if (c && 'hasAttribute' in c) {
@@ -431,7 +431,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 	// recursively process any frames
 	if (aWin.frames) {
 		for (let i = 0, e = aWin.frames.length; i < e; ++i) {
-			for (let y in arguments.callee(aWin.frames[i], aURLs, aImages)) {
+			for (let y in addLinks(aWin.frames[i], aURLs, aImages)) {
 				yield true;
 			}
 		}
@@ -635,10 +635,11 @@ function load(window, outerEvent) {
 
 			// long running fetching may confuse users, hence give them a hint that
 			// stuff is happening
-			let _updateInterval = setInterval(function(isStarter) {
+			let intervalfunc;
+			let _updateInterval = setInterval(intervalfunc = (function(isStarter) {
 				if (isStarter) {
 					clearInterval(_updateInterval);
-					_updateInterval = setInterval(arguments.callee, 150, false);
+					_updateInterval = setInterval(intervalfunc, 150, false);
 				}
 				if (urls.length + images.length) {
 					notifyProgress(getFormattedString('processing', urls.length, images.length));
@@ -646,7 +647,7 @@ function load(window, outerEvent) {
 				else {
 					notifyProgress(getString('preparing'));
 				}
-			}, 1750, true);
+			}), 1750, true);
 
 			new CoThreads.CoThreadInterleaved(
 				(function() {
@@ -1540,8 +1541,8 @@ function load(window, outerEvent) {
 			$(ctx, ctx + "-direct").forEach(bindEvt(evt, fn));
 		}
 
-		ctx.removeEventListener('popupshowing', arguments.callee, true);
-		menu.removeEventListener('popupshowing', arguments.callee, true);
+		ctx.removeEventListener('popupshowing', initMenus, true);
+		menu.removeEventListener('popupshowing', initMenus, true);
 
 		try {
 			let cont = $('dtaCtxSubmenu');
