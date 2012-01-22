@@ -48,7 +48,7 @@
 				removeEventListener('load', arguments.callee, false);
 				let _loader = {};
 				Components.utils.import('resource://dta/loaders/saveas.jsm', _loader);
-				_loader.load(window);
+				new _loader.load(window);
 			}, false);
 		]]></script>
 		<radiogroup id="mode">
