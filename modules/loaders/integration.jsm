@@ -1358,28 +1358,26 @@ function load(window, outerEvent) {
 			let div = this.doc.createElement('div');
 			this.doc.documentElement.appendChild(div);
 
-			with (div.style) {
-				MozBorderRadius = this.RADIUS + 'px';
-				zIndex = 2147483647;
-				opacity = this.OPACITY;
-				background = this.BACKGROUND;
-				display = 'block';
+			div.style.MozBorderRadius = this.RADIUS + 'px';
+			div.style.zIndex = 2147483647;
+			div.style.opacity = this.OPACITY;
+			div.style.background = this.BACKGROUND;
+			div.style.display = 'block';
 
-				// put the div where it belongs
-				let pos = this.calcPosition(this.elem);
-				width = (pos.width + 2 * this.PADDING) + "px";
-				height = (pos.height + 2 * this.PADDING) + "px";
-				top = (pos.top - this.PADDING) + "px";
-				left = (pos.left - this.PADDING) + "px";
-				position = pos.position;
+			// put the div where it belongs
+			let pos = this.calcPosition(this.elem);
+			div.style.width = (pos.width + 2 * this.PADDING) + "px";
+			div.style.height = (pos.height + 2 * this.PADDING) + "px";
+			top = (pos.top - this.PADDING) + "px";
+			left = (pos.left - this.PADDING) + "px";
+			div.style.position = pos.position;
 
-				// add the adding icon if the element covers enough space
-				if (Math.min(pos.width, pos.height) >= 36) {
-					backgroundImage = 'url(chrome://dta-public/skin/integration/added_large.png)';
-				}
-				if (Math.min(pos.width, pos.height) >= 18) {
-					backgroundImage = 'url(chrome://dta-public/skin/integration/added_small.png)';
-				}
+			// add the adding icon if the element covers enough space
+			if (Math.min(pos.width, pos.height) >= 36) {
+				div.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_large.png)';
+			}
+			if (Math.min(pos.width, pos.height) >= 18) {
+				div.style.backgroundImage = 'url(chrome://dta-public/skin/integration/added_small.png)';
 			}
 
 			this._div = div;
@@ -1432,44 +1430,34 @@ function load(window, outerEvent) {
 
 			let pos = this.calcPosition(this.elem);
 			for each (let div in this._divs) {
-				with (div.style) {
-					zIndex = 2147483647;
-					opacity = this.OPACITY;
-					background = this.BACKGROUND;
-					display = 'block';
-					position = pos.position;
-					width = this.WIDTH + 'px';
-					height = this.WIDTH + 'px';
-				}
+				div.style.zIndex = 2147483647;
+				div.style.opacity = this.OPACITY;
+				div.style.background = this.BACKGROUND;
+				div.style.display = 'block';
+				div.style.position = pos.position;
+				div.style.width = this.WIDTH + 'px';
+				div.style.height = this.WIDTH + 'px';
 			}
 
-			with (leftD.style) {
-				MozBorderRadiusTopleft = this.RADIUS + 'px';
-				MozBorderRadiusBottomleft = this.RADIUS + 'px';
-				left = (pos.left - this.WIDTH) + 'px';
-				top = (pos.top - this.WIDTH) + 'px';
-				height = (pos.height + this.WIDTH * 2) + 'px';
-			}
+			leftD.style.MozBorderRadiusTopleft = this.RADIUS + 'px';
+			leftD.style.MozBorderRadiusBottomleft = this.RADIUS + 'px';
+			leftD.style.left = (pos.left - this.WIDTH) + 'px';
+			leftD.style.top = (pos.top - this.WIDTH) + 'px';
+			leftD.style.height = (pos.height + this.WIDTH * 2) + 'px';
 
-			with (rightD.style) {
-				MozBorderRadiusTopright = this.RADIUS + 'px';
-				MozBorderRadiusBottomright = this.RADIUS + 'px';
-				top = leftD.style.top;
-				left = (pos.left + pos.width) + 'px';
-				height = leftD.style.height;
-			}
+			rightD.style.MozBorderRadiusTopright = this.RADIUS + 'px';
+			rightD.style.MozBorderRadiusBottomright = this.RADIUS + 'px';
+			rightD.style.top = leftD.style.top;
+			rightD.style.left = (pos.left + pos.width) + 'px';
+			rightD.style.height = leftD.style.height;
 
-			with (topD.style) {
-				left = pos.left + 'px';
-				top = (pos.top - this.WIDTH) + 'px';
-				width = pos.width + 'px';
-			}
+			topD.style.left = pos.left + 'px';
+			topD.style.top = (pos.top - this.WIDTH) + 'px';
+			topD.style.width = pos.width + 'px';
 
-			with (bottomD.style) {
-				left = pos.left + 'px';
-				top = (pos.top + pos.height) + 'px';
-				width = pos.width + 'px';
-			}
+			bottomD.style.left = pos.left + 'px';
+			bottomD.style.top = (pos.top + pos.height) + 'px';
+			bottomD.style.width = pos.width + 'px';
 		},
 		hide: function() {
 			for each (let div in this._divs) {
