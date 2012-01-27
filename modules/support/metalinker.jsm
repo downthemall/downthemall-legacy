@@ -70,8 +70,9 @@ module("resource://dta/support/urlmanager.jsm");
 const IOService = DTA.IOService;
 const XPathResult = Ci.nsIDOMXPathResult;
 
-const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
-const DOMParser = new Ctor("@mozilla.org/xmlextras/domparser;1", 'nsIDOMParser');
+if (!('XMLHttpRequest' in this)) {
+	this.XMLHttpRequest = Components.Constructor("@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
+}
 
 /**
  * Parsed Metalink representation
@@ -571,35 +572,46 @@ const __parsers__ = [
  * Parse a metalink
  * @param aFile (nsIFile) Metalink file
  * @param aReferrer (String) Optional. Referrer
- * @return (Metalink) Parsed metalink data 
+ * @param aCallback (Function) Receiving callback function of form f(result, exception || null) 
+ * @return async (Metalink) Parsed metalink data 
  */
-function parse(aFile, aReferrer) {
-	let fiStream = new FileInputStream(aFile, 1, 0, false);
-	let doc;
-	try {
-		doc = new DOMParser().parseFromStream(
-				fiStream,
-				null,
-				aFile.fileSize,
-				"application/xml"
-		);
-		if (doc.documentElement.nodeName == 'parsererror') {
-			throw new Exception("Failed to parse XML");
-		}
-	}
-	finally {
-		fiStream.close();
-	}
-	
-	for each (let parser in __parsers__) {
+function parse(aFile, aReferrer, aCallback) {
+	let fu = IOService.newFileURI(aFile);
+	let xhrLoad, xhrError;
+	let xhr = new XMLHttpRequest();
+	xhr.open("GET", fu.spec);
+	xhr.overrideMimeType("application/xml");
+	xhr.addEventListener("load", xhrLoad = (function() {
+		xhr.removeEventListener("load", xhrLoad, false);
+		xhr.removeEventListener("error", xhrError, false);
+
 		try {
-			parser = new parser(doc);
+			doc = xhr.responseXML;
+			if (doc.documentElement.nodeName == 'parsererror') {
+				throw new Exception("Failed to parse XML");
+			}
+			for each (let parser in __parsers__) {
+				try {
+					parser = new parser(doc);
+				}
+				catch (ex) {
+					Debug.log(parser.name + " failed", ex);
+					continue;
+				}
+				aCallback(parser.parse(aReferrer));
+				return;
+			}
+			throw new Exception("no suitable parser found!");			
 		}
 		catch (ex) {
-			Debug.log(parser.name + " failed", ex);
-			continue;
+			aCallback(null, ex);
 		}
-		return parser.parse(aReferrer);
-	}
-	throw new Exception("");
+	}), false);
+	xhr.addEventListener("error", xhrError = (function() {
+		xhr.removeEventListener("load", xhrLoad, false);
+		xhr.removeEventListener("error", xhrError, false);
+
+		aCallback(null, new Exception("failed to load"));
+	}), false);
+	xhr.send();
 }

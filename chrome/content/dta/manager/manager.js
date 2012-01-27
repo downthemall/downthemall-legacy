@@ -1129,48 +1129,55 @@ const Metalinker = {
 		Tree.remove(download, false);
 		let file = new FileFactory(download.destinationFile);
 
-		this.handleFile(file, download.referrer);
-
-		try {
-			file.remove(false);
-		}
-		catch (ex) {
-			Debug.log("failed to remove metalink file!", ex);
-		}
+		this.handleFile(file, download.referrer, function() {
+			try {
+				file.remove(false);
+			}
+			catch (ex) {
+				Debug.log("failed to remove metalink file!", ex);
+			}			
+		});
 	},
-	handleFile: function ML_handleFile(aFile, aReferrer) {
-		try {
-			let res = this.parse(aFile, aReferrer);
-			if (!res.downloads.length) {
-				throw new Error(_('mlnodownloads'));
-			}
-			res.downloads.forEach(function(e) {
-				if (e.size) {
-					e.size = Utils.formatBytes(e.size);
+	handleFile: function ML_handleFile(aFile, aReferrer, aCallback) {
+		this.parse(aFile, aReferrer, function (res, ex) {
+			try {
+				if (ex) {
+					throw ex;
 				}
-				e.fileName = e.fileName.getUsableFileName();
-			});
-			window.openDialog(
-				'chrome://dta/content/dta/manager/metaselect.xul',
-				'_blank',
-				'chrome,centerscreen,dialog=yes,modal',
-				res.downloads,
-				res.info
-			);
-			res.downloads = res.downloads.filter(function(d) { return d.selected; });
-			if (res.downloads.length) {
-				startDownloads(res.info.start, res.downloads);
+				if (!res.downloads.length) {
+					throw new Error(_('mlnodownloads'));
+				}
+				res.downloads.forEach(function(e) {
+					if (e.size) {
+						e.size = Utils.formatBytes(e.size);
+					}
+					e.fileName = e.fileName.getUsableFileName();
+				});
+				window.openDialog(
+					'chrome://dta/content/dta/manager/metaselect.xul',
+					'_blank',
+					'chrome,centerscreen,dialog=yes,modal',
+					res.downloads,
+					res.info
+				);
+				res.downloads = res.downloads.filter(function(d) { return d.selected; });
+				if (res.downloads.length) {
+					startDownloads(res.info.start, res.downloads);
+				}
 			}
-		}
-		catch (ex) {
-			Debug.log("Metalinker::handleDownload", ex);
-			if (!(ex instanceof Error)) {
-				ex = new Error(_('mlerror', [ex.message ? ex.message : (ex.error ? ex.error : ex.toString())]));
+			catch (ex) {
+				Debug.log("Metalinker::handleDownload", ex);
+				if (!(ex instanceof Error)) {
+					ex = new Error(_('mlerror', [ex.message ? ex.message : (ex.error ? ex.error : ex.toString())]));
+				}
+				if (ex instanceof Error) {
+					AlertService.show(_('mlerrortitle'), ex.message);
+				}
 			}
-			if (ex instanceof Error) {
-				AlertService.show(_('mlerrortitle'), ex.message);
+			if (aCallback) {
+				aCallback();
 			}
-		}
+		});
 	}
 };
 module('resource://dta/support/metalinker.jsm', Metalinker);
