@@ -388,7 +388,7 @@ ContentHandling.prototype = {
 		case 'nsPref:changed':
 			try {
 				let newValue = this._prefs.getBoolPref(PREF_SNIFFVIDEOS);
-				let differs = newValue == this.sniffVideos;
+				let differs = newValue != this.sniffVideos;
 				this.sniffVideos = newValue;
 				if (differs) {
 					if (newValue) {
