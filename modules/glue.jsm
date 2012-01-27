@@ -76,7 +76,7 @@ itor("Timer", "@mozilla.org/timer;1", "nsITimer", "init");
 itor("ZipReader", "@mozilla.org/libjar/zip-reader;1", "nsIZipReader", "open");
 
 // Map shim
-if (!("Map") in this) {
+if (!("Map" in this)) {
 	this.Map = function() {
 		this._dict = Object.create(null);
 		Object.freeze(this);
