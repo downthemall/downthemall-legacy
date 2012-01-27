@@ -74,3 +74,51 @@ itor("ScriptError", "@mozilla.org/scripterror;1", "nsIScriptError", "init");
 itor("StringInputStream", "@mozilla.org/io/string-input-stream;1", "nsIStringInputStream", "setData");
 itor("Timer", "@mozilla.org/timer;1", "nsITimer", "init");
 itor("ZipReader", "@mozilla.org/libjar/zip-reader;1", "nsIZipReader", "open");
+
+// Map shim
+if (!("Map") in this) {
+	this.Map = function() {
+		this._dict = Object.create(null);
+		Object.freeze(this);
+	}
+	this.Map.prototype = {
+		"get": function(key) this._dict[key],
+		"has": function(key) key in this._dict,
+		"set": function(key, val) { this._dict[key] = val; },
+		"delete": function(key) { delete this._dict[key]; },
+	};
+	EXPORTED_SYMBOLS.push("Map");
+}
+
+function LRUMap(limit) {
+	this._limit = limit;
+	this.clear();
+	Object.preventExtensions(this);
+}
+LRUMap.prototype = {
+	"get": function(key) this._dict.get(key),
+	"has": function(key) this._dict.has(key),
+	"set": function(key, val) {
+		if (this.has(key)) {
+			this._dict.set(key, val);
+			return;
+		}
+		if (this._arr.length == this._limit) {
+			this._dict.delete(this._arr.shift());
+		}
+		this._dict.set(key, val);
+		this._arr.push(key);
+	},
+	"delete": function(key) {
+		if (this._dict.has(key)) {
+			return;
+		}
+		this._dict.delete(key);
+		this._arr.splice(this._arr.indexOf(key), 1);
+	},
+	"clear": function() {
+		this._dict = new Map();
+		this._arr = [];
+	}
+};
+EXPORTED_SYMBOLS.push("LRUMap");

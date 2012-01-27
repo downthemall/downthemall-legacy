@@ -54,29 +54,6 @@ const REGEXP_SWF = /\.swf\b/i;
 const REGEXP_CT = /\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i;
 const REGEXP_STARTPARAM = /start=\d+&?/;
 
-function LimitedDict(limit) {
-	this._limit = limit;
-	this.clear();
-}
-LimitedDict.prototype = {
-	clear: function() {
-		this._dict = ('create' in Object) ? Object.create(null) : {};
-		this._arr = [];
-	},
-	getKey: function(key) this._dict[key] || null,
-	setKey: function(key, value) {
-		if (key in this._dict) {
-			this._dict[key] = value;
-			return;
-		}
-
-		if (this._arr.length == this._limit) {
-			delete this._dict[this._arr.shift()];
-		}
-		this._arr.push(this._dict[key] = value);
-	}
-};
-
 /**
  * ContentHandling
  */
@@ -225,7 +202,7 @@ ContentHandlingImpl.prototype = {
 			us.seek(0, op);
 
 			if (post) {
-				this._data.setKey(channel.URI.spec, post);
+				this._data.set(channel.URI.spec, post);
 			}
 		}
 		catch (ex) {
@@ -299,22 +276,22 @@ ContentHandlingImpl.prototype = {
 		}
 
 		uri = uri.spec;
-		let nv = this._videos.getKey(uri) || [];
+		let nv = this._videos.get(uri) || [];
 		nv.push(vid.clone());
-		this._videos.setKey(uri, nv);
+		this._videos.set(uri, nv);
 	},
 
 	getPostDataFor: function ct_getPostDataFor(uri) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
-		return this._data.getKey(uri) || "";
+		return this._data.get(uri) || "";
 	},
 	getSniffedVideosFor: function ct_getSniffedVideosFor(uri) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
-		return (this._videos.getKey(uri) || []).map(function(a) a.clone());
+		return (this._videos.get(uri) || []).map(function(a) a.clone());
 	},
 
 	// nsIChannelEventSink
@@ -330,12 +307,12 @@ ContentHandlingImpl.prototype = {
 	onChannelRedirect: function CH_onChannelRedirect(oldChannel, newChannel, flags) {
 		let oldURI = oldChannel.URI.spec;
 		let newURI = newChannel.URI.spec;
-		oldURI = this._revRedirects.getKey(oldURI) || oldURI;
-		this._redirects.setKey(oldURI, newURI);
-		this._revRedirects.setKey(newURI, oldURI);
+		oldURI = this._revRedirects.get(oldURI) || oldURI;
+		this._redirects.set(oldURI, newURI);
+		this._revRedirects.set(newURI, oldURI);
 	},
 	getRedirect: function(uri) {
-		let rv = this._revRedirects.getKey(uri.spec);
+		let rv = this._revRedirects.get(uri.spec);
 		if (!rv) {
 			return uri;
 		}
@@ -347,10 +324,10 @@ ContentHandlingImpl.prototype = {
 		}
 	},
 	clear: function CH_clear() {
-		this._data = new LimitedDict(5);
-		this._videos = new LimitedDict(20);
-		this._redirects = new LimitedDict(20);
-		this._revRedirects = new LimitedDict(100);
+		this._data = new LRUMap(5);
+		this._videos = new LRUMap(20);
+		this._redirects = new LRUMap(20);
+		this._revRedirects = new LRUMap(100);
 	}
 };
 
