@@ -189,7 +189,7 @@
 	</menu>
 
 	<toolbarbutton id="dta-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-regular.label;" tooltiptext="&dta-regular.label;" type="menu-button">
-		<menupopup>
+		<menupopup  id="dta-button-popup">
 			<menuitem id="dta-tb-dta" label="DownThemAll! (&dta-tb-single.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular.label;" />
 			<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular.label;" />
 			<menuseparator />
@@ -202,7 +202,7 @@
 	</box>
 
 	<toolbarbutton id="dta-turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-regular-turbo.label;" tooltiptext="&dta-regular-turbo.label;" type="menu-button">
-		<menupopup>
+		<menupopup id="dta-turbo-button-popup">
 			<menuitem id="dta-tb-turbo" label="dTa OneClick! (&dta-tb-single.label;)" tooltiptext="&dta-regular-turbo.label;" class="menuitem-iconic dta-menuitem dta-turbo" />
 			<menuitem id="dta-tb-allturbo" label="dTa OneClick! (&dta-tb-all.label;)" tooltiptext="&dta-regular-turbo.label;" class="menuitem-iconic dta-menuitem dta-turbo" />
 		</menupopup>
