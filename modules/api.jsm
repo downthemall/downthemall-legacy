@@ -121,7 +121,6 @@ function URL(url, preference, _fast) {
 	}
 
 	this._url = url.clone();
-	this._urlSpec = url.spec;
 	this._urlCharset = url.originCharset;
 	if (!_fast) {
 		let hash = getLinkPrintHash(this._url);
@@ -130,6 +129,7 @@ function URL(url, preference, _fast) {
 			this.hash = hash;
 		}
 	}
+	this._urlSpec = this._url.spec;
 	this._usable = _decodeCharset(this._urlSpec, this._urlCharset);
 };
 URL.schemes = ['http', 'https', 'ftp'];
@@ -462,9 +462,10 @@ function turboSendLinksToManager(window, urlsArray) {
 	let num = incrementSeries();
 
 	for (var i = 0; i < urlsArray.length; i++) {
-		urlsArray[i].mask = mask;
-		urlsArray[i].dirSave = dir;
-		urlsArray[i].numIstance = num;
+		let u = urlsArray[i];
+		u.mask = mask;
+		u.dirSave = dir;
+		u.numIstance = u.numIstance || num;
 	}
 
 	sendLinksToManager(window, !Preferences.getExt("lastqueued", false), urlsArray);
