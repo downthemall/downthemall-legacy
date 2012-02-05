@@ -64,6 +64,7 @@ const PREFS = 'extensions.dta.serverlimit.';
 const LIMITS_PREF  = 'extensions.dta.serverlimit.limits.';
 const SHUTDOWN_TOPIC = 'profile-change-teardown';
 
+const SCHEDULER_DIR = 'dir';
 const SCHEDULER_FAST = 'fast';
 const SCHEDULER_FAIR = 'fair';
 const SCHEDULER_RND = 'rnd';
@@ -332,7 +333,7 @@ FairScheduler.prototype = {
 		// found an item?
 		if (e) {
 			while (e.length) {
-				d = e.pop();
+				d = e.shift();
 				if (d._state == QUEUED) {
 					break;
 				}
@@ -365,11 +366,82 @@ FairScheduler.SchedItem.prototype = {
 	resetCounter: function() this.n = 0,
 	toString: function() this.host,
 	get length() this.downloads.length,
-	pop: function() {
+	shift: function() {
 		++this.n;
 		return this.downloads.shift();
 	},
+	pop: function() {
+		++this.n;
+		return this.downloads.pop();
+	},
 	push: function(d) this.downloads.push(d),
+};
+
+// Fair Dir Scheduler: evenly distribute slots
+function DirScheduler(downloads) {
+	this._downloadSet = Object.create(null);
+
+	// set up our internal state
+	for (let i = 0, e = downloads.length, d, dir; i < e; ++i) {
+		d = downloads[i];
+		if (!d.is(QUEUED)) {
+			continue;
+		}
+		dir = d.destinationPath;
+		if (!(dir in this._downloadSet)) {
+			this._downloadSet[dir] = new FairScheduler.SchedItem(dir);
+		}
+		this._downloadSet[dir].push(d);
+	}
+}
+DirScheduler.prototype = {
+	__proto__: BaseScheduler.prototype,
+
+	next: function(running) {
+		let i, e, d, dir;
+
+		// reset all counters
+		for (i in this._downloadSet) {
+			this._downloadSet[i].resetCounter();
+		}
+
+		// Count the running tasks
+		for (i = 0, e = running.length; i < e; ++i) {
+			d = running[i];
+			dir = d.destinationPath;
+			if (!(dir in this._downloadSet)) {
+				// we don't care, because we don't have any more queued downloads for this directory
+				continue;
+			}
+			this._downloadSet[dir].inc();
+		}
+
+		// Find the host with the least running downloads that still has slots available
+		e = null;
+		for (i in this._downloadSet) {
+			d = this._downloadSet[i];
+			if ((!e || e.n > d.n) && d.available) {
+				e = d;
+			}
+		}
+
+		// found an item?
+		if (e) {
+			while (e.length) {
+				d = e.pop();
+				if (d._state == QUEUED) {
+					break;
+				}
+				d = null;
+			}
+			// host queue is now empty, hence remove
+			if (!e.length) {
+				delete this._downloadSet[e.host];
+			}
+			return d;
+		}
+		return null;
+	}
 };
 
 //Random scheduler. Does not respect limits
@@ -402,6 +474,9 @@ function loadScheduler() {
 		break;
 	case SCHEDULER_RND:
 		scheduler = RndScheduler;
+		break;
+	case SCHEDULER_DIR:
+		scheduler = DirScheduler;
 		break;
 	case SCHEDULER_LEGACY:
 		scheduler = LegacyScheduler;
