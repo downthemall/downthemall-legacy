@@ -411,3 +411,15 @@ __defineGetter__("DefaultDownloadsDirectory", function() {
 	catch (ex) {}
 	return dlm.defaultDownloadsDirectory;
 });
+
+Object.defineProperty(window, "setTimeoutOnlyFun", {
+	value: function setTimeoutFun(cb, delay, p1, p2, p3) {
+		if (typeof(c) != "function") {
+			throw new Error("do not call me with a string!");
+		}
+		return window.setTimeout.apply(window, cb, delay, p1, p2, p3);
+	},
+	writable: false,
+	configurable: false,
+	enumerable: true
+});

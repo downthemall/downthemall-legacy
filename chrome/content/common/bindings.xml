@@ -588,7 +588,7 @@
 
 				// looks a little nasty, but else we will immediately blur/focus :p
 				let tp = this;
-				setTimeout(function() tp.textbox.addEventListener('blur', function() tp.commit(), false), 0);
+				setTimeoutOnlyFun(function() tp.textbox.addEventListener('blur', function() tp.commit(), false), 0);
 			]]></constructor>
 			<method name="commit">
 				<parameter name="forget"/>
@@ -700,7 +700,7 @@
 				this.clearButton.removeAttribute('disabled');
 				if (!this._timer) {
 					let tp = this;
-					this._timer = setTimeout(function() {
+					this._timer = setTimeoutOnlyFun(function() {
 						tp._search();
 					}, 750);
 				}
