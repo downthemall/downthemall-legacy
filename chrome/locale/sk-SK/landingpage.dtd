@@ -1,0 +1,88 @@
+<!ENTITY lp.localedir "ltr">
+<!ENTITY language "Slovensky">
+<!ENTITY transAutor "dTa Team">
+<!ENTITY amo.summary "Prvý a jediný download manažér vstavaný priamo vo Firefoxe!">
+<!ENTITY amo.description.intro "DownThemAll je všetko po čom túžite od správcu sťahovania: obsahuje moderný akcelerátor, ktorý zvyšuje rýchlosť sťahovania až 4x a umožňuje pozastaviť a znovu obnoviť sťahovanie kedy len budete chcieť.">
+<!ENTITY amo.description.feat "DownThemAll je rýchly, spoľahlivý s jednoduchým ovládaním! To vám umožní stiahnuť všetky odkazy alebo obrázky obsiahnuté na webovej stránke a oveľa viac: môžete vylepšiť vaše sťahovanie súborov, plne prispôsobiť kritéria sťahovania a dostať tak len to, čo naozaj chcete! Majte pod kontrolou vaše sťahovanie. Nastavte si rýchlosti a počty paralelných pripojení. Použite Metalinks alebo pridajte mirrory a sťahujte z viac serverov súčasne.">
+<!ENTITY amo.description.free "DownThemAll je opensource a freeware (je zdarma). Neobsahuje Adware ani Spyware a to bez skrytých platieb.">
+<!ENTITY amo.description.more "Pre viac informácií navštívte našu <a href='http://www.downthemall.net/howto/features/'>stránku s vlastnosťami</a>.">
+<!ENTITY lp.title "O DownThemAll!">
+<!ENTITY lp.welcome "Vitajte v DownThemAll!">
+<!ENTITY lp.info "Pozrite sa na video ako používať DownThemAll! a poučte sa o ochrane osobných údajov a Vašich právach">
+<!ENTITY lp.moreinfo "Pre viac informácií navštívte našu <a href='http://www.downthemall.net/howto/features/'>stránku s vlastnosťami</a>.">
+<!ENTITY lp.gettingstarted "Začíname">
+<!ENTITY lp.toolbar "Tlačidlá nástrojovej lišty">
+<!ENTITY lp.privacy "Súkromie">
+<!ENTITY lp.yourrights "Vaše práva">
+<!ENTITY lp.contact "Kontakt">
+<!ENTITY lp.pleasenote "Prosím, zapamätajte si:">
+<!ENTITY lp.donate "Prosím zvážte príspevok">
+<!ENTITY lp.tut.firsttitle "Vaše prvé sťahovanie">
+<!ENTITY lp.tut.fd1 "Sťahovanie súborov v dTa je pomerne jednoduché, ale tiež veľmi silné. Pokiaľ budete vyzvaný k otvoreniu alebo uloženiu súboru môžete použiť DownThemAll!. Táto možnosť sa poskytne v okne, keď sa Firefox bude pýtať, do ktorej zložky daný súbor uložiť.">
+<!ENTITY lp.tut.selecttitle "Použitie okna výberu">
+<!ENTITY lp.tut.selintro "V hlavnej ponuke ponúka DownThemAll! novú položku. Pomocou nej sa zobrazí okno DownThemAll!, v ktorom môžete ľahko vybrať jednu alebo viac odkazov zo stránky.">
+<!ENTITY lp.tut.seloptions "Tu máte viac možností, ako vybrať súbory na stiahnutie.">
+<!ENTITY lp.tut.selopthand "Súbory určené na stiahnutie môžete skontrolovať ručne.">
+<!ENTITY lp.tut.seloptfilters "Môžete tiež použiť jeden zo zabudovaných filtrov, alebo si vytvoriť vlastný filter. Napríklad k stiahnutiu všetkých odkazovaných obrázkov.">
+<!ENTITY lp.tut.seloptfast "V poli rýchleho filtrovania si môžete napísať vlastný filter. Použiť môžete zápis <code>*.pdf,*.doc</code> alebo regulárny výraz.">
+<!ENTITY lp.tut.seltypes "Okno obsahuje panely pre dve rozdielne druhy sťahovania:">
+<!ENTITY lp.tut.seltypelinks "Adresy všetkých súborov nájdených na stránke">
+<!ENTITY lp.tut.seltypepics "Tu sú vidieť všetky obrázky a ostatné médiá, ktoré sú vidieť na stránke">
+<!ENTITY lp.tut.selgalleries "Obrázky v plnom rozlíšení sú len odkazmi fotogalérií, preto ich nájdete v panely Odkazy">
+<!ENTITY lp.tut.seldone "Po výbere súborov k stiahnutiu môžete vybrať Štart! alebo vložiť prestávku.">
+<!ENTITY lp.tut.batchestitle "Dávka sťahovania">
+<!ENTITY lp.tut.batches1 "Veľa užívateľov potrebuje sťahovať viac očíslovaných súborov. Ako je vidieť na videu, DownThemAll! umožňuje používať dávky veľmi ľahko.">
+<!ENTITY lp.tut.batches2 "Základný syntax: <code>[štart:koniec]</code> alebo <code>[štart:koniec:krok]</code>, kde kľúčové slová <code>štart</code> a <code>koniec</code> môžu byť číslami alebo jednoduchými znakmi. <code>krok</code> určuje veľkosť kroku. Pokiaľ nie je krok zadaný (je vynechaný), je krok rovný 1.">
+<!ENTITY lp.tut.batches3 "Napríklad pokiaľ budete chcieť stiahnuť obrázky od 001 do 100, môžete zmeniť URL na:<code>http://priklad.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
+<!ENTITY lp.tut.oneclick1 "Akonáhle začnete sťahovať, bude k dispozícii jedna z položiek: DownThemAll! OneClick. Môžete použiť nastavenie z predchádzajúceho sťahovania a preskočiť tak dialóg pre pridávanie a výber.">
+<!ENTITY lp.tut.oneclick2 "Vďaka tomu môžete pomocou OneClick vytvoriť veľké rady sťahovania.">
+<!ENTITY lp.tut.oneclickn "Pokiaľ použijete funkciu Vymazať nedávnu históriu..., funkcia OneClick nebude k dispozícii, pokiaľ nezačne ďalšie sťahovanie pomocou DownThemAll!.">
+<!ENTITY lp.tb.intro "DownThemAll! ponúka niekoľko tlačidiel na nástrojovej lište, ktoré vám zjednodušia prácu s DownThemAll!.">
+<!ENTITY lp.tb.add.title "Pridávanie a používanie tlačidiel Nástrojovej lišty">
+<!ENTITY lp.tb.add.p1 "DownThemAll! obsahuje štyri tlačidlá pre ľahšie sťahovanie">
+<!ENTITY lp.tb.add.dta "DownThemAll! tlačidlo">
+<!ENTITY lp.tb.add.dtadesc "Otvorí okno výberu pre aktuálny anel">
+<!ENTITY lp.tb.add.tdta "OneClick! tlačidlo">
+<!ENTITY lp.tb.add.tdtadesc "Stiahne všetky položky na aktuálnej stránke zodpovedajúce poslednému nastaveniu a naposledy použitým filtrom">
+<!ENTITY lp.tb.add.manager "Tlačidlo správcu DownThemAll!">
+<!ENTITY lp.tb.add.managerdesc "Otvorí okno správca">
+<!ENTITY lp.tb.add.selector "Tlačidlo prepínača DownThemAll!">
+<!ENTITY lp.tb.add.selectordesc "Pridanie položiek pomocou kliknutia ľavého tlačidla myši">
+<!ENTITY lp.tb.add.p2 "Na Nástrojovú lištu môžete pridávať tlačidlá pomocou <code>Zobrazenie → Nástrojové lišty → Vlastné...</code>.">
+<!ENTITY lp.tb.dnd.title "Potiahni a pusť">
+<!ENTITY lp.tb.dnd.p1 "Pre stiahnutie ktoréhokoľvek odkazu alebo obrázku stačí len pretiahnuť a pustiť na DownThemAll! alebo na OneClick!">
+<!ENTITY lp.tb.dnd.p2 "Okno Správca sťahovania môže byť použité k pretiahnutiu položiek k sťahovaniu.">
+<!ENTITY lp.tb.dnd.p3 "Zoznam sťahovania sa dá upravovať pomocou pretiahnutia na požadované miesto v zozname. Stačí len chytiť a pustiť tam kde sa vám to páči.">
+<!ENTITY lp.tb.selector.title "Používanie prepínača DownThemAll!">
+<!ENTITY lp.tb.selector.p1 "Pri používaní DownThemAll! môžete pomocou Prepínača sťahovať jednoduchým kliknutím na odkazy alebo obrázky.">
+<!ENTITY lp.tb.selector.p2 "Pre povolenie Prepínača kliknite na tlačidlo nástrojovej lišty. Ukončíte ho pomocou znovu kliknutia na tlačidlo.">
+<!ENTITY lp.pr.title "Ochrana osobných údajov">
+<!ENTITY lp.pr.intro "DownThemAll chráni Vaše súkromie">
+<!ENTITY lp.pr.settings "DownThemAll môže pri vypínaní zmazať všetky dokončené, zrušené/zlyhané a alebo nedokončené sťahovania. Nastaviť to môžete v Predvoľby → Súkromie.">
+<!ENTITY lp.pr.diag "Môžete taktiež povoliť zaznamenávanie diagnostických správ (logovanie), ktoré sa budú ukladať do súboru dta_log.txt. Toto sa dá nastaviť v Predvoľby → Súkromie. Diagnostické správy budú pravdepodobne obsahovať citlivé informácie, ako sú adresy URL, cesty k súborom, súbory ktoré ste stiahli alebo dokonca informácie z cookies. Z dôvodu Vašej bezpečnosti je táto možnosť v predvolenom stave VYPNUTÁ. Pokiaľ budete chcieť, môžete tento súbor pred odoslaním cenzurovať. Žiadny diagnostický log nebude nikdy odoslaný automaticky.">
+<!ENTITY lp.pr.pbm "DownThemAll! podporuje anonymné prehliadanie: DownThemAll! pri použití v anonymnom prehliadaní neukladá žiadne informácie o stiahnutých súboroch, zložkách a používaných maskách. Pamätajte si, že ostatné dáta, ako novo-vytvorené filtre a aktuálne sťahované súbory sú ukladané na váš pevný disk.">
+<!ENTITY lp.pr.link "Toto oznámenie je vždy dostupné na tejto stránke (about:downthemall) a z okna predvolieb.">
+<!ENTITY lp.yr.usagetitle "Použitie a redistribúcia">
+<!ENTITY lp.yr.usage "Autori zvolili slobodnú licenciu pre ľahké použitie:">
+<!ENTITY lp.yr.usageuse "Použiť DownThemAll!">
+<!ENTITY lp.yr.usagemod "Upraviť DownThemAll!">
+<!ENTITY lp.yr.usagedist "Redistribúcia DownThemAll! s úpravami alebo bez nich.">
+<!ENTITY lp.yr.usagemore "Viac informácií v licencii.">
+<!ENTITY lp.languagetitle "Jazyk">
+<!ENTITY lp.translation.by "preložil">
+<!ENTITY lp.yr.licensetitle "Copyright a licencia">
+<!ENTITY lp.yr.licensed "DownThemAll! je pod licenciou <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. To platí pre všetky zdrojové kódy.">
+<!ENTITY lp.yr.morelicense "Jednotlivé súbory môžu byť pod rôznymi licenciami. Pozrite sa do zodpovedajúceho depozitára na adrese <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Veľa súborov je pod trojlicenciou MPL 1.1/GPL 2.0/LGPL 2.1. pozrite sa na licenčné podmienky licencií MPL, GPL, LGPL.">
+<!ENTITY lp.yr.gplintro "Najdôležitejšie body z GPL 2.0 o záruke a náhrade škôd nájdete nižšie:">
+<!ENTITY lp.yr.icons "Grafický vzhľad, ikony a tlačítka">
+<!ENTITY lp.yr.iconsbased "sú založené na práci Mike Matas, Jakub Steiner, Mark James a projektu Tango.">
+<!ENTITY lp.yr.artwork "Grafický vzhľad: Copyright © 2004-2010 by Stefano Verna, Federico Parodi and Nils Maier">
+<!ENTITY lp.yr.artworklicense "Grafický vzhľad je chránený licenciou:">
+<!ENTITY lp.yr.logo "The DownThemAll! logo: Copyright © 2004-2010 by Stefano Verna">
+<!ENTITY lp.yr.logopermissions "Bez súhlasu nesmie byť použité Meno a logo The DownThemAll!. S výnimkou informácií o autoroch a licenčných podmienok.">
+<!ENTITY lp.ct.bugstitle "Hlásenie chýb/Požiadavky na nové vlastnosti">
+<!ENTITY lp.ct.bugs "Chyby a požiadavky na nové funkcie nahláste prosím na <a href='http://bugs.code.downthemall.net/'>bug trackeru</a> (EN).">
+<!ENTITY lp.ct.contactstitle "Kontakty">
+<!ENTITY lp.ct.contactsfeed "Vopred ďakujeme za vašu spätnú väzbu, nápady a prípadnú pomoc.">
+<!ENTITY lp.ct.contacts "Prosím navštívte našu <a href='http://www.downthemall.net/main/contacts/'>stránku s kontaktmi</a> (EN).">

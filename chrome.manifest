@@ -30,6 +30,7 @@ locale dta pt-BR chrome/locale/pt-BR/
 locale dta pt-PT chrome/locale/pt-PT/
 locale dta ro chrome/locale/ro/
 locale dta ru chrome/locale/ru/
+locale dta sk-SK chrome/locale/sk-SK/
 locale dta sr chrome/locale/sr/
 locale dta zh-CN chrome/locale/zh-CN/
 locale dta zh-TW chrome/locale/zh-TW/
