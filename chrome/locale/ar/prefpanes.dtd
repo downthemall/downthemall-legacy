@@ -1,4 +1,4 @@
-<!ENTITY winstyle "العرض:46em;الطول:37em">
+<!ENTITY winstyle "width:46em;height:37em;"> 
 <!ENTITY filterspane.label "الفلاتر">
 <!ENTITY listhead1.label "شرح لوحة">
 <!ENTITY listhead2.label "الامتدادات">
