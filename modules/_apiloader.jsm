@@ -54,7 +54,7 @@ function inject(window) {
 	/* Compat; mostly FlashGot, maybe others */
 	// Obsolete; will be removed in 2.++ timeframe
 	window.__defineGetter__('DTA_AddingFunctions', function() {
-	 	let rv = {
+		let rv = {
 			get ios() {
 				return DTA.IOService
 			},
@@ -79,9 +79,9 @@ function inject(window) {
 			sendToDown: function() this.applyWithWindow(DTA.sendToDown, Array.map(arguments, function(e) e)),
 			turboSendToDown: function() this.applyWithWindow(DTA.turboSendToDown, Array.map(arguments, function(e) e))
 		};
-	 	delete window.DTA_AddingFunctions;
-	 	return (window.DTA_AddingFunctions = rv);
+		delete window.DTA_AddingFunctions;
+		return (window.DTA_AddingFunctions = rv);
 	});
-	window.__defineGetter__('DTA_getLinkPrintMetalink', function() DTA.getLinkPrintMetalink);
-	window.__defineGetter__('DTA_URL', function() DTA.URL);
+	window.__defineGetter__('DTA_getLinkPrintMetalink', function() this.DTA.getLinkPrintMetalink);
+	window.__defineGetter__('DTA_URL', function() this.DTA.URL);
 };
