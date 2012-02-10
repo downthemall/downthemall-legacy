@@ -397,6 +397,7 @@ Chunk.prototype = {
 		this._sessionBytes = 0;
 		this._buffered = 0;
 		this._written = this.safeBytes;
+		delete this.download;
 
 		if (notifyOwner) {
 			this.parent.chunkClosed(this);
