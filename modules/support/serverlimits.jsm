@@ -49,7 +49,9 @@ var EXPORTED_SYMBOLS = [
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const module = Components.utils.import;
+const Cu = Components.utils;
+const module = Cu.import;
+const weak = Cu.getWeakReference;
 const Exception = Components.Exception;
 
 let Prefs = {};
@@ -191,7 +193,7 @@ let globalConnections = -1;
 
 function BaseScheduler() {}
 BaseScheduler.prototype = {
-	_queuedFilter: function(e) e.is(QUEUED),
+	_queuedFilter: function(e) e._state == QUEUED,
 	next: function() {
 		for (let d; this._schedule.length;) {
 			d = this._schedule.shift();
@@ -215,11 +217,18 @@ LegacyScheduler.prototype = {
 
 // Fast generator: Start downloads as in queue
 function FastScheduler(downloads, running) {
-	this._downloads = downloads.filter(this._queuedFilter);
+	this._downloads = [];
+	for (let i = 0, e = downloads.length; i < e; ++i) {
+		let d = downloads[i];
+		if (d._state == QUEUED) {
+			this._downloads.push(weak(d));
+		}
+	}
+	//this._downloads = downloads.filter(this._queuedFilter);
 }
 FastScheduler.prototype = {
 	__proto__: BaseScheduler.prototype,
-
+	_queuedFilter: function(e) {let d = e.get(); return d && d._state == QUEUED; },
 	_runCount: 0,
 	next: function(running) {
 		if (!this._downloads.length) {
@@ -259,9 +268,9 @@ FastScheduler.prototype = {
 		}
 
 		for (i = 0, e = this._downloads.length; i < e; ++i) {
-			d = this._downloads[i];
+			d = this._downloads[i].get();
 
-			if (d._state != QUEUED) {
+			if (!d || d._state != QUEUED) {
 				continue;
 			}
 			host = d.urlManager.domain;
@@ -296,7 +305,7 @@ function FairScheduler(downloads) {
 		if (!(host in this._downloadSet)) {
 			this._downloadSet[host] = new FairScheduler.SchedItem(host);
 		}
-		this._downloadSet[host].push(d);
+		this._downloadSet[host].push(weak(d));
 	}
 }
 FairScheduler.prototype = {
@@ -333,8 +342,8 @@ FairScheduler.prototype = {
 		// found an item?
 		if (e) {
 			while (e.length) {
-				d = e.shift();
-				if (d._state == QUEUED) {
+				d = e.shift().get();
+				if (d && d._state == QUEUED) {
 					break;
 				}
 				d = null;

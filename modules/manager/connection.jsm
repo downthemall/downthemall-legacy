@@ -43,6 +43,7 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 const module = Cu.import;
+const weak = Cu.getWeakReference;
 const Exception = Components.Exception;
 
 const NS_ERROR_MODULE_NETWORK = 0x804B0000;
@@ -89,8 +90,8 @@ const DISCONNECTION_CODES = [
 
 function Connection(d, c, isInfoGetter) {
 
-	this.d = d;
-	this.c = c;
+	this.d = weak(d);
+	this.c = weak(c);
 	this.isInfoGetter = isInfoGetter;
 	this.url = d.urlManager.getURL();
 
@@ -149,10 +150,10 @@ function Connection(d, c, isInfoGetter) {
 	}
 	this.prepareChannel(this._chan);
 
-	this.c.running = true;
+	c.running = true;
 	this._chan.asyncOpen(this, null);
 	if (Logger.enabled) {
-		Logger.log(this.c + "is now open");
+		Logger.log(c + "is now open");
 	}
 }
 
@@ -174,9 +175,13 @@ Connection.prototype = {
 	cantCount: false,
 
 	prepareChannel: function(chan) {
+		let d = this.d.get();
+		if (!d) {
+			return;
+		}
 		try {
 			if (chan instanceof Ci.nsISupportsPriority) {
-				if (this.d.forced) {
+				if (d.forced) {
 					chan.adjustPriority(Ci.nsISupportsPriority.PRIORITY_HIGHEST);
 				}
 				else {
@@ -190,13 +195,13 @@ Connection.prototype = {
 			}
 
 			if (chan instanceof Ci.nsIHttpChannel) {
-				let c = this.c;
+				let c = this.c.get();
 
 				// Cannot hash when compressed
 				chan.setRequestHeader("Accept-Encoding", "", false);
 
 				if (this.isInfoGetter) {
-					if (!this.d.fromMetalink) {
+					if (!d.fromMetalink) {
 						chan.setRequestHeader('Accept', 'application/metalink4+xml;q=0.9,application/metalink+xml;q=0.8', true);
 					}
 					chan.setRequestHeader('Want-Digest', DTA.WANT_DIGEST_STRING, false);
@@ -207,7 +212,7 @@ Connection.prototype = {
 					chan.setRequestHeader('Connection', 'close', false);
 				}
 
-				if (c.currentPosition > 0) {
+				if (c && c.currentPosition > 0) {
 					chan.setRequestHeader('Range', 'bytes=' + (c.currentPosition) + "-", false);
 					if (Logger.enabled) {
 						Logger.log("setting range");
@@ -270,13 +275,13 @@ Connection.prototype = {
 	// nsIInterfaceRequestor
 	getInterface: function DL_getInterface(iid) {
 		if (iid.equals(Ci.nsIAuthPrompt)) {
-			return this.d.AuthPrompts.authPrompter;
+			return this.d.get().AuthPrompts.authPrompter;
 		}
 		if (iid.equals(Ci.nsIPrompt)) {
-			return this.d.AuthPrompts.prompter;
+			return this.d.get().AuthPrompts.prompter;
 		}
 		if ('nsIAuthPrompt2' in Ci && iid.equals(Ci.nsIAuthPrompt2)) {
-			return this.d.AuthPrompts.authPrompter.QueryInterface(Ci.nsIAuthPrompt2);
+			return this.d.get().AuthPrompts.authPrompter.QueryInterface(Ci.nsIAuthPrompt2);
 		}
 		return this.QueryInterface(iid);
 	},
@@ -300,7 +305,11 @@ Connection.prototype = {
 		callback.onRedirectVerifyCallback(0);
 	},
 	onChannelRedirect: function DL_onChannelRedirect(oldChannel, newChannel, flags) {
-		let c = this.c;
+		let d = this.d.get();
+		let c = this.c.get();
+		if (!c || !d) {
+			return;
+		}
 		try {
 			if (!(oldChannel instanceof Ci.nsIChannel) || !(newChannel instanceof Ci.nsIChannel)) {
 				throw new Exception("redirect: requests not channels");
@@ -335,11 +344,11 @@ Connection.prototype = {
 		}
 		try {
 			let newurl = new DTA.URL(newChannel.URI.QueryInterface(Ci.nsIURL), this.url.preference);
-			this.d.fileName = newurl.usable.getUsableFileName();
+			d.fileName = newurl.usable.getUsableFileName();
 			if (oldChannel instanceof Ci.nsIHttpChannel && oldChannel.responseStatus == 302) {
 				return;
 			}
-			this.d.urlManager.replace(this.url, newurl);
+			d.urlManager.replace(this.url, newurl);
 			this.url = newurl;
 		}
 		catch (ex) {
@@ -350,8 +359,12 @@ Connection.prototype = {
 	},
 
 	verifyChunksStarted: function() {
+		let d = this.d.get();
+		if (!d) {
+			return false;
+		}
 		// XXX always check, not just .isInfoGetter?
-		if (!this.isInfoGetter || this.d.chunks.every(function(c) !c.running || !!c.sessionBytes)) {
+		if (!this.isInfoGetter || d.chunks.every(function(c) !c.running || !!c.sessionBytes)) {
 			// All running chunks received something at this point
 			return false;
 		}
@@ -362,7 +375,7 @@ Connection.prototype = {
 		}
 
 		// recombine affected chunks
-		let chunks = this.d.chunks;
+		let chunks = d.chunks;
 		for (let c, i = chunks.length - 1; i > 1 && (c = chunks[i]); --i) {
 			if (!c.running || !!c.sessionBytes) {
 				// Only check running chunks without bytes received
@@ -379,13 +392,13 @@ Connection.prototype = {
 
 			// We do not want to run into yet another timed out thing
 			// However, completely disabling chunks isn't really a great thing to do
-			if (this.d.maxChunks > 2) {
-				this.d.maxChunks--;
+			if (d.maxChunks > 2) {
+				d.maxChunks--;
 			}
 		}
 		if (Logger.enabled) {
 			Logger.log("Done respinning, new score board follows");
-			this.d.dumpScoreboard();
+			d.dumpScoreboard();
 		}
 		return true;
 	},
@@ -398,10 +411,11 @@ Connection.prototype = {
 		try {
 			// we want to kill ftp chans as well which do not seem to respond to
 			// cancel correctly.
-			if (this.c.write(aRequest, aInputStream, aCount) < 0) {
+			let c = this.c.get();
+			if (c && c.write(aRequest, aInputStream, aCount) < 0) {
 				// need to attempt another write after merging in verifyChunksStarted
 				if (this.verifyChunksStarted()
-						&& this.c.write(aRequest, aInputStream, aCount) >= 0) {
+						&& c.write(aRequest, aInputStream, aCount) >= 0) {
 					return;
 				}
 
@@ -418,7 +432,10 @@ Connection.prototype = {
 	},
 
 	writeFailed: function() {
-		this.d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+		let d = this.d.get();
+		if (d) {
+			d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+		}
 	},
 
 	// nsIFTPEventSink
@@ -434,8 +451,11 @@ Connection.prototype = {
 	},
 
 	handleError: function DL_handleError() {
-		let c = this.c;
-		let d = this.d;
+		let c = this.c.get();
+		let d = this.d.get();
+		if (!d || !c) {
+			return;
+		}
 
 		c.cancelChunk();
 		if (Logger.enabled) {
@@ -526,8 +546,11 @@ Connection.prototype = {
 		return false;
 	},
 	handleHttp: function DL_handleHttp(aChannel) {
-		let c = this.c;
-		let d = this.d;
+		let c = this.c.get();
+		let d = this.d.get();
+		if (!d || !c) {
+			return false;
+		}
 
 		let code = 0, status = 'Server returned nothing';
 		try {
@@ -683,8 +706,11 @@ Connection.prototype = {
 
 	// Generic handler for now :p
 	handleFtp: function  DL_handleFtp(aChannel) {
-		let c = this.c;
-		let d = this.d;
+		let c = this.c.get();
+		let d = this.d.get();
+		if (!d || !c) {
+			return false;
+		}
 		try {
 			let totalSize = 0;
 			try {
@@ -750,8 +776,11 @@ Connection.prototype = {
 	},
 
 	handleGeneric: function DL_handleGeneric(aChannel) {
-		var c = this.c;
-		var d = this.d;
+		let c = this.c.get();
+		let d = this.d.get();
+		if (!d || !c) {
+			return false;
+		}
 
 		// hack: determine if we are a multi-part chunk,
 		// if so something bad happened, 'cause we aren't supposed to be multi-part
@@ -790,8 +819,11 @@ Connection.prototype = {
 		{i:Ci.nsIChannel, f:'handleGeneric'}
 	],
 	onStartRequest: function DL_onStartRequest(aRequest, aContext) {
-		let c = this.c;
-		let d = this.d;
+		let c = this.c.get();
+		let d = this.d.get();
+		if (!d || !c) {
+			return;
+		}
 		if (Logger.enabled) {
 			Logger.log('StartRequest: ' + c);
 		}
@@ -877,8 +909,11 @@ Connection.prototype = {
 		}
 
 		// shortcuts
-		let c = this.c;
-		let d = this.d;
+		let c = this.c.get();
+		let d = this.d.get();
+		if (!d || !c) {
+			return;
+		}
 		c.close();
 
 		if (d.chunks.indexOf(c) == -1) {
@@ -996,8 +1031,11 @@ Connection.prototype = {
 	onProgress: function DL_onProgress(aRequest, aContext, aProgress, aProgressMax) {
 		try {
 			// shortcuts
-			let c = this.c;
-			let d = this.d;
+			let c = this.c.get();
+			let d = this.d.get();
+			if (!d || !c) {
+				return;
+			}
 
 			if (this.reexamine) {
 				if (Logger.enabled) {
