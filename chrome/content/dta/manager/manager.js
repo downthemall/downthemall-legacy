@@ -325,7 +325,7 @@ const Dialog = {
 
 				seq = Math.floor(seq / 100) * 100;
 
-				setTimeout(function() {
+				setTimeoutOnlyFun(function() {
 					let ndonation = nb.appendNotification(
 							_('nagtext', [seq]),
 							"donation",
@@ -1949,7 +1949,7 @@ QueueItem.prototype = {
 								self.complete(ex);
 								return;
 							}
-							window.setTimeout(function() move(self, ++x), x * 250);
+							setTimeoutOnlyFun(function() move(self, ++x), x * 250);
 							return;
 						}
 						self.complete();
@@ -3020,7 +3020,7 @@ addEventListener(
 		if (!window.arguments || !window.arguments.length) {
 			return;
 		}
-		setTimeout(
+		setTimeoutOnlyFun(
 			function() {
 				try {
 					window.QueryInterface(Ci.nsIDOMChromeWindow).minimize();

@@ -127,7 +127,7 @@ var Dialog = {
 				Logger.log('load', ex);
 			}
 		}
-		window.setTimeout(function() {
+		setTimeoutOnlyFun(function() {
 			window.sizeToContent();
 			addEventListener("resize", function() Dialog.resize(), true);
 		}, 0);

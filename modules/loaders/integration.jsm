@@ -443,8 +443,18 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
  */
 function load(window, outerEvent) {
 	let document = window.document;
-	let setTimeout = window.setTimeout;
-	let setInterval = window.setInterval;
+	let setTimeoutOnlyFun = function setTimeoutOnlyFun(c) {
+		if (typeof(c) != "function") {
+			throw new Error("do not call me with a string!");
+		}
+		return window.setTimeout.apply(window, arguments);
+	};
+	let setIntervalOnlyFun = function setIntervalOnlyFun(c) {
+		if (typeof(c) != "function") {
+			throw new Error("do not call me with a string!");
+		}
+		return window.setInterval.apply(window, arguments);
+	};
 	let clearInterval = window.clearInterval;
 	let gBrowser = window.gBrowser;
 
@@ -485,7 +495,7 @@ function load(window, outerEvent) {
 							null,
 							{timeout: timeout}
 							);
-					setTimeout(function() {
+					setTimeoutOnlyFun(function() {
 						window.PopupNotifications.remove(notification);
 					}, timeout);
 				}
@@ -509,7 +519,7 @@ function load(window, outerEvent) {
 						'chrome://dta/skin/toolbarbuttons/turbo.png',
 						nb[priority]
 						);
-					setTimeout(function() {
+					setTimeoutOnlyFun(function() {
 						nb.removeNotification(notification);
 					}, timeout);
 				}
@@ -636,10 +646,10 @@ function load(window, outerEvent) {
 			// long running fetching may confuse users, hence give them a hint that
 			// stuff is happening
 			let intervalfunc;
-			let _updateInterval = setInterval(intervalfunc = (function(isStarter) {
+			let _updateInterval = setIntervalOnlyFun(intervalfunc = (function(isStarter) {
 				if (isStarter) {
 					clearInterval(_updateInterval);
-					_updateInterval = setInterval(intervalfunc, 150, false);
+					_updateInterval = setIntervalOnlyFun(intervalfunc, 150, false);
 				}
 				if (urls.length + images.length) {
 					notifyProgress(getFormattedString('processing', urls.length, images.length));
@@ -1390,12 +1400,12 @@ function load(window, outerEvent) {
 			}
 			this._div.style.opacity = o.toString();
 			let tp = this;
-			setTimeout(function() tp.fade(), this.FINTERVAL);
+			setTimeoutOnlyFun(function() tp.fade(), this.FINTERVAL);
 			return true;
 		},
 		hide: function() {
 			let tp = this;
-			setTimeout(function() tp.fade(), this.FWAIT);
+			setTimeoutOnlyFun(function() tp.fade(), this.FWAIT);
 		}
 	};
 

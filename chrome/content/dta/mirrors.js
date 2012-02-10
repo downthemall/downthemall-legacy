@@ -333,7 +333,7 @@ function checkMirrors() {
 	else {
 		finish();
 	}
-	setTimeout(timeout, 20000);
+	setTimeoutOnlyFun(timeout, 20000);
 }
 
 addEventListener('load', load, true);

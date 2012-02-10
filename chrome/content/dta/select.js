@@ -375,7 +375,7 @@ let Dialog = {
 		let nb = this._notifications;
 		let n = nb.appendNotification(label, 0, null, priority, buttons);
 		if (isFinite(timeout) && timeout > 0) {
-			setTimeout(
+			setTimeoutOnlyFun(
 				function() {
 					nb.removeNotification(n);
 				},

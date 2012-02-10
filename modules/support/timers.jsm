@@ -58,7 +58,7 @@ function TimerData(owner, time, type, func, ctx) {
 		throw new Exception("callback function is null");
 	}
 	if (typeof this.func != 'function') {
-		this.func = new Function(this.func);
+		throw new Exception("callback function is not actually a function");
 	}
 	this.ctx = ctx;
 	this.timer = new Instances.Timer(this, time, type);
