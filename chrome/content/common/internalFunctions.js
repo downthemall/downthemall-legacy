@@ -414,10 +414,18 @@ __defineGetter__("DefaultDownloadsDirectory", function() {
 
 Object.defineProperty(window, "setTimeoutOnlyFun", {
 	value: function setTimeoutFun(cb, delay, p1, p2, p3) {
-		if (typeof(c) != "function") {
-			throw new Error("do not call me with a string!");
+		try {
+			if (typeof(cb) != "function") {
+					throw new Error("do not call me with a string! ");
+			}
+			return window.setTimeout.call(window, cb, delay, p1, p2, p3);
 		}
-		return window.setTimeout.apply(window, cb, delay, p1, p2, p3);
+		catch (ex) {
+			if (Logger.enabled) {
+				Logger.log(ex);
+			}
+			throw ex;
+		}
 	},
 	writable: false,
 	configurable: false,
