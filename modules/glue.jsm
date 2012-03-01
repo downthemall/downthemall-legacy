@@ -7,7 +7,7 @@
 "use strict";
 
 const EXPORTED_SYMBOLS = [
-	"XPCOMUtils", "Services", "Instances"
+	"XPCOMUtils", "Services", "Instances", "require", "lazyRequire"
 	];
 
 const {classes: Cc, interfaces: Ci, utils: Cu, Constructor: ctor} = Components;
@@ -122,3 +122,15 @@ LRUMap.prototype = {
 	}
 };
 EXPORTED_SYMBOLS.push("LRUMap");
+
+function require(uri, obj) module(uri, obj || Object.create(null));
+
+function lazyRequire(uri, symbols, obj) {
+	obj = obj || Object.create(null);
+	let _o = {};
+	XPCOMUtils.defineLazyGetter(_o, "module", function() require(uri));
+	for (let i = 0, e = symbols.length; i < e; ++i) {
+		let sym = symbols[i];
+		XPCOMUtils.defineLazyGetter(obj, sym, function() _o.module[sym]);
+	}
+}
