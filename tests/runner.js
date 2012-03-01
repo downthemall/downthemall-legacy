@@ -8,16 +8,10 @@ const Exception = Components.Exception;
 
 Cu.import("resource://dta/glue.jsm");
 
-function importModule(aSrc) {
-	var rv = {};
-	Cu.import(aSrc, rv);
-	return rv;
-}
-
 function checkExports(m, exports) {
 	deepEqual(
-		Object.keys(importModule(m)),
-		exports,
+		Object.keys(require(m)).sort(),
+		exports.sort(),
 		"Correct exports"
 		);
 }

@@ -5,20 +5,20 @@ test("exports", function() {
 });
 
 test("regular", function() {
-	var {getTextLinks} = importModule("resource://dta/support/textlinks.jsm");
+	var {getTextLinks} = require("resource://dta/support/textlinks.jsm");
 	deepEqual(getTextLinks("http://downthemall.net/"), ["http://downthemall.net/"]);
 	deepEqual(getTextLinks("https://downthemall.net/"), ["https://downthemall.net/"]);
 	deepEqual(getTextLinks("ftp://downthemall.net/"), ["ftp://downthemall.net/"]);
 });
 
 test("www", function() {
-	var {getTextLinks} = importModule("resource://dta/support/textlinks.jsm");
+	var {getTextLinks} = require("resource://dta/support/textlinks.jsm");
 	deepEqual(getTextLinks("www.downthemall.net"), ["http://www.downthemall.net/"]);
 	deepEqual(getTextLinks("downthemall.net/"), []);
 });
 
 test("hxp", function() {
-	var {getTextLinks} = importModule("resource://dta/support/textlinks.jsm");
+	var {getTextLinks} = require("resource://dta/support/textlinks.jsm");
 	deepEqual(getTextLinks("hp://downthemall.net/"), ["http://downthemall.net/"]);
 	deepEqual(getTextLinks("hxp://downthemall.net/"), ["http://downthemall.net/"]);
 	deepEqual(getTextLinks("hxxp://downthemall.net/"), ["http://downthemall.net/"]);
@@ -27,20 +27,20 @@ test("hxp", function() {
 });
 
 test("3dots", function() {
-	var {getTextLinks} = importModule("resource://dta/support/textlinks.jsm");
+	var {getTextLinks} = require("resource://dta/support/textlinks.jsm");
 	deepEqual(getTextLinks("http://downthemall.net/crop...ped"), []);
 	deepEqual(getTextLinks("http://downthemall.net/crop.....ped"), []);
 });
 
 test("sanitize", function() {
-	var {getTextLinks} = importModule("resource://dta/support/textlinks.jsm");
+	var {getTextLinks} = require("resource://dta/support/textlinks.jsm");
 	deepEqual(getTextLinks("<http://downthemall.net/>"), ["http://downthemall.net/"]);
 	deepEqual(getTextLinks("http://downthemall.net/#foo"), ["http://downthemall.net/"]);
 	deepEqual(getTextLinks("<http://downthemall.net/#foo>"), ["http://downthemall.net/"]);
 });
 
 test("FakeLink", function() {
-	var {FakeLink} = importModule("resource://dta/support/textlinks.jsm");
+	var {FakeLink} = require("resource://dta/support/textlinks.jsm");
 	var l = new FakeLink("http://downthemall.net/");
 	equal(l.href, "http://downthemall.net/", "href");
 	equal(l.toString(), "http://downthemall.net/", "toString");
