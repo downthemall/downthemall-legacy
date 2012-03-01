@@ -123,7 +123,11 @@ LRUMap.prototype = {
 };
 EXPORTED_SYMBOLS.push("LRUMap");
 
-function require(uri, obj) module(uri, obj || Object.create(null));
+function require(uri, obj) {
+	obj = obj || Object.create(null);
+	module(uri, obj);
+	return obj;
+}
 
 function lazyRequire(uri, symbols, obj) {
 	obj = obj || Object.create(null);
