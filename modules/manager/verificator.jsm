@@ -134,7 +134,11 @@ Verificator.prototype = {
 			new Callback(function() {
 				mainHash = new Instances.Hash(nsICryptoHash[hashCollection.full.type]);
 			}, true);
-			let stream = new Instances.FileInputStream(file, 0x01, 502 /* 0766*/, 0);
+			let flags = 0x04 | 0x08;
+			if ('OS_READAHEAD' in Ci.nsILocalFile) {
+				flags |= Ci.nsILocalFile.OS_READAHEAD;
+			}
+			let stream = new Instances.FileInputStream(file, flags, 502 /* 0766*/, 0);
 			try {
 				while (pending) {
 					if (this.terminated) {
@@ -187,7 +191,11 @@ MultiVerificator.prototype = {
 			new Callback(function() {
 				mainHash = new Instances.Hash(nsICryptoHash[hashCollection.full.type]);
 			}, true);
-			let stream = new Instances.FileInputStream(file, 0x01, 502 /* 0766 */, 0).QueryInterface(Ci.nsISeekableStream);
+			let flags = 0x04 | 0x08;
+			if ('OS_READAHEAD' in Ci.nsILocalFile) {
+				flags |= Ci.nsILocalFile.OS_READAHEAD;
+			}
+			let stream = new Instances.FileInputStream(file, flags, 502 /* 0766 */, 0).QueryInterface(Ci.nsISeekableStream);
 			let flushBytes = REGULAR_CHUNK;
 			try {
 				for each (let partial in hashCollection.partials) {
