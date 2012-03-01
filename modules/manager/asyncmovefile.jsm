@@ -48,7 +48,7 @@ require("resource://dta/support/optimpl.jsm", this);
 lazyRequire("resource://dta/utils.jsm", ["Logger"], this);
 
 var _moveFile = createOptimizedImplementation(
-	"resource://dta/manager/asyncmovefile_worker.js",
+	"resource://dta/manager/asyncmovefile/worker.js",
 	function(impl) function _moveFile_async(aLocalFileSrc, aLocalFileDst, aCallback) {
 		let data = Object.create(null);
 		data.src = aLocalFileSrc.path;

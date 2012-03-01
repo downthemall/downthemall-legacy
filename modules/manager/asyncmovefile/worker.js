@@ -36,7 +36,7 @@
 "use strict";
 
 try {
-	importScripts("asyncmovefile_worker_win.js");
+	importScripts("win.js");
 }
 catch (ex) {
 	throw ex;
