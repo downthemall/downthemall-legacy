@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll preallocation ChromeWorker Worker_mac module.
+ * The Original Code is DownThemAll preallocation ChromeWorker Worker_linux module.
  *
  * The Initial Developer of the Original Code is Nils Maier
  * Portions created by the Initial Developer are Copyright (C) 2011
@@ -35,7 +35,14 @@
  * ***** END LICENSE BLOCK ***** */
 "use strict";
 
-var libc = ctypes.open("libSystem.dylib");
+var libc = null;
+for each (let p in ["libc.so.6", "libc.so"]) {
+	try {
+		libc = ctypes.open(p);
+		break;
+	}
+	catch (ex) {}
+}
 if (!libc) {
 	throw new Error("no libc");
 }
@@ -65,38 +72,59 @@ const write = libc.declare(
 	ctypes.size_t // count
 	);
 
-const ftruncate = libc.declare(
-	"ftruncate",
-	ctypes.default_abi,
-	ctypes.int, // retval
-	ctypes.int, // fd
-	ctypes.int64_t // off64_t off
-	);
-const lseek = libc.declare(
-	"lseek",
-	ctypes.default_abi,
-	ctypes.int64_t, // retval
-	ctypes.int, // fd
-	ctypes.int64_t, // off64_t off
-	ctypes.int // whence
-	);
+var ftruncate = null;
+try {
+	ftruncate = libc.declare(
+		"ftruncate64",
+		ctypes.default_abi,
+		ctypes.int, // retval
+		ctypes.int, // fd
+		ctypes.int64_t // off64_t off
+		);
+}
+catch (ex) {
+	ftruncate = libc.declare(
+		"ftruncate",
+		ctypes.default_abi,
+		ctypes.int, // retval
+		ctypes.int, // fd
+		ctypes.int // off_t off
+		);
+	log("ftruncate");
+}
+
+var lseek = null;
+try {
+	lseek = libc.declare(
+		"lseek64",
+		ctypes.default_abi,
+		ctypes.int64_t, // retval
+		ctypes.int, // fd
+		ctypes.int64_t, // off64_t off
+		ctypes.int // whence
+		);
+}
+catch (ex) {
+	lseek = libc.declare(
+		"lseek",
+		ctypes.default_abi,
+		ctypes.int, // retval
+		ctypes.int, // fd
+		ctypes.int, // off_t off
+		cytpes.int // whence
+		);
+	log("lseek");
+}
+
 
 var _canceled = false;
 
-function log(ex) {
-	postMessage({
-		action: "log",
-		message: ex.message || ex,
-		lineNumber: ex.lineNumber || 0
-	});
-}
-
-function prealloc_impl(file, size, perms, sparseOk) {
+function prealloc(file, size, perms, sparseOk) {
 	var rv = false;
 	try {
 		let fd = open(
 			file,
-			0x1 | 0x200,
+			0x1 | 0x40,
 			perms
 			);
 		if (fd == -1) {
@@ -120,7 +148,7 @@ function prealloc_impl(file, size, perms, sparseOk) {
 					}
 
 					// Calculate next seek
-					let seek = Math.min(remainder, (1<<26));
+					let seek = Math.min(remainder, (1<<22));
 					lseek(fd, ctypes.Int64(seek), 0x1);
 					if (write(fd, "a", 1) != 1) {
 						throw new Error("Failed to write byte");
@@ -140,23 +168,3 @@ function prealloc_impl(file, size, perms, sparseOk) {
 	}
 	return rv;
 }
-
-onmessage = function(event) {
-	let data = event.data;
-
-	if (data.action == "alloc") {
-		let rv = prealloc_impl(data.file, data.size, data.perms, data.sparseOk);
-		postMessage({
-			action: "finish",
-			result: rv
-		});
-		return;
-	}
-
-	if (data.action == "cancel") {
-		_canceled = true;
-		libc.close();
-		close();
-		return;
-	}
-};

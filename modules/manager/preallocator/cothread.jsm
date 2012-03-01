@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll preallocation AsyncCopier module.
+ * The Original Code is DownThemAll preallocation CoThread module.
  *
  * The Initial Developer of the Original Code is Nils Maier
  * Portions created by the Initial Developer are Copyright (C) 2011
@@ -36,7 +36,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = ["prealloc_impl"];
+const EXPORTED_SYMBOLS = ["prealloc"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -47,11 +47,19 @@ const Exception = Components.Exception;
 
 module('resource://dta/glue.jsm');
 module('resource://dta/utils.jsm');
+module('resource://dta/version.jsm');
+module('resource://dta/cothread.jsm');
 
-const ss = new Instances.StringInputStream("a", 1);
-ss.QueryInterface(Ci.nsISeekableStream);
+// Should we use the optimized Windows implementation?
+const WINDOWSIMPL = Version.OS == 'winnt';
+// Size cap: Use Windows implementation (on Windows) even if run on main thread
+const WINDOWSIMPL_SIZEMAX = (1 << 25); // 32MB
 
-function prealloc_impl(file, size, perms, callback, sparseOk) {
+//Step size of the allocation
+//Do this step wise to avoid certain "sparse files" cases
+const SIZE_STEP = (1 << 23); // 8MB
+
+function prealloc(file, size, perms, sparseOk, callback) {
 	return new WorkerJob(file, size, perms, callback);
 }
 
@@ -61,85 +69,81 @@ function WorkerJob(file, size, perms, callback) {
 	this.perms = perms;
 	this.callback = callback;
 	try {
-		// Editor note: Safe use as an event target for nsIAsyncStreamCopier
-		this._thread = Services.tm.newThread(0);
-		if (this._thread instanceof Ci.nsISupportsPriority) {
-			this._thread.priority = this._thread.PRIORITY_LOWEST;
-		}
 		this._stream = new Instances.FileOutputStream(this.file, 0x02 | 0x08, this.perms, 0);
-		this._stream instanceof Ci.nsISeekableStream;
-		this.run();
 	}
 	catch (ex) {
-		this.finish();
+		this.callback(false);
+		return;
 	}
+
+	let g = this.run.bind(this);
+	this.coThread = new CoThreadInterleaved((i for (i in g())), 1);
+	this.coThread.start(this.finish.bind(this));
 }
 
 WorkerJob.prototype = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRequestObserver]),
 	result: false,
+	run: function worker_run() {
+		if (WINDOWSIMPL && this.size < WINDOWSIMPL_SIZEMAX) {
+			for (let i in this._run_windows()) yield i;
+		}
+		else {
+			for (let i in this._run_other()) yield i;
+		}
+	},
 	finish: function() {
-		if (this._stream) {
-			this._stream.close();
-			delete this._stream;
-		}
-		if (this._thread) {
-			try {
-				this._thread.shutdown();
-			} catch (ex) {}
-			delete this._thread;
-		}
+		this._close();
+		delete this.coThread;
 		this.callback(this.result);
 	},
-	run: function worker_run_windows() {
+	_run_windows: function worker_run_windows() {
+		let size = this.size;
 		try {
-			this._stream.seek(0x02, 0);
-			let pos = this._stream.tell();
-			if (pos >= this.size) {
-				this.result = true;
-				this.finish();
-				return;
+			let seekable = this._stream.QueryInterface(Ci.nsISeekableStream);
+			seekable.seek(0x02, 0);
+			size -= seekable.tell();
+			while (!this.terminated && size > 0) {
+				let count = Math.min(size, 1 << 26 /* 64MB */);
+				size -= count;
+				seekable.seek(0x01, count);
+				seekable.setEOF();
+				yield true;
 			}
-
-			let remainder = this.size - pos - 1;
-			let seek = Math.min(remainder, (1<<26));
-			this._stream.seek(0x01, seek);
-			ss.seek(0, 0);
-			let copier = new Instances.AsyncStreamCopier(
-				ss,
-				this._stream,
-				this._thread, // event target
-				true, // source buffered
-				false, // sink buffered
-				1,
-				false, // source close
-				false // sink close
-				);
-			copier.asyncCopy(this, null);
+			this.result = true;
 		}
 		catch (ex) {
 			if (Logger.enabled) {
-				Logger.log("pa: implementation failed!", ex);
+				Logger.log("pa: Windows implementation failed!", ex);
 			}
-			this.finish();
+			for (let i in this._run_other()) yield i;
 		}
 	},
-	onStartRequest: function(r,c) {},
-	onStopRequest: function(r, c, aStatusCode) {
-		if (this.terminated) {
-			this.finish();
-			return;
-		}
-		if (!Components.isSuccessCode(aStatusCode)) {
-			if (Logger.enabled) {
-				Logger.log("pa: not successful, " + aStatusCode);
+	_run_other: function worker_run_other() {
+		try {
+			let seekable = this._stream.QueryInterface(Ci.nsISeekableStream);
+			let i = seekable.tell();
+			if (i < this.size - 1) {
+				i += SIZE_STEP;
+				for (; !this.terminated && i < this.size + SIZE_STEP; i += SIZE_STEP) {
+					seekable.seek(0x00, Math.min(i, this.size - 1));
+					seekable.write("a", 1);
+					yield true;
+				}
+				this.result = true;
 			}
-			this.finish();
-			return;
 		}
-		this.run();
+		catch (ex) {
+			if (Logger.enabled) {
+				Logger.log("pa: Failed to run prealloc loop", ex);
+			}
+		}
+	},
+	_close: function() {
+		try { this._stream.close(); } catch (ex) { }
+		delete this._stream;
 	},
 	cancel: function() {
 		this.terminated = true;
+		this._close();
 	}
 };
