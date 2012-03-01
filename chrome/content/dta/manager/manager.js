@@ -2411,8 +2411,8 @@ QueueItem.prototype = {
 				file,
 				this.totalSize,
 				Prefs.permissions,
-				this._donePrealloc.bind(this),
-				Prefs.sparseFiles
+				Prefs.sparseFiles,
+				this._donePrealloc.bind(this)
 				);
 			if (pa) {
 				this.preallocating = true;
