@@ -42,7 +42,7 @@ module("historymanager.jsm");
 			h.reset();
 			ok(h.values && h.values.length, "values is set and not empty after reset");
 			h.push("dude");
-			equals(h.values[0], "dude", "pushing works");
+			equal(h.values[0], "dude", "pushing works");
 		}
 		finally {
 			s.restore();
@@ -58,7 +58,7 @@ module("historymanager.jsm");
 			deepEqual(h.values, [], "directory hist gets empty");
 			h.push("C:\\");
 			h.push("/home/");
-			equals(h.values.length, 1, "Validator at work");
+			equal(h.values.length, 1, "Validator at work");
 		}
 		finally {
 			s.restore();
