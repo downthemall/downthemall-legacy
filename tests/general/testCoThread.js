@@ -6,7 +6,7 @@ test("exports", function() {
 
 asyncTest("CoThread1", function() {
 	expect(2);
-	var {CoThread} = importModule("resource://dta/cothread.jsm");
+	var {CoThread} = require("resource://dta/cothread.jsm");
 	var hit = 0, hit2;
 	new CoThread(
 		function(count) {
@@ -22,7 +22,7 @@ asyncTest("CoThread1", function() {
 });
 asyncTest("CoThread10", function() {
 	expect(2);
-	var {CoThread} = importModule("resource://dta/cothread.jsm");
+	var {CoThread} = require("resource://dta/cothread.jsm");
 	var hit = 0, hit2;
 	new CoThread(
 			function(count) {
@@ -40,7 +40,7 @@ asyncTest("CoThread10", function() {
 
 asyncTest("CoThreadInterleaved", function() {
 	expect(1);
-	var {CoThreadInterleaved} = importModule("resource://dta/cothread.jsm");
+	var {CoThreadInterleaved} = require("resource://dta/cothread.jsm");
 	var hit = 0;
 	new CoThreadInterleaved(
 			function() {
@@ -55,7 +55,7 @@ asyncTest("CoThreadInterleaved", function() {
 });
 asyncTest("CoThreadInterleaved already_generator", function() {
 	expect(1);
-	var {CoThreadInterleaved} = importModule("resource://dta/cothread.jsm");
+	var {CoThreadInterleaved} = require("resource://dta/cothread.jsm");
 	var hit = 0;
 	new CoThreadInterleaved(
 			(function() {
@@ -71,7 +71,7 @@ asyncTest("CoThreadInterleaved already_generator", function() {
 
 asyncTest("CoThreadListWalker array", function() {
 	expect(1);
-	var {CoThreadListWalker} = importModule("resource://dta/cothread.jsm");
+	var {CoThreadListWalker} = require("resource://dta/cothread.jsm");
 	var hit = 0;
 	new CoThreadListWalker(
 			function() {
@@ -87,7 +87,7 @@ asyncTest("CoThreadListWalker array", function() {
 
 asyncTest("CoThreadListWalker generator", function() {
 	expect(1);
-	var {CoThreadListWalker} = importModule("resource://dta/cothread.jsm");
+	var {CoThreadListWalker} = require("resource://dta/cothread.jsm");
 	var hit = 0;
 	new CoThreadListWalker(
 			function() {

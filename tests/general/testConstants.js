@@ -18,7 +18,7 @@ test("exports", function() {
 });
 
 test("powers", function() {
-	var _m = importModule("resource://dta/constants.jsm");
+	var _m = require("resource://dta/constants.jsm");
 	[
 		'PAUSED',
 		'RUNNING',

@@ -5,7 +5,7 @@ module("historymanager.jsm");
 		this.setup();
 	}
 	SetupHistoryManager.prototype = {
-		prefs: importModule("resource://dta/preferences.jsm"),
+		prefs: require("resource://dta/preferences.jsm"),
 		setup: function () {
 			this.old = this.prefs.getExt(this.key, "");
 			this.prefs.resetExt(this.key);
@@ -20,7 +20,7 @@ module("historymanager.jsm");
 	});
 
 	test("regular", function() {
-		var {getHistory} = importModule("resource://dta/support/historymanager.jsm");
+		var {getHistory} = require("resource://dta/support/historymanager.jsm");
 		var h = getHistory("testHistory");
 		deepEqual(h.values, [], "new history must be empty");
 		h.push("foo");
@@ -36,7 +36,7 @@ module("historymanager.jsm");
 	test("filter", function() {
 		var s = new SetupHistoryManager("filter");
 		try {
-			var {getHistory} = importModule("resource://dta/support/historymanager.jsm");
+			var {getHistory} = require("resource://dta/support/historymanager.jsm");
 			var h = getHistory("filter");
 			ok(h.values && h.values.length, "values is set and not empty");
 			h.reset();
@@ -52,7 +52,7 @@ module("historymanager.jsm");
 	test("directory", function() {
 		var s = new SetupHistoryManager("directory");
 		try {
-			var {getHistory} = importModule("resource://dta/support/historymanager.jsm");
+			var {getHistory} = require("resource://dta/support/historymanager.jsm");
 			var h = getHistory("directory");
 			h.reset();
 			deepEqual(h.values, [], "directory hist gets empty");

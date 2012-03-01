@@ -6,7 +6,7 @@ test("exports", function() {
 
 
 asyncTest("getVersion", function() {
-	var {Version} = importModule("resource://dta/version.jsm");
+	var {Version} = require("resource://dta/version.jsm");
 	Version.getInfo(function(v) {
 		QUnit.start();
 		ok(Version == v, "callback gets fed back the original Version");
@@ -23,7 +23,7 @@ asyncTest("getVersion", function() {
 });
 
 asyncTest("compare", function() {
-	var {Version} = importModule("resource://dta/version.jsm");
+	var {Version} = require("resource://dta/version.jsm");
 	Version.getInfo(function(v) {
 		QUnit.start();
 		var cv = Version.compareVersion.bind(v);

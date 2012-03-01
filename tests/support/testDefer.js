@@ -6,7 +6,7 @@ test("exports", function() {
 
 asyncTest("defer", function() {
 	expect(1);
-	var {defer} = importModule("resource://dta/support/defer.jsm");
+	var {defer} = require("resource://dta/support/defer.jsm");
 	defer(function() {
 		QUnit.start();
 		ok("called");
@@ -15,7 +15,7 @@ asyncTest("defer", function() {
 
 asyncTest("defer this", function() {
 	expect(1);
-	var {defer} = importModule("resource://dta/support/defer.jsm");
+	var {defer} = require("resource://dta/support/defer.jsm");
 	var obj = {
 			ok: false,
 			fn: function() {
