@@ -43,67 +43,31 @@ const Cr = Components.results;
 const Cu = Components.utils;
 const module = Cu.import;
 
-module("resource://dta/glue.jsm");
+Cu.import("resource://dta/glue.jsm");
+require("resource://dta/support/optimpl.jsm", this);
+lazyRequire("resource://dta/utils.jsm", ["Logger"], this);
 
-function _moveFile_plain(aLocalFileSrc, aLocalFileDst, aCallback) {
-	try {
-		aLocalFileSrc.clone().moveTo(aLocalFileDst.parent, aLocalFileDst.leafName);
-		aCallback();
-	}
-	catch (ex) {
-		aCallback(ex);
-	}
-}
-var _moveFile = _moveFile_plain;
-
-try {
-	var _jobs = Object.create(null);
-
-	var _worker = new ChromeWorker("asyncmovefile_worker.js");
-	_worker.onerror = function(event) {
-		Cu.reportError("worker bailed early: " + event.message + ":" + event.lineno);
-		_worker = null;
-	}
-	_worker.onmessage = function(event) {
-		if (event.data) {
-			Cu.reportError("worker bailed: " + event.data);
-			return;
-		}
-
-		var observer = {
-			observe: function() {
-				Services.obs.removeObserver(this, "quit-application");
-				_moveFile = _moveFile_plain;
-				_worker.postMessage("close");
-				_worker = null;
-			}
-		};
-		Services.obs.addObserver(observer, "quit-application", false);
-
-		_worker.onmessage = function(event) {
-			let job = _jobs[event.data.uuid];
-			delete _jobs[event.data.uuid];
-			if (!job) {
-				Cu.reportError("Invalid asyncMoveFile job; something is rotten in the state of Denmark!");
-				return;
-			}
-			job(event.data.result ? null : "Worker failed to move file");
-		}
-		_moveFile = _moveFile_worker;
-	}
-	var _moveFile_worker = function _moveFile_worker(aLocalFileSrc, aLocalFileDst, aCallback) {
+var _moveFile = createOptimizedImplementation(
+	"resource://dta/manager/asyncmovefile_worker.js",
+	function(impl) function _moveFile_async(aLocalFileSrc, aLocalFileDst, aCallback) {
 		let data = Object.create(null);
 		data.src = aLocalFileSrc.path;
 		data.dst = aLocalFileDst.path;
-		data.uuid = Services.uuid.generateUUID().toString();
-		_jobs[data.uuid] = aCallback;
-		_worker.postMessage(data);
-	}
-}
-catch (ex) {
-	Cu.reportError("asyncMoveFile Worker threw; using plain");
-}
+		Logger.log("async");
+		return impl(data, aCallback);
+	},
+	function _moveFile_plain(aLocalFileSrc, aLocalFileDst, aCallback) {
+		Logger.log("plain");
+		try {
+			aLocalFileSrc.clone().moveTo(aLocalFileDst.parent, aLocalFileDst.leafName);
+			aCallback();
+		}
+		catch (ex) {
+			aCallback(ex);
+		}
+		return NullCancel;
+	});
 
 function asyncMoveFile(aLocalFileSrc, aLocalFileDst, aCallback) {
-	_moveFile(aLocalFileSrc, aLocalFileDst, aCallback);
+	_moveFile.callImpl(aLocalFileSrc, aLocalFileDst, aCallback);
 }
