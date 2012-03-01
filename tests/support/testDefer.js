@@ -21,7 +21,7 @@ asyncTest("defer this", function() {
 			fn: function() {
 				QUnit.start();
 				this.ok = true;
-				equals(this.ok, obj.ok, "binding works");
+				equal(this.ok, obj.ok, "binding works");
 			}
 	};
 	defer(obj.fn, obj);
