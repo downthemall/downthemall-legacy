@@ -1,38 +1,6 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is DownThemAll preallocator CoThread module.
- *
- * The Initial Developer of the Original Code is Nils Maier
- * Portions created by the Initial Developer are Copyright (C) 2011
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Nils Maier <MaierMan@web.de>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/ */
 
 "use strict";
 
@@ -44,41 +12,34 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const module = Cu.import;
 const Exception = Components.Exception;
 
-module('resource://dta/utils.jsm');
-module('resource://dta/version.jsm');
+Cu.import("resource://dta/glue.jsm");
+require("resource://dta/support/optimpl.jsm", this);
+const {Logger} = require("resource://dta/utils.jsm");
 
-try {
-	module("resource://dta/preallocation/worker.jsm");
-	if (Logger.enabled) {
-		Logger.log("Using ChromeWorker implementation");
-	}
-}
-catch (ex) {
-	let _c = {};
-	module("resource://dta/preallocation/cothread.jsm", _c);
-	let cothread_impl = _c.prealloc_impl;
-	try {
-		let _a = {};
-		module("resource://dta/preallocation/asynccopier.jsm", _a);
-		let asynccopier_impl = _a.prealloc_impl;
-		this.prealloc_impl = function(file, size, perms, callback, sparseOk) {
-			if (size < (1<<24)) {
-				return cothread_impl(file, size, perms, callback, sparseOk);
-			}
-			return asynccopier_impl(file, size, perms, callback, sparseOk);
+const _asynccopier = require("resource://dta/manager/preallocator/asynccopier.jsm").prealloc;
+const _cothread = require("resource://dta/manager/preallocator/cothread.jsm").prealloc;
+
+const SIZE_MIN = (require('resource://dta/version.jsm').Version.OS == 'winnt' ? 256 : 2048) * 1024;
+const SIZE_COTHREAD_MAX = (1<<24);
+
+const _impl = createOptimizedImplementation(
+	"resource://dta/manager/preallocator/worker.js",
+	function(impl) function (file, size, perms, sparseOK, callback) {
+		let data = Object.create(null);
+		data.file = file.path;
+		data.size = size;
+		data.perms = perms;
+		data.sparseOK = sparseOK;
+		return impl(data, callback);
+	},
+	function(file, size, perms, sparseOK, callback) {
+		if (size < SIZE_COTHREAD_MAX) {
+			return _cothread(file, size, perms, sparseOk, callback);
 		}
-	}
-	catch (ex) {
-		this.prealloc_impl = cothread_impl;
-	}
-}
-
-//Minimum size of a preallocation.
-//If requested size is less then no actual pre-allocation will be performed.
-const SIZE_MIN = (Version.OS == 'winnt' ? 256 : 2048) * 1024;
+		return _asynccopier(file, size, perms, sparseOk, callback);
+	});
 
 /**
  * Pre-allocates a given file on disk
@@ -91,14 +52,15 @@ const SIZE_MIN = (Version.OS == 'winnt' ? 256 : 2048) * 1024;
  * @param tp (function) Scope (this) to call the callback function in
  * @return (nsICancelable) Pre-allocation object.
  */
-function prealloc(file, size, perms, callback, sparseOk) {
-	callback = callback || function() {};
+function prealloc(file, size, perms, sparseOk, callback) {
 	if (size <= SIZE_MIN || !isFinite(size)) {
 		if (Logger.enabled) {
 			Logger.log("pa: not preallocating");
 		}
-		callback(false);
+		if (callback) {
+			callback(false);
+		}
 		return null;
 	}
-	return prealloc_impl(file, size, perms, callback, sparseOk);
+	return _impl.callImpl(file, size, perms, sparseOk, callback || function() {});
 }

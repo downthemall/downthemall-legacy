@@ -79,25 +79,17 @@ const DeviceIoControl = kernel32.declare(
 	ctypes.int, // BOOL retval
 	ctypes.intptr_t, // HANDLE hDevice,
 	ctypes.unsigned_int, // DWORD dwIoControlCode,
-  ctypes.voidptr_t, // LPVOID lpInBuffer,
-  ctypes.unsigned_int, // DWORD nInBufferSize,
-  ctypes.voidptr_t, // LPVOID lpOutBuffer,
-  ctypes.unsigned_int, // DWORD nOutBufferSize,
-  ctypes.unsigned_int.ptr, // LPDWORD lpBytesReturned,
-  ctypes.voidptr_t // LPOVERLAPPED lpOverlapped
+	ctypes.voidptr_t, // LPVOID lpInBuffer,
+	ctypes.unsigned_int, // DWORD nInBufferSize,
+	ctypes.voidptr_t, // LPVOID lpOutBuffer,
+	ctypes.unsigned_int, // DWORD nOutBufferSize,
+	ctypes.unsigned_int.ptr, // LPDWORD lpBytesReturned,
+	ctypes.voidptr_t // LPOVERLAPPED lpOverlapped
 );
 
 var _canceled = false;
 
-function log(ex) {
-	postMessage({
-		action: "log",
-		message: ex.message || ex,
-		lineNumber: ex.lineNumber || 0
-	});
-}
-
-function prealloc_impl(file, size, sparseOk) {
+function prealloc(file, size, sparseOk) {
 	var rv = false;
 	try {
 		let hFile = CreateFile(
@@ -166,23 +158,3 @@ function prealloc_impl(file, size, sparseOk) {
 	}
 	return rv;
 }
-
-onmessage = function(event) {
-	let data = event.data;
-
-	if (data.action == "alloc") {
-		let rv = prealloc_impl(data.file, data.size, data.sparseOk);
-		postMessage({
-			action: "finish",
-			result: rv
-		});
-		return;
-	}
-
-	if (data.action == "cancel") {
-		_canceled = true;
-		kernel32.close();
-		close();
-		return;
-	}
-};
