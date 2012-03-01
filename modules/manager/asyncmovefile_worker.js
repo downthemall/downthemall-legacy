@@ -50,10 +50,10 @@ onmessage = function(event) {
 	}
 
 	try {
-		data.result = moveFile(data.src, data.dst);
+		data.result = moveFile(data.src, data.dst) ? null : "Failed to move file";
 	}
 	catch (ex) {
-		data.result = false;
+		data.result = ex.message;
 	}
 	postMessage(data);
 }
