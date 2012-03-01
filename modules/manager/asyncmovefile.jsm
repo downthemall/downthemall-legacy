@@ -53,11 +53,9 @@ var _moveFile = createOptimizedImplementation(
 		let data = Object.create(null);
 		data.src = aLocalFileSrc.path;
 		data.dst = aLocalFileDst.path;
-		Logger.log("async");
 		return impl(data, aCallback);
 	},
 	function _moveFile_plain(aLocalFileSrc, aLocalFileDst, aCallback) {
-		Logger.log("plain");
 		try {
 			aLocalFileSrc.clone().moveTo(aLocalFileDst.parent, aLocalFileDst.leafName);
 			aCallback();
