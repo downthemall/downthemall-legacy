@@ -36,9 +36,9 @@ const _impl = createOptimizedImplementation(
 	},
 	function(file, size, perms, sparseOK, callback) {
 		if (size < SIZE_COTHREAD_MAX) {
-			return _cothread(file, size, perms, sparseOk, callback);
+			return _cothread(file, size, perms, sparseOK, callback);
 		}
-		return _asynccopier(file, size, perms, sparseOk, callback);
+		return _asynccopier(file, size, perms, sparseOK, callback);
 	});
 
 /**

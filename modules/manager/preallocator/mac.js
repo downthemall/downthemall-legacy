@@ -128,7 +128,7 @@ function prealloc(file, size, perms, sparseOk) {
 		}
 	}
 	catch (ex) {
-		log(ex)
+		log(ex);
 	}
 	return rv;
 }
