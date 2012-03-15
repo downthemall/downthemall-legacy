@@ -89,7 +89,7 @@ const DeviceIoControl = kernel32.declare(
 
 var _canceled = false;
 
-function prealloc(file, size, sparseOk) {
+function prealloc(file, size, perms, sparseOk) {
 	var rv = false;
 	try {
 		let hFile = CreateFile(

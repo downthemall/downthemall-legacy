@@ -33,7 +33,7 @@ onmessage = function(event) {
 	}
 
 	try {
-		data.result = prealloc(data.file, data.size, data.sparseOK);
+		data.result = prealloc(data.file, data.size, data.perms, data.sparseOK);
 	}
 	catch (ex) {
 		data.result = false;
