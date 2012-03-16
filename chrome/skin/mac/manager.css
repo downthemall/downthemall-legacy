@@ -47,3 +47,7 @@ toolbarspacer.visible {
 treecol > dropmarker {
 	-moz-appearance: none;
 }
+
+toolbar#tools > toolbarbutton {
+	list-style-image: url(tools.png);
+}
