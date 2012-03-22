@@ -16,7 +16,7 @@
 ]>
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="dtamacoverlay">
-	<window id="DownThemAll">
+	<window id="DownThemAll" fullscreenbutton="true">
 		<stringbundleset id="stringbundleset" />
 		<keyset id="baseMenuKeyset" />
 		<commandset id="baseMenuCommandSet" />

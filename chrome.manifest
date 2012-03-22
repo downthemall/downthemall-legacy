@@ -38,10 +38,10 @@ style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/integration
 ## toolkit ##
 overlay	chrome://mozapps/content/downloads/unknownContentType.xul	chrome://dta/content/integration/saveas.xul
 
-## Firefox / Flock / Songbird ##
+## Firefox ##
 overlay	chrome://browser/content/browser.xul	chrome://dta/content/integration/elements.xul
 style	chrome://browser/content/browser.xul	chrome://dta/skin/integration/style.css
-overlay chrome://dta/content/dta/mainmenu.xul    chrome://browser/content/baseMenuOverlay.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+overlay chrome://dta/content/dta/mac.xul    chrome://browser/content/baseMenuOverlay.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 
 # privacy control - Firefox starting 3.5
 overlay chrome://browser/content/preferences/sanitize.xul	chrome://dta/content/privacy/overlaySanitizePref191.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384} appversion>=3.0+
@@ -52,7 +52,7 @@ overlay	chrome://navigator/content/navigator.xul chrome://dta/content/integratio
 style	chrome://navigator/content/navigator.xul chrome://dta/skin/integration/style.css application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
 style	chrome://navigator/content/navigator.xul chrome://dta/skin/integration/seamonkey.css application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
 style	chrome://dta/content/dta/manager.xul chrome://dta/skin/manager/seamonkey.css application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
-overlay chrome://dta/content/dta/mainmenu.xul    chrome://communicator/content/tasksOverlay.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+overlay chrome://dta/content/dta/mac.xul    chrome://communicator/content/tasksOverlay.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
 
 ## Aero ##
 overlay chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager/aero.xul os=WINNT osversion>=6 application={ec8030f7-c20a-464f-9b0e-13a3a9e97384} appversion>=4.0b5
@@ -61,8 +61,8 @@ override chrome://dta-platform/skin/common.css chrome://dta-platform/skin/common
 override chrome://dta/skin/manager/netstatus.png chrome://dta-platform/skin/netstatus-aero.png os=WINNT osversion>=6
 
 ## Mac Main Menu ##
-overlay chrome://dta/content/dta/manager.xul chrome://dta/content/dta/mainmenu.xul os=Darwin application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
-overlay chrome://dta/content/dta/manager.xul chrome://dta/content/dta/mainmenu.xul os=Darwin application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+overlay chrome://dta/content/dta/manager.xul chrome://dta/content/dta/mac.xul os=Darwin application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+overlay chrome://dta/content/dta/manager.xul chrome://dta/content/dta/mac.xul os=Darwin application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
 
 # Hack to prevent .Net Framework Assistant from messing up the browser, courtesy of AdBlock Plus
 override chrome://dotnetassistant/content/bootstrap.xul data:text/xml,<nada/>
