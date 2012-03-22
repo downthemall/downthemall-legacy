@@ -152,74 +152,74 @@ MemoryReporter.prototype = {
 		// KIND_OTHER to stay forwards-compatible.
 		callback.callback(
 			this.process,
-			"downthemall/downloads/pending",
+			"downthemall-downloads-memory-pending",
 			Ci.nsIMemoryReporter.KIND_OTHER,
 			Ci.nsIMemoryReporter.UNITS_BYTES,
 			this._pendingBytes,
-			"Downloaded bytes waiting or in the process of being written to disk",
+			"Downloaded bytes waiting or in the process of being written to disk.",
 			closure
 			);
 		callback.callback(
 			this.process,
-			"downthemall/downloads/cached",
+			"downthemall-downloads-memory-cached",
 			Ci.nsIMemoryReporter.KIND_OTHER,
 			Ci.nsIMemoryReporter.UNITS_BYTES,
 			this._cachedBytes,
-			"Downloaded bytes in cache",
+			"Downloaded bytes currently residing in memory.",
 			closure
 			);
 		callback.callback(
 			this.process,
-			"downthemall/downloads/unused-overflow",
+			"downthemall-downloads-memory-overflow",
 			Ci.nsIMemoryReporter.KIND_OTHER,
 			Ci.nsIMemoryReporter.UNITS_BYTES,
 			this._overflow,
-			"Unused (overflow) buffer space",
+			"Unused memory that was (potentially) over-committed.",
 			closure
 			);
 		callback.callback(
 			this.process,
-			"downthemall/connections/active",
+			"downthemall-connections-active",
 			Ci.nsIMemoryReporter.KIND_OTHER,
 			Ci.nsIMemoryReporter.UNITS_COUNT,
 			this._chunksActive,
-			"Currently active connections (chunks)",
+			"Connections that are currently alive.",
 			closure
 			);
 		callback.callback(
 			this.process,
-			"downthemall/connections/scheduled",
+			"downthemall-connections-suspended",
 			Ci.nsIMemoryReporter.KIND_OTHER,
 			Ci.nsIMemoryReporter.UNITS_COUNT,
 			this._chunksScheduled,
-			"Currently scheduled/suspended connections (chunks)",
+			"Connections that are currently suspended, e.g. due to speed limits or memory concerns.",
 			closure
 			);
 		callback.callback(
 			this.process,
-			"downthemall/connections/total",
+			"downthemall-connections-total",
 			Ci.nsIMemoryReporter.KIND_OTHER,
 			Ci.nsIMemoryReporter.UNITS_COUNT,
 			this.chunks.length,
-			"Current total connections (chunks)",
+			"Total number of connections that are currently in use by DownThemAll!.",
 			closure
 			);
 		callback.callback(
 			this.process,
-			"downthemall/session/connections",
+			"downthemall-session-connections",
 			Ci.nsIMemoryReporter.KIND_OTHER,
 			Ci.nsIMemoryReporter.UNITS_COUNT_CUMULATIVE,
 			this.session.chunks,
-			"Total connections (chunks) in this session",
+			"Total connections (chunks) created during this session.",
 			closure
 			);
 		callback.callback(
 			this.process,
-			"downthemall/session/bytes-received",
+			"downthemall-session-bytes",
 			Ci.nsIMemoryReporter.KIND_OTHER,
 			Ci.nsIMemoryReporter.UNITS_BYTES,
 			this.session.written,
-			"Total bytes received in this session",
+			"Total bytes received during this session.",
 			closure
 			);
 	},
