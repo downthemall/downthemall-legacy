@@ -2383,6 +2383,12 @@ QueueItem.prototype = {
 			this._notifyPreallocation = [callback];
 		}
 	},
+	createDirectory: function QI_createDirectory(file) {
+		if (file.parent.exists()) {
+			return;
+		}
+		file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
+	},
 	prealloc: function QI_prealloc(callback) {
 		let file = this.tmpFile;
 
@@ -2404,9 +2410,7 @@ QueueItem.prototype = {
 		}
 
 		if (!file.exists() || this.totalSize != this.size) {
-			if (!file.parent.exists()) {
-				file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
-			}
+			this.createDirectory(file);
 			let pa = Preallocator.prealloc(
 				file,
 				this.totalSize,
@@ -2561,6 +2565,7 @@ QueueItem.prototype = {
 			if (Logger.enabled) {
 				Logger.log("started: " + chunk);
 			}
+			download.createDirectory(download.tmpFile);
 			chunk.download = new Connection(download, chunk, header || download.mustGetInfo);
 			download.mustGetInfo = false;
 			++download.activeChunks;
