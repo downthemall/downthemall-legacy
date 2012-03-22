@@ -16,7 +16,8 @@
 ]>
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="dtamacoverlay">
-	<window id="DownThemAll" fullscreenbutton="true">
+	<!-- XXX: re-enable fullscreenbutton once more stable -->
+	<window id="DownThemAll" fullscreenbutton=false>
 		<stringbundleset id="stringbundleset" />
 		<keyset id="baseMenuKeyset" />
 		<commandset id="baseMenuCommandSet" />
