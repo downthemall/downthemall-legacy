@@ -238,8 +238,8 @@ const Prefs = {
 			if (this.tempLocation == '') {
 				// #44: generate a default tmp dir on per-profile basis
 				// hash the profD, as it would be otherwise a minor information leak
-				this.tempLocation = Service.dirsvc.get("TmpD", Ci.nsIFile);
-				let profD = hash(Service.dirsvc.get("ProfD", Ci.nsIFile).leafName);
+				this.tempLocation = Services.dirsvc.get("TmpD", Ci.nsIFile);
+				let profD = hash(Services.dirsvc.get("ProfD", Ci.nsIFile).leafName);
 				this.tempLocation.append("dtatmp-" + profD);
 			}
 			else {
@@ -305,6 +305,9 @@ const Prefs = {
 			}
 		}
 		catch (ex) {
+			if (Logger.enabled) {
+				Logger.log("failed to set up temp directory: " + (this.tempLocation ? this.tempLocation.path || this.tempLocation : "null"), ex);
+			}
 			this.tempLocation = null;
 			// XXX: error handling
 		}

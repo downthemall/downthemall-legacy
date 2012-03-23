@@ -380,8 +380,8 @@ function hash(value, algorithm, encoding, datalen) {
 		ch.updateFromStream(value, datalen > 0 ? datalen : 0xffffffff);
 	}
 	else {
-		Services.uniconverter.charset = 'utf8';
-		value = converter.convertToByteArray(Utils.atos(value), {});
+		Instances.uniconverter.charset = 'utf8';
+		value = Instances.uniconverter.convertToByteArray(Utils.atos(value), {});
 		ch.update(value, value.length);
 	}
 	var rv = ch.finish(encoding == HASH_B64);
