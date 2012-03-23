@@ -49,4 +49,4 @@ const MoveFileEx = kernel32.declare(
 	ctypes.unsigned_int // DWORD dwFlags
 	);
 
-function moveFile(src, dst) MoveFileEx(src, dst, dwFlags);
+function moveFile(src, dst, perms) MoveFileEx(src, dst, dwFlags);

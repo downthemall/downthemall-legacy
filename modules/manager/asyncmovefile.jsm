@@ -49,13 +49,14 @@ lazyRequire("resource://dta/utils.jsm", ["Logger"], this);
 
 var _moveFile = createOptimizedImplementation(
 	"resource://dta/manager/asyncmovefile/worker.js",
-	function(impl) function _moveFile_async(aLocalFileSrc, aLocalFileDst, aCallback) {
+	function(impl) function _moveFile_async(aLocalFileSrc, aLocalFileDst, aPermissions, aCallback) {
 		let data = Object.create(null);
 		data.src = aLocalFileSrc.path;
 		data.dst = aLocalFileDst.path;
+		data.permissions = aPermissions;
 		return impl(data, aCallback);
 	},
-	function _moveFile_plain(aLocalFileSrc, aLocalFileDst, aCallback) {
+	function _moveFile_plain(aLocalFileSrc, aLocalFileDst, aPermissions, aCallback) {
 		try {
 			aLocalFileSrc.clone().moveTo(aLocalFileDst.parent, aLocalFileDst.leafName);
 			aCallback();
@@ -66,6 +67,6 @@ var _moveFile = createOptimizedImplementation(
 		return NullCancel;
 	});
 
-function asyncMoveFile(aLocalFileSrc, aLocalFileDst, aCallback) {
-	_moveFile.callImpl(aLocalFileSrc, aLocalFileDst, aCallback);
+function asyncMoveFile(aLocalFileSrc, aLocalFileDst, aPermissions, aCallback) {
+	_moveFile.callImpl(aLocalFileSrc, aLocalFileDst, aPermissions, aCallback);
 }
