@@ -371,7 +371,7 @@ Connection.prototype = {
 		// Other downloads didn't start; assume the worst
 		if (Logger.enabled) {
 			Logger.log("Need to recombine chunks; not all started");
-			this.d.dumpScoreboard();
+			d.dumpScoreboard();
 		}
 
 		// recombine affected chunks
