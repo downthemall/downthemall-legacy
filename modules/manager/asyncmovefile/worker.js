@@ -43,7 +43,17 @@ catch (ex) {
 		importScripts("mac.js");
 	} 
 	catch (ex) {
-		throw ex; //new Error("No supported native movefile implementation");
+		try {
+			importScripts("unix_splice.js");
+		}
+		catch (ex) {  
+			try {
+				importScripts("unix_copy.js");
+			}
+			catch (ex) {
+				throw new Error("No supported native movefile implementation");
+			}
+		}
 	}
 }
 
