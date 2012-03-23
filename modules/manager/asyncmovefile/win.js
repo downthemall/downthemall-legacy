@@ -35,18 +35,21 @@
  * ***** END LICENSE BLOCK ***** */
 "use strict";
 
-const MOVEFILE_REPLACE_EXISTING = 0x1;
-const MOVEFILE_COPY_ALLOWED = 0x2;
-const MOVEFILE_WRITE_THROUGH = 0x8;
-const dwFlags = MOVEFILE_REPLACE_EXISTING | MOVEFILE_COPY_ALLOWED | MOVEFILE_WRITE_THROUGH;
-const kernel32 = ctypes.open("kernel32.dll");
-const MoveFileEx = kernel32.declare(
-	"MoveFileExW",
-	ctypes.winapi_abi,
-	ctypes.int, // BOOL retval,
-	ctypes.jschar.ptr, // LPCTSTR lpExistingFileName,
-	ctypes.jschar.ptr, // LPCTSTR lpNewFileName,
-	ctypes.unsigned_int // DWORD dwFlags
-	);
-
-function moveFile(src, dst, perms) MoveFileEx(src, dst, dwFlags);
+var moveFile = (function() {
+	const MOVEFILE_REPLACE_EXISTING = 0x1;
+	const MOVEFILE_COPY_ALLOWED = 0x2;
+	const MOVEFILE_WRITE_THROUGH = 0x8;
+	const dwFlags = MOVEFILE_REPLACE_EXISTING | MOVEFILE_COPY_ALLOWED | MOVEFILE_WRITE_THROUGH;
+	
+	const kernel32 = ctypes.open("kernel32.dll");
+	const MoveFileEx = kernel32.declare(
+		"MoveFileExW",
+		ctypes.winapi_abi,
+		ctypes.int, // BOOL retval,
+		ctypes.jschar.ptr, // LPCTSTR lpExistingFileName,
+		ctypes.jschar.ptr, // LPCTSTR lpNewFileName,
+		ctypes.unsigned_int // DWORD dwFlags
+		);
+	
+	return function moveFile_win(src, dst, perms) MoveFileEx(src, dst, dwFlags);
+})();
