@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll asyncmovefile ChromeWorker Worker_Mac module.
+ * The Original Code is DownThemAll asyncmovefile ChromeWorker Worker_Unix_splice module.
  *
  * The Initial Developer of the Original Code is Nils Maier
  * Portions created by the Initial Developer are Copyright (C) 2012
@@ -35,8 +35,25 @@
  * ***** END LICENSE BLOCK ***** */
 "use strict";
 
+/* splice()ing is basically low-level sendfile() where the pipe acts as
+ * the copy buffer.
+ * This ways, there is no need for additional user-land buffers and it
+ * also avoids passing the actual data between the kernel and the user land,
+ * which might result in a massive performance improvement.
+ */ 
+
 var moveFile = (function() {
-	const libc = ctypes.open("libSystem.dylib");
+	const BUFSIZE = 1<<17;
+	const SPLICE_F_MORE = 4;
+	
+	var libc = null;
+	for each (let p in ["libc.so.6", "libc.so"]) {
+		try {
+			libc = ctypes.open(p);
+			break;
+		}
+		catch (ex) {}
+	}
 	if (!libc) {
 		throw new Error("no libc");
 	}
@@ -47,7 +64,6 @@ var moveFile = (function() {
 		ctypes.int, // retval
 		ctypes.char.ptr, // old
 		ctypes.char.ptr // new
-		
 		);
 	
 	const unlink = libc.declare(
@@ -73,69 +89,80 @@ var moveFile = (function() {
 		ctypes.int // fd
 		);
 	
-	const read = libc.declare(
-		"read",
+	const pipe_t = ctypes.ArrayType(ctypes.int, 2);
+	const pipe = libc.declare(
+		"pipe",
 		ctypes.default_abi,
-		ctypes.ssize_t, // retval
-		ctypes.int, // fd
-		ctypes.voidptr_t, // buf
-		ctypes.size_t // count
+		ctypes.int, // retval
+		pipe_t // pipefd
 		);
 	
-	const write = libc.declare(
-		"write",
+	const splice = libc.declare(
+		"splice",
 		ctypes.default_abi,
 		ctypes.ssize_t, // retval
-		ctypes.int, // fd
-		ctypes.voidptr_t, // buf
-		ctypes.size_t // count
+		ctypes.int, // fd_in
+		ctypes.voidptr_t, // off_in,
+		ctypes.int, // fd_out
+		ctypes.voidptr_t, // off_out,
+		ctypes.size_t, // len,
+		ctypes.unsigned_int // flags
 		);
 	
-	
-	const BUFSIZE = 1<<16;
-	const BUFFER = new ctypes.ArrayType(ctypes.char, BUFSIZE)();
-	
-	return function moveFile_mac(src, dst, perms) {
+	return function moveFile_unix_splice(src, dst, perms) {
 		if (rename(src, dst) == 0) {
 			return true;
 		}
 		
 		// rename did not work; copy! :p
 		let rv = false;
-		let fds = open(src, 0x0, perms);
-		if (fds == -1) {
-			throw new Error("Failed to open source file: " + src);
+	
+		let pfd = new pipe_t();
+		if (pipe(pfd) == -1) {
+			throw new Error("Failed to create pipe");
 		}
+		let [pread, pwrite] = pfd;
+		
 		try {
-			let fdd = open(dst, 0x1 | 0x200 | 0x400, perms);
-			if (fdd == -1) {
-				throw new Error("Failed to open destination file: " + dst);
+			let fds = open(src, 0x0, perms);
+			if (fds == -1) {
+				throw new Error("Failed to open source file: " + src);
 			}
 			try {
-				for (;;) {
-					let size = read(fds, BUFFER, BUFSIZE);
-					if (size == -1) {
-						throw new Error("Failed to read some data");
-					}
-					else if (size == 0) {
-						break; // done
-					}
-					let written = write(fdd, BUFFER, size);
-					if (written - size != 0) {
-						throw new Error("Failed to write some data: " + written + "/" + size);
-					} 
+				let fdd = open(dst, 0x1 | 0x40 | 0x200, perms);
+				if (fdd == -1) {
+					throw new Error("Failed to open destination file: " + dst);
 				}
-				rv = true;
+				try {
+					for(;;) {
+						let size = splice(fds, null, pwrite, null, BUFSIZE, 0);
+						if (size == -1) {
+							throw new Error("Failed to fill pipe");
+						}
+						else if (size == 0) {
+							break;
+						}
+						let written = splice(pread, null, fdd, null, size, (size - BUFSIZE == 0) ? 0 : SPLICE_F_MORE);
+						if (written - size != 0) {
+							throw new Error("Failed to drain pipe");
+						}
+					}
+					rv = true;
+				}
+				finally {
+					closeFd(fdd);
+					if (!rv) {
+						unlink(dst);
+					}
+				}
 			}
 			finally {
-				closeFd(fdd);
-				if (!rv) {
-					unlink(dst);
-				}
+				closeFd(fds);
 			}
 		}
 		finally {
-			closeFd(fds);
+			closeFd(pread);
+			closeFd(pwrite);
 		}
 		if (rv) {
 			unlink(src);

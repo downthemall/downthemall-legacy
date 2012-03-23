@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll asyncmovefile ChromeWorker Worker_Mac module.
+ * The Original Code is DownThemAll asyncmovefile ChromeWorker Worker_Unix_copy module.
  *
  * The Initial Developer of the Original Code is Nils Maier
  * Portions created by the Initial Developer are Copyright (C) 2012
@@ -36,7 +36,14 @@
 "use strict";
 
 var moveFile = (function() {
-	const libc = ctypes.open("libSystem.dylib");
+	var libc = null;
+	for each (let p in ["libc.so.6", "libc.so"]) {
+		try {
+			libc = ctypes.open(p);
+			break;
+		}
+		catch (ex) {}
+	}
 	if (!libc) {
 		throw new Error("no libc");
 	}
@@ -95,7 +102,7 @@ var moveFile = (function() {
 	const BUFSIZE = 1<<16;
 	const BUFFER = new ctypes.ArrayType(ctypes.char, BUFSIZE)();
 	
-	return function moveFile_mac(src, dst, perms) {
+	return function moveFile_unix_copy(src, dst, perms) {
 		if (rename(src, dst) == 0) {
 			return true;
 		}
@@ -107,7 +114,7 @@ var moveFile = (function() {
 			throw new Error("Failed to open source file: " + src);
 		}
 		try {
-			let fdd = open(dst, 0x1 | 0x200 | 0x400, perms);
+			let fdd = open(dst, 0x1 | 0x40 | 0x200, perms);
 			if (fdd == -1) {
 				throw new Error("Failed to open destination file: " + dst);
 			}
