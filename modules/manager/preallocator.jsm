@@ -55,12 +55,15 @@ const _impl = createOptimizedImplementation(
 function prealloc(file, size, perms, sparseOk, callback) {
 	if (size <= SIZE_MIN || !isFinite(size)) {
 		if (Logger.enabled) {
-			Logger.log("pa: not preallocating");
+			Logger.log("pa: not preallocating: " + file);
 		}
 		if (callback) {
 			callback(false);
 		}
 		return null;
+	}
+	if (Logger.enabled) {
+		Logger.log("pa: preallocating: " + file + " size: " + size);
 	}
 	return _impl.callImpl(file, size, perms, sparseOk, callback || function() {});
 }

@@ -35,136 +35,135 @@
  * ***** END LICENSE BLOCK ***** */
 "use strict";
 
-var libc = null;
-for each (let p in ["libc.so.6", "libc.so"]) {
-	try {
-		libc = ctypes.open(p);
-		break;
-	}
-	catch (ex) {}
-}
-if (!libc) {
-	throw new Error("no libc");
-}
-
-const open = libc.declare(
-	"open",
-	ctypes.default_abi,
-	ctypes.int, // retval
-	ctypes.char.ptr, // path
-	ctypes.int, // flags
-	ctypes.uint32_t // mode_t mode
-	);
-
-const closeFd = libc.declare(
-	"close",
-	ctypes.default_abi,
-	ctypes.int, // retval
-	ctypes.int // fd
-	);
-
-const write = libc.declare(
-	"write",
-	ctypes.default_abi,
-	ctypes.ssize_t, // retval
-	ctypes.int, // fd
-	ctypes.char.ptr, // buf
-	ctypes.size_t // count
-	);
-
-var ftruncate = null;
-try {
-	ftruncate = libc.declare(
-		"ftruncate64",
-		ctypes.default_abi,
-		ctypes.int, // retval
-		ctypes.int, // fd
-		ctypes.int64_t // off64_t off
-		);
-}
-catch (ex) {
-	ftruncate = libc.declare(
-		"ftruncate",
-		ctypes.default_abi,
-		ctypes.int, // retval
-		ctypes.int, // fd
-		ctypes.int // off_t off
-		);
-	log("ftruncate");
-}
-
-var lseek = null;
-try {
-	lseek = libc.declare(
-		"lseek64",
-		ctypes.default_abi,
-		ctypes.int64_t, // retval
-		ctypes.int, // fd
-		ctypes.int64_t, // off64_t off
-		ctypes.int // whence
-		);
-}
-catch (ex) {
-	lseek = libc.declare(
-		"lseek",
-		ctypes.default_abi,
-		ctypes.int, // retval
-		ctypes.int, // fd
-		ctypes.int, // off_t off
-		cytpes.int // whence
-		);
-	log("lseek");
-}
-
-
-var _canceled = false;
-
-function prealloc(file, size, perms, sparseOk) {
-	var rv = false;
-	try {
-		let fd = open(
-			file,
-			0x1 | 0x40,
-			perms
-			);
-		if (fd == -1) {
-			throw new Error("Failed to open file");
-		}
+var prealloc = (function() {
+	var libc = null;
+	for each (let p in ["libc.so.6", "libc.so"]) {
 		try {
-			if (sparseOk) {
-				log("allocating sparse");
-				ftruncate(fd, ctypes.Int64(size));
-			}
-			else {
-				--size;
-				while (!_canceled) {
-					// Get end of the file
-					let current = lseek(fd, ctypes.Int64(0), 0x2);
-
-					// See if we still need to preallocate
-					let remainder = size - current;
-					if (remainder <= 0) {
-						break;
-					}
-
-					// Calculate next seek
-					let seek = Math.min(remainder, (1<<22));
-					lseek(fd, ctypes.Int64(seek), 0x1);
-					if (write(fd, "a", 1) != 1) {
-						throw new Error("Failed to write byte");
-					}
-				}
-			}
-
-			// all good
-			rv = true;
+			libc = ctypes.open(p);
+			break;
 		}
-		finally {
-			closeFd(fd);
-		}
+		catch (ex) {}
+	}
+	if (!libc) {
+		throw new Error("no libc");
+	}
+	
+	const open = libc.declare(
+		"open",
+		ctypes.default_abi,
+		ctypes.int, // retval
+		ctypes.char.ptr, // path
+		ctypes.int, // flags
+		ctypes.uint32_t // mode_t mode
+		);
+	
+	const closeFd = libc.declare(
+		"close",
+		ctypes.default_abi,
+		ctypes.int, // retval
+		ctypes.int // fd
+		);
+	
+	const write = libc.declare(
+		"write",
+		ctypes.default_abi,
+		ctypes.ssize_t, // retval
+		ctypes.int, // fd
+		ctypes.char.ptr, // buf
+		ctypes.size_t // count
+		);
+	
+	var ftruncate = null;
+	try {
+		ftruncate = libc.declare(
+			"ftruncate64",
+			ctypes.default_abi,
+			ctypes.int, // retval
+			ctypes.int, // fd
+			ctypes.int64_t // off64_t off
+			);
 	}
 	catch (ex) {
-		log(ex)
+		ftruncate = libc.declare(
+			"ftruncate",
+			ctypes.default_abi,
+			ctypes.int, // retval
+			ctypes.int, // fd
+			ctypes.int // off_t off
+			);
+		log("ftruncate");
 	}
-	return rv;
-}
+	
+	var lseek = null;
+	try {
+		lseek = libc.declare(
+			"lseek64",
+			ctypes.default_abi,
+			ctypes.int64_t, // retval
+			ctypes.int, // fd
+			ctypes.int64_t, // off64_t off
+			ctypes.int // whence
+			);
+	}
+	catch (ex) {
+		lseek = libc.declare(
+			"lseek",
+			ctypes.default_abi,
+			ctypes.int, // retval
+			ctypes.int, // fd
+			ctypes.int, // off_t off
+			cytpes.int // whence
+			);
+		log("lseek");
+	}
+	
+	return function prealloc_linux(file, size, perms, sparseOk) {
+		var rv = false;
+		try {
+			let fd = open(
+				file,
+				0x1 | 0x40,
+				perms
+				);
+			if (fd == -1) {
+				throw new Error("Failed to open file");
+			}
+			try {
+				if (sparseOk) {
+					log("allocating sparse");
+					ftruncate(fd, ctypes.Int64(size));
+				}
+				else {
+					--size;
+					for(;;) {
+						// Get end of the file
+						let current = lseek(fd, ctypes.Int64(0), 0x2);
+	
+						// See if we still need to preallocate
+						let remainder = size - current;
+						if (remainder <= 0) {
+							break;
+						}
+	
+						// Calculate next seek
+						let seek = Math.min(remainder, (1<<22));
+						lseek(fd, ctypes.Int64(seek), 0x1);
+						if (write(fd, "a", 1) != 1) {
+							throw new Error("Failed to write byte");
+						}
+					}
+				}
+	
+				// all good
+				rv = true;
+			}
+			finally {
+				closeFd(fd);
+			}
+		}
+		catch (ex) {
+			log(ex)
+		}
+		return rv;
+	};
+})();
