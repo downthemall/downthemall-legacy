@@ -81,7 +81,7 @@ const TextCache = {};
 addEventListener("load", function load_textCache() {
 	removeEventListener("load", load_textCache, false);
 
-	const texts = ['paused', 'queued', 'complete', 'canceled', 'nas', 'unknown', 'offline', 'timeout', 'starting', 'decompress', 'verify'];
+	const texts = ['paused', 'queued', 'complete', 'canceled', 'nas', 'unknown', 'offline', 'timeout', 'starting', 'decompress', 'verify', 'moving'];
 	for (let i = 0, text; i < texts.length; ++i) {
 		text = texts[i];
 		TextCache[text.toUpperCase()] = _(text);
@@ -1936,8 +1936,9 @@ QueueItem.prototype = {
 				new Decompressor(this);
 			}
 			else {
+				this.status = TextCache.MOVING;
 				function move(self, x) {
-					asyncMoveFile(self.tmpFile, destination, function (ex) {
+					asyncMoveFile(self.tmpFile, destination, Prefs.permissions, function (ex) {
 						try {
 							if (ex) {
 								throw new Exception(ex);
