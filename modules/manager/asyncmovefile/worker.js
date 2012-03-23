@@ -39,7 +39,12 @@ try {
 	importScripts("win.js");
 }
 catch (ex) {
-	throw ex;
+	try {
+		importScripts("mac.js");
+	} 
+	catch (ex) {
+		throw ex; //new Error("No supported native movefile implementation");
+	}
 }
 
 onmessage = function(event) {
@@ -50,10 +55,10 @@ onmessage = function(event) {
 	}
 
 	try {
-		data.result = moveFile(data.src, data.dst) ? null : "Failed to move file";
+		data.result = moveFile(data.src, data.dst, data.permissions) ? null : "Failed to move file";
 	}
 	catch (ex) {
-		data.result = ex.message;
+		data.result = ex.message + " @ " + (ex.fileName || ex.sourceName || "unknown") + ":" + (ex.lineNumber || 0);
 	}
 	postMessage(data);
 }
