@@ -72,18 +72,6 @@ XPCOMUtils.defineLazyGetter(this, '__db', function() {
 	db.append(DB_FILE);
 	return db;
 });
-this.__defineGetter__('_asyncStatement', function() {
-	if ('createAsyncStatement' in _connection) {
-		return _connection.createAsyncStatement;
-	}
-	return _connection.createStatement;
-});
-this.__defineGetter__('_asyncClose', function() {
-	if ('asyncClose' in _connection) {
-		return _connection.asyncClose;
-	}
-	return _connection.close;
-});
 
 const QueueStore = {
 	_initialized: false,
@@ -185,7 +173,7 @@ const QueueStore = {
 			// no-op
 		}
 		try {
-			_asyncClose();
+			_connections.asyncClose();
 			_connection = null;
 		}
 		catch (ex) {
@@ -277,7 +265,7 @@ const QueueStore = {
 			throw new Exception("You must provide a Download to save!");
 		}
 		if (!_saveStmt) {
-			_saveStmt = _asyncStatement('UPDATE queue SET item = :item WHERE uuid = :uuid');
+			_saveStmt = _connection.createAsyncStatement('UPDATE queue SET item = :item WHERE uuid = :uuid');
 			_saveStmtParams = _saveStmt.newBindingParamsArray();
 		}
 
@@ -310,7 +298,7 @@ const QueueStore = {
 			}
 			return;
 		}
-		let stmt = _asyncStatement("UPDATE queue SET pos = :pos WHERE uuid = :uuid");
+		let stmt = _connection.createAsyncStatement("UPDATE queue SET pos = :pos WHERE uuid = :uuid");
 		let params = stmt.newBindingParamsArray();
 		for each (let d in downloads) {
 			let bp = params.newBindingParams();
@@ -325,7 +313,7 @@ const QueueStore = {
 		if (!id) {
 			return;
 		}
-		let stmt = _asyncStatement('DELETE FROM queue WHERE uuid = :uuid');
+		let stmt = _connection.createAsyncStatement('DELETE FROM queue WHERE uuid = :uuid');
 		stmt.params.uuid = id;
 		stmt.executeAsync();
 	},
@@ -357,7 +345,7 @@ const QueueStore = {
 		ctx = ctx || null;
 		let stmt;
 		try {
-			stmt = _asyncStatement(STMT_SELECT);
+			stmt = _connection.createAsyncStatement(STMT_SELECT);
 		}
 		catch (ex) {
 			if (Logger.enabled) {
