@@ -35,12 +35,12 @@
  * ***** END LICENSE BLOCK ***** */
 "use strict";
 
-var prealloc = (function() { 
+var prealloc = (function() {
 	var libc = ctypes.open("libSystem.dylib");
 	if (!libc) {
 		throw new Error("no libc");
 	}
-	
+
 	const open = libc.declare(
 		"open",
 		ctypes.default_abi,
@@ -49,14 +49,14 @@ var prealloc = (function() {
 		ctypes.int, // flags
 		ctypes.uint32_t // mode_t mode
 		);
-	
+
 	const closeFd = libc.declare(
 		"close",
 		ctypes.default_abi,
 		ctypes.int, // retval
 		ctypes.int // fd
 		);
-	
+
 	const write = libc.declare(
 		"write",
 		ctypes.default_abi,
@@ -65,7 +65,7 @@ var prealloc = (function() {
 		ctypes.char.ptr, // buf
 		ctypes.size_t // count
 		);
-	
+
 	const ftruncate = libc.declare(
 		"ftruncate",
 		ctypes.default_abi,
@@ -81,7 +81,7 @@ var prealloc = (function() {
 		ctypes.int64_t, // off64_t off
 		ctypes.int // whence
 		);
-	
+
 	return function prealloc_mac(file, size, perms, sparseOk) {
 		var rv = false;
 		try {
@@ -94,22 +94,22 @@ var prealloc = (function() {
 				throw new Error("Failed to open file");
 			}
 			try {
+				ftruncate(fd, ctypes.Int64(size));
 				if (sparseOk) {
 					log("allocating sparse");
-					ftruncate(fd, ctypes.Int64(size));
 				}
 				else {
 					--size;
 					for (;;) {
 						// Get end of the file
 						let current = lseek(fd, ctypes.Int64(0), 0x2);
-	
+
 						// See if we still need to preallocate
 						let remainder = size - current;
 						if (remainder <= 0) {
 							break;
 						}
-	
+
 						// Calculate next seek
 						let seek = Math.min(remainder, (1<<26));
 						lseek(fd, ctypes.Int64(seek), 0x1);
@@ -118,7 +118,7 @@ var prealloc = (function() {
 						}
 					}
 				}
-	
+
 				// all good
 				rv = true;
 			}
