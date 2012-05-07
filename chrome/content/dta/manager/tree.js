@@ -320,8 +320,7 @@ const Tree = {
 		if (!box) {
 			return;
 		}
-		this._box = box.QueryInterface(Ci.nsITreeBoxObject);
-		this._box.view = this;
+		this._box = box;
 		this._cols = [];
 		for (let i = 0; i < box.columns.count; ++i) {
 			this._cols.push(box.columns.getColumnAt(i));
