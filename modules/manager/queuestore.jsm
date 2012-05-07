@@ -167,13 +167,15 @@ const QueueStore = {
 		// finish any pending operations
 		this.flush();
 		try {
-			_connection.executeSimpleSQL('VACUUM');
+			_connection.createAsyncStatement("VACUUM").executeAsync();
 		}
 		catch (ex) {
-			// no-op
+			if (Logger.enabled) {
+				Logger.log("VACUUM failed!", ex);
+			}
 		}
 		try {
-			_connections.asyncClose();
+			_connection.asyncClose();
 			_connection = null;
 		}
 		catch (ex) {
