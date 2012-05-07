@@ -111,7 +111,7 @@ var prealloc = (function() {
 						}
 
 						// Calculate next seek
-						let seek = Math.min(remainder, (1<<26));
+						let seek = Math.min(remainder, 4096); // estimate: usually 4K on mac now
 						lseek(fd, ctypes.Int64(seek), 0x1);
 						if (write(fd, "a", 1) != 1) {
 							throw new Error("Failed to write byte");
