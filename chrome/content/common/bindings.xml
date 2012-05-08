@@ -282,6 +282,9 @@
 					e.setAttribute('label', x);
 					this._types.appendChild(e);
 					this._typemap[x] = e;
+					if (x == "SHA1") {
+						this._types.parentNode.selectedItem = e;
+					}
 				}
 			]]></constructor>
 			<property name="_type"
