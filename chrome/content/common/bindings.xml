@@ -442,8 +442,8 @@
 
 					let iv = Math.max(this.limit, -1);
 					let m = Math.round((iv > 0 ? iv : this.hint / 2) / 1024);
-					m = this.scale(iv > 1 ? m : 150);
-					let vals = [0,1,2,5,10,20,50];
+					m = this.scale(iv > 1 ? m : 250);
+					let vals = [0,10,20,50,100];
 					if (m >= 1000) {
 						vals = [0,100,200,500,1000];
 					}
