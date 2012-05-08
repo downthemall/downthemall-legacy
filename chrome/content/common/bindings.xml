@@ -445,8 +445,8 @@
 
 					let iv = Math.max(this.limit, -1);
 					let m = Math.round((iv > 0 ? iv : this.hint / 2) / 1024);
-					m = this.scale(iv > 1 ? m : 150);
-					let vals = [0,1,2,5,10,20,50];
+					m = this.scale(iv > 1 ? m : 250);
+					let vals = [0,10,20,50,100];
 					if (m >= 1000) {
 						vals = [0,100,200,500,1000];
 					}
@@ -466,7 +466,7 @@
 						this.scale,
 						function(e) !((e in this) || (this[e] = null)),
 						{}
-						).sort();
+						).sort(function(a,b) a - b);
 					let sep = document.createElement('menuseparator');
 					for each (let v in mapInSitu(items, function(e) e * 1024)) {
 						let item = this.appendItem(Utils.formatKBytes(v, 0) + '/s', v);
