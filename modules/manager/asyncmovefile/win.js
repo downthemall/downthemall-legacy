@@ -40,7 +40,7 @@ var moveFile = (function() {
 	const MOVEFILE_COPY_ALLOWED = 0x2;
 	const MOVEFILE_WRITE_THROUGH = 0x8;
 	const dwFlags = MOVEFILE_REPLACE_EXISTING | MOVEFILE_COPY_ALLOWED | MOVEFILE_WRITE_THROUGH;
-	
+
 	const kernel32 = ctypes.open("kernel32.dll");
 	const MoveFileEx = kernel32.declare(
 		"MoveFileExW",
@@ -50,6 +50,6 @@ var moveFile = (function() {
 		ctypes.jschar.ptr, // LPCTSTR lpNewFileName,
 		ctypes.unsigned_int // DWORD dwFlags
 		);
-	
+
 	return function moveFile_win(src, dst, perms) MoveFileEx(src, dst, dwFlags);
 })();

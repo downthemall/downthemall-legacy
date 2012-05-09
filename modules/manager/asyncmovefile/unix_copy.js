@@ -47,23 +47,23 @@ var moveFile = (function() {
 	if (!libc) {
 		throw new Error("no libc");
 	}
-	
+
 	const rename = libc.declare(
 		"rename",
 		ctypes.default_abi,
 		ctypes.int, // retval
 		ctypes.char.ptr, // old
 		ctypes.char.ptr // new
-		
+
 		);
-	
+
 	const unlink = libc.declare(
 		"unlink",
 		ctypes.default_abi,
 		ctypes.int, // retval
 		ctypes.char.ptr // path
 		);
-	
+
 	const open = libc.declare(
 		"open",
 		ctypes.default_abi,
@@ -72,14 +72,14 @@ var moveFile = (function() {
 		ctypes.int, // flags
 		ctypes.uint32_t // mode_t mode
 		);
-	
+
 	const closeFd = libc.declare(
 		"close",
 		ctypes.default_abi,
 		ctypes.int, // retval
 		ctypes.int // fd
 		);
-	
+
 	const read = libc.declare(
 		"read",
 		ctypes.default_abi,
@@ -88,7 +88,7 @@ var moveFile = (function() {
 		ctypes.voidptr_t, // buf
 		ctypes.size_t // count
 		);
-	
+
 	const write = libc.declare(
 		"write",
 		ctypes.default_abi,
@@ -97,16 +97,16 @@ var moveFile = (function() {
 		ctypes.voidptr_t, // buf
 		ctypes.size_t // count
 		);
-	
-	
+
+
 	const BUFSIZE = 1<<16;
 	const BUFFER = new ctypes.ArrayType(ctypes.char, BUFSIZE)();
-	
+
 	return function moveFile_unix_copy(src, dst, perms) {
 		if (rename(src, dst) == 0) {
 			return true;
 		}
-		
+
 		// rename did not work; copy! :p
 		let rv = false;
 		let fds = open(src, 0x0, perms);
@@ -130,7 +130,7 @@ var moveFile = (function() {
 					let written = write(fdd, BUFFER, size);
 					if (written - size != 0) {
 						throw new Error("Failed to write some data: " + written + "/" + size);
-					} 
+					}
 				}
 				rv = true;
 			}

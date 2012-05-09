@@ -40,12 +40,12 @@
  * This ways, there is no need for additional user-land buffers and it
  * also avoids passing the actual data between the kernel and the user land,
  * which might result in a massive performance improvement.
- */ 
+ */
 
 var moveFile = (function() {
 	const BUFSIZE = 1<<17;
 	const SPLICE_F_MORE = 4;
-	
+
 	var libc = null;
 	for each (let p in ["libc.so.6", "libc.so"]) {
 		try {
@@ -57,7 +57,7 @@ var moveFile = (function() {
 	if (!libc) {
 		throw new Error("no libc");
 	}
-	
+
 	const rename = libc.declare(
 		"rename",
 		ctypes.default_abi,
@@ -65,14 +65,14 @@ var moveFile = (function() {
 		ctypes.char.ptr, // old
 		ctypes.char.ptr // new
 		);
-	
+
 	const unlink = libc.declare(
 		"unlink",
 		ctypes.default_abi,
 		ctypes.int, // retval
 		ctypes.char.ptr // path
 		);
-	
+
 	const open = libc.declare(
 		"open",
 		ctypes.default_abi,
@@ -81,14 +81,14 @@ var moveFile = (function() {
 		ctypes.int, // flags
 		ctypes.uint32_t // mode_t mode
 		);
-	
+
 	const closeFd = libc.declare(
 		"close",
 		ctypes.default_abi,
 		ctypes.int, // retval
 		ctypes.int // fd
 		);
-	
+
 	const pipe_t = ctypes.ArrayType(ctypes.int, 2);
 	const pipe = libc.declare(
 		"pipe",
@@ -96,7 +96,7 @@ var moveFile = (function() {
 		ctypes.int, // retval
 		pipe_t // pipefd
 		);
-	
+
 	const splice = libc.declare(
 		"splice",
 		ctypes.default_abi,
@@ -108,21 +108,21 @@ var moveFile = (function() {
 		ctypes.size_t, // len,
 		ctypes.unsigned_int // flags
 		);
-	
+
 	return function moveFile_unix_splice(src, dst, perms) {
 		if (rename(src, dst) == 0) {
 			return true;
 		}
-		
+
 		// rename did not work; copy! :p
 		let rv = false;
-	
+
 		let pfd = new pipe_t();
 		if (pipe(pfd) == -1) {
 			throw new Error("Failed to create pipe");
 		}
 		let [pread, pwrite] = pfd;
-		
+
 		try {
 			let fds = open(src, 0x0, perms);
 			if (fds == -1) {
