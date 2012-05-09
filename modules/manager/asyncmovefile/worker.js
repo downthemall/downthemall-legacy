@@ -41,12 +41,12 @@ try {
 catch (ex) {
 	try {
 		importScripts("mac.js");
-	} 
+	}
 	catch (ex) {
 		try {
 			importScripts("unix_splice.js");
 		}
-		catch (ex) {  
+		catch (ex) {
 			try {
 				importScripts("unix_copy.js");
 			}
