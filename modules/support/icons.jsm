@@ -102,6 +102,9 @@ XPCOMUtils.defineLazyGetter(this, "getFavIcon", function() {
  */
 function getIcon(link, metalink, size) {
 	if (metalink) {
+		if (size > 16) {
+			return "chrome://dta/skin/icons/metalink48.png";
+		}
 		return "chrome://dta/skin/icons/metalink.png";
 	}
 	if (typeof(size) != 'number') {
