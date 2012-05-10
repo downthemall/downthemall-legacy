@@ -110,7 +110,7 @@ LRUMap.prototype = {
 		this._arr.push(key);
 	},
 	"delete": function(key) {
-		if (this._dict.has(key)) {
+		if (!this._dict.has(key)) {
 			return;
 		}
 		this._dict.delete(key);
