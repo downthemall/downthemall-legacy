@@ -51,3 +51,8 @@ treecol > dropmarker {
 toolbar#tools > toolbarbutton {
 	list-style-image: url(tools.png);
 }
+
+treecol[params] .treecol-marker {
+	list-style-image: url("chrome://global/skin/menu/menu-check.png") !important;
+	-moz-image-region: rect(0px, 10px, 11px, 0px) !important;
+}

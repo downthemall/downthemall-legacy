@@ -447,15 +447,15 @@ const Tree = {
 
 		switch (col.index) {
 			case 0:  return Prefs.showOnlyFilenames ? d.destinationName : d.urlManager.usable;
-			case 2:  return d.percent;
-			case 3:  return d.dimensionString;
-			case 4:  return d.status;
-			case 5:  return d.speed;
-			case 6:  return d.parts;
-			case 7:  return d.mask;
-			case 8:  return d.destinationPath;
-			case 9:  return d.prettyHash;
-			case 10: return d.urlManager.domain;
+			case 1:  return d.urlManager.domain;
+			case 3:  return d.percent;
+			case 4:  return d.dimensionString;
+			case 5:  return d.status;
+			case 6:  return d.speed;
+			case 7:  return d.parts;
+			case 8:  return d.mask;
+			case 9:  return d.destinationPath;
+			case 10: return d.prettyHash;
 		}
 		return '';
 	},
@@ -469,7 +469,7 @@ const Tree = {
 	// will grab the "icon" for a cell.
 	getImageSrc: function T_getImageSrc(idx, col) {},
 	getProgressMode : function T_getProgressMode(idx, col) {
-		if (col.index == 1) {
+		if (col.index == 2) {
 			let d = this._filtered[idx];
 			if (!d) return 2;
 			if (d.is(PAUSED) && (!d.totalSize || d.progress < 5)) {
@@ -484,7 +484,7 @@ const Tree = {
 	},
 	// will be called for cells other than textcells
 	getCellValue: function T_getCellValue(idx, col) {
-		if (col.index == 1) {
+		if (col.index == 2) {
 			let d = this._filtered[idx];
 			if (!d) return 0;
 			if (d.isOf(CANCELED | COMPLETE)) {
@@ -496,7 +496,7 @@ const Tree = {
 	},
 	getCellProperties: function T_getCellProperties(idx, col, prop) {
 		let cidx = col.index;
-		if (cidx == 1) {
+		if (cidx == 2) {
 			prop.AppendElement(this.iconicAtom);
 			prop.AppendElement(this.progressAtom);
 			let d = this._filtered[idx];
