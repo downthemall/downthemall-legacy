@@ -115,16 +115,16 @@ maskbutton .toolbarbutton-text,
 	overflow: auto;
 }
 
-tree treecols splitter {
-  -moz-box-align: center;
-  -moz-box-pack: center;
-  cursor: e-resize;
-  border-color: #ddd;
-  border: 1px solid #ddd;
-  background-color: #ddd;
-  border-width: 0px 0px 0px 1px;
-  min-width: 0px;
-}
+/*tree treecols splitter {
+	-moz-box-align: center;
+	-moz-box-pack: center;
+	cursor: e-resize;
+	border-color: #ddd;
+	border: 1px solid #ddd;
+	background-color: #ddd;
+	border-width: 0px 0px 0px 1px;
+	min-width: 0px;
+}*/
 
 #donate {
 	font-style:italic;
@@ -155,12 +155,12 @@ treechildren::-moz-tree-image(iconic) {
 }
 
 textbox[readonly], menulist[disabled] {
-  cursor: default !important;
-  background-color: -moz-dialog !important;
-  color: GrayText !important;
+	cursor: default !important;
+	background-color: -moz-dialog !important;
+	color: GrayText !important;
 }
 textbox[readonly] html|*.textbox-input {
-  color: GrayText !important;
+	color: GrayText !important;
 	font-style: italic;
 }
 

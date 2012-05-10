@@ -668,7 +668,6 @@ treecol[matcher] {
 }
 treecol[params] .treecol-marker {
 	-moz-appearance: none;
-	border: 0;
 	background-color: transparent;
 	list-style-image: url(chrome://global/skin/checkbox/cbox-check.gif);
 }

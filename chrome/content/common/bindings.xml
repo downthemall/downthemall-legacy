@@ -720,7 +720,7 @@
 		</handlers>
 	</binding>
 
-	<binding id="treecol-matcher" display="xul:menu" extends="chrome://global/content/bindings/tree.xml#treecol-base">
+	<binding id="treecol-matcher" extends="chrome://global/content/bindings/tree.xml#treecol-base">
 		<content>
 			<xul:label class="treecol-text box-inherit" xbl:inherits="crop,value=label" flex="1" crop="right" />
 			<xul:dropmarker class="treecol-marker" xbl:inherits="sortDirection,hidden=hideheader,pack,align,orient,disabled"/>

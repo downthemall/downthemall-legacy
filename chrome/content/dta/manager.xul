@@ -245,27 +245,27 @@
 			<stack flex="1" id="mainstack">
 				<tree id="downloads" flex="1" hidecolumnpicker="false" context="popup" seltype="multiple" enableColumnDrag="true" style="margin:0px;" chromedir="&locale.dir;">
 					<treecols>
-						<treecol id="task" matcher="downloadmatch" label="&download.label;" ordinal="1" flex="5" style="width: 18em;" crop="center" persist="width ordinal hidden"/>
+						<treecol id="colTask" matcher="downloadmatch" label="&download.label;" flex="5" crop="center" style="width:18em;" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
-						<treecol id="pct" label="&pct.label;" ordinal="3" type="progressmeter" flex="5" style="width: 9em;" persist="width ordinal hidden" />
+						<treecol id="colDomain" label="&domain.label;" flex="1" hidden="true" crop="center" style="width: 8em;" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
-						<treecol id="per" label="&percent.label;" ordinal="4" style="width:4em;" persist="width ordinal hidden" />
+						<treecol id="colProgress" label="&pct.label;" type="progressmeter" flex="5" style="width: 8em;" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
-						<treecol id="dim" matcher="sizematch" label="&dim.label;" ordinal="5" style="width:8em;" flex="2" persist="width ordinal hidden" />
+						<treecol id="colPercent" label="&percent.label;" style="width: 4em;" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
-						<treecol id="status" matcher="statusmatch" label="&time.label;" ordinal="6" flex="1" persist="width ordinal hidden" />
+						<treecol id="colSize" matcher="sizematch" label="&dim.label;" flex="2" style="width: 8em;" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
-						<treecol id="speed" label="&speed.label;" ordinal="7" flex="1" persist="width ordinal hidden" />
+						<treecol id="colStatus" matcher="statusmatch" label="&time.label;" flex="1" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
-						<treecol id="parts" label="&parts.label;" ordinal="8" flex="1" hidden="true" persist="width ordinal hidden" style="text-align:center;" />
+						<treecol id="colSpeed" label="&speed.label;" flex="1" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
-						<treecol id="mask" label="&mask.label;" ordinal="9" hidden="true" crop="left" flex="1" persist="width ordinal hidden" />
+						<treecol id="colSegments" label="&parts.label;" flex="1" hidden="true" style="text-align: center;"  persist="hidden width ordinal"/>
 						<splitter class="tree-splitter" />
-						<treecol id="path" matcher="pathmatch" label="&path.label;" ordinal="10" hidden="true" crop="center" flex="1" persist="width ordinal hidden" />
+						<treecol id="colMask" label="&mask.label;" flex="1" hidden="true" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
-						<treecol id="hash" label="&hash.label;" ordinal="11" hidden="true" flex="1" persist="width ordinal hidden" />
+						<treecol id="colPath" matcher="pathmatch" label="&path.label;" flex="1" hidden="true" crop="center" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
-						<treecol id="domain" matcher="domainmatch" label="&domain.label;" ordinal="2" hidden="true" flex="4" style="width: 8em;" crop="center" persist="width ordinal hidden" />
+						<treecol id="colHash" label="&hash.label;" flex="1" hidden="true" persist="hidden width ordinal" />
 					</treecols>
 					<treechildren id="downloadList" tooltip="tooltip">
 					</treechildren>
