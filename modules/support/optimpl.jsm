@@ -13,6 +13,13 @@ const {classes: Cc, interfaces: Ci, results: Cr, utils: Cu, Exception: Exception
 Cu.import("resource://dta/glue.jsm");
 const {Logger} = require("resource://dta/utils.jsm");
 
+var makeId = (function() {
+	var cid = 0;
+	return function makeId() {
+		return cid++;
+	};
+})();
+
 var NullCancel = {
 	cancel: function() {}
 };
@@ -22,7 +29,7 @@ function createOptimizedImplementation(workerURI, workerSerializeFun, altImpl) {
 		callImpl: altImpl
 	};
 
-	var _jobs = [];
+	var _jobs = new Map();
 	var _worker = new ChromeWorker(workerURI);
 	_worker.onerror = function(event) {
 		Logger.log("worker bailed early", event);
@@ -48,8 +55,8 @@ function createOptimizedImplementation(workerURI, workerSerializeFun, altImpl) {
 				Logger.log(event.data.log);
 				return;
 			}
-			let job = _jobs[event.data.uuid];
-			delete _jobs[event.data.uuid];
+			let job = _jobs.get(event.data.uuid);
+			_jobs.delete(event.data.uuid);
 			if (!job) {
 				Logger.log("Invalid job; something is rotten in the state of Denmark!", new Error("invalid_job"));
 				return;
@@ -57,8 +64,8 @@ function createOptimizedImplementation(workerURI, workerSerializeFun, altImpl) {
 			job(event.data.result);
 		}
 		impl.callImpl = workerSerializeFun(function(data, callback) {
-			data.uuid = Services.uuid.generateUUID().toString();
-			_jobs[data.uuid] = callback;
+			data.uuid = makeId();
+			_jobs.set(data.uuid, callback);
 			_worker.postMessage(data);
 			return NullCancel;
 		});
