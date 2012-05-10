@@ -93,7 +93,10 @@ addEventListener("load", function load_textCache() {
 GlobalProgress = new GlobalProgress(window);
 var Timers = new TimerManager();
 
-const getLargeIcon = memoize(function(name, metalink) getIcon(name, metalink, 32), 50);
+const getLargeIcon = (function() {
+	const _largeIconSize = (Version.OS == "darwin" ? 48 : 32);
+	return memoize(function(name, metalink) getIcon(name, metalink, _largeIconSize), 150);
+})();
 
 const Dialog_loadDownloads_props = ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'];
 function Dialog_loadDownloads_get(down, attr, def) (attr in down) ? down[attr] : (def ? def : '');
