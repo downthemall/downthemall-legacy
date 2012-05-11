@@ -110,7 +110,7 @@ Base.prototype = {
 		case 'dta':
 			return NS_DTA;
 		}
-		return this._NS;		
+		return this._NS;
 	},
 	getNodes: function (elem, query) {
 		let rv = [];
@@ -171,7 +171,7 @@ Base.prototype = {
 			Debug.log("checkURL: failed to parse " + url, ex);
 			// no-op
 		}
-		return null; 		
+		return null;
 	}
 };
 
@@ -193,11 +193,11 @@ Metalinker3.prototype = {
 		if (aReferrer && 'spec' in aReferrer) {
 			aReferrer = aReferrer.spec;
 		}
-		
+
 		let doc = this._doc;
 		let root = doc.documentElement;
 		let downloads = [];
-		
+
 		let files = this.getNodes(doc, '//ml:files/ml:file');
 		for each (let file in files) {
 			let fileName = file.getAttribute('name');
@@ -231,8 +231,8 @@ Metalinker3.prototype = {
 				catch (ex) {
 					/* no-op */
 				}
-			}				
-				
+			}
+
 			let urls = [];
 			let urlNodes = this.getNodes(file, 'ml:resources/ml:url');
 			for each (var url in urlNodes) {
@@ -241,7 +241,7 @@ Metalinker3.prototype = {
 				if (url.hasAttributeNS(NS_DTA, 'charset')) {
 					charset = url.getAttributeNS(NS_DTA, 'charset');
 				}
-	
+
 				let uri = null;
 				try {
 					if (url.hasAttribute('type') && !url.getAttribute('type').match(/^(?:https?|ftp)$/i)) {
@@ -250,14 +250,14 @@ Metalinker3.prototype = {
 					uri = this.checkURL(url.textContent.trim());
 					if (!uri) {
 						throw new Exception("Invalid url");
-					}							
+					}
 					uri = IOService.newURI(uri, charset, null);
 				}
 				catch (ex) {
 					Debug.log("Failed to parse URL" + url.textContent, ex);
 					continue;
 				}
-				
+
 				if (url.hasAttribute('preference')) {
 					var a = parseInt(url.getAttribute('preference'));
 					if (isFinite(a) && a > 0 && a < 101) {
@@ -275,7 +275,7 @@ Metalinker3.prototype = {
 			if (!urls.length) {
 				continue;
 			}
-			let hash = null; 
+			let hash = null;
 			for each (let h in this.getNodes(file, 'ml:verification/ml:hash')) {
 				try {
 					h = new DTA.Hash(h.textContent.trim(), h.getAttribute('type'));
@@ -325,7 +325,7 @@ Metalinker3.prototype = {
 						hash = new DTA.HashCollection(hash.full);
 					}
 				}
-			}			
+			}
 			let desc = this.getSingle(file, 'description');
 			if (!desc) {
 				desc = this.getSingle(root, 'description');
@@ -353,7 +353,7 @@ Metalinker3.prototype = {
 				'logo': this.checkURL(this.getSingle(file, 'logo', ['data'])),
 				'lang': this.getSingle(file, 'language'),
 				'sys': this.getSingle(file, 'os'),
-				'mirrors': urls.length, 
+				'mirrors': urls.length,
 				'selected': true,
 				'fromMetalink': true
 			});
@@ -389,11 +389,11 @@ MetalinkerRFC5854.prototype = {
 		if (aReferrer && 'spec' in aReferrer) {
 			aReferrer = aReferrer.spec;
 		}
-		
+
 		let doc = this._doc;
 		let root = doc.documentElement;
 		let downloads = [];
-		
+
 		let files = this.getNodes(doc, '/ml:metalink/ml:file');
 		for each (let file in files) {
 			let fileName = file.getAttribute('name');
@@ -427,8 +427,8 @@ MetalinkerRFC5854.prototype = {
 				catch (ex) {
 					/* no-op */
 				}
-			}				
-			
+			}
+
 			let urls = [];
 			let urlNodes = this.getNodes(file, 'ml:url');
 			for each (var url in urlNodes) {
@@ -437,20 +437,20 @@ MetalinkerRFC5854.prototype = {
 				if (url.hasAttributeNS(NS_DTA, 'charset')) {
 					charset = url.getAttributeNS(NS_DTA, 'charset');
 				}
-				
+
 				let uri = null;
 				try {
 					uri = this.checkURL(url.textContent.trim());
 					if (!uri) {
 						throw new Exception("Invalid url");
-					}							
+					}
 					uri = IOService.newURI(uri, charset, null);
 				}
 				catch (ex) {
 					Debug.log("Failed to parse URL" + url.textContent, ex);
 					continue;
 				}
-				
+
 				if (url.hasAttribute('priority')) {
 					let a = parseInt(url.getAttribute('priority'));
 					if (a > 0) {
@@ -474,8 +474,8 @@ MetalinkerRFC5854.prototype = {
 			urls.forEach(function(url) {
 				url.preference = Math.max(100 - ((url.preference - pmin) *  100 / (pmax - pmin)).toFixed(0), 10);
 			});
-			
-			let hash = null; 
+
+			let hash = null;
 			for each (let h in this.getNodes(file, 'ml:hash')) {
 				try {
 					h = new DTA.Hash(h.textContent.trim(), h.getAttribute('type'));
@@ -546,7 +546,7 @@ MetalinkerRFC5854.prototype = {
 				'logo': this.checkURL(this.getSingle(file, "logo", ['data'])),
 				'lang': this.getSingle(file, "language"),
 				'sys': this.getSingle(file, "os"),
-				'mirrors': urls.length, 
+				'mirrors': urls.length,
 				'selected': true,
 				'fromMetalink': true
 			});
@@ -572,8 +572,8 @@ const __parsers__ = [
  * Parse a metalink
  * @param aFile (nsIFile) Metalink file
  * @param aReferrer (String) Optional. Referrer
- * @param aCallback (Function) Receiving callback function of form f(result, exception || null) 
- * @return async (Metalink) Parsed metalink data 
+ * @param aCallback (Function) Receiving callback function of form f(result, exception || null)
+ * @return async (Metalink) Parsed metalink data
  */
 function parse(aFile, aReferrer, aCallback) {
 	let fu = IOService.newFileURI(aFile);
@@ -586,7 +586,7 @@ function parse(aFile, aReferrer, aCallback) {
 		xhr.removeEventListener("error", xhrError, false);
 
 		try {
-			doc = xhr.responseXML;
+			let doc = xhr.responseXML;
 			if (doc.documentElement.nodeName == 'parsererror') {
 				throw new Exception("Failed to parse XML");
 			}
@@ -601,7 +601,7 @@ function parse(aFile, aReferrer, aCallback) {
 				aCallback(parser.parse(aReferrer));
 				return;
 			}
-			throw new Exception("no suitable parser found!");			
+			throw new Exception("no suitable parser found!");
 		}
 		catch (ex) {
 			aCallback(null, ex);
