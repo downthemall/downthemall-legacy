@@ -34,18 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['ContentHandling'];
-
 const PREF_SNIFFVIDEOS = 'extensions.dta.listsniffedvideos';
-
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Exception = Components.Exception;
-const module = Components.utils.import;
-const error = Components.utils.reportError;
-
-module("resource://dta/glue.jsm");
 
 const HEADER_CT = ['Content-Type', 'Content-Disposition'];
 
@@ -331,4 +320,5 @@ ContentHandlingImpl.prototype = {
 	}
 };
 
-const ContentHandling = new ContentHandlingImpl();
+exports.ContentHandling = new ContentHandlingImpl();
+Object.freeze(exports);

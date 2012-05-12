@@ -23,6 +23,52 @@ Cu.import("resource://gre/modules/Services.jsm");
 
 const lazy = XPCOMUtils.defineLazyGetter;
 
+//Map shim
+if (!("Map" in this)) {
+	this.Map = function() {
+		this._dict = Object.create(null);
+		Object.freeze(this);
+	}
+	this.Map.prototype = {
+		"get": function(key) this._dict[key],
+		"has": function(key) key in this._dict,
+		"set": function(key, val) { this._dict[key] = val; },
+		"delete": function(key) { delete this._dict[key]; },
+	};
+}
+
+function LRUMap(limit) {
+	this._limit = limit;
+	this.clear();
+	Object.preventExtensions(this);
+}
+LRUMap.prototype = {
+	"get": function(key) this._dict.get(key),
+	"has": function(key) this._dict.has(key),
+	"set": function(key, val) {
+		if (this.has(key)) {
+			this._dict.set(key, val);
+			return;
+		}
+		if (this._arr.length == this._limit) {
+			this._dict.delete(this._arr.shift());
+		}
+		this._dict.set(key, val);
+		this._arr.push(key);
+	},
+	"delete": function(key) {
+		if (!this._dict.has(key)) {
+			return;
+		}
+		this._dict.delete(key);
+		this._arr.splice(this._arr.indexOf(key), 1);
+	},
+	"clear": function() {
+		this._dict = new Map();
+		this._arr = [];
+	}
+};
+
 //hide our internals
 //Since require() uses .scriptloader, the loaded require scopes will have
 //access to the named stuff within this module scope, but we actually want
