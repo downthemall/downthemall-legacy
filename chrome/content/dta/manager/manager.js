@@ -1372,7 +1372,7 @@ const Metalinker = {
 		});
 	}
 };
-module('resource://dta/support/metalinker.jsm', Metalinker);
+requireJoined(Metalinker, "support/metalinker");
 
 function Replacer(o) {
 	this._obj = o;
