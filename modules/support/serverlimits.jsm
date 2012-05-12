@@ -55,9 +55,10 @@ const Exception = Components.Exception;
 
 module("resource://dta/glue.jsm");
 let Prefs = glue2.require("preferences");
-module("resource://dta/utils.jsm");
-module("resource://dta/constants.jsm");
+glue2.requireJoined(this, "constants");
 const {ByteBucket} = glue2.require("support/bytebucket");
+
+module("resource://dta/utils.jsm");
 
 const TOPIC = 'DTA:serverlimits-changed';
 const PREFS = 'extensions.dta.serverlimit.';

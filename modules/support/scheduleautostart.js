@@ -33,7 +33,7 @@ lazy(this, "QueueStore", function() {
 	let _m = {};
 	Cu.import("resource://dta/manager/queuestore.jsm", _m);
 	_m = _m.QueueStore;
-	Cu.import("resource://dta/constants.jsm", _m);
+	glue2.requireJoined(_m, "constants");
 	return _m;
 })
 

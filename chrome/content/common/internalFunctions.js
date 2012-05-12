@@ -50,7 +50,7 @@ const Exception = Components.Exception;
 // shared state defines
 
 module("resource://dta/glue.jsm", this);
-module("resource://dta/constants.jsm", this);
+glue2.requireJoined(this, "constants");
 
 const DTA = {
 	showPreferences: function(pane, command) DTA.Mediator.showPreferences(window, pane, command)
