@@ -6,8 +6,10 @@
 /* **
  * Lazy getters
  */
-lazy(this, 'DTA', function() requireJSM("resource://dta/api.jsm"));
+lazy(this, 'DTA', function() require("api"));
+lazy(this, 'Logger', function() requireJSM("resource://dta/utils.jsm").Logger);
 lazy(this, 'ContentHandling', function() require("support/contenthandling").ContentHandling);
+lazy(this, 'Preferences', function() require("preferences"));
 
 /* **
  * Loader
@@ -65,7 +67,7 @@ exports.load = function load(window) {
 		}
 		catch (ex) {
 			if (Logger.enabled) {
-				DTA.Logger.log("sizeToContent Bug: 371508", ex);
+				Logger.log("sizeToContent Bug: 371508", ex);
 			}
 			try {
 				var btn = document.documentElement.getButton('accept');
@@ -73,7 +75,7 @@ exports.load = function load(window) {
 			}
 			catch (ex) {
 				if (Logger.enabled) {
-					DTA.Logger.log("setting height failed", ex);
+					Logger.log("setting height failed", ex);
 				}
 			}
 		}
@@ -105,7 +107,7 @@ exports.load = function load(window) {
 	let basicBox = $('basicBox');
 	let normalBox = $('normalBox');
 	const doRevert = basicBox && (!basicBox.collapsed || (normalBox && normalBox.collapsed));
-	const doOverlay = DTA.Preferences.getExt("downloadWin", true);
+	const doOverlay = Preferences.getExt("downloadWin", true);
 	if (
 		!doOverlay
 		&& typeof(gFlashGotDMDialog) == 'undefined'
@@ -153,7 +155,7 @@ exports.load = function load(window) {
 	}
 
 	try {
-		switch (DTA.Preferences.getExt('saveasmode', 0)) {
+		switch (Preferences.getExt('saveasmode', 0)) {
 			case 1:
 				mode.selectedItem = normal;
 				break;
@@ -161,7 +163,7 @@ exports.load = function load(window) {
 				mode.selectedItem = turbo.disabled ? normal : turbo;
 				break;
 		}
-		if (DTA.Preferences.getExt('saveasmode', 0)) {
+		if (Preferences.getExt('saveasmode', 0)) {
 			remember.checked = true;
 			remember.disabled = false;
 		}
@@ -193,16 +195,16 @@ exports.load = function load(window) {
 		let selMode = mode.selectedItem;
 		if (selMode == normal || selMode == turbo) {
 			if (remember.checked) {
-				DTA.Preferences.setExt("saveasmode", selMode == normal ? 1 : 2);
+				Preferences.setExt("saveasmode", selMode == normal ? 1 : 2);
 			}
 			else {
-				DTA.Preferences.setExt("saveasmode", 0);
+				Preferences.setExt("saveasmode", 0);
 			}
 			download(selMode == turbo);
 			evt.stopPropagation();
 			evt.preventDefault();
 			return;
 		}
-		DTA.Preferences.setExt("saveasmode", 0);
+		Preferences.setExt("saveasmode", 0);
 	}, false); // dialogaccept
 }

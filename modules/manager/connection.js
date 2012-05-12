@@ -11,7 +11,7 @@ const NS_ERROR_NET_TIMEOUT = NS_ERROR_MODULE_NETWORK + 14;
 const NS_ERROR_NET_RESET = NS_ERROR_MODULE_NETWORK + 20;
 const NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
 
-let DTA = requireJSM("resource://dta/api.jsm");
+let DTA = require("api");
 requireJoined(this, "constants");
 const {Logger, SimpleIterator, StringBundles} = requireJSM('resource://dta/utils.jsm');
 const RequestManipulation = require("manager/requestmanipulation");

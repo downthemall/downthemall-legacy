@@ -6,7 +6,7 @@
 const BUFFER_SIZE = 5 * 1024 * 1024;
 const FREQ = 250;
 
-const DTA = requireJSM("resource://dta/api.jsm");
+const DTA = require("api");
 const {TimerManager} = require("support/timers");
 const {Logger} = requireJSM("resource://dta/utils.jsm");
 const Prefs = require("preferences");

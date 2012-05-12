@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const DTA = requireJSM("resource://dta/api.jsm");
+const DTA = require("api");
 const {Logger, getTimestamp} = requireJSM("resource://dta/utils.jsm");
 
 function Visitor() {

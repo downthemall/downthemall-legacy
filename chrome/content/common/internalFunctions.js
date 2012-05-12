@@ -51,21 +51,18 @@ const Exception = Components.Exception;
 
 module("resource://dta/glue.jsm", this);
 requireJoined(this, "constants");
+const Preferences = require("preferences");
+const Mediator = require("support/mediator");
+const {FilterManager} = require("support/FilterManager");
 
 const DTA = {
-	showPreferences: function(pane, command) DTA.Mediator.showPreferences(window, pane, command)
+	showPreferences: function(pane, command) Mediator.showPreferences(window, pane, command)
 };
-module("resource://dta/api.jsm", DTA);
+requireJoined(DTA, "api");
 
-function openUrl(url, ref) DTA.Mediator.openUrl(window, url, ref);
+function openUrl(url, ref) Mediator.openUrl(window, url, ref);
 
-const Logger = DTA.Logger;
-if (!('Debug' in this)) {
-	// XXX: compat; Debug is old style stuff
-	// Remove it later
-	this['Debug'] = DTA.Logger;
-}
-const Preferences = DTA.Preferences;
+
 const {getIcon} = require("support/icons");
 
 /**
@@ -308,6 +305,13 @@ var Utils = {
 
 Components.utils.import('resource://dta/utils.jsm', Utils);
 const SYSTEMSLASH = Utils.SYSTEMSLASH;
+
+const Logger = Utils.Logger;
+if (!('Debug' in this)) {
+	// XXX: compat; Debug is old style stuff
+	// Remove it later
+	this['Debug'] = Logger;
+}
 
 
 //XXX Copy from utils.jsm

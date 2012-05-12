@@ -4,7 +4,7 @@
 "use strict";
 
 
-const DTA = requireJSM("resource://dta/api.jsm");
+const DTA = require("api");
 const Prefs = require("preferences");
 const {Logger, newUUIDString, hexdigest} = requireJSM("resource://dta/utils.jsm");
 

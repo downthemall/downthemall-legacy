@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const DTA = requireJSM("resource://dta/api.jsm");
+const DTA = require("api");
 const Preferences = require("preferences");
 const {getTextLinks} = require("support/textlinks");
 const Version = require("version");

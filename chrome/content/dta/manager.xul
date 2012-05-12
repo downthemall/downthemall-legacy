@@ -88,7 +88,7 @@
 		<command id="cmdCustomizeToolbar" oncommand="Dialog.customizeToolbar(event);" />
 
 		<command id="cmdNewTab" oncommand="openUrl('about:blank');" />
-		<command id="cmdNewWin" oncommand="DTA.Mediator.openWindow(window);" />
+		<command id="cmdNewWin" oncommand="Mediator.openWindow(window);" />
 
 		<command id="cmdSearchFocus" oncommand="$('search').focus()" />
 	</commandset>
