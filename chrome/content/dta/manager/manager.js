@@ -42,9 +42,10 @@ module('resource://dta/cothread.jsm');
 const Prompts = glue2.require("prompts");
 const {ByteBucket} = glue2.require("support/bytebucket");
 const {GlobalBucket} = glue2.require("manager/globalbucket");
+const {defer} = glue2.require("support/defer");
+
 
 module('resource://dta/support/contenthandling.jsm');
-module('resource://dta/support/defer.jsm');
 module('resource://dta/support/fileextsheet.jsm');
 module('resource://dta/support/memoize.jsm');
 module('resource://dta/support/pbm.jsm', PrivateBrowsing);
