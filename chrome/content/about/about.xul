@@ -38,12 +38,13 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- -->
+-->
 
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<script type="text/javascript"><![CDATA[
-		Components.utils.import("resource://dta/support/mediator.jsm");
-		showAbout(window.opener);
+		Components.utils.import("resource://dta/glue2.jsm", {})
+			.require("support/mediator")
+			.showAbout(window.opener);
 		close();
 	]]></script>
 </dialog>
