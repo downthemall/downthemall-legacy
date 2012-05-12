@@ -52,8 +52,8 @@ const Limits = glue2.require("support/serverlimits");
 const {QueueStore} = glue2.require("manager/queuestore");
 const {SpeedStats} = glue2.require("manager/speedstats");
 const RequestManipulation = glue2.require("manager/requestmanipulation");
+const {FileExtensionSheet} = glue2.require("support/fileextsheet");
 
-module('resource://dta/support/fileextsheet.jsm');
 module('resource://dta/support/urlmanager.jsm');
 
 let Preallocator = {};
