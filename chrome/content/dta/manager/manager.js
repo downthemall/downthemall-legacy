@@ -53,8 +53,7 @@ const {QueueStore} = require("manager/queuestore");
 const {SpeedStats} = require("manager/speedstats");
 const RequestManipulation = require("manager/requestmanipulation");
 const {FileExtensionSheet} = require("support/fileextsheet");
-
-module('resource://dta/support/urlmanager.jsm');
+const {UrlManager} = require("support/urlmanager");
 
 let Preallocator = {};
 module('resource://dta/manager/chunk.jsm');

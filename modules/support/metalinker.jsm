@@ -63,9 +63,9 @@ const DTA = {};
 module("resource://dta/glue.jsm");
 const Preferences = require("preferences");
 const {LOCALE} = require("version");
+const {UrlManager} = require("support/urlmanager");
 module("resource://dta/api.jsm", DTA);
 module("resource://dta/utils.jsm");
-module("resource://dta/support/urlmanager.jsm");
 
 const XPathResult = Ci.nsIDOMXPathResult;
 
