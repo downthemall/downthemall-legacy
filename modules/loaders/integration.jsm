@@ -525,9 +525,7 @@ function load(window, outerEvent) {
 				}
 				catch (ex) {
 					if (mustAlert) {
-						let prompts = {};
-						Components.utils.import('resource://dta/prompts.jsm', prompts);
-						prompts.alert(window, title, message);
+						glue2.require("prompts").alert(window, title, message);
 					}
 				}
 			}
