@@ -107,13 +107,13 @@
 		<implementation>
 			<constructor><![CDATA[
 				try {
-					this.hist = require("support/historyManager").getHistory(this._pref);
+					let glue = {};
+					Components.utils.import("resource://dta/glue.jsm", glue);
+					this.hist = glue.require("support/historyManager").getHistory(this._pref);
 					this._load();
 				}
 				catch (ex) {
-					if (DTA.Logger.enabled) {
-						DTA.Logger.log("Loading of saveddropdown failed:", ex);
-					}
+					Components.utils.reportError(ex);
 				}
 			]]></constructor>
 			<field name="_list">document.getAnonymousElementByAttribute(this, 'anonid', 'list');</field>
