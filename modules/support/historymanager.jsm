@@ -47,10 +47,9 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-let pbm = {};
 module("resource://dta/glue.jsm");
 module("resource://dta/utils.jsm");
-module("resource://dta/support/pbm.jsm", pbm);
+const pbm = glue2.require("support/pbm");
 const prefs = glue2.require("preferences");
 
 const validators = {
@@ -74,7 +73,7 @@ function History(key) {
 	else {
 		this._validator = function() true;
 	}
-	this._setPersisting(!pbm.browsingPrivately());
+	this._setPersisting(!pbm.browsingPrivately);
 }
 History.prototype = {
 	_key: null,
