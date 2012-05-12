@@ -71,7 +71,7 @@ function lazyModule(obj, name, url, symbol) {
 	});
 }
 
-lazyModule(this, 'AlertService', 'resource://dta/support/alertservice.jsm');
+const AlertService = glue2.lazyRequire("support/alertservice", "show");
 lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Decompressor');
 lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
 lazyModule(this, 'Version', 'resource://dta/version.jsm', 'Version');
