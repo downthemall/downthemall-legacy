@@ -44,11 +44,12 @@
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/saveas.dtd">
 <overlay id="downthemallDownloadSaveAs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 		<script type="application/x-javascript"><![CDATA[
-			addEventListener('load', function() {
-				removeEventListener('load', arguments.callee, false);
-				let _loader = {};
-				Components.utils.import('resource://dta/loaders/saveas.jsm', _loader);
-				new _loader.load(window);
+			addEventListener('load', function dta_load() {
+				"use strict";
+				removeEventListener('load', dta_load, false);
+				Components.utils.import('resource://dta/glue.jsm', {})
+					.require("loaders/saveas")
+					.load(window);
 			}, false);
 		]]></script>
 		<radiogroup id="mode">
