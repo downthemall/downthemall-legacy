@@ -51,7 +51,7 @@ function loadWindow() {};
 
 // moz-2.0+
 module("resource://gre/modules/AddonManager.jsm");
-module("resource://dta/glue2.jsm");
+module("resource://dta/glue.jsm");
 const Version = require("version");
 
 // exported

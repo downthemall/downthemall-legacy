@@ -14,7 +14,7 @@ const Cr = Components.results;
 const Cu = Components.utils;
 const Exception = Components.Exception;
 
-Cu.import("resource://dta/glue2.jsm");
+Cu.import("resource://dta/glue.jsm");
 const {
 	createOptimizedImplementation
 } = require("support/optimpl");

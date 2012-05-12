@@ -48,7 +48,7 @@ const ABOUT_URI = 'https://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%
 
 function requireMod(m) {
 	let _m = {};
-	module("resource://dta/glue2.jsm", _m);
+	module("resource://dta/glue.jsm", _m);
 	return _m.require(m);
 }
 
@@ -146,7 +146,7 @@ Stuff.prototype = {
 	bootstrap: function MM_bootstrap() {
 		this.migrate();
 		try {
-			module("resource://dta/glue2.jsm", {}).require("support/contenthandling");
+			module("resource://dta/glue.jsm", {}).require("support/contenthandling");
 		}
 		catch (ex) {
 			log("ch", ex);
@@ -154,7 +154,7 @@ Stuff.prototype = {
 		try {
 			// DownloadHelper integration
 			if (("dhICore" in Ci) && ("dhIProcessor" in Ci)) {
-				module("resource://dta/glue2.jsm", {}).require("support/downloadHelper");
+				module("resource://dta/glue.jsm", {}).require("support/downloadHelper");
 			}
 		}
 		catch (ex) {
@@ -205,7 +205,7 @@ Stuff.prototype = {
 		}
 
 		try {
-			module('resource://dta/glue2.jsm', {}).require("manager/queuestore").QueueStore.clear();
+			module('resource://dta/glue.jsm', {}).require("manager/queuestore").QueueStore.clear();
 		}
 		catch (ex) {
 			log("Cannot clear queue", ex);

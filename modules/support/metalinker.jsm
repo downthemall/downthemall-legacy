@@ -60,7 +60,7 @@ const NS_METALINKER3 = 'http://www.metalinker.org/';
 const NS_METALINK_RFC5854 = 'urn:ietf:params:xml:ns:metalink';
 
 const DTA = {};
-module("resource://dta/glue2.jsm");
+module("resource://dta/glue.jsm");
 const Preferences = require("preferences");
 const {LOCALE} = require("version");
 module("resource://dta/api.jsm", DTA);

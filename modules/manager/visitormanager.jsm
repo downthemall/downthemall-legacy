@@ -48,7 +48,7 @@ const Exception = Components.Exception;
 module("resource://dta/utils.jsm");
 
 const DTA = {};
-module("resource://dta/glue2.jsm");
+module("resource://dta/glue.jsm");
 module("resource://dta/api.jsm", DTA);
 
 function Visitor() {

@@ -69,7 +69,7 @@ const error = Components.utils.reportError;
 const module = Components.utils.import;
 const Exception = Components.Exception;
 
-module("resource://dta/glue2.jsm");
+module("resource://dta/glue.jsm");
 const Prefs = require("preferences");
 
 /**
