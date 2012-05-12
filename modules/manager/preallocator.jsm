@@ -15,8 +15,10 @@ const Cu = Components.utils;
 const Exception = Components.Exception;
 
 Cu.import("resource://dta/glue.jsm");
-require("resource://dta/support/optimpl.jsm", this);
-const {Logger} = require("resource://dta/utils.jsm");
+const {
+	createOptimizedImplementation
+} = glue2.require("support/optimpl");
+lazyRequire("resource://dta/utils.jsm", ["Logger"], this);
 
 const _asynccopier = require("resource://dta/manager/preallocator/asynccopier.jsm").prealloc;
 const _cothread = require("resource://dta/manager/preallocator/cothread.jsm").prealloc;
