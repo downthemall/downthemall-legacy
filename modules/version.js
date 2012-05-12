@@ -47,7 +47,7 @@ function completeVersion(addon) {
 	_callbacks = [];
 }
 
-Cu.import("resource://gre/modules/AddonManager.jsm");
+const {AddonManager} = requireJSM("resource://gre/modules/AddonManager.jsm");
 AddonManager.getAddonByID(exports.ID, function(addon) {
 	completeVersion(addon);
 });

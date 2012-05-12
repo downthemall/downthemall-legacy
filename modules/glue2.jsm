@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const EXPORTED_SYMBOLS = ["require", "lazyRequire", "requireJoined", "unload", "Services", "Instances", "XPCOMUtils"];
+const EXPORTED_SYMBOLS = ["require", "lazyRequire", "requireJoined", "unload", "Services", "Instances", "XPCOMUtils", "LRUMap"];
 
 const {
 	classes: Cc,
@@ -35,6 +35,7 @@ if (!("Map" in this)) {
 		"set": function(key, val) { this._dict[key] = val; },
 		"delete": function(key) { delete this._dict[key]; },
 	};
+	EXPORTED_SYMBOLS.push("Map");
 }
 
 function LRUMap(limit) {
@@ -192,6 +193,8 @@ LRUMap.prototype = {
 			Services.scriptloader.loadSubScript(module, scope);
 		}
 		catch (ex) {
+			requireJSM("resource://dta/utils.jsm").Logger.log(module, ex);
+			Cu.reportError(module);
 			Cu.reportError(ex);
 			// log(LOG_ERROR, "failed to load " + module, ex);
 			throw ex;
@@ -233,7 +236,13 @@ LRUMap.prototype = {
 			lazy(rv, _p, function() binder(_p));
 		}
 		return rv;
-	}
+	};
+	exports.requireJSM = function requireJSM(mod) {
+		let _m = {};
+		Cu.import(mod, _m);
+		Object.freeze(_m);
+		return _m;
+	};
 
 	/* XXX: Reconsider when making restartless
 	unload(function() {
