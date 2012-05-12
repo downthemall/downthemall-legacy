@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const {Logger} = requireJSM("resource://dta/utils.jsm");
+const {Logger} = require("utils");
 const {URL} = require("api");
 const {memoize} = require("support/memoize");
 const {getExtension, toURL} = require("support/stringfuncs");

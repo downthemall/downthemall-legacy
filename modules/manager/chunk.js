@@ -14,7 +14,7 @@ const {GlobalBucket} = require("manager/globalbucket");
 const {defer} = require("support/defer");
 const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
-const {Logger, getTimestamp, formatNumber} = requireJSM("resource://dta/utils.jsm");
+const {Logger, getTimestamp, formatNumber} = require("utils");
 
 const Timers = new TimerManager();
 

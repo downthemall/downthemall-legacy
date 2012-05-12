@@ -7,7 +7,7 @@ const {Atoms} = require("support/atoms");
 const Timers = new (require("support/timers").TimerManager)();
 const {getIcon} = require("support/icons");
 const {getExtension} = require("support/stringfuncs");
-const {Logger} = requireJSM("resource://dta/utils.jsm");
+const {Logger} = require("utils");
 
 function FileExtensionSheet(window) {
 	this._windowUtils = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowUtils);
