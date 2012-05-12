@@ -58,9 +58,7 @@ const Privacy = {
 			$("butFoldDel").disabled = !DTA.getDropDownValue("directory");
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log("privacyLoad(): ", ex);
-			}
+			log(LOG_ERROR, "privacyLoad(): ", ex);
 		}
 
 		// delay this assignment, or else we get messed up by the slider c'tor
@@ -77,18 +75,18 @@ const Privacy = {
 		Preferences.resetExt("directory");
 	},
 	showLog: function() {
-		if (Logger.file.exists()) {
-			openUrl("file://" + Logger.file.path);
+		if (log.file && log.file.exists()) {
+			openUrl("file://" + log.file.path);
 		}
 	},
 	revealLog: function() {
-		if (Logger.file.exists()) {
-			Utils.reveal(Logger.file);
+		if (log.file && log.file.exists()) {
+			Utils.reveal(log.file);
 		}
 	},
 	deleteLog: function() {
 		try {
-			Logger.remove();
+			log.clear();
 			$("butShowLog", 'butDelLog', 'butRevealLog')
 				.forEach(function(e){ e.disabled = true; });
 		}
@@ -190,9 +188,7 @@ const Filters = {
 				os.addObserver(this, 'DTA:filterschanged', true);
 			}
 			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log("cannot install filterManager observer!", ex);
-				}
+				log(LOG_ERROR, "cannot install filterManager observer!", ex);
 				return false;
 			}
 			return true;
@@ -255,9 +251,7 @@ const Filters = {
 			}
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log("reloadFilters():", ex);
-			}
+			log(LOG_ERROR, "reloadFilters():", ex);
 		}
 	},
 	onCheckboxChange : function() {
@@ -445,9 +439,7 @@ const Servers = {
 			this._load();
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Failed to load Servers", ex);
-			}
+			log(LOG_ERROR, "Failed to load Servers", ex);
 		}
 
 		// delay these assignments, or else we get messed up by the slider c'tor
@@ -566,9 +558,7 @@ const Servers = {
 			this.newInput();
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("failed to add limit", ex);
-			}
+			log(LOG_ERROR, "failed to add limit", ex);
 		}
 		$('noitemsbox').hidden = !!this._list.itemCount;
 	}

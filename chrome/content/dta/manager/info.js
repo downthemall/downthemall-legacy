@@ -123,9 +123,7 @@ var Dialog = {
 			}
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log('load', ex);
-			}
+			log(LOG_ERROR, 'load', ex);
 		}
 		setTimeoutOnlyFun(function() {
 			window.sizeToContent();
@@ -193,9 +191,7 @@ var Dialog = {
 					d.referrer.spec = newRef;
 				}
 				catch (ex) {
-					if (Logger.enabled) {
-						Logger.log("failed to set referrer to", newRef);
-					}
+					log(LOG_ERROR, "failed to set referrer to", newRef);
 				}
 			}
 			d.save();
@@ -233,9 +229,7 @@ var Dialog = {
 		if (mirrors.length) {
 			download.replaceMirrors(mirrors);
 			$("mirrorsText").value = _("mirrorsText", [download.urlManager.length]);
-			if (Logger.enabled) {
-				Logger.log("New mirrors set " + mirrors);
-			}
+			log(LOG_INFO, "New mirrors set " + mirrors);
 		}
 	},
 	check: function DTA_check() {
