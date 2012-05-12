@@ -1546,7 +1546,7 @@ const Tree = {
 		this.updateSelected(this._changePerDownloadSpeedLimit_item.bind(null, limit));
 	}
 };
-module('resource://dta/manager/matcher.jsm', Tree);
+requireJoined(Tree, "manager/matcher");
 requireJoined(Tree, "support/atoms");
 
 const FileHandling = {
