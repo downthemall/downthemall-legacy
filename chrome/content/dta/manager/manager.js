@@ -51,15 +51,15 @@ const GlobalProgress = new (glue2.require("manager/globalprogress").GlobalProgre
 const Limits = glue2.require("support/serverlimits");
 const {QueueStore} = glue2.require("manager/queuestore");
 const {SpeedStats} = glue2.require("manager/speedstats");
+const RequestManipulation = glue2.require("manager/requestmanipulation");
 
 module('resource://dta/support/fileextsheet.jsm');
 module('resource://dta/support/urlmanager.jsm');
 
-let Preallocator = {}, RequestManipulation = {};
+let Preallocator = {};
 module('resource://dta/manager/chunk.jsm');
 module('resource://dta/manager/connection.jsm');
 module('resource://dta/manager/preallocator.jsm', Preallocator);
-module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
 module('resource://dta/manager/visitormanager.jsm');
 
 function lazyModule(obj, name, url, symbol) {
