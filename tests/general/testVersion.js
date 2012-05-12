@@ -1,9 +1,8 @@
 module("version.js");
 
-/* XXX require
 test("exports", function() {
-	checkExports("resource://dta/version.jsm", ["Version"]);
-});*/
+	checkExports("version", ["APP_ID", "APP_NAME", "APP_VERSION", "BASE_VERSION", "ID", "LOCALE", "NAME", "OS", "TOPIC_SHOWABOUT", "VERSION", "ready", "showAbout"]);
+});
 
 
 asyncTest("getVersion", function() {

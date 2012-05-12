@@ -1,10 +1,8 @@
 module("defer.jsm");
 
-/* XXX require
 test("exports", function() {
-	checkExports("resource://dta/support/defer.jsm", ["defer"]);
+	checkExports("support/defer", ["defer"]);
 });
-*/
 
 asyncTest("defer", function() {
 	expect(1);

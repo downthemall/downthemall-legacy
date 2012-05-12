@@ -1,9 +1,7 @@
 module("preferences.js");
 
-/* XXX require
 test("exports", function() {
-	var p = require("resource://dta/preferences.jsm");
-	checkExports("resource://dta/preferences.jsm", [
+	checkExports("preferences", [
 		'get',
 		'getExt',
 		'getBranch',
@@ -23,7 +21,6 @@ test("exports", function() {
 		'makeObserver'
 		]);
 });
-*/
 
 test("read", function() {
 	var p = require("preferences");

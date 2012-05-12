@@ -1,10 +1,8 @@
 module("cothreads.js");
 
-/* XXX require
 test("exports", function() {
-	checkExports("resource://dta/cothread.jsm", ['CoThread', 'CoThreadInterleaved', 'CoThreadListWalker']);
+	checkExports("cothreads", ['CoThread', 'CoThreadInterleaved', 'CoThreadListWalker']);
 });
-*/
 
 asyncTest("CoThread1", function() {
 	expect(2);

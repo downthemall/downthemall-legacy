@@ -1,13 +1,12 @@
 module("pbm.js");
 
-/* XXX
 test("exports", function() {
-	checkExports("resource://dta/support/pbm.jsm", [
+	checkExports("support/pbm", [
 		"browsingPrivately",
 		"registerCallbacks",
 		"unregisterCallbacks"
 		]);
-});*/
+});
 
 test("correct", function() {
 	var pbm = require("support/pbm");
