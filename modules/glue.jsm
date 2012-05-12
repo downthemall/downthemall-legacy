@@ -193,7 +193,6 @@ LRUMap.prototype = {
 			Services.scriptloader.loadSubScript(module, scope);
 		}
 		catch (ex) {
-			requireJSM("resource://dta/utils.jsm").Logger.log(module, ex);
 			Cu.reportError(module);
 			Cu.reportError(ex);
 			// log(LOG_ERROR, "failed to load " + module, ex);

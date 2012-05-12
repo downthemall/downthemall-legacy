@@ -6,7 +6,7 @@
 
 const DTA = require("api");
 const Prefs = require("preferences");
-const {Logger, newUUIDString, hexdigest} = requireJSM("resource://dta/utils.jsm");
+const {Logger, newUUIDString, hexdigest} = require("utils");
 
 const REGULAR_CHUNK = (1 << 21); // 2/16MB
 

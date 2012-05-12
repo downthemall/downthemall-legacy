@@ -4,7 +4,7 @@
 "use strict";
 
 const {CoThreadInterleaved} = require("cothreads");
-const {Logger} = requireJSM("resource://dta/utils.jsm");
+const {Logger} = require("utils");
 
 // Should we use the optimized Windows implementation?
 const WINDOWSIMPL = require("version").OS == 'winnt';

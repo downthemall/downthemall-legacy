@@ -5,7 +5,7 @@
 const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 if (available) {
 	lazy(this, "api", function() require("api"));
-	lazy(this, "utils", function() requireJSM("resource://dta/utils.jsm"));
+	lazy(this, "utils", function() require("utils"));
 	const core = Cc["@downloadhelper.net/core;1"].getService(Ci.dhICore);
 
 	function ProcessorImpl(turbo, name, title, description) {

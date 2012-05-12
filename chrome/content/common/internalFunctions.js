@@ -303,7 +303,7 @@ var Utils = {
 	Utils.formatSpeed = createFormatter([['sizeBs', 0], ['sizeKBs', 1], ['sizeMBs', 2], ['sizeGBs', 3]], 1023);
 })();
 
-Components.utils.import('resource://dta/utils.jsm', Utils);
+requireJoined(Utils, "utils");
 const SYSTEMSLASH = Utils.SYSTEMSLASH;
 
 const Logger = Utils.Logger;
@@ -314,12 +314,7 @@ if (!('Debug' in this)) {
 }
 
 
-//XXX Copy from utils.jsm
-//XXX Cannot use directly; yields NS_ERROR_INVALID_VALUE then
-for each (let copy in ["bind"]) {
-	eval(Utils[copy].toSource());
-}
-
+// XXX DIEDIEDIE
 Utils.extendString(String);
 
 /**
@@ -384,7 +379,7 @@ function hash(value, algorithm, encoding, datalen) {
 	}
 	else {
 		Instances.uniconverter.charset = 'utf8';
-		value = Instances.uniconverter.convertToByteArray(Utils.atos(value), {});
+		value = Instances.uniconverter.convertToByteArray(value, {});
 		ch.update(value, value.length);
 	}
 	var rv = ch.finish(encoding == HASH_B64);

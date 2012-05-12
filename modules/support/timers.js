@@ -7,7 +7,7 @@ const EXPORTED_SYMBOLS = ['TimerManager'];
 
 const nsITimer = Ci.nsITimer;
 
-const {Logger} = requireJSM("resource://dta/utils.jsm");
+const {Logger} = require("utils");
 
 function uuid() Services.uuid.generateUUID().toString();
 

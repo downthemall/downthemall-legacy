@@ -8,7 +8,7 @@ const FREQ = 250;
 
 const DTA = require("api");
 const {TimerManager} = require("support/timers");
-const {Logger} = requireJSM("resource://dta/utils.jsm");
+const {Logger} = require("utils");
 const Prefs = require("preferences");
 
 const Timers = new TimerManager();

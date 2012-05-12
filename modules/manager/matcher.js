@@ -10,7 +10,7 @@ const {
 	SimpleIterator,
 	StringBundles,
 	filterInSitu
-} = requireJSM("resource://dta/utils.jsm");
+} = require("utils");
 
 (function(global) {
 	let strings = {};

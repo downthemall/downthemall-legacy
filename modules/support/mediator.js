@@ -42,7 +42,7 @@ const EXPORTED_SYMBOLS = [
 ];
 
 const Prefs = require("preferences");
-const {Logger} = requireJSM("resource://dta/utils.jsm");
+const {Logger} = require("utils");
 
 function objToString(obj) {
 	if (obj == null || obj == undefined || !obj) {

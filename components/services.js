@@ -58,9 +58,8 @@ XPCOMUtils.defineLazyGetter(this, "IconCheat", function() requireMod("support/ic
 
 function log(str, ex) {
 	try {
-		let _u = {};
-		module('resource://dta/utils.jsm', _u);
-		log = function() _u.Logger.log.apply(_u.Logger, arguments);
+		const {Logger} = requireMod("utils");
+		log = function() Logger.log.apply(Logger, arguments);
 		log(str, ex);
 	}
 	catch (oex) {

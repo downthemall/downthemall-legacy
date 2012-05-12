@@ -8,7 +8,7 @@ const Preferences = require("preferences");
 const {getTextLinks} = require("support/textlinks");
 const Version = require("version");
 const {NS_DTA, NS_METALINKER3} = require("support/metalinker");
-const {Logger, filterInSitu} = requireJSM("resource://dta/utils.jsm");
+const {Logger, filterInSitu} = require("utils");
 
 const XPathResult = Ci.nsIDOMXPathResult;
 

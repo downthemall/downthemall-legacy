@@ -4,7 +4,7 @@
 "use strict";
 
 const DTA = require("api");
-const {Logger, getTimestamp} = requireJSM("resource://dta/utils.jsm");
+const {Logger, getTimestamp} = require("utils");
 
 function Visitor() {
 	// sanity check

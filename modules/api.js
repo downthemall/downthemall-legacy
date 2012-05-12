@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const {Logger, MimeQuality} = requireJSM("resource://dta/utils.jsm");
+const {Logger, MimeQuality} = require("utils");
 const Preferences = require("preferences");
 const pbm = require("support/pbm");
 const Mediator = require("support/mediator");

@@ -15,7 +15,7 @@ lazy(this, 'TextLinks', function() require("support/textlinks"));
 lazy(this, "ContentHandling", function() require("support/contenthandling").ContentHandling);
 lazy(this, 'CoThreads', function() require("cothreads"));
 lazy(this, 'getString_str',	function() Services.strings.createBundle('chrome://dta/locale/menu.properties'));
-lazy(this, "Logger", function() requireJSM("resource://dta/utils.jsm").Logger);
+lazy(this, "Logger", function() require("utils").Logger);
 
 /* **
  * Helpers and tools
