@@ -40,6 +40,8 @@
 let Limits = {}, PrivateBrowsing = {};
 module('resource://dta/cothread.jsm');
 const Prompts = glue2.require("prompts");
+const {ByteBucket} = glue2.require("support/bytebucket");
+const {GlobalBucket} = glue2.require("manager/globalbucket");
 
 module('resource://dta/support/contenthandling.jsm');
 module('resource://dta/support/defer.jsm');
@@ -54,7 +56,6 @@ let Preallocator = {}, RequestManipulation = {};
 module('resource://dta/manager/chunk.jsm');
 module('resource://dta/manager/connection.jsm');
 module('resource://dta/manager/globalprogress.jsm');
-module('resource://dta/manager/globalbucket.jsm');
 module('resource://dta/manager/asyncmovefile.jsm');
 module('resource://dta/manager/preallocator.jsm', Preallocator);
 module('resource://dta/manager/queuestore.jsm');
