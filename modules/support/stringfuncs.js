@@ -97,7 +97,7 @@ exports.toURI = function toURI(str, charset, baseURI) {
 	return Services.io.newURI(str, charset, baseURI);
 };
 
-exports.toURI = function toURI(str, charset, baseURI) {
+exports.toURL = function toURL(str, charset, baseURI) {
 	return exports.toURI(str, charset, baseURI).QueryInterface(Ci.nsIURL);
 };
 
