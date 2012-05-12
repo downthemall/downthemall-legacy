@@ -62,7 +62,6 @@ module('resource://dta/api.jsm', DTA);
 module('resource://dta/constants.jsm');
 module('resource://dta/utils.jsm');
 module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
-module('resource://dta/support/bytebucket.jsm');
 
 const Preferences = DTA.Preferences;
 const Logger = DTA.Logger;

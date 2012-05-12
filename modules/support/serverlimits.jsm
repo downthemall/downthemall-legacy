@@ -57,7 +57,7 @@ module("resource://dta/glue.jsm");
 let Prefs = glue2.require("preferences");
 module("resource://dta/utils.jsm");
 module("resource://dta/constants.jsm");
-module("resource://dta/support/bytebucket.jsm");
+const {ByteBucket} = glue2.require("support/bytebucket");
 
 const TOPIC = 'DTA:serverlimits-changed';
 const PREFS = 'extensions.dta.serverlimit.';
