@@ -154,8 +154,7 @@ Stuff.prototype = {
 		try {
 			// DownloadHelper integration
 			if (("dhICore" in Ci) && ("dhIProcessor" in Ci)) {
-				let _dh = {};
-				module("resource://dta/support/downloadHelper.jsm", _dh);
+				module("resource://dta/glue2.jsm", {}).require("support/downloadHelper");
 			}
 		}
 		catch (ex) {
