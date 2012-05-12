@@ -7,11 +7,14 @@
 "use strict";
 
 const EXPORTED_SYMBOLS = [
-	"XPCOMUtils", "Services", "Instances", "require", "lazyRequire"
+	"XPCOMUtils", "Services", "Instances", "require", "lazyRequire", "glue2"
 	];
 
 const {classes: Cc, interfaces: Ci, utils: Cu, Constructor: ctor} = Components;
 const module = Cu.import;
+
+var glue2 = {};
+module("resource://dta/glue2.jsm", glue2);
 
 module("resource://gre/modules/XPCOMUtils.jsm");
 

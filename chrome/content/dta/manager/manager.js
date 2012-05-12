@@ -37,9 +37,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-let Prompts = {}, Limits = {}, PrivateBrowsing = {};
+let Limits = {}, PrivateBrowsing = {};
 module('resource://dta/cothread.jsm');
-module('resource://dta/prompts.jsm', Prompts);
+const Prompts = glue2.require("prompts");
 
 module('resource://dta/support/contenthandling.jsm');
 module('resource://dta/support/defer.jsm');

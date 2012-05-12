@@ -34,8 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-let Prompts = {};
-Components.utils.import('resource://dta/prompts.jsm', Prompts);
+const Prompts = glue2.require("prompts");
 Components.utils.import('resource://dta/version.jsm');
 
 var dropDowns = {};
