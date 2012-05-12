@@ -1,57 +1,13 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is DownThemAll CoThread module.
- *
- * The Initial Developer of the Original Code is Nils Maier
- * Portions created by the Initial Developer are Copyright (C) 2008
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Nils Maier <MaierMan@web.de>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
-
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const EXPORTED_SYMBOLS = ['CoThread', 'CoThreadInterleaved', 'CoThreadListWalker'];
+// Note: only used for dispatching CoThreads to the mainThread event loop
+const ThreadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
+const MainThread = ThreadManager.mainThread;
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const module = Cu.import;
-
-module("resource://gre/modules/Services.jsm");
-module("resource://gre/modules/XPCOMUtils.jsm");
-
-const MainThread = Services.tm.mainThread;
-
-// "Abstract" base c'tor
-function CoThreadBase() {}
-CoThreadBase.prototype = {
+const CoThreadBase = {
 	_idx: 0,
 	_ran: false,
 	_finishFunc: null,
@@ -129,9 +85,8 @@ CoThreadBase.prototype = {
  * events.
  *
  * Example:
- *        Components.utils.import('resource://dta/cothread.jsm');
  *        new CoThread(
- *        	// What to do with each item?
+ *          // What to do with each item?
  *          // Print it!
  *          function(count) document.write(count + "<br>") || (count < 30000),
  *          // When to turn over Control?
@@ -143,36 +98,33 @@ CoThreadBase.prototype = {
  * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
  * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
  */
-function CoThread(func, yieldEvery, thisCtx) {
+exports.CoThread = function CoThread(func, yieldEvery, thisCtx) {
 	this.init(func, yieldEvery, thisCtx);
-
 	// fake generator so we may use a common implementation. ;)
 	this._generator = (function() { for(;;) { yield null }; })();
 }
-
-CoThread.prototype = {
-	__proto__: CoThreadBase.prototype,
-
-	_callf: function CoThread__callf(ctx, item, idx, func) {
-		return func.call(ctx, idx);
+exports.CoThread.prototype = Object.create(CoThreadBase, {
+	_callf: {
+		value: function CoThread__callf(ctx, i, idx, fn) fn.call(ctx, idx),
+		enumerable: true
 	}
-}
+});
+
 /**
  * Constructs a new CoThreadInterleaved (aka. pseudo-thread).
  * The CoThread will process a interleaved function (generator)
  *
  * Example:
- *        Components.utils.import('resource://dta/cothread.jsm');
  *        new CoThread(
  *          function(count) {
- *          	do_some();
- *          	yield true;
- *          	do_more();
- *          	yield true;
- *          	if (!do_even_more()) {
- *          		return;
- *          	}
- *          	do_last();
+ *            do_some();
+ *            yield true;
+ *            do_more();
+ *            yield true;
+ *            if (!do_even_more()) {
+ *              return;
+ *            }
+ *            do_last();
  *          },
  *          // When to turn over Control?
  *          // Each 2 items
@@ -183,20 +135,16 @@ CoThread.prototype = {
  * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
  * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
  */
-function CoThreadInterleaved(generator, yieldEvery, thisCtx) {
-		this.init(function() true, yieldEvery, thisCtx);
-		if (typeof generator == "function") {
-			this._generator = generator();
-		}
-		else {
-			this._generator = generator;
-		}
-}
-CoThreadInterleaved.prototype = {
-	__proto__: CoThreadBase.prototype,
-
-	_callf: function() true
+exports.CoThreadInterleaved = function CoThreadInterleaved(generator, yieldEvery, thisCtx) {
+	this.init(function() true, yieldEvery, thisCtx);
+	this._generator = typeof(generator) == "function" ? generator() : generator;
 };
+exports.CoThreadInterleaved.prototype = Object.create(CoThreadBase, {
+	_callf: {
+		value: function() true,
+		enumerable: true
+	}
+});
 
 /**
  * Constructs a new CoThreadListWalker (aka. pseudo-thread).
@@ -206,9 +154,8 @@ CoThreadInterleaved.prototype = {
  * process any outstanding events.
  *
  * Example:
- *        Components.utils.import('resource://dta/cothread.jsm');
  *        new CoThreadListWalker(
- *        	// What to do with each item?
+ *          // What to do with each item?
  *          // Print it!
  *          function(item, idx) document.write(item + "/" + idx + "<br>") || true,
  *          // What items?
@@ -225,7 +172,7 @@ CoThreadInterleaved.prototype = {
  * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
  * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
  */
-function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
+exports.CoThreadListWalker = function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
 	this.init(func, yieldEvery, thisCtx);
 
 	if (arrayOrGenerator instanceof Array || 'length' in arrayOrGenerator) {
@@ -240,10 +187,11 @@ function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
 		throw Cr.NS_ERROR_INVALID_ARG;
 	}
 }
-
-CoThreadListWalker.prototype = {
-	__proto__: CoThreadBase.prototype,
-	_callf: function CoThreadListWalker__callf(ctx, item, idx, func) {
-		return func.call(ctx, item, idx);
+exports.CoThreadListWalker.prototype = Object.create(CoThreadBase, {
+	_callf: {
+		value: function CoThreadListWalker__callf(ctx, item, idx, fn) fn.call(ctx, item, idx),
+		enumerable: true
 	}
-}
+});
+
+/* vim: set et ts=2 sw=2 : */

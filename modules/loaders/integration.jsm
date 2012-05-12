@@ -56,13 +56,7 @@ XPCOMUtils.defineLazyGetter(this, 'Preferences', function() glue2.require("prefe
 this.__defineGetter__('recognizeTextLinks', function() Preferences.getExt("textlinks", true));
 XPCOMUtils.defineLazyGetter(this, 'TextLinks', function() glue2.require("support/textlinks"));
 XPCOMUtils.defineLazyGetter(this, "ContentHandling", function() glue2.require("support/contenthandling").ContentHandling);
-XPCOMUtils.defineLazyGetter(this, 'CoThreads', function() {
-	let rv = {};
-	module('resource://dta/cothread.jsm', rv);
-	Object.freeze(rv);
-	return rv;
-});
-
+XPCOMUtils.defineLazyGetter(this, 'CoThreads', function() glue2.require("cothreads"));
 XPCOMUtils.defineLazyGetter(
 	this,
 	'getString_str',

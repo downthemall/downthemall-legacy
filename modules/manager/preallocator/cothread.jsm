@@ -46,8 +46,8 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 module('resource://dta/glue.jsm');
+const {CoThreadInterleaved} = glue2.require("cothreads");
 module('resource://dta/utils.jsm');
-module('resource://dta/cothread.jsm');
 
 // Should we use the optimized Windows implementation?
 const WINDOWSIMPL = glue2.require("version").OS == 'winnt';

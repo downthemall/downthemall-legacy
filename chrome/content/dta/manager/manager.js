@@ -38,7 +38,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 let Limits = {};
-module('resource://dta/cothread.jsm');
+const {CoThreadListWalker} = glue2.require("cothreads");
 const Prompts = glue2.require("prompts");
 const {ByteBucket} = glue2.require("support/bytebucket");
 const {GlobalBucket} = glue2.require("manager/globalbucket");
