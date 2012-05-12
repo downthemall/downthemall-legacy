@@ -50,6 +50,7 @@ const {asyncMoveFile} = glue2.require("manager/asyncmovefile");
 const GlobalProgress = new (glue2.require("manager/globalprogress").GlobalProgress)(window);
 const Limits = glue2.require("support/serverlimits");
 const {QueueStore} = glue2.require("manager/queuestore");
+const {SpeedStats} = glue2.require("manager/speedstats");
 
 module('resource://dta/support/fileextsheet.jsm');
 module('resource://dta/support/urlmanager.jsm');
@@ -59,7 +60,6 @@ module('resource://dta/manager/chunk.jsm');
 module('resource://dta/manager/connection.jsm');
 module('resource://dta/manager/preallocator.jsm', Preallocator);
 module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
-module('resource://dta/manager/speedstats.jsm');
 module('resource://dta/manager/visitormanager.jsm');
 
 function lazyModule(obj, name, url, symbol) {
