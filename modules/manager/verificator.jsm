@@ -46,7 +46,7 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 const DTA = {};
-module("resource://dta/glue2.jsm");
+module("resource://dta/glue.jsm");
 const Prefs = require("preferences");
 module("resource://dta/utils.jsm");
 module("resource://dta/api.jsm", DTA);

@@ -48,7 +48,7 @@ const Cr = Components.results;
 const Cu = Components.utils;
 const module = Cu.import;
 
-module("resource://dta/glue2.jsm");
+module("resource://dta/glue.jsm");
 requireJoined(this, "constants");
 const Prefs = require("preferences");
 const {ByteBucketTee} = require("support/bytebucket");

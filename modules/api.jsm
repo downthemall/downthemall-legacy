@@ -72,7 +72,7 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-module("resource://dta/glue2.jsm");
+module("resource://dta/glue.jsm");
 module("resource://dta/utils.jsm");
 
 const Preferences = require("preferences");

@@ -48,7 +48,7 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 const DTA = {};
-module("resource://dta/glue2.jsm");
+module("resource://dta/glue.jsm");
 const {TimerManager} = require("support/timers");
 
 module("resource://dta/utils.jsm");

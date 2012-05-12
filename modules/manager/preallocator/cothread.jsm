@@ -45,7 +45,7 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-module('resource://dta/glue2.jsm');
+module('resource://dta/glue.jsm');
 const {CoThreadInterleaved} = require("cothreads");
 module('resource://dta/utils.jsm');
 

@@ -57,7 +57,7 @@ const NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
 let DTA = {};
 module("resource://gre/modules/XPCOMUtils.jsm");
 
-module('resource://dta/glue2.jsm');
+module('resource://dta/glue.jsm');
 module('resource://dta/api.jsm', DTA);
 requireJoined(this, "constants");
 module('resource://dta/utils.jsm');
