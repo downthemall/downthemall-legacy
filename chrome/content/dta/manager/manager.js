@@ -59,18 +59,11 @@ const Preallocator = require("manager/preallocator");
 const {Chunk} = require("manager/chunk");
 const {Connection} = require("manager/connection");
 
-function lazyModule(obj, name, url, symbol) {
-	XPCOMUtils.defineLazyGetter(obj, name, function() {
-		let _o = {};
-		module(url, _o);
-		return symbol ? _o[symbol] : _o;
-	});
-}
 XPCOMUtils.defineLazyGetter(this, "Version", function() require("version"));
 const AlertService = lazyRequire("support/alertservice", "show");
-lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Decompressor');
-XPCOMUtils.defineLazyGetter(this, 'Verificator', function() require("manager/verificator"));
-XPCOMUtils.defineLazyGetter(this, 'FileExts', function() new FileExtensionSheet(window));
+XPCOMUtils.defineLazyGetter(this, "Decompressor", function() require("manager/decompressor").Decompressor);
+XPCOMUtils.defineLazyGetter(this, "Verificator", function() require("manager/verificator"));
+XPCOMUtils.defineLazyGetter(this, "FileExts", function() new FileExtensionSheet(window));
 
 const TextCache = {};
 addEventListener("load", function load_textCache() {
