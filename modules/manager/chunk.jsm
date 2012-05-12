@@ -53,8 +53,9 @@ module("resource://dta/constants.jsm");
 const Prefs = glue2.require("preferences");
 const {ByteBucketTee} = glue2.require("support/bytebucket");
 const {GlobalBucket} = glue2.require("manager/globalbucket");
+const {defer} = glue2.require("support/defer");
+
 module("resource://dta/utils.jsm");
-module("resource://dta/support/defer.jsm");
 module("resource://dta/support/timers.jsm");
 const Limits = {};
 module("resource://dta/support/serverlimits.jsm", Limits);
