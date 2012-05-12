@@ -40,9 +40,8 @@ Components.utils.import('resource://dta/version.jsm');
 var dropDowns = {};
 
 XPCOMUtils.defineLazyGetter(this, "BatchGenerator", function() {
-	let bg = {};
-	Components.utils.import("resource://dta/support/batchgen.jsm", bg);
-	return bg.BatchGenerator;
+	const {BatchGenerator} = glue2.require("support/batchgen");
+	return BatchGenerator;
 });
 
 
@@ -267,7 +266,7 @@ var Dialog = {
 			if (Logger.enabled) {
 				Logger.log("Cannot create batch", ex);
 			}
-			return;
+			return false;
 		}
 
 		var rv = !('_realURL' in address) && batch.length > 1;
