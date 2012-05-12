@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-lazyModule(this, 'ImportExport', 'resource://dta/manager/imex.jsm');
+XPCOMUtils.defineLazyGetter(this, "ImportExport", function() require("manager/imex"));
 
 function FileDataProvider(download, file) {
 	this._download = download;

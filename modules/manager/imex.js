@@ -1,75 +1,18 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is DownThemAll Import/Export module.
- *
- * The Initial Developer of the Original Code is Nils Maier
- * Portions created by the Initial Developer are Copyright (C) 2010
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Nils Maier <MaierMan@web.de>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/ */
+"use strict";
 
-const EXPORTED_SYMBOLS = [
-	"parseTextFile",
-
-	"exportToTextFile",
-	"exportToHtmlFile",
-	"exportToMetalinkFile"
-];
-
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const module = Cu.import;
-const Exception = Components.Exception;
-
-const DTA = {};
-module("resource://dta/glue.jsm");
+const DTA = requireJSM("resource://dta/api.jsm");
 const Preferences = require("preferences");
 const {getTextLinks} = require("support/textlinks");
 const Version = require("version");
 const {NS_DTA, NS_METALINKER3} = require("support/metalinker");
-module("resource://dta/api.jsm", DTA);
-module("resource://dta/utils.jsm");
+const {Logger, filterInSitu} = requireJSM("resource://dta/utils.jsm");
 
 const XPathResult = Ci.nsIDOMXPathResult;
 
-function parseTextFile(aFile) {
-	if (Logger.enabled) {
-		Logger.log("Parsing text file: " + aFile.spec);
-	}
-	// Open the file in a line reader
-	let is = new Instances.FileInputStream(aFile, 0x01, 0, 0);
-	let ls = is.QueryInterface(Ci.nsILineInputStream);
-	let line = {};
-	let lines = [];
-
+exports.parseTextFile = function parseTextFile(aFile) {
 	function addLine(line) {
 		try {
 			// try to parse the URI and and see if it is of the correct type.
@@ -82,6 +25,16 @@ function parseTextFile(aFile) {
 			}
 		}
 	}
+
+	if (Logger.enabled) {
+		Logger.log("Parsing text file: " + aFile.spec);
+	}
+	// Open the file in a line reader
+	let is = new Instances.FileInputStream(aFile, 0x01, 0, 0);
+	let ls = is.QueryInterface(Ci.nsILineInputStream);
+	let line = {};
+	let lines = [];
+
 	while(ls.readLine(line)) {
 		addLine(line);
 	}
@@ -106,7 +59,7 @@ function parseTextFile(aFile) {
 	return filterInSitu(links, function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)), {});
 }
 
-function exportToTextFile(aDownloads, aFile, aPermissions) {
+exports.exportToTextFile = function exportToTextFile(aDownloads, aFile, aPermissions) {
 	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
 	let cs = new Instances.ConverterOutputStream(fs, null, 0, null);
 	for (let d in aDownloads) {
@@ -121,10 +74,9 @@ function exportToTextFile(aDownloads, aFile, aPermissions) {
 	try { fs.close(); } catch (ex) { /* no op */ }
 }
 
-function exportToHtmlFile(aDownloads, aDocument, aFile, aPermissions) {
+exports.exportToHtmlFile = function exportToHtmlFile(aDownloads, aDocument, aFile, aPermissions) {
 	// do not localize?!
 	let title = "DownThemAll: exported on " + (new Date).toUTCString();
-
 
 	let doctype = aDocument.implementation.createDocumentType('html', null, null);
 	let document = aDocument.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', doctype);
@@ -218,7 +170,8 @@ function exportToHtmlFile(aDownloads, aDocument, aFile, aPermissions) {
 	fs.close();
 
 }
-function exportToMetalinkFile(aDownloads, aDocument, aFile, aPermissions) {
+
+exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocument, aFile, aPermissions) {
 	let document = aDocument.implementation.createDocument(NS_METALINKER3, 'metalink', null);
 	let root = document.documentElement;
 	root.setAttribute('type', 'static');
