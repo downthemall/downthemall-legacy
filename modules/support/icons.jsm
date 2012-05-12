@@ -49,7 +49,7 @@ const Exception = Components.Exception;
 module("resource://dta/glue.jsm");
 module("resource://dta/api.jsm");
 module("resource://dta/utils.jsm");
-module("resource://dta/support/memoize.jsm");
+const {memoize} = glue2.require("support/memoize");
 
 extendString(String);
 
