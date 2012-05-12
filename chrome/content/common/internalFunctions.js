@@ -66,8 +66,7 @@ if (!('Debug' in this)) {
 	this['Debug'] = DTA.Logger;
 }
 const Preferences = DTA.Preferences;
-
-module("resource://dta/support/icons.jsm");
+const {getIcon} = glue2.require("support/icons");
 
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!
