@@ -4,7 +4,6 @@
 "use strict";
 
 const {makeObserver} = require("preferences");
-Cu.import("resource://dta/version.jsm");
 
 let available = false;
 let service = null;
@@ -12,7 +11,7 @@ let alerting = false;
 let supportsClickable = true;
 (function() {
 	// XXX enhance: query libnotify via ctypes.
-	if (Version.OS == 'linux') {
+	if (require("version").OS == 'linux') {
 		supportsClickable = false;
 	}
 })();

@@ -62,8 +62,8 @@ const NS_METALINK_RFC5854 = 'urn:ietf:params:xml:ns:metalink';
 const DTA = {};
 module("resource://dta/glue.jsm");
 const Preferences = glue2.require("preferences");
+const {LOCALE} = glue2.require("version");
 module("resource://dta/api.jsm", DTA);
-module("resource://dta/version.jsm");
 module("resource://dta/utils.jsm");
 module("resource://dta/support/urlmanager.jsm");
 
@@ -265,7 +265,7 @@ Metalinker3.prototype = {
 				}
 				if (url.hasAttribute('location')) {
 					var a = url.getAttribute('location').slice(0,2).toLowerCase();
-					if (Version.LOCALE.indexOf(a) != -1) {
+					if (LOCALE.indexOf(a) != -1) {
 						preference = 100 + preference;
 					}
 				}
@@ -470,7 +470,7 @@ MetalinkerRFC5854.prototype = {
 				}
 				if (url.hasAttribute('location')) {
 					let a = url.getAttribute('location').slice(0,2).toLowerCase();
-					if (Version.LOCALE.indexOf(a) != -1) {
+					if (LOCALE.indexOf(a) != -1) {
 						preference = Math.max(preference / 4, 1);
 					}
 				}

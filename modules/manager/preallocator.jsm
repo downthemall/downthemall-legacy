@@ -23,7 +23,7 @@ lazyRequire("resource://dta/utils.jsm", ["Logger"], this);
 const _asynccopier = require("resource://dta/manager/preallocator/asynccopier.jsm").prealloc;
 const _cothread = require("resource://dta/manager/preallocator/cothread.jsm").prealloc;
 
-const SIZE_MIN = (require('resource://dta/version.jsm').Version.OS == 'winnt' ? 256 : 2048) * 1024;
+const SIZE_MIN = (glue2.require("version").OS == 'winnt' ? 256 : 2048) * 1024;
 const SIZE_COTHREAD_MAX = (1<<24);
 
 const _impl = createOptimizedImplementation(

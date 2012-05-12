@@ -36,7 +36,7 @@
 
 const METALINK_LOGO = 'chrome://dta/skin/icons/metalink48.png';
 
-module("resource://dta/version.jsm");
+const Version = glue2.require("version");
 
 const MetaSelect = {
 	_insertDownload: function(d) {

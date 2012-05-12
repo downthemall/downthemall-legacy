@@ -47,11 +47,10 @@ const Exception = Components.Exception;
 
 module('resource://dta/glue.jsm');
 module('resource://dta/utils.jsm');
-module('resource://dta/version.jsm');
 module('resource://dta/cothread.jsm');
 
 // Should we use the optimized Windows implementation?
-const WINDOWSIMPL = Version.OS == 'winnt';
+const WINDOWSIMPL = glue2.require("version").OS == 'winnt';
 // Size cap: Use Windows implementation (on Windows) even if run on main thread
 const WINDOWSIMPL_SIZEMAX = (1 << 25); // 32MB
 
