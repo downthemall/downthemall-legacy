@@ -54,6 +54,7 @@ function requireMod(m) {
 
 XPCOMUtils.defineLazyGetter(this, "Preferences", function() requireMod("preferences"));
 XPCOMUtils.defineLazyGetter(this, "Version", function() requireMod("version"));
+XPCOMUtils.defineLazyGetter(this, "IconCheat", function() requireMod("support/iconcheat"));
 
 function log(str, ex) {
 	try {
@@ -129,8 +130,7 @@ Stuff.prototype = {
 				Services.obs.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
 
 				// Need to extract icons
-				let _ic = {};
-				module('resource://dta/support/iconcheat.jsm');
+				IconCheat.loadWindow(null);
 			}
 			catch (ex) {
 				log("MigrationManager:", ex);
