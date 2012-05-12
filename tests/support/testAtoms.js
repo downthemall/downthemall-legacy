@@ -1,5 +1,6 @@
 module("atoms.jsm");
 
+/* XXX require
 test("exports", function() {
 	checkExports("resource://dta/support/atoms.jsm", [
 		"Atoms",
@@ -14,13 +15,14 @@ test("exports", function() {
 		"progressAtom"
 		]);
 });
+*/
 
 test("getAtoms", function() {
-	var Atoms = new (require("resource://dta/support/atoms.jsm").Atoms)();
+	var Atoms = new (glue2.require("support/atoms").Atoms)();
 	ok(Atoms.getAtom("foobar"), "can get atom");
 	strictEqual(Atoms.getAtom("foobar"), Atoms.getAtom("foobar"), "getting twice yields the same atom");
 	equal(Atoms.getAtom("foobar").toString(), "foobar", "toString works");
 
-	var Atoms2 = new (require("resource://dta/support/atoms.jsm").Atoms)();
+	var Atoms2 = new (glue2.require("support/atoms").Atoms)();
 	strictEqual(Atoms.getAtom("foobar"), Atoms2.getAtom("foobar"), "getting twice by different instances yields the same atom");
 });

@@ -281,7 +281,7 @@ Tree.prototype = {
 		}
 	}
 };
-module("resource://dta/support/atoms.jsm", Tree.prototype);
+glue2.requireJoined(Tree.prototype, "support/atoms");
 
 /**
  * Our real, kicks ass implementation of the UI

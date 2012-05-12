@@ -1547,7 +1547,7 @@ const Tree = {
 	}
 };
 module('resource://dta/manager/matcher.jsm', Tree);
-module('resource://dta/support/atoms.jsm', Tree);
+glue2.requireJoined(Tree, "support/atoms");
 
 const FileHandling = {
 	get _uniqueList() {
