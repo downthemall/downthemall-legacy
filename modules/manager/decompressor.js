@@ -8,7 +8,6 @@ const FREQ = 250;
 
 const DTA = require("api");
 const {TimerManager} = require("support/timers");
-const {Logger} = require("utils");
 const Prefs = require("preferences");
 
 const Timers = new TimerManager();
@@ -49,9 +48,7 @@ function Decompressor(download) {
 		catch (exx) {
 			// XXX: what now?
 		}
-		if (Logger.enabled) {
-			Logger.log("err. :p", ex);
-		}
+		log(LOG_ERROR, "err. :p", ex);
 		download.complete(ex);
 	}
 }
@@ -82,9 +79,7 @@ Decompressor.prototype = {
 		}
 		catch (ex) {
 			// huh?
-			if (Logger.enabled) {
-				Logger.log("Decompressor: close streams", ex);
-			}
+			log(LOG_ERROR, "Decompressor: close streams", ex);
 		}
 		if (this.exception) {
 			try {
@@ -98,9 +93,7 @@ Decompressor.prototype = {
 			this.from.remove(false);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Failed to remove tmpFile", ex);
-			}
+			log(LOG_ERROR, "Failed to remove tmpFile", ex);
 		}
 
 		this.download.complete(this.exception);

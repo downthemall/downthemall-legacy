@@ -7,8 +7,6 @@ const Prefs = require("preferences");
 requireJoined(this, "constants");
 const {ByteBucket} = require("support/bytebucket");
 
-const {Logger} = require("utils");
-
 const TOPIC = 'DTA:serverlimits-changed';
 const PREFS = 'extensions.dta.serverlimit.';
 const LIMITS_PREF  = 'extensions.dta.serverlimit.limits.';
@@ -93,14 +91,10 @@ function loadLimits() {
 		try {
 			let limit = new Limit(host);
 			limits[limit.host] = limit;
-			if (Logger.enabled) {
-				Logger.log("loaded limit: " + limit);
-			}
+			log(LOG_DEBUG, "loaded limit: " + limit);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Failed to load: " + host, ex);
-			}
+			log(LOG_ERROR, "Failed to load: " + host, ex);
 		}
 	}
 	Services.obs.notifyObservers(null, TOPIC, null);
@@ -441,9 +435,7 @@ function loadScheduler() {
 		scheduler = FastScheduler;
 		break;
 	}
-	if (Logger.enabled) {
-		Logger.log("Using scheduler " + scheduler.name);
-	}
+	log(LOG_INFO, "Using scheduler" + scheduler.name);
 }
 function getConnectionScheduler(downloads) {
 	return new scheduler(downloads);

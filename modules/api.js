@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const {Logger, MimeQuality} = require("utils");
+const {MimeQuality} = require("utils");
 const Preferences = require("preferences");
 const pbm = require("support/pbm");
 const Mediator = require("support/mediator");
@@ -24,9 +24,7 @@ function _decodeCharset(text, charset) {
 			rv = decodeURIComponent(text);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("decodeCharset: failed to decode: " + text, ex);
-			}
+			log(LOG_INFO, "decodeCharset: failed to decode: " + text, ex);
 		}
 	}
 	return rv;
@@ -287,9 +285,7 @@ exports.composeURL = function composeURL(doc, rel) {
 
 exports.getRef = function getRef(doc) {
 	try {
-		if (Logger.enabled) {
-			Logger.log(doc.URL);
-		}
+		log(LOG_DEBUG, "getting ref for" + doc.URL);
 		return (new URL(Services.io.newURI(doc.URL, doc.characterSet, null))).url.spec;
 	}
 	catch (ex) {
@@ -393,9 +389,7 @@ exports.turboSaveLinkArray = function turboSaveLinkArray(window, urls, images) {
 	if (urls.length == 0 && images.length == 0) {
 		throw new Exception("no links");
 	}
-	if (Logger.enabled) {
-		Logger.log("turboSaveLinkArray(): DtaOneClick filtering started");
-	}
+	log(LOG_INFO, "turboSaveLinkArray(): DtaOneClick filtering started");
 
 	let links;
 	let type;
@@ -424,9 +418,7 @@ exports.turboSaveLinkArray = function turboSaveLinkArray(window, urls, images) {
 		}
 	);
 
-	if (Logger.enabled) {
-		Logger.log("turboSaveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
-	}
+	log(LOG_INFO, "turboSaveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
 
 	if (links.length == 0) {
 		throw new Exception('no links remaining');
@@ -453,9 +445,7 @@ exports.openManager = function openManager(window, quiet) {
 		return Mediator.getMostRecent('DTA:Manager');
 	}
 	catch(ex) {
-		if (Logger.enabled) {
-			Logger.log("openManager():", ex);
-		}
+		log(LOG_ERROR, "openManager():", ex);
 	}
 	return null;
 };
@@ -464,9 +454,7 @@ const Series = {
 	_session: 1,
 	_persist: true,
 	enterPrivateBrowsing: function() {
-		if (Logger.enabled) {
-			Logger.log("enterPrivateBrowsing");
-		}
+		log(LOG_INFO, "Series: enterPrivateBrowsing");
 		this._session = 1;
 		this._persist = false;
 	},

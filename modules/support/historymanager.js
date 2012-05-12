@@ -3,7 +3,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const {Logger} = require("utils");
 const prefs = require("preferences");
 const pbm = require("support/pbm");
 
@@ -61,18 +60,14 @@ History.prototype = {
 			rv = JSON.parse(json);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Histories: Parsing of history failed: " + json, ex);
-			}
+			log(LOG_ERROR, "Histories: Parsing of history failed: " + json, ex);
 		}
 		if (!rv.length) {
 			try {
 				rv = JSON.parse(prefs.getExt(this._key + ".default", '[]'));
 			}
 			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log("Cannot apply default values", ex);
-				}
+				log(LOG_ERROR, "Cannot apply default values", ex);
 			}
 		}
 		return rv;
@@ -82,22 +77,16 @@ History.prototype = {
 	},
 	_setValues: function(values) {
 		if (!this._persisting) {
-			if (Logger.enabled) {
-				Logger.log("Set session history for " + this._key);
-			}
+			log(LOG_DEBUG, "Set session history for " + this._key);
 			this._sessionHistory = values;
 		}
 		else {
 			try {
 				prefs.setExt(this._key, JSON.stringify(values));
-				if (Logger.enabled) {
-					Logger.log("Set normal history for " + this._key + " to " + JSON.stringify(values));
-				}
+				log(LOG_DEBUG, "Set normal history for " + this._key + " to " + JSON.stringify(values));
 			}
 			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log("Histories: Setting values failed" + values, ex);
-				}
+				log(LOG_ERROR, "Histories: Setting values failed" + values, ex);
 				throw ex;
 			}
 		}
@@ -108,28 +97,24 @@ History.prototype = {
 			let values = this._values.filter(function(e) e != value);
 			values.unshift(value);
 			let max = prefs.getExt('history', 5);
-			if (Logger.enabled) {
-				Logger.log("Histories: " + this._key + ", before " + values.toSource());
-				Logger.log("Histories: " + this._key + ", max " + max);
+			if (log.enabled) {
+				log(LOG_DEBUG, "Histories: " + this._key + ", before " + values.toSource());
+				log(LOG_DEBUG, "Histories: " + this._key + ", max " + max);
 			}
 			while (values.length > max) {
 				values.pop();
 			}
-			if (Logger.enabled) {
-				Logger.log("Histories: " + this._key + ", after" + values.toSource());
+			if (log.enabled) {
+				log(LOG_DEBUG, "Histories: " + this._key + ", after" + values.toSource());
 			}
 			this._setValues(values);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Histories: Push failed!", ex);
-			}
+			log(LOG_ERROR, "Histories: Push failed!", ex);
 		}
 	},
 	reset: function(value) {
-		if (Logger.enabled) {
-			Logger.log("Histories: Reset called");
-		}
+		log(LOG_INFO, "Histories: Reset called");
 		this._setValues([]);
 	}
 };
@@ -138,17 +123,13 @@ const _histories = {};
 
 const callbacks = {
 	enterPrivateBrowsing: function() {
-		if (Logger.enabled) {
-			Logger.log("entering pbm: switching to session histories");
-		}
+		log(LOG_INFO, "entering pbm: switching to session histories");
 		for each (let h in _histories) {
 			h._setPersisting(false);
 		}
 	},
 	exitPrivateBrowsing: function() {
-		if (Logger.enabled) {
-			Logger.log("exiting pbm: switching to persisted histories");
-		}
+		log(LOG_INFO, "exiting pbm: switching to persisted histories");
 		for each (let h in _histories) {
 			h._setPersisting(true);
 		}

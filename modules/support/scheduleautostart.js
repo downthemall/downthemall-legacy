@@ -36,7 +36,7 @@ const Observer = {
 		Prefs.addObserver("extensions.dta.schedule", this);
 		unload(function() Observer.unload());
 		this.immidiatelyOpened = this.openIfInRange();
-		Cu.reportError("scheduler running");
+		log(LOG_DEBUG, "scheduler running");
 	},
 	unload: function() {
 		Timers.killAllTimers();
@@ -52,15 +52,11 @@ const Observer = {
 	openIfQueued: function() {
 		QueueStore.loadItems(function(items) {
 			if (items.some(function(i) i.item.state == QueueStore.QUEUED)) {
-				if (Logger.enabled) {
-					Logger.log("auto-opening");
-				}
+				log(LOG_INFO, "auto-opening");
 				DTA.openManager();
 			}
 			else {
-				if (Logger.enabled) {
-					Logger.log("No queued items");
-				}
+				log(LOG_INFO, "not opening: No queued items");
 			}
 		}, null);
 	},

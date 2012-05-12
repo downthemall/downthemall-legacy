@@ -14,7 +14,7 @@ const {GlobalBucket} = require("manager/globalbucket");
 const {defer} = require("support/defer");
 const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
-const {Logger, getTimestamp, formatNumber} = require("utils");
+const {getTimestamp, formatNumber} = require("utils");
 
 const Timers = new TimerManager();
 
@@ -43,7 +43,7 @@ const _thread = (function() {
 	let AsyncCopierThread = Services.tm.newThread(0);
 	/*if (AsyncCopierThread instanceof Ci.nsISupportsPriority) {
 		AsyncCopierThread.priority = AsyncCopierThread.PRIORITY_LOW;
-		Logger.log("Our async copier thread is low priority now!");
+		log(LOG_INFO, "Our async copier thread is low priority now!");
 	}*/
 	return AsyncCopierThread;
 })();
@@ -265,7 +265,7 @@ function Chunk(download, start, end, written) {
 	this._parent = download;
 	this._sessionBytes = 0;
 	this._copiers = [];
-	Logger.log("chunk created: " + this);
+	log(LOG_INFO, "chunk created: " + this);
 }
 
 Chunk.prototype = {
@@ -358,9 +358,7 @@ Chunk.prototype = {
 	onStartRequest: function CH_onStartRequest(aRequest, aContext) {},
 	onStopRequest: function CH_onStopRequest(aRequest, aContext, aStatusCode) {
 		if (!(aRequest instanceof Ci.nsIAsyncStreamCopier)) {
-			if (Logger.enabled) {
-				Logger.log("Not a copier", aRequest);
-			}
+			log(LOG_ERROR, "Not a copier", aRequest);
 			throw new Exception("Not a copier");
 		}
 
@@ -369,8 +367,8 @@ Chunk.prototype = {
 		for (let i = 0; i < this._copiers.length; ++i) {
 			if (aRequest == this._copiers[i]) {
 				this._copiers.splice(i, 1);
-				if (i != 0 && Logger.enabled) {
-					Logger.log("Out of order copier! at: " + i);
+				if (i != 0) {
+					log(LOG_ERROR, "Out of order copier! at: " + i);
 				}
 				break;
 			}
@@ -378,9 +376,7 @@ Chunk.prototype = {
 
 		if (!this._canceled) {
 			if (!Components.isSuccessCode(aStatusCode)) {
-				if (Logger.enabled) {
-					Logger.log("Failed to asyncwrite", aStatusCode);
-				}
+				log(LOG_ERROR, "Failed to asyncwrite", aStatusCode);
 				this.download.writeFailed();
 				return;
 			}
@@ -509,9 +505,7 @@ Chunk.prototype = {
 			return aCount;
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log('write: ' + this.parent.tmpFile.path, ex);
-			}
+			log(LOG_ERROR, 'write: ' + this.parent.tmpFile.path, ex);
 			throw ex;
 		}
 		return 0;
@@ -572,9 +566,7 @@ Chunk.prototype = {
 	},
 	requestBytes: function CH_requestBytes(requested) {
 		if (Observer.memoryPressure || MemoryReporter.pendingBytes > MAX_PENDING_SIZE) {
-			if (Logger.enabled) {
-				Logger.log("Under pressure: " + MemoryReporter.pendingBytes + " : " + Observer.memoryPressure);
-			}
+			log(LOG_INFO, "Under pressure: " + MemoryReporter.pendingBytes + " : " + Observer.memoryPressure);
 			// basically stop processing while under memory pressure
 			Timers.createOneshot(500, this.run, this);
 			return 0;

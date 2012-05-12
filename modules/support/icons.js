@@ -3,7 +3,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const {Logger} = require("utils");
 const {URL} = require("api");
 const {memoize} = require("support/memoize");
 const {getExtension, toURL} = require("support/stringfuncs");
@@ -35,9 +34,7 @@ lazy(this, "getFavIcon", function() {
 		};
 	}
 	catch (ex) {
-		if (Logger.enabled) {
-			Logger.log("FavIcon Service not available", ex);
-		}
+		log(LOG_INFO, "FavIcon Service not available", ex);
 		return function getFavIconStub() null;
 	}
 });
@@ -93,9 +90,7 @@ exports.getIcon = function getIcon(link, metalink, size) {
 		return "moz-icon://file" + (ext ? '.' + ext : '') + "?size=" + size;
 	}
 	catch (ex) {
-		if (Logger.enabled) {
-			Logger.log("updateIcon: failed to grab icon", ex);
-		}
+		log(LOG_ERROR, "updateIcon: failed to grab icon", ex);
 	}
 	return "moz-icon://foo.html?size=" + size;
 };
