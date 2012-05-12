@@ -50,9 +50,7 @@ var Dialog = {
 		try {
 			this.ddDirectory = $("directory");
 			if (!this.ddDirectory.value) {
-				if (Logger.enabled) {
-					Logger.log("Using default download directory, value was " + this.ddDirectory.value);
-				}
+				log(LOG_DEBUG, "Using default download directory, value was " + this.ddDirectory.value);
 				this.ddDirectory.value = DefaultDownloadsDirectory.path;
 			}
 			this.ddRenaming = $("renaming");
@@ -169,9 +167,7 @@ var Dialog = {
 					}
 				}
 				catch (ex) {
-					if (Logger.enabled) {
-						Logger.log("Not able to gather data from the clipboard!", ex);
-					}
+					log(LOG_DEBUG, "Not able to gather data from the clipboard!", ex);
 				}
 			}
 			if (hash) {
@@ -180,9 +176,7 @@ var Dialog = {
 			sizeToContent();
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log("load():", ex);
-			}
+			log(LOG_ERROR, "load():", ex);
 		}
 	},
 	download: function DTA_download(start) {
@@ -263,9 +257,7 @@ var Dialog = {
 			var batch = new BatchGenerator(url);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Cannot create batch", ex);
-			}
+			log(LOG_ERROR, "Cannot create batch", ex);
 			return false;
 		}
 

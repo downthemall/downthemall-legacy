@@ -297,9 +297,7 @@ const Tree = {
 		}
 	},
 	clear: function() {
-		if (Logger.enabled) {
-			Logger.log("Tree: clearing");
-		}
+		log(LOG_INFO, "Tree: clearing");
 		this.beginUpdate();
 		delete this._downloads;
 		delete this._filtered;
@@ -568,9 +566,7 @@ const Tree = {
 				transfer.setData("application/x-dta-position", qi.position); i++;
 			}
 			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log("dnd failure", ex);
-				}
+				log(LOG_ERROR, "dnd failure", ex);
 			}
 			return;
 		}
@@ -583,9 +579,7 @@ const Tree = {
 		return ds && ds.isDataFlavorSupported('application/x-dta-position');
 	},
 	drop: function T_drop(row, orientation) {
-		if (Logger.enabled) {
-			Logger.log("drop");
-		}
+		log(LOG_DEBUG, "drop");
 		if (!this.canDrop()) {
 			return;
 		}
@@ -631,9 +625,7 @@ const Tree = {
 			this.selection.rangedSelect(row, row + downloads.length - 1, true);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("_dropSelection", ex);
-			}
+			log(LOG_ERROR, "_dropSelection", ex);
 		}
 	},
 
@@ -992,9 +984,7 @@ const Tree = {
 		);
 		if (mirrors.length) {
 			this.current.replaceMirrors(mirrors);
-			if (Logger.enabled) {
-				Logger.log("New mirrors set " + mirrors);
-			}
+			log(LOG_INFO, "New mirrors set " + mirrors);
 		}
 	},
 	export: function T_export() {
@@ -1020,9 +1010,7 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Cannot export downloads", ex);
-			}
+			log(LOG_ERROR, "Cannot export downloads", ex);
 			Prompts.alert(window, _('exporttitle'), _('exportfailed'));
 		}
 	},
@@ -1048,9 +1036,7 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Cannot import downloads", ex);
-			}
+			log(LOG_ERROR, "Cannot import downloads", ex);
 			Prompts.alert(window, _('importtitle'), _('importfailed'));
 		}
 	},
@@ -1182,9 +1168,7 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("rt", ex);
-			}
+			log(LOG_ERROR, "rt", ex);
 		}
 	},
 	_invalidate_all: function(e, i) {
@@ -1351,9 +1335,7 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("function threw during update", ex);
-			}
+			log(LOG_ERROR, "function threw during update", ex);
 			throw ex;
 		}
 	},
@@ -1375,9 +1357,7 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("function threw during updateSelected", ex);
-			}
+			log(LOG_ERROR, "function threw during updateSelected", ex);
 			throw ex;
 		}
 	},
@@ -1398,9 +1378,7 @@ const Tree = {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("function threw during updateAll", ex);
-			}
+			log(LOG_ERROR, "function threw during updateAll", ex);
 			throw ex;
 		}
 	},
@@ -1424,9 +1402,7 @@ const Tree = {
 			this._box.ensureRowIsVisible(0);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Mover::top", ex);
-			}
+			log(LOG_ERROR, "Mover::top", ex);
 		}
 	},
 	moveBottom: function T_bottom() {
@@ -1449,9 +1425,7 @@ const Tree = {
 			this._box.ensureRowIsVisible(this.rowCount - 1);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Mover::bottom", ex);
-			}
+			log(LOG_ERROR, "Mover::bottom", ex);
 		}
 	},
 	moveUp: function T_up() {
@@ -1482,9 +1456,7 @@ const Tree = {
 			this._box.ensureRowIsVisible(Math.max(ids.shift() - 1, 0));
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Mover::up", ex);
-			}
+			log(LOG_ERROR, "Mover::up", ex);
 		}
 	},
 	moveDown: function T_down() {
@@ -1519,9 +1491,7 @@ const Tree = {
 			this._box.ensureRowIsVisible(Math.min(ids.shift(), this.rowCount - 1));
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Mover::down", ex);
-			}
+			log(LOG_ERROR, "Mover::down", ex);
 		}
 	},
 	showSpeedLimitList: function(event) {
@@ -1573,9 +1543,7 @@ const FileHandling = {
 				}
 			}
 			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log('reveal', ex);
-				}
+				log(LOG_ERROR, 'reveal', ex);
 			}
 		}
 	},
@@ -1586,9 +1554,7 @@ const FileHandling = {
 				Utils.launch(cur.destinationFile);
 			}
 			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log('launch', ex);
-				}
+				log(LOG_INFO, 'launch', ex);
 			}
 		}
 	},

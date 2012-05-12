@@ -666,9 +666,7 @@
 			</method>
 			<method name="_search">
 				<body><![CDATA[
-					if (Logger.enabled) {
-						Logger.log("search called!");
-					}
+					log(LOG_DEBUG, "search called!");
 					try {
 						this._timer = null;
 						var evt = document.createEvent('UIEvents');
@@ -676,9 +674,7 @@
 						this.dispatchEvent(evt);
 					}
 					catch (ex) {
-						if (Logger.enabled) {
-							Logger.log("_search", ex);
-						}
+						log(LOG_ERROR, "_search", ex);
 					}
 				]]></body>
 			</method>

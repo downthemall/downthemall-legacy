@@ -215,9 +215,7 @@ Tree.prototype = {
 
 		this.removeSortMarker();
 
-		if (Logger.enabled) {
-			Logger.log("setting sortColumn = " + col.index);
-		}
+		log(LOG_DEBUG, "setting sortColumn = " + col.index);
 		this._sortColumn = col.index;
 		this._sortDirection = false;
 		this._sortColumnElem = col.element;
@@ -299,9 +297,7 @@ let Dialog = {
 		this.ddFilter = $('filter');
 		this.ddDirectory = $('directory');
 		if (!this.ddDirectory.value) {
-			if (Logger.enabled) {
-				Logger.log("Using default download directory, value was " + this.ddDirectory.value);
-			}
+			log(LOG_DEBUG, "Using default download directory, value was " + this.ddDirectory.value);
 			this.ddDirectory.value = DefaultDownloadsDirectory.path;
 		}
 		this.ddRenaming = $('renaming');
@@ -361,9 +357,7 @@ let Dialog = {
 			}
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log("load():", ex);
-			}
+			log(LOG_ERROR, "load():", ex);
 		}
 
 		// will install our observer
@@ -454,9 +448,7 @@ let Dialog = {
 					out.push(prepare(i, dir, counter, mask));
 				}
 				catch (ex) {
-					if (Logger.enabled) {
-						Logger.log("err: " + i.toSource(), ex);
-					}
+					log(LOG_ERROR, "err: " + i.toSource(), ex);
 				}
 			}
 
@@ -489,9 +481,7 @@ let Dialog = {
 			return this.unload();
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log("Downloadfile:", ex);
-			}
+			log(LOG_ERROR, "Downloadfile:", ex);
 		}
 
 		// if we get here some error occured - just close.
@@ -607,9 +597,7 @@ let Dialog = {
 
 		// whoops, somebody called us that has no filter attached
 		if (!('filter') in box) {
-			if (Logger.enabled) {
-				Logger.log("toggleBox: invalid element");
-			}
+			log(LOG_ERROR, "toggleBox: invalid element");
 			return;
 		}
 

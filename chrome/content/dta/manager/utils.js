@@ -106,7 +106,7 @@ try {
 	}, false);
 }
 catch (ex) {
-	Logger.log("MinTrayR.init", ex);
+	log(LOG_DEBUG, "MinTrayR.init", ex);
 }
 
 const Prefs = {
@@ -155,16 +155,12 @@ const Prefs = {
 			Preferences.addObserver('extensions.dta.', this);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("failed to add pref-observer", ex);
-			}
+			log(LOG_ERROR, "failed to add pref-observer", ex);
 		}
 	},
 
 	_refreshPrefs: function(prefName) {
-		if (Logger.enabled) {
-			Logger.log("pref reload due to: " + prefName);
-		}
+		log(LOG_DEBUG, "pref reload due to: " + prefName);
 		for each (let e in this.mappings) {
 			let key, pref, def;
 			if (!e) {
@@ -256,9 +252,7 @@ const Prefs = {
 						tl.create(tl.DIRECTORY_TYPE, this.dirPermissions);
 					}
 					catch (ex) {
-						if (Logger.enabled) {
-							Logger.log("Failed to create temp dir", ex);
-						}
+						log(LOG_ERROR, "Failed to create temp dir", ex);
 						throw new Exception("tempnotaccessible");
 					}
 				}
@@ -277,9 +271,7 @@ const Prefs = {
 						}
 					}
 					catch (ex) {
-						if (Logger.enabled) {
-							Logger.log("Failed to check temp dir", ex);
-						}
+						log(LOG_ERROR, "Failed to check temp dir", ex);
 						throw new Exception("tempnotaccessible");
 					}
 				}
@@ -305,9 +297,7 @@ const Prefs = {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("failed to set up temp directory: " + (this.tempLocation ? this.tempLocation.path || this.tempLocation : "null"), ex);
-			}
+			log(LOG_ERROR, "failed to set up temp directory: " + (this.tempLocation ? this.tempLocation.path || this.tempLocation : "null"), ex);
 			this.tempLocation = null;
 			// XXX: error handling
 		}
@@ -361,9 +351,7 @@ const Tooltip = {
 		this.initUpdate();
 	},
 	initUpdate: function() {
-		if (Logger.enabled) {
-			Logger.log("init");
-		}
+		log(LOG_DEBUG, "init");
 		let mr = false;
 		let box = this.canvasGrid.boxObject;
 		this._initUpdateRetries = (this._initUpdateRetries || 0) + 1;
@@ -384,21 +372,15 @@ const Tooltip = {
 				}
 				canvas.width = w;
 				canvas.height = h;
-				if (Logger.enabled) {
-					Logger.log("set " + canvas.id + " to " + w + "/" + h);
-				}
+				log(LOG_DEBUG, "set " + canvas.id + " to " + w + "/" + h);
 				mr = true;
 			}
 			catch (ex) {
 				if (this._initUpdateRetries >= 10) {
-					if (Logger.enabled) {
-						Logger.log("initUpdate failed; not retrying", ex);
-					}
+					log(LOG_ERROR, "initUpdate failed; not retrying", ex);
 					return;
 				}
-				if (Logger.enabled) {
-					Logger.log("initUpdate failed; retrying", ex);
-				}
+				log(LOG_DEBUG, "initUpdate failed; retrying", ex);
 				defer(this.boundInitUpdate);
 				return;
 			}
@@ -476,9 +458,7 @@ const Tooltip = {
 			this.infoPercent.value = file.percent;
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Tooltip.updateMetrics: ", ex);
-			}
+			log(LOG_ERROR, "Tooltip.updateMetrics: ", ex);
 		}
 	},
 	_usFile: null,
@@ -595,9 +575,7 @@ const Tooltip = {
 			ctx.restore();
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log("updateSpeedCanvas(): ", ex);
-			}
+			log(LOG_ERROR, "updateSpeedCanvas(): ", ex);
 		}
 	},
 	_ucFile: null,
@@ -734,9 +712,7 @@ const Tooltip = {
 			ctx.restore();
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log("updateChunkCanvas(): ", ex);
-			}
+			log(LOG_ERROR, "updateChunkCanvas(): ", ex);
 		}
 	}
 };
