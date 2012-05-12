@@ -50,7 +50,7 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 const DTA = {};
-module("resource://dta/glue2.jsm");
+module("resource://dta/glue.jsm");
 const Preferences = require("preferences");
 const {getTextLinks} = require("support/textlinks");
 const Version = require("version");

@@ -46,7 +46,7 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 let DTA = {};
-module('resource://dta/glue2.jsm');
+module('resource://dta/glue.jsm');
 module('resource://dta/api.jsm', DTA);
 requireJoined(DTA, "constants");
 module('resource://dta/utils.jsm');

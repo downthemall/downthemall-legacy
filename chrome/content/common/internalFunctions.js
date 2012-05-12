@@ -49,7 +49,7 @@ const Exception = Components.Exception;
 
 // shared state defines
 
-module("resource://dta/glue2.jsm", this);
+module("resource://dta/glue.jsm", this);
 requireJoined(this, "constants");
 
 const DTA = {
