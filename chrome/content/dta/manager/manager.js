@@ -47,6 +47,7 @@ const {memoize} = glue2.require("support/memoize");
 const PrivateBrowsing = glue2.require("support/pbm");
 const {TimerManager} = glue2.require("support/timers");
 const {ContentHandling} = glue2.require("support/contenthandling");
+const {asyncMoveFile} = glue2.require("manager/asyncmovefile");
 
 module('resource://dta/support/fileextsheet.jsm');
 module('resource://dta/support/serverlimits.jsm', Limits);
@@ -56,7 +57,6 @@ let Preallocator = {}, RequestManipulation = {};
 module('resource://dta/manager/chunk.jsm');
 module('resource://dta/manager/connection.jsm');
 module('resource://dta/manager/globalprogress.jsm');
-module('resource://dta/manager/asyncmovefile.jsm');
 module('resource://dta/manager/preallocator.jsm', Preallocator);
 module('resource://dta/manager/queuestore.jsm');
 module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
