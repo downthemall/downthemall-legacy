@@ -107,9 +107,7 @@
 		<implementation>
 			<constructor><![CDATA[
 				try {
-					var hist = {};
-					Components.utils.import("resource://dta/support/historymanager.jsm", hist);
-					this.hist = hist.getHistory(this._pref);
+					this.hist = glue2.require("support/historyManager").getHistory(this._pref);
 					this._load();
 				}
 				catch (ex) {
