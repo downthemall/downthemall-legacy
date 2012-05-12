@@ -55,13 +55,7 @@ XPCOMUtils.defineLazyGetter(this, 'Version', function() glue2.require("version")
 XPCOMUtils.defineLazyGetter(this, 'Preferences', function() glue2.require("preferences"));
 this.__defineGetter__('recognizeTextLinks', function() Preferences.getExt("textlinks", true));
 XPCOMUtils.defineLazyGetter(this, 'TextLinks', function() glue2.require("support/textlinks"));
-XPCOMUtils.defineLazyGetter(this, 'ContentHandling', function() {
-	let rv = {};
-	module('resource://dta/support/contenthandling.jsm', rv);
-	rv = rv.ContentHandling;
-	Object.freeze(rv);
-	return rv;
-});
+XPCOMUtils.defineLazyGetter(this, "ContentHandling", function() glue2.require("support/contenthandling").ContentHandling);
 XPCOMUtils.defineLazyGetter(this, 'CoThreads', function() {
 	let rv = {};
 	module('resource://dta/cothread.jsm', rv);
