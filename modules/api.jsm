@@ -77,8 +77,7 @@ module("resource://dta/utils.jsm");
 
 const Preferences = glue2.require("preferences");
 const pbm = glue2.require("support/pbm");
-const Mediator = {};
-module("resource://dta/support/mediator.jsm", Mediator);
+const Mediator = glue2.require("support/mediator");
 const Histories = {};
 module("resource://dta/support/historymanager.jsm", Histories);
 

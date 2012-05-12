@@ -41,19 +41,11 @@ const EXPORTED_SYMBOLS = [
 	'showNotice', 'showAbout', 'showPreferences', 'showToolbarInstall'
 ];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const module = Cu.import;
-const Exception = Components.Exception;
+let Prefs = require("preferences");
 
-module("resource://dta/glue.jsm");
-let Prefs = glue2.require("preferences");
-
-XPCOMUtils.defineLazyGetter(this, "Logger", function() {
+lazy(this, "Logger", function() {
 	let _u = {};
-	module("resource://dta/utils.jsm", _u);
+	Cu.import("resource://dta/utils.jsm", _u);
 	return _u.Logger;
 });
 
@@ -237,4 +229,12 @@ function showToolbarInstall(browserWindow) {
 		"chrome://dta/content/integration/toolbarinstall.xul",
 		null,
 		"chrome,dialog,centerscreen");
+}
+
+for each (let i in ['getMostRecent', 'getMostRecentByUrl', 'getAllByType',
+										'openExternal', 'openUrl', 'tryOpenUrl', 'openWindow',
+										'addListener', 'removeListener',
+										'showNotice', 'showAbout', 'showPreferences', 'showToolbarInstall'
+										]) {
+	exports[i] = this[i];
 }
