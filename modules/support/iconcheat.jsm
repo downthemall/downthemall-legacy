@@ -52,7 +52,7 @@ function loadWindow() {};
 // moz-2.0+
 module("resource://gre/modules/AddonManager.jsm");
 module("resource://dta/glue.jsm");
-module("resource://dta/version.jsm");
+const Version = glue2.require("version");
 
 // exported
 loadWindow = (function() {

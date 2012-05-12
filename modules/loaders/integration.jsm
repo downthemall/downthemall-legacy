@@ -51,11 +51,7 @@ XPCOMUtils.defineLazyGetter(this, 'DTA', function() {
 	Object.freeze(rv);
 	return rv;
 });
-XPCOMUtils.defineLazyGetter(this, 'Version', function() {
-	let rv = {};
-	module('resource://dta/Version.jsm', rv);
-	return rv.Version;
-});
+XPCOMUtils.defineLazyGetter(this, 'Version', function() glue2.require("version"));
 XPCOMUtils.defineLazyGetter(this, 'Preferences', function() glue2.require("preferences"));
 this.__defineGetter__('recognizeTextLinks', function() Preferences.getExt("textlinks", true));
 XPCOMUtils.defineLazyGetter(this, 'TextLinks', function() glue2.require("support/textlinks"));

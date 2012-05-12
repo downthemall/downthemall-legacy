@@ -46,7 +46,6 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 module('resource://dta/glue.jsm');
-module('resource://dta/version.jsm');
 module('resource://dta/utils.jsm');
 
 function Manipulator() {
@@ -96,7 +95,7 @@ var _uaplatform = (function() {
 		+ Services.httphandler.language;
 })();
 var _uaextrap = _uaextra + " (" + _uaplatform + "; like wget)";
-Version.getInfo(function(v) {
+glue2.require("version").getInfo(function(v) {
 	_uaextrap = _uaextra + "/" + v.BASE_VERSION + " (" + _uaplatform + "; 2.0; like wget)";
 	_uaextra += "/" + v.BASE_VERSION;
 });

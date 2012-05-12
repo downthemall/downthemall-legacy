@@ -70,11 +70,10 @@ function lazyModule(obj, name, url, symbol) {
 		return symbol ? _o[symbol] : _o;
 	});
 }
-
+XPCOMUtils.defineLazyGetter(this, "Version", function() glue2.require("version"));
 const AlertService = glue2.lazyRequire("support/alertservice", "show");
 lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Decompressor');
 lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
-lazyModule(this, 'Version', 'resource://dta/version.jsm', 'Version');
 
 XPCOMUtils.defineLazyGetter(this, 'FileExts', function() new FileExtensionSheet(window));
 
@@ -274,8 +273,7 @@ const Dialog = {
 		// Autofit
 		(function autofit() {
 			let de = document.documentElement;
-			Components.utils.import('resource://dta/version.jsm', this);
-			this.Version.getInfo(function(version) {
+			Version.getInfo(function(version) {
 				let cv = version.VERSION + ".toolitems" + $('tools').childNodes.length;
 				let shouldAutofit = !de.hasAttribute('dtaAutofitted');
 				if (!shouldAutofit) {

@@ -53,9 +53,9 @@ const DTA = {};
 module("resource://dta/glue.jsm");
 const Preferences = glue2.require("preferences");
 const {getTextLinks} = glue2.require("support/textlinks");
+const Version = glue2.require("version");
 module("resource://dta/api.jsm", DTA);
 module("resource://dta/utils.jsm");
-module("resource://dta/version.jsm");
 module("resource://dta/support/metalinker.jsm");
 
 const XPathResult = Ci.nsIDOMXPathResult;
