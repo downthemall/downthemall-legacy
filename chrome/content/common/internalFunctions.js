@@ -83,8 +83,8 @@ function $() {
 		if (element) {
 			elements.push(element);
 		}
-		else if (Logger.enabled) {
-			Logger.log("requested a non-existing element: " + arguments[i]);
+		else {
+			log(LOG_ERROR, "requested a non-existing element: " + arguments[i]);
 		}
 	}
 	return elements;
@@ -143,9 +143,7 @@ var Utils = {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Utils.askForDir():", ex);
-			}
+			log(LOG_ERROR, "Utils.askForDir():", ex);
 		}
 		return false;
 	},
@@ -172,9 +170,7 @@ var Utils = {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Invalid path supplied", ex);
-			}
+			log(LOG_ERROR, "Invalid path supplied", ex);
 		}
 		if (!directory) {
 			return false;
@@ -201,9 +197,7 @@ var Utils = {
 			}
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log('Checking permissions threw', ex);
-			}
+			log(LOG_ERROR, 'Checking permissions threw', ex);
 		}
 		return false;
 	},
@@ -252,9 +246,7 @@ var Utils = {
 			}
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log("Playing " + name + " sound failed", ex);
-			}
+			log(LOG_ERROR, "Playing " + name + " sound failed", ex);
 		}
 	},
 
@@ -305,14 +297,6 @@ var Utils = {
 
 requireJoined(Utils, "utils");
 const SYSTEMSLASH = Utils.SYSTEMSLASH;
-
-const Logger = Utils.Logger;
-if (!('Debug' in this)) {
-	// XXX: compat; Debug is old style stuff
-	// Remove it later
-	this['Debug'] = Logger;
-}
-
 
 // XXX DIEDIEDIE
 Utils.extendString(String);
@@ -415,9 +399,7 @@ Object.defineProperty(window, "setTimeoutOnlyFun", {
 			return window.setTimeout.call(window, cb, delay, p1, p2, p3);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log(ex);
-			}
+			log(LOG_ERROR, "failed to create timeout", ex);
 			throw ex;
 		}
 	},

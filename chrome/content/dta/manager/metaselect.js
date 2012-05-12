@@ -50,9 +50,7 @@ const MetaSelect = {
 			$('downloads').appendChild(e);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Failed to add download from metalink", ex);
-			}
+			log(LOG_ERROR, "Failed to add download from metalink", ex);
 		}
 	},
 	load: function ML_load() {
@@ -65,9 +63,7 @@ const MetaSelect = {
 			}
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log("Failed to load downloads from Metalink", ex);
-			}
+			log(LOG_ERROR, "Failed to load downloads from Metalink", ex);
 			// no-op
 		}
 		let info = {
@@ -109,9 +105,7 @@ const MetaSelect = {
 				ctx.drawImage(logo, (d - w) /2, (d - h) / 2);
 			}
 			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log("Cannot load logo", ex);
-				}
+				log(LOG_ERROR, "Cannot load logo", ex);
 				logo.src = METALINK_LOGO;
 			}
 		}, false);
@@ -228,9 +222,7 @@ addEventListener('load', function() {
 		MetaSelect.load();
 	}
 	catch (ex) {
-		if (Logger.enabled) {
-			Logger.log("Failed to load", ex);
-		}
+		log(LOG_ERROR, "Failed to load", ex);
 	}
 }, false);
 addEventListener('close', function() {
