@@ -146,8 +146,7 @@ Stuff.prototype = {
 	bootstrap: function MM_bootstrap() {
 		this.migrate();
 		try {
-			let _ch = {};
-			module("resource://dta/support/contenthandling.jsm", _ch);
+			module("resource://dta/glue2.jsm", {}).require("support/contenthandling");
 		}
 		catch (ex) {
 			log("ch", ex);

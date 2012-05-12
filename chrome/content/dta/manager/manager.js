@@ -46,8 +46,8 @@ const {defer} = glue2.require("support/defer");
 const {memoize} = glue2.require("support/memoize");
 const PrivateBrowsing = glue2.require("support/pbm");
 const {TimerManager} = glue2.require("support/timers");
+const {ContentHandling} = glue2.require("support/contenthandling");
 
-module('resource://dta/support/contenthandling.jsm');
 module('resource://dta/support/fileextsheet.jsm');
 module('resource://dta/support/serverlimits.jsm', Limits);
 module('resource://dta/support/urlmanager.jsm');
