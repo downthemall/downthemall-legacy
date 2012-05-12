@@ -55,11 +55,9 @@ const {ByteBucketTee} = glue2.require("support/bytebucket");
 const {GlobalBucket} = glue2.require("manager/globalbucket");
 const {defer} = glue2.require("support/defer");
 const {TimerManager} = glue2.require("support/timers");
-
+const Limits = glue2.require("support/serverlimits");
 
 module("resource://dta/utils.jsm");
-const Limits = {};
-module("resource://dta/support/serverlimits.jsm", Limits);
 
 const Timers = new TimerManager();
 

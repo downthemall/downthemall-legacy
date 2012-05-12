@@ -37,7 +37,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-let Limits = {};
 const {CoThreadListWalker} = glue2.require("cothreads");
 const Prompts = glue2.require("prompts");
 const {ByteBucket} = glue2.require("support/bytebucket");
@@ -49,9 +48,9 @@ const {TimerManager} = glue2.require("support/timers");
 const {ContentHandling} = glue2.require("support/contenthandling");
 const {asyncMoveFile} = glue2.require("manager/asyncmovefile");
 const GlobalProgress = new (glue2.require("manager/globalprogress").GlobalProgress)(window);
+const Limits = glue2.require("support/serverlimits");
 
 module('resource://dta/support/fileextsheet.jsm');
-module('resource://dta/support/serverlimits.jsm', Limits);
 module('resource://dta/support/urlmanager.jsm');
 
 let Preallocator = {}, RequestManipulation = {};
