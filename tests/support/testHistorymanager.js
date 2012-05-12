@@ -14,11 +14,9 @@ module("historymanager.js");
 			this.prefs.setExt(this.key, this.old);
 		}
 	};
-/* XXX require
 	test("exports", function() {
-		checkExports("resource://dta/support/historymanager.jsm", ["getHistory"]);
+		checkExports("support/historymanager", ["getHistory"]);
 	});
-*/
 	test("regular", function() {
 		var {getHistory} = require("support/historymanager");
 		var h = getHistory("testHistory");

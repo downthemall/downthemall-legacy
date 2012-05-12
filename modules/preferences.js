@@ -285,6 +285,7 @@ function makeObserver(obj) {
 
 Object.defineProperties(exports, {
 	"get": {value: get, enumerable: true},
+	"getBranch": {value: getBranch, enumerable: true},
 	"set": {value: set, enumerable: true},
 	"getExt": {value: getExt, enumerable: true},
 	"setExt": {value: setExt, enumerable: true},

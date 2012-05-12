@@ -1,8 +1,7 @@
 module("constants.js");
 
-/* XXX require
 test("exports", function() {
-	checkExports("resource://dta/constants.jsm", [
+	checkExports("constants", [
 		'PAUSED',
 		'RUNNING',
 		'FINISHING',
@@ -17,7 +16,6 @@ test("exports", function() {
 		'TOOLTIP_FREQ',
 	]);
 });
-*/
 
 test("powers", function() {
 	var _m = require("constants");
