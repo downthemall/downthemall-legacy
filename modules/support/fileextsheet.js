@@ -6,10 +6,8 @@
 const {Atoms} = require("support/atoms");
 const Timers = new (require("support/timers").TimerManager)();
 const {getIcon} = require("support/icons");
-const {Logger, extendString} = requireJSM("resource://dta/utils.jsm");
-
-// XXX require
-extendString(String);
+const {getExtension} = require("support/stringfuncs");
+const {Logger} = requireJSM("resource://dta/utils.jsm");
 
 function FileExtensionSheet(window) {
 	this._windowUtils = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowUtils);
@@ -41,7 +39,7 @@ function FileExtensionSheet(window) {
 FileExtensionSheet.prototype = {
 	_atoms: new Atoms(),
 	getAtom: function FES_getAtom(fileName, metalink) {
-		let ext = fileName.getExtension();
+		let ext = getExtension(fileName);
 		if (!ext) {
 			ext = 'unknown';
 		}
