@@ -2731,9 +2731,8 @@ QueueItem.prototype = {
 	}
 }
 XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
-	let _l = {};
-	module('resource://dta/support/loggedprompter.jsm', _l);
-	return new _l.LoggedPrompter(window);
+	const {LoggedPrompter} = glue2.require("support/loggedPrompter");
+	return new LoggedPrompter(window);
 });
 
 var ConflictManager = {

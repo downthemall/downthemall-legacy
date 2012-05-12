@@ -35,7 +35,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 const Prompts = glue2.require("prompts");
-module('resource://dta/support/loggedprompter.jsm');
+const {LoggedPrompter} = glue2.require("support/loggedprompter");
 
 LoggedPrompter = new LoggedPrompter(window).prompter;
 
