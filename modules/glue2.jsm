@@ -61,6 +61,7 @@ const lazy = XPCOMUtils.defineLazyGetter;
 	itor("XHR", "@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
 	itor("DOMSerializer", "@mozilla.org/xmlextras/xmlserializer;1", "nsIDOMSerializer");
 	itor("MimeInputStream", "@mozilla.org/network/mime-input-stream;1", "nsIMIMEInputStream");
+	itor("SupportsString","@mozilla.org/supports-string;1", "nsISupportsString");
 	itor("SupportsUint32","@mozilla.org/supports-PRUint32;1", "nsISupportsPRUint32");
 	itor("Transferable", "@mozilla.org/widget/transferable;1", "nsITransferable");
 	itor("UniConverter", "@mozilla.org/intl/scriptableunicodeconverter", "nsIScriptableUnicodeConverter");

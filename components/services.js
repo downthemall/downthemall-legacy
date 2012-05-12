@@ -50,9 +50,9 @@ this.__defineGetter__(
 	'Preferences',
 	function() {
 		let prefs = {};
-		module('resource://dta/preferences.jsm', prefs);
+		module('resource://dta/glue2.jsm', prefs);
 		delete this.Preferences;
-		return (this.Preferences = prefs);
+		return (this.Preferences = prefs.require("preferences"));
 	}
 );
 

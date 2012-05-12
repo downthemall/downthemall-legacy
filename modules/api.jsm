@@ -75,8 +75,7 @@ const Exception = Components.Exception;
 module("resource://dta/glue.jsm");
 module("resource://dta/utils.jsm");
 
-const Preferences = {};
-module("resource://dta/preferences.jsm", Preferences);
+const Preferences = glue2.require("preferences");
 const Mediator = {};
 module("resource://dta/support/mediator.jsm", Mediator);
 const Histories = {};

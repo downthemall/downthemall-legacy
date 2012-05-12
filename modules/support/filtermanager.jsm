@@ -53,9 +53,9 @@ const Exception = Components.Exception;
 const module = Components.utils.import;
 const error = Components.utils.reportError;
 
-let Preferences = {}, PBM = {}, RegExpMerger = {};
+let PBM = {}, RegExpMerger = {};
 module("resource://dta/glue.jsm");
-module("resource://dta/preferences.jsm", Preferences);
+const Preferences = glue2.require("preferences");
 module('resource://dta/support/pbm.jsm', PBM);
 module('resource://dta/support/regexpmerger.jsm', RegExpMerger);
 
