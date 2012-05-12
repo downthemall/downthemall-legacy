@@ -49,7 +49,6 @@ test("setters", function() {
 
 test("observers", function() {
 	var p = require("preferences");
-	var {XPCOMUtils} = require("resource://gre/modules/XPCOMUtils.jsm");
 
 	var obs1 = {
 			observe: function(s,t,d) {
