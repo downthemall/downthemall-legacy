@@ -119,8 +119,9 @@
 					catch (ex) {
 					}
 				}
-
-				Components.utils.import("resource://dta/support/scheduleautostart.jsm");
+				var glue = {};
+				Components.utils.import("resource://dta/glue.jsm", glue);
+				glue.glue2.require("support/scheduleautostart");
 
 				let _v = {};
 				Components.utils.import("resource://dta/version.jsm", _v);
