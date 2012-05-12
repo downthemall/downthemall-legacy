@@ -78,8 +78,7 @@ module("resource://dta/utils.jsm");
 const Preferences = glue2.require("preferences");
 const pbm = glue2.require("support/pbm");
 const Mediator = glue2.require("support/mediator");
-const Histories = {};
-module("resource://dta/support/historymanager.jsm", Histories);
+const Histories = glue2.require("support/historymanager");
 
 XPCOMUtils.defineLazyGetter(this, "FilterManager", function() {
 	let _fm = {};
