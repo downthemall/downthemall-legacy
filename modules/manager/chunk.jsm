@@ -49,7 +49,7 @@ const Cu = Components.utils;
 const module = Cu.import;
 
 module("resource://dta/glue.jsm");
-module("resource://dta/constants.jsm");
+glue2.requireJoined(this, "constants");
 const Prefs = glue2.require("preferences");
 const {ByteBucketTee} = glue2.require("support/bytebucket");
 const {GlobalBucket} = glue2.require("manager/globalbucket");

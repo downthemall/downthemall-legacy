@@ -48,7 +48,7 @@ const Exception = Components.Exception;
 let DTA = {};
 module('resource://dta/glue.jsm');
 module('resource://dta/api.jsm', DTA);
-module('resource://dta/constants.jsm', DTA);
+glue2.requireJoined(DTA, "constants");
 module('resource://dta/utils.jsm');
 
 extendString(String);
@@ -206,7 +206,7 @@ const StatusMatch = {
 			return function(d) d.state & state;
 		}
 }
-module('resource://dta/constants.jsm', StatusMatch);
+glue2.requireJoined(StatusMatch, "constants");
 
 const SIZES = [
 	['-0', _('unknown')],

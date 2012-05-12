@@ -59,7 +59,7 @@ module("resource://gre/modules/XPCOMUtils.jsm");
 
 module('resource://dta/glue.jsm');
 module('resource://dta/api.jsm', DTA);
-module('resource://dta/constants.jsm');
+glue2.requireJoined(this, "constants");
 module('resource://dta/utils.jsm');
 module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
 
