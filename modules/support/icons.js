@@ -4,7 +4,7 @@
 "use strict";
 
 const {Logger} = requireJSM("resource://dta/utils.jsm");
-const {URL} = requireJSM("resource://dta/api.jsm");
+const {URL} = require("api");
 const {memoize} = require("support/memoize");
 const {getExtension, toURL} = require("support/stringfuncs");
 

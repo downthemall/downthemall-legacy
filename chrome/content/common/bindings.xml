@@ -168,9 +168,6 @@
 				<body><![CDATA[
 					var n = this.value;
 					if (n.length == 0 && !this.hasAttribute('allowempty')) {
-						if (DTA.Logger.enabled) {
-							DTA.Logger.log("Not saving dropdown: empty");
-						}
 						return;
 					}
 					this.hist.push(n);

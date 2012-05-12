@@ -24,7 +24,7 @@ Date.__defineGetter__("today", function() {
 
 const Timers = new TimerManager();
 
-lazy(this, "DTA", function() requireJSM("resource://dta/api.jsm"));
+lazy(this, "DTA", function() require("api"));
 lazy(this, "QueueStore", function() {
 	let {QueueStore} = require("manager/queuestore");
 	requireJoined(QueueStore, "constants");
