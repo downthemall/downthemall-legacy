@@ -57,8 +57,7 @@ const {UrlManager} = require("support/urlmanager");
 const {VisitorManager} = require("manager/visitormanager");
 const Preallocator = require("manager/preallocator");
 const {Chunk} = require("manager/chunk");
-
-module('resource://dta/manager/connection.jsm');
+const {Connection} = require("manager/connection");
 
 function lazyModule(obj, name, url, symbol) {
 	XPCOMUtils.defineLazyGetter(obj, name, function() {
