@@ -37,17 +37,17 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-let Limits = {}, PrivateBrowsing = {};
+let Limits = {};
 module('resource://dta/cothread.jsm');
 const Prompts = glue2.require("prompts");
 const {ByteBucket} = glue2.require("support/bytebucket");
 const {GlobalBucket} = glue2.require("manager/globalbucket");
 const {defer} = glue2.require("support/defer");
 const {memoize} = glue2.require("support/memoize");
+const PrivateBrowsing = glue2.require("support/pbm");
 
 module('resource://dta/support/contenthandling.jsm');
 module('resource://dta/support/fileextsheet.jsm');
-module('resource://dta/support/pbm.jsm', PrivateBrowsing);
 module('resource://dta/support/serverlimits.jsm', Limits);
 module('resource://dta/support/timers.jsm');
 module('resource://dta/support/urlmanager.jsm');
