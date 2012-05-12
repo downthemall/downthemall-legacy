@@ -80,11 +80,7 @@ const pbm = glue2.require("support/pbm");
 const Mediator = glue2.require("support/mediator");
 const Histories = glue2.require("support/historymanager");
 
-XPCOMUtils.defineLazyGetter(this, "FilterManager", function() {
-	let _fm = {};
-	module("resource://dta/support/filtermanager.jsm", _fm);
-	return _fm.FilterManager;
-});
+XPCOMUtils.defineLazyGetter(this, "FilterManager", function() glue2.require("support/filtermanager").FilterManager);
 
 function _decodeCharset(text, charset) {
 	let rv = text;
