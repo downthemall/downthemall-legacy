@@ -43,8 +43,9 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
+module("resource://dta/glue.jsm");
+const {Atoms} = glue2.require("support/atoms");
 module("resource://dta/utils.jsm");
-module("resource://dta/support/atoms.jsm");
 module("resource://dta/support/icons.jsm");
 module("resource://dta/support/timers.jsm");
 
