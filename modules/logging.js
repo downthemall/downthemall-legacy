@@ -48,9 +48,19 @@ function prepareStack(stack) {
 	return rv;
 }
 
-function clear() {
-	// XXX implement file
-}
+lazy(global, "file", function() {
+	let file = Services.dirsvc.get("ProfD", Ci.nsILocalFile);
+	file.append('dta_log.txt');
+	if (file.exists() && file.fileSize > (256 * 1024)) {
+		try {
+			file.remove(false);
+		}
+		catch (ex) {
+			// no op
+		}
+	}
+	return file;
+});
 
 const {
 	errorFlag,
@@ -63,21 +73,27 @@ Object.defineProperties(exports, {
 	LOG_INFO: {value: 1, enumerable: true},
 	LOG_ERROR: {value: 2, enumerable: true},
 	LOG_NONE: {value: 0x7FFFFFFF},
-	PREFIX: {get: function() prefix},
-	clear: {value: clear},
-	setLogLevel: {value: function(l) global.level = l}
+	setLogLevel: {value: function(l) {
+		global.level = l;
+	}}
 });
 
-var prefix = "DownThemAll!";
 var level = exports.LOG_NONE;
 
-exports.log = function(level, message, exception) {
-	//XXX implement file
-	try {
-		if (global.level > level)  {
-			return;
-		}
+const fmt = (function() {
+	const re = /^(\d)$/;
+	return function(i) i.toString().replace(re, "0$1");
+})();
 
+function getTimeString() {
+	let time = new Date();
+	return fmt(time.getHours()) + ":" + fmt(time.getMinutes()) + ":" + fmt(time.getSeconds()) + "::" + fmt(time.getMilliseconds());
+}
+exports.log = function(level, message, exception) {
+	if (global.level > level)  {
+		return;
+	}
+	try {
 		if (message instanceof Ci.nsIScriptError || message instanceof Ci.nsIException || message.fileName) {
 			exception = message;
 			message = exception.message;
@@ -130,7 +146,7 @@ exports.log = function(level, message, exception) {
 				levelMsg = "debug";
 		}
 
-		message = global.prefix + " (" + levelMsg + ") - " + message;
+		message = "DownThemAll! (" + levelMsg + ") - " + message;
 
 		const scriptError = new Instances.ScriptError(
 			message,
@@ -141,6 +157,11 @@ exports.log = function(level, message, exception) {
 			level >= exports.LOG_ERROR ? errorFlag : warningFlag,
 			category);
 		Services.console.logMessage(scriptError);
+		message = getTimeString() + "\n" + message + "\n";
+
+		var f = new Instances.FileOutputStream(global.file, 0x04 | 0x08 | 0x10, parseInt("664", 8), 0);
+		f.write(message, message.length);
+		f.close();
 	}
 	catch (ex) {
 		Cu.reportError("failed to log");
@@ -149,5 +170,14 @@ exports.log = function(level, message, exception) {
 	}
 }
 Object.defineProperty(exports.log, "enabled", {get: function() global.level != LOG_NONE});
-
-/* vim: set et ts=2 sw=2 : */
+Object.defineProperty(exports.log, "file", {get: function () global.file});
+Object.defineProperty(exports.log, "clear", {value: function clear() {
+	try {
+		if (global.file.exists()) {
+			global.file.remove(false);
+		}
+	}
+	catch (ex) {
+		reportError("failed to remove log");
+	}
+}});
