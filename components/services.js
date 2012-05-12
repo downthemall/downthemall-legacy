@@ -58,8 +58,9 @@ XPCOMUtils.defineLazyGetter(this, "IconCheat", function() requireMod("support/ic
 
 function log(str, ex) {
 	try {
-		const {Logger} = requireMod("utils");
-		log = function() Logger.log.apply(Logger, arguments);
+		let _m = {};
+		module("resource://dta/glue.jsm", _m);
+		log = function(str, ex) _m.log(ex ? _m.LOG_ERROR : _m.LOG_INFO, str, ex);
 		log(str, ex);
 	}
 	catch (oex) {
@@ -196,8 +197,8 @@ Stuff.prototype = {
 		// Diagnostic log
 		try {
 			let _d = {};
-			module('resource://dta/Logger.jsm', _d);
-			_d.Logger.clear();
+			module('resource://dta/glue.jsm', _d);
+			_d.log.clear();
 		}
 		catch (ex) {
 			log("Cannot clear diagnostic log", ex);
