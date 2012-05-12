@@ -55,11 +55,11 @@ const RequestManipulation = require("manager/requestmanipulation");
 const {FileExtensionSheet} = require("support/fileextsheet");
 const {UrlManager} = require("support/urlmanager");
 const {VisitorManager} = require("manager/visitormanager");
+const Preallocator = require("manager/preallocator");
 
 let Preallocator = {};
 module('resource://dta/manager/chunk.jsm');
 module('resource://dta/manager/connection.jsm');
-module('resource://dta/manager/preallocator.jsm', Preallocator);
 
 function lazyModule(obj, name, url, symbol) {
 	XPCOMUtils.defineLazyGetter(obj, name, function() {
