@@ -54,6 +54,7 @@ requireJoined(this, "constants");
 const Preferences = require("preferences");
 const Mediator = require("support/mediator");
 const {FilterManager} = require("support/FilterManager");
+const {toURI, toURL} = require("support/stringfuncs");
 
 const DTA = {
 	showPreferences: function(pane, command) Mediator.showPreferences(window, pane, command)
@@ -139,7 +140,7 @@ var Utils = {
 			let res = fp.show();
 
 			if (res == Ci.nsIFilePicker.returnOK) {
-				return fp.file.path.addFinalSlash();
+				return Utils.addFinalSlash(fp.file.path);
 			}
 		}
 		catch (ex) {
@@ -242,7 +243,7 @@ var Utils = {
 			}
 
 			if (Preferences.getExt("sounds." + name, false)) {
-				new Instances.Sound(("chrome://dta/skin/sounds/" + name + ".wav").toURI());
+				new Instances.Sound(toURI("chrome://dta/skin/sounds/" + name + ".wav"));
 			}
 		}
 		catch(ex) {
@@ -296,10 +297,7 @@ var Utils = {
 })();
 
 requireJoined(Utils, "utils");
-const SYSTEMSLASH = Utils.SYSTEMSLASH;
-
-// XXX DIEDIEDIE
-Utils.extendString(String);
+requireJoined(Utils, "support/stringfuncs");
 
 /**
  * Get a (formatted) locale property string.

@@ -141,7 +141,7 @@ var Dialog = {
 		let win = window.arguments[1];
 
 		let directory = $('directory').value.trim();
-		directory = !!directory ? directory.addFinalSlash() : '';
+		directory = !!directory ? Utils.addFinalSlash(directory) : '';
 		$('directory').value = directory;
 
 		let mask = $('renaming').value.trim();

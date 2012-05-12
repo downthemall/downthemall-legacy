@@ -1525,7 +1525,7 @@ const FileHandling = {
 		for (d in Tree.selected) {
 			if (d.is(COMPLETE)) {
 				let f = d.destinationFile;
-				if (SYSTEMSLASH == "\\") {
+				if (Utils.SYSTEMSLASH == "\\") {
 					f = f.toLowerCase();
 				}
 				if (!(f in u)) {

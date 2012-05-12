@@ -52,7 +52,7 @@ function treeDescGetter() {
 }
 function treeResnameGetter() {
 	delete this.resname;
-	return (this.resname = this.url.usable.getUsableFileName());
+	return (this.resname = Utils.getUsableFileName(this.url.usable));
 }
 function treeLinksMapper(link) {
 	// "lazy initialize" the icons.
@@ -395,7 +395,7 @@ let Dialog = {
 	check: function DTA_check() {
 		this.clearNotifications();
 		let dir = this.ddDirectory.value.trim();
-		dir = this.ddDirectory.value = !!dir ? dir.addFinalSlash() : '';
+		dir = this.ddDirectory.value = !!dir ? Utils.addFinalSlash(dir) : '';
 
 		// mask set?
 		let mask = this.ddRenaming.value.trim();
