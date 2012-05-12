@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-Cu.import("resource://dta/support/timers.jsm");
+const {TimerManager} = require("support/timers");
 
 const Timers = new TimerManager();
 

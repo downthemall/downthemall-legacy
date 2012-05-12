@@ -36,7 +36,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 const {defer} = glue2.require("support/defer");
-Components.utils.import('resource://dta/support/timers.jsm');
+const {TimerManager} = glue2.require("support/timers");
 const Timers = new TimerManager();
 
 function discard() {

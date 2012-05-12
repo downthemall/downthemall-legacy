@@ -45,9 +45,10 @@ const Exception = Components.Exception;
 
 module("resource://dta/glue.jsm");
 const {Atoms} = glue2.require("support/atoms");
+const {TimerManager} = glue2.require("support/timers");
+
 module("resource://dta/utils.jsm");
 module("resource://dta/support/icons.jsm");
-module("resource://dta/support/timers.jsm");
 
 const Timers = new TimerManager();
 

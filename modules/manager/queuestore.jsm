@@ -55,8 +55,8 @@ const STMT_SELECT = 'SELECT uuid, item FROM queue ORDER BY pos';
 module("resource://dta/glue.jsm");
 module("resource://dta/utils.jsm");
 
-let pbm = glue2.require("support/pbm");
-module("resource://dta/support/timers.jsm");
+const pbm = glue2.require("support/pbm");
+const {TimerManager} = glue2.require("support/timers");
 
 const Timers = new TimerManager();
 

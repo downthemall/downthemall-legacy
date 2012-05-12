@@ -49,9 +49,10 @@ const Exception = Components.Exception;
 
 const DTA = {};
 module("resource://dta/glue.jsm");
+const {TimerManager} = glue2.require("support/timers");
+
 module("resource://dta/utils.jsm");
 module("resource://dta/api.jsm", DTA);
-module("resource://dta/support/timers.jsm");
 
 const Prefs = DTA.Preferences;
 

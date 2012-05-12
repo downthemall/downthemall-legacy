@@ -4,7 +4,7 @@
 "use strict";
 
 const Prefs = require("preferences");
-Cu.import("resource://dta/support/timers.jsm");
+const {TimerManager} = require("support/timers");
 
 //Add some helpers to Date
 //Note to reviewers: Our scope, our rules ;)
