@@ -7,7 +7,7 @@
  * Lazy getters
  */
 lazy(this, 'DTA', function() require("api"));
-lazy(this, 'Logger', function() requireJSM("resource://dta/utils.jsm").Logger);
+lazy(this, 'Logger', function() require("utils").Logger);
 lazy(this, 'ContentHandling', function() require("support/contenthandling").ContentHandling);
 lazy(this, 'Preferences', function() require("preferences"));
 

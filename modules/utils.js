@@ -1,115 +1,42 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is DownThemAll Utilities module.
- *
- * The Initial Developer of the Original Code is Nils Maier
- * Portions created by the Initial Developer are Copyright (C) 2008
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Nils Maier <MaierMan@web.de>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/ */
+"use strict";
 
-const EXPORTED_SYMBOLS = [
-	'Logger',
-	'atos',
-	'bind',
-	'newUUIDString',
-	'range',
-	'hexdigest',
-	'merge',
-	'clone',
-	'formatNumber',
-	'formatTimeDelta',
-	'getTimestamp',
-	'filterInSitu',
-	'mapInSitu',
-	'filterMapInSitu',
-	'mapFilterInSitu',
-	'naturalSort',
-	'SimpleIterator',
-	'Properties',
-	'MimeQuality',
-	'StringBundles',
-	'launch',
-	'reveal',
-	'extendString',
-	'SYSTEMSLASH',
-	'NS_XUL', 'NS_DTA', 'NS_HTML'
-];
-
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const error = Components.utils.reportError;
-const module = Components.utils.import;
-const Exception = Components.Exception;
-
-module("resource://dta/glue.jsm");
 const Prefs = require("preferences");
 
 /**
  * XUL namespace
  */
 const NS_XUL = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
+exports.NS_XUL = NS_XUL;
 
 /**
  * DownThemAll! Properties namespace
  */
 const NS_DTA = 'http://www.downthemall.net/properties#';
+exports.NS_DTA = NS_DTA;
 
 /**
  * XHTML namespace
  */
 const NS_HTML = 'http://www.w3.org/1999/xhtml';
+exports.NS_HTML = NS_HTML;
 
 const SYSTEMSLASH = (function() {
 	let f = Services.dirsvc.get("TmpD", Ci.nsIFile);
 	f.append('dummy');
 	return (f.path.indexOf('/') != -1) ? '/' : '\\';
 })();
-
+exports.SYSTEMSLASH = SYSTEMSLASH;
 
 const MAX_STACK = 6;
-
-/**
- * Creates anonymous function with context
- * @param context (object) Context object
- * @param func (function) Function to call
- * @return (function) anonymous function binding func to context
- * @deprecated Use XPCOMUtils or glue.jsm
- */
-function bind(context, func) (function() func.apply(context, arguments));
 
 /**
  * returns a new UUID in string representation
  * @return String UUID
  */
-function newUUIDString() Services.uuid.generateUUID().toString();
+exports.newUUIDString = function newUUIDString() Services.uuid.generateUUID().toString();
 
 /**
  * LoggerService
@@ -271,7 +198,7 @@ LoggerService.prototype = {
 				text = text.join('');
 				Services.console.logStringMessage(text);
 			}
-			var f = new Instances.FileOutputStream(this.file, 0x04 | 0x08 | 0x10, 0664, 0);
+			var f = new Instances.FileOutputStream(this.file, 0x04 | 0x08 | 0x10, parseInt("664", 8), 0);
 			f.write(text, text.length);
 			f.close();
 		}
@@ -297,6 +224,7 @@ LoggerService.prototype = {
 };
 
 const Logger = new LoggerService();
+exports.Logger = Logger;
 
 /**
  * Range generator (python style). Difference: step direction is initialized accordingly if corresponding parameter is omitted.
@@ -304,7 +232,7 @@ const Logger = new LoggerService();
  * @param stop Stop value (exclusive)
  * @param step Optional. Step value (default: 1/-1)
  */
-function range() {
+exports.range = function range() {
 	if (arguments.length == 0) {
 		throw Components.results.NS_ERROR_INVALID_ARG;
 	}
@@ -339,9 +267,9 @@ function range() {
  * @param {Object} data
  * @return {String} hexdigest
  */
-function hexdigest(data) {
+exports.hexdigest = function hexdigest(data) {
 	data = data.toString();
-	return [('0' + data.charCodeAt(i).toString(16)).slice(-2) for (i in range(data.length))].join('');
+	return [('0' + data.charCodeAt(i).toString(16)).slice(-2) for (i in exports.range(data.length))].join('');
 }
 
 /**
@@ -356,43 +284,11 @@ function merge(me, that) {
 }
 
 /**
- * (Almost) Clones an object. Not instanceof safe :p
- * @param {Object} obj
- * @return {Object} Copy of obj
- */
-function clone(obj) {
-	var rv = {};
-	merge(rv, obj);
-	merge(rv.prototype, this.prototype);
-	rv.constructor = this.constructor;
-	return rv;
-}
-
-/**
- * Cast non-strings to strings (using toSource if required instead of toString()
- * @param {Object} data
- */
-function atos(data) {
-	if (typeof(data) == 'string') {
-		return data;
-	}
-	if (data instanceof String || typeof(data) == 'object') {
-		try {
-			return data.toSource();
-		}
-		catch (ex) {
-			// fall-trough
-		}
-	}
-	return data.toString();
-}
-
-/**
  * Head-Pads a number so that at it contains least "digits" digits.
  * @param {Object} num The number in question
  * @param {Object} digits Number of digits the results must contain at least
  */
-function formatNumber(num, digits) {
+exports.formatNumber = function formatNumber(num, digits) {
 	let rv = num.toString();
 	if (!isFinite(digits)) {
 		digits = 3;
@@ -408,7 +304,7 @@ function formatNumber(num, digits) {
  * @param {Number} delta in seconds
  * @return {String} formatted result
  */
-function formatTimeDelta(delta) {
+exports.formatTimeDelta = function formatTimeDelta(delta) {
 	let rv = (delta < 0) ? '-' : '';
 
 	delta = Math.abs(delta);
@@ -417,20 +313,20 @@ function formatTimeDelta(delta) {
 	let s = Math.floor(delta % 60);
 
 	if (h) {
-		rv += formatNumber(h, 2) + ':';
+		rv += exports.formatNumber(h, 2) + ':';
 	}
-	return rv + formatNumber(m, 2) + ':' + formatNumber(s, 2);
+	return rv + exports.formatNumber(m, 2) + ':' + exports.formatNumber(s, 2);
 }
 
 /**
  * Converts a Datestring into an integer timestamp.
  * @param {Object} str Datestring or null for current time.
  */
-function getTimestamp(str) {
+exports.getTimestamp = function getTimestamp(str) {
 	if (!str) {
 		return Date.now();
 	}
-	let rv = Date.parse(atos(str));
+	let rv = Date.parse(str);
 	if (!isFinite(rv)) {
 		throw new Error('invalid date');
 	}
@@ -445,7 +341,7 @@ function getTimestamp(str) {
  * @param {Object} tp
  * @returns {Array} Filtered array (identity)
  */
-function filterInSitu(arr, cb, tp) {
+exports.filterInSitu = function filterInSitu(arr, cb, tp) {
 	tp = tp || null;
 	let i, k, e;
 	for (i = 0, k = 0, e = arr.length; i < e; i++) {
@@ -465,7 +361,7 @@ function filterInSitu(arr, cb, tp) {
  * @param {Object} tp
  * @returns {Array} Mapped array (identity)
  */
-function mapInSitu(arr, cb, tp) {
+exports.mapInSitu = function mapInSitu(arr, cb, tp) {
 	tp = tp || null;
 	for (let i = 0, e = arr.length; i < e; i++) {
 		arr[i] = cb.call(tp, arr[i], i, arr);
@@ -481,7 +377,7 @@ function mapInSitu(arr, cb, tp) {
  * @param {Object} tp
  * @returns {Array} Filtered and mapped array (identity)
  */
-function filterMapInSitu(arr, filterStep, mapStep, tp) {
+exports.filterMapInSitu = function filterMapInSitu(arr, filterStep, mapStep, tp) {
 	tp = tp || null;
 	let i, k, e;
 	for (i = 0, k = 0, e = arr.length; i < e; i++) {
@@ -504,7 +400,7 @@ function filterMapInSitu(arr, filterStep, mapStep, tp) {
  * @param {Object} tp
  * @returns {Array} Mapped and filtered array (identity)
  */
-function mapFilterInSitu(arr, mapStep, filterStep, tp) {
+exports.mapFilterInSitu = function mapFilterInSitu(arr, mapStep, filterStep, tp) {
 	tp = tp || null;
 	let i, k, e;
 	for (i = 0, k = 0, e = arr.length; i < e; i++) {
@@ -528,7 +424,7 @@ function naturalSort(arr, mapper) {
 	if (typeof mapper != 'function' && !(mapper instanceof Function)) {
 		mapper = naturalSort.identity;
 	}
-	mapInSitu(
+	exports.mapInSitu(
 		arr,
 		function(b) {
 			let e = mapper(b);
@@ -582,7 +478,7 @@ function naturalSort(arr, mapper) {
 			return a.length - b.length;
 		}
 	);
-	return mapInSitu(arr, function(a) a.elem);
+	return exports.mapInSitu(arr, function(a) a.elem);
 }
 naturalSort.identity = function(e) e;
 naturalSort.isDigit = function(a, i) {
@@ -592,6 +488,7 @@ naturalSort.isDigit = function(a, i) {
 naturalSort.compare = function(a, b) {
 	return a === b ? 0 : (a < b ? -1 : 1);
 };
+exports.naturalSort = naturalSort;
 
 
 /**
@@ -611,6 +508,7 @@ SimpleIterator.prototype = {
 		}
 	}
 };
+exports.SimpleIterator = SimpleIterator;
 
 /**
  * Construct object from nsIProperties.
@@ -699,6 +597,7 @@ Properties.prototype = {
 		}
 	}
 };
+exports.Properties = Properties;
 
 /**
  * Mime quality param constructor
@@ -735,10 +634,11 @@ MimeQuality.prototype = {
 			rv.push({q: x, v: e.join(", ")});
 		}
 		rv.sort(function(a, b) (a.q > b.q) ? -1 : ((a.q < b.q) ? 1 : 0));
-		mapInSitu(rv, function(e) e.v + ";q=" + e.q).join(", ");
+		exports.mapInSitu(rv, function(e) e.v + ";q=" + e.q).join(", ");
 		return rv;
 	}
 }
+exports.MimeQuality = MimeQuality;
 
 const _bundles = {};
 function _loadBundle(url) {
@@ -752,7 +652,7 @@ function _loadBundle(url) {
 	return _bundles[url] = strings;
 }
 function _loadBundles(urls) {
-	filterInSitu(
+	exports.filterInSitu(
 		urls,
 		function(e) !((e in this) || (this[e] = null)), {}
 	);
@@ -762,7 +662,7 @@ function _loadBundles(urls) {
 		return _bundles[key];
 	}
 	let rv = {};
-	for each (let b in mapInSitu(urls, function(e) _loadBundle(e))) {
+	for each (let b in exports.mapInSitu(urls, function(e) _loadBundle(e))) {
 		merge(rv, b);
 	}
 	return _bundles[key] = rv;
@@ -809,6 +709,7 @@ StringBundles.prototype = {
 		return fmt;
 	}
 };
+exports.StringBundles = StringBundles;
 
 /**
  * XP compatible reveal/launch
@@ -840,7 +741,7 @@ function OpenExternal_nixLaunch(file) {
  * @param nsILocalFile/String
  *          pointing to the desired file
  */
-function launch(file) {
+exports.launch = function launch(file) {
 	file = OpenExternal_prepare(file);
 	if (!file.exists()) {
 		throw new Exception("OpenExternal: file not found!");
@@ -861,7 +762,7 @@ function launch(file) {
  * @param nsILocalFile/String
  *          pointing to the desired file
  */
-function reveal(file) {
+exports.reveal = function reveal(file) {
 	file = OpenExternal_prepare(file);
 	try {
 		if (!file.exists()) {
@@ -879,7 +780,7 @@ function reveal(file) {
 	}
 }
 
-function extendString(_s) {
+exports.extendString = function extendString(_s) {
 	const rbc_u = /[\n\r\v?:<>*|"]/g;
 	const rbc_w = /%(?:25)?20/g;
 	const rsl_r = /[\/\\]/g;
@@ -965,4 +866,4 @@ function extendString(_s) {
 		}
 	);
 }
-extendString(String);
+exports.extendString(String);

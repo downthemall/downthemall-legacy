@@ -16,7 +16,7 @@ const DTA = require("api");
 const Preferences = require("preferences");
 const {LOCALE} = require("version");
 const {UrlManager} = require("support/urlmanager");
-const {Logger, NS_DTA, NS_HTML} = requireJSM("resource://dta/utils.jsm");
+const {Logger, NS_DTA, NS_HTML} = require("utils");
 
 const XPathResult = Ci.nsIDOMXPathResult;
 

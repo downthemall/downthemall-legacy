@@ -6,7 +6,7 @@
 const {
 	createOptimizedImplementation
 } = require("support/optimpl");
-const {Logger} = requireJSM("resource://dta/utils.jsm");
+const {Logger} = require("utils");
 
 const {prealloc: _asynccopier} = require("manager/preallocator/asynccopier");
 const {prealloc: _cothread} = require("manager/preallocator/cothread");
