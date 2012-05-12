@@ -30,11 +30,9 @@ lazy(this, "DTA", function() {
 	return _m;
 });
 lazy(this, "QueueStore", function() {
-	let _m = {};
-	Cu.import("resource://dta/manager/queuestore.jsm", _m);
-	_m = _m.QueueStore;
-	glue2.requireJoined(_m, "constants");
-	return _m;
+	let {QueueStore} = glue2.require("manager/queuestore");
+	glue2.requireJoined(QueueStore, "constants");
+	return QueueStore;
 })
 
 const Observer = {
