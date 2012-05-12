@@ -1,10 +1,8 @@
 module("textlinks.js");
 
-/* XXX to require
 test("exports", function() {
-	checkExports("resource://dta/support/textlinks.jsm", ["getTextLinks", "FakeLink"]);
+	checkExports("support/textlinks", ["getTextLinks", "FakeLink"]);
 });
-*/
 
 test("regular", function() {
 	var {getTextLinks} = require("support/textlinks");

@@ -1,8 +1,7 @@
 module("atoms.jsm");
 
-/* XXX require
 test("exports", function() {
-	checkExports("resource://dta/support/atoms.jsm", [
+	checkExports("support/atoms", [
 		"Atoms",
 		"iconicAtom",
 		"completedAtom",
@@ -15,7 +14,6 @@ test("exports", function() {
 		"progressAtom"
 		]);
 });
-*/
 
 test("getAtoms", function() {
 	var Atoms = new (require("support/atoms").Atoms)();

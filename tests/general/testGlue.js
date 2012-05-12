@@ -1,12 +1,6 @@
 "use strict";
 module("glue.jsm");
 
-/* XXX require
-test("exports", function() {
-	checkExports("resource://dta/glue.jsm", ["XPCOMUtils", "Services", "Instances", "require", "lazyRequire", "Map", "LRUMap"]);
-});
-*/
-
 test("Service contents", function() {
 	var {Services: S1} = requireJSM("resource://dta/glue.jsm");
 	var {Services: S2} = requireJSM("resource://gre/modules/Services.jsm");
