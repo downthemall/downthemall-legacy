@@ -24,28 +24,29 @@ module("preallocator.jsm");
 			});
 		}, 100);
 	}
-
+/* XXX require
 	test("exports", function() {
 		checkExports("resource://dta/manager/preallocator.jsm", ["prealloc"]);
 		checkExports("resource://dta/manager/preallocator/asynccopier.jsm", ["prealloc"]);
 		checkExports("resource://dta/manager/preallocator/cothread.jsm", ["prealloc"]);
 	});
+	*/
 
 	asyncTest("worker non-sparse", function() {
-		var {prealloc} = require("resource://dta/manager/preallocator.jsm");
+		var {prealloc} = require("manager/preallocator");
 		_do_test("non-sparse", prealloc, (1<<30), false);
 	});
 	asyncTest("worker sparse", function() {
-		var {prealloc} = require("resource://dta/manager/preallocator.jsm");
+		var {prealloc} = require("manager/preallocator");
 		_do_test("sparse", prealloc, (1<<30), true);
 	});
 	asyncTest("asynccopier", function() {
-		var {prealloc} = require("resource://dta/manager/preallocator/asynccopier.jsm");
+		var {prealloc} = require("manager/preallocator/asynccopier");
 		_do_test("asynccopier", prealloc, (1<<26), false);
 	});
 
 	asyncTest("cothread", function() {
-		var {prealloc} = require("resource://dta/manager/preallocator/cothread.jsm");
+		var {prealloc} = require("manager/preallocator/cothread");
 		_do_test("cothread", prealloc, (1<<26), false);
 	});
 
