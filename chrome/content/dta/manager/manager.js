@@ -48,6 +48,7 @@ const PrivateBrowsing = glue2.require("support/pbm");
 const {TimerManager} = glue2.require("support/timers");
 const {ContentHandling} = glue2.require("support/contenthandling");
 const {asyncMoveFile} = glue2.require("manager/asyncmovefile");
+const GlobalProgress = new (glue2.require("manager/globalprogress").GlobalProgress)(window);
 
 module('resource://dta/support/fileextsheet.jsm');
 module('resource://dta/support/serverlimits.jsm', Limits);
@@ -56,7 +57,6 @@ module('resource://dta/support/urlmanager.jsm');
 let Preallocator = {}, RequestManipulation = {};
 module('resource://dta/manager/chunk.jsm');
 module('resource://dta/manager/connection.jsm');
-module('resource://dta/manager/globalprogress.jsm');
 module('resource://dta/manager/preallocator.jsm', Preallocator);
 module('resource://dta/manager/queuestore.jsm');
 module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
@@ -90,7 +90,6 @@ addEventListener("load", function load_textCache() {
 	Object.freeze(TextCache);
 }, false);
 
-GlobalProgress = new GlobalProgress(window);
 var Timers = new TimerManager();
 
 const getLargeIcon = (function() {
