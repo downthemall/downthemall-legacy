@@ -1,67 +1,19 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is DownThemAll API integration loader.
- *
- * The Initial Developer of the Original Code is Nils Maier
- * Portions created by the Initial Developer are Copyright (C) 2011
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Nils Maier <MaierMan@web.de>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
-
-const EXPORTED_SYMBOLS = ["load"];
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cu = Components.utils;
-const module = Cu.import;
-
-module("resource://dta/glue.jsm");
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
 
 /* **
  * Lazy getters
  */
-XPCOMUtils.defineLazyGetter(this, 'DTA', function() {
-	let rv = {};
-	module("resource://dta/api.jsm", rv);
-	Object.freeze(rv);
-	return rv;
-});
-XPCOMUtils.defineLazyGetter(this, 'Version', function() require("version"));
-XPCOMUtils.defineLazyGetter(this, 'Preferences', function() require("preferences"));
+lazy(this, 'DTA', function() requireJSM("resource://dta/api.jsm"));
+lazy(this, 'Version', function() require("version"));
+lazy(this, 'Preferences', function() require("preferences"));
 this.__defineGetter__('recognizeTextLinks', function() Preferences.getExt("textlinks", true));
-XPCOMUtils.defineLazyGetter(this, 'TextLinks', function() require("support/textlinks"));
-XPCOMUtils.defineLazyGetter(this, "ContentHandling", function() require("support/contenthandling").ContentHandling);
-XPCOMUtils.defineLazyGetter(this, 'CoThreads', function() require("cothreads"));
-XPCOMUtils.defineLazyGetter(
-	this,
-	'getString_str',
-	function() Services.strings.createBundle('chrome://dta/locale/menu.properties')
-);
+lazy(this, 'TextLinks', function() require("support/textlinks"));
+lazy(this, "ContentHandling", function() require("support/contenthandling").ContentHandling);
+lazy(this, 'CoThreads', function() require("cothreads"));
+lazy(this, 'getString_str',	function() Services.strings.createBundle('chrome://dta/locale/menu.properties'));
 
 /* **
  * Helpers and tools
@@ -239,7 +191,7 @@ function filterInSitu(arr, cb, tp) {
 			k += 1;
 		}
 	}
-	arr.length = k; // truncate
+	arr.length = k;
 	return arr;
 }
 
@@ -253,7 +205,7 @@ function filterMapInSitu(arr, filterStep, mapStep, tp) {
 			k += 1;
 		}
 	}
-	arr.length = k; // truncate
+	arr.length = k;
 	return arr;
 }
 
@@ -280,7 +232,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 			yield true;
 		}
 		videos = videos.concat(sources);
-		filterInSitu(function(e) !!e.src);
+		filterInSitu(videos, function(e) !!e.src);
 		yield true;
 
 		let embeds = new Array(aWin.document.embeds.length);
@@ -415,7 +367,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 /* **
  * LOADER
  */
-function load(window, outerEvent) {
+exports.load = function load(window, outerEvent) {
 	let document = window.document;
 	let setTimeoutOnlyFun = function setTimeoutOnlyFun(c) {
 		if (typeof(c) != "function") {
@@ -735,10 +687,10 @@ function load(window, outerEvent) {
 	}
 
 	function _findSingleMedia(turbo, tag) {
+		function isMedia(n) 'tagName' in n && n.tagName.toLowerCase() == tag;
+
 		let ctx = window.gContextMenu;
 		try {
-			function isMedia(n) 'tagName' in n && n.tagName.toLowerCase() == tag;
-
 			let cur = ctx.target;
 			while (cur && !isMedia(cur)) {
 				let cn = cur.getElementsByTagName(tag);
@@ -1504,7 +1456,7 @@ function load(window, outerEvent) {
 		function bindEvt(evt, fn) {
 			return function (e) {
 				e.addEventListener(evt, fn, true);
-				unload(function() e.removeEventListener(evt, fn, true));
+				unloadWindow(function() e.removeEventListener(evt, fn, true));
 			}
 		}
 		function bindCtxEvt(ctx, evt, fn) {
@@ -1577,7 +1529,7 @@ function load(window, outerEvent) {
 		evt.target == ctx ? onContextShowing(evt) : onToolsShowing(evt);
 	}
 
-	let unload = (function() {
+	let unloadWindow = (function() {
 		function unload_i(cb) {
 			if (cb) {
 				unloaders.push(cb);
@@ -1608,18 +1560,18 @@ function load(window, outerEvent) {
 	menu.addEventListener('popupshowing', initMenus, true);
 
 	/*window.addEventListener("keydown", onKeyDown, false);
-	unload(function() window.removeEventListener("keydown", onKeyDown, false));
+	unloadWindow(function() window.removeEventListener("keydown", onKeyDown, false));
 
 	window.addEventListener("keyup", onKeyUp, false);
-	unload(function() window.removeEventListener("keyup", onKeyUp, false));
+	unloadWindow(function() window.removeEventListener("keyup", onKeyUp, false));
 
 	window.addEventListener("blur", onBlur, true);
-	unload(function() window.removeEventListener("blur", onBlur, true));*/
+	unloadWindow(function() window.removeEventListener("blur", onBlur, true));*/
 
 	let appcontent = document.getElementById("appcontent");
 	if (appcontent) {
 		appcontent.addEventListener("DOMContentLoaded", onToolbarInstall, true);
-		unload(function() appcontent.removeEventListener("DOMContentLoaded", onToolbarInstall, true));
+		unloadWindow(function() appcontent.removeEventListener("DOMContentLoaded", onToolbarInstall, true));
 	}
 
 	/* Toolbar buttons */
@@ -1641,75 +1593,76 @@ function load(window, outerEvent) {
 	}
 
 	try {
-		function dta_button_command(event) {
-			switch (event.target.id) {
-			case 'dta-button':
-			case 'dta-tb-dta':
-				findLinks();
-				break;
-			case 'dta-tb-all':
-				findLinks(false, true);
-				break;
-			case 'dta-tb-manager':
-				DTA.openManager(window);
-				break;
-			default:
-				break;
-				}
-		}
-		function dta_button_drag(event) nsDragAndDrop.dragOver(event, DropDTA);
-		function dta_button_drop(event) nsDragAndDrop.drop(event, DropDTA);
-
-
-		function dta_turbo_button_command(event) {
-			switch (event.target.id) {
-			case 'dta-turbo-button':
-			case 'dta-tb-turbo':
-				findLinks(true);
-				break;
-			case 'dta-tb-allturbo':
-				findLinks(true, true);
-				break;
-			default:
-
-				break;
+		(function() {
+			function dta_button_command(event) {
+				switch (event.target.id) {
+				case 'dta-button':
+				case 'dta-tb-dta':
+					findLinks();
+					break;
+				case 'dta-tb-all':
+					findLinks(false, true);
+					break;
+				case 'dta-tb-manager':
+					DTA.openManager(window);
+					break;
+				default:
+					break;
+					}
 			}
-		}
-		function dta_turbo_button_drag(event) nsDragAndDrop.dragOver(event, DropTDTA);
-		function dta_turbo_button_drop(event) nsDragAndDrop.drop(event, DropTDTA);
-
-		function dta_turboselect_button_command(event) { toggleOneClick(event); }
-		function dta_manager_button_command() DTA.openManager(window);
-
-		let DropTDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, true, url, ref); });
-		let DropDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, false, url, ref); });
-
-		let dta_button = $t('dta-button');
-		dta_button.addEventListener('command', dta_button_command, true);
-		unload(function() dta_button.removeEventListener('command', dta_button_command, true));
-		dta_button.addEventListener('dragover', dta_button_drag, true);
-		unload(function() dta_button.removeEventListener('dragover', dta_button_drag, true));
-		dta_button.addEventListener('dragdrop', dta_button_drop, true);
-		unload(function() dta_button.removeEventListener('dragdrop', dta_button_drop, true));
+			function dta_button_drag(event) nsDragAndDrop.dragOver(event, DropDTA);
+			function dta_button_drop(event) nsDragAndDrop.drop(event, DropDTA);
 
 
-		let dta_turbo_button = $t('dta-turbo-button');
-		dta_turbo_button.addEventListener('command', dta_turbo_button_command, true);
-		unload(function() dta_turbo_button.removeEventListener('command', dta_turbo_button_command, true));
-		dta_turbo_button.addEventListener('dragover', dta_turbo_button_drag, true);
-		unload(function() dta_turbo_button.removeEventListener('dragover', dta_turbo_button_drag, true));
-		dta_turbo_button.addEventListener('dragdrop', dta_turbo_button_drop, true);
-		unload(function() dta_turbo_button.removeEventListener('dragdrop', dta_turbo_button_drop, true));
+			function dta_turbo_button_command(event) {
+				switch (event.target.id) {
+				case 'dta-turbo-button':
+				case 'dta-tb-turbo':
+					findLinks(true);
+					break;
+				case 'dta-tb-allturbo':
+					findLinks(true, true);
+					break;
+				default:
 
-		let dta_turboselect_button = $t('dta-turboselect-button');
-		dta_turboselect_button.addEventListener('command', dta_turboselect_button_command, true);
-		unload(function() dta_turboselect_button.removeEventListener('command', dta_turboselect_button_command, true));
-		unload(function() detachOneClick);
+					break;
+				}
+			}
+			function dta_turbo_button_drag(event) nsDragAndDrop.dragOver(event, DropTDTA);
+			function dta_turbo_button_drop(event) nsDragAndDrop.drop(event, DropTDTA);
 
-		let dta_manager_button = $t('dta-manager-button')
-		dta_manager_button.addEventListener('command', dta_manager_button_command, true);
-		unload(function() dta_manager_button.removeEventListener('command', dta_manager_button_command, true));
+			function dta_turboselect_button_command(event) { toggleOneClick(event); }
+			function dta_manager_button_command() DTA.openManager(window);
 
+			let DropTDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, true, url, ref); });
+			let DropDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, false, url, ref); });
+
+			let dta_button = $t('dta-button');
+			dta_button.addEventListener('command', dta_button_command, true);
+			unloadWindow(function() dta_button.removeEventListener('command', dta_button_command, true));
+			dta_button.addEventListener('dragover', dta_button_drag, true);
+			unloadWindow(function() dta_button.removeEventListener('dragover', dta_button_drag, true));
+			dta_button.addEventListener('dragdrop', dta_button_drop, true);
+			unloadWindow(function() dta_button.removeEventListener('dragdrop', dta_button_drop, true));
+
+
+			let dta_turbo_button = $t('dta-turbo-button');
+			dta_turbo_button.addEventListener('command', dta_turbo_button_command, true);
+			unloadWindow(function() dta_turbo_button.removeEventListener('command', dta_turbo_button_command, true));
+			dta_turbo_button.addEventListener('dragover', dta_turbo_button_drag, true);
+			unloadWindow(function() dta_turbo_button.removeEventListener('dragover', dta_turbo_button_drag, true));
+			dta_turbo_button.addEventListener('dragdrop', dta_turbo_button_drop, true);
+			unloadWindow(function() dta_turbo_button.removeEventListener('dragdrop', dta_turbo_button_drop, true));
+
+			let dta_turboselect_button = $t('dta-turboselect-button');
+			dta_turboselect_button.addEventListener('command', dta_turboselect_button_command, true);
+			unloadWindow(function() dta_turboselect_button.removeEventListener('command', dta_turboselect_button_command, true));
+			unloadWindow(function() detachOneClick);
+
+			let dta_manager_button = $t('dta-manager-button')
+			dta_manager_button.addEventListener('command', dta_manager_button_command, true);
+			unloadWindow(function() dta_manager_button.removeEventListener('command', dta_manager_button_command, true));
+		})();
 	}
 	catch (ex) {
 		if (DTA.Logger.enabled) {
