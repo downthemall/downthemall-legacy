@@ -7,8 +7,6 @@ const EXPORTED_SYMBOLS = ['TimerManager'];
 
 const nsITimer = Ci.nsITimer;
 
-const {Logger} = require("utils");
-
 function uuid() Services.uuid.generateUUID().toString();
 
 // Represents the (private) timer data and observer
@@ -40,9 +38,7 @@ TimerData.prototype = {
 			this.func.call(this.ctx);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Failed to execute timer callback", ex);
-			}
+			log(LOG_ERROR, "Failed to execute timer callback", ex);
 		}
 	}
 };

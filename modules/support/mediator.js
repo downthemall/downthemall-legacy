@@ -42,7 +42,6 @@ const EXPORTED_SYMBOLS = [
 ];
 
 const Prefs = require("preferences");
-const {Logger} = require("utils");
 
 function objToString(obj) {
 	if (obj == null || obj == undefined || !obj) {
@@ -126,9 +125,7 @@ function getAllByType(type) {
 }
 
 function openExternal(link) {
-	if (Logger.enabled) {
-		Logger.log("Mediator: Using external handler for " + link);
-	}
+	log(LOG_INFO, "Mediator: Using external handler for " + link);
 	Services.eps.loadUrl(objToUri(link));
 }
 
@@ -144,9 +141,7 @@ this.__defineGetter__(
 			return Services.strings.createBundle(hp || 'resource:/browserconfig.properties').GetStringFromName('browser.startup.homepage');
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("No luck getting hp");
-			}
+			log(LOG_ERROR, "No luck getting hp");
 		}
 		return 'about:blank';
 	}
@@ -156,9 +151,7 @@ function openUrl(window, link, ref) {
 	if (!link) {
 		link = homePage;
 	}
-	if (Logger.enabled) {
-		Logger.log("Mediator: Request to open " + link);
-	}
+	log(LOG_INFO, "Mediator: Request to open " + link);
 	if (!tryOpenUrl(window, link, ref)) {
 		try {
 			window.open(objToString(link));
@@ -182,9 +175,7 @@ function tryOpenUrl(window, link, ref) {
 		}
 	}
 	catch (ex) {
-		if (Logger.enabled) {
-			Logger.log('Mediator: Failed to open tab', ex);
-		}
+		log(LOG_ERROR, "Mediator: Failed to open tab", ex);
 	}
 	return false;
 }

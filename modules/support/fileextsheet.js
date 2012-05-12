@@ -7,7 +7,6 @@ const {Atoms} = require("support/atoms");
 const Timers = new (require("support/timers").TimerManager)();
 const {getIcon} = require("support/icons");
 const {getExtension} = require("support/stringfuncs");
-const {Logger} = require("utils");
 
 function FileExtensionSheet(window) {
 	this._windowUtils = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowUtils);
@@ -18,9 +17,7 @@ function FileExtensionSheet(window) {
 		for each (let ss in document.styleSheets) {
 			if (/^chrome:\/\/dta\//.test(ss.href)) {
 				this._stylesheet = ss;
-				if (Logger.enabled) {
-					Logger.log("found stylesheet " + ss.href + ", rules: " + ss.cssRules.length);
-				}
+				log(LOG_DEBUG, "found stylesheet " + ss.href + ", rules: " + ss.cssRules.length);
 				break;
 			}
 		}
@@ -29,9 +26,7 @@ function FileExtensionSheet(window) {
 		}
 	}
 	catch (ex) {
-		if (Logger.enabled) {
-			Logger.log("sheet:", ex);
-		}
+		log(LOG_ERROR, "sheet:", ex);
 	}
 	this._entries = {};
 }
@@ -56,9 +51,7 @@ FileExtensionSheet.prototype = {
 				+ getIcon('file.' + ext, metalink || ext == 'metalink' || ext == "meta4")
 				+ ') !important; }';
 			this._stylesheet.insertRule(rule, this._stylesheet.cssRules.length);
-			if (Logger.enabled) {
-				Logger.log("sheet: " + rule);
-			}
+			log(LOG_DEBUG, "sheet: " + rule);
 			if (!this._timer) {
 				// this is a moz-2 hack, as it will otherwise not correctly redraw!
 				this._timer = Timers.createOneshot(0, this._updateSheet, this);

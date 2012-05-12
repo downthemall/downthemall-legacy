@@ -3,8 +3,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const {Logger} = require("utils");
-
 const ss = new Instances.StringInputStream("a", 1);
 ss.QueryInterface(Ci.nsISeekableStream);
 
@@ -75,9 +73,7 @@ WorkerJob.prototype = {
 			copier.asyncCopy(this, null);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("pa: implementation failed!", ex);
-			}
+			log(LOG_ERROR, "pa: implementation failed!", ex);
 			this.finish();
 		}
 	},
@@ -88,9 +84,7 @@ WorkerJob.prototype = {
 			return;
 		}
 		if (!Components.isSuccessCode(aStatusCode)) {
-			if (Logger.enabled) {
-				Logger.log("pa: not successful, " + aStatusCode);
-			}
+			log(LOG_INFO, "pa: not successful, " + aStatusCode);
 			this.finish();
 			return;
 		}

@@ -4,7 +4,6 @@
 "use strict";
 
 const {CoThreadInterleaved} = require("cothreads");
-const {Logger} = require("utils");
 
 // Should we use the optimized Windows implementation?
 const WINDOWSIMPL = require("version").OS == 'winnt';
@@ -68,9 +67,7 @@ WorkerJob.prototype = {
 			this.result = true;
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("pa: Windows implementation failed!", ex);
-			}
+			log(LOG_ERROR, "pa: Windows implementation failed!", ex);
 			for (let i in this._run_other()) yield i;
 		}
 	},
@@ -89,9 +86,7 @@ WorkerJob.prototype = {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("pa: Failed to run prealloc loop", ex);
-			}
+			log(LOG_ERROR, "pa: Failed to run prealloc loop", ex);
 		}
 	},
 	_close: function() {

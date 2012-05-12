@@ -4,7 +4,7 @@
 "use strict";
 
 const DTA = require("api");
-const {Logger, getTimestamp} = require("utils");
+const {getTimestamp} = require("utils");
 
 function Visitor() {
 	// sanity check
@@ -38,16 +38,12 @@ Visitor.prototype = {
 				if (this.cmpKeys[x]) {
 					continue;
 				}
-				if (Logger.enabled) {
-					Logger.log(x + " missing");
-				}
+				log(LOG_ERROR, x + " missing");
 				throw new Exception(x + " is missing");
 			}
 			// header is there, but differs
 			else if (this[x] != v[x]) {
-				if (Logger.enabled) {
-					Logger.log(x + " nm: [" + this[x] + "] [" + v[x] + "]");
-				}
+				log(LOG_ERROR, x + " nm: [" + this[x] + "] [" + v[x] + "]");
 				throw new Exception("Header " + x + " doesn't match");
 			}
 		}
@@ -99,9 +95,7 @@ HttpVisitor.prototype = {
 			this.type = chan.getResponseHeader("content-type");
 			var ch = this.type.match(/charset=['"]?([\w\d_-]+)/i);
 			if (ch && ch[1].length) {
-				if (Logger.enabled) {
-					Logger.log("visitHeader: found override to " + ch[1]);
-				}
+				log(LOG_DEBUG, "visitHeader: found override to " + ch[1]);
 				this._charset = this.overrideCharset = ch[1];
 			}
 		}
@@ -171,9 +165,7 @@ HttpVisitor.prototype = {
 				.replace(/^(?:[Ww]\/)?"(.+)"$/, '$1')
 				.replace(/^[a-f\d]+-([a-f\d]+)-([a-f\d]+)$/, '$1-$2')
 				.replace(/^([a-f\d]+):[a-f\d]{1,6}$/, '$1');
-			if (Logger.enabled) {
-				Logger.log("Etag: " + this.etag + " - " + etag);
-			}
+			log(LOG_DEBUG, "Etag: " + this.etag + " - " + etag);
 		}
 		if ("last-modified" in this) {
 			try {
@@ -234,16 +226,12 @@ FtpVisitor.prototype = {
 						time += ':' + m[6];
 					}
 					this.time = getTimestamp(time);
-					if (Logger.enabled) {
-						Logger.log(this.time);
-					}
+					log(LOG_DEBUG, this.time);
 				}
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("visitChan:", ex);
-			}
+			log(LOG_ERROR, "visitChan:", ex);
 		}
 	}
 };
@@ -275,9 +263,7 @@ VisitorManager.prototype = {
 				}
 			}
 			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log("failed to read one visitor", ex);
-				}
+				log(LOG_ERROR, "failed to read one visitor", ex);
 			}
 		}
 	},
@@ -296,9 +282,7 @@ VisitorManager.prototype = {
 				rv.push(v);
 			}
 			catch(ex) {
-				if (Logger.enabled) {
-					Logger.log(x, ex);
-				}
+				log(LOG_ERROR, x, ex);
 			}
 		}
 		return rv;

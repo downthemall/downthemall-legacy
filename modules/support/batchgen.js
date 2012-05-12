@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const {Logger, range} = require("utils");
+const {range} = require("utils");
 
 /**
  * Simple literal
@@ -135,9 +135,7 @@ function BatchGenerator(link) {
 				this._pats.push(new NumericRange(m[0], start, stop, step, sl));
 			}
 			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log("Bad Numeric Range", ex);
-				}
+				log(LOG_ERROR, "Bad Numeric Range", ex);
 				this._pats.push(new Literal(m[0]));
 			}
 			continue;
@@ -161,9 +159,7 @@ function BatchGenerator(link) {
 				this._pats.push(new CharRange(m[0], start, stop, step));
 			}
 			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log("Bad Char Range", ex);
-				}
+				log(LOG_ERROR, "Bad Char Range", ex);
 				this._pats.push(new Literal(m[0]));
 			}
 			continue;
