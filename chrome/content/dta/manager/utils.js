@@ -123,7 +123,7 @@ const Prefs = {
 		['setTime', true],
 		['showOnlyFilenames', true],
 		['conflictResolution', 3],
-		['alertingSystem', 'alertbox', (SYSTEMSLASH == '\\') ? 1 : 0],
+		['alertingSystem', 'alertbox', (Utils.SYSTEMSLASH == '\\') ? 1 : 0],
 		['finishEvent', ''],
 		['showTooltip', true],
 		['maxAutoRetries', 10],

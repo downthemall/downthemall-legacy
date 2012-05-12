@@ -421,7 +421,7 @@ const Dialog = {
 			let referrer = Dialog_loadDownloads_get(down, "referrer");
 			if (referrer) {
 				try {
-					d.referrer = referrer.toURL();
+					d.referrer = toURL(referrer);
 				}
 				catch (ex) {
 					// We might have been fed with about:blank or other crap. so ignore.
@@ -1253,7 +1253,7 @@ const Metalinker = {
 					if (e.size) {
 						e.size = Utils.formatBytes(e.size);
 					}
-					e.fileName = e.fileName.getUsableFileName();
+					e.fileName = Utils.getUsableFileName(e.fileName);
 				}
 				window.openDialog(
 					'chrome://dta/content/dta/manager/metaselect.xul',
@@ -1290,18 +1290,18 @@ function Replacer(o) {
 Replacer.prototype = {
 	get name() this._obj.fileNameAndExtension.name,
 	get ext() this._obj.fileNameAndExtension.extension,
-	get text() this._obj.description.replaceSlashes(' ').trim(),
-	get flattext() this._obj.description.getUsableFileNameWithFlatten(),
+	get text() Utils.replaceSlashes(this._obj.description, " ").trim(),
+	get flattext() Utils.getUsableFileNameWithFlatten(this._obj.description),
 	get title() this._obj.title.trim(),
-	get flattitle() this._obj.title.getUsableFileNameWithFlatten(),
+	get flattitle() Utils.getUsableFileNameWithFlatten(this._obj.title),
 	get url() this._obj.urlManager.host,
 	get domain() this._obj.urlManager.domain,
 	get subdirs() this._obj.maskURLPath,
-	get flatsubdirs() this._obj.maskURLPath.getUsableFileNameWithFlatten(),
+	get flatsubdirs() Utils.getUsableFileNameWithFlatten(this._obj.maskURLPath),
 	get refer() this._obj.referrer ? this._obj.referrer.host.toString() : '',
 	get qstring() this._obj.maskURL.query || '',
 	get curl() this._obj.maskCURL,
-	get flatcurl() this._obj.maskCURL.getUsableFileNameWithFlatten(),
+	get flatcurl() Utils.getUsableFileNameWithFlatten(this._obj.maskCURL),
 	get num() Utils.formatNumber(this._obj.bNum),
 	get inum() Utils.formatNumber(this._obj.iNum),
 	get hh() Utils.formatNumber(this._obj.startDate.getHours(), 2),
@@ -1412,7 +1412,7 @@ QueueItem.prototype = {
 	get fileNameAndExtension() {
 		if (!this._fileNameAndExtension) {
 			let name = this.fileName;
-			let ext = name.getExtension();
+			let ext = Utils.getExtension(name);
 			if (ext) {
 				name = name.substring(0, name.length - ext.length - 1);
 
@@ -1487,10 +1487,7 @@ QueueItem.prototype = {
 		if (this._mask == nv) {
 			return nv;
 		}
-		this._mask = nv
-			.normalizeSlashes()
-			.removeLeadingSlash()
-			.removeFinalSlash();
+		this._mask = Utils.removeFinalSlash(Utils.removeLeadingSlash(Utils.normalizeSlashes(nv)));
 		this.rebuildDestination();
 		this.invalidate(7);
 		return nv;
@@ -2052,17 +2049,15 @@ QueueItem.prototype = {
 	},
 	get maskURL() this.urlManager.usableURL,
 	get maskURLPath() this.urlManager.usableURLPath,
-	get maskCURL() this.maskURL.host + ((this.maskURLPath == "") ? "" : (SYSTEMSLASH + this.maskURLPath)),
+	get maskCURL() this.maskURL.host + ((this.maskURLPath == "") ? "" : (Utils.SYSTEMSLASH + this.maskURLPath)),
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
-			let mask = this.mask.replace(Replacer.expr, this.rebuildDestination_replacer)
-				.removeFinalChar(".")
-				.normalizeSlashes()
-				.removeFinalSlash()
-				.split(SYSTEMSLASH);
-			let file = new Instances.LocalFile(this.pathName.addFinalSlash());
+			let mask = Utils.removeFinalSlash(Utils.normalizeSlashes(Utils.removeFinalChar(
+					this.mask.replace(Replacer.expr, this.rebuildDestination_replacer), "."
+					))).split(Utils.SYSTEMSLASH);
+			let file = new Instances.LocalFile(Utils.addFinalSlash(this.pathName));
 			while (mask.length) {
-				file.append(mask.shift().removeBadChars().trim());
+				file.append(Utils.removeBadChars(mask.shift()).trim());
 			}
 			this._destinationName = file.leafName;
 			let parent = file.parent;
@@ -2076,7 +2071,7 @@ QueueItem.prototype = {
 		}
 		catch(ex) {
 			this._destinationName = this.fileName;
-			this._destinationPath = this.pathName.addFinalSlash();
+			this._destinationPath = Utils.addFinalSlash(this.pathName);
 			this._destinationNameFull = Utils.formatConflictName(
 					this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
 					this.conflicts
@@ -2630,9 +2625,9 @@ var ConflictManager = {
 		this._computeConflicts(cur);
 
 		var options = {
-			url: cur.download.urlManager.usable.cropCenter(45),
-			fn: cur.download.destinationName.cropCenter(45),
-			newDest: cur.newDest.cropCenter(45)
+			url: Utils.cropCenter(cur.download.urlManager.usable, 45),
+			fn: Utils.cropCenter(cur.download.destinationName, 45),
+			newDest: Utils.cropCenter(cur.newDest, 45)
 		};
 
 		this._processing = true;
@@ -2747,27 +2742,24 @@ function startDownloads(start, downloads) {
 
 			if (e.referrer) {
 				try {
-					qi.referrer = e.referrer.toURL();
+					qi.referrer = toURL(e.referrer);
 				}
 				catch (ex) {
 					// We might have been fed with about:blank or other crap. so ignore.
 				}
 			}
 			// only access the setter of the last so that we don't generate stuff trice.
-			qi._pathName = e.dirSave.addFinalSlash().toString();
+			qi._pathName = Utils.addFinalSlash(e.dirSave).toString();
 			qi._description = !!e.description ? e.description : '';
 			qi._title = !!e.title ? e.title : '';
-			qi._mask = e.mask
-				.normalizeSlashes()
-				.removeLeadingSlash()
-				.removeFinalSlash();
+			qi._mask = Utils.removeFinalSlash(Utils.removeLeadingSlash(Utils.normalizeSlashes(e.mask)));
 			qi.fromMetalink = !!e.fromMetalink;
-			qi.fileName = qi.urlManager.usable.getUsableFileName();
+			qi.fileName = Utils.getUsableFileName(qi.urlManager.usable);
 			if (e.fileName) {
-				qi.fileName = e.fileName.getUsableFileName();
+				qi.fileName = Utils.getUsableFileName(e.fileName);
 			}
 			if (e.destinationName) {
-				qi.destinationName = e.destinationName.getUsableFileName();
+				qi.destinationName = Utils.getUsableFileName(e.destinationName);
 			}
 			if (e.startDate) {
 				qi.startDate = e.startDate;

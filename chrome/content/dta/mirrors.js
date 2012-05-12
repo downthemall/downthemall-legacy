@@ -91,7 +91,7 @@ function accept() {
 	}
 	let rv = window.arguments[0];
 	for (let m in allMirrors) {
-		rv.push(new DTA.URL(m.mirror.toURL(m.charset), m.preference));
+		rv.push(new DTA.URL(toURL(m.mirror, m.charset), m.preference));
 	}
 	return true;
 }
