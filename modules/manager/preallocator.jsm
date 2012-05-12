@@ -14,16 +14,16 @@ const Cr = Components.results;
 const Cu = Components.utils;
 const Exception = Components.Exception;
 
-Cu.import("resource://dta/glue.jsm");
+Cu.import("resource://dta/glue2.jsm");
 const {
 	createOptimizedImplementation
-} = glue2.require("support/optimpl");
-lazyRequire("resource://dta/utils.jsm", ["Logger"], this);
+} = require("support/optimpl");
+const {Logger} = requireJSM("resource://dta/utils.jsm");
 
-const _asynccopier = require("resource://dta/manager/preallocator/asynccopier.jsm").prealloc;
-const _cothread = require("resource://dta/manager/preallocator/cothread.jsm").prealloc;
+const {prealloc: _asynccopier} = requireJSM("resource://dta/manager/preallocator/asynccopier.jsm");
+const {prealloc: _cothread} = requireJSM("resource://dta/manager/preallocator/cothread.jsm");
 
-const SIZE_MIN = (glue2.require("version").OS == 'winnt' ? 256 : 2048) * 1024;
+const SIZE_MIN = (require("version").OS == 'winnt' ? 256 : 2048) * 1024;
 const SIZE_COTHREAD_MAX = (1<<24);
 
 const _impl = createOptimizedImplementation(

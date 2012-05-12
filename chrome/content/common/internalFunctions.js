@@ -49,8 +49,8 @@ const Exception = Components.Exception;
 
 // shared state defines
 
-module("resource://dta/glue.jsm", this);
-glue2.requireJoined(this, "constants");
+module("resource://dta/glue2.jsm", this);
+requireJoined(this, "constants");
 
 const DTA = {
 	showPreferences: function(pane, command) DTA.Mediator.showPreferences(window, pane, command)
@@ -66,7 +66,7 @@ if (!('Debug' in this)) {
 	this['Debug'] = DTA.Logger;
 }
 const Preferences = DTA.Preferences;
-const {getIcon} = glue2.require("support/icons");
+const {getIcon} = require("support/icons");
 
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!
@@ -312,7 +312,7 @@ const SYSTEMSLASH = Utils.SYSTEMSLASH;
 
 //XXX Copy from utils.jsm
 //XXX Cannot use directly; yields NS_ERROR_INVALID_VALUE then
-for each (let copy in ["setNewGetter", "bind"]) {
+for each (let copy in ["bind"]) {
 	eval(Utils[copy].toSource());
 }
 

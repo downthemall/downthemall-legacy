@@ -37,22 +37,22 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const {CoThreadListWalker} = glue2.require("cothreads");
-const Prompts = glue2.require("prompts");
-const {ByteBucket} = glue2.require("support/bytebucket");
-const {GlobalBucket} = glue2.require("manager/globalbucket");
-const {defer} = glue2.require("support/defer");
-const {memoize} = glue2.require("support/memoize");
-const PrivateBrowsing = glue2.require("support/pbm");
-const {TimerManager} = glue2.require("support/timers");
-const {ContentHandling} = glue2.require("support/contenthandling");
-const {asyncMoveFile} = glue2.require("manager/asyncmovefile");
-const GlobalProgress = new (glue2.require("manager/globalprogress").GlobalProgress)(window);
-const Limits = glue2.require("support/serverlimits");
-const {QueueStore} = glue2.require("manager/queuestore");
-const {SpeedStats} = glue2.require("manager/speedstats");
-const RequestManipulation = glue2.require("manager/requestmanipulation");
-const {FileExtensionSheet} = glue2.require("support/fileextsheet");
+const {CoThreadListWalker} = require("cothreads");
+const Prompts = require("prompts");
+const {ByteBucket} = require("support/bytebucket");
+const {GlobalBucket} = require("manager/globalbucket");
+const {defer} = require("support/defer");
+const {memoize} = require("support/memoize");
+const PrivateBrowsing = require("support/pbm");
+const {TimerManager} = require("support/timers");
+const {ContentHandling} = require("support/contenthandling");
+const {asyncMoveFile} = require("manager/asyncmovefile");
+const GlobalProgress = new (require("manager/globalprogress").GlobalProgress)(window);
+const Limits = require("support/serverlimits");
+const {QueueStore} = require("manager/queuestore");
+const {SpeedStats} = require("manager/speedstats");
+const RequestManipulation = require("manager/requestmanipulation");
+const {FileExtensionSheet} = require("support/fileextsheet");
 
 module('resource://dta/support/urlmanager.jsm');
 
@@ -69,8 +69,8 @@ function lazyModule(obj, name, url, symbol) {
 		return symbol ? _o[symbol] : _o;
 	});
 }
-XPCOMUtils.defineLazyGetter(this, "Version", function() glue2.require("version"));
-const AlertService = glue2.lazyRequire("support/alertservice", "show");
+XPCOMUtils.defineLazyGetter(this, "Version", function() require("version"));
+const AlertService = lazyRequire("support/alertservice", "show");
 lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Decompressor');
 lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
 
@@ -2727,7 +2727,7 @@ QueueItem.prototype = {
 	}
 }
 XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
-	const {LoggedPrompter} = glue2.require("support/loggedPrompter");
+	const {LoggedPrompter} = require("support/loggedPrompter");
 	return new LoggedPrompter(window);
 });
 

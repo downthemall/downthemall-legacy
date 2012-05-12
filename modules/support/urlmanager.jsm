@@ -51,10 +51,10 @@ module("resource://dta/utils.jsm");
 extendString(String);
 
 const DTA = {};
-module("resource://dta/glue.jsm");
+module("resource://dta/glue2.jsm");
 module("resource://dta/api.jsm", DTA);
 
-const Limits = glue2.require("support/serverlimits");
+const Limits = require("support/serverlimits");
 
 function compareFn(a, b) {
 	const rv = b.preference - a.preference;

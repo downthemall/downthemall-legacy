@@ -72,15 +72,15 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-module("resource://dta/glue.jsm");
+module("resource://dta/glue2.jsm");
 module("resource://dta/utils.jsm");
 
-const Preferences = glue2.require("preferences");
-const pbm = glue2.require("support/pbm");
-const Mediator = glue2.require("support/mediator");
-const Histories = glue2.require("support/historymanager");
+const Preferences = require("preferences");
+const pbm = require("support/pbm");
+const Mediator = require("support/mediator");
+const Histories = require("support/historymanager");
 
-XPCOMUtils.defineLazyGetter(this, "FilterManager", function() glue2.require("support/filtermanager").FilterManager);
+XPCOMUtils.defineLazyGetter(this, "FilterManager", function() require("support/filtermanager").FilterManager);
 
 function _decodeCharset(text, charset) {
 	let rv = text;
