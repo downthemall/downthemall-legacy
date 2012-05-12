@@ -48,8 +48,8 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 const DTA = {};
-module("resource://dta/glue.jsm");
-const {TimerManager} = glue2.require("support/timers");
+module("resource://dta/glue2.jsm");
+const {TimerManager} = require("support/timers");
 
 module("resource://dta/utils.jsm");
 module("resource://dta/api.jsm", DTA);

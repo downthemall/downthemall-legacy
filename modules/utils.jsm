@@ -38,7 +38,6 @@ const EXPORTED_SYMBOLS = [
 	'Logger',
 	'atos',
 	'bind',
-	'setNewGetter',
 	'newUUIDString',
 	'range',
 	'hexdigest',
@@ -70,8 +69,8 @@ const error = Components.utils.reportError;
 const module = Components.utils.import;
 const Exception = Components.Exception;
 
-module("resource://dta/glue.jsm");
-const Prefs = glue2.require("preferences");
+module("resource://dta/glue2.jsm");
+const Prefs = require("preferences");
 
 /**
  * XUL namespace
@@ -96,31 +95,6 @@ const SYSTEMSLASH = (function() {
 
 
 const MAX_STACK = 6;
-
-/**
- * Installs a new lazy getter
- * @param aObject (object) Object to install the getter to
- * @param aName (string) Name of the getter property
- * @param aLambda (function) Initializer function (called once, return value becomes getter value)
- * @deprecated Use XPCOMUtils or glue.jsm
- */
-function setNewGetter(aObject, aName, aLambda) {
-	if (aName in aObject) {
-		throw new Exception(aName + " is already defined in context " + aObject);
-	}
-	try {
-		aObject.__defineGetter__(aName, function() {
-			delete aObject[aName];
-			return aObject[aName] = aLambda.apply(aObject);
-		});
-
-	}
-	catch (ex) {
-		if (Logger.enabled) {
-			Logger.log(aName, ex);
-		}
-	}
-}
 
 /**
  * Creates anonymous function with context

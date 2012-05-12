@@ -34,13 +34,13 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const Prompts = glue2.require("prompts");
-const Version = glue2.require("version");
+const Prompts = require("prompts");
+const Version = require("version");
 
 var dropDowns = {};
 
 XPCOMUtils.defineLazyGetter(this, "BatchGenerator", function() {
-	const {BatchGenerator} = glue2.require("support/batchgen");
+	const {BatchGenerator} = require("support/batchgen");
 	return BatchGenerator;
 });
 

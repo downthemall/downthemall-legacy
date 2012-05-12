@@ -5,7 +5,7 @@ module("historymanager.js");
 		this.setup();
 	}
 	SetupHistoryManager.prototype = {
-		prefs: glue2.require("preferences"),
+		prefs: require("preferences"),
 		setup: function () {
 			this.old = this.prefs.getExt(this.key, "");
 			this.prefs.resetExt(this.key);
@@ -20,7 +20,7 @@ module("historymanager.js");
 	});
 */
 	test("regular", function() {
-		var {getHistory} = glue2.require("support/historymanager");
+		var {getHistory} = require("support/historymanager");
 		var h = getHistory("testHistory");
 		deepEqual(h.values, [], "new history must be empty");
 		h.push("foo");
@@ -36,7 +36,7 @@ module("historymanager.js");
 	test("filter", function() {
 		var s = new SetupHistoryManager("filter");
 		try {
-			var {getHistory} = glue2.require("support/historymanager");
+			var {getHistory} = require("support/historymanager");
 			var h = getHistory("filter");
 			ok(h.values && h.values.length, "values is set and not empty");
 			h.reset();
@@ -52,7 +52,7 @@ module("historymanager.js");
 	test("directory", function() {
 		var s = new SetupHistoryManager("directory");
 		try {
-			var {getHistory} = glue2.require("support/historymanager");
+			var {getHistory} = require("support/historymanager");
 			var h = getHistory("directory");
 			h.reset();
 			deepEqual(h.values, [], "directory hist gets empty");

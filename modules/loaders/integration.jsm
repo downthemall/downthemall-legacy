@@ -40,7 +40,7 @@ const Ci = Components.interfaces;
 const Cu = Components.utils;
 const module = Cu.import;
 
-module("resource://dta/glue.jsm");
+module("resource://dta/glue2.jsm");
 
 /* **
  * Lazy getters
@@ -51,12 +51,12 @@ XPCOMUtils.defineLazyGetter(this, 'DTA', function() {
 	Object.freeze(rv);
 	return rv;
 });
-XPCOMUtils.defineLazyGetter(this, 'Version', function() glue2.require("version"));
-XPCOMUtils.defineLazyGetter(this, 'Preferences', function() glue2.require("preferences"));
+XPCOMUtils.defineLazyGetter(this, 'Version', function() require("version"));
+XPCOMUtils.defineLazyGetter(this, 'Preferences', function() require("preferences"));
 this.__defineGetter__('recognizeTextLinks', function() Preferences.getExt("textlinks", true));
-XPCOMUtils.defineLazyGetter(this, 'TextLinks', function() glue2.require("support/textlinks"));
-XPCOMUtils.defineLazyGetter(this, "ContentHandling", function() glue2.require("support/contenthandling").ContentHandling);
-XPCOMUtils.defineLazyGetter(this, 'CoThreads', function() glue2.require("cothreads"));
+XPCOMUtils.defineLazyGetter(this, 'TextLinks', function() require("support/textlinks"));
+XPCOMUtils.defineLazyGetter(this, "ContentHandling", function() require("support/contenthandling").ContentHandling);
+XPCOMUtils.defineLazyGetter(this, 'CoThreads', function() require("cothreads"));
 XPCOMUtils.defineLazyGetter(
 	this,
 	'getString_str',
@@ -499,7 +499,7 @@ function load(window, outerEvent) {
 				}
 				catch (ex) {
 					if (mustAlert) {
-						glue2.require("prompts").alert(window, title, message);
+						require("prompts").alert(window, title, message);
 					}
 				}
 			}

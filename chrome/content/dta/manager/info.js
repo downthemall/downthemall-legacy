@@ -35,8 +35,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const {defer} = glue2.require("support/defer");
-const {TimerManager} = glue2.require("support/timers");
+const {defer} = require("support/defer");
+const {TimerManager} = require("support/timers");
 const Timers = new TimerManager();
 
 function discard() {

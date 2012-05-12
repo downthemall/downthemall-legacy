@@ -48,14 +48,14 @@ const Cr = Components.results;
 const Cu = Components.utils;
 const module = Cu.import;
 
-module("resource://dta/glue.jsm");
-glue2.requireJoined(this, "constants");
-const Prefs = glue2.require("preferences");
-const {ByteBucketTee} = glue2.require("support/bytebucket");
-const {GlobalBucket} = glue2.require("manager/globalbucket");
-const {defer} = glue2.require("support/defer");
-const {TimerManager} = glue2.require("support/timers");
-const Limits = glue2.require("support/serverlimits");
+module("resource://dta/glue2.jsm");
+requireJoined(this, "constants");
+const Prefs = require("preferences");
+const {ByteBucketTee} = require("support/bytebucket");
+const {GlobalBucket} = require("manager/globalbucket");
+const {defer} = require("support/defer");
+const {TimerManager} = require("support/timers");
+const Limits = require("support/serverlimits");
 
 module("resource://dta/utils.jsm");
 

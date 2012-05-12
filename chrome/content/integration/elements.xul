@@ -88,7 +88,7 @@
 					function openAbout() {
 						fire(null);
 						Version.showAbout = false;
-						setTimeout(function() glue.glue2.require("support/mediator").showAbout(window), 0);
+						setTimeout(function() glue.require("support/mediator").showAbout(window), 0);
 					}
 					function registerObserver() {
 						let os = Services.obs
@@ -118,9 +118,9 @@
 					}
 				}
 				var glue = {};
-				Components.utils.import("resource://dta/glue.jsm", glue);
-				glue.glue2.require("support/scheduleautostart");
-				const Version = glue.glue2.require("version");
+				Components.utils.import("resource://dta/glue2.jsm", glue);
+				glue.require("support/scheduleautostart");
+				const Version = glue.require("version");
 				dta_showabout_i(Version);
 			}, 750);
 		}, false);

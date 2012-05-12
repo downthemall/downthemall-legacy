@@ -7,7 +7,7 @@ test("exports", function() {
 
 
 asyncTest("getVersion", function() {
-	var Version = glue2.require("version");
+	var Version = require("version");
 	Version.getInfo(function(v) {
 		QUnit.start();
 		ok(Version == v, "callback gets fed back the original Version");
@@ -24,7 +24,7 @@ asyncTest("getVersion", function() {
 });
 
 asyncTest("compare", function() {
-	var Version = glue2.require("version");
+	var Version = require("version");
 	Version.getInfo(function(v) {
 		QUnit.start();
 		var cv = Version.compareVersion.bind(v);

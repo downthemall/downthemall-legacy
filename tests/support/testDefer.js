@@ -8,7 +8,7 @@ test("exports", function() {
 
 asyncTest("defer", function() {
 	expect(1);
-	var {defer} = glue2.require("support/defer");
+	var {defer} = require("support/defer");
 	defer(function() {
 		QUnit.start();
 		ok("called");
@@ -17,7 +17,7 @@ asyncTest("defer", function() {
 
 asyncTest("defer this", function() {
 	expect(1);
-	var {defer} = glue2.require("support/defer");
+	var {defer} = require("support/defer");
 	var obj = {
 			ok: false,
 			fn: function() {

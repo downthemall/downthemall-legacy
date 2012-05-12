@@ -10,7 +10,7 @@ test("exports", function() {
 });*/
 
 test("correct", function() {
-	var pbm = glue2.require("support/pbm");
+	var pbm = require("support/pbm");
 	if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingService" in Ci)) {
 		ok(pbm.registerCallbacks.toString() != "function registerCallbacks() {\n}", "setup correct");
 	}
