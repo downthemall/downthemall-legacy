@@ -573,7 +573,7 @@ const Servers = {
 		$('noitemsbox').hidden = !!this._list.itemCount;
 	}
 };
-Components.utils.import('resource://dta/support/serverlimits.jsm', Servers);
+glue2.requireJoined(Servers, "support/serverlimits");
 
 const Schedule = {
 	init: function() {

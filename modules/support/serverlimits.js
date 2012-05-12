@@ -1,69 +1,17 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is DownThemAll! ServerLimits module.
- *
- * The Initial Developer of the Original Code is Nils Maier
- * Portions created by the Initial Developers are Copyright (C) 2009
- * the Initial Developers. All Rights Reserved.
- *
- * Contributor(s):
- *    Nils Maier <MaierMan@web.de>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
-
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-var EXPORTED_SYMBOLS = [
-	'Limit',
-	'addLimit',
-	'listLimits',
-	'getLimitFor',
-	'getEffectiveHost',
-	'getConnectionScheduler',
-	'getServerBucket',
-	'killServerBuckets'
-];
+const Prefs = require("preferences");
+requireJoined(this, "constants");
+const {ByteBucket} = require("support/bytebucket");
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cu = Components.utils;
-const module = Cu.import;
-const Exception = Components.Exception;
-
-module("resource://dta/glue.jsm");
-let Prefs = glue2.require("preferences");
-glue2.requireJoined(this, "constants");
-const {ByteBucket} = glue2.require("support/bytebucket");
-
-module("resource://dta/utils.jsm");
+Cu.import("resource://dta/utils.jsm");
 
 const TOPIC = 'DTA:serverlimits-changed';
 const PREFS = 'extensions.dta.serverlimit.';
 const LIMITS_PREF  = 'extensions.dta.serverlimit.limits.';
-const SHUTDOWN_TOPIC = 'profile-change-teardown';
 
 const SCHEDULER_DIR = 'dir';
 const SCHEDULER_FAST = 'fast';
@@ -532,20 +480,12 @@ function getServerBucket(d) {
 
 // install our observer
 const Observer = {
+	unload: function() {
+		killServerBuckets();
+		unlimitedBucket.kill();
+		unlimitedBucket = null;
+	},
 	observe: function(topic, subject, data) {
-		if (topic == SHUTDOWN_TOPIC) {
-			try {
-				killServerBuckets();
-				unlimitedBucket.kill();
-				unlimitedBucket = null;
-			}
-			catch (ex) {
-				// nothing we can do
-			}
-			Services.obs.removeObserver(this, SHUTDOWN_TOPIC);
-			return;
-		}
-
 		globalConnections = Prefs.getExt("serverlimit.perserver", 4);
 		loadLimits();
 		loadServerBuckets();
@@ -553,5 +493,16 @@ const Observer = {
 	}
 }
 Prefs.addObserver(PREFS, Observer);
-Services.obs.addObserver(Observer, SHUTDOWN_TOPIC, true);
+unload(function() Observer.unload());
 Observer.observe();
+
+Object.defineProperties(exports, {
+	"Limit": {value: Limit, enumerable: true},
+	"addLimit": {value: addLimit, enumerable: true},
+	"listLimits": {value: listLimits, enumerable: true},
+	"getLimitFor": {value: getLimitFor, enumerable: true},
+	"getEffectiveHost": {value: getEffectiveHost, enumerable: true},
+	"getConnectionScheduler": {value: getConnectionScheduler, enumerable: true},
+	"getServerBucket": {value: getServerBucket, enumerable: true},
+	"killServerBuckets": {value: killServerBuckets, enumerable: true},
+});
