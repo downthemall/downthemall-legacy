@@ -1,11 +1,11 @@
-module("historymanager.jsm");
+module("historymanager.js");
 (function() {
 	function SetupHistoryManager(key) {
 		this.key = key;
 		this.setup();
 	}
 	SetupHistoryManager.prototype = {
-		prefs: require("resource://dta/preferences.jsm"),
+		prefs: glue2.require("preferences"),
 		setup: function () {
 			this.old = this.prefs.getExt(this.key, "");
 			this.prefs.resetExt(this.key);
@@ -14,13 +14,13 @@ module("historymanager.jsm");
 			this.prefs.setExt(this.key, this.old);
 		}
 	};
-
+/* XXX require
 	test("exports", function() {
 		checkExports("resource://dta/support/historymanager.jsm", ["getHistory"]);
 	});
-
+*/
 	test("regular", function() {
-		var {getHistory} = require("resource://dta/support/historymanager.jsm");
+		var {getHistory} = glue2.require("support/historymanager");
 		var h = getHistory("testHistory");
 		deepEqual(h.values, [], "new history must be empty");
 		h.push("foo");
@@ -36,7 +36,7 @@ module("historymanager.jsm");
 	test("filter", function() {
 		var s = new SetupHistoryManager("filter");
 		try {
-			var {getHistory} = require("resource://dta/support/historymanager.jsm");
+			var {getHistory} = glue2.require("support/historymanager");
 			var h = getHistory("filter");
 			ok(h.values && h.values.length, "values is set and not empty");
 			h.reset();
@@ -52,7 +52,7 @@ module("historymanager.jsm");
 	test("directory", function() {
 		var s = new SetupHistoryManager("directory");
 		try {
-			var {getHistory} = require("resource://dta/support/historymanager.jsm");
+			var {getHistory} = glue2.require("support/historymanager");
 			var h = getHistory("directory");
 			h.reset();
 			deepEqual(h.values, [], "directory hist gets empty");
