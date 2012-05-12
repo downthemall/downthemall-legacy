@@ -69,8 +69,7 @@ function lazyModule(obj, name, url, symbol) {
 XPCOMUtils.defineLazyGetter(this, "Version", function() require("version"));
 const AlertService = lazyRequire("support/alertservice", "show");
 lazyModule(this, 'Decompressor', 'resource://dta/manager/decompressor.jsm', 'Decompressor');
-lazyModule(this, 'Verificator', 'resource://dta/manager/verificator.jsm');
-
+XPCOMUtils.defineLazyGetter(this, 'Verificator', function() require("manager/verificator"));
 XPCOMUtils.defineLazyGetter(this, 'FileExts', function() new FileExtensionSheet(window));
 
 const TextCache = {};
@@ -1990,7 +1989,7 @@ QueueItem.prototype = {
 					if (Logger.enabled) {
 						Logger.log("hash not computed");
 					}
-					Prompts.alert(window, _('error'), _('verificationfailed', [tp.destinationFile]));
+					Prompts.alert(window, _('error', ["Metalink"]), _('verificationfailed', [tp.destinationFile]));
 					tp.complete();
 				}
 				else if (mismatches.length) {
