@@ -49,10 +49,8 @@ const Cu = Components.utils;
 const module = Cu.import;
 
 module("resource://dta/glue.jsm");
-
 module("resource://dta/constants.jsm");
-const Prefs = {};
-module("resource://dta/preferences.jsm", Prefs);
+const Prefs = glue2.require("preferences");
 module("resource://dta/utils.jsm");
 module("resource://dta/support/defer.jsm");
 module("resource://dta/support/timers.jsm");

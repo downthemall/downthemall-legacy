@@ -47,11 +47,11 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-let pbm = {}, prefs = {};
+let pbm = {};
 module("resource://dta/glue.jsm");
 module("resource://dta/utils.jsm");
 module("resource://dta/support/pbm.jsm", pbm);
-module("resource://dta/preferences.jsm", prefs);
+const prefs = glue2.require("preferences");
 
 const validators = {
 	'directory': function(s) {

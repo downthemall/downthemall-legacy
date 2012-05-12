@@ -41,10 +41,12 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://dta/preferences.jsm");
+Components.utils.import("resource://dta/glue.jsm");
 Components.utils.import("resource://dta/support/bytebucket.jsm");
 
+const {addObserver, getExt} = glue2.require("preferences");
 const GlobalBucket = new ByteBucket(getExt('speedlimit', -1), 1.3);
+
 const Observer = {
 	observe: function(s,t,d) {
 		GlobalBucket.byteRate = getExt("speedlimit", -1);

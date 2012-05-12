@@ -49,9 +49,9 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-const Preferences = {}, DTA = {};
+const DTA = {};
 module("resource://dta/glue.jsm");
-module("resource://dta/preferences.jsm", Preferences);
+const Preferences = glue2.require("preferences");
 module("resource://dta/api.jsm", DTA);
 module("resource://dta/utils.jsm");
 module("resource://dta/version.jsm");
