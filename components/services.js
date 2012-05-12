@@ -46,15 +46,14 @@ module("resource://gre/modules/XPCOMUtils.jsm");
 
 const ABOUT_URI = 'https://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_ID%&version=%APP_VERSION%&os=%OS%';
 
-this.__defineGetter__(
-	'Preferences',
-	function() {
-		let prefs = {};
-		module('resource://dta/glue2.jsm', prefs);
-		delete this.Preferences;
-		return (this.Preferences = prefs.require("preferences"));
-	}
-);
+function requireMod(m) {
+	let _m = {};
+	module("resource://dta/glue2.jsm", _m);
+	return _m.require(m);
+}
+
+XPCOMUtils.defineLazyGetter(this, "Preferences", function() requireMod("preferences"));
+XPCOMUtils.defineLazyGetter(this, "Version", function() requireMod("version"));
 
 function log(str, ex) {
 	try {
@@ -115,10 +114,7 @@ Stuff.prototype = {
 			},
 		];
 
-		let Version = {};
-		module("resource://dta/version.jsm", Version);
-
-		(function migrate(Version) Version.getInfo(function(v) {
+		(function migrate() Version.getInfo(function(v) {
 			try {
 				let lastVersion = Preferences.getExt('version', '0');
 				if (0 == v.compareVersion(v.BASE_VERSION, lastVersion)) {
@@ -145,7 +141,7 @@ Stuff.prototype = {
 					// XXX
 				}
 			}
-		}))(Version.Version);
+		}))();
 	},
 	bootstrap: function MM_bootstrap() {
 		this.migrate();
@@ -243,9 +239,8 @@ AboutModule.prototype = {
 
 	newChannel : function(aURI) {
 		try {
-				module('resource://dta/version.jsm');
 				if (!Version.ready) {
-					throw new Exception("Cannot build about:downthemall, version.jsm not ready");
+					throw new Exception("Cannot build about:downthemall, version module not ready");
 				}
 
 				let ru = ABOUT_URI.replace(

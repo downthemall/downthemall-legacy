@@ -1,12 +1,13 @@
-module("version.jsm");
+module("version.js");
 
+/* XXX require
 test("exports", function() {
 	checkExports("resource://dta/version.jsm", ["Version"]);
-});
+});*/
 
 
 asyncTest("getVersion", function() {
-	var {Version} = require("resource://dta/version.jsm");
+	var Version = glue2.require("version");
 	Version.getInfo(function(v) {
 		QUnit.start();
 		ok(Version == v, "callback gets fed back the original Version");
@@ -23,7 +24,7 @@ asyncTest("getVersion", function() {
 });
 
 asyncTest("compare", function() {
-	var {Version} = require("resource://dta/version.jsm");
+	var Version = glue2.require("version");
 	Version.getInfo(function(v) {
 		QUnit.start();
 		var cv = Version.compareVersion.bind(v);
