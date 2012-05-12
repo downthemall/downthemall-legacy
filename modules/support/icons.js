@@ -3,12 +3,10 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const {Logger, extendString} = requireJSM("resource://dta/utils.jsm");
+const {Logger} = requireJSM("resource://dta/utils.jsm");
 const {URL} = requireJSM("resource://dta/api.jsm");
 const {memoize} = require("support/memoize");
-
-// XXX require
-extendString(String);
+const {getExtension, toURL} = require("support/stringfuncs");
 
 lazy(this, "getFavIcon", function() {
 	try {
@@ -80,7 +78,7 @@ exports.getIcon = function getIcon(link, metalink, size) {
 		}
 		if (typeof url == 'string' || url instanceof String) {
 			try {
-				url = url.toURL();
+				url = toURL(url);
 			}
 			catch (ex) { /* no op */ }
 		}
@@ -91,7 +89,7 @@ exports.getIcon = function getIcon(link, metalink, size) {
 			}
 			url = url.spec;
 		}
-		let ext = url.getExtension();
+		let ext = getExtension(url);
 		return "moz-icon://file" + (ext ? '.' + ext : '') + "?size=" + size;
 	}
 	catch (ex) {
