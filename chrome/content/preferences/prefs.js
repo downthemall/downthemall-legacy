@@ -39,8 +39,7 @@
 const LINK_FILTER = DTA.FilterManager.LINK_FILTER;
 const IMAGE_FILTER = DTA.FilterManager.IMAGE_FILTER;
 
-let Prompts = {};
-Components.utils.import('resource://dta/prompts.jsm', Prompts);
+const Prompts = glue2.require("prompts");
 
 const Main = {
 	load: function() {
