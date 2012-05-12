@@ -257,7 +257,9 @@ LRUMap.prototype = {
 	}
 	addObserver("extensions.dta.logging", LogPrefObs);
 	LogPrefObs.observe();
-	log(LOG_DEBUG, new Exception("glue ready!"));
+	require("version").getInfo(function(v) {
+		log(LOG_INFO, v.NAME + "/" + v.VERSION + " on " + v.APP_NAME + "/" + v.APP_VERSION + " (" + v.LOCALE + " / " + v.OS + ") ready");
+	});
 
 	/* XXX: Reconsider when making restartless
 	unload(function() {
