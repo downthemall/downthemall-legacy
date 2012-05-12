@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const DTA = requireJSM("resource://dta/api.jsm");
+const {URL} = require("api");
 const Limits = require("support/serverlimits");
 const {
 	normalizeSlashes,
@@ -24,15 +24,15 @@ UrlManager.prototype = {
 	initByArray: function um_initByArray(urls) {
 		this._urls = [];
 		for each (let u in urls) {
-			if (u instanceof DTA.URL || (u.url && u.url instanceof Ci.nsIURI)) {
+			if (u instanceof URL || (u.url && u.url instanceof Ci.nsIURI)) {
 				this.add(u);
 			}
 			else if (u instanceof Ci.nsIURI) {
-				this.add(new DTA.URL(u, null, true));
+				this.add(new URL(u, null, true));
 			}
 			else {
 				this.add(
-					new DTA.URL(
+					new URL(
 						Services.io.newURI(u.url,	u.charset, null),
 						u.preference,
 						true
@@ -55,8 +55,8 @@ UrlManager.prototype = {
 		this._makeGood();
 	},
 	add: function um_add(url) {
-		if (!url instanceof DTA.URL) {
-			throw new Exception(url + " is not an DTA.URL");
+		if (!url instanceof URL) {
+			throw new Exception(url + " is not an URL");
 		}
 		for (let i = 0; i < this._urls.length; ++i) {
 			if (this._urls[i]._urlSpec == url._urlSpec) {

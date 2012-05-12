@@ -12,7 +12,7 @@ const NS_METALINKER3 = 'http://www.metalinker.org/';
  */
 const NS_METALINK_RFC5854 = 'urn:ietf:params:xml:ns:metalink';
 
-const DTA = requireJSM("resource://dta/api.jsm");
+const DTA = require("api");
 const Preferences = require("preferences");
 const {LOCALE} = require("version");
 const {UrlManager} = require("support/urlmanager");

@@ -123,7 +123,7 @@ const Tree = {
 				popup.removeChild(popup.lastChild);
 			}
 			let id = popup.id;
-			for (let f in DTA.FilterManager.enumAll()) {
+			for (let f in FilterManager.enumAll()) {
 				if (f.id == 'deffilter-all') {
 					continue;
 				}

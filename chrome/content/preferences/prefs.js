@@ -36,8 +36,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const LINK_FILTER = DTA.FilterManager.LINK_FILTER;
-const IMAGE_FILTER = DTA.FilterManager.IMAGE_FILTER;
+const LINK_FILTER = FilterManager.LINK_FILTER;
+const IMAGE_FILTER = FilterManager.IMAGE_FILTER;
 
 const Prompts = require("prompts");
 
@@ -58,7 +58,7 @@ const Privacy = {
 			$("butFoldDel").disabled = !DTA.getDropDownValue("directory");
 		}
 		catch(ex) {
-			if (DTA.Logger.enabled) {
+			if (Logger.enabled) {
 				Logger.log("privacyLoad(): ", ex);
 			}
 		}
@@ -97,7 +97,7 @@ const Privacy = {
 		}
 	},
 	showNotice: function() {
-		DTA.Mediator.showNotice(window);
+		Mediator.showNotice(window);
 	}
 };
 
@@ -190,7 +190,7 @@ const Filters = {
 				os.addObserver(this, 'DTA:filterschanged', true);
 			}
 			catch (ex) {
-				if (DTA.Logger.enabled) {
+				if (Logger.enabled) {
 					Logger.log("cannot install filterManager observer!", ex);
 				}
 				return false;
@@ -226,7 +226,7 @@ const Filters = {
 			this._box.rowCountChanged(0, -this.rowCount);
 			this._filters = [];
 
-			for (let filter in DTA.FilterManager.enumAll()) {
+			for (let filter in FilterManager.enumAll()) {
 				this._filters.push(filter);
 			}
 			this._box.rowCountChanged(0, this.rowCount);
@@ -255,7 +255,7 @@ const Filters = {
 			}
 		}
 		catch(ex) {
-			if (DTA.Logger.enabled) {
+			if (Logger.enabled) {
 				Logger.log("reloadFilters():", ex);
 			}
 		}
@@ -290,7 +290,7 @@ const Filters = {
 		}
 	},
 	createFilter: function() {
-		DTA.FilterManager.create(
+		FilterManager.create(
 			_("newfilt"),
 			_("inserthere"),
 			false,
@@ -445,7 +445,7 @@ const Servers = {
 			this._load();
 		}
 		catch (ex) {
-			if (DTA.Logger.enabled) {
+			if (Logger.enabled) {
 				Logger.log("Failed to load Servers", ex);
 			}
 		}
@@ -566,7 +566,7 @@ const Servers = {
 			this.newInput();
 		}
 		catch (ex) {
-			if (DTA.Logger.enabled) {
+			if (Logger.enabled) {
 				Logger.log("failed to add limit", ex);
 			}
 		}

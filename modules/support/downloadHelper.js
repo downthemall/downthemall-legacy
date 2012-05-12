@@ -4,7 +4,7 @@
 
 const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 if (available) {
-	lazy(this, "api", function() requireJSM("resource://dta/api.jsm"));
+	lazy(this, "api", function() require("api"));
 	lazy(this, "utils", function() requireJSM("resource://dta/utils.jsm"));
 	const core = Cc["@downloadhelper.net/core;1"].getService(Ci.dhICore);
 

@@ -482,7 +482,7 @@ let Dialog = {
 			for (let i = 0; i < boxen.length; ++i) {
 				boxen[i].filter.active = boxen[i].checked;
 			}
-			DTA.FilterManager.save();
+			FilterManager.save();
 			DTA.incrementSeries();
 
 			// unload ourselves.
@@ -559,7 +559,7 @@ let Dialog = {
 		let fast = null;
 		try {
 			if (this.ddFilter.value) {
-				fast = DTA.FilterManager.getTmpFromString(this.ddFilter.value);
+				fast = FilterManager.getTmpFromString(this.ddFilter.value);
 			}
 		}
 		catch (ex) {
@@ -680,7 +680,7 @@ let Dialog = {
 		}
 
 		let boxes = [];
-		for (let f in DTA.FilterManager.enumAll()) {
+		for (let f in FilterManager.enumAll()) {
 			if (!(f.type & type)) {
 				continue;
 			}
