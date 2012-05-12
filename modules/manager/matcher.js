@@ -6,7 +6,6 @@
 const {FilterManager} = require("support/filtermanager");
 const {COMPLETE, FINISHING} = require("constants");
 const {
-	Logger,
 	SimpleIterator,
 	StringBundles,
 	filterInSitu
@@ -66,16 +65,12 @@ const FilterMatch = {
 				filters.push(FilterManager.getFilter(id));
 			}
 			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log("not a filter: " + id, ex);
-				}
+				log(LOG_ERROR, "not a filter: " + id, ex);
 				// no op; might have changed
 			}
 		}
 		if (!filters.length) {
-			if (Logger.enabled) {
-				Logger.log("No filters available for: " + params);
-			}
+			log(LOG_DEBUG, "No filters available for: " + params);
 			return null;
 		}
 		let _m = FilterManager.getMatcherFor(filters);
@@ -300,17 +295,13 @@ Matcher.prototype = {
 	},
 	addMatcher: function(name, params) {
 		if (!(name in this._available)) {
-			if (Logger.enabled) {
-				Logger.log("trying to add a matcher that does not exist");
-			}
+			log(LOG_ERROR, "trying to add a matcher that does not exist");
 			return;
 		}
 		this.removeMatcher(name);
 		let m = this._available[name].getMatcher(params);
 		if (m) {
-			if (Logger.enabled) {
-				Logger.log("adding the matcher");
-			}
+			log(LOG_DEBUG, "adding the matcher");
 			this._matchers.push({name: name, isMatch: m});
 			this._matchersLength = this._matchers.length;
 		}

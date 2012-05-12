@@ -3,8 +3,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const {Logger} = require("utils");
-
 /**
  * Provides nsIPrompt/nsIAuthPrompt
  * The nsIPrompt implementation will log any alerts instead of actually displaying them
@@ -32,18 +30,10 @@ function LoggedPrompter(window) {
 			hasOwn: function(name) name in _p,
 			get: function(receiver, name) {
 				if (name == "alert") {
-					return function(text, title) {
-						if (Logger.enabled) {
-							Logger.log(text, title);
-						}
-					}
+					return function(text, title) log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
 				}
 				else if (name == "alertCheck") {
-					return function(text, title) {
-						if (Logger.enabled) {
-							Logger.log(text, title);
-						}
-					}
+					return function(text, title, cm, cs) log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
 				}
 				else {
 					return _p[name];

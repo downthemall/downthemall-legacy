@@ -15,7 +15,6 @@ lazy(this, 'TextLinks', function() require("support/textlinks"));
 lazy(this, "ContentHandling", function() require("support/contenthandling").ContentHandling);
 lazy(this, 'CoThreads', function() require("cothreads"));
 lazy(this, 'getString_str',	function() Services.strings.createBundle('chrome://dta/locale/menu.properties'));
-lazy(this, "Logger", function() require("utils").Logger);
 
 /* **
  * Helpers and tools
@@ -25,9 +24,7 @@ function getString(n) {
 		return getString_str.GetStringFromName(n);
 	}
 	catch (ex) {
-		if (Logger.enabled) {
-			Logger.log("locale error: " + n, ex);
-		}
+		log(LOG_ERROR, "locale error: " + n, ex);
 		return '<error>';
 	}
 }
@@ -38,9 +35,7 @@ function getFormattedString(n) {
 		return getString_str.formatStringFromName(n, args, args.length);
 	}
 	catch (ex) {
-		if (Logger.enabled) {
-			Logger.log("locale error: " + n, ex);
-		}
+		log(LOG_ERROR, "locale error: " + n, ex);
 		return '<error>';
 	}
 }
@@ -81,9 +76,7 @@ function extractDescription(child) {
 		}
 	}
 	catch(ex) {
-		if (Logger.enabled) {
-			Logger.log('extractDescription', ex);
-		}
+		log(LOG_ERROR, 'extractDescription', ex);
 	}
 	return trimMore(rv.join(" "));
 }
@@ -256,9 +249,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 
 		let sel = null;
 		if (honorSelection && (sel = aWin.getSelection()) && !sel.isCollapsed) {
-			if (Logger.enabled) {
-				Logger.log("selection only");
-			}
+			log(LOG_INFO, "selection only");
 			[links, images, videos, embeds, inputs].forEach(function(e) filterInSitu(e, function(n) sel.containsNode(n, true)));
 			if (recognizeTextLinks) {
 				let copy = aWin.document.createElement('div');
@@ -326,9 +317,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 			honorSelection = false;
 		}
 
-		if (Logger.enabled) {
-			Logger.log("adding links to array");
-		}
+		log(LOG_DEBUG, "adding links to array");
 		for (let y in addLinksToArray(links, aURLs, aWin.document)) {
 			yield true;
 		}
@@ -346,9 +335,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 		}
 	}
 	catch (ex) {
-		if (Logger.enabled) {
-			Logger.log('addLinks', ex);
-		}
+		log(LOG_ERROR, "addLinks", ex);
 	}
 
 	// do not process further as we just filtered the selection
@@ -398,9 +385,7 @@ exports.load = function load(window, outerEvent) {
 				elements.push(element);
 			}
 			else {
-				if (Logger.enabled) {
-					Logger.log("requested a non-existing element: " + id);
-				}
+				log(LOG_ERROR, "requested a non-existing element: " + id);
 			}
 		}
 		return elements;
@@ -510,9 +495,7 @@ exports.load = function load(window, outerEvent) {
 			})(message);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("np", ex);
-			}
+			log(LOG_ERROR, "np", ex);
 			notifyProgress = function() {}
 		}
 	}
@@ -554,13 +537,11 @@ exports.load = function load(window, outerEvent) {
 				Preferences.setExt('lastalltabs', all);
 			}
 
-
-
-			if (turbo && Logger.enabled) {
-				Logger.log("findLinks(): DtaOneClick request from the user");
+			if (turbo) {
+				log(LOG_INFO, "findLinks(): DtaOneClick request from the user");
 			}
-			else if (Logger.enabled) {
-				Logger.log("findLinks(): DtaStandard request from the user");
+			else {
+				log(LOG_INFO, "findLinks(): DtaStandard request from the user");
 			}
 
 			let wt = document.documentElement.getAttribute('windowtype');
@@ -587,13 +568,9 @@ exports.load = function load(window, outerEvent) {
 
 			new CoThreads.CoThreadInterleaved(
 				(function() {
-					if (Logger.enabled) {
-						Logger.log("findLinks(): running");
-					}
+					log(LOG_DEBUG, "findLinks(): running");
 					for each (let win in windows) {
-						if (Logger.enabled) {
-							Logger.log("findLinks(): running...");
-						}
+						log(LOG_DEBUG, "findLinks(): running...");
 						for (let y in addLinks(win, urls, images, !all)) {
 							yield true;
 						}
@@ -604,10 +581,7 @@ exports.load = function load(window, outerEvent) {
 					unique(images);
 					yield true;
 
-					if (Logger.enabled) {
-						Logger.log("findLinks(): done running...");
-					}
-
+					log(LOG_DEBUG, "findLinks(): done running...");
 				})(),
 				100
 			).start(function() {
@@ -615,9 +589,7 @@ exports.load = function load(window, outerEvent) {
 				clearInterval(_updateInterval);
 				notifyProgress();
 
-				if (Logger.enabled) {
-					Logger.log("findLinks(): finishing...");
-				}
+				log(LOG_DEBUG, "findLinks(): finishing...");
 				if (!urls.length && !images.length) {
 					notifyError(getString('error'), getString('errornolinks'));
 					return;
@@ -635,9 +607,7 @@ exports.load = function load(window, outerEvent) {
 						return;
 					}
 					catch (ex) {
-						if (Logger.enabled) {
-							Logger.log('findLinks', ex);
-						}
+						log(LOG_ERROR, 'findLinks', ex);
 						DTA.saveLinkArray(window, urls, images, getString('errorinformation'));
 					}
 					return;
@@ -646,9 +616,7 @@ exports.load = function load(window, outerEvent) {
 			});
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log('findLinks', ex);
-			}
+			log(LOG_ERROR, 'findLinks', ex);
 		}
 	}
 
@@ -666,9 +634,7 @@ exports.load = function load(window, outerEvent) {
 		}
 		catch (ex) {
 			notifyError(getString('error'), getString('errorcannotdownload'));
-			if (Logger.enabled) {
-				Logger.log('findSingleLink: ', ex);
-			}
+			log(LOG_ERROR, 'findSingleLink: ', ex);
 		}
 	}
 
@@ -682,9 +648,7 @@ exports.load = function load(window, outerEvent) {
 		}
 		catch (ex) {
 			notifyError(getString('error'), getString('errorcannotdownload'));
-			if (Logger.enabled) {
-				Logger.log('findSingleLink: ', ex);
-			}
+			log(LOG_ERROR, 'findSingleLink: ', ex);
 		}
 	}
 
@@ -717,9 +681,7 @@ exports.load = function load(window, outerEvent) {
 			}
 			catch (ex) {
 				notifyError(getString('error'), getString('errorcannotdownload'));
-				if (Logger.enabled) {
-					Logger.log('_findSingleMedia: ', ex);
-				}
+				log(LOG_ERROR, '_findSingleMedia: ', ex);
 			}
 		}
 	}
@@ -744,9 +706,7 @@ exports.load = function load(window, outerEvent) {
 				return;
 			}
 			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log('saveSingleLink', ex);
-				}
+				log(LOG_ERROR, 'saveSingleLink', ex);
 				notifyError(getString('error'), getString('errorinformation'));
 			}
 		}
@@ -818,20 +778,14 @@ exports.load = function load(window, outerEvent) {
 					return;
 				}
 				catch (ex) {
-					if (Logger.enabled) {
-						Logger.log('findSingleLink', ex);
-					}
+					log(LOG_ERROR, 'findSingleLink', ex);
 					notifyError(getString('error'), getString('errorinformation'));
 				}
 			}
 			DTA.saveSingleLink(window, window, false, action, ref, desc);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				if (Logger.enabled) {
-					Logger.log('findForm', ex);
-				}
-			}
+			log(LOG_ERROR, 'findForm', ex);
 		}
 	}
 
@@ -847,7 +801,6 @@ exports.load = function load(window, outerEvent) {
 
 	let ctx = ctxBase.parentNode;
 	let menu = toolsBase.parentNode;
-
 
 	function onContextShowing(evt) {
 		try {
@@ -977,9 +930,7 @@ exports.load = function load(window, outerEvent) {
 			}
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log("DTAContext(): ", ex);
-			}
+			log(LOG_ERROR, "DTAContext(): ", ex);
 		}
 	}
 
@@ -1034,9 +985,7 @@ exports.load = function load(window, outerEvent) {
 				.some(function(b) !!$(b));
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log("DTATools(): ", ex);
-			}
+			log(LOG_ERROR, "DTATools(): ", ex);
 		}
 	}
 
@@ -1430,9 +1379,7 @@ exports.load = function load(window, outerEvent) {
 				this.func(url, ref);
 			}
 			catch (ex) {
-				if (Logger.enabled) {
-					Logger.log("Failed to process drop", ex);
-				}
+				log(LOG_ERROR, "Failed to process drop", ex);
 			}
 		}
 	};
@@ -1524,9 +1471,7 @@ exports.load = function load(window, outerEvent) {
 		}
 		catch (ex) {
 			Components.utils.reportError(ex);
-			if (Logger.enabled) {
-				Logger.log("DCO::init()", ex);
-			}
+			log(LOG_ERROR, "DCO::init()", ex);
 		}
 		evt.target == ctx ? onContextShowing(evt) : onToolsShowing(evt);
 	}
@@ -1589,9 +1534,7 @@ exports.load = function load(window, outerEvent) {
 		}
 	}
 	catch (ex) {
-		if (Logger.enabled) {
-			Logger.log("Failed to parse palette", ex);
-		}
+		log(LOG_ERROR, "Failed to parse palette", ex);
 	}
 
 	try {
@@ -1667,12 +1610,11 @@ exports.load = function load(window, outerEvent) {
 		})();
 	}
 	catch (ex) {
-		if (Logger.enabled) {
-			Logger.log("Init TBB failed", ex);
-		}
+		log(LOG_ERROR, "Init TBB failed", ex);
 	}
 
 	if (outerEvent) {
+		log(LOG_DEBUG, "replaying event");
 		let target = outerEvent.target;
 		let type = outerEvent.type;
 		if (target === ctx || target == menu) {
@@ -1682,4 +1624,5 @@ exports.load = function load(window, outerEvent) {
 			target.doCommand();
 		}
 	}
+	log(LOG_DEBUG, "dTa integration done");
 }

@@ -6,7 +6,7 @@
 
 const DTA = require("api");
 const Prefs = require("preferences");
-const {Logger, newUUIDString, hexdigest} = require("utils");
+const {newUUIDString, hexdigest} = require("utils");
 
 const REGULAR_CHUNK = (1 << 21); // 2/16MB
 
@@ -54,9 +54,7 @@ Callback.prototype = {
 			this._func.apply(this._func, this._args);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Callback threw", ex);
-			}
+			log(LOG_ERROR, "Callback threw", ex);
 		}
 		unregisterJob(this._job);
 	}
@@ -125,9 +123,7 @@ Verificator.prototype = {
 };
 
 function MultiVerificator() {
-	if (Logger.enabled) {
-		Logger.log("MultiVerificator");
-	}
+	log(LOG_INFO, "MultiVerificator");
 	Verificator.apply(this, arguments);
 }
 MultiVerificator.prototype = {

@@ -3,8 +3,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const {Logger} = require("utils");
-
 var makeId = (function() {
 	var cid = 0;
 	return function makeId() {
@@ -24,12 +22,12 @@ exports.createOptimizedImplementation = function createOptimizedImplementation(w
 	var _jobs = new Map();
 	var _worker = new ChromeWorker(workerURI);
 	_worker.onerror = function(event) {
-		Logger.log("worker bailed early", event);
+		log(LOG_INFO, "worker bailed early - not supported");
 		_worker = null;
 	}
 	_worker.onmessage = function(event) {
 		if (event.data) {
-			Logger.log("worker bailed: ", event);
+			log(LOG_INFO, "worker bailed late - not supported", event);
 			return;
 		}
 
@@ -44,13 +42,13 @@ exports.createOptimizedImplementation = function createOptimizedImplementation(w
 		Services.obs.addObserver(observer, "quit-application", false);
 		_worker.onmessage = function(event) {
 			if ("log" in event.data) {
-				Logger.log(event.data.log);
+				log(LOG_DEBUG, "worker said: " + event.data.log)
 				return;
 			}
 			let job = _jobs.get(event.data.uuid);
 			_jobs.delete(event.data.uuid);
 			if (!job) {
-				Logger.log("Invalid job; something is rotten in the state of Denmark!", new Error("invalid_job"));
+				log(LOG_ERROR, "Invalid job; something is rotten in the state of Denmark!", new Error("invalid_job"));
 				return;
 			}
 			job(event.data.result);

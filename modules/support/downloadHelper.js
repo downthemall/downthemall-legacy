@@ -40,9 +40,7 @@ if (available) {
 				}
 			}
 			catch (ex) {
-				if (utils.Logger.enabled) {
-					utils.Logger.log("failed to handle", ex);
-				}
+				log(LOG_ERROR, "failed to handle", ex);
 				throw ex;
 			}
 		},

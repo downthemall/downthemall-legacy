@@ -8,7 +8,7 @@ const Preferences = require("preferences");
 const {getTextLinks} = require("support/textlinks");
 const Version = require("version");
 const {NS_DTA, NS_METALINKER3} = require("support/metalinker");
-const {Logger, filterInSitu} = require("utils");
+const {filterInSitu} = require("utils");
 
 const XPathResult = Ci.nsIDOMXPathResult;
 
@@ -20,15 +20,11 @@ exports.parseTextFile = function parseTextFile(aFile) {
 			lines.push(line);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("not processing line " + line.value, ex);
-			}
+			log(LOG_ERROR, "not processing line " + line.value, ex);
 		}
 	}
 
-	if (Logger.enabled) {
-		Logger.log("Parsing text file: " + aFile.spec);
-	}
+	log(LOG_INFO, "Parsing text file: " + aFile.spec);
 	// Open the file in a line reader
 	let is = new Instances.FileInputStream(aFile, 0x01, 0, 0);
 	let ls = is.QueryInterface(Ci.nsILineInputStream);
@@ -40,9 +36,7 @@ exports.parseTextFile = function parseTextFile(aFile) {
 	}
 	addLine(line);
 	is.close();
-	if (Logger.enabled) {
-		Logger.log("Got lines: " + lines.length);
-	}
+	log(LOG_DEBUG, "Got lines: " + lines.length);
 
 	let links = [];
 	for each (let l in getTextLinks(lines.join("\n"), false)) {
@@ -53,9 +47,7 @@ exports.parseTextFile = function parseTextFile(aFile) {
 			description: 'imported from ' + aFile.leafName
 		});
 	}
-	if (Logger.enabled) {
-		Logger.log("parsed text file, links: " + links.length);
-	}
+	log(LOG_INFO, "parsed text file, links: " + links.length);
 	return filterInSitu(links, function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)), {});
 }
 

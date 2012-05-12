@@ -13,7 +13,7 @@ const NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
 
 let DTA = require("api");
 requireJoined(this, "constants");
-const {Logger, SimpleIterator, StringBundles} = require("utils");
+const {SimpleIterator, StringBundles} = require("utils");
 const RequestManipulation = require("manager/requestmanipulation");
 const Preferences = require("preferences");
 const {
@@ -52,9 +52,7 @@ function Connection(d, c, isInfoGetter) {
 	RequestManipulation.modifyURL(url);
 
 	let referrer = d.referrer;
-	if (Logger.enabled) {
-		Logger.log("starting: " + url.spec);
-	}
+	log(LOG_INFO, "starting: " + url.spec);
 
 	this._chan = Services.io.newChannelFromURI(url);
 	let r = Ci.nsIRequest;
@@ -62,17 +60,15 @@ function Connection(d, c, isInfoGetter) {
 	if (!Preferences.getExt('useCache', false)) {
 		loadFlags = loadFlags | r.LOAD_BYPASS_CACHE;
 	}
-	else if (Logger.enabled) {
-		Logger.log("using cache");
+	else {
+		log(LOG_DEBUG, "using cache");
 	}
 	this._chan.loadFlags = loadFlags;
 	this._chan.notificationCallbacks = this;
 
 	if (this._chan instanceof Ci.nsIHttpChannel) {
 		try {
-			if (Logger.enabled) {
-				Logger.log("http");
-			}
+			log(LOG_DEBUG, "http");
 			if (referrer instanceof Ci.nsIURI) {
 				this._chan.referrer = referrer;
 			}
@@ -82,9 +78,7 @@ function Connection(d, c, isInfoGetter) {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("error setting up http channel", ex);
-			}
+			log(LOG_ERROR, "error setting up http channel", ex);
 			// no-op
 		}
 	}
@@ -96,18 +90,14 @@ function Connection(d, c, isInfoGetter) {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log('error setting up ftp channel', ex);
-			}
+			log(LOG_ERROR, 'error setting up ftp channel', ex);
 		}
 	}
 	this.prepareChannel(this._chan);
 
 	c.running = true;
 	this._chan.asyncOpen(this, null);
-	if (Logger.enabled) {
-		Logger.log(c + "is now open");
-	}
+	log(LOG_INFO, c + "is now open");
 }
 
 Connection.prototype = {
@@ -164,9 +154,7 @@ Connection.prototype = {
 
 				if (c.currentPosition > 0) {
 					chan.setRequestHeader('Range', 'bytes=' + (c.currentPosition) + "-", false);
-					if (Logger.enabled) {
-						Logger.log("setting range");
-					}
+					log(LOG_DEBUG, "setting range");
 				}
 
 				RequestManipulation.modifyHttp(chan);
@@ -182,9 +170,7 @@ Connection.prototype = {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Failed to prepare channel", ex);
-			}
+			log(LOG_ERROR, "Failed to prepare channel", ex);
 		}
 	},
 
@@ -207,9 +193,7 @@ Connection.prototype = {
 			if (this._closed) {
 				return;
 			}
-			if (Logger.enabled) {
-				Logger.log("cancel");
-			}
+			log(LOG_INFO, "cancel");
 			if (!aReason) {
 				aReason = NS_ERROR_BINDING_ABORTED;
 			}
@@ -217,9 +201,7 @@ Connection.prototype = {
 			this._closed = true;
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("cancel", ex);
-			}
+			log(LOG_ERROR, "cancel", ex);
 		}
 	},
 	// nsIInterfaceRequestor
@@ -269,15 +251,11 @@ Connection.prototype = {
 			if (c.currentPosition > 0 && !(newChannel instanceof Ci.nsIHttpChannel)) {
 				let resumable = newChannel.QueryInterface(Ci.nsIResumableChannel);
 				resumable.resumeAt(c.currentPosition, '');
-				if (Logger.enabled) {
-					Logger.log("redirect: set resumeAt on " + newChannel.URI.spec + "/" + newChannel.originalURI.spec + " at " + c.currentPosition);
-				}
+				log(LOG_INFO, "redirect: set resumeAt on " + newChannel.URI.spec + "/" + newChannel.originalURI.spec + " at " + c.currentPosition);
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("redirect: cannot resumeAt", ex);
-			}
+			log(LOG_ERROR, "redirect: cannot resumeAt", ex);
 			if (!this.handleError()) {
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 				return;
@@ -299,9 +277,7 @@ Connection.prototype = {
 			this.url = newurl;
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("Failed to reset data on channel redirect", ex);
-			}
+			log(LOG_ERROR, "Failed to reset data on channel redirect", ex);
 		}
 	},
 
@@ -313,8 +289,8 @@ Connection.prototype = {
 			return false;
 		}
 		// Other downloads didn't start; assume the worst
-		if (Logger.enabled) {
-			Logger.log("Need to recombine chunks; not all started");
+		if (log.enabled) {
+			log(LOG_ERROR, "Need to recombine chunks; not all started");
 			d.dumpScoreboard();
 		}
 
@@ -323,11 +299,11 @@ Connection.prototype = {
 		for (let c, i = chunks.length - 1; i > 1 && (c = chunks[i]); --i) {
 			if (!c.running || !!c.sessionBytes) {
 				// Only check running chunks without bytes received
-				Logger.log("skipping: " + i + " / " + c);
+				log(LOG_DEBUG, "skipping: " + i + " / " + c);
 				continue;
 			}
-			if (Logger.enabled) {
-				Logger.log("Respinning by merging: " + i + " / " + c);
+			if (log.enabled) {
+				log(LOG_DEBUG, "Respinning by merging: " + i + " / " + c);
 			}
 			// Merge with previous chunk
 			chunks[i-1].end = c.end;
@@ -340,8 +316,8 @@ Connection.prototype = {
 				d.maxChunks--;
 			}
 		}
-		if (Logger.enabled) {
-			Logger.log("Done respinning, new score board follows");
+		if (log.enabled) {
+			log(LOG_ERROR, "Done respinning, new score board follows");
 			d.dumpScoreboard();
 		}
 		return true;
@@ -368,9 +344,7 @@ Connection.prototype = {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log('onDataAvailable', ex);
-			}
+			log(LOG_ERROR, 'onDataAvailable', ex);
 			this.writeFailed();
 		}
 	},
@@ -397,7 +371,7 @@ Connection.prototype = {
 		let d = this.d;
 
 		c.cancelChunk();
-		if (Logger.enabled) {
+		if (log.enabled) {
 			d.dumpScoreboard();
 		}
 		if (d.chunks.indexOf(c) == -1) {
@@ -405,20 +379,16 @@ Connection.prototype = {
 			return true;
 		}
 
-		if (Logger.enabled) {
-			Logger.log("handleError: problem found; trying to recover");
-		}
+		log(LOG_ERROR, "handleError: problem found; trying to recover");
 
 		if (d.urlManager.markBad(this.url)) {
-			if (Logger.enabled) {
-				Logger.log("handleError: fresh urls available, kill this one and use another!");
-			}
+			log(LOG_ERROR, "handleError: fresh urls available, kill this one and use another!");
 			d.timeLastProgress = getTimestamp();
 			return true;
 		}
 
-		if (Logger.enabled) {
-			Logger.log("affected: " + c);
+		if (log.enabled) {
+			log(LOG_DEBUG, "affected: " + c);
 			d.dumpScoreboard();
 		}
 
@@ -433,9 +403,7 @@ Connection.prototype = {
 			}
 		}
 		if (found) {
-			if (Logger.enabled) {
-				Logger.log("handleError: found joinable chunk; recovering suceeded, chunk: " + found);
-			}
+			log(LOG_INFO, "handleError: found joinable chunk; recovering suceeded, chunk: " + found);
 
 			// map current failed chunk into the found one
 			found.end = c.end;
@@ -458,9 +426,9 @@ Connection.prototype = {
 				if (c1.end >= c2.end) {
 					if (c2.running) {
 						// should never ever happen :p
-						if (Logger.enabled) {
+						if (log.enabled) {
 							d.dumpScoreboard();
-							Logger.log("overlapping:\n" + c1 + "\n" + c2);
+							log(LOG_ERROR, "overlapping:\n" + c1 + "\n" + c2);
 						}
 						d.fail("Internal error", "Please notify the developers that there were 'overlapping chunks'!", "Internal error (please report)");
 						return false;
@@ -474,14 +442,12 @@ Connection.prototype = {
 			c.close();
 
 			d.save();
-			if (Logger.enabled) {
+			if (log.enabled) {
 				d.dumpScoreboard();
 			}
 			return true;
 		}
-		if (Logger.enabled) {
-			Logger.log("recovery failed");
-		}
+		log(LOG_ERROR, "recovery failed");
 		return false;
 	},
 	handleHttp: function DL_handleHttp(aChannel) {
@@ -502,21 +468,15 @@ Connection.prototype = {
 			c.rollback();
 
 			if (c.starter && d.urlManager.markBad(this.url)) {
-				if (Logger.enabled) {
-					Logger.log("caught bad server (Error: " + code + ")", d.toString());
-				}
+				log(LOG_ERROR, "caught bad server (Error: " + code + ")", d.toString());
 				d.cancel();
 				d.safeRetry();
 				return false;
 			}
 			if (!this.handleError()) {
-				if (Logger.enabled) {
-					Logger.log("handleError: Cannot recover from problem!", code);
-				}
+				log(LOG_ERROR, "handleError: Cannot recover from problem!", code);
 				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1 || Preferences.getExt('recoverallhttperrors', false)) {
-					if (Logger.enabled) {
-						Logger.log("we got temp failure!", code);
-					}
+					log(LOG_DEBUG, "we got temp failure!", code);
 					d.pauseAndRetry();
 					d.status = code >= 500 ? _('temperror') : _('autherror');
 				}
@@ -549,18 +509,16 @@ Connection.prototype = {
 
 		// not partial content altough we are multi-chunk
 		if (code != 206 && !this.isInfoGetter) {
-			if (Logger.enabled) {
-				Logger.log(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206", this.isInfoGetter);
-			}
+			log(LOG_ERROR, d + ": Server returned a " + aChannel.responseStatus + " response instead of 206", this.isInfoGetter);
 
 			if (!this.handleError()) {
-				if (Logger.enabled) {
+				if (log.enabled) {
 					let vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
 					aChannel.visitRequestHeaders(vis);
-					Logger.log("Request Headers\n\n" + vis.value);
+					log(LOG_DEBUG, "Request Headers\n\n" + vis.value);
 					vis.value = '';
 					aChannel.visitResponseHeaders(vis);
-					Logger.log("Response Headers\n\n" + vis.value);
+					log(LOG_DEBUG, "Response Headers\n\n" + vis.value);
 				}
 				d.cancel();
 				d.resumable = false;
@@ -574,9 +532,7 @@ Connection.prototype = {
 			visitor = d.visitors.visit(aChannel);
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("header failed! " + d, ex);
-			}
+			log(LOG_ERROR, "header failed! " + d, ex);
 			// restart download from the beginning
 			if (!this.handleError()) {
 				d.cancel();
@@ -621,9 +577,7 @@ Connection.prototype = {
 			else {
 				d.totalSize = 0;
 			}
-			if (Logger.enabled) {
-				Logger.log("set total size");
-			}
+			log(LOG_DEBUG, "set total size");
 		}
 
 		if (visitor.fileName && visitor.fileName.length > 0) {
@@ -655,21 +609,15 @@ Connection.prototype = {
 				totalSize = Math.max(aChannel.contentLength, 0);
 			}
 			if (d.totalSize && totalSize != d.totalSize && !this.handleError()) {
-				if (Logger.enabled) {
-					Logger.log("ftp: total size mismatch " + totalSize + " " + d.totalSize);
-				}
+				log(LOG_ERROR, "ftp: total size mismatch " + totalSize + " " + d.totalSize);
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 				return false;
 			}
-			if (Logger.enabled) {
-				Logger.log("ftp: total size is: " + totalSize + " for: " + this.url);
-			}
+			log(LOG_INFO, "ftp: total size is: " + totalSize + " for: " + this.url);
 			d.totalSize = totalSize;
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("ftp: no totalsize", ex);
-			}
+			log(LOG_ERROR, "ftp: no totalsize", ex);
 			if (c.start != 0 && !this.handleError()) {
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 				return false;
@@ -682,9 +630,7 @@ Connection.prototype = {
 			aChannel.QueryInterface(Ci.nsIResumableChannel).entityID;
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("likely not resumable or connection refused!");
-			}
+			log(LOG_INFO, "likely not resumable or connection refused!", ex);
 			if (!this.handleError()) {
 				// restart download from the beginning
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
@@ -696,9 +642,7 @@ Connection.prototype = {
 			let visitor = d.visitors.visit(aChannel.QueryInterface(Ci.nsIChannel));
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("header failed! " + d, ex);
-			}
+			log(LOG_ERROR, "header failed! " + d, ex);
 			// restart download from the beginning
 			d.cancel();
 			d.resumable = false;
@@ -716,9 +660,7 @@ Connection.prototype = {
 		// if so something bad happened, 'cause we aren't supposed to be multi-part
 		if (c.start != 0 && d.is(RUNNING)) {
 			if (!this.handleError()) {
-				if (Logger.enabled) {
-					Logger.log(d + ": Server error or disconnection", "(type 1)");
-				}
+				log(LOG_ERROR, d + ": Server error or disconnection", "(type 1)");
 				d.pauseAndRetry();
 				d.status = _("servererror");
 			}
@@ -751,9 +693,7 @@ Connection.prototype = {
 	onStartRequest: function DL_onStartRequest(aRequest, aContext) {
 		let c = this.c;
 		let d = this.d;
-		if (Logger.enabled) {
-			Logger.log('StartRequest: ' + c);
-		}
+		log(LOG_INFO, 'StartRequest: ' + c);
 
 		this.started = true;
 
@@ -772,17 +712,13 @@ Connection.prototype = {
 					break;
 				}
 				catch (ex) {
-					if (Logger.enabled) {
-						Logger.log("examine", ex);
-					}
+					log(LOG_DEBUG, "examine", ex);
 					// continue
 				}
 			}
 
 			if (this.isInfoGetter) {
-				if (Logger.enabled) {
-					Logger.log("Infogetter");
-				}
+				log(LOG_DEBUG, "Infogetter");
 				let ext = getExtension(d.fileName);
 				if (ext && ext.match(/^meta(?:4|link)$/i)) {
 					d.isMetalink = true;
@@ -818,18 +754,14 @@ Connection.prototype = {
 			}
 		}
 		catch (ex) {
-			if (Logger.enabled) {
-				Logger.log("onStartRequest", ex);
-			}
+			log(LOG_ERROR, "onStartRequest", ex);
 			d.fail(_("unknownerror"), _('unknownerrortext'), _("unknownerror"));
 			return;
 		}
 	},
 	onStopRequest: function DL_onStopRequest(aRequest, aContext, aStatusCode) {
 		try {
-			if (Logger.enabled) {
-				Logger.log('StopRequest');
-			}
+			log(LOG_INFO, 'StopRequest');
 		}
 		catch (ex) {
 			return;
@@ -840,15 +772,11 @@ Connection.prototype = {
 		delete this.c;
 		delete this.d;
 
-		if (Logger.enabled) {
-			Logger.log("closing");
-		}
+		log(LOG_DEBUG, "closing");
 		c.close();
 
 		if (d.chunks.indexOf(c) == -1) {
-			if (Logger.enabled) {
-				Logger.log("chunk unknown");
-			}
+			log(LOG_INFO, "chunk unknown");
 			return;
 		}
 
@@ -859,9 +787,7 @@ Connection.prototype = {
 		// check if we're complete now
 		if (d.is(RUNNING) && d.chunks.every(function(e) { return e.complete; })) {
 			if (!d.resumeDownload()) {
-				if (Logger.enabled) {
-					Logger.log(d + ": Download is complete!");
-				}
+				log(LOG_INFO, d + ": Download is complete!");
 				d.state = FINISHING;
 				d.finishDownload();
 				return;
@@ -870,14 +796,12 @@ Connection.prototype = {
 
 		if (c.starter && -1 != DISCONNECTION_CODES.indexOf(aStatusCode)) {
 			if (!d.urlManager.markBad(this.url)) {
-				Logger.log(d + ": Server error or disconnection", "(type 3)");
+				log(LOG_ERROR, d + ": Server error or disconnection", "(type 3)");
 				d.pauseAndRetry();
 				d.status = _("servererror");
 			}
 			else {
-				if (Logger.enabled) {
-					Logger.log("caught bad server", d.toString());
-				}
+				log(LOG_ERROR, "caught bad server", d.toString());
 				d.cancel();
 				d.safeRetry();
 			}
@@ -888,9 +812,7 @@ Connection.prototype = {
 		// nsiftpchan for some reason assumes that if RETR fails it is a directory
 		// and tries to advance into said directory
 		if (aStatusCode == NS_ERROR_FTP_CWD) {
-			if (Logger.enabled) {
-				Logger.log("Cannot change to directory :p", aStatusCode);
-			}
+			log(LOG_DEBUG, "Cannot change to directory :p", aStatusCode);
 			if (!this.handleError()) {
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 			}
@@ -898,24 +820,18 @@ Connection.prototype = {
 		}
 
 		// routine for normal chunk
-		if (Logger.enabled) {
-			Logger.log(this.url + ": Chunk " + c.start + "-" + c.end + " finished.");
-		}
+		log(LOG_INFO, this.url + ": Chunk " + c.start + "-" + c.end + " finished.");
 
 		// rude way to determine disconnection: if connection is closed before
 		// download is started we assume a server error/disconnection
 		if (c.starter && d.is(RUNNING)) {
 			if (!d.urlManager.markBad(this.url)) {
-				if (Logger.enabled) {
-					Logger.log(d + ": Server error or disconnection", "(type 2)");
-				}
+				log(LOG_ERROR, d + ": Server error or disconnection", "(type 2)");
 				d.pauseAndRetry();
 				d.status = _("servererror");
 			}
 			else {
-				if (Logger.enabled) {
-					Logger.log("caught bad server", d.toString());
-				}
+				log(LOG_ERROR, "caught bad server", d.toString());
 				d.cancel();
 				d.safeRetry();
 			}
@@ -927,9 +843,7 @@ Connection.prototype = {
 		// else pause + autoretry
 		if (!c.written && !!c.remainder) {
 			if (!d.urlManager.markBad(this.url)) {
-				if (Logger.enabled) {
-					Logger.log(d + ": Server error or disconnection", "(type 1)");
-				}
+				log(LOG_ERROR, d + ": Server error or disconnection", "(type 1)");
 				d.pauseAndRetry();
 				d.status = _("servererror");
 			}
@@ -967,9 +881,7 @@ Connection.prototype = {
 			let d = this.d;
 
 			if (this.reexamine) {
-				if (Logger.enabled) {
-					Logger.log(d + ": reexamine");
-				}
+				log(LOG_DEBUG, d + ": reexamine");
 				this.onStartRequest(aRequest, aContext);
 				if (this.reexamine) {
 					return;
@@ -980,9 +892,9 @@ Connection.prototype = {
 				if (!this.resumable && d.totalSize) {
 					// basic integrity check
 					if (d.partialSize > d.totalSize) {
-						if (Logger.enabled) {
+						if (log.enabled) {
 							d.dumpScoreboard();
-							Logger.log(d + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");
+							log(LOG_DEBUG, d + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");
 						}
 						d.fail(
 							_('errmismatchtitle'),
@@ -998,9 +910,7 @@ Connection.prototype = {
 			}
 		}
 		catch(ex) {
-			if (Logger.enabled) {
-				Logger.log("onProgressChange():", ex);
-			}
+			log(LOG_ERROR, "onProgressChange():", ex);
 		}
 	},
 	onStatus: function  DL_onStatus(aRequest, aContext, aStatus, aStatusArg) {}
