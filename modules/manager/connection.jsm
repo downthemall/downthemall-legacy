@@ -54,14 +54,14 @@ const NS_ERROR_NET_TIMEOUT = NS_ERROR_MODULE_NETWORK + 14;
 const NS_ERROR_NET_RESET = NS_ERROR_MODULE_NETWORK + 20;
 const NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
 
-let DTA = {}, RequestManipulation = {};
+let DTA = {};
 module("resource://gre/modules/XPCOMUtils.jsm");
 
 module('resource://dta/glue.jsm');
 module('resource://dta/api.jsm', DTA);
 glue2.requireJoined(this, "constants");
 module('resource://dta/utils.jsm');
-module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
+const RequestManipulation = glue2.require("manager/requestmanipulation");
 
 const Preferences = DTA.Preferences;
 const Logger = DTA.Logger;
