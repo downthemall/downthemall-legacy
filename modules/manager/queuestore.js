@@ -10,7 +10,7 @@ const DB_VERSION = 1;
 
 const STMT_SELECT = 'SELECT uuid, item FROM queue ORDER BY pos';
 
-Cu.import("resource://dta/utils.jsm");
+const {Logger} = requireJSM("resource://dta/utils.jsm");
 
 const pbm = require("support/pbm");
 const Timers = new (require("support/timers").TimerManager)();

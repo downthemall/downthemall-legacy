@@ -3,11 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-XPCOMUtils.defineLazyGetter(this, "Logger", function() {
-	let _u = {};
-	module("resource://dta/utils.jsm", _u);
-	return _u.Logger;
-});
+const {Logger} = requireJSM("resource://dta/utils.jsm");
 
 /**
  * Provides nsIPrompt/nsIAuthPrompt

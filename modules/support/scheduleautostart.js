@@ -24,11 +24,7 @@ Date.__defineGetter__("today", function() {
 
 const Timers = new TimerManager();
 
-lazy(this, "DTA", function() {
-	let _m = {};
-	Cu.import("resource://dta/api.jsm", _m);
-	return _m;
-});
+lazy(this, "DTA", function() requireJSM("resource://dta/api.jsm"));
 lazy(this, "QueueStore", function() {
 	let {QueueStore} = glue2.require("manager/queuestore");
 	glue2.requireJoined(QueueStore, "constants");

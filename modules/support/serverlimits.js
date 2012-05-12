@@ -7,7 +7,7 @@ const Prefs = require("preferences");
 requireJoined(this, "constants");
 const {ByteBucket} = require("support/bytebucket");
 
-Cu.import("resource://dta/utils.jsm");
+const {Logger} = requireJSM("resource://dta/utils.jsm");
 
 const TOPIC = 'DTA:serverlimits-changed';
 const PREFS = 'extensions.dta.serverlimit.';
