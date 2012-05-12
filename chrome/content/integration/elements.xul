@@ -88,9 +88,7 @@
 					function openAbout() {
 						fire(null);
 						Version.showAbout = false;
-						let _m = {};
-						Components.utils.import("resource://dta/support/mediator.jsm", _m);
-						setTimeout(function() _m.showAbout(window), 0);
+						setTimeout(function() glue.glue2.require("support/mediator").showAbout(window), 0);
 					}
 					function registerObserver() {
 						let os = Services.obs
@@ -122,7 +120,8 @@
 				var glue = {};
 				Components.utils.import("resource://dta/glue.jsm", glue);
 				glue.glue2.require("support/scheduleautostart");
-				dta_showabout_i(glue.glue2.require("version"));
+				const Version = glue.glue2.require("version");
+				dta_showabout_i(Version);
 			}, 750);
 		}, false);
 	]]></script>
