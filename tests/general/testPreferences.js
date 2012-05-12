@@ -1,5 +1,6 @@
-module("preferences.jsm");
+module("preferences.js");
 
+/* XXX require
 test("exports", function() {
 	var p = require("resource://dta/preferences.jsm");
 	checkExports("resource://dta/preferences.jsm", [
@@ -22,9 +23,10 @@ test("exports", function() {
 		'makeObserver'
 		]);
 });
+*/
 
 test("read", function() {
-	var p = require("resource://dta/preferences.jsm");
+	var p = glue2.require("preferences");
 	strictEqual(p.get("extensions.dta.nokeepalive"), !p.hasUserValue("extensions.dta.nokeepalive"), "get() works");
 	strictEqual(p.getExt("nokeepalive"), !p.hasUserValueExt("nokeepalive"), "getExt() works");
 	strictEqual(p.get("extensions.dta.nokeepalive"), p.getExt("nokeepalive"), "get() eq getExt()");
@@ -34,7 +36,7 @@ test("read", function() {
 });
 
 test("setters", function() {
-	var p = require("resource://dta/preferences.jsm");
+	var p = glue2.require("preferences");
 	p.set("extensions.dta.testSet", "test");
 	equal(p.getExt("testSet"), "test");
 	p.reset("extensions.dta.testSet");
@@ -46,7 +48,7 @@ test("setters", function() {
 });
 
 test("observers", function() {
-	var p = require("resource://dta/preferences.jsm");
+	var p = glue2.require("preferences");
 	var {XPCOMUtils} = require("resource://gre/modules/XPCOMUtils.jsm");
 
 	var obs1 = {

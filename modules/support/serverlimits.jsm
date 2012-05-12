@@ -53,9 +53,8 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-let Prefs = {};
 module("resource://dta/glue.jsm");
-module("resource://dta/preferences.jsm", Prefs);
+let Prefs = glue2.require("preferences");
 module("resource://dta/utils.jsm");
 module("resource://dta/constants.jsm");
 module("resource://dta/support/bytebucket.jsm");

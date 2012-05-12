@@ -71,8 +71,7 @@ const module = Components.utils.import;
 const Exception = Components.Exception;
 
 module("resource://dta/glue.jsm");
-const Prefs = {};
-module("resource://dta/preferences.jsm", Prefs);
+const Prefs = glue2.require("preferences");
 
 /**
  * XUL namespace

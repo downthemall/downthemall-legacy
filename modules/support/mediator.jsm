@@ -49,8 +49,7 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 module("resource://dta/glue.jsm");
-let Prefs = {};
-module("resource://dta/preferences.jsm", Prefs);
+let Prefs = glue2.require("preferences");
 
 XPCOMUtils.defineLazyGetter(this, "Logger", function() {
 	let _u = {};
