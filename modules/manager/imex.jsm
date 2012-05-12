@@ -54,9 +54,9 @@ module("resource://dta/glue.jsm");
 const Preferences = require("preferences");
 const {getTextLinks} = require("support/textlinks");
 const Version = require("version");
+const {NS_DTA, NS_METALINKER3} = require("support/metalinker");
 module("resource://dta/api.jsm", DTA);
 module("resource://dta/utils.jsm");
-module("resource://dta/support/metalinker.jsm");
 
 const XPathResult = Ci.nsIDOMXPathResult;
 

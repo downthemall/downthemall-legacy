@@ -1,54 +1,7 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is DownThemAll Metalinker module.
- *
- * The Initial Developer of the Original Code is Nils Maier
- * Portions created by the Initial Developer are Copyright (C) 2010
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Nils Maier <MaierMan@web.de>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
-
-const EXPORTED_SYMBOLS = [
-	"parse",
-	"Metalink",
-	"NS_DTA",
-	"NS_HTML",
-	"NS_METALINKER3",
-	"NS_METALINK_RFC5854",
-];
-
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const module = Cu.import;
-const Exception = Components.Exception;
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/ */
+"use strict";
 
 /**
  * Metalinker3 namespace
@@ -59,13 +12,11 @@ const NS_METALINKER3 = 'http://www.metalinker.org/';
  */
 const NS_METALINK_RFC5854 = 'urn:ietf:params:xml:ns:metalink';
 
-const DTA = {};
-module("resource://dta/glue.jsm");
+const DTA = requireJSM("resource://dta/api.jsm");
 const Preferences = require("preferences");
 const {LOCALE} = require("version");
 const {UrlManager} = require("support/urlmanager");
-module("resource://dta/api.jsm", DTA);
-module("resource://dta/utils.jsm");
+const {Logger, NS_DTA, NS_HTML} = requireJSM("resource://dta/utils.jsm");
 
 const XPathResult = Ci.nsIDOMXPathResult;
 
@@ -600,12 +551,10 @@ function parse(aFile, aReferrer, aCallback) {
 	let xhr = new Instances.XHR();
 	xhr.open("GET", fu.spec);
 	xhr.overrideMimeType("application/xml");
-	xhr.addEventListener("load", xhrLoad = (function() {
-		xhr.removeEventListener("load", xhrLoad, false);
-		xhr.removeEventListener("error", xhrError, false);
-
+	xhr.addEventListener("loadend", function xhrLoadend() {
+		xhr.removeEventListener("loadend", xhrLoadend, false);
 		try {
-			doc = xhr.responseXML;
+			let doc = xhr.responseXML;
 			if (doc.documentElement.nodeName == 'parsererror') {
 				throw new Exception("Failed to parse XML");
 			}
@@ -625,12 +574,16 @@ function parse(aFile, aReferrer, aCallback) {
 		catch (ex) {
 			aCallback(null, ex);
 		}
-	}), false);
-	xhr.addEventListener("error", xhrError = (function() {
-		xhr.removeEventListener("load", xhrLoad, false);
-		xhr.removeEventListener("error", xhrError, false);
-
-		aCallback(null, new Exception("failed to load"));
-	}), false);
+	}, false);
 	xhr.send();
 }
+
+Object.defineProperties(exports, {
+	"parse": {value: parse, enumerable: true},
+	"Metalink": {value: Metalink, enumerable: true},
+	"NS_DTA": {value: NS_DTA, enumerable: true},
+	"NS_HTML": {value: NS_HTML, enumerable: true},
+	"NS_METALINKER3": {value: NS_METALINKER3, enumerable: true},
+	"NS_METALINK_RFC5854": {value: NS_METALINK_RFC5854, enumerable: true}
+});
+Object.freeze(exports);
