@@ -76,12 +76,11 @@ module("resource://dta/glue.jsm");
 module("resource://dta/utils.jsm");
 
 const Preferences = glue2.require("preferences");
+const pbm = glue2.require("support/pbm");
 const Mediator = {};
 module("resource://dta/support/mediator.jsm", Mediator);
 const Histories = {};
 module("resource://dta/support/historymanager.jsm", Histories);
-const pbm = {};
-module("resource://dta/support/pbm.jsm", pbm);
 
 XPCOMUtils.defineLazyGetter(this, "FilterManager", function() {
 	let _fm = {};
