@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-Cu.import("resource://dta/utils.jsm");
+const {Logger} = requireJSM("resource://dta/utils.jsm");
 
 /**
  * Simple literal

@@ -4,16 +4,8 @@
 
 const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 if (available) {
-	XPCOMUtils.defineLazyGetter(this, "api", function() {
-		let _m = {};
-		Cu.import("resource://dta/api.jsm", _m);
-		return _m;
-	});
-	XPCOMUtils.defineLazyGetter(this, "utils", function() {
-		let _m = {};
-		Cu.import("resource://dta/utils.jsm", _m);
-		return _m;
-	});
+	lazy(this, "api", function() requireJSM("resource://dta/api.jsm"));
+	lazy(this, "utils", function() requireJSM("resource://dta/utils.jsm"));
 	const core = Cc["@downloadhelper.net/core;1"].getService(Ci.dhICore);
 
 	function ProcessorImpl(turbo, name, title, description) {

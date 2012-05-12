@@ -41,13 +41,8 @@ const EXPORTED_SYMBOLS = [
 	'showNotice', 'showAbout', 'showPreferences', 'showToolbarInstall'
 ];
 
-let Prefs = require("preferences");
-
-lazy(this, "Logger", function() {
-	let _u = {};
-	Cu.import("resource://dta/utils.jsm", _u);
-	return _u.Logger;
-});
+const Prefs = require("preferences");
+const {Logger} = requireJSM("resource://dta/utils.jsm");
 
 function objToString(obj) {
 	if (obj == null || obj == undefined || !obj) {
