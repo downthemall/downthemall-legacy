@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const EXPORTED_SYMBOLS = ["require", "lazyRequire", "unload", "Services", "Instances", "XPCOMUtils"];
+const EXPORTED_SYMBOLS = ["require", "lazyRequire", "requireJoined", "unload", "Services", "Instances", "XPCOMUtils"];
 
 const {
 	classes: Cc,
@@ -154,7 +154,13 @@ const lazy = XPCOMUtils.defineLazyGetter;
 		// log(LOG_DEBUG, "loaded module: " + module);
 
 		return scope.exports;
-	}
+	};
+	exports.requireJoined = function requireJoined(where, module) {
+		module = require(module);
+		for (let [k,v] in Iterator(module)) {
+			where[k] = v;
+		}
+	};
 	exports.lazyRequire = function lazyRequire(module) {
 		function lazyBind(props, prop) {
 			//log(LOG_DEBUG, "lazily binding " + props + " for module " + module);
@@ -164,7 +170,7 @@ const lazy = XPCOMUtils.defineLazyGetter;
 				this[p] = m[p];
 			}
 			return this[prop];
-		}
+		};
 
 		// Already loaded?
 		if (module in _registry) {
