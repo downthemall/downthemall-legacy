@@ -396,11 +396,7 @@ const filterInSitu = Utils.filterInSitu;
 const mapFilterInSitu = Utils.mapFilterInSitu;
 const filterMapInSitu = Utils.filterMapInSitu;
 
-(function() {
-	let _ic = {};
-	module("resource://dta/support/iconcheat.jsm", _ic);
-	_ic.loadWindow(window);
-})();
+require("support/iconcheat").loadWindow(window);
 
 __defineGetter__("DefaultDownloadsDirectory", function() {
 	let dlm = Cc["@mozilla.org/download-manager;1"].getService(Ci.nsIDownloadManager);
