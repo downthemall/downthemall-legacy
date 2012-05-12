@@ -23,13 +23,6 @@ exports.NS_DTA = NS_DTA;
 const NS_HTML = 'http://www.w3.org/1999/xhtml';
 exports.NS_HTML = NS_HTML;
 
-const SYSTEMSLASH = (function() {
-	let f = Services.dirsvc.get("TmpD", Ci.nsIFile);
-	f.append('dummy');
-	return (f.path.indexOf('/') != -1) ? '/' : '\\';
-})();
-exports.SYSTEMSLASH = SYSTEMSLASH;
-
 const MAX_STACK = 6;
 
 /**
@@ -82,17 +75,6 @@ exports.range = function range() {
 exports.hexdigest = function hexdigest(data) {
 	data = data.toString();
 	return [('0' + data.charCodeAt(i).toString(16)).slice(-2) for (i in exports.range(data.length))].join('');
-}
-
-/**
- * Merges the enumeratable properties of two objects
- * @param {Object} me Object that has the properties added the properties
- * @param {Object} that Object of which the properties are taken
- */
-function merge(me, that) {
-	for (let c in that) {
-		me[c] = that[c];
-	}
 }
 
 /**
@@ -475,7 +457,9 @@ function _loadBundles(urls) {
 	}
 	let rv = {};
 	for each (let b in exports.mapInSitu(urls, function(e) _loadBundle(e))) {
-		merge(rv, b);
+		for (let k in b) {
+			rv[k] = b[k];
+		}
 	}
 	return _bundles[key] = rv;
 }
@@ -591,91 +575,3 @@ exports.reveal = function reveal(file) {
 		launch(file.parent);
 	}
 }
-
-exports.extendString = function extendString(_s) {
-	const rbc_u = /[\n\r\v?:<>*|"]/g;
-	const rbc_w = /%(?:25)?20/g;
-	const rsl_r = /[\/\\]/g;
-	const gufn_u = /\?.*$/;
-
-	merge(
-		_s.prototype,
-		{
-			removeBadChars: function() {
-				return this
-					.replace(rbc_u, '_')
-					.replace(rbc_w, ' ');
-			},
-			addFinalSlash: function() {
-				if (!this) {
-					return SYSTEMSLASH;
-				}
-				if (this.charAt(this.length - 1) != SYSTEMSLASH) {
-					return this + SYSTEMSLASH;
-				}
-				return this;
-			},
-			removeFinalChar: function(c) {
-				if (!this) {
-					return this;
-				}
-				if (this.charAt(this.length - 1) == c) {
-					return this.substr(0, this.length - 1);
-				}
-				return this;
-			},
-			removeLeadingChar: function(c) {
-				if (!this) {
-					return this;
-				}
-				if (this.charAt(0) == c) {
-					return this.substr(1);
-				}
-				return this;
-			},
-			removeFinalSlash: function() {
-				return this.removeFinalChar(SYSTEMSLASH);
-			},
-			replaceSlashes: function(replaceWith) {
-				return this.replace(rsl_r, replaceWith);
-			},
-			normalizeSlashes: function() {
-				return this.replaceSlashes(SYSTEMSLASH);
-			},
-			removeLeadingSlash: function() {
-				return this.removeLeadingChar(SYSTEMSLASH);
-			},
-			getUsableFileName: function() {
-				let i = this.indexOf("?");
-				let t = (~i ? this.substr(0, i) : this)
-					.normalizeSlashes()
-					.trim()
-					.removeFinalSlash();
-				i = t.lastIndexOf(SYSTEMSLASH);
-				return (~i ? t.substr(i + 1) : t).removeBadChars().trim();
-			},
-			getUsableFileNameWithFlatten: (function()
-					this.replaceSlashes(Prefs.getExt('flatReplacementChar', '-')).getUsableFileName()),
-			getExtension: function() {
-				let name = this.getUsableFileName();
-				let c = name.lastIndexOf('.');
-				return (c == - 1) ? null : name.substr(c + 1);
-			},
-			cropCenter : function(newLength) {
-				if (this.length > newLength) {
-					return this.substr(0, newLength / 2)
-						+ "..."
-						+ this.substr(this.length - newLength / 2, this.length);
-				}
-				return this;
-			},
-			toURI: function(charset, baseURI) {
-				return Services.io.newURI(this, charset, baseURI);
-			},
-			toURL: function(charset, baseURI) {
-				return this.toURI(charset, baseURI).QueryInterface(Ci.nsIURL);
-			}
-		}
-	);
-}
-exports.extendString(String);

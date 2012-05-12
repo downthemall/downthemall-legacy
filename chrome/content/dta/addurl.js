@@ -185,7 +185,7 @@ var Dialog = {
 
 		// check the directory
 		var dir = this.ddDirectory.value.trim();
-		dir = this.ddDirectory.value = !!dir ? dir.addFinalSlash() : '';
+		dir = this.ddDirectory.value = !!dir ? Utils.addFinalSlash(dir) : '';
 		if (!dir.length || !Utils.validateDir(dir)) {
 			errors.push('directory');
 		}
