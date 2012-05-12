@@ -45,12 +45,12 @@ const Cu = Components.utils;
 const module = Cu.import;
 const Exception = Components.Exception;
 
-module('resource://dta/glue.jsm');
-const {CoThreadInterleaved} = glue2.require("cothreads");
+module('resource://dta/glue2.jsm');
+const {CoThreadInterleaved} = require("cothreads");
 module('resource://dta/utils.jsm');
 
 // Should we use the optimized Windows implementation?
-const WINDOWSIMPL = glue2.require("version").OS == 'winnt';
+const WINDOWSIMPL = require("version").OS == 'winnt';
 // Size cap: Use Windows implementation (on Windows) even if run on main thread
 const WINDOWSIMPL_SIZEMAX = (1 << 25); // 32MB
 

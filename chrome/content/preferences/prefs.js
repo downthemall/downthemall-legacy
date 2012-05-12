@@ -39,7 +39,7 @@
 const LINK_FILTER = DTA.FilterManager.LINK_FILTER;
 const IMAGE_FILTER = DTA.FilterManager.IMAGE_FILTER;
 
-const Prompts = glue2.require("prompts");
+const Prompts = require("prompts");
 
 const Main = {
 	load: function() {
@@ -573,7 +573,7 @@ const Servers = {
 		$('noitemsbox').hidden = !!this._list.itemCount;
 	}
 };
-glue2.requireJoined(Servers, "support/serverlimits");
+requireJoined(Servers, "support/serverlimits");
 
 const Schedule = {
 	init: function() {
@@ -595,7 +595,7 @@ const Schedule = {
 
 const Prefs = {
 	load: function() {
-		if (glue2.require("version").APP_ID == "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}" && !Preferences.hasUserValue("general.skins.selectedSkin")) {
+		if (require("version").APP_ID == "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}" && !Preferences.hasUserValue("general.skins.selectedSkin")) {
 			document.documentElement.setAttribute("firefoxtheme", true);
 		}
 

@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const EXPORTED_SYMBOLS = ["require", "lazyRequire", "requireJoined", "unload", "Services", "Instances", "XPCOMUtils", "LRUMap"];
+const EXPORTED_SYMBOLS = ["require", "lazyRequire", "requireJoined", "requireJSM", "unload", "Services", "Instances", "XPCOMUtils", "LRUMap"];
 
 const {
 	classes: Cc,

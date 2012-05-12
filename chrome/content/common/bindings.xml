@@ -107,7 +107,7 @@
 		<implementation>
 			<constructor><![CDATA[
 				try {
-					this.hist = glue2.require("support/historyManager").getHistory(this._pref);
+					this.hist = require("support/historyManager").getHistory(this._pref);
 					this._load();
 				}
 				catch (ex) {

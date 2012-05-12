@@ -20,7 +20,7 @@ test("exports", function() {
 */
 
 test("powers", function() {
-	var _m = glue2.require("constants");
+	var _m = require("constants");
 	[
 		'PAUSED',
 		'RUNNING',

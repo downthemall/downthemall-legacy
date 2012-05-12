@@ -34,8 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const Prompts = glue2.require("prompts");
-const {LoggedPrompter} = glue2.require("support/loggedprompter");
+const Prompts = require("prompts");
+const {LoggedPrompter} = require("support/loggedprompter");
 
 LoggedPrompter = new LoggedPrompter(window).prompter;
 

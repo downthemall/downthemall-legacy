@@ -7,20 +7,20 @@ test("exports", function() {
 */
 
 test("regular", function() {
-	var {getTextLinks} = glue2.require("support/textlinks");
+	var {getTextLinks} = require("support/textlinks");
 	deepEqual(getTextLinks("http://downthemall.net/"), ["http://downthemall.net/"]);
 	deepEqual(getTextLinks("https://downthemall.net/"), ["https://downthemall.net/"]);
 	deepEqual(getTextLinks("ftp://downthemall.net/"), ["ftp://downthemall.net/"]);
 });
 
 test("www", function() {
-	var {getTextLinks} = glue2.require("support/textlinks");
+	var {getTextLinks} = require("support/textlinks");
 	deepEqual(getTextLinks("www.downthemall.net"), ["http://www.downthemall.net/"]);
 	deepEqual(getTextLinks("downthemall.net/"), []);
 });
 
 test("hxp", function() {
-	var {getTextLinks} = glue2.require("support/textlinks");
+	var {getTextLinks} = require("support/textlinks");
 	deepEqual(getTextLinks("hp://downthemall.net/"), ["http://downthemall.net/"]);
 	deepEqual(getTextLinks("hxp://downthemall.net/"), ["http://downthemall.net/"]);
 	deepEqual(getTextLinks("hxxp://downthemall.net/"), ["http://downthemall.net/"]);
@@ -29,20 +29,20 @@ test("hxp", function() {
 });
 
 test("3dots", function() {
-	var {getTextLinks} = glue2.require("support/textlinks");
+	var {getTextLinks} = require("support/textlinks");
 	deepEqual(getTextLinks("http://downthemall.net/crop...ped"), []);
 	deepEqual(getTextLinks("http://downthemall.net/crop.....ped"), []);
 });
 
 test("sanitize", function() {
-	var {getTextLinks} = glue2.require("support/textlinks");
+	var {getTextLinks} = require("support/textlinks");
 	deepEqual(getTextLinks("<http://downthemall.net/>"), ["http://downthemall.net/"]);
 	deepEqual(getTextLinks("http://downthemall.net/#foo"), ["http://downthemall.net/"]);
 	deepEqual(getTextLinks("<http://downthemall.net/#foo>"), ["http://downthemall.net/"]);
 });
 
 test("FakeLink", function() {
-	var {FakeLink} = glue2.require("support/textlinks");
+	var {FakeLink} = require("support/textlinks");
 	var l = new FakeLink("http://downthemall.net/");
 	equal(l.href, "http://downthemall.net/", "href");
 	equal(l.toString(), "http://downthemall.net/", "toString");

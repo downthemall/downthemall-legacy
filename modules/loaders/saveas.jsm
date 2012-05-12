@@ -40,7 +40,7 @@ const Ci = Components.interfaces;
 const Cu = Components.utils;
 const module = Cu.import;
 
-module("resource://dta/glue.jsm");
+module("resource://dta/glue2.jsm");
 
 /* **
  * Lazy getters
@@ -51,7 +51,7 @@ XPCOMUtils.defineLazyGetter(this, 'DTA', function() {
 	Object.freeze(rv);
 	return rv;
 });
-XPCOMUtils.defineLazyGetter(this, 'ContentHandling', function() glue2.require("support/contenthandling").ContentHandling);
+XPCOMUtils.defineLazyGetter(this, 'ContentHandling', function() require("support/contenthandling").ContentHandling);
 
 /* **
  * Loader
