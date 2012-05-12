@@ -53,11 +53,11 @@ const Exception = Components.Exception;
 const module = Components.utils.import;
 const error = Components.utils.reportError;
 
-let RegExpMerger = {};
+
 module("resource://dta/glue.jsm");
 const Preferences = glue2.require("preferences");
 const PBM = glue2.require("support/pbm");
-module('resource://dta/support/regexpmerger.jsm', RegExpMerger);
+let RegExpMerger = glue2.require("support/regexpmerger");
 
 const nsITimer = Ci.nsITimer;
 
