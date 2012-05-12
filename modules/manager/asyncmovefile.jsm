@@ -44,7 +44,10 @@ const Cu = Components.utils;
 const module = Cu.import;
 
 Cu.import("resource://dta/glue.jsm");
-require("resource://dta/support/optimpl.jsm", this);
+const {
+	createOptimizedImplementation,
+	NullCancel
+} = glue2.require("support/optimpl");
 lazyRequire("resource://dta/utils.jsm", ["Logger"], this);
 
 var _moveFile = createOptimizedImplementation(

@@ -1,17 +1,9 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
-
 "use strict";
 
-const EXPORTED_SYMBOLS = [
-	"createOptimizedImplementation",
-	"NullCancel"
-];
-
-const {classes: Cc, interfaces: Ci, results: Cr, utils: Cu, Exception: Exception} = Components;
-Cu.import("resource://dta/glue.jsm");
-const {Logger} = require("resource://dta/utils.jsm");
+const {Logger} = Cu.import("resource://dta/utils.jsm", {});
 
 var makeId = (function() {
 	var cid = 0;
@@ -20,11 +12,11 @@ var makeId = (function() {
 	};
 })();
 
-var NullCancel = {
+exports.NullCancel = {
 	cancel: function() {}
 };
 
-function createOptimizedImplementation(workerURI, workerSerializeFun, altImpl) {
+exports.createOptimizedImplementation = function createOptimizedImplementation(workerURI, workerSerializeFun, altImpl) {
 	var impl = {
 		callImpl: altImpl
 	};
@@ -67,7 +59,7 @@ function createOptimizedImplementation(workerURI, workerSerializeFun, altImpl) {
 			data.uuid = makeId();
 			_jobs.set(data.uuid, callback);
 			_worker.postMessage(data);
-			return NullCancel;
+			return exports.NullCancel;
 		});
 	}
 	return impl;
