@@ -243,6 +243,22 @@ LRUMap.prototype = {
 		return _m;
 	};
 
+	// init autoloaded modules
+	const logging = require("logging");
+	for (let [,k] in Iterator(Object.keys(logging))) {
+		exports[k] = logging[k];
+		exports.EXPORTED_SYMBOLS.push(k);
+	}
+	const {getExt, addObserver} = require("preferences");
+	const LogPrefObs = {
+		observe: function(s,t,d) {
+			logging.setLogLevel(getExt("logging") ? logging.LOG_DEBUG : logging.LOG_NONE);
+		}
+	}
+	addObserver("extensions.dta.logging", LogPrefObs);
+	LogPrefObs.observe();
+	log(LOG_DEBUG, new Exception("glue ready!"));
+
 	/* XXX: Reconsider when making restartless
 	unload(function() {
 	let keys = Object.keys(_registry);
