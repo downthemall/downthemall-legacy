@@ -56,9 +56,8 @@ const {FileExtensionSheet} = require("support/fileextsheet");
 const {UrlManager} = require("support/urlmanager");
 const {VisitorManager} = require("manager/visitormanager");
 const Preallocator = require("manager/preallocator");
+const {Chunk} = require("manager/chunk");
 
-let Preallocator = {};
-module('resource://dta/manager/chunk.jsm');
 module('resource://dta/manager/connection.jsm');
 
 function lazyModule(obj, name, url, symbol) {
