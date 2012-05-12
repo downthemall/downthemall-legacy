@@ -205,9 +205,7 @@ Stuff.prototype = {
 		}
 
 		try {
-			let mod = {};
-			module('resource://dta/manager/queuestore.jsm', mod);
-			mod.QueueStore.clear();
+			module('resource://dta/glue2.jsm', {}).require("manager/queuestore").QueueStore.clear();
 		}
 		catch (ex) {
 			log("Cannot clear queue", ex);
