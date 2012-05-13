@@ -9,7 +9,7 @@ const {
 } = require("support/optimpl");
 
 var _moveFile = createOptimizedImplementation(
-	"resource://dta/manager/asyncmovefile/worker.js",
+	"chrome://dta-modules/content/manager/asyncmovefile/worker.js",
 	function(impl) function _moveFile_async(aLocalFileSrc, aLocalFileDst, aPermissions, aCallback) {
 		let data = Object.create(null);
 		data.src = aLocalFileSrc.path;
