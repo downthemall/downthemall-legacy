@@ -13,7 +13,7 @@ const Cr = Components.results;
 const Cu = Components.utils;
 const Exception = Components.Exception;
 
-Cu.import("resource://dta/glue.jsm");
+Cu.import("chrome://dta-modules/content/glue.jsm");
 
 function checkExports(m, exports) {
 	arrayEqual(

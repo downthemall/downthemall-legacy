@@ -48,7 +48,7 @@
 			function fire(event) {
 				fire._runUnloaders();
 
-				Components.utils.import("resource://dta/glue.jsm", {})
+				Components.utils.import("chrome://dta-modules/content/glue.jsm", {})
 					.require("loaders/integration")
 					.load(window, event);
 			}
@@ -116,7 +116,7 @@
 					}
 				}
 				var glue = {};
-				Components.utils.import("resource://dta/glue.jsm", glue);
+				Components.utils.import("chrome://dta-modules/content/glue.jsm", glue);
 				glue.require("support/scheduleautostart");
 				const Version = glue.require("version");
 				dta_showabout_i(Version);

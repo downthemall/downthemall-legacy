@@ -26,7 +26,7 @@ function prepareStack(stack) {
 		}
 	}
 	let rv = {};
-	rv.sourceName = (stack.filename || "unknown").replace("resource://dta/glue.jsm -> ", "");
+	rv.sourceName = (stack.filename || "unknown").replace("chrome://dta-modules/content/glue.jsm -> ", "");
 	rv.sourceLine = stack.sourceLine;
 	rv.lineNumber = stack.lineNumber;
 	let message = [];
@@ -35,7 +35,7 @@ function prepareStack(stack) {
 			message.push("\t"
 					+ (stack.name || "[anonymous]")
 					+ "() @ "
-					+ (stack.filename || "unknown").replace("resource://dta/glue.jsm -> ", "")
+					+ (stack.filename || "unknown").replace("chrome://dta-modules/content/glue.jsm -> ", "")
 					+ ":"
 					+ stack.lineNumber);
 		}

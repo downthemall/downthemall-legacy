@@ -2,7 +2,7 @@
 module("glue.jsm");
 
 test("Service contents", function() {
-	var {Services: S1} = requireJSM("resource://dta/glue.jsm");
+	var {Services: S1} = requireJSM("chrome://dta-modules/content/glue.jsm");
 	var {Services: S2} = requireJSM("resource://gre/modules/Services.jsm");
 
 	var k2 = Object.keys(S2);
@@ -12,6 +12,6 @@ test("Service contents", function() {
 
 test("Instances contents", function() {
 	var expected = ["XHR", "xhr", "DOMSerializer", "domserializer", "MimeInputStream", "mimeinputstream", "SupportsUint32", "supportsuint32", "Transferable", "transferable", "UniConverter", "uniconverter", "AsyncStreamCopier", "PlainAsyncStreamCopier", "BinaryInputStream", "PlainBinaryInputStream", "BinaryOutputStream", "PlainBinaryOutputStream", "BufferedOutputStream", "PlainBufferedOutputStream", "ConverterOutputStream", "PlainConverterOutputStream", "FileInputStream", "PlainFileInputStream", "PlainFileOutputStream", "FilePicker", "PlainFilePicker", "Hash", "PlainHash", "PlainLocalFile", "Pipe", "PlainPipe", "Process", "PlainProcess", "Sound", "PlainSound", "ScriptableInputStream", "PlainScriptableInputStream", "ScriptError", "PlainScriptError", "StringInputStream", "PlainStringInputStream", "PlainTimer", "ZipReader", "PlainZipReader", "FileOutputStream", "LocalFile", "Timer", "SupportsString", "supportsstring"];
-	var {Instances: I} = requireJSM("resource://dta/glue.jsm");
+	var {Instances: I} = requireJSM("chrome://dta-modules/content/glue.jsm");
 	arrayEqual(Object.keys(I), expected, "Glue Instances are complete");
 });

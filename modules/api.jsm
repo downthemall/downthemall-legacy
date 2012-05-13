@@ -38,7 +38,7 @@
 const Cu = Components.utils;
 const EXPORTED_SYMBOLS = [];
 
-Cu.import("resource://dta/glue.jsm");
+Cu.import("chrome://dta-modules/content/glue.jsm");
 let api = require("api");
 
 for (let [k,v] in Iterator(api)) {
