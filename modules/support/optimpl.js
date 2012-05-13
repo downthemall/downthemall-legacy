@@ -19,6 +19,8 @@ exports.createOptimizedImplementation = function createOptimizedImplementation(w
 		callImpl: altImpl
 	};
 
+	workerURI = BASE_PATH + workerURI + ".js";
+
 	var _jobs = new Map();
 	var _worker = new ChromeWorker(workerURI);
 	_worker.onerror = function(event) {
