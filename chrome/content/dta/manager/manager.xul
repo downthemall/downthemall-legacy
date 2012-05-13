@@ -1,0 +1,301 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ *
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<?xml-stylesheet href="chrome://dta/skin/manager/style.css" type="text/css" ?>
+<?xul-overlay href="chrome://dta/content/dta/manager/tooltip.xul"?>
+<?xul-overlay href="chrome://dta-platform/content/manager.xul"?>
+
+<!DOCTYPE overlay [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/">
+	%globalDTD;
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
+	%commonDTD;
+	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
+	%managerDTD;
+]>
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="dtamanagermainoverlay">
+<window windowtype="DTA:Manager" title="DownThemAll!" id="DownThemAll" class="downlinks" flex="1" persist="width height screenX screenY sizemode dtaAutofitted">
+
+	<script type="application/x-javascript" src="chrome://global/content/globalOverlay.js" />
+	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js" />
+	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js" />
+	<script type="application/x-javascript" src="chrome://browser/content/utilityOverlay.js" />
+
+	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
+
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/manager.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/utils.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/tree.js" />
+
+	<stringbundleset xmlns="http://www.downthemall.net/properties#">
+		<stringbundle src="chrome://dta/locale/common.properties" />
+		<stringbundle src="chrome://dta/locale/manager.properties" />
+		<stringbundle src="chrome://dta/locale/prefpanes.properties" />
+	</stringbundleset>
+
+	<commandset id="maincommands">
+		<command id="cmdAddUrl" oncommand="Dialog.openAdd();" />
+		<command id="cmdClose" oncommand="Dialog.close();" />
+		<command id="cmdToggleOffline" oncommand="Dialog.offlineForced = !Dialog.offlineForced;" />
+
+		<command id="cmdGetInfo" oncommand="Tree.showInfo();" />
+
+		<command id="cmdLaunch" oncommand="FileHandling.openFile();" />
+		<command id="cmdDelete" oncommand="FileHandling.deleteFile();" />
+		<command id="cmdOpenFolder" oncommand="FileHandling.openFolder();" />
+
+		<command id="cmdResume" oncommand="Tree.resume();" />
+		<command id="cmdForceStart" oncommand="Tree.force();" />
+		<command id="cmdPause" oncommand="Tree.pause();" />
+		<command id="cmdCancel" oncommand="Tree.cancel();" />
+
+		<command id="cmdSelectAll" oncommand="Tree.selectAll();" />
+		<command id="cmdSelectInv" oncommand="Tree.selectInv();" />
+
+		<command id="cmdRemoveSelected" oncommand="Tree.removeWithConfirmation();" />
+		<command id="cmdRemoveHost" oncommand="Tree.removeHostWithConfirmation();" />
+		<command id="cmdRemoveAll" oncommand="Tree.removeAllWithConfirmation();" />
+		<command id="cmdRemoveCompleted" oncommand="Tree.removeCompleted();" />
+		<command id="cmdRemoveDupes" oncommand="Tree.removeDupes();" />
+
+		<command id="cmdMoveTop" oncommand="Tree.moveTop();" />
+		<command id="cmdMoveUp" oncommand="Tree.moveUp();" />
+		<command id="cmdMoveDown" oncommand="Tree.moveDown();" />
+		<command id="cmdMoveBottom" oncommand="Tree.moveBottom();" />
+
+		<command id="cmdAddChunk" oncommand="Tree.changeChunks(true);" />
+		<command id="cmdRemoveChunk" oncommand="Tree.changeChunks(false);" />
+
+		<command id="cmdMirrors" oncommand="Tree.manageMirrors();" />
+
+		<command id="cmdCleanGone" oncommand="Tree.removeGone();" />
+
+		<command id="cmdImport" oncommand="Tree.import();" />
+		<command id="cmdExport" oncommand="Tree.export();" />
+
+		<command id="cmdAddLimits" oncommand="Tree.addLimits();" />
+
+		<command id="cmdChangeSpeedLimit" oncommand="Dialog.changeSpeedLimit();" />
+		<command id="cmdPerDownloadSpeedLimit" oncommand="Tree.changePerDownloadSpeedLimit();" />
+
+		<command id="cmdPreferences" oncommand="DTA.showPreferences();" />
+
+		<command id="cmdCustomizeToolbar" oncommand="Dialog.customizeToolbar(event);" />
+
+		<command id="cmdNewTab" oncommand="openUrl('about:blank');" />
+		<command id="cmdNewWin" oncommand="Mediator.openWindow(window);" />
+
+		<command id="cmdSearchFocus" oncommand="$('search').focus()" />
+	</commandset>
+
+	<keyset id="mainkeys">
+		<key id="kClose" keycode="VK_ESCAPE" command="cmdClose" />
+		<key id="kCloseMac" modifiers="accel" key="W" command="cmdClose" />
+
+		<key id="kGetInfo" modifiers="alt" key="I" command="cmdGetInfo" />
+
+		<key id="kLaunch" keycode="VK_RETURN" command="cmdLaunch" />
+		<key id="kDelete" modifiers="accel" keycode="VK_DELETE" command="cmdDelete" />
+		<key id="kOpenFolder" modifiers="shift" keycode="VK_RETURN" command="cmdOpenFolder" />
+
+		<key id="kResume" modifiers="accel" key="R" command="cmdResume" />
+		<key id="kForceStart" modifiers="accel,shift" key="R" command="cmdForceStart" />
+		<key id="kPause" modifiers="accel" key="P" command="cmdPause" />
+		<key id="kCancel" modifiers="accel" key="C" command="cmdCancel" />
+
+		<key id="kSelectAll" modifiers="accel" key="A" command="cmdSelectAll" />
+		<key id="kSelectInv" modifiers="accel" key="I" command="cmdSelectInv" />
+
+		<key id="kAddUrl" modifiers="accel" key="+" command="cmdAddUrl" />
+
+		<key id="kRemoveSelected" keycode="VK_DELETE" command="cmdRemoveSelected" />
+		<key id="kRemoveSelectedMac" modifiers="meta" keycode="VK_BACK" command="cmdRemoveSelected" />
+		<key id="kRemoveCompleted" modifiers="shift" keycode="VK_DELETE" command="cmdRemoveCompleted" />
+		<key id="kCleanGone" modifiers="alt" keycode="VK_DELETE" command="cmdCleanGone" />
+
+		<key id="kMoveTop" modifiers="alt" keycode="VK_HOME" command="cmdMoveTop" />
+		<key id="kMoveUp" modifiers="alt" keycode="VK_PAGE_UP" command="cmdMoveUp" />
+		<key id="kMoveDown" modifiers="alt" keycode="VK_PAGE_DOWN" command="cmdMoveDown" />
+		<key id="kMoveBottom" modifiers="alt" keycode="VK_END" command="cmdMoveBottom" />
+
+		<!-- new window/tab shortcuts -->
+		<key id="kNewTab" modifiers="accel" key="T" command="cmdNewTab" />
+		<key id="kNewWin" modifiers="accel" key="N" command="cmdNewWin" />
+
+		<key id="kSearch" modifiers="accel" key="F" command="cmdSearchFocus"/>
+	</keyset>
+
+
+	<popupset id="mainPopupSet">
+		<tooltip id="tooltip" position="at_pointer" noautohide="true" onpopupshowing="return Tree.showTip(event);" onpopuphiding="Tree.stopTip();" orient="vertical">
+			<hbox id="infoBox" />
+			<grid id="canvasGrid" />
+		</tooltip>
+		<menupopup id="matcher">
+			<menuseparator id="matcher-fixed"/>
+			<menuitem action="invertmatcher" label="&invertmatcher.label;" closemenu="none" />
+			<menuitem action="clearmatcher" label="&clearmatcher.label;" closemenu="none" />
+			<menuseparator id="beforeColumnSort"/>
+			<menuitem action="sortAscending" label="&sortascending.label;"/>
+			<menuitem action="sortDescending" label="&sortdescending.label;"/>
+		</menupopup>
+		<menupopup id="popup" onpopupshowing="Tree.refreshTools(); return true;">
+			<menuitem id="info" class="action menuitem-iconic" label="&infos.label;" key="kGetInfo" command="cmdGetInfo" />
+			<menuseparator class="action" />
+			<menuitem id="launch" class="action menuitem-iconic" label="&launch.label;" key="kLaunch" command="cmdLaunch" />
+			<menuitem id="delete" class="action menuitem-iconic" label="&delete.label;" key="kDelete" command="cmdDelete" />
+			<menuitem id="folder" class="action menuitem-iconic" label="&targetdir.label;" key="kOpenFolder" command="cmdOpenFolder" />
+			<menuseparator />
+			<menuitem id="play" class="menuitem-iconic" label="&resume.label;" key="kResume" command="cmdResume" />
+			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" key="kPause" command="cmdPause" />
+			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" key="kCancel" command="cmdCancel" />
+			<menuseparator />
+			<splitmenu id="removeCompletedMenu" class="menuitem-iconic" label="&removecompleted.label;" command="cmdRemoveCompleted">
+				<menupopup id="removeCompletedPopup">
+					<menuitem id="removeCompleted" class="menuitem-iconic" label="&removeAll.label;" key="kRemoveCompleted" command="cmdRemoveCompleted" />
+					<menuseparator />
+					<menuitem id="cleangone" class="menuitem-iconic" label="&removeGone.label;" key="kCleanGone" command="cmdCleanGone" />
+					<menuseparator />
+				</menupopup>
+			</splitmenu>
+			<splitmenu id="removeMenu" class="menuitem-iconic" label="&removemenu.label;" command="cmdRemoveSelected">
+				<menupopup id="removePopup">
+					<menuitem id="removeselected" class="menuitem-iconic" label="&removeselected.label;" key="kRemoveSelected" command="cmdRemoveSelected" />
+					<menuitem id="removeHost" class="menuitem-iconic" label="&removehost.label;" key="kRemoveHost" command="cmdRemoveHost"/>
+					<menuseparator />
+					<menuitem id="removeDupes" class="menuitem-iconic" label="&removeDupes.label;" command="cmdRemoveDupes" />
+					<menuseparator />
+					<menuitem id="removeAll" class="menuitem-iconic" label="&removeAll.label;" command="cmdRemoveAll" />
+					<menuseparator />
+				</menupopup>
+			</splitmenu>
+			<menuseparator class="action"/>
+			<menuitem id="listselectall" class="action menuitem-iconic" label="&selectall.label;" key="kSelectAll" command="cmdSelectAll" />
+			<menuitem id="listselectinv" class="action menuitem-iconic" label="&selectinv.label;" key="kSelectInv" command="cmdSelectInv" />
+			<menuseparator class="action" />
+			<menuitem id="movetop" class="menuitem-iconic" label="&movetop.label;" key="kMoveTop" command="cmdMoveTop" />
+			<menuitem id="moveup" class="menuitem-iconic" label="&moveup.label;" key="kMoveUp" command="cmdMoveUp" />
+			<menuitem id="movedown" class="menuitem-iconic" label="&movedown.label;" key="kMoveDown" command="cmdMoveDown" />
+			<menuitem id="movebottom" class="menuitem-iconic" label="&movebottom.label;" key="kMoveBottom" command="cmdMoveBottom" />
+			<menuseparator />
+			<menuitem id="mirrors" class="action menuitem-iconic" label="&mirrors.label;" tooltiptext="&mirrors.tooltip;" command="cmdMirrors" />
+			<menuseparator id="mirrors-sep" />
+			<menu class="menu-iconic" label="&perdownloadspeedlimit.label;" id="perDownloadSpeedLimit" tooltiptext="&perdownloadspeedlimit.tooltip;">
+				<menupopup id="perDownloadSpeedLimitList" class="speedlimitlist-popup" command="cmdPerDownloadSpeedLimit" />
+			</menu>
+			<menuseparator />
+			<menu id="advancedMenu" class="menu-iconic" label="&advanced.label;">
+				<menupopup id="popupmisc">
+					<menuitem id="addchunk" class="action menuitem-iconic" label="&addchunk.label;" command="cmdAddChunk" />
+					<menuitem id="removechunk" class="action menuitem-iconic" label="&removechunk.label;" command="cmdRemoveChunk" />
+					<menuseparator class="action"/>
+					<menuitem id="mirrors-cascaded" class="menuitem-iconic" label="&mirrors.label;" tooltiptext="&mirrors.tooltip;" command="cmdMirrors" />
+					<menuseparator id="mirrors-cascaded-sep" />
+					<menuitem id="force" class="action menuitem-iconic" label="&force.label;" key="kForceStart" command="cmdForceStart" />
+					<menuseparator />
+					<menuitem id="import" class="action menuitem-iconic" label="&import.label;" command="cmdImport" />
+					<menuitem id="export" class="action menuitem-iconic" label="&exportto.label;" command="cmdExport" />
+					<menuseperator />
+					<menuitem id="addlimits" class="menuitem-iconic" label="&addlimits.label;" command="cmdAddLimits"/>
+				</menupopup>
+			</menu>
+		</menupopup>
+		<menupopup id="traymenu">
+			<menuitem label="&tooladddownload.label;" command="cmdAddUrl" />
+			<menuseparator />
+			<menuitem label="&restore.label;" oncommand="gMinTrayR.restore()" />
+			<menuitem label="&close.label;" command="cmdClose" />
+		</menupopup>
+		<menupopup id="toolbarpopup" command="cmdCustomizeToolbar">
+			<menuitem id="tbp_icons" mode="icons" label="&toolbar.icons;" type="radio" />
+			<menuitem id="tbp_full" mode="full" label="&toolbar.full;" type="radio" />
+		</menupopup>
+	</popupset>
+
+	<toolbox id="toolbox" chromedir="&locale.dir;" context="toolbarpopup" mousethrough="never">
+		<toolbar id="tools" mode="icons" persist="mode" class="toolbar-primary">
+			<toolbarspacer id="prespacer" />
+			<toolbarbutton label="&tooladddownload.label;" key="kAddUrl" id="tooladd" command="cmdAddUrl" tooltiptext="&tooladd.tooltip;" />
+			<toolbarspacer class="visible" />
+			<toolbarbutton label="&resume.label;" id="toolplay" command="cmdResume" />
+			<toolbarbutton label="&pause.label;" id="toolpause" command="cmdPause" />
+			<toolbarbutton label="&cancel.label;" id="toolcancel" command="cmdCancel" />
+			<toolbarspacer class="visible" />
+			<toolbarbutton label="&movetop.label;" id="toolmovetop" command="cmdMoveTop" />
+			<toolbarbutton label="&moveup.label;" id="toolmoveup" command="cmdMoveUp" />
+			<toolbarbutton label="&movedown.label;" id="toolmovedown" command="cmdMoveDown" />
+			<toolbarbutton label="&movebottom.label;" id="toolmovebottom" command="cmdMoveBottom" />
+			<toolbarspacer flex="1" />
+			<vbox id="donatebox">
+				<image chromedir="&locale.dir;" id="tooldonate" tooltiptext="&tooldonate.tooltiptext;" />
+			</vbox>
+		</toolbar>
+	</toolbox>
+	<hbox flex="1">
+		<windowdragbox id="actionsbox" orient="vertical" lwreftop="tools" lwrefbottom="footer">
+			<toolbar id="actions" orient="vertical"/>
+			<spacer flex="1"/>
+		</windowdragbox>
+		<notificationbox id="notifications" flex="1" dir="reverse">
+			<stack flex="1" id="mainstack">
+				<tree id="downloads" flex="1" hidecolumnpicker="false" context="popup" seltype="multiple" enableColumnDrag="true" style="margin:0px;" chromedir="&locale.dir;">
+					<treecols>
+						<treecol id="colTask" matcher="downloadmatch" label="&download.label;" flex="5" crop="center" style="width:18em;" persist="hidden width ordinal" />
+						<splitter class="tree-splitter" />
+						<treecol id="colDomain" label="&domain.label;" flex="1" hidden="true" crop="center" style="width: 8em;" persist="hidden width ordinal" />
+						<splitter class="tree-splitter" />
+						<treecol id="colProgress" label="&pct.label;" type="progressmeter" flex="5" style="width: 8em;" persist="hidden width ordinal" />
+						<splitter class="tree-splitter" />
+						<treecol id="colPercent" label="&percent.label;" style="width: 4em;" persist="hidden width ordinal" />
+						<splitter class="tree-splitter" />
+						<treecol id="colSize" matcher="sizematch" label="&dim.label;" flex="2" style="width: 8em;" persist="hidden width ordinal" />
+						<splitter class="tree-splitter" />
+						<treecol id="colStatus" matcher="statusmatch" label="&time.label;" flex="1" persist="hidden width ordinal" />
+						<splitter class="tree-splitter" />
+						<treecol id="colSpeed" label="&speed.label;" flex="1" persist="hidden width ordinal" />
+						<splitter class="tree-splitter" />
+						<treecol id="colSegments" label="&parts.label;" flex="1" hidden="true" style="text-align: center;"  persist="hidden width ordinal"/>
+						<splitter class="tree-splitter" />
+						<treecol id="colMask" label="&mask.label;" flex="1" hidden="true" persist="hidden width ordinal" />
+						<splitter class="tree-splitter" />
+						<treecol id="colPath" matcher="pathmatch" label="&path.label;" flex="1" hidden="true" crop="center" persist="hidden width ordinal" />
+						<splitter class="tree-splitter" />
+						<treecol id="colHash" label="&hash.label;" flex="1" hidden="true" persist="hidden width ordinal" />
+					</treecols>
+					<treechildren id="downloadList" tooltip="tooltip">
+					</treechildren>
+				</tree>
+				<vbox align="center" pack="center" flex="1" id="loadingbox">
+					<button id="loading" disabled="true" label="&loading.label;" />
+				</vbox>
+			</stack>
+		</notificationbox>
+	</hbox>
+	<windowdragbox id="footer" chromedir="&locale.dir;">
+		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline" />
+		<statusbarpanel id="statusSearch" flex="1" pack="start">
+			<textbox id="search" emptytext="&search.placeholder;" placeholder="&search.placeholder;"/>
+		</statusbarpanel>
+		<statusbarpanel id="statusText" class="statusbarpanel-iconic-text" pack="start" crop="right" hidden="true" label="" flex="3" />
+		<statusbarpanel class="statusbarpanel-iconic" id="schedule"/>
+		<statusbarpanel id="statusSpeed" class="statusbarpanel-iconic-text" crop="right" hidden="true" label="" />
+		<statusbarpanel id="statusSpeeds">
+			<label control="listSpeeds" class="statusbarpanel-text" value="&speedlimit.label;" />
+			<menulist class="plain" id="speedLimit" tooltiptext="&speedlimit.tooltip;" sizetopopup="none" command="cmdChangeSpeedLimit">
+				<menupopup id="listSpeeds" class="speedlimitlist-popup" position="before_start" />
+			</menulist>
+			<spinbuttons id="listSpeedsSpinners"/>
+		</statusbarpanel>
+		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text text-link" label="&options.label;" command="cmdPreferences" />
+		<resizer dir="bottomend"/>
+	</windowdragbox>
+</window>
+</overlay>
