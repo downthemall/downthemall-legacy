@@ -7,14 +7,14 @@
 // Third parties reusing this module must specify own branch!
 const EXT = 'extensions.dta.';
 
-const nsIPrefBranch = Ci.nsIPrefBranch;
-const nsIPrefBranch2 = Ci.nsIPrefBranch2;
-
-const PREF_STRING = nsIPrefBranch.PREF_STRING;
-const PREF_INT = nsIPrefBranch.PREF_INT;
-const PREF_BOOL = nsIPrefBranch.PREF_BOOL;
+const PREF_STRING = Ci.nsIPrefBranch.PREF_STRING;
+const PREF_INT = Ci.nsIPrefBranch.PREF_INT;
+const PREF_BOOL = Ci.nsIPrefBranch.PREF_BOOL;
 
 const prefs = Services.prefs;
+if (!(prefs instanceof Ci.nsIPrefBranch2) || !(prefs instanceof Ci.nsIPrefBranch2)) {
+	log(LOG_DEBUG, "simple prefs");
+}
 
 /**
  * Gets a preference (based on root)
@@ -219,7 +219,7 @@ function resetAllExt() {
  */
 function addObserver(branch, obj) {
 	makeObserver(obj);
-	prefs.QueryInterface(nsIPrefBranch2).addObserver(branch, obj, true);
+	prefs.addObserver(branch, obj, true);
 	return function() removeObserver(branch, obj);
 }
 
@@ -229,7 +229,7 @@ function addObserver(branch, obj) {
  * @param obj (object) Preference observer. Must have been added before
  */
 function removeObserver(branch, obj) {
-	prefs.QueryInterface(nsIPrefBranch2).removeObserver(branch, obj);
+	prefs.removeObserver(branch, obj);
 }
 
 /**
