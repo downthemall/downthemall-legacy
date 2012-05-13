@@ -47,7 +47,7 @@
 			addEventListener('load', function dta_load() {
 				"use strict";
 				removeEventListener('load', dta_load, false);
-				Components.utils.import('resource://dta/glue.jsm', {})
+				Components.utils.import('chrome://dta-modules/content/glue.jsm', {})
 					.require("loaders/saveas")
 					.load(window);
 			}, false);

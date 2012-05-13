@@ -49,7 +49,7 @@ const Exception = Components.Exception;
 
 // shared state defines
 
-module("resource://dta/glue.jsm", this);
+module("chrome://dta-modules/content/glue.jsm", this);
 requireJoined(this, "constants");
 const Preferences = require("preferences");
 const Mediator = require("support/mediator");
