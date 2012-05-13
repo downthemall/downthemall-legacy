@@ -1,6 +1,3 @@
-### package ###
-resource	dta	modules/
-
 ## general ##
 content	dta	chrome/content/
 content	dtaicon	./
@@ -9,6 +6,7 @@ locale	dta	en-US	chrome/locale/en-US/
 content dta-public	chrome/public/ contentaccessible
 skin	dta-public	classic/1.0 chrome/public/
 content dta-tests tests/
+content	dta-modules	modules/
 
 ## platform package ##
 content dta-platform	chrome/content/ platform

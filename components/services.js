@@ -48,7 +48,7 @@ const ABOUT_URI = 'https://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%
 
 function requireMod(m) {
 	let _m = {};
-	module("resource://dta/glue.jsm", _m);
+	module("chrome://dta-modules/content/glue.jsm", _m);
 	return _m.require(m);
 }
 
@@ -59,7 +59,7 @@ XPCOMUtils.defineLazyGetter(this, "IconCheat", function() requireMod("support/ic
 function log(str, ex) {
 	try {
 		let _m = {};
-		module("resource://dta/glue.jsm", _m);
+		module("chrome://dta-modules/content/glue.jsm", _m);
 		log = function(str, ex) _m.log(ex ? _m.LOG_ERROR : _m.LOG_INFO, str, ex);
 		log(str, ex);
 	}
@@ -145,8 +145,10 @@ Stuff.prototype = {
 	},
 	bootstrap: function MM_bootstrap() {
 		this.migrate();
+		let _glue = {};
+		module("chrome://dta-modules/content/glue.jsm", _glue);
 		try {
-			module("resource://dta/glue.jsm", {}).require("support/contenthandling");
+			_glue.require("support/contenthandling");
 		}
 		catch (ex) {
 			log("ch", ex);
@@ -154,7 +156,7 @@ Stuff.prototype = {
 		try {
 			// DownloadHelper integration
 			if (("dhICore" in Ci) && ("dhIProcessor" in Ci)) {
-				module("resource://dta/glue.jsm", {}).require("support/downloadHelper");
+				_glue.require("support/downloadHelper");
 			}
 		}
 		catch (ex) {
@@ -194,18 +196,19 @@ Stuff.prototype = {
 			log('failed to clean files: ', oex);
 		}
 
+		let _glue = {};
+		module("chrome://dta-modules/content/glue.jsm", _glue);
+
 		// Diagnostic log
 		try {
-			let _d = {};
-			module('resource://dta/glue.jsm', _d);
-			_d.log.clear();
+			_glue.log.clear();
 		}
 		catch (ex) {
 			log("Cannot clear diagnostic log", ex);
 		}
 
 		try {
-			module('resource://dta/glue.jsm', {}).require("manager/queuestore").QueueStore.clear();
+			_glue.require("manager/queuestore").QueueStore.clear();
 		}
 		catch (ex) {
 			log("Cannot clear queue", ex);

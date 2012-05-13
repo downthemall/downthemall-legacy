@@ -108,7 +108,7 @@
 			<constructor><![CDATA[
 				try {
 					let glue = {};
-					Components.utils.import("resource://dta/glue.jsm", glue);
+					Components.utils.import("chrome://dta-modules/content/glue.jsm", glue);
 					this.hist = glue.require("support/historyManager").getHistory(this._pref);
 					this._load();
 				}
