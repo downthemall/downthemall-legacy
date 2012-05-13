@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <?xul-overlay href="chrome://dta/content/dta/manager/manager.xul"?>
+<?xul-overlay href="chrome://dta/content/dta/manager/aero.xul"?>
 <!DOCTYPE dialog>
 
 <window id="DownThemAll" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"/>
