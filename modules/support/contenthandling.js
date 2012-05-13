@@ -56,7 +56,6 @@ ContentHandlingImpl.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.nsIFactory, Ci.nsIChannelEventSink]),
 
 	_init: function ct__init() {
-		Services.obs.addObserver(this, 'xpcom-shutdown', false);
 		Services.obs.addObserver(this, 'private-browsing', false);
 		Services.obs.addObserver(this, 'http-on-modify-request', false);
 
@@ -82,6 +81,7 @@ ContentHandlingImpl.prototype = {
 		if (this.sniffVideos) {
 			this.registerHttpObservers();
 		}
+		unload(this._uninit.bind(this));
 	},
 
 	// nsIFactory
@@ -105,7 +105,6 @@ ContentHandlingImpl.prototype = {
 		Services.catman.deleteCategoryEntry("net-channel-event-sinks", REDIRECTS_CON, true);
 		Components.manager.nsIComponentRegistrar.unregisterFactory(REDIRECTS_IID, this);
 
-		Services.obs.removeObserver(this, 'xpcom-shutdown');
 		Services.obs.removeObserver(this, 'private-browsing');
 		Services.obs.removeObserver(this, 'http-on-modify-request');
 	},
@@ -119,9 +118,6 @@ ContentHandlingImpl.prototype = {
 	},
 	observe: function ct_observe(subject, topic, data) {
 		switch(topic) {
-		case 'xpcom-shutdown':
-			this._uninit();
-			break;
 		case 'http-on-modify-request':
 			this.observeRequest(subject, topic, data);
 			break;

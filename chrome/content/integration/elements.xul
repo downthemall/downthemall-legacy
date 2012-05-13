@@ -91,12 +91,10 @@
 						setTimeout(function() glue.require("support/mediator").showAbout(window), 0);
 					}
 					function registerObserver() {
-						let os = Services.obs
-							|| Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
 
-						os.addObserver({
+						Services.obs.addObserver({
 							observe: function(s,t,d) {
-								os.removeObserver(this, Version.TOPIC_SHOWABOUT);
+								Services.obs.removeObserver(this, Version.TOPIC_SHOWABOUT);
 								if (Version.showAbout) {
 									openAbout();
 								}
