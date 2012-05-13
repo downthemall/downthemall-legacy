@@ -14,7 +14,7 @@ const SIZE_MIN = (require("version").OS == 'winnt' ? 256 : 2048) * 1024;
 const SIZE_COTHREAD_MAX = (1<<24);
 
 const _impl = createOptimizedImplementation(
-	"chrome://dta-modules/content/manager/preallocator/worker.js",
+	"manager/preallocator/worker",
 	function(impl) function (file, size, perms, sparseOK, callback) {
 		let data = Object.create(null);
 		data.file = file.path;
