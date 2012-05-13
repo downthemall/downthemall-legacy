@@ -37,6 +37,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** -->
+<?xml-stylesheet href="chrome://dta/skin/integration/style.css" type="text/css"?>
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
 <overlay id="DTAUIElements" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js" />
