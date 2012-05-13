@@ -9,6 +9,8 @@
  *
  * ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://dta/skin/manager/style.css" type="text/css" ?>
+<?xul-overlay href="chrome://dta/content/dta/manager/tooltip.xul"?>
+<?xul-overlay href="chrome://dta-platform/content/manager.xul"?>
 
 <!DOCTYPE dialog [
 	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/">
