@@ -11,6 +11,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
 <?xml-stylesheet href="chrome://dta/skin/manager/info.css" type="text/css" ?>
+<?xul-overlay href="chrome://dta/content/dta/manager/tooltip.xul"?>
 
 <!DOCTYPE dialog [
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">

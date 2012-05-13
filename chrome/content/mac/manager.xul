@@ -8,6 +8,8 @@
  * See LICENSE and GPL for details.
  *
  * ***** END LICENSE BLOCK ***** -->
+<?xul-overlay href="chrome://browser/content/baseMenuOverlay.xul"?>
+
 <!DOCTYPE overlay [
 	<!ENTITY % mainmenuDTD SYSTEM "chrome://dta/locale/mainmenu.dtd">
 	%mainmenuDTD;
@@ -15,7 +17,7 @@
 	%managerDTD;
 ]>
 
-<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="dtamacoverlay">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="dtamanagerplatformoverlay">
 	<!-- XXX: re-enable fullscreenbutton once more stable -->
 	<window id="DownThemAll" fullscreenbutton="false">
 		<stringbundleset id="stringbundleset" />
