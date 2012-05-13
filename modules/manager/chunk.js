@@ -203,22 +203,19 @@ try {
 
 const Observer = {
 	memoryPressure: 0,
-	observe: function(s, topic, d) {
-		if (topic == "quit-application") {
-			Services.obs.removeObserver(this, "quit-application");
-			Services.obs.removeObserver(this, "memory-pressure");
-			Prefs.removeObserver("extensions.dta.permissions", this);
-			try {
-				_thread.shutdown();
-			}
-			catch (ex) {}
-			try {
-				Services.memrm.unregisterMultiReporter(MemoryReporter);
-			} catch (ex) {}
-			Timers.killAllTimers();
-			return;
+	unload: function() {
+		Services.obs.removeObserver(this, "memory-pressure");
+		Prefs.removeObserver("extensions.dta.permissions", this);
+		try {
+			_thread.shutdown();
 		}
-
+		catch (ex) {}
+		try {
+			Services.memrm.unregisterMultiReporter(MemoryReporter);
+		} catch (ex) {}
+		Timers.killAllTimers();
+	},
+	observe: function(s, topic, d) {
 		if (topic == "memory-pressure") {
 			if (data == "low-memory") {
 				this.memoryPressure += 25;
@@ -253,8 +250,8 @@ const Observer = {
 	}
 }
 Prefs.addObserver("extensions.dta.permissions", Observer);
-Services.obs.addObserver(Observer, "quit-application", true);
 Services.obs.addObserver(Observer, "memory-pressure", true);
+unload(Observer.unload.bind(Observer));
 
 function Chunk(download, start, end, written) {
 	// saveguard against null or strings and such

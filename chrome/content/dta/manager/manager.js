@@ -248,6 +248,13 @@ const Dialog = {
 		for (let [,topic] in Iterator(this._observes)) {
 			Services.obs.addObserver(this, topic, true);
 		}
+		const unload_obs = (function() {
+			removeEventListener("unload", unload_obs, false);
+			for (let [,topic] in Iterator(this._observes)) {
+				Services.obs.removeObserver(this, topic);
+			}
+		}).bind(this);
+		addEventListener("unload", unload_obs, false);
 
 		// Autofit
 		(function autofit() {

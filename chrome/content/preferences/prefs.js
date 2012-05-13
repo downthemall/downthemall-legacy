@@ -184,8 +184,7 @@ const Filters = {
 		registerObserver: function() {
 			try {
 				Preferences.makeObserver(this);
-				var os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
-				os.addObserver(this, 'DTA:filterschanged', true);
+				Services.obs.addObserver(this, 'DTA:filterschanged', true);
 			}
 			catch (ex) {
 				log(LOG_ERROR, "cannot install filterManager observer!", ex);

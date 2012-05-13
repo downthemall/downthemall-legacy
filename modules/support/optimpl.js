@@ -31,15 +31,14 @@ exports.createOptimizedImplementation = function createOptimizedImplementation(w
 			return;
 		}
 
-		var observer = {
-			observe: function() {
-				Services.obs.removeObserver(this, "quit-application");
-				_moveFile = _moveFile_plain;
+		unload(function() {
+			moveFile = _moveFile_plain;
+			if (_worker) {
 				_worker.postMessage("close");
 				_worker = null;
 			}
-		};
-		Services.obs.addObserver(observer, "quit-application", false);
+		});
+
 		_worker.onmessage = function(event) {
 			if ("log" in event.data) {
 				log(LOG_DEBUG, "worker said: " + event.data.log)

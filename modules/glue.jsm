@@ -174,6 +174,7 @@ LRUMap.prototype = {
 				_runUnloader(_unloaders[i]);
 			}
 			_unloaders.splice(0);
+			log(LOG_DEBUG, "glue went down and took unloaders with it!");
 		}
 	}, "xpcom-shutdown", false);
 
