@@ -35,7 +35,7 @@ exports.removeFinalChar = function removeFinalChar(str, c) {
 	if (!str) {
 		return str;
 	}
-	if (str.charAt(this.length - 1) == c) {
+	if (str.charAt(str.length - 1) == c) {
 		return str.substr(0, str.length - 1);
 	}
 	return str;
