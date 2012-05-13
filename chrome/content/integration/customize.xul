@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://dta/skin/integration/style.css" type="text/css"?>
+<!DOCTYPE overlay>
+<overlay id="DTAUIElementsCustomize" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+</overlay>
