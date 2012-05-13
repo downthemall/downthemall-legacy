@@ -308,7 +308,7 @@ const QueueStore = {
 
 unload(function() {
 	try {
-		pbm.unregiszterCallbacks(QueueStore);
+		pbm.unregisterCallbacks(QueueStore);
 		QueueStore.shutdown();
 	}
 	catch (ex) {
