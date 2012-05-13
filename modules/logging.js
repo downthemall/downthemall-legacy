@@ -169,7 +169,7 @@ exports.log = function(level, message, exception) {
 		Cu.reportError(exception || message);
 	}
 }
-Object.defineProperty(exports.log, "enabled", {get: function() global.level != LOG_NONE});
+Object.defineProperty(exports.log, "enabled", {get: function() global.level != exports.LOG_NONE});
 Object.defineProperty(exports.log, "file", {get: function () global.file});
 Object.defineProperty(exports.log, "clear", {value: function clear() {
 	try {
