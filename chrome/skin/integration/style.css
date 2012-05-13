@@ -6,12 +6,12 @@
 	display: -moz-box;
 }
 #downthemall-notification-icon {
-  list-style-image: url(chrome://dta/skin/toolbarbuttons/buttons16.png);
-  -moz-image-region: rect(0px,64px,16px,48px);
+	list-style-image: url(chrome://dta/skin/toolbarbuttons/buttons16.png);
+	-moz-image-region: rect(0px,64px,16px,48px);
 }
 
 .popup-notification-icon[popupid="downthemall"] {
-  list-style-image: url(chrome://dta/skin/common/icon.png);
+	list-style-image: url(chrome://dta/skin/common/icon.png);
 }
 
 /* menus */
@@ -32,4 +32,11 @@
 }
 .dta-about {
 	-moz-image-region: rect(0px,144px,16px,128px);
+}
+
+.main-window #dta-manager-button image,
+.main-window #dta-turbo-button image,
+.main-window #dta-button image {
+	padding-top: 2px;
+	padding-bottom: 3px;
 }
