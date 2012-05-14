@@ -39,7 +39,7 @@ const EXPORTED_SYMBOLS = ['TimerManager'];
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const module = Components.utils.import;
-const Exception = Components.Exception; 
+const Exception = Components.Exception;
 
 const nsITimer = Ci.nsITimer;
 const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'init');
@@ -118,7 +118,7 @@ TimerManager.prototype = {
 		if (fireInitially) {
 			td.execute();
 		}
-		return td.uuid;		
+		return td.uuid;
 	},
 	/**
 	 * Kill a timer again
@@ -134,9 +134,9 @@ TimerManager.prototype = {
 	 * Kills all timers associated with this TimerManager instance
 	 */
 	killAllTimers: function TM_killAll() {
-		for (let td in this._timers) {
+		for (let uuid in this._timers) {
 			try {
-				td.cancel();
+				this._timers[uuid].cancel();
 			}
 			catch (ex) {
 				// no op
@@ -144,4 +144,4 @@ TimerManager.prototype = {
 		}
 		this._timers = {};
 	}
-};	
+};
