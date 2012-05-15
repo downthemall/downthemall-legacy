@@ -51,6 +51,9 @@
 				}
 				return false;
 			}
+			opener.addEventListener("unload", function unloadOpener() {
+				opener.removeEventListener("unload", unloadOpener, false);
+			}, false);
 		]]></script>
 
 		<vbox flex="1" style="padding-left: 35px; background: url('chrome://dta/skin/manager/alert.png') no-repeat 0 0;">
