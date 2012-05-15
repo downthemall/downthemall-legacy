@@ -23,13 +23,36 @@ exports.unloadWindow = function unloadWindow(window, fn) {
 	window.addEventListener('unload', handler, false);
 };
 
+// Watch for new browser windows opening then wait for it to load
+var watchers = new Map();
+function runOnLoad(window) {
+	window.addEventListener("load", function windowWatcher_onload() {
+		window.removeEventListener("load", windowWatcher_onload, false);
+		let _w = watchers.get(window.location.toString());
+		if (!_w || !_w.length) {
+			return;
+		}
+		for (let i = _w.length; ~--i;) {
+			_w[i](window);
+		}
+	}, false);
+}
+function windowWatcher(window,t,d) {
+	runOnLoad(window);
+}
+Services.obs.addObserver(windowWatcher, "chrome-document-global-created", false);
+// Make sure to stop watching for windows if we're unloading
+unload(function() {
+	Services.obs.removeObserver(windowWatcher, "chrome-document-global-created");
+	watchers = null;
+});
+
 /**
  * Apply a callback to each open and new browser windows.
  */
 exports.watchWindows = function watchWindows(location, callback) {
 	// Wrap the callback in a function that ignores failures
 	function watcher(window) {
-		log(LOG_DEBUG, "watchwindows watcher");
 		try {
 			callback(window, window.document);
 		}
@@ -37,22 +60,11 @@ exports.watchWindows = function watchWindows(location, callback) {
 			log(LOG_ERROR, "window watcher failed", ex);
 		}
 	}
-
-	// Wait for the window to finish loading before running the callback
-	function runOnLoad(window) {
-		// Listen for one load event before checking the window type
-		window.addEventListener("load", function runOnLoad_load() {
-			window.removeEventListener("load", runOnLoad_load, false);
-
-			// Now that the window has loaded, only handle requested windows
-			if (window.location == location) {
-				watcher(window);
-			}
-			else {
-				log(LOG_DEBUG, "was but skipping: " + window.location);
-			}
-		}, false);
+	let _w = watchers.get(location);
+	if (!_w) {
+		watchers.set(location, _w = []);
 	}
+	_w.push(watcher);
 
 	// Add functionality to existing windows
 	let windows = Services.wm.getEnumerator(null);
@@ -62,20 +74,7 @@ exports.watchWindows = function watchWindows(location, callback) {
 		if (window.document.readyState == "complete" && window.location == location) {
 			watcher(window);
 		}
-		// Wait for the window to load before continuing
-		else {
-			runOnLoad(window);
-		}
 	}
-
-	// Watch for new browser windows opening then wait for it to load
-	function windowWatcher(subject, topic) {
-		runOnLoad(subject);
-	}
-	Services.obs.addObserver(windowWatcher, "chrome-document-global-created", false);
-
-	// Make sure to stop watching for windows if we're unloading
-	unload(function() Services.obs.removeObserver(windowWatcher, "chrome-document-global-created"));
 };
 const overlayCache = new Map();
 /**
