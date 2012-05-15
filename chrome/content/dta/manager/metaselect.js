@@ -216,8 +216,8 @@ const MetaSelect = {
 		}
 	}
 };
-addEventListener('load', function() {
-	removeEventListener('load', arguments.callee, false);
+addEventListener('load', function loadSelf() {
+	removeEventListener('load', loadSelf, false);
 	try {
 		MetaSelect.load();
 	}
@@ -225,7 +225,11 @@ addEventListener('load', function() {
 		log(LOG_ERROR, "Failed to load", ex);
 	}
 }, false);
-addEventListener('close', function() {
-	removeEventListener('close', arguments.callee, false);
+opener.addEventListener("unload", function unloadOpener() {
+	opener.removeEventListener("unload", unloadOpener, false);
+	MetaSelect.cancel();
+}, false);
+addEventListener('close', function unloadSelf() {
+	removeEventListener('close', unloadSelf, false);
 	MetaSelect.cancel();
 }, false);
