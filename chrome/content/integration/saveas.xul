@@ -43,28 +43,17 @@
 
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/saveas.dtd">
 <overlay id="downthemallDownloadSaveAs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-		<script type="application/x-javascript"><![CDATA[
-			addEventListener('load', function dta_load() {
-				"use strict";
-				removeEventListener('load', dta_load, false);
-				Components.utils.import('chrome://dta-modules/content/glue.jsm', {})
-					.require("loaders/saveas")
-					.load(window);
-			}, false);
-		]]></script>
-		<radiogroup id="mode">
-				<vbox insertbefore="save" id="downthemallcontainer" collapsed="true"
-						flex="1">
-						<hbox flex="1">
-								<radio id="downthemall" label="DownThemAll!" disabled="true" />
-						</hbox>
-						<hbox id="tdta" flex="1">
-								<radio id="turbodta" disabled="true" label="dTa OneClick!" />
-								<toolbarbutton id="turbodtaexec" disabled="true" />
-								<spacer flex="1" />
-								<saveddropdown id="tdtalist" preference="directory"
-										readonly="true" crop="center" flex="1" />
-						</hbox>
-				</vbox>
-		</radiogroup>
+	<radiogroup id="mode">
+		<vbox insertbefore="save" id="downthemallcontainer" collapsed="true" flex="1">
+			<hbox flex="1">
+				<radio id="downthemall" label="DownThemAll!" disabled="true" />
+			</hbox>
+			<hbox id="tdta" flex="1">
+				<radio id="turbodta" disabled="true" label="dTa OneClick!" />
+				<toolbarbutton id="turbodtaexec" disabled="true" />
+				<spacer flex="1" />
+				<saveddropdown id="tdtalist" preference="directory" readonly="true" crop="center" flex="1" />
+			</hbox>
+		</vbox>
+	</radiogroup>
 </overlay>
