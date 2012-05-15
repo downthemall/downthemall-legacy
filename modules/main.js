@@ -158,9 +158,9 @@ exports.clean = function clean() {
 	}
 }
 
-Services.obs.addObserver({
+const unloadObserver = {
 	observe: function() {
-		Services.obs.removeObserver("profile-change-teardown", this);
+		Services.obs.removeObserver(this, "profile-change-teardown");
 
 		let branch = Preferences.getBranch('privacy.');
 		// has user pref'ed to sanitize on shutdown?
@@ -168,7 +168,9 @@ Services.obs.addObserver({
 			exports.clean();
 		}
 	}
-}, "profile-change-teardown", false);
+};
+Services.obs.addObserver(unloadObserver, "profile-change-teardown", false);
+unload(function sanitizeUnload() unloadObserver.observe());
 
 function registerTools() {
 	require("support/contenthandling");
