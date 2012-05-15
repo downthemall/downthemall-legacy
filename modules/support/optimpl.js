@@ -34,11 +34,9 @@ exports.createOptimizedImplementation = function createOptimizedImplementation(w
 		}
 
 		unload(function() {
-			moveFile = _moveFile_plain;
-			if (_worker) {
-				_worker.postMessage("close");
-				_worker = null;
-			}
+			log(LOG_INFO, "Closing worker " + workerURI);
+			_worker.postMessage("close");
+			_worker = null;
 		});
 
 		_worker.onmessage = function(event) {
