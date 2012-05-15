@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const EXPORTED_SYMBOLS = ["require", "lazyRequire", "requireJoined", "requireJSM", "unload", "Services", "Instances", "XPCOMUtils", "LRUMap"];
+const EXPORTED_SYMBOLS = ["require", "requireJoined", "requireJSM", "unload", "Services", "Instances", "XPCOMUtils", "LRUMap"];
 
 const {
 	classes: Cc,
@@ -224,30 +224,6 @@ LRUMap.prototype = {
 		for (let [k,v] in Iterator(module)) {
 			where[k] = v;
 		}
-	};
-	exports.lazyRequire = function lazyRequire(module) {
-		function lazyBind(props, prop) {
-			let m = require(module);
-			for (let [,p] in Iterator(props)) {
-				delete this[p];
-				this[p] = m[p];
-			}
-			return this[prop];
-		};
-
-		// Already loaded?
-		if (module in _registry) {
-			return _registry[module];
-		}
-
-		let props = Array.slice(arguments, 1);
-		let rv = {};
-		let binder = lazyBind.bind(rv, props);
-		for (let [,p] in Iterator(props)) {
-			let _p = p;
-			lazy(rv, _p, function() binder(_p));
-		}
-		return rv;
 	};
 	exports.requireJSM = function requireJSM(mod) {
 		let _m = {};
