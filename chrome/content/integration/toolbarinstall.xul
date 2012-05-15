@@ -114,6 +114,9 @@
 				}
 
 				try {
+					var evt = document.createEvent("Events");
+					evt.initEvent("aftercustomization", true, true);
+					tb.toolbox.dispatchEvent(evt);
 					opener.BrowserToolboxCustomizeDone(true);
 				} catch(ex) {}
 			}, true);

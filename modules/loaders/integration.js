@@ -16,6 +16,8 @@ lazy(this, "ContentHandling", function() require("support/contenthandling").Cont
 lazy(this, 'CoThreads', function() require("cothreads"));
 lazy(this, 'getString_str',	function() Services.strings.createBundle('chrome://dta/locale/menu.properties'));
 
+const {unloadWindow} = require("support/overlays");
+
 /* **
  * Helpers and tools
  */
@@ -1405,7 +1407,7 @@ exports.load = function load(window, outerEvent) {
 		function bindEvt(evt, fn) {
 			return function (e) {
 				e.addEventListener(evt, fn, true);
-				unloadWindow(function() e.removeEventListener(evt, fn, true));
+				unloadWindow(window, function() e.removeEventListener(evt, fn, true));
 			}
 		}
 		function bindCtxEvt(ctx, evt, fn) {
@@ -1476,49 +1478,22 @@ exports.load = function load(window, outerEvent) {
 		evt.target == ctx ? onContextShowing(evt) : onToolsShowing(evt);
 	}
 
-	let unloadWindow = (function() {
-		function unload_i(cb) {
-			if (cb) {
-				unloaders.push(cb);
-				return;
-			}
-
-			while (unloaders.length) {
-				let u = unloaders.pop();
-				try {
-					u();
-				}
-				catch (ex) {}
-			}
-			unloaders = [];
-		}
-		let unloaders = [];
-		let listen;
-		window.addEventListener("unload", listen = (function() {
-			window.removeEventListener("unload", listen, false);
-			unload_i();
-			listen = null;
-		}), false);
-
-		return unload_i;
-	})();
-
 	ctx.addEventListener('popupshowing', initMenus, true);
 	menu.addEventListener('popupshowing', initMenus, true);
 
 	/*window.addEventListener("keydown", onKeyDown, false);
-	unloadWindow(function() window.removeEventListener("keydown", onKeyDown, false));
+	unloadWindow(window, function() window.removeEventListener("keydown", onKeyDown, false));
 
 	window.addEventListener("keyup", onKeyUp, false);
-	unloadWindow(function() window.removeEventListener("keyup", onKeyUp, false));
+	unloadWindow(window, function() window.removeEventListener("keyup", onKeyUp, false));
 
 	window.addEventListener("blur", onBlur, true);
-	unloadWindow(function() window.removeEventListener("blur", onBlur, true));*/
+	unloadWindow(window, function() window.removeEventListener("blur", onBlur, true));*/
 
 	let appcontent = document.getElementById("appcontent");
 	if (appcontent) {
 		appcontent.addEventListener("DOMContentLoaded", onToolbarInstall, true);
-		unloadWindow(function() appcontent.removeEventListener("DOMContentLoaded", onToolbarInstall, true));
+		unloadWindow(window, function() appcontent.removeEventListener("DOMContentLoaded", onToolbarInstall, true));
 	}
 
 	/* Toolbar buttons */
@@ -1584,34 +1559,55 @@ exports.load = function load(window, outerEvent) {
 
 			let dta_button = $t('dta-button');
 			dta_button.addEventListener('command', dta_button_command, true);
-			unloadWindow(function() dta_button.removeEventListener('command', dta_button_command, true));
+			unloadWindow(window, function() dta_button.removeEventListener('command', dta_button_command, true));
 			dta_button.addEventListener('dragover', dta_button_drag, true);
-			unloadWindow(function() dta_button.removeEventListener('dragover', dta_button_drag, true));
+			unloadWindow(window, function() dta_button.removeEventListener('dragover', dta_button_drag, true));
 			dta_button.addEventListener('dragdrop', dta_button_drop, true);
-			unloadWindow(function() dta_button.removeEventListener('dragdrop', dta_button_drop, true));
+			unloadWindow(window, function() dta_button.removeEventListener('dragdrop', dta_button_drop, true));
 
 
 			let dta_turbo_button = $t('dta-turbo-button');
 			dta_turbo_button.addEventListener('command', dta_turbo_button_command, true);
-			unloadWindow(function() dta_turbo_button.removeEventListener('command', dta_turbo_button_command, true));
+			unloadWindow(window, function() dta_turbo_button.removeEventListener('command', dta_turbo_button_command, true));
 			dta_turbo_button.addEventListener('dragover', dta_turbo_button_drag, true);
-			unloadWindow(function() dta_turbo_button.removeEventListener('dragover', dta_turbo_button_drag, true));
+			unloadWindow(window, function() dta_turbo_button.removeEventListener('dragover', dta_turbo_button_drag, true));
 			dta_turbo_button.addEventListener('dragdrop', dta_turbo_button_drop, true);
-			unloadWindow(function() dta_turbo_button.removeEventListener('dragdrop', dta_turbo_button_drop, true));
+			unloadWindow(window, function() dta_turbo_button.removeEventListener('dragdrop', dta_turbo_button_drop, true));
 
 			let dta_turboselect_button = $t('dta-turboselect-button');
 			dta_turboselect_button.addEventListener('command', dta_turboselect_button_command, true);
-			unloadWindow(function() dta_turboselect_button.removeEventListener('command', dta_turboselect_button_command, true));
-			unloadWindow(function() detachOneClick);
+			unloadWindow(window, function() dta_turboselect_button.removeEventListener('command', dta_turboselect_button_command, true));
+			unloadWindow(window, function() detachOneClick);
 
 			let dta_manager_button = $t('dta-manager-button')
 			dta_manager_button.addEventListener('command', dta_manager_button_command, true);
-			unloadWindow(function() dta_manager_button.removeEventListener('command', dta_manager_button_command, true));
+			unloadWindow(window, function() dta_manager_button.removeEventListener('command', dta_manager_button_command, true));
 		})();
 	}
 	catch (ex) {
 		log(LOG_ERROR, "Init TBB failed", ex);
 	}
+
+	let afterCustomization = function() {
+		for (let [,id] in Iterator(["dta-button", "dta-turbo-button", "dta-turboselect-button", "dta-manager-button"])) {
+			let d = $(id);
+			if (!d) {
+				document.documentElement.removeAttribute(id);
+				document.persist(document.documentElement.id, id);
+				continue;
+			}
+			let info = {
+				tid: d.parentNode.id,
+				tcs: d.parentNode.currentSet.split(",")
+			}
+			document.documentElement.setAttribute(id, JSON.stringify(info));
+			document.persist(document.documentElement.id, id);
+		}
+	};
+	window.addEventListener("aftercustomization", afterCustomization, "true");
+	unloadWindow(window, function storeSet() {
+		window.removeEventListener("aftercustomization", afterCustomization, "true");
+	});
 
 	if (outerEvent) {
 		log(LOG_DEBUG, "replaying event");
