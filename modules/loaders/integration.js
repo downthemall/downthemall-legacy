@@ -1426,6 +1426,7 @@ exports.load = function load(window, outerEvent) {
 				node.setAttribute('id', node.id + "-direct");
 				ctx.insertBefore(node, ctxBase.nextSibling);
 				direct[id] = node;
+				unloadWindow(window, function() node.parentNode.removeChild(node));
 			}
 
 			// prepare tools
