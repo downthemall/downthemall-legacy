@@ -94,6 +94,7 @@ exports.log = function(level, message, exception) {
 		return;
 	}
 	try {
+		message = message || "undefined";
 		if (message instanceof Ci.nsIScriptError || message instanceof Ci.nsIException || message.fileName) {
 			exception = message;
 			message = exception.message;
