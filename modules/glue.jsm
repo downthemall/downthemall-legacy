@@ -26,6 +26,9 @@ Cu.import("resource://gre/modules/Services.jsm");
 
 const lazy = XPCOMUtils.defineLazyGetter;
 
+let log = function logStub() {}
+let LOG_DEBUG = 0, LOG_INFO = 0, LOG_WARN = 0;
+
 //Map shim
 if (!("Map" in this)) {
 	this.Map = function() {
@@ -191,20 +194,18 @@ LRUMap.prototype = {
 		}
 
 		// try to load the module
-		// log(LOG_DEBUG, "going to load: " + module);
+		log(LOG_DEBUG, "going to load: " + module);
 		let scope = {exports: Object.create(null)};
 		try {
 			Services.scriptloader.loadSubScript(module, scope);
 		}
 		catch (ex) {
-			Cu.reportError(module);
-			Cu.reportError(ex);
-			// log(LOG_ERROR, "failed to load " + module, ex);
+			log(LOG_ERROR, "failed to load " + module, ex);
 			throw ex;
 		}
 
 		_registry[module] = scope.exports;
-		// log(LOG_DEBUG, "loaded module: " + module);
+		log(LOG_DEBUG, "loaded module: " + module);
 
 		return scope.exports;
 	};
