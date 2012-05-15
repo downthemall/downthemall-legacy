@@ -9,7 +9,7 @@ function startup(data) {
 	// will unload itself
 	Components.utils.import("chrome://dta-modules/content/glue.jsm", {});
 }
-function shutdown(reason) {
+function shutdown(data, reason) {
 	if (reason === APP_SHUTDOWN) {
 		// No need to cleanup; stuff will vanish anyway
 		return;
