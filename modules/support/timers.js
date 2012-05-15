@@ -3,8 +3,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const EXPORTED_SYMBOLS = ['TimerManager'];
-
 const nsITimer = Ci.nsITimer;
 
 function uuid() Services.uuid.generateUUID().toString();
@@ -28,10 +26,10 @@ TimerData.prototype = {
 	cancel: function() this.timer.cancel(),
 	toString: function() this.uuid,
 	observe: function(timer) {
+		this.execute();
 		if (this.timer.type == nsITimer.TYPE_ONE_SHOT) {
 			this.owner.killTimer(this.uuid);
 		}
-		this.execute();
 	},
 	execute: function() {
 		try {
@@ -89,7 +87,11 @@ TimerManager.prototype = {
 	 */
 	killTimer: function TM_kill(uuid) {
 		if (uuid in this._timers) {
-			this._timers[uuid].cancel();
+			let td = this._timers[uuid];
+			td.cancel();
+			delete td.func;
+			delete td.ctx;
+			delete td.timer;
 			delete this._timers[uuid];
 		}
 	},
@@ -97,9 +99,13 @@ TimerManager.prototype = {
 	 * Kills all timers associated with this TimerManager instance
 	 */
 	killAllTimers: function TM_killAll() {
-		for (let td in this._timers) {
+		for (let uuid in this._timers) {
 			try {
+				let td = this._timers[uuid];
 				td.cancel();
+				delete td.func;
+				delete td.ctx;
+				delete td.timer;
 			}
 			catch (ex) {
 				// no op
