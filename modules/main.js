@@ -233,6 +233,8 @@ function registerOverlays() {
 				log(LOG_DEBUG, "no button persistence for " + id, ex);
 			}
 		}
+		log(LOG_DEBUG, "running elementsStub");
+
 		window.setTimeout(function dta_firewalkswithme() {
 			fire._unloaders = [];
 			fire._runUnloaders = function() {
@@ -243,6 +245,7 @@ function registerOverlays() {
 					catch (ex) {
 					}
 				}
+				fire._unloaders = [];
 			};
 			fire.addFireListener = function(elem, type) {
 				if (!elem) {
@@ -258,6 +261,7 @@ function registerOverlays() {
 			fire.addFireListener($("dta-turboselect-button"), "command");
 			fire.addFireListener($("dta-manager-button"), "command");
 			fire.addFireListener($("cmd_CustomizeToolbars"), "command");
+			unload(function() fire._runUnloaders());
 		}, 100);
 
 		window.setTimeout(function dta_showabout() {
