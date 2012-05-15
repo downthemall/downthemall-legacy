@@ -39,7 +39,6 @@ overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overl
 
 ## Seamonkey ##
 overlay	chrome://navigator/content/navigator.xul chrome://dta/content/integration/elements.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
-style	chrome://dta/content/dta/manager.xul chrome://dta/skin/manager/seamonkey.css application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
 
 ## Aero ##
 override chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager-aero.xul os=WINNT osversion>=6
