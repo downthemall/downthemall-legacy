@@ -307,7 +307,11 @@ function registerOverlays() {
 	const {registerOverlay, watchWindows, unloadWindow} = require("support/overlays");
 	registerOverlay("chrome://dta/content/integration/elements.xul", "chrome://browser/content/browser.xul", elementsStub);
 	registerOverlay("chrome://dta/content/integration/elements.xul", "chrome://navigator/content/navigator.xul", elementsStub);
-	registerOverlay("chrome://dta/content/integration/customize.xul", "chrome://global/content/customizeToolbar.xul", function() {});
+	watchWindows("chrome://global/content/customizeToolbar.xul", function(window, document) {
+		let ss = document.createProcessingInstruction("xml-stylesheet", 'href="chrome://dta/skin/integration/style.css" type="text/css"');
+		document.insertBefore(ss, document.documentElement);
+		unloadWindow(window, function() ss.parentNode.removeChild(ss));
+	});
 
 	registerOverlay("chrome://dta/content/integration/saveas.xul", "chrome://mozapps/content/downloads/unknownContentType.xul", function(window, document) {
 		require("loaders/saveas").load(window, document);
