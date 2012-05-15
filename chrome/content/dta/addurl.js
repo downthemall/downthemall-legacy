@@ -332,3 +332,8 @@ var Dialog = {
 		}
 	}
 }
+
+unloadWindow(window, function() {
+	log(LOG_DEBUG, "closed an addurl window");
+	close();
+});

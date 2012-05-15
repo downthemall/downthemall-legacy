@@ -326,3 +326,7 @@ function checkMirrors() {
 }
 
 addEventListener('load', load, true);
+unloadWindow(window, function() {
+	log(LOG_DEBUG, "closed a mirror window");
+	close();
+});
