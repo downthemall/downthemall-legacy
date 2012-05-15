@@ -29,7 +29,6 @@
 	id="DownThemAll"
 	class="selectlinks"
 	onload="Dialog.load();"
-	onunload="Dialog.unload();"
 	persist="width height screenX screenY"
 	style="margin: 0px;"
 >
@@ -179,7 +178,7 @@
 		</hbox>
 	</vbox>
 
- 	<hbox align="baseline" pack="end" style="margin: 2px 7px 4px 7px" >
+	<hbox align="baseline" pack="end" style="margin: 2px 7px 4px 7px" >
 		<button accesskey="&start.key;" label="&start.label;" id="startbutton" command="cmdStart" default="true"/>
 		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" command="cmdQueue" />
 		<button id="cancelbutton" command="cmdClose" />

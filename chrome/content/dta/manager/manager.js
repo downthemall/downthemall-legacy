@@ -1165,7 +1165,7 @@ const Dialog = {
 		);
 		log(LOG_INFO, "Still running: " + chunks + " Finishing: " + finishing);
 		if (chunks || finishing) {
-			if (this._safeCloseAttempts < 20) {
+			if (!this._forceClose && this._safeCloseAttempts < 20) {
 				++this._safeCloseAttempts;
 				Timers.createOneshot(250, function() this.shutdown(callback), this);
 				return false;
@@ -1231,6 +1231,10 @@ const Dialog = {
 	}
 };
 addEventListener('load', function() Dialog.init(), false);
+unloadWindow(window, function () {
+	Dialog._forceClose = true;
+	Dialog.close();
+})
 
 const Metalinker = {
 	handleDownload: function ML_handleDownload(download) {

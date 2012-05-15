@@ -616,3 +616,8 @@ const Prefs = {
 		}
 	}
 }
+
+unloadWindow(window, function() {
+	log(LOG_DEBUG, "closed a pref window");
+	close();
+});
