@@ -214,8 +214,8 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 			}
 			xul.nodes.push(n);
 		}
-		if (!xul.styles.length && xul.nodes.length) {
-			log(LOG_INFO, "There is only XUL ... but there wasn't");
+		if (!xul.styles.length && !xul.nodes.length) {
+			log(LOG_INFO, "There is only XUL ... but there wasn't" + _r.responseText);
 			return;
 		}
 		overlayCache.set(src, xul);
