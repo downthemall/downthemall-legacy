@@ -1,10 +1,12 @@
-## general ##
+## actual content packages ##
 content	dta	chrome/content/
 content	dtaicon	./
 skin	dta	classic/1.0 chrome/skin/
 locale	dta	en-US	chrome/locale/en-US/
 content dta-public	chrome/public/ contentaccessible
 skin	dta-public	classic/1.0 chrome/public/
+
+## aux packages ##
 content dta-tests tests/
 content	dta-modules	modules/
 
@@ -12,17 +14,7 @@ content	dta-modules	modules/
 content dta-platform	chrome/content/ platform
 skin	dta-platform	classic/1.0 chrome/skin/
 
-## Loader ##
-component {27a344f4-7c1b-43f3-af7f-bb9dd65114bb} components/services.js
-contract @downthemall.net/stuff;1 {27a344f4-7c1b-43f3-af7f-bb9dd65114bb}
-category profile-after-change @downthemall.net/stuff;1 @downthemall.net/stuff;1
-
-### integration ###
-
-## general ##
 override chrome://dta/skin/toolbarbuttons/buttons.css chrome://dta-platform/skin/buttons-fx4.css application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
-
-## Aero ##
 override chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager-aero.xul os=WINNT osversion>=6
 override chrome://dta-platform/skin/common.css chrome://dta-platform/skin/common-aero.css os=WINNT osversion>=6
 override chrome://dta/skin/manager/netstatus.png chrome://dta-platform/skin/netstatus-aero.png os=WINNT osversion>=6
