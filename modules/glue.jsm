@@ -114,6 +114,7 @@ LRUMap.prototype = {
 	itor("XHR", "@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
 	itor("DOMSerializer", "@mozilla.org/xmlextras/xmlserializer;1", "nsIDOMSerializer");
 	itor("MimeInputStream", "@mozilla.org/network/mime-input-stream;1", "nsIMIMEInputStream");
+	itor("SupportsBool","@mozilla.org/supports-PRBool;1", "nsISupportsPRBool");
 	itor("SupportsString","@mozilla.org/supports-string;1", "nsISupportsString");
 	itor("SupportsUint32","@mozilla.org/supports-PRUint32;1", "nsISupportsPRUint32");
 	itor("Transferable", "@mozilla.org/widget/transferable;1", "nsITransferable");
@@ -168,6 +169,17 @@ LRUMap.prototype = {
 	}
 	exports.unload = function unload(fn) {
 		if (fn == "shutdown") {
+			if (arguments.length > 1 && arguments[1]) {
+				let cancel = new Instances.SupportsBool();
+				cancel.data = false;
+				Services.obs.notifyObservers(cancel, "DTA:upgrade", null);
+				if (cancel.data) {
+					log(LOG_INFO, "Not going down right now - vetoed!");
+					return;
+				}
+				// reboot :p
+				setExt("rebootOnce", true);
+			}
 			for (let i = _unloaders.length; ~(--i);) {
 				_runUnloader(_unloaders[i]);
 			}
@@ -271,7 +283,7 @@ LRUMap.prototype = {
 		exports[k] = logging[k];
 		exports.EXPORTED_SYMBOLS.push(k);
 	}
-	const {getExt, addObserver} = require("preferences");
+	const {getExt, setExt, addObserver} = require("preferences");
 	const LogPrefObs = {
 		observe: function(s,t,d) {
 			logging.setLogLevel(getExt("logging") ? logging.LOG_DEBUG : logging.LOG_NONE);

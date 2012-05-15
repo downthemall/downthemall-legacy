@@ -49,11 +49,19 @@ const Observer = {
 			this.scheduleNext();
 		}
 	},
+	openManager: function() {
+		let wnd = require("support/mediator").getMostRecent();
+		if (!wnd) {
+			Timers.createOneshot(1000, this.openManager.bind(this));
+			return;
+		}
+		DTA.openManager(wnd);
+	},
 	openIfQueued: function() {
 		QueueStore.loadItems(function(items) {
 			if (items.some(function(i) i.item.state == QueueStore.QUEUED)) {
 				log(LOG_INFO, "auto-opening");
-				DTA.openManager();
+				this.openManager();
 			}
 			else {
 				log(LOG_INFO, "not opening: No queued items");
@@ -64,6 +72,12 @@ const Observer = {
 		this.cancelTimer();
 
 		let disabled = true;
+		if (Prefs.getExt("rebootOnce", false)) {
+			Prefs.setExt("rebootOnce", false);
+			disabled = false;
+			log(LOG_INFO, "rebooting once");
+			this.openManager();
+		}
 		if (Prefs.getExt("schedule.enabled", false)) {
 			let start = Prefs.getExt("schedule.start", 0);
 			let end = Prefs.getExt("schedule.end", 0);
