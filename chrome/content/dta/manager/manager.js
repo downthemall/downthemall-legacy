@@ -60,7 +60,7 @@ const {Chunk} = require("manager/chunk");
 const {Connection} = require("manager/connection");
 
 XPCOMUtils.defineLazyGetter(this, "Version", function() require("version"));
-const AlertService = lazyRequire("support/alertservice", "show");
+XPCOMUtils.defineLazyGetter(this, "AlertService", function() require("support/alertservice"));
 XPCOMUtils.defineLazyGetter(this, "Decompressor", function() require("manager/decompressor").Decompressor);
 XPCOMUtils.defineLazyGetter(this, "Verificator", function() require("manager/verificator"));
 XPCOMUtils.defineLazyGetter(this, "FileExts", function() new FileExtensionSheet(window));
