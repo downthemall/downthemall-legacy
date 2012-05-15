@@ -21,6 +21,7 @@ exports.unloadWindow = function unloadWindow(window, fn) {
 		}
 	});
 	window.addEventListener('unload', handler, false);
+	return handler;
 };
 
 // Watch for new browser windows opening then wait for it to load
