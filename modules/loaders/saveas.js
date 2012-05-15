@@ -13,7 +13,7 @@ lazy(this, 'Preferences', function() require("preferences"));
 /* **
  * Loader
  */
-exports.load = function load(window) {
+exports.load = function load(window, document) {
 	function $() {
 		if (arguments.length == 1) {
 			return document.getElementById(arguments[0]);
@@ -96,7 +96,6 @@ exports.load = function load(window) {
 		de.cancelDialog();
 	}
 
-	let document = window.document;
 	let dialog = window.dialog;
 
 	let basicBox = $('basicBox');
