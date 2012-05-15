@@ -49,38 +49,4 @@
 			onsyncfrompreference="return gSanitizePromptDialog.onReadGeneric();"
 			/>
 	</listbox>
-	<script type="text/javascript"><![CDATA[
-
-		if ('Sanitizer' in this) {
-			Sanitizer.prototype.items['extensions-dta'] = {
-				clear: function() {
-					try	{
-						Components.utils.import("chrome://dta-modules/content/glue.jsm", {})
-							.require("main")
-							.clean();
-					}
-					catch (ex) {
-						Components.utils.reportError(ex);
-					}
-				},
-				get canClear() {
-					return true;
-				}
-			};
-		}
-		addEventListener('load', function() {
-			removeEventListener('load', arguments.callee, true);
-
-			let msg = Components.classes['@mozilla.org/intl/stringbundle;1']
-				.getService(Components.interfaces.nsIStringBundleService)
-				.createBundle('chrome://dta/locale/sanitize.properties')
-				.GetStringFromName('sanitizeitem');
-			document.getElementById('dtaSanitizeItem').setAttribute('label', msg);
-
-			if (!('Sanitizer' in this)) {
-				return;
-			}
-		}, true);
-	]]></script>
-
 </overlay>

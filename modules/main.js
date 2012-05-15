@@ -298,13 +298,64 @@ function registerOverlays() {
 			maybeInsertButton(id);
 		}
 	}
-	const {registerOverlay, unloadWindow} = require("support/overlays");
+	const {registerOverlay, watchWindows, unloadWindow} = require("support/overlays");
 	registerOverlay("chrome://dta/content/integration/elements.xul", "chrome://browser/content/browser.xul", elementsStub);
 	registerOverlay("chrome://dta/content/integration/elements.xul", "chrome://navigator/content/navigator.xul", elementsStub);
 	registerOverlay("chrome://dta/content/integration/customize.xul", "chrome://global/content/customizeToolbar.xul", function() {});
 
 	registerOverlay("chrome://dta/content/integration/saveas.xul", "chrome://mozapps/content/downloads/unknownContentType.xul", function(window, document) {
 		require("loaders/saveas").load(window, document);
+	});
+	watchWindows("chrome://browser/content/preferences/sanitize.xul", function(window, document) {
+		const PREF = 'privacy.clearOnShutdown.extensions-dta';
+		try {
+			let prefs = document.getElementsByTagName('preferences')[0];
+			let pref = document.createElement('preference');
+			pref.setAttribute('id', PREF);
+			pref.setAttribute('name', PREF);
+			pref.setAttribute('type', 'bool');
+			prefs.appendChild(pref);
+
+			let rows = document.getElementsByTagName('rows');
+			rows = rows[rows.length - 1];
+
+			let msg = Services.strings.createBundle('chrome://dta/locale/sanitize.properties')
+				.GetStringFromName('sanitizeitem');
+
+			let check = document.createElement('checkbox');
+			check.setAttribute('label', msg);
+			check.setAttribute('preference', PREF);
+
+			let row = document.createElement('row');
+			row.appendChild(check);
+			rows.appendChild(row);
+
+			pref.updateElements();
+		}
+		catch (ex) {
+			Components.utils.reportError(ex);
+		}
+	});
+	registerOverlay("chrome://dta/content/privacy/overlaySanitize191.xul", "chrome://browser/content/sanitize.xul", function(window, document) {
+		if ('Sanitizer' in window) {
+			window.Sanitizer.prototype.items['extensions-dta'] = {
+				clear: function() {
+					try	{
+						exports.clean();
+					}
+					catch (ex) {
+						log(LOG_ERROR, "Failed to clean", ex);
+						Components.utils.reportError(ex);
+					}
+				},
+				get canClear() {
+					return true;
+				}
+			};
+		}
+		let msg = Services.strings.createBundle('chrome://dta/locale/sanitize.properties')
+			.GetStringFromName('sanitizeitem');
+		document.getElementById('dtaSanitizeItem').setAttribute('label', msg);
 	});
 }
 
