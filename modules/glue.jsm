@@ -10,9 +10,12 @@ const {
 	interfaces: Ci,
 	utils: Cu,
 	results: Cr,
+	manager: Cm,
 	Constructor: ctor,
 	Exception: Exception
 } = Components;
+Cm.QueryInterface(Ci.nsIComponentRegistrar);
+
 const {
 	getWeakReference: weak,
 	reportError: reportError
@@ -169,14 +172,14 @@ LRUMap.prototype = {
 	}
 	Services.obs.addObserver({
 		observe: function SHUTDOWN_observe(s,t,d) {
-			Services.obs.removeObserver(this, "xpcom-shutdown");
+			Services.obs.removeObserver(this, "profile-change-teardown");
 			for (let i = _unloaders.length; ~(--i);) {
 				_runUnloader(_unloaders[i]);
 			}
 			_unloaders.splice(0);
 			log(LOG_DEBUG, "glue went down and took unloaders with it!");
 		}
-	}, "xpcom-shutdown", false);
+	}, "profile-change-teardown", false);
 
 	const _registry = Object.create(null);
 	exports.require = function require(module) {
@@ -261,6 +264,12 @@ LRUMap.prototype = {
 	require("version").getInfo(function(v) {
 		log(LOG_INFO, v.NAME + "/" + v.VERSION + " on " + v.APP_NAME + "/" + v.APP_VERSION + " (" + v.LOCALE + " / " + v.OS + ") ready");
 	});
+	try {
+		require("main").main();
+	}
+	catch (ex) {
+		log(LOG_ERROR, "main failed to run", ex);
+	}
 
 	/* XXX: Reconsider when making restartless
 	unload(function() {
