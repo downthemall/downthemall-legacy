@@ -39,7 +39,7 @@
 	</stringbundleset>
 
 	<prefpane id="paneMain" label="&mainpane.label;" src="chrome://dta/content/preferences/mainPane.xul" />
-	<prefpane id="paneInterface" label="&uipane.label;" />
+	<prefpane id="paneInterface" label="&uipane.label;" src="chrome://dta/content/preferences/interfacePane.xul" />
 	<prefpane id="paneServers" label="&serverspane.label;" src="chrome://dta/content/preferences/serversPane.xul" />
 	<prefpane id="panePrivacy" label="&privacypane.label;" src="chrome://dta/content/preferences/privacyPane.xul" />
 	<prefpane id="paneFilters" label="&filterspane.label;" src="chrome://dta/content/preferences/filtersPane.xul" />
