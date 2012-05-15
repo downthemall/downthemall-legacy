@@ -220,7 +220,7 @@ function resetAllExt() {
 function addObserver(branch, obj) {
 	makeObserver(obj);
 	prefs.addObserver(branch, obj, true);
-	return function() removeObserver(branch, obj);
+	return unload(function() removeObserver(branch, obj));
 }
 
 /**
