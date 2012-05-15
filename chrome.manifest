@@ -12,13 +12,9 @@ content	dta-modules	modules/
 content dta-platform	chrome/content/ platform
 skin	dta-platform	classic/1.0 chrome/skin/
 
-## Components ##
+## Loader ##
 component {27a344f4-7c1b-43f3-af7f-bb9dd65114bb} components/services.js
 contract @downthemall.net/stuff;1 {27a344f4-7c1b-43f3-af7f-bb9dd65114bb}
-
-component {bbaedbd9-9567-4d11-9255-0bbae236ecab} components/services.js
-contract @mozilla.org/network/protocol/about;1?what=downthemall {bbaedbd9-9567-4d11-9255-0bbae236ecab}
-
 category profile-after-change @downthemall.net/stuff;1 @downthemall.net/stuff;1
 
 ### integration ###

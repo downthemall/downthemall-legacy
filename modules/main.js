@@ -1,0 +1,201 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+
+const Preferences = require("preferences");
+const Version = require("version");
+
+/**
+ * AboutModule
+ */
+const ABOUT_URI = 'https://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_ID%&version=%APP_VERSION%&os=%OS%';
+
+function AboutModule() {
+}
+AboutModule.prototype = {
+	classDescription: "DownThemAll! about module",
+	classID: Components.ID('{bbaedbd9-9567-4d11-9255-0bbae236ecab}'),
+	contractID: '@mozilla.org/network/protocol/about;1?what=downthemall',
+
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule]),
+
+	newChannel : function(aURI) {
+		try {
+				if (!Version.ready) {
+					throw new Exception("Cannot build about:downthemall, version module not ready");
+				}
+
+				let ru = ABOUT_URI.replace(
+					/%(.+?)%/g,
+					function (m, m1) (m1 in Version) ? Version[m1] : m
+				);
+
+				let uri = Services.io.newURI(ru, null, null);
+				let chan = Services.io.newChannelFromURI(uri);
+				chan.originalURI = aURI;
+
+				let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
+				chan.owner = sec.getCodebasePrincipal(uri);
+
+				return chan;
+		}
+		catch (ex) {
+			log(LOG_ERROR, "failed to create about channel", ex);
+			throw ex;
+		}
+	},
+	getURIFlags: function(aURI) Ci.nsIAboutModule.URI_SAFE_FOR_UNTRUSTED_CONTENT
+};
+
+function registerComponents() {
+	for (let [,cls] in Iterator([AboutModule])) {
+		const factory = {
+			_cls: cls,
+			createInstance: function(outer, iid) {
+				if (outer) {
+					throw Cr.NS_ERROR_NO_AGGREGATION;
+				}
+				return new cls();
+			}
+		};
+		Cm.registerFactory(cls.prototype.classID, cls.prototype.classDescription, cls.prototype.contractID, factory);
+		unload(function() {
+			Cm.unregisterFactory(factory._cls.prototype.classID, factory);
+		});
+	}
+}
+
+function migrate() {
+	/*
+	 * Various migration
+	 */
+	const fn1_0 = [
+		function() {
+			// 1.0.1: #613 Multiple "slow-down" reports
+			log("resetting connection prefs");
+			for each (let e in ['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server']) {
+				Preferences.reset(e);
+			}
+		},
+	];
+
+	(function migrate() require("version").getInfo(function(v) {
+		try {
+			let lastVersion = Preferences.getExt('version', '0');
+			if (0 == v.compareVersion(v.BASE_VERSION, lastVersion)) {
+				return;
+			}
+			if (v.compareVersion(lastVersion, "1.0.1") < 0) {
+				fn1_0.forEach(function(fn) fn());
+			}
+			Preferences.setExt('version', v.BASE_VERSION);
+
+			v.showAbout = true;
+			Services.obs.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
+
+			// Need to extract icons
+			require("support/iconcheat").loadWindow(null);
+		}
+		catch (ex) {
+			log(LOG_ERROR, "MigrationManager", ex);
+			try {
+				Preferences.resetExt("version");
+			}
+			catch (iex) {
+				// XXX
+			}
+		}
+	}))();
+}
+
+exports.clean = function clean() {
+	log(LOG_INFO, 'clean()');
+
+	// Cleaning prefs
+	for each (let e in ['directory', 'filter', 'renaming']) {
+		try {
+			Preferences.resetExt(e);
+		}
+		catch (ex) {
+			log("Cannot clear pref: " + e, ex);
+		}
+	}
+
+	// Cleaning files
+	try {
+		let prof = Services.dirsvc.get("ProfD", Ci.nsIFile);
+		for each (let e in ['dta_history.xml']) {
+			try {
+				var file = prof.clone();
+				file.append(e);
+				if (file.exists()) {
+					file.remove(false);
+				}
+			}
+			catch (ex) {
+				log(LOG_ERROR, 'Cannot remove: ' + e, ex);
+			}
+		}
+	}
+	catch (oex) {
+		log(LOG_ERROR, 'failed to clean files: ', oex);
+	}
+
+	// Diagnostic log
+	try {
+		log.clear();
+	}
+	catch (ex) {
+		log(LOG_ERROR, "Cannot clear diagnostic log", ex);
+	}
+
+	try {
+		require("manager/queuestore").QueueStore.clear();
+	}
+	catch (ex) {
+		log(LOG_ERROR, "Cannot clear queue", ex);
+	}
+}
+
+Services.obs.addObserver({
+	observe: function() {
+		Services.obs.removeObserver("profile-change-teardown", this);
+
+		let branch = Preferences.getBranch('privacy.');
+		// has user pref'ed to sanitize on shutdown?
+		if (branch.getBoolPref('sanitize.sanitizeOnShutdown') && branch.getBoolPref('clearOnShutdown.extensions-dta')) {
+			exports.clean();
+		}
+	}
+}, "profile-change-teardown", false);
+
+function registerTools() {
+	try {
+		require("support/contenthandling");
+	}
+	catch (ex) {
+		log(LOG_ERROR, "failed to init contenthandling", ex);
+	}
+
+	try {
+		// DownloadHelper integration
+		if (("dhICore" in Ci) && ("dhIProcessor" in Ci)) {
+			require("support/downloadHelper");
+		}
+	}
+	catch (ex) {
+		log(LOG_ERROR, "failed to init downloadHelper", ex);
+	}
+}
+
+exports.main = function main() {
+	log(LOG_INFO, "running main");
+
+	registerComponents();
+
+	migrate();
+
+	registerTools();
+
+}
