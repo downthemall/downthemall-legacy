@@ -32,10 +32,6 @@ if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingServ
 		function Observer() {
 			Services.obs.addObserver(this, "private-browsing", false);
 			Services.obs.addObserver(this, "private-browsing-cancel-vote", false);
-			unload((function() {
-				Services.obs.removeObserver(this, "private-browsing");
-				Services.obs.removeObserver(this, "private-browsing-cancel-vote");
-			}).bind(this));
 		}
 		Observer.prototype = {
 			QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
