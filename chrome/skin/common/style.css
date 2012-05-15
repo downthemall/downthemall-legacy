@@ -137,10 +137,6 @@ maskbutton .toolbarbutton-text,
 	list-style-image: none;
 }
 
-scrollbarbutton[sbattr="scrollbar-up-bottom"]{
-	display: -moz-box !important;
-
-}
 treechildren::-moz-tree-cell-text(selected) {
 	font-weight: bold;
 }
