@@ -171,22 +171,137 @@ Services.obs.addObserver({
 }, "profile-change-teardown", false);
 
 function registerTools() {
-	try {
-		require("support/contenthandling");
+	require("support/contenthandling");
+	if (("dhICore" in Ci) && ("dhIProcessor" in Ci)) {
+		require("support/downloadHelper");
 	}
-	catch (ex) {
-		log(LOG_ERROR, "failed to init contenthandling", ex);
-	}
+	require("support/scheduleautostart");
+}
 
-	try {
-		// DownloadHelper integration
-		if (("dhICore" in Ci) && ("dhIProcessor" in Ci)) {
-			require("support/downloadHelper");
+function registerOverlays() {
+	function elementsStub(window, document) {
+		function $(id) document.getElementById(id);
+		function fire(event) {
+			fire._runUnloaders();
+
+			Components.utils.import("chrome://dta-modules/content/glue.jsm", {})
+				.require("loaders/integration")
+				.load(window, event);
+		}
+		function maybeInsertButton(id) {
+			function setCurrentSet(tb, cs) {
+				tb.currentSet = cs.join(",");
+				tb.setAttribute("currentset", tb.currentSet);
+				tb.ownerDocument.persist(tb.id, "currentset");
+			}
+			try {
+				let info = JSON.parse(document.documentElement.getAttribute(id));
+				if (!info) {
+					throw new Error("null info");
+				}
+				let tb = $(info.tid);
+				let idx = info.tcs.indexOf(id);
+				if (!~idx) {
+					throw new Error("invalid index: " + id + " " + info.tcs.toSource());
+				}
+				let cs = tb.currentSet.split(",");
+				// search right
+				for (let i = idx + 1, e = info.tcs.length; i < e; ++i) {
+					let tidx = cs.indexOf(info.tcs[i]);
+					if (!~tidx) {
+						continue;
+					}
+					cs.splice(tidx, 0, id);
+					return setCurrentSet(tb, cs);
+				}
+				//search left
+				for (let i = idx; ~--i;) {
+					let tidx = cs.indexOf(info.tcs[i]);
+					if (!~tidx) {
+						continue;
+					}
+					cs.splice(tidx + 1, 0, id);
+					return setCurrentSet(tb, cs);
+				}
+				log(LOG_DEBUG, id + ": no insertion point found, appending!", ex);
+				cs.push(id);
+				return setCurrentSet(tb, cs);
+			}
+			catch (ex) {
+				log(LOG_DEBUG, "no button persistence for " + id, ex);
+			}
+		}
+		window.setTimeout(function dta_firewalkswithme() {
+			fire._unloaders = [];
+			fire._runUnloaders = function() {
+				for (let i = 0; i < fire._unloaders.length; ++i) {
+					try {
+						fire._unloaders[i]();
+					}
+					catch (ex) {
+					}
+				}
+			};
+			fire.addFireListener = function(elem, type) {
+				if (!elem) {
+					return;
+				}
+				fire._unloaders.push(function() elem.removeEventListener(type, fire, false));
+				elem.addEventListener(type, fire, false);
+			};
+			fire.addFireListener($("dtaCtxCompact").parentNode, "popupshowing");
+			fire.addFireListener($("dtaToolsMenu").parentNode, "popupshowing");
+			fire.addFireListener($("dta-button"), "command");
+			fire.addFireListener($("dta-turbo-button"), "command");
+			fire.addFireListener($("dta-turboselect-button"), "command");
+			fire.addFireListener($("dta-manager-button"), "command");
+			fire.addFireListener($("cmd_CustomizeToolbars"), "command");
+		}, 100);
+
+		window.setTimeout(function dta_showabout() {
+			function dta_showabout_i() {
+				function openAbout() {
+					fire(null);
+					Version.showAbout = false;
+					window.setTimeout(function() require("support/mediator").showAbout(window), 0);
+				}
+				function registerObserver() {
+					Services.obs.addObserver({
+						observe: function(s,t,d) {
+							Services.obs.removeObserver(this, Version.TOPIC_SHOWABOUT);
+							if (Version.showAbout) {
+								openAbout();
+							}
+						}
+					}, Version.TOPIC_SHOWABOUT, true);
+				}
+
+				try {
+					if (Version.showAbout === null) {
+						registerObserver();
+						return;
+					}
+					if (Version.showAbout === true) {
+						openAbout();
+						return;
+					}
+				}
+				catch (ex) {
+				}
+			}
+			dta_showabout_i();
+		}, 2000);
+
+		log(LOG_DEBUG, "running elementsStub");
+
+		for (let [,id] in Iterator(["dta-button", "dta-turbo-button", "dta-turboselect-button", "dta-manager-button"])) {
+			maybeInsertButton(id);
 		}
 	}
-	catch (ex) {
-		log(LOG_ERROR, "failed to init downloadHelper", ex);
-	}
+	const {registerOverlay, unloadWindow} = require("support/overlays");
+	registerOverlay("chrome://dta/content/integration/elements.xul", "chrome://browser/content/browser.xul", elementsStub);
+	registerOverlay("chrome://dta/content/integration/elements.xul", "chrome://navigator/content/navigator.xul", elementsStub);
+	registerOverlay("chrome://dta/content/integration/customize.xul", "chrome://global/content/customizeToolbar.xul", function() {});
 }
 
 exports.main = function main() {
@@ -197,5 +312,7 @@ exports.main = function main() {
 	migrate();
 
 	registerTools();
+
+	registerOverlays();
 
 }
