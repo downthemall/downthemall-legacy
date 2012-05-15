@@ -303,3 +303,29 @@ Object.defineProperties(exports, {
 	"makeObserver": {value: makeObserver, enumerable: true}
 });
 Object.freeze(exports);
+
+(function setDefaultPrefs() {
+	log(LOG_INFO, "setting default preferences");
+	const branch = Services.prefs.getDefaultBranch("");
+	let scope = {pref: function(key, val) {
+		log(LOG_INFO, "setting pref " + key + ": " + val);
+		if (typeof val == 'number') {
+			branch.setIntPref(key, val);
+			return;
+		}
+		if (typeof val == 'boolean') {
+			branch.setBoolPref(key, val);
+			return;
+		}
+		let str = new Instances.SupportsString();
+		str.data = val.toString();
+		branch.setComplexValue(key, Ci.nsISupportsString, str);
+	}};
+	try {
+		Services.scriptloader.loadSubScript(BASE_PATH + "defaultPrefs.js", scope);
+	}
+	// errors here should not kill addon
+	catch (ex) {
+		log(LOG_ERROR, "failed to setup default preferences", ex);
+	}
+})();
