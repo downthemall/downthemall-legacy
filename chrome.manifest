@@ -22,10 +22,6 @@ category profile-after-change @downthemall.net/stuff;1 @downthemall.net/stuff;1
 ## general ##
 override chrome://dta/skin/toolbarbuttons/buttons.css chrome://dta-platform/skin/buttons-fx4.css application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 
-# privacy control - Firefox starting 3.5
-overlay chrome://browser/content/preferences/sanitize.xul	chrome://dta/content/privacy/overlaySanitizePref191.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
-overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitize191.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
-
 ## Aero ##
 override chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager-aero.xul os=WINNT osversion>=6
 override chrome://dta-platform/skin/common.css chrome://dta-platform/skin/common-aero.css os=WINNT osversion>=6
