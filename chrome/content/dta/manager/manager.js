@@ -97,7 +97,8 @@ const Dialog = {
 		'network:offline-status-changed',
 		'DTA:filterschanged',
 		'DTA:clearedQueueStore',
-		'DTA:shutdownQueueStore'
+		'DTA:shutdownQueueStore',
+		"DTA:upgrade",
 	],
 	_initialized: false,
 	_autoRetrying: [],
@@ -679,8 +680,28 @@ const Dialog = {
 				}
 			}
 		}
+		else if (topic == "DTA:upgrade") {
+			if (!this._canClose()) {
+				delete this._forceClose;
+				try {
+					let cancelQuit = subject.QueryInterface(Ci.nsISupportsPRBool);
+					cancelQuit.data = true;
+					this._mustReload = true;
+					for each (let d in Tree.all) {
+						if (d.is(RUNNING) && d.resumable) {
+							d.pause();
+							d.queue();
+						}
+					}
+				}
+				catch (ex) {
+					log(LOG_ERROR, "cannot set cancelQuit on upgrade", ex);
+				}
+			}
+		}
 		else if (topic == 'quit-application-granted') {
 			this._forceClose = true;
+			delete this._mustReload;
 		}
 		else if (topic == 'network:offline-status-changed') {
 			this.offline = data == "offline";
@@ -915,7 +936,7 @@ const Dialog = {
 				this._autoClears = [];
 			}
 
-			if (!this.offline) {
+			if (!this.offline && !this._mustReload) {
 				if (Prefs.autoRetryInterval) {
 					filterInSitu(this._autoRetrying, function(d) !d.autoRetry());
 				}
@@ -1049,6 +1070,10 @@ const Dialog = {
 		}
 		try {
 			// check if there is something running or scheduled
+			if (this._mustReload) {
+				Dialog.close();
+				return;
+			}
 			if (this.startNext() || Tree.some(this._signal_some)) {
 				return;
 			}
@@ -1226,6 +1251,17 @@ const Dialog = {
 		Tree.clear();
 		QueueStore.flush();
 		FileExts = null;
+		if (this._mustReload) {
+			unload("shutdown");
+			try {
+				Preferences.setExt("rebootOnce", true);
+				Cu.import("chrome://dta-modules/content/glue.jsm", {});
+			}
+			catch (ex) {
+				// may fail, if the add-on was disabled in between
+				// not to worry!
+			}
+		}
 		Dialog = null;
 		return true;
 	}
