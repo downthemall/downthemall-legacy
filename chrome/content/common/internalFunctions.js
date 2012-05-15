@@ -55,6 +55,7 @@ const Preferences = require("preferences");
 const Mediator = require("support/mediator");
 const {FilterManager} = require("support/FilterManager");
 const {toURI, toURL} = require("support/stringfuncs");
+const {unloadWindow} = require("support/overlays");
 
 const DTA = {
 	showPreferences: function(pane, command) Mediator.showPreferences(window, pane, command)

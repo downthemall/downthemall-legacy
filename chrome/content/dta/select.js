@@ -293,6 +293,8 @@ let Dialog = {
 	// will be called to initialize the dialog
 	load: function DTA_load() {
 
+		this.unload = unloadWindow(window, this.unload.bind(this));
+
 		// construct or dropdowns.
 		this.ddFilter = $('filter');
 		this.ddDirectory = $('directory');
