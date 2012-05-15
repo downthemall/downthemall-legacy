@@ -48,6 +48,7 @@ TimerData.prototype = {
  */
 function TimerManager() {
 	this._timers = {};
+	unload((function timerManager_destroy() this.killAllTimers()).bind(this));
 }
 TimerManager.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
