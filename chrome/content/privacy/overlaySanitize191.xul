@@ -55,9 +55,9 @@
 			Sanitizer.prototype.items['extensions-dta'] = {
 				clear: function() {
 					try	{
-						Components.classes["@downthemall.net/stuff;1"]
-							.getService(Components.interfaces.nsIObserver)
-							.observe(null, 'clean', null);
+						Components.utils.import("chrome://dta-modules/content/glue.jsm", {})
+							.require("main")
+							.clean();
 					}
 					catch (ex) {
 						Components.utils.reportError(ex);
