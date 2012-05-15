@@ -1414,8 +1414,7 @@ exports.load = function load(window, outerEvent) {
 			$(ctx, ctx + "-direct").forEach(bindEvt(evt, fn));
 		}
 
-		ctx.removeEventListener('popupshowing', initMenus, true);
-		menu.removeEventListener('popupshowing', initMenus, true);
+		initMenus_unload();
 
 		try {
 			let cont = $('dtaCtxSubmenu');
@@ -1481,6 +1480,10 @@ exports.load = function load(window, outerEvent) {
 
 	ctx.addEventListener('popupshowing', initMenus, true);
 	menu.addEventListener('popupshowing', initMenus, true);
+	let initMenus_unload = unloadWindow(window, function initMenus_unload() {
+		ctx.removeEventListener('popupshowing', initMenus, true);
+		menu.removeEventListener('popupshowing', initMenus, true);
+	});
 
 	/*window.addEventListener("keydown", onKeyDown, false);
 	unloadWindow(window, function() window.removeEventListener("keydown", onKeyDown, false));
