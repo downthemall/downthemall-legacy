@@ -155,31 +155,31 @@ LRUMap.prototype = {
 			fn.apply(null, args);
 		}
 		catch (ex) {
-			// XXX: transplant new logging infrastructure
-			// log(LOG_ERROR, "unloader failed", ex);
+			try {
+				log(LOG_ERROR, "unloader failed", ex);
+			}
+			catch (iex) {
+				reportError(ex);
+			}
 		}
 	}
 	exports.unload = function unload(fn) {
-	// add an unloader
-	if (typeof(fn) != "function") {
-		throw new Error("unloader is not a function");
-	}
-	_unloaders.push(fn);
-	return function() {
-		_runUnloader(fn, arguments);
-		_unloaders = _unloaders.filter(function(c) c != fn);
-	};
-	}
-	Services.obs.addObserver({
-		observe: function SHUTDOWN_observe(s,t,d) {
-			Services.obs.removeObserver(this, "profile-change-teardown");
+		if (fn == "shutdown") {
 			for (let i = _unloaders.length; ~(--i);) {
 				_runUnloader(_unloaders[i]);
 			}
-			_unloaders.splice(0);
-			log(LOG_DEBUG, "glue went down and took unloaders with it!");
+			return;
 		}
-	}, "profile-change-teardown", false);
+		// add an unloader
+		if (typeof(fn) != "function") {
+			throw new Error("unloader is not a function");
+		}
+		_unloaders.push(fn);
+		return function() {
+			_runUnloader(fn, arguments);
+			_unloaders = _unloaders.filter(function(c) c != fn);
+		};
+	}
 
 	const _registry = Object.create(null);
 	exports.require = function require(module) {
@@ -247,6 +247,23 @@ LRUMap.prototype = {
 		return _m;
 	};
 
+	// registry unloader; must be first :p
+	unload(function() {
+		log(LOG_INFO, "glue going down");
+		try {
+			let keys = Object.keys(_registry);
+			for (let i = keys.length; ~(--i);) {
+				delete _registry[keys[i]];
+			}
+			// unload ourselves
+			Cu.unload(SELF_PATH);
+			reportError("unloaded self");
+		}
+		catch (ex) {
+			reportError(ex);
+		}
+	});
+
 	// init autoloaded modules
 	const logging = require("logging");
 	for (let [,k] in Iterator(Object.keys(logging))) {
@@ -270,14 +287,4 @@ LRUMap.prototype = {
 	catch (ex) {
 		log(LOG_ERROR, "main failed to run", ex);
 	}
-
-	/* XXX: Reconsider when making restartless
-	unload(function() {
-	let keys = Object.keys(_registry);
-	for (let i = keys.length; ~(--i);) {
-		delete _registry[keys[i]];
-	}
-	// unload ourselves
-	Cu.unload(SELF_PATH);
-	});*/
 })(this);
