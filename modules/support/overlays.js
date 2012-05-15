@@ -191,7 +191,6 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 
 	let _r = new Instances.XHR();
 	_r.onload = function() {
-		log(LOG_DEBUG, "loaded: " + src);
 		let document = _r.responseXML;
 
 		// clean the document a bit
@@ -216,7 +215,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 			xul.nodes.push(n);
 		}
 		if (!xul.styles.length && !xul.nodes.length) {
-			log(LOG_INFO, "There is only XUL ... but there wasn't" + _r.responseText);
+			log(LOG_ERROR, "There is only XUL ... but there wasn't" + _r.responseText);
 			return;
 		}
 		overlayCache.set(src, xul);

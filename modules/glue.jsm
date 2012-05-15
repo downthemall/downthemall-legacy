@@ -206,7 +206,6 @@ LRUMap.prototype = {
 		}
 
 		// try to load the module
-		log(LOG_DEBUG, "going to load: " + module);
 		let scope = {exports: Object.create(null)};
 		try {
 			Services.scriptloader.loadSubScript(module, scope);
@@ -217,7 +216,6 @@ LRUMap.prototype = {
 		}
 
 		_registry[module] = scope.exports;
-		log(LOG_DEBUG, "loaded module: " + module);
 
 		return scope.exports;
 	};
@@ -229,7 +227,6 @@ LRUMap.prototype = {
 	};
 	exports.lazyRequire = function lazyRequire(module) {
 		function lazyBind(props, prop) {
-			//log(LOG_DEBUG, "lazily binding " + props + " for module " + module);
 			let m = require(module);
 			for (let [,p] in Iterator(props)) {
 				delete this[p];
@@ -240,7 +237,6 @@ LRUMap.prototype = {
 
 		// Already loaded?
 		if (module in _registry) {
-			//log(LOG_DEBUG, "not lazily binding " + module + "; already loaded");
 			return _registry[module];
 		}
 
@@ -270,7 +266,6 @@ LRUMap.prototype = {
 			}
 			// unload ourselves
 			Cu.unload(SELF_PATH);
-			reportError("unloaded self");
 		}
 		catch (ex) {
 			reportError(ex);
