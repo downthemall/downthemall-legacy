@@ -39,16 +39,13 @@ exports.load = function load(window, document) {
 				e.disabled = true;
 			}
 		);
-		$('normalBox').collapsed = false;
-		var nodes = $('normalBox')
-			.getElementsByTagName('separator');
-
+		var nodes = normalBox.getElementsByTagName('separator');
 		for (var i = 0; i < nodes.length; ++i) {
 			nodes[i].collapsed = true;
 		}
 
-		$('basicBox').collapsed = true;
-		$('normalBox').collapsed = false;
+		basicBox.collapsed = true;
+		normalBox.collapsed = false;
 
 		// take care of FlashGot... for now.
 		// need to negotiate with the author (and possible other extension authors)
@@ -96,75 +93,75 @@ exports.load = function load(window, document) {
 		de.cancelDialog();
 	}
 
-	let dialog = window.dialog;
+	const dialog = window.dialog;
 
-	let basicBox = $('basicBox');
-	let normalBox = $('normalBox');
-	const doRevert = basicBox && (!basicBox.collapsed || (normalBox && normalBox.collapsed));
-	const doOverlay = Preferences.getExt("downloadWin", true);
-	if (
-		!doOverlay
-		&& typeof(gFlashGotDMDialog) == 'undefined'
-	) {
-		// we do not actually overlay!
-		return;
-	}
-	if (doRevert) {
-		revertUI();
-	}
-
-	if (!doOverlay) {
-		// we do not actually overlay!
-		// but we revert to help FlashGot ;)
-		return;
-	}
-
+	const basicBox = $('basicBox');
+	const normalBox = $('normalBox');
 	const normal = $('downthemall');
 	const turbo = $('turbodta');
 	const turboExec = $('turbodtaexec');
 	const mode = $('mode');
 	const remember = $("rememberChoice");
 	const settingsChange = $("settingsChange");
-
-	$('downthemallcontainer').collapsed = false;
-	normal.disabled = false;
-
-	let url = ContentHandling.getRedirect(dialog.mLauncher.source);
-	let referrer;
-	try {
-		referrer = dialog.mContext.QueryInterface(Ci.nsIWebNavigation).currentURI.spec;
-	}
-	catch(ex) {
-		referrer = url.spec;
-	}
-
-	let ml = DTA.getLinkPrintMetalink(url);
-	url = new DTA.URL(ml ? ml : url);
-
 	const ddDirectory = $('tdtalist');
-	let mask = DTA.getDropDownValue('renaming');
-	if (!($("tdta").hidden = (DTA.getDropDownValue('directory') == '' || !mask))) {
-		turbo.disabled = false;
-		turboExec.disabled = false;
-	}
 
-	try {
-		switch (Preferences.getExt('saveasmode', 0)) {
-			case 1:
-				mode.selectedItem = normal;
-				break;
-			case 2:
-				mode.selectedItem = turbo.disabled ? normal : turbo;
-				break;
+	window.setTimeout(function() {
+		// Need to get behind the default load event
+		const doRevert = basicBox && (!basicBox.collapsed || (normalBox && normalBox.collapsed));
+		const doOverlay = Preferences.getExt("downloadWin", true);
+
+		if (!doOverlay && typeof(gFlashGotDMDialog) == 'undefined') {
+			// we do not actually overlay!
+			return;
 		}
-		if (Preferences.getExt('saveasmode', 0)) {
-			remember.checked = true;
-			remember.disabled = false;
+		if (doRevert) {
+			revertUI();
 		}
-	}
-	catch (ex) {
-		// no op
-	}
+
+		if (!doOverlay) {
+			// we do not actually overlay!
+			// but we revert to help FlashGot ;)
+			return;
+		}
+		$('downthemallcontainer').collapsed = false;
+		normal.disabled = false;
+
+		let url = ContentHandling.getRedirect(dialog.mLauncher.source);
+		let referrer;
+		try {
+			referrer = dialog.mContext.QueryInterface(Ci.nsIWebNavigation).currentURI.spec;
+		}
+		catch(ex) {
+			referrer = url.spec;
+		}
+
+		let ml = DTA.getLinkPrintMetalink(url);
+		url = new DTA.URL(ml ? ml : url);
+
+		let mask = DTA.getDropDownValue('renaming');
+		if (!($("tdta").hidden = (DTA.getDropDownValue('directory') == '' || !mask))) {
+			turbo.disabled = false;
+			turboExec.disabled = false;
+		}
+
+		try {
+			switch (Preferences.getExt('saveasmode', 0)) {
+				case 1:
+					mode.selectedItem = normal;
+					break;
+				case 2:
+					mode.selectedItem = turbo.disabled ? normal : turbo;
+					break;
+			}
+			if (Preferences.getExt('saveasmode', 0)) {
+				remember.checked = true;
+				remember.disabled = false;
+			}
+		}
+		catch (ex) {
+			// no op
+		}
+	}, 0);
 
 	mode.addEventListener(
 		'select',
