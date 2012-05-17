@@ -109,7 +109,7 @@
 				try {
 					let glue = {};
 					Components.utils.import("chrome://dta-modules/content/glue.jsm", glue);
-					this.hist = glue.require("support/historyManager").getHistory(this._pref);
+					this.hist = glue.require("support/historymanager").getHistory(this._pref);
 					this._load();
 				}
 				catch (ex) {
