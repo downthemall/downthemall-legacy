@@ -53,7 +53,7 @@ module("chrome://dta-modules/content/glue.jsm", this);
 requireJoined(this, "constants");
 const Preferences = require("preferences");
 const Mediator = require("support/mediator");
-const {FilterManager} = require("support/FilterManager");
+const {FilterManager} = require("support/filtermanager");
 const {toURI, toURL} = require("support/stringfuncs");
 const {unloadWindow} = require("support/overlays");
 
