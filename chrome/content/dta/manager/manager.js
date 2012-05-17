@@ -681,6 +681,7 @@ const Dialog = {
 			}
 		}
 		else if (topic == "DTA:upgrade") {
+			Preferences.setExt("rebootOnce", true);
 			if (!this._canClose()) {
 				delete this._forceClose;
 				try {
@@ -1254,7 +1255,6 @@ const Dialog = {
 		if (this._mustReload) {
 			unload("shutdown");
 			try {
-				Preferences.setExt("rebootOnce", true);
 				Cu.import("chrome://dta-modules/content/glue.jsm", {});
 			}
 			catch (ex) {
