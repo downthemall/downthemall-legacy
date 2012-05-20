@@ -5,7 +5,7 @@
 
 const {makeObserver} = require("preferences");
 
-let available = false;
+exports.available = false;
 let service = null;
 let alerting = false;
 let supportsClickable = true;
@@ -42,14 +42,14 @@ const Observer = {
 try {
 	service = Cc['@mozilla.org/alerts-service;1'].getService(Ci.nsIAlertsService);
 	makeObserver(Observer);
-	available = true;
+	exports.available = true;
 }
 catch (ex) {
 	// no-op
 }
 
 exports.show = function alertservice_show(title, msg, callback) {
-	if (!available) {
+	if (!exports.available) {
 		throw new Exception("Alerting Service not available on this platform!");
 	}
 	if (alerting) {
