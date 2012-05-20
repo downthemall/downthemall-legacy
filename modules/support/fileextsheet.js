@@ -14,7 +14,8 @@ function FileExtensionSheet(window) {
 	let document = window.document;
 	this._stylesheet = null;
 	try {
-		for each (let ss in document.styleSheets) {
+		for (let i = document.styleSheets.length; ~--i;) {
+			let ss = document.styleSheets.item(i);
 			if (/^chrome:\/\/dta\//.test(ss.href)) {
 				this._stylesheet = ss;
 				log(LOG_DEBUG, "found stylesheet " + ss.href + ", rules: " + ss.cssRules.length);
@@ -27,6 +28,7 @@ function FileExtensionSheet(window) {
 	}
 	catch (ex) {
 		log(LOG_ERROR, "sheet:", ex);
+		throw ex;
 	}
 	this._entries = {};
 }
