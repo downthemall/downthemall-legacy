@@ -85,10 +85,12 @@ exports.getExtension = function(str) {
 };
 
 exports.cropCenter = function(str, newLength) {
-	if (str.length > newLength) {
-		return str.substr(0, newLength / 2)
+	const length = str.length;
+	const max = newLength / 2;
+	if (length > newLength) {
+		return str.substr(0, max)
 			+ "..."
-			+ str.substr(str.length - newLength / 2, str.length);
+			+ str.substr(length - max);
 	}
 	return str;
 };
