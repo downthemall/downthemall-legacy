@@ -1,4 +1,4 @@
-module("historymanager.js");
+module("support/historymanager.js");
 (function() {
 	function SetupHistoryManager(key) {
 		this.key = key;

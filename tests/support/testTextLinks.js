@@ -1,4 +1,4 @@
-module("textlinks.js");
+module("support/textlinks.js");
 
 test("exports", function() {
 	checkExports("support/textlinks", ["getTextLinks", "FakeLink"]);
