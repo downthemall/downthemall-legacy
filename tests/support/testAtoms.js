@@ -1,4 +1,4 @@
-module("atoms.jsm");
+module("support/atoms.js");
 
 test("exports", function() {
 	checkExports("support/atoms", [
