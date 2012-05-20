@@ -572,6 +572,6 @@ exports.reveal = function reveal(file) {
 		// try to open the directory instead
 		// (either because the file does not exist anymore
 		// or because the platform does not implement reveal);
-		launch(file.parent);
+		exports.launch(file.parent);
 	}
 }
