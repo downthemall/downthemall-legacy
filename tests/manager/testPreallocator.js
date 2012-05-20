@@ -1,5 +1,5 @@
 "use strict";
-module("preallocator.jsm");
+module("manager/preallocator.js");
 
 (function() {
 	function _do_test(title, impl, size, sparse) {

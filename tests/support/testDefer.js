@@ -1,4 +1,4 @@
-module("defer.jsm");
+module("support/defer.js");
 
 test("exports", function() {
 	checkExports("support/defer", ["defer"]);
