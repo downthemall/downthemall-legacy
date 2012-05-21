@@ -197,6 +197,7 @@ function registerOverlays() {
 				tb.ownerDocument.persist(tb.id, "currentset");
 			}
 			try {
+				log(LOG_DEBUG, "maybeInsertButton: " + id);
 				let info = JSON.parse(document.documentElement.getAttribute(id));
 				if (!info) {
 					throw new Error("null info");
@@ -214,6 +215,7 @@ function registerOverlays() {
 						continue;
 					}
 					cs.splice(tidx, 0, id);
+					log(LOG_DEBUG, id + ": inserting right: " + tidx + "\n" + cs.toSource() + "\n" + info.toSource());
 					return setCurrentSet(tb, cs);
 				}
 				//search left
@@ -223,9 +225,10 @@ function registerOverlays() {
 						continue;
 					}
 					cs.splice(tidx + 1, 0, id);
+					log(LOG_DEBUG, id + ": inserting left: " + (tidx + 1) + "\n" + cs.toSource() + "\n" + info.toSource());
 					return setCurrentSet(tb, cs);
 				}
-				log(LOG_DEBUG, id + ": no insertion point found, appending!", ex);
+				log(LOG_DEBUG, id + ": no insertion point found, appending!");
 				cs.push(id);
 				return setCurrentSet(tb, cs);
 			}
