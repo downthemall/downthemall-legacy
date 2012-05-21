@@ -1592,27 +1592,6 @@ exports.load = function load(window, outerEvent) {
 		log(LOG_ERROR, "Init TBB failed", ex);
 	}
 
-	let afterCustomization = function() {
-		for (let [,id] in Iterator(["dta-button", "dta-turbo-button", "dta-turboselect-button", "dta-manager-button"])) {
-			let d = $(id);
-			if (!d) {
-				document.documentElement.removeAttribute(id);
-				document.persist(document.documentElement.id, id);
-				continue;
-			}
-			let info = {
-				tid: d.parentNode.id,
-				tcs: d.parentNode.currentSet.split(",")
-			}
-			document.documentElement.setAttribute(id, JSON.stringify(info));
-			document.persist(document.documentElement.id, id);
-		}
-	};
-	window.addEventListener("aftercustomization", afterCustomization, "true");
-	unloadWindow(window, function storeSet() {
-		window.removeEventListener("aftercustomization", afterCustomization, "true");
-	});
-
 	if (outerEvent) {
 		log(LOG_DEBUG, "replaying event");
 		let target = outerEvent.target;

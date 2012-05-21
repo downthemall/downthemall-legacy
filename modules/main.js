@@ -190,50 +190,24 @@ function registerOverlays() {
 				.require("loaders/integration")
 				.load(window, event);
 		}
-		function maybeInsertButton(id) {
-			function setCurrentSet(tb, cs) {
-				tb.currentSet = cs.join(",");
-				tb.setAttribute("currentset", tb.currentSet);
-				tb.ownerDocument.persist(tb.id, "currentset");
-			}
+		function maybeInsertButtons(ids) {
+			// Simply need to get the currentset attribute, which will still contain
+			// the id and reset it and tb.currentSet
 			try {
-				log(LOG_DEBUG, "maybeInsertButton: " + id);
-				let info = JSON.parse(document.documentElement.getAttribute(id));
-				if (!info) {
-					throw new Error("null info");
-				}
-				let tb = $(info.tid);
-				let idx = info.tcs.indexOf(id);
-				if (!~idx) {
-					throw new Error("invalid index: " + id + " " + info.tcs.toSource());
-				}
-				let cs = tb.currentSet.split(",");
-				// search right
-				for (let i = idx + 1, e = info.tcs.length; i < e; ++i) {
-					let tidx = cs.indexOf(info.tcs[i]);
-					if (!~tidx) {
+				for (let [,tb] in Iterator(document.getElementsByTagName("toolbar"))) {
+					let tcs = tb.getAttribute("currentset").split(",");
+					if (!ids.some(function(id) ~tcs.indexOf(id))) {
 						continue;
 					}
-					cs.splice(tidx, 0, id);
-					log(LOG_DEBUG, id + ": inserting right: " + tidx + "\n" + cs.toSource() + "\n" + info.toSource());
-					return setCurrentSet(tb, cs);
+					tb.currentSet = tcs.join(",");
+					tb.setAttribute("currentset", tb.currentSet);
+					tb.ownerDocument.persist(tb.id, "currentset");
+					log(LOG_DEBUG, "buttons restored in " + tb.id);
+					return;
 				}
-				//search left
-				for (let i = idx; ~--i;) {
-					let tidx = cs.indexOf(info.tcs[i]);
-					if (!~tidx) {
-						continue;
-					}
-					cs.splice(tidx + 1, 0, id);
-					log(LOG_DEBUG, id + ": inserting left: " + (tidx + 1) + "\n" + cs.toSource() + "\n" + info.toSource());
-					return setCurrentSet(tb, cs);
-				}
-				log(LOG_DEBUG, id + ": no insertion point found, appending!");
-				cs.push(id);
-				return setCurrentSet(tb, cs);
 			}
 			catch (ex) {
-				log(LOG_DEBUG, "no button persistence for " + id, ex);
+				log(LOG_DEBUG, "maybeInsertButtons failed for " + ids, ex);
 			}
 		}
 		log(LOG_DEBUG, "running elementsStub");
@@ -303,9 +277,7 @@ function registerOverlays() {
 
 		log(LOG_DEBUG, "running elementsStub");
 
-		for (let [,id] in Iterator(["dta-button", "dta-turbo-button", "dta-turboselect-button", "dta-manager-button"])) {
-			maybeInsertButton(id);
-		}
+		maybeInsertButtons(["dta-button", "dta-turbo-button", "dta-turboselect-button", "dta-manager-button"]);
 	}
 	const {registerOverlay, watchWindows, unloadWindow} = require("support/overlays");
 	registerOverlay("chrome://dta/content/integration/elements.xul", "chrome://browser/content/browser.xul", elementsStub);
