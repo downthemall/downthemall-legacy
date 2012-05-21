@@ -105,6 +105,8 @@ exports.load = function load(window, document) {
 	const settingsChange = $("settingsChange");
 	const ddDirectory = $('tdtalist');
 
+	let url, referrer, mask;
+
 	window.setTimeout(function() {
 		// Need to get behind the default load event
 		const doRevert = basicBox && (!basicBox.collapsed || (normalBox && normalBox.collapsed));
@@ -126,8 +128,7 @@ exports.load = function load(window, document) {
 		$('downthemallcontainer').collapsed = false;
 		normal.disabled = false;
 
-		let url = ContentHandling.getRedirect(dialog.mLauncher.source);
-		let referrer;
+		url = ContentHandling.getRedirect(dialog.mLauncher.source);
 		try {
 			referrer = dialog.mContext.QueryInterface(Ci.nsIWebNavigation).currentURI.spec;
 		}
@@ -138,7 +139,7 @@ exports.load = function load(window, document) {
 		let ml = DTA.getLinkPrintMetalink(url);
 		url = new DTA.URL(ml ? ml : url);
 
-		let mask = DTA.getDropDownValue('renaming');
+		mask = DTA.getDropDownValue('renaming');
 		if (!($("tdta").hidden = (DTA.getDropDownValue('directory') == '' || !mask))) {
 			turbo.disabled = false;
 			turboExec.disabled = false;
