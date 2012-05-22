@@ -18,6 +18,7 @@ if (available) {
 			this.__defineGetter__("title", function() title);
 			this.__defineGetter__("description", function() description);
 			core.registerProcessor(this);
+			unload((function() core.unregisterProcessor(this)).bind(this));
 		},
 
 		QueryInterface: XPCOMUtils.generateQI([Ci.dhIProcessor, Ci.sehISecretHelperProcessorExtra]),
