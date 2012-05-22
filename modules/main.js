@@ -5,6 +5,7 @@
 
 const Preferences = require("preferences");
 const Version = require("version");
+const {defer} = require("support/defer");
 
 /**
  * AboutModule
@@ -174,9 +175,12 @@ unload(function sanitizeUnload() unloadObserver.observe());
 
 function registerTools() {
 	require("support/contenthandling");
-	if (("dhICore" in Ci) && ("dhIProcessor" in Ci)) {
-		require("support/downloadHelper");
-	}
+	// Need to defer dhICore, as it may be registered after were running
+	defer(function() {
+		if (("dhICore" in Ci) && ("dhIProcessor" in Ci)) {
+			require("support/downloadHelper");
+		}
+	});
 	require("support/scheduleautostart");
 }
 
