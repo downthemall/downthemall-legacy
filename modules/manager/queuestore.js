@@ -136,6 +136,11 @@ const QueueStore = {
 		this.init(this._private);
 		Services.storage.notifyObservers(null, 'DTA:clearedQueueStore', null);
 	},
+	observe: function(s,topic,d) {
+		if (topic == "profile-change-teardown") {
+			this.shutdown();
+		}
+	},
 	enterPrivateBrowsing: function() {
 		log(LOG_INFO, "QueueManager: entering pbm");
 		this.reinit(true);
@@ -306,17 +311,19 @@ const QueueStore = {
 	}
 };
 
+pbm.registerCallbacks(QueueStore);
+QueueStore.init();
+Services.obs.addObserver(QueueStore, "profile-change-teardown", false);
+
 unload(function() {
 	try {
 		pbm.unregisterCallbacks(QueueStore);
+		Services.obs.removeObserver(QueueStore, "profile-change-teardown");
 		QueueStore.shutdown();
 	}
 	catch (ex) {
 		log(LOG_ERROR, "Failed to shutdown QueueStore", ex);
 	}
 });
-
-pbm.registerCallbacks(QueueStore);
-QueueStore.init();
 
 exports.QueueStore = QueueStore;
