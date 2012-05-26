@@ -1,5 +1,13 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
+#actions > toolbarbutton {
+	min-width: 26px;
+	min-height: 24px;
+}
+#actions > toolbarbutton:hover:not([disabled="true"]) {
+	-moz-appearance: toolbarbutton !important;
+}
+
 #search {
 	margin: 0;
 	margin-top: 2px;
