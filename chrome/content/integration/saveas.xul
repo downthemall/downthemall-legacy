@@ -39,7 +39,7 @@
  * ***** END LICENSE BLOCK ***** -->
 
 <?xml-stylesheet type="text/css" href="chrome://dta/content/common/bindings.css"?>
-<?xml-stylesheet type="text/css" href="chrome://dta/skin/common/saveas.css"?>
+<?xml-stylesheet type="text/css" href="chrome://dta/skin/integration/saveas.css"?>
 
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/saveas.dtd">
 <overlay id="downthemallDownloadSaveAs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
