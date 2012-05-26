@@ -2,5 +2,6 @@
 @namespace html url("http://www.w3.org/1999/xhtml");
 
 #turbodtaexec {
+	-moz-appearance: toolbarbutton;
 	list-style-image: url("chrome://dta/skin/toolbarbuttons/turbo.png");
 }
