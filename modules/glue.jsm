@@ -177,8 +177,6 @@ LRUMap.prototype = {
 					log(LOG_INFO, "Not going down right now - vetoed!");
 					return;
 				}
-				// reboot :p
-				setExt("rebootOnce", true);
 			}
 			for (let i = _unloaders.length; ~(--i);) {
 				_runUnloader(_unloaders[i]);
