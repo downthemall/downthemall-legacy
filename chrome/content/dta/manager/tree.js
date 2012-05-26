@@ -990,9 +990,10 @@ const Tree = {
 	export: function T_export() {
 		try {
 			let fp = new Instances.FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
-			fp.appendFilters(Ci.nsIFilePicker.filterText | Ci.nsIFilePicker.filterHTML);
+			fp.appendFilters(Ci.nsIFilePicker.filterHTML);
+			fp.appendFilters(Ci.nsIFilePicker.filterText);
 			fp.appendFilter(_('filtermetalink'), '*.metalink');
-			fp.appendFilter("All Files", '*');
+			fp.appendFilter(filterAll);
 			fp.defaultString = "download.metalink";
 			fp.filterIndex = 2;
 
@@ -1000,20 +1001,26 @@ const Tree = {
 			if (rv == Ci.nsIFilePicker.returnOK || rv == Ci.nsIFilePicker.returnReplace) {
 				let fs = fp.file;
 				if (!(/\.[\d\w-]{1,4}/.test(fs.leafName)) && fp.fileIndex != 3) {
-					if (fp.filterIndex == 0)
+					if (fp.filterIndex == 0) {
 						fs.leafName += ".html";
-					else if(fp.filterIndex == 2)
+					}
+					else if (fp.filterIndex == 2) {
 						fs.leafName += ".metalink"
-					else
+					}
+					else {
 						fs.leafName += ".txt";
+					}
 				}
 
-				if (/\.x?html$/i.test(fs.leafName) || fp.fileIndex == 0)
+				if (/\.x?html$/i.test(fs.leafName) || fp.fileIndex == 0) {
 					ImportExport.exportToHtmlFile(this.selected, document, fs, Prefs.permissions);
-				else if (/\.metalink$/i.test(fs.leafName) || fp.fileIndex == 2)
+				}
+				else if (/\.metalink$/i.test(fs.leafName) || fp.fileIndex == 2) {
 					ImportExport.exportToMetalinkFile(this.selected, document, fs, Prefs.permissions);
-				else
+				}
+				else {
 					ImportExport.exportToTextFile(this.selected, fs, Prefs.permissions);
+				}
 			}
 		}
 		catch (ex) {
