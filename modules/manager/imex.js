@@ -7,7 +7,7 @@ const DTA = require("api");
 const Preferences = require("preferences");
 const {getTextLinks} = require("support/textlinks");
 const Version = require("version");
-const {NS_DTA, NS_METALINKER3} = require("support/metalinker");
+const {NS_DTA, NS_METALINKER3, NS_METALINK_RFC5854} = require("support/metalinker");
 const {filterInSitu} = require("utils");
 
 const XPathResult = Ci.nsIDOMXPathResult;
@@ -225,6 +225,86 @@ exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocume
 
 	}
 	root.appendChild(files);
+
+	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
+	let xml = '<?xml version="1.0"?>\r\n';
+	fs.write(xml, xml.length);
+	Instances.domserializer.serializeToStream(document, fs, 'utf-8');
+	fs.close();
+}
+
+exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocument, aFile, aPermissions) {
+	let document = aDocument.implementation.createDocument(NS_METALINK_RFC5854, 'metalink', null);
+	let root = document.documentElement;
+	root.setAttribute('version', '4.0');
+
+	root.appendChild(document.createComment(
+			"metalink as exported by DownThemAll! on "
+			+ Version.APP_NAME + "/" + Version.APP_VERSION
+			+ "\r\nMay contain DownThemAll! specific information in the DownThemAll! namespace: "
+			+ NS_DTA
+			));
+
+	let generator = document.createElementNS(NS_METALINK_RFC5854, 'generator');
+	generator.textContent = 'DownThemAll!/' + Version.BASE_VERSION;
+	root.appendChild(generator);
+
+	/*TODO: need concrete example for origin in case of downthemall */
+
+	let publisher = document.createElementNS(NS_METALINK_RFC5854, 'publisher');
+	publisher.addAttributeNS(NS_METALINK_RFC5854, 'name', 'DownThemAll');
+	/* extention to include the real version */
+	publisher.addAttributeNS(NS_DATA, 'version', Version.Version);
+
+	let published = document.createElementNS(NS_METALINK_RFC5854, "published");
+	published.textContent = new Date().toUTCString();
+
+
+	for (let d in aDownloads) {
+		let f = document.createElementNS(NS_METALINK_RFC5854, 'file');
+		f.setAttribute('name', d.fileName);
+		f.setAttributeNS(NS_DTA, 'num', d.numIstance);
+		f.setAttributeNS(NS_DTA, 'startDate', d.startDate.getTime());
+		if (d.referrer) {
+			f.setAttributeNS(NS_DTA, 'referrer', d.referrer.spec);
+		}
+
+		if (d.description) {
+			let n = document.createElementNS(NS_METALINK_RFC5854, 'description');
+			n.textContent = d.description;
+			f.appendChild(n);
+		}
+
+		/* TODO: refactor the rest to follow the specs as well */
+		for (let u in d.urlManager.all) {
+			let t = u.url.spec.match(/^(\w+):/);
+			let n = document.createElementNS(NS_METALINK_RFC5854, 'url');
+			n.setAttribute('type', t[1]);
+			n.setAttribute('preference', u.preference);
+			n.setAttributeNS(NS_DTA, 'usable', u.usable);
+			n.textContent = u.url.spec;
+			f.appendChild(n);
+		}
+		if (d.hashCollection) {
+			let v = document.createElementNS(NS_METALINKER3, 'verification');
+			let h = document.createElementNS(NS_METALINKER3, 'hash');
+			h.setAttribute('type', d.hashCollection.full.type.toLowerCase());
+			h.textContent = d.hashCollection.full.sum.toLowerCase();
+			v.appendChild(h);
+			// XXX implement chunks
+			f.appendChild(v);
+		}
+
+		if (d.totalSize > 0) {
+			let s = document.createElementNS(NS_METALINKER3, 'size');
+			s.textContent = d.totalSize;
+			let t = u.url.spec.match(/^(\w+):/);
+			f.appendChild(s);
+		}
+
+		root.appendChild(f);
+
+	}
 
 	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
 	let xml = '<?xml version="1.0"?>\r\n';
