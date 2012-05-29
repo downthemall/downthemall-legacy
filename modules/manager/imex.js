@@ -252,9 +252,10 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 	/*TODO: need concrete example for origin in case of downthemall */
 
 	let publisher = document.createElementNS(NS_METALINK_RFC5854, 'publisher');
-	publisher.addAttributeNS(NS_METALINK_RFC5854, 'name', 'DownThemAll');
+	publisher.setAttributeNS(NS_METALINK_RFC5854, 'name', 'DownThemAll');
+
 	/* extention to include the real version */
-	publisher.addAttributeNS(NS_DATA, 'version', Version.Version);
+	publisher.setAttributeNS(NS_DTA, 'version', Version.Version);
 
 	let published = document.createElementNS(NS_METALINK_RFC5854, "published");
 	published.textContent = new Date().toUTCString();
@@ -275,30 +276,34 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 			f.appendChild(n);
 		}
 
-		/* TODO: refactor the rest to follow the specs as well */
 		for (let u in d.urlManager.all) {
 			let t = u.url.spec.match(/^(\w+):/);
-			let n = document.createElementNS(NS_METALINK_RFC5854, 'url');
-			n.setAttribute('type', t[1]);
-			n.setAttribute('preference', u.preference);
+			let n = {};
+			if(t[1] == "http" || t[1] == "https") {
+				n = document.createElementNS(NS_METALINK_RFC5854, 'url');
+
+			} else {
+				n = document.createElementNS(NS_METALINK_RFC5854, 'metaurl');
+				n.setAttribute('mediatype', t[1]);
+			}
+			n.setAttribute('priority', u.preference);
+
+			/* extention to include usabality of the url */
 			n.setAttributeNS(NS_DTA, 'usable', u.usable);
 			n.textContent = u.url.spec;
 			f.appendChild(n);
 		}
 		if (d.hashCollection) {
-			let v = document.createElementNS(NS_METALINKER3, 'verification');
-			let h = document.createElementNS(NS_METALINKER3, 'hash');
-			h.setAttribute('type', d.hashCollection.full.type.toLowerCase());
-			h.textContent = d.hashCollection.full.sum.toLowerCase();
-			v.appendChild(h);
-			// XXX implement chunks
+			let v = document.createElementNS(NS_METALINK_RFC5854, 'hash');
+			v.setAttribute('type', d.hashCollection.full.type.toLowerCase());
+			v.textContent = d.hashCollection.full.sum.toLowerCase();
+			// TODO: check d.hashcollection and add individual hashes for each chunk
 			f.appendChild(v);
 		}
 
 		if (d.totalSize > 0) {
-			let s = document.createElementNS(NS_METALINKER3, 'size');
+			let s = document.createElementNS(NS_METALINK_RFC5854, 'size');
 			s.textContent = d.totalSize;
-			let t = u.url.spec.match(/^(\w+):/);
 			f.appendChild(s);
 		}
 
