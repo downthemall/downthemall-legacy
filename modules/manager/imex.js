@@ -217,7 +217,7 @@ exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocume
 
 		if (d.totalSize > 0) {
 			let s = document.createElementNS(NS_METALINKER3, 'size');
-			s.textContent = d.totalSize;
+		Ci.ns.IFilePicker.	s.textContent = d.totalSize;
 			f.appendChild(s);
 		}
 
@@ -249,7 +249,6 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 	generator.textContent = 'DownThemAll!/' + Version.BASE_VERSION;
 	root.appendChild(generator);
 
-	/*TODO: need concrete example for origin in case of downthemall */
 
 	let publisher = document.createElementNS(NS_METALINK_RFC5854, 'publisher');
 	publisher.setAttributeNS(NS_METALINK_RFC5854, 'name', 'DownThemAll');
