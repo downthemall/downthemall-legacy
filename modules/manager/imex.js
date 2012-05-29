@@ -297,8 +297,16 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 			let v = document.createElementNS(NS_METALINK_RFC5854, 'hash');
 			v.setAttribute('type', d.hashCollection.full.type.toLowerCase());
 			v.textContent = d.hashCollection.full.sum.toLowerCase();
-			// TODO: check d.hashcollection and add individual hashes for each chunk
+
 			f.appendChild(v);
+			let pieces = document.creatElementNS(NS_METALINK_RCF5854, 'pieces');
+			/* TODO: add length and hash type for all pieces */
+			for(let k in d.hashCollection) {
+				let c = document.createElementNS(NS_METALINK_RFC5854, 'hash');
+				c.textContent = k.sum.toLowerCase();
+				pieces.appendChild(c);
+			}
+			f.appendChild(pieces);
 		}
 
 		if (d.totalSize > 0) {
