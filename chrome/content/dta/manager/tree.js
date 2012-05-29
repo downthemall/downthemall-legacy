@@ -993,7 +993,7 @@ const Tree = {
 			fp.appendFilters(Ci.nsIFilePicker.filterHTML);
 			fp.appendFilters(Ci.nsIFilePicker.filterText);
 			fp.appendFilter(_('filtermetalink'), '*.metalink');
-			fp.appendFilter(Ci.ns.IFilePicker.filterAll);
+			fp.appendFilters(Ci.nsIFilePicker.filterAll);
 			fp.defaultString = "download.metalink";
 			fp.filterIndex = 2;
 
