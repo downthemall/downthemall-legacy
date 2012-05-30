@@ -163,7 +163,7 @@ exports.exportToHtmlFile = function exportToHtmlFile(aDownloads, aDocument, aFil
 
 }
 
-exports.exportToMetalink3File = function exportToMetalinkFile(aDownloads, aDocument, aFile, aPermissions) {
+exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocument, aFile, aPermissions) {
 	let document = aDocument.implementation.createDocument(NS_METALINKER3, 'metalink', null);
 	let root = document.documentElement;
 	root.setAttribute('type', 'static');
@@ -233,7 +233,7 @@ exports.exportToMetalink3File = function exportToMetalinkFile(aDownloads, aDocum
 	fs.close();
 }
 
-exports.exportToMetalinkFile = function exportToMetalink4File(aDownloads, aDocument, aFile, aPermissions) {
+exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocument, aFile, aPermissions) {
 	let document = aDocument.implementation.createDocument(NS_METALINK_RFC5854, 'metalink', null);
 	let root = document.documentElement;
 	root.setAttribute('version', '4.0');
