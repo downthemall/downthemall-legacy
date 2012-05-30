@@ -163,7 +163,7 @@ exports.exportToHtmlFile = function exportToHtmlFile(aDownloads, aDocument, aFil
 
 }
 
-exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocument, aFile, aPermissions) {
+exports.exportToMetalink3File = function exportToMetalinkFile(aDownloads, aDocument, aFile, aPermissions) {
 	let document = aDocument.implementation.createDocument(NS_METALINKER3, 'metalink', null);
 	let root = document.documentElement;
 	root.setAttribute('type', 'static');
@@ -217,7 +217,7 @@ exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocume
 
 		if (d.totalSize > 0) {
 			let s = document.createElementNS(NS_METALINKER3, 'size');
-		Ci.ns.IFilePicker.	s.textContent = d.totalSize;
+			s.textContent = d.totalSize;
 			f.appendChild(s);
 		}
 
@@ -233,7 +233,7 @@ exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocume
 	fs.close();
 }
 
-exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocument, aFile, aPermissions) {
+exports.exportToMetalinkFile = function exportToMetalink4File(aDownloads, aDocument, aFile, aPermissions) {
 	let document = aDocument.implementation.createDocument(NS_METALINK_RFC5854, 'metalink', null);
 	let root = document.documentElement;
 	root.setAttribute('version', '4.0');
@@ -266,6 +266,7 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 		f.setAttributeNS(NS_DTA, 'num', d.numIstance);
 		f.setAttributeNS(NS_DTA, 'startDate', d.startDate.getTime());
 		if (d.referrer) {
+			/* extention to include referrer */
 			f.setAttributeNS(NS_DTA, 'referrer', d.referrer.spec);
 		}
 
@@ -276,20 +277,20 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 		}
 
 		for (let u in d.urlManager.all) {
-			let t = u.url.spec.match(/^(\w+):/);
+			let t = u.url.scheme;
 			let n = {};
-			if(t[1] == "http" || t[1] == "https") {
+			if(t == "http" || t == "https" || t == "ftp" || t == "ftps") {
 				n = document.createElementNS(NS_METALINK_RFC5854, 'url');
-
-			} else {
+			}
+			else {
 				n = document.createElementNS(NS_METALINK_RFC5854, 'metaurl');
 				n.setAttribute('mediatype', t[1]);
 			}
 			n.setAttribute('priority', u.preference);
+			n.textContent = u.url.spec;
 
 			/* extention to include usabality of the url */
 			n.setAttributeNS(NS_DTA, 'usable', u.usable);
-			n.textContent = u.url.spec;
 			f.appendChild(n);
 		}
 		if (d.hashCollection) {
@@ -298,14 +299,20 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 			v.textContent = d.hashCollection.full.sum.toLowerCase();
 
 			f.appendChild(v);
-			let pieces = document.creatElementNS(NS_METALINK_RCF5854, 'pieces');
-			/* TODO: add length and hash type for all pieces */
-			for(let k in d.hashCollection) {
-				let c = document.createElementNS(NS_METALINK_RFC5854, 'hash');
-				c.textContent = k.sum.toLowerCase();
-				pieces.appendChild(c);
+			try {
+				let pieces = document.creatElementNS(NS_METALINK_RCF5854, 'pieces');
+				peices.setAttribute('length', d.hashCollection[0].length);
+				peices.setAttribute('type', d.hashCollection.full.type.toLowerCase());
+				for (let k in d.hashCollection) {
+					let c = document.createElementNS(NS_METALINK_RFC5854, 'hash');
+					c.textContent = k.sum.toLowerCase();
+					pieces.appendChild(c);
+				}
+				f.appendChild(pieces);
 			}
-			f.appendChild(pieces);
+			catch (ex) {
+				/* the hash table of chunks is empty */
+			}
 		}
 
 		if (d.totalSize > 0) {
