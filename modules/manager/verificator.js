@@ -4,27 +4,15 @@
 "use strict";
 
 
-const DTA = require("api");
-const Prefs = require("preferences");
-const {newUUIDString, hexdigest} = require("utils");
+const {hexdigest} = require("utils");
 
-const REGULAR_CHUNK = (1 << 21); // 2/16MB
+const SEGSIZE = (1 << 17); // 128K
+const SEGNUM = 8;
 
 const nsICryptoHash = Ci.nsICryptoHash;
 
-const _jobs = {};
-function registerJob(obj) {
-	let rv = newUUIDString();
-	_jobs[rv] = obj;
-	return rv;
-}
-function unregisterJob(job) {
-	_jobs[job] = null;
-	delete _jobs[job];
-}
-
 exports.verify = function verify(file, hashCollection, completeCallback, progressCallback){
-	return new (hashCollection.hasPartials ? MultiVerificator : Verificator)(
+	return new (hashCollection.hasPartials ? _multiVerify : _verify)(
 		file,
 		hashCollection,
 		completeCallback,
@@ -32,193 +20,164 @@ exports.verify = function verify(file, hashCollection, completeCallback, progres
 		);
 }
 
-function Runnable() {}
-Runnable.prototype = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable, Ci.nsICancelable]),
-	cancel: function() {
-		this.terminated = true;
+function _verify(file, hashCollection, completeCallback, progressCallback) {
+	file = new Instances.LocalFile(file);
+	log(LOG_DEBUG, "verifying (single): " + file.path);
+	const total = file.fileSize;
+	let completed = 0;
+
+	const mainHash = new Instances.Hash(nsICryptoHash[hashCollection.full.type]);
+	let flags = 0x04 | 0x08;
+	if ('OS_READAHEAD' in Ci.nsILocalFile) {
+		flags |= Ci.nsILocalFile.OS_READAHEAD;
+		log(LOG_DEBUG, "enabled OS_READAHEAD");
 	}
-};
+	const stream = new Instances.FileInputStream(file, flags, 502 /* 0766*/, 0);
 
-function Callback(func, sync) {
-	this._func = func;
-	this._args = Array.slice(arguments, 2);
-	this._thread = Services.tm.mainThread;
-	this._job = registerJob(this);
-	this._thread.dispatch(this, sync ? 0x1 : 0x0);
-}
-Callback.prototype = {
-	__proto__: Runnable.prototype,
-	run: function() {
-		try {
-			this._func.apply(this._func, this._args);
-		}
-		catch (ex) {
-			log(LOG_ERROR, "Callback threw", ex);
-		}
-		unregisterJob(this._job);
-	}
-};
-
-function Verificator(file, hashCollection, completeCallback, progressCallback) {
-	this._file = new Instances.LocalFile(file);
-	this._hashCollection = hashCollection;
-	this._completeCallback = completeCallback;
-	this._progressCallback = progressCallback;
-
-	this._job = registerJob(this._job);
-	this._thread = Services.tm.mainThread;
-	this._thread.dispatch(this, 0x0);
-}
-Verificator.prototype = {
-	__proto__: Runnable.prototype,
-	_done: function(obj) {
-		unregisterJob(obj._job);
-	},
-	run: function() {
-		try {
-			let hashCollection = this._hashCollection;
-			let file = this._file;
-			let total = file.fileSize;
-			let pending = total;
-			let completed = 0;
-
-			let mainHash;
-			new Callback(function() {
-				mainHash = new Instances.Hash(nsICryptoHash[hashCollection.full.type]);
-			}, true);
-			let flags = 0x04 | 0x08;
-			if ('OS_READAHEAD' in Ci.nsILocalFile) {
-				flags |= Ci.nsILocalFile.OS_READAHEAD;
+	const listener = {
+		QueryInterface: XPCOMUtils.generateQI([Ci.nsIStreamListener, Ci.nsIRequestObserver]),
+		onStartRequest: function(r,c) {
+			// nop
+		},
+		onStopRequest: function(r,c, result) {
+			if (!Components.isSuccessCode(result)) {
+				completeCallback();
+				return;
 			}
-			let stream = new Instances.FileInputStream(file, flags, 502 /* 0766*/, 0);
-			try {
-				while (pending) {
-					if (this.terminated) {
-						throw new Exception("terminated");
-					}
-					let count = Math.min(pending, REGULAR_CHUNK);
-					mainHash.updateFromStream(stream, count);
-					pending -= count;
-					completed += count;
-					new Callback(this._progressCallback, false, Math.min(completed, total));
-				}
-			}
-			finally {
-				stream.close();
-			}
+
 			let actual = hexdigest(mainHash.finish(false));
+			log(LOG_DEBUG, "main\nactual: " + actual + "\nexpected: " + hashCollection.full.sum);
 			if (actual != hashCollection.full.sum) {
-				new Callback(this._completeCallback, true, [{start: 0, end: 0, actual: actual, expected: hashCollection.full.sum}]);
+				completeCallback([{start: 0, end: 0, actual: actual, expected: hashCollection.full.sum}]);
 			}
 			else {
-				new Callback(this._completeCallback, true, []);
+				completeCallback([]);
 			}
+		},
+		onDataAvailable: function(r,c, inputStream, offset, count) {
+			log(LOG_DEBUG, "at offset:" + offset);
+			mainHash.updateFromStream(inputStream, count);
+			completed += count;
+			progressCallback(Math.min(completed, total));
 		}
-		catch (ex) {
-			new Callback(this._completeCallback, true);
-		}
-		new Callback(this._done, false, this);
-	}
-};
-
-function MultiVerificator() {
-	log(LOG_INFO, "MultiVerificator");
-	Verificator.apply(this, arguments);
+	};
+	let pump = new Instances.InputStreamPump(stream, 0, -1, SEGSIZE, SEGNUM, true);
+	pump.asyncRead(listener, null);
 }
-MultiVerificator.prototype = {
-	__proto__: Verificator.prototype,
-	run: function() {
-		try {
-			let hashCollection = this._hashCollection;
-			let mismatches = [];
 
-			let file = this._file;
-			let total = file.fileSize;
-			let pending = total;
-			let completed = 0;
+function _multiVerify(file, hashCollection, completeCallback, progressCallback) {
+	file = new Instances.LocalFile(file);
+	log(LOG_DEBUG, "verifying (multi): " + file.path);
+	let mismatches = [];
+	let total = file.fileSize;
+	let completed = 0;
 
-			let mainHash;
-			new Callback(function() {
-				mainHash = new Instances.Hash(nsICryptoHash[hashCollection.full.type]);
-			}, true);
-			let flags = 0x04 | 0x08;
-			if ('OS_READAHEAD' in Ci.nsILocalFile) {
-				flags |= Ci.nsILocalFile.OS_READAHEAD;
+	let mainHash = new Instances.Hash(nsICryptoHash[hashCollection.full.type]);
+	let flags = 0x04 | 0x08;
+	if ('OS_READAHEAD' in Ci.nsILocalFile) {
+		flags |= Ci.nsILocalFile.OS_READAHEAD;
+		log(LOG_DEBUG, "enabled OS_READAHEAD");
+	}
+	let stream = new Instances.FileInputStream(file, flags, 502 /* 0766 */, 0).QueryInterface(Ci.nsISeekableStream);
+	let partials = Iterator(hashCollection.partials);
+	let partial = partials.next()[1];
+	log(LOG_DEBUG, partial.toSource());
+	let partialHash = new Instances.Hash(nsICryptoHash[partial.type]);
+	let partialPending = hashCollection.parLength;
+	let start = 0;
+
+	const listenerMain = {
+		QueryInterface: XPCOMUtils.generateQI([Ci.nsIStreamListener, Ci.nsIRequestObserver]),
+		onStartRequest: function(r,c) {
+			// nop
+		},
+		onStopRequest: function(r,c, result) {
+			po.close();
+		},
+		onDataAvailable: function(r,c, inputStream, offset, count) {
+			log(LOG_DEBUG, "at offset:" + offset);
+			mainHash.updateFromStream(inputStream, count);
+			completed += count;
+			progressCallback(Math.min(completed, total));
+		}
+	};
+	const listenerPartials = {
+		QueryInterface: XPCOMUtils.generateQI([Ci.nsIStreamListener, Ci.nsIRequestObserver]),
+		onStartRequest: function(r,c) {
+			// nop
+		},
+		onStopRequest: function(r,c, result) {
+			if (!Components.isSuccessCode(result)) {
+				completeCallback();
+				return;
 			}
-			let stream = new Instances.FileInputStream(file, flags, 502 /* 0766 */, 0).QueryInterface(Ci.nsISeekableStream);
-			let flushBytes = REGULAR_CHUNK;
-			try {
-				for each (let partial in hashCollection.partials) {
-					let pendingPartial = Math.min(pending, hashCollection.parLength);
-					let partialHash;
-					new Callback(function() {
-						partialHash = new Instances.Hash(nsICryptoHash[partial.type]);
-					}, true);
-					let start = completed;
-					while (pendingPartial) {
-						if (this.terminated) {
-							throw new Exception("terminated");
-						}
-						let count = Math.min(pendingPartial, REGULAR_CHUNK);
-						if (!count) {
-							throw new Exception("read nothing");
-						}
 
-						partialHash.updateFromStream(stream, count);
-						stream.seek(0x1, -count);
-						mainHash.updateFromStream(stream, count);
-
-						pending -= count;
-						pendingPartial -= count;
-						completed += count;
-						flushBytes = Math.max(flushBytes - count, 0);
-						if (!flushBytes){
-							flushBytes = REGULAR_CHUNK;
-							new Callback(this._progressCallback, false, Math.min(completed, total));
-						}
-					}
-					let partialActual = hexdigest(partialHash.finish(false));
-					if (partial.sum != partialActual) {
-						mismatches.push({
-							start: start,
-							end: completed - 1,
-							actual: partialActual,
-							expected: partial.sum
-						});
-					}
+			// last partial?
+			if (partial) {
+				let partialActual = hexdigest(partialHash.finish(false));
+				log(LOG_DEBUG, "last partial\nactual: " + partialActual + "\nexpected: " + partial.sum);
+				if (partial.sum != partialActual) {
+					mismatches.push({
+						start: start,
+						end: total - 1,
+						actual: partialActual,
+						expected: partial.sum
+					});
 				}
-
-				// any remainder
-				while (pending) {
-					if (this.terminated) {
-						throw new Exception("terminated");
-					}
-					let count = Math.min(pending, REGULAR_CHUNK);
-					mainHash.updateFromStream(stream, count);
-					pending -= count;
-					completed += count;
-					new Callback(this._progressCallback, false, Math.min(completed, total));
-				}
-			}
-			finally {
-				stream.close();
 			}
 			let actual = hexdigest(mainHash.finish(false));
+			log(LOG_DEBUG, "main\nactual: " + actual + "\nexpected: " + hashCollection.full.sum);
 			if (actual != hashCollection.full.sum) {
-				mismatches.push({
-					start: 0,
-					end: 0,
-					actual: actual,
-					expected: hashCollection.full.sum
-				});
+				completeCallback([{start: 0, end: 0, actual: actual, expected: hashCollection.full.sum}]);
 			}
-			new Callback(this._completeCallback, true, mismatches);
+			else {
+				completeCallback([]);
+			}
+		},
+		onDataAvailable: function(r,c, inputStream, offset, count) {
+			log(LOG_DEBUG, "at offset:" + offset);
+			try {
+				let pending = count;
+				while (partial && pending) {
+					let read = Math.min(partialPending, pending);
+					partialHash.updateFromStream(inputStream, read);
+					partialPending -= read;
+					pending -= read;
+
+					if (partialPending == 0) {
+						let partialActual = hexdigest(partialHash.finish(false));
+						log(LOG_DEBUG, "partial\nactual: " + partialActual + "\nexpected: " + partial.sum);
+						if (partial.sum != partialActual) {
+							mismatches.push({
+								start: start,
+								end: start + hashCollection.parLength,
+								actual: partialActual,
+								expected: partial.sum
+							});
+						}
+						try {
+							partial = partials.next()[1];
+							partialHash = new Instances.Hash(nsICryptoHash[partial.type]);
+							partialPending = hashCollection.parLength;
+							start += partialPending;
+						}
+						catch (ex) {
+							partial = null;
+						}
+					}
+				}
+			}
+			catch (ex) {
+				log(LOG_ERROR, "failed to process multi", ex);
+				throw ex;
+			}
 		}
-		catch (ex) {
-			Components.utils.reportError(ex);
-			new Callback(this._completeCallback, true);
-		}
-		new Callback(this._done, false, this);
-	}
-};
+	};
+	const {
+		inputStream: pi,
+		outputStream: po
+		} = new Instances.Pipe(false, true, SEGSIZE, SEGNUM, null);
+	let tee = new Instances.StreamListenerTee(listenerMain, po);
+	new Instances.InputStreamPump(stream, 0, -1, SEGSIZE, SEGNUM, true).asyncRead(tee, null);
+	new Instances.InputStreamPump(pi, 0, -1, SEGSIZE, SEGNUM, true).asyncRead(listenerPartials, null);
+}
