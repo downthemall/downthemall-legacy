@@ -129,6 +129,7 @@ LRUMap.prototype = {
 	itor("FileInputStream", "@mozilla.org/network/file-input-stream;1", "nsIFileInputStream", "init");
 	itor("FileOutputStream", "@mozilla.org/network/file-output-stream;1", "nsIFileOutputStream", "init");
 	itor("FilePicker", "@mozilla.org/filepicker;1", "nsIFilePicker", "init");
+	itor("InputStreamPump", "@mozilla.org/network/input-stream-pump;1", "nsIInputStreamPump", "init");
 	itor("Hash", "@mozilla.org/security/hash;1", "nsICryptoHash", "init");
 	itor("LocalFile", "@mozilla.org/file/local;1", "nsILocalFile", "initWithPath");
 	itor("Pipe", "@mozilla.org/pipe;1", "nsIPipe", "init");
@@ -136,6 +137,7 @@ LRUMap.prototype = {
 	itor("Sound", "@mozilla.org/sound;1", "nsISound", "play");
 	itor("ScriptableInputStream", "@mozilla.org/scriptableinputstream;1", "nsIScriptableInputStream", "init");
 	itor("ScriptError", "@mozilla.org/scripterror;1", "nsIScriptError", "init");
+	itor("StreamListenerTee", "@mozilla.org/network/stream-listener-tee;1", "nsIStreamListenerTee", "init");
 	itor("StringInputStream", "@mozilla.org/io/string-input-stream;1", "nsIStringInputStream", "setData");
 	itor("Timer", "@mozilla.org/timer;1", "nsITimer", "init");
 	itor("ZipReader", "@mozilla.org/libjar/zip-reader;1", "nsIZipReader", "open");
