@@ -299,20 +299,19 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 			v.textContent = d.hashCollection.full.sum.toLowerCase();
 
 			f.appendChild(v);
-			try {
-				let pieces = document.creatElementNS(NS_METALINK_RCF5854, 'pieces');
-				pieces.setAttribute('length', d.hashCollection[0].length);
-				pieces.setAttribute('type', d.hashCollection.full.type.toLowerCase());
-				for (let k in d.hashCollection) {
+			if(d.hashCollection.partials.length > 0) {
+				let pieces = document.createElementNS(NS_METALINK_RFC5854, 'pieces');
+				let chunks = d.hashCollection.partials;
+				pieces.setAttribute('length', d.hashCollection.parLength);
+				pieces.setAttribute('type', chunks[0].type);
+				for(var k = 0; k < chunks.length; k++) {
 					let c = document.createElementNS(NS_METALINK_RFC5854, 'hash');
-					c.textContent = k.sum.toLowerCase();
+					c.textContent = chunks[k].sum.toLowerCase();
 					pieces.appendChild(c);
 				}
 				f.appendChild(pieces);
 			}
-			catch (ex) {
-				/* the hash table of chunks is empty */
-			}
+
 		}
 
 		if (d.totalSize > 0) {
