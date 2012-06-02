@@ -299,12 +299,13 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 			v.textContent = d.hashCollection.full.sum.toLowerCase();
 
 			f.appendChild(v);
-			if(d.hashCollection.partials.length > 0) {
+			if (d.hashCollection.partials.length > 0) {
 				let pieces = document.createElementNS(NS_METALINK_RFC5854, 'pieces');
 				let chunks = d.hashCollection.partials;
 				pieces.setAttribute('length', d.hashCollection.parLength);
 				pieces.setAttribute('type', chunks[0].type);
-				for(var k = 0; k < chunks.length; k++) {
+
+				for (var k = 0, len = chunks.length; k < len; k++) {
 					let c = document.createElementNS(NS_METALINK_RFC5854, 'hash');
 					c.textContent = chunks[k].sum.toLowerCase();
 					pieces.appendChild(c);
