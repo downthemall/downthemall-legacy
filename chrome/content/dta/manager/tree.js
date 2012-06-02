@@ -992,31 +992,38 @@ const Tree = {
 			let fp = new Instances.FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
 			fp.appendFilters(Ci.nsIFilePicker.filterHTML);
 			fp.appendFilters(Ci.nsIFilePicker.filterText);
-			fp.appendFilter(_('filtermetalink'), '*.metalink');
+			fp.appendFilter(_('filtermetalink3'), '*.metalink');
+			fp.appendFilter(_('filtermetalink'), "*.meta4");
 			fp.appendFilters(Ci.nsIFilePicker.filterAll);
-			fp.defaultString = "Downloads.metalink";
-			fp.filterIndex = 2;
+			fp.defaultString = "Downloads.meta4";
+			fp.filterIndex = 3;
 
 			let rv = fp.show();
 			if (rv == Ci.nsIFilePicker.returnOK || rv == Ci.nsIFilePicker.returnReplace) {
 				let fs = fp.file;
-				if (!(/\.[\d\w-]{1,4}/.test(fs.leafName)) && fp.fileIndex != 3) {
+				if (!(/\.[\d\w-]{1,4}/.test(fs.leafName)) && fp.filterIndex != 4) {
 					if (fp.filterIndex == 0) {
 						fs.leafName += ".html";
 					}
 					else if (fp.filterIndex == 2) {
 						fs.leafName += ".metalink"
 					}
+					else if(fp.filterIndex == 3) {
+						fs.leafName += ".meta4";
+					}
 					else {
 						fs.leafName += ".txt";
 					}
 				}
 
-				if (/\.x?html$/i.test(fs.leafName) || fp.fileIndex == 0) {
+				if (/\.x?html$/i.test(fs.leafName) || fp.filterIndex == 0) {
 					ImportExport.exportToHtmlFile(this.selected, document, fs, Prefs.permissions);
 				}
-				else if (/\.metalink$/i.test(fs.leafName) || fp.fileIndex == 2) {
+				else if (/\.metalink$/i.test(fs.leafName) || fp.filterIndex == 2) {
 					ImportExport.exportToMetalinkFile(this.selected, document, fs, Prefs.permissions);
+				}
+				else if(/\.meta4$/i.test(fs.leafName) || fp.filterIndex == 3) {
+					ImportExport.exportToMetalink4File(this.selected, document, fs, Prefs.permissions);
 				}
 				else {
 					ImportExport.exportToTextFile(this.selected, fs, Prefs.permissions);
@@ -1032,7 +1039,7 @@ const Tree = {
 		try {
 			let fp = new Instances.FilePicker(window, _('importtitle'), Ci.nsIFilePicker.modeOpen);
 			fp.appendFilters(Ci.nsIFilePicker.filterText);
-			fp.appendFilter(_('filtermetalink'), '*.metalink');
+			fp.appendFilter(_('filtermetalink3'), '*.metalink');
 			fp.defaultExtension = "metalink";
 			fp.filterIndex = 1;
 
