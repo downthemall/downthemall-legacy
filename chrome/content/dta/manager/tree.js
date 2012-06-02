@@ -992,8 +992,8 @@ const Tree = {
 			let fp = new Instances.FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
 			fp.appendFilters(Ci.nsIFilePicker.filterHTML);
 			fp.appendFilters(Ci.nsIFilePicker.filterText);
-			fp.appendFilter(_('filtermetalink'), '*.metalink');
-			fp.appendFilter(_('filtermetalink4'), "*.meta4");
+			fp.appendFilter(_('filtermetalink3'), '*.metalink');
+			fp.appendFilter(_('filtermetalink'), "*.meta4");
 			fp.appendFilters(Ci.nsIFilePicker.filterAll);
 			fp.defaultString = "Downloads.meta4";
 			fp.filterIndex = 3;
@@ -1039,7 +1039,7 @@ const Tree = {
 		try {
 			let fp = new Instances.FilePicker(window, _('importtitle'), Ci.nsIFilePicker.modeOpen);
 			fp.appendFilters(Ci.nsIFilePicker.filterText);
-			fp.appendFilter(_('filtermetalink'), '*.metalink');
+			fp.appendFilter(_('filtermetalink3'), '*.metalink');
 			fp.defaultExtension = "metalink";
 			fp.filterIndex = 1;
 
