@@ -7,7 +7,7 @@ const DTA = require("api");
 const Preferences = require("preferences");
 const {getTextLinks} = require("support/textlinks");
 const Version = require("version");
-const {NS_DTA, NS_METALINKER3} = require("support/metalinker");
+const {NS_DTA, NS_METALINKER3, NS_METALINK_RFC5854} = require("support/metalinker");
 const {filterInSitu} = require("utils");
 
 const XPathResult = Ci.nsIDOMXPathResult;
@@ -225,6 +225,105 @@ exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocume
 
 	}
 	root.appendChild(files);
+
+	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
+	let xml = '<?xml version="1.0"?>\r\n';
+	fs.write(xml, xml.length);
+	Instances.domserializer.serializeToStream(document, fs, 'utf-8');
+	fs.close();
+}
+
+exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocument, aFile, aPermissions) {
+	let document = aDocument.implementation.createDocument(NS_METALINK_RFC5854, 'metalink', null);
+	let root = document.documentElement;
+	root.setAttribute('version', '4.0');
+
+	root.appendChild(document.createComment(
+			"metalink as exported by DownThemAll! on "
+			+ Version.APP_NAME + "/" + Version.APP_VERSION
+			+ "\r\nMay contain DownThemAll! specific information in the DownThemAll! namespace: "
+			+ NS_DTA
+			));
+
+	let generator = document.createElementNS(NS_METALINK_RFC5854, 'generator');
+	generator.textContent = 'DownThemAll!/' + Version.BASE_VERSION;
+	root.appendChild(generator);
+
+
+	let publisher = document.createElementNS(NS_METALINK_RFC5854, 'publisher');
+	publisher.setAttributeNS(NS_METALINK_RFC5854, 'name', 'DownThemAll');
+
+	/* extention to include the real version */
+	publisher.setAttributeNS(NS_DTA, 'version', Version.Version);
+
+	let published = document.createElementNS(NS_METALINK_RFC5854, "published");
+	published.textContent = new Date().toUTCString();
+
+
+	for (let d in aDownloads) {
+		let f = document.createElementNS(NS_METALINK_RFC5854, 'file');
+		f.setAttribute('name', d.fileName);
+		f.setAttributeNS(NS_DTA, 'num', d.numIstance);
+		f.setAttributeNS(NS_DTA, 'startDate', d.startDate.getTime());
+		if (d.referrer) {
+			/* extention to include referrer */
+			f.setAttributeNS(NS_DTA, 'referrer', d.referrer.spec);
+		}
+
+		if (d.description) {
+			let n = document.createElementNS(NS_METALINK_RFC5854, 'description');
+			n.textContent = d.description;
+			f.appendChild(n);
+		}
+
+		for (let u in d.urlManager.all) {
+			let t = u.url.scheme;
+			let n = {};
+			if(t == "http" || t == "https" || t == "ftp" || t == "ftps") {
+				n = document.createElementNS(NS_METALINK_RFC5854, 'url');
+			}
+			else {
+				n = document.createElementNS(NS_METALINK_RFC5854, 'metaurl');
+				n.setAttribute('mediatype', t[1]);
+			}
+			n.setAttribute('priority', u.preference);
+			n.textContent = u.url.spec;
+
+			/* extention to include usabality of the url */
+			n.setAttributeNS(NS_DTA, 'usable', u.usable);
+			f.appendChild(n);
+		}
+		if (d.hashCollection) {
+			let v = document.createElementNS(NS_METALINK_RFC5854, 'hash');
+			v.setAttribute('type', d.hashCollection.full.type.toLowerCase());
+			v.textContent = d.hashCollection.full.sum.toLowerCase();
+
+			f.appendChild(v);
+			if (d.hashCollection.partials.length > 0) {
+				let pieces = document.createElementNS(NS_METALINK_RFC5854, 'pieces');
+				let chunks = d.hashCollection.partials;
+				pieces.setAttribute('length', d.hashCollection.parLength);
+				pieces.setAttribute('type', chunks[0].type);
+
+				for (var k = 0, len = chunks.length; k < len; k++) {
+					let c = document.createElementNS(NS_METALINK_RFC5854, 'hash');
+					c.textContent = chunks[k].sum.toLowerCase();
+					pieces.appendChild(c);
+				}
+				f.appendChild(pieces);
+			}
+
+		}
+
+		if (d.totalSize > 0) {
+			let s = document.createElementNS(NS_METALINK_RFC5854, 'size');
+			s.textContent = d.totalSize;
+			f.appendChild(s);
+		}
+
+		root.appendChild(f);
+
+	}
 
 	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
 	let xml = '<?xml version="1.0"?>\r\n';
