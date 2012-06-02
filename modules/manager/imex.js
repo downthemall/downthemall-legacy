@@ -237,6 +237,7 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 	let document = aDocument.implementation.createDocument(NS_METALINK_RFC5854, 'metalink', null);
 	let root = document.documentElement;
 	root.setAttribute('version', '4.0');
+	root.setAttributeNS(NS_DTA, 'version', Version.VERSION);
 
 	root.appendChild(document.createComment(
 			"metalink as exported by DownThemAll! on "
@@ -249,16 +250,9 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 	generator.textContent = 'DownThemAll!/' + Version.BASE_VERSION;
 	root.appendChild(generator);
 
-
-	let publisher = document.createElementNS(NS_METALINK_RFC5854, 'publisher');
-	publisher.setAttributeNS(NS_METALINK_RFC5854, 'name', 'DownThemAll');
-
-	/* extention to include the real version */
-	publisher.setAttributeNS(NS_DTA, 'version', Version.Version);
-
 	let published = document.createElementNS(NS_METALINK_RFC5854, "published");
 	published.textContent = new Date().toUTCString();
-
+	root.appendChild(published);
 
 	for (let d in aDownloads) {
 		let f = document.createElementNS(NS_METALINK_RFC5854, 'file');
