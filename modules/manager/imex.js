@@ -183,7 +183,7 @@ exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocume
 	for (let d in aDownloads) {
 		let f = document.createElementNS(NS_METALINKER3, 'file');
 		f.setAttribute('name', d.fileName);
-		f.setAttributeNS(NS_DTA, 'num', d.numIstance);
+		f.setAttributeNS(NS_DTA, 'num', d.bNum);
 		f.setAttributeNS(NS_DTA, 'startDate', d.startDate.getTime());
 		if (d.referrer) {
 			f.setAttributeNS(NS_DTA, 'referrer', d.referrer.spec);
@@ -263,7 +263,7 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 	for (let d in aDownloads) {
 		let f = document.createElementNS(NS_METALINK_RFC5854, 'file');
 		f.setAttribute('name', d.fileName);
-		f.setAttributeNS(NS_DTA, 'num', d.numIstance);
+		f.setAttributeNS(NS_DTA, 'num', d.bNum);
 		f.setAttributeNS(NS_DTA, 'startDate', d.startDate.getTime());
 		if (d.referrer) {
 			/* extention to include referrer */
@@ -279,14 +279,14 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 		for (let u in d.urlManager.all) {
 			let t = u.url.scheme;
 			let n = {};
-			if(t == "http" || t == "https" || t == "ftp" || t == "ftps") {
+			if (t == "http" || t == "https" || t == "ftp") {
 				n = document.createElementNS(NS_METALINK_RFC5854, 'url');
 			}
 			else {
 				n = document.createElementNS(NS_METALINK_RFC5854, 'metaurl');
 				n.setAttribute('mediatype', t[1]);
 			}
-			n.setAttribute('priority', u.preference);
+			n.setAttribute('priority', Math.max(200 - u.preference, 1).toFixed(0));
 			n.textContent = u.url.spec;
 
 			/* extention to include usabality of the url */
