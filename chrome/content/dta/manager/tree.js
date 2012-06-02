@@ -1039,8 +1039,9 @@ const Tree = {
 		try {
 			let fp = new Instances.FilePicker(window, _('importtitle'), Ci.nsIFilePicker.modeOpen);
 			fp.appendFilters(Ci.nsIFilePicker.filterText);
+			fp.appendFilter(_('filtermetalink'), '*.meta4');
 			fp.appendFilter(_('filtermetalink3'), '*.metalink');
-			fp.defaultExtension = "metalink";
+			fp.defaultExtension = "meta4";
 			fp.filterIndex = 1;
 
 			let rv = fp.show();
