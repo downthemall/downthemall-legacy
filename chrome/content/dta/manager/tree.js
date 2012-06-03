@@ -898,7 +898,7 @@ const Tree = {
 		if (d.isOf(QUEUED | PAUSED) || (d.is(RUNNING) && d.resumable)) {
 			d.pause();
 			d.clearAutoRetry();
-			d.status = TextCache.PAUSED;
+			d.status = TextCache_PAUSED;
 			d.state = PAUSED;
 		}
 		return true;
