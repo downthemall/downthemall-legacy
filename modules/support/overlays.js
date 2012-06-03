@@ -4,6 +4,7 @@
 "use strict";
 
 const global = this;
+const {defer} = require("support/defer");
 
 /**
  * Specialized unloader that will trigger whenever either the window gets
@@ -177,7 +178,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 				exports.unloadWindow(window, function() unloaders.forEach(function(u) u()));
 			}
 
-			callback && callback(window, document);
+			callback && defer(function() callback(window, document));
 		}
 		catch (ex) {
 			log(LOG_ERROR, "failed to inject xul", ex);
