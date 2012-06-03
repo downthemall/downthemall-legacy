@@ -65,17 +65,13 @@ XPCOMUtils.defineLazyGetter(this, "Decompressor", function() require("manager/de
 XPCOMUtils.defineLazyGetter(this, "Verificator", function() require("manager/verificator"));
 XPCOMUtils.defineLazyGetter(this, "FileExts", function() new FileExtensionSheet(window));
 
-const TextCache = {};
 addEventListener("load", function load_textCache() {
 	removeEventListener("load", load_textCache, false);
-
 	const texts = ['paused', 'queued', 'complete', 'canceled', 'nas', 'unknown', 'offline', 'timeout', 'starting', 'decompress', 'verify', 'moving'];
 	for (let i = 0, text; i < texts.length; ++i) {
 		text = texts[i];
-		TextCache[text.toUpperCase()] = _(text);
+		window["TextCache_" + text.toUpperCase()] = _(text);
 	}
-
-	Object.freeze(TextCache);
 }, false);
 
 var Timers = new TimerManager();
@@ -496,21 +492,21 @@ const Dialog = {
 					}
 					d.refreshPartialSize();
 					if (d._state == PAUSED) {
-						d.status = TextCache.PAUSED;
+						d.status = TextCache_PAUSED;
 					}
 					else {
-						d.status = TextCache.QUEUED;
+						d.status = TextCache_QUEUED;
 					}
 				}
 				break;
 
 				case COMPLETE:
 					d.partialSize = d.totalSize;
-					d.status = TextCache.COMPLETE;
+					d.status = TextCache_COMPLETE;
 				break;
 
 				case CANCELED:
-					d.status = TextCache.CANCELED;
+					d.status = TextCache_CANCELED;
 				break;
 			}
 
@@ -734,7 +730,7 @@ const Dialog = {
 				if (advanced != 0 && d.totalSize > 0) {
 					let remaining = Math.ceil((d.totalSize - d.partialSize) / d.speeds.avg);
 					if (!isFinite(remaining)) {
-						d.status = TextCache.UNKNOWN;
+						d.status = TextCache_UNKNOWN;
 						d.estimated = 0;
 					}
 					else {
@@ -923,10 +919,10 @@ const Dialog = {
 				if (d.is(RUNNING) && (ts - d.timeLastProgress) >= Prefs.timeout * 1000) {
 					if (d.resumable || !d.totalSize || !d.partialSize || Prefs.resumeOnError) {
 						d.pauseAndRetry();
-						d.status = TextCache.TIMEOUT;
+						d.status = TextCache_TIMEOUT;
 					}
 					else {
-						d.cancel(TextCache.TIMEOUT);
+						d.cancel(TextCache_TIMEOUT);
 					}
 					log(LOG_ERROR, d + " is a timeout");
 				}
@@ -1020,7 +1016,7 @@ const Dialog = {
 			return;
 		}
 		download.forced = !!forced;
-		download.status = TextCache.STARTING;
+		download.status = TextCache_STARTING;
 		if (download.is(FINISHING) || (download.partialSize >= download.totalSize && download.totalSize)) {
 			// we might encounter renaming issues;
 			// but we cannot handle it because we don't know at which stage we crashed
@@ -1603,7 +1599,7 @@ QueueItem.prototype = {
 		this._hashCollection = nv;
 		this._prettyHash = this._hashCollection
 			? _('prettyhash', [this._hashCollection.full.type, this._hashCollection.full.sum])
-			: TextCache.NAS;
+			: TextCache_NAS;
 	},
 	_prettyHash: null,
 	get prettyHash() {
@@ -1747,10 +1743,10 @@ QueueItem.prototype = {
 	},
 	get dimensionString() {
 		if (this.partialSize <= 0) {
-			return TextCache.UNKNOWN;
+			return TextCache_UNKNOWN;
 		}
 		else if (this.totalSize <= 0) {
-			return _('transfered', [Utils.formatBytes(this.partialSize), TextCache.NAS]);
+			return _('transfered', [Utils.formatBytes(this.partialSize), TextCache_NAS]);
 		}
 		else if (this.is(COMPLETE)) {
 			return Utils.formatBytes(this.totalSize);
@@ -1760,7 +1756,7 @@ QueueItem.prototype = {
 	_status : '',
 	get status() {
 		if (Dialog.offline && this.isOf(QUEUED | PAUSED)) {
-			return TextCache.OFFLINE;
+			return TextCache_OFFLINE;
 		}
 		return this._status + (this.autoRetrying ? ' *' : '');
 	},
@@ -1779,7 +1775,7 @@ QueueItem.prototype = {
 	},
 	get percent() {
 		if (!this.totalSize && this.is(RUNNING)) {
-			return TextCache.NAS;
+			return TextCache_NAS;
 		}
 		else if (!this.totalSize) {
 			return "0%";
@@ -1876,11 +1872,11 @@ QueueItem.prototype = {
 			// move file
 			if (this.compression) {
 				this.state = FINISHING;
-				this.status =  TextCache.DECOMPRESS;
+				this.status =  TextCache_DECOMPRESS;
 				new Decompressor(this);
 			}
 			else {
-				this.status = TextCache.MOVING;
+				this.status = TextCache_MOVING;
 				function move(self, x) {
 					asyncMoveFile(self.tmpFile, destination, Prefs.permissions, function (ex) {
 						try {
@@ -1920,7 +1916,7 @@ QueueItem.prototype = {
 	_verificator: null,
 	verifyHash: function() {
 		this.state = FINISHING;
-		this.status = TextCache.VERIFY;
+		this.status = TextCache_VERIFY;
 		let tp = this;
 		this._verificator = Verificator.verify(
 			this.tmpFile.exists() ? this.tmpFile.path : this.destinationFile,
@@ -2091,7 +2087,7 @@ QueueItem.prototype = {
 		}
 		this.activeChunks = 0;
 		this.state = COMPLETE;
-		this.status = TextCache.COMPLETE;
+		this.status = TextCache_COMPLETE;
 		this.visitors = new VisitorManager();
 	},
 	get maskURL() this.urlManager.usableURL,
@@ -2419,7 +2415,7 @@ QueueItem.prototype = {
 	queue: function QI_queue() {
 		this._autoRetryTime = 0;
 		this.state = QUEUED;
-		this.status = TextCache.QUEUED;
+		this.status = TextCache_QUEUED;
 	},
 	maybeResumeDownload: function QI_maybeResumeDownload() {
 		if (!this.is(RUNNING)) {
@@ -2839,10 +2835,10 @@ function startDownloads(start, downloads) {
 
 			qi._state = start ? QUEUED : PAUSED;
 			if (qi.is(QUEUED)) {
-				qi.status = TextCache.QUEUED;
+				qi.status = TextCache_QUEUED;
 			}
 			else {
-				qi.status = TextCache.PAUSED;
+				qi.status = TextCache_PAUSED;
 			}
 			qi.position = Tree.add(qi);
 			qi.save();
