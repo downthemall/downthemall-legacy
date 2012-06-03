@@ -40,6 +40,7 @@ function _verify(file, hashCollection, completeCallback, progressCallback) {
 			// nop
 		},
 		onStopRequest: function(r,c, result) {
+			stream.close();
 			if (!Components.isSuccessCode(result)) {
 				completeCallback();
 				return;
@@ -61,7 +62,7 @@ function _verify(file, hashCollection, completeCallback, progressCallback) {
 			progressCallback(Math.min(completed, total));
 		}
 	};
-	let pump = new Instances.InputStreamPump(stream, 0, -1, SEGSIZE, SEGNUM, true);
+	let pump = new Instances.InputStreamPump(stream, 0, -1, SEGSIZE, SEGNUM, false);
 	pump.asyncRead(listener, null);
 }
 
@@ -107,6 +108,7 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 			// nop
 		},
 		onStopRequest: function(r,c, result) {
+			stream.close();
 			if (!Components.isSuccessCode(result)) {
 				completeCallback();
 				return;
@@ -178,6 +180,6 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 		outputStream: po
 		} = new Instances.Pipe(false, true, SEGSIZE, SEGNUM, null);
 	let tee = new Instances.StreamListenerTee(listenerMain, po);
-	new Instances.InputStreamPump(stream, 0, -1, SEGSIZE, SEGNUM, true).asyncRead(tee, null);
+	new Instances.InputStreamPump(stream, 0, -1, SEGSIZE, SEGNUM, false).asyncRead(tee, null);
 	new Instances.InputStreamPump(pi, 0, -1, SEGSIZE, SEGNUM, true).asyncRead(listenerPartials, null);
 }
