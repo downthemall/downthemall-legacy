@@ -1415,12 +1415,12 @@ const Tree = {
 					this._downloads.unshift(this._downloads.splice(id, 1)[0]);
 				}
 				this.doFilter();
+				this.selection.rangedSelect(0, ids.length - 1, true);
 			}
 			finally {
 				this.invalidate();
 				this.endUpdate();
 			}
-			this.selection.rangedSelect(0, ids.length - 1, true);
 			this._box.ensureRowIsVisible(0);
 		}
 		catch (ex) {
@@ -1438,12 +1438,12 @@ const Tree = {
 					this._downloads.push(this._downloads.splice(id, 1)[0]);
 				}
 				this.doFilter();
+				this.selection.rangedSelect(this._filtered.length - ids.length, this._filtered.length - 1, true);
 			}
 			finally {
 				this.invalidate();
 				this.endUpdate();
 			}
-			this.selection.rangedSelect(this._filtered.length - ids.length, this._filtered.length - 1, true);
 			this._box.ensureRowIsVisible(this.rowCount - 1);
 		}
 		catch (ex) {
@@ -1470,12 +1470,13 @@ const Tree = {
 					},
 					this
 				);
+				this.doFilter();
 			}
 			finally {
 				this.invalidate();
 				this.endUpdate();
 			}
-			this._box.ensureRowIsVisible(Math.max(ids.shift() - 1, 0));
+			this._box.ensureRowIsVisible(Math.max(ids[0] - 1, 0));
 		}
 		catch (ex) {
 			log(LOG_ERROR, "Mover::up", ex);
@@ -1504,13 +1505,14 @@ const Tree = {
 					},
 					this
 				);
+				this.doFilter();
 			}
 			finally {
 				this.invalidate();
 				this.endUpdate();
 			}
 			// readjust view
-			this._box.ensureRowIsVisible(Math.min(ids.shift(), this.rowCount - 1));
+			this._box.ensureRowIsVisible(Math.min(ids[0], this.rowCount - 1));
 		}
 		catch (ex) {
 			log(LOG_ERROR, "Mover::down", ex);
