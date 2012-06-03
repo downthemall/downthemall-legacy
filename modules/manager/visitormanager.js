@@ -90,7 +90,19 @@ HttpVisitor.prototype = {
 		}
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	},
-	visit: function(chan) {
+	visit: function vmh_visit(chan) {
+		if (log.enabled) {
+			let msg = chan.URI.spec + "\nRequest:\n";
+			let visitor = {
+				visitHeader: function(header, value) {
+					msg += header + ": " + value + "\n";
+				}
+			};
+			chan.visitRequestHeaders(visitor);
+			msg += "\nResponse:\n";
+			chan.visitResponseHeaders(visitor);
+			log(LOG_DEBUG, msg);
+		}
 		try {
 			this.type = chan.getResponseHeader("content-type");
 			var ch = this.type.match(/charset=['"]?([\w\d_-]+)/i);
