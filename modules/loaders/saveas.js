@@ -39,7 +39,7 @@ exports.load = function load(window, document) {
 				e.disabled = true;
 			}
 		);
-		var nodes = normalBox.getElementsByTagName('separator');
+		var nodes = normalBox.querySelectorAll("separator");
 		for (var i = 0; i < nodes.length; ++i) {
 			nodes[i].collapsed = true;
 		}
@@ -107,62 +107,59 @@ exports.load = function load(window, document) {
 
 	let url, referrer, mask;
 
-	window.setTimeout(function() {
-		// Need to get behind the default load event
-		const doRevert = basicBox && (!basicBox.collapsed || (normalBox && normalBox.collapsed));
-		const doOverlay = Preferences.getExt("downloadWin", true);
+	// Need to get behind the default load event
+	const doOverlay = Preferences.getExt("downloadWin", true);
 
-		if (!doOverlay && typeof(gFlashGotDMDialog) == 'undefined') {
-			// we do not actually overlay!
-			return;
-		}
-		if (doRevert) {
-			revertUI();
-		}
+	if (!doOverlay && typeof(gFlashGotDMDialog) == 'undefined') {
+		log(LOG_DEBUG, "not doing anything");
+		// we do not actually overlay!
+		return;
+	}
+	revertUI();
 
-		if (!doOverlay) {
-			// we do not actually overlay!
-			// but we revert to help FlashGot ;)
-			return;
-		}
-		$('downthemallcontainer').collapsed = false;
-		normal.disabled = false;
+	if (!doOverlay) {
+		// we do not actually overlay!
+		// but we revert to help FlashGot ;)
+		log(LOG_DEBUG, "not overlaying");
+		return;
+	}
+	$('downthemallcontainer').collapsed = false;
+	normal.disabled = false;
 
-		url = ContentHandling.getRedirect(dialog.mLauncher.source);
-		try {
-			referrer = dialog.mContext.QueryInterface(Ci.nsIWebNavigation).currentURI.spec;
-		}
-		catch(ex) {
-			referrer = url.spec;
-		}
+	url = ContentHandling.getRedirect(dialog.mLauncher.source);
+	try {
+		referrer = dialog.mContext.QueryInterface(Ci.nsIWebNavigation).currentURI.spec;
+	}
+	catch(ex) {
+		referrer = url.spec;
+	}
 
-		let ml = DTA.getLinkPrintMetalink(url);
-		url = new DTA.URL(ml ? ml : url);
+	let ml = DTA.getLinkPrintMetalink(url);
+	url = new DTA.URL(ml ? ml : url);
 
-		mask = DTA.getDropDownValue('renaming');
-		if (!($("tdta").hidden = (DTA.getDropDownValue('directory') == '' || !mask))) {
-			turbo.disabled = false;
-			turboExec.disabled = false;
-		}
+	mask = DTA.getDropDownValue('renaming');
+	if (!($("tdta").hidden = (DTA.getDropDownValue('directory') == '' || !mask))) {
+		turbo.disabled = false;
+		turboExec.disabled = false;
+	}
 
-		try {
-			switch (Preferences.getExt('saveasmode', 0)) {
-				case 1:
-					mode.selectedItem = normal;
-					break;
-				case 2:
-					mode.selectedItem = turbo.disabled ? normal : turbo;
-					break;
-			}
-			if (Preferences.getExt('saveasmode', 0)) {
-				remember.checked = true;
-				remember.disabled = false;
-			}
+	try {
+		switch (Preferences.getExt('saveasmode', 0)) {
+			case 1:
+				mode.selectedItem = normal;
+				break;
+			case 2:
+				mode.selectedItem = turbo.disabled ? normal : turbo;
+				break;
 		}
-		catch (ex) {
-			// no op
+		if (Preferences.getExt('saveasmode', 0)) {
+			remember.checked = true;
+			remember.disabled = false;
 		}
-	}, 0);
+	}
+	catch (ex) {
+		// no op
+	}
 
 	mode.addEventListener(
 		'select',
