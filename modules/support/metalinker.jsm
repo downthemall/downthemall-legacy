@@ -224,9 +224,9 @@ Metalinker3.prototype = {
 				num = DTA.currentSeries();
 			}
 			let startDate = new Date();
-			if (file.hasAttributeNS(NS_DTA, 'date')) {
+			if (file.hasAttributeNS(NS_DTA, 'startDate')) {
 				try {
-					startDate = new Date(parseInt(file.getAttributeNS(NS_DTA, 'num')));
+					startDate = new Date(parseInt(file.getAttributeNS(NS_DTA, 'startDate')));
 				}
 				catch (ex) {
 					/* no-op */
@@ -420,9 +420,9 @@ MetalinkerRFC5854.prototype = {
 				num = DTA.currentSeries();
 			}
 			let startDate = new Date();
-			if (file.hasAttributeNS(NS_DTA, 'date')) {
+			if (file.hasAttributeNS(NS_DTA, 'startDate')) {
 				try {
-					startDate = new Date(parseInt(file.getAttributeNS(NS_DTA, 'num')));
+					startDate = new Date(parseInt(file.getAttributeNS(NS_DTA, 'startDate')));
 				}
 				catch (ex) {
 					/* no-op */
