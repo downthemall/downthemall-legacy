@@ -10,11 +10,16 @@
  * @param window Associated window (that will be the parent of any prompt dialogs)
  */
 function LoggedPrompter(window) {
+	function uriToKey(uri) {
+		return JSON.stringify([uri.scheme, uri.host]);
+	}
+
 	/**
 	 * Property providing nsIAuthPrompt
 	 */
 	lazy(this, "authPrompter", function() {
 		let _p = Services.ww.getNewAuthPrompter(window).QueryInterface(Ci.nsIAuthPrompt);
+		let restricted = new Map();
 		let proxy = Proxy.create({
 			has: function(name) name in _p,
 			hasOwn: function(name) name in _p,
@@ -24,6 +29,33 @@ function LoggedPrompter(window) {
 					return function(iid) {
 						_p.QueryInterface(iid);
 						return proxy;
+					};
+				}
+				if (name == "restrictLogin") {
+					return function(uri) {
+						const key = uriToKey(uri);
+						restricted.set(key, true);
+					};
+				}
+				if (name == "allowLogin") {
+					return function(uri) {
+						const key = uriToKey(uri);
+						log(LOG_DEBUG, "Lifting restriction " + key);
+						restricted.delete(key, true);
+					}
+				}
+				if (name == "asyncPromptAuth") {
+					return function(channel, cb, ctx, level, info) {
+						const key = uriToKey(channel.URI);
+						if (restricted.has(key)) {
+							log(LOG_DEBUG, "Restricted " + key);
+							cb.onAuthCancelled(ctx, true);
+							return {
+								cancel: function() {}
+							};
+						}
+						log(LOG_DEBUG, "Not restricted " + key);
+						return _p.asyncPromptAuth(channel, cb, ctx, level, info);
 					};
 				}
 				return _p[name];
