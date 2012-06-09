@@ -502,6 +502,7 @@ Connection.prototype = {
 						);
 					}
 				}
+				this.cancel();
 				d.save();
 			}
 			return false;
@@ -749,7 +750,7 @@ Connection.prototype = {
 				d.resolveConflicts();
 			}
 
-			if (d.resumable && !d.is(CANCELED)) {
+			if (d.resumable && !d.isOf(CANCELED | PAUSED)) {
 				d.resumeDownload();
 			}
 		}
