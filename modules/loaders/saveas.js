@@ -32,13 +32,6 @@ exports.load = function load(window, document) {
 		return elements;
 	}
 	function revertUI() {
-		['open'].forEach(
-			function(e) {
-				e = $(e);
-				e.parentNode.collapsed = true;
-				e.disabled = true;
-			}
-		);
 		var nodes = normalBox.querySelectorAll("separator");
 		for (var i = 0; i < nodes.length; ++i) {
 			nodes[i].collapsed = true;
