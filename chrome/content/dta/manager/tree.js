@@ -908,6 +908,7 @@ const Tree = {
 	},
 	_resume_item: function T_resumeItem(d) {
 		if (d.isOf(PAUSED | CANCELED)) {
+			d.liftLoginRestriction = true;
 			d.queue();
 		}
 		return true;

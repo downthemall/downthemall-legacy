@@ -206,14 +206,15 @@ Connection.prototype = {
 	},
 	// nsIInterfaceRequestor
 	getInterface: function DL_getInterface(iid) {
-		if (iid.equals(Ci.nsIAuthPrompt)) {
-			return this.d.AuthPrompts.authPrompter;
+		if (iid.equals(Ci.nsIAuthPrompt) || iid.equals(Ci.nsIAuthPrompt2)) {
+			if (this.d.liftLoginRestriction) {
+				delete this.d.liftLoginRestriction;
+				this.d.AuthPrompts.authPrompter.allowLogin(this._chan.URI);
+			}
+			return this.d.AuthPrompts.authPrompter.QueryInterface(iid);
 		}
 		if (iid.equals(Ci.nsIPrompt)) {
 			return this.d.AuthPrompts.prompter;
-		}
-		if ('nsIAuthPrompt2' in Ci && iid.equals(Ci.nsIAuthPrompt2)) {
-			return this.d.AuthPrompts.authPrompter.QueryInterface(Ci.nsIAuthPrompt2);
 		}
 		return this.QueryInterface(iid);
 	},
@@ -475,6 +476,9 @@ Connection.prototype = {
 			}
 			if (!this.handleError()) {
 				log(LOG_ERROR, "handleError: Cannot recover from problem!", code);
+				if (code == 401) {
+					d.AuthPrompts.authPrompter.restrictLogin(aChannel.URI);
+				}
 				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1 || Preferences.getExt('recoverallhttperrors', false)) {
 					log(LOG_DEBUG, "we got temp failure!", code);
 					d.pauseAndRetry();
