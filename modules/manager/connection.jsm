@@ -88,10 +88,10 @@ function Connection(d, c, isInfoGetter) {
 	this.c = c;
 	this.isInfoGetter = isInfoGetter;
 	this.url = d.urlManager.getURL();
-	
+
 	let url = this.url.url;
 	RequestManipulation.modifyURL(url);
-	
+
 	let referrer = d.referrer;
 	Debug.log("starting: " + url.spec);
 
@@ -117,7 +117,7 @@ function Connection(d, c, isInfoGetter) {
 				let uc = this._chan.QueryInterface(Ci.nsIUploadChannel);
 				uc.setUploadStream(new StringInputStream(d.postData, d.postData.length), null, -1);
 				this._chan.requestMethod = 'POST';
-			}			 
+			}
 		}
 		catch (ex) {
 			Debug.log("error setting up http channel", ex);
@@ -129,14 +129,14 @@ function Connection(d, c, isInfoGetter) {
 			if (c.start + c.written > 0) {
 					let resumable = this._chan.QueryInterface(Ci.nsIResumableChannel);
 					resumable.resumeAt(c.start + c.written, '');
-			}				
+			}
 		}
 		catch (ex) {
 			Debug.log('error setting up ftp channel', ex);
 		}
 	}
 	this.prepareChannel(this._chan);
-	
+
 	this.c.running = true;
 	this._chan.asyncOpen(this, null);
 	Debug.log(this.c + "is now open");
@@ -156,9 +156,9 @@ Connection.prototype = {
 		Ci.nsIClassInfo,
 		Ci.nsICancelable,
 	],
-		
+
 	cantCount: false,
-	
+
 	prepareChannel: function(chan) {
 		try {
 			if (chan instanceof Ci.nsISupportsPriority) {
@@ -174,7 +174,7 @@ Connection.prototype = {
 				// Cannot hash when conversation is active
 				chan.applyConversion = false;
 			}
-			
+
 			if (chan instanceof Ci.nsIHttpChannel) {
 				let c = this.c;
 
@@ -187,7 +187,7 @@ Connection.prototype = {
 					}
 					chan.setRequestHeader('Want-Digest', DTA.WANT_DIGEST_STRING, false);
 				}
-				
+
 				if (Preferences.getExt('nokeepalive', true)) {
 					chan.setRequestHeader('Keep-Alive', '', false);
 					chan.setRequestHeader('Connection', 'close', false);
@@ -199,7 +199,7 @@ Connection.prototype = {
 				}
 
 				RequestManipulation.modifyHttp(chan);
-				
+
 				try {
 					// Users want this so they can have no-third-party when browsing regularly,
 					// but still download from sites authenticating using cookies
@@ -207,7 +207,7 @@ Connection.prototype = {
 						chan.forceAllowThirdPartyCookie = true;
 					}
 				}
-				catch (ex) { /* no op */ } 
+				catch (ex) { /* no op */ }
 			}
 		}
 		catch (ex) {
@@ -258,7 +258,7 @@ Connection.prototype = {
 		}
 		return this.QueryInterface(iid);
 	},
-	
+
 	// nsIClassInfo
 	getInterfaces: function(aCount) {
 		aCount.value = this._interfaces.length;
@@ -271,7 +271,7 @@ Connection.prototype = {
 	classID: null,
 	implementationLanguage: Ci.nsIProgrammingLanguage.JAVASCRIPT,
 	flags: Ci.nsIClassInfo.MAIN_THREAD_ONLY,
-	
+
 	// nsIChannelEventSink
 	asyncOnChannelRedirect: function(oldChannel, newChannel, flags, callback) {
 		this.onChannelRedirect(oldChannel, newChannel, flags);
@@ -283,9 +283,9 @@ Connection.prototype = {
 			if (!(oldChannel instanceof Ci.nsIChannel) || !(newChannel instanceof Ci.nsIChannel)) {
 				throw new Exception("redirect: requests not channels");
 			}
-			
+
 			this.prepareChannel(newChannel);
-			
+
 			// When we get redirected from, say, http to ftp, we need to explicitly
 			// call resumeAt() as this won't be propagated from the old channel.
 			if (c.start + c.written > 0 && !(newChannel instanceof Ci.nsIHttpChannel)) {
@@ -301,9 +301,9 @@ Connection.prototype = {
 				return;
 			}
 		}
-			
+
 		this._chan = newChannel;
-		
+
 		if (!this.isInfoGetter) {
 			return;
 		}
@@ -320,7 +320,7 @@ Connection.prototype = {
 			Debug.log("Failed to reset data on channel redirect", ex);
 		}
 	},
-	
+
 	verifyChunksStarted: function() {
 		// XXX always check, not just .isInfoGetter?
 		if (!this.isInfoGetter || this.d.chunks.every(function(c) !c.running || !!c.sessionBytes)) {
@@ -372,7 +372,7 @@ Connection.prototype = {
 				}
 
 				// we already got what we wanted
-				this.cancel();	
+				this.cancel();
 			}
 		}
 		catch (ex) {
@@ -380,7 +380,7 @@ Connection.prototype = {
 			this.d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
 		}
 	},
-	
+
 	// nsIFTPEventSink
 	OnFTPControlLog: function(server, msg) {
 		/*
@@ -392,11 +392,11 @@ Connection.prototype = {
 			this._wasRetr = /^RETR/.test(msg) || /^REST/.test(msg);
 		}
 	},
-	
+
 	handleError: function DL_handleError() {
 		let c = this.c;
 		let d = this.d;
-		
+
 		c.cancel();
 		d.dumpScoreboard();
 		if (d.chunks.indexOf(c) == -1) {
@@ -405,16 +405,16 @@ Connection.prototype = {
 		}
 
 		Debug.log("handleError: problem found; trying to recover");
-		
+
 		if (d.urlManager.markBad(this.url)) {
 			Debug.log("handleError: fresh urls available, kill this one and use another!");
 			d.timeLastProgress = getTimestamp();
 			return true;
 		}
-		
+
 		Debug.log("affected: " + c);
 		d.dumpScoreboard();
-		
+
 		let max = -1, found = null;
 		for each (let cmp in d.chunks) {
 			if (!cmp.running) {
@@ -433,7 +433,7 @@ Connection.prototype = {
 			}
 			d.chunks = d.chunks.filter(function(ch) ch != c);
 			d.chunks.sort(function(a, b) a.start - b.start);
-			
+
 			// check for overlapping ranges we might have created
 			// otherwise we'll receive a size mismatch
 			// this means that we're gonna redownload an already finished chunk...
@@ -454,7 +454,7 @@ Connection.prototype = {
 			d.chunks.forEach(function(c) { if (c.running) { ++ac;	}});
 			d.activeChunks = ac;
 			c.close();
-			
+
 			d.save();
 			d.dumpScoreboard();
 			return true;
@@ -465,7 +465,7 @@ Connection.prototype = {
 	handleHttp: function DL_handleHttp(aChannel) {
 		let c = this.c;
 		let d = this.d;
-		
+
 		let code = 0, status = 'Server returned nothing';
 		try {
 			code = aChannel.responseStatus;
@@ -474,11 +474,11 @@ Connection.prototype = {
 		catch (ex) {
 			return true;
 		}
-		
+
 		if (code >= 400) {
 			// any data that we got over this channel should be considered "corrupt"
 			c.rollback();
-			
+
 			if (c.starter && d.urlManager.markBad(this.url)) {
 				Debug.log("caught bad server (Error: " + code + ")", d.toString());
 				d.cancel();
@@ -514,6 +514,7 @@ Connection.prototype = {
 						);
 					}
 				}
+				this.cancel();
 				d.save();
 			}
 			return false;
@@ -522,7 +523,7 @@ Connection.prototype = {
 		// not partial content altough we are multi-chunk
 		if (code != 206 && !this.isInfoGetter) {
 			Debug.log(d + ": Server returned a " + aChannel.responseStatus + " response instead of 206", this.isInfoGetter);
-			
+
 			if (!this.handleError()) {
 				vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
 				aChannel.visitRequestHeaders(vis);
@@ -549,7 +550,7 @@ Connection.prototype = {
 			d.safeRetry();
 			return false;
 		}
-		
+
 		if (!this.isInfoGetter) {
 			return false;
 		}
@@ -565,7 +566,7 @@ Connection.prototype = {
 		else {
 			d.compression = null;
 		}
-		
+
 		if (visitor.hash && (!d.hashCollection || !d.hashCollection.full || d.hashCollection.full.q < visitor.hash.q)) {
 			d.hashCollection = new DTA.HashCollection(visitor.hash);
 		}
@@ -584,7 +585,7 @@ Connection.prototype = {
 		else {
 			d.totalSize = 0;
 		}
-		
+
 		if (visitor.fileName && visitor.fileName.length > 0) {
 			// if content disposition hasn't an extension we use extension of URL
 			let newName = visitor.fileName.replace(/\\/g, '').getUsableFileNameWithFlatten();
@@ -598,7 +599,7 @@ Connection.prototype = {
 
 		return false;
 	},
-	
+
 	// Generic handler for now :p
 	handleFtp: function  DL_handleFtp(aChannel) {
 		let c = this.c;
@@ -611,11 +612,11 @@ Connection.prototype = {
 			}
 			catch (ex) {
 				// Firefox 4 support 64bit contentLength
-				totalSize = Math.max(aChannel.contentLength, 0); 
+				totalSize = Math.max(aChannel.contentLength, 0);
 			}
 			if (d.totalSize && totalSize != d.totalSize && !this.handleError()) {
 				Debug.log("ftp: total size mismatch " + totalSize + " " + d.totalSize);
-				d.fail(_('servererror'), _('ftperrortext'), _('servererror')); 
+				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 				return false;
 			}
 			Debug.log("ftp: total size is: " + totalSize + " for: " + this.url);
@@ -624,13 +625,13 @@ Connection.prototype = {
 		catch (ex) {
 			Debug.log("ftp: no totalsize", ex);
 			if (c.start != 0 && !this.handleError()) {
-				d.fail(_('servererror'), _('ftperrortext'), _('servererror')); 
+				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 				return false;
 			}
 			d.totalSize = 0;
 			d.resumable = false;
 		}
-		
+
 		try {
 			aChannel.QueryInterface(Ci.nsIResumableChannel).entityID;
 		}
@@ -638,11 +639,11 @@ Connection.prototype = {
 			Debug.log("likely not resumable or connection refused!");
 			if (!this.handleError()) {
 				// restart download from the beginning
-				d.fail(_('servererror'), _('ftperrortext'), _('servererror')); 
+				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 				return false;
 			}
 		}
-		
+
 		try {
 			let visitor = d.visitors.visit(aChannel.QueryInterface(Ci.nsIChannel));
 		}
@@ -656,11 +657,11 @@ Connection.prototype = {
 		}
 		return false;
 	},
-	
+
 	handleGeneric: function DL_handleGeneric(aChannel) {
 		var c = this.c;
 		var d = this.d;
-		
+
 		// hack: determine if we are a multi-part chunk,
 		// if so something bad happened, 'cause we aren't supposed to be multi-part
 		if (c.start != 0 && d.is(RUNNING)) {
@@ -670,8 +671,8 @@ Connection.prototype = {
 				d.status = _("servererror");
 			}
 			return false;
-		}			
-			
+		}
+
 		// try to get the size anyway ;)
 		try {
 			let pb = aChannel.QueryInterface(Ci.nsIPropertyBag2);
@@ -688,7 +689,7 @@ Connection.prototype = {
 		d.resumable = false;
 		return false;
 	},
-	
+
 	// nsIRequestObserver,
 	_supportedChannels: [
 		{i:Ci.nsIHttpChannel, f:'handleHttp'},
@@ -699,13 +700,13 @@ Connection.prototype = {
 		let c = this.c;
 		let d = this.d;
 		Debug.log('StartRequest: ' + c);
-	
+
 		this.started = true;
-		
+
 		if (d.chunks.indexOf(c) == -1) {
 			return;
 		}
-		
+
 		try {
 			for each (let sc in this._supportedChannels) {
 				let chan = null;
@@ -728,31 +729,31 @@ Connection.prototype = {
 				if (ext && ext.match(/^meta(?:4|link)$/i)) {
 					d.isMetalink = true;
 					d.resumable = false;
-				}				
-				
+				}
+
 				// Checks for available disk space.
 				let tsd = d.totalSize;
 				if (tsd && !d.checkSpace(tsd)) {
 					return;
 				}
-				
+
 				if (!d.totalSize) {
-					d.resumable = false;					
+					d.resumable = false;
 					this.cantCount = true;
 				}
-				
+
 				if (!d.resumable) {
 					d.maxChunks = 1;
 				}
 				c.end = d.totalSize - 1;
-				
+
 				// Explicitly trigger rebuildDestination here, as we might have received
 				// a html content type and need to rewrite the file
 				d.rebuildDestination();
 				d.resolveConflicts();
 			}
-			
-			if (d.resumable && !d.is(CANCELED)) {
+
+			if (d.resumable && !d.isOf(CANCELED | PAUSED)) {
 				d.resumeDownload();
 			}
 		}
@@ -769,12 +770,12 @@ Connection.prototype = {
 		catch (ex) {
 			return;
 		}
-		
+
 		// shortcuts
 		let c = this.c;
 		let d = this.d;
 		c.close();
-		
+
 		if (d.chunks.indexOf(c) == -1) {
 			return;
 		}
@@ -792,7 +793,7 @@ Connection.prototype = {
 				return;
 			}
 		}
-		
+
 		if (c.starter && -1 != [
 			NS_ERROR_CONNECTION_REFUSED,
 			NS_ERROR_UNKNOWN_HOST,
@@ -809,9 +810,9 @@ Connection.prototype = {
 				d.cancel();
 				d.safeRetry();
 			}
-			return;			
+			return;
 		}
-		
+
 		// work-around for ftp crap
 		// nsiftpchan for some reason assumes that if RETR fails it is a directory
 		// and tries to advance into said directory
@@ -822,10 +823,10 @@ Connection.prototype = {
 			}
 			return;
 		}
-			
+
 		// routine for normal chunk
 		Debug.log(this.url + ": Chunk " + c.start + "-" + c.end + " finished.");
-		
+
 		// rude way to determine disconnection: if connection is closed before
 		// download is started we assume a server error/disconnection
 		if (c.starter && d.is(RUNNING)) {
@@ -839,14 +840,14 @@ Connection.prototype = {
 				d.cancel();
 				d.safeRetry();
 			}
-			return;			
+			return;
 		}
-		
+
 		// Server did not return any data.
 		// Try to mark the URL bad
 		// else pause + autoretry
 		if (!c.written  && !!c.remainder) {
-			if (!d.urlManager.markBad(this.url)) {
+			if (d.is(RUNNING) && !d.urlManager.markBad(this.url)) {
 				Debug.log(d + ": Server error or disconnection", "(type 1)");
 				d.pauseAndRetry();
 				d.status = _("servererror");
@@ -866,7 +867,7 @@ Connection.prototype = {
 					_('errmismatchtitle')
 				);
 			}
-			return;			
+			return;
 		}
 		if (!d.isOf(PAUSED | CANCELED)) {
 			d.resumeDownload();
@@ -879,7 +880,7 @@ Connection.prototype = {
 			// shortcuts
 			let c = this.c;
 			let d = this.d;
-			
+
 			if (this.reexamine) {
 				Debug.log(d + ": reexamine");
 				this.onStartRequest(aRequest, aContext);
