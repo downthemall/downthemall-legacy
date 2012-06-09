@@ -13,7 +13,24 @@ function LoggedPrompter(window) {
 	/**
 	 * Property providing nsIAuthPrompt
 	 */
-	lazy(this, "authPrompter", function() Services.ww.getNewAuthPrompter(window).QueryInterface(Ci.nsIAuthPrompt));
+	lazy(this, "authPrompter", function() {
+		let _p = Services.ww.getNewAuthPrompter(window).QueryInterface(Ci.nsIAuthPrompt);
+		let proxy = Proxy.create({
+			has: function(name) name in _p,
+			hasOwn: function(name) name in _p,
+			get: function(receiver, name) {
+				log(LOG_DEBUG, "called: " + name);
+				if (name == "QueryInterface") {
+					return function(iid) {
+						_p.QueryInterface(iid);
+						return proxy;
+					};
+				}
+				return _p[name];
+			}
+		});
+		return proxy;
+	});
 
 	/**
 	 * Property providing nsIPrompt
@@ -25,21 +42,26 @@ function LoggedPrompter(window) {
 
 		// Log any alerts instead of showing a dialog.
 		// Everything else pass thru to the actual prompter.
-		return Proxy.create({
+		let proxy = Proxy.create({
 			has: function(name) name in _p,
 			hasOwn: function(name) name in _p,
 			get: function(receiver, name) {
+				if (name == "QueryInterface") {
+					return function(iid) {
+						_p.QueryInterface(iid);
+						return proxy;
+					};
+				}
 				if (name == "alert") {
 					return function(text, title) log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
 				}
-				else if (name == "alertCheck") {
+				if (name == "alertCheck") {
 					return function(text, title, cm, cs) log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
 				}
-				else {
-					return _p[name];
-				}
+				return _p[name];
 			}
 		});
+		return proxy;
 	});
 }
 exports.LoggedPrompter = LoggedPrompter;
