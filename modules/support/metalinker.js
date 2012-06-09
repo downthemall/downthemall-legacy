@@ -379,7 +379,6 @@ MetalinkerRFC5854.prototype = {
 
 			let urls = [];
 			let urlNodes = this.getNodes(file, 'ml:url');
-			urlNodes.concat(this.getNodes(file, 'm1:metaurl'));
 			for each (var url in urlNodes) {
 				let preference = 1;
 				let charset = doc.characterSet;
