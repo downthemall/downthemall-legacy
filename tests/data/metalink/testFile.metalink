@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink version="3.0" xmlns="http://www.metalinker.org/" pubdate="2012-12-12-12:12:12" 
+  refreshdate="2012-12-12-12:12:12" xmlns:a0="http://www.downthemall.net/properties#" identity="test_identity">
+<publisher>
+  <name>test_publisher</name>
+  <url>http://example.com/test_publisher</url>
+</publisher>
+<license>
+  <name>test_license</name>
+  <url>http://example.com/test_license</url>
+</license>
+<copyright>test_copyright</copyright>
+<releasedate>2012-12-12</releasedate>
+<description>test_description</description>
+<tags>test_tag1, test_tag2</tags>
+<identity>test_identity</identity>
+<files>
+  <file name="test_file1" a0:referrer="test_file1_referrer" a0:num="1" a0:startDate="1339582217773"> 
+    <version>test_file1_version</version>
+    <language>en-US</language>
+    <os>test_file1_os</os>    
+    <size>1000</size>
+    <logo>http://example.com/test_file1_logo</logo>
+    <identity>test_file1_identity</identity>
+    <verification>
+      <hash type="md5">b86eaee3dc7f511c7b93cddb1f1bcaac</hash>
+    </verification>
+    <copyright>test_file1_copyright</copyright>
+    <license>
+  		<name>test_file1_license</name>
+  		<url>http://example.com/test_file1_license</url>
+	</license>
+	<publisher>
+  		<name>test_file1_publisher</name>
+  		<url>http://example.com/test_file1_publisher</url>
+	</publisher>    
+    <resources>
+      <url type="bittorrent" preference="100">
+ftp://example.com/ignore.torrent
+      </url>
+      <url type="ftp" location="us" preference="1" a0:usable="ftp://usable.com/test_file1_url1">
+ftp://example.com/test_file1_url1
+      </url>
+      <url type="http" location="de" preference="2" a0="http://usable.com/test_file1_url2">
+ftp://example.com/test_file1_url2
+      </url>
+    </resources>
+  </file>
+<file name="test_file2" a0:referrer="test_file2_referrer" a0:num="2" a0:startDate="1339582217773">
+    <version>test_file2_version</version>
+    <language>zh-Hans</language>
+    <os>test_file2_os</os>    
+    <size>1000</size>
+    <verification>      
+      <md5>cccd7f891ff81b30b9152479d2efcda2</md5>
+    </verification>  
+    <copyright>test_file2_copyright</copyright>
+    <license>
+  		<name>test_file2_license</name>
+  		<url>http://example.com/test_file2_license</url>
+	</license>
+	<publisher>
+  		<name>test_file2_publisher</name>
+  		<url>http://example.com/test_file2_publisher</url>
+	</publisher> 
+    <resources>
+      <url type="bittorrent" preference="2">
+ftp://example.com/test_file2_ignore.torrent
+      </url>
+      <url type="http" location="de" preference="1" a0:usable="http://usable.com/test_file2_url1">
+http://example.com/test_file2_url1
+      </url>
+    </resources>
+  </file>
+</files> 
+</metalink>
