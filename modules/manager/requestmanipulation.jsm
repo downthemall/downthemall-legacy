@@ -57,7 +57,7 @@ Manipulator.prototype = {
 		this._m[id] = {
 				matcher: matcher,
 				funcs: Array.map(arguments, function(e) e).slice(2)
-		};	
+		};
 	},
 	unregister: function(id) {
 		if (id in this._m) {
@@ -76,7 +76,7 @@ Manipulator.prototype = {
 					Cu.reportError(ex);
 				}
 			}
-		}		
+		}
 	}
 }
 
@@ -134,4 +134,10 @@ registerURL(
 	'rapidshare direct',
 	/^https?:\/\/(?:[\w\d_.-]+\.)?rapidshare\.com\/files\/[^?]*?(?!\?directstart=1)$/,
 	function() this.spec += "?directstart=1"
+);
+
+registerURL(
+	"youtube; strip video ranges",
+	/youtube.*&range=/,
+	function() this.spec = this.spec.replace(/&range=.*?&/, "&")
 );
