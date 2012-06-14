@@ -95,7 +95,6 @@ asyncTest("metalink3_parser_general", function() {
 	var file = get_file("data/metalink/testFile.metalink");
 
 	parse(file, "", function(data, ex) {
-		window.tmp = data;
 		strictEqual(ex, undefined, "parsed correctly");
 		equal(data.parser, "Metalinker Version 3.0", "correct parser verion");
 		check_info(data.info, {
