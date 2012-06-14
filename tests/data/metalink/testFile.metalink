@@ -19,11 +19,21 @@
     <version>test_file1_version</version>
     <language>en-US</language>
     <os>test_file1_os</os>    
-    <size>1000</size>
+    <size>2014232</size>>
     <logo>http://example.com/test_file1_logo</logo>
     <identity>test_file1_identity</identity>
     <verification>
-      <hash type="md5">b86eaee3dc7f511c7b93cddb1f1bcaac</hash>
+      <hash type="sha1">01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+      <pieces type="sha1" length="262144">
+        <hash piece="0">ce50319f58e846e3e0c66a9ada9015e601126864</hash>
+        <hash piece="1">c9e73e336831a364cedcd889259b7330d48f90fd</hash>
+        <hash piece="2">a7f5281c629ea63c791f320db3b0df85fdb01861</hash>
+        <hash piece="3">e6cf5571185db0ec79b551222596462db445bdd6</hash>
+        <hash piece="4">8982e850d2e3ea005119beea3cc05daca28de474</hash>
+        <hash piece="5">a0e7a3a3a46f1ae5fb4eb8529b6fb8ee82fa43a8</hash>
+        <hash piece="6">96540cfade1ce9d3846f41510fbed46965b29568</hash>
+        <hash piece="7">87108128d4dde5ba62ffec1f1cc3fc292fc298ca</hash>
+      </pieces>
     </verification>
     <copyright>test_file1_copyright</copyright>
     <license>

@@ -55,7 +55,16 @@ function check_download(downloads, d, message) {
 			arrayEqual(urls, d.urls, message + "urls");
 
 			if(download.hashCollection) {
-				strictEqual(download.hashCollection.full.sum.toLowerCase(), d.hash, message + "hash");
+				strictEqual(download.hashCollection.full.sum.toLowerCase(), d.hash.full, message + "hash");
+				strictEqual(download.hashCollection.full.type, d.hash.type, message + "hash type");
+				if(download.hashCollection.partials.length) {
+					strictEqual(download.hashCollection.parLength, d.hash.pieceLength, message + "piece length");
+					strictEqual(download.hashCollection.partials[0].type, d.hash.pieceType, message + "piece type");
+					var pieces = download.hashCollection.partials.map(function(e) {
+						return e.sum;
+					});
+					arrayEqual(d.hash.pieces, pieces, message + "pieces");
+				}
 			}
 			else if(d.hash) {
 				equal(true, false, message + "hash");
@@ -86,6 +95,7 @@ asyncTest("metalink3_parser_general", function() {
 	var file = get_file("data/metalink/testFile.metalink");
 
 	parse(file, "", function(data, ex) {
+		window.tmp = data;
 		strictEqual(ex, undefined, "parsed correctly");
 		equal(data.parser, "Metalinker Version 3.0", "correct parser verion");
 		check_info(data.info, {
@@ -122,13 +132,28 @@ asyncTest("metalink3_parser_general", function() {
 			],
 			referrer: "test_file1_referrer",
 			sys: "test_file1_os",
-			size: 1000,
+			size: 2014232,
 			version: "test_file1_version",
 			urls: [
 				"ftp://example.com/test_file1_url1",
 				"ftp://example.com/test_file1_url2"
 			],
-			hash: "b86eaee3dc7f511c7b93cddb1f1bcaac"
+			hash: {
+				full: "01586b2c0ec5d8e985138204404878f5ecbeef58",
+				type: "SHA1",
+				pieceType: "SHA1",
+				pieceLength: 262144,
+				pieces: [
+					"ce50319f58e846e3e0c66a9ada9015e601126864",
+					"c9e73e336831a364cedcd889259b7330d48f90fd",
+					"a7f5281c629ea63c791f320db3b0df85fdb01861",
+					"e6cf5571185db0ec79b551222596462db445bdd6",
+					"8982e850d2e3ea005119beea3cc05daca28de474",
+					"a0e7a3a3a46f1ae5fb4eb8529b6fb8ee82fa43a8",
+					"96540cfade1ce9d3846f41510fbed46965b29568",
+					"87108128d4dde5ba62ffec1f1cc3fc292fc298ca"
+				]
+			}
 		}, "Download (1):");
 
 		check_download(data.downloads, {
@@ -155,7 +180,10 @@ asyncTest("metalink3_parser_general", function() {
 			urls: [
 				"http://example.com/test_file2_url1",
 			],
-			hash: "cccd7f891ff81b30b9152479d2efcda2"
+			hash: {
+				full: "cccd7f891ff81b30b9152479d2efcda2",
+				type: "MD5"
+			}
 		}, "Download (2):");
 		start();
 	});
@@ -222,7 +250,6 @@ asyncTest("metalink3_parser_realworld", function() {
 	var file = get_file("data/metalink/kernel.metalink");
 
 	parse(file, "", function(data, ex) {
-		window.tmp = data;
 		strictEqual(ex, undefined, "parsed correctly");
 		equal(data.parser, "Metalinker Version 3.0", "correct parser verion");
 		check_info(data.info, {
@@ -266,7 +293,10 @@ asyncTest("metalink3_parser_realworld", function() {
 				"http://ftp.roedu.net/mirrors/ftp.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2"
 			],
 
-			hash: "b1e3c65992b0049fdbee825eb2a856af"
+			hash: {
+				full: "b1e3c65992b0049fdbee825eb2a856af",
+				type: "MD5"
+			}
 		}, "Linux kernel:");
 		start();
 	});
