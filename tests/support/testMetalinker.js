@@ -54,10 +54,10 @@ function check_download(downloads, d, message) {
 			});
 			arrayEqual(urls, d.urls, message + "urls");
 
-			if(download.hashCollection) {
+			if (download.hashCollection) {
 				strictEqual(download.hashCollection.full.sum.toLowerCase(), d.hash.full, message + "hash");
 				strictEqual(download.hashCollection.full.type, d.hash.type, message + "hash type");
-				if(download.hashCollection.partials.length) {
+				if (download.hashCollection.partials.length) {
 					strictEqual(download.hashCollection.parLength, d.hash.pieceLength, message + "piece length");
 					strictEqual(download.hashCollection.partials[0].type, d.hash.pieceType, message + "piece type");
 					var pieces = download.hashCollection.partials.map(function(e) {
@@ -66,7 +66,7 @@ function check_download(downloads, d, message) {
 					arrayEqual(d.hash.pieces, pieces, message + "pieces");
 				}
 			}
-			else if(d.hash) {
+			else if (d.hash) {
 				equal(true, false, message + "hash");
 			}
 
