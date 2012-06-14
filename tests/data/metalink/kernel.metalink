@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink version="3.0" xmlns="http://www.metalinker.org/"
+  origin="http://metalink.packages.ro/download/download/kernel/linux-2.
+6.16.19.tar.bz2.metalink"
+  type="static" pubdate="2006-06-09-18:56:57"
+  generator="Metalink Gen - http://metalink.packages.ro" 
+  refreshdate="2006-06-09-18:56:57">
+  <publisher>
+    <name>Package resources</name>
+    <url>http://www.packages.ro</url>
+  </publisher>
+  <license>
+    <name>GPL</name>
+    <url>http://www.gnu.org/copyleft/gpl.html</url>
+  </license>    
+  <description>Linux kernel</description>
+  <tags>kernel, linux</tags>
+  <identity>linux-2.6.16.19.tar.bz2</identity>
+  <version>2.6.16.19</version>
+  <files>  
+   <file name="linux-2.6.16.19.tar.bz2">
+    
+     <os>Linux-x86</os>
+    <size>40836905</size>
+    <verification>
+     <hash type="md5">b1e3c65992b0049fdbee825eb2a856af</hash>
+    </verification>
+    <resources>
+      <url type="http"
+           location="RO"
+           preference="10">
+       http://ftp.roedu.net/mirrors/ftp.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+      </url>
+      <url type="http"
+           location="AT"
+           preference="10">
+       http://ftp.at.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+      </url>
+      <url type="http"
+           location="al"
+                      preference="10">
+       http://ftp.al.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+      </url>
+      <url type="http"
+           location="ad"
+           preference="10">
+       http://ftp.ad.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+      </url>
+      <url type="http"
+           location="aq"
+           preference="10">
+       http://ftp.aq.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+      </url>
+      <url type="http"
+           location="ag"
+           preference="10">
+       http://ftp.ag.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+      </url>
+      <url type="http"
+           location="ar"
+           preference="10">
+       http://ftp.ar.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+      </url>
+      <url type="http"
+           location="am"
+           preference="10">
+       http://ftp.am.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+      </url>
+    </resources>
+   </file>
+  </files> 
+</metalink>

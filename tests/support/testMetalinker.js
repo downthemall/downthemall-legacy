@@ -44,11 +44,22 @@ function check_download(downloads, d, message) {
 				"mirrors", "numIstance", "publisher",
 				"referrer", "sys", "version"
 			], message);
-			strictEqual(download.startDate.toString(), d.startDate.toString(), message + "startDate");
+
+			if (d.startDate) {
+				strictEqual(download.startDate.toString(), d.startDate.toString(), message + "startDate");
+			}
+
 			var urls = download.url.toArray().map(function(e) {
 				return e.toString();
 			});
-			arrayEqual(urls, d.urls, "urls");
+			arrayEqual(urls, d.urls, message + "urls");
+
+			if(download.hashCollection) {
+				strictEqual(download.hashCollection.full.sum.toLowerCase(), d.hash, message + "hash");
+			}
+			else if(d.hash) {
+				equal(true, false, message + "hash");
+			}
 
 		}
 	}
@@ -113,11 +124,11 @@ asyncTest("metalink3_parser_general", function() {
 			sys: "test_file1_os",
 			size: 1000,
 			version: "test_file1_version",
-			startDate: new Date("June 13, 2012 18:10:17 GMT+0800"),
 			urls: [
 				"ftp://example.com/test_file1_url1",
 				"ftp://example.com/test_file1_url2"
 			],
+			hash: "b86eaee3dc7f511c7b93cddb1f1bcaac"
 		}, "Download (1):");
 
 		check_download(data.downloads, {
@@ -141,10 +152,10 @@ asyncTest("metalink3_parser_general", function() {
 			sys: "test_file2_os",
 			size: 1000,
 			version: "test_file2_version",
-			startDate: new Date("June 13, 2012 18:10:17 GMT+0800"),
 			urls: [
 				"http://example.com/test_file2_url1",
 			],
+			hash: "cccd7f891ff81b30b9152479d2efcda2"
 		}, "Download (2):");
 		start();
 	});
@@ -152,7 +163,6 @@ asyncTest("metalink3_parser_general", function() {
 });
 
 asyncTest("metalink3_parser_errors", function() {
-
 	const {
 		parse,
 		Metalink,
@@ -197,4 +207,68 @@ asyncTest("metalink3_parser_errors", function() {
 		}
 		cb();
 	});
+});
+
+asyncTest("metalink3_parser_realworld", function() {
+	const {
+		parse,
+		Metalink,
+		NS_DAT,
+		NS_HTML,
+		NS_METALINKER3,
+		NS_METALINK_RFC5854
+	} = require("support/metalinker");
+
+	var file = get_file("data/metalink/kernel.metalink");
+
+	parse(file, "", function(data, ex) {
+		window.tmp = data;
+		strictEqual(ex, undefined, "parsed correctly");
+		equal(data.parser, "Metalinker Version 3.0", "correct parser verion");
+		check_info(data.info, {
+			identity: "linux-2.6.16.19.tar.bz2",
+			description: "Linux kernel",
+			logo: null,
+			license: [
+				"GPL",
+				"http://www.gnu.org/copyleft/gpl.html"
+			],
+			publisher: [
+				"Package resources",
+				"http://www.packages.ro/"
+			],
+			start: false
+		});
+
+		check_download(data.downloads, {
+			copyright: "",
+			description: "Linux kernel",
+			fileName: "linux-2.6.16.19.tar.bz2",
+			lang: "",
+			identity: "",
+			license: null,
+			logo: null,
+			mirrors: 8,
+			numIstance: 63,
+			publisher: null,
+			referrer: null,
+			sys: "Linux-x86",
+			size: 40836905,
+			version: "",
+			urls: [
+				"http://ftp.ad.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+				"http://ftp.ag.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+				"http://ftp.al.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+				"http://ftp.am.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+				"http://ftp.aq.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+				"http://ftp.ar.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+				"http://ftp.at.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+				"http://ftp.roedu.net/mirrors/ftp.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2"
+			],
+
+			hash: "b1e3c65992b0049fdbee825eb2a856af"
+		}, "Linux kernel:");
+		start();
+	});
+
 });
