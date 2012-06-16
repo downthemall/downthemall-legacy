@@ -145,6 +145,11 @@ Metalinker3.prototype = {
 		let downloads = [];
 
 		let files = this.getNodes(doc, '//ml:files/ml:file');
+
+		if (!files.length) {
+			throw new Exception("No valid files node");
+		}
+
 		for each (let file in files) {
 			let fileName = file.getAttribute('name');
 			if (!fileName) {
@@ -281,6 +286,7 @@ Metalinker3.prototype = {
 			if (!isFinite(size)) {
 				size = 0;
 			}
+
 			downloads.push({
 				'url': new UrlManager(urls),
 				'fileName': fileName,
@@ -303,6 +309,10 @@ Metalinker3.prototype = {
 				'selected': true,
 				'fromMetalink': true
 			});
+		}
+
+		if (!downloads.length) {
+			throw new Exception("No valid files to process");
 		}
 		let info = {
 			'identity': this.getSingle(root, 'identity'),

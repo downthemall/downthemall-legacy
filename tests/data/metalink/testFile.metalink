@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<metalink version="3.0" xmlns="http://www.metalinker.org/" pubdate="2012-12-12-12:12:12" 
+<metalink version="3.0" xmlns="http://www.metalinker.org/" pubdate="2012-12-12-12:12:12"
   refreshdate="2012-12-12-12:12:12" xmlns:a0="http://www.downthemall.net/properties#" identity="test_identity">
 <publisher>
   <name>test_publisher</name>
@@ -15,10 +15,10 @@
 <tags>test_tag1, test_tag2</tags>
 <identity>test_identity</identity>
 <files>
-  <file name="test_file1" a0:referrer="test_file1_referrer" a0:num="1" a0:startDate="1339582217773"> 
+  <file name="test_file1" a0:referrer="test_file1_referrer" a0:num="1" a0:startDate="1339582217773">
     <version>test_file1_version</version>
     <language>en-US</language>
-    <os>test_file1_os</os>    
+    <os>test_file1_os</os>
     <size>2014232</size>>
     <logo>http://example.com/test_file1_logo</logo>
     <identity>test_file1_identity</identity>
@@ -43,7 +43,7 @@
 	<publisher>
   		<name>test_file1_publisher</name>
   		<url>http://example.com/test_file1_publisher</url>
-	</publisher>    
+	</publisher>
     <resources>
       <url type="bittorrent" preference="100">
 ftp://example.com/ignore.torrent
@@ -59,11 +59,11 @@ ftp://example.com/test_file1_url2
 <file name="test_file2" a0:referrer="test_file2_referrer" a0:num="2" a0:startDate="1339582217773">
     <version>test_file2_version</version>
     <language>zh-Hans</language>
-    <os>test_file2_os</os>    
+    <os>test_file2_os</os>
     <size>1000</size>
-    <verification>      
-      <md5>cccd7f891ff81b30b9152479d2efcda2</md5>
-    </verification>  
+    <verification>
+      <hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+    </verification>
     <copyright>test_file2_copyright</copyright>
     <license>
   		<name>test_file2_license</name>
@@ -72,7 +72,7 @@ ftp://example.com/test_file1_url2
 	<publisher>
   		<name>test_file2_publisher</name>
   		<url>http://example.com/test_file2_publisher</url>
-	</publisher> 
+	</publisher>
     <resources>
       <url type="bittorrent" preference="2">
 ftp://example.com/test_file2_ignore.torrent
@@ -82,5 +82,5 @@ http://example.com/test_file2_url1
       </url>
     </resources>
   </file>
-</files> 
+</files>
 </metalink>

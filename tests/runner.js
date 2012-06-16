@@ -23,6 +23,15 @@ function checkExports(m, exports) {
 		);
 }
 
+function getFile(relPath) {
+	var path = location.href.replace("index.html", "") + relPath;
+	var testURI = Services.io.newURI(path, null, null);
+	const ChromeRegistry = Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIChromeRegistry);
+	testURI = ChromeRegistry.convertChromeURL(testURI);
+
+	return testURI.QueryInterface(Ci.nsIFileURL).file;
+}
+
 addEventListener("load", function load() {
 	"use strict";
 	removeEventListener("load", load, false);
