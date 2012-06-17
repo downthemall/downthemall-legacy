@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0"?>
 <metalink version="3.0" xmlns="http://www.metalinker.org/">
 <files>
-  <file name="Fußball läuft gerade">
+  <file name="FuÃŸball lÃ¤uft gerade">
     <size>2014232</size>
     <resources>
       <url type="http">http://example.com/encoding</url>
