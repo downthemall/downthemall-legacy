@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink version="3.0" xmlns="http://www.metalinker.org/">
+<files>
+  <file name="corrupt_hash">
+    <size>2014232</size>
+    <verification>
+      <hash>cccd7f891ff81b30b9152479d2efcda2aabccee</hash>
+      <hash type="sha1">01586b2c0ec5d8e985138204404878f5ecbeef58blahblah</hash>
+      <hash type="test">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d</hash>
+      <hash type="rmd160">9c1185a5c5e9asdfafc54612808977ee8f548b2258d31</hash>
+      <hash type="tiger">1441afc717b80e50a6807f708c0443cab</hash>
+      <hash type="crc32">5199asdfa56fa</hash>
+	  <pieces type="sha1" length="262144">
+        <hash piece="0">ce50319f58e846e3e0c66a9ada9015e601126864</hash>
+        <hash piece="1">c9e73e336831a364cedcd889259b7330d48f90fd</hash>
+        <hash piece="2">a7f5281c629ea63c791f320db3b0df85fdb01861</hash>
+        <hash piece="3">e6cf5571185db0ec79b551222596462db445bdd6</hash>
+        <hash piece="4">8982e850d2e3ea005119beea3cc05daca28de474</hash>
+        <hash piece="5">a0e7a3a3a46f1ae5fb4eb8529b6fb8ee82fa43a8</hash>
+        <hash piece="6">96540cfade1ce9d3846f41510fbed46965b29568</hash>
+        <hash piece="7">87108128d4dde5ba62ffec1f1cc3fc292fc298ca</hash>
+	  </pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/incorrect_hash
+      </url>
+    </resources>
+  </file>
+  <file name="corrupt_pieces">
+    <size>2014232</size>
+    <verification>
+      <hash type="sha1">ce50319f58e846e3e0c66a9ada9015e601126864</hash>
+	  <pieces type="sha1" length="262144">
+        <hash piece="0">ce50319f58e846e3e0c66a9ada9015e60112686</hash>
+        <hash piece="1">c9e73e336831a364cedcd889259b7330d48f90fdcurrpot</hash>
+        <hash piece="2">ce50319f58e846e3e0c66a9ada9015e601126864</hash>
+        <hash piece="3">ce50319f58e846e3e0c66a9ada9015e601126864</hash>
+        <hash piece="4">8982e850d2e3ea005119beea3cc05daca28de4</hash>
+        <hash piece="5">a0e7a3a3a46f1ae5fb4eb8529b6fb8ee82f</hash>
+        <hash piece="6">96540cfade1ce9d3846f41510fbed46965b2956sdf8</hash>
+        <hash piece="7">87108128d4dde5ba62ffec1f1cc3fc292fc298ca</hash>
+	  </pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/incorrect_pieces
+      </url>
+    </resources>
+  </file>
+</files>
+</metalink>
+

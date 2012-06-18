@@ -259,7 +259,9 @@ metalink_asyncTestFile(
 metalink_asyncTestFile(
 	"data/metalink/kernel.metalink",
 	function(data, ex) {
-		strictEqual(ex, undefined, "parsed correctly");
+		if (ex) {
+			throw ex;
+		}
 		equal(data.parser, "Metalinker Version 3.0", "correct parser verion");
 		metalink_checkInfo(data.info, {
 			identity: "linux-2.6.16.19.tar.bz2",
@@ -317,6 +319,18 @@ metalink_asyncTestFile(
 );
 
 metalink_asyncTestFile(
+	"data/metalink/emptyUrls.metalink",
+	function(data, ex) {
+		if (ex) {
+			strictEqual(ex.message, "No valid files to process", "unsupported urls error handle");
+		}
+		else {
+			ok(false, "unsupported urls error handle");
+		}
+	}
+);
+
+metalink_asyncTestFile(
 	"data/metalink/emptyFile.metalink",
 	function(data, ex) {
 		ok(ex, "no 'files' node in metalink");
@@ -355,6 +369,39 @@ metalink_asyncTestFile(
 	"data/metalink/invalid_encoding.metalink",
 	function(data, ex) {
 		ok(ex, "invalid encoding fails to parse");
+	}
+);
+
+metalink_asyncTestFile(
+	"data/metalink/corrupt_hash.metalink",
+	function(data, ex) {
+		var download = metalink_getDownload(data.downloads, "corrupt_hash");
+		ok(!download.hashCollection, "Corrupt hashes not used");
+
+		download = metalink_getDownload(data.downloads, "corrupt_pieces");
+		ok(!download.hashCollection.partials.length, "Corrupt pieces not used");
+	}
+);
+
+metalink_asyncTestFile(
+	"data/metalink/priority_hash.metalink",
+	function(data, ex) {
+		var download = metalink_getDownload(data.downloads, "hash_priority");
+		equal(download.hashCollection.full.type.toLowerCase(), "sha512", "hashes with higher priority used");
+	}
+);
+
+metalink_asyncTestFile(
+	"data/metalink/invalid_pieces.metalink",
+	function(data, ex) {
+		var download = metalink_getDownload(data.downloads, "unsupported_pieces");
+		ok(!download.hashCollection.partials.length,  "Unsupported hash pieces not used");
+
+		download = metalink_getDownload(data.downloads, "invalid_piece_num");
+		ok(!download.hashCollection.partials.length, "Out of range piece numbers");
+
+		download = metalink_getDownload(data.downloads, "few_pieces");
+		ok(!download.hashCollection.partials.length, "Few partials given");
 	}
 );
 
@@ -406,21 +453,27 @@ asyncTest("metalink3_hash", function() {
 				val: false
 			}
 		];
-		var hash, download;
-		for (var i = 0; i < hashes.length; i++) {
-			hash = hashes[i];
+		var download;
+		for each(var hash in hashes) {
 			download = metalink_getDownload(downloads, hash.type + "_hash");
 			equal(!!download.hashCollection, !!hash.val, "hash " + hash.type + (!hash.val ? " not" : "") + " parsed");
 			if (download.hashCollection) {
 				strictEqual(download.hashCollection.full.sum.toLowerCase(), hash.val, hash.type + ": correct value");
 				strictEqual(download.hashCollection.full.type.toLowerCase(), hash.type, hash.type + ": correct type");
+				if (hash.val) {
+					strictEqual(download.hashCollection.parLength, 262144, hash.type + ": piece length");
+					strictEqual(download.hashCollection.partials[0].type.toLowerCase(), hash.type, hash.type + ": piece type");
+					var pieces = download.hashCollection.partials.map(function(e) {
+						return e.sum;
+					});
+
+					var exp_pieces = [];
+					for (var i = 0; i < 8; i++) {
+						exp_pieces.push(hash.val);
+					}
+					arrayEqual(exp_pieces, pieces, hash.type + ": pieces");
+				}
 			}
 		}
-
-		download = metalink_getDownload(downloads, "incorrect_hashes");
-		ok(!download.hashCollection, "incorrect hashes not used");
-
-		download = metalink_getDownload(downloads, "hash_priority");
-		equal(download.hashCollection.full.type.toLowerCase(), "sha512", "hashes with higher priority used");
 	});
 });

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink version="3.0" xmlns="http://www.metalinker.org/">
+<files>
+  <file name="hash_priority">
+    <size>2014232</size>
+    <verification>
+      <hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+      <hash type="sha1">01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+      <hash type="sha256">2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+      <hash type="sha512">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/hash_priority
+      </url>
+    </resources>
+  </file>
+</files>
+
+</metalink>

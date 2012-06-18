@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink version="3.0" xmlns="http://www.metalinker.org/">
+<files>
+  <file name="file1">
+    <size>2014232</size>
+    <resources>
+      <url type="bittorrent">
+		http://example.com/file.torrent
+      </url>
+	  <url>http://example.com/file.torrent</url>
+
+	  <url type="magnet">
+		magnet:?xt=urn:ed2k:31D6CFE0D16AE931B73C59D7E0C089C0
+	  </url>
+	  <url>magnet:?xt=urn:ed2k:31D6CFE0D16AE931B73C59D7E0C089C0</url>
+
+	  <url type="rsync">
+		 rsync://sample@example.com/test
+	  </url>
+	  <url>rsync://sample@example.com/test</url>
+
+	  <url type="ed2k">
+		ed2k://|file|example.avi|14997504|965c013e991ee246d63d45ea71954c4d|/
+	  </url>
+	  <url>ed2k://|file|example.avi|14997504|965c013e991ee246d63d45ea71954c4d|/</url>
+
+	  <url type="sftp">
+		test@example.com:80/~/test
+	  </url>
+	  <url>test@example.com:80/~/test</url>
+
+    </resources>
+  </file>
+</files>
+</metalink>
+
