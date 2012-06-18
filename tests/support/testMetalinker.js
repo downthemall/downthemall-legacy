@@ -366,6 +366,13 @@ metalink_asyncTestFile(
 );
 
 metalink_asyncTestFile(
+	"data/metalink/invalid_version.metalink",
+	function(data, ex) {
+		ok(ex, "unsupported metalink version");
+	}
+);
+
+metalink_asyncTestFile(
 	"data/metalink/invalid_encoding.metalink",
 	function(data, ex) {
 		ok(ex, "invalid encoding fails to parse");
