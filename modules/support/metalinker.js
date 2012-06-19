@@ -202,6 +202,9 @@ Metalinker3.prototype = {
 					if (!uri) {
 						throw new Exception("Invalid url");
 					}
+					else if(!url.hasAttribute('type') && uri.substr(-8) === ".torrent") {
+						throw new Exception("Torrent downloads not supported");
+					}
 					uri = Services.io.newURI(uri, charset, null);
 				}
 				catch (ex) {
@@ -226,6 +229,12 @@ Metalinker3.prototype = {
 			if (!urls.length) {
 				continue;
 			}
+			let size = this.getSingle(file, 'size');
+			size = parseInt(size);
+			if (!isFinite(size)) {
+				size = 0;
+			}
+
 			let hash = null;
 			for each (let h in this.getNodes(file, 'ml:verification/ml:hash')) {
 				try {
@@ -266,8 +275,13 @@ Metalinker3.prototype = {
 						for each (let piece in collection) {
 							hash.add(piece.hash);
 						}
-						if (size && hash.parLength * hash.partials.length < size) {
-							throw Exception("too few partials");
+						if (size) {
+							if (hash.parLength * hash.partials.length < size) {
+								throw Exception("too few partials");
+							}
+							else if(hash.parLength * (hash.partials.length - 1) > size) {
+								throw Exception("too many partials");
+							}
 						}
 						log(LOG_DEBUG, "loaded " + hash.partials.length + " partials");
 					}
@@ -280,11 +294,6 @@ Metalinker3.prototype = {
 			let desc = this.getSingle(file, 'description');
 			if (!desc) {
 				desc = this.getSingle(root, 'description');
-			}
-			let size = this.getSingle(file, 'size');
-			size = parseInt(size);
-			if (!isFinite(size)) {
-				size = 0;
 			}
 
 			downloads.push({

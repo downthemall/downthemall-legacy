@@ -409,6 +409,10 @@ metalink_asyncTestFile(
 
 		download = metalink_getDownload(data.downloads, "few_pieces");
 		ok(!download.hashCollection.partials.length, "Few partials given");
+
+		download = metalink_getDownload(data.downloads, "outnumbered_pieces");
+		window.download = download;
+		ok(!download.hashCollection.partials.length, "More partial hashes than the actual size");
 	}
 );
 

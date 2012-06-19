@@ -39,6 +39,30 @@
       </url>
     </resources>
   </file>
+  <file name="outnumbered_pieces">
+    <size>2014232</size>
+    <verification>
+      <hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+      <pieces type="md5" length="262144">
+        <hash piece="0">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="1">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="2">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="3">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="4">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="5">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="6">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="7">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="8">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="9">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="10">cccd7f891ff81b30b9152479d2efcda2</hash>
+	  </pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/outnumbered_pieces
+      </url>
+    </resources>
+  </file>
   <file name="invalid_piece_num">
     <size>2014232</size>
     <verification>
@@ -56,7 +80,7 @@
 	</verification>
     <resources>
       <url type="http">
-		http://example.com/invalid_pieces
+		  http://example.com/invalid_piece_num
       </url>
     </resources>
   </file>
