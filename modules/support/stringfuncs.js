@@ -83,6 +83,14 @@ exports.getExtension = function(str) {
 	let c = name.lastIndexOf('.');
 	return (c == - 1) ? null : name.substr(c + 1);
 };
+exports.getFileNameAndExt = function getFileNameAndExt(str) {
+	let name = exports.getUsableFileName(str);
+	let c = name.lastIndexOf('.');
+	if (!~c) {
+		return [name, ""];
+	}
+	return [name.substr(0, c), name.substr(c + 1)];
+}
 
 exports.cropCenter = function(str, newLength) {
 	const length = str.length;

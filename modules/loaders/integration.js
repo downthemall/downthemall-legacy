@@ -17,6 +17,7 @@ lazy(this, 'CoThreads', function() require("cothreads"));
 lazy(this, 'getString_str',	function() Services.strings.createBundle('chrome://dta/locale/menu.properties'));
 
 const {unloadWindow} = require("support/overlays");
+const strfn = require("support/stringfuncs");
 
 /* **
  * Helpers and tools
@@ -285,16 +286,14 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 		}
 		else {
 			if (Preferences.getExt('listsniffedvideos', false)) {
-				let sniffed = Array.map(
-					ContentHandling.getSniffedVideosFor(Services.io.newURI(aWin.location.href, aWin.document.characterSet, null)),
-					function(e) e
-				);
+				let sniffed = getSniffedInfo(aWin);
 				let ref = DTA.getRef(aWin.document);
 				for each (let s in sniffed) {
 					let o = {
-						'url': new DTA.URL(s),
-						'referrer': ref,
-						'description': getString('sniffedvideo')
+						"url": new DTA.URL(s.url),
+						"fileName": s.name,
+						"referrer": ref,
+						"description": getString('sniffedvideo')
 					}
 					aURLs.push(o);
 					aImages.push(o);
@@ -353,6 +352,24 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 			}
 		}
 	}
+}
+const getSniffedInfo_name = /^(?:[a-f0-9]+|\d+|(?:video)playback|player)$/i;
+function getSniffedInfo(window) {
+	if (!Preferences.getExt('listsniffedvideos', false)) {
+		return [];
+	}
+	const docURI = Services.io.newURI(window.location.href, window.document.characterSet, null);
+	return ContentHandling.getSniffedVideosFor(docURI).map(function(e) {
+		let [fn,ext] = strfn.getFileNameAndExt(e.spec);
+		if (!ext || getSniffedInfo_name.test(fn)) {
+			ext = ext || "flv";
+			fn = strfn.replaceSlashes(strfn.getUsableFileName(window.document.title), "-");
+		}
+		return {
+			url: e,
+			name: fn + "." + ext
+		};
+	});
 }
 
 /* **
