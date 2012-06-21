@@ -145,6 +145,11 @@ Metalinker3.prototype = {
 		let downloads = [];
 
 		let files = this.getNodes(doc, '//ml:files/ml:file');
+
+		if (!files.length) {
+			throw new Exception("No valid files node");
+		}
+
 		for each (let file in files) {
 			let fileName = file.getAttribute('name');
 			if (!fileName) {
@@ -197,6 +202,9 @@ Metalinker3.prototype = {
 					if (!uri) {
 						throw new Exception("Invalid url");
 					}
+					else if(!url.hasAttribute('type') && uri.substr(-8) === ".torrent") {
+						throw new Exception("Torrent downloads not supported");
+					}
 					uri = Services.io.newURI(uri, charset, null);
 				}
 				catch (ex) {
@@ -221,6 +229,12 @@ Metalinker3.prototype = {
 			if (!urls.length) {
 				continue;
 			}
+			let size = this.getSingle(file, 'size');
+			size = parseInt(size);
+			if (!isFinite(size)) {
+				size = 0;
+			}
+
 			let hash = null;
 			for each (let h in this.getNodes(file, 'ml:verification/ml:hash')) {
 				try {
@@ -245,24 +259,30 @@ Metalinker3.prototype = {
 							throw new Exception("Invalid pieces length");
 						}
 						let collection = [];
+						let maxPiece = Math.ceil(size / hash.parLength);
 						for each (let piece in this.getNodes(pieces, 'ml:hash')) {
 							try {
-								collection.push({
-									piece: parseInt(piece.getAttribute('piece')),
-									hash: new DTA.Hash(piece.textContent.trim(), type)
-								});
+								let num = parseInt(piece.getAttribute('piece'));
+								if (!maxPiece || (num >= 0 && num <= maxPiece)) {
+									collection[num] =  new DTA.Hash(piece.textContent.trim(), type);
+								}
+								else {
+									throw new Exception("out of bound piece");
+								}
 							}
 							catch (ex) {
 								log(LOG_ERROR, "Failed to parse piece", ex);
 								throw ex;
 							}
 						}
-						collection.sort(function(a, b) a.piece - b.piece);
-						for each (let piece in collection) {
-							hash.add(piece.hash);
-						}
-						if (size && hash.parLength * hash.partials.length < size) {
-							throw Exception("too few partials");
+						let totalPieces = maxPiece || collection.length;
+						for (let i = 0; i < totalPieces; i++) {
+							if (collection[i]) {
+								hash.add(collection[i]);
+							}
+							else {
+								throw new Exception("missing piece");
+							}
 						}
 						log(LOG_DEBUG, "loaded " + hash.partials.length + " partials");
 					}
@@ -276,11 +296,7 @@ Metalinker3.prototype = {
 			if (!desc) {
 				desc = this.getSingle(root, 'description');
 			}
-			let size = this.getSingle(file, 'size');
-			size = parseInt(size);
-			if (!isFinite(size)) {
-				size = 0;
-			}
+
 			downloads.push({
 				'url': new UrlManager(urls),
 				'fileName': fileName,
@@ -303,6 +319,10 @@ Metalinker3.prototype = {
 				'selected': true,
 				'fromMetalink': true
 			});
+		}
+
+		if (!downloads.length) {
+			throw new Exception("No valid files to process");
 		}
 		let info = {
 			'identity': this.getSingle(root, 'identity'),
