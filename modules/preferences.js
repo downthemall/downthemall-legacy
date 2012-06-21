@@ -261,8 +261,6 @@ function makeObserver(obj) {
 		if (
 			iid.equals(Components.interfaces.nsISupports)
 			|| iid.equals(Components.interfaces.nsISupportsWeakReference)
-			|| iid.equals(Components.interfaces.nsIWeakReference)
-			|| iid.equals(Components.interfaces.nsIObserver)
 		) {
 			return obj;
 		}
@@ -270,16 +268,6 @@ function makeObserver(obj) {
 			return __QueryInterface.call(this, iid);
 		}
 		throw Components.results.NS_ERROR_NO_INTERFACE;
-	};
-
-	// nsiWeakReference
-	obj.QueryReferent = function(iid) {
-		return obj.QueryInterface(iid);
-	};
-
-	// nsiSupportsWeakReference
-	obj.GetWeakReference = function() {
-		return obj;
 	};
 }
 
