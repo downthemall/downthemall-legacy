@@ -24,8 +24,8 @@ function checkExports(m, exports) {
 }
 
 function getFile(relPath) {
-	var path = location.href.replace("index.html", "") + relPath;
-	var testURI = Services.io.newURI(path, null, null);
+	var testURI = Services.io.newURI(location.href, null, null);
+	testURI = Services.io.newURI(relPath, null, testURI);
 	const ChromeRegistry = Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIChromeRegistry);
 	testURI = ChromeRegistry.convertChromeURL(testURI);
 
