@@ -387,6 +387,8 @@ metalink_asyncTestFile(
 
 		download = metalink_getDownload(data.downloads, "corrupt_pieces");
 		ok(!download.hashCollection.partials.length, "Corrupt pieces not used");
+		strictEqual(download.hashCollection.full.sum.toLowerCase(),
+			"ce50319f58e846e3e0c66a9ada9015e601126864", "Correct full hash");
 	}
 );
 
@@ -402,17 +404,22 @@ metalink_asyncTestFile(
 	"data/metalink/invalid_pieces.metalink",
 	function(data, ex) {
 		var download = metalink_getDownload(data.downloads, "unsupported_pieces");
+		var exp_hash = "cccd7f891ff81b30b9152479d2efcda2";
+
 		ok(!download.hashCollection.partials.length,  "Unsupported hash pieces not used");
+		strictEqual(download.hashCollection.full.sum.toLowerCase(), exp_hash, "Correct full hash");
 
 		download = metalink_getDownload(data.downloads, "invalid_piece_num");
 		ok(!download.hashCollection.partials.length, "Out of range piece numbers");
+		strictEqual(download.hashCollection.full.sum.toLowerCase(), exp_hash, "Correct full hash");
 
 		download = metalink_getDownload(data.downloads, "few_pieces");
 		ok(!download.hashCollection.partials.length, "Few partials given");
+		strictEqual(download.hashCollection.full.sum.toLowerCase(), exp_hash, "Correct full hash");
 
 		download = metalink_getDownload(data.downloads, "outnumbered_pieces");
-		window.download = download;
 		ok(!download.hashCollection.partials.length, "More partial hashes than the actual size");
+		strictEqual(download.hashCollection.full.sum.toLowerCase(), exp_hash, "Correct full hash");
 	}
 );
 
