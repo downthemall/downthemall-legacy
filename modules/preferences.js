@@ -259,8 +259,9 @@ function makeObserver(obj) {
 	// Rewrite QI to support required interfaces
 	obj.QueryInterface = function(iid) {
 		if (
-			iid.equals(Components.interfaces.nsISupports)
-			|| iid.equals(Components.interfaces.nsISupportsWeakReference)
+			iid.equals(Ci.nsISupports)
+			|| iid.equals(Ci.nsISupportsWeakReference)
+			|| iid.equals(Ci.nsIObserver)
 		) {
 			return obj;
 		}
