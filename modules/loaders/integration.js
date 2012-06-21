@@ -14,6 +14,7 @@ this.__defineGetter__('recognizeTextLinks', function() Preferences.getExt("textl
 lazy(this, 'TextLinks', function() require("support/textlinks"));
 lazy(this, "ContentHandling", function() require("support/contenthandling").ContentHandling);
 lazy(this, 'CoThreads', function() require("cothreads"));
+lazy(this, 'getIcon', function() require("support/icons").getIcon);
 lazy(this, 'getString_str',	function() Services.strings.createBundle('chrome://dta/locale/menu.properties'));
 
 const {unloadWindow} = require("support/overlays");
@@ -1008,6 +1009,42 @@ exports.load = function load(window, outerEvent) {
 		}
 	}
 
+	function onDTAShowing(evt) {
+		let menu = evt.target;
+		for (let [,n] in Iterator(menu.querySelectorAll(".dta-sniff-element"))) {
+			n.parentNode.removeChild(n);
+		}
+		if (!Preferences.getExt('listsniffedvideos', false)) {
+			return;
+		}
+		const win = findWindowsNavigator().shift();
+		const sniffed = getSniffedInfo(win);
+		if (!sniffed.length) {
+			return;
+		}
+
+		let sep = document.createElement("menuseparator");
+		sep.className = "dta-sniff-element";
+		menu.appendChild(sep);
+
+		let ref = DTA.getRef(win.document);
+		for each (let s in sniffed) {
+			let o = {
+				"url": new DTA.URL(s.url),
+				"referrer": ref,
+				"fileName": s.name,
+				'description': getString('sniffedvideo')
+			}
+			let mi = document.createElement("menuitem");
+			mi.setAttribute("label", strfn.cropCenter(s.name, 60));
+			mi.setAttribute("tooltiptext", getIcon(s.name));
+			mi.setAttribute("image", getIcon(s.name));
+			mi.info = o;
+			mi.className = "dta-sniff-element menuitem-iconic";
+			menu.appendChild(mi);
+		}
+	}
+
 	function attachOneClick(evt) {
 		if (!!_selector) {
 			return;
@@ -1420,7 +1457,7 @@ exports.load = function load(window, outerEvent) {
 		return rv.length == 1 ? rv[0] : rv;
 	}
 
-	function initMenus(evt) {
+	(function initMenus(evt) {
 		function bindEvt(evt, fn) {
 			return function (e) {
 				e.addEventListener(evt, fn, true);
@@ -1431,7 +1468,6 @@ exports.load = function load(window, outerEvent) {
 			$(ctx, ctx + "-direct").forEach(bindEvt(evt, fn));
 		}
 
-		initMenus_unload();
 
 		try {
 			let cont = $('dtaCtxSubmenu');
@@ -1492,15 +1528,7 @@ exports.load = function load(window, outerEvent) {
 			Components.utils.reportError(ex);
 			log(LOG_ERROR, "DCO::init()", ex);
 		}
-		evt.target == ctx ? onContextShowing(evt) : onToolsShowing(evt);
-	}
-
-	ctx.addEventListener('popupshowing', initMenus, true);
-	menu.addEventListener('popupshowing', initMenus, true);
-	let initMenus_unload = unloadWindow(window, function initMenus_unload() {
-		ctx.removeEventListener('popupshowing', initMenus, true);
-		menu.removeEventListener('popupshowing', initMenus, true);
-	});
+	})();
 
 	/*window.addEventListener("keydown", onKeyDown, false);
 	unloadWindow(window, function() window.removeEventListener("keydown", onKeyDown, false));
@@ -1536,7 +1564,8 @@ exports.load = function load(window, outerEvent) {
 	try {
 		(function() {
 			function dta_button_command(event) {
-				switch (event.target.id) {
+				const target = event.target;
+				switch (target.id) {
 				case 'dta-button':
 				case 'dta-tb-dta':
 					findLinks();
@@ -1548,6 +1577,9 @@ exports.load = function load(window, outerEvent) {
 					DTA.openManager(window);
 					break;
 				default:
+					if (target.classList.contains("dta-sniff-element") && target.info) {
+						DTA.saveSingleItem(window, false, target.info);
+					}
 					break;
 					}
 			}
@@ -1556,7 +1588,8 @@ exports.load = function load(window, outerEvent) {
 
 
 			function dta_turbo_button_command(event) {
-				switch (event.target.id) {
+				const target = event.target;
+				switch (target.id) {
 				case 'dta-turbo-button':
 				case 'dta-tb-turbo':
 					findLinks(true);
@@ -1565,7 +1598,9 @@ exports.load = function load(window, outerEvent) {
 					findLinks(true, true);
 					break;
 				default:
-
+					if (target.classList.contains("dta-sniff-element") && target.info) {
+						DTA.saveSingleItem(window, true, target.info);
+					}
 					break;
 				}
 			}
@@ -1581,6 +1616,8 @@ exports.load = function load(window, outerEvent) {
 			let dta_button = $t('dta-button');
 			dta_button.addEventListener('command', dta_button_command, true);
 			unloadWindow(window, function() dta_button.removeEventListener('command', dta_button_command, true));
+			dta_button.addEventListener('popupshowing', onDTAShowing, true);
+			unloadWindow(window, function() dta_button.removeEventListener('popupshowing', onDTAShowing, true));
 			dta_button.addEventListener('dragover', dta_button_drag, true);
 			unloadWindow(window, function() dta_button.removeEventListener('dragover', dta_button_drag, true));
 			dta_button.addEventListener('dragdrop', dta_button_drop, true);
@@ -1590,6 +1627,8 @@ exports.load = function load(window, outerEvent) {
 			let dta_turbo_button = $t('dta-turbo-button');
 			dta_turbo_button.addEventListener('command', dta_turbo_button_command, true);
 			unloadWindow(window, function() dta_turbo_button.removeEventListener('command', dta_turbo_button_command, true));
+			dta_turbo_button.addEventListener('popupshowing', onDTAShowing, true);
+			unloadWindow(window, function() dta_turbo_button.removeEventListener('popupshowing', onDTAShowing, true));
 			dta_turbo_button.addEventListener('dragover', dta_turbo_button_drag, true);
 			unloadWindow(window, function() dta_turbo_button.removeEventListener('dragover', dta_turbo_button_drag, true));
 			dta_turbo_button.addEventListener('dragdrop', dta_turbo_button_drop, true);
@@ -1613,8 +1652,10 @@ exports.load = function load(window, outerEvent) {
 		log(LOG_DEBUG, "replaying event");
 		let target = outerEvent.target;
 		let type = outerEvent.type;
-		if (target === ctx || target == menu) {
-			initMenus(outerEvent);
+		if (type == "popupshowing") {
+			let replayEvent = document.createEvent("Events");
+			replayEvent.initEvent(type, true, true);
+			target.dispatchEvent(replayEvent);
 		}
 		else if (type == "command" && target.id != "cmd_CustomizeToolbars") {
 			target.doCommand();

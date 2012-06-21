@@ -238,7 +238,9 @@ function registerOverlays() {
 			fire.addFireListener($("dtaCtxCompact").parentNode, "popupshowing");
 			fire.addFireListener($("dtaToolsMenu").parentNode, "popupshowing");
 			fire.addFireListener($("dta-button"), "command");
+			fire.addFireListener($("dta-button"), "popupshowing");
 			fire.addFireListener($("dta-turbo-button"), "command");
+			fire.addFireListener($("dta-turbo-button"), "popupshowing");
 			fire.addFireListener($("dta-turboselect-button"), "command");
 			fire.addFireListener($("dta-manager-button"), "command");
 			fire.addFireListener($("cmd_CustomizeToolbars"), "command");
