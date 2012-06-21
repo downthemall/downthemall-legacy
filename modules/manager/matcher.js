@@ -4,7 +4,9 @@
 "use strict";
 
 const {FilterManager} = require("support/filtermanager");
-const {COMPLETE, FINISHING} = require("constants");
+const constants = require("constants");
+const {COMPLETE, FINISHING} = constants;
+
 const {
 	SimpleIterator,
 	StringBundles,
@@ -152,7 +154,7 @@ const StatusMatch = {
 			}
 		},
 		getMatcher: function(params) {
-			let state = params.reduce(function(p,c) p | DTA[c], 0);
+			let state = params.reduce(function(p,c) p | constants[c], 0);
 			if (state & COMPLETE) {
 				state |= FINISHING;
 			}
