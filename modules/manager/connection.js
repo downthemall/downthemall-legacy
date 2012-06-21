@@ -491,6 +491,13 @@ Connection.prototype = {
 						_('pcerrortitle')
 					);
 				}
+				else if (code == 451) {
+					d.fail(
+						"Fahrenheit 451 (censored)",
+						_("failed", [file]) + " " + _("sra", [code]) + ": " + status,
+						"Fahrenheit 451"
+						);
+				}
 				else {
 					var file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
 					code = formatNumber(code, 3);
