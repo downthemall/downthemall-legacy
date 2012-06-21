@@ -5,6 +5,7 @@ test("exports", function() {
 																			"addFinalSlash",
 																			"cropCenter",
 																			"getExtension",
+																			"getFileNameAndExt",
 																			"getUsableFileName",
 																			"getUsableFileNameWithFlatten",
 																			"normalizeSlashes",
@@ -85,6 +86,25 @@ test("getUsableFileName", function() {
 	strictEqual(getUsableFileName("a\\"), "a");
 	strictEqual(getUsableFileName("a?b"), "a");
 	strictEqual(getUsableFileName("a ?b"), "a");
+});
+test("getUsableFileName", function() {
+	const {getFileNameAndExt} = require("support/stringfuncs");
+	deepEqual(getFileNameAndExt("a"), ["a", ""]);
+	deepEqual(getFileNameAndExt(" a "), ["a", ""]);
+	deepEqual(getFileNameAndExt("/a"), ["a", ""]);
+	deepEqual(getFileNameAndExt("a/"), ["a", ""]);
+	deepEqual(getFileNameAndExt("\\a"), ["a", ""]);
+	deepEqual(getFileNameAndExt("a\\"), ["a", ""]);
+	deepEqual(getFileNameAndExt("a?b"), ["a", ""]);
+	deepEqual(getFileNameAndExt("a ?b"), ["a", ""]);
+	deepEqual(getFileNameAndExt("a.ext"), ["a", "ext"]);
+	deepEqual(getFileNameAndExt(" a.ext "), ["a", "ext"]);
+	deepEqual(getFileNameAndExt("/a.ext"), ["a", "ext"]);
+	deepEqual(getFileNameAndExt("a.ext/"), ["a", "ext"]);
+	deepEqual(getFileNameAndExt("\\a.ext"), ["a", "ext"]);
+	deepEqual(getFileNameAndExt("a.ext\\"), ["a", "ext"]);
+	deepEqual(getFileNameAndExt("a.ext?b"), ["a", "ext"]);
+	deepEqual(getFileNameAndExt("a.ext ?b"), ["a", "ext"]);
 });
 
 test("getUsableFileNameWithFlatten", function() {
