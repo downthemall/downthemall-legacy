@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<metalink version="3.0" xmlns="http://www.metalinker.org/">
+<files>
+  <file name="Fußball läuft gerade">
+    <size>2014232</size>
+    <resources>
+      <url type="http">http://example.com/encoding</url>
+    </resources>
+  </file>
+</files>
+</metalink>

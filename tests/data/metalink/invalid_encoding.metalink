@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<metalink version="3.0" xmlns="http://www.metalinker.org/">
+<files>
+  <file name="test_кий_жше">
+    <size>2014232</size>
+    <resources>
+      <url type="http">
+		http://example.com/invalid_encoding
+      </url>
+    </resources>
+  </file>
+</files>
+
+</metalink>
