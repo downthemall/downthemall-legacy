@@ -89,4 +89,10 @@ exports.registerURL(
 	function() this.spec += "?directstart=1"
 );
 
+exports.registerURL(
+	"youtube; strip video ranges",
+	/youtube.*&range=/,
+	function() this.spec = this.spec.replace(/&range=.*?&/, "&")
+);
+
 Object.freeze(exports);
