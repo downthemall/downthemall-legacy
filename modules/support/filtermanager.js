@@ -311,9 +311,7 @@ FilterManagerImpl.prototype = {
 	LINK_FILTER: LINK_FILTER,
 	IMAGE_FILTER: IMAGE_FILTER,
 
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference, Ci.nsIWeakReference]),
-	QueryReferent: function(iid) this.QueryInterface(iid),
-	GetWeakReference: function() this,
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
 
 	init: function FM_init() {
 		PBM.registerCallbacks(this);

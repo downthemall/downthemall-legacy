@@ -110,7 +110,6 @@ Connection.prototype = {
 		Ci.nsIFTPEventSink,
 		Ci.nsISupports,
 		Ci.nsISupportsWeakReference,
-		Ci.nsIWeakReference,
 		Ci.nsIClassInfo,
 		Ci.nsICancelable,
 	],
@@ -182,10 +181,6 @@ Connection.prototype = {
 		}
 		throw Cr.NS_ERROR_NO_INTERFACE;
 	},
-	// nsISupportsWeakReference
-	GetWeakReference: function DL_GWR() this,
-	// nsIWeakReference
-	QueryReferent: function DL_QR(uuid) this.QueryInterface(uuid),
 
 	// nsICancelable
 	cancel: function DL_cancel(aReason) {
