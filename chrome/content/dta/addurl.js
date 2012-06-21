@@ -123,6 +123,9 @@ var Dialog = {
 					// own sandbox)
 					// This hack makes our URL a DTA.URL again ;)
 					address._realURL = a.url;
+					if ("fileName" in a) {
+						address._fileName = a.fileName;
+					}
 					address.readOnly = true;
 					$('batcheslabel').style.display = 'none';
 					$('batches').collapsed = true;
@@ -199,8 +202,10 @@ var Dialog = {
 
 		var address = $('address');
 		var url = address.value;
+		var fn;
 		if ('_realURL' in address) {
 			url = address._realURL;
+			fn = address._fileName;
 		}
 		else {
 			try {
@@ -283,8 +288,11 @@ var Dialog = {
 			let URL = DTA.URL;
 			let newURI = Services.io.newURI;
 
-			function QueueItem(url) {
+			function QueueItem(url, fn) {
 				this.url = new URL(newURI(url, null, null));
+				if (fn) {
+					this.fileName = fn;
+				}
 				if (hash) {
 					this.url.hash = hash;
 				}
@@ -307,7 +315,7 @@ var Dialog = {
 				})();
 			}
 
-			return batch = [new QueueItem(url)];
+			return batch = [new QueueItem(url, fn)];
 		})();
 
 		DTA.sendLinksToManager(window, start, downloads);
