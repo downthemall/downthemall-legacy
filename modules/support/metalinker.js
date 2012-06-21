@@ -259,28 +259,29 @@ Metalinker3.prototype = {
 							throw new Exception("Invalid pieces length");
 						}
 						let collection = [];
+						let maxPiece = Math.ceil(size / hash.parLength);
 						for each (let piece in this.getNodes(pieces, 'ml:hash')) {
 							try {
-								collection.push({
-									piece: parseInt(piece.getAttribute('piece')),
-									hash: new DTA.Hash(piece.textContent.trim(), type)
-								});
+								let num = parseInt(piece.getAttribute('piece'));
+								if (!maxPiece || (num >= 0 && num <= maxPiece)) {
+									collection[num] =  new DTA.Hash(piece.textContent.trim(), type);
+								}
+								else {
+									throw new Exception("out of bound piece");
+								}
 							}
 							catch (ex) {
 								log(LOG_ERROR, "Failed to parse piece", ex);
 								throw ex;
 							}
 						}
-						collection.sort(function(a, b) a.piece - b.piece);
-						for each (let piece in collection) {
-							hash.add(piece.hash);
-						}
-						if (size) {
-							if (hash.parLength * hash.partials.length < size) {
-								throw Exception("too few partials");
+						let totalPieces = maxPiece || collection.length;
+						for (let i = 0; i < totalPieces; i++) {
+							if (collection[i]) {
+								hash.add(collection[i]);
 							}
-							else if(hash.parLength * (hash.partials.length - 1) > size) {
-								throw Exception("too many partials");
+							else {
+								throw new Exception("missing piece");
 							}
 						}
 						log(LOG_DEBUG, "loaded " + hash.partials.length + " partials");
