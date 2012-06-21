@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink version="3.0" xmlns="http://www.metalinker.org/">
+<files>
+  <file name="md5_hash">
+    <size>2014232</size>
+    <verification>
+      <hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+      <pieces type="md5" length="262144">
+        <hash piece="0">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="1">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="2">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="3">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="4">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="5">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="6">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="7">cccd7f891ff81b30b9152479d2efcda2</hash>
+      </pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/md5_hash
+      </url>
+    </resources>
+  </file>
+  <file name="sha1_hash">
+    <size>2014232</size>
+    <verification>
+      <hash type="sha1">01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+      <pieces type="sha1" length="262144">
+        <hash piece="0">01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+        <hash piece="1">01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+        <hash piece="2">01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+        <hash piece="3">01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+        <hash piece="4">01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+        <hash piece="5">01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+        <hash piece="6">01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+        <hash piece="7">01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+      </pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/sha1_hash
+      </url>
+    </resources>
+  </file>
+  <file name="sha256_hash">
+    <size>2014232</size>
+    <verification>
+      <hash type="sha256">2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+      <pieces type="sha256" length="262144">
+        <hash piece="0">2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+        <hash piece="1">2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+        <hash piece="2">2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+        <hash piece="3">2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+        <hash piece="4">2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+        <hash piece="5">2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+        <hash piece="6">2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+        <hash piece="7">2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+	</pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/sha256_hash
+      </url>
+    </resources>
+  </file>
+  <file name="sha384_hash">
+    <size>2014232</size>
+    <verification>
+      <hash type="sha384">38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+      <pieces type="sha384" length="262144">
+        <hash piece="0">38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+        <hash piece="1">38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+        <hash piece="2">38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+        <hash piece="3">38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+        <hash piece="4">38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+        <hash piece="5">38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+        <hash piece="6">38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+        <hash piece="7">38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+	</pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/sha384_hash
+      </url>
+    </resources>
+  </file>
+  <file name="sha512_hash">
+    <size>2014232</size>
+    <verification>
+      <hash type="sha512">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+      <pieces type="sha512" length="262144">
+        <hash piece="0">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+        <hash piece="1">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+        <hash piece="2">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+        <hash piece="3">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+        <hash piece="4">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+        <hash piece="5">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+        <hash piece="6">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+        <hash piece="7">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+	</pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/sha512_hash
+      </url>
+    </resources>
+  </file>
+  <file name="md4_hash">
+    <size>2014232</size>
+    <verification>
+      <hash type="md4">31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+      <pieces type="md4" length="262144">
+        <hash piece="0">31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+        <hash piece="1">31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+        <hash piece="2">31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+        <hash piece="3">31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+        <hash piece="4">31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+        <hash piece="5">31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+        <hash piece="6">31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+        <hash piece="7">31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+	</pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/md4_hash
+      </url>
+    </resources>
+  </file>
+  <file name="rmd160_hash">
+    <size>2014232</size>
+    <verification>
+      <hash type="rmd160">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+      <pieces type="rmd160" length="262144">
+        <hash piece="0">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="1">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="2">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="3">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="4">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="5">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="6">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="7">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+	  </pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/rmd160_hash
+      </url>
+    </resources>
+  </file>
+  <file name="tiger_hash">
+    <size>2014232</size>
+    <verification>
+      <hash type="tiger">223c9a0e319c7401441afc717b80e50a6807f708c0443cab</hash>
+      <pieces type="tiger" length="262144">
+        <hash piece="0">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="1">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="2">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="3">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="4">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="5">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="6">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="7">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+	  </pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/tiger_hash
+      </url>
+    </resources>
+  </file>
+  <file name="crc32_hash">
+    <size>2014232</size>
+    <verification>
+      <hash type="crc32">519956fa</hash>
+      <pieces type="crc32" length="262144">
+        <hash piece="0">519956fa</hash>
+        <hash piece="1">519956fa</hash>
+        <hash piece="2">519956fa</hash>
+        <hash piece="3">519956fa</hash>
+        <hash piece="4">519956fa</hash>
+        <hash piece="5">519956fa</hash>
+        <hash piece="6">519956fa</hash>
+        <hash piece="7">519956fa</hash>
+	</pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/crc_hash
+      </url>
+    </resources>
+  </file>
+</files>
+
+</metalink>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<custom_metalink>
+<files>
+  <file name="test1">
+    <size>2014232</size>
+    <verification>
+      <hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/test1
+      </url>
+    </resources>
+  </file>
+</files>
+</custom_metalink>
+

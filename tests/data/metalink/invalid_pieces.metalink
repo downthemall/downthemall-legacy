@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink version="3.0" xmlns="http://www.metalinker.org/">
+<files>
+  <file name="unsupported_pieces">
+    <size>2014232</size>
+    <verification>
+      <hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+      <pieces type="tiger" length="262144">
+        <hash piece="0">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="1">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="2">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="3">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="4">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="5">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="6">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash piece="7">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+	  </pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/invalid_pieces
+      </url>
+    </resources>
+  </file>
+  <file name="few_pieces">
+    <size>2014232</size>
+    <verification>
+      <hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+      <pieces type="md5" length="262144">
+        <hash piece="0">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="1">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="2">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="3">cccd7f891ff81b30b9152479d2efcda2</hash>
+	  </pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/invalid_pieces
+      </url>
+    </resources>
+  </file>
+  <file name="outnumbered_pieces">
+    <size>2014232</size>
+    <verification>
+      <hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+      <pieces type="md5" length="262144">
+        <hash piece="0">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="1">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="2">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="3">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="4">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="5">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="6">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="7">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="8">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="9">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="10">cccd7f891ff81b30b9152479d2efcda2</hash>
+	  </pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		http://example.com/outnumbered_pieces
+      </url>
+    </resources>
+  </file>
+  <file name="invalid_piece_num">
+    <size>2014232</size>
+    <verification>
+      <hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+      <pieces type="md5" length="262144">
+        <hash piece="8">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="9">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="15">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="25">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="30">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="31">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="32">cccd7f891ff81b30b9152479d2efcda2</hash>
+        <hash piece="37">cccd7f891ff81b30b9152479d2efcda2</hash>
+	  </pieces>
+	</verification>
+    <resources>
+      <url type="http">
+		  http://example.com/invalid_piece_num
+      </url>
+    </resources>
+  </file>
+</files>
+
+</metalink>
