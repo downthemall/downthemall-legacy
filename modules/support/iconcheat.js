@@ -11,7 +11,7 @@ exports.loadWindow = (function() {
 	// xpi version
 	function extract(file) {
 		let jar = new Instances.ZipReader(file);
-		let entries = jar.findEntries("chrome/icons/default/*.(ico|png|xpm)$");
+		let entries = jar.findEntries("chrome/skin/windowicons/*.(ico|png|xpm)$");
 		while (entries.hasMore()) {
 			let entry = entries.getNext();
 			try {
@@ -30,8 +30,8 @@ exports.loadWindow = (function() {
 	function copy(directory) {
 		let srcDirectory = directory.clone();
 		srcDirectory.append('chrome');
-		srcDirectory.append('icons');
-		srcDirectory.append('default');
+		srcDirectory.append('skin');
+		srcDirectory.append('windowicons');
 		let icons = srcDirectory.directoryEntries;
 		while (icons.hasMoreElements()) {
 			let icon = icons.getNext();
