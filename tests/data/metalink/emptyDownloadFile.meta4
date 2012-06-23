@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink xmlns="urn:ietf:params:xml:ns:metalink" xmlns:a0="http://www.downthemall.net/properties#" identity="test_identity">
+	<publisher>
+		<name>test_publisher</name>
+		<url>http://example.com/test_publisher</url>
+	</publisher>
+	<license>
+		<name>test_license</name>
+		<url>http://example.com/test_license</url>
+	</license>
+	<copyright>test_copyright</copyright>
+	<releasedate>2012-12-12</releasedate>
+	<description>test_description</description>
+	<tags>test_tag1, test_tag2</tags>
+	<identity>test_identity</identity>
+	<file name="test_file1" a0:referrer="test_file1_referrer" a0:num="1" a0:startDate="1339582217773">
+		<version>test_file1_version</version>
+		<language>en-US</language>
+		<os>test_file1_os</os>
+		<size>1000</size>
+		<logo>http://example.com/test_file1_logo</logo>
+		<identity>test_file1_identity</identity>
+		<hash type="md5">b86eaee3dc7f511c7b93cddb1f1bcaac</hash>
+	</file>
+</metalink>

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<metalink version="3.0" xmlns="http://www.metalinker.org/" pubdate="2012-12-12-12:12:12" 
+<metalink version="3.0" xmlns="http://www.metalinker.org/" pubdate="2012-12-12-12:12:12"
   refreshdate="2012-12-12-12:12:12" xmlns:a0="http://www.downthemall.net/properties#" identity="test_identity">
 <files>
-  <file> 
-  </file>
-</files> 
+</files>
 </metalink>

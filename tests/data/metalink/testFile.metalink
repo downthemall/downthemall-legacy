@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metalink version="3.0" xmlns="http://www.metalinker.org/" pubdate="2012-12-12-12:12:12"
-  refreshdate="2012-12-12-12:12:12" xmlns:a0="http://www.downthemall.net/properties#" identity="test_identity">
+  refreshdate="2012-12-12-12:12:12" xmlns:a0="http://www.downthemall.net/properties#">
 <publisher>
   <name>test_publisher</name>
   <url>http://example.com/test_publisher</url>
@@ -51,7 +51,7 @@ ftp://example.com/ignore.torrent
       <url type="ftp" location="us" preference="1" a0:usable="ftp://usable.com/test_file1_url1">
 ftp://example.com/test_file1_url1
       </url>
-      <url type="http" location="de" preference="2" a0="http://usable.com/test_file1_url2">
+      <url type="http" location="de" preference="2" a0:usable="http://usable.com/test_file1_url2">
 ftp://example.com/test_file1_url2
       </url>
     </resources>
