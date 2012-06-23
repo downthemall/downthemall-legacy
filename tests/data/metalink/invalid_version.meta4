@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink xmlns="urn:ietf:params:xml:ns:metalink5">
+<file name="test2">
+	<size>2014232</size>
+	<hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+	<url>
+	http://example.com/test2
+	</url>
+</file>
+</metalink>

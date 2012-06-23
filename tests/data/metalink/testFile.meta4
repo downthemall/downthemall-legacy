@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink xmlns="urn:ietf:params:xml:ns:metalink" xmlns:a0="http://www.downthemall.net/properties#">
+	<publisher>
+	  <name>test_publisher</name>
+	  <url>http://example.com/test_publisher</url>
+	</publisher>
+	<license>
+	  <name>test_license</name>
+	  <url>http://example.com/test_license</url>
+	</license>
+	<description>test_description</description>
+
+	<!--<published>2012-06-09T11:33:20Z</published>-->
+
+	<identity>test_identity</identity>
+
+  <file name="test_file1" a0:referrer="test_file1_referrer" a0:num="1" a0:startDate="1339582217773">
+    <version>test_file1_version</version>
+    <language>en-US</language>
+    <os>test_file1_os</os>
+    <size>2014232</size>
+    <logo>http://example.com/test_file1_logo</logo>
+    <identity>test_file1_identity</identity>
+    <copyright>test_file1_copyright</copyright>
+    <license>
+  		<name>test_file1_license</name>
+  		<url>http://example.com/test_file1_license</url>
+	</license>
+	<publisher>
+  		<name>test_file1_publisher</name>
+  		<url>http://example.com/test_file1_publisher</url>
+	</publisher>
+
+
+	<hash type="sha1">01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+
+	<pieces type="sha1" length="262144">
+		<hash>ce50319f58e846e3e0c66a9ada9015e601126864</hash>
+		<hash>c9e73e336831a364cedcd889259b7330d48f90fd</hash>
+		<hash>a7f5281c629ea63c791f320db3b0df85fdb01861</hash>
+		<hash>e6cf5571185db0ec79b551222596462db445bdd6</hash>
+		<hash>8982e850d2e3ea005119beea3cc05daca28de474</hash>
+		<hash>a0e7a3a3a46f1ae5fb4eb8529b6fb8ee82fa43a8</hash>
+		<hash>96540cfade1ce9d3846f41510fbed46965b29568</hash>
+		<hash>87108128d4dde5ba62ffec1f1cc3fc292fc298ca</hash>
+	</pieces>
+
+	<url location="us" priority="1" a0:usable="ftp://usable.com/test_file1_url1">
+		ftp://example.com/test_file1_url1
+	</url>
+	<url location="de" priority="2" a0:usable="http://usable.com/test_file1_url2">
+		ftp://example.com/test_file1_url2
+	</url>
+  </file>
+
+  <file name="test_file2" a0:referrer="test_file2_referrer" a0:num="2" a0:startDate="1339582217773">
+	<version>test_file2_version</version>
+    <language>zh-Hans</language>
+    <os>test_file2_os</os>
+    <size>1000</size>
+    <copyright>test_file2_copyright</copyright>
+    <license>
+  		<name>test_file2_license</name>
+  		<url>http://example.com/test_file2_license</url>
+	</license>
+	<publisher>
+  		<name>test_file2_publisher</name>
+  		<url>http://example.com/test_file2_publisher</url>
+	</publisher>
+
+	<hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+
+
+	<url location="de" preference="1" a0:usable="http://usable.com/test_file2_url1">
+		http://example.com/test_file2_url1
+	</url>
+  </file>
+</metalink>
