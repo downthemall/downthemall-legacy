@@ -147,7 +147,7 @@ Metalinker3.prototype = {
 		let files = this.getNodes(doc, '//ml:files/ml:file');
 
 		if (!files.length) {
-			throw new Exception("No valid files node");
+			throw new Exception("No valid file nodes");
 		}
 
 		for each (let file in files) {
@@ -363,6 +363,9 @@ MetalinkerRFC5854.prototype = {
 		let downloads = [];
 
 		let files = this.getNodes(doc, '/ml:metalink/ml:file');
+		if (!files.length) {
+			throw new Exception("No valid file nodes");
+		}
 		for each (let file in files) {
 			let fileName = file.getAttribute('name');
 			if (!fileName) {
@@ -443,6 +446,12 @@ MetalinkerRFC5854.prototype = {
 				url.preference = Math.max(100 - ((url.preference - pmin) *  100 / (pmax - pmin)).toFixed(0), 10);
 			});
 
+			let size = this.getSingle(file, 'size');
+			size = parseInt(size);
+			if (!isFinite(size)) {
+				size = 0;
+			}
+
 			let hash = null;
 			for each (let h in this.getNodes(file, 'ml:hash')) {
 				try {
@@ -478,6 +487,9 @@ MetalinkerRFC5854.prototype = {
 						if (size && hash.parLength * hash.partials.length < size) {
 							throw Exception("too few partials");
 						}
+						else if(size && (hash.partials.length - 1) * hash.parLength > size) {
+							throw Exception("too many partials");
+						}
 						log(LOG_DEBUG, "loaded " + hash.partials.length + " partials");
 					}
 					catch (ex) {
@@ -490,11 +502,6 @@ MetalinkerRFC5854.prototype = {
 			let desc = this.getSingle(file, 'description');
 			if (!desc) {
 				desc = this.getSingle(root, 'description');
-			}
-			let size = this.getSingle(file, 'size');
-			size = parseInt(size);
-			if (!isFinite(size)) {
-				size = 0;
 			}
 			downloads.push({
 				'url': new UrlManager(urls),
@@ -519,6 +526,11 @@ MetalinkerRFC5854.prototype = {
 				'fromMetalink': true
 			});
 		}
+
+		if (!downloads.length) {
+			throw new Exception("No valid files to process");
+		}
+
 		let info = {
 			'identity': this.getSingle(root, "identity"),
 			'description': this.getSingle(root, "description"),

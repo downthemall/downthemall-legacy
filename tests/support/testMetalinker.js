@@ -77,21 +77,27 @@ function metalink_checkInfo(info, i, message) {
 		"license", "publisher", "start"
 	], message);
 }
-function metalink_asyncTestFile(file, cb) {
+function metalink_asyncTestFile(files, cb) {
+	if (typeof files === "string") {
+		files = [files + ".metalink", files + ".meta4"];
+	}
 	const {parse} = require("support/metalinker");
-	asyncTest(file, function() {
-		parse(getFile(file), "", function(data, ex) {
-			start();
-			cb(data, ex);
-		});
-	});
+	for (var i = 0; i < files.length; i++) {
+		(function(f) {
+			asyncTest(f, function() {
+				parse(getFile(f), "", function(data, ex) {
+					start();
+					cb(data, ex);
+				});
+			});
+		})(files[i]);
+	}
 }
 
 metalink_asyncTestFile(
-	"data/metalink/testFile.metalink",
+	"data/metalink/testFile",
 	function(data, ex) {
 		strictEqual(ex, undefined, "parsed correctly");
-		equal(data.parser, "Metalinker Version 3.0", "correct parser verion");
 		metalink_checkInfo(data.info, {
 			identity: "test_identity",
 			description: "test_description",
@@ -183,7 +189,7 @@ metalink_asyncTestFile(
 );
 
 metalink_asyncTestFile(
-	"data/metalink/utf.metalink",
+	"data/metalink/utf",
 	function(data, ex) {
 		ok(!ex, "no errors in parser");
 		console.log("data", data.downloads.map(function(e) e.fileName).join(""));
@@ -208,7 +214,7 @@ metalink_asyncTestFile(
 );
 
 metalink_asyncTestFile(
-	"data/metalink/iso_encoding.metalink",
+	"data/metalink/iso_encoding",
 	function(data, ex) {
 		ok(!ex, "no errors in parser");
 		console.log("data", data.downloads.map(function(e) e.fileName).join(""));
@@ -233,7 +239,7 @@ metalink_asyncTestFile(
 );
 
 metalink_asyncTestFile(
-	"data/metalink/windows_1252.metalink",
+	"data/metalink/windows_1252",
 	function(data, ex) {
 		ok(!ex, "no errors in parser");
 		metalink_checkDownload(data.downloads, {
@@ -257,12 +263,11 @@ metalink_asyncTestFile(
 );
 
 metalink_asyncTestFile(
-	"data/metalink/kernel.metalink",
+	"data/metalink/kernel",
 	function(data, ex) {
 		if (ex) {
 			throw ex;
 		}
-		equal(data.parser, "Metalinker Version 3.0", "correct parser verion");
 		metalink_checkInfo(data.info, {
 			identity: "linux-2.6.16.19.tar.bz2",
 			description: "Linux kernel",
@@ -312,15 +317,17 @@ metalink_asyncTestFile(
 );
 
 metalink_asyncTestFile(
-	"data/metalink/emptyFilesNode.metalink",
+	"data/metalink/emptyFilesNode",
 	function(data, ex) {
-		strictEqual(ex.message, "LocalFile name not provided!", "file name error handle");
+		strictEqual(ex.message, "No valid file nodes", "file name error handle");
 	}
 );
 
 metalink_asyncTestFile(
-	"data/metalink/emptyUrls.metalink",
+	"data/metalink/emptyUrls",
 	function(data, ex) {
+		window.tmp = data;
+		window.ex = ex;
 		if (ex) {
 			strictEqual(ex.message, "No valid files to process", "unsupported urls error handle");
 		}
@@ -331,56 +338,56 @@ metalink_asyncTestFile(
 );
 
 metalink_asyncTestFile(
-	"data/metalink/emptyFile.metalink",
+	"data/metalink/emptyFile",
 	function(data, ex) {
-		ok(ex, "no 'files' node in metalink");
+		ok(ex, "empty Metalink node");
 	}
 );
 
 metalink_asyncTestFile(
-	"data/metalink/emptyDownloadFile.metalink",
+	"data/metalink/emptyDownloadFile",
 	 function(data, ex) {
-		ok(ex, "no active file to download in metalink file");
+		ok(ex, "no active file to download in the metalink");
 	}
 );
 
 metalink_asyncTestFile(
-	"data/metalink/blank.metalink",
+	"data/metalink/blank",
 	function(data, ex) {
 		ok(ex, "blank metalink file");
 	}
 );
 
 metalink_asyncTestFile(
-	"data/metalink/invalid_metalink.metalink",
+	"data/metalink/invalid_metalink",
 	function(data, ex) {
 		ok(ex, "invalid metalink xml");
 	}
 );
 
 metalink_asyncTestFile(
-	"data/metalink/invalid_namespace.metalink",
+	"data/metalink/invalid_namespace",
 	function(data, ex) {
 		ok(ex, "invalid metalink namespace");
 	}
 );
 
 metalink_asyncTestFile(
-	"data/metalink/invalid_version.metalink",
+	["data/metalink/invalid_version.metalink"],
 	function(data, ex) {
 		ok(ex, "unsupported metalink version");
 	}
 );
 
 metalink_asyncTestFile(
-	"data/metalink/invalid_encoding.metalink",
+	"data/metalink/invalid_encoding",
 	function(data, ex) {
 		ok(ex, "invalid encoding fails to parse");
 	}
 );
 
 metalink_asyncTestFile(
-	"data/metalink/corrupt_hash.metalink",
+	"data/metalink/corrupt_hash",
 	function(data, ex) {
 		var download = metalink_getDownload(data.downloads, "corrupt_hash");
 		ok(!download.hashCollection, "Corrupt hashes not used");
@@ -393,7 +400,7 @@ metalink_asyncTestFile(
 );
 
 metalink_asyncTestFile(
-	"data/metalink/priority_hash.metalink",
+	"data/metalink/priority_hash",
 	function(data, ex) {
 		var download = metalink_getDownload(data.downloads, "hash_priority");
 		equal(download.hashCollection.full.type.toLowerCase(), "sha512", "hashes with higher priority used");
@@ -401,7 +408,7 @@ metalink_asyncTestFile(
 );
 
 metalink_asyncTestFile(
-	"data/metalink/invalid_pieces.metalink",
+	"data/metalink/invalid_pieces",
 	function(data, ex) {
 		var download = metalink_getDownload(data.downloads, "unsupported_pieces");
 		var exp_hash = "cccd7f891ff81b30b9152479d2efcda2";
@@ -410,6 +417,7 @@ metalink_asyncTestFile(
 		strictEqual(download.hashCollection.full.sum.toLowerCase(), exp_hash, "Correct full hash");
 
 		download = metalink_getDownload(data.downloads, "invalid_piece_num");
+		window.tmp = download;
 		ok(!download.hashCollection.partials.length, "Out of range piece numbers");
 		strictEqual(download.hashCollection.full.sum.toLowerCase(), exp_hash, "Correct full hash");
 
@@ -424,10 +432,9 @@ metalink_asyncTestFile(
 );
 
 
-asyncTest("metalink3_hash", function() {
-	const {parse} = require("support/metalinker");
-	var file = getFile("data/metalink/hash.metalink");
-	parse(file, "", function(data, ex) {
+metalink_asyncTestFile(
+	"data/metalink/hash",
+	function(data, ex) {
 		start();
 		if (ex) {
 			throw ex;
@@ -494,4 +501,3 @@ asyncTest("metalink3_hash", function() {
 			}
 		}
 	});
-});
