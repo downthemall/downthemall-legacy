@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink xmlns="urn:ietf:params:xml:ns:metalink" xmlns:a0="http://www.downthemall.net/properties#">
+<file name="md5_hash">
+	<size>2014232</size>
+	<hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+	<pieces type="md5" length="262144">
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+	</pieces>
+	<url>
+	http://example.com/md5_hash
+	</url>
+</file>
+
+<file name="sha1_hash">
+	<size>2014232</size>
+	<hash type="sha1">01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+	<pieces type="sha1" length="262144">
+		<hash>01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+		<hash>01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+		<hash>01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+		<hash>01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+		<hash>01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+		<hash>01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+		<hash>01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+		<hash>01586b2c0ec5d8e985138204404878f5ecbeef58</hash>
+	</pieces>
+	<url>
+	http://example.com/sha1_hash
+	</url>
+</file>
+<file name="sha256_hash">
+	<size>2014232</size>
+	<hash type="sha256">2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+	<pieces type="sha256" length="262144">
+		<hash>2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+		<hash>2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+		<hash>2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+		<hash>2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+		<hash>2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+		<hash>2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+		<hash>2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+		<hash>2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892</hash>
+	</pieces>
+	<url>
+	http://example.com/sha256_hash
+	</url>
+</file>
+
+<file name="sha384_hash">
+	<size>2014232</size>
+	<hash type="sha384">38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+	<pieces type="sha384" length="262144">
+		<hash>38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+		<hash>38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+		<hash>38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+		<hash>38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+		<hash>38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+		<hash>38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+		<hash>38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+		<hash>38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</hash>
+	</pieces>
+	<url>
+	http://example.com/sha384_hash
+	</url>
+</file>
+
+<file name="sha512_hash">
+	<size>2014232</size>
+	<hash type="sha512">cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+	<pieces type="sha512" length="262144">
+		<hash>cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+		<hash>cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+		<hash>cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+		<hash>cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+		<hash>cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+		<hash>cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+		<hash>cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+		<hash>cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</hash>
+	</pieces>
+	<url>
+	http://example.com/sha512_hash
+	</url>
+</file>
+<file name="md4_hash">
+	<size>2014232</size>
+	<hash type="md4">31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+	<pieces type="md4" length="262144">
+		<hash>31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+		<hash>31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+		<hash>31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+		<hash>31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+		<hash>31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+		<hash>31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+		<hash>31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+		<hash>31d6cfe0d16ae931b73c59d7e0c089c0</hash>
+	</pieces>
+	<url>
+	http://example.com/md4_hash
+	</url>
+  </file>
+  <file name="rmd160_hash">
+    <size>2014232</size>
+      <hash type="rmd160">9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+      <pieces type="rmd160" length="262144">
+        <hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+        <hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+	  </pieces>
+      <url>
+		http://example.com/rmd160_hash
+      </url>
+</file>
+<file name="tiger_hash">
+	<size>2014232</size>
+	<hash type="tiger">223c9a0e319c7401441afc717b80e50a6807f708c0443cab</hash>
+	<pieces type="tiger" length="262144">
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+	</pieces>
+	<url>
+	http://example.com/tiger_hash
+	</url>
+</file>
+<file name="crc32_hash">
+	<size>2014232</size>
+	<hash type="crc32">519956fa</hash>
+	<pieces type="crc32" length="262144">
+		<hash>519956fa</hash>
+		<hash>519956fa</hash>
+		<hash>519956fa</hash>
+		<hash>519956fa</hash>
+		<hash>519956fa</hash>
+		<hash>519956fa</hash>
+		<hash>519956fa</hash>
+		<hash>519956fa</hash>
+	</pieces>
+	<url>
+	http://example.com/crc_hash
+	</url>
+</file>
+</metalink>

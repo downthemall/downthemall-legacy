@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink xmlns="urn:ietf:params:xml:ns:metalink" xmlns:a0="http://www.downthemall.net/properties#">
+  <file name="unsupported_pieces">
+    <size>2014232</size>
+	<hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+	<pieces type="tiger" length="262144">
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+		<hash>9c1185a5c5e9fc54612808977ee8f548b2258d31</hash>
+	</pieces>
+	<url>
+	http://example.com/invalid_pieces
+	</url>
+  </file>
+  <file name="few_pieces">
+    <size>2014232</size>
+	<hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+	<pieces type="md5" length="262144">
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+	</pieces>
+	<url>
+	http://example.com/invalid_pieces
+	</url>
+  </file>
+  <file name="outnumbered_pieces">
+    <size>2014232</size>
+	<hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+	<pieces type="md5" length="262144">
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+	</pieces>
+	<url>
+	http://example.com/outnumbered_pieces
+	</url>
+  </file>
+  <file name="invalid_piece_num">
+    <size>2014232</size>
+	<hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
+	<pieces type="md5" length="262144">
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+		<hash>cccd7f891ff81b30b9152479d2efcda2</hash>
+	</pieces>
+	<url>
+	  http://example.com/invalid_piece_num
+	</url>
+  </file>
+</metalink>

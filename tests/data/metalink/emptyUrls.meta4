@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink xmlns="urn:ietf:params:xml:ns:metalink" xmlns:a0="http://www.downthemall.net/properties#">
+<file name="file1">
+	<size>2014232</size>
+	<metaurl mediatype="torrent">
+	http://example.com/file.torrent
+	</metaurl>
+
+	<url>magnet:?xt=urn:ed2k:31D6CFE0D16AE931B73C59D7E0C089C0</url>
+
+	<url>rsync://sample@example.com/test</url>
+
+	<url>ed2k://|file|example.avi|14997504|965c013e991ee246d63d45ea71954c4d|/</url>
+
+	<url>test@example.com:80/~/test</url>
+</file>
+</metalink>
+

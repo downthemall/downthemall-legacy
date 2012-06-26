@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink xmlns="urn:ietf:params:xml:ns:metalink" xmlns:a0="http://www.downthemall.net/properties#">
+	<publisher>
+		<name>Package resources</name>
+		<url>http://www.packages.ro</url>
+	</publisher>
+	<license>
+		<name>GPL</name>
+		<url>http://www.gnu.org/copyleft/gpl.html</url>
+	</license>
+	<description>Linux kernel</description>
+	<tags>kernel, linux</tags>
+	<identity>linux-2.6.16.19.tar.bz2</identity>
+	<version>2.6.16.19</version>
+
+	<file name="linux-2.6.16.19.tar.bz2">
+		<os>Linux-x86</os>
+		<size>40836905</size>
+		<hash type="md5">b1e3c65992b0049fdbee825eb2a856af</hash>
+		<url location="RO"
+		   priority="10">
+		http://ftp.roedu.net/mirrors/ftp.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+		</url>
+		<url location="AT"
+		   priority="10">
+		http://ftp.at.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+		</url>
+		<url location="al"
+			priority="10">
+		http://ftp.al.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+		</url>
+		<url location="ad"
+		   priority="10">
+		http://ftp.ad.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+		</url>
+		<url location="aq"
+		   priority="10">
+		http://ftp.aq.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+		</url>
+		<url location="ag"
+		   priority="10">
+		http://ftp.ag.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+		</url>
+		<url location="ar"
+		   priority="10">
+		http://ftp.ar.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+		</url>
+		<url location="am"
+		   priority="10">
+		http://ftp.am.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2
+		</url>
+	</file>
+</metalink>
