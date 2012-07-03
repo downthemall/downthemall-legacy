@@ -16,19 +16,26 @@ test("exports", function() {
 
 var metalink_downloadCollection = function(downloads) {
 	this.downloads = downloads.map(function(d) {
-		var top_hash = new DTA.Hash(d.hash.full, d.hash.type);
-		var hashCollection = new DTA.HashCollection(top_hash);
-		hashCollection.parLength = d.hash.pieceLength;
-		for (var i in Iterator(d.hash.pieces)) {
-			hashCollection.add(new DTA.Hash(i[1], d.hash.pieceType));
+		var top_hash, hashCollection = null;
+		if (d.hash) {
+			top_hash = new DTA.Hash(d.hash.full, d.hash.type);
+			hashCollection = new DTA.HashCollection(top_hash);
+
+			if (d.hash.pieces) {
+				hashCollection.parLength = d.hash.pieceLength;
+				for (var i in Iterator(d.hash.pieces)) {
+					hashCollection.add(new DTA.Hash(i[1], d.hash.pieceType));
+				}
+			}
 		}
 		return {
 			fileName: d.fileName,
-			startDate: d.startDate,
-			referrer: Services.io.newURI(d.referrer, null, null),
+			startDate: d.startDate ? d.startDate : new Date(),
+			referrer: d.referrer? Services.io.newURI(d.referrer, null, null): null,
 			description: d.description,
 			urlManager: imex_createUrlManager(d.urls),
 			totalSize: d.size,
+			bNum: d.numIstance,
 			hashCollection: hashCollection
 		};
 	});
@@ -77,9 +84,41 @@ function imex_createUrlManager(urls) {
 		return Services.io.newURI(e, null, null);
 	}));
 }
-asyncTest("exporting correct Data", function() {
-	imex_checkMetalinkExport([{
-		fileName: "sampleName",
+asyncTest("real world test case", function() {
+	imex_checkMetalinkExport([
+	{
+		copyright: "",
+		numIstance: 1,
+		description: "The Linux kernel",
+		fileName: "linux-2.6.16.19.tar.bz2",
+		lang: "",
+		identity: "",
+		license: null,
+		logo: null,
+		mirrors: 8,
+		publisher: null,
+		referrer: null,
+		sys: "",
+		size: 40836905,
+		version: "",
+		urls: [
+			"http://ftp.ad.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+			"http://ftp.ag.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+			"http://ftp.al.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+			"http://ftp.am.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+			"http://ftp.aq.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+			"http://ftp.ar.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+			"http://ftp.at.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
+			"http://ftp.roedu.net/mirrors/ftp.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2"
+		],
+
+		hash: {
+			full: "b1e3c65992b0049fdbee825eb2a856af",
+			type: "MD5"
+		}
+	},
+	{
+		fileName: "testFile",
 		startDate: new Date(),
 		referrer: "http://example.com/",
 		size: 21040,
@@ -88,6 +127,7 @@ asyncTest("exporting correct Data", function() {
 			"http://example.com/test1",
 			"http://example.com/test2"
 		],
+		numIstance: 4,
 		hash: {
 			full: "01586b2c0ec5d8e985138204404878f5ecbeef58",
 			type: "SHA1",
@@ -118,3 +158,58 @@ asyncTest("exporting correct Data", function() {
 });
 
 
+asyncTest("No partial hashes test case", function() {
+	imex_checkMetalinkExport([{
+		fileName: "testFile",
+		startDate: new Date(),
+		size: 21040,
+		referrer: null,
+		description: "sample desc",
+		urls: [
+			"http://example.com/test1",
+			"http://example.com/test2"
+		],
+		numIstance: 4,
+		hash: {
+			full: "01586b2c0ec5d8e985138204404878f5ecbeef58",
+			type: "SHA1"
+		},
+		copyright: "",
+		identity: "",
+		lang: "",
+		license: null,
+		mirrors: 2,
+		publisher: null,
+		sys: "",
+		version: "",
+	}], function(data, ex) {
+		start();
+	});
+});
+
+
+asyncTest("No hash test case", function() {
+	imex_checkMetalinkExport([{
+		fileName: "testFile",
+		startDate: new Date(),
+		size: 21040,
+		description: "sample desc",
+		urls: [
+			"http://example.com/test1",
+			"http://example.com/test2"
+		],
+		referrer: null,
+		numIstance: 4,
+		hash: null,
+		copyright: "",
+		identity: "",
+		lang: "",
+		license: null,
+		mirrors: 2,
+		publisher: null,
+		sys: "",
+		version: "",
+	}], function(data, ex) {
+		start();
+	});
+});
