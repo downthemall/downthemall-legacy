@@ -15,6 +15,8 @@ const Exception = Components.Exception;
 
 Cu.import("chrome://dta-modules/content/glue.jsm");
 
+const DTA = require("api");
+
 function checkExports(m, exports) {
 	arrayEqual(
 		Object.keys(require(m)),
