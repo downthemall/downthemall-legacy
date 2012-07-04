@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<metalink xmlns="urn:ietf:params:xml:ns:metalink" version="4.0" a0:version="3.0b1pre" xmlns:a0="http://www.downthemall.net/properties#"><!--metalink as exported by DownThemAll! on firefox/15.0a2
+May contain DownThemAll! specific information in the DownThemAll! namespace: http://www.downthemall.net/properties#--><generator>DownThemAll!/3.0b1pre</generator><published>Wed, 04 Jul 2012 03:33:27 GMT</published><file name="testFile" a0:num="4" a0:startDate="1341372807699"><description>sample desc</description><url priority="100" a0:usable="http://example.com/test2">http://example.com/test2</url><url priority="100" a0:usable="http://example.com/test1">http://example.com/test1</url><size>21040</size></file></metalink>

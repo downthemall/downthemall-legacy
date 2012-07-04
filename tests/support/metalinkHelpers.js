@@ -79,3 +79,66 @@ var metalink_asyncTestFile = function(files, cb) {
 		})(files[i]);
 	}
 }
+
+var metalink_createUrlManager = function(urls) {
+    const {UrlManager} = require("support/urlmanager");
+	return new UrlManager(urls.map(function(e) {
+		return Services.io.newURI(e, null, null);
+	}));
+}
+var metalink_downloadCollection = function(downloads) {
+	this.downloads = downloads.map(function(d) {
+		var top_hash, hashCollection = null;
+		if (d.hash) {
+			top_hash = new DTA.Hash(d.hash.full, d.hash.type);
+			hashCollection = new DTA.HashCollection(top_hash);
+
+			if (d.hash.pieces) {
+				hashCollection.parLength = d.hash.pieceLength;
+				for (var i in Iterator(d.hash.pieces)) {
+					hashCollection.add(new DTA.Hash(i[1], d.hash.pieceType));
+				}
+			}
+		}
+		return {
+			fileName: d.fileName,
+			startDate: d.startDate ? d.startDate : new Date(),
+			referrer: d.referrer? Services.io.newURI(d.referrer, null, null): null,
+			description: d.description,
+			urlManager: metalink_createUrlManager(d.urls),
+			totalSize: d.size,
+			bNum: d.numIstance,
+			hashCollection: hashCollection
+		};
+	});
+}
+var metalink_downloadIterator = function(collection) {
+	this.downloadCollection = collection;
+	this.index = 0;
+}
+metalink_downloadIterator.prototype.next = function() {
+	if (this.index >= this.downloadCollection.downloads.length) {
+		this.index = 0;
+		throw StopIteration;
+	}
+	else {
+		return this.downloadCollection.downloads[this.index++];
+	}
+}
+
+metalink_downloadCollection.prototype.__iterator__ = function() {
+	return new metalink_downloadIterator(this);
+}
+
+function metalink_getExportedResults(downloads, cb) {
+	const {exportToMetalink4File} = require("manager/imex");
+	const Prefs = require("preferences");
+	const {parse} = require("support/metalinker");
+	var file = getFile("data/metalink/tmp.meta4");
+
+	var coll = new metalink_downloadCollection(downloads);
+	exportToMetalink4File(coll, document, file, Prefs.permissions);
+	parse(file, "", function(data, ex) {
+		cb(data, ex);
+	});
+}
