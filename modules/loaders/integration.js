@@ -1037,7 +1037,7 @@ exports.load = function load(window, outerEvent) {
 			}
 			let mi = document.createElement("menuitem");
 			mi.setAttribute("label", strfn.cropCenter(s.name, 60));
-			mi.setAttribute("tooltiptext", getIcon(s.name));
+			mi.setAttribute("tooltiptext", s.url.spec);
 			mi.setAttribute("image", getIcon(s.name));
 			mi.info = o;
 			mi.className = "dta-sniff-element menuitem-iconic";
