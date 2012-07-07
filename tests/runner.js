@@ -25,13 +25,11 @@ function checkExports(m, exports) {
 		);
 }
 
-function getFile(relPath) {
+function getRelURI(relPath) {
 	var testURI = Services.io.newURI(location.href, null, null);
 	testURI = Services.io.newURI(relPath, null, testURI);
 	const ChromeRegistry = Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIChromeRegistry);
-	testURI = ChromeRegistry.convertChromeURL(testURI);
-
-	return testURI.QueryInterface(Ci.nsIFileURL).file;
+	return ChromeRegistry.convertChromeURL(testURI).spec;
 }
 
 addEventListener("load", function load() {

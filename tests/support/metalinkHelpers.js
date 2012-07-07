@@ -71,7 +71,7 @@ var metalink_asyncTestFile = function(files, cb) {
 	for (var i = 0; i < files.length; i++) {
 		(function(f) {
 			asyncTest(f, function() {
-				parse(getFile(f), "", function(data, ex) {
+				parse(getRelURI(f), "", function(data, ex) {
 					start();
 					cb(data, ex);
 				});
@@ -134,11 +134,13 @@ function metalink_getExportedResults(downloads, cb) {
 	const {exportToMetalink4File} = require("manager/imex");
 	const Prefs = require("preferences");
 	const {parse} = require("support/metalinker");
-	var file = getFile("data/metalink/tmp.meta4");
+	var file = Services.dirsvc.get("TmpD", Ci.nsIFile);
+	file.append("tmp.meta4");
+	var fileURI = Services.io.newFileURI(file).spec;
 
 	var coll = new metalink_downloadCollection(downloads);
 	exportToMetalink4File(coll, document, file, Prefs.permissions);
-	parse(file, "", function(data, ex) {
+	parse(fileURI, "", function(data, ex) {
 		cb(data, ex);
 	});
 }
