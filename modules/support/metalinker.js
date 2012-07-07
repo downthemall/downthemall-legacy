@@ -556,7 +556,7 @@ const __parsers__ = [
  * @return async (Metalink) Parsed metalink data
  */
 function parse(aFile, aReferrer, aCallback) {
-	let fu = Services.io.newFileURI(aFile);
+	let fu = Services.io.newURI(aFile, null, null);
 	let xhrLoad, xhrError;
 	let xhr = new Instances.XHR();
 	xhr.open("GET", fu.spec);
