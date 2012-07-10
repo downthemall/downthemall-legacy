@@ -550,16 +550,15 @@ const __parsers__ = [
 
 /**
  * Parse a metalink
- * @param aFile (nsIFile) Metalink file
+ * @param aURI (nsIURI) Metalink URI
  * @param aReferrer (String) Optional. Referrer
  * @param aCallback (Function) Receiving callback function of form f(result, exception || null)
  * @return async (Metalink) Parsed metalink data
  */
-function parse(aFile, aReferrer, aCallback) {
-	let fu = Services.io.newURI(aFile, null, null);
+function parse(aURI, aReferrer, aCallback) {
 	let xhrLoad, xhrError;
 	let xhr = new Instances.XHR();
-	xhr.open("GET", fu.spec);
+	xhr.open("GET", aURI.spec);
 	xhr.overrideMimeType("application/xml");
 	xhr.addEventListener("loadend", function xhrLoadend() {
 		xhr.removeEventListener("loadend", xhrLoadend, false);

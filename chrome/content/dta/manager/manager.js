@@ -1284,7 +1284,8 @@ const Metalinker = {
 		});
 	},
 	handleFile: function ML_handleFile(aFile, aReferrer, aCallback) {
-		this.parse(aFile, aReferrer, function (res, ex) {
+		let aURI = Services.io.newFileURI(aFile);
+		this.parse(aURI, aReferrer, function (res, ex) {
 			try {
 				if (ex) {
 					throw ex;
