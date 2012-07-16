@@ -29,7 +29,7 @@ function getRelURI(relPath) {
 	var testURI = Services.io.newURI(location.href, null, null);
 	testURI = Services.io.newURI(relPath, null, testURI);
 	const ChromeRegistry = Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIChromeRegistry);
-	return ChromeRegistry.convertChromeURL(testURI).spec;
+	return ChromeRegistry.convertChromeURL(testURI);
 }
 
 addEventListener("load", function load() {

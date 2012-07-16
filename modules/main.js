@@ -6,6 +6,9 @@
 const Preferences = require("preferences");
 const Version = require("version");
 const {defer} = require("support/defer");
+const Mediator = require("support/mediator");
+const DTA = require("api");
+const Utils = require("utils");
 
 /**
  * AboutModule
@@ -49,22 +52,127 @@ AboutModule.prototype = {
 	getURIFlags: function(aURI) Ci.nsIAboutModule.URI_SAFE_FOR_UNTRUSTED_CONTENT
 };
 
+function MetalinkInterceptModule() {
+}
+MetalinkInterceptModule.prototype = {
+	classDescription: "DownThemAll! metalink integration",
+	classID: Components.ID('{4b048560-c789-11e1-9b21-0800200c9a67}'),
+	contractID: '@mozilla.org/streamconv;1?from=application/metalink4+xml&to=*/*',
+	QueryInterface: XPCOMUtils.generateQI([
+		Ci.nsISupports,
+		Ci.nsIStreamConverter,
+		Ci.nsIContentSniffer,
+		Ci.nsIStreamListener,
+		Ci.nsIRequestObserver
+	]),
+	xpcom_categories: ["net-content-sniffers", "content-sniffing-services", "@mozilla.org/streamconv;1"],
+	testMetaDoc: /^\s*<\?xml(?:.|\r|\n)*?xmlns(?::.+?)?=('|")(?:http:\/\/www\.metalinker\.org\/|urn:ietf:params:xml:ns:metalink)\1/im,
+
+	getMIMETypeFromContent: function(req, data, length) {
+		data = String.fromCharCode.apply(null, data);
+		if (this.testMetaDoc.test(data)) {
+			if (req instanceof Ci.nsIHttpChannel) {
+				req.setResponseHeader("Content-Disposition", "", false);
+			}
+			return "application/metalink4+xml";
+		}
+		return "";
+	},
+	asyncConvertData: function(fromType, toType, listener, ctx) {
+		this.listener = listener;
+	},
+	convert: function() {
+		throw Cr.NS_ERROR_NOT_IMPLEMENTED;
+	},
+
+	onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
+		try {
+			this.pipe.outputStream.writeFrom(aInputStream, aCount);
+		}
+		catch(ex) {
+			aRequest.cancel(Cr.NS_BINDING_ABORTED);
+		}
+	},
+	onStartRequest: function(aRequest, aCtx) {
+		this.pipe = new Instances.Pipe(false, true, 1<<17, 160, null);
+	},
+	onStopRequest: function(aRequest, aCtx, aStatusCode) {
+		const {parse} = require("support/metalinker");
+
+		try {
+			this.listener.onStopRequest(aRequest, aCtx, aStatusCode);
+		}
+		catch (ex) {}
+
+		try {
+			if (!Components.isSuccessCode(aCtx)) {
+				throw "Error downloading metalink document";
+			}
+			let is = new Instances.BinaryInputStream(this.pipe.inputStream);
+			let buf = "";
+			for (let a; a = is.available();) {
+				buf += is.readBytes(a);
+			}
+			buf = "data:application/metalink4+xml;base64," + btoa(buf);
+			parse(Services.io.newURI(buf, null, null), "", function(res, ex) {
+				if (ex) {
+					log(LOG_ERROR, "failed", ex);
+					throw ex;
+				}
+				if (!res.downloads.length) {
+					log(LOG_ERROR, "no downloads");
+					throw new Error(_("mlnodownloads"));
+				}
+				let window = Mediator.getMostRecent();
+				window.openDialog(
+					"chrome://dta/content/dta/manager/metaselect.xul",
+					"_blank",
+					"chrome,centerscreen,dialog=yes",
+					res.downloads,
+					res.info,
+					function() {
+						Utils.filterInSitu(res.downloads, function(d) { return d.selected; });
+						if (res.downloads.length) {
+							DTA.sendLinksToManager(window, res.info.start, res.downloads);
+						}
+					}
+				);
+			});
+		}
+		catch (ex) {
+			log(LOG_ERROR, "ml", ex);
+		}
+		finally {
+			this.pipe.outputStream.close();
+			is.close();
+			this.listener = null;
+			this.pipe = null;
+		}
+	}
+};
 function registerComponents() {
-	for (let [,cls] in Iterator([AboutModule])) {
+	for (let [,cls] in Iterator([AboutModule, MetalinkInterceptModule])) {
 		const factory = {
 			_cls: cls,
 			createInstance: function(outer, iid) {
 				if (outer) {
 					throw Cr.NS_ERROR_NO_AGGREGATION;
 				}
-				return new cls();
+				return new this._cls();
 			}
 		};
 		Cm.registerFactory(cls.prototype.classID, cls.prototype.classDescription, cls.prototype.contractID, factory);
 		unload(function() {
 			Cm.unregisterFactory(factory._cls.prototype.classID, factory);
 		});
+
+		if (cls.prototype.xpcom_categories) {
+			for each (let category in cls.prototype.xpcom_categories) {
+				Services.catman.addCategoryEntry(category, cls.prototype.classDescription, cls.prototype.contractID, false, true);
+			}
+		}
 	}
+
 }
 
 function migrate() {

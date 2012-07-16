@@ -189,6 +189,9 @@ const MetaSelect = {
 			this
 		);
 		self.close();
+		if (window.arguments[2]) {
+			window.arguments[2]();
+		}
 		return true;
 	},
 	openLink: function(e) {
