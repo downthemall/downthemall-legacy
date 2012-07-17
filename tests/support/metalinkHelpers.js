@@ -140,7 +140,7 @@ function metalink_getExportedResults(downloads, cb) {
 
 	var coll = new metalink_downloadCollection(downloads);
 	exportToMetalink4File(coll, document, file, Prefs.permissions);
-	parse(fileURI, "", function(data, ex) {
+	parse(Services.io.newFileURI(file), "", function(data, ex) {
 		cb(data, ex);
 	});
 }
