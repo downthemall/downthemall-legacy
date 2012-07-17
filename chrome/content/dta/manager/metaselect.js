@@ -178,6 +178,9 @@ const MetaSelect = {
 		}
 		window.arguments[1].start = start;
 		self.close();
+		if (window.arguments[2]) {
+			window.arguments[2]();
+		}
 		return true;
 	},
 	cancel: function ML_cancel() {
@@ -189,6 +192,9 @@ const MetaSelect = {
 			this
 		);
 		self.close();
+		if (window.arguments[2]) {
+			window.arguments[2]();
+		}
 		return true;
 	},
 	openLink: function(e) {
