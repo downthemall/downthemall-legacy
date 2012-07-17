@@ -3,7 +3,15 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-function install() {}
+function flush() {
+	const {Services} = Components.utils.import("resource://gre/modules/Services.jsm", {});
+	Services.obs.notifyObservers(null, "chrome-flush-skin-caches", null);
+	Services.obs.notifyObservers(null, "chrome-flush-caches", null);
+}
+
+function install() {
+	flush();
+}
 function uninstall() {}
 function startup(data) {
 	// will unload itself
