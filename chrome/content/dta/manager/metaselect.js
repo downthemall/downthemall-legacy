@@ -129,6 +129,9 @@ const MetaSelect = {
 		else {
 			$('boxLicense').hidden = true;
 		}
+		if (!$("directory").value) {
+			$("directory").value = DefaultDownloadsDirectory.path;
+		}
 	},
 	browseDir: function() {
 		// get a new directory
