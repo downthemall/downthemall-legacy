@@ -15,7 +15,7 @@ asyncTest("non-existant", function() {
 		function(impl) function(cb) impl(null, cb),
 		function() cb("non-worker")
 		);
-	setTimeout(function() impl.callImpl(cb), 50);
+	setTimeout(function() impl.callImpl(cb), 500);
 });
 
 asyncTest("worker", function() {
@@ -29,7 +29,7 @@ asyncTest("worker", function() {
 		function(impl) function(cb) impl({}, cb),
 		function() cb("non-worker")
 		);
-	setTimeout(function() impl.callImpl(cb), 50);
+	setTimeout(function() impl.callImpl(cb), 500);
 });
 
 asyncTest("workerThrow", function() {
