@@ -5,8 +5,7 @@ module("manager/preallocator.js");
 	function _do_test(title, impl, size, sparse) {
 		setTimeout(function() {
 			var allocStart = Date.now();
-			var file = Services.dirsvc.get("TmpD", Ci.nsIFile);
-			file.append("dta_prealloc_test" + title + ".tmp");
+			var file = FileUtils.getFile("TmpD", ["dta_prealloc_test" + title + ".tmp"]);
 
 			impl(file, size, 416, sparse, function callback(result) {
 				var allocEnd = Date.now();
