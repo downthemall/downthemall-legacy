@@ -35,9 +35,12 @@
  * ***** END LICENSE BLOCK ***** */
 "use strict";
 
+if (!("OS" in this)) {
+	throw new Error("OS constants not yet available");
+}
 var moveFile = (function() {
 	var libc = null;
-	for each (let p in ["libc.so.6", "libc.so"]) {
+	for each (let p in ["libSystem.dylib", "libsystem.B.dylib", "libc.so.6", "libc.so"]) {
 		try {
 			libc = ctypes.open(p);
 			break;
@@ -98,51 +101,137 @@ var moveFile = (function() {
 		ctypes.size_t // count
 		);
 
+	const pipe_t = ctypes.ArrayType(ctypes.int, 2);
+	const pipe = libc.declare(
+		"pipe",
+		ctypes.default_abi,
+		ctypes.int, // retval
+		pipe_t // pipefd
+		);
 
-	const BUFSIZE = 1<<16;
+	const splice = (function() {
+		try {
+			return libc.declare(
+				"splice",
+				ctypes.default_abi,
+				ctypes.ssize_t, // retval
+				ctypes.int, // fd_in
+				ctypes.voidptr_t, // off_in,
+				ctypes.int, // fd_out
+				ctypes.voidptr_t, // off_out,
+				ctypes.size_t, // len,
+				ctypes.unsigned_int // flags
+				);
+		}
+		catch (ex) {
+			return null;
+		}
+	})();
+
+	const BUFSIZE = 1<<17;
 	const BUFFER = new ctypes.ArrayType(ctypes.char, BUFSIZE)();
+	const SPLICE_F_MORE = 4;
 
-	return function moveFile_unix_copy(src, dst, perms) {
+	const ERROR_SPLICE = new Error("Failed to splice");
+	const ERROR_READ = new Error("Failed to read");
+	const ERROR_WRITE = new Error("Failed to write");
+
+	const {
+		O_RDONLY,
+		O_WRONLY,
+		O_CREAT,
+		O_TRUNC
+	} = OS.Constants.libc;
+
+	return function moveFile_unix(src, dst, perms) {
+		function move_splice(fds, fdd) {
+			let pfd = new pipe_t();
+			if (pipe(pfd) == -1) {
+				throw new Error("Failed to create pipe");
+			}
+			let [pread, pwrite] = pfd;
+			for(let alreadyWritten = false;; alreadyWritten = true) {
+				let size = splice(fds, null, pwrite, null, BUFSIZE, 0);
+				if (size == -1) {
+					throw (alreadyWritten ? ERROR_READ : ERROR_SPLICE);
+				}
+				else if (size == 0) {
+					break;
+				}
+				let written = splice(pread, null, fdd, null, size, (size - BUFSIZE == 0) ? 0 : SPLICE_F_MORE);
+				if (written - size != 0) {
+					throw (alreadyWritten ? ERROR_WRITE : ERROR_SPLICE);
+				}
+			}
+		}
+		function move_copy(fds, fdd) {
+			for (;;) {
+				let size = read(fds, BUFFER, BUFSIZE);
+				if (size == -1) {
+					throw ERROR_READ;
+				}
+				else if (size == 0) {
+					break; // done
+				}
+				let written = write(fdd, BUFFER, size);
+				if (written - size != 0) {
+					throw ERROR_WRITE;
+				}
+			}
+		}
+
+		function copy(impl) {
+			let fds = open(src, O_RDONLY, perms);
+			if (fds == -1) {
+				throw new Error("Failed to open source file: " + src);
+			}
+			try {
+				let fdd = open(dst, O_WRONLY | O_CREAT | O_TRUNC, perms);
+				if (fdd == -1) {
+					throw new Error("Failed to open destination file: " + dst);
+				}
+				try {
+					impl(fds, fdd);
+				}
+				catch (ex) {
+					unlink(dst);
+					throw ex;
+				}
+				finally {
+					closeFd(fdd);
+				}
+			}
+			finally {
+				closeFd(fds);
+			}
+		}
+
 		if (rename(src, dst) == 0) {
+			log("moved " + src + " to " + dst + " using rename");
 			return true;
 		}
 
-		// rename did not work; copy! :p
 		let rv = false;
-		let fds = open(src, 0x0, perms);
-		if (fds == -1) {
-			throw new Error("Failed to open source file: " + src);
-		}
 		try {
-			let fdd = open(dst, 0x1 | 0x40 | 0x200, perms);
-			if (fdd == -1) {
-				throw new Error("Failed to open destination file: " + dst);
+			if (!splice) {
+				throw ERROR_SPLICE;
 			}
+			copy(move_splice);
+			log("moved " + src + " to " + dst + " using splice");
+			rv = true;
+		}
+		catch (ex if ex === ERROR_SPLICE) {
 			try {
-				for (;;) {
-					let size = read(fds, BUFFER, BUFSIZE);
-					if (size == -1) {
-						throw new Error("Failed to read some data");
-					}
-					else if (size == 0) {
-						break; // done
-					}
-					let written = write(fdd, BUFFER, size);
-					if (written - size != 0) {
-						throw new Error("Failed to write some data: " + written + "/" + size);
-					}
-				}
+				copy(move_copy);
+				log("moved " + src + " to " + dst + " using copy");
 				rv = true;
 			}
-			finally {
-				closeFd(fdd);
-				if (!rv) {
-					unlink(dst);
-				}
+			catch (ex) {
+				log(ex);
 			}
 		}
-		finally {
-			closeFd(fds);
+		catch (ex) {
+			log(ex);
 		}
 		if (rv) {
 			unlink(src);

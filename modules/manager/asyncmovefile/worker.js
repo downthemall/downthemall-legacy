@@ -35,25 +35,19 @@
  * ***** END LICENSE BLOCK ***** */
 "use strict";
 
+function log(ex) {
+	postMessage({log: ex.message || ex });
+}
+
 try {
 	importScripts("win.js");
 }
 catch (ex) {
 	try {
-		importScripts("mac.js");
+		importScripts("unix.js");
 	}
 	catch (ex) {
-		try {
-			importScripts("unix_splice.js");
-		}
-		catch (ex) {
-			try {
-				importScripts("unix_copy.js");
-			}
-			catch (ex) {
-				throw new Error("No supported native movefile implementation");
-			}
-		}
+		throw new Error("No supported native movefile implementation");
 	}
 }
 
