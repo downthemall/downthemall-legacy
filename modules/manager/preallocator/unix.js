@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is DownThemAll preallocation ChromeWorker Worker_mac module.
+ * The Original Code is DownThemAll preallocation ChromeWorker Worker_linux module.
  *
  * The Initial Developer of the Original Code is Nils Maier
  * Portions created by the Initial Developer are Copyright (C) 2011
@@ -35,8 +35,19 @@
  * ***** END LICENSE BLOCK ***** */
 "use strict";
 
+if (!("OS" in this)) {
+	throw new Error("OS constants not yet available");
+}
+
 var prealloc = (function() {
-	var libc = ctypes.open("libSystem.dylib");
+	var libc = null;
+	for each (let p in ["libSystem.dylib", "libsystem.B.dylib", "libc.so.6", "libc.so"]) {
+		try {
+			libc = ctypes.open(p);
+			break;
+		}
+		catch (ex) {}
+	}
 	if (!libc) {
 		throw new Error("no libc");
 	}
@@ -66,28 +77,61 @@ var prealloc = (function() {
 		ctypes.size_t // count
 		);
 
-	const ftruncate = libc.declare(
-		"ftruncate",
-		ctypes.default_abi,
-		ctypes.int, // retval
-		ctypes.int, // fd
-		ctypes.int64_t // off64_t off
-		);
-	const lseek = libc.declare(
-		"lseek",
-		ctypes.default_abi,
-		ctypes.int64_t, // retval
-		ctypes.int, // fd
-		ctypes.int64_t, // off64_t off
-		ctypes.int // whence
-		);
+	var ftruncate = null;
+	try {
+		ftruncate = libc.declare(
+			"ftruncate64",
+			ctypes.default_abi,
+			ctypes.int, // retval
+			ctypes.int, // fd
+			ctypes.int64_t // off64_t off
+			);
+	}
+	catch (ex) {
+		ftruncate = libc.declare(
+			"ftruncate",
+			ctypes.default_abi,
+			ctypes.int, // retval
+			ctypes.int, // fd
+			ctypes.int // off_t off
+			);
+		log("ftruncate");
+	}
 
-	return function prealloc_mac(file, size, perms, sparseOk) {
+	var lseek = null;
+	try {
+		lseek = libc.declare(
+			"lseek64",
+			ctypes.default_abi,
+			ctypes.int64_t, // retval
+			ctypes.int, // fd
+			ctypes.int64_t, // off64_t off
+			ctypes.int // whence
+			);
+	}
+	catch (ex) {
+		lseek = libc.declare(
+			"lseek",
+			ctypes.default_abi,
+			ctypes.int, // retval
+			ctypes.int, // fd
+			ctypes.int, // off_t off
+			ctypes.int // whence
+			);
+	}
+	const {
+		O_WRONLY,
+		O_CREAT,
+		SEEK_CUR,
+		SEEK_END
+	} = OS.Constants.libc;
+
+	return function prealloc_linux(file, size, perms, sparseOk) {
 		var rv = false;
 		try {
 			let fd = open(
 				file,
-				0x1 | 0x200,
+				O_WRONLY | O_CREAT,
 				perms
 				);
 			if (fd == -1) {
@@ -100,9 +144,9 @@ var prealloc = (function() {
 				}
 				else {
 					--size;
-					for (;;) {
+					for(;;) {
 						// Get end of the file
-						let current = lseek(fd, ctypes.Int64(0), 0x2);
+						let current = lseek(fd, ctypes.Int64(0), SEEK_END);
 
 						// See if we still need to preallocate
 						let remainder = size - current;
@@ -111,8 +155,8 @@ var prealloc = (function() {
 						}
 
 						// Calculate next seek
-						let seek = Math.min(remainder, 4096); // estimate: usually 4K on mac now
-						lseek(fd, ctypes.Int64(seek), 0x1);
+						let seek = Math.min(remainder, 4096); // estimate: usually 4K on newer *nix now
+						lseek(fd, ctypes.Int64(seek), SEEK_CUR);
 						if (write(fd, "a", 1) != 1) {
 							throw new Error("Failed to write byte");
 						}
@@ -127,7 +171,7 @@ var prealloc = (function() {
 			}
 		}
 		catch (ex) {
-			log(ex);
+			log(ex)
 		}
 		return rv;
 	};

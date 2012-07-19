@@ -8,17 +8,7 @@ try {
 	importScripts("win.js");
 }
 catch (ex) {
-	try {
-		importScripts("mac.js");
-	}
-	catch (ex) {
-		try {
-			importScripts("linux.js");
-		}
-		catch (ex) {
-			throw new Error("no compatible implementation found");
-		}
-	}
+	importScripts("unix.js");
 }
 
 function log(ex) {
@@ -33,6 +23,7 @@ onmessage = function(event) {
 	}
 
 	try {
+		log("allocating:" + data.file + " with size: " + data.size + " sparse: " + data.sparseOK);
 		data.result = prealloc(data.file, data.size, data.perms, data.sparseOK);
 	}
 	catch (ex) {
