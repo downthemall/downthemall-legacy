@@ -149,8 +149,8 @@ var moveFile = (function() {
 			if (pipe(pfd) == -1) {
 				throw new Error("Failed to create pipe");
 			}
+			let [pread, pwrite] = pfd;
 			try {
-				let [pread, pwrite] = pfd;
 				for(let alreadyWritten = false;; alreadyWritten = true) {
 					let size = splice(fds, null, pwrite, null, BUFSIZE, 0);
 					if (size == -1) {
