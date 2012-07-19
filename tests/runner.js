@@ -13,6 +13,7 @@ const Cr = Components.results;
 const Cu = Components.utils;
 const Exception = Components.Exception;
 
+Cu.import("resource://gre/modules/FileUtils.jsm");
 Cu.import("chrome://dta-modules/content/glue.jsm");
 
 const DTA = require("api");
