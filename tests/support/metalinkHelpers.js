@@ -81,10 +81,8 @@ var metalink_asyncTestFile = function(files, cb) {
 }
 
 var metalink_createUrlManager = function(urls) {
-    const {UrlManager} = require("support/urlmanager");
-	return new UrlManager(urls.map(function(e) {
-		return Services.io.newURI(e, null, null);
-	}));
+	const {UrlManager} = require("support/urlmanager");
+	return new UrlManager([Services.io.newURI(e, null, null) for each (e in urls)]);
 }
 var metalink_downloadCollection = function(downloads) {
 	this.downloads = downloads.map(function(d) {
@@ -134,13 +132,12 @@ function metalink_getExportedResults(downloads, cb) {
 	const {exportToMetalink4File} = require("manager/imex");
 	const Prefs = require("preferences");
 	const {parse} = require("support/metalinker");
-	var file = Services.dirsvc.get("TmpD", Ci.nsIFile);
-	file.append("tmp.meta4");
-	var fileURI = Services.io.newFileURI(file).spec;
+	var file = FileUtils.getFile("TmpD", ["tmp.meta4"]);
+	var fileURI = Services.io.newFileURI(file);
 
 	var coll = new metalink_downloadCollection(downloads);
 	exportToMetalink4File(coll, document, file, Prefs.permissions);
-	parse(Services.io.newFileURI(file), "", function(data, ex) {
+	parse(fileURI, "", function(data, ex) {
 		cb(data, ex);
 	});
 }
