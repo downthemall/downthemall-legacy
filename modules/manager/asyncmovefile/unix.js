@@ -149,19 +149,25 @@ var moveFile = (function() {
 			if (pipe(pfd) == -1) {
 				throw new Error("Failed to create pipe");
 			}
-			let [pread, pwrite] = pfd;
-			for(let alreadyWritten = false;; alreadyWritten = true) {
-				let size = splice(fds, null, pwrite, null, BUFSIZE, 0);
-				if (size == -1) {
-					throw (alreadyWritten ? ERROR_READ : ERROR_SPLICE);
+			try {
+				let [pread, pwrite] = pfd;
+				for(let alreadyWritten = false;; alreadyWritten = true) {
+					let size = splice(fds, null, pwrite, null, BUFSIZE, 0);
+					if (size == -1) {
+						throw (alreadyWritten ? ERROR_READ : ERROR_SPLICE);
+					}
+					else if (size == 0) {
+						break;
+					}
+					let written = splice(pread, null, fdd, null, size, (size - BUFSIZE == 0) ? 0 : SPLICE_F_MORE);
+					if (written - size != 0) {
+						throw (alreadyWritten ? ERROR_WRITE : ERROR_SPLICE);
+					}
 				}
-				else if (size == 0) {
-					break;
-				}
-				let written = splice(pread, null, fdd, null, size, (size - BUFSIZE == 0) ? 0 : SPLICE_F_MORE);
-				if (written - size != 0) {
-					throw (alreadyWritten ? ERROR_WRITE : ERROR_SPLICE);
-				}
+			}
+			finally {
+				closeFd(pread);
+				closeFd(pwrite);
 			}
 		}
 		function move_copy(fds, fdd) {
