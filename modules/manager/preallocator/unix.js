@@ -93,7 +93,7 @@ var prealloc = (function() {
 			ctypes.default_abi,
 			ctypes.int, // retval
 			ctypes.int, // fd
-			ctypes.int // off_t off
+			ctypes.off_t // off_t off
 			);
 		log("ftruncate");
 	}
@@ -113,9 +113,9 @@ var prealloc = (function() {
 		lseek = libc.declare(
 			"lseek",
 			ctypes.default_abi,
-			ctypes.int, // retval
+			ctypes.off_t, // retval
 			ctypes.int, // fd
-			ctypes.int, // off_t off
+			ctypes.off_t, // off_t off
 			ctypes.int // whence
 			);
 	}
