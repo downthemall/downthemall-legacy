@@ -577,6 +577,88 @@ Connection.prototype = {
 			d.resumable = false;
 		}
 
+		if (visitor.metaDescribedBy) {
+			var secureTransfer = !(visitor.metaDescribedBy.scheme == "http" && this._chan.URI.scheme == "https");
+			if (!secureTransfer && !d.hashCollection) {
+				log(LOG_DEBUG, "rejecting metalink due to insucure metalink location");
+				return;
+			}
+			const {parse} = require("support/metalinker");
+			var finalURI = this._chan.URI;
+			try {
+				if (!this._chan.requestSucceeded) {
+					finalURI = Services.io.newURI(this._chan.getResponseHeader("Location"), null, null);
+				}
+			}
+			catch (ex) {
+				// no op
+			}
+			if (visitor.metaDescribedBy.host != this._chan.host) {
+				log(LOG_DEBUG, "rejecting metalink due to host mismatch");
+				return;
+			}
+			parse(visitor.metaDescribedBy, "", function(res, ex) {
+				if (ex) {
+					throw ex;
+				}
+				if (!res.downloads.length) {
+					throw new Error(_("mlnodownloads"));
+				}
+				var download = res.downloads.filter(function(e) {
+					return e.url._urls.some(function(k) k.spec == finalURI.spec);
+				});
+				if (!download.length) {
+					log(LOG_ERROR, "no related files found in referred metalink document");
+					return;
+				}
+
+				if (download.size != d.totalSize) {
+					log(LOG_ERROR, "Rejecting metalink due to size mismatch");
+					return;
+				}
+				if (download.hashCollection) {
+					if (!d.hashCollection) {
+						d.hashCollection = download.hashCollection;
+						return;
+					}
+					var oldHash = d.hashCollection;
+					var newHash = download.hashCollection;
+					if (oldHash.full.type == newHash.full.type
+						&& oldHash.full.sum != newHash.full.sum) {
+						log(LOG_ERROR, "Rejecting describedby metalink due to hash mismatch");
+						return;
+					}
+					else if(newHash.full._q > oldHash.full._q) {
+						oldHash.full.type = newHash.full.type;
+						oldHash.full.sum = newHash.full.sum;
+						oldHash.full._q = newHash.full._q;
+						oldHash._serialize();
+					}
+
+					for (var i = 0, len = oldHash.partials.length; i < len; i++) {
+						if (oldHash.partials[i].type == newHash.partials[i].type
+							&& oldHash.partials[i].sum != newHash.parials[i].sum) {
+							log(LOG_ERROR, "Rejecting describedby metalink due to hash mismatch");
+							return;
+						}
+						else if(newHash.partials[i]._q > oldHash.partials[i]._q) {
+							oldHash.partials[i].type = newHash.full.type;
+							oldHash.partials[i].sum = newHash.full.sum;
+							oldHash.partials[i]._q = newHash.full._q;
+						}
+					}
+					oldHash._serialize();
+				}
+			});
+		}
+		if (visitor.mirrors
+				&& d.hashCollection && d.hashCollection.full.q > 0.5
+				&& !(d.isMetalink || d.fromMetalink)) {
+			for each(var mirror in visitor.mirrors) {
+				d.urlManager.add(mirror);
+			}
+		}
+
 		if (code != 206) {
 			if (visitor.contentLength > 0) {
 				d.totalSize = visitor.contentLength;

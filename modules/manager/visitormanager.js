@@ -4,7 +4,8 @@
 "use strict";
 
 const DTA = require("api");
-const {getTimestamp} = require("utils");
+const {LOCALE} = require("version");
+const {getTimestamp, normalizeMetaPrefs} = require("utils");
 
 function Visitor() {
 	// sanity check
@@ -162,6 +163,49 @@ HttpVisitor.prototype = {
 			}
 		}
 		catch (ex) {}
+
+		var links = [];
+		this.mirrors = [];
+		try {
+			links = chan.getResponseHeader("Link").split(/,\s*/g);
+		}
+		catch (ex) {
+			links = [];
+		}
+		for each(var link in links) {
+			try {
+				var linkURI = Services.mimeheader.getParameter(link, null, null, true, {})
+					.replace(/[<>]/g, '');
+				var rel = Services.mimeheader.getParameter(link, "rel", null, true, {});
+				if (rel == "describedby") {
+					var type = Services.mimeheader.getParameter(link, "type", null, true, {});
+					if (type == "application/metalink4+xml") {
+						this.metaDescribedBy = Services.io.newURI(linkURI, null, null);
+					}
+				}
+				else if(rel == "duplicate") {
+					linkURI = Services.io.newURI(linkURI, null, null);
+					var pri = null;
+					try {
+						var geo = Services.mimeheader.getParameter(link, "geo", null, true, {})
+							.slice(0,2).toLowerCase();
+						pri = Services.mimeheader.getParameter(link, "pri", null, true, {});
+						pri = parseInt(pri);
+						var pref = Services.mimeheader.getParameter(link, "pref", null, true, {});
+						var depth = Services.mimeheader.getParameter(link, "depth", null, true, {});
+						if (LOCALE.indexOf(geo) != -1) {
+							pri = Math.max(pri / 4, 1);
+						}
+					}
+					catch (ex) {}
+					this.mirrors.push(new DTA.URL(linkURI, pri));
+				}
+			}
+			catch (ex) {
+				log(LOG_ERROR, ex);
+			}
+		}
+		normalizeMetaPrefs(this.mirrors);
 
 		for (let header in this.cmpKeys) {
 			try {

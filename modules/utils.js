@@ -575,3 +575,19 @@ exports.reveal = function reveal(file) {
 		exports.launch(file.parent);
 	}
 }
+
+/**
+ * Convert metalink priorities start from 1 and give more weitage to ones with lower prioroty,
+ * to dta preferences
+ * @param array of DTA.URL
+ */
+exports.normalizeMetaPrefs = function(urls) {
+	if (!urls || !urls.length) {
+		return;
+	}
+	let pmax = urls.reduce(function(p,c) isFinite(c.preference) ? Math.max(c.preference, p) : p, 1)
+	let pmin = urls.reduce(function(p,c) isFinite(c.preference) ? Math.min(c.preference, p) : p, pmax - 1);
+	urls.forEach(function(url) {
+		url.preference = Math.max(100 - ((url.preference - pmin) *  100 / (pmax - pmin)).toFixed(0), 10);
+	});
+}

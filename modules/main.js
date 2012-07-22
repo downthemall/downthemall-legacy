@@ -135,11 +135,11 @@ MetalinkInterceptModule.prototype = {
 					res.downloads,
 					res.info,
 					function() {
-          log(LOG_DEBUG, "callback");
+						log(LOG_DEBUG, "callback");
 						Utils.filterInSitu(res.downloads, function(d) { return d.selected; });
-          log(LOG_DEBUG, res.downloads);
+						log(LOG_DEBUG, res.downloads);
 						if (res.downloads.length) {
-          log(LOG_DEBUG, "going");
+							log(LOG_DEBUG, "going");
 							DTA.sendLinksToManager(window, res.info.start, res.downloads);
 						}
 					}
