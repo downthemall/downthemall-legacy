@@ -187,15 +187,25 @@ HttpVisitor.prototype = {
 					linkURI = Services.io.newURI(linkURI, null, null);
 					var pri = null;
 					try {
-						var geo = Services.mimeheader.getParameter(link, "geo", null, true, {})
 							.slice(0,2).toLowerCase();
 						pri = Services.mimeheader.getParameter(link, "pri", null, true, {});
 						pri = parseInt(pri);
-						var pref = Services.mimeheader.getParameter(link, "pref", null, true, {});
-						var depth = Services.mimeheader.getParameter(link, "depth", null, true, {});
-						if (LOCALE.indexOf(geo) != -1) {
-							pri = Math.max(pri / 4, 1);
+						try {
+							var pref = Services.mimeheader.getParameter(link, "pref", null, true, {});
+							pri = 1;
 						}
+						catch (ex) {}
+						try{
+							var depth = Services.mimeheader.getParameter(link, "depth", null, true, {});
+						}
+						catch (ex) {}
+						try {
+							var geo = Services.mimeheader.getParameter(link, "geo", null, true, {})
+							if (LOCALE.indexOf(geo) != -1) {
+								pri = Math.max(pri / 4, 1);
+							}
+						}
+						catch (ex) {}
 					}
 					catch (ex) {}
 					this.mirrors.push(new DTA.URL(linkURI, pri));
