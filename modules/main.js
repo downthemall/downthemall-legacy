@@ -40,8 +40,12 @@ AboutModule.prototype = {
 				chan.originalURI = aURI;
 
 				let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
-				chan.owner = sec.getCodebasePrincipal(uri);
-
+				try {
+					chan.owner = sec.getSimpleCodebasePrincipal(uri);
+				}
+				catch (ex) {
+					chan.owner = sec.getCodebasePrincipal(uri);
+				}
 				return chan;
 		}
 		catch (ex) {
