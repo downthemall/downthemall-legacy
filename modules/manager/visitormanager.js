@@ -187,7 +187,6 @@ HttpVisitor.prototype = {
 					linkURI = Services.io.newURI(linkURI, null, null);
 					var pri = null;
 					try {
-							.slice(0,2).toLowerCase();
 						pri = Services.mimeheader.getParameter(link, "pri", null, true, {});
 						pri = parseInt(pri);
 						try {
@@ -201,6 +200,7 @@ HttpVisitor.prototype = {
 						catch (ex) {}
 						try {
 							var geo = Services.mimeheader.getParameter(link, "geo", null, true, {})
+								.slice(0,2).toLowerCase();
 							if (LOCALE.indexOf(geo) != -1) {
 								pri = Math.max(pri / 4, 1);
 							}
