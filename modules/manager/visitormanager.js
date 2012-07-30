@@ -164,7 +164,7 @@ HttpVisitor.prototype = {
 		}
 		catch (ex) {}
 
-		var links = [];
+		let links = [];
 		this.mirrors = [];
 		try {
 			links = chan.getResponseHeader("Link").split(/,\s*/g);
@@ -172,34 +172,34 @@ HttpVisitor.prototype = {
 		catch (ex) {
 			links = [];
 		}
-		for each(var link in links) {
+		for each(let link in links) {
 			try {
-				var linkURI = Services.mimeheader.getParameter(link, null, null, true, {})
+				let linkURI = Services.mimeheader.getParameter(link, null, null, true, {})
 					.replace(/[<>]/g, '');
-				var rel = Services.mimeheader.getParameter(link, "rel", null, true, {});
+				const rel = Services.mimeheader.getParameter(link, "rel", null, true, {});
 				if (rel == "describedby") {
-					var type = Services.mimeheader.getParameter(link, "type", null, true, {});
+					const type = Services.mimeheader.getParameter(link, "type", null, true, {});
 					if (type == "application/metalink4+xml") {
 						this.metaDescribedBy = Services.io.newURI(linkURI, null, null);
 					}
 				}
-				else if(rel == "duplicate") {
+				else if (rel == "duplicate") {
 					linkURI = Services.io.newURI(linkURI, null, null);
-					var pri = null;
+					let pri, pref, depth;
 					try {
 						pri = Services.mimeheader.getParameter(link, "pri", null, true, {});
 						pri = parseInt(pri);
 						try {
-							var pref = Services.mimeheader.getParameter(link, "pref", null, true, {});
+							pref = Services.mimeheader.getParameter(link, "pref", null, true, {});
 							pri = 1;
 						}
 						catch (ex) {}
 						try{
-							var depth = Services.mimeheader.getParameter(link, "depth", null, true, {});
+							depth = Services.mimeheader.getParameter(link, "depth", null, true, {});
 						}
 						catch (ex) {}
 						try {
-							var geo = Services.mimeheader.getParameter(link, "geo", null, true, {})
+							const geo = Services.mimeheader.getParameter(link, "geo", null, true, {})
 								.slice(0,2).toLowerCase();
 							if (LOCALE.indexOf(geo) != -1) {
 								pri = Math.max(pri / 4, 1);

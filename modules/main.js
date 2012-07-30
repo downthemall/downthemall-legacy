@@ -135,7 +135,6 @@ MetalinkInterceptModule.prototype = {
 					res.downloads,
 					res.info,
 					function() {
-						log(LOG_DEBUG, "callback");
 						Utils.filterInSitu(res.downloads, function(d) { return d.selected; });
 						log(LOG_DEBUG, res.downloads);
 						if (res.downloads.length) {

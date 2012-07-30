@@ -267,7 +267,7 @@ Connection.prototype = {
 			let newurl = new DTA.URL(newChannel.URI.QueryInterface(Ci.nsIURL), this.url.preference);
 			d.fileName = getUsableFileName(newurl.usable);
 			if (oldChannel instanceof Ci.nsIHttpChannel && oldChannel.responseStatus == 302) {
-				extractMetaInfo(d, oldChannel);
+				this.extractMetaInfo(d, oldChannel);
 				return;
 			}
 			d.urlManager.replace(this.url, newurl);
@@ -457,13 +457,14 @@ Connection.prototype = {
 			}
 		}
 		if (visitor.metaDescribedBy) {
-			var secureTransfer = !(visitor.metaDescribedBy.scheme == "http" && channel.URI.scheme == "https");
-			if (!secureTransfer && !download.hashCollection) {
+			const safeTransfer = !(visitor.metaDescribedBy.scheme == "http" && channel.URI.scheme == "https");
+			const secureHash = download.hashCollection && download.hashCollection.full._q > 0.5;
+			if (!safeTransfer && !secureHash) {
 				log(LOG_DEBUG, "rejecting metalink due to insucure metalink location");
 				return;
 			}
 			const {parse} = require("support/metalinker");
-			var finalURI = channel.URI;
+			let finalURI = channel.URI;
 			try {
 				if (!channel.requestSucceeded) {
 					finalURI = Services.io.newURI(channel.getResponseHeader("Location"), null, null);
@@ -472,68 +473,82 @@ Connection.prototype = {
 			catch (ex) {
 				// no op
 			}
-			if (visitor.metaDescribedBy.host != channel.host) {
+			if (!secureHash && visitor.metaDescribedBy.host != channel.host) {
 				log(LOG_DEBUG, "rejecting metalink due to host mismatch");
 				return;
 			}
 			parse(visitor.metaDescribedBy, "", function(res, ex) {
 				if (ex) {
-					throw ex;
+					log(LOG_ERROR, "Failed to parse metalink linked by the download", ex);
+					return;
 				}
 				if (!res.downloads.length) {
-					throw new Error(_("mlnodownloads"));
+					log(LOG_ERROR, "Rejected empty metalink linked by the download");
+					return;
 				}
-				var d = res.downloads.filter(function(e) {
-					return e.url._urls.some(function(k) k.spec == finalURI.spec);
-				});
-				if (!d.length) {
+				let d;
+				if (res.downloads.length == 1) {
+					d = res.downloads[1];
+				}
+				else {
+					d = res.downloads.filter(function(e) {
+						if (d.hashCollection && e.hashCollection
+							&& d.hashCollection.full.type == e.hashCollection.full.type
+							&& d.hashCollection.full.sum == e.hashCollection.full.sum) {
+							return true;
+						}
+
+						return e.url._urls.some(function(k) {
+							return [finalURI.spec, channel.URI.spec].indexOf(k.spec) != -1;
+						});
+					});
+					d = d && d[1];
+				}
+				if (!d || !d.urls) {
 					log(LOG_ERROR, "no related files found in referred metalink document");
 					return;
 				}
 
-				if (download.size != d.totalSize) {
+				if (download.totalSize && download.totalSize != d.totalSize) {
 					log(LOG_ERROR, "Rejecting metalink due to size mismatch");
 					return;
 				}
+				d.url.toArray().forEach(function(u) {
+					download.urlManager.add(u);
+				});
 				if (d.hashCollection) {
 					if (!download.hashCollection) {
 						download.hashCollection = d.hashCollection;
 						return;
 					}
-					var oldHash = download.hashCollection;
-					var newHash = d.hashCollection;
+					let oldHash = download.hashCollection;
+					const newHash = d.hashCollection;
 					if (oldHash.full.type == newHash.full.type
 						&& oldHash.full.sum != newHash.full.sum) {
 						log(LOG_ERROR, "Rejecting describedby metalink due to hash mismatch");
 						return;
 					}
-					else if(newHash.full._q > oldHash.full._q) {
-						oldHash.full.type = newHash.full.type;
-						oldHash.full.sum = newHash.full.sum;
-						oldHash.full._q = newHash.full._q;
-						oldHash._serialize();
+					if (newHash.full._q > oldHash.full._q) {
+						oldHash.full = new DTA.HashCollection(newHash.full);
 					}
 
-					for (var i = 0, len = oldHash.partials.length; i < len; i++) {
+					for (let i = 0, len = oldHash.partials.length; i < len; i++) {
 						if (oldHash.partials[i].type == newHash.partials[i].type
 							&& oldHash.partials[i].sum != newHash.parials[i].sum) {
 							log(LOG_ERROR, "Rejecting describedby metalink due to hash mismatch");
 							return;
 						}
 						else if(newHash.partials[i]._q > oldHash.partials[i]._q) {
-							oldHash.partials[i].type = newHash.full.type;
-							oldHash.partials[i].sum = newHash.full.sum;
-							oldHash.partials[i]._q = newHash.full._q;
+							oldHash.partials[i] = new DTA.HashCollection(oldHash.partials[i]);
 						}
 					}
-					oldHash._serialize();
 				}
 			});
 		}
 		if (visitor.mirrors
 				&& download.hashCollection && download.hashCollection.full.q > 0.5
 				&& !(download.isMetalink || download.fromMetalink)) {
-			for each(var mirror in visitor.mirrors) {
+			for each(let mirror in visitor.mirrors) {
 				download.urlManager.add(mirror);
 			}
 		}
@@ -626,7 +641,7 @@ Connection.prototype = {
 			}
 		}
 
-		var visitor = null;
+		let visitor = null;
 		try {
 			visitor = d.visitors.visit(aChannel);
 		}
