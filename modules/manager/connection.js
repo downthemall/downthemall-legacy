@@ -460,7 +460,7 @@ Connection.prototype = {
 			const safeTransfer = !(visitor.metaDescribedBy.scheme == "http" && channel.URI.scheme == "https");
 			const secureHash = download.hashCollection && download.hashCollection.full._q > 0.5;
 			if (!safeTransfer && !secureHash) {
-				log(LOG_DEBUG, "rejecting metalink due to insucure metalink location");
+				log(LOG_DEBUG, "rejecting metalink due to insecure metalink location");
 				return;
 			}
 			const {parse} = require("support/metalinker");
@@ -488,59 +488,96 @@ Connection.prototype = {
 				}
 				let d;
 				if (res.downloads.length == 1) {
-					d = res.downloads[1];
+					d = res.downloads;
 				}
 				else {
 					d = res.downloads.filter(function(e) {
-						if (d.hashCollection && e.hashCollection
-							&& d.hashCollection.full.type == e.hashCollection.full.type
-							&& d.hashCollection.full.sum == e.hashCollection.full.sum) {
-							return true;
-						}
-
-						return e.url._urls.some(function(k) {
-							return [finalURI.spec, channel.URI.spec].indexOf(k.spec) != -1;
-						});
+						return download.hashCollection && e.hashCollection
+							&& download.hashCollection.full.type == e.hashCollection.full.type
+							&& download.hashCollection.full.sum == e.hashCollection.full.sum;
 					});
-					d = d && d[1];
+					if (!d.length) {
+						d = res.downloads.filter(function(e) {
+							return e.url._urls.some(function(k) {
+								return [finalURI.spec, channel.URI.spec].indexOf(k.spec) != -1;
+							});
+						});
+					}
 				}
-				if (!d || !d.urls) {
+				if (!d.length) {
 					log(LOG_ERROR, "no related files found in referred metalink document");
 					return;
 				}
+				d = d[1];
 
 				if (download.totalSize && download.totalSize != d.totalSize) {
 					log(LOG_ERROR, "Rejecting metalink due to size mismatch");
 					return;
 				}
-				d.url.toArray().forEach(function(u) {
+				for each(var u in d.url.toArray()){
 					download.urlManager.add(u);
-				});
+				};
 				if (d.hashCollection) {
 					if (!download.hashCollection) {
 						download.hashCollection = d.hashCollection;
 						return;
 					}
-					let oldHash = download.hashCollection;
-					const newHash = d.hashCollection;
-					if (oldHash.full.type == newHash.full.type
-						&& oldHash.full.sum != newHash.full.sum) {
+					const oldHash = download.hashCollection;
+					let newHash = {};
+					if (!oldHash || d.hashCollection.full.q > oldHash.full.q) {
+						newHash = {
+							full: {
+								sum: d.hashCollection.full.sum,
+								type: d.hashCollection.full.type
+							}
+						};
+					}
+					else if(oldHash.full.type == d.hashCollection.full.type
+							&& oldHash.full.sum != d.hashCollection.full.sum) {
 						log(LOG_ERROR, "Rejecting describedby metalink due to hash mismatch");
 						return;
 					}
-					if (newHash.full._q > oldHash.full._q) {
-						oldHash.full = new DTA.HashCollection(newHash.full);
+					if (!newHash.full) {
+						newHash.full = {
+							sum: oldHash.full.sum,
+							type: oldHash.full.type
+						}
 					}
-
-					for (let i = 0, len = oldHash.partials.length; i < len; i++) {
-						if (oldHash.partials[i].type == newHash.partials[i].type
-							&& oldHash.partials[i].sum != newHash.parials[i].sum) {
-							log(LOG_ERROR, "Rejecting describedby metalink due to hash mismatch");
-							return;
+					if (!d.hashCollection.partials.length) {
+						newHash.parLength = oldHash.parLength;
+						newHash.partials = oldHash.partials;
+					}
+					else if (d.hashCollection.parLength == oldHash.parLength) {
+						newHash.partials = [];
+						newHash.parLength = oldHash.parLength;
+						for (let i = 0, len = oldHash.partials.length; i < len; i++) {
+							newHash.partials.push({
+								sum: oldHash.partials[i].sum,
+								type: oldHash.partials[i].type
+							});
+							if (newHash.partials[i].type == d.hashCollection.partials[i].type
+								&& newHash.partials[i].sum != d.hashCollection.parials[i].sum) {
+								log(LOG_ERROR, "Rejecting describedby metalink due to hash mismatch");
+								return;
+							}
+							else if(d.hashCollection.partials[i].q > oldHash.partials[i].q) {
+								newHash.partials[i] = {
+									sum: d.hashCollection.partials[i].sum, 
+									type: d.hashCollection.partials[i].type
+								}
+							}
 						}
-						else if(newHash.partials[i]._q > oldHash.partials[i]._q) {
-							oldHash.partials[i] = new DTA.HashCollection(oldHash.partials[i]);
-						}
+					}
+					else if (d.hashCollection.partials.length > oldHash.partials.length
+							&& d.hashCollection.partials[1].q > oldHash.partials[1].q) {
+						newHash.parLength = d.hashCollection.parLength;
+						newHash.partials = d.hashCollection.partials;
+					}
+					try {
+						download.hashCollection = HashCollection.load(newHash);
+					}
+					catch (ex) {
+						log(LOG_ERROR, "Rejecting describedby metalink due to corrupted hashes");
 					}
 				}
 			});
