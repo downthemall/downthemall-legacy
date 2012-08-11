@@ -447,20 +447,23 @@ Connection.prototype = {
 		log(LOG_ERROR, "recovery failed");
 		return false;
 	},
-	extractMetaInfo: function(download, channel, visitor) {
+	extractMetaInfo: function(download, channel, cb, visitor) {
+		cb = cb || function() true;
 		if (!visitor) {
 			try {
 				visitor = download.visitors.visit(channel);
 			}
 			catch (ex) {
+				cb(ex);
 				return;
 			}
 		}
 		if (visitor.metaDescribedBy) {
 			const safeTransfer = !(visitor.metaDescribedBy.scheme == "http" && channel.URI.scheme == "https");
-			const secureHash = download.hashCollection && download.hashCollection.full._q > 0.5;
+			const secureHash = !!(download.hashCollection && download.hashCollection.full._q > 0.5);
 			if (!safeTransfer && !secureHash) {
 				log(LOG_DEBUG, "rejecting metalink due to insecure metalink location");
+				cb("unsafe transfer");
 				return;
 			}
 			const {parse} = require("support/metalinker");
@@ -473,17 +476,20 @@ Connection.prototype = {
 			catch (ex) {
 				// no op
 			}
-			if (!secureHash && visitor.metaDescribedBy.host != channel.host) {
+			if (!secureHash && visitor.metaDescribedBy.host != channel.URI.host) {
 				log(LOG_DEBUG, "rejecting metalink due to host mismatch");
+				cb("host mismatch");
 				return;
 			}
 			parse(visitor.metaDescribedBy, "", function(res, ex) {
 				if (ex) {
 					log(LOG_ERROR, "Failed to parse metalink linked by the download", ex);
+					cb("metalink parse error");
 					return;
 				}
 				if (!res.downloads.length) {
 					log(LOG_ERROR, "Rejected empty metalink linked by the download");
+					cb("metalink empty");
 					return;
 				}
 				let d;
@@ -499,19 +505,21 @@ Connection.prototype = {
 					if (!d.length) {
 						d = res.downloads.filter(function(e) {
 							return e.url._urls.some(function(k) {
-								return [finalURI.spec, channel.URI.spec].indexOf(k.spec) != -1;
+								return [finalURI.spec, channel.URI.spec].indexOf(k.url.spec) != -1;
 							});
 						});
 					}
 				}
 				if (!d.length) {
 					log(LOG_ERROR, "no related files found in referred metalink document");
+					cb("metalink empty");
 					return;
 				}
-				d = d[1];
+				d = d[0];
 
-				if (download.totalSize && download.totalSize != d.totalSize) {
+				if (download.totalSize && d.size && download.totalSize != d.size) {
 					log(LOG_ERROR, "Rejecting metalink due to size mismatch");
+					cb("size mismatch");
 					return;
 				}
 				for each(var u in d.url.toArray()){
@@ -520,6 +528,7 @@ Connection.prototype = {
 				if (d.hashCollection) {
 					if (!download.hashCollection) {
 						download.hashCollection = d.hashCollection;
+						cb();
 						return;
 					}
 					const oldHash = download.hashCollection;
@@ -535,6 +544,7 @@ Connection.prototype = {
 					else if(oldHash.full.type == d.hashCollection.full.type
 							&& oldHash.full.sum != d.hashCollection.full.sum) {
 						log(LOG_ERROR, "Rejecting describedby metalink due to hash mismatch");
+						cb("hash mismatch");
 						return;
 					}
 					if (!newHash.full) {
@@ -558,11 +568,12 @@ Connection.prototype = {
 							if (newHash.partials[i].type == d.hashCollection.partials[i].type
 								&& newHash.partials[i].sum != d.hashCollection.parials[i].sum) {
 								log(LOG_ERROR, "Rejecting describedby metalink due to hash mismatch");
+								cb("hash mismatch");
 								return;
 							}
 							else if(d.hashCollection.partials[i].q > oldHash.partials[i].q) {
 								newHash.partials[i] = {
-									sum: d.hashCollection.partials[i].sum, 
+									sum: d.hashCollection.partials[i].sum,
 									type: d.hashCollection.partials[i].type
 								}
 							}
@@ -574,13 +585,17 @@ Connection.prototype = {
 						newHash.partials = d.hashCollection.partials;
 					}
 					try {
-						download.hashCollection = HashCollection.load(newHash);
+						download.hashCollection = DTA.HashCollection.load(newHash);
 					}
 					catch (ex) {
 						log(LOG_ERROR, "Rejecting describedby metalink due to corrupted hashes");
 					}
+					cb();
 				}
 			});
+		}
+		else {
+			cb();
 		}
 		if (visitor.mirrors
 				&& download.hashCollection && download.hashCollection.full.q > 0.5
@@ -742,7 +757,7 @@ Connection.prototype = {
 			d.fileName = newName;
 		}
 
-		extractMetaInfo(d, this._chan, visitor);
+		extractMetaInfo(d, this._chan, null, visitor);
 		return false;
 	},
 

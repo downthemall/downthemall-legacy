@@ -577,7 +577,7 @@ exports.reveal = function reveal(file) {
 }
 
 /**
- * Convert metalink priorities start from 1 and give more weitage to ones with lower prioroty,
+ * Convert metalink priorities to start from 1 and give more weitage to ones with lower prioroty,
  * to dta preferences
  * @param array of DTA.URL
  */

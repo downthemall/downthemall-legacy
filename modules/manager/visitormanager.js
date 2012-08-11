@@ -121,11 +121,9 @@ HttpVisitor.prototype = {
 
 		try {
 			this.acceptRanges = !/none/i.test(chan.getResponseHeader("accept-ranges"));
-		}
-		catch (ex) {}
-
-		try {
-			this.acceptRanges = aValue.toLowerCase().indexOf('none') == -1;
+			if (this.acceptRanges) {
+				this.acceptRanges = this.acceptRanges.toLowerCase().indexOf('none') == -1;
+			}
 		}
 		catch (ex) {}
 
@@ -144,14 +142,15 @@ HttpVisitor.prototype = {
 		}
 
 		try {
-			let digest = chan.getResponseHeader("digest");
+			let digest = chan.getResponseHeader("digest").replace(/,/g, ";");
+			digest = ";" + digest;
 			for (let t in DTA.SUPPORTED_HASHES_ALIASES) {
 				try {
-					let v = Services.mimeheader.getParameter(aValue, t, this._charset, true, {});
+					let v = Services.mimeheader.getParameter(digest, t, this._charset, true, {});
 					if (!v) {
 						continue;
 					}
-					v = hexdigest(atob(v));
+					v = atob(v);
 					v = new DTA.Hash(v, t);
 					if (!this.hash || this.hash.q < v.q) {
 						this.hash = v;
