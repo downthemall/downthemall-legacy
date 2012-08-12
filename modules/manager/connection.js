@@ -484,7 +484,7 @@ Connection.prototype = {
 			parse(visitor.metaDescribedBy, "", function(res, ex) {
 				if (ex) {
 					log(LOG_ERROR, "Failed to parse metalink linked by the download", ex);
-					cb("metalink parse error");
+					cb(ex);
 					return;
 				}
 				if (!res.downloads.length) {
@@ -516,7 +516,7 @@ Connection.prototype = {
 					return;
 				}
 				d = d[0];
-
+				download.fileName = d.fileName;
 				if (download.totalSize && d.size && download.totalSize != d.size) {
 					log(LOG_ERROR, "Rejecting metalink due to size mismatch");
 					cb("size mismatch");
@@ -556,6 +556,10 @@ Connection.prototype = {
 					if (!d.hashCollection.partials.length) {
 						newHash.parLength = oldHash.parLength;
 						newHash.partials = oldHash.partials;
+					}
+					else if(!download.hashCollection.partials.length) {
+						newHash.parLength = d.hashCollection.parLength;
+						newHash.partials = d.hashCollection.partials;
 					}
 					else if (d.hashCollection.parLength == oldHash.parLength) {
 						newHash.partials = [];

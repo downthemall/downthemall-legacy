@@ -20,6 +20,13 @@ test("exports", function() {
 		"Accept": "text/html,application/xhtml+xml,application/xml,application/metalink,application/metalink4+xml;q=0.9,*/*;q=0.8",
 		"Want-Digest": DTA.WANT_DIGEST_STRING
 	};
+	const range = function(num) {
+		var arr = new Array(num);
+		for (var i = 1; i <= num; i++) {
+			arr[i - 1] = i;
+		}
+		return arr;
+	};
 	const extractMetaInfo = function(download, channel, cb, visitor) {
 		if (visitor) {
 			download.isMetalink = visitor.isMetalink;
@@ -77,7 +84,7 @@ test("exports", function() {
 
 		extractMetaInfo(download, chan);
 
-		var expMirrors = [1, 2, 3, 4, 5, 6, 7].map(function(i) {
+		var expMirrors = range(7).map(function(i) {
 			return "http://example.com/mirror" + i;
 		});
 		expMirrors.unshift(uri.spec);
@@ -98,6 +105,8 @@ test("exports", function() {
 		var uri = Services.io.newURI("http://example.com/file", null, null);
 		var hash = new DTA.Hash("cccd7f891ff81b30b9152479d2efcda2", "md5");
 		download.hashCollection = new DTA.HashCollection(hash);
+		download.hashCollection.parLength = 262144;
+		download.partials = range(8).map(function() hash);
 
 		var chan = createTestHttpChannel({
 			uri: uri,
@@ -155,7 +164,46 @@ test("exports", function() {
 				"http://ftp.at.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2",
 				"http://ftp.roedu.net/mirrors/ftp.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2"
 			];
+			strictEqual(download.fileName, "linux-2.6.16.19.tar.bz2", "file name merged correctly");
+			strictEqual(download.hashCollection.full.sum,
+				"2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892", "higher hash value not overwritten");
+			strictEqual(download.hashCollection.full.type.toLowerCase(), "sha256", "higher hash type not overwritten");
 			arrayEqual(expMirrors, download.urlManager.toArray().map(function(u) u.url.spec), "correct mirrors merged");
+		}, visitor);
+	});
+	asyncTest("metalink describedby hash merging", function() {
+		var download = getTestDownload();
+		var uri = Services.io.newURI("http://example.com/sha512_hash", null, null);
+		var expHash = new DTA.Hash("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e", "sha512");
+		var hash = new DTA.Hash("2413fb3789b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892", "sha256");
+		download.urlManager = new UrlManager([uri]);
+
+		var chan = createTestHttpChannel({
+			uri: uri,
+			request: request,
+			response: {
+				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
+				"Content-Type": "text/html; charset=utf8",
+				"Content-Length": "2014232",
+			  	"Digest": "SHA-256=" + btoa(hash.sum)
+			}
+		});
+
+		var visitor = (new VisitorManager()).visit(chan);
+		visitor.metaDescribedBy = getRelURI("data/metalink/hash.meta4");
+
+
+		extractMetaInfo(download, chan, function(ex) {
+			start();
+			if (ex) {
+				ok(false, ex);
+				return;
+			}
+			strictEqual(download.fileName, "sha512_hash", "correct metalink file merged");
+			strictEqual(download.hashCollection.full.type, expHash.type, "full hash type merged correctly");
+			strictEqual(download.hashCollection.full.sum, expHash.sum, "full hash value merged correctly");
+			arrayEqual(download.hashCollection.partials.map(function(p) p.sum), range(8).map(function(i) expHash.sum), "partial hash value merged correctly");
+			arrayEqual(download.hashCollection.partials.map(function(p) p.type), range(8).map(function(i) expHash.type), "partial hash type merged correctly");
 		}, visitor);
 	});
 	asyncTest("metalink describedby unsafe protocol switching without a safe hash", function() {
