@@ -121,7 +121,7 @@ HttpVisitor.prototype = {
 
 		try {
 			this.acceptRanges = !/none/i.test(chan.getResponseHeader("accept-ranges"));
-			if (this.acceptRanges) {
+			if (!this.acceptRanges) {
 				this.acceptRanges = this.acceptRanges.toLowerCase().indexOf('none') == -1;
 			}
 		}
