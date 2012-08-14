@@ -116,21 +116,6 @@ test("real world http visit", function() {
 				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
 				"Content-Type": "text/html; charset=utf8",
 				"Content-Length": "1024",
-				"Digest": "SA-1=" + btoa("01586b2c0ec5d8e985138204404878f5ecbeef58")
-			}
-		});
-
-		var visit = (new VisitorManager()).visit(chan);
-
-		ok(!visit.hash, "incorrect digest type not parsed");
-
-		chan = createTestHttpChannel({
-			uri: Services.io.newURI("http://www.example.com", null, null),
-			request: digestRequest,
-			response: {
-				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
-				"Content-Type": "text/html; charset=utf8",
-				"Content-Length": "1024",
 				"Digest": "SHA-1=" + btoa("01586bsdf2c0ec5d8e985138204404878f5ecbeef58") +
 					",SHA-256=" + btoa("2413fb3709b0s5939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892") +
 					",SHA-384=" + btoa("38b060a96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b") +
@@ -138,7 +123,7 @@ test("real world http visit", function() {
 			}
 		});
 
-		visit = (new VisitorManager()).visit(chan);
+		var visit = (new VisitorManager()).visit(chan);
 
 		ok(!visit.hash, "corrupt hashes not parsed");
 	});
