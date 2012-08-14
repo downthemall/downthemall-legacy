@@ -116,13 +116,13 @@ test("real world http visit", function() {
 				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
 				"Content-Type": "text/html; charset=utf8",
 				"Content-Length": "1024",
-				"Digest": ",SHA-1=" + btoa("01586b2c0ec5d8e985138204404878f5ecbeef58")
+				"Digest": "SA-1=" + btoa("01586b2c0ec5d8e985138204404878f5ecbeef58")
 			}
 		});
 
 		var visit = (new VisitorManager()).visit(chan);
 
-		ok(!visit.hash, "incorrect digest syntax not parsed");
+		ok(!visit.hash, "incorrect digest type not parsed");
 
 		chan = createTestHttpChannel({
 			uri: Services.io.newURI("http://www.example.com", null, null),
