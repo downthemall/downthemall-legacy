@@ -45,10 +45,10 @@
 		<hash>87108128d4dde5ba62ffec1f1cc3fc292fc298ca</hash>
 	</pieces>
 
-	<url location="us" priority="1" a0:usable="ftp://usable.com/test_file1_url1">
+	<url location="us" priority="1" a0:usable="ftp://example.com/test_file1_url1">
 		ftp://example.com/test_file1_url1
 	</url>
-	<url location="de" priority="2" a0:usable="http://usable.com/test_file1_url2">
+	<url location="de" priority="2" a0:usable="http://example.com/test_file1_url2">
 		ftp://example.com/test_file1_url2
 	</url>
   </file>
@@ -71,7 +71,7 @@
 	<hash type="md5">cccd7f891ff81b30b9152479d2efcda2</hash>
 
 
-	<url location="de" preference="1" a0:usable="http://usable.com/test_file2_url1">
+	<url location="de" preference="1" a0:usable="http://example.com/test_file2_url1">
 		http://example.com/test_file2_url1
 	</url>
   </file>

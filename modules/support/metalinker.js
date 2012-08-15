@@ -16,7 +16,7 @@ const DTA = require("api");
 const Preferences = require("preferences");
 const {LOCALE} = require("version");
 const {UrlManager} = require("support/urlmanager");
-const {NS_DTA, NS_HTML} = require("utils");
+const {NS_DTA, NS_HTML, normalizeMetaPrefs} = require("utils");
 
 const XPathResult = Ci.nsIDOMXPathResult;
 
@@ -439,12 +439,7 @@ MetalinkerRFC5854.prototype = {
 			if (!urls.length) {
 				continue;
 			}
-			// normalize preferences
-			let pmax = urls.reduce(function(p,c) isFinite(c.preference) ? Math.max(c.preference, p) : p, 1)
-			let pmin = urls.reduce(function(p,c) isFinite(c.preference) ? Math.min(c.preference, p) : p, pmax - 1);
-			urls.forEach(function(url) {
-				url.preference = Math.max(100 - ((url.preference - pmin) *  100 / (pmax - pmin)).toFixed(0), 10);
-			});
+			normalizeMetaPrefs(urls);
 
 			let size = this.getSingle(file, 'size');
 			size = parseInt(size);
