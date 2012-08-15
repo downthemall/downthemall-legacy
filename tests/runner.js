@@ -33,10 +33,7 @@ function getRelURI(relPath) {
 	return ChromeRegistry.convertChromeURL(testURI);
 }
 
-(function() {
-	if (Cc["@downthemall.net/testHttpChannel;1"]) {
-		return;
-	};
+function _createTestHttpChannelInternal() {
 	var testHttpChannel = function() {
 		this.wrappedJSObject = this;
 		this.done = false;
@@ -165,9 +162,14 @@ function getRelURI(relPath) {
 	Components.manager
 		.QueryInterface(Ci.nsIComponentRegistrar)
 		.registerFactory(testHttpChannel.prototype.classID, testHttpChannel.prototype.classDescription, testHttpChannel.prototype.contractID, testHttpChannelFactory);
-})();
-var createTestHttpChannel = function(conf) {
 	var chan = Cc["@downthemall.net/testHttpChannel;1"].createInstance(Ci.nsIHttpChannel);
+	Components.manager
+		.QueryInterface(Ci.nsIComponentRegistrar)
+		.unregisterFactory(testHttpChannel.prototype.classID, testHttpChannelFactory);
+	return chan;
+}
+var createTestHttpChannel = function(conf) {
+	var chan = _createTestHttpChannelInternal();
 	var chanObj = chan.wrappedJSObject;
 	chanObj.initializeTestChannel(conf);
 	return chan;
