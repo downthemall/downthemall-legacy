@@ -85,7 +85,6 @@ const Tree = {
 		this.elem.addEventListener('click', function(evt) { if (evt.button == 1) tp.showInfo(); }, false);
 
 		let dtree = $('downloadList');
-		dtree.addEventListener('mousemove', function(event) tp.hovering(event), false);
 		dtree.addEventListener('dragstart', function(event) tp.onDragStart(event), false);
 
 		$("matcher").addEventListener("command", function(event) tp.handleMatcherPopup(event), true);
@@ -1087,19 +1086,12 @@ const Tree = {
 			this.endUpdate();
 		}
 	},
-	_hoverItem: null,
-	hovering: function(event) {
-		if (!Prefs.showTooltip || Services.ww.activeWindow != window) {
-			return;
-		}
-		this._hoverItem = {x: event.clientX, y: event.clientY};
-	},
 	showTip: function(event) {
-		if (!Prefs.showTooltip || !this._hoverItem || Services.ww.activeWindow != window) {
+		if (!Prefs.showTooltip || Services.ww.activeWindow != window) {
 			return false;
 		}
 		let row = {};
-		this._box.getCellAt(this._hoverItem.x, this._hoverItem.y, row, {}, {});
+		this._box.getCellAt(event.clientX, event.clientY, row, {}, {});
 		if (row.value == -1) {
 			return false;
 		}
