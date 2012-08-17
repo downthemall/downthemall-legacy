@@ -81,7 +81,7 @@ exports.URL = URL;
 const SUPPORTED_HASHES = {
 	'MD5': {l: 32, q: 0.3 },
 	'SHA1': {l: 40, q: 0.4 },
-	'SHA256': {l: 64, q: 0.7 },
+	'SHA256': {l: 64, q: 0.5 },
 	'SHA384': {l: 96, q: 0.8 },
 	'SHA512': {l: 128, q: 0.9 }
 };

@@ -460,7 +460,7 @@ Connection.prototype = {
 		}
 		if (visitor.metaDescribedBy) {
 			const safeTransfer = !(visitor.metaDescribedBy.scheme == "http" && channel.URI.scheme == "https");
-			const secureHash = !!(download.hashCollection && download.hashCollection.full._q > 0.5);
+			const secureHash = !!(download.hashCollection && download.hashCollection.full._q >= 0.5);
 			if (!safeTransfer && !secureHash) {
 				log(LOG_DEBUG, "rejecting metalink due to insecure metalink location");
 				cb("unsafe transfer");
@@ -602,7 +602,7 @@ Connection.prototype = {
 			cb();
 		}
 		if (visitor.mirrors
-				&& download.hashCollection && download.hashCollection.full.q > 0.5
+				&& download.hashCollection && download.hashCollection.full.q >= 0.5
 				&& !(download.isMetalink || download.fromMetalink)) {
 			for each(let mirror in visitor.mirrors) {
 				download.urlManager.add(mirror);
