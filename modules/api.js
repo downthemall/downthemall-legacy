@@ -334,20 +334,9 @@ exports.saveSingleItem = function saveSingleItem(window, turbo, item) {
 }
 
 exports.sendLinksToManager = function sendLinksToManager(window, start, links) {
-	let win = Mediator.getMostRecent('DTA:Manager');
-	if (win) {
-		win.self.startDownloads(start, links);
-		return;
-	}
-
-	window = window || Mediator.getMostRecent();
-	window.openDialog(
-		"chrome://dta/content/dta/manager.xul",
-		"_blank",
-		"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
-		start,
-		links
-	);
+	exports.openManager(window, false, function(win) {
+		win.startDownloads(start, links);
+	});
 }
 
 exports.turboSendLinksToManager = function turboSendLinksToManager(window, urlsArray) {
@@ -427,22 +416,52 @@ exports.turboSaveLinkArray = function turboSaveLinkArray(window, urls, images) {
 	return links.length > 1 ? links.length : links[0];
 }
 
-exports.openManager = function openManager(window, quiet) {
+var isManagerPending = false;
+var managerRequests = [];
+function openManagerCallback(event) {
+	log(LOG_DEBUG, "manager ready; pushing queued items");
+	event.target.removeEventListener("DTA:ready", openManagerCallback, true);
+	for each (let cb in managerRequests) {
+		cb(event.target);
+	}
+	managerRequests.splice(0);
+	isManagerPending = false;
+}
+
+exports.openManager = function openManager(window, quiet, cb) {
 	try {
+		if (isManagerPending) {
+			if (cb) {
+				managerRequests.push(cb);
+			}
+			log(LOG_DEBUG, "manager already pending; queuing");
+			return;
+		}
+
 		let win = Mediator.getMostRecent('DTA:Manager');
 		if (win) {
-			if (!quiet) {
+			log(LOG_DEBUG, "manager already open; direct");
+			if (!cb && !quiet) {
 				win.focus();
 			}
-			return win;
+			else if (cb) {
+				cb(win);
+			}
+			return;
 		}
+
+		log(LOG_DEBUG, "manager not open yet; queueing");
 		window = window || Mediator.getMostRecent();
-		window.openDialog(
+		win = window.openDialog(
 			"chrome://dta/content/dta/manager.xul",
 			"_blank",
 			"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no"
 		);
-		return Mediator.getMostRecent('DTA:Manager');
+		if (cb) {
+			managerRequests.push(cb);
+		}
+		isManagerPending = true;
+		win.addEventListener("DTA:ready", openManagerCallback, true);
 	}
 	catch(ex) {
 		log(LOG_ERROR, "openManager():", ex);
