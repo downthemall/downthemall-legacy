@@ -347,13 +347,13 @@ exports.turboSendLinksToManager = function turboSendLinksToManager(window, urlsA
 		throw new Exception("missing required information");
 	}
 
-	let num = exports.incrementSeries();
+	let num = null;
 
 	for (var i = 0; i < urlsArray.length; i++) {
 		let u = urlsArray[i];
 		u.mask = mask;
 		u.dirSave = dir;
-		u.numIstance = u.numIstance || num;
+		u.numIstance = u.numIstance || (num === null ? num = exports.incrementSeries() : num);
 	}
 
 	exports.sendLinksToManager(window, !Preferences.getExt("lastqueued", false), urlsArray);
