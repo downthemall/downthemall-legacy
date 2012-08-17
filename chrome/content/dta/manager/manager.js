@@ -620,9 +620,6 @@ const Dialog = {
 
 		PrivateBrowsing.registerCallbacks(this);
 
-		if ("arguments" in window) {
-			startDownloads(window.arguments[0], window.arguments[1]);
-		}
 		this._initialized = true;
 		for each (let d in Tree.all) {
 			if (d.state == FINISHING) {
@@ -633,6 +630,10 @@ const Dialog = {
 		Timers.createRepeating(10000, this.saveRunning, this);
 
 		$('loadingbox').parentNode.removeChild($('loadingbox'));
+
+		let re = document.createEvent("Event");
+		re.initEvent("DTA:ready", true, false);
+		window.dispatchEvent(re);
 	},
 
 	reinit: function(mustClear) {
@@ -2767,128 +2768,147 @@ function CustomEvent(download, command) {
 	download.complete();
 }
 
+const startDownloads = (function() {
+	function next(start, downloads) {
+		function addItem(e) {
+			try {
+				let qi = new QueueItem();
+				let lnk = e.url;
+				if (typeof lnk == 'string') {
+					qi.urlManager = new UrlManager([new DTA.URL(Services.io.newURI(lnk, null, null))]);
+				}
+				else if (lnk instanceof UrlManager) {
+					qi.urlManager = lnk;
+				}
+				else {
+					qi.urlManager = new UrlManager([lnk]);
+				}
+				qi.bNum = e.numIstance;
+				qi.iNum = ++iNum;
 
-function startDownloads(start, downloads) {
+				if (e.referrer) {
+					try {
+						qi.referrer = toURL(e.referrer);
+					}
+					catch (ex) {
+						// We might have been fed with about:blank or other crap. so ignore.
+					}
+				}
+				// only access the setter of the last so that we don't generate stuff trice.
+				qi._pathName = Utils.addFinalSlash(e.dirSave).toString();
+				qi._description = !!e.description ? e.description : '';
+				qi._title = !!e.title ? e.title : '';
+				qi._mask = Utils.removeFinalSlash(Utils.removeLeadingSlash(Utils.normalizeSlashes(e.mask)));
+				qi.fromMetalink = !!e.fromMetalink;
+				qi.fileName = Utils.getUsableFileName(qi.urlManager.usable);
+				if (e.fileName) {
+					qi.fileName = Utils.getUsableFileName(e.fileName);
+				}
+				if (e.destinationName) {
+					qi.destinationName = Utils.getUsableFileName(e.destinationName);
+				}
+				if (e.startDate) {
+					qi.startDate = e.startDate;
+				}
 
-	let iNum = 0;
-	let first = null;
+				// hash?
+				if (e.hashCollection) {
+					qi.hashCollection = e.hashCollection;
+				}
+				else if (e.url.hashCollection) {
+					qi.hashCollection = e.url.hashCollection;
+				}
+				else if (e.hash) {
+					qi.hashCollection = new DTA.HashCollection(e.hash);
+				}
+				else if (e.url.hash) {
+					qi.hashCollection = new DTA.HashCollection(e.url.hash);
+				}
+				else {
+					qi.hashCollection = null; // to initialize prettyHash
+				}
 
-	function addItem(e) {
-		try {
-			let qi = new QueueItem();
-			let lnk = e.url;
-			if (typeof lnk == 'string') {
-				qi.urlManager = new UrlManager([new DTA.URL(Services.io.newURI(lnk, null, null))]);
+				let postData = ContentHandling.getPostDataFor(qi.urlManager.url);
+				if (e.url.postData) {
+					postData = e.url.postData;
+				}
+				if (postData) {
+					qi.postData = postData;
+				}
+
+				if (start) {
+					qi._setStateInternal(QUEUED);
+					qi.status = TextCache_QUEUED;
+				}
+				else {
+					qi._setStateInternal(QUEUED);
+					qi.status = TextCache_PAUSED;
+				}
+				qi.position = Tree.add(qi);
+				qi.save();
+				first = first || qi;
 			}
-			else if (lnk instanceof UrlManager) {
-				qi.urlManager = lnk;
+			catch (ex) {
+				log(LOG_ERROR, "addItem", ex);
 			}
-			else {
-				qi.urlManager = new UrlManager([lnk]);
-			}
-			qi.bNum = e.numIstance;
-			qi.iNum = ++iNum;
 
-			if (e.referrer) {
+			return true;
+		}
+
+		busy = true;
+
+		let iNum = 0;
+		let first = null;
+		let g = downloads;
+		if ('length' in downloads) {
+			g = (i for each (i in downloads));
+		}
+
+		Tree.beginUpdate();
+		QueueStore.beginUpdate();
+		let ct = new CoThreadListWalker(
+			addItem,
+			g,
+			100
+		).start(function() {
+			QueueStore.endUpdate();
+			Tree.endUpdate();
+			Tree.invalidate();
+			ct = null;
+			g = null;
+			Tree.scrollToNearest(first);
+
+			while (queue.length) {
 				try {
-					qi.referrer = toURL(e.referrer);
+					let {start, downloads} = queue.shift();
+					next(start, downloads);
+					return;
 				}
 				catch (ex) {
-					// We might have been fed with about:blank or other crap. so ignore.
+					log(LOG_ERROR, "Failed to run next startDownloads", ex);
 				}
 			}
-			// only access the setter of the last so that we don't generate stuff trice.
-			qi._pathName = Utils.addFinalSlash(e.dirSave).toString();
-			qi._description = !!e.description ? e.description : '';
-			qi._title = !!e.title ? e.title : '';
-			qi._mask = Utils.removeFinalSlash(Utils.removeLeadingSlash(Utils.normalizeSlashes(e.mask)));
-			qi.fromMetalink = !!e.fromMetalink;
-			qi.fileName = Utils.getUsableFileName(qi.urlManager.usable);
-			if (e.fileName) {
-				qi.fileName = Utils.getUsableFileName(e.fileName);
-			}
-			if (e.destinationName) {
-				qi.destinationName = Utils.getUsableFileName(e.destinationName);
-			}
-			if (e.startDate) {
-				qi.startDate = e.startDate;
-			}
-
-			// hash?
-			if (e.hashCollection) {
-				qi.hashCollection = e.hashCollection;
-			}
-			else if (e.url.hashCollection) {
-				qi.hashCollection = e.url.hashCollection;
-			}
-			else if (e.hash) {
-				qi.hashCollection = new DTA.HashCollection(e.hash);
-			}
-			else if (e.url.hash) {
-				qi.hashCollection = new DTA.HashCollection(e.url.hash);
-			}
-			else {
-				qi.hashCollection = null; // to initialize prettyHash
-			}
-
-			let postData = ContentHandling.getPostDataFor(qi.urlManager.url);
-			if (e.url.postData) {
-				postData = e.url.postData;
-			}
-			if (postData) {
-				qi.postData = postData;
-			}
-
-			if (start) {
-				qi._setStateInternal(QUEUED);
-				qi.status = TextCache_QUEUED;
-			}
-			else {
-				qi._setStateInternal(QUEUED);
-				qi.status = TextCache_PAUSED;
-			}
-			qi.position = Tree.add(qi);
-			qi.save();
-			first = first || qi;
-		}
-		catch (ex) {
-			log(LOG_ERROR, "addItem", ex);
-		}
-
-		return true;
+			busy = false;
+		});
 	}
+	let busy = false;
+	let queue = [];
 
-	let g = downloads;
-	if ('length' in downloads) {
-		g = (i for each (i in downloads));
-	}
-
-	Tree.beginUpdate();
-	QueueStore.beginUpdate();
-	let ct = new CoThreadListWalker(
-		addItem,
-		g,
-		100
-	).start(function() {
-		QueueStore.endUpdate();
-		Tree.endUpdate();
-		Tree.invalidate();
-		ct = null;
-		g = null;
-		Tree.scrollToNearest(first);
-	});
-}
-
+	return function startDownloads(start, downloads) {
+		if (busy) {
+			queue.push({start: start, downloads: downloads});
+		}
+		else {
+			next(start, downloads);
+		}
+	};
+})();
 
 addEventListener(
 	"load",
 	function() {
 		removeEventListener("load", arguments.callee, false);
 		if (!Preferences.getExt('startminimized', false)) {
-			return;
-		}
-		// Only start minimized if invoked with new downloads
-		if (!window.arguments || !window.arguments.length) {
 			return;
 		}
 		setTimeoutOnlyFun(
