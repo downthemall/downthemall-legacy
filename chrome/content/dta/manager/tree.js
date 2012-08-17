@@ -439,8 +439,10 @@ const Tree = {
 		return 0;
 	},
 	getCellText: function T_getCellText(idx, col) {
-		let d = this._filtered[idx];
-		if (!d) return '';
+		const d = this._filtered[idx];
+		if (!d) {
+			return '';
+		}
 
 		switch (col.index) {
 			case 0:  return Prefs.showOnlyFilenames ? d.destinationName : d.urlManager.usable;
@@ -467,12 +469,15 @@ const Tree = {
 	getImageSrc: function T_getImageSrc(idx, col) {},
 	getProgressMode : function T_getProgressMode(idx, col) {
 		if (col.index == 2) {
-			let d = this._filtered[idx];
-			if (!d) return 2;
-			if (d.is(PAUSED) && (!d.totalSize || d.progress < 5)) {
+			const d = this._filtered[idx];
+			if (!d) {
+				return 2;
+			}
+			const state = d.state;
+			if (state == PAUSED && (!d.totalSize || d.progress < 5)) {
 				return 2; // PROGRESS_UNDETERMINED;
 			}
-			if (d.is(RUNNING) && !d.totalSize) {
+			if (state == RUNNING && !d.totalSize) {
 				return 2; // PROGRESS_UNDETERMINED;
 			}
 			return 1; // PROGRESS_NORMAL;
@@ -482,8 +487,10 @@ const Tree = {
 	// will be called for cells other than textcells
 	getCellValue: function T_getCellValue(idx, col) {
 		if (col.index == 2) {
-			let d = this._filtered[idx];
-			if (!d) return 0;
+			const d = this._filtered[idx];
+			if (!d) {
+				return 0;
+			}
 			if (d.isOf(CANCELED | COMPLETE)) {
 				return 100;
 			}
@@ -492,13 +499,23 @@ const Tree = {
 		return null;
 	},
 	getCellProperties: function T_getCellProperties(idx, col, prop) {
-		let cidx = col.index;
+		const cidx = col.index;
 		if (cidx == 2) {
 			prop.AppendElement(this.iconicAtom);
 			prop.AppendElement(this.progressAtom);
-			let d = this._filtered[idx];
-			if (!d) return;
+			const d = this._filtered[idx];
+			if (!d) {
+				return;
+			}
 			switch (d.state) {
+				case QUEUED:
+					return;
+				case COMPLETE:
+					prop.AppendElement(this.completedAtom);
+					if (d.hashCollection) {
+						prop.AppendElement(this.verifiedAtom);
+					}
+				return;
 				case PAUSED:
 					prop.AppendElement(this.pausedAtom);
 					if (!d.totalSize || d.progress < 5) {
@@ -509,14 +526,12 @@ const Tree = {
 					}
 				return;
 				case FINISHING:
-				case RUNNING: prop.AppendElement(this.inprogressAtom); return;
-				case CANCELED: prop.AppendElement(this.canceledAtom); return;
-				case COMPLETE:
-					prop.AppendElement(this.completedAtom);
-					if (d.hashCollection) {
-						prop.AppendElement(this.verifiedAtom);
-					}
-				return;
+				case RUNNING:
+					prop.AppendElement(this.inprogressAtom);
+					return;
+				case CANCELED:
+					prop.AppendElement(this.canceledAtom);
+					return;
 			}
 		}
 		else if (cidx == 0) {
@@ -556,7 +571,7 @@ const Tree = {
 		transfer.effectAllowed = "copymove";
 		for (let qi in this.selected) {
 			try {
-				if (qi.is(COMPLETE)) {
+				if (qi.state == COMPLETE) {
 					let file = new Instances.LocalFile(qi.destinationFile);
 					if (file.exists()) {
 						transfer.mozSetDataAt("application/x-moz-file", new FileDataProvider(qi, file), i++);
@@ -784,7 +799,7 @@ const Tree = {
 			let async = downloads.length < 100;
 			for (let i = 0; i < downloads.length; ++i) {
 				let d = downloads[i];
-				if (d.is(FINISHING)) {
+				if (d.state == FINISHING) {
 					// un-removable :p
 					return;
 				}
@@ -824,7 +839,7 @@ const Tree = {
 			let delta = this._downloads.length, last = 0;
 			for (let i = delta - 1; i > -1; --i) {
 				let d = this._downloads[i];
-				if (!d.is(COMPLETE)) {
+				if (d.state != COMPLETE) {
 					continue;
 				}
 				if (onlyGone && (new Instances.LocalFile(d.destinationFile).exists())) {
@@ -894,11 +909,11 @@ const Tree = {
 		}
 	},
 	_pause_item: function T_pause_item(d) {
-		if (d.isOf(QUEUED | PAUSED) || (d.is(RUNNING) && d.resumable)) {
+		if (d.isOf(QUEUED | PAUSED) || (d.state == RUNNING && d.resumable)) {
 			d.pause();
 			d.clearAutoRetry();
 			d.status = TextCache_PAUSED;
-			d.state = PAUSED;
+			d.setState(PAUSED);
 		}
 		return true;
 	},
@@ -1112,12 +1127,12 @@ const Tree = {
 	},
 	_refreshTools_item: [
 		{item: 'cmdResume', f: function(d) d.isOf(PAUSED | QUEUED | CANCELED)},
-		{item: 'cmdPause', f: function(d) (d.is(RUNNING) && d.resumable) || d.is(QUEUED)},
+		{item: 'cmdPause', f: function(d) (d.state == RUNNING && d.resumable) || d.state == QUEUED},
 		{item: 'cmdCancel', f: function(d) d.isOf(PAUSED | RUNNING | QUEUED | COMPLETE)},
 
 		{item: 'cmdLaunch', f: function(d) !!d.curFile},
 		{item: 'cmdOpenFolder', f: function(d) !!d.curFolder},
-		{item: 'cmdDelete', f: function(d) d.is(COMPLETE)}
+		{item: 'cmdDelete', f: function(d) d.state == COMPLETE}
 	],
 	_refreshTools_items: [
 		{items: ['cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'], f: function(d) !!d.count},
@@ -1150,9 +1165,9 @@ const Tree = {
 			}
 
 			let states = {
-				_state: 0,
+				state: 0,
 				resumable: false,
-				is: function(s) this._state & s,
+				is: function(s) this.state & s,
 				isOf: QueueItem.prototype.isOf,
 				count: this.selection.count,
 				rows: this.rowCount,
@@ -1160,13 +1175,13 @@ const Tree = {
 				max: 0
 			};
 			for (let d in this.selected) {
-				states._state |= d.state;
+				states.state |= d.state;
 				states.resumable |= d.resumable;
 				states.min = Math.min(d.filteredPosition, states.min);
 				states.max = Math.max(d.filteredPosition, states.max);
 			}
 			let cur = this.current;
-			states.curFile = (cur && cur.is(COMPLETE) && (new Instances.LocalFile(cur.destinationFile)).exists());
+			states.curFile = (cur && cur.state == COMPLETE && (new Instances.LocalFile(cur.destinationFile)).exists());
 			states.curFolder = (cur && (new Instances.LocalFile(cur.destinationPath)).exists());
 
 			for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
@@ -1191,7 +1206,7 @@ const Tree = {
 			e.position = i;
 			this.push({dbId: e.dbId, position: i});
 		}
-		if (e.is(COMPLETE)) {
+		if (e.state == COMPLETE) {
 			Dialog.completed++;
 		}
 	},
@@ -1540,7 +1555,7 @@ const FileHandling = {
 	get _uniqueList() {
 		let u = {};
 		for (d in Tree.selected) {
-			if (d.is(COMPLETE)) {
+			if (d.state == COMPLETE) {
 				let f = d.destinationFile;
 				if (Utils.SYSTEMSLASH == "\\") {
 					f = f.toLowerCase();
@@ -1566,7 +1581,7 @@ const FileHandling = {
 	},
 	openFile: function() {
 		let cur = Tree.current;
-		if (cur && cur.is(COMPLETE)) {
+		if (cur && cur.state == COMPLETE) {
 			try {
 				Utils.launch(cur.destinationFile);
 			}

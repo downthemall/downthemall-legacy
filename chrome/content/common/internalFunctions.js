@@ -50,7 +50,11 @@ const Exception = Components.Exception;
 // shared state defines
 
 module("chrome://dta-modules/content/glue.jsm", this);
-requireJoined(this, "constants");
+(function() {
+	for (let [k,v] in Iterator(require("constants"))) {
+		Object.defineProperty(this, k, {value: v, enumerable:true});
+	}
+}).call(this);
 const Preferences = require("preferences");
 const Mediator = require("support/mediator");
 const {FilterManager} = require("support/filtermanager");
@@ -253,7 +257,7 @@ var Utils = {
 	},
 
 	formatKBytes: function U_formatKBytes(aNumber, decimalPlace) {
-		aNumber = Number(aNumber) / 1024;
+		aNumber = aNumber / 1024;
 
 		if (!isFinite(aNumber)) {
 			return 'NaN';
@@ -280,17 +284,17 @@ var Utils = {
 		const nunits = sunits.length;
 		const s = scale;
 		return function(val, decimalPlace) {
-			val = Number(val);
-			if (!isFinite(val)) {
+			var rv = val;
+			if (!isFinite(rv)) {
 				return 'NaN';
 			}
-			let unit = sunits[0];
-			for (let i = 1; val > s && i < nunits; ++i) {
-				val /= 1024;
-				unit = sunits[i];
+			let i = 0;
+			while (rv > s && ++i < nunits) {
+				rv /= 1024;
 			}
+			const unit = sunits[i];
 			decimalPlace = arguments.length > 1 ? decimalPlace : unit[1];
-			return _(unit[0], [val.toFixed(decimalPlace)]);
+			return _(unit[0], [rv.toFixed(decimalPlace)]);
 		}
 	}
 	Utils.formatBytes = createFormatter([['sizeB', 0], ['sizeKB', 1], ['sizeMB', 2], ['sizeGB', 2], ['sizeTB', 3]], 875);
@@ -357,7 +361,6 @@ function hash(value, algorithm, encoding, datalen) {
 		ch.init(algorithm);
 	}
 	if (value instanceof Ci.nsIInputStream) {
-		datalen = Number(datalen);
 		ch.updateFromStream(value, datalen > 0 ? datalen : 0xffffffff);
 	}
 	else {

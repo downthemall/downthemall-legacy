@@ -166,7 +166,7 @@ var Dialog = {
 				}
 				else if (!d.hashCollection || h.sum != d.hashCollection.full.sum || h.type != d.hashCollection.full.type) {
 					d.hashCollection = new DTA.HashCollection(h);
-					if (h && d.is(COMPLETE)) {
+					if (h && d.state == COMPLETE) {
 						// have to manually start this guy ;)
 						d.verifyHash();
 					}

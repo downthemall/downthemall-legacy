@@ -135,11 +135,11 @@ let globalConnections = -1;
 
 function BaseScheduler() {}
 BaseScheduler.prototype = {
-	_queuedFilter: function(e) e._state == QUEUED,
+	_queuedFilter: function(e) e.state == QUEUED,
 	next: function() {
 		for (let d; this._schedule.length;) {
 			d = this._schedule.shift();
-			if (!d.is(QUEUED)) {
+			if (d.state != QUEUED) {
 				continue;
 			}
 			return d;
@@ -162,7 +162,7 @@ function FastScheduler(downloads, running) {
 	this._downloads = [];
 	for (let i = 0, e = downloads.length; i < e; ++i) {
 		let d = downloads[i];
-		if (d._state == QUEUED) {
+		if (d.state == QUEUED) {
 			this._downloads.push(d);
 		}
 	}
@@ -170,7 +170,7 @@ function FastScheduler(downloads, running) {
 }
 FastScheduler.prototype = {
 	__proto__: BaseScheduler.prototype,
-	_queuedFilter: function(e) {let d = e; return d && d._state == QUEUED; },
+	_queuedFilter: function(e) {let d = e; return d && d.state == QUEUED; },
 	_runCount: 0,
 	next: function(running) {
 		if (!this._downloads.length) {
@@ -212,7 +212,7 @@ FastScheduler.prototype = {
 		for (i = 0, e = this._downloads.length; i < e; ++i) {
 			d = this._downloads[i];
 
-			if (!d || d._state != QUEUED) {
+			if (!d || d.state != QUEUED) {
 				continue;
 			}
 			host = d.urlManager.domain;
@@ -240,7 +240,7 @@ function FairScheduler(downloads) {
 	// set up our internal state
 	for (let i = 0, e = downloads.length, d, host; i < e; ++i) {
 		d = downloads[i];
-		if (!d.is(QUEUED)) {
+		if (d.state != QUEUED) {
 			continue;
 		}
 		host = d.urlManager.domain;
@@ -285,7 +285,7 @@ FairScheduler.prototype = {
 		if (e) {
 			while (e.length) {
 				d = e.shift();
-				if (d && d._state == QUEUED) {
+				if (d && d.state == QUEUED) {
 					break;
 				}
 				d = null;
@@ -335,7 +335,7 @@ function DirScheduler(downloads) {
 	// set up our internal state
 	for (let i = 0, e = downloads.length, d, dir; i < e; ++i) {
 		d = downloads[i];
-		if (!d.is(QUEUED)) {
+		if (d.state != QUEUED) {
 			continue;
 		}
 		dir = d.destinationPath;
@@ -380,7 +380,7 @@ DirScheduler.prototype = {
 		if (e) {
 			while (e.length) {
 				d = e.pop();
-				if (d._state == QUEUED) {
+				if (d.state == QUEUED) {
 					break;
 				}
 				d = null;

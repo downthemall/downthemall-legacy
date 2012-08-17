@@ -338,7 +338,7 @@ const Tooltip = {
 		this._current = d;
 		this._mustDraw = true;
 		this._inTip = inTip;
-		if (this._inTip && !d.is(RUNNING)) {
+		if (this._inTip && d.state != RUNNING) {
 			this.speedCanvas.hidden = true;
 			this.speedRow.collapsed = true;
 		}
@@ -436,11 +436,12 @@ const Tooltip = {
 	},
 	updateMetrics: function(file) {
 		try {
-			if (file.speeds.length && file.is(RUNNING)) {
+			const state = file.state;
+			if (state == RUNNING && file.speeds.length) {
 				this.speedAverage.value = file.speed;
 				this.speedCurrent.value = Utils.formatSpeed(file.speeds.last);
 			}
-			else if (file.is(RUNNING)) {
+			else if (state == RUNNING) {
 				this.speedCurrent.value = this.speedAverage.value = _('unknown');
 			}
 			else {
@@ -449,7 +450,7 @@ const Tooltip = {
 
 			this.infoSize.value = file.dimensionString;
 			this.timeRemaining.value = file.status;
-			if (file.is(RUNNING)) {
+			if (state == RUNNING) {
 				this.timeElapsed.value = Utils.formatTimeDelta((Utils.getTimestamp() - file.timeStart) / 1000);
 			}
 			else {
@@ -629,13 +630,14 @@ const Tooltip = {
 			ctx.fill();
 
 			let b = [];
-			if (file.is(COMPLETE)) {
+			const state = file.state;
+			if (state == COMPLETE) {
 				b.push({
 					s: 0,
 					w: width
 				});
 			}
-			else if (!file.is(CANCELED)){
+			else if (state != CANCELED){
 				b = file.chunks.map(
 					function(chunk) {
 						if (file.totalSize <= 0) {
@@ -685,7 +687,7 @@ const Tooltip = {
 
 			// draw progress
 			if (file.totalSize > 0) {
-				if (file.is(PAUSED)) {
+				if (state == PAUSED) {
 					ctx.fillStyle = this._createVerticalGradient(ctx, 8, "#e0b400", "#FFCC00");
 				}
 				else {
@@ -695,7 +697,7 @@ const Tooltip = {
 				ctx.fill();
 			}
 			else if (file.isOf(CANCELED | PAUSED)) {
-				if (file.is(PAUSED)) {
+				if (state == PAUSED) {
 					ctx.fillStyle = this._createVerticalGradient(ctx, 8, "#e0b400", "#ffeea8");
 				}
 				else {
