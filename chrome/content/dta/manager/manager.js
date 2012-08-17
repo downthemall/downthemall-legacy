@@ -416,7 +416,7 @@ const Dialog = {
 			d.dbId = dbItem.id;
 			let state = Dialog_loadDownloads_get(down, "state");
 			if (state) {
-				d._state = state;
+				d._setStateInternal(state);
 			}
 			d.urlManager = new UrlManager(down.urlManager);
 			d.bNum = Dialog_loadDownloads_get(down, "numIstance");
@@ -482,7 +482,7 @@ const Dialog = {
 			}
 
 			d.started = d.partialSize != 0;
-			switch (d._state) {
+			switch (d.state) {
 				case PAUSED:
 				case QUEUED:
 				{
@@ -491,7 +491,7 @@ const Dialog = {
 						d.chunks.push(new Chunk(d, c.start, c.end, c.written));
 					}
 					d.refreshPartialSize();
-					if (d._state == PAUSED) {
+					if (d.state == PAUSED) {
 						d.status = TextCache_PAUSED;
 					}
 					else {
@@ -562,7 +562,7 @@ const Dialog = {
 		this.reinit(true);
 	},
 	canEnterPrivateBrowsing: function() {
-		if (Tree.some(function(d) { return d.started && !d.resumable && d.is(RUNNING); })) {
+		if (Tree.some(function(d) d.started && !d.resumable && d.state == RUNNING)) {
 			var rv = Prompts.confirmYN(
 				window,
 				_("confpbm"),
@@ -625,7 +625,7 @@ const Dialog = {
 		}
 		this._initialized = true;
 		for each (let d in Tree.all) {
-			if (d.is(FINISHING)) {
+			if (d.state == FINISHING) {
 				this.run(d);
 			}
 		}
@@ -641,7 +641,7 @@ const Dialog = {
 		}
 		let method = mustClear ? 'cancel' : 'pause';
 		Tree.updateAll(function(download) {
-			if (!download.is(COMPLETE)) {
+			if (download.state != COMPLETE) {
 				download[method]();
 			}
 			return true;
@@ -685,7 +685,7 @@ const Dialog = {
 					cancelQuit.data = true;
 					this._mustReload = true;
 					for each (let d in Tree.all) {
-						if (d.is(RUNNING) && d.resumable) {
+						if (d.state == RUNNING && d.resumable) {
 							d.pause();
 							d.queue();
 						}
@@ -817,11 +817,12 @@ const Dialog = {
 				if (Tree.downloadCount) {
 					let state = COMPLETE;
 					for each (let d in Tree.all) {
-						if (d.is(CANCELED)) {
+						const dstate = d.state;
+						if (dstate == CANCELED) {
 							state = CANCELED;
 							break;
 						}
-						if (d.is(PAUSED)) {
+						if (dstate == PAUSED) {
 							state = PAUSED;
 							break;
 						}
@@ -890,7 +891,7 @@ const Dialog = {
 			de.setAttribute('offline', true);
 			$('netstatus').setAttribute('offline', true);
 			for each (let d in Tree.all) {
-				if (d.is(RUNNING)) {
+				if (d.state == RUNNING) {
 					d.pause();
 					d.queue();
 				}
@@ -916,7 +917,7 @@ const Dialog = {
 					continue;
 				}
 				// checks for timeout
-				if (d.is(RUNNING) && (ts - d.timeLastProgress) >= Prefs.timeout * 1000) {
+				if (d.state == RUNNING && (ts - d.timeLastProgress) >= Prefs.timeout * 1000) {
 					if (d.resumable || !d.totalSize || !d.partialSize || Prefs.resumeOnError) {
 						d.pauseAndRetry();
 						d.status = TextCache_TIMEOUT;
@@ -997,7 +998,7 @@ const Dialog = {
 				if (!d) {
 					break;
 				}
-				if (!d.is(QUEUED)) {
+				if (d.state != QUEUED) {
 					log(LOG_ERROR, "FIXME: scheduler returned unqueued download");
 					continue;
 				}
@@ -1017,10 +1018,10 @@ const Dialog = {
 		}
 		download.forced = !!forced;
 		download.status = TextCache_STARTING;
-		if (download.is(FINISHING) || (download.partialSize >= download.totalSize && download.totalSize)) {
+		if (download.state == FINISHING || (download.partialSize >= download.totalSize && download.totalSize)) {
 			// we might encounter renaming issues;
 			// but we cannot handle it because we don't know at which stage we crashed
-			download.state = FINISHING;
+			download.setState(FINISHING);
 			download.partialSize = download.totalSize;
 			log(LOG_INFO, "Download seems to be complete; likely a left-over from a crash, finish it:" + download);
 			download.finishDownload();
@@ -1028,7 +1029,7 @@ const Dialog = {
 		}
 		download.timeLastProgress = Utils.getTimestamp();
 		download.timeStart = Utils.getTimestamp();
-		download.state = RUNNING;
+		download.setState(RUNNING);
 		if (!download.started) {
 			download.started = true;
 			log(LOG_INFO, "Let's start " + download);
@@ -1052,17 +1053,18 @@ const Dialog = {
 	_signal_some: function D_signal_some(d) d.isOf(FINISHING | RUNNING | QUEUED),
 	signal: function D_signal(download) {
 		download.save();
-		if (download.is(QUEUED)) {
+		const state = download.state;
+		if (state == QUEUED) {
 			Dialog.scheduler = null;
 			return;
 		}
-		if (download.is(RUNNING)) {
+		if (state == RUNNING) {
 			this._wasRunning = true;
 		}
-		else if (Prefs.autoClearComplete && download.is(COMPLETE)) {
+		else if (Prefs.autoClearComplete && state == COMPLETE) {
 			this._autoClears.push(download);
 		}
-		if (!this._initialized || !this._wasRunning || !download.is(COMPLETE)) {
+		if (!this._initialized || !this._wasRunning || state != COMPLETE) {
 			return;
 		}
 		try {
@@ -1125,7 +1127,7 @@ const Dialog = {
 		return rv;
 	},
 	_canClose: function D__canClose() {
-		if (Tree.some(function(d) { return d.started && !d.resumable && d.is(RUNNING); })) {
+		if (Tree.some(function(d) { return d.started && !d.resumable && d.state == RUNNING; })) {
 			var rv = Prompts.confirmYN(
 				window,
 				_("confclose"),
@@ -1175,9 +1177,9 @@ const Dialog = {
 						}
 					}
 					d.pause();
-					d.state = QUEUED;
+					d.setState(QUEUED);
 				}
-				else if (d.is(FINISHING)) {
+				else if (d.state == FINISHING) {
 					++finishing;
 				}
 				d.shutdown();
@@ -1270,7 +1272,7 @@ unloadWindow(window, function () {
 
 const Metalinker = {
 	handleDownload: function ML_handleDownload(download) {
-		download.state = CANCELED;
+		download.setState(CANCELED);
 		Tree.remove(download, false);
 		let file = new Instances.LocalFile(download.destinationFile);
 
@@ -1376,23 +1378,23 @@ function QueueItem() {
 }
 
 QueueItem.prototype = {
-	_state: QUEUED,
-	get state() {
-		return this._state;
+	state: QUEUED,
+	_setStateInternal: function Q__setStateInternal(nv) {
+		Object.defineProperty(this, "state", {value: nv, configurable: true, enumerable: true});
 	},
-	set state(nv) {
-		if (this._state == nv) {
+	setState: function Q_setState(nv) {
+		if (this.state == nv) {
 			return nv;
 		}
-		if (this._state == RUNNING) {
+		if (this.state == RUNNING) {
 			// remove ourself from inprogresslist
 			Dialog.wasStopped(this);
 			// kill the bucket via it's setter
 			this.bucket = null;
 		}
 		this.speed = '';
-		this._state = nv;
-		if (this._state == RUNNING) {
+		this._setStateInternal(nv);
+		if (this.state == RUNNING) {
 			// set up the bucket
 			this._bucket = new ByteBucket(this.speedLimit, 1.7);
 		}
@@ -1426,7 +1428,7 @@ QueueItem.prototype = {
 			return;
 		}
 		this._speedLimit = nv;
-		if (this.is(RUNNING)) {
+		if (this.state == RUNNING) {
 			this._bucket.byteRate = this.speedLimit;
 		}
 		this.save();
@@ -1611,16 +1613,17 @@ QueueItem.prototype = {
 	 * Takes one or more state indicators and returns if this download is in state
 	 * of any of them
 	 */
-	is: function QI_is(state) this._state == state,
-	isOf: function QI_isOf(states) (this._state & states) != 0,
+	is: function QI_is(state) this.state == state,
+	isOf: function QI_isOf(states) (this.state & states) != 0,
 	save: function QI_save() {
 		if (this.deleting) {
 			return false;
 		}
+		const state = this.state;
 		if (
-			(Prefs.removeCompleted && this.is(COMPLETE))
-			|| (Prefs.removeCanceled && this.is(CANCELED))
-			|| (Prefs.removeAborted && this.is(PAUSED))
+			(Prefs.removeCompleted && state == COMPLETE)
+			|| (Prefs.removeCanceled && state == CANCELED)
+			|| (Prefs.removeAborted && state == PAUSED)
 		) {
 			if (this.dbId) {
 				this.remove();
@@ -1703,7 +1706,7 @@ QueueItem.prototype = {
 				c.cancelChunk();
 			}
 		}
-		else if (this._maxChunks > this._activeChunks && this.is(RUNNING)) {
+		else if (this._maxChunks > this._activeChunks && this.state == RUNNING) {
 			this.resumeDownload();
 
 		}
@@ -1749,7 +1752,7 @@ QueueItem.prototype = {
 		else if (this.totalSize <= 0) {
 			return _('transfered', [Utils.formatBytes(this.partialSize), TextCache_NAS]);
 		}
-		else if (this.is(COMPLETE)) {
+		else if (this.state == COMPLETE) {
 			return Utils.formatBytes(this.totalSize);
 		}
 		return _('transfered', [Utils.formatBytes(this.partialSize), Utils.formatBytes(this.totalSize)]);
@@ -1775,13 +1778,14 @@ QueueItem.prototype = {
 		return '';
 	},
 	get percent() {
-		if (!this.totalSize && this.is(RUNNING)) {
+		const state = this.state;
+		if (!this.totalSize && state == RUNNING) {
 			return TextCache_NAS;
 		}
 		else if (!this.totalSize) {
 			return "0%";
 		}
-		else if (this.is(COMPLETE)) {
+		else if (state == COMPLETE) {
 			return "100%";
 		}
 		return this.progress + "%";
@@ -1807,7 +1811,7 @@ QueueItem.prototype = {
 		this.speeds.clear();
 		this.otherBytes = 0;
 		this.visitors = new VisitorManager();
-		this.state = QUEUED;
+		this.setState(QUEUED);
 		Dialog.run(this);
 	},
 
@@ -1831,7 +1835,7 @@ QueueItem.prototype = {
 	},
 
 	pause: function QI_pause(){
-		this.state = PAUSED;
+		this.setState(PAUSED);
 		if (this.chunks) {
 			for (let [,c] in Iterator(this.chunks)) {
 				if (c.running) {
@@ -1845,13 +1849,13 @@ QueueItem.prototype = {
 	},
 
 	moveCompleted: function QI_moveCompleted() {
-		if (this.is(CANCELED)) {
+		if (this.state == CANCELED) {
 			return;
 		}
 		ConflictManager.resolve(this, 'continueMoveCompleted');
 	},
 	continueMoveCompleted: function QI_continueMoveCompleted() {
-		if (this.is(CANCELED)) {
+		if (this.state == CANCELED) {
 			return;
 		}
 		try {
@@ -1872,8 +1876,8 @@ QueueItem.prototype = {
 			}
 			// move file
 			if (this.compression) {
-				this.state = FINISHING;
-				this.status =  TextCache_DECOMPRESS;
+				this.setState(FINISHING);
+				this.status = TextCache_DECOMPRESS;
 				new Decompressor(this);
 			}
 			else {
@@ -1916,7 +1920,7 @@ QueueItem.prototype = {
 	},
 	_verificator: null,
 	verifyHash: function() {
-		this.state = FINISHING;
+		this.setState(FINISHING);
 		this.status = TextCache_VERIFY;
 		let tp = this;
 		this._verificator = Verificator.verify(
@@ -2087,7 +2091,7 @@ QueueItem.prototype = {
 			return;
 		}
 		this.activeChunks = 0;
-		this.state = COMPLETE;
+		this.setState(COMPLETE);
 		this.status = TextCache_COMPLETE;
 		this.visitors = new VisitorManager();
 	},
@@ -2217,13 +2221,14 @@ QueueItem.prototype = {
 
 	cancel: function QI_cancel(message) {
 		try {
-			if (this.is(COMPLETE)) {
+			const state = this.state;
+			if (state == COMPLETE) {
 				Dialog.completed--;
 			}
-			else if (this.is(RUNNING)) {
+			else if (state == RUNNING) {
 				if (this.chunks) {
 					// must set state here, already, to avoid confusing the connections
-					this.state = CANCELED;
+					this.setState(CANCELED);
 					for (let [,c] in Iterator(this.chunks)) {
 						if (c.running) {
 							c.cancelChunk();
@@ -2232,7 +2237,7 @@ QueueItem.prototype = {
 				}
 				this.activeChunks = 0;
 			}
-			this.state = CANCELED;
+			this.setState(CANCELED);
 			let bound = this.cancel.bind(this, message);
 			if (!this.chunksReady(bound)) {
 				return;
@@ -2296,7 +2301,7 @@ QueueItem.prototype = {
 	prealloc: function QI_prealloc(callback) {
 		let file = this.tmpFile;
 
-		if (!this.is(RUNNING)) {
+		if (this.state != RUNNING) {
 			return false;
 		}
 
@@ -2415,11 +2420,11 @@ QueueItem.prototype = {
 	},
 	queue: function QI_queue() {
 		this._autoRetryTime = 0;
-		this.state = QUEUED;
+		this.setState(QUEUED);
 		this.status = TextCache_QUEUED;
 	},
 	maybeResumeDownload: function QI_maybeResumeDownload() {
-		if (!this.is(RUNNING)) {
+		if (this.state != RUNNING) {
 			return;
 		}
 		this.resumeDownload();
@@ -2445,7 +2450,7 @@ QueueItem.prototype = {
 		}
 		function downloadChunk(download, chunk, header) {
 			chunk.running = true;
-			download.state = RUNNING;
+			download.setState(RUNNING);
 			log(LOG_DEBUG, "started: " + chunk);
 			download.createDirectory(download.tmpFile);
 			chunk.download = new Connection(download, chunk, header || download.mustGetInfo);
@@ -2528,7 +2533,7 @@ QueueItem.prototype = {
 	replaceMirrors: function(mirrors) {
 		let restart = this.urlManager.length < 3;
 		this.urlManager.initByArray(mirrors);
-		if (restart && this.resumable && this.is(RUNNING) && this.maxChunks > 2) {
+		if (restart && this.resumable && this.state == RUNNING && this.maxChunks > 2) {
 			// stop some chunks and restart them
 			log(LOG_DEBUG, "Stopping some chunks and restarting them after mirrors change");
 			let omc = this.maxChunks;
@@ -2564,7 +2569,7 @@ QueueItem.prototype = {
 		if (this.hashCollection) {
 			rv.hashCollection = this.hashCollection;
 		}
-		if (this.autoRetrying || this.is(RUNNING)) {
+		if (this.autoRetrying || this.state == RUNNING) {
 			rv.state = QUEUED;
 		}
 		else {
@@ -2587,7 +2592,7 @@ QueueItem.prototype = {
 		rv.urlManager = this.urlManager;
 		rv.visitors = this.visitors;
 
-		if (!this.resumable && !this.is(COMPLETE)) {
+		if (!this.resumable && this.state != COMPLETE) {
 			rv.totalSize = 0;
 		}
 		else {
@@ -2627,7 +2632,7 @@ var ConflictManager = {
 	_check: function CM__check(download) {
 		let dest = new Instances.LocalFile(download.destinationFile);
 		let sn = false;
-		if (download.is(RUNNING)) {
+		if (download.state == RUNNING) {
 			sn = Dialog.checkSameName(download, download.destinationFile);
 		}
 		log(LOG_DEBUG, "conflict check: " + sn + "/" + dest.exists() + " for " + download.destinationFile);
@@ -2691,7 +2696,7 @@ var ConflictManager = {
 		let i = 1;
 		for (;; ++i) {
 			newDest.leafName = Utils.formatConflictName(basename, i);
-			if (!newDest.exists() && (!download.is(RUNNING) || !Dialog.checkSameName(this, newDest.path))) {
+			if (!newDest.exists() && (download.state != RUNNING || !Dialog.checkSameName(this, newDest.path))) {
 				break;
 			}
 		}
@@ -2834,11 +2839,12 @@ function startDownloads(start, downloads) {
 				qi.postData = postData;
 			}
 
-			qi._state = start ? QUEUED : PAUSED;
-			if (qi.is(QUEUED)) {
+			if (start) {
+				qi._setStateInternal(QUEUED);
 				qi.status = TextCache_QUEUED;
 			}
 			else {
+				qi._setStateInternal(QUEUED);
 				qi.status = TextCache_PAUSED;
 			}
 			qi.position = Tree.add(qi);

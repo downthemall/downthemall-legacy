@@ -829,7 +829,7 @@ Connection.prototype = {
 
 		// hack: determine if we are a multi-part chunk,
 		// if so something bad happened, 'cause we aren't supposed to be multi-part
-		if (c.start != 0 && d.is(RUNNING)) {
+		if (c.start != 0 && d.state == RUNNING) {
 			if (!this.handleError()) {
 				log(LOG_ERROR, d + ": Server error or disconnection", "(type 1)");
 				d.pauseAndRetry();
@@ -956,10 +956,11 @@ Connection.prototype = {
 		--d.activeChunks;
 
 		// check if we're complete now
-		if (d.is(RUNNING) && d.chunks.every(function(e) { return e.complete; })) {
+		const isRunning = d.state == RUNNING;
+		if (isRunning && d.chunks.every(function(e) { return e.complete; })) {
 			if (!d.resumeDownload()) {
 				log(LOG_INFO, d + ": Download is complete!");
-				d.state = FINISHING;
+				d.setState(FINISHING);
 				d.finishDownload();
 				return;
 			}
@@ -995,7 +996,7 @@ Connection.prototype = {
 
 		// rude way to determine disconnection: if connection is closed before
 		// download is started we assume a server error/disconnection
-		if (c.starter && d.is(RUNNING)) {
+		if (c.starter && isRunning) {
 			if (!d.urlManager.markBad(this.url)) {
 				log(LOG_ERROR, d + ": Server error or disconnection", "(type 2)");
 				d.pauseAndRetry();
@@ -1059,7 +1060,7 @@ Connection.prototype = {
 				}
 			}
 
-			if (d.is(RUNNING)) {
+			if (d.state == RUNNING) {
 				if (!this.resumable && d.totalSize) {
 					// basic integrity check
 					if (d.partialSize > d.totalSize) {
