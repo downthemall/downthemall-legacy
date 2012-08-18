@@ -125,11 +125,20 @@ var Utils = {
 	 *
 	 * @param predefined
 	 *          The starting path to display when dialog opens up
-	 * @text text The description text to be displayed
-	 * @return A string containing the user selected path, or false if user
-	 *         cancels the dialog.
+	 * @param text The description text to be displayed
+	 * @param cb Callback to asynchronously called. The cb is called with a string
+	 *           containing the user-selected path - or false if user cancels the
+	 *           dialog - as the sole argument
 	 */
-	askForDir: function (predefined, text) {
+	askForDir: function(predefined, text, cb) {
+		function processResponse(res) {
+			if (res == Ci.nsIFilePicker.returnOK) {
+				cb(Utils.addFinalSlash(this.file.path));
+			}
+			else {
+				cb(false);
+			}
+		}
 		try {
 			predefined = predefined ? predefined.trim() : '';
 			let fp = new Instances.FilePicker(window, text, Ci.nsIFilePicker.modeGetFolder);
@@ -141,17 +150,19 @@ var Utils = {
 				fp.displayDirectory = dest;
 			}
 
-			// open file picker
-			let res = fp.show();
-
-			if (res == Ci.nsIFilePicker.returnOK) {
-				return Utils.addFinalSlash(fp.file.path);
+			if ("open" in fp) {
+				fp.open({done: processResponse.bind(fp)});
+				return;
 			}
+
+			// open file picker
+			processResponse.call(fp, fp.show());
+			return;
 		}
 		catch (ex) {
 			log(LOG_ERROR, "Utils.askForDir():", ex);
 		}
-		return false;
+		cb(false);
 	},
 	/**
 	 * Performs all the needed controls to see if the specified path is valid, is

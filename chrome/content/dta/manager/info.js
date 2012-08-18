@@ -205,13 +205,15 @@ var Dialog = {
 	},
 	browseDir: function DTA_browseDir() {
 		// let's check and create the directory
-		var newDir = Utils.askForDir(
+		Utils.askForDir(
 			$('directory').value,
-			_("validdestination")
+			_("validdestination"),
+			function(newDir) {
+				if (newDir) {
+					$('directory').value = newDir;
+				}
+			}
 		);
-		if (newDir) {
-			$('directory').value = newDir;
-		}
 	},
 	manageMirrors: function DTA_manageMirrors() {
 		if (this.downloads.length != 1) {
@@ -239,8 +241,9 @@ var Dialog = {
 		}
 		if (!Utils.validateDir(dir)) {
 			alert(_(dir.length ? 'alertinvaliddir' : 'alertnodir'));
-			var newDir = Utils.askForDir(null, _("validdestination"));
-			$('directory').value = newDir ? newDir : '';
+			Utils.askForDir(null, _("validdestination"), function (newDir) {
+				$('directory').value = newDir ? newDir : '';
+			});
 			return false;
 		}
 		if (!$('hash').isValid) {

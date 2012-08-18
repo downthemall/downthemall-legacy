@@ -116,12 +116,13 @@ const Advanced = {
 		if (!tmp) {
 			return;
 		}
-		var f = Utils.askForDir(Preferences.getExt("tempLocation", tmp.value), "");
-		if (!f) {
-			return;
-		}
-		$("temp").value = f;
-		Preferences.setExt("tempLocation", f);
+		Utils.askForDir(Preferences.getExt("tempLocation", tmp.value), "", function(f) {
+			if (!f) {
+				return;
+			}
+			$("temp").value = f;
+			Preferences.setExt("tempLocation", f);
+		});
 		$("temp").focus();
 	},
 	toggleTemp: function() {

@@ -135,14 +135,14 @@ const MetaSelect = {
 	},
 	browseDir: function() {
 		// get a new directory
-		let newDir = Utils.askForDir(
+		Utils.askForDir(
 			$('directory').value, // initialize dialog with the current directory
-			_("validdestination")
-		);
-		// alright, we got something new, so lets set it.
-		if (newDir) {
-			$('directory').value = newDir;
-		}
+			_("validdestination"),
+			function(newDir) {
+				if (newDir) {
+					$('directory').value = newDir;
+				}
+			});
 	},
 	download: function ML_download(start) {
 		let [notifications, directory, mask] = $('notifications', 'directory', 'renaming');
