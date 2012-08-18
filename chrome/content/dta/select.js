@@ -411,8 +411,9 @@ let Dialog = {
 		if (!dir.length || !Utils.validateDir(dir)) {
 			this.addNotification(_(dir.length ? 'alertinvaliddir' : 'alertnodir'), this.PRIORITY_CRITICAL_MEDIUM);
 			if (!dir.length) {
-				let newDir = Utils.askForDir(null, _("validdestination"));
-				this.ddDirectory.value = newDir ? newDir : '';
+				Utils.askForDir(null, _("validdestination"), function(newDir) {
+					Dialog.ddDirectory.value = newDir ? newDir : '';
+				});
 			}
 			return false;
 		}
@@ -716,16 +717,16 @@ let Dialog = {
 
 	// browse for a dest directory
 	browseDir: function() {
-
 		// get a new directory
-		let newDir = Utils.askForDir(
+		Utils.askForDir(
 			this.ddDirectory.value, // initialize dialog with the current directory
-			_("validdestination")
-		);
-		// alright, we got something new, so lets set it.
-		if (newDir) {
-			this.ddDirectory.value = newDir;
-		}
+			_("validdestination"),
+			function(newDir) {
+				// alright, we got something new, so lets set it.
+				if (newDir) {
+					Dialog.ddDirectory.value = newDir;
+				}
+			});
 	},
 
 	// initialized the popup

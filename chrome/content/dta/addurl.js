@@ -331,13 +331,14 @@ var Dialog = {
 	},
 	browseDir: function DTA_browseDir() {
 		// let's check and create the directory
-		var newDir = Utils.askForDir(
+		Utils.askForDir(
 			this.ddDirectory.value,
-			_("validdestination")
-		);
-		if (newDir) {
-			this.ddDirectory.value = newDir;
-		}
+			_("validdestination"),
+			function (newDir) {
+				if (newDir) {
+					Dialog.ddDirectory.value = newDir;
+				}
+			});
 	}
 }
 
