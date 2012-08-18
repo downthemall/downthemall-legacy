@@ -1003,18 +1003,11 @@ const Tree = {
 		}
 	},
 	export: function T_export() {
-		try {
-			let fp = new Instances.FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
-			fp.appendFilters(Ci.nsIFilePicker.filterHTML);
-			fp.appendFilters(Ci.nsIFilePicker.filterText);
-			fp.appendFilter(_('filtermetalink3'), '*.metalink');
-			fp.appendFilter(_('filtermetalink'), "*.meta4");
-			fp.appendFilters(Ci.nsIFilePicker.filterAll);
-			fp.defaultString = "Downloads.meta4";
-			fp.filterIndex = 3;
-
-			let rv = fp.show();
-			if (rv == Ci.nsIFilePicker.returnOK || rv == Ci.nsIFilePicker.returnReplace) {
+		function processResponse(fp, rv) {
+			if (rv != Ci.nsIFilePicker.returnOK && rv != Ci.nsIFilePicker.returnReplace) {
+				return;
+			}
+			try {
 				let fs = fp.file;
 				if (!(/\.[\d\w-]{1,4}/.test(fs.leafName)) && fp.filterIndex != 4) {
 					if (fp.filterIndex == 0) {
@@ -1030,7 +1023,6 @@ const Tree = {
 						fs.leafName += ".txt";
 					}
 				}
-
 				if (/\.x?html$/i.test(fs.leafName) || fp.filterIndex == 0) {
 					ImportExport.exportToHtmlFile(this.selected, document, fs, Prefs.permissions);
 				}
@@ -1044,6 +1036,27 @@ const Tree = {
 					ImportExport.exportToTextFile(this.selected, fs, Prefs.permissions);
 				}
 			}
+			catch (ex) {
+				log(LOG_ERROR, "Cannot export downloads (process response)", ex);
+				Prompts.alert(window, _('exporttitle'), _('exportfailed'));
+			}
+		}
+		try {
+			let fp = new Instances.FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
+			fp.appendFilters(Ci.nsIFilePicker.filterHTML);
+			fp.appendFilters(Ci.nsIFilePicker.filterText);
+			fp.appendFilter(_('filtermetalink3'), '*.metalink');
+			fp.appendFilter(_('filtermetalink'), "*.meta4");
+			fp.appendFilters(Ci.nsIFilePicker.filterAll);
+			fp.defaultString = "Downloads.meta4";
+			fp.filterIndex = 3;
+
+			if ("open" in fp) {
+				fp.open({done: processResponse.bind(this, fp)});
+			}
+			else {
+				processResponse.call(this, fp, fp.show());
+			}
 		}
 		catch (ex) {
 			log(LOG_ERROR, "Cannot export downloads", ex);
@@ -1051,16 +1064,11 @@ const Tree = {
 		}
 	},
 	import: function T_import() {
-		try {
-			let fp = new Instances.FilePicker(window, _('importtitle'), Ci.nsIFilePicker.modeOpen);
-			fp.appendFilters(Ci.nsIFilePicker.filterText);
-			fp.appendFilter(_('filtermetalink'), '*.meta4');
-			fp.appendFilter(_('filtermetalink3'), '*.metalink');
-			fp.defaultExtension = "meta4";
-			fp.filterIndex = 1;
-
-			let rv = fp.show();
-			if (rv == Ci.nsIFilePicker.returnOK) {
+		function processResponse(fp, rv) {
+			if (rv != Ci.nsIFilePicker.returnOK) {
+				return;
+			}
+			try {
 				if (/\.(xml|meta(4|link))$/i.test(fp.file.leafName)) {
 					Metalinker.handleFile(fp.file);
 					return;
@@ -1069,7 +1077,25 @@ const Tree = {
 				if (links.length) {
 					DTA.saveLinkArray(window, links, []);
 				}
-				return;
+			}
+			catch (ex) {
+				log(LOG_ERROR, "Cannot import downloads (processResponse)", ex);
+				Prompts.alert(window, _('importtitle'), _('importfailed'));
+			}
+		}
+		try {
+			let fp = new Instances.FilePicker(window, _('importtitle'), Ci.nsIFilePicker.modeOpen);
+			fp.appendFilters(Ci.nsIFilePicker.filterText);
+			fp.appendFilter(_('filtermetalink'), '*.meta4');
+			fp.appendFilter(_('filtermetalink3'), '*.metalink');
+			fp.defaultExtension = "meta4";
+			fp.filterIndex = 1;
+
+			if ("open" in fp) {
+				fp.open({done: processResponse.bind(this, fp)});
+			}
+			else {
+				processResponse.call(this, fp, fp.show());
 			}
 		}
 		catch (ex) {
