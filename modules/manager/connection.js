@@ -761,7 +761,7 @@ Connection.prototype = {
 			d.fileName = newName;
 		}
 
-		extractMetaInfo(d, this._chan, null, visitor);
+		this.extractMetaInfo(d, this._chan, null, visitor);
 		return false;
 	},
 
