@@ -614,12 +614,7 @@ AboutModule.prototype = {
 				let uri = io.newURI(ru, null, null);
 				let chan = io.newChannelFromURI(uri);
 				chan.originalURI = aURI;
-				try {
-					chan.owner = sec.getSimpleCodebasePrincipal(uri);
-				}
-				catch (ex) {
-					chan.owner = sec.getCodebasePrincipal(uri);
-				}
+				chan.owner = sec.getCodebasePrincipal(uri);
 				
 				return chan;
 		}
