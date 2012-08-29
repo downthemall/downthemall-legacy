@@ -1,4 +1,4 @@
-<!ENTITY winstyle "width:46em;height:37em;"> 
+<!ENTITY winstyle "width:46em;height:37em;">
 <!ENTITY filterspane.label "الفلاتر">
 <!ENTITY listhead1.label "شرح لوحة">
 <!ENTITY listhead2.label "الامتدادات">
@@ -38,14 +38,14 @@
 <!ENTITY privacypane.label "الخصوصية">
 <!ENTITY privacypane.closing.caption "عندما تغلق نافذة المدير">
 <!ENTITY privacypane.removecompleted.label "أزل التنزيلات المكتملة">
-<!ENTITY privacypane.removecanceled.label "أزل التنزيلات الملغيةالفاشلة">
+<!ENTITY privacypane.removecanceled.label "أزل التنزيلات الملغية\الفاشلة">
 <!ENTITY privacypane.removeaborted.label "أزل التنزيلات غير المكتملة">
 <!ENTITY privacypane.deletefoldershistory.label "إخلي لستة المجلدات">
 <!ENTITY privacypane.deletefiltershistory.label "إخلي الفلاتر الإضافية">
 <!ENTITY privacypane.showlog.label "أظهر التقرير">
 <!ENTITY privacypane.reveallog.label "أظهر الملف">
 <!ENTITY privacypane.deletelog.label "إحذف التقرير">
-<!ENTITY privacypane.updates.caption "التحديثالإنترنت">
+<!ENTITY privacypane.updates.caption "التحديث\الإنترنت">
 <!ENTITY privacypane.information.label "السماح لنزِّل بتنزيل أحدث الأخبار و الرسائل و البحث عن التحديثات">
 <!ENTITY privacypane.statistics.label "السماح لنزِّل بجمع و نقل بيانات الاستخدام المجهولة المصدر">
 <!ENTITY privacypane.dropdowns.caption "أخفض القوائم بالأسفل">
