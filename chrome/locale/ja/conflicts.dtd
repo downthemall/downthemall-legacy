@@ -1,7 +1,7 @@
-<!ENTITY title.value "同じ名前のファイルがあります!">
+<!ENTITY title.value "同じ名前のファイルが既にあります">
 <!ENTITY text.value "この設定を次回も使用:">
-<!ENTITY file.label "このファイルにのみ">
-<!ENTITY session.label "このセッション中のみ">
-<!ENTITY always.label "以後この設定を使用">
-<!ENTITY overwrite.label "上書きする">
-<!ENTITY skip.label "無視/中止">
+<!ENTITY file.label "このダウンロードにのみ使用">
+<!ENTITY session.label "このセッション中は使用">
+<!ENTITY always.label "次回からもこの設定を使用">
+<!ENTITY overwrite.label "ファイルを上書きする">
+<!ENTITY skip.label "無視/キャンセル">
