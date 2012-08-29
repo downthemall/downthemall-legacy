@@ -1,18 +1,18 @@
-<!ENTITY title "ダウンロードを選択してください">
+<!ENTITY title "ダウンロードするファイルを選択">
 <!ENTITY filters.caption "フィルター">
 <!ENTITY additional.caption "フィルターのカスタマイズ">
-<!ENTITY additional.tip "文字列フィルター: コンマで区切る事で複数の文字列フィルタを使用することができます。">
+<!ENTITY additional.tip "文字列フィルター: カンマで区切る事で複数の文字列フィルターを使用することができます。">
 <!ENTITY regex.label "正規表現">
-<!ENTITY filter.tip "使用するフィルターを入力してください!(入力例はドロップダウンを見てください)">
-<!ENTITY status.label "リンクを選択した後に開始をクリックしてください!">
+<!ENTITY filter.tip "使用するフィルターを入力してください! (入力例はドロップダウンを見てください)">
+<!ENTITY status.label "リンクを選択した後に [開始] ボタンをクリックしてください!">
 <!ENTITY menu.mask.title "変更後の名前を編集">
 <!ENTITY menu.check.label "ダウンロードする">
 <!ENTITY menu.uncheck.label "ダウンロードの解除">
 <!ENTITY menu.toggle.label "ダウンロードを反転">
 <!ENTITY tab.links.label "リンク">
 <!ENTITY tab.pics.label "画像とメディア">
-<!ENTITY header.desc.label "概要">
-<!ENTITY selectfiltered.label "選択されたフィルター">
+<!ENTITY header.desc.label "説明">
+<!ENTITY selectfiltered.label "フィルタリングされた項目を選択">
 <!ENTITY disableother.label "その他のフィルターを無効">
 <!ENTITY disableother.tooltip "このフィルターのみを使用する事で、フィルタリングの速度を上げることができます。 (この設定は記憶されないため、使用時に毎回設定する必要があります)">
 <!ENTITY resname.value "リソースの名前">

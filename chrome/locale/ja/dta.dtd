@@ -3,21 +3,21 @@
 	CHECK BEFORE MODIFY
 
 -->
-<!ENTITY start.label "ダウンロード!">
+<!ENTITY start.label "開始">
 <!ENTITY start.key "s">
-<!ENTITY queue.label "一覧に追加">
+<!ENTITY queue.label "後でダウンロード">
 <!ENTITY queue.key "p">
 <!ENTITY options.label "設定">
 <!ENTITY url.value "ダウンロード">
 <!ENTITY dest.caption "ファイルの保存先:">
-<!ENTITY mirrors.value "ミラー:">
-<!ENTITY referrer.value "リファラー(参照元):">
+<!ENTITY mirrors.value "ミラーサーバー:">
+<!ENTITY referrer.value "参照元ページ(リファラー):">
 <!ENTITY description.value "説明:">
 <!ENTITY checksum.value "チェックサム (ハッシュ):">
-<!ENTITY browse.tip "保存先のフォルダーを参照...">
-<!ENTITY mirrormanager.tip "ダウンロードミラーの管理">
-<!ENTITY mask.label "別名で保存">
-<!ENTITY mask.tip "選択したファイルの保存後、このマスクを使用して名前を変更します">
+<!ENTITY browse.tip "保存先のフォルダーを参照します...">
+<!ENTITY mirrormanager.tip "ミラーサーバーを管理します">
+<!ENTITY mask.label "ファイル名の規則">
+<!ENTITY mask.tip "ダウンロードしたファイルの名前を指定の規則にそって変更します">
 <!ENTITY selectall.label "すべて選択">
-<!ENTITY selectinv.label "選択を反転">
+<!ENTITY selectinv.label "選択の切り替え">
 <!ENTITY selectnone.label "選択を解除">

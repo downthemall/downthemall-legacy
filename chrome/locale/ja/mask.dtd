@@ -14,7 +14,7 @@
 <!ENTITY mask.y "年">
 <!ENTITY mask.subdirs "URL のサブディレクトリ">
 <!ENTITY mask.flatsubdirs "フラット URL サブディレクトリ">
-<!ENTITY mask.text "リンクの概要">
+<!ENTITY mask.text "リンクの文字列">
 <!ENTITY mask.flattext "フラットリンクテキスト">
 <!ENTITY mask.refer "参照元の URL">
 <!ENTITY mask.qstring "処理要求文字列">
