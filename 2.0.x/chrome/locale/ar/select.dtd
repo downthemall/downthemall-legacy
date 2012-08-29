@@ -1,0 +1,18 @@
+<!ENTITY title "قم بالاختيار">
+<!ENTITY filters.caption "المرشحات">
+<!ENTITY additional.caption "الترشيح السريع">
+<!ENTITY additional.tip "المرشح النصي: يمكنك تعيين عدة مرشحات نصية في الوقت نفسه باستخدام الفاصلة.">
+<!ENTITY regex.label "مثال للتسجيلات">
+<!ENTITY filter.tip "اكتب مرشحاتك النصية هنا! (بعض الأمثلة موجودة في القائمة المنسدلة)">
+<!ENTITY status.label "بعد اختيار الوصلات انقر ابدأ!">
+<!ENTITY menu.mask.title "عدل قناع تغيير الاسم">
+<!ENTITY menu.check.label "حدد العناصر المختارة">
+<!ENTITY menu.uncheck.label "ألغِ تحديد العناصر المختارة">
+<!ENTITY menu.toggle.label "بدِّل حالة التحديد للعناصر المختارة">
+<!ENTITY tab.links.label "الوصلات">
+<!ENTITY tab.pics.label "الصور والوسائط">
+<!ENTITY header.desc.label "الوصف">
+<!ENTITY selectfiltered.label "اختر المرشَّح">
+<!ENTITY disableother.label "عطل المرشحات الأخرى">
+<!ENTITY disableother.tooltip "عطل المرشحات الأخرى واستخدم الترشيح السريع فقط. (هذا الاختيار غير ثابت الآن)">
+<!ENTITY resname.value "إسم المصدر">

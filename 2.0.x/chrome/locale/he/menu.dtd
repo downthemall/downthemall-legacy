@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "העדפות">
+<!ENTITY dta-about.label "אודות">
+<!ENTITY dta-manager-button "מנהל">
+<!ENTITY dta-selector-button "בוחר">
+<!ENTITY dta-tb-all.label "כל הלשוניות">
+<!ENTITY dta-tb-single.label "הלשונית הנוכחית">
+<!ENTITY dta-selection.label "בחירת DownThemAll!‎...">
+<!ENTITY dta-selection-turbo.label "בחירת DownThemAll!‎ בלחיצה אחת...">
+<!ENTITY dta-regular.label "DownThemAll!‎...">
+<!ENTITY dta-regular-turbo.label "DownThemAll!‎ בלחיצה אחת...">
+<!ENTITY dta-img-save.label "שמירת תמונה עם DownThemAll!‎">
+<!ENTITY dta-img-save-turbo.label "להתחיל לשמור תמונה עם DownThemAll!‎ בלחיצה אחת">
+<!ENTITY dta-video-save.label "שמירת וידאו עם DownThemAll!‎">
+<!ENTITY dta-video-save-turbo.label "להתחיל לשמור וידאו עם DownThemAll!‎ בלחיצה אחת">
+<!ENTITY dta-audio-save.label "שמירת קובץ שמע עם DownThemAll!‎">
+<!ENTITY dta-audio-save-turbo.label "להתחיל לשמור קובץ שמע עם DownThemAll!‎ בלחיצה אחת">
+<!ENTITY dta-link-save.label "לשמור את יעד הקישור עם DownThemAll!‎">
+<!ENTITY dta-link-save-turbo.label "להתחיל לשמור את יעד הקישור עם DownThemAll!‎ בלחיצה אחת">
+<!ENTITY dta-form-save.label "לשמור את יעד הטופס עם DownThemAll!‎">
+<!ENTITY dta-form-save-turbo.label "להתחיל לשמור את יעד הטופס עם DownThemAll!‎ בלחיצה אחת">

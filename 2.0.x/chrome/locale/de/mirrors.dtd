@@ -1,0 +1,10 @@
+<!ENTITY title "DownThemAll! Spiegelserver Verwaltung">
+<!ENTITY header "Spiegelserver Verwaltung">
+<!ENTITY byline1 "Downloads können aus verschiedenen Quellen geladen werden. Die Datei wird dann automatisch zusammengesetzt.">
+<!ENTITY byline2 "Fügen Sie weitere Quellen, die auf die gleiche Datei zeigen, hinzu oder entfernen Sie wieder welche.">
+<!ENTITY byline3 "Das Hinzufügen von Quellen, die zu anderen Dateien führen, kann den Download beschädigen">
+<!ENTITY addmirror.tip "Einen neuen Spiegelserver hinzufügen">
+<!ENTITY removemirror.tip "Ausgewählte Spiegelserver entfernen">
+<!ENTITY checkmirrors.tip "Alle Spiegelserver prüfen">
+<!ENTITY mirrorurl "Quelle:">
+<!ENTITY preference "Priorität:">

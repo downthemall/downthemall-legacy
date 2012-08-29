@@ -1,0 +1,4 @@
+<!ENTITY title "URL hozzáadása">
+<!ENTITY desc.value "Adja meg a letöltendő fájl URL címét és opcionálisan a beajánló oldal címét.">
+<!ENTITY desc.batches.value "Megadhat többszörös leírókat tömeges fájlletöltésekhez.">
+<!ENTITY examples.value "Például:">

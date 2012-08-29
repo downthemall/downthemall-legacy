@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Επιλογές...">
+<!ENTITY dta-about.label "Περί...">
+<!ENTITY dta-manager-button "Διαχειριστής">
+<!ENTITY dta-selector-button "Επιλογέας dTa">
+<!ENTITY dta-tb-all.label "Όλες οι καρτέλες">
+<!ENTITY dta-tb-single.label "Τρέχουσα καρτέλα">
+<!ENTITY dta-selection.label "Επιλογή DownThemAll!...">
+<!ENTITY dta-selection-turbo.label "Επιλογή dTa OneClick...">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa OneClick...">
+<!ENTITY dta-img-save.label "Αποθήκευση εικόνας με το DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Έναρξη αποθήκευσης εικόνας με το dTa OneClick!">
+<!ENTITY dta-video-save.label "Αποθήκευση βίντεο με το DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Έναρξη αποθήκευσης βίντεο με το dTa OneClick!">
+<!ENTITY dta-audio-save.label "Αποθήκευση αρχείου ήχου με το DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Έναρξη αποθήκευσης αρχείου ήχου με το dTa OneClick!">
+<!ENTITY dta-link-save.label "Αποθήκευση δεσμού με το DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Έναρξη αποθήκευσης δεσμού με το dTa OneClick!">
+<!ENTITY dta-form-save.label "Αποθήκευση αποτελέσματος φόρμας με το DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Εκκίνηση αποθήκευσης αποτελέσματος φόρμας με το dTa OneClick!">

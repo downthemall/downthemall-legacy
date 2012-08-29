@@ -1,0 +1,55 @@
+<!ENTITY tooladd.label "Додај адресу">
+<!ENTITY tooladd.tooltip "Ручно додај адресу у DownThemAll!">
+<!ENTITY tooldonate.tooltiptext "Можете нам помоћи да DownThemAll! учинимо још бољим. Будите донатор!">
+<!ENTITY movetop.label "Врх">
+<!ENTITY movebottom.label "Дно">
+<!ENTITY moveup.label "Горе">
+<!ENTITY movedown.label "Доле">
+<!ENTITY task.label "Адреса/име">
+<!ENTITY per.label "Завршеност">
+<!ENTITY pct.label "Напредак">
+<!ENTITY dim.label "Величина">
+<!ENTITY time.label "Процењено време">
+<!ENTITY parts.label "Број делова">
+<!ENTITY speed.label "Брзина">
+<!ENTITY infoURLTitle.value "Са:">
+<!ENTITY infoSizeTitle.value "Величина:">
+<!ENTITY infoMultiple.value "Више ставки">
+<!ENTITY elapsedTitle.value "Протекло:">
+<!ENTITY remainingTitle.value "Преостало:">
+<!ENTITY currentSpeedTitle.value "Тренутна брзина:">
+<!ENTITY avgSpeedTitle.value "Просечна брзина:">
+<!ENTITY path.label "Место чувања преузете датотеке">
+<!ENTITY mask.label "Образац за преименовање">
+<!ENTITY hash.label "Извештај">
+<!ENTITY infos.label "Информације о преузимању">
+<!ENTITY launch.label "Отвори датотеку">
+<!ENTITY delete.label "Избриши датотеку(е)">
+<!ENTITY targetdir.label "Отвори директоријум">
+<!ENTITY pause.label "Пауза">
+<!ENTITY resume.label "Наставак">
+<!ENTITY cancel.label "Прекид">
+<!ENTITY removemenu.label "Уклони преузимања">
+<!ENTITY removeselected.label "Уклони одабрано">
+<!ENTITY removeCompleted.label "Уклони завршена преузимања">
+<!ENTITY removeAll.label "Уклони све">
+<!ENTITY removeDupes.label "Уклони дупликате">
+<!ENTITY removeGone.label "Уклони недоступне датотеке">
+<!ENTITY advanced.label "Напредно">
+<!ENTITY addchunk.label "Један део више">
+<!ENTITY removechunk.label "Један део мање">
+<!ENTITY force.label "Приморај старт">
+<!ENTITY import.label "Увези из датотеке">
+<!ENTITY export.label "Извези изабрана преузимања">
+<!ENTITY options.caption "Опције">
+<!ENTITY loading.label "Учитавање...">
+<!ENTITY restore.label "Поврати">
+<!ENTITY close.label "Затвори">
+<!ENTITY speedlimit.label "Ограничење:">
+<!ENTITY speedlimit.tooltip "Мењање ограничења брзине. Овај списак се ажурира.">
+<!ENTITY perdownloadspeedlimit.label "Ограничење брзине">
+<!ENTITY perdownloadspeedlimit.tooltip "Мењање ограничења брзине. Опште ограничење ће ипак бити поштовано.">
+<!ENTITY mirrors.label "Управљање локацијама за преузимање">
+<!ENTITY mirrors.tooltip "Управљање локацијама за преузимање">
+<!ENTITY toolbar.icons "Користи иконе">
+<!ENTITY toolbar.full "Користи иконе и текст">

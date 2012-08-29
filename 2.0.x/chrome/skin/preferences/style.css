@@ -1,0 +1,95 @@
+@import 'chrome://dta/skin/common/style.css';
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+radio[pane] {
+	list-style-image: url(preferences.png);
+}
+
+radio[pane="paneMain"] {
+	list-style-image: url(preferences-toolkit.png);
+	-moz-image-region: rect(0px, 32px,  32px, 0px);
+}
+prefwindow[firefoxtheme] radio[pane="paneMain"] {
+	list-style-image: url(chrome://browser/skin/preferences/Options.png);
+}
+
+radio[pane="paneFilters"] {
+	-moz-image-region: rect(0px, 64px, 32px, 32px);
+}
+radio[pane="paneFilters"]:hover,
+radio[pane="paneFilters"][selected="true"] {
+	-moz-image-region: rect(32px, 64px, 64px, 32px);
+}
+
+radio[pane="panePrivacy"] {
+	list-style-image: url(preferences-toolkit.png);
+	-moz-image-region: rect(0px, 160px,  32px, 128px);
+}
+prefwindow[firefoxtheme] radio[pane="panePrivacy"] {
+	list-style-image: url(chrome://browser/skin/preferences/Options.png);
+}
+
+radio[pane="paneInterface"] {
+	list-style-image: url(preferences-toolkit.png);
+	-moz-image-region: rect(0px, 128px,  32px, 96px);
+}
+prefwindow[firefoxtheme] radio[pane="paneInterface"] {
+	list-style-image: url(chrome://browser/skin/preferences/Options.png);
+}
+
+radio[pane="paneServers"] {
+	-moz-image-region: rect(0px, 192px,  32px, 160px);
+}
+radio[pane="paneServers"]:hover,
+radio[pane="paneServers"][selected="true"] {
+	-moz-image-region: rect(32px, 192px,  64px, 160px);
+}
+
+radio[pane="paneAdvanced"] {
+	list-style-image: url(preferences-toolkit.png);
+	-moz-image-region: rect(0px, 224px,  32px, 192px);
+}
+prefwindow[firefoxtheme] radio[pane="paneAdvanced"] {
+	list-style-image: url(chrome://browser/skin/preferences/Options.png);
+}
+
+caption {
+	font-weight: bold;
+}
+
+richlistitem.serverlimit {
+	-moz-binding: url(chrome://dta/content/preferences/bindings.xml#serverlimit);
+	padding: 6px;
+	padding-left: 1em;
+	padding-right: 1ex;
+}
+richlistitem.serverlimit[selected="true"] {
+	-moz-binding: url(chrome://dta/content/preferences/bindings.xml#serverlimit-selected);
+}
+
+richlistitem.serverlimit[editing="true"] {
+	-moz-binding: url(chrome://dta/content/preferences/bindings.xml#serverlimit-editing);
+}
+
+.serverlimit-host-image {
+	list-style-image: url(server.png);
+}
+.serverlimit-host-label {
+	font-weight: bold;
+}
+
+.serverlimit-scale-label {
+	width: 6em;
+}
+
+.serverlimit-radiogroup {
+	height: 26px;
+}
+.serverlimit-radiogroup[value="unlimited"] > hbox {
+	display: none;
+}
+
+.serverlimit-value-label {
+	margin-right: 2em;
+	font-style: italic;
+}

@@ -1,0 +1,18 @@
+<!ENTITY start.label "Descarcă!">
+<!ENTITY start.key "D">
+<!ENTITY queue.label "Descarcă mai târziu">
+<!ENTITY queue.key "t">
+<!ENTITY options.label "Opțiuni">
+<!ENTITY url.value "Adresă">
+<!ENTITY dest.caption "Dosar destinație:">
+<!ENTITY mirrors.value "Saituri alternative:">
+<!ENTITY referrer.value "Pagină de origine:">
+<!ENTITY description.value "Descriere:">
+<!ENTITY checksum.value "Sumă de control:">
+<!ENTITY browse.tip "Răsfoiește dosarul destinație…">
+<!ENTITY mirrormanager.tip "Gestionează saiturile alternative de descărcare">
+<!ENTITY mask.label "Șablon de redenumire">
+<!ENTITY mask.tip "Fișierele selectate vor fi salvate și redenumite folosind acest șablon">
+<!ENTITY selectall.label "Selectează tot">
+<!ENTITY selectinv.label "Inversează selecția">
+<!ENTITY selectnone.label "Nu selecta nimic">

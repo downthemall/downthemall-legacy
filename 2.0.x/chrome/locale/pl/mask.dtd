@@ -1,0 +1,23 @@
+<!ENTITY mask.title "Znaczniki zmiany nazwy">
+<!ENTITY mask.name "Nazwa pliku">
+<!ENTITY mask.ext "Rozszerzenie">
+<!ENTITY mask.url "Skrócony adres URL">
+<!ENTITY mask.curl "Pełny adres URL">
+<!ENTITY mask.flatcurl "Płaski pełny adres URL">
+<!ENTITY mask.num "Numer partii">
+<!ENTITY mask.inum "Numer elementu">
+<!ENTITY mask.hh "Godziny">
+<!ENTITY mask.mm "Minuty">
+<!ENTITY mask.ss "Sekundy">
+<!ENTITY mask.d "Dzień">
+<!ENTITY mask.m "Miesiąc">
+<!ENTITY mask.y "Rok">
+<!ENTITY mask.subdirs "Adres URL podkatalogów">
+<!ENTITY mask.flatsubdirs "podkatalogi płaskiego adresu URL">
+<!ENTITY mask.text "Opis odnośnika">
+<!ENTITY mask.flattext "Opis płaskiego odnośnika">
+<!ENTITY mask.refer "Powiązany adres URL">
+<!ENTITY mask.qstring "Szukany ciąg znaków">
+<!ENTITY mask.flattitle "Tytuł powiązany z odnośnikiem">
+<!ENTITY mask.tip "Kliknij lub przeciągnij do maski zmiany nazwy">
+<!ENTITY mask.open.tip "Tabela znaczników zmiany nazwy">

@@ -1,0 +1,18 @@
+<!ENTITY start.label "התחל!">
+<!ENTITY start.key "ה">
+<!ENTITY queue.label "הוסף מושהה">
+<!ENTITY queue.key "מ">
+<!ENTITY options.label "אפשרויות">
+<!ENTITY url.value "הורדה">
+<!ENTITY dest.caption "שמור קבצים ב:">
+<!ENTITY mirrors.value "אתרי מראה:">
+<!ENTITY referrer.value "דף מפנה:">
+<!ENTITY description.value "תיאור:">
+<!ENTITY checksum.value "סיכום ביקורת (גיבוב):">
+<!ENTITY browse.tip "בחירת תיקיית יעד...">
+<!ENTITY mirrormanager.tip "ניהול אתרי מראה">
+<!ENTITY mask.label "תבנית שינוי שם">
+<!ENTITY mask.tip "קבצים מסומנים יישמרו ושמם ישונה לפי תבנית זו">
+<!ENTITY selectall.label "בחר הכול">
+<!ENTITY selectinv.label "הפוך בחירה">
+<!ENTITY selectnone.label "נקה בחירה">

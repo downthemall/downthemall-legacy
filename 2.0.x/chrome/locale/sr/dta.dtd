@@ -1,0 +1,18 @@
+<!ENTITY start.label "Крени!">
+<!ENTITY start.key "К">
+<!ENTITY queue.label "Додај паузирано">
+<!ENTITY queue.key "п">
+<!ENTITY options.label "Подешавања">
+<!ENTITY url.value "Преузми">
+<!ENTITY dest.caption "Датотеке чувај у:">
+<!ENTITY mirrors.value "Локације за преузимање:">
+<!ENTITY referrer.value "Страница за преусмеравање:">
+<!ENTITY description.value "Опис:">
+<!ENTITY checksum.value "контролни збир (hash):">
+<!ENTITY browse.tip "Потражи одредишну фасциклу...">
+<!ENTITY mirrormanager.tip "Управљање локацијама за преузимање">
+<!ENTITY mask.label "Маска за преименовање">
+<!ENTITY mask.tip "Изабране датотеке ће бити сачуване и преименоване коришћењем маске">
+<!ENTITY selectall.label "Изабери све">
+<!ENTITY selectinv.label "Обрни избор">
+<!ENTITY selectnone.label "Не бирај ништа">

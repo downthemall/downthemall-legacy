@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is downTHEMall
+ *
+ * The Initial Developer of the Original Code is Nils Maier
+ * Portions created by the Initial Developer are Copyright (C) 2007
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Nils Maier <MaierMan@web.de>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+
+<!--
+	pretty lame overlay like stuff.
+	overalying itself is not possible, as this will crash fx
+-->
+
+<!DOCTYPE bindings SYSTEM "chrome://dta/locale/mask.dtd">
+
+<xbl:bindings
+	xmlns:xbl="http://www.mozilla.org/xbl"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+>
+	<xbl:binding id="maskbutton">
+		<xbl:content>
+			<popupset>
+				<panel id="maskPopup" orient="vertical" position="before_end" style="padding: 8px; margin-bottom: -10px;">
+					<label class="masktitle" value="&mask.title;"/>
+					<hbox id="maskitems">
+						<grid flex="1">
+							<columns><column/><column flex="1"/></columns>
+							<rows>
+								<row tag="*name*" desc="&mask.name;"/>
+								<row tag="*ext*" desc="&mask.ext;"/>
+								<row tag="*url*" desc="&mask.url;"/>
+								<row tag="*curl*" desc="&mask.curl;"/>
+								<row tag="*flatcurl*" desc="&mask.flatcurl;"/>
+								<row tag="*subdirs*" desc="&mask.subdirs;"/>
+								<row tag="*flatsubdirs*" desc="&mask.flatsubdirs;"/>
+								<row tag="*text*" desc="&mask.text;"/>
+								<row tag="*flattext*" desc="&mask.flattext;"/>
+								<row tag="*title*" desc="&mask.title;"/>
+								<row tag="*flattitle*" desc="&mask.flattitle;"/>
+							</rows>
+						</grid>
+						<grid flex="1">
+							<columns><column/><column flex="1"/></columns>
+							<rows>
+								<row tag="*qstring*" desc="&mask.qstring;"/>
+								<row tag="*refer*" desc="&mask.refer;"/>
+								<row tag="*num*" desc="&mask.num;"/>
+								<row tag="*inum*" desc="&mask.inum;"/>
+								<row tag="*hh*" desc="&mask.hh;"/>
+								<row tag="*mm*" desc="&mask.mm;"/>
+								<row tag="*ss*" desc="&mask.ss;"/>
+								<row tag="*d*" desc="&mask.d;"/>
+								<row tag="*m*" desc="&mask.m;"/>
+								<row tag="*y*" desc="&mask.y;"/>
+							</rows>
+						</grid>
+					</hbox>
+				</panel>
+			</popupset>
+			<toolbarbutton
+				popup="maskPopup"
+				tooltiptext="&mask.open.tip;"
+				xbl:inherits="disabled=readonly,popup=readonly"
+			/>
+		</xbl:content>
+	</xbl:binding>
+
+	<xbl:binding id="maskitem">
+		<xbl:content>
+			<label
+				xbl:inherits="value=tag"
+				class="masktag"
+				tooltiptext="&mask.tip;"/>
+			<label xbl:inherits="value=desc"/>
+		</xbl:content>
+		<xbl:handlers>
+			<xbl:handler event="click"><![CDATA[
+				if (event.originalTarget.className != "masktag") {
+					return;
+				}
+				let text = $('renaming');
+				let value = event.originalTarget.value;
+				let s = text.inputField.selectionStart;
+				text.value = text.value.substring(0, s)
+					+ value
+					+ text.value.substring(text.inputField.selectionEnd, text.value.length);
+				text.inputField.setSelectionRange(s + value.length, s + value.length);
+			]]></xbl:handler>
+		</xbl:handlers>
+	</xbl:binding>
+</xbl:bindings>

@@ -1,0 +1,4 @@
+<!ENTITY title "Add Downloads">
+<!ENTITY desc.value "Enter the download here and (optionally) the referring page of the file.">
+<!ENTITY desc.batches.value "You can also use batch descriptors to download multiple files at one time.">
+<!ENTITY examples.value "Examples:">

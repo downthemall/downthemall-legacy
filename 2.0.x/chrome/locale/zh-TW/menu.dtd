@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "偏好設定">
+<!ENTITY dta-about.label "關於 dTa!">
+<!ENTITY dta-manager-button "管理員">
+<!ENTITY dta-selector-button "dTa 單鍵下載選擇器">
+<!ENTITY dta-tb-all.label "所有分頁">
+<!ENTITY dta-tb-single.label "目前分頁">
+<!ENTITY dta-selection.label "DownThemAll! 選擇…">
+<!ENTITY dta-selection-turbo.label "dTa 單鍵下載選擇…">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa 單鍵下載…">
+<!ENTITY dta-img-save.label "用 DownThemAll! 下載圖片檔">
+<!ENTITY dta-img-save-turbo.label "用 dTa 單鍵下載圖片檔">
+<!ENTITY dta-video-save.label "用 DownThemAll! 下載影片檔">
+<!ENTITY dta-video-save-turbo.label "用 dTa 單鍵下載影片檔">
+<!ENTITY dta-audio-save.label "用 DownThemAll! 下載聲音檔">
+<!ENTITY dta-audio-save-turbo.label "用 dTa 單鍵下載聲音檔">
+<!ENTITY dta-link-save.label "用 DownThemAll! 下載連結">
+<!ENTITY dta-link-save-turbo.label "用 dTa 單鍵下載連結">
+<!ENTITY dta-form-save.label "用 DownThemAll! 儲存">
+<!ENTITY dta-form-save-turbo.label "用 dTa 單鍵儲存">

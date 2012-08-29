@@ -1,0 +1,26 @@
+<!--
+	commonly used.
+	CHECK BEFORE MODIFY
+-->
+
+<!ENTITY start.label "Start!">
+<!ENTITY start.key "s" >
+<!ENTITY queue.label "Add paused">
+<!ENTITY queue.key "p" >
+
+<!ENTITY options.label "Preferences">
+
+<!ENTITY url.value "Download">
+<!ENTITY dest.caption "Save Files in:">
+<!ENTITY mirrors.value "Mirrors:">
+<!ENTITY referrer.value "Referring page:">
+<!ENTITY description.value "Description:">
+<!ENTITY checksum.value "Checksum (Hash):">
+<!ENTITY browse.tip "Browse for the destination folder...">
+<!ENTITY mirrormanager.tip "Manage download mirrors">
+<!ENTITY mask.label "Renaming Mask">
+<!ENTITY mask.tip "Selected files will be saved and renamed using this mask">
+
+<!ENTITY selectall.label "Select All">
+<!ENTITY selectinv.label "Invert Selection">
+<!ENTITY selectnone.label "Select None">

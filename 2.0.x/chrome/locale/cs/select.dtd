@@ -1,0 +1,18 @@
+<!ENTITY title "Vyberte si">
+<!ENTITY filters.caption "Filtry">
+<!ENTITY additional.caption "Rychlé filtrování">
+<!ENTITY additional.tip "Textové filtry: můžete nastavit několik textových filtrů najednou, oddělte je čárkou.">
+<!ENTITY regex.label "Reg. výraz">
+<!ENTITY filter.tip "Zde vepište textové filtry! (několik příkladů najdete v roletce)">
+<!ENTITY status.label "Po vybrání odkazů klikněte na start!">
+<!ENTITY menu.mask.title "Změnit masku přejmenování">
+<!ENTITY menu.check.label "Označit vybrané položky">
+<!ENTITY menu.uncheck.label "Odznačit vybrané položky">
+<!ENTITY menu.toggle.label "Přepnout označení vybraných položek">
+<!ENTITY tab.links.label "Odkazy">
+<!ENTITY tab.pics.label "Obrázky a vnořené soubory">
+<!ENTITY header.desc.label "Popis">
+<!ENTITY selectfiltered.label "Vybrat filtrované">
+<!ENTITY disableother.label "Zakázat ostatní soubory">
+<!ENTITY disableother.tooltip "Zakáže ostatní soubory a použije pouze rychlé filtrování. (Toto nastavení nebude v tuto chvíli zapamatováno)">
+<!ENTITY resname.value "Název zdroje">

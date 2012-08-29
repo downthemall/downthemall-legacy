@@ -1,0 +1,23 @@
+<!ENTITY mask.title "Tí­tulo a asociar ó enlace">
+<!ENTITY mask.name "Arquivo">
+<!ENTITY mask.ext "Extensión">
+<!ENTITY mask.url "URL base">
+<!ENTITY mask.curl "URL completa">
+<!ENTITY mask.flatcurl "URL simple completa">
+<!ENTITY mask.num "Número de lote">
+<!ENTITY mask.inum "Número de I­tem">
+<!ENTITY mask.hh "Horas">
+<!ENTITY mask.mm "Minutos">
+<!ENTITY mask.ss "Segundos">
+<!ENTITY mask.d "Día">
+<!ENTITY mask.m "Mes">
+<!ENTITY mask.y "Ano">
+<!ENTITY mask.subdirs "Subdirectorios de URL">
+<!ENTITY mask.flatsubdirs "Subdirectorios de URL simple">
+<!ENTITY mask.text "Descripción do enlace">
+<!ENTITY mask.flattext "Descripción do enlace plano">
+<!ENTITY mask.refer "URL de referencia">
+<!ENTITY mask.qstring "Cadea de consulta">
+<!ENTITY mask.flattitle "Tí­tulo asociado co enlace">
+<!ENTITY mask.tip "Pulsar ou arrastrar para a máscara de renomeado">
+<!ENTITY mask.open.tip "Táboa de referencia de etiquetas de renomeado">

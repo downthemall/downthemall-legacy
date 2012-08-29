@@ -1,0 +1,18 @@
+<!ENTITY title "DownThemAll! - сделайте свой выбор">
+<!ENTITY filters.caption "Фильтры">
+<!ENTITY additional.caption "Быстрое фильтрование">
+<!ENTITY additional.tip "Фильтры: Можно использовать несколько текстовых фильтров разделяя их запятыми">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY filter.tip "Введите здесь текстовые фильтры! (некоторые примеры можете найти в выпадающем списке)">
+<!ENTITY status.label "После выбора ссылок, нажмите Старт!">
+<!ENTITY menu.mask.title "Изменить маску переименования...">
+<!ENTITY menu.check.label "Выбрать выделенные пункты">
+<!ENTITY menu.uncheck.label "Не выбирать выделенные пункты">
+<!ENTITY menu.toggle.label "Переключение проверки выбранных пунктов">
+<!ENTITY tab.links.label "Ссылки">
+<!ENTITY tab.pics.label "Изображения и вложения">
+<!ENTITY header.desc.label "Описание">
+<!ENTITY selectfiltered.label "Выберите фильтры">
+<!ENTITY disableother.label "Отключить другие фильтры">
+<!ENTITY disableother.tooltip "Отключение других фильтров и использовать только быструю фильтрацию (эта настройка пока не запоминается)">
+<!ENTITY resname.value "Имя ресурса">

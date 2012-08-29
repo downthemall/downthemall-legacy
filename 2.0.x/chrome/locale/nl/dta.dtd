@@ -1,0 +1,24 @@
+<!--
+   commonly used.
+   CHECK BEFORE MODIFY
+
+
+-->
+<!ENTITY start.label "Starten">
+<!ENTITY start.key "S">
+<!ENTITY queue.label "Gepauzeerd toevoegen">
+<!ENTITY queue.key "p">
+<!ENTITY options.label "Voorkeuren">
+<!ENTITY url.value "Downloaden">
+<!ENTITY dest.caption "Bestanden bewaren in:">
+<!ENTITY mirrors.value "Mirrors:">
+<!ENTITY referrer.value "Referentie pagina:">
+<!ENTITY description.value "Omschrijving:">
+<!ENTITY checksum.value "Controlegetal (Hash)">
+<!ENTITY browse.tip "Naar de doelmap bladeren...">
+<!ENTITY mirrormanager.tip "Download mirrors beheren">
+<!ENTITY mask.label "Hernoem masker">
+<!ENTITY mask.tip "Geselecteerde bestanden zullen worden opgeslagen en hernoemt conform dit masker">
+<!ENTITY selectall.label "Alles selecteren">
+<!ENTITY selectinv.label "Selectie omkeren">
+<!ENTITY selectnone.label "Niets selecteren">

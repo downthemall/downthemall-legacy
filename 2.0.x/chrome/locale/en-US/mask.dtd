@@ -1,0 +1,24 @@
+<!ENTITY mask.title "Renaming Tags">
+<!ENTITY mask.name "File name">
+<!ENTITY mask.ext "Extension">
+<!ENTITY mask.url "Base URL">
+<!ENTITY mask.curl "Full URL">
+<!ENTITY mask.flatcurl "Flat Full URL">
+<!ENTITY mask.num "Batch number">
+<!ENTITY mask.inum "Item number">
+<!ENTITY mask.hh "Hours">
+<!ENTITY mask.mm "Minutes">
+<!ENTITY mask.ss "Seconds">
+<!ENTITY mask.d "Day">
+<!ENTITY mask.m "Month">
+<!ENTITY mask.y "Year">
+<!ENTITY mask.subdirs "URL subdirectories">
+<!ENTITY mask.flatsubdirs "Flat URL subdirectories">
+<!ENTITY mask.text "Link text">
+<!ENTITY mask.flattext "Flat link text">
+<!ENTITY mask.refer "Referrer URL">
+<!ENTITY mask.qstring "Query String">
+<!ENTITY mask.title "Title associated with link">
+<!ENTITY mask.flattitle "Title associated with link">
+<!ENTITY mask.tip "Click or drag to renaming mask">
+<!ENTITY mask.open.tip "Renaming tags reference table">

@@ -1,0 +1,10 @@
+<!ENTITY title "Správce zrcadel DownThemAll!">
+<!ENTITY header "Správce zrcadel">
+<!ENTITY byline1 "Stahování můžou být našteny z různých míst. Soubor je pak automaticky sestaven.">
+<!ENTITY byline2 "Nebojte se přidávat a odebírat místa ukazující na stejný soubor.">
+<!ENTITY byline3 "Vkládání rozdílných umístění souborů může způsobit chybné stahování">
+<!ENTITY addmirror.tip "přidat zrcadlo">
+<!ENTITY removemirror.tip "smazat označené zrcadla">
+<!ENTITY checkmirrors.tip "zkontrolovat všechna zrcadla">
+<!ENTITY mirrorurl "Umístění:">
+<!ENTITY preference "Priorita:">

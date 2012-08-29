@@ -1,0 +1,4 @@
+<!ENTITY title "Ajout d&apos;URL(s)">
+<!ENTITY desc.value "Indiquez l&apos;URL ici et (facultativement) la page d&apos;origine du fichier que vous souhaitez télécharger.">
+<!ENTITY desc.batches.value "Vous pouvez également utiliser des descripteurs de lots pour télécharger plusieurs fichiers à la fois.">
+<!ENTITY examples.value "Exemples :">

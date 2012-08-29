@@ -1,0 +1,4 @@
+<!ENTITY title "Dodawanie adresów URL">
+<!ENTITY desc.value "Tutaj proszę wprowadzić adres URL i (opcjonalnie) powiązaną stronę pliku, który zamierzasz pobrać">
+<!ENTITY desc.batches.value "Można także użyć deskryptorów pakietu, aby pobrać wiele plików jednocześnie">
+<!ENTITY examples.value "Przykłady:">

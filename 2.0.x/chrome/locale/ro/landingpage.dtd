@@ -1,0 +1,88 @@
+<!ENTITY lp.localedir "ltr">
+<!ENTITY language "Română">
+<!ENTITY transAutor "Cătălin Zamfirescu (x10firefox)">
+<!ENTITY amo.summary "Primul și unicul gestionar și accelerator de descărcări construit în interiorul Firefox!">
+<!ENTITY amo.description.intro "DownThemAll! este tot ceea ce se poate dori de la un gestionar de descărcări: are un accelerator avansat care mărește viteza de descărcare de până la 4 ori și vă permite să întrerupeți și să reluați descărcările în orice moment.">
+<!ENTITY amo.description.feat "DownThemAll! este rapid, fiabil și ușor de utilizat! El vă permite să descărcați toate legăturile sau imaginile conținute într-o pagină web și mult mai mult: puteți rafina descărcările pe baza unor criterii complet personalizate pentru a obține numai ceea ce vreți cu adevărat! Controlați deplin descărcările, viteza și numărul de conexiuni paralele în orice moment. Utilizați documente metalink sau adăugați manual adrese alternative pentru a descărca un fișier de pe servere diferite în același timp.">
+<!ENTITY amo.description.free "DownThemAll! este open-source și este gratuit. Nu conține module Adware sau Spyware și nu are costuri ascunse!">
+<!ENTITY amo.description.more "Pentru informații suplimentare vizitați pagina <a href='http://www.downthemall.net/howto/features/'>Caracteristici</a> (în limba engleză).">
+<!ENTITY lp.title "Despre DownThemAll!">
+<!ENTITY lp.welcome "Bun venit la DownThemAll!">
+<!ENTITY lp.info "Urmăriți clipurile video care ilustrează modul de utilizare a DownThemAll! și aflați mai multe despre confidențialitate și drepturile dumneavoastră.">
+<!ENTITY lp.moreinfo "Pentru informații suplimentare vizitați pagina <a href='http://www.downthemall.net/howto/features/'>Caracteristici</a>.">
+<!ENTITY lp.gettingstarted "Primii pași">
+<!ENTITY lp.toolbar "Butoanele barei de unelte">
+<!ENTITY lp.privacy "Confidențialitate">
+<!ENTITY lp.yourrights "Drepturile dumneavoastră">
+<!ENTITY lp.contact "Contact">
+<!ENTITY lp.pleasenote "Notă:">
+<!ENTITY lp.donate "Vă rugăm să luați în considerare o mică donație!">
+<!ENTITY lp.tut.firsttitle "Prima descărcare">
+<!ENTITY lp.tut.fd1 "dTa! este un instrument foarte puternic dar, în același timp, descărcarea unui fișier este cât se poate de simplă. Dacă vi se solicită deschiderea sau salvarea unui fișier puteți folosi opțiunea DownThemAll! Atunci va fi deschisă o casetă de dialog unde veți putea alege dosarul în care să fie salvat fișierul, împreună cu unele opțiuni mai avansate.">
+<!ENTITY lp.tut.selecttitle "Caseta de selectare surse">
+<!ENTITY lp.tut.selintro "Meniul contextual al unei pagini web oferă o nouă opțiune — DownThemAll!. Folosind această opțiune se va deschide caseta de selectare surse DownThemAll!, de unde puteți selecta cu ușurință una sau mai multe adrese de descărcare din pagina respectivă.">
+<!ENTITY lp.tut.seloptions "În caseta de selectare aveți mai multe moduri de a selecta fișierele pe care doriți să le descărcați:">
+<!ENTITY lp.tut.selopthand "Puteți marca manual adresele de la care doriți să descărcați">
+<!ENTITY lp.tut.seloptfilters "Puteți folosi filtrele integrate sau propriile filtre, de exemplu, pentru a descărca toate imaginile din pagină">
+<!ENTITY lp.tut.seloptfast "În plus, puteți introduce propriul dumneavoastră text de filtrare în caseta de filtrare rapidă, de exemplu <code>*.pdf,*.doc</code> sau chiar o expresie regulată.">
+<!ENTITY lp.tut.seltypes "Caseta de selectare are două secțiuni pentru două tipuri diferite de descărcare:">
+<!ENTITY lp.tut.seltypelinks "Secțiunea „Legături”, conținând toate legăturile posibil de descărcat găsite în pagină">
+<!ENTITY lp.tut.seltypepics "Secțiunea „Imagini și fișiere multimedia”, conținând adresele tuturor imaginilor și a celorlalte fișiere multimedia afișate în pagină">
+<!ENTITY lp.tut.selgalleries "Imaginile în mărime reală sunt adesea doar legături către colecții de imagini, prin urmare, le veți găsi în secțiunea „Legături”.">
+<!ENTITY lp.tut.seldone "După ce ați selectat fișierele de descărcat dați clic fie pe „Descarcă!” fie pe „Descarcă mai târziu”.">
+<!ENTITY lp.tut.batchestitle "Descărcarea loturilor de fișiere">
+<!ENTITY lp.tut.batches1 "O mulțime de utilizatorii doresc să descarce loturi de fișiere numerotate secvențial. DownThemAll! vă permite să specificați cu ușurință loturile așa cum este arătat în clipul video.">
+<!ENTITY lp.tut.batches2 "Sintaxa de bază este: <code>[început:sfârșit]</code> sau <code>[început:sfârșit:pas]</code>, unde <code>început</code> și <code>sfârșit</code> pot fi un număr sau un caracter, iar <code>pas</code> definește pasul sau rația de incrementare și este 1 dacă este omis.">
+<!ENTITY lp.tut.batches3 "De exemplu, dacă doriți să descărcați imagini de la 001 la 100, puteți scrie adresa: <code>http://example.org/[001:100].jpg</code>.">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
+<!ENTITY lp.tut.oneclick1 "După ce ați făcut prima descărcare, va fi disponibilă o altă facilitate: DownThemAll! OneClick. Puteți utiliza această opțiune pentru a face descărcări imediate folosind parametrii anteriori, ocolind astfel casetele de adăugare și/sau de selectare surse.">
+<!ENTITY lp.tut.oneclick2 "Prin urmare OneClick vă permite să creați rapid o listă de descărcări cu o mulțime de adrese.">
+<!ENTITY lp.tut.oneclickn "După utilizarea instrumentului de ștergere a datelor personale din Firefox, facilitatea OneClick nu va mai fi disponibilă până când nu veți face o nouă descărcare obișnuită cu DownThemAll!.">
+<!ENTITY lp.tb.intro "DownThemAll! vă pune la dispoziție câteva butoane în bara de unelte care vă oferă o modalitate convenabilă de a accesa facilitățile sale.">
+<!ENTITY lp.tb.add.title "Adăugarea și folosirea butoanelor din bara de unelte">
+<!ENTITY lp.tb.add.p1 "DownThemAll! pune la dispoziție patru butoane în bara de unelte pentru a face ușoare căutarea și descărcarea fișierelor:">
+<!ENTITY lp.tb.add.dta "Butonul DownThemAll!">
+<!ENTITY lp.tb.add.dtadesc "Deschide caseta DownThemAll! de selectare surse pentru fila curentă.">
+<!ENTITY lp.tb.add.tdta "Butonul OneClick!">
+<!ENTITY lp.tb.add.tdtadesc "Descarcă toate elementele din pagina curentă în funcție de ultimele preferințe și filtre utilizate.">
+<!ENTITY lp.tb.add.manager "Butonul Gestionarului DownThemAll!">
+<!ENTITY lp.tb.add.managerdesc "Deschide fereastra Gestionarului de descărcări DownThemAll!.">
+<!ENTITY lp.tb.add.selector "Butonul de selectare DownThemAll!">
+<!ENTITY lp.tb.add.selectordesc "Adaugă elemente în lista de descărcări.">
+<!ENTITY lp.tb.add.p2 "Butoanele pot fi adăugate în bara de unelte prin intermediul meniului, selectând <code>Vizualizare → Bare de unelte → Personalizează…</code>.">
+<!ENTITY lp.tb.dnd.title "Glisare și fixare">
+<!ENTITY lp.tb.dnd.p1 "Puteți glisa și fixa pe butoanele DownThemAll! sau OneClick!, orice legătură sau imagine pentru a fi descărcate.">
+<!ENTITY lp.tb.dnd.p2 "De asemenea, și fereastra gestionarului poate fi folosită pentru a fixa în ea elemente spre a fi descărcate.">
+<!ENTITY lp.tb.dnd.p3 "Tot prin glisare și fixare puteți ordona lista de descărcări. Glisați un element și fixați-l în poziția dorită.">
+<!ENTITY lp.tb.selector.title "Utilizarea selectorului DownThemAll!">
+<!ENTITY lp.tb.selector.p1 "Utilizând selectorul DownThemAll! puteți adăuga în lista de descărcări mai multe adrese printr-un simplu clic pe legături sau imagini.">
+<!ENTITY lp.tb.selector.p2 "Pentru a activa selectorul dați clic pe butonul din bara de unelte iar pentru a-l dezactiva, odată ce ați terminat, dați clic pe el din nou.">
+<!ENTITY lp.pr.title "Politică de confidențialitate">
+<!ENTITY lp.pr.intro "DownThemAll vă protejează intimitatea.">
+<!ENTITY lp.pr.settings "Puteți alege ca DownThemAll! să elimine toate descărcările terminate, anulate și neterminate din lista de descărcări atunci când este închisă, prin modificarea parametrilor din caseta Opțiuni, secțiunea Confidențialitate.">
+<!ENTITY lp.pr.diag "Puteți să activați în caseta Opțiuni, secțiunea Confidențialitate, jurnalizarea mesajelor de diagnosticare, care vor fi stocate atât în consola de erori cât și în fișierul <i>dta_log.txt</i>. Mesajele de diagnosticare vor conține probabil informații sensibile cum ar fi adresele, căile și denumirile fișierelor descărcate, sau chiar informații despre modulele cookie. Pentru a vă proteja intimitatea, această opțiune este în mod implicit DEZACTIVATĂ. Dacă trimiteți un mesaj de diagnosticare, ați putea dori să cenzurați aceste informații sensibile. Niciun jurnal de diagnosticare nu va fi publicat vreodată, în mod automat.">
+<!ENTITY lp.pr.pbm "DownThemAll! este compatibil cu modul de „Navigare fără urme” al Firefox. În acest mod, DownThemAll! nu va stoca nicio informație despre fișierele descărcate, dosarele de descărcare sau șabloanele de redenumire utilizate. Vă rugăm să rețineți că alte date, cum ar fi filtrele nou create, sau, bineînțeles, fișierele descărcate, sunt totuși stocate pe discul sistemului dumneavoastră.">
+<!ENTITY lp.pr.link "Această notă este întotdeauna disponibilă în această pagină (about:DownThemAll) și este afișată și în caseta Opțiuni.">
+<!ENTITY lp.yr.usagetitle "Utilizare și redistribuire">
+<!ENTITY lp.yr.usage "Autorii DownThemAll! au optat pentru o licență care vă permite în mod liber să:">
+<!ENTITY lp.yr.usageuse "Folosiți DownThemAll!">
+<!ENTITY lp.yr.usagemod "Modificați DownThemAll!">
+<!ENTITY lp.yr.usagedist "Redistribuiți DownThemAll!, cu sau fără modificări">
+<!ENTITY lp.yr.usagemore "Citiți licența pentru mai multe informații.">
+<!ENTITY lp.languagetitle "Limbă">
+<!ENTITY lp.translation.by ". Traducere de">
+<!ENTITY lp.yr.licensetitle "Drepturi de autor și licență">
+<!ENTITY lp.yr.licensed "DownThemAll! este disponibil sub licența <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Vedeți fișierul GPL. Aceasta este valabilă pentru toate fișierele codului sursă.">
+<!ENTITY lp.yr.morelicense "Unele fișiere pot fi supuse unor licențe diferite. Vedeți arhiva fișierelor disponibilă la <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Multe fișiere au trei licențe, și anume: MPL 1.1, GPL 2.0 și LGPL 2.1; vedeți fișierele MPL, GPL, respectiv LGPL.">
+<!ENTITY lp.yr.gplintro "Cele mai importante secțiuni ale GPL 2.0 referitoare la descărcarea de răspundere privind garanția și potențialele efecte negative, sunt redate în continuare, în original:">
+<!ENTITY lp.yr.icons "Grafica, pictogramele și butoanele">
+<!ENTITY lp.yr.iconsbased "se bazează pe lucrările lui Mike Matas, Jakub Steiner și Mark James și pe proiectul Tango">
+<!ENTITY lp.yr.artwork "Grafică originală: Drept de autor © 2004-2010 - Stefano Verna, Federico Parodi și Nils Maier">
+<!ENTITY lp.yr.artworklicense "Grafica originală este sub licența:">
+<!ENTITY lp.yr.logo "Emblemă DownThemAll!: Drept de autor © 2004-2010 - Stefano Verna">
+<!ENTITY lp.yr.logopermissions "Denumirea și emblema DownThemAll! nu pot fi utilizate fără permisiune în nicio lucrare derivată, cu excepția aprecierilor și a notificărilor legate de licență.">
+<!ENTITY lp.ct.bugstitle "Raportarea problemelor și cereri de noi funcționalități">
+<!ENTITY lp.ct.bugs "Vă rugăm să raportați problemele și să cereți noi funcționalități în <a href='http://bugs.code.downthemall.net/'>platforma de urmările a erorilor</a> (în limba engleză).">
+<!ENTITY lp.ct.contactstitle "Contact">
+<!ENTITY lp.ct.contactsfeed "Apreciem comentariile, sugestiile sau ofertele de ajutor din partea dumneavoastră.">
+<!ENTITY lp.ct.contacts "Vă rugăm să vizitați <a href='http://www.downthemall.net/main/contacts/'>pagina de contact</a> (în limba engleză).">

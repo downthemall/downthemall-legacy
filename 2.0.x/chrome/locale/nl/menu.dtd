@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Voorkeuren">
+<!ENTITY dta-about.label "Over dTa!">
+<!ENTITY dta-manager-button "Beheerder">
+<!ENTITY dta-selector-button "dTa! OneClick! selectie">
+<!ENTITY dta-tb-all.label "Alle tabbladen">
+<!ENTITY dta-tb-single.label "Huidige tabblad">
+<!ENTITY dta-selection.label "DownThemAll! selectie...">
+<!ENTITY dta-selection-turbo.label "dTa! OneClick! selectie...">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa! OneClick!...">
+<!ENTITY dta-img-save.label "Afbeelding opslaan met DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Starten opslaan afbeelding met dTa! OneClick!">
+<!ENTITY dta-video-save.label "Video opslaan met DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Starten opslaan video met dTa! OneClick!">
+<!ENTITY dta-audio-save.label "Geluid opslaan met DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Starten opslaan geluid met dTa! OneClick!">
+<!ENTITY dta-link-save.label "Koppeling opslaan met DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Starten opslaan koppeling met dTa! OneClick!">
+<!ENTITY dta-form-save.label "Doel opslaan met DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Doel opslaan met dTa! OneClick! starten">

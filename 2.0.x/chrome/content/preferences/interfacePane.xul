@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<prefpane id="paneInterface" label="&uipane.label;" onpaneload="Interface.init();">
+		<preferences id="prefsInterface">
+			<preference id="dtaShowInDown" name="extensions.dta.downloadWin" type="bool" />
+			<preference id="dtaHideUrl" name="extensions.dta.showonlyfilenames" type="bool" />
+			<preference id="dtaContextSub" name="extensions.dta.ctxcompact" type="bool" />
+			<preference id="dtaToolHide" name="extensions.dta.toolshidden" type="bool" />
+			<preference id="dtaContext" name="extensions.dta.ctxmenu" type="string" />
+			<preference id="dtaTool" name="extensions.dta.toolsmenu" type="string" />
+			<preference id="dtaShowTooltip" name="extensions.dta.showtooltip" type="bool" />
+			<preference id="dtaStartMinimized" name="extensions.dta.startminimized" type="bool" />
+			<preference id="dtaMinimizeToTray" name="extensions.mintrayr.downthemall.watchmanager" type="bool" />
+		</preferences>
+
+		<groupbox>
+			<caption label="&uipane.manager.caption;" />
+			<checkbox label="&uipane.startminimized.label;" preference="dtaStartMinimized" />
+			<hbox>
+				<checkbox flex="1" id="minimizetotray" label="&uipane.minimizetotray.label;" preference="dtaMinimizeToTray" />
+				<label id="minimizetotray_link" value="Get MinTrayR" onclick="Interface.openMinTrayR();" hidden="true" class="text-link" />
+			</hbox>
+			<checkbox label="&uipane.namesonly.label;" preference="dtaHideUrl" />
+			<checkbox label="&uipane.showtooltip.label;" preference="dtaShowTooltip" />
+		</groupbox>
+
+		<groupbox>
+			<caption label="&uipane.integration.caption;" />
+			<checkbox id="downloadWin" label="&uipane.downloadwin.label;" preference="dtaShowInDown" />
+		</groupbox>
+		<grid>
+			<columns id="colItems">
+				<column flex="1" />
+				<column flex="1" />
+			</columns>
+			<rows>
+				<row id="rowItems">
+					<groupbox>
+						<caption label="&uipane.context.caption;" />
+						<checkbox id="dtaContext0" preference="dtaContext" label="DownThemAll!" class="moreLeft" onsyncfrompreference="return Interface.getMenu('dtaContext', 0);" onsynctopreference="return Interface.setMenu('dtaContext', 0);" />
+						<checkbox id="dtaContext1" preference="dtaContext" label="dTa OneClick!" onsyncfrompreference="return Interface.getMenu('dtaContext', 1);" onsynctopreference="return Interface.setMenu('dtaContext', 1);" class="moreLeft" />
+						<checkbox id="dtaContext2" preference="dtaContext" label="&dtacontext2.label;" onsyncfrompreference="return Interface.getMenu('dtaContext', 2);" onsynctopreference="return Interface.setMenu('dtaContext', 2);" class="moreLeft" />
+						<separator class="thin" />
+						<checkbox label="&uipane.compact.label;" preference="dtaContextSub" />
+					</groupbox>
+					<groupbox>
+						<caption label="&uipane.tools.caption;" />
+						<checkbox id="dtaTool0" preference="dtaTool" label="DownThemAll!" onsyncfrompreference="return Interface.getMenu('dtaTool', 0);" onsynctopreference="return Interface.setMenu('dtaTool', 0);" class="moreLeft" />
+						<checkbox id="dtaTool1" preference="dtaTool" label="dTa OneClick!" onsyncfrompreference="return Interface.getMenu('dtaTool', 1);" onsynctopreference="return Interface.setMenu('dtaTool', 1);" class="moreLeft" />
+						<checkbox id="dtaTool2" preference="dtaTool" label="&manager;" onsyncfrompreference="return Interface.getMenu('dtaTool', 2);" onsynctopreference="return Interface.setMenu('dtaTool', 2);" class="moreLeft" />
+						<separator class="thin" />
+						<checkbox label="&uipane.hide.label;" preference="dtaToolHide" />
+					</groupbox>
+				</row>
+			</rows>
+		</grid>
+	</prefpane>
+</overlay>

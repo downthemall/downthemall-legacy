@@ -1,0 +1,18 @@
+<!ENTITY start.label "Старт!">
+<!ENTITY start.key "С">
+<!ENTITY queue.label "Добавить в очередь">
+<!ENTITY queue.key "о">
+<!ENTITY options.label "Настройки">
+<!ENTITY url.value "Загрузка">
+<!ENTITY dest.caption "Сохранить файл в:">
+<!ENTITY mirrors.value "Зеркала:">
+<!ENTITY referrer.value "страница перенаправления:">
+<!ENTITY description.value "Описание:">
+<!ENTITY checksum.value "Контрольная сумма (Хэш)">
+<!ENTITY browse.tip "Выбрать папку назначения...">
+<!ENTITY mirrormanager.tip "Управление зеркалами загрузки">
+<!ENTITY mask.label "Маска переименования">
+<!ENTITY mask.tip "Выбранные файлы будут сохранены и переименованы с использованием этой маски">
+<!ENTITY selectall.label "Выбрать всё">
+<!ENTITY selectinv.label "Инвертировать выделение">
+<!ENTITY selectnone.label "Отменить всё">

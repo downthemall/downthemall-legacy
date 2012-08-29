@@ -1,0 +1,649 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is DownThemAll
+ *
+ * The Initial Developer of the Original Code is Nils Maier
+ * Portions created by the Initial Developer are Copyright (C) 2007
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Nils Maier <MaierMan@web.de>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE bindings [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+	%globalDTD;
+	<!ENTITY % mirrorsDTD SYSTEM "chrome://dta/locale/mirrors.dtd">
+	%mirrorsDTD;
+]>
+
+<bindings xmlns="http://www.mozilla.org/xbl" xmlns:xbl="http://www.mozilla.org/xbl"
+	xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<!-- closebox -->
+	<binding id="closebox"
+		extends="chrome://global/content/bindings/groupbox.xml#groupbox">
+		<content>
+			<xul:hbox class="groupbox-title closebox-title" align="center" pack="start">
+				<xul:caption xbl:inherits="label=caption"/>
+			</xul:hbox>
+			<xul:box flex="1" class="childrenbox" xbl:inherits="orient,align,pack,collapsed=closed">
+				<children />
+			</xul:box>
+		</content>
+		<implementation implements="nsIAccessibleProvider">
+			<property name="closed">
+				<getter>
+					return this.getAttribute('closed') == 'true';
+				</getter>
+				<setter>
+					this.setAttribute('closed', val ? 'true' : 'false');
+				</setter>
+			</property>
+			<property name="shouldResize">
+				<getter>
+					return this.getAttribute('shouldResize') == 'true';
+				</getter>
+				<setter>
+					this.setAttribute('shouldResize', val ? 'true' : 'false');
+				</setter>
+			</property>
+			<property name="accessibleType" readonly="true">
+				<getter>
+          <![CDATA[
+            return Components.interfaces.nsIAccessibleProvider.XULGroupbox;
+          ]]>
+				</getter>
+			</property>
+		</implementation>
+	</binding>
+	<binding id="closebox-title">
+		<content>
+			<xul:vbox pack="center" align="center" class="closebox-twisty">
+				<xul:image class="closebox-icon"/>
+			</xul:vbox>
+			<children includes="caption" />
+		</content>
+		<handlers>
+			<handler event="click"><![CDATA[
+				this.parentNode.closed = !this.parentNode.closed;
+				if (this.parentNode.shouldResize) {
+					window.sizeToContent();
+				}
+			]]></handler>
+		</handlers>
+	</binding>
+
+	<binding id="saveddropdown">
+		<content>
+			<xul:menulist anonid="list" editable="true"
+				xbl:inherits="crop,readonly,disabled,flex,tooltiptext,oninput=onchange,onselect=onchange,error">
+				<xul:menupopup anonid="popup"
+					xbl:inherits="crop,onselect=onchange,oncommand=onchange" />
+			</xul:menulist>
+		</content>
+		<implementation>
+			<constructor><![CDATA[
+				try {
+					var hist = {};
+					Components.utils.import("resource://dta/support/historymanager.jsm", hist);
+					this.hist = hist.getHistory(this._pref);
+					this._load();
+				}
+				catch (ex) {
+					DTA.Debug.log("Loading of saveddropdown failed:", ex);
+				}
+			]]></constructor>
+			<field name="_list">document.getAnonymousElementByAttribute(this, 'anonid', 'list');</field>
+			<field name="_popup">document.getAnonymousElementByAttribute(this, 'anonid', 'popup');</field>
+			<property name="_pref" onget="return this.getAttribute('preference')" />
+			<property name="_values">
+				<getter><![CDATA[
+					return this.hist.values;
+				]]></getter>
+			</property>
+			<property name="inputField" onget="return this._list.inputField" />
+			<property name="value" onget="return this._list.label">
+				<setter>
+					val = val.toString();
+					if (this.value == val) {
+						return;
+					}
+					this._list.label = val;
+				</setter>
+			</property>
+			<method name="_load">
+				<body><![CDATA[
+					var values = this._values;
+					var popup = this._popup;
+
+					while (popup.hasChildNodes()) {
+						popup.removeChild(popup.lastChild);
+					}
+
+					for each (var val in values) {
+						var node = document.createElement('menuitem');
+						node.setAttribute('label', val);
+						if (this.hasAttribute('crop')) {
+							node.setAttribute('crop', this.getAttribute('crop'));
+						}
+						popup.appendChild(node);
+					}
+
+					if (values.length) {
+						this._list.selectedIndex = 0;
+						this.value = values[0];
+					}
+					if (this.hasAttribute('readonly')) {
+						this._list.removeAttribute('editable');
+					}
+				]]></body>
+			</method>
+			<method name="reload">
+				<body>this._load();</body>
+			</method>
+			<method name="save">
+				<body><![CDATA[
+					var n = this.value;
+					if (n.length == 0 && !this.hasAttribute('allowempty')) {
+						DTA.Debug.log("Not saving dropdown: empty");
+						return;
+					}
+					this.hist.push(n);
+				]]></body>
+			</method>
+			<method name="clear">
+				<body>
+					this.hist.reset();
+				</body>
+			</method>
+		</implementation>
+	</binding>
+
+	<binding id="metalinker-item"
+		extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
+		<content>
+			<xul:vbox flex="1">
+				<xul:hbox class="metalink-mainbox" flex="1">
+					<xul:image class="metalinker-icon" xbl:inherits="src=iconURL" />
+					<xul:vbox class="metalink-infobox" flex="1">
+						<xul:checkbox anonid="check" xbl:inherits="label=identity,checked" />
+						<xul:hbox flex="1" anonid="additionallinks" />
+						<xul:hbox>
+							<xul:description flex="1" crop="center"
+								xbl:inherits="value=url" />
+						</xul:hbox>
+					</xul:vbox>
+					<xul:vbox class="metalinker-additional" anonid="additional" />
+				</xul:hbox>
+				<xul:description class="metalinker-description"
+					flex="1" anonid="desc" />
+			</xul:vbox>
+		</content>
+
+		<implementation>
+			<constructor><![CDATA[
+				var dl = this.download;
+				this.setAttribute('checked', dl.selected);
+				var id = '';
+				if (dl.identity) {
+					id = dl.identity + ' (' + dl.fileName + ')';
+				}
+				else {
+					id = dl.fileName;
+				}
+				this.setAttribute('identity', id);
+				this.setAttribute('iconURL', dl.logo ? dl.logo : getIcon(dl.url.usable, false, 32));
+				this.setAttribute('url', dl.url.usable);
+
+				function addSimple(e) {
+					if (dl[e]) {
+						var n = document.createElement('description');
+						n.appendChild(document.createTextNode(_(e, [dl[e]])));
+						n.setAttribute('crop', 'end');
+						this._additional.appendChild(n);
+					}
+				};
+				function addLink(e) {
+					if (dl[e]) {
+						var n = document.createElement('description');
+						n.setAttribute('class', 'text-link');
+						n.setAttribute('onclick', 'MetaSelect.openLink(this)');
+						n.setAttribute('crop', 'center');
+						n.setAttribute('flex', '1');
+						n.link = dl[e][1];
+						n.appendChild(document.createTextNode(dl[e][0]));
+						this._additionalLinks.appendChild(n);
+					}
+				};
+				['size', 'version', 'sys', 'lang', 'copyright', 'mirrors'].forEach(addSimple, this);
+				['publisher', 'license'].forEach(addLink, this);
+
+				if (dl.description) {
+					this._desc.appendChild(document.createTextNode(dl.description));
+				}
+			]]></constructor>
+			<field name="_checkbox">document.getAnonymousElementByAttribute(this,
+				'anonid', 'check');</field>
+			<field name="_additional">document.getAnonymousElementByAttribute(this,
+				'anonid', 'additional');</field>
+			<field name="_additionalLinks">document.getAnonymousElementByAttribute(this,
+				'anonid', 'additionallinks');</field>
+			<field name="_desc">document.getAnonymousElementByAttribute(this,
+				'anonid', 'desc');</field>
+			<property name="checked" onget="return this._checkbox.checked;"
+				onset="this._checkbox.checked = !!val; return !!val;" />
+		</implementation>
+	</binding>
+
+	<binding id="hashinput">
+		<content>
+			<xul:hbox flex="1">
+				<xul:menulist anonid="type" readonly="true"
+					xbl:inherits="disabled,error">
+					<xul:menupopup anonid="types" />
+				</xul:menulist>
+				<xul:textbox anonid="hash" flex="1" xbl:inherits="readonly,disabled"
+					type="autocomplete" />
+			</xul:hbox>
+		</content>
+		<implementation>
+			<constructor><![CDATA[
+				this._typemap = {};
+				for (x in DTA.SUPPORTED_HASHES) {
+					var e = document.createElement('menuitem');
+					e.setAttribute('value', x);
+					e.setAttribute('label', x);
+					this._types.appendChild(e);
+					this._typemap[x] = e;
+					if (x == "SHA1") {
+						this._types.parentNode.selectedItem = e;
+					}
+				}
+			]]></constructor>
+			<property name="_type"
+				onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'type');" />
+			<property name="_types"
+				onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'types');" />
+			<property name="_hash"
+				onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'hash');" />
+			<property name="checked" onget="return this._checkbox.checked;" />
+			<property name="inputField" onget="return this._hash.inputField;" />
+			<property name="isValid">
+				<getter><![CDATA[
+					try {
+						if (this._hash.value.length) {
+							new DTA.Hash(this._hash.value, this._type.value);
+						}
+						return true;
+					}
+					catch(ex) {
+						return false;
+					}
+				]]></getter>
+			</property>
+			<property name="value">
+				<getter><![CDATA[
+					if (this._hash.value.length) {
+						return new DTA.Hash(this._hash.value, this._type.value);
+					}
+					return null;
+				]]></getter>
+				<setter><![CDATA[
+					if (val) {
+						this._hash.value = val.sum;
+						this._type.selectedItem = this._typemap[val.type];
+					}
+					else {
+						this._hash.value = '';
+					}
+					return val;
+				]]></setter>
+			</property>
+		</implementation>
+	</binding>
+
+	<binding id="menu-iconic-addressable"
+		extends="chrome://global/content/bindings/menu.xml#menu-base">
+		<content>
+			<xul:hbox class="menu-iconic-left" align="center" pack="center">
+				<xul:image class="menu-iconic-icon" xbl:inherits="src=image" />
+			</xul:hbox>
+			<xul:label class="menu-iconic-text" flex="1"
+				xbl:inherits="value=label,accesskey,crop" crop="right" />
+			<xul:hbox class="menu-accel-container" anonid="accel">
+				<xul:label class="menu-iconic-accel" xbl:inherits="value=acceltext" />
+			</xul:hbox>
+			<xul:hbox class="menu-right" chromedir="&locale.dir;"
+				xbl:inherits="_moz-menuactive,disabled" align="center" pack="center">
+				<xul:image />
+			</xul:hbox>
+			<children includes="menupopup|template" />
+		</content>
+	</binding>
+
+	<binding id="splitmenu">
+		<content>
+			<xul:menuitem class="menuitem-iconic splitmenu-menuitem" flex="1" xbl:inherits="label,disabled"/>
+			<xul:menu class="splitmenu-menu" pack="end" oncommand="event.stopPropagation();" xbl:inherits="disabled">
+				<children includes="menupopup"/>
+			</xul:menu>
+		</content>
+	</binding>
+
+	<binding id="speed-limit-list-popup"
+		extends="chrome://global/content/bindings/popup.xml#popup-scrollbars">
+		<implementation>
+			<constructor><![CDATA[
+				this.limit = -1;
+				this.fill();
+			]]></constructor>
+			<property name="hint">
+				<getter>
+					return this._hint || 0;
+				</getter>
+				<setter>
+					if (!isFinite(val)) {
+						throw new Error("Provide a valid number");
+					}
+					if (this._hint != val) {
+						this._hint = val;
+					}
+				</setter>
+			</property>
+			<property name="limit">
+				<getter>
+					return parseInt(this.parentNode.value) || -1;
+				</getter>
+				<setter><![CDATA[
+					if (!isFinite(val)) {
+						throw new Error("Provide a valid number");
+					}
+					let nval = this.scale(val / 1024);
+					if (nval > 0) {
+						nval *= 1024;
+					}
+					if (this.parentNode.value != nval) {
+						this.parentNode.value = nval;
+						this.fill();
+					}
+				]]></setter>
+			</property>
+			<property name="selectedItem">
+				<setter><![CDATA[
+					let pn = this.parentNode;
+					if (pn.localName == 'menulist') {
+						pn.selectedItem = val;
+					}
+					else {
+						val.setAttribute('checked', 'true');
+					}
+				]]></setter>
+			</property>
+			<method name="appendItem">
+				<parameter name="label"/>
+				<parameter name="value"/>
+				<parameter name="description"/>
+				<body><![CDATA[
+					let item = document.createElement('menuitem');
+        	item.setAttribute("label", label);
+          item.setAttribute("value", value);
+          if (description) {
+            item.setAttribute("description", description);
+          }
+          item.className = 'menuitem-iconic';
+          this.appendChild(item);
+          return item;
+				]]></body>
+			</method>
+			<method name="scale">
+				<parameter name="e"/>
+				<body><![CDATA[
+					if (e <= 0) {
+					  return -1;
+					}
+					if (e >= 1000) {
+					  return Math.round(e / 25) * 25;
+					}
+					if (e >= 400) {
+					  return Math.round(e / 5) * 5;
+					}
+					return e;
+				]]></body>
+			</method>
+			<method name="fill">
+				<body><![CDATA[
+					while (this.firstChild) {
+						this.removeChild(this.firstChild);
+					}
+
+					let iv = Math.max(this.limit, -1);
+					let m = Math.round((iv > 0 ? iv : this.hint / 2) / 1024);
+					m = this.scale(iv > 1 ? m : 250);
+					let vals = [0,10,20,50,100];
+					if (m >= 1000) {
+						vals = [0,100,200,500,1000];
+					}
+					else if (m > 400) {
+						vals = [0,50,100,200,500];
+					}
+
+					let items = [10, 50, 100, 250, 1000]; // always include these
+					for each (let v in vals) {
+						if (v && m - v > 1) {
+							items.push(m - v);
+						}
+						items.push(m + v);
+					}
+					items = items
+						.map(this.scale)
+						.filter(function(e) !((e in this) || (this[e] = null)), {}) // makes array unique
+						.sort(function(a, b) a - b);
+					let sep = document.createElement('menuseparator');
+					for each (let v in items.map(function(e) e * 1024)) {
+						let item = this.appendItem(Utils.formatKBytes(v, 0) + '/s', v);
+						if (v == iv) {
+							if (item.previousSibling) {
+								this.insertBefore(sep.cloneNode(false), item);
+							}
+							this.selectedItem = item;
+							this.appendChild(sep.cloneNode(false));
+						}
+					}
+					this.appendChild(sep);
+					let item = this.appendItem(_('unlimitedspeed'), -1);
+					if (iv == -1) {
+						this.selectedItem = item;
+					}
+					return true;
+				]]></body>
+			</method>
+		</implementation>
+		<handlers>
+			<handler phase="capturing" event="popupshowing"><![CDATA[
+				this.fill();
+			]]></handler>
+			<handler phase="capturing" event="command"><![CDATA[
+				if (event.originalTarget.localName != "menuitem") {
+					return;
+				}
+				this.parentNode.blur();
+				let nv = parseInt(event.originalTarget.value);
+				if (nv != this.limit) {
+					this.limit = nv;
+				}
+			]]></handler>
+		</handlers>
+	</binding>
+
+	<binding id="mirror-item-base" extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
+		<implementation>
+			<property name="mirror" onget="return this.getAttribute('mirror');" onset="this.setAttribute('mirror', nv);"/>
+			<property name="preference" onget="return parseInt(this.getAttribute('preference')) || 50;">
+				<setter><![CDATA[
+					val = parseInt(val);
+					if (isFinite(val)){
+						val = Math.min(200, Math.max(1, val));
+						this.setAttribute('preference', val);
+					}
+					val = this.preference;
+					let tt;
+					if (val > 130) {
+						tt = _("prefHigh", [val]);
+					}
+					else if (val > 80) {
+						tt = _("prefMedium", [val]);
+					}
+					else {
+						tt = _("prefLow", [val]);
+					}
+					this.setAttribute("_preftooltip", tt);
+				]]></setter>
+			</property>
+			<property name="charset" onget="return this.getAttribute('charset');"/>
+		</implementation>
+	</binding>
+	<binding id="mirror-item" extends="chrome://dta/content/common/bindings.xml#mirror-item-base">
+		<content>
+			<xul:vbox pack="center">
+				<xul:hbox pack="center">
+					<xul:image class="mirror-item-icon" />
+				</xul:hbox>
+				<xul:label value="" class="mirror-item-error" xbl:inherits="value=error"/>
+			</xul:vbox>
+			<xul:hbox flex="1" align="center">
+				<xul:label anonid="mirror" flex="1" crop="center" class="mirror-item-url text-link" xbl:inherits="value=mirror" />
+			</xul:hbox>
+			<xul:hbox align="center">
+				<xul:label value="&preference;" />
+				<xul:scale anonid="preference" class="mirror-item-preference" min="1" max="200" increment="5" pageincrement="30" xbl:inherits="value=preference,tooltiptext=_preftooltip" />
+			</xul:hbox>
+		</content>
+		<implementation>
+			<field name="mirrorElement">document.getAnonymousElementByAttribute(this, 'anonid', 'mirror');</field>
+			<field name="preferenceElement">document.getAnonymousElementByAttribute(this, 'anonid', 'preference');</field>
+			<constructor><![CDATA[
+				// cheat to init
+				this.preference = this.getAttribute('preference');
+			]]></constructor>
+		</implementation>
+		<handlers>
+			<handler event="click" clickcount="1"><![CDATA[
+				if (event.originalTarget == this.mirrorElement) {
+					this.setAttribute("editing", true);
+				}
+			]]></handler>
+			<handler event="click" clickcount="2">
+				this.setAttribute("editing", true);
+			</handler>
+			<handler event="change"><![CDATA[
+				if (event.originalTarget == this.preferenceElement) {
+					this.preference = this.preferenceElement.value;
+				}
+			]]></handler>
+		</handlers>
+	</binding>
+	<binding id="mirror-item-editing" extends="chrome://dta/content/common/bindings.xml#mirror-item-base">
+		<content>
+			<xul:vbox pack="center">
+				<xul:hbox pack="center">
+					<xul:image class="mirror-item-icon" />
+				</xul:hbox>
+			</xul:vbox>
+			<xul:hbox flex="1" align="center">
+				<xul:label value="&mirrorurl;" />
+				<xul:textbox class="mirror-item-textbox" xbl:inherits="value=mirror" type="autocomplete" wantreturns="true" autocompletesearch="history" completedefaultindex="true" flex="1"/>
+			</xul:hbox>
+		</content>
+		<implementation>
+			<field name="textbox">document.getAnonymousElementByAttribute(this, 'class', 'mirror-item-textbox');</field>
+			<constructor><![CDATA[
+				this.parentNode.selectedItem = this;
+				this.textbox.focus();
+
+				// looks a little nasty, but else we will immediately blur/focus :p
+				let tp = this;
+				setTimeout(function() tp.textbox.addEventListener('blur', function() tp.commit(), false), 0);
+			]]></constructor>
+			<method name="commit">
+				<parameter name="forget"/>
+				<body><![CDATA[
+					let original = this.getAttribute('mirror');
+					let uri = this.textbox.value;
+
+					if (!!forget) {
+						uri = "";
+					}
+
+					if (!!uri) {
+						let fs = Cc['@mozilla.org/docshell/urifixup;1'].getService(Ci.nsIURIFixup);
+						uri = fs.createFixupURI(uri, 0).spec;
+					}
+					if (!!uri) {
+						let evt = document.createEvent('MutationEvents');
+						evt.initMutationEvent('MirrorChanging', true, true, this, original, uri, 'mirror', evt.MODIFICATION);
+						if (this.dispatchEvent(evt)) {
+							this.setAttribute('mirror', uri);
+						}
+					}
+					try {
+						this.textbox.blur();
+					}
+					catch (ex) {}
+					this.removeAttribute('editing');
+					this.blur();
+					let evt = document.createEvent('UIEvents');
+					evt.initUIEvent('MirrorEditDone', true, true, null, 0);
+					this.dispatchEvent(evt);
+				]]></body>
+			</method>
+		</implementation>
+		<handlers>
+			<handler event="keydown" phase="capturing"><![CDATA[
+				switch(event.keyCode) {
+				case KeyEvent.DOM_VK_RETURN:
+				case KeyEvent.DOM_VK_ESCAPE:
+					event.stopPropagation();
+					event.preventDefault();
+					break;
+				}
+			]]></handler>
+			<handler event="keyup" phase="capturing"><![CDATA[
+				if (event.keyCode == KeyEvent.DOM_VK_RETURN) {
+					event.stopPropagation();
+					event.preventDefault();
+					this.commit();
+				}
+				if (event.keyCode == KeyEvent.DOM_VK_ESCAPE) {
+					event.stopPropagation();
+					event.preventDefault();
+					this.commit(true);
+					this.removeAttribute('editing');
+				}
+			]]></handler>
+		</handlers>
+	</binding>
+</bindings>
