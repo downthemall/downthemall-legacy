@@ -1,4 +1,4 @@
-<!ENTITY tooladd.label "הוסף הורדות">
+<!ENTITY tooladd.label "הוספת הורדות">
 <!ENTITY tooladd.tooltip "הוספה ידנית של הורדה ל־DownThemAll!‎">
 <!ENTITY tooldonate.tooltiptext "אתה יכול לסייע ל־DownThemAll!‎ להיות עוד יותר טוב! שקול לתרום קצת כסף!">
 <!ENTITY movetop.label "לראש">
@@ -25,7 +25,7 @@
 <!ENTITY infos.label "מידע על ההורדה">
 <!ENTITY launch.label "פתח קובץ">
 <!ENTITY delete.label "מחק קובץ">
-<!ENTITY targetdir.label "פתח תיקית יעד">
+<!ENTITY targetdir.label "פתח תיקיית יעד">
 <!ENTITY pause.label "השהה">
 <!ENTITY resume.label "המשך">
 <!ENTITY cancel.label "ביטול">
