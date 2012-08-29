@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Einstellungen">
+<!ENTITY dta-about.label "Über DownThemAll!...">
+<!ENTITY dta-manager-button "dTa!-Manager">
+<!ENTITY dta-selector-button "dTa OneClick! Auswähler">
+<!ENTITY dta-tb-all.label "Alle Tabs">
+<!ENTITY dta-tb-single.label "Aktuelles Tab">
+<!ENTITY dta-selection.label "DownThemAll! für Auswahl...">
+<!ENTITY dta-selection-turbo.label "dTa OneClick für Auswahl...">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa OneClick...">
+<!ENTITY dta-img-save.label "Bild mit DownThemAll! speichern">
+<!ENTITY dta-img-save-turbo.label "Bild mit dTa OneClick! speichern">
+<!ENTITY dta-video-save.label "Video mit DownThemAll! speichern">
+<!ENTITY dta-video-save-turbo.label "Video mit dTa OneClick! speichern">
+<!ENTITY dta-audio-save.label "Audio mit DownThemAll! speichern">
+<!ENTITY dta-audio-save-turbo.label "Audio mit dTa OneClick! speichern">
+<!ENTITY dta-link-save.label "Link mit DownThemAll! speichern">
+<!ENTITY dta-link-save-turbo.label "Link mit dTa OneClick! speichern">
+<!ENTITY dta-form-save.label "Formularziel mit DownThemAll! speichern">
+<!ENTITY dta-form-save-turbo.label "Formularziel mit dTa OneClick! speichern">

@@ -1,0 +1,4 @@
+<!ENTITY title "Webadres(sen) toevoegen">
+<!ENTITY desc.value "Voer hier het webadres en (optioneel) het verwijzend webadres in van het te downloaden bestand.">
+<!ENTITY desc.batches.value "Ook kunnen batch beschrijvingen gebruikt worden om meerdere bestanden gelijktijdig te downloaden.">
+<!ENTITY examples.value "Voorbeelden:">

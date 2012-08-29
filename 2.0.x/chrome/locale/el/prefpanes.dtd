@@ -1,0 +1,114 @@
+<!ENTITY winstyle "width:78em;height:42em;">
+<!ENTITY filterspane.label "Φίλτρα">
+<!ENTITY listhead1.label "Επεξήγηση">
+<!ENTITY listhead2.label "Επεκτάσεις αρχείων">
+<!ENTITY filter.label "Φιλτραρισμένες επεκτάσεις αρχείων:">
+<!ENTITY regex.label "Κανονική έκφραση">
+<!ENTITY useAs.label "Χρήση ως:">
+<!ENTITY imagesf.label "Φίλτρο εικόνων και ενσωματωμένων στοιχείων">
+<!ENTITY linksf.label "Φίλτρο δεσμών">
+<!ENTITY add.label "Προσθήκη νέου φίλτρου">
+<!ENTITY highlight.label "Επισήμανση αρχείων που έχουν επιλεγεί από φίλτρα">
+<!ENTITY dtacontext2.label "Επιλογές">
+<!ENTITY buttonlabelextra2 "Επαναφορά αρχικών ρυθμίσεων">
+<!ENTITY dtaPreferences.title "Επιλογές DownThemAll!">
+<!ENTITY manager "Διαχειριστής dTa">
+<!ENTITY mainpane.label "Γενικά">
+<!ENTITY mainpane.defaults.caption "Αρχικές ρυθμίσεις">
+<!ENTITY mainpane.defaults.desc "Ο κατάλογος αποθήκευσης, η μάσκα μετονομασίας και τα φίλτρα του OneClick!, μπορούν να ρυθμιστούν από τον διάλογο επιλογής του DownThemAll!.">
+<!ENTITY mainpane.rename.caption "Αν υπάρχει ήδη το όνομα αρχείου:">
+<!ENTITY mainpane.rename.label "Μετονομασία">
+<!ENTITY mainpane.overwrite.label "Αντικατάσταση">
+<!ENTITY mainpane.skip.label "Παράβλεψη">
+<!ENTITY mainpane.ask.label "Να γίνεται ερώτηση">
+<!ENTITY mainpane.misc.caption "Διάφορα">
+<!ENTITY mainpane.sounderror.label "Αναπαραγωγή ενός ήχου σε περίπτωση σφάλματος">
+<!ENTITY mainpane.alert.caption "Όταν ολοκληρωθούν οι λήψεις:">
+<!ENTITY mainpane.alert.label "Ειδοποίηση για:">
+<!ENTITY mainpane.alertboxes.label "Ειδοποίηση σε αναδυόμενο παράθυρο">
+<!ENTITY mainpane.alertslides.label "Ειδοποίηση με το εγγενές σύστημα του Firefox">
+<!ENTITY mainpane.alertnone.label "Να μην προβάλλετε ειδοποίηση">
+<!ENTITY mainpane.sounddone.label "Αναπαραγωγή ενός ήχου όταν ολοκληρωθούν οι λήψεις">
+<!ENTITY mainpane.closedta.label "Κλείσιμο του DownThemAll όταν ολοκληρωθούν οι λήψεις">
+<!ENTITY mainpane.settime.label "Χρονοσήμανση αρχείων με το χρόνο τελευταίας μεταβολής (στο διακομιστή) ή με το χρόνο που προστέθηκε στις λήψεις.">
+<!ENTITY mainpane.rememberoneclick.label "Απομνημόνευση επιλογής για την εφαρμογή dTa OneClick σε όλες ή μόνο στην τρέχουσα καρτέλα.">
+<!ENTITY mainpane.confirmremove.label "Επιβεβαίωση για την αφαίρεση λήψεων">
+<!ENTITY mainpane.textlinks.label "Αναγνώριση δεσμών σε κείμενο">
+<!ENTITY mainpane.listsniffedvideos.label "Εγγραφή και προβολή σε λίστα των βίντεο (Flash)">
+<!ENTITY privacypane.label "Ιδιωτικό απόρρητο">
+<!ENTITY privacypane.closing.caption "Όταν κλείσει το παράθυρο του διαχειριστή">
+<!ENTITY privacypane.removecompleted.label "Αφαίρεση ολοκληρωμένων λήψεων από τη λίστα">
+<!ENTITY privacypane.removecanceled.label "Αφαίρεση λήψεων που ακυρώθηκαν ή παρουσίασαν σφάλματα από τη λίστα">
+<!ENTITY privacypane.removeaborted.label "Αφαίρεση λήψεων που δεν ολοκληρώθηκαν από τη λίστα">
+<!ENTITY privacypane.deletefoldershistory.label "Διαγραφή ιστορικού καταλόγων">
+<!ENTITY privacypane.deletefiltershistory.label "Διαγραφή ιστορικού επιπλέον φίλτρων">
+<!ENTITY privacypane.showlog.label "Προβολή ιστορικού">
+<!ENTITY privacypane.reveallog.label "Προβολή αρχείου">
+<!ENTITY privacypane.deletelog.label "Διαγραφή ιστορικού">
+<!ENTITY privacypane.updates.caption "Ενημερώσεις/Διαδίκτυο">
+<!ENTITY privacypane.information.label "Να επιτρέπεται αυτόματη ενημέρωση του dTa για νέα, μηνύματα και πρόσφατες εκδόσεις">
+<!ENTITY privacypane.statistics.label "Να επιτρέπεται η συλλογή και η αποστολή ανώνυμων στατιστικών στοιχείων">
+<!ENTITY privacypane.dropdowns.caption "Αναδυόμενα μενού">
+<!ENTITY privacypane.dropdownresults.label "Αριθμός στοιχείων που θα διατηρούνται">
+<!ENTITY privacypane.logs.caption "Διαγνωστικό ιστορικό">
+<!ENTITY privacypane.enablelogs.label "Ενεργοποίηση διαγνωστικού ιστορικού">
+<!ENTITY privacypane.notice.caption "Σημείωση">
+<!ENTITY privacypane.notice.desc "Το DownThemAll συνεργάζεται με την ενσωματωμένη επιλογή εκκαθάρισης προσωπικών δεδομένων.">
+<!ENTITY privacypane.privacynotice.label "Σημείωση προσωπικού απορρήτου">
+<!ENTITY serverspane.label "Δίκτυο">
+<!ENTITY serverspane.downloads.caption "Λήψεις">
+<!ENTITY serverspane.concurrent.label "Ταυτόχρονες λήψεις:">
+<!ENTITY serverspane.perserver.label "Λήψεις ανά διακομιστή:">
+<!ENTITY serverspane.url.label "Τοποθεσία ή τομέας:">
+<!ENTITY serverspane.new.label "Νέο όριο">
+<!ENTITY serverspane.del.label "Αφαίρεση ορίου">
+<!ENTITY serverspane.limits.label "Όρια ανά διακομιστή">
+<!ENTITY serverpane.limits.noitems "Δεν έχουν οριστεί όρια ανά διακομιστή">
+<!ENTITY serverspane.connections.label "Συνδέσεις:">
+<!ENTITY serverspane.speed.label "Όριο ταχύτητας:">
+<!ENTITY serverspane.unlimited "Απεριόριστο">
+<!ENTITY serverspane.limited "Περιορισμένο">
+<!ENTITY serverspane.autoretry.caption "Αυτόματες επαναλήψεις">
+<!ENTITY serverspane.autoretry.interval.label "Επανάληψη κάθε">
+<!ENTITY serverspane.autoretry.max.label "Μέγιστος αριθμός επαναλήψεων">
+<!ENTITY serverspane.cancel.label "Ακύρωση">
+<!ENTITY serverspane.edit.label "Επεξεργασία">
+<!ENTITY serverspane.remove.label "Αφαίρεση">
+<!ENTITY advancedpane.label "Για προχωρημένους">
+<!ENTITY advancedpane.downloads.caption "Έλεγχος λήψεων για προχωρημένους">
+<!ENTITY advancedpane.misc.caption "Διάφορες ρυθμίσεις">
+<!ENTITY advancedpane.files.caption "Αρχεία">
+<!ENTITY advancedpane.chunks.label "Μέγιστος αριθμός τεμαχίων ανά λήψη:">
+<!ENTITY advancedpane.chunksdisabled "Απενεργοποιημένο">
+<!ENTITY advancedpane.timeout.label "Τέλος χρόνου αναμονής λήψης μετά από">
+<!ENTITY advancedpane.seconds "δευτερόλεπτα">
+<!ENTITY advancedpane.minute "λεπτό">
+<!ENTITY advancedpane.minutes "λεπτά">
+<!ENTITY advancedpane.hour "ώρα">
+<!ENTITY advancedpane.hours "ώρες">
+<!ENTITY advancedpane.tempfiles.caption "Προσωρινά αρχεία">
+<!ENTITY advancedpane.usetemp.label "Αποθήκευση τεμαχίων πολυμερών λήψεων σε προσωρινό κατάλογο">
+<!ENTITY advancedpane.tempdir.label "Χρήση αυτού του καταλόγου:">
+<!ENTITY advancedpane.permissions.caption "Αρχικά δικαιώματα αρχείων">
+<!ENTITY advancedpane.permissions.group "Ομάδα">
+<!ENTITY advancedpane.permissions.everybody "Άλλοι">
+<!ENTITY advancedpane.permissions.read "δικαίωμα ανάγνωσης">
+<!ENTITY advancedpane.permissions.write "δικαίωμα εγγραφής">
+<!ENTITY advancedpane.loadendfirst.label "Φόρτωση των τελευταίων Kb πρώτα">
+<!ENTITY advancedpane.scheduler.caption "Ταξινόμηση εκκίνησης λήψεων:">
+<!ENTITY advancedpane.scheduler.fast "Γρήγορη - Με την προσθήκη στην ουρά αναμονής">
+<!ENTITY advancedpane.scheduler.fair "Δίκαιη+αργή - Ίση κατανομή">
+<!ENTITY advancedpane.scheduler.legacy "Παλαιού τύπου - Χωρίς όρια">
+<!ENTITY advancedpane.exposeinua.label "Να εμφανίζεται το DownThemAll! στο πεδίο User-Agent">
+<!ENTITY uipane.label "Διασύνδεση χρήστη">
+<!ENTITY uipane.namesonly.label "Προβολή μόνο των ονομάτων αρχείων στο παράθυρο διαχειριστή">
+<!ENTITY uipane.integration.caption "Ενσωμάτωση">
+<!ENTITY uipane.downloadwin.label "Προσθήκη του DownThemAll! στο παράθυρο επιλογών «Αποθήκευση αρχείου»">
+<!ENTITY uipane.context.caption "Μενού περιεχομένου">
+<!ENTITY uipane.tools.caption "Μενού εργαλείων">
+<!ENTITY uipane.compact.label "Χρήση συμπαγούς μενού">
+<!ENTITY uipane.hide.label "Απόκρυψη από το μενού">
+<!ENTITY uipane.showtooltip.label "Προβολή συμβουλών εργαλείων λήψης">
+<!ENTITY uipane.manager.caption "Παράθυρο διαχειριστή">
+<!ENTITY uipane.startminimized.label "Ελαχιστοποιημένη εκκίνηση">
+<!ENTITY uipane.minimizetotray.label "Ελαχιστοποίηση στον χώρο ειδοποίησης">

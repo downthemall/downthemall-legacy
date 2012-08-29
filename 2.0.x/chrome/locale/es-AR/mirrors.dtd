@@ -1,0 +1,10 @@
+<!ENTITY title "Gestion de espejos de DownThemAll!">
+<!ENTITY header "Gestopm de Espejos">
+<!ENTITY byline1 "Descargas pueden ser cargadas de diferentes localizaciones. El archivo sera automáticamente recombinado.">
+<!ENTITY byline2 "No dude en agregar y quitar localizaciones apuntando al mismo archivo.">
+<!ENTITY byline3 "Agregando localizaciones apuntando a archivos diferentes causaran una descarga corrupta">
+<!ENTITY addmirror.tip "Agregue un Espejo de Descarga">
+<!ENTITY removemirror.tip "Quitar Espejos de descarga seleccionados">
+<!ENTITY checkmirrors.tip "Comprobar todos los espejos de Descarga">
+<!ENTITY mirrorurl "Localización:">
+<!ENTITY preference "Prioridad:">

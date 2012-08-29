@@ -1,0 +1,23 @@
+<!ENTITY mask.title "リンクに付与されたタイトル">
+<!ENTITY mask.name "ファイルの名前">
+<!ENTITY mask.ext "拡張子">
+<!ENTITY mask.url "ベース URL">
+<!ENTITY mask.curl "フル URL">
+<!ENTITY mask.flatcurl "フラットフル URL">
+<!ENTITY mask.num "連番数字">
+<!ENTITY mask.inum "アイテムの数">
+<!ENTITY mask.hh "時">
+<!ENTITY mask.mm "分">
+<!ENTITY mask.ss "秒">
+<!ENTITY mask.d "日">
+<!ENTITY mask.m "月">
+<!ENTITY mask.y "年">
+<!ENTITY mask.subdirs "URL のサブディレクトリ">
+<!ENTITY mask.flatsubdirs "フラット URL サブディレクトリ">
+<!ENTITY mask.text "リンクの文字列">
+<!ENTITY mask.flattext "フラットリンクテキスト">
+<!ENTITY mask.refer "参照元の URL">
+<!ENTITY mask.qstring "処理要求文字列">
+<!ENTITY mask.flattitle "リンクに付与されたタイトル">
+<!ENTITY mask.tip "クリックかドラッグで追加できます">
+<!ENTITY mask.open.tip "名前の変更に使用できるタグの一覧を表示します">

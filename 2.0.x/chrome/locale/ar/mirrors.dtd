@@ -1,0 +1,10 @@
+<!ENTITY title "نزِّلها كلها! التحكم في المرايا">
+<!ENTITY header "التحكم في المرايا">
+<!ENTITY byline1 "يمكن تحميل التنزيلات من مواقع مختلفة. يعاد تكوين الملف  آليا حينها.">
+<!ENTITY byline2 "لديك الحرية لإضافة او إزالة مواقع تشير إلي الملف نفسه.">
+<!ENTITY byline3 "سيؤدي إضافة مواقع تشير إلي ملفات مختلفة إلي تنزيل فاسد">
+<!ENTITY addmirror.tip "أضف مرآة تنزيل">
+<!ENTITY removemirror.tip "أزل مرايا التنزيل المختارة">
+<!ENTITY checkmirrors.tip "تأكد من كل مرايا التنزيل">
+<!ENTITY mirrorurl "الموقع:">
+<!ENTITY preference "الأهمية:">

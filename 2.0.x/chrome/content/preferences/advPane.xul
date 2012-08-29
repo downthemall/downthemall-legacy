@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<prefpane id="paneAdvanced" label="&advancedpane.label;" orient="vertical" onpaneload="Advanced.load();">
+		<preferences>
+			<preference id="dtamaxchunks" name="extensions.dta.maxchunks" type="int" />
+			<preference id="dtatemporary" name="extensions.dta.saveTemp" type="bool" />
+			<preference id="dtatimeout" name="extensions.dta.timeout" type="int" />
+			<preference id="dtatemplocation" name="extensions.dta.tempLocation" type="unichar" />
+			<preference id="dtapermissions" name="extensions.dta.permissions" type="int" />
+			<preference id="dtaloadendfirst" name="extensions.dta.loadendfirst" type="int" />
+			<preference id="dtascheduler" name="extensions.dta.serverlimit.connectionscheduler" type="string" />
+			<preference id="dtaexposeinua" name="extensions.dta.exposeInUA" type="bool" />
+			<preference id="dtasettime" name="extensions.dta.settime" type="bool" />
+			<preference id="dtarememberoneclick" name="extensions.dta.rememberoneclick" type="bool" />
+			<preference id="dtaconfirmremove" name="extensions.dta.confirmremove" type="bool" />
+		</preferences>
+
+		<tabbox>
+			<tabs>
+				<tab label="&advancedpane.downloads.caption;" />
+				<tab label="&advancedpane.misc.caption;" />
+				<tab label="&advancedpane.files.caption;" />
+			</tabs>
+			<tabpanels>
+				<tabpanel>
+					<grid>
+						<columns>
+							<column />
+							<column flex="1" />
+						</columns>
+						<rows>
+							<row align="center">
+								<label value="&advancedpane.chunks.label;" id="maxchunk" />
+								<hbox align="center">
+									<scale min="1" max="10" id="maxchunks" preference-editable="true" onchange="Advanced.changedMaxChunks();" />
+									<label id="maxchunkslabel" style="min-width: 6em;" />
+								</hbox>
+							</row>
+							<row align="center">
+								<label value="&advancedpane.timeout.label;" />
+								<hbox align="center">
+									<menulist preference="dtatimeout">
+										<menupopup>
+											<menuitem id="t0" value="10" label="10 &advancedpane.seconds;" />
+											<menuitem id="t1" value="30" label="30 &advancedpane.seconds;" />
+											<menuitem id="t2" value="60" label="1 &advancedpane.minute;" />
+											<menuitem id="t3" value="120" label="2 &advancedpane.minutes;" />
+											<menuitem id="t4" value="180" label="3 &advancedpane.minutes;" />
+											<menuitem id="t5" value="240" label="4 &advancedpane.minutes;" />
+											<menuitem id="t6" value="300" label="5 &advancedpane.minutes;" />
+											<menuitem id="t7" value="600" label="10 &advancedpane.minutes;" />
+											<menuitem id="t8" value="900" label="15 &advancedpane.minutes;" />
+										</menupopup>
+									</menulist>
+								</hbox>
+							</row>
+							<row align="center">
+								<label value="&advancedpane.loadendfirst.label;" control="loadendfirst" />
+								<hbox align="center">
+									<scale min="0" max="4096" id="loadendfirst" increment="4" pageincrement="16" preference-editable="true" onchange="Advanced.changedLoadEndFirst();" />
+									<label id="loadendfirstlabel" style="min-width: 6em;" />
+								</hbox>
+							</row>
+							<checkbox label="&mainpane.settime.label;" preference="dtasettime" />
+						</rows>
+					</grid>
+				</tabpanel>
+				<tabpanel>
+					<grid>
+						<columns>
+							<column />
+							<column flex="1" />
+						</columns>
+						<rows>
+							<row align="baseline">
+								<label value="&advancedpane.scheduler.caption;" />
+								<menulist preference="dtascheduler" flex="1" crop="center">
+									<menupopup>
+										<menuitem label="&advancedpane.scheduler.fast;" value="fast" />
+										<menuitem label="&advancedpane.scheduler.fair;" value="fair" />
+										<menuitem label="&advancedpane.scheduler.legacy;" value="legacy" />
+									</menupopup>
+								</menulist>
+							</row>
+							<separator class="thin" />
+							<checkbox label="&mainpane.confirmremove.label;" preference="dtaconfirmremove" />
+							<separator class="thin" />
+							<checkbox label="&advancedpane.exposeinua.label;" preference="dtaexposeinua" />
+							<checkbox label="&mainpane.rememberoneclick.label;" preference="dtarememberoneclick" />
+						</rows>
+					</grid>
+				</tabpanel>
+				<tabpanel orient="vertical">
+					<vbox pack="start">
+						<groupbox id="advTempFiles">
+							<caption label="&advancedpane.tempfiles.caption;" />
+							<checkbox id="useTemp" label="&advancedpane.usetemp.label;" preference="dtatemporary" oncommand="Advanced.toggleTemp();" />
+							<hbox align="center">
+								<label value="&advancedpane.tempdir.label;" />
+								<textbox id="temp" preference="dtatemplocation" flex="1" />
+								<toolbarbutton id="browsedir" oncommand="Advanced.browse();" />
+							</hbox>
+						</groupbox>
+					</vbox>
+					<groupbox id="advPermissions">
+						<caption id="dtaperms" label="&advancedpane.permissions.caption;" />
+						<grid>
+							<columns>
+								<column flex="1" />
+								<column flex="2" />
+							</columns>
+							<rows>
+								<row>
+									<vbox>
+										<label value="&advancedpane.permissions.group;" />
+										<checkbox label="&advancedpane.permissions.read;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(0040);" onsynctopreference="return Advanced.setPerm(0040);" />
+										<checkbox label="&advancedpane.permissions.write;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(0020);" onsynctopreference="return Advanced.setPerm(0020);" />
+									</vbox>
+									<vbox>
+										<label value="&advancedpane.permissions.everybody;" />
+										<checkbox label="&advancedpane.permissions.read;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(0004);" onsynctopreference="return Advanced.setPerm(0004);" />
+										<checkbox label="&advancedpane.permissions.write;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(0002);" onsynctopreference="return Advanced.setPerm(0002);" />
+									</vbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</tabpanel>
+			</tabpanels>
+		</tabbox>
+	</prefpane>
+</overlay>

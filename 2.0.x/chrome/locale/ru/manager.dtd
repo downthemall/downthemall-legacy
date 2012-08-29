@@ -1,0 +1,55 @@
+<!ENTITY tooladd.label "Добавить URL">
+<!ENTITY tooladd.tooltip "Добавление URL в DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Вы можете помочь сделать DownThemAll еще лучше. Рассмотрите возможность небольшого пожертвования!">
+<!ENTITY movetop.label "В начало">
+<!ENTITY movebottom.label "В конец">
+<!ENTITY moveup.label "Вверх">
+<!ENTITY movedown.label "Вниз">
+<!ENTITY task.label "Адрес/Имя">
+<!ENTITY per.label "Проценты">
+<!ENTITY pct.label "Выполнение">
+<!ENTITY dim.label "Размер">
+<!ENTITY time.label "Ост.время">
+<!ENTITY parts.label "Части">
+<!ENTITY speed.label "Скорость">
+<!ENTITY infoURLTitle.value "От:">
+<!ENTITY infoSizeTitle.value "Размер:">
+<!ENTITY infoMultiple.value "Multiple Items">
+<!ENTITY elapsedTitle.value "Завершено:">
+<!ENTITY remainingTitle.value "Выполняется:">
+<!ENTITY currentSpeedTitle.value "Текущая скорость:">
+<!ENTITY avgSpeedTitle.value "Средняя скорость:">
+<!ENTITY path.label "Сохранено в..">
+<!ENTITY mask.label "Маска переименования">
+<!ENTITY hash.label "Контрольная сумма">
+<!ENTITY infos.label "Информация о загрузке">
+<!ENTITY launch.label "Открыть файл">
+<!ENTITY delete.label "Удалить файл(ы)">
+<!ENTITY targetdir.label "Открыть папку">
+<!ENTITY pause.label "Пауза">
+<!ENTITY resume.label "Старт">
+<!ENTITY cancel.label "Отмена">
+<!ENTITY removemenu.label "Удалить загрузки">
+<!ENTITY removeselected.label "Удалить выбранное">
+<!ENTITY removeCompleted.label "Удалить выполненные загрузки">
+<!ENTITY removeAll.label "Удалить всё">
+<!ENTITY removeDupes.label "Удалить одинаковые">
+<!ENTITY removeGone.label "Очистить несуществующие файлы">
+<!ENTITY advanced.label "Расширенные">
+<!ENTITY addchunk.label "Добавить часть">
+<!ENTITY removechunk.label "Удалить часть">
+<!ENTITY force.label "Форсированный старт">
+<!ENTITY import.label "Импорт из файла">
+<!ENTITY export.label "Экспорт выбранного">
+<!ENTITY options.caption "Настройки">
+<!ENTITY loading.label "Загрузка...">
+<!ENTITY restore.label "Восстановить">
+<!ENTITY close.label "Закрыть">
+<!ENTITY speedlimit.label "Ограничение:">
+<!ENTITY speedlimit.tooltip "Изменение ограничения скорости. Список обновляется динамически.">
+<!ENTITY perdownloadspeedlimit.label "Ограничение скорости">
+<!ENTITY perdownloadspeedlimit.tooltip "Изменения ограничения скорости. Не влияет на глобальное ограничение скорости.">
+<!ENTITY mirrors.label "Управление зеркалами">
+<!ENTITY mirrors.tooltip "Управление местоположением зеркал загрузки">
+<!ENTITY toolbar.icons "Показывать значки">
+<!ENTITY toolbar.full "Показывать значки и текст">

@@ -1,0 +1,31 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#dta-button,
+#dta-turbo-button,
+#dta-turboselect-button,
+#dta-manager-button,
+.dta-toolbarbutton {
+	list-style-image: url(buttons16.png);
+}
+
+#dta-button {
+	-moz-image-region: rect(0px,32px,16px,16px);
+}
+#dta-button:hover {
+	-moz-image-region: rect(0px,16px,16px,0px);
+}
+#dta-turbo-button {
+	-moz-image-region: rect(0px,64px,16px,48px);
+}
+#dta-turbo-button:hover {
+	-moz-image-region: rect(0px,48px,16px,32px);
+}
+#dta-turboselect-button {
+	-moz-image-region: rect(0px,96px,16px,80px);
+}
+#dta-turboselect-button:hover {
+	-moz-image-region: rect(0px,80px,16px,64px);
+}
+#dta-manager-button {
+	-moz-image-region: rect(0px, 112px, 16px, 96px);
+}

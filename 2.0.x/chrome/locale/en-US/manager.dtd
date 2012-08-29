@@ -1,0 +1,64 @@
+<!ENTITY tooladd.label "Add Downloads">
+<!ENTITY tooladd.tooltip "Manually add a download to DownThemAll">
+<!ENTITY tooldonate.tooltiptext "You can help us make DownThemAll even better. Consider making a small donation!">
+
+<!ENTITY movetop.label "Top">
+<!ENTITY movebottom.label "Bottom">
+<!ENTITY moveup.label "Up">
+<!ENTITY movedown.label "Down">
+
+<!ENTITY task.label "Download/Name">
+<!ENTITY per.label "Percent">
+<!ENTITY pct.label "Progress">
+<!ENTITY dim.label "Size">
+<!ENTITY time.label "Est. time">
+<!ENTITY parts.label "Segments">
+<!ENTITY speed.label "Speed">
+<!ENTITY infoURLTitle.value "From:">
+<!ENTITY infoSizeTitle.value "Size:">
+<!ENTITY infoMultiple.value "Multiple Items">
+<!ENTITY elapsedTitle.value "Elapsed:">
+<!ENTITY remainingTitle.value "Remaining:">
+<!ENTITY currentSpeedTitle.value "Current speed:">
+<!ENTITY avgSpeedTitle.value "Average Speed:">
+<!ENTITY path.label "Save path">
+<!ENTITY mask.label "Renaming Mask">
+<!ENTITY hash.label "Checksum">
+
+<!ENTITY infos.label "Download Information">
+<!ENTITY launch.label "Open File">
+<!ENTITY delete.label "Delete File(s)">
+<!ENTITY targetdir.label "Open Directory">
+<!ENTITY pause.label "Pause">
+<!ENTITY resume.label "Resume">
+<!ENTITY cancel.label "Cancel">
+<!ENTITY removemenu.label "Remove Downloads">
+<!ENTITY removeselected.label "Remove Selected">
+<!ENTITY removeCompleted.label "Remove Completed Downloads">
+<!ENTITY removeAll.label "Remove All">
+<!ENTITY removeDupes.label "Remove Duplicates">
+<!ENTITY removeGone.label "Clean Gone Files">
+<!ENTITY advanced.label "Advanced">
+<!ENTITY addchunk.label "One More Segment">
+<!ENTITY removechunk.label "One Fewer Segment">
+<!ENTITY force.label "Force Start">
+<!ENTITY import.label "Import from File">
+<!ENTITY export.label "Export Selected to File">
+
+<!ENTITY options.caption "Options">
+<!ENTITY loading.label "Loading...">
+
+<!ENTITY restore.label "Restore">
+<!ENTITY close.label "Close">
+
+<!ENTITY speedlimit.label "Limit:">
+<!ENTITY speedlimit.tooltip "Change speed limit. The list is dynamicly updated.">
+
+<!ENTITY perdownloadspeedlimit.label "Speed limit">
+<!ENTITY perdownloadspeedlimit.tooltip "Change speed limit. The global speed limit will be still obeyed.">
+
+<!ENTITY mirrors.label "Manage Mirrors">
+<!ENTITY mirrors.tooltip "Manage download mirror locations">
+
+<!ENTITY toolbar.icons "Use Icons">
+<!ENTITY toolbar.full "Use Icons and Text">

@@ -1,0 +1,203 @@
+@import 'chrome://dta/skin/common/style.css';
+@import 'chrome://dta-platform/skin/common.css';
+@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+
+#renamingbox {
+	min-width: 200px;
+}
+
+caption {
+	font-weight: bold;
+}
+
+toolbox, toolbox toolbar, toolbox toolbarbutton {
+	background: white;
+	color: black;
+}
+#views .toolbarbutton-text {
+	color: black;
+}
+
+#views {
+	margin: 0;
+	padding: 0;
+}
+#views toolbar {
+	border-width:0px;
+	min-height: 43px;
+	background: white;
+}
+
+#views toolbarbutton, #views toolbarbutton:hover{
+	-moz-box-orient: horizontal !important;
+	-moz-appearance: none !important;
+
+	min-width: 120px;
+	padding-left: 8px;
+	padding-right: 8px;
+	list-style-image: url(viewbuttons.png);
+}
+
+#views toolbarbutton[selected="true"], #views toolbarbutton[selected="true"] * {
+	font-weight: 600;
+}
+
+#views toolbarbutton[selected="true"] {
+	background: url(tabback.png);
+}
+#views toolbarbutton:not([disabled="true"]):hover {
+    background: url(tabbackhover.png);
+    cursor: pointer;
+    font-weight: 700;
+}
+#viewlinks {
+	-moz-image-region: rect(0px,50px,24px,25px);
+}
+#viewlinks:hover {
+	-moz-image-region: rect(0px,25px,24px,0px);
+}
+#viewlinks[disabled="false"] {
+	-moz-image-region: rect(0px,75px,24px,50px) !important;
+}
+
+#viewpics {
+	-moz-image-region: rect(0px,125px,24px,100px);
+}
+#viewpics:hover {
+	-moz-image-region: rect(0px,100px,24px,75px);
+}
+#viewpics[disabled="true"] {
+	-moz-image-region: rect(0px,150px,24px,125px) !important;
+}
+
+threechildren::-moz-tree-row {
+	min-height: 20px;
+}
+
+treechildren::-moz-tree-checkbox {
+	/* css for checked cells */
+	list-style-image: url(uncheck2.png);
+}
+
+treechildren::-moz-tree-checkbox(checked) {
+	/* css for checked cells */
+	list-style-image: url(check.png);
+}
+
+treechildren::-moz-tree-row(manuallySelected) {
+	background-color: #FFFFB3 !important;
+}
+treechildren::-moz-tree-row(manuallySelected, selected) {
+	background-color: #FFFF80 !important;
+}
+treechildren::-moz-tree-row(f0) {
+	background-color: #FFE8BB !important;
+}
+treechildren::-moz-tree-row(f0, selected) {
+	background-color: #FFD88A !important;
+}
+treechildren::-moz-tree-row(f1) {
+	background-color: #ECFFB3 !important;
+}
+treechildren::-moz-tree-row(f1, selected) {
+	background-color: #DFFF80 !important;
+}
+treechildren::-moz-tree-row(f2) {
+	background-color: #ECE8FF !important;
+}
+treechildren::-moz-tree-row(f2, selected) {
+	background-color: #D5CCFF !important;
+}
+treechildren::-moz-tree-row(f3) {
+	background-color: #DDF3FF !important;
+}
+treechildren::-moz-tree-row(f3, selected) {
+	background-color: #C2EAFF !important;
+}
+treechildren::-moz-tree-row(f4) {
+	background-color: #FDE8FF !important;
+}
+treechildren::-moz-tree-row(f4, selected) {
+	background-color: #FBCCFF !important;
+}
+treechildren::-moz-tree-row(f5) {
+	background-color: #DDFFF4;
+}
+treechildren::-moz-tree-row(f5, selected) {
+	background-color: #A8FFE4 !important;
+}
+treechildren::-moz-tree-row(f6) {
+	background-color: #FEFFAF !important;
+}
+treechildren::-moz-tree-row(f6, selected) {
+	background-color: #FDFF7A !important;
+}
+treechildren::-moz-tree-row(f7) {
+	background-color: #FFF0B3 !important;
+}
+treechildren::-moz-tree-row(f7, selected) {
+	background-color: #FFE680 !important;
+}
+treechildren::-moz-tree-row(fastFiltered) {
+	background-color: #FFDBDB !important;
+}
+treechildren::-moz-tree-row(fastFiltered, selected) {
+	background-color: #DFC2C2 !important;
+}
+treechildren::-moz-tree-cell-text(manuallySelected),
+treechildren::-moz-tree-cell-text(f1),
+treechildren::-moz-tree-cell-text(f2),
+treechildren::-moz-tree-cell-text(f3),
+treechildren::-moz-tree-cell-text(f4),
+treechildren::-moz-tree-cell-text(f5),
+treechildren::-moz-tree-cell-text(f6),
+treechildren::-moz-tree-cell-text(f7),
+treechildren::-moz-tree-cell-text(fastFiltered) {
+	color: black !important;
+}
+
+#mcheck {
+	list-style-image: url(checks16.png);
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+#muncheck {
+	list-style-image: url(checks16.png);
+	-moz-image-region: rect(0px, 48px, 16px, 32px);
+}
+#mtoggle {
+	list-style-image: url(checks16.png);
+	-moz-image-region: rect(0px, 32px, 16px, 16px);
+}
+#mrenaming {
+	list-style-image: url(chrome://dta/skin/common/mask.png);
+}
+#selectall {
+	list-style-image: url(chrome://dta/skin/common/selection.png);
+	-moz-image-region: rect(0px, 16px, 16px, 0px);  
+}
+#selectinvert {
+	list-style-image: url(chrome://dta/skin/common/selection.png);
+	-moz-image-region: rect(0px, 48px, 16px, 32px);  
+}
+#selectfiltered {
+	list-style-image: url(selectfiltered.png);
+}
+#mopen {
+	list-style-image: url(chrome://dta/skin/common/openurl.png);
+}
+
+#maskeditor {
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 4px;
+	padding-bottom: 6px;
+}
+#maskeditor-buttons {
+	margin-top: 1em;
+}
+
+#checkcontainer checkbox {
+	font-size: smaller;
+	white-space: nowrap !important;
+	overflow: hidden;
+}

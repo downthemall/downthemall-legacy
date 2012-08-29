@@ -1,0 +1,29 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+prefwindow {
+	height: auto !important;
+}
+
+caption {
+	margin-bottom: 1px !important;
+	padding-bottom: 0px !important;
+}
+
+separator.groove-thin {
+	border-width: 0px !important;
+	margin: 0px !important;
+	padding: 0px !important;
+	margin-top: 4px !important;
+}
+
+#filterTable {
+	min-height: 200px;
+}
+
+#serverLimits {
+	height: 200px;
+}
+
+#defaultsdesc {
+	min-height: 4.5em;
+}

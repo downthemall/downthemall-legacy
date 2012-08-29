@@ -1,0 +1,88 @@
+<!ENTITY lp.localedir "ltr">
+<!ENTITY language "Português">
+<!ENTITY transAutor "Ricardo Simões, Carlos Simão">
+<!ENTITY amo.summary "O primeiro e único acelerador/gestor de transferências construído dentro do Firefox!">
+<!ENTITY amo.description.intro "O DownThemAll é tudo o que pode desejar de um gestor de transferências: tem um acelerador avançado">
+<!ENTITY amo.description.feat "O DownThemAll é rápido, de confiança e fácil de usar! Deixa-o transferir todas as ligações ou imagens contidos numa página web e muito mais: pode refinar as suas transferências segundo critérios totalmente personalizados para ter apenas o que realmente quer! Tenha controlo total sobre as suas transferências, velocidade dedicada e número de ligações paralelas em qualquer altura. Use Metalinks ou adicione espelhos manualmente para transferir um ficheiro de diferentes servidores ao mesmo tempo.">
+<!ENTITY amo.description.free "O DownThemAll é de código-aberto e software-livre. Sem Adware, sem Spyware, sem custos escondidos!">
+<!ENTITY amo.description.more "Para mais informações veja a nossa página <a href='http://www.downthemall.net/howto/features/'>de funcionalidades</a>.">
+<!ENTITY lp.title "Sobre o DownThemAll!">
+<!ENTITY lp.welcome "Bem vindo ao DownThemAll!">
+<!ENTITY lp.info "Veja os vídeos  que mostram como usar o DownThemAll! e saiba mais sobre privacidade e os seus direitos">
+<!ENTITY lp.moreinfo "Para mais informação visite a nossa <a href='http://www.downthemall.net/howto/features/'>página de funcionalidades</a>.">
+<!ENTITY lp.gettingstarted "Como começar">
+<!ENTITY lp.toolbar "Botões da Barra de Ferramentas">
+<!ENTITY lp.privacy "Privacidade">
+<!ENTITY lp.yourrights "Os seus direitos">
+<!ENTITY lp.contact "Contacto">
+<!ENTITY lp.pleasenote "Por favor tome nota:">
+<!ENTITY lp.donate "Por favor considere uma contribuição">
+<!ENTITY lp.tut.firsttitle "O seu primeiro descarregamento">
+<!ENTITY lp.tut.fd1 "Transferir um ficheiro no dTa é bastante fácil mas também muito poderoso. Se questionado para abrir ou guardar um ficheiro pode usar o item DownThemAll! Isto mostrará um diálogo onde pode escolher em que pasta quer guardar o ficheiro juntamente com mais algumas opções avançadas.">
+<!ENTITY lp.tut.selecttitle "Usando a janela de selecção">
+<!ENTITY lp.tut.selintro "O menu de contexto de uma página web oferece um novo item DownThemAll! Usando este item será mostrada a janela de selecção DownThemAll! que poderá facilmente usar para seleccionar uma ou mais ligações de uma página.">
+<!ENTITY lp.tut.seloptions "Na janela de selecção tem múltiplas maneiras de seleccionar quais os ficheiros que quer transferir:">
+<!ENTITY lp.tut.selopthand "Pode verificar as ligações que quer transferir à mão">
+<!ENTITY lp.tut.seloptfilters "Pode usar os filtros pré-concebidos ou os seus próprios, para por ex. transferir todas as imagens">
+<!ENTITY lp.tut.seloptfast "Adicionalmente pode escrever o seu próprio filtro na caixa Filtro Rápido, por exemplo <code>*.pdf,*.doc</code> ou até mesmo uma expressão regular">
+<!ENTITY lp.tut.seltypes "A janela de selecção contém dois separadores, para dois tipos diferentes de transferência:">
+<!ENTITY lp.tut.seltypelinks "O separador Ligações contém todas as ligações transferíveis encontradas na página">
+<!ENTITY lp.tut.seltypepics "E o separador Imagens e Media contém todas as imagens e outros media mostrados na página">
+<!ENTITY lp.tut.selgalleries "Imagens em tamanho real são muitas vezes apenas ligações de páginas de galerias, portanto vai encontra-las no separador Ligações">
+<!ENTITY lp.tut.seldone "Uma vez que seleccione os ficheiros para transferir carregue em Iniciar! ou Adicionar pausado">
+<!ENTITY lp.tut.batchestitle "Transferência em lotes">
+<!ENTITY lp.tut.batches1 "Muitos utilizadores querem transferir ficheiros em lote numerados sequencialmente. O DownThemAll! permite que especifique lotes muito facilmente como mostra o vídeo.">
+<!ENTITY lp.tut.batches2 "A sintaxe básica é: <code>[início:fim]</code> ou <code>[início:fim:passo]</code> onde ambos <code>início</code> e <code>fim</code> podem ser ambos um número ou um simples caractér. <code>passo</code> define a largura do passo e é simplesmente 1 se omitido.">
+<!ENTITY lp.tut.batches3 "Por exemplo se quiser transferir imagens de 001 a 100 pode modificar o URL para: <code>http://example.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! UmClique">
+<!ENTITY lp.tut.oneclick1 "Uma vez feita a sua transferência inicial outro item ficará disponível: O DownThemAll! UmClique. Pode usar isto para transferir directamente usando as definições anteriores, saltando o diálogo adicionar e/ou seleccionar.">
+<!ENTITY lp.tut.oneclick2 "Portanto o UmClique permite-lhe rapidamente ordenar muitas ligações.">
+<!ENTITY lp.tut.oneclickn "Depois de usar a funcionalidade Limpar Dados Privados no Firefox a funcionalidade UmClique não ficará disponível até que inicie uma transferência no DownThemAll! novamente.">
+<!ENTITY lp.tb.intro "O DownThemAll! oferece alguns botões para barra de ferramentas que lhe dão uma maneira conveniente para aceder às funcionalidades do DownThemAll!">
+<!ENTITY lp.tb.add.title "Adicionando e usando botões da barra de ferramentas">
+<!ENTITY lp.tb.add.p1 "O DownThemAll! tem quatro botões de barra de ferramentas para tornar mais fácil encontrar e ordenar as transferências">
+<!ENTITY lp.tb.add.dta "Botão DownThemAll!">
+<!ENTITY lp.tb.add.dtadesc "Abre a janela de Selecção DownThemAll! para o separador actual.">
+<!ENTITY lp.tb.add.tdta "Botão UmClique!">
+<!ENTITY lp.tb.add.tdtadesc "Transfere todos os itens da página actual de acordo com as últimas preferências e filtros usados.">
+<!ENTITY lp.tb.add.manager "Botão Gestor DownThemAll!">
+<!ENTITY lp.tb.add.managerdesc "Abre a janela do Gestor">
+<!ENTITY lp.tb.add.selector "Botão de Selecção DownThemAll!">
+<!ENTITY lp.tb.add.selectordesc "Adiciona items com clique-esquerdo neles.">
+<!ENTITY lp.tb.add.p2 "Os botões da barra de ferramentas podem ser adicionados via <code>Ver → Barra de Ferramentas → Personalizar</code>.">
+<!ENTITY lp.tb.dnd.title "Arrastar'e'Largar">
+<!ENTITY lp.tb.dnd.p1 "Pode arrastar'e'largar qualquer link ou imagem para o DownThemAll! ou botão Um CLique! para transferi-lo.">
+<!ENTITY lp.tb.dnd.p2 "A janela do Gestor também pode ser usada para largar itens para transferir.">
+<!ENTITY lp.tb.dnd.p3 "Também pode ordenar a sua lista de descarregamento com o arrastar'e'largar. Basta arrastar um item e larga-lo na posição desejada.">
+<!ENTITY lp.tb.selector.title "Usando o Selector DownThemAll!">
+<!ENTITY lp.tb.selector.p1 "Quando estiver a usar o Selector DownThemAll! pode enfileirar quaisquer descarregamentos clicando simplesmente nas ligações ou nas imagens.">
+<!ENTITY lp.tb.selector.p2 "Para activar o Selector clique no botão da barra de ferramentas, depois de terminar clique novamente no botão para o desactivar.">
+<!ENTITY lp.pr.title "Nota de Privacidade">
+<!ENTITY lp.pr.intro "O DownThemAll! protege a sua privacidade">
+<!ENTITY lp.pr.settings "Pode fazer com que o DownThemAll! remova todos as transferências terminadas, canceladas, e não terminadas da lista de transferências, alterando as definições em Preferências → painel Privacidade.">
+<!ENTITY lp.pr.diag "Pode activar mensagens de diagnóstico, que podem ser registadas na consola de erros e escritas no ficheiro dta_log.txt, em Preferências → painel de Privacidade. As mensagens de diagnóstico vão provavelmente conter informação sensível como URLs, caminho de ficheiros, nomes de ficheiros que está a transferir, ou até informação de cookies. Esta opção está DESACTIVADA por defeito para proteger a sua privacidade. Se submeter uma mensagem de diagnóstico, pode desejar censurar esta informação sensível. Jamais será publicado um registo de diagnóstico de forma automática.">
+<!ENTITY lp.pr.pbm "O DownThemAll! suporta o Modo de Navegação Privada do Firefox: Quando em modo de Navegação Privada, o DownThemAll! não guardará qualquer informação sobre ficheiros transferidos, pastas transferidas ou máscaras de re-nomeação usadas. Por favor note que outros dados - como filtros recentemente criados, ou, claro, as transferências actuais - serão na mesma escritos para o seu disco rígido.">
+<!ENTITY lp.pr.link "Esta advertência está sempre disponível a partir desta página (about:downthemall) e está adicionalmente ligada na janela das Preferências">
+<!ENTITY lp.yr.usagetitle "Uso e redistribuição">
+<!ENTITY lp.yr.usage "Os autores licenciam o DownThemAll! de modo a que possa livremente:">
+<!ENTITY lp.yr.usageuse "Use o DownThemAll!">
+<!ENTITY lp.yr.usagemod "Modifique o DownThemAll!">
+<!ENTITY lp.yr.usagedist "Redistribua o DownThemAll! com ou sem modificações">
+<!ENTITY lp.yr.usagemore "Veja as licenças para mais informação">
+<!ENTITY lp.languagetitle "Idioma">
+<!ENTITY lp.translation.by "tradução por">
+<!ENTITY lp.yr.licensetitle "Direitos de Cópia e Licença">
+<!ENTITY lp.yr.licensed "DownThemAll! está licenciado sob <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Veja o ficheiro GPL. Isto aplica-se a todo os ficheiros de código-fonte.">
+<!ENTITY lp.yr.morelicense "Ficheiros individuais poderá ter diferentes licenças. Veja o repositório de ficheiros correspondente a partir de <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Muitos ficheiros são tri-licenciados sob licença MPL 1.1/GPL 2.0/LGPL 2.1; Veja os ficheiros MPL, GPl, LGPL respectivamente.">
+<!ENTITY lp.yr.gplintro "Secções mais importantes do GPL 2.0, a não-garantia e danos, seguem:">
+<!ENTITY lp.yr.icons "Arte, ícones e botões">
+<!ENTITY lp.yr.iconsbased "são baseados no trabalho de Mike Matas, Jakub Steiner, Mark James e o projecto Tango">
+<!ENTITY lp.yr.artwork "A arte original é: Direito de Cópia © 2004-2010 por Stefano Verna, Federico Parodi e Nils Maier">
+<!ENTITY lp.yr.artworklicense "O trabalho artístico original é licenciado sob:">
+<!ENTITY lp.yr.logo "O logo DownThemAll! é: Direito de Cópia © 2004-2010 por Stefano Verna.">
+<!ENTITY lp.yr.logopermissions "O nome DownThemAll! e logo não podem ser usados sem permissão em nenhum trabalho derivativo, com excepção de notícias relativas aos créditos e licenças.">
+<!ENTITY lp.ct.bugstitle "Relatório de bugs/pedidos de funcionalidades">
+<!ENTITY lp.ct.bugs "Por favor reporte bug e pedidos de funcionalidade no nosso <a href='http://bugs.code.downthemall.net/'>bug tracker</a>.">
+<!ENTITY lp.ct.contactstitle "Contactos">
+<!ENTITY lp.ct.contactsfeed "Gostaríamos de receber a sua opinião, sugestões ou ofertas para ajuda.">
+<!ENTITY lp.ct.contacts "Por favor veja a nossa <a href='http://www.downthemall.net/main/contacts/'>página de contactos</a> online.">

@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2009 Nils Maier
+ * 
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+ 
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/richlistbox.css" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/toolbar.css" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/mirrors/style.css" type="text/css"?>
+
+
+<!DOCTYPE dialog [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/">
+	%globalDTD;
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
+	%commonDTD;
+	<!ENTITY % mirrorsDTD SYSTEM "chrome://dta/locale/mirrors.dtd">
+	%mirrorsDTD;
+]>
+<dialog title="&title;" id="DownThemAllMirrors" windowtype="DTA:mirrors" flex="1" persist="width height screenX screenY" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<script type="application/x-javascript" src="chrome://global/content/globalOverlay.js" />
+	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
+
+	<script type="text/javascript" src="mirrors.js" />
+
+	<stringbundleset id="bundles" xmlns="http://www.downthemall.net/properties#">
+		<stringbundle src="chrome://dta/locale/mirrors.properties" />
+	</stringbundleset>
+
+	<commandset>
+		<command id="cmdAdd" oncommand="addMirror()" />
+		<command id="cmdRemove" oncommand="removeMirrors()" />
+		<command id="cmdCheck" oncommand="checkMirrors()" />
+	</commandset>
+
+	<grid flex="1">
+		<columns>
+			<column flex="1" />
+			<column />
+		</columns>
+		<rows>
+			<row>
+				<hbox id="header">
+					<vbox pack="start">
+						<image id="mirrorLogo" />
+					</vbox>
+					<vbox flex="1">
+						<label value="&header;" />
+						<description flex="1">&byline1;
+						</description>
+						<description flex="1">&byline2; &byline3;
+						</description>
+					</vbox>
+				</hbox>
+				<hbox />
+			</row>
+			<row flex="1">
+				<richlistbox flex="1" id="mirrors" seltype="multiple" />
+				<vbox id="actions">
+					<toolbarbutton id="mirrorAdd" tooltiptext="&addmirror.tip;" command="cmdAdd" />
+					<toolbarbutton id="mirrorRemove" tooltiptext="&removemirror.tip;" command="cmdRemove" />
+					<separator class="groove" />
+					<toolbarbutton id="mirrorCheck" tooltiptext="&checkmirrors.tip;" command="cmdCheck" />
+				</vbox>
+			</row>
+		</rows>
+	</grid>
+</dialog>

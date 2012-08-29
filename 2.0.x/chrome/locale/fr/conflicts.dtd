@@ -1,0 +1,7 @@
+<!ENTITY title.value "Conflit de nom de fichier !">
+<!ENTITY text.value "Se souvenir de ce paramétrage :">
+<!ENTITY file.label "Uniquement pour ce fichier">
+<!ENTITY session.label "Uniquement pour cette session">
+<!ENTITY always.label "À partir de maintenant">
+<!ENTITY overwrite.label "Remplacer le fichier existant">
+<!ENTITY skip.label "Passer/Annuler">
