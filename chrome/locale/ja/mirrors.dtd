@@ -1,10 +1,10 @@
-<!ENTITY title "DownThemAll! ミラー管理">
-<!ENTITY header "ミラー管理">
-<!ENTITY byline1 "複数の場所からファイルをダウンロードし、ダウンロードが終了するとそれらのファイルを結合します。">
-<!ENTITY byline2 "同じファイルのダウンロード元の追加や削除を自由に行ってください。">
-<!ENTITY byline3 "異なるファイルのダウンロード元を指定すると、エラーが発生します。">
-<!ENTITY addmirror.tip "ダウンロードミラーを追加します">
-<!ENTITY removemirror.tip "選択されたダウンロードミラーを削除します">
-<!ENTITY checkmirrors.tip "すべてのダウンロードミラーを選択します">
-<!ENTITY mirrorurl "URL:">
-<!ENTITY preference "重要度:">
+<!ENTITY title "ミラーサーバーの管理 - DownThemAll!">
+<!ENTITY header "ミラーサーバーの管理">
+<!ENTITY byline1 "同時に複数の場所からファイルをダウンロードした後ひとつのファイルに結合します。">
+<!ENTITY byline2 "同じファイルのアドレスを追加や削除を行うことでミラーサーバーからダウンロードできます。">
+<!ENTITY byline3 "異なるファイルのアドレスを指定するとダウンロードエラーが発生します">
+<!ENTITY addmirror.tip "ミラーサーバーを追加します">
+<!ENTITY removemirror.tip "選択されたミラーサーバーを削除します">
+<!ENTITY checkmirrors.tip "すべてのミラーサーバーを選択">
+<!ENTITY mirrorurl "アドレス:">
+<!ENTITY preference "優先順位:">
