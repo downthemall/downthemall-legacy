@@ -78,10 +78,8 @@ function load() {
 	}
 	addEventListener('dialogaccept', accept, true);
 
-	with (mirrors) {
-		addEventListener('select', select, true);
-		addEventListener('MirrorChanging', changingMirror, true);
-	}
+	mirrors.addEventListener('select', select, true);
+	mirrors.addEventListener('MirrorChanging', changingMirror, true);
 	select();
 }
 
@@ -326,7 +324,7 @@ function checkMirrors() {
 }
 
 addEventListener('load', load, true);
-unloadWindow(window, function() {
+unloadWindow(window, function() {
 	log(LOG_DEBUG, "closed a mirror window");
 	close();
 });
