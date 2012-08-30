@@ -209,7 +209,6 @@ exports.mapFilterInSitu = function mapFilterInSitu(arr, mapStep, filterStep, tp)
 
 /**
  * Sorts an array with natural sort order.
- * Unlike Array.sort the array is NOT sorted in-situ.
  * @param arr (array) Array to sort
  * @param mapper (function) Optional. Mapping function mapping array items to search keys.
  * @return (array) Sorted array
@@ -218,70 +217,129 @@ function naturalSort(arr, mapper) {
 	if (typeof mapper != 'function' && !(mapper instanceof Function)) {
 		mapper = naturalSort.identity;
 	}
-	exports.mapInSitu(
-		arr,
-		function(b) {
-			let e = mapper(b);
-			if (e == null || e == undefined || typeof e == 'number') {
-				return {elem: b, chunks: [e]};
-			}
-			let a = e.toString()
-				.replace(/\b(?:a|one|the)\b/g, ' ')
-				.replace(/^\s+|\s+$/g, '')
-				.replace(/\s+/g, ' ')
-				.toLowerCase();
-			let len = a.length;
-			if (!len) {
-				return {elem: b, chunks: [a]};
-			}
-			let rv = [];
-			let last = naturalSort.isDigit(a, 0);
-			let cur = last;
-			start = 0;
-
-			for (let i = 0; i < len; ++i) {
-				cur = naturalSort.isDigit(a, i);
-				if (cur != last) {
-					rv.push(cur ? a.substr(start, i - start) : Number(a.substr(start, i - start)));
-					start = i;
-					last = cur;
-				}
-			}
-			if (!rv.length || len - start != 1) {
-				rv.push(cur ? Number(a.substr(start)) : a.substr(start));
-			}
-			return {elem: b, chunks: rv};
-		}
-	);
-	arr.sort(
-		function (a, b) {
-			let ai, bi;
-			[a, b] = [a.chunks, b.chunks];
-			let m = Math.max(a.length, b.length);
-			for (let i = 0; i < m; ++i) {
-				let ai = a[i], bi = b[i];
-				let rv = naturalSort.compare(typeof ai, typeof bi);
-				if (rv) {
-					return rv;
-				}
-				rv = naturalSort.compare(ai, bi);
-				if (rv) {
-					return rv;
-				}
-			}
-			return a.length - b.length;
-		}
-	);
-	return exports.mapInSitu(arr, function(a) a.elem);
+	exports.mapInSitu(arr, naturalSort.tokenize.bind(null, mapper));
+	arr.sort(naturalSort.compare);
+	return exports.mapInSitu(arr, naturalSort.unmap);
 }
 naturalSort.identity = function(e) e;
-naturalSort.isDigit = function(a, i) {
-	i = a[i];
-	return i >= '0' && i <= '9';
+naturalSort.strtol = function strtol(str, rv) {
+	str = str.trimLeft();
+	let base = 10;
+	let negative = false;
+	let parsed = "";
+	let c0 = str[0];
+	if (c0 == "-") {
+		parsed = "-";
+		negative = true;
+		str = str.substr(1);
+	}
+	else if (c0 == "+") {
+		parsed = "+";
+		str = str.substr(1);
+	}
+	else if (c0 == "0" && str[1] == "x") {
+		parsed = "0x";
+		base = 16;
+		str = str.substr(2);
+	}
+	const chars = exports.mapInSitu(
+		str.toLowerCase().split(""),
+		function(e) e.charCodeAt(0)
+		);
+	for (let [idx,c] in Iterator(chars)) {
+		if ((c >= 48 && c <= 57) || (base == 16 && c >= 97 && c <= 100)) {
+			continue;
+		}
+		if (idx == 0) {
+			rv.num = NaN;
+			rv.parsed = "";
+			rv.remainder = str;
+			return false;
+		}
+		rv.parsed = parsed + str.substr(0, idx);
+		rv.num = parseInt(rv.parsed, base);
+		if (negative) {
+			rv.num = -rv.num;
+		}
+		rv.remainder = str.substr(idx);
+		return true;
+	}
+	rv.parsed = parsed + str;
+	rv.num = parseInt(str, base);
+	if (negative) {
+		rv.num = -rv.num;
+	}
+	rv.remainder = "";
+	return true;
 };
-naturalSort.compare = function(a, b) {
+naturalSort.tokenize = function tokenize(mapper, elem) {
+	let str = (mapper(elem) || "")
+		.toString()
+		.replace(/\b(?:a|one|the)\b/g, " ")
+		.replace(/\s+/g, " ")
+		.toLowerCase()
+		.trim();
+	if (!str) {
+		return {elem: elem, chunks: [{l: 0, e: ""}]};
+	}
+	let rv = [];
+	let res = Object.create(null);
+	let plain = "";
+	while (str) {
+		if (naturalSort.strtol(str, res)) {
+			plain = plain.trim();
+			if (plain) {
+				rv.push({l:plain.length, e:plain});
+				plain = "";
+			}
+			rv.push({l: res.parsed.length, e:res.num});
+			str = res.remainder;
+		}
+		if (str) {
+			plain += str[0];
+			str = str.substr(1);
+		}
+	}
+	plain = plain.trim();
+	if (plain) {
+		rv.push({l:plain.length, e:plain});
+	}
+	return {elem: elem, chunks: rv};
+};
+naturalSort.compareElement = function(a, b) {
 	return a === b ? 0 : (a < b ? -1 : 1);
-};
+}
+naturalSort.compare = function(a, b) {
+	let ai, bi;
+	[a, b] = [a.chunks, b.chunks];
+	let m = Math.min(a.length, b.length);
+	for (let i = 0; i < m; ++i) {
+		ai = a[i];
+		bi = b[i];
+		try {
+			let rv = naturalSort.compareElement(typeof ai.e, typeof bi.e);
+			if (rv) {
+				return rv;
+			}
+
+			if ((rv = naturalSort.compareElement(ai.e, bi.e))
+					|| (rv = naturalSort.compareElement(ai.l, bi.l))) {
+				return rv;
+			}
+		}
+		catch (ex) {
+			log(LOG_ERROR, "FAILED!", ex);
+			log(LOG_ERROR, "m " + m + " i " + i);
+			log(LOG_ERROR, a.toSource());
+			log(LOG_ERROR, "ai " + ai);
+			log(LOG_ERROR, b.toSource());
+			log(LOG_ERROR, "bi " + bi);
+			throw ex;
+		}
+	}
+	return naturalSort.compareElement(a.length, b.length);
+}
+naturalSort.unmap = function(e) e.elem;
 exports.naturalSort = naturalSort;
 
 
