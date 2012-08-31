@@ -28,9 +28,6 @@
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/info.js" />
 	<script type="application/javascript" src="chrome://dta/content/dta/manager/utils.js" />
 
-	<script src="chrome://global/content/nsDragAndDrop.js" />
-	<script src="chrome://global/content/nsTransferable.js" />
-
 	<stringbundleset xmlns="http://www.downthemall.net/properties#">
 		<stringbundle src="chrome://dta/locale/common.properties" />
 	</stringbundleset>
