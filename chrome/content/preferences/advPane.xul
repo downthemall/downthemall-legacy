@@ -124,13 +124,13 @@
 								<row>
 									<vbox>
 										<label value="&advancedpane.permissions.group;" />
-										<checkbox label="&advancedpane.permissions.read;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(0040);" onsynctopreference="return Advanced.setPerm(0040);" />
-										<checkbox label="&advancedpane.permissions.write;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(0020);" onsynctopreference="return Advanced.setPerm(0020);" />
+										<checkbox label="&advancedpane.permissions.read;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(32);" onsynctopreference="return Advanced.setPerm(32);" />
+										<checkbox label="&advancedpane.permissions.write;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(16);" onsynctopreference="return Advanced.setPerm(16);" />
 									</vbox>
 									<vbox>
 										<label value="&advancedpane.permissions.everybody;" />
-										<checkbox label="&advancedpane.permissions.read;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(0004);" onsynctopreference="return Advanced.setPerm(0004);" />
-										<checkbox label="&advancedpane.permissions.write;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(0002);" onsynctopreference="return Advanced.setPerm(0002);" />
+										<checkbox label="&advancedpane.permissions.read;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(4);" onsynctopreference="return Advanced.setPerm(4);" />
+										<checkbox label="&advancedpane.permissions.write;" preference="dtapermissions" onsyncfrompreference="return Advanced.getPerm(2);" onsynctopreference="return Advanced.setPerm(2);" />
 									</vbox>
 								</row>
 							</rows>

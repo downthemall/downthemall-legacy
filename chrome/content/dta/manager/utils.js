@@ -139,14 +139,14 @@ const Prefs = {
 		}
 		
 		let perms = Prefs.permissions;
-		if (perms & 0600) {
-			perms |= 0100;
+		if (perms & 384) {
+			perms |= 64;
 		}
-		if (perms & 0060) {
-			perms |= 0010;
+		if (perms & 48) {
+			perms |= 8;
 		}				
-		if (perms & 0006) {
-			perms |= 0001;
+		if (perms & 6) {
+			perms |= 1;
 		}
 		this.dirPermissions = perms;		
 
