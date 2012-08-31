@@ -1407,38 +1407,41 @@ exports.load = function load(window, outerEvent) {
 		}
 	};
 
-	function DropProcessor(func, multiple) {
-		this.func = func;
-		if (multiple) {
-			this.canHandleMultipleItems = true;
-		}
-	};
-	DropProcessor.prototype = {
-		getSupportedFlavours: function() {
-			if (!this._flavors) {
-				this._flavors = new window.FlavourSet();
-				this._flavors.appendFlavour('text/x-moz-url');
-			}
-			return this._flavors;
-		},
-		onDragOver: function() {},
-		onDrop: function (evt, dropdata, session) {
-			if (!dropdata) {
-				return;
-			}
+	function setupDrop(elem, func) {
+		function ondragover(event) {
 			try {
-				let url = window.transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
+				if (event.dataTransfer.types.contains("text/x-moz-url")) {
+					event.dataTransfer.dropEffect = "link";
+					event.preventDefault();
+				}
+			}
+			catch (ex) {
+				log(LOG_ERROR, "failed to process ondragover", ex);
+			}
+		}
+		function ondrop(event) {
+			try {
+				let url = event.dataTransfer.getData("URL");
+				if (!url) {
+					return;
+				}
 				url = Services.io.newURI(url, null, null);
 				url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
 				let doc = document.commandDispatcher.focusedWindow.document;
 				let ref = doc ? DTA.getRef(doc) : null;
-				this.func(url, ref);
+				func(url, ref);
 			}
 			catch (ex) {
-				log(LOG_ERROR, "Failed to process drop", ex);
+				log(LOG_ERROR, "failed to process ondrop", ex);
 			}
 		}
-	};
+		elem.addEventListener("dragover", ondragover, true);
+		elem.addEventListener("drop", ondrop, true);
+		unloadWindow(window, function() {
+			elem.removeEventListener("dragover", ondragover, true);
+			elem.removeEventListener("drop", ondrop, true);
+		})
+	}
 
 	function $t() {
 		let rv = [];
@@ -1583,9 +1586,6 @@ exports.load = function load(window, outerEvent) {
 					break;
 					}
 			}
-			function dta_button_drag(event) nsDragAndDrop.dragOver(event, DropDTA);
-			function dta_button_drop(event) nsDragAndDrop.drop(event, DropDTA);
-
 
 			function dta_turbo_button_command(event) {
 				const target = event.target;
@@ -1604,35 +1604,35 @@ exports.load = function load(window, outerEvent) {
 					break;
 				}
 			}
-			function dta_turbo_button_drag(event) nsDragAndDrop.dragOver(event, DropTDTA);
-			function dta_turbo_button_drop(event) nsDragAndDrop.drop(event, DropTDTA);
 
 			function dta_turboselect_button_command(event) { toggleOneClick(event); }
 			function dta_manager_button_command() DTA.openManager(window);
-
-			let DropTDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, true, url, ref); });
-			let DropDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, false, url, ref); });
 
 			let dta_button = $t('dta-button');
 			dta_button.addEventListener('command', dta_button_command, true);
 			unloadWindow(window, function() dta_button.removeEventListener('command', dta_button_command, true));
 			dta_button.addEventListener('popupshowing', onDTAShowing, true);
 			unloadWindow(window, function() dta_button.removeEventListener('popupshowing', onDTAShowing, true));
-			dta_button.addEventListener('dragover', dta_button_drag, true);
-			unloadWindow(window, function() dta_button.removeEventListener('dragover', dta_button_drag, true));
-			dta_button.addEventListener('dragdrop', dta_button_drop, true);
-			unloadWindow(window, function() dta_button.removeEventListener('dragdrop', dta_button_drop, true));
 
+			setupDrop(dta_button, function(url, ref) {
+				DTA.saveSingleLink(window, false, url, ref);
+			});
 
 			let dta_turbo_button = $t('dta-turbo-button');
 			dta_turbo_button.addEventListener('command', dta_turbo_button_command, true);
 			unloadWindow(window, function() dta_turbo_button.removeEventListener('command', dta_turbo_button_command, true));
 			dta_turbo_button.addEventListener('popupshowing', onDTAShowing, true);
 			unloadWindow(window, function() dta_turbo_button.removeEventListener('popupshowing', onDTAShowing, true));
-			dta_turbo_button.addEventListener('dragover', dta_turbo_button_drag, true);
-			unloadWindow(window, function() dta_turbo_button.removeEventListener('dragover', dta_turbo_button_drag, true));
-			dta_turbo_button.addEventListener('dragdrop', dta_turbo_button_drop, true);
-			unloadWindow(window, function() dta_turbo_button.removeEventListener('dragdrop', dta_turbo_button_drop, true));
+
+			setupDrop(dta_turbo_button, function(url, ref) {
+				try {
+					DTA.saveSingleLink(window, true, url, ref);
+				}
+				catch (ex) {
+					log(LOG_ERROR, "failed to turbo drop, retrying normal", ex);
+					DTA.saveSingleLink(window, false, url, ref);
+				}
+			});
 
 			let dta_turboselect_button = $t('dta-turboselect-button');
 			dta_turboselect_button.addEventListener('command', dta_turboselect_button_command, true);
