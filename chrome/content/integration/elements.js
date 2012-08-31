@@ -83,7 +83,7 @@
 	getString.__defineGetter__('__str', function() {
 		let _str = Cc['@mozilla.org/intl/stringbundle;1']
 			.getService(Ci.nsIStringBundleService)
-		  .createBundle('chrome://dta/locale/menu.properties');
+			.createBundle('chrome://dta/locale/menu.properties');
 		delete getString.__str;
 		return (getString.__str = _str);
 	});
@@ -410,12 +410,12 @@
 					}
 					yield true;
 					
-				  let cdoc = aWin.document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
-				  copy = cdoc.adoptNode(copy);
-				  cdoc.documentElement.appendChild(cdoc.adoptNode(copy));
-				  delete copy;
-				  yield true;
-				  
+					let cdoc = aWin.document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
+					copy = cdoc.adoptNode(copy);
+					cdoc.documentElement.appendChild(cdoc.adoptNode(copy));
+					delete copy;
+					yield true;
+					
 					let set = cdoc.evaluate(
 						'//*[not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
 						copy.ownerDocument,
@@ -1352,46 +1352,40 @@
 		}
 	};
 
-	function DropProcessor(func, multiple) {
-		this.func = func;
-		if (multiple) {
-			this.canHandleMultipleItems = true;
-		}
-	};
-	DropProcessor.prototype = {
-		getSupportedFlavours: function() {
-			if (!this._flavors) {
-				this._flavors = new FlavourSet();
-				this._flavors.appendFlavour('text/x-moz-url');
-			}	
-			return this._flavors;
-		},
-		onDragOver: function() {},
-		onDrop: function (evt, dropdata, session) {
-			if (!dropdata) {
-				return;
-			}
-			let url = null;
+	function setupDrop(elem, func) {
+		function ondragover(event) {
 			try {
-				url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
+				if (event.dataTransfer.types.contains("text/x-moz-url")) {
+					event.dataTransfer.dropEffect = "link";
+					event.preventDefault();
+				}
+			}
+			catch (ex) {
+				debug.log("failed to process ondragover", ex);
+			}
+		}
+		function ondrop(event) {
+			try {
+				let url = event.dataTransfer.getData("URL");
+				if (!url) {
+					return;
+				}
 				if (!DTA.isLinkOpenable(url)) {
 					throw new Components.Exception("Link cannot be opened!");
 				}
 				url = DTA.IOService.newURI(url, null, null);
+				url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
+				let doc = document.commandDispatcher.focusedWindow.document;
+				let ref = doc ? DTA.getRef(doc) : null;
+				func(url, ref);
 			}
 			catch (ex) {
-				DTA.Debug.log("Failed to process drop", ex);
-				return;
-			}
-			let doc = document.commandDispatcher.focusedWindow.document;
-			let ref = doc ? DTA.getRef(doc) : null;		
-			
-			if (url) {
-				url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
-				this.func(url, ref);			
+				debug.log("failed to process ondrop", ex);
 			}
 		}
-	};
+		elem.addEventListener("dragover", ondragover, true);
+		elem.addEventListener("drop", ondrop, true);
+	}
 
 	addEventListener('load', function() {
 		removeEventListener('load', arguments.callee, true);	
@@ -1518,9 +1512,6 @@
 		}
 		
 		try {
-			let DropTDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, true, url, ref); });
-			let DropDTA = new DropProcessor(function(url, ref) { DTA.saveSingleLink(window, false, url, ref); });	
-			
 			let b = $t('dta-button');
 			b.addEventListener('command', function(event) {
 				switch (event.target.id) {
@@ -1538,8 +1529,9 @@
 					break;
 					}
 			}, true);
-			b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropDTA), true);
-			b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DropDTA), true);
+			setupDrop(b, function(url, ref) {
+				DTA.saveSingleLink(window, false, url, ref);
+			});
 			
 			b = $t('dta-turbo-button');
 			b.addEventListener('command', function(event) {
@@ -1556,9 +1548,16 @@
 					break;
 				}
 			}, true);
-			b.addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropTDTA), true);
-			b.addEventListener('dragdrop', function(event) nsDragAndDrop.drop(event, DropTDTA), true);
-			
+			setupDrop(b, function(url, ref) {
+				try {
+					DTA.saveSingleLink(window, true, url, ref);
+				}
+				catch (ex) {
+					debug.log("failed to turbo drop, retrying normal", ex);
+					DTA.saveSingleLink(window, false, url, ref);
+				}
+			});
+
 			$t('dta-turboselect-button').addEventListener('command', function(event) { toggleOneClick(event); }, true);
 			$t('dta-manager-button').addEventListener('command', function() DTA.openManager(window), true);
 		}

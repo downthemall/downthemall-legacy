@@ -54,12 +54,11 @@ const Tree = {
 		
 		let dtree = $('downloadList');
 		dtree.addEventListener('mousemove', function(event) tp.hovering(event), false);
-		dtree.addEventListener('draggesture', function(event) nsDragAndDrop.startDrag(event, tp), false);
+		dtree.addEventListener('dragstart', function(event) tp.onDragStart(event), false);
 		
 		$('popup').addEventListener('popupshowing', function(event) tp.onPopupShowing(event), true);
 
 		
-		ServiceGetter(this, "_ds", "@mozilla.org/widget/dragservice;1", "nsIDragService");
 		ServiceGetter(this, "_ww", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 		ServiceGetter(this, "_as", "@mozilla.org/atom-service;1", "nsIAtomService");
 		
@@ -228,30 +227,30 @@ const Tree = {
 	selectionChanged: function T_selectionChanged() {
 		this.refreshTools();
 	},
-	
-	onDragStart: function T_onDragStart(evt, transferData, dragAction) {
-		for (qi in this.selected) {
-			let item = new TransferData();
+
+	onDragStart: function T_onDragStart(event) {
+		let transfer = event.dataTransfer;
+		transfer.effectAllowed = "copymove";
+		for (let qi in this.selected) {
 			try {
-				item.addDataForFlavour('application/x-dta-position', qi.position);
-				transferData.data = item;
+				transfer.setData("application/x-dta-position", qi.position);
 			}
 			catch (ex) {
-				Debug.log("dnd failure", ex);	
+				Debug.log("dnd failure", ex);
 			}
-			return;			
+			return;
 		}
 	},
-	onDragOver: function T_onDragOver(aEvent, aFlavor, aDragSession) {
-		this.canDrop(aDragSession);
+	canDrop: function T_canDrop(index, orient, dt) {
+		let rv = dt.types.contains("application/x-dta-position");
+		if (rv) {
+			dt.dropEffect = "move";
+		}
+		return rv;
 	},
-	canDrop: function T_canDrop() {
-		let ds = this._ds.getCurrentSession();
-		return ds && ds.isDataFlavorSupported('application/x-dta-position');
-	},
-	drop: function T_drop(row, orientation) {
+	drop: function T_drop(row, orientation, dt) {
 		Debug.logString("drop");
-		if (!this.canDrop()) {
+		if (!this.canDrop(row, orientation, dt)) {
 			return;
 		}
 		try {

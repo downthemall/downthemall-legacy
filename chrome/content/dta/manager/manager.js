@@ -163,38 +163,37 @@ const Dialog = {
 			addEventListener('unload', function() Dialog.unload(), false);
 			addEventListener('close', function(evt) Dialog.onclose(evt), false);
 
-			DropProcessor = {
-				getSupportedFlavours: function() {
-					if (!this._flavors) {
-						this._flavors = new FlavourSet();
-						this._flavors.appendFlavour('text/x-moz-url');
+			addEventListener('dragover', function(event) {
+				try {
+					if (event.dataTransfer.types.contains("text/x-moz-url")) {
+						event.dataTransfer.dropEffect = "link";
+						event.preventDefault();
 					}
-					return this._flavors;
-				},
-				onDragOver: function() {},
-				onDrop: function (evt, dropdata, session) {
-					if (!dropdata) {
-						return;
-					}
-					let url = null;
-					try {
-						url = transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType);
-						if (!DTA.isLinkOpenable(url)) {
-							throw new Components.Exception("Link cannot be opened!");
-						}
-						url = DTA.IOService.newURI(url, null, null);
-					}
-					catch (ex) {
-						DTA.Debug.log("Failed to process drop", ex);
-						return;
-					}
-					url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
-					DTA.saveSingleLink(window, false, url);
 				}
-			};
-
-			addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropProcessor), true);
-			addEventListener('drop', function(event) nsDragAndDrop.drop(event, DropProcessor), true);
+				catch (ex) {
+					Debug.log("failed to process ondragover", ex);
+				}
+			}, true);
+			addEventListener('drop', function(event) {
+				try {
+					let url = event.dataTransfer.getData("URL");
+					if (!url) {
+						return;
+					}
+					if (!DTA.isLinkOpenable(url)) {
+						throw new Components.Exception("Link cannot be opened!");
+					}
+					url = DTA.IOService.newURI(url, null, null);
+					DTA.saveSingleLink(
+						window,
+						false,
+						new DTA.URL(DTA.getLinkPrintMetalink(url) || url)
+						);
+				}
+				catch (ex) {
+					Debug.log("failed to process ondrop", ex);
+				}
+			}, true);
 
 			$('tooldonate').addEventListener('click', function(evt) { if (evt.button == 0) Dialog.openDonate() }, false);
 		})();
