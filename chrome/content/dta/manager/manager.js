@@ -175,39 +175,34 @@ const Dialog = {
 			addEventListener('unload', function() Dialog.unload(), false);
 			addEventListener('close', function(evt) Dialog.onclose(evt), false);
 
-			window.DropProcessor = {
-				getSupportedFlavours: function() {
-					if (!this._flavors) {
-						this._flavors = new FlavourSet();
-						this._flavors.appendFlavour('text/x-moz-url');
-					}
-					return this._flavors;
-				},
-				onDragOver: function() {},
-				onDrop: function (evt, dropdata, session) {
-					if (!dropdata) {
-						return;
-					}
-					try {
-						let url = Services.io.newURI(
-							transferUtils.retrieveURLFromData(dropdata.data, dropdata.flavour.contentType),
-							null,
-							null
-							);
-						DTA.saveSingleLink(
-							window,
-							false,
-							new DTA.URL(DTA.getLinkPrintMetalink(url) || url)
-							);
-					}
-					catch (ex) {
-						log(LOG_ERROR, "Failed to process drop", ex);
+			addEventListener('dragover', function(event) {
+				try {
+					if (event.dataTransfer.types.contains("text/x-moz-url")) {
+						event.dataTransfer.dropEffect = "link";
+						event.preventDefault();
 					}
 				}
-			};
-
-			addEventListener('dragover', function(event) nsDragAndDrop.dragOver(event, DropProcessor), true);
-			addEventListener('drop', function(event) nsDragAndDrop.drop(event, DropProcessor), true);
+				catch (ex) {
+					log(LOG_ERROR, "failed to process ondragover", ex);
+				}
+			}, true);
+			addEventListener('drop', function(event) {
+				try {
+					let url = event.dataTransfer.getData("URL");
+					if (!url) {
+						return;
+					}
+					url = Services.io.newURI(url, null, null);
+					DTA.saveSingleLink(
+						window,
+						false,
+						new DTA.URL(DTA.getLinkPrintMetalink(url) || url)
+						);
+				}
+				catch (ex) {
+					log(LOG_ERROR, "failed to process ondrop", ex);
+				}
+			}, true);
 
 			$('tooldonate').addEventListener('click', function(evt) { if (evt.button == 0) Dialog.openDonate() }, false);
 		})();

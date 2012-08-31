@@ -585,16 +585,16 @@ const Tree = {
 			return;
 		}
 	},
-	onDragOver: function T_onDragOver(aEvent, aFlavor, aDragSession) {
-		this.canDrop(aDragSession);
+	canDrop: function T_canDrop(index, orient, dt) {
+		let rv = dt.types.contains("application/x-dta-position");
+		if (rv) {
+			dt.dropEffect = "move";
+		}
+		return rv;
 	},
-	canDrop: function T_canDrop() {
-		let ds = Services.drags.getCurrentSession();
-		return ds && ds.isDataFlavorSupported('application/x-dta-position');
-	},
-	drop: function T_drop(row, orientation) {
+	drop: function T_drop(row, orient, dt) {
 		log(LOG_DEBUG, "drop");
-		if (!this.canDrop()) {
+		if (!this.canDrop(row, orient, dt)) {
 			return;
 		}
 		try {
@@ -602,7 +602,7 @@ const Tree = {
 			let downloads;
 			try {
 				// means insert_after, so we need to adjust the row
-				if (orientation == 1) {
+				if (orient == 1) {
 					++row;
 				}
 				// translate row from filtered list to full list

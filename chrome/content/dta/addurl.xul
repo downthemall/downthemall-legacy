@@ -43,9 +43,6 @@
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js"/>
 	<script type="application/javascript" src="chrome://dta/content/dta/addurl.js"/>
 
-	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
-	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/>
-
 	<stringbundleset xmlns="http://www.downthemall.net/properties#">
 		<stringbundle src="chrome://dta/locale/addurl.properties"/>
 		<stringbundle src="chrome://dta/locale/common.properties"/>
