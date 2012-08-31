@@ -96,7 +96,6 @@ LRUMap.prototype = {
 	let dlsg = XPCOMUtils.defineLazyServiceGetter.bind(XPCOMUtils, Services);
 	dlsg("catman", "@mozilla.org/categorymanager;1", "nsICategoryManager");
 	dlsg("clipbrd", "@mozilla.org/widget/clipboard;1", "nsIClipboard");
-	dlsg("drags", "@mozilla.org/widget/dragservice;1", "nsIDragService");
 	dlsg("eps", "@mozilla.org/uriloader/external-protocol-service;1", "nsIExternalProtocolService");
 	dlsg("fixups", "@mozilla.org/docshell/urifixup;1", "nsIURIFixup");
 	dlsg("favicons", "@mozilla.org/browser/favicon-service;1", "nsIFaviconService");
