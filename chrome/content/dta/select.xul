@@ -34,9 +34,6 @@
 	style="margin: 0px;"
 >
 	<script type="application/x-javascript" src="chrome://global/content/globalOverlay.js"/>
-	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
-	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js"/>
-
 	<script type="text/javascript" src="chrome://dta/content/common/internalFunctions.js" />
 	<script type="text/javascript" src="chrome://dta/content/dta/select.js" />
 
@@ -179,7 +176,7 @@
 		</hbox>
 	</vbox>
 
- 	<hbox align="baseline" pack="end" style="margin: 2px 7px 4px 7px" >
+	 <hbox align="baseline" pack="end" style="margin: 2px 7px 4px 7px" >
 		<button accesskey="&start.key;" label="&start.label;" id="startbutton" command="cmdStart" default="true"/>
 		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" command="cmdQueue" />
 		<button id="cancelbutton" command="cmdClose" />

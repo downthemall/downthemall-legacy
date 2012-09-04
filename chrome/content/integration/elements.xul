@@ -40,9 +40,6 @@
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
 <overlay id="DTAUIElements" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js" />
-	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js" />
-
 	<script type="application/x-javascript" src="chrome://dta/content/integration/elements.js" />
 
 	<!-- Firefox/Seamonkey -->
