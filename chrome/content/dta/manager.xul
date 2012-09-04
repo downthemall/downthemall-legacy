@@ -24,8 +24,6 @@
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" windowtype="DTA:Manager" title="DownThemAll!" id="DownThemAll" class="downlinks" flex="1" persist="width height screenX screenY sizemode dtaAutofitted">
 
 	<script type="application/x-javascript" src="chrome://global/content/globalOverlay.js" />
-	<script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js" />
-	<script type="application/x-javascript" src="chrome://global/content/nsTransferable.js" />
 	<script type="application/x-javascript" src="chrome://browser/content/utilityOverlay.js" />
 
 	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
