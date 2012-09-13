@@ -2836,7 +2836,7 @@ const startDownloads = (function() {
 					qi.status = TextCache_QUEUED;
 				}
 				else {
-					qi._setStateInternal(QUEUED);
+					qi._setStateInternal(PAUSED);
 					qi.status = TextCache_PAUSED;
 				}
 				qi.position = Tree.add(qi);
