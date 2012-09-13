@@ -321,19 +321,16 @@ Chunk.prototype = {
 		this.parent.chunkOpened(this);
 	},
 	close: function CH_close() {
+		log(LOG_DEBUG, this + ": chunk closed");
 		this.running = false;
 		if (this._hasCurrentStream) {
 			this._shipCurrentStream();
 		}
-		if (!this._copiers.length) {
-			this._finish();
-		}
+		this._shipEOFStream();
 	},
 	_finish: function CH__finish() {
 		let notifyOwner = false;
 		if (this._outStream) {
-			// Close will flush the buffered data
-			this._outStream.close();
 			delete this._outStream;
 			notifyOwner = true;
 		}
@@ -371,21 +368,24 @@ Chunk.prototype = {
 			}
 		}
 
+		aContext.QueryInterface(Ci.nsISupportsPRUint32);
+		let bytes = aContext.data;
 		if (!this._canceled) {
 			if (!Components.isSuccessCode(aStatusCode)) {
 				log(LOG_ERROR, "Failed to asyncwrite", aStatusCode);
 				this.download.writeFailed();
 				return;
 			}
-			if (aContext instanceof Ci.nsISupportsPRUint32) {
-				this._buffered -= aContext.data;
-				this.safeBytes += aContext.data;
+			if (bytes > 0) {
+				log(LOG_DEBUG,  ": shipped " + bytes + " bytes");
+				this._buffered -= bytes;
+				this.safeBytes += bytes;
 			}
 		}
-		if (this.running || this._copiers.length) {
-			return;
+		if (bytes == 0) {
+			log(LOG_DEBUG, "got EOF stream");
+			this._finish();
 		}
-		this._finish();
 	},
 	rollback: function CH_rollback() {
 		if (!this._sessionBytes || this._sessionBytes > this._written) {
@@ -466,7 +466,7 @@ Chunk.prototype = {
 				}
 			}
 			if (bytes < 0) {
-				throw new Error("bytes negative");
+				throw new Error("bytes negative: " + bytes + " " + this.remainder + " " + aCount);
 			}
 
 			// we're using nsIFileOutputStream
@@ -556,6 +556,31 @@ Chunk.prototype = {
 			this._buffered -= bytes;
 			throw ex;
 		}
+	},
+	_shipEOFStream: function() {
+		// hacky way to close the stream off the main thread
+		let is = new Instances.StringInputStream("", 0);
+		let copier = new Instances.AsyncStreamCopier(
+			is,
+			this._outStream,
+			_thread,
+			true, // source buffered
+			false, // sink buffered
+			0,
+			true, // close source
+			true // close sink
+			);
+		let context = new Instances.SupportsUint32();
+		context.data = 0;
+		try {
+			this._copiers.push(copier);
+			copier.asyncCopy(this, context);
+		}
+		catch (ex) {
+			this._copiers.pop();
+			throw ex;
+		}
+		log(LOG_DEBUG, "shipped EOF stream");
 	},
 	_wnd: 2048,
 	observe: function() {
