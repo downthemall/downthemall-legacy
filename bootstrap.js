@@ -5,14 +5,14 @@
 
 function flush() {
 	const {Services} = Components.utils.import("resource://gre/modules/Services.jsm", {});
-	Services.obs.notifyObservers(null, "chrome-flush-skin-caches", null);
+	//Drop XUL/XBL/JAR/CSS/etc caches
 	Services.obs.notifyObservers(null, "chrome-flush-caches", null);
 }
 
-function install() {
+function install() {}
+function uninstall() {
 	flush();
 }
-function uninstall() {}
 function startup(data) {
 	// will unload itself
 	Components.utils.import("chrome://dta-modules/content/glue.jsm", {});
