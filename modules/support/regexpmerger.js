@@ -6,6 +6,13 @@
 const REG_TAINTED = /\\[ux]?\d/;
 const REG_TAINTED_ESCAPES = /\\\\/g;
 
+/**
+ * Filter function - Split a group of patterns into processable and
+ * tainted ones. The |this| context must be set up to refer to an
+ * array that will receive the tainted patterns.
+ * @param {String} r A pattern
+ * @returns {Boolean} Filter pattern
+ */
 function tainted_filter(r) {
 	// No negative lookbehind in js :p
 	if (REG_TAINTED.test(r.replace(REG_TAINTED_ESCAPES, ""))) {
@@ -16,14 +23,13 @@ function tainted_filter(r) {
 }
 
 /**
- * Array filter function to create an unique array
+ * Filter function - Create an unique array
  * @usage arr.filter(unique_filter, Object.create(null));
  */
 function unique_filter(e) !((e in this) || (this[e] = null));
 
 /**
  * Return a good prefix, with no bracket mismatches
- *
  * @param {String} Calculate the prefix from
  * @return {String} Calculated safe prefix without bracket mismatches
  */
@@ -180,6 +186,26 @@ function splitAlternates(pattern, rv) {
 }
 
 /**
+ * Sanitizes (truncates) a prefix, so that it does not end with an escape
+ * character
+ * @param {String} prefix Prefix to sanitize
+ * @returns {String} Sanitized Prefix
+ */
+function sanitizePrefixTail(prefix) {
+	const pl = prefix.length;
+	if (!pl) {
+		return "";
+	}
+	if (pl > 1 && prefix[pl-1] == "\\" && prefix[pl-2] != "\\" ) {
+		return prefix.substr(0, pl-1);
+	}
+	else if (pl == 1 && prefix == "\\") {
+		return "";
+	}
+	return prefix;
+}
+
+/**
  * Recursively determine the the largest group with a common prefix
  * The group is guaranteed to contain at least 3 items
  *
@@ -267,7 +293,7 @@ function largestPrefixGroup(patterns, low, high, level) {
  *                  specified by the low & high params are merged.
  */
 function mergePatterns(patterns, low, high, prefix) {
-	let pl = prefix.length;
+	const pl = prefix.length;
 
 	// splice the patterns to be merged, chop off their common prefix and join
 	let tails = patterns.splice(low, high - low).map(function(p) p.substring(pl));
@@ -307,7 +333,7 @@ function merge_finish(patterns, tainted) {
  * @param {Array} patterns Patterns to merge
  * @returns {String} Resulting merged and optimized pattern
  */
-exports.merge = function merge(patterns) {
+function merge(patterns) {
 	if (patterns.length < 2) {
 		return patterns[0];
 	}
@@ -321,7 +347,6 @@ exports.merge = function merge(patterns) {
 	// Remove tainted patterns for now
 	let tainted = [];
 	patterns = patterns.filter(tainted_filter, tainted);
-
 
 	// split patterns into pieces by top-level alternates
 	let newpatterns = [];
@@ -342,7 +367,8 @@ exports.merge = function merge(patterns) {
 			// no common prefix found in (remaining) patterns
 			break;
 		}
-		patterns = mergePatterns(patterns, i, e, prefix);
+		const sprefix = sanitizePrefixTail(prefix);
+		patterns = mergePatterns(patterns, i, e, sprefix);
 	}
 
 	let len = patterns.length;
@@ -354,4 +380,11 @@ exports.merge = function merge(patterns) {
 	// not yet a single pattern (i.e. not all patterns shared a common prefix)
 	// merge without a prefix to get single pattern
 	return merge_finish(mergePatterns(patterns, 0, len, ""), tainted);
+}
+
+if ("exports" in this) {
+	exports.merge = merge;
+}
+else {
+	this.EXPORTED_SYMBOLS = ["merge"];
 }
