@@ -91,11 +91,20 @@ History.prototype = {
 			}
 		}
 	},
-	push: function(value) {
+	push: function(value, once) {
 		try {
 			value = value.toString();
+			if (this._values[0] === value) {
+				return;
+			}
 			let values = this._values.filter(function(e) e != value);
-			values.unshift(value);
+			if (once && values.length > 0) {
+				let top = values.shift();
+				values.unshift(top, value);
+			}
+			else {
+				values.unshift(value);
+			}
 			let max = prefs.getExt('history', 5);
 			if (log.enabled) {
 				log(LOG_DEBUG, "Histories: " + this._key + ", before " + values.toSource());

@@ -323,7 +323,8 @@ var Dialog = {
 		DTA.incrementSeries();
 		Preferences.setExt("lastqueued", !start);
 
-		['ddRenaming', 'ddDirectory'].forEach(function(e) { Dialog[e].save(); });
+		this.ddRenaming.save($("renamingOnce").checked);
+		this.ddDirectory.save();
 
 		self.close();
 

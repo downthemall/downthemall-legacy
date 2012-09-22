@@ -160,6 +160,7 @@
 				<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
 				<maskbutton/>
 			</hbox>
+			<checkbox id="renamingOnce" label="&mask.once.label;"/>
 		</vbox>
 	</hbox>
 

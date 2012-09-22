@@ -99,10 +99,13 @@
 			</row>
 			<row align="center">
 				<label control="renaming" id="infoDestTitle" value="&mask.label;: " />
-				<hbox>
-					<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
-					<maskbutton/>
-				</hbox>
+				<vbox>
+					<hbox>
+						<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
+						<maskbutton/>
+					</hbox>
+					<checkbox id="renamingOnce" label="&mask.once.label;"/>
+				</vbox>
 			</row>
 			<row align="center">
 				<label control="hash" value="&checksum.value;" style="font-style: italic;" />
