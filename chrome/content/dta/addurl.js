@@ -125,6 +125,7 @@ var Dialog = {
 					address._realURL = a.url;
 					if ("fileName" in a) {
 						address._fileName = a.fileName;
+						address.value += " (" + a.fileName + ")";
 					}
 					address.readOnly = true;
 					$('batcheslabel').style.display = 'none';
