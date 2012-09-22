@@ -103,12 +103,17 @@ function addLinksToArray(lnks, urls, doc) {
 			if (!title && link.hasAttribute('alt')) {
 				title = trimMore(link.getAttribute('alt'));
 			}
-			urls.push({
+			const item = {
 				'url': url,
 				'referrer': ref,
 				'description': extractDescription(link),
 				'title': title
-			});
+			};
+			let fn = link.getAttribute("download");
+			if ((fn = fn && fn.trim())) {
+				item.fileName = fn;
+			}
+			urls.push(item);
 			let ml = DTA.getLinkPrintMetalink(url.url);
 			if (ml) {
 				urls.push({
@@ -717,11 +722,21 @@ exports.load = function load(window, outerEvent) {
 		let ml = DTA.getLinkPrintMetalink(url);
 		url = new DTA.URL(ml ? ml : url);
 
-		let ref = DTA.getRef(elem.ownerDocument);
-		let desc = extractDescription(elem);
+		const item = {
+			"url": url,
+			"description": extractDescription(elem),
+			"referrer": extractDescription(elem),
+		};
+		if (!ml && elem.localName == "a") {
+			let fn = elem.getAttribute("download");
+			if ((fn = fn && fn.trim())) {
+				item.fileName = fn;
+			}
+		}
+
 		if (turbo) {
 			try {
-				DTA.saveSingleLink(window, true, url, ref, desc);
+				DTA.saveSingleItem(window, true, item);
 				notifyInfo(getFormattedString('queued', url));
 				return;
 			}
@@ -730,7 +745,7 @@ exports.load = function load(window, outerEvent) {
 				notifyError(getString('error'), getString('errorinformation'));
 			}
 		}
-		DTA.saveSingleLink(window, false, url, ref, desc);
+		DTA.saveSingleItem(window, false, item);
 	}
 	function findForm(turbo) {
 		try {

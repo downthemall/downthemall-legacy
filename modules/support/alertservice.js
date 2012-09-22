@@ -45,6 +45,7 @@ try {
 	exports.available = true;
 }
 catch (ex) {
+	log(LOG_ERROR, "alertsserivce", ex);
 	// no-op
 }
 
