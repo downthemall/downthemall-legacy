@@ -20,6 +20,7 @@
 <!ENTITY mirrormanager.tip "Manage download mirrors">
 <!ENTITY mask.label "Renaming Mask">
 <!ENTITY mask.tip "Selected files will be saved and renamed using this mask">
+<!ENTITY mask.once.label "Use mask only this time">
 
 <!ENTITY selectall.label "Select All">
 <!ENTITY selectinv.label "Invert Selection">

@@ -165,12 +165,13 @@
 				<body>this._load();</body>
 			</method>
 			<method name="save">
+				<parameter name="once"/>
 				<body><![CDATA[
 					var n = this.value;
 					if (n.length == 0 && !this.hasAttribute('allowempty')) {
 						return;
 					}
-					this.hist.push(n);
+					this.hist.push(n, once);
 				]]></body>
 			</method>
 			<method name="clear">

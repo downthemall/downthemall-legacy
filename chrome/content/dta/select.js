@@ -468,7 +468,9 @@ let Dialog = {
 
 			Preferences.setExt('seltab', this.current.type == 1 ? 0 : 1);
 			// save history
-			['ddDirectory', 'ddRenaming', 'ddFilter'].forEach(function (e) { Dialog[e].save(); });
+			this.ddRenaming.save($("renamingOnce").checked);
+			this.ddDirectory.save();
+			this.ddFilter.save();
 
 			// save the counter, queued state
 			Preferences.setExt("lastqueued", !start);
