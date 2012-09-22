@@ -718,17 +718,20 @@ exports.load = function load(window, outerEvent) {
 	}
 
 	function saveSingleLink(turbo, url, elem) {
-		url = Services.io.newURI(url, elem.ownerDocument.characterSet, null);
+		const owner = elem.ownerDocument;
+		url = Services.io.newURI(url, owner.characterSet, null);
 		let ml = DTA.getLinkPrintMetalink(url);
 		url = new DTA.URL(ml ? ml : url);
 
 		const item = {
 			"url": url,
 			"description": extractDescription(elem),
-			"referrer": extractDescription(elem),
+			"referrer": DTA.getRef(owner),
 		};
+		log(LOG_DEBUG, "saveSingleLink; processing " + elem.localName);
 		if (!ml && elem.localName == "a") {
 			let fn = elem.getAttribute("download");
+			log(LOG_DEBUG, "saveSingleLink; fn " + fn);
 			if ((fn = fn && fn.trim())) {
 				item.fileName = fn;
 			}
