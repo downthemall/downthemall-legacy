@@ -470,8 +470,9 @@ const Tooltip = {
 		{ x:4, y:0, f: ["#EADF91", "#F4EFB1"] },
 		{ x:2, y:0, f: ["#DFD58A", "#D3CB8B"] },
 		{ x:1, y:0, f: ["#D0BA70", "#DFCF6F"] },
-		{ x:0, y:0, f: ["#FF8B00", "#FFDF38"], s: ["#F98F00", "#FFBF37"] }
+		{ x:0, y:0, f: ["#FF8B00", "#FFDF38"], s: "#F98F00" }
 	],
+	_usAvgPass: { x:0, y:0, s: "rgba(0,0,200,0.3)", sw: 2 },
 	updateSpeeds: function(file) {
 		try {
 			if (!this._mustDraw && file === this._usFile && file.speeds.lastUpdate === this._usUpdate && file.speeds.lastBytes === this._usBytes && file.state == this._usState) {
@@ -506,8 +507,6 @@ const Tooltip = {
 			this._makeRoundedRectPath(ctx, 0, 0, w, h, 5);
 			ctx.fill();
 
-			let step = w / SPEED_COUNT;
-
 			if (file.speeds.length > 1) {
 				let maxH, minH;
 				maxH = minH = file.speeds.first;
@@ -517,19 +516,31 @@ const Tooltip = {
 					minH = Math.min(minH, s);
 					speeds.push(s);
 				}
+				let aspeeds = [];
+				for (let i = 0; i < speeds.length; i += 5) {
+						const chunk = speeds.slice(i, i + 5);
+						const as = chunk.reduce(function(p,c) p+c) / chunk.length;
+						for (let j = 0; j < chunk.length; ++j) {
+								aspeeds.push(as);
+						}
+				}
+
 				// special case: all speeds are the same
 				if (minH == maxH) {
 					mapInSitu(speeds, function(speed) { return 12; });
+					mapInSitu(aspeeds, function(speed) { return 12; });
 				}
 				else {
 					let r = (maxH - minH);
 					mapInSitu(speeds, function(speed) { return 3 + Math.round((h - 6) * (speed - minH) / r); });
+					mapInSitu(aspeeds, function(speed) { return 3 + Math.round((h - 6) * (speed - minH) / r); });
 				}
 
 				ctx.save();
 				ctx.clip();
-				for (let [,pass] in Iterator(this._usPasses)) {
-					ctx.fillStyle = this._createVerticalGradient(ctx, h - 7, pass.f[0], pass.f[1]);
+
+				const step = w / (SPEED_COUNT - 1);
+				const draw = (function draw(pass, speeds) {
 					let y = h + pass.y;
 					let x = pass.x + 0.5;
 
@@ -537,7 +548,12 @@ const Tooltip = {
 					ctx.moveTo(x, y);
 
 					y -= speeds[0];
-					ctx.lineTo(x, y);
+					if (pass.f) {
+						ctx.lineTo(x, y);
+					}
+					else {
+						ctx.moveTo(x, y);
+					}
 
 					let slope = (speeds[1] - speeds[0]);
 					x += step * .7;
@@ -560,14 +576,23 @@ const Tooltip = {
 					y -= slope * .3;
 					ctx.lineTo(x, y);
 
-					ctx.lineTo(x, h);
-					ctx.fill();
+					if (pass.f) {
+						ctx.lineTo(x, h);
+						ctx.fillStyle = this._createVerticalGradient(ctx, h - 7, pass.f[0], pass.f[1]);
+						ctx.fill();
+					}
 
 					if (pass.s) {
-						ctx.strokeStyle = this._createVerticalGradient(ctx, h - 7, pass.s[0], pass.s[1]);
+						ctx.lineWidth = pass.sw || 1;
+						ctx.strokeStyle = pass.s;
 						ctx.stroke();
 					}
+				}).bind(this);
+
+				for (let [,pass] in Iterator(this._usPasses)) {
+					draw(pass, speeds);
 				}
+				draw(this._usAvgPass, aspeeds);
 				ctx.restore();
 			}
 			this._makeRoundedRectPath(ctx, 0, 0, w, h, 3);
