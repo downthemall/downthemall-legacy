@@ -144,7 +144,12 @@ Tree.prototype = {
 			case 0: return this.getCellValue(idx, col);
 
 			// col 1 is the name
-			case 1: return l.url.usable;
+			case 1: {
+				if (l.fileName) {
+					return l.url.usable + " (" + l.fileName + ")";
+				}
+				return l.url.usable;
+			}
 
 			// col 2 is the resname
 			case 2: return l.resname;
