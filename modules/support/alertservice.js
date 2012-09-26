@@ -56,7 +56,6 @@ exports.show = function alertservice_show(title, msg, callback) {
 	if (alerting) {
 		return;
 	}
-	alerting = true;
 
 	let clickable = false;
 	Observer._func = null;
@@ -66,12 +65,25 @@ exports.show = function alertservice_show(title, msg, callback) {
 		clickable = true;
 		Observer._func = callback;
 	}
-	service.showAlertNotification(
-		"chrome://dta/skin/common/alert.png",
-		title,
-		msg,
-		clickable,
-		null,
-		Observer
-		);
+	try {
+		service.showAlertNotification(
+			"chrome://dta/skin/common/alert.png",
+			title,
+			msg,
+			clickable,
+			null,
+			Observer
+			);
+		alerting = true;
+	}
+	catch (ex if ex.result == Cr.NS_ERROR_NOT_IMPLEMENTED) {
+		log(LOG_DEBUG, "alertsservice not available after all", ex);
+		exports.available = false;
+	}
+	catch (ex if ex.result == Cr.NS_ERROR_NOT_AVAILABLE) {
+		log(LOG_DEBUG, "alertsservice (temporarily) not available", ex);
+	}
+	catch (ex) {
+		log(LOG_ERROR, "alertsservice unexpectedly failed", ex);
+	}
 }

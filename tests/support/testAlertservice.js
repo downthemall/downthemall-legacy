@@ -4,16 +4,13 @@ test("exports", function() {
 	checkExports("support/alertservice", ["available", "show"]);
 });
 
-test("availablity", function() {
-	equal(require("support/alertservice").available, "@mozilla.org/alerts-service;1" in Cc);
-});
 if (require("support/alertservice").available) {
 	test("show", function() {
 		require("support/alertservice").show("test", "test");
 	});
 }
 else {
-	test("show", function() {
+	test("show n/a", function() {
 		raises(function() require("support/alertservice").show("test", "test"));
 	});
 }
