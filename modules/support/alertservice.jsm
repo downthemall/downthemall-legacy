@@ -92,7 +92,6 @@ function show(title, msg, callback) {
 	if (alerting) {
 		return;
 	}
-	alerting = true;
 
 	let clickable = false;
 	Observer._func = null;
@@ -100,12 +99,19 @@ function show(title, msg, callback) {
 		clickable = true;
 		Observer._func = callback;
 	}
-	service.showAlertNotification(
-		"chrome://dta/skin/common/alert.png",
-		title,
-		msg,
-		clickable,
-		null,
-		Observer
-		);
+
+	try {
+		service.showAlertNotification(
+			"chrome://dta/skin/common/alert.png",
+			title,
+			msg,
+			clickable,
+			null,
+			Observer
+			);
+		alerting = true;
+	}
+	catch (ex) {
+		available = false;
+	}
 }
