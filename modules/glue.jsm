@@ -182,6 +182,7 @@ LRUMap.prototype = {
 			for (let i = _unloaders.length; ~(--i);) {
 				_runUnloader(_unloaders[i]);
 			}
+			_unloaders.splice(0);
 			return;
 		}
 		// add an unloader
