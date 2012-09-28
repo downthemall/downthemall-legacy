@@ -15,3 +15,8 @@ statusbarpanel#netstatus[offline] {
 toolbar#tools > toolbarbutton {
 	list-style-image: url(tools.png);
 }
+
+#search > image {
+	list-style-image: url(chrome://global/skin/icons/Search-glass.png);
+	-moz-image-region: rect(0px 16px 16px 0px);
+}

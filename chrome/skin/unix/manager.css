@@ -37,3 +37,7 @@ treecol > dropmarker {
 #tools > toolbarbutton:active:not([disabled="true"]) {
 	border: 1px inset rgba(128,128,128,.9);
 }
+
+#search > image {
+	list-style-image: url(moz-icon://stock/gtk-find?size=menu);
+}
