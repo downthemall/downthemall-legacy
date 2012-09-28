@@ -455,7 +455,8 @@ exports.openManager = function openManager(window, quiet, cb) {
 		win = window.openDialog(
 			"chrome://dta/content/dta/manager.xul",
 			"_blank",
-			"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no"
+			"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
+			!!cb
 		);
 		if (cb) {
 			managerRequests.push(cb);

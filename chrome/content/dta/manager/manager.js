@@ -2901,9 +2901,12 @@ const startDownloads = (function() {
 
 addEventListener(
 	"load",
-	function() {
-		removeEventListener("load", arguments.callee, false);
+	function  minimize_on_load() {
+		removeEventListener("load", minimize_on_load, false);
 		if (!Preferences.getExt('startminimized', false)) {
+			return;
+		}
+		if (!window.arguments || !window.arguments[0]) {
 			return;
 		}
 		setTimeoutOnlyFun(
