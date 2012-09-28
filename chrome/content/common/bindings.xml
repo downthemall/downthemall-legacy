@@ -654,14 +654,11 @@
 			<xul:hbox class="textbox-input-box" flex="1" xbl:inherits="context,spellcheck">
 				<html:input class="textbox-input" flex="1" anonid="input" xbl:inherits="onfocus,onblur,value,type,maxlength,disabled,size,readonly,tabindex,accesskey,noinitialfocus"/>
 			</xul:hbox>
-			<xul:toolbarbutton anonid="clearbutton" disabled="true" onclick="this.parentNode.clear();"/>
 		</content>
 		<implementation>
-			<property readonly="true" name="clearButton" onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'clearbutton');" />
 			<method name="clear">
 				<body><![CDATA[
 					this.value = '';
-					this.clearButton.setAttribute('disabled', 'true');
 					this._search();
 				]]></body>
 			</method>
@@ -683,7 +680,6 @@
 		<handlers>
 			<handler event="input">
 				if (!this.value) {
-					this.clearButton.setAttribute('disabled', 'true');
 					if (this._timer) {
 						clearTimeout(this._timer);
 						this._timer = null;
@@ -692,7 +688,6 @@
 					return;
 				}
 
-				this.clearButton.removeAttribute('disabled');
 				if (!this._timer) {
 					let tp = this;
 					this._timer = setTimeoutOnlyFun(function() {
