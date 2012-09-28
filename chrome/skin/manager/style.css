@@ -618,7 +618,6 @@ statusbarpanel#schedule:not([running]) {
 	min-width: 22ex;
 }
 #search > image {
-	list-style-image: url(search.png);
 	margin-right: 4px;
 }
 

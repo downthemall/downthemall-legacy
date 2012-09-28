@@ -52,7 +52,7 @@
 }
 
 #search > image {
-	list-style-image: url(chrome://browser/skin/Search.png) !important;
+	list-style-image: url(chrome://browser/skin/Search.png);
 }
 
 #loading {
