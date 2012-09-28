@@ -24,14 +24,35 @@
 }
 
 #search {
-	margin: 0;
-	margin-top: 2px;
-	margin-bottom: 2px;
-	padding: 0;
+	border-radius: 10000px;
+	-moz-appearance: none;
+	box-shadow: 0 1px rgba(255, 255, 255, 0.2), inset 0 1px hsla(0,0%,0%,.05);
+	margin: 0 4px;
+	padding: 2px;
+	padding-left: 5px;
+	padding-right: 6px;
+	border: 1px solid;
+	border-color: #626262 #787878 #8c8c8c;
+	background-clip: padding-box;
+}
+@media (-moz-mac-lion-theme) {
+	#search {
+		background-image: -moz-linear-gradient(hsl(0,0%,97%), hsl(0,0%,100%));
+		border-color: hsla(0,0%,0%,.35) hsla(0,0%,0%,.25) hsla(0,0%,0%,.15);
+		box-shadow: 0 1px 0 hsla(0,0%,100%,.2), inset 0 0 1px hsla(0,0%,0%,.05), inset 0 1px 2px hsla(0,0%,0%,.1);
+	}
+}
+#search[focused="true"] {
+	border-color: -moz-mac-focusring;
+	box-shadow: 0 0 1px -moz-mac-focusring inset, 0 0 4px 1px -moz-mac-focusring, 0 0 1.5px 1px -moz-mac-focusring;
 }
 
 #search .toolbarbutton-text {
 	display: none;
+}
+
+#search > image {
+	list-style-image: url(chrome://browser/skin/Search.png) !important;
 }
 
 #loading {

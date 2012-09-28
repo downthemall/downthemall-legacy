@@ -615,36 +615,13 @@ statusbarpanel#schedule:not([running]) {
 /* search */
 #search {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#downloadsearch);
-	width: 22ex;
+	min-width: 22ex;
 }
 #search > image {
 	list-style-image: url(search.png);
 	margin-right: 4px;
 }
-#search > toolbarbutton {
-	margin: 0;
-	margin-left: 3px;
-	padding: 0;
-	border: 0;
-	height: 16px;
 
-	cursor: default;
-	list-style-image: url(clear.png);
-	-moz-appearance: none;
-	-moz-image-region: rect(0px, 16px, 16px, 0px);
-}
-#search > toolbarbutton:hover {
-	-moz-image-region: rect(0px, 16px, 16px, 0px);
-}
-#search toolbarbutton:hover:active {
-	-moz-image-region: rect(0px, 48px, 16px, 32px);
-}
-#search .toolbarbutton-icon {
-	-moz-margin-end: 0px !important;
-}
-#search > toolbarbutton[disabled] {
-	display: none;
-}
 
 #statusText {
 	list-style-image: url(menu.png);
