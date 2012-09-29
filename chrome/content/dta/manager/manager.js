@@ -926,8 +926,8 @@ const Dialog = {
 			}
 
 			if (Prefs.autoClearComplete && this._autoClears.length) {
-				Tree.remove(this._autoClears);
-				this._autoClears = [];
+				Tree.remove(mapFilterInSitu(this._autoClears, function(e) e.get(), function(e) !!e));
+				this._autoClears.splice(0);
 			}
 
 			if (!this.offline && !this._mustReload) {
@@ -1058,7 +1058,7 @@ const Dialog = {
 			this._wasRunning = true;
 		}
 		else if (Prefs.autoClearComplete && state == COMPLETE) {
-			this._autoClears.push(download);
+			this._autoClears.push(weak(download));
 		}
 		if (!this._initialized || !this._wasRunning || state != COMPLETE) {
 			return;
