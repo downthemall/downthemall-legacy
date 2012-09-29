@@ -65,7 +65,7 @@ exports.load = function load(window, document) {
 			}
 		}
 	}
-	function download(turbo) {
+	var download = function download(turbo) {
 		if (turbo) {
 			ddDirectory.save();
 		}
@@ -84,6 +84,9 @@ exports.load = function load(window, document) {
 		catch (ex) {}
 
 		de.cancelDialog();
+
+		// avoid users double-clicking or something
+		download = function() {};
 	}
 
 	const dialog = window.dialog;
