@@ -517,14 +517,9 @@ const Tooltip = {
 					speeds.push(s);
 				}
 				let aspeeds = [];
-				for (let i = 0; i < speeds.length; i += 5) {
-						const chunk = speeds.slice(i, i + 5);
-						const as = chunk.reduce(function(p,c) p+c) / chunk.length;
-						for (let j = 0; j < chunk.length; ++j) {
-								aspeeds.push(as);
-						}
+				for (let s in file.speeds.allAvg) {
+					aspeeds.push(s);
 				}
-
 				// special case: all speeds are the same
 				if (minH == maxH) {
 					mapInSitu(speeds, function(speed) { return 12; });
