@@ -52,7 +52,7 @@ function URL(url, preference, _fast) {
 	this._usable = _decodeCharset(this._urlSpec, this._urlCharset);
 };
 URL.schemes = ['http', 'https', 'ftp'];
-URL.prototype = {
+URL.prototype = Object.freeze({
 	get url() {
 		return this._url;
 	},
@@ -67,8 +67,8 @@ URL.prototype = {
 		};
 	},
 	toString: function() this._usable
-};
-exports.URL = URL;
+});
+exports.URL = Object.freeze(URL);
 
 /**
  * Checks if a provided strip has the correct hash format Supported are: md5,
@@ -78,15 +78,15 @@ exports.URL = URL;
  *          Hash to check
  * @return hash type or null
  */
-const SUPPORTED_HASHES = {
+const SUPPORTED_HASHES = Object.freeze({
 	'MD5': {l: 32, q: 0.3 },
 	'SHA1': {l: 40, q: 0.4 },
 	'SHA256': {l: 64, q: 0.5 },
 	'SHA384': {l: 96, q: 0.8 },
 	'SHA512': {l: 128, q: 0.9 }
-};
-exports.SUPPORTED_HASHES = SUPPORTED_HASHES;
-const SUPPORTED_HASHES_ALIASES = {
+});
+exports.SUPPORTED_HASHES = Object.freeze(SUPPORTED_HASHES);
+const SUPPORTED_HASHES_ALIASES = Object.freeze({
 	'MD5': 'MD5',
 	'MD-5': 'MD5',
 	'SHA1': 'SHA1',
@@ -98,16 +98,16 @@ const SUPPORTED_HASHES_ALIASES = {
 	'SHA-384': 'SHA384',
 	'SHA512': 'SHA512',
 	'SHA-512': 'SHA512'
-};
-exports.SUPPORTED_HASHES_ALIASES = SUPPORTED_HASHES_ALIASES;
-exports.WANT_DIGEST_STRING = (function() {
+});
+exports.SUPPORTED_HASHES_ALIASES = Object.freeze(SUPPORTED_HASHES_ALIASES);
+exports.WANT_DIGEST_STRING = Object.freeze((function() {
 	let rv = new MimeQuality();
 	for each (let h in ["MD5", "SHA", "SHA1", "SHA256", "SHA512"]) {
 		let q = SUPPORTED_HASHES[SUPPORTED_HASHES_ALIASES[h]].q;
 		rv.add(h, q);
 	}
 	return rv.toString();
-})();
+})());
 
 function Hash(hash, type) {
 	if (typeof(hash) != 'string' && !(hash instanceof String)) {
@@ -129,8 +129,7 @@ function Hash(hash, type) {
 	}
 	this._q = h.q;
 }
-Hash.prototype = {
-	_q: 0,
+Hash.prototype = Object.freeze({
 	get q() {
 		return this._q;
 	},
@@ -143,8 +142,8 @@ Hash.prototype = {
 			sum: this.sum
 		};
 	}
-};
-exports.Hash = Hash;
+});
+exports.Hash = Object.freeze(Hash);
 
 /**
  * Collection of hashes (checksums) about a single download
@@ -172,7 +171,7 @@ HashCollection.load = function(obj) {
 	return rv;
 },
 
-HashCollection.prototype = {
+HashCollection.prototype = Object.freeze({
 	/**
 	 * Iterator over all partial hashes
 	 * Gives {hash,start,end} dict
@@ -199,7 +198,6 @@ HashCollection.prototype = {
 	 * @return (object) Serialized HashCollection
 	 */
 	toJSON: function() this._serialized,
-	_serialized: null,
 	_serialize: function() {
 		this._serialized = {
 			full: this.full,
@@ -207,8 +205,8 @@ HashCollection.prototype = {
 			partials: this.partials
 		};
 	}
-};
-exports.HashCollection = HashCollection;
+});
+exports.HashCollection = Object.freeze(HashCollection);
 
 const _rglph = /^hash\((md5|sha(?:-?(?:1|256|384|512))?):([\da-f]+)\)$/i;
 /**

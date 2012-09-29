@@ -353,14 +353,14 @@ function SimpleIterator(obj, iface) {
 	this.iface = iface || Ci.nsISupport;
 	this.obj = obj.QueryInterface(Ci.nsISimpleEnumerator);
 }
-SimpleIterator.prototype = {
+SimpleIterator.prototype = Object.freeze({
 	__iterator__: function() {
 		while(this.obj.hasMoreElements()) {
 			yield this.obj.getNext().QueryInterface(this.iface);
 		}
 	}
-};
-exports.SimpleIterator = SimpleIterator;
+});
+exports.SimpleIterator = Object.freeze(SimpleIterator);
 
 /**
  * Construct object from nsIProperties.
@@ -373,7 +373,7 @@ function Properties() {
 		this._parse(p);
 	}
 }
-Properties.prototype = {
+Properties.prototype = Object.freeze({
 	_parse: function(properties) {
 		if (!properties) {
 			return;
@@ -448,8 +448,8 @@ Properties.prototype = {
 			}
 		}
 	}
-};
-exports.Properties = Properties;
+});
+exports.Properties = Object.freeze(Properties);
 
 /**
  * Mime quality param constructor
@@ -457,7 +457,7 @@ exports.Properties = Properties;
 function MimeQuality() {
 	this._q = {};
 }
-MimeQuality.prototype = {
+MimeQuality.prototype = Object.freeze({
 	/**
 	 * Add new item
 	 * @param v (string) Parameter value
@@ -489,8 +489,8 @@ MimeQuality.prototype = {
 		exports.mapInSitu(rv, function(e) e.v + ";q=" + e.q).join(", ");
 		return rv;
 	}
-}
-exports.MimeQuality = MimeQuality;
+});
+exports.MimeQuality = Object.freeze(MimeQuality);
 
 const _bundles = {};
 function _loadBundle(url) {
@@ -529,6 +529,7 @@ function _loadBundles(urls) {
  * @author Nils
  * @see _
  */
+var StringBundles_params;
 function StringBundles(documentOrStrings) {
 	if (!('getElementsByTagNameNS' in documentOrStrings)) {
 		this._strings = documentOrStrings;
@@ -547,23 +548,23 @@ function StringBundles(documentOrStrings) {
 }
 StringBundles._br = /%S/gi;
 StringBundles._repl = function() {
-	return StringBundles._params.shift();
+	return StringBundles_params.shift();
 }
-StringBundles.prototype = {
+StringBundles.prototype = Object.freeze({
 	getString: function(id) this._strings[id],
 	getFormattedString: function(id, params) {
 		let fmt = this.getString(id);
-		StringBundles._params = params;
+		StringBundles_params = params;
 		try {
 			fmt = fmt.replace(StringBundles._br, StringBundles._repl);
 		}
 		finally {
-			delete StringBundles._params;
+			StringBundles_params = null;
 		}
 		return fmt;
 	}
-};
-exports.StringBundles = StringBundles;
+});
+exports.StringBundles = Object.freeze(StringBundles);
 
 /**
  * XP compatible reveal/launch

@@ -20,7 +20,7 @@ function compareFn(a, b) {
 function UrlManager(urls) {
 	this.initByArray(urls);
 }
-UrlManager.prototype = {
+UrlManager.prototype = Object.freeze({
 	initByArray: function um_initByArray(urls) {
 		this._urls = [];
 		for each (let u in urls) {
@@ -127,6 +127,5 @@ UrlManager.prototype = {
 	},
 	// clone ;)
 	toArray: function() this._urls.map(function(e) e)
-};
-
-exports.UrlManager = UrlManager;
+});
+exports.UrlManager = Object.freeze(UrlManager);
