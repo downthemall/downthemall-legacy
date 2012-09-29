@@ -9,10 +9,12 @@
  */
 function SpeedStats(maxSpeeds) {
 	this._maxSpeeds = maxSpeeds;
-	this.clear();
+	this._speeds = [];
+	this._aspeeds = [];
+	this._lastTime = this._lastBytes = this._avg = 0;
 }
 
-SpeedStats.prototype = {
+SpeedStats.prototype = Object.freeze({
 	/**
 	 * Maximum number of speeds to store
 	 * Oldest will be dropped if buffer runs full
@@ -53,6 +55,14 @@ SpeedStats.prototype = {
 		}
 	},
 	/**
+	 * Generator over all avg speeds
+	 */
+	get allAvg() {
+		for each (let x in this._aspeeds) {
+			yield x;
+		}
+	},
+	/**
 	 * Time of last update
 	 */
 	get lastUpdate() {
@@ -64,8 +74,6 @@ SpeedStats.prototype = {
 	get lastBytes() {
 		return this._lastBytes;
 	},
-	_lastTime: 0,
-	_lastBytes: 0,
 	/**
 	 * Adds a new data point based on given downloaded bytes and time
 	 * @param bytes (int) Bytes in the period
@@ -89,6 +97,10 @@ SpeedStats.prototype = {
 				avg = avg + _v * this._speeds[i];
 			}
 			this._avg = avg / v;
+			this._aspeeds.push(this.avg);
+			if (this._speeds.length > this._maxSpeeds) {
+				this._speeds.shift();
+			}
 		}
 		if (received < 0) {
 			this.clear();
@@ -102,9 +114,9 @@ SpeedStats.prototype = {
 	 * Clears all statistics
 	 */
 	clear: function DSS_clear() {
-		this._speeds = [];
+		this._speeds.splice(0);
+		this._aspeeds.splice(0);
 		this._lastTime = this._lastBytes = this._avg = 0;
 	}
-};
-
-exports.SpeedStats = SpeedStats;
+});
+exports.SpeedStats = Object.freeze(SpeedStats);
