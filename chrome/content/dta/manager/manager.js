@@ -926,7 +926,7 @@ const Dialog = {
 			}
 
 			if (Prefs.autoClearComplete && this._autoClears.length) {
-				Tree.remove(mapFilterInSitu(this._autoClears, function(e) e.get(), function(e) !!e));
+				Tree.remove(this._autoClears);
 				this._autoClears.splice(0);
 			}
 
@@ -1058,7 +1058,7 @@ const Dialog = {
 			this._wasRunning = true;
 		}
 		else if (Prefs.autoClearComplete && state == COMPLETE) {
-			this._autoClears.push(weak(download));
+			this._autoClears.push(download);
 		}
 		if (!this._initialized || !this._wasRunning || state != COMPLETE) {
 			return;
