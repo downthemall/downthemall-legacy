@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const EXPORTED_SYMBOLS = ["require", "requireJoined", "requireJSM", "unload", "Services", "Instances", "XPCOMUtils", "LRUMap"];
+const EXPORTED_SYMBOLS = ["require", "requireJoined", "requireJSM", "unload", "weak", "Services", "Instances", "XPCOMUtils", "LRUMap"];
 
 const {
 	classes: Cc,
@@ -35,12 +35,12 @@ if (!("Map" in this)) {
 		this._dict = Object.create(null);
 		Object.freeze(this);
 	}
-	this.Map.prototype = {
+	this.Map.prototype = Object.freeze({
 		"get": function(key) this._dict[key],
 		"has": function(key) key in this._dict,
 		"set": function(key, val) { this._dict[key] = val; },
 		"delete": function(key) { delete this._dict[key]; },
-	};
+	});
 	EXPORTED_SYMBOLS.push("Map");
 }
 
@@ -49,7 +49,7 @@ function LRUMap(limit) {
 	this.clear();
 	Object.preventExtensions(this);
 }
-LRUMap.prototype = {
+LRUMap.prototype = Object.freeze({
 	"get": function(key) this._dict.get(key),
 	"has": function(key) this._dict.has(key),
 	"set": function(key, val) {
@@ -74,7 +74,7 @@ LRUMap.prototype = {
 		this._dict = new Map();
 		this._arr = [];
 	}
-};
+});
 
 //hide our internals
 //Since require() uses .scriptloader, the loaded require scopes will have

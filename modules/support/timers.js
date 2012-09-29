@@ -22,7 +22,7 @@ function TimerData(owner, time, type, func, ctx) {
 	this.timer = new Instances.Timer(this, time, type);
 }
 
-TimerData.prototype = {
+TimerData.prototype = Object.freeze({
 	cancel: function() this.timer.cancel(),
 	toString: function() this.uuid,
 	observe: function(timer) {
@@ -39,7 +39,7 @@ TimerData.prototype = {
 			log(LOG_ERROR, "Failed to execute timer callback", ex);
 		}
 	}
-};
+});
 
 /**
  * Manage Timers
@@ -48,7 +48,7 @@ function TimerManager() {
 	this._timers = {};
 	unload((function timerManager_destroy() this.killAllTimers()).bind(this));
 }
-TimerManager.prototype = {
+TimerManager.prototype = Object.freeze({
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
 	/**
 	 * Creates one shot timer
@@ -113,5 +113,5 @@ TimerManager.prototype = {
 		}
 		this._timers = {};
 	}
-};
-exports.TimerManager = TimerManager;
+});
+exports.TimerManager = Object.freeze(TimerManager);

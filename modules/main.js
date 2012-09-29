@@ -17,7 +17,7 @@ const ABOUT_URI = 'https://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%
 
 function AboutModule() {
 }
-AboutModule.prototype = {
+AboutModule.prototype = Object.freeze({
 	classDescription: "DownThemAll! about module",
 	classID: Components.ID('{bbaedbd9-9567-4d11-9255-0bbae236ecab}'),
 	contractID: '@mozilla.org/network/protocol/about;1?what=downthemall',
@@ -54,11 +54,11 @@ AboutModule.prototype = {
 		}
 	},
 	getURIFlags: function(aURI) Ci.nsIAboutModule.URI_SAFE_FOR_UNTRUSTED_CONTENT
-};
+});
 
 function MetalinkInterceptModule() {
 }
-MetalinkInterceptModule.prototype = {
+MetalinkInterceptModule.prototype = Object.freeze({
 	classDescription: "DownThemAll! metalink integration",
 	classID: Components.ID('{4b048560-c789-11e1-9b21-0800200c9a67}'),
 	contractID: '@mozilla.org/streamconv;1?from=application/metalink4+xml&to=*/*',
@@ -155,7 +155,8 @@ MetalinkInterceptModule.prototype = {
 			this.pipe = null;
 		}
 	}
-};
+});
+
 function registerComponents() {
 	for (let [,cls] in Iterator([AboutModule, MetalinkInterceptModule])) {
 		const factory = {

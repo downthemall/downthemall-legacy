@@ -76,13 +76,13 @@ function FakeLink(url, title) {
 		this.title = title;
 	}
 }
-FakeLink.prototype = {
-	childNodes: [],
+FakeLink.prototype = Object.freeze({
+	childNodes: Object.freeze([]),
 	hasAttribute: function(attr) (attr in this),
 	getAttribute: function(attr) (attr in this) ? this[attr] : null,
 	toString: function() this.href
-};
+});
 
 exports.getTextLinks = getTextLinks;
-exports.FakeLink = FakeLink;
+exports.FakeLink = Object.freeze(FakeLink);
 Object.freeze(exports);

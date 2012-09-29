@@ -46,7 +46,7 @@ function Limit(host, isNew) {
 	this.speed = o.s;
 	this.segments = o.seg;
 }
-Limit.prototype = {
+Limit.prototype = Object.freeze({
 	get host() this._host,
 	get isNew() this._isNew,
 	get connections() this._connections,
@@ -77,11 +77,11 @@ Limit.prototype = {
 	remove: function() {
 		Prefs.reset(LIMITS_PREF + this._host);
 	},
-	toString: function() this._host
+	toString: (function() this._host
 		+ " conn: " + this._connections
 		+ " speed: " + this._speed
-		+ " segments:" + this._segments
-}
+		+ " segments:" + this._segments)
+});
 
 function loadLimits() {
 	limits = Object.create(null);
@@ -134,7 +134,7 @@ function getLimitFor(d) {
 let globalConnections = -1;
 
 function BaseScheduler() {}
-BaseScheduler.prototype = {
+BaseScheduler.prototype = Object.freeze({
 	_queuedFilter: function(e) e.state == QUEUED,
 	next: function() {
 		for (let d; this._schedule.length;) {
@@ -146,16 +146,16 @@ BaseScheduler.prototype = {
 		}
 		return null;
 	}
-};
+});
+Object.freeze(BaseScheduler);
 
 // Legacy scheduler. Does not respect limits
 // Basically Olegacy(1)
 function LegacyScheduler(downloads) {
 	this._schedule = downloads.filter(this._queuedFilter);
 }
-LegacyScheduler.prototype = {
-	__proto__: BaseScheduler.prototype
-};
+LegacyScheduler.prototype = BaseScheduler.prototype;
+Object.freeze(LegacyScheduler);
 
 // Fast generator: Start downloads as in queue
 function FastScheduler(downloads, running) {
@@ -166,12 +166,11 @@ function FastScheduler(downloads, running) {
 			this._downloads.push(d);
 		}
 	}
+	this._runCount = 0;
 	//this._downloads = downloads.filter(this._queuedFilter);
 }
-FastScheduler.prototype = {
+FastScheduler.prototype = Object.freeze({
 	__proto__: BaseScheduler.prototype,
-	_queuedFilter: function(e) {let d = e; return d && d.state == QUEUED; },
-	_runCount: 0,
 	next: function(running) {
 		if (!this._downloads.length) {
 			return null;
@@ -230,7 +229,8 @@ FastScheduler.prototype = {
 		}
 		return null;
 	}
-};
+});
+Object.freeze(FastScheduler);
 
 // Fair Scheduler: evenly distribute slots
 // Performs worse than FastScheduler but is more precise.
@@ -250,7 +250,7 @@ function FairScheduler(downloads) {
 		this._downloadSet[host].push(d);
 	}
 }
-FairScheduler.prototype = {
+FairScheduler.prototype = Object.freeze({
 	__proto__: BaseScheduler.prototype,
 
 	next: function(running) {
@@ -298,7 +298,7 @@ FairScheduler.prototype = {
 		}
 		return null;
 	}
-};
+});
 FairScheduler.SchedItem = function(host) {
 	this.host = host;
 	this.limit = 0;
@@ -311,7 +311,7 @@ FairScheduler.SchedItem = function(host) {
 	this.downloads = [];
 	this.resetCounter();
 };
-FairScheduler.SchedItem.prototype = {
+FairScheduler.SchedItem.prototype = Object.freeze({
 	get available() (this.limit <= 0 || this.n < this.limit),
 	inc: function() { this.n++; },
 	resetCounter: function() this.n = 0,
@@ -326,7 +326,8 @@ FairScheduler.SchedItem.prototype = {
 		return this.downloads.pop();
 	},
 	push: function(d) this.downloads.push(d),
-};
+});
+Object.freeze(FairScheduler);
 
 // Fair Dir Scheduler: evenly distribute slots
 function DirScheduler(downloads) {
@@ -345,7 +346,7 @@ function DirScheduler(downloads) {
 		this._downloadSet[dir].push(d);
 	}
 }
-DirScheduler.prototype = {
+DirScheduler.prototype = Object.freeze({
 	__proto__: BaseScheduler.prototype,
 
 	next: function(running) {
@@ -393,7 +394,8 @@ DirScheduler.prototype = {
 		}
 		return null;
 	}
-};
+});
+Object.freeze(DirScheduler);
 
 //Random scheduler. Does not respect limits
 function RndScheduler(downloads, running) {
@@ -401,7 +403,7 @@ function RndScheduler(downloads, running) {
 	this.shuffle(this._schedule);
 }
 // Fisher-Yates based shuffle
-RndScheduler.prototype = {
+RndScheduler.prototype = Object.freeze({
 	__proto__: BaseScheduler.prototype,
 	shuffle: function shuffle(a) {
 		let c, e = a.length;
@@ -415,7 +417,8 @@ RndScheduler.prototype = {
 			[a[e], a[c]] = [a[c], a[e]];
 		}
 	}
-};
+});
+Object.freeze(RndScheduler);
 
 let scheduler;
 function loadScheduler() {
@@ -484,7 +487,7 @@ const Observer = {
 		loadServerBuckets();
 		loadScheduler();
 	}
-}
+};
 Prefs.addObserver(PREFS, Observer);
 unload(function() Observer.unload());
 Observer.observe();

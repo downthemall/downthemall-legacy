@@ -47,9 +47,10 @@ exports.loadWindow = (function() {
 	}
 
 	// Directory Provider we use to check the system :p
-	function CheatDirProvider() {}
-	CheatDirProvider.prototype = {
-		hasMore: false,
+	function CheatDirProvider() {
+		this.hasMore = false;
+	}
+	CheatDirProvider.prototype = Object.freeze({
 		QueryInterface: XPCOMUtils.generateQI([Ci.nsIDirectoryServiceProvider, Ci.nsIDirectoryServiceProvider2, Ci.nsISimpleEnumerator]),
 		getFile: function(prop, persist) {
 			throw Cr.NS_ERROR_FAILURE;
@@ -69,7 +70,7 @@ exports.loadWindow = (function() {
 			this.hasMore = false;
 			return profileDir.clone();
 		}
-	};
+	});
 
 	let profileDir = Services.dirsvc.get("ProfD", Ci.nsILocalFile);
 	let iconDir = profileDir.clone();
