@@ -37,7 +37,11 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** -->
+
+<!-- avoid flickering while the main stylesheet loads -->
+<?xml-stylesheet href="data:text/css, .dta-toolbarbutton { list-style-image: none; }" type="text/css"?>
 <?xml-stylesheet href="chrome://dta/skin/integration/style.css" type="text/css"?>
+
 <!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
 <overlay id="DTAUIElements" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<!-- Firefox/Seamonkey -->
