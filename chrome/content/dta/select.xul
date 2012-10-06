@@ -50,6 +50,7 @@
 		<command id="cmdSelectInv" oncommand="Dialog.invertSelection();"/>
 		<command id="cmdSelectFiltered" oncommand="Dialog.selectFiltered();"/>
 		<command id="cmdOpenSelection" oncommand="Dialog.openSelection();"/>
+		<command id="cmdCopyLinks" oncommand="Dialog.copyLinks();"/>
 
 		<command id="cmdStartEditMask" oncommand="Dialog.editMask();"/>
 		<command id="cmdAcceptEditMask" oncommand="Dialog.acceptEditMask();"/>
@@ -77,6 +78,7 @@
 		<key id="kSelectAll" modifiers="accel" key="A" command="cmdSelectAll"/>
 		<key id="kSelectInv" modifiers="accel" key="I" command="cmdSelectInv"/>
 		<key id="kSelectFiltered" modifiers="accel" key="F" command="cmdSelectFiltered"/>
+		<key id="kCopyLinks" modifiers="accel" key="C" command="cmdCopyLinks"/>
 		<key id="kOpenSelection" modifiers="accel" key="O" command="cmdOpenSelection"/>
 
 		<key id="kStart" keycode="VK_RETURN" command="cmdStart"/>
@@ -97,6 +99,8 @@
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" command="cmdSelectAll" key="kSelectAll" />
 			<menuitem id="selectfiltered" class="menuitem-iconic" label="&selectfiltered.label;" command="cmdSelectFiltered" key="kSelectFiltered" />
 			<menuitem id="selectinvert" class="menuitem-iconic" label="&selectinv.label;" command="cmdSelectInv" key="kSelectInv" />
+			<menuseparator/>
+			<menuitem id="copylinks" label="&menu.copylinks.label;" command="cmdCopyLinks" key="kCopyLinks"/>
 			<menuseparator id="msep3" />
 			<menuitem id="mopen" crop="center" class="menuitem-iconic" command="cmdOpenSelection" key="kOpenSelection" />
 		</menupopup>

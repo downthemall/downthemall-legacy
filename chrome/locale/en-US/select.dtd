@@ -12,6 +12,7 @@
 <!ENTITY menu.check.label "Check Selected Items">
 <!ENTITY menu.uncheck.label "Uncheck Selected Items">
 <!ENTITY menu.toggle.label "Toggle Check for Selected Items">
+<!ENTITY menu.copylinks.label "Copy links">
 
 <!ENTITY tab.links.label "Links">
 <!ENTITY tab.media.label "Pictures and Media">
