@@ -778,6 +778,33 @@ let Dialog = {
 		}
 	},
 
+	copyLinks: function() {
+		const tree = this.current;
+		const selection = tree.selection;
+		if (!selection.count) {
+			return;
+		}
+
+		let text = "";
+		// loop through the selection as usual
+		for (let i = 0, e = selection.getRangeCount(); i < e; ++i) {
+			let start = {}, end = {value: -1};
+			selection.getRangeAt(i, start, end);
+			for (let j = start.value, k = end.value; j <= k; ++j) {
+				let d = tree._links[j];
+				if (!d) {
+					continue;
+				}
+				text += d.url.url.spec + "\n";
+			}
+		}
+		if (!text.length) {
+			return;
+		}
+		Services.clipboardhelper.copyString(text, document);
+		log(LOG_DEBUG, "copied text: " + text.length);
+	},
+
 	selectAll: function() {
 		this.current.selection.selectAll();
 	},
