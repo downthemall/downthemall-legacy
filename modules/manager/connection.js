@@ -313,6 +313,10 @@ Connection.prototype = {
 				d.maxChunks--;
 			}
 		}
+		let ac = 0;
+		d.chunks.forEach(function(c) { if (c.running) { ++ac; }});
+		d.activeChunks = ac;
+
 		if (log.enabled) {
 			log(LOG_ERROR, "Done respinning, new score board follows");
 			d.dumpScoreboard();
