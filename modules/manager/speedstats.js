@@ -98,8 +98,8 @@ SpeedStats.prototype = Object.freeze({
 			}
 			this._avg = avg / v;
 			this._aspeeds.push(this.avg);
-			if (this._speeds.length > this._maxSpeeds) {
-				this._speeds.shift();
+			if (this._aspeeds.length > this._maxSpeeds) {
+				this._aspeeds.shift();
 			}
 		}
 		if (received < 0) {
