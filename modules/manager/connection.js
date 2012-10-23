@@ -13,7 +13,7 @@ const NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
 
 let DTA = require("api");
 requireJoined(this, "constants");
-const {SimpleIterator, StringBundles} = require("utils");
+const {formatNumber, SimpleIterator, StringBundles} = require("utils");
 const RequestManipulation = require("manager/requestmanipulation");
 const Preferences = require("preferences");
 const {
