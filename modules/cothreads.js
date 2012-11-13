@@ -3,9 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-// Note: only used for dispatching CoThreads to the mainThread event loop
-const ThreadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
-const MainThread = ThreadManager.mainThread;
+const {defer} = require("support/defer");
 
 const CoThreadBase = {
 	_idx: 0,
@@ -31,7 +29,7 @@ const CoThreadBase = {
 		}
 		this._finishFunc = finishFunc;
 		this._ran = true;
-		MainThread.dispatch(this, 0);
+		defer(this, 0);
 	},
 
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports, Ci.nsICancelable, Ci.nsIRunnable]),
@@ -73,7 +71,7 @@ const CoThreadBase = {
 				this._yieldEvery = Math.max(i, 1);
 			}
 			if (!this._terminated) {
-				MainThread.dispatch(this, 0);
+				defer(this);
 			}
 		}
 		catch (ex) {

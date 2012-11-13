@@ -4,11 +4,26 @@
 "use strict";
 
 // Only used to dispatch runnables to the main thread, as a cheap alternative to setTimeout/nsITimer
-const MainThread = Services.tm.mainThread;
 
-exports.defer = function defer(fn, ctx) {
-	if (ctx) {
-		fn = fn.bind(ctx);
-	}
-	MainThread.dispatch(fn, 0);
-}
+Object.defineProperty(exports, "defer", {
+	value: (function setup() {
+		if ("dispatch" in Cu) {
+			return function defer(fn, ctx) {
+				if (ctx) {
+					fn = fn.bind(ctx);
+				}
+				Cu.dispatch(fn, ctx || fn);
+			};
+		}
+		else {
+			const MainThread = Services.tm.mainThread;
+			return function defer(fn, ctx) {
+				if (ctx) {
+					fn = fn.bind(ctx);
+				}
+				MainThread.dispatch(fn, 0);
+			};
+		}
+	})(),
+	enumerable: true
+});
