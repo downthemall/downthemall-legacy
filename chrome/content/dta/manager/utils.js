@@ -402,9 +402,21 @@ const Tooltip = {
 	update: function() {
 		let file = this._current;
 		if (!file) {
+			log(LOG_DEBUG, "no current");
 			return;
 		}
 		this.updateMetrics(file);
+
+		if (!this._mustDraw && file === this._file && file.speeds.lastUpdate === this._update && file.speeds.lastBytes === this._bytes && file.state == this._state) {
+			return;
+		}
+
+		log(LOG_DEBUG, "update");
+		this._file = file;
+		this._state = file.state;
+		this._update = file.speeds.lastUpdate;
+		this._bytes = file.speeds.lastBytes;
+
 		this.updateChunks(file);
 		this.updateSpeeds(file);
 	},
@@ -475,15 +487,6 @@ const Tooltip = {
 	_usAvgPass: { x:0, y:0, s: "rgba(0,0,200,0.3)", sw: 2 },
 	updateSpeeds: function(file) {
 		try {
-			if (!this._mustDraw && file === this._usFile && file.speeds.lastUpdate === this._usUpdate && file.speeds.lastBytes === this._usBytes && file.state == this._usState) {
-				return;
-			}
-
-			this._usFile = file;
-			this._usState = file.state;
-			this._usUpdate = file.speeds.lastUpdate;
-			this._usBytes = file.speeds.lastBytes;
-
 			// we need to take care about with/height
 			let canvas = this.speedCanvas;
 			let w = canvas.width;
@@ -617,13 +620,6 @@ const Tooltip = {
 	],
 	updateChunks: function (file) {
 		try {
-			if (!this._mustDraw && file === this._ucFile && file.state === this._ucState && file.dimensionString === this._ucDim) {
-				return;
-			}
-			this._ucFile = file;
-			this._ucState = file.state;
-			this._ucDim = file.dimensionString;
-
 			let canvas = this.chunkCanvas;
 			let width = canvas.width;
 			let height = canvas.height;
