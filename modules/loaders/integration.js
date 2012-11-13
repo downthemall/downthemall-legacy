@@ -608,7 +608,7 @@ exports.load = function load(window, outerEvent) {
 
 					log(LOG_DEBUG, "findLinks(): done running...");
 				})(),
-				100
+				-1
 			).start(function() {
 				// clean up the "hint" notification from above
 				clearInterval(_updateInterval);
