@@ -37,7 +37,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const {CoThreadListWalker} = require("cothreads");
+const {CoThreadListWalker} = require("support/cothreads");
 const Prompts = require("prompts");
 const {ByteBucket} = require("support/bytebucket");
 const {GlobalBucket} = require("manager/globalbucket");

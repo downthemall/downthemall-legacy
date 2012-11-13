@@ -13,7 +13,7 @@ lazy(this, 'Preferences', function() require("preferences"));
 this.__defineGetter__('recognizeTextLinks', function() Preferences.getExt("textlinks", true));
 lazy(this, 'TextLinks', function() require("support/textlinks"));
 lazy(this, "ContentHandling", function() require("support/contenthandling").ContentHandling);
-lazy(this, 'CoThreads', function() require("cothreads"));
+lazy(this, 'CoThreads', function() require("support/cothreads"));
 lazy(this, 'getIcon', function() require("support/icons").getIcon);
 lazy(this, 'getString_str',	function() Services.strings.createBundle('chrome://dta/locale/menu.properties'));
 

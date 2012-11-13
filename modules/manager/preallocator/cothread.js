@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const {CoThreadInterleaved} = require("cothreads");
+const {CoThreadInterleaved} = require("support/cothreads");
 
 // Should we use the optimized Windows implementation?
 const WINDOWSIMPL = require("version").OS == 'winnt';
