@@ -87,7 +87,7 @@ const CoThreadBase = {
 		}
 		this._terminated = true;
 		if (this._finishFunc) {
-			this._finishFunc.call(this._thisCtx);
+			this._finishFunc.call(this._thisCtx, this._yieldEvery);
 		}
 	}
 }
