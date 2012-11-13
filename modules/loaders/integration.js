@@ -378,6 +378,8 @@ function getSniffedInfo(window) {
 	});
 }
 
+var adjustedYieldEvery = -1;
+
 /* **
  * LOADER
  */
@@ -608,8 +610,10 @@ exports.load = function load(window, outerEvent) {
 
 					log(LOG_DEBUG, "findLinks(): done running...");
 				})(),
-				-1
-			).start(function() {
+				adjustedYieldEvery
+			).start(function(newYieldEvery) {
+				adjustedYieldEvery = newYieldEvery;
+
 				// clean up the "hint" notification from above
 				clearInterval(_updateInterval);
 				notifyProgress();
