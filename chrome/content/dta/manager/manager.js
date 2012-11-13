@@ -384,7 +384,7 @@ const Dialog = {
 			this._loader = new CoThreadListWalker(
 				this._loadDownloads_item,
 				result,
-				250,
+				-1,
 				this
 			);
 			let self = this;
@@ -2864,7 +2864,7 @@ const startDownloads = (function() {
 		let ct = new CoThreadListWalker(
 			addItem,
 			g,
-			100
+			-1
 		).start(function() {
 			QueueStore.endUpdate();
 			Tree.endUpdate();

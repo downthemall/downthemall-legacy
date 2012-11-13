@@ -15,11 +15,8 @@ const CoThreadBase = {
 	init: function CoThreadBase_init(func, yieldEvery, thisCtx) {
 		this._thisCtx = thisCtx ? thisCtx : this;
 
-		// default to 1
-		this._yieldEvery = typeof yieldEvery == 'number' ? Math.floor(yieldEvery) : 1;
-		if (yieldEvery < 1) {
-			throw Cr.NS_ERROR_INVALID_ARG;
-		}
+		// default to 0 (adjust)
+		this._yieldEvery = typeof yieldEvery == 'number' ? Math.floor(yieldEvery) : 0;
 
 		if (typeof func != 'function' && !(func instanceof Function)) {
 			throw Cr.NS_ERROR_INVALID_ARG;
@@ -52,10 +49,28 @@ const CoThreadBase = {
 		let ctx = this._thisCtx;
 		let callf = this._callf;
 		try {
-			for (let i = 0; i < y; ++i) {
-				if (!callf(ctx, g.next(), this._idx++, f)) {
-					throw 'complete';
+			if (y > 0) {
+				let start = +new Date();
+				for (let i = 0; i < y; ++i) {
+					if (!callf(ctx, g.next(), this._idx++, f)) {
+						throw 'complete';
+					}
 				}
+				let diff = (+new Date()) - start;
+				if (diff > 150 || diff < 30) {
+					this._yieldEvery = Math.max(1, Math.round(y * 60 / diff));
+				}
+			}
+			else {
+				// adjustment pass
+				let start = +new Date();
+				let i = 0;
+				for(; start + 60 > +new Date(); ++i) {
+					if (!callf(ctx, g.next(), this._idx++, f)) {
+						throw 'complete';
+					}
+				}
+				this._yieldEvery = Math.max(i, 1);
 			}
 			if (!this._terminated) {
 				MainThread.dispatch(this, 0);
@@ -95,7 +110,7 @@ const CoThreadBase = {
  *        ).start();
  *
  * @param {Function} func Function to be called. Is passed call count as argument. Returning false will cancel the operation.
- * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
+ * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread.
  * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
  */
 exports.CoThread = function CoThread(func, yieldEvery, thisCtx) {
