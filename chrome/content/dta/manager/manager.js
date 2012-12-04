@@ -538,7 +538,7 @@ const Dialog = {
 		GlobalProgress.reset();
 		this.statusText.hidden = false;
 
-		this._updTimer = Timers.createRepeating(REFRESH_FREQ, this.checkDownloads, this, true);
+		this._updTimer = Timers.createRepeating(REFRESH_FREQ, this.process, this, true);
 		this.refresh();
 		this.start();
 	},
@@ -895,7 +895,7 @@ const Dialog = {
 		Tree.box.invalidate();
 	},
 
-	checkDownloads: function D_checkDownloads() {
+	process: function() {
 		Prefs.refreshConnPrefs(this._running);
 
 		try {
@@ -933,7 +933,7 @@ const Dialog = {
 			}
 		}
 		catch(ex) {
-			log(LOG_ERROR, "checkDownloads():", ex);
+			log(LOG_ERROR, "process():", ex);
 		}
 	},
 	checkSameName: function D_checkSameName(download, path) {
