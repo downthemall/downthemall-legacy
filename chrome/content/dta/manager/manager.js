@@ -58,6 +58,7 @@ const {VisitorManager} = require("manager/visitormanager");
 const Preallocator = require("manager/preallocator");
 const {Chunk} = require("manager/chunk");
 const {Connection} = require("manager/connection");
+const {createRenamer} = require("manager/renamer");
 
 XPCOMUtils.defineLazyGetter(this, "Version", function() require("version"));
 XPCOMUtils.defineLazyGetter(this, "AlertService", function() require("support/alertservice"));
@@ -1326,51 +1327,12 @@ const Metalinker = {
 };
 requireJoined(Metalinker, "support/metalinker");
 
-function Replacer(o) {
-	this._obj = o;
-}
-Replacer.prototype = {
-	get name() this._obj.fileNameAndExtension.name,
-	get ext() this._obj.fileNameAndExtension.extension,
-	get text() Utils.replaceSlashes(this._obj.description, " ").trim(),
-	get flattext() Utils.getUsableFileNameWithFlatten(this._obj.description),
-	get title() this._obj.title.trim(),
-	get flattitle() Utils.getUsableFileNameWithFlatten(this._obj.title),
-	get url() this._obj.urlManager.host,
-	get domain() this._obj.urlManager.domain,
-	get subdirs() this._obj.maskURLPath,
-	get flatsubdirs() Utils.getUsableFileNameWithFlatten(this._obj.maskURLPath),
-	get refer() this._obj.referrer ? this._obj.referrer.host.toString() : '',
-	get qstring() this._obj.maskURL.query || '',
-	get curl() this._obj.maskCURL,
-	get flatcurl() Utils.getUsableFileNameWithFlatten(this._obj.maskCURL),
-	get num() Utils.formatNumber(this._obj.bNum),
-	get inum() Utils.formatNumber(this._obj.iNum),
-	get hh() Utils.formatNumber(this._obj.startDate.getHours(), 2),
-	get mm() Utils.formatNumber(this._obj.startDate.getMinutes(), 2),
-	get ss() Utils.formatNumber(this._obj.startDate.getSeconds(), 2),
-	get d() Utils.formatNumber(this._obj.startDate.getDate(), 2),
-	get m() Utils.formatNumber(this._obj.startDate.getMonth() + 1, 2),
-	get y() this._obj.startDate.getFullYear().toString()
-};
-Replacer.expr = /\*\w+\*/gi;
-function createReplacer(o) {
-	let replacements = new Replacer(o);
-	return function replacer(type) {
-		let t = type.substr(1, type.length - 2);
-		if (t in replacements) {
-			return replacements[t];
-		}
-		return type;
-	}
-}
-
 function QueueItem() {
 	this.visitors = new VisitorManager();
 
 	this.chunks = [];
 	this.speeds = new SpeedStats(SPEED_COUNT);
-	this.rebuildDestination_replacer = createReplacer(this);
+	this.rebuildDestination_renamer = createRenamer(this);
 }
 
 QueueItem.prototype = {
@@ -2097,7 +2059,7 @@ QueueItem.prototype = {
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
 			let mask = Utils.removeFinalSlash(Utils.normalizeSlashes(Utils.removeFinalChar(
-					this.mask.replace(Replacer.expr, this.rebuildDestination_replacer), "."
+					this.rebuildDestination_renamer(this.mask), "."
 					))).split(Utils.SYSTEMSLASH);
 			let file = new Instances.LocalFile(Utils.addFinalSlash(this.pathName));
 			while (mask.length) {
