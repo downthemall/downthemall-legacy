@@ -358,9 +358,10 @@ Chunk.prototype = {
 
 		// Untrack the copier
 		// XXX .indexOf does NOT work
+		let bytes = -1;
 		for (let i = 0; i < this._copiers.length; ++i) {
-			if (aRequest == this._copiers[i]) {
-				this._copiers.splice(i, 1);
+			if (aRequest == this._copiers[i].copier) {
+				bytes = this._copiers.splice(i, 1)[0].bytes;
 				if (i != 0) {
 					log(LOG_ERROR, "Out of order copier! at: " + i);
 				}
@@ -368,8 +369,6 @@ Chunk.prototype = {
 			}
 		}
 
-		aContext.QueryInterface(Ci.nsISupportsPRUint32);
-		let bytes = aContext.data;
 		if (!this._canceled) {
 			if (!Components.isSuccessCode(aStatusCode)) {
 				log(LOG_ERROR, "Failed to asyncwrite", aStatusCode);
@@ -544,12 +543,10 @@ Chunk.prototype = {
 			false // close sink
 			);
 
-		let context = new Instances.SupportsUint32();
-		context.data = bytes;
 		try {
 			this._buffered += bytes;
-			this._copiers.push(copier);
-			copier.asyncCopy(this, context);
+			this._copiers.push({copier:copier, bytes:bytes});
+			copier.asyncCopy(this, null);
 		}
 		catch (ex) {
 			this._copiers.pop();
@@ -570,11 +567,9 @@ Chunk.prototype = {
 			true, // close source
 			true // close sink
 			);
-		let context = new Instances.SupportsUint32();
-		context.data = 0;
 		try {
-			this._copiers.push(copier);
-			copier.asyncCopy(this, context);
+			this._copiers.push({copier:copier, bytes:0});
+			copier.asyncCopy(this, null);
 		}
 		catch (ex) {
 			this._copiers.pop();
