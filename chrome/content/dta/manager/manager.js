@@ -1561,10 +1561,6 @@ QueueItem.prototype = {
 		return this._prettyHash;
 	},
 
-	/**
-	 * Takes one or more state indicators and returns if this download is in state
-	 * of any of them
-	 */
 	is: function QI_is(state) this.state == state,
 	isOf: function QI_isOf(states) (this.state & states) != 0,
 	save: function QI_save() {
