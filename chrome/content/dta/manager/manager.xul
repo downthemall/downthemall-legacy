@@ -286,13 +286,12 @@
 		<statusbarpanel class="statusbarpanel-iconic" id="schedule"/>
 		<statusbarpanel id="statusSpeed" class="statusbarpanel-iconic-text" crop="right" hidden="true" label="" />
 		<statusbarpanel id="statusSpeeds">
-			<label control="listSpeeds" class="statusbarpanel-text" value="&speedlimit.label;" />
 			<menulist class="plain" id="speedLimit" tooltiptext="&speedlimit.tooltip;" sizetopopup="none" command="cmdChangeSpeedLimit">
 				<menupopup id="listSpeeds" class="speedlimitlist-popup" position="before_start" />
 			</menulist>
 			<spinbuttons id="listSpeedsSpinners"/>
 		</statusbarpanel>
-		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text text-link" label="&options.label;" command="cmdPreferences" />
+		<statusbarpanel class="statusbarpanel-iconic" id="preferences" command="cmdPreferences" />
 		<resizer dir="bottomend"/>
 	</windowdragbox>
 </window>
