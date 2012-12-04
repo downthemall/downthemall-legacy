@@ -55,7 +55,7 @@ const {FileExtensionSheet} = require("support/fileextsheet");
 const {UrlManager} = require("support/urlmanager");
 const {VisitorManager} = require("manager/visitormanager");
 const Preallocator = require("manager/preallocator");
-const {Chunk} = require("manager/chunk");
+const {Chunk, hintChunkBufferSize} = require("manager/chunk");
 const {Connection} = require("manager/connection");
 const {createRenamer} = require("manager/renamer");
 
@@ -740,6 +740,7 @@ const Dialog = {
 			for each (let e in $('listSpeeds', 'perDownloadSpeedLimitList')) {
 				try {
 					e.hint = this._maxObservedSpeed;
+					hintChunkBufferSize(this._maxObservedSpeed);
 				}
 				catch (ex) {
 					log(LOG_ERROR, "set hint threw; mos is " + this._maxObservedSpeed, ex);

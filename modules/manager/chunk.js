@@ -18,6 +18,20 @@ const {getTimestamp, formatNumber} = require("utils");
 
 const Timers = new TimerManager();
 
+var buffer_size = BUFFER_SIZE;
+
+exports.hintChunkBufferSize = function(bs) {
+	bs--;
+	bs |= bs >> 1;
+	bs |= bs >> 2;
+	bs |= bs >> 4;
+	bs |= bs >> 8;
+	bs |= bs >> 16;
+	bs++;
+	buffer_size = Math.max(1<<17, Math.min(BUFFER_SIZE * 8, bs));
+	log(LOG_DEBUG, "hintChunkBufferSize: after " + buffer_size);
+};
+
 const _thread = (function() {
 	// Use a dedicated thread, so that we have serialized writes.
 	// As we use a single sink for various reasons, we need to ensure the
@@ -74,10 +88,10 @@ MemoryReporter.prototype = {
 		this._overflow = 0;
 		this._chunksScheduled = 0;
 		this._chunksActive = 0;
-		let bs = (BUFFER_SIZE>>1);
 
 		for (let i = 0, e = this.chunks.length; i < e; ++i) {
 			let c = this.chunks[i];
+			let bs = c.buffer_size;
 			let pending = 0;
 			this._pendingBytes += pending;
 			this._overflow += (bs - (pending % bs)) % bs;
@@ -475,21 +489,22 @@ Chunk.prototype = {
 			// the download too early
 			let avail;
 			if (this._hasCurrentStream
-					&& (avail = this._currentInputStream.available()) + bytes >= BUFFER_SIZE) {
-				let fill = Math.min(bytes, BUFFER_SIZE - avail);
+					&& (avail = this._currentInputStream.available()) + bytes >= this.buffer_size) {
+				let fill = Math.min(bytes, this.buffer_size - avail);
 				bytes -= fill;
 				if (fill && this._currentOutputStream.writeFrom(aInputStream, fill) != fill) {
 					throw new Error("Failed to fill current stream. fill: " + fill + " bytes: " + bytes + "chunk: " + this);
 				}
 				this._shipCurrentStream();
 			}
-			while (bytes >= BUFFER_SIZE) {
-				this._ensureStream(true);
-				if (this._currentOutputStream.writeFrom(aInputStream, BUFFER_SIZE) != BUFFER_SIZE) {
+			this._ensureStream(true);
+			while (bytes >= this.buffer_size) {
+				if (this._currentOutputStream.writeFrom(aInputStream, this.buffer_size) != this.buffer_size) {
 					throw new Error("Failed to write full stream. " + this);
 				}
 				this._shipCurrentStream();
-				bytes -= BUFFER_SIZE;
+				bytes -= this.buffer_size;
+				this._ensureStream(true);
 			}
 			if (bytes) {
 				this._ensureStream();
@@ -509,11 +524,12 @@ Chunk.prototype = {
 	_ensureStream: function CH__ensureStream(solid) {
 		if (!this._hasCurrentStream) {
 			let pipe;
+			this.buffer_size = buffer_size;
 			if (solid) {
-				pipe = new Instances.Pipe(false, true, BUFFER_SIZE, 1, null);
+				pipe = new Instances.Pipe(false, true, this.buffer_size, 1, null);
 			}
 			else {
-				pipe = new Instances.Pipe(false, true, BUFFER_SIZE>>2, 1<<2, null);
+				pipe = new Instances.Pipe(false, true, this.buffer_size>>2, 1<<2, null);
 			}
 			this._currentInputStream = pipe.inputStream;
 			this._currentOutputStream = pipe.outputStream;
