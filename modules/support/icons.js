@@ -52,7 +52,7 @@ lazy(this, "getFavIcon", function() {
  *          The desired iconsize;
  * @return String containing the icon URI
  */
-exports.getIcon = function getIcon(link, metalink, size) {
+const getIcon = exports.getIcon = function getIcon(link, metalink, size) {
 	if (metalink) {
 		if (size > 16) {
 			return "chrome://dta/skin/icons/metalink48.png";
@@ -94,3 +94,9 @@ exports.getIcon = function getIcon(link, metalink, size) {
 	}
 	return "moz-icon://foo.html?size=" + size;
 };
+
+
+exports.getLargeIcon = (function() {
+	const _s = (require("version").OS == "darwin" ? 48 : 32);
+	return memoize(function(name, metalink) getIcon(name, metalink, _s), 150);
+})();

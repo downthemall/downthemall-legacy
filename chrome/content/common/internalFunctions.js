@@ -69,7 +69,7 @@ requireJoined(DTA, "api");
 function openUrl(url, ref) Mediator.openUrl(window, url, ref);
 
 
-const {getIcon} = require("support/icons");
+const {getIcon, getLargeIcon} = require("support/icons");
 
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!
