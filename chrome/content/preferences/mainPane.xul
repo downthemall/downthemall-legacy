@@ -29,7 +29,7 @@
 		</groupbox>
 
 		<groupbox>
-			<caption id="ren" label="&mainpane.rename.caption;" />
+			<caption id="ren" label="&mainpane.nameclash.caption;" />
 			<radiogroup id="scelta" preference="dtaexisting" orient="horizontal">
 				<radio id="rename1" label="&mainpane.rename.label;" value="0" />
 				<radio id="overwrite" label="&mainpane.overwrite.label;" value="1" />
