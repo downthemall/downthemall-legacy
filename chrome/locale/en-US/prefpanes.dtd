@@ -18,7 +18,7 @@
 <!ENTITY mainpane.label "General">
 <!ENTITY mainpane.defaults.caption "Defaults">
 <!ENTITY mainpane.defaults.desc "The download directory, renaming mask and filters as used by OneClick! can be configured in the regular DownThemAll! selection dialog.">
-<!ENTITY mainpane.rename.caption "If a filename already exists:">
+<!ENTITY mainpane.nameclash.caption "When a file with the same name already exists:">
 <!ENTITY mainpane.rename.label "Rename">
 <!ENTITY mainpane.overwrite.label "Overwrite">
 <!ENTITY mainpane.skip.label "Skip">
