@@ -42,7 +42,6 @@ const Prompts = require("prompts");
 const {ByteBucket} = require("support/bytebucket");
 const {GlobalBucket} = require("manager/globalbucket");
 const {defer} = require("support/defer");
-const {memoize} = require("support/memoize");
 const PrivateBrowsing = require("support/pbm");
 const {TimerManager} = require("support/timers");
 const {ContentHandling} = require("support/contenthandling");
@@ -76,11 +75,6 @@ addEventListener("load", function load_textCache() {
 }, false);
 
 var Timers = new TimerManager();
-
-const getLargeIcon = (function() {
-	const _largeIconSize = (Version.OS == "darwin" ? 48 : 32);
-	return memoize(function(name, metalink) getIcon(name, metalink, _largeIconSize), 150);
-})();
 
 const Dialog_loadDownloads_props = ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'];
 function Dialog_loadDownloads_get(down, attr, def) (attr in down) ? down[attr] : (def ? def : '');
