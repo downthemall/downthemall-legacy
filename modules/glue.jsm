@@ -265,7 +265,7 @@ LRUMap.prototype = Object.freeze({
 	}
 	addObserver("extensions.dta.logging", LogPrefObs);
 	LogPrefObs.observe();
-	require("version").getInfo(function(v) {
+	require("version").getInfo(function setupVersion(v) {
 		log(LOG_INFO, v.NAME + "/" + v.VERSION + " on " + v.APP_NAME + "/" + v.APP_VERSION + " (" + v.LOCALE + " / " + v.OS + ") ready");
 	});
 	try {
