@@ -43,11 +43,11 @@ function completeVersion(addon) {
 		exports.ready = true;
 	}
 
-	_callbacks.forEach(function(c) c.call(c, exports));
+	_callbacks.forEach(function callback(c) c.call(c, exports));
 	_callbacks = [];
 }
 
 const {AddonManager} = requireJSM("resource://gre/modules/AddonManager.jsm");
-AddonManager.getAddonByID(exports.ID, function(addon) {
+AddonManager.getAddonByID(exports.ID, function getAddonByID(addon) {
 	completeVersion(addon);
 });
