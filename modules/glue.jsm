@@ -26,7 +26,9 @@ Cu.import("resource://gre/modules/Services.jsm");
 
 const lazy = XPCOMUtils.defineLazyGetter;
 
-let log = function logStub() {}
+let log = function logStub() {
+	Cu.reportError(Array.join(arguments, ", "));
+}
 let LOG_DEBUG = 0, LOG_INFO = 0, LOG_WARN = 0;
 
 //Map shim
