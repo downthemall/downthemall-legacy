@@ -14,6 +14,7 @@ var UNKNOWN_STACK = {
 	columnNumber: 0
 };
 Object.freeze(UNKNOWN_STACK);
+const GLUE = "chrome://dta-modules/content/glue.jsm -> ";
 
 function prepareStack(stack) {
 	if (!stack || !(stack instanceof Ci.nsIStackFrame)) {
@@ -25,17 +26,16 @@ function prepareStack(stack) {
 			return UNKNOWN_STACK;
 		}
 	}
-	let rv = {};
-	rv.sourceName = (stack.filename || "unknown").replace("chrome://dta-modules/content/glue.jsm -> ", "");
-	rv.sourceLine = stack.sourceLine;
-	rv.lineNumber = stack.lineNumber;
+	let sourceName = (stack.filename || "unknown").replace(GLUE, "");
+	let sourceLine = stack.sourceLine;
+	let lineNumber = stack.lineNumber;
 	let message = [];
 	for (let i = 0; stack && i < 6; ++i, stack = stack.caller) {
 		if (stack.lineNumber) {
 			message.push("\t"
 					+ (stack.name || "[anonymous]")
 					+ "() @ "
-					+ (stack.filename || "unknown").replace("chrome://dta-modules/content/glue.jsm -> ", "")
+					+ (stack.filename || "unknown").replace(GLUE, "")
 					+ ":"
 					+ stack.lineNumber);
 		}
@@ -43,9 +43,13 @@ function prepareStack(stack) {
 			message.push("\t[native @ " + (stack.languageName || "???" ) + "]");
 		}
 	}
-	rv.stackMsg = message.join("\n");
-	rv.prototype = UNKNOWN_STACK;
-	return rv;
+	return {
+		stackMsg: message.join("\n") || "",
+		sourceName: sourceName,
+		sourceLine: sourceLine,
+		lineNumber: lineNumber,
+		columnNumber: 0
+	};
 }
 
 lazy(global, "file", function() {
@@ -158,7 +162,7 @@ exports.log = function(level, message, exception) {
 			level >= exports.LOG_ERROR ? errorFlag : warningFlag,
 			category);
 		Services.console.logMessage(scriptError);
-		message = getTimeString() + "\n" + message + "\n";
+		message = getTimeString() + "\n" + message + "\n--> " + sourceName + ":" + lineNumber + ":" + columnNumber + "\n";
 
 		var f = new Instances.FileOutputStream(global.file, 0x04 | 0x08 | 0x10, parseInt("664", 8), 0);
 		f.write(message, message.length);
