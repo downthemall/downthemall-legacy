@@ -29,7 +29,6 @@ exports.hintChunkBufferSize = function(bs) {
 	bs |= bs >> 16;
 	bs++;
 	buffer_size = Math.max(1<<17, Math.min(BUFFER_SIZE * 8, bs));
-	log(LOG_DEBUG, "hintChunkBufferSize: after " + buffer_size);
 };
 
 const _thread = (function() {
