@@ -10,7 +10,7 @@ asyncTest("getVersion", function() {
 	Version.getInfo(function(v) {
 		QUnit.start();
 		ok(Version == v, "callback gets fed back the original Version");
-		for each (var k in ["TOPIC_SHOWABOUT", "ID", "LOCALE", "APP_NAME", "OS", "APP_VERSION", "APP_ID", "VERSION", "BASE_VERSION", "NAME"]) {
+		for (var k of ["TOPIC_SHOWABOUT", "ID", "LOCALE", "APP_NAME", "OS", "APP_VERSION", "APP_ID", "VERSION", "BASE_VERSION", "NAME"]) {
 			ok(k in Version, k + "in Version");
 			ok(!!Version[k], k + " is set");
 		}
