@@ -74,6 +74,7 @@ function Connection(d, c, isInfoGetter) {
 			}
 			catch (ex) {
 				log(LOG_ERROR, "Cannot set channel to private; setPrivate failed!", ex);
+				throw ex;
 			}
 		}
 		else {
