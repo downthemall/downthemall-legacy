@@ -253,7 +253,7 @@ LRUMap.prototype = Object.freeze({
 
 	// init autoloaded modules
 	const logging = require("logging");
-	for (let [,k] in Iterator(Object.keys(logging))) {
+	for (let k of Object.keys(logging)) {
 		exports[k] = logging[k];
 		exports.EXPORTED_SYMBOLS.push(k);
 	}

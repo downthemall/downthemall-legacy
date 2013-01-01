@@ -17,7 +17,7 @@ Atoms.prototype = {
 };
 exports.Atoms = Atoms;
 
-for each (let atom in COMMON_ATOMS) {
+for (let atom of COMMON_ATOMS) {
 	exports[atom + "Atom"] = _as.getAtom(atom);
 }
 Object.freeze(exports);

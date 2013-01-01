@@ -409,7 +409,7 @@ Chunk.prototype = {
 	cancelChunk: function CH_cancel() {
 		this.running = false;
 		this._canceled = true;
-		for (let [,c] in Iterator(this._copiers)) {
+		for (let c of this._copiers) {
 			try {
 				c.cancel(Cr.NS_ERROR_ABORT);
 			}

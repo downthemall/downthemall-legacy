@@ -98,7 +98,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 					.split(',')
 					.map(function(p) p.trim())
 					.filter(function(p) !!p);
-				for each (let p in places) {
+				for (let p of places) {
 					let pn = $$('#' + target.id + ' > #' + p);
 					if (!pn) {
 						continue;
@@ -128,7 +128,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 			let unloaders = [];
 
 			// apply styles
-			for (let [,data] in Iterator(xul.styles)) {
+			for (let data of xul.styles) {
 				let ss = document.createProcessingInstruction("xml-stylesheet", data);
 				document.insertBefore(ss, document.documentElement);
 				unloaders.push(function() ss.parentNode.removeChild(ss));
@@ -137,7 +137,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 			// Add all overlays
 			var tb = $("nav-bar");
 			tb = tb && tb.toolbox;
-			for (let [,node] in Iterator(xul.nodes)) {
+			for (let node of xul.nodes) {
 				let id = node.getAttribute("id");
 				let target = null;
 				if (id == "BrowserToolbarPalette" && tb) {

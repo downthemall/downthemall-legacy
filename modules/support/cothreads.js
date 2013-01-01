@@ -190,7 +190,7 @@ exports.CoThreadListWalker = function CoThreadListWalker(func, arrayOrGenerator,
 
 	if (arrayOrGenerator instanceof Array || 'length' in arrayOrGenerator) {
 		// make a generator
-		this._generator = (i for each (i in arrayOrGenerator));
+		this._generator = (i for (i of arrayOrGenerator));
 	}
 	else {
 		this._generator = arrayOrGenerator;

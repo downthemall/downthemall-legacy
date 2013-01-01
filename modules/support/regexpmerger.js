@@ -350,7 +350,7 @@ function merge(patterns) {
 
 	// split patterns into pieces by top-level alternates
 	let newpatterns = [];
-	for (let [,p] in Iterator(patterns)) {
+	for (let p of patterns) {
 		splitAlternates(p, newpatterns);
 	}
 	patterns = newpatterns.filter(unique_filter, Object.create(null));

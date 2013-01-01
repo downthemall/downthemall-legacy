@@ -394,7 +394,7 @@ Connection.prototype = {
 		}
 
 		let max = -1, found = null;
-		for each (let cmp in d.chunks) {
+		for (let cmp of d.chunks) {
 			if (!cmp.running) {
 				continue;
 			}
@@ -526,7 +526,7 @@ Connection.prototype = {
 					cb("size mismatch");
 					return;
 				}
-				for each(var u in d.url.toArray()){
+				for (var u of d.url.toArray()){
 					download.urlManager.add(u);
 				};
 				if (d.hashCollection) {
@@ -608,7 +608,7 @@ Connection.prototype = {
 		if (visitor.mirrors
 				&& download.hashCollection && download.hashCollection.full.q >= 0.5
 				&& !(download.isMetalink || download.fromMetalink)) {
-			for each(let mirror in visitor.mirrors) {
+			for (let mirror of visitor.mirrors) {
 				download.urlManager.add(mirror);
 			}
 		}
@@ -877,7 +877,7 @@ Connection.prototype = {
 		}
 
 		try {
-			for each (let sc in this._supportedChannels) {
+			for (let sc of this._supportedChannels) {
 				let chan = null;
 				try {
 					chan = aRequest.QueryInterface(sc.i);

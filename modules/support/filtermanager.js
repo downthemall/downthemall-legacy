@@ -151,7 +151,7 @@ Filter.prototype = {
 		var parts = str.split(',');
 		// we contain multiple filters
 		if (parts.length > 1) {
-			for each (var s in parts) {
+			for (var s of parts) {
 				this._makeRegs(s);
 			}
 			return;
@@ -289,7 +289,7 @@ function FilterEnumerator(filters) {
 FilterEnumerator.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsISimpleEnumerator]),
 	__iterator__: function() {
-		for each (let f in this._filters) {
+		for (let f of this._filters) {
 			yield f;
 		}
 	},
@@ -332,12 +332,12 @@ FilterManagerImpl.prototype = {
 	},
 
 	enterPrivateBrowsing: function() {
-		for each (let f in this._all) {
+		for (let f of this._all) {
 			f.persist = false;
 		}
 	},
 	exitPrivateBrowsing: function() {
-		for each (let f in this._all) {
+		for (let f of this._all) {
 			f.persist = true;
 		}
 	},
@@ -370,7 +370,7 @@ FilterManagerImpl.prototype = {
 		this._all = [];
 
 		// hmmm. since we use uuids for the filters we've to enumerate the whole branch.
-		for each (let pref in Preferences.getChildren(PREF_FILTERS_BASE)) {
+		for (let pref of Preferences.getChildren(PREF_FILTERS_BASE)) {
 			// we test for label (as we get all the other props as well)
 			if (pref.search(/\.label$/) == -1) {
 				continue;
@@ -491,7 +491,7 @@ FilterManagerImpl.prototype = {
 	},
 
 	save: function FM_save() {
-		for each (var f in this._all) {
+		for (var f of this._all) {
 			try {
 				f.save();
 			}

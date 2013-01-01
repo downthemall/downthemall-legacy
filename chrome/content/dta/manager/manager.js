@@ -138,7 +138,7 @@ const Dialog = {
 
 		// Set tooltip texts for each tb button lacking one (copy label)
 		(function addTooltips() {
-			for each (let e in Array.map(document.getElementsByTagName('toolbarbutton'), function(e) e)) {
+			for (let e of Array.map(document.getElementsByTagName('toolbarbutton'), function(e) e)) {
 				if (!e.hasAttribute('tooltiptext')) {
 					e.setAttribute('tooltiptext', e.getAttribute('label'));
 				}
@@ -149,10 +149,10 @@ const Dialog = {
 
 		(function initActions() {
 			let tb = $('actions');
-			for each (let e in $$('#popup menuitem')) {
+			for (let e of $$('#popup menuitem')) {
 				e.className += " " + e.id;
 			}
-			for each (let e in $$('#popup .action')) {
+			for (let e of $$('#popup .action')) {
 				if (e.localName == 'menuseparator') {
 					tb.appendChild($e('toolbarseparator'));
 					continue;
@@ -232,12 +232,12 @@ const Dialog = {
 		}
 
 		Preferences.makeObserver(this);
-		for (let [,topic] in Iterator(this._observes)) {
+		for (let topic of this._observes) {
 			Services.obs.addObserver(this, topic, true);
 		}
 		const unload_obs = (function() {
 			removeEventListener("unload", unload_obs, false);
-			for (let [,topic] in Iterator(this._observes)) {
+			for (let topic of this._observes) {
 				Services.obs.removeObserver(this, topic);
 			}
 		}).bind(this);
@@ -522,7 +522,7 @@ const Dialog = {
 		if (this._brokenDownloads.length) {
 			QueueStore.beginUpdate();
 			try {
-				for each (let id in this._brokenDownloads) {
+				for (let id of this._brokenDownloads) {
 					QueueStore.deleteDownload(id);
 					log(LOG_ERROR, "Removed broken download #" + id);
 				}
@@ -611,7 +611,7 @@ const Dialog = {
 		PrivateBrowsing.registerCallbacks(this);
 
 		this._initialized = true;
-		for each (let d in Tree.all) {
+		for (let d of Tree.all) {
 			if (d.state == FINISHING) {
 				this.run(d);
 			}
@@ -675,7 +675,7 @@ const Dialog = {
 					let cancelQuit = subject.QueryInterface(Ci.nsISupportsPRBool);
 					cancelQuit.data = true;
 					this._mustReload = true;
-					for each (let d in Tree.all) {
+					for (let d of Tree.all) {
 						if (d.state == RUNNING && d.resumable) {
 							d.pause();
 							d.queue();
@@ -737,7 +737,7 @@ const Dialog = {
 			this._speeds.add(this._sum, now);
 			speed = Utils.formatSpeed(this._speeds.avg);
 			this._maxObservedSpeed = Math.max(this._speeds.avg || this._maxObservedSpeed, this._maxObservedSpeed);
-			for each (let e in $('listSpeeds', 'perDownloadSpeedLimitList')) {
+			for (let e of $('listSpeeds', 'perDownloadSpeedLimitList')) {
 				try {
 					e.hint = this._maxObservedSpeed;
 					hintChunkBufferSize(this._maxObservedSpeed);
@@ -808,7 +808,7 @@ const Dialog = {
 			else {
 				if (Tree.downloadCount) {
 					let state = COMPLETE;
-					for each (let d in Tree.all) {
+					for (let d of Tree.all) {
 						const dstate = d.state;
 						if (dstate == CANCELED) {
 							state = CANCELED;
@@ -882,7 +882,7 @@ const Dialog = {
 		if (this.offline) {
 			de.setAttribute('offline', true);
 			$('netstatus').setAttribute('offline', true);
-			for each (let d in Tree.all) {
+			for (let d of Tree.all) {
 				if (d.state == RUNNING) {
 					d.pause();
 					d.queue();
@@ -938,7 +938,7 @@ const Dialog = {
 		}
 	},
 	checkSameName: function D_checkSameName(download, path) {
-		for each (let runner in this._running) {
+		for (let runner of this._running) {
 			if (runner == download) {
 				continue;
 			}
@@ -1163,7 +1163,7 @@ const Dialog = {
 			function(d) {
 				if (d.isOf(RUNNING | QUEUED)) {
 					// enumerate all running chunks
-					for (let [,c] in Iterator(d.chunks)) {
+					for (let c of d.chunks) {
 						if (c.running) {
 							++chunks;
 						}
@@ -1200,7 +1200,7 @@ const Dialog = {
 			return;
 		}
 		let known = [];
-		for each (d in Tree.all) {
+		for (let d of Tree.all) {
 			known.push(d.tmpFile.leafName);
 		}
 		let tmpEnum = Prefs.tempLocation.directoryEntries;
@@ -1210,7 +1210,7 @@ const Dialog = {
 				unknown.push(f);
 			}
 		}
-		for (let [,f] in Iterator(unknown)) {
+		for (let f of unknown) {
 			try {
 				f.remove(false);
 			}
@@ -1236,7 +1236,7 @@ const Dialog = {
 		}
 
 		// some more gc
-		for (let [,d] in Iterator(Tree._downloads)) {
+		for (let d of Tree._downloads) {
 			delete d._icon;
 		}
 		Tree.clear();
@@ -1287,7 +1287,7 @@ const Metalinker = {
 				if (!res.downloads.length) {
 					throw new Error(_('mlnodownloads'));
 				}
-				for (let [,e] in Iterator(res.downloads)) {
+				for (let e of res.downloads) {
 					if (e.size) {
 						e.size = Utils.formatBytes(e.size);
 					}
@@ -1753,7 +1753,7 @@ QueueItem.prototype = {
 		this.progress = this.totalSize = this.partialSize = 0;
 		this.compression = null;
 		this.activeChunks = this.maxChunks = 0;
-		for (let [,c] in Iterator(this.chunks)) {
+		for (let c of this.chunks) {
 			c.cancelChunk();
 		}
 		this.chunks = [];
@@ -1786,7 +1786,7 @@ QueueItem.prototype = {
 	pause: function QI_pause(){
 		this.setState(PAUSED);
 		if (this.chunks) {
-			for (let [,c] in Iterator(this.chunks)) {
+			for (let c of this.chunks) {
 				if (c.running) {
 					c.pauseChunk();
 				}
@@ -1809,7 +1809,7 @@ QueueItem.prototype = {
 		}
 		try {
 			// safeguard against some failed chunks.
-			for (let [,c] in Iterator(this.chunks)) {
+			for (let c of this.chunks) {
 				c.close();
 			}
 			var destination = new Instances.LocalFile(this.destinationPath);
@@ -1923,7 +1923,7 @@ QueueItem.prototype = {
 			}
 			let chunks = [];
 			let next = 0;
-			for each (let mismatch in mismatches) {
+			for (let mismatch of mismatches) {
 				if (next != mismatch.start) {
 					chunks.push(new Chunk(download, next, mismatch.start - 1, mismatch.start - next));
 				}
@@ -2178,7 +2178,7 @@ QueueItem.prototype = {
 				if (this.chunks) {
 					// must set state here, already, to avoid confusing the connections
 					this.setState(CANCELED);
-					for (let [,c] in Iterator(this.chunks)) {
+					for (let c of this.chunks) {
 						if (c.running) {
 							c.cancelChunk();
 						}
@@ -2306,7 +2306,7 @@ QueueItem.prototype = {
 		this.preallocating = false;
 
 		if (this._notifyPreallocation) {
-			for (let [,c] in Iterator(this._notifyPreallocation)) {
+			for (let c of this._notifyPreallocation) {
 				try {
 					c();
 				}
@@ -2454,7 +2454,7 @@ QueueItem.prototype = {
 
 				// find biggest chunk
 				let biggest = null;
-				for each (let chunk in this.chunks) {
+				for (let chunk of this.chunks) {
 					if (chunk.running && chunk.remainder > MIN_CHUNK_SIZE * 2) {
 						if (!biggest || biggest.remainder < chunk.remainder) {
 							biggest = chunk;
@@ -2567,7 +2567,7 @@ var ConflictManager = {
 			}
 			return;
 		}
-		for each (let item in this._items.length) {
+		for (let item of this._items) {
 			if (item.download == download) {
 				log(LOG_DEBUG, "conflict resolution updated to: " + reentry);
 				item.reentry = reentry;
@@ -2809,7 +2809,7 @@ const startDownloads = (function() {
 		let first = null;
 		let g = downloads;
 		if ('length' in downloads) {
-			g = (i for each (i in downloads));
+			g = (i for (i of downloads));
 		}
 
 		Tree.beginUpdate();

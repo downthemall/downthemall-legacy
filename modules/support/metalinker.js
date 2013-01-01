@@ -150,7 +150,7 @@ Metalinker3.prototype = {
 			throw new Exception("No valid file nodes");
 		}
 
-		for each (let file in files) {
+		for (let file of files) {
 			let fileName = file.getAttribute('name');
 			if (!fileName) {
 				throw new Exception("LocalFile name not provided!");
@@ -186,7 +186,7 @@ Metalinker3.prototype = {
 
 			let urls = [];
 			let urlNodes = this.getNodes(file, 'ml:resources/ml:url');
-			for each (var url in urlNodes) {
+			for (var url of urlNodes) {
 				let preference = 1;
 				let charset = doc.characterSet;
 				if (url.hasAttributeNS(NS_DTA, 'charset')) {
@@ -236,7 +236,7 @@ Metalinker3.prototype = {
 			}
 
 			let hash = null;
-			for each (let h in this.getNodes(file, 'ml:verification/ml:hash')) {
+			for (let h of this.getNodes(file, 'ml:verification/ml:hash')) {
 				try {
 					h = new DTA.Hash(h.textContent.trim(), h.getAttribute('type'));
 					if (!hash || hash.q < h.q) {
@@ -260,7 +260,7 @@ Metalinker3.prototype = {
 						}
 						let collection = [];
 						let maxPiece = Math.ceil(size / hash.parLength);
-						for each (let piece in this.getNodes(pieces, 'ml:hash')) {
+						for (let piece of this.getNodes(pieces, 'ml:hash')) {
 							try {
 								let num = parseInt(piece.getAttribute('piece'));
 								if (!maxPiece || (num >= 0 && num <= maxPiece)) {
@@ -366,7 +366,7 @@ MetalinkerRFC5854.prototype = {
 		if (!files.length) {
 			throw new Exception("No valid file nodes");
 		}
-		for each (let file in files) {
+		for (let file of files) {
 			let fileName = file.getAttribute('name');
 			if (!fileName) {
 				throw new Exception("LocalFile name not provided!");
@@ -402,7 +402,7 @@ MetalinkerRFC5854.prototype = {
 
 			let urls = [];
 			let urlNodes = this.getNodes(file, 'ml:url');
-			for each (var url in urlNodes) {
+			for (var url of urlNodes) {
 				let preference = 1;
 				let charset = doc.characterSet;
 				if (url.hasAttributeNS(NS_DTA, 'charset')) {
@@ -448,7 +448,7 @@ MetalinkerRFC5854.prototype = {
 			}
 
 			let hash = null;
-			for each (let h in this.getNodes(file, 'ml:hash')) {
+			for (let h of this.getNodes(file, 'ml:hash')) {
 				try {
 					h = new DTA.Hash(h.textContent.trim(), h.getAttribute('type'));
 					if (!hash || hash.q < h.q) {
@@ -470,7 +470,7 @@ MetalinkerRFC5854.prototype = {
 						if (!isFinite(hash.parLength) || hash.parLength < 1) {
 							throw new Exception("Invalid pieces length");
 						}
-						for each (let piece in this.getNodes(pieces, 'ml:hash')) {
+						for (let piece of this.getNodes(pieces, 'ml:hash')) {
 							try {
 								hash.add(new DTA.Hash(piece.textContent.trim(), type));
 							}
@@ -562,7 +562,7 @@ function parse(aURI, aReferrer, aCallback) {
 			if (doc.documentElement.nodeName == 'parsererror') {
 				throw new Exception("Failed to parse XML");
 			}
-			for each (let parser in __parsers__) {
+			for (let parser of __parsers__) {
 				try {
 					parser = new parser(doc);
 				}

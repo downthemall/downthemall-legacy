@@ -4,7 +4,7 @@
 "use strict";
 
 function getLibc() {
-	for each (let p in ["libSystem.dylib", "libsystem.B.dylib", "libc.so.6", "libc.so"]) {
+	for (let p of ["libSystem.dylib", "libsystem.B.dylib", "libc.so.6", "libc.so"]) {
 		try {
 			return ctypes.open(p);
 			break;

@@ -225,7 +225,7 @@ const QueueStore = {
 		}
 		let stmt = _connection.createAsyncStatement("UPDATE queue SET pos = :pos WHERE uuid = :uuid");
 		let params = stmt.newBindingParamsArray();
-		for each (let d in downloads) {
+		for (let d of downloads) {
 			let bp = params.newBindingParams();
 			bp.bindByName("pos", d.position);
 			bp.bindByName("uuid", d.dbId);

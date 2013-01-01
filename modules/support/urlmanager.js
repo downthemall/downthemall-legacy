@@ -23,7 +23,7 @@ function UrlManager(urls) {
 UrlManager.prototype = Object.freeze({
 	initByArray: function um_initByArray(urls) {
 		this._urls = [];
-		for each (let u in urls) {
+		for (let u of urls) {
 			if (u instanceof URL || (u.url && u.url instanceof Ci.nsIURI)) {
 				this.add(u);
 			}
@@ -77,7 +77,7 @@ UrlManager.prototype = Object.freeze({
 		if (!this.good.length) {
 			// all marked bad; actually a bug
 			Cu.reportError("UM: all marked bad");
-			for each (let u in this._urls) {
+			for (let u of this._urls) {
 				delete u.bad;
 			}
 			this.good = this._urls.map(function(e) e);
@@ -96,7 +96,7 @@ UrlManager.prototype = Object.freeze({
 	get host() this._host,
 	get domain() this._domain,
 	get all() {
-		for each (let i in this._urls) {
+		for (let i of this._urls) {
 			yield i;
 		}
 	},
@@ -109,7 +109,7 @@ UrlManager.prototype = Object.freeze({
 			// cannot mark the last url bad :p
 			return false;
 		}
-		for each (let u in this._urls) {
+		for (let u of this._urls) {
 			if (u != url) {
 				continue;
 			}

@@ -67,7 +67,7 @@
 				let newActive = all.filter(function(b) $(b).checked);
 				let tb = $o('nav-bar');
 
-				for each (let b in all) {
+				for (let b of all) {
 					let btn = $o(b);
 					if (newActive.indexOf(b) != -1 && !btn) {
 						// add the button
@@ -76,7 +76,7 @@
 						// find the best position
 						let spliceIdx = -1;
 						let dist = (1<<30);
-						for each (let rb in all) {
+						for (let rb of all) {
 							let cidx = currentSet.indexOf(rb);
 							if (cidx == -1) {
 								continue;

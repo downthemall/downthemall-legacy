@@ -171,7 +171,7 @@ HttpVisitor.prototype = {
 		catch (ex) {
 			links = [];
 		}
-		for each(let link in links) {
+		for (let link of links) {
 			try {
 				let linkURI = Services.mimeheader.getParameter(link, null, null, true, {})
 					.replace(/[<>]/g, '');
@@ -314,7 +314,7 @@ VisitorManager.prototype = {
 	 * Loads a ::save'd JS Array Will silently bypass failed items!
 	 */
 	load: function vm_init(nodes) {
-		for each (let n in nodes) {
+		for (let n of nodes) {
 			try {
 				let uri = Services.io.newURI(n.url, null, null);
 				switch (uri.scheme) {
@@ -391,7 +391,7 @@ VisitorManager.prototype = {
 	 *           if no timestamp found
 	 */
 	get time() {
-		for each (let v in this._visitors) {
+		for (let v of this._visitors) {
 			if (v.time && v.time > 0) {
 				return v.time;
 			}

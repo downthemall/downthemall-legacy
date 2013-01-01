@@ -15,7 +15,7 @@ const {
 
 (function(global) {
 	let strings = {};
-	for each (let f in ['common.properties', 'manager.properties']) {
+	for (let f of ['common.properties', 'manager.properties']) {
 		for (let s in new SimpleIterator(
 			Services.strings
 				.createBundle('chrome://dta/locale/' + f)
@@ -62,7 +62,7 @@ const FilterMatch = {
 	},
 	getMatcher: function(params) {
 		let filters = [];
-		for each (let id in params) {
+		for (let id of params) {
 			try {
 				filters.push(FilterManager.getFilter(id));
 			}
@@ -89,7 +89,7 @@ const PathMatch = {
 			{}
 			);
 		paths.sort();
-		for each (let p in paths) {
+		for (let p of paths) {
 			yield {
 				label: p,
 				param: btoa(p)
@@ -134,7 +134,7 @@ const RemainderMatch = {
 	getMatcher: function(params) {
 		let state = 0;
 		let est = 0;
-		for each (let p in params) {
+		for (let p of params) {
 			let n = parseInt(p, 10);
 			if (isFinite(n) && n > est) {
 				est = n;
@@ -146,7 +146,7 @@ const RemainderMatch = {
 const StatusMatch = {
 		get name() 'statusmatch',
 		getItems: function() {
-			for each (let s in ['QUEUED', 'PAUSED', 'RUNNING', 'COMPLETE', 'CANCELED']) {
+			for (let s of ['QUEUED', 'PAUSED', 'RUNNING', 'COMPLETE', 'CANCELED']) {
 				yield {
 					label: _(s.toLowerCase()),
 					param: s
@@ -175,7 +175,7 @@ const SIZES = [
 const SizeMatch = {
 	get name() 'sizematch',
 	getItems: function() {
-		for each (let [p, l] in SIZES) {
+		for (let [p, l] of SIZES) {
 			yield {
 				label: l,
 				param: p
@@ -184,7 +184,7 @@ const SizeMatch = {
 	},
 	getMatcher: function(params) {
 		let ranges = [];
-		for each (let x in params) {
+		for (let x of params) {
 			let [l,h] = x.split('-').map(function(v) parseInt(v));
 			ranges.push({low: l, high: h});
 		}
@@ -229,7 +229,7 @@ const DomainMatch = {
 				{}
 				);
 		domains.sort();
-		for each (let p in domains) {
+		for (let p of domains) {
 			yield {
 				label: p,
 				param: btoa(p)

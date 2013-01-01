@@ -133,13 +133,13 @@ const _histories = {};
 const callbacks = {
 	enterPrivateBrowsing: function() {
 		log(LOG_INFO, "entering pbm: switching to session histories");
-		for each (let h in _histories) {
+		for (let h of _histories) {
 			h._setPersisting(false);
 		}
 	},
 	exitPrivateBrowsing: function() {
 		log(LOG_INFO, "exiting pbm: switching to persisted histories");
-		for each (let h in _histories) {
+		for (let h of _histories) {
 			h._setPersisting(true);
 		}
 	}

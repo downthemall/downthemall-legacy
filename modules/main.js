@@ -158,7 +158,7 @@ MetalinkInterceptModule.prototype = Object.freeze({
 });
 
 function registerComponents() {
-	for (let [,cls] in Iterator([AboutModule, MetalinkInterceptModule])) {
+	for (let cls of [AboutModule, MetalinkInterceptModule]) {
 		const factory = Object.freeze({
 			_cls: cls,
 			createInstance: function(outer, iid) {
@@ -171,7 +171,7 @@ function registerComponents() {
 				const cls = this._cls;
 				Cm.registerFactory(cls.prototype.classID, cls.prototype.classDescription, cls.prototype.contractID, this);
 				if (cls.prototype.xpcom_categories) {
-					for each (let category in cls.prototype.xpcom_categories) {
+					for (let category of cls.prototype.xpcom_categories) {
 						Services.catman.addCategoryEntry(category, cls.prototype.classDescription, cls.prototype.contractID, false, true);
 					}
 				}
@@ -180,7 +180,7 @@ function registerComponents() {
 			unregister: function() {
 				const cls = this._cls;
 				if (cls.prototype.xpcom_categories) {
-					for each (let category in cls.prototype.xpcom_categories) {
+					for (let category of cls.prototype.xpcom_categories) {
 						Services.catman.deleteCategoryEntry(category, cls.prototype.classDescription, false);
 					}
 				}
@@ -199,7 +199,7 @@ function migrate() {
 		function() {
 			// 1.0.1: #613 Multiple "slow-down" reports
 			log("resetting connection prefs");
-			for each (let e in ['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server']) {
+			for (let e of ['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server']) {
 				Preferences.reset(e);
 			}
 		},
@@ -238,7 +238,7 @@ exports.clean = function clean() {
 	log(LOG_INFO, 'clean()');
 
 	// Cleaning prefs
-	for each (let e in ['directory', 'filter', 'renaming']) {
+	for (let e of ['directory', 'filter', 'renaming']) {
 		try {
 			Preferences.resetExt(e);
 		}
@@ -250,7 +250,7 @@ exports.clean = function clean() {
 	// Cleaning files
 	try {
 		let prof = Services.dirsvc.get("ProfD", Ci.nsIFile);
-		for each (let e in ['dta_history.xml']) {
+		for (let e of ['dta_history.xml']) {
 			try {
 				var file = prof.clone();
 				file.append(e);
@@ -322,7 +322,7 @@ function registerOverlays() {
 			// Simply need to get the currentset attribute, which will still contain
 			// the id and reset it and tb.currentSet
 			try {
-				for (let [,tb] in Iterator(document.getElementsByTagName("toolbar"))) {
+				for (let tb of document.getElementsByTagName("toolbar")) {
 					let tcs = tb.getAttribute("currentset").split(",");
 					if (!ids.some(function(id) ~tcs.indexOf(id))) {
 						continue;
