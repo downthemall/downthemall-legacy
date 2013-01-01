@@ -50,7 +50,7 @@ SpeedStats.prototype = Object.freeze({
 	 * Generator over all recorded speeds
 	 */
 	get all() {
-		for each (let x in this._speeds) {
+		for (let x of this._speeds) {
 			yield x;
 		}
 	},
@@ -58,7 +58,7 @@ SpeedStats.prototype = Object.freeze({
 	 * Generator over all avg speeds
 	 */
 	get allAvg() {
-		for each (let x in this._aspeeds) {
+		for (let x of this._aspeeds) {
 			yield x;
 		}
 	},

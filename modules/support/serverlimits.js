@@ -88,7 +88,7 @@ function loadLimits() {
 	let hosts = Prefs.getChildren(LIMITS_PREF).map(function(e) e.substr(LIMITS_PREF.length));
 	hosts.sort();
 
-	for each (let host in hosts) {
+	for (let host of hosts) {
 		try {
 			let limit = new Limit(host);
 			limits[limit.host] = limit;
@@ -458,7 +458,7 @@ function loadServerBuckets() {
 	}
 }
 function killServerBuckets() {
-	for each (let bucket in buckets) {
+	for (let bucket of buckets) {
 		bucket.kill();
 	}
 	buckets = Object.create(null);

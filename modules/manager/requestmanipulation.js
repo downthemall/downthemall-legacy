@@ -19,10 +19,10 @@ Manipulator.prototype = {
 		}
 	},
 	modify: function(context, spec) {
-		for each (let m in this._m) {
+		for (let [,m] in Iterator(this._m)) {
 			if (m.matcher.test(spec)) {
 				try {
-					for each (let func in m.funcs) {
+					for (let func of m.funcs) {
 						func.apply(context);
 					}
 				}
@@ -34,7 +34,7 @@ Manipulator.prototype = {
 	}
 }
 
-for each (let [m, sp] in [['URL', function(c) c.spec], ['Http', function(c) c.URI.spec]]) {
+for (let [m, sp] of [['URL', function(c) c.spec], ['Http', function(c) c.URI.spec]]) {
 	let _m = new Manipulator();
 	let _sp = sp;
 	exports['register' + m] = function() _m.register.apply(_m, arguments);

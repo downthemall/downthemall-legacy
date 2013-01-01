@@ -86,7 +86,7 @@ function objToUri(obj) {
  */
 function getMostRecent(type) {
 	if (type && type instanceof Array) {
-		for each (t in type) {
+		for (let t of type) {
 			let rv = getMostRecent(t);
 			if (rv) {
 				return rv;
@@ -217,10 +217,11 @@ function showToolbarInstall(browserWindow) {
 		"chrome,dialog,centerscreen");
 }
 
-for each (let i in ['getMostRecent', 'getMostRecentByUrl', 'getAllByType',
-										'openExternal', 'openUrl', 'tryOpenUrl', 'openWindow',
-										'addListener', 'removeListener',
-										'showNotice', 'showAbout', 'showPreferences', 'showToolbarInstall'
-										]) {
+for (let i of [
+	'getMostRecent', 'getMostRecentByUrl', 'getAllByType',
+	'openExternal', 'openUrl', 'tryOpenUrl', 'openWindow',
+	'addListener', 'removeListener',
+	'showNotice', 'showAbout', 'showPreferences', 'showToolbarInstall'
+]) {
 	exports[i] = this[i];
 }

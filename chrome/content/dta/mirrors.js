@@ -61,7 +61,7 @@ function load() {
 	removeEventListener('load', arguments.callee, true);
 	if (window.arguments && window.arguments.length) {
 		let downloads = Utils.naturalSort(window.arguments[0], function(e) e.url.host + "/" + e.url.spec);
-		for each (let a in downloads) {
+		for (let a of downloads) {
 			try {
 				let mirror = document.createElement('richlistitem');
 				mirror.setAttribute('mirror', a.url.spec);
@@ -152,7 +152,7 @@ function addMirror() {
 }
 
 function removeMirrors() {
-	for each (let item in mirrors.selectedItems) {
+	for (let item of mirrors.selectedItems) {
 		mirrors.removeChild(item);
 	}
 	select();
@@ -269,7 +269,7 @@ function checkMirrors() {
 				if (cl == maxCL) {
 					continue;
 				}
-				for each (let m in good[cl]) {
+				for (let m of good[cl]) {
 					log(LOG_INFO, m.mirror + " has a cl of " + cl + " but the majority of mirrors uses " + maxCL);
 					m.setAttribute('state', 'bad');
 					m.setAttribute('error', _('sizecheckerror'));
@@ -284,14 +284,14 @@ function checkMirrors() {
 			_('removebadmirrors.keep'), // XXX swap
 			_('removebadmirrors.remove')
 		)) {
-			for each (let b in bad) {
+			for (let b of bad) {
 				b.parentNode.removeChild(b);
 			}
 		}
 		button.disabled = false;
 	}
 	function timeout() {
-		for each (let req in requests) {
+		for (let req of requests) {
 			log(LOG_INFO, req.mirror.mirror + " is a timeout");
 			req.abort();
 			finishRequest(req);

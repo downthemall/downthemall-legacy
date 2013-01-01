@@ -102,7 +102,7 @@ const SUPPORTED_HASHES_ALIASES = Object.freeze({
 exports.SUPPORTED_HASHES_ALIASES = Object.freeze(SUPPORTED_HASHES_ALIASES);
 exports.WANT_DIGEST_STRING = Object.freeze((function() {
 	let rv = new MimeQuality();
-	for each (let h in ["MD5", "SHA", "SHA1", "SHA256", "SHA512"]) {
+	for (let h of ["MD5", "SHA", "SHA1", "SHA256", "SHA512"]) {
 		let q = SUPPORTED_HASHES[SUPPORTED_HASHES_ALIASES[h]].q;
 		rv.add(h, q);
 	}
@@ -177,7 +177,7 @@ HashCollection.prototype = Object.freeze({
 	 * Gives {hash,start,end} dict
 	 */
 	__iterator__: function() {
-		for each (let partial in this._partials) {
+		for (let partial of this._partials) {
 			yield partial;
 		}
 	},
@@ -419,7 +419,7 @@ var managerRequests = [];
 function openManagerCallback(event) {
 	log(LOG_DEBUG, "manager ready; pushing queued items");
 	event.target.removeEventListener("DTA:ready", openManagerCallback, true);
-	for each (let cb in managerRequests) {
+	for (let cb of managerRequests) {
 		cb(event.target);
 	}
 	managerRequests.splice(0);

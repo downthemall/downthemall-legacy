@@ -369,7 +369,7 @@ exports.SimpleIterator = Object.freeze(SimpleIterator);
  * @param properties (nsIProperties) initial properties
  */
 function Properties() {
-	for each (let p in Array.slice(arguments)) {
+	for (let p of Array.slice(arguments)) {
 		this._parse(p);
 	}
 }
@@ -379,7 +379,7 @@ Properties.prototype = Object.freeze({
 			return;
 		}
 		let keys = properties.getKeys({});
-		for each (let key in keys) {
+		for (let key of keys) {
 			try {
 				let prop =  properties.get(key, Ci.nsISupports);
 				if (prop instanceof Ci.nsIVariant);
@@ -514,7 +514,7 @@ function _loadBundles(urls) {
 		return _bundles[key];
 	}
 	let rv = {};
-	for each (let b in exports.mapInSitu(urls, function(e) _loadBundle(e))) {
+	for (let b of exports.mapInSitu(urls, function(e) _loadBundle(e))) {
 		for (let k in b) {
 			rv[k] = b[k];
 		}

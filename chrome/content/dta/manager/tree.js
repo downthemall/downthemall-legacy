@@ -94,10 +94,10 @@ const Tree = {
 		$('popup').addEventListener('popupshowing', function onPopupShowing(event) {
 			let current = tp.current;
 			let cascadeMirrors = !current || current.urlManager.length < 2;
-			for (let [,e] in Iterator(mirrorNodes)) {
+			for (let e of mirrorNodes) {
 				e.hidden = cascadeMirrors;
 			}
-			for (let [,e] in Iterator(mirrorCNodes)) {
+			for (let e of mirrorCNodes) {
 				e.hidden = !cascadeMirrors;
 			}
 			tp.showSpeedLimitList(event);
@@ -114,7 +114,7 @@ const Tree = {
 		delete this.elem;
 	},
 	assembleMenus: function() {
-		for each (let popup in $('removeCompletedPopup', 'removePopup')) {
+		for (let popup of $('removeCompletedPopup', 'removePopup')) {
 			while (popup.lastChild) {
 				if (popup.lastChild.localName == 'menuseparator') {
 					break;
@@ -196,7 +196,7 @@ const Tree = {
 
 		if (action == 'clearmatcher') {
 			element.removeAttribute('params');
-			for (let [,n] in Iterator($$('menuitem[param]', popup))) {
+			for (let n of $$('menuitem[param]', popup)) {
 				n.removeAttribute('checked')
 			}
 			this._matcher.removeMatcher(matcher);
@@ -626,7 +626,7 @@ const Tree = {
 					},
 					this
 				);
-				for each (let qi in downloads) {
+				for (let qi of downloads) {
 					this._downloads.splice(realRow, 0, qi);
 				}
 				this.doFilter();
@@ -757,7 +757,7 @@ const Tree = {
 		}
 
 		let downloads = [];
-		for each (let d in this.all) {
+		for (let d of this.all) {
 			if (!(d.state & mask)) {
 				continue;
 			}
@@ -875,7 +875,7 @@ const Tree = {
 	removeDupes: function() {
 		let known = {};
 		let dupes = [];
-		for each (let d in this.all) {
+		for (let d of this.all) {
 			let url = d.urlManager.url.spec;
 			if (url in known) {
 				if (d.isOf(COMPLETE | FINISHING)) {
@@ -955,7 +955,7 @@ const Tree = {
 		this.selectionChanged();
 	},
 	selectInv: function T_selectInv() {
-		for each (let d in this.all) {
+		for (let d of this.all) {
 			this.selection.toggleSelect(d.position);
 		}
 		this.selectionChanged();
@@ -1422,7 +1422,7 @@ const Tree = {
 			this.beginUpdate();
 			try {
 				QueueStore.beginUpdate();
-				for each (let d in this.all) {
+				for (let d of this.all) {
 					if (!f.call(t, d)) {
 						break;
 					}
@@ -1628,7 +1628,7 @@ const FileHandling = {
 		let msg = '';
 		if (list.length < 25) {
 			msg = _('deletetexts');
-			for each (let d in list) {
+			for (let d of list) {
 				msg += "\n" + (new Instances.LocalFile(d.destinationFile)).leafName;
 			}
 		}
@@ -1638,7 +1638,7 @@ const FileHandling = {
 		if (list.length && Prompts.confirm(window, _('deletecaption'), msg, _('delete'), Prompts.CANCEL, null, 1)) {
 			return;
 		}
-		for each (let d in list) {
+		for (let d of list) {
 			try {
 				let file = new Instances.LocalFile(d.destinationFile);
 				if (file.exists()) {

@@ -161,7 +161,7 @@ const Prefs = {
 
 	_refreshPrefs: function(prefName) {
 		log(LOG_DEBUG, "pref reload due to: " + prefName);
-		for each (let e in this.mappings) {
+		for (let e of this.mappings) {
 			let key, pref, def;
 			if (!e) {
 				return;
@@ -360,7 +360,7 @@ const Tooltip = {
 		if (!this.speedCanvas.hidden) {
 			canvases.push(this.speedCanvas);
 		}
-		for each (let canvas in canvases) {
+		for (let canvas of canvases) {
 			try {
 				let w = Math.min(box.width, canvas.clientWidth);
 				let h = parseInt(canvas.getAttribute('height'));
@@ -587,7 +587,7 @@ const Tooltip = {
 					}
 				}).bind(this);
 
-				for (let [,pass] in Iterator(this._usPasses)) {
+				for (let pass of this._usPasses) {
 					draw(pass, speeds);
 				}
 				draw(this._usAvgPass, aspeeds);
@@ -671,7 +671,7 @@ const Tooltip = {
 			ctx.clip();
 
 			let bl = b.length;
-			for (let [,pass] in Iterator(this._ucPasses)) {
+			for (let pass of this._ucPasses) {
 				for (var [i, chunk] in Iterator(b)) {
 					if (pass.fs) {
 						ctx.fillStyle = this._createInnerShadowGradient(ctx, cheight, pass.fs);

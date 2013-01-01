@@ -448,7 +448,7 @@ let Dialog = {
 			// build the actual array holding all selected links
 			let links = this.current._links;
 			let out = [];
-			for each (let i in links) {
+			for (let i of links) {
 				try {
 					if (!i.checked.length) {
 						continue;
@@ -566,7 +566,7 @@ let Dialog = {
 			// no op
 		}
 
-		for each (let link in tree._links) {
+		for (let link of tree._links) {
 			link.checked = '';
 			if (link.manuallyChecked) {
 				link.checked = 'manuallySelected';

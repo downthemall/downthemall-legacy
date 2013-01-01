@@ -76,7 +76,7 @@ var Dialog = {
 
 				let batches = $("batches");
 				let nodes = Array.slice(batches.childNodes);
-				for (let [,n] in Iterator(nodes)) {
+				for (let n of nodes) {
 					menu.appendChild(n);
 				}
 				menu.addEventListener("popupshowing", function() {
@@ -85,7 +85,7 @@ var Dialog = {
 						let text = address.value.substring(address.selectionStart, address.selectionEnd);
 						hidden = !/^\d+$/.test(text);
 					}
-					for (let [,n] in Iterator(nodes)) {
+					for (let n of nodes) {
 						n.hidden = hidden
 					}
 				}, false);
