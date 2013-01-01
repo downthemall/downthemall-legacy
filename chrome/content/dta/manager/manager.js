@@ -2409,12 +2409,12 @@ QueueItem.prototype = {
 			downloadChunk(download, chunk, header);
 		}
 		function downloadChunk(download, chunk, header) {
-			chunk.running = true;
-			download.setState(RUNNING);
-			log(LOG_DEBUG, "started: " + chunk);
 			download.createDirectory(download.tmpFile);
 			chunk.download = new Connection(download, chunk, header || download.mustGetInfo);
+			chunk.running = true;
 			download.mustGetInfo = false;
+			download.setState(RUNNING);
+			log(LOG_DEBUG, "started: " + chunk);
 			++download.activeChunks;
 			++download.sessionConnections;
 		}
