@@ -307,14 +307,6 @@ exports.getDropDownValue = function getDropDownValue(name) {
 	return values.length ? values[0] : '';
 }
 
-exports.saveSingleLink = function saveSingleLink(window, turbo, url, referrer, description, postData) {
-	let item = {
-		'url': url,
-		'referrer': referrer,
-		'description': description ? description : ''
-	};
-	exports.saveSingleItem(window, turbo, item);
-}
 exports.saveSingleItem = function saveSingleItem(window, turbo, item) {
 	if (turbo) {
 		exports.turboSendLinksToManager(window, [item]);
