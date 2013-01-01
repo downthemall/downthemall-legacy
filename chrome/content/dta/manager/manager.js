@@ -188,11 +188,12 @@ const Dialog = {
 						return;
 					}
 					url = Services.io.newURI(url, null, null);
-					DTA.saveSingleLink(
-						window,
-						false,
-						new DTA.URL(DTA.getLinkPrintMetalink(url) || url)
-						);
+					let item = {
+						"url": DTA.URL(DTA.getLinkPrintMetalink(url) || url),
+						"referrer": null,
+						'description': ""
+					};
+					DTA.saveSingleItem(window, false, item);
 				}
 				catch (ex) {
 					log(LOG_ERROR, "failed to process ondrop", ex);

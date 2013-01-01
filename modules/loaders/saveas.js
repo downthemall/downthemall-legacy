@@ -69,7 +69,14 @@ exports.load = function load(window, document) {
 		if (turbo) {
 			ddDirectory.save();
 		}
-		DTA.saveSingleLink(window, turbo, url, referrer, "");
+		// XXX private
+		let item = {
+			"url": url,
+			"referrer": referrer,
+			"description": ""
+		};
+
+		DTA.saveSingleItem(window, turbo, item);
 		let de = document.documentElement;
 		try {
 			de.removeAttribute('ondialogaccept');

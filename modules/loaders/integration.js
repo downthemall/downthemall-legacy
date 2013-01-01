@@ -730,7 +730,7 @@ exports.load = function load(window, outerEvent) {
 		const item = {
 			"url": url,
 			"description": extractDescription(elem),
-			"referrer": DTA.getRef(owner),
+			"referrer": DTA.getRef(owner)
 		};
 		log(LOG_DEBUG, "saveSingleLink; processing " + elem.localName);
 		if (!ml && elem.localName == "a") {
@@ -814,9 +814,15 @@ exports.load = function load(window, outerEvent) {
 			let ref = DTA.getRef(document.commandDispatcher.focusedWindow.document);
 			let desc = extractDescription(form);
 
+			let item = {
+				"url": action,
+				"referrer": ref,
+				"description": desc
+			};
+
 			if (turbo) {
 				try {
-					DTA.saveSingleLink(window, true, action, ref, desc);
+					DTA.saveSingleItem(window, true, item);
 					return;
 				}
 				catch (ex) {
@@ -824,7 +830,7 @@ exports.load = function load(window, outerEvent) {
 					notifyError(getString('error'), getString('errorinformation'));
 				}
 			}
-			DTA.saveSingleLink(window, window, false, action, ref, desc);
+			DTA.saveSingleItem(window, false, item);
 		}
 		catch (ex) {
 			log(LOG_ERROR, 'findForm', ex);
@@ -1637,7 +1643,11 @@ exports.load = function load(window, outerEvent) {
 			unloadWindow(window, function() dta_button.removeEventListener('popupshowing', onDTAShowing, true));
 
 			setupDrop(dta_button, function(url, ref) {
-				DTA.saveSingleLink(window, false, url, ref);
+				DTA.saveSingleItem(window, false, {
+					"url": url,
+					"referrer": ref,
+					"description": ""
+				});
 			});
 
 			let dta_turbo_button = $t('dta-turbo-button');
@@ -1647,12 +1657,17 @@ exports.load = function load(window, outerEvent) {
 			unloadWindow(window, function() dta_turbo_button.removeEventListener('popupshowing', onDTAShowing, true));
 
 			setupDrop(dta_turbo_button, function(url, ref) {
+				let item = {
+					"url": url,
+					"referrer": ref,
+					"description": ""
+				};
 				try {
-					DTA.saveSingleLink(window, true, url, ref);
+					DTA.saveSingleItem(window, true, item);
 				}
 				catch (ex) {
 					log(LOG_ERROR, "failed to turbo drop, retrying normal", ex);
-					DTA.saveSingleLink(window, false, url, ref);
+					DTA.saveSingleItem(window, false, item);
 				}
 			});
 
