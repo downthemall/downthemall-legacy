@@ -27,6 +27,28 @@ function registerCallbacks() {};
  */
 function unregisterCallbacks() {};
 
+/**
+ * Determines if a window is private
+ */
+function isWindowPrivate() false;
+try {
+	let {PrivateBrowsingUtils} = requireJSM("resource://gre/modules/PrivateBrowsingUtils.jsm");
+	if ("isWindowPrivate" in PrivateBrowsingUtils) {
+		isWindowPrivate = function(window) {
+			try {
+				return PrivateBrowsingUtils.isWindowPrivate(window);
+			}
+			catch (ex) {
+				log(LOG_ERROR, "isWindowPrivate call failed, defaulting to false", ex);
+			}
+			return false;
+		}
+	}
+}
+catch (ex) {
+	log(LOG_DEBUG, "no PrivateBrowsingUtils");
+}
+
 if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingService" in Ci)) {
 	(function() {
 		function Observer() {
@@ -97,6 +119,7 @@ if (("@mozilla.org/privatebrowsing-wrapper;1" in Cc) && ("nsIPrivateBrowsingServ
 
 Object.defineProperties(exports, {
 	browsingPrivately: {get: browsingPrivately, enumerable: true},
+	isWindowPrivate: {value: isWindowPrivate, enumerable: true},
 	registerCallbacks: {value: registerCallbacks, enumerable: true},
 	unregisterCallbacks: {value: unregisterCallbacks, enumerable: true}
 });

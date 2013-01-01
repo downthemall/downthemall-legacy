@@ -53,6 +53,7 @@
 			</columns>
 			<rows>
 				<label crop="left" id="infoDest" />
+				<label id="infoPrivate" value="&infoPrivate.value;" />
 				<row>
 					<label value="&infoURLTitle.value;" />
 					<textbox class="plain" id="infoURL" />

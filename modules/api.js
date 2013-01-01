@@ -307,6 +307,14 @@ exports.getDropDownValue = function getDropDownValue(name) {
 	return values.length ? values[0] : '';
 }
 
+exports.setPrivateMode = function setPrivateMode(window, items) {
+	const ip = pbm.isWindowPrivate(window);
+	for (let i of items) {
+		i.isPrivate = ip;
+	}
+	return items;
+};
+
 exports.saveSingleItem = function saveSingleItem(window, turbo, item) {
 	if (turbo) {
 		exports.turboSendLinksToManager(window, [item]);
@@ -339,8 +347,7 @@ exports.turboSendLinksToManager = function turboSendLinksToManager(window, urlsA
 
 	let num = null;
 
-	for (var i = 0; i < urlsArray.length; i++) {
-		let u = urlsArray[i];
+	for (let u of urlsArray) {
 		u.mask = mask;
 		u.dirSave = dir;
 		u.numIstance = u.numIstance || (num === null ? num = exports.incrementSeries() : num);

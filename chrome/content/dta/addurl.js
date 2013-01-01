@@ -36,6 +36,7 @@
 
 const Prompts = require("prompts");
 const Version = require("version");
+const {isWindowPrivate} = require("support/pbm");
 
 var dropDowns = {};
 
@@ -115,21 +116,18 @@ var Dialog = {
 					address.value = a.url;
 				}
 				else if (typeof(a.url) == 'object' && 'url' in a.url) {
+					address._item = a;
 					// we've got a DTA.URL.
 					// In this case it is not safe to modify it because of encoding
 					// issues.
 					address.value = a.url.usable;
-					// JS does not preserve types between windows (as each window gets an
-					// own sandbox)
-					// This hack makes our URL a DTA.URL again ;)
-					address._realURL = a.url;
 					if ("fileName" in a) {
-						address._fileName = a.fileName;
 						address.value += " (" + a.fileName + ")";
 					}
 					address.readOnly = true;
 					$('batcheslabel').style.display = 'none';
 					$('batches').collapsed = true;
+					hash = a.url.hash;
 				}
 				try {
 					let referrer = (new DTA.URL(Services.io.newURI(a.referrer, null, null))).url.spec;
@@ -144,7 +142,6 @@ var Dialog = {
 				if (a.mask) {
 					this.ddRenaming.value = a.mask;
 				}
-				hash = a.url.hash;
 				$('description').value = a.description;
 			}
 			// check if there's some URL in clipboard
@@ -202,13 +199,10 @@ var Dialog = {
 		}
 
 		var address = $('address');
-		var url = address.value;
-		var fn;
-		if ('_realURL' in address) {
-			url = address._realURL;
-			fn = address._fileName;
-		}
-		else {
+		var hasItem = ("_item" in address);
+		var url = null;
+		if (!hasItem) {
+			url = address.value;
 			try {
 				if (url == '') {
 					throw new Components.Exception("Empty url");
@@ -257,8 +251,13 @@ var Dialog = {
 			return false;
 		}
 
+		if (hasItem) {
+			return this.downloadItem(start);
+		}
+		return this.downloadPlain(start, url, hash);
+	},
+	downloadPlain: function(start, url, hash) {
 		let num = DTA.currentSeries();
-
 		try {
 			var batch = new BatchGenerator(url);
 		}
@@ -267,7 +266,7 @@ var Dialog = {
 			return false;
 		}
 
-		var rv = !('_realURL' in address) && batch.length > 1;
+		var rv = batch.length > 1;
 		if (rv) {
 			var message = _(
 				'batchtasks',
@@ -283,6 +282,10 @@ var Dialog = {
 			rv = rv == 0;
 		}
 
+		let mask = this.ddRenaming.value;
+		let dir = this.ddDirectory.value;
+		let isPrivate = isWindowPrivate(window.opener);
+
 		let downloads = (function() {
 			let desc = $('description').value;
 			let ref = $('URLref').value;
@@ -294,38 +297,47 @@ var Dialog = {
 				if (fn) {
 					this.fileName = fn;
 				}
-				if (hash) {
+				if (!rv && hash) {
 					this.url.hash = hash;
 				}
 			}
 			QueueItem.prototype = {
-				title: '',
 				description: desc,
 				referrer: $('URLref').value,
 				numIstance: num,
 				mask: mask,
-				dirSave: dir
+				dirSave: dir,
+				isPrivate: isPrivate
 			};
 
 			if (rv) {
-				let g = batch.getURLs();
-				return (function() {
-					for (let i in g) {
-						yield new QueueItem(i);
-					}
-				})();
+				return (new QueueItem(i) for (i in  batch.getURLs()));
 			}
 
-			return batch = [new QueueItem(url, fn)];
+			return batch = [new QueueItem(url)];
 		})();
+		return this.sendDownloads(start, downloads, isPrivate);
+	},
+	downloadItem: function(start) {
+		let item = $("address")._item;
+		item.description = $('description').value;
+		item.referrer = $('URLref').value;
+		item.numIstance = DTA.currentSeries();
+		item.mask = this.ddRenaming.value;
+		item.dirSave = this.ddDirectory.value;
 
+		return this.sendDownloads(start, [item], item.isPrivate);
+	},
+	sendDownloads: function(start, downloads, isPrivate) {
 		DTA.sendLinksToManager(window, start, downloads);
 
 		DTA.incrementSeries();
 		Preferences.setExt("lastqueued", !start);
 
-		this.ddRenaming.save($("renamingOnce").checked);
-		this.ddDirectory.save();
+		if (!isPrivate) {
+			this.ddRenaming.save($("renamingOnce").checked);
+			this.ddDirectory.save();
+		}
 
 		self.close();
 

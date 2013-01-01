@@ -217,6 +217,10 @@ tooltip textbox.plain {
 	font-weight: bold !important;
 	font-size: 105%;
 }
+#infoPrivate {
+	font-size: x-small;
+	font-style: italic;
+}
 
 /** :: Downloads :: **/
 
@@ -282,6 +286,9 @@ treechildren::-moz-tree-image(iconic,completed) {
 }
 treechildren::-moz-tree-image(iconic,completed,verified) {
 	-moz-image-region: rect(32px,144px,48px,128px);
+}
+treechildren::-moz-tree-cell-text(private) {
+	font-style: italic !important;
 }
 
 /** :: Menu :: **/

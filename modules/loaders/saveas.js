@@ -9,6 +9,7 @@
 lazy(this, 'DTA', function() require("api"));
 lazy(this, 'ContentHandling', function() require("support/contenthandling").ContentHandling);
 lazy(this, 'Preferences', function() require("preferences"));
+lazy(this, "isWindowPrivate", function() require("support/pbm").isWindowPrivate);
 
 /* **
  * Loader
@@ -69,11 +70,11 @@ exports.load = function load(window, document) {
 		if (turbo) {
 			ddDirectory.save();
 		}
-		// XXX private
 		let item = {
 			"url": url,
 			"referrer": referrer,
-			"description": ""
+			"description": "",
+			"isPrivate": isPrivate
 		};
 
 		DTA.saveSingleItem(window, turbo, item);
@@ -108,7 +109,7 @@ exports.load = function load(window, document) {
 	const settingsChange = $("settingsChange");
 	const ddDirectory = $('tdtalist');
 
-	let url, referrer, mask;
+	let url, referrer, mask, isPrivate;
 
 	// Need to get behind the default load event
 	const doOverlay = Preferences.getExt("downloadWin", true);
@@ -163,6 +164,8 @@ exports.load = function load(window, document) {
 	catch (ex) {
 		// no op
 	}
+
+	isPrivate = isWindowPrivate(dialog.mContext);
 
 	mode.addEventListener(
 		'select',

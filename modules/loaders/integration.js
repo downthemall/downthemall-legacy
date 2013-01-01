@@ -16,6 +16,7 @@ lazy(this, "ContentHandling", function() require("support/contenthandling").Cont
 lazy(this, 'CoThreads', function() require("support/cothreads"));
 lazy(this, 'getIcon', function() require("support/icons").getIcon);
 lazy(this, 'getString_str',	function() Services.strings.createBundle('chrome://dta/locale/menu.properties'));
+lazy(this, "isWindowPrivate", function() require("support/pbm").isWindowPrivate);
 
 const {unloadWindow} = require("support/overlays");
 const strfn = require("support/stringfuncs");
@@ -624,6 +625,9 @@ exports.load = function load(window, outerEvent) {
 					return;
 				}
 
+				DTA.setPrivateMode(win, urls);
+				DTA.setPrivateMode(win, images);
+
 				if (turbo) {
 					try {
 						let queued = DTA.turboSaveLinkArray(window, urls, images);
@@ -730,13 +734,14 @@ exports.load = function load(window, outerEvent) {
 		const item = {
 			"url": url,
 			"description": extractDescription(elem),
-			"referrer": DTA.getRef(owner)
+			"referrer": DTA.getRef(owner),
+			"isPrivate": isWindowPrivate(window)
 		};
 		log(LOG_DEBUG, "saveSingleLink; processing " + elem.localName);
 		if (!ml && elem.localName == "a") {
 			let fn = elem.getAttribute("download");
 			log(LOG_DEBUG, "saveSingleLink; fn " + fn);
-			if ((fn = fn && fn.trim())) {
+			if ((fn = fn.trim())) {
 				item.fileName = fn;
 			}
 		}
@@ -817,7 +822,8 @@ exports.load = function load(window, outerEvent) {
 			let item = {
 				"url": action,
 				"referrer": ref,
-				"description": desc
+				"description": desc,
+				"isPrivate": isWindowPrivate(window)
 			};
 
 			if (turbo) {
@@ -1061,7 +1067,8 @@ exports.load = function load(window, outerEvent) {
 				"url": new DTA.URL(s.url),
 				"referrer": ref,
 				"fileName": s.name,
-				'description': getString('sniffedvideo')
+				"description": getString("sniffedvideo"),
+				"isPrivate": isWindowPrivate(window)
 			}
 			let mi = document.createElement("menuitem");
 			mi.setAttribute("label", strfn.cropCenter(s.name, 60));
@@ -1646,7 +1653,8 @@ exports.load = function load(window, outerEvent) {
 				DTA.saveSingleItem(window, false, {
 					"url": url,
 					"referrer": ref,
-					"description": ""
+					"description": "",
+					"isPrivate": isWindowPrivate(window)
 				});
 			});
 
@@ -1660,7 +1668,8 @@ exports.load = function load(window, outerEvent) {
 				let item = {
 					"url": url,
 					"referrer": ref,
-					"description": ""
+					"description": "",
+					"isPrivate": isWindowPrivate(window)
 				};
 				try {
 					DTA.saveSingleItem(window, true, item);

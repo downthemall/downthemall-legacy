@@ -44,7 +44,8 @@ exports.parseTextFile = function parseTextFile(aFile) {
 		links.push({
 			url: new DTA.URL(l),
 			referrer: null,
-			description: 'imported from ' + aFile.leafName
+			description: 'imported from ' + aFile.leafName,
+			isPrivate: false
 		});
 	}
 	log(LOG_INFO, "parsed text file, links: " + links.length);
