@@ -1153,7 +1153,7 @@ const Tree = {
 	},
 	_refreshTools_item: [
 		{item: 'cmdResume', f: function(d) d.isOf(PAUSED | QUEUED | CANCELED)},
-		{item: 'cmdPause', f: function(d) (d.state == RUNNING && d.resumable) || d.state == QUEUED},
+		{item: 'cmdPause', f: function(d) (d.isOf(RUNNING) && d.resumable) || d.isOf(QUEUED | PAUSED)},
 		{item: 'cmdCancel', f: function(d) d.isOf(PAUSED | RUNNING | QUEUED | COMPLETE)},
 
 		{item: 'cmdLaunch', f: function(d) !!d.curFile},
