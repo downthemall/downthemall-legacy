@@ -90,6 +90,7 @@ if (available) {
 			}
 
 			let win = this.getWindow(new utils.Properties(desc));
+			api.setPrivateMode(win, urls);
 			if (urls.length == 1) {
 				api.saveSingleItem(win, this.turbo, urls[0]);
 				return;

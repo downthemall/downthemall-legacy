@@ -67,6 +67,7 @@ var Dialog = {
 				$("infoURL").value = d.urlManager.url.spec;
 				$("infoDest").value = d.destinationFile;
 				$("infoDate").value = d.startDate.toLocaleString();
+				$("infoPrivate").hidden = !d.isPrivate;
 				$("mirrorsText").value = _("mirrorsText", [d.urlManager.length]);
 				document.title = d.destinationName;
 
@@ -93,6 +94,8 @@ var Dialog = {
 					e.value = "---";
 					e.disabled = true;
 				}
+				$("infoPrivate").hidden = true;
+
 				$('mirrorRow').collapsed = true;
 				$("hash").setAttribute('readonly', 'true');
 				$("hash").setAttribute('disabled', 'true');

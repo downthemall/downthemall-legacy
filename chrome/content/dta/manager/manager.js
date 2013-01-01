@@ -189,9 +189,10 @@ const Dialog = {
 					}
 					url = Services.io.newURI(url, null, null);
 					let item = {
-						"url": DTA.URL(DTA.getLinkPrintMetalink(url) || url),
+						"url": new DTA.URL(DTA.getLinkPrintMetalink(url) || url),
 						"referrer": null,
-						'description': ""
+						'description': "",
+						"isPrivate": PrivateBrowsing.isWindowPrivate(event.view)
 					};
 					DTA.saveSingleItem(window, false, item);
 				}
@@ -553,7 +554,7 @@ const Dialog = {
 		this.reinit(true);
 	},
 	canEnterPrivateBrowsing: function() {
-		if (Tree.some(function(d) d.started && !d.resumable && d.state == RUNNING)) {
+		if (Tree.some(function(d) d.started && !d.canResumeLater && d.state == RUNNING)) {
 			var rv = Prompts.confirmYN(
 				window,
 				_("confpbm"),
@@ -677,7 +678,7 @@ const Dialog = {
 					cancelQuit.data = true;
 					this._mustReload = true;
 					for (let d of Tree.all) {
-						if (d.state == RUNNING && d.resumable) {
+						if (d.state == RUNNING && d.canResumeLater) {
 							d.pause();
 							d.queue();
 						}
@@ -1120,7 +1121,7 @@ const Dialog = {
 		return rv;
 	},
 	_canClose: function D__canClose() {
-		if (Tree.some(function(d) { return d.started && !d.resumable && d.state == RUNNING; })) {
+		if (Tree.some(function(d) { return d.started && !d.canResumeLater && d.state == RUNNING; })) {
 			var rv = Prompts.confirmYN(
 				window,
 				_("confclose"),
@@ -1276,9 +1277,10 @@ const Metalinker = {
 			catch (ex) {
 				log(LOG_ERROR, "failed to remove metalink file!", ex);
 			}
-		});
+		}, download.isPrivate);
 	},
-	handleFile: function ML_handleFile(aFile, aReferrer, aCallback) {
+	handleFile: function ML_handleFile(aFile, aReferrer, aCallback, aIsPrivate) {
+		aIsPrivate = !!aIsPrivate || false;
 		let aURI = Services.io.newFileURI(aFile);
 		this.parse(aURI, aReferrer, function (res, ex) {
 			try {
@@ -1293,6 +1295,7 @@ const Metalinker = {
 						e.size = Utils.formatBytes(e.size);
 					}
 					e.fileName = Utils.getUsableFileName(e.fileName);
+					e.isPrivate = aIsPrivate;
 				}
 				window.openDialog(
 					'chrome://dta/content/dta/manager/metaselect.xul',
@@ -1580,6 +1583,9 @@ QueueItem.prototype = {
 			}
 			return false;
 		}
+		if (this.isPrivate) {
+			return false;
+		}
 		if (this.dbId) {
 			QueueStore.saveDownload(this.dbId, JSON.stringify(this));
 			return true;
@@ -1622,6 +1628,10 @@ QueueItem.prototype = {
 
 	resumable: true,
 	started: false,
+
+	get canResumeLater() {
+		return this.resumable && !this.isPrivate;
+	},
 
 	_activeChunks: 0,
 	get activeChunks() {
@@ -2793,6 +2803,12 @@ const startDownloads = (function() {
 					qi._setStateInternal(PAUSED);
 					qi.status = TextCache_PAUSED;
 				}
+
+				if (!("isPrivate" in e)) {
+					log(LOG_INFO, "A queued item has no isPrivate property. Defaulting to false. Please check the code path for proper PBM support!");
+				}
+				qi.isPrivate = !!e.isPrivate || false;
+
 				qi.position = Tree.add(qi);
 				qi.save();
 				first = first || qi;

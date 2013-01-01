@@ -21,6 +21,7 @@
 <!ENTITY infoSizeTitle.value "Size:">
 <!ENTITY infoDateTitle.value "Date added:">
 <!ENTITY infoMultiple.value "Multiple Items">
+<!ENTITY infoPrivate.value "Private Download">
 <!ENTITY elapsedTitle.value "Elapsed:">
 <!ENTITY remainingTitle.value "Remaining:">
 <!ENTITY currentSpeedTitle.value "Current speed:">

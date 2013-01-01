@@ -535,8 +535,12 @@ const Tree = {
 			}
 		}
 		else if (cidx == 0) {
+			let d = this._filtered[idx];
 			prop.AppendElement(this.iconicAtom);
-			prop.AppendElement(this._filtered[idx].iconAtom);
+			prop.AppendElement(d.iconAtom);
+			if (d.isPrivate) {
+				prop.AppendElement(this.privateAtom);
+			}
 		}
 	},
 	cycleHeader: function T_cycleHeader(col) {
@@ -1144,6 +1148,7 @@ const Tree = {
 		$("infoURL").value = d.urlManager.url.spec;
 		$("infoDest").value = d.destinationFile;
 		$("infoDate").value = d.startDate.toLocaleString();
+		$("infoPrivate").hidden = !d.isPrivate;
 
 		Tooltip.start(d, true);
 		return true;

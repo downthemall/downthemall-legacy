@@ -66,6 +66,21 @@ function Connection(d, c, isInfoGetter) {
 	this._chan.loadFlags = loadFlags;
 	this._chan.notificationCallbacks = this;
 
+	if (d.isPrivate) {
+		if (("nsIPrivateBrowsingChannel" in Ci) && (this._chan instanceof Ci.nsIPrivateBrowsingChannel)) {
+			try {
+				this._chan.setPrivate(d.isPrivate);
+				log(LOG_DEBUG, url.spec + ": setPrivate");
+			}
+			catch (ex) {
+				log(LOG_ERROR, "Cannot set channel to private; setPrivate failed!", ex);
+			}
+		}
+		else {
+			log(LOG_ERROR, "Cannot set channel to private; not supported!");
+		}
+	}
+
 	if (this._chan instanceof Ci.nsIHttpChannel) {
 		try {
 			log(LOG_DEBUG, "http");

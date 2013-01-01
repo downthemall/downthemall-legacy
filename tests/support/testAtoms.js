@@ -7,6 +7,7 @@ test("exports", function() {
 		"completedAtom",
 		"inprogressAtom",
 		"pausedAtom",
+		"privateAtom",
 		"canceledAtom",
 		"pausedUndeterminedAtom",
 		"pausedAutoretryingAtom",
