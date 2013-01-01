@@ -265,7 +265,7 @@ metalink_asyncTestFile(
 
 metalink_asyncTestFile(
 	"data/metalink/emptyDownloadFile",
-	 function(data, ex) {
+	function(data, ex) {
 		ok(ex, "no active file to download in the metalink");
 	}
 );
@@ -398,7 +398,7 @@ metalink_asyncTestFile(
 			}
 		];
 		var download;
-		for each(var hash in hashes) {
+		for (var hash of hashes) {
 			download = metalink_getDownload(downloads, hash.type + "_hash");
 			equal(!!download.hashCollection, !!hash.val, "hash " + hash.type + (!hash.val ? " not" : "") + " parsed");
 			if (download.hashCollection) {

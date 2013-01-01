@@ -82,7 +82,7 @@ var metalink_asyncTestFile = function(files, cb) {
 
 var metalink_createUrlManager = function(urls) {
 	const {UrlManager} = require("support/urlmanager");
-	return new UrlManager([Services.io.newURI(e, null, null) for each (e in urls)]);
+	return new UrlManager([Services.io.newURI(e, null, null) for (e of urls)]);
 }
 var metalink_downloadCollection = function(downloads) {
 	this.downloads = downloads.map(function(d) {
