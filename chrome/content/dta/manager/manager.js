@@ -547,41 +547,6 @@ const Dialog = {
 		this.start();
 	},
 
-	enterPrivateBrowsing: function() {
-		log(LOG_INFO, "enterPrivateBrowsing");
-		this.reinit(false);
-	},
-	exitPrivateBrowsing: function() {
-		log(LOG_INFO, "exitPrivateBrowsing");
-		this.reinit(true);
-	},
-	canEnterPrivateBrowsing: function() {
-		if (Tree.some(function(d) d.started && !d.canResumeLater && d.state == RUNNING)) {
-			var rv = Prompts.confirmYN(
-				window,
-				_("confpbm"),
-				_("nonrespbm")
-			);
-			if (rv) {
-				return false;
-			}
-		}
-		return (this._forceClose = true);
-	},
-	canExitPrivateBrowsing: function() {
-		if (Tree.some(function(d) { return d.isOf(RUNNING | QUEUED | PAUSED | FINISHING); })) {
-			var rv = Prompts.confirmYN(
-				window,
-				_("confleavepbm"),
-				_("nonleavepbm")
-			);
-			if (rv) {
-				return false;
-			}
-		}
-		return (this._forceClose = true);
-	},
-
 	openAdd: function D_openAdd() {
 		window.openDialog(
 			'chrome://dta/content/dta/addurl.xul',
@@ -611,8 +576,6 @@ const Dialog = {
 		if (this._initialized) {
 			return;
 		}
-
-		PrivateBrowsing.registerCallbacks(this);
 
 		this._initialized = true;
 		for (let d of Tree.all) {
@@ -1224,7 +1187,6 @@ const Dialog = {
 	_safeCloseAttempts: 0,
 
 	unload: function D_unload() {
-		PrivateBrowsing.unregisterCallbacks(this);
 		Limits.killServerBuckets();
 
 		Timers.killAllTimers();

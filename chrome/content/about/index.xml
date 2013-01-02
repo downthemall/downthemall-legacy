@@ -234,7 +234,7 @@
 				<h2>&lp.pr.title;</h2>
 				<p>&lp.pr.intro;</p>
 				<p>&lp.pr.settings;</p>
-				<p>&lp.pr.pbm;</p>
+				<p>&lp.pr.pwpbm;</p>
 				<p>&lp.pr.diag;</p>
 				<p>&lp.pr.link;</p>
 			</div>
