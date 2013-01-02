@@ -130,7 +130,9 @@ exports.load = function load(window, document) {
 	$('downthemallcontainer').collapsed = false;
 	normal.disabled = false;
 
-	url = ContentHandling.getRedirect(dialog.mLauncher.source);
+	isPrivate = isWindowPrivate(dialog.mContext);
+
+	url = ContentHandling.getRedirect(dialog.mLauncher.source, isPrivate);
 	try {
 		referrer = dialog.mContext.QueryInterface(Ci.nsIWebNavigation).currentURI.spec;
 	}
@@ -141,9 +143,7 @@ exports.load = function load(window, document) {
 	let ml = DTA.getLinkPrintMetalink(url);
 	url = new DTA.URL(ml ? ml : url);
 
-	isPrivate = isWindowPrivate(dialog.mContext);
 	ddDirectory.isPrivate = isPrivate;
-
 	mask = DTA.getDropDownValue('renaming', isPrivate);
 	if (!($("tdta").hidden = (DTA.getDropDownValue('directory', isPrivate) == '' || !mask))) {
 		turbo.disabled = false;

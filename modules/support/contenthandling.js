@@ -43,6 +43,23 @@ const REGEXP_SWF = /\.swf\b/i;
 const REGEXP_CT = /\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i;
 const REGEXP_STARTPARAM = /start=\d+&?/;
 
+
+function ContextLRUMap(num) {
+	this._normal = new LRUMap(num);
+	this._private = new LRUMap(num);
+}
+ContextLRUMap.prototype = {
+	_m: function(isPrivate) isPrivate ? this._private : this._normal,
+	get: function(key, isPrivate) this._m(isPrivate).get(key),
+	has: function(key, isPrivate) this._m(isPrivate).has(key),
+	set: function(key, val, isPrivate) this._m(isPrivate).set(key, val),
+	"delete": function(key, isPrivate) this._m(isPrivate).delete(key),
+	clear: function() {
+		this._normal.clear();
+		this._private.clear();
+	}
+}
+
 /**
  * ContentHandling
  */
@@ -187,7 +204,7 @@ ContentHandlingImpl.prototype = {
 			us.seek(0, op);
 
 			if (post) {
-				this._data.set(channel.URI.spec, post);
+				this._data.set(channel.URI.spec, post /*, isPrivate */);
 			}
 		}
 		catch (ex) {
@@ -234,7 +251,7 @@ ContentHandlingImpl.prototype = {
 				if (!parentURI.schemeIs('http') && !parentURI.schemeIs('https') && !parentURI.schemeIs('ftp')) {
 					return;
 				}
-				this._registerVideo(parentURI, channel.URI);
+				this._registerVideo(parentURI, channel.URI /*, isPrivate */);
 			}
 		}
 		catch (ex) {
@@ -253,7 +270,7 @@ ContentHandlingImpl.prototype = {
 		}
 		return nv;
 	},
-	_registerVideo: function ct__registerVideo(uri, vid) {
+	_registerVideo: function(uri, vid, isPrivate) {
 		// sanitize vid and remove the start param
 		vid = vid.clone();
 		if (vid instanceof Ci.nsIURL) {
@@ -261,22 +278,22 @@ ContentHandlingImpl.prototype = {
 		}
 
 		uri = uri.spec;
-		let nv = this._videos.get(uri) || [];
+		let nv = this._videos.get(uri, isPrivate) || [];
 		nv.push(vid.clone());
-		this._videos.set(uri, nv);
+		this._videos.set(uri, nv, isPrivate);
 	},
 
-	getPostDataFor: function ct_getPostDataFor(uri) {
+	getPostDataFor: function(uri, isPrivate) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
-		return this._data.get(uri) || "";
+		return this._data.get(uri, isPrivate) || "";
 	},
-	getSniffedVideosFor: function ct_getSniffedVideosFor(uri) {
+	getSniffedVideosFor: function(uri, isPrivate) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
-		return (this._videos.get(uri) || []).map(function(a) a.clone());
+		return (this._videos.get(uri, isPrivate) || []).map(function(a) a.clone());
 	},
 
 	// nsIChannelEventSink
@@ -292,12 +309,12 @@ ContentHandlingImpl.prototype = {
 	onChannelRedirect: function CH_onChannelRedirect(oldChannel, newChannel, flags) {
 		let oldURI = oldChannel.URI.spec;
 		let newURI = newChannel.URI.spec;
-		oldURI = this._revRedirects.get(oldURI) || oldURI;
-		this._redirects.set(oldURI, newURI);
-		this._revRedirects.set(newURI, oldURI);
+		oldURI = this._revRedirects.get(oldURI /*, isPrivate */) || oldURI;
+		this._redirects.set(oldURI, newURI /*, isPrivate */);
+		this._revRedirects.set(newURI, oldURI /*, isPrivate */);
 	},
-	getRedirect: function(uri) {
-		let rv = this._revRedirects.get(uri.spec);
+	getRedirect: function(uri, isPrivate) {
+		let rv = this._revRedirects.get(uri.spec /*, isPrivate */);
 		if (!rv) {
 			return uri;
 		}
@@ -309,10 +326,10 @@ ContentHandlingImpl.prototype = {
 		}
 	},
 	clear: function CH_clear() {
-		this._data = new LRUMap(5);
-		this._videos = new LRUMap(20);
-		this._redirects = new LRUMap(20);
-		this._revRedirects = new LRUMap(100);
+		this._data = new ContextLRUMap(5);
+		this._videos = new ContextLRUMap(20);
+		this._redirects = new ContextLRUMap(20);
+		this._revRedirects = new ContextLRUMap(100);
 	}
 };
 
