@@ -167,10 +167,10 @@ const Dialog = {
 		})();
 
 		(function initListeners() {
-			addEventListener('unload', function() Dialog.unload(), false);
-			addEventListener('close', function(evt) Dialog.onclose(evt), false);
+			addEventListener("unload", function() Dialog.unload(), false);
+			addEventListener("close", function(evt) Dialog.onclose(evt), false);
 
-			addEventListener('dragover', function(event) {
+			addEventListener("dragover", function(event) {
 				try {
 					if (event.dataTransfer.types.contains("text/x-moz-url")) {
 						event.dataTransfer.dropEffect = "link";
@@ -181,18 +181,20 @@ const Dialog = {
 					log(LOG_ERROR, "failed to process ondragover", ex);
 				}
 			}, true);
-			addEventListener('drop', function(event) {
+			addEventListener("drop", function(event) {
 				try {
 					let url = event.dataTransfer.getData("URL");
 					if (!url) {
 						return;
 					}
+					let isPrivate = event.dataTransfer.mozSourceNode
+						&& PrivateBrowsing.isWindowPrivate(event.dataTransfer.mozSourceNode.ownerDocument.defaultView);
 					url = Services.io.newURI(url, null, null);
 					let item = {
 						"url": new DTA.URL(DTA.getLinkPrintMetalink(url) || url),
 						"referrer": null,
 						'description': "",
-						"isPrivate": PrivateBrowsing.isWindowPrivate(event.view)
+						"isPrivate": isPrivate
 					};
 					DTA.saveSingleItem(window, false, item);
 				}
