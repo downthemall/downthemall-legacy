@@ -5,7 +5,7 @@
 
 const {MimeQuality} = require("utils");
 const Preferences = require("preferences");
-const pbm = require("support/pbm");
+const {isWindowPrivate} = require("support/pbm");
 const Mediator = require("support/mediator");
 const Histories = require("support/historymanager");
 
@@ -308,7 +308,7 @@ exports.getDropDownValue = function getDropDownValue(name) {
 }
 
 exports.setPrivateMode = function setPrivateMode(window, items) {
-	const ip = pbm.isWindowPrivate(window);
+	const ip = isWindowPrivate(window);
 	for (let i of items) {
 		i.isPrivate = ip;
 	}
@@ -470,14 +470,6 @@ exports.openManager = function openManager(window, quiet, cb) {
 const Series = {
 	_session: 1,
 	_persist: true,
-	enterPrivateBrowsing: function() {
-		log(LOG_INFO, "Series: enterPrivateBrowsing");
-		this._session = 1;
-		this._persist = false;
-	},
-	exitPrivateBrowsing: function() {
-		this._persist = true;
-	},
 	get value() {
 		return this._persist ? Preferences.getExt("counter", 1) : this._session;
 	},
@@ -494,7 +486,6 @@ const Series = {
 		return rv;
 	}
 };
-pbm.registerCallbacks(Series);
 
 exports.currentSeries = function currentSeries() Series.value;
 exports.incrementSeries = function incrementSeries() Series.increment();

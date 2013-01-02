@@ -13,7 +13,6 @@ const REG_WILD = /\*/g;
 const REG_WILD2 = /\./g;
 
 const Preferences = require("preferences");
-const PBM = require("support/pbm");
 const RegExpMerger = require("support/regexpmerger");
 
 const nsITimer = Ci.nsITimer;
@@ -66,18 +65,6 @@ function Filter(name) {
 	this._id = name;
 }
 Filter.prototype = {
-	_persist: true,
-	_sessionActive: null,
-	get persist() {
-		return this._persist;
-	},
-	set persist(nv) {
-		this._persist = !!nv;
-		if (!this._persist) {
-			this._sessionActive = this._active;
-		}
-	},
-
 	// exported
 	get id() {
 		return this._id.slice(PREF_FILTERS_BASE.length);
@@ -169,19 +156,14 @@ Filter.prototype = {
 
 	// exported
 	get active() {
-		return this._persist ? this._active : this._sessionActive;
+		return this._active;
 	},
 	set active(value) {
 		if (this.active == !!value) {
 			return;
 		}
-		if (this._persist) {
-			this._active = !!value;
-			this._modified = true;
-		}
-		else {
-			this._sessionActive = !!value;
-		}
+		this._active = !!value;
+		this._modified = true;
 	},
 
 	// exported
@@ -314,8 +296,6 @@ FilterManagerImpl.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
 
 	init: function FM_init() {
-		PBM.registerCallbacks(this);
-
 		// load those localized labels for default filters.
 		this._localizedLabels = {};
 		let b = Services.strings
@@ -329,17 +309,6 @@ FilterManagerImpl.prototype = {
 		// register (the observer) and initialize our timer, so that we'll get a reload event.
 		this._reload();
 		this.register();
-	},
-
-	enterPrivateBrowsing: function() {
-		for (let f of this._all) {
-			f.persist = false;
-		}
-	},
-	exitPrivateBrowsing: function() {
-		for (let f of this._all) {
-			f.persist = true;
-		}
 	},
 
 	_done: true,

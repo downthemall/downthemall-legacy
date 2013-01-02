@@ -4,7 +4,6 @@
 "use strict";
 
 const prefs = require("preferences");
-const pbm = require("support/pbm");
 
 const validators = {
 	'directory': function(s) {
@@ -27,7 +26,6 @@ function History(key) {
 	else {
 		this._validator = function() true;
 	}
-	this._setPersisting(!pbm.browsingPrivately);
 }
 History.prototype = {
 	_key: null,
@@ -129,22 +127,6 @@ History.prototype = {
 };
 
 const _histories = {};
-
-const callbacks = {
-	enterPrivateBrowsing: function() {
-		log(LOG_INFO, "entering pbm: switching to session histories");
-		for (let h of _histories) {
-			h._setPersisting(false);
-		}
-	},
-	exitPrivateBrowsing: function() {
-		log(LOG_INFO, "exiting pbm: switching to persisted histories");
-		for (let h of _histories) {
-			h._setPersisting(true);
-		}
-	}
-};
-pbm.registerCallbacks(callbacks);
 
 /**
  * Gets the History Instance for a key

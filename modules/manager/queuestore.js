@@ -10,14 +10,12 @@ const DB_VERSION = 1;
 
 const STMT_SELECT = 'SELECT uuid, item FROM queue ORDER BY pos';
 
-const pbm = require("support/pbm");
 const Timers = new (require("support/timers").TimerManager)();
 
 let _connection = null;
 let _saveStmt = null;
 let _saveStmtParams = null;
 let _timer = 0;
-
 
 lazy(this, '__db', function() {
 	let db = Services.dirsvc.get("ProfD", Ci.nsIFile);
@@ -27,42 +25,30 @@ lazy(this, '__db', function() {
 
 const QueueStore = {
 	_initialized: false,
-	_private: false,
-	init: function(pb) {
+	init: function() {
 		if (this._initialized) {
 			return;
 		}
 		this._initialized = true;
 
-		log(LOG_INFO, "QueueStore: initialzing in " + (pb ? "private" : "normal") + " mode");
-
 		try {
-			if (pb) {
-				_connection = Services.storage.openSpecialDatabase("memory");
-				this._private = true;
-			}
-			else {
-				_connection = Services.storage.openDatabase(__db);
-				this._private = false;
-			}
+			_connection = Services.storage.openDatabase(__db);
 		}
 		catch (ex) {
-			if (!pb) {
-				log(LOG_ERROR, "DB appears broken; backing up and restart", ex);
-				try {
-					let cbroken = __db.clone();
-					cbroken.leafName = DB_FILE_BROKEN;
-					if (cbroken.exists()) {
-						cbroken.remove(false);
-					}
+			log(LOG_ERROR, "DB appears broken; backing up and restart", ex);
+			try {
+				let cbroken = __db.clone();
+				cbroken.leafName = DB_FILE_BROKEN;
+				if (cbroken.exists()) {
+					cbroken.remove(false);
 				}
-				catch (iex) {
-					log(LOG_ERROR, "Couldn't remove old broken queue file", iex);
-				}
-				let broken = __db.clone();
-				broken.moveTo(null, DB_FILE_BROKEN);
-				_connection = Services.storage.openDatabase(__db);
 			}
+			catch (iex) {
+				log(LOG_ERROR, "Couldn't remove old broken queue file", iex);
+			}
+			let broken = __db.clone();
+			broken.moveTo(null, DB_FILE_BROKEN);
+			_connection = Services.storage.openDatabase(__db);
 		}
 
 		try {
@@ -83,9 +69,7 @@ const QueueStore = {
 			// no-op
 		}
 		try {
-			if (!pb) {
-				_connection.executeSimpleSQL("PRAGMA journal_mode = MEMORY");
-			}
+			_connection.executeSimpleSQL("PRAGMA journal_mode = MEMORY");
 			_connection.executeSimpleSQL("PRAGMA synchronous = NORMAL");
 		}
 		catch (ex) {
@@ -133,21 +117,13 @@ const QueueStore = {
 		catch (ex) {
 			log(LOG_ERROR, "QueueStore: Cannot remove DB", ex);
 		}
-		this.init(this._private);
+		this.init();
 		Services.storage.notifyObservers(null, 'DTA:clearedQueueStore', null);
 	},
 	observe: function(s,topic,d) {
 		if (topic == "profile-change-teardown") {
 			this.shutdown();
 		}
-	},
-	enterPrivateBrowsing: function() {
-		log(LOG_INFO, "QueueManager: entering pbm");
-		this.reinit(true);
-	},
-	exitPrivateBrowsing: function() {
-		log(LOG_INFO, "QueueManager: exiting pbm");
-		this.reinit(false);
 	},
 	beginUpdate: function() {
 		if (_connection.transactionInProgress) {
@@ -311,13 +287,11 @@ const QueueStore = {
 	}
 };
 
-pbm.registerCallbacks(QueueStore);
 QueueStore.init();
 Services.obs.addObserver(QueueStore, "profile-change-teardown", false);
 
 unload(function() {
 	try {
-		pbm.unregisterCallbacks(QueueStore);
 		Services.obs.removeObserver(QueueStore, "profile-change-teardown");
 		QueueStore.shutdown();
 	}
