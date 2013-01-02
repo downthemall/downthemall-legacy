@@ -111,7 +111,7 @@ function addLinksToArray(lnks, urls, doc) {
 				'title': title
 			};
 			let fn = link.getAttribute("download");
-			if ((fn = fn && fn.trim())) {
+			if (fn && (fn = fn.trim())) {
 				item.fileName = fn;
 			}
 			urls.push(item);
@@ -741,7 +741,7 @@ exports.load = function load(window, outerEvent) {
 		if (!ml && elem.localName == "a") {
 			let fn = elem.getAttribute("download");
 			log(LOG_DEBUG, "saveSingleLink; fn " + fn);
-			if ((fn = fn.trim())) {
+			if (fn && (fn = fn.trim())) {
 				item.fileName = fn;
 			}
 		}
