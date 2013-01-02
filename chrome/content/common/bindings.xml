@@ -106,15 +106,7 @@
 		</content>
 		<implementation>
 			<constructor><![CDATA[
-				try {
-					let glue = {};
-					Components.utils.import("chrome://dta-modules/content/glue.jsm", glue);
-					this.hist = glue.require("support/historymanager").getHistory(this._pref);
-					this._load();
-				}
-				catch (ex) {
-					Components.utils.reportError(ex);
-				}
+				this._load();
 			]]></constructor>
 			<field name="_list">document.getAnonymousElementByAttribute(this, 'anonid', 'list');</field>
 			<field name="_popup">document.getAnonymousElementByAttribute(this, 'anonid', 'popup');</field>
@@ -134,8 +126,25 @@
 					this._list.label = val;
 				</setter>
 			</property>
+			<property name="isPrivate" onget="return this.getAttribute('isPrivate')">
+				<setter><![CDATA[
+					val = !!val;
+					if (this.isPrivate != val) {
+						this.setAttribute("isPrivate", val);
+						this.reload();
+					}
+				]]></setter>
+			</property>
 			<method name="_load">
 				<body><![CDATA[
+					try {
+						let glue = {};
+						Components.utils.import("chrome://dta-modules/content/glue.jsm", glue);
+						this.hist = glue.require("support/historymanager").getHistory(this._pref, this.isPrivate);
+					}
+					catch (ex) {
+						Components.utils.reportError(ex);
+					}
 					var values = this._values;
 					var popup = this._popup;
 
