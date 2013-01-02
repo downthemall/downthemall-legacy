@@ -49,12 +49,19 @@ XPCOMUtils.defineLazyGetter(this, "BatchGenerator", function() {
 var Dialog = {
 	load: function DTA_load() {
 		try {
+			let isPrivate = this.isPrivate = isWindowPrivate(window.opener);
+			if (window.arguments) {
+				isPrivate = this.isPrivate = window.arguments[0].isPrivate;
+			}
 			this.ddDirectory = $("directory");
+			this.ddDirectory.isPrivate = isPrivate;
+			this.ddRenaming = $("renaming");
+			this.ddRenaming.isPrivate = isPrivate;
+
 			if (!this.ddDirectory.value) {
 				log(LOG_DEBUG, "Using default download directory, value was " + this.ddDirectory.value);
 				this.ddDirectory.value = DefaultDownloadsDirectory.path;
 			}
-			this.ddRenaming = $("renaming");
 			var address = $('address');
 			(function() {
 				let menu = document.getAnonymousElementByAttribute(
@@ -284,7 +291,7 @@ var Dialog = {
 
 		let mask = this.ddRenaming.value;
 		let dir = this.ddDirectory.value;
-		let isPrivate = isWindowPrivate(window.opener);
+		let isPrivate = this.isPrivate;
 
 		let downloads = (function() {
 			let desc = $('description').value;
@@ -334,10 +341,8 @@ var Dialog = {
 		DTA.incrementSeries();
 		Preferences.setExt("lastqueued", !start);
 
-		if (!isPrivate) {
-			this.ddRenaming.save($("renamingOnce").checked);
-			this.ddDirectory.save();
-		}
+		this.ddRenaming.save($("renamingOnce").checked);
+		this.ddDirectory.save();
 
 		self.close();
 

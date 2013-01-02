@@ -141,8 +141,11 @@ exports.load = function load(window, document) {
 	let ml = DTA.getLinkPrintMetalink(url);
 	url = new DTA.URL(ml ? ml : url);
 
-	mask = DTA.getDropDownValue('renaming');
-	if (!($("tdta").hidden = (DTA.getDropDownValue('directory') == '' || !mask))) {
+	isPrivate = isWindowPrivate(dialog.mContext);
+	ddDirectory.isPrivate = isPrivate;
+
+	mask = DTA.getDropDownValue('renaming', isPrivate);
+	if (!($("tdta").hidden = (DTA.getDropDownValue('directory', isPrivate) == '' || !mask))) {
 		turbo.disabled = false;
 		turboExec.disabled = false;
 	}
@@ -164,8 +167,6 @@ exports.load = function load(window, document) {
 	catch (ex) {
 		// no op
 	}
-
-	isPrivate = isWindowPrivate(dialog.mContext);
 
 	mode.addEventListener(
 		'select',

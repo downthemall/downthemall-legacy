@@ -36,6 +36,25 @@ module("support/historymanager.js");
 		h.reset();
 		deepEqual(h.values, [], "reset");
 	});
+	test("private", function() {
+		var {getHistory} = require("support/historymanager");
+		var h = getHistory("testHistory", true);
+		deepEqual(h.values, [], "new history must be empty");
+		h.push("foo");
+		deepEqual(h.values, ["foo"], "push to empty");
+		h.push("bar");
+		deepEqual(h.values, ["bar", "foo"], "push will unshift");
+		h.push("foo");
+		deepEqual(h.values, ["foo", "bar"], "no duplicates");
+		h.push("foo2", true);
+		deepEqual(h.values, ["foo", "foo2", "bar"], "once");
+		h.push("foo", true);
+		deepEqual(h.values, ["foo", "foo2", "bar"], "no duplicates, once");
+		h.push("foo2", true);
+		deepEqual(h.values, ["foo", "foo2", "bar"], "no duplicates 2, once");
+		h.reset();
+		deepEqual(h.values, [], "reset");
+	});
 
 	test("filter", function() {
 		var s = new SetupHistoryManager("filter");
@@ -58,6 +77,21 @@ module("support/historymanager.js");
 		try {
 			var {getHistory} = require("support/historymanager");
 			var h = getHistory("directory");
+			h.reset();
+			deepEqual(h.values, [], "directory hist gets empty");
+			h.push("C:\\");
+			h.push("/home/");
+			equal(h.values.length, 1, "Validator at work");
+		}
+		finally {
+			s.restore();
+		}
+	});
+	test("directory private", function() {
+		var s = new SetupHistoryManager("directory");
+		try {
+			var {getHistory} = require("support/historymanager");
+			var h = getHistory("directory", true);
 			h.reset();
 			deepEqual(h.values, [], "directory hist gets empty");
 			h.push("C:\\");

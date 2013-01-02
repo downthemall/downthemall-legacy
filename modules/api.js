@@ -302,8 +302,8 @@ exports.getRef = function getRef(doc) {
 	}
 }
 
-exports.getDropDownValue = function getDropDownValue(name) {
-	let values = Histories.getHistory(name).values;
+exports.getDropDownValue = function getDropDownValue(name, isPrivate) {
+	let values = Histories.getHistory(name, isPrivate).values;
 	return values.length ? values[0] : '';
 }
 
@@ -337,9 +337,12 @@ exports.sendLinksToManager = function sendLinksToManager(window, start, links) {
 	});
 }
 
+function somePrivate(e) e.isPrivate;
+
 exports.turboSendLinksToManager = function turboSendLinksToManager(window, urlsArray) {
-	let dir = exports.getDropDownValue('directory');
-	let  mask = exports.getDropDownValue('renaming');
+	let isPrivate = urlsArray.some(somePrivate);
+	let dir = exports.getDropDownValue('directory', isPrivate);
+	let mask = exports.getDropDownValue('renaming', isPrivate);
 
 	if (!mask || !dir) {
 		throw new Exception("missing required information");
@@ -389,8 +392,9 @@ exports.turboSaveLinkArray = function turboSaveLinkArray(window, urls, images) {
 	}
 
 	let fast = null;
+	let isPrivate = urls.some(somePrivate) || images.some(somePrivate);
 	try {
-		fast = FilterManager.getTmpFromString(exports.getDropDownValue('filter'));
+		fast = FilterManager.getTmpFromString(exports.getDropDownValue('filter', isPrivate));
 	}
 	catch (ex) {
 		// fall-through

@@ -18,76 +18,21 @@ const validators = {
 	}
 };
 
-function History(key) {
-	this._key = key;
-	if (key in validators) {
-		this._validator = validators[key];
-	}
-	else {
-		this._validator = function() true;
-	}
-}
-History.prototype = {
-	_key: null,
+const BaseHistory = {
+	init: function(key) {
+		this._key = key;
+		if (key in validators) {
+			this._validator = validators[key];
+		}
+		else {
+			this._validator = function() true;
+		}
+	},
 	get key() {
 		return this._key;
 	},
-	_sessionHistory: [],
-	_persisting: true,
-	get persisting() {
-		return this._persisting;
-	},
-	_setPersisting: function(persist) {
-		if (persist == this._persisting) {
-			// not modified
-			return;
-		}
-		if (!persist) {
-			// need to clone
-			this._sessionHistory = this.values;
-		}
-		this._persisting = !!persist;
-	},
-	get _values() {
-		if (!this._persisting) {
-			return this._sessionHistory;
-		}
-		let json = prefs.getExt(this._key, '[]');
-		let rv = [];
-		try {
-			rv = JSON.parse(json);
-		}
-		catch (ex) {
-			log(LOG_ERROR, "Histories: Parsing of history failed: " + json, ex);
-		}
-		if (!rv.length) {
-			try {
-				rv = JSON.parse(prefs.getExt(this._key + ".default", '[]'));
-			}
-			catch (ex) {
-				log(LOG_ERROR, "Cannot apply default values", ex);
-			}
-		}
-		return rv;
-	},
 	get values() {
 		return this._values.filter(this._validator);
-	},
-	_setValues: function(values) {
-		if (!this._persisting) {
-			log(LOG_DEBUG, "Set session history for " + this._key);
-			this._sessionHistory = values;
-		}
-		else {
-			try {
-				prefs.setExt(this._key, JSON.stringify(values));
-				log(LOG_DEBUG, "Set normal history for " + this._key + " to " + JSON.stringify(values));
-			}
-			catch (ex) {
-				log(LOG_ERROR, "Histories: Setting values failed" + values, ex);
-				throw ex;
-			}
-		}
 	},
 	push: function(value, once) {
 		try {
@@ -124,18 +69,69 @@ History.prototype = {
 		log(LOG_INFO, "Histories: Reset called");
 		this._setValues([]);
 	}
+}
+
+function PrefHistory(key) {
+	this.init(key);
+}
+PrefHistory.prototype = {
+	__proto__: BaseHistory,
+	get _values() {
+		let json = prefs.getExt(this._key, '[]');
+		let rv = [];
+		try {
+			rv = JSON.parse(json);
+		}
+		catch (ex) {
+			log(LOG_ERROR, "Histories: Parsing of history failed: " + json, ex);
+		}
+		if (!rv.length) {
+			try {
+				rv = JSON.parse(prefs.getExt(this._key + ".default", '[]'));
+			}
+			catch (ex) {
+				log(LOG_ERROR, "Cannot apply default values", ex);
+			}
+		}
+		return rv;
+	},
+	_setValues: function(values) {
+		try {
+			prefs.setExt(this._key, JSON.stringify(values));
+		}
+		catch (ex) {
+			log(LOG_ERROR, "Histories: Setting values failed" + values, ex);
+			throw ex;
+		}
+	}
 };
 
-const _histories = {};
+function MemHistory(key) {
+	this.init(key);
+	this._setValues((new PrefHistory(this.key)).values);
+}
+MemHistory.prototype = {
+	__proto__: BaseHistory,
+	_setValues: function(values) {
+		this._values = values;
+	}
+};
+
+const _normalHistories = {};
+const _privateHistories = {};
 
 /**
  * Gets the History Instance for a key
  * @param key History to get
+ * @param isPrivate operate on private history only
  * @return
  */
-exports.getHistory = function getHistory(key) {
+exports.getHistory = function getHistory(key, isPrivate) {
+	isPrivate = !!isPrivate;
+	let _histories = isPrivate ? _privateHistories : _normalHistories;
+	let _ctor = isPrivate ? MemHistory : PrefHistory;
 	if (!(key in _histories)) {
-		return (_histories[key] = new History(key));
+		return (_histories[key] = new _ctor(key));
 	}
 	return _histories[key];
 }

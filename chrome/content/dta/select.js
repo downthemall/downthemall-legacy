@@ -297,17 +297,7 @@ let Dialog = {
 
 	// will be called to initialize the dialog
 	load: function DTA_load() {
-
 		this.unload = unloadWindow(window, this.unload.bind(this));
-
-		// construct or dropdowns.
-		this.ddFilter = $('filter');
-		this.ddDirectory = $('directory');
-		if (!this.ddDirectory.value) {
-			log(LOG_DEBUG, "Using default download directory, value was " + this.ddDirectory.value);
-			this.ddDirectory.value = DefaultDownloadsDirectory.path;
-		}
-		this.ddRenaming = $('renaming');
 
 		$('maskeditor-accept').label = _('button-accept');
 		$('cancelbutton').label = $('maskeditor-cancel').label = _('button-cancel');
@@ -316,6 +306,22 @@ let Dialog = {
 			// initialize or link lists
 			let links = window.arguments[0];
 			let images = window.arguments[1];
+
+			let isPrivate = this.isPrivate = links.some(function(e) e.isPrivate) || images.some(function(e) e.isPrivate);
+
+			// construct or dropdowns.
+			this.ddFilter = $('filter');
+			this.ddFilter.isPrivate = isPrivate;
+			this.ddDirectory = $('directory');
+			this.ddDirectory.isPrivate = isPrivate;
+			this.ddRenaming = $('renaming');
+			this.ddRenaming.isPrivate;
+			$("maskeditor-selector").isPrivate = isPrivate;
+
+			if (!this.ddDirectory.value) {
+				log(LOG_DEBUG, "Using default download directory, value was " + this.ddDirectory.value);
+				this.ddDirectory.value = DefaultDownloadsDirectory.path;
+			}
 
 			// initialize the labels
 			$("viewlinks").label = $("viewlinks").label + " ("+ links.length + ")";
@@ -473,11 +479,9 @@ let Dialog = {
 
 			Preferences.setExt('seltab', this.current.type == 1 ? 0 : 1);
 			// save history
-			if (!out.some(function(e) e.isPrivate)) {
-				this.ddRenaming.save($("renamingOnce").checked);
-				this.ddDirectory.save();
-				this.ddFilter.save();
-			}
+			this.ddRenaming.save($("renamingOnce").checked);
+			this.ddDirectory.save();
+			this.ddFilter.save();
 
 			// save the counter, queued state
 			Preferences.setExt("lastqueued", !start);
