@@ -3,6 +3,8 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
+const {filterInSitu} = require("utils");
+
 /**
  * Determines if a window is private
  */
@@ -25,6 +27,35 @@ catch (ex) {
 	log(LOG_DEBUG, "no PrivateBrowsingUtils");
 }
 
+
+const purgeObserver = {
+	obsFns: [],
+	observe: function() {
+		for (let fn of this.obsFns) {
+			try {
+				fn();
+			}
+			catch (ex) {
+				log(LOG_ERROR, "pbm purger threw", ex);
+			}
+		}
+	}
+};
+Services.obs.addObserver(purgeObserver, "last-pb-context-exited", false);
+unload(function removePurgeObserver() {
+	Services.obs.removeObserver(purgeObserver, "last-pb-context-exited");
+	purgeObserver.obsFns = [];
+});
+
+function registerPrivatePurger(fn) {
+	purgeObserver.obsFns.push(fn);
+}
+function unregisterPrivatePurger(fn) {
+	filterInSitu(purgeObserver.obsFn, function(e) e != fn);
+}
+
 Object.defineProperties(exports, {
-	isWindowPrivate: {value: isWindowPrivate, enumerable: true}
+	isWindowPrivate: {value: isWindowPrivate, enumerable: true},
+	registerPrivatePurger: {value: registerPrivatePurger, enumerable: true},
+	unregisterPrivatePurger: {value: unregisterPrivatePurger, enumerable: true}
 });

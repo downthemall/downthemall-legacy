@@ -44,6 +44,9 @@ const REGEXP_CT = /\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i;
 const REGEXP_STARTPARAM = /start=\d+&?/;
 
 
+const {registerPrivatePurger, unregisterPrivatePurger} = require("support/pbm");
+
+
 function ContextLRUMap(num) {
 	this._normal = new LRUMap(num);
 	this._private = new LRUMap(num);
@@ -56,6 +59,9 @@ ContextLRUMap.prototype = {
 	"delete": function(key, isPrivate) this._m(isPrivate).delete(key),
 	clear: function() {
 		this._normal.clear();
+		this._private.clear();
+	},
+	clearPrivate: function() {
 		this._private.clear();
 	}
 }
@@ -77,6 +83,9 @@ ContentHandlingImpl.prototype = {
 		Services.obs.addObserver(this, 'http-on-modify-request', false);
 
 		Services.prefs.addObserver(PREF_SNIFFVIDEOS, this, false);
+
+		this.boundPurge = this.purge.bind(this);
+		registerPrivatePurger(this.boundPurge);
 
 		Components.manager.nsIComponentRegistrar.registerFactory(
 			REDIRECTS_IID,
@@ -121,6 +130,8 @@ ContentHandlingImpl.prototype = {
 
 		Services.catman.deleteCategoryEntry("net-channel-event-sinks", REDIRECTS_CON, true);
 		Components.manager.nsIComponentRegistrar.unregisterFactory(REDIRECTS_IID, this);
+
+		unregisterPrivatePurger(this.boundPurge);
 
 		Services.obs.removeObserver(this, 'private-browsing');
 		Services.obs.removeObserver(this, 'http-on-modify-request');
@@ -330,6 +341,12 @@ ContentHandlingImpl.prototype = {
 		this._videos = new ContextLRUMap(20);
 		this._redirects = new ContextLRUMap(20);
 		this._revRedirects = new ContextLRUMap(100);
+	},
+	purge: function() {
+		this._data.clearPrivate();
+		this._videos.clearPrivate();
+		this._redirects.clearPrivate();
+		this._revRedirects.clearPrivate();
 	}
 };
 

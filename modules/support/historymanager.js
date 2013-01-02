@@ -118,7 +118,7 @@ MemHistory.prototype = {
 };
 
 const _normalHistories = {};
-const _privateHistories = {};
+var _privateHistories = {};
 
 /**
  * Gets the History Instance for a key
@@ -135,3 +135,7 @@ exports.getHistory = function getHistory(key, isPrivate) {
 	}
 	return _histories[key];
 }
+
+require("support/pbm").registerPrivatePurger(function purgePrivateHistories() {
+	_privateHistories = {};
+});
