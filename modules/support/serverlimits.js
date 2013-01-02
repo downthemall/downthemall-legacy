@@ -458,7 +458,7 @@ function loadServerBuckets() {
 	}
 }
 function killServerBuckets() {
-	for (let bucket of buckets) {
+	for (let [,bucket] in Iterator(buckets)) {
 		bucket.kill();
 	}
 	buckets = Object.create(null);
