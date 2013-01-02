@@ -625,8 +625,8 @@ exports.load = function load(window, outerEvent) {
 					return;
 				}
 
-				DTA.setPrivateMode(win, urls);
-				DTA.setPrivateMode(win, images);
+				DTA.setPrivateMode(window, urls);
+				DTA.setPrivateMode(window, images);
 
 				if (turbo) {
 					try {
