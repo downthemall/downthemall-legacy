@@ -2751,7 +2751,9 @@ const startDownloads = (function() {
 					qi.hashCollection = null; // to initialize prettyHash
 				}
 
-				let postData = ContentHandling.getPostDataFor(qi.urlManager.url);
+				qi.isPrivate = !!e.isPrivate || false;
+
+				let postData = ContentHandling.getPostDataFor(qi.urlManager.url, qi.isPrivate);
 				if (e.url.postData) {
 					postData = e.url.postData;
 				}
@@ -2771,7 +2773,6 @@ const startDownloads = (function() {
 				if (!("isPrivate" in e)) {
 					log(LOG_INFO, "A queued item has no isPrivate property. Defaulting to false. Please check the code path for proper PBM support!");
 				}
-				qi.isPrivate = !!e.isPrivate || false;
 
 				qi.position = Tree.add(qi);
 				qi.save();

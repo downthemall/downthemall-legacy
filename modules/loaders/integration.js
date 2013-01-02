@@ -366,7 +366,7 @@ function getSniffedInfo(window) {
 		return [];
 	}
 	const docURI = Services.io.newURI(window.location.href, window.document.characterSet, null);
-	return ContentHandling.getSniffedVideosFor(docURI).map(function(e) {
+	return ContentHandling.getSniffedVideosFor(docURI, isWindowPrivate(window)).map(function(e) {
 		let [fn,ext] = strfn.getFileNameAndExt(e.spec);
 		if (!ext || getSniffedInfo_name.test(fn)) {
 			ext = ext || "flv";
