@@ -11,6 +11,6 @@ if (require("support/alertservice").available) {
 }
 else {
 	test("show n/a", function() {
-		raises(function() require("support/alertservice").show("test", "test"));
+		throws(function() require("support/alertservice").show("test", "test"));
 	});
 }
