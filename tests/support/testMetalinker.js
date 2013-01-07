@@ -322,7 +322,7 @@ metalink_asyncTestFile(
 	"data/metalink/priority_hash",
 	function(data, ex) {
 		var download = metalink_getDownload(data.downloads, "hash_priority");
-		equal(download.hashCollection.full.type.toLowerCase(), "sha512", "hashes with higher priority used");
+		equal(download.hashCollection.full.type.toLowerCase(), "sha256", "hashes with higher priority used");
 	}
 );
 
