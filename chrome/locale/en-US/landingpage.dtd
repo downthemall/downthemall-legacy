@@ -1,3 +1,5 @@
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+
 <!-- UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
 
@@ -92,13 +94,13 @@
 
 <!ENTITY lp.yr.licensetitle "Copyright and License">
 <!ENTITY lp.yr.licensed "DownThemAll! is licensed under <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. See the GPL file. This applies to all source code files.">
-<!ENTITY lp.yr.morelicense "Individual files may have different licenses. See the corresponding repository files available from <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Many files are tri-licensed under a MPL 1.1/GPL 2.0/LGPL 2.1 license; See the MPL, GPL, LGPL files respectively.">
+<!ENTITY lp.yr.morelicense3 "Individual files may have additional and/or different licenses. See the corresponding repository files available from <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Most files are licensed under the GPL/LGPL-compatible MPL 2.0, or are tri-licensed under a MPL 1.1/GPL 2.0/LGPL 2.1 license. See the MPL, GPL, LGPL files respectively.">
 <!ENTITY lp.yr.gplintro "Most important sections from the GPL 2.0, the no warranty and damages disclaimer, follow:">
 <!ENTITY lp.yr.icons "Artwork, icons and buttons">
-<!ENTITY lp.yr.iconsbased "are based on the works of Mike Matas, Jakub Steiner, Mark James and the Tango project">
-<!ENTITY lp.yr.artwork11 "The original artwork is: Copyright © 2004-2011 by Stefano Verna, Federico Parodi and Nils Maier">
+<!ENTITY lp.yr.iconsbased3 "are based on the works of Mike Matas, Mark James and the Tango project">
+<!ENTITY lp.yr.artwork3 "The original artwork is: Copyright © 2004-2013 by Stefano Verna, Federico Parodi and Nils Maier">
 <!ENTITY lp.yr.artworklicense "The original artwork is licensed under:">
-<!ENTITY lp.yr.logo11 "The DownThemAll! logo is: Copyright © 2004-2011 by Stefano Verna.">
+<!ENTITY lp.yr.logo3 "The DownThemAll! logo design: Copyright © 2004-2013 by Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "The DownThemAll! name and logo cannot be used without permission in any derivative work, with exception of credits and license-related notices.">
 
 <!ENTITY lp.ct.bugstitle "Reporting bugs/Feature requests">

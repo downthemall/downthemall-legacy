@@ -78,15 +78,15 @@
 		</p>
 		<h2>General hints</h2>
 		<ul>
-			<li>We intent not to change any string within the 2.0 series. This already worked pretty well for the 1.1 time series. That is: there shouldn't be any changes in the point releases (e.g. 2.0.1, 2.0.10).</li>
-			<li>We tried to carry over as much of the 1.1 translations as possible. We, however, deleted any updated or removed strings, so you don't have to care about those. Therefore it is strongly recommend to use the strings contained within this XPI, if you're not using the WTS.</li>
+			<li>We intent not to change any string within the 3.0 series. This already worked pretty well for the 2.0 and 1.1 series. That is: there shouldn't be any changes in the point releases (e.g. 3.0.1, 3.0.10).</li>
+			<li>We tried to carry over as much of the 2.0 translations as possible. We, however, deleted any updated or removed strings, so you don't have to care about those. Therefore it is strongly recommend to use the strings contained within this XPI, if you're not using the WTS.</li>
 			<li>Please stick to the correct "spelling" of DownThemAll!<ul>
 				<li>It is <strong>DownThemAll!</strong> not <del>DOWNTHEMALL!</del> or <del>downTHEMall!</del></li>
 				<li>It is <strong>dTa</strong> not <del>DTA</del> or <del>dta</del></li>
 			</ul></li>
 			<li>DownThemAll! Manager will by default now use the "Icons" mode in the toolbar. Please make sure to check the texts as well, by right-clicking the toolbar and selecting text and icons.</li>
 			<li>Please adjust the preference window width (and maybe height). See <code>prefpanes.dtd:winstyle</code>. There is currently no way to autofit-resize the window automatically, so please choose decent values to avoid cutting-off parts of the window contents.</li>
-			<li>An often missed feature is Metalink support. Please make sure to test that dialog and your translations as well. Please check out some of the <a href="http://metalinker.org/samples.html#3examples">example metalinks</a>.</li>
+			<li>An often missed feature is Metalink support. Please make sure to test that dialog and your translations as well. E.g. downloading LibreOffice with dTa! should display the metalink dialog.</li>
 		</ul>
 
 		<h1>addons.mozilla.org localizations</h1>
@@ -105,13 +105,13 @@
 
 		<h1>Landing page</h1>
 		<p>
-			The new landing page will be shown after initial installation and whenever a user upgrades a major release (e.g. 1.1 -> 2.0, but not 2.0.1 -> 2.0.2)
+			The new landing page will be shown after initial installation and whenever a user upgrades a major release (e.g. 2.0.15 -> 3.0, but not 3.0.1 -> 3.0.2)
 			<br />
 			The landing page consists of a header and some "tabs". The header is always visible, while only one tab is visible at a time.
 		</p>
 		<p>
 			The real page is always accessible at
-			<a href="http://code.downthemall.net/about/2.0b2/">http://code.downthemall.net/about/2.0b2/</a>, but will later be displayed via about:downthemall.
+			<a href="http://about.downthemall.net/3.0/">http://about.downthemall.net/3.0/</a>, but will later be displayed via about:downthemall.
 			<br />
 			We will try to regenerate the page on the server once you mark your localization either "testing" or "released" in the pre-release (beta) phase.
 		</p>
@@ -261,13 +261,13 @@
 				<p class="alwaysleft aligntolocale">
 					Copyright © 2004-2007 Federico Parodi and Stefano Verna
 					<br />
-					Copyright © 2007-2010 Nils Maier, Federico Parodi and Stefano Verna
+					Copyright © 2007-2013 Nils Maier, Federico Parodi and Stefano Verna
 				</p>
 
 				<p>&lp.yr.licensed;
 				</p>
 
-				<p>&lp.yr.morelicense;
+				<p>&lp.yr.morelicense3;
 				</p>
 
 				<p>&lp.yr.gplintro;
@@ -296,16 +296,15 @@
 
 				<h3>&lp.yr.icons;
 				</h3>
-				<p>&lp.yr.iconsbased;
+				<p>&lp.yr.iconsbased3;
 				</p>
 				<ul class="alwaysleft aligntolocale">
 					<li>© Michael Matas,</li>
-					<li>© Jakub Steiner, © Novell, Inc.</li>
 					<li>© Mark James (famfamfam silk icons)</li>
 					<li>Tango Project - public domain</li>
 				</ul>
 
-				<p>&lp.yr.artwork11;
+				<p>&lp.yr.artwork3;
 					<br />
 		&lp.yr.artworklicense;
 				</p>
@@ -315,7 +314,7 @@
 					</li>
 				</ul>
 
-				<p>&lp.yr.logo11;
+				<p>&lp.yr.logo3;
 					<br />
 		&lp.yr.logopermissions;
 				</p>
