@@ -14,7 +14,7 @@ const NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
 let DTA = require("api");
 requireJoined(this, "constants");
 const {formatNumber, SimpleIterator, StringBundles} = require("utils");
-const RequestManipulation = require("manager/requestmanipulation");
+const {modifyURL, modifyHttp} = require("support/requestmanipulation");
 const Preferences = require("preferences");
 const {
 	getUsableFileName,
@@ -48,8 +48,7 @@ function Connection(d, c, isInfoGetter) {
 	this.isInfoGetter = isInfoGetter;
 	this.url = d.urlManager.getURL();
 
-	let url = this.url.url;
-	RequestManipulation.modifyURL(url);
+	let url = modifyURL(this.url.url.clone());
 
 	let referrer = d.referrer;
 	log(LOG_INFO, "starting: " + url.spec);
@@ -172,7 +171,7 @@ Connection.prototype = {
 					log(LOG_DEBUG, "setting range");
 				}
 
-				RequestManipulation.modifyHttp(chan);
+				modifyHttp(chan);
 
 				try {
 					// Users want this so they can have no-third-party when browsing regularly,
