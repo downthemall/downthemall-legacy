@@ -31,6 +31,7 @@ Manipulator.prototype = {
 				}
 			}
 		}
+		return context;
 	}
 }
 
