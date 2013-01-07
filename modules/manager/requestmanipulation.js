@@ -61,6 +61,9 @@ exports.makeAnonymous = function makeAnonymous() {
 	try { this.referrer = null; } catch (ex) { /* no op */ }
 	this.setRequestHeader('Referer', '', false);
 	this.setRequestHeader('Cookie', '', false);
+	if (("nsIPrivateBrowsingChannel" in Ci) && (this instanceof Ci.nsIPrivateBrowsingChannel)) {
+		try { this.setPrivate(true); } catch (ex) {}
+	}
 }
 exports.makeCompletelyAnonymous = function makeCompletelyAnonymous() {
 	makeAnonymous();
