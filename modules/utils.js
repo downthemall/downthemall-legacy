@@ -57,14 +57,13 @@ exports.range = function range() {
 	}
 	if ((stop - start) / step < 0) {
 		// negative range
-		return;
+		throw Cr.NS_ERROR_INVALID_ARG;
 	}
 	stop += -Math.abs(step) / step;
 	stop += step - ((stop - start) % step);
 	for (; start != stop; start += step) {
-		yield start;
+		yield ~~start;
 	}
-
 }
 
 /**
@@ -84,8 +83,14 @@ exports.hexdigest = function hexdigest(data) {
  */
 exports.formatNumber = function formatNumber(num, digits) {
 	let rv = num.toString();
+	if (num < 0) {
+		return rv;
+	}
 	if (!isFinite(digits)) {
 		digits = 3;
+	}
+	else if (digits <= 0) {
+		throw Cr.NS_ERROR_INVALID_ARG;
 	}
 	for (let i = rv.length; i < digits; ++i) {
 		rv = '0' + rv;

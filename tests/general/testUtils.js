@@ -26,6 +26,129 @@ test("exports", function() {
 		]);
 });
 
+test("valid schemes", function() {
+	var u = require("utils");
+	for (var k in u) {
+		if (k.indexOf("NS_") == 0) {
+			ok(Services.io.newURI(u[k], null, null), k);
+		}
+	}
+});
+
+test("newUUIDString", function() {
+	const {newUUIDString} = require("utils");
+	ok(!!newUUIDString(), "set");
+	for (var i = 0; i < 10; ++i)
+		notEqual(newUUIDString(), newUUIDString(), "different each call");
+	ok(/^\{[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}\}$/.test(newUUIDString()), "conforms");
+});
+
+test("range", function() {
+	const {range} = require("utils");
+
+	var r = range(2);
+	strictEqual(r.next(), 0, "0");
+	strictEqual(r.next(), 1, "1");
+	throws(function() r.next(), "stop");
+
+	r = range(1,3);
+	strictEqual(r.next(), 1, "1");
+	strictEqual(r.next(), 2, "2");
+	throws(function() r.next(), "stop");
+
+	r = range(-3,-1,1);
+	strictEqual(r.next(), -3, "-3");
+	strictEqual(r.next(), -2, "-2");
+	throws(function() r.next(), "stop");
+
+	r = range(-30,-10,10);
+	strictEqual(r.next(), -30, "-30");
+	strictEqual(r.next(), -20, "-20");
+	throws(function() r.next(), "stop");
+
+	r = range(-1,-3,-1);
+	strictEqual(r.next(), -1, "-1");
+	strictEqual(r.next(), -2, "-2");
+	throws(function() r.next(), "stop");
+
+	r = range(-10,-30,-10);
+	strictEqual(r.next(), -10, "-10");
+	strictEqual(r.next(), -20, "-20");
+	throws(function() r.next(), "stop");
+
+	throws(function() range(1/0).next(), "finite stop");
+	throws(function() range(1,1/0).next(), "finite start");
+	throws(function() range(1,1,1/0).next(), "finite step");
+	throws(function() range(-3,-1,-1).next(), "negative range");
+});
+
+test("hexdigest", function() {
+	const {hexdigest} = require("utils");
+	strictEqual(hexdigest("0123456789abcdef"), "30313233343536373839616263646566");
+});
+
+test("formatNumber", function() {
+	const {formatNumber} = require("utils");
+	strictEqual(formatNumber(-1), "-1", "def; neg");
+	strictEqual(formatNumber(1), "001", "def; 1");
+	strictEqual(formatNumber(10), "010", "def; 10");
+	strictEqual(formatNumber(100), "100", "def; 100");
+	strictEqual(formatNumber(1000), "1000", "def; 100");
+
+	strictEqual(formatNumber(-1, 5), "-1", "5; neg");
+	strictEqual(formatNumber(1, 5), "00001", "5; 1");
+	strictEqual(formatNumber(10, 5), "00010", "5; 10");
+	strictEqual(formatNumber(100, 5), "00100", "5; 100");
+	strictEqual(formatNumber(1000, 5), "01000", "5; 1000");
+	strictEqual(formatNumber(10000, 5), "10000", "5; 10000");
+	strictEqual(formatNumber(100000, 5), "100000", "5; 100000");
+
+	strictEqual(formatNumber(-1, 1), "-1", "1; neg");
+	strictEqual(formatNumber(1, 1), "1", "1; 1");
+	strictEqual(formatNumber(10, 1), "10", "1; 10");
+	strictEqual(formatNumber(100, 1), "100", "1; 100");
+	strictEqual(formatNumber(1000, 1), "1000", "1; 1000");
+
+	throws(function() formatNumber(1,0), "0 digits");
+	throws(function() formatNumber(1,-10), "-10 digits");
+});
+
+test("formatTimeDelta", function() {
+	const {formatTimeDelta} = require("utils");
+	strictEqual(formatTimeDelta(1), "00:01");
+	strictEqual(formatTimeDelta(61), "01:01");
+	strictEqual(formatTimeDelta(3661), "01:01:01");
+	strictEqual(formatTimeDelta(36061), "10:01:01");
+	strictEqual(formatTimeDelta(360061), "100:01:01");
+});
+
+test("mapInSitu", function() {
+	const {mapInSitu} = require("utils");
+	var vec = [1,2,3,4];
+	deepEqual(mapInSitu(vec, function(i) i*i), [1,4,9,16]);
+	deepEqual(vec, [1,4,9,16]);
+});
+
+test("filterInSitu", function() {
+	const {filterInSitu} = require("utils");
+	var vec = [1,2,3,4,null];
+	deepEqual(filterInSitu(vec, function(i) i % 2), [1,3]);
+	deepEqual(vec, [1,3]);
+});
+
+test("filterMapInSitu", function() {
+	const {filterMapInSitu} = require("utils");
+	var vec = [1,2,3,4,null];
+	deepEqual(filterMapInSitu(vec, function(i) i % 2, function(i) i*i), [1,9]);
+	deepEqual(vec, [1,9]);
+});
+
+test("mapFilterInSitu", function() {
+	const {mapFilterInSitu} = require("utils");
+	var vec = [1,2,3,4,null];
+	deepEqual(mapFilterInSitu(vec, function(i) i*2, function(i) i % 4), [2,6]);
+	deepEqual(vec, [2,6]);
+});
 
 test("naturalSort", function() {
 	const {naturalSort} = require("utils");
