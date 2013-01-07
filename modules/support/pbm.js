@@ -9,6 +9,12 @@ const {filterInSitu} = require("utils");
  * Determines if a window is private
  */
 function isWindowPrivate() false;
+
+/**
+ * Determines if a channel is private
+ */
+function isChannelPrivate() false;
+
 try {
 	let {PrivateBrowsingUtils} = requireJSM("resource://gre/modules/PrivateBrowsingUtils.jsm");
 	if ("isWindowPrivate" in PrivateBrowsingUtils) {
@@ -20,7 +26,10 @@ try {
 				log(LOG_ERROR, "isWindowPrivate call failed, defaulting to false", ex);
 			}
 			return false;
-		}
+		};
+		isChannelPrivate = function(channel) {
+			return (channel instanceof Ci.nsIPrivateBrowsingChannel) && channel.isChannelPrivate;
+		};
 	}
 }
 catch (ex) {
@@ -30,7 +39,8 @@ catch (ex) {
 
 const purgeObserver = {
 	obsFns: [],
-	observe: function() {
+	observe: function(s, topic, d) {
+		log(LOG_DEBUG, topic);
 		for (let fn of this.obsFns) {
 			try {
 				fn();
@@ -56,6 +66,7 @@ function unregisterPrivatePurger(fn) {
 
 Object.defineProperties(exports, {
 	isWindowPrivate: {value: isWindowPrivate, enumerable: true},
+	isChannelPrivate: {value: isChannelPrivate, enumerable: true},
 	registerPrivatePurger: {value: registerPrivatePurger, enumerable: true},
 	unregisterPrivatePurger: {value: unregisterPrivatePurger, enumerable: true}
 });

@@ -1,38 +1,7 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is the DownThemAll! ContentHandling module.
- *
- * The Initial Developer of the Original Code is Nils Maier
- * Portions created by the Initial Developer are Copyright (C) 2010
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Nils Maier <MaierMan@web.de>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
 
 const PREF_SNIFFVIDEOS = 'extensions.dta.listsniffedvideos';
 
@@ -44,7 +13,13 @@ const REGEXP_CT = /\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i;
 const REGEXP_STARTPARAM = /start=\d+&?/;
 
 
-const {registerPrivatePurger, unregisterPrivatePurger} = require("support/pbm");
+const {
+	registerPrivatePurger,
+	unregisterPrivatePurger,
+	isChannelPrivate
+} = require("support/pbm");
+
+const {modifyURL} = require("manager/requestmanipulation");
 
 
 function ContextLRUMap(num) {
@@ -79,7 +54,6 @@ ContentHandlingImpl.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.nsIFactory, Ci.nsIChannelEventSink]),
 
 	_init: function ct__init() {
-		Services.obs.addObserver(this, 'private-browsing', false);
 		Services.obs.addObserver(this, 'http-on-modify-request', false);
 
 		Services.prefs.addObserver(PREF_SNIFFVIDEOS, this, false);
@@ -133,7 +107,6 @@ ContentHandlingImpl.prototype = {
 
 		unregisterPrivatePurger(this.boundPurge);
 
-		Services.obs.removeObserver(this, 'private-browsing');
 		Services.obs.removeObserver(this, 'http-on-modify-request');
 	},
 	registerHttpObservers: function ct_registerHttpObservers() {
@@ -168,11 +141,8 @@ ContentHandlingImpl.prototype = {
 				}
 			}
 			catch (ex) {
-				error(ex);
+				log(LOG_ERROR, "nsPref:changed", ex);
 			}
-			break;
-		case 'private-browsing':
-			this.clear();
 			break;
 		}
 	},
@@ -215,11 +185,11 @@ ContentHandlingImpl.prototype = {
 			us.seek(0, op);
 
 			if (post) {
-				this._data.set(channel.URI.spec, post /*, isPrivate */);
+				this._data.set(channel.URI.spec, post, isChannelPrivate(channel));
 			}
 		}
 		catch (ex) {
-			// no op
+			log(LOG_ERROR, "observe request", ex);
 		}
 	},
 	observeResponse: function ct_observeResponse(channel, topic, data) {
@@ -227,7 +197,7 @@ ContentHandlingImpl.prototype = {
 			return;
 		}
 		try {
-			if (!channel.requestSucceeded) {
+			if (!channel.requestSucceeded || channel.responseStatus == 204) {
 				return;
 			}
 			let ct = '';
@@ -262,11 +232,11 @@ ContentHandlingImpl.prototype = {
 				if (!parentURI.schemeIs('http') && !parentURI.schemeIs('https') && !parentURI.schemeIs('ftp')) {
 					return;
 				}
-				this._registerVideo(parentURI, channel.URI /*, isPrivate */);
+				this._registerVideo(parentURI, channel.URI, isChannelPrivate(channel));
 			}
 		}
 		catch (ex) {
-			// no op
+			log(LOG_ERROR, "observe response", ex);
 		}
 	},
 
@@ -290,8 +260,12 @@ ContentHandlingImpl.prototype = {
 
 		uri = uri.spec;
 		let nv = this._videos.get(uri, isPrivate) || [];
-		nv.push(vid.clone());
-		this._videos.set(uri, nv, isPrivate);
+		vid = modifyURL(vid.clone());
+		if (!nv.some(function(v) v.spec == vid.spec)) {
+			log(LOG_DEBUG, vid.spec);
+			nv.push(vid);
+			this._videos.set(uri, nv, isPrivate);
+		}
 	},
 
 	getPostDataFor: function(uri, isPrivate) {
@@ -313,19 +287,20 @@ ContentHandlingImpl.prototype = {
 			this.onChannelRedirect(oldChannel, newChannel, flags);
 		}
 		catch (ex) {
-			error(ex);
+			log(LOG_ERROR, "asyncOnChannelRedirect", ex);
 		}
 		callback.onRedirectVerifyCallback(0);
 	},
 	onChannelRedirect: function CH_onChannelRedirect(oldChannel, newChannel, flags) {
 		let oldURI = oldChannel.URI.spec;
 		let newURI = newChannel.URI.spec;
-		oldURI = this._revRedirects.get(oldURI /*, isPrivate */) || oldURI;
-		this._redirects.set(oldURI, newURI /*, isPrivate */);
-		this._revRedirects.set(newURI, oldURI /*, isPrivate */);
+		let isPrivate = isChannelPrivate(oldChannel);
+		oldURI = this._revRedirects.get(oldURI, isPrivate) || oldURI;
+		this._redirects.set(oldURI, newURI, isPrivate);
+		this._revRedirects.set(newURI, oldURI, isPrivate);
 	},
 	getRedirect: function(uri, isPrivate) {
-		let rv = this._revRedirects.get(uri.spec /*, isPrivate */);
+		let rv = this._revRedirects.get(uri.spec, isPrivate);
 		if (!rv) {
 			return uri;
 		}
@@ -347,6 +322,7 @@ ContentHandlingImpl.prototype = {
 		this._videos.clearPrivate();
 		this._redirects.clearPrivate();
 		this._revRedirects.clearPrivate();
+		log(LOG_DEBUG, "purged private data");
 	}
 };
 
