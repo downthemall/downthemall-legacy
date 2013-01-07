@@ -19,7 +19,7 @@ const {
 	isChannelPrivate
 } = require("support/pbm");
 
-const {modifyURL} = require("manager/requestmanipulation");
+const {modifyURL} = require("support/requestmanipulation");
 
 
 function ContextLRUMap(num) {
