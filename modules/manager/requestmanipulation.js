@@ -94,5 +94,12 @@ exports.registerURL(
 	/youtube.*&range=/,
 	function() this.spec = this.spec.replace(/&range=.*?&/, "&")
 );
+exports.registerURL(
+	"DumpTruck container pages",
+	/^https:\/\/app\.dumptruck\.goldenfrog\.com\/p\/(.+)$/i,
+	function() {
+		this.spec = this.spec.replace(/^https:\/\/app\.dumptruck\.goldenfrog\.com\//, "https://dl.dumptruck.goldenfrog.com/") + "?dl=1";
+	}
+);
 
 Object.freeze(exports);
