@@ -467,7 +467,7 @@ MimeQuality.prototype = Object.freeze({
 		if (typeof q != "number" || q > 1 || q < 0) {
 			throw new Error("Invalid q");
 		}
-		q = parseInt(q * 1000) / 1000;
+		q = parseInt(q * 1000, 10) / 1000;
 		if (!(q in this._q)) {
 			this._q[q] = [];
 		}
@@ -483,11 +483,13 @@ MimeQuality.prototype = Object.freeze({
 		for (let x in this._q) {
 			let e = this._q[x];
 			e.sort();
-			rv.push({q: x, v: e.join(", ")});
+			rv.push({
+				q: x,
+				v: e.map(function(i) i + (x == 1 ? "" : ";q=" + x)).join(",")
+			});
 		}
 		rv.sort(function(a, b) (a.q > b.q) ? -1 : ((a.q < b.q) ? 1 : 0));
-		exports.mapInSitu(rv, function(e) e.v + ";q=" + e.q).join(", ");
-		return rv;
+		return exports.mapInSitu(rv, function(e) e.v).join(",");
 	}
 });
 exports.MimeQuality = Object.freeze(MimeQuality);

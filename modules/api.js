@@ -81,9 +81,9 @@ exports.URL = Object.freeze(URL);
 const SUPPORTED_HASHES = Object.freeze({
 	'MD5': {l: 32, q: 0.3 },
 	'SHA1': {l: 40, q: 0.4 },
-	'SHA256': {l: 64, q: 0.5 },
+	'SHA256': {l: 64, q: 1 },
 	'SHA384': {l: 96, q: 0.8 },
-	'SHA512': {l: 128, q: 0.9 }
+	'SHA512': {l: 128, q: 1 }
 });
 exports.SUPPORTED_HASHES = Object.freeze(SUPPORTED_HASHES);
 const SUPPORTED_HASHES_ALIASES = Object.freeze({
@@ -100,14 +100,14 @@ const SUPPORTED_HASHES_ALIASES = Object.freeze({
 	'SHA-512': 'SHA512'
 });
 exports.SUPPORTED_HASHES_ALIASES = Object.freeze(SUPPORTED_HASHES_ALIASES);
-exports.WANT_DIGEST_STRING = Object.freeze((function() {
+exports.WANT_DIGEST_STRING = (function() {
 	let rv = new MimeQuality();
 	for (let h of ["MD5", "SHA", "SHA1", "SHA256", "SHA512"]) {
 		let q = SUPPORTED_HASHES[SUPPORTED_HASHES_ALIASES[h]].q;
 		rv.add(h, q);
 	}
 	return rv.toString();
-})());
+})();
 
 function Hash(hash, type) {
 	if (typeof(hash) != 'string' && !(hash instanceof String)) {

@@ -101,8 +101,8 @@ test("real world http visit", function() {
 
 		const visit = (new VisitorManager()).visit(chan);
 
-		strictEqual(visit.hash.sum, "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e", "high priority hash value");
-		strictEqual(visit.hash.type.toLowerCase(), "sha512".toLowerCase(), "high priority hash type");
+		strictEqual(visit.hash.sum, "2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892", "high priority hash value");
+		strictEqual(visit.hash.type.toLowerCase(), "sha256", "high priority hash type");
 	});
 
 	test("http digests corrupt", function() {

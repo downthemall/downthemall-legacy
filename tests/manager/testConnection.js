@@ -71,7 +71,7 @@ test("exports", function() {
 				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
 				"Content-Type": "text/html; charset=utf8",
 				"Content-Length": "1024",
-			  	"Digest": "SHA-256=" + btoa(hash.sum),
+				"Digest": "SHA-256=" + btoa(hash.sum),
 				"Link": "<http://example.com/mirror1>; rel=duplicate; pri=1; geo=de"
 					+ ",<http://example.com/mirror2>; rel=duplicate; pri=2; geo=us"
 					+ ",<http://example.com/mirror3>; rel=duplicate; pri=3; geo=pk"
@@ -115,7 +115,7 @@ test("exports", function() {
 				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
 				"Content-Type": "text/html; charset=utf8",
 				"Content-Length": "1024",
-			  	"Digest": hash.type.toUpperCase() + "=" + btoa(hash.sum),
+				"Digest": hash.type.toUpperCase() + "=" + btoa(hash.sum),
 				"Link": "<http://example.com/mirror1>; rel=duplicate; pri=1; geo=de"
 					+ ",<http://example.com/mirror2>; rel=duplicate; pri=2; geo=us"
 			}
@@ -139,7 +139,7 @@ test("exports", function() {
 				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
 				"Content-Type": "text/html; charset=utf8",
 				"Content-Length": "40836905",
-			  	"Digest": "SHA-256=" + btoa(hash.sum)
+				"Digest": "SHA-256=" + btoa(hash.sum)
 			}
 		});
 
@@ -185,7 +185,7 @@ test("exports", function() {
 				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
 				"Content-Type": "text/html; charset=utf8",
 				"Content-Length": "2014232",
-			  	"Digest": "SHA-256=" + btoa(hash.sum)
+				"Digest": "SHA-256=" + btoa(hash.sum)
 			}
 		});
 
@@ -200,8 +200,8 @@ test("exports", function() {
 				return;
 			}
 			strictEqual(download.fileName, "sha512_hash", "correct metalink file merged");
-			strictEqual(download.hashCollection.full.type, expHash.type, "full hash type merged correctly");
-			strictEqual(download.hashCollection.full.sum, expHash.sum, "full hash value merged correctly");
+			strictEqual(download.hashCollection.full.type, hash.type, "full hash type merged correctly");
+			strictEqual(download.hashCollection.full.sum, hash.sum, "full hash value merged correctly");
 			arrayEqual(download.hashCollection.partials.map(function(p) p.sum), range(8).map(function(i) expHash.sum), "partial hash value merged correctly");
 			arrayEqual(download.hashCollection.partials.map(function(p) p.type), range(8).map(function(i) expHash.type), "partial hash type merged correctly");
 		}, visitor);
@@ -219,8 +219,8 @@ test("exports", function() {
 				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
 				"Content-Type": "text/html; charset=utf8",
 				"Content-Length": "1024",
-			 	"Link": '<http://example.meta4>; rel=describedby; type="application/metalink4+xml"',
-			  	"Digest": hash.type.toUpperCase() + "=" + btoa(hash.sum)
+				"Link": '<http://example.meta4>; rel=describedby; type="application/metalink4+xml"',
+				"Digest": hash.type.toUpperCase() + "=" + btoa(hash.sum)
 			}
 		});
 
@@ -244,8 +244,8 @@ test("exports", function() {
 				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
 				"Content-Type": "text/html; charset=utf8",
 				"Content-Length": "1024",
-			 	"Link": '<https://hackmypc.meta4>; rel=describedby; type="application/metalink4+xml"',
-			  	"Digest": hash.type.toUpperCase() + "=" + btoa(hash.sum)
+				"Link": '<https://hackmypc.meta4>; rel=describedby; type="application/metalink4+xml"',
+				"Digest": hash.type.toUpperCase() + "=" + btoa(hash.sum)
 			}
 		});
 
@@ -269,7 +269,7 @@ test("exports", function() {
 				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
 				"Content-Type": "text/html; charset=utf8",
 				"Content-Length": "1024",
-			  	"Digest": "SHA-256=" + btoa(hash.sum)
+				"Digest": "SHA-256=" + btoa(hash.sum)
 			}
 		});
 
@@ -296,7 +296,7 @@ test("exports", function() {
 				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
 				"Content-Type": "text/html; charset=utf8",
 				"Content-Length": "1024",
-			  	"Digest": "SHA-256=" + btoa(hash.sum)
+				"Digest": "SHA-256=" + btoa(hash.sum)
 			}
 		});
 
@@ -322,7 +322,7 @@ test("exports", function() {
 				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
 				"Content-Type": "text/html; charset=utf8",
 				"Content-Length": "2014232",
-			  	"Digest": "SHA-256=" + btoa(hash.sum)
+				"Digest": "SHA-256=" + btoa(hash.sum)
 			}
 		});
 

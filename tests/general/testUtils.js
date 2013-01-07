@@ -34,3 +34,26 @@ test("naturalSort", function() {
 		["-10", "-1", "1", "01", "01", "001", "0x01", "0001", "0000001", "0000000001", "0000000000001", "0000000000001", "000000000000000000001", "2", "0x02", "9x01", "10", "10x01", "0xaf", "44", "44 (1)", "44 (2)", "44 (3)", "44(4)", "44(5)", "BAR0foo", "bar1foo", "bar-1foo", "bar2foo", "bar10foo", "bar-10foo", "bar20foo", "bar100foo", "bar101foo", "bar200foo", "hallow-10", "hallow-1", "hallow1", "hallow1foo", "hallow-1foo", "hallow2", "hallow2foo", "hallow10", "hallow10foo", "hallow10foobar", "hallow10zfoo", "hallow-10foo", "hallow109", "hallow109", "hallow109xfoo", "hallow109zfoo", "z1", "z2", "z3", "z5", "z11", "z15", "z20", "z 21", "z22", "z24"]
 		);
 });
+
+test("MimeQuality", function() {
+	const {MimeQuality} = require("utils");
+	var m = new MimeQuality();
+	m.add("a", 0.5);
+	m.add("b", 0.1);
+	m.add("c", 1.0);
+	m.add("x", 0.105);
+	m.add("y", 0.100005);
+	m.add("z", 0.1005);
+	throws(function() m.add("d", 1.1));
+	throws(function() m.add("e", -0.1));
+	throws(function() m.add("f", -3));
+	throws(function() m.add("g", 1 / 0));
+	strictEqual(m.toString(), "c,a;q=0.5,x;q=0.105,b;q=0.1,y;q=0.1,z;q=0.1");
+})
+
+test("normalizeMetaPrefs", function() {
+	const {normalizeMetaPrefs} = require("utils");
+	var vec = [{preference: 100}, {preference: 99}, {preference: -3}, {preference: 500}, {preference: 10}];
+	normalizeMetaPrefs(vec);
+	arrayEqual(vec.map(function(e) e.preference), [10,100,80,80,97]);
+});
