@@ -314,9 +314,16 @@ Chunk.prototype = {
 		this.safeBytes += ch.safeBytes;
 	},
 	openOutStream: function CH_openOutStream(file, at) {
-		let outStream = new Instances.FileOutputStream(file, 0x02 | 0x08, Prefs.permissions, 0);
-		let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
-		seekable.seek(0x00, at);
+		let outStream = new Instances.FileOutputStream(
+			file,
+			0x02 | 0x08,
+			Prefs.permissions,
+			Ci.nsIFileOutputStream.DEFER_OPEN
+			);
+		if (at) {
+			let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
+			seekable.seek(0x00, at);
+		}
 		return outStream;
 	},
 	open: function CH_open() {
