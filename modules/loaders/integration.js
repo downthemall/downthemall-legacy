@@ -447,29 +447,7 @@ exports.load = function load(window, outerEvent) {
 			}
 		}
 		else {
-			_notify = function(title, message, priority, mustAlert, timeout) {
-				try {
-					timeout = timeout || 2500;
-					let nb = $('dtaNotifications');
-					if (!nb) {
-						throw new Error("no notifications");
-					}
-					let notification = nb.appendNotification(
-						message,
-						0,
-						'chrome://dta/skin/toolbarbuttons/turbo.png',
-						nb[priority]
-						);
-					setTimeoutOnlyFun(function() {
-						nb.removeNotification(notification);
-					}, timeout);
-				}
-				catch (ex) {
-					if (mustAlert) {
-						require("prompts").alert(window, title, message);
-					}
-				}
-			}
+			_notify = function() {};
 		}
 		return _notify(title, message, priority, mustAlert, timeout);
 	}
@@ -497,30 +475,7 @@ exports.load = function load(window, outerEvent) {
 						);
 				})(message);
 			}
-			return (notifyProgress = function(message) {
-				let nb = $('dtaNotifications');
-				if (!nb) {
-					throw new Error("no notifications");
-				}
-				if (!message && _n) {
-					nb.removeNotification(_n);
-					_n = null;
-					return;
-				}
-				if (!message) {
-					return;
-				}
-				if (_n) {
-					_n.label = message;
-					return;
-				}
-				_n = nb.appendNotification(
-					message,
-					0,
-					'chrome://dta/skin/toolbarbuttons/turbo.png',
-					nb.PRIORITY_INFO_LOW
-					);
-			})(message);
+			return (notifyProgress = function() {})();
 		}
 		catch (ex) {
 			log(LOG_ERROR, "np", ex);

@@ -63,15 +63,6 @@
 		<menu id="dtaToolsMenu" class="menu-iconic dta" insertafter="navBeginGlobalItems" />
 	</menupopup>
 
-	<vbox id="browser-bottombox">
-		<notificationbox id="dtaNotifications" insertbefore="FindToolbar,addon-bar,status-bar"/>
-	</vbox>
-
-	<vbox id="main-window">
-		<notificationbox id="dtaNotifications" insertbefore="addon-bar,status-bar"/>
-	</vbox>
-
-
 	<!-- Integration -->
 	<menu id="dtaCtxCompact" label="DownThemAll!" class="menu-iconic dta-menuitem dta-normal">
 		<menupopup id="dtaCtxSubmenu">
