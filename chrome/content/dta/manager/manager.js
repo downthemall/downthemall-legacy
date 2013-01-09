@@ -1754,7 +1754,7 @@ QueueItem.prototype = {
 		}
 		else {
 			this.partialSize = size;
-			this.progress = Math.floor(size * 100.0 / this._totalSize);
+			this.progress = this._totalSize && Math.floor(size * 100.0 / this._totalSize);
 		}
 	},
 
