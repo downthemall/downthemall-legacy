@@ -57,10 +57,10 @@
 	</toolbarpalette>
 
 	<menupopup id="menu_ToolsPopup">
-		<menu id="dtaToolsMenu" insertafter="javascriptConsole" />
+		<menu id="dtaToolsMenu" />
 	</menupopup>
 	<menupopup id="taskPopup">
-		<menu id="dtaToolsMenu" class="menu-iconic dta" insertafter="navBeginGlobalItems" />
+		<menu id="dtaToolsMenu" class="menu-iconic dta" insertafter="downloadmgr,navBeginGlobalItems" />
 	</menupopup>
 
 	<!-- Integration -->
