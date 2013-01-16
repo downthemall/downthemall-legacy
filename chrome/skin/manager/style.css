@@ -26,7 +26,7 @@ toolbox {
 	margin: 0;
 }
 #tools > toolbarbutton {
-	list-style-image: url(chrome://dta/skin/manager/tools.png);
+	list-style-image: url(tools.png);
 	-moz-box-orient: vertical !important;
 	-moz-box-align: center !important;
 	margin-top: 3px;
@@ -150,7 +150,7 @@ toolbox {
 	-moz-box-pack: center;
 }
 #tooldonate {
-	list-style-image: url(chrome://dta/skin/manager/donate51.png);
+	list-style-image: url(donate51.png);
 	-moz-image-region: rect(0px,360px,51px,180px);
 	cursor: pointer;
 }
@@ -158,7 +158,7 @@ toolbox {
 	-moz-image-region: rect(51px,360px,102px,180px);
 }
 #tools[mode="icons"] #tooldonate {
-	list-style-image: url(chrome://dta/skin/manager/donate33.png);
+	list-style-image: url(donate33.png);
 	-moz-image-region: rect(0px,228px,33px,114px);
 }
 #tools[mode="icons"] #tooldonate:hover {
@@ -237,13 +237,13 @@ treechildren::-moz-tree-progressmeter(paused) {
 	color: #FFCC00 !important;
 }
 treechildren::-moz-tree-progressmeter(progressUndetermined) {
-	list-style-image: url(chrome://dta/skin/manager/undetermined.png);
+	list-style-image: url(undetermined.png);
 }
 treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined) {
-	list-style-image: url(chrome://dta/skin/manager/paused-undetermined.png);
+	list-style-image: url(paused-undetermined.png);
 }
 treechildren::-moz-tree-progressmeter(progressUndetermined, pausedUndetermined, pausedAutoretrying) {
-	list-style-image: url(chrome://dta/skin/manager/paused-autoretry.png);
+	list-style-image: url(paused-autoretry.png);
 }
 treechildren::-moz-tree-progressmeter(paused, pausedAutoretrying) {
 	color: #849FFF !important;
@@ -261,31 +261,30 @@ treechildren::-moz-tree-progressmeter(inprogress) {
 }
 
 treechildren::-moz-tree-image(iconic) {
-	list-style-image: url(menu.png);
-	-moz-image-region: rect(16px,96px,32px,80px);
+	list-style-image: url(icons.png);
+	-moz-image-region: rect(16px,48px,32px,32px);
 }
 treechildren::-moz-tree-image(iconic,progress) {
-	list-style-image: url(menu.png);
-	-moz-image-region: rect(16px,96px,32px,80px);
+	-moz-image-region: rect(16px,48px,32px,32px);
 	padding-right: 0.2ex !important;
 }
 treechildren::-moz-tree-image(iconic,canceled) {
-	-moz-image-region: rect(0px,112px,16px,96px);
+	-moz-image-region: rect(0px,64px,16px,48px);
 }
 treechildren::-moz-tree-image(iconic,paused) {
-	-moz-image-region: rect(0px,96px,16px,80px);
+	-moz-image-region: rect(0px,48px,16px,32px);
 }
 treechildren::-moz-tree-image(iconic,paused,pausedAutoretrying) {
-	-moz-image-region: rect(32px,128px,48px,112px);
+	-moz-image-region: rect(64px,48px,80px,32px);
 }
 treechildren::-moz-tree-image(iconic,inprogress) {
-	-moz-image-region: rect(0px,80px,16px,64px);
+	-moz-image-region: rect(0px,16px,16px,0px);
 }
 treechildren::-moz-tree-image(iconic,completed) {
-	-moz-image-region: rect(32px,32px,48px,16px);
+	-moz-image-region: rect(64px,16px,80px,0px);
 }
 treechildren::-moz-tree-image(iconic,completed,verified) {
-	-moz-image-region: rect(32px,144px,48px,128px);
+	-moz-image-region: rect(64px,32px,80px,16px);
 }
 treechildren::-moz-tree-cell-text(private) {
 	font-style: italic !important;
@@ -304,7 +303,7 @@ treechildren::-moz-tree-cell-text(private) {
 #removeCompletedMenu menuitem,
 #removeMenu menuitem,
 #advancedMenu menuitem {
-	list-style-image: url(menu.png);
+	list-style-image: url(icons.png);
 }
 
 #actions {
@@ -327,187 +326,173 @@ treechildren::-moz-tree-cell-text(private) {
 }
 
 #advancedMenu {
-	-moz-image-region: rect(32px,112px,48px,96px);
+	-moz-image-region: rect(160px,16px,176px,0px);
 }
 #advancedMenu[disabled="true"] {
-	-moz-image-region: rect(48px,112px,64px,96px);
+	-moz-image-region: rect(176px,16px,192px,0px);
 }
 
-/* menuitem element (row 1) */
 .info {
-	-moz-image-region: rect(0px,16px,16px,0px);
+	-moz-image-region: rect(96px,16px,112px,0px);
 }
 .info[disabled="true"] {
-	-moz-image-region: rect(16px,16px,32px,0px);
+	-moz-image-region: rect(112px,16px,128px,0px);
 }
 
 .launch {
-	-moz-image-region: rect(0px,32px,16px,16px);
+	-moz-image-region: rect(128px,16px,144px,0px);
 }
 .launch[disabled="true"] {
-	-moz-image-region: rect(16px,32px,32px,16px);
+	-moz-image-region: rect(144px,16px,160px,0px);
 }
 
 .delete {
-	-moz-image-region: rect(0px,48px,16px,32px);
+	-moz-image-region: rect(128px,48px,144px,32px);
 }
 .delete[disabled="true"] {
-	-moz-image-region: rect(16px,48px,32px,32px);
+	-moz-image-region: rect(144px,48px,160px,32px);
 }
 
 .folder {
-	-moz-image-region: rect(0px,64px,16px,48px);
+	-moz-image-region: rect(128px,32px,144px,16px);
 }
 .folder[disabled="true"] {
-	-moz-image-region: rect(16px,64px,32px,48px);
+	-moz-image-region: rect(144px,32px,160px,16px);
 }
 
 .play {
-	-moz-image-region: rect(0px,80px,16px,64px);
+	-moz-image-region: rect(0px,16px,16px,0px);
 }
 .play[disabled="true"] {
-	-moz-image-region: rect(16px,80px,32px,64px);
+	-moz-image-region: rect(16px,16px,32px,0px);
 }
 
 .pause {
-	-moz-image-region: rect(0px,96px,16px,80px);
+	-moz-image-region: rect(0px,48px,16px,32px);
 }
 .pause[disabled="true"] {
-	-moz-image-region: rect(16px,96px,32px,80px);
+	-moz-image-region: rect(16px,48px,32px,32px);
 }
 
 .cancel {
-	-moz-image-region: rect(0px,112px,16px,96px);
+	-moz-image-region: rect(0px,64px,16px,48px);
 }
 .cancel[disabled="true"] {
 	-moz-image-region: rect(16px,112px,32px,96px);
 }
 
 #speedLimit {
-	-moz-image-region: rect(64px,128px,76px,112px);
-}
-
-#addlimits,
-#perDownloadSpeedLimit {
-	-moz-image-region: rect(48px,144px,64px,128px);
+	-moz-image-region: rect(192px,28px,204px,16px);
 }
 #speedLimit[value="-1"] {
-	-moz-image-region: rect(64px,112px,76px,96px);
+	-moz-image-region: rect(192px,60px,204px,48px);
+}
+#addlimits,
+#perDownloadSpeedLimit {
+	-moz-image-region: rect(192px,16px,208px,0px);
 }
 #perDownloadSpeedLimit[value="-1"] {
-	-moz-image-region: rect(32px,160px,48px,144px);
+	-moz-image-region: rect(192px,48px,208px,32px);
 }
-#addlimits[disabled="true"],
-#perDownloadSpeedLimit[disabled="true"] {
-	-moz-image-region: rect(48px,160px,64px,144px);
-}
+
 .import {
-	-moz-image-region: rect(0px,128px,16px,112px);
+	-moz-image-region: rect(128px,64px,144px,48px);
 }
--import[disabled="true"] {
-	-moz-image-region: rect(16px,128px,32px,112px);
+.import[disabled="true"] {
+	-moz-image-region: rect(144px,64px,160px,48px);
 }
 
 .export {
-	-moz-image-region: rect(0px,144px,16px,128px);
+	-moz-image-region: rect(128px,80px,144px,64px);
 }
 .export[disabled="true"] {
-	-moz-image-region: rect(16px,144px,32px,128px);
+	-moz-image-region: rect(144px,80px,160px,64px);
 }
 
 .force {
-	-moz-image-region: rect(0px,160px,16px,144px);
+	-moz-image-region: rect(0px,32px,16px,16px);
 }
 .force[disabled="true"] {
-	-moz-image-region: rect(16px,160px,32px,144px);
+	-moz-image-region: rect(16px,32px,32px,16px);
 }
 
-/* menuitem element (row 2) */
 #removeMenu > menuitem,
 #removeselected,
 #removeHost,
 #removeAll {
-	-moz-image-region: rect(32px,16px,48px,0px);
+	-moz-image-region: rect(64px,64px,80px,48px);
 }
 #removeMenu[disabled="true"],
 #removeSelected[disabled="true"],
 #removeAll[disabled="true"] {
-	-moz-image-region: rect(48px,16px,64px,0px);
+	-moz-image-region: rect(80px,64px,96px,48px);
 }
 
 #removeCompletedMenu > menuitem,
 #removeCompleted {
-	-moz-image-region: rect(32px,32px,48px,16px);
+	-moz-image-region: rect(64px,16px,80px,0px);
 }
 #removeCompletedMenu[disabled="true"],
 #removeCompleted[disabled="true"] {
-	-moz-image-region: rect(48px,32px,64px,16px);
-}
-
-.cleangone {
-	-moz-image-region: rect(32px,48px,48px,32px);
-}
-.cleanegone[disabled="true"] {
-	-moz-image-region: rect(48px,48px,64px,32px);
-}
-
-/*
-#doc {
-	-moz-image-region: rect(32px,64px,48px,48px);
-}
-#doc[disabled="true"] {
-	-moz-image-region: rect(48px,64px,64px,48px);
-}*/
-
-.addchunk {
-	-moz-image-region: rect(32px,80px,48px,64px);
-}
-.addchunk[disabled="true"] {
-	-moz-image-region: rect(48px,80px,64px,64px);
-}
-
-.removechunk {
-	-moz-image-region: rect(32px,96px,48px,80px);
-}
-.removechunk[disabled="true"] {
-	-moz-image-region: rect(48px,96px,64px,80px);
-}
-
-/* menuitem element (row 3) */
-.movetop {
-	-moz-image-region: rect(64px,16px,80px,0px);
-}
-.movetop[disabled="true"] {
 	-moz-image-region: rect(80px,16px,96px,0px);
 }
 
+.cleangone {
+	-moz-image-region: rect(96px,32px,112px,16px);
+}
+.cleanegone[disabled="true"] {
+	-moz-image-region: rect(112px,32px,128px,16px);
+}
+
+.addchunk {
+	-moz-image-region: rect(112px,32px,128px,16px);
+}
+.addchunk[disabled="true"] {
+	-moz-image-region: rect(176px,32px,192px,16px);
+}
+
+.removechunk {
+	-moz-image-region: rect(160px,48px,176px,32px);
+}
+.removechunk[disabled="true"] {
+	-moz-image-region: rect(176px,48px,192px,32px);
+}
+
+.movetop {
+	-moz-image-region: rect(32px,16px,48px,0px);
+}
+.movetop[disabled="true"] {
+	-moz-image-region: rect(48px,16px,64px,0px);
+}
+
 .moveup {
-	-moz-image-region: rect(64px,32px,80px,16px);
+	-moz-image-region: rect(32px,32px,48px,16px);
 }
 .moveup[disabled="true"] {
-	-moz-image-region: rect(80px,32px,96px,16px);
+	-moz-image-region: rect(48px,32px,64px,16px);
 }
 
 .movedown {
-	-moz-image-region: rect(64px,48px,80px,32px);
+	-moz-image-region: rect(32px,48px,48px,32px);
 }
 .movedown[disabled="true"] {
-	-moz-image-region: rect(80px,48px,96px,32px);
+	-moz-image-region: rect(48px,48px,64px,32px);
 }
 
 .movebottom {
-	-moz-image-region: rect(64px,64px,80px,48px);
+	-moz-image-region: rect(32px,64px,48px,48px);
 }
 .movebottom[disabled="true"] {
-	-moz-image-region: rect(80px,64px,96px,48px);
+	-moz-image-region: rect(48px,64px,64px,48px);
 }
 
 .mirrors,
 .mirrors-cascaded {
-	-moz-image-region: rect(64px,80px,80px,64px);
+	-moz-image-region: rect(160px,64px,176px,48px);
 }
-.mirrors[disabled="true"] {
-	-moz-image-region: rect(80px,80px,96px,64px);
+.mirrors[disabled="true"],
+.mirrors-cascaded[disable="true"] {
+	-moz-image-region: rect(176px,64px,192px,48px);
 }
 
 /* menuitem common */
@@ -520,18 +505,15 @@ toolbarbutton.listselectinv, menuitem#listselectinv {
 	-moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 
-/* menuitem dupes */
-
 #removeDupes {
-	-moz-image-region: rect(64px,96px,80px,80px);
+	-moz-image-region: rect(96px,48px,112px,32px);
 }
 #removeDupes[disabled="true"] {
-	-moz-image-region: rect(80px,96px,96px,80px);
+	-moz-image-region: rect(112px,48px,128px,32px);
 }
 
-/* filters */
 .menuitem-filter {
-	-moz-image-region: rect(64px,144px,80px,128px);
+	-moz-image-region: rect(208px,48px,224px,32px);
 }
 
 .menu-iconic-accel {
@@ -607,7 +589,7 @@ textbox.plain {
 
 /* schedule */
 statusbarpanel#schedule {
-	list-style-image: url(chrome://dta/skin/manager/schedule.png);
+	list-style-image: url(schedule.png);
 	-moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 statusbarpanel#schedule[disabled] {
@@ -630,14 +612,14 @@ statusbarpanel#schedule:not([running]) {
 
 
 #statusText {
-	list-style-image: url(menu.png);
-	-moz-image-region: rect(64px,160px,80px,144px);
+	list-style-image: url(icons.png);
+	-moz-image-region: rect(208px,16px,224px,0px);
 }
 #statusSpeed {
 	text-align: right;
 	min-width: 8em;
-	list-style-image: url(menu.png);
-	-moz-image-region: rect(80px,160px,96px,144px);
+	list-style-image: url(icons.png);
+	-moz-image-region: rect(208px,32px,224px,16px);
 }
 
 
