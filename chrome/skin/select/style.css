@@ -46,9 +46,9 @@ toolbox, toolbox toolbar, toolbox toolbarbutton {
 	background: url(tabback.png);
 }
 #views toolbarbutton:not([disabled="true"]):hover {
-    background: url(tabbackhover.png);
-    cursor: pointer;
-    font-weight: 700;
+		background: url(tabbackhover.png);
+		cursor: pointer;
+		font-weight: 700;
 }
 #viewlinks {
 	-moz-image-region: rect(0px,50px,24px,25px);
@@ -76,12 +76,13 @@ threechildren::-moz-tree-row {
 
 treechildren::-moz-tree-checkbox {
 	/* css for checked cells */
-	list-style-image: url(uncheck2.png);
+	list-style-image: url(checks12.png);
+	-moz-image-region: rect(0px,24px,12px,12px);
 }
 
 treechildren::-moz-tree-checkbox(checked) {
 	/* css for checked cells */
-	list-style-image: url(check.png);
+	-moz-image-region: rect(0px,12px,12px,0px);
 }
 
 treechildren::-moz-tree-row(manuallySelected) {
