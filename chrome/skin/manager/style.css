@@ -1,7 +1,6 @@
 @import 'chrome://global/skin/';
 @import 'chrome://global/skin/toolbar.css';
 @import 'chrome://dta/skin/common/style.css';
-@import 'chrome://dta-platform/skin/manager.css';
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 @namespace html url("http://www.w3.org/1999/xhtml");
 
@@ -445,7 +444,7 @@ treechildren::-moz-tree-cell-text(private) {
 }
 
 .addchunk {
-	-moz-image-region: rect(112px,32px,128px,16px);
+	-moz-image-region: rect(160px,32px,176px,16px);
 }
 .addchunk[disabled="true"] {
 	-moz-image-region: rect(176px,32px,192px,16px);
@@ -495,6 +494,216 @@ treechildren::-moz-tree-cell-text(private) {
 	-moz-image-region: rect(176px,64px,192px,48px);
 }
 
+#removeDupes {
+	-moz-image-region: rect(96px,48px,112px,32px);
+}
+#removeDupes[disabled="true"] {
+	-moz-image-region: rect(112px,48px,128px,32px);
+}
+
+
+.menuitem-filter {
+	-moz-image-region: rect(208px,48px,224px,32px);
+}
+
+@media (min-resolution: 2dppx) {
+	#speedLimit,
+	#actions,
+	#popup > menu,
+	#popup > menuitem,
+	#removeCompletedMenu menuitem,
+	#removeMenu menuitem,
+	#advancedMenu menuitem {
+		list-style-image: url(icons@2x.png);
+	}
+
+	#advancedMenu {
+		-moz-image-region: rect(320px,32px,352px,0px);
+	}
+	#advancedMenu[disabled="true"] {
+		-moz-image-region: rect(352px,32px,384px,0px);
+	}
+
+	.info {
+		-moz-image-region: rect(192px,32px,224px,0px);
+	}
+	.info[disabled="true"] {
+		-moz-image-region: rect(224px,32px,256px,0px);
+	}
+
+	.launch {
+		-moz-image-region: rect(256px,32px,288px,0px);
+	}
+	.launch[disabled="true"] {
+		-moz-image-region: rect(288px,32px,320px,0px);
+	}
+
+	.delete {
+		-moz-image-region: rect(256px,96px,288px,64px);
+	}
+	.delete[disabled="true"] {
+		-moz-image-region: rect(288px,96px,320px,64px);
+	}
+
+	.folder {
+		-moz-image-region: rect(256px,64px,288px,32px);
+	}
+	.folder[disabled="true"] {
+		-moz-image-region: rect(288px,64px,320px,32px);
+	}
+
+	.play {
+		-moz-image-region: rect(0px,32px,32px,0px);
+	}
+	.play[disabled="true"] {
+		-moz-image-region: rect(32px,32px,64px,0px);
+	}
+
+	.pause {
+		-moz-image-region: rect(0px,96px,32px,64px);
+	}
+	.pause[disabled="true"] {
+		-moz-image-region: rect(32px,96px,64px,64px);
+	}
+
+	.cancel {
+		-moz-image-region: rect(0px,128px,32px,96px);
+	}
+	.cancel[disabled="true"] {
+		-moz-image-region: rect(32px,228px,64px,192px);
+	}
+
+	#speedLimit {
+		-moz-image-region: rect(384px,56px,408px,32px);
+	}
+	#speedLimit[value="-1"] {
+		-moz-image-region: rect(384px,120px,408px,96px);
+	}
+	#addlimits,
+	#perDownloadSpeedLimit {
+		-moz-image-region: rect(384px,32px,416px,0px);
+	}
+	#perDownloadSpeedLimit[value="-1"] {
+		-moz-image-region: rect(384px,96px,416px,64px);
+	}
+
+	.import {
+		-moz-image-region: rect(256px,128px,288px,96px);
+	}
+	.import[disabled="true"] {
+		-moz-image-region: rect(288px,128px,320px,96px);
+	}
+
+	.export {
+		-moz-image-region: rect(256px,160px,288px,128px);
+	}
+	.export[disabled="true"] {
+		-moz-image-region: rect(288px,160px,320px,128px);
+	}
+
+	.force {
+		-moz-image-region: rect(0px,64px,32px,32px);
+	}
+	.force[disabled="true"] {
+		-moz-image-region: rect(32px,64px,64px,32px);
+	}
+
+	#removeMenu > menuitem,
+	#removeselected,
+	#removeHost,
+	#removeAll {
+		-moz-image-region: rect(128px,128px,160px,96px);
+	}
+	#removeMenu[disabled="true"],
+	#removeSelected[disabled="true"],
+	#removeAll[disabled="true"] {
+		-moz-image-region: rect(160px,128px,192px,96px);
+	}
+
+	#removeCompletedMenu > menuitem,
+	#removeCompleted {
+		-moz-image-region: rect(128px,32px,160px,0px);
+	}
+	#removeCompletedMenu[disabled="true"],
+	#removeCompleted[disabled="true"] {
+		-moz-image-region: rect(160px,32px,192px,0px);
+	}
+
+	.cleangone {
+		-moz-image-region: rect(192px,64px,224px,32px);
+	}
+	.cleanegone[disabled="true"] {
+		-moz-image-region: rect(224px,64px,256px,32px);
+	}
+
+	.addchunk {
+		-moz-image-region: rect(320px,64px,352px,32px);
+	}
+	.addchunk[disabled="true"] {
+		-moz-image-region: rect(352px,64px,384px,32px);
+	}
+
+	.removechunk {
+		-moz-image-region: rect(320px,96px,352px,64px);
+	}
+	.removechunk[disabled="true"] {
+		-moz-image-region: rect(352px,96px,384px,64px);
+	}
+
+	.movetop {
+		-moz-image-region: rect(64px,32px,96px,0px);
+	}
+	.movetop[disabled="true"] {
+		-moz-image-region: rect(96px,32px,128px,0px);
+	}
+
+	.moveup {
+		-moz-image-region: rect(64px,64px,96px,32px);
+	}
+	.moveup[disabled="true"] {
+		-moz-image-region: rect(96px,64px,128px,32px);
+	}
+
+	.movedown {
+		-moz-image-region: rect(64px,96px,96px,64px);
+	}
+	.movedown[disabled="true"] {
+		-moz-image-region: rect(96px,96px,128px,64px);
+	}
+
+	.movebottom {
+		-moz-image-region: rect(64px,128px,96px,96px);
+	}
+	.movebottom[disabled="true"] {
+		-moz-image-region: rect(96px,128px,128px,96px);
+	}
+
+	.mirrors,
+	.mirrors-cascaded {
+		-moz-image-region: rect(320px,128px,352px,96px);
+	}
+	.mirrors[disabled="true"],
+	.mirrors-cascaded[disable="true"] {
+		-moz-image-region: rect(352px,128px,384px,96px);
+	}
+
+	#removeDupes {
+		-moz-image-region: rect(192px,96px,224px,64px);
+	}
+	#removeDupes[disabled="true"] {
+		-moz-image-region: rect(224px,96px,256px,64px);
+	}
+
+	.menuitem-filter {
+		-moz-image-region: rect(416px,96px,448px,64px);
+	}
+
+	.menu-iconic-icon,
+	#actions .toolbarbutton-icon {
+		width: 16px;
+	}
+}
+
 /* menuitem common */
 toolbarbutton.listselectall,  menuitem#listselectall {
 	list-style-image: url(chrome://dta/skin/common/selection.png);
@@ -503,17 +712,6 @@ toolbarbutton.listselectall,  menuitem#listselectall {
 toolbarbutton.listselectinv, menuitem#listselectinv {
 	list-style-image: url(chrome://dta/skin/common/selection.png);
 	-moz-image-region: rect(0px, 48px, 16px, 32px);
-}
-
-#removeDupes {
-	-moz-image-region: rect(96px,48px,112px,32px);
-}
-#removeDupes[disabled="true"] {
-	-moz-image-region: rect(112px,48px,128px,32px);
-}
-
-.menuitem-filter {
-	-moz-image-region: rect(208px,48px,224px,32px);
 }
 
 .menu-iconic-accel {
@@ -622,6 +820,22 @@ statusbarpanel#schedule:not([running]) {
 	-moz-image-region: rect(208px,32px,224px,16px);
 }
 
+@media (min-resolution: 2dppx) {
+	.statusbarpanel-icon {
+		width: 16px;
+	}
+	#statusText {
+		list-style-image: url(icons@2x.png);
+		-moz-image-region: rect(416px,32px,448px,0px);
+	}
+	#statusSpeed {
+		list-style-image: url(icons@2x.png);
+		-moz-image-region: rect(416px,64px,448px,32px);
+	}
+	#statusSpeeds .menulist-icon {
+		width: 12px;
+	}
+}
 
 treecol[matcher] {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#treecol-matcher);
