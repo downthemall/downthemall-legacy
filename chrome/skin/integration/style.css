@@ -11,7 +11,7 @@
 }
 
 .popup-notification-icon[popupid="downthemall"] {
-	list-style-image: url(chrome://dta/skin/common/icon.png);
+	list-style-image: url(chrome://dtaicon/content/icon64.png);
 }
 
 /* menus */

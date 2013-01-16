@@ -7,7 +7,7 @@ dialog {
 }
 
 #icon {
-	list-style-image: url(../common/icon.png);
+	list-style-image: url(chrome://dtaicon/content/icon64.png);
 	padding: 1ex;
 }
 
