@@ -18,7 +18,9 @@
 	width:780px;
 	height:450px;
 }
-prefpane groupbox {	margin: 1em 0.6ex 1ex 0.6ex;}
+prefpane groupbox {
+	margin: 1em 0.6ex 1ex 0.6ex;
+}
 
 treechildren::-moz-tree-image(iconic) {
 	width: 16px !important;
@@ -27,18 +29,30 @@ treechildren::-moz-tree-image(iconic) {
 
 /* Work-around for bugzilla #593812 */
 treechildren::-moz-tree-progressmeter {
-  margin: 2px 4px;
-  padding: 1px;
-  border: 1px solid;
-  border-top-color: ThreeDShadow;
-  border-right-color: ThreeDHighlight;
-  border-bottom-color: ThreeDHighlight;
-  border-left-color: ThreeDShadow;
-  background-color: -moz-Dialog;
-  color: ThreeDShadow;
+	margin: 2px 4px;
+	padding: 1px;
+	border: 1px solid;
+	border-top-color: ThreeDShadow;
+	border-right-color: ThreeDHighlight;
+	border-bottom-color: ThreeDHighlight;
+	border-left-color: ThreeDShadow;
+	background-color: -moz-Dialog;
+	color: ThreeDShadow;
 }
 
 /* we don't care about the gtk2 stubbornness of not showing menu icons by default */
 .menu-iconic-left {
 	visibility: visible !important;
+}
+
+.findfiles {
+	-moz-appearance: menubar !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+.findfiles toolbarbutton {
+	color: -moz-menubartext;
+}
+.findfiles toolbarbutton[selected="true"] {
+	color: -moz-dialogtext;
 }
