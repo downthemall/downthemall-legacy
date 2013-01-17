@@ -45,13 +45,27 @@
 
 /* Work-around for bugzilla #593812 */
 treechildren::-moz-tree-progressmeter {
-  margin: 2px 4px;
-  padding: 1px;
-  border: 1px solid;
-  border-top-color: ThreeDShadow;
-  border-right-color: ThreeDHighlight;
-  border-bottom-color: ThreeDHighlight;
-  border-left-color: ThreeDShadow;
-  background-color: -moz-Dialog;
-  color: ThreeDShadow;
+	margin: 2px 4px;
+	padding: 1px;
+	border: 1px solid;
+	border-top-color: ThreeDShadow;
+	border-right-color: ThreeDHighlight;
+	border-bottom-color: ThreeDHighlight;
+	border-left-color: ThreeDShadow;
+	background-color: -moz-Dialog;
+	color: ThreeDShadow;
+}
+
+#views,
+#findfiles {
+	-moz-appearance: none !important;
+	background: transparent;
+	border: 0;
+}
+
+window:-moz-system-metric(windows-default-theme) :-moz-any(#views, #findfiles) {
+	background-color: rgb(185,209,234) !important;
+}
+window:-moz-system-metric(windows-default-theme):-moz-window-inactive :-moz-any(#views, #findfiles) {
+	background-color: rgb(215,228,242) !important;
 }
