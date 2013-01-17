@@ -289,6 +289,35 @@ treechildren::-moz-tree-cell-text(private) {
 	font-style: italic !important;
 }
 
+@media (min-resolution: 2dppx) {
+	treechildren::-moz-tree-image(iconic) {
+		list-style-image: url(icons@2x.png);
+		-moz-image-region: rect(32px,96px,64px,64px);
+		width: 16px;
+	}
+	treechildren::-moz-tree-image(iconic,progress) {
+		-moz-image-region: rect(32px,96px,64px,64px);
+	}
+	treechildren::-moz-tree-image(iconic,canceled) {
+		-moz-image-region: rect(0px,128px,32px,96px);
+	}
+	treechildren::-moz-tree-image(iconic,paused) {
+		-moz-image-region: rect(0px,96px,32px,64px);
+	}
+	treechildren::-moz-tree-image(iconic,paused,pausedAutoretrying) {
+		-moz-image-region: rect(128px,96px,160px,64px);
+	}
+	treechildren::-moz-tree-image(iconic,inprogress) {
+		-moz-image-region: rect(0px,32px,32px,0px);
+	}
+	treechildren::-moz-tree-image(iconic,completed) {
+		-moz-image-region: rect(128px,32px,160px,0px);
+	}
+	treechildren::-moz-tree-image(iconic,completed,verified) {
+		-moz-image-region: rect(128px,64px,160px,32px);
+	}
+}
+
 /** :: Menu :: **/
 
 /* menu elements */
