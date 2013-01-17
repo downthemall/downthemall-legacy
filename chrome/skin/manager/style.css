@@ -184,6 +184,7 @@ toolbox {
 }
 #infoIcon {
 	margin: 1ex;
+	max-width: 32px;
 }
 #tooltip grid {
 	-moz-box-flex: 1;

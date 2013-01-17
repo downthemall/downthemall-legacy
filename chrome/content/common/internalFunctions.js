@@ -69,7 +69,11 @@ requireJoined(DTA, "api");
 function openUrl(url, ref) Mediator.openUrl(window, url, ref);
 
 
-const {getIcon, getLargeIcon} = require("support/icons");
+const {getIcon:getIcon, getLargeIcon:_getLargeIcon} = require("support/icons");
+const getLargeIcon = (function() {
+	const hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
+	return function getLargeIcon(f,ml) _getLargeIcon(f,ml, hidpi);
+})();
 
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!

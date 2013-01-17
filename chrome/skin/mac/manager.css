@@ -1,5 +1,9 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
+#infoIcon {
+	max-width: 48px !important;
+}
+
 #tools > toolbarbutton {
 	border: 1px solid transparent;
 	margin-bottom: 3px !important;
