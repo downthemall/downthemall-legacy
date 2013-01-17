@@ -10,7 +10,7 @@ caption {
 	font-weight: bold;
 }
 
-#views {
+#views, .findfiles {
 	margin: 0;
 	padding: 0;
 }

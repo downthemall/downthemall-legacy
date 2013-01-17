@@ -1,14 +1,14 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 .closebox-title .closebox-twisty {
-  -moz-appearance: treetwistyopen;
-  -moz-padding-end: 2px;
-  padding-top: 1px;
-  width: 9px;
+	-moz-appearance: treetwistyopen;
+	-moz-padding-end: 2px;
+	padding-top: 1px;
+	width: 9px;
 }
 .closer[closed="true"] .closebox-title .closebox-twisty {
-  -moz-appearance: treetwisty;
-  width: 9px;
+	-moz-appearance: treetwisty;
+	width: 9px;
 }
 .selectlinks .toolbarbuttonDown {
 	border-width: 0px !important;
@@ -47,8 +47,6 @@ treechildren::-moz-tree-progressmeter {
 
 .findfiles {
 	-moz-appearance: menubar !important;
-	margin: 0 !important;
-	padding: 0 !important;
 }
 .findfiles toolbarbutton {
 	color: -moz-menubartext;
