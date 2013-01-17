@@ -817,14 +817,14 @@ textbox.plain {
 
 /* schedule */
 statusbarpanel#schedule {
-	list-style-image: url(schedule.png);
-	-moz-image-region: rect(0px, 16px, 16px, 0px);
+	list-style-image: url(icons.png);
+	-moz-image-region: rect(208px,64px,224px,48px);
 }
 statusbarpanel#schedule[disabled] {
 	display: none;
 }
 statusbarpanel#schedule:not([running]) {
-	-moz-image-region: rect(0px, 32px, 16px, 16px);
+	-moz-image-region: rect(208px,80px,224px,64px);
 }
 
 
@@ -864,6 +864,16 @@ statusbarpanel#schedule:not([running]) {
 	}
 	#statusSpeeds .menulist-icon {
 		width: 12px;
+	}
+	statusbarpanel#schedule {
+		list-style-image: url(icons@2x.png);
+		-moz-image-region: rect(416px,128px,448px,96px);
+	}
+	statusbarpanel#schedule[disabled] {
+		display: none;
+	}
+	statusbarpanel#schedule:not([running]) {
+		-moz-image-region: rect(416px,160px,448px,128px);
 	}
 }
 
