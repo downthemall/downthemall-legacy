@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="6"
+     height="31">
+  <defs>
+    <linearGradient id="linearGradient1"
+                    x1="0"
+                    y1="31"
+                    x2="0"
+                    y2="1.6"
+                    xlink:href="#linearGradient2"
+                    gradientUnits="userSpaceOnUse"/>
+    <linearGradient id="linearGradient2">
+      <stop style="stop-color:#ffffff;stop-opacity:.3"
+            offset="0"/>
+      <stop style="stop-color:#ffffff;stop-opacity:.7"
+            offset="1"/>
+    </linearGradient>
+  </defs>
+  <rect width="6"
+        height="29.4"
+        x="0"
+        y="1.6"
+        fill="-moz-dialog"/>
+  <rect width="8"
+        height="30.4"
+        x="-1"
+        y="1.6"
+        fill="url(#linearGradient1)"
+        stroke="#0A1F33"
+        stroke-opacity=".35"/>
+</svg>

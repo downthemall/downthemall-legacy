@@ -10,66 +10,39 @@ caption {
 	font-weight: bold;
 }
 
-toolbox, toolbox toolbar, toolbox toolbarbutton {
-	background: white;
-	color: black;
-}
-#views .toolbarbutton-text {
-	color: black;
-}
-
 #views {
 	margin: 0;
 	padding: 0;
 }
 #views toolbar {
 	border-width:0px;
-	min-height: 43px;
-	background: white;
+	height: 31px;
 }
 
-#views toolbarbutton, #views toolbarbutton:hover{
+#views toolbarbutton {
 	-moz-box-orient: horizontal !important;
 	-moz-appearance: none !important;
-
-	min-width: 120px;
-	padding-left: 8px;
-	padding-right: 8px;
-	list-style-image: url(viewbuttons.png);
+	min-width: 20em;
+	background-repeat: no-repeat,no-repeat,no-repeat;
+	background-position: left 0, 30px 0, right 0;
+	background-size: 30px 100%, calc(100% - 60px) 100%, 30px 100%;
+	-moz-padding-start: 20px;
+	-moz-padding-end: 20px;
+	border: 0 !important;
 }
-
-#views toolbarbutton[selected="true"], #views toolbarbutton[selected="true"] * {
-	font-weight: 600;
+#views toolbarbutton:hover:not([disabled="true"]):not([selected="true"]) {
+	background-image: url(tabBackgroundStart.svg),url(tabBackgroundMiddle.svg),url(tabBackgroundEnd.svg);
 }
 
 #views toolbarbutton[selected="true"] {
-	background: url(tabback.png);
+	background-image: url(tabActiveStart.svg),url(tabActiveMiddle.svg),url(tabActiveEnd.svg);
+	font-weight: bold;
 }
+
 #views toolbarbutton:not([disabled="true"]):hover {
-		background: url(tabbackhover.png);
 		cursor: pointer;
 		font-weight: 700;
 }
-#viewlinks {
-	-moz-image-region: rect(0px,50px,24px,25px);
-}
-#viewlinks:hover {
-	-moz-image-region: rect(0px,25px,24px,0px);
-}
-#viewlinks[disabled="false"] {
-	-moz-image-region: rect(0px,75px,24px,50px) !important;
-}
-
-#viewpics {
-	-moz-image-region: rect(0px,125px,24px,100px);
-}
-#viewpics:hover {
-	-moz-image-region: rect(0px,100px,24px,75px);
-}
-#viewpics[disabled="true"] {
-	-moz-image-region: rect(0px,150px,24px,125px) !important;
-}
-
 threechildren::-moz-tree-row {
 	min-height: 20px;
 }

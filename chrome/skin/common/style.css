@@ -66,26 +66,6 @@ maskbutton .toolbarbutton-text,
 	display: none;
 }
 
-#logo {
-	color: windowText;
-	background: white url(chrome://dta/skin/common/logo.png) no-repeat right top;
-	min-width: 290px !important;
-	height: 42px !important;
-	overflow: visible;
-	-moz-box-align: center;
-	-moz-box-pack: start;
-	padding: 3px !important;
-	padding-left: 1em !important;
-	margin: 0 !important;
-}
-#logo > label {
-	-moz-box-align: start;
-	-moz-box-flex: 0;
-}
-#logo[chromedir="rtl"], #logo:-moz-locale-dir(rtl) {
-	background: white url(chrome://dta/skin/common/logo-rtl.png) no-repeat left top;
-}
-
 /* snip */
 
 #frameSelection, listbox.list, #regexbox {
