@@ -161,6 +161,13 @@ statusbarpanel > label {
 }
 
 statusbarpanel#preferences {
-	list-style-image: url(chrome://dta/skin/toolbarbuttons/buttons16.png);
-	-moz-image-region: rect(0px,128px,16px,112px);
+	list-style-image: url(chrome://dta/skin/toolbarbuttons/preferences.png);
+}
+@media (min-resolution: 1dppx) {
+	statusbarpanel#preferences {
+		list-style-image: url(chrome://dta/skin/toolbarbuttons/preferences@2x.png);
+	}
+	statusbarpanel#preferences .statusbarpanel-icon {
+		width: 16px;
+	}
 }

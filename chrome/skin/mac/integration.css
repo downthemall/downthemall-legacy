@@ -15,7 +15,7 @@
 	-moz-image-region: auto;
 }
 #dtaToolsPrefs {
-	list-style-image: url(chrome://dta/skin/toolbarbuttons/prefs.png);
+	list-style-image: url(chrome://dta/skin/toolbarbuttons/preferences.png);
 	-moz-image-region: auto;
 }
 #dtaToolsAbout {
