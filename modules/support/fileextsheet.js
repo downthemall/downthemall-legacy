@@ -9,6 +9,7 @@ const {getIcon} = require("support/icons");
 const {getExtension} = require("support/stringfuncs");
 
 function FileExtensionSheet(window) {
+	this.hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
 	this._windowUtils = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowUtils);
 
 	let document = window.document;
@@ -50,7 +51,7 @@ FileExtensionSheet.prototype = Object.freeze({
 			let rule = 'treechildren::-moz-tree-image(iconic,'
 				+ entry.toString()
 				+ ') { list-style-image: url('
-				+ getIcon('file.' + ext, metalink || ext == 'metalink' || ext == "meta4")
+				+ getIcon('file.' + ext, metalink || ext == 'metalink' || ext == "meta4", this.hidpi ? 32 : 16)
 				+ ') !important; }';
 			this._stylesheet.insertRule(rule, this._stylesheet.cssRules.length);
 			log(LOG_DEBUG, "sheet: " + rule);
