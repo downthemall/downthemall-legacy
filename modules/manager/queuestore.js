@@ -24,6 +24,7 @@ lazy(this, '__db', function() {
 });
 
 const QueueStore = {
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver,]),
 	_initialized: false,
 	init: function() {
 		if (this._initialized) {
@@ -60,7 +61,6 @@ const QueueStore = {
 				log(LOG_DEBUG, "setting schema version");
 			}
 			if (!_connection.tableExists('queue')) {
-				_connection.executeSimpleSQL('PRAGMA page_size = 4096');
 				_connection.createTable('queue', 'uuid INTEGER PRIMARY KEY AUTOINCREMENT, pos INTEGER, item TEXT');
 			}
 		}
@@ -89,12 +89,6 @@ const QueueStore = {
 		// finish any pending operations
 		this.flush();
 		try {
-			_connection.createAsyncStatement("VACUUM").executeAsync();
-		}
-		catch (ex) {
-			log(LOG_ERROR, "VACUUM failed!", ex);
-		}
-		try {
 			_connection.asyncClose();
 			_connection = null;
 		}
@@ -103,9 +97,9 @@ const QueueStore = {
 		}
 		log(LOG_INFO, "QueueStore: shutdown complete!");
 	},
-	reinit: function(pb) {
+	reinit: function() {
 		this.shutdown();
-		this.init(pb);
+		this.init();
 	},
 	clear: function() {
 		this.shutdown();
@@ -299,5 +293,25 @@ unload(function() {
 		log(LOG_ERROR, "Failed to shutdown QueueStore", ex);
 	}
 });
+
+function VacuumParticipant() {}
+VacuumParticipant.prototype = Object.freeze({
+	classDescription: "DownThemAll! QueueStore Vacuum Participant",
+	classID: Components.ID("{c2f27651-9db2-438a-bcc7-f9e9bb2e3393}"),
+	contractID: "@downthemall.net/vacuum-participant;1",
+	xpcom_categories: ["vacuum-participant"],
+	QueryInterface: XPCOMUtils.generateQI([Ci.mozIStorageVacuumParticipant]),
+
+	expectedDatabasePageSize: Ci.mozIStorageConnection.DEFAULT_PAGE_SIZE,
+	get databaseConnection() _connection,
+	onBeginVacuum: function() {
+		log(LOG_DEBUG, "QueueStore: onBeginVacuum");
+		return !_connection.transactionInProgress;
+	},
+	onEndVacuum: function(aSucceeded) {
+		log(LOG_DEBUG, "QueueStore: onEndVacuum, " + aSucceeded.toString());
+	}
+});
+require("components").registerComponents([VacuumParticipant]);
 
 exports.QueueStore = QueueStore;
