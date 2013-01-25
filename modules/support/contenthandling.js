@@ -44,36 +44,25 @@ ContextLRUMap.prototype = {
 /**
  * ContentHandling
  */
-const REDIRECTS_IID = Components.ID("366982b8-9db9-4383-aae7-dbc2f40ba6f6");
-const REDIRECTS_CON = "@downthemall.net/content/redirects;1";
-
 function ContentHandlingImpl() {
 	this._init();
 }
 ContentHandlingImpl.prototype = {
+	classDescription: "DownThemAll! ContentHandling",
+	classID: Components.ID("366982b8-9db9-4383-aae7-dbc2f40ba6f6"),
+	contractID: "@downthemall.net/content/redirects;1",
+	xpcom_categories: ["net-channel-event-sinks"],
+
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.nsIFactory, Ci.nsIChannelEventSink]),
 
 	_init: function ct__init() {
 		Services.obs.addObserver(this, 'http-on-modify-request', false);
 
+		require("components").registerComponents([this], true);
 		Services.prefs.addObserver(PREF_SNIFFVIDEOS, this, false);
 
 		this.boundPurge = this.purge.bind(this);
 		registerPrivatePurger(this.boundPurge);
-
-		Components.manager.nsIComponentRegistrar.registerFactory(
-			REDIRECTS_IID,
-			REDIRECTS_CON,
-			REDIRECTS_CON,
-			this
-			);
-		Services.catman.addCategoryEntry(
-			"net-channel-event-sinks",
-			REDIRECTS_CON,
-			REDIRECTS_CON,
-			false,
-			false
-			);
 
 		this.clear();
 
@@ -84,29 +73,13 @@ ContentHandlingImpl.prototype = {
 		unload(this._uninit.bind(this));
 	},
 
-	// nsIFactory
-	createInstance: function(aOuter, iid) {
-		if (aOuter) {
-			throw Components.results.NS_ERROR_NO_AGGREGATION;
-		}
-		return this.QueryInterface(iid);
-	},
-	lockFactory: function eventsink_lockf(lock) {
-		throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-	},
-
 	_uninit: function ct__uninit() {
 		Services.prefs.removeObserver('extensions.dta.listsniffedvideos', this);
 		if (this.sniffVideos) {
 			this.sniffVideos = false;
 			this.unregisterHttpObservers();
 		}
-
-		Services.catman.deleteCategoryEntry("net-channel-event-sinks", REDIRECTS_CON, true);
-		Components.manager.nsIComponentRegistrar.unregisterFactory(REDIRECTS_IID, this);
-
 		unregisterPrivatePurger(this.boundPurge);
-
 		Services.obs.removeObserver(this, 'http-on-modify-request');
 	},
 	registerHttpObservers: function ct_registerHttpObservers() {
