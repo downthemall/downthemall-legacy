@@ -164,7 +164,7 @@ LRUMap.prototype = Object.freeze({
 		}
 		catch (ex) {
 			try {
-				log(LOG_ERROR, "unloader failed", ex);
+				log(LOG_ERROR, "unloader failed " + fn.name, ex);
 			}
 			catch (iex) {
 				reportError(ex);
