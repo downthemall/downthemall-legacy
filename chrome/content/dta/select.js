@@ -360,7 +360,7 @@ let Dialog = {
 			this._notifications = $('notifications');
 			for (let x in this._notifications) {
 				if (!x.match(/^PRIORITY/)) {
-					break;
+					continue;
 				}
 				this[x] = this._notifications[x];
 			}
