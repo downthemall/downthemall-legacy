@@ -117,13 +117,13 @@
 		</panel>
 	</popupset>
 
+	<toolbox id="views">
+		<toolbar class="findfiles toolbar-primary" chromedir="&locale.dir;">
+			<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&tab.links.label;" command="cmdChangeToLinks" />
+			<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.media.label;" command="cmdChangeToImages" />
+		</toolbar>
+	</toolbox>
 	<notificationbox id="notifications" flex="1">
-		<toolbox id="views">
-			<toolbar class="findfiles toolbar-primary" chromedir="&locale.dir;">
-				<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&tab.links.label;" command="cmdChangeToLinks" />
-				<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.media.label;" command="cmdChangeToImages" />
-			</toolbar>
-		</toolbox>
 		<tree
 			id="urlList"
 			flex="1"
