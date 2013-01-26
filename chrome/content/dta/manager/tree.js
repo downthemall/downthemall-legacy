@@ -823,7 +823,7 @@ const Tree = {
 				}
 			}
 			if (!async) {
-				QueueStore.deleteDownloads(downloads);
+				QueueStore.syncDeleteDownloads(downloads);
 			}
 		}
 		finally {
