@@ -27,6 +27,11 @@
 	-moz-appearance: toolbarbutton !important;
 }
 
+#tools:-moz-window-inactive {
+	/* this forces a repaint, which is all that we're after */
+	background-color: -moz-mac-chrome-inactive;
+}
+
 #search {
 	border-radius: 10000px;
 	-moz-appearance: none;
@@ -63,8 +68,11 @@
 	list-style-image: url(chrome://global/skin/icons/information-32.png);
 }
 
-/* mac doesn't use resizers */
+#footer {
+	-moz-appearance: statusbar;
+}
 #footer > resizer {
+	/* mac doesn't use resizers */
 	display: none;
 }
 
@@ -88,8 +96,20 @@ toolbarspacer.visible {
 	-moz-appearance: toolbar;
 }
 #actions {
+	margin-top: 16px;
+	margin-left: 6px;
+	padding-left: 2px;
+	padding-right: 2px;
 	-moz-appearance: none;
-	background: transparent;
+	background-color: -moz-mac-chrome-inactive;
+	border-top: 1px solid -moz-mac-chrome-active;
+	-moz-border-start: 1px solid -moz-mac-chrome-active;
+	border-bottom: 1px solid -moz-mac-chrome-active;
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+}
+#actions:-moz-window-inactive {
+	background-color: transparent;
 }
 
 treecol > dropmarker {
