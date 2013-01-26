@@ -5,7 +5,7 @@
 		<em:id>dta@downthemall.net</em:id>
 		<em:name>DownThemAll!</em:name>
 		<em:description>The mass downloader for Firefox.</em:description>
-		<em:version>3.0b1pre</em:version>
+		<em:version>3.0b1</em:version>
 		<em:bootstrap>true</em:bootstrap>
 
 		<em:creator>Federico Parodi, Stefano Verna, Nils Maier</em:creator>
@@ -19,6 +19,7 @@
 		<em:icon64URL>chrome://dtaicon/content/icon64.png</em:icon64URL>
 		<em:homepageURL>http://downthemall.net/</em:homepageURL>
 		<em:optionsURL>chrome://dta/content/preferences/prefs.xul</em:optionsURL>
+		<em:updateURL>https://code.downthemall.net/beta/update.rdf</em:updateURL>
 
 		<!-- Firefox -->
 		<em:targetApplication>
