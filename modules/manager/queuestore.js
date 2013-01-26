@@ -212,7 +212,7 @@ const QueueStore = {
 		stmt.params.uuid = id;
 		stmt.executeAsync();
 	},
-	deleteDownloads: function(downloads) {
+	syncDeleteDownloads: function(downloads) {
 		this.beginUpdate();
 		try {
 			let stmt = _connection.createStatement('DELETE FROM queue WHERE uuid = :uuid');
