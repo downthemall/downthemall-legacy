@@ -1946,10 +1946,10 @@ QueueItem.prototype = {
 			try {
 				let time = this.startDate.getTime();
 				try {
-					time =  this.visitors.time;
+					time = this.visitors.time;
 				}
 				catch (ex) {
-					// no-op
+					log(LOG_DEBUG, "no visitors time", ex);
 				}
 				// small validation. Around epoche? More than a month in future?
 				if (time < 2 || time > Date.now() + 30 * 86400000) {

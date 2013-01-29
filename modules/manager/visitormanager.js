@@ -391,7 +391,7 @@ VisitorManager.prototype = {
 	 *           if no timestamp found
 	 */
 	get time() {
-		for (let v of this._visitors) {
+		for (let [,v] in Iterator(this._visitors)) {
 			if (v.time && v.time > 0) {
 				return v.time;
 			}
