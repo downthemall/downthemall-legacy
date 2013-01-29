@@ -232,4 +232,56 @@ test("real world http visit", function() {
 		ok(!visit.metaDescribedBy, "corrupt describedby metalink link not parsed");
 	});
 
+	test("valid time", function() {
+		const {VisitorManager} = require("manager/visitormanager");
+		const chan = createTestHttpChannel({
+			uri: Services.io.newURI("http://www.example.com", null, null),
+			request: request,
+			response: {
+				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
+				"Last-Modified": "Sat, 11 Aug 2012 08:58:33 GMT",
+				"Content-Type": "text/html; charset=utf8",
+				"Content-Length": "1024"
+			}
+		});
+		const vm = new VisitorManager();
+		const visit = vm.visit(chan);
+		strictEqual(vm.time, 1344675513000, "corrupt time parsed");
+		strictEqual(visit.time, 1344675513000, "corrupt time parsed");
+	});
+
+	test("no time", function() {
+		const {VisitorManager} = require("manager/visitormanager");
+		const chan = createTestHttpChannel({
+			uri: Services.io.newURI("http://www.example.com", null, null),
+			request: request,
+			response: {
+				"Content-Type": "text/html; charset=utf8",
+				"Content-Length": "1024"
+			}
+		});
+		const vm = new VisitorManager();
+		const visit = vm.visit(chan);
+		throws(function() vm.time, /No Date registered/i, "No Date registered");
+		ok(!visit.time, "No Date registered");
+	});
+
+	test("invalid time", function() {
+		const {VisitorManager} = require("manager/visitormanager");
+		const chan = createTestHttpChannel({
+			uri: Services.io.newURI("http://www.example.com", null, null),
+			request: request,
+			response: {
+				"Date": "Sat, 11 Aug 2012 08:58:33 GMT",
+				"Last-Modified": "yesterday",
+				"Content-Type": "text/html; charset=utf8",
+				"Content-Length": "1024"
+			}
+		});
+		const vm = new VisitorManager();
+		const visit = vm.visit(chan);
+		throws(function() vm.time, /No Date registered/i, "No Date registered");
+		ok(!visit.time, "No Date registered");
+	});
+
 })();
