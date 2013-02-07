@@ -1,0 +1,31 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#views,
+#findfiles {
+	-moz-appearance: none !important;
+	background: transparent;
+	border: 0;
+}
+
+window:-moz-system-metric(windows-default-theme) :-moz-any(#views, #findfiles) {
+	background-color: rgb(185,209,234) !important;
+}
+window:-moz-system-metric(windows-default-theme):-moz-window-inactive :-moz-any(#views, #findfiles) {
+	background-color: rgb(215,228,242) !important;
+}
+
+@media all and (-moz-windows-compositor) {
+	/* specifity issues ahead; beware */
+	#DownThemAll {
+		-moz-appearance: -moz-win-glass !important;
+		background-color: transparent !important;
+	}
+	#dta-select {
+		-moz-appearance: -moz-win-exclude-glass;
+		background-color: -moz-Dialog;
+	}
+	#views, #findfiles {
+		-moz-appearance: -moz-win-glass !important;
+		background-color: transparent !important;
+	}
+}

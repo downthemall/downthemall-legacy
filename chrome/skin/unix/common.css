@@ -44,13 +44,3 @@ treechildren::-moz-tree-progressmeter {
 .menu-iconic-left {
 	visibility: visible !important;
 }
-
-.findfiles {
-	-moz-appearance: menubar !important;
-}
-.findfiles toolbarbutton {
-	color: -moz-menubartext;
-}
-.findfiles toolbarbutton[selected="true"] {
-	color: -moz-dialogtext;
-}
