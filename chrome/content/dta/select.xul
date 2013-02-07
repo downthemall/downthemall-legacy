@@ -12,6 +12,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://global/skin/toolbar.css" type="text/css"?>
 <?xml-stylesheet href="chrome://dta/skin/select/style.css" type="text/css"?>
+<?xml-stylesheet href="chrome://dta-platform/skin/select.css" type="text/css"?>
 
 <!DOCTYPE dialog [
 	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/">

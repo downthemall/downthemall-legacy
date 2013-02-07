@@ -1,0 +1,11 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+.findfiles {
+	-moz-appearance: menubar !important;
+}
+.findfiles toolbarbutton {
+	color: -moz-menubartext;
+}
+.findfiles toolbarbutton[selected="true"] {
+	color: -moz-dialogtext;
+}
