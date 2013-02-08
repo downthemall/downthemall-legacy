@@ -327,7 +327,7 @@ const Dialog = {
 								},
 								{
 									accessKey: '',
-									label: _('nagneveragain'),
+									label: _('dontaskagain'),
 									callback: function() {
 										nb.removeNotification(ndonation);
 										Preferences.setExt('nagnever', true);
