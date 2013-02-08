@@ -331,7 +331,7 @@ var Dialog = {
 		// let's check and create the directory
 		Utils.askForDir(
 			this.ddDirectory.value,
-			_("validdestination"),
+			_("valid.destination"),
 			function (newDir) {
 				if (newDir) {
 					Dialog.ddDirectory.value = newDir;

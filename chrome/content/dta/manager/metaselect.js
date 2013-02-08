@@ -105,7 +105,7 @@ const MetaSelect = {
 		// get a new directory
 		Utils.askForDir(
 			$('directory').value, // initialize dialog with the current directory
-			_("validdestination"),
+			_("valid.destination"),
 			function(newDir) {
 				if (newDir) {
 					$('directory').value = newDir;
