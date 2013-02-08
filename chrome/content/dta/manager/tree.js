@@ -701,7 +701,7 @@ const Tree = {
 	},
 	removeWithConfirmation: function T_removeWithConfirmation() {
 		if (Prefs.confirmRemove) {
-			let res = Prompts.confirm(window, _('removecaption'), _('removequestion'), Prompts.YES, Prompts.NO, null, 0, false, _('removecheck'));
+			let res = Prompts.confirm(window, _('removecaption'), _('removequestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
 			if (res.checked) {
 				Preferences.setExt('confirmremove', false);
 			}
@@ -751,7 +751,7 @@ const Tree = {
 				_('removecaption'),
 				_(msg, [filter.label]),
 				Prompts.YES, Prompts.NO,
-				null, 0, false, _('removecheck'));
+				null, 0, false, _('dontaskagain'));
 			if (res.checked) {
 				Preferences.setExt(pref, false);
 			}
@@ -866,7 +866,7 @@ const Tree = {
 	},
 	removeCompleted: function T_removeCompleted() {
 		if (Prefs.confirmRemoveCompleted) {
-			let res = Prompts.confirm(window, _('removecaption'), _('removecompletedquestion'), Prompts.YES, Prompts.NO, null, 0, false, _('removecheck'));
+			let res = Prompts.confirm(window, _('removecaption'), _('removecompletedquestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
 			if (res.checked) {
 				Preferences.setExt('confirmremovecompleted', false);
 			}
@@ -944,7 +944,7 @@ const Tree = {
 					_(many ? 'cancelmanytext' : 'canceltext' ),
 					_(many ? 'docancelmany' : 'docancel'),
 					_('dontcancel'),
-					null, 1, false, _('removecheck'));
+					null, 1, false, _('dontaskagain'));
 			if (res.checked) {
 				Preferences.setExt('confirmcancel', false);
 			}

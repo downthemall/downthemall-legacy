@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const Prompts = require("prompts");
+const prompts = require("prompts");
 const Version = require("version");
 const {isWindowPrivate} = require("support/pbm");
 
@@ -282,7 +282,7 @@ var Dialog = {
 			if (batch.length > 1000) {
 				message += _('manytasks');
 			}
-			rv = Prompts.confirm(window, _('batchtitle'), message, _('batchdownload'), Prompts.CANCEL, _('singledownload'));
+			rv = prompts.confirm(window, _('batchtitle'), message, _('batchdownload'), prompts.CANCEL, _('singledownload'));
 			if (rv == 1) {
 				return false;
 			}
@@ -336,13 +336,27 @@ var Dialog = {
 		return this.sendDownloads(start, [item], item.isPrivate);
 	},
 	sendDownloads: function(start, downloads, isPrivate) {
-		DTA.sendLinksToManager(window, start, downloads);
-
 		DTA.incrementSeries();
-		Preferences.setExt("lastqueued", !start);
+		let clq = start;
+		if (!clq) {
+			clq = Preferences.getExt("confirmlastqueued", 0);
+			if (clq == 0) {
+				let res = prompts.confirm(window, _("rememberpref"), _("rememberlastqueued"), prompts.YES, prompts.NO, null, 0, false, _("dontaskagain"));
+				clq = res.button + 1;
+				if (res.checked) {
+					Preferences.setExt("confirmlastqueued", clq);
+				}
+			}
+			clq = clq == 1;
+		}
+		if (clq) {
+			Preferences.setExt("lastqueued", !start);
+		}
 
 		this.ddRenaming.save($("renamingOnce").checked);
 		this.ddDirectory.save();
+
+		DTA.sendLinksToManager(window, start, downloads);
 
 		self.close();
 

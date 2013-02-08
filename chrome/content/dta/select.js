@@ -34,6 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+const prompts = require("prompts");
+
 /* tree helpers */
 function treeIconGetter() {
 	delete this.icon;
@@ -472,9 +474,6 @@ let Dialog = {
 				return false;
 			}
 
-			// actually start the crap.
-			DTA.sendLinksToManager(window, start, out);
-
 			// save tab
 
 			Preferences.setExt('seltab', this.current.type == 1 ? 0 : 1);
@@ -484,7 +483,21 @@ let Dialog = {
 			this.ddFilter.save();
 
 			// save the counter, queued state
-			Preferences.setExt("lastqueued", !start);
+			let clq = start;
+			if (!clq) {
+				clq = Preferences.getExt("confirmlastqueued", 0);
+				if (clq == 0) {
+					let res = prompts.confirm(window, _("rememberpref"), _("rememberlastqueued"), prompts.YES, prompts.NO, null, 0, false, _("dontaskagain"));
+					clq = res.button + 1;
+					if (res.checked) {
+						Preferences.setExt("confirmlastqueued", clq);
+					}
+				}
+				clq = clq == 1;
+			}
+			if (clq) {
+				Preferences.setExt("lastqueued", !start);
+			}
 
 			let boxen = this.boxen;
 			for (let i = 0; i < boxen.length; ++i) {
@@ -492,6 +505,9 @@ let Dialog = {
 			}
 			FilterManager.save();
 			DTA.incrementSeries();
+
+			// actually start the crap.
+			DTA.sendLinksToManager(window, start, out);
 
 			// unload ourselves.
 			return this.unload();
