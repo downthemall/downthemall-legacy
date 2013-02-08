@@ -95,19 +95,19 @@
 			<menuitem class="menuitem-iconic" id="muncheck" label="&menu.uncheck.label;" command="cmdUncheck" />
 			<menuitem class="menuitem-iconic" id="mtoggle" label="&menu.toggle.label;" command="cmdToggle" />
 			<menuseparator id="msep1" />
-			<menuitem class="menuitem-iconic" id="mrenaming" label="&mask.label;" command="cmdStartEditMask" />
+			<menuitem class="menuitem-iconic" id="mrenaming" label="&mask2.label;" command="cmdStartEditMask" />
 			<menuseparator id="msep2" />
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" command="cmdSelectAll" key="kSelectAll" />
 			<menuitem id="selectfiltered" class="menuitem-iconic" label="&selectfiltered.label;" command="cmdSelectFiltered" key="kSelectFiltered" />
 			<menuitem id="selectinvert" class="menuitem-iconic" label="&selectinv.label;" command="cmdSelectInv" key="kSelectInv" />
 			<menuseparator/>
-			<menuitem id="copylinks" label="&menu.copylinks.label;" command="cmdCopyLinks" key="kCopyLinks"/>
+			<menuitem id="copylinks" label="&menu.copylinks2.label;" command="cmdCopyLinks" key="kCopyLinks"/>
 			<menuseparator id="msep3" />
 			<menuitem id="mopen" crop="center" class="menuitem-iconic" command="cmdOpenSelection" key="kOpenSelection" />
 		</menupopup>
 		<panel id="maskeditor">
 			<groupbox orient="horizontal">
-				<caption label="&mask.label;:" />
+				<caption label="&mask2.label;:" />
 				<saveddropdown id="maskeditor-selector" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
 				<maskbutton/>
 			</groupbox>
@@ -144,7 +144,7 @@
 					<splitter class="tree-splitter"/>
 					<treecol id="colDesc" label="&header.desc.label;" flex="9" persist="width hidden" />
 					<splitter class="tree-splitter"/>
-					<treecol id="colMask" label="&mask.label;" flex="5" persist="width hidden"/>
+					<treecol id="colMask" label="&mask2.label;" flex="5" persist="width hidden"/>
 				</treecols>
 
 				<treechildren/>
@@ -153,14 +153,14 @@
 
 		<hbox style="margin:7px 7px 3px 7px;" >
 			<vbox autostretch="never" flex="1">
-				<caption label="&dest.caption;" />
+				<caption label="&directory.caption;" />
 				<hbox>
 					<saveddropdown id="directory" preference="directory" flex="1"/>
-					<toolbarbutton id="browsedir" command="cmdBrowseDirectory" tooltiptext="&browse.tip;" />
+					<toolbarbutton id="browsedir" command="cmdBrowseDirectory" tooltiptext="&browse.tooltip;" />
 				</hbox>
 			</vbox>
 			<vbox id="renamingbox">
-				<caption label="&mask.label;:" />
+				<caption label="&mask2.label;:" />
 				<hbox>
 					<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
 					<maskbutton/>

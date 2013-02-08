@@ -68,7 +68,7 @@ const MetaSelect = {
 		}
 		let info = {
 			'identity': _('mlidentity'),
-			'description': _('mldescription'),
+			'description': _('ml.description'),
 			'logo': null,
 			'publisher': null,
 			'license': null
@@ -156,11 +156,11 @@ const MetaSelect = {
 		mask.value = mask.value.trim();
 
 		if (!mask.value) {
-			err(_('alertmask'));
+			err(_('alert.mask'));
 			return false;
 		}
 		if (!directory.value || !Utils.validateDir(directory.value)) {
-			err(_(directory.value ? 'alertinvaliddir' : 'alertnodir'));
+			err(_(directory.value ? 'alert.invaliddir' : 'alert.nodir'));
 			return false;
 		}
 
@@ -176,7 +176,7 @@ const MetaSelect = {
 			this
 		);
 		if (!selected) {
-			err(_('nolinks'));
+			err(_('no.links'));
 			return false;
 		}
 		window.arguments[1].start = start;

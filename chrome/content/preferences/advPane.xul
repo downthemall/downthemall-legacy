@@ -42,14 +42,14 @@
 						</columns>
 						<rows>
 							<row align="center">
-								<label value="&advancedpane.chunks.label;" id="maxchunk" contol="maxchunks" />
+								<label value="&advancedpane.chunks2.label;" id="maxchunk" contol="maxchunks" />
 								<hbox align="center">
 									<scale min="1" max="10" id="maxchunks" preference-editable="true" onchange="Advanced.changedMaxChunks();" />
 									<label id="maxchunkslabel" style="min-width: 6em;" />
 								</hbox>
 							</row>
 							<row align="center">
-								<label value="&advancedpane.timeout.label;" />
+								<label value="&advancedpane.timeout2.label;" />
 								<hbox align="center">
 									<menulist preference="dtatimeout">
 										<menupopup>
@@ -67,7 +67,7 @@
 								</hbox>
 							</row>
 							<row align="center">
-								<label value="&advancedpane.loadendfirst.label;" control="loadendfirst" />
+								<label value="&advancedpane.loadendfirst2.label;" control="loadendfirst" />
 								<hbox align="center">
 									<scale min="0" max="4096" id="loadendfirst" increment="4" pageincrement="16" preference-editable="true" onchange="Advanced.changedLoadEndFirst();" />
 									<label id="loadendfirstlabel" style="min-width: 6em;" />
@@ -95,7 +95,7 @@
 								</menulist>
 							</row>
 							<separator class="thin" />
-							<checkbox label="&mainpane.confirmremove.label;" preference="dtaconfirmremove" />
+							<checkbox label="&mainpane.confirmremove2.label;" preference="dtaconfirmremove" />
 							<separator class="thin" />
 							<checkbox label="&advancedpane.exposeinua.label;" preference="dtaexposeinua" />
 							<checkbox label="&mainpane.rememberoneclick.label;" preference="dtarememberoneclick" />

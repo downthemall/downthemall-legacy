@@ -187,7 +187,7 @@
 			<menuseparator />
 			<menuitem id="mirrors" class="action menuitem-iconic" label="&mirrors.label;" tooltiptext="&mirrors.tooltip;" command="cmdMirrors" />
 			<menuseparator id="mirrors-sep" />
-			<menu class="menu-iconic" label="&perdownloadspeedlimit.label;" id="perDownloadSpeedLimit" tooltiptext="&perdownloadspeedlimit.tooltip;">
+			<menu class="menu-iconic" label="&perdownloadspeedlimit2.label;" id="perDownloadSpeedLimit" tooltiptext="&perdownloadspeedlimit2.tooltip;">
 				<menupopup id="perDownloadSpeedLimitList" class="speedlimitlist-popup" command="cmdPerDownloadSpeedLimit" />
 			</menu>
 			<menuseparator />
@@ -257,13 +257,13 @@
 						<splitter class="tree-splitter" />
 						<treecol id="colSize" matcher="sizematch" label="&dim.label;" flex="2" style="width: 8em;" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
-						<treecol id="colStatus" matcher="statusmatch" label="&time.label;" flex="1" persist="hidden width ordinal" />
+						<treecol id="colStatus" matcher="statusmatch" label="&time2.label;" flex="1" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
 						<treecol id="colSpeed" label="&speed.label;" flex="1" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
 						<treecol id="colSegments" label="&parts.label;" flex="1" hidden="true" style="text-align: center;"  persist="hidden width ordinal"/>
 						<splitter class="tree-splitter" />
-						<treecol id="colMask" label="&mask.label;" flex="1" hidden="true" persist="hidden width ordinal" />
+						<treecol id="colMask" label="&mask2.label;" flex="1" hidden="true" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
 						<treecol id="colPath" matcher="pathmatch" label="&path.label;" flex="1" hidden="true" crop="center" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
@@ -273,7 +273,7 @@
 					</treechildren>
 				</tree>
 				<vbox align="center" pack="center" flex="1" id="loadingbox">
-					<button id="loading" disabled="true" label="&loading.label;" />
+					<button id="loading" disabled="true" label="&loading2.label;" />
 				</vbox>
 			</stack>
 		</notificationbox>
@@ -287,7 +287,7 @@
 		<statusbarpanel class="statusbarpanel-iconic" id="schedule"/>
 		<statusbarpanel id="statusSpeed" class="statusbarpanel-iconic-text" crop="right" hidden="true" label="" />
 		<statusbarpanel id="statusSpeeds">
-			<menulist class="plain" id="speedLimit" tooltiptext="&speedlimit.tooltip;" sizetopopup="none" command="cmdChangeSpeedLimit">
+			<menulist class="plain" id="speedLimit" tooltiptext="&speedlimit2.tooltip;" sizetopopup="none" command="cmdChangeSpeedLimit">
 				<menupopup id="listSpeeds" class="speedlimitlist-popup" position="before_start" />
 			</menulist>
 			<spinbuttons id="listSpeedsSpinners"/>

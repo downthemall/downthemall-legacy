@@ -416,13 +416,13 @@ let Dialog = {
 		let mask = this.ddRenaming.value.trim();
 		mask = this.ddRenaming.value = mask || '';
 		if (!mask.length) {
-			this.addNotification(_('alertmask'), this.PRIORITY_CRITICAL_MEDIUM);
+			this.addNotification(_('alert.mask'), this.PRIORITY_CRITICAL_MEDIUM);
 			return false;
 		}
 
 		// directory valid?
 		if (!dir.length || !Utils.validateDir(dir)) {
-			this.addNotification(_(dir.length ? 'alertinvaliddir' : 'alertnodir'), this.PRIORITY_CRITICAL_MEDIUM);
+			this.addNotification(_(dir.length ? 'alert.invaliddir' : 'alert.nodir'), this.PRIORITY_CRITICAL_MEDIUM);
 			if (!dir.length) {
 				Utils.askForDir(null, _("validdestination"), function(newDir) {
 					Dialog.ddDirectory.value = newDir ? newDir : '';
@@ -470,7 +470,7 @@ let Dialog = {
 
 			// nothing selected. cannot start
 			if (!out.length) {
-				this.setNotification(_('nolinks'), this.PRIORITY_CRITICAL_LOW);
+				this.setNotification(_('no.links'), this.PRIORITY_CRITICAL_LOW);
 				return false;
 			}
 

@@ -67,7 +67,7 @@ XPCOMUtils.defineLazyGetter(this, "FileExts", function() new FileExtensionSheet(
 
 addEventListener("load", function load_textCache() {
 	removeEventListener("load", load_textCache, false);
-	const texts = ['paused', 'queued', 'complete', 'canceled', 'nas', 'unknown', 'offline', 'timeout', 'starting', 'decompress', 'verify', 'moving'];
+	const texts = ['paused', 'queued', 'complete', 'canceled', 'nas', 'unknown', 'offline', 'timeout', 'starting', 'decompressing', 'verifying', 'moving'];
 	for (let i = 0, text; i < texts.length; ++i) {
 		text = texts[i];
 		window["TextCache_" + text.toUpperCase()] = _(text);
@@ -401,7 +401,7 @@ const Dialog = {
 			GlobalProgress.value = idx;
 		}
 		if (idx % 500 == 0) {
-			this._loading.label = _('loading', [idx, dbItem.count, Math.floor(idx * 100 / dbItem.count)]);
+			this._loading.label = _('loading2', [idx, dbItem.count, Math.floor(idx * 100 / dbItem.count)]);
 		}
 
 		try {
@@ -443,7 +443,7 @@ const Dialog = {
 					else {
 						// Download partfile is gone!
 						// XXX find appropriate error message!
-						d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+						d.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
 					}
 				}
 				catch (ex) {
@@ -1043,7 +1043,7 @@ const Dialog = {
 				dp = dp.destinationPath;
 			}
 			if (Prefs.alertingSystem == 1) {
-				AlertService.show(_("dcom"), _('suc'), function() Utils.launch(dp));
+				AlertService.show(_("suc.title"), _('suc'), function() Utils.launch(dp));
 			}
 			else if (dp && Prefs.alertingSystem == 0) {
 				if (Prompts.confirmYN(window, _('suc'),  _("folder")) == 0) {
@@ -1252,7 +1252,7 @@ const Metalinker = {
 					throw ex;
 				}
 				if (!res.downloads.length) {
-					throw new Error(_('mlnodownloads'));
+					throw new Error(_('ml.nodownloads'));
 				}
 				for (let e of res.downloads) {
 					if (e.size) {
@@ -1801,7 +1801,7 @@ QueueItem.prototype = {
 			// move file
 			if (this.compression) {
 				this.setState(FINISHING);
-				this.status = TextCache_DECOMPRESS;
+				this.status = TextCache_DECOMPRESSING;
 				new Decompressor(this);
 			}
 			else {
@@ -1845,7 +1845,7 @@ QueueItem.prototype = {
 	_verificator: null,
 	verifyHash: function() {
 		this.setState(FINISHING);
-		this.status = TextCache_VERIFY;
+		this.status = TextCache_VERIFYING;
 		let tp = this;
 		this._verificator = Verificator.verify(
 			this.tmpFile.exists() ? this.tmpFile.path : this.destinationFile,
@@ -1916,7 +1916,7 @@ QueueItem.prototype = {
 
 		if (mismatches.length && this.tmpFile.exists()) {
 			// partials
-			let act = Prompts.confirm(window, _('verifyerrortitle'), _('verifyerrorpartialstext'), _('recover'), _('delete'), _('keep'));
+			let act = Prompts.confirm(window, _('verifyerror.title'), _('verifyerror.partialstext'), _('recover'), _('delete'), _('keep'));
 			switch (act) {
 				case 0: deleteFile(); recoverPartials(this, mismatches); return;
 				case 1: deleteFile(); this.cancel(); return;
@@ -1924,7 +1924,7 @@ QueueItem.prototype = {
 			this.complete();
 		}
 		else {
-			let act = Prompts.confirm(window, _('verifyerrortitle'), _('verifyerrortext'), _('retry'), _('delete'), _('keep'));
+			let act = Prompts.confirm(window, _('verifyerror.title'), _('verifyerror.text'), _('retry'), _('delete'), _('keep'));
 			switch (act) {
 				case 0: deleteFile(); this.safeRetry(); return;
 				case 1: deleteFile(); this.cancel(); return;
@@ -1996,7 +1996,7 @@ QueueItem.prototype = {
 		this.chunks = [];
 		this.speeds.clear();
 		if (exception) {
-			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+			this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
 			log(LOG_ERROR, "complete: ", exception);
 			return;
 		}
@@ -2064,7 +2064,7 @@ QueueItem.prototype = {
 			if (tmp) {
 				vtmp = Utils.validateDir(tmp);
 				if (!vtmp && Utils.getFreeDisk(vtmp) < required) {
-					this.fail(_("ndsa"), _("spacetemp"), _("freespace"));
+					this.fail(_("freespace.title"), _("freespace.temp"), _("freespace"));
 					return false;
 				}
 			}
@@ -2085,14 +2085,14 @@ QueueItem.prototype = {
 			}
 			if (nsd < required) {
 				log(LOG_DEBUG, "nsd: " +  nsd + ", tsd: " + required);
-				this.fail(_("ndsa"), _("spacedir"), _("freespace"));
+				this.fail(_("freespace.title"), _("freespace.dir"), _("freespace"));
 				return false;
 			}
 			return true;
 		}
 		catch (ex) {
 			log(LOG_ERROR, "size check threw", ex);
-			this.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+			this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
 		}
 		return false;
 	},

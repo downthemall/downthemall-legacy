@@ -38,8 +38,8 @@
 					<row align="center">
 						<label id="useAs" value="&useAs.label;" />
 						<hbox id="linkPicRow">
-							<checkbox id="filterText" label="&linksf.label;" oncommand="Filters.onCheckboxChange();" />
-							<checkbox id="filterImage" label="&imagesf.label;" oncommand="Filters.onCheckboxChange();" />
+							<checkbox id="filterText" label="&filter.links.label;" oncommand="Filters.onCheckboxChange();" />
+							<checkbox id="filterImage" label="&filter.images.label;" oncommand="Filters.onCheckboxChange();" />
 						</hbox>
 					</row>
 				</rows>
