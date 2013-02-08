@@ -392,7 +392,7 @@ let Dialog = {
 		if (!dir.length || !Utils.validateDir(dir)) {
 			this.addNotification(_(dir.length ? 'alert.invaliddir' : 'alert.nodir'), this.PRIORITY_CRITICAL_MEDIUM);
 			if (!dir.length) {
-				Utils.askForDir(null, _("validdestination"), function(newDir) {
+				Utils.askForDir(null, _("valid.destination"), function(newDir) {
 					Dialog.ddDirectory.value = newDir ? newDir : '';
 				});
 			}
@@ -717,7 +717,7 @@ let Dialog = {
 		// get a new directory
 		Utils.askForDir(
 			this.ddDirectory.value, // initialize dialog with the current directory
-			_("validdestination"),
+			_("valid.destination"),
 			function(newDir) {
 				// alright, we got something new, so lets set it.
 				if (newDir) {

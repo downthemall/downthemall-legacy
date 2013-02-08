@@ -177,7 +177,7 @@ var Dialog = {
 		// let's check and create the directory
 		Utils.askForDir(
 			$('directory').value,
-			_("validdestination"),
+			_("valid.destination"),
 			function(newDir) {
 				if (newDir) {
 					$('directory').value = newDir;
@@ -211,7 +211,7 @@ var Dialog = {
 		}
 		if (!Utils.validateDir(dir)) {
 			alert(_(dir.length ? 'alert.invaliddir' : 'alert.nodir'));
-			Utils.askForDir(null, _("validdestination"), function (newDir) {
+			Utils.askForDir(null, _("valid.destination"), function (newDir) {
 				$('directory').value = newDir ? newDir : '';
 			});
 			return false;

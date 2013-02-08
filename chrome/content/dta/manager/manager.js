@@ -1011,7 +1011,7 @@ const Dialog = {
 				AlertService.show(_("suc.title"), _('suc'), function() Utils.launch(dp));
 			}
 			else if (dp && Prefs.alertingSystem == 0) {
-				if (Prompts.confirmYN(window, _('suc'),  _("folder")) == 0) {
+				if (Prompts.confirmYN(window, _('suc'),  _("openfolder")) == 0) {
 					try {
 						Utils.launch(dp);
 					}
