@@ -367,7 +367,7 @@ Connection.prototype = {
 
 	writeFailed: function() {
 		let d = this.d;
-		d.fail(_("accesserror"), _("permissions") + " " + _("destpath") + ". " + _("checkperm"), _("accesserror"));
+		d.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
 	},
 
 	// nsIFTPEventSink
@@ -945,7 +945,7 @@ Connection.prototype = {
 		}
 		catch (ex) {
 			log(LOG_ERROR, "onStartRequest", ex);
-			d.fail(_("unknownerror"), _('unknownerrortext'), _("unknownerror"));
+			d.fail(_("unknownerror"), _('unknownerror.text'), _("unknownerror"));
 			return;
 		}
 	},

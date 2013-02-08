@@ -326,7 +326,7 @@ const Tree = {
 	sort: function(id, descending) {
 		if (Prompts.confirm(
 			window,
-			_('sortqueuetitle'),
+			_('sortqueue.title'),
 			_('sortqueuemsg'),
 			_('sortqueue'),
 			_('cancel')
@@ -701,7 +701,7 @@ const Tree = {
 	},
 	removeWithConfirmation: function T_removeWithConfirmation() {
 		if (Prefs.confirmRemove) {
-			let res = Prompts.confirm(window, _('removecaption'), _('removequestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
+			let res = Prompts.confirm(window, _('remove.title'), _('removequestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
 			if (res.checked) {
 				Preferences.setExt('confirmremove', false);
 			}
@@ -712,7 +712,7 @@ const Tree = {
 		this.remove(null, true);
 	},
 	removeAllWithConfirmation: function T_removeAllWithConfirmation() {
-		let res = Prompts.confirm(window, _('removecaption'), _('removeallquestion'), Prompts.YES, Prompts.NO);
+		let res = Prompts.confirm(window, _('remove.title'), _('removeallquestion'), Prompts.YES, Prompts.NO);
 		if (res) {
 			return;
 		}
@@ -720,7 +720,7 @@ const Tree = {
 	},
 	removeHostWithConfirmation: function T_removeHostWithConfirmation() {
 		let domain = this.current.urlManager.domain;
-		let res = Prompts.confirm(window, _('removecaption'), _('removehostquestion', [domain]), Prompts.YES, Prompts.NO);
+		let res = Prompts.confirm(window, _('remove.title'), _('removehostquestion', [domain]), Prompts.YES, Prompts.NO);
 		if (res) {
 			return;
 		}
@@ -733,12 +733,12 @@ const Tree = {
 		switch (id) {
 		case 'removePopup':
 			pref = 'confirmremove.' + filter.id;
-			msg = 'removefilterquestion';
+			msg = 'removefilter.question';
 			mask = COMPLETE | QUEUED | CANCELED | PAUSED;
 			break;
 		case 'removeCompletedPopup':
 			pref = 'confirmremovecompleted.' + filter.id;
-			msg = 'removecompletedfilterquestion';
+			msg = 'removecompletedfilter.question';
 			mask = COMPLETE;
 			break;
 		default:
@@ -748,7 +748,7 @@ const Tree = {
 		if (Preferences.getExt(pref, true)) {
 			let res = Prompts.confirm(
 				window,
-				_('removecaption'),
+				_('remove.title'),
 				_(msg, [filter.label]),
 				Prompts.YES, Prompts.NO,
 				null, 0, false, _('dontaskagain'));
@@ -866,7 +866,7 @@ const Tree = {
 	},
 	removeCompleted: function T_removeCompleted() {
 		if (Prefs.confirmRemoveCompleted) {
-			let res = Prompts.confirm(window, _('removecaption'), _('removecompletedquestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
+			let res = Prompts.confirm(window, _('remove.title'), _('removecompletedquestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
 			if (res.checked) {
 				Preferences.setExt('confirmremovecompleted', false);
 			}
@@ -940,7 +940,7 @@ const Tree = {
 			let many = this.selection.count > 1;
 			let res = Prompts.confirm(
 					window,
-					_('canceltitle'),
+					_('cancel.title'),
 					_(many ? 'cancelmanytext' : 'canceltext' ),
 					_(many ? 'docancelmany' : 'docancel'),
 					_('dontcancel'),
@@ -1042,11 +1042,11 @@ const Tree = {
 			}
 			catch (ex) {
 				log(LOG_ERROR, "Cannot export downloads (process response)", ex);
-				Prompts.alert(window, _('exporttitle'), _('exportfailed'));
+				Prompts.alert(window, _('export.title'), _('exportfailed'));
 			}
 		}
 		try {
-			let fp = new Instances.FilePicker(window, _('exporttitle'), Ci.nsIFilePicker.modeSave);
+			let fp = new Instances.FilePicker(window, _('export.title'), Ci.nsIFilePicker.modeSave);
 			fp.appendFilters(Ci.nsIFilePicker.filterHTML);
 			fp.appendFilters(Ci.nsIFilePicker.filterText);
 			fp.appendFilter(_('filtermetalink3'), '*.metalink');
@@ -1064,7 +1064,7 @@ const Tree = {
 		}
 		catch (ex) {
 			log(LOG_ERROR, "Cannot export downloads", ex);
-			Prompts.alert(window, _('exporttitle'), _('exportfailed'));
+			Prompts.alert(window, _('export.title'), _('exportfailed'));
 		}
 	},
 	import: function T_import() {
@@ -1084,11 +1084,11 @@ const Tree = {
 			}
 			catch (ex) {
 				log(LOG_ERROR, "Cannot import downloads (processResponse)", ex);
-				Prompts.alert(window, _('importtitle'), _('importfailed'));
+				Prompts.alert(window, _('import.title'), _('importfailed'));
 			}
 		}
 		try {
-			let fp = new Instances.FilePicker(window, _('importtitle'), Ci.nsIFilePicker.modeOpen);
+			let fp = new Instances.FilePicker(window, _('import.title'), Ci.nsIFilePicker.modeOpen);
 			fp.appendFilters(Ci.nsIFilePicker.filterText);
 			fp.appendFilter(_('filtermetalink'), '*.meta4');
 			fp.appendFilter(_('filtermetalink3'), '*.metalink');
@@ -1104,7 +1104,7 @@ const Tree = {
 		}
 		catch (ex) {
 			log(LOG_ERROR, "Cannot import downloads", ex);
-			Prompts.alert(window, _('importtitle'), _('importfailed'));
+			Prompts.alert(window, _('import.title'), _('importfailed'));
 		}
 	},
 	addLimits: function T_addLimits() {

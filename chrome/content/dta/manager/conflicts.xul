@@ -15,7 +15,7 @@
 
 <dialog
 	id="DownThemAll"
-	title="&windowtitle;"
+	title="&window.title;"
 	onload="load();"
 	buttons="accept"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -32,9 +32,9 @@
 			function load() {
 				var w = window.arguments[0];
 
-				$("s1").label = _('rename.label', [w.newDest]);
-				$("text").appendChild(document.createTextNode(_('text.label', [w.fn])));
-				$("question").appendChild(document.createTextNode(_('question.label', [w.url])));
+				$("s1").label = _('rename2.label', ['"' + w.newDest + '"']);
+				$("text").appendChild(document.createTextNode(_('text2.label', ['"' + w.fn + '"'])));
+				$("question").appendChild(document.createTextNode(_('question2.label', ['"' + w.url + '"'])));
 
 				window.sizeToContent();
 			}

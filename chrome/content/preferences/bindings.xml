@@ -90,7 +90,7 @@
 						<xul:label class="serverlimit-connections-label serverlimit-value-label" anonid="connectionsLabel" />
 					</xul:row>
 					<xul:row>
-						<xul:label value="&serverspane.speed.label;" class="serverlimit-desc-label" />
+						<xul:label value="&serverspane.speed2.label;" class="serverlimit-desc-label" />
 						<xul:label class="serverlimit-speed-label serverlimit-value-label" anonid="speedLabel" />
 					</xul:row>
 					<xul:row>
@@ -124,7 +124,7 @@
 							<xul:label class="serverlimit-connections-label serverlimit-value-label" anonid="connectionsLabel" />
 						</xul:row>
 						<xul:row>
-							<xul:label value="&serverspane.speed.label;" class="serverlimit-desc-label" />
+							<xul:label value="&serverspane.speed2.label;" class="serverlimit-desc-label" />
 							<xul:label class="serverlimit-speed-label serverlimit-value-label" anonid="speedLabel" />
 						</xul:row>
 						<xul:row>
@@ -195,7 +195,7 @@
 							</xul:radiogroup>
 						</xul:row>
 						<xul:row>
-							<xul:label value="&serverspane.speed.label;" />
+							<xul:label value="&serverspane.speed2.label;" />
 							<xul:radiogroup anonid="speedGroup" orient="horizontal" class="serverlimit-radiogroup">
 								<xul:radio label="&serverspane.unlimited;" value="unlimited" />
 								<xul:radio label="&serverspane.limited;" value="limited" />

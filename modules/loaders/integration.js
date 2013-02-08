@@ -542,10 +542,10 @@ exports.load = function load(window, outerEvent) {
 					_updateInterval = setIntervalOnlyFun(intervalfunc, 150, false);
 				}
 				if (urls.length + images.length) {
-					notifyProgress(getFormattedString('processing', urls.length, images.length));
+					notifyProgress(getFormattedString('processing.label', urls.length, images.length));
 				}
 				else {
-					notifyProgress(getString('preparing'));
+					notifyProgress(getString('preparing.label'));
 				}
 			}), 1750, true);
 
@@ -576,7 +576,7 @@ exports.load = function load(window, outerEvent) {
 
 				log(LOG_DEBUG, "findLinks(): finishing...");
 				if (!urls.length && !images.length) {
-					notifyError(getString('error'), getString('errornolinks'));
+					notifyError(getString('error'), getString('error.nolinks'));
 					return;
 				}
 
@@ -596,7 +596,7 @@ exports.load = function load(window, outerEvent) {
 					}
 					catch (ex) {
 						log(LOG_ERROR, 'findLinks', ex);
-						DTA.saveLinkArray(window, urls, images, getString('errorinformation'));
+						DTA.saveLinkArray(window, urls, images, getString('error.information'));
 					}
 					return;
 				}
@@ -709,7 +709,7 @@ exports.load = function load(window, outerEvent) {
 			}
 			catch (ex) {
 				log(LOG_ERROR, 'saveSingleLink', ex);
-				notifyError(getString('error'), getString('errorinformation'));
+				notifyError(getString('error'), getString('error.information'));
 			}
 		}
 		DTA.saveSingleItem(window, false, item);
@@ -788,7 +788,7 @@ exports.load = function load(window, outerEvent) {
 				}
 				catch (ex) {
 					log(LOG_ERROR, 'findSingleLink', ex);
-					notifyError(getString('error'), getString('errorinformation'));
+					notifyError(getString('error'), getString('error.information'));
 				}
 			}
 			DTA.saveSingleItem(window, false, item);

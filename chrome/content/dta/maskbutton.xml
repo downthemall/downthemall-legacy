@@ -65,7 +65,7 @@
 								<row tag="*text*" desc="&mask.linktext;"/>
 								<row tag="*flattext*" desc="&mask.flatlinktext;"/>
 								<row tag="*title*" desc="&mask.title;"/>
-								<row tag="*flattitle*" desc="&mask.flattitle;"/>
+								<row tag="*flattitle*" desc="&mask.flattitle2;"/>
 							</rows>
 						</grid>
 						<grid flex="1">

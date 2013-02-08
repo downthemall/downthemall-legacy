@@ -253,11 +253,11 @@ const Prefs = {
 					}
 					catch (ex) {
 						log(LOG_ERROR, "Failed to create temp dir", ex);
-						throw new Exception("tempnotaccessible");
+						throw new Exception("temp.notaccessible");
 					}
 				}
 				else if (!tl.isDirectory()) {
-					throw new Exception("tempnotdir");
+					throw new Exception("temp.notdir");
 				}
 				else {
 					// Hacky way to check if directory is indeed writable
@@ -272,7 +272,7 @@ const Prefs = {
 					}
 					catch (ex) {
 						log(LOG_ERROR, "Failed to check temp dir", ex);
-						throw new Exception("tempnotaccessible");
+						throw new Exception("temp.notaccessible");
 					}
 				}
 			}
@@ -289,7 +289,7 @@ const Prefs = {
 					},
 					{
 						accessKey: null,
-						label: _('manualfix'),
+						label: _('manualfix2'),
 						callback: function() DTA.showPreferences('paneAdvanced')
 					}
 				]);

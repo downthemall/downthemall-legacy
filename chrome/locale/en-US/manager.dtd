@@ -14,7 +14,8 @@
 <!ENTITY percent.label "Percent">
 <!ENTITY pct.label "Progress">
 <!ENTITY dim.label "Size">
-<!ENTITY time.label "Est. time">
+<!-- time2.label: Est. == Estimated -->
+<!ENTITY time2.label "Est. Time">
 <!ENTITY parts.label "Segments">
 <!ENTITY speed.label "Speed">
 <!ENTITY infoURLTitle.value "From:">
@@ -27,7 +28,6 @@
 <!ENTITY currentSpeedTitle.value "Current speed:">
 <!ENTITY avgSpeedTitle.value "Average Speed:">
 <!ENTITY path.label "Save path">
-<!ENTITY mask.label "Renaming Mask">
 <!ENTITY hash.label "Checksum">
 
 <!ENTITY infos.label "Download Information">
@@ -53,18 +53,18 @@
 <!ENTITY addlimits.label "Add domain specific limits">
 
 <!ENTITY options.caption "Options">
-<!ENTITY loading.label "Loading...">
+<!ENTITY loading2.label "Loading…">
 
 <!ENTITY restore.label "Restore">
 <!ENTITY close.label "Close">
 
-<!ENTITY invertmatcher.label "Invert column filters">
-<!ENTITY clearmatcher.label "Clear column filters">
+<!ENTITY invertmatcher.label "Invert Column Filters">
+<!ENTITY clearmatcher.label "Clear Column Filters">
 
-<!ENTITY speedlimit.tooltip "Change speed limit. The list is dynamicly updated.">
+<!ENTITY speedlimit2.tooltip "Change the global speed limit. The list is dynamicly updated.">
 
-<!ENTITY perdownloadspeedlimit.label "Speed limit">
-<!ENTITY perdownloadspeedlimit.tooltip "Change speed limit. The global speed limit will be still obeyed.">
+<!ENTITY perdownloadspeedlimit2.label "Speed Limit">
+<!ENTITY perdownloadspeedlimit2.tooltip "Change the download speed limit. The global speed limit will be still obeyed.">
 
 <!ENTITY mirrors.label "Manage Mirrors">
 <!ENTITY mirrors.tooltip "Manage download mirror locations">
@@ -72,5 +72,5 @@
 <!ENTITY toolbar.icons "Use Icons">
 <!ENTITY toolbar.full "Use Icons and Text">
 
-<!ENTITY sortascending.label "Sort by column (ascending)">
-<!ENTITY sortdescending.label "Sort by column (descending)">
+<!ENTITY sortascending.label "Sort A > Z">
+<!ENTITY sortdescending.label "Sort Z > A">

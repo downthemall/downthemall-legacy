@@ -127,7 +127,7 @@
 				<row align="center" pack="center">
 					<image id="dta-icon" class="icon" />
 					<vbox flex="1">
-						<checkbox id="dta-button" label="&dta-regular.label;" />
+						<checkbox id="dta-button" label="&dta-regular2.label;" />
 						<description>&dta-regular.desc;</description>
 					</vbox>
 				</row>
@@ -135,7 +135,7 @@
 				<row align="center" pack="center">
 					<image id="dta-turbo-icon" class="icon" />
 					<vbox flex="1">
-						<checkbox id="dta-turbo-button" label="&dta-regular-turbo.label;" />
+						<checkbox id="dta-turbo-button" label="&dta-regular-turbo2.label;" />
 						<description>&dta-regular-turbo.desc;</description>
 					</vbox>
 				</row>
@@ -143,7 +143,7 @@
 				<row align="center" pack="center">
 					<image id="dta-turboselect-icon" class="icon" />
 					<vbox>
-						<checkbox id="dta-turboselect-button" label="&dta-selector-button;" />
+						<checkbox id="dta-turboselect-button" label="&dta-selector-button2.label;" />
 						<description>&dta-selector-button.desc;</description>
 					</vbox>
 				</row>

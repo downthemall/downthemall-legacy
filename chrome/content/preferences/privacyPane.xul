@@ -1,85 +1,85 @@
 <?xml version="1.0"?>
-<!-- ***** BEGIN LICENSE BLOCK *****
- * Version: GPL 2.0
- *
- * This code is part of DownThemAll! - dTa!
- * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
- *
- * See LICENSE and GPL for details.
- *
- * ***** END LICENSE BLOCK ***** -->
+<!-- ***** BEGIN LICENSE BLOCK ***** * Version: GPL 2.0 * * This code is
+	part of DownThemAll! - dTa! * Copyright © 2004-2006 Federico Parodi and Stefano
+	Verna. * * See LICENSE and GPL for details. * * ***** END LICENSE BLOCK ***** -->
 <!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
-<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" flex="1">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	flex="1">
 
-	<prefpane
-		id="panePrivacy"
-		label="&privacypane.label;"
-		onpaneload="Privacy.load();"
-		orient="vertical"
-	>
+	<prefpane id="panePrivacy" label="&privacypane.label;"
+		onpaneload="Privacy.load();" orient="vertical">
 		<preferences>
-		  <preference id="dtarmcomp" name="extensions.dta.removecompleted" type="bool"/>
-		  <preference id="dtarmcanc" name="extensions.dta.removecanceled" type="bool"/>
-		  <preference id="dtarmabort" name="extensions.dta.removeaborted" type="bool"/>
-		  <preference id="dtadonation" name="extensions.dta.infophrases" type="bool" />
-			<preference id="dtastatistics" name="extensions.dta.statistics" type="bool" />
-		  <preference id="dtadump" name="extensions.dta.logging" type="bool" />
-		  <preference id="dtahistory" name="extensions.dta.history" type="int" />
+			<preference id="dtarmcomp" name="extensions.dta.removecompleted"
+				type="bool" />
+			<preference id="dtarmcanc" name="extensions.dta.removecanceled"
+				type="bool" />
+			<preference id="dtarmabort" name="extensions.dta.removeaborted"
+				type="bool" />
+			<preference id="dtadonation" name="extensions.dta.infophrases"
+				type="bool" />
+			<preference id="dtastatistics" name="extensions.dta.statistics"
+				type="bool" />
+			<preference id="dtadump" name="extensions.dta.logging"
+				type="bool" />
+			<preference id="dtahistory" name="extensions.dta.history"
+				type="int" />
 		</preferences>
 
 		<grid>
-			<columns><column flex="3"/><column flex="1"/></columns>
+			<columns>
+				<column flex="3" />
+				<column flex="1" />
+			</columns>
 			<rows>
 				<row>
 					<groupbox>
 						<caption id="closing" label="&privacypane.closing.caption;" />
-						<checkbox id="removecompleted" label="&privacypane.removecompleted.label;" preference="dtarmcomp" />
-						<checkbox id="removecanceled" label="&privacypane.removecanceled.label;" preference="dtarmcanc" />
-						<checkbox id="removeaborted" label="&privacypane.removeaborted.label;" preference="dtarmabort" />
+						<checkbox id="removecompleted" label="&privacypane.removecompleted2.label;"
+							preference="dtarmcomp" />
+						<checkbox id="removecanceled" label="&privacypane.removecanceled2.label;"
+							preference="dtarmcanc" />
+						<checkbox id="removeaborted" label="&privacypane.removeaborted2.label;"
+							preference="dtarmabort" />
 					</groupbox>
 
 					<groupbox>
-						<caption id="dtaddown" label="&privacypane.dropdowns.caption;"/>
+						<caption id="dtaddown" label="&privacypane.dropdowns.caption;" />
 						<vbox flex="1" align="center">
-							<label value="&privacypane.dropdownresults.label;" flex="1" control="history" />
+							<label value="&privacypane.dropdownresults2.label;" flex="1"
+								control="history" />
 							<hbox>
-								<scale min="0" max="15" id="history" preference-editable="true" onchange="Privacy.changedHistory();"/>
+								<scale min="0" max="15" id="history" preference-editable="true"
+									onchange="Privacy.changedHistory();" />
 								<label id="historylabel" style="min-width: 3em;" />
 							</hbox>
 						</vbox>
 						<vbox>
-							<button id="butFoldDel" label="&privacypane.deletefoldershistory.label;" oncommand="Privacy.delDirectories();" />
-							<button id="butFiltDel" label="&privacypane.deletefiltershistory.label;" oncommand="Privacy.delFilters();" />
+							<button id="butFoldDel" label="&privacypane.deletefoldershistory.label;"
+								oncommand="Privacy.delDirectories();" />
+							<button id="butFiltDel" label="&privacypane.deletefiltershistory.label;"
+								oncommand="Privacy.delFilters();" />
 						</vbox>
 					</groupbox>
 				</row>
 			</rows>
 		</grid>
 		<groupbox orient="horizontal">
-			<caption label="&privacypane.logs.caption;"/>
-			<checkbox label="&privacypane.enablelogs.label;" preference="dtadump"/>
-			<spacer flex="1"/>
-			<button id="butShowLog" label="&privacypane.showlog.label;" oncommand="Privacy.showLog();" />
-			<button id="butRevealLog" label="&privacypane.reveallog.label;" oncommand="Privacy.revealLog();" />
-			<button id="butDelLog" label="&privacypane.deletelog.label;" oncommand="Privacy.deleteLog();" />
+			<caption label="&privacypane.logs.caption;" />
+			<checkbox label="&privacypane.enablelogs.label;" preference="dtadump" />
+			<spacer flex="1" />
+			<button id="butShowLog" label="&privacypane.showlog.label;"
+				oncommand="Privacy.showLog();" />
+			<button id="butRevealLog" label="&privacypane.reveallog.label;"
+				oncommand="Privacy.revealLog();" />
+			<button id="butDelLog" label="&privacypane.deletelog.label;"
+				oncommand="Privacy.deleteLog();" />
 		</groupbox>
 
-		<!-- Does not apply, not in use
 		<groupbox>
-			<caption label="&privacypane.updates.caption;"/>
-			<checkbox id="infoAndDonation"
-				label="&privacypane.information.label;"
-				preference="dtadonation" />
-			<checkbox id="infoAndDonation"
-				label="&privacypane.statistics.label;"
-				preference="dtastatistics" />
-		</groupbox>
-		-->
-
-		<groupbox>
-			<caption label="&privacypane.notice.caption;"/>
-			<description value="&privacypane.notice.desc;"/>
-			<label class="text-link" value="&privacypane.privacynotice.label;" onclick="Privacy.showNotice();"/>
+			<caption label="&privacypane.notice.caption;" />
+			<description value="&privacypane.notice.desc;" />
+			<label class="text-link" value="&privacypane.privacynotice.label;"
+				onclick="Privacy.showNotice();" />
 		</groupbox>
 	</prefpane>
 </overlay>

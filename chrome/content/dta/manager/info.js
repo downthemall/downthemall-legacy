@@ -243,14 +243,14 @@ var Dialog = {
 			return false;
 		}
 		if (!Utils.validateDir(dir)) {
-			alert(_(dir.length ? 'alertinvaliddir' : 'alertnodir'));
+			alert(_(dir.length ? 'alert.invaliddir' : 'alert.nodir'));
 			Utils.askForDir(null, _("validdestination"), function (newDir) {
 				$('directory').value = newDir ? newDir : '';
 			});
 			return false;
 		}
 		if (!$('hash').isValid) {
-			alert(_('alerthash'));
+			alert(_('alert.hash'));
 			return false;
 		}
 		return true;

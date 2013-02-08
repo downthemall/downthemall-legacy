@@ -55,12 +55,12 @@
 				</columns>
 				<rows>
 					<row align="center">
-						<label value="&serverspane.concurrent.label;" control="maxtasks" />
+						<label value="&serverspane.concurrent2.label;" control="maxtasks" />
 						<scale min="1" max="20" id="maxtasks" preference-editable="true" onchange="Servers.changedMaxTasks();" />
 						<label id="maxtaskslabel" style="width: 3em;" />
 					</row>
 					<row align="center">
-						<label value="&serverspane.perserver.label;" control="maxtasksperserver" />
+						<label value="&serverspane.perserver2.label;" control="maxtasksperserver" />
 						<scale min="1" max="10" id="maxtasksperserver" preference-editable="true" onchange="Servers.changedMaxTasksPerServer();" />
 						<label id="maxtasksperserverlabel" style="width: 3em;" />
 					</row>
@@ -68,7 +68,7 @@
 			</grid>
 		</groupbox>
 		<groupbox orient="horizontal" align="center">
-			<caption label="&serverspane.autoretry.caption;" />
+			<caption label="&serverspane.autoretry2.caption;" />
 			<label value="&serverspane.autoretry.interval.label;" />
 			<menulist preference="dtaarinterval">
 				<menupopup>

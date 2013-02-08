@@ -1,4 +1,4 @@
-<!ENTITY windowtitle "File Name Conflict!">
+<!ENTITY window.title "File Conflict!">
 <!ENTITY text.value "Remember this setting:">
 <!ENTITY download.label "Just for this download">
 <!ENTITY session.label "Just for this session">

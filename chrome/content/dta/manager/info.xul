@@ -72,14 +72,14 @@
 							<textbox id="description" />
 						</row>
 						<row align="center">
-							<label control="directory" value="&dest.caption;" />
+							<label control="directory" value="&directory.caption;" />
 							<hbox flex="1">
 								<saveddropdown id="directory" preference="directory" flex="1" />
-								<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" tooltiptext="&browse.tip;" />
+								<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" tooltiptext="&browse.tooltip;" />
 							</hbox>
 						</row>
 						<row align="center">
-							<label control="renaming" value="&mask.label;: " />
+							<label control="renaming" value="&mask2.label;: " />
 							<hbox>
 								<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;" />
 								<maskbutton id="mask" />

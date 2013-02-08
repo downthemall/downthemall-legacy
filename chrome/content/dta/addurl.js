@@ -275,12 +275,9 @@ var Dialog = {
 
 		var rv = batch.length > 1;
 		if (rv) {
-			var message = _(
-				'batchtasks',
-				[batch.length, batch.parts, batch.first, batch.last]
-			);
+			var message = _("batch.tasks") + "\n" + _("batch.tasks.2", [batch.length]) + "\n\n" + _("batch.tasks.3") + "\n" + batch.parts + "\n\n" + batch.first + "\n..\n" + batch.last;
 			if (batch.length > 1000) {
-				message += _('manytasks');
+				message += "\n\n" + _('batch.manytasks');
 			}
 			rv = prompts.confirm(window, _('batchtitle'), message, _('batchdownload'), prompts.CANCEL, _('singledownload'));
 			if (rv == 1) {

@@ -125,7 +125,7 @@ MetalinkInterceptModule.prototype = Object.freeze({
 				}
 				if (!res.downloads.length) {
 					log(LOG_ERROR, "no downloads");
-					throw new Error(_("mlnodownloads"));
+					throw new Error(_("ml.nodownloads"));
 				}
 				let window = Mediator.getMostRecent();
 				window.openDialog(
