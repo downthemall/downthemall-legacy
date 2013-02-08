@@ -516,7 +516,7 @@ const Servers = {
 		while (this._list.firstChild){
 			this._list.removeChild(this._list.firstChild);
 		}
-		for (let limit of this.listLimits()) {
+		for (let [,limit] in Iterator(this.listLimits())) {
 			let e = document.createElement('richlistitem');
 			e.setAttribute('class', 'serverlimit');
 			e.setAttribute('id', "host" + limit.host);
