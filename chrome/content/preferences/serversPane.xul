@@ -107,7 +107,6 @@
 					<label value="&serverpane.limits.noitems;" disabled="true" />
 				</vbox>
 			</stack>
-			<separator class="thin" />
 			<hbox pack="end" align="center">
 				<label value="&serverspane.url.label;" control="spnewurl" />
 				<textbox id="spnewurl" type="autocomplete" autocompletesearch="history" flex="1" oninput="Servers.newInput();" />

@@ -65,18 +65,28 @@ caption {
 	font-weight: bold;
 }
 
+richlistitem:nth-child(even):not([selected="true"]) {
+	background-color: -moz-oddtreerow;
+}
+
+
 richlistitem.serverlimit {
 	-moz-binding: url(chrome://dta/content/preferences/bindings.xml#serverlimit);
 	padding: 6px;
 	padding-left: 1em;
 	padding-right: 1ex;
 }
+
 richlistitem.serverlimit[selected="true"] {
 	-moz-binding: url(chrome://dta/content/preferences/bindings.xml#serverlimit-selected);
 }
 
 richlistitem.serverlimit[editing="true"] {
 	-moz-binding: url(chrome://dta/content/preferences/bindings.xml#serverlimit-editing);
+}
+
+richlistitem.serverlimit row {
+	margin-left: 16px;
 }
 
 .serverlimit-host {
@@ -89,8 +99,8 @@ richlistitem.serverlimit[editing="true"] {
 	font-weight: bold;
 }
 
-.serverlimit-scale-label {
-	width: 6em;
+.serverlimit-buttons {
+	margin-top: 1em;
 }
 
 .serverlimit-radiogroup {
