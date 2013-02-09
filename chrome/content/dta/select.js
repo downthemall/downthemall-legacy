@@ -5,9 +5,20 @@
 const prompts = require("prompts");
 
 /* tree helpers */
+function treeIconCallback(icon, async) {
+	if (this.icon == icon) {
+		return;
+	}
+	this.icon = icon;
+	if (async) {
+		Dialog.current.invalidate(this._tidx);
+	}
+}
 function treeIconGetter() {
 	delete this.icon;
-	return (this.icon = getIcon(this.url.url.spec, 'metalink' in this));
+	this.icon = getIcon(this.url.url, 'metalink' in this);
+	getFavIcon(this.url.url, treeIconCallback, this);
+	return this.icon;
 }
 function treeDescGetter() {
 	delete this.desc;
@@ -24,7 +35,7 @@ function treeResnameGetter() {
 	delete this.resname;
 	return (this.resname = Utils.getUsableFileName(this.url.usable));
 }
-function treeLinksMapper(link) {
+function treeLinksMapper(link, idx) {
 	// "lazy initialize" the icons.
 	// cache them so that we don't have to lookup them again and again.
 	// but do not precompute them, as we don't know if we'll ever display
@@ -39,6 +50,7 @@ function treeLinksMapper(link) {
 	// manuallySelected, or f0-f8
 	link.checked = '';
 	link.mask = null;
+	link._tidx = idx;
 	return link;
 }
 
@@ -64,13 +76,11 @@ Tree.prototype = {
 	},
 
 	// will invalidate the whole box and update the statusbar.
-	invalidate: function() {
+	invalidate: function(idx) {
 		if (this._box) {
 			// invalidate specific cell(s)
-			if (arguments && arguments.length) {
-				for (let i = 0; i < arguments.length; ++i) {
-					this._box.invalidateRow(arguments[i]);
-				}
+			if (idx >= 0) {
+				this._box.invalidateRow(idx);
 			}
 			// invalidate whole box
 			else {
@@ -80,7 +90,11 @@ Tree.prototype = {
 
 		// compute and set the checked count
 		let checked = 0;
-		this._links.forEach(function(e) { if (e.checked.length){++checked;} });
+		for (let e of this._links) {
+			if (e.checked.length) {
+				++checked;
+			}
+		}
 
 		if (checked) {
 			$("status").label = _("selel", [checked, this.rowCount]);
