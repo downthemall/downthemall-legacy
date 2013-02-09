@@ -305,7 +305,7 @@ Chunk.prototype = {
 	},
 	get parent() this._parent,
 	get sessionBytes() this._sessionBytes,
-	merge: function CH_merge(ch) {
+	merge: function(ch) {
 		if (!this.complete && !ch.complete) {
 			throw new Error("Cannot merge incomplete chunks this way!");
 		}
@@ -313,7 +313,7 @@ Chunk.prototype = {
 		this._written += ch._written;
 		this.safeBytes += ch.safeBytes;
 	},
-	openOutStream: function CH_openOutStream(file, at) {
+	openOutStream: function(file, at) {
 		let outStream = new Instances.FileOutputStream(
 			file,
 			0x02 | 0x08,
@@ -326,7 +326,7 @@ Chunk.prototype = {
 		}
 		return outStream;
 	},
-	open: function CH_open() {
+	open: function() {
 		this._sessionBytes = 0;
 		this._canceled = false;
 		let file = this.parent.tmpFile;
@@ -340,7 +340,7 @@ Chunk.prototype = {
 		MemoryReporter.registerChunk(this);
 		this.parent.chunkOpened(this);
 	},
-	close: function CH_close() {
+	close: function() {
 		log(LOG_DEBUG, this + ": chunk closed");
 		this.running = false;
 		if (this._hasCurrentStream) {
@@ -348,7 +348,7 @@ Chunk.prototype = {
 		}
 		this._shipEOFStream();
 	},
-	_finish: function CH__finish() {
+	_finish: function() {
 		let notifyOwner = false;
 		if (this._outStream) {
 			delete this._outStream;
@@ -369,8 +369,8 @@ Chunk.prototype = {
 			this.parent.chunkClosed(this);
 		}
 	},
-	onStartRequest: function CH_onStartRequest(aRequest, aContext) {},
-	onStopRequest: function CH_onStopRequest(aRequest, aContext, aStatusCode) {
+	onStartRequest: function(aRequest, aContext) {},
+	onStopRequest: function(aRequest, aContext, aStatusCode) {
 		if (!(aRequest instanceof Ci.nsIAsyncStreamCopier)) {
 			log(LOG_ERROR, "Not a copier", aRequest);
 			throw new Exception("Not a copier");
@@ -406,14 +406,14 @@ Chunk.prototype = {
 			this._finish();
 		}
 	},
-	rollback: function CH_rollback() {
+	rollback: function() {
 		if (!this._sessionBytes || this._sessionBytes > this._written) {
 			return;
 		}
 		this._written -= this._sessionBytes;
 		this._sessionBytes = 0;
 	},
-	cancelChunk: function CH_cancel() {
+	cancelChunk: function() {
 		this.running = false;
 		this._canceled = true;
 		for (let c of this._copiers) {
@@ -440,7 +440,7 @@ Chunk.prototype = {
 			this.download.cancel();
 		}
 	},
-	pauseChunk: function CH_pause() {
+	pauseChunk: function() {
 		this.running = false;
 		this.close();
 		if (this.download) {
@@ -449,14 +449,14 @@ Chunk.prototype = {
 	},
 	_written: 0,
 	_outStream: null,
-	_noteBytesWritten: function CH_noteBytesWritten(bytes) {
+	_noteBytesWritten: function(bytes) {
 		this._written += bytes;
 		this._sessionBytes += bytes;
 		MemoryReporter.noteBytesWritten(bytes);
 
 		this.parent.timeLastProgress = getTimestamp();
 	},
-	write: function CH_write(aRequest, aInputStream, aCount) {
+	write: function(aRequest, aInputStream, aCount) {
 		try {
 			// not running: do not write anything
 			if (!this.running) {
@@ -528,7 +528,7 @@ Chunk.prototype = {
 		}
 		return 0;
 	},
-	_ensureStream: function CH__ensureStream(solid) {
+	_ensureStream: function(solid) {
 		if (!this._hasCurrentStream) {
 			let pipe;
 			this.buffer_size = buffer_size;
@@ -543,7 +543,7 @@ Chunk.prototype = {
 		}
 	},
 	get _hasCurrentStream() !!this._currentInputStream,
-	_shipCurrentStream: function CH__shipCurrentStream() {
+	_shipCurrentStream: function() {
 		let is = this._currentInputStream;
 		let os = this._currentOutputStream;
 		delete this._currentInputStream;
@@ -604,7 +604,7 @@ Chunk.prototype = {
 	observe: function() {
 		this.run();
 	},
-	requestBytes: function CH_requestBytes(requested) {
+	requestBytes: function(requested) {
 		if (Observer.memoryPressure || MemoryReporter.pendingBytes > MAX_PENDING_SIZE) {
 			log(LOG_INFO, "Under pressure: " + MemoryReporter.pendingBytes + " : " + Observer.memoryPressure);
 			// basically stop processing while under memory pressure
@@ -613,7 +613,7 @@ Chunk.prototype = {
 		}
 		return this.buckets.requestBytes(requested);
 	},
-	run: function CH_run() {
+	run: function() {
 		if (!this._req) {
 			return;
 		}
@@ -645,7 +645,7 @@ Chunk.prototype = {
 		req.resume();
 		this.parent.timeLastProgress = getTimestamp();
 	},
-	toString: function CH_toString() {
+	toString: function() {
 		let len = this.parent.totalSize ? String(this.parent.totalSize).length  : 10;
 		return formatNumber(this.start, len)
 			+ "/"
