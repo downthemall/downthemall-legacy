@@ -418,13 +418,14 @@ Chunk.prototype = {
 		this._canceled = true;
 		for (let c of this._copiers) {
 			try {
-				c.cancel(Cr.NS_ERROR_ABORT);
+				c.copier.cancel(Cr.NS_ERROR_ABORT);
 			}
 			catch (ex) {
 				Cu.reportError(ex);
 				// don't care just now ;)
 			}
 		}
+		this._copiers.length = 0;
 
 		// prevent shipping the current stream
 		if (this._hasCurrentStream) {
