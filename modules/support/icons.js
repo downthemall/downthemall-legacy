@@ -7,37 +7,85 @@ const {URL} = require("api");
 const {memoize} = require("support/memoize");
 const {getExtension, toURL} = require("support/stringfuncs");
 
-lazy(this, "getFavIcon", function() {
-	try {
-		const fs = Services.favicons;
-		const RE_HTML = /\/$|html?$|aspx?$|php\d?$|py$|\/[^.]*$/i;
-		const gfi = function getFavIconInternal(url) fs.getFaviconImageForPage(url);
-		const gfim = memoize(gfi, 200);
-		const defaultFavicon = fs.defaultFavicon;
+const favCache = new LRUMap(200);
 
-		return function getFavIcon(url) {
-			try {
-				if (RE_HTML.test(url.filePath)) {
-					let icon = gfi(url);
-					if (defaultFavicon.equals(icon)) {
-						let host = url.clone();
-						host.path = "";
-						return gfim(host).spec;
+if ("mozIAsyncFavicons" in Ci && Services.favicons instanceof Ci.mozIAsyncFavicons) {
+	let fis = Services.favicons;
+	exports.getFavIcon = function getFavIcon(uri, callback, tp) {
+		const spec = uri.spec;
+		if (favCache.has(spec)) {
+			callback.call(tp, favCache.get(spec), false);
+			return;
+		}
+		const ficb = function(aFavURI) {
+			if (!aFavURI) {
+				log(LOG_DEBUG, "getFavIconAsync: failed " + spec + " " + uri.spec);
+				if (uri.path !== "/") {
+					uri = uri.clone();
+					uri.path = "/";
+					let hostSpec = uri.spec;
+					if (favCache.has(hostSpec)) {
+						let rv = favCache.get(hostSpec);
+						callback.call(tp, rv, true);
+						return;
 					}
-					return icon.spec;
+					log(LOG_DEBUG, "getFavIconAsync: reattempting " + spec + " " + uri.spec);
+					fis.getFaviconURLForPage(uri, ficb);
+					return;
 				}
+				log(LOG_DEBUG, "getFavIconAsync: perm failed " + spec);
+				let rv = getIcon(spec);
+				callback.call(tp, rv, true);
+				return;
 			}
-			catch (ex) {
-				// nop op
+			let rv = fis.getFaviconLinkForIcon(aFavURI).spec;
+			if (uri.path !== "/") {
+				favCache.set(uri.spec, rv);
 			}
-			return null;
+			callback.call(tp, rv, true);
 		};
+		fis.getFaviconURLForPage(uri, ficb);
 	}
-	catch (ex) {
-		log(LOG_INFO, "FavIcon Service not available", ex);
-		return function getFavIconStub() null;
+}
+else if ("nsIFaviconService" in Ci) {
+	let fis = Services.favicons;
+	let defIcon = fis.defaultFavicon;
+	exports.getFavIcon = function getFavIcon(uri, callback, tp) {
+		const spec = uri.spec;
+		if (favCache.has(spec)) {
+			callback.call(tp, favCache.get(spec), false);
+			return;
+		}
+		let fi = fis.getFaviconImageForPage(uri);
+		if (!fi || fi.equals(defIcon)) {
+			uri = uri.clone();
+			uri.path = "";
+			if (favCache.has(uri.spec)) {
+				callback.call(tp, favCache.get(uri.spec));
+				return;
+			}
+			fi = fis.getFaviconImageForPage(uri);
+			if (fi && fi.equals(defIcon)) {
+				fi = null;
+			}
+			if (fi) {
+				favCache.set(uri.spec, fi.spec);
+			}
+		}
+		if (fi) {
+			fi = fi.spec;
+		}
+		else {
+			fi = getIcon(spec);
+		}
+		callback.call(tp, fi, false);
 	}
-});
+}
+else {
+	exports.getFavIcon = function(uri, callback, tp) {
+		callback.call(tp, getIcon(uri), false);
+	}
+}
 
 /**
  * Get the icon URI corresponding to an URI (special mac handling)
@@ -65,26 +113,13 @@ const getIcon = exports.getIcon = function getIcon(link, metalink, size) {
 	try {
 		let url = link;
 		if (link instanceof URL) {
-			url = link.url;
+			url = link.url.spec;
 		}
 		else if (link instanceof Ci.nsIURI) {
-			url = link.QueryInterface(Ci.nsIURL);
+			url = link.spec;
 		}
 		else if (link && link.url) {
-			url = link.url;
-		}
-		if (typeof url == 'string' || url instanceof String) {
-			try {
-				url = toURL(url);
-			}
-			catch (ex) { /* no op */ }
-		}
-		if (url && url instanceof Ci.nsIURL) {
-			let icon = getFavIcon(url);
-			if (icon) {
-				return icon;
-			}
-			url = url.spec;
+			url = link.url.spec;
 		}
 		let ext = getExtension(url);
 		return "moz-icon://file" + (ext ? '.' + ext : '') + "?size=" + size;

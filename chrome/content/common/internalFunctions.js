@@ -34,10 +34,24 @@ requireJoined(DTA, "api");
 function openUrl(url, ref) Mediator.openUrl(window, url, ref);
 
 
-const {getIcon:getIcon, getLargeIcon:_getLargeIcon} = require("support/icons");
+const {
+	getIcon: getIcon,
+	getLargeIcon: _getLargeIcon,
+	getFavIcon: _getFavIcon
+} = require("support/icons");
 const getLargeIcon = (function() {
 	const hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
 	return function getLargeIcon(f,ml) _getLargeIcon(f,ml, hidpi);
+})();
+const getFavIcon = (function() {
+	const RE_HTML = /html?$|aspx?$|php\d?$|py$|\/[^.]*$/i;
+	return function getFavIcon(uri, cb, tp) {
+		if (!RE_HTML.test(uri.path)) {
+			cb.call(tp, getIcon(uri), false);
+			return;
+		}
+		_getFavIcon(uri, cb, tp);
+	}
 })();
 
 /**
