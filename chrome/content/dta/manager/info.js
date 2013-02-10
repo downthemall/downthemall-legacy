@@ -159,6 +159,7 @@ var Dialog = {
 			if (newRef) {
 				try {
 					d.referrer.spec = newRef;
+					delete d._referrerUrlManager;
 				}
 				catch (ex) {
 					log(LOG_ERROR, "failed to set referrer to", newRef);

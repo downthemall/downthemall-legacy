@@ -1370,6 +1370,29 @@ QueueItem.prototype = {
 		}
 		return this._fileNameAndExtension;
 	},
+	get referrerUrlManager() {
+		if (this.referrer && !this._referrerUrlManager) {
+			this._referrerUrlManager = new UrlManager([this.referrer]);
+		}
+		return this._referrerUrlManager;
+	},
+	get referrerFileNameAndExtension() {
+		if (!this.referrerUrlManager) {
+			return null;
+		}
+		if (!this._referrerFileNameAndExtension) {
+			let name = Utils.getUsableFileName(this.referrerUrlManager.usable);
+			let ext = Utils.getExtension(name);
+			if (ext) {
+				name = name.substring(0, name.length - ext.length - 1);
+			}
+			else {
+				ext = '';
+			}
+			this._referrerFileNameAndExtension = {name: name, extension: ext};
+		}
+		return this._referrerFileNameAndExtension;
+	},
 	_description: null,
 	get description() {
 		return this._description;
@@ -1987,6 +2010,9 @@ QueueItem.prototype = {
 	get maskURL() this.urlManager.usableURL,
 	get maskURLPath() this.urlManager.usableURLPath,
 	get maskCURL() this.maskURL.host + ((this.maskURLPath == "") ? "" : (Utils.SYSTEMSLASH + this.maskURLPath)),
+	get maskReferrerURL() this.referrerUrlManager.usableURL,
+	get maskReferrerURLPath() this.referrerUrlManager.usableURLPath,
+	get maskReferrerCURL() this.maskReferrerURL.host + ((this.maskReferrerURLPath == "") ? "" : (Utils.SYSTEMSLASH + this.maskReferrerURLPath)),
 	rebuildDestination: function QI_rebuildDestination() {
 		try {
 			let mask = Utils.removeFinalSlash(Utils.normalizeSlashes(Utils.removeFinalChar(
