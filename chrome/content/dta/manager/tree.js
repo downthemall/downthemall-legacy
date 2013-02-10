@@ -1188,9 +1188,8 @@ const Tree = {
 
 			for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
 				let item = this._refreshTools_item[i];
-				let v = item.f(states) ? "false" : "true";
-				log(LOG_DEBUG, item.item.id + " " + v);
-				item.item.setAttribute("disabled", v);
+				let disabled = item.f(states) ? "false" : "true";
+				item.item.setAttribute("disabled", disabled);
 			}
 			for (let i = 0, e = this._refreshTools_items.length; i < e; ++i) {
 				let items = this._refreshTools_items[i];
