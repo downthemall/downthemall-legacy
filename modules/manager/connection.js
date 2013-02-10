@@ -974,6 +974,13 @@ Connection.prototype = {
 		d.refreshPartialSize();
 		--d.activeChunks;
 
+		// If automatic creation of new chunks is disabled we reduce maxChunks for
+		// every complete chunk so that no new chunk is generated.
+		// Manual addidition of new chunks is not affected by this.
+		if (!Preferences.getExt('autosegments', true) && d.maxChunks > 1) {
+			--d.maxChunks
+		}
+
 		// check if we're complete now
 		const isRunning = d.state == RUNNING;
 		if (isRunning && d.chunks.every(function(e) { return e.complete; })) {

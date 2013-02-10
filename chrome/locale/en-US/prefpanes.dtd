@@ -85,6 +85,7 @@
 <!ENTITY advancedpane.files.caption "Files">
 <!ENTITY advancedpane.chunks2.label "Number of segments per download:">
 <!ENTITY advancedpane.chunksdisabled "Disabled">
+<!ENTITY advancedpane.autosegments.label "Start a new segment after a previous segment finishes">
 <!ENTITY advancedpane.timeout2.label "Download timeout after">
 <!ENTITY advancedpane.seconds "Seconds">
 <!ENTITY advancedpane.minute "Minute">

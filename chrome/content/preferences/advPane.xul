@@ -25,6 +25,7 @@
 			<preference id="dtarememberoneclick" name="extensions.dta.rememberoneclick" type="bool" />
 			<preference id="dtaconfirmremove" name="extensions.dta.confirmremove" type="bool" />
 			<preference id="dtasparsefiles" name="extensions.dta.sparsefiles" type="bool" />
+			<preference id="dtaautosegments" name="extensions.dta.autosegments" type="bool" />
 		</preferences>
 
 		<tabbox>
@@ -48,6 +49,7 @@
 									<label id="maxchunkslabel" style="min-width: 6em;" />
 								</hbox>
 							</row>
+							<checkbox label="&advancedpane.autosegments.label;" preference="dtaautosegments" />
 							<row align="center">
 								<label value="&advancedpane.timeout2.label;" />
 								<hbox align="center">
