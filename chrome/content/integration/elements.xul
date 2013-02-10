@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
-	 - License, v. 2.0. If a copy of the MPL was not distributed with this
-	 - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+	- License, v. 2.0. If a copy of the MPL was not distributed with this
+	- file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
 <!-- avoid flickering while the main stylesheet loads -->
 <?xml-stylesheet href="data:text/css, .dta-toolbarbutton { list-style-image: none; }" type="text/css"?>
@@ -29,42 +29,72 @@
 	</menupopup>
 
 	<!-- Integration -->
+
+	<commandset id="mainCommandSet">
+		<command id="dta:regular"/>
+		<command id="dta:regular-all"/>
+		<command id="dta:regular-sel"/>
+		<command id="dta:regular-link"/>
+		<command id="dta:regular-img"/>
+		<command id="dta:regular-video"/>
+		<command id="dta:regular-audio"/>
+		<command id="dta:regular-form"/>
+		<command id="dta:regular-sniff"/>
+
+		<command id="dta:turbo"/>
+		<command id="dta:turbo-all"/>
+		<command id="dta:turbo-sel"/>
+		<command id="dta:turbo-link"/>
+		<command id="dta:turbo-img"/>
+		<command id="dta:turbo-video"/>
+		<command id="dta:turbo-audio"/>
+		<command id="dta:turbo-form"/>
+		<command id="dta:turbo-sniff"/>
+
+		<command id="dta:turboselect"/>
+		<command id="dta:manager"/>
+		<command id="dta:prefs"/>
+		<command id="dta:tbinstall"/>
+		<command id="dta:about"/>
+	</commandset>
+
+
 	<menu id="dtaCtxCompact" label="DownThemAll!" class="menu-iconic dta-menuitem dta-normal">
 		<menupopup id="dtaCtxSubmenu">
 			<menuseparator class="thin" id="dtaCtxSepFront" />
-			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxDTA" accesskey="n" label="&dta-regular2.label;" />
-			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxTDTA" accesskey="o" label="&dta-regular-turbo2.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxDTA" accesskey="n" label="&dta-regular2.label;" command="dta:regular" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxTDTA" accesskey="o" label="&dta-regular-turbo2.label;" command="dta:turbo" />
 
-			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxDTASel" accesskey="n" label="&dta-selection2.label;" />
-			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxTDTASel" accesskey="o" label="&dta-selection-turbo2.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxDTASel" accesskey="n" label="&dta-selection2.label;" command="dta:regular-sel"/>
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxTDTASel" accesskey="o" label="&dta-selection-turbo2.label;" command="dta:turbo-sel"/>
 
-			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveLink" accesskey="n" label="&dta-link-save2.label;" />
-			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveLinkT" accesskey="o" label="&dta-link-save-turbo2.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveLink" accesskey="n" label="&dta-link-save2.label;" command="dta:regular-link"/>
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveLinkT" accesskey="o" label="&dta-link-save-turbo2.label;" command="dta:turbo-link"/>
 
-			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveImg" label="&dta-img-save2.label;" />
-			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveImgT" label="&dta-img-save-turbo2.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveImg" label="&dta-img-save2.label;" command="dta:regular-img"/>
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveImgT" label="&dta-img-save-turbo2.label;" command="dta-turbo-img"/>
 
-			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveVideo" label="&dta-video-save2.label;" />
-			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveVideoT" label="&dta-video-save-turbo2.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveVideo" label="&dta-video-save2.label;" command="dta:regular-video"/>
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveVideoT" label="&dta-video-save-turbo2.label;" command="dta:turbo-video"/>
 
-			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveAudio" label="&dta-audio-save2.label;" />
-			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveAudioT" label="&dta-audio-save-turbo2.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveAudio" label="&dta-audio-save2.label;" command="dta:regular-audio"/>
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveAudioT" label="&dta-audio-save-turbo2.label;" command="dta:turbo-audio"/>
 
-			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveForm" label="&dta-form-save2.label;" />
-			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveFormT" label="&dta-form-save-turbo2.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveForm" label="&dta-form-save2.label;" command="dta:regular-form"/>
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveFormT" label="&dta-form-save-turbo2.label;" command="dta:turbo-form"/>
 
 			<menuseparator class="thin" id="dtaCtxSepPref" />
-			<menuitem class="menuitem-iconic dta-menuitem dta-prefs" id="dtaCtxPref" label="&dta-pref.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-prefs" id="dtaCtxPref" label="&dta-pref.label;" command="dta:prefs"/>
 			<menuseparator class="thin" id="dtaCtxSepBack" />
 		</menupopup>
 	</menu>
 
-	<toolbarbutton id="dta-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-regular2.label;" tooltiptext="&dta-regular.desc;" type="menu-button">
+	<toolbarbutton id="dta-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-regular2.label;" tooltiptext="&dta-regular.desc;" type="menu-button" command="dta:regular">
 		<menupopup  id="dta-button-popup">
-			<menuitem id="dta-tb-dta" label="DownThemAll! (&dta-tb-single.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular2.label;" />
-			<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular2.label;" />
+			<menuitem id="dta-tb-dta" label="DownThemAll! (&dta-tb-single.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular2.label;" command="dta:regular"/>
+			<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular2.label;" command="dta:regular-all"/>
 			<menuseparator />
-			<menuitem id="dta-tb-manager" label="&dta-manager-button;" class="menuitem-iconic dta-menuitem dta-manager" tooltiptext="&dta-manager-button;" />
+			<menuitem id="dta-tb-manager" label="&dta-manager-button;" class="menuitem-iconic dta-menuitem dta-manager" tooltiptext="&dta-manager-button;" command="dta:manager" />
 		</menupopup>
 	</toolbarbutton>
 
@@ -72,25 +102,42 @@
 		<image id="downthemall-notification-icon" class="notification-anchor-icon" role="button" />
 	</box>
 
-	<toolbarbutton id="dta-turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-regular-turbo2.label;" tooltiptext="&dta-regular-turbo.desc;" type="menu-button">
+	<toolbarbutton id="dta-turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-regular-turbo2.label;" tooltiptext="&dta-regular-turbo.desc;" type="menu-button" command="dta:turbo">
 		<menupopup id="dta-turbo-button-popup">
-			<menuitem id="dta-tb-turbo" label="dTa OneClick! (&dta-tb-single.label;)" tooltiptext="&dta-regular-turbo2.label;" class="menuitem-iconic dta-menuitem dta-turbo" />
-			<menuitem id="dta-tb-allturbo" label="dTa OneClick! (&dta-tb-all.label;)" tooltiptext="&dta-regular-turbo2.label;" class="menuitem-iconic dta-menuitem dta-turbo" />
+			<menuitem id="dta-tb-turbo" label="dTa OneClick! (&dta-tb-single.label;)" tooltiptext="&dta-regular-turbo2.label;" class="menuitem-iconic dta-menuitem dta-turbo" command="dta:turbo"/>
+			<menuitem id="dta-tb-allturbo" label="dTa OneClick! (&dta-tb-all.label;)" tooltiptext="&dta-regular-turbo2.label;" class="menuitem-iconic dta-menuitem dta-turbo" command="dta:turbo-all"/>
+			<menuseparator />
+			<menuitem id="dta-tb-manager2" label="&dta-manager-button;" class="menuitem-iconic dta-menuitem dta-manager" tooltiptext="&dta-manager-button;" command="dta:manager" />
 		</menupopup>
 	</toolbarbutton>
 
-	<toolbarbutton id="dta-turboselect-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-selector-button2.label;" tooltiptext="&dta-selector-button.desc;" type="checkbox" />
-	<toolbarbutton id="dta-manager-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-manager-button;" tooltiptext="&dta-manager-button;" />
+	<toolbarbutton id="dta-turboselect-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-selector-button2.label;" tooltiptext="&dta-selector-button.desc;" type="checkbox" command="dta:turboselect" />
+	<toolbarbutton id="dta-manager-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-manager-button;" tooltiptext="&dta-manager-button;" command="dta:manager"/>
 
-	<menu id="dtaToolsMenu" label="DownThemAll" class="menu-iconic dta-menuitem dta-normal">
+	<menu id="dtaToolsMenu" label="DownThemAll!" class="menu-iconic dta-menuitem dta-normal">
 		<menupopup id="dtaToolsPopup">
-			<menuitem id="dtaToolsDTA" label="&dta-regular2.label;" class="menuitem-iconic dta-menuitem dta-normal" />
-			<menuitem id="dtaToolsTDTA" label="&dta-regular-turbo2.label;" class="menuitem-iconic dta-menuitem dta-turbo" />
-			<menuitem id="dtaToolsManager" label="&dta-manager-button;" class="menuitem-iconic dta-menuitem dta-manager" />
+			<menuitem id="dtaToolsDTA" label="&dta-regular2.label;" class="menuitem-iconic dta-menuitem dta-normal" command="dta:regular"/>
+			<menuitem id="dtaToolsTDTA" label="&dta-regular-turbo2.label;" class="menuitem-iconic dta-menuitem dta-turbo" command="dta:turbo"/>
+			<menuitem id="dtaToolsManager" label="&dta-manager-button;" class="menuitem-iconic dta-menuitem dta-manager" command="dta:manager"/>
 			<menuseparator id="dtaToolsSep" />
-			<menuitem id="dtaToolsTBInstall" label="&dta-tbinstall;" class="" />
-			<menuitem id="dtaToolsPrefs" label="&dta-pref.label;" class="menuitem-iconic dta-menuitem dta-prefs" />
-			<menuitem id="dtaToolsAbout" label="&dta-about2.label;" class="menuitem-iconic dta-menuitem dta-about" />
+			<menuitem id="dtaToolsTBInstall" label="&dta-tbinstall;" class="" command="dta:tbinstall"/>
+			<menuitem id="dtaToolsPrefs" label="&dta-pref.label;" class="menuitem-iconic dta-menuitem dta-prefs" command="dta:prefs"/>
+			<menuitem id="dtaToolsAbout" label="&dta-about2.label;" class="menuitem-iconic dta-menuitem dta-about" command="dta:about"/>
 		</menupopup>
 	</menu>
+
+	<vbox id="appmenuSecondaryPane">
+		<menu id="dtaAppMenu" label="DownThemAll!" class="menu-iconic dta-menuitem dta-normal" insertafter="appmenu_downloads">
+			<menupopup id="dtaAppMenuPopup">
+				<menuitem id="dtaAppMenuDTA" label="&dta-regular2.label;" class="menuitem-iconic dta-menuitem dta-normal" command="dta:regular"/>
+				<menuitem id="dtaAppMenuTDTA" label="&dta-regular-turbo2.label;" class="menuitem-iconic dta-menuitem dta-turbo" command="dta:turbo"/>
+				<menuitem id="dtaAppMenuManager" label="&dta-manager-button;" class="menuitem-iconic dta-menuitem dta-manager" command="dta:manager"/>
+				<menuseparator id="dtaAppMenuSep" />
+				<menuitem id="dtaAppMenuTBInstall" label="&dta-tbinstall;" class="" command="dta:tbinstall"/>
+				<menuitem id="dtaAppMenuPrefs" label="&dta-pref.label;" class="menuitem-iconic dta-menuitem dta-prefs" command="dta:prefs"/>
+				<menuitem id="dtaAppMenuAbout" label="&dta-about2.label;" class="menuitem-iconic dta-menuitem dta-about" command="dta:about"/>
+			</menupopup>
+		</menu>
+	</vbox>
+
 </overlay>

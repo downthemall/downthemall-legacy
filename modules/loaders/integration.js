@@ -680,6 +680,13 @@ exports.load = function load(window, outerEvent) {
 		_findSingleMedia(turbo, 'audio');
 	}
 
+	function findSniff(event, turbo) {
+		const target = event.explicitOriginalTarget;
+		if (target.classList.contains("dta-sniff-element") && target.info) {
+			DTA.saveSingleItem(window, turbo, target.info);
+		}
+	}
+
 	function saveSingleLink(turbo, url, elem) {
 		const owner = elem.ownerDocument;
 		url = Services.io.newURI(url, owner.characterSet, null);
@@ -988,10 +995,6 @@ exports.load = function load(window, outerEvent) {
 					toolsBase.parentNode.insertBefore(cur, toolsBase);
 				}
 			}
-
-			// show Add toolbar buttons if there are no buttons
-			$('dtaToolsTBInstall').hidden = ['dta-button', 'dta-turbo-button', 'dta-turboselect-button', 'dta-manager-button']
-				.some(function(b) !!$(b));
 		}
 		catch(ex) {
 			log(LOG_ERROR, "DTATools(): ", ex);
@@ -1017,6 +1020,7 @@ exports.load = function load(window, outerEvent) {
 		menu.appendChild(sep);
 
 		let ref = DTA.getRef(win.document);
+		let cmd = menu.parentNode.getAttribute("command") + "-sniff";
 		for (let s of sniffed) {
 			let o = {
 				"url": new DTA.URL(s.url),
@@ -1029,19 +1033,20 @@ exports.load = function load(window, outerEvent) {
 			mi.setAttribute("label", strfn.cropCenter(s.name, 60));
 			mi.setAttribute("tooltiptext", s.url.spec);
 			mi.setAttribute("image", getIcon(s.name));
+			mi.setAttribute("command", cmd);
 			mi.info = o;
 			mi.className = "dta-sniff-element menuitem-iconic";
 			menu.appendChild(mi);
 		}
 	}
 
-	function attachOneClick(evt) {
+	function attachOneClick() {
 		if (!!_selector) {
 			return;
 		}
 		_selector = new Selector();
 	}
-	function detachOneClick(evt) {
+	function detachOneClick() {
 		if (!_selector) {
 			return;
 		}
@@ -1110,7 +1115,7 @@ exports.load = function load(window, outerEvent) {
 		detachOneClick();
 	}
 
-	function toggleOneClick(evt) {
+	function toggleOneClick() {
 		if (selectButton().checked) {
 			attachOneClick(evt);
 		}
@@ -1450,17 +1455,13 @@ exports.load = function load(window, outerEvent) {
 		return rv.length == 1 ? rv[0] : rv;
 	}
 
-	(function initMenus(evt) {
+	(function initMenusAndCommands(evt) {
 		function bindEvt(evt, fn) {
 			return function (e) {
 				e.addEventListener(evt, fn, true);
 				unloadWindow(window, function() e.removeEventListener(evt, fn, true));
 			}
 		}
-		function bindCtxEvt(ctx, evt, fn) {
-			$(ctx, ctx + "-direct").forEach(bindEvt(evt, fn));
-		}
-
 
 		try {
 			let cont = $('dtaCtxSubmenu');
@@ -1479,41 +1480,34 @@ exports.load = function load(window, outerEvent) {
 				tools[e] = $('dtaTools' + e);
 			}
 
+			let f = bindEvt("command", function() findLinks(false));
+			f($("dta:regular"));
+			f($("dta:regular-sel"));
+			bindEvt("command", function() findLinks(false, true))($("dta:regular-all"));
+			bindEvt("command", function() findSingleLink(false))($("dta:regular-link"));
+			bindEvt("command", function() findSingleImg(false))($("dta:regular-img"));
+			bindEvt("command", function() findSingleVideo(false))($("dta:regular-video"));
+			bindEvt("command", function() findSingleAudio(false))($("dta:regular-audio"));
+			bindEvt("command", function() findSingleForm(false))($("dta:regular-form"));
+			bindEvt("command", function(e) findSniff(e, false))($("dta:regular-sniff"));
 
-			$(
-				'dtaCtxDTA',
-				'dtaCtxDTA-direct',
-				'dtaCtxDTASel',
-				'dtaCtxDTASel-direct',
-				'dtaToolsDTA'
-			).forEach(bindEvt('command', function() findLinks(false)));
-			$(
-				'dtaCtxTDTA',
-				'dtaCtxTDTA-direct',
-				'dtaCtxTDTASel',
-				'dtaCtxTDTASel-direct',
-				'dtaToolsTDTA'
-			).forEach(bindEvt('command', function() findLinks(true)));
+			f = bindEvt("command", function() findLinks(true));
+			f($("dta:turbo"));
+			f($("dta:turbo-sel"));
+			bindEvt("command", function() findLinks(true, true))($("dta:turbo-all"));
+			bindEvt("command", function() findSingleLink(true))($("dta:turbo-link"));
+			bindEvt("command", function() findSingleImg(true))($("dta:turbo-img"));
+			bindEvt("command", function() findSingleVideo(true))($("dta:turbo-video"));
+			bindEvt("command", function() findSingleAudio(true))($("dta:turbo-audio"));
+			bindEvt("command", function() findSingleForm(true))($("dta:turbo-form"));
+			bindEvt("command", function(e) findSniff(e, true))($("dta:turbo-sniff"));
 
-			bindEvt("command", function() DTA.openManager(window))($('dtaToolsManager'));
+			bindEvt("command", function() toggleOneClick())($("dta:turboselect"));
+			bindEvt("command", function() DTA.openManager(window))($("dta:manager"));
+			bindEvt("command", function() Mediator.showPreferences(window))($("dta:prefs"));
+			bindEvt("command", function() Mediator.showToolbarInstall(window))($("dta:tbinstall"));
+			bindEvt("command", function() Mediator.showAbout(window))($("dta:about"));
 
-			bindCtxEvt('dtaCtxSaveLink', 'command', function() findSingleLink(false));
-			bindCtxEvt('dtaCtxSaveLinkT', 'command', function() findSingleLink(true));
-			bindCtxEvt('dtaCtxSaveImg', 'command', function() findSingleImg(false));
-			bindCtxEvt('dtaCtxSaveImgT', 'command', function() findSingleImg(true));
-			bindCtxEvt('dtaCtxSaveVideo', 'command', function() findSingleVideo(false));
-			bindCtxEvt('dtaCtxSaveVideoT', 'command', function() findSingleVideo(true));
-			bindCtxEvt('dtaCtxSaveAudio', 'command', function() findSingleAudio(false));
-			bindCtxEvt('dtaCtxSaveAudioT', 'command', function() findSingleAudio(true));
-			bindCtxEvt('dtaCtxSaveForm', 'command', function() findForm(false));
-			bindCtxEvt('dtaCtxSaveFormT', 'command', function() findForm(true));
-
-			$('dtaCtxPref', 'dtaCtxPref-direct', 'dtaToolsPrefs').forEach(
-				bindEvt('command', function() Mediator.showPreferences(window))
-			);
-
-			bindEvt("command", function() Mediator.showAbout(window))($('dtaToolsAbout'));
-			bindEvt("command", function() Mediator.showToolbarInstall(window))($('dtaToolsTBInstall'));
 			bindEvt("popupshowing", onContextShowing)(ctx);
 			bindEvt("popupshowing", onToolsShowing)(menu);
 		}
@@ -1556,51 +1550,7 @@ exports.load = function load(window, outerEvent) {
 
 	try {
 		(function() {
-			function dta_button_command(event) {
-				const target = event.target;
-				switch (target.id) {
-				case 'dta-button':
-				case 'dta-tb-dta':
-					findLinks();
-					break;
-				case 'dta-tb-all':
-					findLinks(false, true);
-					break;
-				case 'dta-tb-manager':
-					DTA.openManager(window);
-					break;
-				default:
-					if (target.classList.contains("dta-sniff-element") && target.info) {
-						DTA.saveSingleItem(window, false, target.info);
-					}
-					break;
-					}
-			}
-
-			function dta_turbo_button_command(event) {
-				const target = event.target;
-				switch (target.id) {
-				case 'dta-turbo-button':
-				case 'dta-tb-turbo':
-					findLinks(true);
-					break;
-				case 'dta-tb-allturbo':
-					findLinks(true, true);
-					break;
-				default:
-					if (target.classList.contains("dta-sniff-element") && target.info) {
-						DTA.saveSingleItem(window, true, target.info);
-					}
-					break;
-				}
-			}
-
-			function dta_turboselect_button_command(event) { toggleOneClick(event); }
-			function dta_manager_button_command() DTA.openManager(window);
-
 			let dta_button = $t('dta-button');
-			dta_button.addEventListener('command', dta_button_command, true);
-			unloadWindow(window, function() dta_button.removeEventListener('command', dta_button_command, true));
 			dta_button.addEventListener('popupshowing', onDTAShowing, true);
 			unloadWindow(window, function() dta_button.removeEventListener('popupshowing', onDTAShowing, true));
 
@@ -1614,8 +1564,6 @@ exports.load = function load(window, outerEvent) {
 			});
 
 			let dta_turbo_button = $t('dta-turbo-button');
-			dta_turbo_button.addEventListener('command', dta_turbo_button_command, true);
-			unloadWindow(window, function() dta_turbo_button.removeEventListener('command', dta_turbo_button_command, true));
 			dta_turbo_button.addEventListener('popupshowing', onDTAShowing, true);
 			unloadWindow(window, function() dta_turbo_button.removeEventListener('popupshowing', onDTAShowing, true));
 
@@ -1635,14 +1583,7 @@ exports.load = function load(window, outerEvent) {
 				}
 			});
 
-			let dta_turboselect_button = $t('dta-turboselect-button');
-			dta_turboselect_button.addEventListener('command', dta_turboselect_button_command, true);
-			unloadWindow(window, function() dta_turboselect_button.removeEventListener('command', dta_turboselect_button_command, true));
 			unloadWindow(window, function() detachOneClick);
-
-			let dta_manager_button = $t('dta-manager-button')
-			dta_manager_button.addEventListener('command', dta_manager_button_command, true);
-			unloadWindow(window, function() dta_manager_button.removeEventListener('command', dta_manager_button_command, true));
 		})();
 	}
 	catch (ex) {
