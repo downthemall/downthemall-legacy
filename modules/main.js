@@ -278,6 +278,7 @@ function registerOverlays() {
 	function elementsStub(window, document) {
 		function $(id) document.getElementById(id);
 		function fire(event) {
+			log(LOG_DEBUG, "Fire!");
 			fire._runUnloaders();
 
 			Components.utils.import("chrome://dta-modules/content/glue.jsm", {})
@@ -307,36 +308,49 @@ function registerOverlays() {
 		log(LOG_DEBUG, "running elementsStub");
 
 		window.setTimeout(function dta_firewalkswithme() {
-			fire._unloaders = [];
-			fire._runUnloaders = function() {
-				for (let i = 0; i < fire._unloaders.length; ++i) {
-					try {
-						fire._unloaders[i]();
-					}
-					catch (ex) {
-					}
-				}
+			try {
 				fire._unloaders = [];
-			};
-			fire.addFireListener = function(elem, type) {
-				if (!elem) {
-					return;
+				fire._runUnloaders = function() {
+					for (let i = 0; i < fire._unloaders.length; ++i) {
+						try {
+							fire._unloaders[i]();
+						}
+						catch (ex) {
+						}
+					}
+					fire._unloaders = [];
+				};
+				fire.addFireListener = function(elem, type) {
+					if (!elem) {
+						return;
+					}
+					fire._unloaders.push(function() elem.removeEventListener(type, fire, false));
+					elem.addEventListener(type, fire, false);
+				};
+				fire.addFireListener($("dtaCtxCompact").parentNode, "popupshowing");
+				fire.addFireListener($("dtaToolsMenu").parentNode, "popupshowing");
+				let appmenu = $("dtaAppMenu");
+				if (appmenu) {
+					fire.addFireListener($("appmenu-popup"), "popupshowing");
 				}
-				fire._unloaders.push(function() elem.removeEventListener(type, fire, false));
-				elem.addEventListener(type, fire, false);
-			};
-			fire.addFireListener($("dtaCtxCompact").parentNode, "popupshowing");
-			fire.addFireListener($("dtaToolsMenu").parentNode, "popupshowing");
-			fire.addFireListener($("dta-button"), "command");
-			fire.addFireListener($("dta-button"), "popupshowing");
-			fire.addFireListener($("dta-button"), "dragover");
-			fire.addFireListener($("dta-turbo-button"), "command");
-			fire.addFireListener($("dta-turbo-button"), "popupshowing");
-			fire.addFireListener($("dta-turbo-button"), "dragover");
-			fire.addFireListener($("dta-turboselect-button"), "command");
-			fire.addFireListener($("dta-manager-button"), "command");
-			fire.addFireListener($("cmd_CustomizeToolbars"), "command");
-			unload(function() fire._runUnloaders());
+				let toolsmenu = $("menu_ToolsPopup") || $("taskPopup");
+				if (toolsmenu) {
+					fire.addFireListener(toolsmenu, "popupshowing");
+				}
+				fire.addFireListener($("dta:regular"), "command");
+				fire.addFireListener($("dta-button"), "popupshowing");
+				fire.addFireListener($("dta-button"), "dragover");
+				fire.addFireListener($("dta:turbo"), "command");
+				fire.addFireListener($("dta-turbo-button"), "popupshowing");
+				fire.addFireListener($("dta-turbo-button"), "dragover");
+				fire.addFireListener($("dta:turboselect"), "command");
+				fire.addFireListener($("dta:manager"), "command");
+				fire.addFireListener($("cmd_CustomizeToolbars"), "command");
+				unload(function() fire._runUnloaders());
+			}
+			catch (ex) {
+				log(LOG_ERROR, "stub installer failed!", ex);
+			}
 		}, 100);
 
 		window.setTimeout(function dta_showabout() {
