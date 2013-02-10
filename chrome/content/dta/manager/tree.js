@@ -350,7 +350,7 @@ const Tree = {
 				this._downloads[i].filteredPosition = -1;
 			}
 			this._box.rowCountChanged(0, -this.rowCount);
-			if (this._matcher.filtering) {
+			if (this.filtered) {
 				this._filtered = this._matcher.filter(this._downloads);
 			}
 			else {
@@ -1131,14 +1131,17 @@ const Tree = {
 
 		{item: 'cmdLaunch', f: function(d) !!d.curFile},
 		{item: 'cmdOpenFolder', f: function(d) !!d.curFolder},
-		{item: 'cmdDelete', f: function(d) d.state == COMPLETE}
+		{item: 'cmdDelete', f: function(d) d.state == COMPLETE},
+
+		{item: 'cmdMoveUp', f: function(d) !Tree.filtered && d.min > 0},
+		{item: 'cmdMoveTop', f: function(d) d.min > 0},
+		{item: 'cmdMoveDown', f: function(d) !Tree.filtered && d.max != d.rows - 1},
+		{item: 'cmdMoveBottom', f: function(d) d.max != d.rows - 1}
 	],
 	_refreshTools_items: [
 		{items: ['cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'], f: function(d) !!d.count},
 		{items: ['cmdMirrors', 'cmdAddLimits'], f: function(d) d.count == 1},
 		{items: ['cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'], f: function(d) d.isOf(QUEUED | RUNNING | PAUSED | CANCELED)},
-		{items: ['cmdMoveTop', 'cmdMoveUp'], f: function(d) d.min > 0},
-		{items: ['cmdMoveDown', 'cmdMoveBottom'], f: function(d) d.max != d.rows - 1}
 	],
 	_refreshTools_init: function() {
 		this._refreshTools_item.forEach(function(e) e.item = $(e.item));
@@ -1185,7 +1188,9 @@ const Tree = {
 
 			for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
 				let item = this._refreshTools_item[i];
-				item.item.setAttribute("disabled", item.f(states) ? "false" : "true");
+				let v = item.f(states) ? "false" : "true";
+				log(LOG_DEBUG, item.item.id + " " + v);
+				item.item.setAttribute("disabled", v);
 			}
 			for (let i = 0, e = this._refreshTools_items.length; i < e; ++i) {
 				let items = this._refreshTools_items[i];
@@ -1459,7 +1464,7 @@ const Tree = {
 	},
 	moveUp: function T_up() {
 		try {
-			if (this._matcher.filtering) {
+			if (this.filtered) {
 				throw Error("not implemented");
 			}
 			this.beginUpdate();
@@ -1491,7 +1496,7 @@ const Tree = {
 	},
 	moveDown: function T_down() {
 		try {
-			if (this._matcher.filtering) {
+			if (this.filtered) {
 				throw Error("not implemented");
 			}
 			this.beginUpdate();
