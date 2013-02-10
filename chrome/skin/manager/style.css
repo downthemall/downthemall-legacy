@@ -200,8 +200,9 @@ tooltip textbox.plain {
 	font-weight: normal;
 	max-width: 300px;
 }
-#canvasGrid label[id] {
+label.tooltip-fixed {
 	font-weight: bold;
+	width: 12em;
 }
 #infoPercent {
 	text-align: center;
