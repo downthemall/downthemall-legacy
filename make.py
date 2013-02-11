@@ -22,6 +22,9 @@ except ImportError:
     class Minor(object):
         """ Compatiblity stub"""
 
+        def __init__(self, *args):
+            pass
+
         def __enter__(self):
             pass
 
@@ -61,7 +64,7 @@ class WorkingDirectory(object):
         try:
             os.chdir(os.path.split(__file__)[0])
         except:
-            raise
+            pass
 
     def __exit__(self, *args):
         os.chdir(self.wd)
