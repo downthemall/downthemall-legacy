@@ -202,7 +202,7 @@ tooltip textbox.plain {
 }
 label.tooltip-fixed {
 	font-weight: bold;
-	width: 12em;
+	width: 10em;
 }
 #infoPercent {
 	text-align: center;
