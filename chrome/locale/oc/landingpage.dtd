@@ -1,0 +1,88 @@
+<!ENTITY lp.localedir "ltr">
+<!ENTITY language "Occitan">
+<!ENTITY transAutor "Jojaba">
+<!ENTITY amo.summary "Lo sol e unic gestionari e booster de telecargament integrat a Firefox !">
+<!ENTITY amo.description.intro "DownThemAll! es tot çò que podètz desirar d'un gestionari de telecargament : dispausa d'un accelerador avançat que multiplica la velocitat per 4 e vos permet d'interrompre e de reprene los telecargaments a tot moment.">
+<!ENTITY amo.description.feat "DownThemAll! es rapid, fisable e de bon utilizar ! Vos permet de telecargar totes los ligams e imatges d'una pagina Web e plan mai encara : podètz precisar vòstres telecargaments en utilizant de critèris completament personalizables per obténer çò que volètz vertadièrament ! Contrarotlatz completament vòstres telecargaments, velocitat acordada e nombre de connexions simultanèas a tot moment. Utilizatz de metaligams o apondètz de miralhs manualament per telecargar un fichièr a partir de diferents servidors en meteis temps.">
+<!ENTITY amo.description.free "DownThemAll! es un logicial Open Source e gratuit. Pas cap d'adware, de spyware, pas de còsts esconduts !">
+<!ENTITY amo.description.more "Per ne saber mai visitatz la <a href='http://www.downthemall.net/howto/features/'>pagina de las foncionalitats</a>.">
+<!ENTITY lp.title "A prepaus de l'extension DownThemAll!">
+<!ENTITY lp.welcome "Benvengut dins DownThemAll!">
+<!ENTITY lp.info "Getatz una ulhada sus las vidèos que fan veire cossí utilizar DownThemAll! e aprenètz-ne mai sus la vida privada e vòstres dreches">
+<!ENTITY lp.moreinfo "Per ne saber mai, visitatz la <a href='http://www.downthemall.net/howto/features/'>pagina de las foncionalitats</a>.">
+<!ENTITY lp.gettingstarted "Cossí començar">
+<!ENTITY lp.toolbar "Botons de la barra d'aisinas">
+<!ENTITY lp.privacy "Vida privada">
+<!ENTITY lp.yourrights "Vòstres dreches">
+<!ENTITY lp.contact "Nos contactar">
+<!ENTITY lp.pleasenote "Notatz :">
+<!ENTITY lp.donate "Mercé de pensar a una contribucion">
+<!ENTITY lp.tut.firsttitle "Vòstre primièr telecargament">
+<!ENTITY lp.tut.fd1 "Telecargar un fichièr dins dTa! es puslèu simple mas tanben fòrça personalizable. Quand la bóstia de dialòg de telecargament s'aficha, utilizatz l'element « DownThemAll! ». Aquò farà aparéisser una autra bóstia de dialòg dins la quala poiretz causir lo dorsièr de destinacion del telecargament e d'autras opcions  avançadas.">
+<!ENTITY lp.tut.selecttitle "Utilizacion de la fenèstra de seleccion">
+<!ENTITY lp.tut.selintro "Lo menú contextual d'un site vos prepausa un novèl element « DownThemAll!». En utilizant aqueste element, dobriretz la fenèstra de seleccion de DownThemAll!, que poiretz utilizar per causir aisidament un o mai d'un ligam de la pagina.">
+<!ENTITY lp.tut.seloptions "Dins la fenèstra de seleccion avètz mantun biais de seleccionar los fichièrs de telecargar :">
+<!ENTITY lp.tut.selopthand "Podètz verificar los ligams que volètz telecargar manualament">
+<!ENTITY lp.tut.seloptfilters "Podètz utilizar los filtres integrats o los vòstres, per exemple per telecargar totes los ligams imatges">
+<!ENTITY lp.tut.seloptfast "Amai, podètz picar vòstre pròpri filtre dins la bóstia de filtratge rapid, per exemple <code>*.pdf,*.doc</code> o quitament una expression racionala">
+<!ENTITY lp.tut.seltypes "La fenèstra de seleccion compòrta dos onglets, per dos tipes de telecargaments diferents :">
+<!ENTITY lp.tut.seltypelinks "L'onglet dels ligams que conten totes los ligams sus aquesta pagina que puntan cap a de fichièrs telecargables">
+<!ENTITY lp.tut.seltypepics "E l'onglet imatges e mèdias que conten totes los imatges e autres mèdias afichats sus la pagina">
+<!ENTITY lp.tut.selgalleries "Los imatges en talha reala son sovent presents jos la forma de ligam que proven de paginas de galariá, per consequent, los trobaretz dins l'onglet ligams">
+<!ENTITY lp.tut.seldone "Un còp qu'auretz causit los fichièrs de telecargar, clicatz sus « Aviar ! » o « Apondre a la fila d'espèra ».">
+<!ENTITY lp.tut.batchestitle "Telecargament per lòts">
+<!ENTITY lp.tut.batches1 "Fòrça utilizaires vòlon telecargar de lòts de sequéncias de fichièrs (numerotats dins un certan òrdre). DownThemAll! vos permet d'especificar de lòts pro aisidament coma lo fa veire la vidèo.">
+<!ENTITY lp.tut.batches2 "La sintaxi de basa es : <code>[començament:fin]</code> o <code>[començament:fin:pas]</code> ont <code>començament</code> e <code>fin</code> pòdon èsser un nombre o un simple caractèr. <code>pas</code> definís lo pas e es tot simplament egal a 1 se omés.">
+<!ENTITY lp.tut.batches3 "Per exemple se volètz telecargar los imatges de 001 a 100, poiretz modificar l'URL atal : <code>http://exemple.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
+<!ENTITY lp.tut.oneclick1 "Un còp qu'auretz realizat vòstre primièr telecargament, un autre element serà disponible : DownThemAll! OneClick. Poiretz utilizar aqueste element pr'amor de telecargar dirèctament en utilizant los paramètres del telecargament precedent sens passar per la bóstia de dialòg d'apondon de telecargament e de seleccion.">
+<!ENTITY lp.tut.oneclick2 "En resumit, OneClick vos permet d'aviar rapidament fòrça ligams de telecargament.">
+<!ENTITY lp.tut.oneclickn "Aprèp l'escafament de las donadas personalas dins Firefox, la foncionalitat OneClick serà pas mai disponibla tant qu'auretz pas aviat un novèl telecargament DownThemAll!.">
+<!ENTITY lp.tb.intro "DownThemAll! prepausa qualques botons de barra d'aisinas que vos ofrisson un mejan practic d'accedir a las foncionalitats de DownThemAll!.">
+<!ENTITY lp.tb.add.title "Apondon e utilizacion dels botons de barra d'aisinas">
+<!ENTITY lp.tb.add.p1 "DownThemAll! prepausa quatre botons de barra d'aisinas per facilitar la recèrca e l'aviada de telecargaments">
+<!ENTITY lp.tb.add.dta "Boton DownThemAll!">
+<!ENTITY lp.tb.add.dtadesc "Dobrís la fenèstra de seleccion DownThemAll! per l'onglet corrent.">
+<!ENTITY lp.tb.add.tdta "Boton OneClick!">
+<!ENTITY lp.tb.add.tdtadesc "Telecarga totes los elements de la pagina correnta en prenent en compte las darrièras preferéncias e filtres utilizats.">
+<!ENTITY lp.tb.add.manager "Boton Gestionari DownThemAll!">
+<!ENTITY lp.tb.add.managerdesc "Dobrís la fenèstra del gestionari.">
+<!ENTITY lp.tb.add.selector "Boton de seleccion DownThemAll!">
+<!ENTITY lp.tb.add.selectordesc "Apond d'elements en clicant dessús.">
+<!ENTITY lp.tb.add.p2 "Los botons de barra d'aisinas se pòdon apondre via lo menú <code>Afichatge » Barras d'aisinas » Personalizar…</code>.">
+<!ENTITY lp.tb.dnd.title "Lisar-depausar">
+<!ENTITY lp.tb.dnd.p1 "Podètz lisar-depausar tot ligam o tot imatge sul boton DownThemAll! o OneClick! per telecargar lo fichièr.">
+<!ENTITY lp.tb.dnd.p2 "La fenèstra del gestionari se pòt tanben utilizar per depausar d'elements de telecargar.">
+<!ENTITY lp.tb.dnd.p3 "Tanben poiretz ordenar vòstra lista de telecargaments en clicant-lisant. Lisatz simplament un element e depausatz-lo a la posicion volguda.">
+<!ENTITY lp.tb.selector.title "Utilizacion del selector DownThemAll!">
+<!ENTITY lp.tb.selector.p1 "En utilizant lo selector DownThemAll! poiretz aviar fòrça telecargaments en clicant suls ligams e imatges.">
+<!ENTITY lp.tb.selector.p2 "Per activar lo selector, clicatz sus la barra d'aisinas, e per lo desactivar, un còp qu'auretz procedit, clicatz tornarmai sul boton.">
+<!ENTITY lp.pr.title "Nòta a prepaus de la vida privada">
+<!ENTITY lp.pr.intro "DownThemAll! presèrva vòstra vida privada.">
+<!ENTITY lp.pr.settings "Podètz demandar a DownThemAll! de levar totes los telecargaments acabats, anullats e inacabats de la lista de telecargaments al moment de la tampadura en modificant los paramètres dins lo panèl Preferéncias » Vida privada.">
+<!ENTITY lp.pr.diag "Podètz activar los messatges diagnostic, que seràn ammagazinats dins la consòla d'error e dins lo fichièr dta_log.txt dins lo panèl Preferéncias » Vida privada. Los messatges diagnostics contendriá probablament d'informacions sensiblas talas coma las URL, los camins de fichièrs, los noms de fichièr que telecargatz o quitament d'informacions cookie. Aquesta opcion es DESACTIVADA per defaut per preservar vòstra vida privada. Se senhalatz un messatge diagnostic, benlèu que voldretz censurar aquelas informacions sensiblas. Cap de jornal diagnostic serà pas publicat d'un biais automatic.">
+<!ENTITY lp.pr.pbm "DownThemAll! es compatible amb lo mòde de navigacion privada de Firefox : quand dobrissètz una sesilha de navigacion privada, DownThemAll! emmagazinarà pas cap d'informacion a prepaus dels fichièrs telecargats o de las masquetas de cambiament de nom utilizats. Prenètz nòta que d'autras donadas - talas coma los filtres novèlament creats o, solida, los vertadièrs telecargaments - son malgrat tot enregistradas sus vòstre disc dur.">
+<!ENTITY lp.pr.link "Aquesta nòta es totjorn disponibla a partir de la pagina (about:downthemall) e es tanben consultabla a partir de la fenèstra de las preferéncias">
+<!ENTITY lp.yr.usagetitle "Utilizacion e redistribucion">
+<!ENTITY lp.yr.usage "Los autors de DownThemAll! an optat per una licéncia que vos permet, liurament :">
+<!ENTITY lp.yr.usageuse "D'utilizar DownThemAll!">
+<!ENTITY lp.yr.usagemod "De modificar DownThemAll!">
+<!ENTITY lp.yr.usagedist "De redistribuir DownThemAll! amb o sens modificacions">
+<!ENTITY lp.yr.usagemore "Veire las licéncias per mai d'informacions.">
+<!ENTITY lp.languagetitle "Lenga">
+<!ENTITY lp.translation.by "traduccion per">
+<!ENTITY lp.yr.licensetitle "Copyright e licéncia">
+<!ENTITY lp.yr.licensed "Licéncia d'utilizacion de DownThemAll! : <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Vejatz lo fichièr GPL. Aquò s'aplica a totes los fichièrs que contenon de còde font.">
+<!ENTITY lp.yr.morelicense "Certans fichièrs pòdon èsser regits per d'autras licéncias. Vejatz los fichièrs disponibles dins lo depaus a l'adreça seguenta : <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Fòrça fichièrs compòrtan tres licéncias : MPL 1.1/GPL 2.0/LGPL 2.1 ; Vejatz respectivament los fichièrs MPL, GPL, LGPL.">
+<!ENTITY lp.yr.gplintro "Las partidas las mai importantas de GPL 2.0, la descarga de responsabilitat que concernís la garantida e los damatges eventuals, seguisson :">
+<!ENTITY lp.yr.icons "Grafisme, icònas e botons">
+<!ENTITY lp.yr.iconsbased "son basats sul trabalh de Mike Matas, Jakub Steiner, Mark James e lo projècte Tango">
+<!ENTITY lp.yr.artwork "Copyright del grafisme original : Copyright © 2004-2010 per Stefano Verna, Federico Parodi e Nils Maier">
+<!ENTITY lp.yr.artworklicense "Lo grafisme original es jos la licéncia seguenta :">
+<!ENTITY lp.yr.logo "Copyright del lògo DownThemAll! original : Copyright © 2004-2010 per Stefano Verna.">
+<!ENTITY lp.yr.logopermissions "Lo nom e lo lògo DownThemAll! pòdon pas èsser utilizats sens permission dins tot trabalh connèxe, a l'excepcion de las notícias de credits e de licéncias.">
+<!ENTITY lp.ct.bugstitle "Senhalament de bugs / Demanda de foncionalitats">
+<!ENTITY lp.ct.bugs "Senhalatz los bugs o las demandas de foncionalitat sus nòstre <a href='http://bugs.code.downthemall.net/'>bug tracker</a> (plataforma de senhalament de bug).">
+<!ENTITY lp.ct.contactstitle "Contactes">
+<!ENTITY lp.ct.contactsfeed "Nos agradan vòstres comentaris e suggestions e ofrissèm nòstra ajuda.">
+<!ENTITY lp.ct.contacts "Anatz a <a href='http://www.downthemall.net/main/contacts/'>la pagina de contacte</a> en linha.">
