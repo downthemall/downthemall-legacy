@@ -414,7 +414,7 @@ def pack(xpi, patterns, **kw):
         with Minor(zp):
             for f in packing:
                 if f == "modules/version.js" and \
-                        kw.get("type", None) == "release":
+                        kw.get("type", None) in ("release", "beta"):
                     write(f, ZIP_DEFLATED, releaseversionjs)
                 elif f == "install.rdf":
                     t = kw.get("type", None)
