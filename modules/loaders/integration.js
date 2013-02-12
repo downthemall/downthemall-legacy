@@ -1117,10 +1117,10 @@ exports.load = function load(window, outerEvent) {
 
 	function toggleOneClick() {
 		if (selectButton().checked) {
-			attachOneClick(evt);
+			attachOneClick();
 		}
 		else {
-			detachOneClick(evt);
+			detachOneClick();
 		}
 	}
 
@@ -1194,6 +1194,7 @@ exports.load = function load(window, outerEvent) {
 					new this.Flasher(m.elem).hide();
 				}
 				catch (ex) {
+					log(LOG_ERROR, "processRegular", ex);
 					return false;
 				}
 				return true;
@@ -1304,8 +1305,8 @@ exports.load = function load(window, outerEvent) {
 			let pos = this.calcPosition(this.elem);
 			div.style.width = (pos.width + 2 * this.PADDING) + "px";
 			div.style.height = (pos.height + 2 * this.PADDING) + "px";
-			top = (pos.top - this.PADDING) + "px";
-			left = (pos.left - this.PADDING) + "px";
+			div.style.top = (pos.top - this.PADDING) + "px";
+			div.style.left = (pos.left - this.PADDING) + "px";
 			div.style.position = pos.position;
 
 			// add the adding icon if the element covers enough space
