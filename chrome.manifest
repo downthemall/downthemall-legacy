@@ -25,6 +25,7 @@ locale dta it chrome/locale/it/
 locale dta ja chrome/locale/ja/
 locale dta ko-KR chrome/locale/ko-KR/
 locale dta nl chrome/locale/nl/
+locale dta oc chrome/locale/oc/
 locale dta pl chrome/locale/pl/
 locale dta pt-BR chrome/locale/pt-BR/
 locale dta pt-PT chrome/locale/pt-PT/

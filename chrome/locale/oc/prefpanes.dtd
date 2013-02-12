@@ -1,0 +1,114 @@
+<!ENTITY winstyle "width:52em; height:42em;">
+<!ENTITY filterspane.label "Filtres">
+<!ENTITY listhead1.label "Legenda">
+<!ENTITY listhead2.label "Extensions">
+<!ENTITY filter.label "Extensions filtradas :">
+<!ENTITY regex.label "Exp. reg.">
+<!ENTITY useAs.label "Utilizar en tant que :">
+<!ENTITY imagesf.label "Filtre per imatges e objèctes incorporats">
+<!ENTITY linksf.label "Filtre per ligams">
+<!ENTITY add.label "Apondre un filtre novèl">
+<!ENTITY highlight.label "Metre en evidéncia los fichièrs filtrats">
+<!ENTITY dtacontext2.label "Preferéncias">
+<!ENTITY buttonlabelextra2 "Restablir los paramètres per defaut">
+<!ENTITY dtaPreferences.title "Preferéncias de DownThemAll!…">
+<!ENTITY manager "Gestionari de dTa!">
+<!ENTITY mainpane.label "Principalas">
+<!ENTITY mainpane.defaults.caption "Per defaut">
+<!ENTITY mainpane.defaults.desc "Lo repertòri de telecargament, masqueta de cambiament de nom e filtres utilizats per OneClick! pòdon èsser configurats dins la bóstia de dialòg costumièra de DownThemAll!.">
+<!ENTITY mainpane.rename.caption "Se un nom de fichièr existís ja :">
+<!ENTITY mainpane.rename.label "Renomenar">
+<!ENTITY mainpane.overwrite.label "Remplaçar">
+<!ENTITY mainpane.skip.label "Passar">
+<!ENTITY mainpane.ask.label "Demandar">
+<!ENTITY mainpane.misc.caption "Divèrs">
+<!ENTITY mainpane.sounderror.label "Jogar un son en cas d'error">
+<!ENTITY mainpane.alert.caption "Quand los telecargaments son acabats :">
+<!ENTITY mainpane.alert.label "M'avisar :">
+<!ENTITY mainpane.alertboxes.label "M'avisar amb un messatge d'alèrta">
+<!ENTITY mainpane.alertslides.label "M'avisar amb lo panèl de notificacion Firefox">
+<!ENTITY mainpane.alertnone.label "M'avisar pas">
+<!ENTITY mainpane.sounddone.label "Jogar un son per anonciar la fin de totes los telecargaments">
+<!ENTITY mainpane.closedta.label "Tampar DownThemAll! quand los telecargaments son acabats">
+<!ENTITY mainpane.settime.label "Definir la data de creacion del fichièr a la data de darrièra modificacion (servidor) o a la data de mesa en espèra de telecargament">
+<!ENTITY mainpane.rememberoneclick.label "Far en sòrta que dTa OneClick! memorize se s'aplida a totes los onglets o a l'onglet corrent">
+<!ENTITY mainpane.confirmremove.label "L'utilizaire deu confirmar la supression dels telecargaments">
+<!ENTITY mainpane.textlinks.label "Reconéisser los ligams al format tèxte">
+<!ENTITY mainpane.listsniffedvideos.label "Enregistrar e far la lista de las vidèos (Flash)">
+<!ENTITY privacypane.label "Vida privada">
+<!ENTITY privacypane.closing.caption "Quand la fenèstra del gestionari es tampada">
+<!ENTITY privacypane.removecompleted.label "Levar de la lista los telecargaments acabats">
+<!ENTITY privacypane.removecanceled.label "Levar de la lista los telecargaments anullats o corromputs">
+<!ENTITY privacypane.removeaborted.label "Levar de la lista los telecargaments pas acabats">
+<!ENTITY privacypane.deletefoldershistory.label "Escafar l'istoric dels dorsièrs">
+<!ENTITY privacypane.deletefiltershistory.label "Escafar l'istoric dels filtres suplementaris">
+<!ENTITY privacypane.showlog.label "Afichar lo jornal">
+<!ENTITY privacypane.reveallog.label "Afichar lo fichièr">
+<!ENTITY privacypane.deletelog.label "Suprimir lo jornal">
+<!ENTITY privacypane.updates.caption "Mesas a jorn/Internet">
+<!ENTITY privacypane.information.label "Autorizar lo telecargament de las novetats e de las darrièras versions">
+<!ENTITY privacypane.statistics.label "Autorizar dTa! a collectar e transferir d'estatisticas d'utilizacion anonimas">
+<!ENTITY privacypane.dropdowns.caption "Menús desenrotlants">
+<!ENTITY privacypane.dropdownresults.label "Nombre d'elements de conservar">
+<!ENTITY privacypane.logs.caption "Jornal de diagnostic">
+<!ENTITY privacypane.enablelogs.label "Activar l'escritura dins lo jornal de diagnostic">
+<!ENTITY privacypane.notice.caption "Notificacion">
+<!ENTITY privacypane.notice.desc "DownThemAll! es tanben inclusa dins la foncionalitat « Escafar mas traças… » del menú « Aisinas » (se disponible).">
+<!ENTITY privacypane.privacynotice.label "Nòstra politica de confidencialitat">
+<!ENTITY serverspane.label "Ret">
+<!ENTITY serverspane.downloads.caption "Telecargaments">
+<!ENTITY serverspane.concurrent.label "Telecargaments concurrents :">
+<!ENTITY serverspane.perserver.label "Telecargaments per servidor :">
+<!ENTITY serverspane.url.label "Emplaçament o domeni :">
+<!ENTITY serverspane.new.label "Novèl limit">
+<!ENTITY serverspane.del.label "Suprimir lo limit">
+<!ENTITY serverspane.limits.label "Limits servidor">
+<!ENTITY serverpane.limits.noitems "Cap de limit servidor pas especificat">
+<!ENTITY serverspane.connections.label "Connexions :">
+<!ENTITY serverspane.speed.label "Limit de velocitat :">
+<!ENTITY serverspane.unlimited "Illimitat">
+<!ENTITY serverspane.limited "Limitat">
+<!ENTITY serverspane.autoretry.caption "Novèlas temptativas automaticas">
+<!ENTITY serverspane.autoretry.interval.label "Ensajar tornarmai cada">
+<!ENTITY serverspane.autoretry.max.label "Nombre max. d'ensages renovelats">
+<!ENTITY serverspane.cancel.label "Anullar">
+<!ENTITY serverspane.edit.label "Editar">
+<!ENTITY serverspane.remove.label "Suprimir">
+<!ENTITY advancedpane.label "Avançadas">
+<!ENTITY advancedpane.downloads.caption "Contraròtle avançat de telecargament">
+<!ENTITY advancedpane.misc.caption "Paramètres divèrses">
+<!ENTITY advancedpane.files.caption "Fichièrs">
+<!ENTITY advancedpane.chunks.label "Nombre max. de segments per telecargament :">
+<!ENTITY advancedpane.chunksdisabled "Desactivat">
+<!ENTITY advancedpane.timeout.label "Durada de connexion inactiva autorizada abans depassament de relambi :">
+<!ENTITY advancedpane.seconds "segondas">
+<!ENTITY advancedpane.minute "minuta">
+<!ENTITY advancedpane.minutes "minutas">
+<!ENTITY advancedpane.hour "ora">
+<!ENTITY advancedpane.hours "oras">
+<!ENTITY advancedpane.tempfiles.caption "Fichièrs temporaris">
+<!ENTITY advancedpane.usetemp.label "Enregistrar los segments dins un dorsièr temporari">
+<!ENTITY advancedpane.tempdir.label "Utilizar aqueste dorsièr :">
+<!ENTITY advancedpane.permissions.caption "Autorizacion d'accès al fichièr per defaut">
+<!ENTITY advancedpane.permissions.group "Grop">
+<!ENTITY advancedpane.permissions.everybody "Tot lo monde">
+<!ENTITY advancedpane.permissions.read "Drech de lectura">
+<!ENTITY advancedpane.permissions.write "Drech de modificacion">
+<!ENTITY advancedpane.loadendfirst.label "Cargar primièr los darrièrs Kilooctets">
+<!ENTITY advancedpane.scheduler.caption "Òrdre d'aviada de telecargament :">
+<!ENTITY advancedpane.scheduler.fast "Rapid - tre l'apondon dins la fila d'espèra">
+<!ENTITY advancedpane.scheduler.fair "Convenent + lent - distribuit uniformadament">
+<!ENTITY advancedpane.scheduler.legacy "Ereitat - pas cap de limit">
+<!ENTITY advancedpane.exposeinua.label "Expausar DownThemAll! dins lo User-Agent">
+<!ENTITY uipane.label "Interfàcia d'utilizaire">
+<!ENTITY uipane.namesonly.label "Afichar pas que lo nom dels fichièrs dins la fenèstra del gestionari">
+<!ENTITY uipane.integration.caption "Integracion">
+<!ENTITY uipane.downloadwin.label "Apondre DownThemAll! a la fenèstra d'enregistrament">
+<!ENTITY uipane.context.caption "Menú contextual">
+<!ENTITY uipane.tools.caption "Menú « Aisinas »">
+<!ENTITY uipane.compact.label "Utilizar un menú compacte">
+<!ENTITY uipane.hide.label "Amagar aqueste menú">
+<!ENTITY uipane.showtooltip.label "Afichar las infobullas de telecargament">
+<!ENTITY uipane.manager.caption "Fenèstra del gestionari">
+<!ENTITY uipane.startminimized.label "Aviar en mòde reduch">
+<!ENTITY uipane.minimizetotray.label "Reduire cap a la zòna de notificacion">

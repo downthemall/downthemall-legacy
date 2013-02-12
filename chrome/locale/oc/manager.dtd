@@ -1,0 +1,55 @@
+<!ENTITY tooladd.label "Apondon d'URL">
+<!ENTITY tooladd.tooltip "Apondre manualament una URL de telecargament a DownThemAll!">
+<!ENTITY tooldonate.tooltiptext "Nos podètz ajudar a melhorar DownThemAll! en fasent un pichon don !">
+<!ENTITY movetop.label "Naut">
+<!ENTITY movebottom.label "Bas">
+<!ENTITY moveup.label "Montar">
+<!ENTITY movedown.label "Davalar">
+<!ENTITY task.label "URL/Nom">
+<!ENTITY per.label "Per cent">
+<!ENTITY pct.label "Progression">
+<!ENTITY dim.label "Talha">
+<!ENTITY time.label "Temps es.">
+<!ENTITY parts.label "Segments">
+<!ENTITY speed.label "Velocitat">
+<!ENTITY infoURLTitle.value "A partir de :">
+<!ENTITY infoSizeTitle.value "Talha :">
+<!ENTITY infoMultiple.value "Elements multiples">
+<!ENTITY elapsedTitle.value "Passat :">
+<!ENTITY remainingTitle.value "Restant :">
+<!ENTITY currentSpeedTitle.value "Velocitat actuala :">
+<!ENTITY avgSpeedTitle.value "Velocitat mejana :">
+<!ENTITY path.label "Camin d'enregistrament">
+<!ENTITY mask.label "Masqueta de cambiament de nom">
+<!ENTITY hash.label "Checksum">
+<!ENTITY infos.label "Infos sul telecargament">
+<!ENTITY launch.label "Dobrir lo fichièr">
+<!ENTITY delete.label "Suprimir lo(s) fichièr(s)">
+<!ENTITY targetdir.label "Dobrir lo dorsièr cibla">
+<!ENTITY pause.label "Pausa">
+<!ENTITY resume.label "Reprene">
+<!ENTITY cancel.label "Anullar">
+<!ENTITY removemenu.label "Suprimir los telecargaments">
+<!ENTITY removeselected.label "Suprimir la seleccion">
+<!ENTITY removeCompleted.label "Escafar los prètzfaches acabats">
+<!ENTITY removeAll.label "Suprimir tot">
+<!ENTITY removeDupes.label "Suprimir los doblons">
+<!ENTITY removeGone.label "Escafar los fichièrs levats">
+<!ENTITY advanced.label "Avançadas">
+<!ENTITY addchunk.label "Apondre un segment">
+<!ENTITY removechunk.label "Suprimir un segment">
+<!ENTITY force.label "Forçar l'aviada">
+<!ENTITY import.label "Importar a partir del fichièr">
+<!ENTITY export.label "Exportar la seleccion">
+<!ENTITY options.caption "Opcions">
+<!ENTITY loading.label "Cargament…">
+<!ENTITY restore.label "Restablir">
+<!ENTITY close.label "Tampar">
+<!ENTITY speedlimit.label "Limit :">
+<!ENTITY speedlimit.tooltip "Modificar la limitacion de velocitat. La lista es automaticament mesa a jorn.">
+<!ENTITY perdownloadspeedlimit.label "Limitacion de velocitat">
+<!ENTITY perdownloadspeedlimit.tooltip "Modificar la limitacion de velocitat. Pasmens la velocitat globala demorarà prioritària.">
+<!ENTITY mirrors.label "Gerir los miralhs">
+<!ENTITY mirrors.tooltip "Gerir l'emplaçament dels miralhs de telecargament">
+<!ENTITY toolbar.icons "Utilizar d'icònas">
+<!ENTITY toolbar.full "Utilizar icònas e tèxte">

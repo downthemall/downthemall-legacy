@@ -1,0 +1,23 @@
+<!ENTITY mask.title "Títol associat al ligam">
+<!ENTITY mask.name "Nom de fichièr">
+<!ENTITY mask.ext "Extension">
+<!ENTITY mask.url "URL de basa">
+<!ENTITY mask.curl "URL completa">
+<!ENTITY mask.flatcurl "URL completa plata">
+<!ENTITY mask.num "Numèro de lòt">
+<!ENTITY mask.inum "Numèro de l'element">
+<!ENTITY mask.hh "Oras">
+<!ENTITY mask.mm "Minutas">
+<!ENTITY mask.ss "Segondas">
+<!ENTITY mask.d "Jorn">
+<!ENTITY mask.m "Mes">
+<!ENTITY mask.y "Annada">
+<!ENTITY mask.subdirs "Sosdorsièrs de l'URL">
+<!ENTITY mask.flatsubdirs "Sosdorsièrs de l'URL plata">
+<!ENTITY mask.text "Descripcion del ligam">
+<!ENTITY mask.flattext "Descripcion del ligam plat">
+<!ENTITY mask.refer "URL de provenéncia">
+<!ENTITY mask.qstring "Cadena de requèsta (Query string)">
+<!ENTITY mask.flattitle "Títol associat al ligam">
+<!ENTITY mask.tip "Clicatz o lisatz per tornar nomenar la masqueta">
+<!ENTITY mask.open.tip "Taula de referéncia de marcadors de cambiament de nom">
