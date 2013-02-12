@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
-	 - License, v. 2.0. If a copy of the MPL was not distributed with this
-	 - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+	- License, v. 2.0. If a copy of the MPL was not distributed with this
+	- file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://dta/skin/manager/metalinker.css" type="text/css" ?>
@@ -9,12 +9,20 @@
 <!DOCTYPE window [
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
 	%commonDTD;
+	<!ENTITY % defcommonDTD SYSTEM "chrome://dta-locale/content/dta.dtd">
+	%defcommonDTD;
 	<!ENTITY % metalinkerDTD SYSTEM "chrome://dta/locale/metalinker.dtd">
 	%metalinkerDTD;
+	<!ENTITY % defmetalinkerDTD SYSTEM "chrome://dta-locale/content/metalinker.dtd">
+	%defmetalinkerDTD;
 	<!ENTITY % selectDTD SYSTEM "chrome://dta/locale/select.dtd">
 	%selectDTD;
+	<!ENTITY % defselectDTD SYSTEM "chrome://dta-locale/content/select.dtd">
+	%defselectDTD;
 	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
 	%managerDTD;
+	<!ENTITY % defmanagerDTD SYSTEM "chrome://dta-locale/content/manager.dtd">
+	%defmanagerDTD;
 ]>
 
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" id="metaselect" persist="width height">

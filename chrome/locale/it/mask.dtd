@@ -1,0 +1,19 @@
+<!ENTITY mask.curl "URL completa">
+<!ENTITY mask.d "Giorno">
+<!ENTITY mask.ext "Estensione">
+<!ENTITY mask.flatcurl "Stringa dell'intero URL">
+<!ENTITY mask.flatsubdirs "Stringa delle sottocartelle dell'URL">
+<!ENTITY mask.hh "Ore">
+<!ENTITY mask.inum "Numero di elementi">
+<!ENTITY mask.m "Mese">
+<!ENTITY mask.mm "Minuti">
+<!ENTITY mask.name "Nome file">
+<!ENTITY mask.open.tip "Legenda delle etichette di rinomina">
+<!ENTITY mask.qstring "Stringa query">
+<!ENTITY mask.refer "Referrer URL">
+<!ENTITY mask.ss "Secondi">
+<!ENTITY mask.subdirs "Sottocartelle dell'URL">
+<!ENTITY mask.tip "Clicca o trascina sulla maschera di rinomina">
+<!ENTITY mask.title "Etichette di rinomina">
+<!ENTITY mask.url "URL base">
+<!ENTITY mask.y "Anno">

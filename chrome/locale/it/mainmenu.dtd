@@ -1,0 +1,5 @@
+<!ENTITY closeWindow.label "Chiudi DownThemAll!">
+<!ENTITY fileMenu.accesskey "F">
+<!ENTITY fileMenu.label "File">
+<!ENTITY newNavigatorCmd.label "Nuova finestra del browser">
+<!ENTITY tabCmd.label "Nuovo tab del browser">

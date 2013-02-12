@@ -1,0 +1,43 @@
+<!ENTITY addchunk.label "Dodaj część">
+<!ENTITY advanced.label "Zaawansowane">
+<!ENTITY avgSpeedTitle.value "Średnia prędkość:">
+<!ENTITY cancel.label "Anuluj">
+<!ENTITY close.label "Zamknij">
+<!ENTITY currentSpeedTitle.value "Aktualna prędkość:">
+<!ENTITY delete.label "Usuń pliki">
+<!ENTITY dim.label "rozmiar">
+<!ENTITY elapsedTitle.value "Upłynęło:">
+<!ENTITY force.label "Wymuś rozpoczęcie">
+<!ENTITY hash.label "Suma kontrolna">
+<!ENTITY import.label "Importuj z pliku">
+<!ENTITY infoMultiple.value "Wiele elementów">
+<!ENTITY infoSizeTitle.value "Rozmiar:">
+<!ENTITY infoURLTitle.value "Z:">
+<!ENTITY infos.label "Informacje o pobraniu">
+<!ENTITY launch.label "Otwórz plik">
+<!ENTITY mirrors.label "Zarządzaj mirrorami">
+<!ENTITY mirrors.tooltip "Zarządzaj lokalizacjami mirrorów pobierania">
+<!ENTITY movebottom.label "Na dół">
+<!ENTITY movedown.label "W dół">
+<!ENTITY movetop.label "Na górę">
+<!ENTITY moveup.label "W górę">
+<!ENTITY options.caption "Opcje">
+<!ENTITY parts.label "Części">
+<!ENTITY path.label "Katalog docelowy">
+<!ENTITY pause.label "Pauza">
+<!ENTITY pct.label "Postęp">
+<!ENTITY remainingTitle.value "Pozostało:">
+<!ENTITY removeAll.label "Usuń wszystko">
+<!ENTITY removeDupes.label "Usuń duplikaty">
+<!ENTITY removeGone.label "Wyczyść pobrane pliki">
+<!ENTITY removechunk.label "Usuń część">
+<!ENTITY removemenu.label "Usuń pobrania">
+<!ENTITY removeselected.label "Usuń zaznaczone">
+<!ENTITY restore.label "Odtwórz">
+<!ENTITY resume.label "Wznów">
+<!ENTITY speed.label "Prędkość">
+<!ENTITY targetdir.label "Otwórz katalog docelowy">
+<!ENTITY tooladd.tooltip "Dodaj ręcznie adres URL do DownThemAll">
+<!ENTITY toolbar.full "Wyświetlaj ikony i tekst">
+<!ENTITY toolbar.icons "Wyświetlaj ikony">
+<!ENTITY tooldonate.tooltiptext "Możesz nam pomóc w rozwoju DownThemAll. Wykonaj niewielką dotację dla nas.">

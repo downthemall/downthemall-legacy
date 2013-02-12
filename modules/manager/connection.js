@@ -30,13 +30,7 @@ const DISCONNECTION_CODES = [
 ];
 
 (function(global) {
-	let strings = {};
-	for (let s in new SimpleIterator(Services.strings
-		.createBundle('chrome://dta/locale/manager.properties')
-		.getSimpleEnumeration(), Ci.nsIPropertyElement)) {
-		strings[s.key] = s.value;
-	}
-	let bundles = new StringBundles(strings);
+	let bundles = new StringBundles(["chrome://dta/locale/manager.properties"]);
 	global['_'] = function() (arguments.length == 1) ? bundles.getString(arguments[0]) : bundles.getFormattedString.apply(bundles, arguments);
 })(this);
 

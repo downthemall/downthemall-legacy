@@ -1,0 +1,15 @@
+<!ENTITY checksum.value "Kontrolní součet (Hash):">
+<!ENTITY description.value "Popis:">
+<!ENTITY mask.tip "Vybrané soubory budou uloženy a přejmenovány podle této masky">
+<!ENTITY mirrormanager.tip "Spravovat zrcadla">
+<!ENTITY mirrors.value "Zrcadla:">
+<!ENTITY options.label "Předvolby">
+<!ENTITY queue.key "p">
+<!ENTITY queue.label "Vložit pauzu">
+<!ENTITY referrer.value "Odkazující stránka:">
+<!ENTITY selectall.label "Vybrat vše">
+<!ENTITY selectinv.label "Obrátit výběr">
+<!ENTITY selectnone.label "Odznačit vše">
+<!ENTITY start.key "s">
+<!ENTITY start.label "Start!">
+<!ENTITY url.value "Stáhnout">

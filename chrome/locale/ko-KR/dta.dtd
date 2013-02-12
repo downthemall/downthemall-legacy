@@ -1,0 +1,15 @@
+<!ENTITY checksum.value "체크섬 (해시):">
+<!ENTITY description.value "설명:">
+<!ENTITY mask.tip "선택된 파일은 저장된 후 이 마크스로 이름이 변경됩니다">
+<!ENTITY mirrormanager.tip "다운로드 미러 관리">
+<!ENTITY mirrors.value "미러:">
+<!ENTITY options.label "설정">
+<!ENTITY queue.key "p">
+<!ENTITY queue.label "중지상태로 추가">
+<!ENTITY referrer.value "참조 페이지:">
+<!ENTITY selectall.label "모두 선택">
+<!ENTITY selectinv.label "선택 반전">
+<!ENTITY selectnone.label "선택 취소">
+<!ENTITY start.key "s">
+<!ENTITY start.label "시작!">
+<!ENTITY url.value "다운로드">

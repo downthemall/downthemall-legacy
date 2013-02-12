@@ -4,6 +4,7 @@
 "use strict";
 
 const Prefs = require("preferences");
+const {toURI} = require("support/stringfuncs");
 
 /**
  * XUL namespace
@@ -499,18 +500,30 @@ MimeQuality.prototype = Object.freeze({
 });
 exports.MimeQuality = Object.freeze(MimeQuality);
 
-const _bundles = {};
-function _loadBundle(url) {
-	if (url in _bundles) {
-		return _bundles[url];
-	}
-	let strings = {};
-	for (let s in new SimpleIterator(Services.strings.createBundle(url).getSimpleEnumeration(), Ci.nsIPropertyElement)) {
-		strings[s.key] = s.value;
-	}
-	return _bundles[url] = strings;
-}
+let _bundles = Object.create(null);
 function _loadBundles(urls) {
+	function _load(url) {
+		if (url in _bundles) {
+			return _bundles[url];
+		}
+		let strings = {};
+		let uri = toURI(url);
+		for (let s in new SimpleIterator(Services.strings.createBundle(url).getSimpleEnumeration(), Ci.nsIPropertyElement)) {
+			strings[s.key] = s.value;
+		}
+		if (uri.host == "dta") {
+			url = "chrome://dta-locale" + uri.path.replace("/locale/", "/content/");
+			log(LOG_DEBUG, "also loading: " + url);
+			for (let s in new SimpleIterator(Services.strings.createBundle(url).getSimpleEnumeration(), Ci.nsIPropertyElement)) {
+				let k = s.key;
+				if (!(k in strings)) {
+					strings[k] = s.value;
+				}
+			}
+		}
+		return _bundles[url] = strings;
+	}
+
 	exports.filterInSitu(
 		urls,
 		function(e) !((e in this) || (this[e] = null)), {}
@@ -521,7 +534,7 @@ function _loadBundles(urls) {
 		return _bundles[key];
 	}
 	let rv = {};
-	for (let b of exports.mapInSitu(urls, function(e) _loadBundle(e))) {
+	for (let b of exports.mapInSitu(urls, function(e) _load(e))) {
 		for (let k in b) {
 			rv[k] = b[k];
 		}
@@ -539,7 +552,7 @@ function _loadBundles(urls) {
 var StringBundles_params;
 function StringBundles(documentOrStrings) {
 	if (!('getElementsByTagNameNS' in documentOrStrings)) {
-		this._strings = documentOrStrings;
+		this._strings = _loadBundles(documentOrStrings);
 	}
 	else {
 		this._strings = _loadBundles(Array.map(
@@ -572,6 +585,11 @@ StringBundles.prototype = Object.freeze({
 	}
 });
 exports.StringBundles = Object.freeze(StringBundles);
+Prefs.addObserver("general.useragent.locale", {
+	observe: function() {
+		_bundles = Object.create(null);
+	}
+});
 
 /**
  * XP compatible reveal/launch

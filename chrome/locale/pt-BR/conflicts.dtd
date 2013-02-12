@@ -1,0 +1,5 @@
+<!ENTITY always.label "A partir de agora">
+<!ENTITY overwrite.label "Sobrescrever o arquivo existente">
+<!ENTITY session.label "Somente para essa sessão">
+<!ENTITY skip.label "Omitir/Cancelar">
+<!ENTITY text.value "Lembrar-se desta configuração:">

@@ -7,6 +7,8 @@
 	%globalDTD;
 	<!ENTITY % mirrorsDTD SYSTEM "chrome://dta/locale/mirrors.dtd">
 	%mirrorsDTD;
+	<!ENTITY % defmirrorsDTD SYSTEM "chrome://dta-locale/content/mirrors.dtd">
+	%defmirrorsDTD;
 ]>
 
 <bindings xmlns="http://www.mozilla.org/xbl" xmlns:xbl="http://www.mozilla.org/xbl" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">

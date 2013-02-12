@@ -1,0 +1,43 @@
+<!ENTITY addchunk.label "Deel toevoegen">
+<!ENTITY advanced.label "Geavanceerd">
+<!ENTITY avgSpeedTitle.value "Gem. snelheid:">
+<!ENTITY cancel.label "Annuleren">
+<!ENTITY close.label "Sluiten">
+<!ENTITY currentSpeedTitle.value "Huidige snelheid:">
+<!ENTITY delete.label "Bestand(en) verwijderen">
+<!ENTITY dim.label "Grootte">
+<!ENTITY elapsedTitle.value "Verstreken:">
+<!ENTITY force.label "Starten forceren">
+<!ENTITY hash.label "Controlegetal">
+<!ENTITY import.label "Vanuit bestand importeren">
+<!ENTITY infoMultiple.value "Meervoudige items">
+<!ENTITY infoSizeTitle.value "Grootte:">
+<!ENTITY infoURLTitle.value "Van:">
+<!ENTITY infos.label "Download info">
+<!ENTITY launch.label "Bestand openen">
+<!ENTITY mirrors.label "Mirrors beheren">
+<!ENTITY mirrors.tooltip "Download mirrors locaties beheren">
+<!ENTITY movebottom.label "Onderkant">
+<!ENTITY movedown.label "Omlaag">
+<!ENTITY movetop.label "Bovenkant">
+<!ENTITY moveup.label "Omhoog">
+<!ENTITY options.caption "Opties">
+<!ENTITY parts.label "Delen">
+<!ENTITY path.label "Pad opslaan">
+<!ENTITY pause.label "Pauzeren">
+<!ENTITY pct.label "Voortgang">
+<!ENTITY remainingTitle.value "Overblijvend:">
+<!ENTITY removeAll.label "Alles verwijderen">
+<!ENTITY removeDupes.label "Duplicaten verwijderen">
+<!ENTITY removeGone.label "Verwijderde bestanden wissen">
+<!ENTITY removechunk.label "Deel verwijderen">
+<!ENTITY removemenu.label "Downloads verwijderen">
+<!ENTITY removeselected.label "Geselcteerde verwijderen">
+<!ENTITY restore.label "Herstelln">
+<!ENTITY resume.label "Hervatten">
+<!ENTITY speed.label "Snelheid">
+<!ENTITY targetdir.label "Doelmap openen">
+<!ENTITY tooladd.tooltip "Handmatig een webadres aan DownThemAll! toevoegen">
+<!ENTITY toolbar.full "Pictogrammen en tekst gebruiken">
+<!ENTITY toolbar.icons "Pictogrammen gebruiken">
+<!ENTITY tooldonate.tooltiptext "Help mee DownThemAll! te verbeteren. Overweeg het doen van een kleine donatie!">

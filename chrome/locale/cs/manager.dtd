@@ -1,0 +1,43 @@
+<!ENTITY addchunk.label "Přidat segment">
+<!ENTITY advanced.label "Pokročilé">
+<!ENTITY avgSpeedTitle.value "Průměrná rychlost:">
+<!ENTITY cancel.label "Zrušit">
+<!ENTITY close.label "Zavřít">
+<!ENTITY currentSpeedTitle.value "Aktuální rychlost:">
+<!ENTITY delete.label "Smazat soubory">
+<!ENTITY dim.label "Velikost">
+<!ENTITY elapsedTitle.value "Proběhlo:">
+<!ENTITY force.label "Vynutit stahování">
+<!ENTITY hash.label "Kontrolní součet">
+<!ENTITY import.label "Importovat ze souboru">
+<!ENTITY infoMultiple.value "Více položek">
+<!ENTITY infoSizeTitle.value "Velikost:">
+<!ENTITY infoURLTitle.value "Z:">
+<!ENTITY infos.label "Informace o stahování">
+<!ENTITY launch.label "Otevřít soubor">
+<!ENTITY mirrors.label "Spravovat zrcadla">
+<!ENTITY mirrors.tooltip "Upravit umístění zrcadel">
+<!ENTITY movebottom.label "Na konec">
+<!ENTITY movedown.label "Dolů">
+<!ENTITY movetop.label "Na začátek">
+<!ENTITY moveup.label "Nahoru">
+<!ENTITY options.caption "Možnosti">
+<!ENTITY parts.label "Segmenty">
+<!ENTITY path.label "Uložit cestu">
+<!ENTITY pause.label "Pozastavit">
+<!ENTITY pct.label "Průběh">
+<!ENTITY remainingTitle.value "Zbývá:">
+<!ENTITY removeAll.label "Odebrat vše">
+<!ENTITY removeDupes.label "Odebrat duplicity">
+<!ENTITY removeGone.label "Uklidit dokončené">
+<!ENTITY removechunk.label "Odebrat segment">
+<!ENTITY removemenu.label "Odebrat stahování">
+<!ENTITY removeselected.label "Odebrat vybrané">
+<!ENTITY restore.label "Obnovit">
+<!ENTITY resume.label "Pokračovat">
+<!ENTITY speed.label "Rychlost">
+<!ENTITY targetdir.label "Otevřít složku">
+<!ENTITY tooladd.tooltip "Manuálně přidat stahování do DownThemAll">
+<!ENTITY toolbar.full "Ikony a text">
+<!ENTITY toolbar.icons "Ikony">
+<!ENTITY tooldonate.tooltiptext "Naší dosavadní i budoucí práci můžete finančně podpořit libovolně malým příspěvkem!">

@@ -1,0 +1,5 @@
+<!ENTITY always.label "A partir d'ara">
+<!ENTITY overwrite.label "Remplaçar lo fichièr existent">
+<!ENTITY session.label "Unicament per aquesta sesilha">
+<!ENTITY skip.label "Passar/Anullar">
+<!ENTITY text.value "Se remembrar d'aqueste parametratge :">

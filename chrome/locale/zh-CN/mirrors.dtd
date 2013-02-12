@@ -1,0 +1,10 @@
+<!ENTITY addmirror.tip "添加下载镜像">
+<!ENTITY byline1 "可以从不同的地址下载同一文件。文件将会自动重新组合。">
+<!ENTITY byline2 "请随意添加或删除指向同一文件的地址。">
+<!ENTITY byline3 "添加指向不同文件的地址将造成下载错误">
+<!ENTITY checkmirrors.tip "选中所有下载镜像">
+<!ENTITY header "镜像管理">
+<!ENTITY mirrorurl "地址：">
+<!ENTITY preference "优先级：">
+<!ENTITY removemirror.tip "移除选中下载镜像">
+<!ENTITY title "DownThemAll!镜像管理">

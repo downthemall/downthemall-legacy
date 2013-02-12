@@ -1,0 +1,15 @@
+<!ENTITY checksum.value "Sumă de control:">
+<!ENTITY description.value "Descriere:">
+<!ENTITY mask.tip "Fișierele selectate vor fi salvate și redenumite folosind acest șablon">
+<!ENTITY mirrormanager.tip "Gestionează saiturile alternative de descărcare">
+<!ENTITY mirrors.value "Saituri alternative:">
+<!ENTITY options.label "Opțiuni">
+<!ENTITY queue.key "t">
+<!ENTITY queue.label "Descarcă mai târziu">
+<!ENTITY referrer.value "Pagină de origine:">
+<!ENTITY selectall.label "Selectează tot">
+<!ENTITY selectinv.label "Inversează selecția">
+<!ENTITY selectnone.label "Nu selecta nimic">
+<!ENTITY start.key "D">
+<!ENTITY start.label "Descarcă!">
+<!ENTITY url.value "Adresă">

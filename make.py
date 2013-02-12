@@ -244,7 +244,7 @@ def localize(fp, **kw):
         locale = dict(locale=(f.split("/", 3)[2],))
         with open(f, "rb") as lp:
             for l in lp:
-                l = l.strip()
+                l = unicode(l, "utf-8").strip()
                 if not l or l.startswith("#"):
                     continue
                 k, v = l.split("=", 1)
@@ -257,39 +257,40 @@ def localize(fp, **kw):
                 locale[k] += v,
         locales += locale,
 
-    io = BytesIO()
-    with Reset(io):
+    with Reset(fp):
         rdf = XML(fp.read())
 
-        # kill old localized
-        for e in rdf.getElementsByTagNameNS(NS_EM, "localized"):
-            e.parentNode.removeChild(e)
+    # kill old localized
+    for e in rdf.getElementsByTagNameNS(NS_EM, "localized"):
+        e.parentNode.removeChild(e)
 
-        def mapkey(k):
-            v = list()
-            for e in rdf.getElementsByTagNameNS(NS_EM, k):
-                v += e.firstChild.data,
-            return k, v
+    def mapkey(k):
+        v = list()
+        for e in rdf.getElementsByTagNameNS(NS_EM, k):
+            v += e.firstChild.data,
+        return k, v
 
-        keys = ("locale", "name", "description", "creator", "homepageURL",
-                "developer", "translator", "contributor")
-        baseprops = dict(mapkey(k) for k in keys)
+    keys = ("locale", "name", "description", "creator", "homepageURL",
+            "developer", "translator", "contributor")
+    baseprops = dict(mapkey(k) for k in keys)
 
+    parent = rdf.getElementsByTagNameNS(NS_EM, "id")[0].parentNode
+    for props in sorted(locales, key=sort):
         node = rdf.createElementNS(NS_EM, "em:localized")
         desc = rdf.createElementNS(NS_RDF, "Description")
-        for props in sorted(locales, key=sort):
-            for k in keys:
-                vals = props.get(k, baseprops.get(k, list()))
-                for v in vals:
-                    n = rdf.createElementNS(NS_EM, "em:" + k)
-                    n.appendChild(rdf.createTextNode(v))
-                    desc.appendChild(n)
-        node.appendChild(desc)
-        parent = rdf.getElementsByTagNameNS(NS_EM, "id")[0].parentNode
+        for k in keys:
+            vals = props.get(k, baseprops.get(k, list()))
+            for v in vals:
+                n = rdf.createElementNS(NS_EM, "em:" + k)
+                n.appendChild(rdf.createTextNode(v))
+                desc.appendChild(n)
         parent.appendChild(rdf.createTextNode("\n\t\t"))
+        node.appendChild(desc)
         parent.appendChild(node)
-        parent.appendChild(rdf.createTextNode("\n\t"))
+    parent.appendChild(rdf.createTextNode("\n\t"))
 
+    io = BytesIO()
+    with Reset(io):
         print >>io, rdf.toxml(encoding="utf-8")
         rdf.unlink()
     return io
@@ -491,7 +492,7 @@ def create(args):
     if not opts.force and os.path.exists(output):
         raise ValueError("Output file already exists")
 
-    check_locales()
+    #check_locales()
 
     with BytesIO() as io:
         try:

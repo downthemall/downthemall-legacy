@@ -1,0 +1,14 @@
+<!ENTITY additional.caption "Быстрое фильтрование">
+<!ENTITY additional.tip "Фильтры: Можно использовать несколько текстовых фильтров разделяя их запятыми">
+<!ENTITY disableother.label "Отключить другие фильтры">
+<!ENTITY disableother.tooltip "Отключение других фильтров и использовать только быструю фильтрацию (эта настройка пока не запоминается)">
+<!ENTITY filter.tip "Введите здесь текстовые фильтры! (некоторые примеры можете найти в выпадающем списке)">
+<!ENTITY filters.caption "Фильтры">
+<!ENTITY header.desc.label "Описание">
+<!ENTITY menu.check.label "Выбрать выделенные пункты">
+<!ENTITY menu.toggle.label "Переключение проверки выбранных пунктов">
+<!ENTITY menu.uncheck.label "Не выбирать выделенные пункты">
+<!ENTITY resname.value "Имя ресурса">
+<!ENTITY selectfiltered.label "Выберите фильтры">
+<!ENTITY tab.links.label "Ссылки">
+<!ENTITY title "DownThemAll! - сделайте свой выбор">

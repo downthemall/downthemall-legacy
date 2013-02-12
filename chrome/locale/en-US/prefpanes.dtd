@@ -1,4 +1,4 @@
-<!-- Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
+<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
 <!ENTITY windowstyle.3 "width:48em;height:44em;">
 <!ENTITY filterspane.label "Filters">
 <!ENTITY listhead1.label "Caption">
@@ -75,6 +75,7 @@
 <!ENTITY serverspane.remove.label "Remove">
 
 <!ENTITY schedpane.label "Schedule">
+<!ENTITY schedpane.enable.label "Enable schedule">
 <!ENTITY schedpane.start.label "Only start downloads between:">
 <!ENTITY schedpane.end.label "and ending at:">
 <!ENTITY schedpane.open.label "Auto-open the Manager">
@@ -122,3 +123,4 @@
 <!ENTITY uipane.manager.caption "Manager Window">
 <!ENTITY uipane.startminimized.label "Start minimized">
 <!ENTITY uipane.minimizetotray.label "Minimize to system tray">
+<!ENTITY uipane.getmintrayr.label "Get MinTrayR">

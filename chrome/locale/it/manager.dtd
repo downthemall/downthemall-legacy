@@ -1,0 +1,43 @@
+<!ENTITY addchunk.label "Aggiungi segmento">
+<!ENTITY advanced.label "Avanzate">
+<!ENTITY avgSpeedTitle.value "Velocità media:">
+<!ENTITY cancel.label "Annulla">
+<!ENTITY close.label "Chiudi">
+<!ENTITY currentSpeedTitle.value "Velocità attuale:">
+<!ENTITY delete.label "Cancella file">
+<!ENTITY dim.label "Dimensione">
+<!ENTITY elapsedTitle.value "Trascorso:">
+<!ENTITY force.label "Forza partenza">
+<!ENTITY hash.label "Codice di controllo">
+<!ENTITY import.label "Importa da file">
+<!ENTITY infoMultiple.value "Oggetti multipli">
+<!ENTITY infoSizeTitle.value "Dimensione:">
+<!ENTITY infoURLTitle.value "Da:">
+<!ENTITY infos.label "Ottieni info">
+<!ENTITY launch.label "Apri file">
+<!ENTITY mirrors.label "Gestici mirror">
+<!ENTITY mirrors.tooltip "Gestisci le posizioni dei mirror">
+<!ENTITY movebottom.label "In fondo">
+<!ENTITY movedown.label "Giù">
+<!ENTITY movetop.label "In cima">
+<!ENTITY moveup.label "Su">
+<!ENTITY options.caption "Opzioni">
+<!ENTITY parts.label "Parti">
+<!ENTITY path.label "Percorso salvataggio">
+<!ENTITY pause.label "Pausa">
+<!ENTITY pct.label "Avanzamento">
+<!ENTITY remainingTitle.value "Rimanente:">
+<!ENTITY removeAll.label "Rimuovi tutti">
+<!ENTITY removeDupes.label "Rimuovi doppioni">
+<!ENTITY removeGone.label "Rimuovi le voci obsolete">
+<!ENTITY removechunk.label "Rimuovi segmento">
+<!ENTITY removemenu.label "Rimuovi i download">
+<!ENTITY removeselected.label "Rimuovi la selezione">
+<!ENTITY restore.label "Ripristina">
+<!ENTITY resume.label "Riprendi">
+<!ENTITY speed.label "Velocità">
+<!ENTITY targetdir.label "Apri la cartella di destinazione">
+<!ENTITY tooladd.tooltip "Aggiungi manualmente una URL a DownThemAll">
+<!ENTITY toolbar.full "Usa icone e testo">
+<!ENTITY toolbar.icons "Usa icone">
+<!ENTITY tooldonate.tooltiptext "Aiutaci a migliorare ancora dTa. Fai una piccola donazione!">

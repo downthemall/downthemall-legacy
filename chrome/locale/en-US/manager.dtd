@@ -14,7 +14,7 @@
 <!ENTITY percent.label "Percent">
 <!ENTITY pct.label "Progress">
 <!ENTITY dim.label "Size">
-<!-- time2.label: Est. == Estimated -->
+<!-- LOCALIZATION NOTE (time2.label):  Est. == Estimated -->
 <!ENTITY time2.label "Est. Time">
 <!ENTITY parts.label "Segments">
 <!ENTITY speed.label "Speed">
@@ -50,7 +50,7 @@
 <!ENTITY force.label "Force Start">
 <!ENTITY import.label "Import from File">
 <!ENTITY exportto.label "Export Selected to File">
-<!ENTITY addlimits.label "Add domain specific limits">
+<!ENTITY addlimits.label "Add Domain Specific Limits">
 
 <!ENTITY options.caption "Options">
 <!ENTITY loading2.label "Loading…">

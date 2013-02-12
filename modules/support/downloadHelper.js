@@ -6,6 +6,8 @@ const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 if (available) {
 	lazy(this, "api", function() require("api"));
 	lazy(this, "utils", function() require("utils"));
+	lazy(this, "bundle", function() new (require("utils").StringBundles)(["chrome://dta/locale/downloadHelper.properties"]));
+
 	const core = Cc["@downloadhelper.net/core;1"].getService(Ci.dhICore);
 
 	function ProcessorImpl(turbo, name, title, description) {
@@ -111,17 +113,6 @@ if (available) {
 
 	const processors = [];
 
-	let _str = Services.strings
-		.createBundle('chrome://dta/locale/downloadHelper.properties');
-	function getString(n) {
-		try {
-			return _str.GetStringFromName(n);
-		}
-		catch (ex) {
-			Cu.reportError("locale error: " + n + ex);
-			return '<error>';
-		}
-	};
-	processors.push(new ProcessorImpl(false, "dta-regular", getString('dta-regular'), getString('dta-regular-desc')));
-	processors.push(new ProcessorImpl(true, "dta-turbo", getString('dta-turbo'), getString('dta-turbo-desc')));
+	processors.push(new ProcessorImpl(false, "dta-regular", bundle.getString('dta-regular'), bundle.getString('dta-regular-desc')));
+	processors.push(new ProcessorImpl(true, "dta-turbo", bundle.getString('dta-turbo'), bundle.getString('dta-turbo-desc')));
 }

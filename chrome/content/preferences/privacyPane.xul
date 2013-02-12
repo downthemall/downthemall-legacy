@@ -1,8 +1,19 @@
 <?xml version="1.0"?>
-<!-- ***** BEGIN LICENSE BLOCK ***** * Version: GPL 2.0 * * This code is
-	part of DownThemAll! - dTa! * Copyright © 2004-2006 Federico Parodi and Stefano
-	Verna. * * See LICENSE and GPL for details. * * ***** END LICENSE BLOCK ***** -->
-<!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ *
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE window [
+	<!ENTITY % prefsDTD SYSTEM "chrome://dta/locale/prefpanes.dtd">
+	%prefsDTD;
+	<!ENTITY % defprefsDTD SYSTEM "chrome://dta-locale/content/prefpanes.dtd">
+	%defprefsDTD;
+]>
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	flex="1">
 
@@ -53,7 +64,7 @@
 								<label id="historylabel" style="min-width: 3em;" />
 							</hbox>
 						</vbox>
-						<vbox>
+						<vbox class="clears">
 							<button id="butFoldDel" label="&privacypane.deletefoldershistory.label;"
 								oncommand="Privacy.delDirectories();" />
 							<button id="butFiltDel" label="&privacypane.deletefiltershistory.label;"
@@ -63,16 +74,18 @@
 				</row>
 			</rows>
 		</grid>
-		<groupbox orient="horizontal">
+		<groupbox orient="vertical">
 			<caption label="&privacypane.logs.caption;" />
 			<checkbox label="&privacypane.enablelogs.label;" preference="dtadump" />
 			<spacer flex="1" />
-			<button id="butShowLog" label="&privacypane.showlog.label;"
-				oncommand="Privacy.showLog();" />
-			<button id="butRevealLog" label="&privacypane.reveallog.label;"
-				oncommand="Privacy.revealLog();" />
-			<button id="butDelLog" label="&privacypane.deletelog.label;"
-				oncommand="Privacy.deleteLog();" />
+			<hbox class="clears">
+				<button id="butShowLog" label="&privacypane.showlog.label;"
+					oncommand="Privacy.showLog();" />
+				<button id="butRevealLog" label="&privacypane.reveallog.label;"
+					oncommand="Privacy.revealLog();" />
+				<button id="butDelLog" label="&privacypane.deletelog.label;"
+					oncommand="Privacy.deleteLog();" />
+			</hbox>
 		</groupbox>
 
 		<groupbox>

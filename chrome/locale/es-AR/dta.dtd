@@ -1,0 +1,15 @@
+<!ENTITY checksum.value "Checksum (Hash):">
+<!ENTITY description.value "Descripción:">
+<!ENTITY mask.tip "Seleccionar archivos a guardar y renombrar usando esta mascara">
+<!ENTITY mirrormanager.tip "Administrar espejos descarga">
+<!ENTITY mirrors.value "Mirror/Espejos:">
+<!ENTITY options.label "Opciones">
+<!ENTITY queue.key "p">
+<!ENTITY queue.label "Agregar pausado">
+<!ENTITY referrer.value "Pagina referencial:">
+<!ENTITY selectall.label "Seleccionar Todos">
+<!ENTITY selectinv.label "Invertir Selección">
+<!ENTITY selectnone.label "Seleccionar Ninguno">
+<!ENTITY start.key "s">
+<!ENTITY start.label "Comenzar!">
+<!ENTITY url.value "Descargar">

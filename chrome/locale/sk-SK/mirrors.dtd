@@ -1,0 +1,10 @@
+<!ENTITY addmirror.tip "Pridať download mirror">
+<!ENTITY byline1 "Sťahovanie môže byť načítané z rôznych miest. Súbor je potom automaticky poskladaný.">
+<!ENTITY byline2 "Nebojte sa pridávať a odoberať miesta ukazujúce na rovnaký súbor.">
+<!ENTITY byline3 "Vkladanie rôznych umiestnení súboru môže spôsobiť chybné sťahovanie">
+<!ENTITY checkmirrors.tip "Skontrolovať všetky download mirrory">
+<!ENTITY header "Správca mirroru">
+<!ENTITY mirrorurl "Umiestnenie:">
+<!ENTITY preference "Priorita:">
+<!ENTITY removemirror.tip "Zmazať označené download mirrory">
+<!ENTITY title "Správca mirroru DownThemAll!">

@@ -29,6 +29,7 @@ asyncTest("verify that UI XML actually loads", function() {
 								"dta/manager/info.xul",
 								"dta/manager/manager.xul",
 								"dta/manager/metaselect.xul",
+								"dta/manager/tooltip.xul",
 								"integration/elements.xul",
 								"integration/saveas.xul",
 								"integration/toolbarinstall.xul",

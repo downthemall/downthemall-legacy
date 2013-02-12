@@ -1,0 +1,14 @@
+<!ENTITY additional.caption "الترشيح السريع">
+<!ENTITY additional.tip "المرشح النصي: يمكنك تعيين عدة مرشحات نصية في الوقت نفسه باستخدام الفاصلة.">
+<!ENTITY disableother.label "عطل المرشحات الأخرى">
+<!ENTITY disableother.tooltip "عطل المرشحات الأخرى واستخدم الترشيح السريع فقط. (هذا الاختيار غير ثابت الآن)">
+<!ENTITY filter.tip "اكتب مرشحاتك النصية هنا! (بعض الأمثلة موجودة في القائمة المنسدلة)">
+<!ENTITY filters.caption "المرشحات">
+<!ENTITY header.desc.label "الوصف">
+<!ENTITY menu.check.label "حدد العناصر المختارة">
+<!ENTITY menu.toggle.label "بدِّل حالة التحديد للعناصر المختارة">
+<!ENTITY menu.uncheck.label "ألغِ تحديد العناصر المختارة">
+<!ENTITY resname.value "إسم المصدر">
+<!ENTITY selectfiltered.label "اختر المرشَّح">
+<!ENTITY tab.links.label "الوصلات">
+<!ENTITY title "قم بالاختيار">

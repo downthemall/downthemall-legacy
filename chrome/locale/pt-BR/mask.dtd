@@ -1,0 +1,19 @@
+<!ENTITY mask.curl "Endereço Completo">
+<!ENTITY mask.d "Dia">
+<!ENTITY mask.ext "Extensão">
+<!ENTITY mask.flatcurl "Endereço Completo">
+<!ENTITY mask.flatsubdirs "Subdiretórios do Endereço">
+<!ENTITY mask.hh "Horas">
+<!ENTITY mask.inum "Número do Item">
+<!ENTITY mask.m "Mês">
+<!ENTITY mask.mm "Minutos">
+<!ENTITY mask.name "Nome do Arquivo">
+<!ENTITY mask.open.tip "Tabela de referência de tags de renomeação">
+<!ENTITY mask.qstring "Query String">
+<!ENTITY mask.refer "Endereço da Referência">
+<!ENTITY mask.ss "Segundos">
+<!ENTITY mask.subdirs "Subdiretórios do Endereço">
+<!ENTITY mask.tip "Clique ou arraste para a máscara de renomeação">
+<!ENTITY mask.title "Máscaras de Renomeação">
+<!ENTITY mask.url "Endereço Base">
+<!ENTITY mask.y "Ano">

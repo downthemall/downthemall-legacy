@@ -19,8 +19,12 @@
 	%globalDTD;
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
 	%commonDTD;
+	<!ENTITY % defcommonDTD SYSTEM "chrome://dta-locale/content/dta.dtd">
+	%defcommonDTD;
 	<!ENTITY % selectDTD SYSTEM "chrome://dta/locale/select.dtd">
 	%selectDTD;
+	<!ENTITY % defselectDTD SYSTEM "chrome://dta-locale/content/select.dtd">
+	%defselectDTD;
 ]>
 
 <window

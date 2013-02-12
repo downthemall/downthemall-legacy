@@ -1,0 +1,19 @@
+<!ENTITY mask.curl "Volledig webadres">
+<!ENTITY mask.d "Dag">
+<!ENTITY mask.ext "Extensie">
+<!ENTITY mask.flatcurl "Platte volledig webadres">
+<!ENTITY mask.flatsubdirs "Platte webadres subdirectories">
+<!ENTITY mask.hh "Uren">
+<!ENTITY mask.inum "Item nummer">
+<!ENTITY mask.m "Maand">
+<!ENTITY mask.mm "Minuten">
+<!ENTITY mask.name "Bestandsnaam">
+<!ENTITY mask.open.tip "Referentietabel hernoemde markeringen">
+<!ENTITY mask.qstring "Wachtrij string">
+<!ENTITY mask.refer "Verwijzend webadres">
+<!ENTITY mask.ss "Seconden">
+<!ENTITY mask.subdirs "Webadres subdirectories">
+<!ENTITY mask.tip "Klikken of slepen om masker te hernoemen">
+<!ENTITY mask.title "Met koppeling geassocieerde titel">
+<!ENTITY mask.url "Basis webadres">
+<!ENTITY mask.y "Jaar">

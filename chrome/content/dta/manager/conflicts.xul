@@ -11,7 +11,12 @@
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 <?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
 
-<!DOCTYPE window SYSTEM "chrome://dta/locale/conflicts.dtd">
+<!DOCTYPE window [
+	<!ENTITY % conflictsDTD SYSTEM "chrome://dta/locale/conflicts.dtd">
+	%conflictsDTD;
+	<!ENTITY % defconflictsDTD SYSTEM "chrome://dta-locale/content/conflicts.dtd">
+	%defconflictsDTD;
+]>
 
 <dialog
 	id="DownThemAll"
@@ -23,7 +28,7 @@
 	ondialogcancel="return false;"
 	width="460px"
 	>
-		<stringbundleset>
+		<stringbundleset xmlns="http://www.downthemall.net/properties#">
 			<stringbundle src="chrome://dta/locale/conflicts.properties"/>
 		</stringbundleset>
 		<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js"/>

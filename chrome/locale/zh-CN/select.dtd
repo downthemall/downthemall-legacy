@@ -1,0 +1,14 @@
+<!ENTITY additional.caption "快速过滤器">
+<!ENTITY additional.tip "文本过滤器:你可以用逗号分隔并同时使用多个文本过滤器">
+<!ENTITY disableother.label "禁用其它过滤器">
+<!ENTITY disableother.tooltip "禁用其它过滤器，只使用快速过滤器。(该设置目前不会被记住)">
+<!ENTITY filter.tip "在这里输入文本过滤器！(例子见下拉列表)">
+<!ENTITY filters.caption "过滤器">
+<!ENTITY header.desc.label "描述">
+<!ENTITY menu.check.label "勾选所选项目">
+<!ENTITY menu.toggle.label "切换所选项目勾选状态">
+<!ENTITY menu.uncheck.label "不勾选所选项目">
+<!ENTITY resname.value "资源名称">
+<!ENTITY selectfiltered.label "选择过滤">
+<!ENTITY tab.links.label "链接">
+<!ENTITY title "请选择">

@@ -1,0 +1,10 @@
+<!ENTITY addmirror.tip "Aggiungi un mirror di scaricamento">
+<!ENTITY byline1 "Gli scaricamenti possono alimentarsi da diverse posizioni. Il file viene riassemblato automaticamente.">
+<!ENTITY byline2 "Sei libero di aggiungere e rimuovere indirizzi che puntano allo stesso file.">
+<!ENTITY byline3 "Aggiungere indirizzi che puntano a file diversi provocherà uno scaricamento errato">
+<!ENTITY checkmirrors.tip "Controlla tutti i mirror di scaricamento">
+<!ENTITY header "Gestione dei Mirror">
+<!ENTITY mirrorurl "Posizione:">
+<!ENTITY preference "Priorità:">
+<!ENTITY removemirror.tip "Rimuovi i mirror di scaricamento selezionati">
+<!ENTITY title "DownThemAll! Gestione dei Mirror">

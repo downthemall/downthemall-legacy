@@ -1,0 +1,14 @@
+<!ENTITY additional.caption "Szybkie filtrowanie">
+<!ENTITY additional.tip "Używając przecinków można ustanowić jednocześnie wiele filtrów tekstowych">
+<!ENTITY disableother.label "Wyłącz inne filtry">
+<!ENTITY disableother.tooltip "Wyłącza inne filtry i używa tylko szybkiego filtrowania. (Opcja ta nie jest w tej chwili polecana)">
+<!ENTITY filter.tip "Wprowadź tutaj swój filtr tekstowy! (przykłady w menu rozwijanym)">
+<!ENTITY filters.caption "Filtry">
+<!ENTITY header.desc.label "Opis">
+<!ENTITY menu.check.label "Zaznacz wybrane elementy">
+<!ENTITY menu.toggle.label "Odwróć zaznaczenie">
+<!ENTITY menu.uncheck.label "Odznacz wybrane elementy">
+<!ENTITY resname.value "Nazwa źródła">
+<!ENTITY selectfiltered.label "Zaznacz odfiltrowane">
+<!ENTITY tab.links.label "Odnośniki">
+<!ENTITY title "DownThemAll! - wybór odnośników">

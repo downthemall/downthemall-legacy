@@ -123,3 +123,7 @@ richlistitem.serverlimit row {
 timepicker {
 	-moz-binding: url(chrome://dta/content/preferences/bindings.xml#timepicker);
 }
+
+.clears > button {
+	font-size: xx-small;
+}

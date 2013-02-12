@@ -1,0 +1,15 @@
+<!ENTITY checksum.value "チェックサム (ハッシュ):">
+<!ENTITY description.value "説明:">
+<!ENTITY mask.tip "ダウンロードしたファイルの名前を指定の規則にそって変更します">
+<!ENTITY mirrormanager.tip "ミラーサーバーを管理します">
+<!ENTITY mirrors.value "ミラーサーバー:">
+<!ENTITY options.label "設定">
+<!ENTITY queue.key "p">
+<!ENTITY queue.label "後でダウンロード">
+<!ENTITY referrer.value "参照元ページ(リファラー):">
+<!ENTITY selectall.label "すべて選択">
+<!ENTITY selectinv.label "選択の切り替え">
+<!ENTITY selectnone.label "選択を解除">
+<!ENTITY start.key "s">
+<!ENTITY start.label "開始">
+<!ENTITY url.value "ダウンロード">

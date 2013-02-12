@@ -1,0 +1,19 @@
+<!ENTITY mask.curl "Úplná URL">
+<!ENTITY mask.d "Den">
+<!ENTITY mask.ext "Přípona">
+<!ENTITY mask.flatcurl "Přímé plné URL">
+<!ENTITY mask.flatsubdirs "Přímé URL podsložek">
+<!ENTITY mask.hh "Hodiny">
+<!ENTITY mask.inum "Číslo položky">
+<!ENTITY mask.m "Měsíc">
+<!ENTITY mask.mm "Minuty">
+<!ENTITY mask.name "Název souboru">
+<!ENTITY mask.open.tip "Tabulka referenčních štítků pro přejmenování">
+<!ENTITY mask.qstring "Řetězec dotazu">
+<!ENTITY mask.refer "URL odkazující stránky">
+<!ENTITY mask.ss "Sekundy">
+<!ENTITY mask.subdirs "Podsložky URL">
+<!ENTITY mask.tip "Klepněte, nebo přetáhněte pro přejmenování masky">
+<!ENTITY mask.title "Značky přejmenování">
+<!ENTITY mask.url "Základní URL">
+<!ENTITY mask.y "Rok">

@@ -1,0 +1,87 @@
+<!ENTITY add.label "Új szűrő hozzáadása">
+<!ENTITY advancedpane.chunksdisabled "1 (kikapcsolva)">
+<!ENTITY advancedpane.downloads.caption "Haladó letöltésszabályzás">
+<!ENTITY advancedpane.exposeinua.label "DownThemAll! felhasználó-azonosító használata">
+<!ENTITY advancedpane.files.caption "Fájl">
+<!ENTITY advancedpane.hour "óra">
+<!ENTITY advancedpane.hours "óra">
+<!ENTITY advancedpane.label "Haladó beállítások">
+<!ENTITY advancedpane.minute "perc">
+<!ENTITY advancedpane.minutes "perc">
+<!ENTITY advancedpane.permissions.read "olvasás">
+<!ENTITY advancedpane.permissions.write "Írás">
+<!ENTITY advancedpane.scheduler.caption "Letöltés indításának sorrendje:">
+<!ENTITY advancedpane.scheduler.fair "Tisztességes és lassú – Megosztás folyamán">
+<!ENTITY advancedpane.scheduler.fast "Gyors – Sorbakerülés után">
+<!ENTITY advancedpane.scheduler.legacy "Eredeti – nincs határ">
+<!ENTITY advancedpane.seconds "másodperc">
+<!ENTITY advancedpane.tempdir.label "Mappa használata:">
+<!ENTITY advancedpane.tempfiles.caption "Átmeneti fájlok">
+<!ENTITY advancedpane.usetemp.label "Szeletek letöltése átmeneti mappába">
+<!ENTITY buttonlabelextra2 "Eredeti beállítások visszaállítása">
+<!ENTITY dtaPreferences.title "DownThemAll! Beállítások...">
+<!ENTITY dtacontext2.label "Tulajdonságok">
+<!ENTITY filter.label "Szűrt kiterjesztések:">
+<!ENTITY filterspane.label "Szűrők">
+<!ENTITY listhead1.label "Elnevezés">
+<!ENTITY listhead2.label "Kiterjesztések">
+<!ENTITY mainpane.alert.caption "A letöltések befejeztével:">
+<!ENTITY mainpane.alert.label "Értesítsen">
+<!ENTITY mainpane.alertnone.label "Ne figyelmeztessen">
+<!ENTITY mainpane.ask.label "Kérdés">
+<!ENTITY mainpane.closedta.label "DownThemAll  bezárása az összes letöltés befejezésekor">
+<!ENTITY mainpane.defaults.caption "Alapértelmezések">
+<!ENTITY mainpane.defaults.desc "Az OneClick! által használt letöltési mappa, átnevezési maszk és szűrők a DownThemAll! kiválasztás párbeszédablakjában állítható be.">
+<!ENTITY mainpane.label "Alap">
+<!ENTITY mainpane.listsniffedvideos.label "(Flash) videók mentése és listázása">
+<!ENTITY mainpane.misc.caption "Egyebek">
+<!ENTITY mainpane.overwrite.label "Felülírás">
+<!ENTITY mainpane.rememberoneclick.label "Tárolja, hogy az egykattintásos letöltés összes lapra vagy az aktuális lapra vonatkozik">
+<!ENTITY mainpane.rename.label "Átnevezés">
+<!ENTITY mainpane.settime.label "Fájlok idejének beállítása az utolsó módosítás idejére (szerveren) vagy a letöltési sorba kerülés idejére">
+<!ENTITY mainpane.skip.label "Kihagyás">
+<!ENTITY mainpane.sounddone.label "Hang lejátszása az összes letöltése befejezésekor">
+<!ENTITY mainpane.textlinks.label "Szöveglinkek felismerése">
+<!ENTITY manager "dTa Manager">
+<!ENTITY privacypane.closing.caption "Amikor a kezelő ablak zárva van">
+<!ENTITY privacypane.deletefiltershistory.label "Saját szűrőelőzmények törlése">
+<!ENTITY privacypane.deletefoldershistory.label "Mappaelőzmények törlése">
+<!ENTITY privacypane.deletelog.label "Napló törlése">
+<!ENTITY privacypane.dropdowns.caption "Legördülő menük">
+<!ENTITY privacypane.enablelogs.label "Hibakereső naplózás engedélyezése">
+<!ENTITY privacypane.label "Személyes szféra">
+<!ENTITY privacypane.logs.caption "Hibakereső napló">
+<!ENTITY privacypane.notice.caption "Megjegyzés">
+<!ENTITY privacypane.notice.desc "DownThemAll tartalmazza a Személyes adatok törlése funkciót (ha az elérhető)">
+<!ENTITY privacypane.privacynotice.label "Megjegyzések a magánszféra védelméről">
+<!ENTITY privacypane.reveallog.label "Fájl megjelenítése">
+<!ENTITY privacypane.showlog.label "Napló megjelenítése">
+<!ENTITY serverpane.limits.noitems "Nincs szerverenként sebességhatárolás">
+<!ENTITY serverspane.autoretry.interval.label "Időköze">
+<!ENTITY serverspane.autoretry.max.label "Száma">
+<!ENTITY serverspane.cancel.label "Mégsem">
+<!ENTITY serverspane.connections.label "Kapcsolatok:">
+<!ENTITY serverspane.downloads.caption "Letöltések">
+<!ENTITY serverspane.edit.label "Szerkesztés">
+<!ENTITY serverspane.label "Hálózat">
+<!ENTITY serverspane.limited "Határolt">
+<!ENTITY serverspane.limits.label "Szerverenkénti sebességhatár">
+<!ENTITY serverspane.new.label "Új határ">
+<!ENTITY serverspane.remove.label "Eltávolítás">
+<!ENTITY serverspane.unlimited "Határtalan">
+<!ENTITY serverspane.url.label "Hely vagy tartomány:">
+<!ENTITY uipane.compact.label "Kompakt menü használata">
+<!ENTITY uipane.context.caption "Helyi menü">
+<!ENTITY uipane.downloadwin.label "DownThemAll! hozzáadása a letöltési ablakhoz">
+<!ENTITY uipane.hide.label "Menü elrejtése">
+<!ENTITY uipane.integration.caption "Integráció">
+<!ENTITY uipane.label "Felhasználói felület">
+<!ENTITY uipane.manager.caption "Kezelőablak">
+<!ENTITY uipane.minimizetotray.label "Minimalizálás a rendszertálcára">
+<!ENTITY uipane.namesonly.label "Csak fájlnevek megjelenítése a kezelő ablakban">
+<!ENTITY uipane.showtooltip.label "Gyorstippek megjelenítése">
+<!ENTITY uipane.startminimized.label "Indítás minimalizált ablakban">
+<!ENTITY uipane.tools.caption "Eszközök menü">
+<!ENTITY useAs.label "Alkalmazza:">
+<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
+<!ENTITY windowstyle.3 "width:48em;height:44em;">

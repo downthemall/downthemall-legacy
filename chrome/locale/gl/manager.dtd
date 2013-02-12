@@ -1,0 +1,43 @@
+<!ENTITY addchunk.label "Engadir unha parte máis">
+<!ENTITY advanced.label "Avanzado">
+<!ENTITY avgSpeedTitle.value "Velocidade media:">
+<!ENTITY cancel.label "Cancelar">
+<!ENTITY close.label "Pechar">
+<!ENTITY currentSpeedTitle.value "Velocidade actual:">
+<!ENTITY delete.label "Eliminar ficheiro(s)">
+<!ENTITY dim.label "Tamaño">
+<!ENTITY elapsedTitle.value "Transcorrido:">
+<!ENTITY force.label "Forzar o comezo">
+<!ENTITY hash.label "Suma de verificación">
+<!ENTITY import.label "Importar dende o ficheiro">
+<!ENTITY infoMultiple.value "Múltiples elementos">
+<!ENTITY infoSizeTitle.value "Tamaño:">
+<!ENTITY infoURLTitle.value "De:">
+<!ENTITY infos.label "Información da descarga">
+<!ENTITY launch.label "Abrir ficheiro">
+<!ENTITY mirrors.label "Xestionar espellos">
+<!ENTITY mirrors.tooltip "Xestionar as localizacións dos espellos de descarga.">
+<!ENTITY movebottom.label "O inferior">
+<!ENTITY movedown.label "Abaixo">
+<!ENTITY movetop.label "O superior">
+<!ENTITY moveup.label "Arriba">
+<!ENTITY options.caption "Opcións">
+<!ENTITY parts.label "Partes">
+<!ENTITY path.label "Gardar o camiño">
+<!ENTITY pause.label "Parar">
+<!ENTITY pct.label "Avance">
+<!ENTITY remainingTitle.value "Falta:">
+<!ENTITY removeAll.label "Eliminar todas">
+<!ENTITY removeDupes.label "Eliminar as duplicadas">
+<!ENTITY removeGone.label "Limpar os ficheiros">
+<!ENTITY removechunk.label "Eliminar unha parte">
+<!ENTITY removemenu.label "Eliminar as descargas">
+<!ENTITY removeselected.label "Eliminar as seleccionadas">
+<!ENTITY restore.label "Restaurar">
+<!ENTITY resume.label "Continuar">
+<!ENTITY speed.label "Velocidade">
+<!ENTITY targetdir.label "Abrir cartafol">
+<!ENTITY tooladd.tooltip "Engadir manualmente unha descarga a DownThemAll">
+<!ENTITY toolbar.full "Usar iconas e texto">
+<!ENTITY toolbar.icons "Usar iconas">
+<!ENTITY tooldonate.tooltiptext "Pode axudarnos a facer DownThemAll incluso mellor. Considere facer unha pequena doazón">

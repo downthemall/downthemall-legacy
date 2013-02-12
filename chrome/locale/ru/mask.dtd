@@ -1,0 +1,19 @@
+<!ENTITY mask.curl "Полный URL">
+<!ENTITY mask.d "День">
+<!ENTITY mask.ext "Расширение">
+<!ENTITY mask.flatcurl "Flat Полный URL">
+<!ENTITY mask.flatsubdirs "Flat URL поддиректории">
+<!ENTITY mask.hh "Часы">
+<!ENTITY mask.inum "номер пункта">
+<!ENTITY mask.m "Месяц">
+<!ENTITY mask.mm "Минуты">
+<!ENTITY mask.name "Имя файла">
+<!ENTITY mask.open.tip "Показать теги переименования">
+<!ENTITY mask.qstring "Строка запроса">
+<!ENTITY mask.refer "URL перенаправления">
+<!ENTITY mask.ss "Секунды">
+<!ENTITY mask.subdirs "URL поддиректории">
+<!ENTITY mask.tip "Нажмите для выбора маски переименования">
+<!ENTITY mask.title "Теги переименования">
+<!ENTITY mask.url "Базовый URL">
+<!ENTITY mask.y "Год">

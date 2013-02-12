@@ -1,0 +1,19 @@
+<!ENTITY mask.curl "URL Completo">
+<!ENTITY mask.d "Dia">
+<!ENTITY mask.ext "Extensão">
+<!ENTITY mask.flatcurl "URL Completo">
+<!ENTITY mask.flatsubdirs "Sub directorias do URL">
+<!ENTITY mask.hh "Horas">
+<!ENTITY mask.inum "Número do item">
+<!ENTITY mask.m "Mês">
+<!ENTITY mask.mm "Minutos">
+<!ENTITY mask.name "Nome do Ficheiro">
+<!ENTITY mask.open.tip "Tabela de referência para mudar nome das etiquetas">
+<!ENTITY mask.qstring "String do Pedido">
+<!ENTITY mask.refer "Referrer URL">
+<!ENTITY mask.ss "Segundos">
+<!ENTITY mask.subdirs "Sub directorias do URL">
+<!ENTITY mask.tip "Clique ou arraste para mudar o nome da máscara">
+<!ENTITY mask.title "Mudar nome à Máscara">
+<!ENTITY mask.url "URL Base">
+<!ENTITY mask.y "Ano">

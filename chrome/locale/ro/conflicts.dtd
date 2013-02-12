@@ -1,0 +1,5 @@
+<!ENTITY always.label "De acum înainte">
+<!ENTITY overwrite.label "Să înlocuiți fișierul existent">
+<!ENTITY session.label "Doar pentru această sesiune de descărcări">
+<!ENTITY skip.label "Să renunțați la el">
+<!ENTITY text.value "Memorare opțiune">

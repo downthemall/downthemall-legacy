@@ -1,13 +1,13 @@
 <!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
 
-<!-- UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
 
-<!-- Your language in your language -->
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "English">
-<!-- Your credit; or leave as dTa Team if you don't want credit -->
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "The dTa Team">
-<!-- Your credit and language combined -->
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "English translation by: The dTa Team">
 
 
@@ -53,7 +53,7 @@
 <!ENTITY lp.tut.oneclickn "After using the Clear Private Data feature in Firefox the OneClick feature won't be available until you start a regular DownThemAll! download again.">
 
 <!ENTITY lp.tb.intro "DownThemAll! offers some toolbar buttons that give you a convenient way to access DownThemAll! features.">
-<!-- Text for the toolbar install button -->
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "Add toolbar buttons">
 <!ENTITY lp.tb.add.title "Adding and using toolbar buttons">
 <!ENTITY lp.tb.add.p1 "DownThemAll! features four toolbar buttons to make it easier to find and queue downloads">

@@ -15,7 +15,7 @@ lazy(this, 'TextLinks', function() require("support/textlinks"));
 lazy(this, "ContentHandling", function() require("support/contenthandling").ContentHandling);
 lazy(this, 'CoThreads', function() require("support/cothreads"));
 lazy(this, 'getIcon', function() require("support/icons").getIcon);
-lazy(this, 'getString_str',	function() Services.strings.createBundle('chrome://dta/locale/menu.properties'));
+lazy(this, "bundle", function() new (require("utils").StringBundles)(["chrome://dta/locale/menu.properties"]));
 lazy(this, "isWindowPrivate", function() require("support/pbm").isWindowPrivate);
 
 const {unloadWindow} = require("support/overlays");
@@ -24,27 +24,6 @@ const strfn = require("support/stringfuncs");
 /* **
  * Helpers and tools
  */
-function getString(n) {
-	try {
-		return getString_str.GetStringFromName(n);
-	}
-	catch (ex) {
-		log(LOG_ERROR, "locale error: " + n, ex);
-		return '<error>';
-	}
-}
-function getFormattedString(n) {
-	let args = Array.slice(arguments);
-	args.shift();
-	try {
-		return getString_str.formatStringFromName(n, args, args.length);
-	}
-	catch (ex) {
-		log(LOG_ERROR, "locale error: " + n, ex);
-		return '<error>';
-	}
-}
-
 function trimMore(t) {
 	return t.replace(/^[\s_]+|[\s_]+$/gi, '').replace(/(_){2,}/g, "_")
 }
@@ -300,7 +279,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 						"url": new DTA.URL(s.url),
 						"fileName": s.name,
 						"referrer": ref,
-						"description": getString('sniffedvideo')
+						"description": bundle.getString('sniffedvideo')
 					}
 					aURLs.push(o);
 					aImages.push(o);
@@ -545,7 +524,7 @@ exports.load = function load(window, outerEvent) {
 					notifyProgress(getFormattedString('processing.label', urls.length, images.length));
 				}
 				else {
-					notifyProgress(getString('preparing.label'));
+					notifyProgress(bundle.getString('preparing.label'));
 				}
 			}), 1750, true);
 
@@ -576,7 +555,7 @@ exports.load = function load(window, outerEvent) {
 
 				log(LOG_DEBUG, "findLinks(): finishing...");
 				if (!urls.length && !images.length) {
-					notifyError(getString('error'), getString('error.nolinks'));
+					notifyError(bundle.getString('error'), bundle.getString('error.nolinks'));
 					return;
 				}
 
@@ -596,7 +575,7 @@ exports.load = function load(window, outerEvent) {
 					}
 					catch (ex) {
 						log(LOG_ERROR, 'findLinks', ex);
-						DTA.saveLinkArray(window, urls, images, getString('error.information'));
+						DTA.saveLinkArray(window, urls, images, bundle.getString('error.information'));
 					}
 					return;
 				}
@@ -621,7 +600,7 @@ exports.load = function load(window, outerEvent) {
 			return;
 		}
 		catch (ex) {
-			notifyError(getString('error'), getString('errorcannotdownload'));
+			notifyError(bundle.getString('error'), bundle.getString('errorcannotdownload'));
 			log(LOG_ERROR, 'findSingleLink: ', ex);
 		}
 	}
@@ -635,7 +614,7 @@ exports.load = function load(window, outerEvent) {
 			saveSingleLink(turbo, cur.src, cur);
 		}
 		catch (ex) {
-			notifyError(getString('error'), getString('errorcannotdownload'));
+			notifyError(bundle.getString('error'), bundle.getString('errorcannotdownload'));
 			log(LOG_ERROR, 'findSingleLink: ', ex);
 		}
 	}
@@ -668,7 +647,7 @@ exports.load = function load(window, outerEvent) {
 				}
 			}
 			catch (ex) {
-				notifyError(getString('error'), getString('errorcannotdownload'));
+				notifyError(bundle.getString('error'), bundle.getString('errorcannotdownload'));
 				log(LOG_ERROR, '_findSingleMedia: ', ex);
 			}
 		}
@@ -716,7 +695,7 @@ exports.load = function load(window, outerEvent) {
 			}
 			catch (ex) {
 				log(LOG_ERROR, 'saveSingleLink', ex);
-				notifyError(getString('error'), getString('error.information'));
+				notifyError(bundle.getString('error'), bundle.getString('error.information'));
 			}
 		}
 		DTA.saveSingleItem(window, false, item);
@@ -795,7 +774,7 @@ exports.load = function load(window, outerEvent) {
 				}
 				catch (ex) {
 					log(LOG_ERROR, 'findSingleLink', ex);
-					notifyError(getString('error'), getString('error.information'));
+					notifyError(bundle.getString('error'), bundle.getString('error.information'));
 				}
 			}
 			DTA.saveSingleItem(window, false, item);
@@ -983,7 +962,7 @@ exports.load = function load(window, outerEvent) {
 				show.push('Manager');
 			}
 			toolsSep.hidden = menu.indexOf(0) == -1;
-			toolsBase.setAttribute('label', getString(menu.indexOf(1) != -1 ? 'moredtatools' : 'simpledtatools'));
+			toolsBase.setAttribute('label', bundle.getString(menu.indexOf(1) != -1 ? 'moredtatools' : 'simpledtatools'));
 
 			// show the items.
 			for (let i in tools) {
@@ -1026,7 +1005,7 @@ exports.load = function load(window, outerEvent) {
 				"url": new DTA.URL(s.url),
 				"referrer": ref,
 				"fileName": s.name,
-				"description": getString("sniffedvideo"),
+				"description": bundle.getString("sniffedvideo"),
 				"isPrivate": isWindowPrivate(window)
 			}
 			let mi = document.createElement("menuitem");
