@@ -4,9 +4,9 @@
 
 
 -->
-<!ENTITY start.label "Letöltés!">
+<!ENTITY start.label "Letöltés">
 <!ENTITY start.key "s">
-<!ENTITY queue.label "Ütemezés!">
+<!ENTITY queue.label "Ütemezés">
 <!ENTITY queue.key "t">
 <!ENTITY options.label "Tulajdonságok">
 <!ENTITY url.value "Letöltés">
