@@ -1,0 +1,15 @@
+<!ENTITY checksum.value "Controlegetal (Hash)">
+<!ENTITY description.value "Omschrijving:">
+<!ENTITY mask.tip "Geselecteerde bestanden zullen worden opgeslagen en hernoemt conform dit masker">
+<!ENTITY mirrormanager.tip "Download mirrors beheren">
+<!ENTITY mirrors.value "Mirrors:">
+<!ENTITY options.label "Voorkeuren">
+<!ENTITY queue.key "p">
+<!ENTITY queue.label "Gepauzeerd toevoegen">
+<!ENTITY referrer.value "Referentie pagina:">
+<!ENTITY selectall.label "Alles selecteren">
+<!ENTITY selectinv.label "Selectie omkeren">
+<!ENTITY selectnone.label "Niets selecteren">
+<!ENTITY start.key "S">
+<!ENTITY start.label "Starten">
+<!ENTITY url.value "Downloaden">

@@ -1,0 +1,5 @@
+<!ENTITY always.label "A partir de ahora">
+<!ENTITY overwrite.label "Sobrescribir el archivo ya existente">
+<!ENTITY session.label "Sólo durante esta sesión">
+<!ENTITY skip.label "Omitir/Cancelar">
+<!ENTITY text.value "Recordar predisposición:">

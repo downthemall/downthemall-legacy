@@ -1,0 +1,14 @@
+<!ENTITY additional.caption "빠른 필터링">
+<!ENTITY additional.tip "문자 필터: 쉼표로 구분하여 복수의 필터를 설정할 수 있습니다.">
+<!ENTITY disableother.label "다른 필터 비활성화">
+<!ENTITY disableother.tooltip "다른 필터를 비활성화 하고 빠른 필터링만 사용합니다.(이 설정은 지금 기억되지 않습니다.)">
+<!ENTITY filter.tip "여기에 문자 필터를 입력하십시오! (드롭다운 메뉴에 예제)">
+<!ENTITY filters.caption "필터">
+<!ENTITY header.desc.label "설명">
+<!ENTITY menu.check.label "항목 선택">
+<!ENTITY menu.toggle.label "선택 항목 반전">
+<!ENTITY menu.uncheck.label "항목 제거">
+<!ENTITY resname.value "리소스명">
+<!ENTITY selectfiltered.label "필터링된 선택">
+<!ENTITY tab.links.label "링크">
+<!ENTITY title "DownThemAll! - 선택하십시오">

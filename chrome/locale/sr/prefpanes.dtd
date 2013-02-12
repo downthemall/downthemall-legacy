@@ -1,0 +1,87 @@
+<!ENTITY add.label "Додај нови филтер">
+<!ENTITY advancedpane.chunksdisabled "Онемогућено">
+<!ENTITY advancedpane.downloads.caption "Напредна табла за преузимања">
+<!ENTITY advancedpane.exposeinua.label "Прикажи DownThemAll! као корисничког агента">
+<!ENTITY advancedpane.files.caption "Датотеке">
+<!ENTITY advancedpane.hour "сат">
+<!ENTITY advancedpane.hours "сати">
+<!ENTITY advancedpane.label "Напредно">
+<!ENTITY advancedpane.minute "минут">
+<!ENTITY advancedpane.minutes "минута">
+<!ENTITY advancedpane.permissions.read "Могуће читање">
+<!ENTITY advancedpane.permissions.write "Могуће писање">
+<!ENTITY advancedpane.scheduler.caption "Распоред почетка преузимања:">
+<!ENTITY advancedpane.scheduler.fair "фер+споро - подједнако распоређено">
+<!ENTITY advancedpane.scheduler.fast "брзо - чим се дода у списак">
+<!ENTITY advancedpane.scheduler.legacy "застарело - без ограничења">
+<!ENTITY advancedpane.seconds "секунди">
+<!ENTITY advancedpane.tempdir.label "Користи овај директоријум:">
+<!ENTITY advancedpane.tempfiles.caption "Привремене датотеке">
+<!ENTITY advancedpane.usetemp.label "Сачувај преузете делове у привременом директоријуму">
+<!ENTITY buttonlabelextra2 "Врати оригинална подешавања">
+<!ENTITY dtaPreferences.title "DownThemAll! Подешавања...">
+<!ENTITY dtacontext2.label "Подешавања">
+<!ENTITY filter.label "Филтрирани наставци:">
+<!ENTITY filterspane.label "Филтери">
+<!ENTITY listhead1.label "Назив филтера">
+<!ENTITY listhead2.label "Наставци (врста датотеке)">
+<!ENTITY mainpane.alert.caption "Када су сва преузимања завршена:">
+<!ENTITY mainpane.alert.label "Упозори ме:">
+<!ENTITY mainpane.alertnone.label "Не обавештавај ме">
+<!ENTITY mainpane.ask.label "Питај">
+<!ENTITY mainpane.closedta.label "Затвори DownThemAll по завршетку свих преузимања">
+<!ENTITY mainpane.defaults.caption "Подразумевано">
+<!ENTITY mainpane.defaults.desc "Директоријум преузимања, маску за  преименовање и филтере које користи OneClick! можете да подесите у прозору DownThemAll!">
+<!ENTITY mainpane.label "Основна">
+<!ENTITY mainpane.listsniffedvideos.label "Сними и поређај флеш снимке">
+<!ENTITY mainpane.misc.caption "Разно">
+<!ENTITY mainpane.overwrite.label "Замени">
+<!ENTITY mainpane.rememberoneclick.label "Нема dTa OneClick да ли се ово односи на све језичке или само тренутни">
+<!ENTITY mainpane.rename.label "Преименуј">
+<!ENTITY mainpane.settime.label "Време датотеке подеси на датум последње измене (на серверу) или на време чекања">
+<!ENTITY mainpane.skip.label "Прескочи">
+<!ENTITY mainpane.sounddone.label "Звучно обавештење по завршетку свих преузимања">
+<!ENTITY mainpane.textlinks.label "Препознавање текстуалних веза">
+<!ENTITY manager "DownThemAll! Управљач">
+<!ENTITY privacypane.closing.caption "Када се прозор управљача затвори">
+<!ENTITY privacypane.deletefiltershistory.label "Обриши додатне филтере">
+<!ENTITY privacypane.deletefoldershistory.label "Обриши листу директоријума">
+<!ENTITY privacypane.deletelog.label "Обриши дневник">
+<!ENTITY privacypane.dropdowns.caption "Падајућа листа">
+<!ENTITY privacypane.enablelogs.label "Омогући дневник дијагнозе">
+<!ENTITY privacypane.label "Приватност">
+<!ENTITY privacypane.logs.caption "Дневник дијагнозе">
+<!ENTITY privacypane.notice.caption "Назнаке">
+<!ENTITY privacypane.notice.desc "DownThemAll сарађује и са уграђеном опцијом за чишћење приватних података (уколико је доступна).">
+<!ENTITY privacypane.privacynotice.label "Наше обавештење о приватности">
+<!ENTITY privacypane.reveallog.label "Прикажи датотеку дневника">
+<!ENTITY privacypane.showlog.label "Види дневник">
+<!ENTITY serverpane.limits.noitems "Ограничења по серверу нису постављена">
+<!ENTITY serverspane.autoretry.interval.label "Поново покушај свако">
+<!ENTITY serverspane.autoretry.max.label "Највише покушаја">
+<!ENTITY serverspane.cancel.label "Откажи">
+<!ENTITY serverspane.connections.label "Везе:">
+<!ENTITY serverspane.downloads.caption "Преузимања">
+<!ENTITY serverspane.edit.label "Уреди">
+<!ENTITY serverspane.label "Мрежа">
+<!ENTITY serverspane.limited "ограничено">
+<!ENTITY serverspane.limits.label "Ограничење по серверу">
+<!ENTITY serverspane.new.label "Ново ограничење">
+<!ENTITY serverspane.remove.label "Уклони">
+<!ENTITY serverspane.unlimited "неограничено">
+<!ENTITY serverspane.url.label "Локација или домен:">
+<!ENTITY uipane.compact.label "Користи кратки списак">
+<!ENTITY uipane.context.caption "Приручни мени">
+<!ENTITY uipane.downloadwin.label "Додај DownThemAll! у прозор за избор акције код преузимања документа">
+<!ENTITY uipane.hide.label "Сакриј овај списак">
+<!ENTITY uipane.integration.caption "Интеграција">
+<!ENTITY uipane.label "Изглед">
+<!ENTITY uipane.manager.caption "Прозор управљача">
+<!ENTITY uipane.minimizetotray.label "Умањи програм у системску траку">
+<!ENTITY uipane.namesonly.label "У прозору управљача прикажи само имена датотека">
+<!ENTITY uipane.showtooltip.label "Прикажи објашњења код преузимања">
+<!ENTITY uipane.startminimized.label "Покрени програм умањен">
+<!ENTITY uipane.tools.caption "Мени алатки">
+<!ENTITY useAs.label "Користи ово као:">
+<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
+<!ENTITY windowstyle.3 "width:48em;height:44em;">

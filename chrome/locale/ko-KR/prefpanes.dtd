@@ -1,0 +1,87 @@
+<!ENTITY add.label "새 필터 추가">
+<!ENTITY advancedpane.chunksdisabled "사용 안 함">
+<!ENTITY advancedpane.downloads.caption "고급 다운로드 제어">
+<!ENTITY advancedpane.exposeinua.label "User-Agent에 DownThemAll! 노출">
+<!ENTITY advancedpane.files.caption "파일">
+<!ENTITY advancedpane.hour "시간">
+<!ENTITY advancedpane.hours "시간">
+<!ENTITY advancedpane.label "고급">
+<!ENTITY advancedpane.minute "분">
+<!ENTITY advancedpane.minutes "분">
+<!ENTITY advancedpane.permissions.read "읽기">
+<!ENTITY advancedpane.permissions.write "쓰기">
+<!ENTITY advancedpane.scheduler.caption "다운로드 시작 순서:">
+<!ENTITY advancedpane.scheduler.fair "약간 느림 - 배치순">
+<!ENTITY advancedpane.scheduler.fast "빠름 - 큐대기순">
+<!ENTITY advancedpane.scheduler.legacy "레거시 - 무제한">
+<!ENTITY advancedpane.seconds "초">
+<!ENTITY advancedpane.tempdir.label "이 디렉토리 사용:">
+<!ENTITY advancedpane.tempfiles.caption "임시 파일">
+<!ENTITY advancedpane.usetemp.label "분할 파일을 임시 폴더에 저장">
+<!ENTITY buttonlabelextra2 "기본 설정 복원">
+<!ENTITY dtaPreferences.title "DownThemAll! 설정...">
+<!ENTITY dtacontext2.label "설정">
+<!ENTITY filter.label "필터링된 확장자:">
+<!ENTITY filterspane.label "필터">
+<!ENTITY listhead1.label "설명">
+<!ENTITY listhead2.label "확장자">
+<!ENTITY mainpane.alert.caption "다운로드가 완료되면:">
+<!ENTITY mainpane.alert.label "알림:">
+<!ENTITY mainpane.alertnone.label "알리지 않음">
+<!ENTITY mainpane.ask.label "물어보기">
+<!ENTITY mainpane.closedta.label "다운로드가 완료되면 DownThemAll 닫기">
+<!ENTITY mainpane.defaults.caption "기본값">
+<!ENTITY mainpane.defaults.desc "OneClick에서 사용하는 이름 바꾸기 마스크와 같은 필터 다운로드 디렉토리는 정규 DownThemAll! 선택 대화 상자에서 구성할 수 있습니다.">
+<!ENTITY mainpane.label "메인">
+<!ENTITY mainpane.listsniffedvideos.label "비디오 목록 기록하기">
+<!ENTITY mainpane.misc.caption "기타">
+<!ENTITY mainpane.overwrite.label "덮어쓰기">
+<!ENTITY mainpane.rememberoneclick.label "dTa OneClick을 모든 탭 또는 현재 탭에 적용 시 기억하기">
+<!ENTITY mainpane.rename.label "이름 바꾸기">
+<!ENTITY mainpane.settime.label "파일 시간을 마지막 수정된 시간 (서버) 또는 큐잉 시간으로 설정">
+<!ENTITY mainpane.skip.label "건너뛰기">
+<!ENTITY mainpane.sounddone.label "다운로드가 완료되면 소리로 알림">
+<!ENTITY mainpane.textlinks.label "문자링크 인식">
+<!ENTITY manager "dTa 관리자">
+<!ENTITY privacypane.closing.caption "관리자 창을 닫으면">
+<!ENTITY privacypane.deletefiltershistory.label "추가 필터 히스토리 삭제">
+<!ENTITY privacypane.deletefoldershistory.label "폴더 히스토리 삭제">
+<!ENTITY privacypane.deletelog.label "로그 삭제">
+<!ENTITY privacypane.dropdowns.caption "드롭다운 메뉴">
+<!ENTITY privacypane.enablelogs.label "진단 로깅 사용">
+<!ENTITY privacypane.label "개인 정보">
+<!ENTITY privacypane.logs.caption "진단 로그">
+<!ENTITY privacypane.notice.caption "알림">
+<!ENTITY privacypane.notice.desc "DownThemAll은 또한 개인 정보 삭제 기능을 통합했습니다. (가능할 경우)">
+<!ENTITY privacypane.privacynotice.label "개인 정보 알림">
+<!ENTITY privacypane.reveallog.label "파일 보이기">
+<!ENTITY privacypane.showlog.label "로그 보기">
+<!ENTITY serverpane.limits.noitems "서버 당 제한 없음">
+<!ENTITY serverspane.autoretry.interval.label "재시도 회수">
+<!ENTITY serverspane.autoretry.max.label "최대 재시도 회수">
+<!ENTITY serverspane.cancel.label "취소">
+<!ENTITY serverspane.connections.label "연결 수:">
+<!ENTITY serverspane.downloads.caption "다운로드">
+<!ENTITY serverspane.edit.label "편집">
+<!ENTITY serverspane.label "네트워크">
+<!ENTITY serverspane.limited "제한">
+<!ENTITY serverspane.limits.label "서버 당 제한">
+<!ENTITY serverspane.new.label "새 제한">
+<!ENTITY serverspane.remove.label "제거">
+<!ENTITY serverspane.unlimited "무제한">
+<!ENTITY serverspane.url.label "위치 또는 도메인:">
+<!ENTITY uipane.compact.label "단축 메뉴 사용">
+<!ENTITY uipane.context.caption "컨텍스트 메뉴">
+<!ENTITY uipane.downloadwin.label "DownThemAll!을 '파일 저장' 창에 추가">
+<!ENTITY uipane.hide.label "이 메뉴 숨기기">
+<!ENTITY uipane.integration.caption "통합">
+<!ENTITY uipane.label "인터페이스">
+<!ENTITY uipane.manager.caption "관리 창">
+<!ENTITY uipane.minimizetotray.label "시스템 트레이로 최소화">
+<!ENTITY uipane.namesonly.label "관리자 창에 파일명만 보이기">
+<!ENTITY uipane.showtooltip.label "다운로드 풍선 도움말 보이기">
+<!ENTITY uipane.startminimized.label "최소화로 시작">
+<!ENTITY uipane.tools.caption "도구 메뉴">
+<!ENTITY useAs.label "다음을 사용:">
+<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
+<!ENTITY windowstyle.3 "width:48em;height:44em;">

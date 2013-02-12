@@ -1,0 +1,10 @@
+<!ENTITY addmirror.tip "Ajouter un miroir">
+<!ENTITY byline1 "Les téléchargements peuvent s'effectuer à partir de différents emplacement. Le fichier est alors automatiquement restructuré.">
+<!ENTITY byline2 "A vous de choisir d'ajouter ou de supprimer des emplacements pointant vers le même fichier.">
+<!ENTITY byline3 "Ajouter des emplacements pointant sur des fichiers différents entrainera un téléchargement corrompu">
+<!ENTITY checkmirrors.tip "Sélectionner tous les miroirs de téléchargement">
+<!ENTITY header "Gestion des miroirs">
+<!ENTITY mirrorurl "Emplacement :">
+<!ENTITY preference "Priorité :">
+<!ENTITY removemirror.tip "Supprimer les miroirs de téléchargement sélectionnés">
+<!ENTITY title "Gestion des miroirs DownThemAll!">

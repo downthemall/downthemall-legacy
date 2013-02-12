@@ -1,0 +1,15 @@
+<!ENTITY checksum.value "Suma kontrolna (hash):">
+<!ENTITY description.value "Opis:">
+<!ENTITY mask.tip "Zaznaczone elementy zostaną zapisane pod zmienionymi nazwami wg tej maski">
+<!ENTITY mirrormanager.tip "Zarządzaj mirrorami pobierania">
+<!ENTITY mirrors.value "Mirrory:">
+<!ENTITY options.label "Ustawienia">
+<!ENTITY queue.key "D">
+<!ENTITY queue.label "Dodaj jako wstrzymane">
+<!ENTITY referrer.value "Strona odniesienia:">
+<!ENTITY selectall.label "Zaznacz wszystko">
+<!ENTITY selectinv.label "Odwróć zaznaczenie">
+<!ENTITY selectnone.label "Odznacz wszystko">
+<!ENTITY start.key "P">
+<!ENTITY start.label "Pobierz">
+<!ENTITY url.value "Pobierz">

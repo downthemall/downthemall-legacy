@@ -1,0 +1,14 @@
+<!ENTITY additional.caption "Filtratge rapid">
+<!ENTITY additional.tip "Filtre tèxte : podètz definir mantun filtre tèxte en los separant per una virgula.">
+<!ENTITY disableother.label "Desactivar d'autres filtres">
+<!ENTITY disableother.tooltip "Desactivar d'autres filtres e utilizar pas que lo filtratge rapid (aqueste paramètre es pas memorizat pel moment)">
+<!ENTITY filter.tip "Picatz vòstres filtres tèxtes aicí ! (vejatz d'exemples dins lo menú desenrotlant)">
+<!ENTITY filters.caption "Filtres">
+<!ENTITY header.desc.label "Descripcion">
+<!ENTITY menu.check.label "Marcar las opcions seleccionadas">
+<!ENTITY menu.toggle.label "Inversar la seleccion">
+<!ENTITY menu.uncheck.label "Marcar las opcions seleccionadas">
+<!ENTITY resname.value "Nom de la ressorsa">
+<!ENTITY selectfiltered.label "Seleccionar los elements filtrats">
+<!ENTITY tab.links.label "Ligams">
+<!ENTITY title "Fasètz vòstra causida">

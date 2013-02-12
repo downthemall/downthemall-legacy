@@ -1,0 +1,87 @@
+<!ENTITY add.label "Pridať nový filter">
+<!ENTITY advancedpane.chunksdisabled "Zakázané">
+<!ENTITY advancedpane.downloads.caption "Ovládanie pokročilého sťahovania">
+<!ENTITY advancedpane.exposeinua.label "Pridať DownThemAll! do reťazca User-Agent">
+<!ENTITY advancedpane.files.caption "Zložky">
+<!ENTITY advancedpane.hour "hodina">
+<!ENTITY advancedpane.hours "hodiny">
+<!ENTITY advancedpane.label "Spresniť">
+<!ENTITY advancedpane.minute "min.">
+<!ENTITY advancedpane.minutes "min.">
+<!ENTITY advancedpane.permissions.read "Môže čítať">
+<!ENTITY advancedpane.permissions.write "Môžu zapisovať">
+<!ENTITY advancedpane.scheduler.caption "Poradie sťahovania:">
+<!ENTITY advancedpane.scheduler.fair "Spravodlivé + opatrné - rovnomerne rozložené">
+<!ENTITY advancedpane.scheduler.fast "Rýchle - Ako v rade">
+<!ENTITY advancedpane.scheduler.legacy "Bez obmedzenia">
+<!ENTITY advancedpane.seconds "s.">
+<!ENTITY advancedpane.tempdir.label "Použiť tento priečinok:">
+<!ENTITY advancedpane.tempfiles.caption "Dočasné súbory">
+<!ENTITY advancedpane.usetemp.label "Uložiť prevzaté časti do dočasného priečinka">
+<!ENTITY buttonlabelextra2 "Obnoviť pôvodné nastavenie">
+<!ENTITY dtaPreferences.title "DownThemAll! – Predvoľby">
+<!ENTITY dtacontext2.label "Predvoľby">
+<!ENTITY filter.label "Filtrované prípony:">
+<!ENTITY filterspane.label "Filtre">
+<!ENTITY listhead1.label "Názov">
+<!ENTITY listhead2.label "Prípony">
+<!ENTITY mainpane.alert.caption "Keď je preberanie dokončené:">
+<!ENTITY mainpane.alert.label "Upozorňovanie:">
+<!ENTITY mainpane.alertnone.label "Neoznamovať">
+<!ENTITY mainpane.ask.label "Opýtať sa">
+<!ENTITY mainpane.closedta.label "Zavrieť DownThemAll po dokončení preberania">
+<!ENTITY mainpane.defaults.caption "Predvolené">
+<!ENTITY mainpane.defaults.desc "Zložka pre sťahovanie, maska pre premenovanie a filtre používané v OneClick! môžete nastaviť v dialógu DownThemAll!.">
+<!ENTITY mainpane.label "Hlavné">
+<!ENTITY mainpane.listsniffedvideos.label "Nájsť a vložiť do zoznamu (Flash) videá">
+<!ENTITY mainpane.misc.caption "Rôzne">
+<!ENTITY mainpane.overwrite.label "Prepísať">
+<!ENTITY mainpane.rememberoneclick.label "Pamätať si nastavenie dTa OneClick či bolo určené pre všetky panely, alebo len pre aktuálne">
+<!ENTITY mainpane.rename.label "Premenovať">
+<!ENTITY mainpane.settime.label "Nastaviť čas súboru na čas poslednej úpravy (na serveru) alebo čas sťahovania.">
+<!ENTITY mainpane.skip.label "Preskočiť">
+<!ENTITY mainpane.sounddone.label "Prehrať zvuk po dokončení všetkých preberaní">
+<!ENTITY mainpane.textlinks.label "Rozpoznať odkazy v texte">
+<!ENTITY manager "Správca dTa">
+<!ENTITY privacypane.closing.caption "Ak je okno Správca zatvorené">
+<!ENTITY privacypane.deletefiltershistory.label "Odstrániť ďalšie filtre">
+<!ENTITY privacypane.deletefoldershistory.label "Odstrániť zoznam priečinkov">
+<!ENTITY privacypane.deletelog.label "Odstrániť denník">
+<!ENTITY privacypane.dropdowns.caption "Rozbaľovacie ponuky">
+<!ENTITY privacypane.enablelogs.label "Povoliť denník diagnostiky">
+<!ENTITY privacypane.label "Súkromie">
+<!ENTITY privacypane.logs.caption "Denník diagnostiky">
+<!ENTITY privacypane.notice.caption "Poznámka">
+<!ENTITY privacypane.notice.desc "DownThemAll je integrovaný s funkciou Odstrániť súkromné údaje (ak je k dispozícii).">
+<!ENTITY privacypane.privacynotice.label "Poznámka k našim zásadám ochrany súkromia">
+<!ENTITY privacypane.reveallog.label "Zobraziť súbor">
+<!ENTITY privacypane.showlog.label "Zobraziť denník">
+<!ENTITY serverpane.limits.noitems "Neboli pridané žiadne obmedzenia">
+<!ENTITY serverspane.autoretry.interval.label "Opakovať každých">
+<!ENTITY serverspane.autoretry.max.label "Max. opakovaní">
+<!ENTITY serverspane.cancel.label "Zrušiť">
+<!ENTITY serverspane.connections.label "spojenia:">
+<!ENTITY serverspane.downloads.caption "Sťahovanie">
+<!ENTITY serverspane.edit.label "Upraviť">
+<!ENTITY serverspane.label "Sieť">
+<!ENTITY serverspane.limited "Obmedzený">
+<!ENTITY serverspane.limits.label "Obmedzenie pre jednotlivé servery">
+<!ENTITY serverspane.new.label "Pridať obmedzenie">
+<!ENTITY serverspane.remove.label "Vymazať">
+<!ENTITY serverspane.unlimited "Neobmedzený">
+<!ENTITY serverspane.url.label "Umiestnenie alebo doména">
+<!ENTITY uipane.compact.label "Použiť kompaktnú ponuku">
+<!ENTITY uipane.context.caption "Kontextová ponuka">
+<!ENTITY uipane.downloadwin.label "Pridať položku DownThemAll! do okna 'Uložiť súbor'">
+<!ENTITY uipane.hide.label "Skryť túto ponuku">
+<!ENTITY uipane.integration.caption "Integrácia">
+<!ENTITY uipane.label "Použív. prostredie">
+<!ENTITY uipane.manager.caption "Správca">
+<!ENTITY uipane.minimizetotray.label "Minimalizovať do oznamovacej oblasti">
+<!ENTITY uipane.namesonly.label "Zobraziť v okne Správcu len názvy súborov">
+<!ENTITY uipane.showtooltip.label "Zobraziť popisy preberania">
+<!ENTITY uipane.startminimized.label "Spustiť minimalizované">
+<!ENTITY uipane.tools.caption "Ponuka Nástroje">
+<!ENTITY useAs.label "Použiť ako:">
+<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
+<!ENTITY windowstyle.3 "width:48em;height:44em;">

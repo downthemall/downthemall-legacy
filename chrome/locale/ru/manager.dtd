@@ -1,0 +1,43 @@
+<!ENTITY addchunk.label "Добавить часть">
+<!ENTITY advanced.label "Расширенные">
+<!ENTITY avgSpeedTitle.value "Средняя скорость:">
+<!ENTITY cancel.label "Отмена">
+<!ENTITY close.label "Закрыть">
+<!ENTITY currentSpeedTitle.value "Текущая скорость:">
+<!ENTITY delete.label "Удалить файл(ы)">
+<!ENTITY dim.label "Размер">
+<!ENTITY elapsedTitle.value "Завершено:">
+<!ENTITY force.label "Форсированный старт">
+<!ENTITY hash.label "Контрольная сумма">
+<!ENTITY import.label "Импорт из файла">
+<!ENTITY infoMultiple.value "Multiple Items">
+<!ENTITY infoSizeTitle.value "Размер:">
+<!ENTITY infoURLTitle.value "От:">
+<!ENTITY infos.label "Информация о загрузке">
+<!ENTITY launch.label "Открыть файл">
+<!ENTITY mirrors.label "Управление зеркалами">
+<!ENTITY mirrors.tooltip "Управление местоположением зеркал загрузки">
+<!ENTITY movebottom.label "В конец">
+<!ENTITY movedown.label "Вниз">
+<!ENTITY movetop.label "В начало">
+<!ENTITY moveup.label "Вверх">
+<!ENTITY options.caption "Настройки">
+<!ENTITY parts.label "Части">
+<!ENTITY path.label "Сохранено в..">
+<!ENTITY pause.label "Пауза">
+<!ENTITY pct.label "Выполнение">
+<!ENTITY remainingTitle.value "Выполняется:">
+<!ENTITY removeAll.label "Удалить всё">
+<!ENTITY removeDupes.label "Удалить одинаковые">
+<!ENTITY removeGone.label "Очистить несуществующие файлы">
+<!ENTITY removechunk.label "Удалить часть">
+<!ENTITY removemenu.label "Удалить загрузки">
+<!ENTITY removeselected.label "Удалить выбранное">
+<!ENTITY restore.label "Восстановить">
+<!ENTITY resume.label "Старт">
+<!ENTITY speed.label "Скорость">
+<!ENTITY targetdir.label "Открыть папку">
+<!ENTITY tooladd.tooltip "Добавление URL в DownThemAll">
+<!ENTITY toolbar.full "Показывать значки и текст">
+<!ENTITY toolbar.icons "Показывать значки">
+<!ENTITY tooldonate.tooltiptext "Вы можете помочь сделать DownThemAll еще лучше. Рассмотрите возможность небольшого пожертвования!">

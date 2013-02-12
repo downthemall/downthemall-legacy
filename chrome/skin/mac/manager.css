@@ -97,7 +97,6 @@ toolbarspacer.visible {
 }
 #actions {
 	margin-top: 16px;
-	margin-left: 6px;
 	padding-left: 2px;
 	padding-right: 2px;
 	-moz-appearance: none;
@@ -105,11 +104,19 @@ toolbarspacer.visible {
 	border-top: 1px solid -moz-mac-chrome-active;
 	-moz-border-start: 1px solid -moz-mac-chrome-active;
 	border-bottom: 1px solid -moz-mac-chrome-active;
-	border-top-left-radius: 6px;
-	border-bottom-left-radius: 6px;
 }
 #actions:-moz-window-inactive {
 	background-color: transparent;
+}
+#actions:-moz-locale-dir(ltr) {
+	margin-left: 6px;
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+}
+#actions:-moz-locale-dir(rtl) {
+	margin-right: 6px;
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
 }
 
 treecol > dropmarker {

@@ -20,8 +20,12 @@
 	%globalDTD;
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
 	%commonDTD;
+	<!ENTITY % defcommonDTD SYSTEM "chrome://dta-locale/content/dta.dtd">
+	%defcommonDTD;
 	<!ENTITY % mirrorsDTD SYSTEM "chrome://dta/locale/mirrors.dtd">
 	%mirrorsDTD;
+	<!ENTITY % defmirrorsDTD SYSTEM "chrome://dta-locale/content/mirrors.dtd">
+	%defmirrorsDTD;
 ]>
 <dialog title="&title;" id="DownThemAllMirrors" windowtype="DTA:mirrors" flex="1" persist="width height screenX screenY" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 

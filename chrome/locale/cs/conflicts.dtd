@@ -1,0 +1,5 @@
+<!ENTITY always.label "Od nynějška navždy">
+<!ENTITY overwrite.label "Přepsat existující soubor">
+<!ENTITY session.label "Jen pro toto sezení">
+<!ENTITY skip.label "Přeskočit/Zrušit">
+<!ENTITY text.value "Zapamatovat si toto nastavení:">

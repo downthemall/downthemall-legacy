@@ -8,7 +8,12 @@
 	overalying itself is not possible, as this will crash fx
 -->
 
-<!DOCTYPE bindings SYSTEM "chrome://dta/locale/mask.dtd">
+<!DOCTYPE bindings [
+	<!ENTITY % maskDTD SYSTEM "chrome://dta/locale/mask.dtd">
+	%maskDTD;
+	<!ENTITY % defmaskDTD SYSTEM "chrome://dta-locale/content/mask.dtd">
+	%defmaskDTD;
+]>
 
 <xbl:bindings
 	xmlns:xbl="http://www.mozilla.org/xbl"

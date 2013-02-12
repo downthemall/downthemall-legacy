@@ -1,10 +1,14 @@
 <?xml version="1.0"?>
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
-	 - License, v. 2.0. If a copy of the MPL was not distributed with this
-	 - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+	- License, v. 2.0. If a copy of the MPL was not distributed with this
+	- file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<!DOCTYPE bindings SYSTEM "chrome://dta/locale/prefpanes.dtd">
-
+<!DOCTYPE bindings [
+	<!ENTITY % prefsDTD SYSTEM "chrome://dta/locale/prefpanes.dtd">
+	%prefsDTD;
+	<!ENTITY % defprefsDTD SYSTEM "chrome://dta-locale/content/prefpanes.dtd">
+	%defprefsDTD;
+]>
 <bindings xmlns="http://www.mozilla.org/xbl" xmlns:xbl="http://www.mozilla.org/xbl" xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<binding id="serverlimit-base" extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
 		<implementation>

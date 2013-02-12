@@ -1,0 +1,87 @@
+<!ENTITY add.label "Adaugă filtru nou">
+<!ENTITY advancedpane.chunksdisabled "Dezactivat">
+<!ENTITY advancedpane.downloads.caption "Control complex a descărcării">
+<!ENTITY advancedpane.exposeinua.label "Afișează DownThemAll! în șirul User-Agent">
+<!ENTITY advancedpane.files.caption "Fișiere">
+<!ENTITY advancedpane.hour "ora">
+<!ENTITY advancedpane.hours "ore">
+<!ENTITY advancedpane.label "Complex">
+<!ENTITY advancedpane.minute "minut">
+<!ENTITY advancedpane.minutes "minute">
+<!ENTITY advancedpane.permissions.read "Citire">
+<!ENTITY advancedpane.permissions.write "Scriere">
+<!ENTITY advancedpane.scheduler.caption "Mod de descărcare:">
+<!ENTITY advancedpane.scheduler.fair "Normal + lent - distribuție uniformă">
+<!ENTITY advancedpane.scheduler.fast "Rapid - în ordinea adăugării adreselor">
+<!ENTITY advancedpane.scheduler.legacy "Moștenit - fără limite">
+<!ENTITY advancedpane.seconds "secunde">
+<!ENTITY advancedpane.tempdir.label "Dosar:">
+<!ENTITY advancedpane.tempfiles.caption "Fișiere temporare">
+<!ENTITY advancedpane.usetemp.label "Salvează segmentele descărcării într-un dosar temporar">
+<!ENTITY buttonlabelextra2 "Restaurează opțiunile implicite">
+<!ENTITY dtaPreferences.title "Opțiuni DownThemAll!">
+<!ENTITY dtacontext2.label "Opțiuni">
+<!ENTITY filter.label "Extensii filtrate:">
+<!ENTITY filterspane.label "Filtre">
+<!ENTITY listhead1.label "Denumire">
+<!ENTITY listhead2.label "Extensii">
+<!ENTITY mainpane.alert.caption "Când descărcarea s-a terminat:">
+<!ENTITY mainpane.alert.label "Notifică prin:">
+<!ENTITY mainpane.alertnone.label "nimic">
+<!ENTITY mainpane.ask.label "Întreabă">
+<!ENTITY mainpane.closedta.label "Închide DownThemAll! după terminarea tuturor descărcărilor">
+<!ENTITY mainpane.defaults.caption "Opțiuni implicite">
+<!ENTITY mainpane.defaults.desc "Dosarul de descărcare, șablonul de redenumire și filtrele utilizate de OneClick! pot fi configurate în mod normal în caseta de selecție DownThemAll!.">
+<!ENTITY mainpane.label "General">
+<!ENTITY mainpane.listsniffedvideos.label "Înregistrează și listează clipurile video Flash">
+<!ENTITY mainpane.misc.caption "Diverse">
+<!ENTITY mainpane.overwrite.label "Înlocuiește">
+<!ENTITY mainpane.rememberoneclick.label "Stabilește ca dTa OneClick să memoreze dacă se aplică la toate filele sau doar la fila curentă">
+<!ENTITY mainpane.rename.label "Redenumește">
+<!ENTITY mainpane.settime.label "Stabilește data fișierului ca fiind data ultimei modificări (pe server) sau data puneri în lista de descărcări">
+<!ENTITY mainpane.skip.label "Omite">
+<!ENTITY mainpane.sounddone.label "Emite un sunet după terminarea tuturor descărcărilor">
+<!ENTITY mainpane.textlinks.label "Recunoaște legăturile de tip text">
+<!ENTITY manager "Gestionar dTa!">
+<!ENTITY privacypane.closing.caption "La închiderea gestionarului:">
+<!ENTITY privacypane.deletefiltershistory.label "Elimină istoricul filtrelor suplimentare">
+<!ENTITY privacypane.deletefoldershistory.label "Elimină istoricul dosarelor">
+<!ENTITY privacypane.deletelog.label "Șterge jurnalul">
+<!ENTITY privacypane.dropdowns.caption "Liste derulante">
+<!ENTITY privacypane.enablelogs.label "Activează jurnalizarea">
+<!ENTITY privacypane.label "Confidențialitate">
+<!ENTITY privacypane.logs.caption "Jurnal de diagnosticare">
+<!ENTITY privacypane.notice.caption "Notă:">
+<!ENTITY privacypane.notice.desc "DownThemAll! este compatibil cu modul de „Navigare fără urme” al Firefox (dacă este activat).">
+<!ENTITY privacypane.privacynotice.label "Politică de confidențialitate">
+<!ENTITY privacypane.reveallog.label "Deschide dosarul jurnalului">
+<!ENTITY privacypane.showlog.label "Afișează jurnalul">
+<!ENTITY serverpane.limits.noitems "(nu există limitări per server)">
+<!ENTITY serverspane.autoretry.interval.label "Reîncearcă la fiecare:">
+<!ENTITY serverspane.autoretry.max.label "Număr maxim de reîncercări:">
+<!ENTITY serverspane.cancel.label "Renunță">
+<!ENTITY serverspane.connections.label "Conexiuni:">
+<!ENTITY serverspane.downloads.caption "Descărcări">
+<!ENTITY serverspane.edit.label "Editează">
+<!ENTITY serverspane.label "Rețea">
+<!ENTITY serverspane.limited "Limitată">
+<!ENTITY serverspane.limits.label "Limitări per server">
+<!ENTITY serverspane.new.label "Limitare nouă">
+<!ENTITY serverspane.remove.label "Elimină">
+<!ENTITY serverspane.unlimited "Nelimitată">
+<!ENTITY serverspane.url.label "Amplasare sau domeniu:">
+<!ENTITY uipane.compact.label "Afișare ca submeniu">
+<!ENTITY uipane.context.caption "Afișare în meniul contextual">
+<!ENTITY uipane.downloadwin.label "Integrează DownThemAll! în caseta „Deschidere...”">
+<!ENTITY uipane.hide.label "Ascunde opțiunile din meniu">
+<!ENTITY uipane.integration.caption "Integrare">
+<!ENTITY uipane.label "Interfață">
+<!ENTITY uipane.manager.caption "Fereastră gestionar">
+<!ENTITY uipane.minimizetotray.label "Minimizează în zona de notificare a sistemului">
+<!ENTITY uipane.namesonly.label "Afișează numai denumirea fișierelor în fereastra gestionarului">
+<!ENTITY uipane.showtooltip.label "Afișează baloane informative pentru descărcări">
+<!ENTITY uipane.startminimized.label "Pornește minimizat">
+<!ENTITY uipane.tools.caption "Afișare în meniul „Unelte”">
+<!ENTITY useAs.label "Utilizare ca:">
+<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
+<!ENTITY windowstyle.3 "width:48em;height:44em;">

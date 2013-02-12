@@ -1,0 +1,87 @@
+<!ENTITY add.label "新しいフィルターを追加">
+<!ENTITY advancedpane.chunksdisabled "分割を使用しない">
+<!ENTITY advancedpane.downloads.caption "ダウンロードの詳細な管理">
+<!ENTITY advancedpane.exposeinua.label "サーバーに DownThemAll! を使用している事を知らせる">
+<!ENTITY advancedpane.files.caption "ファイル">
+<!ENTITY advancedpane.hour "時間">
+<!ENTITY advancedpane.hours "時間">
+<!ENTITY advancedpane.label "詳細">
+<!ENTITY advancedpane.minute "分間">
+<!ENTITY advancedpane.minutes "分間">
+<!ENTITY advancedpane.permissions.read "読み取り">
+<!ENTITY advancedpane.permissions.write "書き込み">
+<!ENTITY advancedpane.scheduler.caption "ダウンロードする順番:">
+<!ENTITY advancedpane.scheduler.fair "ダウンロードが集中しないよう分散する">
+<!ENTITY advancedpane.scheduler.fast "待機している順にダウンロード">
+<!ENTITY advancedpane.scheduler.legacy "制限を行わない">
+<!ENTITY advancedpane.seconds "秒間">
+<!ENTITY advancedpane.tempdir.label "このフォルダーを使用:">
+<!ENTITY advancedpane.tempfiles.caption "一時ファイル">
+<!ENTITY advancedpane.usetemp.label "分割されたダウンロードを一時ファイルとしてフォルダーに保存">
+<!ENTITY buttonlabelextra2 "設定を初期設定に戻す">
+<!ENTITY dtaPreferences.title "DownThemAll! の設定">
+<!ENTITY dtacontext2.label "設定">
+<!ENTITY filter.label "拡張子:">
+<!ENTITY filterspane.label "フィルター">
+<!ENTITY listhead1.label "表示名">
+<!ENTITY listhead2.label "拡張子">
+<!ENTITY mainpane.alert.caption "ダウンロードの完了時:">
+<!ENTITY mainpane.alert.label "通知方法:">
+<!ENTITY mainpane.alertnone.label "知らせない">
+<!ENTITY mainpane.ask.label "確認する">
+<!ENTITY mainpane.closedta.label "すべてのダウンロードの完了時に DownThemAll を閉じる">
+<!ENTITY mainpane.defaults.caption "デフォルトの設定">
+<!ENTITY mainpane.defaults.desc "OneClick! は前回使用したダウンロード設定を使用します。保存先やフィルター等を設定する場合は通常の DownThemAll! 選択ダイアログを使用します。">
+<!ENTITY mainpane.label "一般">
+<!ENTITY mainpane.listsniffedvideos.label "動画 (Flash) の録画と一覧での表示">
+<!ENTITY mainpane.misc.caption "その他">
+<!ENTITY mainpane.overwrite.label "上書き">
+<!ENTITY mainpane.rememberoneclick.label "dTa OneClick の設定をすべてのタブで使用するか現在のタブにだけ使用するか記憶する">
+<!ENTITY mainpane.rename.label "名前の変更">
+<!ENTITY mainpane.settime.label "ファイルのタイムスタンプをサーバーの変更日時かダウンロードリストへの登録日時に設定する">
+<!ENTITY mainpane.skip.label "無視">
+<!ENTITY mainpane.sounddone.label "すべてのダウンロードの完了を音で知らせる">
+<!ENTITY mainpane.textlinks.label "テキストのリンクを認識">
+<!ENTITY manager "dTa! マネージャー">
+<!ENTITY privacypane.closing.caption "終了時に削除する項目">
+<!ENTITY privacypane.deletefiltershistory.label "フィルターの追加履歴を消去">
+<!ENTITY privacypane.deletefoldershistory.label "保存先の履歴を消去">
+<!ENTITY privacypane.deletelog.label "ログを削除">
+<!ENTITY privacypane.dropdowns.caption "ドロップダウンメニュー">
+<!ENTITY privacypane.enablelogs.label "診断ログを記録する">
+<!ENTITY privacypane.label "プライバシー">
+<!ENTITY privacypane.logs.caption " 診断メッセージ">
+<!ENTITY privacypane.notice.caption "プライバシーに関して">
+<!ENTITY privacypane.notice.desc "DownThemAll のプライバシー情報は [最近の履歴を消去] 機能からも消去できます。">
+<!ENTITY privacypane.privacynotice.label "プライバシーについて">
+<!ENTITY privacypane.reveallog.label "ファイルを表示">
+<!ENTITY privacypane.showlog.label "ログを表示">
+<!ENTITY serverpane.limits.noitems "サーバーごとのダウンロード設定はありません">
+<!ENTITY serverspane.autoretry.interval.label "再開までの時間">
+<!ENTITY serverspane.autoretry.max.label "再開する回数">
+<!ENTITY serverspane.cancel.label "キャンセル">
+<!ENTITY serverspane.connections.label "接続数:">
+<!ENTITY serverspane.downloads.caption "ダウンロードの上限">
+<!ENTITY serverspane.edit.label "編集">
+<!ENTITY serverspane.label "ネットワーク">
+<!ENTITY serverspane.limited "制限">
+<!ENTITY serverspane.limits.label "サーバーごとのダウンロード設定">
+<!ENTITY serverspane.new.label "追加">
+<!ENTITY serverspane.remove.label "削除">
+<!ENTITY serverspane.unlimited "無制限">
+<!ENTITY serverspane.url.label "URL/ドメイン:">
+<!ENTITY uipane.compact.label "コンパクトメニューを使用">
+<!ENTITY uipane.context.caption "コンテキストメニュー">
+<!ENTITY uipane.downloadwin.label "'ファイルを保存' ウィンドウに DownThemAll! を追加">
+<!ENTITY uipane.hide.label "このメニューを隠す">
+<!ENTITY uipane.integration.caption "統合">
+<!ENTITY uipane.label "操作">
+<!ENTITY uipane.manager.caption "ウィンドウの管理">
+<!ENTITY uipane.minimizetotray.label "最小化時にシステムトレイに収納">
+<!ENTITY uipane.namesonly.label "マネージャーウィンドウにファイル名だけを表示">
+<!ENTITY uipane.showtooltip.label "ダウンロードのツールチップを表示">
+<!ENTITY uipane.startminimized.label "最小化して起動">
+<!ENTITY uipane.tools.caption "ツールメニュー">
+<!ENTITY useAs.label "使用するフィルター:">
+<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
+<!ENTITY windowstyle.3 "width:48em;height:44em;">

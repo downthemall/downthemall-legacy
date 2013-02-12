@@ -1,0 +1,19 @@
+<!ENTITY mask.curl "URL complète">
+<!ENTITY mask.d "Jour">
+<!ENTITY mask.ext "Extension">
+<!ENTITY mask.flatcurl "URL complète plate">
+<!ENTITY mask.flatsubdirs "Sous-dossiers de l'URL plate">
+<!ENTITY mask.hh "Heures">
+<!ENTITY mask.inum "Numéro de l'élément">
+<!ENTITY mask.m "Mois">
+<!ENTITY mask.mm "Minutes">
+<!ENTITY mask.name "Nom de fichier">
+<!ENTITY mask.open.tip "Table de référence de marqueurs de renommage">
+<!ENTITY mask.qstring "Chaîne de requête (Query string)">
+<!ENTITY mask.refer "URL de provenance">
+<!ENTITY mask.ss "Secondes">
+<!ENTITY mask.subdirs "Sous-dossiers de l'URL">
+<!ENTITY mask.tip "Cliquez ou glissez pour renommer le masque">
+<!ENTITY mask.title "Titre associé au lien">
+<!ENTITY mask.url "URL de base">
+<!ENTITY mask.y "Année">

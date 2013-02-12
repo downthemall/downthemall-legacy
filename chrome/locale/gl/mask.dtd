@@ -1,0 +1,19 @@
+<!ENTITY mask.curl "URL completa">
+<!ENTITY mask.d "Día">
+<!ENTITY mask.ext "Extensión">
+<!ENTITY mask.flatcurl "URL plana completa">
+<!ENTITY mask.flatsubdirs "URL plana dos subcartafoles">
+<!ENTITY mask.hh "Horas">
+<!ENTITY mask.inum "Número do elemento">
+<!ENTITY mask.m "Mes">
+<!ENTITY mask.mm "Minutos">
+<!ENTITY mask.name "Nome do ficheiro">
+<!ENTITY mask.open.tip "Táboa de referencia das etiquetas de renomeado">
+<!ENTITY mask.qstring "Cadea da consulta">
+<!ENTITY mask.refer "URL de referencia">
+<!ENTITY mask.ss "Segundos">
+<!ENTITY mask.subdirs "URL dos subcartafoles">
+<!ENTITY mask.tip "Prema ou arrastre para a máscara de renomeado">
+<!ENTITY mask.title "Título asociado coa ligazón">
+<!ENTITY mask.url "URL base">
+<!ENTITY mask.y "Ano">

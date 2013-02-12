@@ -14,18 +14,7 @@ const {
 } = require("utils");
 
 (function(global) {
-	let strings = {};
-	for (let f of ['common.properties', 'manager.properties']) {
-		for (let s in new SimpleIterator(
-			Services.strings
-				.createBundle('chrome://dta/locale/' + f)
-				.getSimpleEnumeration(),
-			Ci.nsIPropertyElement
-		)) {
-			strings[s.key] = s.value;
-		}
-	}
-	let bundles = new StringBundles(strings);
+	let bundles = new StringBundles(["chrome://dta/locale/common.properties", "chrome://dta/locale/manager.properties"]);
 	global['_'] = function() (arguments.length == 1) ? bundles.getString(arguments[0]) : bundles.getFormattedString.apply(bundles, arguments);
 })(this);
 

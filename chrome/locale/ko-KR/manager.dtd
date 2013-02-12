@@ -1,0 +1,43 @@
+<!ENTITY addchunk.label "분할 추가">
+<!ENTITY advanced.label "고급">
+<!ENTITY avgSpeedTitle.value "평균 속도:">
+<!ENTITY cancel.label "취소">
+<!ENTITY close.label "닫기">
+<!ENTITY currentSpeedTitle.value "현재 속도:">
+<!ENTITY delete.label "파일 삭제">
+<!ENTITY dim.label "크기">
+<!ENTITY elapsedTitle.value "경과 시간:">
+<!ENTITY force.label "강제 시작">
+<!ENTITY hash.label "체크섬">
+<!ENTITY import.label "파일로부터 가져오기">
+<!ENTITY infoMultiple.value "복수 항목">
+<!ENTITY infoSizeTitle.value "크기:">
+<!ENTITY infoURLTitle.value "원본:">
+<!ENTITY infos.label "다운로드 정보">
+<!ENTITY launch.label "파일 열기">
+<!ENTITY mirrors.label "미러 관리">
+<!ENTITY mirrors.tooltip "다운로드 미러 위치 관리">
+<!ENTITY movebottom.label "맨 아래">
+<!ENTITY movedown.label "아래로">
+<!ENTITY movetop.label "맨 위">
+<!ENTITY moveup.label "위로">
+<!ENTITY options.caption "설정">
+<!ENTITY parts.label "부분">
+<!ENTITY path.label "경로 저장">
+<!ENTITY pause.label "중지">
+<!ENTITY pct.label "진행">
+<!ENTITY remainingTitle.value "남은 시간:">
+<!ENTITY removeAll.label "모두 제거">
+<!ENTITY removeDupes.label "중복 다운로드 제거">
+<!ENTITY removeGone.label "이전 파일 비우기">
+<!ENTITY removechunk.label "분할 제거">
+<!ENTITY removemenu.label "다운로드 제거">
+<!ENTITY removeselected.label "선택부분 제거">
+<!ENTITY restore.label "복구">
+<!ENTITY resume.label "계속">
+<!ENTITY speed.label "속도">
+<!ENTITY targetdir.label "폴더 열기">
+<!ENTITY tooladd.tooltip "수동으로 DownThemAll에 URL 추가">
+<!ENTITY toolbar.full "아이콘 및 문자 사용">
+<!ENTITY toolbar.icons "아이콘 사용">
+<!ENTITY tooldonate.tooltiptext "dTa팀에 기부해 주시면 DownThemAll이 더욱 발전할 수 있습니다. 감사합니다!">

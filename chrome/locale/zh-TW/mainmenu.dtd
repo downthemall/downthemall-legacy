@@ -1,0 +1,5 @@
+<!ENTITY closeWindow.label "關閉 DownThemAll!">
+<!ENTITY fileMenu.accesskey "F">
+<!ENTITY fileMenu.label "檔案">
+<!ENTITY newNavigatorCmd.label "開新視窗">
+<!ENTITY tabCmd.label "開新分頁">

@@ -1,0 +1,15 @@
+<!ENTITY checksum.value "校验码(Hash):">
+<!ENTITY description.value "描述：">
+<!ENTITY mask.tip "选中的文件将被保存并用该掩码重命名">
+<!ENTITY mirrormanager.tip "管理下载镜像">
+<!ENTITY mirrors.value "镜像：">
+<!ENTITY options.label "选项">
+<!ENTITY queue.key "P">
+<!ENTITY queue.label "队列">
+<!ENTITY referrer.value "引用页面：">
+<!ENTITY selectall.label "全选">
+<!ENTITY selectinv.label "反选">
+<!ENTITY selectnone.label "全不选">
+<!ENTITY start.key "S">
+<!ENTITY start.label "开始！">
+<!ENTITY url.value "下载">

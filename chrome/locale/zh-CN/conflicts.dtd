@@ -1,0 +1,5 @@
+<!ENTITY always.label "从现在开始">
+<!ENTITY overwrite.label "覆盖已存在文件">
+<!ENTITY session.label "本次会话">
+<!ENTITY skip.label "跳过/取消">
+<!ENTITY text.value "记住该设置：">

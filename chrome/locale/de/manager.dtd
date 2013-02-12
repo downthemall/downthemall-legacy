@@ -1,0 +1,76 @@
+<!ENTITY addchunk.label "Ein Segment mehr">
+<!ENTITY addlimits.label "Server-Beschränkungen hinzufügen">
+<!ENTITY advanced.label "Fortgeschritten">
+<!ENTITY avgSpeedTitle.value "Durchschn. Geschwindigkeit:">
+<!ENTITY cancel.label "Abbrechen">
+<!ENTITY clearmatcher.label "Spalten-Filter entfernen">
+<!ENTITY close.label "Schließen">
+<!ENTITY currentSpeedTitle.value "Aktuelle Geschwindigkeit:">
+<!ENTITY delete.label "Datei(en) löschen">
+<!ENTITY dim.label "Größe">
+<!ENTITY domain.label "Domäne">
+
+<!ENTITY download.label "Download/Name">
+<!ENTITY elapsedTitle.value "Verstrichen:">
+<!ENTITY exportto.label "In Datei exportieren">
+<!ENTITY force.label "Start erzwingen">
+<!ENTITY hash.label "Prüfsumme">
+<!ENTITY import.label "Aus Datei importieren">
+<!ENTITY infoDateTitle.value "Hinzugefügt am:">
+<!ENTITY infoMultiple.value "Mehrfachauswahl">
+<!ENTITY infoPrivate.value "Privater Download">
+<!ENTITY infoSizeTitle.value "Größe:">
+<!ENTITY infoURLTitle.value "Adresse:">
+
+<!ENTITY infos.label "Download-Informationen">
+
+<!ENTITY invertmatcher.label "Spalten-Filter umkehren">
+<!ENTITY launch.label "Datei öffnen">
+<!ENTITY loading2.label "Lade…">
+
+<!ENTITY mirrors.label "Spiegelserver verwalten">
+<!ENTITY mirrors.tooltip "Spiegelserver verwalten">
+<!ENTITY movebottom.label "Nach  unten">
+<!ENTITY movedown.label "Nach unten">
+
+<!ENTITY movetop.label "An den Anfang">
+<!ENTITY moveup.label "Nach open">
+
+<!ENTITY options.caption "Optionen">
+<!ENTITY parts.label "Segmente">
+<!ENTITY path.label "Speicherpfad">
+<!ENTITY pause.label "Pause">
+<!ENTITY pct.label "Fortschritt">
+<!ENTITY percent.label "Prozent">
+
+<!ENTITY perdownloadspeedlimit2.label "Geschwindigkeit">
+<!ENTITY perdownloadspeedlimit2.tooltip "Geschwindigkeitsbeschränkung ändern. Allgemeine Beschränkung wird weiterhin eingehalten.">
+<!ENTITY remainingTitle.value "Verbleibend:">
+<!ENTITY removeAll.label "Alles entfernen">
+<!ENTITY removeDupes.label "Doppelte Downloads entfernen">
+<!ENTITY removeGone.label "Gelöschte Dateien entfernen">
+<!ENTITY removechunk.label "Ein Segment weniger">
+<!ENTITY removecompleted.label "Vollständige Downloads entfernen">
+<!ENTITY removehost.label "Downloads dieser Domäne">
+<!ENTITY removemenu.label "Downloads entfernen">
+<!ENTITY removeselected.label "Auswahl entfernen">
+
+<!ENTITY restore.label "Wiederherstellen">
+<!ENTITY resume.label "Fortsetzen">
+
+<!ENTITY search.placeholder "Downloads durchsuchen">
+
+<!ENTITY sortascending.label "Sortieren A > Z">
+<!ENTITY sortdescending.label "Sortieren Z > A">
+<!ENTITY speed.label "Geschwindigkeit">
+
+<!ENTITY speedlimit2.tooltip "Geschwindigkeitsbegrenzung ändern. Die Liste wird dynamisch aktualisiert.">
+<!ENTITY targetdir.label "Verzeichnis öffnen">
+<!-- time2.label: Est. == Estimated -->
+<!ENTITY time2.label "Verbleibend">
+<!ENTITY tooladd.tooltip "Manuell Downloads zu DownThemAll! hinzufügen">
+<!ENTITY tooladddownload.label "Downloads hinzufügen">
+<!ENTITY toolbar.full "Icons und Text zeigen">
+
+<!ENTITY toolbar.icons "Icons zeigen">
+<!ENTITY tooldonate.tooltiptext "Helfen Sie, DownThemAll! noch besser zu machen. Erwägen Sie eine kleine Spende!">

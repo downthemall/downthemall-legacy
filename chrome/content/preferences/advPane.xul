@@ -8,7 +8,12 @@
  * See LICENSE and GPL for details.
  *
  * ***** END LICENSE BLOCK ***** -->
-<!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
+<!DOCTYPE window [
+	<!ENTITY % prefsDTD SYSTEM "chrome://dta/locale/prefpanes.dtd">
+	%prefsDTD;
+	<!ENTITY % defprefsDTD SYSTEM "chrome://dta-locale/content/prefpanes.dtd">
+	%defprefsDTD;
+]>
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 	<prefpane id="paneAdvanced" label="&advancedpane.label;" orient="vertical" onpaneload="Advanced.load();">

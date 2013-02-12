@@ -1,0 +1,19 @@
+<!ENTITY mask.curl "Pełny adres URL">
+<!ENTITY mask.d "Dzień">
+<!ENTITY mask.ext "Rozszerzenie">
+<!ENTITY mask.flatcurl "Płaski pełny adres URL">
+<!ENTITY mask.flatsubdirs "podkatalogi płaskiego adresu URL">
+<!ENTITY mask.hh "Godziny">
+<!ENTITY mask.inum "Numer elementu">
+<!ENTITY mask.m "Miesiąc">
+<!ENTITY mask.mm "Minuty">
+<!ENTITY mask.name "Nazwa pliku">
+<!ENTITY mask.open.tip "Tabela znaczników zmiany nazwy">
+<!ENTITY mask.qstring "Szukany ciąg znaków">
+<!ENTITY mask.refer "Powiązany adres URL">
+<!ENTITY mask.ss "Sekundy">
+<!ENTITY mask.subdirs "Adres URL podkatalogów">
+<!ENTITY mask.tip "Kliknij lub przeciągnij do maski zmiany nazwy">
+<!ENTITY mask.title "Znaczniki zmiany nazwy">
+<!ENTITY mask.url "Skrócony adres URL">
+<!ENTITY mask.y "Rok">

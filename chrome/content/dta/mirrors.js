@@ -49,6 +49,7 @@ function load() {
 	mirrors.addEventListener('select', select, true);
 	mirrors.addEventListener('MirrorChanging', changingMirror, true);
 	select();
+	sizeToContent();
 }
 
 function accept() {

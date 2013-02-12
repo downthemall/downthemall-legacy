@@ -139,7 +139,7 @@ const Interface = {
 		return menu.toString();
 	},
 	openMinTrayR: function() {
-		openUrl('https://tn123.org/mintrayr/?fromdta');
+		openUrl("https://addons.mozilla.org/addon/minimizetotray-revived/");
 	}
 };
 

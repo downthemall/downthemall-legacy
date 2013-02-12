@@ -1,0 +1,14 @@
+<!ENTITY additional.caption "Rýchle filtrovanie">
+<!ENTITY additional.tip "Textový filter: môžete nastaviť viac textových filtrov naraz, oddeľte ich čiarkou.">
+<!ENTITY disableother.label "Vypnúť ostatné filtre">
+<!ENTITY disableother.tooltip "Vypnúť ostatné filtre a použiť len rýchle filtrovanie (toto nastavenie sa momentálne neukladá)">
+<!ENTITY filter.tip "Sem zadajte textové filtre! (V rozbaľovacom zozname sú príklady.)">
+<!ENTITY filters.caption "Filtre">
+<!ENTITY header.desc.label "Popis">
+<!ENTITY menu.check.label "Označiť vybrané">
+<!ENTITY menu.toggle.label "Prepnúť označenie vybraných">
+<!ENTITY menu.uncheck.label "Zrušiť označenie vybraných">
+<!ENTITY resname.value "Názov zdroja">
+<!ENTITY selectfiltered.label "Vybrať filtrované">
+<!ENTITY tab.links.label "Prepojenia">
+<!ENTITY title "DownThemAll! – vyberte si">

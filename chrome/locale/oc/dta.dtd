@@ -1,0 +1,15 @@
+<!ENTITY checksum.value "Checksum (Hash) :">
+<!ENTITY description.value "Descripcion :">
+<!ENTITY mask.tip "Los fichièrs seleccionats seràn enregistrats e renomenats en utilizant aquesta masqueta">
+<!ENTITY mirrormanager.tip "Gerir los miralhs de telecargament">
+<!ENTITY mirrors.value "Miralhs :">
+<!ENTITY options.label "Preferéncias">
+<!ENTITY queue.key "p">
+<!ENTITY queue.label "Metre en pausa">
+<!ENTITY referrer.value "Pagina d'origina :">
+<!ENTITY selectall.label "Seleccionar tot">
+<!ENTITY selectinv.label "Inversar la seleccion">
+<!ENTITY selectnone.label "Seleccionar pas res">
+<!ENTITY start.key "D">
+<!ENTITY start.label "Aviar !">
+<!ENTITY url.value "Telecargament">

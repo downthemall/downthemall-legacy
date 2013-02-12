@@ -1,0 +1,19 @@
+<!ENTITY mask.curl "전체 URL">
+<!ENTITY mask.d "일">
+<!ENTITY mask.ext "확장자">
+<!ENTITY mask.flatcurl "고정 전체 URL">
+<!ENTITY mask.flatsubdirs "고정 URL 하위 디렉토리">
+<!ENTITY mask.hh "시간">
+<!ENTITY mask.inum "항목 번호">
+<!ENTITY mask.m "월">
+<!ENTITY mask.mm "분">
+<!ENTITY mask.name "파일명">
+<!ENTITY mask.open.tip "태그 바꾸기 참조표">
+<!ENTITY mask.qstring "질의 문자열">
+<!ENTITY mask.refer "참조자 URL">
+<!ENTITY mask.ss "초">
+<!ENTITY mask.subdirs "URL 하위 디렉토리">
+<!ENTITY mask.tip "이름 변경 설정을 클릭하거나 드래그 하십시오.">
+<!ENTITY mask.title "태그 바꾸기">
+<!ENTITY mask.url "기본 URL">
+<!ENTITY mask.y "년">

@@ -1,0 +1,14 @@
+<!ENTITY additional.caption "סינון מהיר">
+<!ENTITY additional.tip "מסנן טקסטואלי: אפשר להגדיר מסננים טקסטואליים מרובים בו זמנית על־ידי שימוש בפסיק.">
+<!ENTITY disableother.label "ביטול המסננים האחרים">
+<!ENTITY disableother.tooltip "לבטל את המסננים האחרים ולהשתמש רק בסינון מהיר. (ההגדרה הזאת לא נשמרת כעת)">
+<!ENTITY filter.tip "הכנס את את המסנן הטקסטואלי שלך כאן! (אפשר לראות דוגמאות ברשימה הנפתחת)">
+<!ENTITY filters.caption "מסננים">
+<!ENTITY header.desc.label "תיאור">
+<!ENTITY menu.check.label "סמן פריטים מסומנים">
+<!ENTITY menu.toggle.label "היפוך סימון עבור פריטים מסומנים">
+<!ENTITY menu.uncheck.label "הסר סימון מפריטים מסומנים">
+<!ENTITY resname.value "שם המשאב">
+<!ENTITY selectfiltered.label "בחירת מסוננים">
+<!ENTITY tab.links.label "קישורים">
+<!ENTITY title "בחירה">

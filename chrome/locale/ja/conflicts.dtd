@@ -1,0 +1,5 @@
+<!ENTITY always.label "次回からもこの設定を使用">
+<!ENTITY overwrite.label "ファイルを上書きする">
+<!ENTITY session.label "このセッション中は使用">
+<!ENTITY skip.label "無視/キャンセル">
+<!ENTITY text.value "この設定を次回も使用:">

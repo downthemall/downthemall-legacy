@@ -5,7 +5,12 @@
 
 <?xml-stylesheet href="chrome://dta/skin/integration/toolbarinstall.css" type="text/css" ?>
 
-<!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
+<!DOCTYPE overlay [
+	<!ENTITY % menuDTD SYSTEM "chrome://dta/locale/menu.dtd">
+	%menuDTD;
+	<!ENTITY % defmenuDTD SYSTEM "chrome://dta-locale/content/menu.dtd">
+	%defmenuDTD;
+]>
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&dta-tbinstall;" id="DownThemAll" windowtype="DTA:TBInstall">
 		<script type="text/javascript"><![CDATA[
 			const all = ['dta-button', 'dta-turbo-button', 'dta-turboselect-button', 'dta-manager-button'];

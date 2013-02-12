@@ -1,0 +1,15 @@
+<!ENTITY checksum.value "Έλεγχος αθροίσματος (Hash):">
+<!ENTITY description.value "Περιγραφή:">
+<!ENTITY mask.tip "Τα επιλεγμένα αρχεία θα αποθηκευτούν και θα ονομαστούν σύμφωνα μ' αυτή τη μάσκα.">
+<!ENTITY mirrormanager.tip "Διαχείριση εναλλακτικών τοποθεσιών λήψεων">
+<!ENTITY mirrors.value "Εναλλακτικές τοποθεσίες:">
+<!ENTITY options.label "Προτιμήσεις">
+<!ENTITY queue.key "π">
+<!ENTITY queue.label "Προσθήκη σε παύση">
+<!ENTITY referrer.value "Σελίδα αναφοράς:">
+<!ENTITY selectall.label "Επιλογή όλων">
+<!ENTITY selectinv.label "Αντιστροφή επιλογής">
+<!ENTITY selectnone.label "Επιλογή κανενός">
+<!ENTITY start.key "κ">
+<!ENTITY start.label "Εκκίνηση!">
+<!ENTITY url.value "Λήψη">

@@ -1,0 +1,14 @@
+<!ENTITY additional.caption "Filtrado rápido">
+<!ENTITY additional.tip "Filtro textual: puede establecer múltiples filtros de texto simultáneos usando una coma">
+<!ENTITY disableother.label "Desactivar otros filtros">
+<!ENTITY disableother.tooltip "Desactivar otros filtros y solo usar el filtrado rápido (esta configuración no es persistente de momento)">
+<!ENTITY filter.tip "Escriba aquí sus filtros de texto (algunos ejemplos en el desplegable)">
+<!ENTITY filters.caption "Filtros">
+<!ENTITY header.desc.label "Descripción">
+<!ENTITY menu.check.label "Marcar ítems seleccionados">
+<!ENTITY menu.toggle.label "Alternar marca de ítems seleccionados">
+<!ENTITY menu.uncheck.label "Desmarcar ítems seleccionados">
+<!ENTITY resname.value "Nombre de recursos">
+<!ENTITY selectfiltered.label "Seleccionar filtrados">
+<!ENTITY tab.links.label "Enlaces">
+<!ENTITY title "Haga su selección">

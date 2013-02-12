@@ -16,8 +16,12 @@
 <!DOCTYPE dialog [
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
 	%commonDTD;
+	<!ENTITY % defcommonDTD SYSTEM "chrome://dta-locale/content/dta.dtd">
+	%defcommonDTD;
 	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
 	%managerDTD;
+	<!ENTITY % defmanagerDTD SYSTEM "chrome://dta-locale/content/manager.dtd">
+	%defmanagerDTD;
 ]>
 
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&infoMultiple.value;" id="DownThemAll" buttons="accept,cancel" ondialogaccept="return Dialog.accept();">

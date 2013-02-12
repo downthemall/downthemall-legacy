@@ -20,8 +20,12 @@
 	%globalDTD;
 	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
 	%commonDTD;
+	<!ENTITY % defcommonDTD SYSTEM "chrome://dta-locale/content/dta.dtd">
+	%defcommonDTD;
 	<!ENTITY % addUrlDTD SYSTEM "chrome://dta/locale/addurl.dtd">
 	%addUrlDTD;
+	<!ENTITY % defaddUrlDTD SYSTEM "chrome://dta-locale/content/addurl.dtd">
+	%defaddUrlDTD;
 ]>
 
 <dialog
