@@ -521,7 +521,7 @@ exports.load = function load(window, outerEvent) {
 					_updateInterval = setIntervalOnlyFun(intervalfunc, 150, false);
 				}
 				if (urls.length + images.length) {
-					notifyProgress(getFormattedString('processing.label', urls.length, images.length));
+					notifyProgress(bundle.getFormattedString('processing.label', [urls.length, images.length]));
 				}
 				else {
 					notifyProgress(bundle.getString('preparing.label'));
@@ -566,10 +566,10 @@ exports.load = function load(window, outerEvent) {
 					try {
 						let queued = DTA.turboSaveLinkArray(window, urls, images);
 						if (typeof queued == 'number') {
-							notifyInfo(getFormattedString('queuedn', queued));
+							notifyInfo(bundle.getFormattedString('queuedn', [queued]));
 						}
 						else {
-							notifyInfo(getFormattedString('queued', queued.url));
+							notifyInfo(bundle.getFormattedString('queued', [queued.url]));
 						}
 						return;
 					}
@@ -690,7 +690,7 @@ exports.load = function load(window, outerEvent) {
 		if (turbo) {
 			try {
 				DTA.saveSingleItem(window, true, item);
-				notifyInfo(getFormattedString('queued', url));
+				notifyInfo(bundle.getFormattedString('queued', [url]));
 				return;
 			}
 			catch (ex) {
