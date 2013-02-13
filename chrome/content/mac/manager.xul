@@ -11,14 +11,14 @@
 <?xul-overlay href="chrome://browser/content/baseMenuOverlay.xul"?>
 
 <!DOCTYPE overlay [
-	<!ENTITY % defmainmenuDTD SYSTEM "chrome://dta-locale/content/mainmenu.dtd">
-	%defmainmenuDTD;
 	<!ENTITY % mainmenuDTD SYSTEM "chrome://dta/locale/mainmenu.dtd">
 	%mainmenuDTD;
-	<!ENTITY % defmanagerDTD SYSTEM "chrome://dta-locale/content/manager.dtd">
-	%managerDTD;
+	<!ENTITY % defmainmenuDTD SYSTEM "chrome://dta-locale/content/mainmenu.dtd">
+	%defmainmenuDTD;
 	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
 	%managerDTD;
+	<!ENTITY % defmanagerDTD SYSTEM "chrome://dta-locale/content/manager.dtd">
+	%defmanagerDTD;
 ]>
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="dtamanagerplatformoverlay">
