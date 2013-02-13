@@ -73,7 +73,7 @@
 		<command id="cmdChangeToLinks" oncommand="Dialog.changeTab('links')"/>
 		<command id="cmdChangeToImages" oncommand="Dialog.changeTab('images')"/>
 
-		<command id="cmdPreferences" oncommand="DTA.showPreferences();"/>
+		<command id="cmdPreferences" oncommand="showPreferences();"/>
 	</commandset>
 
 	<keyset>

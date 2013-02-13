@@ -17,7 +17,6 @@ test("exports", function() {
 		'resetBranchExt',
 		'resetAllExt',
 		'addObserver',
-		'removeObserver',
 		'makeObserver'
 		]);
 });
@@ -72,16 +71,14 @@ test("observers", function() {
 			}
 	};
 
-	p.addObserver("extensions.dta", obs1);
-	p.addObserver("extensions.dta", obs2);
-	p.addObserver("extensions.dta", obs3);
+	var u1 = p.addObserver("extensions.dta", obs1);
+	var u2 = p.addObserver("extensions.dta", obs2);
+	var u3 = p.addObserver("extensions.dta", obs3);
 	p.setExt("testObs", "yep");
 	ok(obs1.observed && obs1.observed && obs3.observed, "all observers fired");
 
+	u1(); u2(); u3();
 	obs1.observed = false;
-	p.removeObserver("extensions.dta", obs1);
-	p.removeObserver("extensions.dta", obs2);
-	p.removeObserver("extensions.dta", obs3);
 
 	p.setExt("testObs", "yeppy");
 	p.resetExt("testObs");

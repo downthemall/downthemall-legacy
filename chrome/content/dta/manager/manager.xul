@@ -89,7 +89,7 @@
 		<command id="cmdChangeSpeedLimit" oncommand="Dialog.changeSpeedLimit();" />
 		<command id="cmdPerDownloadSpeedLimit" oncommand="Tree.changePerDownloadSpeedLimit();" />
 
-		<command id="cmdPreferences" oncommand="DTA.showPreferences();" />
+		<command id="cmdPreferences" oncommand="showPreferences();" />
 
 		<command id="cmdCustomizeToolbar" oncommand="Dialog.customizeToolbar(event);" />
 
