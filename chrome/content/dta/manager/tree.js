@@ -1076,7 +1076,7 @@ const Tree = {
 		}
 	},
 	addLimits: function T_addLimits() {
-		DTA.showPreferences(
+		showPreferences(
 			"paneServers",
 			{
 				action: "addlimits",

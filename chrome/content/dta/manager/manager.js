@@ -94,8 +94,6 @@ const Dialog = {
 	completed: 0,
 	totalbytes: 0,
 	init: function D_init() {
-		removeEventListener('load', arguments.callee, false);
-
 		Prefs.init();
 
 		this.statusText = $("statusText");
@@ -173,7 +171,7 @@ const Dialog = {
 
 		this.paneSchedule = $("schedule");
 		this.paneSchedule.addEventListener("command", function() {
-			DTA.showPreferences("paneSchedule");
+			showPreferences("paneSchedule");
 		}, false);
 
 		let tree = $("downloads");
@@ -1187,7 +1185,11 @@ const Dialog = {
 		return true;
 	}
 };
-addEventListener('load', function() Dialog.init(), false);
+addEventListener("load", function DialogInit() {
+	removeEventListener("load", DialogInit, false);
+	Dialog.init();
+}, false);
+
 unloadWindow(window, function () {
 	Dialog._forceClose = true;
 	Dialog.close();

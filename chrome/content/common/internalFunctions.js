@@ -25,12 +25,9 @@ const Mediator = require("support/mediator");
 const {FilterManager} = require("support/filtermanager");
 const {toURI, toURL} = require("support/stringfuncs");
 const {unloadWindow} = require("support/overlays");
+const DTA = require("api");
 
-const DTA = {
-	showPreferences: function(pane, command) Mediator.showPreferences(window, pane, command)
-};
-requireJoined(DTA, "api");
-
+function showPreferences(pane, command) Mediator.showPreferences(window, pane, command);
 function openUrl(url, ref) Mediator.openUrl(window, url, ref);
 
 

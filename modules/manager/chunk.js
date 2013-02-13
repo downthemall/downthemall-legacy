@@ -218,7 +218,6 @@ const Observer = {
 	memoryPressure: 0,
 	unload: function() {
 		Services.obs.removeObserver(this, "memory-pressure");
-		Prefs.removeObserver("extensions.dta.permissions", this);
 		try {
 			_thread.shutdown();
 		}

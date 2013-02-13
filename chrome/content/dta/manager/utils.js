@@ -120,7 +120,11 @@ const Prefs = {
 		try {
 			this._resetConnPrefs();
 			this._refreshPrefs();
-			Preferences.addObserver('extensions.dta.', this);
+			let unload = Preferences.addObserver("extensions.dta.", this);
+			addEventListener("unload", function PrefUnload() {
+				removeEventListener("unload", PrefUnload, false);
+				unload();
+			}, false);
 		}
 		catch (ex) {
 			log(LOG_ERROR, "failed to add pref-observer", ex);
@@ -258,7 +262,7 @@ const Prefs = {
 					{
 						accessKey: null,
 						label: _('manualfix2'),
-						callback: function() DTA.showPreferences('paneAdvanced')
+						callback: function() showPreferences('paneAdvanced')
 					}
 				]);
 				throw ex;
@@ -271,7 +275,6 @@ const Prefs = {
 		}
 	},
 	shutdown: function() {
-		Preferences.removeObserver('extensions.dta.', this);
 		this._resetConnPrefs();
 	},
 	_resetConnPrefs: function() {

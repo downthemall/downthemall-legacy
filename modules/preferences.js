@@ -288,7 +288,6 @@ Object.defineProperties(exports, {
 	"resetBranchExt": {value: resetBranchExt, enumerable: true},
 	"resetAllExt": {value: resetAllExt, enumerable: true},
 	"addObserver": {value: addObserver, enumerable: true},
-	"removeObserver": {value: removeObserver, enumerable: true},
 	"makeObserver": {value: makeObserver, enumerable: true}
 });
 Object.freeze(exports);
