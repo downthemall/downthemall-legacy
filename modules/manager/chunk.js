@@ -228,7 +228,7 @@ const Observer = {
 		} catch (ex) {}
 		Timers.killAllTimers();
 	},
-	observe: function(s, topic, d) {
+	observe: function(s, topic, data) {
 		if (topic == "memory-pressure") {
 			if (data == "low-memory") {
 				this.memoryPressure += 25;
