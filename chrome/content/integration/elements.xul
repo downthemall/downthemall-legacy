@@ -78,7 +78,7 @@
 			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveLinkT" accesskey="o" label="&dta-link-save-turbo2.label;" command="dta:turbo-link"/>
 
 			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveImg" label="&dta-img-save2.label;" command="dta:regular-img"/>
-			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveImgT" label="&dta-img-save-turbo2.label;" command="dta-turbo-img"/>
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveImgT" label="&dta-img-save-turbo2.label;" command="dta:turbo-img"/>
 
 			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveVideo" label="&dta-video-save2.label;" command="dta:regular-video"/>
 			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveVideoT" label="&dta-video-save-turbo2.label;" command="dta:turbo-video"/>
