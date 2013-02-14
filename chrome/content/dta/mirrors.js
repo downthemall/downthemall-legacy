@@ -42,7 +42,7 @@ function load() {
 			}
 		}
 		// clear the array; we'll reuse it for return values
-		window.arguments[0].splice(0);
+		window.arguments[0].length = 0;
 	}
 	addEventListener('dialogaccept', accept, true);
 

@@ -425,7 +425,7 @@ function openManagerCallback(event) {
 	for (let cb of managerRequests) {
 		cb(event.target);
 	}
-	managerRequests.splice(0);
+	managerRequests.length = 0;
 	isManagerPending = false;
 }
 

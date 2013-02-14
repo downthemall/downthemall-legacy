@@ -185,7 +185,7 @@ LRUMap.prototype = Object.freeze({
 			for (let i = _unloaders.length; ~(--i);) {
 				_runUnloader(_unloaders[i]);
 			}
-			_unloaders.splice(0);
+			_unloaders.length = 0;
 			return;
 		}
 		// add an unloader

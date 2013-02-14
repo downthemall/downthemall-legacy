@@ -853,7 +853,7 @@ const Dialog = {
 
 			if (Prefs.autoClearComplete && this._autoClears.length) {
 				Tree.remove(this._autoClears);
-				this._autoClears.splice(0);
+				this._autoClears.length = 0;
 			}
 
 			if (!this.offline && !this._mustReload) {
