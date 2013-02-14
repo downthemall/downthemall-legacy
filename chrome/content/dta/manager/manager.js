@@ -852,6 +852,7 @@ const Dialog = {
 			}
 
 			if (Prefs.autoClearComplete && this._autoClears.length) {
+				mapFilterInSitu(this._autoClears, function(e) e.get(), function(e) !!e);
 				Tree.remove(this._autoClears);
 				this._autoClears.length = 0;
 			}
@@ -984,7 +985,7 @@ const Dialog = {
 			this._wasRunning = true;
 		}
 		else if (Prefs.autoClearComplete && state == COMPLETE) {
-			this._autoClears.push(download);
+			this._autoClears.push(weak(download));
 		}
 		if (!this._initialized || !this._wasRunning || state != COMPLETE) {
 			return;
