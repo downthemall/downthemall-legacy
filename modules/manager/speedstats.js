@@ -114,8 +114,8 @@ SpeedStats.prototype = Object.freeze({
 	 * Clears all statistics
 	 */
 	clear: function DSS_clear() {
-		this._speeds.splice(0);
-		this._aspeeds.splice(0);
+		this._speeds.length = 0;
+		this._aspeeds.length = 0;
 		this._lastTime = this._lastBytes = this._avg = 0;
 	}
 });
