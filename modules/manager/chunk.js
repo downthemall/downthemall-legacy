@@ -252,7 +252,8 @@ const Observer = {
 		Prefs.dirPermissions = perms;
 	},
 	decrementPressure: function() {
-		if (!(--this.memoryPressure)) {
+		if (--this.memoryPressure <= 0) {
+			this.memoryPressure = 0;
 			return;
 		}
 		this.schedulePressureDecrement();
