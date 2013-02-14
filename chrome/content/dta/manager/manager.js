@@ -2686,7 +2686,7 @@ function CustomEvent(download, command) {
 }
 
 const startDownloads = (function() {
-	function next(start, downloads) {
+	function next(start, downloads, scroll) {
 		function addItem(e) {
 			try {
 				let qi = new QueueItem();
@@ -2800,12 +2800,14 @@ const startDownloads = (function() {
 			Tree.invalidate();
 			ct = null;
 			g = null;
-			Tree.scrollToNearest(first);
+			if (scroll) {
+				Tree.scrollToNearest(first);
+			}
 
 			while (queue.length) {
 				try {
-					let {start, downloads} = queue.shift();
-					next(start, downloads);
+					let {start, downloads, scrollNext} = queue.shift();
+					next(start, downloads, scrollNext);
 					return;
 				}
 				catch (ex) {
@@ -2818,12 +2820,13 @@ const startDownloads = (function() {
 	let busy = false;
 	let queue = [];
 
-	return function startDownloads(start, downloads) {
+	return function startDownloads(start, downloads, scroll) {
+		scroll = !(scroll === false);
 		if (busy) {
-			queue.push({start: start, downloads: downloads});
+			queue.push({start: start, downloads: downloads, scroll: scroll});
 		}
 		else {
-			next(start, downloads);
+			next(start, downloads, scroll);
 		}
 	};
 })();
