@@ -1049,7 +1049,7 @@ const Dialog = {
 		}
 		return rv;
 	},
-	_canClose: function D__canClose() {
+	_canClose: function() {
 		if (Tree.some(function(d) { return d.started && !d.canResumeLater && d.state == RUNNING; })) {
 			var rv = Prompts.confirmYN(
 				window,
@@ -1066,7 +1066,7 @@ const Dialog = {
 	_doneClosing: function() {
 		close();
 	},
-	shutdown: function D_close(callback) {
+	shutdown: function(callback) {
 		log(LOG_INFO, "Close request");
 		if (!this._initialized) {
 			log(LOG_INFO, "not initialized. Going down immediately!");
@@ -1092,7 +1092,7 @@ const Dialog = {
 		log(LOG_INFO, "Going to close all");
 		Tree.updateAll(
 			function(d) {
-				if (d.isOf(RUNNING | QUEUED)) {
+				if (d.is(RUNNING)) {
 					// enumerate all running chunks
 					for (let c of d.chunks) {
 						if (c.running) {
@@ -1120,9 +1120,10 @@ const Dialog = {
 			log(LOG_ERROR, "Going down even if queue was not probably closed yet!");
 		}
 		callback.call(this);
+		this._initialized = false;
 		return true;
 	},
-	_cleanTmpDir: function D__cleanTmpDir() {
+	_cleanTmpDir: function() {
 		if (!Prefs.tempLocation || Preferences.getExt("tempLocation", '') != '') {
 			// cannot perform this action if we don't use a temp file
 			// there might be far too many directories containing far too many
@@ -1132,6 +1133,9 @@ const Dialog = {
 		}
 		let known = [];
 		for (let d of Tree.all) {
+			if (!d._tmpFile) {
+				continue;
+			}
 			known.push(d.tmpFile.leafName);
 		}
 		let tmpEnum = Prefs.tempLocation.directoryEntries;
