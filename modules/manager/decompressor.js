@@ -14,7 +14,7 @@ const Timers = new TimerManager();
 
 function Decompressor(download) {
 	this.download = download;
-	this.to = new Instances.LocalFile(download.destinationFile);
+	this.to = download.destinationLocalFile.clone();
 	this.from = download.tmpFile.clone();
 
 	try {

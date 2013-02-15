@@ -544,7 +544,7 @@ const Tree = {
 		for (let qi in this.selected) {
 			try {
 				if (qi.state == COMPLETE) {
-					let file = new Instances.LocalFile(qi.destinationFile);
+					let file = qi.destinationLocalFile;
 					if (file.exists()) {
 						transfer.mozSetDataAt("application/x-moz-file", new FileDataProvider(qi, file), i++);
 					}
@@ -814,7 +814,7 @@ const Tree = {
 				if (d.state != COMPLETE) {
 					continue;
 				}
-				if (onlyGone && (new Instances.LocalFile(d.destinationFile).exists())) {
+				if (onlyGone && d.destinationLocalFile.exists()) {
 					continue;
 				}
 				this._downloads.splice(d.position, 1);
@@ -1183,7 +1183,7 @@ const Tree = {
 				states.max = Math.max(d.filteredPosition, states.max);
 			}
 			let cur = this.current;
-			states.curFile = (cur && cur.state == COMPLETE && (new Instances.LocalFile(cur.destinationFile)).exists());
+			states.curFile = (cur && cur.state == COMPLETE && cur.destinationLocalFile.exists());
 			states.curFolder = (cur && (new Instances.LocalFile(cur.destinationPath)).exists());
 
 			for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
@@ -1597,8 +1597,7 @@ const FileHandling = {
 		let list = [];
 
 		for (d in this._uniqueList) {
-			let file = new Instances.LocalFile(d.destinationFile);
-			if (file.exists()) {
+			if (d.destinationLocalFile.exists()) {
 				list.push(d);
 			}
 		}
@@ -1606,7 +1605,7 @@ const FileHandling = {
 		if (list.length < 25) {
 			msg = _('deletetexts');
 			for (let d of list) {
-				msg += "\n" + (new Instances.LocalFile(d.destinationFile)).leafName;
+				msg += "\n" + d.destinationLocalFile.leafName;
 			}
 		}
 		else {
@@ -1617,9 +1616,8 @@ const FileHandling = {
 		}
 		for (let d of list) {
 			try {
-				let file = new Instances.LocalFile(d.destinationFile);
-				if (file.exists()) {
-					file.remove(false);
+				if (d.destinationLocalFile.exists()) {
+					d.destinationLocalFile.remove(false);
 				}
 			}
 			catch (ex) {
