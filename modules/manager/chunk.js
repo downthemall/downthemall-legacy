@@ -11,7 +11,6 @@ requireJoined(this, "constants");
 const Prefs = require("preferences");
 const {ByteBucketTee} = require("support/bytebucket");
 const {GlobalBucket} = require("manager/globalbucket");
-const {defer} = require("support/defer");
 const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
 const {getTimestamp, formatNumber} = require("utils");
@@ -610,16 +609,25 @@ Chunk.prototype = {
 		if (MemoryReporter.pendingBytes > MAX_PENDING_SIZE) {
 			log(LOG_INFO, "Under pressure: " + MemoryReporter.pendingBytes + " : " + Observer.memoryPressure);
 			// basically stop processing while under memory pressure
-			Timers.createOneshot(500, this.run, this);
+			this.schedule();
 			return 0;
 		}
 		if (Observer.memoryPressure > 0) {
 			log(LOG_INFO, "Under some pressure: " + MemoryReporter.pendingBytes + " : " + Observer.memoryPressure + " : " + requested);
 			requested = Math.max(Math.min(requested, 256), Math.floor(requested / Observer.memoryPressure));
 			log(LOG_INFO, "Using instead: " + requested);
-			Timers.createOneshot(250, this.run, this);
+			this.schedule();
 		}
 		return this.buckets.requestBytes(requested);
+	},
+	schedule: function() {
+		if (this._schedTimer) {
+			return;
+		}
+		this._schedTimer = Timers.createOneshot(250, function() {
+			delete this._schedTimer;
+			this.run();
+		}, this);
 	},
 	run: function() {
 		if (!this._req) {
@@ -642,7 +650,7 @@ Chunk.prototype = {
 			this._reqPending -= got;
 			this.parent.timeLastProgress = getTimestamp();
 
-			defer(this);
+			this.schedule();
 			return;
 		}
 
