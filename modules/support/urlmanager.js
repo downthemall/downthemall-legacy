@@ -43,17 +43,21 @@ UrlManager.prototype = Object.freeze({
 		this._urls.sort(compareFn);
 		this._url = this._urls[0].url;
 		this._usable = this._urls[0].usable;
-		this._usableURL = toURL(this._usable);
-		this._usableURLPath = removeLeadingChar(this._usableURL.path, "/");
-		if (this._usableURLPath.length) {
-			this._usableURLPath = removeFinalSlash(normalizeSlashes(
-				this._usableURLPath.substring(0, this._usableURLPath.lastIndexOf("/"))
-				));
-		}
-		this._host = this.usableURL.host;
+		lazy(this, "usableURL", this._usableURL);
+		lazy(this, "usableURLPath", this._usableURLPath);
+		lazy(this, "host", this._host);
 		this._domain = Limits.getEffectiveHost(this._url);
 		this._makeGood();
 	},
+	_usableURL: function() toURL(this._usable),
+	usableURLPath: function() {
+		let rv = removeLeadingChar(this.usableURL.path, "/");
+		if (rv.length) {
+			rv = removeFinalSlash(normalizeSlashes(rv.substring(0, rv.lastIndexOf("/"))));
+		}
+		return rv;
+	},
+	_host: function() this.usableURL.host,
 	add: function um_add(url) {
 		if (!url instanceof URL) {
 			throw new Exception(url + " is not an URL");
@@ -90,10 +94,7 @@ UrlManager.prototype = Object.freeze({
 	},
 	get url() this._url,
 	get usable() this._usable,
-	get usableURL() this._usableURL,
-	get usableURLPath() this._usableURLPath,
 	get length() this._urls.length,
-	get host() this._host,
 	get domain() this._domain,
 	get all() {
 		for (let i of this._urls) {
