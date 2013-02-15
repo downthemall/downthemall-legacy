@@ -5,7 +5,10 @@
 
 const nsITimer = Ci.nsITimer;
 
-function uuid() Services.uuid.generateUUID().toString();
+const uuid = (function() {
+	var i = 0;
+	return function uuid() ++i;
+})();
 
 // Represents the (private) timer data and observer
 function TimerData(owner, time, type, func, ctx) {
