@@ -2786,7 +2786,7 @@ const startDownloads = (function() {
 					log(LOG_INFO, "A queued item has no isPrivate property. Defaulting to false. Please check the code path for proper PBM support!");
 				}
 
-				qi.position = Tree.add(qi);
+				Tree.add(qi);
 				qi.save();
 				first = first || qi;
 			}
