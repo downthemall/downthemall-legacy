@@ -337,7 +337,7 @@ const Tree = {
 	_filter: '',
 	_mustFilter: false,
 	get filtered() this._matcher.filtering,
-	doFilter: function T__doFilter() {
+	doFilter: function() {
 		if (this._updating) {
 			this._mustFilter = true;
 			return;
@@ -346,18 +346,15 @@ const Tree = {
 		try {
 			// save selection
 			let selectedIds = this._getSelectedFilteredIds();
-			for (let i = 0, e = this._downloads.length; i < e; ++i) {
-				this._downloads[i].filteredPosition = -1;
-			}
 			this._box.rowCountChanged(0, -this.rowCount);
 			if (this.filtered) {
 				this._filtered = this._matcher.filter(this._downloads);
 			}
 			else {
 				this._filtered = this._downloads;
-			}
-			for (let i = 0, e = this._filtered.length; i < e; ++i) {
-				this._filtered[i].filteredPosition = i;
+				for (let i = 0, e = this._filtered.length; i < e; ++i) {
+					this._filtered[i].filteredPosition = i;
+				}
 			}
 			this._box.rowCountChanged(0, this.rowCount);
 
