@@ -1204,7 +1204,7 @@ const Metalinker = {
 	handleDownload: function ML_handleDownload(download) {
 		download.setState(CANCELED);
 		Tree.remove(download, false);
-		let file = new Instances.LocalFile(download.destinationFile);
+		let file = download.destinationLocalFile;
 
 		this.handleFile(file, download.referrer, function() {
 			try {
@@ -1479,6 +1479,14 @@ QueueItem.prototype = {
 		return this._destinationFile;
 	},
 
+	_destinationLocalFile: null,
+	get destinationLocalFile() {
+		if (!this._destinationLocalFile) {
+			this.rebuildDestination();
+		}
+		return this._destinationLocalFile;
+	},
+
 	_conflicts: 0,
 	get conflicts() {
 		return this._conflicts;
@@ -1653,7 +1661,7 @@ QueueItem.prototype = {
 				file = this._tmpFile || null;
 			}
 			else {
-				file = new Instances.LocalFile(this.destinationFile);
+				file = this.destinationLocalFile;
 			}
 			if (file && file.exists()) {
 				return file.fileSize;
@@ -1869,7 +1877,7 @@ QueueItem.prototype = {
 		);
 	},
 	verifyHashError: function(mismatches) {
-		let file = new Instances.LocalFile(this.destinationFile);
+		let file = this.destinationLocalFile;
 		filterInSitu(mismatches, function(e) e.start != e.end);
 
 		function deleteFile() {
@@ -1951,8 +1959,7 @@ QueueItem.prototype = {
 					throw new Exception("invalid date encountered: " + time + ", will not set it");
 				}
 				// have to unwrap
-				let file = new Instances.LocalFile(this.destinationFile);
-				file.lastModifiedTime = time;
+				this.destinationLocalFile.lastModifiedTime = time;
 			}
 			catch (ex) {
 				log(LOG_ERROR, "Setting timestamp on file failed: ", ex);
@@ -2024,10 +2031,16 @@ QueueItem.prototype = {
 		try {
 			let mask = Utils.removeFinalSlash(Utils.normalizeSlashes(Utils.removeFinalChar(
 					this.rebuildDestination_renamer(this.mask), "."
-					))).split(Utils.SYSTEMSLASH);
+					)));
 			let file = new Instances.LocalFile(Utils.addFinalSlash(this.pathName));
-			while (mask.length) {
-				file.append(Utils.removeBadChars(mask.shift()).trim());
+			if (!~mask.indexOf(Utils.SYSTEMSLASH)) {
+				file.append(Utils.removeBadChars(mask).trim());
+			}
+			else {
+				mask = mask.split(Utils.SYSTEMSLASH);
+				for (let i = 0, e = mask.length; i < e; ++i) {
+					file.append(Utils.removeBadChars(mask[i]).trim());
+				}
 			}
 			this._destinationName = file.leafName;
 			let parent = file.parent;
@@ -2038,6 +2051,7 @@ QueueItem.prototype = {
 				);
 			parent.append(this.destinationName);
 			this._destinationFile = parent.path;
+			this._destinationLocalFile = parent;
 		}
 		catch(ex) {
 			this._destinationName = this.fileName;
@@ -2049,6 +2063,7 @@ QueueItem.prototype = {
 			let file = new Instances.LocalFile(this.destinationPath);
 			file.append(this.destinationName);
 			this._destinationFile = file.path;
+			this._destinationLocalFile = file;
 			log(LOG_ERROR, "rebuildDestination():", ex);
 		}
 		this._icon = null;
@@ -2552,12 +2567,11 @@ var ConflictManager = {
 		this._process();
 	},
 	_check: function CM__check(download) {
-		let dest = new Instances.LocalFile(download.destinationFile);
+		let dest = download.destinationLocalFile;
 		let sn = false;
 		if (download.state == RUNNING) {
 			sn = Dialog.checkSameName(download, download.destinationFile);
 		}
-		log(LOG_DEBUG, "conflict check: " + sn + "/" + dest.exists() + " for " + download.destinationFile);
 		return dest.exists() || sn;
 	},
 	_process: function CM__process() {
@@ -2614,7 +2628,7 @@ var ConflictManager = {
 		let download = cur.download;
 		download.conflicts = 0;
 		let basename = download.destinationName;
-		let newDest = new Instances.LocalFile(download.destinationFile);
+		let newDest = download.destinationLocalFile;
 		let i = 1;
 		for (;; ++i) {
 			newDest.leafName = Utils.formatConflictName(basename, i);
