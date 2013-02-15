@@ -30,7 +30,7 @@ const TextMatch = {
 			).join('|'),
 			'i'
 		);
-		return function(d) params.test(
+		return function TextMatcher(d) params.test(
 			[d.urlManager.usable, d.description, d.fileName, d.destinationName].join(' ')
 		);
 	}
@@ -65,7 +65,7 @@ const FilterMatch = {
 			return null;
 		}
 		let _m = FilterManager.getMatcherFor(filters);
-		return function(d) _m(d.urlManager.url.spec);
+		return function FilterMatcher(d) _m(d.urlManager.url.spec);
 	}
 };
 
@@ -87,7 +87,7 @@ const PathMatch = {
 	},
 	getMatcher: function(params) {
 		params = params.map(function(e) atob(e));
-		return function(d) params.indexOf(d.destinationPath) >= 0;
+		return function PathMatcher(d) params.indexOf(d.destinationPath) >= 0;
 	}
 };
 
@@ -129,7 +129,7 @@ const RemainderMatch = {
 				est = n;
 			}
 		}
-		return function(d) d.estimated <= est;
+		return function RemainderMatcher(d) d.estimated <= est;
 	}
 }
 const StatusMatch = {
@@ -147,7 +147,7 @@ const StatusMatch = {
 			if (state & COMPLETE) {
 				state |= FINISHING;
 			}
-			return function(d) d.state & state;
+			return function StatusMatcher(d) d.state & state;
 		}
 }
 requireJoined(StatusMatch, "constants");
@@ -301,9 +301,27 @@ Matcher.prototype = {
 		this._matchersLength = filterInSitu(this._matchers, function(m) m.name != name).length;
 	},
 	get filtering() !!this._matchersLength,
-	filter: function(array) array.filter(function(e) this._matchers.every(function(m) m.isMatch(e)), this),
+	filter: function(array) {
+		let rv;
+		for (let i = 0, e = this._matchers.length; i < e; ++i) {
+			let m = this._matchers[i];
+			let j = 0;
+			let fnm = function(e) {
+				let rv = m.isMatch(e);
+				e.filteredPosition = rv ? j++ : -1;
+				return rv;
+			}
+			if (!rv) {
+				rv = array.filter(fnm);
+			}
+			else {
+				filterInSitu(rv, fnm);
+			}
+		}
+		return rv;
+	},
 	shouldDisplay: function(d) {
-		for (let i = 0; i < this._matchersLength; ++i) {
+		for (let i = 0, e = this._matchers.length; i < e; ++i) {
 			if (!this._matchers[i].isMatch(d)) {
 				return false;
 			}
