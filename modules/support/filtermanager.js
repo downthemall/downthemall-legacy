@@ -27,6 +27,21 @@ function flatten(arr) arr.reduce(function(a,b) {
 	return Array.concat(a, b);
 },[]);
 
+function merge_map(e) "(?:" + e + ")";
+function merge_naive(strs) {
+	if (strs.length < 2) {
+		return strs[0];
+	}
+	return strs.map(merge_map).join("|");
+}
+
+function merge_regs(regs) {
+	if (Preferences.getExt("optimizeregex", false)) {
+		return RegExpMerger.merge(regs);
+	}
+	return merge_naive(regs);
+}
+
 /**
  * Helper: Consolidates regular expressions by combining
  * @param (Array) regs
@@ -50,10 +65,10 @@ function consolidateRegs(regs) {
 	}
 	let rv = [];
 	if (ic.length) {
-		rv.push(new RegExp(RegExpMerger.merge(ic), 'i'));
+		rv.push(new RegExp(merge_regs(ic), 'i'));
 	}
 	if (nc.length) {
-		rv.push(new RegExp(RegExpMerger.merge(nc)));
+		rv.push(new RegExp(merge_regs(nc)));
 	}
 	return rv;
 }
