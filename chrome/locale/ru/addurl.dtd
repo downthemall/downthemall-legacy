@@ -1,2 +1,6 @@
-<!ENTITY desc.batches.value "Вы также можете использовать групповые дескрипторы для загрузки нескольких файлов одновременно.">
+<!ENTITY windowtitle "Добавить закачку">
+<!ENTITY adddescription.value "Введите URL загрузки и Referer ссылку (опционально)">
+<!ENTITY createbatchdescriptor.label "Создать групповую загрузку">
+<!ENTITY createbatchdescriptor.tooltip "Создайте групповую загрузку из выделенного текста">
+<!ENTITY desc.batches.value "Также Вы можете использовать правила для загрузки нескольких файлов одновременно.">
 <!ENTITY examples.value "Примеры:">

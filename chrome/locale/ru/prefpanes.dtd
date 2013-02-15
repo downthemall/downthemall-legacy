@@ -1,87 +1,125 @@
-<!ENTITY add.label "Добавить новый фильтр">
-<!ENTITY advancedpane.chunksdisabled "1 (Отключено)">
-<!ENTITY advancedpane.downloads.caption "Дополнительный контроль загрузок">
-<!ENTITY advancedpane.exposeinua.label "Показывать DownThemAll! в User-Agent">
-<!ENTITY advancedpane.files.caption "Файлы">
-<!ENTITY advancedpane.hour "час">
-<!ENTITY advancedpane.hours "часов">
-<!ENTITY advancedpane.label "Дополнительно">
-<!ENTITY advancedpane.minute "минута">
-<!ENTITY advancedpane.minutes "минут">
-<!ENTITY advancedpane.permissions.read "Чтение">
-<!ENTITY advancedpane.permissions.write "Запись">
-<!ENTITY advancedpane.scheduler.caption "Порядок запуска загрузок:">
-<!ENTITY advancedpane.scheduler.fair "Одновременно+Медленно - равномерное распределение">
-<!ENTITY advancedpane.scheduler.fast "Быстро - по очереди">
-<!ENTITY advancedpane.scheduler.legacy "Режим совместимости - без ограничений">
-<!ENTITY advancedpane.seconds "секунд">
-<!ENTITY advancedpane.tempdir.label "Использовать каталог:">
-<!ENTITY advancedpane.tempfiles.caption "Временные файлы">
-<!ENTITY advancedpane.usetemp.label "Сохранять части загрузки во временной директории">
-<!ENTITY buttonlabelextra2 "Восстановить настройки по умолчанию">
-<!ENTITY dtaPreferences.title "Настройки DownThemAll!">
-<!ENTITY dtacontext2.label "Настройки">
-<!ENTITY filter.label "Фильтр расширений:">
+<!-- Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
+<!ENTITY windowstyle.3 "width:48em;height:44em;">
 <!ENTITY filterspane.label "Фильтры">
 <!ENTITY listhead1.label "Заголовок">
 <!ENTITY listhead2.label "Расширения">
+<!ENTITY filter.label "Фильтр расширений:">
+<!ENTITY useAs.label "Использовать как:">
+<!ENTITY filter.images.label "Фильтр изображений">
+<!ENTITY filter.links.label "Фильтр ссылок">
+<!ENTITY add.label "Добавить новый фильтр">
+<!ENTITY dtacontext2.label "Настройки">
+<!ENTITY buttonlabelextra2 "Восстановить настройки по умолчанию">
+<!ENTITY dtaPreferences.title "Настройки DownThemAll!">
+<!ENTITY manager "Менеджер dTa!">
+
+<!ENTITY mainpane.label "Основные">
+<!ENTITY mainpane.defaults.caption "По умолчанию">
+<!ENTITY mainpane.defaults.desc "Папку для загрузки, маску и фильтр переименования, используемые в OneClick!, можно настроить в главном окне DownThemAll!">
+<!ENTITY mainpane.nameclash.caption "Если файл с таким именем существует, то:">
+<!ENTITY mainpane.rename.label "Переименовать">
+<!ENTITY mainpane.overwrite.label "Перезаписать">
+<!ENTITY mainpane.skip.label "Пропустить">
+<!ENTITY mainpane.ask.label "Спросить">
+<!ENTITY mainpane.misc.caption "Разное">
+<!ENTITY mainpane.sounderror2.label "Звук при ошибке">
 <!ENTITY mainpane.alert.caption "При завершении загрузок:">
 <!ENTITY mainpane.alert.label "Сообщать мне:">
+<!ENTITY mainpane.alertbox.label "окном оповещения">
+<!ENTITY mainpane.alertnotifications.label "всплывающим окном">
 <!ENTITY mainpane.alertnone.label "не оповещать">
-<!ENTITY mainpane.ask.label "Спросить">
-<!ENTITY mainpane.closedta.label "Закрывать DownThemAll по завершении загрузок">
-<!ENTITY mainpane.defaults.caption "По умолчанию">
-<!ENTITY mainpane.defaults.desc "Каталог загрузки, маску и фильтр переименования, используемые для OneClick!, можно настроить в главном окне DownThemAll!">
-<!ENTITY mainpane.label "Главные">
-<!ENTITY mainpane.listsniffedvideos.label "Записывать и показывать в списке (Flash) видео">
-<!ENTITY mainpane.misc.caption "Разное">
-<!ENTITY mainpane.overwrite.label "Перезаписать">
+<!ENTITY mainpane.sounddone.label "Звук при завершении всех загрузок">
+<!ENTITY mainpane.closedta.label "Закрывать DownThemAll при завершении загрузок">
+<!ENTITY mainpane.settime.label "Установить время файла по времени его изменения или времени добавления в очередь">
 <!ENTITY mainpane.rememberoneclick.label "Запоминать действия dTa OneClick для всех вкладок и для текущей вкладки">
-<!ENTITY mainpane.rename.label "Переименовать">
-<!ENTITY mainpane.settime.label "Установить время файла по времени его изменения на сервере или времени добавления в очередь">
-<!ENTITY mainpane.skip.label "Пропустить">
-<!ENTITY mainpane.sounddone.label "звук по завершении всех загрузок">
+<!ENTITY mainpane.confirmremove2.label "Подтверждать удаление загрузок">
 <!ENTITY mainpane.textlinks.label "Распознавать текстовые ссылки">
-<!ENTITY manager "Менеджер dTa">
-<!ENTITY privacypane.closing.caption "Когда окно Менеджера закрыто">
-<!ENTITY privacypane.deletefiltershistory.label "Очищать историю дополнительных фильтров">
-<!ENTITY privacypane.deletefoldershistory.label "Очищать историю папок">
-<!ENTITY privacypane.deletelog.label "Очистить журнал">
-<!ENTITY privacypane.dropdowns.caption "Выпадающие меню">
-<!ENTITY privacypane.enablelogs.label "Вести журнал диагностики">
+<!ENTITY mainpane.listsniffedvideos.label "Записывать и показывать в списке (Flash) видео">
+
 <!ENTITY privacypane.label "Приватность">
-<!ENTITY privacypane.logs.caption "Журнал диагностики">
-<!ENTITY privacypane.notice.caption "Внимание">
-<!ENTITY privacypane.notice.desc "DownThemAll также при установке интегрируется с данными частного характера (если имеются)">
-<!ENTITY privacypane.privacynotice.label "Наше уведомление о конфиденциальности">
-<!ENTITY privacypane.reveallog.label "Показать файл">
+<!ENTITY privacypane.closing.caption "Когда окно Управления закрыто">
+<!ENTITY privacypane.removecompleted2.label "Удалять выполненные загрузки">
+<!ENTITY privacypane.removecanceled2.label "Удалять отменённые/ошибочные загрузки">
+<!ENTITY privacypane.removeaborted2.label "Удалять незавершённые загрузки">
+<!ENTITY privacypane.deletefoldershistory.label "Очистить историю папок">
+<!ENTITY privacypane.deletefiltershistory.label "Очистить историю фильтров">
 <!ENTITY privacypane.showlog.label "Показать журнал">
-<!ENTITY serverpane.limits.noitems "Нет ограничений для сервера">
-<!ENTITY serverspane.autoretry.interval.label "Повторять каждые">
-<!ENTITY serverspane.autoretry.max.label "Мах. повторов">
-<!ENTITY serverspane.cancel.label "Отмена">
-<!ENTITY serverspane.connections.label "Соединений:">
-<!ENTITY serverspane.downloads.caption "Загрузки">
-<!ENTITY serverspane.edit.label "Изменить">
+<!ENTITY privacypane.reveallog.label "Показать файл">
+<!ENTITY privacypane.deletelog.label "Очистить журнал">
+<!ENTITY privacypane.dropdowns.caption "Выпадающее меню">
+<!ENTITY privacypane.dropdownresults2.label "Хранить записей:">
+<!ENTITY privacypane.logs.caption "Журнал диагностики">
+<!ENTITY privacypane.enablelogs.label "Вести журнал диагностики">
+<!ENTITY privacypane.notice.caption "Внимание">
+<!ENTITY privacypane.notice.desc "DownThemAll интегрируется со встроенной функцией очистки истории (если доступно).">
+<!ENTITY privacypane.privacynotice.label "Наше уведомление о конфиденциальности">
+
 <!ENTITY serverspane.label "Сеть">
-<!ENTITY serverspane.limited "Ограничено">
-<!ENTITY serverspane.limits.label "Ограничение для сервера">
+<!ENTITY serverspane.downloads.caption "Загрузки">
+<!ENTITY serverspane.concurrent2.label "Параллельных загрузок:">
+<!ENTITY serverspane.perserver2.label "Загрузок с сервера:">
+<!ENTITY serverspane.url.label "Расположение или домен">
 <!ENTITY serverspane.new.label "Новое ограничение">
-<!ENTITY serverspane.remove.label "Удалить">
+<!ENTITY serverspane.limits.label "Ограничение для сервера">
+<!ENTITY serverpane.limits.noitems "Созданных ограничений нет">
+<!ENTITY serverspane.connections.label "Соединений:">
+<!ENTITY serverspane.speed2.label "Ограничение скорости:">
+<!ENTITY serverspane.segments.label "Segments:">
 <!ENTITY serverspane.unlimited "Без ограничений">
-<!ENTITY serverspane.url.label "Расположение или домен:">
-<!ENTITY uipane.compact.label "Использовать компактное меню">
-<!ENTITY uipane.context.caption "Контекстное меню">
-<!ENTITY uipane.downloadwin.label "Добавить DownThemAll! в окно ''Сохранить файл''">
-<!ENTITY uipane.hide.label "Скрыть это меню">
+<!ENTITY serverspane.limited "Ограничено">
+<!ENTITY serverspane.autoretry2.caption "Автоматическое повторение">
+<!ENTITY serverspane.autoretry.interval.label "Повторять каждые">
+<!ENTITY serverspane.autoretry.max.label "Максимум повторов">
+<!ENTITY serverspane.cancel.label "Отмена">
+<!ENTITY serverspane.edit.label "Изменить">
+<!ENTITY serverspane.remove.label "Удалить">
+
+<!ENTITY schedpane.label "Планировщик">
+<!ENTITY schedpane.enable.label "Включить планировщик">
+<!ENTITY schedpane.start.label "Начинать загрузки c:">
+<!ENTITY schedpane.end.label "и до:">
+<!ENTITY schedpane.open.label "Автоматически открыть Менеджер">
+
+<!ENTITY advancedpane.label "Дополнительно">
+<!ENTITY advancedpane.downloads.caption "Дополнительный контроль загрузок">
+<!ENTITY advancedpane.miscellaneous.caption "Разные">
+<!ENTITY advancedpane.files.caption "Файлы">
+<!ENTITY advancedpane.chunks2.label "Количество секций загрузки:">
+<!ENTITY advancedpane.chunksdisabled "Отключено">
+<!ENTITY advancedpane.autosegments.label "Начинать новую секцию после завершения предыдущей секции">
+<!ENTITY advancedpane.timeout2.label "Время ожидания перед перерывом">
+<!ENTITY advancedpane.seconds "секунд">
+<!ENTITY advancedpane.minute "минута">
+<!ENTITY advancedpane.minutes "минут">
+<!ENTITY advancedpane.hour "час">
+<!ENTITY advancedpane.hours "часов">
+<!ENTITY advancedpane.tempfiles.caption "Временные файлы">
+<!ENTITY advancedpane.usetemp.label "Сохранять части загрузки во временной директории">
+<!ENTITY advancedpane.tempdir.label "Использовать эту папку:">
+<!ENTITY advancedpane.permissions "Атрибуты файла">
+<!ENTITY advancedpane.permissions.groupmay "Группа">
+<!ENTITY advancedpane.permissions.everybodymay "Все">
+<!ENTITY advancedpane.permissions.read "Чтение">
+<!ENTITY advancedpane.permissions.write "Запись">
+<!ENTITY advancedpane.loadendfirst2.label "Сначала загружать несколько последних килобайт">
+<!ENTITY advancedpane.scheduler.caption "Порядок запуска загрузок:">
+<!ENTITY advancedpane.scheduler.fast "Быстро - по очереди">
+<!ENTITY advancedpane.scheduler.fair "Одновременно+Медленно - равномерное распределение">
+<!ENTITY advancedpane.scheduler.legacy "Без ограничений">
+<!ENTITY advancedpane.exposeinua.label "Показывать DownThemAll! в User-Agent">
+<!ENTITY advancedpane.sparsefiles.caption "Разреженные файлы">
+<!ENTITY advancedpane.sparsefiles.label "Использование разреженных файлов, если поддерживается">
+<!ENTITY advancedpane.sparsefiles.tooltip "Разреженные файлы это такие файлы, которые занимают меньше дискового пространства, чем их реальный размер. При этом не используется сжатие данных.">
+
+<!ENTITY uipane.label "Вид">
+<!ENTITY uipane.namesonly.label "Показывать только имена файлов в окне управления">
 <!ENTITY uipane.integration.caption "Интеграция">
-<!ENTITY uipane.label "Интерфейс">
-<!ENTITY uipane.manager.caption "Окно Менеджера">
-<!ENTITY uipane.minimizetotray.label "Минимизировать в системный трей">
-<!ENTITY uipane.namesonly.label "Показывать только имена файлов в окне Менеджера">
-<!ENTITY uipane.showtooltip.label "Показывать всплывающее окно">
-<!ENTITY uipane.startminimized.label "Запускать свернутым">
+<!ENTITY uipane.downloadwin.label "Добавить DownThemAll! в окно 'Сохранить файл'">
+<!ENTITY uipane.context.caption "Контекстное меню">
 <!ENTITY uipane.tools.caption "Меню Инструменты">
-<!ENTITY useAs.label "Использовать как:">
-<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
-<!ENTITY windowstyle.3 "width:48em;height:44em;">
+<!ENTITY uipane.compact.label "Использовать компактное меню">
+<!ENTITY uipane.hide.label "Скрыть это меню">
+<!ENTITY uipane.showtooltip.label "Показывать всплывающие подсказки">
+<!ENTITY uipane.manager.caption "Окно Управления">
+<!ENTITY uipane.startminimized.label "Запускать свёрнутым">
+<!ENTITY uipane.minimizetotray.label "Минимизировать в трей">
