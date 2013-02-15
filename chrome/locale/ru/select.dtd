@@ -1,14 +1,22 @@
+<!ENTITY title "Сделайте свой выбор">
+
+<!ENTITY filters.caption "Фильтр">
 <!ENTITY additional.caption "Быстрое фильтрование">
-<!ENTITY additional.tip "Фильтры: Можно использовать несколько текстовых фильтров разделяя их запятыми">
-<!ENTITY disableother.label "Отключить другие фильтры">
-<!ENTITY disableother.tooltip "Отключение других фильтров и использовать только быструю фильтрацию (эта настройка пока не запоминается)">
-<!ENTITY filter.tip "Введите здесь текстовые фильтры! (некоторые примеры можете найти в выпадающем списке)">
-<!ENTITY filters.caption "Фильтры">
-<!ENTITY header.desc.label "Описание">
+<!ENTITY additional.tip "Можно использовать несколько фильтров, разделяя их запятыми">
+<!ENTITY filter.tip "Введите здесь фильтры! (некоторые примеры можете найти в выпадающем списке)">
+
 <!ENTITY menu.check.label "Выбрать выделенные пункты">
-<!ENTITY menu.toggle.label "Переключение проверки выбранных пунктов">
 <!ENTITY menu.uncheck.label "Не выбирать выделенные пункты">
-<!ENTITY resname.value "Имя ресурса">
-<!ENTITY selectfiltered.label "Выберите фильтры">
+<!ENTITY menu.toggle.label "Переключение проверки выбранных пунктов">
+<!ENTITY menu.copylinks2.label "Копировать ссылку">
+
 <!ENTITY tab.links.label "Ссылки">
-<!ENTITY title "DownThemAll! - сделайте свой выбор">
+<!ENTITY tab.media.label "Изображения и вложения">
+
+<!ENTITY header.desc.label "Описание">
+
+<!ENTITY selectfiltered.label "Выбрать фильтр">
+
+<!ENTITY disableother.label "Отключить другие фильтры">
+<!ENTITY disableother.tooltip "Отключить другие фильтры и использовать только быструю фильтрацию (эта настройка не запоминается)">
+<!ENTITY resname.value "Имя элемента">

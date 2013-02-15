@@ -1,19 +1,30 @@
-<!ENTITY mask.curl "Полный URL">
-<!ENTITY mask.d "День">
-<!ENTITY mask.ext "Расширение">
-<!ENTITY mask.flatcurl "Flat Полный URL">
-<!ENTITY mask.flatsubdirs "Flat URL поддиректории">
-<!ENTITY mask.hh "Часы">
-<!ENTITY mask.inum "номер пункта">
-<!ENTITY mask.m "Месяц">
-<!ENTITY mask.mm "Минуты">
+<!ENTITY mask.tags "Теги переименования">
 <!ENTITY mask.name "Имя файла">
-<!ENTITY mask.open.tip "Показать теги переименования">
-<!ENTITY mask.qstring "Строка запроса">
-<!ENTITY mask.refer "URL перенаправления">
-<!ENTITY mask.ss "Секунды">
-<!ENTITY mask.subdirs "URL поддиректории">
-<!ENTITY mask.tip "Нажмите для выбора маски переименования">
-<!ENTITY mask.title "Теги переименования">
+<!ENTITY mask.ext "Расширение">
 <!ENTITY mask.url "Базовый URL">
+<!ENTITY mask.curl "Полный URL">
+<!ENTITY mask.flatcurl "Основа URL">
+<!ENTITY mask.batch "Серийный номер">
+<!ENTITY mask.inum "Номер пункта">
+<!ENTITY mask.hh "Часы">
+<!ENTITY mask.mm "Минуты">
+<!ENTITY mask.ss "Секунды">
+<!ENTITY mask.d "День">
+<!ENTITY mask.m "Месяц">
 <!ENTITY mask.y "Год">
+<!ENTITY mask.subdirs "URL поддиректории">
+<!ENTITY mask.flatsubdirs "Основа поддиректории">
+<!ENTITY mask.linktext "Описание ссылки">
+<!ENTITY mask.flatlinktext "Основное описание">
+<!ENTITY mask.refername "Имя referrer">
+<!ENTITY mask.referext "Referrer расширения">
+<!ENTITY mask.refer "Referrer ссылка">
+<!ENTITY mask.crefer "Полный referrer">
+<!ENTITY mask.flatcrefer "Основа referrer">
+<!ENTITY mask.referdirs "Referrer поддиректории">
+<!ENTITY mask.flatreferdirs "Основа поддиректории">
+<!ENTITY mask.qstring "Cтрока запроса">
+<!ENTITY mask.title "Название связаное с ссылкой">
+<!ENTITY mask.flattitle2 "Основа связаная с ссылкой">
+<!ENTITY mask.tip "Нажмите для выбора маски переименования">
+<!ENTITY mask.open.tip "Показать теги переименования">
