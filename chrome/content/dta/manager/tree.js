@@ -381,6 +381,45 @@ const Tree = {
 			this.endUpdate();
 		}
 	},
+	doFilterOne: function(d) {
+		const display = !this.filtered || this._matcher.shouldDisplay(d);
+		if (display == !!~d.filteredPosition) {
+			return false;
+		}
+		if (!display) {
+			// Hide
+			let fp = d.filteredPosition;
+			this._filtered.splice(fp, 1);
+			d.filteredPosition = -1;
+			for (let i = fp, e = this._filtered.length; i < e; ++i) {
+				this._filtered[i].filteredPosition = i;
+			}
+			this._box.rowCountChanged(fp, -1);
+			return true;
+		}
+
+		// Display
+		// first first non-filtered
+		let fp = -1;
+		for (let i = d.position, e = this._downloads.length; i < e; ++i) {
+			if (~(fp = this._downloads[i].filteredPosition)) {
+				break;
+			}
+		}
+		if (~fp) {
+			d.filteredPosition = fp;
+			this._filtered.splice(fp, 0, d);
+			for (let i = fp + 1, e = this._filtered.length; i < e; ++i) {
+				this._filtered[i].filteredPosition = i;
+			}
+		}
+		else {
+			fp = d.filteredPosition = this._filtered.length;
+			this._filtered.push(d);
+		}
+		this._box.rowCountChanged(fp, 1);
+		return true;
+	},
 	setFilter: function T_setFilter(nv) {
 		if (nv == this._filter) {
 			return;
@@ -635,9 +674,7 @@ const Tree = {
 	fastLoad: function T_add(download) this._downloads.push(download) -1,
 	add: function T_add(download) {
 		let pos = this.fastLoad(download);
-		if (this._matcher.shouldDisplay(download)) {
-			this.doFilter();
-		}
+		this.doFilterOne(download);
 		this.fireChangeEvent();
 		return pos;
 	},
@@ -1238,15 +1275,12 @@ const Tree = {
 			return;
 		}
 
-		if (d.position >= 0) {
+		if (d.position >= 0 && !this.doFilterOne(d) && ~d.filteredPosition) {
 			if (cell !== undefined) {
 				this._box.invalidateCell(d.filteredPosition, this._cols[cell]);
 			}
 			else {
 				this._box.invalidateRow(d.filteredPosition);
-			}
-			if (this._matcher.shouldDisplay(d) == (d.filteredPosition < 0)) {
-				this.doFilter();
 			}
 		}
 	},
