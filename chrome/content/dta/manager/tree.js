@@ -408,15 +408,13 @@ const Tree = {
 				}
 			}
 			if (~fp) {
-				d.filteredPosition = fp;
 				this._filtered.splice(fp, 0, d);
-				for (let i = fp + 1, e = this._filtered.length; i < e; ++i) {
+				for (let i = fp, e = this._filtered.length; i < e; ++i) {
 					this._filtered[i].filteredPosition = i;
 				}
 			}
 			else {
-				fp = d.filteredPosition = this._filtered.length;
-				this._filtered.push(d);
+				fp = d.filteredPosition = this._filtered.push(d) - 1;
 			}
 			this._box.rowCountChanged(fp, 1);
 		}
@@ -677,10 +675,16 @@ const Tree = {
 			}
 		}
 	},
-	fastLoad: function T_add(download) this._downloads.push(download) -1,
+	fastLoad: function(download) this._downloads.push(download) -1,
 	add: function T_add(download) {
-		let pos = this.fastLoad(download);
-		this.doFilterOne(download);
+		let pos = download.position = this._downloads.push(download) -1;
+		if (this.filtered) {
+			download.filteredPosition = -1;
+			this.doFilterOne(download);
+		}
+		else {
+			download.filteredPosition = pos;
+		}
 		this.fireChangeEvent();
 		return pos;
 	},
@@ -1253,6 +1257,16 @@ const Tree = {
 			Dialog.completed++;
 		}
 	},
+	_invalidate_item: function(d, cell) {
+		if (d.position >= 0 && !this.doFilterOne(d) && ~d.filteredPosition) {
+			if (cell !== undefined) {
+				this._box.invalidateCell(d.filteredPosition, this._cols[cell]);
+			}
+			else {
+				this._box.invalidateRow(d.filteredPosition);
+			}
+		}
+	},
 	invalidate: function T_invalidate(d, cell) {
 		if (!d) {
 			let saveArray = [];
@@ -1268,27 +1282,12 @@ const Tree = {
 		}
 
 		if (d instanceof Array) {
-			this.beginUpdate();
-			try {
-				this._box.invalidateRange(d[0].filteredPosition, d[d.length - 1].filteredPosition);
-			}
-			finally {
-				if (this._matcher.filter(d).length != d.filter(function(e) e.filteredPosition > -1).length) {
-					this.doFilter();
-				}
-				this.endUpdate();
+			for (let i of Array) {
+				this._invalidate_item(i, cell);
 			}
 			return;
 		}
-
-		if (d.position >= 0 && !this.doFilterOne(d) && ~d.filteredPosition) {
-			if (cell !== undefined) {
-				this._box.invalidateCell(d.filteredPosition, this._cols[cell]);
-			}
-			else {
-				this._box.invalidateRow(d.filteredPosition);
-			}
-		}
+		this._invalidate_item(d, cell);
 	},
 	get box() {
 		return this._box;
