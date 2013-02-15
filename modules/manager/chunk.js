@@ -252,8 +252,10 @@ const Observer = {
 		Prefs.dirPermissions = perms;
 	},
 	decrementPressure: function() {
-		if (--this.memoryPressure <= 0) {
+		--this.memoryPressure;
+		if (this.memoryPressure <= 0) {
 			this.memoryPressure = 0;
+			log(LOG_DEBUG, "memoryPressure lifted");
 			return;
 		}
 		this.schedulePressureDecrement();
@@ -605,11 +607,17 @@ Chunk.prototype = {
 		this.run();
 	},
 	requestBytes: function(requested) {
-		if (Observer.memoryPressure || MemoryReporter.pendingBytes > MAX_PENDING_SIZE) {
+		if (MemoryReporter.pendingBytes > MAX_PENDING_SIZE) {
 			log(LOG_INFO, "Under pressure: " + MemoryReporter.pendingBytes + " : " + Observer.memoryPressure);
 			// basically stop processing while under memory pressure
 			Timers.createOneshot(500, this.run, this);
 			return 0;
+		}
+		if (Observer.memoryPressure > 0) {
+			log(LOG_INFO, "Under some pressure: " + MemoryReporter.pendingBytes + " : " + Observer.memoryPressure + " : " + requested);
+			requested = Math.max(Math.min(requested, 256), Math.floor(requested / Observer.memoryPressure));
+			log(LOG_INFO, "Using instead: " + requested);
+			Timers.createOneshot(250, this.run, this);
 		}
 		return this.buckets.requestBytes(requested);
 	},
