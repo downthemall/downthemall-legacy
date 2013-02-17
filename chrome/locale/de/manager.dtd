@@ -1,11 +1,11 @@
 <!ENTITY addchunk.label "Ein Segment mehr">
 <!ENTITY addlimits.label "Server-Beschränkungen hinzufügen">
 <!ENTITY advanced.label "Fortgeschritten">
-<!ENTITY avgSpeedTitle.value "Durchschn. Geschwindigkeit:">
+<!ENTITY avgSpeedTitle.value "Durchschn. Geschw.:">
 <!ENTITY cancel.label "Abbrechen">
 <!ENTITY clearmatcher.label "Spalten-Filter entfernen">
 <!ENTITY close.label "Schließen">
-<!ENTITY currentSpeedTitle.value "Aktuelle Geschwindigkeit:">
+<!ENTITY currentSpeedTitle.value "Aktuelle Geschw.:">
 <!ENTITY delete.label "Datei(en) löschen">
 <!ENTITY dim.label "Größe">
 <!ENTITY domain.label "Domäne">
