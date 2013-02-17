@@ -22,7 +22,7 @@ AboutModule.prototype = Object.freeze({
 	classID: Components.ID('{bbaedbd9-9567-4d11-9255-0bbae236ecab}'),
 	contractID: '@mozilla.org/network/protocol/about;1?what=downthemall',
 
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule]),
+	QueryInterface: QI([Ci.nsIAboutModule]),
 
 	newChannel : function(aURI) {
 		try {
@@ -62,7 +62,7 @@ MetalinkInterceptModule.prototype = Object.freeze({
 	classDescription: "DownThemAll! metalink integration",
 	classID: Components.ID('{4b048560-c789-11e1-9b21-0800200c9a67}'),
 	contractID: '@mozilla.org/streamconv;1?from=application/metalink4+xml&to=*/*',
-	QueryInterface: XPCOMUtils.generateQI([
+	QueryInterface: QI([
 		Ci.nsISupports,
 		Ci.nsIStreamConverter,
 		Ci.nsIContentSniffer,

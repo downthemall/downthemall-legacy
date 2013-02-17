@@ -35,7 +35,7 @@ function _verify(file, hashCollection, completeCallback, progressCallback) {
 	const stream = new Instances.FileInputStream(file, flags, 502 /* 0766*/, 0);
 
 	const listener = {
-		QueryInterface: XPCOMUtils.generateQI([Ci.nsIStreamListener, Ci.nsIRequestObserver]),
+		QueryInterface: QI([Ci.nsIStreamListener, Ci.nsIRequestObserver]),
 		onStartRequest: function(r,c) {
 			// nop
 		},
@@ -88,7 +88,7 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 	let start = 0;
 
 	const listenerMain = {
-		QueryInterface: XPCOMUtils.generateQI([Ci.nsIStreamListener, Ci.nsIRequestObserver]),
+		QueryInterface: QI([Ci.nsIStreamListener, Ci.nsIRequestObserver]),
 		onStartRequest: function(r,c) {
 			// nop
 		},
@@ -103,7 +103,7 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 		}
 	};
 	const listenerPartials = {
-		QueryInterface: XPCOMUtils.generateQI([Ci.nsIStreamListener, Ci.nsIRequestObserver]),
+		QueryInterface: QI([Ci.nsIStreamListener, Ci.nsIRequestObserver]),
 		onStartRequest: function(r,c) {
 			// nop
 		},

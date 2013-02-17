@@ -51,7 +51,7 @@ exports.loadWindow = (function() {
 		this.hasMore = false;
 	}
 	CheatDirProvider.prototype = Object.freeze({
-		QueryInterface: XPCOMUtils.generateQI([Ci.nsIDirectoryServiceProvider, Ci.nsIDirectoryServiceProvider2, Ci.nsISimpleEnumerator]),
+		QueryInterface: QI([Ci.nsIDirectoryServiceProvider, Ci.nsIDirectoryServiceProvider2, Ci.nsISimpleEnumerator]),
 		getFile: function(prop, persist) {
 			throw Cr.NS_ERROR_FAILURE;
 		},

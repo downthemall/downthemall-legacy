@@ -52,7 +52,7 @@ function TimerManager() {
 	unload((function timerManager_destroy() this.killAllTimers()).bind(this));
 }
 TimerManager.prototype = Object.freeze({
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
+	QueryInterface: QI([Ci.nsIObserver]),
 	/**
 	 * Creates one shot timer
 	 * @param delay (int) Delay before timer will expire

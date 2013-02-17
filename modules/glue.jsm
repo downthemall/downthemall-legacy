@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const EXPORTED_SYMBOLS = ["require", "requireJoined", "requireJSM", "unload", "weak", "Services", "Instances", "XPCOMUtils", "LRUMap"];
+const EXPORTED_SYMBOLS = ["require", "requireJoined", "requireJSM", "unload", "weak", "lazy", "QI", "Services", "Instances", "XPCOMUtils", "LRUMap"];
 
 const {
 	classes: Cc,
@@ -25,6 +25,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
 const lazy = XPCOMUtils.defineLazyGetter;
+const QI = XPCOMUtils.generateQI.bind(XPCOMUtils);
 
 let log = function logStub() {
 	Cu.reportError(Array.join(arguments, ", "));

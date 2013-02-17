@@ -24,7 +24,7 @@ lazy(this, '__db', function() {
 });
 
 const QueueStore = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver,]),
+	QueryInterface: QI([Ci.nsIObserver,]),
 	_initialized: false,
 	init: function() {
 		if (this._initialized) {
@@ -300,7 +300,7 @@ VacuumParticipant.prototype = Object.freeze({
 	classID: Components.ID("{c2f27651-9db2-438a-bcc7-f9e9bb2e3393}"),
 	contractID: "@downthemall.net/vacuum-participant;1",
 	xpcom_categories: ["vacuum-participant"],
-	QueryInterface: XPCOMUtils.generateQI([Ci.mozIStorageVacuumParticipant]),
+	QueryInterface: QI([Ci.mozIStorageVacuumParticipant]),
 
 	expectedDatabasePageSize: Ci.mozIStorageConnection.DEFAULT_PAGE_SIZE,
 	get databaseConnection() _connection,
