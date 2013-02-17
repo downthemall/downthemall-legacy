@@ -30,7 +30,7 @@ window[sizemode="maximized"] #titlebar-buttonbox {
 	-moz-appearance: -moz-window-button-maximize;
 }
 window[sizemode="maximized"] #titlebar-max {
-	-moz-appearance: -moz-window-button-store;
+	-moz-appearance: -moz-window-button-restore;
 }
 #titlebar-close {
 	-moz-appearance: -moz-window-button-close;
@@ -122,7 +122,7 @@ window[sizemode="maximized"] #tools {
 	padding-top: 6px;
 }
 #tools[mode="icons"] {
-	-moz-border-radius: 4.5px;
+	border-radius: 4.5px;
 }
 
 toolbarbutton > .toolbarbutton-icon {
@@ -231,7 +231,7 @@ treecol:-moz-lwtheme-brighttext {
 		text-shadow: 0 0 .8em white, 0 0 .8em white, 0 1px 0 rgba(255,255,255,.4);
 	}
 
-	#footer:-moz-lwtheme-lighttext {
+	#footer:-moz-lwtheme-brighttext {
 		text-shadow: 1px 1px 1.5px black;
 	}
 
