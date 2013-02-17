@@ -23,7 +23,7 @@ if (available) {
 			unload((function() core.unregisterProcessor(this)).bind(this));
 		},
 
-		QueryInterface: XPCOMUtils.generateQI([Ci.dhIProcessor, Ci.sehISecretHelperProcessorExtra]),
+		QueryInterface: QI([Ci.dhIProcessor, Ci.sehISecretHelperProcessorExtra]),
 
 		get provider() { return "DownThemAll!"; },
 		get enabled() { return true; },

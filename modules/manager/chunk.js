@@ -280,7 +280,7 @@ function Chunk(download, start, end, written) {
 }
 
 Chunk.prototype = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable, Ci.nsIRequestObserver]),
+	QueryInterface: QI([Ci.nsIRunnable, Ci.nsIRequestObserver]),
 	running: false,
 	get starter() this.end <= 0,
 	get start() this._start,

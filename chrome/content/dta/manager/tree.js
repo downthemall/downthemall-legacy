@@ -10,7 +10,7 @@ function FileDataProvider(download, file) {
 };
 FileDataProvider.prototype = {
 	_checks: 0,
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIFlavorDataProvider]),
+	QueryInterface: QI([Ci.nsIFlavorDataProvider]),
 	get file() {
 		if (this._timer) {
 			Timers.killTimer(this._timer);

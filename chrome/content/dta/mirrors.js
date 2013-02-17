@@ -151,7 +151,7 @@ function checkMirrors() {
 		req.channel.notificationCallbacks = this;
 	}
 	Callbacks.prototype = {
-		QueryInterface: XPCOMUtils.generateQI([Ci.nsIInterfaceRequestor]),
+		QueryInterface: QI([Ci.nsIInterfaceRequestor]),
 		getInterface: function(iid) {
 			if (iid.equals(Ci.nsIPrompt)) {
 				return LoggedPrompter;

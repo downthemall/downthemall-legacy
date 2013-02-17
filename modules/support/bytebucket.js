@@ -34,7 +34,7 @@ function Observers() {
 }
 Observers.prototype = {
 	__proto__: ObserversBase.prototype,
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
+	QueryInterface: QI([Ci.nsIObserver]),
 	start: function() {
 		Observers.Manager.register(this);
 	},

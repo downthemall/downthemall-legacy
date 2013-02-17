@@ -53,7 +53,7 @@ ContentHandlingImpl.prototype = {
 	contractID: "@downthemall.net/content/redirects;1",
 	xpcom_categories: ["net-channel-event-sinks"],
 
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.nsIFactory, Ci.nsIChannelEventSink]),
+	QueryInterface: QI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.nsIFactory, Ci.nsIChannelEventSink]),
 
 	_init: function ct__init() {
 		Services.obs.addObserver(this, 'http-on-modify-request', false);

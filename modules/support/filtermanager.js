@@ -284,7 +284,7 @@ function FilterEnumerator(filters) {
 	this._idx = 0;
 }
 FilterEnumerator.prototype = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsISimpleEnumerator]),
+	QueryInterface: QI([Ci.nsISimpleEnumerator]),
 	__iterator__: function() {
 		for (let f of this._filters) {
 			yield f;
@@ -308,7 +308,7 @@ FilterManagerImpl.prototype = {
 	LINK_FILTER: LINK_FILTER,
 	IMAGE_FILTER: IMAGE_FILTER,
 
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
+	QueryInterface: QI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
 
 	init: function FM_init() {
 		// load those localized labels for default filters.

@@ -31,7 +31,7 @@ function WorkerJob(file, size, perms, callback) {
 }
 
 WorkerJob.prototype = {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRequestObserver]),
+	QueryInterface: QI([Ci.nsIRequestObserver]),
 	result: false,
 	finish: function() {
 		if (this._stream) {
