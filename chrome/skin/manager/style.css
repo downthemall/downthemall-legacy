@@ -833,7 +833,8 @@ statusbarpanel#schedule:not([running]) {
 /* search */
 #search {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#downloadsearch);
-	width: 18em;
+	min-width: 6em;
+	max-width: 15em;
 }
 #search > image {
 	margin-right: 4px;
