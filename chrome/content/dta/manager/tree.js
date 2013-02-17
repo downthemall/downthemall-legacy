@@ -1297,20 +1297,8 @@ const Tree = {
 	// generator for selected download elements.
 	// do not make any assumptions about the order.
 	get selected() {
-		if (!this.selection.count) {
-			return;
-		}
-
-		// loop through the selection as usual
-		for (let i = 0, e = this.selection.getRangeCount(); i < e; ++i) {
-			let start = {}, end = {value: -1};
-			this.selection.getRangeAt(i, start, end);
-			for (let j = start.value, k = end.value; j <= k; ++j) {
-					let d = this._filtered[j];
-					if (d) {
-						yield d;
-					}
-			}
+		for (let e of this.getSelected()) {
+			yield e;
 		}
 	},
 	getSelected: function() {
@@ -1326,7 +1314,6 @@ const Tree = {
 				rv[idx++] = this._filtered[j];
 			}
 		}
-		this.selection.clearSelection();
 		return rv;
 	},
 
