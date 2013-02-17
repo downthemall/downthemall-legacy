@@ -1395,41 +1395,39 @@ const Tree = {
 			throw ex;
 		}
 	},
-	updateSelected: function T_updateSelected(f, t) {
+	updateSelected: function(fn, ctx) {
 		try {
 			this.beginUpdate();
-			try {
-				QueueStore.beginUpdate();
-				for (let d in this.selected) {
-					if (!f.call(t, d)) {
-						break;
-					}
-				}
+			QueueStore.beginUpdate();
+			new CoThreadListWalker(
+				fn,
+				this.selected,
+				0,
+				ctx
+			).start((function() {
 				QueueStore.endUpdate();
-			}
-			finally {
 				this.invalidate();
 				this.endUpdate();
-			}
+			}).bind(this));
 		}
 		catch (ex) {
-			log(LOG_ERROR, "function threw during updateSelected", ex);
+			log(LOG_ERROR, "function threw during _gen", ex);
 			throw ex;
 		}
 	},
-	updateAll: function T_updateAll(f, t) {
+	updateAll: function T_updateAll(fn, ctx) {
 		try {
 			this.beginUpdate();
+			QueueStore.beginUpdate();
 			try {
-				QueueStore.beginUpdate();
 				for (let d of this.all) {
-					if (!f.call(t, d)) {
+					if (!fn.call(ctx, d)) {
 						break;
 					}
 				}
-				QueueStore.endUpdate();
 			}
 			finally {
+				QueueStore.endUpdate();
 				this.endUpdate();
 			}
 		}
