@@ -158,6 +158,9 @@ statusbarpanel {
 statusbarpanel > label {
 	margin-top: 1px;
 	margin-bottom: 2px;
+	width: -moz-available;
+	text-overflow: ellipsis;
+	-moz-box-flex: 1;
 }
 
 statusbarpanel#preferences {
