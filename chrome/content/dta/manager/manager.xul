@@ -288,7 +288,7 @@
 			<textbox id="search" emptytext="&search.placeholder;" placeholder="&search.placeholder;"/>
 			<spacer flex="1"/>
 		</statusbarpanel>
-		<statusbarpanel id="statusText" class="statusbarpanel-iconic-text" pack="start" crop="right" hidden="true" label="" flex="3" />
+		<statusbarpanel id="statusText" class="statusbarpanel-iconic-text" pack="start" crop="end" hidden="true" label="" flex="3" />
 		<statusbarpanel class="statusbarpanel-iconic" id="schedule"/>
 		<statusbarpanel id="statusSpeed" class="statusbarpanel-iconic-text" crop="right" hidden="true" label="" />
 		<statusbarpanel id="statusSpeeds">
