@@ -285,7 +285,8 @@
 	<windowdragbox id="footer" chromedir="&locale.dir;">
 		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline" />
 		<statusbarpanel id="statusSearch" flex="1" pack="start">
-			<textbox id="search" emptytext="&search.placeholder;" placeholder="&search.placeholder;" flex="1" />
+			<textbox id="search" emptytext="&search.placeholder;" placeholder="&search.placeholder;"/>
+			<spacer flex="1"/>
 		</statusbarpanel>
 		<statusbarpanel id="statusText" class="statusbarpanel-iconic-text" pack="start" crop="right" hidden="true" label="" flex="3" />
 		<statusbarpanel class="statusbarpanel-iconic" id="schedule"/>
