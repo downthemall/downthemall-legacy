@@ -2735,12 +2735,14 @@ const startDownloads = (function() {
 				qi._title = !!e.title ? e.title : '';
 				qi._mask = Utils.removeFinalSlash(Utils.removeLeadingSlash(Utils.normalizeSlashes(e.mask)));
 				qi.fromMetalink = !!e.fromMetalink;
-				qi.fileName = Utils.getUsableFileName(qi.urlManager.usable);
 				if (e.fileName) {
-					qi.fileName = Utils.getUsableFileName(e.fileName);
+					qi._fileName = Utils.getUsableFileName(e.fileName);
+				}
+				else {
+					qi._fileName = Utils.getUsableFileName(qi.urlManager.usable);
 				}
 				if (e.destinationName) {
-					qi.destinationName = Utils.getUsableFileName(e.destinationName);
+					qi._destinationNameOverride = Utils.getUsableFileName(e.destinationName);
 				}
 				if (e.startDate) {
 					qi.startDate = e.startDate;
@@ -2786,6 +2788,7 @@ const startDownloads = (function() {
 					log(LOG_INFO, "A queued item has no isPrivate property. Defaulting to false. Please check the code path for proper PBM support!");
 				}
 
+				qi.rebuildDestination();
 				Tree.add(qi);
 				qi.save();
 				first = first || qi;
