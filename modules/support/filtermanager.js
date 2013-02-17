@@ -245,7 +245,7 @@ Filter.prototype = {
 
 		// save this last as FM will test for it.
 		Preferences.set(this.pref('label'), this._label);
-		FilterManager._delayedReload();
+		exports.FilterManager._delayedReload();
 
 		this._modified = false;
 	},
