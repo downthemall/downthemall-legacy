@@ -156,6 +156,11 @@ toolbox {
 #tooldonate:hover {
 	-moz-image-region: rect(51px,360px,102px,180px);
 }
+@media (max-width: 440px) {
+	#tooldonate {
+		display: none;
+	}
+}
 #tools[mode="icons"] #tooldonate {
 	list-style-image: url(donate33.png);
 	-moz-image-region: rect(0px,228px,33px,114px);
