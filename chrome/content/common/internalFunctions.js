@@ -247,7 +247,7 @@ var Utils = {
 		}
 	},
 
-	formatKBytes: function U_formatKBytes(aNumber, decimalPlace) {
+	formatKBytes: function(aNumber, decimalPlace) {
 		aNumber = aNumber / 1024;
 
 		if (!isFinite(aNumber)) {
@@ -256,7 +256,7 @@ var Utils = {
 		return _('sizeKB', [aNumber.toFixed(arguments.length > 1 ? decimalPlace : 1)]);
 	},
 
-	formatConflictName: function U_formatConflictName(basename, conflicts) {
+	formatConflictName: function(basename, conflicts) {
 		if (!conflicts) {
 			return basename;
 		}

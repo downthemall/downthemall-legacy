@@ -128,7 +128,7 @@ Filter.prototype = {
 		}
 		this._modified = true;
 	},
-	_makeRegs: function FM__makeRegs(str) {
+	_makeRegs: function(str) {
 
 		str = str.trim();
 
@@ -193,11 +193,11 @@ Filter.prototype = {
 		this._modified = true;
 	},
 
-	pref: function F_pref(str) {
+	pref: function(str) {
 		return this._id + "." + str;
 	},
 
-	match: function F_match(str) {
+	match: function(str) {
 		if (!str) {
 			return false;
 		}
@@ -208,7 +208,7 @@ Filter.prototype = {
 	/**
 	 * @throws Exception in case loading failed
 	 */
-	load: function F_load(localizedLabel) {
+	load: function(localizedLabel) {
 		this._localizedLabel = localizedLabel;
 		this._label = Preferences.get(this.pref('label'));
 		if (!this._label || !this._label.length) {
@@ -235,7 +235,7 @@ Filter.prototype = {
 	},
 
 	// exported
-	save: function F_save() {
+	save: function() {
 		if (!this._modified) {
 			return;
 		}
@@ -250,12 +250,12 @@ Filter.prototype = {
 		this._modified = false;
 	},
 
-	_reset: function F_reset() {
+	_reset: function() {
 		Preferences.resetBranch(this._id);
 	},
 
 	// exported
-	restore: function F_restore() {
+	restore: function() {
 		if (!this._defFilter) {
 			throw new Exception("only default filters can be restored!");
 		}
@@ -263,7 +263,7 @@ Filter.prototype = {
 	},
 
 	// exported
-	remove: function F_remove() {
+	remove: function() {
 		if (this._defFilter) {
 			throw new Exception("default filters cannot be deleted!");
 		}
@@ -290,10 +290,10 @@ FilterEnumerator.prototype = {
 			yield f;
 		}
 	},
-	hasMoreElements: function FE_hasMoreElements() {
+	hasMoreElements: function() {
 		return this._idx < this._filters.length;
 	},
-	getNext: function FE_getNext() {
+	getNext: function() {
 		if (!this.hasMoreElements()) {
 			throw NS_ERROR_FAILURE;
 		}
@@ -310,7 +310,7 @@ FilterManagerImpl.prototype = {
 
 	QueryInterface: QI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
 
-	init: function FM_init() {
+	init: function() {
 		// load those localized labels for default filters.
 		this._localizedLabels = {};
 		let b = Services.strings
@@ -331,7 +331,7 @@ FilterManagerImpl.prototype = {
 
 	_timer: null,
 
-	_delayedReload: function FM_delayedReload() {
+	_delayedReload: function() {
 		if (this._mustReload) {
 			return;
 		}
@@ -342,14 +342,14 @@ FilterManagerImpl.prototype = {
 	get count() {
 		return this._count;
 	},
-	reload: function FM_reload() {
+	reload: function() {
 		if (!this._mustReload) {
 			return;
 		}
 		this._mustReload = false;
 		this._reload();
 	},
-	_reload: function FM__reload() {
+	_reload: function() {
 		this._filters = {};
 		this._all = [];
 
@@ -409,20 +409,20 @@ FilterManagerImpl.prototype = {
 		Services.obs.notifyObservers(this, TOPIC_FILTERSCHANGED, null);
 	},
 
-	enumAll: function FM_enumAll() {
+	enumAll: function() {
 		return new FilterEnumerator(this._all);
 	},
-	enumActive: function FM_enumActive(type) {
+	enumActive: function(type) {
 		return new FilterEnumerator(this._active[type]);
 	},
 
-	getFilter: function FM_getFilter(id) {
+	getFilter: function(id) {
 		if (id in this._filters) {
 			return this._filters[id];
 		}
 		throw new Exception("invalid filter specified: " + id);
 	},
-	getMatcherFor: function FM_getMatcherFor(filters) {
+	getMatcherFor: function(filters) {
 		let regs = consolidateRegs(flatten(
 			filters.map(function(f) f._regs)
 		));
@@ -444,9 +444,9 @@ FilterManagerImpl.prototype = {
 			return regs.some(function(r) r.test(test));
 		}
 	},
-	matchActive: function FM_matchActive(test, type) this._activeRegs[type](test),
+	matchActive: function(test, type) this._activeRegs[type](test),
 
-	create: function FM_create(label, expression, active, type) {
+	create: function(label, expression, active, type) {
 
 		// we will use unique ids for user-supplied filters.
 		// no need to keep track of the actual number of filters or an index.
@@ -466,7 +466,7 @@ FilterManagerImpl.prototype = {
 		return filter.id;
 	},
 
-	remove: function FM_remove(id) {
+	remove: function(id) {
 		if (id in this._filters) {
 			this._filters[id].remove();
 			return;
@@ -474,7 +474,7 @@ FilterManagerImpl.prototype = {
 		throw new Exception('filter not defined!');
 	},
 
-	save: function FM_save() {
+	save: function() {
 		for (var f of this._all) {
 			try {
 				f.save();
@@ -486,7 +486,7 @@ FilterManagerImpl.prototype = {
 		this._delayedReload();
 	},
 
-	getTmpFromString: function FM_getTmpFromString(expression) {
+	getTmpFromString: function(expression) {
 		if (!expression.length) {
 			throw NS_ERROR_INVALID_ARG;
 		}
@@ -499,7 +499,7 @@ FilterManagerImpl.prototype = {
 	},
 
 	// nsIObserver
-	observe: function FM_observe(subject, topic, prefName) {
+	observe: function(subject, topic, prefName) {
 		switch (topic){
 			case 'timer-callback':
 				this.reload();
@@ -511,7 +511,7 @@ FilterManagerImpl.prototype = {
 	},
 
 	// own stuff
-	register: function FM_register() {
+	register: function() {
 		try {
 			// Put self as observer to desired branch
 			Preferences.addObserver(PREF_FILTERS_BASE, this);

@@ -15,7 +15,7 @@ XPCOMUtils.defineLazyGetter(this, "BatchGenerator", function() {
 
 
 var Dialog = {
-	load: function DTA_load() {
+	load: function() {
 		try {
 			let isPrivate = this.isPrivate = isWindowPrivate(window.opener);
 			if (window.arguments) {
@@ -155,7 +155,7 @@ var Dialog = {
 			log(LOG_ERROR, "load():", ex);
 		}
 	},
-	download: function DTA_download(start) {
+	download: function(start) {
 
 		var errors = [];
 
@@ -327,7 +327,7 @@ var Dialog = {
 
 		return false;
 	},
-	browseDir: function DTA_browseDir() {
+	browseDir: function() {
 		// let's check and create the directory
 		Utils.askForDir(
 			this.ddDirectory.value,

@@ -21,7 +21,7 @@ const MetaSelect = {
 			log(LOG_ERROR, "Failed to add download from metalink", ex);
 		}
 	},
-	load: function ML_load() {
+	load: function() {
 		$('cancelbutton').label = _('button-cancel');
 
 		try {
@@ -112,7 +112,7 @@ const MetaSelect = {
 				}
 			});
 	},
-	download: function ML_download(start) {
+	download: function(start) {
 		let [notifications, directory, mask] = $('notifications', 'directory', 'renaming');
 		notifications.removeAllNotifications(true);
 
@@ -154,7 +154,7 @@ const MetaSelect = {
 		}
 		return true;
 	},
-	cancel: function ML_cancel() {
+	cancel: function() {
 		Array.forEach(
 			document.getElementsByTagName('richlistitem'),
 			function(n) {

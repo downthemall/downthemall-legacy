@@ -264,7 +264,7 @@ ContentHandlingImpl.prototype = {
 		}
 		callback.onRedirectVerifyCallback(0);
 	},
-	onChannelRedirect: function CH_onChannelRedirect(oldChannel, newChannel, flags) {
+	onChannelRedirect: function(oldChannel, newChannel, flags) {
 		let oldURI = oldChannel.URI.spec;
 		let newURI = newChannel.URI.spec;
 		let isPrivate = isChannelPrivate(oldChannel);
@@ -284,7 +284,7 @@ ContentHandlingImpl.prototype = {
 			return uri;
 		}
 	},
-	clear: function CH_clear() {
+	clear: function() {
 		this._data = new ContextLRUMap(5);
 		this._videos = new ContextLRUMap(20);
 		this._redirects = new ContextLRUMap(20);

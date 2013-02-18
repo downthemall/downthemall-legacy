@@ -88,7 +88,7 @@ TimerManager.prototype = Object.freeze({
 	 * Kill a timer again
 	 * @param (Timer) Timer to kill
 	 */
-	killTimer: function TM_kill(uuid) {
+	killTimer: function(uuid) {
 		if (uuid in this._timers) {
 			let td = this._timers[uuid];
 			td.cancel();
@@ -101,7 +101,7 @@ TimerManager.prototype = Object.freeze({
 	/**
 	 * Kills all timers associated with this TimerManager instance
 	 */
-	killAllTimers: function TM_killAll() {
+	killAllTimers: function() {
 		for (let uuid in this._timers) {
 			try {
 				let td = this._timers[uuid];

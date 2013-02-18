@@ -182,7 +182,7 @@ Connection.prototype = {
 		}
 	},
 
-	QueryInterface: function DL_QI(iid) {
+	QueryInterface: function(iid) {
 		for (let i = 0, e = this._interfaces.length; i < e; i++) {
 			if (iid.equals(this._interfaces[i])) {
 				return this;
@@ -192,7 +192,7 @@ Connection.prototype = {
 	},
 
 	// nsICancelable
-	cancel: function DL_cancel(aReason) {
+	cancel: function(aReason) {
 		try {
 			if (this._closed) {
 				return;
@@ -209,7 +209,7 @@ Connection.prototype = {
 		}
 	},
 	// nsIInterfaceRequestor
-	getInterface: function DL_getInterface(iid) {
+	getInterface: function(iid) {
 		if (iid.equals(Ci.nsIAuthPrompt) || iid.equals(Ci.nsIAuthPrompt2)) {
 			if (this.d.liftLoginRestriction) {
 				delete this.d.liftLoginRestriction;
@@ -241,7 +241,7 @@ Connection.prototype = {
 		this.onChannelRedirect(oldChannel, newChannel, flags);
 		callback.onRedirectVerifyCallback(0);
 	},
-	onChannelRedirect: function DL_onChannelRedirect(oldChannel, newChannel, flags) {
+	onChannelRedirect: function(oldChannel, newChannel, flags) {
 		let d = this.d;
 		let c = this.c;
 		try {
@@ -334,7 +334,7 @@ Connection.prototype = {
 	},
 
 	// nsIStreamListener
-	onDataAvailable: function DL_onDataAvailable(aRequest, aContext, aInputStream, aOffset, aCount) {
+	onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
 		if (this._closed) {
 			throw NS_ERROR_BINDING_ABORTED;
 		}
@@ -376,7 +376,7 @@ Connection.prototype = {
 		}
 	},
 
-	handleError: function DL_handleError() {
+	handleError: function() {
 		let c = this.c;
 		let d = this.d;
 
@@ -622,7 +622,7 @@ Connection.prototype = {
 			}
 		}
 	},
-	handleHttp: function DL_handleHttp(aChannel) {
+	handleHttp: function(aChannel) {
 		let c = this.c;
 		let d = this.d;
 
@@ -836,7 +836,7 @@ Connection.prototype = {
 		return false;
 	},
 
-	handleGeneric: function DL_handleGeneric(aChannel) {
+	handleGeneric: function(aChannel) {
 		let c = this.c;
 		let d = this.d;
 
@@ -874,7 +874,7 @@ Connection.prototype = {
 		{i:Ci.nsIFTPChannel, f:'handleFtp'},
 		{i:Ci.nsIChannel, f:'handleGeneric'}
 	],
-	onStartRequest: function DL_onStartRequest(aRequest, aContext) {
+	onStartRequest: function(aRequest, aContext) {
 		let c = this.c;
 		let d = this.d;
 		log(LOG_INFO, 'StartRequest: ' + c);
@@ -943,7 +943,7 @@ Connection.prototype = {
 			return;
 		}
 	},
-	onStopRequest: function DL_onStopRequest(aRequest, aContext, aStatusCode) {
+	onStopRequest: function(aRequest, aContext, aStatusCode) {
 		try {
 			log(LOG_INFO, 'StopRequest');
 		}
@@ -1066,7 +1066,7 @@ Connection.prototype = {
 	},
 
 	// nsIProgressEventSink
-	onProgress: function DL_onProgress(aRequest, aContext, aProgress, aProgressMax) {
+	onProgress: function(aRequest, aContext, aProgress, aProgressMax) {
 		try {
 			// shortcuts
 			let c = this.c;
