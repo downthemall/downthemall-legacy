@@ -329,9 +329,9 @@ const Tree = {
 			this.doFilter();
 		}
 		finally {
+			this.savePositions();
 			this.invalidate();
 			this.endUpdate();
-			this.fireChangeEvent();
 		}
 	},
 	_filter: '',
@@ -656,6 +656,7 @@ const Tree = {
 				this.doFilter();
 			}
 			finally {
+				this.savePositions();
 				this.invalidate();
 				this.endUpdate();
 			}
@@ -851,6 +852,10 @@ const Tree = {
 			}
 		}
 		finally {
+			// DB trigger will handle this in the queue file
+			for (let i = downloads.pop().position, e = this._downloads.length; i < e; ++i) {
+				this._downloads[i].position = i;
+			}
 			this.invalidate();
 			this.doFilter();
 			this.endUpdate();
@@ -1260,13 +1265,18 @@ const Tree = {
 			log(LOG_ERROR, "rt", ex);
 		}
 	},
-	_invalidate_all: function(e, i) {
-		if (e.position != i) {
-			e.position = i;
-			this.push({dbId: e.dbId, position: i});
+	savePositions: function() {
+		let saveArray = [];
+		for (let i = 0, e = this._downloads.length; i < e; ++i) {
+			let d = this._downloads[i];
+			if (d.position != i) {
+				d.position = i;
+				saveArray.push({dbId: d.dbId, position: i});
+			}
 		}
-		if (e.state == COMPLETE) {
-			Dialog.completed++;
+		if (saveArray.length) {
+			QueueStore.asyncSavePosition(saveArray);
+			this.fireChangeEvent();
 		}
 	},
 	_invalidate_item: function(d, cell) {
@@ -1281,12 +1291,11 @@ const Tree = {
 	},
 	invalidate: function(d, cell) {
 		if (!d) {
-			let saveArray = [];
 			Dialog.completed = 0;
-			this._downloads.forEach(this._invalidate_all, saveArray);
-			if (saveArray.length) {
-				QueueStore.asyncSavePosition(saveArray);
-				this.fireChangeEvent();
+			for (let d of Tree.all) {
+				if (d.state == COMPLETE) {
+					Dialog.completed++;
+				}
 			}
 			this._box.invalidate();
 			this.refreshTools(this);
@@ -1462,6 +1471,7 @@ const Tree = {
 				this.selection.rangedSelect(0, ids.length - 1, true);
 			}
 			finally {
+				this.savePositions();
 				this.invalidate();
 				this.endUpdate();
 			}
@@ -1485,6 +1495,7 @@ const Tree = {
 				this.selection.rangedSelect(this._filtered.length - ids.length, this._filtered.length - 1, true);
 			}
 			finally {
+				this.savePositions();
 				this.invalidate();
 				this.endUpdate();
 			}
@@ -1517,6 +1528,7 @@ const Tree = {
 				this.doFilter();
 			}
 			finally {
+				this.savePositions();
 				this.invalidate();
 				this.endUpdate();
 			}
@@ -1552,6 +1564,7 @@ const Tree = {
 				this.doFilter();
 			}
 			finally {
+				this.savePositions();
 				this.invalidate();
 				this.endUpdate();
 			}

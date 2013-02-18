@@ -63,6 +63,11 @@ const QueueStore = {
 			if (!_connection.tableExists('queue')) {
 				_connection.createTable('queue', 'uuid INTEGER PRIMARY KEY AUTOINCREMENT, pos INTEGER, item TEXT');
 			}
+			_connection.executeSimpleSQL("CREATE TRIGGER IF NOT EXISTS delete_qi_reposition " +
+					"AFTER DELETE ON queue " +
+					"FOR EACH ROW BEGIN " +
+					"UPDATE queue SET pos = pos - 1 WHERE pos > old.pos; " +
+					"END");
 		}
 		catch (ex) {
 			log(LOG_ERROR, "failed to create table", ex);
@@ -162,13 +167,13 @@ const QueueStore = {
 			throw new Exception("You must provide a Download to save!");
 		}
 		if (!_saveStmt) {
-			_saveStmt = _connection.createAsyncStatement('UPDATE queue SET item = :item WHERE uuid = :uuid');
+			_saveStmt = _connection.createAsyncStatement('UPDATE queue SET item = ? WHERE uuid = ?');
 			_saveStmtParams = _saveStmt.newBindingParamsArray();
 		}
 
 		let bp = _saveStmtParams.newBindingParams();
-		bp.bindByName("item", download);
-		bp.bindByName("uuid", id);
+		bp.bindByIndex(0, download);
+		bp.bindByIndex(1, id);
 		_saveStmtParams.addParams(bp);
 
 		if (!_timer) {
@@ -193,12 +198,13 @@ const QueueStore = {
 			log(LOG_DEBUG, "no position changes");
 			return;
 		}
-		let stmt = _connection.createAsyncStatement("UPDATE queue SET pos = :pos WHERE uuid = :uuid");
+
+		let stmt = _connection.createAsyncStatement("UPDATE queue SET pos = ? WHERE uuid = ?");
 		let params = stmt.newBindingParamsArray();
 		for (let d of downloads) {
 			let bp = params.newBindingParams();
-			bp.bindByName("pos", d.position);
-			bp.bindByName("uuid", d.dbId);
+			bp.bindByIndex(0, d.position);
+			bp.bindByIndex(1, d.dbId);
 			params.addParams(bp);
 		}
 		stmt.bindParameters(params);
