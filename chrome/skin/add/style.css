@@ -11,11 +11,9 @@ dialog {
 	padding: 1ex;
 }
 
-textbox[error="true"],
-menulist[error="true"],
-textbox[error="true"] > hbox,
-menulist[error="true"] > hbox,
-*[error="true"] html|input {
-	color: white;
-	background-color: red;
+textbox[invalid="true"],
+menulist[invalid="true"],
+saveddropdown[invalid="true"] > menulist,
+hashinput[invalid="true"] textbox {
+	box-shadow: 0pt 0pt 1.5px 1px red;
 }
