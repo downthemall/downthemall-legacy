@@ -514,7 +514,10 @@ const Tree = {
 	},
 	getCellProperties: function(idx, col, prop) {
 		const cidx = col.index;
-		if (cidx == 2) {
+		if (cidx != 2 && cidx != 0) {
+			return;
+		}
+		else if (cidx == 2) {
 			prop.AppendElement(this.iconicAtom);
 			prop.AppendElement(this.progressAtom);
 			const d = this._filtered[idx];
@@ -550,6 +553,9 @@ const Tree = {
 		}
 		else if (cidx == 0) {
 			let d = this._filtered[idx];
+			if (!d) {
+				return;
+			}
 			prop.AppendElement(this.iconicAtom);
 			prop.AppendElement(d.iconAtom);
 			if (d.isPrivate) {
