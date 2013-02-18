@@ -79,7 +79,7 @@ SpeedStats.prototype = Object.freeze({
 	 * @param bytes (int) Bytes in the period
 	 * @param time (int) Time bytes was recorded
 	 */
-	add: function DSS_add(bytes, time) {
+	add: function(bytes, time) {
 		let received = 0;
 		if (this._lastTime) {
 			let elapsed = (time - this._lastTime) / 1000;
@@ -113,7 +113,7 @@ SpeedStats.prototype = Object.freeze({
 	/**
 	 * Clears all statistics
 	 */
-	clear: function DSS_clear() {
+	clear: function() {
 		this._speeds.length = 0;
 		this._aspeeds.length = 0;
 		this._lastTime = this._lastBytes = this._avg = 0;

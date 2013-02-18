@@ -23,7 +23,7 @@ var Dialog = {
 			}
 		);
 	},
-	load: function DTA_load() {
+	load: function() {
 		try {
 			Tooltip.init();
 			// d is an Array of Downloads
@@ -100,7 +100,7 @@ var Dialog = {
 			addEventListener("resize", function() Dialog.resize(), true);
 		}, 0);
 	},
-	accept: function DTA_accept() {
+	accept: function() {
 		if (this.isFullyDisabled) {
 			return true;
 		}
@@ -174,7 +174,7 @@ var Dialog = {
 		Timers.killAllTimers();
 		return true;
 	},
-	browseDir: function DTA_browseDir() {
+	browseDir: function() {
 		// let's check and create the directory
 		Utils.askForDir(
 			$('directory').value,
@@ -186,7 +186,7 @@ var Dialog = {
 			}
 		);
 	},
-	manageMirrors: function DTA_manageMirrors() {
+	manageMirrors: function() {
 		if (this.downloads.length != 1) {
 			// only manage single downloads
 			return;
@@ -205,7 +205,7 @@ var Dialog = {
 			log(LOG_INFO, "New mirrors set " + mirrors);
 		}
 	},
-	check: function DTA_check() {
+	check: function() {
 		var dir = $('directory').value.trim();
 		if (!dir.length || !$('renaming').value.trim().length) {
 			return false;

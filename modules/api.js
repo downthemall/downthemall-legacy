@@ -59,7 +59,7 @@ URL.prototype = Object.freeze({
 	get usable() {
 		return this._usable;
 	},
-	toJSON: function DU_toJSON() {
+	toJSON: function() {
 		return 	{
 			url: this._urlSpec,
 			charset: this._urlCharset,

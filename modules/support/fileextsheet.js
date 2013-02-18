@@ -36,7 +36,7 @@ function FileExtensionSheet(window) {
 
 FileExtensionSheet.prototype = Object.freeze({
 	_atoms: new Atoms(),
-	getAtom: function FES_getAtom(fileName, metalink) {
+	getAtom: function(fileName, metalink) {
 		let ext = getExtension(fileName);
 		if (!ext) {
 			ext = 'unknown';
@@ -63,7 +63,7 @@ FileExtensionSheet.prototype = Object.freeze({
 		}
 		return entry;
 	},
-	_updateSheet: function FES__updateSheet() {
+	_updateSheet: function() {
 		delete this._timer;
 		this._windowUtils.redraw();
 	}

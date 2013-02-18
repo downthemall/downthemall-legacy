@@ -93,7 +93,7 @@ const Dialog = {
 	_autoClears: [],
 	completed: 0,
 	totalbytes: 0,
-	init: function D_init() {
+	init: function() {
 		Prefs.init();
 
 		this.statusText = $("statusText");
@@ -325,7 +325,7 @@ const Dialog = {
 		$('listSpeeds').limit -= 25600;
 		this.changeSpeedLimit();
 	},
-	_loadDownloads: function D__loadDownloads() {
+	_loadDownloads: function() {
 		this._loading = $('loading');
 		if (!this._loading) {
 			this._loading = {};
@@ -356,7 +356,7 @@ const Dialog = {
 			});
 		}, this);
 	},
-	_loadDownloads_item: function D__loadDownloads_item(dbItem, idx) {
+	_loadDownloads_item: function(dbItem, idx) {
 		if (!idx) {
 			GlobalProgress.total = dbItem.count;
 		}
@@ -479,7 +479,7 @@ const Dialog = {
 		}
 		return true;
 	},
-	_loadDownloads_finish: function D__loadDownloads_finish() {
+	_loadDownloads_finish: function() {
 		log(LOG_INFO, "Result was processed");
 		delete this._loader;
 		Tree.invalidate();
@@ -510,7 +510,7 @@ const Dialog = {
 		this.start();
 	},
 
-	openAdd: function D_openAdd() {
+	openAdd: function() {
 		window.openDialog(
 			'chrome://dta/content/dta/addurl.xul',
 			'_blank',
@@ -518,7 +518,7 @@ const Dialog = {
 		);
 	},
 
-	openDonate: function D_openDonate() {
+	openDonate: function() {
 		try {
 			openUrl('http://www.downthemall.net/howto/donate/');
 		}
@@ -526,7 +526,7 @@ const Dialog = {
 			alert(ex);
 		}
 	},
-	openInfo: function D_openInfo(downloads) {
+	openInfo: function(downloads) {
 		let w = window.openDialog(
 			"chrome://dta/content/dta/manager/info.xul","_blank",
 			"chrome, centerscreen, dialog=no",
@@ -535,7 +535,7 @@ const Dialog = {
 			);
 	},
 
-	start: function D_start() {
+	start: function() {
 		if (this._initialized) {
 			return;
 		}
@@ -584,7 +584,7 @@ const Dialog = {
 		this._loadDownloads();
 	},
 
-	observe: function D_observe(subject, topic, data) {
+	observe: function(subject, topic, data) {
 		if (topic == 'quit-application-requested') {
 			if (!this._canClose()) {
 				delete this._forceClose;
@@ -635,7 +635,7 @@ const Dialog = {
 			this.saveRunning();
 		}
 	},
-	refresh: function D_refresh() {
+	refresh: function() {
 		try {
 			const now = Utils.getTimestamp();
 			for (let i = 0, e = this._running.length; i < e; ++i) {
@@ -784,7 +784,7 @@ const Dialog = {
 			log(LOG_ERROR, "refresh():", ex);
 		}
 	},
-	refreshWritten: function D_refreshWritten() {
+	refreshWritten: function() {
 		for (let i = 0, e = this._running.length; i < e; ++i) {
 			let d = this._running[i];
 			if (!d) {
@@ -794,7 +794,7 @@ const Dialog = {
 			d.invalidate();
 		}
 	},
-	saveRunning: function D_saveRunning() {
+	saveRunning: function() {
 		if (!this._running.length) {
 			return;
 		}
@@ -803,7 +803,7 @@ const Dialog = {
 		}
 	},
 
-	_processOfflineChange: function D__processOfflineChange() {
+	_processOfflineChange: function() {
 		let de = $('downloads');
 		if (this.offline == de.hasAttribute('offline')) {
 			return;
@@ -868,7 +868,7 @@ const Dialog = {
 			log(LOG_ERROR, "process():", ex);
 		}
 	},
-	checkSameName: function D_checkSameName(download, path) {
+	checkSameName: function(download, path) {
 		for (let runner of this._running) {
 			if (runner == download) {
 				continue;
@@ -880,7 +880,7 @@ const Dialog = {
 		return false;
 	},
 	scheduler: null,
-	startNext: function D_startNext() {
+	startNext: function() {
 		try {
 			var rv = false;
 			// pre-condition, do check prior to loop, or else we'll have the generator cost.
@@ -935,7 +935,7 @@ const Dialog = {
 		}
 		return false;
 	},
-	run: function D_run(download, forced) {
+	run: function(download, forced) {
 		if (this.offline) {
 			return;
 		}
@@ -967,14 +967,14 @@ const Dialog = {
 		download.prealloc(download.maybeResumeDownload.bind(download));
 		download.resumeDownload();
 	},
-	wasStopped: function D_wasStopped(download) {
+	wasStopped: function(download) {
 		let idx = this._running.indexOf(download);
 		if (idx > -1) {
 			this._running.splice(idx, 1);
 		}
 	},
-	_signal_some: function D_signal_some(d) d.isOf(FINISHING | RUNNING | QUEUED),
-	signal: function D_signal(download) {
+	_signal_some: function(d) d.isOf(FINISHING | RUNNING | QUEUED),
+	signal: function(download) {
 		download.save();
 		const state = download.state;
 		if (state == QUEUED) {
@@ -1027,12 +1027,12 @@ const Dialog = {
 			log(LOG_ERROR, "signal():", ex);
 		}
 	},
-	markAutoRetry: function D_markAutoRetry(download) {
+	markAutoRetry: function(download) {
 		if (this._autoRetrying.indexOf(download) == -1) {
 			this._autoRetrying.push(download);
 		}
 	},
-	wasRemoved: function D_wasRemoved(download) {
+	wasRemoved: function(download) {
 		let idx = this._running.indexOf(download);
 		if (idx > -1) {
 			this._running.splice(idx, 1);
@@ -1154,7 +1154,7 @@ const Dialog = {
 	},
 	_safeCloseAttempts: 0,
 
-	unload: function D_unload() {
+	unload: function() {
 		Limits.killServerBuckets();
 
 		Timers.killAllTimers();
@@ -1201,7 +1201,7 @@ unloadWindow(window, function () {
 })
 
 const Metalinker = {
-	handleDownload: function ML_handleDownload(download) {
+	handleDownload: function(download) {
 		download.setState(CANCELED);
 		Tree.remove(download, false);
 		let file = download.destinationLocalFile;
@@ -1215,7 +1215,7 @@ const Metalinker = {
 			}
 		}, download.isPrivate);
 	},
-	handleFile: function ML_handleFile(aFile, aReferrer, aCallback, aIsPrivate) {
+	handleFile: function(aFile, aReferrer, aCallback, aIsPrivate) {
 		aIsPrivate = !!aIsPrivate || false;
 		let aURI = Services.io.newFileURI(aFile);
 		this.parse(aURI, aReferrer, function (res, ex) {
@@ -1272,10 +1272,10 @@ function QueueItem() {
 
 QueueItem.prototype = {
 	state: QUEUED,
-	_setStateInternal: function Q__setStateInternal(nv) {
+	_setStateInternal: function(nv) {
 		Object.defineProperty(this, "state", {value: nv, configurable: true, enumerable: true});
 	},
-	setState: function Q_setState(nv) {
+	setState: function(nv) {
 		if (this.state == nv) {
 			return nv;
 		}
@@ -1533,9 +1533,9 @@ QueueItem.prototype = {
 		return this._prettyHash;
 	},
 
-	is: function QI_is(state) this.state == state,
-	isOf: function QI_isOf(states) (this.state & states) != 0,
-	save: function QI_save() {
+	is: function(state) this.state == state,
+	isOf: function(states) (this.state & states) != 0,
+	save: function() {
 		if (this.deleting) {
 			return false;
 		}
@@ -1560,7 +1560,7 @@ QueueItem.prototype = {
 		this.dbId = QueueStore.addDownload(JSON.stringify(this), this.position);
 		return true;
 	},
-	remove: function QI_remove() {
+	remove: function() {
 		QueueStore.deleteDownload(this.dbId);
 		delete this.dbId;
 	},
@@ -1722,11 +1722,11 @@ QueueItem.prototype = {
 		return this._destinationPath;
 	},
 
-	invalidate: function QI_invalidate(cell) {
+	invalidate: function(cell) {
 		Tree.invalidate(this, cell);
 	},
 
-	safeRetry: function QI_safeRetry() {
+	safeRetry: function() {
 		// reset flags
 		this.progress = this.totalSize = this.partialSize = 0;
 		this.compression = null;
@@ -1742,7 +1742,7 @@ QueueItem.prototype = {
 		Dialog.run(this);
 	},
 
-	refreshPartialSize: function QI_refreshPartialSize(){
+	refreshPartialSize: function(){
 		let size = 0;
 		for (let i = 0, e = this.chunks.length; i < e; ++i) {
 			size += this.chunks[i].written;
@@ -1761,7 +1761,7 @@ QueueItem.prototype = {
 		}
 	},
 
-	pause: function QI_pause(){
+	pause: function(){
 		this.setState(PAUSED);
 		if (this.chunks) {
 			for (let c of this.chunks) {
@@ -1775,13 +1775,13 @@ QueueItem.prototype = {
 		this.otherBytes = 0;
 	},
 
-	moveCompleted: function QI_moveCompleted() {
+	moveCompleted: function() {
 		if (this.state == CANCELED) {
 			return;
 		}
 		ConflictManager.resolve(this, 'continueMoveCompleted');
 	},
-	continueMoveCompleted: function QI_continueMoveCompleted() {
+	continueMoveCompleted: function() {
 		if (this.state == CANCELED) {
 			return;
 		}
@@ -1837,7 +1837,7 @@ QueueItem.prototype = {
 			this.complete(ex);
 		}
 	},
-	handleMetalink: function QI_handleMetaLink() {
+	handleMetalink: function() {
 		try {
 			Metalinker.handleDownload(this);
 		}
@@ -1970,7 +1970,7 @@ QueueItem.prototype = {
 
 		this.complete();
 	},
-	finishDownload: function QI_finishDownload(exception) {
+	finishDownload: function(exception) {
 		if (!this.chunksReady(this.finishDownload.bind(this, exception))) {
 			return;
 		}
@@ -1994,7 +1994,7 @@ QueueItem.prototype = {
 		this.complete();
 	},
 	_completeEvents: [],
-	complete: function QI_complete(exception) {
+	complete: function(exception) {
 		this.chunks = [];
 		this.speeds.clear();
 		if (exception) {
@@ -2027,7 +2027,7 @@ QueueItem.prototype = {
 	get maskReferrerURL() this.referrerUrlManager.usableURL,
 	get maskReferrerURLPath() this.referrerUrlManager.usableURLPath,
 	get maskReferrerCURL() this.maskReferrerURL.host + ((this.maskReferrerURLPath == "") ? "" : (Utils.SYSTEMSLASH + this.maskReferrerURLPath)),
-	rebuildDestination: function QI_rebuildDestination() {
+	rebuildDestination: function() {
 		try {
 			let mask = Utils.removeFinalSlash(Utils.normalizeSlashes(Utils.removeFinalChar(
 					this.rebuildDestination_renamer(this.mask), "."
@@ -2110,7 +2110,7 @@ QueueItem.prototype = {
 		return false;
 	},
 
-	fail: function QI_fail(title, msg, state) {
+	fail: function(title, msg, state) {
 		log(LOG_INFO, "failDownload invoked");
 
 		this.cancel(state);
@@ -2156,7 +2156,7 @@ QueueItem.prototype = {
 		return false;
 	},
 
-	cancel: function QI_cancel(message) {
+	cancel: function(message) {
 		try {
 			const state = this.state;
 			if (state == COMPLETE) {
@@ -2229,13 +2229,13 @@ QueueItem.prototype = {
 			this._notifyPreallocation = [callback];
 		}
 	},
-	createDirectory: function QI_createDirectory(file) {
+	createDirectory: function(file) {
 		if (file.parent.exists()) {
 			return;
 		}
 		file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
 	},
-	prealloc: function QI_prealloc(callback) {
+	prealloc: function(callback) {
 		let file = this.tmpFile;
 
 		if (this.state != RUNNING) {
@@ -2288,7 +2288,7 @@ QueueItem.prototype = {
 		return true;
 	},
 
-	_donePrealloc: function QI__donePrealloc(res) {
+	_donePrealloc: function(res) {
 		log(LOG_INFO, "pa: done");
 		delete this._preallocator;
 		this.preallocating = false;
@@ -2311,7 +2311,7 @@ QueueItem.prototype = {
 		this.cancelVerification();
 	},
 
-	removeTmpFile: function QI_removeTmpFile() {
+	removeTmpFile: function() {
 		if (!!this._tmpFile && this._tmpFile.exists()) {
 			try {
 				this._tmpFile.remove(false);
@@ -2329,7 +2329,7 @@ QueueItem.prototype = {
 	get autoRetrying() {
 		return !!this._autoRetryTime;
 	},
-	pauseAndRetry: function QI_markRetry() {
+	pauseAndRetry: function() {
 		this.pause();
 		this.resumable = true;
 		this.save();
@@ -2340,7 +2340,7 @@ QueueItem.prototype = {
 			log(LOG_INFO, "marked auto-retry: " + this);
 		}
 	},
-	autoRetry: function QI_autoRetry() {
+	autoRetry: function() {
 		if (!this.autoRetrying || Utils.getTimestamp() - (Prefs.autoRetryInterval * 1000) < this._autoRetryTime) {
 			return false;
 		}
@@ -2351,22 +2351,22 @@ QueueItem.prototype = {
 		log(LOG_DEBUG, "Requeued due to auto-retry: " + this);
 		return true;
 	},
-	clearAutoRetry: function QI_clearAutoRetry() {
+	clearAutoRetry: function() {
 		this._autoRetryTime = 0;
 		this._autoRetries = 0;
 	},
-	queue: function QI_queue() {
+	queue: function() {
 		this._autoRetryTime = 0;
 		this.setState(QUEUED);
 		this.status = TextCache_QUEUED;
 	},
-	maybeResumeDownload: function QI_maybeResumeDownload() {
+	maybeResumeDownload: function() {
 		if (this.state != RUNNING) {
 			return;
 		}
 		this.resumeDownload();
 	},
-	resumeDownload: function QI_resumeDownload() {
+	resumeDownload: function() {
 		log(LOG_DEBUG, "resumeDownload: " + this);
 		function cleanChunks(d) {
 			// merge finished chunks together, so that the scoreboard does not bloat
@@ -2480,7 +2480,7 @@ QueueItem.prototype = {
 		this.invalidate();
 		this.save();
 	},
-	dumpScoreboard: function QI_dumpScoreboard() {
+	dumpScoreboard: function() {
 		return;
 		let scoreboard = '';
 		let len = this.totalSize.toString().length;
@@ -2548,7 +2548,7 @@ XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
 
 var ConflictManager = {
 	_items: [],
-	resolve: function CM_resolve(download, reentry) {
+	resolve: function(download, reentry) {
 		if (!this._check(download)) {
 			if (reentry) {
 				download[reentry]();
@@ -2566,7 +2566,7 @@ var ConflictManager = {
 		this._items.push({download: download, reentry: reentry});
 		this._process();
 	},
-	_check: function CM__check(download) {
+	_check: function(download) {
 		let dest = download.destinationLocalFile;
 		let sn = false;
 		if (download.state == RUNNING) {
@@ -2574,7 +2574,7 @@ var ConflictManager = {
 		}
 		return dest.exists() || sn;
 	},
-	_process: function CM__process() {
+	_process: function() {
 		if (this._processing) {
 			return;
 		}
@@ -2624,7 +2624,7 @@ var ConflictManager = {
 			options, this
 		);
 	},
-	_computeConflicts: function CM__computeConflicts(cur) {
+	_computeConflicts: function(cur) {
 		let download = cur.download;
 		download.conflicts = 0;
 		let basename = download.destinationName;
@@ -2639,7 +2639,7 @@ var ConflictManager = {
 		cur.newDest = newDest.leafName;
 		cur.conflicts = i;
 	},
-	_returnFromDialog: function CM__returnFromDialog(option, type) {
+	_returnFromDialog: function(option, type) {
 		if (type == 1) {
 			this._sessionSetting = option;
 		}
@@ -2648,7 +2648,7 @@ var ConflictManager = {
 		}
 		this._return(option);
 	},
-	_return: function CM__return(option) {
+	_return: function(option) {
 		let cur = this._items[0];
 		switch (option) {
 			/* rename */    case 0: this._computeConflicts(cur); cur.download.conflicts = cur.conflicts; break;

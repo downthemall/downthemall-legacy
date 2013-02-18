@@ -38,7 +38,7 @@ FileDataProvider.prototype = {
 
 
 const Tree = {
-	init: function T_init(elem) {
+	init: function(elem) {
 		this.elem = elem;
 		this._downloads = [];
 		this._filtered = this._downloads;
@@ -281,7 +281,7 @@ const Tree = {
 	get rowCount() {
 		return this._filtered.length;
 	},
-	setTree: function T_setTree(box) {
+	setTree: function(box) {
 		if (!box) {
 			return;
 		}
@@ -424,7 +424,7 @@ const Tree = {
 		}
 		return true;
 	},
-	setFilter: function T_setFilter(nv) {
+	setFilter: function(nv) {
 		if (nv == this._filter) {
 			return;
 		}
@@ -438,15 +438,15 @@ const Tree = {
 		// apply filters
 		this.doFilter();
 	},
-	getParentIndex: function T_getParentIndex(idx) {
+	getParentIndex: function(idx) {
 		// no parents, as we are actually a list
 		return -1;
 	},
-	getLevel: function T_getLevel(idx) {
+	getLevel: function(idx) {
 		// ... and being a list all nodes are on the same level
 		return 0;
 	},
-	getCellText: function T_getCellText(idx, col) {
+	getCellText: function(idx, col) {
 		const d = this._filtered[idx];
 		if (!d) {
 			return '';
@@ -466,16 +466,16 @@ const Tree = {
 		}
 		return '';
 	},
-	isSorted: function T_isSorted() true,
-	isContainer: function T_isContainer(idx) false,
-	isContainerOpen: function T_isContainerOpen(idx) false,
-	isContainerEmpty: function T_isContainerEmpty(idx) false,
-	isSeparator: function T_isSeparator(idx) false,
-	isEditable: function T_isEditable(idx) true,
+	isSorted: function() true,
+	isContainer: function(idx) false,
+	isContainerOpen: function(idx) false,
+	isContainerEmpty: function(idx) false,
+	isSeparator: function(idx) false,
+	isEditable: function(idx) true,
 
 	// will grab the "icon" for a cell.
-	getImageSrc: function T_getImageSrc(idx, col) {},
-	getProgressMode : function T_getProgressMode(idx, col) {
+	getImageSrc: function(idx, col) {},
+	getProgressMode : function(idx, col) {
 		if (col.index == 2) {
 			const d = this._filtered[idx];
 			if (!d) {
@@ -493,7 +493,7 @@ const Tree = {
 		return 3; // PROGRESS_NONE;
 	},
 	// will be called for cells other than textcells
-	getCellValue: function T_getCellValue(idx, col) {
+	getCellValue: function(idx, col) {
 		if (col.index == 2) {
 			const d = this._filtered[idx];
 			if (!d) {
@@ -506,7 +506,7 @@ const Tree = {
 		}
 		return null;
 	},
-	getCellProperties: function T_getCellProperties(idx, col, prop) {
+	getCellProperties: function(idx, col, prop) {
 		const cidx = col.index;
 		if (cidx == 2) {
 			prop.AppendElement(this.iconicAtom);
@@ -551,7 +551,7 @@ const Tree = {
 			}
 		}
 	},
-	cycleHeader: function T_cycleHeader(col) {
+	cycleHeader: function(col) {
 		if (!col.element.hasAttribute("matcher")) {
 			return;
 		}
@@ -567,7 +567,7 @@ const Tree = {
 	setCellValue: function(idx, col, value) {},
 
 	_changeTimer: null,
-	selectionChanged: function T_selectionChanged() {
+	selectionChanged: function() {
 		if (this._changeTimer) {
 			Timers.killTimer(this._changeTimer);
 		}
@@ -577,7 +577,7 @@ const Tree = {
 		}, this);
 	},
 
-	onDragStart: function T_onDragStart(event) {
+	onDragStart: function(event) {
 		let transfer = event.dataTransfer;
 		let i = 0;
 		transfer.effectAllowed = "copymove";
@@ -597,14 +597,14 @@ const Tree = {
 			return;
 		}
 	},
-	canDrop: function T_canDrop(index, orient, dt) {
+	canDrop: function(index, orient, dt) {
 		let rv = dt.types.contains("application/x-dta-position");
 		if (rv) {
 			dt.dropEffect = "move";
 		}
 		return rv;
 	},
-	drop: function T_drop(row, orient, dt) {
+	drop: function(row, orient, dt) {
 		log(LOG_DEBUG, "drop");
 		if (!this.canDrop(row, orient, dt)) {
 			return;
@@ -656,12 +656,12 @@ const Tree = {
 	},
 
 	_updating: 0,
-	beginUpdate: function T_beginUpdate() {
+	beginUpdate: function() {
 		if (++this._updating == 1) {
 			this._box.beginUpdateBatch();
 		}
 	},
-	endUpdate: function T_endUpdate() {
+	endUpdate: function() {
 		if (--this._updating == 0) {
 			this._box.endUpdateBatch();
 			this.refreshTools();
@@ -676,7 +676,7 @@ const Tree = {
 		}
 	},
 	fastLoad: function(download) this._downloads.push(download) -1,
-	add: function T_add(download) {
+	add: function(download) {
 		let pos = download.position = this._downloads.push(download) -1;
 		if (this.filtered) {
 			download.filteredPosition = -1;
@@ -711,7 +711,7 @@ const Tree = {
 		}
 		// nothing found; do not scroll
 	},
-	removeWithConfirmation: function T_removeWithConfirmation() {
+	removeWithConfirmation: function() {
 		if (Prefs.confirmRemove) {
 			let res = Prompts.confirm(window, _('remove.title'), _('removequestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
 			if (res.checked) {
@@ -723,14 +723,14 @@ const Tree = {
 		}
 		this.remove(null, true);
 	},
-	removeAllWithConfirmation: function T_removeAllWithConfirmation() {
+	removeAllWithConfirmation: function() {
 		let res = Prompts.confirm(window, _('remove.title'), _('removeallquestion'), Prompts.YES, Prompts.NO);
 		if (res) {
 			return;
 		}
 		this.remove(this._downloads.map(function(e) e), true);
 	},
-	removeHostWithConfirmation: function T_removeHostWithConfirmation() {
+	removeHostWithConfirmation: function() {
 		let domain = this.current.urlManager.domain;
 		let res = Prompts.confirm(window, _('remove.title'), _('removehostquestion', [domain]), Prompts.YES, Prompts.NO);
 		if (res) {
@@ -738,7 +738,7 @@ const Tree = {
 		}
 		this.remove(this._downloads.filter(function(e) e.urlManager.domain == domain, this), true);
 	},
-	removeByFilter: function T_removeByFilter(filter, id) {
+	removeByFilter: function(filter, id) {
 		let pref = null;
 		let mask = -1;
 		let msg = null;
@@ -796,7 +796,7 @@ const Tree = {
 		evt.initUIEvent("change", true, true, null, 0);
 		return this.elem.dispatchEvent(evt);
 	},
-	remove: function T_remove(downloads, performJump) {
+	remove: function(downloads, performJump) {
 		if (downloads && !(downloads instanceof Array)) {
 			downloads = [downloads];
 		}
@@ -848,7 +848,7 @@ const Tree = {
 			this._removeJump(filterInSitu(downloads, function(e) e.filteredPosition >= 0).length, last);
 		}
 	},
-	_removeCompleted: function T__removeCompleted(onlyGone) {
+	_removeCompleted: function(onlyGone) {
 		this.beginUpdate();
 		try {
 			QueueStore.beginUpdate();
@@ -876,7 +876,7 @@ const Tree = {
 			this.endUpdate();
 		}
 	},
-	removeCompleted: function T_removeCompleted() {
+	removeCompleted: function() {
 		if (Prefs.confirmRemoveCompleted) {
 			let res = Prompts.confirm(window, _('remove.title'), _('removecompletedquestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
 			if (res.checked) {
@@ -909,7 +909,7 @@ const Tree = {
 		}
 		return false;
 	},
-	removeGone: function T_removeGone() {
+	removeGone: function() {
 		this._removeCompleted(true);
 	},
 	_removeJump: function(delta, last) {
@@ -924,7 +924,7 @@ const Tree = {
 			this.selection.currentIndex = np;
 		}
 	},
-	_pause_item: function T_pause_item(d) {
+	_pause_item: function(d) {
 		if (d.isOf(QUEUED | PAUSED) || (d.state == RUNNING && d.resumable)) {
 			d.pause();
 			d.clearAutoRetry();
@@ -933,21 +933,21 @@ const Tree = {
 		}
 		return true;
 	},
-	pause: function T_pause() {
+	pause: function() {
 		this.updateSelected(this._pause_item);
 	},
-	_resume_item: function T_resumeItem(d) {
+	_resume_item: function(d) {
 		if (d.isOf(PAUSED | CANCELED)) {
 			d.liftLoginRestriction = true;
 			d.queue();
 		}
 		return true;
 	},
-	resume: function T_resume(d) {
+	resume: function(d) {
 		this.updateSelected(this._resume_item);
 	},
-	_cancel_item: function T_cancel_item(d) d.cancel() || true,
-	cancel: function T_cancel() {
+	_cancel_item: function(d) d.cancel() || true,
+	cancel: function() {
 		if (Prefs.confirmCancel) {
 			let many = this.selection.count > 1;
 			let res = Prompts.confirm(
@@ -966,35 +966,35 @@ const Tree = {
 		}
 		this.updateSelected(this._cancel_item);
 	},
-	selectAll: function T_selectAll() {
+	selectAll: function() {
 		this.selection.selectAll();
 		this.selectionChanged();
 	},
-	selectInv: function T_selectInv() {
+	selectInv: function() {
 		for (let d of this.all) {
 			this.selection.toggleSelect(d.position);
 		}
 		this.selectionChanged();
 	},
-	_changeChunks_inc: function T_changeChunks_inc(d) {
+	_changeChunks_inc: function(d) {
 		if (d.maxChunks < 10 && d.resumable) {
 			++d.maxChunks;
 		}
 		return true;
 	},
-	_changeChunks_dec: function T_changeChunks_dec(d) {
+	_changeChunks_dec: function(d) {
 		if (d.maxChunks > 1) {
 			--d.maxChunks;
 		}
 		return true;
 	},
-	changeChunks: function T_changeChunks(increase) {
+	changeChunks: function(increase) {
 		Tree.updateSelected(increase
 			? this._changeChunks_inc
 			: this._changeChunks_dec
 			);
 	},
-	force: function T_force() {
+	force: function() {
 		for (let d in Tree.selected) {
 			if (d.isOf(QUEUED | PAUSED | CANCELED)) {
 				d.queue();
@@ -1002,7 +1002,7 @@ const Tree = {
 			}
 		}
 	},
-	manageMirrors: function T_manageMirrors() {
+	manageMirrors: function() {
 		if (!this.current) {
 			return;
 		}
@@ -1018,7 +1018,7 @@ const Tree = {
 			log(LOG_INFO, "New mirrors set " + mirrors);
 		}
 	},
-	export: function T_export() {
+	export: function() {
 		function processResponse(fp, rv) {
 			if (rv != Ci.nsIFilePicker.returnOK && rv != Ci.nsIFilePicker.returnReplace) {
 				return;
@@ -1079,7 +1079,7 @@ const Tree = {
 			Prompts.alert(window, _('export.title'), _('exportfailed'));
 		}
 	},
-	import: function T_import() {
+	import: function() {
 		function processResponse(fp, rv) {
 			if (rv != Ci.nsIFilePicker.returnOK) {
 				return;
@@ -1119,7 +1119,7 @@ const Tree = {
 			Prompts.alert(window, _('import.title'), _('importfailed'));
 		}
 	},
-	addLimits: function T_addLimits() {
+	addLimits: function() {
 		showPreferences(
 			"paneServers",
 			{
@@ -1128,7 +1128,7 @@ const Tree = {
 			}
 		);
 	},
-	showInfo: function T_showInfo() {
+	showInfo: function() {
 		this.beginUpdate();
 		try {
 			let downloads = [];
@@ -1165,7 +1165,7 @@ const Tree = {
 		Tooltip.start(d, true);
 		return true;
 	},
-	stopTip: function T_stopTip() {
+	stopTip: function() {
 		Tooltip.stop();
 	},
 	_refreshTools_item: [
@@ -1191,7 +1191,7 @@ const Tree = {
 		this._refreshTools_item.forEach(function(e) e.item = $(e.item));
 		this._refreshTools_items.forEach(function(e) e.items = $.apply(null, e.items));
 	},
-	refreshTools: function T_refreshTools(d) {
+	refreshTools: function(d) {
 		if (this._updating || (d && ('position' in d) && !this.selection.isSelected(d.position))) {
 			return;
 		}
@@ -1267,7 +1267,7 @@ const Tree = {
 			}
 		}
 	},
-	invalidate: function T_invalidate(d, cell) {
+	invalidate: function(d, cell) {
 		if (!d) {
 			let saveArray = [];
 			Dialog.completed = 0;
@@ -1318,7 +1318,7 @@ const Tree = {
 	},
 
 	// returns an ASC sorted array of IDs that are currently selected.
-	_getSelectedIds: function T_getSelectedIds(getReversed) {
+	_getSelectedIds: function(getReversed) {
 		let select = this.selection;
 		if (!select.count) {
 			return [];
@@ -1345,7 +1345,7 @@ const Tree = {
 	_getSelectedIds_asc: function(a, b) a - b,
 	_getSelectedIds_desc: function(a, b) b - a,
 	_getSelectedFilteredIds_map: function(id) this._filtered[id].position,
-	_getSelectedFilteredIds: function T_getSelectedFilteredIds(reverse)
+	_getSelectedFilteredIds: function(reverse)
 		mapInSitu(this._getSelectedIds(reverse), this._getSelectedFilteredIds_map, this),
 
 	// get the first selected item, NOT the item which has the input focus.
@@ -1371,16 +1371,16 @@ const Tree = {
 		}
 		return null;
 	},
-	at: function T_at(idx) {
+	at: function(idx) {
 		return this._filtered[idx];
 	},
-	some: function T_some(f, t) {
+	some: function(f, t) {
 		return this._downloads.some(f, t);
 	},
-	every: function T_every(f, t) {
+	every: function(f, t) {
 		return this._downloads.every(f, t);
 	},
-	update: function T_update(f, t) {
+	update: function(f, t) {
 		try {
 			this.beginUpdate();
 			try {
@@ -1415,7 +1415,7 @@ const Tree = {
 			throw ex;
 		}
 	},
-	updateAll: function T_updateAll(fn, ctx) {
+	updateAll: function(fn, ctx) {
 		try {
 			this.beginUpdate();
 			QueueStore.beginUpdate();
@@ -1436,7 +1436,7 @@ const Tree = {
 			throw ex;
 		}
 	},
-	moveTop: function T_top() {
+	moveTop: function() {
 		try {
 			this.beginUpdate();
 			let ids;
@@ -1459,7 +1459,7 @@ const Tree = {
 			log(LOG_ERROR, "Mover::top", ex);
 		}
 	},
-	moveBottom: function T_bottom() {
+	moveBottom: function() {
 		try {
 			this.beginUpdate();
 			let ids;
@@ -1482,7 +1482,7 @@ const Tree = {
 			log(LOG_ERROR, "Mover::bottom", ex);
 		}
 	},
-	moveUp: function T_up() {
+	moveUp: function() {
 		try {
 			if (this.filtered) {
 				throw Error("not implemented");
@@ -1514,7 +1514,7 @@ const Tree = {
 			log(LOG_ERROR, "Mover::up", ex);
 		}
 	},
-	moveDown: function T_down() {
+	moveDown: function() {
 		try {
 			if (this.filtered) {
 				throw Error("not implemented");
@@ -1564,7 +1564,7 @@ const Tree = {
 		this._speedLimitList.limit = limit;
 		return true;
 	},
-	_changePerDownloadSpeedLimit_item: function T_changePerDownloadSpeedLimit_item(limit, d) (
+	_changePerDownloadSpeedLimit_item: function(limit, d) (
 		(d.speedLimit = limit) || true
 		),
 	changePerDownloadSpeedLimit: function() {

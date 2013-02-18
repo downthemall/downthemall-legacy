@@ -280,7 +280,7 @@ let Dialog = {
 	},
 
 	// will be called to initialize the dialog
-	load: function DTA_load() {
+	load: function() {
 		this.unload = unloadWindow(window, this.unload.bind(this));
 
 		$('maskeditor-accept').label = _('button-accept');
@@ -362,7 +362,7 @@ let Dialog = {
 		this.registerObserver();
 	},
 
-	addNotification: function DTA_addNotification(label, priority, timeout, buttons) {
+	addNotification: function(label, priority, timeout, buttons) {
 		let nb = this._notifications;
 		let n = nb.appendNotification(label, 0, null, priority, buttons);
 		if (isFinite(timeout) && timeout > 0) {
@@ -374,22 +374,22 @@ let Dialog = {
 			);
 		}
 	},
-	setNotification: function DTA_setNotification(label, priority, timeout, buttons) {
+	setNotification: function(label, priority, timeout, buttons) {
 		this.clearNotifications();
 		this.addNotification(label, priority, timeout, buttons);
 	},
-	clearNotifications: function DTA_clearNotifications() {
+	clearNotifications: function() {
 		this._notifications.removeAllNotifications(true);
 	},
 
 	// dialog destruction
-	unload: function DTA_unload() {
+	unload: function() {
 		close();
 		return true;
 	},
 
 	// checks if we can continue to process
-	check: function DTA_check() {
+	check: function() {
 		this.clearNotifications();
 		let dir = this.ddDirectory.value.trim();
 		dir = this.ddDirectory.value = !!dir ? Utils.addFinalSlash(dir) : '';
