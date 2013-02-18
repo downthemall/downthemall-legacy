@@ -211,8 +211,8 @@ var Dialog = {
 		$('directory', 'renaming', 'address', 'hash').forEach(
 			function(e) {
 				// reset the styles
-				if (e.hasAttribute('error')) {
-					e.removeAttribute('error');
+				if (e.hasAttribute('invalid')) {
+					e.removeAttribute('invalid');
 				}
 			}
 		);
@@ -220,7 +220,7 @@ var Dialog = {
 		if (errors.length) {
 			errors.forEach(
 				function(e) {
-					$(e).setAttribute('error', 'true');
+					$(e).setAttribute('invalid', 'true');
 				}
 			);
 			return false;
