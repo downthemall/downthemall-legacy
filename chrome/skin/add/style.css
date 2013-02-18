@@ -12,8 +12,6 @@ dialog {
 }
 
 textbox[invalid="true"],
-menulist[invalid="true"],
-saveddropdown[invalid="true"] > menulist,
-hashinput[invalid="true"] textbox {
+menulist[invalid="true"] {
 	box-shadow: 0pt 0pt 1.5px 1px red;
 }
