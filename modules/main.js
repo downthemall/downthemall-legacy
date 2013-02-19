@@ -285,24 +285,73 @@ function registerOverlays() {
 				.require("loaders/integration")
 				.load(window, event);
 		}
-		function maybeInsertButtons(ids) {
+		function _maybeInsertButtons(ids, attr) {
 			// Simply need to get the currentset attribute, which will still contain
 			// the id and reset it and tb.currentSet
 			try {
 				for (let tb of document.getElementsByTagName("toolbar")) {
-					let tcs = tb.getAttribute("currentset").split(",");
-					if (!ids.some(function(id) ~tcs.indexOf(id))) {
+					let ci = tb.getAttribute(attr).split(",");
+					let insertIds = ids.filter(function(id) ~ci.indexOf(id));
+					Utils.filterInSitu(ids, function(id) !~insertIds.indexOf(id));
+					if (!insertIds.length) {
 						continue;
 					}
-					tb.currentSet = tcs.join(",");
+					let li = tb.currentSet.split(",");
+					for (let id of insertIds) {
+						let idx = ci.indexOf(id);
+						if (!~idx) {
+							log(LOG_ERROR, "didn't find item; appending for now; this shouldn't happen!");
+							li.push(id);
+							continue;
+						}
+						let adjusted = false;
+						for (let i = idx, e = ci.length; i < e; ++i) {
+							let before = ci[i];
+							let lidx = li.indexOf(before);
+							if (~lidx) {
+								idx = lidx;
+								adjusted = true;
+								break;
+							}
+						}
+						if (!adjusted) {
+							for (let i = idx; ~(--i);) {
+								let after = ci[i];
+								let lidx = li.indexOf(after);
+								if (~lidx) {
+									idx = lidx + 1;
+									adjusted = true;
+									break;
+								}
+							}
+						}
+						log(LOG_DEBUG, "insert at " + (adjusted ? "adjusted" : "") + " idx " + idx + " " + id);
+						li.splice(idx, 0, id);
+					}
+					tb.currentSet = li.join(",");
 					tb.setAttribute("currentset", tb.currentSet);
+					tb.setAttribute("downthemall-currentset", tb.currentSet);
 					tb.ownerDocument.persist(tb.id, "currentset");
-					log(LOG_DEBUG, "buttons restored in " + tb.id);
-					return;
+					tb.ownerDocument.persist(tb.id, "downthemall-currentset");
+					log(LOG_DEBUG, insertIds + " buttons restored in " + tb.id);
 				}
 			}
 			catch (ex) {
 				log(LOG_DEBUG, "maybeInsertButtons failed for " + ids, ex);
+			}
+		}
+		function maybeInsertButtons(ids) {
+			for (let attr of ["currentset", "downthemall-currentset"]) {
+				if (!ids.length) {
+					return;
+				}
+				_maybeInsertButtons(ids, attr);
+			}
+			for (let tb of document.getElementsByTagName("toolbar")) {
+				unloadWindow(tb.ownerDocument.defaultView, (function(tb) {
+					tb.setAttribute("downthemall-currentset", tb.currentSet);
+					tb.ownerDocument.persist(tb.id, "downthemall-currentset");
+				}).bind(null, tb));
 			}
 		}
 		log(LOG_DEBUG, "running elementsStub");
@@ -346,7 +395,7 @@ function registerOverlays() {
 				fire.addFireListener($("dta:turboselect"), "command");
 				fire.addFireListener($("dta:manager"), "command");
 				fire.addFireListener($("cmd_CustomizeToolbars"), "command");
-				unload(function() fire._runUnloaders());
+				unloadWindow(window, function() fire._runUnloaders());
 			}
 			catch (ex) {
 				log(LOG_ERROR, "stub installer failed!", ex);
