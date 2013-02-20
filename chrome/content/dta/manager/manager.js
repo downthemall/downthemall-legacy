@@ -39,6 +39,15 @@ addEventListener("load", function load_textCache() {
 	}
 }, false);
 
+
+function dieEarly() {
+	window.removeEventListener("unload", dieEarly, false);
+	let evt = document.createEvent("Event");
+	evt.initEvent("DTA:diedEarly", true, false);
+	window.dispatchEvent(evt);
+}
+window.addEventListener("unload", dieEarly, false);
+
 var Timers = new TimerManager();
 
 const Dialog_loadDownloads_props = ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'];
@@ -550,10 +559,10 @@ const Dialog = {
 		Timers.createRepeating(10000, this.saveRunning, this);
 
 		$('loadingbox').parentNode.removeChild($('loadingbox'));
-
-		let re = document.createEvent("Event");
-		re.initEvent("DTA:ready", true, false);
-		window.dispatchEvent(re);
+		window.removeEventListener("unload", dieEarly, false);
+		let evt = document.createEvent("Event");
+		evt.initEvent("DTA:ready", true, false);
+		window.dispatchEvent(evt);
 	},
 
 	reinit: function(mustClear) {
