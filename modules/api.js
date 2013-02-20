@@ -421,22 +421,12 @@ var isManagerPending = false;
 var managerRequests = [];
 function openManagerCallback(event) {
 	log(LOG_DEBUG, "manager ready; pushing queued items");
-	event.target.removeEventListener("unload", openManagerDiedCallback, false);
 	event.target.removeEventListener("DTA:ready", openManagerCallback, true);
 	for (let cb of managerRequests) {
 		cb(event.target);
 	}
 	managerRequests.length = 0;
 	isManagerPending = false;
-}
-function openManagerDiedCallback(event) {
-	event.target.removeEventListener("unload", openManagerDiedCallback, false);
-	event.target.removeEventListener("DTA:ready", openManagerCallback, true);
-	isManagerPending = false;
-	if (managerRequests.length) {
-		log(LOG_ERROR, "manager died early, reopen");
-		exports.openManager();
-	}
 }
 
 exports.openManager = function openManager(window, quiet, cb) {
@@ -473,7 +463,6 @@ exports.openManager = function openManager(window, quiet, cb) {
 			managerRequests.push(cb);
 		}
 		isManagerPending = true;
-		win.addEventListener("unload", openManagerDiedCallback, false);
 		win.addEventListener("DTA:ready", openManagerCallback, true);
 	}
 	catch(ex) {
