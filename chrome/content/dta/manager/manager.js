@@ -2637,7 +2637,7 @@ var ConflictManager = {
 		let download = cur.download;
 		download.conflicts = 0;
 		let basename = download.destinationName;
-		let newDest = download.destinationLocalFile;
+		let newDest = download.destinationLocalFile.clone();
 		let i = 1;
 		for (;; ++i) {
 			newDest.leafName = Utils.formatConflictName(basename, i);
