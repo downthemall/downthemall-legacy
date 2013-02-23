@@ -2066,7 +2066,7 @@ QueueItem.prototype = {
 			this._destinationName = this.fileName;
 			this._destinationPath = Utils.addFinalSlash(this.pathName);
 			this._destinationNameFull = Utils.formatConflictName(
-					this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
+					this.destinationNameOverride || this._destinationName,
 					this.conflicts
 				);
 			let file = new Instances.LocalFile(this.destinationPath);
