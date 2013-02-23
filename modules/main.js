@@ -286,6 +286,21 @@ function registerOverlays() {
 				.load(window, event);
 		}
 		function _maybeInsertButtons(ids, attr) {
+			function persist(tb, attr) {
+				tb.setAttribute(attr, tb.currentSet);
+				tb.ownerDocument.persist(tb.id, attr);
+				try {
+					var evt = document.createEvent("Events");
+					evt.initEvent("aftercustomization", true, true);
+					tb.toolbox.dispatchEvent(evt);
+					if ("BrowserToolboxCustomizeDone" in window) {
+						window.BrowserToolboxCustomizeDone(true);
+					}
+				}
+				catch(ex) {
+					log(LOG_ERROR, "failed to fire customization event", ex);
+				}
+			}
 			// Simply need to get the currentset attribute, which will still contain
 			// the id and reset it and tb.currentSet
 			try {
@@ -329,10 +344,7 @@ function registerOverlays() {
 						li.splice(idx, 0, id);
 					}
 					tb.currentSet = li.join(",");
-					tb.setAttribute("currentset", tb.currentSet);
-					tb.setAttribute("downthemall-currentset", tb.currentSet);
-					tb.ownerDocument.persist(tb.id, "currentset");
-					tb.ownerDocument.persist(tb.id, "downthemall-currentset");
+					persist(tb, "downthemall-currentset");
 					log(LOG_DEBUG, insertIds + " buttons restored in " + tb.id);
 				}
 			}
