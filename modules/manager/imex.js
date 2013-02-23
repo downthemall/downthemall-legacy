@@ -12,44 +12,26 @@ const {filterInSitu} = require("utils");
 
 const XPathResult = Ci.nsIDOMXPathResult;
 
-exports.parseTextFile = function parseTextFile(aFile) {
-	function addLine(line) {
-		try {
-			// try to parse the URI and and see if it is of the correct type.
-			line = line.value.replace(/^\s+|\s+$/g, '');
-			lines.push(line);
-		}
-		catch (ex) {
-			log(LOG_ERROR, "not processing line " + line.value, ex);
-		}
-	}
-
+exports.parseTextFile = function parseTextFile(aFile, cb) {
 	log(LOG_INFO, "Parsing text file: " + aFile.spec);
-	// Open the file in a line reader
-	let is = new Instances.FileInputStream(aFile, 0x01, 0, 0);
-	let ls = is.QueryInterface(Ci.nsILineInputStream);
-	let line = {};
-	let lines = [];
-
-	while(ls.readLine(line)) {
-		addLine(line);
-	}
-	addLine(line);
-	is.close();
-	log(LOG_DEBUG, "Got lines: " + lines.length);
-
-	let links = [];
-	for (let l of getTextLinks(lines.join("\n"), false)) {
-		l = Services.io.newURI(l, null, null);
-		links.push({
-			url: new DTA.URL(l),
-			referrer: null,
-			description: 'imported from ' + aFile.leafName,
-			isPrivate: false
-		});
-	}
-	log(LOG_INFO, "parsed text file, links: " + links.length);
-	return filterInSitu(links, function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)), {});
+	let req = new Instances.XHR();
+	req.onload = function() {
+		let links = [];
+		for (let l of getTextLinks(req.responseText, false)) {
+			l = Services.io.newURI(l, null, null);
+			links.push({
+				url: new DTA.URL(l),
+				referrer: null,
+				description: 'imported from ' + aFile.leafName,
+				isPrivate: false
+			});
+		}
+		log(LOG_INFO, "parsed text file, links: " + links.length);
+		cb(filterInSitu(links, function(e) (e = e.url.spec) && !((e in this) || (this[e] = null)), {}));
+	};
+	req.overrideMimeType("text/plain");
+	req.open("GET", Services.io.newFileURI(aFile).spec);
+	req.send();
 }
 
 exports.exportToTextFile = function exportToTextFile(aDownloads, aFile, aPermissions) {

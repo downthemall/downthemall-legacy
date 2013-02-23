@@ -1106,10 +1106,11 @@ const Tree = {
 					Metalinker.handleFile(fp.file);
 					return;
 				}
-				let links = ImportExport.parseTextFile(fp.file);
-				if (links.length) {
-					DTA.saveLinkArray(window, links, []);
-				}
+				let links = ImportExport.parseTextFile(fp.file, function importcb(links) {
+					if (links.length) {
+						DTA.saveLinkArray(window, links, []);
+					}
+				});
 			}
 			catch (ex) {
 				log(LOG_ERROR, "Cannot import downloads (processResponse)", ex);
