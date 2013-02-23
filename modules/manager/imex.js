@@ -56,7 +56,7 @@ exports.exportToTextFile = function exportToTextFile(aDownloads, aFile, aPermiss
 	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
 	let cs = new Instances.ConverterOutputStream(fs, null, 0, null);
 	for (let d in aDownloads) {
-		let url = d.urlManager.url.spec;
+		let url = d.urlManager.spec;
 		if (d.hashCollection) {
 			url += '#hash(' + d.hashCollection.full.type + ":" + d.hashCollection.full.sum + ")";
 		}
@@ -118,7 +118,7 @@ exports.exportToHtmlFile = function exportToHtmlFile(aDownloads, aDocument, aFil
 
 		let list = document.createElement('ol');
 		for (let d in aDownloads) {
-			let url = d.urlManager.url.spec;
+			let url = d.urlManager.spec;
 			if (d.hashCollection) {
 				url += '#hash(' + d.hashCollection.full.type + ":" + d.hashCollection.full.sum + ")";
 			}
@@ -198,11 +198,11 @@ exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocume
 		let r = document.createElementNS(NS_METALINKER3, 'resources');
 		for (let u in d.urlManager.all) {
 			let n = document.createElementNS(NS_METALINKER3, 'url');
-			let t = u.url.spec.match(/^(\w+):/);
+			let t = u.spec.match(/^(\w+):/);
 			n.setAttribute('type', t[1]);
 			n.setAttribute('preference', u.preference);
 			n.setAttributeNS(NS_DTA, 'usable', u.usable);
-			n.textContent = u.url.spec;
+			n.textContent = u.spec;
 			r.appendChild(n);
 		}
 		if (d.hashCollection) {
@@ -282,7 +282,7 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 				n.setAttribute('mediatype', t[1]);
 			}
 			n.setAttribute('priority', Math.max(200 - u.preference, 1).toFixed(0));
-			n.textContent = u.url.spec;
+			n.textContent = u.spec;
 
 			/* extention to include usabality of the url */
 			n.setAttributeNS(NS_DTA, 'usable', u.usable);

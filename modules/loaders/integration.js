@@ -486,7 +486,7 @@ exports.load = function load(window, outerEvent) {
 
 	function unique(i) filterInSitu(
 		i,
-		function(e) (e = e.url.url.spec) && !((e in this) || (this[e] = null)),
+		function(e) (e = e.url.spec) && !((e in this) || (this[e] = null)),
 		Object.create(null)
 		);
 
@@ -1010,7 +1010,7 @@ exports.load = function load(window, outerEvent) {
 			}
 			let mi = document.createElement("menuitem");
 			mi.setAttribute("label", strfn.cropCenter(s.name, 60));
-			mi.setAttribute("tooltiptext", s.url.spec);
+			mi.setAttribute("tooltiptext", o.url.spec);
 			mi.setAttribute("image", getIcon(s.name));
 			mi.setAttribute("command", cmd);
 			mi.info = o;

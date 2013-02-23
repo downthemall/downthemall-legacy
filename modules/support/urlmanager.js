@@ -46,6 +46,7 @@ UrlManager.prototype = Object.freeze({
 		lazy(this, "usableURL", this._usableURL);
 		lazy(this, "usableURLPath", this._usableURLPath);
 		lazy(this, "host", this._host);
+		lazy(this, "spec", this._spec);
 		this._domain = Limits.getEffectiveHost(this._url);
 		this._makeGood();
 	},
@@ -58,12 +59,13 @@ UrlManager.prototype = Object.freeze({
 		return rv;
 	},
 	_host: function() this.usableURL.host,
+	_spec: function() this._url.spec,
 	add: function um_add(url) {
 		if (!url instanceof URL) {
 			throw new Exception(url + " is not an URL");
 		}
 		for (let i = 0; i < this._urls.length; ++i) {
-			if (this._urls[i]._urlSpec == url._urlSpec) {
+			if (this._urls[i].spec == url.spec) {
 				return;
 			}
 		}
@@ -102,7 +104,7 @@ UrlManager.prototype = Object.freeze({
 		}
 	},
 	replace: function(url, newurl) {
-		this._urls = this._urls.map(function(u) u.url.spec == url.url.spec ? newurl : u);
+		this._urls = this._urls.map(function(u) u.spec == url.spec ? newurl : u);
 		this._makeGood();
 	},
 	markBad: function um_markBad(url) {

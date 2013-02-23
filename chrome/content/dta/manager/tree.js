@@ -909,7 +909,7 @@ const Tree = {
 		let known = {};
 		let dupes = [];
 		for (let d of this.all) {
-			let url = d.urlManager.url.spec;
+			let url = d.urlManager.spec;
 			if (url in known) {
 				if (d.isOf(COMPLETE | FINISHING)) {
 					continue;
@@ -1141,7 +1141,7 @@ const Tree = {
 			"paneServers",
 			{
 				action: "addlimits",
-				url: this.current.urlManager.url.spec
+				url: this.current.urlManager.spec
 			}
 		);
 	},
@@ -1174,7 +1174,7 @@ const Tree = {
 			return false;
 		}
 		$("infoIcon").src = d.largeIcon;
-		$("infoURL").value = d.urlManager.url.spec;
+		$("infoURL").value = d.urlManager.spec;
 		$("infoDest").value = d.destinationFile;
 		$("infoDate").value = d.startDate.toLocaleString();
 		$("infoPrivate").hidden = !d.isPrivate;

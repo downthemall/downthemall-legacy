@@ -759,7 +759,7 @@ let Dialog = {
 			let s = {}, e = {};
 			tree.selection.getRangeAt(0, s, e);
 			let l = tree._links[s.value];
-			otext = _("openlink", [l.url.url.spec]);
+			otext = _("openlink", [l.url.spec]);
 		}
 		else {
 			otext = _("openlinks", [tree.selection.count]);
@@ -799,7 +799,7 @@ let Dialog = {
 				if (!d) {
 					continue;
 				}
-				text += d.url.url.spec + "\n";
+				text += d.url.spec + "\n";
 			}
 		}
 		if (!text.length) {
