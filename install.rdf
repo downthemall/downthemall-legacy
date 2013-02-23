@@ -7,6 +7,7 @@
 		<em:description>The mass downloader for Firefox.</em:description>
 		<em:version>3.0b2pre</em:version>
 		<em:bootstrap>true</em:bootstrap>
+		<em:type>2</em:type>
 
 		<em:creator>Federico Parodi, Stefano Verna, Nils Maier</em:creator>
 

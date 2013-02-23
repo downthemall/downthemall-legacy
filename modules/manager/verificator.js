@@ -28,8 +28,8 @@ function _verify(file, hashCollection, completeCallback, progressCallback) {
 
 	const mainHash = new Instances.Hash(nsICryptoHash[hashCollection.full.type]);
 	let flags = 0x04 | 0x08;
-	if ('OS_READAHEAD' in Ci.nsILocalFile) {
-		flags |= Ci.nsILocalFile.OS_READAHEAD;
+	if ('OS_READAHEAD' in Ci.nsIFile) {
+		flags |= Ci.nsIFile.OS_READAHEAD;
 		log(LOG_DEBUG, "enabled OS_READAHEAD");
 	}
 	const stream = new Instances.FileInputStream(file, flags, 502 /* 0766*/, 0);
@@ -75,8 +75,8 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 
 	let mainHash = new Instances.Hash(nsICryptoHash[hashCollection.full.type]);
 	let flags = 0x04 | 0x08;
-	if ('OS_READAHEAD' in Ci.nsILocalFile) {
-		flags |= Ci.nsILocalFile.OS_READAHEAD;
+	if ('OS_READAHEAD' in Ci.nsIFile) {
+		flags |= Ci.nsIFile.OS_READAHEAD;
 		log(LOG_DEBUG, "enabled OS_READAHEAD");
 	}
 	let stream = new Instances.FileInputStream(file, flags, 502 /* 0766 */, 0).QueryInterface(Ci.nsISeekableStream);

@@ -599,9 +599,9 @@ Prefs.addObserver("general.useragent.locale", {
 
 function OpenExternal_prepare(file) {
 	if (file instanceof Ci.nsIFile) {
-		return file.QueryInterface(Ci.nsILocalFile);
+		return file;
 	}
-	if (!(file instanceof Ci.nsILocalFile)) {
+	if (!(file instanceof Ci.nsIFile)) {
 		file = new Instances.LocalFile(file);
 	}
 	return file;
@@ -618,7 +618,7 @@ function OpenExternal_nixLaunch(file) {
 /**
  * Launch/Execute a file
  *
- * @param nsILocalFile/String
+ * @param nsIFile/String
  *          pointing to the desired file
  */
 exports.launch = function launch(file) {
@@ -639,7 +639,7 @@ exports.launch = function launch(file) {
  * Reveal a file, which will open the directory and furthermore select the
  * file on some platforms.
  *
- * @param nsILocalFile/String
+ * @param nsIFile/String
  *          pointing to the desired file
  */
 exports.reveal = function reveal(file) {
