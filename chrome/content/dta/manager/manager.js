@@ -2558,18 +2558,18 @@ XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
 var ConflictManager = {
 	_items: [],
 	resolve: function(download, reentry) {
-		if (!this._check(download)) {
-			if (reentry) {
-				download[reentry]();
-			}
-			return;
-		}
 		for (let item of this._items) {
 			if (item.download == download) {
 				log(LOG_DEBUG, "conflict resolution updated to: " + reentry);
 				item.reentry = reentry;
 				return;
 			}
+		}
+		if (!this._check(download)) {
+			if (reentry) {
+				download[reentry]();
+			}
+			return;
 		}
 		log(LOG_DEBUG, "conflict resolution queued to: " + reentry);
 		this._items.push({download: download, reentry: reentry});
