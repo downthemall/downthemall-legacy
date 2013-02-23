@@ -65,7 +65,7 @@ const FilterMatch = {
 			return null;
 		}
 		let _m = FilterManager.getMatcherFor(filters);
-		return function FilterMatcher(d) _m(d.urlManager.url.spec);
+		return function FilterMatcher(d) _m(d.urlManager.spec);
 	}
 };
 

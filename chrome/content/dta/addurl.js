@@ -138,7 +138,7 @@ var Dialog = {
 							hash = url.hash;
 							delete url.hash;
 						}
-						address.value = url.url.spec;
+						address.value = url.spec;
 						address.select();
 					}
 				}

@@ -40,7 +40,6 @@ function URL(url, preference, _fast) {
 	}
 
 	this._url = url.clone();
-	this._urlCharset = url.originCharset;
 	if (!_fast) {
 		let hash = exports.getLinkPrintHash(this._url);
 		this._url.ref = '';
@@ -48,25 +47,27 @@ function URL(url, preference, _fast) {
 			this.hash = hash;
 		}
 	}
-	this._urlSpec = this._url.spec;
-	this._usable = _decodeCharset(this._urlSpec, this._urlCharset);
+	lazy(this, "urlCharset", this._getCharset);
+	lazy(this, "spec", this._getSpec);
+	lazy(this, "usable", this._getUsable);
 };
 URL.schemes = ['http', 'https', 'ftp'];
 URL.prototype = Object.freeze({
+	_getCharset: function() this._url.originCharset,
+	_getSpec: function() this._url.spec,
+	_getUsable: function() _decodeCharset(this.spec, this._urlCharset),
+
 	get url() {
 		return this._url;
 	},
-	get usable() {
-		return this._usable;
-	},
 	toJSON: function() {
 		return 	{
-			url: this._urlSpec,
-			charset: this._urlCharset,
+			url: this.spec,
+			charset: this.urlCharset,
 			preference: this.preference
 		};
 	},
-	toString: function() this._usable
+	toString: function() this.usable
 });
 exports.URL = Object.freeze(URL);
 

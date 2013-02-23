@@ -31,7 +31,7 @@ var Dialog = {
 			if (this.downloads.length == 1) {
 				let d = this.downloads[0];
 				$("infoIcon").src = d.largeIcon;
-				$("infoURL").value = d.urlManager.url.spec;
+				$("infoURL").value = d.urlManager.spec;
 				$("infoDest").value = d.destinationFile;
 				$("infoDate").value = d.startDate.toLocaleString();
 				$("infoPrivate").hidden = !d.isPrivate;
