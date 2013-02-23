@@ -9,6 +9,11 @@ test("regular", function() {
 	deepEqual(getTextLinks("http://downthemall.net/"), ["http://downthemall.net/"]);
 	deepEqual(getTextLinks("https://downthemall.net/"), ["https://downthemall.net/"]);
 	deepEqual(getTextLinks("ftp://downthemall.net/"), ["ftp://downthemall.net/"]);
+	deepEqual(getTextLinks("http://localhost/"), ["http://localhost/"]);
+	deepEqual(getTextLinks("ftp://localhost/"), ["ftp://localhost/"]);
+	deepEqual(getTextLinks("http://127.0.0.1/"), ["http://127.0.0.1/"]);
+	deepEqual(getTextLinks("ftp://127.0.0.1/"), ["ftp://127.0.0.1/"]);
+	deepEqual(getTextLinks("http://localhost/somefile.ext"), ["http://localhost/somefile.ext"]);
 });
 
 test("www", function() {
