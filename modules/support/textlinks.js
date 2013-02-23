@@ -4,7 +4,7 @@
 "use strict";
 
 // Link matcher
-const regLinks = /\b(?:(?:h(?:x+|tt)?ps?|f(?:x+|t)p):\/\/|www\d?\.)[\d\w.-]+\.\w+\.?(?:\/[\d\w+&@#\/%?=~_|!:,.;\(\)-]*)?/ig;
+const regLinks = /\b(?:(?:h(?:x+|tt)?ps?|f(?:x+|t)p):\/\/|www\d?\.)[\d\w.-]+\.?(?:\/[\d\w+&@#\/%?=~_|!:,.;\(\)-]*)?/ig;
 // Match more exactly or more than 3 dots. Links are then assumed "cropped" and will be ignored.
 const regShortened = /\.{3,}/;
 // http cleanup
