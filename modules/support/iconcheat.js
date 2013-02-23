@@ -72,7 +72,7 @@ exports.loadWindow = (function() {
 		}
 	});
 
-	let profileDir = Services.dirsvc.get("ProfD", Ci.nsILocalFile);
+	let profileDir = Services.dirsvc.get("ProfD", Ci.nsIFile);
 	let iconDir = profileDir.clone();
 	iconDir.append('icons');
 	iconDir.append('default');

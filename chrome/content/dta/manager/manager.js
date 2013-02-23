@@ -1149,7 +1149,7 @@ const Dialog = {
 		}
 		let tmpEnum = Prefs.tempLocation.directoryEntries;
 		let unknown = [];
-		for (let f in new Utils.SimpleIterator(tmpEnum, Ci.nsILocalFile)) {
+		for (let f in new Utils.SimpleIterator(tmpEnum, Ci.nsIFile)) {
 			if (f.leafName.match(/\.dtapart$/) && known.indexOf(f.leafName) == -1) {
 				unknown.push(f);
 			}
@@ -1566,7 +1566,7 @@ QueueItem.prototype = {
 			QueueStore.saveDownload(this.dbId, JSON.stringify(this));
 			return true;
 		}
-		this.dbId = QueueStore.addDownload(JSON.stringify(this), this.position);
+		this.dbId = QueueStore.queueDownload(JSON.stringify(this), this.position);
 		return true;
 	},
 	remove: function() {

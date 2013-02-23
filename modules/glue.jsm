@@ -134,7 +134,7 @@ LRUMap.prototype = Object.freeze({
 	itor("FilePicker", "@mozilla.org/filepicker;1", "nsIFilePicker", "init");
 	itor("InputStreamPump", "@mozilla.org/network/input-stream-pump;1", "nsIInputStreamPump", "init");
 	itor("Hash", "@mozilla.org/security/hash;1", "nsICryptoHash", "init");
-	itor("LocalFile", "@mozilla.org/file/local;1", "nsILocalFile", "initWithPath");
+	itor("LocalFile", "@mozilla.org/file/local;1", "nsIFile", "initWithPath");
 	itor("Pipe", "@mozilla.org/pipe;1", "nsIPipe", "init");
 	itor("Process", "@mozilla.org/process/util;1", "nsIProcess", "init");
 	itor("Sound", "@mozilla.org/sound;1", "nsISound", "play");

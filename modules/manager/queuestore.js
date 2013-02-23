@@ -151,7 +151,7 @@ const QueueStore = {
 			log(LOG_ERROR, "QueueStore: Cannot backup queue", ex);
 		}
 	},
-	addDownload: function(download, position) {
+	queueDownload: function(download, position) {
 		if (!download) {
 			throw new Exception("You must provide a Download to save!");
 		}

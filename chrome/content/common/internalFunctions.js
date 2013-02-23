@@ -148,15 +148,14 @@ var Utils = {
 	 * Performs all the needed controls to see if the specified path is valid, is
 	 * creable and writable and his drive has some free disk space.
 	 *
-	 * @param path
-	 *          The path to test
-	 * @return a nsILocalFile to the specified path if it's valid, false if it
+	 * @param path The path to test
+	 * @return a nsIFile to the specified path if it's valid, false if it
 	 *         wasn't
 	 */
 	validateDir: function(path) {
 		let directory = null;
 		try {
-			if (!(path instanceof Ci.nsILocalFile)) {
+			if (!(path instanceof Ci.nsIFile)) {
 				if (!path || !String(path).trim().length) {
 					return false;
 				}
@@ -180,7 +179,7 @@ var Utils = {
 			}
 			if (parent) {
 				// from nsIFile
-				parent = parent.QueryInterface(Ci.nsILocalFile);
+				parent = parent.QueryInterface(Ci.nsIFile);
 				// we look for a directory that is writable and has some disk-space
 				if (parent.isDirectory() && parent.isReadable() && parent.isWritable()) {
 					try {
@@ -199,11 +198,11 @@ var Utils = {
 		return false;
 	},
 	/**
-	 * Gets the disk-space available for a nsILocalFile. Here, because
+	 * Gets the disk-space available for a nsIFile. Here, because
 	 * diskSpaceAvailable requires valid path and/or path to be a directory
 	 *
 	 * @param file
-	 *          Valid nsILocalFile
+	 *          Valid nsIFile
 	 * @return the disk-space available to the caller
 	 * @author Nils
 	 */

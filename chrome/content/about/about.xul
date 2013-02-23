@@ -5,10 +5,5 @@
 	 - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<script type="text/javascript"><![CDATA[
-		Components.utils.import("chrome://dta-modules/content/glue.jsm", {})
-			.require("support/mediator")
-			.showAbout(window.opener);
-		close();
-	]]></script>
+	<script type="text/javascript" src="about.js"/>
 </dialog>

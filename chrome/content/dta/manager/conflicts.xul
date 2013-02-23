@@ -32,34 +32,7 @@
 			<stringbundle src="chrome://dta/locale/conflicts.properties"/>
 		</stringbundleset>
 		<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js"/>
-
-		<script type="application/javascript"><![CDATA[
-			function load() {
-				var w = window.arguments[0];
-
-				$("s1").label = _('rename2.label', ['"' + w.newDest + '"']);
-				$("text").appendChild(document.createTextNode(_('text2.label', ['"' + w.fn + '"'])));
-				$("question").appendChild(document.createTextNode(_('question2.label', ['"' + w.url + '"'])));
-
-				window.sizeToContent();
-			}
-			function accept() {
-				try {
-					window.arguments[1]._returnFromDialog(
-						$('choice').selectedIndex,
-						$('context').selectedIndex
-					);
-					return true;
-				}
-				catch (ex) {
-					log(LOG_ERROR, "accept() : ", ex);
-				}
-				return false;
-			}
-			opener.addEventListener("unload", function unloadOpener() {
-				opener.removeEventListener("unload", unloadOpener, false);
-			}, false);
-		]]></script>
+		<script type="application/javascript" src="conflicts.js"/>
 
 		<vbox flex="1" style="padding-left: 35px; background: url('chrome://dta/skin/manager/alert.png') no-repeat 0 0;">
 			<description id="text"/>
