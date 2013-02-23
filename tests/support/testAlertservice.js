@@ -7,6 +7,7 @@ test("exports", function() {
 if (require("support/alertservice").available) {
 	test("show", function() {
 		require("support/alertservice").show("test", "test");
+		ok(true);
 	});
 }
 else {
