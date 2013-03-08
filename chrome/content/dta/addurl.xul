@@ -63,9 +63,9 @@
 		</menupopup>
 	</popupset>
 
-	<grid onclick="event.stopPropagation();" >
+	<grid onclick="event.stopPropagation();">
 		<columns>
-			<column />
+			<column flex="1"/>
 			<column flex="1"/>
 		</columns>
 		<rows>
@@ -83,26 +83,26 @@
 				</vbox>
 			</row>
 			<row align="center">
-				<label control="address" value="&url.value;:" class="header"/>
+				<label control="address" class="header">&url.value;:</label>
 				<textbox id="address" type="autocomplete" autocompletesearch="history" completedefaultindex="true"/>
 			</row>
 			<row align="center">
-				<label control="URLref" id="URLrefTitle" value="&referrer.value;" style="font-style: italic;" />
+				<label control="URLref" id="URLrefTitle" style="font-style: italic;">&referrer.value;</label>
 				<textbox id="URLref" type="autocomplete" autocompletesearch="history" completedefaultindex="true" />
 			</row>
 			<row align="center">
-				<label control="description" value="&description.value;" style="font-style: italic;"/>
+				<label control="description" style="font-style: italic;">&description.value;</label>
 				<textbox id="description" type="autocomplete" />
 			</row>
 			<row align="center">
-				<label control="directory" id="destinationPath" value="&directory.caption;" />
+				<label control="directory" id="destinationPath">&directory.caption;</label>
 				<hbox flex="1">
 					<saveddropdown id="directory" preference="directory" flex="1"/>
 					<toolbarbutton id="browsedir" class="toolbarbutton-1" oncommand="Dialog.browseDir();" tooltiptext="&browse.tooltip;" />
 				</hbox>
 			</row>
 			<row align="center">
-				<label control="renaming" id="infoDestTitle" value="&mask2.label;: " />
+				<label control="renaming" id="infoDestTitle">&mask2.label;:</label>
 				<vbox>
 					<hbox>
 						<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
@@ -112,7 +112,7 @@
 				</vbox>
 			</row>
 			<row align="center">
-				<label control="hash" value="&checksum.value;" style="font-style: italic;" />
+				<label control="hash" style="font-style: italic;">&checksum.value;</label>
 				<hashinput id="hash"/>
 			</row>
 		</rows>
