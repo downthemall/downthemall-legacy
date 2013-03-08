@@ -3,7 +3,13 @@
 @namespace html url("http://www.w3.org/1999/xhtml");
 
 dialog {
-	max-width: 540px;
+	width: 590px;
+	min-width: 500px;
+	max-width: 900px;
+}
+
+grid > rows > row > label {
+	text-overflow: ellipsis;
 }
 
 #icon {
