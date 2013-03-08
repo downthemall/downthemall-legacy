@@ -227,15 +227,17 @@ Tree.prototype = {
 	performAction: function(action) {},
 	performActionOnRow: function(action, index, column) {},
 	performActionOnCell: function(action, index, column) {},
-	getColumnProperties: function(column, element, prop) {},
+	getColumnProperties_legacy: function(column, element, prop) {},
+	getColumnProperties: function(column, element) "",
 
-	getRowProperties: function(idx, prop) {
+	getRowProperties_legacy: function(idx, prop) {
 		let l = this._links[idx];
 		// AppendElement will just accept nsIAtom.
 		// no documentation on devmo, xulplanet though :p
 		prop.AppendElement(this._atoms.getAtom(l.checked));
 	},
-	getCellProperties: function(idx, column, prop) {
+	getRowProperties: function(idx) this._links[idx].checked,
+	getCellProperties_legacy: function(idx, column, prop) {
 		// col 1 is our url... it should display the type icon
 		// to better be able to style add a property.
 		if (column.index == 1) {
@@ -243,6 +245,14 @@ Tree.prototype = {
 		}
 		let l = this._links[idx];
 		prop.AppendElement(this._atoms.getAtom(l.checked));
+	},
+	getCellProperties: function(idx, column) {
+		// col 1 is our url... it should display the type icon
+		// to better be able to style add a property.
+		if (column.index == 1) {
+			return "iconic " + this._links[idx].checked;
+		}
+		return this._links[idx].checked;
 	},
 
 	// called when the user clicks our checkboxen
@@ -269,6 +279,11 @@ Tree.prototype = {
 	}
 };
 requireJoined(Tree.prototype, "support/atoms");
+if (Components.interfacesByID["{C06DC4D3-63A2-4422-A0A3-5F2EDDECA8C1}"]) {
+	Tree.prototype.getCellProperties = Tree.prototype.getCellProperties_legacy;
+	Tree.prototype.getColumnProperties = Tree.prototype.getColumnProperties_legacy;
+	Tree.prototype.getRowProperties = Tree.prototype.getRowProperties_legacy;
+}
 
 /**
  * Our real, kicks ass implementation of the UI

@@ -171,6 +171,12 @@ const Filters = {
 	},
 
 	load: function() {
+		if (Components.interfacesByID["{C06DC4D3-63A2-4422-A0A3-5F2EDDECA8C1}"]) {
+			this.getCellProperties = this.getCellProperties_legacy;
+			this.getColumnProperties = this.getColumnProperties_legacy;
+			this.getRowProperties = this.getRowProperties_legacy;
+		}
+
 		this._elem = $("filterTable");
 		this._elem.view = this;
 
@@ -390,9 +396,12 @@ const Filters = {
 	performAction: function(action) {},
 	performActionOnRow: function(action, index, column) {},
 	performActionOnCell: function(action, index, column) {},
-	getRowProperties: function(idx, prop) {},
-	getCellProperties: function(idx, column, prop) {},
-	getColumnProperties: function(column, element, prop) {},
+	getRowProperties_legacy: function(idx, prop) {},
+	getRowProperties: function(idx) "",
+	getCellProperties_legacy: function(idx, column, prop) {},
+	getCellProperties: function(idx, column) "",
+	getColumnProperties_legacy: function(column, element, prop) {},
+	getColumnProperties: function(column, element) "",
 	setCellValue: function(idx, col, value) {}
 };
 

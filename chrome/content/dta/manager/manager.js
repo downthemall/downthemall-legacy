@@ -1660,6 +1660,12 @@ QueueItem.prototype = {
 		}
 		return this._icon;
 	},
+	get iconProp() {
+		if (!this._icon) {
+			this._icon = (this.isPrivate ? "iconic private " : "iconic ") + FileExts.getAtom(this.destinationName, 'metalink' in this).toString();
+		}
+		return this._icon;
+	},
 	get largeIcon() {
 		return getLargeIcon(this.destinationName, 'metalink' in this);
 	},
