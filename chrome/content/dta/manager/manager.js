@@ -1069,6 +1069,17 @@ const Dialog = {
 				return false;
 			}
 		}
+		if (Tree.some(function(d) d.isPrivate && d.state != COMPLETE)) {
+			var rv = Prompts.confirmYN(
+				window,
+				_("confclose"),
+				_("privateclose")
+			);
+			if (rv) {
+				return false;
+			}
+		}
+
 		return (this._forceClose = true);
 	},
 	close: function() this.shutdown(this._doneClosing),
@@ -1101,7 +1112,10 @@ const Dialog = {
 		log(LOG_INFO, "Going to close all");
 		Tree.updateAll(
 			function(d) {
-				if (d.is(RUNNING)) {
+				if (!d.is(COMPLETE) && d.isPrivate) {
+					d.cancel();
+				}
+				else if (d.is(RUNNING)) {
 					// enumerate all running chunks
 					for (let c of d.chunks) {
 						if (c.running) {
