@@ -42,13 +42,7 @@
 	</hbox>
 
 	<grid id="canvasGrid">
-		<columns>
-			<column/>
-			<column/>
-			<column flex="1"/>
-			<column/>
-			<column/>
-		</columns>
+		<columns><column/><column flex="1"/><column/><column flex="1"/></columns>
 		<rows>
 			<separator class="thin"/>
 			<stack id="chunkStack" flex="1" align="center">
@@ -57,19 +51,17 @@
 			</stack>
 			<row>
 				<label value="&elapsedTitle.value;"/>
-				<label id="timeElapsed" crop="end" class="tooltip-fixed"/>
-				<box/>
+				<label id="timeElapsed"/>
 				<label value="&remainingTitle.value;"/>
-				<label id="timeRemaining" crop="end" class="tooltip-fixed"/>
+				<label id="timeRemaining" crop="center"/>
 			</row>
 			<separator class="thin" />
 			<html:canvas id="speedCanvas" height="50"/>
 			<row id="speedRow">
 				<label value="&currentSpeedTitle.value;"/>
-				<label id="speedCurrent" crop="end" class="tooltip-fixed"/>
-				<box/>
+				<label id="speedCurrent"/>
 				<label value="&avgSpeedTitle.value;"/>
-				<label id="speedAverage" crop="end" class="tooltip-fixed"/>
+				<label id="speedAverage"/>
 			</row>
 		</rows>
 	</grid>
