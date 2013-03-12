@@ -1,19 +1,30 @@
-<!ENTITY mask.curl "フル URL">
-<!ENTITY mask.d "日">
-<!ENTITY mask.ext "拡張子">
-<!ENTITY mask.flatcurl "フラットフル URL">
-<!ENTITY mask.flatsubdirs "フラット URL サブディレクトリ">
-<!ENTITY mask.hh "時">
-<!ENTITY mask.inum "アイテムの数">
-<!ENTITY mask.m "月">
-<!ENTITY mask.mm "分">
+<!ENTITY mask.tags "ファイル名規則のタグ一覧">
 <!ENTITY mask.name "ファイルの名前">
-<!ENTITY mask.open.tip "名前の変更に使用できるタグの一覧を表示します">
-<!ENTITY mask.qstring "処理要求文字列">
-<!ENTITY mask.refer "参照元の URL">
-<!ENTITY mask.ss "秒">
-<!ENTITY mask.subdirs "URL のサブディレクトリ">
-<!ENTITY mask.tip "クリックかドラッグで追加できます">
-<!ENTITY mask.title "リンクに付与されたタイトル">
+<!ENTITY mask.ext "拡張子">
 <!ENTITY mask.url "ベース URL">
+<!ENTITY mask.curl "フル URL">
+<!ENTITY mask.flatcurl "フラットフル URL">
+<!ENTITY mask.batch "連番数字">
+<!ENTITY mask.inum "アイテムの数">
+<!ENTITY mask.hh "時">
+<!ENTITY mask.mm "分">
+<!ENTITY mask.ss "秒">
+<!ENTITY mask.d "日">
+<!ENTITY mask.m "月">
 <!ENTITY mask.y "年">
+<!ENTITY mask.subdirs "URL のサブディレクトリ">
+<!ENTITY mask.flatsubdirs "フラット URL サブディレクトリ">
+<!ENTITY mask.linktext "リンクの文字列">
+<!ENTITY mask.flatlinktext "フラットリンクテキスト">
+<!ENTITY mask.refername "リファラーネーム">
+<!ENTITY mask.referext "リファラーの拡張子">
+<!ENTITY mask.refer "リファラーファラー URL">
+<!ENTITY mask.crefer "フルリファラー">
+<!ENTITY mask.flatcrefer "フラットフルリファラー">
+<!ENTITY mask.referdirs "リファラーのサブディレクトリ">
+<!ENTITY mask.flatreferdirs "フラットリファラーのサブディレクトリ">
+<!ENTITY mask.qstring "処理要求文字列">
+<!ENTITY mask.title "リンクに付与されたタイトル">
+<!ENTITY mask.flattitle2 "リンクに付与されたタイトル">
+<!ENTITY mask.tip "クリックかドラッグで追加できます">
+<!ENTITY mask.open.tip "名前の変更に使用できるタグの一覧を表示します">
