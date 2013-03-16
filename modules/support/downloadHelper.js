@@ -5,6 +5,7 @@
 const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 if (available) {
 	lazy(this, "api", function() require("api"));
+	lazy(this, "getUsableFileNameWithFlatten", function() require("support/stringfuncs").getUsableFileNameWithFlatten);
 	lazy(this, "utils", function() require("utils"));
 	lazy(this, "bundle", function() new (require("utils").StringBundles)(["chrome://dta/locale/downloadHelper.properties"]));
 
@@ -70,7 +71,7 @@ if (available) {
 				item.description = props.label || null;
 			}
 			if (item.description && props.fileExtension) {
-				item.fileName = item.destinationName = item.description + "." + props.fileExtension;
+				item.fileName = item.destinationName = getUsableFileNameWithFlatten(item.description + "." + props.fileExtension);
 			}
 			return item;
 		},
