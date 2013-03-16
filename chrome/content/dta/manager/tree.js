@@ -65,6 +65,13 @@ const Tree = {
 		for each (let e in ['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined', 'pausedAutoretrying', 'verified', 'progress']) {
 			this['_' + e] = this._as.getAtom(e);
 		}
+		
+		if (Components.interfacesByID["{C06DC4D3-63A2-4422-A0A3-5F2EDDECA8C1}"]) { 
+			this.getCellProperties = this.getCellProperties_legacy; 
+			this.getColumnProperties = this.getColumnProperties_legacy; 
+			this.getRowProperties = this.getRowProperties_legacy; 
+		}
+
 		this.elem.view = this;	
 		this.assembleMenus();
 		this.refreshTools();
@@ -182,7 +189,7 @@ const Tree = {
 		}
 		return null;
 	},
-	getCellProperties: function T_getCellProperties(idx, col, prop) {
+	getCellProperties_legacy: function T_getCellProperties(idx, col, prop) {
 		let cidx = col.index;
 		if (cidx == 1) {
 			prop.AppendElement(this._iconic);
@@ -215,14 +222,70 @@ const Tree = {
 			prop.AppendElement(this._downloads[idx].iconAtom);
 		}
 	},
+	_cpprop_iconic: "iconic progress", 
+	_cpprop_iconiccomplete: "iconic progress completed", 
+	_cpprop_iconicverified: "iconic progress completed verified", 
+	_cpprop_iconicpaused: "iconic progress paused", 
+	_cpprop_iconicpausedundetermined: "iconic progress paused pausedUndetermined", 
+	_cpprop_iconicpausedretrying: "iconic progress paused pausedAutoretrying", 
+	_cpprop_iconicpausedundeterminedretrying: "iconic progress paused pausedUndetermined pausedAutoretrying", 
+	_cpprop_iconicinprogress: "iconic progress inprogress", 
+	_cpprop_iconicicanceled: "iconic progress canceled", 
+	getCellProperties: function(idx, col) { 
+		const cidx = col.index; 
+		if (cidx != 1 && cidx != 0) { 
+			return ""; 
+		} 
+		else if (cidx == 1) { 
+			const d = this._downloads[idx]; 
+			if (!d) { 
+				return this._cpprop_iconic; 
+			} 
+			switch (d.state) { 
+			case QUEUED: 
+				return this._cpprop_iconic; 
+			case COMPLETE: 
+				if (d.hashCollection) { 
+					return this._cpprop_iconicverified; 
+				} 
+				return this._cpprop_iconiccomplete; 
+			case PAUSED: 
+				if (!d.totalSize || d.progress < 5) { 
+					if (d.autoretrying) { 
+						return this._cpprop_iconicpausedundeterminedretrying; 
+					} 
+					return this._cpprop_iconicpausedundetermined; 
+				} 
+				if (d.autoRetrying) { 
+					return this._cpprop_iconicpausedretrying; 
+				} 
+				return this._cpprop_iconicpaused; 
+			case FINISHING: 
+			case RUNNING: 
+				return this._cpprop_iconicinprogress; 
+			case CANCELED: 
+				return this._cpprop_iconicicanceled; 
+			} 
+		} 
+		else if (cidx == 0) { 
+			let d = this._downloads[idx]; 
+			if (!d) { 
+				return ""; 
+			} 
+			return d.iconProp; 
+		} 
+		return ""; 
+	},
 	// just some stubs we need to provide anyway to implement a full nsITreeView
 	cycleHeader: function T_cycleHeader(col, elem) {},
 	cycleCell: function(idx, column) {},
 	performAction: function(action) {},
 	performActionOnRow: function(action, index, column) {},
 	performActionOnCell: function(action, index, column) {},
-	getColumnProperties: function(column, element, prop) {},
-	getRowProperties: function(idx, prop) {},
+	getColumnProperties_legacy: function(column, element, prop) {},
+	getColumnProperties: function(column, element) "",
+	getRowProperties_legacy: function(idx, prop) {},
+	getRowProperties: function(idx) "",
 	setCellValue: function(idx, col, value) {},
 	selectionChanged: function T_selectionChanged() {
 		this.refreshTools();
