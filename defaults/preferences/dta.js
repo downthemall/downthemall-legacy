@@ -104,7 +104,7 @@ pref("extensions.dta.filters.deffilter-all.active", false);
 pref("extensions.dta.filters.deffilter-all.type", 3);
 
 pref("extensions.dta.filters.deffilter-arch.label", "Archives)");
-pref("extensions.dta.filters.deffilter-arch.test", "/\\.(?:z(?:ip|[0-9]{2})|r(?:ar|[0-9]{2})|jar|bz2|gz|tar|rpm)$/i");
+pref("extensions.dta.filters.deffilter-arch.test", "/\\.(?:z(?:ip|[0-9]{2})|r(?:ar|[0-9]{2})|jar|bz2|gz|tar|rpm|7z(?:ip)?|lzma|xz)$/i");
 pref("extensions.dta.filters.deffilter-arch.active", false);
 pref("extensions.dta.filters.deffilter-arch.type", 1);
 
