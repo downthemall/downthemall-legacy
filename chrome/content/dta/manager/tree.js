@@ -48,12 +48,12 @@ const Tree = {
 		addEventListener('blur', function() Tree.stopTip(), false);
 
 		let tp = this;
-		$("downloadList").addEventListener('dblclick', function() FileHandling.openFile(), false);
 		this.elem.addEventListener('select', function() tp.selectionChanged(), false);
 		this.elem.addEventListener('click', function(evt) { if (evt.button == 1) tp.showInfo(); }, false);
 
 		let dtree = $('downloadList');
 		dtree.addEventListener('dragstart', function(event) tp.onDragStart(event), false);
+		dtree.addEventListener('dblclick', function() FileHandling.openFile(), false);
 
 		$("matcher").addEventListener("command", function(event) tp.handleMatcherPopup(event), true);
 
