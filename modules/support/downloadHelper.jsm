@@ -44,6 +44,7 @@ const module = Cu.import;
 const Exception = Components.Exception;
 
 module("resource://gre/modules/XPCOMUtils.jsm");
+module("resource://dta/utils.jsm", {}).extendString(String);
 
 const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 
@@ -112,7 +113,7 @@ if (available) {
 				item.description = props.label || null;
 			}
 			if (item.description && props.fileExtension) {
-				item.fileName = item.destinationName = item.description + "." + props.fileExtension;
+				item.fileName = item.destinationName = (item.description + "." + props.fileExtension).getUsableFileNameWithFlatten();
 			}
 			return item;
 		},
