@@ -48,7 +48,7 @@ const Tree = {
 		addEventListener('blur', function() Tree.stopTip(), false);
 
 		let tp = this;
-		this.elem.addEventListener('dblclick', function() FileHandling.openFile(), false);
+		$("downloadList").addEventListener('dblclick', function() FileHandling.openFile(), false);
 		this.elem.addEventListener('select', function() tp.selectionChanged(), false);
 		this.elem.addEventListener('click', function(evt) { if (evt.button == 1) tp.showInfo(); }, false);
 
