@@ -48,13 +48,13 @@ const Tree = {
 		addEventListener('blur', function() Tree.stopTip(), false);
 		
 		let tp = this;
-		this.elem.addEventListener('dblclick', function() FileHandling.openFile(), false);
 		this.elem.addEventListener('select', function() tp.selectionChanged(), false);
 		this.elem.addEventListener('click', function(evt) { if (evt.button == 1) tp.showInfo(); }, false);
 		
 		let dtree = $('downloadList');
 		dtree.addEventListener('mousemove', function(event) tp.hovering(event), false);
 		dtree.addEventListener('dragstart', function(event) tp.onDragStart(event), false);
+		dtree.addEventListener('dblclick', function() FileHandling.openFile(), false);
 		
 		$('popup').addEventListener('popupshowing', function(event) tp.onPopupShowing(event), true);
 
