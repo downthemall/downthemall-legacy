@@ -43,11 +43,10 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const module = Cu.import;
 const Exception = Components.Exception;
 
 let Preferences = {};
-module("resource://dta/preferences.jsm", Preferences);
+Cu.import("resource://dta/preferences.jsm", Preferences);
 
 let available = false;
 let service = null;

@@ -42,17 +42,16 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const module = Cu.import;
 const Exception = Components.Exception;
 
-module("resource://dta/utils.jsm");
+Cu.import("resource://dta/utils.jsm");
 
 const DTA = {};
-module("resource://dta/api.jsm", DTA);
+Cu.import("resource://dta/api.jsm", DTA);
 const IOService = DTA.IOService;
 
 const Limits = {};
-module("resource://dta/support/serverlimits.jsm", Limits);
+Cu.import("resource://dta/support/serverlimits.jsm", Limits);
 
 function compareFn(a, b) {
 	const rv = b.preference - a.preference;

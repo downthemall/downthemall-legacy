@@ -39,9 +39,9 @@ var EXPORTED_SYMBOLS = ['confirm', 'confirmOC', 'confirmYN', 'alert'];
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
-const module = Components.utils.import;
+const Cu = Components.utils;
 
-module("resource://dta/utils.jsm")
+Cu.import("resource://dta/utils.jsm")
 
 // unpack the default button types
 for (let x in Components.interfaces.nsIPromptService) {

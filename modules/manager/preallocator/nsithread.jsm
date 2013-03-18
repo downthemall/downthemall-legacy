@@ -42,14 +42,13 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const module = Cu.import;
 const Exception = Components.Exception;
 
 const FileOutputStream = Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 const LocalFile = Components.Constructor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 
-module('resource://dta/utils.jsm');
-module('resource://dta/version.jsm');
+Cu.import('resource://dta/utils.jsm');
+Cu.import('resource://dta/version.jsm');
 
 Debug.logString("pa: using nsIThread implementation");
 

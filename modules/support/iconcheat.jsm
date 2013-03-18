@@ -42,20 +42,18 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 const Ctor = Components.Constructor;
-const re = Cu.reportError;
-const module = Cu.import;
 const Exception = Components.Exception;
 
 function loadWindow() {};
 
 try {
 	// moz-1.9.3+
-	module("resource://gre/modules/AddonManager.jsm");
+	Cu.import("resource://gre/modules/AddonManager.jsm");
 	
 	const ZipReader = Ctor("@mozilla.org/libjar/zip-reader;1", "nsIZipReader", "open");
 	
-	module("resource://dta/version.jsm");
-	module("resource://gre/modules/XPCOMUtils.jsm");
+	Cu.import("resource://dta/version.jsm");
+	Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 	
 	const DirectoryService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
 	if (!(DirectoryService instanceof Ci.nsIDirectoryService)) {
@@ -79,7 +77,7 @@ try {
 				jar.extract(entry, dst);
 			}
 			catch (ex) {
-				re(ex);
+				Cu.reportError(ex);
 			}
 		}
 	}

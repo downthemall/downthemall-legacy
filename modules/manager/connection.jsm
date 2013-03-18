@@ -41,7 +41,6 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 const ctor = Components.Constructor;
-const module = Cu.import;
 const Exception = Components.Exception;
 
 const NS_ERROR_MODULE_NETWORK = 0x804B0000;
@@ -53,13 +52,13 @@ const NS_ERROR_NET_RESET = NS_ERROR_MODULE_NETWORK + 20;
 const NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
 
 let DTA = {}, RequestManipulation = {};
-module("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-module('resource://dta/api.jsm', DTA);
-module('resource://dta/constants.jsm');
-module('resource://dta/utils.jsm');
-module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
-module('resource://dta/support/bytebucket.jsm');
+Cu.import('resource://dta/api.jsm', DTA);
+Cu.import('resource://dta/constants.jsm');
+Cu.import('resource://dta/utils.jsm');
+Cu.import('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
+Cu.import('resource://dta/support/bytebucket.jsm');
 
 const StringInputStream = ctor('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
 

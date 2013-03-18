@@ -40,12 +40,11 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const module = Cu.import;
 const Exception = Components.Exception;
 
-module("resource://dta/utils.jsm");
-module("resource://dta/support/icons.jsm");
-module("resource://dta/support/timers.jsm");
+Cu.import("resource://dta/utils.jsm");
+Cu.import("resource://dta/support/icons.jsm");
+Cu.import("resource://dta/support/timers.jsm");
 
 const Timers = new TimerManager();
 

@@ -66,12 +66,12 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const ctor = Components.Constructor;
 const error = Components.utils.reportError;
-const module = Components.utils.import;
+const Cu = Components.utils;
 const Exception = Components.Exception;
 
-module("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 const Prefs = {};
-module("resource://dta/preferences.jsm", Prefs);
+Cu.import("resource://dta/preferences.jsm", Prefs);
 
 const LocalFile = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 const FileStream = new ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');

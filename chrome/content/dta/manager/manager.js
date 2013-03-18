@@ -53,30 +53,30 @@ ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIOb
 ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 
 let Prompts = {}, Limits = {}, JSONCompat = {}, PrivateBrowsing = {};
-module('resource://dta/cothread.jsm');
-module('resource://dta/json.jsm', JSONCompat);
-module('resource://dta/support/urlmanager.jsm');
-module('resource://dta/prompts.jsm', Prompts);
+Cu.import('resource://dta/cothread.jsm');
+Cu.import('resource://dta/json.jsm', JSONCompat);
+Cu.import('resource://dta/support/urlmanager.jsm');
+Cu.import('resource://dta/prompts.jsm', Prompts);
 
-module('resource://dta/support/bytebucket.jsm');
-module('resource://dta/support/pbm.jsm', PrivateBrowsing);
-module('resource://dta/support/serverlimits.jsm', Limits);
-module('resource://dta/support/timers.jsm');
-module('resource://dta/support/fileextsheet.jsm');
+Cu.import('resource://dta/support/bytebucket.jsm');
+Cu.import('resource://dta/support/pbm.jsm', PrivateBrowsing);
+Cu.import('resource://dta/support/serverlimits.jsm', Limits);
+Cu.import('resource://dta/support/timers.jsm');
+Cu.import('resource://dta/support/fileextsheet.jsm');
 
 let Preallocator = {}, RequestManipulation = {};
-module('resource://dta/manager/preallocator.jsm', Preallocator);
-module('resource://dta/manager/connection.jsm');
-module('resource://dta/manager/queuestore.jsm');
-module('resource://dta/manager/speedstats.jsm');
-module('resource://dta/manager/visitormanager.jsm');
-module('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
-module('resource://dta/manager/globalprogress.jsm');
+Cu.import('resource://dta/manager/preallocator.jsm', Preallocator);
+Cu.import('resource://dta/manager/connection.jsm');
+Cu.import('resource://dta/manager/queuestore.jsm');
+Cu.import('resource://dta/manager/speedstats.jsm');
+Cu.import('resource://dta/manager/visitormanager.jsm');
+Cu.import('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
+Cu.import('resource://dta/manager/globalprogress.jsm');
 
 function lazyModule(obj, name, url, symbol) {
 	setNewGetter(obj, name, function() {
 		let _o = {};
-		module(url, _o);
+		Cu.import(url, _o);
 		return symbol ? _o[symbol] : _o;
 	});
 }
@@ -1179,7 +1179,7 @@ const Metalinker = {
 		});
 	}
 };
-module('resource://dta/support/metalinker.jsm', Metalinker);
+Cu.import('resource://dta/support/metalinker.jsm', Metalinker);
 
 function QueueItem(lnk, dir, num, desc, mask, referrer, tmpFile) {
 
@@ -2369,7 +2369,7 @@ QueueItem.prototype = {
 }
 setNewGetter(QueueItem.prototype, 'AuthPrompts', function() {
 	let _l = {};
-	module('resource://dta/support/loggedprompter.jsm', _l);
+	Cu.import('resource://dta/support/loggedprompter.jsm', _l);
 	return new _l.LoggedPrompter(window);
 }
 );

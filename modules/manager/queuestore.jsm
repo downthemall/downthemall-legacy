@@ -40,7 +40,7 @@ var EXPORTED_SYMBOLS = ['QueueStore'];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const module = Components.utils.import;
+const Cu = Components.utils;
 const Exception = Components.Exception;
 
 const DB_FILE = 'dta_queue.sqlite';
@@ -48,11 +48,11 @@ const DB_FILE_BROKEN = 'dta_queue.broken';
 const DB_FILE_BAK = DB_FILE + ".bak";
 const DB_VERSION = 1;
 
-module("resource://dta/utils.jsm");
+Cu.import("resource://dta/utils.jsm");
 
 let pbm = {};
-module("resource://dta/support/pbm.jsm", pbm);
-module("resource://dta/support/timers.jsm");
+Cu.import("resource://dta/support/pbm.jsm", pbm);
+Cu.import("resource://dta/support/timers.jsm");
 
 const Timers = new TimerManager();
 

@@ -41,11 +41,10 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 const Ctor = Components.Constructor;
-const module = Cu.import;
 const Exception = Components.Exception;
 
-module('resource://dta/version.jsm');
-module('resource://dta/utils.jsm');
+Cu.import('resource://dta/version.jsm');
+Cu.import('resource://dta/utils.jsm');
 
 ServiceGetter(this, "CookieManager", "@mozilla.org/cookiemanager;1", "nsICookieManager2");
 

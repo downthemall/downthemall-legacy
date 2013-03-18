@@ -39,10 +39,9 @@ const EXPORTED_SYMBOLS = ['GlobalProgress'];
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
-const module = Cu.import;
 const Exception = Components.Exception;
 
-module("resource://dta/utils.jsm");
+Cu.import("resource://dta/utils.jsm");
 
 function GlobalProgress(window) {
 	this.init(window);
@@ -72,7 +71,7 @@ GlobalProgress.prototype = {
 try {
 	// Windows7, mozilla 1.9.2
 	const wtb = Cc["@mozilla.org/windows-taskbar;1"]
-         .getService(Ci.nsIWinTaskbar);
+				 .getService(Ci.nsIWinTaskbar);
 	
 	if (!wtb.available) {
 		// Service is present but not supported
@@ -87,10 +86,10 @@ try {
 		_state: NO_PROGRESS,
 		init: function(window) {
 			let docShell = window.QueryInterface(Ci.nsIInterfaceRequestor).
-			    getInterface(Ci.nsIWebNavigation).
-			    QueryInterface(Ci.nsIDocShellTreeItem).treeOwner.
-			    QueryInterface(Ci.nsIInterfaceRequestor).
-			    getInterface(Ci.nsIXULWindow).docShell;
+					getInterface(Ci.nsIWebNavigation).
+					QueryInterface(Ci.nsIDocShellTreeItem).treeOwner.
+					QueryInterface(Ci.nsIInterfaceRequestor).
+					getInterface(Ci.nsIXULWindow).docShell;
 			this._progress = wtb.getTaskbarProgress(docShell);
 		},
 		exit: function() {

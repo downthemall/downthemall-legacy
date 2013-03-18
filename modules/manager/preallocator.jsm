@@ -42,15 +42,14 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const module = Cu.import;
 const Exception = Components.Exception;
 
-module('resource://dta/version.jsm');
+Cu.import('resource://dta/version.jsm');
 if (Version.moz1) {
-	module('resource://dta/manager/preallocator/nsithread.jsm');
+	Cu.import('resource://dta/manager/preallocator/nsithread.jsm');
 }
 else {
-	module('resource://dta/manager/preallocator/cothreads.jsm');
+	Cu.import('resource://dta/manager/preallocator/cothreads.jsm');
 }
 //var p = {}; Components.utils.import("resource://dta/manager/preallocator.jsm", p); p.test()
 function test() {
