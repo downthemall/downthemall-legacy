@@ -68,19 +68,18 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const module = Cu.import;
 const Exception = Components.Exception;
 
-module("resource://dta/utils.jsm");
+Cu.import("resource://dta/utils.jsm");
 
 const Preferences = {};
-module("resource://dta/preferences.jsm", Preferences);
+Cu.import("resource://dta/preferences.jsm", Preferences);
 const Mediator = {};
-module("resource://dta/support/mediator.jsm", Mediator);
+Cu.import("resource://dta/support/mediator.jsm", Mediator);
 const Histories = {};
-module("resource://dta/support/historymanager.jsm", Histories);
+Cu.import("resource://dta/support/historymanager.jsm", Histories);
 const pbm = {};
-module("resource://dta/support/pbm.jsm", pbm);
+Cu.import("resource://dta/support/pbm.jsm", pbm);
 
 ServiceGetter(this, "TextToSubURI", "@mozilla.org/intl/texttosuburi;1", "nsITextToSubURI");
 ServiceGetter(this, "IOService", "@mozilla.org/network/io-service;1", "nsIIOService");

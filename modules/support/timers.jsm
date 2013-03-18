@@ -38,14 +38,14 @@ const EXPORTED_SYMBOLS = ['TimerManager'];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const module = Components.utils.import;
+const Cu = Components.utils;
 const Exception = Components.Exception;
 
 const nsITimer = Ci.nsITimer;
 const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'init');
 
-module("resource://gre/modules/XPCOMUtils.jsm");
-module("resource://dta/utils.jsm")
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://dta/utils.jsm")
 
 // Represents the (private) timer data and observer
 function TimerData(owner, time, type, func, ctx) {

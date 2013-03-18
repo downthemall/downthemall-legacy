@@ -38,7 +38,7 @@ const EXPORTED_SYMBOLS = ['Version'];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const module = Components.utils.import;
+const Cu = Components.utils;
 
 const ID = 'dta@downthemall.net'; 
 
@@ -99,7 +99,7 @@ function completeVersion(addon) {
 
 try {
 	// moz-1.9.3+
-	module("resource://gre/modules/AddonManager.jsm");
+	Cu.import("resource://gre/modules/AddonManager.jsm");
 	Version.moz2 = true;
 	AddonManager.getAddonByID(Version.ID, function(addon) {
 		completeVersion(addon);

@@ -41,18 +41,17 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const module = Cu.import;
 const Exception = Components.Exception;
 
-module("resource://dta/api.jsm");
-module("resource://dta/utils.jsm");
+Cu.import("resource://dta/api.jsm");
+Cu.import("resource://dta/utils.jsm");
 
 extendString(String);
 
 setNewGetter(this, "FavIcons", function() {
 	try {
 		return Cc['@mozilla.org/browser/favicon-service;1']
-	       .getService(Ci.nsIFaviconService);
+				 .getService(Ci.nsIFaviconService);
 	}
 	catch (ex) {
 		Debug.log("FavIcon Service not available", ex);

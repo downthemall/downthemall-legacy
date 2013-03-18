@@ -45,13 +45,12 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 const Ctor = Components.Constructor;
-const module = Cu.import;
 const Exception = Components.Exception;
 
 const DTA = {};
-module("resource://dta/utils.jsm");
-module("resource://dta/api.jsm", DTA);
-module("resource://dta/support/timers.jsm");
+Cu.import("resource://dta/utils.jsm");
+Cu.import("resource://dta/api.jsm", DTA);
+Cu.import("resource://dta/support/timers.jsm");
 
 const IOService = DTA.IOService;
 const Prefs = DTA.Preferences;

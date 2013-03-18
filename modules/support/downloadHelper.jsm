@@ -40,11 +40,10 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const module = Cu.import;
 const Exception = Components.Exception;
 
-module("resource://gre/modules/XPCOMUtils.jsm");
-module("resource://dta/utils.jsm", {}).extendString(String);
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://dta/utils.jsm", {}).extendString(String);
 
 const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 
@@ -74,8 +73,8 @@ if (available) {
 		preDownload: function(desc) false,
 		
 		handle: function(props) {
-			module("resource://dta/utils.jsm");			
-			module("resource://dta/api.jsm");
+			Cu.import("resource://dta/utils.jsm");			
+			Cu.import("resource://dta/api.jsm");
 			try {
 				if (props.has('links')) {
 					this.handleLinks(props);
@@ -93,7 +92,7 @@ if (available) {
 			return ('window' in props) ? props.window : null;
 		},
 		createItem: function(props) {
-			module("resource://dta/api.jsm");
+			Cu.import("resource://dta/api.jsm");
 			let win = this.getWindow(props);
 			let doc = ('document' in props) ? props.document : null;
 			let url = new URL(IOService.newURI(props.mediaUrl, doc ? doc.characterSet : null, null));

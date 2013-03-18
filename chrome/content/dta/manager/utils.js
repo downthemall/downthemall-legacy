@@ -38,7 +38,7 @@ const PREF_CONN = 'network.http.max-connections';
 
 var gMinTrayR = {};
 try {
-	module("resource://mintrayr/mintrayr.jsm", gMinTrayR);
+	Cu.import("resource://mintrayr/mintrayr.jsm", gMinTrayR);
 	var init = function() {
 		let self = this;
 		let _oc = Dialog.onclose;

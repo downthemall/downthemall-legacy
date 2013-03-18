@@ -38,10 +38,10 @@ var EXPORTED_SYMBOLS = ["BatchGenerator"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const module = Components.utils.import;
+const Cu = Components.utils;
 const Exception = Components.Exception;
 
-module("resource://dta/utils.jsm");
+Cu.import("resource://dta/utils.jsm");
 
 /**
  * Simple literal

@@ -46,15 +46,15 @@ var EXPORTED_SYMBOLS = [
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const module = Components.utils.import;
+const Cu = Components.utils;
 const Exception = Components.Exception;
 
 let Prefs = {};
-module("resource://dta/preferences.jsm", Prefs);
-module("resource://dta/utils.jsm");
-module("resource://dta/constants.jsm");
-module("resource://dta/json.jsm");
-module("resource://dta/support/bytebucket.jsm");
+Cu.import("resource://dta/preferences.jsm", Prefs);
+Cu.import("resource://dta/utils.jsm");
+Cu.import("resource://dta/constants.jsm");
+Cu.import("resource://dta/json.jsm");
+Cu.import("resource://dta/support/bytebucket.jsm");
 
 ServiceGetter(this, 'tlds', '@mozilla.org/network/effective-tld-service;1', 'nsIEffectiveTLDService');
 ServiceGetter(this, 'fixups', '@mozilla.org/docshell/urifixup;1', 'nsIURIFixup');

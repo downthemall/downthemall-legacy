@@ -45,12 +45,11 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-const module = Cu.import;
 const Exception = Components.Exception;
 
-module("resource://dta/utils.jsm");
+Cu.import("resource://dta/utils.jsm");
 let Prefs = {};
-module("resource://dta/preferences.jsm", Prefs);
+Cu.import("resource://dta/preferences.jsm", Prefs);
 
 ServiceGetter(this, "mediator", "@mozilla.org/appshell/window-mediator;1", "nsIWindowMediator");
 ServiceGetter(this, "ioservice", "@mozilla.org/network/io-service;1", "nsIIOService");

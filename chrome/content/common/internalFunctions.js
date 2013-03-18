@@ -44,7 +44,6 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 const ctor = Components.Constructor;
-const module = Cu.import;
 const Exception = Components.Exception;
 
 const FileFactory = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
@@ -53,19 +52,19 @@ const CryptoHash = new ctor("@mozilla.org/security/hash;1", "nsICryptoHash");
 	
 // shared state defines
 
-module("resource://dta/constants.jsm", this);
+Cu.import("resource://dta/constants.jsm", this);
 
 const DTA = {
 	showPreferences: function(pane) DTA.Mediator.showPreferences(window, pane)
 };
-module("resource://dta/api.jsm", DTA);
+Cu.import("resource://dta/api.jsm", DTA);
 
 function openUrl(url, ref) DTA.Mediator.openUrl(window, url, ref);
 
 const Debug = DTA.Debug;
 const Preferences = DTA.Preferences;
 
-module("resource://dta/support/icons.jsm");
+Cu.import("resource://dta/support/icons.jsm");
 
 /**
  * Get DOM Element(s) by Id. Missing ids are silently ignored!
@@ -462,7 +461,7 @@ function hash(value, algorithm, encoding, datalen) {
 
 (function() {
 	let _ic = {};
-	module("resource://dta/support/iconcheat.jsm", _ic);
+	Cu.import("resource://dta/support/iconcheat.jsm", _ic);
 	_ic.loadWindow(window);
 })();
 

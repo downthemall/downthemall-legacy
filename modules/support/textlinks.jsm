@@ -38,7 +38,7 @@ var EXPORTED_SYMBOLS = ["getTextLinks", "FakeLink"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const module = Components.utils.import;
+const Cu = Components.utils;
 const Exception = Components.Exception;
 
 // Link matcher

@@ -41,19 +41,18 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 const Ctor = Components.Constructor;
-const module = Cu.import;
 const Exception = Components.Exception;
 
 const Prefs = {}, DTA = {};
-module("resource://dta/preferences.jsm", Prefs);
-module("resource://dta/utils.jsm");
-module("resource://dta/version.jsm");
-module("resource://dta/api.jsm", DTA);
+Cu.import("resource://dta/preferences.jsm", Prefs);
+Cu.import("resource://dta/utils.jsm");
+Cu.import("resource://dta/version.jsm");
+Cu.import("resource://dta/api.jsm", DTA);
 
 const RUN_ON_MAINTHREAD = Version.moz2;
 const REGULAR_CHUNK = (1 << (RUN_ON_MAINTHREAD ? 21 : 24)); // 2/16MB 
 
-module("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 ServiceGetter(this, "ThreadManager", "@mozilla.org/thread-manager;1", "nsIThreadManager");
 

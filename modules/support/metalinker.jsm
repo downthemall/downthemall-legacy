@@ -48,7 +48,6 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 const Ctor = Components.Constructor;
-const module = Cu.import;
 const Exception = Components.Exception;
 
 /**
@@ -61,11 +60,11 @@ const NS_METALINKER3 = 'http://www.metalinker.org/';
 const NS_METALINK_RFC5854 = 'urn:ietf:params:xml:ns:metalink';
 
 const Preferences = {}, DTA = {};
-module("resource://dta/preferences.jsm", Preferences);
-module("resource://dta/api.jsm", DTA);
-module("resource://dta/version.jsm");
-module("resource://dta/utils.jsm");
-module("resource://dta/support/urlmanager.jsm");
+Cu.import("resource://dta/preferences.jsm", Preferences);
+Cu.import("resource://dta/api.jsm", DTA);
+Cu.import("resource://dta/version.jsm");
+Cu.import("resource://dta/utils.jsm");
+Cu.import("resource://dta/support/urlmanager.jsm");
 
 const IOService = DTA.IOService;
 const XPathResult = Ci.nsIDOMXPathResult;

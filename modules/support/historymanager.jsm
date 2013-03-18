@@ -43,14 +43,13 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 const ctor = Components.Constructor;
-const module = Cu.import;
 const Exception = Components.Exception;
 
 let pbm = {}, prefs = {};
-module("resource://dta/support/pbm.jsm", pbm);
-module("resource://dta/preferences.jsm", prefs);
-module("resource://dta/json.jsm");
-module("resource://dta/utils.jsm");
+Cu.import("resource://dta/support/pbm.jsm", pbm);
+Cu.import("resource://dta/preferences.jsm", prefs);
+Cu.import("resource://dta/json.jsm");
+Cu.import("resource://dta/utils.jsm");
 
 const LocalFile = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 

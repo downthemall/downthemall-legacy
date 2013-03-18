@@ -37,12 +37,12 @@
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const Cu = Components.utils;
 const ctor = Components.Constructor;
 const Exception = Components.Exception;
-const module = Components.utils.import;
 const error = Components.utils.reportError;
 
-module("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const NS_ERROR_NO_INTERFACE = Cr.NS_ERROR_NO_INTERFACE;
 const NS_ERROR_FAILURE = Cr.NS_ERROR_FAILURE;
@@ -66,7 +66,7 @@ this.__defineGetter__(
 	'Preferences',
 	function() {
 		let prefs = {};
-		module('resource://dta/preferences.jsm', prefs);
+		Cu.import('resource://dta/preferences.jsm', prefs);
 		delete this.Preferences;
 		return (this.Preferences = prefs); 
 	}
@@ -76,7 +76,7 @@ this.__defineGetter__(
 	'pbm',
 	function() {
 		let pbm = {};
-		module('resource://dta/support/pbm.jsm', pbm);
+		Cu.import('resource://dta/support/pbm.jsm', pbm);
 		delete this.pbm;
 		return (this.pbm = pbm); 
 	}
@@ -96,12 +96,12 @@ this.__defineGetter__(
 function log(str, ex) {
 	try {
 		let _u = {};
-		module('resource://dta/utils.jsm', _u);
+		Cu.import('resource://dta/utils.jsm', _u);
 		log = function() _u.Debug.log.apply(_u.Debug, arguments);
 		log(str, ex);
 	}
 	catch (oex) {
-		error(str + ": " + ex);
+		Cu.reportError(str + ": " + ex);
 	}
 }
 
@@ -139,7 +139,7 @@ Stuff.prototype = {
 	_migrate: function MM_migrate() {
 		let _tp = this;
 		
-		module("resource://dta/version.jsm");
+		Cu.import("resource://dta/version.jsm");
 		Version.getInfo(function(v) {
 			try {
 				let lastVersion = Preferences.getExt('version', '0');
@@ -165,7 +165,7 @@ Stuff.prototype = {
 				
 				let _ic = {};
 				// Need to extract icons
-				module('resource://dta/support/iconcheat.jsm');				
+				Cu.import('resource://dta/support/iconcheat.jsm');				
 			}
 			catch(ex) {
 				log("MigrationManager:", ex);
@@ -244,7 +244,7 @@ Stuff.prototype = {
 		// Diagnostic log
 		try {
 			let _d = {};
-			module('resource://dta/debug.jsm', _d);
+			Cu.import('resource://dta/debug.jsm', _d);
 			_d.Debug.clear();
 		}
 		catch (ex) {
@@ -253,7 +253,7 @@ Stuff.prototype = {
 		
 		try {
 			let mod = {};
-			module('resource://dta/manager/queuestore.jsm', mod);
+			Cu.import('resource://dta/manager/queuestore.jsm', mod);
 			mod.QueueStore.clear();
 		}
 		catch (ex) {
@@ -400,7 +400,7 @@ ContentHandling.prototype = {
 				}
 			}
 			catch (ex) {
-				error(ex);
+				Cu.reportError(ex);
 			}
 			break;
 		case 'private-browsing':
@@ -553,7 +553,7 @@ ContentHandling.prototype = {
 			this.onChannelRedirect(oldChannel, newChannel, flags);
 		}
 		catch (ex) {
-			error(ex);
+			Cu.reportError(ex);
 		}
 		callback.onRedirectVerifyCallback(0);
 	},
@@ -601,7 +601,7 @@ AboutModule.prototype = {
 				let io = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
 				let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
 
-				module('resource://dta/version.jsm');
+				Cu.import('resource://dta/version.jsm');
 				if (!Version.ready) {
 					throw new Exception("Cannot build about:downthemall, version.jsm not ready");
 				}
@@ -1087,7 +1087,7 @@ FilterManager.prototype = {
 			Preferences.addObserver(PREF_FILTERS_BASE, this);
 		}
 		catch (ex) {
-			error(ex);
+			Cu.reportError(ex);
 			return false;
 		}
 		return true;
