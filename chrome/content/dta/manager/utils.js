@@ -6,7 +6,7 @@ const PREF_CONN = 'network.http.max-connections';
 
 var gMinTrayR = {};
 try {
-	module("resource://mintrayr/mintrayr.jsm", gMinTrayR);
+	Cu.import("resource://mintrayr/mintrayr.jsm", gMinTrayR);
 	var init = function() {
 		function closeWindow(event){
 			if (Preferences.getExt('minimizetotray', false)
