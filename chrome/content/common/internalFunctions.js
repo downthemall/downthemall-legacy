@@ -9,12 +9,11 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 const ctor = Components.Constructor;
-const module = Cu.import;
 const Exception = Components.Exception;
 
 // shared state defines
 
-module("chrome://dta-modules/content/glue.jsm", this);
+Cu.import("chrome://dta-modules/content/glue.jsm", this);
 (function() {
 	for (let [k,v] in Iterator(require("constants"))) {
 		Object.defineProperty(this, k, {value: v, enumerable:true});

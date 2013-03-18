@@ -16,14 +16,11 @@ const {
 } = Components;
 Cm.QueryInterface(Ci.nsIComponentRegistrar);
 
-const {
-	getWeakReference: weak,
-	reportError: reportError
-} = Cu;
-
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
+const weak = Cu.getWeakReference.bind(Cu);
+const reportError = Cu.reportError.bind(Cu);
 const lazy = XPCOMUtils.defineLazyGetter;
 const QI = XPCOMUtils.generateQI.bind(XPCOMUtils);
 

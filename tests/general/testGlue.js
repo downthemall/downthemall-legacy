@@ -15,3 +15,23 @@ test("Instances contents", function() {
 	var {Instances: I} = requireJSM("chrome://dta-modules/content/glue.jsm");
 	arrayEqual(Object.keys(I), expected, "Glue Instances are complete");
 });
+
+test("weak", function() {
+	var ref = 0;
+	var o = {
+		test: function() { ref++; }
+	};
+	var {weak} = requireJSM("chrome://dta-modules/content/glue.jsm");
+	var w = weak(o);
+	equal(o, w.get());
+	o.test();
+	equal(ref, 1);
+	w.get().test();
+	equal(ref, 2);
+	var bound = o.test.bind(o);
+	bound();
+	equal(ref, 3);
+	var wbound = weak(bound);
+	(wbound.get())();
+	equal(ref, 4);
+});
