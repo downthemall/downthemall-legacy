@@ -57,7 +57,7 @@
 <!ENTITY privacypane.privacynotice.label "我们的隐私声明">
 <!ENTITY serverspane.label "网络">
 <!ENTITY serverspane.downloads.caption "下载">
-<!ENTITY serverspane.concurrent.label "当前下载：">
+<!ENTITY serverspane.concurrent.label "并发下载：">
 <!ENTITY serverspane.perserver.label "每服务器下载：">
 <!ENTITY serverspane.url.label "地址或域名：">
 <!ENTITY serverspane.new.label "新建限制">
