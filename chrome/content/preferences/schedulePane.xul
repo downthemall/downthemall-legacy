@@ -22,7 +22,7 @@
 		<deck id="scheddeck">
 			<hbox/>
 			<groupbox>
-				<caption label="Schedule"/>
+				<caption label="&schedpane.label;"/>
 				<grid flex="1">
 					<columns>
 						<column/>
