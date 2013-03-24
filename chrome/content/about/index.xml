@@ -56,6 +56,13 @@
 		*[localedir="rtl"] .remark {
 		text-align: left;
 		}
+		.toolbarinstall {
+			text-align: center;
+			border: 1px solid black;
+			border-radius: 6px;
+			margin: auto;
+			padding: 4pt;
+		}
 </style>
 
 
@@ -63,15 +70,15 @@
 		<h1>Welcome Localizer</h1>
 		<p>
 			First of all:
-			<strong>Many thanks for your past and future contributions. Without those DownThemAll! wouldn't be such a successful addons and far less usable to a lot of people.</strong>
+			<strong>Many thanks for your past and future contributions. Without those DownThemAll! wouldn't be such a successful add-on and far less usable to a lot of people.</strong>
 		</p>
-		<p>This is the new "landing page" designed to give babelzilla.org localizers a way to translate things that are not directly part of dTa, or at least not directly accessible from the normal user interface.</p>
+		<p>This is the "landing page" designed to give babelzilla.org localizers a way to translate things that are not directly part of dTa, or at least not directly accessible from the normal user interface.</p>
 		<h2>Usage</h2>
-		<p>This page will let you translate the various bits for addons.mozilla.org and the new "landing page".</p>
+		<p>This page will let you translate the various bits for addons.mozilla.org and the "landing page" which is displayed via about:downthemall to the user.</p>
 		<p>Texts will be taken from <code>landingpage.dtd</code>.</p>
 		<p>A translatable block looks like this:</p>
 		<p class="localizable">Translate me
-			<div class="alwaysleft">Always left (for right-to-left locales)</div>
+			<div class="alwaysleft">Always left (even for right-to-left locales)</div>
 		</p>
 		<p>
 			<em>Important</em>: If you change anything on this page after we release the next major version to the public then drop us a note in babelzilla about that.
@@ -93,13 +100,13 @@
 		<h1>addons.mozilla.org localizations</h1>
 		<p>Various texts for addons.mozilla.org</p>
 		<h2>Summary</h2>
-		<p class="localizable">&amo.summary;</p>
+		<p class="localizable">&amo.summary2;</p>
 
 		<h2>Description</h2>
 		<div class="localizable">
 			<p>&amo.description.intro;</p>
-			<p>&amo.description.feat;</p>
-			<p>&amo.description.free;</p>
+			<p>&amo.description.feat2;</p>
+			<p>&amo.description.free2;</p>
 			<p>&amo.description.more;</p>
 		</div>
 
@@ -127,7 +134,7 @@
 			</p>
 			<p class="remark">&lp.moreinfo;
 			</p>
-			<p class="donate remark">&lp.donate;</p>
+			<p class="donate remark">&lp.donate2;</p>
 		</div>
 		<h2>Tab headlines</h2>
 		<p>The site will feature various "tabs". The following are the headlines for each tab.</p>
@@ -163,7 +170,7 @@
 				<h2>&lp.tut.firsttitle;
 				</h2>
 				<div class="player" href="first-download">Video: First download</div>
-				<p>&lp.tut.fd1;
+				<p>&lp.tut.fd2;
 				</p>
 
 				<h2>&lp.tut.selecttitle;
@@ -172,9 +179,9 @@
 				<p>&lp.tut.selintro;</p>
 				<p>&lp.tut.seloptions;</p>
 				<ul>
-					<li>&lp.tut.selopthand;</li>
-					<li>&lp.tut.seloptfilters;</li>
-					<li>&lp.tut.seloptfast;</li>
+					<li>&lp.tut.selopthand2;</li>
+					<li>&lp.tut.seloptfilters2;</li>
+					<li>&lp.tut.seloptfast2;</li>
 				</ul>
 				<p>&lp.tut.seltypes;</p>
 				<ol>
@@ -182,17 +189,20 @@
 					<li>&lp.tut.seltypepics;</li>
 				</ol>
 				<p class="note">&lp.tut.selgalleries;</p>
-				<p>&lp.tut.seldone;</p>
+				<p>&lp.tut.seldone2;</p>
 
 				<h2>&lp.tut.oneclicktitle;
 				</h2>
-				<p>&lp.tut.oneclick1;
+				<p>&lp.tut.oneclick1.2;
 				</p>
 				<p>&lp.tut.oneclick2;
 				</p>
 				<p class="note">&lp.pleasenote; &lp.tut.oneclickn;
 				</p>
 
+				<h2>&lp.tut.tabstitle;</h2>
+				<p>&lp.tut.alltabs;</p>
+				<p class="note">&lp.pleasenote; &lp.tut.tabrestore;</p>
 
 				<h2>&lp.tut.batchestitle;
 				</h2>
@@ -203,6 +213,7 @@
 				</p>
 				<p>&lp.tut.batches3;
 				</p>
+				<p>&lp.tut.batchesctx;</p>
 			</div>
 			<h2>Toolbar/tutorial</h2>
 			<div id="toolbar" class="localizable">
@@ -223,20 +234,20 @@
 				<h3>&lp.tb.dnd.title;</h3>
 				<div class="player" href="dnd">Video: Drag'n'Drop</div>
 				<p>&lp.tb.dnd.p1;<br/>&lp.tb.dnd.p2;</p>
-				<p>&lp.tb.dnd.p3;</p>
+				<p>&lp.tb.dnd.order;</p>
 
 				<h3>&lp.tb.selector.title;</h3>
 				<div class="player" href="selector">Video: Selector</div>
-				<p>&lp.tb.selector.p1;</p>
-				<p>&lp.tb.selector.p2;</p>
+				<p>&lp.tb.selector.queueing;</p>
+				<p>&lp.tb.selector.how;</p>
 			</div>
 			<h2>Privacy information</h2>
 			<div id="privacy" class="localizable">
 				<h2>&lp.pr.title;</h2>
-				<p>&lp.pr.intro;</p>
-				<p>&lp.pr.settings;</p>
+				<p>&lp.pr.intro2;</p>
+				<p>&lp.pr.settings2;</p>
 				<p>&lp.pr.pwpbm;</p>
-				<p>&lp.pr.diag;</p>
+				<p>&lp.pr.diag2;</p>
 				<p>&lp.pr.link;</p>
 			</div>
 			<h2>License/Your rights</h2>
@@ -255,6 +266,7 @@
 				</ul>
 				<p id="morelicense">&lp.yr.usagemore;
 				</p>
+				<p class="note">&lp.pleasenote; &lp.yr.logo;</p>
 
 				<h2>&lp.yr.licensetitle;
 				</h2>
@@ -323,17 +335,18 @@
 				<h3>&lp.languagetitle;
 				</h3>
 				<p>&fulltranslation;</p>
+				<p>&lp.language.babelzilla;</p>
 			</div>
 			<h2>&lp.ct.contactstitle;</h2>
 			<div id="contacts" class="localizable">
 				<h2>&lp.ct.bugstitle;
 				</h2>
-				<p>&lp.ct.bugs;
+				<p>&lp.ct.bugs2;
 				</p>
 
 				<h2>&lp.ct.contactstitle;
 				</h2>
-				<p>&lp.ct.contactsfeed;
+				<p>&lp.ct.contactsfeed2;
 				</p>
 				<p>&lp.ct.contacts;
 				</p>

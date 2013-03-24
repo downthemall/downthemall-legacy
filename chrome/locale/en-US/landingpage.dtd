@@ -11,10 +11,10 @@
 <!ENTITY fulltranslation "English translation by: The dTa Team">
 
 
-<!ENTITY amo.summary "The first and only download manager/accelerator built inside Firefox!">
+<!ENTITY amo.summary2 "The first and only download manager/accelerator inside your browser!">
 <!ENTITY amo.description.intro "DownThemAll is all you can desire from a download manager: it features an advanced accelerator that increases speed up to 4x and it allows you to pause and resume downloads at any time.">
-<!ENTITY amo.description.feat "DownThemAll is fast, reliable and easy-to-use! It lets you download all the links or images contained in a webpage and much more: you can refine your downloads by fully customizable criteria to get only what you really want! Be in full control over your downloads, dedicated speed and number of parallel connections at any time. Use Metalinks or add mirrors manually to download a file from different servers at the same time.">
-<!ENTITY amo.description.free "DownThemAll is open-source and freeware. No Adware, no Spyware, no hidden costs!">
+<!ENTITY amo.description.feat2 "DownThemAll is fast, reliable and easy-to-use! It lets you download all the links or images contained in a web page and much more: you can refine your downloads by fully customizable criteria to get only what you really want. Be in full control over your downloads, dedicated speed and number of parallel connections at any time. Use Metalinks or add mirrors manually to download a file from different servers at the same time.">
+<!ENTITY amo.description.free2 "DownThemAll is open-source and freeware. No Adware, no Spyware, no tracking, no costs at all!">
 <!ENTITY amo.description.more "For more information see our <a href='http://www.downthemall.net/howto/features/'>Features page</a>.">
 
 <!ENTITY lp.title "About DownThemAll!">
@@ -28,29 +28,34 @@
 <!ENTITY lp.contact "Contact">
 <!ENTITY lp.pleasenote "Please note:">
 
-<!ENTITY lp.donate "Please consider a contribution">
+<!ENTITY lp.donate2 "Please consider making a contribution">
 
 <!ENTITY lp.tut.firsttitle "Your first download">
-<!ENTITY lp.tut.fd1 "Downloading a file in dTa is fairly easy but also very powerful. If prompted to open or save a file you may use the DownThemAll! item. This will show a dialog where you may choose which folder to save the file along with some more advanced options.">
+<!ENTITY lp.tut.fd2 "Downloading a file in dTa is fairly easy but also very powerful. If prompted to open or save a file you may use the DownThemAll! item. After choosing where to save the download, you may start to download immediately or queue the file to be downloaded later.">
 <!ENTITY lp.tut.selecttitle "Using the selection window">
 <!ENTITY lp.tut.selintro "The context menu of a website offers a new DownThemAll! item. Using this item will show the DownThemAll! selection window, which you can use to easily select one or more links from a page.">
 <!ENTITY lp.tut.seloptions "In the selection window you have multiple ways to select which files to download:">
-<!ENTITY lp.tut.selopthand "You may check the links you want to download by hand">
-<!ENTITY lp.tut.seloptfilters "You may use the build-in or own Filters, e.g. to download all linked images">
-<!ENTITY lp.tut.seloptfast "Additionally you may type in your own filter in the Fast filtering box, for example <code>*.pdf,*.doc</code> or even a regular expression">
+<!ENTITY lp.tut.selopthand2 "You may check the links you want to download by hand.">
+<!ENTITY lp.tut.seloptfilters2 "You may use the built-in or own Filters, e.g. to download all linked images.">
+<!ENTITY lp.tut.seloptfast2 "Additionally you may type in your own filter in the Fast filtering box, for example <code>*.pdf,*.doc</code> or even use regular expressions">
 <!ENTITY lp.tut.seltypes "The selection window contains two tabs, for two different types of downloads:">
-<!ENTITY lp.tut.seltypelinks "The Links tab containing all downloadable links found on the page">
+<!ENTITY lp.tut.seltypelinks "The Links tab containing all download-able links found on the page">
 <!ENTITY lp.tut.seltypepics "And the Pictures and Media tab containing all pictures and other media as shown on the page">
 <!ENTITY lp.tut.selgalleries "Full-size images are often only linked from gallery pages, hence you'll find them in the Links tab">
-<!ENTITY lp.tut.seldone "Once you selected the files to download hit either Start! or Add paused.">
+<!ENTITY lp.tut.seldone2 "Once you selected the files to download hit either Start! to start your downloads immediately or Add paused to download later.">
 <!ENTITY lp.tut.batchestitle "Downloading Batches">
 <!ENTITY lp.tut.batches1 "A lot of users want to download batches of sequentially numbered files. DownThemAll! lets you specify batches quite easily as the video shows.">
 <!ENTITY lp.tut.batches2 "The basic syntax is: <code>[start:end]</code> or <code>[start:end:step]</code> where both <code>start</code> and <code>end</code> may either be a number or a simple character. <code>step</code> defines the step width and is simply 1 if omitted.">
 <!ENTITY lp.tut.batches3 "For example if you'd like to download pictures from 001 to 100 you may change the URL to: <code>http://example.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.batchesctx "Furthermore, the context menu of the URL field in the Add Downloads window lets you easily convert a text-selection into a batch descriptor.">
 <!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
-<!ENTITY lp.tut.oneclick1 "Once you made your initial download another item will be available: DownThemAll! OneClick. You may use this to download directly using the previous settings skipping the download adding and/or selection dialog.">
+<!ENTITY lp.tut.oneclick1.2 "Once you made your initial download another item will be available: DownThemAll! OneClick, which you may use to download files directly using the previous settings and skipping the download options and/or selection dialogs.">
 <!ENTITY lp.tut.oneclick2 "Hence OneClick enables you to rapidly queue a lot of links.">
 <!ENTITY lp.tut.oneclickn "After using the Clear Private Data feature in Firefox the OneClick feature won't be available until you start a regular DownThemAll! download again.">
+
+<!ENTITY lp.tut.tabstitle "Downloading items from all tabs at once">
+<!ENTITY lp.tut.alltabs "It is possible to queue items from all tabs at once, by using the toolbar button drop-down menus.">
+<!ENTITY lp.tut.tabrestore "Only fully links from fully restored tabs will be available.">
 
 <!ENTITY lp.tb.intro "DownThemAll! offers some toolbar buttons that give you a convenient way to access DownThemAll! features.">
 <!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
@@ -70,27 +75,29 @@
 <!ENTITY lp.tb.dnd.title "Drag'n'drop">
 <!ENTITY lp.tb.dnd.p1 "You can drag'n'drop every link or image onto the DownThemAll! or OneClick! button to download it.">
 <!ENTITY lp.tb.dnd.p2 "The Manager window also can be used to drop items to download on.">
-<!ENTITY lp.tb.dnd.p3 "You may order your download list with drag'n'drop as well. Just drag an item and drop it at the desired position.">
+<!ENTITY lp.tb.dnd.order "You may order your download queue with drag'n'drop. Just select some downloads and drop them at the desired position.">
 
 <!ENTITY lp.tb.selector.title "Using the DownThemAll! Selector">
-<!ENTITY lp.tb.selector.p1 "When using DownThemAll! Selector you may queue many downloads by simply clicking on the links or images.">
-<!ENTITY lp.tb.selector.p2 "To enable the Selector click the toolbar button, and to disable it once you're done click the button again.">
+<!ENTITY lp.tb.selector.queueing "The DownThemAll! Selector lets you queue many downloads by simply clicking on the links or images.">
+<!ENTITY lp.tb.selector.how "To enable the Selector click the corresponding toolbar button. To disable it once you're done, simply click the button again.">
 
 <!ENTITY lp.pr.title "Privacy Notice">
-<!ENTITY lp.pr.intro "DownThemAll protects your privacy.">
-<!ENTITY lp.pr.settings "You can have DownThemAll! remove all complete, canceled, and unfinished downloads from the download list when closed by changing the settings in the Preferences → Privacy panel.">
-<!ENTITY lp.pr.diag "You can enable diagnostic messages, which will be logged to both the error console and written to the dta_log.txt file, by the Preferences → Privacy panel. Diagnostic messages will likely contain sensitive information like URLs, file paths, filenames you're downloading, or even cookie information. This option is DISABLED by default to protect your privacy. If you submit a diagnostic message, you may wish to censor this sensitive information. No diagnostic log will ever get published in an automated fashion.">
-<!ENTITY lp.pr.pwpbm "DownThemAll! supports the Firefox Per-Window Private Browsing Mode: When you add downloads from a Private Browsing Window, DownThemAll! will not store any information about downloaded files, download folders or used renaming masks. Please note that other data - such as newly created filters, or, of course, the actual downloads - is still written to your harddisk.">
+<!ENTITY lp.pr.intro2 "DownThemAll respects your privacy.">
+<!ENTITY lp.pr.settings2 "You can have DownThemAll! remove all complete, canceled, and unfinished downloads from the download list after closing the window by changing the settings in the Preferences → Privacy panel.">
+<!ENTITY lp.pr.diag2 "You can enable diagnostic messages, which will be logged to both the error console and written to the dta_log.txt file, by the Preferences → Privacy panel. Diagnostic messages will likely contain sensitive information like URLs, file paths, filenames you're downloading, or even cookie information. This option is DISABLED by default to protect your privacy. If you submit a diagnostic log, you may wish to censor any sensitive information. No diagnostic logs will ever get published in an automated fashion.">
+<!ENTITY lp.pr.pwpbm "DownThemAll! supports the Firefox Per-Window Private Browsing Mode: When you add downloads from a Private Browsing Window, DownThemAll! will not store any information about downloaded files, download folders or used renaming masks. Please note that other data - such as newly created filters, or, of course, the actual downloads - is still written to your disk.">
 <!ENTITY lp.pr.link "This notice is always available from this page (about:downthemall) and is additionally linked in the Preferences window">
 
 <!ENTITY lp.yr.usagetitle "Usage and redistribution">
-<!ENTITY lp.yr.usage "The authors license DownThemAll! in such a way to you that you may freely:">
+<!ENTITY lp.yr.usage "The authors license DownThemAll! in such a way to you that you may freely and without costs:">
 <!ENTITY lp.yr.usageuse "Use DownThemAll!">
 <!ENTITY lp.yr.usagemod "Modify DownThemAll!">
 <!ENTITY lp.yr.usagedist "Redistribute DownThemAll!, with or without modifications">
 <!ENTITY lp.yr.usagemore "See the licenses for more information.">
+<!ENTITY lp.yr.logo "The logos use a more restrictive license, to let us protect our reputation against fraudsters. That means you need to use your own logo and name should you choose to distribute modified versions of DownThemAll!">
 
 <!ENTITY lp.languagetitle "Language">
+<!ENTITY lp.language.babelzilla "If you're fluent in multiple languages, please consider joining <a href='http://babelzilla.org'>babelzilla.org</a> to help translate this and many other great add-ons.">
 
 <!ENTITY lp.yr.licensetitle "Copyright and License">
 <!ENTITY lp.yr.licensed "DownThemAll! is licensed under <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. See the GPL file. This applies to all source code files.">
@@ -104,8 +111,8 @@
 <!ENTITY lp.yr.logopermissions "The DownThemAll! name and logo cannot be used without permission in any derivative work, with exception of credits and license-related notices.">
 
 <!ENTITY lp.ct.bugstitle "Reporting bugs/Feature requests">
-<!ENTITY lp.ct.bugs "Please report bug and feature requests at our <a href='https://bugs.downthemall.net/'>bug tracker</a>.">
+<!ENTITY lp.ct.bugs2 "Please report any bugs and feature requests at our <a href='https://bugs.downthemall.net/'>bug tracker</a>.">
 
 <!ENTITY lp.ct.contactstitle "Contacts">
-<!ENTITY lp.ct.contactsfeed "We like to receive your feedback, suggestions or offers to help.">
-<!ENTITY lp.ct.contacts "Please see our <a href='http://www.downthemall.net/main/contacts/'>contact page</a> online.">
+<!ENTITY lp.ct.contactsfeed2 "We like to receive your feedback, suggestions and/or offers to help.">
+<!ENTITY lp.ct.contacts "Please see our <a href='http://www.downthemall.net/main/contacts/'>contact page</a>.">
