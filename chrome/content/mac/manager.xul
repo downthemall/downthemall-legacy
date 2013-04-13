@@ -29,6 +29,14 @@
 		<commandset id="baseMenuCommandSet" />
 	</window>
 
+	<keyset id="mainkeys">
+		<key id="kLaunch" modifiers="accel" key="O" command="cmdLaunch" />
+		<key id="kOpenFolder" modifiers="accel,shift" key="O" command="cmdOpenFolder" />
+		<key id="kRename" keycode="VK_ENTER" command="cmdRename"/>
+		<key id="kRename" keycode="VK_RETURN" command="cmdRename"/>
+		<key id="kCloseMac" modifiers="accel" key="W" command="cmdClose" />
+	</keyset>
+
 	<notificationbox id="notifications">
 		<menubar insertbefore="mainstack" id="mainmenu">
 			<menu id="file-menu" label="&fileMenu.label;" accesskey="&fileMenu.accesskey;">

@@ -2049,6 +2049,7 @@ QueueItem.prototype = {
 		this.setState(COMPLETE);
 		this.status = TextCache_COMPLETE;
 		this.visitors = new VisitorManager();
+		this.compression = null;
 	},
 	get maskURL() this.urlManager.usableURL,
 	get maskURLPath() this.urlManager.usableURLPath,

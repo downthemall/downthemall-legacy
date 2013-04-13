@@ -54,6 +54,7 @@
 		<command id="cmdLaunch" oncommand="FileHandling.openFile();" />
 		<command id="cmdDelete" oncommand="FileHandling.deleteFile();" />
 		<command id="cmdOpenFolder" oncommand="FileHandling.openFolder();" />
+		<command id="cmdRename" oncommand="Tree.startRename()"/>
 
 		<command id="cmdResume" oncommand="Tree.resume();" />
 		<command id="cmdForceStart" oncommand="Tree.force();" />
@@ -101,13 +102,10 @@
 
 	<keyset id="mainkeys">
 		<key id="kClose" keycode="VK_ESCAPE" command="cmdClose" />
-		<key id="kCloseMac" modifiers="accel" key="W" command="cmdClose" />
 
 		<key id="kGetInfo" modifiers="alt" key="I" command="cmdGetInfo" />
 
-		<key id="kLaunch" keycode="VK_RETURN" command="cmdLaunch" />
 		<key id="kDelete" modifiers="accel" keycode="VK_DELETE" command="cmdDelete" />
-		<key id="kOpenFolder" modifiers="shift" keycode="VK_RETURN" command="cmdOpenFolder" />
 
 		<key id="kResume" modifiers="accel" key="R" command="cmdResume" />
 		<key id="kForceStart" modifiers="accel,shift" key="R" command="cmdForceStart" />
@@ -154,6 +152,7 @@
 			<menuitem id="info" class="action menuitem-iconic" label="&infos.label;" key="kGetInfo" command="cmdGetInfo" />
 			<menuseparator class="action" />
 			<menuitem id="launch" class="action menuitem-iconic" label="&launch.label;" key="kLaunch" command="cmdLaunch" />
+			<menuitem id="rename" class="menuitem-iconic" label="&rename.label;" key="kRename" command="cmdRename" />
 			<menuitem id="delete" class="action menuitem-iconic" label="&delete.label;" key="kDelete" command="cmdDelete" />
 			<menuitem id="folder" class="action menuitem-iconic" label="&targetdir.label;" key="kOpenFolder" command="cmdOpenFolder" />
 			<menuseparator />

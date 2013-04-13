@@ -53,7 +53,11 @@ const Tree = {
 
 		let dtree = $('downloadList');
 		dtree.addEventListener('dragstart', function(event) tp.onDragStart(event), false);
-		dtree.addEventListener('dblclick', function() FileHandling.openFile(), false);
+		dtree.addEventListener('dblclick', function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			FileHandling.openFile();
+		}, false);
 
 		$("matcher").addEventListener("command", function(event) tp.handleMatcherPopup(event), true);
 
@@ -478,12 +482,59 @@ const Tree = {
 		}
 		return '';
 	},
+	setCellText: function(idx, col, text) {
+		text = Utils.getUsableFileName(text);
+		if (col.index != 0 || text == "") {
+			return;
+		}
+		const d = this._filtered[idx];
+		const from = d.destinationLocalFile;
+		const to = from.clone();
+		to.leafName = text;
+		if (!d.is(COMPLETE)) {
+			d.fileName = text;
+			log(LOG_DEBUG, "reset");
+			return; // complete logic will do this
+		}
+		if (from.leafName === to.leafName) {
+			log(LOG_DEBUG, "nothing");
+			return; // nothing to do
+		}
+		if (!from.exists()) {
+			d.fileName = text;
+			log(LOG_DEBUG, "gone");
+			return; // gone already
+		}
+		if (to.exists()) {
+			Prompts.alert(window, _("rename.title"), _("rename.alreadythere", [from.leafName, to.path]));
+			log(LOG_DEBUG, "exists");
+			return;
+		}
+
+		log(LOG_DEBUG, "move " + from.path + " to " + to.path);
+		// need to move
+		asyncMoveFile(from, to, Prefs.permissions, function(ex) {
+			try {
+				log(LOG_DEBUG, "move complete" + from.path + " to " + to.path, ex);
+				if (ex) {
+					throw ex;
+				}
+				d.fileName = text;
+			}
+			catch (iex) {
+				log(LOG_DEBUG, "move failed " + from.path + " to " + to.path, iex);
+				Prompts.alert(window, _("rename.title"), _("rename.failedtomove", [from.path, to.path]));
+			}
+		});
+	},
 	isSorted: function() true,
 	isContainer: function(idx) false,
 	isContainerOpen: function(idx) false,
 	isContainerEmpty: function(idx) false,
 	isSeparator: function(idx) false,
-	isEditable: function(idx) true,
+	isEditable: function(row, col) {
+		return (col.index == 0);
+	},
 
 	// will grab the "icon" for a cell.
 	getImageSrc: function(idx, col) {},
@@ -1264,7 +1315,7 @@ const Tree = {
 	],
 	_refreshTools_items: [
 		{items: ['cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'], f: function(d) !!d.count},
-		{items: ['cmdMirrors', 'cmdAddLimits'], f: function(d) d.count == 1},
+		{items: ['cmdMirrors', 'cmdAddLimits', 'cmdRename'], f: function(d) d.count == 1},
 		{items: ['cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'], f: function(d) d.isOf(QUEUED | RUNNING | PAUSED | CANCELED)},
 	],
 	_refreshTools_init: function() {
@@ -1658,6 +1709,25 @@ const Tree = {
 	changePerDownloadSpeedLimit: function() {
 		let limit = $('perDownloadSpeedLimitList').limit;
 		this.updateSelected(this._changePerDownloadSpeedLimit_item.bind(null, limit));
+	},
+	startRename: function() {
+		try {
+			let ci = {value: -1};
+			this.selection.getRangeAt(0, ci, {});
+			if (ci.value < 0 || ci.value >= this.rowCount) {
+				return;
+			}
+			this.elem.setAttribute("editable", true);
+			try {
+				this.elem.startEditing(ci.value, this.box.columns.getFirstColumn());
+			}
+			finally {
+				this.elem.removeAttribute("editable");
+			}
+		}
+		catch (ex) {
+			log(LOG_ERROR, "Cannot rename", ex);
+		}
 	}
 };
 requireJoined(Tree, "manager/matcher");
