@@ -443,6 +443,13 @@ treechildren::-moz-tree-cell-text(private) {
 	-moz-image-region: rect(144px,80px,160px,64px);
 }
 
+.rename {
+	-moz-image-region: rect(128px,96px,144px,80px);
+}
+.rename[disabled="true"] {
+	-moz-image-region: rect(144px,96px,160px,80px);
+}
+
 .force {
 	-moz-image-region: rect(0px,32px,16px,16px);
 }
@@ -634,6 +641,13 @@ treechildren::-moz-tree-cell-text(private) {
 	}
 	.export[disabled="true"] {
 		-moz-image-region: rect(288px,160px,320px,128px);
+	}
+
+	.rename {
+		-moz-image-region: rect(256px,192px,288px,160px);
+	}
+	.rename[disabled="true"] {
+		-moz-image-region: rect(288px,192px,320px,160px);
 	}
 
 	.force {

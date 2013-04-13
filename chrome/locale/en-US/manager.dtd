@@ -34,6 +34,7 @@
 
 <!ENTITY infos.label "Download Information">
 <!ENTITY launch.label "Open File">
+<!ENTITY rename.label "Rename File">
 <!ENTITY delete.label "Delete File(s)">
 <!ENTITY targetdir.label "Open Directory">
 <!ENTITY pause.label "Pause">
