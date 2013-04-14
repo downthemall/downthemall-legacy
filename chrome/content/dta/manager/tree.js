@@ -401,8 +401,8 @@ const Tree = {
 				this.beginUpdate();
 				if (!display) {
 					// Hide
-					this._box.rowCountChanged(fp, -1);
 					let fp = d.filteredPosition;
+					this._box.rowCountChanged(fp, -1);
 					this._filtered.splice(fp, 1);
 					d.filteredPosition = -1;
 					for (let i = fp, e = this._filtered.length; i < e; ++i) {
