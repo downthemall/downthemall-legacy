@@ -8,6 +8,7 @@ if (available) {
 	lazy(this, "getUsableFileNameWithFlatten", function() require("support/stringfuncs").getUsableFileNameWithFlatten);
 	lazy(this, "utils", function() require("utils"));
 	lazy(this, "bundle", function() new (require("utils").StringBundles)(["chrome://dta/locale/downloadHelper.properties"]));
+	lazy(this, "isWindowPrivate", function() new require("support/pbm").isWindowPrivate);
 
 	const core = Cc["@downloadhelper.net/core;1"].getService(Ci.dhICore);
 
@@ -52,11 +53,12 @@ if (available) {
 			return ('window' in props) ? props.window : null;
 		},
 		createItem: function(props) {
-			let win = this.getWindow(props);
 			let doc = ('document' in props) ? props.document : null;
+			let win = this.getWindow(props) || (doc ? doc.defaultView : null);
 			let url = new api.URL(Services.io.newURI(props.mediaUrl, doc ? doc.characterSet : null, null));
 			let item = {
 				url: url,
+				isPrivate: isWindowPrivate(win),
 				referrer: props.documentUrl || props.pageUrl || null,
 			};
 			if (props.youtubeTitle) {
