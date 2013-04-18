@@ -123,7 +123,7 @@ PLAIN = ("*.png",
 
 
 @WorkingDirectory.change
-def check_locales():
+def check_locales(errors_only=False):
     """
     Checks all chrome.manifest listed locales are complete and without errors.
     """
@@ -159,7 +159,7 @@ def check_locales():
 
         res = compare_locales(baseloc, p)
         summary = res.getSummary()[None]
-        if "errors" in summary or "missing" in summary:
+        if "errors" in summary or (not errors_only and "missing" in summary):
             raise ValueError("{}: {}\n{}".format(l, summary, res.details))
 
 
@@ -492,7 +492,7 @@ def create(args):
     if not opts.force and os.path.exists(output):
         raise ValueError("Output file already exists")
 
-    #check_locales()
+    check_locales(errors_only=True)
 
     with BytesIO() as io:
         try:
