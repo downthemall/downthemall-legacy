@@ -8,7 +8,7 @@ if (available) {
 	lazy(this, "getUsableFileNameWithFlatten", function() require("support/stringfuncs").getUsableFileNameWithFlatten);
 	lazy(this, "utils", function() require("utils"));
 	lazy(this, "bundle", function() new (require("utils").StringBundles)(["chrome://dta/locale/downloadHelper.properties"]));
-	lazy(this, "isWindowPrivate", function() new require("support/pbm").isWindowPrivate);
+	lazy(this, "isWindowPrivate", function() require("support/pbm").isWindowPrivate);
 
 	const core = Cc["@downloadhelper.net/core;1"].getService(Ci.dhICore);
 
@@ -58,7 +58,7 @@ if (available) {
 			let url = new api.URL(Services.io.newURI(props.mediaUrl, doc ? doc.characterSet : null, null));
 			let item = {
 				url: url,
-				isPrivate: isWindowPrivate(win),
+				isPrivate: win ? isWindowPrivate(win) : false,
 				referrer: props.documentUrl || props.pageUrl || null,
 			};
 			if (props.youtubeTitle) {
