@@ -12,8 +12,8 @@
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="dtamanagerplatformoverlay">
 	<keyset id="mainkeys">
-		<key id="kLaunch" keycode="VK_ENTER" command="cmdLaunch" />
-		<key id="kOpenFolder" modifiers="accel" keycode="VK_ENTER" command="cmdOpenFolder" />
+		<key id="kLaunch" keycode="VK_RETURN" command="cmdLaunch" />
+		<key id="kOpenFolder" modifiers="accel" keycode="VK_RETURN" command="cmdOpenFolder" />
 		<key id="kRename" keycode="VK_F2" command="cmdRename"/>
 	</keyset>
 </overlay>
