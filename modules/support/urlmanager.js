@@ -20,7 +20,7 @@ function compareFn(a, b) {
 function UrlManager(urls) {
 	this.initByArray(urls);
 }
-UrlManager.prototype = Object.freeze({
+UrlManager.prototype = {
 	initByArray: function um_initByArray(urls) {
 		this._urls = [];
 		for (let u of urls) {
@@ -43,11 +43,6 @@ UrlManager.prototype = Object.freeze({
 		this._urls.sort(compareFn);
 		this._url = this._urls[0].url;
 		this._usable = this._urls[0].usable;
-		lazy(this, "usableURL", this._usableURL);
-		lazy(this, "usableURLPath", this._usableURLPath);
-		lazy(this, "host", this._host);
-		lazy(this, "spec", this._spec);
-		this._domain = Limits.getEffectiveHost(this._url);
 		this._makeGood();
 	},
 	_usableURL: function() toURL(this._usable),
@@ -60,6 +55,7 @@ UrlManager.prototype = Object.freeze({
 	},
 	_host: function() this.usableURL.host,
 	_spec: function() this._url.spec,
+	_domain: function() Limits.getEffectiveHost(this._url),
 	add: function um_add(url) {
 		if (!url instanceof URL) {
 			throw new Exception(url + " is not an URL");
@@ -97,7 +93,6 @@ UrlManager.prototype = Object.freeze({
 	get url() this._url,
 	get usable() this._usable,
 	get length() this._urls.length,
-	get domain() this._domain,
 	get all() {
 		for (let i of this._urls) {
 			yield i;
@@ -130,5 +125,12 @@ UrlManager.prototype = Object.freeze({
 	},
 	// clone ;)
 	toArray: function() this._urls.map(function(e) e)
-});
+};
+lazyProto(UrlManager.prototype, "usableURL", UrlManager.prototype._usableURL);
+lazyProto(UrlManager.prototype, "usableURLPath", UrlManager.prototype._usableURLPath);
+lazyProto(UrlManager.prototype, "host", UrlManager.prototype._host);
+lazyProto(UrlManager.prototype, "spec", UrlManager.prototype._spec);
+lazyProto(UrlManager.prototype, "domain",  UrlManager.prototype._domain);
+
+Object.freeze(UrlManager.prototype);
 exports.UrlManager = Object.freeze(UrlManager);
