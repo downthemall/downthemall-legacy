@@ -190,7 +190,7 @@ const QueueStore = {
 
 		stmt.executeAsync();
 	},
-	asyncSavePosition: function(downloads) {
+	savePositions: function(downloads) {
 		if (downloads.length == 0) {
 			log(LOG_DEBUG, "no position changes");
 			return;
@@ -207,6 +207,12 @@ const QueueStore = {
 		stmt.bindParameters(params);
 		stmt.executeAsync();
 	},
+	savePositionsByOffset: function(pos, off) {
+		let stmt = _connection.createAsyncStatement("UPDATE queue SET pos = pos - :off WHERE pos >= :pos");
+		stmt.params.off = off;
+		stmt.params.pos = pos;
+		stmt.executeAsync();
+	},
 	deleteDownload: function(id) {
 		if (!id) {
 			return;
@@ -218,7 +224,7 @@ const QueueStore = {
 	deleteDownloads: function(downloads) {
 		let stmt = _connection.createStatement('DELETE FROM queue WHERE uuid = :uuid');
 		try {
-			if (downloads.lenght < 20) {
+			if (downloads.length < 50) {
 				for (let i = 0; i < downloads.length; ++i) {
 					stmt.params.uuid = downloads[i].dbId;
 					stmt.executeAsync();
