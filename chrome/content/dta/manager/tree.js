@@ -941,7 +941,6 @@ const Tree = {
 
 		this.beginUpdate();
 		try {
-			let async = downloads.length < 100;
 			for (let i = 0; i < downloads.length; ++i) {
 				let d = downloads[i];
 				if (d.state == FINISHING) {
@@ -956,22 +955,14 @@ const Tree = {
 				this._downloads.splice(d.position, 1);
 				this._box.rowCountChanged(d.position, -1);
 				last = Math.max(d.filteredPosition, last);
-				if (async) {
-					d.remove();
-				}
 				if (!d.isOf(RUNNING | PAUSED)) {
 					Dialog.wasRemoved(d);
 				}
 			}
-			if (!async) {
-				QueueStore.syncDeleteDownloads(downloads);
-			}
+			QueueStore.deleteDownloads(downloads);
 		}
 		finally {
-			// DB trigger will handle this in the queue file
-			for (let i = downloads.pop().position, e = this._downloads.length; i < e; ++i) {
-				this._downloads[i].position = i;
-			}
+			this.savePositions();
 			this.invalidate();
 			this.doFilter();
 			this.endUpdate();
