@@ -1411,7 +1411,7 @@ const Tree = {
 		}
 
 		if (d instanceof Array) {
-			for (let i of Array) {
+			for (let i of d) {
 				this._invalidate_item(i, cell);
 			}
 			return;
