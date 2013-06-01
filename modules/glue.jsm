@@ -32,7 +32,6 @@ let lazyProto = (function() {
 		gdesc.get = function() {
 			vdesc.value = fn.call(this);
 			Object.defineProperty(this, name, vdesc);
-			log(LOG_DEBUG, name);
 			return vdesc.value;
 		};
 		Object.defineProperty(proto, name, gdesc);
