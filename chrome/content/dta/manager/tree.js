@@ -960,7 +960,7 @@ const Tree = {
 			QueueStore.deleteDownloads(downloads);
 		}
 		finally {
-			this.savePositions();
+			this.savePositionsByOffsets();
 			this.invalidate();
 			this.doFilter();
 			this.endUpdate();
@@ -1381,7 +1381,30 @@ const Tree = {
 			}
 		}
 		if (saveArray.length) {
-			QueueStore.asyncSavePosition(saveArray);
+			QueueStore.savePositions(saveArray);
+			this.fireChangeEvent();
+		}
+	},
+	savePositionsByOffsets: function() {
+		// Special case: When deleting we know that we will only reduce .position.
+		// This allows for DB updates based on offsets instead of absolute positions,
+		// reducing the number of queries (param bindings) a lot, thus avoiding
+		// overhead on the main thread.
+		let offset = 0;
+		for (let i = 0, e = this._downloads.length; i < e; ++i) {
+			let d = this._downloads[i];
+			if (d.position == i) {
+				continue;
+			}
+			let no = d.position - i;
+			d.position = i;
+			if (no == offset) {
+				continue;
+			}
+			QueueStore.savePositionsByOffset(i, no - offset);
+			offset = no;
+		}
+		if (offset) {
 			this.fireChangeEvent();
 		}
 	},
