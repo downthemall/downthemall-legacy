@@ -207,11 +207,19 @@ const QueueStore = {
 		stmt.bindParameters(params);
 		stmt.executeAsync();
 	},
-	savePositionsByOffset: function(pos, off) {
+	getSavePositionsByOffset: function() {
 		let stmt = _connection.createAsyncStatement("UPDATE queue SET pos = pos - :off WHERE pos >= :pos");
-		stmt.params.off = off;
-		stmt.params.pos = pos;
-		stmt.executeAsync();
+		return Object.freeze({
+			execute: function(pos, off) {
+				stmt.params.off = off;
+				stmt.params.pos = pos;
+				stmt.executeAsync();
+			},
+			finalize: function() {
+				stmt.finalize();
+				stmt = null;
+			}
+		});
 	},
 	deleteDownload: function(id) {
 		if (!id) {

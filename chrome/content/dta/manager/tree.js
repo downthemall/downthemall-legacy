@@ -1391,6 +1391,7 @@ const Tree = {
 		// reducing the number of queries (param bindings) a lot, thus avoiding
 		// overhead on the main thread.
 		let offset = 0;
+		var sp = null;
 		for (let i = 0, e = this._downloads.length; i < e; ++i) {
 			let d = this._downloads[i];
 			if (d.position == i) {
@@ -1401,10 +1402,11 @@ const Tree = {
 			if (no == offset) {
 				continue;
 			}
-			QueueStore.savePositionsByOffset(i, no - offset);
+			(sp || (sp = QueueStore.getSavePositionsByOffset())).execute(i, no - offset);
 			offset = no;
 		}
-		if (offset) {
+		if (sp) {
+			sp.finalize();
 			this.fireChangeEvent();
 		}
 	},
