@@ -24,6 +24,21 @@ const reportError = Cu.reportError.bind(Cu);
 const lazy = XPCOMUtils.defineLazyGetter;
 const QI = XPCOMUtils.generateQI.bind(XPCOMUtils);
 
+let lazyProto = (function() {
+	const gdesc = {enumerable: true};
+	const vdesc = {enumerable: true};
+	return function lazyProto(proto, name, fn) {
+		name = name.toString();
+		gdesc.get = function() {
+			vdesc.value = fn.call(this);
+			Object.defineProperty(this, name, vdesc);
+			log(LOG_DEBUG, name);
+			return vdesc.value;
+		};
+		Object.defineProperty(proto, name, gdesc);
+	};
+})();
+
 let log = function logStub() {
 	Cu.reportError(Array.join(arguments, ", "));
 }
