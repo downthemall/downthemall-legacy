@@ -396,43 +396,41 @@ const Tree = {
 		if (display == !!~d.filteredPosition) {
 			return false;
 		}
+		if (this._updating) {
+			this._mustFilter = true;
+			return true;
+		}
 		try {
-			try {
-				this.beginUpdate();
-				if (!display) {
-					// Hide
-					let fp = d.filteredPosition;
-					this._box.rowCountChanged(fp, -1);
-					this._filtered.splice(fp, 1);
-					d.filteredPosition = -1;
-					for (let i = fp, e = this._filtered.length; i < e; ++i) {
-						this._filtered[i].filteredPosition = i;
-					}
-					return true;
+			if (!display) {
+				// Hide
+				let fp = d.filteredPosition;
+				this._box.rowCountChanged(fp, -1);
+				this._filtered.splice(fp, 1);
+				d.filteredPosition = -1;
+				for (let i = fp, e = this._filtered.length; i < e; ++i) {
+					this._filtered[i].filteredPosition = i;
 				}
+				return true;
+			}
 
-				// Display
-				// first first non-filtered
-				let fp = -1;
-				for (let i = d.position, e = this._downloads.length; i < e; ++i) {
-					if (~(fp = this._downloads[i].filteredPosition)) {
-						break;
-					}
-				}
-				this._box.rowCountChanged(fp, 1);
-				if (~fp) {
-					this._filtered.splice(fp, 0, d);
-					for (let i = fp, e = this._filtered.length; i < e; ++i) {
-						this._filtered[i].filteredPosition = i;
-					}
-				}
-				else {
-					fp = d.filteredPosition = this._filtered.push(d) - 1;
+			// Display
+			// first first non-filtered
+			let fp = -1;
+			for (let i = d.position, e = this._downloads.length; i < e; ++i) {
+				if (~(fp = this._downloads[i].filteredPosition)) {
+					break;
 				}
 			}
-			finally {
-				this.endUpdate();
+			if (~fp) {
+				this._filtered.splice(fp, 0, d);
+				for (let i = fp, e = this._filtered.length; i < e; ++i) {
+					this._filtered[i].filteredPosition = i;
+				}
 			}
+			else {
+				fp = d.filteredPosition = this._filtered.push(d) - 1;
+			}
+			this._box.rowCountChanged(fp, 1);
 		}
 		catch (ex) {
 			log(LOG_ERROR, "doFilterOne", ex);
