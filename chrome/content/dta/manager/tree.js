@@ -649,7 +649,7 @@ const Tree = {
 				return this._cpprop_iconiccomplete;
 			case PAUSED:
 				if (!d.totalSize || d.progress < 5) {
-					if (d.autoretrying) {
+					if (d.autoRetrying) {
 						return this._cpprop_iconicpausedundeterminedretrying;
 					}
 					return this._cpprop_iconicpausedundetermined;
