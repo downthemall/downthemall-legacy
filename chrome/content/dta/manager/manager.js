@@ -860,11 +860,7 @@ const Dialog = {
 				}
 			}
 
-			if (Prefs.autoClearComplete && this._autoClears.length) {
-				mapFilterInSitu(this._autoClears, function(e) e.get(), function(e) !!e);
-				Tree.remove(this._autoClears);
-				this._autoClears.length = 0;
-			}
+			this.processAutoClears();
 
 			if (!this.offline && !this._mustReload) {
 				if (Prefs.autoRetryInterval) {
@@ -877,6 +873,16 @@ const Dialog = {
 			log(LOG_ERROR, "process():", ex);
 		}
 	},
+	processAutoClears: (function() {
+		function _m(e) e.get();
+		function _f(e) !!e;
+		return function() {
+			if (Prefs.autoClearComplete && this._autoClears.length && mapFilterInSitu(this._autoClears, _m, _f).length) {
+				Tree.remove(this._autoClears);
+				this._autoClears.length = 0;
+			}
+		};
+	})(),
 	checkSameName: function(download, path) {
 		for (let runner of this._running) {
 			if (runner == download) {
