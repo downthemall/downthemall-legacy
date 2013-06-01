@@ -6,7 +6,7 @@
 const DB_FILE = 'dta_queue.sqlite';
 const DB_FILE_BROKEN = 'dta_queue.broken';
 const DB_FILE_BAK = DB_FILE + ".bak";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 const STMT_SELECT = 'SELECT uuid, item FROM queue ORDER BY pos';
 
@@ -57,17 +57,14 @@ const QueueStore = {
 				/*
 					migrate data
 				*/
+				_connection.executeSimpleSQL("DROP TRIGGER IF EXISTS delete_qi_reposition");
+
 				_connection.schemaVersion = DB_VERSION;
 				log(LOG_DEBUG, "setting schema version");
 			}
 			if (!_connection.tableExists('queue')) {
 				_connection.createTable('queue', 'uuid INTEGER PRIMARY KEY AUTOINCREMENT, pos INTEGER, item TEXT');
 			}
-			_connection.executeSimpleSQL("CREATE TRIGGER IF NOT EXISTS delete_qi_reposition " +
-					"AFTER DELETE ON queue " +
-					"FOR EACH ROW BEGIN " +
-					"UPDATE queue SET pos = pos - 1 WHERE pos > old.pos; " +
-					"END");
 		}
 		catch (ex) {
 			log(LOG_ERROR, "failed to create table", ex);
@@ -218,23 +215,28 @@ const QueueStore = {
 		stmt.params.uuid = id;
 		stmt.executeAsync();
 	},
-	syncDeleteDownloads: function(downloads) {
-		this.beginUpdate();
+	deleteDownloads: function(downloads) {
+		let stmt = _connection.createStatement('DELETE FROM queue WHERE uuid = :uuid');
 		try {
-			let stmt = _connection.createStatement('DELETE FROM queue WHERE uuid = :uuid');
-			try {
+			if (downloads.lenght < 20) {
 				for (let i = 0; i < downloads.length; ++i) {
 					stmt.params.uuid = downloads[i].dbId;
-					stmt.execute();
-					stmt.reset();
+					stmt.executeAsync();
 				}
+				return;
 			}
-			finally {
-				stmt.finalize();
+
+			let params = stmt.newBindingParamsArray();
+			for (let i = 0; i < downloads.length; ++i) {
+				let bp = params.newBindingParams();
+				bp.bindByIndex(0, downloads[i].dbId);
+				params.addParams(bp);
 			}
+			stmt.bindParameters(params);
+			stmt.executeAsync();
 		}
 		finally {
-			this.endUpdate();
+			stmt.finalize();
 		}
 	},
 	loadItems: function(callback, ctx) {
