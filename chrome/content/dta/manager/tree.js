@@ -693,6 +693,9 @@ const Tree = {
 
 	_changeTimer: null,
 	selectionChanged: function() {
+		if (this._updating) {
+			return;
+		}
 		if (this._changeTimer) {
 			Timers.killTimer(this._changeTimer);
 		}
