@@ -100,6 +100,8 @@ const Prefs = {
 		['confirmCancel', true],
 		['confirmRemove', true],
 		['confirmRemoveCompleted', true],
+		['confirmRemoveFailed', true],
+		['confirmRemovePaused', true],
 		['permissions', 384],
 		['loadEndFirst', 0],
 		['recoverAllHttpErrors', false],

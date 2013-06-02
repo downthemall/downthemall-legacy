@@ -970,14 +970,14 @@ const Tree = {
 			this._removeJump(filterInSitu(downloads, function(e) e.filteredPosition >= 0).length, last);
 		}
 	},
-	_removeCompleted: function(onlyGone) {
+	_removeByState: function(state, onlyGone) {
 		this.beginUpdate();
 		try {
 			QueueStore.beginUpdate();
 			let delta = this._downloads.length, last = 0;
 			for (let i = delta - 1; i > -1; --i) {
 				let d = this._downloads[i];
-				if (d.state != COMPLETE) {
+				if (d.state != state) {
 					continue;
 				}
 				if (onlyGone && d.destinationLocalFile.exists()) {
@@ -1008,7 +1008,31 @@ const Tree = {
 				return;
 			}
 		}
-		this._removeCompleted(false);
+		this._removeByState(COMPLETE, false);
+	},
+	removeFailed: function() {
+		if (Prefs.confirmRemoveFailed) {
+			let res = Prompts.confirm(window, _('remove.title'), _('removefailedquestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
+			if (res.checked) {
+				Preferences.setExt('confirmremovefailed', false);
+			}
+			if (res.button) {
+				return;
+			}
+		}
+		this._removeByState(CANCELED, false);
+	},
+	removePaused: function() {
+		if (Prefs.confirmRemovePaused) {
+			let res = Prompts.confirm(window, _('remove.title'), _('removepausedquestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
+			if (res.checked) {
+				Preferences.setExt('confirmremovepaused', false);
+			}
+			if (res.button) {
+				return;
+			}
+		}
+		this._removeByState(PAUSED, false);
 	},
 	removeDupes: function() {
 		let known = {};

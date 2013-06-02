@@ -68,6 +68,8 @@
 		<command id="cmdRemoveHost" oncommand="Tree.removeHostWithConfirmation();" />
 		<command id="cmdRemoveAll" oncommand="Tree.removeAllWithConfirmation();" />
 		<command id="cmdRemoveCompleted" oncommand="Tree.removeCompleted();" />
+		<command id="cmdRemoveFailed" oncommand="Tree.removeFailed();" />
+		<command id="cmdRemovePaused" oncommand="Tree.removePaused();" />
 		<command id="cmdRemoveDupes" oncommand="Tree.removeDupes();" />
 
 		<command id="cmdMoveTop" oncommand="Tree.moveTop();" />
@@ -157,8 +159,8 @@
 			<menuitem id="folder" class="action menuitem-iconic" label="&targetdir.label;" key="kOpenFolder" command="cmdOpenFolder" />
 			<menuseparator />
 			<menuitem id="play" class="menuitem-iconic" label="&resume.label;" key="kResume" command="cmdResume" />
-			<menuitem id="pause" class="menuitem-iconic" label="&pause.label;" key="kPause" command="cmdPause" />
-			<menuitem id="cancel" class="menuitem-iconic" label="&cancel.label;" key="kCancel" command="cmdCancel" />
+			<menuitem id="pause" class="menuitem-iconic pause" label="&pause.label;" key="kPause" command="cmdPause" />
+			<menuitem id="cancel" class="menuitem-iconic cancel" label="&cancel.label;" key="kCancel" command="cmdCancel" />
 			<menuseparator />
 			<splitmenu id="removeCompletedMenu" class="menuitem-iconic" label="&removecompleted.label;" command="cmdRemoveCompleted">
 				<menupopup id="removeCompletedPopup">
@@ -176,6 +178,9 @@
 					<menuitem id="removeDupes" class="menuitem-iconic" label="&removeDupes.label;" command="cmdRemoveDupes" />
 					<menuseparator />
 					<menuitem id="removeAll" class="menuitem-iconic" label="&removeAll.label;" command="cmdRemoveAll" />
+					<menuseparator />
+					<menuitem id="removeFailed" class="menuitem-iconic cancel" label="&removeFailed.label;" command="cmdRemoveFailed" />
+					<menuitem id="removePaused" class="menuitem-iconic pause" label="&removePaused.label;" command="cmdRemovePaused" />
 					<menuseparator />
 				</menupopup>
 			</splitmenu>
