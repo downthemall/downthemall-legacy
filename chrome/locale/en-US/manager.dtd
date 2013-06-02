@@ -45,6 +45,8 @@
 <!ENTITY removehost.label "Remove domain downloads">
 <!ENTITY removecompleted.label "Remove Completed Downloads">
 <!ENTITY removeAll.label "Remove All">
+<!ENTITY removeFailed.label "Remove Failed">
+<!ENTITY removePaused.label "Remove Paused">
 <!ENTITY removeDupes.label "Remove Duplicates">
 <!ENTITY removeGone.label "Clean Gone Files">
 <!ENTITY advanced.label "Advanced">
