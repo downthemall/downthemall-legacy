@@ -314,7 +314,7 @@ let Dialog = {
 			this.ddDirectory = $('directory');
 			this.ddDirectory.isPrivate = isPrivate;
 			this.ddRenaming = $('renaming');
-			this.ddRenaming.isPrivate;
+			this.ddRenaming.isPrivate = isPrivate;
 			$("maskeditor-selector").isPrivate = isPrivate;
 
 			if (!this.ddDirectory.value) {
