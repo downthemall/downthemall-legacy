@@ -30,9 +30,15 @@ let lazyProto = (function() {
 	return function lazyProto(proto, name, fn) {
 		name = name.toString();
 		gdesc.get = function() {
-			vdesc.value = fn.call(this);
-			Object.defineProperty(this, name, vdesc);
-			return vdesc.value;
+			try {
+				vdesc.value = fn.call(this);
+				Object.defineProperty(this, name, vdesc);
+				return vdesc.value;
+			}
+			catch (ex) {
+				log(LOG_ERROR, "lazyProto: " + name, ex);
+				throw ex;
+			}
 		};
 		Object.defineProperty(proto, name, gdesc);
 	};
