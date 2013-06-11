@@ -37,10 +37,11 @@ const BaseHistory = {
 	push: function(value, once) {
 		try {
 			value = value.toString();
-			if (this._values[0] === value) {
+			let values = this._values;
+			if (values[0] === value) {
 				return;
 			}
-			let values = this._values.filter(function(e) e != value);
+			values = values.filter(function(e) e != value);
 			if (once && values.length > 0) {
 				let top = values.shift();
 				values.unshift(top, value);
@@ -96,6 +97,7 @@ PrefHistory.prototype = {
 		return rv;
 	},
 	_setValues: function(values) {
+		log(LOG_DEBUG, "PrefHistory save of " + values);
 		try {
 			prefs.setExt(this._key, JSON.stringify(values));
 		}
@@ -113,6 +115,7 @@ function MemHistory(key) {
 MemHistory.prototype = {
 	__proto__: BaseHistory,
 	_setValues: function(values) {
+		log(LOG_DEBUG, "MemHistory save of " + values);
 		this._values = values;
 	}
 };
@@ -128,10 +131,10 @@ var _privateHistories = {};
  */
 exports.getHistory = function getHistory(key, isPrivate) {
 	isPrivate = !!isPrivate;
+	log(LOG_DEBUG, "getting " + (isPrivate ? "private" : "normal") + " history for " + key);
 	let _histories = isPrivate ? _privateHistories : _normalHistories;
-	let _ctor = isPrivate ? MemHistory : PrefHistory;
 	if (!(key in _histories)) {
-		return (_histories[key] = new _ctor(key));
+		return (_histories[key] = new (isPrivate ? MemHistory : PrefHistory)(key));
 	}
 	return _histories[key];
 }
