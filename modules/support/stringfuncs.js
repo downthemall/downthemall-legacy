@@ -75,8 +75,9 @@ exports.getUsableFileName = function getUsableFileName(str) {
 	return exports.removeBadChars(~i ? t.substr(i + 1) : t).trim();
 };
 
-exports.getUsableFileNameWithFlatten = (function getUsableFileNameWithFlatten(str)
-	exports.getUsableFileName(exports.replaceSlashes(str, getExt('flatReplacementChar', '-'))));
+exports.getUsableFileNameWithFlatten = function getUsableFileNameWithFlatten(str) {
+	return exports.getUsableFileName(exports.replaceSlashes(str, getExt('flatReplacementChar', '-')));
+}
 
 exports.getExtension = function(str) {
 	let name = exports.getUsableFileName(str);
