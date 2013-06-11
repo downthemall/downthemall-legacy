@@ -52,6 +52,8 @@ module("support/historymanager.js");
 		deepEqual(h.values, ["foo", "foo2", "bar"], "no duplicates, once");
 		h.push("foo2", true);
 		deepEqual(h.values, ["foo", "foo2", "bar"], "no duplicates 2, once");
+		deepEqual(getHistory("testHistory", true).values, ["foo", "foo2", "bar"], "no duplicates 2, once + reget");
+		deepEqual(getHistory("testHistory", false).values, [], "mustn't modify non-private history");
 		h.reset();
 		deepEqual(h.values, [], "reset");
 	});
