@@ -46,7 +46,7 @@ UrlManager.prototype = {
 		this._makeGood();
 	},
 	_usableURL: function() toURL(this._usable),
-	usableURLPath: function() {
+	_usableURLPath: function() {
 		let rv = removeLeadingChar(this.usableURL.path, "/");
 		if (rv.length) {
 			rv = removeFinalSlash(normalizeSlashes(rv.substring(0, rv.lastIndexOf("/"))));
