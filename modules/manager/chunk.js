@@ -13,6 +13,7 @@ const {ByteBucketTee} = require("support/bytebucket");
 const {GlobalBucket} = require("manager/globalbucket");
 const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
+const pressure = require("support/memorypressure");
 const {getTimestamp, formatNumber} = require("utils");
 
 const Timers = new TimerManager();
@@ -216,7 +217,7 @@ try {
 const Observer = {
 	memoryPressure: 0,
 	unload: function() {
-		Services.obs.removeObserver(this, "memory-pressure");
+		pressure.remove(this);
 		try {
 			_thread.shutdown();
 		}
@@ -264,7 +265,7 @@ const Observer = {
 	}
 }
 Prefs.addObserver("extensions.dta.permissions", Observer);
-Services.obs.addObserver(Observer, "memory-pressure", true);
+pressure.add(Observer);
 unload(Observer.unload.bind(Observer));
 
 function Chunk(download, start, end, written) {
