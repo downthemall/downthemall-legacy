@@ -15,6 +15,11 @@ statusbarpanel#netstatus[offline] {
 toolbar#tools > toolbarbutton {
 	list-style-image: url(tools.png);
 }
+@media (min-resolution: 2dppx) {
+	toolbar#tools > toolbarbutton {
+		list-style-image: url(tools@2x.png);
+	}
+}
 
 #search > image {
 	list-style-image: url(chrome://global/skin/icons/Search-glass.png);
