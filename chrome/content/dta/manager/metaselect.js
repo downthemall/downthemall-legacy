@@ -2,7 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-const METALINK_LOGO = 'chrome://dta/skin/icons/metalink48.png';
+const hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
+const METALINK_LOGO = hidpi ? 'chrome://dta/skin/common/metalink64.png' : 'chrome://dta/skin/common/metalink32.png';
 
 const Version = require("version");
 

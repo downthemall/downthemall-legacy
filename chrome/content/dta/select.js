@@ -4,6 +4,8 @@
 
 const prompts = require("prompts");
 
+const hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
+
 /* tree helpers */
 function treeIconCallback(icon, async) {
 	if (this.icon == icon) {
@@ -16,7 +18,7 @@ function treeIconCallback(icon, async) {
 }
 function treeIconGetter() {
 	delete this.icon;
-	this.icon = getIcon(this.url.url, 'metalink' in this);
+	this.icon = getIcon(this.url.url, 'metalink' in this, hidpi ? 32 : 16);
 	getFavIcon(this.url.url, treeIconCallback, this);
 	return this.icon;
 }

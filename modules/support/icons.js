@@ -102,10 +102,19 @@ else {
  */
 const getIcon = exports.getIcon = function getIcon(link, metalink, size) {
 	if (metalink) {
-		if (size > 16) {
+		if (size >= 96) {
+			return "chrome://dta/skin/common/metalink96.png";
+		}
+		if (size >= 64) {
+			return "chrome://dta/skin/common/metalink64.png";
+		}
+		if (size >= 48) {
 			return "chrome://dta/skin/common/metalink48.png";
 		}
-		return "chrome://dta/skin/common/metalink.png";
+		if (size >= 32) {
+			return "chrome://dta/skin/common/metalink32.png";
+		}
+		return "chrome://dta/skin/common/metalink16.png";
 	}
 	if (typeof(size) != 'number') {
 		size = 16;
