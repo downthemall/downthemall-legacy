@@ -50,6 +50,34 @@ test("yield same", function() {
 	strictEqual(hits, 2);
 });
 
+test("yield same + pressure", function() {
+	const {memoize} = require("support/memoize");
+	var hits = 0;
+	const fn = memoize(function(a) {
+		++hits;
+		return a;
+	});
+	strictEqual(fn(1), 1);
+	strictEqual(hits, 1);
+	strictEqual(fn(1), 1);
+	strictEqual(hits, 1);
+	strictEqual(fn(2), 2);
+	strictEqual(hits, 2);
+	strictEqual(fn(2), 2);
+	strictEqual(hits, 2);
+
+	Services.obs.notifyObservers(null, "memory-pressure", "heap-minimize");
+
+	strictEqual(fn(1), 1);
+	strictEqual(hits, 3);
+	strictEqual(fn(1), 1);
+	strictEqual(hits, 3);
+	strictEqual(fn(2), 2);
+	strictEqual(hits, 4);
+	strictEqual(fn(2), 2);
+	strictEqual(hits, 4);
+});
+
 test("yield cache overflow", function() {
 	const {memoize} = require("support/memoize");
 	var hits = 0;

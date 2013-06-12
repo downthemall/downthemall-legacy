@@ -3,6 +3,21 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
+
+var caches = [];
+function filterCaches(c) {
+	c = c.get();
+	if (!c) {
+		return false;
+	}
+	c.clear();
+	return true;
+}
+require("support/memorypressure").add(function() {
+	caches = caches.filter(filterCaches);
+});
+
+
 /**
  * Decorate a function with a memoization wrapper, with a limited-size cache
  * to reduce peak memory utilization.
@@ -23,7 +38,8 @@ exports.memoize = function memoize(func, limit, num_args) {
 	limit = limit || 3000;
 	num_args = num_args || func.length;
 
-	var cache = Object.create(null);
+	var cache = new Map();
+	caches.push(weak(cache));
 	var keylist = [];
 	var args = [];
 	var key, result;
@@ -33,15 +49,15 @@ exports.memoize = function memoize(func, limit, num_args) {
 		throw new Error("memoize does not support functions without arguments");
 	case 1:
 		return function memoize_one_arg(a) {
-			key = a.spec || a.toString();
-
-			if (key in cache)
-				return cache[key];
+			key = a.spec || a;
+			if (cache.has(key)) {
+				return cache.get(key);
+			}
 
 			result = func.call(null, a);
-			cache[key] = result;
+			cache.set(key, result);
 			if (keylist.push(key) > limit)
-				delete cache[keylist.shift()];
+				cache.delete(keylist.shift());
 			return result;
 		};
 	case 2:
@@ -50,13 +66,14 @@ exports.memoize = function memoize(func, limit, num_args) {
 			key = JSON.stringify(args);
 			args.length = 0;
 
-			if (key in cache)
-				return cache[key];
+			if (cache.has(key)) {
+				return cache.get(key);
+			}
 
 			var result = func.call(null, a, b);
-			cache[key] = result;
+			cache.set(key, result);
 			if (keylist.push(key) > limit)
-				delete cache[keylist.shift()];
+				cache.delete(keylist.shift());
 			return result;
 		};
 	case 3:
@@ -65,13 +82,14 @@ exports.memoize = function memoize(func, limit, num_args) {
 			key = JSON.stringify(args);
 			args.length = 0;
 
-			if (key in cache)
-				return cache[key];
+			if (cache.has(key)) {
+				return cache.get(key);
+			}
 
 			var result = func.call(null, a, b, c);
-			cache[key] = result;
+			cache.set(key, result);
 			if (keylist.push(key) > limit)
-				delete cache[keylist.shift()];
+				cache.delete(keylist.shift());
 			return result;
 		};
 
@@ -81,26 +99,29 @@ exports.memoize = function memoize(func, limit, num_args) {
 			key = JSON.stringify(args);
 			args.length = 0;
 
-			if (key in cache)
-				return cache[key];
+			if (cache.has(key)) {
+				return cache.get(key);
+			}
 
 			var result = func.call(null, a, b, c, d);
-			cache[key] = result;
+			cache.set(key, result);
 			if (keylist.push(key) > limit)
-				delete cache[keylist.shift()];
+				cache.delete(keylist.shift());
 			return result;
 		};
 
 	default:
 		return function() {
 			var key = JSON.stringify(arguments);
-			if (key in cache)
-				return cache[key];
 
-			var result = func.apply(this, arguments);
-			cache[key] = result;
+			if (cache.has(key)) {
+				return cache.get(key);
+			}
+
+			var result = func.apply(null, arguments);
+			cache.set(key, result);
 			if (keylist.push(key) > limit)
-				delete cache[keylist.shift()];
+				cache.delete(keylist.shift());
 			return result;
 		};
 	}
