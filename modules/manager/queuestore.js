@@ -245,7 +245,7 @@ const QueueStore = {
 			if (downloads.length < 50) {
 				for (let d of downloads) {
 					if (!d.dbId) {
-						return;
+						continue;
 					}
 					stmt.params.uuid = d.dbId;
 					stmt.executeAsync();
@@ -256,8 +256,9 @@ const QueueStore = {
 			let params = stmt.newBindingParamsArray();
 			for (let d of downloads) {
 				if (!d.dbId) {
-					return;
+					continue;
 				}
+				let bp = params.newBindingParams();
 				bp.bindByIndex(0, d.dbId);
 				params.addParams(bp);
 			}
