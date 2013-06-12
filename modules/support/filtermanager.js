@@ -406,7 +406,7 @@ FilterManagerImpl.prototype = {
 		this._activeRegs[IMAGE_FILTER] = this.getMatcherFor(this._active[IMAGE_FILTER]);
 
 		// notify all observers
-		require("support/observers").obs.notify(this, TOPIC_FILTERSCHANGED, null);
+		require("support/observers").notify(this, TOPIC_FILTERSCHANGED, null);
 	},
 
 	enumAll: function() {
