@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const EXPORTED_SYMBOLS = ["require", "requireJoined", "requireJSM", "unload", "weak", "lazy", "QI", "Services", "Instances", "XPCOMUtils", "LRUMap"];
+const EXPORTED_SYMBOLS = ["require", "requireJoined", "requireJSM", "unload", "weak", "lazy", "lazyProto", "QI", "Services", "Instances", "XPCOMUtils", "LRUMap"];
 
 const {
 	classes: Cc,
@@ -21,10 +21,10 @@ Cu.import("resource://gre/modules/Services.jsm");
 
 const weak = Cu.getWeakReference.bind(Cu);
 const reportError = Cu.reportError.bind(Cu);
-const lazy = XPCOMUtils.defineLazyGetter;
+const lazy = XPCOMUtils.defineLazyGetter; // bind?
 const QI = XPCOMUtils.generateQI.bind(XPCOMUtils);
 
-let lazyProto = (function() {
+const lazyProto = (function() {
 	const gdesc = {enumerable: true};
 	const vdesc = {enumerable: true};
 	return function lazyProto(proto, name, fn) {

@@ -35,3 +35,119 @@ test("weak", function() {
 	(wbound.get())();
 	equal(ref, 4);
 });
+
+test("lazy", function() {
+	var {lazyProto} = requireJSM("chrome://dta-modules/content/glue.jsm");
+	var o = {};
+	var io = {1:1};
+	var i = 0;
+	lazy(o, "testnum", function() 1);
+	lazy(o, "teststr", function() "str");
+	lazy(o, "testobj", function() io);
+	lazy(o, "once", function() ++i);
+
+
+	ok(true, JSON.stringify(o));
+
+	lazy(o, "except", function() {
+		throw new Error("error");
+	});
+
+	strictEqual(o.testnum, 1, "numbers");
+	strictEqual(o.teststr, "str", "strings");
+	strictEqual(o.testobj, io, "objects");
+	strictEqual(o.once, 1, "runs at least once");
+	strictEqual(o.once, 1, "runs only only (really!)");
+	strictEqual(i, 1, "runs only only (counter)");
+	throws(function() o.except, Error, "propagates exceptions");
+});
+
+test("lazyProto", function() {
+	var {lazyProto} = requireJSM("chrome://dta-modules/content/glue.jsm");
+	var O = function() {}
+	O.prototype = {};
+	var io = {1:1};
+	var i = 0;
+	lazyProto(O.prototype, "testnum", function() 1);
+	lazyProto(O.prototype, "teststr", function() "str");
+	lazyProto(O.prototype, "testobj", function() io);
+	lazyProto(O.prototype, "once", function() ++i);
+	lazyProto(O.prototype, "except", function() {
+		throw new Error("error");
+	});
+
+	var o = new O();
+	var o2 = new O();
+
+	strictEqual(o.testnum, 1, "numbers");
+	strictEqual(o.teststr, "str", "strings");
+	strictEqual(o.testobj, io, "objects");
+	strictEqual(o.once, 1, "runs at least once");
+	strictEqual(o.once, 1, "runs only only (really!)");
+	strictEqual(i, 1, "runs only only (counter)");
+	throws(function() o.except, Error, "propagates exceptions");
+	throws(function() o.except, Error, "propagates exceptions (cont.)");
+
+	strictEqual(o2.testnum, 1, "numbers");
+	strictEqual(o2.teststr, "str", "strings");
+	strictEqual(o2.testobj, io, "objects");
+	strictEqual(o2.once, 2, "runs at least once");
+	strictEqual(o2.once, 2, "runs only only (really!)");
+	strictEqual(i, 2, "runs only only (counter)");
+	throws(function() o2.except, Error, "propagates exceptions (cont.)");
+});
+
+test("lazyProto frozen proto", function() {
+	var {lazyProto} = requireJSM("chrome://dta-modules/content/glue.jsm");
+	var O = function() {}
+	O.prototype = {};
+	var io = {1:1};
+	var i = 0;
+	lazyProto(O.prototype, "testnum", function() 1);
+	lazyProto(O.prototype, "teststr", function() "str");
+	lazyProto(O.prototype, "testobj", function() io);
+	lazyProto(O.prototype, "once", function() ++i);
+	lazyProto(O.prototype, "except", function() {
+		throw new Error("error");
+	});
+	Object.freeze(O.prototype);
+
+	var o = new O();
+	var o2 = new O();
+
+	strictEqual(o.testnum, 1, "numbers");
+	strictEqual(o.teststr, "str", "strings");
+	strictEqual(o.testobj, io, "objects");
+	strictEqual(o.once, 1, "runs at least once");
+	strictEqual(o.once, 1, "runs only only (really!)");
+	strictEqual(i, 1, "runs only only (counter)");
+	throws(function() o.except, Error, "propagates exceptions");
+	throws(function() o.except, Error, "propagates exceptions (cont.)");
+
+	strictEqual(o2.testnum, 1, "numbers");
+	strictEqual(o2.teststr, "str", "strings");
+	strictEqual(o2.testobj, io, "objects");
+	strictEqual(o2.once, 2, "runs at least once");
+	strictEqual(o2.once, 2, "runs only only (really!)");
+	strictEqual(i, 2, "runs only only (counter)");
+	throws(function() o2.except, Error, "propagates exceptions (cont.)");
+});
+
+test("lazyProto very frozen", function() {
+	var {lazyProto} = requireJSM("chrome://dta-modules/content/glue.jsm");
+	var O = function() {}
+	O.prototype = {};
+	var io = {1:1};
+	var i = 0;
+	lazyProto(O.prototype, "testnum", function() 1);
+	lazyProto(O.prototype, "teststr", function() "str");
+	lazyProto(O.prototype, "testobj", function() io);
+	lazyProto(O.prototype, "once", function() ++i);
+	lazyProto(O.prototype, "except", function() {
+		throw new Error("error");
+	});
+	Object.freeze(O.prototype);
+
+	var o = Object.freeze(new O());
+	throws(function() o.testnum, "Cannot mess with frozen objects");
+});
