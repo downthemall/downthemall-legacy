@@ -163,6 +163,9 @@ const QueueStore = {
 		if (!download) {
 			throw new Exception("You must provide a Download to save!");
 		}
+		if (!id) {
+			return;
+		}
 		if (!_saveStmt) {
 			_saveStmt = _connection.createAsyncStatement('UPDATE queue SET item = ? WHERE uuid = ?');
 			_saveStmtParams = _saveStmt.newBindingParamsArray();
@@ -183,12 +186,13 @@ const QueueStore = {
 			return;
 		}
 		let stmt = _saveStmt;
-		stmt.bindParameters(_saveStmtParams);
+		if (_saveStmtParams.length) {
+			stmt.bindParameters(_saveStmtParams);
+			stmt.executeAsync();
+		}
 		_saveStmt = null;
 		_saveStmtParams = null;
 		_timer = null;
-
-		stmt.executeAsync();
 	},
 	savePositions: function(downloads) {
 		if (downloads.length == 0) {
@@ -199,13 +203,18 @@ const QueueStore = {
 		let stmt = _connection.createAsyncStatement("UPDATE queue SET pos = ? WHERE uuid = ?");
 		let params = stmt.newBindingParamsArray();
 		for (let d of downloads) {
+			if (!d.dbId) {
+				continue;
+			}
 			let bp = params.newBindingParams();
 			bp.bindByIndex(0, d.position);
 			bp.bindByIndex(1, d.dbId);
 			params.addParams(bp);
 		}
-		stmt.bindParameters(params);
-		stmt.executeAsync();
+		if (params.length) {
+			stmt.bindParameters(params);
+			stmt.executeAsync();
+		}
 	},
 	getSavePositionsByOffset: function() {
 		let stmt = _connection.createAsyncStatement("UPDATE queue SET pos = pos - :off WHERE pos >= :pos");
@@ -233,21 +242,28 @@ const QueueStore = {
 		let stmt = _connection.createStatement('DELETE FROM queue WHERE uuid = :uuid');
 		try {
 			if (downloads.length < 50) {
-				for (let i = 0; i < downloads.length; ++i) {
-					stmt.params.uuid = downloads[i].dbId;
+				for (let d of downloads) {
+					if (!d.dbId) {
+						return;
+					}
+					stmt.params.uuid = d.dbId;
 					stmt.executeAsync();
 				}
 				return;
 			}
 
 			let params = stmt.newBindingParamsArray();
-			for (let i = 0; i < downloads.length; ++i) {
-				let bp = params.newBindingParams();
-				bp.bindByIndex(0, downloads[i].dbId);
+			for (let d of downloads) {
+				if (!d.dbId) {
+					return;
+				}
+				bp.bindByIndex(0, d.dbId);
 				params.addParams(bp);
 			}
-			stmt.bindParameters(params);
-			stmt.executeAsync();
+			if (params.length) {
+				stmt.bindParameters(params);
+				stmt.executeAsync();
+			}
 		}
 		finally {
 			stmt.finalize();
