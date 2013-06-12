@@ -103,9 +103,9 @@ else {
 const getIcon = exports.getIcon = function getIcon(link, metalink, size) {
 	if (metalink) {
 		if (size > 16) {
-			return "chrome://dta/skin/icons/metalink48.png";
+			return "chrome://dta/skin/common/metalink48.png";
 		}
-		return "chrome://dta/skin/icons/metalink.png";
+		return "chrome://dta/skin/common/metalink.png";
 	}
 	if (typeof(size) != 'number') {
 		size = 16;
