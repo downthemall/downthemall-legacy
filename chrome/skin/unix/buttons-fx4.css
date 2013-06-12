@@ -13,7 +13,7 @@ toolbar[iconsize="small"] #dta-turbo-button,
 toolbar[iconsize="small"] #dta-turboselect-button,
 toolbar[iconsize="small"] #dta-manager-button,
 toolbar[iconsize="small"] .dta-toolbarbutton {
-	list-style-image: url(buttons16.png);
+	list-style-image: url(buttons.png);
 }
 
 #dta-button {
