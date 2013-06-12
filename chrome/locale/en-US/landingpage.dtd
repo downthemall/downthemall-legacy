@@ -104,7 +104,7 @@
 <!ENTITY lp.yr.morelicense3 "Individual files may have additional and/or different licenses. See the corresponding repository files available from <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Most files are licensed under the GPL/LGPL-compatible MPL 2.0, or are tri-licensed under a MPL 1.1/GPL 2.0/LGPL 2.1 license. See the MPL, GPL, LGPL files respectively.">
 <!ENTITY lp.yr.gplintro "Most important sections from the GPL 2.0, the no warranty and damages disclaimer, follow:">
 <!ENTITY lp.yr.icons "Artwork, icons and buttons">
-<!ENTITY lp.yr.iconsbased3 "are based on the works of Mike Matas, Mark James and the Tango project">
+<!ENTITY lp.yr.iconsbased4 "are based on the works of Mike Matas, Mark James, the Noun Project and the Tango project">
 <!ENTITY lp.yr.artwork3 "The original artwork is: Copyright © 2004-2013 by Stefano Verna, Federico Parodi and Nils Maier">
 <!ENTITY lp.yr.artworklicense "The original artwork is licensed under:">
 <!ENTITY lp.yr.logo3 "The DownThemAll! logo design: Copyright © 2004-2013 by Stefano Verna.">

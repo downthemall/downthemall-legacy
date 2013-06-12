@@ -548,6 +548,16 @@ treechildren::-moz-tree-cell-text(private) {
 	-moz-image-region: rect(208px,48px,224px,32px);
 }
 
+/* menuitem common */
+toolbarbutton.listselectall,  menuitem#listselectall {
+	list-style-image: url(chrome://dta/skin/common/selection.png);
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+toolbarbutton.listselectinv, menuitem#listselectinv {
+	list-style-image: url(chrome://dta/skin/common/selection.png);
+	-moz-image-region: rect(0px, 48px, 16px, 32px);
+}
+
 @media (min-resolution: 2dppx) {
 	#speedLimit,
 	#actions,
@@ -747,20 +757,20 @@ treechildren::-moz-tree-cell-text(private) {
 		-moz-image-region: rect(416px,96px,448px,64px);
 	}
 
+	/* menuitem common */
+	toolbarbutton.listselectall,  menuitem#listselectall {
+		list-style-image: url(chrome://dta/skin/common/selection@2x.png);
+		-moz-image-region: rect(0px, 32px, 32px, 0px);
+	}
+	toolbarbutton.listselectinv, menuitem#listselectinv {
+		list-style-image: url(chrome://dta/skin/common/selection@2x.png);
+		-moz-image-region: rect(0px, 96px, 32px, 64px);
+	}
+
 	.menu-iconic-icon,
 	#actions .toolbarbutton-icon {
 		width: 16px;
 	}
-}
-
-/* menuitem common */
-toolbarbutton.listselectall,  menuitem#listselectall {
-	list-style-image: url(chrome://dta/skin/common/selection.png);
-	-moz-image-region: rect(0px, 16px, 16px, 0px);
-}
-toolbarbutton.listselectinv, menuitem#listselectinv {
-	list-style-image: url(chrome://dta/skin/common/selection.png);
-	-moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 
 .menu-iconic-accel {

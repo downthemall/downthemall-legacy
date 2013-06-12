@@ -145,19 +145,39 @@ treechildren::-moz-tree-cell-text(fastFiltered) {
 #mrenaming {
 	list-style-image: url(chrome://dta/skin/common/mask.png);
 }
-#selectall {
+
+#selectall, #selectinvert, #selectfiltered {
 	list-style-image: url(chrome://dta/skin/common/selection.png);
+}
+#selectall {
 	-moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 #selectinvert {
-	list-style-image: url(chrome://dta/skin/common/selection.png);
 	-moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 #selectfiltered {
-	list-style-image: url(selectfiltered.png);
+	-moz-image-region: rect(0px, 64px, 16px, 48px);
 }
 #mopen {
 	list-style-image: url(chrome://dta/skin/common/openurl.png);
+}
+
+@media (min-resolution: 2dppx) {
+	#selectall, #selectinvert, #selectfiltered {
+		list-style-image: url(chrome://dta/skin/common/selection@2x.png);
+	}
+	#selectall {
+		-moz-image-region: rect(0px, 32px, 32px, 0px);
+	}
+	#selectinvert {
+		-moz-image-region: rect(0px, 96px, 32px, 64px);
+	}
+	#selectfiltered {
+		-moz-image-region: rect(0px, 128px, 32px, 96px);
+	}
+	.menu-iconic-icon {
+		width: 16px;
+	}
 }
 
 #maskeditor {
