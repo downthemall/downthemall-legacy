@@ -9,6 +9,7 @@ const {defer} = require("support/defer");
 const Mediator = require("support/mediator");
 const DTA = require("api");
 const Utils = require("utils");
+const obs = require("support/observers");
 
 /**
  * AboutModule
@@ -183,7 +184,7 @@ function migrate() {
 			Preferences.setExt('version', v.BASE_VERSION);
 
 			v.showAbout = true;
-			Services.obs.notifyObservers(null, v.TOPIC_SHOWABOUT, null);
+			obs.notify(null, v.TOPIC_SHOWABOUT, null);
 
 			// Need to extract icons
 			require("support/iconcheat").loadWindow(null);
@@ -249,19 +250,15 @@ exports.clean = function clean() {
 	}
 }
 
-const unloadObserver = {
-	observe: function() {
-		Services.obs.removeObserver(this, "profile-change-teardown");
-
-		let branch = Preferences.getBranch('privacy.');
-		// has user pref'ed to sanitize on shutdown?
-		if (branch.getBoolPref('sanitize.sanitizeOnShutdown') && branch.getBoolPref('clearOnShutdown.extensions-dta')) {
-			exports.clean();
-		}
+function unloadObserver() {
+	let branch = Preferences.getBranch('privacy.');
+	// has user pref'ed to sanitize on shutdown?
+	if (branch.getBoolPref('sanitize.sanitizeOnShutdown') && branch.getBoolPref('clearOnShutdown.extensions-dta')) {
+		exports.clean();
 	}
 };
-Services.obs.addObserver(unloadObserver, "profile-change-teardown", false);
-unload(function sanitizeUnload() unloadObserver.observe());
+obs.add(unloadObserver, "profile-change-teardown", false);
+unload(function sanitizeUnload() unloadObserver());
 
 function registerTools() {
 	require("support/contenthandling");
@@ -422,14 +419,14 @@ function registerOverlays() {
 					window.setTimeout(function() require("support/mediator").showAbout(window), 0);
 				}
 				function registerObserver() {
-					Services.obs.addObserver({
+					obs.add({
 						observe: function(s,t,d) {
-							Services.obs.removeObserver(this, Version.TOPIC_SHOWABOUT);
+							obs.remove(this, Version.TOPIC_SHOWABOUT);
 							if (Version.showAbout) {
 								openAbout();
 							}
 						}
-					}, Version.TOPIC_SHOWABOUT, true);
+					}, Version.TOPIC_SHOWABOUT);
 				}
 
 				try {

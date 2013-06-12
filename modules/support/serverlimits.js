@@ -7,6 +7,7 @@ const Prefs = require("preferences");
 requireJoined(this, "constants");
 const {ByteBucket} = require("support/bytebucket");
 const {filterInSitu} = require("utils");
+const obs = require("support/observers");
 
 const TOPIC = 'DTA:serverlimits-changed';
 const PREFS = 'extensions.dta.serverlimit.';
@@ -98,7 +99,7 @@ function loadLimits() {
 			log(LOG_ERROR, "Failed to load: " + host, ex);
 		}
 	}
-	Services.obs.notifyObservers(null, TOPIC, null);
+	obs.notify(null, TOPIC, null);
 }
 
 function getEffectiveHost(url) {

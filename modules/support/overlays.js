@@ -5,6 +5,7 @@
 
 const global = this;
 const {defer} = require("support/defer");
+const obs = require("support/observers");
 
 /**
  * Specialized unloader that will trigger whenever either the window gets
@@ -42,10 +43,9 @@ function runOnLoad(window) {
 function windowWatcher(window,t,d) {
 	runOnLoad(window);
 }
-Services.obs.addObserver(windowWatcher, "chrome-document-global-created", false);
+obs.add(windowWatcher, "chrome-document-global-created");
 // Make sure to stop watching for windows if we're unloading
 unload(function() {
-	Services.obs.removeObserver(windowWatcher, "chrome-document-global-created");
 	watchers = null;
 });
 

@@ -19,6 +19,8 @@ const {
 	isChannelPrivate
 } = require("support/pbm");
 
+const obs = require("support/observers");
+
 const {modifyURL} = require("support/requestmanipulation");
 
 
@@ -56,7 +58,7 @@ ContentHandlingImpl.prototype = {
 	QueryInterface: QI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.nsIFactory, Ci.nsIChannelEventSink]),
 
 	_init: function ct__init() {
-		Services.obs.addObserver(this, 'http-on-modify-request', false);
+		obs.add(this, "http-on-modify-request");
 
 		require("components").registerComponents([this], true);
 		Services.prefs.addObserver(PREF_SNIFFVIDEOS, this, false);
@@ -80,15 +82,15 @@ ContentHandlingImpl.prototype = {
 			this.unregisterHttpObservers();
 		}
 		unregisterPrivatePurger(this.boundPurge);
-		Services.obs.removeObserver(this, 'http-on-modify-request');
+		obs.remove(this, 'http-on-modify-request');
 	},
 	registerHttpObservers: function ct_registerHttpObservers() {
-		Services.obs.addObserver(this, 'http-on-examine-response', false);
-		Services.obs.addObserver(this, 'http-on-examine-cached-response', false);
+		obs.add(this, 'http-on-examine-response');
+		obs.add(this, 'http-on-examine-cached-response');
 	},
 	unregisterHttpObservers: function ct_unregisterHttpObservers() {
-		Services.obs.removeObserver(this, 'http-on-examine-response');
-		Services.obs.removeObserver(this, 'http-on-examine-cached-response');
+		obs.remove(this, 'http-on-examine-response');
+		obs.remove(this, 'http-on-examine-cached-response');
 	},
 	observe: function ct_observe(subject, topic, data) {
 		switch(topic) {

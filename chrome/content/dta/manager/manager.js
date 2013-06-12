@@ -208,13 +208,14 @@ const Dialog = {
 		}
 
 		Preferences.makeObserver(this);
+		const obs = require("support/observers");
 		for (let topic of this._observes) {
-			Services.obs.addObserver(this, topic, true);
+			obs.add(this, topic);
 		}
 		const unload_obs = (function() {
 			removeEventListener("unload", unload_obs, false);
 			for (let topic of this._observes) {
-				Services.obs.removeObserver(this, topic);
+				obs.remove(this, topic);
 			}
 		}).bind(this);
 		addEventListener("unload", unload_obs, false);
