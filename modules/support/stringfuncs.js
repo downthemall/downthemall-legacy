@@ -3,6 +3,8 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
+const {memoize} = require("support/memoize");
+
 const rbc_u = /[\n\r\v?:<>*|"]/g;
 const rbc_w = /%(?:25)?20/g;
 const rsl_r = /[\/\\]/g;
@@ -104,12 +106,13 @@ exports.cropCenter = function(str, newLength) {
 	return str;
 };
 
-exports.toURI = function toURI(str, charset, baseURI) {
+function toURI(str, charset, baseURI) {
 	return Services.io.newURI(str, charset, baseURI);
-};
+}
+exports.toURI = memoize(toURI, 1000);
 
-exports.toURL = function toURL(str, charset, baseURI) {
-	return exports.toURI(str, charset, baseURI).QueryInterface(Ci.nsIURL);
-};
+exports.toURL = memoize(function toURL(str, charset, baseURI) {
+	return toURI(str, charset, baseURI).QueryInterface(Ci.nsIURL);
+}, 1000);
 
 Object.freeze(exports);
