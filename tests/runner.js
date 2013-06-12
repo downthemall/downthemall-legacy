@@ -3,9 +3,21 @@ QUnit.extend(QUnit, {
 	arrayEqual: function arrayEqual(actual, expected, message) {
 		[actual, expected] = [actual.slice(0).sort(), expected.slice(0).sort()];
 		QUnit.deepEqual(actual, expected, message);
+	},
+	notThrows: function(fn, message) {
+		QUnit.config.current.ignoreGlobalErrors = true;
+		try {
+			fn();
+			QUnit.push( true, true, null, message || fn.name);
+		}
+		catch (ex) {
+			QUnit.pushFailure( message || fn.name, null, ex);
+		}
+		QUnit.config.current.ignoreGlobalErrors = false;
 	}
 });
 const arrayEqual = QUnit.arrayEqual;
+const notThrows = QUnit.notThrows;
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
