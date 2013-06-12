@@ -164,11 +164,14 @@ statusbarpanel > label {
 }
 
 statusbarpanel#preferences {
-	list-style-image: url(chrome://dta/skin/toolbarbuttons/preferences.png);
+	list-style-image: url(chrome://dta/skin/toolbarbuttons/buttons.png);
+	-moz-image-region: rect(0px, 128px, 16px, 112px);
 }
-@media (min-resolution: 1dppx) {
+
+@media (min-resolution: 2dppx) {
 	statusbarpanel#preferences {
-		list-style-image: url(chrome://dta/skin/toolbarbuttons/preferences@2x.png);
+		list-style-image: url(chrome://dta/skin/toolbarbuttons/buttons@2x.png);
+		-moz-image-region: rect(0px, 256px, 32px, 224px);
 	}
 	statusbarpanel#preferences .statusbarpanel-icon {
 		width: 16px;

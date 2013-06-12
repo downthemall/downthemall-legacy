@@ -1,6 +1,0 @@
-@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
-
-/* we don't care about the gtk2 stubbornness of not showing menu icons by default */
-.dta-menuitem > .menu-iconic-left {
-	visibility: visible !important;
-}

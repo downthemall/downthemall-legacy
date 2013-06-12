@@ -3,5 +3,22 @@
 
 #turbodtaexec {
 	-moz-appearance: toolbarbutton;
-	list-style-image: url("chrome://dta/skin/toolbarbuttons/turbo.png");
+	list-style-image: url("chrome://dta/skin/toolbarbuttons/buttons.png");
+	-moz-image-region: rect(0px,64px,16px,48px);
+}
+#turbodtaexec:hover {
+	-moz-image-region: rect(0px,48px,16px,32px);
+}
+
+@media (min-resolution: 2dppx) {
+	#turbodtaexec {
+		list-style-image: url("chrome://dta/skin/toolbarbuttons/buttons@2x.png");
+		-moz-image-region: rect(0px,128px,32px,96px);
+	}
+	#turbodtaexec:hover {
+		-moz-image-region: rect(0px,96px,32px,64px);
+	}
+	#turbodtaexec .toolbarbutton-icon {
+		width: 16px;
+	}
 }
