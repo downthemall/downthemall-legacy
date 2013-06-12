@@ -49,13 +49,13 @@ threechildren::-moz-tree-row {
 
 treechildren::-moz-tree-checkbox {
 	/* css for checked cells */
-	list-style-image: url(checks12.png);
-	-moz-image-region: rect(0px,24px,12px,12px);
+	list-style-image: url(checks.png);
+	-moz-image-region: rect(16px,28px,28px,16px);
 }
 
 treechildren::-moz-tree-checkbox(checked) {
 	/* css for checked cells */
-	-moz-image-region: rect(0px,12px,12px,0px);
+	-moz-image-region: rect(16px,12px,28px,0px);
 }
 
 treechildren::-moz-tree-row(manuallySelected) {
@@ -130,18 +130,19 @@ treechildren::-moz-tree-cell-text(fastFiltered) {
 	color: black !important;
 }
 
+#mcheck, #muncheck, #mtoggle {
+	list-style-image: url(checks.png);
+}
 #mcheck {
-	list-style-image: url(checks16.png);
 	-moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 #muncheck {
-	list-style-image: url(checks16.png);
 	-moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 #mtoggle {
-	list-style-image: url(checks16.png);
 	-moz-image-region: rect(0px, 32px, 16px, 16px);
 }
+
 #mrenaming {
 	list-style-image: url(chrome://dta/skin/common/mask.png);
 }
@@ -163,6 +164,31 @@ treechildren::-moz-tree-cell-text(fastFiltered) {
 }
 
 @media (min-resolution: 2dppx) {
+	/* Cannot use ATM: -moz-tree-checkbox does not support scaling
+	treechildren::-moz-tree-checkbox {
+		list-style-image: url(checks@2x.png);
+		-moz-image-region: rect(32px,56px,56px,32px);
+		width: 12px;
+		height: 12px;
+	}
+	treechildren::-moz-tree-checkbox(checked) {
+		-moz-image-region: rect(32px,24px,56px,0px);
+	}
+	*/
+
+	#mcheck, #muncheck, #mtoggle {
+		list-style-image: url(checks@2x.png);
+	}
+	#mcheck {
+		-moz-image-region: rect(0px, 32px, 32px, 0px);
+	}
+	#muncheck {
+		-moz-image-region: rect(0px, 96px, 32px, 64px);
+	}
+	#mtoggle {
+		-moz-image-region: rect(0px, 64px, 32px, 32px);
+	}
+
 	#selectall, #selectinvert, #selectfiltered {
 		list-style-image: url(chrome://dta/skin/common/selection@2x.png);
 	}
