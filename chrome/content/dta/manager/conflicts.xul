@@ -34,7 +34,7 @@
 		<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js"/>
 		<script type="application/javascript" src="conflicts.js"/>
 
-		<vbox flex="1" style="padding-left: 35px; background: url('chrome://dta/skin/manager/alert.png') no-repeat 0 0;">
+		<vbox flex="1" style="padding-left: 35px; background: url('chrome://dta/skin/common/alert.png') no-repeat 0 0;">
 			<description id="text"/>
 			<description id="question"/>
 
