@@ -584,12 +584,14 @@ StringBundles.prototype = Object.freeze({
 		return fmt;
 	}
 });
-exports.StringBundles = Object.freeze(StringBundles);
-Prefs.addObserver("general.useragent.locale", {
+const StringBundles_Observer = {
 	observe: function() {
 		_bundles = Object.create(null);
 	}
-});
+};
+Prefs.addObserver("general.useragent.locale", StringBundles_Observer);
+require("support/memorypressure").add(StringBundles_Observer);
+exports.StringBundles = Object.freeze(StringBundles);
 
 /**
  * XP compatible reveal/launch
