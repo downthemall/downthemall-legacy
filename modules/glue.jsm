@@ -49,21 +49,6 @@ let log = function logStub() {
 }
 let LOG_DEBUG = 0, LOG_INFO = 0, LOG_WARN = 0;
 
-//Map shim
-if (!("Map" in this)) {
-	this.Map = function() {
-		this._dict = Object.create(null);
-		Object.freeze(this);
-	}
-	this.Map.prototype = Object.freeze({
-		"get": function(key) this._dict[key],
-		"has": function(key) key in this._dict,
-		"set": function(key, val) { this._dict[key] = val; },
-		"delete": function(key) { delete this._dict[key]; },
-	});
-	EXPORTED_SYMBOLS.push("Map");
-}
-
 function LRUMap(limit) {
 	this._limit = limit;
 	this.clear();
