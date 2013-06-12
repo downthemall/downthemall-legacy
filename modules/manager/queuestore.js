@@ -11,6 +11,7 @@ const DB_VERSION = 2;
 const STMT_SELECT = 'SELECT uuid, item FROM queue ORDER BY pos';
 
 const Timers = new (require("support/timers").TimerManager)();
+const obs = require("support/observers");
 
 let _connection = null;
 let _saveStmt = null;
@@ -85,7 +86,7 @@ const QueueStore = {
 		}
 
 		// give manager a chance to save running
-		Services.obs.notifyObservers(null, 'DTA:shutdownQueueStore', null);
+		obs.notifyLocal(null, 'DTA:shutdownQueueStore', null);
 
 		this._initialized = false;
 		// finish any pending operations
@@ -320,11 +321,10 @@ const QueueStore = {
 };
 
 QueueStore.init();
-Services.obs.addObserver(QueueStore, "profile-change-teardown", false);
+obs.add(QueueStore, "profile-change-teardown");
 
 unload(function() {
 	try {
-		Services.obs.removeObserver(QueueStore, "profile-change-teardown");
 		QueueStore.shutdown();
 	}
 	catch (ex) {

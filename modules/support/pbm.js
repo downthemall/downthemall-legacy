@@ -4,6 +4,7 @@
 "use strict";
 
 const {filterInSitu} = require("utils");
+const obs = require("support/observers");
 
 /**
  * Determines if a window is private
@@ -51,9 +52,8 @@ const purgeObserver = {
 		}
 	}
 };
-Services.obs.addObserver(purgeObserver, "last-pb-context-exited", false);
+obs.add(purgeObserver, "last-pb-context-exited");
 unload(function removePurgeObserver() {
-	Services.obs.removeObserver(purgeObserver, "last-pb-context-exited");
 	purgeObserver.obsFns = [];
 });
 
