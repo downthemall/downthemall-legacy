@@ -974,6 +974,7 @@ const Tree = {
 		this.beginUpdate();
 		try {
 			QueueStore.beginUpdate();
+			var removing = [];
 			let delta = this._downloads.length, last = 0;
 			for (let i = delta - 1; i > -1; --i) {
 				let d = this._downloads[i];
@@ -986,12 +987,12 @@ const Tree = {
 				this._downloads.splice(d.position, 1);
 				this._box.rowCountChanged(d.position, -1);
 				last = Math.max(d.position, last);
-				d.remove();
+				removing.push(d);
+			}
+			if (removing.length) {
+				this.remove(removing);
 			}
 			QueueStore.endUpdate();
-			if (delta != this._downloads.length) {
-				this.doFilter();
-			}
 		}
 		finally {
 			this.invalidate();
@@ -1056,7 +1057,7 @@ const Tree = {
 		return false;
 	},
 	removeGone: function() {
-		this._removeCompleted(true);
+		this._removeByState(COMPLETE, true);
 	},
 	_removeJump: function(delta, last) {
 		if (!this.rowCount) {
