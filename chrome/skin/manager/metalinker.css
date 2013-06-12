@@ -45,6 +45,7 @@ richlistitem {
 
 #context > menuitem {
 	list-style-image: url(chrome://dta/skin/common/selection.png);
+	border: 1px solid green;
 }
 #selectall {
 	-moz-image-region: rect(0px, 16px, 16px, 0px);
@@ -55,3 +56,22 @@ richlistitem {
 #selectnone {
 	-moz-image-region: rect(0px, 32px, 16px, 16px);
 }
+
+@media (min-resolution: 2dppx) {
+	#context > menuitem {
+		list-style-image: url(chrome://dta/skin/common/selection@2x.png);
+	}
+	#selectall {
+		-moz-image-region: rect(0px, 32px, 32px, 0px);
+	}
+	#selectinv {
+		-moz-image-region: rect(0px, 96px, 32px, 64px);
+	}
+	#selectnone {
+		-moz-image-region: rect(0px, 64px, 32px, 32px);
+	}
+	.menu-iconic-icon {
+		width: 16px;
+	}
+}
+
