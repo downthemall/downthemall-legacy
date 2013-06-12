@@ -47,6 +47,9 @@ threechildren::-moz-tree-row {
 	min-height: 20px;
 }
 
+treechildren::-moz-tree-image {
+	width: 16px;
+}
 treechildren::-moz-tree-checkbox {
 	/* css for checked cells */
 	list-style-image: url(checks.png);
