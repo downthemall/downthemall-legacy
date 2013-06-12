@@ -158,7 +158,7 @@ var Dialog = {
 			}
 			if (newRef) {
 				try {
-					d.referrer.spec = newRef;
+					d.referrer = toURL(newRef);
 					delete d._referrerUrlManager;
 				}
 				catch (ex) {
