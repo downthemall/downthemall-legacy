@@ -13,7 +13,7 @@ dta|* {
 maskbutton {
 	-moz-binding: url(chrome://dta/content/dta/maskbutton.xml#maskbutton);
 }
-#maskitems row {
+#maskitems row  {
 	-moz-binding: url(chrome://dta/content/dta/maskbutton.xml#maskitem);
 }
 .masktag {
@@ -27,6 +27,9 @@ maskbutton {
 	text-align: center;
 	font-size: large;
 	padding-bottom: 3px;
+}
+.maskdesc {
+	font-size: small;
 }
 /* ~maskbutton */
 

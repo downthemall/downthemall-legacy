@@ -24,6 +24,7 @@
 <!ENTITY mask.referdirs "Referrer subdirectories">
 <!ENTITY mask.flatreferdirs "Flat referrer subdirectories">
 <!ENTITY mask.qstring "Query string">
+<!ENTITY mask.referqstring "Referrer query string">
 <!ENTITY mask.title "Title associated with link">
 <!ENTITY mask.flattitle2 "Flat title associated with link">
 <!ENTITY mask.tip "Click or drag to renaming mask">

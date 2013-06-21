@@ -95,7 +95,8 @@ test("exports", function() {
 			"*flatcrefer*": "ref.refhost.rtld-rpath-rto-rfile.rext",
 			"*referdirs*": "rpath/rto",
 			"*flatreferdirs*": "rpath-rto",
-			"*refername*.*referext*": "rname.rext"
+			"*refername*.*referext*": "rname.rext",
+			"*referqstring*": "rqs"
 		});
 	});
 

@@ -24,45 +24,31 @@
 			<popupset>
 				<panel id="maskPopup" orient="vertical" position="before_end" style="padding: 8px; margin-bottom: -10px;">
 					<label class="masktitle" value="&mask.tags;"/>
-					<hbox id="maskitems">
-						<grid flex="1">
-							<columns><column/><column flex="1"/></columns>
-							<rows>
-								<row tag="*name*" desc="&mask.name;"/>
-								<row tag="*ext*" desc="&mask.ext;"/>
-								<row tag="*url*" desc="&mask.url;"/>
-								<row tag="*curl*" desc="&mask.curl;"/>
-								<row tag="*flatcurl*" desc="&mask.flatcurl;"/>
-								<row tag="*subdirs*" desc="&mask.subdirs;"/>
-								<row tag="*flatsubdirs*" desc="&mask.flatsubdirs;"/>
-								<row tag="*qstring*" desc="&mask.qstring;"/>
-								<row tag="*refername*" desc="&mask.refername;"/>
-								<row tag="*referext*" desc="&mask.referext;"/>
-								<row tag="*refer*" desc="&mask.refer;"/>
-								<row tag="*crefer*" desc="&mask.crefer;"/>
-								<row tag="*flatcrefer*" desc="&mask.flatcrefer;"/>
-								<row tag="*referdirs*" desc="&mask.referdirs;"/>
-								<row tag="*flatreferdirs*" desc="&mask.flatreferdirs;"/>
-							</rows>
-						</grid>
-						<grid flex="1">
-							<columns><column/><column flex="1"/></columns>
-							<rows>
-								<row tag="*text*" desc="&mask.linktext;"/>
-								<row tag="*flattext*" desc="&mask.flatlinktext;"/>
-								<row tag="*title*" desc="&mask.title;"/>
-								<row tag="*flattitle*" desc="&mask.flattitle2;"/>
-								<row tag="*num*" desc="&mask.batch;"/>
-								<row tag="*inum*" desc="&mask.inum;"/>
-								<row tag="*hh*" desc="&mask.hh;"/>
-								<row tag="*mm*" desc="&mask.mm;"/>
-								<row tag="*ss*" desc="&mask.ss;"/>
-								<row tag="*d*" desc="&mask.d;"/>
-								<row tag="*m*" desc="&mask.m;"/>
-								<row tag="*y*" desc="&mask.y;"/>
-							</rows>
-						</grid>
-					</hbox>
+					<grid id="maskitems">
+					<columns>
+						<column flex="1"/>
+						<column/>
+						<column flex="1"/>
+						<column/>
+					</columns>
+					<rows>
+						<row tag="*name*" desc="&mask.name;" tag2="*refername*" desc2="&mask.refername;"/>
+						<row tag="*ext*" desc="&mask.ext;" tag2="*referext*" desc2="&mask.referext;"/>
+						<row tag="*url*" desc="&mask.url;" tag2="*refer*" desc2="&mask.refer;"/>
+						<row tag="*curl*" desc="&mask.curl;" tag2="*crefer*" desc2="&mask.crefer;"/>
+						<row tag="*flatcurl*" desc="&mask.flatcurl;" tag2="*flatcrefer*" desc2="&mask.flatcrefer;"/>
+						<row tag="*subdirs*" desc="&mask.subdirs;" tag2="*referdirs*" desc2="&mask.referdirs;"/>
+						<row tag="*flatsubdirs*" desc="&mask.flatsubdirs;" tag2="*flatreferdirs*" desc2="&mask.flatreferdirs;"/>
+						<row tag="*qstring*" desc="&mask.qstring;" tag2="*referqstring*" desc2="&mask.referqstring;"/>
+						<separator/>
+						<row tag="*text*" desc="&mask.linktext;" tag2="*hh*" desc2="&mask.hh;"/>
+						<row tag="*flattext*" desc="&mask.flatlinktext;" tag2="*mm*" desc2="&mask.mm;"/>
+						<row tag="*title*" desc="&mask.title;" tag2="*ss*" desc2="&mask.ss;"/>
+						<row tag="*flattitle*" desc="&mask.flattitle2;" tag2="*d*" desc2="&mask.d;"/>
+						<row tag="*num*" desc="&mask.batch;" tag2="*m*" desc2="&mask.m;"/>
+						<row tag="*inum*" desc="&mask.inum;" tag2="*y*" desc2="&mask.y;"/>
+					</rows>
+					</grid>
 				</panel>
 			</popupset>
 			<toolbarbutton
@@ -79,7 +65,12 @@
 				xbl:inherits="value=tag"
 				class="masktag"
 				tooltiptext="&mask.tip;"/>
-			<label xbl:inherits="value=desc"/>
+			<label class="maskdesc" xbl:inherits="value=desc"/>
+			<label
+				xbl:inherits="value=tag2"
+				class="masktag"
+				tooltiptext="&mask.tip;"/>
+			<label class="maskdesc" xbl:inherits="value=desc2"/>
 		</xbl:content>
 		<xbl:handlers>
 			<xbl:handler event="click"><![CDATA[
