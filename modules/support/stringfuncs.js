@@ -19,6 +19,17 @@ exports.SYSTEMSLASH = SYSTEMSLASH;
 
 const {getExt} = require("preferences");
 
+exports.getCURL = function getCURL(u) {
+	let rv = u.host;
+	if (u instanceof Ci.nsIURL) {
+		let fp = u.filePath;
+		if (fp != "/") {
+			rv += fp;
+		}
+	}
+	return rv;
+};
+
 exports.removeBadChars = function removeBadChars(str) {
 	return str.replace(rbc_u, '_').replace(rbc_w, ' ');
 };
@@ -67,6 +78,11 @@ exports.normalizeSlashes = function normalizeSlashes(str) {
 
 exports.removeLeadingSlash = function removeLeadingSlash(str) {
 	return exports.removeLeadingChar(str, SYSTEMSLASH);
+};
+
+exports.getUsablePath = function getUsablePath(str) {
+	let i = str.indexOf("?");
+	return exports.removeBadChars(exports.normalizeSlashes(~i ? str.substr(0, i) : str)).trim();
 };
 
 exports.getUsableFileName = function getUsableFileName(str) {

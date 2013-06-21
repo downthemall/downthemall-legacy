@@ -2059,11 +2059,11 @@ QueueItem.prototype = {
 		this.compression = null;
 	},
 	get maskURL() this.urlManager.usableURL,
+	get maskCURL() Utils.getCURL(this.maskURL),
 	get maskURLPath() this.urlManager.usableURLPath,
-	get maskCURL() this.maskURL.host + ((this.maskURLPath == "") ? "" : (Utils.SYSTEMSLASH + this.maskURLPath)),
 	get maskReferrerURL() this.referrerUrlManager.usableURL,
 	get maskReferrerURLPath() this.referrerUrlManager.usableURLPath,
-	get maskReferrerCURL() this.maskReferrerURL.host + ((this.maskReferrerURLPath == "") ? "" : (Utils.SYSTEMSLASH + this.maskReferrerURLPath)),
+	get maskReferrerCURL() Utils.getCURL(this.maskReferrerURL),
 	rebuildDestination: function() {
 		try {
 			let mask = Utils.removeFinalSlash(Utils.normalizeSlashes(Utils.removeFinalChar(

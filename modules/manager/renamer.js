@@ -6,6 +6,8 @@
 const {formatNumber} = require("utils");
 const {
 	replaceSlashes,
+	getUsablePath,
+	getUsableFileName,
 	getUsableFileNameWithFlatten
 } = require("support/stringfuncs");
 
@@ -18,15 +20,15 @@ const Renamer = {
 	get flattext() getUsableFileNameWithFlatten(this._o.description),
 	get title() this._o.title.trim(),
 	get flattitle() getUsableFileNameWithFlatten(this._o.title),
-	get url() this._o.urlManager.host,
+	get url() this._o.maskURL.host,
 	get domain() this._o.urlManager.domain,
 	get subdirs() this._o.maskURLPath,
 	get flatsubdirs() getUsableFileNameWithFlatten(this._o.maskURLPath),
 	get refer() this._o.referrer ? this._o.referrer.host.toString() : '',
 	get qstring() this._o.maskURL.query || '',
-	get curl() this._o.maskCURL,
+	get curl() getUsablePath(this._o.maskCURL),
 	get flatcurl() getUsableFileNameWithFlatten(this._o.maskCURL),
-	get crefer() this._o.referrerUrlManager ? this._o.maskReferrerCURL : '',
+	get crefer() this._o.referrerUrlManager ? getUsablePath(this._o.maskReferrerCURL) : '',
 	get flatcrefer() this._o.referrerUrlManager ? getUsableFileNameWithFlatten(this._o.maskReferrerCURL) : '',
 	get referdirs() this._o.referrerUrlManager ? this._o.maskReferrerURLPath : '',
 	get flatreferdirs() this._o.referrerUrlManager ? getUsableFileNameWithFlatten(this._o.maskReferrerURLPath) : '',
