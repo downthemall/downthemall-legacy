@@ -4,10 +4,12 @@ test("exports", function() {
 	checkExports("support/stringfuncs", ["SYSTEMSLASH",
 																			"addFinalSlash",
 																			"cropCenter",
+																			"getCURL",
 																			"getExtension",
 																			"getFileNameAndExt",
 																			"getUsableFileName",
 																			"getUsableFileNameWithFlatten",
+																			"getUsablePath",
 																			"normalizeSlashes",
 																			"removeBadChars",
 																			"removeFinalChar",
@@ -114,6 +116,30 @@ test("getUsableFileNameWithFlatten", function() {
 	strictEqual(getUsableFileNameWithFlatten("a/"), "a-");
 	strictEqual(getUsableFileNameWithFlatten("\\a"), "-a");
 	strictEqual(getUsableFileNameWithFlatten("a\\"), "a-");
+});
+
+test("getUsablePath", function() {
+	const {getUsablePath, normalizeSlashes} = require("support/stringfuncs");
+
+	strictEqual(getUsablePath("abc?de"), "abc");
+	strictEqual(getUsablePath("a/b\\c?de"), normalizeSlashes("a/b/c"));
+});
+
+test("getCURL", function() {
+	const {getCURL, normalizeSlashes} = require("support/stringfuncs");
+
+	strictEqual(
+		getCURL(Services.io.newURI("https://test.example.org/?test#ref", null, null)),
+		"test.example.org"
+		);
+	strictEqual(
+		getCURL(Services.io.newURI("https://test.example.org/file?test#ref", null, null)),
+		"test.example.org/file"
+		);
+	strictEqual(
+		getCURL(Services.io.newURI("https://test.example.org/path/to/file?test#ref", null, null)),
+		"test.example.org/path/to/file"
+		);
 });
 
 test("getExtension", function() {

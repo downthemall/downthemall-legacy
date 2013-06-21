@@ -8,6 +8,7 @@ test("exports", function() {
 (function() {
 	const {UrlManager} = require("support/urlmanager");
 	const {URL} = require("api");
+	const {normalizeSlashes, getCURL} = require("support/stringfuncs");
 	const {createRenamer} = require("manager/renamer");
 
 	var item = {
@@ -24,10 +25,10 @@ test("exports", function() {
 
 		get maskURL() this.urlManager.usableURL,
 		get maskURLPath() this.urlManager.usableURLPath,
-		get maskCURL() this.maskURL.host + ((this.maskURLPath == "") ? "" : ("/" + this.maskURLPath)),
+		get maskCURL() getCURL(this.maskURL),
 		get maskReferrerURL() this.referrerUrlManager.usableURL,
 		get maskReferrerURLPath() this.referrerUrlManager.usableURLPath,
-		get maskReferrerCURL() this.maskReferrerURL.host + ((this.maskReferrerURLPath == "") ? "" : ("/" + this.maskReferrerURLPath)),
+		get maskReferrerCURL() getCURL(this.maskReferrerURL),
 
 		noop: 0
 	};
@@ -36,7 +37,8 @@ test("exports", function() {
 		const rename = createRenamer(item);
 		for (var i of ["first run ", "second run"]) {
 			for (var [mask, res] in Iterator(tests)) {
-				strictEqual(rename(mask), res, i + mask + " = " + res);
+				res = normalizeSlashes(res);
+				strictEqual(normalizeSlashes(rename(mask)), res, i + mask + " = " + res);
 			}
 		}
 	};
@@ -67,8 +69,8 @@ test("exports", function() {
 			"*domain*": "host.tld",
 			"*subdirs*": "path/to",
 			"*qstring*": "fqs",
-			"*curl*": "www.host.tld/path/to",
-			"*flatcurl*": "www.host.tld-path-to"
+			"*curl*": "www.host.tld/path/to/fname.fext",
+			"*flatcurl*": "www.host.tld-path-to-fname.fext"
 		});
 	});
 
@@ -89,8 +91,8 @@ test("exports", function() {
 		var rename = createRenamer(Object.create(item));
 		run_multiple(Object.create(item), {
 			"*refer*": "ref.refhost.rtld",
-			"*crefer*": "ref.refhost.rtld/rpath/rto",
-			"*flatcrefer*": "ref.refhost.rtld-rpath-rto",
+			"*crefer*": "ref.refhost.rtld/rpath/rto/rfile.rext",
+			"*flatcrefer*": "ref.refhost.rtld-rpath-rto-rfile.rext",
 			"*referdirs*": "rpath/rto",
 			"*flatreferdirs*": "rpath-rto",
 			"*refername*.*referext*": "rname.rext"
