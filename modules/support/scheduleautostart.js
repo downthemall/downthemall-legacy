@@ -66,7 +66,7 @@ const Observer = {
 			else {
 				log(LOG_INFO, "not opening: No queued items");
 			}
-		}, null);
+		}, this);
 	},
 	openIfInRange: function() {
 		this.cancelTimer();
