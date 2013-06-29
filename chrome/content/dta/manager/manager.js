@@ -2741,6 +2741,12 @@ function CustomEvent(download, command) {
 }
 
 const startDownloads = (function() {
+	const series = {};
+	lazy(series, "num", function() {
+		let rv = DTA.currentSeries();
+		DTA.incrementSeries();
+		return rv;
+	});
 	function next(start, downloads, scroll) {
 		function addItem(e) {
 			try {
@@ -2755,7 +2761,7 @@ const startDownloads = (function() {
 				else {
 					qi.urlManager = new UrlManager([lnk]);
 				}
-				qi.bNum = e.numIstance;
+				qi.bNum = e.numIstance || series.num;
 				qi.iNum = ++iNum;
 
 				if (e.referrer) {
