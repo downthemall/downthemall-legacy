@@ -8,26 +8,21 @@ const {TimerManager} = require("support/timers");
 const Timers = new TimerManager();
 
 function ObserversBase() {
-	this._obs = [];
+	this._obs = new Set();
 }
-ObserversBase.prototype = {
-	_obs: null,
+ObserversBase.prototype = Object.freeze({
 	register: function(observer) {
-		this._obs.push(observer);
+		this._obs.add(observer);
 	},
 	unregister: function(observer) {
-		let idx = this._obs.indexOf(observer);
-		if (idx > -1) {
-			this._obs.slice(idx, 1);
-		}
+		this._obs.delete(observer);
 	},
 	notify: function() {
-		for (let i = 0, e = this._obs.length, o; i < e; ++i) {
-			o = this._obs[i];
+		for (let o of this._obs) {
 			o.observe.call(o);
 		}
 	}
-}
+});
 
 function Observers() {
 	ObserversBase.call(this);
@@ -174,10 +169,14 @@ ByteBucketTee.prototype = {
 		return bytes;
 	},
 	register: function(observer) {
-		this._buckets.forEach(function(e) e.register(observer));
+		for (let b of this._buckets) {
+			b.register(observer);
+		}
 	},
 	unregister: function(observer) {
-		this._buckets.forEach(function(e) e.unregister(observer));
+		for (let b of this._buckets) {
+			b.unregister(observer);
+		}
 	}
 };
 

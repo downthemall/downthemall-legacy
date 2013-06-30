@@ -62,7 +62,7 @@ const _thread = (function() {
 })();
 
 function MemoryReporter() {
-	this.chunks = [];
+	this.chunks = new Set();
 	this.session = {
 		chunks: 0,
 		written: 0
@@ -88,8 +88,7 @@ MemoryReporter.prototype = {
 		this._chunksScheduled = 0;
 		this._chunksActive = 0;
 
-		for (let i = 0, e = this.chunks.length; i < e; ++i) {
-			let c = this.chunks[i];
+		for (let c of this.chunks) {
 			let bs = c.buffer_size;
 			let pending = 0;
 			this._pendingBytes += pending;
@@ -196,14 +195,11 @@ MemoryReporter.prototype = {
 		this.session.written += bytes;
 	},
 	registerChunk: function(chunk) {
-		this.chunks.push(chunk);
+		this.chunks.add(chunk);
 		++this.session.chunks;
 	},
 	unregisterChunk: function(chunk) {
-		let idx = this.chunks.indexOf(chunk);
-		if (idx >= 0) {
-			this.chunks.splice(idx, 1);
-		}
+		this.chunks.delete(chunk);
 	}
 };
 Object.freeze(MemoryReporter.prototype);
@@ -362,6 +358,7 @@ Chunk.prototype = {
 		}
 		if (this.buckets) {
 			this.buckets.unregister(this);
+			delete this.buckets;
 		}
 		delete this._req;
 		MemoryReporter.unregisterChunk(this);
