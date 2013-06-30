@@ -191,7 +191,7 @@ const Dialog = {
 		}, false);
 		tree.addEventListener("change", function() {
 			log(LOG_DEBUG, "tree change");
-			Dialog.scheduler = null;
+			Dialog.resetScheduler();
 		}, true);
 		try {
 			defer(this._loadDownloads, this);
@@ -929,7 +929,7 @@ const Dialog = {
 				this.paneSchedule.setAttribute("disabled", "true");
 			}
 			if (!this.scheduler) {
-				this.scheduler = Limits.getConnectionScheduler(Tree.all, this._running);
+				this.scheduler = Limits.getConnectionScheduler(Tree.all);
 				log(LOG_DEBUG, "rebuild scheduler");
 			}
 			while (this._running.length < Prefs.maxInProgress) {
@@ -989,12 +989,19 @@ const Dialog = {
 			this._running.splice(idx, 1);
 		}
 	},
+	resetScheduler: function() {
+		if (!Dialog.scheduler) {
+			return;
+		}
+		Dialog.scheduler.destroy();
+		Dialog.scheduler = null;
+	},
 	_signal_some: function(d) d.isOf(FINISHING | RUNNING | QUEUED),
 	signal: function(download) {
 		download.save();
 		const state = download.state;
 		if (state == QUEUED) {
-			Dialog.scheduler = null;
+			Dialog.resetScheduler();
 			return;
 		}
 		if (state == RUNNING) {
@@ -1216,6 +1223,7 @@ const Dialog = {
 				// not to worry!
 			}
 		}
+		this.resetScheduler();
 		Dialog = null;
 		return true;
 	}
