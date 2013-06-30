@@ -951,117 +951,121 @@ Connection.prototype = {
 			return;
 		}
 
-		let c = this.c;
-		let d = this.d;
-		delete this.c;
-		delete this.d;
+		try {
+			let c = this.c;
+			let d = this.d;
 
-		log(LOG_DEBUG, "closing");
-		c.close();
+			log(LOG_DEBUG, "closing");
+			c.close();
 
-		if (d.chunks.indexOf(c) == -1) {
-			log(LOG_INFO, "chunk unknown");
-			return;
-		}
-
-		// update flags and counters
-		d.refreshPartialSize();
-		--d.activeChunks;
-
-		// If automatic creation of new chunks is disabled we reduce maxChunks for
-		// every complete chunk so that no new chunk is generated.
-		// Manual addidition of new chunks is not affected by this.
-		if (!Preferences.getExt('autosegments', true) && d.maxChunks > 1) {
-			--d.maxChunks
-		}
-
-		// check if we're complete now
-		const isRunning = d.state == RUNNING;
-		if (isRunning && d.chunks.every(function(e) { return e.complete; })) {
-			if (!d.resumeDownload()) {
-				log(LOG_INFO, d + ": Download is complete!");
-				d.setState(FINISHING);
-				d.finishDownload();
+			if (d.chunks.indexOf(c) == -1) {
+				log(LOG_INFO, "chunk unknown");
 				return;
 			}
-		}
 
-		if (c.starter && -1 != DISCONNECTION_CODES.indexOf(aStatusCode)) {
-			if (!d.urlManager.markBad(this.url)) {
-				log(LOG_ERROR, d + ": Server error or disconnection", "(type 3)");
-				d.pauseAndRetry();
-				d.status = _("servererror");
-			}
-			else {
-				log(LOG_ERROR, "caught bad server", d.toString());
-				d.cancel();
-				d.safeRetry();
-			}
-			return;
-		}
+			// update flags and counters
+			d.refreshPartialSize();
+			--d.activeChunks;
 
-		// work-around for ftp crap
-		// nsiftpchan for some reason assumes that if RETR fails it is a directory
-		// and tries to advance into said directory
-		if (aStatusCode == NS_ERROR_FTP_CWD) {
-			log(LOG_DEBUG, "Cannot change to directory :p", aStatusCode);
-			if (!this.handleError()) {
-				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
+			// If automatic creation of new chunks is disabled we reduce maxChunks for
+			// every complete chunk so that no new chunk is generated.
+			// Manual addidition of new chunks is not affected by this.
+			if (!Preferences.getExt('autosegments', true) && d.maxChunks > 1) {
+				--d.maxChunks
 			}
-			return;
-		}
 
-		// routine for normal chunk
-		log(LOG_INFO, this.url + ": Chunk " + c.start + "-" + c.end + " finished.");
-
-		// rude way to determine disconnection: if connection is closed before
-		// download is started we assume a server error/disconnection
-		if (c.starter && isRunning) {
-			if (!d.urlManager.markBad(this.url)) {
-				log(LOG_ERROR, d + ": Server error or disconnection", "(type 2)");
-				d.pauseAndRetry();
-				d.status = _("servererror");
+			// check if we're complete now
+			const isRunning = d.state == RUNNING;
+			if (isRunning && d.chunks.every(function(e) { return e.complete; })) {
+				if (!d.resumeDownload()) {
+					log(LOG_INFO, d + ": Download is complete!");
+					d.setState(FINISHING);
+					d.finishDownload();
+					return;
+				}
 			}
-			else {
-				log(LOG_ERROR, "caught bad server", d.toString());
-				d.cancel();
-				d.safeRetry();
-			}
-			return;
-		}
 
-		// Server did not return any data.
-		// Try to mark the URL bad
-		// else pause + autoretry
-		if (!c.written && !!c.remainder) {
-			if (!d.urlManager.markBad(this.url)) {
-				log(LOG_ERROR, d + ": Server error or disconnection", "(type 1)");
-				d.pauseAndRetry();
-				d.status = _("servererror");
+			if (c.starter && -1 != DISCONNECTION_CODES.indexOf(aStatusCode)) {
+				if (!d.urlManager.markBad(this.url)) {
+					log(LOG_ERROR, d + ": Server error or disconnection", "(type 3)");
+					d.pauseAndRetry();
+					d.status = _("servererror");
+				}
+				else {
+					log(LOG_ERROR, "caught bad server", d.toString());
+					d.cancel();
+					d.safeRetry();
+				}
+				return;
 			}
-			return;
-		}
 
-		if (!d.isOf(PAUSED | CANCELED | FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
-			if (d.resumable && c.sessionBytes > 0) {
-				// fast retry unless we didn't actually receive something
+			// work-around for ftp crap
+			// nsiftpchan for some reason assumes that if RETR fails it is a directory
+			// and tries to advance into said directory
+			if (aStatusCode == NS_ERROR_FTP_CWD) {
+				log(LOG_DEBUG, "Cannot change to directory :p", aStatusCode);
+				if (!this.handleError()) {
+					d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
+				}
+				return;
+			}
+
+			// routine for normal chunk
+			log(LOG_INFO, this.url + ": Chunk " + c.start + "-" + c.end + " finished.");
+
+			// rude way to determine disconnection: if connection is closed before
+			// download is started we assume a server error/disconnection
+			if (c.starter && isRunning) {
+				if (!d.urlManager.markBad(this.url)) {
+					log(LOG_ERROR, d + ": Server error or disconnection", "(type 2)");
+					d.pauseAndRetry();
+					d.status = _("servererror");
+				}
+				else {
+					log(LOG_ERROR, "caught bad server", d.toString());
+					d.cancel();
+					d.safeRetry();
+				}
+				return;
+			}
+
+			// Server did not return any data.
+			// Try to mark the URL bad
+			// else pause + autoretry
+			if (!c.written && !!c.remainder) {
+				if (!d.urlManager.markBad(this.url)) {
+					log(LOG_ERROR, d + ": Server error or disconnection", "(type 1)");
+					d.pauseAndRetry();
+					d.status = _("servererror");
+				}
+				return;
+			}
+
+			if (!d.isOf(PAUSED | CANCELED | FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
+				if (d.resumable && c.sessionBytes > 0) {
+					// fast retry unless we didn't actually receive something
+					d.resumeDownload();
+				}
+				else if (d.resumable || Preferences.getExt('resumeonerror', false)) {
+					d.pauseAndRetry();
+					d.status = _('errmismatchtitle');
+				}
+				else {
+					d.fail(
+						_('errmismatchtitle'),
+						_('errmismatchtext', [d.partialSize, d.totalSize]),
+						_('errmismatchtitle')
+					);
+				}
+				return;
+			}
+			if (!d.isOf(PAUSED | CANCELED)) {
 				d.resumeDownload();
 			}
-			else if (d.resumable || Preferences.getExt('resumeonerror', false)) {
-				d.pauseAndRetry();
-				d.status = _('errmismatchtitle');
-			}
-			else {
-				d.fail(
-					_('errmismatchtitle'),
-					_('errmismatchtext', [d.partialSize, d.totalSize]),
-					_('errmismatchtitle')
-				);
-			}
-			return;
 		}
-		if (!d.isOf(PAUSED | CANCELED)) {
-			d.resumeDownload();
+		finally {
+			delete this.c;
+			delete this.d;
 		}
 	},
 
