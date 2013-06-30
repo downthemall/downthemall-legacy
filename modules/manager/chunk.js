@@ -348,7 +348,11 @@ Chunk.prototype = {
 		if (this._hasCurrentStream) {
 			this._shipCurrentStream();
 		}
-		this._shipEOFStream();
+		if (this._outStream) {
+			this._shipEOFStream();
+			return;
+		}
+		this._finish();
 	},
 	_finish: function() {
 		let notifyOwner = false;
