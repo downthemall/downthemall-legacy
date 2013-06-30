@@ -163,58 +163,62 @@ HttpVisitor.prototype = {
 		}
 		catch (ex) {}
 
-		let links = [];
-		this.mirrors = [];
 		try {
-			links = chan.getResponseHeader("Link").split(/,\s*/g);
+			delete this.mirrors;
+			let links = chan.getResponseHeader("Link").split(/,\s*/g);
+			for (let link of links) {
+				try {
+					let linkURI = Services.mimeheader.getParameter(link, null, null, true, {})
+						.replace(/[<>]/g, '');
+					const rel = Services.mimeheader.getParameter(link, "rel", null, true, {});
+					if (rel == "describedby") {
+						const type = Services.mimeheader.getParameter(link, "type", null, true, {});
+						if (type == "application/metalink4+xml") {
+							this.metaDescribedBy = Services.io.newURI(linkURI, null, null);
+						}
+					}
+					else if (rel == "duplicate") {
+						linkURI = Services.io.newURI(linkURI, null, null);
+						let pri, pref, depth;
+						try {
+							pri = Services.mimeheader.getParameter(link, "pri", null, true, {});
+							pri = parseInt(pri);
+							try {
+								pref = Services.mimeheader.getParameter(link, "pref", null, true, {});
+								pri = 1;
+							}
+							catch (ex) {}
+							try{
+								depth = Services.mimeheader.getParameter(link, "depth", null, true, {});
+							}
+							catch (ex) {}
+							try {
+								const geo = Services.mimeheader.getParameter(link, "geo", null, true, {})
+									.slice(0,2).toLowerCase();
+								if (LOCALE.indexOf(geo) != -1) {
+									pri = Math.max(pri / 4, 1);
+								}
+							}
+							catch (ex) {}
+						}
+						catch (ex) {}
+						if (!this.mirrors) {
+							this.mirrors = [];
+						}
+						this.mirrors.push(new DTA.URL(linkURI, pri));
+					}
+				}
+				catch (ex) {
+					log(LOG_ERROR, "VM: failed to process a link", ex);
+				}
+			}
+			if (this.mirrors) {
+				normalizeMetaPrefs(this.mirrors);
+			}
 		}
 		catch (ex) {
-			links = [];
+			log(LOG_DEBUG, "VM: failed to process links", ex);
 		}
-		for (let link of links) {
-			try {
-				let linkURI = Services.mimeheader.getParameter(link, null, null, true, {})
-					.replace(/[<>]/g, '');
-				const rel = Services.mimeheader.getParameter(link, "rel", null, true, {});
-				if (rel == "describedby") {
-					const type = Services.mimeheader.getParameter(link, "type", null, true, {});
-					if (type == "application/metalink4+xml") {
-						this.metaDescribedBy = Services.io.newURI(linkURI, null, null);
-					}
-				}
-				else if (rel == "duplicate") {
-					linkURI = Services.io.newURI(linkURI, null, null);
-					let pri, pref, depth;
-					try {
-						pri = Services.mimeheader.getParameter(link, "pri", null, true, {});
-						pri = parseInt(pri);
-						try {
-							pref = Services.mimeheader.getParameter(link, "pref", null, true, {});
-							pri = 1;
-						}
-						catch (ex) {}
-						try{
-							depth = Services.mimeheader.getParameter(link, "depth", null, true, {});
-						}
-						catch (ex) {}
-						try {
-							const geo = Services.mimeheader.getParameter(link, "geo", null, true, {})
-								.slice(0,2).toLowerCase();
-							if (LOCALE.indexOf(geo) != -1) {
-								pri = Math.max(pri / 4, 1);
-							}
-						}
-						catch (ex) {}
-					}
-					catch (ex) {}
-					this.mirrors.push(new DTA.URL(linkURI, pri));
-				}
-			}
-			catch (ex) {
-				log(LOG_ERROR, ex);
-			}
-		}
-		normalizeMetaPrefs(this.mirrors);
 
 		for (let header in this.cmpKeys) {
 			try {

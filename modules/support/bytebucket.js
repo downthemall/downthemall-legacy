@@ -43,8 +43,7 @@ Observers.prototype = {
 	},
 	kill: function() {
 		this.stop();
-		delete this._obs;
-		this._obs = [];
+		this._obs.length = 0;
 	},
 	observe: function() {
 		this._obs.sort(function() Math.round(Math.random() - 0.5));

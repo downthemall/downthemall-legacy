@@ -79,20 +79,23 @@ PrefHistory.prototype = {
 	__proto__: BaseHistory,
 	get _values() {
 		let json = prefs.getExt(this._key, '[]');
-		let rv = [];
+		let rv;
 		try {
 			rv = JSON.parse(json);
 		}
 		catch (ex) {
 			log(LOG_ERROR, "Histories: Parsing of history failed: " + json, ex);
 		}
-		if (!rv.length) {
+		if (!rv || !rv.length) {
 			try {
 				rv = JSON.parse(prefs.getExt(this._key + ".default", '[]'));
 			}
 			catch (ex) {
 				log(LOG_ERROR, "Cannot apply default values", ex);
 			}
+		}
+		if (!rv) {
+			rv = [];
 		}
 		return rv;
 	},

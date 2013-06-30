@@ -1770,7 +1770,7 @@ QueueItem.prototype = {
 		for (let c of this.chunks) {
 			c.cancelChunk();
 		}
-		this.chunks = [];
+		this.chunks.length = 0;
 		this.speeds.clear();
 		this.otherBytes = 0;
 		this.visitors = new VisitorManager();
@@ -2031,7 +2031,7 @@ QueueItem.prototype = {
 	},
 	_completeEvents: [],
 	complete: function(exception) {
-		this.chunks = [];
+		this.chunks.length = 0;
 		this.speeds.clear();
 		if (exception) {
 			this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
@@ -2226,33 +2226,41 @@ QueueItem.prototype = {
 			this.removeTmpFile();
 
 			// gc
-			if (!this.deleting) {
-				if (message == "" || !message) {
-					message = _("canceled");
-				}
+			if (this.deleting) {
+				return;
+			}
+			if (message == "" || !message) {
+				message = _("canceled");
+			}
 
-				this.status = message;
-				this.visitors = new VisitorManager();
-				this.chunks = [];
-				this.progress = this.totalSize = this.partialSize = 0;
-				this.conflicts = 0;
-				this.resumable = true;
-				this._maxChunks = this._activeChunks = 0;
-				this._autoRetries = 0;
-				delete this._autoRetryTime;
-				this.speeds.clear();
-				this.otherBytes = 0;
-				this.save();
-			}
-			else {
-				this.visitors = null;
-				this.chunks = null;
-				this.speeds = null;
-			}
+			this.status = message;
+			this.visitors = new VisitorManager();
+			this.chunks.length = 0;
+			this.progress = this.totalSize = this.partialSize = 0;
+			this.conflicts = 0;
+			this.resumable = true;
+			this._maxChunks = this._activeChunks = 0;
+			this._autoRetries = 0;
+			delete this._autoRetryTime;
+			this.speeds.clear();
+			this.otherBytes = 0;
+			this.save();
 		}
 		catch(ex) {
 			log(LOG_ERROR, "cancel():", ex);
 		}
+	},
+
+	cleanup: function() {
+		delete this.visitors;
+		delete this.chunks;
+		delete this.speeds;
+		delete this.urlManager;
+		delete this.referrer;
+		delete this._referrerUrlManager;
+		delete this._destinationLocalFile;
+		delete this._tmpFile;
+		delete this.rebuildDestination_renamer;
 	},
 
 	_registerPreallocCallback: function(callback) {

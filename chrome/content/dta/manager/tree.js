@@ -956,6 +956,7 @@ const Tree = {
 				if (!d.isOf(RUNNING | PAUSED)) {
 					Dialog.wasRemoved(d);
 				}
+				d.cleanup();
 			}
 			QueueStore.deleteDownloads(downloads);
 		}

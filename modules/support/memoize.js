@@ -13,10 +13,11 @@ function filterCaches(c) {
 	c.clear();
 	return true;
 }
-require("support/memorypressure").add(function() {
+function cleanCaches() {
 	caches = caches.filter(filterCaches);
-});
-
+}
+require("support/memorypressure").add(cleanCaches);
+unload(cleanCaches);
 
 /**
  * Decorate a function with a memoization wrapper, with a limited-size cache
