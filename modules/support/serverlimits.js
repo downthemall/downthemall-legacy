@@ -146,6 +146,10 @@ BaseScheduler.prototype = Object.freeze({
 			return d;
 		}
 		return null;
+	},
+	destroy: function() {
+		this._schedule.length = 0;
+		delete this._schedule;
 	}
 });
 Object.freeze(BaseScheduler);
@@ -229,6 +233,10 @@ FastScheduler.prototype = Object.freeze({
 			}
 		}
 		return null;
+	},
+	destroy: function() {
+		this._downloads.length = 0;
+		delete this._downloads;
 	}
 });
 Object.freeze(FastScheduler);
@@ -298,6 +306,13 @@ FairScheduler.prototype = Object.freeze({
 			return d;
 		}
 		return null;
+	},
+	destroy: function() {
+		for (let k in this._downloadSet) {
+			this._downloadSet[k].destroy();
+			delete this._downloadSet[k];
+		}
+		this._downloadSet = null;
 	}
 });
 FairScheduler.SchedItem = function(host) {
@@ -327,6 +342,10 @@ FairScheduler.SchedItem.prototype = Object.freeze({
 		return this.downloads.pop();
 	},
 	push: function(d) this.downloads.push(d),
+	destroy: function() {
+		this.downloads.length = 0;
+		delete this.downloads;
+	}
 });
 Object.freeze(FairScheduler);
 
@@ -394,7 +413,8 @@ DirScheduler.prototype = Object.freeze({
 			return d;
 		}
 		return null;
-	}
+	},
+	destroy: FairScheduler.prototype.destroy,
 });
 Object.freeze(DirScheduler);
 
