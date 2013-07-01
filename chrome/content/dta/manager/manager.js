@@ -315,6 +315,32 @@ const Dialog = {
 				log(LOG_ERROR, 'nagger', ex);
 			}
 		})();
+
+		(function checkLogging() {
+			if (!log.enabled) {
+				return;
+			}
+			let nb = $('notifications');
+			nb.appendNotification(_("logging.enabled.warn"), 0, null, nb.PRIORITY_WARNING_MEDIUM, [
+				{
+					accessKey: null,
+					label: _("keep"),
+					callback: function() {}
+				},
+				{
+					accessKey: null,
+					label: _("disable"),
+					callback: function() {
+						Preferences.resetExt("logging");
+					}
+				},
+				{
+					accessKey: null,
+					label: _("manualfix3"),
+					callback: function() showPreferences("panePrivacy")
+				}
+			]);
+		})();
 	},
 
 	customizeToolbar: function(evt) {

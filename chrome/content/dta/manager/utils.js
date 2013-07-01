@@ -263,7 +263,7 @@ const Prefs = {
 					},
 					{
 						accessKey: null,
-						label: _('manualfix2'),
+						label: _('manualfix3'),
 						callback: function() showPreferences('paneAdvanced')
 					}
 				]);
