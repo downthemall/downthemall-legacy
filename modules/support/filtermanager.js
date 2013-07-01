@@ -11,9 +11,11 @@ const TOPIC_FILTERSCHANGED = 'DTA:filterschanged';
 const REG_ESCAPE = /[{}()\[\]\\^$.?]/g;
 const REG_WILD = /\*/g;
 const REG_WILD2 = /\./g;
+const REG_FNMATCH = /[*.]/;
 
 const Preferences = require("preferences");
 const RegExpMerger = require("support/regexpmerger");
+const {mapInSitu} = require("utils");
 
 const nsITimer = Ci.nsITimer;
 
@@ -28,11 +30,13 @@ function flatten(arr) arr.reduce(function(a,b) {
 },[]);
 
 function merge_map(e) "(?:" + e + ")";
+function merge_unique(e) !((e in this) || (this[e] = null));
+
 function merge_naive(strs) {
 	if (strs.length < 2) {
 		return strs[0];
 	}
-	return strs.map(merge_map).join("|");
+	return mapInSitu(strs.filter(merge_unique, {}), merge_map).join("|");
 }
 
 function merge_regs(regs) {
@@ -135,7 +139,7 @@ Filter.prototype = {
 		// first of all: check if we are are a regexp.
 		if (str.length > 2 && str[0] == '/') {
 			try {
-				var m = str.match(/^\/(.+?)(?:\/(i?))?$/);
+				var m = str.match(/^\/(.+?)\/(i)?$/);
 				if (!m) {
 					throw new Exception("Invalid RegExp supplied");
 				}
@@ -160,10 +164,12 @@ Filter.prototype = {
 		}
 
 		// we are simple text
-		str = str
-			.replace(REG_ESCAPE, "\\$&")
-			.replace(REG_WILD, ".*")
-			.replace(REG_WILD2, '.');
+		const fnmatch = REG_FNMATCH.test(str);
+		str = str.replace(REG_ESCAPE, "\\$&")
+		if (fnmatch) {
+			str = "^" + str.replace(REG_WILD, ".*").replace(REG_WILD2, '.') + "$";
+		}
+
 		if (str.length) {
 			this._regs.push(new RegExp(str, 'i'));
 		}
@@ -411,9 +417,6 @@ FilterManagerImpl.prototype = {
 
 	enumAll: function() {
 		return new FilterEnumerator(this._all);
-	},
-	enumActive: function(type) {
-		return new FilterEnumerator(this._active[type]);
 	},
 
 	getFilter: function(id) {
