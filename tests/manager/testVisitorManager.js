@@ -228,7 +228,7 @@ test("real world http visit", function() {
 			}
 		});
 		const visit = (new VisitorManager()).visit(chan);
-		strictEqual(visit.mirrors.length, 0, "corrupt duplicates not parsed");
+		ok(!visit.mirror, "corrupt duplicates not parsed");
 		ok(!visit.metaDescribedBy, "corrupt describedby metalink link not parsed");
 	});
 
