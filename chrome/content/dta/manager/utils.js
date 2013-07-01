@@ -248,6 +248,11 @@ const Prefs = {
 						log(LOG_ERROR, "Failed to check temp dir", ex);
 						throw new Exception("temp.notaccessible");
 					}
+
+					if (!Preferences.getExt("tempLocation.warned", false)) {
+						Preferences.setExt("tempLocation.warned", true);
+						throw new Exception("temp.warnnnonerecommended");
+					}
 				}
 			}
 			catch (ex) {
