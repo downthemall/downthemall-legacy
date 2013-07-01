@@ -27,27 +27,27 @@ AboutModule.prototype = Object.freeze({
 
 	newChannel : function(aURI) {
 		try {
-				if (!Version.ready) {
-					throw new Exception("Cannot build about:downthemall, version module not ready");
-				}
+			if (!Version.ready) {
+				throw new Exception("Cannot build about:downthemall, version module not ready");
+			}
 
-				let ru = ABOUT_URI.replace(
-					/%(.+?)%/g,
-					function (m, m1) (m1 in Version) ? Version[m1] : m
-				);
+			let ru = ABOUT_URI.replace(
+				/%(.+?)%/g,
+				function (m, m1) (m1 in Version) ? Version[m1] : m
+			);
 
-				let uri = Services.io.newURI(ru, null, null);
-				let chan = Services.io.newChannelFromURI(uri);
-				chan.originalURI = aURI;
+			let uri = Services.io.newURI(ru, null, null);
+			let chan = Services.io.newChannelFromURI(uri);
+			chan.originalURI = aURI;
 
-				let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
-				try {
-					chan.owner = sec.getSimpleCodebasePrincipal(uri);
-				}
-				catch (ex) {
-					chan.owner = sec.getCodebasePrincipal(uri);
-				}
-				return chan;
+			let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
+			try {
+				chan.owner = sec.getSimpleCodebasePrincipal(uri);
+			}
+			catch (ex) {
+				chan.owner = sec.getCodebasePrincipal(uri);
+			}
+			return chan;
 		}
 		catch (ex) {
 			log(LOG_ERROR, "failed to create about channel", ex);
