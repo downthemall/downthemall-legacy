@@ -509,8 +509,8 @@ const Dialog = {
 			// XXX better call this only once
 			// See above
 			d.rebuildDestination();
-
-			d.position = Tree.fastLoad(d);
+			Tree.fastLoad(d);
+			d.position = dbItem.pos;
 		}
 		catch (ex) {
 			log(LOG_ERROR, 'failed to init download #' + dbItem.id + ' from queuefile', ex);
@@ -521,6 +521,7 @@ const Dialog = {
 	_loadDownloads_finish: function() {
 		log(LOG_INFO, "Result was processed");
 		delete this._loader;
+		Tree.savePositions();
 		Tree.invalidate();
 		Tree.doFilter();
 		Tree.endUpdate();
