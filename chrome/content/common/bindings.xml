@@ -69,7 +69,7 @@
 	<binding id="saveddropdown">
 		<content>
 			<xul:menulist anonid="list" editable="true"
-				xbl:inherits="crop,readonly,disabled,flex,tooltiptext,oninput=onchange,onselect=onchange,invalid">
+				xbl:inherits="crop,readonly,disabled,flex,tooltiptext,oninput=onchange,onselect=onchange,invalid,placeholder">
 				<xul:menupopup anonid="popup"
 					xbl:inherits="crop,onselect=onchange,oncommand=onchange" />
 			</xul:menulist>
