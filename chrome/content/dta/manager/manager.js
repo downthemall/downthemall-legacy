@@ -323,19 +323,19 @@ const Dialog = {
 			let nb = $('notifications');
 			nb.appendNotification(_("logging.enabled.warn"), 0, null, nb.PRIORITY_WARNING_MEDIUM, [
 				{
-					accessKey: null,
+					accessKey: "",
 					label: _("keep"),
 					callback: function() {}
 				},
 				{
-					accessKey: null,
+					accessKey: "",
 					label: _("disable"),
 					callback: function() {
 						Preferences.resetExt("logging");
 					}
 				},
 				{
-					accessKey: null,
+					accessKey: "",
 					label: _("manualfix3"),
 					callback: function() showPreferences("panePrivacy")
 				}
