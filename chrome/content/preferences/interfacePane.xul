@@ -27,6 +27,7 @@
 			<preference id="dtaShowTooltip" name="extensions.dta.showtooltip" type="bool" />
 			<preference id="dtaStartMinimized" name="extensions.dta.startminimized" type="bool" />
 			<preference id="dtaMinimizeToTray" name="extensions.mintrayr.downthemall.watchmanager" type="bool" />
+			<preference id="dtaNotification" name="extensions.dta.notification" type="bool" />
 		</preferences>
 
 		<groupbox>
@@ -43,6 +44,12 @@
 		<groupbox>
 			<caption label="&uipane.integration.caption;" />
 			<checkbox id="downloadWin" label="&uipane.downloadwin.label;" preference="dtaShowInDown" />
+			<separator class="thin"/>
+			<label control="notification" value="&uipane.notification.label;"/>
+			<radiogroup id="notification" preference="dtaNotification" orient="horizontal">
+				<radio value="false" label="&uipane.notification.nonotification.radio;"/>
+				<radio value="true" label="&uipane.notification.doorhangernotification.radio;"/>
+			</radiogroup>
 		</groupbox>
 		<grid>
 			<columns id="colItems">
