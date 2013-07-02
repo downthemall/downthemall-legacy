@@ -53,7 +53,7 @@ var Timers = new TimerManager();
 const Dialog_loadDownloads_props = ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'];
 function Dialog_loadDownloads_get(down, attr, def) (attr in down) ? down[attr] : (def ? def : '');
 
-const Dialog_serialize_props = ['fileName', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'];
+const Dialog_serialize_props = ['fileName', 'fileNameFromUser', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'];
 
 const Dialog = {
 	_observes: [
@@ -431,6 +431,9 @@ const Dialog = {
 			d._title = Dialog_loadDownloads_get(down, "title");
 			d._mask = Dialog_loadDownloads_get(down, "mask");
 			d._fileName = Dialog_loadDownloads_get(down, "fileName");
+			if (down.fileNameFromUser) {
+				d.fileNameFromUser = true;
+			}
 
 			let tmpFile = Dialog_loadDownloads_get(down, "tmpFile");
 			if (tmpFile) {
@@ -1399,13 +1402,15 @@ QueueItem.prototype = {
 	iNum: 0,
 
 	_fileName: null,
+	fileNameFromUser: false,
 	get fileName() {
 		return this._fileName;
 	},
 	set fileName(nv) {
-		if (this._fileName == nv) {
+		if (this._fileName == nv || this.fileNameFromUser) {
 			return nv;
 		}
+		log(LOG_ERROR, "fn is " + this._fileName + " nv: " + nv);
 		this._fileName = nv;
 		delete this._fileNameAndExtension;
 		this.rebuildDestination();
@@ -2572,8 +2577,7 @@ QueueItem.prototype = {
 	toJSON: function() {
 		let rv = Object.create(null);
 		let p = Object.getPrototypeOf(this);
-		for (let i = 0, e = Dialog_serialize_props.length; i < e; ++i) {
-			let u = Dialog_serialize_props[i];
+		for (let u of Dialog_serialize_props) {
 			// only save what is changed
 			if (p[u] !== this[u]) {
 				rv[u] = this[u];
@@ -2822,6 +2826,7 @@ const startDownloads = (function() {
 				qi.fromMetalink = !!e.fromMetalink;
 				if (e.fileName) {
 					qi._fileName = Utils.getUsableFileName(e.fileName);
+					qi.fileNameFromUser = true;
 				}
 				else {
 					qi._fileName = Utils.getUsableFileName(qi.urlManager.usable);
