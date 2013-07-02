@@ -8,7 +8,7 @@ const DB_FILE_BROKEN = 'dta_queue.broken';
 const DB_FILE_BAK = DB_FILE + ".bak";
 const DB_VERSION = 2;
 
-const STMT_SELECT = 'SELECT uuid, item FROM queue ORDER BY pos';
+const STMT_SELECT = 'SELECT uuid, item, pos FROM queue ORDER BY pos';
 
 const Timers = new (require("support/timers").TimerManager)();
 const obs = require("support/observers");
@@ -275,6 +275,7 @@ const QueueStore = {
 		function Item(row) {
 			this.id = row.getResultByIndex(0);
 			this.item = JSON.parse(row.getResultByIndex(1));
+			this.pos = row.getResultByIndex(2);
 		}
 
 		ctx = ctx || null;
