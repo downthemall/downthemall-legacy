@@ -404,6 +404,9 @@ exports.load = function load(window, outerEvent) {
 	function _notify(title, message, priority, mustAlert, timeout) {
 		if ('PopupNotifications' in window) {
 			_notify = function(title, message, priority, mustAlert, timeout) {
+				if (!Preferences.getExt("notification", true)) {
+					return;
+				}
 				try {
 					timeout = timeout || 2500;
 					let notification = window.PopupNotifications.show(
@@ -438,6 +441,9 @@ exports.load = function load(window, outerEvent) {
 			let _n = null;
 			if ('PopupNotifications' in window) {
 				return (notifyProgress = function(message) {
+					if (!Preferences.getExt("notification", true)) {
+						return;
+					}
 					if (!message && _n) {
 						window.PopupNotifications.remove(_n);
 						_n = null;
