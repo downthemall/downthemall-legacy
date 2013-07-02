@@ -31,6 +31,7 @@ var Dialog = {
 				this.ddDirectory.value = DefaultDownloadsDirectory.path;
 			}
 			var address = $('address');
+			var filename = $("filename");
 			(function() {
 				let menu = document.getAnonymousElementByAttribute(
 					address,
@@ -97,7 +98,7 @@ var Dialog = {
 					// issues.
 					address.value = a.url.usable;
 					if ("fileName" in a) {
-						address.value += " (" + a.fileName + ")";
+						filename.value = a.fileName;
 					}
 					address.readOnly = true;
 					$('batcheslabel').style.display = 'none';
@@ -259,6 +260,7 @@ var Dialog = {
 		let isPrivate = this.isPrivate;
 
 		let downloads = (function() {
+			let filename = $("filename").value || null;
 			let desc = $('description').value;
 			let ref = $('URLref').value;
 			let URL = DTA.URL;
@@ -286,12 +288,13 @@ var Dialog = {
 				return (new QueueItem(i) for (i in  batch.getURLs()));
 			}
 
-			return batch = [new QueueItem(url)];
+			return batch = [new QueueItem(url, filename)];
 		})();
 		return this.sendDownloads(start, downloads, isPrivate);
 	},
 	downloadItem: function(start) {
 		let item = $("address")._item;
+		item.fileName = $("filename").value || null;
 		item.description = $('description').value;
 		item.referrer = $('URLref').value;
 		item.numIstance = DTA.currentSeries();

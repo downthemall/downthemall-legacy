@@ -159,7 +159,7 @@
 			<vbox autostretch="never" flex="1">
 				<caption label="&directory.caption;" />
 				<hbox>
-					<saveddropdown id="directory" preference="directory" flex="1"/>
+					<saveddropdown id="directory" preference="directory" flex="1" placeholder="&directory.placeholder;"/>
 					<toolbarbutton id="browsedir" command="cmdBrowseDirectory" tooltiptext="&browse.tooltip;" />
 				</hbox>
 			</vbox>

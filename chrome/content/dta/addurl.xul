@@ -84,11 +84,15 @@
 			</row>
 			<row align="center">
 				<label control="address" class="header">&url.value;:</label>
-				<textbox id="address" type="autocomplete" autocompletesearch="history" completedefaultindex="true"/>
+				<textbox id="address" type="autocomplete" autocompletesearch="history" completedefaultindex="true" placeholder="&url.placeholder;"/>
+			</row>
+			<row align="center">
+				<label control="filename" class="header" style="font-style: italic;">&override.filename.value;:</label>
+				<textbox id="filename" placeholder="&override.filename.placeholder;" tooltiptext="&override.filename.tip;"/>
 			</row>
 			<row align="center">
 				<label control="URLref" id="URLrefTitle" style="font-style: italic;">&referrer.value;</label>
-				<textbox id="URLref" type="autocomplete" autocompletesearch="history" completedefaultindex="true" />
+				<textbox id="URLref" type="autocomplete" autocompletesearch="history" completedefaultindex="true" placeholder="&referrer.placeholder;" tooltiptext="&referrer.tip;"/>
 			</row>
 			<row align="center">
 				<label control="description" style="font-style: italic;">&description.value;</label>
@@ -97,7 +101,7 @@
 			<row align="center">
 				<label control="directory" id="destinationPath">&directory.caption;</label>
 				<hbox flex="1">
-					<saveddropdown id="directory" preference="directory" flex="1"/>
+					<saveddropdown id="directory" preference="directory" flex="1" placeholdertext="&directory.placeholder;"/>
 					<toolbarbutton id="browsedir" class="toolbarbutton-1" oncommand="Dialog.browseDir();" tooltiptext="&browse.tooltip;" />
 				</hbox>
 			</row>
