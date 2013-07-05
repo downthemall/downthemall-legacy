@@ -1,7 +1,7 @@
 module("support/memorypressure.js");
 
 test("exports", function() {
-	checkExports("support/memorypressure", ["add", "remove"]);
+	checkExports("support/memorypressure", ["add", "remove", "notify"]);
 });
 
 test("plain", 1, function() {

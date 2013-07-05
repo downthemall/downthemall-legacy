@@ -1243,6 +1243,8 @@ const Dialog = {
 		Tree.clear();
 		QueueStore.flush();
 		FileExts = null;
+		this.resetScheduler();
+		Dialog = null;
 		if (this._mustReload) {
 			unload("shutdown");
 			try {
@@ -1253,8 +1255,9 @@ const Dialog = {
 				// not to worry!
 			}
 		}
-		this.resetScheduler();
-		Dialog = null;
+		else {
+			require("support/memorypressure").notify();
+		}
 		return true;
 	}
 };
@@ -1266,7 +1269,7 @@ addEventListener("load", function DialogInit() {
 unloadWindow(window, function () {
 	Dialog._forceClose = true;
 	Dialog.close();
-})
+});
 
 const Metalinker = {
 	handleDownload: function(download) {
