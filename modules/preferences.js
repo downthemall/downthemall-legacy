@@ -16,6 +16,24 @@ if (!(prefs instanceof Ci.nsIPrefBranch2) || !(prefs instanceof Ci.nsIPrefBranch
 	log(LOG_DEBUG, "simple prefs");
 }
 
+//Helper: get a (multi-byte) string
+function getMultiByte(key, defaultValue){
+	try {
+		return prefs.getComplexValue(key, Ci.nsISupportsString).data;
+	}
+	catch (ex) {
+		// no-op
+	}
+	return defaultValue;
+}
+
+//Helper: Set a (multi-byte) string
+function setMultiByte(key, value) {
+	let str = new Instances.SupportsString();
+	str.data = value.toString();
+	prefs.setComplexValue(key, Ci.nsISupportsString, str);
+}
+
 /**
  * Gets a preference (based on root)
  * @param key (string) Key of the preference
@@ -36,7 +54,7 @@ function get(key, defaultValue){
 				rv = getMultiByte(key);
 				break;
 		}
-		if (rv != undefined) {
+		if (rv !== undefined) {
 			return rv;
 		}
 	}
@@ -90,24 +108,6 @@ function set(key, value){
  */
 function setExt(key, value){
 	return set(EXT + key, value);
-}
-
-// Helper: get a (multi-byte) string
-function getMultiByte(key, defaultValue){
-	try {
-		return prefs.getComplexValue(key, Ci.nsISupportsString).data;
-	}
-	catch (ex) {
-		// no-op
-	}
-	return defaultValue;
-}
-
-//Helper: Set a (multi-byte) string
-function setMultiByte(key, value) {
-	let str = new Instances.SupportsString();
-	str.data = value.toString();
-	prefs.setComplexValue(key, Ci.nsISupportsString, str);
 }
 
 /**
@@ -173,7 +173,7 @@ function reset(key) {
  * @return (boolean) Preference reset
  */
 function resetExt(key) {
-	if (key.search(new RegExp('/^' + EXT + '/')) != 0) {
+	if (key.search(new RegExp('/^' + EXT + '/')) !== 0) {
 		key = EXT + key;
 	}
 	return reset(key);
@@ -212,18 +212,6 @@ function resetAllExt() {
 }
 
 /**
- * Adds a preference observer
- * @param branch (string) Branch to add the preference observer for
- * @param obj (object) Preference observer. Must implement observe(). QueryInterface added as required.
- * @return
- */
-function addObserver(branch, obj) {
-	makeObserver(obj);
-	prefs.addObserver(branch, obj, true);
-	return unload(function() removeObserver(branch, obj));
-}
-
-/**
  * Removes a preference observer again
  * @param branch (string) Branch to add the preference observer for
  * @param obj (object) Preference observer. Must have been added before
@@ -241,8 +229,8 @@ function removeObserver(branch, obj) {
 function makeObserver(obj) {
 	try {
 		if (
-			obj.QueryInterface(Ci.nsISupportsWeakReference)
-			&& obj.QueryInterface(Ci.nsIObserver)
+			obj.QueryInterface(Ci.nsISupportsWeakReference) &&
+			obj.QueryInterface(Ci.nsIObserver)
 		) {
 			return;
 		}
@@ -259,9 +247,9 @@ function makeObserver(obj) {
 	// Rewrite QI to support required interfaces
 	obj.QueryInterface = function(iid) {
 		if (
-			iid.equals(Ci.nsISupports)
-			|| iid.equals(Ci.nsISupportsWeakReference)
-			|| iid.equals(Ci.nsIObserver)
+			iid.equals(Ci.nsISupports) ||
+			iid.equals(Ci.nsISupportsWeakReference) ||
+			iid.equals(Ci.nsIObserver)
 		) {
 			return obj;
 		}
@@ -270,6 +258,18 @@ function makeObserver(obj) {
 		}
 		throw Components.results.NS_ERROR_NO_INTERFACE;
 	};
+}
+
+/**
+ * Adds a preference observer
+ * @param branch (string) Branch to add the preference observer for
+ * @param obj (object) Preference observer. Must implement observe(). QueryInterface added as required.
+ * @return
+ */
+function addObserver(branch, obj) {
+	makeObserver(obj);
+	prefs.addObserver(branch, obj, true);
+	return unload(function() removeObserver(branch, obj));
 }
 
 Object.defineProperties(exports, {

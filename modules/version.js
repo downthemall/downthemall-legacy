@@ -9,7 +9,12 @@ let _callbacks = [];
 Object.defineProperties(exports, {
 	TOPIC_SHOWABOUT: {value: "DTA:showAbout", enumerable: true},
 	ID: {value: ID, enumerable: true},
-	LOCALE: {value:Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).getSelectedLocale('global'), enumerable: true},
+	LOCALE: {
+		value: Cc["@mozilla.org/chrome/chrome-registry;1"]
+			.getService(Ci.nsIXULChromeRegistry)
+			.getSelectedLocale('global'),
+		enumerable: true
+		},
 	APP_NAME: {value: Services.appinfo.name.toLowerCase().replace(/ /, ''), enumerable: true},
 	OS: {value: Services.appinfo.OS.toLowerCase(), enumerable: true},
 	APP_VERSION: {value: Services.appinfo.version, enumerable: true},

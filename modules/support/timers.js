@@ -77,7 +77,13 @@ TimerManager.prototype = Object.freeze({
 	 */
 	createRepeating: function(interval, func, ctx, fireInitially, precise) {
 		ctx = ctx || null;
-		let td = new TimerData(this, interval, precise ? nsITimer.TYPE_REPEATING_PRECISE : nsITimer.TYPE_REPEATING_SLACK, func, ctx);
+		let td = new TimerData(
+			this,
+			interval,
+			precise ? nsITimer.TYPE_REPEATING_PRECISE : nsITimer.TYPE_REPEATING_SLACK,
+			func,
+			ctx
+			);
 		this._timers[td] = td;
 		if (fireInitially) {
 			td.execute();

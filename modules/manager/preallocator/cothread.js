@@ -14,10 +14,6 @@ const WINDOWSIMPL_SIZEMAX = (1 << 25); // 32MB
 //Do this step wise to avoid certain "sparse files" cases
 const SIZE_STEP = (1 << 23); // 8MB
 
-exports.prealloc = function prealloc(file, size, perms, sparseOk, callback) {
-	return new WorkerJob(file, size, perms, callback);
-}
-
 function WorkerJob(file, size, perms, callback) {
 	this.file = file;
 	this.size = size;
@@ -32,18 +28,27 @@ function WorkerJob(file, size, perms, callback) {
 	}
 
 	let g = this.run.bind(this);
-	this.coThread = new CoThreadInterleaved((i for (i in g())), 1);
+	var gen = function() {
+		for (let i in g()) {
+			yield i;
+		}
+	};
+	this.coThread = new CoThreadInterleaved(gen(), 1);
 	this.coThread.start(this.finish.bind(this));
 }
 
 WorkerJob.prototype = {
 	result: false,
 	run: function worker_run() {
+		let gen;
 		if (WINDOWSIMPL && this.size < WINDOWSIMPL_SIZEMAX) {
-			for (let i in this._run_windows()) yield i;
+			gen = this._run_windows();
 		}
 		else {
-			for (let i in this._run_other()) yield i;
+			gen = this._run_other();
+		}
+		for (let i in gen) {
+			yield i;
 		}
 	},
 	finish: function() {
@@ -68,7 +73,9 @@ WorkerJob.prototype = {
 		}
 		catch (ex) {
 			log(LOG_ERROR, "pa: Windows implementation failed!", ex);
-			for (let i in this._run_other()) yield i;
+			for (let i in this._run_other()) {
+				yield i;
+			}
 		}
 	},
 	_run_other: function worker_run_other() {
@@ -97,4 +104,8 @@ WorkerJob.prototype = {
 		this.terminated = true;
 		this._close();
 	}
+};
+
+exports.prealloc = function prealloc(file, size, perms, sparseOk, callback) {
+	return new WorkerJob(file, size, perms, callback);
 };

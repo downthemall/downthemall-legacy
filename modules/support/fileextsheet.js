@@ -48,11 +48,11 @@ FileExtensionSheet.prototype = Object.freeze({
 		let entry = this._entries[key];
 		if (!entry) {
 			entry = this._atoms.getAtom("FileIcon" + ext.replace(/\W/g, ''));
-			let rule = 'treechildren::-moz-tree-image(iconic,'
-				+ entry.toString()
-				+ ') { list-style-image: url('
-				+ getIcon('file.' + ext, metalink || ext == 'metalink' || ext == "meta4", this.hidpi ? 32 : 16)
-				+ ') !important; }';
+			let rule = 'treechildren::-moz-tree-image(iconic,' +
+				entry.toString() +
+				') { list-style-image: url(' +
+				getIcon('file.' + ext, metalink || ext == 'metalink' || ext == "meta4", this.hidpi ? 32 : 16) +
+				') !important; }';
 			this._stylesheet.insertRule(rule, this._stylesheet.cssRules.length);
 			log(LOG_DEBUG, "sheet: " + rule);
 			if (!this._timer) {

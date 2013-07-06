@@ -57,8 +57,9 @@ exports.memoize = function memoize(func, limit, num_args) {
 
 			result = func.call(null, a);
 			cache.set(key, result);
-			if (keylist.push(key) > limit)
+			if (keylist.push(key) > limit) {
 				cache.delete(keylist.shift());
+			}
 			return result;
 		};
 	case 2:
@@ -73,8 +74,9 @@ exports.memoize = function memoize(func, limit, num_args) {
 
 			var result = func.call(null, a, b);
 			cache.set(key, result);
-			if (keylist.push(key) > limit)
+			if (keylist.push(key) > limit) {
 				cache.delete(keylist.shift());
+			}
 			return result;
 		};
 	case 3:
@@ -89,8 +91,9 @@ exports.memoize = function memoize(func, limit, num_args) {
 
 			var result = func.call(null, a, b, c);
 			cache.set(key, result);
-			if (keylist.push(key) > limit)
+			if (keylist.push(key) > limit) {
 				cache.delete(keylist.shift());
+			}
 			return result;
 		};
 
@@ -106,8 +109,9 @@ exports.memoize = function memoize(func, limit, num_args) {
 
 			var result = func.call(null, a, b, c, d);
 			cache.set(key, result);
-			if (keylist.push(key) > limit)
+			if (keylist.push(key) > limit) {
 				cache.delete(keylist.shift());
+			}
 			return result;
 		};
 
@@ -121,9 +125,10 @@ exports.memoize = function memoize(func, limit, num_args) {
 
 			var result = func.apply(null, arguments);
 			cache.set(key, result);
-			if (keylist.push(key) > limit)
+			if (keylist.push(key) > limit) {
 				cache.delete(keylist.shift());
+			}
 			return result;
 		};
 	}
-}
+};

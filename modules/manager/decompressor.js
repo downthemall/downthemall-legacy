@@ -19,7 +19,8 @@ function Decompressor(download) {
 
 	try {
 		this._outStream = new Instances.FileOutputStream(this.to, 0x04 | 0x08, Prefs.getExt('permissions', 384), 0);
-		this.outStream = new Instances.BinaryOutputStream(new Instances.BufferedOutputStream(this._outStream, BUFFER_SIZE));
+		this.outStream = new Instances.BinaryOutputStream(
+			new Instances.BufferedOutputStream(this._outStream, BUFFER_SIZE));
 
 		let converter = Cc["@mozilla.org/streamconv;1?from=" + download.compression + "&to=uncompressed"]
 			.createInstance(Ci.nsIStreamConverter);
@@ -36,7 +37,7 @@ function Decompressor(download) {
 	catch (ex) {
 		try {
 			if (this.outStream) {
-				outStream.close();
+				this.outStream.close();
 			}
 			if (this.to.exists()) {
 				this.to.remove(false);
@@ -55,7 +56,7 @@ function Decompressor(download) {
 Decompressor.prototype = {
 	exception: null,
 	QueryInterface: function(iid) {
-		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIStreamListener) || iid.equals(cI.nsIRequestObserver)) {
+		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIStreamListener) || iid.equals(Ci.nsIRequestObserver)) {
 			return this;
 		}
 		throw Cr.NS_ERROR_NO_INTERFACE;

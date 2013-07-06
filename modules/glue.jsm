@@ -3,7 +3,20 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const EXPORTED_SYMBOLS = ["require", "requireJoined", "requireJSM", "unload", "weak", "lazy", "lazyProto", "QI", "Services", "Instances", "XPCOMUtils", "LRUMap"];
+const EXPORTED_SYMBOLS = [
+	"require",
+	"requireJoined",
+	"requireJSM",
+	"unload",
+	"weak",
+	"lazy",
+	"lazyProto",
+	"QI",
+	"Services",
+	"Instances",
+	"XPCOMUtils",
+	"LRUMap"
+	];
 
 const {
 	classes: Cc,
@@ -46,8 +59,8 @@ const lazyProto = (function() {
 
 let log = function logStub() {
 	Cu.reportError(Array.join(arguments, ", "));
-}
-let LOG_DEBUG = 0, LOG_INFO = 0, LOG_WARN = 0;
+};
+let LOG_DEBUG = 0, LOG_INFO = 0, LOG_ERROR = 0;
 
 function LRUMap(limit) {
 	this._limit = limit;
@@ -173,7 +186,7 @@ LRUMap.prototype = Object.freeze({
 				reportError(ex);
 			}
 		}
-	}
+	};
 	exports.unload = function unload(fn) {
 		if (fn == "shutdown") {
 			if (arguments.length > 1 && arguments[1]) {
@@ -200,7 +213,7 @@ LRUMap.prototype = Object.freeze({
 			_runUnloader(fn, arguments);
 			_unloaders = _unloaders.filter(function(c) c != fn);
 		};
-	}
+	};
 
 	const _registry = Object.create(null);
 	exports.require = function require(module) {
@@ -227,7 +240,7 @@ LRUMap.prototype = Object.freeze({
 	};
 	exports.requireJoined = function requireJoined(where, module) {
 		module = require(module);
-		for (let [k,v] in Iterator(module)) {
+		for (let [k,v] in new Iterator(module)) {
 			where[k] = v;
 		}
 	};
@@ -265,11 +278,14 @@ LRUMap.prototype = Object.freeze({
 		observe: function(s,t,d) {
 			logging.setLogLevel(getExt("logging") ? logging.LOG_DEBUG : logging.LOG_NONE);
 		}
-	}
+	};
 	addObserver("extensions.dta.logging", LogPrefObs);
 	LogPrefObs.observe();
 	require("version").getInfo(function setupVersion(v) {
-		log(LOG_INFO, v.NAME + "/" + v.VERSION + " on " + v.APP_NAME + "/" + v.APP_VERSION + " (" + v.LOCALE + " / " + v.OS + ") ready");
+		log(
+			LOG_INFO,
+			v.NAME + "/" + v.VERSION + " on " + v.APP_NAME + "/" + v.APP_VERSION + " (" + v.LOCALE + " / " + v.OS + ") ready"
+			);
 	});
 	try {
 		require("main").main();

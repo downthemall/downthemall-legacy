@@ -4,7 +4,6 @@
 "use strict";
 
 const global = this;
-const reportError = reportError;
 
 var UNKNOWN_STACK = {
 	stackMsg: "",
@@ -32,12 +31,13 @@ function prepareStack(stack) {
 	let message = [];
 	for (let i = 0; stack && i < 6; ++i, stack = stack.caller) {
 		if (stack.lineNumber) {
-			message.push("\t"
-					+ (stack.name || "[anonymous]")
-					+ "() @ "
-					+ (stack.filename || "unknown").replace(GLUE, "")
-					+ ":"
-					+ stack.lineNumber);
+			message.push(
+				"\t" +
+				(stack.name || "[anonymous]") +
+				"() @ " +
+				(stack.filename || "unknown").replace(GLUE, "") +
+				":" +
+				stack.lineNumber);
 		}
 		else {
 			message.push("\t[native @ " + (stack.languageName || "???" ) + "]");
@@ -91,7 +91,13 @@ const fmt = (function() {
 
 function getTimeString() {
 	let time = new Date();
-	return fmt(time.getHours()) + ":" + fmt(time.getMinutes()) + ":" + fmt(time.getSeconds()) + "::" + fmt(time.getMilliseconds());
+	return fmt(time.getHours()) +
+		":" +
+		fmt(time.getMinutes()) +
+		":" +
+		fmt(time.getSeconds()) +
+		"::" +
+		fmt(time.getMilliseconds());
 }
 exports.log = function(level, message, exception) {
 	if (global.level > level)  {
@@ -162,7 +168,11 @@ exports.log = function(level, message, exception) {
 			level >= exports.LOG_ERROR ? errorFlag : warningFlag,
 			category);
 		Services.console.logMessage(scriptError);
-		message = getTimeString() + "\n" + message + "\n--> " + sourceName + ":" + lineNumber + ":" + columnNumber + "\n";
+		message = getTimeString() + "\n" +
+			message + "\n--> " +
+			sourceName + ":" +
+			lineNumber + ":" +
+			columnNumber + "\n";
 
 		var f = new Instances.FileOutputStream(global.file, 0x04 | 0x08 | 0x10, parseInt("664", 8), 0);
 		f.write(message, message.length);
@@ -173,7 +183,8 @@ exports.log = function(level, message, exception) {
 		Cu.reportError(ex);
 		Cu.reportError(exception || message);
 	}
-}
+};
+
 Object.defineProperty(exports.log, "enabled", {get: function() global.level != exports.LOG_NONE});
 Object.defineProperty(exports.log, "file", {get: function () global.file});
 Object.defineProperty(exports.log, "clear", {value: function clear() {

@@ -122,7 +122,7 @@ function killInvalidBrackets(string) {
 		}
 	}
 
-	if (c == 0 && C == 0) {
+	if (c === 0 && C === 0) {
 		// all closed, use whole string
 		return string;
 	}
@@ -157,11 +157,15 @@ function splitAlternates(pattern, rv) {
 			cur += char + pattern[++i];
 		}
 		else if (char == "(") {
-			if (!C) ++c;
+			if (!C) {
+				++c;
+			}
 			cur += char;
 		}
 		else if (char == ")") {
-			if (!C) --c;
+			if (!C) {
+				--c;
+			}
 			cur += char;
 		}
 		else if (char == "[") {
@@ -263,7 +267,7 @@ function largestPrefixGroup(patterns, low, high, level) {
 
 	let prefix = heads[besti];
 
-	if (tails.some(function(p) p.length == 0)) {
+	if (tails.some(function(p) !p.length)) {
 		return [besti, beste, prefix];
 	}
 

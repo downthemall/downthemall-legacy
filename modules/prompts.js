@@ -5,7 +5,7 @@
 
 // unpack the default button types
 for (let x in Ci.nsIPromptService) {
-	let r = new String(x).match(/BUTTON_TITLE_(\w+)$/);
+	let r = x.toString().match(/BUTTON_TITLE_(\w+)$/);
 	if (r) {
 		exports[r[1]] = Ci.nsIPromptService[x];
 	}
@@ -65,7 +65,7 @@ exports.confirm = function confirm(aWindow, aTitle, aText, aButton0, aButton1, a
 			catch (ex) {
 				// no-op
 			}
-			if (check.value == undefined) {
+			if (check.value === undefined) {
 				check.value = false;
 			}
 		}

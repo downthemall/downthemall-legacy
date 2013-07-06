@@ -1,6 +1,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
 
 const EXPORTED_SYMBOLS = [
 	'getMostRecent', 'getMostRecentByUrl', 'getAllByType',
@@ -12,18 +13,18 @@ const EXPORTED_SYMBOLS = [
 const Prefs = require("preferences");
 
 function objToString(obj) {
-	if (obj == null || obj == undefined || !obj) {
+	if (!obj) {
 		return null;
 	}
 	if (
-		typeof obj == 'string'
-		|| obj instanceof String
+		typeof obj == 'string' ||
+		obj instanceof String
 	) {
 		return obj.toString();
 	}
 	if (
-		obj instanceof Ci.nsIURL
-		|| obj instanceof Ci.nsIURI
+		obj instanceof Ci.nsIURL ||
+		obj instanceof Ci.nsIURI
 	) {
 		return obj.spec;
 	}
@@ -33,7 +34,7 @@ function objToString(obj) {
 	throw new Exception("Not a valid type");
 }
 function objToUri(obj) {
-	if (obj == null || obj == undefined || !obj) {
+	if (!obj) {
 		return null;
 	}
 	if (obj instanceof Ci.nsIURL || obj instanceof Ci.nsIURI) {
@@ -97,8 +98,9 @@ function openExternal(link) {
 	Services.eps.loadUrl(objToUri(link));
 }
 
-
-this.__defineGetter__(
+/* global homePage */
+lazy(
+	this,
 	'homePage',
 	function() {
 		let hp = Prefs.get('browser.startup.homepage', null);
@@ -106,7 +108,8 @@ this.__defineGetter__(
 			return hp;
 		}
 		try {
-			return Services.strings.createBundle(hp || 'resource:/browserconfig.properties').GetStringFromName('browser.startup.homepage');
+			return Services.strings.createBundle(hp || 'resource:/browserconfig.properties')
+				.GetStringFromName('browser.startup.homepage');
 		}
 		catch (ex) {
 			log(LOG_ERROR, "No luck getting hp");
@@ -115,20 +118,6 @@ this.__defineGetter__(
 	}
 );
 
-function openUrl(window, link, ref) {
-	if (!link) {
-		link = homePage;
-	}
-	log(LOG_INFO, "Mediator: Request to open " + link);
-	if (!tryOpenUrl(window, link, ref)) {
-		try {
-			window.open(objToString(link));
-		}
-		catch (ex) {
-			openExternal(link);
-		}
-	}
-}
 function tryOpenUrl(window, link, ref) {
 	try {
 		let win = getMostRecent('navigator:browser');
@@ -146,6 +135,21 @@ function tryOpenUrl(window, link, ref) {
 		log(LOG_ERROR, "Mediator: Failed to open tab", ex);
 	}
 	return false;
+}
+
+function openUrl(window, link, ref) {
+	if (!link) {
+		link = homePage;
+	}
+	log(LOG_INFO, "Mediator: Request to open " + link);
+	if (!tryOpenUrl(window, link, ref)) {
+		try {
+			window.open(objToString(link));
+		}
+		catch (ex) {
+			openExternal(link);
+		}
+	}
 }
 
 function openWindow(window, link) {

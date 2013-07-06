@@ -18,6 +18,7 @@ let _saveStmt = null;
 let _saveStmtParams = null;
 let _timer = 0;
 
+/* global __db */
 lazy(this, '__db', function() {
 	let db = Services.dirsvc.get("ProfD", Ci.nsIFile);
 	db.append(DB_FILE);
@@ -196,7 +197,7 @@ const QueueStore = {
 		_timer = null;
 	},
 	savePositions: function(downloads) {
-		if (downloads.length == 0) {
+		if (!downloads.length) {
 			log(LOG_DEBUG, "no position changes");
 			return;
 		}

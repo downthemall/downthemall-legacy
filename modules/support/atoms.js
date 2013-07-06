@@ -3,7 +3,11 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const COMMON_ATOMS = ["iconic", "completed", "inprogress", "paused", "canceled", "pausedUndetermined", "pausedAutoretrying", "verified", "progress", "private"];
+const COMMON_ATOMS = [
+	"iconic", "completed", "inprogress", "paused", "canceled",
+	"pausedUndetermined", "pausedAutoretrying",
+	"verified", "progress", "private"
+	];
 
 const _as = Cc["@mozilla.org/atom-service;1"].getService(Ci.nsIAtomService);
 

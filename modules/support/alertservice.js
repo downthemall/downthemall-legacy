@@ -86,4 +86,4 @@ exports.show = function alertservice_show(title, msg, callback) {
 	catch (ex) {
 		log(LOG_ERROR, "alertsservice unexpectedly failed", ex);
 	}
-}
+};

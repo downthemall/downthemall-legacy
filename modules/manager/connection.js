@@ -12,8 +12,9 @@ const NS_ERROR_NET_RESET = NS_ERROR_MODULE_NETWORK + 20;
 const NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
 
 let DTA = require("api");
+/* global RUNNING, CANCELED, PAUSED, FINISHING */
 requireJoined(this, "constants");
-const {formatNumber, SimpleIterator, StringBundles} = require("utils");
+const {formatNumber, SimpleIterator, StringBundles, getTimestamp} = require("utils");
 const {modifyURL, modifyHttp} = require("support/requestmanipulation");
 const Preferences = require("preferences");
 const {
@@ -29,9 +30,14 @@ const DISCONNECTION_CODES = [
 	NS_ERROR_NET_RESET
 ];
 
-(function(global) {
+const _ = (function(global) {
 	let bundles = new StringBundles(["chrome://dta/locale/manager.properties"]);
-	global['_'] = function() (arguments.length == 1) ? bundles.getString(arguments[0]) : bundles.getFormattedString.apply(bundles, arguments);
+	return function() {
+		if (arguments.length == 1) {
+			return bundles.getString(arguments[0]);
+		}
+		return bundles.getFormattedString.apply(bundles, arguments);
+	};
 })(this);
 
 
@@ -49,7 +55,7 @@ function Connection(d, c, isInfoGetter) {
 
 	this._chan = Services.io.newChannelFromURI(url);
 	let r = Ci.nsIRequest;
-	let loadFlags = r.LOAD_NORMAL
+	let loadFlags = r.LOAD_NORMAL;
 	if (!Preferences.getExt('useCache', false)) {
 		loadFlags = loadFlags | r.LOAD_BYPASS_CACHE;
 	}
@@ -150,7 +156,11 @@ Connection.prototype = {
 
 				if (this.isInfoGetter) {
 					if (!d.fromMetalink) {
-						chan.setRequestHeader('Accept', 'application/metalink4+xml;q=0.9,application/metalink+xml;q=0.8', true);
+						chan.setRequestHeader(
+							"Accept",
+							"application/metalink4+xml;q=0.9,application/metalink+xml;q=0.8",
+							true
+							);
 					}
 					chan.setRequestHeader('Want-Digest', DTA.WANT_DIGEST_STRING, false);
 				}
@@ -256,7 +266,11 @@ Connection.prototype = {
 			if (c.currentPosition > 0 && !(newChannel instanceof Ci.nsIHttpChannel)) {
 				let resumable = newChannel.QueryInterface(Ci.nsIResumableChannel);
 				resumable.resumeAt(c.currentPosition, '');
-				log(LOG_INFO, "redirect: set resumeAt on " + newChannel.URI.spec + "/" + newChannel.originalURI.spec + " at " + c.currentPosition);
+				log(LOG_INFO, "redirect: set resumeAt on " +
+					newChannel.URI.spec + "/" +
+					newChannel.originalURI.spec + " at " +
+					c.currentPosition
+					);
 			}
 		}
 		catch (ex) {
@@ -344,8 +358,8 @@ Connection.prototype = {
 			let c = this.c;
 			if (c.write(aRequest, aInputStream, aCount) < 0) {
 				// need to attempt another write after merging in verifyChunksStarted
-				if (this.verifyChunksStarted()
-						&& c.write(aRequest, aInputStream, aCount) >= 0) {
+				if (this.verifyChunksStarted() &&
+						c.write(aRequest, aInputStream, aCount) >= 0) {
 					return;
 				}
 
@@ -440,7 +454,11 @@ Connection.prototype = {
 							d.dumpScoreboard();
 							log(LOG_ERROR, "overlapping:\n" + c1 + "\n" + c2);
 						}
-						d.fail("Internal error", "Please notify the developers that there were 'overlapping chunks'!", "Internal error (please report)");
+						d.fail(
+							"Internal error",
+							"Please notify the developers that there were 'overlapping chunks'!",
+							"Internal error (please report)"
+							);
 						return false;
 					}
 					d.chunks.splice(i + 1, 1);
@@ -511,9 +529,9 @@ Connection.prototype = {
 				}
 				else {
 					d = res.downloads.filter(function(e) {
-						return download.hashCollection && e.hashCollection
-							&& download.hashCollection.full.type == e.hashCollection.full.type
-							&& download.hashCollection.full.sum == e.hashCollection.full.sum;
+						return download.hashCollection && e.hashCollection &&
+							download.hashCollection.full.type == e.hashCollection.full.type &&
+							download.hashCollection.full.sum == e.hashCollection.full.sum;
 					});
 					if (!d.length) {
 						d = res.downloads.filter(function(e) {
@@ -537,7 +555,7 @@ Connection.prototype = {
 				}
 				for (var u of d.url.toArray()){
 					download.urlManager.add(u);
-				};
+				}
 				if (d.hashCollection) {
 					if (!download.hashCollection) {
 						download.hashCollection = d.hashCollection;
@@ -554,8 +572,8 @@ Connection.prototype = {
 							}
 						};
 					}
-					else if(oldHash.full.type == d.hashCollection.full.type
-							&& oldHash.full.sum != d.hashCollection.full.sum) {
+					else if(oldHash.full.type == d.hashCollection.full.type &&
+							oldHash.full.sum != d.hashCollection.full.sum) {
 						log(LOG_ERROR, "Rejecting describedby metalink due to hash mismatch");
 						cb("hash mismatch");
 						return;
@@ -564,7 +582,7 @@ Connection.prototype = {
 						newHash.full = {
 							sum: oldHash.full.sum,
 							type: oldHash.full.type
-						}
+						};
 					}
 					if (!d.hashCollection.partials.length) {
 						newHash.parLength = oldHash.parLength;
@@ -582,8 +600,8 @@ Connection.prototype = {
 								sum: oldHash.partials[i].sum,
 								type: oldHash.partials[i].type
 							});
-							if (newHash.partials[i].type == d.hashCollection.partials[i].type
-								&& newHash.partials[i].sum != d.hashCollection.parials[i].sum) {
+							if (newHash.partials[i].type == d.hashCollection.partials[i].type &&
+								newHash.partials[i].sum != d.hashCollection.parials[i].sum) {
 								log(LOG_ERROR, "Rejecting describedby metalink due to hash mismatch");
 								cb("hash mismatch");
 								return;
@@ -592,12 +610,12 @@ Connection.prototype = {
 								newHash.partials[i] = {
 									sum: d.hashCollection.partials[i].sum,
 									type: d.hashCollection.partials[i].type
-								}
+								};
 							}
 						}
 					}
-					else if (d.hashCollection.partials.length > oldHash.partials.length
-							&& d.hashCollection.partials[1].q > oldHash.partials[1].q) {
+					else if (d.hashCollection.partials.length > oldHash.partials.length &&
+						d.hashCollection.partials[1].q > oldHash.partials[1].q) {
 						newHash.parLength = d.hashCollection.parLength;
 						newHash.partials = d.hashCollection.partials;
 					}
@@ -614,9 +632,9 @@ Connection.prototype = {
 		else {
 			cb();
 		}
-		if (visitor.mirrors
-				&& download.hashCollection && download.hashCollection.full.q >= 0.5
-				&& !(download.isMetalink || download.fromMetalink)) {
+		if (visitor.mirrors &&
+			download.hashCollection && download.hashCollection.full.q >= 0.5 &&
+			!(download.isMetalink || download.fromMetalink)) {
 			for (let mirror of visitor.mirrors) {
 				download.urlManager.add(mirror);
 			}
@@ -650,7 +668,10 @@ Connection.prototype = {
 				if (code == 401) {
 					d.AuthPrompts.authPrompter.restrictLogin(aChannel.URI);
 				}
-				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1 || Preferences.getExt('recoverallhttperrors', false)) {
+
+				let file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
+				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1 ||
+					Preferences.getExt('recoverallhttperrors', false)) {
 					log(LOG_DEBUG, "we got temp failure!", code);
 					d.pauseAndRetry();
 					d.status = code >= 500 ? _('temperror') : _('autherror');
@@ -670,7 +691,6 @@ Connection.prototype = {
 						);
 				}
 				else {
-					var file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
 					code = formatNumber(code, 3);
 					if (Preferences.getExt('resumeonerror', false)) {
 						d.pauseAndRetry();
@@ -692,7 +712,9 @@ Connection.prototype = {
 
 		// not partial content altough we are multi-chunk
 		if (code != 206 && !this.isInfoGetter) {
-			log(LOG_ERROR, d + ": Server returned a " + aChannel.responseStatus + " response instead of 206", this.isInfoGetter);
+			log(LOG_ERROR, d + ": Server returned a " +
+				aChannel.responseStatus + " response instead of 206",
+				this.isInfoGetter);
 
 			if (!this.handleError()) {
 				if (log.enabled) {
@@ -734,7 +756,8 @@ Connection.prototype = {
 		}
 
 		// compression?
-		if (['gzip', 'deflate'].indexOf(visitor.encoding) != -1 && !d.contentType.match(/gzip/i) && !d.fileName.match(/\.gz$/i)) {
+		if (['gzip', 'deflate'].indexOf(visitor.encoding) != -1 &&
+			!d.contentType.match(/gzip/i) && !d.fileName.match(/\.gz$/i)) {
 			d.compression = visitor.encoding;
 		}
 		else {
@@ -802,7 +825,7 @@ Connection.prototype = {
 		}
 		catch (ex) {
 			log(LOG_ERROR, "ftp: no totalsize", ex);
-			if (c.start != 0 && !this.handleError()) {
+			if (c.start && !this.handleError()) {
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 				return false;
 			}
@@ -811,7 +834,9 @@ Connection.prototype = {
 		}
 
 		try {
-			aChannel.QueryInterface(Ci.nsIResumableChannel).entityID;
+			if (!aChannel.QueryInterface(Ci.nsIResumableChannel).entityID) {
+				throw new Error("no entityID");
+			}
 		}
 		catch (ex) {
 			log(LOG_INFO, "likely not resumable or connection refused!", ex);
@@ -842,7 +867,7 @@ Connection.prototype = {
 
 		// hack: determine if we are a multi-part chunk,
 		// if so something bad happened, 'cause we aren't supposed to be multi-part
-		if (c.start != 0 && d.state == RUNNING) {
+		if (c.start && d.state == RUNNING) {
 			if (!this.handleError()) {
 				log(LOG_ERROR, d + ": Server error or disconnection", "(type 1)");
 				d.pauseAndRetry();
@@ -971,7 +996,7 @@ Connection.prototype = {
 			// every complete chunk so that no new chunk is generated.
 			// Manual addidition of new chunks is not affected by this.
 			if (!Preferences.getExt('autosegments', true) && d.maxChunks > 1) {
-				--d.maxChunks
+				--d.maxChunks;
 			}
 
 			// check if we're complete now
@@ -1090,7 +1115,9 @@ Connection.prototype = {
 					if (d.partialSize > d.totalSize) {
 						if (log.enabled) {
 							d.dumpScoreboard();
-							log(LOG_DEBUG, d + ": partialSize > totalSize" + "(" + d.partialSize + "/" + d.totalSize + "/" + ( d.partialSize - d.totalSize) + ")");
+							log(LOG_DEBUG, d + ": partialSize > totalSize" +
+								"(" + d.partialSize + "/" + d.totalSize +
+								"/" + ( d.partialSize - d.totalSize) + ")");
 						}
 						d.fail(
 							_('errmismatchtitle'),

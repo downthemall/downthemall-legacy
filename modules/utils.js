@@ -33,27 +33,29 @@ const MAX_STACK = 6;
 exports.newUUIDString = function newUUIDString() Services.uuid.generateUUID().toString();
 
 /**
- * Range generator (python style). Difference: step direction is initialized accordingly if corresponding parameter is omitted.
+ * Range generator (python style).
+ * Difference: step direction is initialized accordingly if corresponding parameter is omitted.
+ *
  * @param start Optional. Start value (default: 0)
  * @param stop Stop value (exclusive)
  * @param step Optional. Step value (default: 1/-1)
  */
 exports.range = function range() {
-	if (arguments.length == 0) {
+	if (!arguments.length) {
 		throw Components.results.NS_ERROR_INVALID_ARG;
 	}
-	let start = 0, stop = new Number(arguments[0]), step;
+	let start = 0, stop = parseInt(arguments[0], 10), step;
 	if (arguments.length >= 2) {
 		start = stop;
-		stop = new Number(arguments[1]);
+		stop = parseInt(arguments[1], 10);
 	}
 	if (arguments.length >= 3) {
-		step = new Number(arguments[2]);
+		step = parseInt(arguments[2], 10);
 	}
 	else {
 		step = stop - start > 0 ? 1 : -1;
 	}
-	if (!isFinite(start) || !isFinite(stop) || !isFinite(step) || step == 0) {
+	if (!isFinite(start) || !isFinite(stop) || !isFinite(step) || !step) {
 		throw Cr.NS_ERROR_INVALID_ARG;
 	}
 	if ((stop - start) / step < 0) {
@@ -65,6 +67,10 @@ exports.range = function range() {
 	for (; start != stop; start += step) {
 		yield ~~start;
 	}
+};
+
+function toHex(c) {
+	return ('0' + c.toString(16)).slice(-2);
 }
 
 /**
@@ -73,9 +79,11 @@ exports.range = function range() {
  * @return {String} hexdigest
  */
 exports.hexdigest = function hexdigest(data) {
+	var i;
 	data = data.toString();
-	return [('0' + data.charCodeAt(i).toString(16)).slice(-2) for (i in exports.range(data.length))].join('');
-}
+	let rv = [toHex(data.charCodeAt(i)) for (i in exports.range(data.length))];
+	return rv.join('');
+};
 
 /**
  * Head-Pads a number so that at it contains least "digits" digits.
@@ -97,7 +105,7 @@ exports.formatNumber = function formatNumber(num, digits) {
 		rv = '0' + rv;
 	}
 	return rv;
-}
+};
 
 /**
  * Formats a time delta (seconds)
@@ -116,7 +124,7 @@ exports.formatTimeDelta = function formatTimeDelta(delta) {
 		rv += exports.formatNumber(h, 2) + ':';
 	}
 	return rv + exports.formatNumber(m, 2) + ':' + exports.formatNumber(s, 2);
-}
+};
 
 /**
  * Converts a Datestring into an integer timestamp.
@@ -131,7 +139,7 @@ exports.getTimestamp = function getTimestamp(str) {
 		throw new Error('invalid date');
 	}
 	return rv;
-}
+};
 
 /**
  * Filter arrays in-situ. Like Array.filter, but in place
@@ -152,7 +160,7 @@ exports.filterInSitu = function filterInSitu(arr, cb, tp) {
 	}
 	arr.length = k; // truncate
 	return arr;
-}
+};
 
 /**
  * Map arrays in-situ. Like Array.map, but in place.
@@ -167,7 +175,7 @@ exports.mapInSitu = function mapInSitu(arr, cb, tp) {
 		arr[i] = cb.call(tp, arr[i], i, arr);
 	}
 	return arr;
-}
+};
 
 /**
  * Filters and then maps an array in-situ
@@ -189,7 +197,7 @@ exports.filterMapInSitu = function filterMapInSitu(arr, filterStep, mapStep, tp)
 	}
 	arr.length = k; // truncate
 	return arr;
-}
+};
 
 /**
  * Map and then filter an array in place
@@ -211,7 +219,7 @@ exports.mapFilterInSitu = function mapFilterInSitu(arr, mapStep, filterStep, tp)
 	}
 	arr.length = k; // truncate
 	return arr;
-}
+};
 
 /**
  * Sorts an array with natural sort order.
@@ -252,11 +260,11 @@ naturalSort.strtol = function strtol(str, rv) {
 		str.toLowerCase().split(""),
 		function(e) e.charCodeAt(0)
 		);
-	for (let [idx,c] in Iterator(chars)) {
+	for (let [idx,c] in new Iterator(chars)) {
 		if ((c >= 48 && c <= 57) || (base == 16 && c >= 97 && c <= 100)) {
 			continue;
 		}
-		if (idx == 0) {
+		if (!idx) {
 			rv.num = NaN;
 			rv.parsed = "";
 			rv.remainder = str;
@@ -314,7 +322,7 @@ naturalSort.tokenize = function tokenize(mapper, elem) {
 };
 naturalSort.compareElement = function(a, b) {
 	return a === b ? 0 : (a < b ? -1 : 1);
-}
+};
 naturalSort.compare = function(a, b) {
 	let ai, bi;
 	[a, b] = [a.chunks, b.chunks];
@@ -328,8 +336,8 @@ naturalSort.compare = function(a, b) {
 				return rv;
 			}
 
-			if ((rv = naturalSort.compareElement(ai.e, bi.e))
-					|| (rv = naturalSort.compareElement(ai.l, bi.l))) {
+			if ((rv = naturalSort.compareElement(ai.e, bi.e)) ||
+					(rv = naturalSort.compareElement(ai.l, bi.l))) {
 				return rv;
 			}
 		}
@@ -344,7 +352,7 @@ naturalSort.compare = function(a, b) {
 		}
 	}
 	return naturalSort.compareElement(a.length, b.length);
-}
+};
 naturalSort.unmap = function(e) e.elem;
 exports.naturalSort = naturalSort;
 
@@ -381,6 +389,10 @@ function Properties() {
 }
 Properties.prototype = Object.freeze({
 	_parse: function(properties) {
+		function toUpper(str, n) {
+			return n.toUpperCase();
+		}
+
 		if (!properties) {
 			return;
 		}
@@ -388,9 +400,10 @@ Properties.prototype = Object.freeze({
 		for (let key of keys) {
 			try {
 				let prop =  properties.get(key, Ci.nsISupports);
-				if (prop instanceof Ci.nsIVariant);
+				if (prop instanceof Ci.nsIVariant) {
+					prop = prop;
+				}
 				else if (prop instanceof Ci.nsISupportsPrimitive) {
-					prop = prop.QueryInterface(Ci.nsISupportsPrimitive);
 					switch(prop.type || prop.TYPE_STRING) {
 					case prop.TYPE_CSTRING:
 						prop = prop.QueryInterface(Ci.nsISupportsCString);
@@ -437,16 +450,15 @@ Properties.prototype = Object.freeze({
 					case prop.TYPE_PRTIME:
 						prop = prop.QueryInterface(Ci.nsISupportsPRTime);
 						break;
-					case TYPE_INTERFACE_POINTER:
+					case prop.TYPE_INTERFACE_POINTER:
 						prop = prop.QueryInterface(Ci.nsISupportsInterfacePointer);
 						break;
 					default:
 						throw new Exception("Invalid type");
-						break;
 					}
 					prop = prop.data;
 				}
-				key = key.replace(/[.-](.)/g, function(str, n) n.toUpperCase());
+				key = key.replace(/[.-](.)/g, toUpper);
 				this[key] = prop;
 			}
 			catch (ex) {
@@ -485,13 +497,17 @@ MimeQuality.prototype = Object.freeze({
 	 * @return Representation
 	 */
 	toString: function() {
+		function qval(x, i) {
+			return i + (x == 1 ? "" : ";q=" + x);
+		}
+
 		let rv = [];
 		for (let x in this._q) {
 			let e = this._q[x];
 			e.sort();
 			rv.push({
 				q: x,
-				v: e.map(function(i) i + (x == 1 ? "" : ";q=" + x)).join(",")
+				v: e.map(qval.bind(null, x)).join(",")
 			});
 		}
 		rv.sort(function(a, b) (a.q > b.q) ? -1 : ((a.q < b.q) ? 1 : 0));
@@ -502,19 +518,23 @@ exports.MimeQuality = Object.freeze(MimeQuality);
 
 let _bundles = Object.create(null);
 function _loadBundles(urls) {
+	function bundle(url) {
+		return Services.strings.createBundle(url).getSimpleEnumeration();
+	}
+
 	function _load(url) {
 		if (url in _bundles) {
 			return _bundles[url];
 		}
 		let strings = {};
 		let uri = toURI(url);
-		for (let s in new SimpleIterator(Services.strings.createBundle(url).getSimpleEnumeration(), Ci.nsIPropertyElement)) {
+		for (let s in new SimpleIterator(bundle(url), Ci.nsIPropertyElement)) {
 			strings[s.key] = s.value;
 		}
 		if (uri.host == "dta") {
 			url = "chrome://dta-locale" + uri.path.replace("/locale/", "/content/");
 			log(LOG_DEBUG, "also loading: " + url);
-			for (let s in new SimpleIterator(Services.strings.createBundle(url).getSimpleEnumeration(), Ci.nsIPropertyElement)) {
+			for (let s in new SimpleIterator(bundle(url), Ci.nsIPropertyElement)) {
 				let k = s.key;
 				if (!(k in strings)) {
 					strings[k] = s.value;
@@ -534,7 +554,7 @@ function _loadBundles(urls) {
 		return _bundles[key];
 	}
 	let rv = {};
-	for (let b of exports.mapInSitu(urls, function(e) _load(e))) {
+	for (let b of exports.mapInSitu(urls, _load)) {
 		for (let k in b) {
 			rv[k] = b[k];
 		}
@@ -569,7 +589,7 @@ function StringBundles(documentOrStrings) {
 StringBundles._br = /%S/gi;
 StringBundles._repl = function() {
 	return StringBundles_params.shift();
-}
+};
 StringBundles.prototype = Object.freeze({
 	getString: function(id) this._strings[id],
 	getFormattedString: function(id, params) {
@@ -599,7 +619,7 @@ exports.StringBundles = Object.freeze(StringBundles);
  * @author Nils (derived from DownloadManager code)
  */
 
-function OpenExternal_prepare(file) {
+function openExternal_prepare(file) {
 	if (file instanceof Ci.nsIFile) {
 		return file;
 	}
@@ -608,7 +628,7 @@ function OpenExternal_prepare(file) {
 	}
 	return file;
 }
-function OpenExternal_nixLaunch(file) {
+function openExternal_nixLaunch(file) {
 	try {
 		Services.eps.loadURI(Services.io.newFileURI(file));
 	}
@@ -624,7 +644,7 @@ function OpenExternal_nixLaunch(file) {
  *          pointing to the desired file
  */
 exports.launch = function launch(file) {
-	file = OpenExternal_prepare(file);
+	file = openExternal_prepare(file);
 	if (!file.exists()) {
 		throw new Exception("OpenExternal: file not found!");
 	}
@@ -633,9 +653,9 @@ exports.launch = function launch(file) {
 	}
 	catch (ex) {
 		// *nix will throw as not implemented
-		OpenExternal_nixLaunch(file);
+		openExternal_nixLaunch(file);
 	}
-}
+};
 
 /**
  * Reveal a file, which will open the directory and furthermore select the
@@ -645,7 +665,7 @@ exports.launch = function launch(file) {
  *          pointing to the desired file
  */
 exports.reveal = function reveal(file) {
-	file = OpenExternal_prepare(file);
+	file = openExternal_prepare(file);
 	try {
 		if (!file.exists()) {
 			throw new Exception("LocalFile does not exist");
@@ -660,7 +680,7 @@ exports.reveal = function reveal(file) {
 		// or because the platform does not implement reveal);
 		exports.launch(file.parent);
 	}
-}
+};
 
 /**
  * Convert metalink priorities to start from 1 and give more weitage to ones with lower prioroty,
@@ -671,9 +691,9 @@ exports.normalizeMetaPrefs = function(urls) {
 	if (!urls || !urls.length) {
 		return;
 	}
-	let pmax = urls.reduce(function(p,c) isFinite(c.preference) ? Math.max(c.preference, p) : p, 1)
+	let pmax = urls.reduce(function(p,c) isFinite(c.preference) ? Math.max(c.preference, p) : p, 1);
 	let pmin = urls.reduce(function(p,c) isFinite(c.preference) ? Math.min(c.preference, p) : p, pmax - 1);
 	urls.forEach(function(url) {
 		url.preference = Math.max(100 - ((url.preference - pmin) *  100 / (pmax - pmin)).toFixed(0), 10);
 	});
-}
+};

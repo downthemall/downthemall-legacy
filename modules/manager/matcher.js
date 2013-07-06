@@ -13,9 +13,17 @@ const {
 	filterInSitu
 } = require("utils");
 
-(function(global) {
-	let bundles = new StringBundles(["chrome://dta/locale/common.properties", "chrome://dta/locale/manager.properties"]);
-	global['_'] = function() (arguments.length == 1) ? bundles.getString(arguments[0]) : bundles.getFormattedString.apply(bundles, arguments);
+const _ = (function(global) {
+	let bundles = new StringBundles([
+		"chrome://dta/locale/common.properties",
+		"chrome://dta/locale/manager.properties"
+		]);
+	return function() {
+		if (arguments.length == 1) {
+			return bundles.getString(arguments[0]);
+		}
+		return bundles.getFormattedString.apply(bundles, arguments);
+	};
 })(this);
 
 const TextMatch = {
@@ -131,25 +139,25 @@ const RemainderMatch = {
 		}
 		return function RemainderMatcher(d) d.estimated <= est;
 	}
-}
+};
 const StatusMatch = {
-		get name() 'statusmatch',
-		getItems: function() {
-			for (let s of ['QUEUED', 'PAUSED', 'RUNNING', 'COMPLETE', 'CANCELED']) {
-				yield {
-					label: _(s.toLowerCase()),
-					param: s
-				};
-			}
-		},
-		getMatcher: function(params) {
-			let state = params.reduce(function(p,c) p | constants[c], 0);
-			if (state & COMPLETE) {
-				state |= FINISHING;
-			}
-			return function StatusMatcher(d) d.state & state;
+	get name() 'statusmatch',
+	getItems: function() {
+		for (let s of ['QUEUED', 'PAUSED', 'RUNNING', 'COMPLETE', 'CANCELED']) {
+			yield {
+				label: _(s.toLowerCase()),
+				param: s
+			};
 		}
-}
+	},
+	getMatcher: function(params) {
+		let state = params.reduce(function(p,c) p | constants[c], 0);
+		if (state & COMPLETE) {
+			state |= FINISHING;
+		}
+		return function StatusMatcher(d) d.state & state;
+	}
+};
 requireJoined(StatusMatch, "constants");
 
 const SIZES = [
@@ -172,9 +180,10 @@ const SizeMatch = {
 		}
 	},
 	getMatcher: function(params) {
+		function parseInt10(v) parseInt(v, 10);
 		let ranges = [];
 		for (let x of params) {
-			let [l,h] = x.split('-').map(function(v) parseInt(v));
+			let [l,h] = x.split('-').map(parseInt10);
 			ranges.push({low: l, high: h});
 		}
 		if (!ranges.length) {
@@ -310,7 +319,7 @@ Matcher.prototype = {
 				let rv = m.isMatch(e);
 				e.filteredPosition = rv ? j++ : -1;
 				return rv;
-			}
+			};
 			if (!rv) {
 				rv = array.filter(fnm);
 			}

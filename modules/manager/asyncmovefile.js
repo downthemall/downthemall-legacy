@@ -30,4 +30,4 @@ var _moveFile = createOptimizedImplementation(
 
 exports.asyncMoveFile = function asyncMoveFile(aLocalFileSrc, aLocalFileDst, aPermissions, aCallback) {
 	_moveFile.callImpl(aLocalFileSrc, aLocalFileDst, aPermissions, aCallback);
-}
+};

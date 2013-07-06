@@ -113,11 +113,9 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 			let nn = document.importNode(node, true);
 
 			// try to insert according to insertafter/before
-			if (insertX(nn, 'insertafter', function(pn) pn.parentNode.insertBefore(nn, pn.nextSibling))
-				|| insertX(nn, 'insertbefore', function(pn) pn.parentNode.insertBefore(nn, pn))) {
-			}
-			// just append
-			else {
+			if (!insertX(nn, 'insertafter', function(pn) pn.parentNode.insertBefore(nn, pn.nextSibling)) &&
+				!insertX(nn, 'insertbefore', function(pn) pn.parentNode.insertBefore(nn, pn))) {
+				// just append
 				target.appendChild(nn);
 			}
 			return nn;
@@ -155,7 +153,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 				}
 
 				// set attrs
-				for (let [,a] in Iterator(node.attributes)) {
+				for (let [,a] in new Iterator(node.attributes)) {
 					let k = a.name;
 					if (k == "id" || k == "insertbefore" || k == "insertafter") {
 						continue;
@@ -178,7 +176,9 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 				exports.unloadWindow(window, function() unloaders.forEach(function(u) u()));
 			}
 
-			callback && defer(function() callback(window, document));
+			if (callback) {
+				defer(function() callback(window, document));
+			}
 		}
 		catch (ex) {
 			log(LOG_ERROR, "failed to inject xul", ex);
@@ -224,7 +224,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 	};
 	_r.onerror = _r.onabort = function() {
 		log(LOG_ERROR, "Failed to load " + src);
-	}
+	};
 	_r.overrideMimeType("application/xml");
 	_r.open("GET", src);
 	_r.send();

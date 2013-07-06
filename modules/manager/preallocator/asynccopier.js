@@ -6,10 +6,6 @@
 const ss = new Instances.StringInputStream("a", 1);
 ss.QueryInterface(Ci.nsISeekableStream);
 
-exports.prealloc = function prealloc(file, size, perms, sparseOk, callback) {
-	return new WorkerJob(file, size, perms, callback);
-}
-
 function WorkerJob(file, size, perms, callback) {
 	this.file = file;
 	this.size = size;
@@ -22,7 +18,9 @@ function WorkerJob(file, size, perms, callback) {
 			this._thread.priority = this._thread.PRIORITY_LOWEST;
 		}
 		this._stream = new Instances.FileOutputStream(this.file, 0x02 | 0x08, this.perms, 0);
-		this._stream instanceof Ci.nsISeekableStream;
+		if (!(this._stream instanceof Ci.nsISeekableStream)) {
+			throw new Error("Cannot seek");
+		}
 		this.run();
 	}
 	catch (ex) {
@@ -93,4 +91,8 @@ WorkerJob.prototype = {
 	cancel: function() {
 		this.terminated = true;
 	}
+};
+
+exports.prealloc = function prealloc(file, size, perms, sparseOk, callback) {
+	return new WorkerJob(file, size, perms, callback);
 };

@@ -6,6 +6,8 @@
 /* **
  * Lazy getters
  */
+/* global DTA, Mediator, Version, Preferences, recognizeTextLinks, TextLinks */
+/* global ContentHandling, CoThreads, getIcon, bundle, isWindowPrivate */
 lazy(this, 'DTA', function() require("api"));
 lazy(this, "Mediator", function() require("support/mediator"));
 lazy(this, 'Version', function() require("version"));
@@ -21,11 +23,18 @@ lazy(this, "isWindowPrivate", function() require("support/pbm").isWindowPrivate)
 const {unloadWindow} = require("support/overlays");
 const strfn = require("support/stringfuncs");
 
+const MENU_ITEMS = [
+	'SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel',
+	'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg',
+	'SaveVideoT', 'SaveVideo', 'SaveAudioT', 'SaveAudio',
+	'SaveFormT', 'SaveForm', 'SepFront'
+	];
+
 /* **
  * Helpers and tools
  */
 function trimMore(t) {
-	return t.replace(/^[\s_]+|[\s_]+$/gi, '').replace(/(_){2,}/g, "_")
+	return t.replace(/^[\s_]+|[\s_]+$/gi, '').replace(/(_){2,}/g, "_");
 }
 
 function extractDescription(child) {
@@ -41,7 +50,7 @@ function extractDescription(child) {
 		for (let i = 0, e = child.childNodes.length; i < e; ++i) {
 			let c = child.childNodes[i];
 
-			if (c.nodeValue && c.nodeValue != "") {
+			if (c.nodeValue && c.nodeValue) {
 				rv.push(fmt(c.nodeValue));
 			}
 
@@ -239,7 +248,8 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 		let sel = null;
 		if (honorSelection && (sel = aWin.getSelection()) && !sel.isCollapsed) {
 			log(LOG_INFO, "selection only");
-			[links, images, videos, embeds, inputs].forEach(function(e) filterInSitu(e, function(n) sel.containsNode(n, true)));
+			[links, images, videos, embeds, inputs].forEach(
+					function(e) filterInSitu(e, function(n) sel.containsNode(n, true)));
 			if (recognizeTextLinks) {
 				let copy = aWin.document.createElement('div');
 				for (let i = 0; i < sel.rangeCount; ++i) {
@@ -254,7 +264,9 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 				yield true;
 
 				let set = cdoc.evaluate(
-					'//*[not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
+					"//*[not(ancestor-or-self::a) and " +
+					"not(ancestor-or-self::style) and " +
+					"not(ancestor-or-self::script)]/text()",
 					copy.ownerDocument,
 					null,
 					aWin.XPathResult.ORDERED_NODE_ITERATOR_TYPE,
@@ -280,7 +292,7 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 						"fileName": s.name,
 						"referrer": ref,
 						"description": bundle.getString('sniffedvideo')
-					}
+					};
 					aURLs.push(o);
 					aImages.push(o);
 				}
@@ -288,7 +300,9 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 			}
 			if (recognizeTextLinks) {
 				let set = aWin.document.evaluate(
-					'//*[not(ancestor-or-self::a) and not(ancestor-or-self::style) and not(ancestor-or-self::script)]/text()',
+					"//*[not(ancestor-or-self::a) and " +
+					"not(ancestor-or-self::style) and " +
+					"not(ancestor-or-self::script)]/text()",
 					aWin.document,
 					null,
 					aWin.XPathResult.ORDERED_NODE_ITERATOR_TYPE,
@@ -365,13 +379,13 @@ var adjustedYieldEvery = -1;
  */
 exports.load = function load(window, outerEvent) {
 	let document = window.document;
-	let setTimeoutOnlyFun = function setTimeoutOnlyFun(c) {
+	let setTimeoutOnlyFun = function(c) {
 		if (typeof(c) != "function") {
 			throw new Error("do not call me with a string!");
 		}
 		return window.setTimeout.apply(window, arguments);
 	};
-	let setIntervalOnlyFun = function setIntervalOnlyFun(c) {
+	let setIntervalOnlyFun = function(c) {
 		if (typeof(c) != "function") {
 			throw new Error("do not call me with a string!");
 		}
@@ -400,8 +414,7 @@ exports.load = function load(window, outerEvent) {
 
 	let _selector = null;
 
-
-	function _notify(title, message, priority, mustAlert, timeout) {
+	let _notify = function (title, message, priority, mustAlert, timeout) {
 		if ('PopupNotifications' in window) {
 			_notify = function(title, message, priority, mustAlert, timeout) {
 				if (!Preferences.getExt("notification", true)) {
@@ -423,48 +436,21 @@ exports.load = function load(window, outerEvent) {
 					}, timeout);
 				}
 				catch (ex) {
-					alert(ex);
+					window.alert(ex);
 					// no op
 				}
-			}
+			};
 		}
 		else {
 			_notify = function() {};
 		}
 		return _notify(title, message, priority, mustAlert, timeout);
-	}
+	};
 
 	function notifyError(title, message) _notify(title, message, 'PRIORITY_CRITICAL_HIGH', true, 1500);
-	function notifyInfo(message) { if (!_selector) _notify('', message, 'PRIORITY_INFO_MEDIUM', false) };
-	function notifyProgress(message) {
-		try {
-			let _n = null;
-			if ('PopupNotifications' in window) {
-				return (notifyProgress = function(message) {
-					if (!Preferences.getExt("notification", true)) {
-						return;
-					}
-					if (!message && _n) {
-						window.PopupNotifications.remove(_n);
-						_n = null;
-						return;
-					}
-					if (!message) {
-						return;
-					}
-					_n = window.PopupNotifications.show(
-						gBrowser.selectedBrowser,
-						'downthemall',
-						message,
-						'downthemall-notification-icon'
-						);
-				})(message);
-			}
-			return (notifyProgress = function() {})();
-		}
-		catch (ex) {
-			log(LOG_ERROR, "np", ex);
-			notifyProgress = function() {}
+	function notifyInfo(message) {
+		if (!_selector) {
+			_notify('', message, 'PRIORITY_INFO_MEDIUM', false);
 		}
 	}
 
@@ -498,10 +484,10 @@ exports.load = function load(window, outerEvent) {
 
 	function findLinks(turbo, all) {
 		try {
-			if (all == undefined && turbo && Preferences.getExt('rememberoneclick', false)) {
+			if (!all && turbo && Preferences.getExt('rememberoneclick', false)) {
 				all = Preferences.getExt('lastalltabs', false);
 			}
-			if (turbo && all != undefined) {
+			if (turbo && all) {
 				Preferences.setExt('lastalltabs', all);
 			}
 
@@ -727,11 +713,11 @@ exports.load = function load(window, outerEvent) {
 			let values = [];
 
 			for (let i = 0; i < form.elements.length; ++i) {
-				if (form.elements[i].name ==  '') {
+				if (!form.elements[i].name) {
 					continue;
 				}
 				let v = Services.ttsu.ConvertAndEscape(charset, form.elements[i].name) + "=";
-				if (form.elements[i].value != '') {
+				if (form.elements[i].value) {
 					v += Services.ttsu.ConvertAndEscape(charset, form.elements[i].value);
 				}
 				values.push(v);
@@ -749,7 +735,7 @@ exports.load = function load(window, outerEvent) {
 				sis.init(ms);
 				let postData = '';
 				let avail = 0;
-				while ((avail = sis.available()) != 0) {
+				while ((avail = sis.available())) {
 					postData += sis.read(avail);
 				}
 				sis.close();
@@ -790,6 +776,38 @@ exports.load = function load(window, outerEvent) {
 		}
 	}
 
+	let notifyProgress = function(message) {
+		try {
+			let _n = null;
+			if ('PopupNotifications' in window) {
+				return (notifyProgress = function(message) {
+					if (!Preferences.getExt("notification", true)) {
+						return;
+					}
+					if (!message && _n) {
+						window.PopupNotifications.remove(_n);
+						_n = null;
+						return;
+					}
+					if (!message) {
+						return;
+					}
+					_n = window.PopupNotifications.show(
+						gBrowser.selectedBrowser,
+						'downthemall',
+						message,
+						'downthemall-notification-icon'
+						);
+				})(message);
+			}
+			return (notifyProgress = function() {})();
+		}
+		catch (ex) {
+			log(LOG_ERROR, "np", ex);
+			notifyProgress = function() {};
+		}
+	};
+
 	// these are only valid after the load event.
 	let direct = {};
 	let compact = {};
@@ -807,7 +825,7 @@ exports.load = function load(window, outerEvent) {
 		try {
 			let ctx = window.gContextMenu;
 			// get settings
-			let items = Preferences.getExt("ctxmenu", "1,1,0").split(",").map(function(e) parseInt(e));
+			let items = Preferences.getExt("ctxmenu", "1,1,0").split(",").map(function(e) parseInt(e, 10));
 			let showCompact = Preferences.getExt("ctxcompact", false);
 
 			let menu;
@@ -876,10 +894,7 @@ exports.load = function load(window, outerEvent) {
 					}
 				}
 			}
-			else if (
-				ctx.target
-				&& ('form' in ctx.target)
-			) {
+			else if (ctx.target && ('form' in ctx.target)) {
 				if (items[0]) {
 					show.push(menu.SaveForm);
 				}
@@ -939,7 +954,7 @@ exports.load = function load(window, outerEvent) {
 		try {
 
 			// get settings
-			let menu = Preferences.getExt("toolsmenu", "1,1,1").split(",").map(function(e){return parseInt(e);});
+			let menu = Preferences.getExt("toolsmenu", "1,1,1").split(",").map(function(e) parseInt(e, 10));
 
 			// all hidden...
 			let hidden = Preferences.getExt("toolshidden", false);
@@ -968,7 +983,8 @@ exports.load = function load(window, outerEvent) {
 				show.push('Manager');
 			}
 			toolsSep.hidden = menu.indexOf(0) == -1;
-			toolsBase.setAttribute('label', bundle.getString(menu.indexOf(1) != -1 ? 'moredtatools' : 'simpledtatools'));
+			toolsBase.setAttribute('label',
+				bundle.getString(menu.indexOf(1) != -1 ? 'moredtatools' : 'simpledtatools'));
 
 			// show the items.
 			for (let i in tools) {
@@ -1013,7 +1029,7 @@ exports.load = function load(window, outerEvent) {
 				"fileName": s.name,
 				"description": bundle.getString("sniffedvideo"),
 				"isPrivate": isWindowPrivate(window)
-			}
+			};
 			let mi = document.createElement("menuitem");
 			mi.setAttribute("label", strfn.cropCenter(s.name, 60));
 			mi.setAttribute("tooltiptext", o.url.spec);
@@ -1042,33 +1058,33 @@ exports.load = function load(window, outerEvent) {
 	let _keyActive =  false;
 	function onKeyDown(evt) {
 		return; // XXX reenable when polished
-		if (_keyActive) {
+		/*if (_keyActive) {
 			return;
 		}
 		if (evt.shiftKey && evt.ctrlKey) {
 			_keyActive = true;
 			selectButton().checked = true;
 			attachOneClick();
-		}
+		}*/
 	}
 	function onKeyUp(evt) {
 		return; // XXX reenable when polished
-		if (!_keyActive) {
+		/*if (!_keyActive) {
 			return;
 		}
 		if (evt.shiftKey) {
 			_keyActive = false;
 			selectButton().checked = false;
 			detachOneClick();
-		}
+		}*/
 	}
 	function onToolbarInstall(event) {
 		// white list good locations
 		// note that this is only performed to keep the number of event listeners down
 		// The remote site does not get special privileges!
 		try {
-			if (!/^about:downthemall/.test(event.target.location)
-					&& event.target.location.host != "about.downthemall.net") {
+			if (!/^about:downthemall/.test(event.target.location) &&
+				event.target.location.host != "about.downthemall.net") {
 				return;
 			}
 		}
@@ -1079,18 +1095,18 @@ exports.load = function load(window, outerEvent) {
 		let tbinstall, tbunload, win = event.target;
 		win.addEventListener("DTA:toolbarinstall", tbinstall = (function() {
 			win.removeEventListener("DTA:toolbarinstall", tbinstall, true);
-			win.removeEventListener("unload", tbunload, true)
+			win.removeEventListener("unload", tbunload, true);
 			Mediator.showToolbarInstall(window);
 		}), true);
 		win.addEventListener("unload", tbunload = (function() {
 			win.removeEventListener("DTA:toolbarinstall", tbinstall, true);
-			win.removeEventListener("unload", tbunload, true)
+			win.removeEventListener("unload", tbunload, true);
 		}), true);
 	}
 
 	function onBlur(evt) {
 		return; // XXX reenable when polished
-		// when the window loses focus the keyup might not be received.
+		/*// when the window loses focus the keyup might not be received.
 		// better toggle back
 		if (!_keyActive) {
 			return;
@@ -1098,6 +1114,7 @@ exports.load = function load(window, outerEvent) {
 		_keyActive = false;
 		selectButton().checked = false;
 		detachOneClick();
+		*/
 	}
 
 	function toggleOneClick() {
@@ -1139,7 +1156,7 @@ exports.load = function load(window, outerEvent) {
 				return null;
 			}
 			let url = e.ownerDocument.defaultView.getComputedStyle(e, "").getPropertyCSSValue('background-image');
-			if (url && url.primitiveType == CSSPrimitiveValue.CSS_URI) {
+			if (url && url.primitiveType == window.CSSPrimitiveValue.CSS_URI) {
 				return {elem: e, url: url.getStringValue()};
 			}
 			return getBgImage(e.parentNode);
@@ -1198,7 +1215,9 @@ exports.load = function load(window, outerEvent) {
 			}
 
 			if (evt.type == 'click') {
-				if (evt.button == 0 && !!target && target.nodeType == 1 && (!target.namespaceURI || target.namespaceURI == 'http://www.w3.org/1999/xhtml')) {
+				if (evt.button === 0 && !!target &&
+					target.nodeType == 1 &&
+					(!target.namespaceURI || target.namespaceURI == 'http://www.w3.org/1999/xhtml')) {
 					if (this._searchee.some(processRegular, this)) {
 						this.cancelEvent(evt);
 					}
@@ -1226,7 +1245,7 @@ exports.load = function load(window, outerEvent) {
 		this.elem = elem;
 		this.doc = elem.ownerDocument;
 		this.init();
-	}
+	};
 	Selector.prototype.Flasher.prototype = {
 		BACKGROUND: '#1def39 no-repeat center',
 		PADDING: 6,
@@ -1325,7 +1344,7 @@ exports.load = function load(window, outerEvent) {
 		this.elem = elem;
 		this.doc = elem.ownerDocument;
 		this.init();
-	}
+	};
 	Selector.prototype.Highlighter.prototype = {
 		BACKGROUND: 'red',
 		OPACITY: 0.4,
@@ -1421,7 +1440,7 @@ exports.load = function load(window, outerEvent) {
 		unloadWindow(window, function() {
 			elem.removeEventListener("dragover", ondragover, true);
 			elem.removeEventListener("drop", ondrop, true);
-		})
+		});
 	}
 
 	function $t() {
@@ -1446,13 +1465,13 @@ exports.load = function load(window, outerEvent) {
 			return function (e) {
 				e.addEventListener(evt, fn, true);
 				unloadWindow(window, function() e.removeEventListener(evt, fn, true));
-			}
+			};
 		}
 
 		try {
 			let cont = $('dtaCtxSubmenu');
 
-			for (let id of ['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveVideoT', 'SaveVideo', 'SaveAudioT', 'SaveAudio', 'SaveFormT', 'SaveForm', 'SepFront']) {
+			for (let id of MENU_ITEMS) {
 				compact[id] = $('dtaCtx' + id);
 				let node = $('dtaCtx' + id).cloneNode(true);
 				node.setAttribute('id', node.id + "-direct");
@@ -1590,4 +1609,4 @@ exports.load = function load(window, outerEvent) {
 		}
 	}
 	log(LOG_DEBUG, "dTa integration done");
-}
+};

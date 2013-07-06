@@ -1,21 +1,24 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
 
 const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 if (available) {
+	/* global api, getUsableFileNameWithFlatten, utils, bundle, isWindowPrivate */
 	lazy(this, "api", function() require("api"));
 	lazy(this, "getUsableFileNameWithFlatten", function() require("support/stringfuncs").getUsableFileNameWithFlatten);
 	lazy(this, "utils", function() require("utils"));
-	lazy(this, "bundle", function() new (require("utils").StringBundles)(["chrome://dta/locale/downloadHelper.properties"]));
+	lazy(this, "bundle",
+		function() new (require("utils").StringBundles)(["chrome://dta/locale/downloadHelper.properties"]));
 	lazy(this, "isWindowPrivate", function() require("support/pbm").isWindowPrivate);
 
 	const core = Cc["@downloadhelper.net/core;1"].getService(Ci.dhICore);
 
-	function ProcessorImpl(turbo, name, title, description) {
+	let ProcessorImpl = function(turbo, name, title, description) {
 		this.init(name, title, description);
 		this.turbo = !!turbo;
-	}
+	};
 	ProcessorImpl.prototype = {
 		init: function(name, title, description) {
 			this.__defineGetter__("name", function() name);
@@ -73,7 +76,8 @@ if (available) {
 				item.description = props.label || null;
 			}
 			if (item.description && props.fileExtension) {
-				item.fileName = item.destinationName = getUsableFileNameWithFlatten(item.description + "." + props.fileExtension);
+				item.fileName = item.destinationName =
+					getUsableFileNameWithFlatten(item.description + "." + props.fileExtension);
 			}
 			return item;
 		},
@@ -116,6 +120,12 @@ if (available) {
 
 	const processors = [];
 
-	processors.push(new ProcessorImpl(false, "dta-regular", bundle.getString('dta-regular'), bundle.getString('dta-regular-desc')));
-	processors.push(new ProcessorImpl(true, "dta-turbo", bundle.getString('dta-turbo'), bundle.getString('dta-turbo-desc')));
+	processors.push(new ProcessorImpl(
+		false, "dta-regular",
+		bundle.getString('dta-regular'), bundle.getString('dta-regular-desc')
+		));
+	processors.push(new ProcessorImpl(
+		true, "dta-turbo",
+		bundle.getString('dta-turbo'), bundle.getString('dta-turbo-desc')
+		));
 }
