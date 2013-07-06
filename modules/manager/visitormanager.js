@@ -84,8 +84,8 @@ HttpVisitor.prototype = {
 	},
 	QueryInterface: function(aIID) {
 		if (
-			aIID.equals(Ci.nsISupports)
-			|| aIID.equals(Ci.nsIHttpHeaderVisitor)
+			aIID.equals(Ci.nsISupports) ||
+			aIID.equals(Ci.nsIHttpHeaderVisitor)
 		) {
 			return this;
 		}
@@ -182,7 +182,7 @@ HttpVisitor.prototype = {
 						let pri, pref, depth;
 						try {
 							pri = Services.mimeheader.getParameter(link, "pri", null, true, {});
-							pri = parseInt(pri);
+							pri = parseInt(pri, 10);
 							try {
 								pref = Services.mimeheader.getParameter(link, "pref", null, true, {});
 								pri = 1;
@@ -395,7 +395,7 @@ VisitorManager.prototype = {
 	 *           if no timestamp found
 	 */
 	get time() {
-		for (let [,v] in Iterator(this._visitors)) {
+		for (let [,v] in new Iterator(this._visitors)) {
 			if (v.time && v.time > 0) {
 				return v.time;
 			}

@@ -6,6 +6,7 @@
 /* **
  * Lazy getters
  */
+/* global DTA, ContentHandling, Preferences, isWindowPrivate, gFlashGotDMDialog */
 lazy(this, 'DTA', function() require("api"));
 lazy(this, 'ContentHandling', function() require("support/contenthandling").ContentHandling);
 lazy(this, 'Preferences', function() require("preferences"));
@@ -95,7 +96,7 @@ exports.load = function load(window, document) {
 
 		// avoid users double-clicking or something
 		download = function() {};
-	}
+	};
 
 	const dialog = window.dialog;
 
@@ -145,7 +146,7 @@ exports.load = function load(window, document) {
 
 	ddDirectory.isPrivate = isPrivate;
 	mask = DTA.getDropDownValue('renaming', isPrivate);
-	if (!($("tdta").hidden = (DTA.getDropDownValue('directory', isPrivate) == '' || !mask))) {
+	if (!($("tdta").hidden = (!DTA.getDropDownValue('directory', isPrivate) || !mask))) {
 		turbo.disabled = false;
 		turboExec.disabled = false;
 	}
@@ -203,4 +204,4 @@ exports.load = function load(window, document) {
 		}
 		Preferences.setExt("saveasmode", 0);
 	}, false); // dialogaccept
-}
+};

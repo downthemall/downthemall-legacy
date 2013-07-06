@@ -51,4 +51,4 @@ exports.prealloc = function prealloc(file, size, perms, sparseOk, callback) {
 	}
 	log(LOG_INFO, "pa: preallocating: " + file + " size: " + size);
 	return _impl.callImpl(file, size, perms, sparseOk, callback || function() {});
-}
+};

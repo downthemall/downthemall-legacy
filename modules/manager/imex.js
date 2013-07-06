@@ -32,7 +32,7 @@ exports.parseTextFile = function parseTextFile(aFile, cb) {
 	req.overrideMimeType("text/plain");
 	req.open("GET", Services.io.newFileURI(aFile).spec);
 	req.send();
-}
+};
 
 exports.exportToTextFile = function exportToTextFile(aDownloads, aFile, aPermissions) {
 	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
@@ -47,7 +47,7 @@ exports.exportToTextFile = function exportToTextFile(aDownloads, aFile, aPermiss
 	}
 	cs.close();
 	try { fs.close(); } catch (ex) { /* no op */ }
-}
+};
 
 exports.exportToHtmlFile = function exportToHtmlFile(aDownloads, aDocument, aFile, aPermissions) {
 	// do not localize?!
@@ -64,7 +64,7 @@ exports.exportToHtmlFile = function exportToHtmlFile(aDownloads, aDocument, aFil
 		n.textContent = title;
 		head.appendChild(n);
 
-		n = document.createElement('meta')
+		n = document.createElement('meta');
 		n.setAttribute('http-equiv', 'content-type');
 		n.setAttribute('content', 'application/xhtml+xml;charset=utf-8');
 		head.appendChild(n);
@@ -143,8 +143,7 @@ exports.exportToHtmlFile = function exportToHtmlFile(aDownloads, aDocument, aFil
 	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
 	Instances.domserializer.serializeToStream(document, fs, 'utf-8');
 	fs.close();
-
-}
+};
 
 exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocument, aFile, aPermissions) {
 	let document = aDocument.implementation.createDocument(NS_METALINKER3, 'metalink', null);
@@ -156,10 +155,10 @@ exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocume
 	root.setAttribute('pubdate', new Date().toUTCString());
 
 	root.appendChild(document.createComment(
-			"metalink as exported by DownThemAll! on "
-			+ Version.APP_NAME + "/" + Version.APP_VERSION
-			+ "\r\nMay contain DownThemAll! specific information in the DownThemAll! namespace: "
-			+ NS_DTA
+			"metalink as exported by DownThemAll! on " +
+			Version.APP_NAME + "/" + Version.APP_VERSION +
+			"\r\nMay contain DownThemAll! specific information in the DownThemAll! namespace: " +
+			NS_DTA
 			));
 
 	let files = document.createElementNS(NS_METALINKER3, 'files');
@@ -214,7 +213,7 @@ exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocume
 	fs.write(xml, xml.length);
 	Instances.domserializer.serializeToStream(document, fs, 'utf-8');
 	fs.close();
-}
+};
 
 exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocument, aFile, aPermissions) {
 	let document = aDocument.implementation.createDocument(NS_METALINK_RFC5854, 'metalink', null);
@@ -223,10 +222,10 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 	root.setAttributeNS(NS_DTA, 'version', Version.VERSION);
 
 	root.appendChild(document.createComment(
-			"metalink as exported by DownThemAll! on "
-			+ Version.APP_NAME + "/" + Version.APP_VERSION
-			+ "\r\nMay contain DownThemAll! specific information in the DownThemAll! namespace: "
-			+ NS_DTA
+			"metalink as exported by DownThemAll! on " +
+			Version.APP_NAME + "/" + Version.APP_VERSION +
+			"\r\nMay contain DownThemAll! specific information in the DownThemAll! namespace: " +
+			NS_DTA
 			));
 
 	let generator = document.createElementNS(NS_METALINK_RFC5854, 'generator');
@@ -307,4 +306,4 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 	fs.write(xml, xml.length);
 	Instances.domserializer.serializeToStream(document, fs, 'utf-8');
 	fs.close();
-}
+};

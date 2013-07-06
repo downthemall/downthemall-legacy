@@ -41,7 +41,7 @@ ContextLRUMap.prototype = {
 	clearPrivate: function() {
 		this._private.clear();
 	}
-}
+};
 
 /**
  * ContentHandling
@@ -123,9 +123,8 @@ ContentHandlingImpl.prototype = {
 	},
 	observeRequest: function ct_observeRequest(channel, topic, data) {
 		if (
-			!(channel instanceof Ci.nsIHttpChannel)
-			|| !(channel instanceof Ci.nsIUploadChannel)
-		) {
+			!(channel instanceof Ci.nsIHttpChannel) ||
+			!(channel instanceof Ci.nsIUploadChannel)) {
 			return;
 		}
 
@@ -185,9 +184,7 @@ ContentHandlingImpl.prototype = {
 				}
 			}
 			let spec = channel.URI.spec;
-			if ((REGEXP_MEDIA.test(spec) && !REGEXP_SWF.test(spec))
-				|| REGEXP_CT.test(ct)) {
-
+			if ((REGEXP_MEDIA.test(spec) && !REGEXP_SWF.test(spec)) || REGEXP_CT.test(ct)) {
 				let wp = null;
 				if (channel.loadGroup && channel.loadGroup.groupObserver) {
 					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);
@@ -195,9 +192,8 @@ ContentHandlingImpl.prototype = {
 				if (!wp) {
 					wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
 				}
-
 				if (!wp || !wp.DOMWindow) {
-					return
+					return;
 				}
 				let wn = wp.DOMWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
 				if (!wn || !wn.currentURI) {

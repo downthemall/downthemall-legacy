@@ -43,7 +43,7 @@ Observers.prototype = {
 	observe: function() {
 		this._obs.sort(function() Math.round(Math.random() - 0.5));
 	}
-}
+};
 Observers.Manager = (function() {
 	function Manager() {
 		ObserversBase.call(this);
@@ -76,7 +76,7 @@ ByteBucket.prototype = {
 			throw new Error("Invalid byte rate");
 		}
 		nv = Math.round(nv);
-		if (nv == 0) {
+		if (nv === 0) {
 			nv = -1;
 		}
 		this._available = this._byteRate = nv;

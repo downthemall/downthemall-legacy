@@ -26,8 +26,7 @@ Literal.prototype = {
 /**
  * Abstract base class for Ranges (Numeric, Alpha, ...)
  */
-function Range() {
-};
+function Range() {}
 Range.prototype = {
 	init: function(name, start, stop, step) {
 		stop += -Math.abs(step)/step;
@@ -59,11 +58,11 @@ Range.prototype = {
 function NumericRange(name, start, stop, step, strl) {
 	this.strl = strl;
 	this.init(name, start, stop + (step > 0 ? 1 : -1), step);
-};
+}
 NumericRange.prototype = {
 	__proto__: Range.prototype,
 	format: function(val) {
-		let rv = new String(Math.abs(val));
+		let rv = Math.abs(val).toString();
 		while (rv.length < this.strl) {
 			rv = '0' + rv;
 		}
@@ -83,7 +82,7 @@ NumericRange.prototype = {
  */
 function CharRange(name, start, stop, step) {
 	this.init(name, start, stop + (step > 0 ? 1 : -1), step);
-};
+}
 CharRange.prototype = {
 	__proto__: Range.prototype,
 	format: String.fromCharCode
@@ -106,21 +105,21 @@ function BatchGenerator(link) {
 	// search all batchdescriptors
 	while ((i = url.search(/\[.*?]/)) != -1) {
 		// Heading string is a simple Literal
-		if (i != 0) {
+		if (i !== 0) {
 			this._pats.push(new Literal(url.substring(0, i)));
 			url = url.slice(i);
 		}
 
 		let m;
 		// Numeric range syntax
-		if ((m = url.match(/^\[(-?\d+):(-?\d+)(?::(-?\d+))?\]/)) != null) {
+		if ((m = url.match(/^\[(-?\d+):(-?\d+)(?::(-?\d+))?\]/))) {
 			url = url.slice(m[0].length);
 			try {
-				let start = new Number(m[1]);
-				let stop = new Number(m[2]);
+				let start = parseInt(m[1], 10);
+				let stop = parseInt(m[2], 10);
 				let step = stop > start ? 1 : -1;
 				if (m.length > 3 && typeof(m[3]) != 'undefined') {
-					step = new Number(m[3]);
+					step = parseInt(m[3], 10);
 				}
 				this._checkRange(start, stop, step);
 				if (start == stop) {
@@ -149,7 +148,7 @@ function BatchGenerator(link) {
 				let stop = m[2].charCodeAt(0);
 				let step = stop > start ? 1 : -1;
 				if (m.length > 3 && typeof(m[3]) != 'undefined') {
-					step = new Number(m[3]);
+					step = parseInt(m[3], 10);
 				}
 				this._checkRange(start, stop, step);
 				if (start == stop) {
@@ -167,7 +166,7 @@ function BatchGenerator(link) {
 
 		// Unknown/invalid descriptor
 		// Insert as Literal
-		if ((m = url.match(/^\[.*?]/)) != null) {
+		if ((m = url.match(/^\[.*?]/))) {
 			url = url.slice(m[0].length);
 			this._pats.push(new Literal(m[0]));
 			continue;
@@ -205,7 +204,7 @@ BatchGenerator.prototype = {
 		// Recursively called ;)
 		// Keep this "static"
 
-		if (pats.length == 0) {
+		if (!pats.length) {
 			yield '';
 			return;
 		}

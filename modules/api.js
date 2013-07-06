@@ -9,6 +9,7 @@ const {isWindowPrivate} = require("support/pbm");
 const Mediator = require("support/mediator");
 const Histories = require("support/historymanager");
 
+/* global FilterManager */
 lazy(this, "FilterManager", function() require("support/filtermanager").FilterManager);
 
 function _decodeCharset(text, charset) {
@@ -19,12 +20,12 @@ function _decodeCharset(text, charset) {
 		}
 		rv = Services.ttsu.unEscapeURIForUI(charset || "UTF-8", text);
 	}
-	catch (ex) {
+	catch (oex) {
 		try {
 			rv = decodeURIComponent(text);
 		}
 		catch (ex) {
-			log(LOG_INFO, "decodeCharset: failed to decode: " + text, ex);
+			log(LOG_INFO, "decodeCharset: failed to decode: " + text, oex);
 		}
 	}
 	return rv;
@@ -50,7 +51,7 @@ function URL(url, preference, _fast) {
 	lazy(this, "urlCharset", this._getCharset);
 	lazy(this, "spec", this._getSpec);
 	lazy(this, "usable", this._getUsable);
-};
+}
 URL.schemes = ['http', 'https', 'ftp'];
 URL.prototype = Object.freeze({
 	_getCharset: function() this._url.originCharset,
@@ -61,7 +62,7 @@ URL.prototype = Object.freeze({
 		return this._url;
 	},
 	toJSON: function() {
-		return 	{
+		return {
 			url: this.spec,
 			charset: this.urlCharset,
 			preference: this.preference
@@ -170,7 +171,7 @@ HashCollection.load = function(obj) {
 	rv.partials = obj.partials.map(function(e) new Hash(e.sum, e.type));
 	rv._serialize();
 	return rv;
-},
+};
 
 HashCollection.prototype = Object.freeze({
 	/**
@@ -189,7 +190,7 @@ HashCollection.prototype = Object.freeze({
 	get hasPartials() { return !!this.partials.length; },
 	add: function(hash) {
 		if (!(hash instanceof Hash)) {
-			throw Exception("Must supply hash");
+			throw new Exception("Must supply hash");
 		}
 		this.partials.push(hash);
 		this._serialize();
@@ -231,7 +232,7 @@ exports.getLinkPrintHash = function getLinkPrintHash(url) {
 		}
 	}
 	return null;
-}
+};
 
 /**
  * Get a link-fingerprint metalink from an url (or just the hash component
@@ -257,7 +258,7 @@ exports.getLinkPrintMetalink = function getLinkPrintMetalink(url) {
 		}
 	}
 	return null;
-}
+};
 
 exports.getProfileFile = (function() {
 	let _profile = Services.dirsvc.get("ProfD", Ci.nsIFile);
@@ -280,7 +281,7 @@ exports.composeURL = function composeURL(doc, rel) {
 		}
 	}
 	return Services.io.newURI(rel, doc.characterSet, Services.io.newURI(base, doc.characterSet, null));
-}
+};
 
 exports.getRef = function getRef(doc) {
 	try {
@@ -301,12 +302,12 @@ exports.getRef = function getRef(doc) {
 			}
 		}
 	}
-}
+};
 
 exports.getDropDownValue = function getDropDownValue(name, isPrivate) {
 	let values = Histories.getHistory(name, isPrivate).values;
 	return values.length ? values[0] : '';
-}
+};
 
 exports.setPrivateMode = function setPrivateMode(window, items) {
 	const ip = isWindowPrivate(window);
@@ -330,13 +331,13 @@ exports.saveSingleItem = function saveSingleItem(window, turbo, item) {
 		"chrome, centerscreen, resizable=yes, dialog=no, all, modal=no, dependent=no",
 		item
 	);
-}
+};
 
 exports.sendLinksToManager = function sendLinksToManager(window, start, links) {
 	exports.openManager(window, false, function(win) {
 		win.startDownloads(start, links);
 	});
-}
+};
 
 function somePrivate(e) e.isPrivate;
 
@@ -358,10 +359,10 @@ exports.turboSendLinksToManager = function turboSendLinksToManager(window, urlsA
 	}
 
 	exports.sendLinksToManager(window, !Preferences.getExt("lastqueued", false), urlsArray);
-}
+};
 
 exports.saveLinkArray = function saveLinkArray(window, urls, images, error) {
-	if (urls.length == 0 && images.length == 0) {
+	if (!urls.length && !images.length) {
 		throw new Exception("no links");
 	}
 	window = window || Mediator.getMostRecent();
@@ -373,10 +374,10 @@ exports.saveLinkArray = function saveLinkArray(window, urls, images, error) {
 		images,
 		error
 	);
-}
+};
 
 exports.turboSaveLinkArray = function turboSaveLinkArray(window, urls, images) {
-	if (urls.length == 0 && images.length == 0) {
+	if (!urls.length && !images.length) {
 		throw new Exception("no links");
 	}
 	log(LOG_INFO, "turboSaveLinkArray(): DtaOneClick filtering started");
@@ -411,12 +412,12 @@ exports.turboSaveLinkArray = function turboSaveLinkArray(window, urls, images) {
 
 	log(LOG_INFO, "turboSaveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
 
-	if (links.length == 0) {
+	if (!links.length) {
 		throw new Exception('no links remaining');
 	}
 	this.turboSendLinksToManager(window, links);
 	return links.length > 1 ? links.length : links[0];
-}
+};
 
 var isManagerPending = false;
 var managerRequests = [];
@@ -491,7 +492,12 @@ const Series = {
 		return this._persist ? Preferences.getExt("counter", 1) : this._session;
 	},
 	set value(nv) {
-		this._persist ? Preferences.setExt("counter", nv) : (this._session = nv);
+		if (this._persist) {
+			Preferences.setExt("counter", nv);
+		}
+		else {
+			this._session = nv;
+		}
 	},
 	increment: function() {
 		let rv = this.value;

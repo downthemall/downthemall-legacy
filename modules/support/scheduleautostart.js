@@ -4,6 +4,7 @@
 "use strict";
 
 const Prefs = require("preferences");
+const {QUEUED} = require("constants");
 const {TimerManager} = require("support/timers");
 
 //Add some helpers to Date
@@ -24,12 +25,10 @@ Date.__defineGetter__("today", function() {
 
 const Timers = new TimerManager();
 
+/* global DTA */
 lazy(this, "DTA", function() require("api"));
-lazy(this, "QueueStore", function() {
-	let {QueueStore} = require("manager/queuestore");
-	requireJoined(QueueStore, "constants");
-	return QueueStore;
-})
+/* global QueueStore */
+lazy(this, "QueueStore", require("manager/queuestore"));
 
 const Observer = {
 	init: function() {
@@ -59,7 +58,7 @@ const Observer = {
 	},
 	openIfQueued: function() {
 		QueueStore.loadItems(function(items) {
-			if (items.some(function(i) i.item.state == QueueStore.QUEUED)) {
+			if (items.some(function(i) i.item.state == QUEUED)) {
 				log(LOG_INFO, "auto-opening");
 				this.openManager();
 			}

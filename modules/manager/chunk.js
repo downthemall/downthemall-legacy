@@ -7,6 +7,7 @@
 // We don't do this for now, as the current scheme gives a little more control
 // about how data chunks are written to disk
 
+/* global BUFFER_SIZE, MAX_PENDING_SIZE */
 requireJoined(this, "constants");
 const Prefs = require("preferences");
 const {ByteBucketTee} = require("support/bytebucket");
@@ -203,10 +204,10 @@ MemoryReporter.prototype = {
 	}
 };
 Object.freeze(MemoryReporter.prototype);
-MemoryReporter = new MemoryReporter();
+const memoryReporter = new MemoryReporter();
 
 try {
-	Services.memrm.registerMultiReporter(MemoryReporter);
+	Services.memrm.registerMultiReporter(memoryReporter);
 } catch (ex) {}
 
 
@@ -219,7 +220,7 @@ const Observer = {
 		}
 		catch (ex) {}
 		try {
-			Services.memrm.unregisterMultiReporter(MemoryReporter);
+			Services.memrm.unregisterMultiReporter(memoryReporter);
 		} catch (ex) {}
 		Timers.killAllTimers();
 	},
@@ -259,7 +260,7 @@ const Observer = {
 	schedulePressureDecrement: function() {
 		Timers.createOneshot(100, this.decrementPressure, this);
 	}
-}
+};
 Prefs.addObserver("extensions.dta.permissions", Observer);
 pressure.add(Observer);
 unload(Observer.unload.bind(Observer));
@@ -297,7 +298,7 @@ Chunk.prototype = {
 	get remainder() (this._total - this._written),
 	get complete() {
 		if (this._end == -1) {
-			return this.written != 0;
+			return this.written !== 0;
 		}
 		return this._total == this.written;
 	},
@@ -335,7 +336,7 @@ Chunk.prototype = {
 				GlobalBucket
 				);
 		this.buckets.register(this);
-		MemoryReporter.registerChunk(this);
+		memoryReporter.registerChunk(this);
 		this.parent.chunkOpened(this);
 	},
 	close: function() {
@@ -361,7 +362,7 @@ Chunk.prototype = {
 			delete this.buckets;
 		}
 		delete this._req;
-		MemoryReporter.unregisterChunk(this);
+		memoryReporter.unregisterChunk(this);
 
 		this._sessionBytes = 0;
 		this._buffered = 0;
@@ -385,7 +386,7 @@ Chunk.prototype = {
 		for (let i = 0; i < this._copiers.length; ++i) {
 			if (aRequest == this._copiers[i].copier) {
 				bytes = this._copiers.splice(i, 1)[0].bytes;
-				if (i != 0) {
+				if (i) {
 					log(LOG_ERROR, "Out of order copier! at: " + i);
 				}
 				break;
@@ -404,7 +405,7 @@ Chunk.prototype = {
 				this.safeBytes += bytes;
 			}
 		}
-		if (bytes == 0) {
+		if (!bytes) {
 			log(LOG_DEBUG, "got EOF stream");
 			this._finish();
 		}
@@ -455,7 +456,7 @@ Chunk.prototype = {
 	_noteBytesWritten: function(bytes) {
 		this._written += bytes;
 		this._sessionBytes += bytes;
-		MemoryReporter.noteBytesWritten(bytes);
+		memoryReporter.noteBytesWritten(bytes);
 
 		this.parent.timeLastProgress = getTimestamp();
 	},
@@ -498,12 +499,13 @@ Chunk.prototype = {
 			// reqPending from above makes sure that we won't re-schedule
 			// the download too early
 			let avail;
-			if (this._hasCurrentStream
-					&& (avail = this._currentInputStream.available()) + bytes >= this.buffer_size) {
+			if (this._hasCurrentStream &&
+				(avail = this._currentInputStream.available()) + bytes >= this.buffer_size) {
 				let fill = Math.min(bytes, this.buffer_size - avail);
 				bytes -= fill;
 				if (fill && this._currentOutputStream.writeFrom(aInputStream, fill) != fill) {
-					throw new Error("Failed to fill current stream. fill: " + fill + " bytes: " + bytes + "chunk: " + this);
+					throw new Error("Failed to fill current stream. fill: " +
+						fill + " bytes: " + bytes + "chunk: " + this);
 				}
 				this._shipCurrentStream();
 			}
@@ -519,7 +521,8 @@ Chunk.prototype = {
 			if (bytes) {
 				this._ensureStream();
 				if (this._currentOutputStream.writeFrom(aInputStream, bytes) != bytes) {
-					throw new Error("Failed to write all requested bytes to current stream. bytes: " + bytes + " chunk: " + this);
+					throw new Error("Failed to write all requested bytes to current stream. bytes: " +
+						bytes + " chunk: " + this);
 				}
 			}
 			this._noteBytesWritten(got);
@@ -608,14 +611,15 @@ Chunk.prototype = {
 		this.run();
 	},
 	requestBytes: function(requested) {
-		if (MemoryReporter.pendingBytes > MAX_PENDING_SIZE) {
-			log(LOG_INFO, "Under pressure: " + MemoryReporter.pendingBytes + " : " + Observer.memoryPressure);
+		if (memoryReporter.pendingBytes > MAX_PENDING_SIZE) {
+			log(LOG_INFO, "Under pressure: " + memoryReporter.pendingBytes + " : " + Observer.memoryPressure);
 			// basically stop processing while under memory pressure
 			this.schedule();
 			return 0;
 		}
 		if (Observer.memoryPressure > 0) {
-			log(LOG_INFO, "Under some pressure: " + MemoryReporter.pendingBytes + " : " + Observer.memoryPressure + " : " + requested);
+			log(LOG_INFO, "Under some pressure: " + memoryReporter.pendingBytes +
+				" : " + Observer.memoryPressure + " : " + requested);
 			requested = Math.max(Math.min(requested, 256), Math.floor(requested / Observer.memoryPressure));
 			log(LOG_INFO, "Using instead: " + requested);
 			this.schedule();
@@ -665,19 +669,13 @@ Chunk.prototype = {
 	},
 	toString: function() {
 		let len = this.parent.totalSize ? String(this.parent.totalSize).length  : 10;
-		return formatNumber(this.start, len)
-			+ "/"
-			+ formatNumber(this.end, len)
-			+ "/"
-			+ formatNumber(this.total, len)
-			+ " running:"
-			+ this.running
-			+ " written/remain/sb:"
-			+ formatNumber(this.written, len)
-			+ "/"
-			+ formatNumber(this.remainder, len)
-			+ "/"
-			+ formatNumber(this._sessionBytes, len);
+		return formatNumber(this.start, len) +
+			"/" + formatNumber(this.end, len) +
+			"/" + formatNumber(this.total, len) +
+			" running:" + this.running +
+			" written/remain/sb:" + formatNumber(this.written, len) +
+			"/" + formatNumber(this.remainder, len) +
+			"/" + formatNumber(this._sessionBytes, len);
 	},
 	toJSON: function() {
 		return {

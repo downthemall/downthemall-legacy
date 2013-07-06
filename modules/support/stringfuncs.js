@@ -95,13 +95,14 @@ exports.getUsableFileName = function getUsableFileName(str) {
 
 exports.getUsableFileNameWithFlatten = function getUsableFileNameWithFlatten(str) {
 	return exports.getUsableFileName(exports.replaceSlashes(str, getExt('flatReplacementChar', '-')));
-}
+};
 
 exports.getExtension = function(str) {
 	let name = exports.getUsableFileName(str);
 	let c = name.lastIndexOf('.');
 	return (c == - 1) ? null : name.substr(c + 1);
 };
+
 exports.getFileNameAndExt = function getFileNameAndExt(str) {
 	let name = exports.getUsableFileName(str);
 	let c = name.lastIndexOf('.');
@@ -109,15 +110,13 @@ exports.getFileNameAndExt = function getFileNameAndExt(str) {
 		return [name, ""];
 	}
 	return [name.substr(0, c), name.substr(c + 1)];
-}
+};
 
 exports.cropCenter = function(str, newLength) {
 	const length = str.length;
 	const max = newLength / 2;
 	if (length > newLength) {
-		return str.substr(0, max)
-			+ "..."
-			+ str.substr(length - max);
+		return str.substr(0, max) + "..." + str.substr(length - max);
 	}
 	return str;
 };

@@ -11,15 +11,6 @@ const SEGNUM = 8;
 
 const nsICryptoHash = Ci.nsICryptoHash;
 
-exports.verify = function verify(file, hashCollection, completeCallback, progressCallback){
-	return new (hashCollection.hasPartials ? _multiVerify : _verify)(
-		file,
-		hashCollection,
-		completeCallback,
-		progressCallback
-		);
-}
-
 function _verify(file, hashCollection, completeCallback, progressCallback) {
 	file = new Instances.LocalFile(file);
 	log(LOG_DEBUG, "verifying (single): " + file.path);
@@ -80,7 +71,7 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 		log(LOG_DEBUG, "enabled OS_READAHEAD");
 	}
 	let stream = new Instances.FileInputStream(file, flags, 502 /* 0766 */, 0).QueryInterface(Ci.nsISeekableStream);
-	let partials = Iterator(hashCollection.partials);
+	let partials = new Iterator(hashCollection.partials);
 	let partial = partials.next()[1];
 	log(LOG_DEBUG, partial.toSource());
 	let partialHash = new Instances.Hash(nsICryptoHash[partial.type]);
@@ -146,7 +137,7 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 					partialPending -= read;
 					pending -= read;
 
-					if (partialPending == 0) {
+					if (!partialPending) {
 						let partialActual = hexdigest(partialHash.finish(false));
 						log(LOG_DEBUG, "partial\nactual: " + partialActual + "\nexpected: " + partial.sum);
 						if (partial.sum != partialActual) {
@@ -183,3 +174,13 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 	new Instances.InputStreamPump(stream, 0, -1, SEGSIZE, SEGNUM, false).asyncRead(tee, null);
 	new Instances.InputStreamPump(pi, 0, -1, SEGSIZE, SEGNUM, true).asyncRead(listenerPartials, null);
 }
+
+exports.verify = function verify(file, hashCollection, completeCallback, progressCallback){
+	const fn = hashCollection.hasPartials ? _multiVerify : _verify;
+	return fn(
+		file,
+		hashCollection,
+		completeCallback,
+		progressCallback
+		);
+};

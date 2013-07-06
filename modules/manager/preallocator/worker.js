@@ -3,6 +3,8 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 
 "use strict";
+/* global importScripts, postMessage, prealloc, close */
+/* global onmessage:true */
 
 try {
 	importScripts("win.js");
@@ -30,6 +32,6 @@ onmessage = function(event) {
 		data.result = false;
 	}
 	postMessage(data);
-}
+};
 
 postMessage(false);

@@ -19,7 +19,7 @@ Manipulator.prototype = {
 		}
 	},
 	modify: function(context, spec) {
-		for (let [,m] in Iterator(this._m)) {
+		for (let [,m] in new Iterator(this._m)) {
 			if (m.matcher.test(spec)) {
 				try {
 					for (let func of m.funcs) {
@@ -33,21 +33,28 @@ Manipulator.prototype = {
 		}
 		return context;
 	}
-}
+};
 
-for (let [m, sp] of [['URL', function(c) c.spec], ['Http', function(c) c.URI.spec]]) {
-	let _m = new Manipulator();
-	let _sp = sp;
+function defineManipulator(m, sp) {
+	const _m = new Manipulator();
 	exports['register' + m] = function() _m.register.apply(_m, arguments);
 	exports['unregister' + m] = function(id) _m.unregister(id);
-	exports['modify' + m] = function(context) _m.modify(context, _sp(context));
+	exports['modify' + m] = function(context) _m.modify(context, sp(context));
+}
+
+const mans = [
+	['URL', function(c) c.spec],
+	['Http', function(c) c.URI.spec]
+	];
+for (let [m, sp] of mans) {
+	defineManipulator(m, sp);
 }
 
 var _uaextra = "DownThemAll!";
 var _uaplatform = (function() {
-	return Services.httphandler.platform + "; "
-		+ Services.httphandler.oscpu + "; "
-		+ Services.httphandler.language;
+	return Services.httphandler.platform + "; " +
+		Services.httphandler.oscpu + "; " +
+		Services.httphandler.language;
 })();
 var _uaextrap = _uaextra + " (" + _uaplatform + "; like wget)";
 require("version").getInfo(function(v) {
@@ -57,7 +64,8 @@ require("version").getInfo(function(v) {
 
 exports.overrideUA = function overrideUA() {
 	this.setRequestHeader('User-Agent', _uaextrap, false);
-}
+};
+
 exports.makeAnonymous = function makeAnonymous() {
 	try { this.referrer = null; } catch (ex) { /* no op */ }
 	this.setRequestHeader('Referer', '', false);
@@ -65,18 +73,19 @@ exports.makeAnonymous = function makeAnonymous() {
 	if (("nsIPrivateBrowsingChannel" in Ci) && (this instanceof Ci.nsIPrivateBrowsingChannel)) {
 		try { this.setPrivate(true); } catch (ex) {}
 	}
-}
+};
+
 exports.makeCompletelyAnonymous = function makeCompletelyAnonymous() {
-	makeAnonymous();
+	exports.makeAnonymous();
 	this.loadFlags |= Ci.nsIRequest.LOAD_ANONYMOUS;
-}
+};
 
 exports.amendUA = function amendUA() {
 	let ua = this.getRequestHeader('User-Agent');
 	if (!/^DownThemAll/.test(ua)) {
 		this.setRequestHeader('User-Agent', ua + " " + _uaextra, false);
 	}
-}
+};
 
 // Sourceforge
 exports.registerHttp(
@@ -102,7 +111,9 @@ exports.registerURL(
 	"DumpTruck container pages",
 	/^https:\/\/app\.dumptruck\.goldenfrog\.com\/p\/(.+)$/i,
 	function() {
-		this.spec = this.spec.replace(/^https:\/\/app\.dumptruck\.goldenfrog\.com\//, "https://dl.dumptruck.goldenfrog.com/") + "?dl=1";
+		this.spec =
+			this.spec.replace(/^https:\/\/app\.dumptruck\.goldenfrog\.com\//, "https://dl.dumptruck.goldenfrog.com/") +
+			"?dl=1";
 	}
 );
 

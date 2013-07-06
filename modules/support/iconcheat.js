@@ -21,7 +21,7 @@ exports.loadWindow = (function() {
 				jar.extract(entry, dst);
 			}
 			catch (ex) {
-				re(ex);
+				reportError(ex);
 			}
 		}
 	}
@@ -110,5 +110,5 @@ exports.loadWindow = (function() {
 			}, 0);
 		};
 		window.addEventListener('load', _load, true);
-	}
+	};
 })();

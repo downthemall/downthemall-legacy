@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
+/* global ChromeWorker */
 
 var makeId = (function() {
 	var cid = 0;
@@ -26,7 +27,7 @@ exports.createOptimizedImplementation = function createOptimizedImplementation(w
 	_worker.onerror = function(event) {
 		log(LOG_INFO, "worker bailed early - not supported");
 		_worker = null;
-	}
+	};
 	_worker.onmessage = function(event) {
 		if (event.data) {
 			log(LOG_INFO, "worker bailed late - not supported", event);
@@ -41,7 +42,7 @@ exports.createOptimizedImplementation = function createOptimizedImplementation(w
 
 		_worker.onmessage = function(event) {
 			if ("log" in event.data) {
-				log(LOG_DEBUG, "worker said: " + event.data.log)
+				log(LOG_DEBUG, "worker said: " + event.data.log);
 				return;
 			}
 			let job = _jobs.get(event.data.uuid);
@@ -51,13 +52,14 @@ exports.createOptimizedImplementation = function createOptimizedImplementation(w
 				return;
 			}
 			job(event.data.result);
-		}
+		};
+
 		impl.callImpl = workerSerializeFun(function(data, callback) {
 			data.uuid = makeId();
 			_jobs.set(data.uuid, callback);
 			_worker.postMessage(data);
 			return exports.NullCancel;
 		});
-	}
+	};
 	return impl;
-}
+};

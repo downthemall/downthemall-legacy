@@ -14,7 +14,8 @@ const obs = require("support/observers");
 /**
  * AboutModule
  */
-const ABOUT_URI = 'https://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_ID%&version=%APP_VERSION%&os=%OS%';
+const ABOUT_URI =
+	'https://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_ID%&version=%APP_VERSION%&os=%OS%';
 
 function AboutModule() {
 }
@@ -57,8 +58,7 @@ AboutModule.prototype = Object.freeze({
 	getURIFlags: function(aURI) Ci.nsIAboutModule.URI_SAFE_FOR_UNTRUSTED_CONTENT
 });
 
-function MetalinkInterceptModule() {
-}
+function MetalinkInterceptModule() {}
 MetalinkInterceptModule.prototype = Object.freeze({
 	classDescription: "DownThemAll! metalink integration",
 	classID: Components.ID('{4b048560-c789-11e1-9b21-0800200c9a67}'),
@@ -158,6 +158,12 @@ MetalinkInterceptModule.prototype = Object.freeze({
 	}
 });
 
+const NET_PREFS = [
+	"network.http.max-connections",
+	"network.http.max-connections-per-server",
+	"network.http.max-persistent-connections-per-server"
+	];
+
 function migrate() {
 	/*
 	 * Various migration
@@ -166,7 +172,7 @@ function migrate() {
 		function() {
 			// 1.0.1: #613 Multiple "slow-down" reports
 			log("resetting connection prefs");
-			for (let e of ['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server']) {
+			for (let e of NET_PREFS) {
 				Preferences.reset(e);
 			}
 		},
@@ -175,7 +181,7 @@ function migrate() {
 	(function migrate() require("version").getInfo(function(v) {
 		try {
 			let lastVersion = Preferences.getExt('version', '0');
-			if (0 == v.compareVersion(v.BASE_VERSION, lastVersion)) {
+			if (0 === v.compareVersion(v.BASE_VERSION, lastVersion)) {
 				return;
 			}
 			if (v.compareVersion(lastVersion, "1.0.1") < 0) {
@@ -248,7 +254,7 @@ exports.clean = function clean() {
 	catch (ex) {
 		log(LOG_ERROR, "Cannot clear queue", ex);
 	}
-}
+};
 
 function unloadObserver() {
 	let branch = Preferences.getBranch('privacy.');
@@ -256,7 +262,7 @@ function unloadObserver() {
 	if (branch.getBoolPref('sanitize.sanitizeOnShutdown') && branch.getBoolPref('clearOnShutdown.extensions-dta')) {
 		exports.clean();
 	}
-};
+}
 obs.add(unloadObserver, "profile-change-teardown", false);
 unload(function sanitizeUnload() unloadObserver());
 
@@ -298,51 +304,56 @@ function registerOverlays() {
 					log(LOG_ERROR, "failed to fire customization event", ex);
 				}
 			}
-			// Simply need to get the currentset attribute, which will still contain
-			// the id and reset it and tb.currentSet
-			try {
-				for (let tb of document.getElementsByTagName("toolbar")) {
-					let ci = tb.getAttribute(attr).split(",");
-					let insertIds = ids.filter(function(id) ~ci.indexOf(id));
-					Utils.filterInSitu(ids, function(id) !~insertIds.indexOf(id));
-					if (!insertIds.length) {
+
+			function processToolbar(tb) {
+				let ci = tb.getAttribute(attr).split(",");
+				let insertIds = ids.filter(function(id) ~ci.indexOf(id));
+				Utils.filterInSitu(ids, function(id) !~insertIds.indexOf(id));
+				if (!insertIds.length) {
+					return;
+				}
+				let li = tb.currentSet.split(",");
+				for (let id of insertIds) {
+					let idx = ci.indexOf(id);
+					if (!~idx) {
+						log(LOG_ERROR, "didn't find item; appending for now; this shouldn't happen!");
+						li.push(id);
 						continue;
 					}
-					let li = tb.currentSet.split(",");
-					for (let id of insertIds) {
-						let idx = ci.indexOf(id);
-						if (!~idx) {
-							log(LOG_ERROR, "didn't find item; appending for now; this shouldn't happen!");
-							li.push(id);
-							continue;
+					let adjusted = false;
+					for (let i = idx, e = ci.length; i < e; ++i) {
+						let before = ci[i];
+						let lidx = li.indexOf(before);
+						if (~lidx) {
+							idx = lidx;
+							adjusted = true;
+							break;
 						}
-						let adjusted = false;
-						for (let i = idx, e = ci.length; i < e; ++i) {
-							let before = ci[i];
-							let lidx = li.indexOf(before);
+					}
+					if (!adjusted) {
+						for (let i = idx; ~(--i);) {
+							let after = ci[i];
+							let lidx = li.indexOf(after);
 							if (~lidx) {
-								idx = lidx;
+								idx = lidx + 1;
 								adjusted = true;
 								break;
 							}
 						}
-						if (!adjusted) {
-							for (let i = idx; ~(--i);) {
-								let after = ci[i];
-								let lidx = li.indexOf(after);
-								if (~lidx) {
-									idx = lidx + 1;
-									adjusted = true;
-									break;
-								}
-							}
-						}
-						log(LOG_DEBUG, "insert at " + (adjusted ? "adjusted" : "") + " idx " + idx + " " + id);
-						li.splice(idx, 0, id);
 					}
-					tb.currentSet = li.join(",");
-					persist(tb, "downthemall-currentset");
-					log(LOG_DEBUG, insertIds + " buttons restored in " + tb.id);
+					log(LOG_DEBUG, "insert at " + (adjusted ? "adjusted" : "") + " idx " + idx + " " + id);
+					li.splice(idx, 0, id);
+				}
+				tb.currentSet = li.join(",");
+				persist(tb, "downthemall-currentset");
+				log(LOG_DEBUG, insertIds + " buttons restored in " + tb.id);
+			}
+
+			// Simply need to get the currentset attribute, which will still contain
+			// the id and reset it and tb.currentSet
+			try {
+				for (let tb of document.getElementsByTagName("toolbar")) {
+					processToolbar(tb);
 				}
 			}
 			catch (ex) {
@@ -350,6 +361,12 @@ function registerOverlays() {
 			}
 		}
 		function maybeInsertButtons(ids) {
+			function processToolbar(tb) {
+				unloadWindow(tb.ownerDocument.defaultView, function() {
+					tb.setAttribute("downthemall-currentset", tb.currentSet);
+					tb.ownerDocument.persist(tb.id, "downthemall-currentset");
+				});
+			}
 			for (let attr of ["currentset", "downthemall-currentset"]) {
 				if (!ids.length) {
 					return;
@@ -357,10 +374,7 @@ function registerOverlays() {
 				_maybeInsertButtons(ids, attr);
 			}
 			for (let tb of document.getElementsByTagName("toolbar")) {
-				unloadWindow(tb.ownerDocument.defaultView, (function(tb) {
-					tb.setAttribute("downthemall-currentset", tb.currentSet);
-					tb.ownerDocument.persist(tb.id, "downthemall-currentset");
-				}).bind(null, tb));
+				processToolbar(tb);
 			}
 		}
 		log(LOG_DEBUG, "running elementsStub");
@@ -450,17 +464,31 @@ function registerOverlays() {
 		maybeInsertButtons(["dta-button", "dta-turbo-button", "dta-turboselect-button", "dta-manager-button"]);
 	}
 	const {registerOverlay, watchWindows, unloadWindow} = require("support/overlays");
-	registerOverlay("chrome://dta/content/integration/elements.xul", "chrome://browser/content/browser.xul", elementsStub);
-	registerOverlay("chrome://dta/content/integration/elements.xul", "chrome://navigator/content/navigator.xul", elementsStub);
+	registerOverlay(
+		"chrome://dta/content/integration/elements.xul",
+		"chrome://browser/content/browser.xul",
+		elementsStub
+		);
+	registerOverlay(
+		"chrome://dta/content/integration/elements.xul",
+		"chrome://navigator/content/navigator.xul",
+		elementsStub
+		);
 	watchWindows("chrome://global/content/customizeToolbar.xul", function(window, document) {
-		let ss = document.createProcessingInstruction("xml-stylesheet", 'href="chrome://dta/skin/integration/style.css" type="text/css"');
+		let ss = document.createProcessingInstruction(
+			"xml-stylesheet",
+			'href="chrome://dta/skin/integration/style.css" type="text/css"'
+			);
 		document.insertBefore(ss, document.documentElement);
 		unloadWindow(window, function() ss.parentNode.removeChild(ss));
 	});
 
-	registerOverlay("chrome://dta/content/integration/saveas.xul", "chrome://mozapps/content/downloads/unknownContentType.xul", function(window, document) {
-		require("loaders/saveas").load(window, document);
-	});
+	registerOverlay(
+		"chrome://dta/content/integration/saveas.xul",
+		"chrome://mozapps/content/downloads/unknownContentType.xul",
+		function(window, document) {
+			require("loaders/saveas").load(window, document);
+		});
 	watchWindows("chrome://browser/content/preferences/sanitize.xul", function(window, document) {
 		const PREF = 'privacy.clearOnShutdown.extensions-dta';
 		try {
@@ -491,27 +519,30 @@ function registerOverlays() {
 			Components.utils.reportError(ex);
 		}
 	});
-	registerOverlay("chrome://dta/content/privacy/overlaySanitize191.xul", "chrome://browser/content/sanitize.xul", function(window, document) {
-		if ('Sanitizer' in window) {
-			window.Sanitizer.prototype.items['extensions-dta'] = {
-				clear: function() {
-					try	{
-						exports.clean();
+	registerOverlay(
+		"chrome://dta/content/privacy/overlaySanitize191.xul",
+		"chrome://browser/content/sanitize.xul",
+		function(window, document) {
+			if ('Sanitizer' in window) {
+				window.Sanitizer.prototype.items['extensions-dta'] = {
+					clear: function() {
+						try	{
+							exports.clean();
+						}
+						catch (ex) {
+							log(LOG_ERROR, "Failed to clean", ex);
+							Components.utils.reportError(ex);
+						}
+					},
+					get canClear() {
+						return true;
 					}
-					catch (ex) {
-						log(LOG_ERROR, "Failed to clean", ex);
-						Components.utils.reportError(ex);
-					}
-				},
-				get canClear() {
-					return true;
-				}
-			};
-		}
-		let msg = Services.strings.createBundle('chrome://dta/locale/sanitize.properties')
-			.GetStringFromName('sanitizeitem');
-		document.getElementById('dtaSanitizeItem').setAttribute('label', msg);
-	});
+				};
+			}
+			let msg = Services.strings.createBundle('chrome://dta/locale/sanitize.properties')
+				.GetStringFromName('sanitizeitem');
+			document.getElementById('dtaSanitizeItem').setAttribute('label', msg);
+		});
 }
 
 exports.main = function main() {
@@ -526,4 +557,4 @@ exports.main = function main() {
 
 	registerOverlays();
 
-}
+};

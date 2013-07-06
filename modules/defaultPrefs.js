@@ -1,3 +1,4 @@
+/* global pref */
 pref("extensions.dta.ctxmenu", "1,1,0");
 pref("extensions.dta.ctxcompact", false);
 pref("extensions.dta.toolsmenu", "0,0,0");
@@ -22,8 +23,16 @@ pref("extensions.dta.sounds.done", true);
 pref("extensions.dta.sounds.error", false);
 pref("extensions.dta.settime", true);
 pref("extensions.dta.showtooltip", true);
-pref("extensions.dta.renaming.default", "[\"*name*.*ext*\", \"*num*_*name*.*ext*\", \"*url*-*name*.*ext*\", \"*name* (*text*).*ext*\", \"*name* (*hh*-*mm*).*ext*\"]");
-pref("extensions.dta.filter.default", "[\"\",\"/(.mp3)$/\",\"/(.(html|htm|rtf|doc|pdf))$/\",\"http://www.website.com/subdir/*.*\",\"http://www.website.com/subdir/pre*.???\",\"*.z??, *.css, *.html\"]");
+pref("extensions.dta.renaming.default", JSON.stringify([
+	"*name*.ext", "*num*_*name*.*ext", "*url*-*name*.*ext*",
+	"*name* (*text*).*ext*", "*name* (*hh*-*mm*).*ext*"
+	]));
+pref("extensions.dta.filter.default", JSON.stringify([
+	"", "/(.mp3)$/", "/(.(html|htm|rtf|doc|pdf))$/",
+	"http://www.website.com/subdir/*.*",
+	"http://www.website.com/subdir/pre*.???",
+	"*.z??, *.css, *.html"
+	]));
 pref("extensions.dta.lastqueued", false);
 pref("extensions.dta.lastalltabs", false);
 pref("extensions.dta.rememberoneclick", false);
@@ -80,37 +89,43 @@ pref("extensions.dta.filters.deffilter-all.active", false);
 pref("extensions.dta.filters.deffilter-all.type", 3);
 
 pref("extensions.dta.filters.deffilter-arch.label", "Archives)");
-pref("extensions.dta.filters.deffilter-arch.test", "/\\.(?:z(?:ip|[0-9]{2})|r(?:ar|[0-9]{2})|jar|bz2|gz|tar|rpm|7z(?:ip)?|lzma|xz)$/i");
+pref("extensions.dta.filters.deffilter-arch.test",
+	"/\\.(?:z(?:ip|[0-9]{2})|r(?:ar|[0-9]{2})|jar|bz2|gz|tar|rpm|7z(?:ip)?|lzma|xz)$/i");
 pref("extensions.dta.filters.deffilter-arch.active", false);
 pref("extensions.dta.filters.deffilter-arch.type", 1);
 pref("extensions.dta.filters.deffilter-arch.icon", "zip");
 
 pref("extensions.dta.filters.deffilter-vid.label", "Videos");
-pref("extensions.dta.filters.deffilter-vid.test", "/\\.(?:mpeg|ra?m|avi|mp(?:g|e|4)|mov|divx|asf|qt|wmv|m\\dv|rv|vob|asx|ogm|ogv|webm)$/i");
+pref("extensions.dta.filters.deffilter-vid.test",
+	"/\\.(?:mpeg|ra?m|avi|mp(?:g|e|4)|mov|divx|asf|qt|wmv|m\\dv|rv|vob|asx|ogm|ogv|webm)$/i");
 pref("extensions.dta.filters.deffilter-vid.active", true);
 pref("extensions.dta.filters.deffilter-vid.type", 3);
 pref("extensions.dta.filters.deffilter-vid.icon", "avi");
 
 pref("extensions.dta.filters.deffilter-aud.label", "Audio");
-pref("extensions.dta.filters.deffilter-aud.test", "/\\.(?:mp3|wav|og(?:g|a)|flac|midi?|rm|aac|wma|mka|ape)$/i");
+pref("extensions.dta.filters.deffilter-aud.test",
+	"/\\.(?:mp3|wav|og(?:g|a)|flac|midi?|rm|aac|wma|mka|ape)$/i");
 pref("extensions.dta.filters.deffilter-aud.active", true);
 pref("extensions.dta.filters.deffilter-aud.type", 1);
 pref("extensions.dta.filters.deffilter-aud.icon", "mp3");
 
 pref("extensions.dta.filters.deffilter-img.label", "Images");
-pref("extensions.dta.filters.deffilter-img.test", "/\\.(?:jp(?:e?g|e|2)|gif|png|tiff?|bmp|ico)$/i");
+pref("extensions.dta.filters.deffilter-img.test",
+	"/\\.(?:jp(?:e?g|e|2)|gif|png|tiff?|bmp|ico)$/i");
 pref("extensions.dta.filters.deffilter-img.active", true);
 pref("extensions.dta.filters.deffilter-img.type", 3);
 pref("extensions.dta.filters.deffilter-img.icon", "jpg");
 
 pref("extensions.dta.filters.deffilter-bin.label", "Software");
-pref("extensions.dta.filters.deffilter-bin.test", "/\\.(?:exe|msi|dmg|bin|xpi|iso)$/i");
+pref("extensions.dta.filters.deffilter-bin.test",
+	"/\\.(?:exe|msi|dmg|bin|xpi|iso)$/i");
 pref("extensions.dta.filters.deffilter-bin.active", false);
 pref("extensions.dta.filters.deffilter-bin.type", 1);
 pref("extensions.dta.filters.deffilter-bin.icon", "exe");
 
 pref("extensions.dta.filters.deffilter-doc.label", "Documents");
-pref("extensions.dta.filters.deffilter-doc.test", "/\\.(?:pdf|xlsx?|docx?|odf|odt|rtf)$/i");
+pref("extensions.dta.filters.deffilter-doc.test",
+	"/\\.(?:pdf|xlsx?|docx?|odf|odt|rtf)$/i");
 pref("extensions.dta.filters.deffilter-doc.active", false);
 pref("extensions.dta.filters.deffilter-doc.type", 1);
 pref("extensions.dta.filters.deffilter-doc.icon", "doc");

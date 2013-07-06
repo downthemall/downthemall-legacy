@@ -88,7 +88,7 @@ const CoThreadBase = {
 			this._finishFunc.call(this._thisCtx, this._yieldEvery);
 		}
 	}
-}
+};
 
 /**
  * Constructs a new CoThread (aka. pseudo-thread).
@@ -107,15 +107,24 @@ const CoThreadBase = {
  *          1000
  *        ).start();
  *
- * @param {Function} func Function to be called. Is passed call count as argument. Returning false will cancel the operation.
- * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread.
- * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
+ * @param {Function} func
+ *                   Function to be called. Is passed call count as argument.
+ *                   Returning false will cancel the operation.
+ * @param {Number} yieldEvery
+ *                 Optional. After how many items control should be turned over to the main thread.
+ * @param {Object} thisCtx
+ *                 Optional. The function will be called in the scope of this object
+ *                 (or if omitted in the scope of the CoThread instance)
  */
 exports.CoThread = function CoThread(func, yieldEvery, thisCtx) {
 	this.init(func, yieldEvery, thisCtx);
 	// fake generator so we may use a common implementation. ;)
-	this._generator = (function() { for(;;) { yield null }; })();
-}
+	this._generator = (function() {
+		for(;;) {
+			yield null;
+		}
+	})();
+};
 exports.CoThread.prototype = Object.create(CoThreadBase, {
 	_callf: {
 		value: function CoThread__callf(ctx, i, idx, fn) fn.call(ctx, idx),
@@ -144,9 +153,14 @@ exports.CoThread.prototype = Object.create(CoThreadBase, {
  *          2
  *        ).start();
  *
- * @param {Function} func Function to be called. Is passed call count as argument. Returning false will cancel the operation.
- * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
- * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
+ * @param {Function} func
+ *                   Function to be called. Is passed call count as argument.
+ *                   Returning false will cancel the operation.
+ * @param {Number} yieldEvery
+ *                 Optional. After how many items control should be turned over to the main thread
+ * @param {Object} thisCtx
+ *                 Optional. The function will be called in the scope of this object
+ *                 (or if omitted in the scope of the CoThread instance)
  */
 exports.CoThreadInterleaved = function CoThreadInterleaved(generator, yieldEvery, thisCtx) {
 	this.init(function() true, yieldEvery, thisCtx);
@@ -180,17 +194,27 @@ exports.CoThreadInterleaved.prototype = Object.create(CoThreadBase, {
  *          null,
  *        ).start(function() alert('done'));
  *
- * @param {Function} func Function to be called on each item. Is passed item and index as arguments. Returning false will cancel the operation.
- * @param {Array/Generator} arrayOrGenerator Array or Generator object to be used as the input list
- * @param {Number} yieldEvery Optional. After how many items control should be turned over to the main thread
- * @param {Object} thisCtx Optional. The function will be called in the scope of this object (or if omitted in the scope of the CoThread instance)
+ * @param {Function} func
+ *                   Function to be called on each item. Is passed item and index as arguments.
+ *                   Returning false will cancel the operation.
+ * @param {Array/Generator} arrayOrGenerator
+ *                          Array or Generator object to be used as the input list
+ * @param {Number} yieldEvery
+ *                 Optional. After how many items control should be turned over to the main thread
+ * @param {Object} thisCtx
+ *                 Optional. The function will be called in the scope of this object
+ *                  (or if omitted in the scope of the CoThread instance)
  */
 exports.CoThreadListWalker = function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
 	this.init(func, yieldEvery, thisCtx);
 
 	if (arrayOrGenerator instanceof Array || 'length' in arrayOrGenerator) {
 		// make a generator
-		this._generator = (i for (i of arrayOrGenerator));
+		this._generator = (function() {
+			for (let i of arrayOrGenerator) {
+				yield i;
+			}
+		})();
 	}
 	else {
 		this._generator = arrayOrGenerator;
@@ -199,12 +223,10 @@ exports.CoThreadListWalker = function CoThreadListWalker(func, arrayOrGenerator,
 	if (this._lastFunc && (typeof func != 'function' && !(func instanceof Function))) {
 		throw Cr.NS_ERROR_INVALID_ARG;
 	}
-}
+};
 exports.CoThreadListWalker.prototype = Object.create(CoThreadBase, {
 	_callf: {
 		value: function CoThreadListWalker__callf(ctx, item, idx, fn) fn.call(ctx, item, idx),
 		enumerable: true
 	}
 });
-
-/* vim: set et ts=2 sw=2 : */

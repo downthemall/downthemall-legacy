@@ -34,6 +34,7 @@ try {
 		// Service is present but not supported
 		throw new Exception("not available");
 	}
+	/* global NO_PROGRESS, INDETERMINATE, PAUSED, NORMAL, ERROR */
 	for (let s in Ci.nsITaskbarProgress) {
 		if (/^STATE/.test(s)){
 			this[s.slice(6)] = Ci.nsITaskbarProgress[s];

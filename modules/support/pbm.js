@@ -9,12 +9,12 @@ const obs = require("support/observers");
 /**
  * Determines if a window is private
  */
-function isWindowPrivate() false;
+let isWindowPrivate = function() false;
 
 /**
  * Determines if a channel is private
  */
-function isChannelPrivate() false;
+let isChannelPrivate = function() false;
 
 try {
 	let {PrivateBrowsingUtils} = requireJSM("resource://gre/modules/PrivateBrowsingUtils.jsm");

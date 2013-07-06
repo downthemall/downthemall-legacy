@@ -70,7 +70,7 @@ const BaseHistory = {
 		log(LOG_INFO, "Histories: Reset called");
 		this._setValues([]);
 	}
-}
+};
 
 function PrefHistory(key) {
 	this.init(key);
@@ -137,10 +137,11 @@ exports.getHistory = function getHistory(key, isPrivate) {
 	log(LOG_DEBUG, "getting " + (isPrivate ? "private" : "normal") + " history for " + key);
 	let _histories = isPrivate ? _privateHistories : _normalHistories;
 	if (!(key in _histories)) {
-		return (_histories[key] = new (isPrivate ? MemHistory : PrefHistory)(key));
+		let Ctor = (isPrivate ? MemHistory : PrefHistory);
+		return (_histories[key] = new Ctor(key));
 	}
 	return _histories[key];
-}
+};
 
 require("support/pbm").registerPrivatePurger(function purgePrivateHistories() {
 	_privateHistories = {};

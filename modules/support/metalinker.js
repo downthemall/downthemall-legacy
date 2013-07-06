@@ -165,7 +165,7 @@ Metalinker3.prototype = {
 			let num = null;
 			if (file.hasAttributeNS(NS_DTA, 'num')) {
 				try {
-					num = parseInt(file.getAttributeNS(NS_DTA, 'num'));
+					num = parseInt(file.getAttributeNS(NS_DTA, 'num'), 10);
 				}
 				catch (ex) {
 					/* no-op */
@@ -177,7 +177,7 @@ Metalinker3.prototype = {
 			let startDate = new Date();
 			if (file.hasAttributeNS(NS_DTA, 'startDate')) {
 				try {
-					startDate = new Date(parseInt(file.getAttributeNS(NS_DTA, 'startDate')));
+					startDate = new Date(parseInt(file.getAttributeNS(NS_DTA, 'startDate'), 10));
 				}
 				catch (ex) {
 					/* no-op */
@@ -213,13 +213,13 @@ Metalinker3.prototype = {
 				}
 
 				if (url.hasAttribute('preference')) {
-					var a = parseInt(url.getAttribute('preference'));
+					let a = parseInt(url.getAttribute('preference'), 10);
 					if (isFinite(a) && a > 0 && a < 101) {
 						preference = a;
 					}
 				}
 				if (url.hasAttribute('location')) {
-					var a = url.getAttribute('location').slice(0,2).toLowerCase();
+					let a = url.getAttribute('location').slice(0,2).toLowerCase();
 					if (LOCALE.indexOf(a) != -1) {
 						preference = 100 + preference;
 					}
@@ -230,7 +230,7 @@ Metalinker3.prototype = {
 				continue;
 			}
 			let size = this.getSingle(file, 'size');
-			size = parseInt(size);
+			size = parseInt(size, 10);
 			if (!isFinite(size)) {
 				size = 0;
 			}
@@ -254,7 +254,7 @@ Metalinker3.prototype = {
 					pieces = pieces[0];
 					let type = pieces.getAttribute('type').trim();
 					try {
-						hash.parLength = parseInt(pieces.getAttribute('length'));
+						hash.parLength = parseInt(pieces.getAttribute('length'), 10);
 						if (!isFinite(hash.parLength) || hash.parLength < 1) {
 							throw new Exception("Invalid pieces length");
 						}
@@ -262,7 +262,7 @@ Metalinker3.prototype = {
 						let maxPiece = Math.ceil(size / hash.parLength);
 						for (let piece of this.getNodes(pieces, 'ml:hash')) {
 							try {
-								let num = parseInt(piece.getAttribute('piece'));
+								let num = parseInt(piece.getAttribute('piece'), 10);
 								if (!maxPiece || (num >= 0 && num <= maxPiece)) {
 									collection[num] =  new DTA.Hash(piece.textContent.trim(), type);
 								}
@@ -381,7 +381,7 @@ MetalinkerRFC5854.prototype = {
 			let num = null;
 			if (file.hasAttributeNS(NS_DTA, 'num')) {
 				try {
-					num = parseInt(file.getAttributeNS(NS_DTA, 'num'));
+					num = parseInt(file.getAttributeNS(NS_DTA, 'num'), 10);
 				}
 				catch (ex) {
 					/* no-op */
@@ -393,7 +393,7 @@ MetalinkerRFC5854.prototype = {
 			let startDate = new Date();
 			if (file.hasAttributeNS(NS_DTA, 'startDate')) {
 				try {
-					startDate = new Date(parseInt(file.getAttributeNS(NS_DTA, 'startDate')));
+					startDate = new Date(parseInt(file.getAttributeNS(NS_DTA, 'startDate'), 10));
 				}
 				catch (ex) {
 					/* no-op */
@@ -423,7 +423,7 @@ MetalinkerRFC5854.prototype = {
 				}
 
 				if (url.hasAttribute('priority')) {
-					let a = parseInt(url.getAttribute('priority'));
+					let a = parseInt(url.getAttribute('priority'), 10);
 					if (a > 0) {
 						preference = a;
 					}
@@ -442,7 +442,7 @@ MetalinkerRFC5854.prototype = {
 			normalizeMetaPrefs(urls);
 
 			let size = this.getSingle(file, 'size');
-			size = parseInt(size);
+			size = parseInt(size, 10);
 			if (!isFinite(size)) {
 				size = 0;
 			}
@@ -466,7 +466,7 @@ MetalinkerRFC5854.prototype = {
 					pieces = pieces[0];
 					let type = pieces.getAttribute('type').trim();
 					try {
-						hash.parLength = parseInt(pieces.getAttribute('length'));
+						hash.parLength = parseInt(pieces.getAttribute('length'), 10);
 						if (!isFinite(hash.parLength) || hash.parLength < 1) {
 							throw new Exception("Invalid pieces length");
 						}
@@ -480,10 +480,10 @@ MetalinkerRFC5854.prototype = {
 							}
 						}
 						if (size && hash.parLength * hash.partials.length < size) {
-							throw Exception("too few partials");
+							throw new Exception("too few partials");
 						}
 						else if(size && (hash.partials.length - 1) * hash.parLength > size) {
-							throw Exception("too many partials");
+							throw new Exception("too many partials");
 						}
 						log(LOG_DEBUG, "loaded " + hash.partials.length + " partials");
 					}
@@ -562,13 +562,14 @@ function parse(aURI, aReferrer, aCallback) {
 			if (doc.documentElement.nodeName == 'parsererror') {
 				throw new Exception("Failed to parse XML");
 			}
-			for (let parser of __parsers__) {
+			for (let Parser of __parsers__) {
+				let parser;
 				try {
-					parser = new parser(doc);
+					parser = new Parser(doc);
 				}
 				catch (ex) {
-					log(LOG_DEBUG, parser.name + " failed", ex);
-					continue;
+					log(LOG_DEBUG, Parser.name + " failed", ex);
+					continue
 				}
 				aCallback(parser.parse(aReferrer));
 				return;

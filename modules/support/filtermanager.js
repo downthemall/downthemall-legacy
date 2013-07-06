@@ -27,7 +27,7 @@ function flatten(arr) arr.reduce(function(a,b) {
 		b = flatten(b);
 	}
 	return Array.concat(a, b);
-},[]);
+}, []);
 
 function merge_map(e) "(?:" + e + ")";
 function merge_unique(e) !((e in this) || (this[e] = null));
@@ -125,7 +125,7 @@ Filter.prototype = {
 					return false;
 				}
 				return r.test(str.toString());
-			}
+			};
 		}
 		else if (this.hasOwnProperty('match')) {
 			delete this.match;
@@ -165,7 +165,7 @@ Filter.prototype = {
 
 		// we are simple text
 		const fnmatch = REG_FNMATCH.test(str);
-		str = str.replace(REG_ESCAPE, "\\$&")
+		str = str.replace(REG_ESCAPE, "\\$&");
 		if (fnmatch) {
 			str = "^" + str.replace(REG_WILD, ".*").replace(REG_WILD2, '.') + "$";
 		}
@@ -218,7 +218,7 @@ Filter.prototype = {
 		this._localizedLabel = localizedLabel;
 		this._label = Preferences.get(this.pref('label'));
 		if (!this._label || !this._label.length) {
-			throw Exception("Empty filter!");
+			throw new Exception("Empty filter!");
 		}
 		// localize the label, but only if user didn't change it.
 		if (localizedLabel && !Preferences.hasUserValue(this.pref('label'))) {
@@ -301,7 +301,7 @@ FilterEnumerator.prototype = {
 	},
 	getNext: function() {
 		if (!this.hasMoreElements()) {
-			throw NS_ERROR_FAILURE;
+			throw Cr.NS_ERROR_FAILURE;
 		}
 		return this._filters[this._idx++];
 	}
@@ -380,7 +380,7 @@ FilterManagerImpl.prototype = {
 				this._all.push(filter);
 			}
 			catch (ex) {
-				error(ex);
+				log(LOG_ERROR, "failed to reload " + pref, ex);
 			}
 		}
 
@@ -405,8 +405,8 @@ FilterManagerImpl.prototype = {
 			}
 		);
 		this._active = {};
-		this._active[LINK_FILTER]  = this._all.filter(function(f) (f.type & LINK_FILTER) && f.active),
-		this._active[IMAGE_FILTER] = this._all.filter(function(f) (f.type & IMAGE_FILTER) && f.active)
+		this._active[LINK_FILTER]  = this._all.filter(function(f) (f.type & LINK_FILTER) && f.active);
+		this._active[IMAGE_FILTER] = this._all.filter(function(f) (f.type & IMAGE_FILTER) && f.active);
 		this._activeRegs = {};
 		this._activeRegs[LINK_FILTER]  = this.getMatcherFor(this._active[LINK_FILTER]);
 		this._activeRegs[IMAGE_FILTER] = this.getMatcherFor(this._active[IMAGE_FILTER]);
@@ -437,7 +437,7 @@ FilterManagerImpl.prototype = {
 					return false;
 				}
 				return regs.test(test);
-			}
+			};
 		}
 		return function(test) {
 			test = test.toString();
@@ -445,7 +445,7 @@ FilterManagerImpl.prototype = {
 				return false;
 			}
 			return regs.some(function(r) r.test(test));
-		}
+		};
 	},
 	matchActive: function(test, type) this._activeRegs[type](test),
 
@@ -478,12 +478,12 @@ FilterManagerImpl.prototype = {
 	},
 
 	save: function() {
-		for (var f of this._all) {
+		for (let f of this._all) {
 			try {
 				f.save();
 			}
 			catch (ex) {
-				error(ex);
+				log(LOG_ERROR, "failed to save filter", ex);
 			}
 		}
 		this._delayedReload();
@@ -491,7 +491,7 @@ FilterManagerImpl.prototype = {
 
 	getTmpFromString: function(expression) {
 		if (!expression.length) {
-			throw NS_ERROR_INVALID_ARG;
+			throw Cr.NS_ERROR_INVALID_ARG;
 		}
 		var filter = new Filter("temp", null);
 		filter._active = true;
@@ -520,7 +520,7 @@ FilterManagerImpl.prototype = {
 			Preferences.addObserver(PREF_FILTERS_BASE, this);
 		}
 		catch (ex) {
-			error(ex);
+			log(LOG_DEBUG, "failed to register", ex);
 			return false;
 		}
 		return true;

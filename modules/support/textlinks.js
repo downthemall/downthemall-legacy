@@ -40,6 +40,26 @@ function mapper(e) {
 }
 
 /**
+ * Minimal Link representation (partially) implementing DOMElement
+ *
+ * @param url (string) URL (href) of the Links
+ * @param title (string) Optional. Title/description
+ * @see DOMElement
+ */
+function FakeLink(url, title) {
+	this.src = this.href = url;
+	if (!!title) {
+		this.title = title;
+	}
+}
+FakeLink.prototype = Object.freeze({
+	childNodes: Object.freeze([]),
+	hasAttribute: function(attr) (attr in this),
+	getAttribute: function(attr) (attr in this) ? this[attr] : null,
+	toString: function() this.href
+});
+
+/**
  * Parses a text looking for any URLs with supported protocols
  *
  * @param text (string) Text to parse
@@ -62,26 +82,6 @@ function getTextLinks(text, fakeLinks) {
 	rv.length = k; // truncate
 	return rv;
 }
-
-/**
- * Minimal Link representation (partially) implementing DOMElement
- *
- * @param url (string) URL (href) of the Links
- * @param title (string) Optional. Title/description
- * @see DOMElement
- */
-function FakeLink(url, title) {
-	this.src = this.href = url;
-	if (!!title) {
-		this.title = title;
-	}
-}
-FakeLink.prototype = Object.freeze({
-	childNodes: Object.freeze([]),
-	hasAttribute: function(attr) (attr in this),
-	getAttribute: function(attr) (attr in this) ? this[attr] : null,
-	toString: function() this.href
-});
 
 exports.getTextLinks = getTextLinks;
 exports.FakeLink = Object.freeze(FakeLink);

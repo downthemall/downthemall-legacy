@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
+/* global QUEUED */
 
 const Prefs = require("preferences");
 requireJoined(this, "constants");
@@ -72,16 +73,19 @@ Limit.prototype = Object.freeze({
 		this._segments = value;
 	},
 	save: function() {
-		Prefs.set(LIMITS_PREF + this._host, JSON.stringify({c: this._connections, s: this._speed, seg: this._segments}));
+		Prefs.set(
+			LIMITS_PREF + this._host,
+			JSON.stringify({c: this._connections, s: this._speed, seg: this._segments})
+			);
 		this._isNew = false;
 	},
 	remove: function() {
 		Prefs.reset(LIMITS_PREF + this._host);
 	},
-	toString: (function() this._host
-		+ " conn: " + this._connections
-		+ " speed: " + this._speed
-		+ " segments:" + this._segments)
+	toString: (function() this._host +
+		" conn: " + this._connections +
+		" speed: " + this._speed +
+		" segments:" + this._segments)
 });
 
 function loadLimits() {
@@ -441,29 +445,29 @@ RndScheduler.prototype = Object.freeze({
 });
 Object.freeze(RndScheduler);
 
-let scheduler;
+let Scheduler;
 function loadScheduler() {
 	switch (Prefs.getExt('serverlimit.connectionscheduler', SCHEDULER_FAST)) {
 	case SCHEDULER_FAIR:
-		scheduler = FairScheduler;
+		Scheduler = FairScheduler;
 		break;
 	case SCHEDULER_RND:
-		scheduler = RndScheduler;
+		Scheduler = RndScheduler;
 		break;
 	case SCHEDULER_DIR:
-		scheduler = DirScheduler;
+		Scheduler = DirScheduler;
 		break;
 	case SCHEDULER_LEGACY:
-		scheduler = LegacyScheduler;
+		Scheduler = LegacyScheduler;
 		break;
 	default:
-		scheduler = FastScheduler;
+		Scheduler = FastScheduler;
 		break;
 	}
-	log(LOG_INFO, "Using scheduler" + scheduler.name);
+	log(LOG_INFO, "Using scheduler" + Scheduler.name);
 }
 function getConnectionScheduler(downloads) {
-	return new scheduler(downloads);
+	return new Scheduler(downloads);
 }
 
 var buckets = Object.create(null);
@@ -479,7 +483,7 @@ function loadServerBuckets() {
 	}
 }
 function killServerBuckets() {
-	for (let [,bucket] in Iterator(buckets)) {
+	for (let [,bucket] in new Iterator(buckets)) {
 		bucket.kill();
 	}
 	buckets = Object.create(null);
