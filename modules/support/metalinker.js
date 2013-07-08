@@ -554,6 +554,7 @@ function parse(aURI, aReferrer, aCallback) {
 	let xhrLoad, xhrError;
 	let xhr = new Instances.XHR();
 	xhr.open("GET", aURI.spec);
+	log(LOG_DEBUG, "parsing metalink at " + aURI.spec);
 	xhr.overrideMimeType("application/xml");
 	xhr.addEventListener("loadend", function xhrLoadend() {
 		xhr.removeEventListener("loadend", xhrLoadend, false);
