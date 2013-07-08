@@ -1297,8 +1297,6 @@ unloadWindow(window, function () {
 
 const Metalinker = {
 	handleDownload: function(download) {
-		download.setState(CANCELED);
-		Tree.remove(download, false);
 		let file = download.destinationLocalFile;
 
 		this.handleFile(file, download.referrer, function() {
@@ -1309,6 +1307,9 @@ const Metalinker = {
 				log(LOG_ERROR, "failed to remove metalink file!", ex);
 			}
 		}, download.isPrivate);
+
+		download.setState(CANCELED);
+		Tree.remove(download, false);
 	},
 	handleFile: function(aFile, aReferrer, aCallback, aIsPrivate) {
 		aIsPrivate = !!aIsPrivate || false;
