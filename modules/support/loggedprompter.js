@@ -26,26 +26,26 @@ function LoggedPrompter(window) {
 			hasOwn: function(name) name in _p,
 			get: function(receiver, name) {
 				log(LOG_DEBUG, "called: " + name);
-				if (name == "QueryInterface") {
+				if (name === "QueryInterface") {
 					return function(iid) {
 						_p.QueryInterface(iid);
 						return proxy;
 					};
 				}
-				if (name == "restrictLogin") {
+				if (name === "restrictLogin") {
 					return function(uri) {
 						const key = uriToKey(uri);
 						restricted.set(key, true);
 					};
 				}
-				if (name == "allowLogin") {
+				if (name === "allowLogin") {
 					return function(uri) {
 						const key = uriToKey(uri);
 						log(LOG_DEBUG, "Lifting restriction " + key);
 						restricted.delete(key, true);
 					};
 				}
-				if (name == "asyncPromptAuth") {
+				if (name === "asyncPromptAuth") {
 					return function(channel, cb, ctx, level, info) {
 						const key = uriToKey(channel.URI);
 						if (restricted.has(key)) {
@@ -79,16 +79,16 @@ function LoggedPrompter(window) {
 			has: function(name) name in _p,
 			hasOwn: function(name) name in _p,
 			get: function(receiver, name) {
-				if (name == "QueryInterface") {
+				if (name === "QueryInterface") {
 					return function(iid) {
 						_p.QueryInterface(iid);
 						return proxy;
 					};
 				}
-				if (name == "alert") {
+				if (name === "alert") {
 					return function(text, title) log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
 				}
-				if (name == "alertCheck") {
+				if (name === "alertCheck") {
 					return function(text, title, cm, cs) log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
 				}
 				return _p[name];

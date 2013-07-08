@@ -1,13 +1,16 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
+"use strict";
+/* global _, DTA, $, $$, Utils, Preferences, DefaultDownloadsDirectory, unloadWindow */
+/* jshint browser:true */
 const prompts = require("prompts");
 const Version = require("version");
 const {isWindowPrivate} = require("support/pbm");
 
 var dropDowns = {};
 
+/* global BatchGenerator */
 XPCOMUtils.defineLazyGetter(this, "BatchGenerator", function() {
 	const {BatchGenerator} = require("support/batchgen");
 	return BatchGenerator;
@@ -58,12 +61,12 @@ var Dialog = {
 				}
 				menu.addEventListener("popupshowing", function() {
 					let hidden = true;
-					if (address.selectionStart != -1) {
+					if (~address.selectionStart) {
 						let text = address.value.substring(address.selectionStart, address.selectionEnd);
 						hidden = !/^\d+$/.test(text);
 					}
 					for (let n of nodes) {
-						n.hidden = hidden
+						n.hidden = hidden;
 					}
 				}, false);
 				$("create-batch-descriptor").addEventListener("command", function() {
@@ -75,9 +78,8 @@ var Dialog = {
 						start = "0" + start;
 					}
 					text = "[" + start + ":" + text + "]";
-					address.value = value.substring(0, selectionStart)
-						+ text
-						+ value.substring(selectionEnd, value.length);
+					address.value = value.substring(0, selectionStart) + text +
+						value.substring(selectionEnd, value.length);
 					address.setSelectionRange(selectionStart + 1, selectionEnd + 1);
 				}, false);
 			})();
@@ -85,25 +87,25 @@ var Dialog = {
 			var hash = null;
 			if (window.arguments) {
 				var a = window.arguments[0];
-				var url = a.url;
-				if (!('url' in a))
-					;
-				else if (typeof(a.url) == 'string') {
-					address.value = a.url;
-				}
-				else if (typeof(a.url) == 'object' && 'url' in a.url) {
-					address._item = a;
-					// we've got a DTA.URL.
-					// In this case it is not safe to modify it because of encoding
-					// issues.
-					address.value = a.url.usable;
-					if ("fileName" in a) {
-						filename.value = a.fileName;
+				let url = a.url;
+				if ("url" in a) {
+					if (typeof(a.url) === 'string') {
+						address.value = a.url;
 					}
-					address.readOnly = true;
-					$('batcheslabel').style.display = 'none';
-					$('batches').collapsed = true;
-					hash = a.url.hash;
+					else if (typeof(a.url) === 'object' && 'url' in a.url) {
+						address._item = a;
+						// we've got a DTA.URL.
+						// In this case it is not safe to modify it because of encoding
+						// issues.
+						address.value = a.url.usable;
+						if ("fileName" in a) {
+							filename.value = a.fileName;
+						}
+						address.readOnly = true;
+						$('batcheslabel').style.display = 'none';
+						$('batches').collapsed = true;
+						hash = a.url.hash;
+					}
 				}
 				try {
 					let referrer = (new DTA.URL(Services.io.newURI(a.referrer, null, null))).url.spec;
@@ -127,13 +129,9 @@ var Dialog = {
 					trans.addDataFlavor("text/unicode");
 					Services.clipbrd.getData(trans, Services.clipbrd.kGlobalClipboard);
 
-					let str = {}, length = {};
-					trans.getTransferData(
-						"text/unicode",
-						str,
-						length
-					);
-					if (length.value && (str.value instanceof Ci.nsISupportsString)) {
+					let str = {}, len = {};
+					trans.getTransferData("text/unicode", str, len);
+					if (len.value && (str.value instanceof Ci.nsISupportsString)) {
 						let url = new DTA.URL(Services.io.newURI(str.value.data, null, null));
 						if (url.hash) {
 							hash = url.hash;
@@ -150,7 +148,7 @@ var Dialog = {
 			if (hash) {
 				$('hash').value = hash;
 			}
-			sizeToContent();
+			window.sizeToContent();
 		}
 		catch(ex) {
 			log(LOG_ERROR, "load():", ex);
@@ -176,11 +174,12 @@ var Dialog = {
 
 		var address = $('address');
 		var hasItem = ("_item" in address);
-		var url = null;
+		let url = null;
+		let hash = null;
 		if (!hasItem) {
 			url = address.value;
 			try {
-				if (url == '') {
+				if (!url) {
 					throw new Components.Exception("Empty url");
 				}
 				let uri = Services.fixups.createFixupURI(url, 0);
@@ -201,7 +200,6 @@ var Dialog = {
 			}
 		}
 
-		var hash = null;
 		if (!$('hash').isValid) {
 			errors.push('hash');
 		}
@@ -234,25 +232,35 @@ var Dialog = {
 	},
 	downloadPlain: function(start, url, hash) {
 		let num = DTA.currentSeries();
+		let batch;
 		try {
-			var batch = new BatchGenerator(url);
+			batch = new BatchGenerator(url);
 		}
 		catch (ex) {
 			log(LOG_ERROR, "Cannot create batch", ex);
 			return false;
 		}
 
-		var rv = batch.length > 1;
+		let rv = batch.length > 1;
 		if (rv) {
-			var message = _("batch.tasks") + "\n" + _("batch.tasks.2", [batch.length]) + "\n\n" + _("batch.tasks.3") + "\n" + batch.parts + "\n\n" + batch.first + "\n..\n" + batch.last;
+			let message = _("batch.tasks") + "\n" +
+				_("batch.tasks.2", [batch.length]) + "\n\n" +
+				_("batch.tasks.3") + "\n" + batch.parts + "\n\n" +
+				batch.first + "\n..\n" + batch.last;
 			if (batch.length > 1000) {
 				message += "\n\n" + _('batch.manytasks');
 			}
-			rv = prompts.confirm(window, _('batchtitle'), message, _('batchdownload'), prompts.CANCEL, _('singledownload'));
-			if (rv == 1) {
+			rv = prompts.confirm(
+				window,
+				_('batchtitle'),
+				message,
+				_('batchdownload'),
+				prompts.CANCEL,
+				_('singledownload'));
+			if (rv === 1) {
 				return false;
 			}
-			rv = rv == 0;
+			rv = !rv;
 		}
 
 		let mask = this.ddRenaming.value;
@@ -285,7 +293,11 @@ var Dialog = {
 			};
 
 			if (rv) {
-				return (new QueueItem(i) for (i in  batch.getURLs()));
+				return (function() {
+					for (let i in batch.getURLs()) {
+						yield new QueueItem(i);
+					}
+				})();
 			}
 
 			return batch = [new QueueItem(url, filename)];
@@ -308,14 +320,23 @@ var Dialog = {
 		let clq = start;
 		if (!clq) {
 			clq = Preferences.getExt("confirmlastqueued", 0);
-			if (clq == 0) {
-				let res = prompts.confirm(window, _("rememberpref"), _("rememberlastqueued"), prompts.YES, prompts.NO, null, 0, false, _("dontaskagain"));
+			if (clq === 0) {
+				let res = prompts.confirm(
+					window,
+					_("rememberpref"),
+					_("rememberlastqueued"),
+					prompts.YES,
+					prompts.NO,
+					null,
+					0,
+					false,
+					_("dontaskagain"));
 				clq = res.button + 1;
 				if (res.checked) {
 					Preferences.setExt("confirmlastqueued", clq);
 				}
 			}
-			clq = clq == 1;
+			clq = clq === 1;
 		}
 		if (clq) {
 			Preferences.setExt("lastqueued", !start);
@@ -326,8 +347,7 @@ var Dialog = {
 
 		DTA.sendLinksToManager(window, start, downloads);
 
-		self.close();
-
+		close();
 		return false;
 	},
 	browseDir: function() {
@@ -341,7 +361,7 @@ var Dialog = {
 				}
 			});
 	}
-}
+};
 
 unloadWindow(window, function() {
 	log(LOG_DEBUG, "closed an addurl window");

@@ -1,12 +1,15 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
+"use strict";
+/* global _, DTA, $, $$, Utils, Preferences, DefaultDownloadsDirectory, unloadWindow, toURI, toURL, setTimeoutOnlyFun */
+/* jshint browser:true */
 const Prompts = require("prompts");
-const {LoggedPrompter} = require("support/loggedprompter");
 
+let {LoggedPrompter} = require("support/loggedprompter");
 LoggedPrompter = new LoggedPrompter(window).prompter;
 
+/* global mirrors */
 this.__defineGetter__(
 	'mirrors',
 	function() {
@@ -15,6 +18,7 @@ this.__defineGetter__(
 	}
 );
 
+/* global allMirrors */
 this.__defineGetter__(
 	'allMirrors',
 	function() {
@@ -24,9 +28,39 @@ this.__defineGetter__(
 	}
 );
 
+function accept() {
+	if (!window.arguments || !window.arguments.length) {
+		return;
+	}
+	let rv = window.arguments[0];
+	for (let m in allMirrors) {
+		rv.push(new DTA.URL(toURL(m.mirror, m.charset), m.preference));
+	}
+	return true;
+}
+
+function select() {
+	let removeDisabled = !mirrors.selectedCount || (mirrors.itemCount - mirrors.selectedCount) < 1;
+	$('cmdRemove', 'mirrorRemove').forEach(function(e) e.setAttribute("disabled", removeDisabled));
+}
+
+function changingMirror(event) {
+	for (let m in allMirrors) {
+		if (event.target === m) {
+			continue;
+		}
+		if (event.newValue === m.mirror) {
+			Prompts.alert(window, _('duplicatetitle'), _('duplicatetext'));
+			event.preventDefault();
+			return;
+		}
+	}
+	// clear the state
+	event.target.removeAttribute('state');
+}
 
 function load() {
-	removeEventListener('load', arguments.callee, true);
+	removeEventListener('load', load, true);
 	if (window.arguments && window.arguments.length) {
 		let downloads = Utils.naturalSort(window.arguments[0], function(e) e.url.host + "/" + e.url.spec);
 		for (let a of downloads) {
@@ -49,38 +83,7 @@ function load() {
 	mirrors.addEventListener('select', select, true);
 	mirrors.addEventListener('MirrorChanging', changingMirror, true);
 	select();
-	sizeToContent();
-}
-
-function accept() {
-	if (!window.arguments || !window.arguments.length) {
-		return;
-	}
-	let rv = window.arguments[0];
-	for (let m in allMirrors) {
-		rv.push(new DTA.URL(toURL(m.mirror, m.charset), m.preference));
-	}
-	return true;
-}
-
-function select() {
-	let removeDisabled = !mirrors.selectedCount || (mirrors.itemCount - mirrors.selectedCount) < 1;
-	$('cmdRemove', 'mirrorRemove').forEach(function(e) e.setAttribute("disabled", removeDisabled));
-}
-
-function changingMirror(event) {
-	for (let m in allMirrors) {
-		if (event.target == m) {
-			continue;
-		}
-		if (event.newValue == m.mirror) {
-			Prompts.alert(window, _('duplicatetitle'), _('duplicatetext'));
-			event.preventDefault();
-			return;
-		}
-	}
-	// clear the state
-	event.target.removeAttribute('state');
+	window.sizeToContent();
 }
 
 function addMirror() {
@@ -90,13 +93,9 @@ function addMirror() {
 		trans.addDataFlavor("text/unicode");
 		Services.clipbrd.getData(trans, Services.clipbrd.kGlobalClipboard);
 
-		let str = {}, length = {};
-		trans.getTransferData(
-			"text/unicode",
-			str,
-			length
-		);
-		if (length.value && (str.value instanceof Ci.nsISupportsString)) {
+		let str = {}, len = {};
+		trans.getTransferData("text/unicode", str, len);
+		if (len.value && (str.value instanceof Ci.nsISupportsString)) {
 			url = (new DTA.URL(Services.io.newURI(str.value.data, null, null))).url.spec;
 		}
 	}
@@ -133,7 +132,7 @@ function checkMirrors() {
 	let pending = [];
 	let running = 0;
 	let bad = [];
-	let requests = {};
+	let requests = new Set();
 	let good = {};
 	let numGoodLengths = 0;
 
@@ -172,7 +171,7 @@ function checkMirrors() {
 		req.addEventListener("error", function() {
 			finishRequest(req);
 		}, false);
-		requests[m.mirror] = req;
+		requests.add(req);
 		try {
 			req.open('HEAD', m.mirror);
 			req._callbacks = new Callbacks(req);
@@ -186,7 +185,7 @@ function checkMirrors() {
 	function finishRequest(req, error) {
 		let m = req.mirror;
 		let state = 'bad';
-		delete requests[m.mirror];
+		requests.delete(req);
 		error = error || _('genericcheckerror');
 		try {
 			error = req.statusText || error;
@@ -214,10 +213,10 @@ function checkMirrors() {
 		}
 		m.setAttribute("state", state);
 		m.setAttribute("error", error);
-		if (state == 'bad') {
+		if (state === 'bad') {
 			bad.push(m);
 		}
-		if (--running == 0) {
+		if (!--running) {
 			finish();
 		}
 		else if (pending.length) {
@@ -227,7 +226,7 @@ function checkMirrors() {
 	function finish() {
 		if (numGoodLengths > 1) {
 			let max;
-			let maxCl;
+			let maxCL;
 			for (let cl in good) {
 				if (!max || good[cl].length > max) {
 					max = good[cl].length;
@@ -235,7 +234,7 @@ function checkMirrors() {
 				}
 			}
 			for (let cl in good) {
-				if (cl == maxCL) {
+				if (cl === maxCL) {
 					continue;
 				}
 				for (let m of good[cl]) {
@@ -246,13 +245,14 @@ function checkMirrors() {
 				}
 			}
 		}
-		if (bad.length && (mirrors.itemCount - bad.length) > 0 && 1 == Prompts.confirm(
-			window,
-			_('removebadmirrors.caption'),
-			_('removebadmirrors.message', [bad.length]),
-			_('removebadmirrors.keep'), // XXX swap
-			_('removebadmirrors.remove')
-		)) {
+		if (bad.length && (mirrors.itemCount - bad.length) > 0 &&
+				Prompts.confirm(
+					window,
+					_('removebadmirrors.caption'),
+					_('removebadmirrors.message', [bad.length]),
+					_('removebadmirrors.keep'), // XXX swap
+					_('removebadmirrors.remove')
+			)) {
 			for (let b of bad) {
 				b.parentNode.removeChild(b);
 			}
@@ -269,7 +269,7 @@ function checkMirrors() {
 
 	for (let m in allMirrors) {
 		if (m.hasAttribute('state')) {
-			if (m.getAttribute('state') == 'bad') {
+			if (m.getAttribute('state') === 'bad') {
 				bad.push(m);
 			}
 			else {

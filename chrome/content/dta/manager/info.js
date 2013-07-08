@@ -1,13 +1,19 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* global _, $, Tooltip, DTA, Utils, Preferences, setTimeoutOnlyFun, toURL */
+/* global COMPLETE, FINISHING */
+/* jshint browser:true */
 
 const {defer} = require("support/defer");
 const {TimerManager} = require("support/timers");
 const Timers = new TimerManager();
 
 function discard() {
-	if (opener) opener.removeEventListener("unload", discard, false);
+	if (opener) {
+		opener.removeEventListener("unload", discard, false);
+	}
 	removeEventListener("unload", discard, false);
 	close();
 }
@@ -28,7 +34,7 @@ var Dialog = {
 			Tooltip.init();
 			// d is an Array of Downloads
 			this.downloads = window.arguments[0];
-			if (this.downloads.length == 1) {
+			if (this.downloads.length === 1) {
 				let d = this.downloads[0];
 				$("infoIcon").src = d.largeIcon;
 				$("infoURL").value = d.urlManager.spec;
@@ -69,15 +75,15 @@ var Dialog = {
 
 				let mask = this.downloads[0].mask;
 				$('renaming').value =
-					this.downloads.every(function(e, i, a) { return e.mask == mask; })
-					? mask
-					: '';
+					this.downloads.every(function(e, i, a) { return e.mask === mask; }) ?
+					mask :
+					'';
 
 				let dir = String(this.downloads[0].pathName);
 				$('directory').value =
-					this.downloads.every(function(e) { return e.pathName == dir; })
-					? dir
-					: '';
+					this.downloads.every(function(e) e.pathName === dir) ?
+					dir :
+					"";
 				$('tabs').selectedIndex = 2;
 				$('canvasTab').hidden = true;
 				$('canvasBox').hidden = true;
@@ -123,20 +129,22 @@ var Dialog = {
 
 		let sp = $('sourcePage');
 		let newRef = null;
-		if (!sp.hasAttribute('readonly') && sp._value != sp.value) {
+		if (!sp.hasAttribute('readonly') && sp._value !== sp.value) {
 			newRef = sp.value;
 		}
 
-		if (this.downloads.length == 1) {
+		if (this.downloads.length === 1) {
 			let d = this.downloads[0];
 			if ($('hash').isValid) {
 				var h = $('hash').value;
 				if (!h) {
 					d.hashCollection = null;
 				}
-				else if (!d.hashCollection || h.sum != d.hashCollection.full.sum || h.type != d.hashCollection.full.type) {
+				else if (!d.hashCollection ||
+					h.sum !== d.hashCollection.full.sum ||
+					h.type !== d.hashCollection.full.type) {
 					d.hashCollection = new DTA.HashCollection(h);
-					if (h && d.state == COMPLETE) {
+					if (h && d.state === COMPLETE) {
 						// have to manually start this guy ;)
 						d.verifyHash();
 					}
@@ -187,13 +195,13 @@ var Dialog = {
 		);
 	},
 	manageMirrors: function() {
-		if (this.downloads.length != 1) {
+		if (this.downloads.length !== 1) {
 			// only manage single downloads
 			return;
 		}
 		let download = this.downloads[0];
 		let mirrors = download.urlManager.toArray();
-		openDialog(
+		window.openDialog(
 			'chrome://dta/content/dta/mirrors.xul',
 			null,
 			"chrome,dialog,resizable,modal,centerscreen",
@@ -211,14 +219,14 @@ var Dialog = {
 			return false;
 		}
 		if (!Utils.validateDir(dir)) {
-			alert(_(dir.length ? 'alert.invaliddir' : 'alert.nodir'));
+			window.alert(_(dir.length ? 'alert.invaliddir' : 'alert.nodir'));
 			Utils.askForDir(null, _("valid.destination"), function (newDir) {
 				$('directory').value = newDir ? newDir : '';
 			});
 			return false;
 		}
 		if (!$('hash').isValid) {
-			alert(_('alert.hash'));
+			window.alert(_('alert.hash'));
 			return false;
 		}
 		return true;

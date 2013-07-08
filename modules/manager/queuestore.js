@@ -55,7 +55,7 @@ const QueueStore = {
 		}
 
 		try {
-			if (('schemaVersion' in _connection) && _connection.schemaVersion != DB_VERSION) {
+			if (('schemaVersion' in _connection) && _connection.schemaVersion !== DB_VERSION) {
 				/*
 					migrate data
 				*/
@@ -119,7 +119,7 @@ const QueueStore = {
 		Services.storage.notifyObservers(null, 'DTA:clearedQueueStore', null);
 	},
 	observe: function(s,topic,d) {
-		if (topic == "profile-change-teardown") {
+		if (topic === "profile-change-teardown") {
 			this.shutdown();
 		}
 	},

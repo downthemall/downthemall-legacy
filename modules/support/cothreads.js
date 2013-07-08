@@ -14,9 +14,9 @@ const CoThreadBase = {
 		this._thisCtx = thisCtx ? thisCtx : this;
 
 		// default to 0 (adjust)
-		this._yieldEvery = typeof yieldEvery == 'number' ? Math.floor(yieldEvery) : 0;
+		this._yieldEvery = typeof yieldEvery === 'number' ? Math.floor(yieldEvery) : 0;
 
-		if (typeof func != 'function' && !(func instanceof Function)) {
+		if (typeof func !== 'function' && !(func instanceof Function)) {
 			throw Cr.NS_ERROR_INVALID_ARG;
 		}
 		this._func = func;
@@ -164,7 +164,7 @@ exports.CoThread.prototype = Object.create(CoThreadBase, {
  */
 exports.CoThreadInterleaved = function CoThreadInterleaved(generator, yieldEvery, thisCtx) {
 	this.init(function() true, yieldEvery, thisCtx);
-	this._generator = typeof(generator) == "function" ? generator() : generator;
+	this._generator = typeof(generator) === "function" ? generator() : generator;
 };
 exports.CoThreadInterleaved.prototype = Object.create(CoThreadBase, {
 	_callf: {
@@ -220,7 +220,7 @@ exports.CoThreadListWalker = function CoThreadListWalker(func, arrayOrGenerator,
 		this._generator = arrayOrGenerator;
 	}
 
-	if (this._lastFunc && (typeof func != 'function' && !(func instanceof Function))) {
+	if (this._lastFunc && (typeof func !== 'function' && !(func instanceof Function))) {
 		throw Cr.NS_ERROR_INVALID_ARG;
 	}
 };

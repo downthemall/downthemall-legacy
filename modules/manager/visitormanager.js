@@ -8,11 +8,6 @@ const {LOCALE} = require("version");
 const {getTimestamp, normalizeMetaPrefs} = require("utils");
 
 function Visitor() {
-	// sanity check
-	if (arguments.length != 1) {
-		return;
-	}
-
 	let nodes = arguments[0];
 	for (let x in nodes) {
 		if (!(x in this.cmpKeys))	{
@@ -43,7 +38,7 @@ Visitor.prototype = {
 				throw new Exception(x + " is missing");
 			}
 			// header is there, but differs
-			else if (this[x] != v[x]) {
+			else if (this[x] !== v[x]) {
 				log(LOG_ERROR, x + " nm: [" + this[x] + "] [" + v[x] + "]");
 				throw new Exception("Header " + x + " doesn't match");
 			}
@@ -122,7 +117,7 @@ HttpVisitor.prototype = {
 		try {
 			this.acceptRanges = !/none/i.test(chan.getResponseHeader("accept-ranges"));
 			if (!this.acceptRanges) {
-				this.acceptRanges = this.acceptRanges.toLowerCase().indexOf('none') == -1;
+				this.acceptRanges = !~this.acceptRanges.toLowerCase().indexOf('none');
 			}
 		}
 		catch (ex) {}
@@ -171,13 +166,13 @@ HttpVisitor.prototype = {
 					let linkURI = Services.mimeheader.getParameter(link, null, null, true, {})
 						.replace(/[<>]/g, '');
 					const rel = Services.mimeheader.getParameter(link, "rel", null, true, {});
-					if (rel == "describedby") {
+					if (rel === "describedby") {
 						const type = Services.mimeheader.getParameter(link, "type", null, true, {});
-						if (type == "application/metalink4+xml") {
+						if (type === "application/metalink4+xml") {
 							this.metaDescribedBy = Services.io.newURI(linkURI, null, null);
 						}
 					}
-					else if (rel == "duplicate") {
+					else if (rel === "duplicate") {
 						linkURI = Services.io.newURI(linkURI, null, null);
 						let pri, pref, depth;
 						try {
@@ -195,7 +190,7 @@ HttpVisitor.prototype = {
 							try {
 								const geo = Services.mimeheader.getParameter(link, "geo", null, true, {})
 									.slice(0,2).toLowerCase();
-								if (LOCALE.indexOf(geo) != -1) {
+								if (~LOCALE.indexOf(geo)) {
 									pri = Math.max(pri / 4, 1);
 								}
 							}

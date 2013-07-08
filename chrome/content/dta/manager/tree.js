@@ -1,6 +1,14 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* global $, $e, $$, _, Utils, Timers, FilterManager, getIcon, Preferences */
+/* global mapInSitu, filterInSitu, mapFilterInSitu, filterMapInSitu */
+/* global DTA, Dialog, QueueItem, Prefs, QueueStore, Prompts, ImportExport, Metalinker */
+/* global asyncMoveFile, showPreferences, Tooltip, CoThreadListWalker */
+/* global COMPLETE, CANCELED, RUNNING, PAUSED, QUEUED, FINISHING */
+/* global TextCache_PAUSED */
+/* jshint browser:true, latedef:false */
 
 XPCOMUtils.defineLazyGetter(this, "ImportExport", function() require("manager/imex"));
 
@@ -49,7 +57,11 @@ const Tree = {
 
 		let tp = this;
 		this.elem.addEventListener('select', function() tp.selectionChanged(), false);
-		this.elem.addEventListener('click', function(evt) { if (evt.button == 1) tp.showInfo(); }, false);
+		this.elem.addEventListener('click', function(evt) {
+			if (evt.button === 1) {
+				tp.showInfo();
+			}
+		}, false);
 
 		let dtree = $('downloadList');
 		dtree.addEventListener('dragstart', function(event) tp.onDragStart(event), false);
@@ -92,16 +104,17 @@ const Tree = {
 		delete this.elem;
 	},
 	assembleMenus: function() {
+		// jshint loopfunc:true
 		for (let popup of $('removeCompletedPopup', 'removePopup')) {
 			while (popup.lastChild) {
-				if (popup.lastChild.localName == 'menuseparator') {
+				if (popup.lastChild.localName === 'menuseparator') {
 					break;
 				}
 				popup.removeChild(popup.lastChild);
 			}
 			let id = popup.id;
 			for (let f in FilterManager.enumAll()) {
-				if (f.id == 'deffilter-all') {
+				if (f.id === 'deffilter-all') {
 					continue;
 				}
 				let filter = f; // clone for closure
@@ -127,7 +140,7 @@ const Tree = {
 		}
 
 		let popup = $("matcher");
-		while (popup.firstChild && popup.firstChild.id != "matcher-fixed") {
+		while (popup.firstChild && popup.firstChild.id !== "matcher-fixed") {
 			popup.removeChild(popup.firstChild);
 		}
 		let fixedItems = popup.firstChild;
@@ -135,7 +148,7 @@ const Tree = {
 		let active = (col.getAttribute('params') || "").split(",");
 		let newActive = [];
 		for (let i in this._matcher.getItems(processor, this._downloads)) {
-			if (i.label == '-') {
+			if (i.label === '-') {
 				popup.insertBefore($e('menuseparator'), fixedItems);
 				continue;
 			}
@@ -172,16 +185,16 @@ const Tree = {
 		let matcher = element.getAttribute('matcher');
 		let action = target.getAttribute('action');
 
-		if (action == 'clearmatcher') {
+		if (action === 'clearmatcher') {
 			element.removeAttribute('params');
 			for (let n of $$('menuitem[param]', popup)) {
-				n.removeAttribute('checked')
+				n.removeAttribute('checked');
 			}
 			this._matcher.removeMatcher(matcher);
 			this.doFilter();
 			return;
 		}
-		if (action == 'invertmatcher') {
+		if (action === 'invertmatcher') {
 			let active = [];
 			let params = element.getAttribute('params');
 			if (params) {
@@ -190,7 +203,7 @@ const Tree = {
 			let newActive = mapFilterInSitu(
 				$$('menuitem[type="checkbox"][param]', popup),
 				function(e) {
-					if (e.getAttribute('checked') == "true") {
+					if (e.getAttribute('checked') === "true") {
 						e.removeAttribute('checked');
 					}
 					else {
@@ -198,32 +211,32 @@ const Tree = {
 					}
 					return e.getAttribute('param');
 				},
-				function(e) active.indexOf(e) == -1
+				function(e) !~active.indexOf(e)
 			);
 			active = newActive;
 			active.sort();
 			let newParams = active.join(',');
 			if (active.length) {
 				element.setAttribute('params', newParams);
-				if (newParams != params) {
+				if (newParams !== params) {
 					this._matcher.addMatcher(matcher, active);
 					this.doFilter();
 				}
 			}
 			else {
 				element.removeAttribute('params');
-				if (newParams != params) {
+				if (newParams !== params) {
 					this._matcher.removeMatcher(matcher);
 					this.doFilter();
 				}
 			}
 			return;
 		}
-		if (action == 'sortAscending') {
+		if (action === 'sortAscending') {
 			this.sort(element.id, false);
 			return;
 		}
-		if (action == 'sortDescending') {
+		if (action === 'sortDescending') {
 			this.sort(element.id, true);
 			return;
 		}
@@ -236,12 +249,12 @@ const Tree = {
 			let param = target.getAttribute('param');
 
 			// remove other radio params for this name
-			if (target.getAttribute('type') == 'radio') {
+			if (target.getAttribute('type') === 'radio') {
 				// find other params for name
 				let others = mapFilterInSitu(
 					$$('menuitem[name="' + target.getAttribute('name') + '"]', popup),
 					function(n) n.getAttribute('param'),
-					function(p) p != param
+					function(p) p !== param
 					);
 				// filter out other params
 				filterInSitu(active, function(p) others.indexOf(p) < 0);
@@ -258,14 +271,14 @@ const Tree = {
 			let newParams = active.join(',');
 			if (active.length) {
 				element.setAttribute('params', newParams);
-				if (newParams != params) {
+				if (newParams !== params) {
 					this._matcher.addMatcher(matcher, active);
 					this.doFilter();
 				}
 			}
 			else {
 				element.removeAttribute('params');
-				if (newParams != params) {
+				if (newParams !== params) {
 					this._matcher.removeMatcher(matcher);
 					this.doFilter();
 				}
@@ -378,7 +391,7 @@ const Tree = {
 				let eid = fid;
 				for (let e = i + 1; e < selectedIds.length; e++) {
 					let oid = this._downloads[selectedIds[e]].filteredPosition;
-					if (oid != eid + 1) {
+					if (oid !== eid + 1) {
 						break;
 					}
 					eid = oid;
@@ -393,7 +406,7 @@ const Tree = {
 	},
 	doFilterOne: function(d) {
 		const display = !this.filtered || this._matcher.shouldDisplay(d);
-		if (display == !!~d.filteredPosition) {
+		if (display === !!~d.filteredPosition) {
 			return false;
 		}
 		if (this._updating) {
@@ -439,7 +452,7 @@ const Tree = {
 		return true;
 	},
 	setFilter: function(nv) {
-		if (nv == this._filter) {
+		if (nv === this._filter) {
 			return;
 		}
 		this._filter = nv;
@@ -482,7 +495,7 @@ const Tree = {
 	},
 	setCellText: function(idx, col, text) {
 		text = Utils.getUsableFileName(text);
-		if (col.index != 0 || text == "") {
+		if (col.index || !text) {
 			return;
 		}
 		const d = this._filtered[idx];
@@ -530,23 +543,21 @@ const Tree = {
 	isContainerOpen: function(idx) false,
 	isContainerEmpty: function(idx) false,
 	isSeparator: function(idx) false,
-	isEditable: function(row, col) {
-		return (col.index == 0);
-	},
+	isEditable: function(row, col) !col.index,
 
 	// will grab the "icon" for a cell.
 	getImageSrc: function(idx, col) {},
 	getProgressMode : function(idx, col) {
-		if (col.index == 2) {
+		if (col.index === 2) {
 			const d = this._filtered[idx];
 			if (!d) {
 				return 2;
 			}
 			const state = d.state;
-			if (state == PAUSED && (!d.totalSize || d.progress < 5)) {
+			if (state === PAUSED && (!d.totalSize || d.progress < 5)) {
 				return 2; // PROGRESS_UNDETERMINED;
 			}
-			if (state == RUNNING && !d.totalSize) {
+			if (state === RUNNING && !d.totalSize) {
 				return 2; // PROGRESS_UNDETERMINED;
 			}
 			return 1; // PROGRESS_NORMAL;
@@ -555,7 +566,7 @@ const Tree = {
 	},
 	// will be called for cells other than textcells
 	getCellValue: function(idx, col) {
-		if (col.index == 2) {
+		if (col.index === 2) {
 			const d = this._filtered[idx];
 			if (!d) {
 				return 0;
@@ -569,13 +580,13 @@ const Tree = {
 	},
 	getCellProperties_legacy: function(idx, col, prop) {
 		const cidx = col.index;
-		if (cidx != 2 && cidx != 0) {
+		if (cidx !== 2 && cidx !== 0) {
 			return;
 		}
-		else if (cidx == 2) {
+		else if (cidx === 2) {
 			prop.AppendElement(this.iconicAtom);
 			prop.AppendElement(this.progressAtom);
-			const d = this._filtered[idx];
+			let d = this._filtered[idx];
 			if (!d) {
 				return;
 			}
@@ -606,7 +617,7 @@ const Tree = {
 					return;
 			}
 		}
-		else if (cidx == 0) {
+		else if (cidx === 0) {
 			let d = this._filtered[idx];
 			if (!d) {
 				return;
@@ -629,11 +640,11 @@ const Tree = {
 	_cpprop_iconicicanceled: "iconic progress canceled",
 	getCellProperties: function(idx, col) {
 		const cidx = col.index;
-		if (cidx != 2 && cidx != 0) {
+		if (cidx !== 2 && cidx !== 0) {
 			return "";
 		}
-		else if (cidx == 2) {
-			const d = this._filtered[idx];
+		else if (cidx === 2) {
+			let d = this._filtered[idx];
 			if (!d) {
 				return this._cpprop_iconic;
 			}
@@ -663,7 +674,7 @@ const Tree = {
 				return this._cpprop_iconicicanceled;
 			}
 		}
-		else if (cidx == 0) {
+		else if (cidx === 0) {
 			let d = this._filtered[idx];
 			if (!d) {
 				return "";
@@ -699,7 +710,7 @@ const Tree = {
 		}
 		this._changeTimer = Timers.createOneshot(100, function() {
 			this._changeTimer = null;
-			this.refreshTools()
+			this.refreshTools();
 		}, this);
 	},
 
@@ -709,7 +720,7 @@ const Tree = {
 		transfer.effectAllowed = "copymove";
 		for (let qi in this.selected) {
 			try {
-				if (qi.state == COMPLETE) {
+				if (qi.state === COMPLETE) {
 					let file = qi.destinationLocalFile;
 					if (file.exists()) {
 						transfer.mozSetDataAt("application/x-moz-file", new FileDataProvider(qi, file), i++);
@@ -740,16 +751,16 @@ const Tree = {
 			let downloads;
 			try {
 				// means insert_after, so we need to adjust the row
-				if (orient == 1) {
+				if (orient === 1) {
 					++row;
 				}
 				// translate row from filtered list to full list
 				let realRow = this._filtered[row].position;
 
 				/* first we remove the dragged items from the list
-				 * then we reinsert them
-				 * if the dragged item is location before the drop position we need to adjust it (as we remove the item first)
-				 * after we collected all items we simply reinsert them and invalidate our list.
+				 * then we reinsert them if the dragged item is location before the drop
+				 * position we need to adjust it (as we remove the item first) after we
+				 * collected all items we simply reinsert them and invalidate our list.
 				 * This might not be the most performant way, but at least it kinda works ;)
 				 */
 				downloads = Array.map(
@@ -784,12 +795,12 @@ const Tree = {
 
 	_updating: 0,
 	beginUpdate: function() {
-		if (++this._updating == 1) {
+		if (++this._updating === 1) {
 			this._box.beginUpdateBatch();
 		}
 	},
 	endUpdate: function() {
-		if (--this._updating == 0) {
+		if (--this._updating === 0) {
 			this._box.endUpdateBatch();
 			this.refreshTools();
 			if (this._mustFilter) {
@@ -840,7 +851,16 @@ const Tree = {
 	},
 	removeWithConfirmation: function() {
 		if (Prefs.confirmRemove) {
-			let res = Prompts.confirm(window, _('remove.title'), _('removequestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
+			let res = Prompts.confirm(
+				window,
+				_('remove.title'),
+				_('removequestion'),
+				Prompts.YES,
+				Prompts.NO,
+				null,
+				0,
+				false,
+				_('dontaskagain'));
 			if (res.checked) {
 				Preferences.setExt('confirmremove', false);
 			}
@@ -859,11 +879,16 @@ const Tree = {
 	},
 	removeHostWithConfirmation: function() {
 		let domain = this.current.urlManager.domain;
-		let res = Prompts.confirm(window, _('remove.title'), _('removehostquestion', [domain]), Prompts.YES, Prompts.NO);
+		let res = Prompts.confirm(
+			window,
+			_('remove.title'),
+			_('removehostquestion', [domain]),
+			Prompts.YES,
+			Prompts.NO);
 		if (res) {
 			return;
 		}
-		this.remove(this._downloads.filter(function(e) e.urlManager.domain == domain, this), true);
+		this.remove(this._downloads.filter(function(e) e.urlManager.domain === domain, this), true);
 	},
 	removeByFilter: function(filter, id) {
 		let pref = null;
@@ -941,7 +966,7 @@ const Tree = {
 		try {
 			for (let i = 0; i < downloads.length; ++i) {
 				let d = downloads[i];
-				if (d.state == FINISHING) {
+				if (d.state === FINISHING) {
 					// un-removable :p
 					return;
 				}
@@ -979,7 +1004,7 @@ const Tree = {
 			let delta = this._downloads.length, last = 0;
 			for (let i = delta - 1; i > -1; --i) {
 				let d = this._downloads[i];
-				if (d.state != state) {
+				if (d.state !== state) {
 					continue;
 				}
 				if (onlyGone && d.destinationLocalFile.exists()) {
@@ -1002,7 +1027,16 @@ const Tree = {
 	},
 	removeCompleted: function() {
 		if (Prefs.confirmRemoveCompleted) {
-			let res = Prompts.confirm(window, _('remove.title'), _('removecompletedquestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
+			let res = Prompts.confirm(
+				window,
+				_('remove.title'),
+				_('removecompletedquestion'),
+				Prompts.YES,
+				Prompts.NO,
+				null,
+				0,
+				false,
+				_('dontaskagain'));
 			if (res.checked) {
 				Preferences.setExt('confirmremovecompleted', false);
 			}
@@ -1014,7 +1048,16 @@ const Tree = {
 	},
 	removeFailed: function() {
 		if (Prefs.confirmRemoveFailed) {
-			let res = Prompts.confirm(window, _('remove.title'), _('removefailedquestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
+			let res = Prompts.confirm(
+				window,
+				_('remove.title'),
+				_('removefailedquestion'),
+				Prompts.YES,
+				Prompts.NO,
+				null,
+				0,
+				false,
+				_('dontaskagain'));
 			if (res.checked) {
 				Preferences.setExt('confirmremovefailed', false);
 			}
@@ -1026,7 +1069,16 @@ const Tree = {
 	},
 	removePaused: function() {
 		if (Prefs.confirmRemovePaused) {
-			let res = Prompts.confirm(window, _('remove.title'), _('removepausedquestion'), Prompts.YES, Prompts.NO, null, 0, false, _('dontaskagain'));
+			let res = Prompts.confirm(
+				window,
+				_('remove.title'),
+				_('removepausedquestion'),
+				Prompts.YES,
+				Prompts.NO,
+				null,
+				0,
+				false,
+				_('dontaskagain'));
 			if (res.checked) {
 				Preferences.setExt('confirmremovepaused', false);
 			}
@@ -1073,7 +1125,7 @@ const Tree = {
 		}
 	},
 	_pause_item: function(d) {
-		if (d.isOf(QUEUED | PAUSED) || (d.state == RUNNING && d.resumable)) {
+		if (d.isOf(QUEUED | PAUSED) || (d.state === RUNNING && d.resumable)) {
 			d.pause();
 			d.clearAutoRetry();
 			d.status = TextCache_PAUSED;
@@ -1137,10 +1189,7 @@ const Tree = {
 		return true;
 	},
 	changeChunks: function(increase) {
-		Tree.updateSelected(increase
-			? this._changeChunks_inc
-			: this._changeChunks_dec
-			);
+		Tree.updateSelected(increase ? this._changeChunks_inc : this._changeChunks_dec);
 	},
 	force: function() {
 		for (let d in Tree.selected) {
@@ -1155,7 +1204,7 @@ const Tree = {
 			return;
 		}
 		let mirrors = this.current.urlManager.toArray();
-		openDialog(
+		window.openDialog(
 			'chrome://dta/content/dta/mirrors.xul',
 			null,
 			"chrome,dialog,resizable,modal,centerscreen",
@@ -1168,32 +1217,32 @@ const Tree = {
 	},
 	export: function() {
 		function processResponse(fp, rv) {
-			if (rv != Ci.nsIFilePicker.returnOK && rv != Ci.nsIFilePicker.returnReplace) {
+			if (rv !== Ci.nsIFilePicker.returnOK && rv !== Ci.nsIFilePicker.returnReplace) {
 				return;
 			}
 			try {
 				let fs = fp.file;
-				if (!(/\.[\d\w-]{1,4}/.test(fs.leafName)) && fp.filterIndex != 4) {
-					if (fp.filterIndex == 0) {
+				if (!(/\.[\d\w-]{1,4}/.test(fs.leafName)) && fp.filterIndex !== 4) {
+					if (fp.filterIndex === 0) {
 						fs.leafName += ".html";
 					}
-					else if (fp.filterIndex == 2) {
-						fs.leafName += ".metalink"
+					else if (fp.filterIndex === 2) {
+						fs.leafName += ".metalink";
 					}
-					else if(fp.filterIndex == 3) {
+					else if(fp.filterIndex === 3) {
 						fs.leafName += ".meta4";
 					}
 					else {
 						fs.leafName += ".txt";
 					}
 				}
-				if (/\.x?html$/i.test(fs.leafName) || fp.filterIndex == 0) {
+				if (/\.x?html$/i.test(fs.leafName) || fp.filterIndex === 0) {
 					ImportExport.exportToHtmlFile(this.selected, document, fs, Prefs.permissions);
 				}
-				else if (/\.metalink$/i.test(fs.leafName) || fp.filterIndex == 2) {
+				else if (/\.metalink$/i.test(fs.leafName) || fp.filterIndex === 2) {
 					ImportExport.exportToMetalinkFile(this.selected, document, fs, Prefs.permissions);
 				}
-				else if(/\.meta4$/i.test(fs.leafName) || fp.filterIndex == 3) {
+				else if(/\.meta4$/i.test(fs.leafName) || fp.filterIndex === 3) {
 					ImportExport.exportToMetalink4File(this.selected, document, fs, Prefs.permissions);
 				}
 				else {
@@ -1229,7 +1278,7 @@ const Tree = {
 	},
 	import: function() {
 		function processResponse(fp, rv) {
-			if (rv != Ci.nsIFilePicker.returnOK) {
+			if (rv !== Ci.nsIFilePicker.returnOK) {
 				return;
 			}
 			try {
@@ -1237,9 +1286,9 @@ const Tree = {
 					Metalinker.handleFile(fp.file);
 					return;
 				}
-				let links = ImportExport.parseTextFile(fp.file, function importcb(links) {
-					if (links.length) {
-						DTA.saveLinkArray(window, links, []);
+				ImportExport.parseTextFile(fp.file, function importcb(lnks) {
+					if (lnks.length) {
+						DTA.saveLinkArray(window, lnks, []);
 					}
 				});
 			}
@@ -1293,12 +1342,12 @@ const Tree = {
 		}
 	},
 	showTip: function(event) {
-		if (!Prefs.showTooltip || Services.ww.activeWindow != window) {
+		if (!Prefs.showTooltip || Services.ww.activeWindow !== window) {
 			return false;
 		}
 		let row = {};
 		this._box.getCellAt(event.clientX, event.clientY, row, {}, {});
-		if (row.value == -1) {
+		if (row.value === -1) {
 			return false;
 		}
 		let d = this.at(row.value);
@@ -1324,17 +1373,18 @@ const Tree = {
 
 		{item: 'cmdLaunch', f: function(d) !!d.curFile},
 		{item: 'cmdOpenFolder', f: function(d) !!d.curFolder},
-		{item: 'cmdDelete', f: function(d) d.state == COMPLETE},
+		{item: 'cmdDelete', f: function(d) d.state === COMPLETE},
 
 		{item: 'cmdMoveUp', f: function(d) !Tree.filtered && d.min > 0},
 		{item: 'cmdMoveTop', f: function(d) d.min > 0},
-		{item: 'cmdMoveDown', f: function(d) !Tree.filtered && d.max != d.rows - 1},
-		{item: 'cmdMoveBottom', f: function(d) d.max != d.rows - 1}
+		{item: 'cmdMoveDown', f: function(d) !Tree.filtered && d.max !== d.rows - 1},
+		{item: 'cmdMoveBottom', f: function(d) d.max !== d.rows - 1}
 	],
 	_refreshTools_items: [
 		{items: ['cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'], f: function(d) !!d.count},
-		{items: ['cmdMirrors', 'cmdAddLimits', 'cmdRename'], f: function(d) d.count == 1},
-		{items: ['cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'], f: function(d) d.isOf(QUEUED | RUNNING | PAUSED | CANCELED)},
+		{items: ['cmdMirrors', 'cmdAddLimits', 'cmdRename'], f: function(d) d.count === 1},
+		{items: ['cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'],
+			f: function(d) d.isOf(QUEUED | RUNNING | PAUSED | CANCELED)},
 	],
 	_refreshTools_init: function() {
 		this._refreshTools_item.forEach(function(e) e.item = $(e.item));
@@ -1345,7 +1395,7 @@ const Tree = {
 			return;
 		}
 		try {
-			let empty = this.current == null;
+			let empty = this.current === null;
 			if (empty) {
 				for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
 					this._refreshTools_item[i].item.setAttribute("disabled", "true");
@@ -1369,14 +1419,14 @@ const Tree = {
 				min: this.rowCount,
 				max: 0
 			};
-			for (let d in this.selected) {
-				states.state |= d.state;
-				states.resumable |= d.resumable;
-				states.min = Math.min(d.filteredPosition, states.min);
-				states.max = Math.max(d.filteredPosition, states.max);
+			for (let qi in this.selected) {
+				states.state |= qi.state;
+				states.resumable |= qi.resumable;
+				states.min = Math.min(qi.filteredPosition, states.min);
+				states.max = Math.max(qi.filteredPosition, states.max);
 			}
 			let cur = this.current;
-			states.curFile = (cur && cur.state == COMPLETE && cur.destinationLocalFile.exists());
+			states.curFile = (cur && cur.state === COMPLETE && cur.destinationLocalFile.exists());
 			states.curFolder = (cur && (new Instances.LocalFile(cur.destinationPath)).exists());
 
 			for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
@@ -1401,7 +1451,7 @@ const Tree = {
 		let saveArray = [];
 		for (let i = 0, e = this._downloads.length; i < e; ++i) {
 			let d = this._downloads[i];
-			if (d.position != i) {
+			if (d.position !== i) {
 				d.position = i;
 				saveArray.push({dbId: d.dbId, position: i});
 			}
@@ -1420,12 +1470,12 @@ const Tree = {
 		var sp = null;
 		for (let i = 0, e = this._downloads.length; i < e; ++i) {
 			let d = this._downloads[i];
-			if (d.position == i) {
+			if (d.position === i) {
 				continue;
 			}
 			let no = d.position - i;
 			d.position = i;
-			if (no == offset) {
+			if (no === offset) {
 				continue;
 			}
 			(sp || (sp = QueueStore.getSavePositionsByOffset())).execute(i, no - offset);
@@ -1449,8 +1499,8 @@ const Tree = {
 	invalidate: function(d, cell) {
 		if (!d) {
 			Dialog.completed = 0;
-			for (let d of Tree.all) {
-				if (d.state == COMPLETE) {
+			for (d of Tree.all) {
+				if (d.state === COMPLETE) {
 					Dialog.completed++;
 				}
 			}
@@ -1673,8 +1723,9 @@ const Tree = {
 				ids = mapInSitu(
 					this._getSelectedFilteredIds(),
 					function(id, idx) {
-						if (id - idx != 0) {
-							[this._downloads[id], this._downloads[id - 1]] = [this._downloads[id - 1], this._downloads[id]];
+						if (id - idx !== 0) {
+							[this._downloads[id], this._downloads[id - 1]] =
+								[this._downloads[id - 1], this._downloads[id]];
 							--id;
 						}
 						this.selection.rangedSelect(id, id, true);
@@ -1707,7 +1758,7 @@ const Tree = {
 				ids = mapInSitu(
 					this._getSelectedIds(true),
 					function(id, idx) {
-						if (id + idx != rowCount - 1) {
+						if (id + idx !== rowCount - 1) {
 							let tmp = this._downloads[id];
 							this._downloads[id] = this._downloads[id + 1];
 							this._downloads[id + 1] = tmp;
@@ -1739,7 +1790,7 @@ const Tree = {
 		let selection = this.selected;
 		let limit = selection.next().speedLimit;
 		for (let qi in selection) {
-			if (limit != qi.speedLimit) {
+			if (limit !== qi.speedLimit) {
 				limit = -1;
 			}
 		}
@@ -1779,10 +1830,10 @@ requireJoined(Tree, "support/atoms");
 const FileHandling = {
 	get _uniqueList() {
 		let u = {};
-		for (d in Tree.selected) {
-			if (d.state == COMPLETE) {
+		for (let d in Tree.selected) {
+			if (d.state === COMPLETE) {
 				let f = d.destinationFile;
-				if (Utils.SYSTEMSLASH == "\\") {
+				if (Utils.SYSTEMSLASH === "\\") {
 					f = f.toLowerCase();
 				}
 				if (!(f in u)) {
@@ -1793,7 +1844,7 @@ const FileHandling = {
 		}
 	},
 	openFolder: function() {
-		for (d in Tree.selected) {
+		for (let d in Tree.selected) {
 			try {
 				if (new Instances.LocalFile(d.destinationPath).exists()) {
 					Utils.reveal(d.destinationFile);
@@ -1806,7 +1857,7 @@ const FileHandling = {
 	},
 	openFile: function() {
 		let cur = Tree.current;
-		if (cur && cur.state == COMPLETE) {
+		if (cur && cur.state === COMPLETE) {
 			try {
 				Utils.launch(cur.destinationFile);
 			}
@@ -1818,7 +1869,7 @@ const FileHandling = {
 	deleteFile: function() {
 		let list = [];
 
-		for (d in this._uniqueList) {
+		for (let d in this._uniqueList) {
 			if (d.destinationLocalFile.exists()) {
 				list.push(d);
 			}

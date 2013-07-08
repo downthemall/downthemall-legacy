@@ -11,7 +11,7 @@ let alerting = false;
 let supportsClickable = true;
 (function() {
 	// XXX enhance: query libnotify via ctypes.
-	if (require("version").OS == 'linux') {
+	if (require("version").OS === 'linux') {
 		supportsClickable = false;
 	}
 })();
@@ -61,7 +61,7 @@ exports.show = function alertservice_show(title, msg, callback) {
 	Observer._func = null;
 
 	// don't make clickable on *nix, so that libnotify will be used more often
-	if (typeof callback == 'function' && supportsClickable) {
+	if (typeof callback === 'function' && supportsClickable) {
 		clickable = true;
 		Observer._func = callback;
 	}
@@ -76,11 +76,11 @@ exports.show = function alertservice_show(title, msg, callback) {
 			);
 		alerting = true;
 	}
-	catch (ex if ex.result == Cr.NS_ERROR_NOT_IMPLEMENTED) {
+	catch (ex if ex.result === Cr.NS_ERROR_NOT_IMPLEMENTED) {
 		log(LOG_DEBUG, "alertsservice not available after all", ex);
 		exports.available = false;
 	}
-	catch (ex if ex.result == Cr.NS_ERROR_NOT_AVAILABLE) {
+	catch (ex if ex.result === Cr.NS_ERROR_NOT_AVAILABLE) {
 		log(LOG_DEBUG, "alertsservice (temporarily) not available", ex);
 	}
 	catch (ex) {

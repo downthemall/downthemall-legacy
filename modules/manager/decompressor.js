@@ -102,7 +102,7 @@ Decompressor.prototype = {
 	onDataAvailable: function(request, c, stream, offset, count) {
 		try {
 			var binStream = new Instances.BinaryInputStream(stream);
-			if (count != this.outStream.write(binStream.readBytes(count), count)) {
+			if (count !== this.outStream.write(binStream.readBytes(count), count)) {
 				throw new Exception("Failed to write!");
 			}
 			this.download.partialSize = offset;

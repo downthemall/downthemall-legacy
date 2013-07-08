@@ -6,7 +6,7 @@
 const {CoThreadInterleaved} = require("support/cothreads");
 
 // Should we use the optimized Windows implementation?
-const WINDOWSIMPL = require("version").OS == 'winnt';
+const WINDOWSIMPL = require("version").OS === 'winnt';
 // Size cap: Use Windows implementation (on Windows) even if run on main thread
 const WINDOWSIMPL_SIZEMAX = (1 << 25); // 32MB
 

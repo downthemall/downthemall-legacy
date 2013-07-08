@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
+/* jshint eqeqeq:false */
 /* global ctypes, importScripts, OS, getPosix */
 
 if (!("OS" in this)) {
@@ -49,11 +50,11 @@ var moveFile = (function() {
 					if (size == -1) {
 						throw (alreadyWritten ? ERROR_READ : ERROR_SPLICE);
 					}
-					else if (size == 0) {
+					else if (!size) {
 						break;
 					}
-					let written = splice(pread, null, fdd, null, size, (size - BUFSIZE == 0) ? 0 : SPLICE_F_MORE);
-					if (written - size != 0) {
+					let written = splice(pread, null, fdd, null, size, !(size - BUFSIZE) ? 0 : SPLICE_F_MORE);
+					if (!(written - size)) {
 						throw (alreadyWritten ? ERROR_WRITE : ERROR_SPLICE);
 					}
 				}
@@ -69,11 +70,11 @@ var moveFile = (function() {
 				if (size == -1) {
 					throw ERROR_READ;
 				}
-				else if (size == 0) {
+				else if (!size) {
 					break; // done
 				}
 				let written = write(fdd, BUFFER, size);
-				if (written - size != 0) {
+				if (!(written - size)) {
 					throw ERROR_WRITE;
 				}
 			}
@@ -105,7 +106,7 @@ var moveFile = (function() {
 			}
 		}
 
-		if (rename(src, dst) == 0) {
+		if (!rename(src, dst)) {
 			log("moved " + src + " to " + dst + " using rename");
 			return true;
 		}
@@ -125,8 +126,8 @@ var moveFile = (function() {
 				log("moved " + src + " to " + dst + " using copy");
 				rv = true;
 			}
-			catch (ex) {
-				log(ex);
+			catch (e) {
+				log(e);
 			}
 		}
 		catch (ex) {

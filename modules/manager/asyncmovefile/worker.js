@@ -16,14 +16,14 @@ catch (ex) {
 	try {
 		importScripts("unix.js");
 	}
-	catch (ex) {
+	catch (e) {
 		throw new Error("No supported native movefile implementation");
 	}
 }
 
 onmessage = function(event) {
 	let data = event.data;
-	if (data == "close") {
+	if (data === "close") {
 		close();
 		return;
 	}

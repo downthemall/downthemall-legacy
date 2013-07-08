@@ -1,14 +1,20 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
+"use strict";
+/* global _, DTA, $, $$, Utils, Preferences */
+/* global DefaultDownloadsDirectory, unloadWindow, getIcon, getFavIcon */
+/* global mapInSitu, setTimeoutOnlyFun, FilterManager, openUrl */
+/* jshint browser:true */
 const prompts = require("prompts");
 
 const hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
 
+let Dialog;
+
 /* tree helpers */
 function treeIconCallback(icon, async) {
-	if (this.icon == icon) {
+	if (this.icon === icon) {
 		return;
 	}
 	this.icon = icon;
@@ -104,7 +110,7 @@ Tree.prototype = {
 			$("status").label = _("status");
 		}
 	},
-	isChecked: function(idx) this._links[idx].checked.length != 0,
+	isChecked: function(idx) !!this._links[idx].checked.length,
 
 	/*
 	 * actual nsITreeView follows
@@ -130,12 +136,11 @@ Tree.prototype = {
 			case 0: return this.getCellValue(idx, col);
 
 			// col 1 is the name
-			case 1: {
+			case 1:
 				if (l.fileName) {
 					return l.url.usable + " (" + l.fileName + ")";
 				}
 				return l.url.usable;
-			}
 
 			// col 2 is the resname
 			case 2: return l.resname;
@@ -154,7 +159,7 @@ Tree.prototype = {
 	isContainerOpen: function(idx) false,
 	isContainerEmpty: function(idx) false,
 	isSeparator: function(idx) false,
-	isEditable: function(idx, col) col.index == 0,
+	isEditable: function(idx, col) !col.index,
 
 	// will grab the "icon" for a cell.
 	getImageSrc: function(idx, col) {
@@ -196,7 +201,7 @@ Tree.prototype = {
 		this._sortColumnElem.setAttribute("sortDirection", this._sortDirection ? "descending" : "ascending");
 	},
 	cycleHeader: function(col) {
-		if (col.index == this._sortColumn) {
+		if (col.index === this._sortColumn) {
 			this._sortDirection = !this._sortDirection;
 			this._links.reverse();
 			this.setSortMarker();
@@ -242,7 +247,7 @@ Tree.prototype = {
 	getCellProperties_legacy: function(idx, column, prop) {
 		// col 1 is our url... it should display the type icon
 		// to better be able to style add a property.
-		if (column.index == 1) {
+		if (column.index === 1) {
 			prop.AppendElement(this.iconicAtom);
 		}
 		let l = this._links[idx];
@@ -251,7 +256,7 @@ Tree.prototype = {
 	getCellProperties: function(idx, column) {
 		// col 1 is our url... it should display the type icon
 		// to better be able to style add a property.
-		if (column.index == 1) {
+		if (column.index === 1) {
 			return "iconic " + this._links[idx].checked;
 		}
 		return this._links[idx].checked;
@@ -261,12 +266,12 @@ Tree.prototype = {
 	setCellValue: function(idx, col, value) {
 		// set new checked state.
 		let l = this._links[idx];
-		if (value == "true") {
+		if (value === "true") {
 			l.checked = "manuallySelected";
 			l.manuallyChecked = true;
 		}
 		else {
-			l.checked = '';
+			l.checked = "";
 			l.manuallySelected = false;
 		}
 
@@ -290,7 +295,7 @@ if (Components.interfacesByID["{C06DC4D3-63A2-4422-A0A3-5F2EDDECA8C1}"]) {
 /**
  * Our real, kicks ass implementation of the UI
  */
-let Dialog = {
+Dialog = {
 
 	get boxen() {
 		return $('checkcontainer').getElementsByTagName('checkbox');
@@ -308,7 +313,8 @@ let Dialog = {
 			let links = window.arguments[0];
 			let images = window.arguments[1];
 
-			let isPrivate = this.isPrivate = links.some(function(e) e.isPrivate) || images.some(function(e) e.isPrivate);
+			let isPrivate = this.isPrivate =
+				links.some(function(e) e.isPrivate) || images.some(function(e) e.isPrivate);
 
 			// construct or dropdowns.
 			this.ddFilter = $('filter');
@@ -351,7 +357,7 @@ let Dialog = {
 			$("urlList").addEventListener(
 				'keypress',
 				function(evt) {
-					if (evt.charCode == ' '.charCodeAt(0)) {
+					if (evt.charCode === ' '.charCodeAt(0)) {
 						Dialog.toggleSelection();
 					}
 				},
@@ -434,6 +440,13 @@ let Dialog = {
 
 	// user decided to start the selection
 	download: function(start) {
+		function prepare(link, dir, counter, mask) {
+			link.dirSave = dir;
+			link.numIstance = counter;
+			link.mask = link.mask ? link.mask : mask;
+			return link;
+		}
+
 		try {
 
 			// not everything correctly set. refuse to start
@@ -444,13 +457,6 @@ let Dialog = {
 			let dir = this.ddDirectory.value;
 			let mask = this.ddRenaming.value;
 			let counter = DTA.currentSeries();
-
-			function prepare(link, dir, counter, mask) {
-				link.dirSave = dir;
-				link.numIstance = counter;
-				link.mask = link.mask ? link.mask : mask;
-				return link;
-			}
 
 			// build the actual array holding all selected links
 			let links = this.current._links;
@@ -475,7 +481,7 @@ let Dialog = {
 
 			// save tab
 
-			Preferences.setExt('seltab', this.current.type == 1 ? 0 : 1);
+			Preferences.setExt('seltab', this.current.type === 1 ? 0 : 1);
 			// save history
 			this.ddRenaming.save($("renamingOnce").checked);
 			this.ddDirectory.save();
@@ -485,14 +491,23 @@ let Dialog = {
 			let clq = start;
 			if (!clq) {
 				clq = Preferences.getExt("confirmlastqueued", 0);
-				if (clq == 0) {
-					let res = prompts.confirm(window, _("rememberpref"), _("rememberlastqueued"), prompts.YES, prompts.NO, null, 0, false, _("dontaskagain"));
+				if (!clq) {
+					let res = prompts.confirm(
+						window,
+						_("rememberpref"),
+						_("rememberlastqueued"),
+						prompts.YES,
+						prompts.NO,
+						null,
+						0,
+						false,
+						_("dontaskagain"));
 					clq = res.button + 1;
 					if (res.checked) {
 						Preferences.setExt("confirmlastqueued", clq);
 					}
 				}
-				clq = clq == 1;
+				clq = clq === 1;
 			}
 			if (clq) {
 				Preferences.setExt("lastqueued", !start);
@@ -534,7 +549,7 @@ let Dialog = {
 
 	acceptEditMask: function() {
 		let selector = $('maskeditor-selector');
-		if (!selector.value || selector.value.length == 0) {
+		if (!selector.value || !selector.value.length) {
 			return;
 		}
 
@@ -597,26 +612,23 @@ let Dialog = {
 				link.checked = 'fastFiltered';
 				continue;
 			}
-			filters.some(
-				function(f) {
-					if (!f.match(link.url.usable)) {
-						return false;
-					}
-					let i;
+			for (let f of filters) {
+				if (!f.match(link.url.usable)) {
+					continue;
+				}
 
-					// see if we already assigned a prop to that filter.
-					if (f.id in used) {
-						i = used[f.id];
-					}
-					else {
-						i = idx = (idx + 1) % 8;
-						used[f.id] = i;
-					}
-					link.checked = 'f' + i;
-					return true;
-				},
-				this
-			);
+				let i;
+				// see if we already assigned a prop to that filter.
+				if (f.id in used) {
+					i = used[f.id];
+				}
+				else {
+					i = idx = (idx + 1) % 8;
+					used[f.id] = i;
+				}
+				link.checked = 'f' + i;
+				break;
+			};
 		}
 
 		// need to invalidate our tree so that it displays the selection
@@ -663,7 +675,7 @@ let Dialog = {
 					break;
 					default:
 						val = tree.getCellValue(i);
-						val = val == 'true' ? 'false' : 'true';
+						val = val === 'true' ? 'false' : 'true';
 						tree.setCellValue(i, null, val);
 					break;
 				}
@@ -689,7 +701,7 @@ let Dialog = {
 
 		// ... and update the UI
 		let type = this.current.type;
-		if (type == 1) {
+		if (type === 1) {
 			$("viewlinks").setAttribute("selected", true);
 			$("viewpics").setAttribute("selected", false);
 		}
@@ -699,6 +711,9 @@ let Dialog = {
 		}
 
 		let boxes = [];
+		let checkCmd = function(evt) {
+			Dialog.toggleBox(evt.target);
+		};
 		for (let f in FilterManager.enumAll()) {
 			if (!(f.type & type)) {
 				continue;
@@ -708,7 +723,7 @@ let Dialog = {
 			checkbox.setAttribute("id", f.id);
 			checkbox.setAttribute("label", f.label);
 			checkbox.setAttribute("crop", "end");
-			checkbox.addEventListener('command', function(evt) Dialog.toggleBox(evt.target), true);
+			checkbox.addEventListener('command', checkCmd, true);
 			checkbox.filter = f;
 			boxes.push(checkbox);
 		}
@@ -731,7 +746,7 @@ let Dialog = {
 		let row = null;
 		boxes.forEach(
 			function(b, i) {
-				if (i % 3 == 0) {
+				if (!(i % 3)) {
 					row = document.createElement('row');
 					row.setAttribute('pack', 'center');
 					rows.appendChild(row);
@@ -761,10 +776,10 @@ let Dialog = {
 	showPopup: function() {
 
 		let items = $('popup').getElementsByTagName('menuitem');
-		let open = $('mopen');
+		let mopen = $('mopen');
 		let tree = this.current;
 
-		const hideItems = tree.selection.count == 0;
+		const hideItems = !tree.selection.count;
 		$('mopen', 'mcheck', 'muncheck', 'mtoggle', 'mrenaming', 'msep1', 'msep2', 'msep3').forEach(
 			function(e) {
 				e.setAttribute('hidden', hideItems);
@@ -772,7 +787,7 @@ let Dialog = {
 		);
 
 		let otext = '';
-		if (tree.selection.count == 1) {
+		if (tree.selection.count === 1) {
 			let s = {}, e = {};
 			tree.selection.getRangeAt(0, s, e);
 			let l = tree._links[s.value];
@@ -781,7 +796,7 @@ let Dialog = {
 		else {
 			otext = _("openlinks", [tree.selection.count]);
 		}
-		open.setAttribute("label", otext);
+		mopen.setAttribute("label", otext);
 		// display the popup
 		return true;
 	},
@@ -851,7 +866,7 @@ let Dialog = {
 	// nsIObserver::observe
 	observe : function(subject, topic, prefName) {
 		// filterManager will throw this topic at us.
-		if (topic == 'DTA:filterschanged') {
+		if (topic === 'DTA:filterschanged') {
 			// the heavy work will be performed by changeTab..
 			// it will create the filter boxen for us, and furthermore do another
 			// selection

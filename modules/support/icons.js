@@ -45,7 +45,7 @@ if ("mozIAsyncFavicons" in Ci && Services.favicons instanceof Ci.mozIAsyncFavico
 			callback.call(tp, rv, true);
 		};
 		fis.getFaviconURLForPage(uri, ficb);
-	}
+	};
 }
 else if ("nsIFaviconService" in Ci) {
 	let fis = Services.favicons;
@@ -79,12 +79,12 @@ else if ("nsIFaviconService" in Ci) {
 			fi = getIcon(spec);
 		}
 		callback.call(tp, fi, false);
-	}
+	};
 }
 else {
 	exports.getFavIcon = function(uri, callback, tp) {
 		callback.call(tp, getIcon(uri), false);
-	}
+	};
 }
 
 /**
@@ -100,7 +100,7 @@ else {
  *          The desired iconsize;
  * @return String containing the icon URI
  */
-const getIcon = exports.getIcon = function getIcon(link, metalink, size) {
+const getIcon = exports.getIcon = function(link, metalink, size) {
 	if (metalink) {
 		if (size >= 96) {
 			return "chrome://dta/skin/common/metalink96.png";
@@ -116,7 +116,7 @@ const getIcon = exports.getIcon = function getIcon(link, metalink, size) {
 		}
 		return "chrome://dta/skin/common/metalink16.png";
 	}
-	if (typeof(size) != 'number') {
+	if (typeof(size) !== 'number') {
 		size = 16;
 	}
 	try {
@@ -141,6 +141,6 @@ const getIcon = exports.getIcon = function getIcon(link, metalink, size) {
 
 
 exports.getLargeIcon = (function() {
-	const _s = (require("version").OS == "darwin" ? 48 : 32);
+	const _s = (require("version").OS === "darwin" ? 48 : 32);
 	return memoize(function(name, metalink, hidpi) getIcon(name, metalink, hidpi ? _s * 2 : _s), 150);
 })();

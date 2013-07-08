@@ -99,17 +99,17 @@ Base.prototype = {
 		}
 		try {
 			url = Services.io.newURI(url, this._doc.characterSet, null);
-			if (url.scheme == 'file') {
+			if (url.scheme === 'file') {
 				throw new Exception("file protocol invalid!");
 			}
 			// check for some popular bad links :p
-			if (['http', 'https', 'ftp'].indexOf(url.scheme) == -1 || url.host.indexOf('.') == -1) {
+			if (!~['http', 'https', 'ftp'].indexOf(url.scheme) || !~url.host.indexOf('.')) {
 				if (!(allowed instanceof Array)) {
 					throw new Exception("bad link!");
 				}
-				if (allowed.indexOf(url.scheme) == -1) {
-						throw new Exception("not allowed!");
-					}
+				if (!~allowed.indexOf(url.scheme)) {
+					throw new Exception("not allowed!");
+				}
 			}
 			return url.spec;
 		}
@@ -128,7 +128,7 @@ Base.prototype = {
  */
 function Metalinker3(doc) {
 	let root = doc.documentElement;
-	if (root.nodeName != 'metalink' || root.getAttribute('version') != '3.0') {
+	if (root.nodeName !== 'metalink' || root.getAttribute('version') !== '3.0') {
 		throw new Exception('mlinvalid');
 	}
 	Base.call(this, doc, NS_METALINKER3);
@@ -220,7 +220,7 @@ Metalinker3.prototype = {
 				}
 				if (url.hasAttribute('location')) {
 					let a = url.getAttribute('location').slice(0,2).toLowerCase();
-					if (LOCALE.indexOf(a) != -1) {
+					if (~LOCALE.indexOf(a)) {
 						preference = 100 + preference;
 					}
 				}
@@ -343,7 +343,7 @@ Metalinker3.prototype = {
  */
 function MetalinkerRFC5854(doc) {
 	let root = doc.documentElement;
-	if (root.nodeName != 'metalink' || root.namespaceURI != NS_METALINK_RFC5854 ) {
+	if (root.nodeName !== 'metalink' || root.namespaceURI !== NS_METALINK_RFC5854 ) {
 		if (log.enabled) {
 			log(LOG_DEBUG, root.nodeName + "\nns:" + root.namespaceURI);
 		}
@@ -430,7 +430,7 @@ MetalinkerRFC5854.prototype = {
 				}
 				if (url.hasAttribute('location')) {
 					let a = url.getAttribute('location').slice(0,2).toLowerCase();
-					if (LOCALE.indexOf(a) != -1) {
+					if (~LOCALE.indexOf(a)) {
 						preference = Math.max(preference / 4, 1);
 					}
 				}
@@ -559,7 +559,7 @@ function parse(aURI, aReferrer, aCallback) {
 		xhr.removeEventListener("loadend", xhrLoadend, false);
 		try {
 			let doc = xhr.responseXML;
-			if (doc.documentElement.nodeName == 'parsererror') {
+			if (doc.documentElement.nodeName === 'parsererror') {
 				throw new Exception("Failed to parse XML");
 			}
 			for (let Parser of __parsers__) {
@@ -569,7 +569,7 @@ function parse(aURI, aReferrer, aCallback) {
 				}
 				catch (ex) {
 					log(LOG_DEBUG, Parser.name + " failed", ex);
-					continue
+					continue;
 				}
 				aCallback(parser.parse(aReferrer));
 				return;

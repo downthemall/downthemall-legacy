@@ -103,7 +103,7 @@ function BatchGenerator(link) {
 	let i;
 
 	// search all batchdescriptors
-	while ((i = url.search(/\[.*?]/)) != -1) {
+	while ((i = url.search(/\[.*?]/)) !== -1) {
 		// Heading string is a simple Literal
 		if (i !== 0) {
 			this._pats.push(new Literal(url.substring(0, i)));
@@ -118,17 +118,17 @@ function BatchGenerator(link) {
 				let start = parseInt(m[1], 10);
 				let stop = parseInt(m[2], 10);
 				let step = stop > start ? 1 : -1;
-				if (m.length > 3 && typeof(m[3]) != 'undefined') {
+				if (m.length > 3 && typeof(m[3]) !== 'undefined') {
 					step = parseInt(m[3], 10);
 				}
 				this._checkRange(start, stop, step);
-				if (start == stop) {
+				if (start === stop) {
 					this._pats.push(new Literal(m[1]));
 					continue;
 				}
 				var x = m[Math.abs(start) > Math.abs(stop) ? 2 : 1];
 				var sl = x.length;
-				if (x.slice(0,1) == '-') {
+				if (x.slice(0,1) === '-') {
 					--sl;
 				}
 				this._pats.push(new NumericRange(m[0], start, stop, step, sl));
@@ -147,11 +147,11 @@ function BatchGenerator(link) {
 				let start = m[1].charCodeAt(0);
 				let stop = m[2].charCodeAt(0);
 				let step = stop > start ? 1 : -1;
-				if (m.length > 3 && typeof(m[3]) != 'undefined') {
+				if (m.length > 3 && typeof(m[3]) !== 'undefined') {
 					step = parseInt(m[3], 10);
 				}
 				this._checkRange(start, stop, step);
-				if (start == stop) {
+				if (start === stop) {
 					this._pats.push(new Literal(m[1]));
 					continue;
 				}

@@ -29,11 +29,11 @@ exports.confirm = function confirm(aWindow, aTitle, aText, aButton0, aButton1, a
 	let flags = 0;
 	[aButton0, aButton1, aButton2].forEach(
 		function(button, idx) {
-			if (typeof button == 'number') {
+			if (typeof button === 'number') {
 				flags += Services.prompt['BUTTON_POS_' + idx] * button;
 				button = null;
 			}
-			else if (typeof button == 'string' || button instanceof String) {
+			else if (typeof button === 'string' || button instanceof String) {
 				flags |= Services.prompt['BUTTON_POS_' + idx] * Services.prompt.BUTTON_TITLE_IS_STRING;
 			}
 			else {
@@ -42,10 +42,10 @@ exports.confirm = function confirm(aWindow, aTitle, aText, aButton0, aButton1, a
 		},
 		this
 	);
-	if (aDefault == 1) {
+	if (aDefault === 1) {
 		flags += Services.prompt.BUTTON_POS_1_DEFAULT;
 	}
-	else if (aDefault == 2) {
+	else if (aDefault === 2) {
 		flags += Services.prompt.BUTTON_POS_2_DEFAULT;
 	}
 
@@ -53,11 +53,11 @@ exports.confirm = function confirm(aWindow, aTitle, aText, aButton0, aButton1, a
 	let rv = null;
 	let check = {};
 	if (aCheckText) {
-		if (typeof(aCheck) == 'boolean') {
+		if (typeof(aCheck) === 'boolean') {
 			rv = {};
 			check.value = aCheck;
 		}
-		else if (typeof(aCheck) == 'string' || aCheck instanceof String) {
+		else if (typeof(aCheck) === 'string' || aCheck instanceof String) {
 			check.value = undefined;
 			try {
 				check.value = Services.prefs.getBoolPref(aCheck);
