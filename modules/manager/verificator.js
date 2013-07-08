@@ -39,7 +39,7 @@ function _verify(file, hashCollection, completeCallback, progressCallback) {
 
 			let actual = hexdigest(mainHash.finish(false));
 			log(LOG_DEBUG, "main\nactual: " + actual + "\nexpected: " + hashCollection.full.sum);
-			if (actual != hashCollection.full.sum) {
+			if (actual !== hashCollection.full.sum) {
 				completeCallback([{start: 0, end: 0, actual: actual, expected: hashCollection.full.sum}]);
 			}
 			else {
@@ -109,7 +109,7 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 			if (partial) {
 				let partialActual = hexdigest(partialHash.finish(false));
 				log(LOG_DEBUG, "last partial\nactual: " + partialActual + "\nexpected: " + partial.sum);
-				if (partial.sum != partialActual) {
+				if (partial.sum !== partialActual) {
 					mismatches.push({
 						start: start,
 						end: total - 1,
@@ -120,7 +120,7 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 			}
 			let actual = hexdigest(mainHash.finish(false));
 			log(LOG_DEBUG, "main\nactual: " + actual + "\nexpected: " + hashCollection.full.sum);
-			if (actual != hashCollection.full.sum) {
+			if (actual !== hashCollection.full.sum) {
 				completeCallback([{start: 0, end: 0, actual: actual, expected: hashCollection.full.sum}]);
 			}
 			else {
@@ -140,7 +140,7 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 					if (!partialPending) {
 						let partialActual = hexdigest(partialHash.finish(false));
 						log(LOG_DEBUG, "partial\nactual: " + partialActual + "\nexpected: " + partial.sum);
-						if (partial.sum != partialActual) {
+						if (partial.sum !== partialActual) {
 							mismatches.push({
 								start: start,
 								end: start + hashCollection.parLength,

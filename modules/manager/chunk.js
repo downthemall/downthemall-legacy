@@ -225,8 +225,8 @@ const Observer = {
 		Timers.killAllTimers();
 	},
 	observe: function(s, topic, data) {
-		if (topic == "memory-pressure") {
-			if (data == "low-memory") {
+		if (topic === "memory-pressure") {
+			if (data === "low-memory") {
 				this.memoryPressure += 25;
 			}
 			else {
@@ -297,10 +297,10 @@ Chunk.prototype = {
 	get currentPosition() (this.start + this.written),
 	get remainder() (this._total - this._written),
 	get complete() {
-		if (this._end == -1) {
+		if (!~this._end) {
 			return this.written !== 0;
 		}
-		return this._total == this.written;
+		return this._total === this.written;
 	},
 	get parent() this._parent,
 	get sessionBytes() this._sessionBytes,
@@ -375,6 +375,7 @@ Chunk.prototype = {
 	},
 	onStartRequest: function(aRequest, aContext) {},
 	onStopRequest: function(aRequest, aContext, aStatusCode) {
+		/* jshint eqeqeq:false */
 		if (!(aRequest instanceof Ci.nsIAsyncStreamCopier)) {
 			log(LOG_ERROR, "Not a copier", aRequest);
 			throw new Exception("Not a copier");
@@ -503,7 +504,7 @@ Chunk.prototype = {
 				(avail = this._currentInputStream.available()) + bytes >= this.buffer_size) {
 				let fill = Math.min(bytes, this.buffer_size - avail);
 				bytes -= fill;
-				if (fill && this._currentOutputStream.writeFrom(aInputStream, fill) != fill) {
+				if (fill && this._currentOutputStream.writeFrom(aInputStream, fill) !== fill) {
 					throw new Error("Failed to fill current stream. fill: " +
 						fill + " bytes: " + bytes + "chunk: " + this);
 				}
@@ -511,7 +512,7 @@ Chunk.prototype = {
 			}
 			this._ensureStream(true);
 			while (bytes >= this.buffer_size) {
-				if (this._currentOutputStream.writeFrom(aInputStream, this.buffer_size) != this.buffer_size) {
+				if (this._currentOutputStream.writeFrom(aInputStream, this.buffer_size) !== this.buffer_size) {
 					throw new Error("Failed to write full stream. " + this);
 				}
 				this._shipCurrentStream();
@@ -520,7 +521,7 @@ Chunk.prototype = {
 			}
 			if (bytes) {
 				this._ensureStream();
-				if (this._currentOutputStream.writeFrom(aInputStream, bytes) != bytes) {
+				if (this._currentOutputStream.writeFrom(aInputStream, bytes) !== bytes) {
 					throw new Error("Failed to write all requested bytes to current stream. bytes: " +
 						bytes + " chunk: " + this);
 				}
@@ -650,7 +651,7 @@ Chunk.prototype = {
 			if (got < requested) {
 				this._wnd = Math.round(Math.min(this._wnd / 2, 1024));
 			}
-			else if (requested == this._wnd) {
+			else if (requested === this._wnd) {
 				this._wnd += 256;
 			}
 			this._reqPending -= got;

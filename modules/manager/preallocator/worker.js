@@ -19,7 +19,7 @@ function log(ex) {
 
 onmessage = function(event) {
 	let data = event.data;
-	if (data == "close") {
+	if (data === "close") {
 		close();
 		return;
 	}

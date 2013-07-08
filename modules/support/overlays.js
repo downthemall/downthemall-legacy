@@ -3,7 +3,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const global = this;
 const {defer} = require("support/defer");
 const obs = require("support/observers");
 
@@ -72,9 +71,9 @@ exports.watchWindows = function watchWindows(location, callback) {
 	let windows = Services.wm.getEnumerator(null);
 	while (windows.hasMoreElements()) {
 		// Only run the watcher immediately if the browser is completely loaded
-		let window = windows.getNext();
-		if (window.document.readyState == "complete" && window.location == location) {
-			watcher(window);
+		let w = windows.getNext();
+		if (w.document.readyState === "complete" && w.location === location) {
+			watcher(w);
 		}
 	}
 };
@@ -84,8 +83,14 @@ const overlayCache = new Map();
  */
 exports.registerOverlay = function registerOverlay(src, location, callback) {
 	function inject(xul, window, document) {
-		function $(id) document.getElementById(id);
-		function $$(q) document.querySelector(q);
+    // jshint loopfunc:true
+
+		function $(id) {
+      return document.getElementById(id);
+    }
+		function $$(q) {
+      return document.querySelector(q);
+    }
 
 		// loadOverlay for the poor
 		function addNode(target, node) {
@@ -138,7 +143,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 			for (let node of xul.nodes) {
 				let id = node.getAttribute("id");
 				let target = null;
-				if (id == "BrowserToolbarPalette" && tb) {
+				if (id === "BrowserToolbarPalette" && tb) {
 					target = tb.palette;
 				}
 				if (!target) {
@@ -155,7 +160,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 				// set attrs
 				for (let [,a] in new Iterator(node.attributes)) {
 					let k = a.name;
-					if (k == "id" || k == "insertbefore" || k == "insertafter") {
+					if (k === "id" || k === "insertbefore" || k === "insertafter") {
 						continue;
 					}
 					target.setAttribute(k, a.value);
@@ -163,7 +168,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 
 				// insert all children
 				for (let n = node.firstChild; n; n = n.nextSibling) {
-					if (n.nodeType != n.ELEMENT_NODE) {
+					if (n.nodeType !== n.ELEMENT_NODE) {
 						continue;
 					}
 					let nn = addNode(target, n);
@@ -192,10 +197,10 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 
 	let _r = new Instances.XHR();
 	_r.onload = function() {
-		let document = _r.responseXML;
+		let doc = _r.responseXML;
 
 		// clean the document a bit
-		let emptyNodes = document.evaluate("//text()[normalize-space(.) = '']", document, null, 7, null);
+		let emptyNodes = doc.evaluate("//text()[normalize-space(.) = '']", doc, null, 7, null);
 		for (let i = 0, e = emptyNodes.snapshotLength; i < e; ++i) {
 			let n = emptyNodes.snapshotItem(i);
 			n.parentNode.removeChild(n);
@@ -203,14 +208,14 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 
 		// prepare all elements to be inserted
 		let xul = {styles: [], nodes: []};
-		for (let n = document.firstChild; n; n = n.nextSibling) {
-			if (n.nodeType != 7 || n.target != "xml-stylesheet") {
+		for (let n = doc.firstChild; n; n = n.nextSibling) {
+			if (n.nodeType !== 7 || n.target !== "xml-stylesheet") {
 				continue;
 			}
 			xul.styles.push(n.data);
 		}
-		for (let n = document.documentElement.firstChild; n; n = n.nextSibling) {
-			if (n.nodeType != n.ELEMENT_NODE || !n.hasAttribute("id")) {
+		for (let n = doc.documentElement.firstChild; n; n = n.nextSibling) {
+			if (n.nodeType !== n.ELEMENT_NODE || !n.hasAttribute("id")) {
 				continue;
 			}
 			xul.nodes.push(n);

@@ -3,7 +3,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /* dTa-only code! - DO NOT include in overlays or such! */
-
+"use strict";
+/* jshint browser:true */
+/* global _ */
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
@@ -15,7 +17,7 @@ const Exception = Components.Exception;
 
 Cu.import("chrome://dta-modules/content/glue.jsm", this);
 (function() {
-	for (let [k,v] in Iterator(require("constants"))) {
+	for (let [k,v] in new Iterator(require("constants"))) {
 		Object.defineProperty(this, k, {value: v, enumerable:true});
 	}
 }).call(this);
@@ -47,7 +49,7 @@ const getFavIcon = (function() {
 			return;
 		}
 		_getFavIcon(uri, cb, tp);
-	}
+	};
 })();
 
 /**
@@ -59,7 +61,7 @@ const getFavIcon = (function() {
  *         elements.
  */
 function $() {
-	if (arguments.length == 1) {
+	if (arguments.length === 1) {
 		return document.getElementById(arguments[0]);
 	}
 	let elements = [];
@@ -77,7 +79,7 @@ function $() {
 
 function $$(query, el) {
 	let rv = document.querySelectorAll(query, el || document);
-	if (rv.length == 1) {
+	if (rv.length === 1) {
 		return rv[0];
 	}
 	return Array.map(rv, function(e) e);
@@ -111,7 +113,7 @@ var Utils = {
 	 */
 	askForDir: function(predefined, text, cb) {
 		function processResponse(res) {
-			if (res == Ci.nsIFilePicker.returnOK) {
+			if (res === Ci.nsIFilePicker.returnOK) {
 				cb(Utils.addFinalSlash(this.file.path));
 			}
 			else {
@@ -172,17 +174,17 @@ var Utils = {
 		}
 		try {
 			// look for the first directory that exists.
-			let parent = directory.clone();
-			while (parent && !parent.exists()) {
-				parent = parent.parent;
+			let pn = directory.clone();
+			while (pn && !pn.exists()) {
+				pn = pn.parent;
 			}
-			if (parent) {
+			if (pn) {
 				// from nsIFile
-				parent = parent.QueryInterface(Ci.nsIFile);
+				pn = pn.QueryInterface(Ci.nsIFile);
 				// we look for a directory that is writable and has some disk-space
-				if (parent.isDirectory() && parent.isReadable() && parent.isWritable()) {
+				if (pn.isDirectory() && pn.isReadable() && pn.isWritable()) {
 					try {
-						return parent.diskSpaceAvailable ? directory : false;
+						return pn.diskSpaceAvailable ? directory : false;
 					}
 					catch (ex) {
 						// Solaris compat: #889
@@ -231,8 +233,8 @@ var Utils = {
 	playSound: function(name) {
 
 		try {
-			if (/linux|sun|bsd|aix|hp|dragonfly|irix|unix/i.test(Services.appinfo.OS)
-					&& /64/.test(Services.appinfo.XPCOMABI)) {
+			if (/linux|sun|bsd|aix|hp|dragonfly|irix|unix/i.test(Services.appinfo.OS) &&
+					/64/.test(Services.appinfo.XPCOMABI)) {
 				throw new Components.Exception("*nix 64 - freeze problems");
 			}
 
@@ -259,7 +261,7 @@ var Utils = {
 			return basename;
 		}
 		let ext = '', pos = basename.lastIndexOf('.');
-		if (pos != -1) {
+		if (~pos) {
 			ext = basename.slice(pos);
 			basename = basename.slice(0, pos);
 		}
@@ -284,10 +286,14 @@ var Utils = {
 			const unit = sunits[i];
 			decimalPlace = arguments.length > 1 ? decimalPlace : unit[1];
 			return _(unit[0], [rv.toFixed(decimalPlace)]);
-		}
+		};
 	}
-	Utils.formatBytes = createFormatter([['sizeB', 0], ['sizeKB', 1], ['sizeMB', 2], ['sizeGB', 2], ['sizeTB', 3]], 875);
-	Utils.formatSpeed = createFormatter([['sizeBs', 0], ['sizeKBs', 1], ['sizeMBs', 2], ['sizeGBs', 3]], 1023);
+	Utils.formatBytes = createFormatter(
+		[['sizeB', 0], ['sizeKB', 1], ['sizeMB', 2], ['sizeGB', 2], ['sizeTB', 3]],
+		875);
+	Utils.formatSpeed = createFormatter(
+		[['sizeBs', 0], ['sizeKBs', 1], ['sizeMBs', 2], ['sizeGBs', 3]],
+		1023);
 })();
 
 requireJoined(Utils, "utils");
@@ -308,11 +314,11 @@ requireJoined(Utils, "support/stringfuncs");
 XPCOMUtils.defineLazyGetter(this, "_", function() {
 	let bundles = new Utils.StringBundles(document);
 	return function() {
-		if (arguments.length == 1) {
+		if (arguments.length === 1) {
 			return bundles.getString(arguments[0]);
 		}
 		return bundles.getFormattedString.apply(bundles, arguments);
-	}
+	};
 });
 
 /**
@@ -343,7 +349,7 @@ function hash(value, algorithm, encoding, datalen) {
 	if (!encoding) {
 		encoding = HASH_HEX;
 	}
-	if (typeof(algorithm) == 'string' || algorithm instanceof String) {
+	if (typeof(algorithm) === 'string' || algorithm instanceof String) {
 		ch.initWithString(algorithm);
 	}
 	else {
@@ -357,8 +363,8 @@ function hash(value, algorithm, encoding, datalen) {
 		value = Instances.uniconverter.convertToByteArray(value, {});
 		ch.update(value, value.length);
 	}
-	var rv = ch.finish(encoding == HASH_B64);
-	if (encoding == HASH_HEX) {
+	var rv = ch.finish(encoding === HASH_B64);
+	if (encoding === HASH_HEX) {
 		rv = Utils.hexdigest(rv);
 	}
 	return rv;
@@ -372,7 +378,7 @@ const filterMapInSitu = Utils.filterMapInSitu;
 
 require("support/iconcheat").loadWindow(window);
 
-__defineGetter__("DefaultDownloadsDirectory", function() {
+this.__defineGetter__("DefaultDownloadsDirectory", function() {
 	let dlm = Cc["@mozilla.org/download-manager;1"].getService(Ci.nsIDownloadManager);
 	try {
 		return dlm.userDownloadsDirectory;
@@ -384,7 +390,7 @@ __defineGetter__("DefaultDownloadsDirectory", function() {
 Object.defineProperty(window, "setTimeoutOnlyFun", {
 	value: function setTimeoutFun(cb, delay, p1, p2, p3) {
 		try {
-			if (typeof(cb) != "function") {
+			if (typeof(cb) !== "function") {
 					throw new Error("do not call me with a string! ");
 			}
 			return window.setTimeout.call(window, cb, delay, p1, p2, p3);

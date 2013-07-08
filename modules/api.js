@@ -36,7 +36,7 @@ function URL(url, preference, _fast) {
 	if (!(url instanceof Ci.nsIURL)) {
 		throw new Exception("You must pass a nsIURL");
 	}
-	if (!_fast && URL.schemes.indexOf(url.scheme) == -1) {
+	if (!_fast && URL.schemes.indexOf(url.scheme) === -1) {
 		throw new Exception("Not a supported URL");
 	}
 
@@ -112,10 +112,10 @@ exports.WANT_DIGEST_STRING = (function() {
 })();
 
 function Hash(hash, type) {
-	if (typeof(hash) != 'string' && !(hash instanceof String)) {
+	if (typeof(hash) !== 'string' && !(hash instanceof String)) {
 		throw new Exception("hash is invalid");
 	}
-	if (typeof(type) != 'string' && !(type instanceof String)) {
+	if (typeof(type) !== 'string' && !(type instanceof String)) {
 		throw new Exception("hashtype is invalid");
 	}
 
@@ -126,7 +126,7 @@ function Hash(hash, type) {
 	this.type = SUPPORTED_HASHES_ALIASES[type];
 	this.sum = hash.toLowerCase().replace(/\s/g, '');
 	let h = SUPPORTED_HASHES[this.type];
-	if (h.l != this.sum.length || isNaN(parseInt(this.sum, 16))) {
+	if (h.l !== this.sum.length || isNaN(parseInt(this.sum, 16))) {
 		throw new Exception("hash is invalid");
 	}
 	this._q = h.q;
@@ -297,7 +297,7 @@ exports.getRef = function getRef(doc) {
 			try {
 				return exports.composeURL(doc, b[i].getAttribute('href')).spec;
 			}
-			catch (ex) {
+			catch (e) {
 				continue;
 			}
 		}

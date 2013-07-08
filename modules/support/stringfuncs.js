@@ -13,7 +13,7 @@ const gufn_u = /\?.*$/;
 const SYSTEMSLASH = (function() {
 	let f = Services.dirsvc.get("TmpD", Ci.nsIFile);
 	f.append('dummy');
-	return (f.path.indexOf('/') != -1) ? '/' : '\\';
+	return (f.path.indexOf('/') !== -1) ? '/' : '\\';
 })();
 exports.SYSTEMSLASH = SYSTEMSLASH;
 
@@ -23,7 +23,7 @@ exports.getCURL = function getCURL(u) {
 	let rv = u.host;
 	if (u instanceof Ci.nsIURL) {
 		let fp = u.filePath;
-		if (fp != "/") {
+		if (fp !== "/") {
 			rv += fp;
 		}
 	}
@@ -38,7 +38,7 @@ exports.addFinalSlash = function addFinalSlash(str) {
 	if (!str) {
 		return SYSTEMSLASH;
 	}
-	if (str.charAt(str.length - 1) != SYSTEMSLASH) {
+	if (str.charAt(str.length - 1) !== SYSTEMSLASH) {
 		return str + SYSTEMSLASH;
 	}
 	return str;
@@ -48,7 +48,7 @@ exports.removeFinalChar = function removeFinalChar(str, c) {
 	if (!str) {
 		return str;
 	}
-	if (str.charAt(str.length - 1) == c) {
+	if (str.charAt(str.length - 1) === c) {
 		return str.substr(0, str.length - 1);
 	}
 	return str;
@@ -58,7 +58,7 @@ exports.removeLeadingChar = function removeLeadingChar(str, c) {
 	if (!str) {
 		return str;
 	}
-	if (str.charAt(0) == c) {
+	if (str.charAt(0) === c) {
 		return str.substr(1);
 	}
 	return str;
@@ -98,18 +98,18 @@ exports.getUsableFileNameWithFlatten = function getUsableFileNameWithFlatten(str
 };
 
 exports.getExtension = function(str) {
-	let name = exports.getUsableFileName(str);
-	let c = name.lastIndexOf('.');
-	return (c == - 1) ? null : name.substr(c + 1);
+	let n = exports.getUsableFileName(str);
+	let c = n.lastIndexOf('.');
+	return (c === - 1) ? null : n.substr(c + 1);
 };
 
 exports.getFileNameAndExt = function getFileNameAndExt(str) {
-	let name = exports.getUsableFileName(str);
-	let c = name.lastIndexOf('.');
+	let n = exports.getUsableFileName(str);
+	let c = n.lastIndexOf('.');
 	if (!~c) {
-		return [name, ""];
+		return [n, ""];
 	}
-	return [name.substr(0, c), name.substr(c + 1)];
+	return [n.substr(0, c), n.substr(c + 1)];
 };
 
 exports.cropCenter = function(str, newLength) {

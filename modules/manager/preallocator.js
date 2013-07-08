@@ -10,7 +10,7 @@ const {
 const {prealloc: _asynccopier} = require("manager/preallocator/asynccopier");
 const {prealloc: _cothread} = require("manager/preallocator/cothread");
 
-const SIZE_MIN = (require("version").OS == 'winnt' ? 256 : 2048) * 1024;
+const SIZE_MIN = (require("version").OS === 'winnt' ? 256 : 2048) * 1024;
 const SIZE_COTHREAD_MAX = (1<<24);
 
 const _impl = createOptimizedImplementation(

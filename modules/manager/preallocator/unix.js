@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 /* global importScripts, OS, ctypes, getPosix */
+/* jshint eqeqeq:false */
 
 if (!("OS" in this)) {
 	throw new Error("OS constants not yet available");

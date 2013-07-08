@@ -33,7 +33,7 @@ const DISCONNECTION_CODES = [
 const _ = (function(global) {
 	let bundles = new StringBundles(["chrome://dta/locale/manager.properties"]);
 	return function() {
-		if (arguments.length == 1) {
+		if (arguments.length === 1) {
 			return bundles.getString(arguments[0]);
 		}
 		return bundles.getFormattedString.apply(bundles, arguments);
@@ -289,7 +289,7 @@ Connection.prototype = {
 		try {
 			let newurl = new DTA.URL(newChannel.URI.QueryInterface(Ci.nsIURL), this.url.preference);
 			d.fileName = getUsableFileName(newurl.usable);
-			if (oldChannel instanceof Ci.nsIHttpChannel && oldChannel.responseStatus == 302) {
+			if (oldChannel instanceof Ci.nsIHttpChannel && oldChannel.responseStatus === 302) {
 				this.extractMetaInfo(d, oldChannel);
 				return;
 			}
@@ -398,7 +398,7 @@ Connection.prototype = {
 		if (log.enabled) {
 			d.dumpScoreboard();
 		}
-		if (d.chunks.indexOf(c) == -1) {
+		if (!~d.chunks.indexOf(c)) {
 			// already killed;
 			return true;
 		}
@@ -490,7 +490,7 @@ Connection.prototype = {
 			}
 		}
 		if (visitor.metaDescribedBy) {
-			const safeTransfer = !(visitor.metaDescribedBy.scheme == "http" && channel.URI.scheme == "https");
+			const safeTransfer = !(visitor.metaDescribedBy.scheme === "http" && channel.URI.scheme === "https");
 			const secureHash = !!(download.hashCollection && download.hashCollection.full._q >= 0.5);
 			if (!safeTransfer && !secureHash) {
 				log(LOG_DEBUG, "rejecting metalink due to insecure metalink location");
@@ -507,7 +507,7 @@ Connection.prototype = {
 			catch (ex) {
 				// no op
 			}
-			if (!secureHash && visitor.metaDescribedBy.host != channel.URI.host) {
+			if (!secureHash && visitor.metaDescribedBy.host !== channel.URI.host) {
 				log(LOG_DEBUG, "rejecting metalink due to host mismatch");
 				cb("host mismatch");
 				return;
@@ -524,19 +524,19 @@ Connection.prototype = {
 					return;
 				}
 				let d;
-				if (res.downloads.length == 1) {
+				if (res.downloads.length === 1) {
 					d = res.downloads;
 				}
 				else {
 					d = res.downloads.filter(function(e) {
 						return download.hashCollection && e.hashCollection &&
-							download.hashCollection.full.type == e.hashCollection.full.type &&
-							download.hashCollection.full.sum == e.hashCollection.full.sum;
+							download.hashCollection.full.type === e.hashCollection.full.type &&
+							download.hashCollection.full.sum === e.hashCollection.full.sum;
 					});
 					if (!d.length) {
 						d = res.downloads.filter(function(e) {
 							return e.url._urls.some(function(k) {
-								return [finalURI.spec, channel.URI.spec].indexOf(k.url.spec) != -1;
+								return ~[finalURI.spec, channel.URI.spec].indexOf(k.url.spec);
 							});
 						});
 					}
@@ -548,7 +548,7 @@ Connection.prototype = {
 				}
 				d = d[0];
 				download.fileName = d.fileName;
-				if (download.totalSize && d.size && download.totalSize != d.size) {
+				if (download.totalSize && d.size && download.totalSize !== d.size) {
 					log(LOG_ERROR, "Rejecting metalink due to size mismatch");
 					cb("size mismatch");
 					return;
@@ -572,8 +572,8 @@ Connection.prototype = {
 							}
 						};
 					}
-					else if(oldHash.full.type == d.hashCollection.full.type &&
-							oldHash.full.sum != d.hashCollection.full.sum) {
+					else if(oldHash.full.type === d.hashCollection.full.type &&
+							oldHash.full.sum !== d.hashCollection.full.sum) {
 						log(LOG_ERROR, "Rejecting describedby metalink due to hash mismatch");
 						cb("hash mismatch");
 						return;
@@ -592,7 +592,7 @@ Connection.prototype = {
 						newHash.parLength = d.hashCollection.parLength;
 						newHash.partials = d.hashCollection.partials;
 					}
-					else if (d.hashCollection.parLength == oldHash.parLength) {
+					else if (d.hashCollection.parLength === oldHash.parLength) {
 						newHash.partials = [];
 						newHash.parLength = oldHash.parLength;
 						for (let i = 0, len = oldHash.partials.length; i < len; i++) {
@@ -600,8 +600,8 @@ Connection.prototype = {
 								sum: oldHash.partials[i].sum,
 								type: oldHash.partials[i].type
 							});
-							if (newHash.partials[i].type == d.hashCollection.partials[i].type &&
-								newHash.partials[i].sum != d.hashCollection.parials[i].sum) {
+							if (newHash.partials[i].type === d.hashCollection.partials[i].type &&
+								newHash.partials[i].sum !== d.hashCollection.parials[i].sum) {
 								log(LOG_ERROR, "Rejecting describedby metalink due to hash mismatch");
 								cb("hash mismatch");
 								return;
@@ -622,7 +622,7 @@ Connection.prototype = {
 					try {
 						download.hashCollection = DTA.HashCollection.load(newHash);
 					}
-					catch (ex) {
+					catch (e) {
 						log(LOG_ERROR, "Rejecting describedby metalink due to corrupted hashes");
 					}
 					cb();
@@ -665,25 +665,25 @@ Connection.prototype = {
 			}
 			if (!this.handleError()) {
 				log(LOG_ERROR, "handleError: Cannot recover from problem!", code);
-				if (code == 401) {
+				if (code === 401) {
 					d.AuthPrompts.authPrompter.restrictLogin(aChannel.URI);
 				}
 
 				let file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
-				if ([401, 402, 407, 500, 502, 503, 504].indexOf(code) != -1 ||
+				if (~[401, 402, 407, 500, 502, 503, 504].indexOf(code) ||
 					Preferences.getExt('recoverallhttperrors', false)) {
 					log(LOG_DEBUG, "we got temp failure!", code);
 					d.pauseAndRetry();
 					d.status = code >= 500 ? _('temperror') : _('autherror');
 				}
-				else if (code == 450) {
+				else if (code === 450) {
 					d.fail(
 						_('pcerrortitle'),
 						_('pcerrortext'),
 						_('pcerrortitle')
 					);
 				}
-				else if (code == 451) {
+				else if (code === 451) {
 					d.fail(
 						"Fahrenheit 451 (censored)",
 						_("failed", [file]) + " " + _("sra", [code]) + ": " + status,
@@ -711,7 +711,7 @@ Connection.prototype = {
 		}
 
 		// not partial content altough we are multi-chunk
-		if (code != 206 && !this.isInfoGetter) {
+		if (code !== 206 && !this.isInfoGetter) {
 			log(LOG_ERROR, d + ": Server returned a " +
 				aChannel.responseStatus + " response instead of 206",
 				this.isInfoGetter);
@@ -756,7 +756,7 @@ Connection.prototype = {
 		}
 
 		// compression?
-		if (['gzip', 'deflate'].indexOf(visitor.encoding) != -1 &&
+		if (~['gzip', 'deflate'].indexOf(visitor.encoding) &&
 			!d.contentType.match(/gzip/i) && !d.fileName.match(/\.gz$/i)) {
 			d.compression = visitor.encoding;
 		}
@@ -771,12 +771,12 @@ Connection.prototype = {
 		// accept range
 		d.resumable &= visitor.acceptRanges;
 
-		if (visitor.type && visitor.type.search(/application\/metalink4?\+xml/) != -1) {
+		if (visitor.type && ~visitor.type.search(/application\/metalink4?\+xml/)) {
 			d.isMetalink = true;
 			d.resumable = false;
 		}
 
-		if (code != 206) {
+		if (code !== 206) {
 			if (visitor.contentLength > 0) {
 				d.totalSize = visitor.contentLength;
 			}
@@ -790,7 +790,7 @@ Connection.prototype = {
 			// if content disposition hasn't an extension we use extension of URL
 			let newName = getUsableFileNameWithFlatten(visitor.fileName.replace(/\\/g, ''));
 			let ext = getExtension(this.url.usable);
-			if (visitor.fileName.lastIndexOf('.') == -1 && ext) {
+			if (!~visitor.fileName.lastIndexOf('.') && ext) {
 				newName += ('.' + ext);
 				newName = getUsableFileNameWithFlatten(newName);
 			}
@@ -815,7 +815,7 @@ Connection.prototype = {
 				// Firefox 4 support 64bit contentLength
 				totalSize = Math.max(aChannel.contentLength, 0);
 			}
-			if (d.totalSize && totalSize != d.totalSize && !this.handleError()) {
+			if (d.totalSize && totalSize !== d.totalSize && !this.handleError()) {
 				log(LOG_ERROR, "ftp: total size mismatch " + totalSize + " " + d.totalSize);
 				d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
 				return false;
@@ -867,7 +867,7 @@ Connection.prototype = {
 
 		// hack: determine if we are a multi-part chunk,
 		// if so something bad happened, 'cause we aren't supposed to be multi-part
-		if (c.start && d.state == RUNNING) {
+		if (c.start && d.state === RUNNING) {
 			if (!this.handleError()) {
 				log(LOG_ERROR, d + ": Server error or disconnection", "(type 1)");
 				d.pauseAndRetry();
@@ -885,7 +885,7 @@ Connection.prototype = {
 			try {
 				d.totalSize = Math.max(aChannel.contentLength, 0);
 			}
-			catch (ex) {
+			catch (e) {
 				d.totalSize = 0;
 			}
 		}
@@ -906,7 +906,7 @@ Connection.prototype = {
 
 		this.started = true;
 
-		if (d.chunks.indexOf(c) == -1) {
+		if (!~d.chunks.indexOf(c)) {
 			return;
 		}
 
@@ -983,7 +983,7 @@ Connection.prototype = {
 			log(LOG_DEBUG, "closing");
 			c.close();
 
-			if (d.chunks.indexOf(c) == -1) {
+			if (!~d.chunks.indexOf(c)) {
 				log(LOG_INFO, "chunk unknown");
 				return;
 			}
@@ -1000,7 +1000,7 @@ Connection.prototype = {
 			}
 
 			// check if we're complete now
-			const isRunning = d.state == RUNNING;
+			const isRunning = d.state === RUNNING;
 			if (isRunning && d.chunks.every(function(e) { return e.complete; })) {
 				if (!d.resumeDownload()) {
 					log(LOG_INFO, d + ": Download is complete!");
@@ -1010,7 +1010,7 @@ Connection.prototype = {
 				}
 			}
 
-			if (c.starter && -1 != DISCONNECTION_CODES.indexOf(aStatusCode)) {
+			if (c.starter && ~DISCONNECTION_CODES.indexOf(aStatusCode)) {
 				if (!d.urlManager.markBad(this.url)) {
 					log(LOG_ERROR, d + ": Server error or disconnection", "(type 3)");
 					d.pauseAndRetry();
@@ -1027,7 +1027,7 @@ Connection.prototype = {
 			// work-around for ftp crap
 			// nsiftpchan for some reason assumes that if RETR fails it is a directory
 			// and tries to advance into said directory
-			if (aStatusCode == NS_ERROR_FTP_CWD) {
+			if (aStatusCode === NS_ERROR_FTP_CWD) {
 				log(LOG_DEBUG, "Cannot change to directory :p", aStatusCode);
 				if (!this.handleError()) {
 					d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
@@ -1066,7 +1066,7 @@ Connection.prototype = {
 				return;
 			}
 
-			if (!d.isOf(PAUSED | CANCELED | FINISHING) && d.chunks.length == 1 && d.chunks[0] == c) {
+			if (!d.isOf(PAUSED | CANCELED | FINISHING) && d.chunks.length === 1 && d.chunks[0] === c) {
 				if (d.resumable && c.sessionBytes > 0) {
 					// fast retry unless we didn't actually receive something
 					d.resumeDownload();
@@ -1109,7 +1109,7 @@ Connection.prototype = {
 				}
 			}
 
-			if (d.state == RUNNING) {
+			if (d.state === RUNNING) {
 				if (!this.resumable && d.totalSize) {
 					// basic integrity check
 					if (d.partialSize > d.totalSize) {

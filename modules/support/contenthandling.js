@@ -104,7 +104,7 @@ ContentHandlingImpl.prototype = {
 		case 'nsPref:changed':
 			try {
 				let newValue = Services.prefs.getBoolPref(PREF_SNIFFVIDEOS);
-				let differs = newValue == this.sniffVideos;
+				let differs = newValue === this.sniffVideos;
 				this.sniffVideos = newValue;
 				if (differs) {
 					if (newValue) {
@@ -128,7 +128,7 @@ ContentHandlingImpl.prototype = {
 			return;
 		}
 
-		if (channel.requestMethod != 'POST') {
+		if (channel.requestMethod !== 'POST') {
 			return;
 		}
 
@@ -171,7 +171,7 @@ ContentHandlingImpl.prototype = {
 			return;
 		}
 		try {
-			if (!channel.requestSucceeded || channel.responseStatus == 204) {
+			if (!channel.requestSucceeded || channel.responseStatus === 204) {
 				return;
 			}
 			let ct = '';
@@ -232,7 +232,7 @@ ContentHandlingImpl.prototype = {
 		uri = uri.spec;
 		let nv = this._videos.get(uri, isPrivate) || [];
 		vid = modifyURL(vid.clone());
-		if (!nv.some(function(v) v.spec == vid.spec)) {
+		if (!nv.some(function(v) v.spec === vid.spec)) {
 			log(LOG_DEBUG, vid.spec);
 			nv.push(vid);
 			this._videos.set(uri, nv, isPrivate);

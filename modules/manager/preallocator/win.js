@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 /* global ctypes */
+/* jshint eqeqeq:false */
 
 var prealloc = (function() {
 	const kernel32 = ctypes.open("kernel32.dll");

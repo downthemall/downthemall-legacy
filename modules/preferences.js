@@ -91,10 +91,10 @@ function getBranch(branch) {
  * @throws Value-type/Preference-type mismatch
  */
 function set(key, value){
-	if (typeof value == 'number' || value instanceof Number) {
+	if (typeof value === 'number' || value instanceof Number) {
 		return prefs.setIntPref(key, value);
 	}
-	if (typeof value == 'boolean' || value instanceof Boolean) {
+	if (typeof value === 'boolean' || value instanceof Boolean) {
 		return prefs.setBoolPref(key, value);
 	}
 	return setMultiByte(key, value);
@@ -297,11 +297,11 @@ Object.freeze(exports);
 	const branch = Services.prefs.getDefaultBranch("");
 	let scope = {pref: function(key, val) {
 		log(LOG_INFO, "setting pref " + key + ": " + val);
-		if (typeof val == 'number') {
+		if (typeof val === 'number') {
 			branch.setIntPref(key, val);
 			return;
 		}
-		if (typeof val == 'boolean') {
+		if (typeof val === 'boolean') {
 			branch.setBoolPref(key, val);
 			return;
 		}

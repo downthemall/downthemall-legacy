@@ -64,7 +64,7 @@ exports.range = function range() {
 	}
 	stop += -Math.abs(step) / step;
 	stop += step - ((stop - start) % step);
-	for (; start != stop; start += step) {
+	for (; start !== stop; start += step) {
 		yield ~~start;
 	}
 };
@@ -228,7 +228,7 @@ exports.mapFilterInSitu = function mapFilterInSitu(arr, mapStep, filterStep, tp)
  * @return (array) Sorted array
  */
 function naturalSort(arr, mapper) {
-	if (typeof mapper != 'function' && !(mapper instanceof Function)) {
+	if (typeof mapper !== 'function' && !(mapper instanceof Function)) {
 		mapper = naturalSort.identity;
 	}
 	exports.mapInSitu(arr, naturalSort.tokenize.bind(null, mapper));
@@ -242,16 +242,16 @@ naturalSort.strtol = function strtol(str, rv) {
 	let negative = false;
 	let parsed = "";
 	let c0 = str[0];
-	if (c0 == "-") {
+	if (c0 === "-") {
 		parsed = "-";
 		negative = true;
 		str = str.substr(1);
 	}
-	else if (c0 == "+") {
+	else if (c0 === "+") {
 		parsed = "+";
 		str = str.substr(1);
 	}
-	else if (c0 == "0" && str[1] == "x") {
+	else if (c0 === "0" && str[1] === "x") {
 		parsed = "0x";
 		base = 16;
 		str = str.substr(2);
@@ -261,7 +261,7 @@ naturalSort.strtol = function strtol(str, rv) {
 		function(e) e.charCodeAt(0)
 		);
 	for (let [idx,c] in new Iterator(chars)) {
-		if ((c >= 48 && c <= 57) || (base == 16 && c >= 97 && c <= 100)) {
+		if ((c >= 48 && c <= 57) || (base === 16 && c >= 97 && c <= 100)) {
 			continue;
 		}
 		if (!idx) {
@@ -482,7 +482,7 @@ MimeQuality.prototype = Object.freeze({
 	 * @param q (number) Quality number
 	 */
 	add: function(v, q) {
-		if (typeof q != "number" || q > 1 || q < 0) {
+		if (typeof q !== "number" || q > 1 || q < 0) {
 			throw new Error("Invalid q");
 		}
 		q = parseInt(q * 1000, 10) / 1000;
@@ -498,7 +498,7 @@ MimeQuality.prototype = Object.freeze({
 	 */
 	toString: function() {
 		function qval(x, i) {
-			return i + (x == 1 ? "" : ";q=" + x);
+			return i + (x >= 1 ? "" : ";q=" + x);
 		}
 
 		let rv = [];
@@ -531,7 +531,7 @@ function _loadBundles(urls) {
 		for (let s in new SimpleIterator(bundle(url), Ci.nsIPropertyElement)) {
 			strings[s.key] = s.value;
 		}
-		if (uri.host == "dta") {
+		if (uri.host === "dta") {
 			url = "chrome://dta-locale" + uri.path.replace("/locale/", "/content/");
 			log(LOG_DEBUG, "also loading: " + url);
 			for (let s in new SimpleIterator(bundle(url), Ci.nsIPropertyElement)) {

@@ -255,7 +255,7 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 		for (let u in d.urlManager.all) {
 			let t = u.url.scheme;
 			let n = {};
-			if (t == "http" || t == "https" || t == "ftp") {
+			if (t === "http" || t === "https" || t === "ftp") {
 				n = document.createElementNS(NS_METALINK_RFC5854, 'url');
 			}
 			else {

@@ -1,16 +1,21 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* global $, $$, _, Preferences, Dialog, Utils, mapInSitu, RequestManipulation, hash, showPreferences, Timers, defer */
+/* global COMPLETE, PAUSED, CANCELED, RUNNING, SPEED_COUNT, TOOLTIP_FREQ */
+/* jshint browser:true */
 
 const PREF_CONN = 'network.http.max-connections';
 
 var gMinTrayR = {};
 try {
 	Cu.import("resource://mintrayr/mintrayr.jsm", gMinTrayR);
+	let self;
 	var init = function() {
 		function closeWindow(event){
-			if (Preferences.getExt('minimizetotray', false)
-				&& (self.prefs.getExt('minimizeon', 1) & (1<<1))) {
+			if (Preferences.getExt('minimize, Dialogtotray', false) &&
+				(self.prefs.getExt('minimizeon', 1) & (1<<1))) {
 				self.minimize();
 				event.preventDefault();
 				event.stopPropagation();
@@ -20,8 +25,8 @@ try {
 			return Dialog.close();
 		}
 		function minimizeWindow(event) {
-			if (Preferences.getExt('minimizetotray', false)
-				&& (self.prefs.getExt('minimizeon', 1) & (1<<0))) {
+			if (Preferences.getExt('minimizetotray', false) &&
+				(self.prefs.getExt('minimizeon', 1) & (1<<0))) {
 				self.minimize();
 				event.preventDefault();
 				event.stopPropagation();
@@ -45,16 +50,15 @@ try {
 			button.addEventListener('command', newCommand, false);
 		}
 
-		let self = this;
 		let _oc = Dialog.onclose;
 		Dialog.onclose = function(evt) {
-			if (self.prefs.getExt("downthemall", false)
-				&& (self.prefs.getExt("minimizeon", 1) & (1<<1))) {
+			if (self.prefs.getExt("downthemall", false) &&
+				(self.prefs.getExt("minimizeon", 1) & (1<<1))) {
 				evt.preventDefault();
 				return false;
 			}
 			return _oc.apply(Dialog, arguments);
-		}
+		};
 		hijackButton(closeWindow, "titlebar-close");
 		hijackButton(minimizeWindow, "titlebar-min");
 	};
@@ -62,7 +66,7 @@ try {
 	addEventListener("load", function tray_init() {
 		removeEventListener("load", tray_init, false);
 
-		if (gMinTrayR.MinTrayR.length == 3) {
+		if (gMinTrayR.MinTrayR.length === 3) {
 			gMinTrayR = new gMinTrayR.MinTrayR($("traymenu"), "downthemall.watchmanager", init);
 		}
 		else {
@@ -91,7 +95,7 @@ const Prefs = {
 		['setTime', true],
 		['showOnlyFilenames', true],
 		['conflictResolution', 3],
-		['alertingSystem', 'alertbox', (Utils.SYSTEMSLASH == '\\') ? 1 : 0],
+		['alertingSystem', 'alertbox', (Utils.SYSTEMSLASH === '\\') ? 1 : 0],
 		['finishEvent', ''],
 		['showTooltip', true],
 		['maxAutoRetries', 10],
@@ -140,7 +144,7 @@ const Prefs = {
 			if (!e) {
 				return;
 			}
-			else if (e.length == 3) {
+			else if (e.length === 3) {
 				key = e[0];
 				pref = e[1];
 				def = e[2];
@@ -154,18 +158,19 @@ const Prefs = {
 		}
 
 		let perms = Prefs.permissions;
-		if (perms & 0600) {
-			perms |= 0100;
+		if (perms & parseInt("600", 8)) {
+			perms |= parseInt("100", 8);
 		}
-		if (perms & 0060) {
-			perms |= 0010;
+		if (perms & parseInt("60", 8)) {
+			perms |= parseInt("10", 8);
 		}
-		if (perms & 0006) {
-			perms |= 0001;
+		if (perms & 6) {
+			perms |= 1;
 		}
 		this.dirPermissions = perms;
 
-		if (!prefName || prefName == 'extensions.dta.saveTemp' || prefName == 'extensions.dta.tempLocation') {
+		if (!prefName || prefName === 'extensions.dta.saveTemp' ||
+			prefName === 'extensions.dta.tempLocation') {
 			this._constructTemp();
 		}
 		// Make this KB
@@ -193,7 +198,7 @@ const Prefs = {
 			conns += downloads[i].activeChunks;
 		}
 		conns = Math.max(this._baselineConns, Math.min(50, conns));
-		if (this._currentConns != conns) {
+		if (this._currentConns !== conns) {
 			Preferences.set(PREF_CONN, conns);
 			this._currentConns = conns;
 		}
@@ -205,7 +210,7 @@ const Prefs = {
 		}
 		try {
 			this.tempLocation = Preferences.getExt("tempLocation", '');
-			if (this.tempLocation == '') {
+			if (!this.tempLocation) {
 				// #44: generate a default tmp dir on per-profile basis
 				// hash the profD, as it would be otherwise a minor information leak
 				this.tempLocation = Services.dirsvc.get("TmpD", Ci.nsIFile);
@@ -276,7 +281,8 @@ const Prefs = {
 			}
 		}
 		catch (ex) {
-			log(LOG_ERROR, "failed to set up temp directory: " + (this.tempLocation ? this.tempLocation.path || this.tempLocation : "null"), ex);
+			log(LOG_ERROR, "failed to set up temp directory: " +
+				(this.tempLocation ? this.tempLocation.path || this.tempLocation : "null"), ex);
 			this.tempLocation = null;
 			// XXX: error handling
 		}
@@ -316,7 +322,7 @@ const Tooltip = {
 		this._current = d;
 		this._mustDraw = true;
 		this._inTip = inTip;
-		if (this._inTip && d.state != RUNNING) {
+		if (this._inTip && d.state !== RUNNING) {
 			this.speedCanvas.hidden = true;
 			this.speedRow.collapsed = true;
 		}
@@ -341,11 +347,11 @@ const Tooltip = {
 		for (let canvas of canvases) {
 			try {
 				let w = Math.min(box.width, canvas.clientWidth);
-				let h = parseInt(canvas.getAttribute('height'));
+				let h = parseInt(canvas.getAttribute('height'), 10);
 				if (!isFinite(w) || !isFinite(h) || w <= 1 || h <= 1) {
 					throw new Components.Exception("Failed to get dimensions");
 				}
-				if (w == canvas.width && h == canvas.height) {
+				if (w === canvas.width && h === canvas.height) {
 					continue;
 				}
 				canvas.width = w;
@@ -385,7 +391,11 @@ const Tooltip = {
 		}
 		this.updateMetrics(file);
 
-		if (!this._mustDraw && file === this._file && file.speeds.lastUpdate === this._update && file.speeds.lastBytes === this._bytes && file.state == this._state) {
+		if (!this._mustDraw &&
+			file === this._file &&
+			file.speeds.lastUpdate === this._update &&
+			file.speeds.lastBytes === this._bytes &&
+			file.state === this._state) {
 			return;
 		}
 
@@ -427,11 +437,11 @@ const Tooltip = {
 	updateMetrics: function(file) {
 		try {
 			const state = file.state;
-			if (state == RUNNING && file.speeds.length) {
+			if (state === RUNNING && file.speeds.length) {
 				this.speedAverage.value = file.speed;
 				this.speedCurrent.value = Utils.formatSpeed(file.speeds.last);
 			}
-			else if (state == RUNNING) {
+			else if (state === RUNNING) {
 				this.speedCurrent.value = this.speedAverage.value = _('unknown');
 			}
 			else {
@@ -440,7 +450,7 @@ const Tooltip = {
 
 			this.infoSize.value = file.dimensionString;
 			this.timeRemaining.value = file.status;
-			if (state == RUNNING) {
+			if (state === RUNNING) {
 				this.timeElapsed.value = Utils.formatTimeDelta((Utils.getTimestamp() - file.timeStart) / 1000);
 			}
 			else {
@@ -477,7 +487,7 @@ const Tooltip = {
 
 			ctx.clearRect(0, 0, w, h);
 			ctx.save();
-			ctx.translate(.5, .5);
+			ctx.translate(0.5, 0.5);
 
 			ctx.lineWidth = 1;
 			ctx.strokeStyle = boxStrokeStyle;
@@ -502,9 +512,9 @@ const Tooltip = {
 					aspeeds.push(s);
 				}
 				// special case: all speeds are the same
-				if (minH == maxH) {
-					mapInSitu(speeds, function(speed) { return 12; });
-					mapInSitu(aspeeds, function(speed) { return 12; });
+				if (minH === maxH) {
+					mapInSitu(speeds, function(speed) 12);
+					mapInSitu(aspeeds, function(speed) 12);
 				}
 				else {
 					let r = (maxH - minH);
@@ -516,14 +526,14 @@ const Tooltip = {
 				ctx.clip();
 
 				const step = w / (SPEED_COUNT - 1);
-				const draw = (function draw(pass, speeds) {
+				const draw = (function draw(pass, spds) {
 					let y = h + pass.y;
 					let x = pass.x + 0.5;
 
 					ctx.beginPath();
 					ctx.moveTo(x, y);
 
-					y -= speeds[0];
+					y -= spds[0];
 					if (pass.f) {
 						ctx.lineTo(x, y);
 					}
@@ -531,25 +541,25 @@ const Tooltip = {
 						ctx.moveTo(x, y);
 					}
 
-					let slope = (speeds[1] - speeds[0]);
-					x += step * .7;
-					y -= slope * .7;
+					let slope = (spds[1] - spds[0]);
+					x += step * 0.7;
+					y -= slope * 0.7;
 					ctx.lineTo(x, y);
 
-					for (let j = 1, e = speeds.length - 1; j < e; ++j) {
-						y -= slope *.3;
-						slope = (speeds[j+1] - speeds[j]);
-						y -= slope * .3;
+					for (let j = 1, e = spds.length - 1; j < e; ++j) {
+						y -= slope * 0.3;
+						slope = (spds[j+1] - spds[j]);
+						y -= slope * 0.3;
 
-						ctx.quadraticCurveTo(step * j, h + pass.y - speeds[j], (x + step * .6), y);
+						ctx.quadraticCurveTo(step * j, h + pass.y - spds[j], (x + step * 0.6), y);
 
 						x += step;
-						y -= slope * .4;
+						y -= slope * 0.4;
 
 						ctx.lineTo(x, y);
 					}
-					x += step * .3;
-					y -= slope * .3;
+					x += step * 0.3;
+					y -= slope * 0.3;
 					ctx.lineTo(x, y);
 
 					if (pass.f) {
@@ -607,14 +617,17 @@ const Tooltip = {
 			let cheight = height - 15;
 
 			// Create gradients
-			let boxFillStyle = this._createInnerShadowGradient(ctx, cheight, ["#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4"]);
-			let boxStrokeStyle = this._createInnerShadowGradient(ctx, 8, ["#816A1D", "#E7BE34", "#F8CC38", "#D8B231"]);
-			let partialBoxFillStyle = this._createInnerShadowGradient(ctx, 8, ["#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4"]);
+			let boxFillStyle =
+				this._createInnerShadowGradient(ctx, cheight, ["#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4"]);
+			let boxStrokeStyle =
+				this._createInnerShadowGradient(ctx, 8, ["#816A1D", "#E7BE34", "#F8CC38", "#D8B231"]);
+			let partialBoxFillStyle =
+				this._createInnerShadowGradient(ctx, 8, ["#B1A45A", "#F1DF7A", "#FEEC84", "#FFFDC4"]);
 
 			// clear all
 			ctx.clearRect(0, 0, width, height);
 			ctx.save();
-			ctx.translate(.5, .5);
+			ctx.translate(0.5, 0.5);
 
 			// draw container chunks back
 			ctx.lineWidth = 1;
@@ -625,13 +638,13 @@ const Tooltip = {
 
 			let b = [];
 			const state = file.state;
-			if (state == COMPLETE) {
+			if (state === COMPLETE) {
 				b.push({
 					s: 0,
 					w: width
 				});
 			}
-			else if (state != CANCELED){
+			else if (state !== CANCELED){
 				b = file.chunks.map(
 					function(chunk) {
 						if (file.totalSize <= 0) {
@@ -655,7 +668,7 @@ const Tooltip = {
 						ctx.fillStyle = this._createInnerShadowGradient(ctx, cheight, pass.fs);
 					}
 					if (pass.f) {
-						let [f1, f2] = pass.f(bl == 1 ? 2 : bl - i);
+						let [f1, f2] = pass.f(bl === 1 ? 2 : bl - i);
 						ctx.fillStyle = this._createVerticalGradient(ctx, cheight, f1, f2);
 					}
 					this._makeRoundedRectPath(ctx, chunk.s, 0, chunk.w - pass.x + 2, cheight, 3);
@@ -681,7 +694,7 @@ const Tooltip = {
 
 			// draw progress
 			if (file.totalSize > 0) {
-				if (state == PAUSED) {
+				if (state === PAUSED) {
 					ctx.fillStyle = this._createVerticalGradient(ctx, 8, "#e0b400", "#FFCC00");
 				}
 				else {
@@ -691,7 +704,7 @@ const Tooltip = {
 				ctx.fill();
 			}
 			else if (file.isOf(CANCELED | PAUSED)) {
-				if (state == PAUSED) {
+				if (state === PAUSED) {
 					ctx.fillStyle = this._createVerticalGradient(ctx, 8, "#e0b400", "#ffeea8");
 				}
 				else {
@@ -712,7 +725,8 @@ const Tooltip = {
 		}
 	}
 };
-addEventListener('load', function() {
-	removeEventListener('load', arguments.callee, false);
+
+addEventListener('load', function loadUtils() {
+	removeEventListener('load', loadUtils, false);
 	Tooltip.init();
 }, false);

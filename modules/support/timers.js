@@ -18,7 +18,7 @@ function TimerData(owner, time, type, func, ctx) {
 	if (!this.func) {
 		throw new Exception("callback function is null");
 	}
-	if (typeof this.func != 'function') {
+	if (typeof this.func !== 'function') {
 		throw new Exception("callback function is not actually a function");
 	}
 	this.ctx = ctx;
@@ -30,7 +30,7 @@ TimerData.prototype = Object.freeze({
 	toString: function() this.uuid,
 	observe: function(timer) {
 		this.execute();
-		if (this.timer.type == nsITimer.TYPE_ONE_SHOT) {
+		if (this.timer.type === nsITimer.TYPE_ONE_SHOT) {
 			this.owner.killTimer(this.uuid);
 		}
 	},

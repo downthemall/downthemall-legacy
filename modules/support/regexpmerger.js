@@ -26,7 +26,9 @@ function tainted_filter(r) {
  * Filter function - Create an unique array
  * @usage arr.filter(unique_filter, Object.create(null));
  */
-function unique_filter(e) !((e in this) || (this[e] = null));
+function unique_filter(e) {
+	return !((e in this) || (this[e] = null));
+}
 
 /**
  * Return a good prefix, with no bracket mismatches
@@ -41,14 +43,14 @@ function killInvalidBrackets(string) {
 	for (let i = 0, e = string.length; i < e; ++i) {
 		let ch = string[i];
 
-		if (ch == "\\") {
+		if (ch === "\\") {
 			// step over escaping
 			++i;
 			continue;
 		}
 
 		// ()
-		if (ch == '(') {
+		if (ch === '(') {
 			if (!C) {
 				// not in a character class []
 				if (!c) {
@@ -59,7 +61,7 @@ function killInvalidBrackets(string) {
 			}
 			continue;
 		}
-		if (ch == ')') {
+		if (ch === ')') {
 			if (!C) {
 				// not in a character class
 				--c;
@@ -77,14 +79,14 @@ function killInvalidBrackets(string) {
 		}
 
 		// []
-		if (ch == '[') {
+		if (ch === '[') {
 			if (!C && !c) {
 				// last good (nothing open)
 				good = i - 1;
 			}
 			++C;
 		}
-		if (ch == ']') {
+		if (ch === ']') {
 			--C;
 			if (C < 0) {
 				// cannot be valid and negative at the same time
@@ -95,19 +97,19 @@ function killInvalidBrackets(string) {
 				good = i;
 			}
 		}
-		if (ch == "{") {
-			if (good == -1 || good != i - 1) {
+		if (ch === "{") {
+			if (good === -1 || good !== i - 1) {
 				good = i - 2;
 			}
-			else if (good != -1 && string[good] == ")" || string[good] == "]") {
+			else if (good !== -1 && string[good] === ")" || string[good] === "]") {
 				// we don't really have a good position now :p
 				good = -1;
 				for (i = 0; i < e; ++i) {
 					ch = string[i];
-					if (ch == "\\") {
+					if (ch === "\\") {
 						++i;
 					}
-					else if (ch == "(" || ch == "[") {
+					else if (ch === "(" || ch === "[") {
 						break;
 					}
 					++good;
@@ -153,31 +155,31 @@ function splitAlternates(pattern, rv) {
 	for (let i = 0, e = pattern.length; i < e; ++i) {
 		let char = pattern[i];
 
-		if (char == "\\") {
+		if (char === "\\") {
 			cur += char + pattern[++i];
 		}
-		else if (char == "(") {
+		else if (char === "(") {
 			if (!C) {
 				++c;
 			}
 			cur += char;
 		}
-		else if (char == ")") {
+		else if (char === ")") {
 			if (!C) {
 				--c;
 			}
 			cur += char;
 		}
-		else if (char == "[") {
+		else if (char === "[") {
 			++C;
 			cur += char;
 		}
-		else if (char == "]") {
+		else if (char === "]") {
 			--C;
 			cur += char;
 		}
 		else {
-			if (char == "|" && !c && !C) {
+			if (char === "|" && !c && !C) {
 				rv.push(cur);
 				cur = "";
 			}
@@ -200,10 +202,10 @@ function sanitizePrefixTail(prefix) {
 	if (!pl) {
 		return "";
 	}
-	if (pl > 1 && prefix[pl-1] == "\\" && prefix[pl-2] != "\\" ) {
+	if (pl > 1 && prefix[pl-1] === "\\" && prefix[pl-2] !== "\\" ) {
 		return prefix.substr(0, pl-1);
 	}
-	else if (pl == 1 && prefix == "\\") {
+	else if (pl === 1 && prefix === "\\") {
 		return "";
 	}
 	return prefix;
@@ -235,7 +237,7 @@ function largestPrefixGroup(patterns, low, high, level) {
 		let allgood = true;
 
 		for (let e = i + 1; e < high; ++e) {
-			if (heads[i] == heads[e]) {
+			if (heads[i] === heads[e]) {
 				continue;
 			}
 
@@ -304,7 +306,7 @@ function mergePatterns(patterns, low, high, prefix) {
 
 	// if there is an empty tail, then we can omit the whole group
 	let newpattern = "";
-	if (tails.indexOf("") == -1) {
+	if (tails.indexOf("") === -1) {
 		newpattern = tails.join("|");
 	}
 
@@ -376,7 +378,7 @@ function merge(patterns) {
 	}
 
 	let len = patterns.length;
-	if (len == 1) {
+	if (len === 1) {
 		// already merged into a single pattern
 		return merge_finish(patterns, tainted);
 	}

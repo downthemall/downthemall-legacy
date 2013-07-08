@@ -16,16 +16,12 @@ function objToString(obj) {
 	if (!obj) {
 		return null;
 	}
-	if (
-		typeof obj == 'string' ||
-		obj instanceof String
-	) {
+	if (typeof obj === 'string' ||
+		obj instanceof String) {
 		return obj.toString();
 	}
-	if (
-		obj instanceof Ci.nsIURL ||
-		obj instanceof Ci.nsIURI
-	) {
+	if (obj instanceof Ci.nsIURL ||
+		obj instanceof Ci.nsIURI) {
 		return obj.spec;
 	}
 	if (obj.url) {
@@ -40,7 +36,7 @@ function objToUri(obj) {
 	if (obj instanceof Ci.nsIURL || obj instanceof Ci.nsIURI) {
 		return obj;
 	}
-	if (typeof obj == 'string' || obj instanceof String) {
+	if (typeof obj === 'string' || obj instanceof String) {
 		return Services.io.newURI(obj.toString(), null, null);
 	}
 	if (obj.url) {
@@ -77,7 +73,7 @@ function getMostRecentByUrl(url) {
 	let enumerator = Services.wm.getEnumerator(null);
 	while (enumerator.hasMoreElements()) {
 		var win = enumerator.getNext();
-		if (win.location == url) {
+		if (win.location === url) {
 			return win;
 		}
 	}

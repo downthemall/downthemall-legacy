@@ -19,7 +19,7 @@ const _ = (function(global) {
 		"chrome://dta/locale/manager.properties"
 		]);
 	return function() {
-		if (arguments.length == 1) {
+		if (arguments.length === 1) {
 			return bundles.getString(arguments[0]);
 		}
 		return bundles.getFormattedString.apply(bundles, arguments);
@@ -48,7 +48,7 @@ const FilterMatch = {
 	get name() 'filtermatch',
 	getItems: function() {
 		for (let f in FilterManager.enumAll()) {
-			if (f.id == "deffilter-all") {
+			if (f.id === "deffilter-all") {
 				continue;
 			}
 			yield {
@@ -191,7 +191,7 @@ const SizeMatch = {
 		}
 		// combine ranges
 		for (let i = ranges.length - 2; i >= 0; --i) {
-			if (ranges[i].high == ranges[i+1].low) {
+			if (ranges[i].high === ranges[i+1].low) {
 				ranges[i].high = ranges[i+1].high;
 				ranges.splice(i+1,1);
 			}
@@ -210,7 +210,7 @@ const SizeMatch = {
 			return function(size) size > low && size <= high;
 		});
 
-		if (ranges.length == 1) {
+		if (ranges.length === 1) {
 			let rf = ranges.shift();
 			return function(d) rf(d.totalSize);
 		}
@@ -307,10 +307,11 @@ Matcher.prototype = {
 		}
 	},
 	removeMatcher: function(name) {
-		this._matchersLength = filterInSitu(this._matchers, function(m) m.name != name).length;
+		this._matchersLength = filterInSitu(this._matchers, function(m) m.name !== name).length;
 	},
 	get filtering() !!this._matchersLength,
 	filter: function(array) {
+		// jshint loopfunc:true
 		let rv;
 		for (let i = 0, e = this._matchers.length; i < e; ++i) {
 			let m = this._matchers[i];

@@ -1,6 +1,13 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* global _, DTA, $, $$, Utils, Preferences, DefaultDownloadsDirectory, unloadWindow */
+/* global $e, mapInSitu, filterMapInSitu, filterInSitu, mapFilterInSitu, setTimeoutOnlyFun */
+/* global toURI, toURL, showPreferences, openUrl, getLargeIcon */
+/* global Tree, Prefs */
+/* global QUEUED, PAUSED, CANCELED, FINISHING, COMPLETE, RUNNING, SPEED_COUNT, REFRESH_FREQ, MIN_CHUNK_SIZE */
+/* jshint browser:true, latedef:false */
 
 const {CoThreadListWalker} = require("support/cothreads");
 const Prompts = require("prompts");
@@ -24,15 +31,20 @@ const {Chunk, hintChunkBufferSize} = require("manager/chunk");
 const {Connection} = require("manager/connection");
 const {createRenamer} = require("manager/renamer");
 
+/* global Version, AlertService, Decompressor, Verificator, FileExts:true */
 XPCOMUtils.defineLazyGetter(this, "Version", function() require("version"));
 XPCOMUtils.defineLazyGetter(this, "AlertService", function() require("support/alertservice"));
 XPCOMUtils.defineLazyGetter(this, "Decompressor", function() require("manager/decompressor").Decompressor);
 XPCOMUtils.defineLazyGetter(this, "Verificator", function() require("manager/verificator"));
 XPCOMUtils.defineLazyGetter(this, "FileExts", function() new FileExtensionSheet(window));
 
+/* global TextCache_PAUSED, TextCache_QUEUED, TextCache_COMPLETE, TextCache_CANCELED, TextCache_NAS */
+/* global TextCache_UNKNOWN, TextCache_OFFLINE, TextCache_TIMEOUT, TextCache_STARTING, TextCache_DECOMPRESSING */
+/* global TextCache_VERIFYING, TextCache_MOVING */
 addEventListener("load", function load_textCache() {
 	removeEventListener("load", load_textCache, false);
-	const texts = ['paused', 'queued', 'complete', 'canceled', 'nas', 'unknown', 'offline', 'timeout', 'starting', 'decompressing', 'verifying', 'moving'];
+	const texts = ['paused', 'queued', 'complete', 'canceled', 'nas', 'unknown',
+		'offline', 'timeout', 'starting', 'decompressing', 'verifying', 'moving'];
 	for (let i = 0, text; i < texts.length; ++i) {
 		text = texts[i];
 		window["TextCache_" + text.toUpperCase()] = _(text);
@@ -50,10 +62,14 @@ window.addEventListener("unload", dieEarly, false);
 
 var Timers = new TimerManager();
 
-const Dialog_loadDownloads_props = ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'];
+const Dialog_loadDownloads_props =
+	['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression',
+		'fromMetalink', 'speedLimit'];
 function Dialog_loadDownloads_get(down, attr, def) (attr in down) ? down[attr] : (def ? def : '');
 
-const Dialog_serialize_props = ['fileName', 'fileNameFromUser', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'];
+const Dialog_serialize_props =
+	['fileName', 'fileNameFromUser', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName',
+		'compression', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'];
 
 const Dialog = {
 	_observes: [
@@ -110,7 +126,7 @@ const Dialog = {
 
 		// Set tooltip texts for each tb button lacking one (copy label)
 		(function addTooltips() {
-			for (let e of Array.map(document.getElementsByTagName('toolbarbutton'), function(e) e)) {
+			for (let e of document.getElementsByTagName('toolbarbutton')) {
 				if (!e.hasAttribute('tooltiptext')) {
 					e.setAttribute('tooltiptext', e.getAttribute('label'));
 				}
@@ -125,7 +141,7 @@ const Dialog = {
 				e.className += " " + e.id;
 			}
 			for (let e of $$('#popup .action')) {
-				if (e.localName == 'menuseparator') {
+				if (e.localName === 'menuseparator') {
 					tb.appendChild($e('toolbarseparator'));
 					continue;
 				}
@@ -159,8 +175,8 @@ const Dialog = {
 					if (!url) {
 						return;
 					}
-					let isPrivate = event.dataTransfer.mozSourceNode
-						&& PrivateBrowsing.isWindowPrivate(event.dataTransfer.mozSourceNode.ownerDocument.defaultView);
+					let isPrivate = event.dataTransfer.mozSourceNode &&
+						PrivateBrowsing.isWindowPrivate(event.dataTransfer.mozSourceNode.ownerDocument.defaultView);
 					url = Services.io.newURI(url, null, null);
 					let item = {
 						"url": new DTA.URL(DTA.getLinkPrintMetalink(url) || url),
@@ -175,7 +191,11 @@ const Dialog = {
 				}
 			}, true);
 
-			$('tooldonate').addEventListener('click', function(evt) { if (evt.button == 0) Dialog.openDonate() }, false);
+			$('tooldonate').addEventListener('click', function(evt) {
+				if (evt.button === 0) {
+					Dialog.openDonate();
+				}
+			}, false);
 		})();
 
 		this.paneSchedule = $("schedule");
@@ -185,8 +205,8 @@ const Dialog = {
 
 		let tree = $("downloads");
 		Tree.init(tree);
-		addEventListener("unload", function() {
-			removeEventListener("unload", arguments.callee, false);
+		addEventListener("unload", function unloadUnlink() {
+			removeEventListener("unload", unloadUnlink, false);
 			Tree.unlink();
 		}, false);
 		tree.addEventListener("change", function() {
@@ -241,7 +261,7 @@ const Dialog = {
 					defer(
 						function() {
 							let tdb = $('tooldonate').boxObject;
-							let db = de.boxObject
+							let db = de.boxObject;
 							let cw = tdb.width + tdb.x;
 							if (db.width < cw) {
 								window.resizeTo(cw, window.outerHeight);
@@ -269,7 +289,9 @@ const Dialog = {
 				if (seq < nagnext) {
 					return;
 				}
-				for (nagnext = isFinite(nagnext) && nagnext > 0 ? nagnext : 100; seq >= nagnext; nagnext *= 2);
+				for (nagnext = isFinite(nagnext) && nagnext > 0 ? nagnext : 100; seq >= nagnext;) {
+					nagnext *= 2;
+				}
 
 				seq = Math.floor(seq / 100) * 100;
 
@@ -308,7 +330,7 @@ const Dialog = {
 								}
 
 							]
-					)
+					);
 				}, 1000);
 			}
 			catch (ex) {
@@ -396,10 +418,10 @@ const Dialog = {
 		if (!idx) {
 			GlobalProgress.total = dbItem.count;
 		}
-		if (idx % 250 == 0) {
+		if (!(idx % 250)) {
 			GlobalProgress.value = idx;
 		}
-		if (idx % 500 == 0) {
+		if (!(idx % 500)) {
 			this._loading.label = _('loading2', [idx, dbItem.count, Math.floor(idx * 100 / dbItem.count)]);
 		}
 
@@ -477,7 +499,7 @@ const Dialog = {
 				d._maxChunks = down.maxChunks;
 			}
 
-			d.started = d.partialSize != 0;
+			d.started = !!d.partialSize;
 			switch (d.state) {
 				case PAUSED:
 				case QUEUED:
@@ -487,7 +509,7 @@ const Dialog = {
 						d.chunks.push(new Chunk(d, c.start, c.end, c.written));
 					}
 					d.refreshPartialSize();
-					if (d.state == PAUSED) {
+					if (d.state === PAUSED) {
 						d.status = TextCache_PAUSED;
 					}
 					else {
@@ -554,7 +576,7 @@ const Dialog = {
 		window.openDialog(
 			'chrome://dta/content/dta/addurl.xul',
 			'_blank',
-			Version.OS == 'darwin' ? 'chrome,modal,dependent=yes' : 'chrome,centerscreen,dialog=no,dependent=yes'
+			Version.OS === 'darwin' ? 'chrome,modal,dependent=yes' : 'chrome,centerscreen,dialog=no,dependent=yes'
 		);
 	},
 
@@ -563,7 +585,7 @@ const Dialog = {
 			openUrl('http://www.downthemall.net/howto/donate/');
 		}
 		catch(ex) {
-			alert(ex);
+			window.alert(ex);
 		}
 	},
 	openInfo: function(downloads) {
@@ -582,7 +604,7 @@ const Dialog = {
 
 		this._initialized = true;
 		for (let d of Tree.all) {
-			if (d.state == FINISHING) {
+			if (d.state === FINISHING) {
 				this.run(d);
 			}
 		}
@@ -602,7 +624,7 @@ const Dialog = {
 		}
 		let method = mustClear ? 'cancel' : 'pause';
 		Tree.updateAll(function(download) {
-			if (download.state != COMPLETE) {
+			if (download.state !== COMPLETE) {
 				download[method]();
 			}
 			return true;
@@ -625,7 +647,7 @@ const Dialog = {
 	},
 
 	observe: function(subject, topic, data) {
-		if (topic == 'quit-application-requested') {
+		if (topic === 'quit-application-requested') {
 			if (!this._canClose()) {
 				delete this._forceClose;
 				try {
@@ -637,7 +659,7 @@ const Dialog = {
 				}
 			}
 		}
-		else if (topic == "DTA:upgrade") {
+		else if (topic === "DTA:upgrade") {
 			Preferences.setExt("rebootOnce", true);
 			if (!this._canClose()) {
 				delete this._forceClose;
@@ -646,7 +668,7 @@ const Dialog = {
 					cancelQuit.data = true;
 					this._mustReload = true;
 					for (let d of Tree.all) {
-						if (d.state == RUNNING && d.canResumeLater) {
+						if (d.state === RUNNING && d.canResumeLater) {
 							d.pause();
 							d.queue();
 						}
@@ -657,20 +679,20 @@ const Dialog = {
 				}
 			}
 		}
-		else if (topic == 'quit-application-granted') {
+		else if (topic === 'quit-application-granted') {
 			this._forceClose = true;
 			delete this._mustReload;
 		}
-		else if (topic == 'network:offline-status-changed') {
-			this.offline = data == "offline";
+		else if (topic === 'network:offline-status-changed') {
+			this.offline = data === "offline";
 		}
-		else if (topic == 'DTA:filterschanged') {
+		else if (topic === 'DTA:filterschanged') {
 			Tree.assembleMenus();
 		}
-		else if (topic == 'DTA:clearedQueueStore') {
+		else if (topic === 'DTA:clearedQueueStore') {
 			this.reinit(true);
 		}
-		else if (topic == 'DTA:shutdownQueueStore') {
+		else if (topic === 'DTA:shutdownQueueStore') {
 			log(LOG_INFO, "saving running");
 			this.saveRunning();
 		}
@@ -688,7 +710,7 @@ const Dialog = {
 				this._sum += advanced;
 
 				// Calculate estimated time
-				if (advanced != 0 && d.totalSize > 0) {
+				if (advanced !== 0 && d.totalSize > 0) {
 					let remaining = Math.ceil((d.totalSize - d.partialSize) / d.speeds.avg);
 					if (!isFinite(remaining)) {
 						d.status = TextCache_UNKNOWN;
@@ -705,7 +727,7 @@ const Dialog = {
 				}
 			}
 			this._speeds.add(this._sum, now);
-			speed = Utils.formatSpeed(this._speeds.avg);
+			let speed = Utils.formatSpeed(this._speeds.avg);
 			this._maxObservedSpeed = Math.max(this._speeds.avg || this._maxObservedSpeed, this._maxObservedSpeed);
 			for (let e of $('listSpeeds', 'perDownloadSpeedLimitList')) {
 				try {
@@ -718,7 +740,8 @@ const Dialog = {
 			}
 
 			// Refresh status bar
-			this.statusText.label = _("currentdownloadstats", [this.completed, Tree.downloadCount, Tree.rowCount, this._running.length]);
+			this.statusText.label = _("currentdownloadstats",
+				[this.completed, Tree.downloadCount, Tree.rowCount, this._running.length]);
 			if (!this._running.length) {
 				this.statusSpeed.hidden = true;
 			}
@@ -728,7 +751,7 @@ const Dialog = {
 			}
 
 			// Refresh window title
-			if (this._running.length == 1 && this._running[0].totalSize > 0) {
+			if (this._running.length === 1 && this._running[0].totalSize > 0) {
 				if (Tree.filtered) {
 					document.title = _('titlespeedfiltered', [
 						this._running[0].percent,
@@ -780,11 +803,11 @@ const Dialog = {
 					let state = COMPLETE;
 					for (let d of Tree.all) {
 						const dstate = d.state;
-						if (dstate == CANCELED) {
+						if (dstate === CANCELED) {
 							state = CANCELED;
 							break;
 						}
-						if (dstate == PAUSED) {
+						if (dstate === PAUSED) {
 							state = PAUSED;
 							break;
 						}
@@ -845,7 +868,7 @@ const Dialog = {
 
 	_processOfflineChange: function() {
 		let de = $('downloads');
-		if (this.offline == de.hasAttribute('offline')) {
+		if (this.offline === de.hasAttribute('offline')) {
 			return;
 		}
 
@@ -853,7 +876,7 @@ const Dialog = {
 			de.setAttribute('offline', true);
 			$('netstatus').setAttribute('offline', true);
 			for (let d of Tree.all) {
-				if (d.state == RUNNING) {
+				if (d.state === RUNNING) {
 					d.pause();
 					d.queue();
 				}
@@ -879,7 +902,7 @@ const Dialog = {
 					continue;
 				}
 				// checks for timeout
-				if (d.state == RUNNING && (ts - d.timeLastProgress) >= Prefs.timeout * 1000) {
+				if (d.state === RUNNING && (ts - d.timeLastProgress) >= Prefs.timeout * 1000) {
 					if (d.resumable || !d.totalSize || !d.partialSize || Prefs.resumeOnError) {
 						d.pauseAndRetry();
 						d.status = TextCache_TIMEOUT;
@@ -908,7 +931,9 @@ const Dialog = {
 		function _m(e) e.get();
 		function _f(e) !!e;
 		return function() {
-			if (Prefs.autoClearComplete && this._autoClears.length && mapFilterInSitu(this._autoClears, _m, _f).length) {
+			if (Prefs.autoClearComplete &&
+				this._autoClears.length &&
+				mapFilterInSitu(this._autoClears, _m, _f).length) {
 				Tree.remove(this._autoClears);
 				this._autoClears.length = 0;
 			}
@@ -916,10 +941,10 @@ const Dialog = {
 	})(),
 	checkSameName: function(download, path) {
 		for (let runner of this._running) {
-			if (runner == download) {
+			if (runner === download) {
 				continue;
 			}
-			if (runner.destinationFile == path) {
+			if (runner.destinationFile === path) {
 				return true;
 			}
 		}
@@ -967,7 +992,7 @@ const Dialog = {
 				if (!d) {
 					break;
 				}
-				if (d.state != QUEUED) {
+				if (d.state !== QUEUED) {
 					log(LOG_ERROR, "FIXME: scheduler returned unqueued download");
 					continue;
 				}
@@ -987,7 +1012,7 @@ const Dialog = {
 		}
 		download.forced = !!forced;
 		download.status = TextCache_STARTING;
-		if (download.state == FINISHING || (download.partialSize >= download.totalSize && download.totalSize)) {
+		if (download.state === FINISHING || (download.partialSize >= download.totalSize && download.totalSize)) {
 			// we might encounter renaming issues;
 			// but we cannot handle it because we don't know at which stage we crashed
 			download.setState(FINISHING);
@@ -1030,17 +1055,17 @@ const Dialog = {
 	signal: function(download) {
 		download.save();
 		const state = download.state;
-		if (state == QUEUED) {
+		if (state === QUEUED) {
 			Dialog.resetScheduler();
 			return;
 		}
-		if (state == RUNNING) {
+		if (state === RUNNING) {
 			this._wasRunning = true;
 		}
-		else if (Prefs.autoClearComplete && state == COMPLETE) {
+		else if (Prefs.autoClearComplete && state === COMPLETE) {
 			this._autoClears.push(weak(download));
 		}
-		if (!this._initialized || !this._wasRunning || state != COMPLETE) {
+		if (!this._initialized || !this._wasRunning || state !== COMPLETE) {
 			return;
 		}
 		try {
@@ -1059,11 +1084,11 @@ const Dialog = {
 			if (dp) {
 				dp = dp.destinationPath;
 			}
-			if (Prefs.alertingSystem == 1) {
+			if (Prefs.alertingSystem === 1) {
 				AlertService.show(_("suc.title"), _('suc'), function() Utils.launch(dp));
 			}
-			else if (dp && Prefs.alertingSystem == 0) {
-				if (Prompts.confirmYN(window, _('suc'),  _("openfolder")) == 0) {
+			else if (dp && Prefs.alertingSystem === 0) {
+				if (!Prompts.confirmYN(window, _('suc'),  _("openfolder"))) {
 					try {
 						Utils.launch(dp);
 					}
@@ -1081,7 +1106,7 @@ const Dialog = {
 		}
 	},
 	markAutoRetry: function(download) {
-		if (this._autoRetrying.indexOf(download) == -1) {
+		if (!~this._autoRetrying.indexOf(download)) {
 			this._autoRetrying.push(download);
 		}
 	},
@@ -1103,8 +1128,8 @@ const Dialog = {
 		return rv;
 	},
 	_canClose: function() {
-		if (Tree.some(function(d) { return d.started && !d.canResumeLater && d.state == RUNNING; })) {
-			var rv = Prompts.confirmYN(
+		if (Tree.some(function(d) { return d.started && !d.canResumeLater && d.state === RUNNING; })) {
+			let rv = Prompts.confirmYN(
 				window,
 				_("confclose"),
 				_("nonresclose")
@@ -1113,8 +1138,8 @@ const Dialog = {
 				return false;
 			}
 		}
-		if (Tree.some(function(d) d.isPrivate && d.state != COMPLETE)) {
-			var rv = Prompts.confirmYN(
+		if (Tree.some(function(d) d.isPrivate && d.state !== COMPLETE)) {
+			let rv = Prompts.confirmYN(
 				window,
 				_("confclose"),
 				_("privateclose")
@@ -1169,7 +1194,7 @@ const Dialog = {
 					d.pause();
 					d.setState(QUEUED);
 				}
-				else if (d.state == FINISHING) {
+				else if (d.state === FINISHING) {
 					++finishing;
 				}
 				d.shutdown();
@@ -1191,7 +1216,7 @@ const Dialog = {
 		return true;
 	},
 	_cleanTmpDir: function() {
-		if (!Prefs.tempLocation || Preferences.getExt("tempLocation", '') != '') {
+		if (!Prefs.tempLocation || Preferences.getExt("tempLocation", "")) {
 			// cannot perform this action if we don't use a temp file
 			// there might be far too many directories containing far too many
 			// tmpFiles.
@@ -1208,7 +1233,7 @@ const Dialog = {
 		let tmpEnum = Prefs.tempLocation.directoryEntries;
 		let unknown = [];
 		for (let f in new Utils.SimpleIterator(tmpEnum, Ci.nsIFile)) {
-			if (f.leafName.match(/\.dtapart$/) && known.indexOf(f.leafName) == -1) {
+			if (f.leafName.match(/\.dtapart$/) && !~known.indexOf(f.leafName)) {
 				unknown.push(f);
 			}
 		}
@@ -1244,7 +1269,6 @@ const Dialog = {
 		QueueStore.flush();
 		FileExts = null;
 		this.resetScheduler();
-		Dialog = null;
 		if (this._mustReload) {
 			unload("shutdown");
 			try {
@@ -1316,13 +1340,14 @@ const Metalinker = {
 					startDownloads(res.info.start, res.downloads);
 				}
 			}
-			catch (ex) {
-				log(LOG_ERROR, "Metalinker::handleDownload", ex);
-				if (!(ex instanceof Error)) {
-					ex = new Error(_('mlerror', [ex.message ? ex.message : (ex.error ? ex.error : ex.toString())]));
+			catch (e) {
+				log(LOG_ERROR, "Metalinker::handleDownload", e);
+				if (!(e instanceof Error)) {
+					let msg = _('mlerror', [e.message ? e.message : (e.error ? e.error : e.toString())]);
+					AlertService.show(_('mlerrortitle'), msg);
 				}
-				if (ex instanceof Error) {
-					AlertService.show(_('mlerrortitle'), ex.message);
+				else {
+					AlertService.show(_('mlerrortitle'), e.message);
 				}
 			}
 			if (aCallback) {
@@ -1347,10 +1372,10 @@ QueueItem.prototype = {
 		Object.defineProperty(this, "state", {value: nv, configurable: true, enumerable: true});
 	},
 	setState: function(nv) {
-		if (this.state == nv) {
+		if (this.state === nv) {
 			return nv;
 		}
-		if (this.state == RUNNING) {
+		if (this.state === RUNNING) {
 			// remove ourself from inprogresslist
 			Dialog.wasStopped(this);
 			// kill the bucket via it's setter
@@ -1358,7 +1383,7 @@ QueueItem.prototype = {
 		}
 		this.speed = '';
 		this._setStateInternal(nv);
-		if (this.state == RUNNING) {
+		if (this.state === RUNNING) {
 			// set up the bucket
 			this._bucket = new ByteBucket(this.speedLimit, 1.7);
 		}
@@ -1388,11 +1413,11 @@ QueueItem.prototype = {
 	},
 	set speedLimit(nv) {
 		nv = Math.max(nv, -1);
-		if (this._speedLimit == nv) {
+		if (this._speedLimit === nv) {
 			return;
 		}
 		this._speedLimit = nv;
-		if (this.state == RUNNING) {
+		if (this.state === RUNNING) {
 			this._bucket.byteRate = this.speedLimit;
 		}
 		this.save();
@@ -1411,7 +1436,7 @@ QueueItem.prototype = {
 		return this._fileName;
 	},
 	set fileName(nv) {
-		if (this._fileName == nv || this.fileNameFromUser) {
+		if (this._fileName === nv || this.fileNameFromUser) {
 			return nv;
 		}
 		log(LOG_ERROR, "fn is " + this._fileName + " nv: " + nv);
@@ -1423,10 +1448,10 @@ QueueItem.prototype = {
 	},
 	get fileNameAndExtension() {
 		if (!this._fileNameAndExtension) {
-			let name = this.fileName;
-			let ext = Utils.getExtension(name);
+			let fn = this.fileName;
+			let ext = Utils.getExtension(fn);
 			if (ext) {
-				name = name.substring(0, name.length - ext.length - 1);
+				fn = fn.substring(0, fn.length - ext.length - 1);
 
 				if (this.contentType && /htm/.test(this.contentType) && !/htm/.test(ext)) {
 					ext += ".html";
@@ -1442,11 +1467,11 @@ QueueItem.prototype = {
 				}
 			}
 			else {
-				name = this.fileName;
+				fn = this.fileName;
 				ext = '';
 			}
 
-			this._fileNameAndExtension = {name: name, extension: ext };
+			this._fileNameAndExtension = {name: fn, extension: ext };
 		}
 		return this._fileNameAndExtension;
 	},
@@ -1461,15 +1486,15 @@ QueueItem.prototype = {
 			return null;
 		}
 		if (!this._referrerFileNameAndExtension) {
-			let name = Utils.getUsableFileName(this.referrerUrlManager.usable);
-			let ext = Utils.getExtension(name);
+			let fn = Utils.getUsableFileName(this.referrerUrlManager.usable);
+			let ext = Utils.getExtension(fn);
 			if (ext) {
-				name = name.substring(0, name.length - ext.length - 1);
+				fn = fn.substring(0, fn.length - ext.length - 1);
 			}
 			else {
 				ext = '';
 			}
-			this._referrerFileNameAndExtension = {name: name, extension: ext};
+			this._referrerFileNameAndExtension = {name: fn, extension: ext};
 		}
 		return this._referrerFileNameAndExtension;
 	},
@@ -1478,7 +1503,7 @@ QueueItem.prototype = {
 		return this._description;
 	},
 	set description(nv) {
-		if (nv == this._description) {
+		if (nv === this._description) {
 			return nv;
 		}
 		this._description = nv;
@@ -1491,7 +1516,7 @@ QueueItem.prototype = {
 		return this._title;
 	},
 	set title(nv) {
-		if (nv == this._title) {
+		if (nv === this._title) {
 			return this._title;
 		}
 		this._title = nv;
@@ -1505,7 +1530,7 @@ QueueItem.prototype = {
 	},
 	set pathName(nv) {
 		nv = nv.toString();
-		if (this._pathName == nv) {
+		if (this._pathName === nv) {
 			return nv;
 		}
 		this._pathName = nv;
@@ -1519,7 +1544,7 @@ QueueItem.prototype = {
 		return this._mask;
 	},
 	set mask(nv) {
-		if (this._mask == nv) {
+		if (this._mask === nv) {
 			return nv;
 		}
 		this._mask = Utils.removeFinalSlash(Utils.removeLeadingSlash(Utils.normalizeSlashes(nv)));
@@ -1535,7 +1560,7 @@ QueueItem.prototype = {
 		return this._destinationNameFull;
 	},
 	set destinationName(nv) {
-		if (this.destinationNameOverride == nv) {
+		if (this.destinationNameOverride === nv) {
 			return this._destinationNameFull;
 		}
 		this.destinationNameOverride = nv;
@@ -1565,7 +1590,7 @@ QueueItem.prototype = {
 		return this._conflicts;
 	},
 	set conflicts(nv) {
-		if (this._conflicts == nv) {
+		if (this._conflicts === nv) {
 			return nv;
 		}
 		this._conflicts = nv;
@@ -1576,14 +1601,14 @@ QueueItem.prototype = {
 	_tmpFile: null,
 	get tmpFile() {
 		if (!this._tmpFile) {
-			var dest = Prefs.tempLocation
-				? Prefs.tempLocation.clone()
-				: new Instances.LocalFile(this.destinationPath);
-			let name = this.fileName;
-			if (name.length > 60) {
-				name = name.substring(0, 60);
+			var dest = Prefs.tempLocation ?
+				Prefs.tempLocation.clone() :
+				new Instances.LocalFile(this.destinationPath);
+			let fn = this.fileName;
+			if (fn.length > 60) {
+				fn = fn.substring(0, 60);
 			}
-			dest.append(name + "-" + Utils.newUUIDString() + '.dtapart');
+			dest.append(fn + "-" + Utils.newUUIDString() + '.dtapart');
 			this._tmpFile = dest;
 		}
 		return this._tmpFile;
@@ -1593,31 +1618,29 @@ QueueItem.prototype = {
 		return this._hashCollection;
 	},
 	set hashCollection(nv) {
-		if (nv != null && !(nv instanceof DTA.HashCollection)) {
+		if (nv && !(nv instanceof DTA.HashCollection)) {
 			throw new Exception("Not a hash collection");
 		}
 		this._hashCollection = nv;
-		this._prettyHash = this._hashCollection
-			? _('prettyhash', [this._hashCollection.full.type, this._hashCollection.full.sum])
-			: TextCache_NAS;
+		this._prettyHash = this._hashCollection ?
+			_('prettyhash', [this._hashCollection.full.type, this._hashCollection.full.sum]) :
+			TextCache_NAS;
 	},
 	_prettyHash: null,
 	get prettyHash() {
 		return this._prettyHash;
 	},
 
-	is: function(state) this.state == state,
-	isOf: function(states) (this.state & states) != 0,
+	is: function(state) this.state === state,
+	isOf: function(states) (this.state & states) !== 0,
 	save: function() {
 		if (this.deleting) {
 			return false;
 		}
 		const state = this.state;
-		if (
-			(Prefs.removeCompleted && state == COMPLETE)
-			|| (Prefs.removeCanceled && state == CANCELED)
-			|| (Prefs.removeAborted && state == PAUSED)
-		) {
+		if ((Prefs.removeCompleted && state === COMPLETE) ||
+			(Prefs.removeCanceled && state === CANCELED) ||
+			(Prefs.removeAborted && state === PAUSED)) {
 			if (this.dbId) {
 				this.remove();
 			}
@@ -1641,7 +1664,7 @@ QueueItem.prototype = {
 	_contentType: "",
 	get contentType() this._contentType,
 	set contentType(nv) {
-		if (nv == this._contentType) {
+		if (nv === this._contentType) {
 			return;
 		}
 		this._contentType = nv;
@@ -1706,7 +1729,7 @@ QueueItem.prototype = {
 				c.cancelChunk();
 			}
 		}
-		else if (this._maxChunks > this._activeChunks && this.state == RUNNING) {
+		else if (this._maxChunks > this._activeChunks && this.state === RUNNING) {
 			this.resumeDownload();
 
 		}
@@ -1726,7 +1749,8 @@ QueueItem.prototype = {
 	},
 	get iconProp() {
 		if (!this._icon) {
-			this._icon = (this.isPrivate ? "iconic private " : "iconic ") + FileExts.getAtom(this.destinationName, 'metalink' in this).toString();
+			this._icon = (this.isPrivate ? "iconic private " : "iconic ") +
+				FileExts.getAtom(this.destinationName, 'metalink' in this).toString();
 		}
 		return this._icon;
 	},
@@ -1758,7 +1782,7 @@ QueueItem.prototype = {
 		else if (this.totalSize <= 0) {
 			return _('transfered', [Utils.formatBytes(this.partialSize), TextCache_NAS]);
 		}
-		else if (this.state == COMPLETE) {
+		else if (this.state === COMPLETE) {
 			return Utils.formatBytes(this.totalSize);
 		}
 		return _('transfered', [Utils.formatBytes(this.partialSize), Utils.formatBytes(this.totalSize)]);
@@ -1771,7 +1795,7 @@ QueueItem.prototype = {
 		return this._status + (this.autoRetrying ? ' *' : '');
 	},
 	set status(nv) {
-		if (nv != this._status) {
+		if (nv !== this._status) {
 			this._status = nv;
 			this.invalidate();
 		}
@@ -1785,13 +1809,13 @@ QueueItem.prototype = {
 	},
 	get percent() {
 		const state = this.state;
-		if (!this.totalSize && state == RUNNING) {
+		if (!this.totalSize && state === RUNNING) {
 			return TextCache_NAS;
 		}
 		else if (!this.totalSize) {
 			return "0%";
 		}
-		else if (state == COMPLETE) {
+		else if (state === COMPLETE) {
 			return "100%";
 		}
 		return this.progress + "%";
@@ -1855,13 +1879,13 @@ QueueItem.prototype = {
 	},
 
 	moveCompleted: function() {
-		if (this.state == CANCELED) {
+		if (this.state === CANCELED) {
 			return;
 		}
 		ConflictManager.resolve(this, 'continueMoveCompleted');
 	},
 	continueMoveCompleted: function() {
-		if (this.state == CANCELED) {
+		if (this.state === CANCELED) {
 			return;
 		}
 		try {
@@ -1888,17 +1912,17 @@ QueueItem.prototype = {
 			}
 			else {
 				this.status = TextCache_MOVING;
-				function move(self, x) {
+				let move = function(self, x) {
 					asyncMoveFile(self.tmpFile, destination, Prefs.permissions, function (ex) {
 						try {
 							if (ex) {
 								throw new Exception(ex);
 							}
 						}
-						catch (ex) {
+						catch (e) {
 							x = x || 1;
 							if (x > 5) {
-								self.complete(ex);
+								self.complete(e);
 								return;
 							}
 							setTimeoutOnlyFun(function() move(self, ++x), x * 250);
@@ -1906,7 +1930,7 @@ QueueItem.prototype = {
 						}
 						self.complete();
 					});
-				}
+				};
 				destination.append(this.destinationName);
 				move(this);
 			}
@@ -1957,7 +1981,7 @@ QueueItem.prototype = {
 	},
 	verifyHashError: function(mismatches) {
 		let file = this.destinationLocalFile;
-		filterInSitu(mismatches, function(e) e.start != e.end);
+		filterInSitu(mismatches, function(e) e.start !== e.end);
 
 		function deleteFile() {
 			try {
@@ -1973,7 +1997,7 @@ QueueItem.prototype = {
 		function recoverPartials(download) {
 			// merge
 			for (let i = mismatches.length - 1; i > 0; --i) {
-				if (mismatches[i].start == mismatches[i-1].end + 1) {
+				if (mismatches[i].start === mismatches[i-1].end + 1) {
 					mismatches[i-1].end = mismatches[i].end;
 					mismatches.splice(i, 1);
 				}
@@ -1981,13 +2005,13 @@ QueueItem.prototype = {
 			let chunks = [];
 			let next = 0;
 			for (let mismatch of mismatches) {
-				if (next != mismatch.start) {
+				if (next !== mismatch.start) {
 					chunks.push(new Chunk(download, next, mismatch.start - 1, mismatch.start - next));
 				}
 				chunks.push(new Chunk(download, mismatch.start, mismatch.end));
 				next = mismatch.end + 1;
 			}
-			if (next != download.totalSize) {
+			if (next !== download.totalSize) {
 				log(LOG_DEBUG, "Inserting last");
 				chunks.push(new Chunk(download, next, download.totalSize - 1, download.totalSize - next));
 			}
@@ -1998,7 +2022,13 @@ QueueItem.prototype = {
 
 		if (mismatches.length && this.tmpFile.exists()) {
 			// partials
-			let act = Prompts.confirm(window, _('verifyerror.title'), _('verifyerror.partialstext'), _('recover'), _('delete'), _('keep'));
+			let act = Prompts.confirm(
+				window,
+				_('verifyerror.title'),
+				_('verifyerror.partialstext'),
+				_('recover'),
+				_('delete'),
+				_('keep'));
 			switch (act) {
 				case 0: deleteFile(); recoverPartials(this, mismatches); return;
 				case 1: deleteFile(); this.cancel(); return;
@@ -2006,7 +2036,13 @@ QueueItem.prototype = {
 			this.complete();
 		}
 		else {
-			let act = Prompts.confirm(window, _('verifyerror.title'), _('verifyerror.text'), _('retry'), _('delete'), _('keep'));
+			let act = Prompts.confirm(
+				window,
+				_('verifyerror.title'),
+				_('verifyerror.text'),
+				_('retry'),
+				_('delete'),
+				_('keep'));
 			switch (act) {
 				case 0: deleteFile(); this.safeRetry(); return;
 				case 1: deleteFile(); this.cancel(); return;
@@ -2123,15 +2159,15 @@ QueueItem.prototype = {
 				}
 			}
 			this._destinationName = file.leafName;
-			let parent = file.parent;
-			this._destinationPath = parent.path;
+			let pd = file.parent;
+			this._destinationPath = pd.path;
 			this._destinationNameFull = Utils.formatConflictName(
 					this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
 					this.conflicts
 				);
-			parent.append(this.destinationName);
-			this._destinationFile = parent.path;
-			this._destinationLocalFile = parent;
+			pd.append(this.destinationName);
+			this._destinationFile = pd.path;
+			this._destinationLocalFile = pd;
 		}
 		catch(ex) {
 			this._destinationName = this.fileName;
@@ -2169,7 +2205,7 @@ QueueItem.prototype = {
 			// Same save path or same disk (we assume that tmp.avail ==
 			// dst.avail means same disk)
 			// simply moving should succeed
-			if (this.compression && (!tmp || Utils.getFreeDisk(vtmp) == required)) {
+			if (this.compression && (!tmp || Utils.getFreeDisk(vtmp) === required)) {
 				// we cannot know how much space we will consume after
 				// decompressing.
 				// so we assume factor 1.0 for the compressed and factor 1.5 for
@@ -2202,7 +2238,7 @@ QueueItem.prototype = {
 				AlertService.show(title, msg);
 				break;
 			case 0:
-				alert(msg);
+				window.alert(msg);
 				break;
 		}
 	},
@@ -2239,10 +2275,10 @@ QueueItem.prototype = {
 	cancel: function(message) {
 		try {
 			const state = this.state;
-			if (state == COMPLETE) {
+			if (state === COMPLETE) {
 				Dialog.completed--;
 			}
-			else if (state == RUNNING) {
+			else if (state === RUNNING) {
 				if (this.chunks) {
 					// must set state here, already, to avoid confusing the connections
 					this.setState(CANCELED);
@@ -2272,7 +2308,7 @@ QueueItem.prototype = {
 			if (this.deleting) {
 				return;
 			}
-			if (message == "" || !message) {
+			if (!message) {
 				message = _("canceled");
 			}
 
@@ -2326,7 +2362,7 @@ QueueItem.prototype = {
 	prealloc: function(callback) {
 		let file = this.tmpFile;
 
-		if (this.state != RUNNING) {
+		if (this.state !== RUNNING) {
 			return false;
 		}
 
@@ -2339,7 +2375,7 @@ QueueItem.prototype = {
 			return true;
 		}
 
-		if (!file.exists() || this.totalSize != this.size) {
+		if (!file.exists() || this.totalSize !== this.size) {
 			this.createDirectory(file);
 			let pa = Preallocator.prealloc(
 				file,
@@ -2449,7 +2485,7 @@ QueueItem.prototype = {
 		this.status = TextCache_QUEUED;
 	},
 	maybeResumeDownload: function() {
-		if (this.state != RUNNING) {
+		if (this.state !== RUNNING) {
 			return;
 		}
 		this.resumeDownload();
@@ -2495,7 +2531,7 @@ QueueItem.prototype = {
 
 			// we didn't load up anything so let's start the main chunk (which will
 			// grab the info)
-			if (this.chunks.length == 0) {
+			if (!this.chunks.length) {
 				downloadNewChunk(this, 0, 0, true);
 				this.sessionConnections = 0;
 				return false;
@@ -2518,7 +2554,9 @@ QueueItem.prototype = {
 					continue;
 				}
 
-				if (this.chunks.length == 1 && !!Prefs.loadEndFirst && this.chunks[0].remainder > 3 * Prefs.loadEndFirst) {
+				if (this.chunks.length === 1 &&
+					!!Prefs.loadEndFirst &&
+					this.chunks[0].remainder > 3 * Prefs.loadEndFirst) {
 					// we should download the end first!
 					let c = this.chunks[0];
 					let end = c.end;
@@ -2558,7 +2596,7 @@ QueueItem.prototype = {
 	replaceMirrors: function(mirrors) {
 		let restart = this.urlManager.length < 3;
 		this.urlManager.initByArray(mirrors);
-		if (restart && this.resumable && this.state == RUNNING && this.maxChunks > 2) {
+		if (restart && this.resumable && this.state === RUNNING && this.maxChunks > 2) {
 			// stop some chunks and restart them
 			log(LOG_DEBUG, "Stopping some chunks and restarting them after mirrors change");
 			let omc = this.maxChunks;
@@ -2569,8 +2607,10 @@ QueueItem.prototype = {
 		this.save();
 	},
 	dumpScoreboard: function() {
-		return;
-		let scoreboard = '';
+		if (!log.enabled) {
+			return;
+		}
+		let scoreboard = "";
 		let len = this.totalSize.toString().length;
 		for (let [i,c] in Iterator(this.chunks)) {
 			scoreboard += i + ": " + c + "\n";
@@ -2593,7 +2633,7 @@ QueueItem.prototype = {
 		if (this.hashCollection) {
 			rv.hashCollection = this.hashCollection;
 		}
-		if (this.autoRetrying || this.state == RUNNING) {
+		if (this.autoRetrying || this.state === RUNNING) {
 			rv.state = QUEUED;
 		}
 		else {
@@ -2616,7 +2656,7 @@ QueueItem.prototype = {
 		rv.urlManager = this.urlManager;
 		rv.visitors = this.visitors;
 
-		if (!this.resumable && this.state != COMPLETE) {
+		if (!this.resumable && this.state !== COMPLETE) {
 			rv.totalSize = 0;
 		}
 		else {
@@ -2627,17 +2667,18 @@ QueueItem.prototype = {
 		}
 		return rv;
 	}
-}
+};
+
 XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
 	const {LoggedPrompter} = require("support/loggedPrompter");
 	return new LoggedPrompter(window);
 });
 
-var ConflictManager = {
+const ConflictManager = {
 	_items: [],
 	resolve: function(download, reentry) {
 		for (let item of this._items) {
-			if (item.download == download) {
+			if (item.download === download) {
 				log(LOG_DEBUG, "conflict resolution updated to: " + reentry);
 				item.reentry = reentry;
 				return;
@@ -2656,7 +2697,7 @@ var ConflictManager = {
 	_check: function(download) {
 		let dest = download.destinationLocalFile;
 		let sn = false;
-		if (download.state == RUNNING) {
+		if (download.state === RUNNING) {
 			sn = Dialog.checkSameName(download, download.destinationFile);
 		}
 		return dest.exists() || sn;
@@ -2681,7 +2722,7 @@ var ConflictManager = {
 			return;
 		}
 
-		if (Prefs.conflictResolution != 3) {
+		if (Prefs.conflictResolution !== 3) {
 			this._return(Prefs.conflictResolution);
 			return;
 		}
@@ -2719,7 +2760,7 @@ var ConflictManager = {
 		let i = 1;
 		for (;; ++i) {
 			newDest.leafName = Utils.formatConflictName(basename, i);
-			if (!newDest.exists() && (download.state != RUNNING || !Dialog.checkSameName(this, newDest.path))) {
+			if (!newDest.exists() && (download.state !== RUNNING || !Dialog.checkSameName(this, newDest.path))) {
 				break;
 			}
 		}
@@ -2727,10 +2768,10 @@ var ConflictManager = {
 		cur.conflicts = i;
 	},
 	_returnFromDialog: function(option, type) {
-		if (type == 1) {
+		if (type === 1) {
 			this._sessionSetting = option;
 		}
-		if (type == 2) {
+		if (type === 2) {
 			Preferences.setExt('conflictresolution', option);
 		}
 		this._return(option);
@@ -2751,20 +2792,19 @@ var ConflictManager = {
 	}
 };
 
-
 function CustomEvent(download, command) {
 	try {
 		// may I introduce you to a real bastard way of commandline parsing?! :p
 		var uuids = {};
-		function callback(u) {
+		let callback = function (u) {
 			u = u.substr(1, u.length - 2);
-			id = Utils.newUUIDString();
+			let id = Utils.newUUIDString();
 			uuids[id] = u;
 			return id;
-		}
-		function mapper(arg, i) {
-			if (arg == "%f") {
-				if (i == 0) {
+		};
+		let mapper = function(arg, i) {
+			if (arg === "%f") {
+				if (!i) {
 					throw new Error("Will not execute the file itself");
 				}
 				arg = download.destinationFile;
@@ -2773,7 +2813,7 @@ function CustomEvent(download, command) {
 				arg = uuids[arg];
 			}
 			return arg;
-		}
+		};
 		var args = mapInSitu(
 			command
 				.replace(/(["'])(.*?)\1/g, callback)
@@ -2785,7 +2825,7 @@ function CustomEvent(download, command) {
 	}
 	catch (ex) {
 		log(LOG_ERROR, "failed to execute custom event", ex);
-		alert("failed to execute custom event", ex);
+		window.alert("failed to execute custom event", ex);
 	}
 	download.complete();
 }
@@ -2797,12 +2837,28 @@ const startDownloads = (function() {
 		DTA.incrementSeries();
 		return rv;
 	});
-	function next(start, downloads, scroll) {
-		function addItem(e) {
+	let busy = false;
+	let queue = [];
+
+	let next = function (start, downloads, scroll) {
+		busy = true;
+
+		let iNum = 0;
+		let first = null;
+		let g = downloads;
+		if ('length' in downloads) {
+			g = (function() {
+				for (let i of downloads) {
+					yield i;
+				}
+			})();
+		}
+
+		let addItem = function(e) {
 			try {
 				let qi = new QueueItem();
 				let lnk = e.url;
-				if (typeof lnk == 'string') {
+				if (typeof lnk === 'string') {
 					qi.urlManager = new UrlManager([new DTA.URL(Services.io.newURI(lnk, null, null))]);
 				}
 				else if (lnk instanceof UrlManager) {
@@ -2879,7 +2935,9 @@ const startDownloads = (function() {
 				}
 
 				if (!("isPrivate" in e)) {
-					log(LOG_INFO, "A queued item has no isPrivate property. Defaulting to false. Please check the code path for proper PBM support!");
+					log(LOG_INFO,
+							"A queued item has no isPrivate property. Defaulting to false. " +
+							"Please check the code path for proper PBM support!");
 				}
 
 				qi.rebuildDestination();
@@ -2892,16 +2950,7 @@ const startDownloads = (function() {
 			}
 
 			return true;
-		}
-
-		busy = true;
-
-		let iNum = 0;
-		let first = null;
-		let g = downloads;
-		if ('length' in downloads) {
-			g = (i for (i of downloads));
-		}
+		};
 
 		Tree.beginUpdate();
 		QueueStore.beginUpdate();
@@ -2931,9 +2980,7 @@ const startDownloads = (function() {
 			}
 			busy = false;
 		});
-	}
-	let busy = false;
-	let queue = [];
+	};
 
 	return function startDownloads(start, downloads, scroll) {
 		scroll = !(scroll === false);

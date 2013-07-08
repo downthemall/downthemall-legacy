@@ -6,6 +6,16 @@
 const {AddonManager} = requireJSM("resource://gre/modules/AddonManager.jsm");
 const Version = require("version");
 
+/* global profileDir, iconDir */
+lazy(this, "profileDir", function() Services.dirsvc.get("ProfD", Ci.nsIFile));
+lazy(this, "iconDir", function() {
+	let rv  = profileDir.clone();
+	rv.append('icons');
+	rv.append('default');
+	return rv;
+});
+
+
 // exported
 exports.loadWindow = (function() {
 	// xpi version
@@ -15,9 +25,9 @@ exports.loadWindow = (function() {
 		while (entries.hasMore()) {
 			let entry = entries.getNext();
 			try {
-				let name = entry.split(/[/\\]/).pop();
+				let n = entry.split(/[/\\]/).pop();
 				let dst = iconDir.clone();
-				dst.append(name);
+				dst.append(n);
 				jar.extract(entry, dst);
 			}
 			catch (ex) {
@@ -56,7 +66,7 @@ exports.loadWindow = (function() {
 			throw Cr.NS_ERROR_FAILURE;
 		},
 		getFiles: function(prop, persist) {
-			if (prop == "AChromDL") {
+			if (prop === "AChromDL") {
 				this.hasMore = true;
 				return this;
 			}
@@ -71,11 +81,6 @@ exports.loadWindow = (function() {
 			return profileDir.clone();
 		}
 	});
-
-	let profileDir = Services.dirsvc.get("ProfD", Ci.nsIFile);
-	let iconDir = profileDir.clone();
-	iconDir.append('icons');
-	iconDir.append('default');
 
 	// Create icons if not there yet, or if we got a major version update
 	if (!iconDir.exists() || Version.showAbout) {

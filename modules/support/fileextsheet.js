@@ -51,7 +51,7 @@ FileExtensionSheet.prototype = Object.freeze({
 			let rule = 'treechildren::-moz-tree-image(iconic,' +
 				entry.toString() +
 				') { list-style-image: url(' +
-				getIcon('file.' + ext, metalink || ext == 'metalink' || ext == "meta4", this.hidpi ? 32 : 16) +
+				getIcon('file.' + ext, metalink || ext === 'metalink' || ext === "meta4", this.hidpi ? 32 : 16) +
 				') !important; }';
 			this._stylesheet.insertRule(rule, this._stylesheet.cssRules.length);
 			log(LOG_DEBUG, "sheet: " + rule);

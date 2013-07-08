@@ -61,7 +61,7 @@ UrlManager.prototype = {
 			throw new Exception(url + " is not an URL");
 		}
 		for (let i = 0; i < this._urls.length; ++i) {
-			if (this._urls[i].spec == url.spec) {
+			if (this._urls[i].spec === url.spec) {
 				return;
 			}
 		}
@@ -99,16 +99,16 @@ UrlManager.prototype = {
 		}
 	},
 	replace: function(url, newurl) {
-		this._urls = this._urls.map(function(u) u.spec == url.spec ? newurl : u);
+		this._urls = this._urls.map(function(u) u.spec === url.spec ? newurl : u);
 		this._makeGood();
 	},
 	markBad: function um_markBad(url) {
-		if (this.good.length == 1) {
+		if (this.good.length === 1) {
 			// cannot mark the last url bad :p
 			return false;
 		}
 		for (let u of this._urls) {
-			if (u != url) {
+			if (u !== url) {
 				continue;
 			}
 			u.bad = true;

@@ -58,7 +58,7 @@ const Observer = {
 	},
 	openIfQueued: function() {
 		QueueStore.loadItems(function(items) {
-			if (items.some(function(i) i.item.state == QUEUED)) {
+			if (items.some(function(i) i.item.state === QUEUED)) {
 				log(LOG_INFO, "auto-opening");
 				this.openManager();
 			}

@@ -1,6 +1,9 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* global $, _, Utils, DefaultDownloadsDirectory, openUrl */
+/* jshint browser:true */
 
 const hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
 const METALINK_LOGO = hidpi ? 'chrome://dta/skin/common/metalink64.png' : 'chrome://dta/skin/common/metalink32.png';
@@ -10,8 +13,8 @@ const Version = require("version");
 const MetaSelect = {
 	_insertDownload: function(d) {
 		try {
-			if (d.lang && d.lang.search(/^\w{2}(?:-\w{2})?$/) != -1) {
-				d.selected = Version.LOCALE.slice(0,2) == d.lang.slice(0,2);
+			if (d.lang && ~d.lang.search(/^\w{2}(?:-\w{2})?$/)) {
+				d.selected = Version.LOCALE.slice(0, 2) === d.lang.slice(0, 2);
 			}
 			let e = document.createElement('richlistitem');
 			e.setAttribute("class", "item");
@@ -41,10 +44,10 @@ const MetaSelect = {
 			'logo': null,
 			'publisher': null,
 			'license': null
-		}
+		};
 		try {
 			let oi = window.arguments[1];
-			for (x in info) {
+			for (let x in info) {
 				if (x in oi && oi[x]) {
 					info[x] = oi[x];
 				}
@@ -67,7 +70,7 @@ const MetaSelect = {
 				let h = logo.naturalHeight;
 				let d = Math.max(canvas.width, w, h);
 
-				if (d != canvas.width) {
+				if (d !== canvas.width) {
 					ctx.scale(canvas.width / d, canvas.height / d);
 				}
 
@@ -149,7 +152,7 @@ const MetaSelect = {
 			return false;
 		}
 		window.arguments[1].start = start;
-		self.close();
+		close();
 		if (window.arguments[2]) {
 			window.arguments[2]();
 		}
@@ -163,7 +166,7 @@ const MetaSelect = {
 			},
 			this
 		);
-		self.close();
+		close();
 		if (window.arguments[2]) {
 			window.arguments[2]();
 		}
@@ -176,13 +179,13 @@ const MetaSelect = {
 		let f;
 		switch (type) {
 		case 'all':
-			f = function(node) { return true; }
+			f = function(node) { return true; };
 		break;
 		case 'none':
-			f = function(node) { return false; }
+			f = function(node) { return false; };
 		break;
 		case 'invert':
-			f = function(node) { return !node.checked; }
+			f = function(node) { return !node.checked; };
 		break;
 		default:
 		return;

@@ -140,11 +140,11 @@ let globalConnections = -1;
 
 function BaseScheduler() {}
 BaseScheduler.prototype = Object.freeze({
-	_queuedFilter: function(e) e.state == QUEUED,
+	_queuedFilter: function(e) e.state === QUEUED,
 	next: function() {
 		for (let d; this._schedule.length;) {
 			d = this._schedule.shift();
-			if (d.state != QUEUED) {
+			if (d.state !== QUEUED) {
 				continue;
 			}
 			return d;
@@ -171,7 +171,7 @@ function FastScheduler(downloads, running) {
 	this._downloads = [];
 	for (let i = 0, e = downloads.length; i < e; ++i) {
 		let d = downloads[i];
-		if (d.state == QUEUED) {
+		if (d.state === QUEUED) {
 			this._downloads.push(d);
 		}
 	}
@@ -220,7 +220,7 @@ FastScheduler.prototype = Object.freeze({
 		for (i = 0, e = this._downloads.length; i < e; ++i) {
 			d = this._downloads[i];
 
-			if (!d || d.state != QUEUED) {
+			if (!d || d.state !== QUEUED) {
 				continue;
 			}
 			host = d.urlManager.domain;
@@ -253,7 +253,7 @@ function FairScheduler(downloads) {
 	// set up our internal state
 	for (let i = 0, e = downloads.length, d, host; i < e; ++i) {
 		d = downloads[i];
-		if (d.state != QUEUED) {
+		if (d.state !== QUEUED) {
 			continue;
 		}
 		host = d.urlManager.domain;
@@ -298,7 +298,7 @@ FairScheduler.prototype = Object.freeze({
 		if (e) {
 			while (e.length) {
 				d = e.shift();
-				if (d && d.state == QUEUED) {
+				if (d && d.state === QUEUED) {
 					break;
 				}
 				d = null;
@@ -360,7 +360,7 @@ function DirScheduler(downloads) {
 	// set up our internal state
 	for (let i = 0, e = downloads.length, d, dir; i < e; ++i) {
 		d = downloads[i];
-		if (d.state != QUEUED) {
+		if (d.state !== QUEUED) {
 			continue;
 		}
 		dir = d.destinationPath;
@@ -405,7 +405,7 @@ DirScheduler.prototype = Object.freeze({
 		if (e) {
 			while (e.length) {
 				d = e.pop();
-				if (d.state == QUEUED) {
+				if (d.state === QUEUED) {
 					break;
 				}
 				d = null;

@@ -53,7 +53,7 @@ function merge_regs(regs) {
  */
 function consolidateRegs(regs) {
 	regs = regs;
-	if (!regs || regs.length == 1) {
+	if (!regs || regs.length === 1) {
 		return regs;
 	}
 	let nc = [];
@@ -99,7 +99,7 @@ Filter.prototype = {
 		return this._label;
 	},
 	set label(value) {
-		if (this._label == value) {
+		if (this._label === value) {
 			return;
 		}
 		this._label = value;
@@ -111,14 +111,14 @@ Filter.prototype = {
 		return this._expr;
 	},
 	set expression(value) {
-		if (this._expr == value) {
+		if (this._expr === value) {
 			return;
 		}
 		this._expr = value;
 		this._regs = [];
 		this._makeRegs(this._expr);
 		this._regs = consolidateRegs(this._regs);
-		if (this._regs.length == 1) {
+		if (this._regs.length === 1) {
 			let r = this._regs[0];
 			this.match = function(str) {
 				if (!str) {
@@ -137,7 +137,7 @@ Filter.prototype = {
 		str = str.trim();
 
 		// first of all: check if we are are a regexp.
-		if (str.length > 2 && str[0] == '/') {
+		if (str.length > 2 && str[0] === '/') {
 			try {
 				var m = str.match(/^\/(.+?)\/(i)?$/);
 				if (!m) {
@@ -180,7 +180,7 @@ Filter.prototype = {
 		return this._active;
 	},
 	set active(value) {
-		if (this.active == !!value) {
+		if (this.active === !!value) {
 			return;
 		}
 		this._active = !!value;
@@ -192,7 +192,7 @@ Filter.prototype = {
 		return this._type;
 	},
 	set type(t) {
-		if (this._type == t) {
+		if (this._type === t) {
 			return;
 		}
 		this._type = t;
@@ -227,7 +227,7 @@ Filter.prototype = {
 
 		this._active = Preferences.get(this.pref('active'));
 		this._type = Preferences.get(this.pref('type'));
-		this._defFilter = this._id.search(/deffilter/) != -1;
+		this._defFilter = this._id.search(/deffilter/) !== -1;
 		if (this._defFilter) {
 			let ext = Preferences.get(this.pref('icon'));
 			if (ext) {
@@ -362,7 +362,7 @@ FilterManagerImpl.prototype = {
 		// hmmm. since we use uuids for the filters we've to enumerate the whole branch.
 		for (let pref of Preferences.getChildren(PREF_FILTERS_BASE)) {
 			// we test for label (as we get all the other props as well)
-			if (pref.search(/\.label$/) == -1) {
+			if (pref.search(/\.label$/) === -1) {
 				continue;
 			}
 			// cut of the label part to get the actual name
@@ -429,7 +429,7 @@ FilterManagerImpl.prototype = {
 		let regs = consolidateRegs(flatten(
 			filters.map(function(f) f._regs)
 		));
-		if (regs.length == 1) {
+		if (regs.length === 1) {
 			regs = regs[0];
 			return function(test) {
 				test = test.toString();

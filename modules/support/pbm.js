@@ -61,7 +61,7 @@ function registerPrivatePurger(fn) {
 	purgeObserver.obsFns.push(fn);
 }
 function unregisterPrivatePurger(fn) {
-	filterInSitu(purgeObserver.obsFns, function(e) e != fn);
+	filterInSitu(purgeObserver.obsFns, function(e) e !== fn);
 }
 
 Object.defineProperties(exports, {

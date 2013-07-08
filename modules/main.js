@@ -71,7 +71,8 @@ MetalinkInterceptModule.prototype = Object.freeze({
 		Ci.nsIRequestObserver
 	]),
 	xpcom_categories: ["net-content-sniffers", "content-sniffing-services", "@mozilla.org/streamconv;1"],
-	testMetaDoc: /^\s*<\?xml(?:.|\r|\n)*?xmlns(?::.+?)?=('|")(?:http:\/\/www\.metalinker\.org\/|urn:ietf:params:xml:ns:metalink)\1/im,
+	testMetaDoc:
+		/^\s*<\?xml(?:.|\r|\n)*?xmlns(?::.+?)?=('|")(?:http:\/\/www\.metalinker\.org\/|urn:ietf:params:xml:ns:metalink)\1/im,
 
 	getMIMETypeFromContent: function(req, data, length) {
 		data = String.fromCharCode.apply(null, data);
@@ -126,7 +127,7 @@ MetalinkInterceptModule.prototype = Object.freeze({
 				}
 				if (!res.downloads.length) {
 					log(LOG_ERROR, "no downloads");
-					throw new Error(_("ml.nodownloads"));
+					throw new Error("ml.nodownloads");
 				}
 				let window = Mediator.getMostRecent();
 				window.openDialog(

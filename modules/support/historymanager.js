@@ -41,10 +41,9 @@ const BaseHistory = {
 			if (values[0] === value) {
 				return;
 			}
-			values = values.filter(function(e) e != value);
+			values = values.filter(function(e) e !== value);
 			if (once && values.length > 0) {
-				let top = values.shift();
-				values.unshift(top, value);
+				values.unshift(values.shift(), value);
 			}
 			else {
 				values.unshift(value);
