@@ -1267,7 +1267,7 @@ const Dialog = {
 		}
 		Tree.clear();
 		QueueStore.flush();
-		FileExts = null;
+		delete window.FileExts;
 		this.resetScheduler();
 		if (this._mustReload) {
 			unload("shutdown");
