@@ -415,11 +415,9 @@ exports.load = function load(window, outerEvent) {
 	let _selector = null;
 
 	let _notify = function (title, message, priority, mustAlert, timeout) {
-		if ('PopupNotifications' in window) {
-			_notify = function(title, message, priority, mustAlert, timeout) {
-				if (!Preferences.getExt("notification", true)) {
-					return;
-				}
+		switch (Preferences.getExt("notification2", 1)) {
+		case 1:
+			if ('PopupNotifications' in window) {
 				try {
 					timeout = timeout || 2500;
 					let notification = window.PopupNotifications.show(
@@ -434,17 +432,22 @@ exports.load = function load(window, outerEvent) {
 					setTimeoutOnlyFun(function() {
 						window.PopupNotifications.remove(notification);
 					}, timeout);
+					return;
 				}
 				catch (ex) {
-					window.alert(ex);
 					// no op
 				}
-			};
+				return;
+			}
+			// fall through in case we got not doorhangers
+		case 2:
+			require("support/alertservice")
+				.show("DownThemAll!", message, null, "chrome://dtaicon/content/icon64.png");
+			return;
+		default:
+			// no notification
+			return;
 		}
-		else {
-			_notify = function() {};
-		}
-		return _notify(title, message, priority, mustAlert, timeout);
 	};
 
 	function notifyError(title, message) _notify(title, message, 'PRIORITY_CRITICAL_HIGH', true, 1500);
@@ -781,7 +784,7 @@ exports.load = function load(window, outerEvent) {
 			let _n = null;
 			if ('PopupNotifications' in window) {
 				return (notifyProgress = function(message) {
-					if (!Preferences.getExt("notification", true)) {
+					if (!Preferences.getExt("notification2", 1) !== 1) {
 						return;
 					}
 					if (!message && _n) {

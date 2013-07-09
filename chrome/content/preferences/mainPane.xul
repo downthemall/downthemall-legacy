@@ -50,7 +50,7 @@
 				<menulist preference="dtaalert" readonly="true" id="menualert">
 					<menupopup>
 						<menuitem id="alert1" label="&mainpane.alertbox.label;" value="0" />
-						<menuitem id="alert2" label="&mainpane.alertnotifications.label;" value="1" />
+						<menuitem id="alert2" label="&mainpane.alertnotifications2.label;" value="1" />
 						<menuitem id="alert3" label="&mainpane.alertnone.label;" value="2" />
 					</menupopup>
 				</menulist>

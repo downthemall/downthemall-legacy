@@ -49,7 +49,7 @@ catch (ex) {
 	// no-op
 }
 
-exports.show = function alertservice_show(title, msg, callback) {
+exports.show = function alertservice_show(title, msg, callback, icon) {
 	if (!exports.available) {
 		throw new Exception("Alerting Service not available on this platform!");
 	}
@@ -67,7 +67,7 @@ exports.show = function alertservice_show(title, msg, callback) {
 	}
 	try {
 		service.showAlertNotification(
-			"chrome://dta/skin/common/alert.png",
+			icon || "chrome://dta/skin/common/alert.png",
 			title,
 			msg,
 			clickable,
