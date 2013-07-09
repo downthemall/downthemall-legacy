@@ -1001,18 +1001,13 @@ const Tree = {
 		try {
 			QueueStore.beginUpdate();
 			var removing = [];
-			let delta = this._downloads.length, last = 0;
-			for (let i = delta - 1; i > -1; --i) {
-				let d = this._downloads[i];
+			for (let d of this._downloads) {
 				if (d.state !== state) {
 					continue;
 				}
 				if (onlyGone && d.destinationLocalFile.exists()) {
 					continue;
 				}
-				this._downloads.splice(d.position, 1);
-				this._box.rowCountChanged(d.position, -1);
-				last = Math.max(d.position, last);
 				removing.push(d);
 			}
 			if (removing.length) {
