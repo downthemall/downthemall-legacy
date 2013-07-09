@@ -61,7 +61,7 @@ pref("extensions.dta.serverlimit.connectionscheduler", 'fast');
 pref("extensions.dta.exposeInUA", false);
 pref("extensions.dta.sparsefiles", false);
 pref("extensions.dta.autosegments", true);
-pref("extensions.dta.notification", true);
+pref("extensions.dta.notification2", 2);
 // Non-customizable-toolbar specific
 pref("extensions.dta.tb.buttons", "1,1,0");
 

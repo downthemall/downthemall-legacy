@@ -26,7 +26,7 @@
 <!ENTITY mainpane.alert.caption "When downloads are complete:">
 <!ENTITY mainpane.alert.label "Alert me:">
 <!ENTITY mainpane.alertbox.label "Using Alert Boxes">
-<!ENTITY mainpane.alertnotifications.label "Using Slide Notifications">
+<!ENTITY mainpane.alertnotifications2.label "Using Desktop Notifications">
 <!ENTITY mainpane.alertnone.label "Don't Alert Me">
 <!ENTITY mainpane.sounddone.label "Play a sound when all downloads are complete">
 <!ENTITY mainpane.closedta.label "Close DownThemAll when downloads are complete">
@@ -127,3 +127,4 @@
 <!ENTITY uipane.notification.label "When adding downloads with OneClick, show:">
 <!ENTITY uipane.notification.nonotification.radio "No notification">
 <!ENTITY uipane.notification.doorhangernotification.radio "Doorhanger">
+<!ENTITY uipane.notification.desktopnotification.radio "Desktop notification">
