@@ -23,7 +23,13 @@ Observer.prototype = Object.freeze({
 			o.clear();
 		}
 		this.observers.clear();
-		Services.obs.removeObserver(this, TOPIC_SHUTDOWN);
+		try {
+			// might already be removed
+			Services.obs.removeObserver(this, TOPIC_SHUTDOWN);
+		}
+		catch (ex) {
+			// no op
+		}
 	},
 
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
