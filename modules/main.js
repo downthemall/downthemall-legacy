@@ -449,7 +449,7 @@ function registerOverlays() {
 						registerObserver();
 						return;
 					}
-					if (Version.showAbout === true) {
+					if (Version.showAbout) {
 						openAbout();
 						return;
 					}
