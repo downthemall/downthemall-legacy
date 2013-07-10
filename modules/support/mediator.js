@@ -73,7 +73,7 @@ function getMostRecentByUrl(url) {
 	let enumerator = Services.wm.getEnumerator(null);
 	while (enumerator.hasMoreElements()) {
 		var win = enumerator.getNext();
-		if (win.location === url) {
+		if (win.location.toString() === url) {
 			return win;
 		}
 	}

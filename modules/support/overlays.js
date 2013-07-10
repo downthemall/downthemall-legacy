@@ -72,7 +72,7 @@ exports.watchWindows = function watchWindows(location, callback) {
 	while (windows.hasMoreElements()) {
 		// Only run the watcher immediately if the browser is completely loaded
 		let w = windows.getNext();
-		if (w.document.readyState === "complete" && w.location === location) {
+		if (w.document.readyState === "complete" && w.location.toString() === location) {
 			watcher(w);
 		}
 	}
@@ -83,14 +83,14 @@ const overlayCache = new Map();
  */
 exports.registerOverlay = function registerOverlay(src, location, callback) {
 	function inject(xul, window, document) {
-    // jshint loopfunc:true
+		// jshint loopfunc:true
 
 		function $(id) {
-      return document.getElementById(id);
-    }
+			return document.getElementById(id);
+		}
 		function $$(q) {
-      return document.querySelector(q);
-    }
+			return document.querySelector(q);
+		}
 
 		// loadOverlay for the poor
 		function addNode(target, node) {
