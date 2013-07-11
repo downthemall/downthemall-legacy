@@ -24,11 +24,11 @@ pref("extensions.dta.sounds.error", false);
 pref("extensions.dta.settime", true);
 pref("extensions.dta.showtooltip", true);
 pref("extensions.dta.renaming.default", JSON.stringify([
-	"*name*.ext", "*num*_*name*.*ext", "*url*-*name*.*ext*",
+	"*name*.*ext*", "*num*_*name*.*ext*", "*url*-*name*.*ext*",
 	"*name* (*text*).*ext*", "*name* (*hh*-*mm*).*ext*"
 	]));
 pref("extensions.dta.filter.default", JSON.stringify([
-	"", "/(.mp3)$/", "/(.(html|htm|rtf|doc|pdf))$/",
+	"", "/\\.mp3$/", "/\\.(html|htm|rtf|doc|pdf)$/",
 	"http://www.website.com/subdir/*.*",
 	"http://www.website.com/subdir/pre*.???",
 	"*.z??, *.css, *.html"
