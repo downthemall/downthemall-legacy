@@ -447,6 +447,8 @@ const Tooltip = {
 			else {
 				this.speedCurrent.value = this.speedAverage.value = _('nal');
 			}
+			this.speedAverage.setAttribute("tooltiptext", this.speedAverage.value);
+			this.speedCurrent.setAttribute("tooltiptext", this.speedCurrent.value);
 
 			this.infoSize.value = file.dimensionString;
 			this.timeRemaining.value = file.status;
@@ -457,6 +459,8 @@ const Tooltip = {
 				this.timeElapsed.value = _('nal');
 			}
 			this.infoPercent.value = file.percent;
+			this.timeRemaining.setAttribute("tooltiptext", this.timeRemaining.value);
+			this.timeElapsed.setAttribute("tooltiptext", this.timeElapsed.value);
 		}
 		catch (ex) {
 			log(LOG_ERROR, "Tooltip.updateMetrics: ", ex);

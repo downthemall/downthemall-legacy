@@ -298,6 +298,12 @@ tooltip textbox.plain {
 #canvasGrid label[id] {
 	font-weight: bold;
 }
+#canvasGrid column {
+	max-width: 12em;
+}
+#canvasGrid column.col-value {
+	min-width: 8em;
+}
 #infoPercent {
 	text-align: center;
 	margin: 0;
