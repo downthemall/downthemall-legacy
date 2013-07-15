@@ -50,11 +50,11 @@ var moveFile = (function() {
 					if (size == -1) {
 						throw (alreadyWritten ? ERROR_READ : ERROR_SPLICE);
 					}
-					else if (!size) {
+					else if (size == 0) {
 						break;
 					}
 					let written = splice(pread, null, fdd, null, size, !(size - BUFSIZE) ? 0 : SPLICE_F_MORE);
-					if (!(written - size)) {
+					if ((written - size) != 0) {
 						throw (alreadyWritten ? ERROR_WRITE : ERROR_SPLICE);
 					}
 				}
@@ -70,11 +70,11 @@ var moveFile = (function() {
 				if (size == -1) {
 					throw ERROR_READ;
 				}
-				else if (!size) {
+				else if (size == 0) {
 					break; // done
 				}
 				let written = write(fdd, BUFFER, size);
-				if (!(written - size)) {
+				if ((written - size) != 0) {
 					throw ERROR_WRITE;
 				}
 			}
