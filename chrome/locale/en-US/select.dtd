@@ -3,7 +3,7 @@
 <!ENTITY filters.caption "Filters">
 <!ENTITY additional.caption "Fast Filtering">
 <!ENTITY additional.tip "Textual filter: you can set multiple textual filters at the same time using a comma.">
-<!ENTITY filter.tip "Type your textual filters here! (some examples on the dropdown)">
+<!ENTITY filter.tip "Type your textual filters here! (some examples in the dropdown)">
 
 <!ENTITY menu.check.label "Check Selected Items">
 <!ENTITY menu.uncheck.label "Uncheck Selected Items">
