@@ -2457,13 +2457,13 @@ QueueItem.prototype = {
 	pauseAndRetry: function() {
 		this.pause();
 		this.resumable = true;
-		this.save();
 
 		if (Prefs.autoRetryInterval && !(Prefs.maxAutoRetries && Prefs.maxAutoRetries <= this._autoRetries)) {
 			Dialog.markAutoRetry(this);
 			this._autoRetryTime = Utils.getTimestamp();
 			log(LOG_INFO, "marked auto-retry: " + this);
 		}
+		this.save();
 	},
 	autoRetry: function() {
 		if (!this.autoRetrying || Utils.getTimestamp() - (Prefs.autoRetryInterval * 1000) < this._autoRetryTime) {
