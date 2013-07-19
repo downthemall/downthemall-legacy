@@ -83,7 +83,7 @@
 							</hbox>
 						</row>
 						<row align="center">
-							<label control="renaming" value="&mask2.label;: " />
+							<label control="renaming" value="&mask3.label;: " />
 							<hbox>
 								<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;" />
 								<maskbutton id="mask" />

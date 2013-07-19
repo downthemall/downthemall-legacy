@@ -4,7 +4,7 @@
 <!ENTITY directory.caption "Datein speichern in:">
 <!ENTITY mask.once.label "Tags nur dieses mal benutzen">
 <!ENTITY mask.tip "Ausgewählte Dateien werden nach diesem Umbenennungs-Tags gespeichert und umbenannt">
-<!ENTITY mask2.label "Umbenennungs-Tags">
+<!ENTITY mask3.label "Maske">
 <!ENTITY mirrormanager.tip "Spiegelserver verwalten">
 <!ENTITY mirrors.value "Spiegelserver:">
 

@@ -106,7 +106,7 @@
 				</hbox>
 			</row>
 			<row align="center">
-				<label control="renaming" id="infoDestTitle">&mask2.label;:</label>
+				<label control="renaming" id="infoDestTitle">&mask3.label;:</label>
 				<vbox>
 					<hbox>
 						<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>

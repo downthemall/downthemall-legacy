@@ -99,7 +99,7 @@
 			<menuitem class="menuitem-iconic" id="muncheck" label="&menu.uncheck.label;" command="cmdUncheck" />
 			<menuitem class="menuitem-iconic" id="mtoggle" label="&menu.toggle.label;" command="cmdToggle" />
 			<menuseparator id="msep1" />
-			<menuitem class="menuitem-iconic" id="mrenaming" label="&mask2.label;" command="cmdStartEditMask" />
+			<menuitem class="menuitem-iconic" id="mrenaming" label="&mask3.label;" command="cmdStartEditMask" />
 			<menuseparator id="msep2" />
 			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" command="cmdSelectAll" key="kSelectAll" />
 			<menuitem id="selectfiltered" class="menuitem-iconic" label="&selectfiltered.label;" command="cmdSelectFiltered" key="kSelectFiltered" />
@@ -111,7 +111,7 @@
 		</menupopup>
 		<panel id="maskeditor">
 			<groupbox orient="horizontal">
-				<caption label="&mask2.label;:" />
+				<caption label="&mask3.label;:" />
 				<saveddropdown id="maskeditor-selector" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
 				<maskbutton/>
 			</groupbox>
@@ -148,7 +148,7 @@
 					<splitter class="tree-splitter"/>
 					<treecol id="colDesc" label="&header.desc.label;" flex="9" persist="width hidden" />
 					<splitter class="tree-splitter"/>
-					<treecol id="colMask" label="&mask2.label;" flex="5" persist="width hidden"/>
+					<treecol id="colMask" label="&mask3.label;" flex="5" persist="width hidden"/>
 				</treecols>
 
 				<treechildren/>
@@ -164,7 +164,7 @@
 				</hbox>
 			</vbox>
 			<vbox id="renamingbox">
-				<caption label="&mask2.label;:" />
+				<caption label="&mask3.label;:" />
 				<hbox>
 					<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
 					<maskbutton/>
