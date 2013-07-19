@@ -65,7 +65,7 @@
 
 	<grid onclick="event.stopPropagation();">
 		<columns>
-			<column flex="1"/>
+			<column/>
 			<column flex="1"/>
 		</columns>
 		<rows>
