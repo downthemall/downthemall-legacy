@@ -2,6 +2,7 @@
 <!ENTITY checksum.value "Prüfsumme (Hash):">
 <!ENTITY description.value "Beschreibung:">
 <!ENTITY directory.caption "Datein speichern in:">
+<!ENTITY directory.placeholder "Verzeichnis eingeben oder auswählen">
 <!ENTITY mask.once.label "Tags nur dieses mal benutzen">
 <!ENTITY mask.tip "Ausgewählte Dateien werden nach diesem Umbenennungs-Tags gespeichert und umbenannt">
 <!ENTITY mask3.label "Maske">
@@ -9,8 +10,13 @@
 <!ENTITY mirrors.value "Spiegelserver:">
 
 <!ENTITY options.label "Einstellungen">
+<!ENTITY override.filename.placeholder "Neuen Dateinamen eingeben">
+<!ENTITY override.filename.tip "Neuen Dateinamen eingeben, oder leer lassen für automatischen Namen">
+<!ENTITY override.filename.value "Neuer Dateiname">
 <!ENTITY queue.key "p" >
 <!ENTITY queue.label "Pausiert hinzufügen">
+<!ENTITY referrer.placeholder "URI der verweisenden Seite">
+<!ENTITY referrer.tip "URI der verweisenden Seite eingeben oder leer lassen">
 <!ENTITY referrer.value "Verweisende Seite:">
 
 <!ENTITY selectall.label "Alles auswählen">
@@ -18,5 +24,6 @@
 <!ENTITY selectnone.label "Nichts auswählen">
 <!ENTITY start.key "s" >
 <!ENTITY start.label "Start!">
+<!ENTITY url.placeholder "Download URI eingeben">
 
 <!ENTITY url.value "Download">
