@@ -48,12 +48,15 @@
 <!ENTITY remainingTitle.value "Verbleibend:">
 <!ENTITY removeAll.label "Alles entfernen">
 <!ENTITY removeDupes.label "Doppelte Downloads entfernen">
+<!ENTITY removeFailed.label "Fehlgeschlagene entfernen">
 <!ENTITY removeGone.label "Gelöschte Dateien entfernen">
+<!ENTITY removePaused.label "Pausierte entfernen">
 <!ENTITY removechunk.label "Ein Segment weniger">
 <!ENTITY removecompleted.label "Vollständige Downloads entfernen">
 <!ENTITY removehost.label "Downloads dieser Domäne">
 <!ENTITY removemenu.label "Downloads entfernen">
 <!ENTITY removeselected.label "Auswahl entfernen">
+<!ENTITY rename.label "Datei umbenennen">
 
 <!ENTITY restore.label "Wiederherstellen">
 <!ENTITY resume.label "Fortsetzen">

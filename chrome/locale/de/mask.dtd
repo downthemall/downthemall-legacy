@@ -21,6 +21,7 @@
 <!ENTITY mask.referdirs "Referrer-Unterverzeichnisse">
 <!ENTITY mask.referext "Referrer-Erweiterung">
 <!ENTITY mask.refername "Referrer-Dateiname">
+<!ENTITY mask.referqstring "Referrer Querystring">
 <!ENTITY mask.ss "Sekunden">
 <!ENTITY mask.subdirs "URL-Unterverzeichnisse">
 <!ENTITY mask.tags "Umbenennungs-Tags">

@@ -42,7 +42,7 @@
 <!ENTITY mainpane.alert.label "Hinweis:">
 <!ENTITY mainpane.alertbox.label "Hinweisfenster einblenden">
 <!ENTITY mainpane.alertnone.label "Keine Benachrichtigung anzeigen">
-<!ENTITY mainpane.alertnotifications.label "Benachrichtigungsanzeige verwenden">
+<!ENTITY mainpane.alertnotifications2.label "Desktop-Benachrichtungen benutzen">
 <!ENTITY mainpane.ask.label "Nachfragen">
 <!ENTITY mainpane.closedta.label "DownThemAll! schließen, wenn alle Downloads abgeschlossen sind">
 <!ENTITY mainpane.confirmremove2.label "Entfernen von Downloads bestätigen">
@@ -78,10 +78,10 @@
 <!ENTITY privacypane.removecompleted2.label "Vollständige Downloads entfernen">
 <!ENTITY privacypane.reveallog.label "Datei anzeigen">
 <!ENTITY privacypane.showlog.label "Protokoll anzeigen">
+<!ENTITY schedpane.enable.label "Zeitplan aktivieren">
 <!ENTITY schedpane.end.label "und:">
 
 <!ENTITY schedpane.label "Zeitplan">
-<!ENTITY schedpane.enable.label "Zeitplan aktivieren">
 <!ENTITY schedpane.open.label "Manager automatisch öffnen">
 <!ENTITY schedpane.start.label "Downloads nur starten zwischen:">
 <!ENTITY serverpane.limits.noitems "Keine Beschränkungen vorhanden">
@@ -113,6 +113,10 @@
 <!ENTITY uipane.manager.caption "Manager Fenster">
 <!ENTITY uipane.minimizetotray.label "In den Benachrichtigungsbereich minimieren">
 <!ENTITY uipane.namesonly.label "Nur Dateinamen im Manager-Fenster anzeigen">
+<!ENTITY uipane.notification.desktopnotification.radio "Desktop-Benachrichtigung">
+<!ENTITY uipane.notification.doorhangernotification.radio "Hängende Benachrichtigung">
+<!ENTITY uipane.notification.label "Nach dem Hinzufügen von Downloads mit OneClick, zeige:">
+<!ENTITY uipane.notification.nonotification.radio "Keine Benachrichtigung">
 <!ENTITY uipane.showtooltip.label "Download-Tooltips anzeigen">
 <!ENTITY uipane.startminimized.label "Minimiert starten">
 <!ENTITY uipane.tools.caption "Einträge im Menü &quot;Extras&quot;">
