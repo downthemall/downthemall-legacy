@@ -55,7 +55,7 @@
 
 <!ENTITY lp.tut.tabstitle "Downloading items from all tabs at once">
 <!ENTITY lp.tut.alltabs "It is possible to queue items from all tabs at once, by using the toolbar button drop-down menus.">
-<!ENTITY lp.tut.tabrestore "Only fully links from fully restored tabs will be available.">
+<!ENTITY lp.tut.tabrestore "Only links from fully restored tabs will be available.">
 
 <!ENTITY lp.tb.intro "DownThemAll! offers some toolbar buttons that give you a convenient way to access DownThemAll! features.">
 <!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
@@ -84,7 +84,7 @@
 <!ENTITY lp.pr.title "Privacy Notice">
 <!ENTITY lp.pr.intro2 "DownThemAll respects your privacy.">
 <!ENTITY lp.pr.settings2 "You can have DownThemAll! remove all complete, canceled, and unfinished downloads from the download list after closing the window by changing the settings in the Preferences → Privacy panel.">
-<!ENTITY lp.pr.diag2 "You can enable diagnostic messages, which will be logged to both the error console and written to the dta_log.txt file, by the Preferences → Privacy panel. Diagnostic messages will likely contain sensitive information like URLs, file paths, filenames you're downloading, or even cookie information. This option is DISABLED by default to protect your privacy. If you submit a diagnostic log, you may wish to censor any sensitive information. No diagnostic logs will ever get published in an automated fashion.">
+<!ENTITY lp.pr.diag2 "You can enable diagnostic messages, which will be logged to both the error console and written to the dta_log.txt file, by the Preferences → Privacy panel. Diagnostic messages will likely contain sensitive information like URLs, file paths, filenames you're downloading, or even cookie information. This option is DISABLED by default to protect your privacy. If you submit a diagnostic log, you may wish to censor any sensitive information. Diagnostic logs will never get transmitted and/or published in an automated fashion.">
 <!ENTITY lp.pr.pwpbm "DownThemAll! supports the Firefox Per-Window Private Browsing Mode: When you add downloads from a Private Browsing Window, DownThemAll! will not store any information about downloaded files, download folders or used renaming masks. Please note that other data - such as newly created filters, or, of course, the actual downloads - is still written to your disk.">
 <!ENTITY lp.pr.link "This notice is always available from this page (about:downthemall) and is additionally linked in the Preferences window">
 
