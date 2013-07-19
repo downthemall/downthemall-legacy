@@ -90,7 +90,7 @@
 				</hbox>
 			</vbox>
 			<vbox id="renamingbox">
-				<caption label="&mask2.label;:" />
+				<caption label="&mask3.label;:" />
 				<hbox>
 					<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;" />
 					<maskbutton />

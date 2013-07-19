@@ -20,7 +20,7 @@
 <!ENTITY checksum.value "Checksum (Hash):">
 <!ENTITY browse.tooltip "Browse…">
 <!ENTITY mirrormanager.tip "Manage download mirrors">
-<!ENTITY mask2.label "Renaming mask">
+<!ENTITY mask3.label "Mask">
 <!ENTITY mask.tip "Selected files will be saved and renamed using this mask">
 <!ENTITY mask.once.label "Use mask only this time">
 
