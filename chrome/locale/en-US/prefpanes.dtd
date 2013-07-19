@@ -126,5 +126,5 @@
 <!ENTITY uipane.getmintrayr.label "Get MinTrayR">
 <!ENTITY uipane.notification.label "When adding downloads with OneClick, show:">
 <!ENTITY uipane.notification.nonotification.radio "No notification">
-<!ENTITY uipane.notification.doorhangernotification.radio "Doorhanger">
+<!ENTITY uipane.notification.doorhangernotification.radio "Door hanger">
 <!ENTITY uipane.notification.desktopnotification.radio "Desktop notification">
