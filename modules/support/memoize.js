@@ -132,3 +132,5 @@ exports.memoize = function memoize(func, limit, num_args) {
 		};
 	}
 };
+
+exports.identity = exports.memoize(function(o) o);

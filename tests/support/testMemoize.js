@@ -1,7 +1,7 @@
 module("support/memoize.js");
 
 test("exports", function() {
-	checkExports("support/memoize", ["memoize"]);
+	checkExports("support/memoize", ["memoize", "identity"]);
 });
 
 test("yield 1", function() {
@@ -92,4 +92,13 @@ test("yield cache overflow", function() {
 	strictEqual(hits, 21);
 	strictEqual(fn(1), 1);
 	strictEqual(hits, 21);
+});
+
+test("identity", function() {
+	const {identity} = require("support/memoize");
+	strictEqual(identity(1), 1);
+	strictEqual(identity(2), 2);
+	strictEqual(identity(1), 1);
+	strictEqual(identity(""), "");
+	strictEqual(identity("string"), "string");
 });
