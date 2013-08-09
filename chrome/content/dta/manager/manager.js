@@ -30,6 +30,7 @@ const Preallocator = require("manager/preallocator");
 const {Chunk, hintChunkBufferSize} = require("manager/chunk");
 const {Connection} = require("manager/connection");
 const {createRenamer} = require("manager/renamer");
+const {memoize, identity} = require("support/memoize");
 
 /* global Version, AlertService, Decompressor, Verificator, FileExts:true */
 XPCOMUtils.defineLazyGetter(this, "Version", function() require("version"));
@@ -448,10 +449,10 @@ const Dialog = {
 			}
 
 			// only access the setter of the last so that we don't generate stuff trice.
-			d._pathName = Dialog_loadDownloads_get(down, "pathName");
-			d._description = Dialog_loadDownloads_get(down, "description");
-			d._title = Dialog_loadDownloads_get(down, "title");
-			d._mask = Dialog_loadDownloads_get(down, "mask");
+			d._pathName = identity(Dialog_loadDownloads_get(down, "pathName"));
+			d._description = identity(Dialog_loadDownloads_get(down, "description"));
+			d._title = identity(Dialog_loadDownloads_get(down, "title"));
+			d._mask = identity(Dialog_loadDownloads_get(down, "mask"));
 			d._fileName = Dialog_loadDownloads_get(down, "fileName");
 			if (down.fileNameFromUser) {
 				d.fileNameFromUser = true;
@@ -1534,7 +1535,7 @@ QueueItem.prototype = {
 		if (this._pathName === nv) {
 			return nv;
 		}
-		this._pathName = nv;
+		this._pathName = identity(nv);
 		this.rebuildDestination();
 		this.invalidate(0);
 		return nv;
@@ -1548,7 +1549,7 @@ QueueItem.prototype = {
 		if (this._mask === nv) {
 			return nv;
 		}
-		this._mask = Utils.removeFinalSlash(Utils.removeLeadingSlash(Utils.normalizeSlashes(nv)));
+		this._mask = identity(Utils.removeFinalSlash(Utils.removeLeadingSlash(Utils.normalizeSlashes(nv))));
 		this.rebuildDestination();
 		this.invalidate(7);
 		return nv;
@@ -1750,8 +1751,8 @@ QueueItem.prototype = {
 	},
 	get iconProp() {
 		if (!this._icon) {
-			this._icon = (this.isPrivate ? "iconic private " : "iconic ") +
-				FileExts.getAtom(this.destinationName, 'metalink' in this).toString();
+			this._icon = identity((this.isPrivate ? "iconic private " : "iconic ") +
+				FileExts.getAtom(this.destinationName, 'metalink' in this).toString());
 		}
 		return this._icon;
 	},
@@ -2161,7 +2162,7 @@ QueueItem.prototype = {
 			}
 			this._destinationName = file.leafName;
 			let pd = file.parent;
-			this._destinationPath = pd.path;
+			this._destinationPath = identity(pd.path);
 			this._destinationNameFull = Utils.formatConflictName(
 					this.destinationNameOverride ? this.destinationNameOverride : this._destinationName,
 					this.conflicts
@@ -2880,10 +2881,10 @@ const startDownloads = (function() {
 					}
 				}
 				// only access the setter of the last so that we don't generate stuff trice.
-				qi._pathName = Utils.addFinalSlash(e.dirSave).toString();
-				qi._description = !!e.description ? e.description : '';
-				qi._title = !!e.title ? e.title : '';
-				qi._mask = Utils.removeFinalSlash(Utils.removeLeadingSlash(Utils.normalizeSlashes(e.mask)));
+				qi._pathName = identity(Utils.addFinalSlash(e.dirSave));
+				qi._description = identity(!!e.description ? e.description : '');
+				qi._title = identity(!!e.title ? e.title : '');
+				qi._mask = identity(Utils.removeFinalSlash(Utils.removeLeadingSlash(Utils.normalizeSlashes(e.mask))));
 				qi.fromMetalink = !!e.fromMetalink;
 				if (e.fileName) {
 					qi._fileName = Utils.getUsableFileName(e.fileName);
