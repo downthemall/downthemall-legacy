@@ -5,6 +5,7 @@
 
 const Prefs = require("preferences");
 const {toURI} = require("support/stringfuncs");
+const {identity} = require("support/memoize");
 
 /**
  * XUL namespace
@@ -601,7 +602,7 @@ StringBundles.prototype = Object.freeze({
 		finally {
 			StringBundles_params = null;
 		}
-		return fmt;
+		return identity(fmt);
 	}
 });
 const StringBundles_Observer = {
