@@ -776,15 +776,7 @@ Connection.prototype = {
 			d.resumable = false;
 		}
 
-		if (code !== 206) {
-			if (visitor.contentLength > 0) {
-				d.totalSize = visitor.contentLength;
-			}
-			else {
-				d.totalSize = 0;
-			}
-			log(LOG_DEBUG, "set total size");
-		}
+		d.relaxSize = !!visitor.relaxSize;
 
 		if (visitor.fileName && visitor.fileName.length > 0) {
 			// if content disposition hasn't an extension we use extension of URL
@@ -796,6 +788,17 @@ Connection.prototype = {
 			}
 			d.fileName = newName;
 		}
+
+		if (code !== 206) {
+			if (visitor.contentLength > 0) {
+				d.totalSize = visitor.contentLength;
+			}
+			else {
+				d.totalSize = 0;
+			}
+			log(LOG_DEBUG, "set total size");
+		}
+
 
 		this.extractMetaInfo(d, this._chan, null, visitor);
 		return false;
@@ -1066,7 +1069,14 @@ Connection.prototype = {
 				return;
 			}
 
+			// size mismatch
 			if (!d.isOf(PAUSED | CANCELED | FINISHING) && d.chunks.length === 1 && d.chunks[0] === c) {
+				if (d.relaxSize && c.remainder < 250) {
+					log(LOG_INFO, d + ": Download is complete!");
+					d.setState(FINISHING);
+					d.finishDownload();
+					return;
+				}
 				if (d.resumable && c.sessionBytes > 0) {
 					// fast retry unless we didn't actually receive something
 					d.resumeDownload();
@@ -1112,7 +1122,7 @@ Connection.prototype = {
 			if (d.state === RUNNING) {
 				if (!this.resumable && d.totalSize) {
 					// basic integrity check
-					if (d.partialSize > d.totalSize) {
+					if (d.partialSize > d.totalSize + (d.relaxSize ? 250 : 0)) {
 						if (log.enabled) {
 							d.dumpScoreboard();
 							log(LOG_DEBUG, d + ": partialSize > totalSize" +
