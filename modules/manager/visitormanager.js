@@ -157,6 +157,13 @@ HttpVisitor.prototype = {
 			}
 		}
 		catch (ex) {}
+		try {
+			let poweredby = chan.getResponseHeader("x-powered-by");
+			if (!!poweredby) {
+				this.relaxSize = true;
+			}
+		}
+		catch (ex) {}
 
 		try {
 			delete this.mirrors;
@@ -264,6 +271,7 @@ HttpVisitor.prototype = {
 		}
 		if (fn) {
 			this.fileName = fn;
+			this.relaxSize = true;
 		}
 	}
 };

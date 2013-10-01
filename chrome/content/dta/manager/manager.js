@@ -70,7 +70,7 @@ function Dialog_loadDownloads_get(down, attr, def) (attr in down) ? down[attr] :
 
 const Dialog_serialize_props =
 	['fileName', 'fileNameFromUser', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName',
-		'compression', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'];
+		'compression', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit', "relaxSize"];
 
 const Dialog = {
 	_observes: [
@@ -489,6 +489,7 @@ const Dialog = {
 
 			// don't trigger prealloc!
 			d._totalSize = down.totalSize ? down.totalSize : 0;
+			d.relaxSize = !!down.relaxSize;
 
 			if (down.hashCollection) {
 				d.hashCollection = DTA.HashCollection.load(down.hashCollection);
@@ -1673,6 +1674,7 @@ QueueItem.prototype = {
 		delete this._fileNameAndExtension;
 	},
 	visitors: null,
+	relaxSize: false,
 	_totalSize: 0,
 	get totalSize() { return this._totalSize; },
 	set totalSize(nv) {
