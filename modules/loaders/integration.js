@@ -1014,7 +1014,12 @@ exports.load = function load(window, outerEvent) {
 			return;
 		}
 		const win = findWindowsNavigator().shift();
-		const sniffed = getSniffedInfo(win);
+		let sniffed = getSniffedInfo(win);
+		if (win.frames) {
+			for (let i = 0, e = win.frames.length; i < e; ++i) {
+				sniffed = sniffed.concat(getSniffedInfo(win.frames[i]));
+			}
+		}
 		if (!sniffed.length) {
 			return;
 		}
