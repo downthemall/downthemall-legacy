@@ -205,36 +205,19 @@ function filterMapInSitu(arr, filterStep, mapStep, tp) {
 //recursively add stuff.
 function addLinks(aWin, aURLs, aImages, honorSelection) {
 	try {
-		let links = new Array(aWin.document.links.length);
-		for (let i = 0, e = aWin.document.links.length; i < e; ++i) {
-			links.push(aWin.document.links[i]);
-			yield true;
-		}
-
-		let images = new Array(aWin.document.images.length);
-		for (let i = 0, e = aWin.document.images.length; i < e; ++i) {
-			images.push(aWin.document.images[i]);
-			yield true;
-		}
-
-		let videos = Array.map(aWin.document.getElementsByTagName('video'), function(e) e);
-		videos = videos.concat(Array.map(aWin.document.getElementsByTagName('audio'), function(e) e));
-		let sources = [];
-		for (let v of videos) {
-			sources = sources.concat(Array.map(v.getElementsByTagName('source'), function(e) e));
-			yield true;
-		}
-		videos = videos.concat(sources);
+		yield true;
+		let links = Array.slice(aWin.document.querySelectorAll("a"));
+		yield true;
+		let images = Array.slice(aWin.document.querySelectorAll("img"));
+		yield true;
+		let videos = Array.slice(aWin.document.querySelectorAll("video, audio, video > source, audio > source"));
 		filterInSitu(videos, function(e) !!e.src);
 		yield true;
 
-		let embeds = new Array(aWin.document.embeds.length);
-		for (let i = 0, e = aWin.document.embeds.length; i < e; ++i) {
-			embeds.push(aWin.document.embeds[i]);
-			yield true;
-		}
+		let embeds = Array.slice(aWin.document.embeds);
+		yield true;
 
-		let rawInputs = aWin.document.getElementsByTagName('input');
+		let rawInputs = Array.slice(aWin.document.querySelectorAll("input"));
 		let inputs = [];
 		for (let i = 0, e = rawInputs.length; i < e; ++i) {
 			let rit = rawInputs[i].getAttribute('type');
@@ -242,8 +225,8 @@ function addLinks(aWin, aURLs, aImages, honorSelection) {
 				continue;
 			}
 			inputs.push(rawInputs[i]);
-			yield true;
 		}
+		yield true;
 
 		let sel = null;
 		if (honorSelection && (sel = aWin.getSelection()) && !sel.isCollapsed) {
