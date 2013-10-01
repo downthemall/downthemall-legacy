@@ -182,6 +182,7 @@ Connection.prototype = {
 					// but still download from sites authenticating using cookies
 					if (chan instanceof Ci.nsIHttpChannelInternal) {
 						chan.forceAllowThirdPartyCookie = true;
+						chan.allowSpdy = false;
 					}
 				}
 				catch (ex) { /* no op */ }
