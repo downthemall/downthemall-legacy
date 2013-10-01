@@ -18,7 +18,7 @@ asyncTest("asyncMoveFile", function() {
 			tmpFile2.remove(false);
 		}
 	} catch (ex) {}
-	asyncMoveFile(tmpFile, tmpFile2, parseInt("666", 8), function(ex) {
+	asyncMoveFile(tmpFile, tmpFile2, function(ex) {
 		start();
 		ok(!ex, ex);
 		try {
@@ -29,5 +29,17 @@ asyncTest("asyncMoveFile", function() {
 				tmpFile2.remove(false);
 			}
 		} catch (ex) {}
+		asyncMoveFile(tmpFile, tmpFile2, function(ex) {
+			start();
+			ok(ex, ex);
+			try {
+				if (tmpFile.exists()) {
+					tmpFile.remove(false);
+				}
+				if (tmpFile2.exists()) {
+					tmpFile2.remove(false);
+				}
+			} catch (ex) {}
+		});
 	});
 });

@@ -1917,7 +1917,7 @@ QueueItem.prototype = {
 			else {
 				this.status = TextCache_MOVING;
 				let move = function(self, x) {
-					asyncMoveFile(self.tmpFile, destination, Prefs.permissions, function (ex) {
+					asyncMoveFile(self.tmpFile, destination, function (ex) {
 						try {
 							if (ex) {
 								throw new Exception(ex);

@@ -524,7 +524,7 @@ const Tree = {
 
 		log(LOG_DEBUG, "move " + from.path + " to " + to.path);
 		// need to move
-		asyncMoveFile(from, to, Prefs.permissions, function(ex) {
+		asyncMoveFile(from, to, function(ex) {
 			try {
 				log(LOG_DEBUG, "move complete" + from.path + " to " + to.path, ex);
 				if (ex) {
