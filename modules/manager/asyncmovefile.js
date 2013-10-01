@@ -3,21 +3,19 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const {
-	createOptimizedImplementation,
-	NullCancel
-} = require("support/optimpl");
+try {
+	const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
 
-var _moveFile = createOptimizedImplementation(
-	"manager/asyncmovefile/worker",
-	function(impl) function _moveFile_async(aLocalFileSrc, aLocalFileDst, aPermissions, aCallback) {
-		let data = Object.create(null);
-		data.src = aLocalFileSrc.path;
-		data.dst = aLocalFileDst.path;
-		data.permissions = aPermissions;
-		return impl(data, aCallback);
-	},
-	function _moveFile_plain(aLocalFileSrc, aLocalFileDst, aPermissions, aCallback) {
+	exports.asyncMoveFile = function asyncMoveFile(aLocalFileSrc, aLocalFileDst, aCallback) {
+		OS.File.move(aLocalFileSrc.path, aLocalFileDst.path).then(
+			function() aCallback(),
+			function(ex) aCallback(ex)
+		);
+	};
+}
+catch (ex) {
+	log(LOG_ERROR, "Cannot use async moveFile", ex);
+	exports.asyncMoveFile = function _moveFile_plain(aLocalFileSrc, aLocalFileDst, aCallback) {
 		try {
 			aLocalFileSrc.clone().moveTo(aLocalFileDst.parent, aLocalFileDst.leafName);
 			aCallback();
@@ -25,9 +23,5 @@ var _moveFile = createOptimizedImplementation(
 		catch (ex) {
 			aCallback(ex);
 		}
-		return NullCancel;
-	});
-
-exports.asyncMoveFile = function asyncMoveFile(aLocalFileSrc, aLocalFileDst, aPermissions, aCallback) {
-	_moveFile.callImpl(aLocalFileSrc, aLocalFileDst, aPermissions, aCallback);
-};
+	};
+}
