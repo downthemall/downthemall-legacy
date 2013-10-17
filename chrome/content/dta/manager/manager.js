@@ -17,7 +17,6 @@ const {defer} = require("support/defer");
 const PrivateBrowsing = require("support/pbm");
 const {TimerManager} = require("support/timers");
 const {ContentHandling} = require("support/contenthandling");
-const {asyncMoveFile} = require("manager/asyncmovefile");
 const GlobalProgress = new (require("manager/globalprogress").GlobalProgress)(window);
 const RequestManipulation = require("support/requestmanipulation");
 const Limits = require("support/serverlimits");
