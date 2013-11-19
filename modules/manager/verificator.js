@@ -5,13 +5,14 @@
 
 
 const {hexdigest} = require("utils");
+const {Promise} = require("support/promise");
 
 const SEGSIZE = (1 << 17); // 128K
 const SEGNUM = 8;
 
 const nsICryptoHash = Ci.nsICryptoHash;
 
-function _verify(file, hashCollection, completeCallback, progressCallback) {
+function _verify(file, hashCollection, progressCallback) {
 	file = new Instances.LocalFile(file);
 	log(LOG_DEBUG, "verifying (single): " + file.path);
 	const total = file.fileSize;
@@ -25,6 +26,7 @@ function _verify(file, hashCollection, completeCallback, progressCallback) {
 	}
 	const stream = new Instances.FileInputStream(file, flags, 502 /* 0766*/, 0);
 
+	const deferred = Promise.defer();
 	const listener = {
 		QueryInterface: QI([Ci.nsIStreamListener, Ci.nsIRequestObserver]),
 		onStartRequest: function(r,c) {
@@ -33,17 +35,17 @@ function _verify(file, hashCollection, completeCallback, progressCallback) {
 		onStopRequest: function(r,c, result) {
 			stream.close();
 			if (!Components.isSuccessCode(result)) {
-				completeCallback();
+				deferred.resolve();
 				return;
 			}
 
 			let actual = hexdigest(mainHash.finish(false));
 			log(LOG_DEBUG, "main\nactual: " + actual + "\nexpected: " + hashCollection.full.sum);
 			if (actual !== hashCollection.full.sum) {
-				completeCallback([{start: 0, end: 0, actual: actual, expected: hashCollection.full.sum}]);
+				deferred.resolve([{start: 0, end: 0, actual: actual, expected: hashCollection.full.sum}]);
 			}
 			else {
-				completeCallback([]);
+				deferred.resolve([]);
 			}
 		},
 		onDataAvailable: function(r,c, inputStream, offset, count) {
@@ -55,9 +57,10 @@ function _verify(file, hashCollection, completeCallback, progressCallback) {
 	};
 	let pump = new Instances.InputStreamPump(stream, 0, -1, SEGSIZE, SEGNUM, false);
 	pump.asyncRead(listener, null);
+	return deferred.promise;
 }
 
-function _multiVerify(file, hashCollection, completeCallback, progressCallback) {
+function _multiVerify(file, hashCollection, progressCallback) {
 	file = new Instances.LocalFile(file);
 	log(LOG_DEBUG, "verifying (multi): " + file.path);
 	let mismatches = [];
@@ -78,6 +81,7 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 	let partialPending = hashCollection.parLength;
 	let start = 0;
 
+	const deferred = Promise.defer();
 	const listenerMain = {
 		QueryInterface: QI([Ci.nsIStreamListener, Ci.nsIRequestObserver]),
 		onStartRequest: function(r,c) {
@@ -101,7 +105,7 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 		onStopRequest: function(r,c, result) {
 			stream.close();
 			if (!Components.isSuccessCode(result)) {
-				completeCallback();
+				deferred.resolve();
 				return;
 			}
 
@@ -121,10 +125,10 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 			let actual = hexdigest(mainHash.finish(false));
 			log(LOG_DEBUG, "main\nactual: " + actual + "\nexpected: " + hashCollection.full.sum);
 			if (actual !== hashCollection.full.sum) {
-				completeCallback([{start: 0, end: 0, actual: actual, expected: hashCollection.full.sum}]);
+				deferred.resolve([{start: 0, end: 0, actual: actual, expected: hashCollection.full.sum}]);
 			}
 			else {
-				completeCallback([]);
+				deferred.resolve([]);
 			}
 		},
 		onDataAvailable: function(r,c, inputStream, offset, count) {
@@ -173,14 +177,10 @@ function _multiVerify(file, hashCollection, completeCallback, progressCallback) 
 	let tee = new Instances.StreamListenerTee(listenerMain, po);
 	new Instances.InputStreamPump(stream, 0, -1, SEGSIZE, SEGNUM, false).asyncRead(tee, null);
 	new Instances.InputStreamPump(pi, 0, -1, SEGSIZE, SEGNUM, true).asyncRead(listenerPartials, null);
+	return deferred.promise;
 }
 
-exports.verify = function verify(file, hashCollection, completeCallback, progressCallback){
+exports.verify = function verify(file, hashCollection, progressCallback){
 	const fn = hashCollection.hasPartials ? _multiVerify : _verify;
-	return fn(
-		file,
-		hashCollection,
-		completeCallback,
-		progressCallback
-		);
+	return fn(file,	hashCollection,	progressCallback);
 };
