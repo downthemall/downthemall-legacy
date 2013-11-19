@@ -339,12 +339,15 @@ Chunk.prototype = {
 		}
 
 		this._openDeferred = Promise.defer();
-		const path = this.parent.tmpFile.path;
+		const file = this.parent.tmpFile;
 		let pos = this.start + this.safeBytes;
-		log(LOG_ERROR, "opening " + path + " at: " + pos);
+		log(LOG_ERROR, "opening " + file.path + " at: " + pos);
 		Task.spawn((function() {
+			if (!(yield OS.File.exists(file.parent.path))) {
+				yield OS.File.makeDir(file.parent.path, {unixMode: Prefs.dirPermissions});
+			}
 			const flags = OS.Constants.libc.O_CREAT | OS.Constants.libc.O_LARGEFILE | OS.Constants.libc.O_WRONLY;
-			this._osFile = yield OS.File.open(path, {write:true}, {unixFlags: flags, unixMode: Prefs.permissions});
+			this._osFile = yield OS.File.open(file.path, {write:true}, {unixFlags: flags, unixMode: Prefs.permissions});
 			if (pos) {
 				yield this._osFile.setPosition(pos, OS.File.POS_START);
 			}

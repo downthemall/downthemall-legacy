@@ -2327,12 +2327,6 @@ QueueItem.prototype = {
 		delete this._tmpFile;
 		delete this.rebuildDestination_renamer;
 	},
-	createDirectory: function(file) {
-		if (file.parent.exists()) {
-			return;
-		}
-		file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
-	},
 	prealloc: function() {
 		let file = this.tmpFile;
 
@@ -2461,7 +2455,6 @@ QueueItem.prototype = {
 			downloadChunk(download, chunk, header);
 		}
 		function downloadChunk(download, chunk, header) {
-			download.createDirectory(download.tmpFile);
 			chunk.download = new Connection(download, chunk, header || download.mustGetInfo);
 			chunk.running = true;
 			download.mustGetInfo = false;
