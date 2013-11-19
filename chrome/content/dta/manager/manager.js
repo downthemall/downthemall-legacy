@@ -1912,7 +1912,7 @@ QueueItem.prototype = {
 		try {
 			yield OS.File.remove(df.path);
 		}
-		catch (ex if ex.becauseNoSuchFile) {
+		catch (ex) {
 			// no op
 		}
 		// move file
@@ -1931,6 +1931,7 @@ QueueItem.prototype = {
 			yield compressDeferred.promise;
 			throw new Task.Result(true);
 		}
+		log(LOG_DEBUG, "About to move");
 		this.status = TextCache_MOVING;
 		let moveDeferred = Promise.defer();
 		let move = function(self, x) {
@@ -1940,7 +1941,7 @@ QueueItem.prototype = {
 				moveDeferred.resolve(true);
 			}, function(ex) {
 				// XXX Win
-				if (ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) {
+				if (ex.unixErrno && ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) {
 					try {
 						self.shortenName();
 					}
