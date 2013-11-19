@@ -1308,7 +1308,7 @@ unloadWindow(window, function () {
 
 const Metalinker = {
 	handleDownload: function(download) {
-		let file = download.destinationLocalFile;
+		let file = download.tmpFile;
 
 		this.handleFile(file, download.referrer, function() {
 			try {
@@ -1899,65 +1899,63 @@ QueueItem.prototype = {
 
 	moveCompleted: function() {
 		if (this.state === CANCELED) {
-			return;
+			throw Error("Cannot move incomplete file");
 		}
-		ConflictManager.resolve(this, 'continueMoveCompleted');
+		var deferred = Promise.defer();
+		ConflictManager.resolve(this, 'continueMoveCompleted', deferred);
+		return deferred.promise;
 	},
-	continueMoveCompleted: function() {
+	continueMoveCompleted: function(deferred) {
 		if (this.state === CANCELED) {
+			deferred.resolve(false);
 			return;
 		}
-		try {
-			// safeguard against some failed chunks.
-			for (let c of this.chunks) {
-				c.close();
-			}
-			var destination = new Instances.LocalFile(this.destinationPath);
+		// safeguard against some failed chunks.
+		for (let c of this.chunks) {
+			c.close();
+		}
+		Task.spawn((function() {
+			let destination = new Instances.LocalFile(this.destinationPath);
 			log(LOG_INFO, this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
-
-			if (!destination.exists()) {
-				destination.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
+			if (!(yield OS.File.exists(destination.path))) {
+				yield OS.File.makeDir(destination.path, {unixMode: Prefs.dirPermissions});
 			}
-			var df = destination.clone();
+			let df = destination.clone();
 			df.append(this.destinationName);
-			if (df.exists()) {
-				df.remove(false);
+			if ((yield OS.File.exists(df.path))) {
+				yield OS.File.remove(df.path);
 			}
 			// move file
 			if (this.compression) {
 				this.setState(FINISHING);
 				this.status = TextCache_DECOMPRESSING;
-				new Decompressor(this);
+				new Decompressor(this, function(ex) {
+					if (ex) {
+						deferred.reject(ex);
+					}
+					else {
+						deferred.resolve(true);
+					}
+				});
+				return;
 			}
-			else {
-				this.status = TextCache_MOVING;
-				let move = function(self, x) {
-					asyncMoveFile(self.tmpFile, destination, function (ex) {
-						try {
-							if (ex) {
-								throw new Exception(ex);
-							}
-						}
-						catch (e) {
-							x = x || 1;
-							if (x > 5) {
-								self.complete(e);
-								return;
-							}
-							setTimeoutOnlyFun(function() move(self, ++x), x * 250);
-							return;
-						}
-						self.complete();
-					});
-				};
-				destination.append(this.destinationName);
-				move(this);
-			}
-		}
-		catch(ex) {
-			log(LOG_ERROR, "continueMoveCompleted encountered an error", ex);
-			this.complete(ex);
-		}
+			this.status = TextCache_MOVING;
+			destination.append(this.destinationName);
+			let move = function(self, x) {
+				OS.File.move(self.tmpFile.path, destination.path).then(function() {
+					deferred.resolve(true);
+				}, function(ex) {
+					x = x || 1;
+					if (x > 5) {
+						deferred.reject(ex);
+					}
+					setTimeoutOnlyFun(function() move(self, ++x), x * 250);
+				})
+			};
+			move(this);
+		}).bind(this)).then(null, function(ex) {
+			deferred.reject(ex);
+		});
 	},
 	handleMetalink: function() {
 		try {
@@ -1967,94 +1965,91 @@ QueueItem.prototype = {
 			log(LOG_ERROR, "handleMetalink", ex);
 		}
 	},
-	_verificator: null,
 	verifyHash: function() {
 		this.setState(FINISHING);
 		this.status = TextCache_VERIFYING;
-		let tp = this;
-		this._verificator = Verificator.verify(
-			this.tmpFile.exists() ? this.tmpFile.path : this.destinationFile,
-			this.hashCollection,
-			function(mismatches) {
-				delete tp._verificator;
-				tp._verificator = null;
-
-				if (!mismatches) {
-					log(LOG_ERROR, "hash not computed");
-					Prompts.alert(window, _('error', ["Metalink"]), _('verificationfailed', [tp.destinationFile]));
-					tp.complete();
-				}
-				else if (mismatches.length) {
-					log(LOG_ERROR, "Mismatches: " + mismatches.toSource());
-					tp.verifyHashError(mismatches);
-				}
-				else {
-					tp.complete();
-				}
-			},
-			function(progress) {
-				tp.partialSize = progress;
-				tp.invalidate();
+		return Task.spawn((function() {
+			let mismatches = yield Verificator.verify(
+				(yield OS.File.exists(this.tmpFile.path)) ? this.tmpFile.path : this.destinationFile,
+				this.hashCollection,
+				(function(progress) {
+					this.partialSize = progress;
+					this.invalidate();
+				}).bind(this));
+			if (!mismatches) {
+				log(LOG_ERROR, "hash not computed");
+				Prompts.alert(window, _('error', ["Metalink"]), _('verificationfailed', [this.destinationFile]));
+				throw new Task.Result(true);
 			}
-		);
+			else if (mismatches.length) {
+				log(LOG_ERROR, "Mismatches: " + mismatches.toSource());
+				throw new Task.Result(yield this.verifyHashError(mismatches));
+			}
+			throw new Task.Result(true);
+		}).bind(this));
 	},
 	verifyHashError: function(mismatches) {
 		let file = this.destinationLocalFile;
-		filterInSitu(mismatches, function(e) e.start !== e.end);
 
-		function deleteFile() {
-			try {
-				if (file.exists()) {
-					file.remove(false);
-				}
+		return Task.spawn((function() {
+			function deleteFile() {
+				return OS.File.exists(file.path, function(exists) {
+					if (exists) {
+						return OS.File.remove(file.path);
+					}
+					return null;
+				});
 			}
-			catch (ex) {
-				log(LOG_ERROR, "Failed to remove file after checksum mismatch", ex);
-			}
-		}
 
-		function recoverPartials(download) {
-			// merge
-			for (let i = mismatches.length - 1; i > 0; --i) {
-				if (mismatches[i].start === mismatches[i-1].end + 1) {
-					mismatches[i-1].end = mismatches[i].end;
-					mismatches.splice(i, 1);
+			function recoverPartials(download) {
+				// merge
+				for (let i = mismatches.length - 1; i > 0; --i) {
+					if (mismatches[i].start === mismatches[i-1].end + 1) {
+						mismatches[i-1].end = mismatches[i].end;
+						mismatches.splice(i, 1);
+					}
 				}
-			}
-			let chunks = [];
-			let next = 0;
-			for (let mismatch of mismatches) {
-				if (next !== mismatch.start) {
-					chunks.push(new Chunk(download, next, mismatch.start - 1, mismatch.start - next));
+				let chunks = [];
+				let next = 0;
+				for (let mismatch of mismatches) {
+					if (next !== mismatch.start) {
+						chunks.push(new Chunk(download, next, mismatch.start - 1, mismatch.start - next));
+					}
+					chunks.push(new Chunk(download, mismatch.start, mismatch.end));
+					next = mismatch.end + 1;
 				}
-				chunks.push(new Chunk(download, mismatch.start, mismatch.end));
-				next = mismatch.end + 1;
+				if (next !== download.totalSize) {
+					log(LOG_DEBUG, "Inserting last");
+					chunks.push(new Chunk(download, next, download.totalSize - 1, download.totalSize - next));
+				}
+				download.chunks = chunks;
+				download.refreshPartialSize();
+				download.queue();
 			}
-			if (next !== download.totalSize) {
-				log(LOG_DEBUG, "Inserting last");
-				chunks.push(new Chunk(download, next, download.totalSize - 1, download.totalSize - next));
-			}
-			download.chunks = chunks;
-			download.refreshPartialSize();
-			download.queue();
-		}
 
-		if (mismatches.length && this.tmpFile.exists()) {
-			// partials
-			let act = Prompts.confirm(
-				window,
-				_('verifyerror.title'),
-				_('verifyerror.partialstext'),
-				_('recover'),
-				_('delete'),
-				_('keep'));
-			switch (act) {
-				case 0: deleteFile(); recoverPartials(this, mismatches); return;
-				case 1: deleteFile(); this.cancel(); return;
+			filterInSitu(mismatches, function(e) e.start !== e.end);
+
+			if (mismatches.length && (yield OS.File.exists(this.tmpFile.path))) {
+				// partials
+				let act = Prompts.confirm(
+					window,
+					_('verifyerror.title'),
+					_('verifyerror.partialstext'),
+					_('recover'),
+					_('delete'),
+					_('keep'));
+				switch (act) {
+					case 0:
+						yield deleteFile();
+						recoverPartials(this, mismatches);
+						throw new Task.Result(false);
+					case 1:
+						yield deleteFile();
+						this.cancel();
+						throw new Task.Result(false);
+				}
+				throw new Task.Result(true);
 			}
-			this.complete();
-		}
-		else {
 			let act = Prompts.confirm(
 				window,
 				_('verifyerror.title'),
@@ -2063,98 +2058,81 @@ QueueItem.prototype = {
 				_('delete'),
 				_('keep'));
 			switch (act) {
-				case 0: deleteFile(); this.safeRetry(); return;
-				case 1: deleteFile(); this.cancel(); return;
+				case 0:
+					yield deleteFile();
+					this.safeRetry();
+					throw new Task.Result(false);
+				case 1:
+					yield deleteFile();
+					this.cancel();
+					throw new Task.Result(false);
 			}
-			this.complete();
-		}
-	},
-	cancelVerification: function() {
-		if (!this._verificator) {
-			return;
-		}
-		this._verificator.cancel();
+			throw new Task.Result(true);
+		}).bind(this));
 	},
 	customFinishEvent: function() {
 		new CustomEvent(this, Prefs.finishEvent);
 	},
 	setAttributes: function() {
-		if (Prefs.setTime) {
-			try {
-				let time = this.startDate.getTime();
+		return Task.spawn((function() {
+			if (Prefs.setTime) {
+				// XXX: async API <https://bugzilla.mozilla.org/show_bug.cgi?id=924916>
 				try {
-					time = this.visitors.time;
+					let time = this.startDate.getTime();
+					try {
+						time = this.visitors.time;
+					}
+					catch (ex) {
+						log(LOG_DEBUG, "no visitors time", ex);
+					}
+					// small validation. Around epoche? More than a month in future?
+					if (time < 2 || time > Date.now() + 30 * 86400000) {
+						throw new Exception("invalid date encountered: " + time + ", will not set it");
+					}
+					// have to unwrap
+					this.destinationLocalFile.lastModifiedTime = time;
 				}
 				catch (ex) {
-					log(LOG_DEBUG, "no visitors time", ex);
+					log(LOG_ERROR, "Setting timestamp on file failed: ", ex);
 				}
-				// small validation. Around epoche? More than a month in future?
-				if (time < 2 || time > Date.now() + 30 * 86400000) {
-					throw new Exception("invalid date encountered: " + time + ", will not set it");
-				}
-				// have to unwrap
-				this.destinationLocalFile.lastModifiedTime = time;
 			}
-			catch (ex) {
-				log(LOG_ERROR, "Setting timestamp on file failed: ", ex);
-			}
-		}
-		this.totalSize = this.partialSize = this.size;
-		++Dialog.completed;
 
-		this.complete();
+			this.totalSize = this.partialSize = this.size;
+			++Dialog.completed;
+		}).bind(this));
 	},
 	finishDownload: function(exception) {
 		if (!this.chunksReady(this.finishDownload.bind(this, exception))) {
 			return;
 		}
 		log(LOG_DEBUG, "finishDownload, connections: " + this.sessionConnections);
-		this._completeEvents = ['moveCompleted', 'setAttributes'];
-		if (this.hashCollection) {
-			if (this.hashCollection.hasPartials) {
-				// need to verify first
-				this._completeEvents.unshift('verifyHash');
+		Task.spawn((function finishDownloadTask() {
+			if (this.hashCollection && !(yield this.verifyHash())) {
+				return;
 			}
-			else {
-				this._completeEvents.push('verifyHash');
+			if ("isMetalink" in this) {
+				this.handleMetalink();
+				return;
 			}
-		}
-		if ('isMetalink' in this) {
-			this._completeEvents.push('handleMetalink');
-		}
-		if (Prefs.finishEvent) {
-			this._completeEvents.push('customFinishEvent');
-		}
-		this.complete();
-	},
-	_completeEvents: [],
-	complete: function(exception) {
-		this.chunks.length = 0;
-		this.speeds.clear();
-		if (exception) {
+			if (!(yield this.moveCompleted())) {
+				return;
+			}
+			yield this.setAttributes();
+			if (Prefs.finishEvent) {
+				this.customFinishEvent();
+			}
+			this.chunks.length = 0;
+			this.speeds.clear();
+			this.activeChunks = 0;
+			this.setState(COMPLETE);
+			this.status = TextCache_COMPLETE;
+			this.visitors = new VisitorManager();
+			this.compression = null;
+		}).bind(this)).then(null, (function finishDownloadFailure(ex) {
+			log(LOG_ERROR, "complete: ", ex);
 			this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
-			log(LOG_ERROR, "complete: ", exception);
 			return;
-		}
-		if (this._completeEvents.length) {
-			var evt = this._completeEvents.shift();
-			var tp = this;
-			defer(function() {
-				try {
-					tp[evt]();
-				}
-				catch(ex) {
-					log(LOG_ERROR, "completeEvent failed: " + evt, ex);
-					tp.complete();
-				}
-			});
-			return;
-		}
-		this.activeChunks = 0;
-		this.setState(COMPLETE);
-		this.status = TextCache_COMPLETE;
-		this.visitors = new VisitorManager();
-		this.compression = null;
+		}).bind(this));
 	},
 	get maskURL() this.urlManager.usableURL,
 	get maskCURL() Utils.getCURL(this.maskURL),
@@ -2451,7 +2429,6 @@ QueueItem.prototype = {
 
 	shutdown: function() {
 		this.cancelPreallocation();
-		this.cancelVerification();
 	},
 
 	removeTmpFile: function() {
@@ -2695,22 +2672,23 @@ XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
 
 const ConflictManager = {
 	_items: [],
-	resolve: function(download, reentry) {
+	resolve: function(download, reentry, options) {
 		for (let item of this._items) {
 			if (item.download === download) {
 				log(LOG_DEBUG, "conflict resolution updated to: " + reentry);
 				item.reentry = reentry;
+				item.options = options;
 				return;
 			}
 		}
 		if (!this._check(download)) {
 			if (reentry) {
-				download[reentry]();
+				download[reentry](options);
 			}
 			return;
 		}
 		log(LOG_DEBUG, "conflict resolution queued to: " + reentry);
-		this._items.push({download: download, reentry: reentry});
+		this._items.push({download: download, reentry: reentry, options: options});
 		this._process();
 	},
 	_check: function(download) {
@@ -2730,7 +2708,7 @@ const ConflictManager = {
 			cur = this._items[0];
 			if (!this._check(cur.download)) {
 				if (cur.reentry) {
-					cur.download[cur.reentry]();
+					cur.download[cur.reentry](cur.options);
 				}
 				this._items.shift();
 				continue;
@@ -2803,7 +2781,7 @@ const ConflictManager = {
 			/* skip */      default: cur.download.cancel(_('skipped')); break;
 		}
 		if (cur.reentry) {
-			cur.download[cur.reentry]();
+			cur.download[cur.reentry](cur.options);
 		}
 		this._items.shift();
 		this._processing = false;

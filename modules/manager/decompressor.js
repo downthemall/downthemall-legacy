@@ -12,8 +12,9 @@ const Prefs = require("preferences");
 
 const Timers = new TimerManager();
 
-function Decompressor(download) {
+function Decompressor(download, callback) {
 	this.download = download;
+	this.callback = callback;
 	this.to = download.destinationLocalFile.clone();
 	this.from = download.tmpFile.clone();
 
@@ -50,7 +51,7 @@ function Decompressor(download) {
 			// XXX: what now?
 		}
 		log(LOG_ERROR, "err. :p", ex);
-		download.complete(ex);
+		callback.call(download, ex);
 	}
 }
 Decompressor.prototype = {
@@ -96,8 +97,7 @@ Decompressor.prototype = {
 		catch (ex) {
 			log(LOG_ERROR, "Failed to remove tmpFile", ex);
 		}
-
-		this.download.complete(this.exception);
+		this.callback.call(this.download, this.exception);
 	},
 	onDataAvailable: function(request, c, stream, offset, count) {
 		try {

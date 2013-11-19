@@ -29,7 +29,7 @@ function prepareStack(stack) {
 	let sourceLine = stack.sourceLine;
 	let lineNumber = stack.lineNumber;
 	let message = [];
-	for (let i = 0; stack && i < 6; ++i, stack = stack.caller) {
+	for (let i = 0; stack && i < 60; ++i, stack = stack.caller) {
 		if (stack.lineNumber) {
 			message.push(
 				"\t" +
