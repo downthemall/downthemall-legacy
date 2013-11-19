@@ -2081,8 +2081,14 @@ QueueItem.prototype = {
 			else {
 				file = this.destinationLocalFile;
 			}
-			if (file && (yield OS.File.exists(file.path))) {
-				this.totalSize = this.partialSize = (yield OS.File.stat(file.path)).size;
+			try {
+				if (file && (yield OS.File.exists(file.path))) {
+					this.totalSize = this.partialSize = (yield OS.File.stat(file.path)).size;
+				}
+			}
+			catch (ex) {
+				log(LOG_ERROR, "failed to get filesize for " + file.path, ex);
+				this.totalSize = this.partialSize = 0;
 			}
 			++Dialog.completed;
 		}).bind(this));
