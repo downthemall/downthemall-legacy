@@ -2201,6 +2201,10 @@ QueueItem.prototype = {
 		ConflictManager.resolve(this);
 	},
 	checkSpace: function(required) {
+		// Do not check for small files < 16M
+		if (required <= (1<<24)) {
+			return true;
+		}
 		try {
 			let tmp = Prefs.tempLocation, vtmp = 0;
 			if (tmp) {
