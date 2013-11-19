@@ -1464,6 +1464,21 @@ QueueItem.prototype = {
 		this.filenameFromUser = true;
 		this.save();
 	},
+	shortenName: function() {
+		let fn = this.destinationName;
+		let ext = Utils.getExtension(fn);
+		if (ext) {
+			fn = fn.substring(0, fn.length - ext.length - 1);
+		}
+		let nn = fn.substr(0, Math.min(200, Math.max(fn.length - 25, 10)));
+		if (nn == fn) {
+			return;
+		}
+		if (ext) {
+			nn += "." + ext;
+		}
+		this.destinationName = nn;
+	},
 	get fileNameAndExtension() {
 		if (!this._fileNameAndExtension) {
 			let fn = this.fileName;
@@ -1917,12 +1932,22 @@ QueueItem.prototype = {
 				throw new Task.Result(true);
 			}
 			this.status = TextCache_MOVING;
-			destination.append(this.destinationName);
 			let moveDeferred = Promise.defer();
 			let move = function(self, x) {
-				OS.File.move(self.tmpFile.path, destination.path).then(function() {
+				let df = destination.clone();
+				df.append(self.destinationName);
+				OS.File.move(self.tmpFile.path, df.path).then(function() {
 					moveDeferred.resolve(true);
 				}, function(ex) {
+					// XXX Win
+					if (ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) {
+						try {
+							self.shortenName();
+						}
+						catch (iex) {
+							log(LOG_ERROR, "Failed to shorten name", ex);
+						}
+					}
 					x = x || 1;
 					if (x > 5) {
 						moveDeferred.reject(ex);
