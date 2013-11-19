@@ -1102,6 +1102,7 @@ Connection.prototype = {
 		finally {
 			delete this.c;
 			delete this.d;
+			delete this._chan;
 		}
 	},
 
