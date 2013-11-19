@@ -3,10 +3,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-// XXX Consider using a real (single) pipe into the async stream copier
-// We don't do this for now, as the current scheme gives a little more control
-// about how data chunks are written to disk
-
 /* global BUFFER_SIZE, MAX_PENDING_SIZE */
 requireJoined(this, "constants");
 const Prefs = require("preferences");
@@ -16,6 +12,9 @@ const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
 const pressure = require("support/memorypressure");
 const {getTimestamp, formatNumber} = require("utils");
+const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
+const {Promise} = requireJSM("resource://gre/modules/Promise.jsm");
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 const Timers = new TimerManager();
 
@@ -31,36 +30,6 @@ exports.hintChunkBufferSize = function(bs) {
 	bs++;
 	buffer_size = Math.max(1<<17, Math.min(BUFFER_SIZE * 8, bs));
 };
-
-const _thread = (function() {
-	// Use a dedicated thread, so that we have serialized writes.
-	// As we use a single sink for various reasons, we need to ensure the
-	// shipped bytes arrive and are written to in the correct order.
-	// The assumption that writes will be properly serialized is based on the
-	// following assumptions
-	//  1. The thread event queue processes events fifo, always
-	//  2. The async stream copier writes a whole piped stream before processing
-	//     another stream write request.
-	//
-	// Why do we want to use all this cruft?
-	// - To keep the browser snappier by having the slow disk I/O stuff off the
-	//   main thread.
-	// - Having a single thread doing all the writes might reduce/avoid some
-	//   nasty performance issues, such as excessive disk thrashing due to
-	//   concurrency.
-	// - We cannot use ChromeWorkers, because we cannot do file I/O there
-	//   unless we reimplement file I/O using ctypes (and while it's feasible, it
-	//   is not really reasonable)
-	//
-	// For the amo-validator context:
-	// Editor note: Safe use, as an event target for nsIAsyncStreamCopier (no js use)
-	let AsyncCopierThread = Services.tm.newThread(0);
-	/*if (AsyncCopierThread instanceof Ci.nsISupportsPriority) {
-		AsyncCopierThread.priority = AsyncCopierThread.PRIORITY_LOW;
-		log(LOG_INFO, "Our async copier thread is low priority now!");
-	}*/
-	return AsyncCopierThread;
-})();
 
 function MemoryReporter() {
 	this.chunks = new Set();
@@ -265,8 +234,38 @@ Prefs.addObserver("extensions.dta.permissions", Observer);
 pressure.add(Observer);
 unload(Observer.unload.bind(Observer));
 
+function Buffer(size) {
+	this.size = size;
+	this._data = new Uint8Array(size);
+}
+Buffer.prototype = Object.seal({
+	_buf: new ArrayBuffer(1<<16),
+	length: 0,
+	writeFrom: function(inputStream, length) {
+		if (length > this.free) {
+			throw new Error("Buffer overflow");
+		}
+		if (this._buf.byteLength < length) {
+			let nl = this._buf.byteLength;
+			while (nl < length) {
+				nl += 1<<16;
+			}
+			this._buf = new ArrayBuffer(nl);
+		}
+		inputStream.readArrayBuffer(length, this._buf);
+		this._data.set(new Uint8Array(this._buf, 0, length), this.length);
+		this.length += length;
+		return length;
+	},
+	get free() this.size - this.length,
+	get data() {
+		return this._data;
+	}
+});
+
+
 function Chunk(download, start, end, written) {
-	// saveguard against null or strings and such
+	// safeguard against null or strings and such
 	this._written = written > 0 ? written : 0;
 	this.safeBytes = this._written;
 	this._start = start;
@@ -278,7 +277,6 @@ function Chunk(download, start, end, written) {
 }
 
 Chunk.prototype = {
-	QueryInterface: QI([Ci.nsIRunnable, Ci.nsIRequestObserver]),
 	running: false,
 	get starter() this.end <= 0,
 	get start() this._start,
@@ -291,7 +289,7 @@ Chunk.prototype = {
 	get written() this._written,
 	_buffered: 0,
 	get bufferedPending() this._buffered,
-	get bufferedCached() this._hasCurrentStream ? this._currentInputStream.available() : 0,
+	get bufferedCached() this._hasBuffer ? this._buffer.length : 0,
 	get buffered() (this.bufferedPending + this.bufferedCached),
 	safeBytes: 0,
 	get currentPosition() (this.start + this.written),
@@ -312,57 +310,91 @@ Chunk.prototype = {
 		this._written += ch._written;
 		this.safeBytes += ch.safeBytes;
 	},
-	openOutStream: function(file, at) {
-		let outStream = new Instances.FileOutputStream(
-			file,
-			0x02 | 0x08,
-			Prefs.permissions,
-			Ci.nsIFileOutputStream.DEFER_OPEN
-			);
-		if (at) {
-			let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
-			seekable.seek(0x00, at);
-		}
-		return outStream;
-	},
-	open: function() {
-		this._sessionBytes = 0;
-		this._canceled = false;
-		let file = this.parent.tmpFile;
-		this._outStream = this.openOutStream(file, this.currentPosition);
-		this.buckets = new ByteBucketTee(
-				this.parent.bucket,
-				Limits.getServerBucket(this.parent),
-				GlobalBucket
-				);
-		this.buckets.register(this);
-		memoryReporter.registerChunk(this);
-		this.parent.chunkOpened(this);
-	},
-	close: function() {
-		log(LOG_DEBUG, this + ": chunk closed");
-		this.running = false;
-		if (this._hasCurrentStream) {
-			this._shipCurrentStream();
-		}
-		if (this._outStream) {
-			this._shipEOFStream();
+	_inited: false,
+	_init: function() {
+		if (this._inited) {
 			return;
 		}
-		this._finish();
+		this._inited = true;
+
+		this._sessionBytes = 0;
+		this._canceled = false;
+		this.buckets = new ByteBucketTee(
+			this.parent.bucket,
+			Limits.getServerBucket(this.parent),
+			GlobalBucket
+			);
+		this.buckets.register(this);
+		memoryReporter.registerChunk(this);
 	},
-	_finish: function() {
-		let notifyOwner = false;
-		if (this._outStream) {
-			delete this._outStream;
-			notifyOwner = true;
+	_open: function() {
+		if (this._osFile) {
+			// File was already opened
+			let p = Promise.defer();
+			p.resolve(this._osFile);
+			return p.promise;
 		}
+		if (this._openDeferred) {
+			// File open is already pending
+			return this._openDeferred.promise;
+		}
+
+		this._openDeferred = Promise.defer();
+		const path = this.parent.tmpFile.path;
+		let pos = this.start + this.safeBytes;
+		log(LOG_ERROR, "opening " + path + " at: " + pos);
+		Task.spawn((function() {
+			const flags = OS.Constants.libc.O_CREAT | OS.Constants.libc.O_LARGEFILE | OS.Constants.libc.O_WRONLY;
+			this._osFile = yield OS.File.open(path, {write:true}, {unixFlags: flags, unixMode: Prefs.permissions});
+			if (pos) {
+				yield this._osFile.setPosition(pos, OS.File.POS_START);
+			}
+			this._openDeferred.resolve(this._osFile);
+			delete this._openDeferred;
+		}).bind(this)).then(null, (function(ex) {
+			log(LOG_ERROR, ex);
+			this._openDeferred.reject(ex);
+			delete this._openDeferred;
+		}).bind(this));
+
+		this.parent.chunkOpened(this);
+		return this._openDeferred.promise;
+	},
+	close: function() {
+		this.running = false;
+		if (this._hasBuffer) {
+			this._shipBuffer();
+		}
+		log(LOG_DEBUG, "pending writes: " + this._pendingWrites);
+		if (this._pendingWrites) {
+			return;
+		}
+		if (this._osFile) {
+			let f = this._osFile;
+			delete this._osFile;
+			log(LOG_DEBUG, "closing osfile");
+			f.close().then((function() {
+				log(LOG_DEBUG, "closed osfile");
+				this._finish(true);
+			}).bind(this),
+			(function(ex) {
+				log(LOG_ERRROR, "failed to close osfile: " + ex);
+				this._finish(true);
+			}).bind(this));
+			return;
+		}
+		log(LOG_DEBUG, this + ": chunk closed");
+		this._finish(false);
+	},
+	_finish: function(notifyOwner) {
+		log(LOG_ERROR, "Finishing " + this + " notify: " + notifyOwner);
 		if (this.buckets) {
 			this.buckets.unregister(this);
 			delete this.buckets;
 		}
 		delete this._req;
 		memoryReporter.unregisterChunk(this);
+		this._inited = false;
 
 		this._sessionBytes = 0;
 		this._buffered = 0;
@@ -371,44 +403,6 @@ Chunk.prototype = {
 
 		if (notifyOwner) {
 			this.parent.chunkClosed(this);
-		}
-	},
-	onStartRequest: function(aRequest, aContext) {},
-	onStopRequest: function(aRequest, aContext, aStatusCode) {
-		/* jshint eqeqeq:false */
-		if (!(aRequest instanceof Ci.nsIAsyncStreamCopier)) {
-			log(LOG_ERROR, "Not a copier", aRequest);
-			throw new Exception("Not a copier");
-		}
-
-		// Untrack the copier
-		// XXX .indexOf does NOT work
-		let bytes = -1;
-		for (let i = 0; i < this._copiers.length; ++i) {
-			if (aRequest == this._copiers[i].copier) {
-				bytes = this._copiers.splice(i, 1)[0].bytes;
-				if (i) {
-					log(LOG_ERROR, "Out of order copier! at: " + i);
-				}
-				break;
-			}
-		}
-
-		if (!this._canceled) {
-			if (!Components.isSuccessCode(aStatusCode)) {
-				log(LOG_ERROR, "Failed to asyncwrite", aStatusCode);
-				this.download.writeFailed();
-				return;
-			}
-			if (bytes > 0) {
-				log(LOG_DEBUG,  ": shipped " + bytes + " bytes");
-				this._buffered -= bytes;
-				this.safeBytes += bytes;
-			}
-		}
-		if (!bytes) {
-			log(LOG_DEBUG, "got EOF stream");
-			this._finish();
 		}
 	},
 	rollback: function() {
@@ -421,25 +415,11 @@ Chunk.prototype = {
 	cancelChunk: function() {
 		this.running = false;
 		this._canceled = true;
-		for (let c of this._copiers) {
-			try {
-				c.copier.cancel(Cr.NS_ERROR_ABORT);
-			}
-			catch (ex) {
-				Cu.reportError(ex);
-				// don't care just now ;)
-			}
-		}
-		this._copiers.length = 0;
 
-		// prevent shipping the current stream
-		if (this._hasCurrentStream) {
-			this._currentOutputStream.close();
-			delete this._currentOutputStream;
-			this._currentInputStream.close();
-			delete this._currentInputStream;
+		// prevent shipping the current buffer
+		if (this._hasBuffer) {
+			delete this._buffer;
 		}
-
 		this.close();
 		if (this.download) {
 			this.download.cancel();
@@ -453,7 +433,6 @@ Chunk.prototype = {
 		}
 	},
 	_written: 0,
-	_outStream: null,
 	_noteBytesWritten: function(bytes) {
 		this._written += bytes;
 		this._sessionBytes += bytes;
@@ -467,9 +446,7 @@ Chunk.prototype = {
 			if (!this.running) {
 				return -1;
 			}
-			if (!this._outStream) {
-				this.open();
-			}
+			this._init();
 			let bytes = this.remainder;
 			if (!this.total || aCount < bytes) {
 				bytes = aCount;
@@ -494,36 +471,39 @@ Chunk.prototype = {
 				throw new Error("bytes negative: " + bytes + " " + this.remainder + " " + aCount);
 			}
 
-			// we're using nsIFileOutputStream
+			if (!(aInputStream instanceof Ci.nsIBinaryInputStream)) {
+				aInputStream = new Instances.BinaryInputStream(aInputStream);
+			}
+
 			// per e10n contract we must consume all bytes
 			// or in our case all remainder bytes
 			// reqPending from above makes sure that we won't re-schedule
 			// the download too early
-			let avail;
-			if (this._hasCurrentStream &&
-				(avail = this._currentInputStream.available()) + bytes >= this.buffer_size) {
-				let fill = Math.min(bytes, this.buffer_size - avail);
+			if (this._hasBuffer) {
+				let fill = Math.min(bytes, this._buffer.free);
 				bytes -= fill;
-				if (fill && this._currentOutputStream.writeFrom(aInputStream, fill) !== fill) {
+				if (fill && this._buffer.writeFrom(aInputStream, fill) !== fill) {
 					throw new Error("Failed to fill current stream. fill: " +
 						fill + " bytes: " + bytes + "chunk: " + this);
 				}
-				this._shipCurrentStream();
+				if (!this._buffer.free) {
+					this._shipBuffer();
+				}
 			}
-			this._ensureStream(true);
 			while (bytes >= this.buffer_size) {
-				if (this._currentOutputStream.writeFrom(aInputStream, this.buffer_size) !== this.buffer_size) {
+				this._ensureBuffer();
+				if (this._buffer.writeFrom(aInputStream, this.buffer_size) !== this.buffer_size) {
 					throw new Error("Failed to write full stream. " + this);
 				}
-				this._shipCurrentStream();
+				this._shipBuffer();
 				bytes -= this.buffer_size;
-				this._ensureStream(true);
 			}
 			if (bytes) {
-				this._ensureStream();
-				if (this._currentOutputStream.writeFrom(aInputStream, bytes) !== bytes) {
+				this._ensureBuffer();
+				let written = this._buffer.writeFrom(aInputStream, bytes);
+				if (written !== bytes) {
 					throw new Error("Failed to write all requested bytes to current stream. bytes: " +
-						bytes + " chunk: " + this);
+						bytes + " actual: " + written + " chunk: " + this);
 				}
 			}
 			this._noteBytesWritten(got);
@@ -535,77 +515,47 @@ Chunk.prototype = {
 		}
 		return 0;
 	},
-	_ensureStream: function(solid) {
-		if (!this._hasCurrentStream) {
-			let pipe;
-			this.buffer_size = buffer_size;
-			if (solid) {
-				pipe = new Instances.Pipe(false, true, this.buffer_size, 1, null);
-			}
-			else {
-				pipe = new Instances.Pipe(false, true, this.buffer_size>>2, 1<<2, null);
-			}
-			this._currentInputStream = pipe.inputStream;
-			this._currentOutputStream = pipe.outputStream;
-		}
-	},
-	get _hasCurrentStream() !!this._currentInputStream,
-	_shipCurrentStream: function() {
-		let is = this._currentInputStream;
-		let os = this._currentOutputStream;
-		delete this._currentInputStream;
-		delete this._currentOutputStream;
-		if (!is || !os) {
+	_ensureBuffer: function() {
+		if (this._hasBuffer) {
 			return;
 		}
-
-		let bytes = is.available();
-		os.close();
-
-		let copier = new Instances.AsyncStreamCopier(
-			is,
-			this._outStream,
-			_thread,
-			true, // source buffered
-			false, // sink buffered
-			bytes,
-			true, // close source
-			false // close sink
-			);
-
-		try {
-			this._buffered += bytes;
-			this._copiers.push({copier:copier, bytes:bytes});
-			copier.asyncCopy(this, null);
-		}
-		catch (ex) {
-			this._copiers.pop();
-			this._buffered -= bytes;
-			throw ex;
-		}
+		this.buffer_size = buffer_size;
+		this._buffer = new Buffer(this.buffer_size);
 	},
-	_shipEOFStream: function() {
-		// hacky way to close the stream off the main thread
-		let is = new Instances.StringInputStream("", 0);
-		let copier = new Instances.AsyncStreamCopier(
-			is,
-			this._outStream,
-			_thread,
-			true, // source buffered
-			false, // sink buffered
-			0,
-			true, // close source
-			true // close sink
-			);
-		try {
-			this._copiers.push({copier:copier, bytes:0});
-			copier.asyncCopy(this, null);
+	get _hasBuffer() !!this._buffer,
+	_pendingWrites: 0,
+	_shipBuffer: function() {
+		let buffer = this._buffer;
+		delete this._buffer;
+		if (!buffer) {
+			return;
 		}
-		catch (ex) {
-			this._copiers.pop();
-			throw ex;
+		log(LOG_DEBUG, "shipping buffer: " + buffer.length);
+
+		let bytes = buffer.length;
+		if (!bytes) {
+			log(LOG_DEBUG, "Not shipping buffer, zero length");
 		}
-		log(LOG_DEBUG, "shipped EOF stream");
+		this._buffered += bytes;
+		++this._pendingWrites;
+		Task.spawn((function _shipBufferTask() {
+			let file = yield this._open();
+			yield file.write(buffer.data, {bytes: bytes});
+			log(LOG_DEBUG, this + ": shipped " + bytes + " bytes");
+			this._buffered -= bytes;
+			this.safeBytes += bytes;
+			--this._pendingWrites;
+			if (!this.running) {
+				this.close();
+			}
+		}).bind(this)).then(null, (function _shipBufferFailure(ex) {
+			log(LOG_ERROR, ex);
+			--this._pendingWrites;
+			this.download.writeFailed();
+			if (!this.running) {
+				this.close();
+			}
+		}).bind(this));
 	},
 	_wnd: 2048,
 	observe: function() {
