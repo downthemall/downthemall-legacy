@@ -16,10 +16,7 @@ function load() {
 }
 function accept() {
 	try {
-		window.arguments[1]._returnFromDialog(
-			$('choice').selectedIndex,
-			$('context').selectedIndex
-		);
+		window.arguments[1].resolve([$('choice').selectedIndex, $('context').selectedIndex]);
 		return true;
 	}
 	catch (ex) {

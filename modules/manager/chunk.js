@@ -242,7 +242,7 @@ Buffer.prototype = Object.seal({
 	length: 0,
 	writeFrom: function(inputStream, length) {
 		if (length > this.free) {
-			throw new Error("Buffer overflow");
+			throw new Error("Buffer overflow, free: " + this.free + ", length: " + length + ", blen: " + this.length);
 		}
 		if (this._buf.byteLength < length) {
 			let nl = this._buf.byteLength;
