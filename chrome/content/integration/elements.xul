@@ -95,7 +95,7 @@
 		</menupopup>
 	</menu>
 
-	<toolbarbutton id="dta-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-regular2.label;" tooltiptext="&dta-regular.desc;" type="menu-button" command="dta:regular">
+	<toolbarbutton id="dta-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-regular2.label;" tooltiptext="&dta-regular.desc;" type="menu-button" buttoncommand="dta:regular" widget-type="view" panelview="PanelUI-downthemall">
 		<menupopup  id="dta-button-popup">
 			<menuitem id="dta-tb-dta" label="DownThemAll! (&dta-tb-single.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular2.label;" command="dta:regular"/>
 			<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular2.label;" command="dta:regular-all"/>
@@ -108,7 +108,7 @@
 		<image id="downthemall-notification-icon" class="notification-anchor-icon" role="button" />
 	</box>
 
-	<toolbarbutton id="dta-turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-regular-turbo2.label;" tooltiptext="&dta-regular-turbo.desc;" type="menu-button" command="dta:turbo">
+	<toolbarbutton id="dta-turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-regular-turbo2.label;" tooltiptext="&dta-regular-turbo.desc;" type="menu-button" widget-type="view" buttoncommand="dta:turbo" panelview="PanelUI-downthemall-turbo">
 		<menupopup id="dta-turbo-button-popup">
 			<menuitem id="dta-tb-turbo" label="dTa OneClick! (&dta-tb-single.label;)" tooltiptext="&dta-regular-turbo2.label;" class="menuitem-iconic dta-menuitem dta-turbo" command="dta:turbo"/>
 			<menuitem id="dta-tb-allturbo" label="dTa OneClick! (&dta-tb-all.label;)" tooltiptext="&dta-regular-turbo2.label;" class="menuitem-iconic dta-menuitem dta-turbo" command="dta:turbo-all"/>
@@ -145,5 +145,20 @@
 			</menupopup>
 		</menu>
 	</vbox>
+
+	<panelmultiview id="PanelUI-multiView">
+		<panelview id="PanelUI-downthemall">
+			<toolbarbutton id="dta-panel-dta" label="DownThemAll! (&dta-tb-single.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular2.label;" command="dta:regular"/>
+			<toolbarbutton id="dta-panel-all" label="DownThemAll! (&dta-tb-all.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular2.label;" command="dta:regular-all"/>
+			<menuseparator />
+			<toolbarbutton id="dta-panel-manager" label="&dta-manager-button;" class="menuitem-iconic dta-menuitem dta-manager" tooltiptext="&dta-manager-button;" command="dta:manager" />
+		</panelview>
+		<panelview id="PanelUI-downthemall-turbo">
+			<toolbarbutton id="dta-tb-turbo" label="dTa OneClick! (&dta-tb-single.label;)" tooltiptext="&dta-regular-turbo2.label;" class="menuitem-iconic dta-menuitem dta-turbo" command="dta:turbo"/>
+			<toolbarbutton id="dta-tb-allturbo" label="dTa OneClick! (&dta-tb-all.label;)" tooltiptext="&dta-regular-turbo2.label;" class="menuitem-iconic dta-menuitem dta-turbo" command="dta:turbo-all"/>
+			<menuseparator />
+			<toolbarbutton id="dta-tb-manager2" label="&dta-manager-button;" class="menuitem-iconic dta-menuitem dta-manager" tooltiptext="&dta-manager-button;" command="dta:manager" />
+		</panelview>
+	</panelmultiview>
 
 </overlay>

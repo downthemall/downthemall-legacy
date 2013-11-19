@@ -1546,9 +1546,27 @@ exports.load = function load(window, outerEvent) {
 
 	try {
 		(function() {
+			function onCommand(e) {
+				let el = e.target;
+				if (el.getAttribute("cui-areatype") === "menu-panel") {
+					try {
+						let ownerWindow = el.ownerDocument.defaultView;
+						let {area} = ownerWindow.CustomizableUI.getPlacementOfWidget(el.id);
+						ownerWindow.PanelUI.showSubView(el.getAttribute("panelview"), el, area);
+						e.preventDefault();
+						return false;
+					}
+					catch (ex) {
+						log(LOG_ERROR, "failed to show panel", ex);
+					}
+				}
+				$(el.getAttribute("buttoncommand")).doCommand();
+			}
 			let dta_button = $t('dta-button');
 			dta_button.addEventListener('popupshowing', onDTAShowing, true);
 			unloadWindow(window, function() dta_button.removeEventListener('popupshowing', onDTAShowing, true));
+			dta_button.addEventListener('command', onCommand, true);
+			unloadWindow(window, function() dta_button.removeEventListener('command', onCommand, true));
 
 			setupDrop(dta_button, function(url, ref) {
 				DTA.saveSingleItem(window, false, {
@@ -1562,6 +1580,8 @@ exports.load = function load(window, outerEvent) {
 			let dta_turbo_button = $t('dta-turbo-button');
 			dta_turbo_button.addEventListener('popupshowing', onDTAShowing, true);
 			unloadWindow(window, function() dta_turbo_button.removeEventListener('popupshowing', onDTAShowing, true));
+			dta_turbo_button.addEventListener('command', onCommand, true);
+			unloadWindow(window, function() dta_turbo_button.removeEventListener('command', onCommand, true));
 
 			setupDrop(dta_turbo_button, function(url, ref) {
 				let item = {
