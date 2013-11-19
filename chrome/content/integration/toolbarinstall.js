@@ -17,20 +17,41 @@ function discard() {
 opener.addEventListener("unload", discard, false);
 addEventListener("unload", discard, false);
 
-addEventListener("load", function() {
-	removeEventListener("load", arguments.callee, false);
+addEventListener("load", function load() {
+	removeEventListener("load", load, false);
 
 	all.forEach(function(b) $(b).checked = !!$o(b));
 	window.sizeToContent();
 
 }, false);
 
-addEventListener("dialogaccept", function() {
-	removeEventListener("dialogaccept", arguments.callee, true);
+addEventListener("dialogaccept", function accept() {
+	removeEventListener("dialogaccept", accept, true);
 
 	let newActive = all.filter(function(b) $(b).checked);
-	let tb = $o('nav-bar');
 
+	if (opener.CustomizableUI) {
+		for (let b of all) {
+			let placement = opener.CustomizableUI.getPlacementOfWidget(b);
+			if (newActive.indexOf(b) == -1) {
+				// Remove
+				if (placement) {
+					opener.CustomizableUI.removeWidgetFromArea(b);
+				}
+			}
+			else {
+				if (!placement) {
+					// New and not placed yet
+					placement = {area: 'nav-bar', position: undefined};
+					opener.CustomizableUI.addWidgetToArea(id, placement.area, placement.position);
+					opener.CustomizableUI.ensureWidgetPlacedInWindow(id, opener);
+				}
+			}
+		}
+		return;
+	}
+
+	let tb = $o('nav-bar');
 	for (let b of all) {
 		let btn = $o(b);
 		if (newActive.indexOf(b) != -1 && !btn) {
