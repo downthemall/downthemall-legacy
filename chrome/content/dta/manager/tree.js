@@ -1369,16 +1369,16 @@ const Tree = {
 		{item: 'cmdPause', f: function(d) (d.isOf(RUNNING) && d.resumable) || d.isOf(QUEUED | PAUSED)},
 		{item: 'cmdCancel', f: function(d) d.isOf(PAUSED | RUNNING | QUEUED | COMPLETE)},
 
-		{item: 'cmdLaunch', f: function(d) !!d.curFile},
-		{item: 'cmdOpenFolder', f: function(d) !!d.curFolder},
-		{item: 'cmdDelete', f: function(d) d.state === COMPLETE},
-
 		{item: 'cmdMoveUp', f: function(d) !Tree.filtered && d.min > 0},
 		{item: 'cmdMoveTop', f: function(d) d.min > 0},
 		{item: 'cmdMoveDown', f: function(d) !Tree.filtered && d.max !== d.rows - 1},
 		{item: 'cmdMoveBottom', f: function(d) d.max !== d.rows - 1}
 	],
 	_refreshTools_items: [
+		{items: ['cmdLaunch', "launch"], f: function(d) !!d.curFile},
+		{items: ["cmdOpenFolder", "folder"], f: function(d) !!d.curFolder},
+		{items: ["cmdDelete", "delete"], f: function(d) d.state === COMPLETE},
+
 		{items: ['cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'], f: function(d) !!d.count},
 		{items: ['cmdMirrors', 'cmdAddLimits', 'cmdRename'], f: function(d) d.count === 1},
 		{items: ['cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'],
