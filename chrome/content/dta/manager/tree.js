@@ -15,6 +15,7 @@ XPCOMUtils.defineLazyGetter(this, "ImportExport", function() require("manager/im
 function FileDataProvider(download, file) {
 	this._download = download;
 	this._file = file;
+	this._checkFile = this._checkFile.bind(this);
 };
 FileDataProvider.prototype = {
 	_checks: 0,
@@ -29,7 +30,7 @@ FileDataProvider.prototype = {
 		return this._file;
 	},
 	checkFile: function() {
-		Task.spawn(this._checkFile.bind(this));
+		Task.spawn(this._checkFile);
 	},
 	_checkFile: function() {
 		delete this._timer;
@@ -1424,25 +1425,28 @@ const Tree = {
 			}
 			let cur = this.current;
 			Task.spawn((function() {
-				states.curFile = (cur && cur.state === COMPLETE && (yield OS.File.exists(cur.destinationLocalFile.path)));
-				states.curFolder = (cur && (yield OS.File.exists(new Instances.LocalFile(cur.destinationPath).path)));
+				try {
+					states.curFile = (cur && cur.state === COMPLETE && (yield OS.File.exists(cur.destinationLocalFile.path)));
+					states.curFolder = (cur && (yield OS.File.exists(new Instances.LocalFile(cur.destinationPath).path)));
 
-				for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
-					let item = this._refreshTools_item[i];
-					let disabled = item.f(states) ? "false" : "true";
-					item.item.setAttribute("disabled", disabled);
-				}
-				for (let i = 0, e = this._refreshTools_items.length; i < e; ++i) {
-					let items = this._refreshTools_items[i];
-					let disabled = items.f(states) ? "false" : "true";
-					items = items.items;
-					for (let ii = 0, ee = items.length; ii < ee; ++ii) {
-						items[ii].setAttribute("disabled", disabled);
+					for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
+						let item = this._refreshTools_item[i];
+						let disabled = item.f(states) ? "false" : "true";
+						item.item.setAttribute("disabled", disabled);
+					}
+					for (let i = 0, e = this._refreshTools_items.length; i < e; ++i) {
+						let items = this._refreshTools_items[i];
+						let disabled = items.f(states) ? "false" : "true";
+						items = items.items;
+						for (let ii = 0, ee = items.length; ii < ee; ++ii) {
+							items[ii].setAttribute("disabled", disabled);
+						}
 					}
 				}
-			}).bind(this)).then(null, function(tex) {
-				log(LOG_ERROR, "rt (task)", tex);
-			});
+				catch (tex) {
+					log(LOG_ERROR, "rt (task)", tex);
+				}
+			}).bind(this));
 		}
 		catch (ex) {
 			log(LOG_ERROR, "rt", ex);
