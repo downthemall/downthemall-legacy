@@ -1,63 +1,132 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-#dta-button,
-#dta-turbo-button,
-#dta-turboselect-button,
-#dta-manager-button,
 .dta-toolbarbutton {
-	list-style-image: url(buttons24.png);
+	list-style-image: url(buttons16.png);
 }
-
-toolbar[iconsize="small"] #dta-button,
-toolbar[iconsize="small"] #dta-turbo-button,
-toolbar[iconsize="small"] #dta-turboselect-button,
-toolbar[iconsize="small"] #dta-manager-button,
-toolbar[iconsize="small"] .dta-toolbarbutton {
-	list-style-image: url(buttons.png);
+.dta-toolbarbutton[cui-areatype="menu-panel"],
+toolbarpaletteitem[place="palette"] > .dta-toolbarbutton {
+	list-style-image: url(buttons32.png) !important;
 }
 
 #dta-button {
-	-moz-image-region: rect(0px,48px,24px,24px);
-}
-#dta-button:hover {
-	-moz-image-region: rect(0px,24px,24px,0px);
-}
-toolbar[iconsize="small"] #dta-button {
 	-moz-image-region: rect(0px,32px,16px,16px);
 }
-toolbar[iconsize="small"] #dta-button:hover {
+#dta-button:hover {
 	-moz-image-region: rect(0px,16px,16px,0px);
+}
+#dta-button[cui-areatype="menu-panel"],
+toolbarpaletteitem[place="palette"] > #dta-button,
+toolbarpaletteitem[place="palette"] > #dta-button:hover {
+	-moz-image-region: rect(0px,64px,32px,32px);
+}
+#dta-button[cui-areatype="menu-panel"]:hover {
+	-moz-image-region: rect(0px,32px,32px,0px);
 }
 
 #dta-turbo-button {
-	-moz-image-region: rect(0px,96px,24px,72px);
-}
-#dta-turbo-button:hover {
-	-moz-image-region: rect(0px,72px,24px,48px);
-}
-toolbar[iconsize="small"] #dta-turbo-button {
 	-moz-image-region: rect(0px,64px,16px,48px);
 }
-toolbar[iconsize="small"] #dta-turbo-button:hover {
+#dta-turbo-button:hover {
 	-moz-image-region: rect(0px,48px,16px,32px);
+}
+#dta-turbo-button[cui-areatype="menu-panel"],
+toolbarpaletteitem[place="palette"] > #dta-turbo-button,
+toolbarpaletteitem[place="palette"] > #dta-turbo-button:hover {
+	-moz-image-region: rect(0px,128px,32px,96px);
+}
+#dta-turbo-button[cui-areatype="menu-panel"]:hover {
+	-moz-image-region: rect(0px,96px,32px,64px);
 }
 
 #dta-turboselect-button {
-	-moz-image-region: rect(0px,144px,24px,120px);
-}
-#dta-turboselect-button:hover {
-	-moz-image-region: rect(0px,120px,24px,96px);
-}
-toolbar[iconsize="small"] #dta-turboselect-button {
 	-moz-image-region: rect(0px,96px,16px,80px);
 }
-toolbar[iconsize="small"] #dta-turboselect-button:hover {
+#dta-turboselect-button:hover {
 	-moz-image-region: rect(0px,80px,16px,64px);
+}
+#dta-turboselect-button[cui-areatype="menu-panel"],
+toolbarpaletteitem[place="palette"] > #dta-turboselect-button,
+toolbarpaletteitem[place="palette"] > #dta-turboselect-button:hover {
+	-moz-image-region: rect(0px,192px,32px,160px);
+}
+#dta-turboselect-button[cui-areatype="menu-panel"]:hover {
+	-moz-image-region: rect(0px,160px,32px,128px);
 }
 
 #dta-manager-button {
-	-moz-image-region: rect(0px,168px,24px,144px);
-}
-toolbar[iconsize="small"] #dta-manager-button {
 	-moz-image-region: rect(0px, 112px, 16px, 96px);
+}
+#dta-manager-button[cui-areatype="menu-panel"],
+toolbarpaletteitem[place="palette"] > #dta-manager-button {
+	-moz-image-region: rect(0px, 224px,32px,192px);
+}
+
+@media (min-resolution: 2dppx) {
+	.dta-toolbarbutton {
+		list-style-image: url(buttons32.png);
+	}
+	.dta-toolbarbutton .toolbarbutton-icon {
+		width: 16px;
+	}
+	.dta-toolbarbutton[cui-areatype="menu-panel"],
+	toolbarpaletteitem[place="palette"] > .dta-toolbarbutton {
+		list-style-image: url(buttons64.png) !important;
+	}
+	.dta-toolbarbutton[cui-areatype="menu-panel"] .toolbarbutton-icon,
+	toolbarpaletteitem[place="palette"] > .dta-toolbarbutton .toolbarbutton-icon {
+	width: 32px;
+	}
+
+	#dta-button {
+		-moz-image-region: rect(0px,64px,32px,32px);
+	}
+	#dta-button:hover {
+		-moz-image-region: rect(0px,32px,32px,0px);
+	}
+	#dta-button[cui-areatype="menu-panel"],
+	toolbarpaletteitem[place="palette"] > #dta-button,
+	toolbarpaletteitem[place="palette"] > #dta-button:hover {
+		-moz-image-region: rect(0px,128px,64px,64px);
+	}
+	#dta-button[cui-areatype="menu-panel"]:hover {
+		-moz-image-region: rect(0px,64px,64px,0px);
+	}
+
+	#dta-turbo-button {
+		-moz-image-region: rect(0px,128px,32px,96px);
+	}
+	#dta-turbo-button:hover {
+		-moz-image-region: rect(0px,96px,32px,64px);
+	}
+	#dta-turbo-button[cui-areatype="menu-panel"],
+	toolbarpaletteitem[place="palette"] > #dta-turbo-button,
+	toolbarpaletteitem[place="palette"] > #dta-turbo-button:hover {
+		-moz-image-region: rect(0px,256px,64px,192px);
+	}
+	#dta-turbo-button[cui-areatype="menu-panel"]:hover {
+		-moz-image-region: rect(0px,192px,64px,128px);
+	}
+
+	#dta-turboselect-button {
+		-moz-image-region: rect(0px,192px,32px,160px);
+	}
+	#dta-turboselect-button:hover {
+		-moz-image-region: rect(0px,160px,32px,128px);
+	}
+	#dta-turboselect-button[cui-areatype="menu-panel"],
+	toolbarpaletteitem[place="palette"] > #dta-turboselect-button,
+	toolbarpaletteitem[place="palette"] > #dta-turboselect-button:hover {
+		-moz-image-region: rect(0px,384px,64px,320px);
+	}
+	#dta-turboselect-button[cui-areatype="menu-panel"]:hover {
+		-moz-image-region: rect(0px,320px,64px,256px);
+	}
+
+	#dta-manager-button {
+		-moz-image-region: rect(0px,224px,32px,192px);
+	}
+	#dta-manager-button[cui-areatype="menu-panel"],
+	toolbarpaletteitem[place="palette"] > #dta-manager-button {
+		-moz-image-region: rect(0px,448px,64px,384px);
+	}
 }
