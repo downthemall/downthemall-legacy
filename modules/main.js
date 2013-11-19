@@ -368,6 +368,20 @@ function registerOverlays() {
 					tb.ownerDocument.persist(tb.id, "downthemall-currentset");
 				});
 			}
+
+			if (window.CustomizableUI) {
+				for (let id of ids) {
+					let placement = window.CustomizableUI.getPlacementOfWidget(id);
+					if (!placement) {
+						log(LOG_DEBUG, id + " is not placeable");
+						continue;
+					}
+					window.CustomizableUI.addWidgetToArea(id, placement.area, placement.position);
+					window.CustomizableUI.ensureWidgetPlacedInWindow(id, window);
+					log(LOG_DEBUG, "placed " + id + " " + JSON.stringify(placement));
+				}
+				return;
+			}
 			for (let attr of ["currentset", "downthemall-currentset"]) {
 				if (!ids.length) {
 					return;
