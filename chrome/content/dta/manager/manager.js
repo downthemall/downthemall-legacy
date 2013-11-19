@@ -2432,15 +2432,18 @@ QueueItem.prototype = {
 	},
 
 	removeTmpFile: function() {
-		if (!!this._tmpFile && this._tmpFile.exists()) {
-			try {
-				this._tmpFile.remove(false);
-			}
-			catch (ex) {
-				log(LOG_ERROR, "failed to remove tmpfile: " + this.tmpFile.path, ex);
-			}
+		let tmpFile = this._tmpFile;
+		delete this._tmpFile;
+		if (!tmpFile) {
+			return;
 		}
-		this._tmpFile = null;
+		Task.spawn(function() {
+			if (yield OS.File.exists(tmpFile.path)) {
+				yield OS.File.remove(tmpFile.path);
+			}
+		}).then(null, function(ex) {
+			log(LOG_ERROR, "failed to remove tmpfile: " + tmpFile.path, ex);
+		});
 	},
 
 	sessionConnections: 0,
