@@ -39,3 +39,24 @@
 	padding-top: 2px;
 	padding-bottom: 3px;
 }
+
+@media (min-resolution: 2dppx) {
+	.dta-menuitem {
+		list-style-image: url(chrome://dta/skin/toolbarbuttons/buttons32.png);
+	}
+	.dta-normal {
+		-moz-image-region: rect(0px,64px,32px,32px);
+	}
+	.dta-turbo {
+		-moz-image-region: rect(0px,128px,32px,96px);
+	}
+	.dta-manager {
+		-moz-image-region: rect(0px,224px,32px,192px);
+	}
+	.dta-prefs {
+		-moz-image-region: rect(0px,256px,32px,224px);
+	}
+	.dta-about {
+		-moz-image-region: rect(0px,288px,32px,256px);
+	}
+}
