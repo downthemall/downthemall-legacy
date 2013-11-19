@@ -1901,71 +1901,64 @@ QueueItem.prototype = {
 		for (let c of this.chunks) {
 			c.close();
 		}
-		return Task.spawn((function() {
-			if (!(yield ConflictManager.resolve(this))) {
-				return;
-			}
-			let destination = new Instances.LocalFile(this.destinationPath);
-			log(LOG_INFO, this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
-			try {
-				yield OS.File.makeDir(destination.path, {unixMode: Prefs.dirPermissions});
-			}
-			catch (ex if ex.becauseExists) {
-				// no op
-			}
-			let df = destination.clone();
-			df.append(this.destinationName);
-			try {
-				yield OS.File.remove(df.path);
-			}
-			catch (ex if ex.becauseNoSuchFile) {
-				// no op
-			}
-			// move file
-			if (this.compression) {
-				this.setState(FINISHING);
-				this.status = TextCache_DECOMPRESSING;
-				let compressDeferred = Promise.defer();
-				new Decompressor(this, function(ex) {
-					if (ex) {
-						compressDeferred.reject(ex);
-					}
-					else {
-						compressDeferred.resolve(true);
-					}
-				});
-				yield compressDeferred.promise;
-				throw new Task.Result(true);
-			}
-			this.status = TextCache_MOVING;
-			let moveDeferred = Promise.defer();
-			let move = function(self, x) {
-				let df = destination.clone();
-				df.append(self.destinationName);
-				OS.File.move(self.tmpFile.path, df.path).then(function() {
-					moveDeferred.resolve(true);
-				}, function(ex) {
-					// XXX Win
-					if (ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) {
-						try {
-							self.shortenName();
-						}
-						catch (iex) {
-							log(LOG_ERROR, "Failed to shorten name", ex);
-						}
-					}
-					x = x || 1;
-					if (x > 5) {
-						moveDeferred.reject(ex);
-						return;
-					}
-					setTimeoutOnlyFun(function() move(self, ++x), x * 250);
-				})
-			};
-			move(this);
-			yield moveDeferred.promise;
+		if (!(yield ConflictManager.resolve(this))) {
+			return;
+		}
+		let destination = new Instances.LocalFile(this.destinationPath);
+		yield Utils.makeDir(destination, Prefs.dirPermissions);
+		log(LOG_INFO, this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
+		let df = destination.clone();
+		df.append(this.destinationName);
+		try {
+			yield OS.File.remove(df.path);
+		}
+		catch (ex if ex.becauseNoSuchFile) {
+			// no op
+		}
+		// move file
+		if (this.compression) {
+			this.setState(FINISHING);
+			this.status = TextCache_DECOMPRESSING;
+			let compressDeferred = Promise.defer();
+			new Decompressor(this, function(ex) {
+				if (ex) {
+					compressDeferred.reject(ex);
+				}
+				else {
+					compressDeferred.resolve(true);
+				}
+			});
+			yield compressDeferred.promise;
 			throw new Task.Result(true);
-		}).bind(this));
+		}
+		this.status = TextCache_MOVING;
+		let moveDeferred = Promise.defer();
+		let move = function(self, x) {
+			let df = destination.clone();
+			df.append(self.destinationName);
+			OS.File.move(self.tmpFile.path, df.path).then(function() {
+				moveDeferred.resolve(true);
+			}, function(ex) {
+				// XXX Win
+				if (ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) {
+					try {
+						self.shortenName();
+					}
+					catch (iex) {
+						log(LOG_ERROR, "Failed to shorten name", ex);
+					}
+				}
+				x = x || 1;
+				if (x > 5) {
+					moveDeferred.reject(ex);
+					return;
+				}
+				setTimeoutOnlyFun(function() move(self, ++x), x * 250);
+			})
+		};
+		move(this);
+		yield moveDeferred.promise;
+		throw new Task.Result(true);
 	},
 	handleMetalink: function() {
 		try {
