@@ -21,7 +21,14 @@ function createFactory(direct, cls) {
 		},
 		register: function() {
 			const i = this._info;
-			Cm.registerFactory(i.classID, i.classDescription, i.contractID, this);
+			try {
+				Cm.registerFactory(i.classID, i.classDescription, i.contractID, this);
+			}
+			catch (ex if result == Cr.NS_ERROR_FACTORY_EXISTS) {
+				defer(this.register.bind(this));
+				return;
+			}
+
 			if (i.xpcom_categories) {
 				for (let category of i.xpcom_categories) {
 					Services.catman.addCategoryEntry(category, i.classDescription, i.contractID, false, true);
