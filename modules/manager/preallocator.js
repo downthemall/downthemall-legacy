@@ -10,6 +10,8 @@ const {
 const {prealloc: _asynccopier} = require("manager/preallocator/asynccopier");
 const {prealloc: _cothread} = require("manager/preallocator/cothread");
 
+const {Promise} = require("support/promise");
+
 const SIZE_MIN = (require("version").OS === 'winnt' ? 256 : 2048) * 1024;
 const SIZE_COTHREAD_MAX = (1<<24);
 
@@ -41,14 +43,13 @@ const _impl = createOptimizedImplementation(
  * @param tp (function) Scope (this) to call the callback function in
  * @return (nsICancelable) Pre-allocation object.
  */
-exports.prealloc = function prealloc(file, size, perms, sparseOk, callback) {
+exports.prealloc = function prealloc(file, size, perms, sparseOk) {
 	if (size <= SIZE_MIN || !isFinite(size)) {
 		log(LOG_INFO, "pa: not preallocating: " + file);
-		if (callback) {
-			callback(false);
-		}
 		return null;
 	}
 	log(LOG_INFO, "pa: preallocating: " + file + " size: " + size);
-	return _impl.callImpl(file, size, perms, sparseOk, callback || function() {});
+	let deferred = Promise.defer();
+	_impl.callImpl(file, size, perms, sparseOk, function(r) deferred.resolve(r));
+	return deferred.promise;
 };
