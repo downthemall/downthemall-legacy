@@ -13,8 +13,7 @@ const Limits = require("support/serverlimits");
 const pressure = require("support/memorypressure");
 const {getTimestamp, formatNumber} = require("utils");
 const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
-const {Promise} = requireJSM("resource://gre/modules/Promise.jsm");
-const {Task} = requireJSM("resource://gre/modules/Task.jsm");
+const {Promise, Task} = require("support/promise");
 
 const Timers = new TimerManager();
 
