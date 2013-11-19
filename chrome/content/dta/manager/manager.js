@@ -1926,6 +1926,7 @@ QueueItem.prototype = {
 					x = x || 1;
 					if (x > 5) {
 						moveDeferred.reject(ex);
+						return;
 					}
 					setTimeoutOnlyFun(function() move(self, ++x), x * 250);
 				})
@@ -2123,7 +2124,6 @@ QueueItem.prototype = {
 		}).bind(this)).then(null, (function finishDownloadFailure(ex) {
 			log(LOG_ERROR, "complete: ", ex);
 			this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
-			return;
 		}).bind(this));
 	},
 	get maskURL() this.urlManager.usableURL,
