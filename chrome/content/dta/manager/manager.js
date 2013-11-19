@@ -1896,25 +1896,18 @@ QueueItem.prototype = {
 		this.speeds.clear();
 		this.otherBytes = 0;
 	},
-
 	moveCompleted: function() {
 		if (this.state === CANCELED) {
 			throw Error("Cannot move incomplete file");
-		}
-		var deferred = Promise.defer();
-		ConflictManager.resolve(this, 'continueMoveCompleted', deferred);
-		return deferred.promise;
-	},
-	continueMoveCompleted: function(deferred) {
-		if (this.state === CANCELED) {
-			deferred.resolve(false);
-			return;
 		}
 		// safeguard against some failed chunks.
 		for (let c of this.chunks) {
 			c.close();
 		}
-		Task.spawn((function() {
+		return Task.spawn((function() {
+			if (!(yield ConflictManager.resolve(this))) {
+				return;
+			}
 			let destination = new Instances.LocalFile(this.destinationPath);
 			log(LOG_INFO, this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
 			if (!(yield OS.File.exists(destination.path))) {
@@ -1929,33 +1922,36 @@ QueueItem.prototype = {
 			if (this.compression) {
 				this.setState(FINISHING);
 				this.status = TextCache_DECOMPRESSING;
+				let compressDeferred = Promise.defer();
 				new Decompressor(this, function(ex) {
 					if (ex) {
-						deferred.reject(ex);
+						compressDeferred.reject(ex);
 					}
 					else {
-						deferred.resolve(true);
+						compressDeferred.resolve(true);
 					}
 				});
-				return;
+				yield compressDeferred.promise;
+				throw new Task.Result(true);
 			}
 			this.status = TextCache_MOVING;
 			destination.append(this.destinationName);
+			let moveDeferred = Promise.defer();
 			let move = function(self, x) {
 				OS.File.move(self.tmpFile.path, destination.path).then(function() {
-					deferred.resolve(true);
+					moveDeferred.resolve(true);
 				}, function(ex) {
 					x = x || 1;
 					if (x > 5) {
-						deferred.reject(ex);
+						moveDeferred.reject(ex);
 					}
 					setTimeoutOnlyFun(function() move(self, ++x), x * 250);
 				})
 			};
 			move(this);
-		}).bind(this)).then(null, function(ex) {
-			deferred.reject(ex);
-		});
+			yield moveDeferred.promise;
+			throw new Task.Result(true);
+		}).bind(this));
 	},
 	handleMetalink: function() {
 		try {
@@ -2675,120 +2671,109 @@ XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
 
 const ConflictManager = {
 	_items: [],
-	resolve: function(download, reentry, options) {
-		for (let item of this._items) {
-			if (item.download === download) {
-				log(LOG_DEBUG, "conflict resolution updated to: " + reentry);
-				item.reentry = reentry;
-				item.options = options;
-				return;
+	resolve: function(download) {
+		if (this._processing && this._processing.download === download) {
+			return this._processing.deferred.promise;
+		}
+		for (let i of this._items) {
+			if (i.download == download) {
+				return i.deferred.promise;
 			}
 		}
-		if (!this._check(download)) {
-			if (reentry) {
-				download[reentry](options);
-			}
-			return;
-		}
-		log(LOG_DEBUG, "conflict resolution queued to: " + reentry);
-		this._items.push({download: download, reentry: reentry, options: options});
+		let deferred = Promise.defer();
+		this._items.push({download: download, deferred: deferred});
 		this._process();
+		return deferred.promise;
 	},
-	_check: function(download) {
-		let dest = download.destinationLocalFile;
-		let sn = false;
-		if (download.state === RUNNING) {
-			sn = Dialog.checkSameName(download, download.destinationFile);
-		}
-		return dest.exists() || sn;
-	},
-	_process: function() {
+	_process: function() {
 		if (this._processing) {
 			return;
 		}
-		let cur;
-		while (this._items.length) {
-			cur = this._items[0];
-			if (!this._check(cur.download)) {
-				if (cur.reentry) {
-					cur.download[cur.reentry](cur.options);
-				}
-				this._items.shift();
-				continue;
-			}
-			break;
+		let item = this._items.shift();
+		if (!item) {
+			return;
 		}
-		if (!this._items.length) {
+		this._processing = item;
+		Task.spawn(this._processOne.bind(this, item.download, item.deferred)).then((function() {
+			log(LOG_ERROR, "Resolved " + item.download);
+			delete this._processing;
+			this._process();
+		}).bind(this), (function(ex) {
+			log(LOG_ERROR, "Failed to resolve conflicts", ex);
+			item.deferred.reject(ex);
+			delete this._processing;
+			this._process();
+		}).bind(this));
+	},
+	_processOne: function(download, deferred) {
+		let dest = download.destinationLocalFile;
+		if (!Dialog.checkSameName(download, download.destinationFile) && !(yield OS.File.exists(dest.path))) {
+			deferred.resolve(true);
 			return;
 		}
 
+		let cr = -1;
 		if (Prefs.conflictResolution !== 3) {
-			this._return(Prefs.conflictResolution);
-			return;
+			cr = Prefs.conflictResolution;
 		}
 		if ('_sessionSetting' in this) {
-			this._return(this._sessionSetting);
-			return;
+			cr = this._sessionSetting;
 		}
-		if (cur.download.shouldOverwrite) {
-			this._return(1);
-			return;
+		if (download.shouldOverwrite) {
+			cr = 1;
 		}
 
-		this._computeConflicts(cur);
-
-		var options = {
-			url: Utils.cropCenter(cur.download.urlManager.usable, 45),
-			fn: Utils.cropCenter(cur.download.destinationName, 45),
-			newDest: Utils.cropCenter(cur.newDest, 45)
-		};
-
-		this._processing = true;
-
-		window.openDialog(
-			"chrome://dta/content/dta/manager/conflicts.xul",
-			"_blank",
-			"chrome,centerscreen,resizable=no,dialog,close=no,dependent",
-			options, this
-		);
-	},
-	_computeConflicts: function(cur) {
-		let download = cur.download;
-		download.conflicts = 0;
+		let conflicts = download.conflicts || 0;
 		let basename = download.destinationName;
 		let newDest = download.destinationLocalFile.clone();
-		let i = 1;
-		for (;; ++i) {
-			newDest.leafName = Utils.formatConflictName(basename, i);
-			if (!newDest.exists() && (download.state !== RUNNING || !Dialog.checkSameName(this, newDest.path))) {
+		for (;; ++conflicts) {
+			newDest.leafName = Utils.formatConflictName(basename, conflicts);
+			if (!(yield OS.File.exists(newDest.path))) {
 				break;
 			}
 		}
-		cur.newDest = newDest.leafName;
-		cur.conflicts = i;
-	},
-	_returnFromDialog: function(option, type) {
-		if (type === 1) {
-			this._sessionSetting = option;
+		if (cr < 0) {
+			let choice = Promise.defer();
+			let options = {
+				url: Utils.cropCenter(download.urlManager.usable, 45),
+				fn: Utils.cropCenter(download.destinationName, 45),
+				newDest: Utils.cropCenter(newDest.leafName, 45)
+			};
+			window.openDialog(
+				"chrome://dta/content/dta/manager/conflicts.xul",
+				"_blank",
+				"chrome,centerscreen,resizable=no,dialog,close=no,dependent",
+				options, choice
+				);
+			let ctype = 0;
+			[cr, ctype] = yield choice.promise;
+			if (ctype === 1) {
+				this._sessionSetting = cr;
+			}
+			else if (ctype === 2) {
+				Preferences.setExt('conflictresolution', cr);
+			}
 		}
-		if (type === 2) {
-			Preferences.setExt('conflictresolution', option);
+		switch (cr) {
+			case 0:
+				for (;; ++conflicts) {
+					newDest.leafName = Utils.formatConflictName(basename, conflicts);
+					if (!(yield OS.File.exists(newDest.path))) {
+						break;
+					}
+				}
+				download.conflicts = conflicts;
+				deferred.resolve(true);
+				break;
+			case 1:
+				download.shouldOverwrite = true;
+				deferred.resolve(true);
+				break;
+			default:
+				download.cancel(_('skipped'));
+				deferred.resolve(false);
+				break;
 		}
-		this._return(option);
-	},
-	_return: function(option) {
-		let cur = this._items[0];
-		switch (option) {
-			/* rename */    case 0: this._computeConflicts(cur); cur.download.conflicts = cur.conflicts; break;
-			/* overwrite */ case 1: cur.download.shouldOverwrite = true; break;
-			/* skip */      default: cur.download.cancel(_('skipped')); break;
-		}
-		if (cur.reentry) {
-			cur.download[cur.reentry](cur.options);
-		}
-		this._items.shift();
-		this._processing = false;
-		this._process();
 	}
 };
 
