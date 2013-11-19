@@ -1872,36 +1872,35 @@ const FileHandling = {
 		}
 	},
 	deleteFile: function() {
-		let list = [];
-
-		for (let d in this._uniqueList) {
-			if (d.destinationLocalFile.exists()) {
-				list.push(d);
-			}
-		}
-		let msg = '';
-		if (list.length < 25) {
-			msg = _('deletetexts');
-			for (let d of list) {
-				msg += "\n" + d.destinationLocalFile.leafName;
-			}
-		}
-		else {
-			msg = _('deletetextl', [list.length]);
-		}
-		if (list.length && Prompts.confirm(window, _('deletecaption'), msg, _('delete'), Prompts.CANCEL, null, 1)) {
-			return;
-		}
-		for (let d of list) {
-			try {
-				if (d.destinationLocalFile.exists()) {
-					d.destinationLocalFile.remove(false);
+		Task.spawn(function() {
+			let list = [];
+			for (let d in this._uniqueList) {
+				if ((yield OS.File.exists(d.destinationLocalFile.path))) {
+					list.push(d);
 				}
 			}
-			catch (ex) {
-				// no-op
+			let msg = '';
+			if (list.length < 25) {
+				msg = _('deletetexts');
+				for (let d of list) {
+					msg += "\n" + d.destinationLocalFile.leafName;
+				}
 			}
-		}
-		Tree.remove(null, true);
+			else {
+				msg = _('deletetextl', [list.length]);
+			}
+			if (list.length && Prompts.confirm(window, _('deletecaption'), msg, _('delete'), Prompts.CANCEL, null, 1)) {
+				return;
+			}
+			for (let d of list) {
+				try {
+					yield OS.File.remove(d.destinationLocalFile.path);
+				}
+				catch (ex) {
+					// no-op
+				}
+			}
+			Tree.remove(null, true);
+		});
 	}
 };

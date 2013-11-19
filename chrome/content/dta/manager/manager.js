@@ -1907,13 +1907,19 @@ QueueItem.prototype = {
 			}
 			let destination = new Instances.LocalFile(this.destinationPath);
 			log(LOG_INFO, this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
-			if (!(yield OS.File.exists(destination.path))) {
+			try {
 				yield OS.File.makeDir(destination.path, {unixMode: Prefs.dirPermissions});
+			}
+			catch (ex if ex.becauseExists) {
+				// no op
 			}
 			let df = destination.clone();
 			df.append(this.destinationName);
-			if ((yield OS.File.exists(df.path))) {
+			try {
 				yield OS.File.remove(df.path);
+			}
+			catch (ex if ex.becauseNoSuchFile) {
+				// no op
 			}
 			// move file
 			if (this.compression) {
@@ -1997,11 +2003,13 @@ QueueItem.prototype = {
 
 		return Task.spawn((function() {
 			function deleteFile() {
-				return OS.File.exists(file.path, function(exists) {
-					if (exists) {
-						return OS.File.remove(file.path);
+				return Task.spawn(function() {
+					try {
+						yield OS.file.remove(file.path);
 					}
-					return null;
+					catch (ex if ex.becauseNoSuchFile) {
+						// no op
+					}
 				});
 			}
 
@@ -2108,9 +2116,7 @@ QueueItem.prototype = {
 				file = this.destinationLocalFile;
 			}
 			try {
-				if (file && (yield OS.File.exists(file.path))) {
-					this.totalSize = this.partialSize = (yield OS.File.stat(file.path)).size;
-				}
+				this.totalSize = this.partialSize = (yield OS.File.stat(file.path)).size;
 			}
 			catch (ex) {
 				log(LOG_ERROR, "failed to get filesize for " + file.path, ex);
@@ -2376,11 +2382,20 @@ QueueItem.prototype = {
 
 		this.preallocating = true;
 		this._preallocTask = Task.spawn((function() {
-			if ((yield OS.File.exists(file.path)) && this.totalSize === (yield OS.File.stat(file.path)).size) {
-				log(LOG_INFO, "pa: already allocated");
-			}
-			if (!(yield OS.File.exists(file.parent.path))) {
+			try {
 				yield OS.File.makeDir(file.parent.path, {unixMode: Prefs.dirPermissions});
+			}
+			catch (ex if ex.becauseExists) {
+				// no op
+			}
+			try {
+				if (this.totalSize === (yield OS.File.stat(file.path)).size) {
+					log(LOG_INFO, "pa: already allocated");
+					return;
+				}
+			}
+			catch (ex if ex.becauseNoSuchFile) {
+				// no op
 			}
 			let pa = Preallocator.prealloc(
 				file,
@@ -2415,8 +2430,10 @@ QueueItem.prototype = {
 			return;
 		}
 		Task.spawn(function() {
-			if (yield OS.File.exists(tmpFile.path)) {
+			try {
 				yield OS.File.remove(tmpFile.path);
+			} catch (ex if ex.becauseNoSuchFile) {
+				// no op
 			}
 		}).then(null, function(ex) {
 			log(LOG_ERROR, "failed to remove tmpfile: " + tmpFile.path, ex);

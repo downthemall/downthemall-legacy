@@ -352,8 +352,11 @@ Chunk.prototype = {
 		let pos = this.start + this.safeBytes;
 		log(LOG_ERROR, "opening " + file.path + " at: " + pos);
 		Task.spawn((function() {
-			if (!(yield OS.File.exists(file.parent.path))) {
+			try {
 				yield OS.File.makeDir(file.parent.path, {unixMode: Prefs.dirPermissions});
+			}
+			catch (ex if ex.becauseExists) {
+				// no op
 			}
 			const flags = OS.Constants.libc.O_CREAT | OS.Constants.libc.O_LARGEFILE | OS.Constants.libc.O_WRONLY;
 			this._osFile = yield OS.File.open(file.path, {write:true}, {unixFlags: flags, unixMode: Prefs.permissions});
