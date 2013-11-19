@@ -11,7 +11,7 @@ const {GlobalBucket} = require("manager/globalbucket");
 const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
 const pressure = require("support/memorypressure");
-const {getTimestamp, formatNumber} = require("utils");
+const {getTimestamp, formatNumber, makeDir} = require("utils");
 const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
 const {Promise, Task} = require("support/promise");
 
@@ -353,7 +353,7 @@ Chunk.prototype = {
 		log(LOG_ERROR, "opening " + file.path + " at: " + pos);
 		Task.spawn((function() {
 			try {
-				yield OS.File.makeDir(file.parent.path, {unixMode: Prefs.dirPermissions});
+				yield makeDir(file.parent, Prefs.dirPermissions);
 			}
 			catch (ex if ex.becauseExists) {
 				// no op

@@ -2380,7 +2380,7 @@ QueueItem.prototype = {
 		this.preallocating = true;
 		this._preallocTask = Task.spawn((function() {
 			try {
-				yield OS.File.makeDir(file.parent.path, {unixMode: Prefs.dirPermissions});
+				yield Utils.makeDir(file.parent, Prefs.dirPermissions);
 			}
 			catch (ex if ex.becauseExists) {
 				// no op
