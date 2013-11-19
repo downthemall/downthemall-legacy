@@ -1046,7 +1046,7 @@ const Dialog = {
 			this._speeds.clear(); // started to run; remove old global speed stats
 		}
 		this._running.push(download);
-		download.prealloc(download.maybeResumeDownload.bind(download));
+		download.prealloc();
 		download.resumeDownload();
 	},
 	wasStopped: function(download) {
@@ -1697,7 +1697,7 @@ QueueItem.prototype = {
 			this._totalSize = Math.floor(nv);
 		}
 		this.invalidate(3);
-		this.prealloc(this.maybeResumeDownload.bind(this));
+		this.prealloc();
 	},
 	partialSize: 0,
 	progress: 0,
@@ -1775,24 +1775,6 @@ QueueItem.prototype = {
 	},
 	get largeIcon() {
 		return getLargeIcon(this.destinationName, 'metalink' in this);
-	},
-	get size() {
-		try {
-			let file = null;
-			if (!this.isOf(COMPLETE | FINISHING)) {
-				file = this._tmpFile || null;
-			}
-			else {
-				file = this.destinationLocalFile;
-			}
-			if (file && file.exists()) {
-				return file.fileSize;
-			}
-		}
-		catch (ex) {
-			log(LOG_ERROR, "download::getSize(): ", ex);
-		}
-		return 0;
 	},
 	get dimensionString() {
 		if (this.partialSize <= 0) {
@@ -2092,8 +2074,16 @@ QueueItem.prototype = {
 					log(LOG_ERROR, "Setting timestamp on file failed: ", ex);
 				}
 			}
-
-			this.totalSize = this.partialSize = this.size;
+			let file = null;
+			if (!this.isOf(COMPLETE | FINISHING)) {
+				file = this._tmpFile || null;
+			}
+			else {
+				file = this.destinationLocalFile;
+			}
+			if (file && (yield OS.File.exists(file.path))) {
+				this.totalSize = this.partialSize = (yield OS.File.stat(file.path)).size;
+			}
 			++Dialog.completed;
 		}).bind(this));
 	},
@@ -2286,9 +2276,12 @@ QueueItem.prototype = {
 			this.setState(CANCELED);
 			let bound = this.cancel.bind(this, message);
 			if (!this.chunksReady(bound)) {
+				log(LOG_INFO, this.fileName + ": cancel delayed (chunks)");
 				return;
 			}
-			if (!this.cancelPreallocation(bound)) {
+			if (this._preallocTask) {
+				log(LOG_INFO, this.fileName + ": cancel delayed (prealloc)");
+				this._preallocTask.then(bound, bound);
 				return;
 			}
 			log(LOG_INFO, this.fileName + ": canceled");
@@ -2334,97 +2327,60 @@ QueueItem.prototype = {
 		delete this._tmpFile;
 		delete this.rebuildDestination_renamer;
 	},
-
-	_registerPreallocCallback: function(callback) {
-		if (!callback) {
-			return;
-		}
-		try {
-			this._notifyPreallocation.push(callback);
-		}
-		catch (ex) {
-			this._notifyPreallocation = [callback];
-		}
-	},
 	createDirectory: function(file) {
 		if (file.parent.exists()) {
 			return;
 		}
 		file.parent.create(Ci.nsIFile.DIRECTORY_TYPE, Prefs.dirPermissions);
 	},
-	prealloc: function(callback) {
+	prealloc: function() {
 		let file = this.tmpFile;
 
 		if (this.state !== RUNNING) {
-			return false;
+			return;
 		}
 
 		if (!this.totalSize) {
 			log(LOG_DEBUG, "pa: no totalsize");
-			return false;
+			return;
 		}
 		if (this.preallocating) {
 			log(LOG_DEBUG, "pa: already working");
-			return true;
+			return;
 		}
 
-		if (!file.exists() || this.totalSize !== this.size) {
-			this.createDirectory(file);
+		this.preallocating = true;
+		this._preallocTask = Task.spawn((function() {
+			if ((yield OS.File.exists(file.path)) && this.totalSize === (yield OS.File.stat(file.path)).size) {
+				log(LOG_INFO, "pa: already allocated");
+			}
+			if (!(yield OS.File.exists(file.parent.path))) {
+				yield OS.File.makeDir(file.parent.path, {unixMode: Prefs.dirPermissions});
+			}
 			let pa = Preallocator.prealloc(
 				file,
 				this.totalSize,
 				Prefs.permissions,
-				Prefs.sparseFiles,
-				this._donePrealloc.bind(this)
+				Prefs.sparseFiles
 				);
 			if (pa) {
-				this.preallocating = true;
-				this._preallocator = pa;
-				this._registerPreallocCallback(callback);
-				log(LOG_INFO, "pa: started");
+				yield pa;
+				log(LOG_INFO, "pa: done");
 			}
-		}
-		else {
-			log(LOG_INFO, "pa: already allocated");
-		}
-		return this.preallocating;
-	},
-	cancelPreallocation: function(callback) {
-		if (this._preallocator) {
-			log(LOG_INFO, "pa: going to cancel");
-			try {
-				this._notifyPreallocationCancelled.push(callback);
+			else {
+				log(LOG_INFO, "pa: not preallocating");
 			}
-			catch (ex) {
-				this._notifyPreallocationCancelled = [callback];
-			}
-			this._registerPreallocCallback(callback);
-			this._preallocator.cancel();
-			return false;
-		}
-		return true;
-	},
-
-	_donePrealloc: function(res) {
-		log(LOG_INFO, "pa: done");
-		delete this._preallocator;
-		this.preallocating = false;
-
-		if (this._notifyPreallocation) {
-			for (let c of this._notifyPreallocation) {
-				try {
-					c();
-				}
-				catch (ex) {
-					log(LOG_ERROR, "pa: callback threw", ex);
-				}
-			}
-			delete this._notifyPreallocation;
-		}
+			this._preallocTask = null;
+			this.preallocating = false;
+			this.maybeResumeDownload();
+		}).bind(this)).then(null, (function(ex) {
+			this._preallocTask = null;
+			this.preallocating = false;
+			log(LOG_ERROR, "pa: Failed to prealloc", ex);
+		}).bind(this));
 	},
 
 	shutdown: function() {
-		this.cancelPreallocation();
 	},
 
 	removeTmpFile: function() {
