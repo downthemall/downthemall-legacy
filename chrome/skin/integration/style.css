@@ -5,7 +5,7 @@
 	display: -moz-box;
 }
 #downthemall-notification-icon {
-	list-style-image: url(chrome://dta/skin/toolbarbuttons/buttons.png);
+	list-style-image: url(chrome://dta/skin/toolbarbuttons/buttons16.png);
 	-moz-image-region: rect(0px,64px,16px,48px);
 }
 
@@ -15,7 +15,7 @@
 
 /* menus */
 .dta-menuitem {
-	list-style-image: url(chrome://dta/skin/toolbarbuttons/buttons.png);
+	list-style-image: url(chrome://dta/skin/toolbarbuttons/buttons16.png);
 }
 .dta-normal {
 	-moz-image-region: rect(0px,32px,16px,16px);
