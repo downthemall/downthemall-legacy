@@ -501,6 +501,7 @@ Chunk.prototype = {
 					this._shipBuffer();
 				}
 			}
+			this._ensureBuffer();
 			while (bytes >= this.buffer_size) {
 				this._ensureBuffer();
 				if (this._buffer.writeFrom(aInputStream, this.buffer_size) !== this.buffer_size) {
