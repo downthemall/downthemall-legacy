@@ -267,7 +267,7 @@ Buffer.prototype = Object.seal({
 	},
 	get free() this.size - this.length,
 	get data() {
-		return this._data;
+		return this._data.subarray(0, this.length);
 	}
 });
 
@@ -359,7 +359,7 @@ Chunk.prototype = {
 				// no op
 			}
 			const flags = OS.Constants.libc.O_CREAT | OS.Constants.libc.O_LARGEFILE | OS.Constants.libc.O_WRONLY;
-			this._osFile = yield OS.File.open(file.path, {write:true}, {unixFlags: flags, unixMode: Prefs.permissions});
+			this._osFile = yield OS.File.open(file.path, {write:true, append: false}, {unixFlags: flags, unixMode: Prefs.permissions});
 			if (pos) {
 				yield this._osFile.setPosition(pos, OS.File.POS_START);
 			}
@@ -547,18 +547,17 @@ Chunk.prototype = {
 		}
 		log(LOG_DEBUG, "shipping buffer: " + buffer.length);
 
-		let bytes = buffer.length;
-		if (!bytes) {
+		if (!buffer.length) {
 			log(LOG_DEBUG, "Not shipping buffer, zero length");
+			return;
 		}
-		this._buffered += bytes;
+		this._buffered += buffer.length;
 		++this._pendingWrites;
 		Task.spawn((function _shipBufferTask() {
 			let file = yield this._open();
-			yield file.write(buffer.data, {bytes: bytes});
-			log(LOG_DEBUG, this + ": shipped " + bytes + " bytes");
-			this._buffered -= bytes;
-			this.safeBytes += bytes;
+			yield file.write(buffer.data, {bytes: buffer.length});
+			this._buffered -= buffer.length;
+			this.safeBytes += buffer.length;
 			--this._pendingWrites;
 			if (!this.running) {
 				this.close();
