@@ -31,6 +31,15 @@ const {Chunk, hintChunkBufferSize} = require("manager/chunk");
 const {Connection} = require("manager/connection");
 const {createRenamer} = require("manager/renamer");
 const {memoize, identity} = require("support/memoize");
+const {Task} = require("support/promise");
+try {
+	this.Promise = require("support/promise").Promise;
+}
+catch (ex) {
+	// already defined
+}
+const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
+
 
 /* global Version, AlertService, Decompressor, Verificator, FileExts:true */
 XPCOMUtils.defineLazyGetter(this, "Version", function() require("version"));
@@ -1448,6 +1457,12 @@ QueueItem.prototype = {
 		this.rebuildDestination();
 		this.invalidate(0);
 		return nv;
+	},
+	setUserFileName: function(name) {
+		this.fileNameFromUser = false;
+		this.fileName = name;
+		this.filenameFromUser = true;
+		this.save();
 	},
 	get fileNameAndExtension() {
 		if (!this._fileNameAndExtension) {
