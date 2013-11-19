@@ -424,10 +424,16 @@ function registerOverlays() {
 				if (toolsmenu) {
 					fire.addFireListener(toolsmenu, "popupshowing");
 				}
+				let panelbutton = $("PanelUI-button");
+				if (panelbutton) {
+					fire.addFireListener(panelbutton, "command");
+				}
 				fire.addFireListener($("dta:regular"), "command");
+				fire.addFireListener($("dta-regular-button"), "command");
 				fire.addFireListener($("dta-button"), "popupshowing");
 				fire.addFireListener($("dta-button"), "dragover");
 				fire.addFireListener($("dta:turbo"), "command");
+				fire.addFireListener($("dta-turbo-button"), "command");
 				fire.addFireListener($("dta-turbo-button"), "popupshowing");
 				fire.addFireListener($("dta-turbo-button"), "dragover");
 				fire.addFireListener($("dta:turboselect"), "command");
