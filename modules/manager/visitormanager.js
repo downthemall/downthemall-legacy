@@ -6,6 +6,7 @@
 const DTA = require("api");
 const {LOCALE} = require("version");
 const {getTimestamp, normalizeMetaPrefs} = require("utils");
+const {identity} = require("support/memoize");
 
 function Visitor() {
 	let nodes = arguments[0];
@@ -104,13 +105,13 @@ HttpVisitor.prototype = {
 			var ch = this.type.match(/charset=['"]?([\w\d_-]+)/i);
 			if (ch && ch[1].length) {
 				log(LOG_DEBUG, "visitHeader: found override to " + ch[1]);
-				this._charset = this.overrideCharset = ch[1];
+				this._charset = this.overrideCharset = identity(ch[1]);
 			}
 		}
 		catch (ex) {}
 
 		try {
-			this.encoding = chan.getResponseHeader("content-encoding");
+			this.encoding = identity(chan.getResponseHeader("content-encoding"));
 		}
 		catch (ex) {}
 
@@ -270,7 +271,7 @@ HttpVisitor.prototype = {
 			}
 		}
 		if (fn) {
-			this.fileName = fn;
+			this.fileName = identity(fn);
 			this.relaxSize = true;
 		}
 	}
