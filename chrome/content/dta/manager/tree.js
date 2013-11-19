@@ -29,8 +29,12 @@ FileDataProvider.prototype = {
 		return this._file;
 	},
 	checkFile: function() {
+		Task.spawn(this._checkFile.bind(this));
+	},
+	_checkFile: function() {
 		delete this._timer;
-		if (!this._file.exists()) {
+		let exists = yield OS.File.exists(this._file.path);
+		if (!exists) {
 			Tree.remove(this._download);
 			return;
 		}
@@ -502,21 +506,27 @@ const Tree = {
 		const from = d.destinationLocalFile;
 		const to = from.clone();
 		to.leafName = text;
-		if (!d.is(COMPLETE)) {
-			d.fileName = text;
-			log(LOG_DEBUG, "reset");
-			return; // complete logic will do this
-		}
 		if (from.leafName === to.leafName) {
 			log(LOG_DEBUG, "nothing");
 			return; // nothing to do
 		}
-		if (!from.exists()) {
-			d.fileName = text;
+		if (!d.is(COMPLETE)) {
+			d.setUserFileName(to.leafName);
+			log(LOG_DEBUG, "reset");
+			return; // complete logic will do this
+		}
+		Task.spawn(this._setCellText.bind(this, d, from, to)).then(null, function(ex) {
+			log(LOG_DEBUG, "move failed " + from.path + " to " + to.path, ex);
+			Prompts.alert(window, _("rename.title"), _("rename.failedtomove", [from.path, to.path]));
+		});
+	},
+	_setCellText: function(d, from, to) {
+		if (!(yield OS.File.exists(from.path))) {
+			d.setUserFileName(to.leafName);
 			log(LOG_DEBUG, "gone");
 			return; // gone already
 		}
-		if (to.exists()) {
+		if ((yield OS.File.exists(to.path))) {
 			Prompts.alert(window, _("rename.title"), _("rename.alreadythere", [from.leafName, to.path]));
 			log(LOG_DEBUG, "exists");
 			return;
@@ -524,19 +534,9 @@ const Tree = {
 
 		log(LOG_DEBUG, "move " + from.path + " to " + to.path);
 		// need to move
-		asyncMoveFile(from, to, function(ex) {
-			try {
-				log(LOG_DEBUG, "move complete" + from.path + " to " + to.path, ex);
-				if (ex) {
-					throw ex;
-				}
-				d.fileName = text;
-			}
-			catch (iex) {
-				log(LOG_DEBUG, "move failed " + from.path + " to " + to.path, iex);
-				Prompts.alert(window, _("rename.title"), _("rename.failedtomove", [from.path, to.path]));
-			}
-		});
+		yield OS.File.move(from.path, to.path);
+		log(LOG_DEBUG, "move complete " + from.path + " to " + to.path);
+		d.setUserFileName(to.leafName);
 	},
 	isSorted: function() true,
 	isContainer: function(idx) false,
@@ -998,27 +998,29 @@ const Tree = {
 	},
 	_removeByState: function(state, onlyGone) {
 		this.beginUpdate();
-		try {
-			QueueStore.beginUpdate();
-			var removing = [];
-			for (let d of this._downloads) {
-				if (d.state !== state) {
-					continue;
+		Task.spawn((function() {
+			try {
+				QueueStore.beginUpdate();
+				var removing = [];
+				for (let d of this._downloads) {
+					if (d.state !== state) {
+						continue;
+					}
+					if (onlyGone && (yield OS.File.exists(d.destinationLocalFile.path))) {
+						continue;
+					}
+					removing.push(d);
 				}
-				if (onlyGone && d.destinationLocalFile.exists()) {
-					continue;
+				if (removing.length) {
+					this.remove(removing);
 				}
-				removing.push(d);
+				QueueStore.endUpdate();
 			}
-			if (removing.length) {
-				this.remove(removing);
+			finally {
+				this.invalidate();
+				this.endUpdate();
 			}
-			QueueStore.endUpdate();
-		}
-		finally {
-			this.invalidate();
-			this.endUpdate();
-		}
+		}).bind(this));
 	},
 	removeCompleted: function() {
 		if (Prefs.confirmRemoveCompleted) {
