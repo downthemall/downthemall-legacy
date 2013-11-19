@@ -1940,8 +1940,7 @@ QueueItem.prototype = {
 			OS.File.move(self.tmpFile.path, df.path).then(function() {
 				moveDeferred.resolve(true);
 			}, function(ex) {
-				// XXX Win
-				if (ex.unixErrno && ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) {
+				if ((ex.unixErrno && ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) || (ex.winLastError && ex.winLastError == 3)) {
 					try {
 						self.shortenName();
 					}
