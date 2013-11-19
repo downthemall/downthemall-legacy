@@ -174,9 +174,18 @@ MemoryReporter.prototype = {
 Object.freeze(MemoryReporter.prototype);
 const memoryReporter = new MemoryReporter();
 
+
 try {
-	Services.memrm.registerMultiReporter(memoryReporter);
-} catch (ex) {}
+	Services.memrm.registerReporter(memoryReporter);
+}
+catch (ex) {
+	try {
+		Services.memrm.registerMultiReporter(memoryReporter);
+	}
+	catch (ex) {
+		log(LOG_ERROR, "Failed to register reporter");
+	}
+}
 
 
 const Observer = {
