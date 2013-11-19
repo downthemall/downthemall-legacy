@@ -6,6 +6,7 @@
 const Prefs = require("preferences");
 const {toURI} = require("support/stringfuncs");
 const {identity} = require("support/memoize");
+const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
 
 /**
  * XUL namespace
@@ -697,4 +698,17 @@ exports.normalizeMetaPrefs = function(urls) {
 	urls.forEach(function(url) {
 		url.preference = Math.max(100 - ((url.preference - pmin) *  100 / (pmax - pmin)).toFixed(0), 10);
 	});
+};
+
+exports.makeDir = function(dir, perms) {
+	try {
+		yield OS.File.makeDir(dir.path, {unixMode: perms});
+	}
+	catch (ex if ex.becauseExists) {
+		// no op
+	}
+	catch (ex if ex.becauseNoSuchFile) {
+		yield exports.makeDir(dir.parent, perms);
+		yield exports.makeDir(dir, perms);
+	}
 };
