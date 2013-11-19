@@ -358,7 +358,10 @@ Chunk.prototype = {
 			catch (ex if ex.becauseExists) {
 				// no op
 			}
-			const flags = OS.Constants.libc.O_CREAT | OS.Constants.libc.O_LARGEFILE | OS.Constants.libc.O_WRONLY;
+			let flags = 0;
+			if (OS.Constants.libc) {
+				flags = OS.Constants.libc.O_CREAT | OS.Constants.libc.O_LARGEFILE | OS.Constants.libc.O_WRONLY;
+			}
 			this._osFile = yield OS.File.open(file.path, {write:true, append: false}, {unixFlags: flags, unixMode: Prefs.permissions});
 			if (pos) {
 				yield this._osFile.setPosition(pos, OS.File.POS_START);
