@@ -170,7 +170,7 @@ Connection.prototype = {
 					chan.setRequestHeader('Connection', 'close', false);
 				}
 
-				if (c.currentPosition > 0) {
+				if (c.currentPosition) {
 					chan.setRequestHeader('Range', 'bytes=' + (c.currentPosition) + "-", false);
 					log(LOG_DEBUG, "setting range");
 				}
@@ -712,7 +712,7 @@ Connection.prototype = {
 		}
 
 		// not partial content altough we are multi-chunk
-		if (code !== 206 && !this.isInfoGetter) {
+		if (code !== 206 && !this.isInfoGetter && (c.currentPosition > 0 || c.start > 0)) {
 			log(LOG_ERROR, d + ": Server returned a " +
 				aChannel.responseStatus + " response instead of 206",
 				this.isInfoGetter);
