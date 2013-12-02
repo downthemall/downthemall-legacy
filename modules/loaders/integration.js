@@ -1012,7 +1012,7 @@ exports.load = function load(window, outerEvent) {
 		menu.appendChild(sep);
 
 		let ref = DTA.getRef(win.document);
-		let cmd = menu.parentNode.getAttribute("command") + "-sniff";
+		let cmd = menu.parentNode.getAttribute("buttoncommand") + "-sniff";
 		for (let s of sniffed) {
 			let o = {
 				"url": new DTA.URL(s.url),
