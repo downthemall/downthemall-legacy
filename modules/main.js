@@ -370,18 +370,19 @@ function registerOverlays() {
 			}
 
 			if (window.CustomizableUI) {
-				for (let id of ids) {
-					let placement = window.CustomizableUI.getPlacementOfWidget(id);
-					if (!placement) {
-						log(LOG_DEBUG, id + " is not placeable");
-						continue;
+				for (let id of ids.reverse()) {
+					try {
+						log(LOG_DEBUG, "trying to place " + id);
+						window.CustomizableUI.ensureWidgetPlacedInWindow(id, window);
+						log(LOG_DEBUG, "placed " + id);
 					}
-					window.CustomizableUI.addWidgetToArea(id, placement.area, placement.position);
-					window.CustomizableUI.ensureWidgetPlacedInWindow(id, window);
-					log(LOG_DEBUG, "placed " + id + " " + JSON.stringify(placement));
+					catch (ex) {
+						log(LOG_ERROR, "Died placing " + id, ex);
+					}
 				}
 				return;
 			}
+			log(LOG_DEBUG, "running old");
 			for (let attr of ["currentset", "downthemall-currentset"]) {
 				if (!ids.length) {
 					return;
@@ -392,7 +393,6 @@ function registerOverlays() {
 				processToolbar(tb);
 			}
 		}
-		log(LOG_DEBUG, "running elementsStub");
 
 		window.setTimeout(function dta_firewalkswithme() {
 			try {
