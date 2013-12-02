@@ -16,31 +16,40 @@ Object.freeze(UNKNOWN_STACK);
 const GLUE = "chrome://dta-modules/content/glue.jsm -> ";
 
 function prepareStack(stack) {
-	if (!stack || !(stack instanceof Ci.nsIStackFrame)) {
-		stack = Components.stack;
-		for (let i = 0; stack && i < 2; ++i) {
-			stack = stack.caller;
-		}
-		if (!stack) {
-			return UNKNOWN_STACK;
-		}
+	let message;
+	let sourceName = "unknown";
+	let sourceLine = "";
+	let lineNumber = 0;
+	if (typeof(stack) === "string") {
+		message = stack.split("\n");
 	}
-	let sourceName = (stack.filename || "unknown").replace(GLUE, "");
-	let sourceLine = stack.sourceLine;
-	let lineNumber = stack.lineNumber;
-	let message = [];
-	for (let i = 0; stack && i < 60; ++i, stack = stack.caller) {
-		if (stack.lineNumber) {
-			message.push(
-				"\t" +
-				(stack.name || "[anonymous]") +
-				"() @ " +
-				(stack.filename || "unknown").replace(GLUE, "") +
-				":" +
-				stack.lineNumber);
+	else {
+		if (!stack || !(stack instanceof Ci.nsIStackFrame) ) {
+			stack = Components.stack;
+			for (let i = 0; stack && i < 2; ++i) {
+				stack = stack.caller;
+			}
+			if (!stack) {
+				return UNKNOWN_STACK;
+			}
 		}
-		else {
-			message.push("\t[native @ " + (stack.languageName || "???" ) + "]");
+		sourceName = (stack.filename || sourceName).replace(GLUE, "");
+		sourceLine = stack.sourceLine || sourceLine;
+		lineNumber = stack.lineNumber || lineNumber;
+		message = [];
+		for (let i = 0; stack && i < 60; ++i, stack = stack.caller) {
+			if (stack.lineNumber) {
+				message.push(
+					"\t" +
+					(stack.name || "[anonymous]") +
+					"() @ " +
+					(stack.filename || "unknown").replace(GLUE, "") +
+					":" +
+					stack.lineNumber);
+			}
+			else {
+				message.push("\t[native @ " + (stack.languageName || "???" ) + "]");
+			}
 		}
 	}
 	return {
@@ -119,7 +128,7 @@ exports.log = function(level, message, exception) {
 			sourceLine,
 			lineNumber,
 			columnNumber
-		} = prepareStack((exception && exception.location) || null);
+		} = prepareStack((exception && (exception.location || exception.stack)) || null);
 
 		if (stackMsg) {
 			message += "\n" + stackMsg;
