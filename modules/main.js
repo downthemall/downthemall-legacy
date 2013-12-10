@@ -429,7 +429,7 @@ function registerOverlays() {
 					fire.addFireListener(panelbutton, "command");
 				}
 				fire.addFireListener($("dta:regular"), "command");
-				fire.addFireListener($("dta-regular-button"), "command");
+				fire.addFireListener($("dta-button"), "command");
 				fire.addFireListener($("dta-button"), "popupshowing");
 				fire.addFireListener($("dta-button"), "dragover");
 				fire.addFireListener($("dta:turbo"), "command");
