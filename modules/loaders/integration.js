@@ -1611,9 +1611,20 @@ exports.load = function load(window, outerEvent) {
 		let target = outerEvent.target;
 		let type = outerEvent.type;
 		if (type == "popupshowing") {
-			let replayEvent = document.createEvent("Events");
-			replayEvent.initEvent(type, true, true);
-			target.dispatchEvent(replayEvent);
+			switch(target.id) {
+				case "menu_ToolsPopup":
+					onToolsShowing(outerEvent);
+					break;
+				case "contentAreaContextMenu":
+					onContextShowing(outerEvent);
+					break;
+				default:
+					log(LOG_DEBUG, "dispatching new event");
+					let replayEvent = document.createEvent("Events");
+					replayEvent.initEvent(type, true, true);
+					target.dispatchEvent(replayEvent);
+					break;
+			}
 		}
 		else if (type == "command" && target.id != "cmd_CustomizeToolbars") {
 			target.doCommand();
