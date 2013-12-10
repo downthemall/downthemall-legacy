@@ -567,10 +567,15 @@ Chunk.prototype = {
 			}
 		}).bind(this)).then(null, (function _shipBufferFailure(ex) {
 			log(LOG_ERROR, ex);
-			--this._pendingWrites;
-			this.download.writeFailed();
-			if (!this.running) {
-				this.close();
+			try {
+				--this._pendingWrites;
+				this.download.writeFailed();
+				if (!this.running) {
+					this.close();
+				}
+			}
+			catch (ex2) {
+				log(LOG_ERROR, "aggregate failure", ex2);
 			}
 		}).bind(this));
 	},

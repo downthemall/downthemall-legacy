@@ -375,6 +375,7 @@ Connection.prototype = {
 	},
 
 	writeFailed: function() {
+		log(LOG_DEBUG, "write failed invoked!");
 		let d = this.d;
 		d.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
 	},
@@ -1103,7 +1104,6 @@ Connection.prototype = {
 		}
 		finally {
 			delete this.c;
-			delete this.d;
 			delete this._chan;
 		}
 	},
