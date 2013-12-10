@@ -465,11 +465,38 @@ function hash(value, algorithm, encoding, datalen) {
 	_ic.loadWindow(window);
 })();
 
-__defineGetter__("DefaultDownloadsDirectory", function() {
-	let dlm = Cc["@mozilla.org/download-manager;1"].getService(Ci.nsIDownloadManager);
-	try {
-		return dlm.userDownloadsDirectory;	
+const getDefaultDownloadsDirectory = (function() {
+	function oldFallback(callback) {
+		let dlm = Cc["@mozilla.org/download-manager;1"].getService(Ci.nsIDownloadManager);
+		var dir;
+		try {
+			dir = dlm.userDownloadsDirectory;	
+		}
+		catch (ex) {
+			dir = dlm.defaultDownloadsDirectory;
+		}
+		callback(dir.path);
 	}
-	catch (ex) {}
-	return dlm.defaultDownloadsDirectory;
-});
+
+	try {
+		let Downloads = Cu.import("resource://gre/modules/Downloads.jsm", {}).Downloads;
+		if (!Downloads.getPreferredDownloadsDirectory) {
+			throw new Error("not supported");
+		}
+		return function newDownloads(callback) {
+			var p = Downloads.getPreferredDownloadsDirectory();
+			if (!p) {
+				oldFallback(callback);
+				return;
+			}
+			p.then(function success(r) {
+				callback(r);
+			}, function fail(e) {
+				oldFallback(callback);
+			});
+		};
+	}
+	catch (ex) {
+		return oldFallback;
+	}
+})();

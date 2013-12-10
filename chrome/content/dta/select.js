@@ -308,7 +308,10 @@ let Dialog = {
 		this.ddFilter = $('filter');
 		this.ddDirectory = $('directory');
 		if (!this.ddDirectory.value) {
-			this.ddDirectory.value = DefaultDownloadsDirectory.path;
+			let tp = this;
+			getDefaultDownloadsDirectory(function(path) {
+				tp.ddDirectory.value = path;
+			});
 		}
 		this.ddRenaming = $('renaming');
 		
