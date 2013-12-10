@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 /* global _, DTA, $, $$, Utils, Preferences */
-/* global DefaultDownloadsDirectory, unloadWindow, getIcon, getFavIcon */
+/* global getDefaultDownloadsDirectory, unloadWindow, getIcon, getFavIcon */
 /* global mapInSitu, setTimeoutOnlyFun, FilterManager, openUrl */
 /* jshint browser:true */
 const prompts = require("prompts");
@@ -327,7 +327,9 @@ Dialog = {
 
 			if (!this.ddDirectory.value) {
 				log(LOG_DEBUG, "Using default download directory, value was " + this.ddDirectory.value);
-				this.ddDirectory.value = DefaultDownloadsDirectory.path;
+				getDefaultDownloadsDirectory((function(path) {
+					this.ddDirectory.value = path;
+				}).bind(this));
 			}
 
 			// initialize the labels
