@@ -781,7 +781,9 @@ Connection.prototype = {
 
 		if (visitor.fileName && visitor.fileName.length > 0) {
 			// if content disposition hasn't an extension we use extension of URL
-			let newName = getUsableFileNameWithFlatten(visitor.fileName.replace(/\\/g, ''));
+			log(LOG_DEBUG, "raw file name " + visitor.fileName);
+			let newName = getUsableFileNameWithFlatten(visitor.fileName.replace(/\\|\?/g, '_'));
+			log(LOG_DEBUG, "new file name " + newName);
 			let ext = getExtension(this.url.usable);
 			if (!~visitor.fileName.lastIndexOf('.') && ext) {
 				newName += ('.' + ext);
