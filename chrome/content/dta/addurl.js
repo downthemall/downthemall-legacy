@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
- 
+
 let Prompts = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
 Components.utils.import('resource://dta/version.jsm');
@@ -57,7 +57,10 @@ var Dialog = {
 		try {
 			this.ddDirectory = $("directory");
 			if (!this.ddDirectory.value) {
-				this.ddDirectory.value = DefaultDownloadsDirectory.path;
+				let tp = this;
+				getDefaultDownloadsDirectory(function(path) {
+					tp.ddDirectory.value = path;
+				});
 			}			
 			this.ddRenaming = $("renaming");			
 			var address = $('address');
