@@ -711,4 +711,8 @@ exports.makeDir = function(dir, perms) {
 		yield exports.makeDir(dir.parent, perms);
 		yield exports.makeDir(dir, perms);
 	}
+	catch (ex if ex.winLastError == 3) {
+		yield exports.makeDir(dir.parent, perms);
+		yield exports.makeDir(dir, perms);
+	}
 };
