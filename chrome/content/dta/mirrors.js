@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
-/* global _, DTA, $, $$, Utils, Preferences, DefaultDownloadsDirectory, unloadWindow, toURI, toURL, setTimeoutOnlyFun */
+/* global _, DTA, $, $$, Utils, Preferences, getDefaultDownloadsDirectory, unloadWindow, toURI, toURL, setTimeoutOnlyFun */
 /* jshint browser:true */
 const Prompts = require("prompts");
 
