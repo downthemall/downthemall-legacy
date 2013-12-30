@@ -2313,7 +2313,7 @@ QueueItem.prototype = {
 				log(LOG_INFO, this.fileName + ": cancel delayed (chunks)");
 				return;
 			}
-			if (this._preallocTask) {
+			if (this._preallocTask) {
 				log(LOG_INFO, this.fileName + ": cancel delayed (prealloc)");
 				this._preallocTask.then(bound, bound);
 				return;
@@ -2444,10 +2444,11 @@ QueueItem.prototype = {
 		return !!this._autoRetryTime;
 	},
 	pauseAndRetry: function() {
+		let retry = this.state == RUNNING;
 		this.pause();
 		this.resumable = true;
 
-		if (Prefs.autoRetryInterval && !(Prefs.maxAutoRetries && Prefs.maxAutoRetries <= this._autoRetries)) {
+		if (retry && Prefs.autoRetryInterval && !(Prefs.maxAutoRetries && Prefs.maxAutoRetries <= this._autoRetries)) {
 			Dialog.markAutoRetry(this);
 			this._autoRetryTime = Utils.getTimestamp();
 			log(LOG_INFO, "marked auto-retry: " + this);
