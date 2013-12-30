@@ -1872,7 +1872,7 @@ const FileHandling = {
 		}
 	},
 	deleteFile: function() {
-		Task.spawn(function() {
+		Task.spawn((function() {
 			let list = [];
 			for (let d in this._uniqueList) {
 				if ((yield OS.File.exists(d.destinationLocalFile.path))) {
@@ -1901,6 +1901,8 @@ const FileHandling = {
 				}
 			}
 			Tree.remove(null, true);
+		}).bind(this)).then(null, function(ex) {
+			log(LOG_ERROR, "deleteFile", ex);
 		});
 	}
 };
