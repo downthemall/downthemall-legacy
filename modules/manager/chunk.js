@@ -364,7 +364,17 @@ Chunk.prototype = {
 			}
 			this._osFile = yield OS.File.open(file.path, {write:true, append: false}, {unixFlags: flags, unixMode: Prefs.permissions});
 			if (pos) {
-				yield this._osFile.setPosition(pos, OS.File.POS_START);
+				while (pos) {
+					let p = Math.min(pos, 1<<29);
+					try {
+						yield this._osFile.setPosition(p, OS.File.POS_CURRENT);
+					}
+					catch (ex if ex.winLastError == 0) {
+						// Ignore this error. The call did actually succeed.
+						// See bug:
+					}
+					pos -= p;
+				}
 			}
 			this._openDeferred.resolve(this._osFile);
 			delete this._openDeferred;
