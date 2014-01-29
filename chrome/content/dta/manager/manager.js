@@ -2380,39 +2380,41 @@ QueueItem.prototype = {
 		this.preallocating = true;
 		this._preallocTask = Task.spawn((function() {
 			try {
-				yield Utils.makeDir(file.parent, Prefs.dirPermissions);
-			}
-			catch (ex if ex.becauseExists) {
-				// no op
-			}
-			try {
-				if (this.totalSize === (yield OS.File.stat(file.path)).size) {
-					log(LOG_INFO, "pa: already allocated");
-					return;
+				try {
+					yield Utils.makeDir(file.parent, Prefs.dirPermissions);
+				}
+				catch (ex if ex.becauseExists) {
+					// no op
+				}
+				try {
+					if (this.totalSize === (yield OS.File.stat(file.path)).size) {
+						log(LOG_INFO, "pa: already allocated");
+						return;
+					}
+				}
+				catch (ex if ex.becauseNoSuchFile) {
+					// no op
+				}
+				let pa = Preallocator.prealloc(
+					file,
+					this.totalSize,
+					Prefs.permissions,
+					Prefs.sparseFiles
+					);
+				if (pa) {
+					yield pa;
+					log(LOG_INFO, "pa: done");
+				}
+				else {
+					log(LOG_INFO, "pa: not preallocating");
 				}
 			}
-			catch (ex if ex.becauseNoSuchFile) {
-				// no op
+			finally {
+				this._preallocTask = null;
+				this.preallocating = false;
+				this.maybeResumeDownload();
 			}
-			let pa = Preallocator.prealloc(
-				file,
-				this.totalSize,
-				Prefs.permissions,
-				Prefs.sparseFiles
-				);
-			if (pa) {
-				yield pa;
-				log(LOG_INFO, "pa: done");
-			}
-			else {
-				log(LOG_INFO, "pa: not preallocating");
-			}
-			this._preallocTask = null;
-			this.preallocating = false;
-			this.maybeResumeDownload();
 		}).bind(this)).then(null, (function(ex) {
-			this._preallocTask = null;
-			this.preallocating = false;
 			log(LOG_ERROR, "pa: Failed to prealloc", ex);
 		}).bind(this));
 	},
