@@ -69,6 +69,7 @@
 							<label control="sourcePage" id="sourcePageTitle" value="&referrer.value;" style="font-style: italic;" />
 							<hbox flex="1">
 								<textbox id="sourcePage" readonly="true" flex="1" />
+								<toolbarbutton id="clearReferrer" oncommand="Dialog.clearReferrer()"/>
 							</hbox>
 						</row>
 						<row align="center">
