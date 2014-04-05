@@ -939,7 +939,7 @@ const Dialog = {
 		}
 	},
 	processAutoClears: (function() {
-		function _m(e) e.get();
+		function _m(e) e && e.get();
 		function _f(e) !!e;
 		return function() {
 			if (Prefs.autoClearComplete &&
