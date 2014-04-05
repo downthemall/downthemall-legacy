@@ -464,7 +464,18 @@ exports.load = function load(window, outerEvent) {
 
 	function unique(i) filterInSitu(
 		i,
-		function(e) (e = e.url.spec) && !((e in this) || (this[e] = null)),
+		function(e) {
+			let u = e.url.spec;
+			let other = this[u];
+			if (other) {
+				if (!other.description) {
+					other.description = e.description;
+				}
+				return false;
+			}
+			this[u] = e;
+			return true;
+		},
 		Object.create(null)
 		);
 
