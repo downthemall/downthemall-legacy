@@ -1011,7 +1011,6 @@ Connection.prototype = {
 			if (isRunning && d.chunks.every(function(e) { return e.complete; })) {
 				if (!d.resumeDownload()) {
 					log(LOG_INFO, d + ": Download is complete!");
-					d.setState(FINISHING);
 					d.finishDownload();
 					return;
 				}

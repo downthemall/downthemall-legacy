@@ -950,12 +950,25 @@ const Dialog = {
 			}
 		};
 	})(),
+	_pending: [],
+	registerPending: function(download) {
+		let i = this._pending.indexOf(download);
+		if (i < 0) {
+			this._pending.push(download);
+		}
+	},
+	unregisterPending: function(download) {
+		let i = this._pending.indexOf(download);
+		if (i > -1) {
+			this._pending.splice(i, 1);
+		}
+	},
 	checkSameName: function(download, path) {
-		for (let runner of this._running) {
-			if (runner === download) {
+		for (let p of this._pending) {
+			if (p === download) {
 				continue;
 			}
-			if (runner.destinationFile === path) {
+			if (p.destinationFile == path) {
 				return true;
 			}
 		}
@@ -1904,6 +1917,8 @@ QueueItem.prototype = {
 		for (let c of this.chunks) {
 			c.close();
 		}
+		this.setState(FINISHING);
+
 		if (!(yield ConflictManager.resolve(this))) {
 			return;
 		}
@@ -1920,10 +1935,10 @@ QueueItem.prototype = {
 		}
 		// move file
 		if (this.compression) {
-			this.setState(FINISHING);
 			this.status = TextCache_DECOMPRESSING;
 			let compressDeferred = Promise.defer();
 			new Decompressor(this, function(ex) {
+				Dialog.unregisterPending(this);
 				if (ex) {
 					compressDeferred.reject(ex);
 				}
@@ -1934,13 +1949,13 @@ QueueItem.prototype = {
 			yield compressDeferred.promise;
 			throw new Task.Result(true);
 		}
-		log(LOG_DEBUG, "About to move");
 		this.status = TextCache_MOVING;
 		let moveDeferred = Promise.defer();
 		let move = function(self, x) {
 			let df = destination.clone();
 			df.append(self.destinationName);
 			OS.File.move(self.tmpFile.path, df.path).then(function() {
+				Dialog.unregisterPending(self);
 				moveDeferred.resolve(true);
 			}, function(ex) {
 				if ((ex.unixErrno && ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) || (ex.winLastError && ex.winLastError == 3)) {
@@ -1951,8 +1966,10 @@ QueueItem.prototype = {
 						log(LOG_ERROR, "Failed to shorten name", ex);
 					}
 				}
+				log(LOG_DEBUG, ex);
 				x = x || 1;
 				if (x > 5) {
+					Dialog.unregisterPending(self);
 					moveDeferred.reject(ex);
 					return;
 				}
@@ -2708,7 +2725,9 @@ const ConflictManager = {
 	},
 	_processOne: function(download, deferred) {
 		let dest = download.destinationLocalFile;
-		if (!Dialog.checkSameName(download, download.destinationFile) && !(yield OS.File.exists(dest.path))) {
+		let running = Dialog.checkSameName(download, download.destinationFile);
+		let exists = yield OS.File.exists(dest.path);
+		if (!running && !exists) {
 			deferred.resolve(true);
 			return;
 		}
@@ -2727,12 +2746,6 @@ const ConflictManager = {
 		let conflicts = download.conflicts || 0;
 		let basename = download.destinationName;
 		let newDest = download.destinationLocalFile.clone();
-		for (;; ++conflicts) {
-			newDest.leafName = Utils.formatConflictName(basename, conflicts);
-			if (!(yield OS.File.exists(newDest.path))) {
-				break;
-			}
-		}
 		if (cr < 0) {
 			let choice = Promise.defer();
 			let options = {
@@ -2759,15 +2772,19 @@ const ConflictManager = {
 			case 0:
 				for (;; ++conflicts) {
 					newDest.leafName = Utils.formatConflictName(basename, conflicts);
-					if (!(yield OS.File.exists(newDest.path))) {
+					running = Dialog.checkSameName(download, newDest.path);
+					exists = yield OS.File.exists(newDest.path);
+					if (!running && !exists) {
 						break;
 					}
 				}
 				download.conflicts = conflicts;
+				Dialog.registerPending(download);
 				deferred.resolve(true);
 				break;
 			case 1:
 				download.shouldOverwrite = true;
+				Dialog.registerPending(download);
 				deferred.resolve(true);
 				break;
 			default:
