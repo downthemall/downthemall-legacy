@@ -1,17 +1,18 @@
 module("support/alertservice.js");
 
 test("exports", function() {
-	checkExports("support/alertservice", ["available", "show"]);
+	checkExports("support/alertservice", ["show"]);
 });
 
-if (require("support/alertservice").available) {
-	test("show", function() {
-		require("support/alertservice").show("test", "test");
-		ok(true);
-	});
-}
-else {
-	test("show n/a", function() {
-		throws(function() require("support/alertservice").show("test", "test"));
-	});
-}
+test("show", function() {
+	require("support/alertservice").show(new Date().toLocaleString(), "test", () => { alert("clicked"); });
+	ok(true);
+});
+
+asyncTest("XULAlertsService", function() {
+	require("support/alertservice");
+	var svc = Cc["@downthemall.net/xul-alerts-service;1"].getService(Ci.nsIAlertsService);
+	svc.showAlertNotification("chrome://branding/content/icon64.png", "hello", "world", "true", null, null, "test", "en-US", "ltr", null);
+	svc.showAlertNotification(null, "hello", "world", "true", null, null, "test", "en-US", "ltr", null);
+	svc.showAlertNotification("chrome://branding/content/icon64.png", "hello", "world", "true", null, (s,t,d) => { if (t == "alertshow") { start(); ok(true); } else { Components.utils.reportError(t); } }, "test", "en-US", "ltr", null);
+});

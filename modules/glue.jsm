@@ -132,7 +132,10 @@ LRUMap.prototype = Object.freeze({
 	itor("XHR", "@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
 	itor("DOMSerializer", "@mozilla.org/xmlextras/xmlserializer;1", "nsIDOMSerializer");
 	itor("MimeInputStream", "@mozilla.org/network/mime-input-stream;1", "nsIMIMEInputStream");
+	itor("SupportsArray","@mozilla.org/supports-array;1", "nsISupportsArray");
 	itor("SupportsBool","@mozilla.org/supports-PRBool;1", "nsISupportsPRBool");
+	itor("SupportsInt32","@mozilla.org/supports-PRInt32;1", "nsISupportsPRInt32");
+	itor("SupportsInterfacePointer","@mozilla.org/supports-interface-pointer;1", "nsISupportsInterfacePointer");
 	itor("SupportsString","@mozilla.org/supports-string;1", "nsISupportsString");
 	itor("SupportsUint32","@mozilla.org/supports-PRUint32;1", "nsISupportsPRUint32");
 	itor("Transferable", "@mozilla.org/widget/transferable;1", "nsITransferable");
