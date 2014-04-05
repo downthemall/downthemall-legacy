@@ -262,11 +262,17 @@ Buffer.prototype = Object.seal({
 		if (length > this.free) {
 			throw new Error("Buffer overflow, free: " + this.free + ", length: " + length + ", blen: " + this.length);
 		}
-		if (this._buf.byteLength < length) {
-			this._buf = new Uint8Array(roundp2(length));
+		if (!this.length) {
+			inputStream.readArrayBuffer(length, this._data.buffer);
 		}
-		inputStream.readArrayBuffer(length, this._buf.buffer);
-		this._data.set(this._buf.subarray(0, length), this.length);
+		else {
+			// Cannot read into offset, so we need an intermediary (class static buffer).
+			if (this._buf.byteLength < length) {
+				Buffer.prototype._buf = new Uint8Array(roundp2(length));
+			}
+			inputStream.readArrayBuffer(length, this._buf.buffer);
+			this._data.set(this._buf.subarray(0, length), this.length);
+		}
 		this.length += length;
 		return length;
 	},
