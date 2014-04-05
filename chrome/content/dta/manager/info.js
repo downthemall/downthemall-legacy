@@ -124,13 +124,12 @@ var Dialog = {
 		mask = mask || '';
 		$('renaming').value = mask;
 
-		let description = $('description').value;
-		description = description.length ? description : '';
+		let description = $('description').value || "";
 
 		let sp = $('sourcePage');
 		let newRef = null;
 		if (!sp.hasAttribute('readonly') && sp._value !== sp.value) {
-			newRef = sp.value;
+			newRef = sp.value || "";
 		}
 
 		if (this.downloads.length === 1) {
@@ -164,9 +163,9 @@ var Dialog = {
 			if (description) {
 				d.description = description;
 			}
-			if (newRef) {
+			if (newRef !== null) {
 				try {
-					d.referrer = toURL(newRef);
+					d.referrer = newRef ? toURL(newRef) : null;
 					delete d._referrerUrlManager;
 				}
 				catch (ex) {
