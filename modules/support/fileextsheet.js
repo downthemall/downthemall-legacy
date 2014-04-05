@@ -31,21 +31,20 @@ function FileExtensionSheet(window) {
 		log(LOG_ERROR, "sheet:", ex);
 		throw ex;
 	}
-	this._entries = {};
+	this._entries = new Map();
 }
 
 FileExtensionSheet.prototype = Object.freeze({
 	_atoms: new Atoms(),
 	getAtom: function(fileName, metalink) {
 		let ext = getExtension(fileName);
-		if (!ext) {
+		if (!ext || ext.length > 10 || ext.indexOf(" ") > -1) {
 			ext = 'unknown';
 		}
 		if (metalink) {
 			ext = 'metalink';
 		}
-		let key = 'ext:' + ext;
-		let entry = this._entries[key];
+		let entry = this._entries.get(ext);
 		if (!entry) {
 			entry = this._atoms.getAtom("FileIcon" + ext.replace(/\W/g, ''));
 			let rule = 'treechildren::-moz-tree-image(iconic,' +
@@ -59,7 +58,7 @@ FileExtensionSheet.prototype = Object.freeze({
 				// this is a moz-2 hack, as it will otherwise not correctly redraw!
 				this._timer = Timers.createOneshot(0, this._updateSheet, this);
 			}
-			this._entries[key] = entry;
+			this._entries.set(ext, entry);
 		}
 		return entry;
 	},
