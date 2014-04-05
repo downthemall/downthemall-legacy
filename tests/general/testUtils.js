@@ -16,6 +16,7 @@ test("exports", function() {
 		"getTimestamp",
 		"hexdigest",
 		"launch",
+		"makeDir",
 		"mapFilterInSitu",
 		"mapInSitu",
 		"naturalSort",
