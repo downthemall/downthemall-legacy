@@ -2688,109 +2688,114 @@ XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
 });
 
 const ConflictManager = {
-	_items: [],
+	_items: new WeakMap(),
 	resolve: function(download) {
 		if (this._processing && this._processing.download === download) {
 			return this._processing.deferred.promise;
 		}
-		for (let i of this._items) {
-			if (i.download == download) {
-				return i.deferred.promise;
-			}
+		let promise = this._items.get(download);
+		if (promise) {
+			return promise;
 		}
-		let deferred = Promise.defer();
-		this._items.push({download: download, deferred: deferred});
-		this._process();
-		return deferred.promise;
+		promise = Task.spawn(this._processOne.bind(this, download));
+		this._items.set(download, promise);
+		return promise;
 	},
-	_process: function() {
-		if (this._processing) {
-			return;
-		}
-		let item = this._items.shift();
-		if (!item) {
-			return;
-		}
-		this._processing = item;
-		Task.spawn(this._processOne.bind(this, item.download, item.deferred)).then((function() {
-			log(LOG_ERROR, "Resolved " + item.download);
-			delete this._processing;
-			this._process();
-		}).bind(this), (function(ex) {
-			log(LOG_ERROR, "Failed to resolve conflicts", ex);
-			item.deferred.reject(ex);
-			delete this._processing;
-			this._process();
-		}).bind(this));
-	},
-	_processOne: function(download, deferred) {
-		let dest = download.destinationLocalFile;
-		let running = Dialog.checkSameName(download, download.destinationFile);
-		let exists = yield OS.File.exists(dest.path);
-		if (!running && !exists) {
-			deferred.resolve(true);
-			return;
-		}
-
-		let cr = -1;
-		if (Prefs.conflictResolution !== 3) {
-			cr = Prefs.conflictResolution;
-		}
-		if ('_sessionSetting' in this) {
-			cr = this._sessionSetting;
-		}
-		if (download.shouldOverwrite) {
-			cr = 1;
-		}
-
-		let conflicts = download.conflicts || 0;
-		let basename = download.destinationName;
-		let newDest = download.destinationLocalFile.clone();
-		if (cr < 0) {
-			let choice = Promise.defer();
-			let options = {
-				url: Utils.cropCenter(download.urlManager.usable, 45),
-				fn: Utils.cropCenter(download.destinationName, 45),
-				newDest: Utils.cropCenter(newDest.leafName, 45)
-			};
-			window.openDialog(
-				"chrome://dta/content/dta/manager/conflicts.xul",
-				"_blank",
-				"chrome,centerscreen,resizable=no,dialog,close=no,dependent",
-				options, choice
-				);
-			let ctype = 0;
-			[cr, ctype] = yield choice.promise;
-			if (ctype === 1) {
-				this._sessionSetting = cr;
+	_processOne: function(download) {
+		try {
+			log(LOG_DEBUG, "Starting conflict resolution for " + download);
+			let dest = download.destinationLocalFile;
+			let exists = Dialog.checkSameName(download, download.destinationFile);
+			if (!exists) {
+				exists = yield OS.File.exists(dest.path);
 			}
-			else if (ctype === 2) {
-				Preferences.setExt('conflictresolution', cr);
+			if (!exists) {
+				log(LOG_DEBUG, "Does not exist " + download);
+				throw new Task.Result(true);
 			}
-		}
-		switch (cr) {
-			case 0:
-				for (;; ++conflicts) {
-					newDest.leafName = Utils.formatConflictName(basename, conflicts);
-					running = Dialog.checkSameName(download, newDest.path);
-					exists = yield OS.File.exists(newDest.path);
-					if (!running && !exists) {
-						break;
+
+			let cr = -1;
+
+			let conflicts = download.conflicts || 0;
+			let basename = download.destinationName;
+			let newDest = download.destinationLocalFile.clone();
+
+			if (Prefs.conflictResolution !== 3) {
+				cr = Prefs.conflictResolution;
+			}
+			else if (download.shouldOverwrite) {
+				cr = 1;
+			}
+			else if ('_sessionSetting' in this) {
+				if (this._dialog) {
+					// Another dialog open: Wait for it to close.
+					log(LOG_ERROR, "Already open2");
+					yield this._dialog.promise;
+				}
+				cr = this._sessionSetting;
+			}
+
+			if (cr < 0) {
+				if (this._dialog) {
+					// Another dialog open: Wait for it to close.
+					log(LOG_ERROR, "Already open");
+					yield this._dialog.promise;
+				}
+				this._dialog = Promise.defer();
+				try {
+					let options = {
+						url: Utils.cropCenter(download.urlManager.usable, 45),
+						fn: Utils.cropCenter(download.destinationName, 45),
+						newDest: Utils.cropCenter(newDest.leafName, 45)
+					};
+					window.openDialog(
+						"chrome://dta/content/dta/manager/conflicts.xul",
+						"_blank",
+						"chrome,centerscreen,resizable=no,dialog,close=no,dependent",
+						options, this._dialog
+						);
+					let ctype = 0;
+					[cr, ctype] = yield this._dialog.promise;
+
+					if (ctype === 1) {
+						this._sessionSetting = cr;
+					}
+					else if (ctype === 2) {
+						Preferences.setExt('conflictresolution', cr);
 					}
 				}
-				download.conflicts = conflicts;
-				Dialog.registerPending(download);
-				deferred.resolve(true);
-				break;
-			case 1:
-				download.shouldOverwrite = true;
-				Dialog.registerPending(download);
-				deferred.resolve(true);
-				break;
-			default:
-				download.cancel(_('skipped'));
-				deferred.resolve(false);
-				break;
+				finally {
+					delete this._dialog;
+				}
+			}
+
+			switch (cr) {
+				case 0:
+					for (;; ++conflicts) {
+						newDest.leafName = Utils.formatConflictName(basename, conflicts);
+						exists = Dialog.checkSameName(download, newDest.path);
+						if (!exists) {
+							exists = yield OS.File.exists(newDest.path);
+						}
+						if (!exists) {
+							break;
+						}
+					}
+					download.conflicts = conflicts;
+					Dialog.registerPending(download);
+					throw new Task.Result(true);
+				case 1:
+					download.shouldOverwrite = true;
+					Dialog.registerPending(download);
+					throw new Task.Result(true);
+				default:
+					download.cancel(_('skipped'));
+					throw new Task.Result(false);
+			}
+		}
+		finally {
+			log(LOG_DEBUG, "Resolved: " + download);
+			this._items.delete(download);
 		}
 	}
 };
