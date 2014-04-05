@@ -125,6 +125,7 @@ LRUMap.prototype = Object.freeze({
 	dlsg("uuid", "@mozilla.org/uuid-generator;1", "nsIUUIDGenerator");
 	dlsg("wintaskbar", "@mozilla.org/windows-taskbar;1", "nsIWinTaskbar");
 	dlsg("clipboardhelper", "@mozilla.org/widget/clipboardhelper;1", "nsIClipboardHelper");
+	dlsg("pps", "@mozilla.org/network/protocol-proxy-service;1", "nsIProtocolProxyService");
 
 	const Instances = exports.Instances = {};
 

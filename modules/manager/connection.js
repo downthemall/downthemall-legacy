@@ -40,6 +40,34 @@ const _ = (function(global) {
 	};
 })(this);
 
+let proxyInfo = null;
+const proxyObserver = {
+	observe: function() {
+		let type = Preferences.getExt("proxy.type", "");
+		let host = Preferences.getExt("proxy.host", "");
+		let port = Preferences.getExt("proxy.port", 0);
+		let resolve = Preferences.getExt("proxy.resolve", true);
+		if (!type || !host || !port) {
+			log(LOG_DEBUG, "no proxy info");
+			proxyInfo = null;
+			return;
+		}
+		try {
+			let flags = 0;
+			if (resolve) {
+				flags |= Ci.nsIProxyInfo.TRANSPARENT_PROXY_RESOLVES_HOST;
+			}
+			proxyInfo = Services.pps.newProxyInfo(type, host, port, flags, 0xffffffff, null);
+			log(LOG_DEBUG, "created proxy info");
+		}
+		catch (ex) {
+			log(LOG_ERROR, "Failed to create proxy info", ex);
+			proxyInfo = null;
+		}
+	}
+};
+Preferences.addObserver("extensions.dta.proxy", proxyObserver);
+proxyObserver.observe();
 
 function Connection(d, c, isInfoGetter) {
 
@@ -53,7 +81,24 @@ function Connection(d, c, isInfoGetter) {
 	let referrer = d.referrer;
 	log(LOG_INFO, "starting: " + url.spec);
 
-	this._chan = Services.io.newChannelFromURI(url);
+	try {
+		if (proxyInfo) {
+			let handler = Services.io.getProtocolHandler(url.scheme);
+			if (handler instanceof Ci.nsIProxiedProtocolHandler) {
+				this._chan = handler.newProxiedChannel(url, proxyInfo, 0, null);
+			}
+			else {
+				this._chan = handler.newChannel(url);
+			}
+		}
+		else {
+			this._chan = Services.io.newChannelFromURI(url);
+		}
+	}
+	catch (ex) {
+		log(LOG_ERROR, "Failed to construct a channel the hard way!");
+		this._chan = Services.io.newChannelFromURI(url);
+	}
 	let r = Ci.nsIRequest;
 	let loadFlags = r.LOAD_NORMAL;
 	if (!Preferences.getExt('useCache', false)) {
