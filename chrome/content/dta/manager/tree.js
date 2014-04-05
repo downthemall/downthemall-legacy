@@ -374,6 +374,7 @@ const Tree = {
 		try {
 			// save selection
 			let selectedIds = this._getSelectedFilteredIds();
+
 			this._box.rowCountChanged(0, -this.rowCount);
 			if (this.filtered) {
 				this._filtered = this._matcher.filter(this._downloads);
@@ -1687,12 +1688,11 @@ const Tree = {
 			let ids;
 			try {
 				ids = this._getSelectedFilteredIds(true);
-				for (let [idx, id] in Iterator(ids)) {
-					id = id + idx;
+				for (let i = 0, e = ids.length; i < e; ++i) {
+					let id = ids[i] + i;
 					this._downloads.unshift(this._downloads.splice(id, 1)[0]);
 				}
 				this.doFilter();
-				this.selection.rangedSelect(0, ids.length - 1, true);
 			}
 			finally {
 				this.savePositions();
@@ -1700,6 +1700,7 @@ const Tree = {
 				this.endUpdate();
 			}
 			this._box.ensureRowIsVisible(0);
+			this.selection.rangedSelect(0, ids.length - 1, true);
 		}
 		catch (ex) {
 			log(LOG_ERROR, "Mover::top", ex);
@@ -1711,12 +1712,11 @@ const Tree = {
 			let ids;
 			try {
 				ids = this._getSelectedFilteredIds();
-				for (let [idx, id] in Iterator(ids)) {
-					id = id - idx;
+				for (let i = 0, e = ids.length; i < e; ++i) {
+					let id = ids[i] - i;
 					this._downloads.push(this._downloads.splice(id, 1)[0]);
 				}
 				this.doFilter();
-				this.selection.rangedSelect(this._filtered.length - ids.length, this._filtered.length - 1, true);
 			}
 			finally {
 				this.savePositions();
@@ -1724,6 +1724,7 @@ const Tree = {
 				this.endUpdate();
 			}
 			this._box.ensureRowIsVisible(this.rowCount - 1);
+			this.selection.rangedSelect(this._filtered.length - ids.length, this._filtered.length - 1, true);
 		}
 		catch (ex) {
 			log(LOG_ERROR, "Mover::bottom", ex);
