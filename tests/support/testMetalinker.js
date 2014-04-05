@@ -354,7 +354,6 @@ metalink_asyncTestFile(
 metalink_asyncTestFile(
 	"data/metalink/hash",
 	function(data, ex) {
-		start();
 		if (ex) {
 			throw ex;
 		}

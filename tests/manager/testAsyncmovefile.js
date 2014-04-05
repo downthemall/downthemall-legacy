@@ -29,6 +29,7 @@ asyncTest("asyncMoveFile", function() {
 				tmpFile2.remove(false);
 			}
 		} catch (ex) {}
+		stop();
 		asyncMoveFile(tmpFile, tmpFile2, function(ex) {
 			start();
 			ok(ex, ex);
