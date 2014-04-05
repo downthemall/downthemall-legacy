@@ -3,8 +3,9 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const DB_FILE = 'dta_queue.sqlite';
-const DB_FILE_BROKEN = 'dta_queue.broken';
+const DB_OLD_FILE = 'dta_queue.sqlite';
+const DB_FILE = "queue.sqlite";
+const DB_FILE_BROKEN = 'queue.broken';
 const DB_FILE_BAK = DB_FILE + ".bak";
 const DB_VERSION = 2;
 
@@ -20,8 +21,20 @@ let _timer = 0;
 
 /* global __db */
 lazy(this, '__db', function() {
-	let db = Services.dirsvc.get("ProfD", Ci.nsIFile);
-	db.append(DB_FILE);
+	let db = require("api").getProfileFile(DB_FILE);
+	if (!db.exists()) {
+		let olddb = Services.dirsvc.get("ProfD", Ci.nsIFile);
+		olddb.append(DB_OLD_FILE);
+		if (olddb.exists()) {
+			try {
+				olddb.moveTo(db.parent, db.leafName);
+			}
+			catch (ex) {
+				log(LOG_ERROR, "Failed to move DB to new location; locked?", ex);
+				return olddb;
+			}
+		}
+	}
 	return db;
 });
 
@@ -50,7 +63,7 @@ const QueueStore = {
 				log(LOG_ERROR, "Couldn't remove old broken queue file", iex);
 			}
 			let broken = __db.clone();
-			broken.moveTo(null, DB_FILE_BROKEN);
+			broken.moveTo(broken.parent, DB_FILE_BROKEN);
 			_connection = Services.storage.openDatabase(__db);
 		}
 

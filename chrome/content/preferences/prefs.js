@@ -16,7 +16,7 @@ const Main = {
 const Privacy = {
 	load: function() {
 		try {
-			var log = !DTA.getProfileFile('dta_log.txt').exists();
+			var log = !DTA.getProfileFile("log.txt").exists();
 			$("butShowLog", 'butDelLog', 'butRevealLog')
 				.forEach(function(e) { e.disabled = log; });
 

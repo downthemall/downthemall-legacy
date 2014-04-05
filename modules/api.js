@@ -262,9 +262,13 @@ exports.getLinkPrintMetalink = function getLinkPrintMetalink(url) {
 
 exports.getProfileFile = (function() {
 	let _profile = Services.dirsvc.get("ProfD", Ci.nsIFile);
-	return function getProfileFile(fileName) {
+	_profile.append("downthemall.net");
+	return function getProfileFile(fileName, createDir) {
 		var file = _profile.clone();
 		file.append(fileName);
+		if (createDir && !file.parent.exists()) {
+			file.parent.create(file.DIRECTORY_TYPE, 0o755);
+		}
 		return file;
 	};
 })();

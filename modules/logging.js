@@ -63,7 +63,8 @@ function prepareStack(stack) {
 
 lazy(global, "file", function() {
 	let file = Services.dirsvc.get("ProfD", Ci.nsIFile);
-	file.append('dta_log.txt');
+	file.append("downthemall.net");
+	file.append('log.txt');
 	if (file.exists() && file.fileSize > (256 * 1024)) {
 		try {
 			file.remove(false);
@@ -71,6 +72,9 @@ lazy(global, "file", function() {
 		catch (ex) {
 			// no op
 		}
+	}
+	if (!file.parent.exists()) {
+		file.parent.create(file.DIRECTORY_TYPE, 0o755);
 	}
 	return file;
 });
