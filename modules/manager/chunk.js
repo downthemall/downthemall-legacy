@@ -19,15 +19,17 @@ const Timers = new TimerManager();
 
 var buffer_size = BUFFER_SIZE;
 
+function roundp2(s) {
+	s |= (--s) >> 1;
+	s |= s >> 2;
+	s |= s >> 4;
+	s |= s >> 8;
+	s |= s >> 16;
+	return ++s;
+}
+
 exports.hintChunkBufferSize = function(bs) {
-	bs--;
-	bs |= bs >> 1;
-	bs |= bs >> 2;
-	bs |= bs >> 4;
-	bs |= bs >> 8;
-	bs |= bs >> 16;
-	bs++;
-	buffer_size = Math.max(1<<17, Math.min(BUFFER_SIZE * 8, bs));
+	buffer_size = Math.max(1<<17, Math.min(BUFFER_SIZE * 8, roundp2(bs)));
 };
 
 function MemoryReporter() {
@@ -254,21 +256,17 @@ function Buffer(size) {
 	this._data = new Uint8Array(size);
 }
 Buffer.prototype = Object.seal({
-	_buf: new ArrayBuffer(1<<16),
+	_buf: new Uint8Array(1<<16),
 	length: 0,
 	writeFrom: function(inputStream, length) {
 		if (length > this.free) {
 			throw new Error("Buffer overflow, free: " + this.free + ", length: " + length + ", blen: " + this.length);
 		}
 		if (this._buf.byteLength < length) {
-			let nl = this._buf.byteLength;
-			while (nl < length) {
-				nl += 1<<16;
-			}
-			this._buf = new ArrayBuffer(nl);
+			this._buf = new Uint8Array(roundp2(length));
 		}
-		inputStream.readArrayBuffer(length, this._buf);
-		this._data.set(new Uint8Array(this._buf, 0, length), this.length);
+		inputStream.readArrayBuffer(length, this._buf.buffer);
+		this._data.set(this._buf.subarray(0, length), this.length);
 		this.length += length;
 		return length;
 	},
