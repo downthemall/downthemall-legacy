@@ -8,6 +8,8 @@ const LINK_FILTER = (1<<0);
 const IMAGE_FILTER = (1<<1);
 const TOPIC_FILTERSCHANGED = 'DTA:filterschanged';
 
+const FILTERS_FILE = "filters.json";
+
 const REG_ESCAPE = /[{}()\[\]\\^$.?]/g;
 const REG_WILD = /\*/g;
 const REG_WILD2 = /\./g;
@@ -16,6 +18,9 @@ const REG_FNMATCH = /[*.]/;
 const Preferences = require("preferences");
 const RegExpMerger = require("support/regexpmerger");
 const {mapInSitu} = require("utils");
+const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
+const {Promise, Task} = require("support/promise");
+const {DeferredSave} = requireJSM("resource://gre/modules/DeferredSave.jsm");
 
 const nsITimer = Ci.nsITimer;
 
@@ -86,7 +91,7 @@ function Filter(name) {
 Filter.prototype = {
 	// exported
 	get id() {
-		return this._id.slice(PREF_FILTERS_BASE.length);
+		return this._id;
 	},
 
 	// exported
@@ -133,9 +138,7 @@ Filter.prototype = {
 		this._modified = true;
 	},
 	_makeRegs: function(str) {
-
 		str = str.trim();
-
 		// first of all: check if we are are a regexp.
 		if (str.length > 2 && str[0] === '/') {
 			try {
@@ -214,28 +217,18 @@ Filter.prototype = {
 	/**
 	 * @throws Exception in case loading failed
 	 */
-	load: function(localizedLabel) {
-		this._localizedLabel = localizedLabel;
-		this._label = Preferences.get(this.pref('label'));
+	load: function(obj) {
+		this._label = obj.label;
 		if (!this._label || !this._label.length) {
 			throw new Exception("Empty filter!");
 		}
-		// localize the label, but only if user didn't change it.
-		if (localizedLabel && !Preferences.hasUserValue(this.pref('label'))) {
-			this._label = localizedLabel;
-		}
 
-		this._active = Preferences.get(this.pref('active'));
-		this._type = Preferences.get(this.pref('type'));
+		this._active = !!obj.active;
+		this._type = obj.type;
 		this._defFilter = this._id.search(/deffilter/) !== -1;
-		if (this._defFilter) {
-			let ext = Preferences.get(this.pref('icon'));
-			if (ext) {
-				this.iconExt = ext;
-			}
-		}
+		this.iconExt = obj.icon;
 		// may throw
-		this.expression = Preferences.get(this.pref('test'));
+		this.expression = obj.expr;
 
 		this._modified = false;
 	},
@@ -245,14 +238,7 @@ Filter.prototype = {
 		if (!this._modified) {
 			return;
 		}
-		Preferences.set(this.pref('active'), this._active);
-		Preferences.set(this.pref('test'), this._expr);
-		Preferences.set(this.pref('type'), this._type);
-
-		// save this last as FM will test for it.
-		Preferences.set(this.pref('label'), this._label);
-		exports.FilterManager._delayedReload();
-
+		exports.FilterManager.save();
 		this._modified = false;
 	},
 
@@ -282,6 +268,16 @@ Filter.prototype = {
 
 	toSource: function() {
 		return this.toString() + ": " + this._regs.toSource();
+	},
+
+	toJSON: function() {
+		return {
+			id: this.id,
+			label: this._label,
+			expr: this._expr,
+			type: this._type,
+			active: this._active,
+		};
 	}
 };
 
@@ -314,8 +310,6 @@ FilterManagerImpl.prototype = {
 	LINK_FILTER: LINK_FILTER,
 	IMAGE_FILTER: IMAGE_FILTER,
 
-	QueryInterface: QI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
-
 	init: function() {
 		// load those localized labels for default filters.
 		this._localizedLabels = {};
@@ -326,84 +320,123 @@ FilterManagerImpl.prototype = {
 			let prop = e.getNext().QueryInterface(Ci.nsIPropertyElement);
 			this._localizedLabels[prop.key] = prop.value;
 		}
-
-		// register (the observer) and initialize our timer, so that we'll get a reload event.
+		this._file = require("api").getProfileFile(FILTERS_FILE);
+		this._saver = new DeferredSave(
+			this._file.path,
+			JSON.stringify.bind(JSON, this, null, 2),
+			100);
 		this._reload();
-		this.register();
-	},
-
-	_done: true,
-	_mustReload: false,
-
-	_timer: null,
-
-	_delayedReload: function() {
-		if (this._mustReload) {
-			return;
-		}
-		this._mustReload = true;
-		this._timer = new Instances.Timer(this, 100, nsITimer.TYPE_ONE_SHOT);
 	},
 
 	get count() {
 		return this._count;
 	},
 	reload: function() {
-		if (!this._mustReload) {
-			return;
-		}
-		this._mustReload = false;
 		this._reload();
 	},
 	_reload: function() {
-		this._filters = {};
-		this._all = [];
-
-		// hmmm. since we use uuids for the filters we've to enumerate the whole branch.
-		for (let pref of Preferences.getChildren(PREF_FILTERS_BASE)) {
-			// we test for label (as we get all the other props as well)
-			if (pref.search(/\.label$/) === -1) {
-				continue;
-			}
-			// cut of the label part to get the actual name
-			let name = pref.slice(0, -6);
+		if (this._pending) {
+			return this._pending;
+		}
+		this._pending = Task.spawn((function() {
 			try {
-				let filter = new Filter(name);
-				// overwrite with localized labels.
-				let localizedLabel = null;
-				let localizedTag = filter.id;
-				if (localizedTag in this._localizedLabels) {
-					localizedLabel = this._localizedLabels[localizedTag];
+				let decoder = new TextDecoder();
+				if (!this.defFilters) {
+					let d = Promise.defer();
+					let x = new Instances.XHR();
+					this._filters = {};
+					this._all = [];
+					x.overrideMimeType("application/json");
+					x.open("GET", BASE_PATH + "support/filters.json");
+					x.onloadend = (function() {
+						try {
+							this.defFilters = JSON.parse(x.responseText);
+							for (let id in this.defFilters) {
+								if (id in this._localizedLabels) {
+									this.defFilters[id].label = this._localizedLabels[id];
+								}
+							}
+							Object.freeze(this.defFilters);
+						}
+						catch (ex) {
+							log(LOG_ERROR, "Failed to load default filters", ex);
+							this.defFilters = {};
+						}
+						d.resolve();
+					}).bind(this);
+					x.send();
+					yield d.promise;
 				}
-				filter.load(localizedLabel);
-				this._filters[filter.id] = filter;
-				this._all.push(filter);
+				let filters = {};
+				try {
+					filters = JSON.parse(decoder.decode(yield OS.File.read(this._file.path)));
+					if (!filters) {
+						throw new Error ("No filters where loaded");
+					}
+				}
+				catch (lex) {
+					log(LOG_DEBUG, "Couldn't load filters file", lex);
+					filters = this._migrateFromPrefs(this._pending);
+				}
+				// merge with defFilters
+				for (let f in this.defFilters) {
+					if (!(f in filters)) {
+						filters[f] = Object.create(this.defFilters[f]);
+					}
+				}
+
+				// Load all
+				let all = [];
+				for (let [id, obj] in Iterator(filters)) {
+					if (id in this.defFilters) {
+						// Lacking setPrototypeOf
+						obj.__proto__ = this.defFilters[id];
+					}
+					try {
+						let f = new Filter(id);
+						f.load(obj);
+						filters[f.id] = f;
+						all.push(f);
+					}
+					catch (ex) {
+						log(LOG_DEBUG, "failed to load filter: " + id, ex);
+						delete filters[id];
+					}
+				}
+				this._filters = filters;
+				this._all = all;
+				log(LOG_DEBUG, "loaded all filters");
 			}
 			catch (ex) {
-				log(LOG_ERROR, "failed to reload " + pref, ex);
+				log(LOG_ERROR, "failed to load filters", ex);
 			}
-		}
 
+			this._rebuild();
+			delete this._pending;
+		}).bind(this)).then(null, function(ex) {
+			log(LOG_ERROR, "Task did not finish", ex);
+		});
+		return this._pending;
+	},
+
+	_rebuild: function() {
 		this._count = this._all.length;
-
-		this._all.sort(
-			function(a,b) {
-				if (a.defFilter && !b.defFilter) {
+		this._all.sort(function(a,b) {
+			if (a.defFilter && !b.defFilter) {
+				return -1;
+			}
+			else if (!a.defFilter && b.defFilter) {
+				return 1;
+			}
+			else if (a.defFilter) {
+				if (a.id < b.id) {
 					return -1;
 				}
-				else if (!a.defFilter && b.defFilter) {
-					return 1;
-				}
-				else if (a.defFilter) {
-					if (a.id < b.id) {
-						return -1;
-					}
-					return 1;
-				}
-				var i = a.label.toLowerCase(), ii = b.label.toLowerCase();
-				return i < ii ? -1 : (i > ii ? 1 : 0);
+				return 1;
 			}
-		);
+			var i = a.label.toLowerCase(), ii = b.label.toLowerCase();
+			return i < ii ? -1 : (i > ii ? 1 : 0);
+		});
 		this._active = {};
 		this._active[LINK_FILTER]  = this._all.filter(function(f) (f.type & LINK_FILTER) && f.active);
 		this._active[IMAGE_FILTER] = this._all.filter(function(f) (f.type & IMAGE_FILTER) && f.active);
@@ -415,6 +448,53 @@ FilterManagerImpl.prototype = {
 		require("support/observers").notify(this, TOPIC_FILTERSCHANGED, null);
 	},
 
+	_migrateFromPrefs: function(pending) {
+		log(LOG_DEBUG, "migrating from prefs");
+
+		let rv = {};
+		let kill = new Set();
+		let checks = [".label", ".test", ".type", ".active"];
+		for (let pref of Preferences.getChildren(PREF_FILTERS_BASE)) {
+			// we test for label (as we get all the other props as well)
+			let name = pref.replace(/\.[^.]+?$/, "");
+			if (name in kill) {
+				continue;
+			}
+			kill.add(name);
+			if (pending && !checks.some(function(c) Preferences.hasUserValue(name + c))) {
+				log(LOG_DEBUG, "skipping (not modified) " + name + " pref: " + pref);
+				continue;
+			}
+			try {
+				rv[name.slice(PREF_FILTERS_BASE.length)] = {
+					"label": Preferences.get(name + ".label", ""),
+					"expr": Preferences.get(name + ".test", ""),
+					"type": Preferences.get(name + ".type", LINK_FILTER),
+					"active": Preferences.get(name + ".active", true)
+				};
+				log(LOG_DEBUG, "migrated " + name);
+			}
+			catch (ex) {
+				log(LOG_DEBUG, "Failed to migrate " + name, ex);
+			}
+		}
+		if (pending && kill.size) {
+			Task.spawn((function() {
+				try {
+					yield this._save();
+					for (let i of kill) {
+						log(LOG_DEBUG, "killing " + i);
+						Preferences.resetBranch(i);
+					}
+				}
+				catch (ex) {
+					log(LOG_ERROR, "failed to reset prefs", ex);
+				}
+			}).bind(this));
+		}
+		return rv;
+	},
+
 	enumAll: function() {
 		return new FilterEnumerator(this._all);
 	},
@@ -422,6 +502,28 @@ FilterManagerImpl.prototype = {
 	getFilter: function(id) {
 		if (id in this._filters) {
 			return this._filters[id];
+		}
+		if (id.startsWith("deffilter-")) {
+			// compat: Other add-ons, in particular anticontainer, may have
+			// added filters, which weren't completely present at the time
+			// filters.json was first generated, but are accessed just now.
+			// Try to migrate the filter now.
+			let filters = this._migrateFromPrefs(null);
+			if (id in filters) {
+				try {
+					let f = new Filter(id);
+					f.load(filters[id]);
+					this._filters[f.id] = f;
+					this._all.push(f);
+					this._rebuild();
+					this._save();
+					return f;
+				}
+				catch (ex) {
+					log(LOG_DEBUG, "failed to re-migrate filter: " + id, ex);
+					delete this._filters[id];
+				}
+			}
 		}
 		throw new Exception("invalid filter specified: " + id);
 	},
@@ -453,7 +555,7 @@ FilterManagerImpl.prototype = {
 
 		// we will use unique ids for user-supplied filters.
 		// no need to keep track of the actual number of filters or an index.
-		let filter = new Filter(PREF_FILTERS_BASE + Services.uuid.generateUUID().toString());
+		let filter = new Filter(Services.uuid.generateUUID().toString());
 		// I'm a friend, hence I'm allowed to access private members :p
 		filter._label = label;
 		filter._active = active;
@@ -463,9 +565,11 @@ FilterManagerImpl.prototype = {
 		// this might throw!
 		filter.expression = expression;
 
-
 		// will call our observer so we re-init... no need to do more work here :p
-		filter.save();
+		this._filters[filter.id] = filter;
+		this._all.push(filter);
+		this._rebuild();
+		this._save();
 		return filter.id;
 	},
 
@@ -477,16 +581,27 @@ FilterManagerImpl.prototype = {
 		throw new Exception('filter not defined!');
 	},
 
-	save: function() {
-		for (let f of this._all) {
+	_save: function() {
+		return Task.spawn((function() {
 			try {
-				f.save();
+				yield OS.File.makeDir(this._file.parent.path, {unixMode: 0x775, ignoreExisting: true});
+			}
+			catch (ex if ex.becauseExists) {
+				// no op;
+			}
+			yield this._saver.saveChanges();
+		}).bind(this));
+	},
+	save: function() {
+		Task.spawn((function() {
+			try {
+				yield this._save();
+				this._reload();
 			}
 			catch (ex) {
-				log(LOG_ERROR, "failed to save filter", ex);
+				log(LOG_ERROR, "failed to save filters", ex);
 			}
-		}
-		this._delayedReload();
+		}).bind(this));
 	},
 
 	getTmpFromString: function(expression) {
@@ -501,29 +616,17 @@ FilterManagerImpl.prototype = {
 		return filter;
 	},
 
-	// nsIObserver
-	observe: function(subject, topic, prefName) {
-		switch (topic){
-			case 'timer-callback':
-				this.reload();
-				break;
-			default:
-				this._delayedReload();
-				break;
+	ready: function(callback) {
+		if (this._pending) {
+			log(LOG_DEBUG, "waiting for ready");
+			this._pending.then(callback);
+			return;
 		}
+		callback();
 	},
 
-	// own stuff
-	register: function() {
-		try {
-			// Put self as observer to desired branch
-			Preferences.addObserver(PREF_FILTERS_BASE, this);
-		}
-		catch (ex) {
-			log(LOG_DEBUG, "failed to register", ex);
-			return false;
-		}
-		return true;
+	toJSON: function() {
+		return this._filters;
 	}
 };
 exports.FilterManager = new FilterManagerImpl();

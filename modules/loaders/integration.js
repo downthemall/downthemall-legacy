@@ -541,20 +541,17 @@ exports.load = function load(window, outerEvent) {
 				DTA.setPrivateMode(window, images);
 
 				if (turbo) {
-					try {
-						let queued = DTA.turboSaveLinkArray(window, urls, images);
+					DTA.turboSaveLinkArray(window, urls, images, function(queued) {
+						if (!queued) {
+							DTA.saveLinkArray(window, urls, images, bundle.getString('error.information'));
+						}
 						if (typeof queued == 'number') {
 							notifyInfo(bundle.getFormattedString('queuedn', [queued]));
 						}
 						else {
 							notifyInfo(bundle.getFormattedString('queued', [queued.url]));
 						}
-						return;
-					}
-					catch (ex) {
-						log(LOG_ERROR, 'findLinks', ex);
-						DTA.saveLinkArray(window, urls, images, bundle.getString('error.information'));
-					}
+					});
 					return;
 				}
 				DTA.saveLinkArray(window, urls, images);

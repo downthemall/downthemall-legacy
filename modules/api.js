@@ -380,47 +380,57 @@ exports.saveLinkArray = function saveLinkArray(window, urls, images, error) {
 	);
 };
 
-exports.turboSaveLinkArray = function turboSaveLinkArray(window, urls, images) {
-	if (!urls.length && !images.length) {
-		throw new Exception("no links");
-	}
-	log(LOG_INFO, "turboSaveLinkArray(): DtaOneClick filtering started");
-
-	let links;
-	let type;
-	if (Preferences.getExt("seltab", 0)) {
-		links = images;
-		type = 2;
-	}
-	else {
-		links = urls;
-		type = 1;
-	}
-
-	let fast = null;
-	let isPrivate = urls.some(somePrivate) || images.some(somePrivate);
-	try {
-		fast = FilterManager.getTmpFromString(exports.getDropDownValue('filter', isPrivate));
-	}
-	catch (ex) {
-		// fall-through
-	}
-	links = links.filter(
-		function(link) {
-			if (fast && (fast.match(link.url.usable) || fast.match(link.description))) {
-				return true;
+exports.turboSaveLinkArray = function turboSaveLinkArray(window, urls, images, callback) {
+	FilterManager.ready(function() {
+		try {
+			if (!urls.length && !images.length) {
+				throw new Exception("no links");
 			}
-			return FilterManager.matchActive(link.url.usable, type);
+			log(LOG_INFO, "turboSaveLinkArray(): DtaOneClick filtering started");
+
+			let links;
+			let type;
+			if (Preferences.getExt("seltab", 0)) {
+				links = images;
+				type = 2;
+			}
+			else {
+				links = urls;
+				type = 1;
+			}
+
+			let fast = null;
+			let isPrivate = urls.some(somePrivate) || images.some(somePrivate);
+			try {
+				fast = FilterManager.getTmpFromString(exports.getDropDownValue('filter', isPrivate));
+			}
+			catch (ex) {
+				// fall-through
+			}
+			links = links.filter(function(link) {
+				if (fast && (fast.match(link.url.usable) || fast.match(link.description))) {
+					return true;
+				}
+				return FilterManager.matchActive(link.url.usable, type);
+			});
+
+			log(LOG_INFO, "turboSaveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
+
+			if (!links.length) {
+				throw new Exception('no links remaining');
+			}
+			exports.turboSendLinksToManager(window, links);
+			if (callback) {
+				callback(links.length > 1 ? links.length : links[0]);
+			}
 		}
-	);
-
-	log(LOG_INFO, "turboSaveLinkArray(): DtaOneClick has filtered " + links.length + " URLs");
-
-	if (!links.length) {
-		throw new Exception('no links remaining');
-	}
-	this.turboSendLinksToManager(window, links);
-	return links.length > 1 ? links.length : links[0];
+		catch (ex) {
+			log(LOG_DEBUG, "turboSaveLinkArray", ex);
+			if (callback) {
+				callback();
+			}
+		}
+	});
 };
 
 var isManagerPending = false;
