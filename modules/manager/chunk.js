@@ -176,15 +176,17 @@ const memoryReporter = new MemoryReporter();
 
 
 try {
-	Services.memrm.registerReporter(memoryReporter);
+	if ("unregisterStrongReporter" in Services.memrm) {
+		Services.memrm.registerStrongReporter(memoryReporter);
+		log(LOG_DEBUG, "registered strong reporter");
+	}
+	else {
+		Services.memrm.registerReporter(memoryReporter);
+		log(LOG_DEBUG, "registered reporter");
+	}
 }
 catch (ex) {
-	try {
-		Services.memrm.registerMultiReporter(memoryReporter);
-	}
-	catch (ex) {
-		log(LOG_ERROR, "Failed to register reporter");
-	}
+	log(LOG_ERROR, "Failed to register reporter", ex);
 }
 
 
@@ -197,7 +199,12 @@ const Observer = {
 		}
 		catch (ex) {}
 		try {
-			Services.memrm.unregisterMultiReporter(memoryReporter);
+			if ("unregisterStrongReporter" in Services.memrm) {
+				Services.memrm.unregisterStrongReporter(memoryReporter);
+			}
+			else {
+				Services.memrm.unregisterReporter(memoryReporter);
+			}
 		} catch (ex) {}
 		Timers.killAllTimers();
 	},
