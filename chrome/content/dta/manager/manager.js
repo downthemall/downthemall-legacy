@@ -442,6 +442,9 @@ const Dialog = {
 			let state = Dialog_loadDownloads_get(down, "state");
 			if (state) {
 				d._setStateInternal(state);
+				if (state === COMPLETE) {
+					Dialog.completed++;
+				}
 			}
 			d.urlManager = new UrlManager(down.urlManager);
 			d.bNum = Dialog_loadDownloads_get(down, "numIstance");
@@ -1130,6 +1133,9 @@ const Dialog = {
 		if (idx > -1) {
 			this._autoRetrying.splice(idx, 1);
 		}
+		if (download.state == COMPLETE) {
+			Dialog.completed--;
+		}
 	},
 	onclose: function(evt) {
 		let rv = Dialog.close();
@@ -1393,11 +1399,17 @@ QueueItem.prototype = {
 			// kill the bucket via it's setter
 			this.bucket = null;
 		}
+		else if (this.state === COMPLETE) {
+			Dialog.completed -= 1;
+		}
 		this.speed = '';
 		this._setStateInternal(nv);
 		if (this.state === RUNNING) {
 			// set up the bucket
 			this._bucket = new ByteBucket(this.speedLimit, 1.7);
+		}
+		else if (this.state === COMPLETE) {
+			Dialog.completed++;
 		}
 		Dialog.signal(this);
 		this.invalidate();

@@ -1503,20 +1503,14 @@ const Tree = {
 	},
 	invalidate: function(d, cell) {
 		if (!d) {
-			Dialog.completed = 0;
-			for (d of Tree.all) {
-				if (d.state === COMPLETE) {
-					Dialog.completed++;
-				}
-			}
 			this._box.invalidate();
 			this.refreshTools(this);
 			return;
 		}
 
 		if (d instanceof Array) {
-			for (let i of d) {
-				this._invalidate_item(i, cell);
+			for (let i = 0, e = d.length; i < e; ++i) {
+				this._invalidate_item(d[i], cell);
 			}
 			return;
 		}
