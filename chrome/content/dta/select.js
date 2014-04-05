@@ -363,6 +363,8 @@ Dialog = {
 				function(evt) {
 					if (evt.charCode === ' '.charCodeAt(0)) {
 						Dialog.toggleSelection();
+						evt.stopPropagation();
+						evt.preventDefault();
 					}
 				},
 				true
