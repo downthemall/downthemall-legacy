@@ -349,12 +349,14 @@ Dialog = {
 
 			// changeTab will initialize the filters and do the selection for us
 			let preferredTab = Preferences.getExt("seltab", 0);
-			if (preferredTab) {
-				this.changeTab(!!images.length ? 'images' : 'links');
-			}
-			else {
-				this.changeTab(!!links.length ? 'links': 'images');
-			}
+			FilterManager.ready((function() {
+				if (preferredTab) {
+					this.changeTab(!!images.length ? 'images' : 'links');
+				}
+				else {
+					this.changeTab(!!links.length ? 'links': 'images');
+				}
+			}).bind(this));
 
 			$("urlList").addEventListener(
 				'keypress',
