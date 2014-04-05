@@ -2274,9 +2274,9 @@ QueueItem.prototype = {
 		this.invalidate();
 		if (!this._openChunks && this._chunksReady_next) {
 			log(LOG_DEBUG, "Running chunksReady_next");
-			let fn = this._chunksReady_next;
+			let p = this._chunksReady_next;
 			delete this._chunksReady_next;
-			fn();
+			p.resolve();
 		}
 		if (!this._openChunks) {
 			this.save();
@@ -2286,7 +2286,12 @@ QueueItem.prototype = {
 		if (!this._openChunks) {
 			return true;
 		}
-		this._chunksReady_next = nextEvent;
+		if (nextEvent) {
+			if (!this._chunksReady_next) {
+				this._chunksReady_next = Promise.defer();
+			}
+			this._chunksReady_next.promise.then(nextEvent);
+		}
 		log(LOG_DEBUG, "chunksReady: reschedule");
 		return false;
 	},
