@@ -814,9 +814,14 @@ const Tree = {
 			}
 		}
 	},
-	fastLoad: function(download) this._downloads.push(download) -1,
+	fastLoad: function(download) {
+		if (download.state === COMPLETE) {
+			++Dialog.completed;
+		}
+		return this._downloads.push(download) - 1;
+	},
 	add: function(download) {
-		let pos = download.position = this._downloads.push(download) -1;
+		let pos = download.position = this.fastLoad(download);
 		if (this.filtered) {
 			download.filteredPosition = -1;
 			this.doFilterOne(download);
@@ -979,6 +984,9 @@ const Tree = {
 				this._downloads.splice(d.position, 1);
 				this._box.rowCountChanged(d.position, -1);
 				last = Math.max(d.filteredPosition, last);
+				if (d.state === COMPLETE) {
+					--Dialog.completed;
+				}
 				if (!d.isOf(RUNNING | PAUSED)) {
 					Dialog.wasRemoved(d);
 				}
