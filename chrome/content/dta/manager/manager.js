@@ -442,9 +442,6 @@ const Dialog = {
 			let state = Dialog_loadDownloads_get(down, "state");
 			if (state) {
 				d._setStateInternal(state);
-				if (state === COMPLETE) {
-					Dialog.completed++;
-				}
 			}
 			d.urlManager = new UrlManager(down.urlManager);
 			d.bNum = Dialog_loadDownloads_get(down, "numIstance");
@@ -1133,9 +1130,6 @@ const Dialog = {
 		if (idx > -1) {
 			this._autoRetrying.splice(idx, 1);
 		}
-		if (download.state == COMPLETE) {
-			Dialog.completed--;
-		}
 	},
 	onclose: function(evt) {
 		let rv = Dialog.close();
@@ -1399,9 +1393,6 @@ QueueItem.prototype = {
 			// kill the bucket via it's setter
 			this.bucket = null;
 		}
-		else if (this.state === COMPLETE) {
-			Dialog.completed -= 1;
-		}
 		this.speed = '';
 		this._setStateInternal(nv);
 		if (this.state === RUNNING) {
@@ -1409,7 +1400,7 @@ QueueItem.prototype = {
 			this._bucket = new ByteBucket(this.speedLimit, 1.7);
 		}
 		else if (this.state === COMPLETE) {
-			Dialog.completed++;
+			++Dialog.completed;
 		}
 		Dialog.signal(this);
 		this.invalidate();
@@ -2127,7 +2118,6 @@ QueueItem.prototype = {
 				log(LOG_ERROR, "failed to get filesize for " + file.path, ex);
 				this.totalSize = this.partialSize = 0;
 			}
-			++Dialog.completed;
 		}).bind(this));
 	},
 	finishDownload: function(exception) {
@@ -2304,10 +2294,7 @@ QueueItem.prototype = {
 	cancel: function(message) {
 		try {
 			const state = this.state;
-			if (state === COMPLETE) {
-				Dialog.completed--;
-			}
-			else if (state === RUNNING) {
+			if (state === RUNNING) {
 				if (this.chunks) {
 					// must set state here, already, to avoid confusing the connections
 					this.setState(CANCELED);
