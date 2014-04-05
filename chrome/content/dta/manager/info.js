@@ -84,9 +84,9 @@ var Dialog = {
 					this.downloads.every(function(e) e.pathName === dir) ?
 					dir :
 					"";
-				$('tabs').selectedIndex = 2;
-				$('canvasTab').hidden = true;
-				$('canvasBox').hidden = true;
+				$('canvasTab').parentElement.removeChild($('canvasTab'));
+				$('canvasBox').parentElement.removeChild($('canvasBox'));
+				$('tabs').selectedIndex = 0;
 			}
 			if (this.downloads.every(function(d) { return d.isOf(COMPLETE | FINISHING); })) {
 				for (let e of $('directory', 'renaming', 'mask', 'browsedir')) {
