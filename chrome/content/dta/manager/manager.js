@@ -2143,30 +2143,34 @@ QueueItem.prototype = {
 		}
 		log(LOG_DEBUG, "finishDownload, connections: " + this.sessionConnections);
 		Task.spawn((function finishDownloadTask() {
-			if (this.hashCollection && !(yield this.verifyHash())) {
-				return;
+			try {
+				if (this.hashCollection && !(yield this.verifyHash())) {
+					return;
+				}
+				if ("isMetalink" in this) {
+					this.handleMetalink();
+					return;
+				}
+				if (!(yield this.moveCompleted())) {
+					log(LOG_DEBUG, "moveCompleted scheduled!");
+					return;
+				}
+				yield this.setAttributes();
+				if (Prefs.finishEvent) {
+					this.customFinishEvent();
+				}
+				this.chunks.length = 0;
+				this.speeds.clear();
+				this.activeChunks = 0;
+				this.setState(COMPLETE);
+				this.status = TextCache_COMPLETE;
+				this.visitors = new VisitorManager();
+				this.compression = null;
 			}
-			if ("isMetalink" in this) {
-				this.handleMetalink();
-				return;
+			catch (ex) {
+				log(LOG_ERROR, "complete: ", ex);
+				this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
 			}
-			if (!(yield this.moveCompleted())) {
-				return;
-			}
-			yield this.setAttributes();
-			if (Prefs.finishEvent) {
-				this.customFinishEvent();
-			}
-			this.chunks.length = 0;
-			this.speeds.clear();
-			this.activeChunks = 0;
-			this.setState(COMPLETE);
-			this.status = TextCache_COMPLETE;
-			this.visitors = new VisitorManager();
-			this.compression = null;
-		}).bind(this)).then(null, (function finishDownloadFailure(ex) {
-			log(LOG_ERROR, "complete: ", ex);
-			this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
 		}).bind(this));
 	},
 	get maskURL() this.urlManager.usableURL,
