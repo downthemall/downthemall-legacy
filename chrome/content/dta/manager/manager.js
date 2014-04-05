@@ -1918,6 +1918,7 @@ QueueItem.prototype = {
 			c.close();
 		}
 		this.setState(FINISHING);
+		this.status = TextCache_MOVING;
 
 		if (!(yield ConflictManager.resolve(this))) {
 			return;
@@ -1949,7 +1950,6 @@ QueueItem.prototype = {
 			yield compressDeferred.promise;
 			throw new Task.Result(true);
 		}
-		this.status = TextCache_MOVING;
 		let moveDeferred = Promise.defer();
 		let move = function(self, x) {
 			let df = destination.clone();
