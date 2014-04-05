@@ -508,7 +508,7 @@ treechildren::-moz-tree-cell-text(private) {
 	-moz-image-region: rect(0px,64px,16px,48px);
 }
 .cancel[disabled="true"] {
-	-moz-image-region: rect(16px,112px,32px,96px);
+	-moz-image-region: rect(16px,64px,32px,48px);
 }
 
 #speedLimit {
