@@ -16,19 +16,30 @@ caption {
 }
 #views toolbar {
 	border-width:0px;
-	height: 31px;
+	height: 30px;
 }
 
 #views toolbarbutton {
 	-moz-box-orient: horizontal !important;
 	-moz-appearance: none !important;
-	min-width: 20em;
+	min-width: 18em;
 	background-repeat: no-repeat,no-repeat,no-repeat;
-	background-position: left 0, 30px 0, right 0;
-	background-size: 30px 100%, calc(100% - 60px) 100%, 30px 100%;
-	-moz-padding-start: 20px;
-	-moz-padding-end: 20px;
+	background-position: left 0, 30px 0, right 0, 0 0;
+	background-size: 30px 100%, calc(100% - 60px) 100%, 30px 100%, 100% 100%;
+	-moz-padding-start: 4ex;
+	-moz-padding-end: 4ex;
 	border: 0 !important;
+	text-shadow: rgba(255, 255, 255, 0.4) 0px 1px 0px;
+}
+#views toolbarbutton, #views toolbarbutton:hover {
+	-moz-margin-start: -7px !important;
+	-moz-margin-end: -7px !important;
+}
+#views toolbarbutton:first-child, #views toolbarbutton:hover:first-child {
+	-moz-margin-start: 0px !important;
+}
+#views toolbarbutton:last-child, #views toolbarbutton:hover:last-child {
+	-moz-margin-end: 0px !important;
 }
 #views toolbarbutton:hover:not([disabled="true"]):not([selected="true"]) {
 	background-image: url(tabBackgroundStart.svg),url(tabBackgroundMiddle.svg),url(tabBackgroundEnd.svg);
@@ -40,8 +51,8 @@ caption {
 }
 
 #views toolbarbutton:not([disabled="true"]):hover {
-		cursor: pointer;
-		font-weight: 700;
+	cursor: pointer;
+	font-weight: 700;
 }
 threechildren::-moz-tree-row {
 	min-height: 20px;
