@@ -60,7 +60,7 @@ test("observers", function() {
 	p.makeObserver(obs1);
 	p.makeObserver(obs2);
 	strictEqual(obs1.QueryInterface(Ci.nsIObserver), obs1, "QI works");
-	raises(function() obs1.QueryInterface(Ci.nsIRunnable), "QI works (throws)");
+	throws(function() obs1.QueryInterface(Ci.nsIRunnable), "QI works (throws)");
 
 	strictEqual(obs2.QueryInterface(Ci.nsIObserver), obs2, "QI2 works");
 	strictEqual(obs2.QueryInterface(Ci.nsIRunnable), obs2, "Old QI2 works");
