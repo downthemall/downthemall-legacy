@@ -279,18 +279,29 @@ Buffer.prototype = Object.seal({
 
 function Chunk(download, start, end, written) {
 	// safeguard against null or strings and such
-	this._written = written > 0 ? written : 0;
-	this.safeBytes = this._written;
-	this._start = start;
-	this.end = end;
 	this._parent = download;
+	this._start = start;
+	this._written = written > 0 ? written : 0;
 	this._sessionBytes = 0;
-	this._copiers = [];
+
+	this.end = end;
+	this.safeBytes = this._written;
+
 	log(LOG_INFO, "chunk created: " + this);
 }
 
 Chunk.prototype = {
+	_inited: false,
+	_buffered: 0,
+	_written: 0,
+	_pendingWrites: 0,
+	_wnd: 2048,
+
 	running: false,
+	safeBytes: 0,
+
+	get _hasBuffer() !!this._buffer,
+
 	get starter() this.end <= 0,
 	get start() this._start,
 	get end() this._end,
@@ -300,11 +311,9 @@ Chunk.prototype = {
 	},
 	get total() this._total,
 	get written() this._written,
-	_buffered: 0,
 	get bufferedPending() this._buffered,
 	get bufferedCached() this._hasBuffer ? this._buffer.length : 0,
 	get buffered() (this.bufferedPending + this.bufferedCached),
-	safeBytes: 0,
 	get currentPosition() (this.start + this.written),
 	get remainder() (this._total - this._written),
 	get complete() {
@@ -315,15 +324,7 @@ Chunk.prototype = {
 	},
 	get parent() this._parent,
 	get sessionBytes() this._sessionBytes,
-	merge: function(ch) {
-		if (!this.complete && !ch.complete) {
-			throw new Error("Cannot merge incomplete chunks this way!");
-		}
-		this.end = ch.end;
-		this._written += ch._written;
-		this.safeBytes += ch.safeBytes;
-	},
-	_inited: false,
+
 	_init: function() {
 		if (this._inited) {
 			return;
@@ -392,6 +393,76 @@ Chunk.prototype = {
 		this.parent.chunkOpened(this);
 		return this._openDeferred.promise;
 	},
+	_finish: function(notifyOwner) {
+		log(LOG_ERROR, "Finishing " + this + " notify: " + notifyOwner);
+		if (this.buckets) {
+			this.buckets.unregister(this);
+			delete this.buckets;
+		}
+		delete this._req;
+		memoryReporter.unregisterChunk(this);
+		this._inited = false;
+
+		this._sessionBytes = 0;
+		this._buffered = 0;
+		this._written = this.safeBytes;
+		delete this.download;
+
+		if (notifyOwner) {
+			this.parent.chunkClosed(this);
+		}
+	},
+	_noteBytesWritten: function(bytes) {
+		this._written += bytes;
+		this._sessionBytes += bytes;
+		memoryReporter.noteBytesWritten(bytes);
+
+		this.parent.timeLastProgress = getTimestamp();
+	},
+	_ensureBuffer: function() {
+		if (this._hasBuffer) {
+			return;
+		}
+		this.buffer_size = buffer_size;
+		this._buffer = new Buffer(this.buffer_size);
+	},
+	_shipBuffer: function() {
+		let buffer = this._buffer;
+		delete this._buffer;
+		if (!buffer) {
+			return;
+		}
+		log(LOG_DEBUG, "shipping buffer: " + buffer.length);
+
+		if (!buffer.length) {
+			log(LOG_DEBUG, "Not shipping buffer, zero length");
+			return;
+		}
+		this._buffered += buffer.length;
+		++this._pendingWrites;
+		Task.spawn((function _shipBufferTask() {
+			let file = yield this._open();
+			yield file.write(buffer.data, {bytes: buffer.length});
+			this._buffered -= buffer.length;
+			this.safeBytes += buffer.length;
+			--this._pendingWrites;
+			if (!this.running) {
+				this.close();
+			}
+		}).bind(this)).then(null, (function _shipBufferFailure(ex) {
+			log(LOG_ERROR, ex);
+			try {
+				--this._pendingWrites;
+				this.download.writeFailed();
+				if (!this.running) {
+					this.close();
+				}
+			}
+			catch (ex2) {
+				log(LOG_ERROR, "aggregate failure", ex2);
+			}
+		}).bind(this));
+	},
 	close: function() {
 		this.running = false;
 		if (this._hasBuffer) {
@@ -418,24 +489,13 @@ Chunk.prototype = {
 		log(LOG_DEBUG, this + ": chunk closed");
 		this._finish(false);
 	},
-	_finish: function(notifyOwner) {
-		log(LOG_ERROR, "Finishing " + this + " notify: " + notifyOwner);
-		if (this.buckets) {
-			this.buckets.unregister(this);
-			delete this.buckets;
+	merge: function(ch) {
+		if (!this.complete && !ch.complete) {
+			throw new Error("Cannot merge incomplete chunks this way!");
 		}
-		delete this._req;
-		memoryReporter.unregisterChunk(this);
-		this._inited = false;
-
-		this._sessionBytes = 0;
-		this._buffered = 0;
-		this._written = this.safeBytes;
-		delete this.download;
-
-		if (notifyOwner) {
-			this.parent.chunkClosed(this);
-		}
+		this.end = ch.end;
+		this._written += ch._written;
+		this.safeBytes += ch.safeBytes;
 	},
 	rollback: function() {
 		if (!this._sessionBytes || this._sessionBytes > this._written) {
@@ -463,14 +523,6 @@ Chunk.prototype = {
 		if (this.download) {
 			this.download.cancel();
 		}
-	},
-	_written: 0,
-	_noteBytesWritten: function(bytes) {
-		this._written += bytes;
-		this._sessionBytes += bytes;
-		memoryReporter.noteBytesWritten(bytes);
-
-		this.parent.timeLastProgress = getTimestamp();
 	},
 	write: function(aRequest, aInputStream, aCount) {
 		try {
@@ -548,53 +600,6 @@ Chunk.prototype = {
 		}
 		return 0;
 	},
-	_ensureBuffer: function() {
-		if (this._hasBuffer) {
-			return;
-		}
-		this.buffer_size = buffer_size;
-		this._buffer = new Buffer(this.buffer_size);
-	},
-	get _hasBuffer() !!this._buffer,
-	_pendingWrites: 0,
-	_shipBuffer: function() {
-		let buffer = this._buffer;
-		delete this._buffer;
-		if (!buffer) {
-			return;
-		}
-		log(LOG_DEBUG, "shipping buffer: " + buffer.length);
-
-		if (!buffer.length) {
-			log(LOG_DEBUG, "Not shipping buffer, zero length");
-			return;
-		}
-		this._buffered += buffer.length;
-		++this._pendingWrites;
-		Task.spawn((function _shipBufferTask() {
-			let file = yield this._open();
-			yield file.write(buffer.data, {bytes: buffer.length});
-			this._buffered -= buffer.length;
-			this.safeBytes += buffer.length;
-			--this._pendingWrites;
-			if (!this.running) {
-				this.close();
-			}
-		}).bind(this)).then(null, (function _shipBufferFailure(ex) {
-			log(LOG_ERROR, ex);
-			try {
-				--this._pendingWrites;
-				this.download.writeFailed();
-				if (!this.running) {
-					this.close();
-				}
-			}
-			catch (ex2) {
-				log(LOG_ERROR, "aggregate failure", ex2);
-			}
-		}).bind(this));
-	},
-	_wnd: 2048,
 	observe: function() {
 		this.run();
 	},
