@@ -1383,8 +1383,6 @@ const Tree = {
 		{item: 'cmdMoveBottom', f: function(d) d.max !== d.rows - 1}
 	],
 	_refreshTools_items: [
-		{items: ['cmdLaunch', "launch"], f: function(d) !!d.curFile},
-		{items: ["cmdOpenFolder", "folder"], f: function(d) !!d.curFolder},
 		{items: ["cmdDelete", "delete"], f: function(d) d.state === COMPLETE},
 
 		{items: ['cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'], f: function(d) !!d.count},
@@ -1392,9 +1390,14 @@ const Tree = {
 		{items: ['cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'],
 			f: function(d) d.isOf(QUEUED | RUNNING | PAUSED | CANCELED)},
 	],
+	_refreshTools_items_deferred: [
+		{items: ['cmdLaunch', "launch"], f: function(d) !!d.curFile},
+		{items: ["cmdOpenFolder", "folder"], f: function(d) !!d.curFolder},
+	],
 	_refreshTools_init: function() {
 		this._refreshTools_item.forEach(function(e) e.item = $(e.item));
 		this._refreshTools_items.forEach(function(e) e.items = $.apply(null, e.items));
+		this._refreshTools_items_deferred.forEach(function(e) e.items = $.apply(null, e.items));
 	},
 	refreshTools: function(d) {
 		if (this._updating || (d && ('position' in d) && !this.selection.isSelected(d.position))) {
@@ -1432,18 +1435,25 @@ const Tree = {
 				states.max = Math.max(qi.filteredPosition, states.max);
 			}
 			let cur = this.current;
+			for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
+				let item = this._refreshTools_item[i];
+				let disabled = item.f(states) ? "false" : "true";
+				item.item.setAttribute("disabled", disabled);
+			}
+			for (let i = 0, e = this._refreshTools_items.length; i < e; ++i) {
+				let items = this._refreshTools_items[i];
+				let disabled = items.f(states) ? "false" : "true";
+				items = items.items;
+				for (let ii = 0, ee = items.length; ii < ee; ++ii) {
+					items[ii].setAttribute("disabled", disabled);
+				}
+			}
 			Task.spawn((function() {
 				try {
 					states.curFile = (cur && cur.state === COMPLETE && (yield OS.File.exists(cur.destinationLocalFile.path)));
 					states.curFolder = (cur && (yield OS.File.exists(new Instances.LocalFile(cur.destinationPath).path)));
-
-					for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
-						let item = this._refreshTools_item[i];
-						let disabled = item.f(states) ? "false" : "true";
-						item.item.setAttribute("disabled", disabled);
-					}
-					for (let i = 0, e = this._refreshTools_items.length; i < e; ++i) {
-						let items = this._refreshTools_items[i];
+					for (let i = 0, e = this._refreshTools_items_deferred.length; i < e; ++i) {
+						let items = this._refreshTools_items_deferred[i];
 						let disabled = items.f(states) ? "false" : "true";
 						items = items.items;
 						for (let ii = 0, ee = items.length; ii < ee; ++ii) {
