@@ -7,7 +7,7 @@ asyncTest("verify that UI XML actually loads", function() {
 			QUnit.start();
 			return;
 		}
-		var req = XMLHttpRequest();
+		var req = new XMLHttpRequest();
 		req.overrideMimeType("text/xml");
 		req.open("GET", "chrome://dta/content/" + file);
 		req.onloadend = function() {
