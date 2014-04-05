@@ -42,6 +42,7 @@ var Dialog = {
 				$("infoDate").value = d.startDate.toLocaleString();
 				$("infoPrivate").hidden = !d.isPrivate;
 				$("mirrorsText").value = _("mirrorsText", [d.urlManager.length]);
+				$("clearReferrer").hidden = true;
 				document.title = d.destinationName;
 
 				if (d.referrer) {
@@ -105,6 +106,13 @@ var Dialog = {
 			window.sizeToContent();
 			addEventListener("resize", function() Dialog.resize(), true);
 		}, 0);
+	},
+	clearReferrer: function() {
+		var sp = $("sourcePage");
+		sp.removeAttribute("readonly");
+		sp.disabled = false;
+		sp.value = "";
+		sp.focus();
 	},
 	accept: function() {
 		if (this.isFullyDisabled) {
