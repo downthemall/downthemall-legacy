@@ -273,7 +273,7 @@
 						<splitter class="tree-splitter" />
 						<treecol id="colMask" label="&mask3.label;" tooltiptext="&mask3.label;" flex="1" hidden="true" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
-						<treecol id="colPath" matcher="pathmatch" label="&path.label;" tooltiptext="&path.label;" flex="1" hidden="true" crop="center" persist="hidden width ordinal" />
+						<treecol id="colPath" matcher="pathmatch" label="&path.label;" tooltiptext="&path.label;" flex="1" hidden="true" crop="start" persist="hidden width ordinal" />
 						<splitter class="tree-splitter" />
 						<treecol id="colHash" label="&hash.label;" tooltiptext="&hash.label;" flex="1" hidden="true" persist="hidden width ordinal" />
 					</treecols>
