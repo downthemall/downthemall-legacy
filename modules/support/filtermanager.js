@@ -311,6 +311,7 @@ FilterManagerImpl.prototype = {
 	IMAGE_FILTER: IMAGE_FILTER,
 
 	init: function() {
+		log(LOG_DEBUG, "initializing filter manager");
 		// load those localized labels for default filters.
 		this._localizedLabels = {};
 		let b = Services.strings
@@ -336,9 +337,12 @@ FilterManagerImpl.prototype = {
 	},
 	_reload: function() {
 		if (this._pending) {
+			log(LOG_DEBUG, "reload pending");
 			return this._pending;
 		}
+		log(LOG_DEBUG, "reload spawning");
 		this._pending = Task.spawn((function() {
+			log(LOG_DEBUG, "reload commencing");
 			try {
 				let decoder = new TextDecoder();
 				if (!this.defFilters) {
