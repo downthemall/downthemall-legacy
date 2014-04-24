@@ -24,7 +24,7 @@ function createFactory(direct, cls) {
 			try {
 				Cm.registerFactory(i.classID, i.classDescription, i.contractID, this);
 			}
-			catch (ex if result == Cr.NS_ERROR_FACTORY_EXISTS) {
+			catch (ex if ex.result == Cr.NS_ERROR_FACTORY_EXISTS) {
 				defer(this.register.bind(this));
 				return;
 			}
@@ -37,21 +37,26 @@ function createFactory(direct, cls) {
 			unload(this.unregister.bind(this));
 		},
 		unregister: function() {
-			const i = this._info;
-			if (i.xpcom_categories) {
-				for (let category of i.xpcom_categories) {
-					Services.catman.deleteCategoryEntry(category, i.classDescription, false);
+			try {
+				const i = this._info;
+				if (i.xpcom_categories) {
+					for (let category of i.xpcom_categories) {
+						Services.catman.deleteCategoryEntry(category, i.classDescription, false);
+					}
 				}
+				// defer, see bug 753687
+				defer((function(Cm, clsid) {
+					try {
+						Cm.unregisterFactory(clsid, this);
+					}
+					catch (ex) {
+						Components.utils.reportError(ex);
+					}
+				}).bind(this, Cm, i.classID));
 			}
-			// defer, see bug 753687
-			defer((function(Cm, clsid) {
-				try {
-					Cm.unregisterFactory(clsid, this);
-				}
-				catch (ex) {
-					Components.utils.reportError(ex);
-				}
-			}).bind(this, Cm, i.classID));
+			catch (ex) {
+				Components.utils.reportError(ex);
+			}
 		}
 	});
 }
