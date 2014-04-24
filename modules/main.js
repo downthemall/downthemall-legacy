@@ -172,7 +172,7 @@ function migrate() {
 	const fn1_0 = [
 		function() {
 			// 1.0.1: #613 Multiple "slow-down" reports
-			log("resetting connection prefs");
+			log(LOG_DEBUG, "resetting connection prefs");
 			for (let e of NET_PREFS) {
 				Preferences.reset(e);
 			}
