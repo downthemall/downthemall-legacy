@@ -365,34 +365,35 @@ Chunk.prototype = {
 		log(LOG_ERROR, "opening " + file.path + " at: " + pos);
 		Task.spawn((function() {
 			try {
-				yield makeDir(file.parent, Prefs.dirPermissions);
-			}
-			catch (ex if ex.becauseExists) {
-				// no op
-			}
-			let flags = 0;
-			if (OS.Constants.libc) {
-				flags = OS.Constants.libc.O_CREAT | OS.Constants.libc.O_LARGEFILE | OS.Constants.libc.O_WRONLY;
-			}
-			this._osFile = yield OS.File.open(file.path, {write:true, append: false}, {unixFlags: flags, unixMode: Prefs.permissions});
-			if (pos) {
-				while (pos) {
-					let p = Math.min(pos, 1<<29);
-					try {
-						yield this._osFile.setPosition(p, OS.File.POS_CURRENT);
-					}
-					catch (ex if ex.winLastError == 0) {
-						// Ignore this error. The call did actually succeed.
-						// See bug:
-					}
-					pos -= p;
+				try {
+					yield makeDir(file.parent, Prefs.dirPermissions);
 				}
+				catch (ex if ex.becauseExists) {
+					// no op
+				}
+				let flags = 0;
+				if (OS.Constants.libc) {
+					flags = OS.Constants.libc.O_CREAT | OS.Constants.libc.O_LARGEFILE | OS.Constants.libc.O_WRONLY;
+				}
+				this._osFile = yield OS.File.open(file.path, {write:true, append: false}, {unixFlags: flags, unixMode: Prefs.permissions});
+				if (pos) {
+					while (pos) {
+						let p = Math.min(pos, 1<<29);
+						try {
+							yield this._osFile.setPosition(p, OS.File.POS_CURRENT);
+						}
+						catch (ex if ex.winLastError == 0) {
+							// Ignore this error. The call did actually succeed.
+							// See bug:
+						}
+						pos -= p;
+					}
+				}
+				this._openDeferred.resolve(this._osFile);
 			}
-			this._openDeferred.resolve(this._osFile);
-			delete this._openDeferred;
-		}).bind(this)).then(null, (function(ex) {
-			log(LOG_ERROR, ex);
-			this._openDeferred.reject(ex);
+			catch (ex) {
+				this._openDeferred.reject(ex);
+			}
 			delete this._openDeferred;
 		}).bind(this));
 
@@ -447,25 +448,28 @@ Chunk.prototype = {
 		this._buffered += buffer.length;
 		++this._pendingWrites;
 		Task.spawn((function _shipBufferTask() {
-			let file = yield this._open();
-			yield file.write(buffer.data, {bytes: buffer.length});
-			this._buffered -= buffer.length;
-			this.safeBytes += buffer.length;
-			--this._pendingWrites;
-			if (!this.running) {
-				this.close();
-			}
-		}).bind(this)).then(null, (function _shipBufferFailure(ex) {
-			log(LOG_ERROR, ex);
 			try {
+				let file = yield this._open();
+				yield file.write(buffer.data, {bytes: buffer.length});
+				this._buffered -= buffer.length;
+				this.safeBytes += buffer.length;
 				--this._pendingWrites;
-				this.download.writeFailed();
 				if (!this.running) {
 					this.close();
 				}
 			}
-			catch (ex2) {
-				log(LOG_ERROR, "aggregate failure", ex2);
+			catch (ex) {
+				log(LOG_ERROR, ex);
+				try {
+					--this._pendingWrites;
+					this.download.writeFailed();
+					if (!this.running) {
+						this.close();
+					}
+				}
+				catch (ex2) {
+					log(LOG_ERROR, "aggregate failure", ex2);
+				}
 			}
 		}).bind(this));
 	},
