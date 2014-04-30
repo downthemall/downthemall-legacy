@@ -1,0 +1,5 @@
+<!ENTITY fileMenu.label "Súbor">
+<!ENTITY fileMenu.accesskey "S">
+<!ENTITY newNavigatorCmd.label "Nové okno">
+<!ENTITY tabCmd.label "Nový panel">
+<!ENTITY closeWindow.label "Zavrieť DownThemAll!">

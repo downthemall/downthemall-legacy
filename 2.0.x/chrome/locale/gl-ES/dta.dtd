@@ -1,0 +1,18 @@
+<!ENTITY start.label "Comezar">
+<!ENTITY start.key "c">
+<!ENTITY queue.label "Engadir pausada">
+<!ENTITY queue.key "p">
+<!ENTITY options.label "Opcións">
+<!ENTITY url.value "Descarga">
+<!ENTITY dest.caption "Gardar arquivos en:">
+<!ENTITY mirrors.value "Espellos:">
+<!ENTITY referrer.value "Páxina de referencia:">
+<!ENTITY description.value "Descrición:">
+<!ENTITY checksum.value "Comprobación (Hash):">
+<!ENTITY browse.tip "Explorar a carpeta de destino...">
+<!ENTITY mirrormanager.tip "Manexa os mirrors de descarga">
+<!ENTITY mask.label "Máscara de renomeado">
+<!ENTITY mask.tip "Os arquivos seleccionados serán gardados e renomeados usando esta máscara">
+<!ENTITY selectall.label "Seleccionar todo">
+<!ENTITY selectinv.label "Intertir selección">
+<!ENTITY selectnone.label "Non seleccionar nada">

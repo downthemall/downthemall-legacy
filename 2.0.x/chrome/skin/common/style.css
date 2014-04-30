@@ -1,0 +1,190 @@
+@import 'chrome://dta/content/common/bindings.css';
+@import 'chrome://dta-platform/skin/common.css';
+
+@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+@namespace html url(http://www.w3.org/1999/xhtml);
+@namespace dta url(http://www.downthemall.net/properties#);
+
+dta|* {
+	display: none;
+}
+		
+/* maskbutton */
+maskbutton {
+	-moz-binding: url(chrome://dta/content/dta/maskbutton.xml#maskbutton);
+}
+#maskitems row {
+	-moz-binding: url(chrome://dta/content/dta/maskbutton.xml#maskitem);
+}
+.masktag {
+	text-decoration: underline;
+	cursor :pointer;
+	font-family: "Courier New", Courier, monospace;
+}
+.masktitle {
+	background-color: transparent !important;
+	font-weight: bold;
+	text-align: center;
+	font-size: large;
+	padding-bottom: 3px;
+}
+/* ~maskbutton */
+
+#mirrorManager {
+	list-style-image: url(mirrorManager.png);
+}
+
+#browsedir {
+	list-style-image: url(chrome://global/skin/dirListing/folder.png);
+}
+
+maskbutton toolbarbutton {
+	list-style-image: url(mask.png);
+}
+
+#browsedir, maskbutton toolbarbutton {
+	min-height: 30px;
+	min-width: 30px;
+	-moz-box-pack: center;
+}
+
+maskbutton .toolbarbutton-icon,
+#browsedir .toolbarbutton-icon {
+	-moz-margin-end: 0;
+}
+maskbutton toolbarbutton:hover .toolbarbutton-icon,
+#browsedir:hover .toolbarbutton-icon {
+	opacity: 0.7;
+}
+
+#browsedir[disabled="true"] .toolbarbutton-icon {
+	opacity: 0.3;
+}
+
+maskbutton .toolbarbutton-text,
+#browsedir .toolbarbutton-text {
+	display: none;
+}
+
+#logo {
+	color: windowText;
+	background: white url(chrome://dta/skin/common/logo.png) no-repeat right top;	
+	min-width: 290px !important;
+	height: 42px !important;
+	overflow: visible;
+	-moz-box-align: center;
+	-moz-box-pack: start;
+	padding: 3px !important;
+	padding-left: 1em !important;
+	margin: 0 !important;
+}
+#logo > label {
+	-moz-box-align: start;
+	-moz-box-flex: 0;
+}	
+#logo[chromedir="rtl"], #logo:-moz-locale-dir(rtl) {
+	background: white url(chrome://dta/skin/common/logo-rtl.png) no-repeat left top;
+}
+
+/* snip */
+
+#frameSelection, listbox.list, #regexbox {
+	margin:0px;
+}
+
+
+#saveas {
+	margin-bottom: 10px; 
+	margin-top: 10px;
+}
+
+#head image:hover {
+	margin-right:1px;
+	
+}
+
+.hidegroup {
+	border:0px; margin: 0px; padding: 0px;
+}
+
+#checkcontainer {
+	margin-right: 10px;
+}
+
+.list {
+	overflow: auto;
+}
+
+tree treecols splitter {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  cursor: e-resize;
+  border-color: #ddd;
+  border: 1px solid #ddd;
+  background-color: #ddd;
+  border-width: 0px 0px 0px 1px;
+  min-width: 0px;
+}
+
+#donate {
+	font-style:italic;
+	text-align:right !important;
+	font-size: 9px !important;
+	cursor: pointer;
+}
+
+.toolbarbutton-menu-dropmarker {
+	list-style-image: none;
+}
+
+scrollbarbutton[sbattr="scrollbar-up-bottom"]{
+	display: -moz-box !important;
+	
+}
+treechildren::-moz-tree-cell-text(selected) {
+	font-weight: bold;
+}
+
+treechildren::-moz-tree-row {
+	min-height: 21px;
+}
+
+treechildren::-moz-tree-image(iconic) {
+	padding-left: 0.1ex;
+	padding-right: 0.5ex;
+}
+
+textbox[readonly], menulist[disabled] {
+  cursor: default !important;
+  background-color: -moz-dialog !important;
+  color: GrayText !important;
+}
+textbox[readonly] html|*.textbox-input {
+  color: GrayText !important;
+	font-style: italic;
+}
+
+textbox {
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+/* foreign theme compat, i.e. Songbird */
+statusbar {
+	min-height: 24px;	
+}
+statusbarpanel {
+	-moz-appearance: statusbarpanel;
+	-moz-box-align: center;
+	-moz-box-pack: center;
+	height: auto;
+}
+statusbarpanel > label {
+	margin-top: 1px;
+	margin-bottom: 2px;
+}
+
+statusbarpanel#preferences {
+	list-style-image: url(chrome://dta/skin/toolbarbuttons/buttons16.png);
+	-moz-image-region: rect(0px,128px,16px,112px);
+}

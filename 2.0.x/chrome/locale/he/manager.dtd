@@ -1,0 +1,55 @@
+<!ENTITY tooladd.label "הוספת הורדות">
+<!ENTITY tooladd.tooltip "הוספה ידנית של הורדה ל־DownThemAll!‎">
+<!ENTITY tooldonate.tooltiptext "אתה יכול לסייע ל־DownThemAll!‎ להיות עוד יותר טוב! שקול לתרום קצת כסף!">
+<!ENTITY movetop.label "לראש">
+<!ENTITY movebottom.label "לתחתית">
+<!ENTITY moveup.label "מעלה">
+<!ENTITY movedown.label "מטה">
+<!ENTITY task.label "הורדה/שם">
+<!ENTITY per.label "אחוז">
+<!ENTITY pct.label "התקדמות">
+<!ENTITY dim.label "גודל">
+<!ENTITY time.label "זמן משוער">
+<!ENTITY parts.label "מקטעים">
+<!ENTITY speed.label "מהירות">
+<!ENTITY infoURLTitle.value "מ:">
+<!ENTITY infoSizeTitle.value "גודל:">
+<!ENTITY infoMultiple.value "פריטים מרובים">
+<!ENTITY elapsedTitle.value "עבר:">
+<!ENTITY remainingTitle.value "נותר:">
+<!ENTITY currentSpeedTitle.value "מהירות נוכחית:">
+<!ENTITY avgSpeedTitle.value "מהירות ממוצעת:">
+<!ENTITY path.label "נתיב שמירה">
+<!ENTITY mask.label "תבנית שינוי שם">
+<!ENTITY hash.label "סיכום ביקורת">
+<!ENTITY infos.label "מידע על ההורדה">
+<!ENTITY launch.label "פתח קובץ">
+<!ENTITY delete.label "מחק קובץ">
+<!ENTITY targetdir.label "פתח תיקיית יעד">
+<!ENTITY pause.label "השהה">
+<!ENTITY resume.label "המשך">
+<!ENTITY cancel.label "ביטול">
+<!ENTITY removemenu.label "הסרת הורדות">
+<!ENTITY removeselected.label "להסיר את הנבחרים">
+<!ENTITY removeCompleted.label "להסיר את ההורדות שהושלמו">
+<!ENTITY removeAll.label "להסיר את הכול">
+<!ENTITY removeDupes.label "להסיר כפולים">
+<!ENTITY removeGone.label "להסיר קבצים שנעלמו">
+<!ENTITY advanced.label "מתקדם">
+<!ENTITY addchunk.label "עוד מקטע">
+<!ENTITY removechunk.label "פחות חתיכה">
+<!ENTITY force.label "לכפות התחלה">
+<!ENTITY import.label "לייבא מקובץ">
+<!ENTITY export.label "לייצא את הנבחרים לקובץ">
+<!ENTITY options.caption "אפשרויות">
+<!ENTITY loading.label "טעינה">
+<!ENTITY restore.label "שחזור">
+<!ENTITY close.label "סגירה">
+<!ENTITY speedlimit.label "הגבלה:">
+<!ENTITY speedlimit.tooltip "שינוי מגבלת מהירות. הרשימה הזאת מתעדכנת אוטומטית.">
+<!ENTITY perdownloadspeedlimit.label "מגבלת מהירות">
+<!ENTITY perdownloadspeedlimit.tooltip "לשנות את מגבלת המהירות. מגבלת המהירות הכללית עדיין תיאכף.">
+<!ENTITY mirrors.label "ניהול אתרי מראה">
+<!ENTITY mirrors.tooltip "ניהול מיקום אתרי מראה">
+<!ENTITY toolbar.icons "סמלים">
+<!ENTITY toolbar.full "סמלים והסבר">

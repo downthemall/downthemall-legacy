@@ -1,0 +1,307 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is DownThemAll!
+ *
+ * The Initial Developer of the Original Code is Nils Maier
+ * Portions created by the Initial Developer are Copyright (C) 2009
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Nils Maier <MaierMan@web.de>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+ 
+<!DOCTYPE bindings SYSTEM "chrome://dta/locale/prefpanes.dtd">
+
+<bindings xmlns="http://www.mozilla.org/xbl" xmlns:xbl="http://www.mozilla.org/xbl" xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<binding id="serverlimit-base" extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
+		<implementation>
+			<field name="_host">document.getAnonymousElementByAttribute(this, 'anonid', 'host');</field>
+			<field name="_connectionsLabel">document.getAnonymousElementByAttribute(this, 'anonid', 'connectionsLabel');</field>
+			<field name="_speedLabel">document.getAnonymousElementByAttribute(this, 'anonid', 'speedLabel');</field>
+
+			<property name="host" onget="return this._host.value;" />
+
+			<constructor>this.refresh();</constructor>
+
+			<method name="postEvent">
+				<parameter name="eventType" />
+				<body><![CDATA[
+					let evt = document.createEvent('UIEvents');
+					evt.initUIEvent(eventType, true, true, null, 0);
+					return this.dispatchEvent(evt);				
+				]]></body>
+			</method>
+
+			<method name="refresh">
+				<body><![CDATA[
+					this._connectionsLabel.value = (this.connections > 0) ? this.connections : _('unlimited');
+					this._speedLabel.value = (this.speed > 0) ? Utils.formatSpeed(this.speed * 1024) : _('unlimited');
+				]]></body>
+			</method>
+
+			<method name="edit">
+				<body><![CDATA[
+					this.postEvent('LimitsEdit');
+				]]></body>
+			</method>
+		</implementation>
+	</binding>
+	<binding id="serverlimit" extends="chrome://dta/content/preferences/bindings.xml#serverlimit-base">
+		<content>
+			<xul:grid flex="1">
+				<xul:columns>
+					<xul:column flex="1" />
+					<xul:column />
+					<xul:column />
+				</xul:columns>
+				<xul:rows>
+					<xul:row>
+						<xul:hbox class="serverlimit-host" align="center">
+							<xul:image class="serverlimit-host-image" />
+							<xul:label anonid="host" xbl:inherits="value=host" class="serverlimit-host-label" crop="right" />
+						</xul:hbox>
+						<xul:hbox class="serverlimit-connections" align="center">
+							<xul:label value="&serverspane.connections.label;" />
+							<xul:label class="serverlimit-connections-label serverlimit-value-label" anonid="connectionsLabel" />
+						</xul:hbox>
+						<xul:hbox class="serverlimit-speed" align="center">
+							<xul:label value="&serverspane.speed.label;" />
+							<xul:label class="serverlimit-speed-label serverlimit-value-label" anonid="speedLabel" />
+						</xul:hbox>
+					</xul:row>
+				</xul:rows>
+			</xul:grid>
+		</content>
+		<implementation>
+			<property name="connections" onget="return parseInt(this.getAttribute('connections'));" />
+			<property name="speed" onget="return parseInt(this.getAttribute('speed'));" />
+		</implementation>
+	</binding>
+	<binding id="serverlimit-selected" extends="chrome://dta/content/preferences/bindings.xml#serverlimit-base">
+		<content>
+			<xul:vbox flex="1">
+				<xul:grid flex="1">
+					<xul:columns>
+						<xul:column flex="1" />
+						<xul:column />
+						<xul:column />
+					</xul:columns>
+					<xul:rows>
+						<xul:row>
+							<xul:hbox class="serverlimit-host" align="center">
+								<xul:image class="serverlimit-host-image" />
+								<xul:label anonid="host" xbl:inherits="value=host" class="serverlimit-host-label" crop="right" />
+							</xul:hbox>
+							<xul:hbox class="serverlimit-connections" align="center">
+								<xul:label value="&serverspane.connections.label;" />
+								<xul:label class="serverlimit-connections-label serverlimit-value-label" anonid="connectionsLabel" />
+							</xul:hbox>
+							<xul:hbox class="serverlimit-speed" align="center">
+								<xul:label value="&serverspane.speed.label;" />
+								<xul:label class="serverlimit-speed-label serverlimit-value-label" anonid="speedLabel" />
+							</xul:hbox>
+						</xul:row>
+					</xul:rows>
+				</xul:grid>
+				<xul:separator class="thin"/>
+				<xul:hbox flex="1" pack="end">
+					<xul:button label="&serverspane.edit.label;" anonid="editButton" />
+					<xul:button label="&serverspane.remove.label;" anonid="removeButton" />
+				</xul:hbox>
+			</xul:vbox>
+		</content>
+		<implementation>
+			<property name="connections" onget="return parseInt(this.getAttribute('connections'));" />
+			<property name="speed" onget="return parseInt(this.getAttribute('speed'));" />
+			<method name="removeLimit">
+				<body><![CDATA[
+					if (!this.postEvent('LimitsCanRemove')) {
+						return;
+					}
+					this.limit.remove();
+					this.postEvent('LimitsRemoved');
+				]]></body>
+			</method>
+		</implementation>
+		<handlers>
+			<handler event="command"><![CDATA[
+				switch (event.originalTarget.getAttribute('anonid')) {
+					case 'editButton':
+						this.edit();
+						break;
+					case 'removeButton':
+						this.removeLimit();
+						break;
+				}
+			]]></handler>
+			<handler event="click" clickcount="2"><![CDATA[
+				this.edit();
+			]]></handler>
+		</handlers>
+	</binding>
+	<binding id="serverlimit-editing" extends="chrome://dta/content/preferences/bindings.xml#serverlimit-base">
+		<content>
+			<xul:vbox flex="1">
+				<xul:grid flex="1" class="serverlimit-grid">
+					<xul:columns>
+						<xul:column />
+						<xul:column />
+						<xul:column flex="1" />
+					</xul:columns>
+					<xul:rows>
+						<xul:row align="center">
+							<xul:image class="serverlimit-host-image" />
+							<xul:label anonid="host" xbl:inherits="value=host" class="serverlimit-host-label" crop="right" />
+						</xul:row>
+						<xul:row align="center">
+							<xul:box />
+							<xul:label value="&serverspane.connections.label;" />
+							<xul:radiogroup anonid="connectionsGroup" orient="horizontal" class="serverlimit-radiogroup">
+								<xul:radio label="&serverspane.unlimited;" value="unlimited" />
+								<xul:radio label="&serverspane.limited;" value="limited" />
+								<xul:hbox align="center">
+									<xul:scale min="1" max="10" anonid="connections" xbl:inherits="value=connections" />
+									<xul:label class="serverlimit-connections-label serverlimit-scale-label" anonid="connectionsLabel" />
+								</xul:hbox>
+							</xul:radiogroup>
+						</xul:row>
+						<xul:row>
+							<xul:box />
+							<xul:label value="&serverspane.speed.label;" />
+							<xul:radiogroup anonid="speedGroup" orient="horizontal" class="serverlimit-radiogroup">
+								<xul:radio label="&serverspane.unlimited;" value="unlimited" />
+								<xul:radio label="&serverspane.limited;" value="limited" />
+								<xul:hbox align="center">
+									<xul:textbox type="number" min="1" max="20480" size="5" increment="4" pageincrement="16" anonid="speed" xbl:inherits="value=speed" />
+									<xul:label class="serverlimit-speed-label serverlimit-scale-label" anonid="speedLabel" />
+								</xul:hbox>
+							</xul:radiogroup>
+						</xul:row>
+					</xul:rows>
+				</xul:grid>
+				<xul:hbox flex="1" pack="end">
+					<xul:button anonid="saveButton" />
+					<xul:button label="&serverspane.cancel.label;" anonid="cancelButton" />
+				</xul:hbox>
+			</xul:vbox>
+		</content>
+		<implementation>
+			<field name="_connectionsGroup">document.getAnonymousElementByAttribute(this, 'anonid', 'connectionsGroup');</field>
+			<field name="_connections">document.getAnonymousElementByAttribute(this, 'anonid', 'connections');</field>
+			<field name="_speedGroup">document.getAnonymousElementByAttribute(this, 'anonid', 'speedGroup');</field>
+			<field name="_speed">document.getAnonymousElementByAttribute(this, 'anonid', 'speed');</field>
+			<field name="_saveButton">document.getAnonymousElementByAttribute(this, 'anonid', 'saveButton');</field>
+
+			<property name="connections">
+				<getter><![CDATA[
+					if (this._connectionsGroup.value == "unlimited") {
+						return -1;
+					}
+					return parseInt(this._connections.value);
+				]]></getter>
+			</property>
+
+			<property name="speed">
+				<getter><![CDATA[
+					if (this._speedGroup.value == "unlimited") {
+						return -1;
+					}
+					return parseInt(this._speed.value);
+				]]></getter>
+			</property>
+
+			<constructor><![CDATA[
+				this._connectionsGroup.value = this.getAttribute('connections') <= 0 ? 'unlimited' : 'limited';
+				this._speedGroup.value = this.getAttribute('speed') <= 0 ? 'unlimited' : 'limited';
+				this._saveButton.label = _(this.limit.isNew ? 'createlimit' : 'savelimit');
+				this.parentNode.ensureElementIsVisible(this);
+			]]></constructor>
+
+			<method name="saveEdit">
+				<body><![CDATA[
+					if (!this.postEvent("LimitsEditSave")) {
+						return;
+					}
+					this.limit.connections = this.connections;
+					this.limit.speed = this.speed;
+					this.setAttribute('connections', this.connections);
+					this.setAttribute('speed', this.speed);
+					this.limit.save();
+				]]></body>
+			</method>
+
+			<method name="cancelEdit">
+				<body><![CDATA[
+					this.postEvent("LimitsEditCancel");
+				]]></body>
+			</method>
+			<method name="changedConnections">
+				<body><![CDATA[
+					if (this._connectionsGroup.value != 'limited') {
+						return;
+					}
+					this._connections.value = Math.max(this.limit.connections, 0) || 2;
+					this.refresh();
+				]]></body>
+			</method>
+			<method name="changedSpeed">
+				<body><![CDATA[
+					if (this._speedGroup.value != 'limited') {
+						return;
+					}
+					this._speed.value = Math.max(this.limit.speed, 0) || 100;
+					this.refresh();
+				]]></body>
+			</method>
+		</implementation>
+		<handlers>
+			<handler event="change">this.refresh();</handler>
+			<handler event="command"><![CDATA[
+				switch (event.originalTarget.getAttribute('anonid')) {
+					case 'saveButton':
+						this.saveEdit();
+						break;
+					case 'cancelButton':
+						this.cancelEdit();
+						break;
+				}
+			]]></handler>
+			<handler event="select"><![CDATA[
+				switch (event.originalTarget.getAttribute('anonid')) {
+					case 'connectionsGroup':
+						this.changedConnections();
+						break;
+					case 'speedGroup':
+						this.changedSpeed();
+						break;
+				}
+				this.refresh();
+			]]></handler>
+		</handlers>
+	</binding>
+</bindings>

@@ -1,0 +1,4 @@
+<!ENTITY title "添加下载">
+<!ENTITY desc.value "在这里输入下载和文件引用页面(可选)。">
+<!ENTITY desc.batches.value "您也可以使用批量描述符一次下载多个文件。">
+<!ENTITY examples.value "例如：">

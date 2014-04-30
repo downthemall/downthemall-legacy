@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ *
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE window SYSTEM "chrome://dta/locale/prefpanes.dtd">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<prefpane id="paneMain" label="&mainpane.label;" onpaneload="Main.load();">
+
+		<preferences>
+			<preference id="dtaexisting" name="extensions.dta.conflictresolution" type="int" />
+			<preference id="dtaalert" name="extensions.dta.alertbox" type="int" />
+			<preference id="dtadone" name="extensions.dta.sounds.done" type="bool" />
+			<preference id="dtaerror" name="extensions.dta.sounds.error" type="bool" />
+			<preference id="dtaautoclose" name="extensions.dta.closedta" type="bool" />
+			<preference id="dtatextlinks" name="extensions.dta.textlinks" type="bool" />
+			<preference id="dtalistsniffedvideos" name="extensions.dta.listsniffedvideos" type="bool" />
+		</preferences>
+
+		<groupbox id="defaultsdesc">
+			<caption label="&mainpane.defaults.caption;" />
+			<description>&mainpane.defaults.desc;
+			</description>
+		</groupbox>
+
+		<groupbox>
+			<caption id="ren" label="&mainpane.rename.caption;" />
+			<radiogroup id="scelta" preference="dtaexisting" orient="horizontal">
+				<radio id="rename1" label="&mainpane.rename.label;" value="0" />
+				<radio id="overwrite" label="&mainpane.overwrite.label;" value="1" />
+				<radio id="skip" label="&mainpane.skip.label;" value="2" />
+				<radio id="ask" label="&mainpane.ask.label;" value="3" />
+			</radiogroup>
+		</groupbox>
+
+		<groupbox>
+			<caption label="&mainpane.alert.caption;" />
+			<hbox flex="1" align="center" pack="start">
+				<label value="&mainpane.alert.label;" control="menualert" />
+				<menulist preference="dtaalert" readonly="true" id="menualert">
+					<menupopup>
+						<menuitem id="alert1" label="&mainpane.alertboxes.label;" value="0" />
+						<menuitem id="alert2" label="&mainpane.alertslides.label;" value="1" />
+						<menuitem id="alert3" label="&mainpane.alertnone.label;" value="2" />
+					</menupopup>
+				</menulist>
+			</hbox>
+			<hbox pack="start">
+				<checkbox label="&mainpane.sounderror.label;" preference="dtaerror" />
+				<checkbox id="soundDone" label="&mainpane.sounddone.label;" preference="dtadone" />
+			</hbox>
+			<checkbox id="closedta" label="&mainpane.closedta.label;" preference="dtaautoclose" />
+		</groupbox>
+
+		<groupbox>
+			<caption label="&mainpane.misc.caption;" />
+			<checkbox label="&mainpane.textlinks.label;" preference="dtatextlinks" />
+			<checkbox label="&mainpane.listsniffedvideos.label;" preference="dtalistsniffedvideos" />
+		</groupbox>
+	</prefpane>
+</overlay>

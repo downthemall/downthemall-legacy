@@ -1,0 +1,18 @@
+<!ENTITY title "Downloads auswählen">
+<!ENTITY filters.caption "Filter">
+<!ENTITY additional.caption "Schnelles Filtern">
+<!ENTITY additional.tip "Textfilter: Es können mehrere Textfilter gleichzeitig kommagetrennt angegeben werden.">
+<!ENTITY regex.label "Regulärer Ausdruck">
+<!ENTITY filter.tip "Geben Sie hier Ihre Textfilter ein (Beispiele siehe Auswahlliste)">
+<!ENTITY status.label "Nach dem Auswählen von Links auf Start klicken!">
+<!ENTITY menu.mask.title "Umbenennungs-Tags ändern...">
+<!ENTITY menu.check.label "Ausgewählte Einträge markieren">
+<!ENTITY menu.uncheck.label "Ausgewählte Einträge abwählen">
+<!ENTITY menu.toggle.label "Markierung für ausgewählte Einträge umkehren">
+<!ENTITY tab.links.label "Links">
+<!ENTITY tab.pics.label "Bilder und Medien">
+<!ENTITY header.desc.label "Beschreibung">
+<!ENTITY selectfiltered.label "Markierte auswählen">
+<!ENTITY disableother.label "Andere Filter deaktivieren">
+<!ENTITY disableother.tooltip "Andere filter deaktivieren und nur Schnelles Filtern benutzen. (Diese Einstellung wird derzeit nicht gespeichert)">
+<!ENTITY resname.value "Quellenname">

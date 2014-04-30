@@ -1,0 +1,4 @@
+<!ENTITY title "Downloads hinzufügen">
+<!ENTITY desc.value "Hier einen Download und (optional) die verweisende Seite der herunterzuladenenen Datei eintragen.">
+<!ENTITY desc.batches.value "Sie können auch Batch-Marker verwenden um mehrere Dateien gleichzeitig zu laden.">
+<!ENTITY examples.value "Beispiele:">

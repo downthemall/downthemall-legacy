@@ -1,0 +1,5 @@
+<!ENTITY fileMenu.label "Bestand">
+<!ENTITY fileMenu.accesskey "B">
+<!ENTITY newNavigatorCmd.label "Nieuw browser venster">
+<!ENTITY tabCmd.label "Nieuw browser tabblad">
+<!ENTITY closeWindow.label "DownThemAll! sluiten">

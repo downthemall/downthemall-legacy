@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "تفضيلات">
+<!ENTITY dta-about.label "عن نزِّلها!">
+<!ENTITY dta-manager-button "المدير">
+<!ENTITY dta-selector-button "مختار نزِّلها! بنقرة واحدة!">
+<!ENTITY dta-tb-all.label "كل الألسنة">
+<!ENTITY dta-tb-single.label "اللسان الحالي">
+<!ENTITY dta-selection.label "نزِّلها كلها! للتحديد...">
+<!ENTITY dta-selection-turbo.label "نزِّلها! بنقرة واحدة للتحديد...">
+<!ENTITY dta-regular.label "نزِّلها كلها!...">
+<!ENTITY dta-regular-turbo.label "نزِّلها كلها! بنقرة واحدة...">
+<!ENTITY dta-img-save.label "احفظ الصورة بنزِّلها كلها!">
+<!ENTITY dta-img-save-turbo.label "ابدأ حفظ الصورة بنزِّلها! بنقرة واحدة!">
+<!ENTITY dta-video-save.label "احفظ الفيديو بنزِّلها كلها!">
+<!ENTITY dta-video-save-turbo.label "ابدأ حفظ الفيديو بنزِّلها! بنقرة واحدة!">
+<!ENTITY dta-audio-save.label "احفظ الصوت بنزِّلها كلها!">
+<!ENTITY dta-audio-save-turbo.label "ابدأ حفظ الصوت بنزِّلها! بنقرة واحدة!">
+<!ENTITY dta-link-save.label "احفظ الوصلة بنزِّلها كلها!">
+<!ENTITY dta-link-save-turbo.label "ابدأ حفظ الوصلة بنزِّلها! بنقرة واحدة!">
+<!ENTITY dta-form-save.label "احفظ من الهدف بنزِّلها كلها!">
+<!ENTITY dta-form-save-turbo.label "ابدأ الحفظ من الهدف بنزِّلها! بنقرة واحدة!">

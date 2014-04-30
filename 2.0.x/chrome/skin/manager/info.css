@@ -1,0 +1,5 @@
+@import 'chrome://dta/skin/manager/style.css';
+
+dialog {
+	width: 600px;
+}

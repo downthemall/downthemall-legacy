@@ -1,0 +1,7 @@
+<!ENTITY title.value "Πρόβλημα ονομασίας αρχείου!">
+<!ENTITY text.value "Διατήρηση αυτής της ρύθμισης:">
+<!ENTITY file.label "Μόνο γι&apos; αυτό το αρχείο">
+<!ENTITY session.label "Μόνο γι&apos; αυτή τη συνεδρία">
+<!ENTITY always.label "Από &apos;δω και στο εξής">
+<!ENTITY overwrite.label "Αντικατάσταση υπάρχοντος αρχείου">
+<!ENTITY skip.label "Παράβλεψη/Ακύρωση">

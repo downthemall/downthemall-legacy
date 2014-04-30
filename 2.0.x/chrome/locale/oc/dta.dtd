@@ -1,0 +1,24 @@
+<!--
+	commonly used.
+	CHECK BEFORE MODIFY
+
+
+-->
+<!ENTITY start.label "Aviar !">
+<!ENTITY start.key "D">
+<!ENTITY queue.label "Metre en pausa">
+<!ENTITY queue.key "p">
+<!ENTITY options.label "Preferéncias">
+<!ENTITY url.value "Telecargament">
+<!ENTITY dest.caption "Enregistrar los fichièrs dins :">
+<!ENTITY mirrors.value "Miralhs :">
+<!ENTITY referrer.value "Pagina d'origina :">
+<!ENTITY description.value "Descripcion :">
+<!ENTITY checksum.value "Checksum (Hash) :">
+<!ENTITY browse.tip "Recercar lo dorsièr de destinacion…">
+<!ENTITY mirrormanager.tip "Gerir los miralhs de telecargament">
+<!ENTITY mask.label "Masqueta de cambiament de nom">
+<!ENTITY mask.tip "Los fichièrs seleccionats seràn enregistrats e renomenats en utilizant aquesta masqueta">
+<!ENTITY selectall.label "Seleccionar tot">
+<!ENTITY selectinv.label "Inversar la seleccion">
+<!ENTITY selectnone.label "Seleccionar pas res">

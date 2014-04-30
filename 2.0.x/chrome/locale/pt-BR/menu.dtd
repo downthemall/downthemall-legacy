@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Opções…">
+<!ENTITY dta-about.label "Sobre o dTa!">
+<!ENTITY dta-manager-button "Gerenciador">
+<!ENTITY dta-selector-button "Seletor do dTa OneClick!">
+<!ENTITY dta-tb-all.label "Todas as abas">
+<!ENTITY dta-tb-single.label "Aba atual">
+<!ENTITY dta-selection.label "Seleção com DownThemAll!">
+<!ENTITY dta-selection-turbo.label "Seleção com dTa OneClick…">
+<!ENTITY dta-regular.label "DownThemAll!…">
+<!ENTITY dta-regular-turbo.label "dTa OneClick…">
+<!ENTITY dta-img-save.label "Salvar Imagem com DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Começar download da Imagem com dTa OneClick!">
+<!ENTITY dta-video-save.label "Salvar Vídeo com DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Começar download do Vídeo com dTa OneClick!">
+<!ENTITY dta-audio-save.label "Salvar Áudio com DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Começar download do Áudio com dTa OneClick!">
+<!ENTITY dta-link-save.label "Salvar Link com DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Começar download do Link com dTa OneClick!">
+<!ENTITY dta-form-save.label "Salvar Target do Formulário com o DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Começar download do Target do Formulário com dTa OneClick!">

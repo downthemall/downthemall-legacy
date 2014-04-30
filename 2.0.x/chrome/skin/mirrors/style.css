@@ -1,0 +1,84 @@
+@import 'chrome://dta/skin/common/style.css';
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+dialog {
+	width: 40em;
+	height: 25em;
+}
+
+#header {
+	margin-bottom: 1ex;
+}
+
+#header label {
+	font-weight: bold;
+	font-size: large;
+	padding-bottom: 1ex;
+}
+
+#mirrorLogo {
+	list-style-image: url(mirrors.png);
+	padding: 1ex;
+}
+
+#actions > toolbarbutton {
+	list-style-image: url(actions.png);
+}
+
+#mirrorAdd {
+	-moz-image-region: rect(0px,32px,32px,0px);
+}
+#mirrorAdd[disabled="true"] {
+	-moz-image-region: rect(32px,32px,64px,0px);
+}
+
+#mirrorRemove {
+	-moz-image-region: rect(0px,98px,32px,66px);
+}
+#mirrorRemove[disabled="true"] {
+	-moz-image-region: rect(32px,98px,64px,66px);
+}
+#mirrorCheck {
+	-moz-image-region: rect(0px,65px,32px,33px);
+}
+#mirrorCheck[disabled="true"] {
+	-moz-image-region: rect(32px,65px,64px,33px);
+}
+
+#mirrors > richlistitem {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#mirror-item);
+	padding: 3px;
+}
+#mirrors > richlistitem[editing] {
+	-moz-binding: url(chrome://dta/content/common/bindings.xml#mirror-item-editing);
+}
+	
+.mirror-item-url {
+	font-weight: bold;
+}
+richlistbox:focus richlistitem[selected="true"] .mirror-item-url {
+	color: HighlightText !important;
+}
+.mirror-item-error {
+	font-size: small;
+}
+.mirror-item-error[value=""] {
+	display: none;	
+}
+
+.mirror-item-icon {
+	list-style-image: url(mirror.png);
+	-moz-image-region: rect(0px,16px,16px,0px);
+	padding: 2px 1ex;
+}
+richlistitem[state="good"] .mirror-item-icon {
+	-moz-image-region: rect(0px,48px,16px,32px);
+}
+
+richlistitem[state="bad"] .mirror-item-icon {
+	-moz-image-region: rect(0px,32px,16px,16px);
+}
+.small {
+	font-size: small;
+}

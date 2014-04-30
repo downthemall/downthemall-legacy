@@ -1,0 +1,18 @@
+<!ENTITY title "DownThemAll! - Válasszon">
+<!ENTITY filters.caption "Szűrők">
+<!ENTITY additional.caption "Gyorsszűrés">
+<!ENTITY additional.tip "Szöveges szűrők: egyszerre több szöveges szűrőt vesszővel elválasztva adhat meg.">
+<!ENTITY regex.label "Reguláris kifejezés">
+<!ENTITY filter.tip "Adja meg a szöveges szűrőket (néhány példa a legördülő menüben)">
+<!ENTITY status.label "A hivatkozások kiválasztása után kattintson a Indítás gombra.">
+<!ENTITY menu.mask.title "Átnevezési maszk módosítása...">
+<!ENTITY menu.check.label "Kiválasztott elemek megjelölése">
+<!ENTITY menu.uncheck.label "Kiválasztott elemek megjelölésének törlése">
+<!ENTITY menu.toggle.label "Kiválasztás megfordítása">
+<!ENTITY tab.links.label "Hivatkozások">
+<!ENTITY tab.pics.label "Képekk és beágyazott tartalmak">
+<!ENTITY header.desc.label "Leírás">
+<!ENTITY selectfiltered.label "Kiválasztás szűrve">
+<!ENTITY disableother.label "Egyéb szűrők letiltása">
+<!ENTITY disableother.tooltip "Letiltja a további szűrőket és csak a „Gyorsszűrés”-t alkalmazza. (Ez a beállítás nem kerül eltárolásra.)">
+<!ENTITY resname.value "Erőforrás-név">

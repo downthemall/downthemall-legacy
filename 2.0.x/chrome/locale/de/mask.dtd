@@ -1,0 +1,23 @@
+<!ENTITY mask.title "Titel von Link">
+<!ENTITY mask.name "Dateiname">
+<!ENTITY mask.ext "Dateiendung">
+<!ENTITY mask.url "Basis-URL">
+<!ENTITY mask.curl "Komplette URL">
+<!ENTITY mask.flatcurl "Komplette URL (flach)">
+<!ENTITY mask.num "Batch-Nummer">
+<!ENTITY mask.inum "Elementnummer">
+<!ENTITY mask.hh "Stunden">
+<!ENTITY mask.mm "Minuten">
+<!ENTITY mask.ss "Sekunden">
+<!ENTITY mask.d "Tag">
+<!ENTITY mask.m "Monat">
+<!ENTITY mask.y "Jahr">
+<!ENTITY mask.subdirs "URL-Unterverzeichnisse">
+<!ENTITY mask.flatsubdirs "URL-Unterverzeichnisse (flach)">
+<!ENTITY mask.text "Link Text">
+<!ENTITY mask.flattext "Flacher Link Text">
+<!ENTITY mask.refer "Verweisende URL">
+<!ENTITY mask.qstring "Abfrage-Parameter">
+<!ENTITY mask.flattitle "Flacher Title des Link">
+<!ENTITY mask.tip "Zur Übernahme anklicken oder ins Umbenennungs-Tags Feld ziehen">
+<!ENTITY mask.open.tip "Referenzübersicht der Umbenennungs-Tags">

@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://dta/skin/manager/info.css" type="text/css" ?>
+
+<!DOCTYPE dialog [
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
+	%commonDTD;
+	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
+	%managerDTD;	
+]>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&infoMultiple.value;" id="DownThemAll" buttons="accept,cancel" ondialogaccept="return Dialog.accept();">
+
+	<script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js" />
+
+	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/info.js" />
+	<script type="application/javascript" src="chrome://dta/content/dta/manager/utils.js" />
+
+	<stringbundleset xmlns="http://www.downthemall.net/properties#">
+		<stringbundle src="chrome://dta/locale/common.properties" />
+	</stringbundleset>
+
+	<keyset>
+		<key keycode="VK_ESCAPE" oncommand="self.close();" />
+	</keyset>
+
+	<hbox id="infoBox" flex="1" />
+	<separator />
+	<tabbox flex="1">
+		<tabs>
+			<tab label="&infos.label;" />
+			<tab label="&options.caption;" />
+		</tabs>
+		<tabpanels>
+			<tabpanel id="canvasTab" orient="vertical" flex="1" pack="start">
+				<grid id="canvasGrid" style="overflow: hidden;" />
+			</tabpanel>
+			<tabpanel id="paramsBox" orient="vertical" flex="1" pack="start">
+				<grid>
+					<columns>
+						<column />
+						<column flex="1" />
+					</columns>
+					<rows>
+						<row align="center" id="mirrorRow">
+							<label control="mirrorManager" id="mirrorsTitle" value="&mirrors.value;" />
+							<hbox align="center" flex="1">
+								<label id="mirrorsText" class="text-link" flex="1" onclick="Dialog.manageMirrors();" />
+								<toolbarbutton id="mirrorManager" oncommand="Dialog.manageMirrors();" tooltiptext="&mirrormanager.tip;" />
+							</hbox>
+						</row>
+						<row align="center">
+							<label control="sourcePage" id="sourcePageTitle" value="&referrer.value;" style="font-style: italic;" />
+							<hbox flex="1">
+								<textbox id="sourcePage" readonly="true" flex="1" />
+							</hbox>
+						</row>
+						<row align="center">
+							<label control="description" value="&description.value;" style="font-style: italic;" />
+							<textbox id="description" />
+						</row>
+						<row align="center">
+							<label control="directory" value="&dest.caption;" />
+							<hbox flex="1">
+								<saveddropdown id="directory" preference="directory" flex="1" />
+								<toolbarbutton id="browsedir" oncommand="Dialog.browseDir();" tooltiptext="&browse.tip;" />
+							</hbox>
+						</row>
+						<row align="center">
+							<label control="renaming" value="&mask.label;: " />
+							<hbox>
+								<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;" />
+								<maskbutton id="mask" />
+							</hbox>
+						</row>
+						<row align="center">
+							<label control="hash" value="&checksum.value;" style="font-style: italic;" />
+							<hashinput id="hash" />
+						</row>
+					</rows>
+				</grid>
+			</tabpanel>
+		</tabpanels>
+	</tabbox>
+</dialog>

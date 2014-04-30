@@ -1,0 +1,4 @@
+<!ENTITY title "Adăugare surse de descărcare">
+<!ENTITY desc.value "Furnizați adresa sursei și, opțional, pagina de origine a fișierului pe care doriți să-l descărcați.">
+<!ENTITY desc.batches.value "Puteți folosi, de asemenea, și descriptori pentru descărcarea simultană a mai multor fișiere.">
+<!ENTITY examples.value "Exemple:">

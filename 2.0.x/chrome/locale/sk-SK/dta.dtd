@@ -1,0 +1,18 @@
+<!ENTITY start.label "Štart!">
+<!ENTITY start.key "s">
+<!ENTITY queue.label "Vložiť pauzu">
+<!ENTITY queue.key "p">
+<!ENTITY options.label "Predvoľby">
+<!ENTITY url.value "Stiahnuť">
+<!ENTITY dest.caption "Uložiť súbory do:">
+<!ENTITY mirrors.value "Mirrory:">
+<!ENTITY referrer.value "Odkazujúca stránka:">
+<!ENTITY description.value "Popis:">
+<!ENTITY checksum.value "Kontrolný súčet (Hash):">
+<!ENTITY browse.tip "Otvoriť zložku:">
+<!ENTITY mirrormanager.tip "Spravovať download mirrory">
+<!ENTITY mask.label "Maska pre premenovanie">
+<!ENTITY mask.tip "Vybrané súbory budú uložené a premenované podľa tejto masky">
+<!ENTITY selectall.label "Vybrať všetko">
+<!ENTITY selectinv.label "Obrátiť výber">
+<!ENTITY selectnone.label "Odznačiť všetko">

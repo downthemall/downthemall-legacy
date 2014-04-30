@@ -1,0 +1,10 @@
+<!ENTITY title "DownThemAll! Tükörkezelés">
+<!ENTITY header "Tükörkezelés">
+<!ENTITY byline1 "A letöltések több helyről is származhatnak. Az ilyen letöltés elemei megfelelően lesznek összeillesztve.">
+<!ENTITY byline2 "Adjon hozzá vagy távolítson el helyeket ugyanazon fájlra mutatva.">
+<!ENTITY byline3 "Más fájlra mutató helyek hozzáadása a fájlhibát okoz.">
+<!ENTITY addmirror.tip "Letöltési tükör hozzáadása">
+<!ENTITY removemirror.tip "Kiválasztott letöltési tükrök eltávolítása">
+<!ENTITY checkmirrors.tip "Letöltési tükrök ellenőrzése">
+<!ENTITY mirrorurl "Hely:">
+<!ENTITY preference "Sürgősség:">

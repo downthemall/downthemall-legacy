@@ -1,0 +1,7 @@
+<!ENTITY title.value "Conflicte de nom de fichièr !">
+<!ENTITY text.value "Se remembrar d'aqueste parametratge :">
+<!ENTITY file.label "Unicament per aqueste fichièr">
+<!ENTITY session.label "Unicament per aquesta sesilha">
+<!ENTITY always.label "A partir d'ara">
+<!ENTITY overwrite.label "Remplaçar lo fichièr existent">
+<!ENTITY skip.label "Passar/Anullar">

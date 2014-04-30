@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
+
+<!DOCTYPE window SYSTEM "chrome://dta/locale/conflicts.dtd">
+
+<dialog
+	id="DownThemAll" 
+	title="&title.value;" 
+	onload="load();" 
+	buttons="accept" 
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	ondialogaccept="return accept();" 
+	ondialogcancel="return false;"
+	width="460px"
+	>
+		<stringbundleset>
+			<stringbundle src="chrome://dta/locale/conflicts.properties"/>
+		</stringbundleset>
+		<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js"/>
+	
+		<script type="application/javascript"><![CDATA[
+			function load() {
+				var w = window.arguments[0];
+				
+				$("s1").label = _('rename.label', [w.newDest]);
+				$("text").appendChild(document.createTextNode(_('text.label', [w.fn])));
+				$("question").appendChild(document.createTextNode(_('question.label', [w.url])));
+								
+				window.sizeToContent();
+			}
+			function accept() {
+				try {
+					window.arguments[1]._returnFromDialog(
+						$('choice').selectedIndex,
+						$('context').selectedIndex
+					);
+					return true;
+				}
+				catch (ex) {
+					Debug.log("accept() : ", ex);
+				}
+				return false;
+			}
+		]]></script>
+	
+		<vbox flex="1" style="padding-left: 35px; background: url('chrome://dta/skin/manager/alert.png') no-repeat 0 0;">
+			<description id="text"/>
+			<description id="question"/>
+
+			<radiogroup id="choice" style="margin-left: 10px; margin-bottom: 10px;" >
+				<radio id="s1" persist="selected"/>
+				<radio id="s2" persist="selected" label="&overwrite.label;"/>
+				<radio id="s3" persist="selected" label="&skip.label;"/>
+			</radiogroup>
+		</vbox>		
+		<groupbox style="margin-left: 30px; margin-right: 30px;">
+			<caption label="&text.value;" />
+			<menulist id="context">
+				<menupopup>
+					<menuitem label="&file.label;"/>
+					<menuitem label="&session.label;"/>
+					<menuitem label="&always.label;"/>
+				</menupopup>
+			</menulist>
+		</groupbox>
+</dialog>

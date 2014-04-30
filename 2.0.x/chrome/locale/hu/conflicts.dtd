@@ -1,0 +1,7 @@
+<!ENTITY title.value "Fájlnév konfliktus">
+<!ENTITY text.value "A beállítás hatóköre:">
+<!ENTITY file.label "Erre a fájlra">
+<!ENTITY session.label "Erre a munkamenetre">
+<!ENTITY always.label "Mindig">
+<!ENTITY overwrite.label "Létező fájl felülírása">
+<!ENTITY skip.label "Kihagyás">

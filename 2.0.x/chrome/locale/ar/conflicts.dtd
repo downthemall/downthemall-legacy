@@ -1,0 +1,7 @@
+<!ENTITY title.value "تضارب في تسمية الملف!">
+<!ENTITY text.value "تذكر هذا الإعداد:">
+<!ENTITY file.label "لهذا التنزيل فقط">
+<!ENTITY session.label "لهذه الجلسة فقط">
+<!ENTITY always.label "من الآن فصاعدًا">
+<!ENTITY overwrite.label "استبدل الملف الموجود">
+<!ENTITY skip.label "تخطَّ/ألغِ">

@@ -1,0 +1,24 @@
+<!--
+	commonly used.
+	CHECK BEFORE MODIFY
+
+
+-->
+<!ENTITY start.label "Start!">
+<!ENTITY start.key "s">
+<!ENTITY queue.label "Warteschlange!">
+<!ENTITY queue.key "W">
+<!ENTITY options.label "Einstellungen">
+<!ENTITY url.value "Download">
+<!ENTITY dest.caption "Dateien speichern in:">
+<!ENTITY mirrors.value "Spiegelserver:">
+<!ENTITY referrer.value "Verweisende Seite:">
+<!ENTITY description.value "Beschreibung:">
+<!ENTITY checksum.value "Prüfsumme (Hash):">
+<!ENTITY browse.tip "Zielverzeichnis auswählen...">
+<!ENTITY mirrormanager.tip "Spiegelserver verwalten">
+<!ENTITY mask.label "Umbenennungs-Tags">
+<!ENTITY mask.tip "Ausgewählte Dateien werden nach diesem Umbenennungs-Tags gespeichert und umbenannt">
+<!ENTITY selectall.label "Alle auswählen">
+<!ENTITY selectinv.label "Auswahl umkehren">
+<!ENTITY selectnone.label "Auswahl aufheben">

@@ -1,0 +1,114 @@
+<!ENTITY winstyle "width:46em;height:37em;">
+<!ENTITY filterspane.label "الفلاتر">
+<!ENTITY listhead1.label "شرح لوحة">
+<!ENTITY listhead2.label "الامتدادات">
+<!ENTITY filter.label "الامتدادات المفلترة">
+<!ENTITY regex.label "استثناء التسجيلات">
+<!ENTITY useAs.label "استخدم الفلتر كـ:">
+<!ENTITY imagesf.label "الصور و الفلتر المدمج">
+<!ENTITY linksf.label "فلتر الوصلات">
+<!ENTITY add.label "أضف فلتر جديد">
+<!ENTITY highlight.label "أشر إلي الملفات التي تم فلترتها">
+<!ENTITY dtacontext2.label "التفضيلات">
+<!ENTITY buttonlabelextra2 "إعادة تطبيق الإعدادات الأساسية">
+<!ENTITY dtaPreferences.title "تفضيلات نزِّلها كلها!">
+<!ENTITY manager "مدير نزِّل!">
+<!ENTITY mainpane.label "عام">
+<!ENTITY mainpane.defaults.caption "الأساسيات">
+<!ENTITY mainpane.defaults.desc ".يستخدم نقرة واحدة! دليل التنزيل و إعادة تسمية القناع و الفلاتر و يمكن تعديلها في حواري نزِّلها كلها! المعتاد">
+<!ENTITY mainpane.rename.caption "لو أن اسم الملف موجود بالفعل:">
+<!ENTITY mainpane.rename.label "أعد تسميته">
+<!ENTITY mainpane.overwrite.label "أعد كتابته">
+<!ENTITY mainpane.skip.label "تجاهله">
+<!ENTITY mainpane.ask.label "إسأل">
+<!ENTITY mainpane.misc.caption "متنوع">
+<!ENTITY mainpane.sounderror.label "في حالة الخطأ شغِّل صوتاً">
+<!ENTITY mainpane.alert.caption "عندما تنتهي التنزيلات:">
+<!ENTITY mainpane.alert.label "أعلمني:">
+<!ENTITY mainpane.alertboxes.label "باستخدام صناديق الإعلام">
+<!ENTITY mainpane.alertslides.label "باستخدام التنبيهات الجانبية">
+<!ENTITY mainpane.alertnone.label "لا تعلمني">
+<!ENTITY mainpane.sounddone.label "عندما تنتهي كل التنزيلات شغِّل صوتاً">
+<!ENTITY mainpane.closedta.label "عندما تنتهي التنزيلات أغلق نزِّلها كلها">
+<!ENTITY mainpane.settime.label "ضع وقت الملف إلي آخر مرة تغير فيها (الخادم) أو عندما وضع في الطابور">
+<!ENTITY mainpane.rememberoneclick.label "السماح لنزِّل نقرة واحدة بتذكر إذا كان يطبق على كل الألسنة أو اللسان الحالي">
+<!ENTITY mainpane.confirmremove.label "يجب علي المستخدم أن يؤكد إزالة التنزيلات">
+<!ENTITY mainpane.textlinks.label "تعرف علي الوصلات النصية">
+<!ENTITY mainpane.listsniffedvideos.label "سجِّل و ضع في لستة فيديوهات (الفلاش)">
+<!ENTITY privacypane.label "الخصوصية">
+<!ENTITY privacypane.closing.caption "عندما تغلق نافذة المدير">
+<!ENTITY privacypane.removecompleted.label "أزل التنزيلات المكتملة">
+<!ENTITY privacypane.removecanceled.label "أزل التنزيلات الملغية\الفاشلة">
+<!ENTITY privacypane.removeaborted.label "أزل التنزيلات غير المكتملة">
+<!ENTITY privacypane.deletefoldershistory.label "إخلي لستة المجلدات">
+<!ENTITY privacypane.deletefiltershistory.label "إخلي الفلاتر الإضافية">
+<!ENTITY privacypane.showlog.label "أظهر التقرير">
+<!ENTITY privacypane.reveallog.label "أظهر الملف">
+<!ENTITY privacypane.deletelog.label "إحذف التقرير">
+<!ENTITY privacypane.updates.caption "التحديث\الإنترنت">
+<!ENTITY privacypane.information.label "السماح لنزِّل بتنزيل أحدث الأخبار و الرسائل و البحث عن التحديثات">
+<!ENTITY privacypane.statistics.label "السماح لنزِّل بجمع و نقل بيانات الاستخدام المجهولة المصدر">
+<!ENTITY privacypane.dropdowns.caption "أخفض القوائم بالأسفل">
+<!ENTITY privacypane.dropdownresults.label "عدد المدخلات التي يبقي عليها">
+<!ENTITY privacypane.logs.caption "تقرير الكشف">
+<!ENTITY privacypane.enablelogs.label "تفعيل تقارير الكشف">
+<!ENTITY privacypane.notice.caption "ملاحظة">
+<!ENTITY privacypane.notice.desc "يدمج نزِّلها كلها أيضا مع خاصية مسح البيانات الخاصة المدمجة (إذا كانت متاحة)">
+<!ENTITY privacypane.privacynotice.label "ملاحظتنا للخصوصية">
+<!ENTITY serverspane.label "الشبكة">
+<!ENTITY serverspane.downloads.caption "التنزيلات">
+<!ENTITY serverspane.concurrent.label "التنزيلات الحالية:">
+<!ENTITY serverspane.perserver.label "التنزيلات بالنسبة للخادم:">
+<!ENTITY serverspane.url.label "الموقع أو النطاق">
+<!ENTITY serverspane.new.label "حد جديد">
+<!ENTITY serverspane.del.label "إزالة الحد">
+<!ENTITY serverspane.limits.label "الحدود بالنسبة للخادم">
+<!ENTITY serverpane.limits.noitems "لا حدود بالنسبة للخادم محددة">
+<!ENTITY serverspane.connections.label "الاتصالات:">
+<!ENTITY serverspane.speed.label "حد السرعة:">
+<!ENTITY serverspane.unlimited "غير محدود">
+<!ENTITY serverspane.limited "محدود">
+<!ENTITY serverspane.autoretry.caption "إعادات للمحاولة آلياً">
+<!ENTITY serverspane.autoretry.interval.label "أعد المحاولة كل">
+<!ENTITY serverspane.autoretry.max.label "الحد الأقصي للمحاولات">
+<!ENTITY serverspane.cancel.label "إرفض">
+<!ENTITY serverspane.edit.label "عدِّل">
+<!ENTITY serverspane.remove.label "أزل">
+<!ENTITY advancedpane.label "متقدم">
+<!ENTITY advancedpane.downloads.caption "التحكم المتقدم في التنزيل">
+<!ENTITY advancedpane.misc.caption "متنوع">
+<!ENTITY advancedpane.files.caption "ملفات">
+<!ENTITY advancedpane.chunks.label "الحد الأقصي لعدد التجزيئات بالنسبة للتنزيل:">
+<!ENTITY advancedpane.chunksdisabled "غير مفعل">
+<!ENTITY advancedpane.timeout.label "نفاذ الوقت الوقت الخاص بالتنزيل بعد">
+<!ENTITY advancedpane.seconds "ثواني">
+<!ENTITY advancedpane.minute "دقيقة">
+<!ENTITY advancedpane.minutes "دقائق">
+<!ENTITY advancedpane.hour "ساعة">
+<!ENTITY advancedpane.hours "ساعات">
+<!ENTITY advancedpane.tempfiles.caption "الملفات المؤقتة">
+<!ENTITY advancedpane.usetemp.label "إحفظ تجزيئات التنزيل في دليل مؤقت">
+<!ENTITY advancedpane.tempdir.label "إستخدم هذا الدليل:">
+<!ENTITY advancedpane.permissions.caption "صلاحيات الملف">
+<!ENTITY advancedpane.permissions.group "بإستطاعة أعضاء المجموعة أن">
+<!ENTITY advancedpane.permissions.everybody "بإستطاعة كل شخص آخر أن">
+<!ENTITY advancedpane.permissions.read "إقرأ">
+<!ENTITY advancedpane.permissions.write "إكتب">
+<!ENTITY advancedpane.loadendfirst.label "حمِّل آخر قلَّة من الكيلوبايتات أولا">
+<!ENTITY advancedpane.scheduler.caption "نظام بدأ التنزيل:">
+<!ENTITY advancedpane.scheduler.fast "سريع كما في الطابور">
+<!ENTITY advancedpane.scheduler.fair "عادل+بطيء يوزع بعدالة">
+<!ENTITY advancedpane.scheduler.legacy "إرث بلا حدود">
+<!ENTITY advancedpane.exposeinua.label "إعرض نزِّلها كلها! في مساعد المستخدم">
+<!ENTITY uipane.label "الشكل الخارجي">
+<!ENTITY uipane.namesonly.label "أظهر فقط أسماء الملفات في نافذة المدير">
+<!ENTITY uipane.integration.caption "الدمج">
+<!ENTITY uipane.downloadwin.label "أضف نزِّلها كلها! إلي نافذة 'إحفظ ملف'">
+<!ENTITY uipane.context.caption "قائمة السياق">
+<!ENTITY uipane.tools.caption "قائمة الأدوات">
+<!ENTITY uipane.compact.label "إستخدم قائمة مدمجة">
+<!ENTITY uipane.hide.label "إخفي هذه القائمة">
+<!ENTITY uipane.showtooltip.label "أظهر نصائح أدوات التنزيل">
+<!ENTITY uipane.manager.caption "نافذة المدير">
+<!ENTITY uipane.startminimized.label "إبدأ مصغراً">
+<!ENTITY uipane.minimizetotray.label "صغِّر إلي قائمة أيقونات النظام">

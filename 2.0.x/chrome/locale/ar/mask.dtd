@@ -1,0 +1,23 @@
+<!ENTITY mask.title "العنوان المرتبط بالوصلة">
+<!ENTITY mask.name "اسم الملف">
+<!ENTITY mask.ext "الامتداد">
+<!ENTITY mask.url "العنوان الرئيسي">
+<!ENTITY mask.curl "العنوان الكامل">
+<!ENTITY mask.flatcurl "العنوان السطحي الكامل">
+<!ENTITY mask.num "رقم الدفعة">
+<!ENTITY mask.inum "رقم العنصر">
+<!ENTITY mask.hh "الساعات">
+<!ENTITY mask.mm "الدقائق">
+<!ENTITY mask.ss "الثواني">
+<!ENTITY mask.d "اليوم">
+<!ENTITY mask.m "الشهر">
+<!ENTITY mask.y "السنة">
+<!ENTITY mask.subdirs "عنوان الدلائل الفرعية">
+<!ENTITY mask.flatsubdirs "العنوان السحطي للدلائل الفرعية">
+<!ENTITY mask.text "نص الوصلة">
+<!ENTITY mask.flattext "نص الوصلة السطحي">
+<!ENTITY mask.refer "عنوان الموجه">
+<!ENTITY mask.qstring "استعلامات المقطع">
+<!ENTITY mask.flattitle "العنوان المرتبط بالوصلة">
+<!ENTITY mask.tip "أنقر او إسحب لإعادة تسمية القناع">
+<!ENTITY mask.open.tip "جدول علامات تغيير الاسم">
