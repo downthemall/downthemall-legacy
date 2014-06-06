@@ -131,7 +131,7 @@ const getIcon = exports.getIcon = function(link, metalink, size) {
 			url = link.url.spec;
 		}
 		let ext = getExtension(url);
-		return "moz-icon://file" + (ext ? '.' + ext : '') + "?size=" + size;
+		return "moz-icon://file" + (ext ? '.' + ext.toLowerCase() : '') + "?size=" + size;
 	}
 	catch (ex) {
 		log(LOG_ERROR, "updateIcon: failed to grab icon", ex);
