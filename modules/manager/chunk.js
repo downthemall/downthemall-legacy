@@ -10,10 +10,10 @@ const {ByteBucketTee} = require("support/bytebucket");
 const {GlobalBucket} = require("manager/globalbucket");
 const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
-const pressure = require("support/memorypressure");
 const {getTimestamp, formatNumber, makeDir} = require("utils");
 const OS = require("support/osfiler").create();
 const {Promise, Task} = require("support/promise");
+const {memoryReporter} = require("manager/memoryreporter");
 
 const Timers = new TimerManager();
 
@@ -32,196 +32,8 @@ exports.hintChunkBufferSize = function(bs) {
 	buffer_size = Math.max(1<<17, Math.min(BUFFER_SIZE * 8, roundp2(bs)));
 };
 
-function MemoryReporter() {
-	this.chunks = new Set();
-	this.session = {
-		chunks: 0,
-		written: 0
-	};
-	this._calc();
-	return Object.seal(this);
-}
-MemoryReporter.prototype = {
-	process: "",
-	_calc: function(force) {
-		if (!this._generation) {
-			this._generation = 10;
-		}
-		else {
-			--this._generation;
-			if (!force) {
-				return;
-			}
-		}
-		this._pendingBytes = 0;
-		this._cachedBytes = 0;
-		this._overflow = 0;
-		this._chunksScheduled = 0;
-		this._chunksActive = 0;
-
-		for (let c of this.chunks) {
-			let bs = c.buffer_size;
-			let pending = 0;
-			this._pendingBytes += pending;
-			this._overflow += (bs - (pending % bs)) % bs;
-			let cached = c.bufferedCached;
-			this._cachedBytes += cached;
-			this._overflow += (bs - (cached % bs)) % bs;
-			if (c._req) {
-				++this._chunksScheduled;
-			}
-			else {
-				++this._chunksActive;
-			}
-		}
-	},
-	get pendingBytes() {
-		this._calc();
-		return this._pendingBytes;
-	},
-	get cachedBytes() {
-		this._calc();
-		return this._cachedBytes;
-	},
-	collectReports: function(callback, closure) {
-		this._calc(true);
-
-		// As per :njn, add-ons should not use anything other than
-		// KIND_OTHER to stay forwards-compatible.
-		callback.callback(
-			this.process,
-			"downthemall-downloads-memory-pending",
-			Ci.nsIMemoryReporter.KIND_OTHER,
-			Ci.nsIMemoryReporter.UNITS_BYTES,
-			this._pendingBytes,
-			"Downloaded bytes waiting or in the process of being written to disk.",
-			closure
-			);
-		callback.callback(
-			this.process,
-			"downthemall-downloads-memory-cached",
-			Ci.nsIMemoryReporter.KIND_OTHER,
-			Ci.nsIMemoryReporter.UNITS_BYTES,
-			this._cachedBytes,
-			"Downloaded bytes currently residing in memory.",
-			closure
-			);
-		callback.callback(
-			this.process,
-			"downthemall-downloads-memory-overflow",
-			Ci.nsIMemoryReporter.KIND_OTHER,
-			Ci.nsIMemoryReporter.UNITS_BYTES,
-			this._overflow,
-			"Unused memory that was (potentially) over-committed.",
-			closure
-			);
-		callback.callback(
-			this.process,
-			"downthemall-connections-active",
-			Ci.nsIMemoryReporter.KIND_OTHER,
-			Ci.nsIMemoryReporter.UNITS_COUNT,
-			this._chunksActive,
-			"Connections that are currently alive.",
-			closure
-			);
-		callback.callback(
-			this.process,
-			"downthemall-connections-suspended",
-			Ci.nsIMemoryReporter.KIND_OTHER,
-			Ci.nsIMemoryReporter.UNITS_COUNT,
-			this._chunksScheduled,
-			"Connections that are currently suspended, e.g. due to speed limits or memory concerns.",
-			closure
-			);
-		callback.callback(
-			this.process,
-			"downthemall-connections-total",
-			Ci.nsIMemoryReporter.KIND_OTHER,
-			Ci.nsIMemoryReporter.UNITS_COUNT,
-			this.chunks.length,
-			"Total number of connections that are currently in use by DownThemAll!.",
-			closure
-			);
-		callback.callback(
-			this.process,
-			"downthemall-session-connections",
-			Ci.nsIMemoryReporter.KIND_OTHER,
-			Ci.nsIMemoryReporter.UNITS_COUNT_CUMULATIVE,
-			this.session.chunks,
-			"Total connections (chunks) created during this session.",
-			closure
-			);
-		callback.callback(
-			this.process,
-			"downthemall-session-bytes",
-			Ci.nsIMemoryReporter.KIND_OTHER,
-			Ci.nsIMemoryReporter.UNITS_BYTES,
-			this.session.written,
-			"Total bytes received during this session.",
-			closure
-			);
-	},
-	explicitNonHeap: 0,
-	noteBytesWritten: function(bytes) {
-		this.session.written += bytes;
-	},
-	registerChunk: function(chunk) {
-		this.chunks.add(chunk);
-		++this.session.chunks;
-	},
-	unregisterChunk: function(chunk) {
-		this.chunks.delete(chunk);
-	}
-};
-Object.freeze(MemoryReporter.prototype);
-const memoryReporter = new MemoryReporter();
-
-
-try {
-	if ("unregisterStrongReporter" in Services.memrm) {
-		Services.memrm.registerStrongReporter(memoryReporter);
-		log(LOG_DEBUG, "registered strong reporter");
-	}
-	else {
-		Services.memrm.registerReporter(memoryReporter);
-		log(LOG_DEBUG, "registered reporter");
-	}
-}
-catch (ex) {
-	log(LOG_ERROR, "Failed to register reporter", ex);
-}
-
-
 const Observer = {
-	memoryPressure: 0,
-	unload: function() {
-		pressure.remove(this);
-		try {
-			_thread.shutdown();
-		}
-		catch (ex) {}
-		try {
-			if ("unregisterStrongReporter" in Services.memrm) {
-				Services.memrm.unregisterStrongReporter(memoryReporter);
-			}
-			else {
-				Services.memrm.unregisterReporter(memoryReporter);
-			}
-		} catch (ex) {}
-		Timers.killAllTimers();
-	},
 	observe: function(s, topic, data) {
-		if (topic === "memory-pressure") {
-			if (data === "low-memory") {
-				this.memoryPressure += 25;
-			}
-			else {
-				this.memoryPressure += 100;
-			}
-			this.schedulePressureDecrement();
-			return;
-		}
-
 		let perms = Prefs.permissions = Prefs.getExt("permissions", 384);
 		if (perms & 384) {
 			perms |= 64;
@@ -234,55 +46,46 @@ const Observer = {
 		}
 		Prefs.dirPermissions = perms;
 	},
-	decrementPressure: function() {
-		--this.memoryPressure;
-		if (this.memoryPressure <= 0) {
-			this.memoryPressure = 0;
-			log(LOG_DEBUG, "memoryPressure lifted");
-			return;
-		}
-		this.schedulePressureDecrement();
-	},
-	schedulePressureDecrement: function() {
-		Timers.createOneshot(100, this.decrementPressure, this);
-	}
 };
 Prefs.addObserver("extensions.dta.permissions", Observer);
-pressure.add(Observer);
-unload(Observer.unload.bind(Observer));
 
 function Buffer(size) {
 	this.size = size;
-	this._data = new Uint8Array(size);
+	this._pipe = new Instances.Pipe(true, true, size, 1);
+	this._out = this._pipe.outputStream;
 }
 Buffer.prototype = Object.seal({
-	_buf: new Uint8Array(1<<16),
 	length: 0,
+	get free() this.size - this.length,
 	writeFrom: function(inputStream, length) {
 		if (length > this.free) {
 			throw new Error("Buffer overflow, free: " + this.free + ", length: " + length + ", blen: " + this.length);
 		}
-		if (!this.length) {
-			inputStream.readArrayBuffer(length, this._data.buffer);
-		}
-		else {
-			// Cannot read into offset, so we need an intermediary (class static buffer).
-			if (this._buf.byteLength < length) {
-				Buffer.prototype._buf = new Uint8Array(roundp2(length));
-			}
-			inputStream.readArrayBuffer(length, this._buf.buffer);
-			this._data.set(this._buf.subarray(0, length), this.length);
-		}
+		this._out.writeFrom(inputStream, length);
 		this.length += length;
 		return length;
 	},
 	unlink: function() {
-		this._data = null;
-		delete this._data;
+		if (this._out) {
+			this._out.close();
+			this._out = null;
+		}
+		if (this._pipe) {
+			this._pipe = null;
+			delete this._pipe;
+		}
+		this.length = this.size = 0;
 	},
-	get free() this.size - this.length,
-	get data() {
-		return this._data.subarray(0, this.length);
+	getData: function() {
+		let inputStream = this._pipe.inputStream;
+		if (!(inputStream instanceof Ci.nsIBinaryInputStream)) {
+			inputStream = new Instances.BinaryInputStream(inputStream);
+		}
+		let data = new Uint8Array(this.length);
+		inputStream.readArrayBuffer(this.length, data.buffer);
+		inputStream.close();
+		this.unlink();
+		return data;
 	}
 });
 
@@ -454,9 +257,11 @@ Chunk.prototype = {
 		Task.spawn((function _shipBufferTask() {
 			try {
 				let file = yield this._open();
-				yield file.write(buffer.data, {bytes: buffer.length});
-				this._buffered -= buffer.length;
-				this.safeBytes += buffer.length;
+				let data = buffer.getData();
+				let bytes = data.buffer.byteLength;
+				yield file.write(data, {bytes: bytes});
+				this._buffered -= bytes;
+				this.safeBytes += bytes;
 				--this._pendingWrites;
 				if (!this.running) {
 					this.close();
@@ -574,10 +379,6 @@ Chunk.prototype = {
 				throw new Error("bytes negative: " + bytes + " " + this.remainder + " " + aCount);
 			}
 
-			if (!(aInputStream instanceof Ci.nsIBinaryInputStream)) {
-				aInputStream = new Instances.BinaryInputStream(aInputStream);
-			}
-
 			// per e10n contract we must consume all bytes
 			// or in our case all remainder bytes
 			// reqPending from above makes sure that we won't re-schedule
@@ -624,15 +425,15 @@ Chunk.prototype = {
 	},
 	requestBytes: function(requested) {
 		if (memoryReporter.pendingBytes > MAX_PENDING_SIZE) {
-			log(LOG_INFO, "Under pressure: " + memoryReporter.pendingBytes + " : " + Observer.memoryPressure);
+			log(LOG_INFO, "Under pressure: " + memoryReporter.pendingBytes + " : " + memoryReporter.memoryPressure);
 			// basically stop processing while under memory pressure
 			this.schedule();
 			return 0;
 		}
-		if (Observer.memoryPressure > 0) {
+		if (memoryReporter.memoryPressure > 0) {
 			log(LOG_INFO, "Under some pressure: " + memoryReporter.pendingBytes +
-				" : " + Observer.memoryPressure + " : " + requested);
-			requested = Math.max(Math.min(requested, 256), Math.floor(requested / Observer.memoryPressure));
+				" : " + memoryReporter.memoryPressure + " : " + requested);
+			requested = Math.max(Math.min(requested, 256), Math.floor(requested / memoryReporter.memoryPressure));
 			log(LOG_INFO, "Using instead: " + requested);
 			this.schedule();
 		}
