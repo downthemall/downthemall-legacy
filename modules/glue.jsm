@@ -18,6 +18,10 @@ const EXPORTED_SYMBOLS = [
 	"LRUMap"
 	];
 
+//This might be already defined... or not...
+this._Promise = this.Promise;
+delete this.Promise;
+
 const {
 	classes: Cc,
 	interfaces: Ci,
@@ -192,22 +196,37 @@ LRUMap.prototype = Object.freeze({
 			}
 		}
 	};
+	const _registry = new Map();
+	const shutdown = function() {
+		if (arguments.length > 1 && arguments[1]) {
+			let cancel = new Instances.SupportsBool();
+			cancel.data = false;
+			Services.obs.notifyObservers(cancel, "DTA:upgrade", null);
+			if (cancel.data) {
+				log(LOG_INFO, "Not going down right now - vetoed!");
+				return;
+			}
+		}
+		for (let i = _unloaders.length; ~(--i);) {
+			_runUnloader(_unloaders[i]);
+		}
+		_unloaders.length = 0;
+		for (let r of _registry.keys()) {
+			try {
+				Cu.nukeSandbox(_registry.get(r));
+			}
+			catch (ex) {}
+			_registry.delete(r);
+		}
+		try {
+			_registry.clear();
+		}
+		catch (ex) {}
+		return;
+	}
 	exports.unload = function unload(fn) {
 		if (fn == "shutdown") {
-			if (arguments.length > 1 && arguments[1]) {
-				let cancel = new Instances.SupportsBool();
-				cancel.data = false;
-				Services.obs.notifyObservers(cancel, "DTA:upgrade", null);
-				if (cancel.data) {
-					log(LOG_INFO, "Not going down right now - vetoed!");
-					return;
-				}
-			}
-			for (let i = _unloaders.length; ~(--i);) {
-				_runUnloader(_unloaders[i]);
-			}
-			_unloaders.length = 0;
-			return;
+			return shutdown();
 		}
 		// add an unloader
 		if (typeof(fn) != "function") {
@@ -220,18 +239,28 @@ LRUMap.prototype = Object.freeze({
 		};
 	};
 
-	const _registry = Object.create(null);
 	exports.require = function require(module) {
 		module = BASE_PATH + module + ".js";
 
 		// already loaded?
-		if (module in _registry) {
-			return _registry[module];
+		let scope = _registry.get(module);
+		if (scope) {
+			return scope;
 		}
 
 		// try to load the module
-		let scope = {exports: Object.create(null)};
+		scope = Object.create(exports);
+		scope.exports = Object.create(null);
 		try {
+			scope = Cu.Sandbox(Services.sysprincipal, {
+				sandboxName: module,
+				sandboxPrototype: scope,
+				wantXRays: false
+			});
+			// This might be already defined... or not...
+			scope._Promise = scope.Promise;
+			delete scope.Promise;
+
 			Services.scriptloader.loadSubScript(module, scope);
 		}
 		catch (ex) {
@@ -239,7 +268,7 @@ LRUMap.prototype = Object.freeze({
 			throw ex;
 		}
 
-		_registry[module] = scope.exports;
+		_registry.set(module, scope.exports);
 
 		return scope.exports;
 	};

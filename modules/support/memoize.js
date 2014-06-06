@@ -6,18 +6,20 @@
 
 var caches = [];
 function filterCaches(c) {
-	c = c.get();
 	if (!c) {
 		return false;
 	}
 	c.clear();
 	return true;
 }
-function cleanCaches() {
+function clearCaches() {
 	caches = caches.filter(filterCaches);
 }
-require("support/memorypressure").add(cleanCaches);
-unload(cleanCaches);
+require("support/memorypressure").add(clearCaches);
+unload(() => {
+	clearCaches();
+	caches.length = 0;
+});
 
 /**
  * Decorate a function with a memoization wrapper, with a limited-size cache
@@ -40,7 +42,7 @@ exports.memoize = function memoize(func, limit, num_args) {
 	num_args = num_args || func.length;
 
 	var cache = new Map();
-	caches.push(weak(cache));
+	caches.push(cache);
 	var keylist = [];
 	var args = [];
 	var key, result;
