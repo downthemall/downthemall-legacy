@@ -362,7 +362,7 @@ Chunk.prototype = {
 		this._openDeferred = Promise.defer();
 		const file = this.parent.tmpFile;
 		let pos = this.start + this.safeBytes;
-		log(LOG_ERROR, "opening " + file.path + " at: " + pos);
+		log(LOG_DEBUG, "opening " + file.path + " at: " + pos);
 		Task.spawn((function() {
 			try {
 				try {
@@ -401,7 +401,7 @@ Chunk.prototype = {
 		return this._openDeferred.promise;
 	},
 	_finish: function(notifyOwner) {
-		log(LOG_ERROR, "Finishing " + this + " notify: " + notifyOwner);
+		log(LOG_DEBUG, "Finishing " + this + " notify: " + notifyOwner);
 		if (this.buckets) {
 			this.buckets.unregister(this);
 			delete this.buckets;
