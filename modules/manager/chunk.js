@@ -12,7 +12,7 @@ const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
 const pressure = require("support/memorypressure");
 const {getTimestamp, formatNumber, makeDir} = require("utils");
-const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
+const OS = require("support/osfiler").create();
 const {Promise, Task} = require("support/promise");
 
 const Timers = new TimerManager();

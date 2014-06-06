@@ -126,6 +126,7 @@ LRUMap.prototype = Object.freeze({
 	dlsg("wintaskbar", "@mozilla.org/windows-taskbar;1", "nsIWinTaskbar");
 	dlsg("clipboardhelper", "@mozilla.org/widget/clipboardhelper;1", "nsIClipboardHelper");
 	dlsg("pps", "@mozilla.org/network/protocol-proxy-service;1", "nsIProtocolProxyService");
+	dlsg("sysprincipal", "@mozilla.org/systemprincipal;1", "nsIPrincipal")
 
 	const Instances = exports.Instances = {};
 
@@ -244,8 +245,8 @@ LRUMap.prototype = Object.freeze({
 	};
 	exports.requireJoined = function requireJoined(where, module) {
 		module = require(module);
-		for (let [k,v] in new Iterator(module)) {
-			where[k] = v;
+		for (let k of Object.getOwnPropertyNames(module)) {
+			Object.defineProperty(where, k, Object.getOwnPropertyDescriptor(module, k));
 		}
 	};
 	exports.requireJSM = function requireJSM(mod) {
