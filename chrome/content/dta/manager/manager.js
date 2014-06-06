@@ -1155,7 +1155,7 @@ const Dialog = {
 		if (Tree.some(function(d) { return d.started && !d.canResumeLater && d.state === RUNNING; })) {
 			let rv = Prompts.confirmYN(
 				window,
-				_("confclose"),
+				_("confclose.2"),
 				_("nonresclose")
 			);
 			if (rv) {
@@ -1165,7 +1165,7 @@ const Dialog = {
 		if (Tree.some(function(d) d.isPrivate && d.state !== COMPLETE)) {
 			let rv = Prompts.confirmYN(
 				window,
-				_("confclose"),
+				_("confclose.2"),
 				_("privateclose")
 			);
 			if (rv) {
