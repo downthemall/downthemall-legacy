@@ -276,6 +276,10 @@ Buffer.prototype = Object.seal({
 		this.length += length;
 		return length;
 	},
+	unlink: function() {
+		this._data = null;
+		delete this._data;
+	},
 	get free() this.size - this.length,
 	get data() {
 		return this._data.subarray(0, this.length);
@@ -471,6 +475,10 @@ Chunk.prototype = {
 					log(LOG_ERROR, "aggregate failure", ex2);
 				}
 			}
+			finally {
+				buffer.unlink();
+				buffer = null;
+			}
 		}).bind(this));
 	},
 	close: function() {
@@ -520,6 +528,7 @@ Chunk.prototype = {
 
 		// prevent shipping the current buffer
 		if (this._hasBuffer) {
+			this._buffer.unlink();
 			delete this._buffer;
 		}
 		this.close();
