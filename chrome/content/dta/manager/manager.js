@@ -17,7 +17,6 @@ const {defer} = require("support/defer");
 const PrivateBrowsing = require("support/pbm");
 const {TimerManager} = require("support/timers");
 const {ContentHandling} = require("support/contenthandling");
-const {asyncMoveFile} = require("manager/asyncmovefile");
 const GlobalProgress = new (require("manager/globalprogress").GlobalProgress)(window);
 const RequestManipulation = require("support/requestmanipulation");
 const Limits = require("support/serverlimits");
@@ -38,8 +37,12 @@ try {
 catch (ex) {
 	// already defined
 }
-const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
 
+// Use the main OS.File here!
+(() => {
+	let OSProp = Object.getOwnPropertyDescriptor(require("support/osfiler"), "OS");
+	Object.defineProperty(this, "OS", OSProp);
+})();
 
 /* global Version, AlertService, Decompressor, Verificator, FileExts:true */
 XPCOMUtils.defineLazyGetter(this, "Version", function() require("version"));
