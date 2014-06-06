@@ -1040,6 +1040,51 @@ exports.load = function load(window, outerEvent) {
 		}
 	}
 
+	function onDTAViewShowing(button, view) {
+		for (let n of view.querySelectorAll(".dta-sniff-element")) {
+			n.parentNode.removeChild(n);
+		}
+		if (!Preferences.getExt('listsniffedvideos', false)) {
+			return;
+		}
+		const win = findWindowsNavigator().shift();
+		let sniffed = getSniffedInfo(win);
+		if (win.frames) {
+			for (let i = 0, e = win.frames.length; i < e; ++i) {
+				sniffed = sniffed.concat(getSniffedInfo(win.frames[i]));
+			}
+		}
+		if (!sniffed.length) {
+			return;
+		}
+
+		let menu = view.querySelector(".panel-subview-body");
+
+		let sep = document.createElement("menuseparator");
+		sep.className = "dta-sniff-element";
+		menu.appendChild(sep);
+
+		let ref = DTA.getRef(win.document);
+		let cmd = button.getAttribute("buttoncommand") + "-sniff";
+		for (let s of sniffed) {
+			let o = {
+				"url": new DTA.URL(s.url),
+				"referrer": ref,
+				"fileName": s.name,
+				"description": bundle.getString("sniffedvideo"),
+				"isPrivate": isWindowPrivate(window)
+			};
+			let mi = document.createElement("toolbarbutton");
+			mi.setAttribute("label", strfn.cropCenter(s.name, 60));
+			mi.setAttribute("tooltiptext", o.url.spec);
+			mi.setAttribute("image", getIcon(s.name));
+			mi.setAttribute("command", cmd);
+			mi.info = o;
+			mi.className = "dta-sniff-element subviewbutton cui-withicon";
+			menu.appendChild(mi);
+		}
+	}
+
 	function attachOneClick() {
 		if (!!_selector) {
 			return;
@@ -1560,7 +1605,9 @@ exports.load = function load(window, outerEvent) {
 					try {
 						let ownerWindow = el.ownerDocument.defaultView;
 						let {area} = ownerWindow.CustomizableUI.getPlacementOfWidget(el.id);
-						ownerWindow.PanelUI.showSubView(el.getAttribute("panelview"), el, area);
+						let view = el.getAttribute("panelview");
+						onDTAViewShowing(el, $(view));
+						ownerWindow.PanelUI.showSubView(view, el, area);
 						e.preventDefault();
 						return false;
 					}
