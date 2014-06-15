@@ -75,6 +75,9 @@ exports.watchWindows = function watchWindows(location, callback) {
 		if (w.document.readyState === "complete" && w.location.toString() === location) {
 			watcher(w);
 		}
+		else {
+			runOnLoad(window);
+		}
 	}
 };
 const overlayCache = new Map();
