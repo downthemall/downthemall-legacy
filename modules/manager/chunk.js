@@ -11,11 +11,43 @@ const {GlobalBucket} = require("manager/globalbucket");
 const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
 const {getTimestamp, formatNumber, makeDir} = require("utils");
-const OS = require("support/osfiler").create();
 const {Promise, Task} = require("support/promise");
 const {memoryReporter} = require("manager/memoryreporter");
 
 const Timers = new TimerManager();
+
+const _thread = (function() {
+	// Use a dedicated thread, so that we have serialized writes.
+	// As we use a single sink for various reasons, we need to ensure the
+	// shipped bytes arrive and are written to in the correct order.
+	// The assumption that writes will be properly serialized is based on the
+	// following assumptions
+	//  1. The thread event queue processes events fifo, always
+	//  2. The async stream copier writes a whole piped stream before processing
+	//     another stream write request.
+	//
+	// Why do we want to use all this cruft?
+	// - To keep the browser snappier by having the slow disk I/O stuff off the
+	//   main thread.
+	// - Having a single thread doing all the writes might reduce/avoid some
+	//   nasty performance issues, such as excessive disk thrashing due to
+	//   concurrency.
+	// - We cannot use ChromeWorkers, because we cannot do file I/O there
+	//   unless we reimplement file I/O using ctypes (and while it's feasible, it
+	//   is not really reasonable)
+	//
+	// For the amo-validator context:
+	// Editor note: Safe use, as an event target for nsIAsyncStreamCopier (no js use)
+	let AsyncCopierThread = Services.tm.newThread(0);
+	/*if (AsyncCopierThread instanceof Ci.nsISupportsPriority) {
+		AsyncCopierThread.priority = AsyncCopierThread.PRIORITY_LOW;
+		log(LOG_INFO, "Our async copier thread is low priority now!");
+	}*/
+	unload(() => {
+		AsyncCopierThread.shutdown();
+	});
+	return AsyncCopierThread;
+})();
 
 var buffer_size = BUFFER_SIZE;
 
@@ -76,19 +108,27 @@ Buffer.prototype = Object.seal({
 		}
 		this.length = this.size = 0;
 	},
-	getData: function() {
-		let inputStream = this._pipe.inputStream;
-		if (!(inputStream instanceof Ci.nsIBinaryInputStream)) {
-			inputStream = new Instances.BinaryInputStream(inputStream);
-		}
-		let data = new Uint8Array(this.length);
-		inputStream.readArrayBuffer(this.length, data.buffer);
-		inputStream.close();
-		this.unlink();
-		return data;
+	get stream() {
+		return this._pipe.inputStream;
 	}
 });
 
+function PromiseListener() {
+	this.d = Promise.defer();
+	this.promise = this.d.promise;
+}
+PromiseListener.prototype = Object.freeze({
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRequestListener]),
+	onStartRequest: function(req, context) {},
+	onStopRequest: function(req, context, status) {
+		if (!Components.isSuccessCode(status)) {
+			this.d.reject(status);
+		}
+		else {
+			this.d.resolve();
+		}
+	},
+});
 
 function Chunk(download, start, end, written) {
 	// safeguard against null or strings and such
@@ -153,59 +193,41 @@ Chunk.prototype = {
 			);
 		this.buckets.register(this);
 		memoryReporter.registerChunk(this);
+		this.parent.chunkOpened(this);
 	},
 	_open: function() {
-		if (this._osFile) {
-			// File was already opened
-			let p = Promise.defer();
-			p.resolve(this._osFile);
-			return p.promise;
+		if (this._outStream) {
+			let d = Promise.defer();
+			d.resolve(this._outStream);
+			return d.promise;
 		}
-		if (this._openDeferred) {
-			// File open is already pending
-			return this._openDeferred.promise;
+		if (this._openPromise) {
+			return this._openPromise;
 		}
 
-		this._openDeferred = Promise.defer();
 		const file = this.parent.tmpFile;
 		let pos = this.start + this.safeBytes;
 		log(LOG_DEBUG, "opening " + file.path + " at: " + pos);
-		Task.spawn((function() {
+		return this._openPromise = Task.spawn(function*() {
 			try {
-				try {
-					yield makeDir(file.parent, Prefs.dirPermissions);
-				}
-				catch (ex if ex.becauseExists) {
-					// no op
-				}
-				let flags = 0;
-				if (OS.Constants.libc) {
-					flags = OS.Constants.libc.O_CREAT | OS.Constants.libc.O_LARGEFILE | OS.Constants.libc.O_WRONLY;
-				}
-				this._osFile = yield OS.File.open(file.path, {write:true, append: false}, {unixFlags: flags, unixMode: Prefs.permissions});
-				if (pos) {
-					while (pos) {
-						let p = Math.min(pos, 1<<29);
-						try {
-							yield this._osFile.setPosition(p, OS.File.POS_CURRENT);
-						}
-						catch (ex if ex.winLastError == 0) {
-							// Ignore this error. The call did actually succeed.
-							// See bug:
-						}
-						pos -= p;
-					}
-				}
-				this._openDeferred.resolve(this._osFile);
+				yield makeDir(file.parent, Prefs.dirPermissions);
 			}
-			catch (ex) {
-				this._openDeferred.reject(ex);
+			catch (ex if ex.becauseExists) {
+				// no op
 			}
-			delete this._openDeferred;
-		}).bind(this));
-
-		this.parent.chunkOpened(this);
-		return this._openDeferred.promise;
+			let outStream = new Instances.FileOutputStream(
+				file,
+				0x02 | 0x08,
+				Prefs.permissions,
+				Ci.nsIFileOutputStream.DEFER_OPEN
+				);
+			if (pos) {
+				let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
+				seekable.seek(0x00, pos);
+			}
+			delete this._openPromise;
+			return (this._outStream = outStream);
+		}.bind(this));
 	},
 	_finish: function(notifyOwner) {
 		log(LOG_DEBUG, "Finishing " + this + " notify: " + notifyOwner);
@@ -246,45 +268,55 @@ Chunk.prototype = {
 		if (!buffer) {
 			return;
 		}
-		log(LOG_DEBUG, "shipping buffer: " + buffer.length);
-
-		if (!buffer.length) {
+		let length = buffer.length;
+		if (!length) {
 			log(LOG_DEBUG, "Not shipping buffer, zero length");
 			return;
 		}
-		this._buffered += buffer.length;
+
+		log(LOG_DEBUG, "shipping buffer: " + length);
+		let stream = buffer.stream;
+		buffer.unlink();
+		this._buffered += length;
 		++this._pendingWrites;
-		Task.spawn((function _shipBufferTask() {
+		let self = this;
+		Task.spawn(function* _shipBufferTask() {
 			try {
-				let file = yield this._open();
-				let data = buffer.getData();
-				let bytes = data.buffer.byteLength;
-				yield file.write(data, {bytes: bytes});
-				this._buffered -= bytes;
-				this.safeBytes += bytes;
-				--this._pendingWrites;
-				if (!this.running) {
-					this.close();
+				let copier = new Instances.AsyncStreamCopier(
+					stream,
+					(yield self._open()),
+					_thread,
+					true, // source buffered
+					false, // sink buffered
+					0,
+					true, // close source
+					false // close sink
+					);
+				var d = new PromiseListener();
+				copier.asyncCopy(d, null);
+				yield d.promise;
+				self._buffered -= length;
+				--self._pendingWrites;
+				self.safeBytes += length;
+				if (!self.running) {
+					self.close();
 				}
 			}
 			catch (ex) {
-				log(LOG_ERROR, ex);
 				try {
-					--this._pendingWrites;
-					this.download.writeFailed();
-					if (!this.running) {
-						this.close();
-					}
+					self._buffered -= length;
+					--self._pendingWrites;
+					log(LOG_ERROR, "Failed to write", ex);
+					self.download.writeFailed();
 				}
 				catch (ex2) {
 					log(LOG_ERROR, "aggregate failure", ex2);
 				}
+				if (!self.running) {
+					self.close();
+				}
 			}
-			finally {
-				buffer.unlink();
-				buffer = null;
-			}
-		}).bind(this));
+		});
 	},
 	close: function() {
 		this.running = false;
@@ -295,18 +327,32 @@ Chunk.prototype = {
 		if (this._pendingWrites) {
 			return;
 		}
-		if (this._osFile) {
-			let f = this._osFile;
-			delete this._osFile;
-			log(LOG_DEBUG, "closing osfile");
-			f.close().then((function() {
-				log(LOG_DEBUG, "closed osfile");
+		if (this._outStream) {
+			// hacky way to close the stream off the main thread
+			let is = new Instances.StringInputStream("", 0);
+			let copier = new Instances.AsyncStreamCopier(
+				is,
+				this._outStream,
+				_thread,
+				true, // source buffered
+				false, // sink buffered
+				0,
+				true, // close source
+				true // close sink
+				);
+			try {
+				copier.asyncCopy({
+					onStartRequest: function(req, context) {},
+					onStopRequest: function(req, context, status) {
+						log(LOG_DEBUG, "closed off the main thread");
+						this._finish(true);
+					}.bind(this)
+				}, null);
+			}
+			catch (ex) {
 				this._finish(true);
-			}).bind(this),
-			(function(ex) {
-				log(LOG_ERRROR, "failed to close osfile: " + ex);
-				this._finish(true);
-			}).bind(this));
+			}
+			delete this._outStream;
 			return;
 		}
 		log(LOG_DEBUG, this + ": chunk closed");
