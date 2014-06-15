@@ -49,7 +49,7 @@ const _thread = (function() {
 	return AsyncCopierThread;
 })();
 
-var buffer_size = BUFFER_SIZE;
+var buffer_size = Math.max(1<<18, BUFFER_SIZE);
 
 function roundp2(s) {
 	s |= (--s) >> 1;
@@ -61,7 +61,10 @@ function roundp2(s) {
 }
 
 exports.hintChunkBufferSize = function(bs) {
-	buffer_size = Math.max(1<<17, Math.min(BUFFER_SIZE * 8, roundp2(bs)));
+	if (!bs) {
+		return;
+	}
+	buffer_size = Math.max(1<<18, Math.min(BUFFER_SIZE * 32, roundp2(bs * 2)));
 };
 
 const Observer = {
