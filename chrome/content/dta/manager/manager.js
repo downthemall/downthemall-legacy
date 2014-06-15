@@ -30,6 +30,7 @@ const {Chunk, hintChunkBufferSize} = require("manager/chunk");
 const {Connection} = require("manager/connection");
 const {createRenamer} = require("manager/renamer");
 const {memoize, identity} = require("support/memoize");
+const {moveFile} = require("support/movefile");
 const {Task} = require("support/promise");
 try {
 	this.Promise = require("support/promise").Promise;
@@ -39,10 +40,7 @@ catch (ex) {
 }
 
 // Use the main OS.File here!
-(() => {
-	let OSProp = Object.getOwnPropertyDescriptor(require("support/osfiler"), "OS");
-	Object.defineProperty(this, "OS", OSProp);
-})();
+const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
 
 /* global Version, AlertService, Decompressor, Verificator, FileExts:true */
 XPCOMUtils.defineLazyGetter(this, "Version", function() require("version"));
@@ -945,9 +943,7 @@ const Dialog = {
 		function _m(e) e && e.get();
 		function _f(e) !!e;
 		return function() {
-			if (Prefs.autoClearComplete &&
-				this._autoClears.length &&
-				mapFilterInSitu(this._autoClears, _m, _f).length) {
+			if (Prefs.autoClearComplete && this._autoClears.length) {
 				Tree.remove(this._autoClears);
 				this._autoClears.length = 0;
 			}
@@ -1090,7 +1086,7 @@ const Dialog = {
 			this._wasRunning = true;
 		}
 		else if (Prefs.autoClearComplete && state === COMPLETE) {
-			this._autoClears.push(weak(download));
+			this._autoClears.push(download);
 		}
 		if (!this._initialized || !this._wasRunning || state !== COMPLETE) {
 			return;
@@ -1957,7 +1953,7 @@ QueueItem.prototype = {
 		let move = function(self, x) {
 			let df = destination.clone();
 			df.append(self.destinationName);
-			OS.File.move(self.tmpFile.path, df.path).then(function() {
+			moveFile(self.tmpFile.path, df.path).then(function() {
 				Dialog.unregisterPending(self);
 				moveDeferred.resolve(true);
 			}, function(ex) {
