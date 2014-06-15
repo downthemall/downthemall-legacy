@@ -14,6 +14,7 @@ const log = function log() {
 onmessage = function({data}) {
 	if (!data) {
 		log("going down");
+		postMessage({exit: true});
 		self.close();
 		return;
 	}

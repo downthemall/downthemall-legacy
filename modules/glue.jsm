@@ -213,15 +213,36 @@ LRUMap.prototype = Object.freeze({
 		_unloaders.length = 0;
 		for (let r of _registry.keys()) {
 			try {
-				Cu.nukeSandbox(_registry.get(r));
+				let scope = _registry.get(r);
+				if (scope.asyncShutdown) {
+					let p = scope.asyncShutdown();
+					if (p && p.then) {
+						let re = Cu.reportError.bind(Cu);
+						let ns = Cu.nukeSandbox.bind(Cu);
+						p.then(function() {
+							ns(scope);
+						}, function(ex) {
+							re(ex);
+							ns(scope);
+						});
+						continue;
+					}
+				}
+
+				Cu.nukeSandbox(scope);
 			}
 			catch (ex) {}
+		}
+		for (let r of _registry.keys()) {
 			_registry.delete(r);
 		}
 		try {
 			_registry.clear();
 		}
 		catch (ex) {}
+
+		// Unload ourself
+		Cu.unload(SELF_PATH);
 		return;
 	}
 	exports.unload = function unload(fn) {
@@ -245,7 +266,7 @@ LRUMap.prototype = Object.freeze({
 		// already loaded?
 		let scope = _registry.get(module);
 		if (scope) {
-			return scope;
+			return scope.exports;
 		}
 
 		// try to load the module
@@ -268,7 +289,7 @@ LRUMap.prototype = Object.freeze({
 			throw ex;
 		}
 
-		_registry.set(module, scope.exports);
+		_registry.set(module, scope);
 
 		return scope.exports;
 	};
@@ -284,22 +305,6 @@ LRUMap.prototype = Object.freeze({
 		Object.freeze(_m);
 		return _m;
 	};
-
-	// registry unloader; must be first :p
-	unload(function() {
-		log(LOG_INFO, "glue going down");
-		try {
-			let keys = Object.keys(_registry);
-			for (let i = keys.length; ~(--i);) {
-				delete _registry[keys[i]];
-			}
-			// unload ourselves
-			Cu.unload(SELF_PATH);
-		}
-		catch (ex) {
-			reportError(ex);
-		}
-	});
 
 	// init autoloaded modules
 	const logging = require("logging");
