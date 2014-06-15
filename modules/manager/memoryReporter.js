@@ -17,6 +17,7 @@ function MemoryReporter() {
 		written: 0
 	};
 	this._calc();
+	this.memoryPressure = 0;
 	return Object.seal(this);
 }
 MemoryReporter.prototype = {
@@ -150,7 +151,6 @@ MemoryReporter.prototype = {
 	unregisterChunk: function(chunk) {
 		this.chunks.delete(chunk);
 	},
-	memoryPressure: 0,
 	unload: function() {
 		pressure.remove(this);
 		try {
