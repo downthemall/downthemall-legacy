@@ -378,7 +378,7 @@ FilterManagerImpl.prototype = {
 						throw new Error ("No filters where loaded");
 					}
 					for (let f of Object.keys(filters)) {
-						if (!(k in this.defFilters)) {
+						if (!(f in this.defFilters)) {
 							continue;
 						}
 						let filter = filters[f];
@@ -472,7 +472,7 @@ FilterManagerImpl.prototype = {
 				continue;
 			}
 			kill.add(name);
-			if (pending && !checks.some(function(c) Preferences.hasUserValue(name + c))) {
+			if (pending && (name in this.defFilters) && !checks.some(function(c) Preferences.hasUserValue(name + c))) {
 				log(LOG_DEBUG, "skipping (not modified) " + name + " pref: " + pref);
 				continue;
 			}
