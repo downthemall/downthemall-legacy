@@ -4,6 +4,7 @@
 "use strict";
 
 const {Promise} = require("support/promise");
+const {AsyncShutdown} = requireJSM("resource://gre/modules/AsyncShutdown.jsm");
 
 const _jobs = new Map();
 let _jobid = 0;
@@ -48,12 +49,49 @@ const _workerGenerator = (function*() {
 	}
 })();
 
-unload(() => {
-	for (let w of _workers) {
-		// Send kill.
-		w.postMessage(null);
-	}
-});
+const asyncShutdown = (function() {
+	let p = null;
+	return function killWorkers() {
+		if (p) {
+			return p.promise;
+		}
+
+		p = Promise.defer();
+		p.promise.then(function() {
+			try {
+				AsyncShutdown.webWorkersShutdown.removeBlocker(asyncShutdown);
+			}
+			catch (ex) {
+				Cu.reportError(ex);
+			}
+		});
+
+		let pending = _workers.length;
+		if (!pending) {
+			p.resolve();
+			return;
+		}
+		for (let w of _workers) {
+			w.onmessage = function(e) {
+				if (e.data.exit) {
+					--pending;
+					if (!pending) {
+						p.resolve();
+					}
+					return;
+				}
+				onmessage(e);
+			};
+			w.postMessage(null);
+		}
+		_workers.length = 0;
+
+		return p.promise;
+	};
+})();
+unload(asyncShutdown);
+
+AsyncShutdown.webWorkersShutdown.addBlocker("DownThemAll! moveFile workers", asyncShutdown);
 
 exports.moveFile = function(from, to) {
 	let jobid = ++_jobid;
