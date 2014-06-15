@@ -377,6 +377,17 @@ FilterManagerImpl.prototype = {
 					if (!filters) {
 						throw new Error ("No filters where loaded");
 					}
+					for (let f of Object.keys(filters)) {
+						if (!(k in this.defFilters)) {
+							continue;
+						}
+						let filter = filters[f];
+						let no = Object.create(this.defFilters[f]);
+						for (let i of Object.getOwnPropertyNames(filter)) {
+							Object.defineProperty(no, i, Object.getOwnPropertyDescriptor(filter, i));
+						}
+						filters[f] = no;
+					}
 				}
 				catch (lex) {
 					log(LOG_DEBUG, "Couldn't load filters file", lex);
@@ -392,10 +403,6 @@ FilterManagerImpl.prototype = {
 				// Load all
 				let all = [];
 				for (let [id, obj] in Iterator(filters)) {
-					if (id in this.defFilters) {
-						// Lacking setPrototypeOf
-						obj.__proto__ = this.defFilters[id];
-					}
 					try {
 						let f = new Filter(id);
 						f.load(obj);
