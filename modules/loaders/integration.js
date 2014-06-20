@@ -19,6 +19,7 @@ lazy(this, 'CoThreads', function() require("support/cothreads"));
 lazy(this, 'getIcon', function() require("support/icons").getIcon);
 lazy(this, "bundle", function() new (require("utils").StringBundles)(["chrome://dta/locale/menu.properties"]));
 lazy(this, "isWindowPrivate", function() require("support/pbm").isWindowPrivate);
+lazy(this, "identity", () => require("support/memoize").identity);
 
 const {unloadWindow} = require("support/overlays");
 const strfn = require("support/stringfuncs");
@@ -34,7 +35,7 @@ const MENU_ITEMS = [
  * Helpers and tools
  */
 function trimMore(t) {
-	return t.replace(/^[\s_]+|[\s_]+$/gi, '').replace(/(_){2,}/g, "_");
+	return identity(t.replace(/^[\s_]+|[\s_]+$/gi, '').replace(/(_){2,}/g, "_"));
 }
 
 function extractDescription(child) {
@@ -71,7 +72,11 @@ function extractDescription(child) {
 	catch(ex) {
 		log(LOG_ERROR, 'extractDescription', ex);
 	}
-	return trimMore(rv.join(" "));
+	rv = trimMore(rv.join(" "));
+	if (!rv) {
+		rv = trimMore((child.ownerDocument || child).title || "");
+	}
+	return rv;
 }
 
 function addLinksToArray(lnks, urls, doc) {
