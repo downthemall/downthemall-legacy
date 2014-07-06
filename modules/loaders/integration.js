@@ -72,11 +72,7 @@ function extractDescription(child) {
 	catch(ex) {
 		log(LOG_ERROR, 'extractDescription', ex);
 	}
-	rv = trimMore(rv.join(" "));
-	if (!rv) {
-		rv = trimMore((child.ownerDocument || child).title || "");
-	}
-	return rv;
+	return trimMore(rv.join(" "));
 }
 
 function addLinksToArray(lnks, urls, doc) {
@@ -85,6 +81,8 @@ function addLinksToArray(lnks, urls, doc) {
 	}
 
 	let ref = DTA.getRef(doc);
+
+	let defaultDescription = trimMore(doc.title || "");
 
 	for (let link of lnks) {
 		try {
@@ -101,6 +99,7 @@ function addLinksToArray(lnks, urls, doc) {
 				'url': url,
 				'referrer': ref,
 				'description': extractDescription(link),
+				'defaultDescription': defaultDescription,
 				'title': title
 			};
 			let fn = link.getAttribute("download");
@@ -534,7 +533,22 @@ exports.load = function load(window, outerEvent) {
 
 					unique(urls);
 					yield true;
+					for (let e of urls) {
+						if (!e.description) {
+							e.description = e.defaultDescription || "";
+						}
+						delete e.defaultDescription;
+					}
+					yield true;
+
 					unique(images);
+					yield true;
+					for (let e of images) {
+						if (!e.description) {
+							e.description = e.defaultDescription || "";
+						}
+						delete e.defaultDescription;
+					}
 					yield true;
 
 					log(LOG_DEBUG, "findLinks(): done running...");
@@ -659,13 +673,15 @@ exports.load = function load(window, outerEvent) {
 
 	function saveSingleLink(turbo, url, elem) {
 		const owner = elem.ownerDocument;
+		let defaultDescription = trimMore(owner.title || "");
+
 		url = Services.io.newURI(url, owner.characterSet, null);
 		let ml = DTA.getLinkPrintMetalink(url);
 		url = new DTA.URL(ml ? ml : url);
 
 		const item = {
 			"url": url,
-			"description": extractDescription(elem),
+			"description": extractDescription(elem) || defaultDescription,
 			"referrer": DTA.getRef(owner),
 			"isPrivate": isWindowPrivate(window)
 		};
@@ -749,7 +765,8 @@ exports.load = function load(window, outerEvent) {
 			}
 
 			let ref = DTA.getRef(document.commandDispatcher.focusedWindow.document);
-			let desc = extractDescription(form);
+			let defaultDescription = trimMore(document.commandDispatcher.focusedWindow.document.title || "");
+			let desc = extractDescription(form) || defaultDescription;
 
 			let item = {
 				"url": action,
