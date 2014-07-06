@@ -63,6 +63,8 @@ pref("extensions.dta.sparsefiles", false);
 pref("extensions.dta.autosegments", true);
 pref("extensions.dta.notification2", 2);
 pref("extensions.dta.usesysalerts", false);
+pref("extensions.dta.seriesdigits", 3);
+
 // Non-customizable-toolbar specific
 pref("extensions.dta.tb.buttons", "1,1,0");
 

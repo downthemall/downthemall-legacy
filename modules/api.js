@@ -516,13 +516,19 @@ const Series = {
 	increment: function() {
 		let rv = this.value;
 		let store = rv;
-		if (++store > 999) {
+		if (++store > this._max) {
 			store = 1;
 		}
 		this.value = store;
 		return rv;
+	},
+	observe: function(s, t, d) {
+		this._digits = Preferences.getExt("seriesdigits", 3);
+		this._max = Math.pow(10, this._digits) - 1;
 	}
 };
+Preferences.addObserver("extensions.dta.seriesdigits", Series);
+Series.observe();
 
 exports.currentSeries = function currentSeries() Series.value;
 exports.incrementSeries = function incrementSeries() Series.increment();
