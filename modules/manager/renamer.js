@@ -4,12 +4,22 @@
 "use strict";
 
 const {formatNumber} = require("utils");
+const Prefs = require("preferences");
 const {
 	replaceSlashes,
 	getUsablePath,
 	getUsableFileName,
 	getUsableFileNameWithFlatten
 } = require("support/stringfuncs");
+
+var seriesDigits;
+
+Prefs.addObserver("extensions.dta.seriesdigits", ({
+	observe: function() {
+		seriesDigits = Prefs.getExt("seriesdigits", 3);
+		return this;
+	}
+}).observe());
 
 const expr = /\*\w+\*/gi;
 
@@ -35,8 +45,8 @@ const Renamer = {
 	get flatreferdirs() this._o.referrerUrlManager ? getUsableFileNameWithFlatten(this._o.maskReferrerURLPath) : '',
 	get refername() this._o.referrerFileNameAndExtension ? this._o.referrerFileNameAndExtension.name : '',
 	get referext() this._o.referrerFileNameAndExtension ? this._o.referrerFileNameAndExtension.extension : '',
-	get num() formatNumber(this._o.bNum),
-	get inum() formatNumber(this._o.iNum),
+	get num() formatNumber(this._o.bNum, seriesDigits),
+	get inum() formatNumber(this._o.iNum, seriesDigits),
 	get hh() formatNumber(this._o.startDate.getHours(), 2),
 	get mm() formatNumber(this._o.startDate.getMinutes(), 2),
 	get ss() formatNumber(this._o.startDate.getSeconds(), 2),
