@@ -28,8 +28,8 @@ exports.unloadWindow = function unloadWindow(window, fn) {
 // Watch for new browser windows opening then wait for it to load
 var watchers = new Map();
 function runOnLoad(window) {
-	window.addEventListener("load", function windowWatcher_onload() {
-		window.removeEventListener("load", windowWatcher_onload, false);
+	window.addEventListener("DOMContentLoaded", function windowWatcher_onload() {
+		window.removeEventListener("DOMContentLoaded", windowWatcher_onload, false);
 		let _w = watchers.get(window.location.toString());
 		if (!_w || !_w.length) {
 			return;
@@ -148,20 +148,9 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 			}
 
 			// Add all overlays
-			var tb = $("nav-bar");
-			tb = tb && tb.toolbox;
 			for (let node of xul.nodes) {
 				let id = node.getAttribute("id");
-				let target = null;
-				if (id === "BrowserToolbarPalette" && tb) {
-					target = tb.palette;
-				}
-				if (!target) {
-					target = $(id);
-				}
-				if (!target && tb) {
-					target = tb.palette.querySelector("#" + id);
-				}
+				let target = $(id);
 				if (!target) {
 					log(LOG_DEBUG, "no target for " + id + ", not inserting");
 					continue;
