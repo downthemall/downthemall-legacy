@@ -21,9 +21,10 @@ function onmessage({data}) {
 	}
 	_jobs.delete(data.jobid);
 	if (data.error) {
-		let e = new Error(data.error.message, data.error.fileName, data.error.lineNumber);
-		e.unixErrno = data.error.unixErrno;
-		e.winLastError = data.error.winLastError;
+		let e = new Error(data.error.message || "<unknown error>", data.error.fileName, data.error.lineNumber);
+		e.unixErrno = data.error.unixErrno || 0;
+		e.winLastError = data.error.winLastError || 0;
+		log(LOG_ERROR, "Failed to move file", e);
 		job.reject(e);
 		return;
 	}
