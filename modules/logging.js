@@ -113,7 +113,7 @@ function getTimeString() {
 		fmt(time.getMilliseconds());
 }
 exports.log = function(level, message, exception) {
-	if (global.level > level)  {
+	if (global.level > level && level < exports.LOG_ERROR)  {
 		return;
 	}
 	try {
@@ -187,9 +187,11 @@ exports.log = function(level, message, exception) {
 			lineNumber + ":" +
 			columnNumber + "\n";
 
-		var f = new Instances.FileOutputStream(global.file, 0x04 | 0x08 | 0x10, parseInt("664", 8), 0);
-		f.write(message, message.length);
-		f.close();
+		if (global.level <= level) {
+			let f = new Instances.FileOutputStream(global.file, 0x04 | 0x08 | 0x10, parseInt("664", 8), 0);
+			f.write(message, message.length);
+			f.close();
+		}
 	}
 	catch (ex) {
 		Cu.reportError("failed to log");
