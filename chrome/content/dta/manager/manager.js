@@ -949,30 +949,6 @@ const Dialog = {
 			}
 		};
 	})(),
-	_pending: [],
-	registerPending: function(download) {
-		let i = this._pending.indexOf(download);
-		if (i < 0) {
-			this._pending.push(download);
-		}
-	},
-	unregisterPending: function(download) {
-		let i = this._pending.indexOf(download);
-		if (i > -1) {
-			this._pending.splice(i, 1);
-		}
-	},
-	checkSameName: function(download, path) {
-		for (let p of this._pending) {
-			if (p === download) {
-				continue;
-			}
-			if (p.destinationFile == path) {
-				return true;
-			}
-		}
-		return false;
-	},
 	scheduler: null,
 	startNext: function() {
 		try {
@@ -1919,65 +1895,72 @@ QueueItem.prototype = {
 		this.setState(FINISHING);
 		this.status = TextCache_MOVING;
 
-		if (!(yield ConflictManager.resolve(this))) {
+		if (!(yield this.resolveConflicts())) {
 			return;
 		}
-		let destination = new Instances.LocalFile(this.destinationPath);
-		yield Utils.makeDir(destination, Prefs.dirPermissions);
-		log(LOG_INFO, this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
-		let df = destination.clone();
-		df.append(this.destinationName);
+		let pinned = this.destinationFile;
+		ConflictManager.pin(pinned);
 		try {
-			yield OS.File.remove(df.path);
-		}
-		catch (ex) {
-			// no op
-		}
-		// move file
-		if (this.compression) {
-			this.status = TextCache_DECOMPRESSING;
-			let compressDeferred = Promise.defer();
-			new Decompressor(this, function(ex) {
-				Dialog.unregisterPending(this);
-				if (ex) {
-					compressDeferred.reject(ex);
-				}
-				else {
-					compressDeferred.resolve(true);
-				}
-			});
-			yield compressDeferred.promise;
+			let destination = new Instances.LocalFile(this.destinationPath);
+			yield Utils.makeDir(destination, Prefs.dirPermissions);
+			log(LOG_INFO, this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
+			let df = destination.clone();
+			df.append(this.destinationName);
+			try {
+				yield OS.File.remove(df.path);
+			}
+			catch (ex) {
+				// no op
+			}
+			// move file
+			if (this.compression) {
+				this.status = TextCache_DECOMPRESSING;
+				let compressDeferred = Promise.defer();
+				new Decompressor(this, function(ex) {
+					if (ex) {
+						compressDeferred.reject(ex);
+					}
+					else {
+						compressDeferred.resolve(true);
+					}
+				});
+				yield compressDeferred.promise;
+				throw new Task.Result(true);
+			}
+			let moveDeferred = Promise.defer();
+			let move = function(self, x) {
+				let df = destination.clone();
+				df.append(self.destinationName);
+				moveFile(self.tmpFile.path, df.path).then(function() {
+					moveDeferred.resolve(true);
+				}, function(ex) {
+					if ((ex.unixErrno && ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) || (ex.winLastError && ex.winLastError == 3)) {
+						try {
+							self.shortenName();
+							ConflictManager.unpin(pinned);
+							pinned = self.destinationFile;
+							ConflictManager.pin(pinned);
+						}
+						catch (iex) {
+							log(LOG_ERROR, "Failed to shorten name", ex);
+						}
+					}
+					log(LOG_ERROR, ex);
+					x = x || 1;
+					if (x > 5) {
+						moveDeferred.reject(ex);
+						return;
+					}
+					setTimeoutOnlyFun(function() move(self, ++x), x * 250);
+				})
+			};
+			move(this);
+			yield moveDeferred.promise;
 			throw new Task.Result(true);
 		}
-		let moveDeferred = Promise.defer();
-		let move = function(self, x) {
-			let df = destination.clone();
-			df.append(self.destinationName);
-			moveFile(self.tmpFile.path, df.path).then(function() {
-				Dialog.unregisterPending(self);
-				moveDeferred.resolve(true);
-			}, function(ex) {
-				if ((ex.unixErrno && ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) || (ex.winLastError && ex.winLastError == 3)) {
-					try {
-						self.shortenName();
-					}
-					catch (iex) {
-						log(LOG_ERROR, "Failed to shorten name", ex);
-					}
-				}
-				log(LOG_ERROR, ex);
-				x = x || 1;
-				if (x > 5) {
-					Dialog.unregisterPending(self);
-					moveDeferred.reject(ex);
-					return;
-				}
-				setTimeoutOnlyFun(function() move(self, ++x), x * 250);
-			})
-		};
-		move(this);
-		yield moveDeferred.promise;
-		throw new Task.Result(true);
+		finally {
+			ConflictManager.unpin(pinned);
+		}
 	},
 	handleMetalink: function() {
 		try {
@@ -2220,7 +2203,7 @@ QueueItem.prototype = {
 		this._icon = null;
 	},
 	resolveConflicts: function() {
-		ConflictManager.resolve(this);
+		return ConflictManager.resolve(this);
 	},
 	checkSpace: function(required) {
 		// Do not check for small files < 16M
@@ -2691,114 +2674,136 @@ XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
 });
 
 const ConflictManager = {
-	_items: new WeakMap(),
+	_items: new Map(),
+	_queue: [],
+	_pinned: new Set(),
 	resolve: function(download) {
-		if (this._processing && this._processing.download === download) {
-			return this._processing.deferred.promise;
-		}
 		let promise = this._items.get(download);
 		if (promise) {
-			return promise;
+			return promise.promise;
 		}
-		promise = Task.spawn(this._processOne.bind(this, download));
+		promise = Promise.defer();
 		this._items.set(download, promise);
-		return promise;
+		this._queue.push(download);
+		this._processNext();
+		return promise.promise;
+	},
+	pin: function(name) {
+		this._pinned.add(name);
+	},
+	unpin: function(name) {
+		this._pinned.delete(name);
+	},
+	_processNext: function() {
+		log(LOG_DEBUG, "Resolving next");
+		if (this._processing) {
+			log(LOG_DEBUG, "Resolving rescheduling");
+			return;
+		}
+		let download = this._queue.shift();
+		if (!download) {
+			return;
+		}
+		let p = this._items.get(download);
+		this._items.delete(download);
+
+		this._processing = true;
+		Task.spawn(function() {
+			try {
+				p.resolve(yield this._processOne(download));
+			}
+			catch (ex) {
+				log(LOG_ERROR, "Failed to resolve", ex);
+				p.reject(ex);
+			}
+			finally {
+				this._processing = false;
+				setTimeoutOnlyFun(this._processNext.bind(this), 0);
+			}
+		}.bind(this));
 	},
 	_processOne: function(download) {
-		try {
-			log(LOG_DEBUG, "Starting conflict resolution for " + download);
-			let dest = download.destinationLocalFile;
-			let exists = Dialog.checkSameName(download, download.destinationFile);
-			if (!exists) {
-				exists = yield OS.File.exists(dest.path);
-			}
-			if (!exists) {
-				log(LOG_DEBUG, "Does not exist " + download);
-				throw new Task.Result(true);
-			}
+		log(LOG_DEBUG, "Starting conflict resolution for " + download);
+		let dest = download.destinationLocalFile;
+		let exists = this._pinned.has(this.destinationFile);
+		if (!exists) {
+			exists = yield OS.File.exists(dest.path);
+		}
+		if (!exists) {
+			log(LOG_DEBUG, "Does not exist " + download);
+			throw new Task.Result(true);
+		}
 
-			let cr = -1;
+		let cr = -1;
 
-			let conflicts = download.conflicts || 0;
-			let basename = download.destinationName;
-			let newDest = download.destinationLocalFile.clone();
+		let conflicts = download.conflicts || 0;
+		let basename = download.destinationName;
+		let newDest = download.destinationLocalFile.clone();
 
-			if (Prefs.conflictResolution !== 3) {
-				cr = Prefs.conflictResolution;
-			}
-			else if (download.shouldOverwrite) {
-				cr = 1;
-			}
-			else if ('_sessionSetting' in this) {
-				if (this._dialog) {
-					// Another dialog open: Wait for it to close.
-					log(LOG_ERROR, "Already open2");
-					yield this._dialog.promise;
+		if (Prefs.conflictResolution !== 3) {
+			cr = Prefs.conflictResolution;
+		}
+		else if (download.shouldOverwrite) {
+			cr = 1;
+		}
+		else if ('_sessionSetting' in this) {
+			cr = this._sessionSetting;
+		}
+
+		if (cr < 0) {
+			let dialog = Promise.defer();
+			for (;; ++conflicts) {
+				newDest.leafName = Utils.formatConflictName(basename, conflicts);
+				exists = this._pinned.has(newDest.path);
+				if (!exists) {
+					exists = yield OS.File.exists(newDest.path);
 				}
-				cr = this._sessionSetting;
-			}
-
-			if (cr < 0) {
-				if (this._dialog) {
-					// Another dialog open: Wait for it to close.
-					log(LOG_ERROR, "Already open");
-					yield this._dialog.promise;
-				}
-				this._dialog = Promise.defer();
-				try {
-					let options = {
-						url: Utils.cropCenter(download.urlManager.usable, 45),
-						fn: Utils.cropCenter(download.destinationName, 45),
-						newDest: Utils.cropCenter(newDest.leafName, 45)
-					};
-					window.openDialog(
-						"chrome://dta/content/dta/manager/conflicts.xul",
-						"_blank",
-						"chrome,centerscreen,resizable=no,dialog,close=no,dependent",
-						options, this._dialog
-						);
-					let ctype = 0;
-					[cr, ctype] = yield this._dialog.promise;
-
-					if (ctype === 1) {
-						this._sessionSetting = cr;
-					}
-					else if (ctype === 2) {
-						Preferences.setExt('conflictresolution', cr);
-					}
-				}
-				finally {
-					delete this._dialog;
+				if (!exists) {
+					break;
 				}
 			}
+			let options = {
+				url: Utils.cropCenter(download.urlManager.usable, 45),
+				fn: Utils.cropCenter(newDest.leafName, 45),
+				newDest: Utils.cropCenter(newDest.leafName, 45)
+			};
+			window.openDialog(
+				"chrome://dta/content/dta/manager/conflicts.xul",
+				"_blank",
+				"chrome,centerscreen,resizable=no,dialog,close=no,dependent",
+				options, dialog
+				);
+			let ctype = 0;
+			[cr, ctype] = yield dialog.promise;
 
-			switch (cr) {
-				case 0:
-					for (;; ++conflicts) {
-						newDest.leafName = Utils.formatConflictName(basename, conflicts);
-						exists = Dialog.checkSameName(download, newDest.path);
-						if (!exists) {
-							exists = yield OS.File.exists(newDest.path);
-						}
-						if (!exists) {
-							break;
-						}
-					}
-					download.conflicts = conflicts;
-					Dialog.registerPending(download);
-					throw new Task.Result(true);
-				case 1:
-					download.shouldOverwrite = true;
-					Dialog.registerPending(download);
-					throw new Task.Result(true);
-				default:
-					download.cancel(_('skipped'));
-					throw new Task.Result(false);
+			if (ctype === 1) {
+				this._sessionSetting = cr;
+			}
+			else if (ctype === 2) {
+				Preferences.setExt('conflictresolution', cr);
 			}
 		}
-		finally {
-			log(LOG_DEBUG, "Resolved: " + download);
-			this._items.delete(download);
+
+		switch (cr) {
+			case 0:
+				for (;; ++conflicts) {
+					newDest.leafName = Utils.formatConflictName(basename, conflicts);
+					exists = this._pinned.has(newDest.path);
+					if (!exists) {
+						exists = yield OS.File.exists(newDest.path);
+					}
+					if (!exists) {
+						break;
+					}
+				}
+				download.conflicts = conflicts;
+				throw new Task.Result(true);
+			case 1:
+				download.shouldOverwrite = true;
+				throw new Task.Result(true);
+			default:
+				download.cancel(_('skipped'));
+				throw new Task.Result(false);
 		}
 	}
 };
