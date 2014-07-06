@@ -4,7 +4,6 @@
 	- file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
 <!-- avoid flickering while the main stylesheet loads -->
-<?xml-stylesheet href="data:text/css, .dta-toolbarbutton { list-style-image: none; }" type="text/css"?>
 <?xml-stylesheet href="chrome://dta/skin/integration/style.css" type="text/css"?>
 
 <!DOCTYPE overlay [

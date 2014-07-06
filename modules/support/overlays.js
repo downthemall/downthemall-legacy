@@ -131,10 +131,20 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 			let unloaders = [];
 
 			// apply styles
-			for (let data of xul.styles) {
-				let ss = document.createProcessingInstruction("xml-stylesheet", data);
-				document.insertBefore(ss, document.documentElement);
-				unloaders.push(function() ss.parentNode.removeChild(ss));
+			if (window instanceof Ci.nsIInterfaceRequestor) {
+				let winUtils = window.getInterface(Ci.nsIDOMWindowUtils);
+				for (let data of xul.styles) {
+					try {
+						let uri = Services.io.newURI(data, null, null);
+						winUtils.loadSheet(uri, Ci.nsIDOMWindowUtils.AUTHOR_SHEET);
+						unloaders.push(function() {
+							winUtils.removeSheet(uri, Ci.nsIDOMWindowUtils.AUTHOR_SHEET);
+						});
+					}
+					catch (ex) {
+						log(LOG_ERROR, "failed to load sheet: " + data, ex);
+					}
+				}
 			}
 
 			// Add all overlays
@@ -212,7 +222,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 			if (n.nodeType !== 7 || n.target !== "xml-stylesheet") {
 				continue;
 			}
-			xul.styles.push(n.data);
+			xul.styles.push(n.data.replace(/^.*href=(["'])(.*?)\1.*$/, "$2"));
 		}
 		for (let n = doc.documentElement.firstChild; n; n = n.nextSibling) {
 			if (n.nodeType !== n.ELEMENT_NODE || !n.hasAttribute("id")) {
