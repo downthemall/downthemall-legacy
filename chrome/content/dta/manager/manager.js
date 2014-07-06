@@ -128,7 +128,7 @@ const Dialog = {
 	_running: [],
 	_autoClears: [],
 	completed: 0,
-	totalbytes: 0,
+	totalBytes: 0,
 	init: function() {
 		Prefs.init();
 
@@ -1466,7 +1466,7 @@ QueueItem.prototype = {
 		if (this._fileName === nv || this.fileNameFromUser) {
 			return nv;
 		}
-		log(LOG_ERROR, "fn is " + this._fileName + " nv: " + nv);
+		log(LOG_DEBUG, "fn is " + this._fileName + " nv: " + nv);
 		this._fileName = nv;
 		delete this._fileNameAndExtension;
 		this.rebuildDestination();
@@ -1965,7 +1965,7 @@ QueueItem.prototype = {
 						log(LOG_ERROR, "Failed to shorten name", ex);
 					}
 				}
-				log(LOG_DEBUG, ex);
+				log(LOG_ERROR, ex);
 				x = x || 1;
 				if (x > 5) {
 					Dialog.unregisterPending(self);

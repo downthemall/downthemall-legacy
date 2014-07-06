@@ -130,7 +130,7 @@ LRUMap.prototype = Object.freeze({
 	dlsg("wintaskbar", "@mozilla.org/windows-taskbar;1", "nsIWinTaskbar");
 	dlsg("clipboardhelper", "@mozilla.org/widget/clipboardhelper;1", "nsIClipboardHelper");
 	dlsg("pps", "@mozilla.org/network/protocol-proxy-service;1", "nsIProtocolProxyService");
-	dlsg("sysprincipal", "@mozilla.org/systemprincipal;1", "nsIPrincipal")
+	dlsg("sysprincipal", "@mozilla.org/systemprincipal;1", "nsIPrincipal");
 
 	const Instances = exports.Instances = {};
 

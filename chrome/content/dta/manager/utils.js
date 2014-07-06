@@ -391,6 +391,10 @@ const Tooltip = {
 		}
 		this.updateMetrics(file);
 
+		if (!file || !file.speeds) {
+			return;
+		}
+
 		if (!this._mustDraw &&
 			file === this._file &&
 			file.speeds.lastUpdate === this._update &&
