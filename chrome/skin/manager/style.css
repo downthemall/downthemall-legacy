@@ -312,7 +312,8 @@ tooltip textbox.plain {
 	width: 100%;
 	font-size: 14px;
 	font-weight: bold;
-	color: black !important;
+	text-shadow: 1px 1px 0px #d7ff85 !important;
+	color: #252525 !important;
 }
 #infoDest {
 	font-weight: bold !important;
