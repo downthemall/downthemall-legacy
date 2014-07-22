@@ -128,6 +128,7 @@ const Dialog = {
 	_running: [],
 	_autoClears: [],
 	completed: 0,
+	finishing: 0,
 	totalBytes: 0,
 	init: function() {
 		Prefs.init();
@@ -995,7 +996,9 @@ const Dialog = {
 					log(LOG_ERROR, "FIXME: scheduler returned unqueued download");
 					continue;
 				}
-				this.run(d);
+				if (!this.run(d)) {
+					break;
+				}
 				rv = true;
 			}
 			return rv;
@@ -1007,7 +1010,7 @@ const Dialog = {
 	},
 	run: function(download, forced) {
 		if (this.offline) {
-			return;
+			return false;
 		}
 		download.forced = !!forced;
 		download.status = TextCache_STARTING;
@@ -1018,7 +1021,10 @@ const Dialog = {
 			download.partialSize = download.totalSize;
 			log(LOG_INFO, "Download seems to be complete; likely a left-over from a crash, finish it:" + download);
 			download.finishDownload();
-			return;
+			return true;
+		}
+		if (this.finishing > Prefs.maxInProgress * 4) {
+			return false;
 		}
 		download.timeLastProgress = Utils.getTimestamp();
 		download.timeStart = Utils.getTimestamp();
@@ -1036,6 +1042,7 @@ const Dialog = {
 		this._running.push(download);
 		download.prealloc();
 		download.resumeDownload();
+		return true;
 	},
 	wasStopped: function(download) {
 		let idx = this._running.indexOf(download);
@@ -1387,7 +1394,11 @@ QueueItem.prototype = {
 			// set up the bucket
 			this._bucket = new ByteBucket(this.speedLimit, 1.7);
 		}
+		else if (this.state === FINISHING) {
+			++Dialog.finishing;
+		}
 		else if (this.state === COMPLETE) {
+			--Dialog.finishing;
 			++Dialog.completed;
 		}
 		Dialog.signal(this);
