@@ -34,12 +34,20 @@ test("exports", function() {
 	};
 
 	var run_multiple = function(item, tests) {
-		const rename = createRenamer(item);
-		for (var i of ["first run ", "second run"]) {
-			for (var [mask, res] in Iterator(tests)) {
-				res = normalizeSlashes(res);
-				strictEqual(normalizeSlashes(rename(mask)), res, i + mask + " = " + res);
+		var prefs = require("preferences");
+		var restore = prefs.getExt("seriesdigits", 3);
+		try {
+			prefs.setExt("seriesdigits", 3);
+			const rename = createRenamer(item);
+			for (var i of ["first run ", "second run"]) {
+				for (var [mask, res] in Iterator(tests)) {
+					res = normalizeSlashes(res);
+					strictEqual(normalizeSlashes(rename(mask)), res, i + mask + " = " + res);
+				}
 			}
+		}
+		finally {
+			prefs.setExt("seriesdigits", restore);
 		}
 	};
 
