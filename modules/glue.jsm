@@ -170,15 +170,15 @@ LRUMap.prototype = Object.freeze({
 	itor("ZipReader", "@mozilla.org/libjar/zip-reader;1", "nsIZipReader", "open");
 
 	const {SELF_PATH, BASE_PATH} = (function() {
-	let rv;
-	try { throw new Error("narf"); }
-	catch (ex) {
-		rv = {
-			SELF_PATH: ex.fileName,
-			BASE_PATH: /^(.+\/).*?$/.exec(ex.fileName)[1]
-		};
-	}
-	return rv;
+		let rv;
+		try { throw new Error("narf"); }
+		catch (ex) {
+			rv = {
+				SELF_PATH: ex.fileName,
+				BASE_PATH: /^(.+\/).*?$/.exec(ex.fileName)[1]
+			};
+		}
+		return rv;
 	})();
 	exports.BASE_PATH = BASE_PATH;
 
@@ -260,8 +260,54 @@ LRUMap.prototype = Object.freeze({
 		};
 	};
 
-	exports.require = function require(module) {
-		module = BASE_PATH + module + ".js";
+	const require_prefixes = new Map();
+	require_prefixes.set(undefined, BASE_PATH);
+	require_prefixes.set(null, BASE_PATH);
+	require_prefixes.set("testsupport", BASE_PATH + "tests/");
+
+	const require = function require(base, module) {
+		let path = module.split("/").filter(e => !!e);
+		if (!path || !path.length) {
+			throw new Error("Invalid module path");
+		}
+		if (path[0] == "." || path[0] == "..") {
+			path = base.split("/").filter(e => !!e).concat(path);
+		}
+		for (let i = path.length - 2; i >= 0; --i) {
+			if (path[i] == ".") {
+				path.splice(i, 1);
+				continue;
+			}
+			if (path[i] != "..") {
+				continue;
+			}
+			if (i == 0) {
+				throw new Error("Invalid traversal");
+			}
+			path.splice(i - 1, 2);
+		}
+		let file = path.pop();
+		if (file == ".." || file == ".") {
+			throw new Error("Invalid traversal");
+		}
+		base = path.join("/");
+		let id = (!!base && [base, file].join("/")) || file;
+
+		let prefix;
+		if (path.length) {
+			prefix = require_prefixes.get(path[0]);
+			if (prefix) {
+				path.shift();
+			}
+		}
+		if (!prefix) {
+			prefix = require_prefixes.get();
+		}
+		if (prefix) {
+			path.unshift(prefix.replace(/\/$/, ""));
+		}
+		path.push(file);
+		module = path.join("/") + ".js";
 
 		// already loaded?
 		let scope = _registry.get(module);
@@ -272,6 +318,22 @@ LRUMap.prototype = Object.freeze({
 		// try to load the module
 		scope = Object.create(exports);
 		scope.exports = Object.create(null);
+		scope.require = require.bind(null, base);
+		scope.requireJoined = requireJoined.bind(null, base);
+		scope.module = {};
+		Object.defineProperty(scope.module, "id", {
+			value: id,
+			enumerable: true
+		});
+		Object.defineProperty(scope.module, "relid", {
+			value: "./" + file,
+			enumerable: true
+		});
+		Object.defineProperty(scope.module, "uri", {
+			value: module,
+			enumerable: true
+		});
+
 		try {
 			scope = Cu.Sandbox(Services.sysprincipal, {
 				sandboxName: module,
@@ -282,7 +344,23 @@ LRUMap.prototype = Object.freeze({
 			scope._Promise = scope.Promise;
 			delete scope.Promise;
 
-			Services.scriptloader.loadSubScript(module, scope);
+			// Add to registry write now to enable resolving cyclic dependencies.
+			_registry.set(module, scope);
+			try {
+				Services.scriptloader.loadSubScript(module, scope);
+				if (!("exports" in scope) || !scope.exports) {
+					throw new Error("Invalid exports in module");
+				}
+			}
+			catch (ex) {
+				// Don't get half-loaded modules around!
+				_registry.delete(module);
+				throw new Error(
+					"Failed to load module " + id + " from: " + module + "\n" + (ex.message || ex.toString()),
+					ex.fileName || ex.filename,
+					ex.lineNumber  || ex.linenumber || ex.lineno
+					);
+			}
 		}
 		catch (ex) {
 			log(LOG_ERROR, "failed to load " + module, ex);
@@ -293,12 +371,17 @@ LRUMap.prototype = Object.freeze({
 
 		return scope.exports;
 	};
-	exports.requireJoined = function requireJoined(where, module) {
-		module = require(module);
+
+	const requireJoined = function requireJoined(base, where, module) {
+		module = require(base, module);
 		for (let k of Object.getOwnPropertyNames(module)) {
 			Object.defineProperty(where, k, Object.getOwnPropertyDescriptor(module, k));
 		}
 	};
+
+	exports.require = require.bind(null, "");
+	exports.requireJoined = requireJoined.bind(null, "");
+
 	exports.requireJSM = function requireJSM(mod) {
 		let _m = {};
 		Cu.import(mod, _m);
@@ -307,12 +390,12 @@ LRUMap.prototype = Object.freeze({
 	};
 
 	// init autoloaded modules
-	const logging = require("logging");
+	const logging = exports.require("logging");
 	for (let k of Object.keys(logging)) {
 		exports[k] = logging[k];
 		exports.EXPORTED_SYMBOLS.push(k);
 	}
-	const {getExt, setExt, addObserver} = require("preferences");
+	const {getExt, setExt, addObserver} = exports.require("preferences");
 	const LogPrefObs = {
 		observe: function(s,t,d) {
 			logging.setLogLevel(getExt("logging") ? logging.LOG_DEBUG : logging.LOG_NONE);
@@ -320,14 +403,14 @@ LRUMap.prototype = Object.freeze({
 	};
 	addObserver("extensions.dta.logging", LogPrefObs);
 	LogPrefObs.observe();
-	require("version").getInfo(function setupVersion(v) {
+	exports.require("version").getInfo(function setupVersion(v) {
 		log(
 			LOG_INFO,
 			v.NAME + "/" + v.VERSION + " on " + v.APP_NAME + "/" + v.APP_VERSION + " (" + v.LOCALE + " / " + v.OS + ") ready"
 			);
 	});
 	try {
-		require("main").main();
+		exports.require("main").main();
 	}
 	catch (ex) {
 		log(LOG_ERROR, "main failed to run", ex);

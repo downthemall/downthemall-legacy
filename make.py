@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 import os
-import sys
 import re
+import sys
 
-from optparse import OptionParser
-from warnings import warn
-from io import BytesIO
-from zipfile import ZipFile, ZIP_STORED, ZIP_DEFLATED
-from glob import glob
 from fnmatch import fnmatch
-from time import strftime
-from xml.dom.minidom import parseString as XML
 from functools import wraps
+from glob import glob
+from io import BytesIO
+from optparse import OptionParser
+from time import strftime
+from warnings import warn
+from xml.dom.minidom import parseString as XML
+from zipfile import ZipFile, ZIP_STORED, ZIP_DEFLATED
 
 try:
     from xpisign.context import ZipFileMinorCompression as _Minor
@@ -110,7 +110,7 @@ FILES = ("install.rdf",
          "modules/manager/",
          "modules/support/",
          )
-TESTS = ("modules/testsupport/",
+TESTS = ("modules/tests/",
          "tests"
          )
 EXCLUDED = ("chrome/locale/*/landingpage.dtd",
@@ -252,7 +252,7 @@ def localize(fp, **kw):
                 k = k[-2] if len(k[-1]) < 3 else k[-1]
                 if not k or not v:
                     continue
-                if not k in locale:
+                if k not in locale:
                     locale[k] = list()
                 locale[k] += v,
         locales += locale,
