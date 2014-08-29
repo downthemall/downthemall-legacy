@@ -977,11 +977,6 @@ const Tree = {
 					// un-removable :p
 					return;
 				}
-				// wipe out any info/tmpFiles
-				if (!d.isOf(COMPLETE | CANCELED)) {
-					d.deleting = true;
-					d.cancel();
-				}
 				this._downloads.splice(d.position, 1);
 				this._box.rowCountChanged(d.position, -1);
 				last = Math.max(d.filteredPosition, last);
@@ -990,6 +985,11 @@ const Tree = {
 				}
 				if (!d.isOf(RUNNING | PAUSED)) {
 					Dialog.wasRemoved(d);
+				}
+				// wipe out any info/tmpFiles
+				if (!d.isOf(COMPLETE | CANCELED)) {
+					d.deleting = true;
+					d.cancel();
 				}
 				d.cleanup();
 			}
