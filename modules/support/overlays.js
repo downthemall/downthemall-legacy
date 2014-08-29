@@ -151,6 +151,10 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 			for (let node of xul.nodes) {
 				let id = node.getAttribute("id");
 				let target = $(id);
+				if (!target && id === "BrowserToolbarPalette") {
+					target = $("navigator-toolbox");
+					target = target && target.palette;
+				}
 				if (!target) {
 					log(LOG_DEBUG, "no target for " + id + ", not inserting");
 					continue;

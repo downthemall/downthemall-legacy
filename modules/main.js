@@ -285,9 +285,7 @@ function registerOverlays() {
 			log(LOG_DEBUG, "Fire!");
 			fire._runUnloaders();
 
-			Components.utils.import("chrome://dta-modules/content/glue.jsm", {})
-				.require("loaders/integration")
-				.load(window, event);
+			require("loaders/integration").load(window, event);
 		}
 		function _maybeInsertButtons(ids, attr) {
 			function persist(tb, attr) {
