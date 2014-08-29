@@ -7,8 +7,8 @@ const {
 	createOptimizedImplementation
 } = require("support/optimpl");
 
-const {prealloc: _asynccopier} = require("manager/preallocator/asynccopier");
-const {prealloc: _cothread} = require("manager/preallocator/cothread");
+const {prealloc: _asynccopier} = require("./preallocator/asynccopier");
+const {prealloc: _cothread} = require("./preallocator/cothread");
 
 const {Promise} = require("support/promise");
 

@@ -142,6 +142,6 @@ exports.getHistory = function getHistory(key, isPrivate) {
 	return _histories[key];
 };
 
-require("support/pbm").registerPrivatePurger(function purgePrivateHistories() {
+require("./pbm").registerPrivatePurger(function purgePrivateHistories() {
 	_privateHistories = {};
 });

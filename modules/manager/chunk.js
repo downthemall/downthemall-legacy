@@ -7,12 +7,12 @@
 requireJoined(this, "constants");
 const Prefs = require("preferences");
 const {ByteBucketTee} = require("support/bytebucket");
-const {GlobalBucket} = require("manager/globalbucket");
+const {GlobalBucket} = require("./globalbucket");
 const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
 const {getTimestamp, formatNumber, makeDir} = require("utils");
 const {Promise, Task} = require("support/promise");
-const {memoryReporter} = require("manager/memoryreporter");
+const {memoryReporter} = require("./memoryreporter");
 
 const Timers = new TimerManager();
 

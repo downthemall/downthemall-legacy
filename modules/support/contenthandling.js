@@ -17,11 +17,11 @@ const {
 	registerPrivatePurger,
 	unregisterPrivatePurger,
 	isChannelPrivate
-} = require("support/pbm");
+} = require("./pbm");
 
-const obs = require("support/observers");
+const obs = require("./observers");
 
-const {modifyURL} = require("support/requestmanipulation");
+const {modifyURL} = require("./requestmanipulation");
 
 
 function ContextLRUMap(num) {

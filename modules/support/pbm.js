@@ -4,7 +4,7 @@
 "use strict";
 
 const {filterInSitu} = require("utils");
-const obs = require("support/observers");
+const obs = require("./observers");
 
 /**
  * Determines if a window is private

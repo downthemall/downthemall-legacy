@@ -3,10 +3,10 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const {Atoms} = require("support/atoms");
-const Timers = new (require("support/timers").TimerManager)();
-const {getIcon} = require("support/icons");
-const {getExtension} = require("support/stringfuncs");
+const {Atoms} = require("./atoms");
+const Timers = new (require("./timers").TimerManager)();
+const {getIcon} = require("./icons");
+const {getExtension} = require("./stringfuncs");
 
 function FileExtensionSheet(window) {
 	this.hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
