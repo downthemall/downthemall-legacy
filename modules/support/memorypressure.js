@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const obs = require("support/observers");
+const obs = require("./observers");
 
 const Observer = Object.freeze({
 	observers: new Set(),

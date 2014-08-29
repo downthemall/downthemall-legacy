@@ -5,7 +5,7 @@
 
 const Prefs = require("preferences");
 const {QUEUED} = require("constants");
-const {TimerManager} = require("support/timers");
+const {TimerManager} = require("./timers");
 
 //Add some helpers to Date
 //Note to reviewers: Our scope, our rules ;)
@@ -49,7 +49,7 @@ const Observer = {
 		}
 	},
 	openManager: function() {
-		let wnd = require("support/mediator").getMostRecent();
+		let wnd = require("./mediator").getMostRecent();
 		if (!wnd) {
 			Timers.createOneshot(1000, this.openManager.bind(this));
 			return;

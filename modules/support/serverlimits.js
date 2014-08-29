@@ -6,9 +6,9 @@
 
 const Prefs = require("preferences");
 requireJoined(this, "constants");
-const {ByteBucket} = require("support/bytebucket");
+const {ByteBucket} = require("./bytebucket");
 const {filterInSitu} = require("utils");
-const obs = require("support/observers");
+const obs = require("./observers");
 
 const TOPIC = 'DTA:serverlimits-changed';
 const PREFS = 'extensions.dta.serverlimit.';

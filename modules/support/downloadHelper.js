@@ -7,11 +7,11 @@ const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 if (available) {
 	/* global api, getUsableFileNameWithFlatten, utils, bundle, isWindowPrivate */
 	lazy(this, "api", function() require("api"));
-	lazy(this, "getUsableFileNameWithFlatten", function() require("support/stringfuncs").getUsableFileNameWithFlatten);
+	lazy(this, "getUsableFileNameWithFlatten", function() require("./stringfuncs").getUsableFileNameWithFlatten);
 	lazy(this, "utils", function() require("utils"));
 	lazy(this, "bundle",
 		function() new (require("utils").StringBundles)(["chrome://dta/locale/downloadHelper.properties"]));
-	lazy(this, "isWindowPrivate", function() require("support/pbm").isWindowPrivate);
+	lazy(this, "isWindowPrivate", function() require("./pbm").isWindowPrivate);
 
 	const core = Cc["@downloadhelper.net/core;1"].getService(Ci.dhICore);
 

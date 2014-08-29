@@ -3,8 +3,8 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const {defer} = require("support/defer");
-const obs = require("support/observers");
+const {defer} = require("./defer");
+const obs = require("./observers");
 
 /**
  * Specialized unloader that will trigger whenever either the window gets

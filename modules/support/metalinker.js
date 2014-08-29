@@ -15,7 +15,7 @@ const NS_METALINK_RFC5854 = 'urn:ietf:params:xml:ns:metalink';
 const DTA = require("api");
 const Preferences = require("preferences");
 const {LOCALE} = require("version");
-const {UrlManager} = require("support/urlmanager");
+const {UrlManager} = require("./urlmanager");
 const {NS_DTA, NS_HTML, normalizeMetaPrefs} = require("utils");
 
 const XPathResult = Ci.nsIDOMXPathResult;

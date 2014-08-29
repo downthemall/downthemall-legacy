@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const {Promise} = require("support/promise");
+const {Promise} = require("./promise");
 const {AsyncShutdown} = requireJSM("resource://gre/modules/AsyncShutdown.jsm");
 
 const _jobs = new Map();

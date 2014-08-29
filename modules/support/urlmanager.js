@@ -4,13 +4,13 @@
 "use strict";
 
 const {URL} = require("api");
-const Limits = require("support/serverlimits");
+const Limits = require("./serverlimits");
 const {
 	normalizeSlashes,
 	removeFinalSlash,
 	removeLeadingChar,
 	toURL
-	} = require("support/stringfuncs");
+	} = require("./stringfuncs");
 
 function compareFn(a, b) {
 	const rv = b.preference - a.preference;

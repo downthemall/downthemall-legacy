@@ -4,8 +4,8 @@
 "use strict";
 
 const {URL} = require("api");
-const {memoize} = require("support/memoize");
-const {getExtension, toURL} = require("support/stringfuncs");
+const {memoize} = require("./memoize");
+const {getExtension, toURL} = require("./stringfuncs");
 
 const favCache = new LRUMap(200);
 

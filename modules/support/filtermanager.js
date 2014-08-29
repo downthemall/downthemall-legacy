@@ -16,10 +16,10 @@ const REG_WILD2 = /\./g;
 const REG_FNMATCH = /[*.]/;
 
 const Preferences = require("preferences");
-const RegExpMerger = require("support/regexpmerger");
+const RegExpMerger = require("./regexpmerger");
 const {mapInSitu} = require("utils");
 const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
-const {Promise, Task} = require("support/promise");
+const {Promise, Task} = require("./promise");
 const {DeferredSave} = requireJSM("resource://gre/modules/DeferredSave.jsm");
 
 const nsITimer = Ci.nsITimer;
@@ -456,7 +456,7 @@ FilterManagerImpl.prototype = {
 		this._activeRegs[IMAGE_FILTER] = this.getMatcherFor(this._active[IMAGE_FILTER]);
 
 		// notify all observers
-		require("support/observers").notify(this, TOPIC_FILTERSCHANGED, null);
+		require("./observers").notify(this, TOPIC_FILTERSCHANGED, null);
 	},
 
 	_migrateFromPrefs: function(pending) {

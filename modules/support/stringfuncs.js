@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const {memoize} = require("support/memoize");
+const {memoize} = require("./memoize");
 
 const rbc_u = /[\n\r\v?:<>*|"]/g;
 const rbc_w = /%(?:25)?20/g;

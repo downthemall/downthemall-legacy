@@ -15,7 +15,7 @@ function filterCaches(c) {
 function clearCaches() {
 	caches = caches.filter(filterCaches);
 }
-require("support/memorypressure").add(clearCaches);
+require("./memorypressure").add(clearCaches);
 unload(() => {
 	clearCaches();
 	caches.length = 0;
