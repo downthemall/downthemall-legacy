@@ -25,7 +25,7 @@ asyncTest("worker", function() {
 	};
 	const {createOptimizedImplementation} = require("support/optimpl");
 	var impl = createOptimizedImplementation(
-		"testsupport/worker",
+		"tests/worker",
 		function(impl) function(cb) impl({}, cb),
 		function() cb("non-worker")
 		);
@@ -39,7 +39,7 @@ asyncTest("workerThrow", function() {
 	};
 	const {createOptimizedImplementation} = require("support/optimpl");
 	var impl = createOptimizedImplementation(
-			"testsupport/workerThrow",
+			"tests/workerThrow",
 			function(impl) function(cb) impl({}, cb),
 			function() cb("non-worker")
 	);
@@ -53,7 +53,7 @@ asyncTest("workerFail", function() {
 	};
 	const {createOptimizedImplementation} = require("support/optimpl");
 	var impl = createOptimizedImplementation(
-			"testsupport/workerFail",
+			"tests/workerFail",
 			function(impl) function(cb) impl({}, cb),
 			function() cb("non-worker")
 	);
