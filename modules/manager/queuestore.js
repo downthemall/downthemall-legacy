@@ -21,7 +21,7 @@ let _timer = 0;
 
 /* global __db */
 lazy(this, '__db', function() {
-	let db = require("api").getProfileFile(DB_FILE);
+	let db = require("api").getProfileFile(DB_FILE, true);
 	if (!db.exists()) {
 		let olddb = Services.dirsvc.get("ProfD", Ci.nsIFile);
 		olddb.append(DB_OLD_FILE);
