@@ -20,6 +20,7 @@ treecol > dropmarker {
 	-moz-appearance: menubar;
 }
 #tools > toolbarbutton {
+	border: 1px solid transparent;
 	-moz-appearance: none;
 	color: -moz-menubartext;
 	-moz-border-radius: 6.5px;
