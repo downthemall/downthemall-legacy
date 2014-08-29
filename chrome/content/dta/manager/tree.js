@@ -93,12 +93,6 @@ const Tree = {
 		}, true);
 		$('search').addEventListener('search', function(event) tp.setFilter(event.target.value), true);
 
-		if (Components.interfacesByID["{C06DC4D3-63A2-4422-A0A3-5F2EDDECA8C1}"]) {
-			this.getCellProperties = this.getCellProperties_legacy;
-			this.getColumnProperties = this.getColumnProperties_legacy;
-			this.getRowProperties = this.getRowProperties_legacy;
-		}
-
 		this.elem.treeBoxObject.view = this;
 		this.assembleMenus();
 		this._refreshTools_init();
@@ -580,57 +574,6 @@ const Tree = {
 		}
 		return null;
 	},
-	getCellProperties_legacy: function(idx, col, prop) {
-		const cidx = col.index;
-		if (cidx !== 2 && cidx !== 0) {
-			return;
-		}
-		else if (cidx === 2) {
-			prop.AppendElement(this.iconicAtom);
-			prop.AppendElement(this.progressAtom);
-			let d = this._filtered[idx];
-			if (!d) {
-				return;
-			}
-			switch (d.state) {
-				case QUEUED:
-					return;
-				case COMPLETE:
-					prop.AppendElement(this.completedAtom);
-					if (d.hashCollection) {
-						prop.AppendElement(this.verifiedAtom);
-					}
-				return;
-				case PAUSED:
-					prop.AppendElement(this.pausedAtom);
-					if (!d.totalSize || d.progress < 5) {
-						prop.AppendElement(this.pausedUndeterminedAtom);
-					}
-					if (d.autoRetrying) {
-						prop.AppendElement(this.pausedAutoretryingAtom);
-					}
-				return;
-				case FINISHING:
-				case RUNNING:
-					prop.AppendElement(this.inprogressAtom);
-					return;
-				case CANCELED:
-					prop.AppendElement(this.canceledAtom);
-					return;
-			}
-		}
-		else if (cidx === 0) {
-			let d = this._filtered[idx];
-			if (!d) {
-				return;
-			}
-			prop.AppendElement(this.iconicAtom);
-			prop.AppendElement(d.iconAtom);
-			if (d.isPrivate) {
-				prop.AppendElement(this.privateAtom);
-			}
-		}
-	},
 	_cpprop_iconic: "iconic progress",
 	_cpprop_iconiccomplete: "iconic progress completed",
 	_cpprop_iconicverified: "iconic progress completed verified",
@@ -696,9 +639,7 @@ const Tree = {
 	performAction: function(action) {},
 	performActionOnRow: function(action, index, column) {},
 	performActionOnCell: function(action, index, column) {},
-	getColumnProperties_legacy: function(column, element, prop) {},
 	getColumnProperties: function(column, element) "",
-	getRowProperties_legacy: function(idx, prop) {},
 	getRowProperties: function(idx) "",
 	setCellValue: function(idx, col, value) {},
 
