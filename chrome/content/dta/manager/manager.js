@@ -2559,7 +2559,8 @@ QueueItem.prototype = {
 
 				// restart paused chunks
 				if (paused.length) {
-					downloadChunk(this, paused.shift());
+					let p = paused.shift();
+					downloadChunk(this, p, p.end === 0);
 					rv = true;
 					continue;
 				}
