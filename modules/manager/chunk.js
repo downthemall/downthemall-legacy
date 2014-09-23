@@ -163,7 +163,7 @@ Chunk.prototype = {
 	get end() this._end,
 	set end(nv) {
 		this._end = nv;
-		this._total = this._end - this._start + 1;
+		this._total = this.end && (this._end - this._start + 1);
 	},
 	get total() this._total,
 	get written() this._written,
