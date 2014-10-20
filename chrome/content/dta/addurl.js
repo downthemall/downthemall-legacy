@@ -11,7 +11,7 @@ const {isWindowPrivate} = require("support/pbm");
 var dropDowns = {};
 
 /* global BatchGenerator */
-XPCOMUtils.defineLazyGetter(this, "BatchGenerator", function() {
+XPCOMUtils.defineLazyGetter(window, "BatchGenerator", function() {
 	const {BatchGenerator} = require("support/batchgen");
 	return BatchGenerator;
 });

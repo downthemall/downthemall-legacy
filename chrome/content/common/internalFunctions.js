@@ -311,7 +311,7 @@ requireJoined(Utils, "support/stringfuncs");
  *           if stringID is not found or before the dialog was initialized
  * @author Nils
  */
-XPCOMUtils.defineLazyGetter(this, "_", function() {
+XPCOMUtils.defineLazyGetter(window, "_", function() {
 	let bundles = new Utils.StringBundles(document);
 	return function() {
 		if (arguments.length === 1) {

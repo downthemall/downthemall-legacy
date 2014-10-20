@@ -10,7 +10,7 @@
 /* global TextCache_PAUSED */
 /* jshint browser:true, latedef:false */
 
-XPCOMUtils.defineLazyGetter(this, "ImportExport", function() require("manager/imex"));
+XPCOMUtils.defineLazyGetter(window, "ImportExport", function() require("manager/imex"));
 
 function FileDataProvider(download, file) {
 	this._download = download;

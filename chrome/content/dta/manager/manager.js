@@ -43,11 +43,11 @@ catch (ex) {
 const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
 
 /* global Version, AlertService, Decompressor, Verificator, FileExts:true */
-XPCOMUtils.defineLazyGetter(this, "Version", function() require("version"));
-XPCOMUtils.defineLazyGetter(this, "AlertService", function() require("support/alertservice"));
-XPCOMUtils.defineLazyGetter(this, "Decompressor", function() require("manager/decompressor").Decompressor);
-XPCOMUtils.defineLazyGetter(this, "Verificator", function() require("manager/verificator"));
-XPCOMUtils.defineLazyGetter(this, "FileExts", function() new FileExtensionSheet(window));
+XPCOMUtils.defineLazyGetter(window, "Version", function() require("version"));
+XPCOMUtils.defineLazyGetter(window, "AlertService", function() require("support/alertservice"));
+XPCOMUtils.defineLazyGetter(window, "Decompressor", function() require("manager/decompressor").Decompressor);
+XPCOMUtils.defineLazyGetter(window, "Verificator", function() require("manager/verificator"));
+XPCOMUtils.defineLazyGetter(window, "FileExts", function() new FileExtensionSheet(window));
 
 /* global TextCache_PAUSED, TextCache_QUEUED, TextCache_COMPLETE, TextCache_CANCELED, TextCache_NAS */
 /* global TextCache_UNKNOWN, TextCache_OFFLINE, TextCache_TIMEOUT, TextCache_STARTING, TextCache_DECOMPRESSING */
