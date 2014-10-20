@@ -2134,10 +2134,13 @@ QueueItem.prototype = {
 		if (!this.chunksReady(this.finishDownload.bind(this, exception))) {
 			return;
 		}
+		if (this.state === COMPLETE) {
+			return;
+		}
 		log(LOG_DEBUG, "finishDownload, connections: " + this.sessionConnections);
 		Task.spawn((function finishDownloadTask() {
 			try {
-				if (this.hashCollection && !(yield this.verifyHash())) {
+				if (this.hashCollection && !(yield this.verifyHash())) {
 					return;
 				}
 				if ("isMetalink" in this) {
