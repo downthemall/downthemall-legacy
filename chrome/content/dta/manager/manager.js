@@ -1388,6 +1388,9 @@ QueueItem.prototype = {
 			// kill the bucket via it's setter
 			this.bucket = null;
 		}
+		else if (this.state === COMPLETE) {
+			--Dialog.completed;
+		}
 		this.speed = '';
 		this._setStateInternal(nv);
 		if (this.state === RUNNING) {
