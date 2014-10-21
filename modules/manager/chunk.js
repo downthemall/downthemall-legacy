@@ -196,7 +196,6 @@ Chunk.prototype = {
 			);
 		this.buckets.register(this);
 		memoryReporter.registerChunk(this);
-		this.parent.chunkOpened(this);
 	},
 	_open: function() {
 		if (this._outStream) {
@@ -229,6 +228,7 @@ Chunk.prototype = {
 				seekable.seek(0x00, pos);
 			}
 			delete this._openPromise;
+			this.parent.chunkOpened(this);
 			return (this._outStream = outStream);
 		}.bind(this));
 	},
@@ -330,32 +330,34 @@ Chunk.prototype = {
 		if (this._pendingWrites) {
 			return;
 		}
-		if (this._outStream) {
-			// hacky way to close the stream off the main thread
-			let is = new Instances.StringInputStream("", 0);
-			let copier = new Instances.AsyncStreamCopier(
-				is,
-				this._outStream,
-				_thread,
-				true, // source buffered
-				false, // sink buffered
-				0,
-				true, // close source
-				true // close sink
-				);
-			try {
-				copier.asyncCopy({
-					onStartRequest: function(req, context) {},
-					onStopRequest: function(req, context, status) {
-						log(LOG_DEBUG, "closed off the main thread");
-						this._finish(true);
-					}.bind(this)
-				}, null);
-			}
-			catch (ex) {
-				this._finish(true);
-			}
-			delete this._outStream;
+		if (this._outStream || this._openPromise) {
+			Task.spawn((function*() {
+				// hacky way to close the stream off the main thread
+				let is = new Instances.StringInputStream("", 0);
+				let copier = new Instances.AsyncStreamCopier(
+					is,
+					(yield this._open()),
+					_thread,
+					true, // source buffered
+					false, // sink buffered
+					0,
+					true, // close source
+					true // close sink
+					);
+				try {
+					copier.asyncCopy({
+						onStartRequest: function(req, context) {},
+						onStopRequest: function(req, context, status) {
+							log(LOG_DEBUG, "closed off the main thread");
+							this._finish(true);
+						}.bind(this)
+					}, null);
+				}
+				catch (ex) {
+					this._finish(true);
+				}
+				delete this._outStream;
+			}).bind(this));
 			return;
 		}
 		log(LOG_DEBUG, this + ": chunk closed");
@@ -432,9 +434,11 @@ Chunk.prototype = {
 			// or in our case all remainder bytes
 			// reqPending from above makes sure that we won't re-schedule
 			// the download too early
+			let written = 0;
 			if (this._hasBuffer) {
 				let fill = Math.min(bytes, this._buffer.free);
 				bytes -= fill;
+				//log(LOG_ERROR, "fill " + fill);
 				if (fill && this._buffer.writeFrom(aInputStream, fill) !== fill) {
 					throw new Error("Failed to fill current stream. fill: " +
 						fill + " bytes: " + bytes + "chunk: " + this);
@@ -442,26 +446,32 @@ Chunk.prototype = {
 				if (!this._buffer.free) {
 					this._shipBuffer();
 				}
+				written += fill;
 			}
-			this._ensureBuffer();
 			while (bytes >= this.buffer_size) {
 				this._ensureBuffer();
+				//log(LOG_ERROR, "full " + this._buffer_size);
 				if (this._buffer.writeFrom(aInputStream, this.buffer_size) !== this.buffer_size) {
 					throw new Error("Failed to write full stream. " + this);
 				}
 				this._shipBuffer();
 				bytes -= this.buffer_size;
+				written += this.buffer_size;
 			}
 			if (bytes) {
 				this._ensureBuffer();
-				let written = this._buffer.writeFrom(aInputStream, bytes);
-				if (written !== bytes) {
+				let part = this._buffer.writeFrom(aInputStream, bytes);
+				//log(LOG_ERROR, "part " + written);
+				if (part !== bytes) {
 					throw new Error("Failed to write all requested bytes to current stream. bytes: " +
-						bytes + " actual: " + written + " chunk: " + this);
+						bytes + " actual: " + part + " chunk: " + this);
 				}
+				written += part;
+				bytes -= part;
 			}
 			this._noteBytesWritten(got);
-			return aCount;
+
+			return written;
 		}
 		catch (ex) {
 			log(LOG_ERROR, 'write: ' + this.parent.tmpFile.path, ex);
