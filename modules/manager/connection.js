@@ -395,8 +395,13 @@ Connection.prototype = {
 
 	discard: function(aInputStream, count) {
 		if (aInputStream instanceof Ci.nsISeekableStream) {
-			aInputStream.seek(Ci.nsISeekableStream.NS_SEEK_END, 0);
-			return;
+			try {
+				aInputStream.seek(Ci.nsISeekableStream.NS_SEEK_END, 0);
+				return;
+			}
+			catch (ex) {
+				// no op
+			}
 		}
 		try {
 			if (count) {
