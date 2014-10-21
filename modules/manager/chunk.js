@@ -196,6 +196,7 @@ Chunk.prototype = {
 			);
 		this.buckets.register(this);
 		memoryReporter.registerChunk(this);
+		this.parent.chunkOpened(this);
 	},
 	_open: function() {
 		if (this._outStream) {
@@ -228,12 +229,11 @@ Chunk.prototype = {
 				seekable.seek(0x00, pos);
 			}
 			delete this._openPromise;
-			this.parent.chunkOpened(this);
 			return (this._outStream = outStream);
 		}.bind(this));
 	},
-	_finish: function(notifyOwner) {
-		log(LOG_DEBUG, "Finishing " + this + " notify: " + notifyOwner);
+	_finish: function() {
+		log(LOG_DEBUG, "Finishing " + this);
 		if (this.buckets) {
 			this.buckets.unregister(this);
 			delete this.buckets;
@@ -246,10 +246,9 @@ Chunk.prototype = {
 		this._buffered = 0;
 		this._written = this.safeBytes;
 		delete this.download;
+		delete this._closing;
 
-		if (notifyOwner) {
-			this.parent.chunkClosed(this);
-		}
+		this.parent.chunkClosed(this);
 	},
 	_noteBytesWritten: function(bytes) {
 		this._written += bytes;
@@ -331,6 +330,10 @@ Chunk.prototype = {
 			return;
 		}
 		if (this._outStream || this._openPromise) {
+			if (this._closing) {
+				return;
+			}
+			this._closing = true;
 			Task.spawn((function*() {
 				// hacky way to close the stream off the main thread
 				let is = new Instances.StringInputStream("", 0);
@@ -349,19 +352,19 @@ Chunk.prototype = {
 						onStartRequest: function(req, context) {},
 						onStopRequest: function(req, context, status) {
 							log(LOG_DEBUG, "closed off the main thread");
-							this._finish(true);
+							this._finish();
 						}.bind(this)
 					}, null);
 				}
 				catch (ex) {
-					this._finish(true);
+					this._finish();
 				}
 				delete this._outStream;
 			}).bind(this));
 			return;
 		}
 		log(LOG_DEBUG, this + ": chunk closed");
-		this._finish(false);
+		this._finish();
 	},
 	merge: function(ch) {
 		if (!this.complete && !ch.complete) {

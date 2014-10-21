@@ -2140,6 +2140,9 @@ QueueItem.prototype = {
 		if (this.state === COMPLETE) {
 			return;
 		}
+		if (this.state === FINISHING) {
+			return;
+		}
 		log(LOG_DEBUG, "finishDownload, connections: " + this.sessionConnections);
 		Task.spawn((function finishDownloadTask() {
 			try {
@@ -2288,7 +2291,10 @@ QueueItem.prototype = {
 		log(LOG_DEBUG, "chunkOpened: " + this._openChunks);
 	},
 	chunkClosed: function() {
-		this._openChunks--;
+		if (!this._openChunks) {
+			return;
+		}
+		--this._openChunks;
 		log(LOG_DEBUG, "chunkClosed: " + this._openChunks);
 		this.refreshPartialSize();
 		this.invalidate();
