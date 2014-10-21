@@ -393,6 +393,23 @@ Connection.prototype = {
 		return true;
 	},
 
+	discard: function(aInputStream, count) {
+		if (aInputStream instanceof Ci.nsISeekableStream) {
+			aInputStream.seek(Ci.nsISeekableStream.NS_SEEK_END, 0);
+			return;
+		}
+		try {
+			if (count) {
+				new Instances.BinaryInputStream(aInputStream).
+					readArrayBuffer(count, new ArrayBuffer(count));
+			}
+		}
+		catch (ex) {
+			log(LOG_ERROR, "Failed to discard overrecv by conventional means " + count + " " + aInputStream.available(), ex);
+			throw NS_ERROR_BINDING_ABORTED;
+		}
+	},
+
 	// nsIStreamListener
 	onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
 		if (this._closed) {
@@ -402,18 +419,28 @@ Connection.prototype = {
 			// we want to kill ftp chans as well which do not seem to respond to
 			// cancel correctly.
 			let c = this.c;
-			if (c.write(aRequest, aInputStream, aCount) < 0) {
+			let written = c.write(aRequest, aInputStream, aCount);
+			if (written < 0) {
 				// need to attempt another write after merging in verifyChunksStarted
-				if (this.verifyChunksStarted() &&
-						c.write(aRequest, aInputStream, aCount) >= 0) {
-					return;
+				if (this.verifyChunksStarted()) {
+					written = c.write(aRequest, aInputStream, aCount);
 				}
-
+			}
+			if (written < 0) {
 				// we already got what we wanted
-				this.cancel();
+				try {
+					this.discard(aInputStream, aCount);
+				}
+				finally {
+					this.cancel();
+				}
+				return;
+			}
+			if (aCount - written > 0) {
+				this.discard(aInputStream, aCount - written);
 			}
 		}
-		catch (ex) {
+		catch (ex if (ex !== NS_ERROR_BINDING_ABORTED && ex.result !== NS_ERROR_BINDING_ABORTED)) {
 			log(LOG_ERROR, 'onDataAvailable', ex);
 			this.writeFailed();
 		}
