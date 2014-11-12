@@ -19,7 +19,7 @@ const Preferences = require("preferences");
 const RegExpMerger = require("./regexpmerger");
 const {mapInSitu} = require("utils");
 const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
-const {Promise, Task} = require("./promise");
+const {Task} = requireJSM("resource://gre/modules/Task.jsm")
 const {DeferredSave} = requireJSM("resource://gre/modules/DeferredSave.jsm");
 
 const nsITimer = Ci.nsITimer;
@@ -341,35 +341,35 @@ FilterManagerImpl.prototype = {
 			return this._pending;
 		}
 		log(LOG_DEBUG, "reload spawning");
-		this._pending = Task.spawn((function() {
+		this._pending = Task.spawn((function*() {
 			log(LOG_DEBUG, "reload commencing");
 			try {
 				let decoder = new TextDecoder();
 				if (!this.defFilters) {
-					let d = Promise.defer();
-					let x = new Instances.XHR();
-					this._filters = {};
-					this._all = [];
-					x.overrideMimeType("application/json");
-					x.open("GET", BASE_PATH + "support/filters.json");
-					x.onloadend = (function() {
-						try {
-							this.defFilters = JSON.parse(x.responseText);
-							for (let id in this.defFilters) {
-								if (id in this._localizedLabels) {
-									this.defFilters[id].label = this._localizedLabels[id];
+					yield new Promise(function(resolve, reject) {
+						let x = new Instances.XHR();
+						this._filters = {};
+						this._all = [];
+						x.overrideMimeType("application/json");
+						x.open("GET", BASE_PATH + "support/filters.json");
+						x.onloadend = (function() {
+							try {
+								this.defFilters = JSON.parse(x.responseText);
+								for (let id in this.defFilters) {
+									if (id in this._localizedLabels) {
+										this.defFilters[id].label = this._localizedLabels[id];
+									}
 								}
+								Object.freeze(this.defFilters);
 							}
-							Object.freeze(this.defFilters);
-						}
-						catch (ex) {
-							log(LOG_ERROR, "Failed to load default filters", ex);
-							this.defFilters = {};
-						}
-						d.resolve();
-					}).bind(this);
-					x.send();
-					yield d.promise;
+							catch (ex) {
+								log(LOG_ERROR, "Failed to load default filters", ex);
+								this.defFilters = {};
+							}
+							resolve();
+						}).bind(this);
+						x.send();
+					}.bind(this));
 				}
 				let filters = {};
 				try {
@@ -490,7 +490,7 @@ FilterManagerImpl.prototype = {
 			}
 		}
 		if (pending && kill.size) {
-			Task.spawn((function() {
+			Task.spawn((function*() {
 				try {
 					yield this._save();
 					for (let i of kill) {
@@ -593,7 +593,7 @@ FilterManagerImpl.prototype = {
 	},
 
 	_save: function() {
-		return Task.spawn((function() {
+		return Task.spawn((function*() {
 			try {
 				yield OS.File.makeDir(this._file.parent.path, {unixMode: 0x775, ignoreExisting: true});
 			}
@@ -604,7 +604,7 @@ FilterManagerImpl.prototype = {
 		}).bind(this));
 	},
 	save: function() {
-		Task.spawn((function() {
+		Task.spawn((function*() {
 			try {
 				yield this._save();
 				this._reload();
