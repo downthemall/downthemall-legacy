@@ -449,10 +449,8 @@ exports.load = function load(window, outerEvent) {
 	}
 
 	function getFocusedWindow() {
-		if (!("BrowserUtils" in window)) {
-			return document.commandDispatcher.focusedWindow;
-		}
-		return window.BrowserUtils.getFocusSync(document)[1];
+		return (document.commandDispatcher.focusedWindow.contentWindow && document.commandDispatcher.focusedWindow)
+			|| window.BrowserUtils.getFocusSync(document)[1];
 	}
 
 	function selectButton() {
