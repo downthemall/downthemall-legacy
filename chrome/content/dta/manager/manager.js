@@ -31,13 +31,7 @@ const {Connection} = require("manager/connection");
 const {createRenamer} = require("manager/renamer");
 const {memoize, identity} = require("support/memoize");
 const {moveFile} = require("support/movefile");
-const {Task} = require("support/promise");
-try {
-	this.Promise = require("support/promise").Promise;
-}
-catch (ex) {
-	// already defined
-}
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 // Use the main OS.File here!
 const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
@@ -1898,13 +1892,9 @@ QueueItem.prototype = {
 		this.speeds.clear();
 		this.otherBytes = 0;
 	},
-	moveCompleted: function() {
+	moveCompleted: function*() {
 		if (this.state === CANCELED) {
 			throw Error("Cannot move incomplete file");
-		}
-		// safeguard against some failed chunks.
-		for (let c of this.chunks) {
-			c.close();
 		}
 		this.setState(FINISHING);
 		this.status = TextCache_MOVING;
@@ -1929,52 +1919,54 @@ QueueItem.prototype = {
 			// move file
 			if (this.compression) {
 				this.status = TextCache_DECOMPRESSING;
-				let compressDeferred = Promise.defer();
-				new Decompressor(this, function(ex) {
-					if (ex) {
-						compressDeferred.reject(ex);
-					}
-					else {
-						compressDeferred.resolve(true);
-					}
-				});
-				yield compressDeferred.promise;
-				throw new Task.Result(true);
+				yield new Promise(function(resolve, reject) {
+					new Decompressor(this, function(ex) {
+						if (ex) {
+							reject(ex);
+						}
+						else {
+							resolve(true);
+						}
+					});
+				}.bind(this));
+				return true;
 			}
-			let moveDeferred = Promise.defer();
-			let move = function(self, x) {
-				let df = destination.clone();
-				df.append(self.destinationName);
-				moveFile(self.tmpFile.path, df.path).then(function() {
-					moveDeferred.resolve(true);
-				}, function(ex) {
-					if ((ex.unixErrno && ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) || (ex.winLastError && ex.winLastError == 3)) {
-						try {
-							self.shortenName();
-							ConflictManager.unpin(pinned);
-							pinned = self.destinationFile;
-							ConflictManager.pin(pinned);
+			yield new Promise(function(resolve, reject) {
+				let move = function(self, x) {
+					let df = destination.clone();
+					df.append(self.destinationName);
+					moveFile(self.tmpFile.path, df.path).then(function() {
+						resolve(true);
+					}, function(ex) {
+						if ((ex.unixErrno && ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) || (ex.winLastError && ex.winLastError == 3)) {
+							try {
+								self.shortenName();
+								ConflictManager.unpin(pinned);
+								pinned = self.destinationFile;
+								ConflictManager.pin(pinned);
+							}
+							catch (iex) {
+								log(LOG_ERROR, "Failed to shorten name", ex);
+							}
 						}
-						catch (iex) {
-							log(LOG_ERROR, "Failed to shorten name", ex);
+						log(LOG_ERROR, ex);
+						x = x || 1;
+						if (x > 5) {
+							log(LOG_ERROR, "shit hit the fan!");
+							reject(ex);
+							return;
 						}
-					}
-					log(LOG_ERROR, ex);
-					x = x || 1;
-					if (x > 5) {
-						moveDeferred.reject(ex);
-						return;
-					}
-					setTimeoutOnlyFun(function() move(self, ++x), x * 250);
-				})
-			};
-			move(this);
-			yield moveDeferred.promise;
-			throw new Task.Result(true);
+						setTimeoutOnlyFun(function() move(self, ++x), x * 250);
+					})
+				};
+				move(this);
+			}.bind(this));
+			return true;
 		}
 		finally {
 			ConflictManager.unpin(pinned);
 		}
+		return false;
 	},
 	handleMetalink: function() {
 		try {
@@ -1987,7 +1979,7 @@ QueueItem.prototype = {
 	verifyHash: function() {
 		this.setState(FINISHING);
 		this.status = TextCache_VERIFYING;
-		return Task.spawn((function() {
+		return Task.spawn((function*() {
 			let mismatches = yield Verificator.verify(
 				(yield OS.File.exists(this.tmpFile.path)) ? this.tmpFile.path : this.destinationFile,
 				this.hashCollection,
@@ -1998,28 +1990,26 @@ QueueItem.prototype = {
 			if (!mismatches) {
 				log(LOG_ERROR, "hash not computed");
 				Prompts.alert(window, _('error', ["Metalink"]), _('verificationfailed', [this.destinationFile]));
-				throw new Task.Result(true);
+				return true;
 			}
 			else if (mismatches.length) {
 				log(LOG_ERROR, "Mismatches: " + mismatches.toSource());
-				throw new Task.Result(yield this.verifyHashError(mismatches));
+				return (yield this.verifyHashError(mismatches));
 			}
-			throw new Task.Result(true);
+			return true;
 		}).bind(this));
 	},
 	verifyHashError: function(mismatches) {
 		let file = this.destinationLocalFile;
 
-		return Task.spawn((function() {
-			function deleteFile() {
-				return Task.spawn(function() {
-					try {
-						yield OS.file.remove(file.path);
-					}
-					catch (ex if ex.becauseNoSuchFile) {
-						// no op
-					}
-				});
+		return Task.spawn((function*() {
+			function* deleteFile() {
+				try {
+					yield OS.File.remove(file.path);
+				}
+				catch (ex if ex.becauseNoSuchFile) {
+					// no op
+				}
 			}
 
 			function recoverPartials(download) {
@@ -2063,13 +2053,13 @@ QueueItem.prototype = {
 					case 0:
 						yield deleteFile();
 						recoverPartials(this, mismatches);
-						throw new Task.Result(false);
+						return false;
 					case 1:
 						yield deleteFile();
 						this.cancel();
-						throw new Task.Result(false);
+						return false;
 				}
-				throw new Task.Result(true);
+				return true;
 			}
 			let act = Prompts.confirm(
 				window,
@@ -2082,70 +2072,72 @@ QueueItem.prototype = {
 				case 0:
 					yield deleteFile();
 					this.safeRetry();
-					throw new Task.Result(false);
+					return false;
 				case 1:
 					yield deleteFile();
 					this.cancel();
-					throw new Task.Result(false);
+					return false;
 			}
-			throw new Task.Result(true);
+			return true;
 		}).bind(this));
 	},
 	customFinishEvent: function() {
 		new CustomEvent(this, Prefs.finishEvent);
 	},
 	setAttributes: function() {
-		return Task.spawn((function() {
-			if (Prefs.setTime) {
-				// XXX: async API <https://bugzilla.mozilla.org/show_bug.cgi?id=924916>
+		if (Prefs.setTime) {
+			// XXX: async API <https://bugzilla.mozilla.org/show_bug.cgi?id=924916>
+			try {
+				let time = this.startDate.getTime();
 				try {
-					let time = this.startDate.getTime();
-					try {
-						time = this.visitors.time;
-					}
-					catch (ex) {
-						log(LOG_DEBUG, "no visitors time", ex);
-					}
-					// small validation. Around epoche? More than a month in future?
-					if (time < 2 || time > Date.now() + 30 * 86400000) {
-						throw new Exception("invalid date encountered: " + time + ", will not set it");
-					}
-					// have to unwrap
-					this.destinationLocalFile.lastModifiedTime = time;
+					time = this.visitors.time;
 				}
 				catch (ex) {
-					log(LOG_ERROR, "Setting timestamp on file failed: ", ex);
+					log(LOG_DEBUG, "no visitors time", ex);
 				}
-			}
-			let file = null;
-			if (!this.isOf(COMPLETE | FINISHING)) {
-				file = this._tmpFile || null;
-			}
-			else {
-				file = this.destinationLocalFile;
-			}
-			try {
-				this.totalSize = this.partialSize = (yield OS.File.stat(file.path)).size;
+				// small validation. Around epoche? More than a month in future?
+				if (time < 2 || time > Date.now() + 30 * 86400000) {
+					throw new Exception("invalid date encountered: " + time + ", will not set it");
+				}
+				// have to unwrap
+				this.destinationLocalFile.lastModifiedTime = time;
 			}
 			catch (ex) {
-				log(LOG_ERROR, "failed to get filesize for " + file.path, ex);
-				this.totalSize = this.partialSize = 0;
+				log(LOG_ERROR, "Setting timestamp on file failed: ", ex);
 			}
-		}).bind(this));
+		}
+		let file = null;
+		if (!this.isOf(COMPLETE | FINISHING)) {
+			file = this._tmpFile || null;
+		}
+		else {
+			file = this.destinationLocalFile;
+		}
+		try {
+			this.totalSize = this.partialSize = (yield OS.File.stat(file.path)).size;
+		}
+		catch (ex) {
+			log(LOG_ERROR, "failed to get filesize for " + file.path, ex);
+			this.totalSize = this.partialSize = 0;
+		}
+		yield true;
+	},
+	closeChunks: function*() {
+		if (!this.chunks) {
+			return;
+		}
+		for (let c of this.chunks) {
+			yield c.close();
+		}
 	},
 	finishDownload: function(exception) {
-		if (!this.chunksReady(this.finishDownload.bind(this, exception))) {
-			return;
-		}
-		if (this.state === COMPLETE) {
-			return;
-		}
-		if (this.state === FINISHING) {
+		if (this._finishDownloadTask) {
 			return;
 		}
 		log(LOG_DEBUG, "finishDownload, connections: " + this.sessionConnections);
-		Task.spawn((function finishDownloadTask() {
+		this._finishDownloadTask = Task.spawn(function* finishDownloadTask() {
 			try {
+				yield this.closeChunks();
 				if (this.hashCollection && !(yield this.verifyHash())) {
 					return;
 				}
@@ -2173,7 +2165,10 @@ QueueItem.prototype = {
 				log(LOG_ERROR, "complete: ", ex);
 				this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
 			}
-		}).bind(this));
+			finally {
+				delete this._finishDownloadTask;
+			}
+		}.bind(this));
 	},
 	get maskURL() this.urlManager.usableURL,
 	get maskCURL() Utils.getCURL(this.maskURL),
@@ -2285,43 +2280,6 @@ QueueItem.prototype = {
 		}
 	},
 
-	_openChunks: 0,
-	chunkOpened: function() {
-		this._openChunks++;
-		log(LOG_DEBUG, "chunkOpened: " + this._openChunks);
-	},
-	chunkClosed: function() {
-		if (!this._openChunks) {
-			return;
-		}
-		--this._openChunks;
-		log(LOG_DEBUG, "chunkClosed: " + this._openChunks);
-		this.refreshPartialSize();
-		this.invalidate();
-		if (!this._openChunks && this._chunksReady_next) {
-			log(LOG_DEBUG, "Running chunksReady_next");
-			let p = this._chunksReady_next;
-			delete this._chunksReady_next;
-			p.resolve();
-		}
-		if (!this._openChunks) {
-			this.save();
-		}
-	},
-	chunksReady: function(nextEvent) {
-		if (!this._openChunks) {
-			return true;
-		}
-		if (nextEvent) {
-			if (!this._chunksReady_next) {
-				this._chunksReady_next = Promise.defer();
-			}
-			this._chunksReady_next.promise.then(nextEvent);
-		}
-		log(LOG_DEBUG, "chunksReady: reschedule");
-		return false;
-	},
-
 	cancel: function(message) {
 		try {
 			const state = this.state;
@@ -2338,42 +2296,37 @@ QueueItem.prototype = {
 				this.activeChunks = 0;
 			}
 			this.setState(CANCELED);
-			let bound = this.cancel.bind(this, message);
-			if (!this.chunksReady(bound)) {
-				log(LOG_INFO, this.fileName + ": cancel delayed (chunks)");
-				return;
-			}
-			if (this._preallocTask) {
-				log(LOG_INFO, this.fileName + ": cancel delayed (prealloc)");
-				this._preallocTask.then(bound, bound);
-				return;
-			}
-			log(LOG_INFO, this.fileName + ": canceled");
+			Task.spawn(function*() {
+				yield this.closeChunks();
+				if (this._preallocTask) {
+					yield this._preallocTask;
+				}
+				log(LOG_INFO, this.fileName + ": canceled");
 
-			this.shutdown();
+				this.shutdown();
+				this.removeTmpFile();
 
-			this.removeTmpFile();
+				// gc
+				if (this.deleting) {
+					return;
+				}
+				if (!message) {
+					message = _("canceled");
+				}
 
-			// gc
-			if (this.deleting) {
-				return;
-			}
-			if (!message) {
-				message = _("canceled");
-			}
-
-			this.status = message;
-			this.visitors = new VisitorManager();
-			this.chunks.length = 0;
-			this.progress = this.totalSize = this.partialSize = 0;
-			this.conflicts = 0;
-			this.resumable = true;
-			this._maxChunks = this._activeChunks = 0;
-			this._autoRetries = 0;
-			delete this._autoRetryTime;
-			this.speeds.clear();
-			this.otherBytes = 0;
-			this.save();
+				this.status = message;
+				this.visitors = new VisitorManager();
+				this.chunks.length = 0;
+				this.progress = this.totalSize = this.partialSize = 0;
+				this.conflicts = 0;
+				this.resumable = true;
+				this._maxChunks = this._activeChunks = 0;
+				this._autoRetries = 0;
+				delete this._autoRetryTime;
+				this.speeds.clear();
+				this.otherBytes = 0;
+				this.save();
+			}.bind(this));
 		}
 		catch(ex) {
 			log(LOG_ERROR, "cancel():", ex);
@@ -2408,7 +2361,7 @@ QueueItem.prototype = {
 		}
 
 		this.preallocating = true;
-		this._preallocTask = Task.spawn((function() {
+		this._preallocTask = Task.spawn((function*() {
 			try {
 				try {
 					yield Utils.makeDir(file.parent, Prefs.dirPermissions);
@@ -2458,7 +2411,7 @@ QueueItem.prototype = {
 		if (!tmpFile) {
 			return;
 		}
-		Task.spawn(function() {
+		Task.spawn(function*() {
 			try {
 				yield OS.File.remove(tmpFile.path);
 			} catch (ex if ex.becauseNoSuchFile) {
@@ -2702,13 +2655,20 @@ const ConflictManager = {
 	_queue: [],
 	_pinned: new Set(),
 	resolve: function(download) {
+		log(LOG_DEBUG, "Resolving " + download);
 		let promise = this._items.get(download);
 		if (promise) {
+			log(LOG_DEBUG, "Resolving already " + promise);
 			return promise.promise;
 		}
-		promise = Promise.defer();
+		promise = {};
+		promise.promise = new Promise(function(resolve, reject) {
+			promise.reject = reject;
+			promise.resolve = resolve;
+		});
 		this._items.set(download, promise);
 		this._queue.push(download);
+		log(LOG_DEBUG, "Resolving new " + promise);
 		this._processNext();
 		return promise.promise;
 	},
@@ -2732,7 +2692,7 @@ const ConflictManager = {
 		this._items.delete(download);
 
 		this._processing = true;
-		Task.spawn(function() {
+		Task.spawn(function*() {
 			try {
 				p.resolve(yield this._processOne(download));
 			}
@@ -2746,7 +2706,7 @@ const ConflictManager = {
 			}
 		}.bind(this));
 	},
-	_processOne: function(download) {
+	_processOne: function*(download) {
 		log(LOG_DEBUG, "Starting conflict resolution for " + download);
 		let dest = download.destinationLocalFile;
 		let exists = this._pinned.has(this.destinationFile);
@@ -2755,7 +2715,7 @@ const ConflictManager = {
 		}
 		if (!exists) {
 			log(LOG_DEBUG, "Does not exist " + download);
-			throw new Task.Result(true);
+			return true;
 		}
 
 		let cr = -1;
@@ -2775,7 +2735,11 @@ const ConflictManager = {
 		}
 
 		if (cr < 0) {
-			let dialog = Promise.defer();
+			let dialog = {};
+			dialog.promise = new Promise(function(resolve, reject) {
+				dialog.resolve = resolve;
+				dialog.reject = reject;
+			});
 			for (;; ++conflicts) {
 				newDest.leafName = Utils.formatConflictName(basename, conflicts);
 				exists = this._pinned.has(newDest.path);
@@ -2821,13 +2785,13 @@ const ConflictManager = {
 					}
 				}
 				download.conflicts = conflicts;
-				throw new Task.Result(true);
+				return true;
 			case 1:
 				download.shouldOverwrite = true;
-				throw new Task.Result(true);
+				return true;
 			default:
 				download.cancel(_('skipped'));
-				throw new Task.Result(false);
+				return false;
 		}
 	}
 };

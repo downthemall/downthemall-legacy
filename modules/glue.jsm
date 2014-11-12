@@ -19,8 +19,6 @@ const EXPORTED_SYMBOLS = [
 	];
 
 //This might be already defined... or not...
-this._Promise = this.Promise;
-delete this.Promise;
 
 const {
 	classes: Cc,
@@ -340,9 +338,6 @@ LRUMap.prototype = Object.freeze({
 				sandboxPrototype: scope,
 				wantXRays: false
 			});
-			// This might be already defined... or not...
-			scope._Promise = scope.Promise;
-			delete scope.Promise;
 
 			// Add to registry write now to enable resolving cyclic dependencies.
 			_registry.set(module, scope);

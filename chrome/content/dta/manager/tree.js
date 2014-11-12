@@ -32,7 +32,7 @@ FileDataProvider.prototype = {
 	checkFile: function() {
 		Task.spawn(this._checkFile);
 	},
-	_checkFile: function() {
+	_checkFile: function*() {
 		delete this._timer;
 		let exists = yield OS.File.exists(this._file.path);
 		if (!exists) {
@@ -949,7 +949,7 @@ const Tree = {
 	},
 	_removeByState: function(state, onlyGone) {
 		this.beginUpdate();
-		Task.spawn((function() {
+		Task.spawn((function*() {
 			try {
 				QueueStore.beginUpdate();
 				var removing = [];
@@ -1390,7 +1390,7 @@ const Tree = {
 					items[ii].setAttribute("disabled", disabled);
 				}
 			}
-			Task.spawn((function() {
+			Task.spawn((function*() {
 				try {
 					states.curFile = (cur && cur.state === COMPLETE && (yield OS.File.exists(cur.destinationLocalFile.path)));
 					states.curFolder = (cur && (yield OS.File.exists(new Instances.LocalFile(cur.destinationPath).path)));
@@ -1826,7 +1826,7 @@ const FileHandling = {
 		}
 	},
 	deleteFile: function() {
-		Task.spawn((function() {
+		Task.spawn((function*() {
 			let list = [];
 			for (let d in this._uniqueList) {
 				if ((yield OS.File.exists(d.destinationLocalFile.path))) {
