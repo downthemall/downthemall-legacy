@@ -2334,15 +2334,18 @@ QueueItem.prototype = {
 	},
 
 	cleanup: function() {
-		delete this.visitors;
-		delete this.chunks;
-		delete this.speeds;
-		delete this.urlManager;
-		delete this.referrer;
-		delete this._referrerUrlManager;
-		delete this._destinationLocalFile;
-		delete this._tmpFile;
-		delete this.rebuildDestination_renamer;
+		Task.spawn(function*() {
+			this.chunks && (yield this.closeChunks());
+			delete this.visitors;
+			delete this.chunks;
+			delete this.speeds;
+			delete this.urlManager;
+			delete this.referrer;
+			delete this._referrerUrlManager;
+			delete this._destinationLocalFile;
+			delete this._tmpFile;
+			delete this.rebuildDestination_renamer;
+		}.bind(this));
 	},
 	prealloc: function() {
 		let file = this.tmpFile;
