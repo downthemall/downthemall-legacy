@@ -38,6 +38,10 @@ function trimMore(t) {
 	return identity(t.replace(/^[\s_]+|[\s_]+$/gi, '').replace(/(_){2,}/g, "_"));
 }
 
+function getContentWindow(browser) {
+	return browser.contentWindowAsCPOW || browser.contentWindow;
+}
+
 function extractDescription(child) {
 	let rv = [];
 	try {
@@ -444,6 +448,13 @@ exports.load = function load(window, outerEvent) {
 		}
 	}
 
+	function getFocusedWindow() {
+		if (!("BrowserUtils" in window)) {
+			return document.commandDispatcher.focusedWindow;
+		}
+		return window.BrowserUtils.getFocusSync(document)[1];
+	}
+
 	function selectButton() {
 		return $('dta-turboselect-button') || {checked: false};
 	}
@@ -451,17 +462,18 @@ exports.load = function load(window, outerEvent) {
 	function findWindowsNavigator(all) {
 		let windows = [];
 		if (!all) {
-			let sel = document.commandDispatcher.focusedWindow.getSelection();
+			let focusedWindow = getFocusedWindow();
+			let sel = focusedWindow.getSelection();
 			if (sel.isCollapsed) {
-				windows.push(gBrowser.selectedBrowser.contentWindow.top);
+				windows.push(getContentWindow(gBrowser.selectedBrowser).top);
 			}
 			else {
-				windows.push(document.commandDispatcher.focusedWindow);
+				windows.push(focusedWindow);
 			}
 			return windows;
 		}
 		for (let e of gBrowser.browsers) {
-			windows.push(e.contentWindow.top);
+			windows.push(getContentWindow(e).top);
 		}
 		return windows;
 	}
@@ -764,8 +776,9 @@ exports.load = function load(window, outerEvent) {
 				action.url.ref = '';
 			}
 
-			let ref = DTA.getRef(document.commandDispatcher.focusedWindow.document);
-			let defaultDescription = trimMore(document.commandDispatcher.focusedWindow.document.title || "");
+			let focusedWindow = getFocusedWindow();
+			let ref = DTA.getRef(focusedWindow.document);
+			let defaultDescription = trimMore(focusedWindow.document.title || "");
 			let desc = extractDescription(form) || defaultDescription;
 
 			let item = {
@@ -869,7 +882,7 @@ exports.load = function load(window, outerEvent) {
 			// show will hold those that will be shown
 			let show = [];
 
-			let sel = document.commandDispatcher.focusedWindow.getSelection();
+			let sel = getFocusedWindow().getSelection();
 			if (sel && !sel.isCollapsed) {
 				if (items[0]) {
 					show.push(menu.DTASel);
@@ -1493,7 +1506,7 @@ exports.load = function load(window, outerEvent) {
 				}
 				url = Services.io.newURI(url, null, null);
 				url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
-				let doc = document.commandDispatcher.focusedWindow.document;
+				let doc = getFocusedWindow().document;
 				let ref = doc ? DTA.getRef(doc) : null;
 				func(url, ref);
 			}
