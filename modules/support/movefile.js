@@ -3,7 +3,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-const {Promise} = require("./promise");
 const {AsyncShutdown} = requireJSM("resource://gre/modules/AsyncShutdown.jsm");
 
 const _jobs = new Map();
@@ -54,11 +53,31 @@ const asyncShutdown = (function() {
 	let p = null;
 	return function killWorkers() {
 		if (p) {
-			return p.promise;
+			return p;
 		}
 
-		p = Promise.defer();
-		p.promise.then(function() {
+		p = new Promise(function(resolve, reject) {
+			let pending = _workers.length;
+			if (!pending) {
+				resolve();
+				return;
+			}
+			for (let w of _workers) {
+				w.onmessage = function(e) {
+					if (e.data.exit) {
+						--pending;
+						if (!pending) {
+							resolve();
+						}
+						return;
+					}
+					onmessage(e);
+				};
+				w.postMessage(null);
+			}
+			_workers.length = 0;
+		});
+		p.then(function() {
 			try {
 				AsyncShutdown.webWorkersShutdown.removeBlocker(asyncShutdown);
 			}
@@ -66,28 +85,7 @@ const asyncShutdown = (function() {
 				Cu.reportError(ex);
 			}
 		});
-
-		let pending = _workers.length;
-		if (!pending) {
-			p.resolve();
-			return;
-		}
-		for (let w of _workers) {
-			w.onmessage = function(e) {
-				if (e.data.exit) {
-					--pending;
-					if (!pending) {
-						p.resolve();
-					}
-					return;
-				}
-				onmessage(e);
-			};
-			w.postMessage(null);
-		}
-		_workers.length = 0;
-
-		return p.promise;
+		return p;
 	};
 })();
 unload(asyncShutdown);
@@ -96,14 +94,14 @@ AsyncShutdown.webWorkersShutdown.addBlocker("DownThemAll! moveFile workers", asy
 
 exports.moveFile = function(from, to) {
 	let jobid = ++_jobid;
-	let job = Promise.defer();
-	_jobs.set(jobid, job);
-	_workerGenerator.next().value.postMessage({
-		jobid: jobid,
-		from: from,
-		to: to
+	return new Promise((rs, rj) => {
+		_jobs.set(jobid, {resolve: rs, reject: rj});
+		_workerGenerator.next().value.postMessage({
+			jobid: jobid,
+			from: from,
+			to: to
+		});
 	});
-	return job.promise;
 };
 Object.defineProperty(exports, "maxWorkers", {
 	value: MAX_WORKERS,

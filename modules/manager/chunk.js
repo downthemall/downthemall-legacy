@@ -11,7 +11,7 @@ const {GlobalBucket} = require("./globalbucket");
 const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
 const {getTimestamp, formatNumber, makeDir} = require("utils");
-const {Promise, Task} = require("support/promise");
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 const {memoryReporter} = require("./memoryreporter");
 
 const Timers = new TimerManager();
@@ -116,22 +116,31 @@ Buffer.prototype = Object.seal({
 	}
 });
 
-function PromiseListener() {
-	this.d = Promise.defer();
-	this.promise = this.d.promise;
+function shipStream(instream, outstream, closeSink) {
+	let copier = new Instances.AsyncStreamCopier(
+		instream,
+		outstream,
+		_thread,
+		true, // source buffered
+		false, // sink buffered
+		instream.available(),
+		true, // close source
+		closeSink // close sink
+		);
+	return new Promise(function(resolve, reject) {
+		copier.asyncCopy({
+			onStartRequest: function(req, context) {},
+			onStopRequest: function(req, context, status) {
+				if (!Components.isSuccessCode(status)) {
+					reject(status);
+				}
+				else {
+					resolve();
+				}
+			}
+		}, null);
+	});
 }
-PromiseListener.prototype = Object.freeze({
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIRequestListener]),
-	onStartRequest: function(req, context) {},
-	onStopRequest: function(req, context, status) {
-		if (!Components.isSuccessCode(status)) {
-			this.d.reject(status);
-		}
-		else {
-			this.d.resolve();
-		}
-	},
-});
 
 function Chunk(download, start, end, written) {
 	// safeguard against null or strings and such
@@ -196,13 +205,10 @@ Chunk.prototype = {
 			);
 		this.buckets.register(this);
 		memoryReporter.registerChunk(this);
-		this.parent.chunkOpened(this);
 	},
 	_open: function() {
 		if (this._outStream) {
-			let d = Promise.defer();
-			d.resolve(this._outStream);
-			return d.promise;
+			return new Promise(r => r(this._outStream));
 		}
 		if (this._openPromise) {
 			return this._openPromise;
@@ -231,24 +237,6 @@ Chunk.prototype = {
 			delete this._openPromise;
 			return (this._outStream = outStream);
 		}.bind(this));
-	},
-	_finish: function() {
-		log(LOG_DEBUG, "Finishing " + this);
-		if (this.buckets) {
-			this.buckets.unregister(this);
-			delete this.buckets;
-		}
-		delete this._req;
-		memoryReporter.unregisterChunk(this);
-		this._inited = false;
-
-		this._sessionBytes = 0;
-		this._buffered = 0;
-		this._written = this.safeBytes;
-		delete this.download;
-		delete this._closing;
-
-		this.parent.chunkClosed(this);
 	},
 	_noteBytesWritten: function(bytes) {
 		this._written += bytes;
@@ -281,90 +269,71 @@ Chunk.prototype = {
 		buffer.unlink();
 		this._buffered += length;
 		++this._pendingWrites;
-		let self = this;
 		Task.spawn(function* _shipBufferTask() {
 			try {
-				let copier = new Instances.AsyncStreamCopier(
-					stream,
-					(yield self._open()),
-					_thread,
-					true, // source buffered
-					false, // sink buffered
-					0,
-					true, // close source
-					false // close sink
-					);
-				var d = new PromiseListener();
-				copier.asyncCopy(d, null);
-				yield d.promise;
-				self._buffered -= length;
-				--self._pendingWrites;
-				self.safeBytes += length;
-				if (!self.running) {
-					self.close();
+				yield shipStream(stream, (yield this._open()), false);
+				this._buffered -= length;
+				--this._pendingWrites;
+				this.safeBytes += length;
+				if (!this.running) {
+					this.close();
 				}
 			}
 			catch (ex) {
 				try {
-					self._buffered -= length;
-					--self._pendingWrites;
+					this._buffered -= length;
+					--this._pendingWrites;
 					log(LOG_ERROR, "Failed to write", ex);
-					self.download.writeFailed();
+					this.download.writeFailed();
 				}
 				catch (ex2) {
 					log(LOG_ERROR, "aggregate failure", ex2);
 				}
-				if (!self.running) {
-					self.close();
+				if (!this.running) {
+					this.close();
 				}
 			}
-		});
+		}.bind(this));
 	},
 	close: function() {
+		if (this._closing) {
+			return this._closing;
+		}
+		if (!this._inited) {
+			return new Promise(r => r());
+		}
 		this.running = false;
-		if (this._hasBuffer) {
-			this._shipBuffer();
-		}
-		log(LOG_DEBUG, "pending writes: " + this._pendingWrites);
-		if (this._pendingWrites) {
-			return;
-		}
-		if (this._outStream || this._openPromise) {
-			if (this._closing) {
-				return;
+		return (this._closing = Task.spawn(function*() {
+			try {
+				if (this._hasBuffer) {
+					this._shipBuffer();
+				}
+				if (this._outStream || this._openPromise) {
+					// hacky way to close the stream off the main thread
+					let is = new Instances.StringInputStream("", 0);
+					yield shipStream(is, (yield this._open()), true);
+					delete this._outStream;
+				}
+				if (this.buckets) {
+					this.buckets.unregister(this);
+					delete this.buckets;
+				}
+				delete this._req;
+				memoryReporter.unregisterChunk(this);
+				this._inited = false;
+
+				this._sessionBytes = 0;
+				this._buffered = 0;
+				this._written = this.safeBytes;
+				delete this.download;
 			}
-			this._closing = true;
-			Task.spawn((function*() {
-				// hacky way to close the stream off the main thread
-				let is = new Instances.StringInputStream("", 0);
-				let copier = new Instances.AsyncStreamCopier(
-					is,
-					(yield this._open()),
-					_thread,
-					true, // source buffered
-					false, // sink buffered
-					0,
-					true, // close source
-					true // close sink
-					);
-				try {
-					copier.asyncCopy({
-						onStartRequest: function(req, context) {},
-						onStopRequest: function(req, context, status) {
-							log(LOG_DEBUG, "closed off the main thread");
-							this._finish();
-						}.bind(this)
-					}, null);
-				}
-				catch (ex) {
-					this._finish();
-				}
-				delete this._outStream;
-			}).bind(this));
-			return;
-		}
-		log(LOG_DEBUG, this + ": chunk closed");
-		this._finish();
+			catch (ex) {
+				log(LOG_ERROR, "Damn!", ex);
+			}
+			finally {
+				delete this._closing;
+			}
+		}.bind(this)));
 	},
 	merge: function(ch) {
 		if (!this.complete && !ch.complete) {
@@ -441,7 +410,6 @@ Chunk.prototype = {
 			if (this._hasBuffer) {
 				let fill = Math.min(bytes, this._buffer.free);
 				bytes -= fill;
-				//log(LOG_ERROR, "fill " + fill);
 				if (fill && this._buffer.writeFrom(aInputStream, fill) !== fill) {
 					throw new Error("Failed to fill current stream. fill: " +
 						fill + " bytes: " + bytes + "chunk: " + this);
@@ -453,7 +421,6 @@ Chunk.prototype = {
 			}
 			while (bytes >= this.buffer_size) {
 				this._ensureBuffer();
-				//log(LOG_ERROR, "full " + this._buffer_size);
 				if (this._buffer.writeFrom(aInputStream, this.buffer_size) !== this.buffer_size) {
 					throw new Error("Failed to write full stream. " + this);
 				}
@@ -464,7 +431,6 @@ Chunk.prototype = {
 			if (bytes) {
 				this._ensureBuffer();
 				let part = this._buffer.writeFrom(aInputStream, bytes);
-				//log(LOG_ERROR, "part " + written);
 				if (part !== bytes) {
 					throw new Error("Failed to write all requested bytes to current stream. bytes: " +
 						bytes + " actual: " + part + " chunk: " + this);
