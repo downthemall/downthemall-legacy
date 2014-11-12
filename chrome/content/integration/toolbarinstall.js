@@ -43,8 +43,8 @@ addEventListener("dialogaccept", function accept() {
 				if (!placement) {
 					// New and not placed yet
 					placement = {area: 'nav-bar', position: undefined};
-					opener.CustomizableUI.addWidgetToArea(id, placement.area, placement.position);
-					opener.CustomizableUI.ensureWidgetPlacedInWindow(id, opener);
+					opener.CustomizableUI.addWidgetToArea(b, placement.area, placement.position);
+					opener.CustomizableUI.ensureWidgetPlacedInWindow(b, opener);
 				}
 			}
 		}
