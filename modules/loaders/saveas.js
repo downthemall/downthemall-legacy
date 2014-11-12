@@ -34,7 +34,6 @@ function load(window, document) {
 		return elements;
 	}
 
-	log(LOG_ERROR, "save-as int");
 	try {
 		const dialog = window.dialog;
 
@@ -81,7 +80,7 @@ function load(window, document) {
 					log(LOG_ERROR, "setting height failed", ex);
 				}
 			}
-			log(LOG_ERROR, "reverted!");
+			log(LOG_DEBUG, "save-as reverted!");
 		}
 		let download = turbo => {
 			if (turbo) {
