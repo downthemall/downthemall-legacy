@@ -198,7 +198,7 @@ def files(*args, **kw):
             for i in files(f + "*"):
                 yield i
         elif os.path.isfile(f) and not any(fnmatch(f, x) for x in excluded):
-            yield f
+            yield f.replace("\\", "/")
 
     for p in args:
         gg = glob(p)
@@ -215,9 +215,9 @@ def releaseversionjs(fp, **kw):
     with Reset(io):
         for l in fp:
             if "const ID = " in l:
-                print >>io, 'const ID = "{}"'.format(RELEASE_ID)
+                print >> io, 'const ID = "{}"'.format(RELEASE_ID)
             else:
-                print >>io, l,
+                print >> io, l,
     return io
 
 
@@ -228,7 +228,7 @@ def droptests(fp, **kw):
         for l in fp:
             if "dta-tests" in l:
                 continue
-            print >>io, l,
+            print >> io, l,
     return io
 
 
@@ -291,7 +291,7 @@ def localize(fp, **kw):
 
     io = BytesIO()
     with Reset(io):
-        print >>io, rdf.toxml(encoding="utf-8")
+        print >> io, rdf.toxml(encoding="utf-8")
         rdf.unlink()
     return io
 
@@ -313,7 +313,7 @@ def releasify(fp, **kw):
 
     io = BytesIO()
     with Reset(io):
-        print >>io, rdf.toxml(encoding="utf-8")
+        print >> io, rdf.toxml(encoding="utf-8")
     rdf.unlink()
     return io
 
@@ -332,7 +332,7 @@ def set_uurl(fp, **kw):
 
     io = BytesIO()
     with Reset(io):
-        print >>io, rdf.toxml(encoding="utf-8")
+        print >> io, rdf.toxml(encoding="utf-8")
     rdf.unlink()
     return io
 
@@ -347,7 +347,7 @@ def releaserdf(fp, **kw):
     if not re.match(r"^[\d.]+$", node.data) or True:
         raise ValueError("Invalid release version: {}".format(node.data))
 
-    return releasify(fp, *+kw)
+    return releasify(fp, **kw)
 
 
 @localized
@@ -377,7 +377,7 @@ def nightlyrdf(fp, **kw):
 
     io = BytesIO()
     with Reset(io):
-        print >>io, rdf.toxml(encoding="utf-8")
+        print >> io, rdf.toxml(encoding="utf-8")
     rdf.unlink()
     return set_uurl(io, **kw)
 
@@ -392,7 +392,7 @@ def devrdf(fp, **kw):
 
     io = BytesIO()
     with Reset(io):
-        print >>io, rdf.toxml(encoding="utf-8")
+        print >> io, rdf.toxml(encoding="utf-8")
     rdf.unlink()
     return io
 
@@ -427,7 +427,8 @@ def pack(xpi, patterns, **kw):
                         write(f, ZIP_DEFLATED, nightlyrdf)
                     else:
                         write(f, ZIP_DEFLATED, devrdf)
-                elif not kw.get("tests", False) and f == "chrome.manifest":
+                elif not kw.get("tests", False) and \
+                        (f == "chrome.manifest" or f == "modules/main.js"):
                     write(f, ZIP_DEFLATED, droptests)
                 elif any(fnmatch(f, p) for p in PLAIN):
                     write(f, ZIP_STORED)
