@@ -43,10 +43,6 @@ function trimMore(t) {
 	return identity(t.replace(/^[\s_]+|[\s_]+$/gi, '').replace(/(_){2,}/g, "_"));
 }
 
-function getContentWindow(browser) {
-	return browser.contentWindowAsCPOW || browser.contentWindow;
-}
-
 function extractDescription(child) {
 	let rv = [];
 	try {
@@ -94,23 +90,13 @@ function getSniffedInfoFromLocation(l) {
 		let [fn,ext] = strfn.getFileNameAndExt(e.spec);
 		if (!ext || getSniffedInfo_name.test(fn)) {
 			ext = ext || "flv";
-			fn = strfn.replaceSlashes(strfn.getUsableFileName(l.title) || "unknown", "-");
+			fn = strfn.replaceSlashes(strfn.getUsableFileName(l.title) || "unknown", "-");
 		}
 		return {
 			url: e,
-			name: fn + "." + ext
+			name: fn + "." + ext,
+			ref: docURI
 		};
-	});
-}
-
-function getSniffedInfo(window) {
-	return getSniffedInfoFromLocation({
-		url: {
-			spec: window.location.href,
-			originCharset: window.document.characterSet,
-		},
-		isPrivate: isWindowPrivate(window),
-		title: window.document.title
 	});
 }
 
@@ -208,25 +194,18 @@ exports.load = function load(window, outerEvent) {
 		return $('dta-turboselect-button') || {checked: false};
 	}
 
-	function findWindowsNavigator(all) {
-		let windows = [];
-		if (!all) {
-			let focusedWindow = getFocusedWindow();
-			let sel = focusedWindow.getSelection();
-			if (sel.isCollapsed) {
-				windows.push(getContentWindow(gBrowser.selectedBrowser).top);
+	function getCurrentLocations() {
+		let b = gBrowser.selectedBrowser;
+		return new Promise((resolve, reject) => {
+			let job = ++findLinksJob;
+			let result = m => {
+				b.messageManager.removeMessageListener("DTA:getLocations:" + job, result);
+				resolve(m.data);
 			}
-			else {
-				windows.push(focusedWindow);
-			}
-			return windows;
-		}
-		for (let e of gBrowser.browsers) {
-			windows.push(getContentWindow(e).top);
-		}
-		return windows;
+			b.messageManager.addMessageListener("DTA:getLocations:" + job, result);
+			b.messageManager.sendAsyncMessage("DTA:getLocations", {job:job});
+		});
 	}
-
 	function findBrowsers(all) {
 		let browsers = [];
 		if (!all) {
@@ -343,12 +322,11 @@ exports.load = function load(window, outerEvent) {
 						collectedImages = collectedImages.concat(mapFilterInSitu(images, transposeURIs, nonnull));
 						for (let l of locations) {
 							let sniffed = getSniffedInfoFromLocation(l);
-							let ref = makeURI(l.url);
 							for (let s of sniffed) {
 								let o = {
 									"url": new DTA.URL(s.url),
 									"fileName": s.name,
-									"referrer": ref,
+									"referrer": s.ref,
 									"description": bundle.getString('sniffedvideo')
 								};
 								collectedUrls.push(o);
@@ -859,40 +837,39 @@ exports.load = function load(window, outerEvent) {
 		if (!Preferences.getExt('listsniffedvideos', false)) {
 			return;
 		}
-		const win = findWindowsNavigator().shift();
-		let sniffed = getSniffedInfo(win);
-		if (win.frames) {
-			for (let i = 0, e = win.frames.length; i < e; ++i) {
-				sniffed = sniffed.concat(getSniffedInfo(win.frames[i]));
+		Task.spawn(function*() {
+			const locations = yield getCurrentLocations();
+			let sniffed = [];
+			for (let l of locations) {
+				sniffed = sniffed.concat(getSniffedInfoFromLocation(l));
 			}
-		}
-		if (!sniffed.length) {
-			return;
-		}
+			if (!sniffed.length) {
+				return;
+			}
 
-		let sep = document.createElement("menuseparator");
-		sep.className = "dta-sniff-element";
-		menu.appendChild(sep);
+			let sep = document.createElement("menuseparator");
+			sep.className = "dta-sniff-element";
+			menu.appendChild(sep);
 
-		let ref = DTA.getRef(win.document);
-		let cmd = menu.parentNode.getAttribute("buttoncommand") + "-sniff";
-		for (let s of sniffed) {
-			let o = {
-				"url": new DTA.URL(s.url),
-				"referrer": ref,
-				"fileName": s.name,
-				"description": bundle.getString("sniffedvideo"),
-				"isPrivate": isWindowPrivate(window)
-			};
-			let mi = document.createElement("menuitem");
-			mi.setAttribute("label", strfn.cropCenter(s.name, 60));
-			mi.setAttribute("tooltiptext", o.url.spec);
-			mi.setAttribute("image", getIcon(s.name));
-			mi.setAttribute("command", cmd);
-			mi.info = o;
-			mi.className = "dta-sniff-element menuitem-iconic";
-			menu.appendChild(mi);
-		}
+			let cmd = menu.parentNode.getAttribute("buttoncommand") + "-sniff";
+			for (let s of sniffed) {
+				let o = {
+					"url": new DTA.URL(s.url),
+					"referrer": s.ref,
+					"fileName": s.name,
+					"description": bundle.getString("sniffedvideo"),
+					"isPrivate": isWindowPrivate(window)
+				};
+				let mi = document.createElement("menuitem");
+				mi.setAttribute("label", strfn.cropCenter(s.name, 60));
+				mi.setAttribute("tooltiptext", o.url.spec);
+				mi.setAttribute("image", getIcon(s.name));
+				mi.setAttribute("command", cmd);
+				mi.info = o;
+				mi.className = "dta-sniff-element menuitem-iconic";
+				menu.appendChild(mi);
+			}
+		});
 	}
 
 	function onDTAViewShowing(button, view) {
@@ -902,42 +879,41 @@ exports.load = function load(window, outerEvent) {
 		if (!Preferences.getExt('listsniffedvideos', false)) {
 			return;
 		}
-		const win = findWindowsNavigator().shift();
-		let sniffed = getSniffedInfo(win);
-		if (win.frames) {
-			for (let i = 0, e = win.frames.length; i < e; ++i) {
-				sniffed = sniffed.concat(getSniffedInfo(win.frames[i]));
+		Task.spawn(function*() {
+			const locations = yield getCurrentLocations();
+			let sniffed = [];
+			for (let l of locations) {
+				sniffed = sniffed.concat(getSniffedInfoFromLocation(l));
 			}
-		}
-		if (!sniffed.length) {
-			return;
-		}
+			if (!sniffed.length) {
+				return;
+			}
 
-		let menu = view.querySelector(".panel-subview-body");
+			let menu = view.querySelector(".panel-subview-body");
 
-		let sep = document.createElement("menuseparator");
-		sep.className = "dta-sniff-element";
-		menu.appendChild(sep);
+			let sep = document.createElement("menuseparator");
+			sep.className = "dta-sniff-element";
+			menu.appendChild(sep);
 
-		let ref = DTA.getRef(win.document);
-		let cmd = button.getAttribute("buttoncommand") + "-sniff";
-		for (let s of sniffed) {
-			let o = {
-				"url": new DTA.URL(s.url),
-				"referrer": ref,
-				"fileName": s.name,
-				"description": bundle.getString("sniffedvideo"),
-				"isPrivate": isWindowPrivate(window)
-			};
-			let mi = document.createElement("toolbarbutton");
-			mi.setAttribute("label", strfn.cropCenter(s.name, 60));
-			mi.setAttribute("tooltiptext", o.url.spec);
-			mi.setAttribute("image", getIcon(s.name));
-			mi.setAttribute("command", cmd);
-			mi.info = o;
-			mi.className = "dta-sniff-element subviewbutton cui-withicon";
-			menu.appendChild(mi);
-		}
+			let cmd = button.getAttribute("buttoncommand") + "-sniff";
+			for (let s of sniffed) {
+				let o = {
+					"url": new DTA.URL(s.url),
+					"referrer": s.ref,
+					"fileName": s.name,
+					"description": bundle.getString("sniffedvideo"),
+					"isPrivate": isWindowPrivate(window)
+				};
+				let mi = document.createElement("toolbarbutton");
+				mi.setAttribute("label", strfn.cropCenter(s.name, 60));
+				mi.setAttribute("tooltiptext", o.url.spec);
+				mi.setAttribute("image", getIcon(s.name));
+				mi.setAttribute("command", cmd);
+				mi.info = o;
+				mi.className = "dta-sniff-element subviewbutton cui-withicon";
+				menu.appendChild(mi);
+			}
+		});
 	}
 
 	function attachOneClick() {
