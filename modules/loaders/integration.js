@@ -13,7 +13,6 @@ lazy(this, "Mediator", function() require("support/mediator"));
 lazy(this, 'Version', function() require("version"));
 lazy(this, 'Preferences', function() require("preferences"));
 this.__defineGetter__('recognizeTextLinks', function() Preferences.getExt("textlinks", true));
-lazy(this, 'TextLinks', function() require("support/textlinks"));
 lazy(this, "ContentHandling", function() require("support/contenthandling").ContentHandling);
 lazy(this, 'CoThreads', function() require("support/cothreads"));
 lazy(this, 'getIcon', function() require("support/icons").getIcon);
@@ -21,8 +20,14 @@ lazy(this, "bundle", function() new (require("utils").StringBundles)(["chrome://
 lazy(this, "isWindowPrivate", function() require("support/pbm").isWindowPrivate);
 lazy(this, "identity", () => require("support/memoize").identity);
 
+const {filterInSitu, mapFilterInSitu} = require("utils");
+
 const {unloadWindow} = require("support/overlays");
 const strfn = require("support/stringfuncs");
+
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
+
+var findLinksJob = 0;
 
 const MENU_ITEMS = [
 	'SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel',
@@ -79,287 +84,33 @@ function extractDescription(child) {
 	return trimMore(rv.join(" "));
 }
 
-function addLinksToArray(lnks, urls, doc) {
-	if (!lnks || !lnks.length) {
-		return;
-	}
-
-	let ref = DTA.getRef(doc);
-
-	let defaultDescription = trimMore(doc.title || "");
-
-	for (let link of lnks) {
-		try {
-			let url = new DTA.URL(Services.io.newURI(link.href, doc.characterSet, null));
-
-			let title = '';
-			if (link.hasAttribute('title')) {
-				title = trimMore(link.getAttribute('title'));
-			}
-			if (!title && link.hasAttribute('alt')) {
-				title = trimMore(link.getAttribute('alt'));
-			}
-			const item = {
-				'url': url,
-				'referrer': ref,
-				'description': extractDescription(link),
-				'defaultDescription': defaultDescription,
-				'title': title
-			};
-			let fn = link.getAttribute("download");
-			if (fn && (fn = fn.trim())) {
-				item.fileName = fn;
-			}
-			urls.push(item);
-			let ml = DTA.getLinkPrintMetalink(url.url);
-			if (ml) {
-				urls.push({
-					'url': new DTA.URL(ml),
-					'referrer': ref,
-					'description': '[metalink] http://www.metalinker.org/',
-					'title': title,
-					'metalink': true
-				});
-			}
-		}
-		catch (ex) {
-			// no op
-		}
-		yield true;
-	}
-}
-
-function addImagesToArray(lnks, images, doc)	{
-	if (!lnks || !lnks.length) {
-		return;
-	}
-
-	let ref = DTA.getRef(doc);
-
-	for (let l of lnks) {
-		try {
-			let url = new DTA.URL(DTA.composeURL(doc, l.src));
-
-			let desc = '';
-			if (l.hasAttribute('alt')) {
-				desc = trimMore(l.getAttribute('alt'));
-			}
-			else if (l.hasAttribute('title')) {
-				desc = trimMore(l.getAttribute('title'));
-			}
-			images.push({
-				'url': url,
-				'referrer': ref,
-				'description': desc
-			});
-		}
-		catch (ex) {
-			// no op
-		}
-		yield true;
-	}
-}
-
-function getTextLinks(set, out, fakeLinks) {
-	let rset = [];
-	for (let r = set.iterateNext(); r; r = set.iterateNext()) {
-		rset.push(r);
-	}
-	for (let r of rset) {
-		try {
-			r = r.textContent.replace(/^\s+|\s+$/g, "");
-			if (r) {
-				for (let link of TextLinks.getTextLinks(r, fakeLinks)) {
-					out.push(link);
-				}
-				yield true;
-			}
-		}
-		catch (ex) {
-			// no op: might be an already removed node
-		}
-	}
-}
-
-function filterInSitu(arr, cb, tp) {
-	tp = tp || null;
-
-	// courtesy of firefox-sync
-	let i, k, e;
-	for (i = 0, k = 0, e = arr.length; i < e; i++) {
-		let a = arr[k] = arr[i]; // replace filtered items
-		if (a && cb.call(tp, a, i, arr)) {
-			k += 1;
-		}
-	}
-	arr.length = k;
-	return arr;
-}
-
-function filterMapInSitu(arr, filterStep, mapStep, tp) {
-	tp = tp || null;
-	let i, k, e;
-	for (i = 0, k = 0, e = arr.length; i < e; i++) {
-		let a = arr[i]; // replace filtered items
-		if (a && filterStep.call(tp, a, i, arr)) {
-			arr[k] = mapStep.call(tp, a, i, arr);
-			k += 1;
-		}
-	}
-	arr.length = k;
-	return arr;
-}
-
-//recursively add stuff.
-function addLinks(aWin, aURLs, aImages, honorSelection) {
-	try {
-		yield true;
-		let links = Array.slice(aWin.document.querySelectorAll("a"));
-		yield true;
-		let images = Array.slice(aWin.document.querySelectorAll("img"));
-		yield true;
-		let videos = Array.slice(aWin.document.querySelectorAll("video, audio, video > source, audio > source"));
-		filterInSitu(videos, function(e) !!e.src);
-		yield true;
-
-		let embeds = Array.slice(aWin.document.embeds);
-		yield true;
-
-		let rawInputs = Array.slice(aWin.document.querySelectorAll("input"));
-		let inputs = [];
-		for (let i = 0, e = rawInputs.length; i < e; ++i) {
-			let rit = rawInputs[i].getAttribute('type');
-			if (!rit || rit.toLowerCase() != 'image') {
-				continue;
-			}
-			inputs.push(rawInputs[i]);
-		}
-		yield true;
-
-		let sel = null;
-		if (honorSelection && (sel = aWin.getSelection()) && !sel.isCollapsed) {
-			log(LOG_INFO, "selection only");
-			[links, images, videos, embeds, inputs].forEach(
-					function(e) filterInSitu(e, function(n) sel.containsNode(n, true)));
-			if (recognizeTextLinks) {
-				let copy = aWin.document.createElement('div');
-				for (let i = 0; i < sel.rangeCount; ++i) {
-					let r = sel.getRangeAt(i);
-					copy.appendChild(r.cloneContents());
-				}
-				yield true;
-
-				let cdoc = aWin.document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
-				copy = cdoc.adoptNode(copy);
-				cdoc.documentElement.appendChild(cdoc.adoptNode(copy));
-				yield true;
-
-				let set = cdoc.evaluate(
-					"//*[not(ancestor-or-self::a) and " +
-					"not(ancestor-or-self::style) and " +
-					"not(ancestor-or-self::script)]/text()",
-					copy.ownerDocument,
-					null,
-					aWin.XPathResult.ORDERED_NODE_ITERATOR_TYPE,
-					null
-				);
-				yield true;
-
-				for (let y in getTextLinks(set, links, true)) {
-					yield true;
-				}
-				cdoc = null;
-				copy = null;
-				yield true;
-			}
-		}
-		else {
-			if (Preferences.getExt('listsniffedvideos', false)) {
-				let sniffed = getSniffedInfo(aWin);
-				let ref = DTA.getRef(aWin.document);
-				for (let s of sniffed) {
-					let o = {
-						"url": new DTA.URL(s.url),
-						"fileName": s.name,
-						"referrer": ref,
-						"description": bundle.getString('sniffedvideo')
-					};
-					aURLs.push(o);
-					aImages.push(o);
-				}
-				yield true;
-			}
-			if (recognizeTextLinks) {
-				let set = aWin.document.evaluate(
-					"//*[not(ancestor-or-self::a) and " +
-					"not(ancestor-or-self::style) and " +
-					"not(ancestor-or-self::script)]/text()",
-					aWin.document,
-					null,
-					aWin.XPathResult.ORDERED_NODE_ITERATOR_TYPE,
-					null
-				);
-				for (let y of getTextLinks(set, links, true)) {
-					yield true;
-				}
-			}
-
-			// we were asked to honor the selection, but we didn't actually have one.
-			// so reset this flag so that we can continue processing frames below.
-			honorSelection = false;
-		}
-
-		log(LOG_DEBUG, "adding links to array");
-		for (let y in addLinksToArray(links, aURLs, aWin.document)) {
-			yield true;
-		}
-		for (let e of [images, videos, embeds, inputs]) {
-			for (let y in addImagesToArray(e, aImages, aWin.document)) {
-				yield true;
-			}
-		}
-		for (let y in addImagesToArray(
-			filterMapInSitu(videos, function(e) !!e.poster, function(e) new TextLinks.FakeLink(e.poster)),
-			aImages,
-			aWin.document
-		)) {
-			yield true;
-		}
-	}
-	catch (ex) {
-		log(LOG_ERROR, "addLinks", ex);
-	}
-
-	// do not process further as we just filtered the selection
-	if (honorSelection) {
-		return;
-	}
-
-	// recursively process any frames
-	if (aWin.frames) {
-		for (let i = 0, e = aWin.frames.length; i < e; ++i) {
-			for (let y in addLinks(aWin.frames[i], aURLs, aImages)) {
-				yield true;
-			}
-		}
-	}
-}
 const getSniffedInfo_name = /^(?:[a-f0-9]+|\d+|(?:video)playback|player)$/i;
-function getSniffedInfo(window) {
+function getSniffedInfoFromLocation(l) {
 	if (!Preferences.getExt('listsniffedvideos', false)) {
 		return [];
 	}
-	const docURI = Services.io.newURI(window.location.href, window.document.characterSet, null);
-	return ContentHandling.getSniffedVideosFor(docURI, isWindowPrivate(window)).map(function(e) {
+	const docURI = Services.io.newURI(l.url.spec, l.url.originCharset, null);
+	return ContentHandling.getSniffedVideosFor(docURI, l.isPrivate).map(function(e) {
 		let [fn,ext] = strfn.getFileNameAndExt(e.spec);
 		if (!ext || getSniffedInfo_name.test(fn)) {
 			ext = ext || "flv";
-			fn = strfn.replaceSlashes(strfn.getUsableFileName(window.document.title), "-");
+			fn = strfn.replaceSlashes(strfn.getUsableFileName(l.title), "-");
 		}
 		return {
 			url: e,
 			name: fn + "." + ext
 		};
+	});
+}
+
+function getSniffedInfo(window) {
+	return getSniffedInfoFromLocation({
+		url: {
+			spec: window.location.href,
+			originCharset: window.document.characterSet,
+		},
+		isPrivate: isWindowPrivate(window),
+		title: window.document.title
 	});
 }
 
@@ -476,9 +227,20 @@ exports.load = function load(window, outerEvent) {
 		return windows;
 	}
 
-	function unique(i) filterInSitu(
-		i,
-		function(e) {
+	function findBrowsers(all) {
+		let browsers = [];
+		if (!all) {
+			browsers.push(gBrowser.selectedBrowser);
+			return browsers;
+		}
+		for (let e of gBrowser.browsers) {
+			browsers.push(e);
+		}
+		return browsers;
+	}
+
+	const unique = i => {
+		return filterInSitu(i, function(e) {
 			let u = e.url.spec;
 			let other = this[u];
 			if (other) {
@@ -489,9 +251,8 @@ exports.load = function load(window, outerEvent) {
 			}
 			this[u] = e;
 			return true;
-		},
-		Object.create(null)
-		);
+		}, Object.create(null));
+	};
 
 	function findLinks(turbo, all) {
 		try {
@@ -509,11 +270,10 @@ exports.load = function load(window, outerEvent) {
 				log(LOG_INFO, "findLinks(): DtaStandard request from the user");
 			}
 
-			let wt = document.documentElement.getAttribute('windowtype');
-			let windows = findWindowsNavigator(all);
-
-			let urls = [];
-			let images = [];
+			let collectedUrls = [];
+			let collectedImages = [];
+			let urlsLength = 0;
+			let imagesLength = 0;
 
 			// long running fetching may confuse users, hence give them a hint that
 			// stuff is happening
@@ -523,79 +283,130 @@ exports.load = function load(window, outerEvent) {
 					clearInterval(_updateInterval);
 					_updateInterval = setIntervalOnlyFun(intervalfunc, 150, false);
 				}
-				if (urls.length + images.length) {
-					notifyProgress(bundle.getFormattedString('processing.label', [urls.length, images.length]));
+				if (urlsLength + imagesLength) {
+					notifyProgress(bundle.getFormattedString('processing.label', [urlsLength, imageLength]));
 				}
 				else {
 					notifyProgress(bundle.getString('preparing.label'));
 				}
 			}), 1750, true);
 
-			new CoThreads.CoThreadInterleaved(
-				(function() {
-					log(LOG_DEBUG, "findLinks(): running");
-					for (let win of windows) {
-						log(LOG_DEBUG, "findLinks(): running...");
-						for (let y in addLinks(win, urls, images, !all)) {
-							yield true;
-						}
+			new Task.spawn(function*() {
+				try {
+					let promises = [];
+					let job = findLinksJob++;
+					for (let b of findBrowsers(all)) {
+						let browser = b;
+						promises.push(new Promise((resolve, reject) => {
+							let progress = m => {
+								urlsLength += m.data.urls;
+								imagesLength += m.data.images;
+							};
+							let result = m => {
+								browser.messageManager.removeMessageListener("DTA:findLinks:progress:" + job, progress);
+								browser.messageManager.removeMessageListener("DTA:findLinks:" + job, result);
+								resolve(m.data);
+							};
+							log(LOG_ERROR, browser);
+							browser.messageManager.addMessageListener("DTA:findLinks:progress:" + job, progress);
+							browser.messageManager.addMessageListener("DTA:findLinks:" + job, result);
+							browser.messageManager.sendAsyncMessage("DTA:findLinks", {
+								job: job,
+								honorSelection: !all,
+								recognizeTextLinks: recognizeTextLinks
+							});
+						}));
 					}
 
-					unique(urls);
-					yield true;
-					for (let e of urls) {
+					let nonnull = function(e) {
+						return !!e;
+					};
+					let makeURI = function(u) {
+						return new DTA.URL(Services.io.newURI(u.spec, u.originCharset, null));
+					};
+					let transposeURIs = function(e) {
+						try {
+							e.url = makeURI(e.url);
+							e.ref = e.ref && makeURI(e.ref);
+							return e;
+						}
+						catch (ex) {
+							return null;
+						}
+					};
+					for (let p of promises) {
+						let {urls, images, locations} = yield p;
+						if (!urls.length && !images.length && !locations.length) {
+							continue;
+						}
+						collectedUrls = collectedUrls.concat(mapFilterInSitu(urls, transposeURIs, nonnull));
+						collectedImages = collectedImages.concat(mapFilterInSitu(images, transposeURIs, nonnull));
+						for (let l of locations) {
+							let sniffed = getSniffedInfoFromLocation(l);
+							let ref = makeURI(l.url);
+							for (let s of sniffed) {
+								let o = {
+									"url": new DTA.URL(s.url),
+									"fileName": s.name,
+									"referrer": ref,
+									"description": bundle.getString('sniffedvideo')
+								};
+								collectedUrls.push(o);
+								collectedImages.push(o);
+							}
+						}
+					}
+					unique(collectedUrls);
+					for (let e of collectedUrls) {
 						if (!e.description) {
 							e.description = e.defaultDescription || "";
 						}
 						delete e.defaultDescription;
+						e.description = identity(e.description);
 					}
-					yield true;
 
-					unique(images);
-					yield true;
-					for (let e of images) {
+					unique(collectedImages);
+					for (let e of collectedImages) {
 						if (!e.description) {
 							e.description = e.defaultDescription || "";
 						}
 						delete e.defaultDescription;
+						e.description = identity(e.description);
 					}
-					yield true;
 
-					log(LOG_DEBUG, "findLinks(): done running...");
-				})(),
-				adjustedYieldEvery
-			).start(function(newYieldEvery) {
-				adjustedYieldEvery = newYieldEvery;
+					// clean up the "hint" notification from above
+					clearInterval(_updateInterval);
+					notifyProgress();
 
-				// clean up the "hint" notification from above
-				clearInterval(_updateInterval);
-				notifyProgress();
+					log(LOG_DEBUG, "findLinks(): finishing...");
+					if (!collectedUrls.length && !collectedImages.length) {
+						notifyError(bundle.getString('error'), bundle.getString('error.nolinks'));
+						return;
+					}
 
-				log(LOG_DEBUG, "findLinks(): finishing...");
-				if (!urls.length && !images.length) {
-					notifyError(bundle.getString('error'), bundle.getString('error.nolinks'));
-					return;
+					DTA.setPrivateMode(window, collectedUrls);
+					DTA.setPrivateMode(window, collectedImages);
+
+					if (turbo) {
+						DTA.turboSaveLinkArray(window, collectedUrls, collectedImages, function(queued) {
+							if (!queued) {
+								DTA.saveLinkArray(window, collectedUrls, collectedImages, bundle.getString('error.information'));
+							}
+							if (typeof queued == 'number') {
+								notifyInfo(bundle.getFormattedString('queuedn', [queued]));
+							}
+							else {
+								notifyInfo(bundle.getFormattedString('queued', [queued.url]));
+							}
+						});
+						return;
+					}
+					DTA.saveLinkArray(window, collectedUrls, collectedImages);
 				}
-
-				DTA.setPrivateMode(window, urls);
-				DTA.setPrivateMode(window, images);
-
-				if (turbo) {
-					DTA.turboSaveLinkArray(window, urls, images, function(queued) {
-						if (!queued) {
-							DTA.saveLinkArray(window, urls, images, bundle.getString('error.information'));
-						}
-						if (typeof queued == 'number') {
-							notifyInfo(bundle.getFormattedString('queuedn', [queued]));
-						}
-						else {
-							notifyInfo(bundle.getFormattedString('queued', [queued.url]));
-						}
-					});
-					return;
+				catch (ex) {
+					log(LOG_ERROR, "findLinksTask", ex);
 				}
-				DTA.saveLinkArray(window, urls, images);
-			});
+			}.bind(this));
 		}
 		catch(ex) {
 			log(LOG_ERROR, 'findLinks', ex);
@@ -717,6 +528,7 @@ exports.load = function load(window, outerEvent) {
 		}
 		DTA.saveSingleItem(window, false, item);
 	}
+
 	function findForm(turbo) {
 		try {
 			let ctx = window.gContextMenu;
@@ -834,6 +646,16 @@ exports.load = function load(window, outerEvent) {
 			notifyProgress = function() {};
 		}
 	};
+
+	let frameToLog = m => log(m.data.level, m.data.message, m.data.exception);
+	window.messageManager.addMessageListener("DTA:log", frameToLog);
+	let fs = "chrome://dta-modules/content/loaders/integration-content.js?" + (+new Date());
+	window.messageManager.loadFrameScript(fs, true);
+	unloadWindow(window, () => {
+		window.messageManager.broadcastAsyncMessage("DTA:shutdown");
+		window.messageManager.removeMessageListener("DTA:log", frameToLog);
+		window.messageManager.removeDelayedFrameScript(fs);
+	});
 
 	// these are only valid after the load event.
 	let direct = {};
