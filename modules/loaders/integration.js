@@ -94,7 +94,7 @@ function getSniffedInfoFromLocation(l) {
 		let [fn,ext] = strfn.getFileNameAndExt(e.spec);
 		if (!ext || getSniffedInfo_name.test(fn)) {
 			ext = ext || "flv";
-			fn = strfn.replaceSlashes(strfn.getUsableFileName(l.title), "-");
+			fn = strfn.replaceSlashes(strfn.getUsableFileName(l.title) || "unknown", "-");
 		}
 		return {
 			url: e,
