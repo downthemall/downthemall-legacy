@@ -431,12 +431,33 @@ const handleFindLinks = message => {
 	setTimeout(runner, 0);
 }
 
+const handleGetLocations = m => {
+	let locations = [];
+	let collect = w => {
+		locations.push({
+			url: new URL(Services.io.newURI(w.location.href, w.document.characterSet, null)),
+			isPrivate: isWindowPrivate(w),
+			title: w.document.title
+		});
+		if (!w.frames) {
+			return;
+		}
+		for (let i = 0, e = w.frames.length; i < e; ++i) {
+			collect(w.frames[i]);
+		}
+	};
+	collect(content);
+	sendAsyncMessage("DTA:getLocations:" + m.data.job, locations);
+};
+
 const handleShutdown = message => {
 	removeMessageListener("DTA:findLinks", handleFindLinks);
+	removeMessageListener("DTA:getLocations", handleGetLocations);
 	removeMessageListener("DTA:shutdown", handleShutdown);
 };
 
 addMessageListener("DTA:findLinks", handleFindLinks);
+addMessageListener("DTA:getLocations", handleGetLocations);
 addMessageListener("DTA:shutdown", handleShutdown);
 
 })();
