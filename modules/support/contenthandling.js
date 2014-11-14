@@ -185,25 +185,74 @@ ContentHandlingImpl.prototype = {
 			}
 			let spec = channel.URI.spec;
 			if ((REGEXP_MEDIA.test(spec) && !REGEXP_SWF.test(spec)) || REGEXP_CT.test(ct)) {
-				let wp = null;
-				if (channel.loadGroup && channel.loadGroup.groupObserver) {
-					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);
+				let uri = null;
+				let lc = null;
+				if (channel instanceof Ci.nsIInterfaceRequestor) {
+					try {
+						lc = channel.getInterface(Ci.nsILoadContext);
+					}
+					catch (ex) {
+
+					}
 				}
-				if (!wp) {
-					wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
+				if (!lc) {
+					try {
+						lc = channel.notificationCallbacks.getInterface(Ci.nsILoadContext);
+					}
+					catch (ex) {
+
+					}
 				}
-				if (!wp || !wp.DOMWindow) {
+				if (lc) {
+					try {
+						log(LOG_DEBUG, "got load context");
+						try {
+							let wnd = lc.topWindow;
+							uri = Services.io.newURI(wnd.location.href, wnd.document.characterSet, null);
+							log(LOG_DEBUG, "got uri from lctw " + uri.spec);
+						}
+						catch (ex) {
+							try {
+								let tfe = lc.topFrameElement;
+								let wnd = tfe.contentWindowAsCPOW;
+								uri = Services.io.newURI(wnd.location.href, wnd.document.characterSet, null);
+								log(LOG_DEBUG, "got uri from lctfe " + uri.spec);
+							}
+							catch (ex) {
+								log(LOG_DEBUG, "Cannot get from lc", ex);
+							}
+						}
+					}
+					catch (ex) {
+						// no op
+					}
+				}
+				if (!uri) {
+					let wp;
+					if (!uri && channel.loadGroup && channel.loadGroup.groupObserver) {
+						wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);
+					}
+					if (!uri && !wp) {
+						wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
+					}
+					if (!wp || !wp.DOMWindow) {
+						return;
+					}
+					let wn = wp.DOMWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
+					if (!wn || !wn.currentURI) {
+						return;
+					}
+					uri = wn.currentURI;
+				}
+				if (!uri) {
+					log(LOG_DEBUG, "Failed to get video doc uri");
 					return;
 				}
-				let wn = wp.DOMWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
-				if (!wn || !wn.currentURI) {
+				log(LOG_DEBUG, channel.URI.spec + " -> " + uri.spec);
+				if (!uri.schemeIs('http') && !uri.schemeIs('https') && !uri.schemeIs('ftp')) {
 					return;
 				}
-				let parentURI = wn.currentURI;
-				if (!parentURI.schemeIs('http') && !parentURI.schemeIs('https') && !parentURI.schemeIs('ftp')) {
-					return;
-				}
-				this._registerVideo(parentURI, channel.URI, isChannelPrivate(channel));
+				this._registerVideo(uri, channel.URI, isChannelPrivate(channel));
 			}
 		}
 		catch (ex) {
