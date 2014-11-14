@@ -249,7 +249,7 @@ ContentHandlingImpl.prototype = {
 					return;
 				}
 				log(LOG_DEBUG, channel.URI.spec + " -> " + uri.spec);
-				if (!uri.schemeIs('http') && !uri.schemeIs('https') && !uri.schemeIs('ftp')) {
+				if (!uri.schemeIs('http') && !uri.schemeIs('https') && !uri.schemeIs('ftp') && !uri.schemeIs("data")) {
 					return;
 				}
 				this._registerVideo(uri, channel.URI, isChannelPrivate(channel));
