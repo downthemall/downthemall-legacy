@@ -243,7 +243,7 @@ Filter.prototype = {
 	},
 
 	_reset: function() {
-		Preferences.resetBranch(this._id);
+		exports.FilterManager.remove(this._id);
 	},
 
 	// exported
@@ -586,7 +586,9 @@ FilterManagerImpl.prototype = {
 
 	remove: function(id) {
 		if (id in this._filters) {
-			this._filters[id].remove();
+			delete this._filters[id];
+			this.save();
+			this._saver.flush()
 			return;
 		}
 		throw new Exception('filter not defined!');
