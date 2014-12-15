@@ -67,19 +67,24 @@ function load(window, document) {
 			}
 
 			// Workaround for bug 371508
-			try {
-				window.sizeToContent();
-			}
-			catch (ex) {
-				log(LOG_DEBUG, "sizeToContent Bug: 371508", ex);
+			let stc = () => {
 				try {
-					var btn = document.documentElement.getButton('accept');
-					window.innerHeight = btn.boxObject.y + 10;
+					window.sizeToContent();
 				}
 				catch (ex) {
-					log(LOG_ERROR, "setting height failed", ex);
+					log(LOG_DEBUG, "sizeToContent Bug: 371508", ex);
+					try {
+						var btn = document.documentElement.getButton('accept');
+						window.innerHeight = btn.boxObject.y + 10;
+					}
+					catch (ex) {
+						log(LOG_ERROR, "setting height failed", ex);
+					}
 				}
-			}
+			};
+			stc();
+			window.setTimeout(() => stc(), 0);
+
 			log(LOG_DEBUG, "save-as reverted!");
 		}
 		let download = turbo => {
