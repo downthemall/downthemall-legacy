@@ -326,18 +326,18 @@ const Tree = {
 
 		let cmpFun = (function () {
 			switch (id) {
-			case 'task':
+			case 'colTask':
 				if (Prefs.showOnlyFilenames) {
 					return function(d) d.destinationName;
 				}
 				return function(d) d.urlManager.usable;
-			case 'dim':
+			case 'colSize':
 				return function(d) d.totalSize;
-			case 'status':
+			case 'colStatus':
 				return function(d) d.status;
-			case 'path':
+			case 'colPath':
 				return function(d) d.destinationPath;
-			case 'domain':
+			case 'colDomain':
 				return function(d) d.urlManager.domain;
 			};
 			throw new Exception("cmpFun not implemented");
