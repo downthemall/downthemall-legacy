@@ -2084,7 +2084,7 @@ QueueItem.prototype = {
 	customFinishEvent: function() {
 		new CustomEvent(this, Prefs.finishEvent);
 	},
-	setAttributes: function() {
+	setAttributes: function*() {
 		if (Prefs.setTime) {
 			// XXX: async API <https://bugzilla.mozilla.org/show_bug.cgi?id=924916>
 			try {
@@ -2120,7 +2120,7 @@ QueueItem.prototype = {
 			log(LOG_ERROR, "failed to get filesize for " + file.path, ex);
 			this.totalSize = this.partialSize = 0;
 		}
-		yield true;
+		return true;
 	},
 	closeChunks: function*() {
 		if (!this.chunks) {
@@ -2297,35 +2297,40 @@ QueueItem.prototype = {
 			}
 			this.setState(CANCELED);
 			Task.spawn(function*() {
-				yield this.closeChunks();
-				if (this._preallocTask) {
-					yield this._preallocTask;
-				}
-				log(LOG_INFO, this.fileName + ": canceled");
+				try {
+					yield this.closeChunks();
+					if (this._preallocTask) {
+						yield this._preallocTask;
+					}
+					log(LOG_INFO, this.fileName + ": canceled");
 
-				this.shutdown();
-				this.removeTmpFile();
+					this.shutdown();
+					this.removeTmpFile();
 
-				// gc
-				if (this.deleting) {
-					return;
-				}
-				if (!message) {
-					message = _("canceled");
-				}
+					// gc
+					if (this.deleting) {
+						return;
+					}
+					if (!message) {
+						message = _("canceled");
+					}
 
-				this.status = message;
-				this.visitors = new VisitorManager();
-				this.chunks.length = 0;
-				this.progress = this.totalSize = this.partialSize = 0;
-				this.conflicts = 0;
-				this.resumable = true;
-				this._maxChunks = this._activeChunks = 0;
-				this._autoRetries = 0;
-				delete this._autoRetryTime;
-				this.speeds.clear();
-				this.otherBytes = 0;
-				this.save();
+					this.status = message;
+					this.visitors = new VisitorManager();
+					this.chunks.length = 0;
+					this.progress = this.totalSize = this.partialSize = 0;
+					this.conflicts = 0;
+					this.resumable = true;
+					this._maxChunks = this._activeChunks = 0;
+					this._autoRetries = 0;
+					delete this._autoRetryTime;
+					this.speeds.clear();
+					this.otherBytes = 0;
+					this.save();
+				}
+				catch (ex) {
+					log(LOG_ERROR, "cancel() Task", ex);
+				}
 			}.bind(this));
 		}
 		catch(ex) {
@@ -2364,7 +2369,7 @@ QueueItem.prototype = {
 		}
 
 		this.preallocating = true;
-		this._preallocTask = Task.spawn((function*() {
+		this._preallocTask = Task.spawn(function*() {
 			try {
 				try {
 					yield Utils.makeDir(file.parent, Prefs.dirPermissions);
@@ -2395,14 +2400,13 @@ QueueItem.prototype = {
 					log(LOG_INFO, "pa: not preallocating");
 				}
 			}
-			finally {
-				this._preallocTask = null;
-				this.preallocating = false;
-				this.maybeResumeDownload();
+			catch(ex) {
+				log(LOG_ERROR, "pa: failed", ex);
 			}
-		}).bind(this)).then(null, (function(ex) {
-			log(LOG_ERROR, "pa: Failed to prealloc", ex);
-		}).bind(this));
+			this._preallocTask = null;
+			this.preallocating = false;
+			this.maybeResumeDownload();
+		}.bind(this));
 	},
 
 	shutdown: function() {
