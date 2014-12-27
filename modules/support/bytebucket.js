@@ -41,7 +41,7 @@ Observers.prototype = {
 		this._obs.length = 0;
 	},
 	observe: function() {
-		this._obs.sort(function() Math.round(Math.random() - 0.5));
+		//this._obs.sort(function() Math.round(Math.random() - 0.5));
 	}
 };
 Observers.Manager = (function() {
