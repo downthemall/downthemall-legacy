@@ -112,7 +112,9 @@ var prealloc = (function() {
 					SetFilePointerEx(hFile, liSize, null, 0x1);
 
 					// EOF
-					SetEndOfFile(hFile);
+					if (!SetEndOfFile(hFile)) {
+						throw new Error("Failed to set EOF");
+					}
 				}
 
 				// all good
