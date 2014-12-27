@@ -10,7 +10,7 @@ const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 let {Services} = Cu.import("resource://gre/modules/Services.jsm", {});
 let isWindowPrivate = () => false;
 try {
-	let {PrivateBrowsingUtils} = requireJSM("resource://gre/modules/PrivateBrowsingUtils.jsm");
+	let {PrivateBrowsingUtils} = Cu.import("resource://gre/modules/PrivateBrowsingUtils.jsm", {});
 	isWindowPrivate = w => PrivateBrowsingUtils.isWindowPrivate(w);
 }
 catch (ex) {
@@ -387,6 +387,7 @@ const addLinks = function* addLinks(aWin, aURLs, aImages, aLocations, honorSelec
 };
 
 const handleFindLinks = message => {
+	log(LOG_DEBUG, "FindLinks job received" + message.data.job);
 	let urls = [];
 	let images = [];
 	let locations = [];
@@ -404,19 +405,31 @@ const handleFindLinks = message => {
 	}
 	let gen = addLinks(win, urls, images, locations, honorSelection, recognizeTextLinks);
 	let send = () => {
-		sendAsyncMessage("DTA:findLinks:" + job, {
-			urls: unique(urls),
-			images: unique(images),
-			locations: locations
-		});
+		try {
+			sendAsyncMessage("DTA:findLinks:" + job, {
+				urls: unique(urls),
+				images: unique(images),
+				locations: locations
+			});
+		}
+		catch (ex) {
+			log(LOG_ERROR, "findLinks, failed to send", ex);
+		}
 	};
 	let lastUrls = 0, lastImages = 0;
 	let runner = () => {
+		log(LOG_DEBUG, "findLinks: Runner iteration");
 		let deadline = +(new Date()) + 60;
 		while (deadline >= +(new Date())) {
-			let result = gen.next();
-			if (result.done || !result.value) {
-				send();
+			try {
+				let result = gen.next();
+				if (result.done || !result.value) {
+					send();
+					return;
+				}
+			}
+			catch (ex) {
+				log(LOG_ERROR, "findLinks failed", ex);
 				return;
 			}
 		}
@@ -432,6 +445,7 @@ const handleFindLinks = message => {
 }
 
 const handleGetLocations = m => {
+	log(LOG_DEBUG, "GetLocations job received" + m.data.job);
 	let locations = [];
 	let collect = w => {
 		locations.push({
