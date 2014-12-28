@@ -16,7 +16,7 @@ for (let [k,v] in Iterator(api)) {
 			Cu.reportError("deprecated DownThemAll! API access; see glue.jsm/require(). Symbol was " + _k);
 			return _v;
 		},
-		enumerable: true,
+		enumerable: true
 	});
 	EXPORTED_SYMBOLS.push(_k);
 }
