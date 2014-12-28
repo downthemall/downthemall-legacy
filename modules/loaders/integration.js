@@ -100,8 +100,6 @@ function getSniffedInfoFromLocation(l) {
 	});
 }
 
-var adjustedYieldEvery = -1;
-
 /* **
  * LOADER
  */
