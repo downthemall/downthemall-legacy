@@ -430,13 +430,19 @@ Chunk.prototype = {
 			}
 			if (bytes) {
 				this._ensureBuffer();
-				let part = this._buffer.writeFrom(aInputStream, bytes);
-				if (part !== bytes) {
-					throw new Error("Failed to write all requested bytes to current stream. bytes: " +
-						bytes + " actual: " + part + " chunk: " + this);
+				try {
+					let part = this._buffer.writeFrom(aInputStream, bytes);
+					if (part !== bytes) {
+						throw new Error("Failed to write all requested bytes to current stream. bytes: " +
+							bytes + " actual: " + part + " chunk: " + this);
+					}
+					written += part;
+					bytes -= part;
 				}
-				written += part;
-				bytes -= part;
+				catch (ex) {
+					log(LOG_ERROR, "Failed to write: " + bytes + "/" + this._buffer.free + "/" + this.buffer_size, ex);
+					throw ex;
+				}
 			}
 			this._noteBytesWritten(got);
 
