@@ -981,7 +981,8 @@ const Dialog = {
 				this.scheduler = Limits.getConnectionScheduler(Tree.all);
 				log(LOG_DEBUG, "rebuild scheduler");
 			}
-			while (this._running.length < Prefs.maxInProgress) {
+			let finishingPenality = Math.floor(this.finishing / 3);
+			while (this._running.length < Prefs.maxInProgress - finishingPenality) {
 				let d = this.scheduler.next(this._running);
 				if (!d) {
 					break;
@@ -1017,9 +1018,6 @@ const Dialog = {
 			download.finishDownload();
 			return true;
 		}
-		if (this.finishing > Prefs.maxInProgress * 4) {
-			return false;
-		}
 		download.timeLastProgress = Utils.getTimestamp();
 		download.timeStart = Utils.getTimestamp();
 		download.setState(RUNNING);
@@ -1043,6 +1041,9 @@ const Dialog = {
 		if (idx > -1) {
 			this._running.splice(idx, 1);
 		}
+	},
+	wasFinished: function() {
+		--this.finishing;
 	},
 	resetScheduler: function() {
 		if (!Dialog.scheduler) {
