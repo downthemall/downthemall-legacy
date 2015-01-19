@@ -1840,7 +1840,7 @@ const FileHandling = {
 					}
 				}
 				else {
-					msg = _('deletetextl', [list.length]);
+					msg = _('deletetextl.2', [list.length], list.length);
 				}
 				if (list.length && Prompts.confirm(window, _('deletecaption'), msg, _('delete'), Prompts.CANCEL, null, 1)) {
 					return;

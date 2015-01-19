@@ -7,6 +7,7 @@ const Prefs = require("preferences");
 const {toURI} = require("support/stringfuncs");
 const {identity} = require("support/memoize");
 const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
+const {PluralForm} = requireJSM("resource://gre/modules/PluralForm.jsm");
 
 /**
  * XUL namespace
@@ -594,8 +595,11 @@ StringBundles._repl = function() {
 };
 StringBundles.prototype = Object.freeze({
 	getString: function(id) this._strings[id],
-	getFormattedString: function(id, params) {
+	getFormattedString: function(id, params, num) {
 		let fmt = this.getString(id);
+		if (isFinite(num)) {
+			fmt = PluralForm.get(num, fmt);
+		}
 		StringBundles_params = params;
 		try {
 			fmt = fmt.replace(StringBundles._br, StringBundles._repl);

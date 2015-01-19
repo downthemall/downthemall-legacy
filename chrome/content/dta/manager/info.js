@@ -41,7 +41,7 @@ var Dialog = {
 				$("infoDest").value = d.destinationFile;
 				$("infoDate").value = d.startDate.toLocaleString();
 				$("infoPrivate").hidden = !d.isPrivate;
-				$("mirrorsText").value = _("mirrorsText", [d.urlManager.length]);
+				$("mirrorsText").value = _("mirrorsText.2", [d.urlManager.length], d.urlManager.length);
 				$("clearReferrer").hidden = true;
 				document.title = d.destinationName;
 
@@ -216,7 +216,7 @@ var Dialog = {
 		);
 		if (mirrors.length) {
 			download.replaceMirrors(mirrors);
-			$("mirrorsText").value = _("mirrorsText", [download.urlManager.length]);
+			$("mirrorsText").value = _("mirrorsText.2", [download.urlManager.length], download.urlManager.length);
 			log(LOG_INFO, "New mirrors set " + mirrors);
 		}
 	},
