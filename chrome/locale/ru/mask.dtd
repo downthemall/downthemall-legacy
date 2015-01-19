@@ -1,30 +1,30 @@
-<!ENTITY mask.tags "Теги переименования">
-<!ENTITY mask.name "Имя файла">
-<!ENTITY mask.ext "Расширение">
-<!ENTITY mask.url "Базовый URL">
-<!ENTITY mask.curl "Полный URL">
-<!ENTITY mask.flatcurl "Основа URL">
 <!ENTITY mask.batch "Серийный номер">
-<!ENTITY mask.inum "Номер пункта">
-<!ENTITY mask.hh "Часы">
-<!ENTITY mask.mm "Минуты">
-<!ENTITY mask.ss "Секунды">
-<!ENTITY mask.d "День">
-<!ENTITY mask.m "Месяц">
-<!ENTITY mask.y "Год">
-<!ENTITY mask.subdirs "URL поддиректории">
-<!ENTITY mask.flatsubdirs "Основа поддиректории">
-<!ENTITY mask.linktext "Описание ссылки">
-<!ENTITY mask.flatlinktext "Основное описание">
-<!ENTITY mask.refername "Имя referrer">
-<!ENTITY mask.referext "Referrer расширения">
-<!ENTITY mask.refer "Referrer ссылка">
 <!ENTITY mask.crefer "Полный referrer">
+<!ENTITY mask.curl "Полный URL">
+<!ENTITY mask.d "День">
+<!ENTITY mask.ext "Расширение">
 <!ENTITY mask.flatcrefer "Основа referrer">
-<!ENTITY mask.referdirs "Referrer поддиректории">
+<!ENTITY mask.flatcurl "Основа URL">
+<!ENTITY mask.flatlinktext "Основное описание">
 <!ENTITY mask.flatreferdirs "Основа поддиректории">
-<!ENTITY mask.qstring "Cтрока запроса">
-<!ENTITY mask.title "Название связаное с ссылкой">
+<!ENTITY mask.flatsubdirs "Основа поддиректории">
 <!ENTITY mask.flattitle2 "Основа связаная с ссылкой">
-<!ENTITY mask.tip "Нажмите для выбора маски переименования">
+<!ENTITY mask.hh "Часы">
+<!ENTITY mask.inum "Номер пункта">
+<!ENTITY mask.linktext "Описание ссылки">
+<!ENTITY mask.m "Месяц">
+<!ENTITY mask.mm "Минуты">
+<!ENTITY mask.name "Имя файла">
 <!ENTITY mask.open.tip "Показать теги переименования">
+<!ENTITY mask.qstring "Cтрока запроса">
+<!ENTITY mask.refer "Referrer ссылка">
+<!ENTITY mask.referdirs "Referrer поддиректории">
+<!ENTITY mask.referext "Referrer расширения">
+<!ENTITY mask.refername "Имя referrer">
+<!ENTITY mask.ss "Секунды">
+<!ENTITY mask.subdirs "URL поддиректории">
+<!ENTITY mask.tags "Теги переименования">
+<!ENTITY mask.tip "Нажмите для выбора маски переименования">
+<!ENTITY mask.title "Название связаное с ссылкой">
+<!ENTITY mask.url "Базовый URL">
+<!ENTITY mask.y "Год">

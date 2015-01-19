@@ -1,26 +1,17 @@
-<!ENTITY amo.description.feat "A DownThemAll gyors, megbízható és könnyen kezelhető. Letöltheti vele a weboldalon található összes linket illetve képet. De még ennél többre is képes: kizárólag a finoman beállítható kritériumoknak megfelelő letöltéseket választhatja ki, hogy csak tényleg azokat a töltse le amelyeket tényleg szeretne. A letöltések teljesen az Ön ellenőrzése alatt tarthatja, határolhatja a letöltés sebességét és a párhuzamos letöltési szálak számát is. Használja a Metalinkeket vagy adjon meg tükörszervereket kézzel, hogy a különböző szerverek egyszerre szolgálják ki Önt.">
-<!ENTITY amo.description.free "A DownThemAll nyílt forráskódú szabad szoftver. Nincsenek benne hirdetések, sem kémprogramok, és rejtett költségek sincsenek.">
 <!ENTITY amo.description.intro "A DownThemAll mindazt tudja, amit egy letöltéskezelőtől elvár: a továbbfejlesztett letöltésgyorsító segítségével akár 4x-es sebességgel tölthet le, bármikor felfüggesztehti, majd folytathatja a letöltéseit.">
 <!ENTITY amo.description.more "További információkért látogassa meg a <a href='http://www.downthemall.net/howto/features/'>Szolgáltatások oldal</a>t.">
-<!ENTITY amo.summary "Az első és az egyetlen letöltéskezelő, amely beépül a Firefoxba.">
 <!ENTITY language "Magyar">
 <!ENTITY lp.contact "Kapcsolat">
-<!ENTITY lp.ct.bugs "Jelentsen be hibákat és kérjen új képességeket a <a href='http://bugs.code.downthemall.net/'>hibakövető rendszerünk</a>ben.">
 <!ENTITY lp.ct.bugstitle "Hibajelentés és új képességek kérése">
 <!ENTITY lp.ct.contacts "Látogassa meg online elérhető <a href='http://www.downthemall.net/main/contacts/'>kapcsolatok</a> oldalunkat.">
-<!ENTITY lp.ct.contactsfeed "Szeretnénk visszajelzéseket, tanácsokat és segítséget kapni.">
 <!ENTITY lp.ct.contactstitle "Kapcsolatok">
-<!ENTITY lp.donate "Fontolja meg a közreműködést">
 <!ENTITY lp.gettingstarted "Kezdeti lépések">
 <!ENTITY lp.info "Tekintse meg a DownThemAll! használatát bemutató videókat, tudjon meg többet a személyes szféra védelméről és a jogairól.">
 <!ENTITY lp.languagetitle "Nyelv">
 <!ENTITY lp.localedir "ltr">
 <!ENTITY lp.moreinfo "További információkért látogassa meg a <a href='http://www.downthemall.net/howto/features/'>szolgáltatások</a> oldalt.">
 <!ENTITY lp.pleasenote "Mielőtt használatba venné a programot, jegyezze meg az alábbiakat:">
-<!ENTITY lp.pr.diag "You can enable diagnostic messages, which will be logged to both the error console and written to the dta_log.txt file, by the Preferences → Privacy panel. Diagnostic messages will likely contain sensitive information like URLs, file paths, filenames you're downloading, or even cookie information. This option is DISABLED by default to protect your privacy. If you submit a diagnostic message, you may wish to censor this sensitive information. No diagnostic log will ever get published in an automated fashion.">
-<!ENTITY lp.pr.intro "A DownThemAll védi személyes szféráját">
 <!ENTITY lp.pr.link "This notice is always available from this page (about:downthemall) and is additionally linked in the Preferences window">
-<!ENTITY lp.pr.settings "You can have DownThemAll! remove all complete, canceled, and unfinished downloads from the download list when closed by changing the settings in the Preferences → Privacy panel.">
 <!ENTITY lp.pr.title "Megjegyzések a privát szférával kapcsolatban">
 <!ENTITY lp.privacy "Személyes szféra">
 <!ENTITY lp.tb.add.dta "DownThemAll! gomb">
@@ -36,11 +27,8 @@
 <!ENTITY lp.tb.add.title "Eszköztár gombok hozzáadása és használata">
 <!ENTITY lp.tb.dnd.p1 "You can drag'n'drop every link or image onto the DownThemAll! or OneClick! button to download it.">
 <!ENTITY lp.tb.dnd.p2 "The Manager window also can be used to drop items to download on.">
-<!ENTITY lp.tb.dnd.p3 "You may order your download list with drag'n'drop as well. Just drag an item and drop it at the desired position.">
 <!ENTITY lp.tb.dnd.title "Húzd és ejtsd">
 <!ENTITY lp.tb.intro "A DownThemAll! rendelkezésére bocsát néhány eszköztár gombot, amely kényelmes módja a DownThemAll! szolgáltatásainak elérésének.">
-<!ENTITY lp.tb.selector.p1 "When using DownThemAll! Selector you may queue many downloads by simply clicking on the links or images.">
-<!ENTITY lp.tb.selector.p2 "To enable the Selector click the toolbar button, and to disable it once you're done click the button again.">
 <!ENTITY lp.tb.selector.title "DownThemAll! Választó használata">
 <!ENTITY lp.title "A DownThemAll! névjegye…">
 <!ENTITY lp.toolbar "Eszköztár gombok">
@@ -48,19 +36,13 @@
 <!ENTITY lp.tut.batches2 "The basic syntax is: <code>[start:end]</code> or <code>[start:end:step]</code> where both <code>start</code> and <code>end</code> may either be a number or a simple character. <code>step</code> defines the step width and is simply 1 if omitted.">
 <!ENTITY lp.tut.batches3 "For example if you'd like to download pictures from 001 to 100 you may change the URL to: <code>http://example.org/[001:100].jpg</code>">
 <!ENTITY lp.tut.batchestitle "Tömeges letöltés">
-<!ENTITY lp.tut.fd1 "Fájlok letöltése különösen egyszerű és hatékony a DownThemAll! kiterjesztésben. Fájlok megnyitásánál és mentésénél használhatja a DownThemAll! menüelemet, az így megjelenő párbeszédablakban kiválaszthatja, hogy melyik mappába menti el a fájlt valamint további haladó beállításokat is megadhat.">
 <!ENTITY lp.tut.firsttitle "Első letöltése">
-<!ENTITY lp.tut.oneclick1 "Once you made your initial download another item will be available: DownThemAll! OneClick. You may use this to download directly using the previous settings skipping the download adding and/or selection dialog.">
 <!ENTITY lp.tut.oneclick2 "Hence OneClick enables you to rapidly queue a lot of links.">
 <!ENTITY lp.tut.oneclickn "After using the Clear Private Data feature in Firefox the OneClick feature won't be available until you start a regular DownThemAll! download again.">
 <!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
-<!ENTITY lp.tut.seldone "Once you selected the files to download hit either Start! or Add paused.">
 <!ENTITY lp.tut.selecttitle "Kiválasztóablak használata">
 <!ENTITY lp.tut.selgalleries "Full-size images are often only linked from gallery pages, hence you'll find them in the Links tab">
 <!ENTITY lp.tut.selintro "A webhelyek helyzetérzékeny menüjéből elérhetővé válik az DownThemAll! lehetőség. Kiválaszta ezt az elemet megjelenik a DownThemAll! kiválasztóablaka, amelyben kiválaszthat letöltésre egy vagy több hivatkozást.">
-<!ENTITY lp.tut.seloptfast "Továbbá megadhat saját keresési feltételeket a Gyorsszűrő mezőben, például: <code>*.pdf,*.doc</code> vagy akár egy reguláris kifejezést is">
-<!ENTITY lp.tut.seloptfilters "Használhatja a beépített szűrőket, például: az összes kép letöltésére">
-<!ENTITY lp.tut.selopthand "Kiválaszthatja a letöltendő fájlok hivatkozásait kézzel">
 <!ENTITY lp.tut.seloptions "A kiválasztóablakban számos módon kijelölheti a letöltendő fájlokat:">
 <!ENTITY lp.tut.seltypelinks "The Links tab containing all downloadable links found on the page">
 <!ENTITY lp.tut.seltypepics "And the Pictures and Media tab containing all pictures and other media as shown on the page">

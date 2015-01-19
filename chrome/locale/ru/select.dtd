@@ -1,22 +1,16 @@
-<!ENTITY title "Сделайте свой выбор">
-
-<!ENTITY filters.caption "Фильтр">
 <!ENTITY additional.caption "Быстрое фильтрование">
 <!ENTITY additional.tip "Можно использовать несколько фильтров, разделяя их запятыми">
-<!ENTITY filter.tip "Введите здесь фильтры! (некоторые примеры можете найти в выпадающем списке)">
-
-<!ENTITY menu.check.label "Выбрать выделенные пункты">
-<!ENTITY menu.uncheck.label "Не выбирать выделенные пункты">
-<!ENTITY menu.toggle.label "Переключение проверки выбранных пунктов">
-<!ENTITY menu.copylinks2.label "Копировать ссылку">
-
-<!ENTITY tab.links.label "Ссылки">
-<!ENTITY tab.media.label "Изображения и вложения">
-
-<!ENTITY header.desc.label "Описание">
-
-<!ENTITY selectfiltered.label "Выбрать фильтр">
-
 <!ENTITY disableother.label "Отключить другие фильтры">
 <!ENTITY disableother.tooltip "Отключить другие фильтры и использовать только быструю фильтрацию (эта настройка не запоминается)">
+<!ENTITY filter.tip "Введите здесь фильтры! (некоторые примеры можете найти в выпадающем списке)">
+<!ENTITY filters.caption "Фильтр">
+<!ENTITY header.desc.label "Описание">
+<!ENTITY menu.check.label "Выбрать выделенные пункты">
+<!ENTITY menu.copylinks2.label "Копировать ссылку">
+<!ENTITY menu.toggle.label "Переключение проверки выбранных пунктов">
+<!ENTITY menu.uncheck.label "Не выбирать выделенные пункты">
 <!ENTITY resname.value "Имя элемента">
+<!ENTITY selectfiltered.label "Выбрать фильтр">
+<!ENTITY tab.links.label "Ссылки">
+<!ENTITY tab.media.label "Изображения и вложения">
+<!ENTITY title "Сделайте свой выбор">

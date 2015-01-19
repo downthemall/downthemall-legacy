@@ -1,26 +1,17 @@
-<!ENTITY amo.description.feat "DownThemAll é rápido, confiável e fácil de usar! Permite que você baixe todos os links ou imagens contidas numa página e muito mais: você pode refinar seus downloads com critérios totalmente customizáveis para selecionar somente o que você realmente queira! Tenha total controle sobre seus downloads, velocidade dedicada e número de conexões paralelas a qualquer momento. Use Metalinks ou adicione mirrors manualmente para baixar um arquivo de diferentes servidores ao mesmo tempo.">
-<!ENTITY amo.description.free "DownThemAll é open-source e freeware. Nenhum Adware, nenhum Spyware, nenhum custo escondido!">
 <!ENTITY amo.description.intro "DownThemAll é tudo o que você poderia desejar em um gerenciador de downloads: possui um avançado acelerador que pode aumentar a velocidade em até 4x e permite que você pause e continue os downloads a qualquer momento.">
 <!ENTITY amo.description.more "Para mais informações, veja nossa <a href='http://www.downthemall.net/howto/features/'>Página de Funcionalidades</a>.">
-<!ENTITY amo.summary "O primeiro e único gerenciador/acelerador de downloads construído para o Firefox!">
 <!ENTITY language "Português (Brasil)">
 <!ENTITY lp.contact "Contato">
-<!ENTITY lp.ct.bugs "Reporte bugs e requisições de novos recursos em nosso <a href='http://bugs.code.downthemall.net/'>bug tracker</a>.">
 <!ENTITY lp.ct.bugstitle "Reportando bugs/Requisição de recursos">
 <!ENTITY lp.ct.contacts "Veja nossa <a href='http://www.downthemall.net/main/contacts/'>página de contato</a> online.">
-<!ENTITY lp.ct.contactsfeed "Gostaríamos de receber a sua opinião, sugestões ou ofertas de ajuda.">
 <!ENTITY lp.ct.contactstitle "Contatos">
-<!ENTITY lp.donate "Agradeceríamos uma contribuição">
 <!ENTITY lp.gettingstarted "Como começar">
 <!ENTITY lp.info "Dê uma olhada nos vídeos que mostram como usar o DownThemAll! e conheça mais sobre seus direitos e privacidade">
 <!ENTITY lp.languagetitle "Linguagem">
 <!ENTITY lp.localedir "ltr">
 <!ENTITY lp.moreinfo "Para mais informações, visite nossa <a href='http://www.downthemall.net/howto/features/'>Página de Funcionalidades</a>.">
 <!ENTITY lp.pleasenote "Tome conhecimento:">
-<!ENTITY lp.pr.diag "Você pode habilitar mensagens de diagnóstico, que serão registradas tanto no console de erros como no arquivo dta_log.txt, em Opções → Privacidade. Mensagens de diagnóstico contêm informações consideradas confidenciais, tais como URLs, caminhos, nomes dos arquivos sendo baixados, ou mesmo informações de cookies. Essa opção é DESABILITADA por padrão para proteger sua privacidade. Se quiser enviar uma mensagem de diagnóstico, você pode optar por esconder essas informações confidenciais. Nenhum log de diagnóstico será publicado automaticamente.">
-<!ENTITY lp.pr.intro "DownThemAll protege sua privacidade.">
 <!ENTITY lp.pr.link "Este informativo está sempre disponível nesta página (about:downthemall) e também pode ser acessada a partir da janela de Opções.">
-<!ENTITY lp.pr.settings "Você pode habilitar o DownThemAll! a remover da lista todos os downloads completos, cancelados e inacabados ao ser fechado, alterando as configurações em Opções → Privacidade.">
 <!ENTITY lp.pr.title "Informações de Privacidade">
 <!ENTITY lp.privacy "Privacidade">
 <!ENTITY lp.tb.add.dta "Botão DownThemAll!">
@@ -36,11 +27,8 @@
 <!ENTITY lp.tb.add.title "Adicionando e usando botões na barra de ferramentas">
 <!ENTITY lp.tb.dnd.p1 "Você pode arrastar e soltar qualquer link ou imagem nos botões DownThemAll! ou OneClick! para baixá-lo.">
 <!ENTITY lp.tb.dnd.p2 "Os ítens também podem ser soltados na janela do Gerenciador para iniciar o download.">
-<!ENTITY lp.tb.dnd.p3 "Você também pode ordenar sua lista de downloads usando o arrastar e soltar. Apenas arraste um ítem e solte-o na posição desejada.">
 <!ENTITY lp.tb.dnd.title "Arrastar e soltar">
 <!ENTITY lp.tb.intro "DownThemAll! oferece alguns botões para a barra de ferramentas que facilita o acesso às funcionalidades do DownThemAll!.">
-<!ENTITY lp.tb.selector.p1 "Usando o Seletor do DownThemAll! você pode enfileirar vários downloads simplesmente clicando nos links ou imagens.">
-<!ENTITY lp.tb.selector.p2 "Para habilitar o Seletor, clique no botão da barra de ferramentas e, para desabilitá-lo quando terminar, clique no botão novamente.">
 <!ENTITY lp.tb.selector.title "Usando o Seletor do DownThemAll!">
 <!ENTITY lp.title "Sobre o DownThemAll!">
 <!ENTITY lp.toolbar "Botões da Barra de Ferramentas">
@@ -48,19 +36,13 @@
 <!ENTITY lp.tut.batches2 "A sintaxe básica é: <code>[início:fim]</code> ou <code>[início:fim:passo]</code> onde <code>início</code> e <code>fim</code> podem ser um número ou um caracter simples. <code>passo</code> define o tamanho do incremento a cada arquivo, tendo valor 1 caso omitido.">
 <!ENTITY lp.tut.batches3 "Por exemplo, se quiser baixar figuras de 001 a 100, você pode mudar a URL para: <code>http://exemplo.org/[001:100].jpg</code>">
 <!ENTITY lp.tut.batchestitle "Downloads em lotes">
-<!ENTITY lp.tut.fd1 "O dTa apresenta simplicidade mas também muitas funcionalidades na hora de baixar arquivos. Quando a janela para abrir ou salvar um arquivo for aberta, ela trará a opção DownThemAll!. Essa opção levará ao gerenciador, onde você pode escolher a pasta onde o arquivo será salvo dentre outras opções avançadas.">
 <!ENTITY lp.tut.firsttitle "Seu primeiro download">
-<!ENTITY lp.tut.oneclick1 "Assim que você tiver feito o primeiro download, uma nova opção estára disponível: DownThemAll! OneClick. Você pode usá-la para pular a janela de seleção de downloads e baixar o arquivo diretamente usando as mesmas opções do último download.">
 <!ENTITY lp.tut.oneclick2 "Assim, OneClick te permite rapidamente adicionar vários links na fila.">
 <!ENTITY lp.tut.oneclickn "Após usar a opção Limpar Histórico Recente no Firefox, a opção OneClick não estará mais disponível até que você inicie um novo download regular do DownThemAll!.">
 <!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
-<!ENTITY lp.tut.seldone "Depois de selecionar os arquivos para download, clique em Iniciar! ou Adicionar pausado(s).">
 <!ENTITY lp.tut.selecttitle "Usando a janela de seleção">
 <!ENTITY lp.tut.selgalleries "As imagens em tamanho real muitas vezes vem de links de páginas de galerias, sendo assim, serão listadas na aba de Links">
 <!ENTITY lp.tut.selintro "O menu de contexto numa página da web dispõe de uma nova opção DownThemAll! Ela levará à janela de seleção do DownThemAll!, que você usar para facilmente selecionar um ou mais links numa página.">
-<!ENTITY lp.tut.seloptfast "Você também pode digitar o seu próprio filtro na Caixa de Filtragem Rápida, por exemplo <code>*.pdf,*.doc</code> ou mesmo uma expressão regular">
-<!ENTITY lp.tut.seloptfilters "Você pode usar filtros prontos ou criar os seus próprios, por exemplo, para baixar todas as imagens">
-<!ENTITY lp.tut.selopthand "Você pode checar os links que deseja baixar manualmente">
 <!ENTITY lp.tut.seloptions "Na janela de seleção existem várias formas de selecionar os arquivos para baixar:">
 <!ENTITY lp.tut.seltypelinks "A aba de Links, que contém todos os links baixáveis encontrados na página">
 <!ENTITY lp.tut.seltypepics "E a aba de Imagens e Mídia, que contêm todas as imagens e outras mídias mostradas na página">

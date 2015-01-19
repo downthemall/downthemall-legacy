@@ -1,5 +1,5 @@
-<!ENTITY fileMenu.label "Файл">
+<!ENTITY closeWindow.label "Закрыть DownThemAll!">
 <!ENTITY fileMenu.accesskey "Ф">
+<!ENTITY fileMenu.label "Файл">
 <!ENTITY newNavigatorCmd.label "Новое окно">
 <!ENTITY tabCmd.label "Новое вкладка">
-<!ENTITY closeWindow.label "Закрыть DownThemAll!">

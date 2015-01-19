@@ -1,126 +1,119 @@
-<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
-<!ENTITY windowstyle.3 "width:48em;height:44em;">
-<!ENTITY filterspane.label "フィルター">
-<!ENTITY listhead1.label "表示名">
-<!ENTITY listhead2.label "拡張子">
-<!ENTITY filter.label "拡張子:">
-<!ENTITY useAs.label "使用するフィルター:">
-<!ENTITY filter.images.label "画像と組み込みオブジェクト">
-<!ENTITY filter.links.label "リンクフィルター">
 <!ENTITY add.label "新しいフィルターを追加">
-<!ENTITY dtacontext2.label "設定">
-<!ENTITY buttonlabelextra2 "設定を初期設定に戻す">
-<!ENTITY dtaPreferences.title "DownThemAll! の設定">
-<!ENTITY manager "dTa! マネージャー">
-
-<!ENTITY mainpane.label "一般">
-<!ENTITY mainpane.defaults.caption "デフォルトの設定">
-<!ENTITY mainpane.defaults.desc "OneClick! は前回使用したダウンロード設定を使用します。保存先やフィルター等を設定する場合は通常の DownThemAll! 選択ダイアログを使用します。">
-<!ENTITY mainpane.nameclash.caption "既に同じ名前のファイルが存在する時:">
-<!ENTITY mainpane.rename.label "名前の変更">
-<!ENTITY mainpane.overwrite.label "上書き">
-<!ENTITY mainpane.skip.label "無視">
-<!ENTITY mainpane.ask.label "確認する">
-<!ENTITY mainpane.misc.caption "その他">
-<!ENTITY mainpane.sounderror2.label "エラーの発生時に音で知らせる">
-<!ENTITY mainpane.alert.caption "ダウンロードの完了時:">
-<!ENTITY mainpane.alert.label "通知方法:">
-<!ENTITY mainpane.alertbox.label "警告ボックスを表示">
-<!ENTITY mainpane.alertnotifications.label "スライド式の通知ボックスを表示">
-<!ENTITY mainpane.alertnone.label "知らせない">
-<!ENTITY mainpane.sounddone.label "すべてのダウンロードの完了を音で知らせる">
-<!ENTITY mainpane.closedta.label "すべてのダウンロードの完了時に DownThemAll を閉じる">
-<!ENTITY mainpane.settime.label "ファイルのタイムスタンプをサーバーの変更日時かダウンロードリストへの登録日時に設定する">
-<!ENTITY mainpane.rememberoneclick.label "OneClick の設定をすべてのタブで使用するか現在のタブにだけ使用するか記憶する">
-<!ENTITY mainpane.confirmremove2.label "ダウンロードの削除時に確認する">
-<!ENTITY mainpane.textlinks.label "テキストのリンクを認識">
-<!ENTITY mainpane.listsniffedvideos.label "動画 (Flash) の録画と一覧での表示">
-
-<!ENTITY privacypane.label "プライバシー">
-<!ENTITY privacypane.closing.caption "終了時に削除する項目">
-<!ENTITY privacypane.removecompleted2.label "完了したダウンロードを削除">
-<!ENTITY privacypane.removecanceled2.label "中止や失敗したダウンロードを削除">
-<!ENTITY privacypane.removeaborted2.label "完了していないダウンロードを削除">
-<!ENTITY privacypane.deletefoldershistory.label "フォルダーリストを消去">
-<!ENTITY privacypane.deletefiltershistory.label "追加したフィルターを消去">
-<!ENTITY privacypane.showlog.label "ログを表示">
-<!ENTITY privacypane.reveallog.label "ファイルを表示">
-<!ENTITY privacypane.deletelog.label "ログを削除">
-<!ENTITY privacypane.dropdowns.caption "ドロップダウンメニュー">
-<!ENTITY privacypane.dropdownresults2.label "履歴の表示数">
-<!ENTITY privacypane.logs.caption " 診断メッセージ">
-<!ENTITY privacypane.enablelogs.label "診断メッセージを記録する">
-<!ENTITY privacypane.notice.caption "プライバシーに関して">
-<!ENTITY privacypane.notice.desc "DownThemAll のプライバシー情報は [最近の履歴を消去] 機能からも消去できます。">
-<!ENTITY privacypane.privacynotice.label "プライバシーについて">
-
-<!ENTITY serverspane.label "ネットワーク">
-<!ENTITY serverspane.downloads.caption "ダウンロードの上限">
-<!ENTITY serverspane.concurrent2.label "ダウンロードの上限数:">
-<!ENTITY serverspane.perserver2.label "サーバーごとの上限数:">
-<!ENTITY serverspane.url.label "URL/ドメイン:">
-<!ENTITY serverspane.new.label "追加">
-<!ENTITY serverspane.limits.label "サーバーごとのダウンロード設定">
-<!ENTITY serverpane.limits.noitems "サーバーごとのダウンロード設定はありません">
-<!ENTITY serverspane.connections.label "接続数:">
-<!ENTITY serverspane.speed2.label "転送速度:">
-<!ENTITY serverspane.segments.label "分割数:">
-<!ENTITY serverspane.unlimited "無制限">
-<!ENTITY serverspane.limited "制限">
-<!ENTITY serverspane.autoretry2.caption "自動再開">
-<!ENTITY serverspane.autoretry.interval.label "再開までの時間">
-<!ENTITY serverspane.autoretry.max.label "再開する回数">
-<!ENTITY serverspane.cancel.label "キャンセル">
-<!ENTITY serverspane.edit.label "編集">
-<!ENTITY serverspane.remove.label "削除">
-
-<!ENTITY schedpane.label "スケジュール">
-<!ENTITY schedpane.enable.label "スケジュール機能を使用する">
-<!ENTITY schedpane.start.label "ダウンロードの開始時刻:">
-<!ENTITY schedpane.end.label "終了時刻:">
-<!ENTITY schedpane.open.label "マネージャーを自動的に開く">
-
-<!ENTITY advancedpane.label "詳細">
-<!ENTITY advancedpane.downloads.caption "ダウンロードの詳細な管理">
-<!ENTITY advancedpane.miscellaneous.caption "その他">
-<!ENTITY advancedpane.files.caption "ファイル">
+<!ENTITY advancedpane.autosegments.label "分割したファイルを同時にダウンロードしない">
 <!ENTITY advancedpane.chunks2.label "ダウンロードの最大分割数:">
 <!ENTITY advancedpane.chunksdisabled "分割を使用しない">
-<!ENTITY advancedpane.autosegments.label "分割したファイルを同時にダウンロードしない">
-<!ENTITY advancedpane.timeout2.label "タイムアウトまでの無通信時間">
-<!ENTITY advancedpane.seconds "秒間">
-<!ENTITY advancedpane.minute "分間">
-<!ENTITY advancedpane.minutes "分間">
+<!ENTITY advancedpane.downloads.caption "ダウンロードの詳細な管理">
+<!ENTITY advancedpane.exposeinua.label "サーバーに DownThemAll! を使用している事を知らせる">
+<!ENTITY advancedpane.files.caption "ファイル">
 <!ENTITY advancedpane.hour "時間">
 <!ENTITY advancedpane.hours "時間">
-<!ENTITY advancedpane.tempfiles.caption "一時ファイル">
-<!ENTITY advancedpane.usetemp.label "分割されたダウンロードを一時ファイルとしてフォルダーに保存">
-<!ENTITY advancedpane.tempdir.label "このフォルダーを使用:">
+<!ENTITY advancedpane.label "詳細">
+<!ENTITY advancedpane.loadendfirst2.label "最後の数キロバイトを先に読み込む">
+<!ENTITY advancedpane.minute "分間">
+<!ENTITY advancedpane.minutes "分間">
+<!ENTITY advancedpane.miscellaneous.caption "その他">
 <!ENTITY advancedpane.permissions "ファイルのアクセス権限">
-<!ENTITY advancedpane.permissions.groupmay "グループ">
 <!ENTITY advancedpane.permissions.everybodymay "その他">
+<!ENTITY advancedpane.permissions.groupmay "グループ">
 <!ENTITY advancedpane.permissions.read "読み取り">
 <!ENTITY advancedpane.permissions.write "書き込み">
-<!ENTITY advancedpane.loadendfirst2.label "最後の数キロバイトを先に読み込む">
 <!ENTITY advancedpane.scheduler.caption "ダウンロードする順番:">
-<!ENTITY advancedpane.scheduler.fast "待機している順にダウンロード">
 <!ENTITY advancedpane.scheduler.fair "ダウンロードが集中しないよう分散する">
+<!ENTITY advancedpane.scheduler.fast "待機している順にダウンロード">
 <!ENTITY advancedpane.scheduler.legacy "制限を行わない">
-<!ENTITY advancedpane.exposeinua.label "サーバーに DownThemAll! を使用している事を知らせる">
+<!ENTITY advancedpane.seconds "秒間">
 <!ENTITY advancedpane.sparsefiles.caption "スパースファイル">
 <!ENTITY advancedpane.sparsefiles.label "スパースファイルがサポートされている場合に使用する">
 <!ENTITY advancedpane.sparsefiles.tooltip "スパースファイルとは空白のブロックをハードディスクに保存しないファイルの事です。この機能を使用する事でプリアロケーションの高速化を望める一方ファイルの書き込み速度の低下やファイルフラグメンテーションを引き起こす可能性が高くなります!">
-
-<!ENTITY uipane.label "操作">
-<!ENTITY uipane.namesonly.label "マネージャー画面にファイル名だけを表示">
-<!ENTITY uipane.integration.caption "統合">
-<!ENTITY uipane.downloadwin.label "'ファイルを保存' ダイアログに DownThemAll! を追加">
-<!ENTITY uipane.context.caption "コンテキストメニュー">
-<!ENTITY uipane.tools.caption "ツールメニュー">
+<!ENTITY advancedpane.tempdir.label "このフォルダーを使用:">
+<!ENTITY advancedpane.tempfiles.caption "一時ファイル">
+<!ENTITY advancedpane.timeout2.label "タイムアウトまでの無通信時間">
+<!ENTITY advancedpane.usetemp.label "分割されたダウンロードを一時ファイルとしてフォルダーに保存">
+<!ENTITY buttonlabelextra2 "設定を初期設定に戻す">
+<!ENTITY dtaPreferences.title "DownThemAll! の設定">
+<!ENTITY dtacontext2.label "設定">
+<!ENTITY filter.images.label "画像と組み込みオブジェクト">
+<!ENTITY filter.label "拡張子:">
+<!ENTITY filter.links.label "リンクフィルター">
+<!ENTITY filterspane.label "フィルター">
+<!ENTITY listhead1.label "表示名">
+<!ENTITY listhead2.label "拡張子">
+<!ENTITY mainpane.alert.caption "ダウンロードの完了時:">
+<!ENTITY mainpane.alert.label "通知方法:">
+<!ENTITY mainpane.alertbox.label "警告ボックスを表示">
+<!ENTITY mainpane.alertnone.label "知らせない">
+<!ENTITY mainpane.ask.label "確認する">
+<!ENTITY mainpane.closedta.label "すべてのダウンロードの完了時に DownThemAll を閉じる">
+<!ENTITY mainpane.confirmremove2.label "ダウンロードの削除時に確認する">
+<!ENTITY mainpane.defaults.caption "デフォルトの設定">
+<!ENTITY mainpane.defaults.desc "OneClick! は前回使用したダウンロード設定を使用します。保存先やフィルター等を設定する場合は通常の DownThemAll! 選択ダイアログを使用します。">
+<!ENTITY mainpane.label "一般">
+<!ENTITY mainpane.listsniffedvideos.label "動画 (Flash) の録画と一覧での表示">
+<!ENTITY mainpane.misc.caption "その他">
+<!ENTITY mainpane.nameclash.caption "既に同じ名前のファイルが存在する時:">
+<!ENTITY mainpane.overwrite.label "上書き">
+<!ENTITY mainpane.rememberoneclick.label "OneClick の設定をすべてのタブで使用するか現在のタブにだけ使用するか記憶する">
+<!ENTITY mainpane.rename.label "名前の変更">
+<!ENTITY mainpane.settime.label "ファイルのタイムスタンプをサーバーの変更日時かダウンロードリストへの登録日時に設定する">
+<!ENTITY mainpane.skip.label "無視">
+<!ENTITY mainpane.sounddone.label "すべてのダウンロードの完了を音で知らせる">
+<!ENTITY mainpane.sounderror2.label "エラーの発生時に音で知らせる">
+<!ENTITY mainpane.textlinks.label "テキストのリンクを認識">
+<!ENTITY manager "dTa! マネージャー">
+<!ENTITY privacypane.closing.caption "終了時に削除する項目">
+<!ENTITY privacypane.deletefiltershistory.label "追加したフィルターを消去">
+<!ENTITY privacypane.deletefoldershistory.label "フォルダーリストを消去">
+<!ENTITY privacypane.deletelog.label "ログを削除">
+<!ENTITY privacypane.dropdownresults2.label "履歴の表示数">
+<!ENTITY privacypane.dropdowns.caption "ドロップダウンメニュー">
+<!ENTITY privacypane.enablelogs.label "診断メッセージを記録する">
+<!ENTITY privacypane.label "プライバシー">
+<!ENTITY privacypane.logs.caption " 診断メッセージ">
+<!ENTITY privacypane.notice.caption "プライバシーに関して">
+<!ENTITY privacypane.notice.desc "DownThemAll のプライバシー情報は [最近の履歴を消去] 機能からも消去できます。">
+<!ENTITY privacypane.privacynotice.label "プライバシーについて">
+<!ENTITY privacypane.removeaborted2.label "完了していないダウンロードを削除">
+<!ENTITY privacypane.removecanceled2.label "中止や失敗したダウンロードを削除">
+<!ENTITY privacypane.removecompleted2.label "完了したダウンロードを削除">
+<!ENTITY privacypane.reveallog.label "ファイルを表示">
+<!ENTITY privacypane.showlog.label "ログを表示">
+<!ENTITY schedpane.enable.label "スケジュール機能を使用する">
+<!ENTITY schedpane.end.label "終了時刻:">
+<!ENTITY schedpane.label "スケジュール">
+<!ENTITY schedpane.open.label "マネージャーを自動的に開く">
+<!ENTITY schedpane.start.label "ダウンロードの開始時刻:">
+<!ENTITY serverpane.limits.noitems "サーバーごとのダウンロード設定はありません">
+<!ENTITY serverspane.autoretry.interval.label "再開までの時間">
+<!ENTITY serverspane.autoretry.max.label "再開する回数">
+<!ENTITY serverspane.autoretry2.caption "自動再開">
+<!ENTITY serverspane.cancel.label "キャンセル">
+<!ENTITY serverspane.concurrent2.label "ダウンロードの上限数:">
+<!ENTITY serverspane.connections.label "接続数:">
+<!ENTITY serverspane.downloads.caption "ダウンロードの上限">
+<!ENTITY serverspane.edit.label "編集">
+<!ENTITY serverspane.label "ネットワーク">
+<!ENTITY serverspane.limited "制限">
+<!ENTITY serverspane.limits.label "サーバーごとのダウンロード設定">
+<!ENTITY serverspane.new.label "追加">
+<!ENTITY serverspane.perserver2.label "サーバーごとの上限数:">
+<!ENTITY serverspane.remove.label "削除">
+<!ENTITY serverspane.segments.label "分割数:">
+<!ENTITY serverspane.speed2.label "転送速度:">
+<!ENTITY serverspane.unlimited "無制限">
+<!ENTITY serverspane.url.label "URL/ドメイン:">
 <!ENTITY uipane.compact.label "コンパクトメニューを使用">
-<!ENTITY uipane.hide.label "このメニューを隠す">
-<!ENTITY uipane.showtooltip.label "ダウンロードのツールチップを表示">
-<!ENTITY uipane.manager.caption "ウィンドウの管理">
-<!ENTITY uipane.startminimized.label "最小化して起動">
-<!ENTITY uipane.minimizetotray.label "最小化時にシステムトレイに収納">
+<!ENTITY uipane.context.caption "コンテキストメニュー">
+<!ENTITY uipane.downloadwin.label "'ファイルを保存' ダイアログに DownThemAll! を追加">
 <!ENTITY uipane.getmintrayr.label "MinTrayR　を入手する">
+<!ENTITY uipane.hide.label "このメニューを隠す">
+<!ENTITY uipane.integration.caption "統合">
+<!ENTITY uipane.label "操作">
+<!ENTITY uipane.manager.caption "ウィンドウの管理">
+<!ENTITY uipane.minimizetotray.label "最小化時にシステムトレイに収納">
+<!ENTITY uipane.namesonly.label "マネージャー画面にファイル名だけを表示">
+<!ENTITY uipane.showtooltip.label "ダウンロードのツールチップを表示">
+<!ENTITY uipane.startminimized.label "最小化して起動">
+<!ENTITY uipane.tools.caption "ツールメニュー">
+<!ENTITY useAs.label "使用するフィルター:">
+<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
+<!ENTITY windowstyle.3 "width:48em;height:44em;">

@@ -1,22 +1,18 @@
-<!ENTITY start.label "Старт!">
-<!ENTITY start.key "С" >
-<!ENTITY queue.label "Добавить в очередь">
-<!ENTITY queue.key "о" >
-
-<!ENTITY options.label "Настройки">
-
-<!ENTITY url.value "Ссылка">
-<!ENTITY directory.caption "Сохранить в:">
-<!ENTITY mirrors.value "Зеркала:">
-<!ENTITY referrer.value "Страница перенаправления:">
-<!ENTITY description.value "Описание:">
-<!ENTITY checksum.value "Контрольная сумма (Хэш)">
 <!ENTITY browse.tooltip "Обзор...">
-<!ENTITY mirrormanager.tip "Управление зеркалами загрузки">
-<!ENTITY mask2.label "Маска переименования">
-<!ENTITY mask.tip "Выбранные файлы будут сохранены и переименованы с использованием этой маски">
+<!ENTITY checksum.value "Контрольная сумма (Хэш)">
+<!ENTITY description.value "Описание:">
+<!ENTITY directory.caption "Сохранить в:">
 <!ENTITY mask.once.label "Временно использовать маску">
-
+<!ENTITY mask.tip "Выбранные файлы будут сохранены и переименованы с использованием этой маски">
+<!ENTITY mirrormanager.tip "Управление зеркалами загрузки">
+<!ENTITY mirrors.value "Зеркала:">
+<!ENTITY options.label "Настройки">
+<!ENTITY queue.key "о" >
+<!ENTITY queue.label "Добавить в очередь">
+<!ENTITY referrer.value "Страница перенаправления:">
 <!ENTITY selectall.label "Выбрать всё">
 <!ENTITY selectinv.label "Преобразовать выделение">
 <!ENTITY selectnone.label "Отменить всё">
+<!ENTITY start.key "С" >
+<!ENTITY start.label "Старт!">
+<!ENTITY url.value "Ссылка">

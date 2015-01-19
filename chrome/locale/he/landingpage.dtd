@@ -1,26 +1,17 @@
-<!ENTITY amo.description.feat "DownThemAll!‎ מהיר, אמין וקל לשימוש! הוא מאפשר לך להוריד את כל הסוגים של קישורים ותמונות בדפים ברשת ועוד הרבה יותר מזה: אפשר לעשות להורדות התאמה אישית מלאה כדי לקבל רק את הקבצים שאתם צריכים! היה בשליטה מלאה על ההורדות שלך, קבל מהירות מלאה ומספר חיבורים מקבילים בכל זמן. השתמש במטא־קישורים או הוסף אתרי מראה כדי להוריד קובץ ממספר שרתים בו־זמנית.">
-<!ENTITY amo.description.free "DownThemAll!‎ היא תכנת קוד פתוח חופשית. אין פרסומות, אין רוגלה, אין עלויות נסתרות!">
 <!ENTITY amo.description.intro "ב־DownThemAll!‎ תמצאו את כל מה שאתם מחפשים במנהל הורדות: יש בו מאיץ מתקדם במגדיל את המהירות עד פי 4, וגם תוכלו להשהות ולהמשיך את ההורדות בכל זמן.">
 <!ENTITY amo.description.more "למידע נוסף ר׳ את <a href='http://www.downthemall.net/howto/features/'>דף פירוט היכולות</a>.">
-<!ENTITY amo.summary "התכנה הראשונה לניהול והאצה של הורדות שמובנית לתוך פיירפוקס!">
 <!ENTITY language "עברית">
 <!ENTITY lp.contact "יצירת קשר">
-<!ENTITY lp.ct.bugs "אנא דווחו לנו על בגים ובקשות ליכולות חדשות ב<a href='http://bugs.code.downthemall.net/'>תכנת מעקב הבאגים</a> שלנו.">
 <!ENTITY lp.ct.bugstitle "דיווחים באגים/בקשות לתכונות חדשות">
 <!ENTITY lp.ct.contacts "בבקשה ר׳ את <a href='http://www.downthemall.net/main/contacts/'>דף יצירת הקשר שלנו</a> ברשת.">
-<!ENTITY lp.ct.contactsfeed "אנחנו אוהבים לקבל מכם תגובות, הצעות לשיפור והצעות עזרה.">
 <!ENTITY lp.ct.contactstitle "יצירת קשר">
-<!ENTITY lp.donate "אנא שקול לתרום לנו">
 <!ENTITY lp.gettingstarted "איך להתחיל">
 <!ENTITY lp.info "צפה בסרטונים הבאים כדי לדעת איך להשתמש ב־DownThemAll!‎ וללמוד על פרטיותך וזכויותיך בתור משתמש בתכנה.">
 <!ENTITY lp.languagetitle "שפה">
 <!ENTITY lp.localedir "rtl">
 <!ENTITY lp.moreinfo "למידע נוסף בקר ב<a href='http://www.downthemall.net/howto/features/'>דף פירוט היכולות</a>.">
 <!ENTITY lp.pleasenote "לתשומת לבך:">
-<!ENTITY lp.pr.diag "אפשר להפעיל הודעות אבחוניות, שיירשמו ביומן בצג השגיאות ובקובץ dta_log.txt, בהעדפות ← פרטיות. הודעות אבחוניות כנראה מכילות מידע רגיש כגון כתובות, נתיבים של קבצים, שמות קבצים שאתה מוריד ואפילו מידע על עוגיות. בררת המחדל היא שהאפשרות הזאת כבויה, כדי להגין על פרטיותך. אם אתה שולח הודעה אבחונית, יכול להיות שתרצה לצנזר את המידע הרגיש הזה. שום יומן אבחוני לא יפורסם לעולם באופן אוטומטי.">
-<!ENTITY lp.pr.intro "DownThemAll!‎ מגן על הפרטיות שלך.">
 <!ENTITY lp.pr.link "ההודעה הזאת תמיד זמינה בדף הזה (about:downthemall) וגם מקושרת מחלון ההעדפות">
-<!ENTITY lp.pr.settings "אתה יכול לומר ל־DownThemAll!‎ למחוק מהרשימה את כל ההורדות שהושלמו, בוטלו או לא הסתיימו על־ידי שינוי ההגדרות בחלון העדפות ← פרטיות.">
 <!ENTITY lp.pr.title "הודעה על פרטיות">
 <!ENTITY lp.privacy "פרטיות">
 <!ENTITY lp.tb.add.dta "כפתור DownThemAll!‎">
@@ -36,11 +27,8 @@
 <!ENTITY lp.tb.add.title "הוספת כפתורים לסרגל כלים ושימוש בהם">
 <!ENTITY lp.tb.dnd.p1 "אפשר לגרור כל קישור ולשחרר אותו על כפתורי DownThemAll!‎ כדי להוריד אותו.">
 <!ENTITY lp.tb.dnd.p2 "אפשר לשחרר את הקישורים גם על חלון המנהל.">
-<!ENTITY lp.tb.dnd.p3 "אפשר למיין את רשימת ההורדות האמצעות פעולת גרור־ושחרר על המיקום הרצוי.">
 <!ENTITY lp.tb.dnd.title "גרור־ושחרר">
 <!ENTITY lp.tb.intro "DownThemAll!‎ מציע כמה כפתורים שנותנים לך גישה קלה ליכולות של התכנה.">
-<!ENTITY lp.tb.selector.p1 "כאשר אתה משתמש בחלון החבירה של DownThemAll!‎ אתה יכול להכניס הורדות לרשימה באמצעות לחיצה על קישורים או תמונות.">
-<!ENTITY lp.tb.selector.p2 "כדי להפעיל את חלון הבחירה, לחץ על כפתור בסרגל הכלים, וכדי לכבות אותו, לחץ על הכפתור שוב.">
 <!ENTITY lp.tb.selector.title "שימוש בחלון הבחירה של DownThemAll!‎">
 <!ENTITY lp.title "אודות DownThemAll!‎">
 <!ENTITY lp.toolbar "כפתורים בסרגל">
@@ -48,19 +36,13 @@
 <!ENTITY lp.tut.batches2 "התחביר הבסיסי הוא: <code>[start:end]</code> או <code>[start:end:step]</code> כאשר <code>start</code> ו־<code>end</code> יכולים להיות מספרים או תווים פשוטים. <code>step</code> הוא המספר שצריך לדלג עליו; אם אינו מוגדר, בררת המחדל היא 1.">
 <!ENTITY lp.tut.batches3 "למשל, אם תרצה להוריד תמונות שממוספרות מ־001 עד 100, תרצה לשנות את הכתובת ל־<code>http://example.org/[001:100].jpg</code>">
 <!ENTITY lp.tut.batchestitle "הורדת קבוצות">
-<!ENTITY lp.tut.fd1 "הורדה באמצעות DownThemAll!‎ קלה למדי, אבל גם מתוחכמת. כאשר אתם מקבלים תיבה ששואלת על שמירת קובץ, אפשר לבחור בשורת DownThemAll!‎. זה יציג תיבת דו־שיח שבה אפשר לבחור את התיקייה שבה יישמר הקובץ, יחד עם אפשרויות מתקדמות יותר.">
 <!ENTITY lp.tut.firsttitle "ההורדה הראשונה שלך">
-<!ENTITY lp.tut.oneclick1 "אחרי שהורדת את הקובץ הראשון, תופיע בתפריט שורה נוספת: DownThemAll!‎ בלחיצה אחת. אפשר להשתמש בזה כדי להוריד ישירות באמצעות ההגדרות הקודמות ולדלג על בחירה ידנית של קבצים.">
 <!ENTITY lp.tut.oneclick2 "כך פעולת &quot;לחיצה אחת&quot; מאפשרת לך להכניס לתור הרבה קישורים במהירות.">
 <!ENTITY lp.tut.oneclickn "אחרי שתשתמשו בפעול מחיקת מידע פרטי בפיירפוקס, פעולת &quot;לחיצה אחת&quot; לא תהיה זמינה עד שתעשה הורדה אחת רגילה באמצעות DownThemAll!‎.">
 <!ENTITY lp.tut.oneclicktitle "DownThemAll!‎ בלחיצה אחת">
-<!ENTITY lp.tut.seldone "אחרי שבחרת את הקבצים להורדה, לחץ על &quot;התחל!&quot; או &quot;הוסף מושהה&quot;.">
 <!ENTITY lp.tut.selecttitle "שימוש בחלון הבחירה.">
 <!ENTITY lp.tut.selgalleries "תמונות בגודל מלא לעתים קרובות מקושרות מדפי גלריה, אז תמצאו אותן תחת לשונית הקישורים">
 <!ENTITY lp.tut.selintro "תפריט הֶקְשֶׁר באתר אינטרנט מציע שורה עם אפשרויות DownThemAll!‎. לחיצה על השורה הזאת תפתח את חלון הבחירה עם רשימה של קישורים בדף.">
-<!ENTITY lp.tut.seloptfast "בנוסף, אפשר להכניס מסנן משלך בתיבת הסינון המהיר, למשל <code>*.pdf,*.doc</code>, או אפילו ביטוי רגולרי">
-<!ENTITY lp.tut.seloptfilters "אפשר להשתמש במסננים מובְנים, למשל לשמור את התמונות">
-<!ENTITY lp.tut.selopthand "אפשר לסמן את הקישורים להורדה ידנית">
 <!ENTITY lp.tut.seloptions "בחלון הבחירה יש מספר דרכים לבחור קבצים להורדה:">
 <!ENTITY lp.tut.seltypelinks "לשונית קישורים מכילה את כל הקישורים הניתנים להורדה שנמצאו בדף">
 <!ENTITY lp.tut.seltypepics "ולשונית &quot;תמונות ומדיה&quot; מכילה את התמונות ואת שאר סוגי המדיה שמוצגים בדף">
