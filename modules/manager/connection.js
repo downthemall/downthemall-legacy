@@ -1083,15 +1083,7 @@ Connection.prototype = {
 				--d.maxChunks;
 			}
 
-			// check if we're complete now
 			const isRunning = d.state === RUNNING;
-			if (isRunning && d.chunks.every(function(e) { return e.complete; })) {
-				if (!d.resumeDownload()) {
-					log(LOG_INFO, d + ": Download is complete!");
-					d.finishDownload();
-					return;
-				}
-			}
 
 			if (c.starter && ~DISCONNECTION_CODES.indexOf(aStatusCode)) {
 				if (!d.urlManager.markBad(this.url)) {
@@ -1174,6 +1166,16 @@ Connection.prototype = {
 				}
 				return;
 			}
+
+			// check if we're complete now
+			if (isRunning && d.chunks.every(function(e) { return e.complete; })) {
+				if (!d.resumeDownload()) {
+					log(LOG_INFO, d + ": Download is complete!");
+					d.finishDownload();
+					return;
+				}
+			}
+
 			if (!d.isOf(PAUSED | CANCELED)) {
 				d.resumeDownload();
 			}
