@@ -1798,7 +1798,7 @@ QueueItem.prototype = {
 		else if (this.totalSize <= 0) {
 			return _('transfered', [Utils.formatBytes(this.partialSize), TextCache_NAS]);
 		}
-		else if (this.state === COMPLETE) {
+		else if (this.state === COMPLETE || this.state == FINISHING) {
 			return Utils.formatBytes(this.totalSize);
 		}
 		return _('transfered', [Utils.formatBytes(this.partialSize), Utils.formatBytes(this.totalSize)]);
