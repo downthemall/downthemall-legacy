@@ -1115,7 +1115,7 @@ Connection.prototype = {
 
 			// rude way to determine disconnection: if connection is closed before
 			// download is started we assume a server error/disconnection
-			if (c.starter && isRunning) {
+			if (c.starter && isRunning && !c.written) {
 				if (!d.urlManager.markBad(this.url)) {
 					log(LOG_ERROR, d + ": Server error or disconnection", "(type 2)");
 					d.pauseAndRetry();
@@ -1139,6 +1139,15 @@ Connection.prototype = {
 					d.status = _("servererror");
 				}
 				return;
+			}
+
+			// check if we're complete now
+			if (isRunning && d.chunks.every(e => e.complete)) {
+				if (!d.resumeDownload()) {
+					log(LOG_INFO, d + ": Download is complete!");
+					d.finishDownload();
+					return;
+				}
 			}
 
 			// size mismatch
@@ -1165,15 +1174,6 @@ Connection.prototype = {
 					);
 				}
 				return;
-			}
-
-			// check if we're complete now
-			if (isRunning && d.chunks.every(function(e) { return e.complete; })) {
-				if (!d.resumeDownload()) {
-					log(LOG_INFO, d + ": Download is complete!");
-					d.finishDownload();
-					return;
-				}
 			}
 
 			if (!d.isOf(PAUSED | CANCELED)) {
