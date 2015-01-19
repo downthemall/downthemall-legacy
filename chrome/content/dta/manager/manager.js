@@ -1116,7 +1116,6 @@ const Dialog = {
 		delete Tree._downloads;
 		Tree = null;
 		FileExts = null;
-		Dialog = null;
 		return true;
 	}
 };
