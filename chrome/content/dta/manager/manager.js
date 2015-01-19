@@ -1386,6 +1386,9 @@ QueueItem.prototype = {
 		else if (this.state === COMPLETE) {
 			--Dialog.completed;
 		}
+		else if (this.state === FINISHING) {
+			--Dialog.finishing;
+		}
 		this.speed = '';
 		this._setStateInternal(nv);
 		if (this.state === RUNNING) {
@@ -1396,7 +1399,6 @@ QueueItem.prototype = {
 			++Dialog.finishing;
 		}
 		else if (this.state === COMPLETE) {
-			--Dialog.finishing;
 			++Dialog.completed;
 		}
 		Dialog.signal(this);
