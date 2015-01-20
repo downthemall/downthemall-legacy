@@ -1,0 +1,23 @@
+<!ENTITY mask.title "Titlu asociat cu legătura">
+<!ENTITY mask.name "Denumire fișier">
+<!ENTITY mask.ext "Extensie fișier">
+<!ENTITY mask.url "Adresă de bază">
+<!ENTITY mask.curl "Adresă completă">
+<!ENTITY mask.flatcurl "Adresă completă directă">
+<!ENTITY mask.num "Număr de lot">
+<!ENTITY mask.inum "Număr de element">
+<!ENTITY mask.hh "Ore">
+<!ENTITY mask.mm "Minute">
+<!ENTITY mask.ss "Secunde">
+<!ENTITY mask.d "Zi">
+<!ENTITY mask.m "Lună">
+<!ENTITY mask.y "An">
+<!ENTITY mask.subdirs "Subdirectoare din adresă">
+<!ENTITY mask.flatsubdirs "Subdirectoare din adresa directă">
+<!ENTITY mask.text "Descriere legătură">
+<!ENTITY mask.flattext "Descriere legătură directă">
+<!ENTITY mask.refer "Adresă de proveniență">
+<!ENTITY mask.qstring "Șir de interogare">
+<!ENTITY mask.flattitle "Titlu asociat cu legătura">
+<!ENTITY mask.tip "Faceți clic sa trageți cu mausul pentru a adăuga în șablon">
+<!ENTITY mask.open.tip "Tabelă de substituenți pentru redenumire">

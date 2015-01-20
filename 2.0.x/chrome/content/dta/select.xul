@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ *
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/toolbar.css" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/select/style.css" type="text/css"?>
+
+<!DOCTYPE dialog [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/">
+	%globalDTD;
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
+	%commonDTD;
+	<!ENTITY % selectDTD SYSTEM "chrome://dta/locale/select.dtd">
+	%selectDTD;
+]>
+
+<window
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	title="DownThemAll! - &title;"
+	width="675" height="575"
+	id="DownThemAll"
+	class="selectlinks"
+	onload="Dialog.load();"
+	onunload="Dialog.unload();"
+	persist="width height screenX screenY"
+	style="margin: 0px;"
+>
+	<script type="application/x-javascript" src="chrome://global/content/globalOverlay.js"/>
+	<script type="text/javascript" src="chrome://dta/content/common/internalFunctions.js" />
+	<script type="text/javascript" src="chrome://dta/content/dta/select.js" />
+
+	<stringbundleset xmlns="http://www.downthemall.net/properties#">
+		<stringbundle src="chrome://dta/locale/common.properties"/>
+		<stringbundle src="chrome://dta/locale/select.properties"/>
+		<stringbundle src="chrome://global/locale/dialog.properties"/>
+	</stringbundleset>
+	
+	<commandset>
+		<command id="cmdClose" oncommand="self.close();"/>
+		
+		<command id="cmdSelectAll" oncommand="Dialog.selectAll();"/>
+		<command id="cmdSelectInv" oncommand="Dialog.invertSelection();"/>
+		<command id="cmdSelectFiltered" oncommand="Dialog.selectFiltered();"/>
+		<command id="cmdOpenSelection" oncommand="Dialog.openSelection();"/>
+		
+		<command id="cmdStartEditMask" oncommand="Dialog.editMask();"/>
+		<command id="cmdAcceptEditMask" oncommand="Dialog.acceptEditMask();"/>
+		<command id="cmdCancelEditMask" oncommand="$('maskeditor').hidePopup();"/>
+		
+		<command id="cmdCheck" oncommand="Dialog.toggleSelection(true);"/>
+		<command id="cmdUncheck" oncommand="Dialog.toggleSelection(false);"/>
+		<command id="cmdToggle" oncommand="Dialog.toggleSelection();"/>
+		
+		<command id="cmdStart" oncommand="Dialog.download(true);"/>
+		<command id="cmdQueue" oncommand="Dialog.download(false);"/>
+		
+		<command id="cmdBrowseDirectory" oncommand="Dialog.browseDir();"/>
+		
+		<command id="cmdChangeToLinks" oncommand="Dialog.changeTab('links')"/>
+		<command id="cmdChangeToImages" oncommand="Dialog.changeTab('images')"/>
+		
+		<command id="cmdPreferences" oncommand="DTA.showPreferences();"/>
+	</commandset>
+
+	<keyset>
+		<key id="kClose" keycode="VK_ESCAPE" command="cmdClose"/>
+		<key id="kCloseMac" modifiers="accel" key="W" command="cmdClose"/>
+		
+		<key id="kSelectAll" modifiers="accel" key="A" command="cmdSelectAll"/>
+		<key id="kSelectInv" modifiers="accel" key="I" command="cmdSelectInv"/>
+		<key id="kSelectFiltered" modifiers="accel" key="F" command="cmdSelectFiltered"/>
+		<key id="kOpenSelection" modifiers="accel" key="O" command="cmdOpenSelection"/>
+		
+		<key id="kStart" keycode="VK_RETURN" command="cmdStart"/>
+		<key id="kStartAlt" keycode="VK_ENTER" command="cmdStart"/>
+
+		<key id="kQueue" modifiers="alt" keycode="VK_RETURN" command="cmdQueue"/>
+		<key id="kQueueAlt" modifiers="alt" keycode="VK_ENTER" command="cmdQueue"/>		
+	</keyset>
+
+	<popupset id="popups">
+		<menupopup id="popup" onpopupshowing="return Dialog.showPopup();">
+			<menuitem class="menuitem-iconic" id="mcheck" label="&menu.check.label;" command="cmdCheck" />
+			<menuitem class="menuitem-iconic" id="muncheck" label="&menu.uncheck.label;" command="cmdUncheck" />
+			<menuitem class="menuitem-iconic" id="mtoggle" label="&menu.toggle.label;" command="cmdToggle" />
+			<menuseparator id="msep1" />
+			<menuitem class="menuitem-iconic" id="mrenaming" label="&mask.label;" command="cmdStartEditMask" />
+			<menuseparator id="msep2" />
+			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" command="cmdSelectAll" key="kSelectAll" />
+			<menuitem id="selectfiltered" class="menuitem-iconic" label="&selectfiltered.label;" command="cmdSelectFiltered" key="kSelectFiltered" />						
+			<menuitem id="selectinvert" class="menuitem-iconic" label="&selectinv.label;" command="cmdSelectInv" key="kSelectInv" />
+			<menuseparator id="msep3" />
+			<menuitem id="mopen" crop="center" class="menuitem-iconic" command="cmdOpenSelection" key="kOpenSelection" />
+		</menupopup>
+		<panel id="maskeditor">
+			<groupbox orient="horizontal">
+				<caption label="&mask.label;:" />
+				<saveddropdown id="maskeditor-selector" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
+				<maskbutton/>
+			</groupbox>
+			<hbox id="maskeditor-buttons" pack="end">
+				<button id="maskeditor-accept" command="cmdAcceptEditMask"/>
+				<button id="maskeditor-cancel" command="cmdCancelEditMask"/>
+			</hbox>
+		</panel>
+	</popupset>
+	
+	<notificationbox id="notifications" flex="1">
+		<toolbox id="views">
+			<toolbar class="findfiles" chromedir="&locale.dir;">
+				<toolbarbutton class="toolbarbuttonDown" id="viewlinks" label="&tab.links.label;" command="cmdChangeToLinks" />
+				<toolbarbutton class="toolbarbuttonDown" id="viewpics" label="&tab.pics.label;" command="cmdChangeToImages" />
+				<spacer flex="1" id="logo" chromedir="&locale.dir;"/>
+			</toolbar>
+		</toolbox>
+		<tree
+			id="urlList"
+			flex="1"
+			context="popup"
+			seltype="multiple"
+			enableColumnDrag="true"
+			style="margin:0px;"
+			editable="true"
+			autostretch="always"
+		>
+			<treecols>
+				<treecol type="checkbox" fixed="true" editable="true" ignoreincolumnpicker="true" />
+				<treecol id="colURL" label="&url.value;" flex="35" crop="right" persist="width hidden" />
+				<splitter class="tree-splitter"/>
+				<treecol id="colResname" label="&resname.value;" flex="15" crop="right" hidden="true" persist="width hidden" />
+				<splitter class="tree-splitter"/>
+				<treecol id="colDesc" label="&header.desc.label;" flex="9" persist="width hidden" />
+				<splitter class="tree-splitter"/>
+				<treecol id="colMask" label="&mask.label;" flex="5" persist="width hidden"/>
+			</treecols>
+			
+			<treechildren/>
+		</tree>
+	</notificationbox>	
+
+	<hbox style="margin:7px 7px 3px 7px;" >
+		<vbox autostretch="never" flex="1">
+			<caption label="&dest.caption;" />
+			<hbox>
+				<saveddropdown id="directory" preference="directory" flex="1"/>
+				<toolbarbutton id="browsedir" command="cmdBrowseDirectory" tooltiptext="&browse.tip;" />
+			</hbox>
+		</vbox>
+		<vbox id="renamingbox">
+			<caption label="&mask.label;:" />
+			<hbox>
+				<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
+				<maskbutton/>
+			</hbox>
+		</vbox>
+	</hbox>
+
+	<box style="margin:3px 7px;" orient="vertical" id="filterbox" class="closer" autostretch="never" closed="true" persist="closed" caption="&filters.caption;">
+		<grid flex="1" id="checkcontainer">
+			<columns id="checkcontainercols"/>
+			<rows id="checkcontainerrows"/>
+		</grid>
+	</box>
+	<vbox style="margin:3px 7px;" class="closer" id="regexcontainer" closed="true" persist="closed" caption="&additional.caption;" tooltiptext="&additional.tip;">
+		<hbox flex="1">
+			<saveddropdown id="filter" flex="1" tooltiptext="&filter.tip;" preference="filter" allowempty="true" onchange="Dialog.notify();"/>
+			<checkbox id="disableothers" label="&disableother.label;" tooltiptext="&disableother.tooltip;" oncommand="Dialog.notify();"/>
+		</hbox>
+	</vbox>
+
+	 <hbox align="baseline" pack="end" style="margin: 2px 7px 4px 7px" >
+		<button accesskey="&start.key;" label="&start.label;" id="startbutton" command="cmdStart" default="true"/>
+		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" command="cmdQueue" />
+		<button id="cancelbutton" command="cmdClose" />
+	</hbox>
+	
+	<statusbar id="footer">
+		<statusbarpanel id="status" flex="1" />
+		<statusbarpanel id="preferences" class="statusbarpanel-iconic-text text-link" label="&options.label;" command="cmdPreferences"/>
+	</statusbar>
+
+</window>

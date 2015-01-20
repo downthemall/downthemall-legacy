@@ -1,0 +1,24 @@
+<!--
+	commonly used.
+	CHECK BEFORE MODIFY
+
+
+-->
+<!ENTITY start.label "Εκκίνηση!">
+<!ENTITY start.key "κ">
+<!ENTITY queue.label "Προσθήκη σε παύση">
+<!ENTITY queue.key "π">
+<!ENTITY options.label "Προτιμήσεις">
+<!ENTITY url.value "Λήψη">
+<!ENTITY dest.caption "Αποθήκευση αρχείων σε:">
+<!ENTITY mirrors.value "Εναλλακτικές τοποθεσίες:">
+<!ENTITY referrer.value "Σελίδα αναφοράς:">
+<!ENTITY description.value "Περιγραφή:">
+<!ENTITY checksum.value "Έλεγχος αθροίσματος (Hash):">
+<!ENTITY browse.tip "Εντοπισμός καταλόγου προορισμού...">
+<!ENTITY mirrormanager.tip "Διαχείριση εναλλακτικών τοποθεσιών λήψεων">
+<!ENTITY mask.label "Μάσκα μετονομασίας">
+<!ENTITY mask.tip "Τα επιλεγμένα αρχεία θα αποθηκευτούν και θα ονομαστούν σύμφωνα μ' αυτή τη μάσκα.">
+<!ENTITY selectall.label "Επιλογή όλων">
+<!ENTITY selectinv.label "Αντιστροφή επιλογής">
+<!ENTITY selectnone.label "Επιλογή κανενός">

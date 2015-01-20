@@ -1,0 +1,24 @@
+<!--
+	commonly used.
+	CHECK BEFORE MODIFY
+
+
+-->
+<!ENTITY start.label "Start!">
+<!ENTITY start.key "s">
+<!ENTITY queue.label "Vložit pauzu">
+<!ENTITY queue.key "p">
+<!ENTITY options.label "Předvolby">
+<!ENTITY url.value "Stáhnout">
+<!ENTITY dest.caption "Uložit soubory do:">
+<!ENTITY mirrors.value "Zrcadla:">
+<!ENTITY referrer.value "Odkazující stránka:">
+<!ENTITY description.value "Popis:">
+<!ENTITY checksum.value "Kontrolní součet (Hash):">
+<!ENTITY browse.tip "Otevřít složku">
+<!ENTITY mirrormanager.tip "Spravovat zrcadla">
+<!ENTITY mask.label "Maska pro přejmenování">
+<!ENTITY mask.tip "Vybrané soubory budou uloženy a přejmenovány podle této masky">
+<!ENTITY selectall.label "Vybrat vše">
+<!ENTITY selectinv.label "Obrátit výběr">
+<!ENTITY selectnone.label "Odznačit vše">

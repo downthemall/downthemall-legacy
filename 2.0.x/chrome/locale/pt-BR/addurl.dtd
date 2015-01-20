@@ -1,0 +1,4 @@
+<!ENTITY title "Adicionar Endereço">
+<!ENTITY desc.value "Digite a URL e a página de referência (opcional) do arquivo que você quer baixar.">
+<!ENTITY desc.batches.value "Você também pode usar indicadores de lotes para fazer downloads de múltiplos arquivos ao mesmo tempo.">
+<!ENTITY examples.value "Exemplos:">

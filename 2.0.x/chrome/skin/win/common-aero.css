@@ -1,0 +1,57 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+.closebox-title .closebox-twisty {
+	-moz-padding-end: 2px;
+	padding-top: 1px;
+	width: 9px;
+	list-style-image: url(chrome://global/skin/tree/twisty-open.png);
+}
+.closebox-title:hover .closebox-twisty {
+	list-style-image: url(chrome://global/skin/tree/twisty-open-hover.png);
+}
+.closer[closed="true"] .closebox-title .closebox-twisty {
+	list-style-image: url(chrome://global/skin/tree/twisty-clsd.png);
+}
+.closer[closed="true"] .closebox-title:hover .closebox-twisty {
+	list-style-image: url(chrome://global/skin/tree/twisty-clsd-hover.png);
+}
+
+*[chromedir="rtl"] .closebox-title .closebox-twisty {
+	list-style-image: url("chrome://global/skin/tree/twisty-open-rtl.png");
+}
+*[chromedir="rtl"] .closer[closed="true"] .closebox-title .closebox-twisty {
+	list-style-image: url("chrome://global/skin/tree/twisty-clsd-rtl.png");
+}
+*[chromedir="rtl"] .closer .closebox-title:hover .closebox-twisty {
+	list-style-image: url("chrome://global/skin/tree/twisty-open-hover-rtl.png");
+}
+*[chromedir="rtl"] .closer[closed="true"] .closebox-title:hover .closebox-twisty {
+	list-style-image: url("chrome://global/skin/tree/twisty-clsd-hover-rtl.png");
+}
+
+.downlinks {
+	width:690px;
+	height:450px;
+}
+
+.selectlinks toolbarbutton {
+	border: 0px solid black !important;
+}
+
+.selectlinks caption {
+	margin-left: 2px;
+	padding-left: 0px;
+}
+
+/* Work-around for bugzilla #593812 */
+treechildren::-moz-tree-progressmeter {
+  margin: 2px 4px;
+  padding: 1px;
+  border: 1px solid;
+  border-top-color: ThreeDShadow;
+  border-right-color: ThreeDHighlight;
+  border-bottom-color: ThreeDHighlight;
+  border-left-color: ThreeDShadow;
+  background-color: -moz-Dialog;
+  color: ThreeDShadow;
+}

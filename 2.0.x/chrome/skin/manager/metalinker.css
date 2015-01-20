@@ -1,0 +1,57 @@
+@import 'chrome://dta/skin/common/style.css';
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+@namespace html url("http://www.w3.org/1999/xhtml");
+	
+#metaselect {
+	width: 600px;
+	height: 430px;
+}
+#header {
+	margin: 1ex;
+	margin-bottom: 1em;
+}
+#header label, #downloads label {
+	font-weight: bold;
+}
+.icon, html|*.icon {
+	margin: 1ex;
+	margin-top: 0.5ex;
+}
+richlistitem {
+	border-bottom: 1px dotted rgb(192, 192, 192);
+	background-color: transparent !important;
+	color: inherit !important;
+	overflow: visible;
+	-moz-box-align: center;
+	padding: 4pt;
+}
+.metalinker-icon {
+	margin-top: 1ex !important;
+	-moz-margin-start: 1ex;
+	-moz-margin-end: 1.3ex;
+	width: 32px;
+	max-height: 32px;
+}
+.metalinker-additional {
+	text-align: right;
+	font-style: italic;
+	max-width: 10%;
+}
+.metalinker-description {
+	padding-top: 0.5ex;
+	-moz-padding-start: 1em;
+	-moz-padding-end: 1ex;
+}
+
+#context > menuitem {
+	list-style-image: url(chrome://dta/skin/common/selection.png);
+}
+#selectall {
+	-moz-image-region: rect(0px, 16px, 16px, 0px);  
+}
+#selectinv {
+	-moz-image-region: rect(0px, 48px, 16px, 32px);  
+}
+#selectnone {
+	-moz-image-region: rect(0px, 32px, 16px, 16px);  
+}

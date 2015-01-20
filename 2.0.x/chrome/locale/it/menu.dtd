@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Preferenze...">
+<!ENTITY dta-about.label "Informazioni su...">
+<!ENTITY dta-manager-button "dTa! Manager">
+<!ENTITY dta-selector-button "dTa OneClick! Selector">
+<!ENTITY dta-tb-all.label "Tutte le schede">
+<!ENTITY dta-tb-single.label "Scheda corrente">
+<!ENTITY dta-selection.label "DownThemAll! sulla selezione...">
+<!ENTITY dta-selection-turbo.label "dTa OneClick sulla selezione">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa OneClick...">
+<!ENTITY dta-img-save.label "Salva immagine con DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Inizia il salvataggio dell'immagine con dTa OneClick!">
+<!ENTITY dta-video-save.label "Salva video con DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Inizia il salvataggio del video con dTa OneClick!">
+<!ENTITY dta-audio-save.label "Salva il file audio con DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Inizia il salvataggio del file audio con dTa OneClick!">
+<!ENTITY dta-link-save.label "Salva il link con DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Inizia il salvataggio del link con dTa OneClick!">
+<!ENTITY dta-form-save.label "Salva il target del modulo con DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Comincia il salvataggio del target del modulo con DownThemAll!">

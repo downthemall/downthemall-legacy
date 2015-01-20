@@ -1,0 +1,4 @@
+<!ENTITY title "Engadir descargas">
+<!ENTITY desc.value "Insira a descarga aquí e (opcionalmente) a páxina de referencia do ficheiro que quere descargar.">
+<!ENTITY desc.batches.value "Pode empregar descritores de proceso en lotes para descargar múltiples ficheiros ao tempo.">
+<!ENTITY examples.value "Exemplos:">

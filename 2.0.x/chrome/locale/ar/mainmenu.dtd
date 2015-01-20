@@ -1,0 +1,5 @@
+<!ENTITY fileMenu.label "ملف">
+<!ENTITY fileMenu.accesskey "م">
+<!ENTITY newNavigatorCmd.label "نافذة متصفح جديدة">
+<!ENTITY tabCmd.label "نافذة متصفح جديدة">
+<!ENTITY closeWindow.label "أغلق نزِّلها كلها!">

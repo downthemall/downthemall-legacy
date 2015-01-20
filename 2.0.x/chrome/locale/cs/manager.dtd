@@ -1,0 +1,55 @@
+<!ENTITY tooladd.label "Přidat URL">
+<!ENTITY tooladd.tooltip "Manuálně přidat stahování do DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Naší dosavadní i budoucí práci můžete finančně podpořit libovolně malým příspěvkem!">
+<!ENTITY movetop.label "Na začátek">
+<!ENTITY movebottom.label "Na konec">
+<!ENTITY moveup.label "Nahoru">
+<!ENTITY movedown.label "Dolů">
+<!ENTITY task.label "URL/Název">
+<!ENTITY per.label "Procent">
+<!ENTITY pct.label "Průběh">
+<!ENTITY dim.label "Velikost">
+<!ENTITY time.label "Čas do konce">
+<!ENTITY parts.label "Segmenty">
+<!ENTITY speed.label "Rychlost">
+<!ENTITY infoURLTitle.value "Z:">
+<!ENTITY infoSizeTitle.value "Velikost:">
+<!ENTITY infoMultiple.value "Více položek">
+<!ENTITY elapsedTitle.value "Proběhlo:">
+<!ENTITY remainingTitle.value "Zbývá:">
+<!ENTITY currentSpeedTitle.value "Aktuální rychlost:">
+<!ENTITY avgSpeedTitle.value "Průměrná rychlost:">
+<!ENTITY path.label "Uložit cestu">
+<!ENTITY mask.label "Maska přesměrování">
+<!ENTITY hash.label "Kontrolní součet">
+<!ENTITY infos.label "Informace o stahování">
+<!ENTITY launch.label "Otevřít soubor">
+<!ENTITY delete.label "Smazat soubory">
+<!ENTITY targetdir.label "Otevřít složku">
+<!ENTITY pause.label "Pozastavit">
+<!ENTITY resume.label "Pokračovat">
+<!ENTITY cancel.label "Zrušit">
+<!ENTITY removemenu.label "Odebrat stahování">
+<!ENTITY removeselected.label "Odebrat vybrané">
+<!ENTITY removeCompleted.label "Odebrat dokončená stahování">
+<!ENTITY removeAll.label "Odebrat vše">
+<!ENTITY removeDupes.label "Odebrat duplicity">
+<!ENTITY removeGone.label "Uklidit dokončené">
+<!ENTITY advanced.label "Pokročilé">
+<!ENTITY addchunk.label "Přidat segment">
+<!ENTITY removechunk.label "Odebrat segment">
+<!ENTITY force.label "Vynutit stahování">
+<!ENTITY import.label "Importovat ze souboru">
+<!ENTITY export.label "Exportovat vybrané">
+<!ENTITY options.caption "Možnosti">
+<!ENTITY loading.label "Načítání...">
+<!ENTITY restore.label "Obnovit">
+<!ENTITY close.label "Zavřít">
+<!ENTITY speedlimit.label "Limit:">
+<!ENTITY speedlimit.tooltip "Změnit rychlostní limit. Seznam je průběžně aktualizován.">
+<!ENTITY perdownloadspeedlimit.label "Rychlostní limit">
+<!ENTITY perdownloadspeedlimit.tooltip "Změnit limit rychlost. Hlavní nastavení rychlosti nebude změněno.">
+<!ENTITY mirrors.label "Spravovat zrcadla">
+<!ENTITY mirrors.tooltip "Upravit umístění zrcadel">
+<!ENTITY toolbar.icons "Ikony">
+<!ENTITY toolbar.full "Ikony a text">

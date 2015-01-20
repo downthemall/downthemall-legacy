@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+   - Version: MPL 1.1/GPL 2.0/LGPL 2.1
+   -
+   - The contents of this file are subject to the Mozilla Public License Version
+   - 1.1 (the "License"); you may not use this file except in compliance with
+   - the License. You may obtain a copy of the License at
+   - http://www.mozilla.org/MPL/
+   -
+   - Software distributed under the License is distributed on an "AS IS" basis,
+   - WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+   - for the specific language governing rights and limitations under the
+   - License.
+   -
+   - The Original Code is DownThemAll!
+   -
+   - The Initial Developer of the Original Code is
+   - Nils Maier.
+   - Portions created by the Initial Developer are Copyright (C) 2010
+   - the Initial Developer. All Rights Reserved.
+   -
+   - Contributor(s):
+   -	Nils Maier <MaierMan@web.de>
+   -
+   - Alternatively, the contents of this file may be used under the terms of
+   - either the GNU General Public License Version 2 or later (the "GPL"), or
+   - the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+   - in which case the provisions of the GPL or the LGPL are applicable instead
+   - of those above. If you wish to allow use of your version of this file only
+   - under the terms of either the GPL or the LGPL, and not to allow others to
+   - use your version of this file under the terms of the MPL, indicate your
+   - decision by deleting the provisions above and replace them with the notice
+   - and other provisions required by the LGPL or the GPL. If you do not delete
+   - the provisions above, a recipient may use your version of this file under
+   - the terms of any one of the MPL, the GPL or the LGPL.
+   -
+   - ***** END LICENSE BLOCK ***** -->
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/manager/metalinker.css" type="text/css" ?>
+
+<!DOCTYPE window [
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
+	%commonDTD;
+	<!ENTITY % metalinkerDTD SYSTEM "chrome://dta/locale/metalinker.dtd">
+	%metalinkerDTD;	
+	<!ENTITY % selectDTD SYSTEM "chrome://dta/locale/select.dtd">
+	%selectDTD;
+	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
+	%managerDTD;
+]>
+
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" id="metaselect" persist="width height">
+	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js" />
+	<script type="application/x-javascript" src="metaselect.js" />
+
+	<keyset>
+		<key keycode="VK_ESCAPE" oncommand="MetaSelect.cancel();" />
+	</keyset>
+
+
+	<stringbundleset>
+		<stringbundle src="chrome://dta/locale/common.properties" />
+		<stringbundle src="chrome://dta/locale/metalinker.properties" />
+		<stringbundle src="chrome://dta/locale/manager.properties" />
+		<stringbundle src="chrome://dta/locale/prefpanes.properties" />
+		<stringbundle src="chrome://global/locale/dialog.properties" />
+	</stringbundleset>
+
+	<popupset id="popups">
+		<menupopup id="context">
+			<menuitem id="selectall" class="menuitem-iconic" label="&selectall.label;" oncommand="MetaSelect.select('all');" />
+			<menuitem id="selectinv" class="menuitem-iconic" label="&selectinv.label;" oncommand="MetaSelect.select('invert');" />
+			<menuitem id="selectnone" class="menuitem-iconic" label="&selectnone.label;" oncommand="MetaSelect.select('none');" />
+		</menupopup>
+	</popupset>
+
+	<hbox id="header">
+		<vbox pack="center">
+			<html:canvas width="48" height="48" id="icon" class="icon" />
+		</vbox>
+		<vbox flex="1" pack="start">
+			<grid flex="1">
+				<columns>
+					<column flex="1" />
+					<column />
+					<column />
+				</columns>
+				<rows>
+					<row>
+						<label id="identity" crop="end" />
+						<hbox id="boxPublisher">
+							<label value="&publisher;" />
+							<description id="publisher" class="text-link" onclick="MetaSelect.openLink(this);" />
+						</hbox>
+						<hbox id="boxLicense">
+							<label value="&license;" />
+							<description id="license" class="text-link" onclick="MetaSelect.openLink(this);" />
+						</hbox>
+					</row>
+				</rows>
+			</grid>
+			<description id="desc" />
+		</vbox>
+	</hbox>
+	<notificationbox id="notifications" flex="1">
+		<richlistbox context="context" id="downloads" class="metalinker" flex="1" suppressonselect="true" />
+
+		<hbox style="margin:7px 7px 3px 7px;">
+			<vbox autostretch="never" flex="1">
+				<caption label="&dest.caption;" />
+				<hbox>
+					<saveddropdown id="directory" preference="directory" flex="1" />
+					<toolbarbutton id="browsedir" oncommand="MetaSelect.browseDir();" tooltiptext="&browse.tip;" />
+				</hbox>
+			</vbox>
+			<vbox id="renamingbox">
+				<caption label="&mask.label;:" />
+				<hbox>
+					<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;" />
+					<maskbutton />
+				</hbox>
+			</vbox>
+		</hbox>
+	</notificationbox>
+
+	<hbox pack="end" align="baseline" style="margin: 2px 7px 4px 7px">
+		<button accesskey="&start.key;" label="&start.label;" id="startbutton" oncommand="MetaSelect.download(true);" default="true" />
+		<button accesskey="&queue.key;" label="&queue.label;" id="queuebutton" oncommand="MetaSelect.download(false);" />
+		<button id="cancelbutton" oncommand="MetaSelect.cancel();" />
+	</hbox>
+</window>

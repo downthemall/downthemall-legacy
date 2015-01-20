@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See LICENSE and GPL for details.
+ *
+ * Contributers:
+ *   Nils Maier <MaierMan@web.de>
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/common/style.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://dta/skin/add/style.css" type="text/css" ?>
+
+<!DOCTYPE dialog [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/">
+	%globalDTD;
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
+	%commonDTD;
+	<!ENTITY % addUrlDTD SYSTEM "chrome://dta/locale/addurl.dtd">
+	%addUrlDTD;
+]>
+
+<dialog
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	title="&title;"
+	id="DownThemAll" 
+	onload="Dialog.load();" 
+	persist="screenX screenY width"
+	ondialogaccept="return Dialog.download(true);"
+	ondialogextra1="return Dialog.download(false);"
+	buttons="accept,extra1,cancel"
+	buttonlabelaccept="&start.label;"
+	buttonlabelextra1="&queue.label;"
+	buttonaccesskeyaccept="&start.key;"
+	buttonaccesskeyextra1="&queue.key;"	
+	>
+	
+	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js"/>
+	<script type="application/javascript" src="chrome://dta/content/dta/addurl.js"/>
+	
+	<stringbundleset xmlns="http://www.downthemall.net/properties#">
+		<stringbundle src="chrome://dta/locale/addurl.properties"/>
+		<stringbundle src="chrome://dta/locale/common.properties"/>
+	</stringbundleset>
+	
+	<keyset>
+		<key keycode="VK_ESCAPE" oncommand="self.close();"/>
+	</keyset>
+	
+	<grid onclick="event.stopPropagation();" >
+		<columns>
+			<column />
+			<column flex="1"/>
+		</columns>
+		<rows>
+			<row>
+				<vbox align="center" pack="center" id="icon">
+					<image/>
+				</vbox>
+				<vbox flex="1">
+					<description class="header" id="descr">&desc.value; <html:span id="batcheslabel">&desc.batches.value;</html:span></description>
+					<vbox id="batches">
+						<label flex="1">&examples.value;</label>
+						<label class="monospace indent">.../mygallery[A:C]/photo[001:100:2].jpg</label>
+						<label class="monospace indent">.../mygallery[1:3]/photo[01:10][3:01:-1].jpg</label>
+					</vbox>
+				</vbox>
+			</row> 
+			<row align="center">
+				<label control="address" value="&url.value;:" class="header"/>
+				<textbox id="address" type="autocomplete" autocompletesearch="history" completedefaultindex="true"/>
+			</row>
+			<row align="center">
+				<label control="URLref" id="URLrefTitle" value="&referrer.value;" style="font-style: italic;" />
+				<textbox id="URLref" type="autocomplete" autocompletesearch="history" completedefaultindex="true" />
+			</row>
+			<row align="center">
+				<label control="description" value="&description.value;" style="font-style: italic;"/>
+				<textbox id="description" type="autocomplete" />
+			</row>			
+			<row align="center">
+				<label control="directory" id="destinationPath" value="&dest.caption;" />
+				<hbox flex="1">
+					<saveddropdown id="directory" preference="directory" flex="1"/>
+					<toolbarbutton id="browsedir" class="toolbarbutton-1" oncommand="Dialog.browseDir();" tooltiptext="&browse.tip;" />
+				</hbox>
+			</row>
+			<row align="center">
+				<label control="renaming" id="infoDestTitle" value="&mask.label;: " />
+				<hbox>
+					<saveddropdown id="renaming" preference="renaming" flex="1" tooltiptext="&mask.tip;"/>
+					<maskbutton/>
+				</hbox>
+			</row>
+			<row align="center">
+				<label control="hash" value="&checksum.value;" style="font-style: italic;" />
+				<hashinput id="hash"/>
+			</row>
+		</rows>
+	</grid>
+</dialog>

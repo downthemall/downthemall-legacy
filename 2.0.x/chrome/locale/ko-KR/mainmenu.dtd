@@ -1,0 +1,5 @@
+<!ENTITY fileMenu.label "파일">
+<!ENTITY fileMenu.accesskey "F">
+<!ENTITY newNavigatorCmd.label "새 창">
+<!ENTITY tabCmd.label "새 탭">
+<!ENTITY closeWindow.label "DownThemAll! 닫기">

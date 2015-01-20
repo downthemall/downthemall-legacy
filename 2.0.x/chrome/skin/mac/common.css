@@ -1,0 +1,28 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#views toolbarbutton, #views toolbarbutton:hover {
+	margin: 0px !important;
+}
+
+.closebox-title .closebox-twisty {
+  -moz-appearance: treetwistyopen;
+  -moz-padding-end: 2px;
+}
+
+.closer[closed="true"] .closebox-title .closebox-twisty {
+  -moz-appearance: treetwisty;
+}
+
+.downlinks {
+	width:780px;
+	height:450px;
+}
+
+.selectlinks caption {
+	font-weight: normal !important;
+}
+
+notificationbox {
+	/* avoid horizontal scrollbar */
+	overflow: hidden;
+}

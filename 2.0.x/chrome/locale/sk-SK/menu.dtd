@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Predvoľby">
+<!ENTITY dta-about.label "Čo je DownThemAll!">
+<!ENTITY dta-manager-button "Správca">
+<!ENTITY dta-selector-button "dTa OneClick! pepínač">
+<!ENTITY dta-tb-all.label "Všetky panely">
+<!ENTITY dta-tb-single.label "Aktuálny panel">
+<!ENTITY dta-selection.label "DownThemAll! výber...">
+<!ENTITY dta-selection-turbo.label "dTa OneClick výber...">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa OneClick...">
+<!ENTITY dta-img-save.label "Uložiť obrázok pomocou DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Začať sťahovať obrázok pomocou dTa OneClick!">
+<!ENTITY dta-video-save.label "Uložiť video pomocou DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Začať sťahovať video pomocou dTa OneClick!">
+<!ENTITY dta-audio-save.label "Uložiť zvuk pomocou DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Začať sťahovať zvuk pomocou dTa OneClick!">
+<!ENTITY dta-link-save.label "Uložiť odkaz pomocou DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Začať sťahovať odkaz pomocou dTa OneClick!">
+<!ENTITY dta-form-save.label "Uložiť cieľ formulára s DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Spustiť ukladanie cieľa formulára s dTa OneClick!">

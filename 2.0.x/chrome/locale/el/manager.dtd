@@ -1,0 +1,55 @@
+<!ENTITY tooladd.label "Προσθήκη URL">
+<!ENTITY tooladd.tooltip "Χειρωνακτική προσθήκη URL στο DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Μπορείτε να μας βοηθήσετε να κάνουμε το DownThemAll ακόμα καλύτερο. Κάντε μια μικρή δωρεά!">
+<!ENTITY movetop.label "Κορυφή">
+<!ENTITY movebottom.label "Τέλος">
+<!ENTITY moveup.label "Πάνω">
+<!ENTITY movedown.label "Κάτω">
+<!ENTITY task.label "Όνομα/URL">
+<!ENTITY per.label "&#37;">
+<!ENTITY pct.label "Πρόοδος">
+<!ENTITY dim.label "Μέγεθος">
+<!ENTITY time.label "Χρόνος">
+<!ENTITY parts.label "Τμήματα">
+<!ENTITY speed.label "Ταχύτητα">
+<!ENTITY infoURLTitle.value "Από:">
+<!ENTITY infoSizeTitle.value "Μέγεθος:">
+<!ENTITY infoMultiple.value "Πολλαπλά στοιχεία">
+<!ENTITY elapsedTitle.value "Χρόνος που πέρασε:">
+<!ENTITY remainingTitle.value "Χρόνος που απομένει:">
+<!ENTITY currentSpeedTitle.value "Τρέχουσα ταχύτητα:">
+<!ENTITY avgSpeedTitle.value "Μέση ταχύτητα:">
+<!ENTITY path.label "Διαδρομή αποθήκευσης">
+<!ENTITY mask.label "Μάσκα μετονομασίας">
+<!ENTITY hash.label "Άθροισμα ελέγχου">
+<!ENTITY infos.label "Πληροφορίες λήψης">
+<!ENTITY launch.label "Άνοιγμα αρχείου">
+<!ENTITY delete.label "Διαγραφή αρχείου">
+<!ENTITY targetdir.label "Άνοιγμα καταλόγου προορισμού">
+<!ENTITY pause.label "Παύση">
+<!ENTITY resume.label "Συνέχιση">
+<!ENTITY cancel.label "Ακύρωση">
+<!ENTITY removemenu.label "Αφαίρεση λήψεων">
+<!ENTITY removeselected.label "Αφαίρεση επιλεγμένων">
+<!ENTITY removeCompleted.label "Αφαίρεση ολοκληρωμένων εργασιών">
+<!ENTITY removeAll.label "Αφαίρεση όλων">
+<!ENTITY removeDupes.label "Αφαίρεση διπλότυπων">
+<!ENTITY removeGone.label "Εκκαθάριση ολοκληρωμένων αρχείων">
+<!ENTITY advanced.label "Για προχωρημένους">
+<!ENTITY addchunk.label "Προσθήκη τεμαχίου">
+<!ENTITY removechunk.label "Αφαίρεση τεμαχίου">
+<!ENTITY force.label "Εξαναγκασμένη εκκίνηση">
+<!ENTITY import.label "Εισαγωγή από αρχείο">
+<!ENTITY export.label "Εξαγωγή επιλεγμένων">
+<!ENTITY options.caption "Επιλογές">
+<!ENTITY loading.label "Φόρτωση...">
+<!ENTITY restore.label "Επαναφορά">
+<!ENTITY close.label "Κλείσιμο">
+<!ENTITY speedlimit.label "Όριο:">
+<!ENTITY speedlimit.tooltip "Αλλαγή ορίου ταχύτητας. Η λίστα ενημερώνεται δυναμικά.">
+<!ENTITY perdownloadspeedlimit.label "Όριο ταχύτητας">
+<!ENTITY perdownloadspeedlimit.tooltip "Αλλαγή ορίου ταχύτητας. Το γενικό όριο ταχύτητας θα εξακολουθήσει να είναι σεβαστό.">
+<!ENTITY mirrors.label "Διαχείριση εναλλακτικών τοποθεσιών">
+<!ENTITY mirrors.tooltip "Διαχείριση εναλλακτικών τοποθεσιών λήψεων">
+<!ENTITY toolbar.icons "Χρήση εικονιδίων">
+<!ENTITY toolbar.full "Χρήση εικονιδίων και κειμένου">

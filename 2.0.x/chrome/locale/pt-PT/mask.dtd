@@ -1,0 +1,23 @@
+<!ENTITY mask.title "Mudar nome à Máscara">
+<!ENTITY mask.name "Nome do Ficheiro">
+<!ENTITY mask.ext "Extensão">
+<!ENTITY mask.url "URL Base">
+<!ENTITY mask.curl "URL Completo">
+<!ENTITY mask.flatcurl "URL Completo">
+<!ENTITY mask.num "Número Progressivo">
+<!ENTITY mask.inum "Número do item">
+<!ENTITY mask.hh "Horas">
+<!ENTITY mask.mm "Minutos">
+<!ENTITY mask.ss "Segundos">
+<!ENTITY mask.d "Dia">
+<!ENTITY mask.m "Mês">
+<!ENTITY mask.y "Ano">
+<!ENTITY mask.subdirs "Sub directorias do URL">
+<!ENTITY mask.flatsubdirs "Sub directorias do URL">
+<!ENTITY mask.text "Descrição da ligação">
+<!ENTITY mask.flattext "Descrição da ligação plana">
+<!ENTITY mask.refer "Referrer URL">
+<!ENTITY mask.qstring "String do Pedido">
+<!ENTITY mask.flattitle "Título associado com ligação">
+<!ENTITY mask.tip "Clique ou arraste para mudar o nome da máscara">
+<!ENTITY mask.open.tip "Tabela de referência para mudar nome das etiquetas">

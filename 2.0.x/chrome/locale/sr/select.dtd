@@ -1,0 +1,18 @@
+<!ENTITY title "Направите Ваш избор">
+<!ENTITY filters.caption "Филтери">
+<!ENTITY additional.caption "Брзо филтрирање">
+<!ENTITY additional.tip "Текстуални филтер: коришћењем зареза, можете поставити више текстуалних филтера истовремено.">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY filter.tip "Унесите ваше текстуалне филтере! Примери су дати у падајућој листи.">
+<!ENTITY status.label "После избора веза, кликните на Преузми!">
+<!ENTITY menu.mask.title "Уреди образац за преименовање">
+<!ENTITY menu.check.label "Обележи изабране ствари">
+<!ENTITY menu.uncheck.label "Одбаци изабране ствари">
+<!ENTITY menu.toggle.label "Промени избор за обележене ствари">
+<!ENTITY tab.links.label "Везе">
+<!ENTITY tab.pics.label "Слике и угнежђени објекти">
+<!ENTITY header.desc.label "Опис">
+<!ENTITY selectfiltered.label "Изабрани филтери">
+<!ENTITY disableother.label "Искључи остале филтере">
+<!ENTITY disableother.tooltip "Искључи остале филтере и користи само брзо филтрирање. (Ово подешавање тренутно није могуће сачувати)">
+<!ENTITY resname.value "Име извора">

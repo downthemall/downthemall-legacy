@@ -1,0 +1,55 @@
+<!ENTITY tooladd.label "URL hozzáadása">
+<!ENTITY tooladd.tooltip "URL hozzáadása manuálisan">
+<!ENTITY tooldonate.tooltiptext "Segíthet a DownThemAll Kiterjesztést még jobbá tenni! Támogassa a fejlesztést hozzájárulásaival!">
+<!ENTITY movetop.label "Első">
+<!ENTITY movebottom.label "Utolsó">
+<!ENTITY moveup.label "Fel">
+<!ENTITY movedown.label "Le">
+<!ENTITY task.label "URL/Név">
+<!ENTITY per.label "Százalék">
+<!ENTITY pct.label "Állapot">
+<!ENTITY dim.label "Méret">
+<!ENTITY time.label "Hátralévő idő">
+<!ENTITY parts.label "Szeletek">
+<!ENTITY speed.label "Sebesség">
+<!ENTITY infoURLTitle.value "Hely:">
+<!ENTITY infoSizeTitle.value "Méret:">
+<!ENTITY infoMultiple.value "Többszörös elem">
+<!ENTITY elapsedTitle.value "Eltelt idő:">
+<!ENTITY remainingTitle.value "Hátralevő idő:">
+<!ENTITY currentSpeedTitle.value "Aktuális sebesség:">
+<!ENTITY avgSpeedTitle.value "Átlagos sebesség:">
+<!ENTITY path.label "Mentési útvonal">
+<!ENTITY mask.label "Átnevezési maszk">
+<!ENTITY hash.label "Ellenőrzőösszeg">
+<!ENTITY infos.label "Letöltési információ">
+<!ENTITY launch.label "Fájl megnyitása">
+<!ENTITY delete.label "Törölt fájlok">
+<!ENTITY targetdir.label "Célmappa megnyitása">
+<!ENTITY pause.label "Szünet">
+<!ENTITY resume.label "Folytatás">
+<!ENTITY cancel.label "Mégse">
+<!ENTITY removemenu.label "Letöltése eltávolítása">
+<!ENTITY removeselected.label "Kiválasztott letöltése eltávolítása">
+<!ENTITY removeCompleted.label "Befejezett feladatok eltávolítása">
+<!ENTITY removeAll.label "Összes eltávolítása">
+<!ENTITY removeDupes.label "Duplikátumok eltávolítása">
+<!ENTITY removeGone.label "Kész fájlok eltávolítása a listáról">
+<!ENTITY advanced.label "Haladó">
+<!ENTITY addchunk.label "Szelet hozzáadása">
+<!ENTITY removechunk.label "Szelet eltávolítása">
+<!ENTITY force.label "Kényszerített indítás">
+<!ENTITY import.label "Importálás fájlból">
+<!ENTITY export.label "Exportálás">
+<!ENTITY options.caption "Beállítások">
+<!ENTITY loading.label "Betöltés…">
+<!ENTITY restore.label "Visszaállítás">
+<!ENTITY close.label "Bezárás">
+<!ENTITY speedlimit.label "Határ:">
+<!ENTITY speedlimit.tooltip "Sebesség-határolás megváltoztatása. A lista dinamikusan frissül.">
+<!ENTITY perdownloadspeedlimit.label "Sebességhatár">
+<!ENTITY perdownloadspeedlimit.tooltip "Sebességhatárolás megváltoztatása. A globális sebességhatár továbbra is érvényben van.">
+<!ENTITY mirrors.label "Tükrök kezelése">
+<!ENTITY mirrors.tooltip "Letöltési tükrök kezelése">
+<!ENTITY toolbar.icons "Csak ikonok">
+<!ENTITY toolbar.full "Ikonok és szöveg">

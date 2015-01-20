@@ -1,0 +1,7 @@
+<!ENTITY title.value "Conflito com o nome do ficheiro!">
+<!ENTITY text.value "Lembrar esta definição:">
+<!ENTITY file.label "Apenas para este ficheiro">
+<!ENTITY session.label "Apenas para esta sessão">
+<!ENTITY always.label "A partir de agora">
+<!ENTITY overwrite.label "Sobrescrever ficheiro existente">
+<!ENTITY skip.label "Saltar/Cancelar">

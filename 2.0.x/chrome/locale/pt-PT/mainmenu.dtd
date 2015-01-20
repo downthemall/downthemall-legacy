@@ -1,0 +1,5 @@
+<!ENTITY fileMenu.label "Ficheiro">
+<!ENTITY fileMenu.accesskey "F">
+<!ENTITY newNavigatorCmd.label "Nova Janela do Navegador">
+<!ENTITY tabCmd.label "Novo Separador do Navegador">
+<!ENTITY closeWindow.label "Fechar o DownThemAll!">

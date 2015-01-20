@@ -1,0 +1,55 @@
+<!ENTITY tooladd.label "URL 추가">
+<!ENTITY tooladd.tooltip "수동으로 DownThemAll에 URL 추가">
+<!ENTITY tooldonate.tooltiptext "dTa팀에 기부해 주시면 DownThemAll이 더욱 발전할 수 있습니다. 감사합니다!">
+<!ENTITY movetop.label "맨 위">
+<!ENTITY movebottom.label "맨 아래">
+<!ENTITY moveup.label "위로">
+<!ENTITY movedown.label "아래로">
+<!ENTITY task.label "URL/이름">
+<!ENTITY per.label "완료">
+<!ENTITY pct.label "진행">
+<!ENTITY dim.label "크기">
+<!ENTITY time.label "예상 시간">
+<!ENTITY parts.label "부분">
+<!ENTITY speed.label "속도">
+<!ENTITY infoURLTitle.value "원본:">
+<!ENTITY infoSizeTitle.value "크기:">
+<!ENTITY infoMultiple.value "복수 항목">
+<!ENTITY elapsedTitle.value "경과 시간:">
+<!ENTITY remainingTitle.value "남은 시간:">
+<!ENTITY currentSpeedTitle.value "현재 속도:">
+<!ENTITY avgSpeedTitle.value "평균 속도:">
+<!ENTITY path.label "경로 저장">
+<!ENTITY mask.label "이름 바꾸기 마스크">
+<!ENTITY hash.label "체크섬">
+<!ENTITY infos.label "다운로드 정보">
+<!ENTITY launch.label "파일 열기">
+<!ENTITY delete.label "파일 삭제">
+<!ENTITY targetdir.label "폴더 열기">
+<!ENTITY pause.label "중지">
+<!ENTITY resume.label "계속">
+<!ENTITY cancel.label "취소">
+<!ENTITY removemenu.label "다운로드 제거">
+<!ENTITY removeselected.label "선택부분 제거">
+<!ENTITY removeCompleted.label "완료된 항목 제거">
+<!ENTITY removeAll.label "모두 제거">
+<!ENTITY removeDupes.label "중복 다운로드 제거">
+<!ENTITY removeGone.label "이전 파일 비우기">
+<!ENTITY advanced.label "고급">
+<!ENTITY addchunk.label "분할 추가">
+<!ENTITY removechunk.label "분할 제거">
+<!ENTITY force.label "강제 시작">
+<!ENTITY import.label "파일로부터 가져오기">
+<!ENTITY export.label "선택 항목 내보내기">
+<!ENTITY options.caption "설정">
+<!ENTITY loading.label "가져오는 중...">
+<!ENTITY restore.label "복구">
+<!ENTITY close.label "닫기">
+<!ENTITY speedlimit.label "제한:">
+<!ENTITY speedlimit.tooltip "속도제한변경. 이 목록은 동적으로 업데이트 됩니다.">
+<!ENTITY perdownloadspeedlimit.label "속도 제한">
+<!ENTITY perdownloadspeedlimit.tooltip "속도제한변경. 전체 속도제한은 계속 유효합니다.">
+<!ENTITY mirrors.label "미러 관리">
+<!ENTITY mirrors.tooltip "다운로드 미러 위치 관리">
+<!ENTITY toolbar.icons "아이콘 사용">
+<!ENTITY toolbar.full "아이콘 및 문자 사용">

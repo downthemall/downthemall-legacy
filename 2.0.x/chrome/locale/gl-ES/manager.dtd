@@ -1,0 +1,55 @@
+<!ENTITY tooladd.label "Engadir URL">
+<!ENTITY tooladd.tooltip "Engadir URL manualmente a DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Pode axudarnos a mellorar DownThemAll cunha pequena doación.">
+<!ENTITY movetop.label "Comezo">
+<!ENTITY movebottom.label "Final">
+<!ENTITY moveup.label "Arriba">
+<!ENTITY movedown.label "Abaixo">
+<!ENTITY task.label "URL/Nome">
+<!ENTITY per.label "Porcentaxe">
+<!ENTITY pct.label "Progreso">
+<!ENTITY dim.label "Tamaño">
+<!ENTITY time.label "Tempo Est.">
+<!ENTITY parts.label "Partes">
+<!ENTITY speed.label "Velocidade">
+<!ENTITY infoURLTitle.value "Desde:">
+<!ENTITY infoSizeTitle.value "Tamaño:">
+<!ENTITY infoMultiple.value "Múltiples elementos">
+<!ENTITY elapsedTitle.value "Transcorrido:">
+<!ENTITY remainingTitle.value "Pendente:">
+<!ENTITY currentSpeedTitle.value "Velocidade actual:">
+<!ENTITY avgSpeedTitle.value "Velocidade media:">
+<!ENTITY path.label "Ruta gardado">
+<!ENTITY mask.label "Máscara renomeado">
+<!ENTITY hash.label "Checksum">
+<!ENTITY infos.label "Info descargas">
+<!ENTITY launch.label "Abrir arquivo">
+<!ENTITY delete.label "Eliminar arquivo(s)">
+<!ENTITY targetdir.label "Abrir carpeta destino">
+<!ENTITY pause.label "Deter">
+<!ENTITY resume.label "Continuar">
+<!ENTITY cancel.label "Cancelar">
+<!ENTITY removemenu.label "Eliminar descargas">
+<!ENTITY removeselected.label "Eliminar seleccionadas">
+<!ENTITY removeCompleted.label "Eliminar tarefas completadas">
+<!ENTITY removeAll.label "Eliminar todas">
+<!ENTITY removeDupes.label "Eliminar duplicadas">
+<!ENTITY removeGone.label "Eliminar arquivos movidos">
+<!ENTITY advanced.label "Avanzados">
+<!ENTITY addchunk.label "Engadir parte">
+<!ENTITY removechunk.label "Eliminar parte">
+<!ENTITY force.label "Forzar inicio">
+<!ENTITY import.label "Importar de arquivo">
+<!ENTITY export.label "Exportar seleccionadas">
+<!ENTITY options.caption "Opcións">
+<!ENTITY loading.label "Cargando...">
+<!ENTITY restore.label "Restaurar">
+<!ENTITY close.label "Pechar">
+<!ENTITY speedlimit.label "Lí­mite:">
+<!ENTITY speedlimit.tooltip "Cambia o límite da velocidade. A lista actualízase dinamicamente.">
+<!ENTITY perdownloadspeedlimit.label "Límite de velocidade">
+<!ENTITY perdownloadspeedlimit.tooltip "Cambiar límite de velocidade. O límite de velocidade global seguirá vixente.">
+<!ENTITY mirrors.label "Administrar mirrors">
+<!ENTITY mirrors.tooltip "Administrar situacións alternativas (mirrors) de descarga">
+<!ENTITY toolbar.icons "Usar iconas">
+<!ENTITY toolbar.full "Usar iconas e texto">

@@ -1,0 +1,7 @@
+<!ENTITY title.value "Conflitto tra nomi dei file!">
+<!ENTITY text.value "Ricorda questa impostazione:">
+<!ENTITY file.label "Solo per questo file">
+<!ENTITY session.label "Solo per questa sessione">
+<!ENTITY always.label "Da ora in poi">
+<!ENTITY overwrite.label "Sovrascrivi file esistente">
+<!ENTITY skip.label "Salta/Annulla">

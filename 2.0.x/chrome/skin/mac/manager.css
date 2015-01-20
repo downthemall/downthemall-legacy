@@ -1,0 +1,21 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#loading {
+	list-style-image: url(chrome://global/skin/icons/information-32.png);
+}
+
+statusbarpanel#netstatus {
+	list-style-image: url(chrome://dta/skin/manager/netstatus.png);
+	-moz-image-region: rect(16px, 16px, 32px, 0px);
+}
+statusbarpanel#netstatus[offline] {
+	-moz-image-region: rect(16px, 32px, 32px, 16px);
+}
+
+/* pinestripe makes this important at 32px :p */
+toolbarspacer {
+	min-width: 6px !important;
+}
+toolbarspacer.visible {
+	min-width: 13px !important;
+}

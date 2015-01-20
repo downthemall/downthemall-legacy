@@ -1,0 +1,5 @@
+<!ENTITY fileMenu.label "Датотека">
+<!ENTITY fileMenu.accesskey "Д">
+<!ENTITY newNavigatorCmd.label "Нови прозор прегледача">
+<!ENTITY tabCmd.label "Нови језичак прегледача">
+<!ENTITY closeWindow.label "Затвори DownThemAll!">

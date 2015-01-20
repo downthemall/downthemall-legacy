@@ -1,0 +1,72 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#dta-button,
+#dta-turbo-button,
+#dta-turboselect-button,
+#dta-manager-button,
+.dta-toolbarbutton {
+	list-style-image: url(buttons16.png);
+}
+
+.dta-toolbarbutton[cui-areatype="menu-panel"],
+#customization-container .dta-toolbarbutton {
+	list-style-image: url(buttons32.png) !important;
+}
+
+#dta-button {
+	-moz-image-region: rect(0px,32px,16px,16px);
+}
+#dta-button:hover {
+	-moz-image-region: rect(0px,16px,16px,0px);
+}
+#dta-button[cui-areatype="menu-panel"],
+#customization-container #dta-button,
+#customization-container #dta-button:hover {
+	-moz-binding: url("chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton");
+	-moz-box-align: center;
+	-moz-box-orient: vertical !important;
+	-moz-image-region: rect(0px,64px,32px,32px);
+}
+#dta-button[cui-areatype="menu-panel"]:hover {
+	-moz-image-region: rect(0px,32px,32px,0px);
+}
+
+#dta-turbo-button {
+	-moz-image-region: rect(0px,64px,16px,48px);
+}
+#dta-turbo-button:hover {
+	-moz-image-region: rect(0px,48px,16px,32px);
+}
+#dta-turbo-button[cui-areatype="menu-panel"],
+#customization-container #dta-turbo-button,
+#customization-container #dta-turbo-button:hover {
+	-moz-binding: url("chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton");
+	-moz-box-align: center;
+	-moz-box-orient: vertical !important;
+	-moz-image-region: rect(0px,128px,32px,96px);
+}
+#dta-turbo-button[cui-areatype="menu-panel"]:hover {
+	-moz-image-region: rect(0px,96px,32px,64px);
+}
+
+#dta-turboselect-button {
+	-moz-image-region: rect(0px,96px,16px,80px);
+}
+#dta-turboselect-button:hover {
+	-moz-image-region: rect(0px,80px,16px,64px);
+}
+#dta-turboselect-button[cui-areatype="menu-panel"],
+#customization-container #dta-turboselect-button,
+#customization-container #dta-turboselect-button:hover {
+	-moz-image-region: rect(0px,192px,32px,160px);
+}
+#dta-turboselect-button[cui-areatype="menu-panel"]:hover {
+	-moz-image-region: rect(0px,160px,32px,128px);
+}
+#dta-manager-button[cui-areatype="menu-panel"],
+#customization-container #dta-manager-button {
+	-moz-image-region: rect(0px, 224px,32px,192px);
+}
+#dta-manager-button {
+	-moz-image-region: rect(0px, 112px, 16px, 96px);
+}

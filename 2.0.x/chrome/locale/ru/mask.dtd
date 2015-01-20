@@ -1,0 +1,23 @@
+<!ENTITY mask.title "Теги переименования">
+<!ENTITY mask.name "Имя файла">
+<!ENTITY mask.ext "Расширение">
+<!ENTITY mask.url "Базовый URL">
+<!ENTITY mask.curl "Полный URL">
+<!ENTITY mask.flatcurl "Flat Полный URL">
+<!ENTITY mask.num "Возрастающее число">
+<!ENTITY mask.inum "номер пункта">
+<!ENTITY mask.hh "Часы">
+<!ENTITY mask.mm "Минуты">
+<!ENTITY mask.ss "Секунды">
+<!ENTITY mask.d "День">
+<!ENTITY mask.m "Месяц">
+<!ENTITY mask.y "Год">
+<!ENTITY mask.subdirs "URL поддиректории">
+<!ENTITY mask.flatsubdirs "Flat URL поддиректории">
+<!ENTITY mask.text "Описание ссылки">
+<!ENTITY mask.flattext "Flat Описание ссылки">
+<!ENTITY mask.refer "URL перенаправления">
+<!ENTITY mask.qstring "Строка запроса">
+<!ENTITY mask.flattitle "Ассоциировать название с ссылкой">
+<!ENTITY mask.tip "Нажмите для выбора маски переименования">
+<!ENTITY mask.open.tip "Показать теги переименования">

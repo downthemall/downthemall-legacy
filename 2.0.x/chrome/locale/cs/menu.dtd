@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Předvolby">
+<!ENTITY dta-about.label "O dTa!">
+<!ENTITY dta-manager-button "Správce">
+<!ENTITY dta-selector-button "dTa OneClick! přepínač">
+<!ENTITY dta-tb-all.label "Všechny panely">
+<!ENTITY dta-tb-single.label "Aktuální panel">
+<!ENTITY dta-selection.label "DownThemAll! výběr...">
+<!ENTITY dta-selection-turbo.label "dTa OneClick výběr...">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa OneClick...">
+<!ENTITY dta-img-save.label "Uložit obrázek pomocí DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Začít stahovat obrázek pomocí dTa OneClick!">
+<!ENTITY dta-video-save.label "Uložit video pomocí DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Začít stahovat video pomocí dTa OneClick!">
+<!ENTITY dta-audio-save.label "Uložit audio pomocí DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Začít stahovat audio pomocí dTa OneClick!">
+<!ENTITY dta-link-save.label "Uložit odkaz pomocí DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Začít stahovat odkaz pomocí dTa OneClick!">
+<!ENTITY dta-form-save.label "Uložit cíl formuláře s DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Zahájit ukládání cíle formuláře s dTa OneClick!">
