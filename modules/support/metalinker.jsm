@@ -286,6 +286,11 @@ Metalinker3.prototype = {
 					Debug.log("Failed to parse hash: " + h.textContent.trim() + "/" + h.getAttribute('type'), ex);
 				}
 			}
+			let size = this.getSingle(file, 'size');
+			size = parseInt(size);
+			if (!isFinite(size)) {
+				size = 0;
+			}
 			if (hash) {
 				hash = new DTA.HashCollection(hash);
 				let pieces = this.getNodes(file, 'ml:verification/ml:pieces');
@@ -328,11 +333,6 @@ Metalinker3.prototype = {
 			let desc = this.getSingle(file, 'description');
 			if (!desc) {
 				desc = this.getSingle(root, 'description');
-			}
-			let size = this.getSingle(file, 'size');
-			size = parseInt(size);
-			if (!isFinite(size)) {
-				size = 0;
 			}
 			downloads.push({
 				'url': new UrlManager(urls),
@@ -486,6 +486,11 @@ MetalinkerRFC5854.prototype = {
 					Debug.log("Failed to parse hash: " + h.textContent.trim() + "/" + h.getAttribute('type'), ex);
 				}
 			}
+			let size = this.getSingle(file, 'size');
+			size = parseInt(size);
+			if (!isFinite(size)) {
+				size = 0;
+			}
 			if (hash) {
 				hash = new DTA.HashCollection(hash);
 				let pieces = this.getNodes(file, 'ml:pieces');
@@ -521,11 +526,6 @@ MetalinkerRFC5854.prototype = {
 			let desc = this.getSingle(file, 'description');
 			if (!desc) {
 				desc = this.getSingle(root, 'description');
-			}
-			let size = this.getSingle(file, 'size');
-			size = parseInt(size);
-			if (!isFinite(size)) {
-				size = 0;
 			}
 			downloads.push({
 				'url': new UrlManager(urls),
