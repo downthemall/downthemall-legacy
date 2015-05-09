@@ -5,6 +5,9 @@
 
 const global = this;
 
+const CATEGORY = "component javascript";
+
+
 var UNKNOWN_STACK = {
 	stackMsg: "",
 	sourceName: "unknown",
@@ -39,16 +42,10 @@ function prepareStack(stack) {
 		message = [];
 		for (let i = 0; stack && i < 60; ++i, stack = stack.caller) {
 			if (stack.lineNumber) {
-				message.push(
-					"\t" +
-					(stack.name || "[anonymous]") +
-					"() @ " +
-					(stack.filename || "unknown").replace(GLUE, "") +
-					":" +
-					stack.lineNumber);
+				message.push(`\t${stack.name || "[anonymous]"}() @ ${(stack.filename || "unknown").replace(GLUE, "")}:${stack.lineNumber}`);
 			}
 			else {
-				message.push("\t[native @ " + (stack.languageName || "???" ) + "]");
+				message.push(`\t[native @ ${stack.languageName || "???"}]`);
 			}
 		}
 	}
@@ -123,7 +120,7 @@ exports.log = function(level, message, exception) {
 			message = exception.message;
 		}
 		else if (exception) {
-			message = message + " [Exception: " + exception.message + "]";
+			message = `${message} [Exception: ${exception.message || exception.toString()}]`;
 		}
 
 		let {
@@ -138,23 +135,27 @@ exports.log = function(level, message, exception) {
 			message += "\n" + stackMsg;
 		}
 
-		let category = "component javascript";
+		let category = CATEGORY;
 
 		if (exception) {
+			let sn;
 			if (exception instanceof Ci.nsIScriptError) {
-				sourceName = exception.sourceName;
+				sn = exception.sourceName;
 				sourceLine = exception.sourceLine;
 				lineNumber = exception.lineNumber;
 				columnNumber = exception.columnNumber;
 				category = exception.category;
 			}
 			else if (exception instanceof Ci.nsIException) {
-				sourceName = exception.filename;
+				sn = exception.filename;
 				lineNumber = exception.lineNumber;
 			}
 			else {
-				sourceName = exception.fileName || sourceName;
+				sn = exception.fileName || sourceName;
 				lineNumber = exception.lineNumber || lineNumber;
+			}
+			if (sn && !sn.contains("unknown ")) {
+				sourceName = sn;
 			}
 		}
 
@@ -170,7 +171,7 @@ exports.log = function(level, message, exception) {
 				levelMsg = "debug";
 		}
 
-		message = "DownThemAll! (" + levelMsg + ") - " + message;
+		message = `DownThemAll! (${levelMsg}) - ${message}`;
 
 		const scriptError = new Instances.ScriptError(
 			message,
@@ -181,11 +182,7 @@ exports.log = function(level, message, exception) {
 			level >= exports.LOG_ERROR ? errorFlag : warningFlag,
 			category);
 		Services.console.logMessage(scriptError);
-		message = getTimeString() + "\n" +
-			message + "\n--> " +
-			sourceName + ":" +
-			lineNumber + ":" +
-			columnNumber + "\n";
+		message = `${getTimeString()}\n${message}\n--> ${sourceName}:${lineNumber}:${columnNumber}\n`;
 
 		if (global.level <= level) {
 			let f = new Instances.FileOutputStream(global.file, 0x04 | 0x08 | 0x10, parseInt("664", 8), 0);
