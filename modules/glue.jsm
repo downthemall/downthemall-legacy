@@ -263,6 +263,22 @@ LRUMap.prototype = Object.freeze({
 	require_prefixes.set(null, BASE_PATH);
 	require_prefixes.set("testsupport", BASE_PATH + "tests/");
 
+	const loadScript = (() => {
+		if (Services.scriptloader.loadSubScriptWithOptions) {
+			return (module, scope) => {
+				return Services.scriptloader.loadSubScriptWithOptions(module, {charset: "utf-8", target: scope});
+			};
+		}
+		return (mdoule, scope) => {
+			try {
+				return Services.scriptloader.loadSubScript(module, scope, "utf-8");
+			}
+			catch (ex) {
+				return Services.scriptLoader.loadSubScript(module, scope);
+			}
+		}
+	})();
+
 	const require = function require(base, module) {
 		let path = module.split("/").filter(e => !!e);
 		if (!path || !path.length) {
@@ -342,7 +358,7 @@ LRUMap.prototype = Object.freeze({
 			// Add to registry write now to enable resolving cyclic dependencies.
 			_registry.set(module, scope);
 			try {
-				Services.scriptloader.loadSubScript(module, scope);
+				loadScript(module, scope);
 				if (!("exports" in scope) || !scope.exports) {
 					throw new Error("Invalid exports in module");
 				}
