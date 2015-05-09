@@ -183,26 +183,26 @@ exports.load = function load(window, outerEvent) {
 		}
 	}
 
-	function getFocusedWindow() {
-		return (document.commandDispatcher.focusedWindow.contentWindow && document.commandDispatcher.focusedWindow)
-			|| window.BrowserUtils.getFocusSync(document)[1];
-	}
-
 	function selectButton() {
 		return $('dta-turboselect-button') || {checked: false};
 	}
-
-	function getCurrentLocations() {
+	function getMethod(method) {
 		let b = gBrowser.selectedBrowser;
 		return new Promise((resolve, reject) => {
 			let job = ++findLinksJob;
 			let result = m => {
-				b.messageManager.removeMessageListener("DTA:getLocations:" + job, result);
+				b.messageManager.removeMessageListener(`DTA:${method}:${job}`, result);
 				resolve(m.data);
 			}
-			b.messageManager.addMessageListener("DTA:getLocations:" + job, result);
-			b.messageManager.sendAsyncMessage("DTA:getLocations", {job:job});
+			b.messageManager.addMessageListener(`DTA:${method}:${job}`, result);
+			b.messageManager.sendAsyncMessage(`DTA:${method}`, {job:job});
 		});
+	}
+	function getCurrentLocations() {
+		return getMethod("getLocations");
+	}
+	function getFocusedDetails() {
+		return getMethod("getFocusedDetails");
 	}
 	function findBrowsers(all) {
 		let browsers = [];
@@ -261,7 +261,7 @@ exports.load = function load(window, outerEvent) {
 					_updateInterval = setIntervalOnlyFun(intervalfunc, 150, false);
 				}
 				if (urlsLength + imagesLength) {
-					notifyProgress(bundle.getFormattedString('processing.label', [urlsLength, imageLength]));
+					notifyProgress(bundle.getFormattedString('processing.label', [urlsLength, imagesLength]));
 				}
 				else {
 					notifyProgress(bundle.getString('preparing.label'));
@@ -506,89 +506,91 @@ exports.load = function load(window, outerEvent) {
 	}
 
 	function findForm(turbo) {
-		try {
-			let ctx = window.gContextMenu;
-			if (!('form' in ctx.target)) {
-				throw new Components.Exception("No form");
-			}
-			let form = ctx.target.form;
-
-			let action = DTA.URL(DTA.composeURL(form.ownerDocument, form.action));
-
-			let charset = form.ownerDocument.characterSet;
-			if (form.acceptCharset) {
-				charset = form.acceptCharset;
-			}
-			if (charset.match(/utf-?(?:16|32)/i)) {
-				charset = 'utf-8';
-			}
-
-			let values = [];
-
-			for (let i = 0; i < form.elements.length; ++i) {
-				if (!form.elements[i].name) {
-					continue;
+		Task.spawn(function*() {
+			try {
+				let ctx = window.gContextMenu;
+				if (!('form' in ctx.target)) {
+					throw new Components.Exception("No form");
 				}
-				let v = Services.ttsu.ConvertAndEscape(charset, form.elements[i].name) + "=";
-				if (form.elements[i].value) {
-					v += Services.ttsu.ConvertAndEscape(charset, form.elements[i].value);
+				let form = ctx.target.form;
+
+				let action = DTA.URL(DTA.composeURL(form.ownerDocument, form.action));
+
+				let charset = form.ownerDocument.characterSet;
+				if (form.acceptCharset) {
+					charset = form.acceptCharset;
 				}
-				values.push(v);
-			}
-			values = values.join("&");
-
-			if (form.method.toLowerCase() == 'post') {
-				let ss = new Instances.StringInputStream(values, -1);
-				let ms = new Instances.MimeInputStream();
-				ms.addContentLength = true;
-				ms.addHeader('Content-Type', 'application/x-www-form-urlencoded');
-				ms.setData(ss);
-
-				let sis = new Instances.ScriptableInputStream();
-				sis.init(ms);
-				let postData = '';
-				let avail = 0;
-				while ((avail = sis.available())) {
-					postData += sis.read(avail);
+				if (charset.match(/utf-?(?:16|32)/i)) {
+					charset = 'utf-8';
 				}
-				sis.close();
-				ms.close();
-				ss.close();
 
-				action.postData = postData;
-			}
-			else {
-				action.url.query = values;
-				action.url.ref = '';
-			}
+				let values = [];
 
-			let focusedWindow = getFocusedWindow();
-			let ref = DTA.getRef(focusedWindow.document);
-			let defaultDescription = trimMore(focusedWindow.document.title || "");
-			let desc = extractDescription(form) || defaultDescription;
-
-			let item = {
-				"url": action,
-				"referrer": ref,
-				"description": desc,
-				"isPrivate": isWindowPrivate(window)
-			};
-
-			if (turbo) {
-				try {
-					DTA.saveSingleItem(window, true, item);
-					return;
+				for (let i = 0; i < form.elements.length; ++i) {
+					if (!form.elements[i].name) {
+						continue;
+					}
+					let v = Services.ttsu.ConvertAndEscape(charset, form.elements[i].name) + "=";
+					if (form.elements[i].value) {
+						v += Services.ttsu.ConvertAndEscape(charset, form.elements[i].value);
+					}
+					values.push(v);
 				}
-				catch (ex) {
-					log(LOG_ERROR, 'findSingleLink', ex);
-					notifyError(bundle.getString('error'), bundle.getString('error.information'));
+				values = values.join("&");
+
+				if (form.method.toLowerCase() == 'post') {
+					let ss = new Instances.StringInputStream(values, -1);
+					let ms = new Instances.MimeInputStream();
+					ms.addContentLength = true;
+					ms.addHeader('Content-Type', 'application/x-www-form-urlencoded');
+					ms.setData(ss);
+
+					let sis = new Instances.ScriptableInputStream();
+					sis.init(ms);
+					let postData = '';
+					let avail = 0;
+					while ((avail = sis.available())) {
+						postData += sis.read(avail);
+					}
+					sis.close();
+					ms.close();
+					ss.close();
+
+					action.postData = postData;
 				}
+				else {
+					action.url.query = values;
+					action.url.ref = '';
+				}
+
+				let {ref, title} = yield getFocusedDetails();
+				ref = ref && Services.io.newURI(ref.spec, ref.originCharset, null);
+				let defaultDescription = trimMore(title || "");
+				let desc = extractDescription(form) || defaultDescription;
+
+				let item = {
+					"url": action,
+					"referrer": ref,
+					"description": desc,
+					"isPrivate": isWindowPrivate(window)
+				};
+
+				if (turbo) {
+					try {
+						DTA.saveSingleItem(window, true, item);
+						return;
+					}
+					catch (ex) {
+						log(LOG_ERROR, 'findSingleLink', ex);
+						notifyError(bundle.getString('error'), bundle.getString('error.information'));
+					}
+				}
+				DTA.saveSingleItem(window, false, item);
 			}
-			DTA.saveSingleItem(window, false, item);
-		}
-		catch (ex) {
-			log(LOG_ERROR, 'findForm', ex);
-		}
+			catch (ex) {
+				log(LOG_ERROR, 'findForm', ex);
+			}
+		});
 	}
 
 	let notifyProgress = function(message) {
@@ -678,8 +680,8 @@ exports.load = function load(window, outerEvent) {
 			// show will hold those that will be shown
 			let show = [];
 
-			let sel = getFocusedWindow().getSelection();
-			if (sel && !sel.isCollapsed) {
+			let sel = ctx && ctx.isContentSelected;
+			if (sel) {
 				if (items[0]) {
 					show.push(menu.DTASel);
 				}
@@ -728,7 +730,7 @@ exports.load = function load(window, outerEvent) {
 				}
 			}
 			// regular
-			else if (!sel || sel.isCollapsed) {
+			else if (!sel) {
 				if (items[0]) {
 					show.push(menu.DTA);
 				}
@@ -1293,20 +1295,22 @@ exports.load = function load(window, outerEvent) {
 			}
 		}
 		function ondrop(event) {
-			try {
-				let url = event.dataTransfer.getData("URL");
-				if (!url) {
-					return;
+			Task.spawn(function*() {
+				try {
+					let url = event.dataTransfer.getData("URL");
+					if (!url) {
+						return;
+					}
+					url = Services.io.newURI(url, null, null);
+					url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
+					let {ref, title} = yield getFocusedDetails();
+					ref = ref && Services.io.newURI(ref.spec, ref.originCharset, null);
+					func(url, ref);
 				}
-				url = Services.io.newURI(url, null, null);
-				url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
-				let doc = getFocusedWindow().document;
-				let ref = doc ? DTA.getRef(doc) : null;
-				func(url, ref);
-			}
-			catch (ex) {
-				log(LOG_ERROR, "failed to process ondrop", ex);
-			}
+				catch (ex) {
+					log(LOG_ERROR, "failed to process ondrop", ex);
+				}
+			});
 		}
 		elem.addEventListener("dragover", ondragover, true);
 		elem.addEventListener("drop", ondrop, true);

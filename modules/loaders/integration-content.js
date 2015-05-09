@@ -464,14 +464,22 @@ const handleGetLocations = m => {
 	sendAsyncMessage("DTA:getLocations:" + m.data.job, locations);
 };
 
+const handleGetFocusedDetails = m => {
+	log(LOG_DEBUG, "GetFocusedDetails job received" + m.data.job);
+	let ref = getRef(content);
+	sendAsyncMessage("DTA:getFocusedDetails:" + m.data.job, {title: content.title, ref: ref && new URL(ref)});
+};
+
 const handleShutdown = message => {
 	removeMessageListener("DTA:findLinks", handleFindLinks);
 	removeMessageListener("DTA:getLocations", handleGetLocations);
+	removeMessageListener("DTA:getFocusedDetails", handleGetFocusedDetails);
 	removeMessageListener("DTA:shutdown", handleShutdown);
 };
 
 addMessageListener("DTA:findLinks", handleFindLinks);
 addMessageListener("DTA:getLocations", handleGetLocations);
+addMessageListener("DTA:getFocusedDetails", handleGetFocusedDetails);
 addMessageListener("DTA:shutdown", handleShutdown);
 
 })();
