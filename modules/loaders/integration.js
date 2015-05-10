@@ -224,6 +224,9 @@ exports.load = function load(window, outerEvent) {
 				if (!other.description) {
 					other.description = e.description;
 				}
+				if (!other.fileName) {
+					other.fileName = e.fileName;
+				}
 				return false;
 			}
 			this[u] = e;
