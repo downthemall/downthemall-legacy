@@ -94,9 +94,31 @@ Buffer.prototype = Object.seal({
 	get free() this.size - this.length,
 	writeFrom: function(inputStream, length) {
 		if (length > this.free) {
-			throw new Error("Buffer overflow, free: " + this.free + ", length: " + length + ", blen: " + this.length);
+			throw new Error(`Buffer overflow, free: ${this.free}, length: ${length}, blen: ${this.length}`);
 		}
-		this._out.writeFrom(inputStream, length);
+		let exception = null;
+		for (let i = 0; i < 10; ++i) {
+			try {
+				this._out.writeFrom(inputStream, length);
+				exception = null;
+				break;
+			}
+			catch (ex) {
+				exception = ex;
+				try {
+					Services.memrm.minimizeMemoryUsage(() => {});
+				}
+				catch (iex) {
+					log(LOG_ERROR, "Failed to minimize memory usage", iex);
+				}
+				for (let j = 0; j < (i + 1) * 1000; ++j) {
+					// Do some busy looping
+				}
+			}
+		}
+		if (exception) {
+			throw exception;
+		}
 		this.length += length;
 		return length;
 	},
@@ -419,14 +441,15 @@ Chunk.prototype = {
 				}
 				written += fill;
 			}
+			this._ensureBuffer();
 			while (bytes >= this.buffer_size) {
-				this._ensureBuffer();
 				if (this._buffer.writeFrom(aInputStream, this.buffer_size) !== this.buffer_size) {
 					throw new Error("Failed to write full stream. " + this);
 				}
 				this._shipBuffer();
 				bytes -= this.buffer_size;
 				written += this.buffer_size;
+				this._ensureBuffer();
 			}
 			if (bytes) {
 				this._ensureBuffer();
