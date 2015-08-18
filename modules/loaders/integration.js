@@ -142,7 +142,7 @@ function addImagesToArray(lnks, images, doc)	{
 			images.push({
 				'url': url,
 				'referrer': ref,
-				'description': desc
+				'description': desc || trimMore(l.ownerDocument.title)
 			});
 		}
 		catch (ex) {
