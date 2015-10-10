@@ -704,7 +704,12 @@ exports.normalizeMetaPrefs = function(urls) {
 	});
 };
 
+const makeDirCache = new LRUMap(10);
+
 exports.makeDir = function(dir, perms) {
+	if (makeDirCache.has(dir.path)) {
+		return;
+	}
 	try {
 		yield OS.File.makeDir(dir.path, {unixMode: perms});
 	}
@@ -719,4 +724,5 @@ exports.makeDir = function(dir, perms) {
 		yield exports.makeDir(dir.parent, perms);
 		yield exports.makeDir(dir, perms);
 	}
+	makeDirCache.set(dir.path, perms);
 };
