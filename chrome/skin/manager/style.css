@@ -396,7 +396,7 @@ treechildren::-moz-tree-cell-text(private) {
 	treechildren::-moz-tree-image(iconic) {
 		list-style-image: url(icons@2x.png);
 		-moz-image-region: rect(32px,96px,64px,64px);
-		width: 16px;
+		width: 16px !important;
 	}
 	treechildren::-moz-tree-image(iconic,progress) {
 		-moz-image-region: rect(32px,96px,64px,64px);
@@ -719,7 +719,7 @@ toolbarbutton.listselectinv, menuitem#listselectinv {
 		-moz-image-region: rect(0px,128px,32px,96px);
 	}
 	.cancel[disabled="true"] {
-		-moz-image-region: rect(32px,228px,64px,192px);
+		-moz-image-region: rect(32px,128px,64px,96px);
 	}
 
 	#speedLimit {
