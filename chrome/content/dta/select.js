@@ -6,11 +6,11 @@
 /* global getDefaultDownloadsDirectory, unloadWindow, getIcon, getFavIcon */
 /* global mapInSitu, setTimeoutOnlyFun, FilterManager, openUrl */
 /* jshint browser:true */
-const prompts = require("prompts");
+var prompts = require("prompts");
 
-const hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
+var hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
 
-let Dialog;
+var Dialog;
 
 /* tree helpers */
 function treeIconCallback(icon, async) {

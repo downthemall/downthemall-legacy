@@ -9,32 +9,32 @@
 /* global QUEUED, PAUSED, CANCELED, FINISHING, COMPLETE, RUNNING, SPEED_COUNT, REFRESH_FREQ, MIN_CHUNK_SIZE */
 /* jshint browser:true, latedef:false */
 
-const {CoThreadListWalker} = require("support/cothreads");
-const Prompts = require("prompts");
-const {ByteBucket} = require("support/bytebucket");
-const {GlobalBucket} = require("manager/globalbucket");
-const {defer} = require("support/defer");
-const PrivateBrowsing = require("support/pbm");
-const {TimerManager} = require("support/timers");
-const {ContentHandling} = require("support/contenthandling");
-const GlobalProgress = new (require("manager/globalprogress").GlobalProgress)(window);
-const RequestManipulation = require("support/requestmanipulation");
-const Limits = require("support/serverlimits");
-const {QueueStore} = require("manager/queuestore");
-const {SpeedStats} = require("manager/speedstats");
-const {FileExtensionSheet} = require("support/fileextsheet");
-const {UrlManager} = require("support/urlmanager");
-const {VisitorManager} = require("manager/visitormanager");
-const Preallocator = require("manager/preallocator");
-const {Chunk, hintChunkBufferSize} = require("manager/chunk");
-const {Connection} = require("manager/connection");
-const {createRenamer} = require("manager/renamer");
-const {memoize, identity} = require("support/memoize");
-const {moveFile} = require("support/movefile");
-const {Task} = requireJSM("resource://gre/modules/Task.jsm");
+var {CoThreadListWalker} = require("support/cothreads");
+var Prompts = require("prompts");
+var {ByteBucket} = require("support/bytebucket");
+var {GlobalBucket} = require("manager/globalbucket");
+var {defer} = require("support/defer");
+var PrivateBrowsing = require("support/pbm");
+var {TimerManager} = require("support/timers");
+var {ContentHandling} = require("support/contenthandling");
+var GlobalProgress = new (require("manager/globalprogress").GlobalProgress)(window);
+var RequestManipulation = require("support/requestmanipulation");
+var Limits = require("support/serverlimits");
+var {QueueStore} = require("manager/queuestore");
+var {SpeedStats} = require("manager/speedstats");
+var {FileExtensionSheet} = require("support/fileextsheet");
+var {UrlManager} = require("support/urlmanager");
+var {VisitorManager} = require("manager/visitormanager");
+var Preallocator = require("manager/preallocator");
+var {Chunk, hintChunkBufferSize} = require("manager/chunk");
+var {Connection} = require("manager/connection");
+var {createRenamer} = require("manager/renamer");
+var {memoize, identity} = require("support/memoize");
+var {moveFile} = require("support/movefile");
+var {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 // Use the main OS.File here!
-const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
+var {OS} = requireJSM("resource://gre/modules/osfile.jsm");
 
 /* global Version, AlertService, Decompressor, Verificator, FileExts:true */
 XPCOMUtils.defineLazyGetter(window, "Version", function() require("version"));
@@ -67,16 +67,16 @@ window.addEventListener("unload", dieEarly, false);
 
 var Timers = new TimerManager();
 
-const Dialog_loadDownloads_props =
+var Dialog_loadDownloads_props =
 	['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression',
 		'fromMetalink', 'speedLimit'];
 function Dialog_loadDownloads_get(down, attr, def) (attr in down) ? down[attr] : (def ? def : '');
 
-const Dialog_serialize_props =
+var Dialog_serialize_props =
 	['fileName', 'fileNameFromUser', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName',
 		'compression', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit', "relaxSize"];
 
-const Dialog = {
+var Dialog = {
 	_observes: [
 		'quit-application-requested',
 		'quit-application-granted',
@@ -1296,7 +1296,7 @@ unloadWindow(window, function () {
 	Dialog.close();
 });
 
-const Metalinker = {
+var Metalinker = {
 	handleDownload: function(download) {
 		let file = download.tmpFile;
 
@@ -2660,7 +2660,7 @@ XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
 	return new LoggedPrompter(window);
 });
 
-const ConflictManager = {
+var ConflictManager = {
 	_items: new Map(),
 	_queue: [],
 	_pinned: new Set(),
@@ -2844,7 +2844,7 @@ function CustomEvent(download, command) {
 	download.complete();
 }
 
-const startDownloads = (function() {
+var startDownloads = (function() {
 	const series = {};
 	lazy(series, "num", function() {
 		let rv = DTA.currentSeries();

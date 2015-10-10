@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const all = ['dta-button', 'dta-turbo-button', 'dta-turboselect-button', 'dta-manager-button'];
+var all = ['dta-button', 'dta-turbo-button', 'dta-turboselect-button', 'dta-manager-button'];
 
 function $(id) document.getElementById(id);
 function $o(id) opener.document.getElementById(id);

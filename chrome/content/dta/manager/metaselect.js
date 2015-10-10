@@ -5,12 +5,12 @@
 /* global $, _, Utils, getDefaultDownloadsDirectory, openUrl */
 /* jshint browser:true */
 
-const hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
-const METALINK_LOGO = hidpi ? 'chrome://dta/skin/common/metalink64.png' : 'chrome://dta/skin/common/metalink32.png';
+var hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
+var METALINK_LOGO = hidpi ? 'chrome://dta/skin/common/metalink64.png' : 'chrome://dta/skin/common/metalink32.png';
 
-const Version = require("version");
+var Version = require("version");
 
-const MetaSelect = {
+var MetaSelect = {
 	_insertDownload: function(d) {
 		try {
 			if (d.lang && ~d.lang.search(/^\w{2}(?:-\w{2})?$/)) {

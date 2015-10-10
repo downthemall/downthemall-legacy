@@ -10,7 +10,6 @@ const {getExtension} = require("./stringfuncs");
 const {identity} = require("./memoize");
 
 function FileExtensionSheet(window) {
-	this.hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
 	this._windowUtils = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowUtils);
 	this._entries = new Map();
 }
@@ -29,12 +28,21 @@ FileExtensionSheet.prototype = Object.freeze({
 		let entry = this._entries.get(ext);
 		if (!entry) {
 			entry = "FileIcon" + ext.replace(/\W/g, '');
-			let rule = 'data:text/css,treechildren::-moz-tree-image(iconic,' +
-				entry.toString() +
-				') { list-style-image: url(' +
-				getIcon('file.' + ext, metalink || ext === 'metalink' || ext === "meta4", this.hidpi ? 32 : 16) +
-				') !important; }';
+			let icon16 = getIcon('file.' + ext, metalink || ext === 'metalink' || ext === "meta4", 16);
+			let icon32 = getIcon('file.' + ext, metalink || ext === 'metalink' || ext === "meta4", 32);
+			let rule = `data:text/css,
+treechildren::-moz-tree-image(iconic,${entry.toString()}) {
+	list-style-image: url(${icon16}) !important;
+	-moz-image-region: auto !important;
+	width: 16px !important;
+}
+@media (min-resolution: 2dppx) {
+	treechildren::-moz-tree-image(iconic,${entry.toString()}) {
+		list-style-image: url(${icon32}) !important;
+	}
+}`;
 			let ruleURI = Services.io.newURI(rule, null, null);
+			log(LOG_ERROR, ruleURI.spec);
 			try {
 				this._windowUtils.loadSheet(ruleURI, this._windowUtils.AGENT_SHEET);
 			}

@@ -6,7 +6,7 @@
 /* global COMPLETE, PAUSED, CANCELED, RUNNING, SPEED_COUNT, TOOLTIP_FREQ */
 /* jshint browser:true */
 
-const PREF_CONN = 'network.http.max-connections';
+var PREF_CONN = 'network.http.max-connections';
 
 var gMinTrayR = {};
 try {
@@ -81,7 +81,7 @@ catch (ex) {
 	log(LOG_DEBUG, "MinTrayR.init", ex);
 }
 
-const Prefs = {
+var Prefs = {
 	tempLocation: null,
 
 	mappings: [
@@ -299,7 +299,7 @@ const Prefs = {
 	}
 };
 
-const Tooltip = {
+var Tooltip = {
 	_current: null,
 	_mustDraw: true,
 	init: function() {

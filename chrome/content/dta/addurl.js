@@ -4,9 +4,9 @@
 "use strict";
 /* global _, DTA, $, $$, Utils, Preferences, getDefaultDownloadsDirectory, unloadWindow */
 /* jshint browser:true */
-const prompts = require("prompts");
-const Version = require("version");
-const {isWindowPrivate} = require("support/pbm");
+var prompts = require("prompts");
+var Version = require("version");
+var {isWindowPrivate} = require("support/pbm");
 
 var dropDowns = {};
 

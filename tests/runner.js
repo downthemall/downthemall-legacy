@@ -16,19 +16,19 @@ QUnit.extend(QUnit, {
 		QUnit.config.current.ignoreGlobalErrors = false;
 	}
 });
-const arrayEqual = QUnit.arrayEqual;
-const notThrows = QUnit.notThrows;
+var arrayEqual = QUnit.arrayEqual;
+var notThrows = QUnit.notThrows;
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
 Cu.import("resource://gre/modules/FileUtils.jsm");
 Cu.import("chrome://dta-modules/content/glue.jsm");
 
-const DTA = require("api");
+var DTA = require("api");
 
 function checkExports(m, exports) {
 	arrayEqual(
@@ -72,6 +72,7 @@ function _createTestHttpChannelInternal() {
 		this.requestStatus =  true;
 		this.responseStatus = 200;
 		this.responseStatusText = "OK";
+		this._stub = true;
 
 	}
 	testHttpChannel.prototype = {
@@ -82,6 +83,9 @@ function _createTestHttpChannelInternal() {
 			}
 			for (var res in Iterator(opts.response)) {
 				responseHeaders[res[0].toLowerCase()] = res[1];
+			}
+			if (!opts.uri) {
+				throw Error(opts);
 			}
 			this.requestHeaders = requestHeaders;
 			this.responseHeaders = responseHeaders;
@@ -161,31 +165,18 @@ function _createTestHttpChannelInternal() {
 			for (var i in this.responseHeaders) {
 				visitor.visitHeader(i, this.responseHeaders[i]);
 			}
-		},
-	};
-	const testHttpChannelFactory = {
-		createInstance: function(outer, iid, p) {
-			if (outer) {
-				throw Cr.NS_ERROR_NO_AGGREGATION;
-			}
-			return new testHttpChannel();
 		}
 	};
-	Components.manager
-		.QueryInterface(Ci.nsIComponentRegistrar)
-		.registerFactory(testHttpChannel.prototype.classID, testHttpChannel.prototype.classDescription, testHttpChannel.prototype.contractID, testHttpChannelFactory);
-	var chan = Cc["@downthemall.net/testHttpChannel;1"].createInstance(Ci.nsIHttpChannel);
-	Components.manager
-		.QueryInterface(Ci.nsIComponentRegistrar)
-		.unregisterFactory(testHttpChannel.prototype.classID, testHttpChannelFactory);
-	return chan;
+	return new testHttpChannel();
 }
+
 var createTestHttpChannel = function(conf) {
 	var chan = _createTestHttpChannelInternal();
 	var chanObj = chan.wrappedJSObject;
 	chanObj.initializeTestChannel(conf);
 	return chan;
 }
+
 addEventListener("load", function load() {
 	"use strict";
 	removeEventListener("load", load, false);

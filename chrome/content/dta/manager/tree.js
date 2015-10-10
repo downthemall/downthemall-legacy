@@ -50,7 +50,7 @@ FileDataProvider.prototype = {
 };
 
 
-const Tree = {
+var Tree = {
 	init: function(elem) {
 		this.elem = elem;
 		this._downloads = [];
@@ -1786,7 +1786,7 @@ const Tree = {
 requireJoined(Tree, "manager/matcher");
 requireJoined(Tree, "support/atoms");
 
-const FileHandling = {
+var FileHandling = {
 	get _uniqueList() {
 		let u = {};
 		for (let d in Tree.selected) {

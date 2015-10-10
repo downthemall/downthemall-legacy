@@ -4,9 +4,9 @@
 "use strict";
 /* global _, DTA, $, $$, Utils, Preferences, getDefaultDownloadsDirectory, unloadWindow, toURI, toURL, setTimeoutOnlyFun */
 /* jshint browser:true */
-const Prompts = require("prompts");
+var Prompts = require("prompts");
 
-let {LoggedPrompter} = require("support/loggedprompter");
+var {LoggedPrompter} = require("support/loggedprompter");
 LoggedPrompter = new LoggedPrompter(window).prompter;
 
 /* global mirrors */

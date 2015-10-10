@@ -607,7 +607,7 @@ StringBundles.prototype = Object.freeze({
 		finally {
 			StringBundles_params = null;
 		}
-		return identity(fmt);
+		return fmt;
 	}
 });
 const StringBundles_Observer = {

@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const EXPORTED_SYMBOLS = [
+var EXPORTED_SYMBOLS = [
 	"require",
 	"requireJoined",
 	"requireJSM",
@@ -20,7 +20,7 @@ const EXPORTED_SYMBOLS = [
 
 //This might be already defined... or not...
 
-const {
+var {
 	classes: Cc,
 	interfaces: Ci,
 	utils: Cu,
@@ -34,12 +34,12 @@ Cm.QueryInterface(Ci.nsIComponentRegistrar);
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
-const weak = Cu.getWeakReference.bind(Cu);
-const reportError = Cu.reportError.bind(Cu);
-const lazy = XPCOMUtils.defineLazyGetter; // bind?
-const QI = XPCOMUtils.generateQI.bind(XPCOMUtils);
+var weak = Cu.getWeakReference.bind(Cu);
+var reportError = Cu.reportError.bind(Cu);
+var lazy = XPCOMUtils.defineLazyGetter; // bind?
+var QI = XPCOMUtils.generateQI.bind(XPCOMUtils);
 
-const lazyProto = (function() {
+var lazyProto = (function() {
 	const gdesc = {enumerable: true};
 	const vdesc = {enumerable: true};
 	return function lazyProto(proto, name, fn) {
@@ -59,16 +59,16 @@ const lazyProto = (function() {
 	};
 })();
 
-let log = function logStub() {
+var log = function logStub() {
 	Cu.reportError(Array.join(arguments, ", "));
 };
-let LOG_DEBUG = 0, LOG_INFO = 0, LOG_ERROR = 0;
+var LOG_DEBUG = 0, LOG_INFO = 0, LOG_ERROR = 0;
 
-function LRUMap(limit) {
+var LRUMap = function LRUMap(limit) {
 	this._limit = limit;
 	this.clear();
 	Object.preventExtensions(this);
-}
+};
 LRUMap.prototype = Object.freeze({
 	"get": function(key) this._dict.get(key),
 	"has": function(key) this._dict.has(key),

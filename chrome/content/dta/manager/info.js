@@ -6,9 +6,9 @@
 /* global COMPLETE, FINISHING */
 /* jshint browser:true */
 
-const {defer} = require("support/defer");
-const {TimerManager} = require("support/timers");
-const Timers = new TimerManager();
+var {defer} = require("support/defer");
+var {TimerManager} = require("support/timers");
+var Timers = new TimerManager();
 
 function discard() {
 	if (opener) {

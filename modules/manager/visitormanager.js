@@ -58,7 +58,7 @@ Visitor.prototype = {
 };
 
 function HttpVisitor(chan) {
-	if (chan instanceof Ci.nsIHttpChannel) {
+	if ((chan instanceof Ci.nsIHttpChannel) || ("_stub" in chan)) {
 		this._charset = chan.URI.originCharset;
 		this.visit(chan);
 	}
