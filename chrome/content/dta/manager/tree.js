@@ -912,11 +912,12 @@ var Tree = {
 
 		this.beginUpdate();
 		try {
+			let removedDownloads = [];
 			for (let i = 0; i < downloads.length; ++i) {
 				let d = downloads[i];
 				if (d.state === FINISHING) {
 					// un-removable :p
-					return;
+					continue;
 				}
 				this._downloads.splice(d.position, 1);
 				this._box.rowCountChanged(d.position, -1);
@@ -933,8 +934,9 @@ var Tree = {
 					d.cancel();
 				}
 				d.cleanup();
+				removedDownloads.push(d);
 			}
-			QueueStore.deleteDownloads(downloads);
+			QueueStore.deleteDownloads(removedDownloads);
 		}
 		finally {
 			this.savePositionsByOffsets();
