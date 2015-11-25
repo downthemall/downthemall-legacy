@@ -235,6 +235,13 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 	};
 	_r.overrideMimeType("application/xml");
 	_r.open("GET", src);
+	let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
+	try {
+		_r.channel.owner = sec.getSystemPrincipal();
+	}
+	catch (ex) {
+		log(LOG_ERROR, "Failed to set system principal");
+	}
 	_r.send();
 };
 
