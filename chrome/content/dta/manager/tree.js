@@ -838,6 +838,21 @@ var Tree = {
 		}
 		this.remove(this._downloads.filter(function(e) e.urlManager.domain === domain, this), true);
 	},
+	removeBatchWithConfirmation: function() {
+		let bid = this.current.bNum;
+		if (Prefs.confirmRemove) {
+			let res = Prompts.confirm(
+					window,
+					_('remove.title'),
+					_('removebatchquestion', [bid]),
+					Prompts.YES,
+					Prompts.NO);
+			if (res) {
+				return;
+			}
+		}
+		this.remove(this._downloads.filter(e => e.bNum === bid), true);
+	},
 	removeByFilter: function(filter, id) {
 		let pref = null;
 		let mask = -1;

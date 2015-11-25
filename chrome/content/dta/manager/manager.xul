@@ -66,6 +66,7 @@
 
 		<command id="cmdRemoveSelected" oncommand="Tree.removeWithConfirmation();" />
 		<command id="cmdRemoveHost" oncommand="Tree.removeHostWithConfirmation();" />
+		<command id="cmdRemoveBatch" oncommand="Tree.removeBatchWithConfirmation();" />
 		<command id="cmdRemoveAll" oncommand="Tree.removeAllWithConfirmation();" />
 		<command id="cmdRemoveCompleted" oncommand="Tree.removeCompleted();" />
 		<command id="cmdRemoveFailed" oncommand="Tree.removeFailed();" />
@@ -174,6 +175,7 @@
 				<menupopup id="removePopup">
 					<menuitem id="removeselected" class="menuitem-iconic" label="&removeselected.label;" key="kRemoveSelected" command="cmdRemoveSelected" />
 					<menuitem id="removeHost" class="menuitem-iconic" label="&removehost.label;" key="kRemoveHost" command="cmdRemoveHost"/>
+					<menuitem id="removeBatch" class="menuitem-iconic" label="&removebatch.label;" command="cmdRemoveBatch"/>
 					<menuseparator />
 					<menuitem id="removeDupes" class="menuitem-iconic" label="&removeDupes.label;" command="cmdRemoveDupes" />
 					<menuseparator />

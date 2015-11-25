@@ -557,6 +557,7 @@ treechildren::-moz-tree-cell-text(private) {
 #removeMenu > menuitem,
 #removeselected,
 #removeHost,
+#removeBatch,
 #removeAll {
 	-moz-image-region: rect(64px,64px,80px,48px);
 }
@@ -767,6 +768,7 @@ toolbarbutton.listselectinv, menuitem#listselectinv {
 	#removeMenu > menuitem,
 	#removeselected,
 	#removeHost,
+	#removeBatch,
 	#removeAll {
 		-moz-image-region: rect(128px,128px,160px,96px);
 	}
