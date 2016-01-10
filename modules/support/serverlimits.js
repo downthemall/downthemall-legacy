@@ -195,6 +195,9 @@ FastScheduler.prototype = Object.freeze({
 
 		// count running downloads per host
 		for (i = 0, e = running.length; i < e; ++i) {
+			if (running[i].totalSize && running[i].totalSize < 1024*1024) {
+				continue;
+			}
 			host = running[i].urlManager.domain;
 			downloadSet[host] = ++downloadSet[host] || 1;
 		}
@@ -276,6 +279,9 @@ FairScheduler.prototype = Object.freeze({
 
 		// Count the running tasks
 		for (i = 0, e = running.length; i < e; ++i) {
+			if (running[i].totalSize && running[i].totalSize < 1024*1024) {
+				continue;
+			}
 			d = running[i];
 			host = d.urlManager.domain;
 			if (!(host in this._downloadSet)) {

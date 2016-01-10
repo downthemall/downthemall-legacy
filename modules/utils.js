@@ -82,9 +82,8 @@ function toHex(c) {
  * @return {String} hexdigest
  */
 exports.hexdigest = function hexdigest(data) {
-	var i;
 	data = data.toString();
-	let rv = [toHex(data.charCodeAt(i)) for (i in exports.range(data.length))];
+	let rv = Array.from(data, (c, i) => toHex(data.charCodeAt(i)));
 	return rv.join('');
 };
 

@@ -7,7 +7,7 @@ test("Service contents", function() {
 
 	var k2 = Object.keys(S2);
 	arrayEqual(Object.keys(S1.__proto__), k2, "Glue Services contains Services.jsm");
-	arrayEqual([k for (k in S1)], Object.keys(S1).concat(k2), "All glue Services accessible (sans dupes)");
+	// TODO: comprehensions arrayEqual([k for (k in S1)], Object.keys(S1).concat(k2), "All glue Services accessible (sans dupes)");
 });
 
 test("Instances contents", function() {
