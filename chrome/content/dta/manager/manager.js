@@ -1450,7 +1450,7 @@ QueueItem.prototype = {
 		return this._fileName;
 	},
 	set fileName(nv) {
-		if (this._fileName === nv || this.fileNameFromUser) {
+		if (this._fileName === nv || this.fileNameFromUser) {
 			return nv;
 		}
 		log(LOG_DEBUG, "fn is " + this._fileName + " nv: " + nv);
@@ -1463,7 +1463,7 @@ QueueItem.prototype = {
 	setUserFileName: function(name) {
 		this.fileNameFromUser = false;
 		this.fileName = name;
-		this.filenameFromUser = true;
+		this.fileNameFromUser = true;
 		this.save();
 	},
 	shortenName: function() {
