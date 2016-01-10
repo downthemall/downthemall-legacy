@@ -204,7 +204,7 @@ Chunk.prototype = {
 	get currentPosition() (this.start + this.written),
 	get remainder() (this._total - this._written),
 	get complete() {
-		if (!~this._end) {
+		if (this._end <= 0) {
 			return this.written !== 0;
 		}
 		return this._total === this.written;

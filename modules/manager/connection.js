@@ -990,7 +990,7 @@ Connection.prototype = {
 
 		this.started = true;
 
-		if (!~d.chunks.indexOf(c)) {
+		if (!d || !d.chunks || !~d.chunks.indexOf(c)) {
 			return;
 		}
 
@@ -1033,7 +1033,7 @@ Connection.prototype = {
 					d.maxChunks = 1;
 				}
 				if (c.end < 1) {
-					c.end = d.totalSize - 1;
+					c.end = Math.max(0, d.totalSize - 1);
 				}
 
 				// Explicitly trigger rebuildDestination here, as we might have received
@@ -1067,7 +1067,7 @@ Connection.prototype = {
 			log(LOG_DEBUG, "closing");
 			c.close();
 
-			if (!~d.chunks.indexOf(c)) {
+			if (!d || !d.chunks || !~d.chunks.indexOf(c)) {
 				log(LOG_INFO, "chunk unknown");
 				return;
 			}
