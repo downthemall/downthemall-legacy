@@ -34,15 +34,15 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['TimerManager'];
+var EXPORTED_SYMBOLS = ['TimerManager'];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
-const nsITimer = Ci.nsITimer;
-const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'init');
+var nsITimer = Ci.nsITimer;
+var Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'init');
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://dta/utils.jsm")

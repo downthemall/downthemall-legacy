@@ -34,19 +34,19 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['FileExtensionSheet'];
+var EXPORTED_SYMBOLS = ['FileExtensionSheet'];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
 Cu.import("resource://dta/utils.jsm");
 Cu.import("resource://dta/support/icons.jsm");
 Cu.import("resource://dta/support/timers.jsm");
 
-const Timers = new TimerManager();
+var Timers = new TimerManager();
 
 ServiceGetter(this, "Atoms", "@mozilla.org/atom-service;1", "nsIAtomService");
 

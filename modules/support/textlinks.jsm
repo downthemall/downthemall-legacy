@@ -36,23 +36,23 @@
 
 var EXPORTED_SYMBOLS = ["getTextLinks", "FakeLink"];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
 // Link matcher
-const regLinks = /\b(?:(?:h(?:x+|tt)?ps?|ftp):\/\/|www\d?\.)[\d\w.-]+\.\w+\.?(?:\/[\d\w+&@#\/%?=~_|!:,.;\(\)-]*)?/ig;
+var regLinks = /\b(?:(?:h(?:x+|tt)?ps?|ftp):\/\/|www\d?\.)[\d\w.-]+\.\w+\.?(?:\/[\d\w+&@#\/%?=~_|!:,.;\(\)-]*)?/ig;
 // Match more exactly or more than 3 dots. Links are then assumed "cropped" and will be ignored. 
-const regShortened = /\.{3,}/;
+var regShortened = /\.{3,}/;
 // http cleanup
-const regHttp = /^h(?:x+|tt)?p(s?)/i;
+var regHttp = /^h(?:x+|tt)?p(s?)/i;
 // ftp cleanup
-const regFtp = /^f(?:x|t)p/i;
+var regFtp = /^f(?:x|t)p/i;
 // www (sans protocol) match
-const regWWW = /^www/i;
+var regWWW = /^www/i;
 // Right-trim (sanitize) link
-const regDTrim = /[<>._#-]+$/;
+var regDTrim = /[<>._#-]+$/;
 
 /**
  * Parses a text looking for any URLs with supported protocols

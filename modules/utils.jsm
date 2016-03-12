@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = [
+var EXPORTED_SYMBOLS = [
 	'Debug',
 	'atos',
 	'setNewGetter',
@@ -61,47 +61,47 @@ const EXPORTED_SYMBOLS = [
 	'NS_XUL', 'NS_DTA', 'NS_HTML'
 ];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const ctor = Components.Constructor;
-const error = Components.utils.reportError;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var ctor = Components.Constructor;
+var error = Components.utils.reportError;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-const Prefs = {};
+var Prefs = {};
 Cu.import("resource://dta/preferences.jsm", Prefs);
 
-const LocalFile = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
-const FileStream = new ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const ScriptError = new ctor('@mozilla.org/scripterror;1', 'nsIScriptError', 'init');
+var LocalFile = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+var FileStream = new ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
+var ScriptError = new ctor('@mozilla.org/scripterror;1', 'nsIScriptError', 'init');
 
-const DirectoryService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
+var DirectoryService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
 
 /**
  * XUL namespace
  */
-const NS_XUL = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
+var NS_XUL = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
 
 /**
  * DownThemAll! Properties namespace
  */
-const NS_DTA = 'http://www.downthemall.net/properties#';
+var NS_DTA = 'http://www.downthemall.net/properties#';
 
 /**
  * XHTML namespace
  */
-const NS_HTML = 'http://www.w3.org/1999/xhtml';
+var NS_HTML = 'http://www.w3.org/1999/xhtml';
 
-const SYSTEMSLASH = (function() {
+var SYSTEMSLASH = (function() {
 	let f = DirectoryService.get("TmpD", Ci.nsIFile);
 	f.append('dummy');
 	return (f.path.indexOf('/') != -1) ? '/' : '\\';
 })(); 
 
 
-const MAX_STACK = 6; 
+var MAX_STACK = 6; 
 
 /**
  * Installs a new lazy getter
@@ -392,7 +392,7 @@ DebugService.prototype = {
 	}
 };
 
-const Debug = new DebugService();
+var Debug = new DebugService();
 
 /**
  * Range generator (python style). Difference: step direction is initialized accordingly if corresponding parameter is omitted.
@@ -750,7 +750,7 @@ MimeQuality.prototype = {
 	}
 }
 
-const _bundles = {};
+var _bundles = {};
 function _loadBundle(url) {
 	if (url in _bundles) {
 		return _bundles[url];
@@ -776,7 +776,7 @@ function _loadBundles(urls) {
 	}
 	return _bundles[key] = rv; 
 }
-const _br = /%S/gi;
+var _br = /%S/gi;
 
 /**
  * Encapulates all stringbundles of the current document and provides unified

@@ -39,30 +39,30 @@
 
 /* dTa-only code! - DO NOT include in overlays or such! */
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const ctor = Components.Constructor;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var ctor = Components.Constructor;
+var Exception = Components.Exception;
 
-const FileFactory = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
-const SoundFactory = new ctor('@mozilla.org/sound;1', 'nsISound', 'play');
-const CryptoHash = new ctor("@mozilla.org/security/hash;1", "nsICryptoHash");
+var FileFactory = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+var SoundFactory = new ctor('@mozilla.org/sound;1', 'nsISound', 'play');
+var CryptoHash = new ctor("@mozilla.org/security/hash;1", "nsICryptoHash");
 	
 // shared state defines
 
 Cu.import("resource://dta/constants.jsm", this);
 
-const DTA = {
+var DTA = {
 	showPreferences: function(pane) DTA.Mediator.showPreferences(window, pane)
 };
 Cu.import("resource://dta/api.jsm", DTA);
 
 function openUrl(url, ref) DTA.Mediator.openUrl(window, url, ref);
 
-const Debug = DTA.Debug;
-const Preferences = DTA.Preferences;
+var Debug = DTA.Debug;
+var Preferences = DTA.Preferences;
 
 Cu.import("resource://dta/support/icons.jsm");
 
@@ -278,7 +278,7 @@ var Utils = {
 })();
 
 Components.utils.import('resource://dta/utils.jsm', Utils);
-const SYSTEMSLASH = Utils.SYSTEMSLASH;
+var SYSTEMSLASH = Utils.SYSTEMSLASH;
 
 
 //XXX Copy from utils.jsm
@@ -426,9 +426,9 @@ InstanceGetter(this, "converter", "@mozilla.org/intl/scriptableunicodeconverter"
  * @return A string representing the hash a in given encoding.
  * @author Nils
  */
-const HASH_HEX = 0x0;
-const HASH_BIN = 0x1;
-const HASH_B64 = 0x2;
+var HASH_HEX = 0x0;
+var HASH_BIN = 0x1;
+var HASH_B64 = 0x2;
 function hash(value, algorithm, encoding, datalen) {
 	var ch = new CryptoHash();
 	if (!algorithm) {
@@ -465,7 +465,7 @@ function hash(value, algorithm, encoding, datalen) {
 	_ic.loadWindow(window);
 })();
 
-const getDefaultDownloadsDirectory = (function() {
+var getDefaultDownloadsDirectory = (function() {
 	function oldFallback(callback) {
 		let dlm = Cc["@mozilla.org/download-manager;1"].getService(Ci.nsIDownloadManager);
 		var dir;

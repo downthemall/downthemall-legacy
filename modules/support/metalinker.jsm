@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = [
+var EXPORTED_SYMBOLS = [
 	"parse",
 	"Metalink",
 	"NS_DTA",
@@ -43,31 +43,31 @@ const EXPORTED_SYMBOLS = [
 	"NS_METALINK_RFC5854",
 ];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const Ctor = Components.Constructor;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var Ctor = Components.Constructor;
+var Exception = Components.Exception;
 
 /**
  * Metalinker3 namespace
  */
-const NS_METALINKER3 = 'http://www.metalinker.org/';
+var NS_METALINKER3 = 'http://www.metalinker.org/';
 /**
  * Metalinker 4 namespace
  */
-const NS_METALINK_RFC5854 = 'urn:ietf:params:xml:ns:metalink';
+var NS_METALINK_RFC5854 = 'urn:ietf:params:xml:ns:metalink';
 
-const Preferences = {}, DTA = {};
+var Preferences = {}, DTA = {};
 Cu.import("resource://dta/preferences.jsm", Preferences);
 Cu.import("resource://dta/api.jsm", DTA);
 Cu.import("resource://dta/version.jsm");
 Cu.import("resource://dta/utils.jsm");
 Cu.import("resource://dta/support/urlmanager.jsm");
 
-const IOService = DTA.IOService;
-const XPathResult = Ci.nsIDOMXPathResult;
+var IOService = DTA.IOService;
+var XPathResult = Ci.nsIDOMXPathResult;
 
 if (!('XMLHttpRequest' in this)) {
 	this.XMLHttpRequest = Components.Constructor("@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
@@ -562,7 +562,7 @@ MetalinkerRFC5854.prototype = {
 	}
 };
 
-const __parsers__ = [
+var __parsers__ = [
 	Metalinker3,
 	MetalinkerRFC5854
 ];

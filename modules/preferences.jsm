@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = [
+var EXPORTED_SYMBOLS = [
 	'get',
 	'getExt',
 	'getBranch',
@@ -56,23 +56,23 @@ const EXPORTED_SYMBOLS = [
 
 // Base extension branch
 // Third parties reusing this module must specify own branch!
-const EXT = 'extensions.dta.';
+var EXT = 'extensions.dta.';
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Ctor = Components.Constructor;
-const log = Components.utils.reportError;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Ctor = Components.Constructor;
+var log = Components.utils.reportError;
 
-const nsIPrefBranch = Ci.nsIPrefBranch;
-const nsIPrefBranch2 = Ci.nsIPrefBranch2;
+var nsIPrefBranch = Ci.nsIPrefBranch;
+var nsIPrefBranch2 = Ci.nsIPrefBranch2;
 
-const PREF_STRING = nsIPrefBranch.PREF_STRING;
-const PREF_INT = nsIPrefBranch.PREF_INT;
-const PREF_BOOL = nsIPrefBranch.PREF_BOOL;
+var PREF_STRING = nsIPrefBranch.PREF_STRING;
+var PREF_INT = nsIPrefBranch.PREF_INT;
+var PREF_BOOL = nsIPrefBranch.PREF_BOOL;
 
-const SupportsString = new Ctor('@mozilla.org/supports-string;1', 'nsISupportsString');
+var SupportsString = new Ctor('@mozilla.org/supports-string;1', 'nsISupportsString');
 
-const prefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch);
+var prefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch);
 prefs instanceof Ci.nsIPrefService; // bug #1117206
 
 /**

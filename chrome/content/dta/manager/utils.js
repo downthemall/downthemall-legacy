@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const PREF_CONN = 'network.http.max-connections';
+var PREF_CONN = 'network.http.max-connections';
 
 var gMinTrayR = {};
 try {
@@ -69,7 +69,7 @@ try {
 catch (ex) {
 	// no op
 }
-const Prefs = {
+var Prefs = {
 	tempLocation: null,
 	
 	mappings: [
@@ -266,7 +266,7 @@ const Prefs = {
 	}
 };
 
-const Tooltip = {
+var Tooltip = {
 	_current: null,
 	_mustDraw: true,
 	init: function() {

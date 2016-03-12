@@ -35,14 +35,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['loadWindow'];
+var EXPORTED_SYMBOLS = ['loadWindow'];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const Ctor = Components.Constructor;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var Ctor = Components.Constructor;
+var Exception = Components.Exception;
 
 function loadWindow() {};
 

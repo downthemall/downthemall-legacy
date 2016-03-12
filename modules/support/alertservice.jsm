@@ -34,25 +34,25 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = [
+var EXPORTED_SYMBOLS = [
 	'available',
 	'show'
 ];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
-let Preferences = {};
+var Preferences = {};
 Cu.import("resource://dta/preferences.jsm", Preferences);
 
-let available = false;
-let service = null;
-let alerting = false;
+var available = false;
+var service = null;
+var alerting = false;
 
-const Observer = {
+var Observer = {
 	_func: null,
 	observe: function(aSubject, aTopic, aData) {
 		switch (aTopic) {

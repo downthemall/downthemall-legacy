@@ -39,7 +39,7 @@
  * Please use api.jsm directly
  */
 
-const EXPORTED_SYMBOLS = ['inject'];
+var EXPORTED_SYMBOLS = ['inject'];
 
 function inject(window) {
 	window.__defineGetter__('DTA', function(){

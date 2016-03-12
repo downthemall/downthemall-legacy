@@ -34,23 +34,23 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = [
+var EXPORTED_SYMBOLS = [
 	"UrlManager"
 ];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
 Cu.import("resource://dta/utils.jsm");
 
-const DTA = {};
+var DTA = {};
 Cu.import("resource://dta/api.jsm", DTA);
-const IOService = DTA.IOService;
+var IOService = DTA.IOService;
 
-const Limits = {};
+var Limits = {};
 Cu.import("resource://dta/support/serverlimits.jsm", Limits);
 
 function compareFn(a, b) {

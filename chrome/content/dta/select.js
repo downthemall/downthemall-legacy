@@ -295,7 +295,7 @@ if (Components.interfacesByID["{C06DC4D3-63A2-4422-A0A3-5F2EDDECA8C1}"]) {
 /**
  * Our real, kicks ass implementation of the UI
  */
-let Dialog = {
+var Dialog = {
 	
 	get boxen() {
 		return $('checkcontainer').getElementsByTagName('checkbox');

@@ -34,24 +34,24 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['Connection', 'GlobalBucket'];
+var EXPORTED_SYMBOLS = ['Connection', 'GlobalBucket'];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const ctor = Components.Constructor;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var ctor = Components.Constructor;
+var Exception = Components.Exception;
 
-const NS_ERROR_MODULE_NETWORK = 0x804B0000;
-const NS_ERROR_BINDING_ABORTED = NS_ERROR_MODULE_NETWORK + 2;
-const NS_ERROR_UNKNOWN_HOST = NS_ERROR_MODULE_NETWORK + 30;
-const NS_ERROR_CONNECTION_REFUSED = NS_ERROR_MODULE_NETWORK + 13;
-const NS_ERROR_NET_TIMEOUT = NS_ERROR_MODULE_NETWORK + 14;
-const NS_ERROR_NET_RESET = NS_ERROR_MODULE_NETWORK + 20;
-const NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
+var NS_ERROR_MODULE_NETWORK = 0x804B0000;
+var NS_ERROR_BINDING_ABORTED = NS_ERROR_MODULE_NETWORK + 2;
+var NS_ERROR_UNKNOWN_HOST = NS_ERROR_MODULE_NETWORK + 30;
+var NS_ERROR_CONNECTION_REFUSED = NS_ERROR_MODULE_NETWORK + 13;
+var NS_ERROR_NET_TIMEOUT = NS_ERROR_MODULE_NETWORK + 14;
+var NS_ERROR_NET_RESET = NS_ERROR_MODULE_NETWORK + 20;
+var NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
 
-let DTA = {}, RequestManipulation = {};
+var DTA = {}, RequestManipulation = {};
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 Cu.import('resource://dta/api.jsm', DTA);
@@ -60,9 +60,9 @@ Cu.import('resource://dta/utils.jsm');
 Cu.import('resource://dta/manager/requestmanipulation.jsm', RequestManipulation);
 Cu.import('resource://dta/support/bytebucket.jsm');
 
-const StringInputStream = ctor('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
+var StringInputStream = ctor('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
 
-const Preferences = DTA.Preferences;
+var Preferences = DTA.Preferences;
 
 extendString(String);
 
@@ -913,4 +913,4 @@ Connection.prototype = {
 	},
 	onStatus: function  DL_onStatus(aRequest, aContext, aStatus, aStatusArg) {}
 };
-const GlobalBucket = new ByteBucket(Preferences.getExt('speedlimit', -1), 1.3);
+var GlobalBucket = new ByteBucket(Preferences.getExt('speedlimit', -1), 1.3);

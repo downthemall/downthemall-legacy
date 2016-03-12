@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['SpeedStats'];
+var EXPORTED_SYMBOLS = ['SpeedStats'];
 
 /**
  * Speed Statistics

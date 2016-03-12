@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-let Prompts = {};
+var Prompts = {};
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import('resource://dta/support/loggedprompter.jsm');
 Cu.import('resource://dta/prompts.jsm', Prompts);

@@ -34,18 +34,18 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = [
+var EXPORTED_SYMBOLS = [
 	'prealloc'
 ];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
-const FileOutputStream = Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const LocalFile = Components.Constructor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+var FileOutputStream = Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
+var LocalFile = Components.Constructor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 
 Cu.import('resource://dta/utils.jsm');
 Cu.import('resource://dta/version.jsm');
@@ -53,22 +53,22 @@ Cu.import('resource://dta/version.jsm');
 Debug.logString("pa: using nsIThread implementation");
 
 // Should we use the optimized Windows implementation?
-const WINDOWSIMPL = Version.OS == 'winnt';
+var WINDOWSIMPL = Version.OS == 'winnt';
 // Size cap: Use Windows implementation (on Windows) even if run on main thread
-const WINDOWSIMPL_SIZEMAX = (1 << 25); // 32MB
+var WINDOWSIMPL_SIZEMAX = (1 << 25); // 32MB
 
 //Minimum size of a preallocation.
 //If requested size is less then no actual pre-allocation will be performed.
-const SIZE_MIN = (WINDOWSIMPL ? 30 : 2048) * 1024;
+var SIZE_MIN = (WINDOWSIMPL ? 30 : 2048) * 1024;
 
 //Step size of the allocation
 //Do this step wise to avoid certain "sparse files" cases
-const SIZE_STEP = (1 << 27); // 128MB
+var SIZE_STEP = (1 << 27); // 128MB
 
 
 // Store workers here.
 // Not storing workers (in this context) will cause gc havoc.
-const workers = {};
+var workers = {};
 
 /**
  * Pre-allocates a given file on disk

@@ -34,17 +34,17 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = [
+var EXPORTED_SYMBOLS = [
 	'prealloc'
 ];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
-const FileOutputStream = Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
+var FileOutputStream = Components.Constructor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
 
 Cu.import('resource://dta/utils.jsm');
 Cu.import('resource://dta/version.jsm');
@@ -53,17 +53,17 @@ Cu.import('resource://dta/cothread.jsm');
 Debug.logString("Using CoThread implementation");
 
 // Should we use the optimized Windows implementation?
-const WINDOWSIMPL = Version.OS == 'winnt';
+var WINDOWSIMPL = Version.OS == 'winnt';
 // Size cap: Use Windows implementation (on Windows) even if run on main thread
-const WINDOWSIMPL_SIZEMAX = (1 << 25); // 32MB
+var WINDOWSIMPL_SIZEMAX = (1 << 25); // 32MB
 
 //Minimum size of a preallocation.
 //If requested size is less then no actual pre-allocation will be performed.
-const SIZE_MIN = (WINDOWSIMPL ? 30 : 2048) * 1024;
+var SIZE_MIN = (WINDOWSIMPL ? 30 : 2048) * 1024;
 
 //Step size of the allocation
 //Do this step wise to avoid certain "sparse files" cases
-const SIZE_STEP = (1 << 23); // 8MB
+var SIZE_STEP = (1 << 23); // 8MB
 
 /**
  * Pre-allocates a given file on disk

@@ -12,26 +12,26 @@ var EXPORTED_SYMBOLS = [
 ];
 
 // Download is paused
-const PAUSED =    1<<1;
+var PAUSED =    1<<1;
 // Download is running
-const RUNNING =   1<<2;
+var RUNNING =   1<<2;
 // Download is finishing, but not full complete
-const FINISHING = 1<<3;
+var FINISHING = 1<<3;
 // Download is complete
-const COMPLETE =  1<<4;
+var COMPLETE =  1<<4;
 // Download was canceled
-const CANCELED =  1<<5;
+var CANCELED =  1<<5;
 // Download is queued
-const QUEUED =    1<<6;
+var QUEUED =    1<<6;
 
 // Number of speed data points to keep
-const SPEED_COUNT = 100;
+var SPEED_COUNT = 100;
 
 // Minimal size a chunk may take
-const MIN_CHUNK_SIZE = 1<<19; // 512K
+var MIN_CHUNK_SIZE = 1<<19; // 512K
 
 // Refresh frequency
-const REFRESH_FREQ = 1000;
+var REFRESH_FREQ = 1000;
 
 // Tooltip refresh frequency
-const TOOLTIP_FREQ = 500;
+var TOOLTIP_FREQ = 500;

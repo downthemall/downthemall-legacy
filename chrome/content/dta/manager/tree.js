@@ -34,12 +34,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init');
+var FilePicker = Construct('@mozilla.org/filepicker;1', 'nsIFilePicker', 'init');
 
-let ImportExport = {};
+var ImportExport = {};
 Cu.import('resource://dta/manager/imex.jsm', ImportExport);
 
-const Tree = {
+var Tree = {
 	init: function T_init(elem) {
 		this.elem = elem;
 		this._downloads = [];
@@ -1079,7 +1079,7 @@ const Tree = {
 	}
 };
 
-const FileHandling = {
+var FileHandling = {
 	get _uniqueList() {
 		let u = {};
 		for (d in Tree.selected) {

@@ -34,36 +34,36 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['verify'];
+var EXPORTED_SYMBOLS = ['verify'];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const Ctor = Components.Constructor;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var Ctor = Components.Constructor;
+var Exception = Components.Exception;
 
-const Prefs = {}, DTA = {};
+var Prefs = {}, DTA = {};
 Cu.import("resource://dta/preferences.jsm", Prefs);
 Cu.import("resource://dta/utils.jsm");
 Cu.import("resource://dta/version.jsm");
 Cu.import("resource://dta/api.jsm", DTA);
 
-const RUN_ON_MAINTHREAD = Version.moz2;
-const REGULAR_CHUNK = (1 << (RUN_ON_MAINTHREAD ? 21 : 24)); // 2/16MB 
+var RUN_ON_MAINTHREAD = Version.moz2;
+var REGULAR_CHUNK = (1 << (RUN_ON_MAINTHREAD ? 21 : 24)); // 2/16MB 
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 ServiceGetter(this, "ThreadManager", "@mozilla.org/thread-manager;1", "nsIThreadManager");
 
-const nsICryptoHash = Ci.nsICryptoHash;
+var nsICryptoHash = Ci.nsICryptoHash;
 
-const LocalFile = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
-const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
+var LocalFile = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+var FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
 
-const Hash = new Ctor('@mozilla.org/security/hash;1', 'nsICryptoHash', 'init');
+var Hash = new Ctor('@mozilla.org/security/hash;1', 'nsICryptoHash', 'init');
 
-const _jobs = {};
+var _jobs = {};
 function registerJob(obj) {
 	let rv = newUUIDString();
 	_jobs[rv] = obj;

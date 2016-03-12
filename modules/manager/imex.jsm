@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = [
+var EXPORTED_SYMBOLS = [
 	"parseTextFile",
 	
 	"exportToTextFile",
@@ -42,14 +42,14 @@ const EXPORTED_SYMBOLS = [
 	"exportToMetalinkFile"
 ];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const Ctor = Components.Constructor;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var Ctor = Components.Constructor;
+var Exception = Components.Exception;
 
-const Preferences = {}, DTA = {};
+var Preferences = {}, DTA = {};
 Cu.import("resource://dta/preferences.jsm", Preferences);
 Cu.import("resource://dta/api.jsm", DTA);
 Cu.import("resource://dta/utils.jsm");
@@ -57,13 +57,13 @@ Cu.import("resource://dta/version.jsm");
 Cu.import("resource://dta/support/textlinks.jsm");
 Cu.import("resource://dta/support/metalinker.jsm");
 
-const IOService = DTA.IOService;
-const XPathResult = Ci.nsIDOMXPathResult;
+var IOService = DTA.IOService;
+var XPathResult = Ci.nsIDOMXPathResult;
 
-const FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
-const FileOutputStream = new Ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const DOMParser = new Ctor("@mozilla.org/xmlextras/domparser;1", 'nsIDOMParser');
-const ConverterOutputStream = Ctor('@mozilla.org/intl/converter-output-stream;1', 'nsIConverterOutputStream', 'init');
+var FileInputStream = new Ctor('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
+var FileOutputStream = new Ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
+var DOMParser = new Ctor("@mozilla.org/xmlextras/domparser;1", 'nsIDOMParser');
+var ConverterOutputStream = Ctor('@mozilla.org/intl/converter-output-stream;1', 'nsIConverterOutputStream', 'init');
 
 InstanceGetter(this, "Serializer", "@mozilla.org/xmlextras/xmlserializer;1", "nsIDOMSerializer");
 

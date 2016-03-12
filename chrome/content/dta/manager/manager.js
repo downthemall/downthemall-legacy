@@ -37,22 +37,22 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const Construct = Components.Constructor;
+var Construct = Components.Constructor;
 function Serv(c, i) { // leave in; anticontainer and others compat
 	return Cc[c].getService(i ? Ci[i] : null);
 }
-const BufferedOutputStream = Construct('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
-const FileInputStream = Construct('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
-const FileOutputStream = Construct('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const StringInputStream = Construct('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
-const Process = Construct('@mozilla.org/process/util;1', 'nsIProcess', 'init');
+var BufferedOutputStream = Construct('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
+var FileInputStream = Construct('@mozilla.org/network/file-input-stream;1', 'nsIFileInputStream', 'init');
+var FileOutputStream = Construct('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
+var StringInputStream = Construct('@mozilla.org/io/string-input-stream;1', 'nsIStringInputStream', 'setData');
+var Process = Construct('@mozilla.org/process/util;1', 'nsIProcess', 'init');
 
 ServiceGetter(this, "ContentHandling", "@downthemall.net/contenthandling;3", "dtaIContentHandling");
 ServiceGetter(this, "MimeService", "@mozilla.org/uriloader/external-helper-app-service;1", "nsIMIMEService");
 ServiceGetter(this, "ObserverService", "@mozilla.org/observer-service;1", "nsIObserverService");
 ServiceGetter(this, "WindowWatcherService", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 
-let Prompts = {}, Limits = {}, JSONCompat = {}, PrivateBrowsing = {};
+var Prompts = {}, Limits = {}, JSONCompat = {}, PrivateBrowsing = {};
 Cu.import('resource://dta/cothread.jsm');
 Cu.import('resource://dta/json.jsm', JSONCompat);
 Cu.import('resource://dta/support/urlmanager.jsm');
@@ -64,7 +64,7 @@ Cu.import('resource://dta/support/serverlimits.jsm', Limits);
 Cu.import('resource://dta/support/timers.jsm');
 Cu.import('resource://dta/support/fileextsheet.jsm');
 
-let Preallocator = {}, RequestManipulation = {};
+var Preallocator = {}, RequestManipulation = {};
 Cu.import('resource://dta/manager/preallocator.jsm', Preallocator);
 Cu.import('resource://dta/manager/connection.jsm');
 Cu.import('resource://dta/manager/queuestore.jsm');
@@ -97,12 +97,12 @@ var TEXT_CANCELED;
 GlobalProgress = new GlobalProgress(window);
 var Timers = new TimerManager();
 
-const Dialog_loadDownloads_props = ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'];
+var Dialog_loadDownloads_props = ['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression', 'fromMetalink', 'speedLimit'];
 function Dialog_loadDownloads_get(down, attr, def) (attr in down) ? down[attr] : (def ? def : '');
 
-const Dialog_serialize_props = ['fileName', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'maxChunks', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'];
+var Dialog_serialize_props = ['fileName', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName', 'compression', 'maxChunks', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit'];
 
-const Dialog = {
+var Dialog = {
 	_observes: [
 		'quit-application-requested',
 		'quit-application-granted',
@@ -1121,7 +1121,7 @@ const Dialog = {
 };
 addEventListener('load', function() Dialog.init(), false);
 
-const Metalinker = {
+var Metalinker = {
 	handleDownload: function ML_handleDownload(download) {
 		download.state = CANCELED;
 		Tree.remove(download, false);

@@ -34,14 +34,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-let Prompts = {};
+var Prompts = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
 Components.utils.import('resource://dta/version.jsm');
 
 ServiceGetter(this, "Clipboard", "@mozilla.org/widget/clipboard;1", "nsIClipboard");
 ServiceGetter(this, "Fixups", "@mozilla.org/docshell/urifixup;1", "nsIURIFixup");
 
-const Transferable = new Components.Constructor("@mozilla.org/widget/transferable;1", "nsITransferable");
+var Transferable = new Components.Constructor("@mozilla.org/widget/transferable;1", "nsITransferable");
 
 var dropDowns = {};
 

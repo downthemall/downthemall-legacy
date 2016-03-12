@@ -38,30 +38,30 @@
 
 var EXPORTED_SYMBOLS = ['QueueStore'];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
-const DB_FILE = 'dta_queue.sqlite';
-const DB_FILE_BROKEN = 'dta_queue.broken';
-const DB_FILE_BAK = DB_FILE + ".bak";
-const DB_VERSION = 1;
+var DB_FILE = 'dta_queue.sqlite';
+var DB_FILE_BROKEN = 'dta_queue.broken';
+var DB_FILE_BAK = DB_FILE + ".bak";
+var DB_VERSION = 1;
 
 Cu.import("resource://dta/utils.jsm");
 
-let pbm = {};
+var pbm = {};
 Cu.import("resource://dta/support/pbm.jsm", pbm);
 Cu.import("resource://dta/support/timers.jsm");
 
-const Timers = new TimerManager();
+var Timers = new TimerManager();
 
 ServiceGetter(this, "Storage", "@mozilla.org/storage/service;1", "mozIStorageService");
 ServiceGetter(this, "Observers", "@mozilla.org/observer-service;1", "nsIObserverService");
 
-let _connection = null;
-let _saveQueue = {};
-let _timer = 0;
+var _connection = null;
+var _saveQueue = {};
+var _timer = 0;
 
 setNewGetter(this, '__db', function() {
 	let db = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
@@ -69,7 +69,7 @@ setNewGetter(this, '__db', function() {
 	return db;
 });
 
-const QueueStore = {
+var QueueStore = {
 	_initialized: false,
 	_private: false,
 	init: function(pb) {
@@ -322,7 +322,7 @@ const QueueStore = {
 	}
 };
 
-const SHUTDOWN_TOPIC = 'profile-change-teardown'; 
+var SHUTDOWN_TOPIC = 'profile-change-teardown'; 
 
 var ShutdownObserver = {
 	install: function() {

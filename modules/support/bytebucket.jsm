@@ -34,15 +34,15 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['ByteBucket', 'ByteBucketTee'];
+var EXPORTED_SYMBOLS = ['ByteBucket', 'ByteBucketTee'];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://dta/support/timers.jsm");
 
-const Timers = new TimerManager();
+var Timers = new TimerManager();
 
 function Observers() {
 	this._obs = [];

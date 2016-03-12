@@ -44,12 +44,12 @@ var EXPORTED_SYMBOLS = [
 	'killServerBuckets'
 ];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
-let Prefs = {};
+var Prefs = {};
 Cu.import("resource://dta/preferences.jsm", Prefs);
 Cu.import("resource://dta/utils.jsm");
 Cu.import("resource://dta/constants.jsm");
@@ -60,17 +60,17 @@ ServiceGetter(this, 'tlds', '@mozilla.org/network/effective-tld-service;1', 'nsI
 ServiceGetter(this, 'fixups', '@mozilla.org/docshell/urifixup;1', 'nsIURIFixup');
 ServiceGetter(this, 'obs', '@mozilla.org/observer-service;1', 'nsIObserverService');
 
-const TOPIC = 'DTA:serverlimits-changed';
-const PREFS = 'extensions.dta.serverlimit.';
-const LIMITS_PREF  = 'extensions.dta.serverlimit.limits.';
-const SHUTDOWN_TOPIC = 'profile-change-teardown';
+var TOPIC = 'DTA:serverlimits-changed';
+var PREFS = 'extensions.dta.serverlimit.';
+var LIMITS_PREF  = 'extensions.dta.serverlimit.limits.';
+var SHUTDOWN_TOPIC = 'profile-change-teardown';
 
-const SCHEDULER_FAST = 'fast';
-const SCHEDULER_FAIR = 'fair';
-const SCHEDULER_RND = 'rnd';
-const SCHEDULER_LEGACY = 'legacy';
+var SCHEDULER_FAST = 'fast';
+var SCHEDULER_FAIR = 'fair';
+var SCHEDULER_RND = 'rnd';
+var SCHEDULER_LEGACY = 'legacy';
 
-let limits = {};
+var limits = {};
 
 function Limit(host, isNew) {
 	this._host = host;
@@ -154,7 +154,7 @@ function listLimits() {
 }
 
 
-let globalConnections = -1;
+var globalConnections = -1;
 
 function BaseScheduler() {}
 BaseScheduler.prototype = {
@@ -362,7 +362,7 @@ RndScheduler.prototype = {
 	}
 };
 
-let scheduler;
+var scheduler;
 function loadScheduler() {
 	switch (Prefs.getExt('serverlimit.connectionscheduler', SCHEDULER_FAST)) {
 	case SCHEDULER_FAIR:
@@ -414,7 +414,7 @@ function getServerBucket(d) {
 }
 
 // install our observer
-const Observer = {
+var Observer = {
 	observe: function(topic, subject, data) {
 		if (topic == SHUTDOWN_TOPIC) {
 			try {

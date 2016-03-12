@@ -34,34 +34,34 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['Decompressor'];
+var EXPORTED_SYMBOLS = ['Decompressor'];
 
 
-const BUFFER_SIZE = 5 * 1024 * 1024;
-const FREQ = 250;
+var BUFFER_SIZE = 5 * 1024 * 1024;
+var FREQ = 250;
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const Ctor = Components.Constructor;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var Ctor = Components.Constructor;
+var Exception = Components.Exception;
 
-const DTA = {};
+var DTA = {};
 Cu.import("resource://dta/utils.jsm");
 Cu.import("resource://dta/api.jsm", DTA);
 Cu.import("resource://dta/support/timers.jsm");
 
-const IOService = DTA.IOService;
-const Prefs = DTA.Preferences;
+var IOService = DTA.IOService;
+var Prefs = DTA.Preferences;
 
-const LocalFile = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
-const FileOutputStream = new Ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
-const BinaryOutputStream = new Ctor('@mozilla.org/binaryoutputstream;1', 'nsIBinaryOutputStream', 'setOutputStream');
-const BufferedOutputStream = new Ctor('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
-const BinaryInputStream = new Ctor('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
+var LocalFile = new Ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+var FileOutputStream = new Ctor('@mozilla.org/network/file-output-stream;1', 'nsIFileOutputStream', 'init');
+var BinaryOutputStream = new Ctor('@mozilla.org/binaryoutputstream;1', 'nsIBinaryOutputStream', 'setOutputStream');
+var BufferedOutputStream = new Ctor('@mozilla.org/network/buffered-output-stream;1', 'nsIBufferedOutputStream', 'init');
+var BinaryInputStream = new Ctor('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
 
-const Timers = new TimerManager();
+var Timers = new TimerManager();
 
 function Decompressor(download) {
 	this.download = download;

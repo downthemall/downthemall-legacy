@@ -34,12 +34,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['GlobalProgress'];
+var EXPORTED_SYMBOLS = ['GlobalProgress'];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
 Cu.import("resource://dta/utils.jsm");
 

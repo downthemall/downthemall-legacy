@@ -34,14 +34,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['CoThread', 'CoThreadInterleaved', 'CoThreadListWalker'];
+var EXPORTED_SYMBOLS = ['CoThread', 'CoThreadInterleaved', 'CoThreadListWalker'];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
 
-const TYPE_REPEATING_SLACK = Ci.nsITimer.TYPE_REPEATING_SLACK;
-const Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'initWithCallback');
+var TYPE_REPEATING_SLACK = Ci.nsITimer.TYPE_REPEATING_SLACK;
+var Timer = Components.Constructor('@mozilla.org/timer;1', 'nsITimer', 'initWithCallback');
 
 // "Abstract" base c'tor
 function CoThreadBase() {}

@@ -34,33 +34,33 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const ctor = Components.Constructor;
-const Exception = Components.Exception;
-const error = Components.utils.reportError;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var ctor = Components.Constructor;
+var Exception = Components.Exception;
+var error = Components.utils.reportError;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-const NS_ERROR_NO_INTERFACE = Cr.NS_ERROR_NO_INTERFACE;
-const NS_ERROR_FAILURE = Cr.NS_ERROR_FAILURE;
-const NS_ERROR_NO_AGGREGATION = Cr.NS_ERROR_NO_AGGREGATION;
-const NS_ERROR_INVALID_ARG = Cr.NS_ERROR_INVALID_ARG;
+var NS_ERROR_NO_INTERFACE = Cr.NS_ERROR_NO_INTERFACE;
+var NS_ERROR_FAILURE = Cr.NS_ERROR_FAILURE;
+var NS_ERROR_NO_AGGREGATION = Cr.NS_ERROR_NO_AGGREGATION;
+var NS_ERROR_INVALID_ARG = Cr.NS_ERROR_INVALID_ARG;
 
-const PREF_FILTERS_BASE = 'extensions.dta.filters.';
+var PREF_FILTERS_BASE = 'extensions.dta.filters.';
 
-const ABOUT_URI = 'http://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_ID%&version=%APP_VERSION%&os=%OS%';
+var ABOUT_URI = 'http://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_ID%&version=%APP_VERSION%&os=%OS%';
 
-const LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
-const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
-const TOPIC_FILTERSCHANGED = 'DTA:filterschanged';
+var LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
+var IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
+var TOPIC_FILTERSCHANGED = 'DTA:filterschanged';
 
-const nsITimer = Ci.nsITimer;
+var nsITimer = Ci.nsITimer;
 
-const Timer = ctor('@mozilla.org/timer;1', 'nsITimer', 'init');
-const ScriptableInputStream = new ctor('@mozilla.org/scriptableinputstream;1', 'nsIScriptableInputStream', 'init');
+var Timer = ctor('@mozilla.org/timer;1', 'nsITimer', 'init');
+var ScriptableInputStream = new ctor('@mozilla.org/scriptableinputstream;1', 'nsIScriptableInputStream', 'init');
 
 this.__defineGetter__(
 	'Preferences',
@@ -300,12 +300,12 @@ LimitedDict.prototype = {
 /**
  * ContentHandling
  */
-const HEADER_CT = ['Content-Type', 'Content-Disposition'];
-const PREF_SNIFFVIDEOS = 'extensions.dta.listsniffedvideos';
-const REGEXP_MEDIA = /\.(flv|ogg|ogm|ogv|avi|divx|mp4v?|webm)\b/i;
-const REGEXP_SWF = /\.swf\b/i;
-const REGEXP_CT = /\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i;
-const REGEXP_STARTPARAM = /start=\d+&?/;
+var HEADER_CT = ['Content-Type', 'Content-Disposition'];
+var PREF_SNIFFVIDEOS = 'extensions.dta.listsniffedvideos';
+var REGEXP_MEDIA = /\.(flv|ogg|ogm|ogv|avi|divx|mp4v?|webm)\b/i;
+var REGEXP_SWF = /\.swf\b/i;
+var REGEXP_CT = /\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i;
+var REGEXP_STARTPARAM = /start=\d+&?/;
 
 
 function ContentHandling() {

@@ -34,17 +34,17 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ['parse', 'stringify'];
+var EXPORTED_SYMBOLS = ['parse', 'stringify'];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const log = Components.utils.reportError;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var log = Components.utils.reportError;
+var Exception = Components.Exception;
 
-let parse = function() { throw new Exception("No implementation available"); }
-let stringify = parse;
+var parse = function() { throw new Exception("No implementation available"); }
+var stringify = parse;
 
 if ('JSON' in this) {
 	parse = JSON.parse;

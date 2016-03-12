@@ -34,18 +34,18 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = ["available", "processors"];
+var EXPORTED_SYMBOLS = ["available", "processors"];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://dta/utils.jsm", {}).extendString(String);
 
-const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
+var available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 
 if (available) {
 	const core = Cc["@downloadhelper.net/core;1"].getService(Ci.dhICore);

@@ -36,19 +36,19 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
-const IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
+var LINK_FILTER = Ci.dtaIFilter.LINK_FILTER;
+var IMAGE_FILTER = Ci.dtaIFilter.IMAGE_FILTER;
 
-let Prompts = {};
+var Prompts = {};
 Components.utils.import('resource://dta/prompts.jsm', Prompts);
 
-const Main = {
+var Main = {
 	load: function() {
 		$('alert2').hidden = !('nsIAlertsService' in Ci);
 	}
 }
 
-const Privacy = {
+var Privacy = {
 	load: function PP_load() {
 		try {
 			var log = !DTA.getProfileFile('dta_log.txt').exists();
@@ -100,7 +100,7 @@ const Privacy = {
 	}
 };
 
-const Advanced = {
+var Advanced = {
 	load: function() {
 		// delay these assignments, or else we get messed up by the slider c'tor
 		$('maxchunks').setAttribute('preference', 'dtamaxchunks');
@@ -153,7 +153,7 @@ const Advanced = {
 	}
 };
 
-const Interface = {
+var Interface = {
 	init: function(pref, which) {
 		try {
 			Components.utils.import("resource://mintrayr/mintrayr.jsm", {});
@@ -177,7 +177,7 @@ const Interface = {
 	}
 };
 
-const Filters = {
+var Filters = {
 	_filters: [],
 	_lastRowEdited : -1,
 	
@@ -440,7 +440,7 @@ const Filters = {
 	setCellValue: function(idx, col, value) {}
 };
 
-const Servers = {
+var Servers = {
 	_limits: [],
 	_editing: null,
 	init: function() {
@@ -573,7 +573,7 @@ const Servers = {
 Components.utils.import('resource://dta/support/serverlimits.jsm', Servers);
 ServiceGetter(Servers, 'prompts', '@mozilla.org/embedcomp/prompt-service;1', 'nsIPromptService');
 
-const Prefs = {
+var Prefs = {
 	load: function() {
 		Components.utils.import('resource://dta/version.jsm');
 

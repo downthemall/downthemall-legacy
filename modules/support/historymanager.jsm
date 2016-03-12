@@ -34,26 +34,26 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = [
+var EXPORTED_SYMBOLS = [
 	'getHistory'
 ];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const ctor = Components.Constructor;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var ctor = Components.Constructor;
+var Exception = Components.Exception;
 
-let pbm = {}, prefs = {};
+var pbm = {}, prefs = {};
 Cu.import("resource://dta/support/pbm.jsm", pbm);
 Cu.import("resource://dta/preferences.jsm", prefs);
 Cu.import("resource://dta/json.jsm");
 Cu.import("resource://dta/utils.jsm");
 
-const LocalFile = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
+var LocalFile = new ctor('@mozilla.org/file/local;1', 'nsILocalFile', 'initWithPath');
 
-const validators = {
+var validators = {
 	'directory': function(s) {
 		try {
 			new LocalFile(s);
@@ -162,9 +162,9 @@ History.prototype = {
 	}
 };
 
-const _histories = {};
+var _histories = {};
 
-const callbacks = {
+var callbacks = {
 	enterPrivateBrowsing: function() {
 		Debug.logString("entering pbm: switching to session histories");
 		for each (let h in _histories) {

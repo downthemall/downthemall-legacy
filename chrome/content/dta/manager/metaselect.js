@@ -34,11 +34,11 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const METALINK_LOGO = 'chrome://dta/skin/icons/metalink48.png';
+var METALINK_LOGO = 'chrome://dta/skin/icons/metalink48.png';
 
 Cu.import("resource://dta/version.jsm");
 
-const MetaSelect = {
+var MetaSelect = {
  	_insertDownload: function(d) {
 		try {
 	 		if (d.lang && d.lang.search(/^\w{2}(?:-\w{2})?$/) != -1) {

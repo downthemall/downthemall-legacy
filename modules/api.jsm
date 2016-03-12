@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const EXPORTED_SYMBOLS = [
+var EXPORTED_SYMBOLS = [
 	"FilterManager",
 	"Preferences",
 	"Mediator",
@@ -64,21 +64,21 @@ const EXPORTED_SYMBOLS = [
 	"incrementSeries",
 ];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-const Exception = Components.Exception;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
+var Exception = Components.Exception;
 
 Cu.import("resource://dta/utils.jsm");
 
-const Preferences = {};
+var Preferences = {};
 Cu.import("resource://dta/preferences.jsm", Preferences);
-const Mediator = {};
+var Mediator = {};
 Cu.import("resource://dta/support/mediator.jsm", Mediator);
-const Histories = {};
+var Histories = {};
 Cu.import("resource://dta/support/historymanager.jsm", Histories);
-const pbm = {};
+var pbm = {};
 Cu.import("resource://dta/support/pbm.jsm", pbm);
 
 ServiceGetter(this, "TextToSubURI", "@mozilla.org/intl/texttosuburi;1", "nsITextToSubURI");
@@ -156,14 +156,14 @@ URL.prototype = {
  *          Hash to check
  * @return hash type or null
  */
-const SUPPORTED_HASHES = {
+var SUPPORTED_HASHES = {
 	'MD5': {l: 32, q: 0.3 },
 	'SHA1': {l: 40, q: 0.5 },
 	'SHA256': {l: 64, q: 0.7 },
 	'SHA384': {l: 96, q: 0.8 },
 	'SHA512': {l: 128, q: 0.9 }
 };
-const SUPPORTED_HASHES_ALIASES = {
+var SUPPORTED_HASHES_ALIASES = {
 	'MD5': 'MD5',
 	'MD-5': 'MD5',
 	'SHA1': 'SHA1',
@@ -176,7 +176,7 @@ const SUPPORTED_HASHES_ALIASES = {
 	'SHA512': 'SHA512',
 	'SHA-512': 'SHA512'
 };
-const WANT_DIGEST_STRING = (function() {
+var WANT_DIGEST_STRING = (function() {
 	let rv = new MimeQuality();
 	for each (let h in ["MD5", "SHA", "SHA1", "SHA256", "SHA512"]) {
 		let q = SUPPORTED_HASHES[SUPPORTED_HASHES_ALIASES[h]].q;
@@ -540,7 +540,7 @@ function openManager(window, quiet) {
 	return null;
 };
 
-const Series = {
+var Series = {
 	_session: 1,
 	_persist: true,
 	enterPrivateBrowsing: function() {
