@@ -73,6 +73,7 @@ const PREF_BOOL = nsIPrefBranch.PREF_BOOL;
 const SupportsString = new Ctor('@mozilla.org/supports-string;1', 'nsISupportsString');
 
 const prefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch);
+prefs instanceof Ci.nsIPrefService; // bug #1117206
 
 /**
  * Gets a preference (based on root)
