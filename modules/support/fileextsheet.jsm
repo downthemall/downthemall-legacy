@@ -42,6 +42,7 @@ var Cr = Components.results;
 var Cu = Components.utils;
 var Exception = Components.Exception;
 
+Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://dta/utils.jsm");
 Cu.import("resource://dta/support/icons.jsm");
 Cu.import("resource://dta/support/timers.jsm");
@@ -56,24 +57,6 @@ function FileExtensionSheet(window) {
 	this._windowUtils = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowUtils);
 	
 	let document = window.document;
-	this._stylesheet = null;
-	try {
-		for (let ss of Array.from(document.styleSheets)) {
-			Debug.log("sheet: " + ss.href);
-			if (/^chrome:\/\/dta\//.test(ss.href)) {
-				this._stylesheet = ss;
-				Debug.log("found stylesheet " + ss.href + ", rules: " + ss.cssRules.length);
-				break;
-			}
-		}
-		if (!this._stylesheet) {
-			throw new Exception("didn't find stylesheet");
-		}
-	}
-	catch (ex) {
-		Debug.log("sheet:", ex);
-	}
-
 	this._entries = {};
 }
 
@@ -89,24 +72,17 @@ FileExtensionSheet.prototype = {
 		let key = 'ext:' + ext;
 		let entry = this._entries[key];
 		if (!entry) {
-			entry = Atoms.getAtom("icon" + newUUIDString().replace(/\W/g, ''));
-			let rule = 'treechildren::-moz-tree-image(iconic,' 
+			entry = "icon" + newUUIDString().replace(/\W/g, '');
+			let rule = 'data:text/css,treechildren::-moz-tree-image(iconic,' 
 				+ entry.toString()
 				+ ') { list-style-image: url('
 				+ getIcon('file.' + ext, metalink || ext == 'metalink')
-				+ ') !important; }';
-			this._stylesheet.insertRule(rule, this._stylesheet.cssRules.length);
-			Debug.log("sheet: " + rule);
-			if (!this._timer) {
-				// this is a moz-2 hack, as it will otherwise not correctly redraw!
-				this._timer = Timers.createOneshot(0, this._updateSheet, this);
-			}
+				+ ') !important; -moz-image-region: auto !important; width: 16px !important;}';
+			let ruleURI = Services.io.newURI(rule, null, null);
+			Debug.log(ruleURI.spec);
+			this._windowUtils.loadSheet(ruleURI, this._windowUtils.AGENT_SHEET);
 			this._entries[key] = entry;
 		}
-		return entry;
-	},
-	_updateSheet: function FES__updateSheet() {
-		delete this._timer;
-		this._windowUtils.redraw();
+		return Atoms.getAtom(entry);
 	}
 };
