@@ -64,7 +64,7 @@ function UrlManager(urls) {
 UrlManager.prototype = {
 	initByArray: function um_initByArray(urls) {
 		this._urls = [];
-		for each (let u in urls) {
+		for (let u of urls) {
 			if (u instanceof DTA.URL || (u.url && u.url instanceof Ci.nsIURI)) {
 				this.add(u);
 			}
@@ -102,7 +102,7 @@ UrlManager.prototype = {
 		if (!this.good.length) {
 			// all marked bad; actually a bug
 			Cu.reportError("UM: all marked bad");
-			for each (let u in this._urls) {
+			for (let u of this._urls) {
 				delete u.bad;
 			}
 			this.good = this._urls.map(function(e) e);
@@ -123,7 +123,7 @@ UrlManager.prototype = {
 		return this._urls.length;
 	},
 	get all() {
-		for each (let i in this._urls) {
+		for (let i of this._urls) {
 			yield i;
 		}
 	},
@@ -136,7 +136,7 @@ UrlManager.prototype = {
 			// cannot mark the last url bad :p
 			return false;
 		}
-		for each (let u in this._urls) {
+		for (let u of this._urls) {
 			if (u != url) {
 				continue;
 			}
@@ -150,7 +150,7 @@ UrlManager.prototype = {
 	},
 	serialize: function um_serialize() {
 		let rv = [];
-		for each (let url in this._urls) {
+		for (let url of this._urls) {
 			rv.push(url.serialize());
 		}
 		return rv;

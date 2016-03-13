@@ -120,7 +120,7 @@ var Prefs = {
 
 	_refreshPrefs: function(prefName) {
 		Debug.logString("pref reload due to: " + prefName);
-		for each (let e in this.mappings) {
+		for (let e of this.mappings) {
 			let key, pref, def;
 			if (!e) {
 				return;
@@ -297,7 +297,7 @@ var Tooltip = {
 		let box = this.canvasGrid.boxObject;
 		this._initUpdateRetries = (this._initUpdateRetries || 0) + 1;
 		
-		for each (let canvas in [this.speedCanvas, this.chunkCanvas]) {
+		for (let canvas of [this.speedCanvas, this.chunkCanvas]) {
 			try {
 				let w = Math.min(box.width, canvas.clientWidth);
 				let h = parseInt(canvas.getAttribute('height'));
@@ -587,8 +587,8 @@ var Tooltip = {
 				{ x:3, f: chunkFillStyle, s:chunkFillStyle }
 			];
 			
-			for each (var chunk in b) {
-				for each (var pass in passes) {
+			for (var chunk of b) {
+				for (var pass of passes) {
 					ctx.fillStyle = pass.f;
 					this._makeRoundedRectPath(ctx, chunk.s, 0, chunk.w - pass.x + 2, cheight, 3);
 					ctx.fill();

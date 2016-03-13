@@ -58,7 +58,7 @@ function FileExtensionSheet(window) {
 	let document = window.document;
 	this._stylesheet = null;
 	try {
-		for each (let ss in document.styleSheets) {
+		for (let ss of Array.from(document.styleSheets)) {
 			Debug.log("sheet: " + ss.href);
 			if (/^chrome:\/\/dta\//.test(ss.href)) {
 				this._stylesheet = ss;

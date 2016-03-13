@@ -81,7 +81,7 @@ SpeedStats.prototype = {
 	 * Generator over all recorded speeds
 	 */
 	get all() {
-		for each (let x in this._speeds) {
+		for (let x of this._speeds) {
 			yield x;
 		}
 	},

@@ -215,7 +215,7 @@ Connection.prototype = {
 	},
 
 	QueryInterface: function DL_QI(iid) {
-		for each (let i in this._interfaces) {
+		for (let i of this._interfaces) {
 			if (iid.equals(i)) {
 				return this;
 			}
@@ -415,7 +415,7 @@ Connection.prototype = {
 		d.dumpScoreboard();
 
 		let max = -1, found = null;
-		for each (let cmp in d.chunks) {
+		for (let cmp of d.chunks) {
 			if (!cmp.running) {
 				continue;
 			}
@@ -707,7 +707,7 @@ Connection.prototype = {
 		}
 
 		try {
-			for each (let sc in this._supportedChannels) {
+			for (let sc of this._supportedChannels) {
 				let chan = null;
 				try {
 					chan = aRequest.QueryInterface(sc.i);

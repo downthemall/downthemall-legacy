@@ -62,7 +62,7 @@ Observers.prototype = {
 		}
 	},
 	notify: function() {
-		for each (let o in this._obs) {
+		for (let o of this._obs) {
 			o.observe.call(o);
 		}		
 	},
@@ -187,13 +187,13 @@ ByteBucketTee.prototype = {
 				.reduce(function(p, c) Math.min(p,c));
 		},
 		requestBytes: function(bytes) {
-			for each (let bucket in this._buckets) {
+			for (let bucket of this._buckets) {
 				bytes = bucket.requestBytes(bytes);
 				if (!bytes) {
 					return 0;
 				}
 			}
-			for each (let bucket in this._buckets) {
+			for (let bucket of this._buckets) {
 				bucket.commitBytes(bytes);
 			}
 			return bytes;

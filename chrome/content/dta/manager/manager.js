@@ -263,7 +263,7 @@ var Dialog = {
 
 		// Set tooltip texts for each tb button lacking one (copy label)
 		(function() {
-			for each (let e in Array.map(document.getElementsByTagName('toolbarbutton'), function(e) e)) {
+			for (let e of Array.map(document.getElementsByTagName('toolbarbutton'), function(e) e)) {
 				if (!e.hasAttribute('tooltiptext')) {
 					e.setAttribute('tooltiptext', e.getAttribute('label'));
 				}
@@ -511,7 +511,7 @@ var Dialog = {
 		if (this._brokenDownloads.length) {
 			QueueStore.beginUpdate();
 			try {
-				for each (let id in this._brokenDownloads) {
+				for (let id of this._brokenDownloads) {
 					QueueStore.deleteDownload(id);
 					Debug.logString("Removed broken download #" + id);
 				}
@@ -680,7 +680,7 @@ var Dialog = {
 	refresh: function D_refresh() {
 		try {
 			const now = Utils.getTimestamp();
-			for each (let d in this._running) {
+			for (let d of this._running) {
 				d.refreshPartialSize();
 				let advanced = d.speeds.add(d.partialSize, now);
 				this._sum += advanced;
@@ -703,7 +703,7 @@ var Dialog = {
 			this._speeds.add(this._sum, now);
 			speed = Utils.formatSpeed(this._speeds.avg);
 			this._maxObservedSpeed = Math.max(this._speeds.avg, this._maxObservedSpeed);
-			for each (let e in $('listSpeeds', 'perDownloadSpeedLimitList')) {
+			for (let e of $('listSpeeds', 'perDownloadSpeedLimitList')) {
 				e.hint = this._maxObservedSpeed;
 			}
 
@@ -771,7 +771,7 @@ var Dialog = {
 		}
 	},
 	refreshWritten: function D_refreshWritten() {
-		for each (let d in this._running) {
+		for (let d of this._running) {
 			d.refreshPartialSize();
 			d.invalidate();
 		}
@@ -780,7 +780,7 @@ var Dialog = {
 		if (!this._running.length) {
 			return;
 		}
-		for each (let d in this._running) {
+		for (let d of this._running) {
 			d.save();
 		}
 	},
@@ -813,7 +813,7 @@ var Dialog = {
 			this.refresh();
 
 			let ts = Utils.getTimestamp();
-			for each (let d in this._running) {
+			for (let d of this._running) {
 				// checks for timeout
 				if (d.is(RUNNING) && (ts - d.timeLastProgress) >= Prefs.timeout * 1000) {
 					if (d.resumable || !d.totalSize || !d.partialSize || Prefs.resumeOnError) {
@@ -844,7 +844,7 @@ var Dialog = {
 		}
 	},
 	checkSameName: function D_checkSameName(download, path) {
-		for each (let runner in this._running) {
+		for (let runner of this._running) {
 			if (runner == download) {
 				continue;
 			}
@@ -1105,7 +1105,7 @@ var Dialog = {
 		catch(ex) {
 			Debug.log("_safeClose", ex);
 		}
-		for each (let w in this._infoWindows) {
+		for (let w of this._infoWindows) {
 			if (!w.closed) {
 				w.close();
 			}
@@ -1610,7 +1610,7 @@ QueueItem.prototype = {
 
 	pause: function QI_pause(){
 		if (this.chunks) {
-			for each (let c in this.chunks) {
+			for (let c of this.chunks) {
 				if (c.running) {
 					c.cancel();
 				}
@@ -1739,7 +1739,7 @@ QueueItem.prototype = {
 			}
 			let chunks = [];
 			let next = 0;
-			for each (let mismatch in mismatches) {
+			for (let mismatch of mismatches) {
 				if (next != mismatch.start) {
 					chunks.push(new Chunk(download, next, mismatch.start - 1, mismatch.start - next));
 				}
@@ -2258,7 +2258,7 @@ QueueItem.prototype = {
 
 				// find biggest chunk
 				let biggest = null;
-				for each (let chunk in this.chunks) {
+				for (let chunk of this.chunks) {
 					if (chunk.running && chunk.remainder > MIN_CHUNK_SIZE * 2) {
 						if (!biggest || biggest.remainder < chunk.remainder) {
 							biggest = chunk;
@@ -2359,7 +2359,7 @@ QueueItem.prototype = {
 		e.chunks = [];
 
 		if (this.isOf(RUNNING | PAUSED | QUEUED) && this.resumable) {
-			for each (let c in this.chunks) {
+			for (let c of this.chunks) {
 				e.chunks.push({start: c.start, end: c.end, written: c.safeBytes});
 			}
 		}
@@ -2653,7 +2653,11 @@ function startDownloads(start, downloads) {
 
 	let g = downloads;
 	if ('length' in downloads) {
-		g = (i for each (i in downloads));
+		g = (function() {
+			for (let d of downloads) {
+				yield d;
+			}
+		})();
 	}
 
 	Tree.beginUpdate();
@@ -2680,7 +2684,7 @@ var ConflictManager = {
 			}
 			return;
 		}
-		for each (let item in this._items.length) {
+		for (let item of this._items) {
 			if (item.download == download) {
 				Debug.logString("conflict resolution updated to: " + reentry);
 				item.reentry = reentry;

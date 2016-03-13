@@ -100,7 +100,7 @@ function objToUri(obj) {
  */
 function getMostRecent(type) {
 	if (type && type instanceof Array) {
-		for each (t in type) {
+		for (let t of type) {
 			let rv = getMostRecent(t);
 			if (rv) {
 				return rv;

@@ -430,6 +430,10 @@ function range() {
 
 }
 
+function toHex(c) {
+	return ('0' + c.toString(16)).slice(-2);
+}
+
 /**
  * Builds the hexdigest of (binary) data
  * @param {Object} data
@@ -437,7 +441,7 @@ function range() {
  */
 function hexdigest(data) {
 	data = data.toString();
-	return [('0' + data.charCodeAt(i).toString(16)).slice(-2) for (i in range(data.length))].join('');	
+	return Array.from(data, (c, i) => toHex(data.charCodeAt(i))).join("");
 }
 
 /**
@@ -629,7 +633,7 @@ SimpleIterator.prototype = {
  * @param properties (nsIProperties) initial properties
  */
 function Properties() {
-	for each (let p in Array.map(arguments, function(e) e)) {
+	for (let p of Array.map(arguments, function(e) e)) {
 		this._parse(p);
 	}
 }
@@ -639,7 +643,7 @@ Properties.prototype = {
 			return;
 		}
 		let keys = properties.getKeys({});
-		for each (let key in keys) {
+		for (let key of keys) {
 			try {
 				let prop =  properties.get(key, Ci.nsISupports);
 				if (prop instanceof Ci.nsIVariant);
@@ -771,7 +775,7 @@ function _loadBundles(urls) {
 		return _bundles[key];
 	}
 	let rv = {};
-	for each (let b in urls.map(function(e) _loadBundle(e))) {
+	for (let b of urls.map(function(e) _loadBundle(e))) {
 		merge(rv, b);
 	}
 	return _bundles[key] = rv; 

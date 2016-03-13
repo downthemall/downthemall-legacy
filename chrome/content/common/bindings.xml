@@ -144,7 +144,7 @@
 						popup.removeChild(popup.lastChild);
 					}
 
-					for each (var val in values) {
+					for (var val of values) {
 						var node = document.createElement('menuitem');
 						node.setAttribute('label', val);
 						if (this.hasAttribute('crop')) {
@@ -452,7 +452,7 @@
 					}
 
 					let items = [10, 50, 100, 250, 1000]; // always include these
-					for each (let v in vals) {
+					for (let v of vals) {
 						if (v && m - v > 1) {
 							items.push(m - v);
 						}
@@ -463,7 +463,7 @@
 						.filter(function(e) !((e in this) || (this[e] = null)), {}) // makes array unique
 						.sort(function(a, b) a - b);
 					let sep = document.createElement('menuseparator');
-					for each (let v in items.map(function(e) e * 1024)) {
+					for (let v of items.map(function(e) e * 1024)) {
 						let item = this.appendItem(Utils.formatKBytes(v, 0) + '/s', v);
 						if (v == iv) {
 							if (item.previousSibling) {

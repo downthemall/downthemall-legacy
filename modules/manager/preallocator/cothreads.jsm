@@ -101,7 +101,12 @@ function WorkerJob(file, size, perms, callback) {
 	}
 
 	let g = this.run.bind(this);
-	this.coThread = new CoThreadInterleaved((i for (i in g())), 1);
+	let gen = function() {
+		for (let i in g()) {
+			yield i;
+		}
+	};
+	this.coThread = new CoThreadInterleaved(gen(), 1);
 	this.coThread.run(this.finish.bind(this));
 }
 

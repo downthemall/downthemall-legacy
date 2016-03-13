@@ -179,7 +179,7 @@ Stuff.prototype = {
 		});
 	},
 	_migrateExecute: function MM_execute(types) {
-		for each (let e in types) {
+		for (let e of types) {
 			try {
 				this['_migrate' + e]();
 			}
@@ -192,7 +192,7 @@ Stuff.prototype = {
 	// 1.0.1: #613 Multiple "slow-down" reports
 	_migrateResetMaxConnections: function() {
 		log("resetting connection prefs");
-		for each (let e in ['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server']) {
+		for (let e of ['network.http.max-connections', 'network.http.max-connections-per-server', 'network.http.max-persistent-connections-per-server']) {
 			Preferences.reset(e);
 		}
 	},
@@ -211,7 +211,7 @@ Stuff.prototype = {
 		log('clean()');
 		
 		// Cleaning prefs
-		for each (let e in ['directory', 'filter', 'renaming']) {
+		for (let e of ['directory', 'filter', 'renaming']) {
 			try {
 				Preferences.resetExt(e);
 			}
@@ -224,7 +224,7 @@ Stuff.prototype = {
 		try {
 			let prof = Cc["@mozilla.org/file/directory_service;1"]
 				.getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
-			for each (let e in ['dta_history.xml']) {
+			for (let e of ['dta_history.xml']) {
 				try {
 					var file = prof.clone();
 					file.append(e);
@@ -713,7 +713,7 @@ Filter.prototype = {
 		var parts = str.split(',');
 		// we contain multiple filters
 		if (parts.length > 1) {
-			for each (var s in parts) { 
+			for (var s of parts) { 
 				this._makeRegs(s);
 			}
 			return;
@@ -891,12 +891,12 @@ FilterManager.prototype = {
 	},
 	
 	enterPrivateBrowsing: function() {
-		for each (let f in this._all) {
+		for (let f of this._all) {
 			f.persist = false; 
 		}
 	},
 	exitPrivateBrowsing: function() {
-		for each (let f in this._all) {
+		for (let f of this._all) {
 			f.persist = true; 
 		}		
 	},
@@ -931,7 +931,7 @@ FilterManager.prototype = {
 		this._all = [];
 
 		// hmmm. since we use uuids for the filters we've to enumerate the whole branch.
-		for each (let pref in Preferences.getChildren(PREF_FILTERS_BASE)) {
+		for (let pref of Preferences.getChildren(PREF_FILTERS_BASE)) {
 			// we test for label (as we get all the other props as well)
 			if (pref.search(/\.label$/) == -1) {
 				continue;
@@ -1039,7 +1039,7 @@ FilterManager.prototype = {
 	},
 
 	save: function FM_save() {
-		for each (var f in this._all) {
+		for (var f of this._all) {
 			try {
 				f.save();
 			}

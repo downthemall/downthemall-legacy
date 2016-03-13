@@ -97,7 +97,7 @@ function parseTextFile(aFile) {
 	Debug.log("Got lines: " + lines.length);
 	
 	let links = [];
-	for each (let l in getTextLinks(lines.join("\n"), false)) {
+	for (let l of getTextLinks(lines.join("\n"), false)) {
 		l = IOService.newURI(l, null, null);
 		links.push({
 			url: new DTA.URL(l),

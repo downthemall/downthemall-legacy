@@ -228,7 +228,7 @@ MultiVerificator.prototype = {
 			let stream = new FileInputStream(file, 0x01, 0766, 0).QueryInterface(Ci.nsISeekableStream);
 			let flushBytes = REGULAR_CHUNK;
 			try {
-				for each (let partial in hashCollection.partials) {
+				for (let partial of hashCollection.partials) {
 					let pendingPartial = Math.min(pending, hashCollection.parLength);
 					let partialHash; 
 					new Callback(function() {

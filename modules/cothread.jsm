@@ -212,7 +212,7 @@ function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
 	
 	if (arrayOrGenerator instanceof Array) {
 		// make a generator
-		this._generator = (i for each (i in arrayOrGenerator));
+		this,_generator = (function() { for (let i of arrayOrGenerator) yield i; })();
 	}
 	else {
 		this._generator = arrayOrGenerator;

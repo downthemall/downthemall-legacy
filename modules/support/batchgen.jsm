@@ -228,7 +228,7 @@ function BatchGenerator(link) {
 	}
 	
 	// Calculate the total length of the batch
-	for each (let i in this._pats) {
+	for (let i of this._pats) {
 		this._length *= i.length;
 	}
 }

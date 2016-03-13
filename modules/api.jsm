@@ -178,7 +178,7 @@ var SUPPORTED_HASHES_ALIASES = {
 };
 var WANT_DIGEST_STRING = (function() {
 	let rv = new MimeQuality();
-	for each (let h in ["MD5", "SHA", "SHA1", "SHA256", "SHA512"]) {
+	for (let h of ["MD5", "SHA", "SHA1", "SHA256", "SHA512"]) {
 		let q = SUPPORTED_HASHES[SUPPORTED_HASHES_ALIASES[h]].q;
 		rv.add(h, q);
 	}
@@ -253,7 +253,7 @@ HashCollection.prototype = {
 	 * Gives {hash,start,end} dict
 	 */		
 	__iterator__: function() {
-		for each (let partial in this._partials) {
+		for (let partial of this._partials) {
 			yield partial;
 		}
 	},

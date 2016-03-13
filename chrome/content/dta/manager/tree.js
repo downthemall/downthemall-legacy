@@ -62,7 +62,7 @@ var Tree = {
 		ServiceGetter(this, "_ww", "@mozilla.org/embedcomp/window-watcher;1", "nsIWindowWatcher");
 		ServiceGetter(this, "_as", "@mozilla.org/atom-service;1", "nsIAtomService");
 		
-		for each (let e in ['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined', 'pausedAutoretrying', 'verified', 'progress']) {
+		for (let e of ['iconic', 'completed', 'inprogress', 'paused', 'canceled', 'pausedUndetermined', 'pausedAutoretrying', 'verified', 'progress']) {
 			this['_' + e] = this._as.getAtom(e);
 		}
 		
@@ -84,7 +84,7 @@ var Tree = {
 		this.showSpeedLimitList(event);
 	},
 	assembleMenus: function() {
-		for each (let popup in $('removeCompletedPopup', 'removePopup')) {
+		for (let popup of $('removeCompletedPopup', 'removePopup')) {
 			while (popup.lastChild) {
 				if (popup.lastChild.localName == 'menuseparator') {
 					break;
@@ -339,7 +339,7 @@ var Tree = {
 				},
 				this
 			);
-			for each (let qi in downloads) {
+			for (let qi of downloads) {
 				this._downloads.splice(row, 0, qi);
 			}
 			
@@ -487,7 +487,7 @@ var Tree = {
 		QueueStore.beginUpdate();
 		this.beginUpdate();
 		let last = 0;
-		for each (let d in downloads) {
+		for (let d of downloads) {
 			if (d.is(FINISHING)) {
 				// un-removable :p
 				return;
@@ -809,7 +809,7 @@ var Tree = {
 					items.setAttribute('disabled', disabled);
 					return;
 				}
-				for each (let o in items) { 
+				for (let o of items) { 
 					o.setAttribute('disabled', disabled);
 				}
 			}
@@ -1130,7 +1130,7 @@ var FileHandling = {
 		let msg = '';
 		if (list.length < 25) {
 			msg = _('deletetexts');
-			for each (let d in list) {
+			for (let d of list) {
 				msg += "\n" + (new FileFactory(d.destinationFile)).leafName;
 			}
 		}
@@ -1140,7 +1140,7 @@ var FileHandling = {
 		if (list.length && Prompts.confirm(window, _('deletetitle'), msg, _('delete'), Prompts.CANCEL, null, 1)) {
 			return;
 		}
-		for each (let d in list) {
+		for (let d of list) {
 			try {
 				let file = new FileFactory(d.destinationFile);
 				if (file.exists()) {

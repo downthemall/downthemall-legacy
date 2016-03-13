@@ -79,7 +79,7 @@ var Dialog = {
 			else {
 				// more than just one download
 				$('infoDest').value = document.title;
-				for each (let e in $('infoURL', 'infoSize', 'sourcePage', 'mirrorsText')) {
+				for (let e of $('infoURL', 'infoSize', 'sourcePage', 'mirrorsText')) {
 					e.value = "---";
 					e.disabled = true;
 				}
@@ -101,7 +101,7 @@ var Dialog = {
 				$('canvasGrid').hidden = true;
 			}				
 			if (this.downloads.every(function(d) { return d.isOf(COMPLETE | FINISHING); })) {
-				for each (let e in $('directory', 'renaming', 'mask', 'browsedir')) {
+				for (let e of $('directory', 'renaming', 'mask', 'browsedir')) {
 					e.setAttribute('readonly', 'true');
 					e.setAttribute('disabled', 'true');
 				}
@@ -162,7 +162,7 @@ var Dialog = {
 			}
 		}
 		
-		for each (let d in this.downloads) {
+		for (let d of this.downloads) {
 			if (!d.isOf(COMPLETE | FINISHING)) {
 				if (directory) {
 					d.pathName = directory;

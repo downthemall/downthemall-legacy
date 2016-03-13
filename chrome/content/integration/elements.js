@@ -209,7 +209,7 @@
 		
 		let ref = DTA.getRef(doc);
 		
-		for each (let link in lnks) {
+		for (let link of lnks) {
 			// if it's valid and it's new
 			if (!DTA.isLinkOpenable(link.href)) {
 				continue;
@@ -250,7 +250,7 @@
 		
 		let ref = DTA.getRef(doc);
 		
-		for each (let l in lnks) {
+		for (let l of lnks) {
 			let src = l.src;
 			try {
 				src = DTA.composeURL(doc, l.src);
@@ -290,11 +290,11 @@
 		for (let r = set.iterateNext(); r; r = set.iterateNext()) {
 			rset.push(r);
 		}
-		for each (let r in rset) {
+		for (let r of rset) {
 			try {
 				r = r.textContent.replace(/^\s+|\s+$/g, "");
 				if (r) {
-					for each (let link in TextLinks.getTextLinks(r, fakeLinks)) {
+					for (let link of TextLinks.getTextLinks(r, fakeLinks)) {
 						out.push(link);
 					}
 					yield true;
@@ -341,7 +341,7 @@
 
 		function filterElements(nodes, set) {
 			let rv = [];
-			for each (let n in nodes) {
+			for (let n of nodes) {
 				try {
 					if (n && set.containsNode(n, true)) {
 						rv.push(n);
@@ -369,7 +369,7 @@
 			let videos = Array.map(aWin.document.getElementsByTagName('video'), function(e) e);
 			videos = videos.concat(Array.map(aWin.document.getElementsByTagName('audio'), function(e) e));
 			let sources = [];
-			for each (let v in videos) {
+			for (let v of videos) {
 				sources = sources.concat(Array.map(v.getElementsByTagName('source'), function(e) e));
 				yield true;
 			}
@@ -439,7 +439,7 @@
 						function(e) e
 					);
 					let ref = DTA.getRef(aWin.document);
-					for each (let s in sniffed) {
+					for (let s of sniffed) {
 						let o = {
 							'url': new DTA.URL(s),
 							'referrer': ref,
@@ -458,7 +458,7 @@
 						XPathResult.ORDERED_NODE_ITERATOR_TYPE,
 						null
 					);
-					for each (let y in getTextLinks(set, links, true)) {
+					for (let y of getTextLinks(set, links, true)) {
 						yield true;
 					}
 				}
@@ -472,7 +472,7 @@
 			for (let y in addLinksToArray(links, aURLs, aWin.document)) {
 				yield true;
 			}
-			for each (let e in [images, videos, embeds, inputs]) {
+			for (let e of [images, videos, embeds, inputs]) {
 				for (let y in addImagesToArray(e, aImages, aWin.document)) {
 					yield true;
 				}				
@@ -522,7 +522,7 @@
 			}
 			return windows;
 		}
-		for each (let e in gBrowser.browsers) {
+		for (let e of gBrowser.browsers) {
 			windows.push(e.contentWindow.top);
 		}
 		return windows;
@@ -575,7 +575,7 @@
 			new cothreads.CoThreadInterleaved(
 				(function() {
 					debug.log("findLinks(): running");
-					for each (let win in windows) {
+					for (let win of windows) {
 						debug.log("findLinks(): running...");
 						for (let y in addLinks(win, urls, images, !all)) {
 							yield true;
@@ -943,7 +943,7 @@
 				}
 				break;
 			}
-			for each (let node in show) {
+			for (let node of show) {
 				node.hidden = false;
 			}
 		}
@@ -1305,7 +1305,7 @@
 			this._divs = [leftD, rightD, topD, bottomD];
 
 			let pos = this.calcPosition(this.elem);
-			for each (let div in this._divs) {
+			for (let div of this._divs) {
 				with (div.style) {
 					zIndex = 2147483647;
 					opacity = this.OPACITY;
@@ -1346,7 +1346,7 @@
 			}			
 		},
 		hide: function() {
-			for each (let div in this._divs) {
+			for (let div of this._divs) {
 				div.parentNode.removeChild(div);
 			}
 		}
@@ -1427,7 +1427,7 @@
 			try {
 				let cont = $('dtaCtxSubmenu');
 		
-				for each (let id in ['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveVideoT', 'SaveVideo', 'SaveAudioT', 'SaveAudio', 'SaveFormT', 'SaveForm', 'SepFront']) {
+				for (let id of ['SepBack', 'Pref', 'SepPref', 'TDTA', 'DTA', 'TDTASel', 'DTASel', 'SaveLinkT', 'SaveLink', 'SaveImgT', 'SaveImg', 'SaveVideoT', 'SaveVideo', 'SaveAudioT', 'SaveAudio', 'SaveFormT', 'SaveForm', 'SepFront']) {
 					compact[id] = $('dtaCtx' + id);
 					let node = $('dtaCtx' + id).cloneNode(true);
 					node.setAttribute('id', node.id + "-direct");
@@ -1436,7 +1436,7 @@
 				}
 		
 				// prepare tools
-				for each (let e in ['DTA', 'TDTA', 'Manager']) {
+				for (let e of ['DTA', 'TDTA', 'Manager']) {
 					tools[e] = $('dtaTools' + e);
 				}
 				

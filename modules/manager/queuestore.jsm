@@ -160,7 +160,7 @@ var QueueStore = {
 			_timer = null;
 			this._saveDownloadQueue();
 		}
-		for each (let e in ['_addStmt', '_saveStmt', '_savePosStmt', '_delStmt']) {
+		for (let e of ['_addStmt', '_saveStmt', '_savePosStmt', '_delStmt']) {
 			try {
 				this[e].finalize();
 				delete this[e];
