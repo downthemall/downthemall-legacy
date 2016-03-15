@@ -1028,9 +1028,6 @@ var Dialog = {
 		else {
 			log(LOG_INFO, "Let's resume " + download + " at " + download.partialSize);
 		}
-		if (!this._running.length) {
-			this._speeds.clear(); // started to run; remove old global speed stats
-		}
 		this._running.push(download);
 		download.prealloc();
 		download.resumeDownload();
@@ -1078,6 +1075,7 @@ var Dialog = {
 			if (this.startNext() || Tree.some(this._signal_some)) {
 				return;
 			}
+			this._speeds.clear();
 			log(LOG_DEBUG, "signal(): Queue finished");
 			Utils.playSound("done");
 
@@ -2137,6 +2135,11 @@ QueueItem.prototype = {
 			return;
 		}
 		log(LOG_DEBUG, "finishDownload, connections: " + this.sessionConnections);
+
+		// Last speed update
+		this.refreshPartialSize();
+		Dialog._sum += this.speeds.add(this.partialSize + this.otherBytes, Utils.getTimestamp());
+
 		this._finishDownloadTask = Task.spawn(function* finishDownloadTask() {
 			try {
 				yield this.closeChunks();

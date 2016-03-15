@@ -937,9 +937,6 @@ var Tree = {
 				this._downloads.splice(d.position, 1);
 				this._box.rowCountChanged(d.position, -1);
 				last = Math.max(d.filteredPosition, last);
-				if (d.state === COMPLETE) {
-					--Dialog.completed;
-				}
 				if (!d.isOf(RUNNING | PAUSED)) {
 					Dialog.wasRemoved(d);
 				}
@@ -948,6 +945,7 @@ var Tree = {
 					d.deleting = true;
 					d.cancel();
 				}
+				d.setState(CANCELED);
 				d.cleanup();
 				removedDownloads.push(d);
 			}
