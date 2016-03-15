@@ -118,34 +118,38 @@ LRUMap.prototype = Object.freeze({
 				loadInfo);
 		},
 		newChannelFromURI: function(uri, loadInfo) {
-			if (Services.io.newChannelFromURIWithLoadInfo) {
+			if (Services.io.newChannelFromURIWithLoadInfo && loadInfo) {
 				return Services.io.newChannelFromURIWithLoadInfo(uri, loadInfo || null);
+			}
+			if (Services.io.newChannelFromURI2) {
+				return Services.io.newChannelFromURI2(
+					uri,
+					null,
+					Services.sysprincipal,
+					Services.sysprincipal,
+					Ci.nsILoadInfo.SEC_NORMAL,
+					Ci.nsIContentPolicy.TYPE_OTHER
+				);
 			}
 			return Services.io.newChannelFromURI(uri);
 		},
-		newProxiedChannel: function(uri, proxyInfo) {
+		newProxiedChannel: function(uri, proxyInfo, loadInfo) {
 			try {
 				if (proxyInfo) {
 					let handler = Services.io.getProtocolHandler(uri.scheme);
 					if (handler instanceof Ci.nsIProxiedProtocolHandler) {
 						if ("newProxiedChannel2" in handler) {
-							return handler.newProxiedChannelw(uri, proxyInfo, 0, null, null);
+							// XXX need to construct a new loadInfo maybe
+							return handler.newProxiedChannel2(uri, proxyInfo, 0, null, loadInfo || null);
 						}
 						return handler.newProxiedChannel(uri, proxyInfo, 0, null);
 					}
-					else if ("newChannel2" in handler) {
-						return handler.newChannel2(uri, null);
-					}
-					else {
-						return handler.newChannel(uri);
-					}
 				}
-				return Services.oldio.newChannelFromURI(uri);
 			}
 			catch (ex) {
 				log(LOG_ERROR, "Failed to construct a channel the hard way!");
-				return Services.oldio.newChannelFromURI(uri);
 			}
+			return Services.oldio.newChannelFromURI(uri, loadInfo);
 		}
 	};
 

@@ -77,8 +77,8 @@ AboutTestsModule.prototype = Object.freeze({ // dta-tests
 	newChannel: function(aURI, aLoadInfo) { // dta-tests
 		try { // dta-tests
 			log(LOG_ERROR, "aURI " + aURI.spec); // dta-tests
-			return Services.oldio.newChannelFromURI(
-				Services.io.newURI("chrome://dta-tests/content/dta-tests.xul", null, null),
+			return Services.oldio.newChannelFromURI(  // dta-tests
+				Services.io.newURI("chrome://dta-tests/content/dta-tests.xul", null, null),  // dta-tests
 				aLoadInfo); // dta-tests
 		} // dta-tests
 		catch (ex) { // dta-tests
