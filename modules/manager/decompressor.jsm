@@ -82,7 +82,13 @@ function Decompressor(download) {
 			null
 		);
 
-		IOService.newChannelFromURI(IOService.newFileURI(this.from)).asyncOpen(converter, null);
+		if (IOService.newChannelFromURIWithLoadInfo) {
+			chan = IOService.newChannelFromURIWithLoadInfo(IOService.newFileURI(this.from), null);
+		}
+		else {
+			chan = IOService.newChannelFromURI(IOService.newFileURI(this.from));
+		}
+		chan.asyncOpen(converter, null);
 	}
 	catch (ex) {
 		try {

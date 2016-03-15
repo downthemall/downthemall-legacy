@@ -596,7 +596,7 @@ AboutModule.prototype = {
 	
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule]),
 	
-	newChannel : function(aURI) {
+	newChannel : function(aURI, aLoadInfo) {
 		try {
 				let io = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
 				let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
@@ -612,7 +612,13 @@ AboutModule.prototype = {
 				);
 				
 				let uri = io.newURI(ru, null, null);
-				let chan = io.newChannelFromURI(uri);
+				let chan;
+				if (io.newChannelFromURIWithLoadInfo) {
+					chan = io.newChannelFromURIWithLoadInfo(uri, aLoadInfo || null);
+				}
+				else {
+					chan = io.newChannelFromURI(uri);
+				}
 				chan.originalURI = aURI;
 				chan.owner = sec.getCodebasePrincipal(uri);
 				

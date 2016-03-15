@@ -94,7 +94,12 @@ function Connection(d, c, isInfoGetter) {
 	let referrer = d.referrer;
 	Debug.log("starting: " + url.spec);
 
-	this._chan = IOService.newChannelFromURI(url);
+	if (IOService.newChannelFromURIWithLoadInfo) {
+		this._chan = IOService.newChannelFromURIWithLoadInfo(url, null);
+	}
+	else {
+		this._chan = IOService.newChannelFromURI(url);
+	}
 	let r = Ci.nsIRequest;
 	let loadFlags = r.LOAD_NORMAL
 	if (!Preferences.getExt('useCache', false)) {
