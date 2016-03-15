@@ -576,6 +576,7 @@ var Tree = {
 	},
 	_cpprop_iconic: "iconic progress",
 	_cpprop_iconiccomplete: "iconic progress completed",
+	_cpprop_iconicfinishing: "iconic progress finishing",
 	_cpprop_iconicverified: "iconic progress completed verified",
 	_cpprop_iconicpaused: "iconic progress paused",
 	_cpprop_iconicpausedundetermined: "iconic progress paused pausedUndetermined",
@@ -613,6 +614,7 @@ var Tree = {
 				}
 				return this._cpprop_iconicpaused;
 			case FINISHING:
+				return this._cpprop_iconicfinishing;
 			case RUNNING:
 				return this._cpprop_iconicinprogress;
 			case CANCELED:

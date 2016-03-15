@@ -981,7 +981,7 @@ var Dialog = {
 				this.scheduler = Limits.getConnectionScheduler(Tree.all);
 				log(LOG_DEBUG, "rebuild scheduler");
 			}
-			let finishingPenality = Math.floor(this.finishing / 3);
+			let finishingPenality = Math.ceil(this.finishing / 10);
 			while (this._running.length < Prefs.maxInProgress - finishingPenality) {
 				let d = this.scheduler.next(this._running);
 				if (!d) {

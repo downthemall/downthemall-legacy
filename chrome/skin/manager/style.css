@@ -335,6 +335,10 @@ treechildren::-moz-tree-progressmeter(completed) {
 	color: #008F00 !important;
 }
 
+treechildren::-moz-tree-progressmeter(finishing) {
+	color: #57cc12 !important;
+}
+
 treechildren::-moz-tree-progressmeter(paused) {
 	color: #FFCC00 !important;
 }
@@ -379,6 +383,7 @@ treechildren::-moz-tree-image(iconic,paused) {
 treechildren::-moz-tree-image(iconic,paused,pausedAutoretrying) {
 	-moz-image-region: rect(64px,48px,80px,32px);
 }
+treechildren::-moz-tree-image(iconic,finishing),
 treechildren::-moz-tree-image(iconic,inprogress) {
 	-moz-image-region: rect(0px,16px,16px,0px);
 }
@@ -410,6 +415,7 @@ treechildren::-moz-tree-cell-text(private) {
 	treechildren::-moz-tree-image(iconic,paused,pausedAutoretrying) {
 		-moz-image-region: rect(128px,96px,160px,64px);
 	}
+	treechildren::-moz-tree-image(iconic,finishing),
 	treechildren::-moz-tree-image(iconic,inprogress) {
 		-moz-image-region: rect(0px,32px,32px,0px);
 	}
