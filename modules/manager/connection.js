@@ -183,7 +183,7 @@ Connection.prototype = {
 				chan.setRequestHeader("Accept-Encoding", "", false);
 
 				if (this.isInfoGetter) {
-					if (!d.fromMetalink) {
+					if (!d.fromMetalink && !chan.getRequestHeader("Accept").includes("application/metalink+xml")) {
 						chan.setRequestHeader(
 							"Accept",
 							"application/metalink4+xml;q=0.9,application/metalink+xml;q=0.8",
@@ -286,6 +286,21 @@ Connection.prototype = {
 		try {
 			if (!(oldChannel instanceof Ci.nsIChannel) || !(newChannel instanceof Ci.nsIChannel)) {
 				throw new Exception("redirect: requests not channels");
+			}
+
+			if (newChannel instanceof Ci.nsIHttpChannel) {
+				let oldURI = oldChannel.URI;
+				let newURI = newChannel.URI;
+				let redirectURI = modifyURL(newURI.clone());
+				if (redirectURI.spec != newURI.spec && redirectURI.spec != oldURI.spec) {
+					log(LOG_ERROR, `redirecting ${newURI.spec} to ${redirectURI.spec}`);
+					try {
+						newChannel.redirectTo(redirectURI);
+					}
+					catch (ex) {
+						log(LOG_ERROR, `failed to redirect ${newURI.spec} to ${redirectURI.spec}`, ex);
+					}
+				}
 			}
 
 			this.prepareChannel(newChannel);
@@ -727,16 +742,27 @@ Connection.prototype = {
 			}
 			if (!this.handleError()) {
 				log(LOG_ERROR, "handleError: Cannot recover from problem!", code);
+				{
+					let vis = {
+							value: `Request Headers\n\n${aChannel.requestMethod} ${aChannel.URI.spec}\n`,
+							visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }
+							};
+					aChannel.visitRequestHeaders(vis);
+					vis.value += '\n\nResponse Headers\n\n';
+					vis.value += `${code} ${aChannel.responseStatusText}\n`;
+					aChannel.visitResponseHeaders(vis);
+					log(LOG_ERROR, vis.value);
+				}
 				if (code === 401) {
 					d.AuthPrompts.authPrompter.restrictLogin(aChannel.URI);
 				}
 
 				let file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
 				if (~[401, 402, 407, 500, 502, 503, 504].indexOf(code) ||
-					Preferences.getExt('recoverallhttperrors', false)) {
+					(Preferences.getExt('recoverallhttperrors', false) && code != 404)) {
 					log(LOG_DEBUG, "we got temp failure!", code);
 					d.pauseAndRetry();
-					d.status = code >= 500 ? _('temperror') : _('autherror');
+					d.status = code >= 500 ? _('temperror') : _("error", [formatNumber(code, 3)]);
 				}
 				else if (code === 450) {
 					d.fail(
@@ -780,12 +806,15 @@ Connection.prototype = {
 
 			if (!this.handleError()) {
 				if (log.enabled) {
-					let vis = {value: '', visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }};
+					let vis = {
+							value: `Request Headers\n\n${aChannel.requestMethod} ${aChannel.URI.spec}\n`,
+							visitHeader: function(a,b) { this.value += a + ': ' + b + "\n"; }
+							};
 					aChannel.visitRequestHeaders(vis);
-					log(LOG_DEBUG, "Request Headers\n\n" + vis.value);
-					vis.value = '';
+					vis.value += '\n\nResponse Headers\n\n';
+					vis.value += `${code} ${aChannel.responseStatusText}\n`;
 					aChannel.visitResponseHeaders(vis);
-					log(LOG_DEBUG, "Response Headers\n\n" + vis.value);
+					log(LOG_ERROR, vis.value);
 				}
 				d.cancel();
 				d.resumable = false;
