@@ -33,7 +33,8 @@ function Decompressor(download, callback) {
 			null
 		);
 
-		Services.io.newChannelFromURI(Services.io.newFileURI(this.from)).asyncOpen(converter, null);
+		let chan = Services.oldio.newChannelFromURI(Services.io.newFileURI(this.from));
+		chan.asyncOpen(converter, null);
 	}
 	catch (ex) {
 		try {

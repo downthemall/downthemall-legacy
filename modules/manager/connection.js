@@ -81,24 +81,7 @@ function Connection(d, c, isInfoGetter) {
 	let referrer = d.referrer;
 	log(LOG_INFO, "starting: " + url.spec);
 
-	try {
-		if (proxyInfo) {
-			let handler = Services.io.getProtocolHandler(url.scheme);
-			if (handler instanceof Ci.nsIProxiedProtocolHandler) {
-				this._chan = handler.newProxiedChannel(url, proxyInfo, 0, null);
-			}
-			else {
-				this._chan = handler.newChannel(url);
-			}
-		}
-		else {
-			this._chan = Services.io.newChannelFromURI(url);
-		}
-	}
-	catch (ex) {
-		log(LOG_ERROR, "Failed to construct a channel the hard way!");
-		this._chan = Services.io.newChannelFromURI(url);
-	}
+	this._chan = Services.oldio.newProxiedChannel(url, proxyInfo);
 	let r = Ci.nsIRequest;
 	let loadFlags = r.LOAD_NORMAL;
 	if (!Preferences.getExt('useCache', false)) {

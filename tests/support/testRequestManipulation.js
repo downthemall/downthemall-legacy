@@ -29,7 +29,7 @@ test("url", function() {
 
 test("http", function() {
 	var {registerHttp, unregisterHttp, modifyHttp, overrideUA, makeAnonymous} = require("support/requestmanipulation");
-	var chan = Services.io.newChannel("http://example.org/", null, null);
+	var chan = Services.oldio.newChannel("http://example.org/", null, null);
 	chan instanceof Ci.nsIHttpChannel && chan instanceof Ci.nsIPrivateBrowsingChannel;
 
 	registerHttp("example", /example.org/, overrideUA, makeAnonymous);

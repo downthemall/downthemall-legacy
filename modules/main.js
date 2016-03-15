@@ -32,7 +32,7 @@ AboutModule.prototype = Object.freeze({
 
 	QueryInterface: QI([Ci.nsIAboutModule]),
 
-	newChannel: function(aURI) {
+	newChannel: function(aURI, aLoadInfo) {
 		try {
 			if (!Version.ready) {
 				throw new Exception("Cannot build about:downthemall, version module not ready");
@@ -44,7 +44,7 @@ AboutModule.prototype = Object.freeze({
 			);
 
 			let uri = Services.io.newURI(ru, null, null);
-			let chan = Services.io.newChannelFromURI(uri);
+			let chan = Services.oldio.newChannelFromURI(uri, aLoadInfo);
 			chan.originalURI = aURI;
 
 			let sec = Cc['@mozilla.org/scriptsecuritymanager;1'].getService(Ci.nsIScriptSecurityManager);
@@ -74,10 +74,12 @@ AboutTestsModule.prototype = Object.freeze({ // dta-tests
 
 	QueryInterface: QI([Ci.nsIAboutModule]), // dta-tests
 
-	newChannel: function(aURI) { // dta-tests
+	newChannel: function(aURI, aLoadInfo) { // dta-tests
 		try { // dta-tests
 			log(LOG_ERROR, "aURI " + aURI.spec); // dta-tests
-			return Services.io.newChannel("chrome://dta-tests/content/dta-tests.xul", null, null); // dta-tests
+			return Services.oldio.newChannelFromURI(
+				Services.io.newURI("chrome://dta-tests/content/dta-tests.xul", null, null),
+				aLoadInfo); // dta-tests
 		} // dta-tests
 		catch (ex) { // dta-tests
 			log(LOG_ERROR, "failed to create about channel", ex); // dta-tests
