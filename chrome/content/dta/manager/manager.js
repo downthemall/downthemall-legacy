@@ -2082,7 +2082,7 @@ QueueItem.prototype = {
 		}).bind(this));
 	},
 	customFinishEvent: function() {
-		new CustomEvent(this, Prefs.finishEvent);
+		new CustomAction(this, Prefs.finishEvent);
 	},
 	setAttributes: function*() {
 		if (Prefs.setTime) {
@@ -2808,7 +2808,7 @@ var ConflictManager = {
 	}
 };
 
-function CustomEvent(download, command) {
+function CustomAction(download, command) {
 	try {
 		// may I introduce you to a real bastard way of commandline parsing?! :p
 		var uuids = {};
