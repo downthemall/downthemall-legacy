@@ -1911,14 +1911,6 @@ QueueItem.prototype = {
 			let destination = new Instances.LocalFile(this.destinationPath);
 			yield Utils.makeDir(destination, Prefs.dirPermissions);
 			log(LOG_INFO, this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
-			let df = destination.clone();
-			df.append(this.destinationName);
-			try {
-				yield OS.File.remove(df.path);
-			}
-			catch (ex) {
-				// no op
-			}
 			// move file
 			if (this.compression) {
 				this.status = TextCache_DECOMPRESSING;
@@ -1935,12 +1927,16 @@ QueueItem.prototype = {
 				return true;
 			}
 			yield new Promise(function(resolve, reject) {
+				let remakeDir = false;
 				let move = function(self, x) {
+					if (remakeDir) {
+						Utils.makeDir(destination, Prefs.dirPermissions, true);
+					}
 					let df = destination.clone();
 					df.append(self.destinationName);
 					moveFile(self.tmpFile.path, df.path).then(function() {
 						resolve(true);
-					}, function(ex) {
+					}, function*(ex) {
 						if ((ex.unixErrno && ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) || (ex.winLastError && ex.winLastError == 3)) {
 							try {
 								self.shortenName();
@@ -1951,6 +1947,9 @@ QueueItem.prototype = {
 							catch (iex) {
 								log(LOG_ERROR, "Failed to shorten name", ex);
 							}
+						}
+						if (ex.becauseNoSuchFile || (ex.unixErrno && ex.unixErrno == OS.Constants.libc.ENOENT) /* || (ex.winLastError && ex.winLastError == ?) */) {
+							remakeDir = true;
 						}
 						log(LOG_ERROR, ex);
 						x = x || 1;
