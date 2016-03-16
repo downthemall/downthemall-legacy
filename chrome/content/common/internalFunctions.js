@@ -4,7 +4,7 @@
 
 /* dTa-only code! - DO NOT include in overlays or such! */
 "use strict";
-/* jshint browser:true */
+/* jshint strict:true, globalstrict:true, browser:true */
 /* global _ */
 var Cc = Components.classes;
 var Ci = Components.interfaces;
@@ -28,8 +28,12 @@ var {toURI, toURL} = require("support/stringfuncs");
 var {unloadWindow} = require("support/overlays");
 var DTA = require("api");
 
-function showPreferences(pane, command) Mediator.showPreferences(window, pane, command);
-function openUrl(url, ref) Mediator.openUrl(window, url, ref);
+function showPreferences(pane, command) {
+	return Mediator.showPreferences(window, pane, command);
+}
+function openUrl(url, ref) {
+	return Mediator.openUrl(window, url, ref);
+}
 
 
 var {
@@ -39,7 +43,7 @@ var {
 } = require("support/icons");
 var getLargeIcon = (function() {
 	const hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
-	return function getLargeIcon(f,ml) _getLargeIcon(f,ml, hidpi);
+	return function getLargeIcon(f,ml) { return _getLargeIcon(f, ml, hidpi); };
 })();
 var getFavIcon = (function() {
 	const RE_HTML = /html?$|aspx?$|php\d?$|py$|\/[^.]*$/i;
@@ -82,7 +86,7 @@ function $$(query, el) {
 	if (rv.length === 1) {
 		return rv[0];
 	}
-	return Array.map(rv, function(e) e);
+	return Array.map(rv, e => e);
 }
 
 function $e(name, attrs, ns) {

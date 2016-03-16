@@ -315,7 +315,7 @@ const QueueStore = {
 			handleCompletion: function(aReason) {
 				stmt.finalize();
 				let count = rows.length;
-				rows.forEach(function(e) e.count = count);
+				rows.forEach(e => e.count = count);
 				log(LOG_DEBUG, "All your callback are belong to us");
 				callback.call(ctx, rows);
 			}
@@ -357,7 +357,7 @@ VacuumParticipant.prototype = Object.freeze({
 	QueryInterface: QI([Ci.mozIStorageVacuumParticipant]),
 
 	expectedDatabasePageSize: Ci.mozIStorageConnection.DEFAULT_PAGE_SIZE,
-	get databaseConnection() _connection,
+	get databaseConnection() { return _connection; },
 	onBeginVacuum: function() {
 		log(LOG_DEBUG, "QueueStore: onBeginVacuum");
 		return !_connection.transactionInProgress;

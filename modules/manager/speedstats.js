@@ -50,17 +50,21 @@ SpeedStats.prototype = Object.freeze({
 	 * Generator over all recorded speeds
 	 */
 	get all() {
-		for (let x of this._speeds) {
-			yield x;
-		}
+		return (function*() {
+			for (let x of this._speeds) {
+				yield x;
+			}
+		}).call(this);
 	},
 	/**
 	 * Generator over all avg speeds
 	 */
 	get allAvg() {
-		for (let x of this._aspeeds) {
-			yield x;
-		}
+		return (function*() {
+			for (let x of this._aspeeds) {
+				yield x;
+			}
+		}).call(this);
 	},
 	/**
 	 * Time of last update

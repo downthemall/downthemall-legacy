@@ -140,7 +140,7 @@ ByteBucket.prototype = {
 };
 
 function ByteBucketTee() {
-	this._buckets = Array.filter(arguments, function(e) e instanceof ByteBucket);
+	this._buckets = Array.filter(arguments, e => e instanceof ByteBucket);
 	if (!this._buckets.length) {
 		throw new Error("No buckets supplied");
 	}
@@ -148,13 +148,13 @@ function ByteBucketTee() {
 ByteBucketTee.prototype = {
 	get byteRate() {
 		return this._buckets
-			.map(function(e) e.byteRange)
-			.reduce(function(p, c) c > 0 ? Math.min(p,c) : p);
+			.map(e => e.byteRange)
+			.reduce((p, c) =>  c > 0 ? Math.min(p,c) : p);
 	},
 	get burstFactor() {
 		return this._buckets
-			.map(function(e) e.burstFactor)
-			.reduce(function(p, c) Math.min(p,c));
+			.map(e =>e.burstFactor)
+			.reduce((p, c) => Math.min(p,c));
 	},
 	requestBytes: function(bytes) {
 		for (let i = 0, e = this._buckets.length; i < e; ++i) {

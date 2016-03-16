@@ -5,8 +5,12 @@
 
 var all = ['dta-button', 'dta-turbo-button', 'dta-turboselect-button', 'dta-manager-button'];
 
-function $(id) document.getElementById(id);
-function $o(id) opener.document.getElementById(id);
+function $(id) {
+	return document.getElementById(id);
+}
+function $o(id) {
+	return opener.document.getElementById(id);
+}
 
 function discard() {
 	if (opener) opener.removeEventListener("unload", discard, false);
@@ -20,7 +24,7 @@ addEventListener("unload", discard, false);
 addEventListener("load", function load() {
 	removeEventListener("load", load, false);
 
-	all.forEach(function(b) $(b).checked = !!$o(b));
+	all.forEach(b => $(b).checked = !!$o(b));
 	window.sizeToContent();
 
 }, false);
@@ -28,7 +32,7 @@ addEventListener("load", function load() {
 addEventListener("dialogaccept", function accept() {
 	removeEventListener("dialogaccept", accept, true);
 
-	let newActive = all.filter(function(b) $(b).checked);
+	let newActive = all.filter(b => $(b).checked);
 
 	if (opener.CustomizableUI) {
 		for (let b of all) {
@@ -91,7 +95,7 @@ addEventListener("dialogaccept", function accept() {
 			let tbb = btn.parentNode;
 			tbb.currentSet = tbb.currentSet
 				.split(',')
-				.filter(function(id) id != b)
+				.filter(id => id != b)
 				.join(",");
 			tbb.setAttribute("currentset", tbb.currentSet);
 			opener.document.persist(tbb.id, "currentset");

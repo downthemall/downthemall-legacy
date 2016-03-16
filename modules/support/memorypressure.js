@@ -39,15 +39,15 @@ unload(Observer.unload.bind(Observer));
 
 Object.defineProperties(exports, {
 	"add": {
-		value: function add(obs) Observer.add(obs),
+		value: function add(obs) { Observer.add(obs); },
 		enumerable: true
 	},
 	"remove": {
-		value: function remove(obs) Observer.remove(obs),
+		value: function remove(obs) { Observer.remove(obs); },
 		enumerable: true
 	},
 	"notify": {
-		value: function notify() Observer.observe(null, "memory-pressure", "low-memory"),
+		value: function notify() { Observer.observe(null, "memory-pressure", "low-memory"); },
 		enumerable: true
 	}
 });

@@ -26,5 +26,5 @@ test("powers", function() {
 		'COMPLETE',
 		'CANCELED',
 		'QUEUED',
-	].forEach(function(e,i) equal(_m[e] >> i, 2));
+	].forEach((e,i) => equal(_m[e] >> i, 2));
 });

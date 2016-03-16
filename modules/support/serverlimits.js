@@ -49,23 +49,23 @@ function Limit(host, isNew) {
 	this.segments = o.seg;
 }
 Limit.prototype = Object.freeze({
-	get host() this._host,
-	get isNew() this._isNew,
-	get connections() this._connections,
+	get host() { return this._host; },
+	get isNew() { return this._isNew; },
+	get connections() { return this._connections; },
 	set connections(value) {
 		if (!isFinite(value)) {
 			throw new Exception("Invalid Limit");
 		}
 		this._connections = value;
 	},
-	get speed() this._speed,
+	get speed() { return this._speed; },
 	set speed(value) {
 		if (!isFinite(value)) {
 			throw new Exception("Invalid Limit");
 		}
 		this._speed = value;
 	},
-	get segments() this._segments,
+	get segments() { return this._segments; },
 	set segments(value) {
 		if (!isFinite(value)) {
 			throw new Exception("Invalid Limit");
@@ -82,15 +82,17 @@ Limit.prototype = Object.freeze({
 	remove: function() {
 		Prefs.reset(LIMITS_PREF + this._host);
 	},
-	toString: (function() this._host +
-		" conn: " + this._connections +
-		" speed: " + this._speed +
-		" segments:" + this._segments)
+	toString: function() {
+		return this._host +
+			" conn: " + this._connections +
+			" speed: " + this._speed +
+			" segments:" + this._segments
+	}
 });
 
 function loadLimits() {
 	limits = Object.create(null);
-	let hosts = Prefs.getChildren(LIMITS_PREF).map(function(e) e.substr(LIMITS_PREF.length));
+	let hosts = Prefs.getChildren(LIMITS_PREF).map(e => e.substr(LIMITS_PREF.length));
 	hosts.sort();
 
 	for (let host of hosts) {
@@ -140,7 +142,7 @@ let globalConnections = -1;
 
 function BaseScheduler() {}
 BaseScheduler.prototype = Object.freeze({
-	_queuedFilter: function(e) e.state === QUEUED,
+	_queuedFilter: function(e) { return e.state === QUEUED; },
 	next: function() {
 		for (let d; this._schedule.length;) {
 			d = this._schedule.shift();
@@ -338,11 +340,11 @@ FairScheduler.SchedItem = function(host) {
 	this.resetCounter();
 };
 FairScheduler.SchedItem.prototype = Object.freeze({
-	get available() (this.limit <= 0 || this.n < this.limit),
+	get available() { return this.limit <= 0 || this.n < this.limit; },
 	inc: function() { this.n++; },
-	resetCounter: function() this.n = 0,
-	toString: function() this.host,
-	get length() this.downloads.length,
+	resetCounter: function() { return this.n = 0; },
+	toString: function() { return this.host; },
+	get length() { return this.downloads.length; },
 	shift: function() {
 		++this.n;
 		return this.downloads.shift();
@@ -351,7 +353,7 @@ FairScheduler.SchedItem.prototype = Object.freeze({
 		++this.n;
 		return this.downloads.pop();
 	},
-	push: function(d) this.downloads.push(d),
+	push: function(d) { return this.downloads.push(d); },
 	destroy: function() {
 		this.downloads.length = 0;
 		delete this.downloads;
@@ -520,7 +522,7 @@ const Observer = {
 	}
 };
 Prefs.addObserver(PREFS, Observer);
-unload(function() Observer.unload());
+unload(() => Observer.unload());
 Observer.observe();
 
 Object.defineProperties(exports, {

@@ -4,7 +4,7 @@
 "use strict";
 /* global _, $, Tooltip, DTA, Utils, Preferences, setTimeoutOnlyFun, toURL */
 /* global COMPLETE, FINISHING */
-/* jshint browser:true */
+/* jshint strict:true, globalstrict:true, browser:true */
 
 var {defer} = require("support/defer");
 var {TimerManager} = require("support/timers");
@@ -82,7 +82,7 @@ var Dialog = {
 
 				let dir = String(this.downloads[0].pathName);
 				$('directory').value =
-					this.downloads.every(function(e) e.pathName === dir) ?
+					this.downloads.every(e => e.pathName === dir) ?
 					dir :
 					"";
 				$('canvasTab').parentElement.removeChild($('canvasTab'));
@@ -104,7 +104,7 @@ var Dialog = {
 		}
 		setTimeoutOnlyFun(function() {
 			window.sizeToContent();
-			addEventListener("resize", function() Dialog.resize(), true);
+			addEventListener("resize", () => Dialog.resize(), true);
 		}, 0);
 	},
 	clearReferrer: function() {
@@ -243,5 +243,5 @@ var Dialog = {
 		return true;
 	}
 };
-addEventListener("load", function() Dialog.load(), true);
-addEventListener('unload', function() Dialog.unload(), true);
+addEventListener("load", () => Dialog.load(), true);
+addEventListener('unload', () => Dialog.unload(), true);

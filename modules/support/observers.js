@@ -101,23 +101,27 @@ unload(observer.unload.bind(observer));
 
 Object.defineProperties(exports, {
 	"add": {
-		value: function add(obs, topic) observer.add(obs, topic),
+		value: function add(obs, topic) { observer.add(obs, topic); },
 		enumerable: true
 	},
 	"remove": {
-		value: function remove(obs, topic) observer.remove(obs, topic),
+		value: function remove(obs, topic) { observer.remove(obs, topic); },
 		enumerable: true
 	},
 	"topics": {
-		get: function() observer.topics,
+		get: function() { return observer.topics; },
 		enumerable: true
 	},
 	"notify": {
-		value: function notify(subject, topic, data) Services.obs.notifyObservers(subject, topic, data),
+		value: function notify(subject, topic, data) {
+			Services.obs.notifyObservers(subject, topic, data);
+		},
 		enumerable: true
 	},
 	"notifyLocal": {
-		value: function notifyLocal(subject, topic, data) observer.observe(subject, topic, data),
+		value: function notifyLocal(subject, topic, data) {
+			observer.observe(subject, topic, data);
+		},
 		enumerable: true
 	}
 });

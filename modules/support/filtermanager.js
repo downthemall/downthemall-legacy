@@ -19,12 +19,12 @@ const Preferences = require("preferences");
 const RegExpMerger = require("./regexpmerger");
 const {mapInSitu} = require("utils");
 const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
-const {Task} = requireJSM("resource://gre/modules/Task.jsm")
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 const {DeferredSave} = requireJSM("resource://gre/modules/DeferredSave.jsm");
 
 const nsITimer = Ci.nsITimer;
 
-function flatten(arr) arr.reduce(function(a,b) {
+function flatten(arr) { return arr.reduce(function(a,b) {
 	if (a instanceof Array) {
 		a = flatten(a);
 	}
@@ -32,10 +32,12 @@ function flatten(arr) arr.reduce(function(a,b) {
 		b = flatten(b);
 	}
 	return Array.concat(a, b);
-}, []);
+}, []); }
 
-function merge_map(e) "(?:" + e + ")";
-function merge_unique(e) !((e in this) || (this[e] = null));
+function merge_map(e) { return `(?:${e})`; };
+function merge_unique(e) {
+	return !((e in this) || (this[e] = null));
+};
 
 function merge_naive(strs) {
 	if (strs.length < 2) {
@@ -211,7 +213,7 @@ Filter.prototype = {
 			return false;
 		}
 		str = str.toString();
-		return this._regs.some(function(r) r.test(str));
+		return this._regs.some(r => r.test(str));
 	},
 
 	/**
@@ -287,11 +289,6 @@ function FilterEnumerator(filters) {
 }
 FilterEnumerator.prototype = {
 	QueryInterface: QI([Ci.nsISimpleEnumerator]),
-	__iterator__: function() {
-		for (let f of this._filters) {
-			yield f;
-		}
-	},
 	hasMoreElements: function() {
 		return this._idx < this._filters.length;
 	},
@@ -300,6 +297,11 @@ FilterEnumerator.prototype = {
 			throw Cr.NS_ERROR_FAILURE;
 		}
 		return this._filters[this._idx++];
+	}
+};
+FilterEnumerator.prototype[Symbol.iterator] = function*() {
+	for (let f of this._filters) {
+		yield f;
 	}
 };
 
@@ -449,8 +451,8 @@ FilterManagerImpl.prototype = {
 			return i < ii ? -1 : (i > ii ? 1 : 0);
 		});
 		this._active = {};
-		this._active[LINK_FILTER]  = this._all.filter(function(f) (f.type & LINK_FILTER) && f.active);
-		this._active[IMAGE_FILTER] = this._all.filter(function(f) (f.type & IMAGE_FILTER) && f.active);
+		this._active[LINK_FILTER]  = this._all.filter(f => (f.type & LINK_FILTER) && f.active);
+		this._active[IMAGE_FILTER] = this._all.filter(f => (f.type & IMAGE_FILTER) && f.active);
 		this._activeRegs = {};
 		this._activeRegs[LINK_FILTER]  = this.getMatcherFor(this._active[LINK_FILTER]);
 		this._activeRegs[IMAGE_FILTER] = this.getMatcherFor(this._active[IMAGE_FILTER]);
@@ -465,6 +467,7 @@ FilterManagerImpl.prototype = {
 		let rv = {};
 		let kill = new Set();
 		let checks = [".label", ".test", ".type", ".active"];
+		let checkfn = (name, c) => Preferences.hasUserValue(name + c);
 		for (let pref of Preferences.getChildren(PREF_FILTERS_BASE)) {
 			// we test for label (as we get all the other props as well)
 			let name = pref.replace(/\.[^.]+?$/, "");
@@ -472,7 +475,7 @@ FilterManagerImpl.prototype = {
 				continue;
 			}
 			kill.add(name);
-			if (pending && (name in this.defFilters) && !checks.some(function(c) Preferences.hasUserValue(name + c))) {
+			if (pending && (name in this.defFilters) && !checks.some(checkfn.bind(null, name))) {
 				log(LOG_DEBUG, "skipping (not modified) " + name + " pref: " + pref);
 				continue;
 			}
@@ -540,7 +543,7 @@ FilterManagerImpl.prototype = {
 	},
 	getMatcherFor: function(filters) {
 		let regs = consolidateRegs(flatten(
-			filters.map(function(f) f._regs)
+			filters.map(f => f._regs)
 		));
 		if (regs.length === 1) {
 			regs = regs[0];
@@ -557,10 +560,10 @@ FilterManagerImpl.prototype = {
 			if (!test) {
 				return false;
 			}
-			return regs.some(function(r) r.test(test));
+			return regs.some(r => r.test(test));
 		};
 	},
-	matchActive: function(test, type) this._activeRegs[type](test),
+	matchActive: function(test, type) { return this._activeRegs[type](test); },
 
 	create: function(label, expression, active, type) {
 
@@ -588,7 +591,7 @@ FilterManagerImpl.prototype = {
 		if (id in this._filters) {
 			delete this._filters[id];
 			this.save();
-			this._saver.flush()
+			this._saver.flush();
 			return;
 		}
 		throw new Exception('filter not defined!');

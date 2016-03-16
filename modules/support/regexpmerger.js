@@ -226,8 +226,8 @@ function largestPrefixGroup(patterns, low, high, level) {
 	high = high || patterns.length;
 
 	// split patterns in heading char and tails
-	let heads = patterns.map(function(p) p.charAt(0));
-	let tails = patterns.map(function(p) p.substring(1));
+	let heads = patterns.map(p => p.charAt(0));
+	let tails = patterns.map(p => p.substring(1));
 
 	let besti = -1; // best starting match
 	let beste = 0; // best ending match
@@ -269,7 +269,7 @@ function largestPrefixGroup(patterns, low, high, level) {
 
 	let prefix = heads[besti];
 
-	if (tails.some(function(p) !p.length)) {
+	if (tails.some(p => !p.length)) {
 		return [besti, beste, prefix];
 	}
 
@@ -302,7 +302,7 @@ function mergePatterns(patterns, low, high, prefix) {
 	const pl = prefix.length;
 
 	// splice the patterns to be merged, chop off their common prefix and join
-	let tails = patterns.splice(low, high - low).map(function(p) p.substring(pl));
+	let tails = patterns.splice(low, high - low).map(p => p.substring(pl));
 
 	// if there is an empty tail, then we can omit the whole group
 	let newpattern = "";
@@ -324,7 +324,9 @@ function mergePatterns(patterns, low, high, prefix) {
 	return patterns.sort();
 }
 
-function merge_finish_map(e) "(?:" + e + ")";
+function merge_finish_map(e) {
+	return `(?:${e})`;
+}
 
 function merge_finish(patterns, tainted) {
 	patterns = patterns.concat(tainted);

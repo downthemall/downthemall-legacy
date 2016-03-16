@@ -10,7 +10,7 @@ const Mediator = require("support/mediator");
 const Histories = require("support/historymanager");
 
 /* global FilterManager */
-lazy(this, "FilterManager", function() require("support/filtermanager").FilterManager);
+lazy(this, "FilterManager", () => require("support/filtermanager").FilterManager);
 
 function _decodeCharset(text, charset) {
 	let rv = text;
@@ -54,9 +54,15 @@ function URL(url, preference, _fast) {
 }
 URL.schemes = ['http', 'https', 'ftp'];
 URL.prototype = Object.freeze({
-	_getCharset: function() this._url.originCharset,
-	_getSpec: function() this._url.spec,
-	_getUsable: function() _decodeCharset(this.spec, this._urlCharset),
+	_getCharset: function() {
+		return this._url.originCharset;
+	},
+	_getSpec: function() {
+		return this._url.spec;
+	},
+	_getUsable: function() {
+		return _decodeCharset(this.spec, this._urlCharset);
+	},
 
 	get url() {
 		return this._url;
@@ -68,7 +74,9 @@ URL.prototype = Object.freeze({
 			preference: this.preference
 		};
 	},
-	toString: function() this.usable
+	toString: function() {
+		return this.usable;
+	}
 });
 exports.URL = Object.freeze(URL);
 
@@ -168,22 +176,12 @@ function HashCollection(fullHash) {
 HashCollection.load = function(obj) {
 	let rv = new HashCollection(new Hash(obj.full.sum, obj.full.type));
 	rv.parLength = obj.parLength ? obj.parLength : 0;
-	rv.partials = obj.partials.map(function(e) new Hash(e.sum, e.type));
+	rv.partials = obj.partials.map(e => new Hash(e.sum, e.type));
 	rv._serialize();
 	return rv;
 };
 
 HashCollection.prototype = Object.freeze({
-	/**
-	 * Iterator over all partial hashes
-	 * Gives {hash,start,end} dict
-	 */
-	__iterator__: function() {
-		for (let partial of this._partials) {
-			yield partial;
-		}
-	},
-
 	/**
 	 * HashCollection has parital hashes
 	 */
@@ -199,7 +197,9 @@ HashCollection.prototype = Object.freeze({
 	 * Serializes HashCollection
 	 * @return (object) Serialized HashCollection
 	 */
-	toJSON: function() this._serialized,
+	toJSON: function() {
+		return this._serialized;
+	},
 	_serialize: function() {
 		this._serialized = {
 			full: this.full,
@@ -343,7 +343,9 @@ exports.sendLinksToManager = function sendLinksToManager(window, start, links) {
 	});
 };
 
-function somePrivate(e) e.isPrivate;
+function somePrivate(e) {
+	return e.isPrivate;
+}
 
 exports.turboSendLinksToManager = function turboSendLinksToManager(window, urlsArray) {
 	let isPrivate = urlsArray.some(somePrivate);
@@ -530,5 +532,9 @@ const Series = {
 Preferences.addObserver("extensions.dta.seriesdigits", Series);
 Series.observe();
 
-exports.currentSeries = function currentSeries() Series.value;
-exports.incrementSeries = function incrementSeries() Series.increment();
+exports.currentSeries = function currentSeries() {
+	return Series.value;
+};
+exports.incrementSeries = function incrementSeries() {
+	return Series.increment();
+};

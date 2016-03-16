@@ -9,11 +9,11 @@ const {TimerManager} = require("./timers");
 
 //Add some helpers to Date
 //Note to reviewers: Our scope, our rules ;)
-Date.prototype.addMilliseconds =  function(ms) this.setMilliseconds(this.getMilliseconds() + ms);
-Date.prototype.addSeconds = function(s) this.addMilliseconds(s * 1000);
-Date.prototype.addMinutes = function(m) this.addMilliseconds(m * 60000);
-Date.prototype.addHours = function(h) this.addMilliseconds(h * 3600000);
-Date.prototype.addDays =  function(d) this.setDate(this.getDate() + d);
+Date.prototype.addMilliseconds =  function(ms) { return this.setMilliseconds(this.getMilliseconds() + ms); };
+Date.prototype.addSeconds = function(s) { return this.addMilliseconds(s * 1000); };
+Date.prototype.addMinutes = function(m) { return this.addMilliseconds(m * 60000); };
+Date.prototype.addHours = function(h) { return this.addMilliseconds(h * 3600000); };
+Date.prototype.addDays =  function(d) { return this.setDate(this.getDate() + d); };
 Date.__defineGetter__("today", function() {
 	let rv = new Date();
 	rv.setHours(0);
@@ -26,14 +26,14 @@ Date.__defineGetter__("today", function() {
 const Timers = new TimerManager();
 
 /* global DTA */
-lazy(this, "DTA", function() require("api"));
+lazy(this, "DTA", () => require("api"));
 /* global QueueStore */
-lazy(this, "QueueStore", require("manager/queuestore"));
+lazy(this, "QueueStore", () => require("manager/queuestore"));
 
 const Observer = {
 	init: function() {
 		Prefs.addObserver("extensions.dta.schedule", this);
-		unload(function() Observer.unload());
+		unload(() => Observer.unload());
 		this.immidiatelyOpened = this.openIfInRange();
 		log(LOG_DEBUG, "scheduler running");
 	},
@@ -58,7 +58,7 @@ const Observer = {
 	},
 	openIfQueued: function() {
 		QueueStore.loadItems(function(items) {
-			if (items.some(function(i) i.item.state === QUEUED)) {
+			if (items.some(i => i.item.state === QUEUED)) {
 				log(LOG_INFO, "auto-opening");
 				this.openManager();
 			}

@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 /* global _, DTA, $, $$, Utils, Preferences, getDefaultDownloadsDirectory, unloadWindow */
-/* jshint browser:true */
+/* jshint globalstrict:true, strict:true, browser:true */
 var prompts = require("prompts");
 var Version = require("version");
 var {isWindowPrivate} = require("support/pbm");
@@ -295,8 +295,8 @@ var Dialog = {
 			};
 
 			if (rv) {
-				return (function() {
-					for (let i in batch.getURLs()) {
+				return (function*() {
+					for (let i of batch.getURLs()) {
 						yield new QueueItem(i);
 					}
 				})();

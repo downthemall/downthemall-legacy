@@ -106,7 +106,7 @@ test("exports", function() {
 		var hash = new DTA.Hash("cccd7f891ff81b30b9152479d2efcda2", "md5");
 		download.hashCollection = new DTA.HashCollection(hash);
 		download.hashCollection.parLength = 262144;
-		download.partials = range(8).map(function() hash);
+		download.partials = range(8).map(() => hash);
 
 		var chan = createTestHttpChannel({
 			uri: uri,
@@ -123,7 +123,7 @@ test("exports", function() {
 
 		extractMetaInfo(download, chan);
 
-		arrayEqual(download.urlManager.toArray().map(function(u) u.url.spec),
+		arrayEqual(download.urlManager.toArray().map(u => u.url.spec),
 				[uri.spec], "duplicates rejected due to insecure hash");
 	});
 	asyncTest("metalink describedby real world", function() {
@@ -168,7 +168,7 @@ test("exports", function() {
 			strictEqual(download.hashCollection.full.sum,
 				"2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892", "higher hash value not overwritten");
 			strictEqual(download.hashCollection.full.type.toLowerCase(), "sha256", "higher hash type not overwritten");
-			arrayEqual(expMirrors, download.urlManager.toArray().map(function(u) u.url.spec), "correct mirrors merged");
+			arrayEqual(expMirrors, download.urlManager.toArray().map(u => u.url.spec), "correct mirrors merged");
 		}, visitor);
 	});
 	asyncTest("metalink describedby hash merging", function() {
@@ -202,8 +202,8 @@ test("exports", function() {
 			strictEqual(download.fileName, "sha512_hash", "correct metalink file merged");
 			strictEqual(download.hashCollection.full.type, hash.type, "full hash type merged correctly");
 			strictEqual(download.hashCollection.full.sum, hash.sum, "full hash value merged correctly");
-			arrayEqual(download.hashCollection.partials.map(function(p) p.sum), range(8).map(function(i) expHash.sum), "partial hash value merged correctly");
-			arrayEqual(download.hashCollection.partials.map(function(p) p.type), range(8).map(function(i) expHash.type), "partial hash type merged correctly");
+			arrayEqual(download.hashCollection.partials.map(p => p.sum), range(8).map(i => expHash.sum), "partial hash value merged correctly");
+			arrayEqual(download.hashCollection.partials.map(p => p.type), range(8).map(i => expHash.type), "partial hash type merged correctly");
 		}, visitor);
 	});
 	asyncTest("metalink describedby unsafe protocol switching without a safe hash", function() {

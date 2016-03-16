@@ -7,7 +7,7 @@ const nsITimer = Ci.nsITimer;
 
 const uuid = (function() {
 	var i = 0;
-	return function uuid() ++i;
+	return function uuid() { return ++i; };
 })();
 
 // Represents the (private) timer data and observer
@@ -26,8 +26,8 @@ function TimerData(owner, time, type, func, ctx) {
 }
 
 TimerData.prototype = Object.freeze({
-	cancel: function() this.timer.cancel(),
-	toString: function() this.uuid,
+	cancel: function() { return this.timer.cancel(); },
+	toString: function() { return this.uuid; },
 	observe: function(timer) {
 		this.execute();
 		if (this.timer.type === nsITimer.TYPE_ONE_SHOT) {
@@ -49,7 +49,7 @@ TimerData.prototype = Object.freeze({
  */
 function TimerManager() {
 	this._timers = {};
-	unload((function timerManager_destroy() this.killAllTimers()).bind(this));
+	unload(() => this.killAllTimers());
 }
 TimerManager.prototype = Object.freeze({
 	QueryInterface: QI([Ci.nsIObserver]),

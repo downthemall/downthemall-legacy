@@ -7,17 +7,17 @@
  * Lazy getters
  */
 /* global DTA, ContentHandling, Preferences, isWindowPrivate, gFlashGotDMDialog */
-lazy(this, 'DTA', function() require("api"));
-lazy(this, 'ContentHandling', function() require("support/contenthandling").ContentHandling);
-lazy(this, 'Preferences', function() require("preferences"));
-lazy(this, "isWindowPrivate", function() require("support/pbm").isWindowPrivate);
+lazy(this, 'DTA', () => require("api"));
+lazy(this, 'ContentHandling', () => require("support/contenthandling").ContentHandling);
+lazy(this, 'Preferences', () => require("preferences"));
+lazy(this, "isWindowPrivate", () => require("support/pbm").isWindowPrivate);
 
 /* **
  * Loader
  */
 function load(window, document) {
 	function $() {
-		if (arguments.length == 1) {
+		if (arguments.length === 1) {
 			return document.getElementById(arguments[0]);
 		}
 		let elements = [];
@@ -86,7 +86,7 @@ function load(window, document) {
 			window.setTimeout(() => stc(), 0);
 
 			log(LOG_DEBUG, "save-as reverted!");
-		}
+		};
 		let download = turbo => {
 			if (turbo) {
 				ddDirectory.save();
@@ -123,7 +123,7 @@ function load(window, document) {
 		// Need to get behind the default load event
 		const doOverlay = Preferences.getExt("downloadWin", true);
 
-		if (!doOverlay && typeof(gFlashGotDMDialog) == 'undefined') {
+		if (!doOverlay && typeof(gFlashGotDMDialog) === 'undefined') {
 			log(LOG_DEBUG, "not doing anything");
 			// we do not actually overlay!
 			return;
@@ -182,7 +182,7 @@ function load(window, document) {
 			function() {
 				let selMode = mode.selectedItem;
 				remember.checked = false;
-				if (normal == selMode || turbo == selMode) {
+				if (normal === selMode || turbo === selMode) {
 					remember.disabled = false;
 				}
 			},
@@ -198,14 +198,14 @@ function load(window, document) {
 
 		window.addEventListener('dialogaccept', function(evt) {
 			let selMode = mode.selectedItem;
-			if (selMode == normal || selMode == turbo) {
+			if (selMode === normal || selMode === turbo) {
 				if (remember.checked) {
-					Preferences.setExt("saveasmode", selMode == normal ? 1 : 2);
+					Preferences.setExt("saveasmode", selMode === normal ? 1 : 2);
 				}
 				else {
 					Preferences.setExt("saveasmode", 0);
 				}
-				download(selMode == turbo);
+				download(selMode === turbo);
 				evt.stopPropagation();
 				evt.preventDefault();
 				return;

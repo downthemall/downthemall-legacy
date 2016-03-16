@@ -83,8 +83,6 @@ const overlayCache = new Map();
  */
 exports.registerOverlay = function registerOverlay(src, location, callback) {
 	function inject(xul, window, document) {
-		// jshint loopfunc:true
-
 		function $(id) {
 			return document.getElementById(id);
 		}
@@ -101,8 +99,8 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 				}
 				let places = nn.getAttribute(attr)
 					.split(',')
-					.map(function(p) p.trim())
-					.filter(function(p) !!p);
+					.map(p => p.trim())
+					.filter(p => !!p);
 				for (let p of places) {
 					let pn = $$('#' + target.id + ' > #' + p);
 					if (!pn) {
@@ -118,8 +116,8 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 			let nn = document.importNode(node, true);
 
 			// try to insert according to insertafter/before
-			if (!insertX(nn, 'insertafter', function(pn) pn.parentNode.insertBefore(nn, pn.nextSibling)) &&
-				!insertX(nn, 'insertbefore', function(pn) pn.parentNode.insertBefore(nn, pn))) {
+			if (!insertX(nn, 'insertafter', function(pn) { pn.parentNode.insertBefore(nn, pn.nextSibling); }) &&
+				!insertX(nn, 'insertbefore', function(pn) { pn.parentNode.insertBefore(nn, pn); })) {
 				// just append
 				target.appendChild(nn);
 			}
@@ -175,17 +173,17 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 						continue;
 					}
 					let nn = addNode(target, n);
-					unloaders.push(function() nn.parentNode.removeChild(nn));
+					unloaders.push(() => nn.parentNode.removeChild(nn));
 				}
 			}
 
 			// install per-window unloader
 			if (unloaders.length) {
-				exports.unloadWindow(window, function() unloaders.forEach(function(u) u()));
+				exports.unloadWindow(window, () => unloaders.forEach(u => u()));
 			}
 
 			if (callback) {
-				defer(function() callback(window, document));
+				defer(() => callback(window, document));
 			}
 		}
 		catch (ex) {

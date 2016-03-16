@@ -29,11 +29,11 @@ function ContextLRUMap(num) {
 	this._private = new LRUMap(num);
 }
 ContextLRUMap.prototype = {
-	_m: function(isPrivate) isPrivate ? this._private : this._normal,
-	get: function(key, isPrivate) this._m(isPrivate).get(key),
-	has: function(key, isPrivate) this._m(isPrivate).has(key),
-	set: function(key, val, isPrivate) this._m(isPrivate).set(key, val),
-	"delete": function(key, isPrivate) this._m(isPrivate).delete(key),
+	_m: function(isPrivate) { return isPrivate ? this._private : this._normal; },
+	get: function(key, isPrivate) { return this._m(isPrivate).get(key); },
+	has: function(key, isPrivate) { return this._m(isPrivate).has(key); },
+	set: function(key, val, isPrivate) { return this._m(isPrivate).set(key, val); },
+	"delete": function(key, isPrivate) { return this._m(isPrivate).delete(key); },
 	clear: function() {
 		this._normal.clear();
 		this._private.clear();
@@ -281,7 +281,7 @@ ContentHandlingImpl.prototype = {
 		uri = uri.spec;
 		let nv = this._videos.get(uri, isPrivate) || [];
 		vid = modifyURL(vid.clone());
-		if (!nv.some(function(v) v.spec === vid.spec)) {
+		if (!nv.some(v => v.spec === vid.spec)) {
 			log(LOG_DEBUG, vid.spec);
 			nv.push(vid);
 			this._videos.set(uri, nv, isPrivate);
@@ -298,7 +298,7 @@ ContentHandlingImpl.prototype = {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
-		return (this._videos.get(uri, isPrivate) || []).map(function(a) a.clone());
+		return (this._videos.get(uri, isPrivate) || []).map(a => a.clone());
 	},
 
 	// nsIChannelEventSink

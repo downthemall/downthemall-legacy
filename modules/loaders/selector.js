@@ -3,6 +3,8 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
+/* globals addEventListener, removeEventListener, setTimeout, content */
+
 function Selector(bgimages, handler) {
 	this._callback = evt => {
 		return this.onClickOneClick(evt);
@@ -33,20 +35,20 @@ Selector.prototype = {
 			return null;
 		}
 		let url = e.ownerDocument.defaultView.getComputedStyle(e, "").getPropertyCSSValue('background-image');
-		if (url && url.primitiveType == content.CSSPrimitiveValue.CSS_URI) {
+		if (url && url.primitiveType === content.CSSPrimitiveValue.CSS_URI) {
 			return {elem: e, url: url.getStringValue()};
 		}
-		return getBgImage(e.parentNode);
+		return this.getBgImage(e.parentNode);
 	},
 	findElemUnderCursor: function (e, n, a) {
-		if (n == 'bgimg') {
+		if (n === 'bgimg') {
 			return this.getBgImage(e);
 		}
 		if (!e || !e.localName) {
 			return null;
 		}
-		if (e.localName.toLowerCase() == n && e[a]) {
-			if (n == "a") {
+		if (e.localName.toLowerCase() === n && e[a]) {
+			if (n === "a") {
 				return {elem: e, url: e[a], download: e.getAttribute("download")};
 			}
 			return {elem: e, url: e[a] };
@@ -87,7 +89,7 @@ Selector.prototype = {
 			if (!m) {
 				return false;
 			}
-			if (this._hilight && this._hilight.elem == m.elem) {
+			if (this._hilight && this._hilight.elem === m.elem) {
 				return true;
 			}
 			this.detachHilight();
@@ -95,16 +97,16 @@ Selector.prototype = {
 			return true;
 		}
 
-		if (evt.type == 'click') {
+		if (evt.type === 'click') {
 			if (evt.button === 0 && !!target &&
-				target.nodeType == 1 &&
-				(!target.namespaceURI || target.namespaceURI == 'http://www.w3.org/1999/xhtml')) {
+				target.nodeType === 1 &&
+				(!target.namespaceURI || target.namespaceURI === 'http://www.w3.org/1999/xhtml')) {
 				if (this._searchee.some(processRegular, this)) {
 					this.cancelEvent(evt);
 				}
 			}
 		}
-		else if (evt.type == 'mousemove') {
+		else if (evt.type === 'mousemove') {
 			if (!this._searchee.some(highlightElement, this)) {
 				this.detachHilight();
 			}
@@ -143,11 +145,11 @@ Flasher.prototype = {
 		let ot = parent.offsetTop;
 		// enlarge the box to include all (overflowing) child elements
 		// useful for example for inline <A><IMG></A>
-		if (parent.nodeName != 'IMG') {
+		if (parent.nodeName !== 'IMG') {
 			let boxen = parent.getElementsByTagName('*');
 			for (let i = 0; i < boxen.length; ++i) {
 				let box = boxen[i];
-				if (!!box.style.float || box.style.position == 'fixed' || box.style.position == 'absolute') {
+				if (!!box.style.float || box.style.position === 'fixed' || box.style.position === 'absolute') {
 					continue;
 				}
 				ow = Math.max(ow, box.offsetWidth);
@@ -158,11 +160,11 @@ Flasher.prototype = {
 		}
 		// calculate the real offset coordinates
 		parent = parent.offsetParent;
-		let pos = (this.elem.style.position && this.elem.style.position == 'fixed') ? 'fixed' : 'absolute';
+		let pos = (this.elem.style.position && this.elem.style.position === 'fixed') ? 'fixed' : 'absolute';
 		while (parent) {
 			ot += parent.offsetTop;
 			ol += parent.offsetLeft;
-			if (parent.style.position == 'fixed') {
+			if (parent.style.position === 'fixed') {
 				pos = 'fixed';
 			}
 			parent = parent.offsetParent;
@@ -211,13 +213,11 @@ Flasher.prototype = {
 			return false;
 		}
 		this._div.style.opacity = o.toString();
-		let tp = this;
-		setTimeout(function() tp.fade(), this.FINTERVAL);
+		setTimeout(() => this.fade(), this.FINTERVAL);
 		return true;
 	},
 	hide: function() {
-		let tp = this;
-		setTimeout(function() tp.fade(), this.FWAIT);
+		setTimeout(() => this.fade(), this.FWAIT);
 	}
 };
 
@@ -237,7 +237,7 @@ Highlighter.prototype = {
 	init: function() {
 		let doc = this.doc;
 		let elem = doc.documentElement;
-		function div() doc.createElement('div');
+		const div = () => doc.createElement('div');
 
 		let leftD = div();
 		elem.appendChild(leftD);

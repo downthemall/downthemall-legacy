@@ -9,12 +9,12 @@ const obs = require("./observers");
 /**
  * Determines if a window is private
  */
-let isWindowPrivate = function() false;
+let isWindowPrivate = function() { return false; };
 
 /**
  * Determines if a channel is private
  */
-let isChannelPrivate = function() false;
+let isChannelPrivate = function() { return false };
 
 try {
 	let {PrivateBrowsingUtils} = requireJSM("resource://gre/modules/PrivateBrowsingUtils.jsm");
@@ -61,7 +61,7 @@ function registerPrivatePurger(fn) {
 	purgeObserver.obsFns.push(fn);
 }
 function unregisterPrivatePurger(fn) {
-	filterInSitu(purgeObserver.obsFns, function(e) e !== fn);
+	filterInSitu(purgeObserver.obsFns, e => e !== fn);
 }
 
 Object.defineProperties(exports, {

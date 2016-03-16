@@ -40,7 +40,9 @@ AboutModule.prototype = Object.freeze({
 
 			let ru = ABOUT_URI.replace(
 				/%(.+?)%/g,
-				function (m, m1) (m1 in Version) ? Version[m1] : m
+				function (m, m1) {
+					return (m1 in Version) ? Version[m1] : m;
+				}
 			);
 
 			let uri = Services.io.newURI(ru, null, null);
@@ -61,8 +63,12 @@ AboutModule.prototype = Object.freeze({
 			throw ex;
 		}
 	},
-	getURIFlags: function(aURI) Ci.nsIAboutModule.URI_SAFE_FOR_UNTRUSTED_CONTENT,
-	getIndexedDBOriginPostfix: function(uri) null
+	getURIFlags: function(aURI) {
+		return Ci.nsIAboutModule.URI_SAFE_FOR_UNTRUSTED_CONTENT;
+	},
+	getIndexedDBOriginPostfix: function(uri) {
+		return null;
+	}
 });
 
 function AboutTestsModule() { // dta-tests
@@ -86,8 +92,12 @@ AboutTestsModule.prototype = Object.freeze({ // dta-tests
 			throw ex; // dta-tests
 		} // dta-tests
 	}, // dta-tests
-	getURIFlags: function(aURI) Ci.nsIAboutModule.ALLOW_SCRIPT, // dta-tests
-	getIndexedDBOriginPostfix: function(uri) null // dta-tests
+	getURIFlags: function(aURI) { // dta-tests
+		return Ci.nsIAboutModule.ALLOW_SCRIPT; // dta-tests
+	}, // dta-tests
+	getIndexedDBOriginPostfix: function(uri) { // dta-tests
+		return null; // dta-tests
+	} // dta-tests
 }); // dta-tests
 
 function MetalinkInterceptModule() {}
@@ -211,14 +221,14 @@ function migrate() {
 		},
 	];
 
-	(function migrate() require("version").getInfo(function(v) {
+	require("version").getInfo(function(v) {
 		try {
 			let lastVersion = Preferences.getExt('version', '0');
 			if (0 === v.compareVersion(v.BASE_VERSION, lastVersion)) {
 				return;
 			}
 			if (v.compareVersion(lastVersion, "1.0.1") < 0) {
-				fn1_0.forEach(function(fn) fn());
+				fn1_0.forEach(fn => fn());
 			}
 			Preferences.setExt('version', v.BASE_VERSION);
 
@@ -237,7 +247,7 @@ function migrate() {
 				// XXX
 			}
 		}
-	}))();
+	});
 }
 
 exports.clean = function clean() {
@@ -297,7 +307,9 @@ function unloadObserver() {
 	}
 }
 obs.add(unloadObserver, "profile-change-teardown", false);
-unload(function sanitizeUnload() unloadObserver());
+unload(function sanitizeUnload() {
+	unloadObserver();
+});
 
 function registerTools() {
 	require("support/contenthandling");
@@ -312,7 +324,7 @@ function registerTools() {
 
 function registerOverlays() {
 	function elementsStub(window, document) {
-		function $(id) document.getElementById(id);
+		function $(id) { return document.getElementById(id); }
 		function fire(event) {
 			log(LOG_DEBUG, "Fire!");
 			fire._runUnloaders();
@@ -338,8 +350,8 @@ function registerOverlays() {
 
 			function processToolbar(tb) {
 				let ci = tb.getAttribute(attr).split(",");
-				let insertIds = ids.filter(function(id) ~ci.indexOf(id));
-				Utils.filterInSitu(ids, function(id) !~insertIds.indexOf(id));
+				let insertIds = ids.filter(id => ~ci.indexOf(id));
+				Utils.filterInSitu(ids, id => !~insertIds.indexOf(id));
 				if (!insertIds.length) {
 					return;
 				}
@@ -441,7 +453,7 @@ function registerOverlays() {
 					if (!elem) {
 						return;
 					}
-					fire._unloaders.push(function() elem.removeEventListener(type, fire, false));
+					fire._unloaders.push(() => elem.removeEventListener(type, fire, false));
 					elem.addEventListener(type, fire, false);
 				};
 				fire.addFireListener($("dtaCtxCompact").parentNode, "popupshowing");
@@ -469,7 +481,9 @@ function registerOverlays() {
 				fire.addFireListener($("dta:turboselect"), "command");
 				fire.addFireListener($("dta:manager"), "command");
 				fire.addFireListener($("cmd_CustomizeToolbars"), "command");
-				unloadWindow(window, function() fire._runUnloaders());
+				unloadWindow(window, function() {
+					fire._runUnloaders();
+				});
 			}
 			catch (ex) {
 				log(LOG_ERROR, "stub installer failed!", ex);
@@ -481,7 +495,7 @@ function registerOverlays() {
 				function openAbout() {
 					fire(null);
 					Version.showAbout = false;
-					window.setTimeout(function() require("support/mediator").showAbout(window), 0);
+					window.setTimeout(() => require("support/mediator").showAbout(window), 0);
 				}
 				function registerObserver() {
 					obs.add({
@@ -514,6 +528,7 @@ function registerOverlays() {
 
 		maybeInsertButtons(["dta-button", "dta-turbo-button", "dta-turboselect-button", "dta-manager-button"]);
 	}
+
 	const {registerOverlay, watchWindows, unloadWindow} = require("support/overlays");
 	registerOverlay(
 		"chrome://dta/content/integration/elements.xul",
@@ -531,7 +546,7 @@ function registerOverlays() {
 			'href="chrome://dta/skin/integration/style.css" type="text/css"'
 			);
 		document.insertBefore(ss, document.documentElement);
-		unloadWindow(window, function() ss.parentNode.removeChild(ss));
+		unloadWindow(window, () => ss.parentNode.removeChild(ss));
 	});
 
 	registerOverlay(

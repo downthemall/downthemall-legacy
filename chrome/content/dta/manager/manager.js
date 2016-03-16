@@ -7,7 +7,7 @@
 /* global toURI, toURL, showPreferences, openUrl, getLargeIcon */
 /* global Tree, Prefs */
 /* global QUEUED, PAUSED, CANCELED, FINISHING, COMPLETE, RUNNING, SPEED_COUNT, REFRESH_FREQ, MIN_CHUNK_SIZE */
-/* jshint browser:true, latedef:false */
+/* jshint strict:true, globalstrict:true, browser:true, latedef:false */
 
 var {CoThreadListWalker} = require("support/cothreads");
 var Prompts = require("prompts");
@@ -37,11 +37,11 @@ var {Task} = requireJSM("resource://gre/modules/Task.jsm");
 var {OS} = requireJSM("resource://gre/modules/osfile.jsm");
 
 /* global Version, AlertService, Decompressor, Verificator, FileExts:true */
-XPCOMUtils.defineLazyGetter(window, "Version", function() require("version"));
-XPCOMUtils.defineLazyGetter(window, "AlertService", function() require("support/alertservice"));
-XPCOMUtils.defineLazyGetter(window, "Decompressor", function() require("manager/decompressor").Decompressor);
-XPCOMUtils.defineLazyGetter(window, "Verificator", function() require("manager/verificator"));
-XPCOMUtils.defineLazyGetter(window, "FileExts", function() new FileExtensionSheet(window));
+XPCOMUtils.defineLazyGetter(window, "Version", () => require("version"));
+XPCOMUtils.defineLazyGetter(window, "AlertService", () => require("support/alertservice"));
+XPCOMUtils.defineLazyGetter(window, "Decompressor", () => require("manager/decompressor").Decompressor);
+XPCOMUtils.defineLazyGetter(window, "Verificator", () => require("manager/verificator"));
+XPCOMUtils.defineLazyGetter(window, "FileExts", () => new FileExtensionSheet(window));
 
 /* global TextCache_PAUSED, TextCache_QUEUED, TextCache_COMPLETE, TextCache_CANCELED, TextCache_NAS */
 /* global TextCache_UNKNOWN, TextCache_OFFLINE, TextCache_TIMEOUT, TextCache_STARTING, TextCache_DECOMPRESSING */
@@ -70,7 +70,9 @@ var Timers = new TimerManager();
 var Dialog_loadDownloads_props =
 	['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression',
 		'fromMetalink', 'speedLimit'];
-function Dialog_loadDownloads_get(down, attr, def) (attr in down) ? down[attr] : (def ? def : '');
+function Dialog_loadDownloads_get(down, attr, def) {
+	return (attr in down) ? down[attr] : (def ? def : '');
+};
 
 var Dialog_serialize_props =
 	['fileName', 'fileNameFromUser', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName',
@@ -161,8 +163,8 @@ var Dialog = {
 		})();
 
 		(function initListeners() {
-			addEventListener("unload", function() Dialog.unload(), false);
-			addEventListener("close", function(evt) Dialog.onclose(evt), false);
+			addEventListener("unload", () => Dialog.unload(), false);
+			addEventListener("close", evt => Dialog.onclose(evt), false);
 
 			addEventListener("dragover", function(event) {
 				try {
@@ -215,7 +217,7 @@ var Dialog = {
 			removeEventListener("unload", unloadUnlink, false);
 			Tree.unlink();
 		}, false);
-		tree.addEventListener("change", function() {
+		tree.addEventListener("change", () => {
 			log(LOG_DEBUG, "tree change");
 			Dialog.resetScheduler();
 		}, true);
@@ -280,8 +282,8 @@ var Dialog = {
 		})();
 
 		$('listSpeeds').limit = Prefs.speedLimit;
-		$('listSpeedsSpinners').addEventListener('up', function() Dialog.changeSpeedLimitUp(), false);
-		$('listSpeedsSpinners').addEventListener('down', function() Dialog.changeSpeedLimitDown(), false);
+		$('listSpeedsSpinners').addEventListener('up', () => Dialog.changeSpeedLimitUp(), false);
+		$('listSpeedsSpinners').addEventListener('down', () => Dialog.changeSpeedLimitDown(), false);
 
 		(function nagging() {
 			if (Preferences.getExt('nagnever', false)) {
@@ -365,7 +367,9 @@ var Dialog = {
 				{
 					accessKey: "",
 					label: _("manualfix3"),
-					callback: function() showPreferences("panePrivacy")
+					callback: function() {
+						showPreferences("panePrivacy");
+					}
 				}
 			]);
 		})();
@@ -638,7 +642,7 @@ var Dialog = {
 		});
 		try {
 			log(LOG_INFO, "reinit initiated");
-			defer(function() this.shutdown(this._continueReinit), this);
+			defer(() => this.shutdown(this._continueReinit), this);
 		}
 		catch (ex) {
 			log(LOG_DEBUG, "reinit: Failed to reload any downloads from queuefile", ex);
@@ -925,7 +929,7 @@ var Dialog = {
 
 			if (!this.offline && !this._mustReload) {
 				if (Prefs.autoRetryInterval) {
-					filterInSitu(this._autoRetrying, function(d) !d.autoRetry());
+					filterInSitu(this._autoRetrying, d => !d.autoRetry());
 				}
 				this.startNext();
 			}
@@ -935,8 +939,12 @@ var Dialog = {
 		}
 	},
 	processAutoClears: (function() {
-		function _m(e) e && e.get();
-		function _f(e) !!e;
+		function _m(e) {
+			return e && e.get();
+		}
+		function _f(e) {
+			return !!e;
+		}
 		return function() {
 			if (Prefs.autoClearComplete && this._autoClears.length) {
 				Tree.remove(this._autoClears);
@@ -1049,7 +1057,9 @@ var Dialog = {
 		Dialog.scheduler.destroy();
 		Dialog.scheduler = null;
 	},
-	_signal_some: function(d) d.isOf(FINISHING | RUNNING | QUEUED),
+	_signal_some: function(d) {
+		return d.isOf(FINISHING | RUNNING | QUEUED);
+	},
 	signal: function(download) {
 		download.save();
 		const state = download.state;
@@ -1084,7 +1094,7 @@ var Dialog = {
 				dp = dp.destinationPath;
 			}
 			if (Prefs.alertingSystem === 1) {
-				AlertService.show(_("suc.title"), _('suc'), function() Utils.launch(dp));
+				AlertService.show(_("suc.title"), _('suc'), () => Utils.launch(dp));
 			}
 			else if (dp && Prefs.alertingSystem === 0) {
 				if (!Prompts.confirmYN(window, _('suc'),  _("openfolder"))) {
@@ -1137,7 +1147,7 @@ var Dialog = {
 				return false;
 			}
 		}
-		if (Tree.some(function(d) d.isPrivate && d.state !== COMPLETE)) {
+		if (Tree.some(d => d.isPrivate && d.state !== COMPLETE)) {
 			let rv = Prompts.confirmYN(
 				window,
 				_("confclose.2"),
@@ -1150,7 +1160,9 @@ var Dialog = {
 
 		return (this._forceClose = true);
 	},
-	close: function() this.shutdown(this._doneClosing),
+	close: function() {
+		return this.shutdown(this._doneClosing);
+	},
 	_doneClosing: function() {
 		close();
 	},
@@ -1205,7 +1217,7 @@ var Dialog = {
 		if (chunks || finishing) {
 			if (!this._forceClose && this._safeCloseAttempts < 20) {
 				++this._safeCloseAttempts;
-				Timers.createOneshot(250, function() this.shutdown(callback), this);
+				Timers.createOneshot(250, () => this.shutdown(callback), this);
 				return false;
 			}
 			log(LOG_ERROR, "Going down even if queue was not probably closed yet!");
@@ -1231,7 +1243,7 @@ var Dialog = {
 		}
 		let tmpEnum = Prefs.tempLocation.directoryEntries;
 		let unknown = [];
-		for (let f in new Utils.SimpleIterator(tmpEnum, Ci.nsIFile)) {
+		for (let f of new Utils.SimpleIterator(tmpEnum, Ci.nsIFile)) {
 			if (f.leafName.match(/\.dtapart$/) && !~known.indexOf(f.leafName)) {
 				unknown.push(f);
 			}
@@ -1471,7 +1483,7 @@ QueueItem.prototype = {
 			fn = fn.substring(0, fn.length - ext.length - 1);
 		}
 		let nn = fn.substr(0, Math.min(200, Math.max(fn.length - 25, 10)));
-		if (nn == fn) {
+		if (nn === fn) {
 			return;
 		}
 		if (ext) {
@@ -1664,8 +1676,12 @@ QueueItem.prototype = {
 		return this._prettyHash;
 	},
 
-	is: function(state) this.state === state,
-	isOf: function(states) (this.state & states) !== 0,
+	is: function(state) {
+		return this.state === state;
+	},
+	isOf: function(states) {
+		return (this.state & states) !== 0;
+	},
 	save: function() {
 		if (this.deleting) {
 			return false;
@@ -1695,7 +1711,9 @@ QueueItem.prototype = {
 	},
 	position: -1,
 	_contentType: "",
-	get contentType() this._contentType,
+	get contentType() {
+		return this._contentType;
+	},
 	set contentType(nv) {
 		if (nv === this._contentType) {
 			return;
@@ -1718,8 +1736,12 @@ QueueItem.prototype = {
 	progress: 0,
 	mustGetInfo: false,
 
-	get startDate() this._startDate || (this.startDate = new Date()),
-	set startDate(nv) this._startDate = nv,
+	get startDate() {
+		return this._startDate || (this.startDate = new Date());
+	},
+	set startDate(nv) {
+		this._startDate = nv;
+	},
 
 	compression: null,
 
@@ -1798,7 +1820,7 @@ QueueItem.prototype = {
 		else if (this.totalSize <= 0) {
 			return _('transfered', [Utils.formatBytes(this.partialSize), TextCache_NAS]);
 		}
-		else if (this.state === COMPLETE || this.state == FINISHING) {
+		else if (this.state === COMPLETE || this.state === FINISHING) {
 			return Utils.formatBytes(this.totalSize);
 		}
 		return _('transfered', [Utils.formatBytes(this.partialSize), Utils.formatBytes(this.totalSize)]);
@@ -1934,8 +1956,9 @@ QueueItem.prototype = {
 					df.append(self.destinationName);
 					moveFile(self.tmpFile.path, df.path).then(function() {
 						resolve(true);
-					}, function*(ex) {
-						if ((ex.unixErrno && ex.unixErrno == OS.Constants.libc.ENAMETOOLONG) || (ex.winLastError && ex.winLastError == 3)) {
+					}, function(ex) {
+						if ((ex.unixErrno && ex.unixErrno === OS.Constants.libc.ENAMETOOLONG) ||
+								(ex.winLastError && ex.winLastError === 3)) {
 							try {
 								self.shortenName();
 								ConflictManager.unpin(pinned);
@@ -1946,7 +1969,7 @@ QueueItem.prototype = {
 								log(LOG_ERROR, "Failed to shorten name", ex);
 							}
 						}
-						if (ex.becauseNoSuchFile || (ex.unixErrno && ex.unixErrno == OS.Constants.libc.ENOENT) /* || (ex.winLastError && ex.winLastError == ?) */) {
+						if (ex.becauseNoSuchFile || (ex.unixErrno && ex.unixErrno === OS.Constants.libc.ENOENT)) {
 							remakeDir = true;
 						}
 						log(LOG_ERROR, ex);
@@ -1956,8 +1979,8 @@ QueueItem.prototype = {
 							reject(ex);
 							return;
 						}
-						setTimeoutOnlyFun(function() move(self, ++x), x * 250);
-					})
+						setTimeoutOnlyFun(() => move(self, ++x), x * 250);
+					}).then(null, reject);
 				};
 				move(this);
 			}.bind(this));
@@ -2038,7 +2061,7 @@ QueueItem.prototype = {
 				download.queue();
 			}
 
-			filterInSitu(mismatches, function(e) e.start !== e.end);
+			filterInSitu(mismatches, e => e.start !== e.end);
 
 			if (mismatches.length && (yield OS.File.exists(this.tmpFile.path))) {
 				// partials
@@ -2175,12 +2198,24 @@ QueueItem.prototype = {
 			}
 		}.bind(this));
 	},
-	get maskURL() this.urlManager.usableURL,
-	get maskCURL() Utils.getCURL(this.maskURL),
-	get maskURLPath() this.urlManager.usableURLPath,
-	get maskReferrerURL() this.referrerUrlManager.usableURL,
-	get maskReferrerURLPath() this.referrerUrlManager.usableURLPath,
-	get maskReferrerCURL() Utils.getCURL(this.maskReferrerURL),
+	get maskURL() {
+		return this.urlManager.usableURL;
+	},
+	get maskCURL() {
+		return Utils.getCURL(this.maskURL);
+	},
+	get maskURLPath() {
+		return this.urlManager.usableURLPath;
+	},
+	get maskReferrerURL() {
+		return this.referrerUrlManager.usableURL;
+	},
+	get maskReferrerURLPath() {
+		return this.referrerUrlManager.usableURLPath;
+	},
+	get maskReferrerCURL() {
+		return Utils.getCURL(this.maskReferrerURL);
+	},
 	rebuildDestination: function() {
 		try {
 			let mask = Utils.removeFinalSlash(Utils.normalizeSlashes(Utils.removeFinalChar(
@@ -2345,7 +2380,9 @@ QueueItem.prototype = {
 
 	cleanup: function() {
 		Task.spawn(function*() {
-			this.chunks && (yield this.closeChunks());
+			if (this.chunks) {
+				yield this.closeChunks();
+			}
 			delete this.visitors;
 			delete this.chunks;
 			delete this.speeds;
@@ -2441,7 +2478,7 @@ QueueItem.prototype = {
 		return !!this._autoRetryTime;
 	},
 	pauseAndRetry: function() {
-		let retry = this.state == RUNNING;
+		let retry = this.state === RUNNING;
 		this.pause();
 		this.resumable = true;
 
@@ -2526,7 +2563,7 @@ QueueItem.prototype = {
 
 
 			// start some new chunks
-			let paused = this.chunks.filter(function (chunk) !(chunk.running || chunk.complete));
+			let paused = this.chunks.filter(chunk => !(chunk.running || chunk.complete));
 
 			while (this.activeChunks < this.maxChunks) {
 				if (this.preallocating && this.activeChunks) {
@@ -2605,7 +2642,9 @@ QueueItem.prototype = {
 		}
 		log(LOG_DEBUG, "scoreboard\n" + scoreboard);
 	},
-	toString: function() this.urlManager.usable,
+	toString: function() {
+		return this.urlManager.usable;
+	},
 	toJSON: function() {
 		let rv = Object.create(null);
 		let p = Object.getPrototypeOf(this);
@@ -2863,7 +2902,7 @@ var startDownloads = (function() {
 		let first = null;
 		let g = downloads;
 		if ('length' in downloads) {
-			g = (function() {
+			g = (function*() {
 				for (let i of downloads) {
 					yield i;
 				}

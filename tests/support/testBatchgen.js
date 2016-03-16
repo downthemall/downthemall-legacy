@@ -39,7 +39,7 @@ test("num step", function() {
 	strictEqual(b.parts, "[1:10:3]");
 	strictEqual(b.length, 4);
 	var r = [];
-	for (l in b.getURLs()) {
+	for (l of b.getURLs()) {
 		r.push(l);
 	}
 	deepEqual(r, ["literal1", "literal4", "literal7", "literal10"]);
@@ -52,7 +52,7 @@ test("num step front/end", function() {
 	strictEqual(b.parts, "[1:10:3]");
 	strictEqual(b.length, 4);
 	var r = [];
-	for (l in b.getURLs()) {
+	for (l of b.getURLs()) {
 		r.push(l);
 	}
 	deepEqual(r, ["literal1literal", "literal4literal", "literal7literal", "literal10literal"]);
@@ -93,7 +93,7 @@ test("char step", function() {
 	strictEqual(b.parts, "[a:e:3]");
 	strictEqual(b.length, 2);
 	var r = [];
-	for (l in b.getURLs()) {
+	for (l of b.getURLs()) {
 		r.push(l);
 	}
 	deepEqual(r, ["literala", "literald"]);

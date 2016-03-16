@@ -45,7 +45,7 @@ UrlManager.prototype = {
 		this._usable = this._urls[0].usable;
 		this._makeGood();
 	},
-	_usableURL: function() toURL(this._usable),
+	_usableURL: function() { return toURL(this._usable); },
 	_usableURLPath: function() {
 		let rv = removeLeadingChar(this.usableURL.path, "/");
 		if (rv.length) {
@@ -53,9 +53,9 @@ UrlManager.prototype = {
 		}
 		return rv;
 	},
-	_host: function() this.usableURL.host,
-	_spec: function() this._url.spec,
-	_domain: function() Limits.getEffectiveHost(this._url),
+	_host: function() { return this.usableURL.host; },
+	_spec: function() { return this._url.spec; },
+	_domain: function() { return Limits.getEffectiveHost(this._url); },
 	add: function um_add(url) {
 		if (!url instanceof URL) {
 			throw new Exception(url + " is not an URL");
@@ -73,7 +73,7 @@ UrlManager.prototype = {
 		}
 		this.good.push(this.good.shift());
 	},
-	_makeGood_check: function(u) !('bad' in u),
+	_makeGood_check: function(u) { return !('bad' in u); },
 	_makeGood: function um_makeGood() {
 		this.good = this._urls.filter(this._makeGood_check);
 		if (!this.good.length) {
@@ -82,7 +82,7 @@ UrlManager.prototype = {
 			for (let u of this._urls) {
 				delete u.bad;
 			}
-			this.good = this._urls.map(function(e) e);
+			this.good = this._urls.map(e => e);
 		}
 	},
 	getURL: function um_getURL(idx) {
@@ -90,16 +90,14 @@ UrlManager.prototype = {
 		this._rotate();
 		return rv;
 	},
-	get url() this._url,
-	get usable() this._usable,
-	get length() this._urls.length,
+	get url() { return this._url; },
+	get usable() { return this._usable; },
+	get length() { return this._urls.length; },
 	get all() {
-		for (let i of this._urls) {
-			yield i;
-		}
+		return this.toArray();
 	},
 	replace: function(url, newurl) {
-		this._urls = this._urls.map(function(u) u.spec === url.spec ? newurl : u);
+		this._urls = this._urls.map(u => u.spec === url.spec ? newurl : u);
 		this._makeGood();
 	},
 	markBad: function um_markBad(url) {
@@ -119,12 +117,12 @@ UrlManager.prototype = {
 		this._makeGood();
 		return true;
 	},
-	toJSON: function um_toJSON() this._urls,
+	toJSON: function um_toJSON() { return this._urls; },
 	toString: function() {
-		return this._urls.reduce(function(v, u) v + u.preference + " " + u.url + "\n");
+		return this._urls.reduce((v, u) => v + u.preference + " " + u.url + "\n");
 	},
 	// clone ;)
-	toArray: function() this._urls.map(function(e) e)
+	toArray: function() { return this._urls.map(e => e); }
 };
 lazyProto(UrlManager.prototype, "usableURL", UrlManager.prototype._usableURL);
 lazyProto(UrlManager.prototype, "usableURLPath", UrlManager.prototype._usableURLPath);

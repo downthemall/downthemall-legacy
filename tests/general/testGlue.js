@@ -104,10 +104,10 @@ test("lazy", function() {
 	var o = {};
 	var io = {1:1};
 	var i = 0;
-	lazy(o, "testnum", function() 1);
-	lazy(o, "teststr", function() "str");
-	lazy(o, "testobj", function() io);
-	lazy(o, "once", function() ++i);
+	lazy(o, "testnum", () => 1);
+	lazy(o, "teststr", () => "str");
+	lazy(o, "testobj", () => io);
+	lazy(o, "once", () => ++i);
 
 
 	ok(true, JSON.stringify(o));
@@ -122,7 +122,7 @@ test("lazy", function() {
 	strictEqual(o.once, 1, "runs at least once");
 	strictEqual(o.once, 1, "runs only only (really!)");
 	strictEqual(i, 1, "runs only only (counter)");
-	throws(function() o.except, Error, "propagates exceptions");
+	throws(() => o.except, Error, "propagates exceptions");
 });
 
 test("lazyProto", function() {
@@ -131,10 +131,10 @@ test("lazyProto", function() {
 	O.prototype = {};
 	var io = {1:1};
 	var i = 0;
-	lazyProto(O.prototype, "testnum", function() 1);
-	lazyProto(O.prototype, "teststr", function() "str");
-	lazyProto(O.prototype, "testobj", function() io);
-	lazyProto(O.prototype, "once", function() ++i);
+	lazyProto(O.prototype, "testnum", () => 1);
+	lazyProto(O.prototype, "teststr", () => "str");
+	lazyProto(O.prototype, "testobj", () => io);
+	lazyProto(O.prototype, "once", () => ++i);
 	lazyProto(O.prototype, "except", function() {
 		throw new Error("error");
 	});
@@ -148,8 +148,8 @@ test("lazyProto", function() {
 	strictEqual(o.once, 1, "runs at least once");
 	strictEqual(o.once, 1, "runs only only (really!)");
 	strictEqual(i, 1, "runs only only (counter)");
-	throws(function() o.except, Error, "propagates exceptions");
-	throws(function() o.except, Error, "propagates exceptions (cont.)");
+	throws(() => o.except, Error, "propagates exceptions");
+	throws(() => o.except, Error, "propagates exceptions (cont.)");
 
 	strictEqual(o2.testnum, 1, "numbers");
 	strictEqual(o2.teststr, "str", "strings");
@@ -157,7 +157,7 @@ test("lazyProto", function() {
 	strictEqual(o2.once, 2, "runs at least once");
 	strictEqual(o2.once, 2, "runs only only (really!)");
 	strictEqual(i, 2, "runs only only (counter)");
-	throws(function() o2.except, Error, "propagates exceptions (cont.)");
+	throws(() => o2.except, Error, "propagates exceptions (cont.)");
 });
 
 test("lazyProto frozen proto", function() {
@@ -166,10 +166,10 @@ test("lazyProto frozen proto", function() {
 	O.prototype = {};
 	var io = {1:1};
 	var i = 0;
-	lazyProto(O.prototype, "testnum", function() 1);
-	lazyProto(O.prototype, "teststr", function() "str");
-	lazyProto(O.prototype, "testobj", function() io);
-	lazyProto(O.prototype, "once", function() ++i);
+	lazyProto(O.prototype, "testnum", () => 1);
+	lazyProto(O.prototype, "teststr", () => "str");
+	lazyProto(O.prototype, "testobj", () => io);
+	lazyProto(O.prototype, "once", () => ++i);
 	lazyProto(O.prototype, "except", function() {
 		throw new Error("error");
 	});
@@ -184,8 +184,8 @@ test("lazyProto frozen proto", function() {
 	strictEqual(o.once, 1, "runs at least once");
 	strictEqual(o.once, 1, "runs only only (really!)");
 	strictEqual(i, 1, "runs only only (counter)");
-	throws(function() o.except, Error, "propagates exceptions");
-	throws(function() o.except, Error, "propagates exceptions (cont.)");
+	throws(() => o.except, Error, "propagates exceptions");
+	throws(() => o.except, Error, "propagates exceptions (cont.)");
 
 	strictEqual(o2.testnum, 1, "numbers");
 	strictEqual(o2.teststr, "str", "strings");
@@ -193,7 +193,7 @@ test("lazyProto frozen proto", function() {
 	strictEqual(o2.once, 2, "runs at least once");
 	strictEqual(o2.once, 2, "runs only only (really!)");
 	strictEqual(i, 2, "runs only only (counter)");
-	throws(function() o2.except, Error, "propagates exceptions (cont.)");
+	throws(() => o2.except, Error, "propagates exceptions (cont.)");
 });
 
 test("lazyProto very frozen", function() {
@@ -202,17 +202,17 @@ test("lazyProto very frozen", function() {
 	O.prototype = {};
 	var io = {1:1};
 	var i = 0;
-	lazyProto(O.prototype, "testnum", function() 1);
-	lazyProto(O.prototype, "teststr", function() "str");
-	lazyProto(O.prototype, "testobj", function() io);
-	lazyProto(O.prototype, "once", function() ++i);
+	lazyProto(O.prototype, "testnum", () => 1);
+	lazyProto(O.prototype, "teststr", () => "str");
+	lazyProto(O.prototype, "testobj", () => io);
+	lazyProto(O.prototype, "once", () => ++i);
 	lazyProto(O.prototype, "except", function() {
 		throw new Error("error");
 	});
 	Object.freeze(O.prototype);
 
 	var o = Object.freeze(new O());
-	throws(function() o.testnum, "Cannot mess with frozen objects");
+	throws(() => o.testnum, "Cannot mess with frozen objects");
 });
 
 test("require simple", function() {

@@ -6,12 +6,12 @@
 const available = ("dhICore" in Ci) && ("dhIProcessor" in Ci);
 if (available) {
 	/* global api, getUsableFileNameWithFlatten, utils, bundle, isWindowPrivate */
-	lazy(this, "api", function() require("api"));
-	lazy(this, "getUsableFileNameWithFlatten", function() require("./stringfuncs").getUsableFileNameWithFlatten);
-	lazy(this, "utils", function() require("utils"));
+	lazy(this, "api", () => require("api"));
+	lazy(this, "getUsableFileNameWithFlatten", () => require("./stringfuncs").getUsableFileNameWithFlatten);
+	lazy(this, "utils", () => require("utils"));
 	lazy(this, "bundle",
-		function() new (require("utils").StringBundles)(["chrome://dta/locale/downloadHelper.properties"]));
-	lazy(this, "isWindowPrivate", function() require("./pbm").isWindowPrivate);
+		() => new (require("utils").StringBundles)(["chrome://dta/locale/downloadHelper.properties"]));
+	lazy(this, "isWindowPrivate", () => require("./pbm").isWindowPrivate);
 
 	const core = Cc["@downloadhelper.net/core;1"].getService(Ci.dhICore);
 
@@ -21,11 +21,11 @@ if (available) {
 	};
 	ProcessorImpl.prototype = {
 		init: function(name, title, description) {
-			this.__defineGetter__("name", function() name);
-			this.__defineGetter__("title", function() title);
-			this.__defineGetter__("description", function() description);
+			this.__defineGetter__("name", function() { return name; });
+			this.__defineGetter__("title", function() { return title; });
+			this.__defineGetter__("description", function() { return description; });
 			core.registerProcessor(this);
-			unload((function() core.unregisterProcessor(this)).bind(this));
+			unload(e => core.unregisterProcessor(this));
 		},
 
 		QueryInterface: QI([Ci.dhIProcessor, Ci.sehISecretHelperProcessorExtra]),
@@ -33,10 +33,10 @@ if (available) {
 		get provider() { return "DownThemAll!"; },
 		get enabled() { return true; },
 
-		canHandle: function(desc) desc.has("media-url") || desc.has("links"),
+		canHandle: function(desc) { return desc.has("media-url") || desc.has("links"); },
 
-		requireDownload: function(desc) false,
-		preDownload: function(desc) false,
+		requireDownload: function(desc) { return false; },
+		preDownload: function(desc) { return false; },
 
 		handle: function(props) {
 			try {
@@ -84,7 +84,7 @@ if (available) {
 		handleLinks: function(desc) {
 			let links = desc.get('links', Ci.nsIArray).enumerate();
 			let urls = [];
-			for (let link in new utils.SimpleIterator(links, Ci.nsIProperties)) {
+			for (let link of new utils.SimpleIterator(links, Ci.nsIProperties)) {
 				let props = new utils.Properties(link, desc);
 				let item = null;
 				try {

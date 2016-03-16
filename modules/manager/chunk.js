@@ -91,7 +91,9 @@ function Buffer(size) {
 }
 Buffer.prototype = Object.seal({
 	length: 0,
-	get free() this.size - this.length,
+	get free() {
+		return this.size - this.length;
+	},
 	writeFrom: function(inputStream, length) {
 		if (length > this.free) {
 			throw new Error(`Buffer overflow, free: ${this.free}, length: ${length}, blen: ${this.length}`);
@@ -187,30 +189,56 @@ Chunk.prototype = {
 	running: false,
 	safeBytes: 0,
 
-	get _hasBuffer() !!this._buffer,
+	get _hasBuffer() {
+		return !!this._buffer;
+	},
 
-	get starter() this.end <= 0,
-	get start() this._start,
-	get end() this._end,
+	get starter() {
+		return this.end <= 0;
+	},
+	get start() {
+		return this._start;
+	},
+	get end() {
+		return this._end;
+	},
 	set end(nv) {
 		this._end = nv;
 		this._total = this.end && (this._end - this._start + 1);
 	},
-	get total() this._total,
-	get written() this._written,
-	get bufferedPending() this._buffered,
-	get bufferedCached() this._hasBuffer ? this._buffer.length : 0,
-	get buffered() (this.bufferedPending + this.bufferedCached),
-	get currentPosition() (this.start + this.written),
-	get remainder() (this._total - this._written),
+	get total() {
+		return this._total;
+	},
+	get written() {
+		return this._written;
+	},
+	get bufferedPending() {
+		return this._buffered;
+	},
+	get bufferedCached() {
+		return this._hasBuffer ? this._buffer.length : 0;
+	},
+	get buffered() {
+		return this.bufferedPending + this.bufferedCached;
+	},
+	get currentPosition() {
+		return this.start + this.written;
+	},
+	get remainder() {
+		return this._total - this._written;
+	},
 	get complete() {
 		if (this._end <= 0) {
 			return this.written !== 0;
 		}
 		return this._total === this.written;
 	},
-	get parent() this._parent,
-	get sessionBytes() this._sessionBytes,
+	get parent() {
+		return this._parent;
+	},
+	get sessionBytes() {
+		return this._sessionBytes;
+	},
 
 	_init: function() {
 		if (this._inited) {

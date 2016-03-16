@@ -33,7 +33,9 @@ const MAX_STACK = 6;
  * returns a new UUID in string representation
  * @return String UUID
  */
-exports.newUUIDString = function newUUIDString() Services.uuid.generateUUID().toString();
+exports.newUUIDString = function newUUIDString() {
+	return Services.uuid.generateUUID().toString();
+};
 
 /**
  * Range generator (python style).
@@ -43,7 +45,7 @@ exports.newUUIDString = function newUUIDString() Services.uuid.generateUUID().to
  * @param stop Stop value (exclusive)
  * @param step Optional. Step value (default: 1/-1)
  */
-exports.range = function range() {
+exports.range = function* range() {
 	if (!arguments.length) {
 		throw Components.results.NS_ERROR_INVALID_ARG;
 	}
@@ -237,7 +239,9 @@ function naturalSort(arr, mapper) {
 	arr.sort(naturalSort.compare);
 	return exports.mapInSitu(arr, naturalSort.unmap);
 }
-naturalSort.identity = function(e) e;
+naturalSort.identity = function(e) {
+	return e;
+};
 naturalSort.strtol = function strtol(str, rv) {
 	str = str.trimLeft();
 	let base = 10;
@@ -260,7 +264,7 @@ naturalSort.strtol = function strtol(str, rv) {
 	}
 	const chars = exports.mapInSitu(
 		str.toLowerCase().split(""),
-		function(e) e.charCodeAt(0)
+		e => e.charCodeAt(0)
 		);
 	for (let [idx,c] in new Iterator(chars)) {
 		if ((c >= 48 && c <= 57) || (base === 16 && c >= 97 && c <= 100)) {
@@ -355,7 +359,9 @@ naturalSort.compare = function(a, b) {
 	}
 	return naturalSort.compareElement(a.length, b.length);
 };
-naturalSort.unmap = function(e) e.elem;
+naturalSort.unmap = function(e) {
+	return e.elem;
+};
 exports.naturalSort = naturalSort;
 
 
@@ -369,13 +375,11 @@ function SimpleIterator(obj, iface) {
 	this.iface = iface || Ci.nsISupport;
 	this.obj = obj.QueryInterface(Ci.nsISimpleEnumerator);
 }
-SimpleIterator.prototype = Object.freeze({
-	__iterator__: function() {
-		while(this.obj.hasMoreElements()) {
-			yield this.obj.getNext().QueryInterface(this.iface);
-		}
+SimpleIterator.prototype[Symbol.iterator] = function*() {
+	while (this.obj.hasMoreElements()) {
+		yield this.obj.getNext().QueryInterface(this.iface);
 	}
-});
+};
 exports.SimpleIterator = Object.freeze(SimpleIterator);
 
 /**
@@ -512,8 +516,10 @@ MimeQuality.prototype = Object.freeze({
 				v: e.map(qval.bind(null, x)).join(",")
 			});
 		}
-		rv.sort(function(a, b) (a.q > b.q) ? -1 : ((a.q < b.q) ? 1 : 0));
-		return exports.mapInSitu(rv, function(e) e.v).join(",");
+		rv.sort(function(a, b) {
+			return (a.q > b.q) ? -1 : ((a.q < b.q) ? 1 : 0);
+		});
+		return exports.mapInSitu(rv, e => e.v).join(",");
 	}
 });
 exports.MimeQuality = Object.freeze(MimeQuality);
@@ -530,13 +536,13 @@ function _loadBundles(urls) {
 		}
 		let strings = {};
 		let uri = toURI(url);
-		for (let s in new SimpleIterator(bundle(url), Ci.nsIPropertyElement)) {
+		for (let s of new SimpleIterator(bundle(url), Ci.nsIPropertyElement)) {
 			strings[s.key] = s.value;
 		}
 		if (uri.host === "dta") {
 			url = "chrome://dta-locale" + uri.path.replace("/locale/", "/content/");
 			log(LOG_DEBUG, "also loading: " + url);
-			for (let s in new SimpleIterator(bundle(url), Ci.nsIPropertyElement)) {
+			for (let s of new SimpleIterator(bundle(url), Ci.nsIPropertyElement)) {
 				let k = s.key;
 				if (!(k in strings)) {
 					strings[k] = s.value;
@@ -548,7 +554,10 @@ function _loadBundles(urls) {
 
 	exports.filterInSitu(
 		urls,
-		function(e) !((e in this) || (this[e] = null)), {}
+		function(e) {
+			return !((e in this) || (this[e] = null));
+		},
+		{}
 	);
 	urls.sort();
 	let key = urls.toString();
@@ -579,11 +588,11 @@ function StringBundles(documentOrStrings) {
 	else {
 		this._strings = _loadBundles(Array.map(
 			documentOrStrings.getElementsByTagNameNS(NS_DTA, 'stringbundle'),
-			function(e) e.getAttribute('src')
+			e => e.getAttribute('src')
 		).concat(
 			Array.map(
 				documentOrStrings.getElementsByTagNameNS(NS_XUL, 'stringbundle'),
-				function(e) e.getAttribute('src')
+				e => e.getAttribute('src')
 			)
 		));
 	}
@@ -593,7 +602,9 @@ StringBundles._repl = function() {
 	return StringBundles_params.shift();
 };
 StringBundles.prototype = Object.freeze({
-	getString: function(id) this._strings[id],
+	getString: function(id) {
+		return this._strings[id];
+	},
 	getFormattedString: function(id, params, num) {
 		let fmt = this.getString(id);
 		if (isFinite(num)) {
@@ -696,8 +707,8 @@ exports.normalizeMetaPrefs = function(urls) {
 	if (!urls || !urls.length) {
 		return;
 	}
-	let pmax = urls.reduce(function(p,c) isFinite(c.preference) ? Math.max(c.preference, p) : p, 1);
-	let pmin = urls.reduce(function(p,c) isFinite(c.preference) ? Math.min(c.preference, p) : p, pmax - 1);
+	let pmax = urls.reduce((p,c) => isFinite(c.preference) ? Math.max(c.preference, p) : p, 1);
+	let pmin = urls.reduce((p,c) => isFinite(c.preference) ? Math.min(c.preference, p) : p, pmax - 1);
 	urls.forEach(function(url) {
 		url.preference = Math.max(100 - ((url.preference - pmin) *  100 / (pmax - pmin)).toFixed(0), 10);
 	});
@@ -705,7 +716,7 @@ exports.normalizeMetaPrefs = function(urls) {
 
 const makeDirCache = new LRUMap(10);
 
-exports.makeDir = function(dir, perms, force) {
+exports.makeDir = function*(dir, perms, force) {
 	if (!force && makeDirCache.has(dir.path)) {
 		return;
 	}
@@ -720,7 +731,7 @@ exports.makeDir = function(dir, perms, force) {
 		yield exports.makeDir(dir.parent, perms);
 		yield exports.makeDir(dir, perms);
 	}
-	catch (ex if ex.winLastError == 3) {
+	catch (ex if ex.winLastError === 3) {
 		yield exports.makeDir(dir.parent, perms);
 		yield exports.makeDir(dir, perms);
 	}

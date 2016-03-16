@@ -1,6 +1,10 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* global _, DTA, $, $$, Utils, Preferences, log, unloadWindow */
+/* global Mediator, FilterManager, openUrl, alert */
+/* jshint globalstrict:true, strict:true, browser:true */
 
 var LINK_FILTER = FilterManager.LINK_FILTER;
 var IMAGE_FILTER = FilterManager.IMAGE_FILTER;
@@ -11,19 +15,19 @@ var Main = {
 	load: function() {
 		$('alert2').hidden = !('nsIAlertsService' in Ci);
 	}
-}
+};
 
 var Privacy = {
 	load: function() {
 		try {
-			var log = !DTA.getProfileFile("log.txt").exists();
+			var logExists = DTA.getProfileFile("log.txt").exists();
 			$("butShowLog", 'butDelLog', 'butRevealLog')
-				.forEach(function(e) { e.disabled = log; });
+				.forEach(function(e) { e.disabled = !logExists; });
 
 			$("butFiltDel").disabled = !DTA.getDropDownValue("filter");
 			$("butFoldDel").disabled = !DTA.getDropDownValue("directory");
 		}
-		catch(ex) {
+		catch (ex) {
 			log(LOG_ERROR, "privacyLoad(): ", ex);
 		}
 
@@ -104,13 +108,13 @@ var Advanced = {
 	changedMaxChunks: function() {
 		let v = $('maxchunks').value;
 		$('maxchunkslabel').value = $('maxchunks').value;
-		if (v == '1') {
+		if (v === '1') {
 			$('maxchunkslabel').value += ' / ' + _('disabled');
 		}
 	},
 	changedLoadEndFirst: function() {
 		let v = $('loadendfirst').value;
-		if (v == '0') {
+		if (v === '0') {
 			$('loadendfirstlabel').value = _('disabled');
 		}
 		else {
@@ -131,7 +135,7 @@ var Interface = {
 	},
 	getMenu: function(pref, which) {
 		let menu = $(pref).value.split(',');
-		return which in menu ? menu[which] == '1' : false;
+		return which in menu ? menu[which] === '1' : false;
 	},
 	setMenu: function(pref, which) {
 		let menu = $(pref).value.split(',');
@@ -162,7 +166,7 @@ var Filters = {
 		// nsIObserver::observe
 		observe : function(subject, topic, prefName) {
 			// filterManager will throw this topic at us.
-			if (topic == 'DTA:filterschanged') {
+			if (topic === 'DTA:filterschanged') {
 				// the heavy work will be performed by changeTab..
 				// it will create the filter boxen for us, and furthermore do another selection
 				Filters.reloadFilters();
@@ -188,7 +192,7 @@ var Filters = {
 			this._box.rowCountChanged(0, -this.rowCount);
 			this._filters = [];
 
-			for (let filter in FilterManager.enumAll()) {
+			for (let filter of FilterManager.enumAll()) {
 				this._filters.push(filter);
 			}
 			this._box.rowCountChanged(0, this.rowCount);
@@ -198,7 +202,7 @@ var Filters = {
 				this._filters.some(
 					function(f, i) {
 						var idx = old.indexOf(f.id);
-						if (idx == -1) {
+						if (idx === -1) {
 							this.selection.select(i);
 							this._box.ensureRowIsVisible(i);
 							return true;
@@ -208,7 +212,7 @@ var Filters = {
 					this
 				);
 			}
-			else if (old.length == this._filters.length && index != -1) {
+			else if (old.length === this._filters.length && index !== -1) {
 				this.selection.select(index);
 				this._box.scrollToRow(index);
 			}
@@ -228,12 +232,9 @@ var Filters = {
 		let filter = this.filter;
 		let newType = ($("filterText").checked ? LINK_FILTER : 0) | ($("filterImage").checked ? IMAGE_FILTER : 0);
 
-		if (
-			$("filterLabel").value != filter.label
-			|| $("filterExpression").value != filter.expression
-			|| filter.type != newType
-		)
-		{
+		if ($("filterLabel").value !== filter.label ||
+			$("filterExpression").value !== filter.expression ||
+			filter.type !== newType) {
 			filter.label = $("filterLabel").value;
 			filter.type = newType;
 			filter.expression = $("filterExpression").value;
@@ -244,7 +245,7 @@ var Filters = {
 		}
 	},
 	onFinishedFilterEdit : function() {
-		if (this._lastRowEdited != -1) {
+		if (this._lastRowEdited !== -1) {
 			this.getFilter(this._lastRowEdited).save();
 			this._lastRowEdited = -1;
 		}
@@ -262,14 +263,21 @@ var Filters = {
 		this.filter.remove();
 	},
 	_restoreDefaultFilter: function() {
-		if (Prompts.confirm(window, _('restorefilterstitle'), _('restorefilterstext'), _('restore'), Prompts.CANCEL, null, 1) == 1) {
+		if (Prompts.confirm(
+			window,
+			_('restorefilterstitle'),
+			_('restorefilterstext'),
+			_('restore'),
+			Prompts.CANCEL,
+			null,
+			1) === 1) {
 			return;
 		}
 		this.filter.restore();
 	},
 	restoreRemoveFilter: function() {
 		if (this.filter.defFilter) {
-			this._restoreDefaultFilter()
+			this._restoreDefaultFilter();
 		} else {
 			this._removeFilter();
 		}
@@ -288,7 +296,7 @@ var Filters = {
 		return this.selection.currentIndex;
 	},
 	set current(nv) {
-		if (this.current != nv) {
+		if (this.current !== nv) {
 			this.selection.select(nv);
 		}
 	},
@@ -302,7 +310,7 @@ var Filters = {
 		return this.getFilter(this.current);
 	},
 	getFilter: function(idx) {
-		if (idx==-1 || idx >= this.rowCount) {
+		if (idx === -1 || idx >= this.rowCount) {
 			throw new Components.Exception("Invalid index specified: " + idx);
 		}
 		return this._filters[idx];
@@ -347,22 +355,11 @@ var Filters = {
 	selectionChanged: function() {
 		var idx = this.current;
 
-		if (idx == -1) {
+		if (idx === -1) {
 			$("filterLabel", "filterExpression", "filterText", "filterImage", "restoreremovebutton").forEach(
-				function(a){
-					a.disabled = true
-				}
-			);
-			$("filterLabel", "filterExpression").forEach(
-				function(a){
-					a.value = ""
-				}
-			);
-			$("filterText", "filterImage").forEach(
-				function(a){
-					a.checked = false
-				}
-			);
+				function(a) { a.disabled = true; });
+			$("filterLabel", "filterExpression").forEach(function(a) { a.value = ""; });
+			$("filterText", "filterImage").forEach(function(a) { a.checked = false; });
 			return;
 		}
 
@@ -377,22 +374,19 @@ var Filters = {
 		$("filterText").checked = currentFilter.type & LINK_FILTER;
 		$("filterImage").checked = currentFilter.type & IMAGE_FILTER;
 		$("filterLabel", "filterExpression", "filterText", "filterImage", "restoreremovebutton").forEach(
-			function(a){
-				a.disabled = false
-			}
-		);
+			function(a) { a.disabled = false; });
 
-		$("restoreremovebutton").label = currentFilter.defFilter
-			? _('restorebutton')
-			: _('removebutton');
+		$("restoreremovebutton").label = currentFilter.defFilter ?
+			_('restorebutton') :
+			_('removebutton');
 	},
 	cycleCell: function(idx, column) {},
 	performAction: function(action) {},
 	performActionOnRow: function(action, index, column) {},
 	performActionOnCell: function(action, index, column) {},
-	getRowProperties: function(idx) "",
-	getCellProperties: function(idx, column) "",
-	getColumnProperties: function(column, element) "",
+	getRowProperties: function(idx) { return ""; },
+	getCellProperties: function(idx, column) { return ""; },
+	getColumnProperties: function(column, element) { return ""; },
 	setCellValue: function(idx, col, value) {}
 };
 
@@ -414,16 +408,15 @@ var Servers = {
 		$('maxtasksperserver').setAttribute('preference', 'dtamaxtasksperserver');
 		$('dtamaxtasksperserver').updateElements();
 
-		let _tp = this;
-		this._list.addEventListener('LimitsEdit', function(evt) _tp.editLimit(evt), true);
-		this._list.addEventListener('LimitsEditCancel', function(evt) _tp.cancelEditLimit(evt.originalTarget), true);
-		this._list.addEventListener('LimitsEditSave', function(evt) _tp.saveEditLimit(evt), true);
-		this._list.addEventListener('LimitsCanRemove', function(evt) _tp.canRemoveLimit(evt), true);
-		this._list.addEventListener('LimitsRemoved', function(evt) _tp.removedLimit(evt.originalTarget), true);
+		this._list.addEventListener('LimitsEdit', evt => this.editLimit(evt), true);
+		this._list.addEventListener('LimitsEditCancel', evt => this.cancelEditLimit(evt.originalTarget), true);
+		this._list.addEventListener('LimitsEditSave', evt => this.saveEditLimit(evt), true);
+		this._list.addEventListener('LimitsCanRemove', evt => this.canRemoveLimit(evt), true);
+		this._list.addEventListener('LimitsRemoved', evt => this.removedLimit(evt.originalTarget), true);
 	},
 	editLimit: function(evt) {
 		if (this._editing) {
-			if (this._editing == evt.originalTarget) {
+			if (this._editing === evt.originalTarget) {
 				return;
 			}
 			this.cancelEditLimit(this._editing);
@@ -432,7 +425,7 @@ var Servers = {
 		this._editing.setAttribute('editing', 'true');
 	},
 	cancelEditLimit: function(target) {
-		if (target != this._editing) {
+		if (target !== this._editing) {
 			return;
 		}
 		if (this._editing.limit.isNew) {
@@ -442,7 +435,7 @@ var Servers = {
 		this._editing = null;
 	},
 	saveEditLimit: function(evt) {
-		if (evt.originalTarget != this._editing) {
+		if (evt.originalTarget !== this._editing) {
 			return;
 		}
 		this._editing.removeAttribute('editing');
@@ -458,7 +451,7 @@ var Servers = {
 			Prompts.CANCEL,
 			null,
 			1
-		) != 0) {
+		) !== 0) {
 			evt.preventDefault();
 		}
 	},
@@ -534,7 +527,7 @@ requireJoined(Servers, "support/serverlimits");
 var Schedule = {
 	init: function() {
 		this.setupSchedDeck();
-		$("schedenable").addEventListener("command", function() Schedule.setupSchedDeck(), false);
+		$("schedenable").addEventListener("command", () => Schedule.setupSchedDeck(), false);
 	},
 	setupSchedDeck: function() {
 		$("scheddeck").selectedIndex = $("schedenable").checked ? 1 : 0;
@@ -551,14 +544,15 @@ var Schedule = {
 
 var Prefs = {
 	load: function() {
-		if (require("version").APP_ID == "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}" && !Preferences.hasUserValue("general.skins.selectedSkin")) {
+		if (require("version").APP_ID === "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}" &&
+			!Preferences.hasUserValue("general.skins.selectedSkin")) {
 			document.documentElement.setAttribute("firefoxtheme", true);
 		}
 
 		if (!("arguments" in window)) {
 			return;
 		}
-		if (window.arguments.length == 2) {
+		if (window.arguments.length === 2) {
 			let cmd = window.arguments[1];
 			if (!cmd) {
 				return;
@@ -573,7 +567,14 @@ var Prefs = {
 		}
 	},
 	restoreAll: function() {
-		if (Prompts.confirm(window, _('restoreprefstitle'), _('restoreprefstext'), _('restore'), Prompts.CANCEL, null, 1) == 1) {
+		if (Prompts.confirm(
+			window,
+			_('restoreprefstitle'),
+			_('restoreprefstext'),
+			_('restore'),
+			Prompts.CANCEL,
+			null,
+			1) === 1) {
 			return;
 		}
 		try {
@@ -582,7 +583,7 @@ var Prefs = {
 			// XXX
 		}
 	}
-}
+};
 
 unloadWindow(window, function() {
 	log(LOG_DEBUG, "closed a pref window");

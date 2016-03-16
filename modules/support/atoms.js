@@ -17,7 +17,9 @@ function Atoms() {
 	}
 }
 Atoms.prototype = {
-	getAtom: function(atom) this[atom] || (this[atom] = _as.getAtom(atom))
+	getAtom: function(atom) {
+		return this[atom] || (this[atom] = _as.getAtom(atom));
+	}
 };
 exports.Atoms = Atoms;
 

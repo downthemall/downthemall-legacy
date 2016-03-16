@@ -3,6 +3,8 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
+/* global content, setTimeout, removeMessageListener, addMessageListener, sendAsyncMessage */
+
 (function() {
 
 const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
@@ -17,6 +19,20 @@ catch (ex) {
 	// no op
 }
 
+const [LOG_DEBUG, LOG_INFO, LOG_ERROR] = [0, 1, 2];
+const log = function(level, message, exception) {
+	sendAsyncMessage("DTA:log", {
+		level: level,
+		message: message,
+		exception: exception && {
+			message: exception.message,
+			fileName: exception.fileName,
+			lineNumber: exception.lineNumber,
+			stack: exception.stack
+		}
+	});
+};
+
 const require = function require_mini(m) {
 	let scope = {
 		log: log,
@@ -30,20 +46,6 @@ const require = function require_mini(m) {
 	let module = "chrome://dta-modules/content/" + m + ".js";
 	Services.scriptloader.loadSubScript(module, scope);
 	return scope.exports;
-};
-
-const [LOG_DEBUG, LOG_INFO, LOG_ERROR] = [0, 1, 2];
-const log = function(level, message, exception) {
-	sendAsyncMessage("DTA:log", {
-		level: level,
-		message: message,
-		exception: exception && {
-			message: exception.message,
-			fileName: exception.fileName,
-			lineNumber: exception.lineNumber,
-			stack: exception.stack
-		}
-	});
 };
 
 const TextLinks = require("support/textlinks");
@@ -110,7 +112,7 @@ const extractDescription = function extractDescription(child) {
 				rv.push(fmt(c.nodeValue));
 			}
 
-			if (c.nodeType == 1) {
+			if (c.nodeType === 1) {
 				rv.push(extractDescription(c));
 			}
 
@@ -203,7 +205,7 @@ const addImagesToArray = function* addImagesToArray(lnks, images, doc)	{
 	}
 };
 
-const getTextLinks = function getTextLinks(set, out, fakeLinks) {
+const getTextLinks = function* getTextLinks(set, out, fakeLinks) {
 	let rset = [];
 	for (let r = set.iterateNext(); r; r = set.iterateNext()) {
 		rset.push(r);
@@ -277,7 +279,7 @@ const addLinks = function* addLinks(aWin, aURLs, aImages, aLocations, honorSelec
 		let images = Array.slice(aWin.document.querySelectorAll("img"));
 		yield true;
 		let videos = Array.slice(aWin.document.querySelectorAll("video, audio, video > source, audio > source"));
-		filterInSitu(videos, function(e) !!e.src);
+		filterInSitu(videos, e => !!e.src);
 		yield true;
 
 		let embeds = Array.slice(aWin.document.embeds);
@@ -287,7 +289,7 @@ const addLinks = function* addLinks(aWin, aURLs, aImages, aLocations, honorSelec
 		let inputs = [];
 		for (let i = 0, e = rawInputs.length; i < e; ++i) {
 			let rit = rawInputs[i].getAttribute('type');
-			if (!rit || rit.toLowerCase() != 'image') {
+			if (!rit || rit.toLowerCase() !== 'image') {
 				continue;
 			}
 			inputs.push(rawInputs[i]);
@@ -298,7 +300,7 @@ const addLinks = function* addLinks(aWin, aURLs, aImages, aLocations, honorSelec
 		if (honorSelection && (sel = aWin.getSelection()) && !sel.isCollapsed) {
 			log(LOG_INFO, "selection only");
 			[links, images, videos, embeds, inputs].forEach(
-					function(e) filterInSitu(e, function(n) sel.containsNode(n, true)));
+					e => filterInSitu(e, n => sel.containsNode(n, true)));
 			if (recognizeTextLinks) {
 				let copy = aWin.document.createElement('div');
 				for (let i = 0; i < sel.rangeCount; ++i) {
@@ -367,7 +369,7 @@ const addLinks = function* addLinks(aWin, aURLs, aImages, aLocations, honorSelec
 			}
 		}
 		for (let y of addImagesToArray(
-			filterMapInSitu(videos, function(e) !!e.poster, function(e) new TextLinks.FakeLink(e.poster)),
+			filterMapInSitu(videos, e => !!e.poster, e => new TextLinks.FakeLink(e.poster)),
 			aImages,
 			aWin.document
 		)) {
@@ -449,7 +451,7 @@ const handleFindLinks = message => {
 		setTimeout(runner, 0);
 	};
 	setTimeout(runner, 0);
-}
+};
 
 const handleGetLocations = m => {
 	log(LOG_DEBUG, "GetLocations job received" + m.data.job);
@@ -498,7 +500,7 @@ const handleGetFormData = m => {
 			values.push(v);
 		}
 		action.values = values.join("&");
-		action.method = form.method.toLowerCase() == 'post' ? "post" : "get";
+		action.method = form.method.toLowerCase() === 'post' ? "post" : "get";
 		action.desc = extractDescription(form);
 		action.title = ctx.ownerDocument.defaultView.title;
 		action.ref = getRef(ctx.ownerDocument);
@@ -508,7 +510,7 @@ const handleGetFormData = m => {
 		log(LOG_ERROR, "Failed to get form data", ex);
 		sendAsyncMessage("DTA:getFormData:" + m.data.job, {exception: ex.message || ex});
 	}
-}
+};
 
 const handleSaveTarget = m => {
 	try {
@@ -516,8 +518,8 @@ const handleSaveTarget = m => {
 		let doc = cur.ownerDocument;
 		let rv;
 		let what = m.data.args.what;
-		while (cur && cur.localName.toLowerCase() != what) {
-			if (what == "video" || what == "audio") {
+		while (cur && cur.localName.toLowerCase() !== what) {
+			if (what === "video" || what === "audio") {
 				let cn = cur.getElementsByTagName(what);
 				if (cn.length) {
 					cur = cn[0];

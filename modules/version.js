@@ -48,7 +48,7 @@ function completeVersion(addon) {
 		exports.ready = true;
 	}
 
-	_callbacks.forEach(function callback(c) c.call(c, exports));
+	_callbacks.forEach(c => c.call(c, exports));
 	_callbacks = [];
 }
 

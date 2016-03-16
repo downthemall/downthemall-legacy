@@ -5,7 +5,7 @@
 /* global _, DTA, $, $$, Utils, Preferences */
 /* global getDefaultDownloadsDirectory, unloadWindow, getIcon, getFavIcon */
 /* global mapInSitu, setTimeoutOnlyFun, FilterManager, openUrl */
-/* jshint browser:true */
+/* jshint globalstrict:true, strict:true, browser:true */
 var prompts = require("prompts");
 
 var hidpi = window.matchMedia && window.matchMedia("(min-resolution: 2dppx)").matches;
@@ -110,20 +110,20 @@ Tree.prototype = {
 			$("status").label = _("status");
 		}
 	},
-	isChecked: function(idx) !!this._links[idx].checked.length,
+	isChecked: function(idx) { return !!this._links[idx].checked.length; },
 
 	/*
 	 * actual nsITreeView follows
 	 */
-	get rowCount() this._links.length,
+	get rowCount() { return this._links.length; },
 
 	// used to initialize nsITreeview and provide the corresponding treeBoxObject
 	setTree: function(box) {
 		this._box = box;
 	},
 
-	getParentIndex: function(idx) -1,
-	getLevel: function(idx) 0,
+	getParentIndex: function(idx) { return -1; },
+	getLevel: function(idx) { return 0; },
 
 	getCellText: function(idx, col) {
 
@@ -154,12 +154,14 @@ Tree.prototype = {
 		return null;
 	},
 
-	isSorted: function() !!this._sortColumn,
-	isContainer: function(idx) false,
-	isContainerOpen: function(idx) false,
-	isContainerEmpty: function(idx) false,
-	isSeparator: function(idx) false,
-	isEditable: function(idx, col) !col.index,
+	isSorted: function() {
+		return !!this._sortColumn;
+	},
+	isContainer: function(idx) { return false; },
+	isContainerOpen: function(idx) { return false; },
+	isContainerEmpty: function(idx) { return false; },
+	isSeparator: function(idx) { return false; },
+	isEditable: function(idx, col) { return !col.index; },
 
 	// will grab the "icon" for a cell.
 	getImageSrc: function(idx, col) {
@@ -220,8 +222,7 @@ Tree.prototype = {
 		let sd;
 		this._links.forEach(function(e, i) { e._sortId = i; });
 
-		let tp = this;
-		Utils.naturalSort(this._links, function(e) tp.getCellText(e._sortId, col));
+		Utils.naturalSort(this._links, e => this.getCellText(e._sortId, col));
 		if (this._sortDirection) {
 			this._links.reverse();
 		}
@@ -234,9 +235,9 @@ Tree.prototype = {
 	performAction: function(action) {},
 	performActionOnRow: function(action, index, column) {},
 	performActionOnCell: function(action, index, column) {},
-	getColumnProperties: function(column, element) "",
+	getColumnProperties: function(column, element) { return ""; },
 
-	getRowProperties: function(idx) this._links[idx].checked,
+	getRowProperties: function(idx) { return this._links[idx].checked; },
 	getCellProperties: function(idx, column) {
 		// col 1 is our url... it should display the type icon
 		// to better be able to style add a property.
@@ -293,7 +294,7 @@ Dialog = {
 			let images = window.arguments[1];
 
 			let isPrivate = this.isPrivate =
-				links.some(function(e) e.isPrivate) || images.some(function(e) e.isPrivate);
+				links.some(e => e.isPrivate) || images.some(e => e.isPrivate);
 
 			// construct or dropdowns.
 			this.ddFilter = $('filter');
@@ -699,7 +700,7 @@ Dialog = {
 		let checkCmd = function(evt) {
 			Dialog.toggleBox(evt.target);
 		};
-		for (let f in FilterManager.enumAll()) {
+		for (let f of FilterManager.enumAll()) {
 			if (!(f.type & type)) {
 				continue;
 			}

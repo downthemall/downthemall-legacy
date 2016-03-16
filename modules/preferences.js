@@ -269,7 +269,7 @@ function makeObserver(obj) {
 function addObserver(branch, obj) {
 	makeObserver(obj);
 	prefs.addObserver(branch, obj, true);
-	return unload(function() removeObserver(branch, obj));
+	return unload(() => removeObserver(branch, obj));
 }
 
 Object.defineProperties(exports, {

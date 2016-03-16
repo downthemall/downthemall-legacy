@@ -168,8 +168,8 @@ test("cropCenter", function() {
 
 test("toURI", function() {
 	const {toURI} = require("support/stringfuncs");
-	throws(function() toURI(""));
-	throws(function() toURI("a"));
+	throws(() => toURI(""));
+	throws(() => toURI("a"));
 	strictEqual(toURI("abc:").spec, "abc:");
 	strictEqual(toURI("https://example.org").spec, "https://example.org/");
 	strictEqual(toURI("https://example.org/p").spec, "https://example.org/p");
@@ -179,9 +179,9 @@ test("toURI", function() {
 
 test("toURL", function() {
 	const {toURL} = require("support/stringfuncs");
-	throws(function() toURL(""));
-	throws(function() toURL("a"));
-	throws(function() toURL("abc:"));
+	throws(() => toURL(""));
+	throws(() => toURL("a"));
+	throws(() => toURL("abc:"));
 	strictEqual(toURL("https://example.org").spec, "https://example.org/");
 	strictEqual(toURL("https://example.org/p").spec, "https://example.org/p");
 	strictEqual(toURL("c", null, toURL("https://example.org/p")).spec, "https://example.org/c");

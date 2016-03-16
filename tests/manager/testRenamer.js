@@ -23,12 +23,12 @@ test("exports", function() {
 		iNum: 2,
 		startDate: new Date(123456789),
 
-		get maskURL() this.urlManager.usableURL,
-		get maskURLPath() this.urlManager.usableURLPath,
-		get maskCURL() getCURL(this.maskURL),
-		get maskReferrerURL() this.referrerUrlManager.usableURL,
-		get maskReferrerURLPath() this.referrerUrlManager.usableURLPath,
-		get maskReferrerCURL() getCURL(this.maskReferrerURL),
+		get maskURL() { return this.urlManager.usableURL; },
+		get maskURLPath() { return this.urlManager.usableURLPath; },
+		get maskCURL() { return getCURL(this.maskURL); },
+		get maskReferrerURL() { return this.referrerUrlManager.usableURL; },
+		get maskReferrerURLPath() { return this.referrerUrlManager.usableURLPath; },
+		get maskReferrerCURL() { return getCURL(this.maskReferrerURL); },
 
 		noop: 0
 	};

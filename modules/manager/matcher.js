@@ -8,7 +8,6 @@ const constants = require("constants");
 const {COMPLETE, FINISHING} = constants;
 
 const {
-	SimpleIterator,
 	StringBundles,
 	filterInSitu
 } = require("utils");
@@ -27,10 +26,12 @@ const _ = (function(global) {
 })(this);
 
 const TextMatch = {
-	get name() 'textmatch',
+	get name() {
+		return 'textmatch';
+	},
 	getMatcher: function(params) {
 		params = new RegExp(
-			params.map(function(e) e
+			params.map(e => e
 				.replace(/^\s+|\s+$/g, '')
 				.replace(/([/{}()\[\]\\^$.])/g, "\\$1")
 				.replace(/\*/g, ".*")
@@ -38,16 +39,20 @@ const TextMatch = {
 			).join('|'),
 			'i'
 		);
-		return function TextMatcher(d) params.test(
-			[d.urlManager.usable, d.description, d.fileName, d.destinationName].join(' ')
-		);
+		return function TextMatcher(d) {
+			return params.test(
+				[d.urlManager.usable, d.description, d.fileName, d.destinationName].join(' ')
+			);
+		};
 	}
 };
 
 const FilterMatch = {
-	get name() 'filtermatch',
-	getItems: function() {
-		for (let f in FilterManager.enumAll()) {
+	get name() {
+		return 'filtermatch';
+	},
+	getItems: function*() {
+		for (let f of FilterManager.enumAll()) {
 			if (f.id === "deffilter-all") {
 				continue;
 			}
@@ -73,18 +78,21 @@ const FilterMatch = {
 			return null;
 		}
 		let _m = FilterManager.getMatcherFor(filters);
-		return function FilterMatcher(d) _m(d.urlManager.spec);
+		return function FilterMatcher(d) { return _m(d.urlManager.spec); };
 	}
 };
 
 const PathMatch = {
-	get name() 'pathmatch',
-	getItems: function(downloads) {
+	get name() {
+		return 'pathmatch';
+	},
+	getItems: function*(downloads) {
 		let paths = filterInSitu(
-			downloads.map(function(d) d.destinationPath),
-			function(e) !((e in this) || (this[e] = null)),
-			{}
-			);
+			downloads.map(d => d.destinationPath),
+			function(e) {
+				return !((e in this) || (this[e] = null));
+			},
+			{});
 		paths.sort();
 		for (let p of paths) {
 			yield {
@@ -94,14 +102,18 @@ const PathMatch = {
 		}
 	},
 	getMatcher: function(params) {
-		params = params.map(function(e) atob(e));
-		return function PathMatcher(d) params.indexOf(d.destinationPath) >= 0;
+		params = params.map(e => atob(e));
+		return function PathMatcher(d) {
+			return params.indexOf(d.destinationPath) >= 0;
+		};
 	}
 };
 
 const RemainderMatch = {
-	get name() 'remainder',
-	getItems: function() {
+	get name() {
+		return 'remainder';
+	},
+	getItems: function*() {
 		yield {
 			label: _('soonfinished'),
 			param: '120',
@@ -137,12 +149,14 @@ const RemainderMatch = {
 				est = n;
 			}
 		}
-		return function RemainderMatcher(d) d.estimated <= est;
+		return function RemainderMatcher(d) { return d.estimated <= est; };
 	}
 };
 const StatusMatch = {
-	get name() 'statusmatch',
-	getItems: function() {
+	get name() {
+		return 'statusmatch';
+	},
+	getItems: function*() {
 		for (let s of ['QUEUED', 'PAUSED', 'RUNNING', 'COMPLETE', 'CANCELED']) {
 			yield {
 				label: _(s.toLowerCase()),
@@ -151,11 +165,11 @@ const StatusMatch = {
 		}
 	},
 	getMatcher: function(params) {
-		let state = params.reduce(function(p,c) p | constants[c], 0);
+		let state = params.reduce((p, c) =>  p | constants[c], 0);
 		if (state & COMPLETE) {
 			state |= FINISHING;
 		}
-		return function StatusMatcher(d) d.state & state;
+		return function StatusMatcher(d) { return d.state & state; };
 	}
 };
 requireJoined(StatusMatch, "constants");
@@ -170,8 +184,10 @@ const SIZES = [
 	['4294967296-', _('hugefiles')]
 ];
 const SizeMatch = {
-	get name() 'sizematch',
-	getItems: function() {
+	get name() {
+		return 'sizematch';
+	},
+	getItems: function*() {
 		for (let [p, l] of SIZES) {
 			yield {
 				label: l,
@@ -180,7 +196,9 @@ const SizeMatch = {
 		}
 	},
 	getMatcher: function(params) {
-		function parseInt10(v) parseInt(v, 10);
+		function parseInt10(v) {
+			return parseInt(v, 10);
+		}
 		let ranges = [];
 		for (let x of params) {
 			let [l,h] = x.split('-').map(parseInt10);
@@ -202,30 +220,35 @@ const SizeMatch = {
 			let low = r.low;
 			let high = r.high;
 			if (!isFinite(low)) {
-				return function(size) size <= high;
+				return function(size) { return size <= high; };
 			}
 			if (!isFinite(high)) {
-				return function(size) size > low;
+				return function(size) { return size > low; };
 			}
-			return function(size) size > low && size <= high;
+			return function(size) { return size > low && size <= high; };
 		});
 
 		if (ranges.length === 1) {
 			let rf = ranges.shift();
-			return function(d) rf(d.totalSize);
+			return function(d) { return rf(d.totalSize); };
 		}
-		return function(d) ranges.some(function(rf) rf(d.totalSize));
+		return function(d) {
+			return ranges.some(function(rf) { return rf(d.totalSize); });
+		};
 	}
 };
 
 const DomainMatch = {
-	get name() 'domainmatch',
-	getItems: function(downloads) {
+	get name() {
+		return 'domainmatch';
+	},
+	getItems: function*(downloads) {
 		let domains = filterInSitu(
-				downloads.map(function(d) d.urlManager.domain),
-				function(e) !((e in this) || (this[e] = null)),
-				{}
-				);
+				downloads.map(d => d.urlManager.domain),
+				function(e) {
+					return !((e in this) || (this[e] = null));
+				},
+				{});
 		domains.sort();
 		for (let p of domains) {
 			yield {
@@ -235,8 +258,8 @@ const DomainMatch = {
 		}
 	},
 	getMatcher: function(params) {
-		params = params.map(function(e) atob(e));
-		return function(d) params.indexOf(d.urlManager.domain) >= 0;
+		params = params.map(e => atob(e));
+		return function(d) { return params.indexOf(d.urlManager.domain) >= 0; };
 	}
 };
 
@@ -245,21 +268,25 @@ function MatcherTee(a, b) {
 	this.b = b;
 }
 MatcherTee.prototype = {
-	get name() this.a + ";" + this.b,
-	getItems: function(downloads) {
-		for (let a in this.a.getItems(downloads)) {
+	get name() {
+		return this.a + ";" + this.b;
+	},
+	getItems: function*(downloads) {
+		for (let a of this.a.getItems(downloads)) {
 			a.param = "a:" + a.param;
 			yield a;
 		}
 		yield {label: '-'};
-		for (let b in this.b.getItems(downloads)) {
+		for (let b of this.b.getItems(downloads)) {
 			b.param = "b:" + b.param;
 			yield b;
 		}
 	},
 	getMatcher: function(params) {
 		let a = [], b = [];
-		params.forEach(function(p) this[p[0]].push(p.substr(2)), {a:a, b:b});
+		params.forEach(function(p) {
+			return this[p[0]].push(p.substr(2));
+		}, {a:a, b:b});
 		if (a.length && !b.length) {
 			return this.a.getMatcher(a);
 		}
@@ -271,7 +298,7 @@ MatcherTee.prototype = {
 		}
 		a = this.a.getMatcher(a);
 		b = this.b.getMatcher(b);
-		return function(d) a(d) && b(d);
+		return function(d) { return a(d) && b(d); };
 	}
 };
 
@@ -288,8 +315,8 @@ Matcher.prototype = {
 		'sizematch': SizeMatch,
 		'domainmatch': DomainMatch
 	},
-	getItems: function(name, downloads) {
-		for (let i in this._available[name].getItems(downloads)) {
+	getItems: function*(name, downloads) {
+		for (let i of this._available[name].getItems(downloads)) {
 			yield i;
 		}
 	},
@@ -307,11 +334,13 @@ Matcher.prototype = {
 		}
 	},
 	removeMatcher: function(name) {
-		this._matchersLength = filterInSitu(this._matchers, function(m) m.name !== name).length;
+		this._matchersLength = filterInSitu(this._matchers, m => m.name !== name).length;
 	},
-	get filtering() !!this._matchersLength,
+	get filtering() {
+		return !!this._matchersLength;
+	},
 	filter: function(array) {
-		// jshint loopfunc:true
+		// jshint strict:true, globalstrict:true, loopfunc:true
 		let rv;
 		for (let i = 0, e = this._matchers.length; i < e; ++i) {
 			let m = this._matchers[i];

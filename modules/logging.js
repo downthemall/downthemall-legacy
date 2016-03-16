@@ -96,7 +96,9 @@ var level = exports.LOG_NONE;
 
 const fmt = (function() {
 	const re = /^(\d)$/;
-	return function(i) i.toString().replace(re, "0$1");
+	return function(i) {
+		return i.toString().replace(re, "0$1");
+	};
 })();
 
 function getTimeString() {
@@ -197,8 +199,8 @@ exports.log = function(level, message, exception) {
 	}
 };
 
-Object.defineProperty(exports.log, "enabled", {get: function() global.level !== exports.LOG_NONE});
-Object.defineProperty(exports.log, "file", {get: function () global.file});
+Object.defineProperty(exports.log, "enabled", {get: () => global.level !== exports.LOG_NONE});
+Object.defineProperty(exports.log, "file", {get: () => global.file});
 Object.defineProperty(exports.log, "clear", {value: function clear() {
 	try {
 		if (global.file.exists()) {

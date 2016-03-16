@@ -12,9 +12,9 @@ const NS_ERROR_NET_RESET = NS_ERROR_MODULE_NETWORK + 20;
 const NS_ERROR_FTP_CWD = NS_ERROR_MODULE_NETWORK + 22;
 
 let DTA = require("api");
-/* global RUNNING, CANCELED, PAUSED, FINISHING */
+/* global RUNNING, CANCELED, PAUSED, FINISHING, ArrayBuffer */
 requireJoined(this, "constants");
-const {formatNumber, SimpleIterator, StringBundles, getTimestamp} = require("utils");
+const {formatNumber, StringBundles, getTimestamp} = require("utils");
 const {modifyURL, modifyHttp} = require("support/requestmanipulation");
 const Preferences = require("preferences");
 const {
@@ -268,7 +268,9 @@ Connection.prototype = {
 		return this._interfaces;
 	},
 
-	getHelperForLanguage: function(aLanguage) null,
+	getHelperForLanguage: function(aLanguage) {
+		return null;
+	},
 	contractID: null,
 	classDescription: "DownThemAll! connection",
 	classID: null,
@@ -292,7 +294,7 @@ Connection.prototype = {
 				let oldURI = oldChannel.URI;
 				let newURI = newChannel.URI;
 				let redirectURI = modifyURL(newURI.clone());
-				if (redirectURI.spec != newURI.spec && redirectURI.spec != oldURI.spec) {
+				if (redirectURI.spec !== newURI.spec && redirectURI.spec !== oldURI.spec) {
 					log(LOG_ERROR, `redirecting ${newURI.spec} to ${redirectURI.spec}`);
 					try {
 						newChannel.redirectTo(redirectURI);
@@ -333,9 +335,16 @@ Connection.prototype = {
 		try {
 			let newurl = new DTA.URL(newChannel.URI.QueryInterface(Ci.nsIURL), this.url.preference);
 			d.fileName = getUsableFileName(newurl.usable);
-			if (oldChannel instanceof Ci.nsIHttpChannel && oldChannel.responseStatus === 302) {
-				this.extractMetaInfo(d, oldChannel);
-				return;
+			if (oldChannel instanceof Ci.nsIHttpChannel) {
+				try {
+					if (oldChannel.responseStatus === 302) {
+						this.extractMetaInfo(d, oldChannel);
+						return;
+					}
+				}
+				catch (ex) {
+					// oldChannel might not have a status yet
+				}
 			}
 			d.urlManager.replace(this.url, newurl);
 			this.url = newurl;
@@ -348,7 +357,7 @@ Connection.prototype = {
 	verifyChunksStarted: function() {
 		let d = this.d;
 		// XXX always check, not just .isInfoGetter?
-		if (!this.isInfoGetter || d.chunks.every(function(c) !c.running || !!c.sessionBytes)) {
+		if (!this.isInfoGetter || d.chunks.every(c => !c.running || !!c.sessionBytes)) {
 			// All running chunks received something at this point
 			return false;
 		}
@@ -408,7 +417,7 @@ Connection.prototype = {
 			}
 		}
 		catch (ex) {
-			log(LOG_ERROR, "Failed to discard overrecv by conventional means " + count + " " + aInputStream.available(), ex);
+			log(LOG_ERROR, `Failed to discard overrecv by conventional means ${count} ${aInputStream.available()}`, ex);
 			throw NS_ERROR_BINDING_ABORTED;
 		}
 	},
@@ -517,7 +526,7 @@ Connection.prototype = {
 			if (cidx > -1) {
 				d.chunks.splice(cidx, 1);
 			}
-			d.chunks.sort(function(a, b) a.start - b.start);
+			d.chunks.sort((a, b) => a.start - b.start);
 
 			// check for overlapping ranges we might have created
 			// otherwise we'll receive a size mismatch
@@ -556,7 +565,7 @@ Connection.prototype = {
 		return false;
 	},
 	extractMetaInfo: function(download, channel, cb, visitor) {
-		cb = cb || function() true;
+		cb = cb || (() => true);
 		if (!visitor) {
 			try {
 				visitor = download.visitors.visit(channel);
@@ -759,7 +768,7 @@ Connection.prototype = {
 
 				let file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
 				if (~[401, 402, 407, 500, 502, 503, 504].indexOf(code) ||
-					(Preferences.getExt('recoverallhttperrors', false) && code != 404)) {
+					(Preferences.getExt('recoverallhttperrors', false) && code !== 404)) {
 					log(LOG_DEBUG, "we got temp failure!", code);
 					d.pauseAndRetry();
 					d.status = code >= 500 ? _('temperror') : _("error", [formatNumber(code, 3)]);

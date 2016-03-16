@@ -37,14 +37,14 @@ Manipulator.prototype = {
 
 function defineManipulator(m, sp) {
 	const _m = new Manipulator();
-	exports['register' + m] = function() _m.register.apply(_m, arguments);
-	exports['unregister' + m] = function(id) _m.unregister(id);
-	exports['modify' + m] = function(context) _m.modify(context, sp(context));
+	exports['register' + m] = function() { _m.register.apply(_m, arguments); };
+	exports['unregister' + m] = function(id) { _m.unregister(id); };
+	exports['modify' + m] = function(context) { return _m.modify(context, sp(context)); };
 }
 
 const mans = [
-	['URL', function(c) c.spec],
-	['Http', function(c) c.URI.spec]
+	['URL', c => c.spec],
+	['Http', c => c.URI.spec]
 	];
 for (let [m, sp] of mans) {
 	defineManipulator(m, sp);
@@ -99,13 +99,13 @@ exports.registerHttp(
 exports.registerURL(
 	'rapidshare direct',
 	/^https?:\/\/(?:[\w\d_.-]+\.)?rapidshare\.com\/files\/[^?]*?(?!\?directstart=1)$/,
-	function() this.spec += "?directstart=1"
+	function() { this.spec += "?directstart=1"; }
 );
 
 exports.registerURL(
 	"youtube; strip video ranges",
 	/youtube.*&range=/,
-	function() this.spec = this.spec.replace(/&range=.*?&/, "&")
+	function() { this.spec = this.spec.replace(/&range=.*?&/, "&"); }
 );
 exports.registerURL(
 	"DumpTruck container pages",

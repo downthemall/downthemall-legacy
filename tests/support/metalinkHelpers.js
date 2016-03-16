@@ -85,7 +85,7 @@ var metalink_createUrlManager = function(urls) {
 	return new UrlManager(Array.from(urls, e => Services.io.newURI(e, null, null)));
 }
 var metalink_downloadCollection = function(downloads) {
-	this.downloads = downloads.map(function(d) {
+	return downloads.map(function(d) {
 		var top_hash, hashCollection = null;
 		if (d.hash) {
 			top_hash = new DTA.Hash(d.hash.full, d.hash.type);
@@ -110,24 +110,6 @@ var metalink_downloadCollection = function(downloads) {
 		};
 	});
 }
-var metalink_downloadIterator = function(collection) {
-	this.downloadCollection = collection;
-	this.index = 0;
-}
-metalink_downloadIterator.prototype.next = function() {
-	if (this.index >= this.downloadCollection.downloads.length) {
-		this.index = 0;
-		throw StopIteration;
-	}
-	else {
-		return this.downloadCollection.downloads[this.index++];
-	}
-}
-
-metalink_downloadCollection.prototype.__iterator__ = function() {
-	return new metalink_downloadIterator(this);
-}
-
 function metalink_getExportedResults(downloads, cb) {
 	const {exportToMetalink4File} = require("manager/imex");
 	const Prefs = require("preferences");
@@ -135,7 +117,7 @@ function metalink_getExportedResults(downloads, cb) {
 	var file = FileUtils.getFile("TmpD", ["tmp.meta4"]);
 	var fileURI = Services.io.newFileURI(file);
 
-	var coll = new metalink_downloadCollection(downloads);
+	var coll = metalink_downloadCollection(downloads);
 	exportToMetalink4File(coll, document, file, Prefs.permissions);
 	parse(fileURI, "", function(data, ex) {
 		cb(data, ex);

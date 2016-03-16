@@ -12,10 +12,10 @@ asyncTest("non-existant", function() {
 	const {createOptimizedImplementation} = require("support/optimpl");
 	var impl = createOptimizedImplementation(
 		"non-existant",
-		function(impl) function(cb) impl(null, cb),
-		function() cb("non-worker")
+		impl => cb => impl(null, cb),
+		() => cb("non-worker")
 		);
-	setTimeout(function() impl.callImpl(cb), 500);
+	setTimeout(() => impl.callImpl(cb), 500);
 });
 
 asyncTest("worker", function() {
@@ -26,10 +26,10 @@ asyncTest("worker", function() {
 	const {createOptimizedImplementation} = require("support/optimpl");
 	var impl = createOptimizedImplementation(
 		"tests/worker",
-		function(impl) function(cb) impl({}, cb),
-		function() cb("non-worker")
+		impl => cb => impl({}, cb),
+		() => cb("non-worker")
 		);
-	setTimeout(function() impl.callImpl(cb), 500);
+	setTimeout(() => impl.callImpl(cb), 500);
 });
 
 asyncTest("workerThrow", function() {
@@ -40,10 +40,10 @@ asyncTest("workerThrow", function() {
 	const {createOptimizedImplementation} = require("support/optimpl");
 	var impl = createOptimizedImplementation(
 			"tests/workerThrow",
-			function(impl) function(cb) impl({}, cb),
-			function() cb("non-worker")
+			impl => cb => impl({}, cb),
+			() => cb("non-worker")
 	);
-	setTimeout(function() impl.callImpl(cb), 50);
+	setTimeout(() => impl.callImpl(cb), 50);
 });
 
 asyncTest("workerFail", function() {
@@ -54,8 +54,8 @@ asyncTest("workerFail", function() {
 	const {createOptimizedImplementation} = require("support/optimpl");
 	var impl = createOptimizedImplementation(
 			"tests/workerFail",
-			function(impl) function(cb) impl({}, cb),
-			function() cb("non-worker")
+			impl => cb => impl({}, cb),
+			() => cb("non-worker")
 	);
-	setTimeout(function() impl.callImpl(cb), 50);
+	setTimeout(() => impl.callImpl(cb), 50);
 });

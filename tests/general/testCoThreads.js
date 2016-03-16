@@ -43,7 +43,7 @@ asyncTest("CoThreadInterleaved", function() {
 	var {CoThreadInterleaved} = require("support/cothreads");
 	var hit = 0;
 	new CoThreadInterleaved(
-			function() {
+			function*() {
 				++hit;
 				yield true;
 				++hit;
@@ -58,7 +58,7 @@ asyncTest("CoThreadInterleaved already_generator", function() {
 	var {CoThreadInterleaved} = require("support/cothreads");
 	var hit = 0;
 	new CoThreadInterleaved(
-			(function() {
+			(function*() {
 				++hit;
 				yield true;
 				++hit;
@@ -76,7 +76,7 @@ asyncTest("CoThreadListWalker array", function() {
 	new CoThreadListWalker(
 			function() {
 				++hit;
-				return true
+				return true;
 			},
 			[1,2]
 	).start(function() {
@@ -94,7 +94,7 @@ asyncTest("CoThreadListWalker generator", function() {
 				++hit;
 				return true
 			},
-			(function() { yield 1; yield 2; })()
+			(function*() { yield 1; yield 2; })()
 	).start(function() {
 		QUnit.start();
 		equal(hit, 2);

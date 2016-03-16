@@ -20,7 +20,7 @@ test("url", function() {
 	var uri = Services.io.newURI("http://example.org/", null, null);
 	strictEqual(uri.spec, modifyURL(uri.clone()).spec, uri.spec);
 
-	registerURL("example", /example.org/, function() this.spec = this.spec.replace(".org", ".com"));
+	registerURL("example", /example.org/, function() { this.spec = this.spec.replace(".org", ".com"); });
 	strictEqual(uri.spec.replace(".org", ".com"), modifyURL(uri.clone()).spec, uri.spec.replace(".org", ".com"));
 
 	unregisterURL("example");
@@ -34,8 +34,8 @@ test("http", function() {
 
 	registerHttp("example", /example.org/, overrideUA, makeAnonymous);
 	modifyHttp(chan);
-	throws(function() chan.getRequestHeader("Referer"));
-	throws(function() chan.getRequestHeader("Cookie"));
+	throws(() => chan.getRequestHeader("Referer"));
+	throws(() => chan.getRequestHeader("Cookie"));
 	ok(chan.getRequestHeader("User-Agent").indexOf("DownThemAll") != -1);
 	ok(chan.getRequestHeader("User-Agent").indexOf("wget") != -1);
 	ok(chan.getRequestHeader("User-Agent").indexOf("Firefox") == -1);

@@ -28,8 +28,8 @@ function WorkerJob(file, size, perms, callback) {
 	}
 
 	let g = this.run.bind(this);
-	var gen = function() {
-		for (let i in g()) {
+	var gen = function*() {
+		for (let i of g()) {
 			yield i;
 		}
 	};
@@ -39,7 +39,7 @@ function WorkerJob(file, size, perms, callback) {
 
 WorkerJob.prototype = {
 	result: false,
-	run: function worker_run() {
+	run: function* worker_run() {
 		let gen;
 		if (WINDOWSIMPL && this.size < WINDOWSIMPL_SIZEMAX) {
 			gen = this._run_windows();
@@ -47,7 +47,7 @@ WorkerJob.prototype = {
 		else {
 			gen = this._run_other();
 		}
-		for (let i in gen) {
+		for (let i of gen) {
 			yield i;
 		}
 	},
@@ -56,7 +56,7 @@ WorkerJob.prototype = {
 		delete this.coThread;
 		this.callback(this.result);
 	},
-	_run_windows: function worker_run_windows() {
+	_run_windows: function* worker_run_windows() {
 		let size = this.size;
 		try {
 			let seekable = this._stream.QueryInterface(Ci.nsISeekableStream);
@@ -73,12 +73,12 @@ WorkerJob.prototype = {
 		}
 		catch (ex) {
 			log(LOG_ERROR, "pa: Windows implementation failed!", ex);
-			for (let i in this._run_other()) {
+			for (let i of this._run_other()) {
 				yield i;
 			}
 		}
 	},
-	_run_other: function worker_run_other() {
+	_run_other: function* worker_run_other() {
 		try {
 			let seekable = this._stream.QueryInterface(Ci.nsISeekableStream);
 			let i = seekable.tell();

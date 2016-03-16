@@ -4,7 +4,7 @@
 "use strict";
 /* global $, $$, _, Preferences, Dialog, Utils, mapInSitu, RequestManipulation, hash, showPreferences, Timers, defer */
 /* global COMPLETE, PAUSED, CANCELED, RUNNING, SPEED_COUNT, TOOLTIP_FREQ */
-/* jshint browser:true */
+/* jshint globalstrict: true, strict:true, browser:true */
 
 var PREF_CONN = 'network.http.max-connections';
 
@@ -274,7 +274,9 @@ var Prefs = {
 					{
 						accessKey: null,
 						label: _('manualfix3'),
-						callback: function() showPreferences('paneAdvanced')
+						callback: function() {
+							showPreferences('paneAdvanced');
+						}
 					}
 				]);
 				throw ex;
@@ -314,7 +316,7 @@ var Tooltip = {
 			'speedCurrent',
 			'timeRemaining',
 			'timeElapsed'
-		).forEach(function(e) this[e.id] = e, this);
+		).forEach(function(e) { this[e.id] = e; }, this);
 		this.boundInitUpdate = this.initUpdate.bind(this);
 	},
 	start: function(d, inTip) {
@@ -510,19 +512,19 @@ var Tooltip = {
 				let maxH, minH;
 				maxH = minH = file.speeds.first;
 				let speeds = [];
-				for (let s in file.speeds.all) {
+				for (let s of file.speeds.all) {
 					maxH = Math.max(maxH, s);
 					minH = Math.min(minH, s);
 					speeds.push(s);
 				}
 				let aspeeds = [];
-				for (let s in file.speeds.allAvg) {
+				for (let s of file.speeds.allAvg) {
 					aspeeds.push(s);
 				}
 				// special case: all speeds are the same
 				if (minH === maxH) {
-					mapInSitu(speeds, function(speed) 12);
-					mapInSitu(aspeeds, function(speed) 12);
+					mapInSitu(speeds, function(speed) { return 12; });
+					mapInSitu(aspeeds, function(speed) { return 12; });
 				}
 				else {
 					let r = (maxH - minH);
@@ -607,7 +609,7 @@ var Tooltip = {
 		{ x:1, fs: ["#9A8F4E", "#B0A359", "#B3A75D", "#BAB78B"] },
 		{ x:2, fs: ["#8E8746", "#B0A359", "#8E8746", "#CACB96"] },
 		{ x:3, f: function(i) {
-			function c(a) Math.max(0, Math.min(360, a));
+			function c(a) { return Math.max(0, Math.min(360, a)); }
 			return [
 				"hsl(" + c(77.64 + 7 * (i - 2)) + ",65.88%,51.76%)",
 				"hsl(" + c(70.59 + 4 * (2 - 1)) + ",85.10%,61.18%)"

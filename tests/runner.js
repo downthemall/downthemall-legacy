@@ -149,7 +149,7 @@ function _createTestHttpChannelInternal() {
 			}
 			return val;
 		},
-		isNoStoreResponse: function() false,
+		isNoStoreResponse: function() { return false; },
 		setRequestHeader: function(header, value, merge) {
 			this.responseHeaders[header.toLowerCase()] = value;
 		},

@@ -111,7 +111,6 @@ metalink_asyncTestFile(
 	"data/metalink/utf",
 	function(data, ex) {
 		ok(!ex, "no errors in parser");
-		console.log("data", data.downloads.map(function(e) e.fileName).join(""));
 		metalink_checkDownload(data.downloads, {
 			fileName: "Fußball läuft gerade",
 			size: 2014232,
@@ -136,7 +135,6 @@ metalink_asyncTestFile(
 	"data/metalink/iso_encoding",
 	function(data, ex) {
 		ok(!ex, "no errors in parser");
-		console.log("data", data.downloads.map(function(e) e.fileName).join(""));
 		metalink_checkDownload(data.downloads, {
 			fileName: "Fußball läuft gerade",
 			size: 2014232,

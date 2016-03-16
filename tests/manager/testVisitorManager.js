@@ -262,7 +262,7 @@ test("real world http visit", function() {
 		});
 		const vm = new VisitorManager();
 		const visit = vm.visit(chan);
-		throws(function() vm.time, /No Date registered/i, "No Date registered");
+		throws(() => vm.time, /No Date registered/i, "No Date registered");
 		ok(!visit.time, "No Date registered");
 	});
 
@@ -280,7 +280,7 @@ test("real world http visit", function() {
 		});
 		const vm = new VisitorManager();
 		const visit = vm.visit(chan);
-		throws(function() vm.time, /No Date registered/i, "No Date registered");
+		throws(() => vm.time, /No Date registered/i, "No Date registered");
 		ok(!visit.time, "No Date registered");
 	});
 

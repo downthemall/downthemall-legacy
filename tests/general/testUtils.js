@@ -48,39 +48,40 @@ test("range", function() {
 	const {range} = require("utils");
 
 	var r = range(2);
-	strictEqual(r.next(), 0, "0");
-	strictEqual(r.next(), 1, "1");
-	throws(function() r.next(), "stop");
+	strictEqual(r.next().value, 0, "0");
+	strictEqual(r.next().value, 1, "1");
+	strictEqual(r.next().done, true, "stop");
 
 	r = range(1,3);
-	strictEqual(r.next(), 1, "1");
-	strictEqual(r.next(), 2, "2");
-	throws(function() r.next(), "stop");
+	strictEqual(r.next().value, 1, "1");
+	strictEqual(r.next().value, 2, "2");
+	strictEqual(r.next().done, true, "stop");
 
 	r = range(-3,-1,1);
-	strictEqual(r.next(), -3, "-3");
-	strictEqual(r.next(), -2, "-2");
-	throws(function() r.next(), "stop");
+	strictEqual(r.next().value, -3, "-3");
+	strictEqual(r.next().value, -2, "-2");
+	strictEqual(r.next().done, true, "stop");
 
 	r = range(-30,-10,10);
-	strictEqual(r.next(), -30, "-30");
-	strictEqual(r.next(), -20, "-20");
-	throws(function() r.next(), "stop");
+	strictEqual(r.next().value, -30, "-30");
+	strictEqual(r.next().value, -20, "-20");
+	strictEqual(r.next().done, true, "stop");
 
 	r = range(-1,-3,-1);
-	strictEqual(r.next(), -1, "-1");
-	strictEqual(r.next(), -2, "-2");
-	throws(function() r.next(), "stop");
+	strictEqual(r.next().value, -1, "-1");
+	strictEqual(r.next().value, -2, "-2");
+	strictEqual(r.next().done, true, "stop");
 
 	r = range(-10,-30,-10);
-	strictEqual(r.next(), -10, "-10");
-	strictEqual(r.next(), -20, "-20");
-	throws(function() r.next(), "stop");
+	strictEqual(r.next().value, -10, "-10");
+	strictEqual(r.next().value, -20, "-20");
+	strictEqual(r.next().done, true, "stop");
+	
 
-	throws(function() range(1/0).next(), "finite stop");
-	throws(function() range(1,1/0).next(), "finite start");
-	throws(function() range(1,1,1/0).next(), "finite step");
-	throws(function() range(-3,-1,-1).next(), "negative range");
+	throws(() => range(1/0).next(), "finite stop");
+	throws(() => range(1,1/0).next(), "finite start");
+	throws(() => range(1,1,1/0).next(), "finite step");
+	throws(() => range(-3,-1,-1).next(), "negative range");
 });
 
 test("hexdigest", function() {
@@ -110,8 +111,8 @@ test("formatNumber", function() {
 	strictEqual(formatNumber(100, 1), "100", "1; 100");
 	strictEqual(formatNumber(1000, 1), "1000", "1; 1000");
 
-	throws(function() formatNumber(1,0), "0 digits");
-	throws(function() formatNumber(1,-10), "-10 digits");
+	throws(() => formatNumber(1,0), "0 digits");
+	throws(() => formatNumber(1,-10), "-10 digits");
 });
 
 test("formatTimeDelta", function() {
@@ -126,28 +127,28 @@ test("formatTimeDelta", function() {
 test("mapInSitu", function() {
 	const {mapInSitu} = require("utils");
 	var vec = [1,2,3,4];
-	deepEqual(mapInSitu(vec, function(i) i*i), [1,4,9,16]);
+	deepEqual(mapInSitu(vec, i => i*i), [1,4,9,16]);
 	deepEqual(vec, [1,4,9,16]);
 });
 
 test("filterInSitu", function() {
 	const {filterInSitu} = require("utils");
 	var vec = [1,2,3,4,null];
-	deepEqual(filterInSitu(vec, function(i) i % 2), [1,3]);
+	deepEqual(filterInSitu(vec, i => i % 2), [1,3]);
 	deepEqual(vec, [1,3]);
 });
 
 test("filterMapInSitu", function() {
 	const {filterMapInSitu} = require("utils");
 	var vec = [1,2,3,4,null];
-	deepEqual(filterMapInSitu(vec, function(i) i % 2, function(i) i*i), [1,9]);
+	deepEqual(filterMapInSitu(vec, i => i % 2, i => i*i), [1,9]);
 	deepEqual(vec, [1,9]);
 });
 
 test("mapFilterInSitu", function() {
 	const {mapFilterInSitu} = require("utils");
 	var vec = [1,2,3,4,null];
-	deepEqual(mapFilterInSitu(vec, function(i) i*2, function(i) i % 4), [2,6]);
+	deepEqual(mapFilterInSitu(vec, i => i*2, i => i % 4), [2,6]);
 	deepEqual(vec, [2,6]);
 });
 
@@ -168,10 +169,10 @@ test("MimeQuality", function() {
 	m.add("x", 0.105);
 	m.add("y", 0.100005);
 	m.add("z", 0.1005);
-	throws(function() m.add("d", 1.1));
-	throws(function() m.add("e", -0.1));
-	throws(function() m.add("f", -3));
-	throws(function() m.add("g", 1 / 0));
+	throws(() => m.add("d", 1.1));
+	throws(() => m.add("e", -0.1));
+	throws(() => m.add("f", -3));
+	throws(() => m.add("g", 1 / 0));
 	strictEqual(m.toString(), "c,a;q=0.5,x;q=0.105,b;q=0.1,y;q=0.1,z;q=0.1");
 })
 
@@ -179,5 +180,5 @@ test("normalizeMetaPrefs", function() {
 	const {normalizeMetaPrefs} = require("utils");
 	var vec = [{preference: 100}, {preference: 99}, {preference: -3}, {preference: 500}, {preference: 10}];
 	normalizeMetaPrefs(vec);
-	arrayEqual(vec.map(function(e) e.preference), [10,100,80,80,97]);
+	arrayEqual(vec.map(e => e.preference), [10,100,80,80,97]);
 });

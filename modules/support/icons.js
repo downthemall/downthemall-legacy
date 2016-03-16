@@ -142,5 +142,7 @@ const getIcon = exports.getIcon = function(link, metalink, size) {
 
 exports.getLargeIcon = (function() {
 	const _s = (require("version").OS === "darwin" ? 48 : 32);
-	return memoize(function(name, metalink, hidpi) getIcon(name, metalink, hidpi ? _s * 2 : _s), 150);
+	return memoize(function(name, metalink, hidpi) {
+		return getIcon(name, metalink, hidpi ? _s * 2 : _s), 150;
+	});
 })();

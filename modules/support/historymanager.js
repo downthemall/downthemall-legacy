@@ -25,7 +25,7 @@ const BaseHistory = {
 			this._validator = validators[key];
 		}
 		else {
-			this._validator = function() true;
+			this._validator = function() { return true; };
 		}
 	},
 	get key() {
@@ -41,7 +41,7 @@ const BaseHistory = {
 			if (values[0] === value) {
 				return;
 			}
-			values = values.filter(function(e) e !== value);
+			values = values.filter(e => e !== value);
 			if (once && values.length > 0) {
 				values.unshift(values.shift(), value);
 			}

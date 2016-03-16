@@ -2,8 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
-/* global _, DTA, $, $$, Utils, Preferences, getDefaultDownloadsDirectory, unloadWindow, toURI, toURL, setTimeoutOnlyFun */
-/* jshint browser:true */
+/* global _, DTA, $, $$, Utils, Preferences, getDefaultDownloadsDirectory, unloadWindow */
+/* global toURI, toURL, setTimeoutOnlyFun */
+/* jshint strict:true, globalstrict:true, browser:true */
 var Prompts = require("prompts");
 
 var {LoggedPrompter} = require("support/loggedprompter");
@@ -21,7 +22,7 @@ this.__defineGetter__(
 /* global allMirrors */
 this.__defineGetter__(
 	'allMirrors',
-	function() {
+	function*() {
 		for (let m = 0; m < mirrors.itemCount; ++m) {
 			yield mirrors.getItemAtIndex(m);
 		}
@@ -33,7 +34,7 @@ function accept() {
 		return;
 	}
 	let rv = window.arguments[0];
-	for (let m in allMirrors) {
+	for (let m of allMirrors) {
 		rv.push(new DTA.URL(toURL(m.mirror, m.charset), m.preference));
 	}
 	return true;
@@ -41,11 +42,11 @@ function accept() {
 
 function select() {
 	let removeDisabled = !mirrors.selectedCount || (mirrors.itemCount - mirrors.selectedCount) < 1;
-	$('cmdRemove', 'mirrorRemove').forEach(function(e) e.setAttribute("disabled", removeDisabled));
+	$('cmdRemove', 'mirrorRemove').forEach(e => e.setAttribute("disabled", removeDisabled));
 }
 
 function changingMirror(event) {
-	for (let m in allMirrors) {
+	for (let m of allMirrors) {
 		if (event.target === m) {
 			continue;
 		}
@@ -62,7 +63,7 @@ function changingMirror(event) {
 function load() {
 	removeEventListener('load', load, true);
 	if (window.arguments && window.arguments.length) {
-		let downloads = Utils.naturalSort(window.arguments[0], function(e) e.url.host + "/" + e.url.spec);
+		let downloads = Utils.naturalSort(window.arguments[0], e => e.url.host + "/" + e.url.spec);
 		for (let a of downloads) {
 			try {
 				let mirror = document.createElement('richlistitem');
@@ -267,7 +268,7 @@ function checkMirrors() {
 		}
 	}
 
-	for (let m in allMirrors) {
+	for (let m of allMirrors) {
 		if (m.hasAttribute('state')) {
 			if (m.getAttribute('state') === 'bad') {
 				bad.push(m);

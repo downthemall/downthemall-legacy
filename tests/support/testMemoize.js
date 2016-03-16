@@ -6,30 +6,30 @@ test("exports", function() {
 
 test("yield 1", function() {
 	const {memoize} = require("support/memoize");
-	const fn = memoize(function(a) a + 1);
+	const fn = memoize(a => a + 1);
 	strictEqual(fn(1), 2);
 });
 test("yield 2", function() {
 	const {memoize} = require("support/memoize");
-	const fn = memoize(function(a, b) a + b);
+	const fn = memoize((a, b) => a + b);
 	strictEqual(fn(1, 2), 3);
 });
 
 test("yield 3", function() {
 	const {memoize} = require("support/memoize");
-	const fn = memoize(function(a, b, c) a + b + c);
+	const fn = memoize((a, b, c) => a + b + c);
 	strictEqual(fn(1, 2, 3), 6);
 });
 
 test("yield 4", function() {
 	const {memoize} = require("support/memoize");
-	const fn = memoize(function(a, b, c, d) a + b + c + d);
+	const fn = memoize((a, b, c, d) => a + b + c + d);
 	strictEqual(fn(1, 2, 3, 4), 10);
 });
 
 test("yield 4", function() {
 	const {memoize} = require("support/memoize");
-	const fn = memoize(function(a, b, c, d, e) a + b + c + d + e);
+	const fn = memoize((a, b, c, d, e) => a + b + c + d + e);
 	strictEqual(fn(1, 2, 3, 4, 5), 15);
 });
 

@@ -7,17 +7,18 @@
  * Lazy getters
  */
 /* global DTA, Mediator, Version, Preferences, recognizeTextLinks, TextLinks */
-/* global ContentHandling, CoThreads, getIcon, bundle, isWindowPrivate */
-lazy(this, 'DTA', function() require("api"));
-lazy(this, "Mediator", function() require("support/mediator"));
-lazy(this, 'Version', function() require("version"));
-lazy(this, 'Preferences', function() require("preferences"));
-this.__defineGetter__('recognizeTextLinks', function() Preferences.getExt("textlinks", true));
-lazy(this, "ContentHandling", function() require("support/contenthandling").ContentHandling);
-lazy(this, 'CoThreads', function() require("support/cothreads"));
-lazy(this, 'getIcon', function() require("support/icons").getIcon);
-lazy(this, "bundle", function() new (require("utils").StringBundles)(["chrome://dta/locale/menu.properties"]));
-lazy(this, "isWindowPrivate", function() require("support/pbm").isWindowPrivate);
+/* global ContentHandling, CoThreads, getIcon, bundle, isWindowPrivate, identity */
+/*jshint strict:true, globalstrict:true, -W083, -W003*/
+lazy(this, 'DTA', () => require("api"));
+lazy(this, "Mediator", () => require("support/mediator"));
+lazy(this, 'Version', () => require("version"));
+lazy(this, 'Preferences', () => require("preferences"));
+this.__defineGetter__('recognizeTextLinks', () => Preferences.getExt("textlinks", true));
+lazy(this, "ContentHandling", () => require("support/contenthandling").ContentHandling);
+lazy(this, 'CoThreads', () => require("support/cothreads"));
+lazy(this, 'getIcon', () => require("support/icons").getIcon);
+lazy(this, "bundle", () => new (require("utils").StringBundles)(["chrome://dta/locale/menu.properties"]));
+lazy(this, "isWindowPrivate", () => require("support/pbm").isWindowPrivate);
 lazy(this, "identity", () => require("support/memoize").identity);
 
 const {filterInSitu, mapFilterInSitu} = require("utils");
@@ -77,7 +78,7 @@ function extractDescription(child) {
 				rv.push(fmt(c.nodeValue));
 			}
 
-			if (c.nodeType == 1) {
+			if (c.nodeType === 1) {
 				rv.push(extractDescription(c));
 			}
 
@@ -123,13 +124,13 @@ function getSniffedInfoFromLocation(l) {
 exports.load = function load(window, outerEvent) {
 	let document = window.document;
 	let setTimeoutOnlyFun = function(c) {
-		if (typeof(c) != "function") {
+		if (typeof(c) !== "function") {
 			throw new Error("do not call me with a string!");
 		}
 		return window.setTimeout.apply(window, arguments);
 	};
 	let setIntervalOnlyFun = function(c) {
-		if (typeof(c) != "function") {
+		if (typeof(c) !== "function") {
 			throw new Error("do not call me with a string!");
 		}
 		return window.setInterval.apply(window, arguments);
@@ -138,7 +139,7 @@ exports.load = function load(window, outerEvent) {
 	let gBrowser = window.gBrowser;
 
 	function $() {
-		if (arguments.length == 1) {
+		if (arguments.length === 1) {
 			return document.getElementById(arguments[0]);
 		}
 		let elements = [];
@@ -159,6 +160,7 @@ exports.load = function load(window, outerEvent) {
 
 	let _notify = function (title, message, priority, mustAlert, timeout) {
 		switch (Preferences.getExt("notification2", 1)) {
+		/* jshint strict:true, globalstrict:true, -W086 */
 		case 1:
 			if ('PopupNotifications' in window) {
 				try {
@@ -184,6 +186,7 @@ exports.load = function load(window, outerEvent) {
 			}
 			// fall through in case we got not doorhangers
 		case 2:
+		/* jshint strict:true, globalstrict:true, +W086 */
 			require("support/alertservice")
 				.show("DownThemAll!", message, null, "chrome://dtaicon/content/icon64.png");
 			return;
@@ -193,7 +196,9 @@ exports.load = function load(window, outerEvent) {
 		}
 	};
 
-	function notifyError(title, message) _notify(title, message, 'PRIORITY_CRITICAL_HIGH', true, 1500);
+	function notifyError(title, message) {
+		return _notify(title, message, 'PRIORITY_CRITICAL_HIGH', true, 1500);
+	}
 	function notifyInfo(message) {
 		if (!_selector) {
 			_notify('', message, 'PRIORITY_INFO_MEDIUM', false);
@@ -215,7 +220,7 @@ exports.load = function load(window, outerEvent) {
 				else {
 					resolve(m.data);
 				}
-			}
+			};
 			b.messageManager.addMessageListener(`DTA:${method}:${job}`, result);
 			if (!target) {
 				b.messageManager.sendAsyncMessage(`DTA:${method}`, {job:job, args: data});
@@ -396,9 +401,14 @@ exports.load = function load(window, outerEvent) {
 					if (turbo) {
 						DTA.turboSaveLinkArray(window, collectedUrls, collectedImages, function(queued) {
 							if (!queued) {
-								DTA.saveLinkArray(window, collectedUrls, collectedImages, bundle.getString('error.information'));
+								DTA.saveLinkArray(
+									window,
+									collectedUrls,
+									collectedImages,
+									bundle.getString('error.information')
+								);
 							}
-							if (typeof queued == 'number') {
+							if (typeof queued === 'number') {
 								notifyInfo(bundle.getFormattedString('queuedn', [queued]));
 							}
 							else {
@@ -493,7 +503,7 @@ exports.load = function load(window, outerEvent) {
 
 				let action = makeURI(data);
 
-				if (data.method == 'post') {
+				if (data.method === 'post') {
 					let ss = new Instances.StringInputStream(data.values, -1);
 					let ms = new Instances.MimeInputStream();
 					ms.addContentLength = true;
@@ -551,7 +561,7 @@ exports.load = function load(window, outerEvent) {
 		try {
 			let _n = null;
 			if ('PopupNotifications' in window) {
-				return (notifyProgress = function(message) {
+				notifyProgress = function(message) {
 					if (!Preferences.getExt("notification2", 1) !== 1) {
 						return;
 					}
@@ -569,9 +579,11 @@ exports.load = function load(window, outerEvent) {
 						message,
 						'downthemall-notification-icon'
 						);
-				})(message);
+				};
+				return notifyProgress(message);
 			}
-			return (notifyProgress = function() {})();
+			notifyProgress = function() {};;
+			return notifyProgress();
 		}
 		catch (ex) {
 			log(LOG_ERROR, "np", ex);
@@ -651,7 +663,7 @@ exports.load = function load(window, outerEvent) {
 		try {
 			let ctx = window.gContextMenu;
 			// get settings
-			let items = Preferences.getExt("ctxmenu", "1,1,0").split(",").map(function(e) parseInt(e, 10));
+			let items = Preferences.getExt("ctxmenu", "1,1,0").split(",").map(e => parseInt(e, 10));
 			let showCompact = Preferences.getExt("ctxcompact", false);
 
 			let menu;
@@ -670,7 +682,7 @@ exports.load = function load(window, outerEvent) {
 				compact[i].hidden = true;
 			}
 			// show nothing!
-			if (items.indexOf(1) == -1) {
+			if (items.indexOf(1) === -1) {
 				ctxBase.hidden = true;
 				return;
 			}
@@ -752,7 +764,7 @@ exports.load = function load(window, outerEvent) {
 				if (n.hidden) {
 					continue;
 				}
-				if (n.nodeName != 'menuseparator') {
+				if (n.nodeName !== 'menuseparator') {
 					show.push(menu.SepFront);
 				}
 				break;
@@ -762,7 +774,7 @@ exports.load = function load(window, outerEvent) {
 				if (n.hidden) {
 					continue;
 				}
-				if (n.nodeName != 'menuseparator') {
+				if (n.nodeName !== 'menuseparator') {
 					show.push(menu.SepBack);
 				}
 				break;
@@ -780,7 +792,7 @@ exports.load = function load(window, outerEvent) {
 		try {
 
 			// get settings
-			let menu = Preferences.getExt("toolsmenu", "1,1,1").split(",").map(function(e) parseInt(e, 10));
+			let menu = Preferences.getExt("toolsmenu", "1,1,1").split(",").map(e => parseInt(e, 10));
 
 			// all hidden...
 			let hidden = Preferences.getExt("toolshidden", false);
@@ -792,7 +804,7 @@ exports.load = function load(window, outerEvent) {
 				return;
 			}
 
-			let compact = menu.indexOf(0) != -1;
+			let compact = menu.indexOf(0) !== -1;
 
 			// setup menu items
 			// show will hold those that will be shown
@@ -808,14 +820,14 @@ exports.load = function load(window, outerEvent) {
 			if (menu[2]) {
 				show.push('Manager');
 			}
-			toolsSep.hidden = menu.indexOf(0) == -1;
+			toolsSep.hidden = menu.indexOf(0) === -1;
 			toolsBase.setAttribute('label',
-				bundle.getString(menu.indexOf(1) != -1 ? 'moredtatools' : 'simpledtatools'));
+				bundle.getString(menu.indexOf(1) !== -1 ? 'moredtatools' : 'simpledtatools'));
 
 			// show the items.
 			for (let i in tools) {
 				let cur = tools[i];
-				if (show.indexOf(i) == -1) {
+				if (show.indexOf(i) === -1) {
 					toolsMenu.insertBefore(cur, toolsSep);
 				}
 				else {
@@ -955,7 +967,7 @@ exports.load = function load(window, outerEvent) {
 		// The remote site does not get special privileges!
 		try {
 			if (!/^about:downthemall/.test(event.target.location) &&
-				event.target.location.host != "about.downthemall.net") {
+				event.target.location.host !== "about.downthemall.net") {
 				return;
 			}
 		}
@@ -1050,14 +1062,14 @@ exports.load = function load(window, outerEvent) {
 				continue;
 			}
 		}
-		return rv.length == 1 ? rv[0] : rv;
+		return rv.length === 1 ? rv[0] : rv;
 	}
 
 	(function initMenusAndCommands(evt) {
 		function bindEvt(evt, fn) {
 			return function (e) {
 				e.addEventListener(evt, fn, true);
-				unloadWindow(window, function() e.removeEventListener(evt, fn, true));
+				unloadWindow(window, () => e.removeEventListener(evt, fn, true));
 			};
 		}
 
@@ -1070,7 +1082,7 @@ exports.load = function load(window, outerEvent) {
 				node.setAttribute('id', node.id + "-direct");
 				ctx.insertBefore(node, ctxBase.nextSibling);
 				direct[id] = node;
-				unloadWindow(window, function() node.parentNode.removeChild(node));
+				unloadWindow(window, () => node.parentNode.removeChild(node));
 			}
 
 			// prepare tools
@@ -1078,33 +1090,33 @@ exports.load = function load(window, outerEvent) {
 				tools[e] = $('dtaTools' + e);
 			}
 
-			let f = bindEvt("command", function() findLinks(false));
+			let f = bindEvt("command", () => findLinks(false));
 			f($("dta:regular"));
 			f($("dta:regular-sel"));
-			bindEvt("command", function() findLinks(false, true))($("dta:regular-all"));
-			bindEvt("command", function() findSingleLink(false))($("dta:regular-link"));
-			bindEvt("command", function() findSingleImg(false))($("dta:regular-img"));
-			bindEvt("command", function() findSingleVideo(false))($("dta:regular-video"));
-			bindEvt("command", function() findSingleAudio(false))($("dta:regular-audio"));
-			bindEvt("command", function() findForm(false))($("dta:regular-form"));
-			bindEvt("command", function(e) findSniff(e, false))($("dta:regular-sniff"));
+			bindEvt("command", () => findLinks(false, true))($("dta:regular-all"));
+			bindEvt("command", () => findSingleLink(false))($("dta:regular-link"));
+			bindEvt("command", () => findSingleImg(false))($("dta:regular-img"));
+			bindEvt("command", () => findSingleVideo(false))($("dta:regular-video"));
+			bindEvt("command", () => findSingleAudio(false))($("dta:regular-audio"));
+			bindEvt("command", () => findForm(false))($("dta:regular-form"));
+			bindEvt("command", e => findSniff(e, false))($("dta:regular-sniff"));
 
-			f = bindEvt("command", function() findLinks(true));
+			f = bindEvt("command", () => findLinks(true));
 			f($("dta:turbo"));
 			f($("dta:turbo-sel"));
-			bindEvt("command", function() findLinks(true, true))($("dta:turbo-all"));
-			bindEvt("command", function() findSingleLink(true))($("dta:turbo-link"));
-			bindEvt("command", function() findSingleImg(true))($("dta:turbo-img"));
-			bindEvt("command", function() findSingleVideo(true))($("dta:turbo-video"));
-			bindEvt("command", function() findSingleAudio(true))($("dta:turbo-audio"));
-			bindEvt("command", function() findForm(true))($("dta:turbo-form"));
-			bindEvt("command", function(e) findSniff(e, true))($("dta:turbo-sniff"));
+			bindEvt("command", () => findLinks(true, true))($("dta:turbo-all"));
+			bindEvt("command", () => findSingleLink(true))($("dta:turbo-link"));
+			bindEvt("command", () => findSingleImg(true))($("dta:turbo-img"));
+			bindEvt("command", () => findSingleVideo(true))($("dta:turbo-video"));
+			bindEvt("command", () => findSingleAudio(true))($("dta:turbo-audio"));
+			bindEvt("command", () => findForm(true))($("dta:turbo-form"));
+			bindEvt("command", e => findSniff(e, true))($("dta:turbo-sniff"));
 
-			bindEvt("command", function() toggleOneClick())($("dta:turboselect"));
-			bindEvt("command", function() DTA.openManager(window))($("dta:manager"));
-			bindEvt("command", function() Mediator.showPreferences(window))($("dta:prefs"));
-			bindEvt("command", function() Mediator.showToolbarInstall(window))($("dta:tbinstall"));
-			bindEvt("command", function() Mediator.showAbout(window))($("dta:about"));
+			bindEvt("command", () => toggleOneClick())($("dta:turboselect"));
+			bindEvt("command", () => DTA.openManager(window))($("dta:manager"));
+			bindEvt("command", () => Mediator.showPreferences(window))($("dta:prefs"));
+			bindEvt("command", () => Mediator.showToolbarInstall(window))($("dta:tbinstall"));
+			bindEvt("command", () => Mediator.showAbout(window))($("dta:about"));
 
 			bindEvt("popupshowing", onContextShowing)(ctx);
 			bindEvt("popupshowing", onToolsShowing)(menu);
@@ -1127,7 +1139,7 @@ exports.load = function load(window, outerEvent) {
 	let appcontent = document.getElementById("appcontent");
 	if (appcontent) {
 		appcontent.addEventListener("DOMContentLoaded", onToolbarInstall, true);
-		unloadWindow(window, function() appcontent.removeEventListener("DOMContentLoaded", onToolbarInstall, true));
+		unloadWindow(window, () => appcontent.removeEventListener("DOMContentLoaded", onToolbarInstall, true));
 	}
 
 	/* Toolbar buttons */
@@ -1168,9 +1180,9 @@ exports.load = function load(window, outerEvent) {
 			}
 			let dta_button = $t('dta-button');
 			dta_button.addEventListener('popupshowing', onDTAShowing, true);
-			unloadWindow(window, function() dta_button.removeEventListener('popupshowing', onDTAShowing, true));
+			unloadWindow(window, () => dta_button.removeEventListener('popupshowing', onDTAShowing, true));
 			dta_button.addEventListener('command', onCommand, true);
-			unloadWindow(window, function() dta_button.removeEventListener('command', onCommand, true));
+			unloadWindow(window, () => dta_button.removeEventListener('command', onCommand, true));
 
 			setupDrop(dta_button, function(url, ref) {
 				DTA.saveSingleItem(window, false, {
@@ -1183,9 +1195,9 @@ exports.load = function load(window, outerEvent) {
 
 			let dta_turbo_button = $t('dta-turbo-button');
 			dta_turbo_button.addEventListener('popupshowing', onDTAShowing, true);
-			unloadWindow(window, function() dta_turbo_button.removeEventListener('popupshowing', onDTAShowing, true));
+			unloadWindow(window, () => dta_turbo_button.removeEventListener('popupshowing', onDTAShowing, true));
 			dta_turbo_button.addEventListener('command', onCommand, true);
-			unloadWindow(window, function() dta_turbo_button.removeEventListener('command', onCommand, true));
+			unloadWindow(window, () => dta_turbo_button.removeEventListener('command', onCommand, true));
 
 			setupDrop(dta_turbo_button, function(url, ref) {
 				let item = {
@@ -1203,7 +1215,7 @@ exports.load = function load(window, outerEvent) {
 				}
 			});
 
-			unloadWindow(window, function() detachOneClick);
+			unloadWindow(window, () => detachOneClick());
 		})();
 	}
 	catch (ex) {
@@ -1214,7 +1226,7 @@ exports.load = function load(window, outerEvent) {
 		log(LOG_DEBUG, "replaying event");
 		let target = outerEvent.target;
 		let type = outerEvent.type;
-		if (type == "popupshowing") {
+		if (type === "popupshowing") {
 			switch(target.id) {
 				case "menu_ToolsPopup":
 					onToolsShowing(outerEvent);
@@ -1230,7 +1242,7 @@ exports.load = function load(window, outerEvent) {
 					break;
 			}
 		}
-		else if (type == "command" && target.id != "cmd_CustomizeToolbars") {
+		else if (type === "command" && target.id !== "cmd_CustomizeToolbars") {
 			target.doCommand();
 		}
 	}

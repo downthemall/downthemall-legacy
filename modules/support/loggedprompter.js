@@ -21,9 +21,9 @@ function LoggedPrompter(window) {
 	lazy(this, "authPrompter", function() {
 		let _p = Services.ww.getNewAuthPrompter(window).QueryInterface(Ci.nsIAuthPrompt);
 		let restricted = new Map();
-		let proxy = Proxy.create({
-			has: function(name) name in _p,
-			hasOwn: function(name) name in _p,
+		let proxy = new Proxy(_p, {
+			has: function(name) { return name in _p; },
+			hasOwn: function(name) { returnname in _p; },
 			get: function(receiver, name) {
 				log(LOG_DEBUG, "called: " + name);
 				if (name === "QueryInterface") {
@@ -75,9 +75,9 @@ function LoggedPrompter(window) {
 
 		// Log any alerts instead of showing a dialog.
 		// Everything else pass thru to the actual prompter.
-		let proxy = Proxy.create({
-			has: function(name) name in _p,
-			hasOwn: function(name) name in _p,
+		let proxy = new Proxy(_p, {
+			has: function(name) { return name in _p },
+			hasOwn: function(name) { return name in _p; },
 			get: function(receiver, name) {
 				if (name === "QueryInterface") {
 					return function(iid) {
@@ -86,10 +86,14 @@ function LoggedPrompter(window) {
 					};
 				}
 				if (name === "alert") {
-					return function(text, title) log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
+					return function(text, title) {
+						log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
+					};
 				}
 				if (name === "alertCheck") {
-					return function(text, title, cm, cs) log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
+					return function(text, title, cm, cs) {
+						log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
+					};
 				}
 				return _p[name];
 			}

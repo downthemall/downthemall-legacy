@@ -54,9 +54,15 @@ function FakeLink(url, title) {
 }
 FakeLink.prototype = Object.freeze({
 	childNodes: Object.freeze([]),
-	hasAttribute: function(attr) (attr in this),
-	getAttribute: function(attr) (attr in this) ? this[attr] : null,
-	toString: function() this.href
+	hasAttribute: function(attr) {
+		return (attr in this);
+	},
+	getAttribute: function(attr) {
+		return (attr in this) ? this[attr] : null
+	},
+	toString: function() {
+		return this.href;
+	}
 });
 
 /**

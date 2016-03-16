@@ -92,15 +92,15 @@ test("notify/Local", function() {
 
 test("errors", function() {
 	var obs = require("support/observers");
-	throws(function() obs.add());
-	throws(function() obs.add(null));
-	throws(function() obs.add(null, null));
-	throws(function() obs.add(function() {}, null));
-	throws(function() obs.remove());
-	throws(function() obs.remove(null));
-	throws(function() obs.remove(null, null));
-	throws(function() obs.remove(function() {}, null));
-	notThrows(function removenonexisting() obs.remove({}, "dta-test-not-registered"));
+	throws(() => obs.add());
+	throws(() => obs.add(null));
+	throws(() => obs.add(null, null));
+	throws(() => obs.add(function() {}, null));
+	throws(() => obs.remove());
+	throws(() => obs.remove(null));
+	throws(() => obs.remove(null, null));
+	throws(() => obs.remove(function() {}, null));
+	notThrows(() => obs.remove({}, "dta-test-not-registered"));
 });
 
 test("exceptions", function() {

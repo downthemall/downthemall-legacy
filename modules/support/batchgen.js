@@ -15,7 +15,7 @@ function Literal(str) {
 	this.length = 1;
 }
 Literal.prototype = {
-	join: function(str) {
+	join: function*(str) {
 		yield str + this.str;
 	},
 	toString: function() {
@@ -40,8 +40,8 @@ Range.prototype = {
 		this.first = this.format(this.start);
 		this.last = this.format(this.stop - this.step);
 	},
-	join: function(str) {
-		for (let i in range(this.start, this.stop, this.step)) {
+	join: function*(str) {
+		for (let i of range(this.start, this.stop, this.step)) {
 			yield (str + this.format(i));
 		}
 	}
@@ -200,7 +200,7 @@ BatchGenerator.prototype = {
 			throw new Exception("step invalid!");
 		}
 	},
-	_process: function(pats) {
+	_process: function*(pats) {
 		// Recursively called ;)
 		// Keep this "static"
 
@@ -209,8 +209,8 @@ BatchGenerator.prototype = {
 			return;
 		}
 		let pat = pats.pop();
-		for (let i in this._process(pats)) {
-			for (let j in pat.join(i)) {
+		for (let i of this._process(pats)) {
+			for (let j of pat.join(i)) {
 				yield j;
 			}
 		}
@@ -220,8 +220,8 @@ BatchGenerator.prototype = {
 	 * Generates all URLs
 	 * @return (generator) All URLs according to any batch descriptors
 	 */
-	getURLs: function() {
-		for (let i in this._process(this._pats)) {
+	getURLs: function*() {
+		for (let i of this._process(this._pats)) {
 			yield i;
 		}
 	},

@@ -7,7 +7,7 @@ const {AddonManager} = requireJSM("resource://gre/modules/AddonManager.jsm");
 const Version = require("version");
 
 /* global profileDir, iconDir */
-lazy(this, "profileDir", function() Services.dirsvc.get("ProfD", Ci.nsIFile));
+lazy(this, "profileDir", () => Services.dirsvc.get("ProfD", Ci.nsIFile));
 lazy(this, "iconDir", function() {
 	let rv  = profileDir.clone();
 	rv.append('icons');
@@ -72,7 +72,7 @@ exports.loadWindow = (function() {
 			}
 			throw Cr.NS_ERROR_FAILURE;
 		},
-		hasMoreElements: function() this.hasMore,
+		hasMoreElements: function() { return this.hasMore; },
 		getNext: function() {
 			if (!this.hasMore) {
 				throw Cr.NS_ERROR_FAILURE;

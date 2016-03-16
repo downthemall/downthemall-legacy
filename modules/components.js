@@ -10,8 +10,12 @@ function createFactory(direct, cls) {
 		_cls: cls,
 		_info: (direct ? cls : cls.prototype),
 		_ctor: (direct ?
-				(function(iid) this._cls.QueryInterface(iid))
-				: (function() new this._cls())
+				(function(iid) {
+					return this._cls.QueryInterface(iid);
+				})
+				: (function() {
+					return new this._cls();
+				})
 				),
 		createInstance: function(outer, iid) {
 			if (outer) {
@@ -24,7 +28,7 @@ function createFactory(direct, cls) {
 			try {
 				Cm.registerFactory(i.classID, i.classDescription, i.contractID, this);
 			}
-			catch (ex if ex.result == Cr.NS_ERROR_FACTORY_EXISTS) {
+			catch (ex if ex.result === Cr.NS_ERROR_FACTORY_EXISTS) {
 				defer(this.register.bind(this));
 				return;
 			}

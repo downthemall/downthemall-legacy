@@ -46,11 +46,19 @@ const CoThreadBase = {
 		let f = this._func;
 		let ctx = this._thisCtx;
 		let callf = this._callf;
+		const isStar = !('send' in g);
 		try {
 			if (y > 0) {
 				let start = +new Date();
 				for (let i = 0; i < y; ++i) {
-					if (!callf(ctx, g.next(), this._idx++, f)) {
+					let next = g.next();
+					if (isStar) {
+						if (next.done) {
+							throw "complete";
+						}
+						next = next.value;
+					}
+					if (!callf(ctx, next, this._idx++, f)) {
 						throw 'complete';
 					}
 				}
@@ -64,7 +72,14 @@ const CoThreadBase = {
 				let start = +new Date();
 				let i = 0;
 				for(; start + 60 > +new Date(); ++i) {
-					if (!callf(ctx, g.next(), this._idx++, f)) {
+					let next = g.next();
+					if (isStar) {
+						if (next.done) {
+							throw "complete";
+						}
+						next = next.value;
+					}
+					if (!callf(ctx, next, this._idx++, f)) {
 						throw 'complete';
 					}
 				}
@@ -119,7 +134,7 @@ const CoThreadBase = {
 exports.CoThread = function CoThread(func, yieldEvery, thisCtx) {
 	this.init(func, yieldEvery, thisCtx);
 	// fake generator so we may use a common implementation. ;)
-	this._generator = (function() {
+	this._generator = (function*() {
 		for(;;) {
 			yield null;
 		}
@@ -127,7 +142,9 @@ exports.CoThread = function CoThread(func, yieldEvery, thisCtx) {
 };
 exports.CoThread.prototype = Object.create(CoThreadBase, {
 	_callf: {
-		value: function CoThread__callf(ctx, i, idx, fn) fn.call(ctx, idx),
+		value: function CoThread__callf(ctx, i, idx, fn) {
+			return fn.call(ctx, idx);
+		},
 		enumerable: true
 	}
 });
@@ -163,12 +180,12 @@ exports.CoThread.prototype = Object.create(CoThreadBase, {
  *                 (or if omitted in the scope of the CoThread instance)
  */
 exports.CoThreadInterleaved = function CoThreadInterleaved(generator, yieldEvery, thisCtx) {
-	this.init(function() true, yieldEvery, thisCtx);
+	this.init(() => true, yieldEvery, thisCtx);
 	this._generator = typeof(generator) === "function" ? generator() : generator;
 };
 exports.CoThreadInterleaved.prototype = Object.create(CoThreadBase, {
 	_callf: {
-		value: function() true,
+		value: function() { return true; },
 		enumerable: true
 	}
 });
@@ -208,9 +225,9 @@ exports.CoThreadInterleaved.prototype = Object.create(CoThreadBase, {
 exports.CoThreadListWalker = function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
 	this.init(func, yieldEvery, thisCtx);
 
-	if (arrayOrGenerator instanceof Array || 'length' in arrayOrGenerator) {
+	if (Array.isArray(arrayOrGenerator)) {
 		// make a generator
-		this._generator = (function() {
+		this._generator = (function*() {
 			for (let i of arrayOrGenerator) {
 				yield i;
 			}
@@ -226,7 +243,9 @@ exports.CoThreadListWalker = function CoThreadListWalker(func, arrayOrGenerator,
 };
 exports.CoThreadListWalker.prototype = Object.create(CoThreadBase, {
 	_callf: {
-		value: function CoThreadListWalker__callf(ctx, item, idx, fn) fn.call(ctx, item, idx),
+		value: function CoThreadListWalker__callf(ctx, item, idx, fn) {
+			return fn.call(ctx, item, idx);
+		},
 		enumerable: true
 	}
 });

@@ -27,7 +27,9 @@ exports.parseTextFile = function parseTextFile(aFile, cb) {
 			});
 		}
 		log(LOG_INFO, "parsed text file, links: " + links.length);
-		cb(filterInSitu(links, function(e) (e = e.url.spec) && !((e in this) || (this[e] = null)), {}));
+		cb(filterInSitu(links, function(e) {
+			return (e = e.url.spec) && !((e in this) || (this[e] = null));
+		}, {}));
 	};
 	req.overrideMimeType("text/plain");
 	req.open("GET", Services.io.newFileURI(aFile).spec);
@@ -37,7 +39,7 @@ exports.parseTextFile = function parseTextFile(aFile, cb) {
 exports.exportToTextFile = function exportToTextFile(aDownloads, aFile, aPermissions) {
 	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);
 	let cs = new Instances.ConverterOutputStream(fs, null, 0, null);
-	for (let d in aDownloads) {
+	for (let d of aDownloads) {
 		let url = d.urlManager.spec;
 		if (d.hashCollection) {
 			url += '#hash(' + d.hashCollection.full.type + ":" + d.hashCollection.full.sum + ")";
@@ -99,7 +101,7 @@ exports.exportToHtmlFile = function exportToHtmlFile(aDownloads, aDocument, aFil
 		body.appendChild(n);
 
 		let list = document.createElement('ol');
-		for (let d in aDownloads) {
+		for (let d of aDownloads) {
 			let url = d.urlManager.spec;
 			if (d.hashCollection) {
 				url += '#hash(' + d.hashCollection.full.type + ":" + d.hashCollection.full.sum + ")";
@@ -162,7 +164,7 @@ exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocume
 			));
 
 	let files = document.createElementNS(NS_METALINKER3, 'files');
-	for (let d in aDownloads) {
+	for (let d of aDownloads) {
 		let f = document.createElementNS(NS_METALINKER3, 'file');
 		f.setAttribute('name', d.fileName);
 		f.setAttributeNS(NS_DTA, 'num', d.bNum);
@@ -177,7 +179,7 @@ exports.exportToMetalinkFile = function exportToMetalinkFile(aDownloads, aDocume
 			f.appendChild(n);
 		}
 		let r = document.createElementNS(NS_METALINKER3, 'resources');
-		for (let u in d.urlManager.all) {
+		for (let u of d.urlManager.all) {
 			let n = document.createElementNS(NS_METALINKER3, 'url');
 			let t = u.spec.match(/^(\w+):/);
 			n.setAttribute('type', t[1]);
@@ -236,7 +238,7 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 	published.textContent = new Date().toUTCString();
 	root.appendChild(published);
 
-	for (let d in aDownloads) {
+	for (let d of aDownloads) {
 		let f = document.createElementNS(NS_METALINK_RFC5854, 'file');
 		f.setAttribute('name', d.fileName);
 		f.setAttributeNS(NS_DTA, 'num', d.bNum);
@@ -252,7 +254,7 @@ exports.exportToMetalink4File = function exportToMetalink4File(aDownloads, aDocu
 			f.appendChild(n);
 		}
 
-		for (let u in d.urlManager.all) {
+		for (let u of d.urlManager.all) {
 			let t = u.url.scheme;
 			let n = {};
 			if (t === "http" || t === "https" || t === "ftp") {
