@@ -1373,7 +1373,7 @@ exports.load = function load(window, outerEvent) {
 			bindEvt("command", function() findSingleImg(false))($("dta:regular-img"));
 			bindEvt("command", function() findSingleVideo(false))($("dta:regular-video"));
 			bindEvt("command", function() findSingleAudio(false))($("dta:regular-audio"));
-			bindEvt("command", function() findSingleForm(false))($("dta:regular-form"));
+			bindEvt("command", function() findForm(false))($("dta:regular-form"));
 			bindEvt("command", function(e) findSniff(e, false))($("dta:regular-sniff"));
 
 			f = bindEvt("command", function() findLinks(true));
@@ -1384,7 +1384,7 @@ exports.load = function load(window, outerEvent) {
 			bindEvt("command", function() findSingleImg(true))($("dta:turbo-img"));
 			bindEvt("command", function() findSingleVideo(true))($("dta:turbo-video"));
 			bindEvt("command", function() findSingleAudio(true))($("dta:turbo-audio"));
-			bindEvt("command", function() findSingleForm(true))($("dta:turbo-form"));
+			bindEvt("command", function() findForm(true))($("dta:turbo-form"));
 			bindEvt("command", function(e) findSniff(e, true))($("dta:turbo-sniff"));
 
 			bindEvt("command", function() toggleOneClick())($("dta:turboselect"));
