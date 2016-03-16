@@ -1033,6 +1033,7 @@ FilterManager.prototype = {
 
 		// will call our observer so we re-init... no need to do more work here :p
 		filter.save();
+		this._reload();
 		return filter.id;
 	},
 
