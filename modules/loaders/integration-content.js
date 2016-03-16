@@ -470,16 +470,51 @@ const handleGetFocusedDetails = m => {
 	sendAsyncMessage("DTA:getFocusedDetails:" + m.data.job, {title: content.title, ref: ref && new URL(ref)});
 };
 
+const handleGetFormData = m => {
+	try {
+		let ctx = m.objects.target;
+		let form = ctx.form;
+		if (!form) {
+			throw new Error("no form");
+		}
+		let action = new URL(composeURL(form.ownerDocument, form.action));
+
+		let values = [];
+		for (let i = 0; i < form.elements.length; ++i) {
+			if (!form.elements[i].name) {
+				continue;
+			}
+			let v = encodeURIComponent(form.elements[i].name) + "=";
+			if (form.elements[i].value) {
+				v += encodeURIComponent(form.elements[i].value);
+			}
+			values.push(v);
+		}
+		action.values = values.join("&");
+		action.method = form.method.toLowerCase() == 'post' ? "post" : "get";
+		action.desc = extractDescription(form);
+		action.title = ctx.ownerDocument.defaultView.title;
+		action.ref = getRef(ctx.ownerDocument);
+		sendAsyncMessage("DTA:getFormData:" + m.data.job, action);
+	}
+	catch (ex) {
+		log(LOG_ERROR, "Failed to get form data", ex);
+		sendAsyncMessage("DTA:getFormData:" + m.data.job, {exception: ex.message || ex});
+	}
+}
+
 const handleShutdown = message => {
 	removeMessageListener("DTA:findLinks", handleFindLinks);
 	removeMessageListener("DTA:getLocations", handleGetLocations);
 	removeMessageListener("DTA:getFocusedDetails", handleGetFocusedDetails);
+	removeMessageListener("DTA:getFormData", handleGetFormData);
 	removeMessageListener("DTA:shutdown", handleShutdown);
 };
 
 addMessageListener("DTA:findLinks", handleFindLinks);
 addMessageListener("DTA:getLocations", handleGetLocations);
 addMessageListener("DTA:getFocusedDetails", handleGetFocusedDetails);
+addMessageListener("DTA:getFormData", handleGetFormData);
 addMessageListener("DTA:shutdown", handleShutdown);
 
 })();

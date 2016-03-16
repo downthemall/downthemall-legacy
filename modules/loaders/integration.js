@@ -186,16 +186,26 @@ exports.load = function load(window, outerEvent) {
 	function selectButton() {
 		return $('dta-turboselect-button') || {checked: false};
 	}
-	function getMethod(method) {
-		let b = gBrowser.selectedBrowser;
+	function getMethod(method, target, browser) {
+		let b = browser || gBrowser.selectedBrowser;
 		return new Promise((resolve, reject) => {
 			let job = ++findLinksJob;
 			let result = m => {
 				b.messageManager.removeMessageListener(`DTA:${method}:${job}`, result);
-				resolve(m.data);
+				if (m.data.exception) {
+					reject(m.data.exception);
+				}
+				else {
+					resolve(m.data);
+				}
 			}
 			b.messageManager.addMessageListener(`DTA:${method}:${job}`, result);
-			b.messageManager.sendAsyncMessage(`DTA:${method}`, {job:job});
+			if (!target) {
+				b.messageManager.sendAsyncMessage(`DTA:${method}`, {job:job});
+			}
+			else {
+				b.messageManager.sendAsyncMessage(`DTA:${method}`, {job:job}, {target:target});
+			}
 		});
 	}
 	function getCurrentLocations() {
@@ -203,6 +213,9 @@ exports.load = function load(window, outerEvent) {
 	}
 	function getFocusedDetails() {
 		return getMethod("getFocusedDetails");
+	}
+	function getFormData(target) {
+		return getMethod("getFormData", target);
 	}
 	function findBrowsers(all) {
 		let browsers = [];
@@ -511,38 +524,12 @@ exports.load = function load(window, outerEvent) {
 	function findForm(turbo) {
 		Task.spawn(function*() {
 			try {
-				let ctx = window.gContextMenu;
-				if (!('form' in ctx.target)) {
-					throw new Components.Exception("No form");
-				}
-				let form = ctx.target.form;
+				let data = yield getFormData(window.gContextMenu.target);
 
-				let action = DTA.URL(DTA.composeURL(form.ownerDocument, form.action));
+				let action = new DTA.URL(Services.io.newURI(data.spec, data.originCharset, null));
 
-				let charset = form.ownerDocument.characterSet;
-				if (form.acceptCharset) {
-					charset = form.acceptCharset;
-				}
-				if (charset.match(/utf-?(?:16|32)/i)) {
-					charset = 'utf-8';
-				}
-
-				let values = [];
-
-				for (let i = 0; i < form.elements.length; ++i) {
-					if (!form.elements[i].name) {
-						continue;
-					}
-					let v = Services.ttsu.ConvertAndEscape(charset, form.elements[i].name) + "=";
-					if (form.elements[i].value) {
-						v += Services.ttsu.ConvertAndEscape(charset, form.elements[i].value);
-					}
-					values.push(v);
-				}
-				values = values.join("&");
-
-				if (form.method.toLowerCase() == 'post') {
-					let ss = new Instances.StringInputStream(values, -1);
+				if (data.method == 'post') {
+					let ss = new Instances.StringInputStream(data.values, -1);
 					let ms = new Instances.MimeInputStream();
 					ms.addContentLength = true;
 					ms.addHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -562,14 +549,13 @@ exports.load = function load(window, outerEvent) {
 					action.postData = postData;
 				}
 				else {
-					action.url.query = values;
+					action.url.query = data.values;
 					action.url.ref = '';
 				}
 
-				let {ref, title} = yield getFocusedDetails();
-				ref = ref && Services.io.newURI(ref.spec, ref.originCharset, null);
-				let defaultDescription = trimMore(title || "");
-				let desc = extractDescription(form) || defaultDescription;
+				let ref = data.ref && new DTA.URL(Services.io.newURI(data.ref.spec, data.ref.originCharset, null));
+				let defaultDescription = trimMore(data.title || "");
+				let desc = data.desc || defaultDescription;
 
 				let item = {
 					"url": action,
@@ -1307,7 +1293,7 @@ exports.load = function load(window, outerEvent) {
 					url = Services.io.newURI(url, null, null);
 					url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
 					let {ref, title} = yield getFocusedDetails();
-					ref = ref && Services.io.newURI(ref.spec, ref.originCharset, null);
+					ref = ref && new DTA.URL(Services.io.newURI(ref.spec, ref.originCharset, null));
 					func(url, ref);
 				}
 				catch (ex) {
