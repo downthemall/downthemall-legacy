@@ -466,7 +466,7 @@ const handleGetLocations = m => {
 
 const handleGetFocusedDetails = m => {
 	log(LOG_DEBUG, "GetFocusedDetails job received" + m.data.job);
-	let ref = getRef(content);
+	let ref = getRef(content.document);
 	sendAsyncMessage("DTA:getFocusedDetails:" + m.data.job, {title: content.title, ref: ref && new URL(ref)});
 };
 
