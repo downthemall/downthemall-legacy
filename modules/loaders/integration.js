@@ -36,12 +36,16 @@ const MENU_ITEMS = [
 	'SaveFormT', 'SaveForm', 'SepFront'
 	];
 
-function makeURI(u) {
+function makeURI(u, ml) {
 	if (!u) {
 		return null;
 	}
 	try {
-		return new DTA.URL(Services.io.newURI(u.spec, u.originCharset, null));
+		u = Services.io.newURI(u.spec, u.originCharset, null);
+		if (ml) {
+			u = DTA.getLinkPrintMetalink(u) || u;
+		}
+		return new DTA.URL(u);
 	}
 	catch (ex) {
 		log(LOG_ERROR, "failed to reconstruct");
@@ -447,18 +451,16 @@ exports.load = function load(window, outerEvent) {
 		Task.spawn(function*() {
 			try {
 				let data = yield getMethod("saveTarget", {what:what, linkhint: linkhint}, target);
-				let url = Services.io.newURI(data.spec, data.originCharset, null);
-				let ml = DTA.getLinkPrintMetalink(url);
-				url = new DTA.URL(ml ? ml : url);
-
+				let url = makeURI(data, true);
 				let ref = makeURI(data.ref);
+
 				const item = {
 					url: url,
 					description: data.desc || trimMore(data.title || ""),
 					referrer: ref,
 					isPrivate: isWindowPrivate(window)
 				};
-				if (!ml && data.download) {
+				if (data.download) {
 					data.download = data.download.trim();
 					if (data.download) {
 						item.fileName = data.download;
@@ -580,9 +582,7 @@ exports.load = function load(window, outerEvent) {
 	function saveSelected(m) {
 		try {
 			let data = m.data;
-			let url = Services.io.newURI(data.spec, data.originCharset, null);
-			let ml = DTA.getLinkPrintMetalink(url);
-			url = new DTA.URL(ml ? ml : url);
+			let url = makeURI(data, true);
 
 			let ref = makeURI(data.ref);
 			const item = {
@@ -591,7 +591,7 @@ exports.load = function load(window, outerEvent) {
 				referrer: ref,
 				isPrivate: isWindowPrivate(window)
 			};
-			if (!ml && data.download) {
+			if (data.download) {
 				data.download = data.download.trim();
 				if (data.download) {
 					item.fileName = data.download;
@@ -916,11 +916,14 @@ exports.load = function load(window, outerEvent) {
 	}
 
 	function attachOneClick() {
-		window.messageManager.broadcastAsyncMessage("DTA:startSelector", Preferences.getExt('selectbgimages', false));
+		window.messageManager.broadcastAsyncMessage("DTA:selector", {
+			enable: true,
+			bgimgs: Preferences.getExt('selectbgimages', false)
+		});
 	}
 
 	function detachOneClick() {
-		window.messageManager.broadcastAsyncMessage("DTA:stopSelector");
+		window.messageManager.broadcastAsyncMessage("DTA:selector", {enable: false});
 	}
 
 	let _keyActive =  false;

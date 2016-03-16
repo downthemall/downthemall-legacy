@@ -557,8 +557,9 @@ const handleSaveTarget = m => {
 };
 
 function Selector(bgimages) {
-	let tp = this;
-	this._callback = function(evt) tp.onClickOneClick(evt);
+	this._callback = evt => {
+		return this.onClickOneClick(evt);
+	};
 
 	addEventListener('click', this._callback, true);
 	addEventListener('mouseup', this._callback, false);
@@ -844,40 +845,46 @@ Selector.prototype.Highlighter.prototype = {
 
 let _sel = null;
 
-const handleStartSelector = m => {
+const handleSelector = m => {
 	if (_sel) {
+		if (!m.data.enable) {
+			_sel.dispose();
+			_sel = null;
+		}
 		return;
 	}
-	_sel = new Selector(m.data);
-};
 
-const handleStopSelector = m => {
-	if (!_sel) {
-		return;
+	if (!_sel && m.data.enable) {
+		_sel = new Selector(m.data.bgimgs);
 	}
-	_sel.dispose();
-	_sel = null;
 };
 
-const handleShutdown = message => {
-	removeMessageListener("DTA:findLinks", handleFindLinks);
-	removeMessageListener("DTA:getLocations", handleGetLocations);
-	removeMessageListener("DTA:getFocusedDetails", handleGetFocusedDetails);
-	removeMessageListener("DTA:getFormData", handleGetFormData);
-	removeMessageListener("DTA:saveTarget", handleSaveTarget);
-	removeMessageListener("DTA:startSelector", handleStartSelector);
-	removeMessageListener("DTA:stopSelector", handleStopSelector);
-	removeMessageListener("DTA:shutdown", handleShutdown);
-};
+const methods = new Map([
+	["findLinks", handleFindLinks],
+	["getLocations", handleGetLocations],
+	["getFocusedDetails", handleGetFocusedDetails],
+	["getFormData", handleGetFormData],
+	["saveTarget", handleSaveTarget],
+	["selector", handleSelector]
+]);
 
-addMessageListener("DTA:findLinks", handleFindLinks);
-addMessageListener("DTA:getLocations", handleGetLocations);
-addMessageListener("DTA:getFocusedDetails", handleGetFocusedDetails);
-addMessageListener("DTA:getFormData", handleGetFormData);
-addMessageListener("DTA:saveTarget", handleSaveTarget);
-addMessageListener("DTA:startSelector", handleStartSelector);
-addMessageListener("DTA:stopSelector", handleStopSelector);
-addMessageListener("DTA:shutdown", handleShutdown);
+(function() {
+	try {
+		const handleShutdown = m => {
+			for (let e of methods.entries()) {
+				removeMessageListener(`DTA:${e[0]}`, e[1]);
+			}
+			removeMessageListener("DTA:shutdown", handleShutdown);
+		};
+		for (let e of methods.entries()) {
+			addMessageListener(`DTA:${e[0]}`, e[1]);
+		}
+		addMessageListener("DTA:shutdown", handleShutdown);
+	}
+	catch (ex) {
+		log(LOG_ERROR, "ahue", ex);
+	}
+})();
 
 sendAsyncMessage("DTA:new");
 
