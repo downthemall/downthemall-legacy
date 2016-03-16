@@ -49,7 +49,7 @@ function makeURI(u, ml) {
 		return new DTA.URL(u);
 	}
 	catch (ex) {
-		log(LOG_ERROR, "failed to reconstruct");
+		log(LOG_ERROR, "failed to reconstruct", ex);
 		return null;
 	}
 };
@@ -339,6 +339,9 @@ exports.load = function load(window, outerEvent) {
 					let transposeURIs = function(e) {
 						try {
 							e.url = makeURI(e.url);
+							if (!e.url) {
+								return null;
+							}
 							e.ref = makeURI(e.ref);
 							return e;
 						}
@@ -462,6 +465,9 @@ exports.load = function load(window, outerEvent) {
 			try {
 				let data = yield getMethod("saveTarget", {what:what, linkhint: linkhint}, target);
 				let url = makeURI(data, true);
+				if (!url) {
+					throw new Error("invalid URL");
+				}
 				let ref = makeURI(data.ref);
 
 				const item = {
@@ -502,6 +508,9 @@ exports.load = function load(window, outerEvent) {
 				let data = yield getFormData(window.gContextMenu.target);
 
 				let action = makeURI(data);
+				if (!action) {
+					throw new Error("Invalid Form URL");
+				}
 
 				if (data.method === 'post') {
 					let ss = new Instances.StringInputStream(data.values, -1);
@@ -595,6 +604,9 @@ exports.load = function load(window, outerEvent) {
 		try {
 			let data = m.data;
 			let url = makeURI(data, true);
+			if (!url) {
+				throw new Error("Invalid selected URL");
+			}
 
 			let ref = makeURI(data.ref);
 			const item = {
