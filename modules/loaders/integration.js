@@ -36,6 +36,19 @@ const MENU_ITEMS = [
 	'SaveFormT', 'SaveForm', 'SepFront'
 	];
 
+function makeURI(u) {
+	if (!u) {
+		return null;
+	}
+	try {
+		return new DTA.URL(Services.io.newURI(u.spec, u.originCharset, null));
+	}
+	catch (ex) {
+		log(LOG_ERROR, "failed to reconstruct");
+		return null;
+	}
+};
+
 /* **
  * Helpers and tools
  */
@@ -186,7 +199,7 @@ exports.load = function load(window, outerEvent) {
 	function selectButton() {
 		return $('dta-turboselect-button') || {checked: false};
 	}
-	function getMethod(method, target, browser) {
+	function getMethod(method, data, target, browser) {
 		let b = browser || gBrowser.selectedBrowser;
 		return new Promise((resolve, reject) => {
 			let job = ++findLinksJob;
@@ -201,10 +214,10 @@ exports.load = function load(window, outerEvent) {
 			}
 			b.messageManager.addMessageListener(`DTA:${method}:${job}`, result);
 			if (!target) {
-				b.messageManager.sendAsyncMessage(`DTA:${method}`, {job:job});
+				b.messageManager.sendAsyncMessage(`DTA:${method}`, {job:job, args: data});
 			}
 			else {
-				b.messageManager.sendAsyncMessage(`DTA:${method}`, {job:job}, {target:target});
+				b.messageManager.sendAsyncMessage(`DTA:${method}`, {job:job, args: data}, {target:target});
 			}
 		});
 	}
@@ -215,7 +228,7 @@ exports.load = function load(window, outerEvent) {
 		return getMethod("getFocusedDetails");
 	}
 	function getFormData(target) {
-		return getMethod("getFormData", target);
+		return getMethod("getFormData", null, target);
 	}
 	function findBrowsers(all) {
 		let browsers = [];
@@ -314,13 +327,10 @@ exports.load = function load(window, outerEvent) {
 					let nonnull = function(e) {
 						return !!e;
 					};
-					let makeURI = function(u) {
-						return new DTA.URL(Services.io.newURI(u.spec, u.originCharset, null));
-					};
 					let transposeURIs = function(e) {
 						try {
 							e.url = makeURI(e.url);
-							e.ref = e.ref && makeURI(e.ref);
+							e.ref = makeURI(e.ref);
 							return e;
 						}
 						catch (ex) {
@@ -406,69 +416,18 @@ exports.load = function load(window, outerEvent) {
 	}
 
 	function findSingleLink(turbo) {
-		try {
-			if (!window.gContextMenu.onSaveableLink) {
-				return;
-			}
-			let cur = window.gContextMenu.target;
-			while (!("tagName" in cur) || !cur.tagName.match(/^a$/i)) {
-				cur = cur.parentNode;
-			}
-			saveSingleLink(turbo, cur.href, cur);
+		if (!window.gContextMenu.onSaveableLink) {
 			return;
 		}
-		catch (ex) {
-			notifyError(bundle.getString('error'), bundle.getString('errorcannotdownload'));
-			log(LOG_ERROR, 'findSingleLink: ', ex);
-		}
+		saveSingleLinkAsync(turbo, "a", window.gContextMenu.target);
 	}
 
 	function findSingleImg(turbo) {
-		try {
-			let cur = window.gContextMenu.target;
-			while (!("tagName" in cur) || !cur.tagName.match(/^img$/i)) {
-				cur = cur.parentNode;
-			}
-			saveSingleLink(turbo, cur.src, cur);
-		}
-		catch (ex) {
-			notifyError(bundle.getString('error'), bundle.getString('errorcannotdownload'));
-			log(LOG_ERROR, 'findSingleLink: ', ex);
-		}
+		saveSingleLinkAsync(turbo, "img", window.gContextMenu.target);
 	}
 
 	function _findSingleMedia(turbo, tag) {
-		function isMedia(n) 'tagName' in n && n.tagName.toLowerCase() == tag;
-
-		let ctx = window.gContextMenu;
-		try {
-			let cur = ctx.target;
-			while (cur && !isMedia(cur)) {
-				let cn = cur.getElementsByTagName(tag);
-				if (cn.length) {
-					cur = cn[0];
-					break;
-				}
-				cur = cur.parentNode;
-			}
-
-			if (!cur.src) {
-				cur = cur.getElementsByTagName('source')[0];
-			}
-			saveSingleLink(turbo, cur.src, cur);
-			return;
-		}
-		catch (ex) {
-			try {
-				if (ctx.mediaURL) {
-					saveSingleLink(turbo, ctx.mediaURL, ctx.target);
-				}
-			}
-			catch (ex) {
-				notifyError(bundle.getString('error'), bundle.getString('errorcannotdownload'));
-				log(LOG_ERROR, '_findSingleMedia: ', ex);
-			}
-		}
+		saveSingleLinkAsync(turbo, tag, window.gContextMenu.target, ctx.mediaURL);
 	}
 	function findSingleVideo(turbo) {
 		_findSingleMedia(turbo, 'video');
@@ -484,41 +443,45 @@ exports.load = function load(window, outerEvent) {
 		}
 	}
 
-	function saveSingleLink(turbo, url, elem) {
-		const owner = elem.ownerDocument;
-		let defaultDescription = trimMore(owner.title || "");
-
-		url = Services.io.newURI(url, owner.characterSet, null);
-		let ml = DTA.getLinkPrintMetalink(url);
-		url = new DTA.URL(ml ? ml : url);
-
-		const item = {
-			"url": url,
-			"description": extractDescription(elem) || defaultDescription,
-			"referrer": DTA.getRef(owner),
-			"isPrivate": isWindowPrivate(window)
-		};
-		log(LOG_DEBUG, "saveSingleLink; processing " + elem.localName);
-		if (!ml && elem.localName == "a") {
-			let fn = elem.getAttribute("download");
-			log(LOG_DEBUG, "saveSingleLink; fn " + fn);
-			if (fn && (fn = fn.trim())) {
-				item.fileName = fn;
-			}
-		}
-
-		if (turbo) {
+	function saveSingleLinkAsync(turbo, what, target, linkhint) {
+		Task.spawn(function*() {
 			try {
-				DTA.saveSingleItem(window, true, item);
-				notifyInfo(bundle.getFormattedString('queued', [url]));
-				return;
+				let data = yield getMethod("saveTarget", {what:what, linkhint: linkhint}, target);
+				let url = Services.io.newURI(data.spec, data.originCharset, null);
+				let ml = DTA.getLinkPrintMetalink(url);
+				url = new DTA.URL(ml ? ml : url);
+
+				let ref = makeURI(data.ref);
+				const item = {
+					url: url,
+					description: data.desc || trimMore(data.title || ""),
+					referrer: ref,
+					isPrivate: isWindowPrivate(window)
+				};
+				if (!ml && data.download) {
+					data.download = data.download.trim();
+					if (data.download) {
+						item.fileName = data.download;
+					}
+				}
+				if (turbo) {
+					try {
+						DTA.saveSingleItem(window, true, item);
+						notifyInfo(bundle.getFormattedString('queued', [url]));
+						return;
+					}
+					catch (ex) {
+						log(LOG_ERROR, 'saveSingleLink', ex);
+						notifyError(bundle.getString('error'), bundle.getString('error.information'));
+					}
+				}
+				DTA.saveSingleItem(window, false, item);
 			}
 			catch (ex) {
-				log(LOG_ERROR, 'saveSingleLink', ex);
-				notifyError(bundle.getString('error'), bundle.getString('error.information'));
+				log(LOG_ERROR, "Failed to process single link", ex);
+				notifyError(bundle.getString('error'), bundle.getString('errorcannotdownload'));
 			}
-		}
-		DTA.saveSingleItem(window, false, item);
+		});
 	}
 
 	function findForm(turbo) {
@@ -526,7 +489,7 @@ exports.load = function load(window, outerEvent) {
 			try {
 				let data = yield getFormData(window.gContextMenu.target);
 
-				let action = new DTA.URL(Services.io.newURI(data.spec, data.originCharset, null));
+				let action = makeURI(data);
 
 				if (data.method == 'post') {
 					let ss = new Instances.StringInputStream(data.values, -1);
@@ -553,7 +516,7 @@ exports.load = function load(window, outerEvent) {
 					action.url.ref = '';
 				}
 
-				let ref = data.ref && new DTA.URL(Services.io.newURI(data.ref.spec, data.ref.originCharset, null));
+				let ref = makeURI(data.ref);
 				let defaultDescription = trimMore(data.title || "");
 				let desc = data.desc || defaultDescription;
 
@@ -1055,7 +1018,7 @@ exports.load = function load(window, outerEvent) {
 					return false;
 				}
 				try {
-					saveSingleLink(true, m.url, m.elem);
+					// XXX saveSingleLink(true, m.url, m.elem);
 					this.detachHilight();
 					new this.Flasher(m.elem).hide();
 				}
@@ -1293,7 +1256,7 @@ exports.load = function load(window, outerEvent) {
 					url = Services.io.newURI(url, null, null);
 					url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
 					let {ref, title} = yield getFocusedDetails();
-					ref = ref && new DTA.URL(Services.io.newURI(ref.spec, ref.originCharset, null));
+					ref = makeURI(ref);
 					func(url, ref);
 				}
 				catch (ex) {

@@ -503,11 +503,65 @@ const handleGetFormData = m => {
 	}
 }
 
+const handleSaveTarget = m => {
+	try {
+		let cur = m.objects.target;
+		let doc = cur.ownerDocument;
+		let rv;
+		let what = m.data.args.what;
+		while (cur && cur.localName.toLowerCase() != what) {
+			if (what == "video" || what == "audio") {
+				let cn = cur.getElementsByTagName(what);
+				if (cn.length) {
+					cur = cn[0];
+					break;
+				}
+			}
+			cur = cur.parentElement;
+		}
+		switch (what) {
+			case "a": {
+				rv = new URL(composeURL(doc, cur.href));
+				rv.download = cur.getAttribute("download");
+				break;
+			}
+			case "img":
+				rv = new URL(composeURL(doc, cur.src));
+				break;
+			case "audio":
+			case "video": {
+				if (!cur.src && !cur.currentSrc) {
+					cur = cur.getElementsByTagName('source')[0];
+				}
+				rv = new URL(composeURL(doc, cur.src || cur.currentSrc));
+				break;
+			}
+			default:
+				throw new Error("unhandled type " + m.data.args.what);
+		}
+
+		if (!rv || !cur) {
+			throw new Error("Failed");
+		}
+
+		rv.title = doc.title || "";
+		rv.desc = extractDescription(cur);
+		rv.ref = getRef(doc);
+
+		sendAsyncMessage("DTA:saveTarget:" + m.data.job, rv);
+	}
+	catch (ex) {
+		log(LOG_ERROR, "Failed to get form data", ex);
+		sendAsyncMessage("DTA:saveTarget:" + m.data.job, {exception: ex.message || ex});
+	}
+};
+
 const handleShutdown = message => {
 	removeMessageListener("DTA:findLinks", handleFindLinks);
 	removeMessageListener("DTA:getLocations", handleGetLocations);
 	removeMessageListener("DTA:getFocusedDetails", handleGetFocusedDetails);
 	removeMessageListener("DTA:getFormData", handleGetFormData);
+	removeMessageListener("DTA:saveTarget", handleSaveTarget);
 	removeMessageListener("DTA:shutdown", handleShutdown);
 };
 
@@ -515,6 +569,7 @@ addMessageListener("DTA:findLinks", handleFindLinks);
 addMessageListener("DTA:getLocations", handleGetLocations);
 addMessageListener("DTA:getFocusedDetails", handleGetFocusedDetails);
 addMessageListener("DTA:getFormData", handleGetFormData);
+addMessageListener("DTA:saveTarget", handleSaveTarget);
 addMessageListener("DTA:shutdown", handleShutdown);
 
 })();
