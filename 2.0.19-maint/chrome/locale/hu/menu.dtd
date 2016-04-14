@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Beállítások...">
+<!ENTITY dta-about.label "Névjegy...">
+<!ENTITY dta-manager-button "Kezelő">
+<!ENTITY dta-selector-button "dTa OneClick! Választó">
+<!ENTITY dta-tb-all.label "Minden lap">
+<!ENTITY dta-tb-single.label "Aktuális lap">
+<!ENTITY dta-selection.label "DownThemAll! választás…">
+<!ENTITY dta-selection-turbo.label "OneClick választás…">
+<!ENTITY dta-regular.label "DownThemAll!…">
+<!ENTITY dta-regular-turbo.label "dTa OneClick!…">
+<!ENTITY dta-img-save.label "Képek mentése a DownThemAll! programmal">
+<!ENTITY dta-img-save-turbo.label "Képek mentése az OneClick! lehetőséggel">
+<!ENTITY dta-video-save.label "Videók mentése a DownThemAll! programmal">
+<!ENTITY dta-video-save-turbo.label "Videók mentése az OneClick! lehetőséggel">
+<!ENTITY dta-audio-save.label "Hangok mentése a DownThemAll! programmal">
+<!ENTITY dta-audio-save-turbo.label "Hangok mentése az OneClick! lehetőséggel">
+<!ENTITY dta-link-save.label "Hivatkozások mentése a DownThemAll! programmal">
+<!ENTITY dta-link-save-turbo.label "Hivatkozások mentése az OneClick! lehetőséggel">
+<!ENTITY dta-form-save.label "Cél mentése DownThemAll!-lal">
+<!ENTITY dta-form-save-turbo.label "Űrlap céljának mentése dTa OneClick!-kel">

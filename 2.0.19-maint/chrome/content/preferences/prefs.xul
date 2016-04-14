@@ -1,0 +1,50 @@
+<?xml version="1.0"?> 
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2004-2006 Federico Parodi and Stefano Verna.
+ * 
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://dta/skin/preferences/style.css"?>
+<?xml-stylesheet href="chrome://dta-platform/skin/preferences.css"?>
+
+<!DOCTYPE prefwindow [
+	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/">
+	%globalDTD;
+	<!ENTITY % prefpanesDTD SYSTEM "chrome://dta/locale/prefpanes.dtd">
+	%prefpanesDTD;
+	<!ENTITY % commonDTD SYSTEM "chrome://dta/locale/">
+	%commonDTD;
+]>
+
+<prefwindow
+	id="DownThemAll"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
+	windowtype="DTA:Preferences"
+	title="&dtaPreferences.title;" 
+	buttons="accept,cancel,extra2,help"
+	buttonlabelextra2="&buttonlabelextra2;"
+	ondialogextra2="Prefs.restoreAll();"
+	persist="lastSelected screenX screenY"
+	onload="Prefs.load();"
+	style="&winstyle;"
+	>
+	<stringbundleset id="bundlesPrefs" xmlns="http://www.downthemall.net/properties#">
+		<stringbundle src="chrome://dta/locale/common.properties" />
+		<stringbundle src="chrome://dta/locale/prefpanes.properties" />
+	</stringbundleset>
+	
+	<prefpane id="paneMain" label="&mainpane.label;" src="chrome://dta/content/preferences/mainPane.xul" />
+	<prefpane id="paneInterface" label="&uipane.label;" />
+	<prefpane id="paneServers" label="&serverspane.label;" src="chrome://dta/content/preferences/serversPane.xul" />
+	<prefpane id="panePrivacy" label="&privacypane.label;" src="chrome://dta/content/preferences/privacyPane.xul" />
+	<prefpane id="paneFilters" label="&filterspane.label;" src="chrome://dta/content/preferences/filtersPane.xul" />
+	<prefpane id="paneAdvanced" label="&advancedpane.label;" src="chrome://dta/content/preferences/advPane.xul" />
+	
+	<script type="application/javascript" src="chrome://dta/content/common/internalFunctions.js"/>
+	<script type="application/javascript" src="chrome://dta/content/preferences/prefs.js"/>
+</prefwindow>

@@ -1,0 +1,12 @@
+<!ENTITY title "DownThemAll! Mirror Management">
+<!ENTITY header "Mirror Management">
+<!ENTITY byline1 "Downloads can be loaded from different locations. The file is then automatically recombined.">
+<!ENTITY byline2 "Feel free to add and remove locations pointing to the same file.">
+<!ENTITY byline3 "Adding locations pointing to different files will cause a corrupt download">
+
+<!ENTITY addmirror.tip "Add a Download Mirror">
+<!ENTITY removemirror.tip "Remove Selected Download Mirrors">
+<!ENTITY checkmirrors.tip "Check All Download Mirrors">
+
+<!ENTITY mirrorurl "Location:">
+<!ENTITY preference "Priority:">

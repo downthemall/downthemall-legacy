@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: GPL 2.0
+ *
+ * This code is part of DownThemAll! - dTa!
+ * Copyright © 2010 Nils Maier
+ * 
+ * See LICENSE and GPL for details.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE overlay [
+	<!ENTITY % mainmenuDTD SYSTEM "chrome://dta/locale/mainmenu.dtd">
+	%mainmenuDTD;
+	<!ENTITY % managerDTD SYSTEM "chrome://dta/locale/manager.dtd">
+	%managerDTD;
+]>
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="dtamacoverlay">
+	<window id="DownThemAll">
+		<stringbundleset id="stringbundleset" />
+		<keyset id="baseMenuKeyset" />
+		<commandset id="baseMenuCommandSet" />
+	</window>
+
+	<notificationbox id="notifications">
+		<menubar insertbefore="mainstack" id="mainmenu">
+			<menu id="file-menu" label="&fileMenu.label;" accesskey="&fileMenu.accesskey;">
+				<menupopup id="menu_FilePopup">
+					<menuitem id="menu_addnewdownload" label="&tooladd.label;" command="cmdAddUrl" key="kAddUrl" tooltiptext="&tooladd.tooltip;" />
+					<menuseparator />
+					<menuitem id="menu_newNavigator" label="&newNavigatorCmd.label;" key="kNewWin" command="cmdNewWin" />
+					<menuitem id="menu_newNavigatorTab" label="&tabCmd.label;" command="cmdNewTab" key="kNewTab" />
+					<menuseparator />
+					<menuitem id="menu_closeWindow" command="cmdClose" key="kCloseMac" label="&closeWindow.label;" />
+				</menupopup>
+			</menu>
+			<menu id="tasksMenu" /><!-- Seamonkey -->
+			<menu id="windowMenu" /><!-- Firefox, Seamonkey -->
+			<menupopup id="menu_ToolsPopup" /><!-- Mac menu -->
+			<menu id="menu_Help" /><!-- Seamonkey -->
+			<menu id="helpMenu" /><!-- Firefox -->
+		</menubar>
+	</notificationbox>
+</overlay>

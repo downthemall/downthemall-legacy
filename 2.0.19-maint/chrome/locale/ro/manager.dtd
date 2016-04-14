@@ -1,0 +1,55 @@
+<!ENTITY tooladd.label "Adaugă o adresă">
+<!ENTITY tooladd.tooltip "Adaugă manual o adresă în DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Ne puteți ajuta să facem DownThemAll mai bun. Puteți face o mică donație!">
+<!ENTITY movetop.label "Mută la început">
+<!ENTITY movebottom.label "Mută la sfârșit">
+<!ENTITY moveup.label "Mută în sus">
+<!ENTITY movedown.label "Mută în jos">
+<!ENTITY task.label "Adresă/Denumire">
+<!ENTITY per.label "Procent">
+<!ENTITY pct.label "Progres">
+<!ENTITY dim.label "Dimensiune">
+<!ENTITY time.label "Timp estimat">
+<!ENTITY parts.label "Segmente">
+<!ENTITY speed.label "Viteză">
+<!ENTITY infoURLTitle.value "De la:">
+<!ENTITY infoSizeTitle.value "Dimensiune:">
+<!ENTITY infoMultiple.value "Elemente multiple">
+<!ENTITY elapsedTitle.value "Timp scurs:">
+<!ENTITY remainingTitle.value "Timp rămas:">
+<!ENTITY currentSpeedTitle.value "Viteză curentă:">
+<!ENTITY avgSpeedTitle.value "Viteză medie:">
+<!ENTITY path.label "Cale de stocare">
+<!ENTITY mask.label "Șablon de redenumire">
+<!ENTITY hash.label "Sumă de control">
+<!ENTITY infos.label "Informații despre descărcare">
+<!ENTITY launch.label "Deschide fișierul">
+<!ENTITY delete.label "Șterge fișierul">
+<!ENTITY targetdir.label "Deschide dosarul">
+<!ENTITY pause.label "Întrerupe">
+<!ENTITY resume.label "Repornește">
+<!ENTITY cancel.label "Anulează…">
+<!ENTITY removemenu.label "Elimină descărcările…">
+<!ENTITY removeselected.label "Elimină descărcările selectate…">
+<!ENTITY removeCompleted.label "Elimină descărcările terminate…">
+<!ENTITY removeAll.label "Elimină tot…">
+<!ENTITY removeDupes.label "Elimină dublurile…">
+<!ENTITY removeGone.label "Elimină înregistrările fișierelor șterse…">
+<!ENTITY advanced.label "Complex">
+<!ENTITY addchunk.label "Adaugă un segment">
+<!ENTITY removechunk.label "Elimină un segment">
+<!ENTITY force.label "Forțează pornirea">
+<!ENTITY import.label "Importă din fișier">
+<!ENTITY export.label "Exportă în fișier">
+<!ENTITY options.caption "Opțiuni">
+<!ENTITY loading.label "Încărcare…">
+<!ENTITY restore.label "Restaurează">
+<!ENTITY close.label "Închide">
+<!ENTITY speedlimit.label "Limitare de viteză:">
+<!ENTITY speedlimit.tooltip "Modifică limita maximă a vitezei de descărcare. Lista este actualizată dinamic">
+<!ENTITY perdownloadspeedlimit.label "Limitează viteză">
+<!ENTITY perdownloadspeedlimit.tooltip "Modifică limita maximă a vitezei de descărcare. Limita globală de descărcare va fi totuși respectată">
+<!ENTITY mirrors.label "Gestionează saiturile alternative">
+<!ENTITY mirrors.tooltip "Gestionează locațiile alternative de descărcare">
+<!ENTITY toolbar.icons "Afișează doar pictograme">
+<!ENTITY toolbar.full "Afișează pictograme și text">

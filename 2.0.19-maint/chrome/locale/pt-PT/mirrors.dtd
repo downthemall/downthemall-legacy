@@ -1,0 +1,10 @@
+<!ENTITY title "Gestão de Espelhos DownThemAll!">
+<!ENTITY header "Gestão de Espelhos">
+<!ENTITY byline1 "As transferências podem ser carregadas a partir de diferentes localizações. O ficheiro é então automaticamente recombinado.">
+<!ENTITY byline2 "Sinta-se à vontade para adicionar e remover localizações que apontam para o mesmo ficheiro.">
+<!ENTITY byline3 "Adicionar localizações que apontam para ficheiros diferentes pode causar uma transferência corrompida">
+<!ENTITY addmirror.tip "Adicionar um Espelho de transferência">
+<!ENTITY removemirror.tip "Remover Espelhos de transferências seleccionadas">
+<!ENTITY checkmirrors.tip "Verificar Todos os Espelhos de transferências">
+<!ENTITY mirrorurl "Localização:">
+<!ENTITY preference "Prioridade:">

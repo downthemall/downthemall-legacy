@@ -1,0 +1,55 @@
+<!ENTITY tooladd.label "أضِف تنزيلات">
+<!ENTITY tooladd.tooltip "أضِف تنزيلات يدويًا إلى نزِّلها كلها!">
+<!ENTITY tooldonate.tooltiptext "يمكنك مساعدتنا لجعل نزِّلها كلها! أفضل. فكر بتقديم تبرع صغير!">
+<!ENTITY movetop.label "الأول">
+<!ENTITY movebottom.label "الأخير">
+<!ENTITY moveup.label "أعلى">
+<!ENTITY movedown.label "أسفل">
+<!ENTITY task.label "التنزيل/الاسم">
+<!ENTITY per.label "النسبة">
+<!ENTITY pct.label "التقدم">
+<!ENTITY dim.label "الحجم">
+<!ENTITY time.label "الوقت التقريبي">
+<!ENTITY parts.label "الأجزاء">
+<!ENTITY speed.label "السرعة">
+<!ENTITY infoURLTitle.value "من:">
+<!ENTITY infoSizeTitle.value "الحجم:">
+<!ENTITY infoMultiple.value "عناصر متعددة">
+<!ENTITY elapsedTitle.value "المنقضي:">
+<!ENTITY remainingTitle.value "المتبقي:">
+<!ENTITY currentSpeedTitle.value "السرعة الحالية:">
+<!ENTITY avgSpeedTitle.value "معدل السرعة:">
+<!ENTITY path.label "مسار الحفظ">
+<!ENTITY mask.label "قناع تغيير الاسم">
+<!ENTITY hash.label "كود الفحص">
+<!ENTITY infos.label "معلومات التنزيل">
+<!ENTITY launch.label "افتح الملف">
+<!ENTITY delete.label "احذف الملف‍(‍ات)">
+<!ENTITY targetdir.label "افتح المجلد">
+<!ENTITY pause.label "ألبِث">
+<!ENTITY resume.label "واصل">
+<!ENTITY cancel.label "ألغِ">
+<!ENTITY removemenu.label "أزِل التنزيلات">
+<!ENTITY removeselected.label "أزِل المحدد">
+<!ENTITY removeCompleted.label "أزِل التنزيلات المكتملة">
+<!ENTITY removeAll.label "أزِل الكل">
+<!ENTITY removeDupes.label "أزِل المكررة">
+<!ENTITY removeGone.label "أزِل الملفات المحذوفة">
+<!ENTITY advanced.label "متقدم">
+<!ENTITY addchunk.label "زِد جزءًا">
+<!ENTITY removechunk.label "أنقص جزءًا">
+<!ENTITY force.label "أرغم على البدء">
+<!ENTITY import.label "استورد من ملف">
+<!ENTITY export.label "صدِّر المحدد إلى ملف">
+<!ENTITY options.caption "خيارات">
+<!ENTITY loading.label "يحمل ...">
+<!ENTITY restore.label "استعد">
+<!ENTITY close.label "أغلق">
+<!ENTITY speedlimit.label "الحد:">
+<!ENTITY speedlimit.tooltip "غيِّر الحد الأقصى للسرعة. تُحدَّث القائمة ديناميكيًا.">
+<!ENTITY perdownloadspeedlimit.label "حد السرعة">
+<!ENTITY perdownloadspeedlimit.tooltip "غيِّر الحد الأقصى للسرعة. سيظل الحد العام للسرعة متبعًا.">
+<!ENTITY mirrors.label "أدر المرايا">
+<!ENTITY mirrors.tooltip "أدر مواقع مرايا تنزيلاتك">
+<!ENTITY toolbar.icons "استخدم الأيقونات">
+<!ENTITY toolbar.full "استخدم الأيقونات والنصوص">

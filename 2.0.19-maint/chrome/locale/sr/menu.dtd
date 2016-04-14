@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Подешавања">
+<!ENTITY dta-about.label "О додатку">
+<!ENTITY dta-manager-button "Управљач">
+<!ENTITY dta-selector-button "dTa OneClick! обирач">
+<!ENTITY dta-tb-all.label "Сви језичци">
+<!ENTITY dta-tb-single.label "Тренутни језичак">
+<!ENTITY dta-selection.label "DownThemAll! избор...">
+<!ENTITY dta-selection-turbo.label "dTa OneClick избор...">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa OneClick...">
+<!ENTITY dta-img-save.label "Сачувај слику помоћу DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Започни чување слике помоћу dTa OneClick!">
+<!ENTITY dta-video-save.label "Сачувај видео помоћу DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Започни чување видеа помоћу dTa OneClick!">
+<!ENTITY dta-audio-save.label "Сачувај звук помоћу DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Започни чување звука помоћу dTa OneClick!">
+<!ENTITY dta-link-save.label "Сачувај везу помоћу DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Започни чување везе помоћу dTa OneClick!">
+<!ENTITY dta-form-save.label "Сачувај изабрани образац помоћу DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Започни чување изабраног обрасца помоћу dTa OneClick!">

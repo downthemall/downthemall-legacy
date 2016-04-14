@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "Préférences">
+<!ENTITY dta-about.label "À propos de DTA!">
+<!ENTITY dta-manager-button "Gestionnaire">
+<!ENTITY dta-selector-button "Sélecteur dTa OneClick!">
+<!ENTITY dta-tb-all.label "Tous les onglets">
+<!ENTITY dta-tb-single.label "Onglet courant">
+<!ENTITY dta-selection.label "Sélection DownThemAll! …">
+<!ENTITY dta-selection-turbo.label "Sélection dTa OneClick …">
+<!ENTITY dta-regular.label "DownThemAll!…">
+<!ENTITY dta-regular-turbo.label "dTa OneClick…">
+<!ENTITY dta-img-save.label "Enregistrer l'image avec DownThemAll!">
+<!ENTITY dta-img-save-turbo.label "Démarrer l'enregistrement de l'image avec dTa OneClick!">
+<!ENTITY dta-video-save.label "Enregistrer la vidéo avec DownThemAll!">
+<!ENTITY dta-video-save-turbo.label "Démarrer l'enregistrement de la vidéo avec dTa OneClick!">
+<!ENTITY dta-audio-save.label "Enregistrer le son avec DownThemAll!">
+<!ENTITY dta-audio-save-turbo.label "Démarrer l'enregistrement du son avec dTa OneClick!">
+<!ENTITY dta-link-save.label "Enregistrer la cible du lien avec DownThemAll!">
+<!ENTITY dta-link-save-turbo.label "Démarrer l'enregistrement de la cible du lien avec dTa OneClick!">
+<!ENTITY dta-form-save.label "Enregistrer la cible du formulaire avec DownThemAll!">
+<!ENTITY dta-form-save-turbo.label "Démarrage de l'enregistrement de la cible du formulaire avec dTa OneClick!">

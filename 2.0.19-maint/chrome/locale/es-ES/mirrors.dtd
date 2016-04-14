@@ -1,0 +1,10 @@
+<!ENTITY title "Administrador de mirrors de DownThemAll!">
+<!ENTITY header "Administrador de mirrors (ubicaciones alternativas)">
+<!ENTITY byline1 "Las descargas pueden descargarse de ubicaciones diferentes. Después se recombina automáticamente el archivo.">
+<!ENTITY byline2 "Puede añadir y eliminar a su gusto ubicaciones que apunten al mismo archivo.">
+<!ENTITY byline3 "Si añade ubicaciones que apunten a archivos diferentes provocará una descarga corrupta.">
+<!ENTITY addmirror.tip "Añadir un mirror de descarga">
+<!ENTITY removemirror.tip "Eliminar los mirrors de descarga seleccionados">
+<!ENTITY checkmirrors.tip "Comprobar todos los mirrors de descarga">
+<!ENTITY mirrorurl "Ubicación:">
+<!ENTITY preference "Prioridad">

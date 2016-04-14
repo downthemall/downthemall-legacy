@@ -1,0 +1,10 @@
+<!ENTITY title "DownThemAll! 鏡射管理">
+<!ENTITY header "鏡射管理">
+<!ENTITY byline1 "檔案可由不同地點分開下載，最後會自動合併成一個檔案。">
+<!ENTITY byline2 "可輕易的新增或移除相同檔案的載點。">
+<!ENTITY byline3 "加入不同檔案的載點將造成檔案損毀">
+<!ENTITY addmirror.tip "加入一個下載鏡射">
+<!ENTITY removemirror.tip "移除所選下載鏡射">
+<!ENTITY checkmirrors.tip "檢查所有下載鏡射">
+<!ENTITY mirrorurl "載點：">
+<!ENTITY preference "優先權：">

@@ -1,0 +1,36 @@
+@import 'chrome://dta/skin/toolbarbuttons/buttons.css';
+@import 'chrome://dta-platform/skin/integration.css';
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+	
+#notification-popup-box[anchorid="downthemall-notification-icon"] > #downthemall-notification-icon {
+	display: -moz-box;
+}
+#downthemall-notification-icon {
+  list-style-image: url(chrome://dta/skin/toolbarbuttons/buttons16.png);
+  -moz-image-region: rect(0px,64px,16px,48px);
+}
+
+.popup-notification-icon[popupid="downthemall"] {
+  list-style-image: url(chrome://dta/skin/common/icon.png);
+}
+
+/* menus */
+.dta-menuitem {
+	list-style-image: url(chrome://dta/skin/toolbarbuttons/buttons16.png);
+}
+.dta-normal {
+	-moz-image-region: rect(0px,32px,16px,16px);
+}
+.dta-turbo {
+	-moz-image-region: rect(0px,64px,16px,48px);
+}
+.dta-manager {
+	-moz-image-region: rect(0px,112px,16px,96px);
+}
+.dta-prefs {
+	-moz-image-region: rect(0px,128px,16px,112px);
+}	
+.dta-about {
+	-moz-image-region: rect(0px,144px,16px,128px);
+}	
+

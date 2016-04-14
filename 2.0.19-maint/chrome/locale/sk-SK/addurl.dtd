@@ -1,0 +1,4 @@
+<!ENTITY title "Pridať adresu">
+<!ENTITY desc.value "Zadajte adresu a (voliteľne) odkazujúcu stránku súboru, ktorý chcete prevziať.">
+<!ENTITY desc.batches.value "Ak chcete prevziať viac súborov naraz, použite dávkové popisovače.">
+<!ENTITY examples.value "Príklady:">

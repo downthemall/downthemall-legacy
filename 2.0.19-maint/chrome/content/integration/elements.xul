@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<!-- ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is DownThemAll!
+ *
+ * The Initial Developers of the Original Code are
+ * Federico Parodi, Stefano Verna and Nils Maier
+ * Portions created by the Initial Developers are Copyright (C) 2007
+ * the Initial Developers. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Federico Parodi <jimmy2k@gmail.com>
+ *   Stefano Verna <stefano.verna@gmail.com>
+ *   Nils Maier <MaierMan@web.de>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** -->
+<!DOCTYPE overlay SYSTEM "chrome://dta/locale/menu.dtd">
+<overlay id="DTAUIElements" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<script type="application/x-javascript" src="chrome://dta/content/integration/elements.js" />
+
+	<!-- Firefox/Seamonkey -->
+	<popup id="contentAreaContextMenu">
+		<menu id="dtaCtxCompact" insertafter="context-sep-selectall" />
+	</popup>
+
+	<toolbarpalette id="BrowserToolbarPalette">
+		<toolbarbutton id="dta-button" />
+		<toolbarbutton id="dta-turbo-button" />
+		<toolbarbutton id="dta-turboselect-button" />
+		<toolbarbutton id="dta-manager-button" />
+	</toolbarpalette>
+
+	<menupopup id="menu_ToolsPopup">
+		<menu id="dtaToolsMenu" insertafter="javascriptConsole" />
+	</menupopup>
+	<menupopup id="taskPopup">
+		<menu id="dtaToolsMenu" class="menu-iconic dta" insertafter="navBeginGlobalItems" />
+	</menupopup>
+	
+	<vbox id="browser-bottombox">
+		<notificationbox id="dtaNotifications" insertbefore="FindToolbar,addon-bar,status-bar"/>
+	</vbox>
+
+	<vbox id="main-window">
+		<notificationbox id="dtaNotifications" insertbefore="addon-bar,status-bar"/>
+	</vbox>
+
+
+	<!-- Integration -->
+	<menu id="dtaCtxCompact" label="DownThemAll!" class="menu-iconic dta-menuitem dta-normal">
+		<menupopup id="dtaCtxSubmenu">
+			<menuseparator class="thin" id="dtaCtxSepFront" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxDTA"  accesskey="n" label="&dta-regular.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxTDTA" accesskey="o" label="&dta-regular-turbo.label;" />
+
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxDTASel" accesskey="n" label="&dta-selection.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxTDTASel" accesskey="o" label="&dta-selection-turbo.label;" />
+
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveLink" accesskey="n" label="&dta-link-save.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveLinkT" accesskey="o" label="&dta-link-save-turbo.label;" />
+
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveImg" label="&dta-img-save.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveImgT" label="&dta-img-save-turbo.label;" />
+
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveVideo" label="&dta-video-save.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveVideoT" label="&dta-video-save-turbo.label;" />
+
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveAudio" label="&dta-audio-save.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveAudioT" label="&dta-audio-save-turbo.label;" />
+
+			<menuitem class="menuitem-iconic dta-menuitem dta-normal" id="dtaCtxSaveForm" label="&dta-form-save.label;" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-turbo" id="dtaCtxSaveFormT" label="&dta-form-save-turbo.label;" />
+
+			<menuseparator class="thin" id="dtaCtxSepPref" />
+			<menuitem class="menuitem-iconic dta-menuitem dta-prefs" id="dtaCtxPref" label="&dta-pref.label;" />
+			<menuseparator class="thin" id="dtaCtxSepBack" />
+		</menupopup>
+	</menu>
+
+	<toolbarbutton id="dta-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-regular.label;" tooltiptext="&dta-regular.label;" type="menu-button">
+		<menupopup>
+			<menuitem id="dta-tb-dta" label="DownThemAll! (&dta-tb-single.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular.label;" />
+			<menuitem id="dta-tb-all" label="DownThemAll! (&dta-tb-all.label;)" class="menuitem-iconic dta-menuitem dta-normal" tooltiptext="&dta-regular.label;" />
+			<menuseparator />
+			<menuitem id="dta-tb-manager" label="&dta-manager-button;" class="menuitem-iconic dta-menuitem dta-manager" tooltiptext="&dta-manager-button;" />
+		</menupopup>
+	</toolbarbutton>
+	
+	<toolbarbutton id="dta-turbo-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-regular-turbo.label;" tooltiptext="&dta-regular-turbo.label;" type="menu-button">
+		<menupopup>
+			<menuitem id="dta-tb-turbo" label="dTa OneClick! (&dta-tb-single.label;)" tooltiptext="&dta-regular-turbo.label;" class="menuitem-iconic dta-menuitem dta-turbo" />
+			<menuitem id="dta-tb-allturbo" label="dTa OneClick! (&dta-tb-all.label;)" tooltiptext="&dta-regular-turbo.label;" class="menuitem-iconic dta-menuitem dta-turbo" />
+		</menupopup>
+	</toolbarbutton>
+	
+	<toolbarbutton id="dta-turboselect-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-selector-button;" tooltiptext="&dta-selector-button;" type="checkbox" />
+	<toolbarbutton id="dta-manager-button" class="chromeclass-toolbar-additional toolbarbutton-1 dta-toolbarbutton" label="&dta-manager-button;" tooltiptext="&dta-manager-button;" />
+	
+	<menu id="dtaToolsMenu" label="DownThemAll" class="menu-iconic dta-menuitem dta-normal">
+		<menupopup id="dtaToolsPopup">
+			<menuitem id="dtaToolsDTA" label="&dta-regular.label;" class="menuitem-iconic dta-menuitem dta-normal" />
+			<menuitem id="dtaToolsTDTA" label="&dta-regular-turbo.label;" class="menuitem-iconic dta-menuitem dta-turbo" />
+			<menuitem id="dtaToolsManager" label="&dta-manager-button;" class="menuitem-iconic dta-menuitem dta-manager" />
+			<menuseparator id="dtaToolsSep" />
+			<menuitem id="dtaToolsPrefs" label="&dta-pref.label;" class="menuitem-iconic dta-menuitem dta-prefs" />
+			<menuitem id="dtaToolsAbout" label="&dta-about.label;" class="menuitem-iconic dta-menuitem dta-about" />
+		</menupopup>
+	</menu>
+</overlay>

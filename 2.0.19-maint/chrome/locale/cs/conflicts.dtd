@@ -1,0 +1,7 @@
+<!ENTITY title.value "Konflikt názvu jmen!">
+<!ENTITY text.value "Zapamatovat si toto nastavení:">
+<!ENTITY file.label "Jen pro tuto stránku">
+<!ENTITY session.label "Jen pro toto sezení">
+<!ENTITY always.label "Od nynějška navždy">
+<!ENTITY overwrite.label "Přepsat existující soubor">
+<!ENTITY skip.label "Přeskočit/Zrušit">

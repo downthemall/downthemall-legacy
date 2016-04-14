@@ -1,0 +1,4 @@
+<!ENTITY title "Apondon d&apos;URL(s)">
+<!ENTITY desc.value "Indicatz l&apos;URL aicí e (facultativament) la pagina d&apos;origina del fichièr que volètz telecargar.">
+<!ENTITY desc.batches.value "Podètz tanben utilizar de descriptors de lòts per telecargar mai d'un fichièr a l'encòp.">
+<!ENTITY examples.value "Exemples :">

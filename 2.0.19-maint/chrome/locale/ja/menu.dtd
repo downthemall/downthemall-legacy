@@ -1,0 +1,20 @@
+<!ENTITY dta-pref.label "設定">
+<!ENTITY dta-about.label "dTa! について">
+<!ENTITY dta-manager-button "マネージャー">
+<!ENTITY dta-selector-button "dTa OneClick! セレクター">
+<!ENTITY dta-tb-all.label "すべてのタブ">
+<!ENTITY dta-tb-single.label "現在のタブ">
+<!ENTITY dta-selection.label "DownThemAll! 選択画面...">
+<!ENTITY dta-selection-turbo.label "dTa OneClick 選択画面...">
+<!ENTITY dta-regular.label "DownThemAll!...">
+<!ENTITY dta-regular-turbo.label "dTa OneClick...">
+<!ENTITY dta-img-save.label "DownThemAll! で画像を保存">
+<!ENTITY dta-img-save-turbo.label "dTa OneClick! で画像の保存を開始">
+<!ENTITY dta-video-save.label "DownThemAll! でビデオを保存">
+<!ENTITY dta-video-save-turbo.label "dTa OneClick! でビデオの保存を開始">
+<!ENTITY dta-audio-save.label "DownThemAll! でオーディオを保存">
+<!ENTITY dta-audio-save-turbo.label "dTa OneClick! でオーディオの保存を開始">
+<!ENTITY dta-link-save.label "DownThemAll! でリンクを保存">
+<!ENTITY dta-link-save-turbo.label "dTa OneClick! でリンクの保存を開始">
+<!ENTITY dta-form-save.label "ターゲットを DownThemAll で保存">
+<!ENTITY dta-form-save-turbo.label "ターゲットを dTa OneClick! で保存を開始">

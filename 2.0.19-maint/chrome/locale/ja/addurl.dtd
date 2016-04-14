@@ -1,0 +1,4 @@
+<!ENTITY title "ダウンロードの追加">
+<!ENTITY desc.value "ダウンロードするファイルの URL と参照元の URL (任意) を入力してください。">
+<!ENTITY desc.batches.value "バッチ処理を使用することで複数のファイルを一度にダウンロードすることができます。">
+<!ENTITY examples.value "サンプル:">

@@ -1,0 +1,24 @@
+<!--
+	commonly used.
+	CHECK BEFORE MODIFY
+
+
+-->
+<!ENTITY start.label "Pobierz">
+<!ENTITY start.key "P">
+<!ENTITY queue.label "Dodaj jako wstrzymane">
+<!ENTITY queue.key "D">
+<!ENTITY options.label "Ustawienia">
+<!ENTITY url.value "Pobierz">
+<!ENTITY dest.caption "Zapisz pliki w:">
+<!ENTITY mirrors.value "Mirrory:">
+<!ENTITY referrer.value "Strona odniesienia:">
+<!ENTITY description.value "Opis:">
+<!ENTITY checksum.value "Suma kontrolna (hash):">
+<!ENTITY browse.tip "Przeglądaj w poszukiwaniu folderu docelowego…">
+<!ENTITY mirrormanager.tip "Zarządzaj mirrorami pobierania">
+<!ENTITY mask.label "Maska zmiany nazwy">
+<!ENTITY mask.tip "Zaznaczone elementy zostaną zapisane pod zmienionymi nazwami wg tej maski">
+<!ENTITY selectall.label "Zaznacz wszystko">
+<!ENTITY selectinv.label "Odwróć zaznaczenie">
+<!ENTITY selectnone.label "Odznacz wszystko">

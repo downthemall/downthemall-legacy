@@ -1,0 +1,74 @@
+* { 
+	font-family: "Lucida Grande", "Lucida Sans Unicode", Arial;
+	text-align: justify;
+	color: #333;
+	line-height: 128%;
+}
+
+html, body {
+	margin: 0;
+	padding: 0;
+	background-color: white;	
+}
+
+h1 {
+	margin: 0;
+	padding: 0;
+	
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;	
+	
+	font-size: 1em;
+	line-height: 1.1em;
+	color: black;
+	background: white url(logo.png) no-repeat right top;
+	border-bottom: 1px solid rgb(255, 227, 145);
+	height: 33px;
+	padding-top: 10px;
+	padding-left: 1em;
+	padding-right: 220px;
+	
+}
+
+ol {
+	padding-top: 50px;
+	padding-bottom: 1.5em;
+}
+
+li {
+	margin-bottom: 1ex;
+}
+
+a, a:visited {
+	color: #30536F;
+	font-weight: bold;
+	text-decoration: none;
+}
+a:hover {
+	color: #1271A9;
+}
+li a:before {
+	content: 'Download: ';
+	color: gray;
+}
+
+p {
+	font-size: small;
+	background: #FFF6CF;
+	border-top: 1ex solid white;
+	color: darkgray;
+	text-align: center;
+	margin: 0;
+	padding: 0.5ex;
+	margin-top: 1em;
+	height: 1.5em;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+.desc {
+	font-size: smaller;
+}

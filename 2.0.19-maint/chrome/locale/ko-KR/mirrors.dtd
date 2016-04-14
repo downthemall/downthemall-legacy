@@ -1,0 +1,10 @@
+<!ENTITY title "DownThemAll! 미러 관리">
+<!ENTITY header "미러 관리">
+<!ENTITY byline1 "다운로드가 다른 지역으로부터도 가능합니다. 다운로드 완료 시 자동으로 결합됩니다.">
+<!ENTITY byline2 "동일한 파일에 대해 자유롭게 그 위치를 추가 또는 제거하십시오.">
+<!ENTITY byline3 "상이한 파일을 가리키는 위치를 추가하면 다운로드 오류가 발생할 수 있음">
+<!ENTITY addmirror.tip "다운로드 미러 추가">
+<!ENTITY removemirror.tip "선택된 다운로드 미러 제거">
+<!ENTITY checkmirrors.tip "모든 다운로드 미러 확인">
+<!ENTITY mirrorurl "위치:">
+<!ENTITY preference "우선순위:">

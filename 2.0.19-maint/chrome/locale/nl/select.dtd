@@ -1,0 +1,18 @@
+<!ENTITY title "Maak een selectie">
+<!ENTITY filters.caption "Filters">
+<!ENTITY additional.caption "Snel filteren">
+<!ENTITY additional.tip "Tekstfilter: er kunnen meer tekstfilters tegelijkertijd ingesteld worden door een komma te gebruiken.">
+<!ENTITY regex.label "Reg. exp.">
+<!ENTITY filter.tip "Voer de tekstfilters hier in! (zie enkele voorbeelden in de uitklaplijst)">
+<!ENTITY status.label "Na de selectie van koppelingen, klik op Starten">
+<!ENTITY menu.mask.title "Masker voor hernoemen wijzigen">
+<!ENTITY menu.check.label "Markeer geselecteerde items">
+<!ENTITY menu.uncheck.label "Demarkeer geselecteerde items">
+<!ENTITY menu.toggle.label "Controle op geselecteerde items omschakelen">
+<!ENTITY tab.links.label "Koppelingen">
+<!ENTITY tab.pics.label "Afbeeldingen en ingesloten">
+<!ENTITY header.desc.label "Omschrijving">
+<!ENTITY selectfiltered.label "Gefilterde selecteren">
+<!ENTITY disableother.label "Overige filters uitschakelen">
+<!ENTITY disableother.tooltip "Overige filters uitschakelen en alleen snelle filtering gebruiken. (Deze instelling wordt momenteel niet aanbevolen)">
+<!ENTITY resname.value "Bronnaam">

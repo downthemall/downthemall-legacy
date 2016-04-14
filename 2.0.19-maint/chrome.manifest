@@ -1,0 +1,102 @@
+### package ###
+resource	dta	modules/
+
+## general ##
+content	dta	chrome/content/
+content	dtaicon	./
+skin	dta	classic/1.0 chrome/skin/
+locale	dta	en-US	chrome/locale/en-US/
+content dta-public	chrome/public/ contentaccessible
+skin	dta-public	classic/1.0 chrome/public/
+
+## locales ##
+locale dta ar chrome/locale/ar/
+locale dta cs chrome/locale/cs/
+locale dta de chrome/locale/de/
+locale dta el chrome/locale/el/
+locale dta es-AR chrome/locale/es-AR/
+locale dta es-ES chrome/locale/es-ES/
+locale dta fr chrome/locale/fr/
+locale dta gl chrome/locale/gl/
+locale dta gl-ES chrome/locale/gl-ES/
+locale dta he chrome/locale/he/
+locale dta hu chrome/locale/hu/
+locale dta it chrome/locale/it/
+locale dta ja chrome/locale/ja/
+locale dta ko-KR chrome/locale/ko-KR/
+locale dta nl chrome/locale/nl/
+locale dta oc chrome/locale/oc/
+locale dta pl chrome/locale/pl/
+locale dta pt-BR chrome/locale/pt-BR/
+locale dta pt-PT chrome/locale/pt-PT/
+locale dta ro chrome/locale/ro/
+locale dta ru chrome/locale/ru/
+locale dta sk-SK chrome/locale/sk-SK/
+locale dta sr chrome/locale/sr/
+locale dta zh-CN chrome/locale/zh-CN/
+locale dta zh-TW chrome/locale/zh-TW/
+
+## platform package ##
+content dta-platform	chrome/content/ platform
+skin	dta-platform	classic/1.0 chrome/skin/
+
+## Components ##
+interfaces components/services.xpt
+
+component {27a344f4-7c1b-43f3-af7f-bb9dd65114bb} components/services.js
+contract @downthemall.net/stuff;1 {27a344f4-7c1b-43f3-af7f-bb9dd65114bb}
+
+component {c7b0d885-0a2b-4047-8816-183764c7fe2e} components/services.js
+contract @downthemall.net/contenthandling;3 {c7b0d885-0a2b-4047-8816-183764c7fe2e}
+
+component {bbaedbd9-9567-4d11-9255-0bbae236ecab} components/services.js
+contract @mozilla.org/network/protocol/about;1?what=downthemall {bbaedbd9-9567-4d11-9255-0bbae236ecab}
+
+component {435FC5E5-D4F0-47a1-BDC1-F325B78188F3} components/services.js
+contract @downthemall.net/filtermanager;2 {435FC5E5-D4F0-47a1-BDC1-F325B78188F3}
+
+category profile-after-change @downthemall.net/stuff;1 @downthemall.net/stuff;1
+category profile-after-change @downthemall.net/contenthandling;3 @downthemall.net/contenthandling;3
+category net-channel-event-sinks @downthemall.net/contenthandling;3 @downthemall.net/contenthandling;3
+category profile-after-change @downthemall.net/filtermanager;2 @downthemall.net/filtermanager;2
+
+### integration ###
+
+## general ##
+overlay chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager/tooltip.xul
+overlay chrome://dta/content/dta/manager/info.xul chrome://dta/content/dta/manager/tooltip.xul
+#override chrome://dta/skin/preferences/preferences-toolkit.png chrome://browser/skin/preferences/Options.png application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+override chrome://dta/skin/toolbarbuttons/buttons.css chrome://dta-platform/skin/buttons-fx4.css application={ec8030f7-c20a-464f-9b0e-13a3a9e97384} appversion>=4.0b7
+# work-around bugs in loadOverlay preventing seamonkey integration otherwise
+overlay chrome://dta/content/preferences/prefs.xul chrome://dta/content/preferences/interfacePane.xul
+style	chrome://global/content/customizeToolbar.xul	chrome://dta/skin/integration/style.css
+
+## toolkit ##
+overlay	chrome://mozapps/content/downloads/unknownContentType.xul	chrome://dta/content/integration/saveas.xul
+
+## Firefox / Flock / Songbird ##
+overlay	chrome://browser/content/browser.xul	chrome://dta/content/integration/elements.xul
+style	chrome://browser/content/browser.xul	chrome://dta/skin/integration/style.css
+overlay chrome://dta/content/dta/mainmenu.xul    chrome://browser/content/baseMenuOverlay.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+
+# privacy control - Firefox starting 3.5
+overlay chrome://browser/content/preferences/sanitize.xul	chrome://dta/content/privacy/overlaySanitizePref191.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384} appversion>=3.0+
+overlay chrome://browser/content/sanitize.xul	chrome://dta/content/privacy/overlaySanitize191.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384} appversion>=3.0+
+
+## Seamonkey ##
+overlay	chrome://navigator/content/navigator.xul chrome://dta/content/integration/elements.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+style	chrome://navigator/content/navigator.xul chrome://dta/skin/integration/style.css application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+style	chrome://navigator/content/navigator.xul chrome://dta/skin/integration/seamonkey.css application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+style	chrome://dta/content/dta/manager.xul chrome://dta/skin/manager/seamonkey.css application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+overlay chrome://dta/content/dta/mainmenu.xul    chrome://communicator/content/tasksOverlay.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+
+## Aero ##
+override chrome://dta-platform/skin/common.css chrome://dta-platform/skin/common-aero.css os=WINNT osversion>=6
+override chrome://dta/skin/manager/netstatus.png chrome://dta-platform/skin/netstatus-aero.png os=WINNT osversion>=6
+
+## Mac Main Menu ##
+overlay chrome://dta/content/dta/manager.xul chrome://dta/content/dta/mainmenu.xul os=Darwin application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+overlay chrome://dta/content/dta/manager.xul chrome://dta/content/dta/mainmenu.xul os=Darwin application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+
+# Hack to prevent .Net Framework Assistant from messing up the browser, courtesy of AdBlock Plus
+override chrome://dotnetassistant/content/bootstrap.xul data:text/xml,<nada/>

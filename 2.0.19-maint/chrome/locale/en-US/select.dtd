@@ -1,0 +1,25 @@
+<!ENTITY title "Make Your Selection">
+
+<!ENTITY filters.caption "Filters">
+<!ENTITY additional.caption "Fast Filtering">
+<!ENTITY additional.tip "Textual filter: you can set multiple textual filters at the same time using a comma.">
+<!ENTITY regex.label "Reg. Exp.">
+<!ENTITY filter.tip "Type your textual filters here! (some examples on the dropdown)">
+
+<!ENTITY status.label "After selecting links, click on Start!">
+
+<!ENTITY menu.mask.title "Modify Renaming Mask">
+<!ENTITY menu.check.label "Check Selected Items">
+<!ENTITY menu.uncheck.label "Uncheck Selected Items">
+<!ENTITY menu.toggle.label "Toggle Check for Selected Items">
+
+<!ENTITY tab.links.label "Links">
+<!ENTITY tab.pics.label "Pictures and Media">
+
+<!ENTITY header.desc.label "Description">
+
+<!ENTITY selectfiltered.label "Select Filtered">
+
+<!ENTITY disableother.label "Disable other filters">
+<!ENTITY disableother.tooltip "Disable other filters and only use fast filtering. (This setting is not remembered at the moment)">
+<!ENTITY resname.value "Resource Name">
