@@ -179,7 +179,7 @@ Connection.prototype = {
 			if (chan instanceof Ci.nsIHttpChannel) {
 				let c = this.c;
 
-				if (d.cleanRequest) {
+				if (!d.cleanRequest) {
 					// Cannot hash when compressed
 					chan.setRequestHeader("Accept-Encoding", "", false);
 
@@ -198,9 +198,10 @@ Connection.prototype = {
 						chan.setRequestHeader('Keep-Alive', '', false);
 						chan.setRequestHeader('Connection', 'close', false);
 					}
-
-					modifyHttp(chan);
 				}
+
+				modifyHttp(chan);
+
 				if (c.currentPosition) {
 					chan.setRequestHeader('Range', 'bytes=' + (c.currentPosition) + "-", false);
 					log(LOG_DEBUG, "setting range");
