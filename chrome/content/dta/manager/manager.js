@@ -2935,9 +2935,21 @@ var startDownloads = (function() {
 
 				if (e.referrer) {
 					try {
-						qi.referrer = toURL(e.referrer);
+						if (typeof(qi.referrer) === "string") {
+							qi.referrer = toURL(e.referrer);
+						}
+						else if (e.referrer.spec) {
+							qi.referrer = toURL(e.referrer.spec);
+						}
+						else if (e.referrer.url && e.referrer.url.spec) {
+							qi.referrer = toURL(e.referrer.url.spec);
+						}
+						else {
+							throw new Error("Don't know how to handle");
+						}
 					}
 					catch (ex) {
+						log(LOG_ERROR, "Failed to ref", ex);
 						// We might have been fed with about:blank or other crap. so ignore.
 					}
 				}
