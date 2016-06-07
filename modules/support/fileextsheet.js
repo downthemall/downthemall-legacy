@@ -42,7 +42,7 @@ treechildren::-moz-tree-image(iconic,${entry.toString()}) {
 	}
 }`;
 			let ruleURI = Services.io.newURI(rule, null, null);
-			log(LOG_ERROR, ruleURI.spec);
+			log(LOG_DEBUG, ruleURI.spec);
 			try {
 				this._windowUtils.loadSheet(ruleURI, this._windowUtils.AGENT_SHEET);
 			}
