@@ -156,7 +156,7 @@ exports.log = function(level, message, exception) {
 				sn = exception.fileName || sourceName;
 				lineNumber = exception.lineNumber || lineNumber;
 			}
-			if (sn && !sn.contains("unknown ")) {
+			if (sn && !sn.includes("unknown ")) {
 				sourceName = sn;
 			}
 		}
