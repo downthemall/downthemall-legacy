@@ -22,6 +22,7 @@ lazy(this, "isWindowPrivate", () => require("support/pbm").isWindowPrivate);
 lazy(this, "identity", () => require("support/memoize").identity);
 
 const {filterInSitu, mapFilterInSitu} = require("utils");
+const {unique} = require("support/uniquelinks");
 
 const {unloadWindow} = require("support/overlays");
 const strfn = require("support/stringfuncs");
@@ -42,14 +43,14 @@ function makeURI(u, ml) {
 		return null;
 	}
 	try {
-		u = Services.io.newURI(u.spec, u.originCharset, null);
+		let url = Services.io.newURI(u.spec || u, u.originCharset, null);
 		if (ml) {
-			u = DTA.getLinkPrintMetalink(u) || u;
+			url = DTA.getLinkPrintMetalink(url) || url;
 		}
-		return new DTA.URL(u);
+		return new DTA.URL(url);
 	}
 	catch (ex) {
-		log(LOG_ERROR, "failed to reconstruct", ex);
+		log(LOG_ERROR, "failed to reconstruct: " + JSON.stringify(u), ex);
 		return null;
 	}
 };
@@ -250,24 +251,6 @@ exports.load = function load(window, outerEvent) {
 		}
 		return browsers;
 	}
-
-	const unique = i => {
-		return filterInSitu(i, function(e) {
-			let u = e.url.spec;
-			let other = this[u];
-			if (other) {
-				if (!other.description) {
-					other.description = e.description;
-				}
-				if (!other.fileName) {
-					other.fileName = e.fileName;
-				}
-				return false;
-			}
-			this[u] = e;
-			return true;
-		}, Object.create(null));
-	};
 
 	function findLinks(turbo, all) {
 		try {

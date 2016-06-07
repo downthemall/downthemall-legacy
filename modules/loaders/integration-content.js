@@ -49,6 +49,7 @@ const require = function require_mini(m) {
 };
 
 const TextLinks = require("support/textlinks");
+const {filterInSitu, filterMapInSitu, unique} = require("support/uniquelinks");
 
 /* **
  * Helpers and tools
@@ -224,50 +225,6 @@ const getTextLinks = function* getTextLinks(set, out, fakeLinks) {
 			// no op: might be an already removed node
 		}
 	}
-};
-
-const filterInSitu = function filterInSitu(arr, cb, tp) {
-	tp = tp || null;
-
-	// courtesy of firefox-sync
-	let i, k, e;
-	for (i = 0, k = 0, e = arr.length; i < e; i++) {
-		let a = arr[k] = arr[i]; // replace filtered items
-		if (a && cb.call(tp, a, i, arr)) {
-			k += 1;
-		}
-	}
-	arr.length = k;
-	return arr;
-};
-
-const filterMapInSitu = function filterMapInSitu(arr, filterStep, mapStep, tp) {
-	tp = tp || null;
-	let i, k, e;
-	for (i = 0, k = 0, e = arr.length; i < e; i++) {
-		let a = arr[i]; // replace filtered items
-		if (a && filterStep.call(tp, a, i, arr)) {
-			arr[k] = mapStep.call(tp, a, i, arr);
-			k += 1;
-		}
-	}
-	arr.length = k;
-	return arr;
-};
-
-const unique = i => {
-	return filterInSitu(i, function(e) {
-		let u = e.url.spec;
-		let other = this[u];
-		if (other) {
-			if (!other.description) {
-				other.description = e.description;
-			}
-			return false;
-		}
-		this[u] = e;
-		return true;
-	}, Object.create(null));
 };
 
 //recursively add stuff.
