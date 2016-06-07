@@ -881,6 +881,11 @@ toolbarbutton.listselectinv, menuitem#listselectinv {
 .menu-iconic-accel {
 	font-size: 75%;
 }
+#popup > menu .menu-right {
+	/* for some reason OSX messes this up ?! */
+	max-height: 16px;
+	max-width: 16px;
+}
 
 /** :: Speedlist :: **/
 
