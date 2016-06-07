@@ -69,6 +69,16 @@ const proxyObserver = {
 Preferences.addObserver("extensions.dta.proxy", proxyObserver);
 proxyObserver.observe();
 
+function maybeTempBlacklisted(httpchan) {
+	try {
+		return httpchan.getResponseHeader("Server").includes("cloudflare");
+	}
+	catch (ex) {
+		// no op
+	}
+	return false;
+}
+
 function Connection(d, c, isInfoGetter) {
 
 	this.d = d;
@@ -180,6 +190,7 @@ Connection.prototype = {
 				let c = this.c;
 
 				if (!d.cleanRequest) {
+					log(LOG_DEBUG, `setting up ${chan.URI.spec}`);
 					// Cannot hash when compressed
 					chan.setRequestHeader("Accept-Encoding", "", false);
 
@@ -198,6 +209,17 @@ Connection.prototype = {
 						chan.setRequestHeader('Keep-Alive', '', false);
 						chan.setRequestHeader('Connection', 'close', false);
 					}
+
+					try {
+						// Users want this so they can have no-third-party when browsing regularly,
+						// but still download from sites authenticating using cookies
+						if (chan instanceof Ci.nsIHttpChannelInternal) {
+							chan.forceAllowThirdPartyCookie = true;
+							chan.allowSpdy = false;
+							chan.channelIsForDownload = true;
+						}
+					}
+					catch (ex) { /* no op */ }
 				}
 
 				modifyHttp(chan);
@@ -206,16 +228,6 @@ Connection.prototype = {
 					chan.setRequestHeader('Range', 'bytes=' + (c.currentPosition) + "-", false);
 					log(LOG_DEBUG, "setting range");
 				}
-
-				try {
-					// Users want this so they can have no-third-party when browsing regularly,
-					// but still download from sites authenticating using cookies
-					if (chan instanceof Ci.nsIHttpChannelInternal) {
-						chan.forceAllowThirdPartyCookie = true;
-						chan.allowSpdy = false;
-					}
-				}
-				catch (ex) { /* no op */ }
 			}
 		}
 		catch (ex) {
@@ -770,7 +782,8 @@ Connection.prototype = {
 
 				let file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
 				if (~[401, 402, 407, 500, 502, 503, 504].indexOf(code) ||
-					(Preferences.getExt('recoverallhttperrors', false) && code !== 404)) {
+					(Preferences.getExt('recoverallhttperrors', false) && code !== 404) ||
+					(code === 403 && aChannel instanceof Ci.nsIHttpChannel && maybeTempBlacklisted(aChannel))) {
 					log(LOG_DEBUG, "we got temp failure!", code);
 					d.pauseAndRetry();
 					d.status = code >= 500 ? _('temperror') : _("error", [formatNumber(code, 3)]);

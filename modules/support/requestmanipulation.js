@@ -44,7 +44,8 @@ function defineManipulator(m, sp) {
 
 const mans = [
 	['URL', c => c.spec],
-	['Http', c => c.URI.spec]
+	['Http', c => c.URI.spec],
+	["Download", d => d.urlManager.spec],
 	];
 for (let [m, sp] of mans) {
 	defineManipulator(m, sp);
@@ -114,6 +115,15 @@ exports.registerURL(
 		this.spec =
 			this.spec.replace(/^https:\/\/app\.dumptruck\.goldenfrog\.com\//, "https://dl.dumptruck.goldenfrog.com/") +
 			"?dl=1";
+	}
+);
+
+exports.registerDownload(
+	"chan CDN",
+	/^https?:\/\/(?:media\.8ch\.net|(?:[^.]?\.)?4cdn\.org)\//i,
+	function() {
+		log(LOG_ERROR, `4cdn ${this.urlManager.spec}`);
+		this.cleanRequest = true;
 	}
 );
 

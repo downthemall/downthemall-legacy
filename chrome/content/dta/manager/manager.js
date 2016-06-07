@@ -3018,6 +3018,7 @@ var startDownloads = (function() {
 				}
 
 				qi.rebuildDestination();
+				RequestManipulation.modifyDownload(qi);
 				Tree.add(qi);
 				qi.save();
 				first = first || qi;
