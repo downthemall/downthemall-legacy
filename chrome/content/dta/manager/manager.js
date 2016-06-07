@@ -1407,6 +1407,11 @@ QueueItem.prototype = {
 		}
 		else if (this.state === FINISHING) {
 			++Dialog.finishing;
+			if (!this.totalSize) {
+				// We are done now, just set indeterminate size downloads to what we actually downloaded
+				this.refreshPartialSize();
+				this.totalSize = this.partialSize;
+			}
 		}
 		else if (this.state === COMPLETE) {
 			++Dialog.completed;
@@ -1899,6 +1904,9 @@ QueueItem.prototype = {
 		else {
 			this.partialSize = size;
 			this.progress = this._totalSize && Math.floor(size * 100.0 / this._totalSize);
+			if (!this._totalSize && this.state === FINISHING) {
+				this.progress = 100;
+			}
 		}
 	},
 
