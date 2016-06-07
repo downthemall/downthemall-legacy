@@ -69,14 +69,14 @@ var Timers = new TimerManager();
 
 var Dialog_loadDownloads_props =
 	['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression',
-		'fromMetalink', 'speedLimit'];
+		'fromMetalink', 'speedLimit', "cleanRequest"];
 function Dialog_loadDownloads_get(down, attr, def) {
 	return (attr in down) ? down[attr] : (def ? def : '');
 };
 
 var Dialog_serialize_props =
 	['fileName', 'fileNameFromUser', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName',
-		'compression', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit', "relaxSize"];
+		'compression', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit', "relaxSize", "cleanRequest"];
 
 var Dialog = {
 	_observes: [
@@ -2979,6 +2979,8 @@ var startDownloads = (function() {
 				if (postData) {
 					qi.postData = postData;
 				}
+
+				qi.cleanRequest = !!e.cleanRequest || false;
 
 				if (start) {
 					qi._setStateInternal(QUEUED);

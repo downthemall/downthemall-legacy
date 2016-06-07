@@ -179,31 +179,32 @@ Connection.prototype = {
 			if (chan instanceof Ci.nsIHttpChannel) {
 				let c = this.c;
 
-				// Cannot hash when compressed
-				chan.setRequestHeader("Accept-Encoding", "", false);
+				if (d.cleanRequest) {
+					// Cannot hash when compressed
+					chan.setRequestHeader("Accept-Encoding", "", false);
 
-				if (this.isInfoGetter) {
-					if (!d.fromMetalink && !chan.getRequestHeader("Accept").includes("application/metalink+xml")) {
-						chan.setRequestHeader(
-							"Accept",
-							"application/metalink4+xml;q=0.9,application/metalink+xml;q=0.8",
-							true
-							);
+					if (this.isInfoGetter) {
+						if (!d.fromMetalink && !chan.getRequestHeader("Accept").includes("application/metalink+xml")) {
+							chan.setRequestHeader(
+								"Accept",
+								"application/metalink4+xml;q=0.9,application/metalink+xml;q=0.8",
+								true
+								);
+						}
+						chan.setRequestHeader('Want-Digest', DTA.WANT_DIGEST_STRING, false);
 					}
-					chan.setRequestHeader('Want-Digest', DTA.WANT_DIGEST_STRING, false);
-				}
 
-				if (Preferences.getExt('nokeepalive', true)) {
-					chan.setRequestHeader('Keep-Alive', '', false);
-					chan.setRequestHeader('Connection', 'close', false);
-				}
+					if (Preferences.getExt('nokeepalive', true)) {
+						chan.setRequestHeader('Keep-Alive', '', false);
+						chan.setRequestHeader('Connection', 'close', false);
+					}
 
+					modifyHttp(chan);
+				}
 				if (c.currentPosition) {
 					chan.setRequestHeader('Range', 'bytes=' + (c.currentPosition) + "-", false);
 					log(LOG_DEBUG, "setting range");
 				}
-
-				modifyHttp(chan);
 
 				try {
 					// Users want this so they can have no-third-party when browsing regularly,
