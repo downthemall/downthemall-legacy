@@ -313,7 +313,7 @@ Connection.prototype = {
 				let newURI = newChannel.URI;
 				let redirectURI = modifyURL(newURI.clone());
 				if (redirectURI.spec !== newURI.spec && redirectURI.spec !== oldURI.spec) {
-					log(LOG_ERROR, `redirecting ${newURI.spec} to ${redirectURI.spec}`);
+					log(LOG_INFO, `redirecting ${newURI.spec} to ${redirectURI.spec}`);
 					try {
 						newChannel.redirectTo(redirectURI);
 					}
