@@ -288,7 +288,7 @@
 			</stack>
 		</notificationbox>
 	</hbox>
-	<windowdragbox id="footer" chromedir="&locale.dir;">
+	<box id="footer" chromedir="&locale.dir;">
 		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline" />
 		<statusbarpanel id="statusSearch" flex="1" pack="start">
 			<textbox id="search" emptytext="&search.placeholder;" placeholder="&search.placeholder;"/>
@@ -305,6 +305,6 @@
 		</statusbarpanel>
 		<statusbarpanel class="statusbarpanel-iconic" id="preferences" command="cmdPreferences" />
 		<resizer dir="bottomend"/>
-	</windowdragbox>
+	</box>
 </window>
 </overlay>

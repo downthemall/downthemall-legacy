@@ -70,6 +70,8 @@
 
 #footer {
 	-moz-appearance: statusbar;
+	color: red !important;
+	background: yellow !important;
 }
 #footer > resizer {
 	/* mac doesn't use resizers */
