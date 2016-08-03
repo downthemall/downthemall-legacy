@@ -56,6 +56,44 @@ addEventListener("load", function load_textCache() {
 	}
 }, false);
 
+function _moveFile(destination, self) {
+	let remakeDir = false;
+	let move = function(resolve, reject, x) {
+		if (remakeDir) {
+			Utils.makeDir(destination, Prefs.dirPermissions, true);
+		}
+		let df = destination.clone();
+		df.append(self.destinationName);
+		moveFile(self.tmpFile.path, df.path).then(function() {
+			resolve(true);
+		}, function(ex) {
+			if ((ex.unixErrno && ex.unixErrno === OS.Constants.libc.ENAMETOOLONG) ||
+					(ex.winLastError && ex.winLastError === 3)) {
+				try {
+					self.shortenName();
+					ConflictManager.unpin(pinned);
+					pinned = self.destinationFile;
+					ConflictManager.pin(pinned);
+				}
+				catch (iex) {
+					log(LOG_ERROR, "Failed to shorten name", ex);
+				}
+			}
+			if (ex.becauseNoSuchFile || (ex.unixErrno && ex.unixErrno === OS.Constants.libc.ENOENT)) {
+				remakeDir = true;
+			}
+			log(LOG_ERROR, ex);
+			x = x || 1;
+			if (x > 5) {
+				log(LOG_ERROR, "shit hit the fan!");
+				reject(ex);
+				return;
+			}
+			setTimeoutOnlyFun(() => move(resolve, reject, ++x), x * 250);
+		}).catch(reject);
+	};
+	return new Promise(move);
+};
 
 function dieEarly() {
 	window.removeEventListener("unload", dieEarly, false);
@@ -1927,7 +1965,6 @@ QueueItem.prototype = {
 		if (this.state === CANCELED) {
 			throw Error("Cannot move incomplete file");
 		}
-		this.setState(FINISHING);
 		this.status = TextCache_MOVING;
 
 		if (!(yield this.resolveConflicts())) {
@@ -1954,44 +1991,7 @@ QueueItem.prototype = {
 				}.bind(this));
 				return true;
 			}
-			yield new Promise(function(resolve, reject) {
-				let remakeDir = false;
-				let move = function(self, x) {
-					if (remakeDir) {
-						Utils.makeDir(destination, Prefs.dirPermissions, true);
-					}
-					let df = destination.clone();
-					df.append(self.destinationName);
-					moveFile(self.tmpFile.path, df.path).then(function() {
-						resolve(true);
-					}, function(ex) {
-						if ((ex.unixErrno && ex.unixErrno === OS.Constants.libc.ENAMETOOLONG) ||
-								(ex.winLastError && ex.winLastError === 3)) {
-							try {
-								self.shortenName();
-								ConflictManager.unpin(pinned);
-								pinned = self.destinationFile;
-								ConflictManager.pin(pinned);
-							}
-							catch (iex) {
-								log(LOG_ERROR, "Failed to shorten name", ex);
-							}
-						}
-						if (ex.becauseNoSuchFile || (ex.unixErrno && ex.unixErrno === OS.Constants.libc.ENOENT)) {
-							remakeDir = true;
-						}
-						log(LOG_ERROR, ex);
-						x = x || 1;
-						if (x > 5) {
-							log(LOG_ERROR, "shit hit the fan!");
-							reject(ex);
-							return;
-						}
-						setTimeoutOnlyFun(() => move(self, ++x), x * 250);
-					}).then(null, reject);
-				};
-				move(this);
-			}.bind(this));
+			yield _moveFile(destination, this);
 			return true;
 		}
 		finally {
@@ -2008,7 +2008,6 @@ QueueItem.prototype = {
 		}
 	},
 	verifyHash: function() {
-		this.setState(FINISHING);
 		this.status = TextCache_VERIFYING;
 		return Task.spawn((function*() {
 			let mismatches = yield Verificator.verify(
@@ -2173,6 +2172,7 @@ QueueItem.prototype = {
 
 		this._finishDownloadTask = Task.spawn(function* finishDownloadTask() {
 			try {
+				this.setState(FINISHING);
 				yield this.closeChunks();
 				if (this.hashCollection && !(yield this.verifyHash())) {
 					return;
@@ -2768,9 +2768,11 @@ var ConflictManager = {
 	_processOne: function*(download) {
 		log(LOG_DEBUG, "Starting conflict resolution for " + download);
 		let dest = download.destinationLocalFile;
-		let exists = this._pinned.has(this.destinationFile);
+		let exists = this._pinned.has(dest.path);
 		if (!exists) {
 			exists = yield OS.File.exists(dest.path);
+			// recheck
+			exists = exists || this._pinned.has(dest.path);
 		}
 		if (!exists) {
 			log(LOG_DEBUG, "Does not exist " + download);
@@ -2804,6 +2806,8 @@ var ConflictManager = {
 				exists = this._pinned.has(newDest.path);
 				if (!exists) {
 					exists = yield OS.File.exists(newDest.path);
+					// recheck
+					exists = exists || this._pinned.has(newDest.path);
 				}
 				if (!exists) {
 					break;
@@ -2838,6 +2842,8 @@ var ConflictManager = {
 					exists = this._pinned.has(newDest.path);
 					if (!exists) {
 						exists = yield OS.File.exists(newDest.path);
+						// recheck
+						exists = exists || this._pinned.has(newDest.path);
 					}
 					if (!exists) {
 						break;
@@ -2935,7 +2941,7 @@ var startDownloads = (function() {
 
 				if (e.referrer) {
 					try {
-						if (typeof(qi.referrer) === "string") {
+						if (typeof(e.referrer) === "string") {
 							qi.referrer = toURL(e.referrer);
 						}
 						else if (e.referrer.spec) {
@@ -3042,7 +3048,7 @@ var startDownloads = (function() {
 			Tree.invalidate();
 			ct = null;
 			g = null;
-			if (scroll) {
+			if (scroll && Prefs.scrollToNew) {
 				Tree.scrollToNearest(first);
 			}
 

@@ -114,7 +114,8 @@ var Prefs = {
 		['schedEnabled', 'schedule.enabled', false],
 		['schedStart', 'schedule.start', 0],
 		['schedEnd', 'schedule.end', 1380],
-		['sparseFiles', false]
+		['sparseFiles', false],
+		['scrollToNew', true],
 	],
 
 	// nsIObserver
