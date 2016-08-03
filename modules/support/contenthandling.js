@@ -12,6 +12,7 @@ const REGEXP_SWF = /\.swf\b/i;
 const REGEXP_CT = /\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i;
 const REGEXP_STARTPARAM = /start=\d+&?/;
 
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 const {
 	registerPrivatePurger,
@@ -72,6 +73,15 @@ ContentHandlingImpl.prototype = {
 		if (this.sniffVideos) {
 			this.registerHttpObservers();
 		}
+		this.getUriJob = 0;
+		this.globalMM = Cc["@mozilla.org/globalmessagemanager;1"]
+			.getService(Ci.nsIMessageListenerManager);
+		let fs = "chrome://dta-modules/content/support/contenthandling-content.js?" + (+new Date());
+		this.globalMM.loadFrameScript(fs, true);
+		unload(() => {
+			this.globalMM.broadcastAsyncMessage("DTA:ch:shutdown");
+			this.globalMM.removeDelayedFrameScript(fs);
+		});
 		unload(this._uninit.bind(this));
 	},
 
@@ -184,17 +194,20 @@ ContentHandlingImpl.prototype = {
 				}
 			}
 			let spec = channel.URI.spec;
-			if ((REGEXP_MEDIA.test(spec) && !REGEXP_SWF.test(spec)) || REGEXP_CT.test(ct)) {
-				let uri = null;
-				let lc = null;
-				if (channel instanceof Ci.nsIInterfaceRequestor) {
-					try {
-						lc = channel.getInterface(Ci.nsILoadContext);
-					}
-					catch (ex) {
-
-					}
+			if (!(REGEXP_MEDIA.test(spec) && !REGEXP_SWF.test(spec)) && !REGEXP_CT.test(ct)) {
+				return;
+			}
+			let uri = null;
+			let lc = null;
+			if (channel instanceof Ci.nsIInterfaceRequestor) {
+				try {
+					lc = channel.getInterface(Ci.nsILoadContext);
 				}
+				catch (ex) {
+
+				}
+			}
+			Task.spawn(function*() {
 				if (!lc) {
 					try {
 						lc = channel.notificationCallbacks.getInterface(Ci.nsILoadContext);
@@ -214,8 +227,18 @@ ContentHandlingImpl.prototype = {
 						catch (ex) {
 							try {
 								let tfe = lc.topFrameElement;
-								let wnd = tfe.contentWindowAsCPOW;
-								uri = Services.io.newURI(wnd.location.href, wnd.document.characterSet, null);
+								let mm = tfe.messageManager;
+								let wnd = yield new Promise((resolve, reject) => {
+									let topic = `DTA::getURI:${this.getUriJob++}`;
+									mm.addMessageListener(topic, function load(m) {
+										mm.removeMessageListener(topic, load);
+										resolve(m.data);
+									});
+									mm.sendAsyncMessage("DTA:ch:getURI", {
+										topic: topic
+									});
+								});
+								uri = Services.io.newURI(wnd.location, wnd.characterSet, null);
 								log(LOG_DEBUG, "got uri from lctfe " + uri.spec);
 							}
 							catch (ex) {
@@ -253,7 +276,7 @@ ContentHandlingImpl.prototype = {
 					return;
 				}
 				this._registerVideo(uri, channel.URI, isChannelPrivate(channel));
-			}
+			}.bind(this));
 		}
 		catch (ex) {
 			log(LOG_ERROR, "observe response", ex);
