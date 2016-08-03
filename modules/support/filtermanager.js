@@ -89,6 +89,7 @@ function consolidateRegs(regs) {
 // no not create DTA_Filter yourself, managed by FilterManager
 function Filter(name) {
 	this._id = name;
+	this._expr = null;
 }
 Filter.prototype = {
 	// exported
