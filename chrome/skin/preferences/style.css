@@ -9,9 +9,6 @@ radio[pane="paneMain"] {
 	list-style-image: url(preferences-toolkit.png);
 	-moz-image-region: rect(0px, 32px,  32px, 0px);
 }
-prefwindow[firefoxtheme] radio[pane="paneMain"] {
-	list-style-image: url(chrome://browser/skin/preferences/Options.png);
-}
 
 radio[pane="paneFilters"] {
 	-moz-image-region: rect(0px, 64px, 32px, 32px);
@@ -25,16 +22,10 @@ radio[pane="panePrivacy"] {
 	list-style-image: url(preferences-toolkit.png);
 	-moz-image-region: rect(0px, 160px,  32px, 128px);
 }
-prefwindow[firefoxtheme] radio[pane="panePrivacy"] {
-	list-style-image: url(chrome://browser/skin/preferences/Options.png);
-}
 
 radio[pane="paneInterface"] {
 	list-style-image: url(preferences-toolkit.png);
 	-moz-image-region: rect(0px, 128px,  32px, 96px);
-}
-prefwindow[firefoxtheme] radio[pane="paneInterface"] {
-	list-style-image: url(chrome://browser/skin/preferences/Options.png);
 }
 
 radio[pane="paneServers"] {
@@ -56,9 +47,6 @@ radio[pane="paneSchedule"][selected="true"] {
 radio[pane="paneAdvanced"] {
 	list-style-image: url(preferences-toolkit.png);
 	-moz-image-region: rect(0px, 224px,  32px, 192px);
-}
-prefwindow[firefoxtheme] radio[pane="paneAdvanced"] {
-	list-style-image: url(chrome://browser/skin/preferences/Options.png);
 }
 
 caption {

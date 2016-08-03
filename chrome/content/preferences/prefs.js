@@ -544,11 +544,6 @@ var Schedule = {
 
 var Prefs = {
 	load: function() {
-		if (require("version").APP_ID === "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}" &&
-			!Preferences.hasUserValue("general.skins.selectedSkin")) {
-			document.documentElement.setAttribute("firefoxtheme", true);
-		}
-
 		if (!("arguments" in window)) {
 			return;
 		}
