@@ -1,25 +1,26 @@
+<!-- LOCALIZATION NOTE : FILE Please do NOT translate DownThemAll! and OneClick -->
+<!ENTITY dta-tbinstall "Symbolleisten-Buttons hinzufügen">
+<!ENTITY dta-pref.label "Einstellungen">
 <!ENTITY dta-about2.label "Über DownThemAll!">
-<!ENTITY dta-audio-save-turbo2.label "Audio mit dTa! OneClick speichern">
-<!ENTITY dta-audio-save2.label "Audio mit DownThemAll! speichern">
-<!ENTITY dta-form-save-turbo2.label "Formularziel mit dTa! OneClick speichern">
-<!ENTITY dta-form-save2.label "Formularziel mit with DownThemAll! speichern">
-<!ENTITY dta-img-save-turbo2.label "Bild mit dTa! OneClick speichern">
-<!ENTITY dta-img-save2.label "Bild mit DownThemAll! speichern">
-<!ENTITY dta-link-save-turbo2.label "Ziel mit dTa! OneClick speichern">
-<!ENTITY dta-link-save2.label "Ziel mit  DownThemAll! speichern">
 <!ENTITY dta-manager-button "Manager">
 <!ENTITY dta-manager-button.desc "Öffnet das Manager-Fenster.">
-<!ENTITY dta-pref.label "Einstellungen">
-<!ENTITY dta-regular-turbo.desc "Läd alle Dateien der aktuellen Seite basierend auf den vorherigen Einstellungen und Filtern.">
-<!ENTITY dta-regular-turbo2.label "dTa! OneClick">
-<!ENTITY dta-regular.desc "Öffnet das DownThemAll! Auswahlfenster für den aktuellen Tab.">
-<!ENTITY dta-regular2.label "DownThemAll!">
-<!ENTITY dta-selection-turbo2.label "OneClick für Auswahl">
-<!ENTITY dta-selection2.label "DownThemAll! für Auswahl">
-<!ENTITY dta-selector-button.desc "Fügt Downloads durch Linkklick hinzu.">
 <!ENTITY dta-selector-button2.label "OneClick! Auswähöler">
+<!ENTITY dta-selector-button.desc "Fügt Downloads durch Linkklick hinzu.">
 <!ENTITY dta-tb-all.label "Alle Tabs">
 <!ENTITY dta-tb-single.label "Aktueller Tab">
-<!ENTITY dta-tbinstall "Symbolleisten-Buttons hinzufügen">
-<!ENTITY dta-video-save-turbo2.label "Video mit dTa! OneClick speichern">
+<!ENTITY dta-selection2.label "DownThemAll! für Auswahl">
+<!ENTITY dta-selection-turbo2.label "OneClick für Auswahl">
+<!ENTITY dta-regular2.label "DownThemAll!">
+<!ENTITY dta-regular.desc "Öffnet das DownThemAll! Auswahlfenster für den aktuellen Tab.">
+<!ENTITY dta-regular-turbo2.label "dTa! OneClick">
+<!ENTITY dta-regular-turbo.desc "Läd alle Dateien der aktuellen Seite basierend auf den vorherigen Einstellungen und Filtern.">
+<!ENTITY dta-img-save2.label "Bild mit DownThemAll! speichern">
+<!ENTITY dta-img-save-turbo2.label "Bild mit dTa! OneClick speichern">
 <!ENTITY dta-video-save2.label "Video mit DownThemAll! speichern">
+<!ENTITY dta-video-save-turbo2.label "Video mit dTa! OneClick speichern">
+<!ENTITY dta-audio-save2.label "Audio mit DownThemAll! speichern">
+<!ENTITY dta-audio-save-turbo2.label "Audio mit dTa! OneClick speichern">
+<!ENTITY dta-link-save2.label "Ziel mit  DownThemAll! speichern">
+<!ENTITY dta-link-save-turbo2.label "Ziel mit dTa! OneClick speichern">
+<!ENTITY dta-form-save2.label "Formularziel mit with DownThemAll! speichern">
+<!ENTITY dta-form-save-turbo2.label "Formularziel mit dTa! OneClick speichern">

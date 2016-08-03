@@ -1,31 +1,31 @@
-<!ENTITY mask.batch "Batch Nummer">
-<!ENTITY mask.crefer "Voller Referrer">
-<!ENTITY mask.curl "Volle URL">
-<!ENTITY mask.d "Tag">
-<!ENTITY mask.ext "Erweiterung">
-<!ENTITY mask.flatcrefer "Flacher, kompletter Referrer">
-<!ENTITY mask.flatcurl "Flache, volle URL">
-<!ENTITY mask.flatlinktext "Flacher Linktext">
-<!ENTITY mask.flatreferdirs "Flache Referrer-Unterverzeichnisse">
-<!ENTITY mask.flatsubdirs "Flache URL-Unterverzeichnisse">
-<!ENTITY mask.flattitle2 "Flacher Linktitel">
-<!ENTITY mask.hh "Stunden">
-<!ENTITY mask.inum "Posten Nummer">
-<!ENTITY mask.linktext "Link Text">
-<!ENTITY mask.m "Monat">
-<!ENTITY mask.mm "Minuten">
-<!ENTITY mask.name "Dateiname">
-<!ENTITY mask.open.tip "Referenzübersicht der Umbenennungs-Tags">
-<!ENTITY mask.qstring "Querystring">
-<!ENTITY mask.refer "Referrer-URL">
-<!ENTITY mask.referdirs "Referrer-Unterverzeichnisse">
-<!ENTITY mask.referext "Referrer-Erweiterung">
-<!ENTITY mask.refername "Referrer-Dateiname">
-<!ENTITY mask.referqstring "Referrer Querystring">
-<!ENTITY mask.ss "Sekunden">
-<!ENTITY mask.subdirs "URL-Unterverzeichnisse">
 <!ENTITY mask.tags "Umbenennungs-Tags">
-<!ENTITY mask.tip "Zur Übernahme anklicken oder ins Umbenennungs-Tags Feld ziehen">
-<!ENTITY mask.title "Titel vom Link">
+<!ENTITY mask.name "Dateiname">
+<!ENTITY mask.ext "Erweiterung">
 <!ENTITY mask.url "Basis-URL">
+<!ENTITY mask.curl "Volle URL">
+<!ENTITY mask.flatcurl "Flache, volle URL">
+<!ENTITY mask.batch "Batch Nummer">
+<!ENTITY mask.inum "Posten Nummer">
+<!ENTITY mask.hh "Stunden">
+<!ENTITY mask.mm "Minuten">
+<!ENTITY mask.ss "Sekunden">
+<!ENTITY mask.d "Tag">
+<!ENTITY mask.m "Monat">
 <!ENTITY mask.y "Jahr">
+<!ENTITY mask.subdirs "URL-Unterverzeichnisse">
+<!ENTITY mask.flatsubdirs "Flache URL-Unterverzeichnisse">
+<!ENTITY mask.linktext "Link Text">
+<!ENTITY mask.flatlinktext "Flacher Linktext">
+<!ENTITY mask.refername "Referrer-Dateiname">
+<!ENTITY mask.referext "Referrer-Erweiterung">
+<!ENTITY mask.refer "Referrer-URL">
+<!ENTITY mask.crefer "Voller Referrer">
+<!ENTITY mask.flatcrefer "Flacher, kompletter Referrer">
+<!ENTITY mask.referdirs "Referrer-Unterverzeichnisse">
+<!ENTITY mask.flatreferdirs "Flache Referrer-Unterverzeichnisse">
+<!ENTITY mask.qstring "Querystring">
+<!ENTITY mask.referqstring "Referrer Querystring">
+<!ENTITY mask.title "Titel vom Link">
+<!ENTITY mask.flattitle2 "Flacher Linktitel">
+<!ENTITY mask.tip "Zur Übernahme anklicken oder ins Umbenennungs-Tags Feld ziehen">
+<!ENTITY mask.open.tip "Referenzübersicht der Umbenennungs-Tags">
