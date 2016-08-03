@@ -114,7 +114,7 @@ function getSniffedInfoFromLocation(l) {
 		return {
 			url: e,
 			name: fn + "." + ext,
-			ref: docURI
+			ref: docURI.spec
 		};
 	});
 }
@@ -325,7 +325,7 @@ exports.load = function load(window, outerEvent) {
 							if (!e.url) {
 								return null;
 							}
-							e.ref = makeURI(e.ref);
+							e.referrer = makeURI(e.referrer);
 							return e;
 						}
 						catch (ex) {
