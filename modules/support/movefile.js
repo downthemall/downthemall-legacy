@@ -4,13 +4,24 @@
 "use strict";
 
 const {AsyncShutdown} = requireJSM("resource://gre/modules/AsyncShutdown.jsm");
+const obs = require("support/observers");
 
 const _jobs = new Map();
 let _jobid = 0;
 
+let _kill;
+let _killWorker = new Promise((resolve, reject) => {
+	_kill = resolve;
+});
+
 function onmessage({data}) {
 	if (data.log) {
 		log(LOG_DEBUG, "movefile_worker said" + data.log);
+		return;
+	}
+	if (data.exit) {
+		_worker = null;
+		_kill();
 		return;
 	}
 	let job = _jobs.get(data.jobid);
@@ -32,71 +43,40 @@ function onmessage({data}) {
 
 function onerror(e) {
 	log(LOG_ERROR, "moveFile worker died " + e.message + " " + e.filename + " " + e.linenumber + " " + Object.keys(e), e);
+	_worker = null;
+	_kill();
 }
 
-const MAX_WORKERS = 5;
-const _workers = [];
-const _workerGenerator = (function*() {
-	for (var i = 0; i < MAX_WORKERS; ++i) {
-		var w = new ChromeWorker(BASE_PATH + "support/movefile_worker.js");
-		w.onmessage = onmessage;
-		w.onerror = onerror;
-		_workers.push(w);
-		yield w;
-	}
-	for (var i = 0; ; i = ++i % MAX_WORKERS) {
-		yield _workers[i];
-	}
-})();
+const _worker = new ChromeWorker(BASE_PATH + "support/movefile_worker.js");
+_worker.onmessage = onmessage;
+_worker.onerror = onerror;
 
-const asyncShutdown = (function() {
-	let p = null;
-	return function killWorkers() {
-		if (p) {
-			return p;
+const asyncShutdown = function() {
+	log(LOG_DEBUG, "asyncShutdown");
+	const dead = () => {
+		try {
+			AsyncShutdown.webWorkersShutdown.removeBlocker(asyncShutdown);
 		}
-
-		p = new Promise(function(resolve, reject) {
-			let pending = _workers.length;
-			if (!pending) {
-				resolve();
-				return;
-			}
-			for (let w of _workers) {
-				w.onmessage = function(e) {
-					if (e.data.exit) {
-						--pending;
-						if (!pending) {
-							resolve();
-						}
-						return;
-					}
-					onmessage(e);
-				};
-				w.postMessage(null);
-			}
-			_workers.length = 0;
-		});
-		p.then(function() {
-			try {
-				AsyncShutdown.webWorkersShutdown.removeBlocker(asyncShutdown);
-			}
-			catch (ex) {
-				Cu.reportError(ex);
-			}
-		});
-		return p;
+		catch (ex) {
+			Cu.reportError(ex);
+		}
 	};
-})();
-unload(asyncShutdown);
+	_killWorker.then(dead).catch(dead);
 
+	if (!_worker) {
+		_kill();
+		return;
+	}
+	_worker.postMessage(null);
+}
+obs.add(asyncShutdown, "profile-change-teardown");
 AsyncShutdown.webWorkersShutdown.addBlocker("DownThemAll! moveFile workers", asyncShutdown);
 
 exports.moveFile = function(from, to) {
 	let jobid = ++_jobid;
 	return new Promise((rs, rj) => {
 		_jobs.set(jobid, {resolve: rs, reject: rj});
-		_workerGenerator.next().value.postMessage({
+		_worker.postMessage({
 			jobid: jobid,
 			from: from,
 			to: to
@@ -104,6 +84,6 @@ exports.moveFile = function(from, to) {
 	});
 };
 Object.defineProperty(exports, "maxWorkers", {
-	value: MAX_WORKERS,
+	value: 1,
 	enumerable: true
 });
