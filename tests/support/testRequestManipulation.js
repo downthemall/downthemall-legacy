@@ -5,11 +5,14 @@ test("exports", function() {
 		"amendUA",
 		"makeAnonymous",
 		"makeCompletelyAnonymous",
+		"modifyDownload",
 		"modifyHttp",
 		"modifyURL",
 		"overrideUA",
+		"registerDownload",
 		"registerHttp",
 		"registerURL",
+		"unregisterDownload",
 		"unregisterHttp",
 		"unregisterURL"
 	]);
