@@ -1967,11 +1967,10 @@ QueueItem.prototype = {
 		}
 		this.status = TextCache_MOVING;
 
-		if (!(yield this.resolveConflicts())) {
+		let pinned = (yield this.resolveConflicts());
+		if (!pinned) {
 			return;
 		}
-		let pinned = this.destinationFile;
-		ConflictManager.pin(pinned);
 		try {
 			let destination = new Instances.LocalFile(this.destinationPath);
 			yield Utils.makeDir(destination, Prefs.dirPermissions);
@@ -2714,10 +2713,10 @@ var ConflictManager = {
 	_queue: [],
 	_pinned: new Set(),
 	resolve: function(download) {
-		log(LOG_DEBUG, "Resolving " + download);
+		log(LOG_DEBUG, "ConflictManager: Resolving " + download);
 		let promise = this._items.get(download);
 		if (promise) {
-			log(LOG_DEBUG, "Resolving already " + promise);
+			log(LOG_DEBUG, "ConflictManager: Resolving already " + promise);
 			return promise.promise;
 		}
 		promise = {};
@@ -2727,7 +2726,7 @@ var ConflictManager = {
 		});
 		this._items.set(download, promise);
 		this._queue.push(download);
-		log(LOG_DEBUG, "Resolving new " + promise);
+		log(LOG_DEBUG, "ConflictManager: Resolving new " + promise);
 		this._processNext();
 		return promise.promise;
 	},
@@ -2738,9 +2737,9 @@ var ConflictManager = {
 		this._pinned.delete(name);
 	},
 	_processNext: function() {
-		log(LOG_DEBUG, "Resolving next");
+		log(LOG_DEBUG, "ConflictManager: Resolving next");
 		if (this._processing) {
-			log(LOG_DEBUG, "Resolving rescheduling");
+			log(LOG_DEBUG, "ConflictManager: Resolving rescheduling");
 			return;
 		}
 		let download = this._queue.shift();
@@ -2756,8 +2755,8 @@ var ConflictManager = {
 				p.resolve(yield this._processOne(download));
 			}
 			catch (ex) {
-				log(LOG_ERROR, "Failed to resolve", ex);
-				p.reject(ex);
+				log(LOG_ERROR, "ConflictManager: Failed to resolve", ex);
+				p.reject(null);
 			}
 			finally {
 				this._processing = false;
@@ -2766,7 +2765,7 @@ var ConflictManager = {
 		}.bind(this));
 	},
 	_processOne: function*(download) {
-		log(LOG_DEBUG, "Starting conflict resolution for " + download);
+		log(LOG_DEBUG, "ConflictManager: Starting conflict resolution for " + download);
 		let dest = download.destinationLocalFile;
 		let exists = this._pinned.has(dest.path);
 		if (!exists) {
@@ -2775,8 +2774,9 @@ var ConflictManager = {
 			exists = exists || this._pinned.has(dest.path);
 		}
 		if (!exists) {
-			log(LOG_DEBUG, "Does not exist " + download);
-			return true;
+			log(LOG_DEBUG, "ConflictManager: Does not exist " + download);
+			this.pin(dest.path);
+			return dest.path;
 		}
 
 		let cr = -1;
@@ -2836,7 +2836,7 @@ var ConflictManager = {
 		}
 
 		switch (cr) {
-			case 0:
+			case 0: {
 				for (;; ++conflicts) {
 					newDest.leafName = Utils.formatConflictName(basename, conflicts);
 					exists = this._pinned.has(newDest.path);
@@ -2850,10 +2850,17 @@ var ConflictManager = {
 					}
 				}
 				download.conflicts = conflicts;
-				return true;
-			case 1:
+				let pinned = download.destinationFile;
+				this.pin(pinned);
+				log(LOG_DEBUG, "ConflictManager: resolved setting conflicts for " + download);
+				return pinned;
+			}
+			case 1: {
+				let pinned = download.destinationFile;
+				this.pin(pinned);
 				download.shouldOverwrite = true;
-				return true;
+				return pinned;
+			}
 			default:
 				download.cancel(_('skipped'));
 				return false;
