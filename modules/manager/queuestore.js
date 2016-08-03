@@ -337,7 +337,7 @@ const QueueStore = {
 };
 
 QueueStore.init();
-obs.add(QueueStore, "profile-change-teardown");
+obs.addExit(QueueStore);
 
 unload(function() {
 	try {

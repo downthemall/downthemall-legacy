@@ -306,7 +306,7 @@ function unloadObserver() {
 		exports.clean();
 	}
 }
-obs.add(unloadObserver, "profile-change-teardown", false);
+obs.addExit(unloadObserver);
 unload(function sanitizeUnload() {
 	unloadObserver();
 });

@@ -69,7 +69,7 @@ const asyncShutdown = function() {
 	}
 	_worker.postMessage(null);
 }
-obs.add(asyncShutdown, "profile-change-teardown");
+obs.addExit(asyncShutdown);
 AsyncShutdown.webWorkersShutdown.addBlocker("DownThemAll! moveFile workers", asyncShutdown);
 
 exports.moveFile = function(from, to) {
