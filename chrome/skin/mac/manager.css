@@ -70,7 +70,6 @@
 
 #footer {
 	-moz-appearance: statusbar;
-	color: red !important;
 	background: yellow !important;
 }
 #footer > resizer {
