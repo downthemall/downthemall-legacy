@@ -1356,9 +1356,9 @@ var Tree = {
 		{item: 'cmdCancel', f: function(d) { return d.isOf(PAUSED | RUNNING | QUEUED | COMPLETE); }},
 
 		{item: 'cmdMoveUp', f: function(d) { return !Tree.filtered && d.min > 0; }},
-		{item: 'cmdMoveTop', f: function(d) { return d.min > 0; }},
+		{item: 'cmdMoveTop', f: function(d) { return d.minId > 0; }},
 		{item: 'cmdMoveDown', f: function(d) { return !Tree.filtered && d.max !== d.rows - 1; }},
-		{item: 'cmdMoveBottom', f: function(d) { return d.max !== d.rows - 1; }}
+		{item: 'cmdMoveBottom', f: function(d) { return d.maxId !== Tree._downloads.length - 1; }}
 	],
 	_refreshTools_items: [
 		{items: ["cmdDelete", "delete"], f: function(d) { return d.state === COMPLETE; }},
@@ -1406,13 +1406,17 @@ var Tree = {
 				count: this.selection.count,
 				rows: this.rowCount,
 				min: this.rowCount,
-				max: 0
+				max: 0,
+				minId: this._downloads.length,
+				maxId: 0,
 			};
 			for (let qi of this.getSelected()) {
 				states.state |= qi.state;
 				states.resumable |= qi.resumable;
 				states.min = Math.min(qi.filteredPosition, states.min);
 				states.max = Math.max(qi.filteredPosition, states.max);
+				states.minId = Math.min(qi.position, states.minId);
+				states.maxId = Math.max(qi.position, states.maxId);
 			}
 			let cur = this.current;
 			for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
