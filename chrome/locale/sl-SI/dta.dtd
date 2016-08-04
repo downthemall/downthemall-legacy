@@ -1,0 +1,26 @@
+<!ENTITY start.label "Začni!">
+<!ENTITY start.key "z">
+<!ENTITY queue.label "Dodaj prekinjene">
+<!ENTITY queue.key "p">
+<!ENTITY options.label "Nastavitve">
+<!ENTITY url.value "Prenesi">
+<!ENTITY url.placeholder "Vnesite URI za prenos">
+<!ENTITY override.filename.value "Ime datoteke po meri">
+<!ENTITY override.filename.placeholder "Vnesite novo ime datoteke">
+<!ENTITY override.filename.tip "Vnesite novo ime datoteke ali pustite razno za privzeto">
+<!ENTITY directory.caption "Shrani datoteke v:">
+<!ENTITY directory.placeholder "Vnesite ali izberite mapo">
+<!ENTITY mirrors.value "Zrcalni strežniki:">
+<!ENTITY referrer.value "Stran sklicatelja:">
+<!ENTITY referrer.placeholder "Vnesite sklicni URI">
+<!ENTITY referrer.tip "Vnesite sklicni URI ali pustite prazno za pošiljanje brez sklicatelja">
+<!ENTITY description.value "Opis:">
+<!ENTITY checksum.value "Nadz. vsota:">
+<!ENTITY browse.tooltip "Brskaj …">
+<!ENTITY mirrormanager.tip "Upravljaj z zrcalnimi strežniki">
+<!ENTITY mask3.label "Maska">
+<!ENTITY mask.tip "Izbrane datoteke bodo shranjene in preimenovane s to masko">
+<!ENTITY mask.once.label "Uporabi masko samo tokrat">
+<!ENTITY selectall.label "Izberi vse">
+<!ENTITY selectinv.label "Preobrni izbor">
+<!ENTITY selectnone.label "Ne izberi ničesar">

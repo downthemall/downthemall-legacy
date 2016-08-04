@@ -1,0 +1,10 @@
+<!ENTITY title "Upravljanje zrcalnih strežnikov DownThemAll!">
+<!ENTITY header "Upravljanje zrcalnih strežnikov">
+<!ENTITY byline1 "Prenosi so možni z različnih naslovov. Datoteka je nato samodejno sestavljena.">
+<!ENTITY byline2 "Dodate in odstranite naslove, ki kažejo na isto datoteko.">
+<!ENTITY byline3 "Dodajanje naslovov, ki kažejo na različne datoteke, bo povzročilo okvarjen prenos.">
+<!ENTITY addmirror.tip "Dodaj zrcalni strežnik">
+<!ENTITY removemirror.tip "Odstrani izbrane zrcalne strežnike">
+<!ENTITY checkmirrors.tip "Preveri vse zrcalne strežnike">
+<!ENTITY mirrorurl "Naslov:">
+<!ENTITY preference "Prednost:">

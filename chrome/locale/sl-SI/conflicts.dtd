@@ -1,0 +1,7 @@
+<!ENTITY window.title "Spor z datoteko!">
+<!ENTITY text.value "Zapomni si to nastavitev:">
+<!ENTITY download.label "Le za ta prenos">
+<!ENTITY session.label "Le za to sejo">
+<!ENTITY always.label "Odslej">
+<!ENTITY overwrite.label "Prepiši obstoječo datoteko">
+<!ENTITY skip.label "Preskoči/Prekliči">

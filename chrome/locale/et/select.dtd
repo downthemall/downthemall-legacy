@@ -1,0 +1,16 @@
+<!ENTITY title "Valiku tegemine">
+<!ENTITY filters.caption "Filtrid">
+<!ENTITY additional.caption "Kiirfiltreerimine">
+<!ENTITY additional.tip "Tekstiline filter: saad määrata mitu tekstilist filtrit korraga, eraldades need komaga.">
+<!ENTITY filter.tip "Sisesta oma tekstilised filtrid siia! (mõned näited ripploendis)">
+<!ENTITY menu.check.label "Märgista valitud üksused">
+<!ENTITY menu.uncheck.label "Eemalda valitud üksustelt märgistus">
+<!ENTITY menu.toggle.label "Lülita valitud üksuste märgistatuse olekut">
+<!ENTITY menu.copylinks2.label "Kopeeri lingid">
+<!ENTITY tab.links.label "Lingid">
+<!ENTITY tab.media.label "Pildid ja meedia">
+<!ENTITY header.desc.label "Kirjeldus">
+<!ENTITY selectfiltered.label "Vali filtreeritud">
+<!ENTITY disableother.label "Keela muud filtrid">
+<!ENTITY disableother.tooltip "Keela teised filtrid ja kasuta ainult kiirfiltreerimist. (Seda sätet ei jäeta hetkel meelde)">
+<!ENTITY resname.value "Allika nimi">

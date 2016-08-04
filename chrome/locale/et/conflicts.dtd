@@ -1,0 +1,7 @@
+<!ENTITY window.title "Faili konflikt!">
+<!ENTITY text.value "Jäta see säte meelde:">
+<!ENTITY download.label "Ainult selle allalaadimise jaoks">
+<!ENTITY session.label "Ainult selle seansi jooksul">
+<!ENTITY always.label "Alates nüüdsest">
+<!ENTITY overwrite.label "Kirjuta olemasolev fail üle">
+<!ENTITY skip.label "Jäta vahele/Tühista">
