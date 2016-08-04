@@ -112,6 +112,10 @@ Object.defineProperties(exports, {
 		value: function remove(obs, topic) { observer.remove(obs, topic); },
 		enumerable: true
 	},
+	"removeExit": {
+		value: function add(obs, topic) { observer.remove(obs, TOPIC_SHUTDOWN); },
+		enumerable: true
+	},
 	"topics": {
 		get: function() { return observer.topics; },
 		enumerable: true

@@ -52,6 +52,7 @@ _worker.onmessage = onmessage;
 _worker.onerror = onerror;
 
 const asyncShutdown = function() {
+	obs.removeExit(asyncShutdown);
 	log(LOG_DEBUG, "asyncShutdown");
 	const dead = () => {
 		try {
@@ -70,6 +71,7 @@ const asyncShutdown = function() {
 	_worker.postMessage(null);
 }
 obs.addExit(asyncShutdown);
+unload(asyncShutdown);
 AsyncShutdown.webWorkersShutdown.addBlocker("DownThemAll! moveFile workers", asyncShutdown);
 
 exports.moveFile = function(from, to) {

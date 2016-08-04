@@ -342,6 +342,7 @@ obs.addExit(QueueStore);
 unload(function() {
 	try {
 		QueueStore.shutdown();
+		obs.removeExit(QueueStore);
 	}
 	catch (ex) {
 		log(LOG_ERROR, "Failed to shutdown QueueStore", ex);
