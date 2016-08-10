@@ -71,7 +71,7 @@ exports.watchWindows = function watchWindows(location, callback) {
 	let windows = Services.wm.getEnumerator(null);
 	while (windows.hasMoreElements()) {
 		// Only run the watcher immediately if the browser is completely loaded
-		let w = windows.getNext();
+		let w = windows.getNext(Ci.nsIDOMWindow);
 		if (w.document.readyState === "complete" && w.location.toString() === location) {
 			watcher(w);
 		}
@@ -129,21 +129,24 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 			let unloaders = [];
 
 			// apply styles
-			if (window instanceof Ci.nsIInterfaceRequestor) {
-				let winUtils = window.getInterface(Ci.nsIDOMWindowUtils);
-				for (let data of xul.styles) {
-					try {
-						let uri = Services.io.newURI(data, null, null);
-						winUtils.loadSheet(uri, Ci.nsIDOMWindowUtils.AUTHOR_SHEET);
-						unloaders.push(function() {
-							winUtils.removeSheet(uri, Ci.nsIDOMWindowUtils.AUTHOR_SHEET);
-						});
-					}
-					catch (ex) {
-						log(LOG_ERROR, "failed to load sheet: " + data, ex);
-					}
+			if (!(window instanceof Ci.nsIInterfaceRequestor)) {
+				throw new Error("No interface requestor");
+			}
+			let winUtils = window.getInterface(Ci.nsIDOMWindowUtils);
+			for (let data of xul.styles) {
+				try {
+					let uri = Services.io.newURI(data, null, null);
+					winUtils.loadSheet(uri, Ci.nsIDOMWindowUtils.AUTHOR_SHEET);
+					unloaders.push(function() {
+						winUtils.removeSheet(uri, Ci.nsIDOMWindowUtils.AUTHOR_SHEET);
+					});
+				}
+				catch (ex) {
+					log(LOG_ERROR, "failed to load sheet: " + data, ex);
 				}
 			}
+
+			const idcache = new Map();
 
 			// Add all overlays
 			for (let node of xul.nodes) {
@@ -154,12 +157,15 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 					target = target && target.palette;
 				}
 				if (!target) {
+					target = idcache.get(id);
+				}
+				if (!target) {
 					log(LOG_DEBUG, "no target for " + id + ", not inserting");
 					continue;
 				}
 
 				// set attrs
-				for (let [,a] in new Iterator(node.attributes)) {
+				for (let a of Array.from(node.attributes)) {
 					let k = a.name;
 					if (k === "id" || k === "insertbefore" || k === "insertafter") {
 						continue;
@@ -173,9 +179,14 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 						continue;
 					}
 					let nn = addNode(target, n);
+					if (nn.id) {
+						idcache.set(nn.id, nn);
+					}
 					unloaders.push(() => nn.parentNode.removeChild(nn));
 				}
 			}
+
+			idcache.clear();
 
 			// install per-window unloader
 			if (unloaders.length) {
@@ -192,7 +203,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 	}
 
 	if (overlayCache.has(src)) {
-		exports.watchWindows(location, inject(null, overlayCache.get(src)));
+		exports.watchWindows(location, inject.bind(null, overlayCache.get(src)));
 		return;
 	}
 
