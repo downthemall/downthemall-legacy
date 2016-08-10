@@ -111,6 +111,8 @@ var Prefs = {
 		['recoverAllHttpErrors', false],
 		['speedLimit', -1],
 		['resumeOnError', false],
+		['soundsDone', 'sounds.done', true],
+		['soundsError', 'sounds.error', true],
 		['schedEnabled', 'schedule.enabled', false],
 		['schedStart', 'schedule.start', 0],
 		['schedEnd', 'schedule.end', 1380],

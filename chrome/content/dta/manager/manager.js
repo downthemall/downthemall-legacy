@@ -1125,7 +1125,9 @@ var Dialog = {
 			}
 			this._speeds.clear();
 			log(LOG_DEBUG, "signal(): Queue finished");
-			$("sound_done").play();
+			if (Prefs.soundsDone) {
+				$("sound_done").play();
+			}
 
 			let dp = Tree.at(0);
 			if (dp) {
@@ -2266,7 +2268,9 @@ QueueItem.prototype = {
 
 		this.cancel(state);
 
-		$("sound_error").play();
+		if (Prefs.soundsError) {
+			$("sound_error").play();
+		}
 
 		switch (Prefs.alertingSystem) {
 			case 1:
