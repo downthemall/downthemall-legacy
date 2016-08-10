@@ -947,7 +947,7 @@ var Dialog = {
 			let ts = Utils.getTimestamp();
 			for (let i = 0, e = this._running.length; i < e; ++i) {
 				let d = this._running[i];
-				if (!d) {
+				if (!d || d.isCritical) {
 					continue;
 				}
 				// checks for timeout
@@ -2155,6 +2155,16 @@ QueueItem.prototype = {
 			yield c.close();
 		}
 	},
+	_criticals: 0,
+	get isCritical() {
+		return this._criticals !== 0;
+	},
+	critical: function() {
+		this._criticals++;
+	},
+	uncritical: function() {
+		this._criticals = Math.max(0, this._criticals + 1);
+	},
 	finishDownload: function(exception) {
 		if (this._finishDownloadTask) {
 			return;
@@ -2164,6 +2174,11 @@ QueueItem.prototype = {
 		// Last speed update
 		this.refreshPartialSize();
 		Dialog._sum += this.speeds.add(this.partialSize + this.otherBytes, Utils.getTimestamp());
+		if (!this.partialSize) {
+			log(LOG_ERROR, "INVALID SIZE!!!!!");
+			d.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
+			return;
+		}
 
 		this._finishDownloadTask = Task.spawn(function* finishDownloadTask() {
 			try {
