@@ -376,7 +376,7 @@ LRUMap.prototype = Object.freeze({
 		// already loaded?
 		let scope = _registry.get(module);
 		if (scope) {
-			return scope.exports;
+			return (scope.module && scope.module.exports) || scope.exports;
 		}
 
 		// try to load the module
@@ -384,7 +384,11 @@ LRUMap.prototype = Object.freeze({
 		scope.exports = Object.create(null);
 		scope.require = require.bind(null, base);
 		scope.requireJoined = requireJoined.bind(null, base);
-		scope.module = {};
+		scope.module = {
+			exports: scope.exports,
+			loaded: false,
+			require: require
+			};
 		Object.defineProperty(scope.module, "id", {
 			value: id,
 			enumerable: true
@@ -428,9 +432,10 @@ LRUMap.prototype = Object.freeze({
 			throw ex;
 		}
 
+		scope.module.loaded = true;
 		_registry.set(module, scope);
 
-		return scope.exports;
+		return (scope.module && scope.module.exports) || scope.exports;
 	};
 
 	const requireJoined = function requireJoined(base, where, module) {
