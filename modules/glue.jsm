@@ -387,7 +387,7 @@ LRUMap.prototype = Object.freeze({
 		scope.module = {
 			exports: scope.exports,
 			loaded: false,
-			require: require
+			require: scope.require
 			};
 		Object.defineProperty(scope.module, "id", {
 			value: id,
