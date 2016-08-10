@@ -4,6 +4,10 @@ dialog {
 	width: 600px;
 }
 
+#infoIcon {
+	margin: 1em;
+}
+
 #clearReferrer {
 	list-style-image: url(icons.png);
 	-moz-image-region: rect(64px,64px,80px,48px);

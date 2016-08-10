@@ -139,10 +139,24 @@ const getIcon = exports.getIcon = function(link, metalink, size) {
 	return "moz-icon://foo.html?size=" + size;
 };
 
-
+// The Windows icon loader does not support icons > 32px at the moment
 exports.getLargeIcon = (function() {
-	const _s = (require("version").OS === "darwin" ? 48 : 32);
+	let _s = 32, _sh = 32;
+	switch (require("version").OS) {
+	case "darwin":
+		_s = 48;
+		_sh = 96;
+		break;
+	case "winnt":
+		_s = 64;
+		_sh = 256;
+		break;
+	default:
+		_s = 48;
+		_sh = 256;
+		break;
+	}
 	return memoize(function(name, metalink, hidpi) {
-		return getIcon(name, metalink, hidpi ? _s * 2 : _s), 150;
-	});
+		return getIcon(name, metalink, hidpi ? _sh : _s);
+	}, 150);
 })();

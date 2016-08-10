@@ -279,7 +279,7 @@ toolbox {
 }
 #infoIcon {
 	margin: 1ex;
-	max-width: 32px;
+	max-width: 64px;
 }
 #tooltip grid {
 	-moz-box-flex: 1;
