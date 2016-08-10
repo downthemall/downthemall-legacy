@@ -777,6 +777,7 @@ var Tree = {
 		if (download.state === COMPLETE) {
 			++Dialog.completed;
 		}
+		download.iconProp; // set up initial icon to avoid display problems
 		return this._downloads.push(download) - 1;
 	},
 	add: function(download) {

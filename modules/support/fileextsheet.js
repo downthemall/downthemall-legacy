@@ -9,14 +9,16 @@ const {getIcon} = require("./icons");
 const {getExtension} = require("./stringfuncs");
 const {identity} = require("./memoize");
 
-function FileExtensionSheet(window) {
+function FileExtensionSheet(window, tree) {
+	this._tree = tree;
 	this._windowUtils = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowUtils);
 	this._entries = new Map();
+	this._toadd = [];
 }
 
 FileExtensionSheet.prototype = Object.freeze({
 	_atoms: new Atoms(),
-	getAtom: function(fileName, metalink) {
+	getAtom: function(fileName, metalink, invalidate) {
 		let ext = getExtension(fileName);
 		if (!ext || ext.length > 10 || ext.indexOf(" ") > -1) {
 			ext = 'unknown';
@@ -30,7 +32,7 @@ FileExtensionSheet.prototype = Object.freeze({
 			entry = "FileIcon" + ext.replace(/\W/g, '');
 			let icon16 = getIcon('file.' + ext, metalink || ext === 'metalink' || ext === "meta4", 16);
 			let icon32 = getIcon('file.' + ext, metalink || ext === 'metalink' || ext === "meta4", 32);
-			let rule = `data:text/css,
+			let rule = `
 treechildren::-moz-tree-image(iconic,${entry.toString()}) {
 	list-style-image: url(${icon16}) !important;
 	-moz-image-region: auto !important;
@@ -41,17 +43,29 @@ treechildren::-moz-tree-image(iconic,${entry.toString()}) {
 		list-style-image: url(${icon32}) !important;
 	}
 }`;
-			let ruleURI = Services.io.newURI(rule, null, null);
-			log(LOG_DEBUG, ruleURI.spec);
-			try {
-				this._windowUtils.loadSheet(ruleURI, this._windowUtils.AGENT_SHEET);
-			}
-			catch (ex) {
-				log(LOG_ERROR, ext + " sheet: " + rule, ex);
+			this._toadd.push(rule);
+			if (!this._timer) {
+				this._timer = Timers.createOneshot(0, this._add, this);
 			}
 			this._entries.set(ext, entry);
 		}
 		return this._atoms.getAtom(entry);
+	},
+	_add: function() {
+		this._timer = null;
+		if (!this._toadd.length) {
+			return;
+		}
+		try {
+			let rule = `data:text/css,@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");\n${this._toadd.join("\n")}`;
+			log(LOG_DEBUG, "new sheet: " + rule);
+			this._windowUtils.loadSheetUsingURIString(rule, this._windowUtils.AGENT_SHEET);
+			this._tree.invalidate();
+		}
+		catch (ex) {
+			log(LOG_ERROR, ext + " sheet: " + rule, ex);
+		}
+		this._toadd = [];
 	}
 });
 

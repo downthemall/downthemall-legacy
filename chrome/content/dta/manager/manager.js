@@ -41,7 +41,7 @@ XPCOMUtils.defineLazyGetter(window, "Version", () => require("version"));
 XPCOMUtils.defineLazyGetter(window, "AlertService", () => require("support/alertservice"));
 XPCOMUtils.defineLazyGetter(window, "Decompressor", () => require("manager/decompressor").Decompressor);
 XPCOMUtils.defineLazyGetter(window, "Verificator", () => require("manager/verificator"));
-XPCOMUtils.defineLazyGetter(window, "FileExts", () => new FileExtensionSheet(window));
+XPCOMUtils.defineLazyGetter(window, "FileExts", () => new FileExtensionSheet(window, Tree));
 
 /* global TextCache_PAUSED, TextCache_QUEUED, TextCache_COMPLETE, TextCache_CANCELED, TextCache_NAS */
 /* global TextCache_UNKNOWN, TextCache_OFFLINE, TextCache_TIMEOUT, TextCache_STARTING, TextCache_DECOMPRESSING */
@@ -1840,16 +1840,10 @@ QueueItem.prototype = {
 	timeStart: 0,
 
 	_icon: null,
-	get iconAtom() {
-		if (!this._icon) {
-			this._icon = FileExts.getAtom(this.destinationName, 'metalink' in this);
-		}
-		return this._icon;
-	},
 	get iconProp() {
 		if (!this._icon) {
-			this._icon = identity((this.isPrivate ? "iconic private " : "iconic ") +
-				FileExts.getAtom(this.destinationName, 'metalink' in this).toString());
+			let icon = FileExts.getAtom(this.destinationName, 'metalink' in this).toString();
+			this._icon = identity((this.isPrivate ? "iconic private file " : "iconic file ") + icon);
 		}
 		return this._icon;
 	},
