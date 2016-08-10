@@ -1,5 +1,0 @@
-<!ENTITY always.label "Од сада па надаље">
-<!ENTITY overwrite.label "Препиши преко постојећих датотека">
-<!ENTITY session.label "Само током ове сесије">
-<!ENTITY skip.label "Прескочи/Откажи">
-<!ENTITY text.value "Запамти следећа подешавања:">

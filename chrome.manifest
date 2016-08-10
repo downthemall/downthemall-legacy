@@ -12,31 +12,13 @@ content dta-tests tests/
 content	dta-modules	modules/
 
 ## additional locales
-locale dta ar chrome/locale/ar/
-locale dta cs chrome/locale/cs/
 locale dta de chrome/locale/de/
-locale dta el chrome/locale/el/
-locale dta es-AR chrome/locale/es-AR/
-locale dta es-ES chrome/locale/es-ES/
 locale dta et chrome/locale/et/
-locale dta fr chrome/locale/fr/
 locale dta gl chrome/locale/gl/
 locale dta gl-ES chrome/locale/gl-ES/
-locale dta he chrome/locale/he/
-locale dta hu chrome/locale/hu/
-locale dta it chrome/locale/it/
-locale dta ja chrome/locale/ja/
-locale dta ko-KR chrome/locale/ko-KR/
-locale dta nl chrome/locale/nl/
-locale dta oc chrome/locale/oc/
 locale dta pl chrome/locale/pl/
-locale dta pt-BR chrome/locale/pt-BR/
 locale dta pt-PT chrome/locale/pt-PT/
-locale dta ro chrome/locale/ro/
-locale dta ru chrome/locale/ru/
-locale dta sk-SK chrome/locale/sk-SK/
 locale dta sl-SI chrome/locale/sl-SI/
-locale dta sr chrome/locale/sr/
 locale dta zh-CN chrome/locale/zh-CN/
 locale dta zh-TW chrome/locale/zh-TW/
 

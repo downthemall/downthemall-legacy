@@ -1,5 +1,0 @@
-<!ENTITY always.label "지금부터">
-<!ENTITY overwrite.label "덮어쓰기">
-<!ENTITY session.label "이 세션만">
-<!ENTITY skip.label "건너뛰기/취소">
-<!ENTITY text.value "이 설정 기억:">

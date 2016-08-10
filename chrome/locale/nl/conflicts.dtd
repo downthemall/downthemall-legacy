@@ -1,5 +1,0 @@
-<!ENTITY always.label "altijd vanaf nu">
-<!ENTITY overwrite.label "bestaand bestand overschrijven">
-<!ENTITY session.label "alleen gedurende deze sessie">
-<!ENTITY skip.label "overslaan/annuleren">
-<!ENTITY text.value "Deze instelling onthouden:">

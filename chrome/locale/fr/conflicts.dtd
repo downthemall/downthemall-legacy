@@ -1,5 +1,0 @@
-<!ENTITY always.label "À partir de maintenant">
-<!ENTITY overwrite.label "Remplacer le fichier existant">
-<!ENTITY session.label "Uniquement pour cette session">
-<!ENTITY skip.label "Passer/Annuler">
-<!ENTITY text.value "Se souvenir de ce paramétrage :">

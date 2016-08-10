@@ -1,5 +1,0 @@
-<!ENTITY always.label "Da ora in poi">
-<!ENTITY overwrite.label "Sovrascrivi file esistente">
-<!ENTITY session.label "Solo per questa sessione">
-<!ENTITY skip.label "Salta/Annulla">
-<!ENTITY text.value "Ricorda questa impostazione:">
