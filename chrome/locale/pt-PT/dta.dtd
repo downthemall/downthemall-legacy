@@ -1,15 +1,26 @@
-<!ENTITY checksum.value "Checksum (Hash):">
-<!ENTITY description.value "Descrição:">
-<!ENTITY mask.tip "Os ficheiros seleccionados serão guardados e renomeados usando esta máscara">
-<!ENTITY mirrormanager.tip "Gerir espelhos de descarregamento">
-<!ENTITY mirrors.value "Espelhos:">
-<!ENTITY options.label "Preferências">
-<!ENTITY queue.key "p">
+<!ENTITY start.label "Iniciar!">
+<!ENTITY start.key "c">
 <!ENTITY queue.label "Adicionar pausado">
+<!ENTITY queue.key "p">
+<!ENTITY options.label "Preferências">
+<!ENTITY url.value "Descarregar">
+<!ENTITY url.placeholder "Insira o URI da transferência">
+<!ENTITY override.filename.value "Nome personalizado do ficheiro">
+<!ENTITY override.filename.placeholder "Insira novo nome do ficheiro">
+<!ENTITY override.filename.tip "Insira novo nome do ficheiro, ou vazio como está para nome padrão">
+<!ENTITY directory.caption "Guardar ficheiros em:">
+<!ENTITY directory.placeholder "Insira ou selecione pasta">
+<!ENTITY mirrors.value "Espelhos:">
 <!ENTITY referrer.value "Página referida:">
+<!ENTITY referrer.placeholder "Insira o URI de referimento">
+<!ENTITY referrer.tip "Insira o URI de referimento, ou deixe vazio para enviar sem referimento">
+<!ENTITY description.value "Descrição:">
+<!ENTITY checksum.value "Checksum (Hash):">
+<!ENTITY browse.tooltip "Navegar...">
+<!ENTITY mirrormanager.tip "Gerir espelhos de descarregamento">
+<!ENTITY mask3.label "Máscara">
+<!ENTITY mask.tip "Os ficheiros seleccionados serão guardados e renomeados usando esta máscara">
+<!ENTITY mask.once.label "Usar máscara apenas desta vez">
 <!ENTITY selectall.label "Seleccionar tudo">
 <!ENTITY selectinv.label "Inverter Selecção">
 <!ENTITY selectnone.label "Nenhuma Selecção">
-<!ENTITY start.key "c">
-<!ENTITY start.label "Iniciar!">
-<!ENTITY url.value "Descarregar">

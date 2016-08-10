@@ -1,10 +1,10 @@
-<!ENTITY addmirror.tip "Dodaj mirror pobierania">
+<!ENTITY title "DownThemAll! – zarządzanie mirrorami">
+<!ENTITY header "Zarządzanie mirrorami">
 <!ENTITY byline1 "Pliki mogą być pobierane z różnych lokalizacji i automatycznie łączone.">
 <!ENTITY byline2 "Dodawaj i usuwaj lokalizacje wskazujące na ten sam plik.">
 <!ENTITY byline3 "Dodanie lokalizacji wskazujących na różne pliki spowoduje uszkodzenie pobieranego pliku">
+<!ENTITY addmirror.tip "Dodaj mirror pobierania">
+<!ENTITY removemirror.tip "Usuń wybrane mirrory">
 <!ENTITY checkmirrors.tip "Sprawdź wszystkie mirrory pobierania">
-<!ENTITY header "Zarządzanie mirrorami">
 <!ENTITY mirrorurl "Lokalizacja:">
 <!ENTITY preference "Priorytet:">
-<!ENTITY removemirror.tip "Usuń wybrane mirrory">
-<!ENTITY title "DownThemAll! – zarządzanie mirrorami">

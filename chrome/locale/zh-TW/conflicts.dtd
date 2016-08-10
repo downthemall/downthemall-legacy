@@ -1,5 +1,7 @@
+<!ENTITY window.title "檔案衝突！">
+<!ENTITY text.value "記住此設定：">
+<!ENTITY download.label "僅對此檔">
+<!ENTITY session.label "僅對這次">
 <!ENTITY always.label "從現在起">
 <!ENTITY overwrite.label "覆寫已存在的檔案">
-<!ENTITY session.label "只對這次">
 <!ENTITY skip.label "略過/取消">
-<!ENTITY text.value "記住此設定：">

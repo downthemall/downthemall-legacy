@@ -1,5 +1,5 @@
+<!ENTITY fileMenu.label "Ficheiro">
+<!ENTITY fileMenu.accesskey "F">
+<!ENTITY newNavigatorCmd.label "Nova xanela do navegador">
+<!ENTITY tabCmd.label "Nova lapela do navegador">
 <!ENTITY closeWindow.label "Pechar DownThemAll!">
-<!ENTITY fileMenu.accesskey "h">
-<!ENTITY fileMenu.label "Arquivo">
-<!ENTITY newNavigatorCmd.label "Nova ventá de navegador">
-<!ENTITY tabCmd.label "Nova pestana do navegador">

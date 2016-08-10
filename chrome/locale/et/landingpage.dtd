@@ -1,11 +1,6 @@
-<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
-<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
-<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "Eesti keel">
-<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "Maidur">
-<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "Tõlge eesti keelde: Maidur">
 <!ENTITY amo.summary2 "Esimene ja ainus allalaadimiste haldur/kiirendi sinu brauseris!">
 <!ENTITY amo.description.intro "DownThemAll! on kõik, mida allalaadimiste haldurilt oodata: sellel on võimas kiirendi, mis suurendab kiirust kuni 4x ning see võimaldab allalaadimisi igal ajal peatada ja jätkata.">
@@ -49,7 +44,6 @@
 <!ENTITY lp.tut.alltabs "On võimalik järjekorda lisada kõik üksused kõikidelt kaartidelt korraga, kasutades selleks tööriistaribal oleva nupu rippmenüüsid.">
 <!ENTITY lp.tut.tabrestore "Saadaval on ainult lingid, mis on täielikult taastatud kaartidel.">
 <!ENTITY lp.tb.intro "DownThemAll! pakub mõnd tööriistariba nuppu, mis annab mugava viisi DownThemAll!-i funktsioonide kasutamiseks.">
-<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "Lisa tööriistariba nuppe">
 <!ENTITY lp.tb.add.title "Tööriistariba nuppude lisamine ja kasutamine">
 <!ENTITY lp.tb.add.p1 "DownThemAll!-il on neli tööriistariba nuppu, mis teevad allalaadimiste leidmise ja järjekorda panemise lihtsamaks">

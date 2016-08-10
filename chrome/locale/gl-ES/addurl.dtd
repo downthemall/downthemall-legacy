@@ -1,2 +1,6 @@
-<!ENTITY desc.batches.value "Tamén pode utilizar os descriptores de proceso por lotes para descargar varios arquivos ao mesmo tempo.">
+<!ENTITY windowtitle "Engadir descargas">
+<!ENTITY adddescription.value "Introducir a URL da descarga e (opcionalmente) a páxina de referencia.">
+<!ENTITY createbatchdescriptor.label "Crear descritor de proceso en lote">
+<!ENTITY createbatchdescriptor.tooltip "Crear descritor do proceso en lote desde a selección de texto actual">
+<!ENTITY desc.batches.value "Pode empregar descritores de proceso en lote para descargar múltiples ficheiros á vez.">
 <!ENTITY examples.value "Exemplos:">

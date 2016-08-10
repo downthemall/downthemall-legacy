@@ -22,9 +22,7 @@
 <!ENTITY infoPrivate.value "Privater Download">
 <!ENTITY elapsedTitle.value "Verstrichen:">
 <!ENTITY remainingTitle.value "Verbleibend:">
-<!-- LOCALIZATION NOTE (currentSpeedTitle.value):  Please keep this short, and use abbreviations is necessary, or the tooltip will widen too much. -->
 <!ENTITY currentSpeedTitle.value "Aktuelle Geschw.:">
-<!-- LOCALIZATION NOTE (avgSpeedTitle.value):  Please keep this short, and use abbreviations is necessary. -->
 <!ENTITY avgSpeedTitle.value "Durchschn. Geschw.:">
 <!ENTITY path.label "Speicherpfad">
 <!ENTITY hash.label "Prüfsumme">

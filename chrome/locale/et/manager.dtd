@@ -11,7 +11,6 @@
 <!ENTITY percent.label "Protsent">
 <!ENTITY pct.label "Edenemine">
 <!ENTITY dim.label "Suurus">
-<!-- LOCALIZATION NOTE (time2.label):  Est. == Estimated -->
 <!ENTITY time2.label "Hinn. aeg">
 <!ENTITY parts.label "Tükke">
 <!ENTITY speed.label "Kiirus">
@@ -22,9 +21,7 @@
 <!ENTITY infoPrivate.value "Privaatne allalaadimine">
 <!ENTITY elapsedTitle.value "Kulunud:">
 <!ENTITY remainingTitle.value "Jäänud:">
-<!-- LOCALIZATION NOTE (currentSpeedTitle.value):  Please keep this short, and use abbreviations is necessary, or the tooltip will widen too much. -->
 <!ENTITY currentSpeedTitle.value "Hetkekiirus:">
-<!-- LOCALIZATION NOTE (avgSpeedTitle.value):  Please keep this short, and use abbreviations is necessary. -->
 <!ENTITY avgSpeedTitle.value "Keskmine kiirus:">
 <!ENTITY path.label "Salvestuskoht">
 <!ENTITY hash.label "Kontrollsumma">

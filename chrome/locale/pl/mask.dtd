@@ -1,19 +1,33 @@
-<!ENTITY mask.curl "Pełny adres URL">
-<!ENTITY mask.d "Dzień">
-<!ENTITY mask.ext "Rozszerzenie">
-<!ENTITY mask.flatcurl "Płaski pełny adres URL">
-<!ENTITY mask.flatsubdirs "podkatalogi płaskiego adresu URL">
-<!ENTITY mask.hh "Godziny">
-<!ENTITY mask.inum "Numer elementu">
-<!ENTITY mask.m "Miesiąc">
-<!ENTITY mask.mm "Minuty">
+<!ENTITY mask.tags "Znaczniki zmiany nazwy">
 <!ENTITY mask.name "Nazwa pliku">
-<!ENTITY mask.open.tip "Tabela znaczników zmiany nazwy">
-<!ENTITY mask.qstring "Szukany ciąg znaków">
-<!ENTITY mask.refer "Powiązany adres URL">
-<!ENTITY mask.ss "Sekundy">
-<!ENTITY mask.subdirs "Adres URL podkatalogów">
-<!ENTITY mask.tip "Kliknij lub przeciągnij do maski zmiany nazwy">
-<!ENTITY mask.title "Znaczniki zmiany nazwy">
+<!ENTITY mask.ext "Rozszerzenie">
 <!ENTITY mask.url "Skrócony adres URL">
+<!ENTITY mask.curl "Pełny adres URL">
+<!ENTITY mask.flatcurl "Płaski pełny adres URL">
+<!ENTITY mask.batch "Numer partii">
+<!ENTITY mask.inum "Numer elementu">
+<!ENTITY mask.hh "Godziny">
+<!ENTITY mask.mm "Minuty">
+<!ENTITY mask.ss "Sekundy">
+<!ENTITY mask.d "Dzień">
+<!ENTITY mask.m "Miesiąc">
 <!ENTITY mask.y "Rok">
+<!ENTITY mask.subdirs "Adres URL podkatalogów">
+<!ENTITY mask.flatsubdirs "Podkatalogi płaskiego adresu URL">
+<!ENTITY mask.linktext "Opis odnośnika">
+<!ENTITY mask.flatlinktext "Opis płaskiego odnośnika">
+<!ENTITY mask.refername "Nazwa odsyłacza">
+<!ENTITY mask.referext "Rozszerzenie odsyłacza">
+<!ENTITY mask.refer "Adres URL odsyłacza">
+<!ENTITY mask.crefer "Pełny odsyłacza">
+<!ENTITY mask.flatcrefer "Płaski pełny odsyłacza">
+<!ENTITY mask.referdirs "Subkatalogi odsyłacza&gt;
+
+">
+<!ENTITY mask.flatreferdirs "Subkatalogi płaskiego odsyłacza">
+<!ENTITY mask.qstring "Szukany ciąg znaków">
+<!ENTITY mask.referqstring "Szukany ciąg znaków odsyłacza">
+<!ENTITY mask.title "Tytuł powiązany z odnośnikiem">
+<!ENTITY mask.flattitle2 "Paski tytuł powiązany z odnośnikiem">
+<!ENTITY mask.tip "Kliknij lub przeciągnij do maski zmiany nazwy">
+<!ENTITY mask.open.tip "Tabela znaczników zmiany nazwy">

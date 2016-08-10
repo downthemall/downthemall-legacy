@@ -1,2 +1,6 @@
-<!ENTITY desc.batches.value "Também pode usar descritores batch para transferir múltiplos ficheiros de uma só vez.">
+<!ENTITY windowtitle "Adicionar Transferências">
+<!ENTITY adddescription.value "Insira o URL da transferência e (opcionalmente) a página de referência.">
+<!ENTITY createbatchdescriptor.label "Criar Descritor de Lote">
+<!ENTITY createbatchdescriptor.tooltip "Criar um descritor de lote a partir da seleção de texto atual">
+<!ENTITY desc.batches.value "Também pode usar descritores de lote para transferir múltiplos ficheiros de uma só vez.">
 <!ENTITY examples.value "Exemplos:">

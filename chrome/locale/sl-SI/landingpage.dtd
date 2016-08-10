@@ -1,11 +1,6 @@
-<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
-<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
-<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "Slovenščina">
-<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "Ekipa dTa">
-<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "Angleški prevod: ekipa dTa">
 <!ENTITY amo.summary2 "Prvi in edini upravitelj/pospeševalnik prenosov v brskalniku!">
 <!ENTITY amo.description.intro "DownThemAll je vse, kar si želite od upravitelja prenosov: vsebuje napredni pospeševalnik, ki poveča hitrost do 4x in kadarkoli omogoča premore in obnovitve prenosov.">
@@ -49,7 +44,6 @@
 <!ENTITY lp.tut.alltabs "Predmete lahko z uporabo spustnih menijev gumba orodne vrstice dodate v čakalno vrsto iz vseh zavihkov.">
 <!ENTITY lp.tut.tabrestore "Na voljo bodo samo povezave iz popolnoma obnovljenih zavihkov.">
 <!ENTITY lp.tb.intro "DownThemAll! omogoča nekaj gumbov za orodno vrstico, ki vam dajo priročen način dostopa do možnosti DownThemAll!.">
-<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "Dodaj gumbe orodne vrstice">
 <!ENTITY lp.tb.add.title "Dodajanje in uporaba gumbov za orodno vrstico">
 <!ENTITY lp.tb.add.p1 "DownThemAll! omogoča štiri gumbe za orodno vrstico, s katerimi lahko enostavno najdete in dodate prenose v čakalno vrsto">
@@ -89,7 +83,7 @@
 <!ENTITY lp.yr.morelicense3 "Posamezne datoteke imajo lahko dodatne in/ali drugačne licence. Glejte ustrezne datoteke v skladišču, ki je na voljo na <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Večina datotek je pod licenco GPL/LGPL-compatible MPL 2.0 ali pod trojno licenco MPL 1.1/GPL 2.0/LGPL 2.1. Glejte datoteke MPL, GPL in LGPL.">
 <!ENTITY lp.yr.gplintro "Najbolj pomembni odseki iz GPL 2.0, pogoji o garanciji in poškodbah so naslednji:">
 <!ENTITY lp.yr.icons "Grafika, ikone in gumbi">
-<!ENTITY lp.yr.iconsbased4 "so osnovani na delu Mikea Matasa, Marka Jamesa, in projektov Noun in Tango">
+<!ENTITY lp.yr.iconsbased4 "so osnovani na delu Mika Matasa, Marka Jamesa, in projektov Noun in Tango">
 <!ENTITY lp.yr.artwork3 "Avtorske pravice izvirnega umetniškega dela: © 2004-2013 Stefano Verna, Federico Parodi in Nils Maier">
 <!ENTITY lp.yr.artworklicense "Izvirna grafika je licencirana od">
 <!ENTITY lp.yr.logo3 "Oblikovanje logotipa DownThemAll!: avtorske pravice © 2004-2013 Stefano Verna.">

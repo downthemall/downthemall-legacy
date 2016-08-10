@@ -1,14 +1,16 @@
+<!ENTITY title "Faça a sua selecção">
+<!ENTITY filters.caption "Filtros">
 <!ENTITY additional.caption "Filtragem Rápida">
 <!ENTITY additional.tip "Filtro textual: pode aplicar vários filtros textuais separando-os por vírgulas.">
+<!ENTITY filter.tip "Escreva aqui os seus filtros textuais! (Alguns exemplos no dropdown)">
+<!ENTITY menu.check.label "Seleccionar itens seleccionados">
+<!ENTITY menu.uncheck.label "De-seleccionar itens seleccionados">
+<!ENTITY menu.toggle.label "Alternar verificação dos itens seleccionados">
+<!ENTITY menu.copylinks2.label "Copiar Ligações">
+<!ENTITY tab.links.label "Ligações">
+<!ENTITY tab.media.label "Imagens e Media">
+<!ENTITY header.desc.label "Descrição">
+<!ENTITY selectfiltered.label "Seleccionar filtrados">
 <!ENTITY disableother.label "Desactivar outros filtros">
 <!ENTITY disableother.tooltip "Desactivar outros filtros e usar apenas a filtragem rápida. (esta definição de momento não é guardada)">
-<!ENTITY filter.tip "Escreva aqui os seus filtros textuais! (Alguns exemplos no dropdown)">
-<!ENTITY filters.caption "Filtros">
-<!ENTITY header.desc.label "Descrição">
-<!ENTITY menu.check.label "Seleccionar itens seleccionados">
-<!ENTITY menu.toggle.label "Alternar verificação dos itens seleccionados">
-<!ENTITY menu.uncheck.label "De-seleccionar itens seleccionados">
 <!ENTITY resname.value "Nome do recurso">
-<!ENTITY selectfiltered.label "Seleccionar filtrados">
-<!ENTITY tab.links.label "Ligações">
-<!ENTITY title "Faça a sua selecção">

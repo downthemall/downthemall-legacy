@@ -1,11 +1,6 @@
-<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
-<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
-<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "简体中文">
-<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "Blacko,Cye3s">
-<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "简体中文翻译：Blacko,Cye3s">
 <!ENTITY amo.summary2 "独一无二的 Firefox 内建下载管理器/加速器">
 <!ENTITY amo.description.intro "DownThemAll 满足您对一个下载管理器的需求:提供高级加速器可增加4倍以上的加速并且允许您随时暂停并恢复下载。">
@@ -49,7 +44,6 @@
 <!ENTITY lp.tut.alltabs "使用工具栏图标下拉按钮，就可以将所有标签页内的项目加入队列。">
 <!ENTITY lp.tut.tabrestore "只适用于完全恢复的页面中的完成链接。">
 <!ENTITY lp.tb.intro "DownThemAll! 提供一些工具栏按钮让您可以方便地访问 DownThemAll! 的功能。">
-<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "添加工具栏按钮">
 <!ENTITY lp.tb.add.title "增加并使用工具栏按钮">
 <!ENTITY lp.tb.add.p1 "DownThemAll! 提供四个工具栏按钮用于方便地查找并增加下载队列">
