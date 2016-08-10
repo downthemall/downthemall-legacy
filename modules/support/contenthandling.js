@@ -251,21 +251,24 @@ ContentHandlingImpl.prototype = {
 					}
 				}
 				if (!uri) {
-					let wp;
-					if (!uri && channel.loadGroup && channel.loadGroup.groupObserver) {
-						wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);
+					try {
+						let wp;
+						if (!uri && channel.loadGroup && channel.loadGroup.groupObserver) {
+							wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);
+						}
+						if (!uri && !wp) {
+							wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
+						}
+						if (!wp || !wp.DOMWindow) {
+							return;
+						}
+						let wn = wp.DOMWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
+						if (!wn || !wn.currentURI) {
+							return;
+						}
+						uri = wn.currentURI;
 					}
-					if (!uri && !wp) {
-						wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
-					}
-					if (!wp || !wp.DOMWindow) {
-						return;
-					}
-					let wn = wp.DOMWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
-					if (!wn || !wn.currentURI) {
-						return;
-					}
-					uri = wn.currentURI;
+					catch (ex) {}
 				}
 				if (!uri) {
 					log(LOG_DEBUG, "Failed to get video doc uri");
