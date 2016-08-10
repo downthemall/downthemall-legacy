@@ -199,29 +199,6 @@ var Utils = {
 		}
 		return false;
 	},
-	/**
-	 * Play a sound file (if prefs allow to do so)
-	 *
-	 * @param name
-	 *          Name of the sound (corresponding to the pref name and the file
-	 *          name of desired sound)
-	 */
-	playSound: function(name) {
-
-		try {
-			if (/linux|sun|bsd|aix|hp|dragonfly|irix|unix/i.test(Services.appinfo.OS) &&
-					/64/.test(Services.appinfo.XPCOMABI)) {
-				throw new Components.Exception("*nix 64 - freeze problems");
-			}
-
-			if (Preferences.getExt("sounds." + name, false)) {
-				new Instances.Sound(toURI("chrome://dta/skin/sounds/" + name + ".wav"));
-			}
-		}
-		catch(ex) {
-			log(LOG_ERROR, "Playing " + name + " sound failed", ex);
-		}
-	},
 
 	formatKBytes: function(aNumber, decimalPlace) {
 		aNumber = aNumber / 1024;

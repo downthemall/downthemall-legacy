@@ -1125,7 +1125,7 @@ var Dialog = {
 			}
 			this._speeds.clear();
 			log(LOG_DEBUG, "signal(): Queue finished");
-			Utils.playSound("done");
+			$("sound_done").play();
 
 			let dp = Tree.at(0);
 			if (dp) {
@@ -1145,7 +1145,7 @@ var Dialog = {
 				}
 			}
 			if (Prefs.autoClose) {
-				Dialog.close();
+				setTimeoutOnlyFunc(() => Dialog.close(), 1500);
 			}
 		}
 		catch(ex) {
@@ -2272,7 +2272,7 @@ QueueItem.prototype = {
 
 		this.cancel(state);
 
-		Utils.playSound("error");
+		$("sound_error").play();
 
 		switch (Prefs.alertingSystem) {
 			case 1:
