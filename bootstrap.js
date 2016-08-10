@@ -25,4 +25,5 @@ function shutdown(data, reason) {
 	let _g = {};
 	Components.utils.import("chrome://dta-modules/content/glue.jsm", _g);
 	_g.unload("shutdown", reason == ADDON_UPGRADE);
+	Components.utils.unload("chrome://dta-modules/content/glue.jsm");
 }

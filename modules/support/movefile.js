@@ -47,7 +47,7 @@ function onerror(e) {
 	_kill();
 }
 
-const _worker = new ChromeWorker(BASE_PATH + "support/movefile_worker.js");
+let _worker = new ChromeWorker(BASE_PATH + "support/movefile_worker.js");
 _worker.onmessage = onmessage;
 _worker.onerror = onerror;
 
