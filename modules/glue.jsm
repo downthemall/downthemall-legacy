@@ -70,8 +70,8 @@ var LRUMap = function LRUMap(limit) {
 	Object.preventExtensions(this);
 };
 LRUMap.prototype = Object.freeze({
-	"get": function(key) this._dict.get(key),
-	"has": function(key) this._dict.has(key),
+	"get": function(key) { return this._dict.get(key); },
+	"has": function(key) { return this._dict.has(key) },
 	"set": function(key, val) {
 		if (this.has(key)) {
 			this._dict.set(key, val);
@@ -103,12 +103,20 @@ LRUMap.prototype = Object.freeze({
 (function setup_scope(exports) {
 	function itor(name, cls, iface, init) {
 		if (init) {
-			XPCOMUtils.defineLazyGetter(Instances, name, function() ctor(cls, iface, init));
-			XPCOMUtils.defineLazyGetter(Instances, "Plain" + name, function() ctor(cls, iface));
+			XPCOMUtils.defineLazyGetter(Instances, name, function() {
+				return ctor(cls, iface, init);
+			});
+			XPCOMUtils.defineLazyGetter(Instances, "Plain" + name, function() {
+				return ctor(cls, iface);
+			});
 		}
 		else {
-			XPCOMUtils.defineLazyGetter(Instances, name, function() ctor(cls, iface));
-			XPCOMUtils.defineLazyGetter(Instances, name.toLowerCase(), function() new this[name]());
+			XPCOMUtils.defineLazyGetter(Instances, name, function() {
+				return ctor(cls, iface);
+			});
+			XPCOMUtils.defineLazyGetter(Instances, name.toLowerCase(), function() {
+				return new this[name]();
+			});
 		}
 	}
 	Services.oldio = {
@@ -296,7 +304,7 @@ LRUMap.prototype = Object.freeze({
 		_unloaders.push(fn);
 		return function() {
 			_runUnloader(fn, arguments);
-			_unloaders = _unloaders.filter(function(c) c != fn);
+			_unloaders = _unloaders.filter(c => c != fn);
 		};
 	};
 
