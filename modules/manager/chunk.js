@@ -245,6 +245,7 @@ Chunk.prototype = {
 			return;
 		}
 		this._inited = true;
+		this.errored = false;
 
 		this._sessionBytes = 0;
 		this._canceled = false;
@@ -267,6 +268,7 @@ Chunk.prototype = {
 		const file = this.parent.tmpFile;
 		let pos = this.start + this.safeBytes;
 		log(LOG_DEBUG, "opening " + file.path + " at: " + pos);
+		this.errored = false;
 		return this._openPromise = Task.spawn(function*() {
 			try {
 				yield makeDir(file.parent, Prefs.dirPermissions);
@@ -319,6 +321,10 @@ Chunk.prototype = {
 		buffer.unlink();
 		this._buffered += length;
 		++this._pendingWrites;
+		if (this.errored) {
+			log(LOG_DEBUG, "Not shipping buffer, we're errored");
+			return;
+		}
 		Task.spawn(function* _shipBufferTask() {
 			try {
 				yield shipStream(stream, (yield this._open()), false);
@@ -331,10 +337,11 @@ Chunk.prototype = {
 			}
 			catch (ex) {
 				try {
+					this.errored = true;
 					this._buffered -= length;
 					--this._pendingWrites;
 					log(LOG_ERROR, "Failed to write", ex);
-					this.download.writeFailed();
+					this.download.writeFailed(ex);
 				}
 				catch (ex2) {
 					log(LOG_ERROR, "aggregate failure", ex2);

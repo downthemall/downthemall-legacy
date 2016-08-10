@@ -2267,49 +2267,6 @@ QueueItem.prototype = {
 	resolveConflicts: function() {
 		return ConflictManager.resolve(this);
 	},
-	checkSpace: function(required) {
-		// Do not check for small files < 16M
-		if (required <= (1<<24)) {
-			return true;
-		}
-		try {
-			let tmp = Prefs.tempLocation, vtmp = 0;
-			if (tmp) {
-				vtmp = Utils.validateDir(tmp);
-				if (!vtmp && Utils.getFreeDisk(vtmp) < required) {
-					this.fail(_("freespace.title"), _("freespace.temp"), _("freespace"));
-					return false;
-				}
-			}
-			let realDest = Utils.validateDir(this.destinationPath);
-			if (!realDest) {
-				throw new Error("invalid destination folder");
-			}
-			let nsd = Utils.getFreeDisk(realDest);
-			// Same save path or same disk (we assume that tmp.avail ==
-			// dst.avail means same disk)
-			// simply moving should succeed
-			if (this.compression && (!tmp || Utils.getFreeDisk(vtmp) === required)) {
-				// we cannot know how much space we will consume after
-				// decompressing.
-				// so we assume factor 1.0 for the compressed and factor 1.5 for
-				// the decompressed file.
-				required *= 2.5;
-			}
-			if (nsd < required) {
-				log(LOG_DEBUG, "nsd: " +  nsd + ", tsd: " + required);
-				this.fail(_("freespace.title"), _("freespace.dir"), _("freespace"));
-				return false;
-			}
-			return true;
-		}
-		catch (ex) {
-			log(LOG_ERROR, "size check threw", ex);
-			this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
-		}
-		return false;
-	},
-
 	fail: function(title, msg, state) {
 		log(LOG_INFO, "failDownload invoked");
 

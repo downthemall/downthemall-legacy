@@ -110,10 +110,12 @@ var Utils = {
 	 *
 	 * @param predefined
 	 *          The starting path to display when dialog opens up
-	 * @param text The description text to be displayed
-	 * @param cb Callback to asynchronously called. The cb is called with a string
-	 *           containing the user-selected path - or false if user cancels the
-	 *           dialog - as the sole argument
+	 * @param text
+	 *          The description text to be displayed
+	 * @param cb
+	 *          Callback to asynchronously called. The cb is called with a string
+	 *          containing the user-selected path - or false if user cancels the
+	 *          dialog - as the sole argument
 	 */
 	askForDir: function(predefined, text, cb) {
 		function processResponse(res) {
@@ -153,9 +155,9 @@ var Utils = {
 	 * Performs all the needed controls to see if the specified path is valid, is
 	 * creable and writable and his drive has some free disk space.
 	 *
-	 * @param path The path to test
-	 * @return a nsIFile to the specified path if it's valid, false if it
-	 *         wasn't
+	 * @param path
+	 *          The path to test
+	 * @return a nsIFile to the specified path if it's valid, false if it wasn't
 	 */
 	validateDir: function(path) {
 		let directory = null;
@@ -185,15 +187,10 @@ var Utils = {
 			if (pn) {
 				// from nsIFile
 				pn = pn.QueryInterface(Ci.nsIFile);
-				// we look for a directory that is writable and has some disk-space
+				// we look for a directory that is writable
 				if (pn.isDirectory() && pn.isReadable() && pn.isWritable()) {
-					try {
-						return pn.diskSpaceAvailable ? directory : false;
-					}
-					catch (ex) {
-						// Solaris compat: #889
-						return directory;
-					}
+					// Solaris compat: #889
+					return directory;
 				}
 			}
 		}
@@ -201,31 +198,6 @@ var Utils = {
 			log(LOG_ERROR, 'Checking permissions threw', ex);
 		}
 		return false;
-	},
-	/**
-	 * Gets the disk-space available for a nsIFile. Here, because
-	 * diskSpaceAvailable requires valid path and/or path to be a directory
-	 *
-	 * @param file
-	 *          Valid nsIFile
-	 * @return the disk-space available to the caller
-	 * @author Nils
-	 */
-	getFreeDisk: function(file) {
-		while (file) {
-			if (file.exists() && file.isDirectory()) {
-				try {
-					return file.diskSpaceAvailable;
-				}
-				catch (ex) {
-					// Solaris compat: #889
-					// As we cannot get a correct value simply return max int64_t
-					return 9223372036854775807;
-				}
-			}
-			file = file.parent;
-		}
-		return 0;
 	},
 	/**
 	 * Play a sound file (if prefs allow to do so)

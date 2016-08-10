@@ -472,13 +472,20 @@ Connection.prototype = {
 		}
 		catch (ex if (ex !== NS_ERROR_BINDING_ABORTED && ex.result !== NS_ERROR_BINDING_ABORTED)) {
 			log(LOG_ERROR, 'onDataAvailable', ex);
-			this.writeFailed();
+			this.writeFailed(ex);
 		}
 	},
 
-	writeFailed: function() {
-		log(LOG_DEBUG, "write failed invoked!");
+	writeFailed: function(ex) {
+		log(LOG_DEBUG, "write failed invoked!", ex);
 		let d = this.d;
+		if ((ex.result || ex) === Cr.NS_ERROR_FILE_NO_DEVICE_SPACE) {
+			d.pauseAndRetry();
+			d.status = _("freespace");
+			d.save();
+			this.cancel();
+			return;
+		}
 		d.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
 	},
 
@@ -1056,12 +1063,6 @@ Connection.prototype = {
 				if (ext && ext.match(/^meta(?:4|link)$/i)) {
 					d.isMetalink = true;
 					d.resumable = false;
-				}
-
-				// Checks for available disk space.
-				let tsd = d.totalSize;
-				if (tsd && !d.checkSpace(tsd)) {
-					return;
 				}
 
 				if (!d.totalSize) {
