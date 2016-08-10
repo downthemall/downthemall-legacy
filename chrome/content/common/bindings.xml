@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
-	 - License, v. 2.0. If a copy of the MPL was not distributed with this
-	 - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+	- License, v. 2.0. If a copy of the MPL was not distributed with this
+	- file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <!DOCTYPE bindings [
 	<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
 	%globalDTD;
@@ -438,7 +438,9 @@
 					mapFilterInSitu(
 						items,
 						this.scale,
-						function(e) !((e in this) || (this[e] = null)),
+						function(e) {
+							return !((e in this) || (this[e] = null))
+						},
 						{}
 						).sort(function(a,b) a - b);
 					let sep = document.createElement('menuseparator');
