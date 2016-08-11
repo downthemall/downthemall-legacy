@@ -1055,14 +1055,25 @@ var Dialog = {
 		}
 		download.forced = !!forced;
 		download.status = TextCache_STARTING;
-		if (download.state === FINISHING || (download.partialSize >= download.totalSize && download.totalSize)) {
-			// we might encounter renaming issues;
-			// but we cannot handle it because we don't know at which stage we crashed
-			download.setState(FINISHING);
-			download.partialSize = download.totalSize;
-			log(LOG_INFO, "Download seems to be complete; likely a left-over from a crash, finish it:" + download);
-			download.finishDownload();
-			return true;
+		if (download.partialSize) {
+			// only ever consider downloads complete where there was actual data retrieved
+			if (!download.totalSize || download.partialSize > download.totalSize) {
+				// only ever consider downloads to be complete which a saane ammount of data retrieved
+				// or where the totalSize is not known
+				if (download.state === FINISHING || download.totalSize) {
+					// So by now we got a download that
+					// 1. always as data
+					// 2. is set to FINISHING already
+					// 3. or has partialSize > totalSize (and a totalSize) indicating it is complete
+					download.setState(FINISHING);
+					if (download.totalSize) {
+						download.partialSize = download.totalSize;
+					}
+					log(LOG_INFO, "Download seems to be complete; likely a left-over from a crash, finish it:" + download);
+					download.finishDownload();
+					return true;
+				}
+			}
 		}
 		download.timeLastProgress = Utils.getTimestamp();
 		download.timeStart = Utils.getTimestamp();

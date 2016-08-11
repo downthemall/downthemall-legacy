@@ -879,6 +879,16 @@ Connection.prototype = {
 			return false;
 		}
 
+		if (code !== 206) {
+			if (visitor.contentLength > 0) {
+				d.totalSize = visitor.contentLength;
+			}
+			else {
+				d.totalSize = 0;
+			}
+			log(LOG_DEBUG, "set total size");
+		}
+
 		if (visitor.type) {
 			d.contentType = aChannel.contentType || visitor.type;
 		}
@@ -918,17 +928,6 @@ Connection.prototype = {
 			}
 			d.fileName = newName;
 		}
-
-		if (code !== 206) {
-			if (visitor.contentLength > 0) {
-				d.totalSize = visitor.contentLength;
-			}
-			else {
-				d.totalSize = 0;
-			}
-			log(LOG_DEBUG, "set total size");
-		}
-
 
 		this.extractMetaInfo(d, this._chan, null, visitor);
 		return false;
