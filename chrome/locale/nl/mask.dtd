@@ -1,0 +1,31 @@
+<!ENTITY mask.tags "Tags hernoemen">
+<!ENTITY mask.name "Bestandsnaam">
+<!ENTITY mask.ext "Extensie">
+<!ENTITY mask.url "Basis-URL">
+<!ENTITY mask.curl "Volledige URL">
+<!ENTITY mask.flatcurl "Platte volledige URL">
+<!ENTITY mask.batch "Batchnummer">
+<!ENTITY mask.inum "Itemnummer">
+<!ENTITY mask.hh "Uren">
+<!ENTITY mask.mm "Minuten">
+<!ENTITY mask.ss "Seconden">
+<!ENTITY mask.d "Dag">
+<!ENTITY mask.m "Maand">
+<!ENTITY mask.y "Jaar">
+<!ENTITY mask.subdirs "URL-submappen">
+<!ENTITY mask.flatsubdirs "Platte URL-submappen">
+<!ENTITY mask.linktext "Koppelingstekst">
+<!ENTITY mask.flatlinktext "Platte koppelingstekst">
+<!ENTITY mask.refername "Naam van verwijzer">
+<!ENTITY mask.referext "Extensie van verwijzer">
+<!ENTITY mask.refer "URL van verwijzer">
+<!ENTITY mask.crefer "Volledige verwijzer">
+<!ENTITY mask.flatcrefer "Platte volledige verwijzer">
+<!ENTITY mask.referdirs "Submappen van verwijzer">
+<!ENTITY mask.flatreferdirs "Platte submappen van verwijzer">
+<!ENTITY mask.qstring "Querystring">
+<!ENTITY mask.referqstring "Querystring van verwijzer">
+<!ENTITY mask.title "Met koppeling geassocieerde titel">
+<!ENTITY mask.flattitle2 "Platte met koppeling geassocieerde titel">
+<!ENTITY mask.tip "Klikken of slepen naar hernoemmasker">
+<!ENTITY mask.open.tip "Referentietabel voor hernoemen van markeringen">

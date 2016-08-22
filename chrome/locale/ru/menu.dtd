@@ -1,0 +1,25 @@
+<!ENTITY dta-tbinstall "Добавить кнопки в панель инструментов">
+<!ENTITY dta-pref.label "Настройки...">
+<!ENTITY dta-about2.label "О DownThemAll!">
+<!ENTITY dta-manager-button "Менеджер dTa!">
+<!ENTITY dta-manager-button.desc "Открывает окно Менеджера.">
+<!ENTITY dta-selector-button2.label "OneClick! выбор">
+<!ENTITY dta-selector-button.desc "Добавляются элементы щелчком левой кнопкой мыши на них.">
+<!ENTITY dta-tb-all.label "Все вкладки">
+<!ENTITY dta-tb-single.label "Текущая вкладка">
+<!ENTITY dta-selection2.label "Выбор DownThemAll!">
+<!ENTITY dta-selection-turbo2.label "Выбор OneClick">
+<!ENTITY dta-regular2.label "DownThemAll!">
+<!ENTITY dta-regular.desc "Открывает окно выбора DownThemAll! для текущей вкладки.">
+<!ENTITY dta-regular-turbo2.label "dTa! OneClick">
+<!ENTITY dta-regular-turbo.desc "Загрузить все элементы текущей страницы в соответствии с последними использованными настройками и фильтрами.">
+<!ENTITY dta-img-save2.label "Сохранить изображение с помощью DownThemAll!">
+<!ENTITY dta-img-save-turbo2.label "Сохранить изображение с помощью dTa! OneClick">
+<!ENTITY dta-video-save2.label "Сохранить видео с помощью DownThemAll!">
+<!ENTITY dta-video-save-turbo2.label "Сохранить видео с помощью dTa! OneClick">
+<!ENTITY dta-audio-save2.label "Сохранить аудио с помощью DownThemAll!">
+<!ENTITY dta-audio-save-turbo2.label "Сохранить аудио с помощью dTa! OneClick">
+<!ENTITY dta-link-save2.label "Сохранить ссылку с помощью DownThemAll!">
+<!ENTITY dta-link-save-turbo2.label "Сохранить ссылку с помощью dTa! OneClick">
+<!ENTITY dta-form-save2.label "Сохранить цель формы с помощью DownThemAll!">
+<!ENTITY dta-form-save-turbo2.label "Сохранить цель формы с помощью dTa! OneClick">

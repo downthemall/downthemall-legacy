@@ -46,7 +46,7 @@
 <!ENTITY privacypane.dropdowns.caption "Spustni meniji">
 <!ENTITY privacypane.dropdownresults2.label "Število vnosov, ki naj se ohranijo">
 <!ENTITY privacypane.logs.caption "Diagnostični zapisnik">
-<!ENTITY privacypane.enablelogs.label "Omogoči diagnostično beleženje">
+<!ENTITY privacypane.enablelogs.label "Omogoči diagnostično zapisovanje">
 <!ENTITY privacypane.notice.caption "Opozorilo">
 <!ENTITY privacypane.notice.desc "DownThemAll lahko vključi tudi vgrajeno funkcionalnost 'Počisti zasebne podatke' (če je na voljo).">
 <!ENTITY privacypane.privacynotice.label "Naše Opozorilo o zasebnosti">

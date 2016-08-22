@@ -1,0 +1,124 @@
+<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
+<!ENTITY windowstyle.3 "width:50em;height:46em;">
+<!ENTITY filterspane.label "Filters">
+<!ENTITY listhead1.label "Bijschriften">
+<!ENTITY listhead2.label "Extensies">
+<!ENTITY filter.label "Gefilterde extensies:">
+<!ENTITY useAs.label "Filter gebruiken als:">
+<!ENTITY filter.images.label "Afbeeldingenfilter">
+<!ENTITY filter.links.label "Koppelingenfilter">
+<!ENTITY add.label "Nieuw filter toevoegen">
+<!ENTITY dtacontext2.label "Voorkeuren">
+<!ENTITY buttonlabelextra2 "Standaardinstellingen terugzetten">
+<!ENTITY dtaPreferences.title "DownThemAll!-voorkeuren">
+<!ENTITY manager "dTa!-beheerder">
+<!ENTITY mainpane.label "Algemeen">
+<!ENTITY mainpane.defaults.caption "Standaardwaarden">
+<!ENTITY mainpane.defaults.desc "De downloadmap, het hernoemmasker en filters zoals gebruikt door OneClick! kunnen in het algemene DownThemAll!-selectievenster worden geconfigureerd.">
+<!ENTITY mainpane.nameclash.caption "Als er al een bestand met dezelfde naam bestaat:">
+<!ENTITY mainpane.rename.label "Hernoemen">
+<!ENTITY mainpane.overwrite.label "Overschrijven">
+<!ENTITY mainpane.skip.label "Overslaan">
+<!ENTITY mainpane.ask.label "Vragen">
+<!ENTITY mainpane.misc.caption "Diversen">
+<!ENTITY mainpane.sounderror2.label "Een geluid afspelen bij fouten">
+<!ENTITY mainpane.alert.caption "Als downloads zijn voltooid:">
+<!ENTITY mainpane.alert.label "Waarschuwen:">
+<!ENTITY mainpane.alertbox.label "Via waarschuwingsvensters">
+<!ENTITY mainpane.alertnotifications2.label "Via desktopnotificaties">
+<!ENTITY mainpane.alertnone.label "Niet waarschuwen">
+<!ENTITY mainpane.sounddone.label "Een geluid afspelen als alle downloads zijn voltooid">
+<!ENTITY mainpane.closedta.label "DownThemAll! sluiten als downloads zijn voltooid">
+<!ENTITY mainpane.settime.label "Bestandstijd instellen op tijd van laatste wijziging (server) of op tijd van in wachtrij plaatsen">
+<!ENTITY mainpane.rememberoneclick.label "dTa OneClick laten onthouden of het op alle tabbladen of het huidige tabblad van toepassing is">
+<!ENTITY mainpane.confirmremove2.label "Verwijdering van downloads bevestigen">
+<!ENTITY mainpane.textlinks.label "Tekstkoppelingen herkennen">
+<!ENTITY mainpane.listsniffedvideos.label "(Flash-)video’s opnemen en in lijst vermelden">
+<!ENTITY privacypane.label "Privacy">
+<!ENTITY privacypane.closing.caption "Als het venster Beheerder wordt gesloten:">
+<!ENTITY privacypane.removecompleted2.label "Voltooide downloads verwijderen">
+<!ENTITY privacypane.removecanceled2.label "Geannuleerde/mislukte downloads verwijderen">
+<!ENTITY privacypane.removeaborted2.label "Onvoltooide downloads verwijderen">
+<!ENTITY privacypane.deletefoldershistory.label "Mappenlijst legen">
+<!ENTITY privacypane.deletefiltershistory.label "Aanvullende filters legen">
+<!ENTITY privacypane.showlog.label "Logboek weergeven">
+<!ENTITY privacypane.reveallog.label "Bestand tonen">
+<!ENTITY privacypane.deletelog.label "Logboek verwijderen">
+<!ENTITY privacypane.dropdowns.caption "Vervolgkeuzemenu’s">
+<!ENTITY privacypane.dropdownresults2.label "Aantal te behouden vermeldingen">
+<!ENTITY privacypane.logs.caption "Diagnostisch logboek">
+<!ENTITY privacypane.enablelogs.label "Diagnostisch logboek inschakelen">
+<!ENTITY privacypane.notice.caption "Opmerking">
+<!ENTITY privacypane.notice.desc "DownThemAll! integreert ook met de ingebouwde functie Privégegevens wissen (wanneer beschikbaar).">
+<!ENTITY privacypane.privacynotice.label "Onze Privacyverklaring">
+<!ENTITY serverspane.label "Netwerk">
+<!ENTITY serverspane.downloads.caption "Downloads">
+<!ENTITY serverspane.concurrent2.label "Gelijktijdige downloads:">
+<!ENTITY serverspane.perserver2.label "Downloads per server:">
+<!ENTITY serverspane.url.label "Locatie of domein:">
+<!ENTITY serverspane.new.label "Nieuwe limiet">
+<!ENTITY serverspane.limits.label "Per-serverlimieten">
+<!ENTITY serverpane.limits.noitems "Geen per-serverlimieten opgegeven">
+<!ENTITY serverspane.connections.label "Verbindingen:">
+<!ENTITY serverspane.speed2.label "Snelheidslimiet:">
+<!ENTITY serverspane.segments.label "Segmenten:">
+<!ENTITY serverspane.unlimited "Onbeperkt">
+<!ENTITY serverspane.limited "Beperkt">
+<!ENTITY serverspane.autoretry2.caption "Automatische nieuwe pogingen">
+<!ENTITY serverspane.autoretry.interval.label "Opnieuw proberen om de">
+<!ENTITY serverspane.autoretry.max.label "Max. aantal pogingen">
+<!ENTITY serverspane.cancel.label "Annuleren">
+<!ENTITY serverspane.edit.label "Bewerken">
+<!ENTITY serverspane.remove.label "Verwijderen">
+<!ENTITY schedpane.label "Schema">
+<!ENTITY schedpane.enable.label "Schema inschakelen">
+<!ENTITY schedpane.start.label "Downloads alleen starten vanaf:">
+<!ENTITY schedpane.end.label "en laten eindigen om:">
+<!ENTITY schedpane.open.label "Beheerder automatisch openen">
+<!ENTITY advancedpane.label "Geavanceerd">
+<!ENTITY advancedpane.downloads.caption "Geavanceerd downloadbeheer">
+<!ENTITY advancedpane.miscellaneous.caption "Diversen">
+<!ENTITY advancedpane.files.caption "Bestanden">
+<!ENTITY advancedpane.chunks2.label "Aantal segmenten per download:">
+<!ENTITY advancedpane.chunksdisabled "Uitgeschakeld">
+<!ENTITY advancedpane.autosegments.label "Een nieuw segment starten nadat een vorig segment is voltooid">
+<!ENTITY advancedpane.timeout2.label "Time-out bij downloaden geven na">
+<!ENTITY advancedpane.seconds "seconden">
+<!ENTITY advancedpane.minute "minuut">
+<!ENTITY advancedpane.minutes "minuten">
+<!ENTITY advancedpane.hour "uur">
+<!ENTITY advancedpane.hours "uur">
+<!ENTITY advancedpane.tempfiles.caption "Tijdelijke bestanden">
+<!ENTITY advancedpane.usetemp.label "Downloadsegmenten opslaan in een tijdelijke map">
+<!ENTITY advancedpane.tempdir.label "Deze map gebruiken:">
+<!ENTITY advancedpane.permissions "Bestandsmachtigingen">
+<!ENTITY advancedpane.permissions.groupmay "Groepsleden mogen">
+<!ENTITY advancedpane.permissions.everybodymay "Alle anderen mogen">
+<!ENTITY advancedpane.permissions.read "Lezen">
+<!ENTITY advancedpane.permissions.write "Schrijven">
+<!ENTITY advancedpane.loadendfirst2.label "Laatste paar kilobytes als eerste laden">
+<!ENTITY advancedpane.scheduler.caption "Startvolgorde van downloads:">
+<!ENTITY advancedpane.scheduler.fast "Snel - volgens wachtrij">
+<!ENTITY advancedpane.scheduler.fair "Verdeeld+langzaam - gelijkmatig verdeeld">
+<!ENTITY advancedpane.scheduler.legacy "Geen beperkingen">
+<!ENTITY advancedpane.exposeinua.label "DownThemAll! in de useragent weergeven">
+<!ENTITY advancedpane.sparsefiles.caption "Sparse-bestanden">
+<!ENTITY advancedpane.sparsefiles.label "Sparse-bestanden gebruiken wanneer ondersteund">
+<!ENTITY advancedpane.sparsefiles.tooltip "Sparse-bestanden zijn bestanden die niet meteen op de harde schijf worden gereserveerd. Sparse-bestanden zouden snellere toewijzing vooraf kunnen opleveren, maar ook mindere schrijfprestaties en/of meer bestandsfragmentatie!">
+<!ENTITY uipane.label "Interface">
+<!ENTITY uipane.namesonly.label "Alleen bestandsnamen in venster Beheerder tonen">
+<!ENTITY uipane.integration.caption "Integratie">
+<!ENTITY uipane.downloadwin.label "DownThemAll! aan het venster ‘Bestand opslaan’ toevoegen">
+<!ENTITY uipane.context.caption "Contextmenu">
+<!ENTITY uipane.tools.caption "Menu Extra">
+<!ENTITY uipane.compact.label "Compact menu gebruiken">
+<!ENTITY uipane.hide.label "Dit menu verbergen">
+<!ENTITY uipane.showtooltip.label "Downloadtooltips tonen">
+<!ENTITY uipane.manager.caption "Venster Beheerder">
+<!ENTITY uipane.startminimized.label "Geminimaliseerd starten">
+<!ENTITY uipane.minimizetotray.label "Minimaliseren naar systeemvak">
+<!ENTITY uipane.getmintrayr.label "MinTrayR downloaden">
+<!ENTITY uipane.notification.label "Bij het toevoegen van downloads met OneClick, tonen:">
+<!ENTITY uipane.notification.nonotification.radio "Geen notificatie">
+<!ENTITY uipane.notification.doorhangernotification.radio "Deurhanger">
+<!ENTITY uipane.notification.desktopnotification.radio "Desktopnotificatie">
