@@ -955,7 +955,9 @@ var Tree = {
 					continue;
 				}
 				this._downloads.splice(d.position, 1);
-				this._box.rowCountChanged(d.position, -1);
+				if (d.filteredPosition >= 0) {
+					this._box.rowCountChanged(d.filteredPosition, -1);
+				}
 				last = Math.max(d.filteredPosition, last);
 				if (!d.isOf(RUNNING | PAUSED)) {
 					Dialog.wasRemoved(d);
