@@ -4,29 +4,29 @@
 	-moz-padding-end: 2px;
 	padding-top: 1px;
 	width: 9px;
-	list-style-image: url(chrome://global/skin/tree/twisty-open.png);
+	list-style-image: url("chrome://global/skin/tree/twisty.svg#open");
 }
 .closebox-title:hover .closebox-twisty {
-	list-style-image: url(chrome://global/skin/tree/twisty-open-hover.png);
+	list-style-image: url("chrome://global/skin/tree/twisty.svg#open-hover");
 }
 .closer[closed="true"] .closebox-title .closebox-twisty {
-	list-style-image: url(chrome://global/skin/tree/twisty-clsd.png);
+	list-style-image: url("chrome://global/skin/tree/twisty.svg#clsd");
 }
 .closer[closed="true"] .closebox-title:hover .closebox-twisty {
-	list-style-image: url(chrome://global/skin/tree/twisty-clsd-hover.png);
+	list-style-image: url("chrome://global/skin/tree/twisty.svg#clsd-hover");
 }
 
 *[chromedir="rtl"] .closebox-title .closebox-twisty {
-	list-style-image: url("chrome://global/skin/tree/twisty-open-rtl.png");
+	list-style-image: url("chrome://global/skin/tree/twisty.svg#open-rtl");
 }
 *[chromedir="rtl"] .closer[closed="true"] .closebox-title .closebox-twisty {
-	list-style-image: url("chrome://global/skin/tree/twisty-clsd-rtl.png");
+	list-style-image: url("chrome://global/skin/tree/twisty.svg#clsd-rtl");
 }
 *[chromedir="rtl"] .closer .closebox-title:hover .closebox-twisty {
-	list-style-image: url("chrome://global/skin/tree/twisty-open-hover-rtl.png");
+	list-style-image: url("chrome://global/skin/tree/twisty.svg#open-hover-rtl");
 }
 *[chromedir="rtl"] .closer[closed="true"] .closebox-title:hover .closebox-twisty {
-	list-style-image: url("chrome://global/skin/tree/twisty-clsd-hover-rtl.png");
+	list-style-image: url("chrome://global/skin/tree/twisty.svg#clsd-hover-rtl");
 }
 
 .downlinks {
