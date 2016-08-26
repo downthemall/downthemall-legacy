@@ -1,0 +1,19 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#actionsbox {
+	padding-left: 2px;
+	-moz-appearance: none;
+}
+
+#toolbox {
+	text-shadow: 0 0 .8em white, 0 0 .8em white, 0 1px 0 rgba(255,255,255,.4);
+	padding-left: 26px;
+	padding-bottom: 4px;
+}
+
+#footer {
+	text-shadow: 0pt 0pt 0.5em white, 0pt 0pt 0.5em white, 0pt 1px 0pt rgba(255, 255, 255, 0.4);
+}
+#footer:not(:-moz-window-inactive) {
+	background-color: rgba(255,255,255,.66);
+}

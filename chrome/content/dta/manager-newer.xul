@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<?xul-overlay href="chrome://dta/content/dta/manager/manager.xul"?>
+<?xml-stylesheet href="chrome://dta-platform/skin/manager-new.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://dta-platform/skin/manager-newer.css" type="text/css" ?>
+<!DOCTYPE dialog>
+
+<window id="DownThemAll" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"/>

@@ -74,64 +74,9 @@ window[sizemode="maximized"] #titlebar {
 	margin-bottom: -24px;
 }
 
-/* toolbar button styles */
-#tools > toolbarbutton {
-	-moz-appearance: none;
-	margin: 1px 3px;
-	padding: 1px 5px;
-	background: rgba(151,152,153,.05)
-		-moz-linear-gradient(rgba(251,252,253,.95), rgba(246,247,248,.47) 49%, rgba(231,232,233,.45) 51%, rgba(225,226,229,.3));
-	background-clip: padding-box;
-	border-radius: 6px;
-	border: 1px solid;
-	border-color: rgba(0,0,0,.12) rgba(0,0,0,.19) rgba(0,0,0,.38);
-	box-shadow: 0 0 0 1px rgba(255,255,255,.3) inset,
-		0 0 0 2px rgba(255,255,255,.1) inset;
-	color: black;
-	text-shadow: 0 0 2px white;
-}
-#tools > toolbarbutton:not([disabled="true"]):not([checked="true"]):not([open="true"]):not(:active):hover {
-	background-color: hsla(190,60%,70%,.5);
-	border-color: hsla(190,50%,65%,.8) hsla(190,50%,50%,.8) hsla(190,50%,40%,.8);
-	box-shadow: 0 0 0 1px rgba(255,255,255,.3) inset,
-		0 0 0 1.5px rgba(255,255,255,.1) inset,
-		0 0 3.5px hsl(190,90%,80%);
-	-moz-transition: background-color .4s ease-in,
-		border-color .3s ease-in,
-		box-shadow .3s ease-in;
-}
-#tools > toolbarbutton:not([disabled="true"]):hover:active {
-	background-color: transparent;
-	border-color: rgba(0,0,0,.65) rgba(0,0,0,.55) rgba(0,0,0,.5);
-	box-shadow: 0 0 6.5px rgba(0,0,0,.4) inset,
-		0 0 2px rgba(0,0,0,.4) inset,
-		0 1px 0 rgba(255,255,255,.4);
-	-moz-transition: background-color .2s ease-in,
-		border-color .3s ease-in,
-		box-shadow .3s ease-in;
-}
-
-toolbarbutton[disabled="true"] {
-	opacity: .6;
-}
-#prespacer {
-	width: 22px;
-	display: -moz-box;
-}
-#tools {
-	margin-bottom: 3px;
-}
 window[sizemode="maximized"] #tools {
 	padding-top: 6px;
 }
-#tools[mode="icons"] {
-	border-radius: 4.5px;
-}
-
-toolbarbutton > .toolbarbutton-icon {
-	-moz-margin-end: 0;
-}
-
 /* specialized toolbarbutton styles */
 
 /* special lwtheme rules */

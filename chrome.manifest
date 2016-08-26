@@ -29,7 +29,9 @@ locale dta zh-TW chrome/locale/zh-TW/
 content dta-platform	chrome/content/ platform
 skin	dta-platform	classic/1.0 chrome/skin/
 
-override chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager-aero.xul os=WINNT osversion>=6
+override chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager-aero.xul os=WINNT osversion=6
+override chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager-newer.xul os=WINNT osversion>6
+override chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager-aero.xul os=WINNT osversion=6.1
 override chrome://dta-platform/skin/common.css chrome://dta-platform/skin/common-aero.css os=WINNT osversion>=6
 override chrome://dta/skin/manager/netstatus.png chrome://dta-platform/skin/netstatus-aero.png os=WINNT osversion>=6
 
