@@ -3032,8 +3032,8 @@ var startDownloads = (function() {
 			-1
 		).start(function() {
 			QueueStore.endUpdate();
-			Tree.endUpdate();
 			Tree.invalidate();
+			Tree.endUpdate();
 			ct = null;
 			g = null;
 			if (scroll && Prefs.scrollToNew) {

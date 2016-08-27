@@ -45,27 +45,29 @@ treechildren::-moz-tree-image(iconic,${entry.toString()}) {
 }`;
 			this._toadd.push(rule);
 			if (!this._timer) {
-				this._timer = Timers.createOneshot(0, this._add, this);
+				this._timer = Timers.createOneshot(0, () => this.add(true));
 			}
 			this._entries.set(ext, entry);
 		}
 		return this._atoms.getAtom(entry);
 	},
-	_add: function() {
+	add: function(invalidate) {
 		this._timer = null;
 		if (!this._toadd.length) {
 			return;
 		}
+		let rule = `data:text/css,@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");\n${this._toadd.join("\n")}`;
+		this._toadd = [];
 		try {
-			let rule = `data:text/css,@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");\n${this._toadd.join("\n")}`;
 			log(LOG_DEBUG, "new sheet: " + rule);
 			this._windowUtils.loadSheetUsingURIString(rule, this._windowUtils.AGENT_SHEET);
-			this._tree.invalidate();
+			if (invalidate) {
+				this._tree.invalidate();
+			}
 		}
 		catch (ex) {
-			log(LOG_ERROR, ext + " sheet: " + rule, ex);
+			log(LOG_ERROR, "sheet: " + rule, ex);
 		}
-		this._toadd = [];
 	}
 });
 

@@ -1510,6 +1510,7 @@ var Tree = {
 	},
 	invalidate: function(d, cell) {
 		if (!d) {
+			FileExts.add();
 			this._box.invalidate();
 			this.refreshTools(this);
 			return;
