@@ -566,8 +566,7 @@
 				this.textbox.focus();
 
 				// looks a little nasty, but else we will immediately blur/focus :p
-				let tp = this;
-				setTimeoutOnlyFun(function() tp.textbox.addEventListener('blur', function() tp.commit(), false), 0);
+				setTimeoutOnlyFun(() => this.textbox.addEventListener('blur', () => this.commit(), false), 0);
 			]]></constructor>
 			<method name="commit">
 				<parameter name="forget"/>
