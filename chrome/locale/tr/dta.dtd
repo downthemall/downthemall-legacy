@@ -1,0 +1,26 @@
+<!ENTITY start.label "Başla!">
+<!ENTITY start.key "b">
+<!ENTITY queue.label "Duraklatılmış ekle">
+<!ENTITY queue.key "d">
+<!ENTITY options.label "Tercihler">
+<!ENTITY url.value "İndir">
+<!ENTITY url.placeholder "İndirme URI gir">
+<!ENTITY override.filename.value "Özel dosya adı">
+<!ENTITY override.filename.placeholder "Yeni dosya adı gir">
+<!ENTITY override.filename.tip "Yeni dosya adı gir ya da varsayılan dosya adı için boş bırak">
+<!ENTITY directory.caption "Dosya kaydedilen yer:">
+<!ENTITY directory.placeholder "Klasör gir ya da seç">
+<!ENTITY mirrors.value "Yansılar:">
+<!ENTITY referrer.value "Geliş sayfası:">
+<!ENTITY referrer.placeholder "Geliş URI gir">
+<!ENTITY referrer.tip "Geliş URI gir ya da gelişsiz göndermek için boş bırak">
+<!ENTITY description.value "Açıklama:">
+<!ENTITY checksum.value "Sağlama (Hash):">
+<!ENTITY browse.tooltip "Gözat...">
+<!ENTITY mirrormanager.tip "İndirme yansılarını yönet">
+<!ENTITY mask3.label "Maske">
+<!ENTITY mask.tip "Seçilen dosyalar kaydedilip bu maskeye göre yeniden adlandırılacak">
+<!ENTITY mask.once.label "Yalnızca bu kez maske kullan">
+<!ENTITY selectall.label "Tümünü Seç">
+<!ENTITY selectinv.label "Seçimi Tersine Çevir">
+<!ENTITY selectnone.label "Hiçbirini Seçme">

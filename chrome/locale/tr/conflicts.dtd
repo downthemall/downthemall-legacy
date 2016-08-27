@@ -1,0 +1,7 @@
+<!ENTITY window.title "Dosya Uyuşmazlığı!">
+<!ENTITY text.value "Bu ayarı hatırla:">
+<!ENTITY download.label "Yalnızca bu indirme için">
+<!ENTITY session.label "Yalnızca bu oturum için">
+<!ENTITY always.label "Bundan sonra">
+<!ENTITY overwrite.label "Varolan dosyanın üstüme yaz">
+<!ENTITY skip.label "Atla/İptal et">

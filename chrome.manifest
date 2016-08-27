@@ -22,6 +22,7 @@ locale dta pl chrome/locale/pl/
 locale dta pt-PT chrome/locale/pt-PT/
 locale dta ru chrome/locale/ru/
 locale dta sl-SI chrome/locale/sl-SI/
+locale dta tr chrome/locale/tr/
 locale dta zh-CN chrome/locale/zh-CN/
 locale dta zh-TW chrome/locale/zh-TW/
 
