@@ -1,0 +1,7 @@
+<!ENTITY window.title "文件冲突！">
+<!ENTITY text.value "记住该设置：">
+<!ENTITY download.label "仅本次下载">
+<!ENTITY session.label "仅本次会话">
+<!ENTITY always.label "从现在开始">
+<!ENTITY overwrite.label "覆盖已存在文件">
+<!ENTITY skip.label "跳过/取消">

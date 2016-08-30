@@ -1,0 +1,7 @@
+<!ENTITY window.title "Bestandsconflict!">
+<!ENTITY text.value "Deze instelling onthouden:">
+<!ENTITY download.label "Alleen voor deze download">
+<!ENTITY session.label "Alleen voor deze sessie">
+<!ENTITY always.label "Vanaf nu">
+<!ENTITY overwrite.label "Bestaand bestand overschrijven">
+<!ENTITY skip.label "Overslaan/annuleren">

@@ -1,0 +1,31 @@
+<!ENTITY mask.tags "Renomeando etiquetas">
+<!ENTITY mask.name "Nome do ficheiro">
+<!ENTITY mask.ext "Extensión">
+<!ENTITY mask.url "URL base">
+<!ENTITY mask.curl "URL completa">
+<!ENTITY mask.flatcurl "URL plana completa">
+<!ENTITY mask.batch "Número do lote">
+<!ENTITY mask.inum "Número do elemento">
+<!ENTITY mask.hh "Horas">
+<!ENTITY mask.mm "Minutos">
+<!ENTITY mask.ss "Segundos">
+<!ENTITY mask.d "Día">
+<!ENTITY mask.m "Mes">
+<!ENTITY mask.y "Ano">
+<!ENTITY mask.subdirs "URL dos subcartafoles">
+<!ENTITY mask.flatsubdirs "URL plana dos subcartafoles">
+<!ENTITY mask.linktext "Texto da ligazón">
+<!ENTITY mask.flatlinktext "Texto da ligazón">
+<!ENTITY mask.refername "Nome do referente">
+<!ENTITY mask.referext "Extensión do referente">
+<!ENTITY mask.refer "URL do referente">
+<!ENTITY mask.crefer "Referente completo">
+<!ENTITY mask.flatcrefer "Referente completo">
+<!ENTITY mask.referdirs "Subcartafoles do referente">
+<!ENTITY mask.flatreferdirs "Subcartafoles do referente">
+<!ENTITY mask.qstring "Cadea da consulta">
+<!ENTITY mask.referqstring "Cadea da consulta do referente">
+<!ENTITY mask.title "Título asociado coa ligazón">
+<!ENTITY mask.flattitle2 "Título asociado coa ligazón">
+<!ENTITY mask.tip "Prema ou arrastre cara á máscara de renomeado">
+<!ENTITY mask.open.tip "Táboa de referencia das etiquetas de renomeado">

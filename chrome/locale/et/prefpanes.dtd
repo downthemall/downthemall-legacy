@@ -1,0 +1,123 @@
+<!ENTITY windowstyle.3 "width:48em;height:44em;">
+<!ENTITY filterspane.label "Filtrid">
+<!ENTITY listhead1.label "Pealdis">
+<!ENTITY listhead2.label "Laiendused">
+<!ENTITY filter.label "Filtreeritud laiendused:">
+<!ENTITY useAs.label "Kasuta filtrit kui:">
+<!ENTITY filter.images.label "Piltide filter">
+<!ENTITY filter.links.label "Linkide filter">
+<!ENTITY add.label "Lisa uus filter">
+<!ENTITY dtacontext2.label "Eelistused">
+<!ENTITY buttonlabelextra2 "Taasta vaikimisi sätted">
+<!ENTITY dtaPreferences.title "DownThemAll! - Eelistused">
+<!ENTITY manager "dTa! Haldur">
+<!ENTITY mainpane.label "Üldised">
+<!ENTITY mainpane.defaults.caption "Vaikimisi sätted">
+<!ENTITY mainpane.defaults.desc "Allalaadimiste kausta, nimemuutmismaski ja OneClick!-i kasutatavaid filtreid saab muuta tavalises DownThemAll!-i dialoogiaknas.">
+<!ENTITY mainpane.nameclash.caption "Kui sama nimega fail on juba olemas:">
+<!ENTITY mainpane.rename.label "Muuda nime">
+<!ENTITY mainpane.overwrite.label "Kirjuta üle">
+<!ENTITY mainpane.skip.label "Jäta vahele">
+<!ENTITY mainpane.ask.label "Küsi">
+<!ENTITY mainpane.misc.caption "Muud">
+<!ENTITY mainpane.sounderror2.label "Vigade korral esita heli">
+<!ENTITY mainpane.alert.caption "Kui allalaadimised valmis saavad:">
+<!ENTITY mainpane.alert.label "Teavita mind:">
+<!ENTITY mainpane.alertbox.label "Teavituskaste kasutades">
+<!ENTITY mainpane.alertnotifications2.label "Töölauateavitusi kasutades">
+<!ENTITY mainpane.alertnone.label "Ära teavita mind">
+<!ENTITY mainpane.sounddone.label "Esita heli, kui kõik allalaadimised valmis saavad">
+<!ENTITY mainpane.closedta.label "Sulge DownThemAll, kui allalaadimised valmis saavad">
+<!ENTITY mainpane.settime.label "Määra faili ajaks viimatise muutmise aeg (server) või järjekorda panemise aeg">
+<!ENTITY mainpane.rememberoneclick.label "dTa OneClick jätab meelde, kas see käib kõikide kaartide või aktiivse kaardi kohta">
+<!ENTITY mainpane.confirmremove2.label "Küsi allalaadimiste eemaldamisel kinnitust">
+<!ENTITY mainpane.textlinks.label "Tuvasta tekstilinke">
+<!ENTITY mainpane.listsniffedvideos.label "Salvesta ja kanna loendisse (Flash) videod">
+<!ENTITY privacypane.label "Privaatsus">
+<!ENTITY privacypane.closing.caption "Halduri akna sulgemisel">
+<!ENTITY privacypane.removecompleted2.label "Eemalda valmis allalaadimised">
+<!ENTITY privacypane.removecanceled2.label "Eemalda tühistatud/ebaõnnestunud allalaadimised">
+<!ENTITY privacypane.removeaborted2.label "Eemalda lõpetamata allalaadimised">
+<!ENTITY privacypane.deletefoldershistory.label "Tühjenda kaustade loend">
+<!ENTITY privacypane.deletefiltershistory.label "Tühjenda lisafiltrid">
+<!ENTITY privacypane.showlog.label "Näita logi">
+<!ENTITY privacypane.reveallog.label "Näita faili">
+<!ENTITY privacypane.deletelog.label "Kustuta logi">
+<!ENTITY privacypane.dropdowns.caption "Rippmenüüd">
+<!ENTITY privacypane.dropdownresults2.label "Meelde jäetavate kirjete arv">
+<!ENTITY privacypane.logs.caption "Diagnostiline logi">
+<!ENTITY privacypane.enablelogs.label "Luba diagnostiline logi">
+<!ENTITY privacypane.notice.caption "Teavitus">
+<!ENTITY privacypane.notice.desc "DownThemAll integreerub ka sisseehitatud ajaloo kustutamise aknaga (kui saadaval).">
+<!ENTITY privacypane.privacynotice.label "Meie privaatsusavaldus">
+<!ENTITY serverspane.label "Võrk">
+<!ENTITY serverspane.downloads.caption "Allalaadimised">
+<!ENTITY serverspane.concurrent2.label "Samaaegseid allalaadimisi:">
+<!ENTITY serverspane.perserver2.label "Allalaadimise serveri kohta:">
+<!ENTITY serverspane.url.label "Asukoht või domeen:">
+<!ENTITY serverspane.new.label "Uus piirang">
+<!ENTITY serverspane.limits.label "Serveripõhised piirangud">
+<!ENTITY serverpane.limits.noitems "Ühtki serveripõhist piirangut pole määratud">
+<!ENTITY serverspane.connections.label "Ühendusi:">
+<!ENTITY serverspane.speed2.label "Kiiruspiirang:">
+<!ENTITY serverspane.segments.label "Tükke:">
+<!ENTITY serverspane.unlimited "Piiramata">
+<!ENTITY serverspane.limited "Piiratud">
+<!ENTITY serverspane.autoretry2.caption "Automaatsed uuestiproovimised">
+<!ENTITY serverspane.autoretry.interval.label "Uuestiproovimiste ajavahe">
+<!ENTITY serverspane.autoretry.max.label "Uuestiproovimiste suurim arv">
+<!ENTITY serverspane.cancel.label "Loobu">
+<!ENTITY serverspane.edit.label "Muuda">
+<!ENTITY serverspane.remove.label "Eemalda">
+<!ENTITY schedpane.label "Ajakava">
+<!ENTITY schedpane.enable.label "Luba ajakava">
+<!ENTITY schedpane.start.label "Allalaadimiste käivitamise lubamise algusaeg:">
+<!ENTITY schedpane.end.label "ja lõppaeg:">
+<!ENTITY schedpane.open.label "Automaatselt ava haldur">
+<!ENTITY advancedpane.label "Täpsemad">
+<!ENTITY advancedpane.downloads.caption "Täpne allalaadimiste kontrollimine">
+<!ENTITY advancedpane.miscellaneous.caption "Muud">
+<!ENTITY advancedpane.files.caption "Failid">
+<!ENTITY advancedpane.chunks2.label "Tükke allalaadimise kohta:">
+<!ENTITY advancedpane.chunksdisabled "Keelatud">
+<!ENTITY advancedpane.autosegments.label "Alusta uut tükki, kui eelmine tükk valmis saab">
+<!ENTITY advancedpane.timeout2.label "Allalaadimise aegumise aeg">
+<!ENTITY advancedpane.seconds "sekundit">
+<!ENTITY advancedpane.minute "minut">
+<!ENTITY advancedpane.minutes "minutit">
+<!ENTITY advancedpane.hour "tund">
+<!ENTITY advancedpane.hours "tundi">
+<!ENTITY advancedpane.tempfiles.caption "Ajutised failid">
+<!ENTITY advancedpane.usetemp.label "Salvesta allalaadimiste tükid ajutisse kausta">
+<!ENTITY advancedpane.tempdir.label "Kasuta seda kausta:">
+<!ENTITY advancedpane.permissions "Failiõigused">
+<!ENTITY advancedpane.permissions.groupmay "Grupiliikmed saavad">
+<!ENTITY advancedpane.permissions.everybodymay "Kõik teised saavad">
+<!ENTITY advancedpane.permissions.read "Lugeda">
+<!ENTITY advancedpane.permissions.write "Kirjutada">
+<!ENTITY advancedpane.loadendfirst2.label "Laadi viimased mõned kilobaidid esimesena">
+<!ENTITY advancedpane.scheduler.caption "Allalaadimiste alustamisjärjekord:">
+<!ENTITY advancedpane.scheduler.fast "Kiire - Nagu järjekorras">
+<!ENTITY advancedpane.scheduler.fair "Mõõdukas+Aeglane - Võrdselt jaotatud">
+<!ENTITY advancedpane.scheduler.legacy "Pärand - piiranguteta">
+<!ENTITY advancedpane.exposeinua.label "Paljasta DownThemAll! kasutajaagendis">
+<!ENTITY advancedpane.sparsefiles.caption "Hajusfailid">
+<!ENTITY advancedpane.sparsefiles.label "Kasuta hajusfaile, kui toetatakse">
+<!ENTITY advancedpane.sparsefiles.tooltip "Hajusfailid on failid, mida kõvakettal koheselt ei reserveerita. Hajusfailid võivad põhjustada kiiremat etteeraldust, kuid ka vähenenud kirjutamisjõudlust ja/või suuremat failide killustatust kettal!">
+<!ENTITY uipane.label "Liides">
+<!ENTITY uipane.namesonly.label "Halduri aknas näita ainult failinimesid">
+<!ENTITY uipane.integration.caption "Integreerimine">
+<!ENTITY uipane.downloadwin.label "Lisa DownThemAll! 'Faili salvestamise' aknasse">
+<!ENTITY uipane.context.caption "Kontekstimenüü">
+<!ENTITY uipane.tools.caption "Tööriistade menüü">
+<!ENTITY uipane.compact.label "Kasuta kompaktset menüüd">
+<!ENTITY uipane.hide.label "Peida see menüü">
+<!ENTITY uipane.showtooltip.label "Näita allalaadimiste kohtspikreid">
+<!ENTITY uipane.manager.caption "Halduri aken">
+<!ENTITY uipane.startminimized.label "Käivita minimeerituna">
+<!ENTITY uipane.minimizetotray.label "Minimeeri süsteemisalve">
+<!ENTITY uipane.getmintrayr.label "Tõmba MinTrayR">
+<!ENTITY uipane.notification.label "OneClickiga allalaadimisi lisades näidatava teavituse stiil:">
+<!ENTITY uipane.notification.nonotification.radio "Teavitust ei näidata">
+<!ENTITY uipane.notification.doorhangernotification.radio "Uksesilt">
+<!ENTITY uipane.notification.desktopnotification.radio "Töölauateavitus">

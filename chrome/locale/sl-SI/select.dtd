@@ -1,0 +1,16 @@
+<!ENTITY title "DownThemAll! - Opravite svoj izbor">
+<!ENTITY filters.caption "Filtri">
+<!ENTITY additional.caption "Hitro filtriranje">
+<!ENTITY additional.tip "Besedilni filter: naenkrat lahko nastavite več besedilnih filtrov z uporabo vejic med njimi.">
+<!ENTITY filter.tip "Vnesite svoje besedilne filtre! (nekaj primerov v spustnem meniju)">
+<!ENTITY menu.check.label "Označi izbrane elemente">
+<!ENTITY menu.uncheck.label "Odznači izbrane elemente">
+<!ENTITY menu.toggle.label "Vključi/Izključi oznako izbranim elementom">
+<!ENTITY menu.copylinks2.label "Kopiraj povezave">
+<!ENTITY tab.links.label "Povezave">
+<!ENTITY tab.media.label "Slike in predstavnost">
+<!ENTITY header.desc.label "Opis">
+<!ENTITY selectfiltered.label "Izberite filtrirane">
+<!ENTITY disableother.label "Onemogoči druge filtre">
+<!ENTITY disableother.tooltip "Onemogoči druge filtre in uporabi le hitro filtriranje (ta nastavitev se trenutno ne shrani).">
+<!ENTITY resname.value "Ime vira">

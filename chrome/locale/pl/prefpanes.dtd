@@ -1,0 +1,124 @@
+<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
+<!ENTITY windowstyle.3 "width:55em;height:42em;">
+<!ENTITY filterspane.label "Filtry">
+<!ENTITY listhead1.label "Opis">
+<!ENTITY listhead2.label "Rozszerzenia">
+<!ENTITY filter.label "Filtrowane rozszerzenia:">
+<!ENTITY useAs.label "Użyj tej reguły jako:">
+<!ENTITY filter.images.label "filtr obrazków">
+<!ENTITY filter.links.label "filtr odnośników">
+<!ENTITY add.label "Dodaj nowy filtr">
+<!ENTITY dtacontext2.label "Ustawienia">
+<!ENTITY buttonlabelextra2 "Przywróć ustawienia domyślne">
+<!ENTITY dtaPreferences.title "DownThemAll! - ustawienia">
+<!ENTITY manager "Menedżer pobrań">
+<!ENTITY mainpane.label "Główne">
+<!ENTITY mainpane.defaults.caption "Domyślne">
+<!ENTITY mainpane.defaults.desc "Katalog pobierania, maska zmiany nazwy i filtry używane przez OneClick! mogą być konfigurowane w normalnym oknie wyboru DownThemAll!">
+<!ENTITY mainpane.nameclash.caption "Jeżeli nazwa pliku już istnieje:">
+<!ENTITY mainpane.rename.label "zmień nazwę">
+<!ENTITY mainpane.overwrite.label "nadpisz">
+<!ENTITY mainpane.skip.label "pomiń">
+<!ENTITY mainpane.ask.label "pytaj co zrobić">
+<!ENTITY mainpane.misc.caption "Różne">
+<!ENTITY mainpane.sounderror2.label "Powiadamiaj dźwiękiem o wystąpieniu błędu">
+<!ENTITY mainpane.alert.caption "Gdy pobieranie jest zakończone:">
+<!ENTITY mainpane.alert.label "Powiadamiaj">
+<!ENTITY mainpane.alertbox.label "za pomocą wyskakującego okienka">
+<!ENTITY mainpane.alertnotifications2.label "za pomocą slajdu">
+<!ENTITY mainpane.alertnone.label "nie powiadamiaj">
+<!ENTITY mainpane.sounddone.label "Odtwarzaj dźwięk po zakończeniu pobierania">
+<!ENTITY mainpane.closedta.label "Zamykaj DownThemAll! po zakończeniu pobierania">
+<!ENTITY mainpane.settime.label "Ustaw ostatnio zmodyfikowany czas pliku na czas serwera lub czas kolejki">
+<!ENTITY mainpane.rememberoneclick.label "dTa OneClick! ma zapamiętać czy ma to zastosowanie do wszystkich kart, czy do aktywnej karty">
+<!ENTITY mainpane.confirmremove2.label "Użytkownik musi potwierdzać usunięcie pobrań">
+<!ENTITY mainpane.textlinks.label "Rozpoznaj odnośniki tekstowe">
+<!ENTITY mainpane.listsniffedvideos.label "Zapisz i wyświetl listę wideo (Flash)">
+<!ENTITY privacypane.label "Prywatność">
+<!ENTITY privacypane.closing.caption "Gdy okno menedżera jest zamykane:">
+<!ENTITY privacypane.removecompleted2.label "usuwaj z listy pobrania zakończone">
+<!ENTITY privacypane.removecanceled2.label "usuwaj z listy pobrania błędne i anulowane">
+<!ENTITY privacypane.removeaborted2.label "usuwaj z listy pobrania niedokończone">
+<!ENTITY privacypane.deletefoldershistory.label "Usuń historię katalogów">
+<!ENTITY privacypane.deletefiltershistory.label "Usuń historię dodatkowych filtrów">
+<!ENTITY privacypane.showlog.label "Otwórz dziennik zdarzeń">
+<!ENTITY privacypane.reveallog.label "Otwórz katalog z plikiem">
+<!ENTITY privacypane.deletelog.label "Usuń dziennik zdarzeń">
+<!ENTITY privacypane.dropdowns.caption "Menu rozwijane">
+<!ENTITY privacypane.dropdownresults2.label "Liczba przetrzymywanych wpisów">
+<!ENTITY privacypane.logs.caption "Diagnostyczny dziennik zdarzeń">
+<!ENTITY privacypane.enablelogs.label "Włącz zapis zdarzeń">
+<!ENTITY privacypane.notice.caption "Uwaga">
+<!ENTITY privacypane.notice.desc "DownThemAll! integruje się – jeśli jest to możliwe – z wbudowaną funkcją czyszczenia prywatnych danych.">
+<!ENTITY privacypane.privacynotice.label "Nasze zasady ochrony prywatności">
+<!ENTITY serverspane.label "Sieć">
+<!ENTITY serverspane.downloads.caption "Pobrania">
+<!ENTITY serverspane.concurrent2.label "Pobrania równoległe:">
+<!ENTITY serverspane.perserver2.label "Pobrania na serwer:">
+<!ENTITY serverspane.url.label "Lokalizacja lub domena:">
+<!ENTITY serverspane.new.label "Nowy limit">
+<!ENTITY serverspane.limits.label "Limity na serwer">
+<!ENTITY serverpane.limits.noitems "Nie określono limitów na serwer">
+<!ENTITY serverspane.connections.label "Połączenia:">
+<!ENTITY serverspane.speed2.label "Limit prędkości:">
+<!ENTITY serverspane.segments.label "Segmenty:">
+<!ENTITY serverspane.unlimited "bez limitu">
+<!ENTITY serverspane.limited "limitowana">
+<!ENTITY serverspane.autoretry2.caption "Automatyczne wznawianie">
+<!ENTITY serverspane.autoretry.interval.label "Wznawiaj co każde">
+<!ENTITY serverspane.autoretry.max.label "Maksymalna liczba wznowień">
+<!ENTITY serverspane.cancel.label "Anuluj">
+<!ENTITY serverspane.edit.label "Edytuj">
+<!ENTITY serverspane.remove.label "Usuń">
+<!ENTITY schedpane.label "Harmonogram">
+<!ENTITY schedpane.enable.label "Włącz harmonogram">
+<!ENTITY schedpane.start.label "Uruchamiaj pobieranie o:">
+<!ENTITY schedpane.end.label "i zakończ o:">
+<!ENTITY schedpane.open.label "Automatycznie otwieraj menedżera">
+<!ENTITY advancedpane.label "Zaawansowane">
+<!ENTITY advancedpane.downloads.caption "Zaawansowana kontrola pobierania">
+<!ENTITY advancedpane.miscellaneous.caption "Różne ustawienia">
+<!ENTITY advancedpane.files.caption "Pliki">
+<!ENTITY advancedpane.chunks2.label "Maksymalna liczba części na jedno pobranie">
+<!ENTITY advancedpane.chunksdisabled "(wyłączone)">
+<!ENTITY advancedpane.autosegments.label "Uruchamiaj kolejny segment po zakończeniu poprzedniego">
+<!ENTITY advancedpane.timeout2.label "Dopuszczalny czas bezczynności">
+<!ENTITY advancedpane.seconds "s">
+<!ENTITY advancedpane.minute "min">
+<!ENTITY advancedpane.minutes "min">
+<!ENTITY advancedpane.hour "godz.">
+<!ENTITY advancedpane.hours "godz.">
+<!ENTITY advancedpane.tempfiles.caption "Pliki tymczasowe">
+<!ENTITY advancedpane.usetemp.label "Zapisuj pobrane części w katalogu tymczasowym">
+<!ENTITY advancedpane.tempdir.label "Zapisuj w katalogu:">
+<!ENTITY advancedpane.permissions "Uprawnienia pliku">
+<!ENTITY advancedpane.permissions.groupmay "Grupa">
+<!ENTITY advancedpane.permissions.everybodymay "Wszyscy">
+<!ENTITY advancedpane.permissions.read "Odczyt">
+<!ENTITY advancedpane.permissions.write "Zapis">
+<!ENTITY advancedpane.loadendfirst2.label "Wczytuj jako pierwsze kilka ostatnich kilobajtów">
+<!ENTITY advancedpane.scheduler.caption "Kolejność rozpoczynania pobierania:">
+<!ENTITY advancedpane.scheduler.fast "Szybko – jak w kolejce">
+<!ENTITY advancedpane.scheduler.fair "Średnio+wolno – równomiernie rozłożone">
+<!ENTITY advancedpane.scheduler.legacy "Pozostałe – bez limitów">
+<!ENTITY advancedpane.exposeinua.label "Pokazuj DownThemAll! w identyfikatorze przeglądarki">
+<!ENTITY advancedpane.sparsefiles.caption "Rozrzedzone pliki">
+<!ENTITY advancedpane.sparsefiles.label "Użyj rozrzedzonych plików, jeśli są obsługiwane">
+<!ENTITY advancedpane.sparsefiles.tooltip "Rozrzedzony plik to typ pliku komputerowego, próbujący wykorzystać bardziej efektywnie przestrzenie systemu plików. Rozrzedzone pliki mogą przyspieszać alokację, ale także obniżać wydajność zapisu i zwiększać fragmentację!">
+<!ENTITY uipane.label "Interfejs">
+<!ENTITY uipane.namesonly.label "W oknie menedżera pobrań wyświetlaj tylko nazwy plików">
+<!ENTITY uipane.integration.caption "Integracja">
+<!ENTITY uipane.downloadwin.label "Dodaj element „DownThemAll!” do standardowego okna pobierania pliku">
+<!ENTITY uipane.context.caption "Wyświetlaj w menu kontekstowym elementy:">
+<!ENTITY uipane.tools.caption "Wyświetlaj w menu „Narzędzia” elementy:">
+<!ENTITY uipane.compact.label "Zastosuj menu rozwijane">
+<!ENTITY uipane.hide.label "Nie wyświetlaj tych elementów">
+<!ENTITY uipane.showtooltip.label "Wyświetlaj informacje o pobieraniu w podpowiedzi">
+<!ENTITY uipane.manager.caption "Okno menedżera">
+<!ENTITY uipane.startminimized.label "Uruchamiaj zminimalizowane">
+<!ENTITY uipane.minimizetotray.label "Minimalizuj do obszaru powiadomień">
+<!ENTITY uipane.getmintrayr.label "Zainstaluj MinTrayR">
+<!ENTITY uipane.notification.label "Gdy jest dodawane pobieranie za pomocą OneClick:">
+<!ENTITY uipane.notification.nonotification.radio "nie wyświetlaj powiadomień">
+<!ENTITY uipane.notification.doorhangernotification.radio "wyświetlaj panel">
+<!ENTITY uipane.notification.desktopnotification.radio "wyświetlaj slajd">

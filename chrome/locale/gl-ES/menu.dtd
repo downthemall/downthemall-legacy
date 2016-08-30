@@ -1,0 +1,25 @@
+<!ENTITY dta-tbinstall "Engadir botóns á barra de ferramentas">
+<!ENTITY dta-pref.label "Preferencias">
+<!ENTITY dta-about2.label "Sobre DownThemAll!">
+<!ENTITY dta-manager-button "Xestor">
+<!ENTITY dta-manager-button.desc "Abrir a xanela do xestor.">
+<!ENTITY dta-selector-button2.label "Selector OneClick!">
+<!ENTITY dta-selector-button.desc "Engadir elementos premendo neles.">
+<!ENTITY dta-tb-all.label "Todos as lapelas">
+<!ENTITY dta-tb-single.label "Lapela actual">
+<!ENTITY dta-selection2.label "Selección de DownThemAll!">
+<!ENTITY dta-selection-turbo2.label "Selección de OneClick">
+<!ENTITY dta-regular2.label "DownThemAll!">
+<!ENTITY dta-regular.desc "Abre a xanela de selección de DownThemAll! para a lapela actual.">
+<!ENTITY dta-regular-turbo2.label "dTa! OneClick">
+<!ENTITY dta-regular-turbo.desc "Descarga todos os elementos da páxina actual segundo as últimas preferencias e filtros usados.">
+<!ENTITY dta-img-save2.label "Gardar imaxe con DownThemAll!">
+<!ENTITY dta-img-save-turbo2.label "Gardar imaxe con dTa! OneClick">
+<!ENTITY dta-video-save2.label "Gardar vídeo con DownThemAll!">
+<!ENTITY dta-video-save-turbo2.label "Gardar vídeo con dTa! OneClick">
+<!ENTITY dta-audio-save2.label "Gardar son con DownThemAll!">
+<!ENTITY dta-audio-save-turbo2.label "Gardar son con dTa! OneClick">
+<!ENTITY dta-link-save2.label "Gardar ligazón con DownThemAll!">
+<!ENTITY dta-link-save-turbo2.label "Gardar ligazón con dTa! OneClick">
+<!ENTITY dta-form-save2.label "Gardar formulario de destino con DownThemAll!">
+<!ENTITY dta-form-save-turbo2.label "Gardar formulario de destino con dTa!OneClick">

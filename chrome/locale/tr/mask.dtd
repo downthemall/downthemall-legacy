@@ -1,0 +1,31 @@
+<!ENTITY mask.tags "Yeniden Adlandırma Etiketleri">
+<!ENTITY mask.name "Dosya adı">
+<!ENTITY mask.ext "Uzantı">
+<!ENTITY mask.url "URL Tabanı">
+<!ENTITY mask.curl "Tüm URL">
+<!ENTITY mask.flatcurl "Tekil Tüm URL">
+<!ENTITY mask.batch "Toplu İndirme No">
+<!ENTITY mask.inum "Nesne sayısı">
+<!ENTITY mask.hh "Saat">
+<!ENTITY mask.mm "Dakika">
+<!ENTITY mask.ss "Saniye">
+<!ENTITY mask.d "Gün">
+<!ENTITY mask.m "Ay">
+<!ENTITY mask.y "Yıl">
+<!ENTITY mask.subdirs "URL altdizinleri">
+<!ENTITY mask.flatsubdirs "Tekil URL altdizinleri">
+<!ENTITY mask.linktext "Bağlantı metni">
+<!ENTITY mask.flatlinktext "Tekil bağlantı metni">
+<!ENTITY mask.refername "Gönderen adı">
+<!ENTITY mask.referext "Gönderen uzantısı">
+<!ENTITY mask.refer "Gönderen URL">
+<!ENTITY mask.crefer "Gönderenin tümü">
+<!ENTITY mask.flatcrefer "Tekil gönderenin tümü">
+<!ENTITY mask.referdirs "Gönderenin aldizinleri">
+<!ENTITY mask.flatreferdirs "Gönderenin tekil altdizinleri">
+<!ENTITY mask.qstring "Sorgu dizisi">
+<!ENTITY mask.referqstring "Gönderenin sorgu dizisi">
+<!ENTITY mask.title "Bağlantıyla ilişkilendirilmiş başlık">
+<!ENTITY mask.flattitle2 "Bağlantıyla ilişkilendirilmiş tekil başlık">
+<!ENTITY mask.tip "Yeniden adlandırma maskesine tıkla ya da sürükle">
+<!ENTITY mask.open.tip "Yeniden adlandırma etiketleri için başvuru çizelgesi">

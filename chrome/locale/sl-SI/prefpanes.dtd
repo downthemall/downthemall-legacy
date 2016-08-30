@@ -1,0 +1,123 @@
+<!ENTITY windowstyle.3 "width:48em;height:44em;">
+<!ENTITY filterspane.label "Filtri">
+<!ENTITY listhead1.label "Napis">
+<!ENTITY listhead2.label "Razširitve">
+<!ENTITY filter.label "Filtrirane razširitve:">
+<!ENTITY useAs.label "Uporabi kot:">
+<!ENTITY filter.images.label "Filter slik">
+<!ENTITY filter.links.label "Filter povezav">
+<!ENTITY add.label "Dodaj nov filter">
+<!ENTITY dtacontext2.label "Nastavitve">
+<!ENTITY buttonlabelextra2 "Obnovi privzete nastavitve">
+<!ENTITY dtaPreferences.title "Nastavitve za DownThemAll! ...">
+<!ENTITY manager "Upravitelj dTa!">
+<!ENTITY mainpane.label "Splošno">
+<!ENTITY mainpane.defaults.caption "Privzeto">
+<!ENTITY mainpane.defaults.desc "Mapo za prenos, masko za preimenovanje in filtre, ki jih uporablja OneClick!, lahko nastavite v običajnem pogovornem oknu za izbiro DownThemAll!">
+<!ENTITY mainpane.nameclash.caption "Ko datoteka z enakim imenom že obstaja:">
+<!ENTITY mainpane.rename.label "Preimenuj">
+<!ENTITY mainpane.overwrite.label "Prepiši">
+<!ENTITY mainpane.skip.label "Preskoči">
+<!ENTITY mainpane.ask.label "Vprašaj">
+<!ENTITY mainpane.misc.caption "Razno">
+<!ENTITY mainpane.sounderror2.label "Predvajaj zvok ob napakah">
+<!ENTITY mainpane.alert.caption "Ob zaključku prenosov:">
+<!ENTITY mainpane.alert.label "Opozori me:">
+<!ENTITY mainpane.alertbox.label "z uporabo opozorilnih oken">
+<!ENTITY mainpane.alertnotifications2.label "z uporabo namiznih obvestil">
+<!ENTITY mainpane.alertnone.label "Ne opozarjaj me">
+<!ENTITY mainpane.sounddone.label "Predvajaj zvočno datoteko, ko so vsi prenosi dokončani">
+<!ENTITY mainpane.closedta.label "Zapri DownThemAll, ko so prenosi dokončani">
+<!ENTITY mainpane.settime.label "Določite čas datoteke na čas zadnje spremembe (strežnik) ali čas postavitve v vrsto">
+<!ENTITY mainpane.rememberoneclick.label "dTa OneClick si naj zapomni, ali velja za vse zavihke ali za trenutni zavihek">
+<!ENTITY mainpane.confirmremove2.label "Potrdi odstranitev prenosov">
+<!ENTITY mainpane.textlinks.label "Prepoznaj besedilne povezave">
+<!ENTITY mainpane.listsniffedvideos.label "Snemaj in izpiši video (Flash)">
+<!ENTITY privacypane.label "Zasebnost">
+<!ENTITY privacypane.closing.caption "Ko je okno upravitelja zaprto">
+<!ENTITY privacypane.removecompleted2.label "Odstrani dokončane prenose">
+<!ENTITY privacypane.removecanceled2.label "Odstrani preklicane/spodletele prenose">
+<!ENTITY privacypane.removeaborted2.label "Odstrani nedokončane prenose">
+<!ENTITY privacypane.deletefoldershistory.label "Izbriši zgodovino map">
+<!ENTITY privacypane.deletefiltershistory.label "Izbriši zgodovino dodatnih filtrov">
+<!ENTITY privacypane.showlog.label "Pokaži zapisnik">
+<!ENTITY privacypane.reveallog.label "Pokaži datoteko">
+<!ENTITY privacypane.deletelog.label "Izbriši zapisnik">
+<!ENTITY privacypane.dropdowns.caption "Spustni meniji">
+<!ENTITY privacypane.dropdownresults2.label "Število vnosov, ki naj se ohranijo">
+<!ENTITY privacypane.logs.caption "Diagnostični zapisnik">
+<!ENTITY privacypane.enablelogs.label "Omogoči diagnostično zapisovanje">
+<!ENTITY privacypane.notice.caption "Opozorilo">
+<!ENTITY privacypane.notice.desc "DownThemAll lahko vključi tudi vgrajeno funkcionalnost 'Počisti zasebne podatke' (če je na voljo).">
+<!ENTITY privacypane.privacynotice.label "Naše Opozorilo o zasebnosti">
+<!ENTITY serverspane.label "Omrežje">
+<!ENTITY serverspane.downloads.caption "Prenosi">
+<!ENTITY serverspane.concurrent2.label "Trenutni prenosi:">
+<!ENTITY serverspane.perserver2.label "Prenosi na strežnik:">
+<!ENTITY serverspane.url.label "Mesto ali domena:">
+<!ENTITY serverspane.new.label "Nova omejitev">
+<!ENTITY serverspane.limits.label "Omejitve na strežnik">
+<!ENTITY serverpane.limits.noitems "Omejitve na strežnik niso navedene">
+<!ENTITY serverspane.connections.label "Povezave:">
+<!ENTITY serverspane.speed2.label "Omejitev hitrosti:">
+<!ENTITY serverspane.segments.label "Odseki:">
+<!ENTITY serverspane.unlimited "neomejena">
+<!ENTITY serverspane.limited "omejena">
+<!ENTITY serverspane.autoretry2.caption "Samodejni ponovni poskusi">
+<!ENTITY serverspane.autoretry.interval.label "Poskusi znova vsakih">
+<!ENTITY serverspane.autoretry.max.label "Največ ponovnih poskusov">
+<!ENTITY serverspane.cancel.label "Prekliči">
+<!ENTITY serverspane.edit.label "Uredi">
+<!ENTITY serverspane.remove.label "Odstrani">
+<!ENTITY schedpane.label "Urnik">
+<!ENTITY schedpane.enable.label "Omogoči urnik">
+<!ENTITY schedpane.start.label "Prenose začni samo med:">
+<!ENTITY schedpane.end.label "in končaj ob:">
+<!ENTITY schedpane.open.label "Samodejno odpri upravitelja">
+<!ENTITY advancedpane.label "Napredno">
+<!ENTITY advancedpane.downloads.caption "Napredni nadzor nad prenosi">
+<!ENTITY advancedpane.miscellaneous.caption "Razno">
+<!ENTITY advancedpane.files.caption "Datoteke">
+<!ENTITY advancedpane.chunks2.label "Št. odsekov na prenos:">
+<!ENTITY advancedpane.chunksdisabled "1 (onemogočeno)">
+<!ENTITY advancedpane.autosegments.label "Začni nov odsek, ko se prejšnji konča">
+<!ENTITY advancedpane.timeout2.label "Časovna omejitev prenosa">
+<!ENTITY advancedpane.seconds "sekund">
+<!ENTITY advancedpane.minute "minuta">
+<!ENTITY advancedpane.minutes "minut">
+<!ENTITY advancedpane.hour "ura">
+<!ENTITY advancedpane.hours "ur">
+<!ENTITY advancedpane.tempfiles.caption "Začasne datoteke">
+<!ENTITY advancedpane.usetemp.label "Shrani prenesene koščke v začasni mapi">
+<!ENTITY advancedpane.tempdir.label "Uporabi naslednjo mapo:">
+<!ENTITY advancedpane.permissions "Dovoljenja za datoteke">
+<!ENTITY advancedpane.permissions.groupmay "Člani skupine lahko">
+<!ENTITY advancedpane.permissions.everybodymay "Vsi drugi lahko">
+<!ENTITY advancedpane.permissions.read "berejo">
+<!ENTITY advancedpane.permissions.write "pišejo">
+<!ENTITY advancedpane.loadendfirst2.label "Najprej naloži zadnjih nekaj kilobajtov">
+<!ENTITY advancedpane.scheduler.caption "Zaporedje prenašanja:">
+<!ENTITY advancedpane.scheduler.fast "hitro - kot v vrsti">
+<!ENTITY advancedpane.scheduler.fair "pošteno in počasi - porazdeljeno">
+<!ENTITY advancedpane.scheduler.legacy "zastarelo - brez omejitev">
+<!ENTITY advancedpane.exposeinua.label "Razkrij DownThemAll! v uporabniškem agentu">
+<!ENTITY advancedpane.sparsefiles.caption "Redke datoteke">
+<!ENTITY advancedpane.sparsefiles.label "Uporabi redke datoteke, kadar so podprte">
+<!ENTITY advancedpane.sparsefiles.tooltip "Redke datoteke niso takoj rezervirane na trdem disku. Lahko povzročijo hitrejše vnaprejšnje dodeljevanje, vendar manj zmogljivosti pri pisanju in/ali več več razdrobljenosti!">
+<!ENTITY uipane.label "Uporabniški vmesnik">
+<!ENTITY uipane.namesonly.label "V oknu upravitelja pokaži le imena datotek">
+<!ENTITY uipane.integration.caption "Vključitev">
+<!ENTITY uipane.downloadwin.label "Dodaj DownThemAll! v okno 'Shrani datoteko'">
+<!ENTITY uipane.context.caption "Pojavni meni">
+<!ENTITY uipane.tools.caption "Meni Orodja">
+<!ENTITY uipane.compact.label "Uporabi strnjeni meni">
+<!ENTITY uipane.hide.label "Skrij ta meni">
+<!ENTITY uipane.showtooltip.label "Pokaži nasvete za prenos">
+<!ENTITY uipane.manager.caption "Okno upravljanja">
+<!ENTITY uipane.startminimized.label "Zaženi pomanjšano">
+<!ENTITY uipane.minimizetotray.label "Skrči v sistemsko vrstico">
+<!ENTITY uipane.getmintrayr.label "Dobi MinTrayR">
+<!ENTITY uipane.notification.label "Med dodajanjem prenosov z OneClickom prikaži:">
+<!ENTITY uipane.notification.nonotification.radio "brez obvestila">
+<!ENTITY uipane.notification.doorhangernotification.radio "obvestilo za kljuko">
+<!ENTITY uipane.notification.desktopnotification.radio "namizno obvestilo">

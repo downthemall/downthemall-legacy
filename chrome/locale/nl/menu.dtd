@@ -1,0 +1,26 @@
+<!-- LOCALIZATION NOTE : FILE Please do NOT translate DownThemAll! and OneClick -->
+<!ENTITY dta-tbinstall "Werkbalkknoppen toevoegen">
+<!ENTITY dta-pref.label "Voorkeuren">
+<!ENTITY dta-about2.label "Over DownThemAll!">
+<!ENTITY dta-manager-button "Beheerder">
+<!ENTITY dta-manager-button.desc "Opent het venster Beheerder.">
+<!ENTITY dta-selector-button2.label "OneClick!-kiezer">
+<!ENTITY dta-selector-button.desc "Voegt items toe door er met de linkermuisknop op te klikken.">
+<!ENTITY dta-tb-all.label "Alle tabbladen">
+<!ENTITY dta-tb-single.label "Huidige tabblad">
+<!ENTITY dta-selection2.label "DownThemAll!-selectie">
+<!ENTITY dta-selection-turbo2.label "OneClick-selectie">
+<!ENTITY dta-regular2.label "DownThemAll!">
+<!ENTITY dta-regular.desc "Opent het DownThemAll!-selectievenster voor het huidige tabblad.">
+<!ENTITY dta-regular-turbo2.label "dTa! OneClick">
+<!ENTITY dta-regular-turbo.desc "Downloadt alle items van de huidige pagina volgens de laatst gebruikte voorkeuren en filters.">
+<!ENTITY dta-img-save2.label "Afbeelding opslaan met DownThemAll!">
+<!ENTITY dta-img-save-turbo2.label "Afbeelding opslaan met dTa! OneClick">
+<!ENTITY dta-video-save2.label "Video opslaan met DownThemAll!">
+<!ENTITY dta-video-save-turbo2.label "Video opslaan met dTa! OneClick">
+<!ENTITY dta-audio-save2.label "Audio opslaan met DownThemAll!">
+<!ENTITY dta-audio-save-turbo2.label "Audio opslaan met dTa! OneClick">
+<!ENTITY dta-link-save2.label "Koppeling opslaan met DownThemAll!">
+<!ENTITY dta-link-save-turbo2.label "Koppeling opslaan met dTa! OneClick">
+<!ENTITY dta-form-save2.label "Formulierdoel opslaan met DownThemAll!">
+<!ENTITY dta-form-save-turbo2.label "Formulierdoel opslaan met dTa! OneClick">

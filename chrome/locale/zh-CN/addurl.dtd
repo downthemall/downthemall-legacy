@@ -1,0 +1,6 @@
+<!ENTITY windowtitle "添加下载">
+<!ENTITY adddescription.value "转入下载地址和引用页面(可选)。">
+<!ENTITY createbatchdescriptor.label "创建批量描述符">
+<!ENTITY createbatchdescriptor.tooltip "从当前选中文本创批量描述符">
+<!ENTITY desc.batches.value "您也可以使用批量描述符一次下载多个文件。">
+<!ENTITY examples.value "例如：">

@@ -1,0 +1,26 @@
+<!ENTITY start.label "Starten!">
+<!ENTITY start.key "S">
+<!ENTITY queue.label "Gepauzeerd toevoegen">
+<!ENTITY queue.key "G">
+<!ENTITY options.label "Voorkeuren">
+<!ENTITY url.value "Downloaden">
+<!ENTITY url.placeholder "Voer download-URI in">
+<!ENTITY override.filename.value "Eigen bestandsnaam">
+<!ENTITY override.filename.placeholder "Voer nieuwe bestandsnaam in">
+<!ENTITY override.filename.tip "Voer een nieuwe bestandsnaam in, of laat leeg voor standaardnaam">
+<!ENTITY directory.caption "Bestanden opslaan in:">
+<!ENTITY directory.placeholder "Selecteer of voer map in">
+<!ENTITY mirrors.value "Mirrors:">
+<!ENTITY referrer.value "Verwijzende pagina:">
+<!ENTITY referrer.placeholder "Voer verwijzende URI in">
+<!ENTITY referrer.tip "Voer een verwijzende URI in, of laat leeg om geen verwijzer te verzenden">
+<!ENTITY description.value "Beschrijving:">
+<!ENTITY checksum.value "Controlesom (Hash):">
+<!ENTITY browse.tooltip "Bladeren…">
+<!ENTITY mirrormanager.tip "Downloadmirrors beheren">
+<!ENTITY mask3.label "Masker">
+<!ENTITY mask.tip "Geselecteerde bestanden zullen met behulp van dit masker worden opgeslagen en hernoemd">
+<!ENTITY mask.once.label "Masker alleen deze keer gebruiken">
+<!ENTITY selectall.label "Alles selecteren">
+<!ENTITY selectinv.label "Selectie omkeren">
+<!ENTITY selectnone.label "Niets selecteren">

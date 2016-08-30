@@ -1,0 +1,16 @@
+<!ENTITY title "Seçiminizi yapın">
+<!ENTITY filters.caption "Süzgeçler">
+<!ENTITY additional.caption "Hızlı süzme">
+<!ENTITY additional.tip "Metinsel süzgeç: Virgül kullanarak çoklu metinsel süzgeçleri aynı anda girebilirsiniz.">
+<!ENTITY filter.tip "Metinsel süzgeçlerinizi buraya yazın! (kayan menüdeki bazı örneklere bakın)">
+<!ENTITY menu.check.label "Seçilenleri İşaretle">
+<!ENTITY menu.uncheck.label "Seçilenleri İşaretleme">
+<!ENTITY menu.toggle.label "Seçimi Tersine Çevir">
+<!ENTITY menu.copylinks2.label "Bağlantıları Kopyala">
+<!ENTITY tab.links.label "Bağlantılar">
+<!ENTITY tab.media.label "Görüntü ve Medya">
+<!ENTITY header.desc.label "Tanım">
+<!ENTITY selectfiltered.label "Süzülenleri Seç">
+<!ENTITY disableother.label "Diğer süzgeçleri etkinsizleştir">
+<!ENTITY disableother.tooltip "Diğer süzgeçleri etkinsizleştir ve yalnızca hızlı süzmeyi kullan. (Bu ayar bu noktada hatırlanmaz)">
+<!ENTITY resname.value "Kaynak Adı">

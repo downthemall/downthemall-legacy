@@ -1,0 +1,25 @@
+<!ENTITY dta-tbinstall "Lisa tööriistariba nuppe">
+<!ENTITY dta-pref.label "Eelistused">
+<!ENTITY dta-about2.label "DownThemAll!-i teave">
+<!ENTITY dta-manager-button "Haldur">
+<!ENTITY dta-manager-button.desc "Avab halduri akna.">
+<!ENTITY dta-selector-button2.label "OneClick! valija">
+<!ENTITY dta-selector-button.desc "Lisa üksuseid nendel vasak-klõpsates.">
+<!ENTITY dta-tb-all.label "Kõik kaardid">
+<!ENTITY dta-tb-single.label "Praegune kaart">
+<!ENTITY dta-selection2.label "DownThemAll! valik">
+<!ENTITY dta-selection-turbo2.label "OneClick valik">
+<!ENTITY dta-regular2.label "DownThemAll!">
+<!ENTITY dta-regular.desc "Avab DownThemAll! valiku akna praeguse kaardi jaoks.">
+<!ENTITY dta-regular-turbo2.label "dTa! OneClick">
+<!ENTITY dta-regular-turbo.desc "Laadib alla kõik üksused praeguselt lehelt, vastavalt viimati kasutatud eelistustele ja filtritele.">
+<!ENTITY dta-img-save2.label "Salvesta pilt DownThemAll!-iga">
+<!ENTITY dta-img-save-turbo2.label "Salvesta pilt dTa! OneClickiga">
+<!ENTITY dta-video-save2.label "Salvesta video DownThemAll!-iga">
+<!ENTITY dta-video-save-turbo2.label "Salvesta video dTa! OneClickiga">
+<!ENTITY dta-audio-save2.label "Salvesta helifail DownThemAll!-iga">
+<!ENTITY dta-audio-save-turbo2.label "Salvesta helifail dTa! OneClickiga">
+<!ENTITY dta-link-save2.label "Salvesta link DownThemAll!-iga">
+<!ENTITY dta-link-save-turbo2.label "Salvesta link dTa! OneClickiga">
+<!ENTITY dta-form-save2.label "Salvesta vormi sihtkoht DownThemAll!-iga">
+<!ENTITY dta-form-save-turbo2.label "Salvesta vormi sihtkoht dTa! OneClickiga">

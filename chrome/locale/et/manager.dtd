@@ -1,0 +1,67 @@
+<!ENTITY tooladddownload.label "Lisa allalaadimisi">
+<!ENTITY tooladd.tooltip "Käsitsi lisa allalaadimisi DownThemAlli">
+<!ENTITY tooldonate.tooltiptext "Sa saad meid aidata DownThemAlli veelgi paremaks teha. Kaalu väikese annetuse tegemist!">
+<!ENTITY movetop.label "Algusse">
+<!ENTITY movebottom.label "Lõppu">
+<!ENTITY moveup.label "Üles">
+<!ENTITY movedown.label "Alla">
+<!ENTITY search.placeholder "Otsi allalaadimisi">
+<!ENTITY download.label "Allalaadimine/Nimi">
+<!ENTITY domain.label "Domeen">
+<!ENTITY percent.label "Protsent">
+<!ENTITY pct.label "Edenemine">
+<!ENTITY dim.label "Suurus">
+<!ENTITY time2.label "Hinn. aeg">
+<!ENTITY parts.label "Tükke">
+<!ENTITY speed.label "Kiirus">
+<!ENTITY infoURLTitle.value "Allikas:">
+<!ENTITY infoSizeTitle.value "Suurus:">
+<!ENTITY infoDateTitle.value "Lisamise kuupäev:">
+<!ENTITY infoMultiple.value "Mitu üksust">
+<!ENTITY infoPrivate.value "Privaatne allalaadimine">
+<!ENTITY elapsedTitle.value "Kulunud:">
+<!ENTITY remainingTitle.value "Jäänud:">
+<!ENTITY currentSpeedTitle.value "Hetkekiirus:">
+<!ENTITY avgSpeedTitle.value "Keskmine kiirus:">
+<!ENTITY path.label "Salvestuskoht">
+<!ENTITY hash.label "Kontrollsumma">
+<!ENTITY infos.label "Allalaadimise info">
+<!ENTITY launch.label "Ava fail">
+<!ENTITY rename.label "Muuda failinime">
+<!ENTITY delete.label "Kustuta fail(id)">
+<!ENTITY targetdir.label "Ava kaust">
+<!ENTITY pause.label "Peata">
+<!ENTITY resume.label "Jätka">
+<!ENTITY cancel.label "Tühista">
+<!ENTITY removemenu.label "Eemalda allalaadimised">
+<!ENTITY removeselected.label "Eemalda valitud">
+<!ENTITY removehost.label "Eemalda domeeni allalaadimised">
+<!ENTITY removebatch.label "Eemalda praegune pakk">
+<!ENTITY removecompleted.label "Eemalda valmis allalaadimised">
+<!ENTITY removeAll.label "Eemalda kõik">
+<!ENTITY removeFailed.label "Eemalda ebaõnnestunud">
+<!ENTITY removePaused.label "Eemalda peatatud">
+<!ENTITY removeDupes.label "Eemalda koopiad">
+<!ENTITY removeGone.label "Eemalda kustutatud failid">
+<!ENTITY advanced.label "Täpsemad">
+<!ENTITY addchunk.label "Lisa tükk">
+<!ENTITY removechunk.label "Eemalda tükk">
+<!ENTITY force.label "Sunni alustama">
+<!ENTITY import.label "Impordi failist">
+<!ENTITY exportto.label "Ekspordi valik faili">
+<!ENTITY addlimits.label "Lisa domeenipõhiseid piiranguid">
+<!ENTITY options.caption "Sätted">
+<!ENTITY loading2.label "Laadimine…">
+<!ENTITY restore.label "Taasta">
+<!ENTITY close.label "Sulge">
+<!ENTITY invertmatcher.label "Pööra veeru filtrid">
+<!ENTITY clearmatcher.label "Puhasta veeru filtrid">
+<!ENTITY speedlimit2.tooltip "Muuda üleüldist kiiruspiirangut. Seda loendit värskendatakse dünaamiliselt.">
+<!ENTITY perdownloadspeedlimit2.label "Kiiruspiirang">
+<!ENTITY perdownloadspeedlimit2.tooltip "Muuda allalaadimise kiiruspiirangut. Üleüldisest kiiruspiirangust peetakse endiselt kinni.">
+<!ENTITY mirrors.label "Peeglite haldamine">
+<!ENTITY mirrors.tooltip "Halda allalaadimise peeglite asukohti">
+<!ENTITY toolbar.icons "Kasuta ikoone">
+<!ENTITY toolbar.full "Kasuta ikoone ja teksti">
+<!ENTITY sortascending.label "Järjesta A &gt; Z">
+<!ENTITY sortdescending.label "Järjesta Z &gt; A">

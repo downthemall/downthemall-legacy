@@ -1,0 +1,6 @@
+<!ENTITY windowtitle "Downloads toevoegen">
+<!ENTITY adddescription.value "Voer de download-URL en (optioneel) de verwijzende pagina in.">
+<!ENTITY createbatchdescriptor.label "Batchdefinitie maken">
+<!ENTITY createbatchdescriptor.tooltip "Een batchdefinitie maken van de huidige tekstselectie">
+<!ENTITY desc.batches.value "U kunt ook batchdefinities gebruiken om meerdere bestanden tegelijk te downloaden.">
+<!ENTITY examples.value "Voorbeelden:">

@@ -1,0 +1,95 @@
+<!ENTITY lp.localedir "ltr">
+<!ENTITY language "Slovenščina">
+<!ENTITY transAuthor "Ekipa dTa">
+<!ENTITY fulltranslation "Angleški prevod: ekipa dTa">
+<!ENTITY amo.summary2 "Prvi in edini upravitelj/pospeševalnik prenosov v brskalniku!">
+<!ENTITY amo.description.intro "DownThemAll je vse, kar si želite od upravitelja prenosov: vsebuje napredni pospeševalnik, ki poveča hitrost do 4x in kadarkoli omogoča premore in obnovitve prenosov.">
+<!ENTITY amo.description.feat2 "DownThemAll je hiter, zanesljiv in enostaven za uporabo! Omogoča prenos vseh povezav ali slik na strani in veliko več: svoje prenose lahko popolnoma prilagodite z merili, da dobite samo tisto, kar želite. Kadarkoli prevzemite popoln nadzor nad prenosi, dodeljeno hitrostjo in številom vzporednih povezav. Uporabite metapovezave ali ročno dodajte zrcalne strežnike za sočasni prenos datoteke z različnih strežnikov.">
+<!ENTITY amo.description.free2 "DownThemAll je odprtokoden in prost. Brez oglasov, vohunske programske opreme, sledenja in kakršnihkoli stroškov!">
+<!ENTITY amo.description.more "Za več podrobnosti glejte našo <a href='http://www.downthemall.net/howto/features/'>stran značilnosti</a>.">
+<!ENTITY lp.title "O razširitvi!">
+<!ENTITY lp.welcome "Dobrodošli v DownThemAll!">
+<!ENTITY lp.info "Oglejte si videoposnetke o uporabi razširitve DownThemAll! in se spoznajte več o zasebnosti in vaših pravicah">
+<!ENTITY lp.moreinfo "Za več podrobnosti glejte našo <a href='http://www.downthemall.net/howto/features/'>stran značilnosti</a>.">
+<!ENTITY lp.gettingstarted "Prvi koraki">
+<!ENTITY lp.toolbar "Gumbi orodne vrstice">
+<!ENTITY lp.privacy "Zasebnost">
+<!ENTITY lp.yourrights "Vaše pravice">
+<!ENTITY lp.contact "Stik">
+<!ENTITY lp.pleasenote "Upoštevajte:">
+<!ENTITY lp.donate2 "Prosimo razmislite o darovanju">
+<!ENTITY lp.tut.firsttitle "Vaš prvi prenos">
+<!ENTITY lp.tut.fd2 "Prenos datoteke v dTa-ju je precej enostaven in hkrati zelo učinkovit. Če ste pozvani za odpiranje ali shranjevanje datoteke, lahko uporabite predmet DownThemAll!. Po izbiri mesta za shranjevanje lahko takoj začnete s prenosom ali datoteko daste v čakalno vrsto za kasnejši prenos.">
+<!ENTITY lp.tut.selecttitle "Uporaba izbirnega okna">
+<!ENTITY lp.tut.selintro "Vsebinski meni spletne strani omogoči nov predmet DownThemAll! Uuporaba tega predmeta bo prikazala izbirno okno DownThemAll!, katerega lahko uporabite za enostavno izbiro ene ali več povezav iz strani.">
+<!ENTITY lp.tut.seloptions "V izbirnem oknu imate več načinov izbire datotek za prenos:">
+<!ENTITY lp.tut.selopthand2 "Povezave za prenos lahko preverite ročno.">
+<!ENTITY lp.tut.seloptfilters2 "Lahko uporabljate vgrajene ali lastne filtre, npr. za prenos vseh povezanih slik.">
+<!ENTITY lp.tut.seloptfast2 "Dodatno lahko v polje hitrega filtriranja vtipkate svoj filter, npr.  <code>*.pdf,*.doc</code> ali uporabite običajne izraze">
+<!ENTITY lp.tut.seltypes "Izbirno okno vsebuje dva zavihka za dve različni vrsti prenosov:">
+<!ENTITY lp.tut.seltypelinks "Zavihek 'Povezave' vsebuje vse prenosljive povezave najdene na strani">
+<!ENTITY lp.tut.seltypepics "In zavihek 'Slike in predstavnost' vsebuje vse slike in drugo predstavnost prikazane na strani">
+<!ENTITY lp.tut.selgalleries "Slike polne velikosti so pogosto samo povezane na galerijske strani, torej jih boste našli v zavihku 'Povezave'">
+<!ENTITY lp.tut.seldone2 "Ko ste izbrali datoteke za prenos kliknite Začni! za takojšnji začetek prenosov ali Dodaj prekinjeno za kasnejši prenos.">
+<!ENTITY lp.tut.batchestitle "Paketno prenašanje">
+<!ENTITY lp.tut.batches1 "Veliko uporabnikov želi prenesti pakete zaporedno oštevilčenih datotek. DownThemAll! vam omogoča enostavno navajanje paketov, kot to prikazuje video posnetek.">
+<!ENTITY lp.tut.batches2 "Osnovna skladnost je: <code>[start:end]</code> ali <code>[start:end:step]</code>, kjer sta <code>start</code> in <code>end</code> lahko število ali preprost znak.">
+<!ENTITY lp.tut.batches3 "Na primer, če želite prenesti slike od 001 do 100,lahko spremenite URL na: <code>http://example.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.batchesctx "Nadalje vsebinski meni polja za URL v oknu Dodaj prenose omogoča enostavno pretvarjanje izbire besedila v paketni opisnik.">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
+<!ENTITY lp.tut.oneclick1.2 "Ko ste začeli prvi prenos, bo na voljo dodaten predmet: DownThemAll! OneClick, ki vam omogoča prenos datotek neposredno z uporabo prejšnjih nastavitev in preskok možnosti za prenos in/ali pogovornih oken za izbiro.">
+<!ENTITY lp.tut.oneclick2 "Torej vam OneClick omogoča hitro dodajanje veliko prenosov v čakalno vrsto.">
+<!ENTITY lp.tut.oneclickn "Po uporabi možnosti 'Počisti zasebne podatke' v Firefoxu možnost OneClick ne bo na voljo, dokler ponovne ne začnete običajnega prenosa DownThemAll.">
+<!ENTITY lp.tut.tabstitle "Prenašanje predmetov iz vseh zavihkov naenkrat">
+<!ENTITY lp.tut.alltabs "Predmete lahko z uporabo spustnih menijev gumba orodne vrstice dodate v čakalno vrsto iz vseh zavihkov.">
+<!ENTITY lp.tut.tabrestore "Na voljo bodo samo povezave iz popolnoma obnovljenih zavihkov.">
+<!ENTITY lp.tb.intro "DownThemAll! omogoča nekaj gumbov za orodno vrstico, ki vam dajo priročen način dostopa do možnosti DownThemAll!.">
+<!ENTITY lp.tb.install "Dodaj gumbe orodne vrstice">
+<!ENTITY lp.tb.add.title "Dodajanje in uporaba gumbov za orodno vrstico">
+<!ENTITY lp.tb.add.p1 "DownThemAll! omogoča štiri gumbe za orodno vrstico, s katerimi lahko enostavno najdete in dodate prenose v čakalno vrsto">
+<!ENTITY lp.tb.add.dta "Gumb DownThemAll!">
+<!ENTITY lp.tb.add.dtadesc "Odpre izbirno okno DownThemAll! za trenutni zavihek.">
+<!ENTITY lp.tb.add.tdta "Gumb OneClick!">
+<!ENTITY lp.tb.add.tdtadesc "Prenese vse predmete iz trenutne strani glede na nazadnje uporabljene nastavitve in filtre.">
+<!ENTITY lp.tb.add.manager "Gumb Upravitelja DownThemAll!">
+<!ENTITY lp.tb.add.managerdesc "Odpre okno Upravitelja.">
+<!ENTITY lp.tb.add.selector "Gumb Izbirnika DownThemAll!">
+<!ENTITY lp.tb.add.selectordesc "Doda predmete z levim klikom na njih.">
+<!ENTITY lp.tb.add.p2 "Gumbe orodne vrstice lahko dodate preko  via <code>Pogled → Orodne vrstice → Prilagodi</code>.">
+<!ENTITY lp.tb.dnd.title "Povleci in spusti">
+<!ENTITY lp.tb.dnd.p1 "Vsako povezavo ali sliko lahko povlečete na gumb DownThemAll! ali OneClick!, da jo prenesete.">
+<!ENTITY lp.tb.dnd.p2 "Predmete za prenos lahko tudi povlečete na okno Upravitelja, da jih v njem prenesete.">
+<!ENTITY lp.tb.dnd.order "Čakalno vrsto lahko preuredite z vlečenjem  in spuščanjem. Izberite prenose in jih spustite na želeno mesto.">
+<!ENTITY lp.tb.selector.title "Uporaba Izbirnika DownThemAll!">
+<!ENTITY lp.tb.selector.queueing "Izbirnik DownThemAll! omogoča dodajanje prenosov v čakalno vrsto s klikom na povezavo ali sliko.">
+<!ENTITY lp.tb.selector.how "Za omogočanje Izbirnika kliknite na ustrezen gumb orodne vrstice. Za onemogočanje ga ponovno kliknite.">
+<!ENTITY lp.pr.title "Obvestilo o zasebnosti">
+<!ENTITY lp.pr.intro2 "DownThemAll! spoštuje vašo zasebnost.">
+<!ENTITY lp.pr.settings2 "DownThemAll! lahko odstrani vse dokončane, preklicane in nedokončane prenose s seznama po zaprtju okna s spreminjanjem nastavitev v Nastavitve → plošča Zasebnost.">
+<!ENTITY lp.pr.diag2 "Na plošči Nastavitve → Zasebnost lahko omogočite diagnostična sporočila, ki se beležijo tako na konzoli napak kot v datoteki dta_log.txt. Diagnostična sporočila bodo morda vsebovala občutljive podatke, kot so URL-ji, poti in imena datotek, ki jih prenašate ali celo podatke o piškotkih. Ta možnost je privzeto ONEMOGOČENA, da zaščiti vašo zasebnost. Če pošiljate diagnostični dnevnik, boste morda želeli izločiti občutljive podatke. Diagnostični dnevniki se ne bodo nikoli objavili in/ali prenašali samodejno.">
+<!ENTITY lp.pr.pwpbm "DownThemAll! podpira Firefoxov način zasebnega brskanja na posamezno okno: ko dodajate prenose iz okna zasebnega brskanja, DownThemAll! ne bo shranil podatkov o prenesenih datotekah, mapah za prenos ali uporabljenih maskah za preimenovanje. Upoštevajte, da se drugi podatki, kot so na novo ustvarjeni filtri ali seveda dejanski prenosi, še vedno zapišejo na disk.">
+<!ENTITY lp.pr.link "To obvestilo je vedno na voljo na tej strani (about:downthemall) in dodatno povezano najdete v oknu nastavitev">
+<!ENTITY lp.yr.usagetitle "Uporaba in nadaljnje razširjanje">
+<!ENTITY lp.yr.usage "Avtorji vam licencirajo razširitev DownThemAll! na način, kjer lahko:">
+<!ENTITY lp.yr.usageuse "uporabljate DownThemAll!">
+<!ENTITY lp.yr.usagemod "spreminjate DownThemAll!">
+<!ENTITY lp.yr.usagedist "razširjate DownThemAll!, s ali brez sprememb">
+<!ENTITY lp.yr.usagemore "Za več podrobnosti glejte licenco">
+<!ENTITY lp.yr.logo "Avtorske pravite © 2004-2010 logotipa razširitve DownThemAll!: Stefano Verna.">
+<!ENTITY lp.languagetitle "Jezik">
+<!ENTITY lp.language.babelzilla "Če tekoče govorite več jezikov, prosimo razmislite o pridružitvi <a href='http://babelzilla.org'>Babelzilli</a>, da nam pomagate prevesti ta in veliko drugih dodatkov.">
+<!ENTITY lp.yr.licensetitle "Avtorke pravice in licenca">
+<!ENTITY lp.yr.licensed "DownThemAll! licencira <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Glejte datoteko GPL. To velja za vse datoteke izvorne kode.">
+<!ENTITY lp.yr.morelicense3 "Posamezne datoteke imajo lahko dodatne in/ali drugačne licence. Glejte ustrezne datoteke v skladišču, ki je na voljo na <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Večina datotek je pod licenco GPL/LGPL-compatible MPL 2.0 ali pod trojno licenco MPL 1.1/GPL 2.0/LGPL 2.1. Glejte datoteke MPL, GPL in LGPL.">
+<!ENTITY lp.yr.gplintro "Najbolj pomembni odseki iz GPL 2.0, pogoji o garanciji in poškodbah so naslednji:">
+<!ENTITY lp.yr.icons "Grafika, ikone in gumbi">
+<!ENTITY lp.yr.iconsbased4 "so osnovani na delu Mika Matasa, Marka Jamesa, in projektov Noun in Tango">
+<!ENTITY lp.yr.artwork3 "Avtorske pravice izvirnega umetniškega dela: © 2004-2013 Stefano Verna, Federico Parodi in Nils Maier">
+<!ENTITY lp.yr.artworklicense "Izvirna grafika je licencirana od">
+<!ENTITY lp.yr.logo3 "Oblikovanje logotipa DownThemAll!: avtorske pravice © 2004-2013 Stefano Verna.">
+<!ENTITY lp.yr.logopermissions "Imena in logotipa razširitve DownThemAll! ne smete uporabljati brez dovoljenja v izpeljanem delu, z izjemo zaslug in obvestil, ki se nanašajo na licenco.">
+<!ENTITY lp.ct.bugstitle "Poročanje o hroščih/Predlogi za značilnosti">
+<!ENTITY lp.ct.bugs2 "Morebitne hrošče in prošnje za značilnosti oddajte v našem <a href='https://bugs.downthemall.net/'>sledilniku hroščev</a>.">
+<!ENTITY lp.ct.contactstitle "Stiki">
+<!ENTITY lp.ct.contactsfeed2 "Veseli bomo vaših morebitnih povratnih informacij, predlogov in/ali ponudb za pomoč.">
+<!ENTITY lp.ct.contacts "Glejte našo spletno <a href='http://www.downthemall.net/main/contacts/'>stran za stike</a>.">

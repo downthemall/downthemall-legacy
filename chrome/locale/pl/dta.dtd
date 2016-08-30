@@ -1,0 +1,26 @@
+<!ENTITY start.label "Pobierz">
+<!ENTITY start.key "P">
+<!ENTITY queue.label "Dodaj jako wstrzymane">
+<!ENTITY queue.key "D">
+<!ENTITY options.label "Ustawienia">
+<!ENTITY url.value "Pobierz">
+<!ENTITY url.placeholder "Podaj URI pobrania">
+<!ENTITY override.filename.value "Własna nazwa pliku">
+<!ENTITY override.filename.placeholder "Podaj nowa nazwę pliku">
+<!ENTITY override.filename.tip "Podaj nową nazwę pliku lub pozostaw pole puste, by użyć domyslnej nazwy">
+<!ENTITY directory.caption "Zapisz pliki w:">
+<!ENTITY directory.placeholder "Podaj lub wybierz folder">
+<!ENTITY mirrors.value "Mirrory:">
+<!ENTITY referrer.value "Strona odniesienia:">
+<!ENTITY referrer.placeholder "Podaj referrer URI">
+<!ENTITY referrer.tip "Podaj referrer URI lub pozostaw pole puste, by wysłać bez referrera">
+<!ENTITY description.value "Opis:">
+<!ENTITY checksum.value "Suma kontrolna (hash):">
+<!ENTITY browse.tooltip "Przeglądaj…">
+<!ENTITY mirrormanager.tip "Zarządzaj mirrorami pobierania">
+<!ENTITY mask3.label "Maska zmiany nazwy">
+<!ENTITY mask.tip "Zaznaczone elementy zostaną zapisane pod zmienionymi nazwami wg tej maski">
+<!ENTITY mask.once.label "Użyj maski tylko tym razem">
+<!ENTITY selectall.label "Zaznacz wszystko">
+<!ENTITY selectinv.label "Odwróć zaznaczenie">
+<!ENTITY selectnone.label "Odznacz wszystko">

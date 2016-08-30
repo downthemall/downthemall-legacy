@@ -1,0 +1,31 @@
+<!ENTITY mask.tags "Renomear Etiquetas">
+<!ENTITY mask.name "Nome do Ficheiro">
+<!ENTITY mask.ext "Extensão">
+<!ENTITY mask.url "URL Base">
+<!ENTITY mask.curl "URL Completo">
+<!ENTITY mask.flatcurl "URL Completo">
+<!ENTITY mask.batch "Lote número">
+<!ENTITY mask.inum "Número do item">
+<!ENTITY mask.hh "Horas">
+<!ENTITY mask.mm "Minutos">
+<!ENTITY mask.ss "Segundos">
+<!ENTITY mask.d "Dia">
+<!ENTITY mask.m "Mês">
+<!ENTITY mask.y "Ano">
+<!ENTITY mask.subdirs "Sub directorias do URL">
+<!ENTITY mask.flatsubdirs "Sub directorias do URL">
+<!ENTITY mask.linktext "Ligação de texto">
+<!ENTITY mask.flatlinktext "Ligação de texto plano">
+<!ENTITY mask.refername "Nome do referidor">
+<!ENTITY mask.referext "Extensão do referidor">
+<!ENTITY mask.refer "Referrer URL">
+<!ENTITY mask.crefer "Referidor completo">
+<!ENTITY mask.flatcrefer "Referidor plano completo">
+<!ENTITY mask.referdirs "Sub-pastas do referidor">
+<!ENTITY mask.flatreferdirs "Sub-pastas do referidor plano">
+<!ENTITY mask.qstring "String do Pedido">
+<!ENTITY mask.referqstring "String de consulta do referidor">
+<!ENTITY mask.title "Mudar nome à Máscara">
+<!ENTITY mask.flattitle2 "Título plano associado com ligação">
+<!ENTITY mask.tip "Clique ou arraste para mudar o nome da máscara">
+<!ENTITY mask.open.tip "Tabela de referência para mudar nome das etiquetas">

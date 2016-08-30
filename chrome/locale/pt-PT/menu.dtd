@@ -1,0 +1,25 @@
+<!ENTITY dta-tbinstall "Adicionar Botões da Barra de Tarefa">
+<!ENTITY dta-pref.label "Preferências">
+<!ENTITY dta-about2.label "Sobre o DownThemAll!">
+<!ENTITY dta-manager-button "Gestor">
+<!ENTITY dta-manager-button.desc "Abre a janela do Gestor.">
+<!ENTITY dta-selector-button2.label "Seletor UmClique!">
+<!ENTITY dta-selector-button.desc "Adicionar itens ao clicar neles com o botão esquerdo.">
+<!ENTITY dta-tb-all.label "Todos os separadores">
+<!ENTITY dta-tb-single.label "Separador actual">
+<!ENTITY dta-selection2.label "Seleção DownThemAll!">
+<!ENTITY dta-selection-turbo2.label "Seleção UmClique">
+<!ENTITY dta-regular2.label "DownThemAll!">
+<!ENTITY dta-regular.desc "Abre a Janela de Seleção DownThemAll! para o separador atual.">
+<!ENTITY dta-regular-turbo2.label "dTa! UmCLique">
+<!ENTITY dta-regular-turbo.desc "Transfere todos os itens da página atual de acordo com as últimas preferências e filtros usados.">
+<!ENTITY dta-img-save2.label "Guardar Imagem com o DownThemAll!">
+<!ENTITY dta-img-save-turbo2.label "Guardar Imagem com o dTa! UmClique">
+<!ENTITY dta-video-save2.label "Guardar vídeo com o DownThemAll!">
+<!ENTITY dta-video-save-turbo2.label "Guardar Vídeo com o dTa! UmClique">
+<!ENTITY dta-audio-save2.label "Guardar Áudio com o DownThemAll!">
+<!ENTITY dta-audio-save-turbo2.label "Guardar Áudio com o dTa! UmClique">
+<!ENTITY dta-link-save2.label "Guardar Ligação com o DownThemAll!">
+<!ENTITY dta-link-save-turbo2.label "Guardar Ligação com o dTa! UmClique">
+<!ENTITY dta-form-save2.label "Guardar Formulário Alvo com o DownThemAll!">
+<!ENTITY dta-form-save-turbo2.label "Guardar Formulário Alvo com o dTa! UmClique">

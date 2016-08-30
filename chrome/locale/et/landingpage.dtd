@@ -1,0 +1,95 @@
+<!ENTITY lp.localedir "ltr">
+<!ENTITY language "Eesti keel">
+<!ENTITY transAuthor "Maidur">
+<!ENTITY fulltranslation "Tõlge eesti keelde: Maidur">
+<!ENTITY amo.summary2 "Esimene ja ainus allalaadimiste haldur/kiirendi sinu brauseris!">
+<!ENTITY amo.description.intro "DownThemAll! on kõik, mida allalaadimiste haldurilt oodata: sellel on võimas kiirendi, mis suurendab kiirust kuni 4x ning see võimaldab allalaadimisi igal ajal peatada ja jätkata.">
+<!ENTITY amo.description.feat2 "DownThemAll on kiire, usaldusväärne ja lihtsalt kasutatav! See võimaldab sul alla laadida kõiki veebilehel olevaid linke või pilte ja palju muud: sa saad oma allalaadimised määrata täielikult kohandatavate kriteeriumite abil, saamaks ainult seda, mida sa tegelikult tahad. Saa oma allalaadimiste üle täielik kontroll, pühendatud kiirus ja samaaegsete ühenduste võimalus igal ajal. Faili samaaegselt mitmest serverist korraga allalaadimiseks saad kasutada metalinke või lisada peeglid käsitsi.">
+<!ENTITY amo.description.free2 "DownThemAll on avatud lähtekoodiga ja tasuta tarkvara. Ei mingeid reklaame, nuhkvara, jälitamist ega kulutusi!">
+<!ENTITY amo.description.more "Lähema teabe saamiseks külasta meie <a href='http://www.downthemall.net/howto/features/'>Võimaluste lehte</a>.">
+<!ENTITY lp.title "Teave DownThemAll!-i kohta">
+<!ENTITY lp.welcome "Tere tulemast kasutama DownThemAll!-i">
+<!ENTITY lp.info "Vaata videosid, mis näitavad, kuidas DownThemAll!-i kasutada ning loe privaatsuse ja oma õiguste kohta">
+<!ENTITY lp.moreinfo "Lähema teabe saamiseks külasta meie <a href='http://www.downthemall.net/howto/features/'>võimaluste lehte</a>.">
+<!ENTITY lp.gettingstarted "Alustamine">
+<!ENTITY lp.toolbar "Tööriistariba nupud">
+<!ENTITY lp.privacy "Privaatsus">
+<!ENTITY lp.yourrights "Sinu õigused">
+<!ENTITY lp.contact "Kontakt">
+<!ENTITY lp.pleasenote "Palun võta teadmiseks:">
+<!ENTITY lp.donate2 "Palun kaalu annetuse tegemist">
+<!ENTITY lp.tut.firsttitle "Sinu esimene allalaadimine">
+<!ENTITY lp.tut.fd2 "Faili dTa'ga allalaadimine on suhteliselt lihtne, kuid samas väga võimas. Kui küsitakse faili avamist või salvestamist, võid kasutada DownThemAll!-i. Pärast allalaadimise salvestuskoha valimist võid allalaadimise käivitada kohe või faili hilisemaks allalaadimiseks järjekorda panna.">
+<!ENTITY lp.tut.selecttitle "Valiku tegemise akna kasutamine">
+<!ENTITY lp.tut.selintro "Veebilehe kontekstimenüüs on uus DownThemAll! kirje. Selle kasutamine avab DownThemAll! valiku tegemise akna, milles saad valida vähemalt ühe lingi, mis alla laadida.">
+<!ENTITY lp.tut.seloptions "Valiku tegemise aknas on allalaaditavate failide valimiseks minu võimalust:">
+<!ENTITY lp.tut.selopthand2 "Allalaadida soovitavaid linke võid käsitsi kontrollida.">
+<!ENTITY lp.tut.seloptfilters2 "Sa võid kasutada sisseehitatud või isetehtud filtreid, nt. laadida alla kõik lingitud pildid.">
+<!ENTITY lp.tut.seloptfast2 "Lisaks võid oma filtri sisestada kiirfiltreerimise kasti, näiteks <code>*.pdf,*.doc</code> või kasutada isegi regulaaravaldisi">
+<!ENTITY lp.tut.seltypes "Valiku tegemise aknas on kaks kaarti, kahe eri tüüpi allalaadimiste jaoks:">
+<!ENTITY lp.tut.seltypelinks "Kaardil Lingid näidatakse kõiki lehelt leitud allalaaditavaid linke">
+<!ENTITY lp.tut.seltypepics "Ja Piltide ja meedia kaart, mis sisaldab kõiki lehel olevaid pilte ja muud meediat">
+<!ENTITY lp.tut.selgalleries "Täissuuruses piltidele sageli viidatakse galerii lehtedelt, seega leiad need linkide kaardilt">
+<!ENTITY lp.tut.seldone2 "Kui oled allalaadida soovitavad failid ära märgistanud, vajuta kas Alusta! oma allalaadimiste koheselt käivitamiseks või Lisa peatatuna hilisemaks allalaadimiseks.">
+<!ENTITY lp.tut.batchestitle "Pakkide allalaadimine">
+<!ENTITY lp.tut.batches1 "Paljud kasutajad tahavad alla laadida järjestikuselt nummerdatud failide pakke. DownThemAll! võimaldab pakid määrata päris kergesti, nagu video näitab.">
+<!ENTITY lp.tut.batches2 "Põhiline süntaks on: <code>[algus:lõpp]</code> või <code>[algus:lõpp:samm]</code>, kus nii <code>algus</code> kui ka <code>lõpp</code> võib olla kas number või tavaline tähemärk. <code>samm</code> määrab sammupikkuse ja ärajätmise korral on lihtsalt 1.">
+<!ENTITY lp.tut.batches3 "Näiteks kui tahad alla laadida pildid 001 kuni 100, sisesta URL-i väljale: <code>http://example.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.batchesctx "Veelgi enam, Allalaadimiste lisamise aknas oleva Allalaadimise URL-i välja kontekstimenüü võimaldab sul kergesti teisendada tekstivaliku pakkdeskriptoriks.">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
+<!ENTITY lp.tut.oneclick1.2 "Kui oled oma esialgse allalaadimise teinud, tuleb saadavale uus kirje: DownThemAll! OneClick, mida võid kasutada failide otse allalaadimiseks, kasutades eelmisi sätteid ja jättes vahele allalaadimise sätete ja/või valiku tegemise dialoogid.">
+<!ENTITY lp.tut.oneclick2 "Seega võimaldab OneClick kiiresti järjekorda panna palju linke.">
+<!ENTITY lp.tut.oneclickn "Pärast Firefoxi ajaloo kustutamise funktsiooni kasutamist ei ole OneClick saadaval, kuni tavapärase DownThemAll! allalaadimise alustamiseni.">
+<!ENTITY lp.tut.tabstitle "Failide allalaadimine kõikidelt kaartidelt korraga">
+<!ENTITY lp.tut.alltabs "On võimalik järjekorda lisada kõik üksused kõikidelt kaartidelt korraga, kasutades selleks tööriistaribal oleva nupu rippmenüüsid.">
+<!ENTITY lp.tut.tabrestore "Saadaval on ainult lingid, mis on täielikult taastatud kaartidel.">
+<!ENTITY lp.tb.intro "DownThemAll! pakub mõnd tööriistariba nuppu, mis annab mugava viisi DownThemAll!-i funktsioonide kasutamiseks.">
+<!ENTITY lp.tb.install "Lisa tööriistariba nuppe">
+<!ENTITY lp.tb.add.title "Tööriistariba nuppude lisamine ja kasutamine">
+<!ENTITY lp.tb.add.p1 "DownThemAll!-il on neli tööriistariba nuppu, mis teevad allalaadimiste leidmise ja järjekorda panemise lihtsamaks">
+<!ENTITY lp.tb.add.dta "Nupp DownThemAll!">
+<!ENTITY lp.tb.add.dtadesc "Avab DownThemAll! valiku tegemise akna praeguse kaardi jaoks.">
+<!ENTITY lp.tb.add.tdta "Nupp OneClick!">
+<!ENTITY lp.tb.add.tdtadesc "Laadib alla kõik praegusel lehel olevad üksused, rakendades viimati kasutatud eelistusi ja filtreid.">
+<!ENTITY lp.tb.add.manager "Nupp DownThemAll! Haldur">
+<!ENTITY lp.tb.add.managerdesc "Avab halduri akna.">
+<!ENTITY lp.tb.add.selector "Nupp DownThemAll! Valija">
+<!ENTITY lp.tb.add.selectordesc "Lisab üksuseid, nendel vasak-klõpsates.">
+<!ENTITY lp.tb.add.p2 "Tööriistariba nuppe saab lisada dialoogiakna <code>Vaade → Tööriistaribad → Kohanda</code> kaudu.">
+<!ENTITY lp.tb.dnd.title "Lohistamine">
+<!ENTITY lp.tb.dnd.p1 "Sa saad iga lingi või pildi kas DownThemAll! või OneClick! nupule lohistada, et see alla laadida.">
+<!ENTITY lp.tb.dnd.p2 "Sa võid ka allalaaditavad failid lohistada halduri aknasse.">
+<!ENTITY lp.tb.dnd.order "Sa saad oma allalaadimiste järjekorda muuta lohistades. Lihtsalt vali mõni allalaadimine ja lohista need soovitud asukohale.">
+<!ENTITY lp.tb.selector.title "DownThemAll! Valija kasutamine">
+<!ENTITY lp.tb.selector.queueing "DownThemAll! Valija laseb sul palju allalaadimisi järjekorda panna, klõpsates lihtsalt linkidel või piltide.">
+<!ENTITY lp.tb.selector.how "Valija lubamiseks klõpsa vastaval tööriistariba nupul. Kui valimisega valmis oled saanud ja selle funktsiooni keelata tahad, lihtsalt klõpsa sellel nupul uuesti.">
+<!ENTITY lp.pr.title "Privaatsusavaldus">
+<!ENTITY lp.pr.intro2 "DownThemAll austab sinu privaatsust.">
+<!ENTITY lp.pr.settings2 "Sa saad lasta DownThemAll!-il pärast akna sulgemist kustutada allalaadimiste loendist kõik valmis, tühistatud ja pooleliolevad allalaadimised, muutes sätteid paneelil Eelistused → Privaatsus.">
+<!ENTITY lp.pr.diag2 "Sa saad lubada diagnostilised teated, mis logitakse nii vigade konsoolile kui ka kirjutatakse faili dta_log.txt, paneelil Eelistused → Pivaatsus. Diagnostilised teated sisaldavad tõenäoliselt tundlikke andmeid nagu URL-id, failide teed, allalaaditavate failide nimed või isegi küpsiste andmed. Sinu privaatsuse kaitsmiseks on see valik vaikimisi VÄLJA LÜLITATUD. Diagnostilise logi saatmisel võid enne tahta sellest kõik tundlikud andmed eemaldada. Diagnostilisi logisid ei saadeta ega avalikustata kunagi automaatselt.">
+<!ENTITY lp.pr.pwpbm "DownThemAll! toetab Firefoxi aknapõhist privaatse veebilehitsemise režiimi: privaatse veebilehitsemise aknas allalaadimisi lisades ei talleta DownThemAll! mingit teavet allalaaditavate failide, allalaadimiste kaustade ega kasutatud nimemuutmismaskide kohta. Palun pane tähele, et muud andmed - nagu värskelt loodud filtrid või, muidugi, tegelikud allalaaditud failid - kirjutatakse su arvuti kettale ikkagi.">
+<!ENTITY lp.pr.link "See teade on alati kättesaadav sellelt lehelt (about:downthemall) ja lisaks on sellele lingitud Eelistuste aknas.">
+<!ENTITY lp.yr.usagetitle "Kasutamine ja taaslevitamine">
+<!ENTITY lp.yr.usage "Autorid litsentsivad DownThemAll!-i sulle selliselt, et sa võid vabalt:">
+<!ENTITY lp.yr.usageuse "DownThemAll!-i kasutada">
+<!ENTITY lp.yr.usagemod "DownThemAll!-i muuta">
+<!ENTITY lp.yr.usagedist "DownThemAll!-i taaslevitada, koos isetehtud muudatustega ja/või ilma">
+<!ENTITY lp.yr.usagemore "Rohkema teabe saamiseks vaata litsentse.">
+<!ENTITY lp.yr.logo "DownThemAll! logo: Kopeerimisõigus © 2004-2010 Stefano Verna.">
+<!ENTITY lp.languagetitle "Keel">
+<!ENTITY lp.language.babelzilla "Kui oskad mitut keelt, palun kaalu liitumist lehega <a href='http://babelzilla.org'>babelzilla.org</a>, et aidata tõlkida seda ja palju muid suurepäraseid lisasid.">
+<!ENTITY lp.yr.licensetitle "Autoriõigus ja Litsents">
+<!ENTITY lp.yr.licensed "DownThemAll! on litsentsitud litsentsi <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a> alusel. Vaata GPL faili. See käib kõigi lähtekoodifailide kohta.">
+<!ENTITY lp.yr.morelicense3 "Üksikutel failidel võib olla erinev ja/või lisalitsents. Vaata vastavaid hoidla faile aadressil <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Enamus faile on litsentsitud litsentsi GPL/LGPL-ühilduv MPL 2.0 või on kolmik-litsentsitud litsentside MPL 1.1/GPL 2.0/LGPL 2.1 alusel. Vaata vastavaid faile MPL, GPL, LGPL.">
+<!ENTITY lp.yr.gplintro "Kõige tähtsamad sektsioonid GPL 2.0-st, garantii puudus ja kahjudest lahtiütlemine, on järgmised:">
+<!ENTITY lp.yr.icons "Joonistused, ikoonid ja nupud">
+<!ENTITY lp.yr.iconsbased4 "põhinevad nende töödel: Mike Matas, Mark James, Noun Project ja Tango projekt">
+<!ENTITY lp.yr.artwork3 "Esialgne kunstilooming on: Autoriõigus © 2004-2013 Stefano Verna, Federico Parodi ja Nils Maier">
+<!ENTITY lp.yr.artworklicense "Originaaljoonistused on litsentsitud selle litsentsi alusel:">
+<!ENTITY lp.yr.logo3 "DownThemAll! logo disain: Copyright © 2004-2013 Stefano Verna.">
+<!ENTITY lp.yr.logopermissions "DownThemAll! nime ja logo ei tohi loata kasutada üheski tuletuslikus töös, välja arvatud tunnustused ja litsentsiga seotud teatised.">
+<!ENTITY lp.ct.bugstitle "Vigadest teatamine / Funktsioonide taotlused">
+<!ENTITY lp.ct.bugs2 "Palun teavita igast veast ja funktsiooni taotlusest meie <a href='https://bugs.downthemall.net/'>vigade jälitaja</a> kaudu.">
+<!ENTITY lp.ct.contactstitle "Kontaktandmed">
+<!ENTITY lp.ct.contactsfeed2 "Me oleme väga tänulikud iga tagasiside, soovituse ja/või abipakkumise eest.">
+<!ENTITY lp.ct.contacts "Palun vaata meie <a href='http://www.downthemall.net/main/contacts/'>kontaktide lehte</a> veebis.">
