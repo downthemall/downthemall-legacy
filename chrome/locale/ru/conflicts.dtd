@@ -1,7 +1,0 @@
-<!ENTITY window.title "Конфликт файлов!">
-<!ENTITY text.value "Выполнять эту настройку:">
-<!ENTITY download.label "Только для этой загрузки">
-<!ENTITY session.label "Только для этой сессии">
-<!ENTITY always.label "Всегда">
-<!ENTITY overwrite.label "Перезаписать существующий файл">
-<!ENTITY skip.label "Пропустить/Отмена">

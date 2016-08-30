@@ -12,19 +12,6 @@ content dta-tests tests/
 content	dta-modules	modules/
 
 ## additional locales
-locale dta de chrome/locale/de/
-locale dta et chrome/locale/et/
-locale dta gl chrome/locale/gl/
-locale dta gl-ES chrome/locale/gl-ES/
-locale dta ja chrome/locale/ja/
-locale dta nl chrome/locale/nl/
-locale dta pl chrome/locale/pl/
-locale dta pt-PT chrome/locale/pt-PT/
-locale dta ru chrome/locale/ru/
-locale dta sl-SI chrome/locale/sl-SI/
-locale dta tr chrome/locale/tr/
-locale dta zh-CN chrome/locale/zh-CN/
-locale dta zh-TW chrome/locale/zh-TW/
 
 ## platform package ##
 content dta-platform	chrome/content/ platform

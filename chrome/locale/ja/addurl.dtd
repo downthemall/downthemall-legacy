@@ -1,6 +1,0 @@
-<!ENTITY windowtitle "ダウンロードの追加">
-<!ENTITY adddescription.value "ダウンロードするファイルの URL と参照元の URL (任意) を入力してください。">
-<!ENTITY createbatchdescriptor.label "バッチ処理を自動作成">
-<!ENTITY createbatchdescriptor.tooltip "選択された文字列からバッチ処理を作成します">
-<!ENTITY desc.batches.value "バッチ処理を使用することで複数のファイルを一度にダウンロードすることができます。">
-<!ENTITY examples.value "サンプル:">

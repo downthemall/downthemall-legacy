@@ -1,6 +1,0 @@
-<!ENTITY windowtitle "新增下載">
-<!ENTITY adddescription.value "請輸入檔案的下載網址以及引用頁面(可不填)。">
-<!ENTITY createbatchdescriptor.label "建立批次描述">
-<!ENTITY createbatchdescriptor.tooltip "從目前所選取的文字建立批次描述">
-<!ENTITY desc.batches.value "您也可以用批次敘述一次下載多個檔案。">
-<!ENTITY examples.value "範例：">

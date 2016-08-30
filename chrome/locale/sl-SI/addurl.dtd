@@ -1,6 +1,0 @@
-<!ENTITY windowtitle "Dodaj prenose">
-<!ENTITY adddescription.value "Vnesite URL za prenos in (izbirno) stran sklicatelja.">
-<!ENTITY createbatchdescriptor.label "Ustvari paketni opisnik">
-<!ENTITY createbatchdescriptor.tooltip "Ustvari paketni opisnik iz trenutne izbire besedila">
-<!ENTITY desc.batches.value "Uporabite lahko tudi paketne opisnike za prenos več datotek naenkrat.">
-<!ENTITY examples.value "Primeri:">

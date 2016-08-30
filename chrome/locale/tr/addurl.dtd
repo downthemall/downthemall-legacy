@@ -1,6 +1,0 @@
-<!ENTITY windowtitle "İndirme Ekle">
-<!ENTITY adddescription.value "İndirilecek URL'yi ve geliş sayfasını (isteğe bağlı) girin.">
-<!ENTITY createbatchdescriptor.label "Toplu Tanımlayıcı Üretin">
-<!ENTITY createbatchdescriptor.tooltip "Var olan metin seçiminden toplu tanımlayıcı üret">
-<!ENTITY desc.batches.value "Birçok dosyayı aynı anda indirmek için toplu tanımlayıcılar da kullanabilirsiniz.">
-<!ENTITY examples.value "Örnekler:">

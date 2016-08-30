@@ -1,6 +1,0 @@
-<!ENTITY windowtitle "Allalaadimiste lisamine">
-<!ENTITY adddescription.value "Sisesta allalaadimise URL ja (valikuliselt) viitav leht.">
-<!ENTITY createbatchdescriptor.label "Loo pakkdeskriptor">
-<!ENTITY createbatchdescriptor.tooltip "Loo praegusest tekstivalikust pakkdeskriptor">
-<!ENTITY desc.batches.value "Mitme faili korraga allalaadimiseks võid kasutada pakkdeskriptoreid.">
-<!ENTITY examples.value "Näidised:">
