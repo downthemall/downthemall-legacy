@@ -344,7 +344,7 @@ def releaserdf(fp, **kw):
     with Reset(fp):
         rdf = XML(fp.read())
     node = rdf.getElementsByTagNameNS(NS_EM, 'version')[0].childNodes[0]
-    if not re.match(r"^[\d.]+$", node.data) or True:
+    if not re.match(r"^[\d.]+$", node.data):
         raise ValueError("Invalid release version: {}".format(node.data))
 
     return releasify(fp, **kw)
