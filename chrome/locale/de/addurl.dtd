@@ -1,6 +1,0 @@
-<!ENTITY windowtitle "Downloads Hinzufügen">
-<!ENTITY adddescription.value "Download URL eingeben und (optional) die verweisende Seite.">
-<!ENTITY createbatchdescriptor.label "Batch-Marker Erstellen">
-<!ENTITY createbatchdescriptor.tooltip "Batch-Marker aus Auswahl erstellen">
-<!ENTITY desc.batches.value "Man kann auch Batch-Marker erstellen um mehrere Dateien gleichzeitig herunterzuladen.">
-<!ENTITY examples.value "Beispiele:">

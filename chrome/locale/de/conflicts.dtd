@@ -1,7 +1,0 @@
-<!ENTITY window.title "Dateinamen Konflikt!">
-<!ENTITY text.value "Diese Einstellung merken:">
-<!ENTITY download.label "Nur für diesen Download">
-<!ENTITY session.label "Nur für diese Sitzung">
-<!ENTITY always.label "Von jetzt an immer">
-<!ENTITY overwrite.label "Vorhandene Datei überschreiben">
-<!ENTITY skip.label "Überspringen/Abbrechen">
