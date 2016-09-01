@@ -257,7 +257,7 @@ Tree.prototype = {
 		}
 		else {
 			l.checked = "";
-			l.manuallySelected = false;
+			l.manuallyChecked = false;
 		}
 
 		// a lil' hacky.
