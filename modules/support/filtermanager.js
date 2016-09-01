@@ -324,7 +324,7 @@ FilterManagerImpl.prototype = {
 			let prop = e.getNext().QueryInterface(Ci.nsIPropertyElement);
 			this._localizedLabels[prop.key] = prop.value;
 		}
-		this._file = require("api").getProfileFile(FILTERS_FILE);
+		this._file = require("api").getProfileFile(FILTERS_FILE, true);
 		this._saver = new DeferredSave(
 			this._file.path,
 			JSON.stringify.bind(JSON, this, null, 2),
