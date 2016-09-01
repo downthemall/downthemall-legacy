@@ -5,7 +5,7 @@
 		<em:id>dta@downthemall.net</em:id>
 		<em:name>DownThemAll!</em:name>
 		<em:description>The mass downloader for Firefox.</em:description>
-		<em:version>3.0.2</em:version>
+		<em:version>3.0.3pre</em:version>
 		<em:bootstrap>true</em:bootstrap>
 		<em:multiprocessCompatible>true</em:multiprocessCompatible>
 		<em:type>2</em:type>
