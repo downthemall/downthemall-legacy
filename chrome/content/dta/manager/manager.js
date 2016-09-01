@@ -1158,7 +1158,7 @@ var Dialog = {
 				}
 			}
 			if (Prefs.autoClose) {
-				setTimeoutOnlyFunc(() => Dialog.close(), 1500);
+				setTimeoutOnlyFun(() => Dialog.close(), 1500);
 			}
 		}
 		catch(ex) {
