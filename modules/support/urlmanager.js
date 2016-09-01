@@ -47,11 +47,11 @@ UrlManager.prototype = {
 	},
 	_usableURL: function() { return toURL(this._usable); },
 	_usableURLPath: function() {
-		let rv = removeLeadingChar(this.usableURL.path, "/");
+		let rv = this.usableURL.path;
 		if (rv.length) {
 			rv = removeFinalSlash(normalizeSlashes(rv.substring(0, rv.lastIndexOf("/"))));
 		}
-		return rv;
+		return removeLeadingChar(rv, "/");
 	},
 	_host: function() { return this.usableURL.host; },
 	_spec: function() { return this._url.spec; },
