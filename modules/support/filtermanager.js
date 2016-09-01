@@ -398,7 +398,7 @@ FilterManagerImpl.prototype = {
 				}
 				// merge with defFilters
 				for (let f in this.defFilters) {
-					if (!(f in filters)) {
+					if (!(f in filters) || !filters[f].expr) {
 						filters[f] = Object.create(this.defFilters[f]);
 					}
 				}
@@ -481,12 +481,16 @@ FilterManagerImpl.prototype = {
 				continue;
 			}
 			try {
-				rv[name.slice(PREF_FILTERS_BASE.length)] = {
+				let filter = {
 					"label": Preferences.get(name + ".label", ""),
 					"expr": Preferences.get(name + ".test", ""),
 					"type": Preferences.get(name + ".type", LINK_FILTER),
 					"active": Preferences.get(name + ".active", true)
 				};
+				if (!filter.label || !filter.expr || !filter.type) {
+					throw new Error("filter empty");
+				}
+				rv[name.slice(PREF_FILTERS_BASE.length)] = filter;
 				log(LOG_DEBUG, "migrated " + name);
 			}
 			catch (ex) {
@@ -507,6 +511,7 @@ FilterManagerImpl.prototype = {
 				}
 			}).bind(this));
 		}
+		this._save();
 		return rv;
 	},
 
@@ -601,12 +606,17 @@ FilterManagerImpl.prototype = {
 	_save: function() {
 		return Task.spawn((function*() {
 			try {
-				yield OS.File.makeDir(this._file.parent.path, {unixMode: 0x775, ignoreExisting: true});
+				try {
+					yield OS.File.makeDir(this._file.parent.path, {unixMode: 0o775, ignoreExisting: true});
+				}
+				catch (ex if ex.becauseExists) {
+					// no op;
+				}
+				yield this._saver.saveChanges();
 			}
-			catch (ex if ex.becauseExists) {
-				// no op;
+			catch (ex) {
+				log(LOG_ERROR, "failed to save filters", ex);
 			}
-			yield this._saver.saveChanges();
 		}).bind(this));
 	},
 	save: function() {
