@@ -266,8 +266,18 @@ exports.getProfileFile = (function() {
 	return function getProfileFile(fileName, createDir) {
 		var file = _profile.clone();
 		file.append(fileName);
-		if (createDir && !file.parent.exists()) {
-			file.parent.create(file.DIRECTORY_TYPE, 0o755);
+		if (createDir) {
+			if (!file.parent.exists()) {
+				file.parent.create(file.DIRECTORY_TYPE, 0o755);
+			}
+			else {
+				try {
+					// make sure the data directory has the correct permissions
+					file.parent.permissions = 0o755;
+				}
+				catch (ex) {
+				}
+			}
 		}
 		return file;
 	};
