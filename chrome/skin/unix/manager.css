@@ -39,6 +39,8 @@ treecol > dropmarker {
 	border: 1px inset rgba(128,128,128,.9);
 }
 
-#search > image {
+#search image {
 	list-style-image: url(moz-icon://stock/gtk-find?size=menu);
+	max-height: 16px;
+	max-width: 16px;
 }

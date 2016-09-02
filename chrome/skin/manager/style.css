@@ -975,7 +975,7 @@ statusbarpanel#schedule:not([running]) {
 	min-width: 5em;
 	max-width: 15em;
 }
-#search > image {
+#search image {
 	margin-right: 4px;
 }
 

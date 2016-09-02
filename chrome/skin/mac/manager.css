@@ -60,8 +60,8 @@
 	display: none;
 }
 
-#search > image {
-	list-style-image: url(chrome://browser/skin/Search.png);
+#search image {
+	list-style-image: url(Search.png);
 }
 
 #loading {
@@ -142,8 +142,8 @@ treecol[params] .treecol-marker {
 	toolbar#tools > toolbarbutton {
 		list-style-image: url(tools@2x.png);
 	}
-	#search > image {
-		list-style-image: url(chrome://browser/skin/Search@2x.png);
+	#search image {
+		list-style-image: url(Search@2x.png);
 		width: 14px;
 		height: 14px;
 	}
