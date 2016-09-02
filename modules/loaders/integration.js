@@ -305,7 +305,6 @@ exports.load = function load(window, outerEvent) {
 								browser.messageManager.removeMessageListener("DTA:findLinks:" + job, result);
 								resolve(m.data);
 							};
-							log(LOG_ERROR, browser);
 							browser.messageManager.addMessageListener("DTA:findLinks:progress:" + job, progress);
 							browser.messageManager.addMessageListener("DTA:findLinks:" + job, result);
 							browser.messageManager.sendAsyncMessage("DTA:findLinks", {
