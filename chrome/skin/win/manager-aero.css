@@ -72,7 +72,7 @@ window[sizemode="maximized"] #titlebar-max {
 	-moz-binding: url(chrome://dta/content/common/bindings.xml#toolbar-lwauto);
 }
 window[sizemode="maximized"] #titlebar {
-	margin-bottom: -24px;
+	margin-bottom: -14px;
 }
 
 window[sizemode="maximized"] #tools {
