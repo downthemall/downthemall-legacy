@@ -1527,10 +1527,18 @@ QueueItem.prototype = {
 		return nv;
 	},
 	setUserFileName: function(name) {
-		this.fileNameFromUser = false;
-		this.fileName = name;
-		this.fileNameFromUser = true;
-		this.save();
+		try {
+			Tree.beginUpdate();
+			this.fileNameFromUser = false;
+			this.fileName = name;
+			this.fileNameFromUser = true;
+			this.save();
+		}
+		finally {
+			this.iconProp; // set up initial icon to avoid display problems
+			Tree.invalidate();
+			Tree.endUpdate();
+		}
 	},
 	shortenName: function() {
 		let fn = this.destinationName;
