@@ -228,7 +228,7 @@ var Dialog = {
 		}
 
 		if (hasItem) {
-			return this.downloadItem(start);
+			return this.downloadItem(start, hash);
 		}
 		return this.downloadPlain(start, url, hash);
 	},
@@ -306,7 +306,7 @@ var Dialog = {
 		})();
 		return this.sendDownloads(start, downloads, isPrivate);
 	},
-	downloadItem: function(start) {
+	downloadItem: function(start, hash) {
 		let item = $("address")._item;
 		item.fileName = $("filename").value || null;
 		item.description = $('description').value;
@@ -314,6 +314,7 @@ var Dialog = {
 		item.numIstance = DTA.currentSeries();
 		item.mask = this.ddRenaming.value;
 		item.dirSave = this.ddDirectory.value;
+		item.url.hash = item.url.hash || hash;
 
 		return this.sendDownloads(start, [item], item.isPrivate);
 	},
