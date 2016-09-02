@@ -2852,16 +2852,18 @@ var ConflictManager = {
 					}
 				}
 				download.conflicts = conflicts;
+				let pinned = null;
 				if (data.pinned) {
-					let pinned = download.destinationFile;
+					pinned = download.destinationFile;
 					this.pin(pinned);
 				}
 				log(LOG_DEBUG, "ConflictManager: resolved setting conflicts for " + download);
 				return pinned;
 			}
 			case 1: {
+				let pinned = null;
 				if (data.pinned) {
-					let pinned = download.destinationFile;
+					pinned = download.destinationFile;
 					this.pin(pinned);
 				}
 				download.shouldOverwrite = true;
