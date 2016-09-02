@@ -1114,7 +1114,7 @@ Connection.prototype = {
 					log(LOG_INFO, "chunk unknown");
 					return;
 				}
-				if (c.errored) {
+				if (c.errored || d.state === CANCELED) {
 					return; // already handled
 				}
 
