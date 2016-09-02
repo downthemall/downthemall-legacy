@@ -1081,6 +1081,7 @@ Connection.prototype = {
 				// Explicitly trigger rebuildDestination here, as we might have received
 				// a html content type and need to rewrite the file
 				d.rebuildDestination();
+				d.checkConflicts();
 			}
 
 			if (d.resumable && !d.isOf(CANCELED | PAUSED)) {

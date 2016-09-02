@@ -2286,6 +2286,9 @@ QueueItem.prototype = {
 		}
 		this._icon = null;
 	},
+	checkConflicts: function() {
+		return ConflictManager.check(this);
+	},
 	resolveConflicts: function() {
 		return ConflictManager.resolve(this);
 	},
@@ -2694,22 +2697,30 @@ var ConflictManager = {
 	_queue: [],
 	_pinned: new Set(),
 	resolve: function(download) {
+		return this._resolve(download, true);
+	},
+	check: function(download) {
+		return this._resolve(download, false);
+	},
+	_resolve: function(download, pinned) {
 		log(LOG_DEBUG, "ConflictManager: Resolving " + download);
-		let promise = this._items.get(download);
-		if (promise) {
-			log(LOG_DEBUG, "ConflictManager: Resolving already " + promise);
-			return promise.promise;
+		let data = this._items.get(download);
+		if (data) {
+			// Make sure pinning request is carried over
+			data.pinned |= pinned;
+			log(LOG_DEBUG, "ConflictManager: Resolving already " + data);
+			return data.promise;
 		}
-		promise = {};
-		promise.promise = new Promise(function(resolve, reject) {
-			promise.reject = reject;
-			promise.resolve = resolve;
+		data = {pinned: pinned};
+		data.promise = new Promise(function(resolve, reject) {
+			data.reject = reject;
+			data.resolve = resolve;
 		});
-		this._items.set(download, promise);
+		this._items.set(download,data);
 		this._queue.push(download);
-		log(LOG_DEBUG, "ConflictManager: Resolving new " + promise);
+		log(LOG_DEBUG, "ConflictManager: Resolving new " + data);
 		this._processNext();
-		return promise.promise;
+		return data.promise;
 	},
 	pin: function(name) {
 		this._pinned.add(name);
@@ -2727,17 +2738,17 @@ var ConflictManager = {
 		if (!download) {
 			return;
 		}
-		let p = this._items.get(download);
+		let data = this._items.get(download);
 		this._items.delete(download);
 
 		this._processing = true;
 		Task.spawn(function*() {
 			try {
-				p.resolve(yield this._processOne(download));
+				data.resolve(yield this._processOne(download, data));
 			}
 			catch (ex) {
 				log(LOG_ERROR, "ConflictManager: Failed to resolve", ex);
-				p.reject(null);
+				data.reject(null);
 			}
 			finally {
 				this._processing = false;
@@ -2745,7 +2756,7 @@ var ConflictManager = {
 			}
 		}.bind(this));
 	},
-	_processOne: function*(download) {
+	_processOne: function*(download, data) {
 		log(LOG_DEBUG, "ConflictManager: Starting conflict resolution for " + download);
 		let dest = download.destinationLocalFile;
 		let exists = this._pinned.has(dest.path);
@@ -2756,7 +2767,9 @@ var ConflictManager = {
 		}
 		if (!exists) {
 			log(LOG_DEBUG, "ConflictManager: Does not exist " + download);
-			this.pin(dest.path);
+			if (data.pinned) {
+				this.pin(dest.path);
+			}
 			return dest.path;
 		}
 
@@ -2831,14 +2844,18 @@ var ConflictManager = {
 					}
 				}
 				download.conflicts = conflicts;
-				let pinned = download.destinationFile;
-				this.pin(pinned);
+				if (data.pinned) {
+					let pinned = download.destinationFile;
+					this.pin(pinned);
+				}
 				log(LOG_DEBUG, "ConflictManager: resolved setting conflicts for " + download);
 				return pinned;
 			}
 			case 1: {
-				let pinned = download.destinationFile;
-				this.pin(pinned);
+				if (data.pinned) {
+					let pinned = download.destinationFile;
+					this.pin(pinned);
+				}
 				download.shouldOverwrite = true;
 				return pinned;
 			}
