@@ -2022,6 +2022,7 @@ QueueItem.prototype = {
 		}
 	},
 	verifyHash: function() {
+		let oldStatus = this.status;
 		this.status = TextCache_VERIFYING;
 		return Task.spawn((function*() {
 			let mismatches = yield Verificator.verify(
@@ -2040,6 +2041,7 @@ QueueItem.prototype = {
 				log(LOG_ERROR, "Mismatches: " + mismatches.toSource());
 				return (yield this.verifyHashError(mismatches));
 			}
+			this.status = oldStatus;
 			return true;
 		}).bind(this));
 	},
