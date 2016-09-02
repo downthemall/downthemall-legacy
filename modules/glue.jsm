@@ -7,6 +7,7 @@ var EXPORTED_SYMBOLS = [
 	"require",
 	"requireJoined",
 	"requireJSM",
+	"canUnload",
 	"unload",
 	"weak",
 	"lazy",
@@ -38,6 +39,16 @@ var weak = Cu.getWeakReference.bind(Cu);
 var reportError = Cu.reportError.bind(Cu);
 var lazy = XPCOMUtils.defineLazyGetter; // bind?
 var QI = XPCOMUtils.generateQI.bind(XPCOMUtils);
+
+function canUnload() {
+		let cancel = new Instances.SupportsBool();
+		cancel.data = false;
+		Services.obs.notifyObservers(cancel, "DTA:upgrade", null);
+		if (cancel.data) {
+			return false;
+		}
+		return true;
+};
 
 var lazyProto = (function() {
 	const gdesc = {enumerable: true};
@@ -247,10 +258,7 @@ LRUMap.prototype = Object.freeze({
 	const _registry = new Map();
 	const shutdown = function() {
 		if (arguments.length > 1 && arguments[1]) {
-			let cancel = new Instances.SupportsBool();
-			cancel.data = false;
-			Services.obs.notifyObservers(cancel, "DTA:upgrade", null);
-			if (cancel.data) {
+			if (!canUnload()) {
 				log(LOG_INFO, "Not going down right now - vetoed!");
 				return;
 			}

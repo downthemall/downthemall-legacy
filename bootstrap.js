@@ -3,8 +3,10 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
+const {Services} = Components.utils.import("resource://gre/modules/Services.jsm", {});
+const {AddonManager} = Components.utils.import("resource://gre/modules/AddonManager.jsm", {});
+
 function flush() {
-	const {Services} = Components.utils.import("resource://gre/modules/Services.jsm", {});
 	//Drop XUL/XBL/JAR/CSS/etc caches
 	Services.obs.notifyObservers(null, "chrome-flush-caches", null);
 }
@@ -15,9 +17,27 @@ function uninstall() {
 }
 function startup(data) {
 	// will unload itself
-	Components.utils.import("chrome://dta-modules/content/glue.jsm", {});
+	let _g = {};
+	Components.utils.import("chrome://dta-modules/content/glue.jsm", _g);
+
+	if (AddonManager.addUpgradeListener && data.instanceID) {
+		AddonManager.addUpgradeListener(data.instanceID, upgrade => {
+			if (_g.canUnload()) {
+				upgrade.install();
+			}
+		});
+	}
 }
 function shutdown(data, reason) {
+	if (AddonManager.addUpgradeListener && data.instanceID) {
+		try {
+			AddonManager.removeUpgradeListener(data.instanceID);
+		}
+		catch (ex) {
+			// oh well...
+		}
+	}
+
 	if (reason === APP_SHUTDOWN) {
 		// No need to cleanup; stuff will vanish anyway
 		return;
