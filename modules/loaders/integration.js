@@ -501,8 +501,7 @@ exports.load = function load(window, outerEvent) {
 					ms.addHeader('Content-Type', 'application/x-www-form-urlencoded');
 					ms.setData(ss);
 
-					let sis = new Instances.ScriptableInputStream();
-					sis.init(ms);
+					let sis = new Instances.ScriptableInputStream(ms);
 					let postData = '';
 					let avail = 0;
 					while ((avail = sis.available())) {
