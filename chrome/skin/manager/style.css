@@ -366,7 +366,7 @@ treechildren::-moz-tree-progressmeter(inprogress) {
 	color: #AAE061 !important;
 }
 
-treechildren::-moz-tree-image(iconic):not(::-moz-tree-image(file)) {
+treechildren::-moz-tree-image(iconic) {
 	list-style-image: url(icons.png);
 	-moz-image-region: rect(16px,48px,32px,32px);
 }
