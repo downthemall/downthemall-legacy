@@ -266,7 +266,7 @@ const addLinks = function* addLinks(aWin, aURLs, aImages, aLocations, honorSelec
 				}
 				yield true;
 
-				let cdoc = aWin.document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
+				let cdoc = aWin.document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', null);
 				copy = cdoc.adoptNode(copy);
 				cdoc.documentElement.appendChild(cdoc.adoptNode(copy));
 				yield true;
@@ -275,14 +275,14 @@ const addLinks = function* addLinks(aWin, aURLs, aImages, aLocations, honorSelec
 					"//*[not(ancestor-or-self::a) and " +
 					"not(ancestor-or-self::style) and " +
 					"not(ancestor-or-self::script)]/text()",
-					copy.ownerDocument,
+					cdoc,
 					null,
 					aWin.XPathResult.ORDERED_NODE_ITERATOR_TYPE,
 					null
 				);
 				yield true;
 
-				for (let y in getTextLinks(set, links, true)) {
+				for (let y of getTextLinks(set, links, true)) {
 					yield true;
 				}
 				cdoc = null;
