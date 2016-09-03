@@ -19,7 +19,9 @@ onmessage = function({data}) {
 		return;
 	}
 	try {
-		OS.File.move(data.from, data.to);
+		OS.File.move(data.from, data.to, {
+			noOverwrite: !data.overwriteOk
+		});
 		postMessage({jobid: data.jobid});
 	}
 	catch (ex) {

@@ -56,6 +56,16 @@ addEventListener("load", function load_textCache() {
 	}
 }, false);
 
+function isOSError(ex, unix, win) {
+	if (ex.unixErrno) {
+		return OS.Constants.libc[unix] == ex.unixErrno;
+	}
+	if (ex.winLastError) {
+		return OS.Constants.Win[win] == ex.winLastError;
+	}
+	return false;
+}
+
 function _moveFile(destination, self) {
 	let remakeDir = false;
 	let move = function(resolve, reject, x) {
@@ -64,22 +74,27 @@ function _moveFile(destination, self) {
 		}
 		let df = destination.clone();
 		df.append(self.destinationName);
-		moveFile(self.tmpFile.path, df.path).then(function() {
+		moveFile(self.tmpFile.path, df.path, self.shouldOverwrite).then(function() {
 			resolve(true);
 		}, function(ex) {
-			if ((ex.unixErrno && ex.unixErrno === OS.Constants.libc.ENAMETOOLONG) ||
-					(ex.winLastError && ex.winLastError === 3)) {
+			if (isOSError(ex, "EEXIST", "ERROR_ALREADY_EXISTS") && !self.shouldOverwrite) {
+				self.conflicts += 1;
+				move(resolve, reject, x);
+				return;
+			}
+
+			if (isOSError(ex, "ENAMETOOLONG", "ERROR_PATH_NOT_FOUND")) {
 				try {
 					self.shortenName();
 					ConflictManager.unpin(pinned);
 					pinned = self.destinationFile;
-					ConflictManager.pin(pinned);
+					ConflictManager.pin(pinned, !self.shouldOverwrite);
 				}
 				catch (iex) {
 					log(LOG_ERROR, "Failed to shorten name", ex);
 				}
 			}
-			if (ex.becauseNoSuchFile || (ex.unixErrno && ex.unixErrno === OS.Constants.libc.ENOENT)) {
+			if (ex.becauseNoSuchFile || isOSError(ex, "ENOENT", "NONE")) {
 				remakeDir = true;
 			}
 			log(LOG_ERROR, ex);
@@ -2705,7 +2720,7 @@ XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
 var ConflictManager = {
 	_items: new Map(),
 	_queue: [],
-	_pinned: new Set(),
+	_pinned: new Map(),
 	resolve: function(download) {
 		return this._resolve(download, true);
 	},
@@ -2732,11 +2747,25 @@ var ConflictManager = {
 		this._processNext();
 		return data.promise;
 	},
-	pin: function(name) {
-		this._pinned.add(name);
+	pin: function(name, unique) {
+		let count = (this._pinned.get(name) || 0) + 1;
+		if (unique && count > 1) {
+			throw new Error("Invalid pin; not unique");
+		}
+		this._pinned.set(name, count);
 	},
 	unpin: function(name) {
-		this._pinned.delete(name);
+		let count = this._pinned.get(name);
+		if (!isFinite(count)) {
+			log(LOG_ERROR, "ConflictManager: trying to unpin a name that does not exist");
+			this._pinned.delete(name);
+			return;
+		}
+		if (--count <= 0) {
+			this._pinned.delete(name);
+			return;
+		}
+		this._pinned.set(name, count); // store new count
 	},
 	_processNext: function() {
 		log(LOG_DEBUG, "ConflictManager: Resolving next");
@@ -2778,7 +2807,7 @@ var ConflictManager = {
 		if (!exists) {
 			log(LOG_DEBUG, "ConflictManager: Does not exist " + download);
 			if (data.pinned) {
-				this.pin(dest.path);
+				this.pin(dest.path, true);
 			}
 			return dest.path;
 		}
@@ -2862,7 +2891,8 @@ var ConflictManager = {
 				if (data.pinned) {
 					download.conflicts = conflicts;
 					pinned = download.destinationFile;
-					this.pin(pinned);
+					download.shouldOverwrite = false;
+					this.pin(pinned, true);
 				}
 				log(LOG_DEBUG, "ConflictManager: resolved setting conflicts for " + download);
 				return pinned;
@@ -2872,7 +2902,7 @@ var ConflictManager = {
 				if (data.pinned) {
 					pinned = download.destinationFile;
 					download.shouldOverwrite = true;
-					this.pin(pinned);
+					this.pin(pinned, false);
 				}
 				return pinned;
 			}

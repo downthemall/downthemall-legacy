@@ -74,14 +74,15 @@ obs.addExit(asyncShutdown);
 unload(asyncShutdown);
 AsyncShutdown.webWorkersShutdown.addBlocker("DownThemAll! moveFile workers", asyncShutdown);
 
-exports.moveFile = function(from, to) {
+exports.moveFile = function(from, to, overwriteOk) {
 	let jobid = ++_jobid;
 	return new Promise((rs, rj) => {
 		_jobs.set(jobid, {resolve: rs, reject: rj});
 		_worker.postMessage({
 			jobid: jobid,
 			from: from,
-			to: to
+			to: to,
+			overwriteOk: overwriteOk
 		});
 	});
 };
