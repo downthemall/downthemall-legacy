@@ -2785,7 +2785,7 @@ var ConflictManager = {
 
 		let cr = -1;
 
-		let conflicts = download.conflicts || 0;
+		let conflicts = 0;
 		let basename = download.destinationName;
 		let newDest = download.destinationLocalFile.clone();
 
@@ -2866,9 +2866,9 @@ var ConflictManager = {
 				let pinned = null;
 				if (data.pinned) {
 					pinned = download.destinationFile;
+					download.shouldOverwrite = true;
 					this.pin(pinned);
 				}
-				download.shouldOverwrite = true;
 				return pinned;
 			}
 			default:
