@@ -7,6 +7,7 @@ const {URL} = require("api");
 const Limits = require("./serverlimits");
 const {
 	normalizeSlashes,
+	removeLeadingSlash,
 	removeFinalSlash,
 	removeLeadingChar,
 	toURL
@@ -51,7 +52,7 @@ UrlManager.prototype = {
 		if (rv.length) {
 			rv = removeFinalSlash(normalizeSlashes(rv.substring(0, rv.lastIndexOf("/"))));
 		}
-		return removeLeadingChar(rv, "/");
+		return removeLeadingSlash(rv);
 	},
 	_host: function() { return this.usableURL.host; },
 	_spec: function() { return this._url.spec; },
