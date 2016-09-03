@@ -2309,7 +2309,11 @@ QueueItem.prototype = {
 			this._destinationLocalFile = file;
 			log(LOG_ERROR, "rebuildDestination():", ex);
 		}
-		this._icon = null;
+		finally {
+			this._icon = null;
+			this.iconProp; // set up initial icon to avoid display problems
+			FileExts.add();
+		}
 	},
 	checkConflicts: function() {
 		return ConflictManager.check(this);
