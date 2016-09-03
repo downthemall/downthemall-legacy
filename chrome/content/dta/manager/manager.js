@@ -2841,6 +2841,11 @@ var ConflictManager = {
 
 		switch (cr) {
 			case 0: {
+				if (!data.pinned) {
+					// No need to actually check here...
+					// Check will be performed once we pin
+					return;
+				}
 				for (;; ++conflicts) {
 					newDest.leafName = Utils.formatConflictName(basename, conflicts);
 					exists = this._pinned.has(newDest.path);
@@ -2853,9 +2858,9 @@ var ConflictManager = {
 						break;
 					}
 				}
-				download.conflicts = conflicts;
 				let pinned = null;
 				if (data.pinned) {
+					download.conflicts = conflicts;
 					pinned = download.destinationFile;
 					this.pin(pinned);
 				}
